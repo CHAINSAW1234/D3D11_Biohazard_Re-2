@@ -6,15 +6,17 @@
 *.lo
 *.o
 *.obj
+*.tlog
+*.log
 
 # Precompiled Headers
 *.gch
 *.pch
 
 # Compiled Dynamic libraries
+*.cso
 *.so
 *.dylib
-*.dll
 
 # Fortran module files
 *.mod
@@ -24,9 +26,26 @@
 *.lai
 *.la
 *.a
-*.lib
 
 # Executables
 *.exe
 *.out
 *.app
+
+.vs/
+*.exp
+*.pdb
+
+/x64/*
+
+UpdateLib.bat
+
+Client/Default/x64
+Engine/Default/x64
+
+Client/Bin/Client.pdb
+
+Engine/Bin/Engine.pdb
+*.db
+*.ini
+*.ipch
