@@ -116,7 +116,7 @@ private:	/* For.Linear_Interpolation */
 
 private:
 	MODEL_TYPE					m_eModelType = { TYPE_END };
-	const aiScene* m_pAIScene = { nullptr };
+	const aiScene*				m_pAIScene = { nullptr };
 	Assimp::Importer			m_Importer;
 
 private:
