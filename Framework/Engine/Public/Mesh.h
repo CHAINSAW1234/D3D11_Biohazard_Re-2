@@ -1,6 +1,5 @@
 #pragma once
 
-/* 디자이너분들이 저장해준 정점과 인덱스의 정보를 바탕으로해서 정점, 인덱스버퍼를 생선한다.  */
 #include "VIBuffer.h"
 #include "Model.h"
 

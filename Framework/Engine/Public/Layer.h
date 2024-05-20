@@ -2,9 +2,6 @@
 
 #include "Base.h"
 
-/* 오브젝트 매니져가 개발자의 의도에 따라 객체들을 묶어서 보관한다. */
-/* 한 묶음. */
-
 BEGIN(Engine)
 
 class CLayer final : public CBase

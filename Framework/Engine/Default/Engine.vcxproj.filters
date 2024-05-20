@@ -190,6 +190,12 @@
     <Filter Include="00.Device\Input\KeyBoard">
       <UniqueIdentifier>{8a817d1b-64e7-44d5-85f5-344732579f54}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\96.Sound">
+      <UniqueIdentifier>{8feeb1d5-780f-443f-ba79-bdc5fd0e4ccf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\96.Sound\Manager">
+      <UniqueIdentifier>{2a047875-debb-4f56-8d61-cc1d6811746d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -371,6 +377,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Mouse.cpp">
       <Filter>00.Device\Input\Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sound_Manager.cpp">
+      <Filter>01.Utility\96.Sound\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -568,6 +577,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Mouse.h">
       <Filter>00.Device\Input\Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sound_Manager.h">
+      <Filter>01.Utility\96.Sound\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
