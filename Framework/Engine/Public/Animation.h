@@ -26,11 +26,8 @@ private:
 	virtual ~CAnimation() = default;
 
 public:
-	_bool isFinished() const {
-		return m_isFinished;
-	}
-
-	void Reset_Finish();
+	_bool isFinished() const { return m_isFinished; }
+	void Reset_Finish() { m_isFinished = false; }
 
 	_float Get_TrackPosition() { return m_fTrackPosition; }
 	_float Get_Duration() { return m_fDuration; }

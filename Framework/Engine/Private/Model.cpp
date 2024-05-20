@@ -84,6 +84,66 @@ void CModel::Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec)
 	m_Animations[iAnimIndex]->Set_TickPerSec(fTickPerSec);
 }
 
+_bool CModel::Is_Active_RootMotion_XZ(_uint iAnimIndex)
+{
+	if (iAnimIndex >= m_Animations.size())
+		return;
+
+	return m_Animations[iAnimIndex]->Is_Active_RootMotion_XZ();
+}
+
+_bool CModel::Is_Active_RootMotion_Y(_uint iAnimIndex)
+{
+	if (iAnimIndex >= m_Animations.size())
+		return;
+
+	return m_Animations[iAnimIndex]->Is_Active_RootMotion_Y();
+}
+
+_bool CModel::Is_Active_RootMotion_Rotation(_uint iAnimIndex)
+{
+	if (iAnimIndex >= m_Animations.size())
+		return;
+
+	return m_Animations[iAnimIndex]->Is_Active_RootMotion_Rotation();
+}
+
+void CModel::Active_RootMotion_XZ(_uint iAnimIndex, _bool isActive)
+{
+	if (iAnimIndex >= m_Animations.size())
+		return;
+
+	m_Animations[iAnimIndex]->Active_RootMotion_XZ(isActive);
+}
+
+void CModel::Active_RootMotion_Y(_uint iAnimIndex, _bool isActive)
+{
+	if (iAnimIndex >= m_Animations.size())
+		return;
+
+	m_Animations[iAnimIndex]->Active_RootMotion_Y(isActive);
+}
+
+void CModel::Active_RootMotion_Rotation(_uint iAnimIndex, _bool isActive)
+{
+	if (iAnimIndex >= m_Animations.size())
+		return;
+
+	m_Animations[iAnimIndex]->Active_RootMotion_Rotation(isActive);
+}
+
+void CModel::Set_RootBone(string strBoneTag)
+{
+	_int		iBoneIndex = { Find_BoneIndex(strBoneTag) };
+	if (-1 == iBoneIndex)
+		return;
+
+	for (auto& pBone : m_Bones)
+		pBone->Set_RootBone(false);
+
+	m_Bones[iBoneIndex]->Set_RootBone(true);
+}
+
 void CModel::Set_CombinedMatrix(string strBoneTag, _fmatrix CombinedMatrix)
 {
 	_uint			iBoneIndex = { Find_BoneIndex(strBoneTag) };
@@ -468,6 +528,64 @@ HRESULT CModel::Play_Animation(_float fTimeDelta)
 	return S_OK;
 }
 
+HRESULT CModel::Play_Animation_RootMotion(CTransform* pTransform, _float fTimeDelta)
+{
+	_bool		isFirstTick = { false };
+	m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix(fTimeDelta, m_Bones, m_isLoop, &isFirstTick);
+
+	//		TODO:		추 후 선형보간 혹은 모션 블렌딩으로 대체하여 삽입하기
+	_bool		isActiveXZ = { m_Animations[m_iCurrentAnimIndex]->Is_Active_RootMotion_XZ() };
+	_bool		isActiveY = { m_Animations[m_iCurrentAnimIndex]->Is_Active_RootMotion_Y() };
+	_bool		isActiveRotation = { m_Animations[m_iCurrentAnimIndex]->Is_Active_RootMotion_Rotation() };
+
+	//	모든 채널업데이트가 끝난후 각 뼈에 컴바인드 행렬을 설정한다.
+	for (auto& pBone : m_Bones)
+	{
+		_bool		isRootBone = { pBone->Is_RootBone() };
+		if (true == isRootBone)
+		{
+			_float4			vTranslation, vQuaternion;
+			_float4*		pTranslation = { &vTranslation };
+			_float4*		pQuaternion = { &vQuaternion };
+
+			if (false == isActiveRotation)
+			{
+				pQuaternion = nullptr;
+			}
+
+			if (false == isActiveXZ && false == isActiveY)
+			{
+				pTranslation = nullptr;
+			}
+
+			pBone->Invalidate_CombinedTransformationMatrix_RootMotion(m_Bones, m_TransformationMatrix, isActiveXZ, isActiveY, pTranslation, pQuaternion);
+
+			if (true == isActiveRotation)
+			{
+
+			}
+
+			if (true == isActiveXZ || true == isActiveY)
+			{
+				_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
+				_matrix			WorldMatrixInv = { XMMatrixInverse(nullptr , WorldMatrix) };
+
+				_vector			vCurrentPosition = { pTransform->Get_State_Vector(CTransform::STATE_POSITION) };
+				_vector			vTranslationLocal = { XMLoadFloat4(&vTranslation) };
+				//	_vector			vPreMoveDir = { XMSotreFloat4(&)}
+
+			}
+		}
+
+		else
+		{
+			pBone->Invalidate_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix));
+		}
+	}
+
+	return S_OK;
+}
+
 HRESULT CModel::Play_Animation_RootMotion_Translation(CTransform* pTransform, const string& strRootTag, _float fTimeDelta, _bool isAutoRotate)
 {
 	_vector			vResultTranslationDir = XMVectorSet(0.f, 0.f, 0.f, 0.f);
@@ -586,9 +704,9 @@ const _float4x4* CModel::Get_CombinedMatrix(const string& strBoneTag)
 	return m_Bones[iBoneIndex]->Get_CombinedTransformationMatrix();
 }
 
-_uint CModel::Find_BoneIndex(const string& strRootTag)
+_int CModel::Find_BoneIndex(const string& strRootTag)
 {
-	_uint		iIndex = { 0 };
+	_int		iIndex = { -1 };
 	for (auto& Bone : m_Bones)
 	{
 		if (true == Bone->Compare_Name(strRootTag.c_str()))
@@ -597,7 +715,7 @@ _uint CModel::Find_BoneIndex(const string& strRootTag)
 		++iIndex;
 	}
 
-	return 0;
+	return iIndex;
 }
 
 void CModel::Compute_RootParentsIndicies(_uint iRootIndex, vector<_uint>& ParentsIndices)

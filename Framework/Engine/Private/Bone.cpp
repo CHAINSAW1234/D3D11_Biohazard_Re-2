@@ -34,6 +34,8 @@ HRESULT CBone::Initialize(const BONE_DESC& BoneDesc)
 
 void CBone::Invalidate_CombinedTransformationMatrix(const vector<CBone*>& Bones, _fmatrix ParentsTransformatrixMatrix)
 {
+	_bool			isTopParrentBone = { -1 == m_iParentBoneIndex };
+
 	if (true == m_isSurbordinate)
 	{
 		if (nullptr == m_pParentCombinedMatrix)
@@ -43,7 +45,7 @@ void CBone::Invalidate_CombinedTransformationMatrix(const vector<CBone*>& Bones,
 	}
 
 	//	부모 뼈가 없다면 => 루트 노드라면
-	else if (-1 == m_iParentBoneIndex)
+	else if (true == isTopParrentBone)
 	{
 		XMStoreFloat4x4(&m_CombinedTransformationMatrix, XMLoadFloat4x4(&m_TransformationMatrix) * ParentsTransformatrixMatrix);
 	}
@@ -84,7 +86,7 @@ _float3 CBone::Invalidate_CombinedTransformationMatrix_RootMotion_Translation(co
 
 		vRotation = XMQuaternionIdentity();
 		CombinedMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSet(0.f, 0.f, 0.f, 1.f));
-		
+
 
 		XMStoreFloat4x4(&m_CombinedTransformationMatrix, CombinedMatrix);
 	}
@@ -120,47 +122,101 @@ _float4x4 CBone::Invalidate_CombinedTransformationMatrix_RootMotion_WorldMatrix(
 	return CombinedFloat4x4;
 }
 
-void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBone*>& Bones, _fmatrix ParentsCombinedMatrix, _float4* pTranslation, _float4* pQuaternion)
+void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBone*>& Bones, _float4x4 TransformationMatrix, _bool isActiveXZ, _bool isActiveY, _float4* pTranslation, _float4* pQuaternion)
 {
-	//_vector			vScale, vRotation, vTranslation;
+	_vector			vScale, vQuaternion, vTranslation;
 
-	//_bool			isSetTranslation = { pTranslation != nullptr };
-	//_bool			isSetQuaternion = { pQuaternion != nullptr };
+	_bool			isSetTranslation = { pTranslation != nullptr };
+	_bool			isSetQuaternion = { pQuaternion != nullptr };
+	_bool			isTopParrentBone = { -1 == m_iParentBoneIndex };
 
-	////	부모 뼈가 없다면 => 루트 노드라면
-	//if (-1 == m_iParentBoneIndex)
-	//{
-	//	_matrix			CombinedMatrix = XMLoadFloat4x4(&m_TransformationMatrix) * ParentsCombinedMatrix;
+	if (true == m_isSurbordinate)
+	{
+		if (nullptr == m_pParentCombinedMatrix)
+			return;
 
-	//	XMMatrixDecompose(&vScale, &vRotation, &vTranslation, CombinedMatrix);
+		m_CombinedTransformationMatrix = *m_pParentCombinedMatrix;
+	}
 
-	//	if(true == isSet)
+	//	부모 뼈가 없다면 => 루트 노드라면
+	else if (true == isTopParrentBone)
+	{
+		//	현재 뼈의 변환성분들을 분해하여 특정성분을 추출후 반환
+		_matrix			MyTransformationMatrix = { XMLoadFloat4x4(&m_TransformationMatrix) };
+		XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, MyTransformationMatrix);
 
-	//	CombinedMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		if (true == isSetTranslation)
+		{
+			vTranslation = Decompose_Translation(isActiveXZ, isActiveY, vTranslation, pTranslation);
+		}
+		if (true == isSetQuaternion)
+		{
+			vQuaternion = Decompose_Quaternion(vQuaternion, pQuaternion);
+		}
 
-	//	//	부모의 합행렬을 그대로 남김 => 나의 변환을 전부 뺌 ( 항등행렬을 적용함과 같다. )
-	//	XMStoreFloat4x4(&m_CombinedTransformationMatrix, CombinedMatrix);
-	//}
+		MyTransformationMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
 
-	//else
-	//{
-	//	//	스케일 회전성분만 남긴 매트릭스로 변환 매트릭스를 등록한다.
-	//	_matrix			ParrentsCombinedMatrix = XMLoadFloat4x4(&Bones[m_iParentBoneIndex]->m_CombinedTransformationMatrix);
-	//	_matrix			CombinedMatrix = XMLoadFloat4x4(&m_TransformationMatrix) * ParrentsCombinedMatrix;
+		// 현재 결과에서 애니메이션에 따라 특정 성분들이 제거된 매트릭스를 합행렬에 곱해준다.
+		_matrix			CombinedMatrix = XMLoadFloat4x4(&m_TransformationMatrix) * XMLoadFloat4x4(&TransformationMatrix);
+		XMStoreFloat4x4(&m_CombinedTransformationMatrix, CombinedMatrix);
+	}
 
-	//	XMMatrixDecompose(&vScale, &vRotation, &vTranslation, CombinedMatrix);
+	else
+	{
+		//	현재 뼈의 변환성분들을 분해하여 특정성분을 추출후 반환
+		_matrix			MyTransformationMatrix = { XMLoadFloat4x4(&m_TransformationMatrix) };
+		XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, MyTransformationMatrix);
 
-	//	vRotation = XMQuaternionIdentity();
-	//	CombinedMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		if (true == isSetTranslation)
+		{
+			vTranslation = Decompose_Translation(isActiveXZ, isActiveY, vTranslation, pTranslation);
+		}
+		if (true == isSetQuaternion)
+		{
+			vQuaternion = Decompose_Quaternion(vQuaternion, pQuaternion);
+		}
+
+		MyTransformationMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
 
 
-	//	XMStoreFloat4x4(&m_CombinedTransformationMatrix, CombinedMatrix);
-	//}
+		//	스케일 회전성분만 남긴 매트릭스로 변환 매트릭스를 등록한다.
+		_matrix			ParrentsCombinedMatrix = XMLoadFloat4x4(&Bones[m_iParentBoneIndex]->m_CombinedTransformationMatrix);
+		_matrix			CombinedMatrix = MyTransformationMatrix * ParrentsCombinedMatrix;
+		XMStoreFloat4x4(&m_CombinedTransformationMatrix, CombinedMatrix);
+	}
+}
 
-	////	분해한 이동성분을 반환
-	//_float3			vTraslationFloat3;
+_vector CBone::Decompose_Translation(_bool isActiveXZ, _bool isActiveY, _fvector vTranslation, _float4* pTranslation)
+{
+	_vector		vResultTranslation = { vTranslation };
 
-	//XMStoreFloat3(&vTraslationFloat3, vTranslation);
+	if (true == isActiveXZ)
+	{
+		pTranslation->x = XMVectorGetX(vResultTranslation);
+		pTranslation->z = XMVectorGetZ(vResultTranslation);
+
+		vResultTranslation = XMVectorSetX(vResultTranslation, 0.f);
+		vResultTranslation = XMVectorSetZ(vResultTranslation, 0.f);
+	}
+
+	if (true == isActiveY)
+	{
+		pTranslation->y = XMVectorGetY(vResultTranslation);
+
+		vResultTranslation = XMVectorSetY(vResultTranslation, 0.f);
+	}
+
+	return vResultTranslation;
+}
+
+_vector CBone::Decompose_Quaternion(_fvector vQuaternion, _float4* pQuaternion)
+{
+	_vector		vResultQuaternion = { vQuaternion };
+
+	XMStoreFloat4(pQuaternion, vQuaternion);
+	vResultQuaternion = XMQuaternionIdentity();
+
+	return vResultQuaternion;
 }
 
 void CBone::Set_Combined_Matrix(_fmatrix CombinedMatrix)
