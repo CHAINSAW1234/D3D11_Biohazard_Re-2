@@ -575,25 +575,24 @@ HRESULT CModel::Play_Animation_RootMotion(CTransform* pTransform, _float fTimeDe
 					m_vPreQuaternion = vQuaternion;
 				}
 
-				XMVECTOR Q1 = XMLoadFloat4(&m_vPreQuaternion);
-				XMVECTOR Q2 = XMLoadFloat4(&vQuaternion);
+				_vector			vPreQuaternion = { XMLoadFloat4(&m_vPreQuaternion) };
+				_vector			vCurrentQuaternion = { XMLoadFloat4(&vQuaternion) };
 
-				// Q1의 역쿼터니언 구하기
-				XMVECTOR Q1Inv = XMQuaternionInverse(Q1);
+				// 이전 쿼터니언의 역쿼터니언 구하기
+				_vector			vPreQuaternionInv = { XMQuaternionInverse(vPreQuaternion) };
 
-				// Q1의 역쿼터니언과 Q2의 곱셈
-				XMVECTOR QDiff = XMQuaternionMultiply(Q1Inv, Q2);
-				
+				// 이전 쿼터니언의 역쿼터니언과 현재쿼터니언의 곱 => 합쿼터니언
+				_vector			vQuaternionDiffrence = { XMQuaternionNormalize(XMQuaternionMultiply(vPreQuaternionInv, vCurrentQuaternion)) };
 
+				_matrix			RotationMatrix = { XMMatrixRotationQuaternion(vQuaternionDiffrence) };
+				_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
+				_vector			vPosition = { WorldMatrix.r[CTransform::STATE_POSITION] };
+				WorldMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 
+				_matrix			ResultMatrix = { XMMatrixMultiply(RotationMatrix, WorldMatrix) };
 
-				_matrix RotationMat= XMMatrixRotationQuaternion(QDiff);
-				_matrix WorldMat = pTransform->Get_RotationMatrix_Pure_Mat();
-				_float4 Pos = pTransform->Get_State_Float4(CTransform::STATE_POSITION);
-
-				_matrix Result = XMMatrixMultiply(WorldMat, RotationMat);
-				pTransform->Set_RotationMatrix_Pure(Result);
-				pTransform->Set_State(CTransform::STATE_POSITION, Pos);
+				ResultMatrix.r[CTransform::STATE_POSITION] = vPosition;
+				pTransform->Set_WorldMatrix(ResultMatrix);
 
 				m_vPreQuaternion = vQuaternion;
 			}
@@ -604,24 +603,7 @@ HRESULT CModel::Play_Animation_RootMotion(CTransform* pTransform, _float fTimeDe
 
 				_vector			vTranslationLocal = { XMLoadFloat4(&vTranslation) };
 
-				vTranslationLocal = XMVector4Transform(vTranslationLocal, XMLoadFloat4x4(&m_TransformationMatrix));
-
-
-				_float Length = XMVectorGetX(XMVector4Length(XMVectorSetW(vTranslationLocal,0.f)));
-				if (isActiveRotation)
-				{
-					XMVECTOR Q2 = XMLoadFloat4(&vQuaternion);
-
-					XMVECTOR Q2Inv = XMQuaternionInverse(Q2);
-
-					_matrix InvQ2Mat = XMMatrixRotationQuaternion(Q2Inv);
-
-					vTranslationLocal = XMVector4Transform(vTranslationLocal, InvQ2Mat);
-
-					vTranslationLocal = XMVectorScale(XMVector4Normalize(vTranslationLocal), Length);
-
-					vTranslationLocal = XMVectorSetW(vTranslationLocal, 1.f);
-				}
+				vTranslationLocal = XMVector4Transform(vTranslationLocal, XMLoadFloat4x4(&m_TransformationMatrix));				
 
 				/* 첫 틱인 경우 이전 이동량을 현재 결과 이동량으로 넣어준다 => 이동이 않일어나게끔 */
 				if (true == isFirstTick)
@@ -630,7 +612,17 @@ HRESULT CModel::Play_Animation_RootMotion(CTransform* pTransform, _float fTimeDe
 				}
 
 				_vector			vCurrentMoveDirectionLocal = { vTranslationLocal - XMVectorSetW(XMLoadFloat3(&m_vPreTranslationLocal), 1.f) };
-				_vector			vCurrentMoveDirectionWorld = { XMVector3TransformNormal(vCurrentMoveDirectionLocal, WorldMatrix) };
+
+				if (true == isActiveRotation)
+				{
+					_vector			vCurrentQuaternion = { XMLoadFloat4(&vQuaternion) };
+					_vector			vCurrentQuaternionInv = { XMQuaternionNormalize(XMQuaternionInverse(vCurrentQuaternion)) };
+					_matrix			RoatationMatrix = { XMMatrixRotationQuaternion(vCurrentQuaternionInv) };
+
+					vCurrentMoveDirectionLocal = XMVector3TransformNormal(vCurrentMoveDirectionLocal, RoatationMatrix);
+				}
+
+				_vector			vCurrentMoveDirectionWorld = { XMVector3TransformNormal(vCurrentMoveDirectionLocal, WorldMatrix) };				
 
 				XMStoreFloat3(pMovedDirection, vCurrentMoveDirectionWorld);
 				XMStoreFloat3(&m_vPreTranslationLocal, vTranslationLocal);
