@@ -1,3 +1,2 @@
 Framework/Engine/Bin/PhysXGpu_64.dll filter=lfs diff=lfs merge=lfs -text
 Framework/Client/Bin/PhysXGpu_64.dll filter=lfs diff=lfs merge=lfs -text
-'*.dll' !text !filter !merge !diff
