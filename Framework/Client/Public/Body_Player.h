@@ -36,7 +36,6 @@ private:
 	_float3*				m_pRootTranslation = { nullptr };
 
 	const _ubyte*			m_pState;
-	
 private:
 	HRESULT Add_Components();
 	HRESULT Bind_ShaderResources();

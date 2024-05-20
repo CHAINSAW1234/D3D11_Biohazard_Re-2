@@ -265,8 +265,8 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	//		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
 	//}
 
-	//	if (m_Controller)
-	//		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
+	if (m_Controller)
+		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
 
 	//auto Pos = m_Controller->getPosition();
 	//// 현재 글로벌 포즈 가져오기
@@ -299,7 +299,7 @@ void CPhysics_Controller::Create_Controller(_float4 Pos)
 
 	m_Controll_Desc.height = 3.0f; // 캐릭터의 높이
 	m_Controll_Desc.radius = 2.5f; // 캐릭터의 반지름
-	m_Controll_Desc.position = PxExtendedVec3(0.0,5.0, 0.0); // 초기 위치 설정
+	m_Controll_Desc.position = PxExtendedVec3(0.0, 5.0, 0.0); // 초기 위치 설정
 	m_Controll_Desc.material = m_Physics->createMaterial(0.f, 0.f, 0.f); // 마찰계수와 반발력 설정
 	m_Controller = m_Manager->createController(m_Controll_Desc);
 
@@ -419,7 +419,7 @@ void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
 				newShape->setSimulationFilterData(filterData);
 				newShape->setContactOffset(0.1f);
 				//physx::PxTransform localTm(physx::PxVec3(3.f,0.f, 3.f));
-				physx::PxTransform localTm(physx::PxVec3(physx::PxReal(j * 2) - physx::PxReal(size - i)+10.f, physx::PxReal(i * 2 + 1)+5.f, 10.f) * (halfExtent));
+				physx::PxTransform localTm(physx::PxVec3(physx::PxReal(j * 2) - physx::PxReal(size - i) + 10.f, physx::PxReal(i * 2 + 1) + 5.f, 10.f) * (halfExtent));
 				physx::PxRigidDynamic* body = m_Physics->createRigidDynamic(t.transform(localTm));
 				body->attachShape(*newShape);
 				physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.f);
@@ -506,7 +506,7 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	Mesh->release();
 }
 
-void CPhysics_Controller::Move_CCT(_float4 Dir, _float fTimeDelta,_int Index)
+void CPhysics_Controller::Move_CCT(_float4 Dir, _float fTimeDelta, _int Index)
 {
 	PxVec3 PxDir;
 	PxDir.x = Dir.x;
@@ -573,7 +573,7 @@ _float4 CPhysics_Controller::GetPosition()
 
 		_float4 Pos;
 		Pos.x = static_cast<_float>(position.x);
-		Pos.y = static_cast<_float>(position.y-4.f);
+		Pos.y = static_cast<_float>(position.y - 4.f);
 		Pos.z = static_cast<_float>(position.z);
 		Pos.w = 1.f;
 		return Pos;
@@ -662,45 +662,45 @@ void CPhysics_Controller::Free()
 		m_vecFullMapObject[i]->release();
 	}
 
-	if(m_Shape)
+	if (m_Shape)
 		m_Shape->release();
 	if (m_BodyCollider)
 		m_BodyCollider->release();
 
-	if(m_TerrainActor)
+	if (m_TerrainActor)
 		m_TerrainActor->release();
 
-	if(m_GroundPlane)
+	if (m_GroundPlane)
 		m_GroundPlane->release();
 
-	if(m_TerrainMesh)
+	if (m_TerrainMesh)
 		m_TerrainMesh->release();
 
-	if(m_Material)
+	if (m_Material)
 		m_Material->release();
 
-	if(m_Controller)
+	if (m_Controller)
 		m_Controller->release();
 
-	if(m_Manager)
+	if (m_Manager)
 		m_Manager->release();
 
-	if(m_Scene)
+	if (m_Scene)
 		m_Scene->release();
 
-	if(m_Dispatcher)
+	if (m_Dispatcher)
 		m_Dispatcher->release();
 
-	if(m_Physics)
+	if (m_Physics)
 		m_Physics->release();
 
-	if(m_Pvd)
+	if (m_Pvd)
 		m_Pvd->release();
 
-	if(m_Transport)
+	if (m_Transport)
 		m_Transport->release();
 
-	if(m_Foundation)
+	if (m_Foundation)
 		m_Foundation->release();
 
 	delete m_EventCallBack;

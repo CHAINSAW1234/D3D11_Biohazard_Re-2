@@ -570,7 +570,32 @@ HRESULT CModel::Play_Animation_RootMotion(CTransform* pTransform, _float fTimeDe
 
 			if (true == isActiveRotation)
 			{
+				if (true == isFirstTick)
+				{
+					m_vPreQuaternion = vQuaternion;
+				}
 
+				XMVECTOR Q1 = XMLoadFloat4(&m_vPreQuaternion);
+				XMVECTOR Q2 = XMLoadFloat4(&vQuaternion);
+
+				// Q1의 역쿼터니언 구하기
+				XMVECTOR Q1Inv = XMQuaternionInverse(Q1);
+
+				// Q1의 역쿼터니언과 Q2의 곱셈
+				XMVECTOR QDiff = XMQuaternionMultiply(Q1Inv, Q2);
+				
+
+
+
+				_matrix RotationMat= XMMatrixRotationQuaternion(QDiff);
+				_matrix WorldMat = pTransform->Get_RotationMatrix_Pure_Mat();
+				_float4 Pos = pTransform->Get_State_Float4(CTransform::STATE_POSITION);
+
+				_matrix Result = XMMatrixMultiply(WorldMat, RotationMat);
+				pTransform->Set_RotationMatrix_Pure(Result);
+				pTransform->Set_State(CTransform::STATE_POSITION, Pos);
+
+				m_vPreQuaternion = vQuaternion;
 			}
 
 			if (true == isActiveXZ || true == isActiveY)
@@ -580,6 +605,23 @@ HRESULT CModel::Play_Animation_RootMotion(CTransform* pTransform, _float fTimeDe
 				_vector			vTranslationLocal = { XMLoadFloat4(&vTranslation) };
 
 				vTranslationLocal = XMVector4Transform(vTranslationLocal, XMLoadFloat4x4(&m_TransformationMatrix));
+
+
+				_float Length = XMVectorGetX(XMVector4Length(XMVectorSetW(vTranslationLocal,0.f)));
+				if (isActiveRotation)
+				{
+					XMVECTOR Q2 = XMLoadFloat4(&vQuaternion);
+
+					XMVECTOR Q2Inv = XMQuaternionInverse(Q2);
+
+					_matrix InvQ2Mat = XMMatrixRotationQuaternion(Q2Inv);
+
+					vTranslationLocal = XMVector4Transform(vTranslationLocal, InvQ2Mat);
+
+					vTranslationLocal = XMVectorScale(XMVector4Normalize(vTranslationLocal), Length);
+
+					vTranslationLocal = XMVectorSetW(vTranslationLocal, 1.f);
+				}
 
 				/* 첫 틱인 경우 이전 이동량을 현재 결과 이동량으로 넣어준다 => 이동이 않일어나게끔 */
 				if (true == isFirstTick)

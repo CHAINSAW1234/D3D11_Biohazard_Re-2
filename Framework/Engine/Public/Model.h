@@ -151,6 +151,7 @@ private:
 
 private:	/* For.Linear_Interpolation */
 	_float3						m_vPreTranslationLocal = { 0.f, 0.f, 0.f };
+	_float4						m_vPreQuaternion = {_float4(0.f,0.f,0.f,0.f)};
 	_float4x4					m_PreTranslationMatrix;
 	wstring						m_strRootTag = { TEXT("") };
 	_float						m_fTotalLinearTime = { 0.f };

@@ -82,15 +82,11 @@ public:
 	HRESULT Bind_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 	HRESULT Bind_ShaderResource_Texture(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eTextureType);
 	HRESULT Bind_ShaderResource_MaterialDesc(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
-	//	루트모션 아닌 경우
+
 	HRESULT Play_Animation(_float fTimeDelta);
-
 	HRESULT Play_Animation_RootMotion(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
-
-	//	루트모션인 경우
-	HRESULT Play_Animation_RootMotion_Translation(class CTransform* pTransform, const string& strRootTag, _float fTimeDelta, _bool isAutoRotate = false);
-	HRESULT Play_Animation_RootMotion_WorldMatrix(class CTransform* pTransform, const string& strRootTag, _float fTimeDelta);
 	HRESULT Render(_uint iMeshIndex);
+
 	void	Static_Mesh_Cooking();
 
 public:
@@ -155,6 +151,7 @@ private:
 
 private:	/* For.Linear_Interpolation */
 	_float3						m_vPreTranslationLocal = { 0.f, 0.f, 0.f };
+	_float4						m_vPreQuaternion = {_float4(0.f,0.f,0.f,0.f)};
 	_float4x4					m_PreTranslationMatrix;
 	wstring						m_strRootTag = { TEXT("") };
 	_float						m_fTotalLinearTime = { 0.f };

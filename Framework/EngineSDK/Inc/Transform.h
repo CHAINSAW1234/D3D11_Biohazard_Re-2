@@ -87,6 +87,12 @@ public:
 		return XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_WorldMatrix));
 	}
 
+	_float4x4	Get_WorldMatrix_Pure();
+	_matrix	Get_WorldMatrix_Pure_Mat();
+	_float4x4 Get_RotationMatrix_Pure();
+	_matrix Get_RotationMatrix_Pure_Mat();
+	void  Set_RotationMatrix_Pure(_float4x4 Mat);
+	void  Set_RotationMatrix_Pure(_matrix Mat);
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;

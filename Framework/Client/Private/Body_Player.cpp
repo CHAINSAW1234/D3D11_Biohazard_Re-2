@@ -71,18 +71,43 @@ void CBody_Player::Tick(_float fTimeDelta)
 			iAnimIndex = 0;
 	}
 
-	if (PRESSING == m_pGameInstance->Get_KeyState('W'))
+	static bool Temp = false;
+	static bool Temp2 = false;
+	if (UP == m_pGameInstance->Get_KeyState('P'))
 	{
-		iAnimIndex = 50;
+		Temp = !Temp;
+	}
+
+	if (UP == m_pGameInstance->Get_KeyState('O'))
+	{
+		Temp2 = !Temp2;
+	}
+
+	if (Temp)
+	{
+		m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, true);
+	}
+	else
+	{
+		m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, false);
+	}
+
+	if (Temp2)
+	{
+		m_pModelCom->Active_RootMotion_XZ(iAnimIndex, true);
+	}
+	else
+	{
+		m_pModelCom->Active_RootMotion_XZ(iAnimIndex, false);
 	}
 
 	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 	m_pModelCom->Set_Animation(iAnimIndex, true);
 
 	m_pModelCom->Set_RootBone("root");
-	m_pModelCom->Active_RootMotion_XZ(iAnimIndex, false);
-	m_pModelCom->Active_RootMotion_Y(iAnimIndex, true);
-	m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, false);
+	//m_pModelCom->Active_RootMotion_XZ(iAnimIndex, true);
+	m_pModelCom->Active_RootMotion_Y(iAnimIndex, false);
+//	m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, true);
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)
