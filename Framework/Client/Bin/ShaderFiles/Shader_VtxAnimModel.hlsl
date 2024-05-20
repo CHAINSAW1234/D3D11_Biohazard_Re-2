@@ -7,8 +7,8 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_BoneMatrices[512];
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
+texture2D g_ATOSTexture;
 texture2D g_NoiseTexture;
-texture2D g_AtosTexture;
 texture2D g_DissolveDiffuseTexture;
 
 float4 g_vMaterial;
@@ -133,7 +133,7 @@ PS_OUT PS_MAIN_ATOS(PS_IN In)
 
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
     vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexcoord);
-    vector vAtosDesc = g_AtosTexture.Sample(LinearSampler, In.vTexcoord);
+    vector vATOSDesc = g_ATOSTexture.Sample(LinearSampler, In.vTexcoord);
     
     float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
 
@@ -142,7 +142,7 @@ PS_OUT PS_MAIN_ATOS(PS_IN In)
     float3 vWorldNormal = mul(vNormal, WorldMatrix);
 
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vDiffuse.a = vAtosDesc.r;
+    Out.vDiffuse.a = vATOSDesc.r;
     Out.vNormal = vector(vWorldNormal * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vMaterial = g_vMaterial;
@@ -159,7 +159,7 @@ PS_OUT PS_DISSOLVE(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
-    vector vNoiseDesc = g_NoiseTexture.Sample(LinearSampler, In.vTexcoord);
+    vector vNoiseDesc = g_NormalTexture.Sample(LinearSampler, In.vTexcoord);
     vector vDissolveDiffuseDesc = g_DissolveDiffuseTexture.Sample(LinearSampler, In.vTexcoord);
     
     if (0.3f >= vMtrlDiffuse.a)
@@ -190,9 +190,7 @@ PS_OUT PS_DISSOLVE(PS_IN In)
 PS_OUT_EMISSIVE PS_EMISSIVE(PS_IN In)
 {
     PS_OUT_EMISSIVE Out = (PS_OUT_EMISSIVE) 0;
-    
-    
-    
+        
     Out.vEmissive = g_vEmissiveLightColor;
     
     return Out;

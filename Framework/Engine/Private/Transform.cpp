@@ -66,8 +66,6 @@ void CTransform::Go_Straight(_float fTimeDelta, CNavigation* pNavigation)
 	}	
 }
 
-
-
 void CTransform::Go_Backward(_float fTimeDelta)
 {
 	_vector		vPosition = Get_State_Vector(STATE_POSITION);
@@ -94,6 +92,26 @@ void CTransform::Go_Right(_float fTimeDelta)
 	_vector		vRight = Get_State_Vector(STATE_RIGHT);
 
 	vPosition += XMVector3Normalize(vRight) * m_fSpeedPerSec * fTimeDelta;
+
+	Set_State(STATE_POSITION, vPosition);
+}
+
+void CTransform::Go_Up(_float fTimeDelta)
+{
+	_vector		vPosition = Get_State_Vector(STATE_POSITION);
+	_vector		vUp = Get_State_Vector(STATE_UP);
+
+	vPosition += XMVector3Normalize(vUp) * m_fSpeedPerSec * fTimeDelta;;
+
+	Set_State(STATE_POSITION, vPosition);
+}
+
+void CTransform::Go_Down(_float fTimeDelta)
+{
+	_vector		vPosition = Get_State_Vector(STATE_POSITION);
+	_vector		vUp = Get_State_Vector(STATE_UP);
+
+	vPosition -= XMVector3Normalize(vUp) * m_fSpeedPerSec * fTimeDelta;
 
 	Set_State(STATE_POSITION, vPosition);
 }

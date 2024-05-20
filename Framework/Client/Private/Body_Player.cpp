@@ -54,8 +54,8 @@ void CBody_Player::Tick(_float fTimeDelta)
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_UP))
 	{
 		++iAnimIndex;
-		if (144 <= iAnimIndex)
-			iAnimIndex = 143;
+		if (50 <= iAnimIndex)
+			iAnimIndex = 50;
 	}
 
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_DOWN))
@@ -67,10 +67,10 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('W'))
 	{
-		iAnimIndex = 60;
+		iAnimIndex = 50;
 	}
 
-	m_pModelCom->Set_TickPerSec(iAnimIndex, 1300.f);
+	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 	m_pModelCom->Set_Animation(iAnimIndex, true);
 }
 

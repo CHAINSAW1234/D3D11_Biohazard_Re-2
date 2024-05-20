@@ -128,8 +128,7 @@
     </FxCompile>
     <PostBuildEvent>
       <Command>cd $(SolutionDir)
-UpdateLib.bat
-</Command>
+UpdateLib.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -200,6 +199,8 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\KeyBoard.cpp" />
     <ClCompile Include="..\Private\Model_Extractor.cpp" />
     <ClCompile Include="..\Private\Mouse.cpp" />
+    <ClCompile Include="..\Private\Observer.cpp" />
+    <ClCompile Include="..\Private\Observer_Handler.cpp" />
     <ClCompile Include="..\Private\Rigid_Dynamic.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
@@ -264,6 +265,8 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\KeyBoard.h" />
     <ClInclude Include="..\Public\Model_Extractor.h" />
     <ClInclude Include="..\Public\Mouse.h" />
+    <ClInclude Include="..\Public\Observer.h" />
+    <ClInclude Include="..\Public\Observer_Handler.h" />
     <ClInclude Include="..\Public\Rigid_Dynamic.h" />
     <ClInclude Include="..\public\CustomFont.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
