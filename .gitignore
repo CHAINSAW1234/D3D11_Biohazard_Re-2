@@ -34,14 +34,15 @@
 
 .vs/
 *.exp
+*.idb
 *.pdb
 
 FrameWork/Client/Default/x64/
 FrameWork/Engine/Default/x64/
 
-Client/Bin/Client.pdb
+FrameWork/Client/Bin/Client.pdb
 
-Engine/Bin/Engine.pdb
+FrameWork/Engine/Bin/Engine.pdb
 *.db
 *.ini
 *.ipch
