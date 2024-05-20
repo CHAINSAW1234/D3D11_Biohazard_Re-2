@@ -71,6 +71,15 @@ public:
 	}
 
 	void Set_TickPerSec(_float fTickPerSec);
+	
+public:	/* For.RootMotion_Active_Range */
+	_bool Is_Active_RootMotion_XZ() { return m_isRootMotion_XZ; }
+	_bool Is_Active_RootMotion_Y() { return m_isRootMotion_Y; }
+	_bool Is_Active_RootMotion_Rotation() { return m_isRootMotion_Rotation; }
+
+	void Active_RootMotion_XZ(_bool isActive) { m_isRootMotion_XZ = isActive; }
+	void Active_RootMotion_Y(_bool isActive) { m_isRootMotion_Y = isActive; }
+	void Active_RootMotion_Rotation(_bool isActive) { m_isRootMotion_Rotation = isActive; }
 
 private:
 	_char							m_szName[MAX_PATH] = { "" };
@@ -82,6 +91,10 @@ private:
 	_uint							m_iNumChannels = { 0 };
 	vector<class CChannel*>			m_Channels;
 	vector<_uint>					m_CurrentKeyFrameIndices;
+
+	_bool							m_isRootMotion_XZ = { false };
+	_bool							m_isRootMotion_Y = { false };
+	_bool							m_isRootMotion_Rotation = { false };
 
 	_bool							m_isFinished = { false };
 

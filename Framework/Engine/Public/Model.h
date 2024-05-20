@@ -65,9 +65,6 @@ private:
 	_float4x4 Invalidate_BonesCombinedMatix_TranslationMatrix(_int iRootIndex = -1);
 
 public:
-
-
-public:
 	HRESULT Bind_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 	HRESULT Bind_ShaderResource_Texture(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eTextureType);
 	HRESULT Bind_ShaderResource_MaterialDesc(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
@@ -102,7 +99,7 @@ public:	/* For.KeyFrame */
 public:
 	const MODEL_TYPE& Get_ModelType() { return m_eModelType; }
 
-private: /* For.Linear Interpolation */
+private:	/* For.Linear Interpolation */
 	void Motion_Changed();
 
 private:	/* For.Linear Interpolation */
