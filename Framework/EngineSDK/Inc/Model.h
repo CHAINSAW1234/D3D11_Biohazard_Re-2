@@ -5,6 +5,8 @@
 
 BEGIN(Engine)
 
+#define ANIM_DEFAULT_LINEARTIME 0.2f
+
 class ENGINE_DLL CModel final : public CComponent
 {
 public:
@@ -140,7 +142,7 @@ private:	/* For.Linear_Interpolation */
 	_float3						m_vPreTranslationDir = { 0.f, 0.f, 0.f };
 	_float4x4					m_PreTranslationMatrix;
 	wstring						m_strRootTag = { TEXT("") };
-	_float						m_fTotalLinearTime = { 0.2f };
+	_float						m_fTotalLinearTime = { 0.f };
 
 private: /* For.FBX_Load */
 	HRESULT Ready_Meshes(const map<string, _uint>& BoneIndices);

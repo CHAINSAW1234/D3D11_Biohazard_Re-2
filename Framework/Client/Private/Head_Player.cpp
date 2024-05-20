@@ -49,6 +49,9 @@ void CHead_Player::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_pColliderCom->Tick(XMLoadFloat4x4(&m_WorldMatrix));
+
+	m_pModelCom->Set_Animation(3, true);
+
 }
 
 void CHead_Player::Late_Tick(_float fTimeDelta)

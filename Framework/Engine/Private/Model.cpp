@@ -29,15 +29,7 @@ CModel::CModel(const CModel& rhs)
 	, m_TransformationMatrix{ rhs.m_TransformationMatrix }
 	, m_iNumAnimations{ rhs.m_iNumAnimations }
 	, m_PreTranslationMatrix{ rhs.m_PreTranslationMatrix }
-	//	, m_Bones{ rhs.m_Bones }				//	복사 대입을 하여 값 변수들은 각자 가지게한다 객체별로...
-	//	, m_Animations{ rhs.m_Animations }		//	복사 대입을 하여 값 변수들은 각자 가지게한다 객체별로...
 {
-	/*for (auto& pAnimation : m_Animations)
-		Safe_AddRef(pAnimation);
-
-	for (auto& pBone : m_Bones)
-		Safe_AddRef(pBone);*/
-
 	for (auto& pPrototypeAnimation : rhs.m_Animations)
 		m_Animations.push_back(pPrototypeAnimation->Clone());
 
@@ -317,6 +309,7 @@ HRESULT CModel::Initialize_Prototype(const string& strModelFilePath, _fmatrix Tr
 
 HRESULT CModel::Initialize(void* pArg)
 {
+	m_fTotalLinearTime = ANIM_DEFAULT_LINEARTIME;
 
 	return S_OK;
 }
@@ -488,39 +481,6 @@ HRESULT CModel::Play_Animation_RootMotion_Translation(CTransform* pTransform, co
 		return E_FAIL;
 
 	Update_LinearInterpolation(fTimeDelta, iRootIndex);
-
-#pragma region PreRework
-	////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////
-	///	리워크 이전
-	//if (true == m_isLinearInterpolation)
-	//{
-	//	m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix_LinearInterpolation(m_fAccLinearInterpolation, m_fTotalLinearTime, m_Bones, m_LastKeyFrames, iRootIndex);
-
-	//	if (fTimeDelta == m_fAccLinearInterpolation)
-	//		Reset_PreTranslation_Translation(iRootIndex);
-	//}
-	//else
-	//{
-	//	/* 현재 애니메이션에 맞는 뼈의 상태(m_TransformationMatrix)를 갱신해준다. */
-	//	m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix(fTimeDelta, m_Bones, m_isLoop);
-
-	//	/* 현재 트랙포지션이 0인경우 .. 첫 틱 */
-	//	if (0.f == m_Animations[m_iCurrentAnimIndex]->Get_TrackPosition())
-	//		Reset_PreTranslation_Translation(iRootIndex);
-	//}
-	////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////
-
-#pragma endregion
-
-	////////////////////////////////////////////////////////
-	////////리워크
-	//	기존 버전은 사이에 공백 기간을 만들어서 보간
-	//	이 버전은 애니메이션 진행하면서 선형보간 시간동안 추가로 보간
-
 
 	/* 현재 애니메이션에 맞는 뼈의 상태(m_TransformationMatrix)를 갱신해준다. */
 	_bool		isFirstTick = { false };

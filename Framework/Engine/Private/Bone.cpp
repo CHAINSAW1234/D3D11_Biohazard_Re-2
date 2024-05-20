@@ -82,7 +82,9 @@ _float3 CBone::Invalidate_CombinedTransformationMatrix_RootMotion_Translation(co
 
 		XMMatrixDecompose(&vScale, &vRotation, &vTranslation, CombinedMatrix);
 
+		vRotation = XMQuaternionIdentity();
 		CombinedMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		
 
 		XMStoreFloat4x4(&m_CombinedTransformationMatrix, CombinedMatrix);
 	}
@@ -118,6 +120,49 @@ _float4x4 CBone::Invalidate_CombinedTransformationMatrix_RootMotion_WorldMatrix(
 	return CombinedFloat4x4;
 }
 
+void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBone*>& Bones, _fmatrix ParentsCombinedMatrix, _float4* pTranslation, _float4* pQuaternion)
+{
+	//_vector			vScale, vRotation, vTranslation;
+
+	//_bool			isSetTranslation = { pTranslation != nullptr };
+	//_bool			isSetQuaternion = { pQuaternion != nullptr };
+
+	////	부모 뼈가 없다면 => 루트 노드라면
+	//if (-1 == m_iParentBoneIndex)
+	//{
+	//	_matrix			CombinedMatrix = XMLoadFloat4x4(&m_TransformationMatrix) * ParentsCombinedMatrix;
+
+	//	XMMatrixDecompose(&vScale, &vRotation, &vTranslation, CombinedMatrix);
+
+	//	if(true == isSet)
+
+	//	CombinedMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+
+	//	//	부모의 합행렬을 그대로 남김 => 나의 변환을 전부 뺌 ( 항등행렬을 적용함과 같다. )
+	//	XMStoreFloat4x4(&m_CombinedTransformationMatrix, CombinedMatrix);
+	//}
+
+	//else
+	//{
+	//	//	스케일 회전성분만 남긴 매트릭스로 변환 매트릭스를 등록한다.
+	//	_matrix			ParrentsCombinedMatrix = XMLoadFloat4x4(&Bones[m_iParentBoneIndex]->m_CombinedTransformationMatrix);
+	//	_matrix			CombinedMatrix = XMLoadFloat4x4(&m_TransformationMatrix) * ParrentsCombinedMatrix;
+
+	//	XMMatrixDecompose(&vScale, &vRotation, &vTranslation, CombinedMatrix);
+
+	//	vRotation = XMQuaternionIdentity();
+	//	CombinedMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+
+
+	//	XMStoreFloat4x4(&m_CombinedTransformationMatrix, CombinedMatrix);
+	//}
+
+	////	분해한 이동성분을 반환
+	//_float3			vTraslationFloat3;
+
+	//XMStoreFloat3(&vTraslationFloat3, vTranslation);
+}
+
 void CBone::Set_Combined_Matrix(_fmatrix CombinedMatrix)
 {
 	_vector		vNewScale, vNewTranslation, vNewQuaternion;
@@ -134,6 +179,11 @@ void CBone::Set_Parent_CombinedMatrix_Ptr(_float4x4* pParentMatrix)
 		return;
 
 	m_pParentCombinedMatrix = pParentMatrix;
+}
+
+void CBone::Set_RootBone(_bool isRootBone)
+{
+	m_isRootBone = isRootBone;
 }
 
 CBone* CBone::Create(const aiNode* pAINode, _int iParentIndex)

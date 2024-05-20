@@ -35,27 +35,25 @@ HRESULT CCamera_Free::Initialize(void * pArg)
 
 void CCamera_Free::Tick(_float fTimeDelta)
 {
-	
-
-	if(PRESSING == m_pGameInstance->Get_KeyState('A'))
-	{
-		m_pTransformCom->Go_Left(fTimeDelta);
-	}
-	if (PRESSING == m_pGameInstance->Get_KeyState('D'))
-	{
-		m_pTransformCom->Go_Right(fTimeDelta);
-	}
-	if (PRESSING == m_pGameInstance->Get_KeyState('W'))
-	{
-		m_pTransformCom->Go_Straight(fTimeDelta);
-	}
-	if (PRESSING == m_pGameInstance->Get_KeyState('S'))
-	{
-		m_pTransformCom->Go_Backward(fTimeDelta);
-	}
-
 	if (PRESSING == m_pGameInstance->Get_KeyState(VK_MBUTTON))
 	{
+		if (PRESSING == m_pGameInstance->Get_KeyState('A'))
+		{
+			m_pTransformCom->Go_Left(fTimeDelta);
+		}
+		if (PRESSING == m_pGameInstance->Get_KeyState('D'))
+		{
+			m_pTransformCom->Go_Right(fTimeDelta);
+		}
+		if (PRESSING == m_pGameInstance->Get_KeyState('W'))
+		{
+			m_pTransformCom->Go_Straight(fTimeDelta);
+		}
+		if (PRESSING == m_pGameInstance->Get_KeyState('S'))
+		{
+			m_pTransformCom->Go_Backward(fTimeDelta);
+		}
+
 		POINT		ptDeltaPos = { m_pGameInstance->Get_MouseDeltaPos() };
 		_vector		vUp = { XMVectorSet(0.f, 1.f, 0.f, 0.f) };
 		_vector		vRight = { m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT) };

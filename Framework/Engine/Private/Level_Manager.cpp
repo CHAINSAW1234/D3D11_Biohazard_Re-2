@@ -12,23 +12,8 @@ HRESULT CLevel_Manager::Initialize()
 	return S_OK;
 }
 
-HRESULT CLevel_Manager::Request_Open_Level(_uint iNewLevelID, CLevel* pNewLevel)
+HRESULT CLevel_Manager::Open_Level(_uint iNewLevelID, CLevel * pNewLevel)
 {
-	m_queueRequestLevel.push({ iNewLevelID , pNewLevel });
-
-	return S_OK;
-}
-
-HRESULT CLevel_Manager::Open_Level()
-{
-	if (m_queueRequestLevel.empty())
-		return E_FAIL;
-
-	_uint iNewLevelID = m_queueRequestLevel.front().first;
-	CLevel* pNewLevel = m_queueRequestLevel.front().second;
-	m_queueRequestLevel.pop();
-
-
 	/* 최초레벨할당시에는 수행하지 않는다. */
 	if (nullptr != m_pCurrentLevel)
 	{

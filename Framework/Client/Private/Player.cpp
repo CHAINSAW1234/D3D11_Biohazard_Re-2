@@ -43,7 +43,7 @@ HRESULT CPlayer::Initialize(void * pArg)
 	if (FAILED(Initialize_PartModels()))
 		return E_FAIL;
 
-	//	m_pTransformCom->Set_Scaled(0.05f, 0.05f, 0.05f);
+	m_pTransformCom->Set_Scaled(0.05f, 0.05f, 0.05f);
 
 	return S_OK;
 }
@@ -90,7 +90,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	_vector		vWorldPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
 
 
-	if (GetKeyState(VK_LBUTTON) & 0x8000)
+	/*if (GetKeyState(VK_LBUTTON) & 0x8000)
 	{
 		POINT		ptMouse;
 		GetCursorPos(&ptMouse);
@@ -99,7 +99,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		_float2		vMousePos = _float2(static_cast<_float>(ptMouse.x), static_cast<_float>(ptMouse.y));
 
 		vWorldPos = m_pGameInstance->Compute_WorldPos(vMousePos, TEXT("Target_FieldDepth"));
-	}
+	}*/
 	
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vWorldPos);
 

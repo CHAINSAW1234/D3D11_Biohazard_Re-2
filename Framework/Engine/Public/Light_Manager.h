@@ -11,17 +11,15 @@ private:
 	virtual ~CLight_Manager() = default;
 
 public:
-	const LIGHT_DESC* Get_LightDesc(const wstring& strLightTag);
+	const LIGHT_DESC* Get_LightDesc(_uint iIndex);
+
 public:
 	HRESULT Initialize();
-	HRESULT Add_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc);
+	HRESULT Add_Light(const LIGHT_DESC& LightDesc);
 	HRESULT Render(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
-	HRESULT Tick_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc);
-private:
-	map<const wstring, class CLight* > m_Lights;
 
 private:
-	class CLight*	Find_Light(const wstring& strLightTag);
+	list<class CLight*>				m_Lights;
 
 public:
 	static CLight_Manager* Create();

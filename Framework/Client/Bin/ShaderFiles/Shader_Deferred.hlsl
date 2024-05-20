@@ -298,14 +298,6 @@ texture2D g_ShadeTexture;
 texture2D g_DepthTexture;
 texture2D g_MaterialTexture;
 
-//예은 추가
-float		g_fCutOff;
-float		g_fOutCutOff;
-//
-
-float4		g_vLightDir;
-float4		g_vLightPos;
-float		g_fLightRange;
 texture2D g_LightDepthTexture;
 
 texture2D g_SpecularTexture;
@@ -325,6 +317,10 @@ texture2D g_PostprocessingShadeTexture;
 bool g_isRadialBlurActive = { false };
 float2 g_vRadialBlurUV;
 float g_fRadialAmount;
+
+float4 g_vLightDir;
+float4 g_vLightPos;
+float g_fLightRange;
 
 float4 g_vLightDiffuse;
 float4 g_vLightAmbient;
@@ -503,70 +499,6 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 
     return Out;
 }
-
-
-PS_OUT_LIGHT PS_MAIN_SPOT(PS_IN In)
-{
-    PS_OUT_LIGHT Out = (PS_OUT_LIGHT) 0;
-
-    vector vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexcoord);
-    float4 vNormal = float4(vNormalDesc.xyz * 2.f - 1.f, 0.f);
-
-    vector vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
-    float fViewZ = vDepthDesc.y * 1000.0f;
-    float4 vWorldPos;
-
-	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / View.z */
-    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
-    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
-    vWorldPos.z = vDepthDesc.x;
-    vWorldPos.w = 1.f;
-
-	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 */
-    vWorldPos *= fViewZ;
-
-	/* 로컬위치 * 월드행렬 * 뷰행렬 */
-    vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
-
-	/* 로컬위치 * 월드행렬 */
-    vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
-
-    vector vLightDir = vWorldPos - g_vLightPos;
-	
-    vector vSpotDir = g_vLightDir;
-	
-    float fResult = acos(dot(normalize(vLightDir), normalize(vSpotDir)));
-	
- 
-    if (g_fOutCutOff >= fResult) // 빛이 번질 범위 안에 있을 때
-    {
-        float fDistance = length(vLightDir);
-
-        float fIntensity = (fResult - g_fOutCutOff) / (g_fCutOff - g_fOutCutOff);
-		
-        float fAtt = saturate((g_fLightRange - fDistance) / g_fLightRange) * fIntensity; //범위 줘서 끝 범위에서는 연해지게 
-
-        Out.vShade = g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + g_vLightAmbient * g_vMtrlAmbient);
-        Out.vShade *= fAtt;
-	
-        float4 vLook = vWorldPos - g_vCamPosition;
-        float4 vReflect = reflect(normalize(vLightDir), vNormal);
-
-        float fSpecular = pow(max(dot(normalize(vLook) * -1.f, normalize(vReflect)), 0.f), 30.f);
-
-        Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * fSpecular;
-        Out.vSpecular *= fAtt;
-
-		
-		
-    }
-		
-	
-	
-
-    return Out;
-}
-
 
 /* 최종적ㅇ으로 480000 수행되는 쉐이더. */
 PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)

@@ -50,14 +50,36 @@ void CBody_Player::Tick(_float fTimeDelta)
 	
 	m_pColliderCom->Tick(XMLoadFloat4x4(&m_WorldMatrix));
 	
-	m_pModelCom->Set_Animation(1, true);
+	static _uint iAnimIndex = { 0 };
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_UP))
+	{
+		++iAnimIndex;
+		if (144 <= iAnimIndex)
+			iAnimIndex = 143;
+	}
+
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_DOWN))
+	{
+		--iAnimIndex;
+		if (0 > iAnimIndex)
+			iAnimIndex = 0;
+	}
+
+	if (PRESSING == m_pGameInstance->Get_KeyState('W'))
+	{
+		iAnimIndex = 60;
+	}
+
+	m_pModelCom->Set_TickPerSec(iAnimIndex, 1300.f);
+	m_pModelCom->Set_Animation(iAnimIndex, true);
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+	//	m_pModelCom->Play_Animation(fTimeDelta);
+	m_pModelCom->Play_Animation_RootMotion_Translation(m_pParentsTransform, "root", fTimeDelta, false);
 	
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);

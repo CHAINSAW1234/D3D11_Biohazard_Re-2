@@ -11,17 +11,12 @@ namespace Engine
 
 	typedef struct tagLightDesc
 	{
-
-		bool bRender = { true };
-
-		enum TYPE { TYPE_DIRECTIONAL, TYPE_POINT, TYPE_SPOT, TYPE_END };
+		enum TYPE { TYPE_DIRECTIONAL, TYPE_POINT, TYPE_END };
 		TYPE		eType;
 
-		float		fRange;
-		float 		fCutOff;
-		float 		fOutCutOff;
 		XMFLOAT4	vDirection;
 		XMFLOAT4	vPosition;
+		float		fRange;	
 
 		XMFLOAT4	vDiffuse;
 		XMFLOAT4	vAmbient;
@@ -150,23 +145,4 @@ namespace Engine
 		Category2 = 1 << 1,
 		Category3 = 1 << 2,
 	};
-	// 3D음향을 위한 자료형의 모음 구조체
-	typedef struct Sound_Desc
-	{
-		_bool	 bPause = { true };
-		_float2 fRange = { 0.f,1.f };
-		_float fVolume = { SOUND_DEFAULT };
-		FMOD_VECTOR vPos = { FMOD_VECTOR() };
-		FMOD_VECTOR vSpeedDir = { FMOD_VECTOR() };
-		FMOD_SOUND* pSound = { nullptr };
-		FMOD_MODE eMode = { FMOD_DEFAULT };
-
-		Sound_Desc() = default;
-		Sound_Desc(const Sound_Desc&) = default;
-		Sound_Desc& operator=(const Sound_Desc&) = default;
-		Sound_Desc(Sound_Desc&&) = default;
-		Sound_Desc& operator=(Sound_Desc&&) = default;
-
-	}SOUND_DESC;
-
 }

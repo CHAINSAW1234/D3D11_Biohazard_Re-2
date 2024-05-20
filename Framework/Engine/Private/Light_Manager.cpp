@@ -1,4 +1,4 @@
-#include "Light_Manager.h"
+#include "..\Public\Light_Manager.h"
 
 #include "Light.h"
 
@@ -7,34 +7,32 @@ CLight_Manager::CLight_Manager()
 
 }
 
-const LIGHT_DESC * CLight_Manager::Get_LightDesc(const wstring & strLightTag)
+const LIGHT_DESC * CLight_Manager::Get_LightDesc(_uint iIndex)
 {
-	auto& iter = m_Lights.find(strLightTag);
-	if (iter == m_Lights.end())
+	if (iIndex >= m_Lights.size())
 		return nullptr;
 
-	return iter->second->Get_LightDesc();	
+	auto	iter = m_Lights.begin();
+
+	for (_uint i = 0; i < iIndex; ++i)
+		++iter;
+
+	return (*iter)->Get_LightDesc();	
 }
 
-
+/* いじし ぞしし さぁ*/
 HRESULT CLight_Manager::Initialize()
 {
 	return S_OK;
 }
 
-HRESULT CLight_Manager::Add_Light(const wstring& strLightTag, const LIGHT_DESC & LightDesc)
+HRESULT CLight_Manager::Add_Light(const LIGHT_DESC & LightDesc)
 {
-	CLight* pLight = Find_Light(strLightTag);
-	if (pLight != nullptr)
-		return E_FAIL;
-
-
-
-	pLight = CLight::Create(LightDesc);
+	CLight*		pLight = CLight::Create(LightDesc);
 	if (nullptr == pLight)
 		return E_FAIL;
 
-	m_Lights.emplace(strLightTag, pLight);
+	m_Lights.emplace_back(pLight);
 
 	return S_OK;
 }
@@ -42,29 +40,9 @@ HRESULT CLight_Manager::Add_Light(const wstring& strLightTag, const LIGHT_DESC &
 HRESULT CLight_Manager::Render(CShader * pShader, CVIBuffer_Rect * pVIBuffer)
 {
 	for (auto& pLight : m_Lights)
-		pLight.second->Render(pShader, pVIBuffer);
+		pLight->Render(pShader, pVIBuffer);
 
 	return S_OK;
-}
-
-HRESULT CLight_Manager::Tick_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc)
-{
-	CLight* pLight = Find_Light(strLightTag);
-	if (pLight == nullptr)
-		return E_FAIL;
-
-	return pLight->Tick(LightDesc);
-}
-
-CLight* CLight_Manager::Find_Light(const wstring& strLightTag)
-{
-
-	auto		iter = m_Lights.find(strLightTag);
-
-	if (iter == m_Lights.end())
-		return nullptr;
-
-	return iter->second;
 }
 
 CLight_Manager * CLight_Manager::Create()
@@ -84,8 +62,7 @@ CLight_Manager * CLight_Manager::Create()
 void CLight_Manager::Free()
 {
 	for (auto& pLight : m_Lights)
-		Safe_Release(pLight.second);
-
+		Safe_Release(pLight);
 
 	m_Lights.clear();
 }

@@ -73,10 +73,9 @@ public: /* For.PipeLine */
 	_float4 Get_CamPosition_Float4() const;
 
 public: /* For.Light_Manager */
-	const LIGHT_DESC* Get_LightDesc(const wstring& strLightTag);
-	HRESULT Add_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc);
+	const LIGHT_DESC* Get_LightDesc(_uint iIndex);
+	HRESULT Add_Light(const LIGHT_DESC& LightDesc);
 	HRESULT Render_Lights(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
-	HRESULT Tick_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc);
 
 
 public: /* For.Font_Manager */
@@ -162,17 +161,6 @@ public://Temp
 
 #endif
 
-public: /* For.m_pSound_Manager */
-	HRESULT Update_Listener(FMOD_3D_ATTRIBUTES& Attributes_desc);
-	void Update_Sound(const wstring& pSoundKey, SOUND_DESC _SoundTag);
-	HRESULT  Channel_Pause(_uint iID);
-	HRESULT  Change_Channel_Sound(const wstring& SoundKeyTag, _uint iID);
-	HRESULT Play_Sound(const wstring& SoundKeyTag, _uint iID);
-	HRESULT Play_Sound_Again(const wstring& SoundKeyTag, _uint iID);
-	HRESULT PlayBGM(_uint iID, const wstring& SoundKey);
-	HRESULT Stop_Sound(_uint iID);
-	HRESULT Stop_All();
-
 private:
 	class CGraphic_Device*			m_pGraphic_Device = { nullptr };
 	class CInput_Device*			m_pInput_Device = { nullptr };
@@ -188,8 +176,7 @@ private:
 	class CFrustum*					m_pFrustum = { nullptr };
 	class CExtractor*				m_pExtractor = { nullptr };
 	class CPhysics_Controller*		m_pPhysics_Controller = { nullptr };
-	class CSound_Manager* m_pSound_Manager = { nullptr };
-	
+
 	/*for physics*/
 	_bool							m_bSimulate = { false };
 public:		

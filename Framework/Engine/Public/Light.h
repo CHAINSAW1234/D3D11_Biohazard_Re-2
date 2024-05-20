@@ -17,7 +17,6 @@ public:
 
 public:
 	HRESULT Initialize(const LIGHT_DESC& LightDesc);
-	HRESULT Tick(const LIGHT_DESC& Light_Desc);
 	HRESULT Render(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
 
 private:

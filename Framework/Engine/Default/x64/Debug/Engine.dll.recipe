@@ -2,15 +2,15 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\3DTeam\Framework\Engine\Bin\Engine.dll</FullPath>
+      <FullPath>C:\Users\HJYeom\Desktop\Direct11_Team_Portpolio\D3D11_Biohazard_Re-2\Framework\Engine\Bin\Engine.dll</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles>
     <ContentFile>
-      <FullPath>C:\3DTeam\Framework\Engine\Bin\Shader_Cell.cso</FullPath>
+      <FullPath>C:\Users\HJYeom\Desktop\Direct11_Team_Portpolio\D3D11_Biohazard_Re-2\Framework\Engine\Bin\Shader_Cell.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>C:\3DTeam\Framework\Engine\Bin\Shader_Deferred.cso</FullPath>
+      <FullPath>C:\Users\HJYeom\Desktop\Direct11_Team_Portpolio\D3D11_Biohazard_Re-2\Framework\Engine\Bin\Shader_Deferred.cso</FullPath>
     </ContentFile>
   </ContentFiles>
   <SatelliteDlls />

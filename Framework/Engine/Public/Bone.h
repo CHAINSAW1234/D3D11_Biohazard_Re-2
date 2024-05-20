@@ -60,6 +60,8 @@ public:
 	_float3 Invalidate_CombinedTransformationMatrix_RootMotion_Translation(const vector<CBone*>& Bones, _fmatrix ParentsTransformatrixMatrix);
 	//	합행렬 전부 반환
 	_float4x4 Invalidate_CombinedTransformationMatrix_RootMotion_WorldMatrix(const vector<CBone*>& Bones, _fmatrix ParentsTransformatrixMatrix);
+
+	void Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBone*>& Bones, _fmatrix ParentsCombinedMatrix, _float4* pTranslation, _float4* pQuaternion);
 	_bool Compare_Name(const _char* pBoneName) {
 		return !strcmp(m_szName, pBoneName);
 	}
@@ -71,6 +73,7 @@ public:
 	void Set_Combined_Matrix(_fmatrix CombinedMatrix);
 	void Set_Parent_CombinedMatrix_Ptr(_float4x4* pParentMatrix);
 	void Set_Surbodinate(_bool isSurbodinate) { m_isSurbordinate = isSurbodinate; }
+	void Set_RootBone(_bool isRootBone);
 
 private:
 	_char					m_szName[MAX_PATH] = { "" };
@@ -82,9 +85,10 @@ private:
 	_float4x4				m_CombinedTransformationMatrix;
 
 	_int					m_iParentBoneIndex = { -1 };
+	_bool					m_isRootBone = { false };
 
 	_bool					m_isSurbordinate = { false };
-	_float4x4* m_pParentCombinedMatrix = { nullptr };
+	_float4x4*				m_pParentCombinedMatrix = { nullptr };
 
 public:
 	static CBone* Create(const aiNode* pAINode, _int iParentIndex);
