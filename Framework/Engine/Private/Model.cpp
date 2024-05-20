@@ -425,14 +425,15 @@ HRESULT CModel::Bind_ShaderResource_Texture(CShader* pShader, const _char* pCons
 		return E_FAIL;
 
 	CTexture* pTexture = m_Materials[iMeshMaterialIndex].MaterialTextures[eTextureType];
+
+
 	if (nullptr != pTexture)
-		pTexture->Bind_ShaderResource(pShader, pConstantName);
-
-	//	해당 텍스처가없으면 텍스처를 바인딩하지않아야 안그려지겠지?
-	else
+		return pTexture->Bind_ShaderResource(pShader, pConstantName);
+	else {
 		pShader->Bind_Texture(pConstantName, nullptr);
+	}
 
-	return S_OK;
+	return E_FAIL;
 }
 
 HRESULT CModel::Bind_ShaderResource_MaterialDesc(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)

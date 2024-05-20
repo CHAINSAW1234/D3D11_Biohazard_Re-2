@@ -36,8 +36,8 @@
 *.exp
 *.pdb
 
-FrameWork/Client/Default/x64
-FrameWork/Engine/Default/x64
+FrameWork/Client/Default/x64/
+FrameWork/Engine/Default/x64/
 
 Client/Bin/Client.pdb
 
