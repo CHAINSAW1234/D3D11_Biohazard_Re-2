@@ -103,7 +103,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 	m_pModelCom->Set_Animation(iAnimIndex, true);
-	m_pModelCom->Set_TickPerSec(iAnimIndex, 1300.f);
+	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 
 	m_pModelCom->Set_RootBone("root");
 	//m_pModelCom->Active_RootMotion_XZ(iAnimIndex, true);
