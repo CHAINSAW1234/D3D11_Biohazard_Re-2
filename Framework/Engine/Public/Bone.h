@@ -2,10 +2,6 @@
 
 #include "Base.h"
 
-/* 뼈의 정보를 표현하기위한 타입 세가지 제공한다. */
-/* aiNode, aiBone, aiAnimNode */
-/* 현재 프레임 워크는 위 타입중 aiNode를 이용할 것이다. */
-
 BEGIN(Engine)
 
 class ENGINE_DLL CBone final : public CBase

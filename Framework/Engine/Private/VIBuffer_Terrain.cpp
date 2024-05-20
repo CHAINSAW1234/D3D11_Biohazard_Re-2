@@ -186,11 +186,11 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const wstring& strHeightMapFileP
 
 
 	//Temp
-	m_pGameInstance->SetTerrainPos(m_pVerticesPos);
+	/*m_pGameInstance->SetTerrainPos(m_pVerticesPos);
 	m_pGameInstance->SetNumVertices(m_iNumVertices);
 	m_pGameInstance->SetNumIndicies(m_iNumIndices);
 	m_pGameInstance->SetIndices(m_pIndices);
-	m_pGameInstance->InitTerrainPhysics();
+	m_pGameInstance->InitTerrainPhysics();*/
 	return S_OK;
 }
 

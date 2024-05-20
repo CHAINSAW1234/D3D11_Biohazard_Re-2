@@ -48,6 +48,19 @@ using namespace physx;
 
 using namespace DirectX;
 
+#include <tchar.h> //fmod에서 사용하는 것 같음
+
+
+#include "fmod.h"
+#include "fmod.hpp"
+#include "fmod_errors.h"
+
+#include <io.h>
+
+#pragma comment (lib, "fmod_vc.lib")
+
+
+
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -72,16 +85,23 @@ using namespace std;
 namespace Engine
 {
 	const wstring g_strTransformTag = TEXT("Com_Transform");
+	const wstring g_strModelTag = TEXT("Com_Model");
+	const wstring g_strDirectionalTag = TEXT("LIGHT_SUN");
 }
 
 #define		VK_MAX			0xff
 
+#define SOUND_MAX 1.0f
+#define SOUND_MIN 0.0f
+#define SOUND_DEFAULT 0.5f
+#define SOUND_WEIGHT 0.1f
+#define SOUND_CHANNEL_MAX 32
+
+#include "Engine_Typedef.h"
 #include "Engine_Macro.h"
 #include "Engine_Function.h"
-#include "Engine_Typedef.h"
 #include "Engine_Struct.h"
 #include "Engine_Enums.h"
-
 
 using namespace Engine;
 

@@ -946,13 +946,12 @@ HRESULT CRenderer::Render_Light_Result()
 
 
 
-	////	TODO:		하드 코딩 수정하기... .라이트 관련 변수들관리하는 클래스 작성해야함
 	_float			fLightDepthFar = { 2000.f };
 	_float4x4		ViewMatrix, ProjMatrix;
 	XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(0.f, 10.f, -10.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
 	XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(120.0f), (_float)1920.f / 1080.0f, 0.1f, fLightDepthFar));
 
-	const LIGHT_DESC* pLightDesc = { m_pGameInstance->Get_LightDesc(0) };
+	const LIGHT_DESC* pLightDesc = { m_pGameInstance->Get_LightDesc(g_strDirectionalTag) };
 	if (nullptr != pLightDesc)
 	{
 		_float4			vLightAmbient = { pLightDesc->vAmbient };

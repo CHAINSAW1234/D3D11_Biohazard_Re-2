@@ -2,10 +2,6 @@
 
 #include "Base.h"
 
-/* 투영공간상의 절두체의 여덟개 점을 정의한다. */
-/* Tick함수를 통해서 매 프레임마다 한번씩만 월드로 역변환 시키는 작업을 해 두겠다. */
-/* 절두체와 점의 비교를 수행하여 안에 있는지? 없는지? 판단한다. */
-
 BEGIN(Engine)
 
 class CFrustum final : public CBase

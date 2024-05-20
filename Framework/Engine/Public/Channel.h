@@ -2,9 +2,6 @@
 
 #include "Base.h"
 
-/* 특정 애니메이션이 사용하고 있는 뼈들 중, 하나의 정보를 표현한다. */
-/* 이 뼈는 시간에 따라 어떤 상태(KeyFrame)을 취해야 하는가? */
-
 BEGIN(Engine)
 
 class CChannel final : public CBase
