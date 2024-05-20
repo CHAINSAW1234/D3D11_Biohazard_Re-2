@@ -265,8 +265,8 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	//		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
 	//}
 
-	if (m_Controller)
-		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
+	//	if (m_Controller)
+	//		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
 
 	//auto Pos = m_Controller->getPosition();
 	//// 현재 글로벌 포즈 가져오기
@@ -299,7 +299,7 @@ void CPhysics_Controller::Create_Controller(_float4 Pos)
 
 	m_Controll_Desc.height = 3.0f; // 캐릭터의 높이
 	m_Controll_Desc.radius = 2.5f; // 캐릭터의 반지름
-	m_Controll_Desc.position = PxExtendedVec3(0.0,0.0, 0.0); // 초기 위치 설정
+	m_Controll_Desc.position = PxExtendedVec3(0.0,5.0, 0.0); // 초기 위치 설정
 	m_Controll_Desc.material = m_Physics->createMaterial(0.f, 0.f, 0.f); // 마찰계수와 반발력 설정
 	m_Controller = m_Manager->createController(m_Controll_Desc);
 

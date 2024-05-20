@@ -155,6 +155,7 @@ void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBon
 		}
 
 		MyTransformationMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
+		XMStoreFloat4x4(&m_TransformationMatrix, MyTransformationMatrix);
 
 		// 현재 결과에서 애니메이션에 따라 특정 성분들이 제거된 매트릭스를 합행렬에 곱해준다.
 		_matrix			CombinedMatrix = XMLoadFloat4x4(&m_TransformationMatrix) * XMLoadFloat4x4(&TransformationMatrix);
@@ -177,7 +178,7 @@ void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBon
 		}
 
 		MyTransformationMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
-
+		XMStoreFloat4x4(&m_TransformationMatrix, MyTransformationMatrix);
 
 		//	스케일 회전성분만 남긴 매트릭스로 변환 매트릭스를 등록한다.
 		_matrix			ParrentsCombinedMatrix = XMLoadFloat4x4(&Bones[m_iParentBoneIndex]->m_CombinedTransformationMatrix);
