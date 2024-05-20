@@ -43,8 +43,7 @@ HRESULT CPlayer::Initialize(void * pArg)
 	if (FAILED(Initialize_PartModels()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Scaled(0.05f, 0.05f, 0.05f);
-
+	m_pTransformCom->Set_Scaled(0.045f, 0.045f, 0.045f);
 	return S_OK;
 }
 
@@ -57,25 +56,27 @@ void CPlayer::Tick(_float fTimeDelta)
 {
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pGameInstance->GetPosition_Physics());
 
-	if(PRESSING == m_pGameInstance->Get_KeyState('A'))
+	if(PRESSING == m_pGameInstance->Get_KeyState('H'))
 	{
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
 	}
 
-	if (PRESSING == m_pGameInstance->Get_KeyState('D'))
+	if (PRESSING == m_pGameInstance->Get_KeyState('K'))
 	{
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
 	}
 
-	if (PRESSING == m_pGameInstance->Get_KeyState('S'))
+	if (PRESSING == m_pGameInstance->Get_KeyState('U'))
 	{
-		m_pTransformCom->Go_Backward(fTimeDelta);
+		auto Look = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
+		Look.x = -Look.x;
+		Look.z = -Look.z;
+		m_pGameInstance->Move_CCT(Look, fTimeDelta,0);
 	}
 
-	if (PRESSING == m_pGameInstance->Get_KeyState('W'))
+	if (PRESSING == m_pGameInstance->Get_KeyState('J'))
 	{
-		m_pTransformCom->Go_Straight(fTimeDelta);
-
+		m_pGameInstance->Move_CCT(m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK), fTimeDelta,0);
 		m_eState |= STATE_RUN;
 		if (m_eState & STATE_IDLE)
 			m_eState ^= STATE_IDLE;

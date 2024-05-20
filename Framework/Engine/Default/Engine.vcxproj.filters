@@ -202,6 +202,9 @@
     <Filter Include="01.Utility\10.Frustum">
       <UniqueIdentifier>{54d3a672-c27f-4d9e-960a-975978b721b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\10.Picking">
+      <UniqueIdentifier>{03ba2e75-dc70-407d-bed1-fb1939c7f9dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -392,6 +395,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Observer_Handler.cpp">
       <Filter>01.Utility\11.Observer\Handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Picking.cpp">
+      <Filter>01.Utility\10.Picking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -598,6 +604,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Observer_Handler.h">
       <Filter>01.Utility\11.Observer\Handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Picking.h">
+      <Filter>01.Utility\10.Picking</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

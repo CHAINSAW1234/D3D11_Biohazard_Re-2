@@ -59,8 +59,8 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 
 	//create simulation
 	m_Material = m_Physics->createMaterial(0.5f, 0.5f, 0.6f);
-	m_GroundPlane = PxCreatePlane(*m_Physics, physx::PxPlane(0, 1, 0, 1), *m_Material);
-	m_Scene->addActor(*m_GroundPlane);
+	//m_GroundPlane = PxCreatePlane(*m_Physics, physx::PxPlane(0, 1, 0, 1), *m_Material);
+	//m_Scene->addActor(*m_GroundPlane);
 
 	//float halfExtent = 0.5f;
 	//m_Shape = m_Physics->createShape(physx::PxBoxGeometry(halfExtent, halfExtent, halfExtent), *m_Material);
@@ -162,108 +162,111 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	if (m_pGameInstance->GetSimulate() == false)
 		return;
 
-	if (PRESSING == m_pGameInstance->Get_KeyState('H'))
-	{
-		// y축을 중심으로 회전할 쿼터니언 생성
-		PxQuat rotation(-0.0075f, PxVec3(0, 1, 0));
+	//if (PRESSING == m_pGameInstance->Get_KeyState('H'))
+	//{
+	//	// y축을 중심으로 회전할 쿼터니언 생성
+	//	PxQuat rotation(-0.0075f, PxVec3(0, 1, 0));
 
-		//// 현재 글로벌 포즈 가져오기
-		//PxTransform currentPose = m_BodyCollider->getGlobalPose();
+	//	//// 현재 글로벌 포즈 가져오기
+	//	//PxTransform currentPose = m_BodyCollider->getGlobalPose();
 
-		//// 새로운 회전 적용
-		//currentPose.q = rotation * currentPose.q; // 현재 회전에 추가 회전 적용
+	//	//// 새로운 회전 적용
+	//	//currentPose.q = rotation * currentPose.q; // 현재 회전에 추가 회전 적용
 
-		//// 변경된 포즈를 객체에 적용
-		//m_BodyCollider->setGlobalPose(currentPose);
+	//	//// 변경된 포즈를 객체에 적용
+	//	//m_BodyCollider->setGlobalPose(currentPose);
 
-		// 생성된 회전으로 벡터 회전
-		m_Look = rotation.rotate(m_Look);
-	}
+	//	// 생성된 회전으로 벡터 회전
+	//	m_Look = rotation.rotate(m_Look);
+	//}
 
-	if (PRESSING == m_pGameInstance->Get_KeyState('K'))
-	{
-		// y축을 중심으로 회전할 쿼터니언 생성
-		PxQuat rotation(0.0075f, PxVec3(0, 1, 0));
+	//if (PRESSING == m_pGameInstance->Get_KeyState('K'))
+	//{
+	//	// y축을 중심으로 회전할 쿼터니언 생성
+	//	PxQuat rotation(0.0075f, PxVec3(0, 1, 0));
 
-		//// 현재 글로벌 포즈 가져오기
-		//PxTransform currentPose = m_BodyCollider->getGlobalPose();
+	//	//// 현재 글로벌 포즈 가져오기
+	//	//PxTransform currentPose = m_BodyCollider->getGlobalPose();
 
-		//// 새로운 회전 적용
-		//currentPose.q = rotation * currentPose.q; // 현재 회전에 추가 회전 적용
+	//	//// 새로운 회전 적용
+	//	//currentPose.q = rotation * currentPose.q; // 현재 회전에 추가 회전 적용
 
-		//// 변경된 포즈를 객체에 적용
-		//m_BodyCollider->setGlobalPose(currentPose);
+	//	//// 변경된 포즈를 객체에 적용
+	//	//m_BodyCollider->setGlobalPose(currentPose);
 
-		// 생성된 회전으로 벡터 회전
-		m_Look = rotation.rotate(m_Look);
-	}
-
-
-	if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
-	{
-		if (m_Controller)
-		{
-			if (IsGrounded(m_Controller))
-			{
-				m_bJump = true;
-
-				m_JumpVel = PxVec3(0.f, 4.f, 0.f);
-			}
-		}
+	//	// 생성된 회전으로 벡터 회전
+	//	m_Look = rotation.rotate(m_Look);
+	//}
 
 
-		//m_BodyCollider->addForce(m_JumpVel*2.5f, PxForceMode::eIMPULSE);
-	}
+	//if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
+	//{
+	//	if (m_Controller)
+	//	{
+	//		if (IsGrounded(m_Controller))
+	//		{
+	//			m_bJump = true;
 
-	if (PRESSING == m_pGameInstance->Get_KeyState('U'))
-	{
-		// 이동 속도 설정
-		PxVec3 velocity = m_Look * 10.f * fTimeDelta;
+	//			m_JumpVel = PxVec3(0.f, 4.f, 0.f);
+	//		}
+	//	}
 
-		// 캐릭터 이동
-		if (m_Controller)
-			PxControllerCollisionFlags flags = m_Controller->move(velocity, 0.0f, fTimeDelta, PxControllerFilters());
 
-		//m_BodyCollider->addForce(velocity * 5.f, PxForceMode::eIMPULSE);
-	}
+	//	//m_BodyCollider->addForce(m_JumpVel*2.5f, PxForceMode::eIMPULSE);
+	//}
+
+	//if (PRESSING == m_pGameInstance->Get_KeyState('U'))
+	//{
+	//	// 이동 속도 설정
+	//	PxVec3 velocity = m_Look * 10.f * fTimeDelta;
+
+	//	// 캐릭터 이동
+	//	if (m_Controller)
+	//		PxControllerCollisionFlags flags = m_Controller->move(velocity, 0.0f, fTimeDelta, PxControllerFilters());
+
+	//	//m_BodyCollider->addForce(velocity * 5.f, PxForceMode::eIMPULSE);
+	//}
 
 	PxVec3 gravity(0.0f, -9.81f * fTimeDelta, 0.0f);
 
-	if (PRESSING == m_pGameInstance->Get_KeyState('J'))
-	{
-		// 이동 속도 설정
-		PxVec3 velocity = -m_Look * 10.f * fTimeDelta;
+	//if (PRESSING == m_pGameInstance->Get_KeyState('J'))
+	//{
+	//	// 이동 속도 설정
+	//	PxVec3 velocity = -m_Look * 10.f * fTimeDelta;
 
-		// 캐릭터 이동
-		if (m_Controller)
-			PxControllerCollisionFlags flags = m_Controller->move(velocity, 0.0f, fTimeDelta, PxControllerFilters());
+	//	// 캐릭터 이동
+	//	if (m_Controller)
+	//		PxControllerCollisionFlags flags = m_Controller->move(velocity, 0.0f, fTimeDelta, PxControllerFilters());
 
-		//m_BodyCollider->addForce(velocity * 5.f,PxForceMode::eIMPULSE);
-	}
+	//	//m_BodyCollider->addForce(velocity * 5.f,PxForceMode::eIMPULSE);
+	//}
 
-	if (m_bJump)
-	{
-		m_JumpVel += gravity; // 중력 적용
+	//if (m_bJump)
+	//{
+	//	m_JumpVel += gravity; // 중력 적용
 
-		// 이동 및 중력 적용
-		PxVec3 displacement = m_JumpVel * fTimeDelta;
-		PxControllerFilters filters;
-		PxControllerCollisionFlags flags = m_Controller->move(displacement, 0.0f, fTimeDelta, filters);
+	//	// 이동 및 중력 적용
+	//	PxVec3 displacement = m_JumpVel * fTimeDelta;
+	//	PxControllerFilters filters;
+	//	PxControllerCollisionFlags flags = m_Controller->move(displacement, 0.0f, fTimeDelta, filters);
 
-		if (m_Controller)
-		{
-			if (IsGrounded(m_Controller))
-			{
-				m_bJump = false;
-				m_JumpVel = PxVec3(0.f, 0.f, 0.f); // 점프 속도 초기화
-			}
-		}
-	}
-	else
-	{
-		if (m_Controller)
-			PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
-	}
+	//	if (m_Controller)
+	//	{
+	//		if (IsGrounded(m_Controller))
+	//		{
+	//			m_bJump = false;
+	//			m_JumpVel = PxVec3(0.f, 0.f, 0.f); // 점프 속도 초기화
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	if (m_Controller)
+	//		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
+	//}
+
+	if (m_Controller)
+		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
 
 	//auto Pos = m_Controller->getPosition();
 	//// 현재 글로벌 포즈 가져오기
@@ -294,9 +297,9 @@ void CPhysics_Controller::Create_Controller(_float4 Pos)
 	//Character Controller Init
 	m_Manager = PxCreateControllerManager(*m_Scene);
 
-	m_Controll_Desc.height = 1.0f; // 캐릭터의 높이
-	m_Controll_Desc.radius = 0.5f; // 캐릭터의 반지름
-	m_Controll_Desc.position = PxExtendedVec3(1.0,5.0, 1.0); // 초기 위치 설정
+	m_Controll_Desc.height = 3.0f; // 캐릭터의 높이
+	m_Controll_Desc.radius = 2.5f; // 캐릭터의 반지름
+	m_Controll_Desc.position = PxExtendedVec3(0.0,0.0, 0.0); // 초기 위치 설정
 	m_Controll_Desc.material = m_Physics->createMaterial(0.f, 0.f, 0.f); // 마찰계수와 반발력 설정
 	m_Controller = m_Manager->createController(m_Controll_Desc);
 
@@ -342,7 +345,7 @@ void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
 	m_Shape = m_Physics->createShape(physx::PxBoxGeometry(halfExtent, halfExtent, halfExtent), *m_Material);
 	m_Shape->setSimulationFilterData(filterData);
 	m_Shape->setContactOffset(0.1f);
-	physx::PxU32 size = 10;
+	physx::PxU32 size = 0;
 	physx::PxTransform t(physx::PxVec3(0));
 	physx::PxTransform localTm(physx::PxVec3(4.f, 0.f, 4.f));
 	//m_BodyCollider = m_Physics->createRigidDynamic(t.transform(localTm));
@@ -445,6 +448,93 @@ void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
 	}
 }
 
+void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
+{
+	// Cooking 파라미터 설정
+	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
+
+	vector<PxVec3> vertices;
+	vector<PxU32> IndicesVec;
+
+	for (int i = 0; i < VertexNum; ++i)
+	{
+		PxVec3 Ver = PxVec3(pVertices[i].x, pVertices[i].y, pVertices[i].z);
+		vertices.push_back(Ver);
+	}
+
+	for (int i = 0; i < IndexNum; ++i)
+	{
+		PxU32 Ind = pIndices[i];
+		IndicesVec.push_back(Ind);
+	}
+
+	// Triangle Mesh 설명자 생성
+	PxTriangleMeshDesc meshDesc;
+	meshDesc.points.count = static_cast<PxU32>(VertexNum);
+	meshDesc.points.stride = sizeof(PxVec3);
+	meshDesc.points.data = vertices.data();
+
+	meshDesc.triangles.count = static_cast<PxU32>(IndexNum / 3);
+	meshDesc.triangles.stride = 3 * sizeof(PxU32);
+	meshDesc.triangles.data = IndicesVec.data();
+
+
+	auto Mesh = PxCreateTriangleMesh(cookingParams, meshDesc);
+
+	PxTransform transform(PxVec3(0.0f, 0.0f, 0.0f)); // 지형의 위치
+	auto Actor = m_Physics->createRigidStatic(transform);
+
+	PxTriangleMeshGeometry meshGeometry(Mesh);
+	PxShape* Shape = m_Physics->createShape(meshGeometry, *m_Physics->createMaterial(0.5f, 0.5f, 0.5f));
+
+	//PxFilterData filterData_Character;
+	//filterData_Character.word0 = COLLISION_CATEGORY::Category1;
+	//filterData_Character.word1 = Category1 | Category2 | Category3;
+
+	//// 캐릭터 컨트롤러의 PxShape에 충돌 필터 데이터 설정
+	//terrainShape->setSimulationFilterData(filterData_Character);
+
+	Actor->attachShape(*Shape);
+	Shape->release();
+
+
+	m_Scene->addActor(*Actor);
+
+	m_vecFullMapObject.push_back(Actor);
+	++m_iMapMeshCount;
+
+	Mesh->release();
+}
+
+void CPhysics_Controller::Move_CCT(_float4 Dir, _float fTimeDelta,_int Index)
+{
+	PxVec3 PxDir;
+	PxDir.x = Dir.x;
+	PxDir.y = Dir.y;
+	PxDir.z = Dir.z;
+
+	m_vecCharacter_Controller[Index]->Move(PxDir, fTimeDelta);
+}
+
+
+_matrix CPhysics_Controller::GetWorldMatrix_Rigid_Dynamic(_int Index)
+{
+	PxTransform globalPose = m_vecRigid_Dynamic[Index]->GetTransform_Px();
+
+	PxVec3 position = globalPose.p;
+
+	PxQuat rotation = globalPose.q;
+
+	XMMATRIX translationMatrix = XMMatrixTranslation(position.x, position.y, position.z);
+
+	XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(XMVectorSet(rotation.x, rotation.y, rotation.z, rotation.w));
+
+	XMMATRIX worldMatrix = rotationMatrix * translationMatrix;
+
+	return worldMatrix;
+}
+
+
 void CPhysics_Controller::Create_Rigid_Static(_float4 Pos)
 {
 }
@@ -483,7 +573,7 @@ _float4 CPhysics_Controller::GetPosition()
 
 		_float4 Pos;
 		Pos.x = static_cast<_float>(position.x);
-		Pos.y = static_cast<_float>(position.y-1.f);
+		Pos.y = static_cast<_float>(position.y-4.f);
 		Pos.z = static_cast<_float>(position.z);
 		Pos.w = 1.f;
 		return Pos;
@@ -567,22 +657,51 @@ void CPhysics_Controller::Free()
 		m_vecBody[i]->release();
 	}
 
+	for (int i = 0; i < m_vecFullMapObject.size(); ++i)
+	{
+		m_vecFullMapObject[i]->release();
+	}
+
 	if(m_Shape)
 		m_Shape->release();
 	if (m_BodyCollider)
 		m_BodyCollider->release();
-	m_TerrainActor->release();
-	m_GroundPlane->release();
-	m_TerrainMesh->release();
-	m_Material->release();
-	m_Controller->release();
-	m_Manager->release();
-	m_Scene->release();
-	m_Dispatcher->release();
-	m_Physics->release();
-	m_Pvd->release();
-	m_Transport->release();
-	m_Foundation->release();
+
+	if(m_TerrainActor)
+		m_TerrainActor->release();
+
+	if(m_GroundPlane)
+		m_GroundPlane->release();
+
+	if(m_TerrainMesh)
+		m_TerrainMesh->release();
+
+	if(m_Material)
+		m_Material->release();
+
+	if(m_Controller)
+		m_Controller->release();
+
+	if(m_Manager)
+		m_Manager->release();
+
+	if(m_Scene)
+		m_Scene->release();
+
+	if(m_Dispatcher)
+		m_Dispatcher->release();
+
+	if(m_Physics)
+		m_Physics->release();
+
+	if(m_Pvd)
+		m_Pvd->release();
+
+	if(m_Transport)
+		m_Transport->release();
+
+	if(m_Foundation)
+		m_Foundation->release();
 
 	delete m_EventCallBack;
 	delete m_FilterCallBack;

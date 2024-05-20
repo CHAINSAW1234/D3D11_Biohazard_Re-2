@@ -30,6 +30,10 @@ public:
 	_float4			GetPosition();
 
 	void			InitTerrain();
+
+	_matrix						 GetWorldMatrix_Rigid_Dynamic(_int Index);
+	void			Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
+	void			Move_CCT(_float4 Dir, _float fTimeDelta,_int Index);
 public:
 	static CPhysics_Controller* Create();
 
@@ -78,6 +82,10 @@ private:
 	_int						m_iCharacter_Controller_Count = { 0 };
 	_int						m_iRigid_Dynamic_Count = { 0 };
 	_int						m_iRigid_Static_Count = { 0 };
+
+	_int						m_iMapMeshCount = { 0 };
+	vector<PxRigidStatic*>			m_vecFullMapObject;
+
 private:
 	_bool			m_bJump = { false };
 public:

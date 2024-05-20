@@ -99,6 +99,16 @@ public: /* For.Frustum */
 public: /* For.Extractor */
 	_vector Compute_WorldPos(const _float2& vViewportPos, const wstring& strZRenderTargetTag, _uint iOffset = 0);
 
+public: /* For.Picking */
+	void Transform_PickingToLocalSpace(class CTransform* pTransform, _Out_ _float3* pRayDir, _Out_ _float3* pRayPos);
+	void Transform_PickingToWorldSpace(_Out_ _float4* pRayDir, _Out_ _float4* pRayPos);
+
+public:
+	//Random Number
+	uniform_real_distribution<_float>	GetRandomDevice_Real(_float Start, _float End);
+	uniform_int_distribution<_int>		GetRandomDevice_Int(_int Start, _int End);
+
+	
 public:/*For Physics Controller*/
 	_float4 GetPosition_Physics();
 	void	Simulate();
@@ -113,7 +123,8 @@ public:/*For Physics Controller*/
 	class CCharacter_Controller* GetCharacter_Controller(_int Index);
 	class CRigid_Dynamic* GetRigid_Dynamic(_int Index);
 	_float4	GetTranslation_Rigid_Dynamic(_int Index);
-
+	_matrix	GetWorldMatrix_Rigid_Dynamic(_int Index);
+	void	Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 
 public://Temp
 	_float3* TerrainPos = { nullptr };
@@ -154,7 +165,7 @@ public://Temp
 		return m_pIndices;
 	}
 	void	InitTerrainPhysics();
-
+	void	Move_CCT(_float4 Dir, _float fTimeDelta,_int Index);
 #ifdef _DEBUG
 	HRESULT Ready_RTVDebug(const wstring& strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT Draw_RTVDebug(const wstring& strMRTTag, class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
@@ -187,10 +198,15 @@ private:
 	class CFrustum*					m_pFrustum = { nullptr };
 	class CExtractor*				m_pExtractor = { nullptr };
 	class CPhysics_Controller*		m_pPhysics_Controller = { nullptr };
-	class CSound_Manager* m_pSound_Manager = { nullptr };
-	
+	class CSound_Manager* 			m_pSound_Manager = { nullptr };
+	class CPicking*					m_pPicking = { nullptr };
+
 	/*for physics*/
 	_bool							m_bSimulate = { false };
+
+	//Random Number
+	random_device					m_RandomDevice;
+	mt19937_64						m_RandomNumber;
 public:		
 	static void Release_Engine();
 	virtual void Free() override;
