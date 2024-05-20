@@ -20,6 +20,7 @@ public:
 	virtual void Update() override;
 
 	virtual _float4 GetTranslation() override;
+	virtual PxTransform	GetTransform_Px() override;
 public:
 	static CRigid_Dynamic* Create();
 

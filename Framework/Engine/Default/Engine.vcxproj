@@ -200,6 +200,7 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\KeyBoard.cpp" />
     <ClCompile Include="..\Private\Model_Extractor.cpp" />
     <ClCompile Include="..\Private\Mouse.cpp" />
+    <ClCompile Include="..\Private\Picking.cpp" />
     <ClCompile Include="..\Private\Rigid_Dynamic.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
@@ -263,6 +264,7 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\KeyBoard.h" />
     <ClInclude Include="..\Public\Model_Extractor.h" />
     <ClInclude Include="..\Public\Mouse.h" />
+    <ClInclude Include="..\Public\Picking.h" />
     <ClInclude Include="..\Public\Rigid_Dynamic.h" />
     <ClInclude Include="..\public\CustomFont.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />

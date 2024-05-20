@@ -77,6 +77,7 @@ public:
 	HRESULT Play_Animation_RootMotion_Translation(class CTransform* pTransform, const string& strRootTag, _float fTimeDelta, _bool isAutoRotate = false);
 	HRESULT Play_Animation_RootMotion_WorldMatrix(class CTransform* pTransform, const string& strRootTag, _float fTimeDelta);
 	HRESULT Render(_uint iMeshIndex);
+	void	Static_Mesh_Cooking();
 
 public:
 	const _float4x4* Get_CombinedMatrix(const string& strBoneTag);

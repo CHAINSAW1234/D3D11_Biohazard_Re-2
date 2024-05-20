@@ -19,6 +19,7 @@ public:
 public:
 	static CCharacter_Controller* Create();
 
+	virtual void Move(PxVec3 Dir, _float fTimeDelta) override;
 protected:
 
 private:

@@ -190,6 +190,9 @@
     <Filter Include="00.Device\Input\KeyBoard">
       <UniqueIdentifier>{8a817d1b-64e7-44d5-85f5-344732579f54}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\10.Picking">
+      <UniqueIdentifier>{03ba2e75-dc70-407d-bed1-fb1939c7f9dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -371,6 +374,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Mouse.cpp">
       <Filter>00.Device\Input\Mouse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Picking.cpp">
+      <Filter>01.Utility\10.Picking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -568,6 +574,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Mouse.h">
       <Filter>00.Device\Input\Mouse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Picking.h">
+      <Filter>01.Utility\10.Picking</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

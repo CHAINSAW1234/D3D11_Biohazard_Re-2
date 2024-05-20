@@ -106,11 +106,19 @@ HRESULT CMesh::Initialize_Prototype(CModel::MODEL_TYPE eType, const MESH_DESC& M
 	m_BufferDesc.StructureByteStride = 0;
 
 	_uint* pIndices = new _uint[m_iNumIndices];
+
+	m_pIndices_Cooking = new _uint[m_iNumIndices];
+
 	ZeroMemory(pIndices, sizeof(_uint) * m_iNumIndices);
 
 	for (_uint i = 0; i < m_iNumIndices; ++i)
 	{
 		pIndices[i] = MeshDesc.Indices[i];
+	}
+
+	for (int i = 0; i < m_iNumIndices; ++i)
+	{
+		m_pIndices_Cooking[i] = pIndices[i];
 	}
 
 	memcpy(m_pIndices, pIndices, sizeof(_uint) * m_iNumIndices);
@@ -330,6 +338,9 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertic
 	m_BufferDesc.StructureByteStride = m_iVertexStride;
 
 	VTXMESH* pVertices = new VTXMESH[m_iNumVertices];
+
+	m_pVertices_Cooking = new _float3[m_iNumVertices];
+
 	ZeroMemory(pVertices, sizeof(VTXMESH) * m_iNumVertices);
 
 	for (size_t i = 0; i < m_iNumVertices; i++)
@@ -339,6 +350,11 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertic
 		memcpy_s(&pVertices[i].vNormal, sizeof(_float3), &Vertices[i].vNormal, sizeof(_float3));
 		memcpy_s(&pVertices[i].vTexcoord, sizeof(_float2), &Vertices[i].vTexcoord, sizeof(_float2));
 		memcpy_s(&pVertices[i].vTangent, sizeof(_float3), &Vertices[i].vTangent, sizeof(_float3));
+	}
+
+	for (int i = 0; i < m_iNumVertices; ++i)
+	{
+		m_pVertices_Cooking[i] = pVertices[i].vPosition;
 	}
 
 	ZeroMemory(&m_InitialData, sizeof m_InitialData);
@@ -441,6 +457,18 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 	return S_OK;
 }
 
+void CMesh::Static_Mesh_Cooking()
+{
+	for (int i = 0; i < m_iNumVertices; ++i)
+	{
+		m_pVertices_Cooking[i].x *= 5.f;
+		m_pVertices_Cooking[i].y *= 5.f;
+		m_pVertices_Cooking[i].z *= 5.f;
+	}
+
+	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices);
+}
+
 CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::MODEL_TYPE eModelType, const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices, _fmatrix TransformationMatrix)
 {
 	CMesh* pInstance = new CMesh(pDevice, pContext);
@@ -486,4 +514,7 @@ CMesh* CMesh::Clone(void* pArg)
 void CMesh::Free()
 {
 	__super::Free();
+
+	Safe_Delete_Array(m_pVertices_Cooking);
+	Safe_Delete_Array(m_pIndices_Cooking);
 }

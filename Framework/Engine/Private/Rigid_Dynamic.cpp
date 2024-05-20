@@ -53,6 +53,11 @@ _float4 CRigid_Dynamic::GetTranslation()
 	return ReturnPos;
 }
 
+PxTransform CRigid_Dynamic::GetTransform_Px()
+{
+	return m_pRigid_Dynamic->getGlobalPose();
+}
+
 CRigid_Dynamic* CRigid_Dynamic::Create()
 {
 	return nullptr;

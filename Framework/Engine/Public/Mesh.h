@@ -66,6 +66,10 @@ private:
 
 	MATERIAL_DESC			m_MaterialDesc = {};
 
+	//For Mesh Cooking
+	_float3*				m_pVertices_Cooking = { nullptr };
+	_uint*					m_pIndices_Cooking = { nullptr };
+
 private:/* For.FBXLoad */
 	HRESULT Ready_Vertices_For_NonAnimModel(const aiMesh* pAIMesh, _fmatrix TransformationMatrix);
 	HRESULT Ready_Vertices_For_AnimModel(const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices);
@@ -73,6 +77,9 @@ private:/* For.FBXLoad */
 private:/* For.BinaryLoad */
 	HRESULT Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertices);
 	HRESULT Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices, const vector<_uint>& Indices, const vector<_uint>& Bones, const vector<_float4x4>& OffsetMatrices);
+
+public:/*For Cooking*/
+	void	Static_Mesh_Cooking();
 
 public:
 	/* For.FBXLoad*/

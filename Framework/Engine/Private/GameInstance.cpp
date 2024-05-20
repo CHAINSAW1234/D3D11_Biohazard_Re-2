@@ -13,6 +13,7 @@
 #include "Renderer.h"
 #include "Frustum.h"
 #include "Physics_Controller.h"
+#include "Picking.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -91,9 +92,16 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 	m_pPhysics_Controller = CPhysics_Controller::Create();
 	if (nullptr == m_pPhysics_Controller)
 		return E_FAIL;
+
+	m_pPicking = CPicking::Create(*ppDevice, *ppContext, EngineDesc.hWnd, EngineDesc.iWinSizeX, EngineDesc.iWinSizeY);
+	if (nullptr == m_pPicking)
+		return E_FAIL;
 	
 	m_pPhysics_Controller->Create_Controller(_float4(0.f,0.f,0.f,1.f));
 	m_pPhysics_Controller->Create_Rigid_Dynamic(_float4(0.f, 0.f, 0.f, 1.f));
+
+	m_RandomNumber = mt19937_64(m_RandomDevice());
+
 	return S_OK;
 }
 
@@ -109,6 +117,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	m_pObject_Manager->Priority_Tick(fTimeDelta);	
 
 	m_pObject_Manager->Tick(fTimeDelta);	
+
+	m_pPicking->Update();
 
 	m_pPipeLine->Tick();
 
@@ -482,6 +492,36 @@ HRESULT CGameInstance::End_MRT()
 	return m_pTarget_Manager->End_MRT();
 }
 
+_matrix CGameInstance::GetWorldMatrix_Rigid_Dynamic(_int Index)
+{
+	return m_pPhysics_Controller->GetWorldMatrix_Rigid_Dynamic(Index);
+}
+
+void CGameInstance::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
+{
+	m_pPhysics_Controller->Cook_Mesh(pVertices, pIndices, VertexNum, IndexNum);
+}
+
+void CGameInstance::Transform_PickingToLocalSpace(CTransform* pTransform, _float3* pRayDir, _float3* pRayPos)
+{
+	return m_pPicking->Transform_PickingToLocalSpace(pTransform, pRayDir, pRayPos);
+}
+
+void CGameInstance::Transform_PickingToWorldSpace(_float4* pRayDir, _float4* pRayPos)
+{
+	return m_pPicking->Transform_PickingToWorldSpace(pRayDir, pRayPos);
+}
+
+uniform_real_distribution<_float> CGameInstance::GetRandomDevice_Real(_float Start, _float End)
+{
+	return uniform_real_distribution<_float>(Start,End);
+}
+
+uniform_int_distribution<_int> CGameInstance::GetRandomDevice_Int(_int Start, _int End)
+{
+	return uniform_int_distribution<_int>(Start,End);
+}
+
 HRESULT CGameInstance::Bind_RTShaderResource(CShader * pShader, const wstring & strRenderTargetTag, const _char * pConstantName)
 {
 	
@@ -547,6 +587,11 @@ void CGameInstance::InitTerrainPhysics()
 		m_pPhysics_Controller->InitTerrain();
 }
 
+void CGameInstance::Move_CCT(_float4 Dir, _float fTimeDelta, _int Index)
+{
+	m_pPhysics_Controller->Move_CCT(Dir, fTimeDelta, Index);
+}
+
 #ifdef _DEBUG
 
 HRESULT CGameInstance::Ready_RTVDebug(const wstring & strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
@@ -582,4 +627,5 @@ void CGameInstance::Free()
 	Safe_Release(m_pInput_Device);
 	Safe_Release(m_pGraphic_Device);
 	Safe_Release(m_pPhysics_Controller);
+	Safe_Release(m_pPicking);
 }

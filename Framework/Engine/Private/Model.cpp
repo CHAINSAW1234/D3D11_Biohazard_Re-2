@@ -579,6 +579,14 @@ HRESULT CModel::Render(_uint iMeshIndex)
 	return S_OK;
 }
 
+void CModel::Static_Mesh_Cooking()
+{
+	for (int i = 0; i < m_Meshes.size(); ++i)
+	{
+		m_Meshes[i]->Static_Mesh_Cooking();
+	}
+}
+
 const _float4x4* CModel::Get_CombinedMatrix(const string& strBoneTag)
 {
 	_uint		iBoneIndex = { Find_BoneIndex(strBoneTag) };
