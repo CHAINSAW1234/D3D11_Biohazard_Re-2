@@ -1,3 +1,4 @@
 C:\Users\stgo5015\Documents\GitHub\D3D11_Biohazard_Re-2\Framework\Client\Default\x64\Debug\Client.vcxproj.Up2Date
 C:\Users\vuwqk\OneDrive\바탕 화면\Team\D3D11_Biohazard_Re-2\Framework\Client\Default\x64\Debug\Client.vcxproj.Up2Date
 C:\3D_Team\Framework\Client\Default\x64\Debug\Client.vcxproj.Up2Date
+C:\3DTeam\Framework\Client\Default\x64\Debug\Client.vcxproj.Up2Date
