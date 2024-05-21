@@ -32,7 +32,7 @@ HRESULT CForkLift::Initialize(void * pArg)
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scaled(5.f, 5.f, 5.f);
-	m_pModelCom->Static_Mesh_Cooking();
+	//m_pModelCom->Static_Mesh_Cooking();
 
 	m_pGameInstance->SetSimulate(true);
 
@@ -54,6 +54,8 @@ void CForkLift::Late_Tick(_float fTimeDelta)
 
 HRESULT CForkLift::Render()
 {
+	return S_OK;
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 

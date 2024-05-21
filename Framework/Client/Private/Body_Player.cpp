@@ -42,6 +42,10 @@ HRESULT CBody_Player::Initialize(void * pArg)
 
 	m_pModelCom->Set_RootBone("root");
 
+	m_pModelCom->Set_SpineBone("spine_0");
+
+	m_pModelCom->Init_Separate_Bones();
+
 	return S_OK;
 }
 
@@ -53,6 +57,9 @@ void CBody_Player::Priority_Tick(_float fTimeDelta)
 void CBody_Player::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	//Upper 13
+	//Lower 33
 	
 	m_pColliderCom->Tick(XMLoadFloat4x4(&m_WorldMatrix));
 	
@@ -108,7 +115,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	m_pModelCom->Set_RootBone("root");
 	//m_pModelCom->Active_RootMotion_XZ(iAnimIndex, true);
 	m_pModelCom->Active_RootMotion_Y(iAnimIndex, false);
-//	m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, true);
+	//m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, true);
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)
@@ -118,7 +125,11 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	//	m_pModelCom->Play_Animation(fTimeDelta);
 	//	m_pModelCom->Play_Animation_RootMotion_Translation(m_pParentsTransform, "root", fTimeDelta, false);
 
-	m_pModelCom->Play_Animation_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);	
+	static bool Temp = false;
+	if(Temp == false)
+ 		m_pModelCom->Play_Animation_Separation(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+
+	Temp = true;
 	//	m_pModelCom->Play_Animation(fTimeDelta);	
 	
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);

@@ -15,13 +15,13 @@ static physx::PxFilterFlags MegamotionFilterShader(
 
 	// trigger the contact callback for pairs (A,B) where
 	// the filtermask of A contains the ID of B and vice versa.
-	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
+	/*if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
 	{
 		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
 		return physx::PxFilterFlag::eNOTIFY;
 	}
 
-	return physx::PxFilterFlag::eDEFAULT;
+	return physx::PxFilterFlag::eDEFAULT;*/
 
 
 	//충돌 무시 코드

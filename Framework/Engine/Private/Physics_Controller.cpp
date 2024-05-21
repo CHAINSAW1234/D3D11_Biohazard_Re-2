@@ -59,8 +59,8 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 
 	//create simulation
 	m_Material = m_Physics->createMaterial(0.5f, 0.5f, 0.6f);
-	//m_GroundPlane = PxCreatePlane(*m_Physics, physx::PxPlane(0, 1, 0, 1), *m_Material);
-	//m_Scene->addActor(*m_GroundPlane);
+	m_GroundPlane = PxCreatePlane(*m_Physics, physx::PxPlane(0, 1, 0, 1), *m_Material);
+	m_Scene->addActor(*m_GroundPlane);
 
 	//float halfExtent = 0.5f;
 	//m_Shape = m_Physics->createShape(physx::PxBoxGeometry(halfExtent, halfExtent, halfExtent), *m_Material);
@@ -446,6 +446,108 @@ void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
 			}
 		}
 	}
+
+	PxInitExtensions(*m_Physics, m_Pvd);
+
+	PxReal radius = 1.0f;
+	PxVec3 offset(0, 0.5f, 0);
+
+	// Head
+	PxVec3 headPos = PxVec3(0, 25, 0);
+	m_pHead = PxCreateDynamic(*m_Physics, PxTransform(headPos), PxSphereGeometry(radius), *m_Material, 1.0f);
+	m_Scene->addActor(*m_pHead);
+
+	// Body (longer)
+	PxVec3 bodyPos = headPos - PxVec3(0, 4 * radius, 0);
+	//PxRigidDynamic* body = PxCreateDynamic(*m_Physics, PxTransform(bodyPos), PxBoxGeometry(PxVec3(radius, 3 * radius, radius)), *m_Material, 1.0f);
+	m_pBody = PxCreateDynamic(*m_Physics, PxTransform(bodyPos), PxBoxGeometry(PxVec3(radius, 2.f * radius, radius)), *m_Material, 1.0f);
+	m_Scene->addActor(*m_pBody);
+	//m_pBody->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	PxVec3 PelvisPos = bodyPos - PxVec3(3 * radius, 0, 0);
+	m_pPelvis = PxCreateDynamic(*m_Physics, PxTransform(PelvisPos), PxBoxGeometry(PxVec3(radius, radius, radius)), *m_Material, 1.0f);
+	m_Scene->addActor(*m_pPelvis);
+	//m_pPelvis->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	// Connect head and body
+	m_pPelvis_Joint= PxSphericalJointCreate(*m_Physics, m_pBody, PxTransform(PxVec3(0, -radius * 1.5f, 0)), m_pPelvis, PxTransform(PxVec3(0, radius * 1.f, 0)));
+	m_pPelvis_Joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+
+	// Connect head and body
+	m_pNeck_Joint = PxSphericalJointCreate(*m_Physics, m_pHead, PxTransform(PxVec3(0, -radius, 0)), m_pBody, PxTransform(PxVec3(0, 2 * radius, 0)));
+	m_pNeck_Joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+
+	// Arms (shorter)
+	PxVec3 leftArmPos = bodyPos - PxVec3(3 * radius, 0, 0);
+	m_pLeftArm = PxCreateDynamic(*m_Physics, PxTransform(leftArmPos), PxCapsuleGeometry(radius, 1.5 * radius), *m_Material, 1.0f);
+	m_Scene->addActor(*m_pLeftArm);
+	//m_pLeftArm->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	PxVec3 rightArmPos = bodyPos + PxVec3(3 * radius, 0, 0);
+	m_pRightArm = PxCreateDynamic(*m_Physics, PxTransform(rightArmPos), PxCapsuleGeometry(radius, 1.5 * radius), *m_Material, 1.0f);
+	m_Scene->addActor(*m_pRightArm);
+	//m_pRightArm->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	// Connect arms to body
+	m_pLeft_Shoulder_Joint = PxSphericalJointCreate(*m_Physics, m_pBody, PxTransform(PxVec3(-radius * 1.5f, radius, 0)), m_pLeftArm, PxTransform(PxVec3(radius * 1.5f, 0, 0)));
+	m_pLeft_Shoulder_Joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+
+	m_pRight_Shoulder_Joint = PxSphericalJointCreate(*m_Physics, m_pBody, PxTransform(PxVec3(radius * 1.5f, radius, 0)), m_pRightArm, PxTransform(PxVec3(-radius * 1.5f, 0, 0)));
+	m_pRight_Shoulder_Joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+
+	// Legs
+	PxVec3 leftLegPos = PelvisPos - PxVec3(5 * radius, 5.f, 0);
+	m_pLeftLeg = PxCreateDynamic(*m_Physics, PxTransform(leftLegPos), PxCapsuleGeometry(radius, 2 * radius), *m_Material, 1.0f);
+	m_Scene->addActor(*m_pLeftLeg);
+	//m_pLeftLeg->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	PxVec3 rightLegPos = PelvisPos + PxVec3(5 * radius, -5.f, 0);
+	m_pRightLeg = PxCreateDynamic(*m_Physics, PxTransform(rightLegPos), PxCapsuleGeometry(radius, 2 * radius), *m_Material, 1.0f);
+	m_Scene->addActor(*m_pRightLeg);
+	m_pRightLeg->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	// Connect legs to body
+	m_pLeft_Hip_Joint = PxSphericalJointCreate(*m_Physics, m_pPelvis, PxTransform(PxVec3(-radius * 1.5f, -radius, 0)), m_pLeftLeg, PxTransform(PxVec3(radius * 1.5f, 0, 0)));
+	m_pLeft_Hip_Joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+
+	m_pRight_Hip_Joint = PxSphericalJointCreate(*m_Physics, m_pPelvis, PxTransform(PxVec3(radius * 1.5f, -radius, 0)), m_pRightLeg, PxTransform(PxVec3(-radius * 1.5f, 0, 0)));
+	m_pRight_Hip_Joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+
+	// Elbows
+	PxVec3 leftForearmPos = leftArmPos - PxVec3(12 * radius, 12.f, 0); // Adjust for shorter arms
+	m_pLeftForeArm = PxCreateDynamic(*m_Physics, PxTransform(leftForearmPos), PxCapsuleGeometry(radius, radius), *m_Material, 1.0f);
+	m_Scene->addActor(*m_pLeftForeArm);
+	m_pLeftForeArm->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	PxVec3 rightForearmPos = rightArmPos + PxVec3(12 * radius, 12.f, 0); // Adjust for shorter arms
+	m_pRightForeArm = PxCreateDynamic(*m_Physics, PxTransform(rightForearmPos), PxCapsuleGeometry(radius, radius), *m_Material, 1.0f);
+	m_Scene->addActor(*m_pRightForeArm);
+	m_pRightForeArm->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	// Connect forearms to upper arms (elbows)
+	m_pLeft_Elbow_Joint= PxSphericalJointCreate(*m_Physics, m_pLeftArm, PxTransform(PxVec3(-radius * 2.f, 0.f, 0)), m_pLeftForeArm, PxTransform(PxVec3(radius * 1.5f, 0, 0)));
+	m_pLeft_Elbow_Joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+
+	m_pRight_Elbow_Joint = PxSphericalJointCreate(*m_Physics, m_pRightArm, PxTransform(PxVec3(radius * 2.f, 0.f, 0)), m_pRightForeArm, PxTransform(PxVec3(-radius * 1.5f, 0, 0)));
+	m_pRight_Elbow_Joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+
+	// Knees
+	PxVec3 leftShinPos = leftLegPos - PxVec3(0, 3 * radius, 0); // Adjust for body length
+	m_pLeftShin = PxCreateDynamic(*m_Physics, PxTransform(leftShinPos), PxCapsuleGeometry(radius, 2 * radius), *m_Material, 1.0f);
+	m_Scene->addActor(*m_pLeftShin);
+	m_pLeftShin->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	PxVec3 rightShinPos = rightLegPos + PxVec3(0, 3 * radius, 0); // Adjust for body length
+	m_pRightShin = PxCreateDynamic(*m_Physics, PxTransform(rightShinPos), PxCapsuleGeometry(radius, 2 * radius), *m_Material, 1.0f);
+	m_Scene->addActor(*m_pRightShin);
+	m_pRightShin->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	// Connect shins to thighs (knees)
+	m_pLeft_Knee_Joint = PxSphericalJointCreate(*m_Physics, m_pLeftLeg, PxTransform(PxVec3(-radius * 3.f, 0.f, 0)), m_pLeftShin, PxTransform(PxVec3(radius * 2.f, 0, 0)));
+	m_pLeft_Knee_Joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+
+	m_pRight_Knee_Joint = PxSphericalJointCreate(*m_Physics, m_pRightLeg, PxTransform(PxVec3(radius * 3.f, 0.f, 0)), m_pRightShin, PxTransform(PxVec3(-radius * 2.f, 0, 0)));
+	m_pRight_Knee_Joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
 }
 
 void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
@@ -514,6 +616,138 @@ void CPhysics_Controller::Move_CCT(_float4 Dir, _float fTimeDelta, _int Index)
 	PxDir.z = Dir.z;
 
 	m_vecCharacter_Controller[Index]->Move(PxDir, fTimeDelta);
+}
+
+_float4 CPhysics_Controller::GetHeadPos()
+{
+	auto Pos = m_pHead->getGlobalPose();
+	_float4 Result;
+	Result.x = Pos.p.x;
+	Result.y = Pos.p.y;
+	Result.z = Pos.p.z;
+	Result.w = 1.f;
+
+	return Result;
+}
+
+_float4 CPhysics_Controller::GetBodyPos()
+{
+	auto Pos = m_pBody->getGlobalPose();
+	_float4 Result;
+	Result.x = Pos.p.x;
+	Result.y = Pos.p.y;
+	Result.z = Pos.p.z;
+	Result.w = 1.f;
+
+	return Result;
+}
+
+_float4 CPhysics_Controller::GetPelvisPos()
+{
+	auto Pos = m_pPelvis->getGlobalPose();
+	_float4 Result;
+	Result.x = Pos.p.x;
+	Result.y = Pos.p.y;
+	Result.z = Pos.p.z;
+	Result.w = 1.f;
+
+	return Result;
+}
+
+_float4 CPhysics_Controller::GetLeft_Arm_Pos()
+{
+	auto Pos = m_pLeftArm->getGlobalPose();
+	_float4 Result;
+	Result.x = Pos.p.x;
+	Result.y = Pos.p.y;
+	Result.z = Pos.p.z;
+	Result.w = 1.f;
+
+	return Result;
+}
+
+_float4 CPhysics_Controller::GetRight_Arm_Pos()
+{
+	auto Pos = m_pRightArm->getGlobalPose();
+	_float4 Result;
+	Result.x = Pos.p.x;
+	Result.y = Pos.p.y;
+	Result.z = Pos.p.z;
+	Result.w = 1.f;
+
+	return Result;
+}
+
+_float4 CPhysics_Controller::GetLeft_Fore_Arm_Pos()
+{
+	auto Pos = m_pLeftForeArm->getGlobalPose();
+	_float4 Result;
+	Result.x = Pos.p.x;
+	Result.y = Pos.p.y;
+	Result.z = Pos.p.z;
+	Result.w = 1.f;
+
+	return Result;
+}
+
+_float4 CPhysics_Controller::GetRight_Fore_Arm_Pos()
+{
+	auto Pos = m_pRightForeArm->getGlobalPose();
+	_float4 Result;
+	Result.x = Pos.p.x;
+	Result.y = Pos.p.y;
+	Result.z = Pos.p.z;
+	Result.w = 1.f;
+
+	return Result;
+}
+
+_float4 CPhysics_Controller::GetLeft_Leg_Pos()
+{
+	auto Pos = m_pLeftLeg->getGlobalPose();
+	_float4 Result;
+	Result.x = Pos.p.x;
+	Result.y = Pos.p.y;
+	Result.z = Pos.p.z;
+	Result.w = 1.f;
+
+	return Result;
+}
+
+_float4 CPhysics_Controller::GetRight_Leg_Pos()
+{
+	auto Pos = m_pRightLeg->getGlobalPose();
+	_float4 Result;
+	Result.x = Pos.p.x;
+	Result.y = Pos.p.y;
+	Result.z = Pos.p.z;
+	Result.w = 1.f;
+
+	return Result;
+}
+
+_float4 CPhysics_Controller::GetRight_Shin_Pos()
+{
+	auto Pos = m_pRightShin->getGlobalPose();
+	_float4 Result;
+	Result.x = Pos.p.x;
+	Result.y = Pos.p.y;
+	Result.z = Pos.p.z;
+	Result.w = 1.f;
+
+	return Result;
+}
+
+_float4 CPhysics_Controller::GetLeft_Shin_Pos()
+{
+	auto Pos = m_pLeftShin->getGlobalPose();
+	_float4 Result;
+	Result.x = Pos.p.x;
+	Result.y = Pos.p.y;
+	Result.z = Pos.p.z;
+	Result.w = 1.f;
+
+	return Result;
 }
 
 
@@ -661,6 +895,75 @@ void CPhysics_Controller::Free()
 	{
 		m_vecFullMapObject[i]->release();
 	}
+
+	PxCloseExtensions();
+
+	//Ragdoll
+	if (m_pHead)
+		m_pHead->release();
+
+	if (m_pBody)
+		m_pBody->release();
+
+	if (m_BodyCollider)
+		m_BodyCollider->release();
+
+	if (m_pPelvis)
+		m_pPelvis->release();
+
+	if (m_pLeftArm)
+		m_pLeftArm->release();
+
+	if (m_pRightArm)
+		m_pRightArm->release();
+
+	if (m_pLeftForeArm)
+		m_pLeftForeArm->release();
+
+	if (m_pRightForeArm)
+		m_pRightForeArm->release();
+
+	if (m_pLeftLeg)
+		m_pLeftLeg->release();
+
+	if (m_pRightLeg)
+		m_pRightLeg->release();
+
+	if (m_pRightShin)
+		m_pRightShin->release();
+
+	if (m_pLeftShin)
+		m_pLeftShin->release();
+
+	if (m_pNeck_Joint)
+		m_pNeck_Joint->release();
+
+	if (m_pLeft_Shoulder_Joint)
+		m_pLeft_Shoulder_Joint->release();
+
+	if (m_pRight_Shoulder_Joint)
+		m_pRight_Shoulder_Joint->release();
+
+	if (m_pLeft_Elbow_Joint)
+		m_pLeft_Elbow_Joint->release();
+
+	if (m_pRight_Elbow_Joint)
+		m_pRight_Elbow_Joint->release();
+
+	if (m_pPelvis_Joint)
+		m_pPelvis_Joint->release();
+
+	if (m_pLeft_Hip_Joint)
+		m_pLeft_Hip_Joint->release();
+
+	if (m_pRight_Hip_Joint)
+		m_pRight_Hip_Joint->release();
+
+	if (m_pLeft_Knee_Joint)
+		m_pLeft_Knee_Joint->release();
+
+	if (m_pRight_Knee_Joint)
+		m_pRight_Knee_Joint->release();
 
 	if (m_Shape)
 		m_Shape->release();

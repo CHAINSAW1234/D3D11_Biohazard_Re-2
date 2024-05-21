@@ -46,10 +46,13 @@ public:	/* For.Animation */
 	void Active_RootMotion_XZ(_uint iAnimIndex, _bool isActive);
 	void Active_RootMotion_Y(_uint iAnimIndex, _bool isActive);
 	void Active_RootMotion_Rotation(_uint iAnimIndex, _bool isActive);
-
-	/* For.Bone */
 	void Set_RootBone(string strBoneTag);			//	모든본을 초기화 => 루트본은 하나다 가정후 찾은 본을 루트본으로 등록
 
+public:	/*For Upper-Lower Separation*/
+	void Set_SpineBone(string strBoneTag);			//상,하체 분리를 위한 Spine Bone Select 코드
+	void Init_Separate_Bones();
+	HRESULT Play_Animation_Separation(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
+	HRESULT RagDoll();
 public:
 	void Set_CombinedMatrix(string strBoneTag, _fmatrix CombinedMatrix);
 	void Set_Parent_CombinedMatrix_Ptr(string strBoneTag, _float4x4* pParentMatrix);
@@ -140,6 +143,8 @@ private:
 	_float4x4					m_TransformationMatrix;
 
 	vector<class CBone*>		m_Bones;
+	vector<class CBone*>		m_Bones_Upper;
+	vector<class CBone*>		m_Bones_Lower;
 
 	_uint						m_iNumAnimations = { 0 };
 	_uint						m_iCurrentAnimIndex = { 0 };
@@ -155,6 +160,10 @@ private:	/* For.Linear_Interpolation */
 	_float4x4					m_PreTranslationMatrix;
 	wstring						m_strRootTag = { TEXT("") };
 	_float						m_fTotalLinearTime = { 0.f };
+
+
+private:	/*For Upper-Lower Separation*/
+	class CBone*				m_pSpineBone = { nullptr };
 
 private: /* For.FBX_Load */
 	HRESULT Ready_Meshes(const map<string, _uint>& BoneIndices);

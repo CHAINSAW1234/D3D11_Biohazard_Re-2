@@ -35,6 +35,20 @@ public:
 	_matrix						 GetWorldMatrix_Rigid_Dynamic(_int Index);
 	void			Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 	void			Move_CCT(_float4 Dir, _float fTimeDelta,_int Index);
+
+	//Ragdoll Temp
+	_float4			GetHeadPos();
+	_float4			GetBodyPos();
+	_float4			GetPelvisPos();
+	_float4			GetLeft_Arm_Pos();
+	_float4			GetRight_Arm_Pos();
+	_float4			GetLeft_Fore_Arm_Pos();
+	_float4			GetRight_Fore_Arm_Pos();
+	_float4			GetLeft_Leg_Pos();
+	_float4			GetRight_Leg_Pos();
+	_float4			GetRight_Shin_Pos();
+	_float4			GetLeft_Shin_Pos();
+
 public:
 	static CPhysics_Controller* Create();
 
@@ -87,6 +101,31 @@ private:
 	_int						m_iMapMeshCount = { 0 };
 	vector<PxRigidStatic*>			m_vecFullMapObject;
 
+
+
+	//Ragdoll
+	PxRigidDynamic*				m_pHead = { nullptr };
+	PxRigidDynamic*				m_pBody = { nullptr };
+	PxRigidDynamic*				m_pRightArm = { nullptr };
+	PxRigidDynamic*				m_pRightForeArm = { nullptr };
+	PxRigidDynamic*				m_pLeftArm = { nullptr };
+	PxRigidDynamic*				m_pLeftForeArm = { nullptr };
+	PxRigidDynamic*				m_pPelvis = { nullptr };
+	PxRigidDynamic*				m_pRightLeg = { nullptr };
+	PxRigidDynamic*				m_pRightShin = { nullptr };
+	PxRigidDynamic*				m_pLeftLeg = { nullptr };
+	PxRigidDynamic*				m_pLeftShin = { nullptr };
+
+	PxSphericalJoint*			m_pNeck_Joint = { nullptr };
+	PxSphericalJoint*			m_pPelvis_Joint = { nullptr };
+	PxSphericalJoint*			m_pLeft_Shoulder_Joint = { nullptr };
+	PxSphericalJoint*			m_pRight_Shoulder_Joint = { nullptr };
+	PxSphericalJoint*			m_pLeft_Elbow_Joint = { nullptr };
+	PxSphericalJoint*			m_pRight_Elbow_Joint = { nullptr };
+	PxSphericalJoint*			m_pRight_Knee_Joint = { nullptr };
+	PxSphericalJoint*			m_pLeft_Knee_Joint = { nullptr };
+	PxSphericalJoint*			m_pRight_Hip_Joint = { nullptr };
+	PxSphericalJoint*			m_pLeft_Hip_Joint = { nullptr };
 private:
 	_bool			m_bJump = { false };
 public:
