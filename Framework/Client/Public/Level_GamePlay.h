@@ -24,7 +24,7 @@ private:
 	HRESULT Ready_Lights();
 	HRESULT Ready_Layer_Camera(const wstring& strLayerTag);
 	HRESULT Ready_Layer_BackGround(const wstring& strLayerTag);
-
+	
 	HRESULT Ready_LandObject();
 	HRESULT Ready_Layer_Player(const wstring& strLayerTag/*, CLandObject::LANDOBJECT_DESC& LandObjectDesc*/);
 	HRESULT Ready_Layer_Monster(const wstring& strLayerTag);

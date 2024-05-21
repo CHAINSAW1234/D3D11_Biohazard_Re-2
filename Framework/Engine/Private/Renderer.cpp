@@ -26,7 +26,6 @@ HRESULT CRenderer::Initialize()
 	if (FAILED(SetUp_Matrices()))
 		return E_FAIL;
 
-
 	/* For.Shadow */
 	Set_Shadow_Resolution(SHADOW_RESOLUTION::RES_1X);
 	if (FAILED(SetUp_LightDSV()))
@@ -91,7 +90,7 @@ HRESULT CRenderer::Render()
 
 	if (FAILED(Render_PostProcessing_Result()))
 		return E_FAIL;
-
+	 
 	if (FAILED(Render_Non_PostProcessing()))
 		return E_FAIL;
 
@@ -755,6 +754,12 @@ HRESULT CRenderer::Render_Shadow()
 
 	Set_ViewPort_Size(m_fLightDepthTargetViewWidth, m_fLightDepthTargetViewHeight);
 
+	/*
+	XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(0.f, 10.f, -10.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+	XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(120.0f), (_float)g_iWinSizeX / g_iWinSizeY, 0.1f, 2000.f));
+
+	*/
+
 	if (SHADOW_RESOLUTION::RES_1X == m_eShadowResolution)
 	{
 		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow_1X"), m_pLightDepthDSVs[RES_1X])))
@@ -945,18 +950,15 @@ HRESULT CRenderer::Render_Light_Result()
 	}
 
 
-
 	_float			fLightDepthFar = { 2000.f };
 	_float4x4		ViewMatrix, ProjMatrix;
-	XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(0.f, 10.f, -10.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
-	XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(120.0f), (_float)1920.f / 1080.0f, 0.1f, fLightDepthFar));
+	ViewMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW, CPipeLine::SHADOW);
+	ProjMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ, CPipeLine::SHADOW);
 
 	const LIGHT_DESC* pLightDesc = { m_pGameInstance->Get_LightDesc(g_strDirectionalTag) };
 	if (nullptr != pLightDesc)
 	{
 		_float4			vLightAmbient = { pLightDesc->vAmbient };
-
-
 
 		if (FAILED(m_pShader->Bind_Matrix("g_LightViewMatrix", &ViewMatrix)))
 			return E_FAIL;
@@ -1022,7 +1024,7 @@ HRESULT CRenderer::Render_PostProcessing_Result()
 
 	/*if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Emissive"), "g_EmissiveTexture")))
 		return E_FAIL;*/
-
+	
 		//	TEST : Bloom
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Bloom"), "g_AdditionalLightTexture")))
 		return E_FAIL;

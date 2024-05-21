@@ -10,35 +10,36 @@ BEGIN(Engine)
 class CPipeLine final : public CBase
 {
 public:
+	enum PIPELINE { CAMERA, SHADOW, PIPELINE_END };
 	enum TRANSFORMSTATE { D3DTS_VIEW, D3DTS_PROJ, D3DTS_END };
 private:
 	CPipeLine();
 	virtual ~CPipeLine() = default;
 
 public:
-	void Set_Transform(TRANSFORMSTATE eState, _fmatrix TransformMatrix) {
-		XMStoreFloat4x4(&m_TransformMatrices[eState], TransformMatrix);
+	void Set_Transform(TRANSFORMSTATE eState, _fmatrix TransformMatrix, PIPELINE ePipeLine) {
+		XMStoreFloat4x4(&m_TransformMatrices[eState][ePipeLine], TransformMatrix);
 	}
 public:
-	_matrix Get_Transform_Matrix(TRANSFORMSTATE eState) const {
-		return XMLoadFloat4x4(&m_TransformMatrices[eState]);
+	_matrix Get_Transform_Matrix(TRANSFORMSTATE eState, PIPELINE ePipeLine) const {
+		return XMLoadFloat4x4(&m_TransformMatrices[eState][ePipeLine]);
 	}
-	_float4x4 Get_Transform_Float4x4(TRANSFORMSTATE eState) const {
-		return m_TransformMatrices[eState];
+	_float4x4 Get_Transform_Float4x4(TRANSFORMSTATE eState, PIPELINE ePipeLine) const {
+		return m_TransformMatrices[eState][ePipeLine];
 	}
-	_matrix Get_Transform_Matrix_Inverse(TRANSFORMSTATE eState) const {
-		return XMLoadFloat4x4(&m_TransformInverseMatrices[eState]);
+	_matrix Get_Transform_Matrix_Inverse(TRANSFORMSTATE eState, PIPELINE ePipeLine) const {
+		return XMLoadFloat4x4(&m_TransformInverseMatrices[eState][ePipeLine]);
 	}
-	_float4x4 Get_Transform_Float4x4_Inverse(TRANSFORMSTATE eState) const {
-		return m_TransformInverseMatrices[eState];
-	}
-
-	_vector Get_CamPosition_Vector() const {
-		return XMLoadFloat4(&m_vCamPosition);
+	_float4x4 Get_Transform_Float4x4_Inverse(TRANSFORMSTATE eState, PIPELINE ePipeLine) const {
+		return m_TransformInverseMatrices[eState][ePipeLine];
 	}
 
-	_float4 Get_CamPosition_Float4() const {
-		return m_vCamPosition;
+	_vector Get_CamPosition_Vector(PIPELINE ePipeLine) const {
+		return XMLoadFloat4(&m_vCamPosition[ePipeLine]);
+	}
+
+	_float4 Get_CamPosition_Float4(PIPELINE ePipeLine) const {
+		return m_vCamPosition[ePipeLine];
 	}
 
 public:
@@ -46,9 +47,9 @@ public:
 	void Tick();
 
 private:
-	_float4x4			m_TransformMatrices[D3DTS_END];
-	_float4x4			m_TransformInverseMatrices[D3DTS_END];
-	_float4				m_vCamPosition;
+	_float4x4			m_TransformMatrices[D3DTS_END][PIPELINE_END];
+	_float4x4			m_TransformInverseMatrices[D3DTS_END][PIPELINE_END];
+	_float4				m_vCamPosition[PIPELINE_END];
 
 public:
 	static CPipeLine* Create();

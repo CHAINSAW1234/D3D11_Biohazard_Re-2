@@ -25,9 +25,17 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 
-	
 	if (FAILED(Ready_LandObject()))
 		return E_FAIL;
+
+	_float4x4		ViewMatrix, ProjMatrix;
+
+	XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(0.f, 20.f, -20.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+	XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(120.0f), (_float)g_iWinSizeX / g_iWinSizeY, 0.1f, 2000.f));
+
+	m_pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, XMLoadFloat4x4(&ViewMatrix), CPipeLine::SHADOW);
+	m_pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMLoadFloat4x4(&ProjMatrix), CPipeLine::SHADOW);
+
 	/*
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
@@ -72,7 +80,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
 		return E_FAIL;
 
-	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
+	/*LightDesc.eType = LIGHT_DESC::TYPE_POINT;
 	LightDesc.vPosition = _float4(20.f, 3.f, 20.f, 1.f);
 	LightDesc.fRange = 10.f;
 
@@ -90,7 +98,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.vAmbient = _float4(0.2f, 0.4f, 0.2f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 1.f, 0.4f, 1.f);
 	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_GARA_2"), LightDesc)))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	return S_OK;
 }

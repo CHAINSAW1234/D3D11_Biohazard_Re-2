@@ -73,32 +73,32 @@ public:
 #endif
 
 private:
-	ID3D11Device* m_pDevice = { nullptr };
-	ID3D11DeviceContext* m_pContext = { nullptr };
-	class CGameInstance* m_pGameInstance = { nullptr };
-	list<class CGameObject*>			m_RenderObjects[RENDER_END];
+	ID3D11Device*				m_pDevice = { nullptr };
+	ID3D11DeviceContext*		m_pContext = { nullptr };
+	class CGameInstance*		m_pGameInstance = { nullptr };
+	list<class CGameObject*>	m_RenderObjects[RENDER_END];
 
 private:
-	class CVIBuffer_Rect* m_pVIBuffer = { nullptr };
-	class CShader* m_pShader = { nullptr };
-	_float4x4							m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
+	class CVIBuffer_Rect*		m_pVIBuffer = { nullptr };
+	class CShader*				m_pShader = { nullptr };
+	_float4x4					m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
 
 private:
-	ID3D11DepthStencilView* m_pLightDepthDSVs[RES_END] = {};
-	SHADOW_RESOLUTION					m_eShadowResolution = { SHADOW_RESOLUTION::RES_1X };
-	_float								m_fLightDepthTargetViewWidth = { 0.f };
-	_float								m_fLightDepthTargetViewHeight = { 0.f };
+	ID3D11DepthStencilView*		m_pLightDepthDSVs[RES_END] = {};
+	SHADOW_RESOLUTION			m_eShadowResolution = { SHADOW_RESOLUTION::RES_1X };
+	_float						m_fLightDepthTargetViewWidth = { 0.f };
+	_float						m_fLightDepthTargetViewHeight = { 0.f };
 
 private:
-	_bool								m_isRadialBlurActive = { false };
-	_float2								m_vRadialBlurUV = { 0.f, 0.f };
-	_float								m_fRadialBlurAmount = { 0.f };
+	_bool						m_isRadialBlurActive = { false };
+	_float2						m_vRadialBlurUV = { 0.f, 0.f };
+	_float						m_fRadialBlurAmount = { 0.f };
 
 #ifdef _DEBUG
 private:
-	list<class CComponent*>				m_DebugComponents;
+	list<class CComponent*>		m_DebugComponents;
 
-	_bool								m_isRenderDebug = { true };
+	_bool						m_isRenderDebug = { true };
 #endif
 
 public:

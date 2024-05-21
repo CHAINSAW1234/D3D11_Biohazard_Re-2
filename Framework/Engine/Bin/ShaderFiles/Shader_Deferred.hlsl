@@ -557,17 +557,12 @@ PS_OUT_LIGHT PS_MAIN_SPOT(PS_IN In)
         Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * fSpecular;
         Out.vSpecular *= fAtt;
 
-		
-		
     }
 		
-	
-	
-
     return Out;
 }
 
-/* 최종적ㅇ으로 480000 수행되는 쉐이더. */
+/* 최종적으로 480000 수행되는 쉐이더. */
 PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
 {
     PS_OUT_PRE_POST Out = (PS_OUT_PRE_POST) 0;
@@ -627,7 +622,7 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
 
 	/* vPosition.w : 현재 내가 그릴려고 했던 픽셀의 광원기준의 깊이. */
 	/* vLightDepthDesc.x * 2000.f : 현재 픽셀을 광원기준으로  그릴려고 했던 위치에 이미 그려져있떤 광원 기준의 깊이.  */
-    if (vPosition.w - 0.001f > (vLightDepthDesc.x * g_fLightDepthFar))
+    if (vPosition.w - 0.5 > (vLightDepthDesc.x * g_fLightDepthFar))
         Out.vDiffuse = vDiffuse * (g_vLightAmbient * g_vMtrlAmbient);
 
     return Out;
@@ -685,6 +680,7 @@ PS_OUT PS_POST_PROCESSING_RESULT(PS_IN In)
     float fDstAlpha = 1.f - fSrcAlpha;
    
     
+    
     //Out.vColor = DiffuseDesc * fDstAlpha + PostprocessingDiffuseDesc * fSrcAlpha;
     //Out.vColor *= PostprocessingShadeDesc;
     Out.vColor = DiffuseDesc;
@@ -723,6 +719,10 @@ PS_OUT PS_RADIALBLUR(PS_IN In)
     {
         vector DiffuseDesc = g_DiffuseTexture.Sample(PointSampler, In.vTexcoord);
         Out.vColor = DiffuseDesc;
+        
+        if (DiffuseDesc.a == 0)
+            discard;
+
     }
     
     return Out;

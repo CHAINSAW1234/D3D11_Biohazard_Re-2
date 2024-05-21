@@ -458,60 +458,60 @@ _float CGameInstance::Compute_TimeDelta(const wstring & strTimerTag)
 	return m_pTimer_Manager->Compute_TimeDelta(strTimerTag);
 }
 
-void CGameInstance::Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix)
+void CGameInstance::Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix, CPipeLine::PIPELINE ePipeLine)
 {
 	if (nullptr == m_pPipeLine)
 		return;
 
-	m_pPipeLine->Set_Transform(eState, TransformMatrix);
+	m_pPipeLine->Set_Transform(eState, TransformMatrix, ePipeLine);
 }
 
-_matrix CGameInstance::Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState) const
+_matrix CGameInstance::Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine) const
 {
 	if (nullptr == m_pPipeLine)
 		return XMMatrixIdentity();
 
-	return m_pPipeLine->Get_Transform_Matrix(eState);
+	return m_pPipeLine->Get_Transform_Matrix(eState, ePipeLine);
 }
 
-_float4x4 CGameInstance::Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE eState) const
+_float4x4 CGameInstance::Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine) const
 {
 	if (nullptr == m_pPipeLine)
 		return _float4x4();
 
-	return m_pPipeLine->Get_Transform_Float4x4(eState);
+	return m_pPipeLine->Get_Transform_Float4x4(eState, ePipeLine);
 }
 
-_matrix CGameInstance::Get_Transform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState) const
+_matrix CGameInstance::Get_Transform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine) const
 {
 	if (nullptr == m_pPipeLine)
 		return XMMatrixIdentity();
 
-	return m_pPipeLine->Get_Transform_Matrix_Inverse(eState);
+	return m_pPipeLine->Get_Transform_Matrix_Inverse(eState, ePipeLine);
 }
 
-_float4x4 CGameInstance::Get_Transform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState) const
+_float4x4 CGameInstance::Get_Transform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine) const
 {
 	if (nullptr == m_pPipeLine)
 		return _float4x4();
 
-	return m_pPipeLine->Get_Transform_Float4x4_Inverse(eState);
+	return m_pPipeLine->Get_Transform_Float4x4_Inverse(eState, ePipeLine);
 }
 
-_vector CGameInstance::Get_CamPosition_Vector() const
+_vector CGameInstance::Get_CamPosition_Vector(CPipeLine::PIPELINE ePipeLine) const
 {
 	if (nullptr == m_pPipeLine)
 		return XMVectorZero();
 
-	return m_pPipeLine->Get_CamPosition_Vector();
+	return m_pPipeLine->Get_CamPosition_Vector(ePipeLine);
 }
 
-_float4 CGameInstance::Get_CamPosition_Float4() const
+_float4 CGameInstance::Get_CamPosition_Float4(CPipeLine::PIPELINE ePipeLine) const
 {
 	if (nullptr == m_pPipeLine)
 		return _float4();
 
-	return m_pPipeLine->Get_CamPosition_Float4();
+	return m_pPipeLine->Get_CamPosition_Float4(ePipeLine);
 }
 
 

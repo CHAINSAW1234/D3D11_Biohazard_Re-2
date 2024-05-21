@@ -59,8 +59,6 @@ using namespace DirectX;
 
 #pragma comment (lib, "fmod_vc.lib")
 
-
-
 #include <algorithm>
 #include <string>
 #include <vector>

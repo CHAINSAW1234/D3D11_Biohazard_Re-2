@@ -32,6 +32,7 @@ public: /* For.Input_Device */
 	POINT	Get_MouseCurPos();
 	POINT	Get_MouseDeltaPos();
 	void	Set_MouseCurPos(POINT ptPos);
+
 public: /* For.Renderer */
 	HRESULT Add_RenderGroup(CRenderer::RENDERGROUP eRenderGroup, class CGameObject* pRenderObject);
 	void Set_Shadow_Resolution(CRenderer::SHADOW_RESOLUTION eResolution);
@@ -63,13 +64,13 @@ public: /* For.Timer_Manager */
 	_float Compute_TimeDelta(const wstring& strTimerTag);
 
 public: /* For.PipeLine */
-	void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
-	_matrix Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState) const;
-	_float4x4 Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE eState) const;
-	_matrix Get_Transform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState) const;
-	_float4x4 Get_Transform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState) const;
-	_vector Get_CamPosition_Vector() const;
-	_float4 Get_CamPosition_Float4() const;
+	void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA);
+	_matrix Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
+	_float4x4 Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
+	_matrix Get_Transform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
+	_float4x4 Get_Transform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
+	_vector Get_CamPosition_Vector(CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
+	_float4 Get_CamPosition_Float4(CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
 
 public: /* For.Light_Manager */
 	const LIGHT_DESC* Get_LightDesc(const wstring& strLightTag);
