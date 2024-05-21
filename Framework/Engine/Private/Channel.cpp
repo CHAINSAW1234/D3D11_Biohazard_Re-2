@@ -129,59 +129,8 @@ void CChannel::Invalidate_TransformationMatrix(const vector<class CBone*>& Bones
 	Bones[m_iBoneIndex]->Set_TransformationMatrix(TransformationMatrix);
 }
 
-void CChannel::Invalidate_TransformationMatrix_LinearInterpolation(const vector<class CBone*>& Bones, _float fAccLinearInterpolation, _float fTotalLinearTime, const vector<KEYFRAME>& LastKeyFrames, _int iRootBoneIndex, _bool isAutoRotate)
+void CChannel::Invalidate_TransformationMatrix_LinearInterpolation(const vector<class CBone*>& Bones, _float fAccLinearInterpolation, _float fTotalLinearTime, const vector<KEYFRAME>& LastKeyFrames)
 {
-	////	마지막 키프레임을 얻어온다.
-	////	선형 보간의 경우 첫프레임
-	//KEYFRAME		FirstKeyFrame = m_KeyFrames.front();
-	//KEYFRAME		LastKeyFrame = LastKeyFrames[m_iBoneIndex];
-	//_vector			vScale, vRotation, vTranslation;
-
-	//if (iRootBoneIndex != -1)
-	//{
-	//	if (m_iBoneIndex == iRootBoneIndex)
-	//	{
-	//		XMStoreFloat4(&LastKeyFrame.vRotation, XMQuaternionIdentity());
-	//	}
-	//}
-
-	////	Ratio :: 비율 => 선형보간하기위한 수치
-	////	(트랙의 현재 위치 - 현재 키프레임의 시작 시간)
-	////	-------------------------------------------------------------------------
-	////	(다음 키프레임의 시작시간 - 현재 키프레임의 시작 시간) == 현재 키프레임의 구간 
-
-	////	==>>	현재 키프레임 구간의 재생 정도를 얻어낸다
-	//_float		fRatio = fAccLinearInterpolation / fTotalLinearTime;
-
-	////	현재 키프레임과 다음 키프레임 사이의 위치에서 위치의 진행 정도에 따라 다음 키프레임과 선형 보간을 한다. 
-	////	XMVectorLerp == > Result = V0 + t * (V1 - V0);
-	//vScale = XMVectorLerp(XMLoadFloat3(&LastKeyFrame.vScale),
-	//	XMLoadFloat3(&FirstKeyFrame.vScale), fRatio);
-
-	////	쿼터니언은 XMQuaternionSlerp 함수를 이용하여 선형보간을 진행한다.
-	//vRotation = XMQuaternionSlerp(XMLoadFloat4(&LastKeyFrame.vRotation),
-	//	XMLoadFloat4(&FirstKeyFrame.vRotation), fRatio);
-
-	//vTranslation = XMVectorLerp(XMLoadFloat3(&LastKeyFrame.vTranslation),
-	//	XMLoadFloat3(&FirstKeyFrame.vTranslation), fRatio);
-
-	//_matrix			TransformationMatrix = XMMatrixAffineTransformation(
-	//	vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSetW(vTranslation, 1.f));
-
-	//Bones[m_iBoneIndex]->Set_TransformationMatrix(TransformationMatrix);
-
-	////////////////////////////////
-	////////////////////////////////
-	////////////////////////////////
-	///	리워크					
-	////////////////////////////////
-	////////////////////////////////
-	////////////////////////////////
-	//	기존 버전은 사이에 공백 기간을 만들어서 보간
-	//	이 버전은 애니메이션 진행하면서 선형보간 시간동안 추가로 보간
-
-	//	마지막 키프레임을 얻어온다.
-	//	선형 보간의 경우 첫프레임
 	KEYFRAME		FirstKeyFrame = m_KeyFrames.front();
 	KEYFRAME		LinearStartKeyFrame = LastKeyFrames[m_iBoneIndex];
 	_vector			vScale, vRotation, vTranslation;
@@ -189,17 +138,6 @@ void CChannel::Invalidate_TransformationMatrix_LinearInterpolation(const vector<
 	_matrix			TransformationMatrix = { Bones[m_iBoneIndex]->Get_TrasformationMatrix() };
 
 	XMMatrixDecompose(&vScale, &vRotation, &vTranslation, TransformationMatrix);
-
-	if (iRootBoneIndex != -1)
-	{
-		if (m_iBoneIndex == iRootBoneIndex)
-		{
-			//	자동으로 회전 시키기가 꺼져있으면 작동함 => 외부에서 별도로 회전값을 적용하는경우...
-			//	아닌경우는 기본적으로 회전값을 함께 먹음
-			if (false == isAutoRotate)
-				XMStoreFloat4(&LinearStartKeyFrame.vRotation, XMQuaternionIdentity());
-		}
-	}
 
 	_float		fRatio = fAccLinearInterpolation / fTotalLinearTime;
 
@@ -212,12 +150,8 @@ void CChannel::Invalidate_TransformationMatrix_LinearInterpolation(const vector<
 	vRotation = XMQuaternionSlerp(XMLoadFloat4(&LinearStartKeyFrame.vRotation),
 		vRotation, fRatio);
 
-	if (m_iBoneIndex != iRootBoneIndex)
-	{
-		vTranslation = XMVectorLerp(XMLoadFloat3(&LinearStartKeyFrame.vTranslation),
-			vTranslation, fRatio);
-	}
-
+	vTranslation = XMVectorLerp(XMLoadFloat3(&LinearStartKeyFrame.vTranslation),
+		vTranslation, fRatio);
 
 	TransformationMatrix = XMMatrixAffineTransformation(
 		vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, XMVectorSetW(vTranslation, 1.f));

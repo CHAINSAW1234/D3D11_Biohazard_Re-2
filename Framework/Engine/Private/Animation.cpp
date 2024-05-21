@@ -94,6 +94,7 @@ void CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector
 		}
 
 		m_fTrackPosition = 0.f;
+		*pFirstTick = true;
 	}
 
 	for (_uint i = 0; i < m_iNumChannels; ++i)
@@ -103,11 +104,11 @@ void CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector
 	}
 }
 
-void CAnimation::Invalidate_TransformationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, const vector<class CBone*>& Bones, const vector<KEYFRAME>& LastKeyFrames, _int iRootBoneIndex, _bool isAutoRotate)
+void CAnimation::Invalidate_TransformationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, const vector<class CBone*>& Bones, const vector<KEYFRAME>& LastKeyFrames)
 {
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
-		m_Channels[i]->Invalidate_TransformationMatrix_LinearInterpolation(Bones, fAccLinearInterpolation, fTotalLinearTime, LastKeyFrames, iRootBoneIndex, isAutoRotate);
+		m_Channels[i]->Invalidate_TransformationMatrix_LinearInterpolation(Bones, fAccLinearInterpolation, fTotalLinearTime, LastKeyFrames);
 	}
 }
 

@@ -69,13 +69,14 @@ void CPlayer::Tick(_float fTimeDelta)
 	if (PRESSING == m_pGameInstance->Get_KeyState('U'))
 	{
 		auto Look = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-		Look.x = -Look.x;
-		Look.z = -Look.z;
 		m_pGameInstance->Move_CCT(Look, fTimeDelta,0);
 	}
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('J'))
 	{
+		auto Look = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
+		Look.z = -Look.z;
+		Look.x = -Look.x;
 		m_pGameInstance->Move_CCT(m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK), fTimeDelta,0);
 		m_eState |= STATE_RUN;
 		if (m_eState & STATE_IDLE)

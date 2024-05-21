@@ -155,7 +155,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	m_strLoadingText = TEXT("모델를(을) 로딩 중 입니다.");
 
 	_matrix			TransformMatrix = { XMMatrixIdentity() };
-	//TransformMatrix = XMMatrixRotationY(XMConvertToRadians(90.f));
+	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 
 
 	/* Prototype_Component_police_holl */
@@ -167,19 +167,19 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* Prototype_Component_Model_Boss_MantisShrimp */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonBody"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonBody.fbx",
-			TransformMatrix))))
+			LeonTransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_Boss_MantisShrimp */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonFace"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonFace.fbx",
-			TransformMatrix))))
+			LeonTransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_Boss_MantisShrimp */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonHair"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonHair.fbx",
-			TransformMatrix))))
+			LeonTransformMatrix))))
 		return E_FAIL;
 
 

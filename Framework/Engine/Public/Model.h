@@ -18,10 +18,7 @@ private:
 	virtual ~CModel() = default;
 
 public:
-	_uint Get_NumMeshes() const {
-		return m_iNumMeshes;
-	}
-
+	_uint Get_NumMeshes() const { return m_iNumMeshes; }
 	class CBone* Get_BonePtr(const _char* pBoneName) const;
 
 	_bool isFinished() {
@@ -50,16 +47,20 @@ public:	/* For.Animation */
 	/* For.Bone */
 	void Set_RootBone(string strBoneTag);			//	모든본을 초기화 => 루트본은 하나다 가정후 찾은 본을 루트본으로 등록
 
+private:
+	void Apply_RootMotion_Rotation(class CTransform* pTransform, _fvector vQuaternion);
+	void Apply_RootMotion_Translation(class CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection, _bool isActiveRotation, _fvector vQuaternion = XMQuaternionIdentity());
+
 public:
 	void Set_CombinedMatrix(string strBoneTag, _fmatrix CombinedMatrix);
 	void Set_Parent_CombinedMatrix_Ptr(string strBoneTag, _float4x4* pParentMatrix);
 	void Set_Surbodinate(string strBoneTag, _bool isSurbodinate);
 
 public:
-	vector<string>				Get_BoneNames();
-	vector<_float4>				Get_Translations();
-	set<string>					Get_MeshTags();
-	list<_uint>					Get_MeshIndices(const string& strMeshTag);		//	이름이 같은 메쉬들이 각각의 칸에있을수있으므로 인덱스들을 컨테이너에 담아서 반환한다.
+	vector<string> Get_BoneNames();
+	vector<_float4>	Get_Translations();
+	set<string>	Get_MeshTags();
+	list<_uint>	Get_MeshIndices(const string& strMeshTag);		//	이름이 같은 메쉬들이 각각의 칸에있을수있으므로 인덱스들을 컨테이너에 담아서 반환한다.
 
 public:
 	MATERIAL_DESC Get_Mesh_MaterialDesc(_uint iMeshIndex);
@@ -87,7 +88,7 @@ public:
 	HRESULT Play_Animation_RootMotion(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
 	HRESULT Render(_uint iMeshIndex);
 
-	void	Static_Mesh_Cooking();
+	void Static_Mesh_Cooking();
 
 public:
 	const _float4x4* Get_CombinedMatrix(const string& strBoneTag);
@@ -107,9 +108,6 @@ public:	/* For.KeyFrame */
 	void Set_TrackPosition(_float fTrackPosition);
 	const vector<_uint>& Get_CurrentKeyFrameIndices();
 
-	//public:	/* For.Test */
-	//	_bool Compare(CModel* pCompareModel);
-
 public:
 	const MODEL_TYPE& Get_ModelType() { return m_eModelType; }
 
@@ -117,7 +115,7 @@ private:	/* For.Linear Interpolation */
 	void Motion_Changed();
 
 private:	/* For.Linear Interpolation */
-	void Update_LinearInterpolation(_float fTimeDelta, _int iRootIndex = -1);
+	void Update_LinearInterpolation(_float fTimeDelta);
 	void Reset_LinearInterpolation();
 
 private:	/* For.Linear_Interpolation */

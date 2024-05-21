@@ -47,10 +47,18 @@ void CCamera::Late_Tick(_float fTimeDelta)
 
 HRESULT CCamera::Bind_PipeLines()
 {	
-	/* dx9 : 고정기능렌더링파이프라인. 현재 카메라에서 설정할 수 있는 행렬들을 장치에 바인딩하여 추후 렌더릴ㅇ되는 정점들에게 알아서 곱할 수 있도록 한다. */
-	/* dx11 : 사용자 정의 렌더링 파이프라인(ㅅㅖ이더). */
-	m_pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
-	m_pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(m_fFovy, m_fAspect, m_fNear, m_fFar));	
+	_vector			vUp = { m_pTransformCom->Get_State_Vector(CTransform::STATE_UP) };
+	_vector			vLook = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
+	_vector			vPos = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+
+	_matrix			ViewMatrix = { XMMatrixLookAtLH(vPos, vLook + vPos, XMVectorSet(0.f, 1.f, 0.f, 0.f))};
+	_matrix			ProjMatrix = { XMMatrixPerspectiveFovLH(m_fFovy, m_fAspect, m_fNear, m_fFar) };
+
+	XMStoreFloat4x4(&m_ViewMatrix, ViewMatrix);
+	XMStoreFloat4x4(&m_ProjMatrix, ProjMatrix);
+
+	m_pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMLoadFloat4x4(&m_ProjMatrix));
+	m_pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, XMLoadFloat4x4(&m_ViewMatrix));
 
 	return S_OK;
 }
