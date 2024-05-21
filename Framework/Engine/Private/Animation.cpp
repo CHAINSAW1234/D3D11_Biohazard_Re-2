@@ -112,6 +112,66 @@ void CAnimation::Invalidate_TransformationMatrix_LinearInterpolation(_float fAcc
 	}
 }
 
+vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _bool isLoop, _uint iNumBones, set<_uint>& IncludedBoneIndices, _bool* pFirstTick)
+{
+	m_isFinished = false;
+
+	if (m_fTrackPosition == 0.f)
+	{
+		*pFirstTick = true;
+	}
+	else
+	{
+		*pFirstTick = false;
+	}
+
+	m_fTrackPosition += m_fTickPerSecond * fTimeDelta;
+
+	if (m_fDuration <= m_fTrackPosition)
+	{
+		if (false == isLoop)
+		{
+			m_isFinished = true;
+			return vector<_float4x4>();
+		}
+
+		m_fTrackPosition = 0.f;
+		*pFirstTick = true;
+	}
+
+	vector<_float4x4>			TransformationMatrices;
+	TransformationMatrices.resize(iNumBones);
+
+	for (auto& TransformationMatrix : TransformationMatrices)
+	{
+		XMStoreFloat4x4(&TransformationMatrix, XMMatrixIdentity());
+	}
+
+	for (_uint i = 0; i < m_iNumChannels; ++i)
+	{
+		/* 이 뼈의 상태행렬을 만들어서 CBone의 TransformationMatrix를 바꿔라. */
+		_uint				iBoneIndex = {0};
+		_float4x4			TransformationFloat4x4 = { m_Channels[i]->Compute_TransformationMatrix(m_fTrackPosition, &m_CurrentKeyFrameIndices[i], &iBoneIndex) };
+		TransformationMatrices[iBoneIndex] = TransformationFloat4x4;
+
+		IncludedBoneIndices.insert(iBoneIndex);
+	}
+
+	return TransformationMatrices;
+}
+
+vector<_float4x4> CAnimation::Compute_TransfromationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, vector<_float4x4>& TransformationMatrices, _uint iNumBones, const vector<KEYFRAME>& LastKeyFrames)
+{
+	for (_uint i = 0; i < m_iNumChannels; ++i)
+	{
+		_uint		iBoneIndex = { 0 };
+		_float4x4			TransformationFloat4x4 = { m_Channels[i]->Compute_TransformationMatrix_LinearInterpolation(TransformationMatrices, fAccLinearInterpolation, fTotalLinearTime, &iBoneIndex, LastKeyFrames) };
+		TransformationMatrices[iBoneIndex] = TransformationFloat4x4;
+	}
+
+	return TransformationMatrices;
+}
+
 void CAnimation::Set_TickPerSec(_float fTickPerSec)
 {
 	if (0.f >= fTickPerSec)

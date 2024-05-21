@@ -50,13 +50,13 @@ public:	/* For.Animation */
 	void Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec);
 
 	/* For.RootAnimaition ActiveControll */
-	_bool Is_Active_RootMotion_XZ(_uint iAnimIndex);
-	_bool Is_Active_RootMotion_Y(_uint iAnimIndex);
-	_bool Is_Active_RootMotion_Rotation(_uint iAnimIndex);
+	_bool Is_Active_RootMotion_XZ();
+	_bool Is_Active_RootMotion_Y();
+	_bool Is_Active_RootMotion_Rotation();
 
-	void Active_RootMotion_XZ(_uint iAnimIndex, _bool isActive);
-	void Active_RootMotion_Y(_uint iAnimIndex, _bool isActive);
-	void Active_RootMotion_Rotation(_uint iAnimIndex, _bool isActive);
+	void Active_RootMotion_XZ(_bool isActive);
+	void Active_RootMotion_Y(_bool isActive);
+	void Active_RootMotion_Rotation(_bool isActive);
 	void Set_RootBone(string strBoneTag);			//	모든본을 초기화 => 루트본은 하나다 가정후 찾은 본을 루트본으로 등록
 
 public:	/*For Upper-Lower Separation*/
@@ -150,6 +150,12 @@ private:
 	_uint						m_iNumMeshes = { 0 };
 	vector<class CMesh*>		m_Meshes;
 
+private:	/* For.RootMotion */
+	_bool							m_isRootMotion_XZ = { false };
+	_bool							m_isRootMotion_Y = { false };
+	_bool							m_isRootMotion_Rotation = { false };
+
+private:
 	_uint						m_iNumMaterials = { 0 };
 	vector<MESH_MATERIAL>		m_Materials;
 

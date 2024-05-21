@@ -111,20 +111,20 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	if (Temp)
 	{
-		m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, true);
+		m_pModelCom->Active_RootMotion_Rotation(true);
 	}
 	else
 	{
-		m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, false);
+		m_pModelCom->Active_RootMotion_Rotation(false);
 	}
 
 	if (Temp2)
 	{
-		m_pModelCom->Active_RootMotion_XZ(iAnimIndex, true);
+		m_pModelCom->Active_RootMotion_XZ(true);
 	}
 	else
 	{
-		m_pModelCom->Active_RootMotion_XZ(iAnimIndex, false);
+		m_pModelCom->Active_RootMotion_XZ(false);
 	}
 
 	m_pModelCom->Set_TickPerSec(iAnimIndex, 40.f);
@@ -132,9 +132,10 @@ void CBody_Player::Tick(_float fTimeDelta)
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
 	AnimDesc.iAnimIndex = iAnimIndex;
 	AnimDesc.isLoop = true;
+	AnimDesc.fWeight = 1.f;
 	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 	list<_uint>		iBoneIndices;
-	for (_uint i = 0; i < 61; ++i)
+	for (_uint i = 0; i < iNumBones; ++i)
 	{
 		iBoneIndices.emplace_back(i);
 	}
@@ -143,8 +144,9 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	AnimDesc.iAnimIndex = 1;
 	AnimDesc.isLoop = true;
+	AnimDesc.fWeight = 0.f;
 	iBoneIndices.clear();
-	for (_uint i = 61; i < iNumBones; ++i)
+	for (_uint i = 0; i < iNumBones; ++i)
 	{
 		iBoneIndices.emplace_back(i);
 	}
@@ -155,7 +157,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	m_pModelCom->Set_RootBone("root");
 	//m_pModelCom->Active_RootMotion_XZ(iAnimIndex, true);
-	m_pModelCom->Active_RootMotion_Y(iAnimIndex, false);
+	m_pModelCom->Active_RootMotion_Y(false);
 	//m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, true);
 }
 
