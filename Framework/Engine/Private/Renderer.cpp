@@ -31,6 +31,10 @@ HRESULT CRenderer::Initialize()
 	if (FAILED(SetUp_LightDSV()))
 		return E_FAIL;
 
+	if (FAILED(SetUp_LightDSV_Point()))
+		return E_FAIL;
+
+
 #ifdef _DEBUG
 
 	if (FAILED(SetUp_Debug()))
@@ -61,6 +65,9 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_Shadow()))
 		return E_FAIL;
 
+	if (FAILED(Render_Shadow_Point()))
+		return E_FAIL;
+
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
 
@@ -73,20 +80,20 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 	
-	 if (FAILED(Render_Ambient()))
-		return E_FAIL;
+	 //if (FAILED(Render_Ambient()))
+		//return E_FAIL;
 
-	if (FAILED(Render_Distortion()))
-		return E_FAIL;
+	//if (FAILED(Render_Distortion()))
+	//	return E_FAIL;
 
-	if (FAILED(Render_Emissive()))
-		return E_FAIL;
+	//if (FAILED(Render_Emissive()))
+	//	return E_FAIL;
 
-	if (FAILED(Render_Bloom()))
-		return E_FAIL;
+	//if (FAILED(Render_Bloom()))
+	//	return E_FAIL;
 
-	if (FAILED(Render_PostProcessing()))
-		return E_FAIL;
+	//if (FAILED(Render_PostProcessing()))
+	//	return E_FAIL;
 
 	if (FAILED(Render_PostProcessing_Result()))
 		return E_FAIL;
@@ -97,20 +104,20 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
 
-	if (FAILED(Render_Filter()))
-		return E_FAIL;
+	//if (FAILED(Render_Filter()))
+	//	return E_FAIL;
 
-	if (FAILED(Render_UI()))
-		return E_FAIL;
+	//if (FAILED(Render_UI()))
+	//	return E_FAIL;
 
-	if (FAILED(Render_Font()))
-		return E_FAIL;
+	//if (FAILED(Render_Font()))
+	//	return E_FAIL;
 
-	if (FAILED(Render_Overwrap()))
-		return E_FAIL;
+	//if (FAILED(Render_Overwrap()))
+	//	return E_FAIL;
 
-	if (FAILED(Render_OverwrapFont()))
-		return E_FAIL;
+	//if (FAILED(Render_OverwrapFont()))
+	//	return E_FAIL;
 
 #ifdef _DEBUG
 
@@ -149,6 +156,8 @@ HRESULT CRenderer::SetUp_RenderTargets()
 	if (FAILED(SetUp_RenderTargets_LightAcc(ViewportDesc)))
 		return E_FAIL;
 	if (FAILED(SetUp_RenderTargets_Shadow(ViewportDesc)))
+		return E_FAIL;
+	if (FAILED(SetUp_RenderTargets_Shadow_Point(ViewportDesc)))
 		return E_FAIL;
 	if (FAILED(SetUp_RenderTargets_Pre_PostProcessing(ViewportDesc)))
 		return E_FAIL;
@@ -200,6 +209,10 @@ HRESULT CRenderer::SetUp_MRTs()
 	///* MRT_Shadow_8X : 객체들의 특정 정보를 받아오기위한 렌더타겟들이다. */
 	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow_8X"), TEXT("Target_LightDepth_8X"))))
 	//	return E_FAIL;
+
+		/* MRT_Shadow_1X : 객체들의 특정 정보를 받아오기위한 렌더타겟들이다. */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow_Point"), TEXT("Target_LightDepth_Point"))))
+		return E_FAIL;
 
 	/* MRT_LightResult : 빛연산까지 혼합한 그림을 버퍼로 저장 */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Pre_PostProcessing"), TEXT("Target_Pre_Post_Diffuse"))))
@@ -290,6 +303,52 @@ HRESULT CRenderer::SetUp_LightDSV()
 	return S_OK;
 }
 
+HRESULT CRenderer::SetUp_LightDSV_Point()
+{
+	_uint				iNumViewports = { 1 };
+	D3D11_VIEWPORT		ViewportDesc{};
+
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	m_fLightDepthTargetViewCubeWidth = ViewportDesc.Width;
+
+	// For. Shadow_Points
+	ID3D11Texture2D* pDepthStencilTexture = nullptr;
+
+	D3D11_TEXTURE2D_DESC	TextureDesc;
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	TextureDesc.Width = static_cast<_uint>(ViewportDesc.Width);
+	TextureDesc.Height = static_cast<_uint>(ViewportDesc.Width);
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = m_iArraySize * 6;							// 최대 깊이 버퍼 개수 : 광원 개수에 따라 다름 여기서는 4, 큐브 맵의 경우 6의 배수로 지정
+	TextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+
+	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL
+		/*| D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE*/;
+	TextureDesc.CPUAccessFlags = 0;
+	TextureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
+		return E_FAIL;
+
+	/* RenderTarget */
+	/* ShaderResource */
+	/* DepthStencil */
+
+	if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pLightDepthDSV_Point)))
+		return E_FAIL;
+
+	Safe_Release(pDepthStencilTexture);
+
+
+	return S_OK;
+}
+
 HRESULT CRenderer::SetUp_Components()
 {
 	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
@@ -369,6 +428,13 @@ if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_LightDepth_8X"), stati
 	return E_FAIL;*/
 
 	return S_OK;
+}
+
+HRESULT CRenderer::SetUp_RenderTargets_Shadow_Point(const D3D11_VIEWPORT& ViewportDesc)
+{
+	/* For.Target_LightDepth */
+	if (FAILED(m_pGameInstance->Add_RenderTarget_Cube(TEXT("Target_LightDepth_Point"), static_cast<_uint>(ViewportDesc.Width), m_iArraySize, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
 }
 
 HRESULT CRenderer::SetUp_RenderTargets_Pre_PostProcessing(const D3D11_VIEWPORT& ViewportDesc)
@@ -801,6 +867,43 @@ HRESULT CRenderer::Render_Shadow()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_Shadow_Point()
+{
+	_uint				iNumViewports = { 1 };
+	D3D11_VIEWPORT		ViewportDesc{};
+
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+	_float		fOriginViewPortWidth = { ViewportDesc.Width };
+	_float		fOriginViewPortHeight = { ViewportDesc.Height };
+
+	Set_ViewPort_Size(m_fLightDepthTargetViewCubeWidth, m_fLightDepthTargetViewCubeWidth);
+
+	/*
+	XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(0.f, 10.f, -10.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+	XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(120.0f), (_float)g_iWinSizeX / g_iWinSizeY, 0.1f, 2000.f));
+
+	*/
+
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow_Point"), m_pLightDepthDSV_Point)))
+		return E_FAIL;
+	
+
+	for (auto& pRenderObject : m_RenderObjects[RENDER_SHADOW_POINT])
+	{
+		if (nullptr != pRenderObject)
+			pRenderObject->Render_LightDepth_Cube();
+		Safe_Release(pRenderObject);
+	}
+	m_RenderObjects[RENDER_SHADOW_POINT].clear();
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
+
+	Set_ViewPort_Size(fOriginViewPortWidth, fOriginViewPortHeight);
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_Distortion()
 {
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Distortion"))))
@@ -1223,6 +1326,7 @@ void CRenderer::Free()
 
 	for (auto& pDsv : m_pLightDepthDSVs)
 		Safe_Release(pDsv);
+	Safe_Release(m_pLightDepthDSV_Point);
 
 #ifdef _DEBUG
 

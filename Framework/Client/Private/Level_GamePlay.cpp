@@ -36,6 +36,13 @@ HRESULT CLevel_GamePlay::Initialize()
 	m_pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, XMLoadFloat4x4(&ViewMatrix), CPipeLine::SHADOW);
 	m_pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMLoadFloat4x4(&ProjMatrix), CPipeLine::SHADOW);
 
+	CPipeLine::FRUSTUM_DESC FrustumDesc = {};
+	FrustumDesc.fAspect = (_float)g_iWinSizeX / g_iWinSizeY;
+	FrustumDesc.fFovy = XMConvertToRadians(120.0f);
+	FrustumDesc.fFar = 2000.f;
+	FrustumDesc.fNear = 0.1f;
+
+	m_pGameInstance->Set_Frustum(FrustumDesc, CPipeLine::SHADOW);
 	/*
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
@@ -54,6 +61,8 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_Particle_Red"))))
 			return;
 	}
+	
+	
 }
 
 HRESULT CLevel_GamePlay::Render()
@@ -80,9 +89,9 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
 		return E_FAIL;
 
-	/*LightDesc.eType = LIGHT_DESC::TYPE_POINT;
+	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
 	LightDesc.vPosition = _float4(20.f, 3.f, 20.f, 1.f);
-	LightDesc.fRange = 10.f;
+	LightDesc.fRange = 100.f;
 
 	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
@@ -98,7 +107,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.vAmbient = _float4(0.2f, 0.4f, 0.2f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 1.f, 0.4f, 1.f);
 	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_GARA_2"), LightDesc)))
-		return E_FAIL;*/
+		return E_FAIL;
 
 	return S_OK;
 }

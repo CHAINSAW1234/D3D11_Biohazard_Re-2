@@ -44,6 +44,39 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixel
 	return S_OK;
 }
 
+HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+{
+	D3D11_TEXTURE2D_DESC	TextureDesc;
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	TextureDesc.Width = iSize;
+	TextureDesc.Height = iSize;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 6* iArraySize;
+	TextureDesc.Format = ePixelFormat;
+
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+
+	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	TextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	TextureDesc.CPUAccessFlags = 0;
+	TextureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pTexture2D)))
+		return E_FAIL;
+
+	if (FAILED(m_pDevice->CreateRenderTargetView(m_pTexture2D, nullptr, &m_pRTV)))
+		return E_FAIL;
+
+	if (FAILED(m_pDevice->CreateShaderResourceView(m_pTexture2D, nullptr, &m_pSRV)))
+		return E_FAIL;
+
+	m_vClearColor = vClearColor;
+
+	return S_OK;
+}
+
 HRESULT CRenderTarget::Clear()
 {
 	m_pContext->ClearRenderTargetView(m_pRTV, (_float*)&m_vClearColor);
@@ -106,6 +139,19 @@ CRenderTarget * CRenderTarget::Create(ID3D11Device * pDevice, ID3D11DeviceContex
 	CRenderTarget*		pInstance = new CRenderTarget(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize(iSizeX, iSizeY, ePixelFormat, vClearColor)))
+	{
+		MSG_BOX(TEXT("Failed to Created : CRenderTarget"));
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CRenderTarget* CRenderTarget::Create_Cube(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+{
+	CRenderTarget* pInstance = new CRenderTarget(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Cube(iSize, iArraySize, ePixelFormat, vClearColor)))
 	{
 		MSG_BOX(TEXT("Failed to Created : CRenderTarget"));
 		Safe_Release(pInstance);

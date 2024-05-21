@@ -17,6 +17,8 @@ public:
 		_float	fFar = { 0.0f };
 	}CAMERA_DESC;
 
+
+
 protected:
 	CCamera(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CCamera(const CCamera& rhs);	
@@ -27,6 +29,7 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
+
 
 protected:
 	_float			m_fFovy = { 0.0f };

@@ -466,6 +466,14 @@ void CGameInstance::Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix Tra
 	m_pPipeLine->Set_Transform(eState, TransformMatrix, ePipeLine);
 }
 
+void CGameInstance::Set_Frustum(CPipeLine::FRUSTUM_DESC FrustumDesc, CPipeLine::PIPELINE ePipeLine)
+{
+	if (nullptr == m_pPipeLine)
+		return;
+
+	m_pPipeLine->Set_Frustum(FrustumDesc, ePipeLine);
+}
+
 _matrix CGameInstance::Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine) const
 {
 	if (nullptr == m_pPipeLine)
@@ -512,6 +520,14 @@ _float4 CGameInstance::Get_CamPosition_Float4(CPipeLine::PIPELINE ePipeLine) con
 		return _float4();
 
 	return m_pPipeLine->Get_CamPosition_Float4(ePipeLine);
+}
+
+CPipeLine::FRUSTUM_DESC CGameInstance::Get_Frustum(CPipeLine::PIPELINE ePipeLine) const
+{
+	if (nullptr == m_pPipeLine)
+		return CPipeLine::FRUSTUM_DESC();
+
+	return m_pPipeLine->Get_Frustum(ePipeLine);
 }
 
 
@@ -566,6 +582,11 @@ HRESULT CGameInstance::Render_Font(const wstring & strFontTag, const wstring & s
 HRESULT CGameInstance::Add_RenderTarget(const wstring & strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4 & vClearColor)
 {
 	return m_pTarget_Manager->Add_RenderTarget(strRenderTargetTag, iSizeX, iSizeY, ePixelFormat, vClearColor);
+}
+
+HRESULT CGameInstance::Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+{
+	return m_pTarget_Manager->Add_RenderTarget_Cube(strRenderTargetTag, iSize, iArraySize, ePixelFormat, vClearColor);
 }
 
 HRESULT CGameInstance::Add_MRT(const wstring & strMRTTag, const wstring & strRenderTargetTag)

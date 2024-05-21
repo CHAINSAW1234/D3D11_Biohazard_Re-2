@@ -12,7 +12,7 @@ class CRenderer final : public CBase
 public:
 	enum RENDERGROUP {
 		RENDER_PRIORITY,
-		RENDER_SHADOW,
+		RENDER_SHADOW, RENDER_SHADOW_POINT, RENDER_SHADOW_SPOT,
 		RENDER_FIELD,
 		RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_NON_POSTPROCESSING,
 		RENDER_AMBIENT, RENDER_DISTORTION, RENDER_EMISSIVE,
@@ -44,6 +44,7 @@ private:
 	HRESULT SetUp_RenderTargets();
 	HRESULT SetUp_MRTs();
 	HRESULT SetUp_LightDSV();
+	HRESULT SetUp_LightDSV_Point();
 	HRESULT SetUp_Components();
 	HRESULT SetUp_Matrices();
 
@@ -51,6 +52,7 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT SetUp_RenderTargets_GameObjects(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT SetUp_RenderTargets_LightAcc(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT SetUp_RenderTargets_Shadow(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT SetUp_RenderTargets_Shadow_Point(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT SetUp_RenderTargets_Pre_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT SetUp_RenderTargets_Ambient(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT SetUp_RenderTargets_Distortion(const D3D11_VIEWPORT& ViewportDesc);
@@ -58,7 +60,6 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT SetUp_RenderTargets_Bloom(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT SetUp_RenderTargets_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT SetUp_RenderTargets_PostProcessing_Result(const D3D11_VIEWPORT& ViewportDesc);
-
 
 #ifdef _DEBUG
 	HRESULT SetUp_Debug();
@@ -88,6 +89,11 @@ private:
 	SHADOW_RESOLUTION			m_eShadowResolution = { SHADOW_RESOLUTION::RES_1X };
 	_float						m_fLightDepthTargetViewWidth = { 0.f };
 	_float						m_fLightDepthTargetViewHeight = { 0.f };
+
+private:
+	_uint					m_iArraySize = { 4 };		// 동시에 적용하는 최대 점 광원 개수 지정
+	ID3D11DepthStencilView* m_pLightDepthDSV_Point = { nullptr };		// 점 광원용
+	_float					m_fLightDepthTargetViewCubeWidth = { 0.f };
 
 private:
 	_bool						m_isRadialBlurActive = { false };
@@ -121,6 +127,7 @@ private:
 
 private:
 	HRESULT Render_Shadow();
+	HRESULT Render_Shadow_Point();
 
 private:
 	HRESULT Render_Distortion();
