@@ -41,7 +41,7 @@ public:
 	/* For.Binary_Load*/
 	HRESULT Initialize(const ANIM_DESC& AnimDesc);
 	void Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _bool* pFirsltTick);
-	void Invalidate_TransformationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, const vector<class CBone*>& Bones, const vector<KEYFRAME>& LastKeyFrames, _int iRootBoneIndex = -1, _bool isAutoRotate = false);
+	void Invalidate_TransformationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, const vector<class CBone*>& Bones, const vector<KEYFRAME>& LastKeyFrames);
 
 public:
 	const vector<class CChannel*>& Get_Channels() {

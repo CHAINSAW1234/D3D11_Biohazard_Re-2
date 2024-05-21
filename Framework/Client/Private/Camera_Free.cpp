@@ -57,16 +57,15 @@ void CCamera_Free::Tick(_float fTimeDelta)
 		POINT		ptDeltaPos = { m_pGameInstance->Get_MouseDeltaPos() };
 		_vector		vUp = { XMVectorSet(0.f, 1.f, 0.f, 0.f) };
 		_vector		vRight = { m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT) };
-		_float		fMouseSensor = { m_fMouseSensor };
 
 		if ((_long)0 != ptDeltaPos.x)
 		{
-			m_pTransformCom->Turn(vUp, fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor);
+			m_pTransformCom->Turn(vUp, fTimeDelta * (_float)ptDeltaPos.x * m_fMouseSensor);
 		}
 
 		if ((_long)0 != ptDeltaPos.y)
 		{
-			m_pTransformCom->Turn(vRight, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
+			m_pTransformCom->Turn(vRight, fTimeDelta * (_float)ptDeltaPos.y * m_fMouseSensor);
 		}
 
 		POINT ptPos = {};

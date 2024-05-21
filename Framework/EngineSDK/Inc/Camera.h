@@ -36,6 +36,7 @@ protected:
 
 protected:
 	_float4x4		m_ProjMatrix;
+	_float4x4		m_ViewMatrix;
 
 protected:
 	HRESULT Bind_PipeLines();

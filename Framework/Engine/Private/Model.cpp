@@ -275,6 +275,55 @@ HRESULT CModel::Play_Animation_Separation(CTransform* pTransform, _float fTimeDe
 	return S_OK;
 }
 
+void CModel::Apply_RootMotion_Rotation(CTransform* pTransform, _fvector vQuaternion)
+{
+	_vector			vPreQuaternion = { XMLoadFloat4(&m_vPreQuaternion) };
+	_vector			vCurrentQuaternion = { vQuaternion };
+
+	// 이전 쿼터니언의 역쿼터니언 구하기
+	_vector			vPreQuaternionInv = { XMQuaternionInverse(vPreQuaternion) };
+
+	// 이전 쿼터니언의 역쿼터니언과 현재쿼터니언의 곱 => 합쿼터니언
+	_vector			vQuaternionDifference = { XMQuaternionNormalize(XMQuaternionMultiply(vPreQuaternionInv, vCurrentQuaternion)) };
+
+	_matrix			RotationMatrix = { XMMatrixRotationQuaternion(vQuaternionDifference) };
+	_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
+	_vector			vPosition = { WorldMatrix.r[CTransform::STATE_POSITION] };
+	WorldMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+
+	_matrix			ResultMatrix = { XMMatrixMultiply(RotationMatrix, WorldMatrix) };
+
+	ResultMatrix.r[CTransform::STATE_POSITION] = vPosition;
+	pTransform->Set_WorldMatrix(ResultMatrix);
+
+	XMStoreFloat4(&m_vPreQuaternion, vCurrentQuaternion);
+}
+
+void CModel::Apply_RootMotion_Translation(CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection, _bool isActiveRotation, _fvector vQuaternion)
+{
+	_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
+	_vector			vTranslationLocal = { vTranslation };
+
+	_vector			vCurrentMoveDirectionLocal = { vTranslationLocal - XMVectorSetW(XMLoadFloat3(&m_vPreTranslationLocal), 1.f) };
+
+	if (true == isActiveRotation)
+	{
+		_vector			vCurrentQuaternion = { vQuaternion };
+		_vector			vCurrentQuaternionInv = { XMQuaternionNormalize(XMQuaternionInverse(vCurrentQuaternion)) };
+		_matrix			RoatationMatrix = { XMMatrixRotationQuaternion(vCurrentQuaternionInv) };
+
+		vCurrentMoveDirectionLocal = XMVector3TransformNormal(vCurrentMoveDirectionLocal, RoatationMatrix);
+	}
+
+	_vector			vCurrentMoveDirectionWorld;
+
+	vCurrentMoveDirectionWorld = { XMVector3TransformNormal(vCurrentMoveDirectionLocal, XMLoadFloat4x4(&m_TransformationMatrix)) };
+	vCurrentMoveDirectionWorld = { XMVector3TransformNormal(vCurrentMoveDirectionWorld, WorldMatrix) };
+
+	XMStoreFloat3(pMovedDirection, vCurrentMoveDirectionWorld);
+	XMStoreFloat3(&m_vPreTranslationLocal, vTranslationLocal);
+}
+
 void CModel::Set_CombinedMatrix(string strBoneTag, _fmatrix CombinedMatrix)
 {
 	_int			iBoneIndex = { Find_BoneIndex(strBoneTag) };
@@ -540,48 +589,8 @@ _float3 CModel::Invalidate_BonesCombinedMatix_Translation(_int iRootIndex)
 
 _float4x4 CModel::Invalidate_BonesCombinedMatix_TranslationMatrix(_int iRootIndex)
 {
-	/*_matrix			ResultMatrix = XMMatrixIdentity();
-	_matrix			ParentsMatrix;
-	vector<_uint>	ParentsIndices;
-
-	Compute_RootParentsIndicies(iRootIndex, ParentsIndices);
-
-	list<_uint>		RevParentsIndices;
-	for (auto iIndex : ParentsIndices)
-		RevParentsIndices.push_front(iIndex);
-
-	for (auto iIndex : RevParentsIndices)
-	{
-		ParentsMatrix = XMLoadFloat4x4(&m_Bones[iIndex]->Invalidate_CombinedTransformationMatrix_RootMotion_WorldMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix)));
-
-		ResultMatrix = ResultMatrix * ParentsMatrix;
-	}
-
-	_uint		iIndex = { 0 };
-	for (auto& pBone : m_Bones)
-	{
-		_bool		isCheck = { false };
-		for (_uint iRootIndex : ParentsIndices)
-		{
-			if (iIndex == iRootIndex)
-			{
-				isCheck = true;
-			}
-		}
-
-		if (false == isCheck)
-			pBone->Invalidate_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix));
-
-		++iIndex;
-	}
-
-	_float4x4 ResultFloat4x4;
-
-	XMStoreFloat4x4(&ResultFloat4x4, ResultMatrix);
-
-	return  ResultFloat4x4;*/
-
-	_float4x4		ResultMatrix;
+	_float4x4		ResultMatrix{};
+	XMStoreFloat4x4(&ResultMatrix, XMMatrixIdentity());
 
 	_uint			iindex = { 0 };
 	for (auto& pBone : m_Bones)
@@ -671,6 +680,12 @@ HRESULT CModel::Play_Animation_RootMotion(CTransform* pTransform, _float fTimeDe
 	_bool		isFirstTick = { false };
 	m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix(fTimeDelta, m_Bones, m_isLoop, &isFirstTick);
 
+	Update_LinearInterpolation(fTimeDelta);
+	if (true == m_isLinearInterpolation)
+	{
+		m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix_LinearInterpolation(m_fAccLinearInterpolation, m_fTotalLinearTime, m_Bones, m_LastKeyFrames);
+	}
+
 	//		TODO:		추 후 선형보간 혹은 모션 블렌딩으로 대체하여 삽입하기
 	_bool		isActiveXZ = { m_Animations[m_iCurrentAnimIndex]->Is_Active_RootMotion_XZ() };
 	_bool		isActiveY = { m_Animations[m_iCurrentAnimIndex]->Is_Active_RootMotion_Y() };
@@ -706,57 +721,17 @@ HRESULT CModel::Play_Animation_RootMotion(CTransform* pTransform, _float fTimeDe
 					m_vPreQuaternion = vQuaternion;
 				}
 
-				_vector			vPreQuaternion = { XMLoadFloat4(&m_vPreQuaternion) };
-				_vector			vCurrentQuaternion = { XMLoadFloat4(&vQuaternion) };
-
-				// 이전 쿼터니언의 역쿼터니언 구하기
-				_vector			vPreQuaternionInv = { XMQuaternionInverse(vPreQuaternion) };
-
-				// 이전 쿼터니언의 역쿼터니언과 현재쿼터니언의 곱 => 합쿼터니언
-				_vector			vQuaternionDiffrence = { XMQuaternionNormalize(XMQuaternionMultiply(vPreQuaternionInv, vCurrentQuaternion)) };
-
-				_matrix			RotationMatrix = { XMMatrixRotationQuaternion(vQuaternionDiffrence) };
-				_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
-				_vector			vPosition = { WorldMatrix.r[CTransform::STATE_POSITION] };
-				WorldMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-
-				_matrix			ResultMatrix = { XMMatrixMultiply(RotationMatrix, WorldMatrix) };
-
-				ResultMatrix.r[CTransform::STATE_POSITION] = vPosition;
-				pTransform->Set_WorldMatrix(ResultMatrix);
-
-				m_vPreQuaternion = vQuaternion;
+				Apply_RootMotion_Rotation(pTransform, XMLoadFloat4(&vQuaternion));
 			}
 
 			if (true == isActiveXZ || true == isActiveY)
 			{
-				_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
-
-				_vector			vTranslationLocal = { XMLoadFloat4(&vTranslation) };
-
-				vTranslationLocal = XMVector4Transform(vTranslationLocal, XMLoadFloat4x4(&m_TransformationMatrix));				
-
-				/* 첫 틱인 경우 이전 이동량을 현재 결과 이동량으로 넣어준다 => 이동이 않일어나게끔 */
 				if (true == isFirstTick)
 				{
-					XMStoreFloat3(&m_vPreTranslationLocal, vTranslationLocal);
+					XMStoreFloat3(&m_vPreTranslationLocal, XMLoadFloat4(&vTranslation));
 				}
 
-				_vector			vCurrentMoveDirectionLocal = { vTranslationLocal - XMVectorSetW(XMLoadFloat3(&m_vPreTranslationLocal), 1.f) };
-
-				if (true == isActiveRotation)
-				{
-					_vector			vCurrentQuaternion = { XMLoadFloat4(&vQuaternion) };
-					_vector			vCurrentQuaternionInv = { XMQuaternionNormalize(XMQuaternionInverse(vCurrentQuaternion)) };
-					_matrix			RoatationMatrix = { XMMatrixRotationQuaternion(vCurrentQuaternionInv) };
-
-					vCurrentMoveDirectionLocal = XMVector3TransformNormal(vCurrentMoveDirectionLocal, RoatationMatrix);
-				}
-
-				_vector			vCurrentMoveDirectionWorld = { XMVector3TransformNormal(vCurrentMoveDirectionLocal, WorldMatrix) };				
-
-				XMStoreFloat3(pMovedDirection, vCurrentMoveDirectionWorld);
-				XMStoreFloat3(&m_vPreTranslationLocal, vTranslationLocal);
+				Apply_RootMotion_Translation(pTransform, XMLoadFloat4(&vTranslation), pMovedDirection, isActiveRotation, XMLoadFloat4(&vQuaternion));
 			}
 		}
 
@@ -902,7 +877,7 @@ void CModel::Motion_Changed()
 	}
 }
 
-void CModel::Update_LinearInterpolation(_float fTimeDelta, _int iRootIndex)
+void CModel::Update_LinearInterpolation(_float fTimeDelta)
 {
 	if (false == m_isLinearInterpolation)
 		return;

@@ -25,7 +25,7 @@ public:
 	/* For.Binary_Load*/
 	HRESULT Initialize(const CHANNEL_DESC& ChannelDesc);
 	void Invalidate_TransformationMatrix(const vector<class CBone*>& Bones, _float fTrackPosition, _uint* pCurrentKeyFrameIndex);
-	void Invalidate_TransformationMatrix_LinearInterpolation(const vector<class CBone*>& Bones, _float fAccLinearInterpolation, _float fTotalLinearTime, const vector<KEYFRAME>& LastKeyFrames, _int iRootBoneIndex, _bool isAutoRotate = false);
+	void Invalidate_TransformationMatrix_LinearInterpolation(const vector<class CBone*>& Bones, _float fAccLinearInterpolation, _float fTotalLinearTime, const vector<KEYFRAME>& LastKeyFrames);
 
 public:
 	const vector<KEYFRAME>& Get_KeyFrames() {
