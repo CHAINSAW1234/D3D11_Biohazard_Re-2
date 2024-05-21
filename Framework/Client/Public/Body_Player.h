@@ -11,6 +11,7 @@ public:
 	typedef struct tagBodyDesc: public CPartObject::PARTOBJECT_DESC
 	{
 		const _ubyte*		pState;
+		_float3*			pRootTranslation = { nullptr };
 	}BODY_DESC;
 
 private:
@@ -32,8 +33,9 @@ private:
 	CShader*				m_pShaderCom = { nullptr };	
 	CCollider*				m_pColliderCom = { nullptr };
 
+	_float3*				m_pRootTranslation = { nullptr };
+
 	const _ubyte*			m_pState;
-	
 private:
 	HRESULT Add_Components();
 	HRESULT Bind_ShaderResources();

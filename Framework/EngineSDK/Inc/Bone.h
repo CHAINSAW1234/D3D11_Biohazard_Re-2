@@ -57,7 +57,13 @@ public:
 	//	합행렬 전부 반환
 	_float4x4 Invalidate_CombinedTransformationMatrix_RootMotion_WorldMatrix(const vector<CBone*>& Bones, _fmatrix ParentsTransformatrixMatrix);
 
-	void Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBone*>& Bones, _fmatrix ParentsCombinedMatrix, _float4* pTranslation, _float4* pQuaternion);
+	void Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBone*>& Bones, _float4x4 TransformationMatrix, _bool isActiveXZ, _bool isActiveY, _float4* pTranslation, _float4* pQuaternion);
+
+private:
+	_vector Decompose_Translation(_bool isActiveXZ, _bool isActiveY, _fvector vTranslation, _float4* pTranslation);
+	_vector Decompose_Quaternion(_fvector vQuaternion, _float4* pQuaternion);
+
+public:
 	_bool Compare_Name(const _char* pBoneName) {
 		return !strcmp(m_szName, pBoneName);
 	}
@@ -70,6 +76,8 @@ public:
 	void Set_Parent_CombinedMatrix_Ptr(_float4x4* pParentMatrix);
 	void Set_Surbodinate(_bool isSurbodinate) { m_isSurbordinate = isSurbodinate; }
 	void Set_RootBone(_bool isRootBone);
+
+	_bool Is_RootBone() { return m_isRootBone; }
 
 private:
 	_char					m_szName[MAX_PATH] = { "" };

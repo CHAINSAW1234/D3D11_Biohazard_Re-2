@@ -34,7 +34,21 @@ public:	/* For.Animation */
 	_uint Get_NumAnims() { return m_iNumAnimations; }
 	_uint Get_CurrentAnimIndex() { return m_iCurrentAnimIndex; }
 
+
+	/* For.Controll AnimSpeed */
 	void Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec);
+
+	/* For.RootAnimaition ActiveControll */
+	_bool Is_Active_RootMotion_XZ(_uint iAnimIndex);
+	_bool Is_Active_RootMotion_Y(_uint iAnimIndex);
+	_bool Is_Active_RootMotion_Rotation(_uint iAnimIndex);
+
+	void Active_RootMotion_XZ(_uint iAnimIndex, _bool isActive);
+	void Active_RootMotion_Y(_uint iAnimIndex, _bool isActive);
+	void Active_RootMotion_Rotation(_uint iAnimIndex, _bool isActive);
+
+	/* For.Bone */
+	void Set_RootBone(string strBoneTag);			//	모든본을 초기화 => 루트본은 하나다 가정후 찾은 본을 루트본으로 등록
 
 public:
 	void Set_CombinedMatrix(string strBoneTag, _fmatrix CombinedMatrix);
@@ -65,25 +79,21 @@ private:
 	_float4x4 Invalidate_BonesCombinedMatix_TranslationMatrix(_int iRootIndex = -1);
 
 public:
-
-
-public:
 	HRESULT Bind_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 	HRESULT Bind_ShaderResource_Texture(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eTextureType);
 	HRESULT Bind_ShaderResource_MaterialDesc(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
-	//	루트모션 아닌 경우
+
 	HRESULT Play_Animation(_float fTimeDelta);
-	//	루트모션인 경우
-	HRESULT Play_Animation_RootMotion_Translation(class CTransform* pTransform, const string& strRootTag, _float fTimeDelta, _bool isAutoRotate = false);
-	HRESULT Play_Animation_RootMotion_WorldMatrix(class CTransform* pTransform, const string& strRootTag, _float fTimeDelta);
+	HRESULT Play_Animation_RootMotion(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
 	HRESULT Render(_uint iMeshIndex);
+
 	void	Static_Mesh_Cooking();
 
 public:
 	const _float4x4* Get_CombinedMatrix(const string& strBoneTag);
 
 private:
-	_uint Find_BoneIndex(const string& strBoneTag);
+	_int Find_BoneIndex(const string& strBoneTag);
 	void Compute_RootParentsIndicies(_uint iRootIndex, vector<_uint>& ParentsIndices);
 
 	void Reset_PreTranslation_Translation(_int iRootIndex);
@@ -103,7 +113,7 @@ public:	/* For.KeyFrame */
 public:
 	const MODEL_TYPE& Get_ModelType() { return m_eModelType; }
 
-private: /* For.Linear Interpolation */
+private:	/* For.Linear Interpolation */
 	void Motion_Changed();
 
 private:	/* For.Linear Interpolation */
@@ -140,7 +150,8 @@ private:
 	_float4x4					m_MeshBoneMatrices[512];
 
 private:	/* For.Linear_Interpolation */
-	_float3						m_vPreTranslationDir = { 0.f, 0.f, 0.f };
+	_float3						m_vPreTranslationLocal = { 0.f, 0.f, 0.f };
+	_float4						m_vPreQuaternion = {_float4(0.f,0.f,0.f,0.f)};
 	_float4x4					m_PreTranslationMatrix;
 	wstring						m_strRootTag = { TEXT("") };
 	_float						m_fTotalLinearTime = { 0.f };

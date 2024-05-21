@@ -155,6 +155,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	m_strLoadingText = TEXT("모델를(을) 로딩 중 입니다.");
 
 	_matrix			TransformMatrix = { XMMatrixIdentity() };
+	//TransformMatrix = XMMatrixRotationY(XMConvertToRadians(90.f));
 
 
 	/* Prototype_Component_police_holl */

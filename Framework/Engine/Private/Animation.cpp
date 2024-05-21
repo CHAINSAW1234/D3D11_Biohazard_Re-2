@@ -24,11 +24,6 @@ CAnimation::CAnimation(const CAnimation& rhs)
 	m_CurrentKeyFrameIndices.resize(m_iNumChannels);
 }
 
-void CAnimation::Reset_Finish()
-{
-	m_isFinished = false;
-}
-
 HRESULT CAnimation::Initialize(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices)
 {
 	strcpy_s(m_szName, pAIAnimation->mName.data);

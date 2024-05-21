@@ -25,6 +25,10 @@ HRESULT CBody_Player::Initialize(void * pArg)
 
 	pDesc->fSpeedPerSec = 10.f;
 	pDesc->fRotationPerSec = XMConvertToRadians(90.0f);
+	m_pRootTranslation = pDesc->pRootTranslation;
+
+	if (nullptr == m_pRootTranslation)
+		return E_FAIL;
 
 	m_pState = pDesc->pState;
 
@@ -35,6 +39,8 @@ HRESULT CBody_Player::Initialize(void * pArg)
 		return E_FAIL;	
 
 	m_pModelCom->Set_Animation(0, true);	
+
+	m_pModelCom->Set_RootBone("root");
 
 	return S_OK;
 }
@@ -65,13 +71,44 @@ void CBody_Player::Tick(_float fTimeDelta)
 			iAnimIndex = 0;
 	}
 
-	if (PRESSING == m_pGameInstance->Get_KeyState('W'))
+	static bool Temp = false;
+	static bool Temp2 = false;
+	if (UP == m_pGameInstance->Get_KeyState('P'))
 	{
-		iAnimIndex = 50;
+		Temp = !Temp;
+	}
+
+	if (UP == m_pGameInstance->Get_KeyState('O'))
+	{
+		Temp2 = !Temp2;
+	}
+
+	if (Temp)
+	{
+		m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, true);
+	}
+	else
+	{
+		m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, false);
+	}
+
+	if (Temp2)
+	{
+		m_pModelCom->Active_RootMotion_XZ(iAnimIndex, true);
+	}
+	else
+	{
+		m_pModelCom->Active_RootMotion_XZ(iAnimIndex, false);
 	}
 
 	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 	m_pModelCom->Set_Animation(iAnimIndex, true);
+	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
+
+	m_pModelCom->Set_RootBone("root");
+	//m_pModelCom->Active_RootMotion_XZ(iAnimIndex, true);
+	m_pModelCom->Active_RootMotion_Y(iAnimIndex, false);
+//	m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, true);
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)
@@ -79,7 +116,10 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	//	m_pModelCom->Play_Animation(fTimeDelta);
-	m_pModelCom->Play_Animation_RootMotion_Translation(m_pParentsTransform, "root", fTimeDelta, false);
+	//	m_pModelCom->Play_Animation_RootMotion_Translation(m_pParentsTransform, "root", fTimeDelta, false);
+
+	m_pModelCom->Play_Animation_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);	
+	//	m_pModelCom->Play_Animation(fTimeDelta);	
 	
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);

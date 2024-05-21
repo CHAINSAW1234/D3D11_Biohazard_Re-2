@@ -24,6 +24,211 @@ void CTransform::Set_Scaled(_float fScaleX, _float fScaleY, _float fScaleZ)
 		
 }
 
+_float4x4 CTransform::Get_WorldMatrix_Pure()
+{
+	_matrix identity = XMMatrixIdentity(); // XMMATRIX 항등 행렬 생성
+	_float4x4 RotationMatrix;
+	XMStoreFloat4x4(&RotationMatrix, identity); // XMMATRIX를 XMFLOAT4X4로 변환
+
+	_float3 vLenght_1 = _float3(m_WorldMatrix._11, m_WorldMatrix._12, m_WorldMatrix._13);
+	XMVECTOR vector = XMLoadFloat3(&vLenght_1);
+	XMVECTOR length = XMVector3Length(vector);
+	float Length1;
+	XMStoreFloat(&Length1, length);
+
+	RotationMatrix._11 = m_WorldMatrix._11 / Length1;
+	RotationMatrix._12 = m_WorldMatrix._12 / Length1;
+	RotationMatrix._13 = m_WorldMatrix._13 / Length1;
+
+	_float3 vLenght_2 = _float3(m_WorldMatrix._21, m_WorldMatrix._22, m_WorldMatrix._23);
+	XMVECTOR vector2 = XMLoadFloat3(&vLenght_2);
+	XMVECTOR length2 = XMVector3Length(vector2);
+	float Length2;
+	XMStoreFloat(&Length2, length2);
+	RotationMatrix._21 = m_WorldMatrix._21 / Length2;
+	RotationMatrix._22 = m_WorldMatrix._22 / Length2;
+	RotationMatrix._23 = m_WorldMatrix._23 / Length2;
+
+	_float3 vLenght_3 = _float3(m_WorldMatrix._31, m_WorldMatrix._32, m_WorldMatrix._33);
+	XMVECTOR vector3 = XMLoadFloat3(&vLenght_3);
+	XMVECTOR length3 = XMVector3Length(vector3);
+	float Length3;
+	XMStoreFloat(&Length3, length);
+	RotationMatrix._31 = m_WorldMatrix._31 / Length3;
+	RotationMatrix._32 = m_WorldMatrix._32 / Length3;
+	RotationMatrix._33 = m_WorldMatrix._33 / Length3;
+
+	RotationMatrix._41 = m_WorldMatrix._41;
+	RotationMatrix._42 = m_WorldMatrix._42;
+	RotationMatrix._43 = m_WorldMatrix._43;
+
+	return RotationMatrix;
+}
+
+_matrix CTransform::Get_WorldMatrix_Pure_Mat()
+{
+	_matrix identity = XMMatrixIdentity(); // XMMATRIX 항등 행렬 생성
+	_float4x4 RotationMatrix;
+	XMStoreFloat4x4(&RotationMatrix, identity); // XMMATRIX를 XMFLOAT4X4로 변환
+
+	_float3 vLenght_1 = _float3(m_WorldMatrix._11, m_WorldMatrix._12, m_WorldMatrix._13);
+	XMVECTOR vector = XMLoadFloat3(&vLenght_1);
+	XMVECTOR length = XMVector3Length(vector);
+	float Length1;
+	XMStoreFloat(&Length1, length);
+
+	RotationMatrix._11 = m_WorldMatrix._11 / Length1;
+	RotationMatrix._12 = m_WorldMatrix._12 / Length1;
+	RotationMatrix._13 = m_WorldMatrix._13 / Length1;
+
+	_float3 vLenght_2 = _float3(m_WorldMatrix._21, m_WorldMatrix._22, m_WorldMatrix._23);
+	XMVECTOR vector2 = XMLoadFloat3(&vLenght_2);
+	XMVECTOR length2 = XMVector3Length(vector2);
+	float Length2;
+	XMStoreFloat(&Length2, length2);
+	RotationMatrix._21 = m_WorldMatrix._21 / Length2;
+	RotationMatrix._22 = m_WorldMatrix._22 / Length2;
+	RotationMatrix._23 = m_WorldMatrix._23 / Length2;
+
+	_float3 vLenght_3 = _float3(m_WorldMatrix._31, m_WorldMatrix._32, m_WorldMatrix._33);
+	XMVECTOR vector3 = XMLoadFloat3(&vLenght_3);
+	XMVECTOR length3 = XMVector3Length(vector3);
+	float Length3;
+	XMStoreFloat(&Length3, length);
+	RotationMatrix._31 = m_WorldMatrix._31 / Length3;
+	RotationMatrix._32 = m_WorldMatrix._32 / Length3;
+	RotationMatrix._33 = m_WorldMatrix._33 / Length3;
+
+	RotationMatrix._41 = m_WorldMatrix._41;
+	RotationMatrix._42 = m_WorldMatrix._42;
+	RotationMatrix._43 = m_WorldMatrix._43;
+
+	return XMLoadFloat4x4(&RotationMatrix);
+}
+
+_float4x4 CTransform::Get_RotationMatrix_Pure()
+{
+	_matrix identity = XMMatrixIdentity(); // XMMATRIX 항등 행렬 생성
+	_float4x4 RotationMatrix;
+	XMStoreFloat4x4(&RotationMatrix, identity); // XMMATRIX를 XMFLOAT4X4로 변환
+
+	_float3 vLenght_1 = _float3(m_WorldMatrix._11, m_WorldMatrix._12, m_WorldMatrix._13);
+	XMVECTOR vector = XMLoadFloat3(&vLenght_1);
+	XMVECTOR length = XMVector3Length(vector);
+	float Length1;
+	XMStoreFloat(&Length1, length);
+
+	RotationMatrix._11 = m_WorldMatrix._11 / Length1;
+	RotationMatrix._12 = m_WorldMatrix._12 / Length1;
+	RotationMatrix._13 = m_WorldMatrix._13 / Length1;
+
+	_float3 vLenght_2 = _float3(m_WorldMatrix._21, m_WorldMatrix._22, m_WorldMatrix._23);
+	XMVECTOR vector2 = XMLoadFloat3(&vLenght_2);
+	XMVECTOR length2 = XMVector3Length(vector2);
+	float Length2;
+	XMStoreFloat(&Length2, length2);
+	RotationMatrix._21 = m_WorldMatrix._21 / Length2;
+	RotationMatrix._22 = m_WorldMatrix._22 / Length2;
+	RotationMatrix._23 = m_WorldMatrix._23 / Length2;
+
+	_float3 vLenght_3 = _float3(m_WorldMatrix._31, m_WorldMatrix._32, m_WorldMatrix._33);
+	XMVECTOR vector3 = XMLoadFloat3(&vLenght_3);
+	XMVECTOR length3 = XMVector3Length(vector3);
+	float Length3;
+	XMStoreFloat(&Length3, length);
+	RotationMatrix._31 = m_WorldMatrix._31 / Length3;
+	RotationMatrix._32 = m_WorldMatrix._32 / Length3;
+	RotationMatrix._33 = m_WorldMatrix._33 / Length3;
+
+	return RotationMatrix;
+}
+
+_matrix CTransform::Get_RotationMatrix_Pure_Mat()
+{
+	_matrix identity = XMMatrixIdentity(); // XMMATRIX 항등 행렬 생성
+	_float4x4 RotationMatrix;
+	XMStoreFloat4x4(&RotationMatrix, identity); // XMMATRIX를 XMFLOAT4X4로 변환
+
+	_float3 vLenght_1 = _float3(m_WorldMatrix._11, m_WorldMatrix._12, m_WorldMatrix._13);
+	XMVECTOR vector = XMLoadFloat3(&vLenght_1);
+	XMVECTOR length = XMVector3Length(vector);
+	float Length1;
+	XMStoreFloat(&Length1, length);
+
+	RotationMatrix._11 = m_WorldMatrix._11 / Length1;
+	RotationMatrix._12 = m_WorldMatrix._12 / Length1;
+	RotationMatrix._13 = m_WorldMatrix._13 / Length1;
+
+	_float3 vLenght_2 = _float3(m_WorldMatrix._21, m_WorldMatrix._22, m_WorldMatrix._23);
+	XMVECTOR vector2 = XMLoadFloat3(&vLenght_2);
+	XMVECTOR length2 = XMVector3Length(vector2);
+	float Length2;
+	XMStoreFloat(&Length2, length2);
+	RotationMatrix._21 = m_WorldMatrix._21 / Length2;
+	RotationMatrix._22 = m_WorldMatrix._22 / Length2;
+	RotationMatrix._23 = m_WorldMatrix._23 / Length2;
+
+	_float3 vLenght_3 = _float3(m_WorldMatrix._31, m_WorldMatrix._32, m_WorldMatrix._33);
+	XMVECTOR vector3 = XMLoadFloat3(&vLenght_3);
+	XMVECTOR length3 = XMVector3Length(vector3);
+	float Length3;
+	XMStoreFloat(&Length3, length);
+	RotationMatrix._31 = m_WorldMatrix._31 / Length3;
+	RotationMatrix._32 = m_WorldMatrix._32 / Length3;
+	RotationMatrix._33 = m_WorldMatrix._33 / Length3;
+
+	return XMLoadFloat4x4(&RotationMatrix);
+}
+
+void CTransform::Set_RotationMatrix_Pure(_float4x4 Mat)
+{
+	_matrix RotationMatrix;
+	_float4 Position = Get_State_Float4(STATE::STATE_POSITION);
+	_float3 Scale = Get_Scaled();
+	m_WorldMatrix = Mat;
+	m_WorldMatrix._11 *= Scale.x;
+	m_WorldMatrix._12 *= Scale.x;
+	m_WorldMatrix._13 *= Scale.x;
+
+	m_WorldMatrix._21 *= Scale.x;
+	m_WorldMatrix._22 *= Scale.x;
+	m_WorldMatrix._23 *= Scale.x;
+
+	m_WorldMatrix._31 *= Scale.x;
+	m_WorldMatrix._32 *= Scale.x;
+	m_WorldMatrix._33 *= Scale.x;
+
+	m_WorldMatrix._41 = Position.x;
+	m_WorldMatrix._42 = Position.y;
+	m_WorldMatrix._43 = Position.z;
+	m_WorldMatrix._44 = 1.f;
+}
+
+void CTransform::Set_RotationMatrix_Pure(_matrix Mat)
+{
+	_float4x4 RotationMatrix;
+	XMStoreFloat4x4(&RotationMatrix, Mat);
+	_float4 Position = Get_State_Float4(STATE::STATE_POSITION);
+	_float3 Scale = Get_Scaled();
+	m_WorldMatrix = RotationMatrix;
+	m_WorldMatrix._11 *= Scale.x;
+	m_WorldMatrix._12 *= Scale.x;
+	m_WorldMatrix._13 *= Scale.x;
+
+	m_WorldMatrix._21 *= Scale.x;
+	m_WorldMatrix._22 *= Scale.x;
+	m_WorldMatrix._23 *= Scale.x;
+
+	m_WorldMatrix._31 *= Scale.x;
+	m_WorldMatrix._32 *= Scale.x;
+	m_WorldMatrix._33 *= Scale.x;
+
+	m_WorldMatrix._41 = Position.x;
+	m_WorldMatrix._42 = Position.y;
+	m_WorldMatrix._43 = Position.z;
+	m_WorldMatrix._44 = 1.f;
+}
+
 HRESULT CTransform::Initialize_Prototype()
 {
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
