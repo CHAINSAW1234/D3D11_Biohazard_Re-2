@@ -61,7 +61,16 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//Upper 13
 	//Lower 33
 	
-	m_pColliderCom->Tick(XMLoadFloat4x4(&m_WorldMatrix));
+	_matrix         WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+
+	_vector         vLook = { WorldMatrix.r[CTransform::STATE_LOOK] };
+	_vector         vPosition = { WorldMatrix.r[CTransform::STATE_POSITION] };
+
+	vPosition += XMVector3Normalize(vLook) * 3.f;
+
+	WorldMatrix.r[CTransform::STATE_POSITION] = vPosition;
+
+	m_pColliderCom->Tick(WorldMatrix);
 	
 	static _uint iAnimIndex = { 0 };
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_UP))
@@ -126,8 +135,8 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	//	m_pModelCom->Play_Animation_RootMotion_Translation(m_pParentsTransform, "root", fTimeDelta, false);
 
 	static bool Temp = false;
-	if(Temp == false)
- 		m_pModelCom->Play_Animation_Separation(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	//if(Temp == false)
+		m_pModelCom->Play_Animation_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 
 	Temp = true;
 	//	m_pModelCom->Play_Animation(fTimeDelta);	

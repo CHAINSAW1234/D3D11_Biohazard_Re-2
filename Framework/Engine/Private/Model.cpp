@@ -741,6 +741,13 @@ HRESULT CModel::Play_Animation_RootMotion(CTransform* pTransform, _float fTimeDe
 		}
 	}
 
+	m_Animations[m_iCurrentAnimIndex+3]->Invalidate_TransformationMatrix(fTimeDelta, m_Bones, m_isLoop, &isFirstTick);
+
+	for (int i = 0; i < m_Bones_Upper.size(); ++i)
+	{
+		m_Bones_Upper[i]->Invalidate_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix));
+	}
+
 	return S_OK;
 }
 
