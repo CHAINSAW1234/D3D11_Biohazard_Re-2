@@ -34,7 +34,18 @@ HRESULT CHair_Player::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pModelCom->Set_Animation(0, true);
+	CModel::ANIM_PLAYING_DESC		AnimDesc;
+	AnimDesc.iAnimIndex = 0;
+	AnimDesc.isLoop = true;
+	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
+	list<_uint>		iBoneIndices;
+	for (_uint i = 0; i < iNumBones; ++i)
+	{
+		iBoneIndices.emplace_back(i);
+	}
+	AnimDesc.TargetBoneIndices = iBoneIndices;
+
+	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
 
 	return S_OK;
 }
@@ -55,7 +66,7 @@ void CHair_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animation(fTimeDelta);
+	m_pModelCom->Play_Animations(fTimeDelta);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);

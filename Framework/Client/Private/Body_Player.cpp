@@ -38,7 +38,17 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;	
 
-	m_pModelCom->Set_Animation(0, true);	
+	/*CModel::ANIM_PLAYING_DESC		AnimDesc;
+	AnimDesc.iAnimIndex = 0;
+	AnimDesc.isLoop = true;
+	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
+	list<_uint>		iBoneIndices;
+	for (_uint i = 0; i < iNumBones; ++i)
+	{
+		iBoneIndices.emplace_back(i);
+	}
+	AnimDesc.TargetBoneIndices = iBoneIndices;
+	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);*/
 
 	m_pModelCom->Set_RootBone("root");
 
@@ -117,9 +127,31 @@ void CBody_Player::Tick(_float fTimeDelta)
 		m_pModelCom->Active_RootMotion_XZ(iAnimIndex, false);
 	}
 
-	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
-	m_pModelCom->Set_Animation(iAnimIndex, true);
-	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
+	m_pModelCom->Set_TickPerSec(iAnimIndex, 40.f);
+
+	CModel::ANIM_PLAYING_DESC		AnimDesc;
+	AnimDesc.iAnimIndex = iAnimIndex;
+	AnimDesc.isLoop = true;
+	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
+	list<_uint>		iBoneIndices;
+	for (_uint i = 0; i < 61; ++i)
+	{
+		iBoneIndices.emplace_back(i);
+	}
+	AnimDesc.TargetBoneIndices = iBoneIndices;
+	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
+
+	AnimDesc.iAnimIndex = 1;
+	AnimDesc.isLoop = true;
+	iBoneIndices.clear();
+	for (_uint i = 61; i < iNumBones; ++i)
+	{
+		iBoneIndices.emplace_back(i);
+	}
+	AnimDesc.TargetBoneIndices = iBoneIndices;
+	m_pModelCom->Set_Animation_Blend(AnimDesc, 1);
+
+	//	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 
 	m_pModelCom->Set_RootBone("root");
 	//m_pModelCom->Active_RootMotion_XZ(iAnimIndex, true);
@@ -136,7 +168,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 
 	static bool Temp = false;
 	//if(Temp == false)
-		m_pModelCom->Play_Animation_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+		m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 
 	Temp = true;
 	//	m_pModelCom->Play_Animation(fTimeDelta);	

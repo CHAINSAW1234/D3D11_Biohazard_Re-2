@@ -265,8 +265,8 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	//		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
 	//}
 
-	if (m_Controller)
-		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
+	//	if (m_Controller)
+	//		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
 
 	//auto Pos = m_Controller->getPosition();
 	//// 현재 글로벌 포즈 가져오기

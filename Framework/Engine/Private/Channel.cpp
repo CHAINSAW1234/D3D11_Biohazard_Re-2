@@ -131,7 +131,6 @@ void CChannel::Invalidate_TransformationMatrix(const vector<class CBone*>& Bones
 
 void CChannel::Invalidate_TransformationMatrix_LinearInterpolation(const vector<class CBone*>& Bones, _float fAccLinearInterpolation, _float fTotalLinearTime, const vector<KEYFRAME>& LastKeyFrames)
 {
-	KEYFRAME		FirstKeyFrame = m_KeyFrames.front();
 	KEYFRAME		LinearStartKeyFrame = LastKeyFrames[m_iBoneIndex];
 	_vector			vScale, vRotation, vTranslation;
 

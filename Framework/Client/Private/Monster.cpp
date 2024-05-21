@@ -37,7 +37,7 @@ HRESULT CMonster::Initialize(void * pArg)
 		m_iIndex = pDesc->Index;
 	}
 
-	m_pModelCom->Set_Animation(rand() % 20, true);
+	//	m_pModelCom->Set_Animation(rand() % 20, true);
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(static_cast<_float>(rand() % 20), 0.f, static_cast<_float>(rand() % 20), 1.f));
 
 	return S_OK;
@@ -53,7 +53,7 @@ void CMonster::Tick(_float fTimeDelta)
 
 void CMonster::Late_Tick(_float fTimeDelta)
 {
-	m_pModelCom->Play_Animation(fTimeDelta);
+	//	m_pModelCom->Play_Animation(fTimeDelta);
 
 	for (auto& pColliderCom : m_pColliderCom)
 		pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());	
