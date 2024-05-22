@@ -37,6 +37,8 @@ public:
 	void			Move_CCT(_float4 Dir, _float fTimeDelta,_int Index);
 
 	//Ragdoll Temp
+	void			Create_Ragdoll();
+	void			Init_Radoll();
 	_float4			GetHeadPos();
 	_float4			GetBodyPos();
 	_float4			GetPelvisPos();
@@ -60,6 +62,15 @@ public:
 	void			SetColliderTransform_Right_Leg(_float4x4 Transform);
 	void			SetColliderTransform_Left_Shin(_float4x4 Transform);
 	void			SetColliderTransform_Right_Shin(_float4x4 Transform);
+	void			SetJointTransform_Neck(_float4x4 Transform);
+	void			SetJointTransform_L_Shoulder(_float4x4 Transform);
+	void			SetJointTransform_R_Shoulder(_float4x4 Transform);
+	void			SetJointTransform_Spine(_float4x4 Transform);
+	void			SetJointTransform_Acetabulum_L(_float4x4 Transform);
+	void			SetJointTransform_Acetabulum_R(_float4x4 Transform);
+	void			SetJointTransform_Knee_L(_float4x4 Transform);
+	void			SetJointTransform_Knee_R(_float4x4 Transform);
+
 	PxTransform		ColliderTransform = { PxTransform(PxVec3(0.f,0.f,0.f)) };
 	PxTransform		ColliderTransform_Head = { PxTransform(PxVec3(0.f,0.f,0.f)) };
 	PxTransform		ColliderTransform_Right_Arm = { PxTransform(PxVec3(0.f,0.f,0.f)) };
@@ -71,6 +82,28 @@ public:
 	PxTransform		ColliderTransform_Right_Leg = { PxTransform(PxVec3(0.f,0.f,0.f)) };
 	PxTransform		ColliderTransform_Left_Shin = { PxTransform(PxVec3(0.f,0.f,0.f)) };
 	PxTransform		ColliderTransform_Right_Shin = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		JointTransform_Neck = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		JointTransform_Spine = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		JointTransform_Shoulder_L = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		JointTransform_Shoulder_R = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		JointTransform_Acetabulum_L = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		JointTransform_Acetabulum_R = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		JointTransform_Knee_L = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		JointTransform_Knee_R = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+
+	PxShape* m_Shape_Head = { nullptr };
+	PxShape* m_Shape_Body = { nullptr };
+	PxShape* m_Shape_Right_Arm = { nullptr };
+	PxShape* m_Shape_Left_Arm = { nullptr };
+	PxShape* m_Shape_Right_ForeArm = { nullptr };
+	PxShape* m_Shape_Left_ForeArm = { nullptr };
+	PxShape* m_Shape_Pelvis = { nullptr };
+	PxShape* m_Shape_Left_Leg = { nullptr };
+	PxShape* m_Shape_Right_Leg = { nullptr };
+	PxShape* m_Shape_Left_Shin = { nullptr };
+	PxShape* m_Shape_Right_Shin = { nullptr };
+
+	_bool	 m_bRagdoll = { false };
 public:
 	static CPhysics_Controller* Create();
 

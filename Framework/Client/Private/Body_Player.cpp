@@ -186,7 +186,12 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	static bool Temp = false;
+
+	if(!Temp)
+	{
+		m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	}
 
 	//Body
 	_float4x4 BoneCombined = m_pModelCom->GetBoneTransform(62);
@@ -258,7 +263,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	m_pGameInstance->SetColliderTransform_Right_ForeArm(BoneCombined);
 
 	//Pelvis
-	BoneCombined = m_pModelCom->GetBoneTransform(22);
+	BoneCombined = m_pModelCom->GetBoneTransform(60);
 	BoneCombined._41 *= 0.045f;
 	BoneCombined._42 *= 0.045f;
 	BoneCombined._43 *= 0.045f;
@@ -290,7 +295,6 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	XMStoreFloat4x4(&BoneCombined, Mat);
 	m_pGameInstance->SetColliderTransform_Left_Shin(BoneCombined);
 
-
 	//Right Leg
 	BoneCombined = m_pModelCom->GetBoneTransform(41);
 	BoneCombined._41 *= 0.045f;
@@ -313,7 +317,104 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	XMStoreFloat4x4(&BoneCombined, Mat);
 	m_pGameInstance->SetColliderTransform_Right_Shin(BoneCombined);
 
-	
+	//Neck
+	BoneCombined = m_pModelCom->GetBoneTransform(167);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetJointTransform_Neck(BoneCombined);
+
+	//Shoulder_L
+	BoneCombined = m_pModelCom->GetBoneTransform(83);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetJointTransform_L_Shoulder(BoneCombined);
+
+	//Shoulder_R
+	BoneCombined = m_pModelCom->GetBoneTransform(125);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetJointTransform_R_Shoulder(BoneCombined);
+
+	//Spine
+	BoneCombined = m_pModelCom->GetBoneTransform(61);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetJointTransform_Spine(BoneCombined);
+
+	//Acetabulum_L
+	BoneCombined = m_pModelCom->GetBoneTransform(36);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetJointTransform_Acetabulum_L(BoneCombined);
+
+	//Acetabulum_R
+	BoneCombined = m_pModelCom->GetBoneTransform(50);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetJointTransform_Acetabulum_R(BoneCombined);
+
+	//Knee_L
+	BoneCombined = m_pModelCom->GetBoneTransform(29);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetJointTransform_Knee_L(BoneCombined);
+
+	//Knee_R
+	BoneCombined = m_pModelCom->GetBoneTransform(43);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetJointTransform_Knee_R(BoneCombined);
+
+	if (Temp == false)
+	{
+		Temp = true;
+	}
+
+	if (UP == m_pGameInstance->Get_KeyState('B'))
+	{
+		m_pGameInstance->Create_Ragdoll();
+	}
+
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 

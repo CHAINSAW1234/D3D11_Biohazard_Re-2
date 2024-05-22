@@ -178,6 +178,15 @@ public://Temp
 	void			SetColliderTransform_Right_Leg(_float4x4 Transform);
 	void			SetColliderTransform_Left_Shin(_float4x4 Transform);
 	void			SetColliderTransform_Right_Shin(_float4x4 Transform);
+	void			SetJointTransform_Neck(_float4x4 Transform);
+	void			SetJointTransform_L_Shoulder(_float4x4 Transform);
+	void			SetJointTransform_R_Shoulder(_float4x4 Transform);
+	void			SetJointTransform_Spine(_float4x4 Transform);
+	void			SetJointTransform_Acetabulum_L(_float4x4 Transform);
+	void			SetJointTransform_Acetabulum_R(_float4x4 Transform);
+	void			SetJointTransform_Knee_L(_float4x4 Transform);
+	void			SetJointTransform_Knee_R(_float4x4 Transform);
+	void			Create_Ragdoll();
 #ifdef _DEBUG
 	HRESULT Ready_RTVDebug(const wstring& strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT Draw_RTVDebug(const wstring& strMRTTag, class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);

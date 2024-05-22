@@ -113,19 +113,27 @@ public:
 						if (filterData0.word0 == 2)
 						{
 							auto Rigid_Dynamic = GameInstance->GetRigid_Dynamic(filterData0.word3);
-							auto Pos = Rigid_Dynamic->GetPosition();
-							Rigid_Dynamic->SetPosition(physx::PxVec3(0, 5, 0));
-							Pos = Rigid_Dynamic->GetPosition();
-							Rigid_Dynamic->SetUpdated(true);
+
+							if(Rigid_Dynamic != nullptr)
+							{
+								auto Pos = Rigid_Dynamic->GetPosition();
+								Rigid_Dynamic->SetPosition(physx::PxVec3(0, 5, 0));
+								Pos = Rigid_Dynamic->GetPosition();
+								Rigid_Dynamic->SetUpdated(true);
+							}
 						}
 
 						if (filterData1.word0 == 2)
 						{
 							auto Rigid_Dynamic = GameInstance->GetRigid_Dynamic(filterData1.word3);
-							auto Pos = Rigid_Dynamic->GetPosition();
-							Rigid_Dynamic->SetPosition(physx::PxVec3(0, 5, 0));
-							Pos = Rigid_Dynamic->GetPosition();
-							Rigid_Dynamic->SetUpdated(true);
+
+							if(Rigid_Dynamic != nullptr)
+							{
+								auto Pos = Rigid_Dynamic->GetPosition();
+								Rigid_Dynamic->SetPosition(physx::PxVec3(0, 5, 0));
+								Pos = Rigid_Dynamic->GetPosition();
+								Rigid_Dynamic->SetUpdated(true);
+							}
 						}
 					}
 				}

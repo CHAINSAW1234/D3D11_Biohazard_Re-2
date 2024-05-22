@@ -873,7 +873,7 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 	////////////////////////////////////////////////////////////////////
 
 	//	재생할 모든 애니메이션을 일단 재생하고 각 키프레임을 저장하여 가져온다.
-	_uint		iPlayingIndex = { 0 };
+	_uint							iPlayingIndex = { 0 };
 	vector<vector<_float4x4>>		TransformationMatricesLayer;
 	set<_uint>						IncludedBoneIndices;
 

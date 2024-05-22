@@ -759,6 +759,51 @@ void CGameInstance::SetColliderTransform_Right_Shin(_float4x4 Transform)
 	m_pPhysics_Controller->SetColliderTransform_Right_Shin(Transform);
 }
 
+void CGameInstance::SetJointTransform_Neck(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetJointTransform_Neck(Transform);
+}
+
+void CGameInstance::SetJointTransform_L_Shoulder(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetJointTransform_L_Shoulder(Transform);
+}
+
+void CGameInstance::SetJointTransform_R_Shoulder(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetJointTransform_R_Shoulder(Transform);
+}
+
+void CGameInstance::SetJointTransform_Spine(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetJointTransform_Spine(Transform);
+}
+
+void CGameInstance::SetJointTransform_Acetabulum_L(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetJointTransform_Acetabulum_L(Transform);
+}
+
+void CGameInstance::SetJointTransform_Acetabulum_R(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetJointTransform_Acetabulum_R(Transform);
+}
+
+void CGameInstance::SetJointTransform_Knee_L(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetJointTransform_Knee_L(Transform);
+}
+
+void CGameInstance::SetJointTransform_Knee_R(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetJointTransform_Knee_R(Transform);
+}
+
+void CGameInstance::Create_Ragdoll()
+{
+	m_pPhysics_Controller->Create_Ragdoll();
+}
+
 HRESULT CGameInstance::Ready_RTVDebug(const wstring & strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
 {
 	return m_pTarget_Manager->Ready_Debug(strRenderTargetTag, fX, fY, fSizeX, fSizeY);

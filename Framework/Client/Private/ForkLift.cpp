@@ -34,7 +34,7 @@ HRESULT CForkLift::Initialize(void * pArg)
 	m_pTransformCom->Set_Scaled(5.f, 5.f, 5.f);
 	//m_pModelCom->Static_Mesh_Cooking();
 
-	m_pGameInstance->SetSimulate(true);
+	//m_pGameInstance->SetSimulate(true);
 
 	return S_OK;
 }
