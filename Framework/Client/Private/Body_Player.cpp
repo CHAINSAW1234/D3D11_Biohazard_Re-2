@@ -104,21 +104,21 @@ void CBody_Player::Tick(_float fTimeDelta)
 	if (PRESSING == m_pGameInstance->Get_KeyState('N'))
 	{
 		fWeight -= 0.02f;
-		if (fWeight < 0.f)
-			fWeight = 0.f;
+		if (fWeight < 0.02f)
+			fWeight = 0.02f;
 	}
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('M'))
 	{
 		fWeight += 0.02f;
-		if (fWeight > 1.f)
-			fWeight = 1.f;
+		if (fWeight > 0.98f)
+			fWeight = 0.98f;
 	}
 
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
 	//	AnimDesc.iAnimIndex = 23;
 	AnimDesc.iAnimIndex = iAnimIndex;
-	AnimDesc.isLoop = true;
+	AnimDesc.isLoop = false;
 	AnimDesc.fWeight = fWeight;
 	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 	list<_uint>		iBoneIndices;
@@ -130,7 +130,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
 
 	AnimDesc.iAnimIndex = 33;
-	AnimDesc.isLoop = true;
+	AnimDesc.isLoop = false;
 	AnimDesc.fWeight = 1.f - fWeight;
 	iBoneIndices.clear();
 	for (_uint i = 0; i < iNumBones; ++i)
@@ -138,7 +138,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 		iBoneIndices.emplace_back(i);
 	}
 	AnimDesc.TargetBoneIndices = iBoneIndices;
-	m_pModelCom->Set_Animation_Blend(AnimDesc, 1);
+	//	m_pModelCom->Set_Animation_Blend(AnimDesc, 1);
 
 
 	m_pModelCom->Set_Weight(0, fWeight);
@@ -163,7 +163,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	m_pModelCom->Active_RootMotion_Rotation(isSetRootRotation);
 	m_pModelCom->Active_RootMotion_XZ(isSetRootXZ);
-	m_pModelCom->Active_RootMotion_Y(false);
+	m_pModelCom->Active_RootMotion_Y(true);
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)
@@ -171,6 +171,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	//	m_pModelCom->Play_Animations(fTimeDelta);
 
 	//Body
 	_float4x4 BoneCombined = m_pModelCom->GetBoneTransform(62);

@@ -193,8 +193,8 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	PxControllerFilters controllerFilters;
 	controllerFilters.mFilterCallback = &filterCallback;
 
-	if (m_Controller)
-		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, controllerFilters);
+	//	if (m_Controller)
+	//		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, controllerFilters);
 
 	for (int i = 0; i < m_vecRigid_Dynamic.size(); ++i)
 	{

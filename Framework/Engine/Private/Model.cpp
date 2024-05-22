@@ -247,6 +247,12 @@ _float CModel::Compute_Current_TotalWeight()
 	_float		fTotalWeight = { 0.f };
 	for (auto& AnimInfo : m_PlayingAnimInfos)
 	{
+		if (-1 == AnimInfo.iAnimIndex)
+			continue;
+
+		if (true == m_Animations[AnimInfo.iAnimIndex]->isFinished())
+			continue;
+
 		fTotalWeight += AnimInfo.fWeight;
 	}
 
@@ -705,7 +711,7 @@ HRESULT CModel::Initialize_Prototype(const string& strModelFilePath, _fmatrix Tr
 
 HRESULT CModel::Initialize(void* pArg)
 {
-	m_fTotalLinearTime = ANIM_DEFAULT_LINEARTIME;
+	m_fTotalLinearTime = ANIM_DEFAULT_LINEARTIME + 0.1f;
 
 	return S_OK;
 }
@@ -984,7 +990,6 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 
 			XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, TransformationMatrix);
 
-			//	TODO:		=> 반대로 새로운 모션의 시작값역시 루트모션 시작시에 넣어줘야한다.
 			if (true == m_isRootMotion_XZ)
 			{
 				_vector			vLastTranslation = { XMLoadFloat3(&AnimInfo.LastKeyFrames[iRootBoneIndex].vTranslation) };
@@ -998,7 +1003,7 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 				_vector			vLastTranslation = { XMLoadFloat3(&AnimInfo.LastKeyFrames[iRootBoneIndex].vTranslation) };
 
 				vRollbackRootTranslation += XMVectorSet(0.f, XMVectorGetY(vLastTranslation), 0.f, 0.f);
-				vRollbackRootTranslation -= XMVectorSet(XMVectorGetX(vTranslation), 0.f, XMVectorGetZ(vTranslation), 0.f);
+				vRollbackRootTranslation -= XMVectorSet(0.f, XMVectorGetY(vTranslation), 0.f, 0.f);
 			}
 
 			if (true == m_isRootMotion_Rotation)
@@ -1024,6 +1029,9 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 
 		++iPlayingIndex;
 	}
+
+	if (true == TransformationMatricesLayer.empty())
+		return S_OK;
 
 	//	영향을 받지 않은 뼈들은 이전 변환행렬로 초기화한다.
 	//	영향을 받은뼈는 항등 행렬로 초기화 후 이후 과정에서 행렬을 블렌드한다.
@@ -1058,30 +1066,6 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 		++iLayerIndex;
 	}
 
-	//	변환이 위에서 가해진 뼈들은 스케일이 항등행렬에 가산된 값이므로 1만큼 크다.. 그러므로 모든 스케일을 1씩 줄여준다.
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/*for (_uint iBoneIndex : IncludedBoneIndices)
-	{
-		_matrix			ResultMatrix = { XMLoadFloat4x4(&ResultTransformationMatrices[iBoneIndex]) };
-
-		_vector			vScale, vQuaternion, vTranslation;
-		XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, ResultMatrix);
-
-		vScale -= XMVectorSet(1.f, 1.f, 1.f, 0.f);
-
-		ResultMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
-
-		XMStoreFloat4x4(&ResultTransformationMatrices[iBoneIndex], ResultMatrix);
-	}*/
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//	TEST 위에서 항등행렬도 어차피 전부 가해지므로 모든 행렬에 대해서 스케일을 줄여주는게 맞다.
 	for (auto& ResultFloat4x4 : ResultTransformationMatrices)
 	{
 		_matrix			ResultMatrix = { XMLoadFloat4x4(&ResultFloat4x4) };
@@ -1096,27 +1080,27 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 		XMStoreFloat4x4(&ResultFloat4x4, ResultMatrix);
 	}
 
+	/*for (_uint iBoneIndex = 0; iBoneIndex < static_cast<_uint>(m_Bones.size()); ++iBoneIndex)
+	{
+		_bool		isIncluded = { false };
+		for (_uint iIncludedIndex : IncludedBoneIndices)
+		{			
+			if (iBoneIndex == iIncludedIndex)
+			{
+				isIncluded = true;
+				break;
+			}
+		}
+
+		if (true == isIncluded)
+			continue;
+
+		XMStoreFloat4x4(&ResultTransformationMatrices[iBoneIndex], XMMatrixIdentity());
+	}*/
+
 	//	결과행렬들을 뼈의 트랜스폼에 저장한다.
 	for (_uint iBoneIndex = 0; iBoneIndex < static_cast<_uint>(m_Bones.size()); ++iBoneIndex)
 	{
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//	TEST 포함되지않았던 행렬은 항등행렬이 아닌 이전 정보들을 담아놧으므로 그냥 전부 그대로 넣어준다.
-		/*set<_uint>::iterator		iter = { IncludedBoneIndices.find(iBoneIndex) };
-
-		if (iter == IncludedBoneIndices.end())
-		{
-			m_Bones[iBoneIndex]->Set_TransformationMatrix(XMMatrixIdentity());
-			continue;
-		}*/
-
-		////	찾은 인덱스들은 재탐색하면 손해이므로 삭제해준다.
-		//else
-		//{
-		//	IncludedBoneIndices.erase(iter);
-		//}
 		if (iBoneIndex == iRootBoneIndex)
 		{
 			int iA = 0;
