@@ -6,9 +6,28 @@ CLight::CLight()
 {
 }
 
-HRESULT CLight::Initialize(const LIGHT_DESC & LightDesc)
+HRESULT CLight::Initialize(const LIGHT_DESC& LightDesc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ)
 {
 	m_LightDesc = LightDesc;
+
+	if (LIGHT_DESC::TYPE_POINT == m_LightDesc.eType) {
+		m_LightViewMatrix = new _float4x4[6];
+
+		XMStoreFloat4x4(&m_LightViewMatrix[0], XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMVectorSet(1.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+		XMStoreFloat4x4(&m_LightViewMatrix[1], XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMVectorSet(-1.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+		XMStoreFloat4x4(&m_LightViewMatrix[2], XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMVectorSet(0.f, 1.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+		XMStoreFloat4x4(&m_LightViewMatrix[3], XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMVectorSet(0.f, -1.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+		XMStoreFloat4x4(&m_LightViewMatrix[4], XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMVectorSet(0.f, 0.f, 1.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+		XMStoreFloat4x4(&m_LightViewMatrix[5], XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMVectorSet(0.f, 0.f, -1.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+	}
+	else {
+		m_LightViewMatrix = new _float4x4;
+		XMStoreFloat4x4(m_LightViewMatrix, XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMLoadFloat4(&m_LightDesc.vDirection), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+
+	}
+
+	XMStoreFloat4x4(&m_LightProjMatrix, XMMatrixPerspectiveFovLH(fFovY, fAspect, fNearZ, fFarZ));
+
 
 	return S_OK;
 }
@@ -35,6 +54,9 @@ HRESULT CLight::Tick(const LIGHT_DESC& Light_Desc)
 		 m_LightDesc.fOutCutOff= Light_Desc.fOutCutOff;
 		 m_LightDesc.fCutOff = Light_Desc.fCutOff;
 		 m_LightDesc.bRender = Light_Desc.bRender;
+
+		 XMStoreFloat4x4(m_LightViewMatrix, XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMLoadFloat4(&m_LightDesc.vDirection), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+
 	}
 	else if (LIGHT_DESC::TYPE_DIRECTIONAL == m_LightDesc.eType)
 	 {
@@ -48,10 +70,8 @@ HRESULT CLight::Tick(const LIGHT_DESC& Light_Desc)
 
 HRESULT CLight::Render(CShader * pShader, CVIBuffer_Rect * pVIBuffer)
 {
-
 	if (m_LightDesc.bRender == false)
 		return S_OK;
-
 
 	_uint		iPassIndex = { 0 };
 
@@ -108,11 +128,11 @@ HRESULT CLight::Render(CShader * pShader, CVIBuffer_Rect * pVIBuffer)
 	return S_OK;
 }
 
-CLight * CLight::Create(const LIGHT_DESC & LightDesc)
+CLight * CLight::Create(const LIGHT_DESC& LightDesc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ)
 {
 	CLight*		pInstance = new CLight();
 
-	if (FAILED(pInstance->Initialize(LightDesc)))
+	if (FAILED(pInstance->Initialize(LightDesc, fFovY, fAspect, fNearZ, fFarZ)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CLight"));
 
@@ -124,6 +144,12 @@ CLight * CLight::Create(const LIGHT_DESC & LightDesc)
 
 void CLight::Free()
 {
+	if (LIGHT_DESC::TYPE_SPOT == m_LightDesc.eType) {
+		Safe_Delete_Array(m_LightViewMatrix);
+	}
+	else
+		Safe_Delete(m_LightViewMatrix);
+
 
 }
 

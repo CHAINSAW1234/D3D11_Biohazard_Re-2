@@ -6,6 +6,8 @@ BEGIN(Engine)
 
 class CFrustum final : public CBase
 {
+public:
+	enum CASCADE { CASCADE_NEAR, CASCADE_MIDDLE, CASCADE_FAR, CASCADE_END};
 private:
 	CFrustum();
 	virtual ~CFrustum() = default;

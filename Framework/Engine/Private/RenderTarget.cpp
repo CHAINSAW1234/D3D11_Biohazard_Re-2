@@ -44,6 +44,52 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixel
 	return S_OK;
 }
 
+HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+{
+	D3D11_TEXTURE2D_DESC	TextureDesc;
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	TextureDesc.Width = iSize;
+	TextureDesc.Height = iSize;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 6* iArraySize;
+	TextureDesc.Format = ePixelFormat;
+
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+
+	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	TextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	TextureDesc.CPUAccessFlags = 0;
+	TextureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pTexture2D)))
+		return E_FAIL;
+
+	D3D11_RENDER_TARGET_VIEW_DESC RenderTargetDesc;
+	RenderTargetDesc.Format = TextureDesc.Format;
+	RenderTargetDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+	RenderTargetDesc.Texture2DArray.ArraySize = 6 * iArraySize;
+	RenderTargetDesc.Texture2DArray.FirstArraySlice = 0;
+	RenderTargetDesc.Texture2DArray.MipSlice = 0;
+
+	if (FAILED(m_pDevice->CreateRenderTargetView(m_pTexture2D, &RenderTargetDesc, &m_pRTV)))
+		return E_FAIL;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC ResourceViewDesc;
+	ResourceViewDesc.Format = TextureDesc.Format;
+	ResourceViewDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURECUBE;
+	ResourceViewDesc.Texture2DArray.MipLevels = 1;
+	ResourceViewDesc.Texture2DArray.MostDetailedMip = 0;
+
+	if (FAILED(m_pDevice->CreateShaderResourceView(m_pTexture2D, &ResourceViewDesc, &m_pSRV)))
+		return E_FAIL;
+
+	m_vClearColor = vClearColor;
+
+	return S_OK;
+}
+
 HRESULT CRenderTarget::Clear()
 {
 	m_pContext->ClearRenderTargetView(m_pRTV, (_float*)&m_vClearColor);
@@ -87,14 +133,29 @@ HRESULT CRenderTarget::Render_Debug(CShader * pShader, CVIBuffer_Rect * pVIBuffe
 	if (FAILED(pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 
-	if (FAILED(pShader->Bind_Texture("g_Texture", m_pSRV)))
-		return E_FAIL;	
+	D3D11_TEXTURE2D_DESC pDesc = {};
+	m_pTexture2D->GetDesc(&pDesc);
+	if (pDesc.MiscFlags == D3D11_RESOURCE_MISC_TEXTURECUBE) {
+		if (FAILED(pShader->Bind_Texture("g_CubeTexture", m_pSRV)))
+			return E_FAIL;
 
-	if (FAILED(pShader->Begin(0)))
-		return E_FAIL;
+		if (FAILED(pShader->Begin(9)))
+			return E_FAIL;
 
-	if (FAILED(pVIBuffer->Render()))
-		return E_FAIL;
+		if (FAILED(pVIBuffer->Render()))
+			return E_FAIL;
+	}
+	else {
+		if (FAILED(pShader->Bind_Texture("g_Texture", m_pSRV)))
+			return E_FAIL;
+
+		if (FAILED(pShader->Begin(0)))
+			return E_FAIL;
+
+		if (FAILED(pVIBuffer->Render()))
+			return E_FAIL;
+	}
+
 
 	return S_OK;
 }
@@ -114,8 +175,28 @@ CRenderTarget * CRenderTarget::Create(ID3D11Device * pDevice, ID3D11DeviceContex
 	return pInstance;
 }
 
+CRenderTarget* CRenderTarget::Create_Cube(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+{
+	CRenderTarget* pInstance = new CRenderTarget(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Cube(iSize, iArraySize, ePixelFormat, vClearColor)))
+	{
+		MSG_BOX(TEXT("Failed to Created : CRenderTarget"));
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
 void CRenderTarget::Free()
 {
+	D3D11_TEXTURE2D_DESC pDesc = {};
+	m_pTexture2D->GetDesc(&pDesc);
+	if (pDesc.MiscFlags == D3D11_RESOURCE_MISC_TEXTURECUBE) {
+		SaveDDSTextureToFile(m_pContext, m_pTexture2D, TEXT("Test.dds"));
+	}
+
+
 	Safe_Release(m_pSRV);
 	Safe_Release(m_pRTV);
 	Safe_Release(m_pTexture2D);

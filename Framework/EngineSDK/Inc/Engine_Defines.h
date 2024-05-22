@@ -18,13 +18,10 @@ namespace Engine
 	enum MOUSEMOVESTATE { DIMMS_X, DIMMS_Y, DIMMS_WHEEL, DIMMS_END };
 }
 
-
 #include <physx/PxPhysics.h>
 #include <physx/PxPhysicsAPI.h>
 #include <physx/cooking/PxCooking.h>
 using namespace physx;
-
-
 
 #include "Effects11/d3dx11effect.h"
 #include "DirectXTK/DDSTextureLoader.h"
@@ -45,11 +42,9 @@ using namespace physx;
 
 #include <random>
 
-
 using namespace DirectX;
 
 #include <tchar.h> //fmod에서 사용하는 것 같음
-
 
 #include "fmod.h"
 #include "fmod.hpp"

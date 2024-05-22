@@ -16,20 +16,37 @@ const LIGHT_DESC * CLight_Manager::Get_LightDesc(const wstring & strLightTag)
 	return iter->second->Get_LightDesc();	
 }
 
+const _float4x4* CLight_Manager::Get_LightViewMatrix(const wstring& strLightTag)
+{
+	auto& iter = m_Lights.find(strLightTag);
+	if (iter == m_Lights.end())
+		return nullptr;
+
+	return iter->second->Get_LightViewMatrix();
+}
+
+const _float4x4 CLight_Manager::Get_LightProjMatrix(const wstring& strLightTag)
+{
+	auto& iter = m_Lights.find(strLightTag);
+	if (iter == m_Lights.end())
+		return _float4x4();
+
+	return iter->second->Get_LightProjMatrix();
+}
+
 HRESULT CLight_Manager::Initialize()
 {
 	return S_OK;
 }
 
-HRESULT CLight_Manager::Add_Light(const wstring& strLightTag, const LIGHT_DESC & LightDesc)
+HRESULT CLight_Manager::Add_Light(const wstring& strLightTag, const LIGHT_DESC & LightDesc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ)
 {
+
 	CLight* pLight = Find_Light(strLightTag);
 	if (pLight != nullptr)
 		return E_FAIL;
 
-
-
-	pLight = CLight::Create(LightDesc);
+	pLight = CLight::Create(LightDesc, fFovY, fAspect, fNearZ, fFarZ);
 	if (nullptr == pLight)
 		return E_FAIL;
 
@@ -57,7 +74,6 @@ HRESULT CLight_Manager::Tick_Light(const wstring& strLightTag, const LIGHT_DESC&
 
 CLight* CLight_Manager::Find_Light(const wstring& strLightTag)
 {
-
 	auto		iter = m_Lights.find(strLightTag);
 
 	if (iter == m_Lights.end())
@@ -78,7 +94,6 @@ CLight_Manager * CLight_Manager::Create()
 
 	return pInstance;
 }
-
 
 void CLight_Manager::Free()
 {

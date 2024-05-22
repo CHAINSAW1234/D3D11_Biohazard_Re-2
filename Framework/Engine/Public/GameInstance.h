@@ -65,16 +65,20 @@ public: /* For.Timer_Manager */
 
 public: /* For.PipeLine */
 	void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA);
+	void Set_Frustum(CPipeLine::FRUSTUM_DESC FrustumDesc, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA);
 	_matrix Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
 	_float4x4 Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
 	_matrix Get_Transform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
 	_float4x4 Get_Transform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
 	_vector Get_CamPosition_Vector(CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
 	_float4 Get_CamPosition_Float4(CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
+	CPipeLine::FRUSTUM_DESC Get_Frustum(CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
 
 public: /* For.Light_Manager */
 	const LIGHT_DESC* Get_LightDesc(const wstring& strLightTag);
-	HRESULT Add_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc);
+	const _float4x4* Get_LightViewMatrix(const wstring& strLightTag);
+	const _float4x4 Get_LightProjMatrix(const wstring& strLightTag);
+	HRESULT Add_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _float fFovY = XMConvertToRadians(90.f), _float fAspect = 1, _float fNearZ = 0.01, _float fFarZ = 1000);
 	HRESULT Render_Lights(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
 	HRESULT Tick_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc);
 
@@ -86,6 +90,7 @@ public: /* For.Font_Manager */
 
 public: /* For.Target_Manager */
 	HRESULT Add_RenderTarget(const wstring& strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	HRESULT Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
 	HRESULT Add_MRT(const wstring& strMRTTag, const wstring& strRenderTargetTag);
 	HRESULT Begin_MRT(const wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
 	HRESULT End_MRT();

@@ -36,6 +36,13 @@ HRESULT CLevel_GamePlay::Initialize()
 	m_pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, XMLoadFloat4x4(&ViewMatrix), CPipeLine::SHADOW);
 	m_pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMLoadFloat4x4(&ProjMatrix), CPipeLine::SHADOW);
 
+	CPipeLine::FRUSTUM_DESC FrustumDesc = {};
+	FrustumDesc.fAspect = (_float)g_iWinSizeX / g_iWinSizeY;
+	FrustumDesc.fFovy = XMConvertToRadians(120.0f);
+	FrustumDesc.fFar = 2000.f;
+	FrustumDesc.fNear = 0.1f;
+
+	m_pGameInstance->Set_Frustum(FrustumDesc, CPipeLine::SHADOW);
 	/*
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
@@ -54,6 +61,7 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_Particle_Red"))))
 			return;
 	}
+	
 }
 
 HRESULT CLevel_GamePlay::Render()
@@ -77,17 +85,17 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.vAmbient = _float4(0.2f, 0.2f, 0.2f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 
-	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
+	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc, XMConvertToRadians(120.0f), (_float)g_iWinSizeX / g_iWinSizeY, 0.1f, 2000.f)))
 		return E_FAIL;
 
-	/*LightDesc.eType = LIGHT_DESC::TYPE_POINT;
-	LightDesc.vPosition = _float4(20.f, 3.f, 20.f, 1.f);
+	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
+	LightDesc.vPosition =_float4(-10.f, 0.f, 0.f, 1.f);
 	LightDesc.fRange = 10.f;
 
 	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 0.4f, 0.4f, 1.f);
-	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_GARA_1"), LightDesc)))
+	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_GARA_1"), LightDesc, XMConvertToRadians(90.0f), 1.f, 0.1f, 2000.f)))
 		return E_FAIL;
 
 	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
@@ -97,8 +105,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.2f, 0.4f, 0.2f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 1.f, 0.4f, 1.f);
-	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_GARA_2"), LightDesc)))
-		return E_FAIL;*/
+	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_GARA_2"), LightDesc, XMConvertToRadians(90.0f), 1.f, 0.1f, 2000.f)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -112,7 +120,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const wstring & strLayerTag)
 	CameraDesc.fAspect = (_float)g_iWinSizeX / g_iWinSizeY;
 	CameraDesc.fNear = 0.1f;
 	CameraDesc.fFar = 1000.0f;
-	CameraDesc.vEye = _float4(0.f, 10.f, -7.f, 1.f);
+	CameraDesc.vEye = _float4(-10.f, 10.f, 0.f, 1.f);
 	CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
 	CameraDesc.fSpeedPerSec = 10.f;
 	CameraDesc.fRotationPerSec = XMConvertToRadians(90.0f);
