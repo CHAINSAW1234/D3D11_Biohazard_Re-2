@@ -361,9 +361,7 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
 	/* vLightDepthDesc.x * 2000.f : 현재 픽셀을 광원기준으로  그릴려고 했던 위치에 이미 그려져있떤 광원 기준의 깊이.  */
     if (vLightDepthDesc.a == 0)
     {
-        vector t  = g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + g_vLightAmbient * g_vMtrlAmbient);
-        t *= fAtt;
-        Out.vDiffuse = vDiffuse * (g_vLightAmbient * g_vMtrlAmbient);
+        Out.vDiffuse = vDiffuse * (g_vLightAmbient * g_vMtrlAmbient ) *fAtt;
         //Out.vDiffuse = vDiffuse * (g_vLightAmbient * g_vMtrlAmbient) ;
     }
 

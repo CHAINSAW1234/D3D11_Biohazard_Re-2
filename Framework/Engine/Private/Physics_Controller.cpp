@@ -1080,7 +1080,7 @@ _float4 CPhysics_Controller::GetPosition()
 
 		_float4 Pos;
 		Pos.x = static_cast<_float>(position.x);
-		Pos.y = static_cast<_float>(position.y - 4.f);
+		Pos.y = static_cast<_float>(position.y - 2.f);
 		Pos.z = static_cast<_float>(position.z);
 		Pos.w = 1.f;
 		return Pos;
