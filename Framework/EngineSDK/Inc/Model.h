@@ -20,6 +20,7 @@ public:
 
 	typedef struct tagAnimPlayingInfo : public ANIM_PLAYING_DESC
 	{
+
 		_int					iPreAnimIndex = { -1 };
 		_bool					isLinearInterpolation = { false };
 		_float					fAccLinearInterpolation = { 0.f };
@@ -48,6 +49,7 @@ public:	/* For.Animation */
 
 	/* For.Controll AnimSpeed */
 	void Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec);
+	void Set_Weight(_uint iPlayingIndex, _float fWeight);
 
 	/* For.RootAnimaition ActiveControll */
 	_bool Is_Active_RootMotion_XZ();
@@ -137,7 +139,8 @@ public:
 
 private:	/* For.Linear Interpolation */
 	void Motion_Changed(_uint iPlayingIndex);
-	void Update_LastKeyFrames(vector<KEYFRAME>& LastKeyFrames);
+	void Update_LastKeyFrames(const vector<_float4x4>& TransformationMatrices, vector<KEYFRAME>& LastKeyFrames);
+	void Update_LastKeyFrames_Bones(vector<KEYFRAME>& LastKeyFrames);
 
 private:	/* For.Linear Interpolation */
 	void Update_LinearInterpolation(_float fTimeDelta, _uint iPlayingIndex);
@@ -158,9 +161,9 @@ private:
 	vector<class CMesh*>		m_Meshes;
 
 private:	/* For.RootMotion */
-	_bool							m_isRootMotion_XZ = { false };
-	_bool							m_isRootMotion_Y = { false };
-	_bool							m_isRootMotion_Rotation = { false };
+	_bool						m_isRootMotion_XZ = { false };
+	_bool						m_isRootMotion_Y = { false };
+	_bool						m_isRootMotion_Rotation = { false };
 
 private:
 	_uint						m_iNumMaterials = { 0 };
