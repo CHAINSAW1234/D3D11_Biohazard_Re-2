@@ -760,13 +760,6 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 {
 #pragma region 1안
 
-<<<<<<< HEAD
-	Update_LinearInterpolation(fTimeDelta);
-	/*if (true == m_isLinearInterpolation)
-	{
-		m_Animations[m_iCurrentAnimIndex]->Invalidate_TransformationMatrix_LinearInterpolation(m_fAccLinearInterpolation, m_fTotalLinearTime, m_Bones, m_LastKeyFrames);
-	}*/
-=======
 	//_uint		iPlayingIndex = { 0 };
 	//for (auto& AnimInfo : m_PlayingAnimInfos)
 	//{
@@ -900,7 +893,6 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 
 		++iPlayingIndex;
 	}
->>>>>>> hj
 
 	//	결과 행렬을 담을곳... 기본적으로 아이덴티티 초기화
 	vector<_float4x4>			ResultTransformationMatrices;

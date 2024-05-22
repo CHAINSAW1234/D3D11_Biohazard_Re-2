@@ -165,9 +165,8 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animation_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 
-<<<<<<< HEAD
 	//Body
 	_float4x4 BoneCombined = m_pModelCom->GetBoneTransform(62);
 	BoneCombined._41 *= 0.045f;
@@ -292,11 +291,6 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	Mat = XMMatrixMultiply(Mat, Rot);
 	XMStoreFloat4x4(&BoneCombined, Mat);
 	m_pGameInstance->SetColliderTransform_Right_Shin(BoneCombined);
-=======
-	static bool Temp = false;
-	//if(Temp == false)
-		m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
->>>>>>> hj
 
 	
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
