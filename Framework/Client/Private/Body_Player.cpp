@@ -95,37 +95,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 		--iAnimIndex;
 		if (0 > iAnimIndex)
 			iAnimIndex = 0;
-	}
-
-	static bool Temp = false;
-	static bool Temp2 = false;
-	if (UP == m_pGameInstance->Get_KeyState('P'))
-	{
-		Temp = !Temp;
-	}
-
-	if (UP == m_pGameInstance->Get_KeyState('O'))
-	{
-		Temp2 = !Temp2;
-	}
-
-	if (Temp)
-	{
-		m_pModelCom->Active_RootMotion_Rotation(true);
-	}
-	else
-	{
-		m_pModelCom->Active_RootMotion_Rotation(false);
-	}
-
-	if (Temp2)
-	{
-		m_pModelCom->Active_RootMotion_XZ(true);
-	}
-	else
-	{
-		m_pModelCom->Active_RootMotion_XZ(false);
-	}
+	}	
 
 	m_pModelCom->Set_TickPerSec(iAnimIndex, 40.f);
 
@@ -146,7 +116,8 @@ void CBody_Player::Tick(_float fTimeDelta)
 	}
 
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
-	AnimDesc.iAnimIndex = 22;
+	//	AnimDesc.iAnimIndex = 23;
+	AnimDesc.iAnimIndex = iAnimIndex;
 	AnimDesc.isLoop = true;
 	AnimDesc.fWeight = fWeight;
 	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
@@ -174,12 +145,25 @@ void CBody_Player::Tick(_float fTimeDelta)
 	m_pModelCom->Set_Weight(1, 1.f - fWeight);
 
 
-	//	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
+		//	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 
 	m_pModelCom->Set_RootBone("root");
-	//m_pModelCom->Active_RootMotion_XZ(iAnimIndex, true);
+
+	static _bool		isSetRootXZ = false;
+	static _bool		isSetRootRotation = false;
+	if (UP == m_pGameInstance->Get_KeyState('O'))
+	{
+		isSetRootXZ = !isSetRootXZ;
+	}
+
+	if (UP == m_pGameInstance->Get_KeyState('P'))
+	{
+		isSetRootRotation = !isSetRootRotation;
+	}
+
+	m_pModelCom->Active_RootMotion_Rotation(isSetRootRotation);
+	m_pModelCom->Active_RootMotion_XZ(isSetRootXZ);
 	m_pModelCom->Active_RootMotion_Y(false);
-	//m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, true);
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)

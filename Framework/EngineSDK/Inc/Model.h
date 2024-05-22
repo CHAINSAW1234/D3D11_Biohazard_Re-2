@@ -61,6 +61,15 @@ public:	/* For.Animation */
 	void Active_RootMotion_Rotation(_bool isActive);
 	void Set_RootBone(string strBoneTag);			//	모든본을 초기화 => 루트본은 하나다 가정후 찾은 본을 루트본으로 등록
 
+private:
+	_int Find_RootBoneIndex();
+
+private:
+	vector<_float4x4> Initialize_ResultMatrices(const set<_uint> IncludedBoneIndices);
+
+	_float Compute_Current_TotalWeight();
+	_float4x4 Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fmatrix DstMatrix, _float fAdditionalWeight);
+
 public:	/*For Upper-Lower Separation*/
 	void Set_SpineBone(string strBoneTag);			//상,하체 분리를 위한 Spine Bone Select 코드
 	void Init_Separate_Bones();

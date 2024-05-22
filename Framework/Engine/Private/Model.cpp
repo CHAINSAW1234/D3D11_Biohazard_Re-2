@@ -205,6 +205,78 @@ void CModel::Set_RootBone(string strBoneTag)
 	m_Bones[iBoneIndex]->Set_RootBone(true);
 }
 
+_int CModel::Find_RootBoneIndex()
+{
+	_int iRootBoneIndex = { -1 };
+
+	for (auto& pBone : m_Bones)
+	{
+		++iRootBoneIndex;
+
+		if (true == pBone->Is_RootBone())
+		{
+			return iRootBoneIndex;
+		}
+	}
+
+	return -1;
+}
+
+vector<_float4x4> CModel::Initialize_ResultMatrices(const set<_uint> IncludedBoneIndices)
+{
+	vector<_float4x4>		ResultMatrices;
+	ResultMatrices.resize(m_Bones.size());
+
+	//	이전 저장 된 변환 행렬들을 전부 저장한다.
+	for (_uint iBoneIndex = 0; iBoneIndex < m_Bones.size(); ++iBoneIndex)
+	{
+		XMStoreFloat4x4(&ResultMatrices[iBoneIndex], m_Bones[iBoneIndex]->Get_TrasformationMatrix());
+	}
+
+	//	이번에 애니메이션의 영향을 받은 뼈들은 전부 항등행렬로 재초기화한다.
+	for (_uint iBoneIndex : IncludedBoneIndices)
+	{
+		XMStoreFloat4x4(&ResultMatrices[iBoneIndex], XMMatrixIdentity());
+	}
+
+	return ResultMatrices;
+}
+
+_float CModel::Compute_Current_TotalWeight()
+{
+	_float		fTotalWeight = { 0.f };
+	for (auto& AnimInfo : m_PlayingAnimInfos)
+	{
+		fTotalWeight += AnimInfo.fWeight;
+	}
+
+	return fTotalWeight;
+}
+
+_float4x4 CModel::Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fmatrix DstMatrix, _float fAdditionalWeight)
+{
+	_vector			vSrcScale, vSrcQuaternion, vSrcTranslation;
+	XMMatrixDecompose(&vSrcScale, &vSrcQuaternion, &vSrcTranslation, SrcMatrix);
+
+	_vector			vDstScale, vDstQuaternion, vDstTranslation;
+	XMMatrixDecompose(&vDstScale, &vDstQuaternion, &vDstTranslation, DstMatrix);
+
+	vDstQuaternion = XMQuaternionSlerp(XMQuaternionIdentity(), vDstQuaternion, fAdditionalWeight);
+	vDstScale *= fAdditionalWeight;
+	vDstTranslation *= fAdditionalWeight;
+
+	_vector			vResultScale = { vSrcScale + vDstScale };
+	_vector			vResultQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(vSrcQuaternion), XMQuaternionNormalize(vDstQuaternion)) };
+	_vector			vResultTranslation = { XMVectorSetW(XMVectorSetW(vSrcTranslation, 0.f) + XMVectorSetW(vDstTranslation,0.f), 1.f) };
+
+	_matrix			ResultMatrix = { XMMatrixAffineTransformation(vResultScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vResultQuaternion, vResultTranslation) };
+	_float4x4		ResultFloat4x4;
+
+	XMStoreFloat4x4(&ResultFloat4x4, ResultMatrix);
+
+	return ResultFloat4x4;
+}
+
 void CModel::Set_SpineBone(string strBoneTag)
 {
 	_int		iBoneIndex = { Find_BoneIndex(strBoneTag) };
@@ -873,23 +945,15 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 	////////////////////////////////////////////////////////////////////
 
 	//	재생할 모든 애니메이션을 일단 재생하고 각 키프레임을 저장하여 가져온다.
-	_uint		iPlayingIndex = { 0 };
+	_uint							iPlayingIndex = { 0 };
 	vector<vector<_float4x4>>		TransformationMatricesLayer;
 	set<_uint>						IncludedBoneIndices;
-
+	XMStoreFloat3(pMovedDirection, XMVectorZero());
+	
 	_vector							vRollbackRootTranslation = {XMVectorSet(0.f, 0.f, 0.f, 1.f)};
 	_vector							vRollbackRootQuaternion = { XMQuaternionIdentity() };
 
-	_uint							iRootIndex = { 0 };
-	for (auto& pBone : m_Bones)
-	{
-		if (true == pBone->Is_RootBone())
-		{
-			break;
-		}
-
-		++iRootIndex;
-	}
+	_int							iRootBoneIndex = { Find_RootBoneIndex()};	
 
 	for (auto& AnimInfo : m_PlayingAnimInfos)
 	{
@@ -908,41 +972,51 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 		if (true == AnimInfo.isLinearInterpolation)
 		{
 			TransformationMatrices = m_Animations[AnimInfo.iAnimIndex]->Compute_TransfromationMatrix_LinearInterpolation(AnimInfo.fAccLinearInterpolation, m_fTotalLinearTime, TransformationMatrices, static_cast<_uint>(m_Bones.size()), AnimInfo.LastKeyFrames);
+		}		
+
+		//	첫틱의 경우 루트모션을 롤백하기위한 성분을 분해한다.
+		if ((true == m_isRootMotion_XZ || true == m_isRootMotion_Y || true == m_isRootMotion_Rotation) &&
+			true == isFirstTick &&
+			-1 != iRootBoneIndex)
+		{
+			_vector			vScale, vQuaternion, vTranslation;
+			_matrix			TransformationMatrix = { XMLoadFloat4x4(&TransformationMatrices[iRootBoneIndex]) };
+
+			XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, TransformationMatrix);
+
+			//	TODO:		=> 반대로 새로운 모션의 시작값역시 루트모션 시작시에 넣어줘야한다.
+			if (true == m_isRootMotion_XZ)
+			{
+				_vector			vLastTranslation = { XMLoadFloat3(&AnimInfo.LastKeyFrames[iRootBoneIndex].vTranslation) };
+
+				vRollbackRootTranslation += XMVectorSet(XMVectorGetX(vLastTranslation), 0.f, XMVectorGetZ(vLastTranslation), 0.f);
+				vRollbackRootTranslation -= XMVectorSet(XMVectorGetX(vTranslation), 0.f, XMVectorGetZ(vTranslation), 0.f);
+			}
+
+			if (true == m_isRootMotion_Y)
+			{
+				_vector			vLastTranslation = { XMLoadFloat3(&AnimInfo.LastKeyFrames[iRootBoneIndex].vTranslation) };
+
+				vRollbackRootTranslation += XMVectorSet(0.f, XMVectorGetY(vLastTranslation), 0.f, 0.f);
+				vRollbackRootTranslation -= XMVectorSet(XMVectorGetX(vTranslation), 0.f, XMVectorGetZ(vTranslation), 0.f);
+			}
+
+			if (true == m_isRootMotion_Rotation)
+			{
+				_vector			vLastQuaternion = { XMLoadFloat4(&AnimInfo.LastKeyFrames[iRootBoneIndex].vRotation) };
+				_vector			vQuaternionInv = { XMQuaternionInverse(vQuaternion) };
+
+				vRollbackRootQuaternion = XMQuaternionNormalize(XMQuaternionMultiply(vLastQuaternion, vQuaternionInv));
+			}
+
+			vRollbackRootTranslation *= AnimInfo.fWeight;
+			vRollbackRootQuaternion = XMQuaternionSlerp(XMQuaternionIdentity(), vRollbackRootQuaternion, AnimInfo.fWeight);
 		}
 
 		//	선형 보간중이아니었다면 이후에 일어날 선형 보간을 대비하여 마지막 키프레임들을 저장한다.
 		if (false == AnimInfo.isLinearInterpolation)
 		{			
 			Update_LastKeyFrames(TransformationMatrices, AnimInfo.LastKeyFrames);
-		}
-
-		//	첫틱의 경우 루트모션을 롤백하기위한 성분을 분해한다.
-		if (true == isFirstTick &&
-			(true == m_isRootMotion_XZ || true == m_isRootMotion_Y || true == m_isRootMotion_Rotation))
-		{
-			_matrix			RootTransformtaionMatrix = { XMLoadFloat4x4(&TransformationMatrices[iRootIndex]) };
-			_vector			vScale, vQuaternion, vTranslation;
-
-			XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, RootTransformtaionMatrix);
-
-			if (true == m_isRootMotion_XZ)
-			{
-				vRollbackRootTranslation += XMVectorSet(XMVectorGetX(vTranslation), 0.f, 0.f, 0.f);
-				vRollbackRootTranslation += XMVectorSet(0.f, 0.f, XMVectorGetZ(vTranslation), 0.f);
-			}
-
-			if (true == m_isRootMotion_Y)
-			{
-				vRollbackRootTranslation += XMVectorSet(0.f, XMVectorGetY(vTranslation), 0.f, 0.f);
-			}
-
-			if (true == m_isRootMotion_Rotation)
-			{
-				vRollbackRootQuaternion = vQuaternion;
-			}
-
-			vRollbackRootTranslation *= AnimInfo.fWeight;
-			vRollbackRootQuaternion = XMQuaternionSlerp(XMQuaternionIdentity(), vRollbackRootQuaternion, AnimInfo.fWeight);
 		}
 		
 
@@ -951,54 +1025,32 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 		++iPlayingIndex;
 	}
 
-	//	결과 행렬을 담을곳... 기본적으로 아이덴티티 초기화
-	vector<_float4x4>			ResultTransformationMatrices;
-	ResultTransformationMatrices.resize(m_Bones.size());
-	for (auto& Matrix : ResultTransformationMatrices)
-	{
-		XMStoreFloat4x4(&Matrix, XMMatrixIdentity());
-	}
-
-	_float fTotalWeight = { 0.f };
-	for (auto& AnimInfo : m_PlayingAnimInfos)
-	{
-		fTotalWeight += AnimInfo.fWeight;
-	}
+	//	영향을 받지 않은 뼈들은 이전 변환행렬로 초기화한다.
+	//	영향을 받은뼈는 항등 행렬로 초기화 후 이후 과정에서 행렬을 블렌드한다.
+	vector<_float4x4>			ResultTransformationMatrices = { Initialize_ResultMatrices(IncludedBoneIndices) };
+	_float fTotalWeight = { Compute_Current_TotalWeight()};
 
 	//	결과행렬을 계산한다 => 얻어온 모든 행렬을 각 뼈의 인덱스에 해당하는 인덱스들에 결과행렬을 각 저장한다.
-
-
 	_uint		iLayerIndex = { 0 };
 	for (auto& Layer : TransformationMatricesLayer)
 	{
 		_uint		iBoneIndex = { 0 };
-		_float		fWeight = { m_PlayingAnimInfos[iLayerIndex].fWeight };
-		fWeight /= fTotalWeight;
-		vector<_float4>			TempQuaternions;
+		_float		fWeight = { m_PlayingAnimInfos[iLayerIndex].fWeight / fTotalWeight };
 
 		//	각 변환행렬을 결과행렬에 가산한다 => 웨이트를 적용하여 가산한다.
 		for (auto& TransformationFloat4x4 : Layer)
 		{
 			_matrix			ResultMatrix = { XMLoadFloat4x4(&ResultTransformationMatrices[iBoneIndex]) };
-
-			_vector			vSrcScale, vSrcQuaternion, vSrcTranslation;
-			XMMatrixDecompose(&vSrcScale, &vSrcQuaternion, &vSrcTranslation, ResultMatrix);
-
 			_matrix			TransformationMatrix = { XMLoadFloat4x4(&TransformationFloat4x4) };
-			_vector			vDstScale, vDstQuaternion, vDstTranslation;
-			XMMatrixDecompose(&vDstScale, &vDstQuaternion, &vDstTranslation, TransformationMatrix);
 
-			vDstQuaternion = XMQuaternionSlerp(XMQuaternionIdentity(), vDstQuaternion, fWeight);
-			vDstScale *= fWeight;
-			vDstTranslation *= fWeight;
+			_float4x4		ResultFloat4x4 = { Compute_BlendTransformation_Additional(ResultMatrix, TransformationMatrix, fWeight) };
+			
+			XMStoreFloat4x4(&ResultTransformationMatrices[iBoneIndex], XMLoadFloat4x4(&ResultFloat4x4));
 
-			_vector			vResultScale = { vSrcScale + vDstScale };
-			//	_vector			vResultQuaternion = { XMQuaternionSlerp(XMQuaternionNormalize(vSrcQuaternion), XMQuaternionNormalize(vDstQuaternion), 0.5f) };
-			_vector			vResultQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(vSrcQuaternion), XMQuaternionNormalize(vDstQuaternion)) };
-			_vector			vResultTranslation = { XMVectorSetW(XMVectorSetW(vSrcTranslation, 0.f) + XMVectorSetW(vDstTranslation,0.f), 1.f) };
-
-			ResultMatrix = { XMMatrixAffineTransformation(vResultScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vResultQuaternion, vResultTranslation) };
-			XMStoreFloat4x4(&ResultTransformationMatrices[iBoneIndex], ResultMatrix);
+			if (iBoneIndex == iRootBoneIndex)
+			{
+				int iA = 0;
+			}
 
 			++iBoneIndex;
 		}
@@ -1006,7 +1058,12 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 		++iLayerIndex;
 	}
 
-	for (_uint iBoneIndex : IncludedBoneIndices)
+	//	변환이 위에서 가해진 뼈들은 스케일이 항등행렬에 가산된 값이므로 1만큼 크다.. 그러므로 모든 스케일을 1씩 줄여준다.
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/*for (_uint iBoneIndex : IncludedBoneIndices)
 	{
 		_matrix			ResultMatrix = { XMLoadFloat4x4(&ResultTransformationMatrices[iBoneIndex]) };
 
@@ -1018,18 +1075,52 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 		ResultMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
 
 		XMStoreFloat4x4(&ResultTransformationMatrices[iBoneIndex], ResultMatrix);
+	}*/
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//	TEST 위에서 항등행렬도 어차피 전부 가해지므로 모든 행렬에 대해서 스케일을 줄여주는게 맞다.
+	for (auto& ResultFloat4x4 : ResultTransformationMatrices)
+	{
+		_matrix			ResultMatrix = { XMLoadFloat4x4(&ResultFloat4x4) };
+
+		_vector			vScale, vQuaternion, vTranslation;
+		XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, ResultMatrix);
+
+		vScale -= XMVectorSet(1.f, 1.f, 1.f, 0.f);
+
+		ResultMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
+
+		XMStoreFloat4x4(&ResultFloat4x4, ResultMatrix);
 	}
 
 	//	결과행렬들을 뼈의 트랜스폼에 저장한다.
 	for (_uint iBoneIndex = 0; iBoneIndex < static_cast<_uint>(m_Bones.size()); ++iBoneIndex)
 	{
-		set<_uint>::iterator		iter = { IncludedBoneIndices.find(iBoneIndex) };
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//	TEST 포함되지않았던 행렬은 항등행렬이 아닌 이전 정보들을 담아놧으므로 그냥 전부 그대로 넣어준다.
+		/*set<_uint>::iterator		iter = { IncludedBoneIndices.find(iBoneIndex) };
+
 		if (iter == IncludedBoneIndices.end())
 		{
 			m_Bones[iBoneIndex]->Set_TransformationMatrix(XMMatrixIdentity());
 			continue;
-		}
+		}*/
 
+		////	찾은 인덱스들은 재탐색하면 손해이므로 삭제해준다.
+		//else
+		//{
+		//	IncludedBoneIndices.erase(iter);
+		//}
+		if (iBoneIndex == iRootBoneIndex)
+		{
+			int iA = 0;
+		}
 		m_Bones[iBoneIndex]->Set_TransformationMatrix(ResultTransformationMatrices[iBoneIndex]);
 	}
 
