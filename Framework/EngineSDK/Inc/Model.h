@@ -50,6 +50,11 @@ public:	/*For Upper-Lower Separation*/
 	void Init_Separate_Bones();
 	HRESULT Play_Animation_Separation(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
 	HRESULT RagDoll();
+
+public:/*For Physics Collider*/
+	_float4x4 GetBoneTransform(string strBoneTag);
+	_float4x4 GetBoneTransform(_int Index);
+
 private:
 	void Apply_RootMotion_Rotation(class CTransform* pTransform, _fvector vQuaternion);
 	void Apply_RootMotion_Translation(class CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection, _bool isActiveRotation, _fvector vQuaternion = XMQuaternionIdentity());

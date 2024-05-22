@@ -1,4 +1,5 @@
 #include "Character_Controller.h"
+#include "Event_Call_Back.h"
 
 CCharacter_Controller::CCharacter_Controller(PxController* Controller)
 {
@@ -34,9 +35,12 @@ CCharacter_Controller* CCharacter_Controller::Create()
 
 void CCharacter_Controller::Move(PxVec3 Dir, _float fTimeDelta)
 {
+	QueryFilterCallback filterCallback;
+	PxControllerFilters controllerFilters;
+	controllerFilters.mFilterCallback = &filterCallback;
 	// 캐릭터 이동
 	if (m_pController)
-		PxControllerCollisionFlags flags = m_pController->move(Dir, 0.0f, fTimeDelta, PxControllerFilters());
+		PxControllerCollisionFlags flags = m_pController->move(Dir, 0.0f, fTimeDelta, controllerFilters);
 
 	//m_BodyCollider->addForce(velocity * 5.f, PxForceMode::eIMPULSE);
 }

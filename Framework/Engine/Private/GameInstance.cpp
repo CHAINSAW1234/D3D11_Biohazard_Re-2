@@ -702,7 +702,62 @@ void CGameInstance::Move_CCT(_float4 Dir, _float fTimeDelta, _int Index)
 	m_pPhysics_Controller->Move_CCT(Dir, fTimeDelta, Index);
 }
 
+void CGameInstance::SetColliderTransform(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetColliderTransform(Transform);
+}
+
+void CGameInstance::SetColliderTransform_Head(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetColliderTransform_Head(Transform);
+}
+
+void CGameInstance::SetColliderTransform_Left_Arm(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetColliderTransform_Left_Arm(Transform);
+}
+
+void CGameInstance::SetColliderTransform_Right_Arm(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetColliderTransform_Right_Arm(Transform);
+}
+
+void CGameInstance::SetColliderTransform_Left_ForeArm(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetColliderTransform_Left_ForeArm(Transform);
+}
+
+void CGameInstance::SetColliderTransform_Right_ForeArm(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetColliderTransform_Right_ForeArm(Transform);
+}
+
+void CGameInstance::SetColliderTransform_Pelvis(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetColliderTransform_Pelvis(Transform);
+}
+
+void CGameInstance::SetColliderTransform_Left_Leg(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetColliderTransform_Left_Leg(Transform);
+}
+
+void CGameInstance::SetColliderTransform_Right_Leg(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetColliderTransform_Right_Leg(Transform);
+}
+
+void CGameInstance::SetColliderTransform_Left_Shin(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetColliderTransform_Left_Shin(Transform);
+}
+
 #ifdef _DEBUG
+
+void CGameInstance::SetColliderTransform_Right_Shin(_float4x4 Transform)
+{
+	m_pPhysics_Controller->SetColliderTransform_Right_Shin(Transform);
+}
 
 HRESULT CGameInstance::Ready_RTVDebug(const wstring & strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
 {

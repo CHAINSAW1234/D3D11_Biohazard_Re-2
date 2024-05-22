@@ -131,15 +131,133 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	//	m_pModelCom->Play_Animation(fTimeDelta);
-	//	m_pModelCom->Play_Animation_RootMotion_Translation(m_pParentsTransform, "root", fTimeDelta, false);
+	m_pModelCom->Play_Animation_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 
-	static bool Temp = false;
-	//if(Temp == false)
-		m_pModelCom->Play_Animation_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	//Body
+	_float4x4 BoneCombined = m_pModelCom->GetBoneTransform(62);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	_matrix Mat = XMLoadFloat4x4(&BoneCombined);
 
-	Temp = true;
-	//	m_pModelCom->Play_Animation(fTimeDelta);	
+	_matrix Rot = m_pParentsTransform->Get_WorldMatrix_Pure_Mat();
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+
+	m_pGameInstance->SetColliderTransform(BoneCombined);
+
+	//Head
+	BoneCombined = m_pModelCom->GetBoneTransform(169);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetColliderTransform_Head(BoneCombined);
+
+	//Left Arm
+	BoneCombined = m_pModelCom->GetBoneTransform(84);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetColliderTransform_Left_Arm(BoneCombined);
+
+	//Left ForeArm
+	BoneCombined = m_pModelCom->GetBoneTransform(85);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetColliderTransform_Left_ForeArm(BoneCombined);
+
+	//Right Arm
+	BoneCombined = m_pModelCom->GetBoneTransform(126);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetColliderTransform_Right_Arm(BoneCombined);
+
+	//Right ForeArm
+	BoneCombined = m_pModelCom->GetBoneTransform(127);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetColliderTransform_Right_ForeArm(BoneCombined);
+
+	//Pelvis
+	BoneCombined = m_pModelCom->GetBoneTransform(22);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetColliderTransform_Pelvis(BoneCombined);
+
+	//Left Leg
+	BoneCombined = m_pModelCom->GetBoneTransform(27);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetColliderTransform_Left_Leg(BoneCombined);
+
+	//Left Shin
+	BoneCombined = m_pModelCom->GetBoneTransform(28);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetColliderTransform_Left_Shin(BoneCombined);
+
+
+	//Right Leg
+	BoneCombined = m_pModelCom->GetBoneTransform(41);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetColliderTransform_Right_Leg(BoneCombined);
+
+	//Right Shin
+	BoneCombined = m_pModelCom->GetBoneTransform(42);
+	BoneCombined._41 *= 0.045f;
+	BoneCombined._42 *= 0.045f;
+	BoneCombined._43 *= 0.045f;
+	Mat = XMLoadFloat4x4(&BoneCombined);
+
+	Mat = XMMatrixMultiply(Mat, Rot);
+	XMStoreFloat4x4(&BoneCombined, Mat);
+	m_pGameInstance->SetColliderTransform_Right_Shin(BoneCombined);
+
 	
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);

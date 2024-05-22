@@ -62,82 +62,6 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	m_GroundPlane = PxCreatePlane(*m_Physics, physx::PxPlane(0, 1, 0, 1), *m_Material);
 	m_Scene->addActor(*m_GroundPlane);
 
-	//float halfExtent = 0.5f;
-	//m_Shape = m_Physics->createShape(physx::PxBoxGeometry(halfExtent, halfExtent, halfExtent), *m_Material);
-	//m_Shape->setSimulationFilterData(filterData);
-	//m_Shape->setContactOffset(0.1f);
-	//physx::PxU32 size =30;
-	//physx::PxTransform t(physx::PxVec3(0));
-	//physx::PxTransform localTm(physx::PxVec3(4.f, 0.f, 4.f));
-	//m_BodyCollider = m_Physics->createRigidDynamic(t.transform(localTm));
-	//m_BodyCollider->attachShape(*m_Shape);
-	//physx::PxRigidBodyExt::updateMassAndInertia(*m_BodyCollider, 10.f);
-	//m_Scene->addActor(*m_BodyCollider);
-
-	//m_BodyCollider->setMass(1.f);
-	//m_BodyCollider->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
-	//float sleepThreshold = 0.5f; // 예시 값, 프로젝트 요구 사항에 맞게 조정
-	//m_BodyCollider->setSleepThreshold(sleepThreshold);
-	//m_BodyCollider->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
-
-	//for (physx::PxU32 i = 0; i < size; ++i) {
-	//	for (physx::PxU32 j = 0; j < size - i; ++j) {
-	//		// 필요에 따라 filterData를 설정합니다.
-	//		/*if (i != 0) {
-	//			filterData.word0 = Category2;
-	//			filterData.word1 = Category1 | Category3;
-	//		}*/
-
-	//		if (i == size - 1)
-	//		{
-	//			if (j == size - i - 1)
-	//			{
-	//				filterData.word0 = COLLISION_CATEGORY::Category2; // 이 객체의 카테고리
-	//				filterData.word1 = COLLISION_CATEGORY::Category1 | COLLISION_CATEGORY::Category3; // 이 객체와 충돌해야 하는 카테고리
-
-
-	//				// 각 액터마다 새로운 PxShape 인스턴스를 생성합니다.
-	//				physx::PxShape* newShape = m_Physics->createShape(physx::PxBoxGeometry(halfExtent*10.f, halfExtent*10.f, halfExtent), *m_Material);
-	//				newShape->setSimulationFilterData(filterData);
-	//				newShape->setContactOffset(0.1f);
-	//				physx::PxTransform localTm(physx::PxVec3(2.f,0.f, 2.f));
-	//				physx::PxRigidDynamic* body = m_Physics->createRigidDynamic(t.transform(localTm));
-	//				body->attachShape(*newShape);
-	//				physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.f);
-	//				m_Scene->addActor(*body);
-	//				m_vecBody.push_back(body);
-	//				// 사용 후 newShape를 release합니다.
-	//				newShape->release();
-	//				body->setMass(1.f);
-	//				body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
-	//				body->setSleepThreshold(sleepThreshold);
-	//			}
-	//		}
-	//		else
-	//		{
-	//			filterData.word0 = COLLISION_CATEGORY::Category2; // 이 객체의 카테고리
-	//			filterData.word1 = COLLISION_CATEGORY::Category1 | COLLISION_CATEGORY::Category3; // 이 객체와 충돌해야 하는 카테고리
-
-	//			// 각 액터마다 새로운 PxShape 인스턴스를 생성합니다.
-	//			physx::PxShape* newShape = m_Physics->createShape(physx::PxBoxGeometry(halfExtent, halfExtent, halfExtent), *m_Material);
-	//			newShape->setSimulationFilterData(filterData);
-	//			newShape->setContactOffset(0.1f);
-	//			//physx::PxTransform localTm(physx::PxVec3(3.f,0.f, 3.f));
-	//			physx::PxTransform localTm(physx::PxVec3(physx::PxReal(j * 2) - physx::PxReal(size - i), physx::PxReal(i * 2 + 1), 0) * (halfExtent));
-	//			physx::PxRigidDynamic* body = m_Physics->createRigidDynamic(t.transform(localTm));
-	//			body->attachShape(*newShape);
-	//			physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.f);
-	//			m_Scene->addActor(*body);
-	//			m_vecBody.push_back(body);
-	//			// 사용 후 newShape를 release합니다.
-	//			newShape->release();
-	//			body->setMass(1.f);
-	//			body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
-	//			body->setSleepThreshold(sleepThreshold);
-	//		}
-	//	}
-	//}
-
 	m_Look = PxVec3(0.f, 0.f, 1.f);
 
 	return S_OK;
@@ -265,28 +189,29 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	//		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
 	//}
 
+	QueryFilterCallback filterCallback;
+	PxControllerFilters controllerFilters;
+	controllerFilters.mFilterCallback = &filterCallback;
+
 	if (m_Controller)
-		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
-
-	//auto Pos = m_Controller->getPosition();
-	//// 현재 글로벌 포즈 가져오기
-	//PxTransform currentPose;
-	//currentPose.p.x = Pos.x;
-	//currentPose.p.y = Pos.y;
-	//currentPose.p.z = Pos.z;
-	//// 변경된 포즈를 객체에 적용
-	//m_BodyCollider->setGlobalPose(currentPose);
-
-	//PxExtendedVec3 characterPosition = m_Controller->getPosition();
-	//PxVec3 newPosition(characterPosition.x, characterPosition.y, characterPosition.z);
-
-	//// `RigidDynamic` 객체를 새 위치로 이동시킵니다.
-	//m_BodyCollider->setKinematicTarget(PxTransform(newPosition));
+		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, controllerFilters);
 
 	for (int i = 0; i < m_vecRigid_Dynamic.size(); ++i)
 	{
 		m_vecRigid_Dynamic[i]->Update();
 	}
+
+	m_BodyCollider->setGlobalPose(ColliderTransform);
+	m_HeadCollider->setGlobalPose(ColliderTransform_Head);
+	m_Left_Arm_Collider->setGlobalPose(ColliderTransform_Left_Arm);
+	m_Right_Arm_Collider->setGlobalPose(ColliderTransform_Right_Arm);
+	m_Right_ForeArm_Collider->setGlobalPose(ColliderTransform_Right_ForeArm);
+	m_Left_ForeArm_Collider->setGlobalPose(ColliderTransform_Left_ForeArm);
+	//m_Pelvis_Collider->setGlobalPose(ColliderTransform_Pelvis);
+	m_Left_Leg_Collider->setGlobalPose(ColliderTransform_Left_Leg);
+	m_Right_Leg_Collider->setGlobalPose(ColliderTransform_Right_Leg);
+	m_Right_Shin_Collider->setGlobalPose(ColliderTransform_Right_Shin);
+	m_Left_Shin_Collider->setGlobalPose(ColliderTransform_Left_Shin);
 
 	m_Scene->simulate(fTimeDelta);
 	m_Scene->fetchResults(true);
@@ -298,8 +223,8 @@ void CPhysics_Controller::Create_Controller(_float4 Pos)
 	m_Manager = PxCreateControllerManager(*m_Scene);
 
 	m_Controll_Desc.height = 3.0f; // 캐릭터의 높이
-	m_Controll_Desc.radius = 2.5f; // 캐릭터의 반지름
-	m_Controll_Desc.position = PxExtendedVec3(0.0, 5.0, 0.0); // 초기 위치 설정
+	m_Controll_Desc.radius = 1.f; // 캐릭터의 반지름
+	m_Controll_Desc.position = PxExtendedVec3(0.0,1.0, 0.0); // 초기 위치 설정
 	m_Controll_Desc.material = m_Physics->createMaterial(0.f, 0.f, 0.f); // 마찰계수와 반발력 설정
 	m_Controller = m_Manager->createController(m_Controll_Desc);
 
@@ -337,30 +262,154 @@ void CPhysics_Controller::Create_Controller(_float4 Pos)
 
 void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
 {
+	float sleepThreshold = 0.5f;
+
 	PxFilterData filterData;
 	filterData.word0 = COLLISION_CATEGORY::Category2; // 이 객체의 카테고리
 	filterData.word1 = COLLISION_CATEGORY::Category1 | COLLISION_CATEGORY::Category3; // 이 객체와 충돌해야 하는 카테고리
 
-	float halfExtent = 0.5f;
-	m_Shape = m_Physics->createShape(physx::PxBoxGeometry(halfExtent, halfExtent, halfExtent), *m_Material);
+	float halfExtent = 0.25f;
+	m_Shape = m_Physics->createShape(PxSphereGeometry(halfExtent), *m_Material);
 	m_Shape->setSimulationFilterData(filterData);
 	m_Shape->setContactOffset(0.1f);
 	physx::PxU32 size = 0;
 	physx::PxTransform t(physx::PxVec3(0));
 	physx::PxTransform localTm(physx::PxVec3(4.f, 0.f, 4.f));
-	//m_BodyCollider = m_Physics->createRigidDynamic(t.transform(localTm));
-	//m_BodyCollider->attachShape(*m_Shape);
-	//physx::PxRigidBodyExt::updateMassAndInertia(*m_BodyCollider, 10.f);
-	//m_Scene->addActor(*m_BodyCollider);
-
-	//m_BodyCollider->setMass(1.f);
-	//m_BodyCollider->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
-	//float sleepThreshold = 0.5f;
-	//m_BodyCollider->setSleepThreshold(sleepThreshold);
-	//m_BodyCollider->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
 
-	float sleepThreshold = 0.5f;
+	//BodyCollider Temp 코드
+	m_BodyCollider = m_Physics->createRigidDynamic(t.transform(localTm));
+	m_BodyCollider->attachShape(*m_Shape);
+	physx::PxRigidBodyExt::updateMassAndInertia(*m_BodyCollider, 10.f);
+	m_Scene->addActor(*m_BodyCollider);
+
+	m_BodyCollider->setMass(1.f);
+	m_BodyCollider->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	m_BodyCollider->setSleepThreshold(sleepThreshold);
+	m_BodyCollider->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	//Head
+	m_HeadCollider = m_Physics->createRigidDynamic(t.transform(localTm));
+	m_HeadCollider->attachShape(*m_Shape);
+	physx::PxRigidBodyExt::updateMassAndInertia(*m_HeadCollider, 10.f);
+	m_Scene->addActor(*m_HeadCollider);
+
+	m_HeadCollider->setMass(1.f);
+	m_HeadCollider->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	m_HeadCollider->setSleepThreshold(sleepThreshold);
+	m_HeadCollider->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+
+	//Left Arm
+	m_Left_Arm_Collider = m_Physics->createRigidDynamic(t.transform(localTm));
+	m_Left_Arm_Collider->attachShape(*m_Shape);
+	physx::PxRigidBodyExt::updateMassAndInertia(*m_Left_Arm_Collider, 10.f);
+	m_Scene->addActor(*m_Left_Arm_Collider);
+
+	m_Left_Arm_Collider->setMass(1.f);
+	m_Left_Arm_Collider->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	m_Left_Arm_Collider->setSleepThreshold(sleepThreshold);
+	m_Left_Arm_Collider->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+
+
+	//Right Arm
+	m_Right_Arm_Collider = m_Physics->createRigidDynamic(t.transform(localTm));
+	m_Right_Arm_Collider->attachShape(*m_Shape);
+	physx::PxRigidBodyExt::updateMassAndInertia(*m_Right_Arm_Collider, 10.f);
+	m_Scene->addActor(*m_Right_Arm_Collider);
+
+	m_Right_Arm_Collider->setMass(1.f);
+	m_Right_Arm_Collider->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	m_Right_Arm_Collider->setSleepThreshold(sleepThreshold);
+	m_Right_Arm_Collider->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+
+	//Right ForeArm
+	m_Right_ForeArm_Collider = m_Physics->createRigidDynamic(t.transform(localTm));
+	m_Right_ForeArm_Collider->attachShape(*m_Shape);
+	physx::PxRigidBodyExt::updateMassAndInertia(*m_Right_ForeArm_Collider, 10.f);
+	m_Scene->addActor(*m_Right_ForeArm_Collider);
+
+	m_Right_ForeArm_Collider->setMass(1.f);
+	m_Right_ForeArm_Collider->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	m_Right_ForeArm_Collider->setSleepThreshold(sleepThreshold);
+	m_Right_ForeArm_Collider->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+
+
+
+	//Left ForeArm
+	m_Left_ForeArm_Collider = m_Physics->createRigidDynamic(t.transform(localTm));
+	m_Left_ForeArm_Collider->attachShape(*m_Shape);
+	physx::PxRigidBodyExt::updateMassAndInertia(*m_Left_ForeArm_Collider, 10.f);
+	m_Scene->addActor(*m_Left_ForeArm_Collider);
+
+	m_Left_ForeArm_Collider->setMass(1.f);
+	m_Left_ForeArm_Collider->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	m_Left_ForeArm_Collider->setSleepThreshold(sleepThreshold);
+	m_Left_ForeArm_Collider->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+
+	//Pelvis
+	m_Pelvis_Collider = m_Physics->createRigidDynamic(t.transform(localTm));
+	m_Pelvis_Collider->attachShape(*m_Shape);
+	physx::PxRigidBodyExt::updateMassAndInertia(*m_Pelvis_Collider, 10.f);
+//	m_Scene->addActor(*m_Pelvis_Collider);
+
+	m_Pelvis_Collider->setMass(1.f);
+	m_Pelvis_Collider->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	m_Pelvis_Collider->setSleepThreshold(sleepThreshold);
+	m_Pelvis_Collider->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+
+
+	//Left Leg
+	m_Left_Leg_Collider = m_Physics->createRigidDynamic(t.transform(localTm));
+	m_Left_Leg_Collider->attachShape(*m_Shape);
+	physx::PxRigidBodyExt::updateMassAndInertia(*m_Left_Leg_Collider, 10.f);
+	m_Scene->addActor(*m_Left_Leg_Collider);
+
+	m_Left_Leg_Collider->setMass(1.f);
+	m_Left_Leg_Collider->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	m_Left_Leg_Collider->setSleepThreshold(sleepThreshold);
+	m_Left_Leg_Collider->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	//Right Leg
+	m_Right_Leg_Collider = m_Physics->createRigidDynamic(t.transform(localTm));
+	m_Right_Leg_Collider->attachShape(*m_Shape);
+	physx::PxRigidBodyExt::updateMassAndInertia(*m_Right_Leg_Collider, 10.f);
+	m_Scene->addActor(*m_Right_Leg_Collider);
+
+	m_Right_Leg_Collider->setMass(1.f);
+	m_Right_Leg_Collider->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	m_Right_Leg_Collider->setSleepThreshold(sleepThreshold);
+	m_Right_Leg_Collider->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+
+	//Left Shin
+	m_Left_Shin_Collider = m_Physics->createRigidDynamic(t.transform(localTm));
+	m_Left_Shin_Collider->attachShape(*m_Shape);
+	physx::PxRigidBodyExt::updateMassAndInertia(*m_Left_Shin_Collider, 10.f);
+	m_Scene->addActor(*m_Left_Shin_Collider);
+
+	m_Left_Shin_Collider->setMass(1.f);
+	m_Left_Shin_Collider->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	m_Left_Shin_Collider->setSleepThreshold(sleepThreshold);
+	m_Left_Shin_Collider->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+
+	//Right Shin
+	m_Right_Shin_Collider = m_Physics->createRigidDynamic(t.transform(localTm));
+	m_Right_Shin_Collider->attachShape(*m_Shape);
+	physx::PxRigidBodyExt::updateMassAndInertia(*m_Right_Shin_Collider, 10.f);
+	m_Scene->addActor(*m_Right_Shin_Collider);
+
+	m_Right_Shin_Collider->setMass(1.f);
+	m_Right_Shin_Collider->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	m_Right_Shin_Collider->setSleepThreshold(sleepThreshold);
+	m_Right_Shin_Collider->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
 
 	for (physx::PxU32 i = 0; i < size; ++i) {
 		for (physx::PxU32 j = 0; j < size - i; ++j) {
@@ -504,7 +553,7 @@ void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
 	PxVec3 rightLegPos = PelvisPos + PxVec3(5 * radius, -5.f, 0);
 	m_pRightLeg = PxCreateDynamic(*m_Physics, PxTransform(rightLegPos), PxCapsuleGeometry(radius, 2 * radius), *m_Material, 1.0f);
 	m_Scene->addActor(*m_pRightLeg);
-	m_pRightLeg->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+	//m_pRightLeg->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
 	// Connect legs to body
 	m_pLeft_Hip_Joint = PxSphericalJointCreate(*m_Physics, m_pPelvis, PxTransform(PxVec3(-radius * 1.5f, -radius, 0)), m_pLeftLeg, PxTransform(PxVec3(radius * 1.5f, 0, 0)));
@@ -517,12 +566,12 @@ void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
 	PxVec3 leftForearmPos = leftArmPos - PxVec3(12 * radius, 12.f, 0); // Adjust for shorter arms
 	m_pLeftForeArm = PxCreateDynamic(*m_Physics, PxTransform(leftForearmPos), PxCapsuleGeometry(radius, radius), *m_Material, 1.0f);
 	m_Scene->addActor(*m_pLeftForeArm);
-	m_pLeftForeArm->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+	//m_pLeftForeArm->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
 	PxVec3 rightForearmPos = rightArmPos + PxVec3(12 * radius, 12.f, 0); // Adjust for shorter arms
 	m_pRightForeArm = PxCreateDynamic(*m_Physics, PxTransform(rightForearmPos), PxCapsuleGeometry(radius, radius), *m_Material, 1.0f);
 	m_Scene->addActor(*m_pRightForeArm);
-	m_pRightForeArm->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+	//m_pRightForeArm->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
 	// Connect forearms to upper arms (elbows)
 	m_pLeft_Elbow_Joint= PxSphericalJointCreate(*m_Physics, m_pLeftArm, PxTransform(PxVec3(-radius * 2.f, 0.f, 0)), m_pLeftForeArm, PxTransform(PxVec3(radius * 1.5f, 0, 0)));
@@ -535,12 +584,12 @@ void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
 	PxVec3 leftShinPos = leftLegPos - PxVec3(0, 3 * radius, 0); // Adjust for body length
 	m_pLeftShin = PxCreateDynamic(*m_Physics, PxTransform(leftShinPos), PxCapsuleGeometry(radius, 2 * radius), *m_Material, 1.0f);
 	m_Scene->addActor(*m_pLeftShin);
-	m_pLeftShin->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+	//m_pLeftShin->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
 	PxVec3 rightShinPos = rightLegPos + PxVec3(0, 3 * radius, 0); // Adjust for body length
 	m_pRightShin = PxCreateDynamic(*m_Physics, PxTransform(rightShinPos), PxCapsuleGeometry(radius, 2 * radius), *m_Material, 1.0f);
 	m_Scene->addActor(*m_pRightShin);
-	m_pRightShin->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+	//m_pRightShin->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
 
 	// Connect shins to thighs (knees)
 	m_pLeft_Knee_Joint = PxSphericalJointCreate(*m_Physics, m_pLeftLeg, PxTransform(PxVec3(-radius * 3.f, 0.f, 0)), m_pLeftShin, PxTransform(PxVec3(radius * 2.f, 0, 0)));
@@ -750,6 +799,230 @@ _float4 CPhysics_Controller::GetLeft_Shin_Pos()
 	return Result;
 }
 
+void CPhysics_Controller::SetColliderTransform(_float4x4 Transform)
+{
+	_matrix Mat = XMLoadFloat4x4(&Transform);
+
+	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
+	_float4 dxQuat;
+	XMStoreFloat4(&dxQuat, Quaternion);
+
+	// PhysX의 PxQuat에 값을 대입
+	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
+
+	_float4 fourthRow;
+	XMStoreFloat4(&fourthRow, Mat.r[3]);
+	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
+
+	PxTransform newTransform(Result, pxQuat);
+
+	ColliderTransform = newTransform;
+}
+
+void CPhysics_Controller::SetColliderTransform_Head(_float4x4 Transform)
+{
+	_matrix Mat = XMLoadFloat4x4(&Transform);
+
+	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
+	_float4 dxQuat;
+	XMStoreFloat4(&dxQuat, Quaternion);
+
+	// PhysX의 PxQuat에 값을 대입
+	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
+
+	_float4 fourthRow;
+	XMStoreFloat4(&fourthRow, Mat.r[3]);
+	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
+
+	PxTransform newTransform(Result, pxQuat);
+
+	ColliderTransform_Head = newTransform;
+}
+
+void CPhysics_Controller::SetColliderTransform_Left_Arm(_float4x4 Transform)
+{
+	_matrix Mat = XMLoadFloat4x4(&Transform);
+
+	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
+	_float4 dxQuat;
+	XMStoreFloat4(&dxQuat, Quaternion);
+
+	// PhysX의 PxQuat에 값을 대입
+	//PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
+	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.z, dxQuat.y, dxQuat.w);
+
+	_float4 fourthRow;
+	XMStoreFloat4(&fourthRow, Mat.r[3]);
+	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
+
+	PxTransform newTransform(Result, pxQuat);
+
+	ColliderTransform_Left_Arm = newTransform;
+}
+
+void CPhysics_Controller::SetColliderTransform_Right_Arm(_float4x4 Transform)
+{
+	_matrix Mat = XMLoadFloat4x4(&Transform);
+
+	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
+	_float4 dxQuat;
+	XMStoreFloat4(&dxQuat, Quaternion);
+
+	// PhysX의 PxQuat에 값을 대입
+	//PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
+	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.z, dxQuat.y, dxQuat.w);
+
+	_float4 fourthRow;
+	XMStoreFloat4(&fourthRow, Mat.r[3]);
+	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
+
+	PxTransform newTransform(Result, pxQuat);
+
+	ColliderTransform_Right_Arm = newTransform;
+}
+
+void CPhysics_Controller::SetColliderTransform_Left_ForeArm(_float4x4 Transform)
+{
+	_matrix Mat = XMLoadFloat4x4(&Transform);
+
+	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
+	_float4 dxQuat;
+	XMStoreFloat4(&dxQuat, Quaternion);
+
+	// PhysX의 PxQuat에 값을 대입
+	//PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
+	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.z, dxQuat.y, dxQuat.w);
+
+	_float4 fourthRow;
+	XMStoreFloat4(&fourthRow, Mat.r[3]);
+	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
+
+	PxTransform newTransform(Result, pxQuat);
+
+	ColliderTransform_Left_ForeArm = newTransform;
+}
+
+void CPhysics_Controller::SetColliderTransform_Right_ForeArm(_float4x4 Transform)
+{
+	_matrix Mat = XMLoadFloat4x4(&Transform);
+
+	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
+	_float4 dxQuat;
+	XMStoreFloat4(&dxQuat, Quaternion);
+
+	// PhysX의 PxQuat에 값을 대입
+	//PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
+	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.z, dxQuat.y, dxQuat.w);
+
+	_float4 fourthRow;
+	XMStoreFloat4(&fourthRow, Mat.r[3]);
+	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
+
+	PxTransform newTransform(Result, pxQuat);
+
+	ColliderTransform_Right_ForeArm = newTransform;
+}
+
+void CPhysics_Controller::SetColliderTransform_Pelvis(_float4x4 Transform)
+{
+	_matrix Mat = XMLoadFloat4x4(&Transform);
+
+	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
+	_float4 dxQuat;
+	XMStoreFloat4(&dxQuat, Quaternion);
+
+	// PhysX의 PxQuat에 값을 대입
+	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
+
+	_float4 fourthRow;
+	XMStoreFloat4(&fourthRow, Mat.r[3]);
+	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
+
+	PxTransform newTransform(Result, pxQuat);
+
+	ColliderTransform_Pelvis = newTransform;
+}
+
+void CPhysics_Controller::SetColliderTransform_Left_Leg(_float4x4 Transform)
+{
+	_matrix Mat = XMLoadFloat4x4(&Transform);
+
+	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
+	_float4 dxQuat;
+	XMStoreFloat4(&dxQuat, Quaternion);
+
+	// PhysX의 PxQuat에 값을 대입
+	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
+
+	_float4 fourthRow;
+	XMStoreFloat4(&fourthRow, Mat.r[3]);
+	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
+
+	PxTransform newTransform(Result, pxQuat);
+
+	ColliderTransform_Left_Leg = newTransform;
+}
+
+void CPhysics_Controller::SetColliderTransform_Right_Leg(_float4x4 Transform)
+{
+	_matrix Mat = XMLoadFloat4x4(&Transform);
+
+	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
+	_float4 dxQuat;
+	XMStoreFloat4(&dxQuat, Quaternion);
+
+	// PhysX의 PxQuat에 값을 대입
+	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
+
+	_float4 fourthRow;
+	XMStoreFloat4(&fourthRow, Mat.r[3]);
+	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
+
+	PxTransform newTransform(Result, pxQuat);
+
+	ColliderTransform_Right_Leg = newTransform;
+}
+
+void CPhysics_Controller::SetColliderTransform_Left_Shin(_float4x4 Transform)
+{
+	_matrix Mat = XMLoadFloat4x4(&Transform);
+
+	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
+	_float4 dxQuat;
+	XMStoreFloat4(&dxQuat, Quaternion);
+
+	// PhysX의 PxQuat에 값을 대입
+	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
+
+	_float4 fourthRow;
+	XMStoreFloat4(&fourthRow, Mat.r[3]);
+	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
+
+	PxTransform newTransform(Result, pxQuat);
+
+	ColliderTransform_Left_Shin = newTransform;
+}
+
+void CPhysics_Controller::SetColliderTransform_Right_Shin(_float4x4 Transform)
+{
+	_matrix Mat = XMLoadFloat4x4(&Transform);
+
+	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
+	_float4 dxQuat;
+	XMStoreFloat4(&dxQuat, Quaternion);
+
+	// PhysX의 PxQuat에 값을 대입
+	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
+
+	_float4 fourthRow;
+	XMStoreFloat4(&fourthRow, Mat.r[3]);
+	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
+
+	PxTransform newTransform(Result, pxQuat);
+
+	ColliderTransform_Right_Shin = newTransform;
+}
+
 
 _matrix CPhysics_Controller::GetWorldMatrix_Rigid_Dynamic(_int Index)
 {
@@ -898,15 +1171,42 @@ void CPhysics_Controller::Free()
 
 	PxCloseExtensions();
 
+	if (m_HeadCollider)
+		m_HeadCollider->release();
+
+	if (m_Left_Arm_Collider)
+		m_Left_Arm_Collider->release();
+
+	if (m_Right_Arm_Collider)
+		m_Right_Arm_Collider->release();
+
+	if (m_Left_ForeArm_Collider)
+		m_Left_ForeArm_Collider->release();
+
+	if (m_Right_ForeArm_Collider)
+		m_Right_ForeArm_Collider->release();
+
+	if (m_Pelvis_Collider)
+		m_Pelvis_Collider->release();
+
+	if (m_Left_Leg_Collider)
+		m_Left_Leg_Collider->release();
+
+	if (m_Right_Leg_Collider)
+		m_Right_Leg_Collider->release();
+
+	if (m_Left_Shin_Collider)
+		m_Left_Shin_Collider->release();
+
+	if (m_Right_Shin_Collider)
+		m_Right_Shin_Collider->release();
+
 	//Ragdoll
 	if (m_pHead)
 		m_pHead->release();
 
 	if (m_pBody)
 		m_pBody->release();
-
-	if (m_BodyCollider)
-		m_BodyCollider->release();
 
 	if (m_pPelvis)
 		m_pPelvis->release();
@@ -967,6 +1267,7 @@ void CPhysics_Controller::Free()
 
 	if (m_Shape)
 		m_Shape->release();
+
 	if (m_BodyCollider)
 		m_BodyCollider->release();
 
