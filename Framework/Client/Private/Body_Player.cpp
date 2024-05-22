@@ -129,10 +129,26 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	m_pModelCom->Set_TickPerSec(iAnimIndex, 40.f);
 
+	static _float fWeight = { 1.f };
+
+	if (PRESSING == m_pGameInstance->Get_KeyState('N'))
+	{
+		fWeight -= 0.02f;
+		if (fWeight < 0.f)
+			fWeight = 0.f;
+	}
+
+	if (PRESSING == m_pGameInstance->Get_KeyState('M'))
+	{
+		fWeight += 0.02f;
+		if (fWeight > 1.f)
+			fWeight = 1.f;
+	}
+
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
-	AnimDesc.iAnimIndex = iAnimIndex;
+	AnimDesc.iAnimIndex = 22;
 	AnimDesc.isLoop = true;
-	AnimDesc.fWeight = 1.f;
+	AnimDesc.fWeight = fWeight;
 	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 	list<_uint>		iBoneIndices;
 	for (_uint i = 0; i < iNumBones; ++i)
@@ -142,9 +158,9 @@ void CBody_Player::Tick(_float fTimeDelta)
 	AnimDesc.TargetBoneIndices = iBoneIndices;
 	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
 
-	AnimDesc.iAnimIndex = 1;
+	AnimDesc.iAnimIndex = 33;
 	AnimDesc.isLoop = true;
-	AnimDesc.fWeight = 0.f;
+	AnimDesc.fWeight = 1.f - fWeight;
 	iBoneIndices.clear();
 	for (_uint i = 0; i < iNumBones; ++i)
 	{
@@ -152,6 +168,11 @@ void CBody_Player::Tick(_float fTimeDelta)
 	}
 	AnimDesc.TargetBoneIndices = iBoneIndices;
 	m_pModelCom->Set_Animation_Blend(AnimDesc, 1);
+
+
+	m_pModelCom->Set_Weight(0, fWeight);
+	m_pModelCom->Set_Weight(1, 1.f - fWeight);
+
 
 	//	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 
