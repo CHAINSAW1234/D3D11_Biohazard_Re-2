@@ -165,7 +165,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animation_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 
 	//Body
 	_float4x4 BoneCombined = m_pModelCom->GetBoneTransform(62);
