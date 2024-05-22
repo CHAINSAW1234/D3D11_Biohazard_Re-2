@@ -10,6 +10,23 @@ BEGIN(Engine)
 class ENGINE_DLL CModel final : public CComponent
 {
 public:
+	typedef struct tagAnimPlayingDesc
+	{
+		_int					iAnimIndex = { -1 };
+		_bool					isLoop = { false };
+		_float					fWeight = { 0.f };
+		list<_uint>				TargetBoneIndices;
+	}ANIM_PLAYING_DESC;
+
+	typedef struct tagAnimPlayingInfo : public ANIM_PLAYING_DESC
+	{
+		_int					iPreAnimIndex = { -1 };
+		_bool					isLinearInterpolation = { false };
+		_float					fAccLinearInterpolation = { 0.f };
+		vector<KEYFRAME>		LastKeyFrames;
+	}ANIM_PLAYING_INFO;
+
+public:
 	enum MODEL_TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
 
 private:
@@ -21,33 +38,31 @@ public:
 	_uint Get_NumMeshes() const { return m_iNumMeshes; }
 	class CBone* Get_BonePtr(const _char* pBoneName) const;
 
-	_bool isFinished() {
-		return m_Animations[m_iCurrentAnimIndex]->isFinished();
-	}
-
+	_bool isFinished(_uint iPlayingIndex);
 public:	/* For.Animation */
-	void Set_Animation(_uint iAnimIndex, _bool isLoop);
+	//	void Set_Animation(_uint iAnimIndex, _bool isLoop);
+	void Set_Animation_Blend(ANIM_PLAYING_DESC AnimDesc, _uint iPlayingIndex);
 
 	_uint Get_NumAnims() { return m_iNumAnimations; }
-	_uint Get_CurrentAnimIndex() { return m_iCurrentAnimIndex; }
-
+	_uint Get_CurrentAnimIndex(_uint iPlayingIndex);
 
 	/* For.Controll AnimSpeed */
 	void Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec);
 
 	/* For.RootAnimaition ActiveControll */
-	_bool Is_Active_RootMotion_XZ(_uint iAnimIndex);
-	_bool Is_Active_RootMotion_Y(_uint iAnimIndex);
-	_bool Is_Active_RootMotion_Rotation(_uint iAnimIndex);
+	_bool Is_Active_RootMotion_XZ();
+	_bool Is_Active_RootMotion_Y();
+	_bool Is_Active_RootMotion_Rotation();
 
-	void Active_RootMotion_XZ(_uint iAnimIndex, _bool isActive);
-	void Active_RootMotion_Y(_uint iAnimIndex, _bool isActive);
-	void Active_RootMotion_Rotation(_uint iAnimIndex, _bool isActive);
+	void Active_RootMotion_XZ(_bool isActive);
+	void Active_RootMotion_Y(_bool isActive);
+	void Active_RootMotion_Rotation(_bool isActive);
 	void Set_RootBone(string strBoneTag);			//	모든본을 초기화 => 루트본은 하나다 가정후 찾은 본을 루트본으로 등록
 
 public:	/*For Upper-Lower Separation*/
 	void Set_SpineBone(string strBoneTag);			//상,하체 분리를 위한 Spine Bone Select 코드
 	void Init_Separate_Bones();
+<<<<<<< HEAD
 	HRESULT Play_Animation_Separation(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
 	HRESULT RagDoll();
 
@@ -55,6 +70,10 @@ public:/*For Physics Collider*/
 	_float4x4 GetBoneTransform(string strBoneTag);
 	_float4x4 GetBoneTransform(_int Index);
 
+=======
+	//	HRESULT Play_Animation_Separation(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
+	//	HRESULT RagDoll();
+>>>>>>> hj
 private:
 	void Apply_RootMotion_Rotation(class CTransform* pTransform, _fvector vQuaternion);
 	void Apply_RootMotion_Translation(class CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection, _bool isActiveRotation, _fvector vQuaternion = XMQuaternionIdentity());
@@ -92,8 +111,8 @@ public:
 	HRESULT Bind_ShaderResource_Texture(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eTextureType);
 	HRESULT Bind_ShaderResource_MaterialDesc(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 
-	HRESULT Play_Animation(_float fTimeDelta);
-	HRESULT Play_Animation_RootMotion(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
+	HRESULT Play_Animations(_float fTimeDelta);
+	HRESULT Play_Animations_RootMotion(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
 	HRESULT Render(_uint iMeshIndex);
 
 	void Static_Mesh_Cooking();
@@ -109,27 +128,28 @@ private:
 	void Reset_PreTranslation_WorldMatrix(_int iRootIndex);
 
 public:	/* For.KeyFrame */
-	_uint Get_CurrentMaxKeyFrameIndex();
-	_float Get_Duration(_int iAnimIndex = -1);
-	_float Get_TrackPosition();
-	void Set_KeyFrameIndex(_uint iKeyFrameIndex);
-	void Set_TrackPosition(_float fTrackPosition);
-	const vector<_uint>& Get_CurrentKeyFrameIndices();
+	_uint Get_CurrentMaxKeyFrameIndex(_uint iPlayingIndex);
+	_float Get_Duration(_uint iPlayingIndex, _int iAnimIndex = -1);
+	_float Get_TrackPosition(_uint iPlayingIndex);
+	void Set_KeyFrameIndex(_uint iPlayingIndex, _uint iKeyFrameIndex);
+	void Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition);
+	const vector<_uint>& Get_CurrentKeyFrameIndices(_uint iPlayingIndex);
 
 public:
 	const MODEL_TYPE& Get_ModelType() { return m_eModelType; }
 
 private:	/* For.Linear Interpolation */
-	void Motion_Changed();
+	void Motion_Changed(_uint iPlayingIndex);
+	void Update_LastKeyFrames(vector<KEYFRAME>& LastKeyFrames);
 
 private:	/* For.Linear Interpolation */
-	void Update_LinearInterpolation(_float fTimeDelta);
-	void Reset_LinearInterpolation();
+	void Update_LinearInterpolation(_float fTimeDelta, _uint iPlayingIndex);
+	void Reset_LinearInterpolation(_uint iPlayingIndex);
 
-private:	/* For.Linear_Interpolation */
-	_bool						m_isLinearInterpolation = { false };
-	_float						m_fAccLinearInterpolation = { 0.f };
-	vector<KEYFRAME>			m_LastKeyFrames;
+//private:	/* For.Linear_Interpolation */
+//	_bool						m_isLinearInterpolation = { false };
+//	_float						m_fAccLinearInterpolation = { 0.f };
+//	vector<KEYFRAME>			m_LastKeyFrames;
 
 private:
 	MODEL_TYPE					m_eModelType = { TYPE_END };
@@ -140,6 +160,12 @@ private:
 	_uint						m_iNumMeshes = { 0 };
 	vector<class CMesh*>		m_Meshes;
 
+private:	/* For.RootMotion */
+	_bool							m_isRootMotion_XZ = { false };
+	_bool							m_isRootMotion_Y = { false };
+	_bool							m_isRootMotion_Rotation = { false };
+
+private:
 	_uint						m_iNumMaterials = { 0 };
 	vector<MESH_MATERIAL>		m_Materials;
 
@@ -150,12 +176,12 @@ private:
 	vector<class CBone*>		m_Bones_Lower;
 
 	_uint						m_iNumAnimations = { 0 };
-	_uint						m_iCurrentAnimIndex = { 0 };
-	_uint						m_iPreAnimIndex = { 0 };
-	_bool						m_isLoop = { false };
 	vector<class CAnimation*>	m_Animations;
 
 	_float4x4					m_MeshBoneMatrices[512];
+
+private:	/* For.Blend_Animation */
+	vector<ANIM_PLAYING_INFO>	m_PlayingAnimInfos;
 
 private:	/* For.Linear_Interpolation */
 	_float3						m_vPreTranslationLocal = { 0.f, 0.f, 0.f };
@@ -163,7 +189,6 @@ private:	/* For.Linear_Interpolation */
 	_float4x4					m_PreTranslationMatrix;
 	wstring						m_strRootTag = { TEXT("") };
 	_float						m_fTotalLinearTime = { 0.f };
-
 
 private:	/*For Upper-Lower Separation*/
 	class CBone*				m_pSpineBone = { nullptr };

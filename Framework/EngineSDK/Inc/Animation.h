@@ -43,6 +43,9 @@ public:
 	void Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _bool* pFirsltTick);
 	void Invalidate_TransformationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, const vector<class CBone*>& Bones, const vector<KEYFRAME>& LastKeyFrames);
 
+	vector<_float4x4> Compute_TransfromationMatrix(_float fTimeDelta, _bool isLoop, _uint iNumBones, set<_uint>& IncludedBoneIndices, _bool* pFirstTick);
+	vector<_float4x4> Compute_TransfromationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, vector<_float4x4>& TransformationMatrices, _uint iNumBones, const vector<KEYFRAME>& LastKeyFrames);
+
 public:
 	const vector<class CChannel*>& Get_Channels() {
 		return m_Channels;
@@ -64,15 +67,6 @@ public:
 	}
 
 	void Set_TickPerSec(_float fTickPerSec);
-	
-public:	/* For.RootMotion_Active_Range */
-	_bool Is_Active_RootMotion_XZ() { return m_isRootMotion_XZ; }
-	_bool Is_Active_RootMotion_Y() { return m_isRootMotion_Y; }
-	_bool Is_Active_RootMotion_Rotation() { return m_isRootMotion_Rotation; }
-
-	void Active_RootMotion_XZ(_bool isActive) { m_isRootMotion_XZ = isActive; }
-	void Active_RootMotion_Y(_bool isActive) { m_isRootMotion_Y = isActive; }
-	void Active_RootMotion_Rotation(_bool isActive) { m_isRootMotion_Rotation = isActive; }
 
 private:
 	_char							m_szName[MAX_PATH] = { "" };
@@ -84,10 +78,6 @@ private:
 	_uint							m_iNumChannels = { 0 };
 	vector<class CChannel*>			m_Channels;
 	vector<_uint>					m_CurrentKeyFrameIndices;
-
-	_bool							m_isRootMotion_XZ = { false };
-	_bool							m_isRootMotion_Y = { false };
-	_bool							m_isRootMotion_Rotation = { false };
 
 	_bool							m_isFinished = { false };
 

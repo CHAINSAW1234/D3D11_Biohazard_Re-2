@@ -38,7 +38,17 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;	
 
-	m_pModelCom->Set_Animation(0, true);	
+	/*CModel::ANIM_PLAYING_DESC		AnimDesc;
+	AnimDesc.iAnimIndex = 0;
+	AnimDesc.isLoop = true;
+	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
+	list<_uint>		iBoneIndices;
+	for (_uint i = 0; i < iNumBones; ++i)
+	{
+		iBoneIndices.emplace_back(i);
+	}
+	AnimDesc.TargetBoneIndices = iBoneIndices;
+	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);*/
 
 	m_pModelCom->Set_RootBone("root");
 
@@ -101,29 +111,53 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	if (Temp)
 	{
-		m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, true);
+		m_pModelCom->Active_RootMotion_Rotation(true);
 	}
 	else
 	{
-		m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, false);
+		m_pModelCom->Active_RootMotion_Rotation(false);
 	}
 
 	if (Temp2)
 	{
-		m_pModelCom->Active_RootMotion_XZ(iAnimIndex, true);
+		m_pModelCom->Active_RootMotion_XZ(true);
 	}
 	else
 	{
-		m_pModelCom->Active_RootMotion_XZ(iAnimIndex, false);
+		m_pModelCom->Active_RootMotion_XZ(false);
 	}
 
-	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
-	m_pModelCom->Set_Animation(iAnimIndex, true);
-	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
+	m_pModelCom->Set_TickPerSec(iAnimIndex, 40.f);
+
+	CModel::ANIM_PLAYING_DESC		AnimDesc;
+	AnimDesc.iAnimIndex = iAnimIndex;
+	AnimDesc.isLoop = true;
+	AnimDesc.fWeight = 1.f;
+	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
+	list<_uint>		iBoneIndices;
+	for (_uint i = 0; i < iNumBones; ++i)
+	{
+		iBoneIndices.emplace_back(i);
+	}
+	AnimDesc.TargetBoneIndices = iBoneIndices;
+	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
+
+	AnimDesc.iAnimIndex = 1;
+	AnimDesc.isLoop = true;
+	AnimDesc.fWeight = 0.f;
+	iBoneIndices.clear();
+	for (_uint i = 0; i < iNumBones; ++i)
+	{
+		iBoneIndices.emplace_back(i);
+	}
+	AnimDesc.TargetBoneIndices = iBoneIndices;
+	m_pModelCom->Set_Animation_Blend(AnimDesc, 1);
+
+	//	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 
 	m_pModelCom->Set_RootBone("root");
 	//m_pModelCom->Active_RootMotion_XZ(iAnimIndex, true);
-	m_pModelCom->Active_RootMotion_Y(iAnimIndex, false);
+	m_pModelCom->Active_RootMotion_Y(false);
 	//m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, true);
 }
 
@@ -133,6 +167,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 
 	m_pModelCom->Play_Animation_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 
+<<<<<<< HEAD
 	//Body
 	_float4x4 BoneCombined = m_pModelCom->GetBoneTransform(62);
 	BoneCombined._41 *= 0.045f;
@@ -257,6 +292,11 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	Mat = XMMatrixMultiply(Mat, Rot);
 	XMStoreFloat4x4(&BoneCombined, Mat);
 	m_pGameInstance->SetColliderTransform_Right_Shin(BoneCombined);
+=======
+	static bool Temp = false;
+	//if(Temp == false)
+		m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+>>>>>>> hj
 
 	
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);

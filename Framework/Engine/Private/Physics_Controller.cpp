@@ -189,12 +189,32 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	//		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
 	//}
 
+<<<<<<< HEAD
 	QueryFilterCallback filterCallback;
 	PxControllerFilters controllerFilters;
 	controllerFilters.mFilterCallback = &filterCallback;
 
 	if (m_Controller)
 		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, controllerFilters);
+=======
+	//	if (m_Controller)
+	//		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
+
+	//auto Pos = m_Controller->getPosition();
+	//// 현재 글로벌 포즈 가져오기
+	//PxTransform currentPose;
+	//currentPose.p.x = Pos.x;
+	//currentPose.p.y = Pos.y;
+	//currentPose.p.z = Pos.z;
+	//// 변경된 포즈를 객체에 적용
+	//m_BodyCollider->setGlobalPose(currentPose);
+
+	//PxExtendedVec3 characterPosition = m_Controller->getPosition();
+	//PxVec3 newPosition(characterPosition.x, characterPosition.y, characterPosition.z);
+
+	//// `RigidDynamic` 객체를 새 위치로 이동시킵니다.
+	//m_BodyCollider->setKinematicTarget(PxTransform(newPosition));
+>>>>>>> hj
 
 	for (int i = 0; i < m_vecRigid_Dynamic.size(); ++i)
 	{

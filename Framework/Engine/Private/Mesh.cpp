@@ -116,7 +116,7 @@ HRESULT CMesh::Initialize_Prototype(CModel::MODEL_TYPE eType, const MESH_DESC& M
 		pIndices[i] = MeshDesc.Indices[i];
 	}
 
-	for (int i = 0; i < m_iNumIndices; ++i)
+	for (int i = 0; i < static_cast<_int>(m_iNumIndices); ++i)
 	{
 		m_pIndices_Cooking[i] = pIndices[i];
 	}
@@ -343,7 +343,7 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertic
 
 	ZeroMemory(pVertices, sizeof(VTXMESH) * m_iNumVertices);
 
-	for (size_t i = 0; i < m_iNumVertices; i++)
+	for (size_t i = 0; i < static_cast<size_t>(m_iNumVertices); i++)
 	{
 		memcpy_s(&pVertices[i].vPosition, sizeof(_float3), &Vertices[i].vPosition, sizeof(_float3));
 		memcpy_s(&m_pVerticesPos[i], sizeof(_float3), &pVertices[i].vPosition, sizeof(_float3));
@@ -352,7 +352,7 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertic
 		memcpy_s(&pVertices[i].vTangent, sizeof(_float3), &Vertices[i].vTangent, sizeof(_float3));
 	}
 
-	for (int i = 0; i < m_iNumVertices; ++i)
+	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
 	{
 		m_pVertices_Cooking[i] = pVertices[i].vPosition;
 	}
@@ -459,7 +459,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 
 void CMesh::Static_Mesh_Cooking()
 {
-	for (int i = 0; i < m_iNumVertices; ++i)
+	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
 	{
 		m_pVertices_Cooking[i].x *= 5.f;
 		m_pVertices_Cooking[i].y *= 5.f;
