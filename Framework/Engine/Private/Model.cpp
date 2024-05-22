@@ -975,6 +975,44 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 
 		//	애니메이션이 선형보간중이었다면 선형보간된 매트릭스로 재 업데이트한다.
 		Update_LinearInterpolation(fTimeDelta, iPlayingIndex);
+
+		//	선형 보간이전 루트 모션의 경우 이전 움직임 정보를 현재 첫 움직임정보로 덧 씌운다 => 루트모션시 루트가 원점이 아닌 애니메이션인 경우 새로운 애니메이션의 시작지점으로 보간되어버리므로...
+			//	기존 루트모션시 이전 움직임으로 저장된 벡터를 롤백하기위한 값을 추가해준다. => 마지막 키프레임의 값 * 가중치
+		if (true == isFirstTick)
+		{
+			_matrix			TransformationMatrix = { XMLoadFloat4x4(&TransformationMatrices[iRootBoneIndex]) };
+
+			_vector			vTransformationScale, vTransformationQuaternion, vTransformationTranslation;
+			XMMatrixDecompose(&vTransformationScale, &vTransformationQuaternion, &vTransformationTranslation, TransformationMatrix);
+
+			_vector			vLastQuaternion = { XMLoadFloat4(&AnimInfo.LastKeyFrames[iRootBoneIndex].vRotation) };
+			_vector			vLastTranslation = { XMLoadFloat3(&AnimInfo.LastKeyFrames[iRootBoneIndex].vTranslation) };
+
+			if (true == m_isRootMotion_XZ)
+			{
+				vRollbackRootTranslation += XMVectorSet(XMVectorGetX(vLastTranslation), 0.f, XMVectorGetZ(vLastTranslation), 0.f);
+				vLastTranslation = XMVectorSet(XMVectorGetX(vTransformationTranslation), XMVectorGetY(vLastTranslation), XMVectorGetZ(vTransformationTranslation), 1.f);
+			}
+
+			if (true == m_isRootMotion_Y)
+			{
+				vRollbackRootTranslation += XMVectorSet(0.f, XMVectorGetY(vLastTranslation), 0.f, 0.f);
+				vLastTranslation = XMVectorSet(XMVectorGetX(vLastTranslation), XMVectorGetY(vTransformationTranslation), XMVectorGetZ(vLastTranslation), 1.f);
+			}
+
+			vRollbackRootTranslation *= AnimInfo.fWeight;
+			XMStoreFloat3(&AnimInfo.LastKeyFrames[iRootBoneIndex].vTranslation, vLastTranslation);
+
+			if (true == m_isRootMotion_Rotation)
+			{
+				vRollbackRootQuaternion = vLastQuaternion;
+				vLastQuaternion = vTransformationQuaternion;
+			}
+
+			vRollbackRootQuaternion = XMQuaternionSlerp(XMQuaternionIdentity(), vRollbackRootQuaternion, AnimInfo.fWeight);
+			XMStoreFloat4(&AnimInfo.LastKeyFrames[iRootBoneIndex].vRotation, vLastQuaternion);
+		}
+
 		if (true == AnimInfo.isLinearInterpolation)
 		{
 			TransformationMatrices = m_Animations[AnimInfo.iAnimIndex]->Compute_TransfromationMatrix_LinearInterpolation(AnimInfo.fAccLinearInterpolation, m_fTotalLinearTime, TransformationMatrices, static_cast<_uint>(m_Bones.size()), AnimInfo.LastKeyFrames);
@@ -991,18 +1029,12 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 			XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, TransformationMatrix);
 
 			if (true == m_isRootMotion_XZ)
-			{
-				_vector			vLastTranslation = { XMLoadFloat3(&AnimInfo.LastKeyFrames[iRootBoneIndex].vTranslation) };
-
-				vRollbackRootTranslation += XMVectorSet(XMVectorGetX(vLastTranslation), 0.f, XMVectorGetZ(vLastTranslation), 0.f);
+			{									
 				vRollbackRootTranslation -= XMVectorSet(XMVectorGetX(vTranslation), 0.f, XMVectorGetZ(vTranslation), 0.f);
 			}
 
 			if (true == m_isRootMotion_Y)
-			{
-				_vector			vLastTranslation = { XMLoadFloat3(&AnimInfo.LastKeyFrames[iRootBoneIndex].vTranslation) };
-
-				vRollbackRootTranslation += XMVectorSet(0.f, XMVectorGetY(vLastTranslation), 0.f, 0.f);
+			{									
 				vRollbackRootTranslation -= XMVectorSet(0.f, XMVectorGetY(vTranslation), 0.f, 0.f);
 			}
 
