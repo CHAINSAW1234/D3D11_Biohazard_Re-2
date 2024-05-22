@@ -140,7 +140,8 @@ PS_OUT PS_MAIN_CUBE(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
 
     float3 vTex = normalize(float3(1.0, In.vTexcoord.y * -2 + 1.f, In.vTexcoord.x * -2.f + 1.f));
-    //float3 vTex = normalize(float3(In.vTexcoord.y * -2 + 1.f, In.vTexcoord.x * -2.f + 1.f, 1.f));
+    //float3 vTex = normalize(float3(In.vTexcoord.x * 2 - 1.f, In.vTexcoord.y * -2.f + 1.f, 1.f));
+    //float3 vTex = normalize(float3(-1.0, In.vTexcoord.y * -2 + 1.f, In.vTexcoord.x * -2.f + 1.f));
     
     Out.vColor = g_CubeTexture.Sample(LinearSampler, float4(vTex, 0));
 
@@ -359,11 +360,25 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
     //Out.vDiffuse = vLightDepthDesc * 2000;
 	/* vPosition.w : 현재 내가 그릴려고 했던 픽셀의 광원기준의 깊이. */
 	/* vLightDepthDesc.x * 2000.f : 현재 픽셀을 광원기준으로  그릴려고 했던 위치에 이미 그려져있떤 광원 기준의 깊이.  */
-    if (vLightDepthDesc.a == 0)
+    
+    float minDepth = 0;
+    for (int i = 0; i < 6; ++i)
     {
-        Out.vDiffuse = vDiffuse * (g_vLightAmbient * g_vMtrlAmbient ) *fAtt;
-        //Out.vDiffuse = vDiffuse * (g_vLightAmbient * g_vMtrlAmbient) ;
+        vector vPosition = mul(vWorldPos, g_LightViewMatrix[i]);
+        vPosition = mul(vPosition, g_LightProjMatrix);
+        minDepth = max(minDepth, vPosition.w);
+
     }
+    
+    //float shadow = fDistance < vLightDepthDesc.r * 1000 ? 1.0 : 0.0;
+    
+
+    if (minDepth -0.1 > vLightDepthDesc.x * 1000)
+        Out.vDiffuse = float4(0.f,0.f,0.f,1.f);
+        
+        //lerp((g_vLightAmbient * g_vMtrlAmbient), float4(1, 1, 1, 1), );
+        
+    
 
     return Out;
 }

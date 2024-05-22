@@ -83,7 +83,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	m_pColliderCom->Tick(WorldMatrix);
 	
 	static _uint iAnimIndex = { 0 };
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_UP))
+	if (UP == m_pGameInstance->Get_KeyState(VK_UP))
 	{
 		++iAnimIndex;
 		if (50 <= iAnimIndex)
@@ -177,9 +177,9 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 
 	m_pModelCom->Set_RootBone("root");
-	//m_pModelCom->Active_RootMotion_XZ(iAnimIndex, true);
+	m_pModelCom->Active_RootMotion_XZ(false);
 	m_pModelCom->Active_RootMotion_Y(false);
-	//m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, true);
+	m_pModelCom->Active_RootMotion_Rotation(false);
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)
@@ -409,16 +409,16 @@ HRESULT CBody_Player::Render_LightDepth_Cube()
 		return E_FAIL;
 
 	// 의미 없긴 함
-	_float4x4		ViewMatrix, ProjMatrix;
+	//_float4x4		ViewMatrix, ProjMatrix;
 
-	ViewMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW, CPipeLine::SHADOW);
-	ProjMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ, CPipeLine::SHADOW);
+	//ViewMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW, CPipeLine::SHADOW);
+	//ProjMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ, CPipeLine::SHADOW);
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
-		return E_FAIL;
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
+	//	return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &ProjMatrix)))
-		return E_FAIL;
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &ProjMatrix)))
+	//	return E_FAIL;
 
 	const _float4x4* pLightViewMatrices;
 	_float4x4 LightProjMatrix;

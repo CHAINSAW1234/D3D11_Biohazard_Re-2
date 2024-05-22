@@ -117,7 +117,8 @@ struct GS_OUT
 {
     float4 vPosition : SV_POSITION;
     float2 vTexcoord : TEXCOORD0;
-
+    float4 vProjPos : TEXCOORD1;
+    
     uint    RTIndex  : SV_RenderTargetArrayIndex; 
 };
 
@@ -129,11 +130,12 @@ void GS_MAIN(triangle GS_IN In[3], inout TriangleStream<GS_OUT> Output)
     for (int i = 0; i < 6; ++i)
     {
         Out.RTIndex = i;
-        matrix LightViewProjMatrix = mul(g_LightViewMatrix[i], g_ProjMatrix);
+        matrix LightViewProjMatrix = mul(g_LightViewMatrix[i], g_LightProjMatrix);
         for (uint j = 0; j < 3; j++)
         {
             Out.vPosition = mul(In[j].vPosition, LightViewProjMatrix);
             Out.vTexcoord = In[j].vTexcoord;
+            Out.vProjPos = Out.vPosition;
             Output.Append(Out);
         }
         Output.RestartStrip();
@@ -157,7 +159,8 @@ struct PS_IN_CUBE
 {
     float4 vPosition : SV_POSITION;
     float2 vTexcoord : TEXCOORD0;
-
+    float4 vProjPos : TEXCOORD1;
+    
     uint RTIndex : SV_RenderTargetArrayIndex;
 };
 
@@ -276,7 +279,7 @@ PS_OUT_LIGHTDEPTH PS_MAIN_LIGHTDEPTH(PS_IN In)
 {
     PS_OUT_LIGHTDEPTH Out = (PS_OUT_LIGHTDEPTH) 0;
 
-    Out.vLightDepth = float4(In.vProjPos.w / 2000.f, 0.f, 0.f, 0.f);
+    Out.vLightDepth = float4(In.vProjPos.w / 1000.f, 0.f, 0.f, 0.f);
 
     return Out;
 }
@@ -286,7 +289,7 @@ PS_OUT_LIGHTDEPTH PS_LIGHTDEPTH_CUBE(PS_IN_CUBE In)
 {
     PS_OUT_LIGHTDEPTH Out = (PS_OUT_LIGHTDEPTH) 0;
     
-    Out.vLightDepth = float4(In.vPosition.w / 2000.f, 0.f, 0.f, 0.f);
+    Out.vLightDepth = float4(In.vProjPos.w / 1000.f, 0.f, 0.f, 0.f);
     
     return Out;
 }

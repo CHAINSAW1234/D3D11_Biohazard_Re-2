@@ -66,7 +66,7 @@ HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMA
 	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pTexture2D)))
 		return E_FAIL;
 
-	D3D11_RENDER_TARGET_VIEW_DESC RenderTargetDesc;
+	D3D11_RENDER_TARGET_VIEW_DESC RenderTargetDesc = {};
 	RenderTargetDesc.Format = TextureDesc.Format;
 	RenderTargetDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
 	RenderTargetDesc.Texture2DArray.ArraySize = 6 * iArraySize;
@@ -76,7 +76,7 @@ HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMA
 	if (FAILED(m_pDevice->CreateRenderTargetView(m_pTexture2D, &RenderTargetDesc, &m_pRTV)))
 		return E_FAIL;
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC ResourceViewDesc;
+	D3D11_SHADER_RESOURCE_VIEW_DESC ResourceViewDesc = {};
 	ResourceViewDesc.Format = TextureDesc.Format;
 	ResourceViewDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURECUBE;
 	ResourceViewDesc.Texture2DArray.MipLevels = 1;

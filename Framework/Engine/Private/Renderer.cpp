@@ -339,8 +339,12 @@ HRESULT CRenderer::SetUp_LightDSV_Point()
 	/* RenderTarget */
 	/* ShaderResource */
 	/* DepthStencil */
+	D3D11_DEPTH_STENCIL_VIEW_DESC DepthStencilViewDesc = {};
+	DepthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	DepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
+	DepthStencilViewDesc.Texture2DArray.ArraySize = 6 * m_iArraySize;
 
-	if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pLightDepthDSV_Point)))
+	if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, &DepthStencilViewDesc, &m_pLightDepthDSV_Point)))
 		return E_FAIL;
 
 	Safe_Release(pDepthStencilTexture);
@@ -1028,6 +1032,10 @@ HRESULT CRenderer::Render_Light_Result()
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrixInv", &m_pGameInstance->Get_Transform_Float4x4_Inverse(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrixInv", &m_pGameInstance->Get_Transform_Float4x4_Inverse(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Diffuse"), "g_DiffuseTexture")))
 		return E_FAIL;
@@ -1046,7 +1054,7 @@ HRESULT CRenderer::Render_Light_Result()
 		return E_FAIL;
 
 
-	_float			fLightDepthFar = { 2000.f };
+	_float			fLightDepthFar = { 1000.f };
 	const LIGHT_DESC* pLightDesc = { m_pGameInstance->Get_LightDesc(TEXT("LIGHT_GARA_1")) };
 	if (nullptr != pLightDesc)
 	{

@@ -85,17 +85,17 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.vAmbient = _float4(0.2f, 0.2f, 0.2f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 
-	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc, XMConvertToRadians(120.0f), (_float)g_iWinSizeX / g_iWinSizeY, 0.1f, 2000.f)))
+	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
 		return E_FAIL;
 
 	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
-	LightDesc.vPosition =_float4(-10.f, 0.f, 0.f, 1.f);
+	LightDesc.vPosition =_float4(-5.f, 5.f, 0.f, 1.f);
 	LightDesc.fRange = 10.f;
 
 	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 0.4f, 0.4f, 1.f);
-	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_GARA_1"), LightDesc, XMConvertToRadians(90.0f), 1.f, 0.1f, 2000.f)))
+	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_GARA_1"), LightDesc)))
 		return E_FAIL;
 
 	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
@@ -105,7 +105,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.2f, 0.4f, 0.2f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 1.f, 0.4f, 1.f);
-	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_GARA_2"), LightDesc, XMConvertToRadians(90.0f), 1.f, 0.1f, 2000.f)))
+	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_GARA_2"), LightDesc)))
 		return E_FAIL;
 
 	return S_OK;
