@@ -49,6 +49,28 @@ public:
 	_float4			GetRight_Shin_Pos();
 	_float4			GetLeft_Shin_Pos();
 
+	void			SetColliderTransform(_float4x4 Transform);
+	void			SetColliderTransform_Head(_float4x4 Transform);
+	void			SetColliderTransform_Left_Arm(_float4x4 Transform);
+	void			SetColliderTransform_Right_Arm(_float4x4 Transform);
+	void			SetColliderTransform_Left_ForeArm(_float4x4 Transform);
+	void			SetColliderTransform_Right_ForeArm(_float4x4 Transform);
+	void			SetColliderTransform_Pelvis(_float4x4 Transform);
+	void			SetColliderTransform_Left_Leg(_float4x4 Transform);
+	void			SetColliderTransform_Right_Leg(_float4x4 Transform);
+	void			SetColliderTransform_Left_Shin(_float4x4 Transform);
+	void			SetColliderTransform_Right_Shin(_float4x4 Transform);
+	PxTransform		ColliderTransform = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		ColliderTransform_Head = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		ColliderTransform_Right_Arm = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		ColliderTransform_Left_Arm = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		ColliderTransform_Right_ForeArm = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		ColliderTransform_Left_ForeArm = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		ColliderTransform_Pelvis = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		ColliderTransform_Left_Leg = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		ColliderTransform_Right_Leg = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		ColliderTransform_Left_Shin = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+	PxTransform		ColliderTransform_Right_Shin = { PxTransform(PxVec3(0.f,0.f,0.f)) };
 public:
 	static CPhysics_Controller* Create();
 
@@ -68,7 +90,6 @@ private:
 	class CEventCallBack* m_EventCallBack = { nullptr };
 	class CFilterCallBack* m_FilterCallBack = { nullptr };
 	vector<PxRigidDynamic*> m_vecBody;
-	PxRigidDynamic* m_BodyCollider = { nullptr };
 	PxControllerManager* m_Manager = { nullptr };
 	PxController* m_Controller = { nullptr };
 
@@ -126,6 +147,17 @@ private:
 	PxSphericalJoint*			m_pLeft_Knee_Joint = { nullptr };
 	PxSphericalJoint*			m_pRight_Hip_Joint = { nullptr };
 	PxSphericalJoint*			m_pLeft_Hip_Joint = { nullptr };
+	PxRigidDynamic* m_BodyCollider = { nullptr };
+	PxRigidDynamic* m_HeadCollider = { nullptr };
+	PxRigidDynamic* m_Left_Arm_Collider = { nullptr };
+	PxRigidDynamic* m_Right_Arm_Collider = { nullptr };
+	PxRigidDynamic* m_Left_ForeArm_Collider = { nullptr };
+	PxRigidDynamic* m_Right_ForeArm_Collider = { nullptr };
+	PxRigidDynamic* m_Pelvis_Collider = { nullptr };
+	PxRigidDynamic* m_Left_Leg_Collider = { nullptr };
+	PxRigidDynamic* m_Right_Leg_Collider = { nullptr };
+	PxRigidDynamic* m_Left_Shin_Collider = { nullptr };
+	PxRigidDynamic* m_Right_Shin_Collider = { nullptr };
 private:
 	_bool			m_bJump = { false };
 public:

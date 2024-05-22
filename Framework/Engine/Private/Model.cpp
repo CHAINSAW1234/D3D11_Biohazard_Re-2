@@ -323,6 +323,25 @@ void CModel::Init_Separate_Bones()
 //	return S_OK;
 //}
 
+_float4x4 CModel::GetBoneTransform(string strBoneTag)
+{
+	_int			iBoneIndex = { Find_BoneIndex(strBoneTag) };
+	iBoneIndex = 86;
+	if (-1 == iBoneIndex)
+		return _float4x4();
+
+	auto CombinedFloat4x4 = m_Bones[iBoneIndex]->Get_CombinedTransformationMatrix();
+
+	return *CombinedFloat4x4;
+}
+
+_float4x4 CModel::GetBoneTransform(_int Index)
+{
+	auto CombinedFloat4x4 = m_Bones[Index]->Get_CombinedTransformationMatrix();
+
+	return *CombinedFloat4x4;
+}
+
 void CModel::Apply_RootMotion_Rotation(CTransform* pTransform, _fvector vQuaternion)
 {
 	_vector			vPreQuaternion = { XMLoadFloat4(&m_vPreQuaternion) };
@@ -941,7 +960,7 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 	}
 
 	//	모든 채널업데이트가 끝난후 각 뼈에 컴바인드 행렬을 설정한다.
-	for (auto& pBone : m_Bones)
+	for (auto& pBone : m_Bones_Lower)
 	{
 		///////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////

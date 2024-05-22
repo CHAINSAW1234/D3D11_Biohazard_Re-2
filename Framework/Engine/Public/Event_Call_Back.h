@@ -2,6 +2,31 @@
 #include "GameInstance.h"
 #include "Rigid_Dynamic.h"
 
+class QueryFilterCallback : public PxQueryFilterCallback
+{
+public:
+	QueryFilterCallback() {}
+	virtual PxQueryHitType::Enum preFilter(const PxFilterData& filterData, const PxShape* shape, const PxRigidActor* actor, PxHitFlags& queryFlags)
+	{
+		PxFilterData filterData0 = shape->getSimulationFilterData();
+
+		if (filterData0.word0 == 2)
+		{
+			return PxQueryHitType::eNONE; // 충돌 무시(Rigid Dynamic이 밀려남)
+		}
+		else
+		{
+			return PxQueryHitType::eBLOCK; // 충돌 처리
+		}
+	}
+	
+	virtual PxQueryHitType::Enum PxQueryFilterCallback::postFilter(const PxFilterData& filterData, const PxQueryHit& hit, const PxShape* shape, const PxRigidActor* actor)
+	{
+		// 추가적인 후처리 로직이 필요하다면 작성
+		return PxQueryHitType::eNONE; // 충돌 무시
+	}
+};
+
 static physx::PxFilterFlags MegamotionFilterShader(
 	physx::PxFilterObjectAttributes attributes0,
 	physx::PxFilterData filterData0,

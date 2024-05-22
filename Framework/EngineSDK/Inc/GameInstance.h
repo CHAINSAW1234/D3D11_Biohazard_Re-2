@@ -165,8 +165,19 @@ public://Temp
 	{
 		return m_pIndices;
 	}
-	void	InitTerrainPhysics();
-	void	Move_CCT(_float4 Dir, _float fTimeDelta,_int Index);
+	void			InitTerrainPhysics();
+	void			Move_CCT(_float4 Dir, _float fTimeDelta,_int Index);
+	void			SetColliderTransform(_float4x4 Transform);
+	void			SetColliderTransform_Head(_float4x4 Transform);
+	void			SetColliderTransform_Left_Arm(_float4x4 Transform);
+	void			SetColliderTransform_Right_Arm(_float4x4 Transform);
+	void			SetColliderTransform_Left_ForeArm(_float4x4 Transform);
+	void			SetColliderTransform_Right_ForeArm(_float4x4 Transform);
+	void			SetColliderTransform_Pelvis(_float4x4 Transform);
+	void			SetColliderTransform_Left_Leg(_float4x4 Transform);
+	void			SetColliderTransform_Right_Leg(_float4x4 Transform);
+	void			SetColliderTransform_Left_Shin(_float4x4 Transform);
+	void			SetColliderTransform_Right_Shin(_float4x4 Transform);
 #ifdef _DEBUG
 	HRESULT Ready_RTVDebug(const wstring& strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT Draw_RTVDebug(const wstring& strMRTTag, class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
