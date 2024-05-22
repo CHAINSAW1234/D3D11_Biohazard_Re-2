@@ -91,7 +91,7 @@ private:
 	_float						m_fLightDepthTargetViewHeight = { 0.f };
 
 private:
-	_uint					m_iArraySize = { 4 };		// 동시에 적용하는 최대 점 광원 개수 지정
+	_uint					m_iArraySize = { 1 };		// 동시에 적용하는 최대 점 광원 개수 지정
 	ID3D11DepthStencilView* m_pLightDepthDSV_Point = { nullptr };		// 점 광원용
 	_float					m_fLightDepthTargetViewCubeWidth = { 0.f };
 

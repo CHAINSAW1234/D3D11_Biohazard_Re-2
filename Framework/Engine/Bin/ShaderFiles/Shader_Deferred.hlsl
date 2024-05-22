@@ -2,7 +2,7 @@
 
 /* 전역변수 : 쉐이더 외부에 있는 데이터를 쉐이더 안으로 받아온다. */
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-matrix g_LightViewMatrix, g_LightProjMatrix;
+//matrix g_LightViewMatrix, g_LightProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
 texture2D g_Texture;
@@ -35,6 +35,12 @@ float g_fRadialAmount;
 //예은 추가
 float		g_fCutOff;
 float		g_fOutCutOff;
+//
+
+// 현진 추가
+TextureCubeArray g_CubeTexture;
+matrix g_LightViewMatrix[6];
+matrix g_LightProjMatrix;
 //
 
 float4 g_vLightDir;
@@ -125,6 +131,18 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
 
     Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
+
+    return Out;
+}
+
+PS_OUT PS_MAIN_CUBE(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    float3 vTex = normalize(float3(1.0, In.vTexcoord.y * -2 + 1.f, In.vTexcoord.x * -2.f + 1.f));
+    //float3 vTex = normalize(float3(In.vTexcoord.y * -2 + 1.f, In.vTexcoord.x * -2.f + 1.f, 1.f));
+    
+    Out.vColor = g_CubeTexture.Sample(LinearSampler, float4(vTex, 0));
 
     return Out;
 }
@@ -331,21 +349,21 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
 	/* 로컬위치 * 월드행렬 */
     vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
 
-	/* 라이트 뷰, 투영을 곱한다. */
-    vector vPosition = mul(vWorldPos, g_LightViewMatrix);
-    vPosition = mul(vPosition, g_LightProjMatrix);
-
-    float2 vTexcoord;
-
-    vTexcoord.x = (vPosition.x / vPosition.w) * 0.5f + 0.5f;
-    vTexcoord.y = (vPosition.y / vPosition.w) * -0.5f + 0.5f;
-
-    vector vLightDepthDesc = g_LightDepthTexture.Sample(LinearSampler, vTexcoord);
-
+    float3 vLightDir = vWorldPos - g_vLightPos;
+    float fDistance = length(vLightDir);
+    vLightDir = normalize(vLightDir);
+    
+    float fAtt = saturate((g_fLightRange - fDistance) / g_fLightRange);
+    
+    vector vLightDepthDesc = g_CubeTexture.Sample(PointSampler, float4(vLightDir, 0));
+    //Out.vDiffuse = vLightDepthDesc * 2000;
 	/* vPosition.w : 현재 내가 그릴려고 했던 픽셀의 광원기준의 깊이. */
 	/* vLightDepthDesc.x * 2000.f : 현재 픽셀을 광원기준으로  그릴려고 했던 위치에 이미 그려져있떤 광원 기준의 깊이.  */
-    if (vPosition.w - 0.5 > (vLightDepthDesc.x * g_fLightDepthFar))
-        Out.vDiffuse = vDiffuse * (g_vLightAmbient * g_vMtrlAmbient);
+    if (vLightDepthDesc.a == 0)
+    {
+        Out.vDiffuse = vDiffuse * (g_vLightAmbient * g_vMtrlAmbient ) *fAtt;
+        //Out.vDiffuse = vDiffuse * (g_vLightAmbient * g_vMtrlAmbient) ;
+    }
 
     return Out;
 }
@@ -621,4 +639,18 @@ technique11 DefaultTechnique
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_RADIALBLUR();
     }
+
+    pass Debug_Cube // 9
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_CUBE();
+    }
+
 }

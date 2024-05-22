@@ -24,7 +24,8 @@ vector g_vDissolveColor = { 1.f, 1.f, 1.f, 1.f };
 float4 g_vEmissiveLightColor = { 0.f, 0.f, 0.f, 0.f };
 
 // HyeonJin Ãß°¡
-matrix g_ShadowViewProjMatrix[6];
+matrix g_LightViewMatrix[6];
+matrix g_LightProjMatrix;
 float g_fShadowFar;
 
 struct VS_IN
@@ -100,12 +101,7 @@ VS_OUT_CUBE VS_CUBE(VS_IN In)
 
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
 
-    matrix matWV, matWVP;
-
-    matWV = mul(g_WorldMatrix, g_ViewMatrix);
-    matWVP = mul(matWV, g_ProjMatrix);
-
-    Out.vPosition = vPosition;
+    Out.vPosition = mul(vPosition, g_WorldMatrix);
     Out.vTexcoord = In.vTexcoord;
 
     return Out;
@@ -133,10 +129,11 @@ void GS_MAIN(triangle GS_IN In[3], inout TriangleStream<GS_OUT> Output)
     for (int i = 0; i < 6; ++i)
     {
         Out.RTIndex = i;
-        for (uint j = 0; j < 3; i++)
+        matrix LightViewProjMatrix = mul(g_LightViewMatrix[i], g_ProjMatrix);
+        for (uint j = 0; j < 3; j++)
         {
-            Out.vPosition = mul(In[j].vPosition, g_ShadowViewProjMatrix[i]);
-            Out.vTexcoord = In[i].vTexcoord;
+            Out.vPosition = mul(In[j].vPosition, LightViewProjMatrix);
+            Out.vTexcoord = In[j].vTexcoord;
             Output.Append(Out);
         }
         Output.RestartStrip();
@@ -289,7 +286,7 @@ PS_OUT_LIGHTDEPTH PS_LIGHTDEPTH_CUBE(PS_IN_CUBE In)
 {
     PS_OUT_LIGHTDEPTH Out = (PS_OUT_LIGHTDEPTH) 0;
     
-    Out.vLightDepth = float4(In.vPosition.w /2000.f, 0.f, 0.f, 0.f);
+    Out.vLightDepth = float4(In.vPosition.w / 2000.f, 0.f, 0.f, 0.f);
     
     return Out;
 }

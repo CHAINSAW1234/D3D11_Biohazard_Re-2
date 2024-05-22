@@ -540,14 +540,32 @@ const LIGHT_DESC* CGameInstance::Get_LightDesc(const wstring& strLightTag)
 	return m_pLight_Manager->Get_LightDesc(strLightTag);
 }
 
-HRESULT CGameInstance::Add_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc)
+const _float4x4* CGameInstance::Get_LightViewMatrix(const wstring& strLightTag)
+{
+	if (nullptr == m_pLight_Manager)
+	{
+		return nullptr;
+	}
+	return m_pLight_Manager->Get_LightViewMatrix(strLightTag);
+}
+
+const _float4x4 CGameInstance::Get_LightProjMatrix(const wstring& strLightTag)
+{
+	if (nullptr == m_pLight_Manager)
+	{
+		return _float4x4();
+	}
+	return m_pLight_Manager->Get_LightProjMatrix(strLightTag);
+}
+
+HRESULT CGameInstance::Add_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ)
 {
 	if (nullptr == m_pLight_Manager)
 	{
 		MSG_BOX(TEXT("nullptr == m_pLight_Manager : CGameInstance"));
 		return E_FAIL;
 	}
-	return m_pLight_Manager->Add_Light(strLightTag, LightDesc);
+	return m_pLight_Manager->Add_Light(strLightTag, LightDesc, fFovY, fAspect, fNearZ, fFarZ);
 }
 
 HRESULT CGameInstance::Render_Lights(CShader * pShader, CVIBuffer_Rect * pVIBuffer)

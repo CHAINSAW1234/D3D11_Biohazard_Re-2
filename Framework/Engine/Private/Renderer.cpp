@@ -62,8 +62,8 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
 
-	if (FAILED(Render_Shadow()))
-		return E_FAIL;
+	//if (FAILED(Render_Shadow()))
+	//	return E_FAIL;
 
 	if (FAILED(Render_Shadow_Point()))
 		return E_FAIL;
@@ -435,6 +435,8 @@ HRESULT CRenderer::SetUp_RenderTargets_Shadow_Point(const D3D11_VIEWPORT& Viewpo
 	/* For.Target_LightDepth */
 	if (FAILED(m_pGameInstance->Add_RenderTarget_Cube(TEXT("Target_LightDepth_Point"), static_cast<_uint>(ViewportDesc.Width), m_iArraySize, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
+
+	return S_OK;
 }
 
 HRESULT CRenderer::SetUp_RenderTargets_Pre_PostProcessing(const D3D11_VIEWPORT& ViewportDesc)
@@ -534,6 +536,8 @@ HRESULT CRenderer::SetUp_Debug()
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Specular"), 300.0f, 300.0f, 200.f, 200.f)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_1X"), 300.0f, 500.0f, 200.f, 200.f)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Point"), 300.0f, 700.0f, 200.f, 200.f)))
 		return E_FAIL;
 	/*if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_2X"), 300.0f, 500.0f, 200.f, 200.f)))
 		return E_FAIL;
@@ -876,13 +880,21 @@ HRESULT CRenderer::Render_Shadow_Point()
 	_float		fOriginViewPortWidth = { ViewportDesc.Width };
 	_float		fOriginViewPortHeight = { ViewportDesc.Height };
 
-	Set_ViewPort_Size(m_fLightDepthTargetViewCubeWidth, m_fLightDepthTargetViewCubeWidth);
+	D3D11_VIEWPORT			ViewPortDesc2[6];
+	for (int i = 0; i < 6; ++i) {
+		ZeroMemory(&ViewPortDesc2[i], sizeof(D3D11_VIEWPORT));
+		ViewPortDesc2[i].TopLeftX = 0;
+		ViewPortDesc2[i].TopLeftY = 0;
+		ViewPortDesc2[i].Width = m_fLightDepthTargetViewCubeWidth;
+		ViewPortDesc2[i].Height = m_fLightDepthTargetViewCubeWidth;
+		ViewPortDesc2[i].MinDepth = 0.f;
+		ViewPortDesc2[i].MaxDepth = 1.f;
+	}
 
-	/*
-	XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(0.f, 10.f, -10.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
-	XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(120.0f), (_float)g_iWinSizeX / g_iWinSizeY, 0.1f, 2000.f));
 
-	*/
+	m_pContext->RSSetViewports(6, ViewPortDesc2);
+
+	//Set_ViewPort_Size(m_fLightDepthTargetViewCubeWidth, m_fLightDepthTargetViewCubeWidth);
 
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow_Point"), m_pLightDepthDSV_Point)))
 		return E_FAIL;
@@ -898,6 +910,8 @@ HRESULT CRenderer::Render_Shadow_Point()
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
+
+	//m_pContext->RSSetViewports(6, &ViewportDesc);
 
 	Set_ViewPort_Size(fOriginViewPortWidth, fOriginViewPortHeight);
 
@@ -1028,50 +1042,36 @@ HRESULT CRenderer::Render_Light_Result()
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Material"), "g_MaterialTexture")))
 		return E_FAIL;
 
-	if (SHADOW_RESOLUTION::RES_1X == m_eShadowResolution)
-	{
-		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_LightDepth_1X"), "g_LightDepthTexture")))
-			return E_FAIL;
-	}
-
-	else if (SHADOW_RESOLUTION::RES_2X == m_eShadowResolution)
-	{
-		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_LightDepth_2X"), "g_LightDepthTexture")))
-			return E_FAIL;
-	}
-
-	else if (SHADOW_RESOLUTION::RES_4X == m_eShadowResolution)
-	{
-		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_LightDepth_4X"), "g_LightDepthTexture")))
-			return E_FAIL;
-	}
-
-	else if (SHADOW_RESOLUTION::RES_8X == m_eShadowResolution)
-	{
-		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_LightDepth_8X"), "g_LightDepthTexture")))
-			return E_FAIL;
-	}
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_LightDepth_Point"), "g_CubeTexture")))
+		return E_FAIL;
 
 
 	_float			fLightDepthFar = { 2000.f };
-	_float4x4		ViewMatrix, ProjMatrix;
-	ViewMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW, CPipeLine::SHADOW);
-	ProjMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ, CPipeLine::SHADOW);
-
-	const LIGHT_DESC* pLightDesc = { m_pGameInstance->Get_LightDesc(g_strDirectionalTag) };
+	const LIGHT_DESC* pLightDesc = { m_pGameInstance->Get_LightDesc(TEXT("LIGHT_GARA_1")) };
 	if (nullptr != pLightDesc)
 	{
-		_float4			vLightAmbient = { pLightDesc->vAmbient };
+		const _float4x4* ViewMatrices = m_pGameInstance->Get_LightViewMatrix(TEXT("LIGHT_GARA_1"));
+		_float4x4 ProjMatrix = m_pGameInstance->Get_LightProjMatrix(TEXT("LIGHT_GARA_1"));
 
-		if (FAILED(m_pShader->Bind_Matrix("g_LightViewMatrix", &ViewMatrix)))
+		if (FAILED(m_pShader->Bind_Matrices("g_LightViewMatrix", ViewMatrices, 6 * m_iArraySize)))
 			return E_FAIL;
 		if (FAILED(m_pShader->Bind_Matrix("g_LightProjMatrix", &ProjMatrix)))
 			return E_FAIL;
 
+		if (FAILED(m_pShader->Bind_RawValue("g_vLightPos", &pLightDesc->vPosition, sizeof(_float4))))
+			return E_FAIL;
+
+		if (FAILED(m_pShader->Bind_RawValue("g_fLightRange", &pLightDesc->fRange, sizeof(_float))))
+			return E_FAIL;
+
+		if (FAILED(m_pShader->Bind_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
+			return E_FAIL;
+
 		if (FAILED(m_pShader->Bind_RawValue("g_fLightDepthFar", &fLightDepthFar, sizeof(_float))))
 			return E_FAIL;
-		if (FAILED(m_pShader->Bind_RawValue("g_vLightAmbient", &vLightAmbient, sizeof(_float))))
+		if (FAILED(m_pShader->Bind_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
 			return E_FAIL;
+
 	}
 	if (FAILED(m_pVIBuffer->Bind_Buffers()))
 		return E_FAIL;
@@ -1287,6 +1287,9 @@ HRESULT CRenderer::Render_Debug()
 		if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Shadow_8X"), m_pShader, m_pVIBuffer)))
 			return E_FAIL;
 	}
+
+	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Shadow_Point"), m_pShader, m_pVIBuffer)))
+		return E_FAIL;
 
 	return S_OK;
 }

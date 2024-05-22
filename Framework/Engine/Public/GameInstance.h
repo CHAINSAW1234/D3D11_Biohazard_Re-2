@@ -76,7 +76,9 @@ public: /* For.PipeLine */
 
 public: /* For.Light_Manager */
 	const LIGHT_DESC* Get_LightDesc(const wstring& strLightTag);
-	HRESULT Add_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc);
+	const _float4x4* Get_LightViewMatrix(const wstring& strLightTag);
+	const _float4x4 Get_LightProjMatrix(const wstring& strLightTag);
+	HRESULT Add_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _float fFovY = XMConvertToRadians(90.f), _float fAspect = 1, _float fNearZ = 0.01, _float fFarZ = 1000);
 	HRESULT Render_Lights(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
 	HRESULT Tick_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc);
 
