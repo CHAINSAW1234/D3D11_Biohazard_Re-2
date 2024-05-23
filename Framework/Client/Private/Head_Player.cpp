@@ -34,6 +34,8 @@ HRESULT CHead_Player::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
+
 	/*CModel::ANIM_PLAYING_DESC		AnimDesc;
 	AnimDesc.iAnimIndex = 0;
 	AnimDesc.isLoop = true;
@@ -70,7 +72,6 @@ void CHead_Player::Tick(_float fTimeDelta)
 	{
 		iBoneIndices.emplace_back(i);
 	}
-	AnimDesc.TargetBoneIndices = iBoneIndices;
 
 	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
 }

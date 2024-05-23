@@ -37,15 +37,17 @@ HRESULT CHair_Player::Initialize(void* pArg)
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
 	AnimDesc.iAnimIndex = 0;
 	AnimDesc.isLoop = true;
+	AnimDesc.strBoneLayerTag = TEXT("Default");
+
 	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 	list<_uint>		iBoneIndices;
 	for (_uint i = 0; i < iNumBones; ++i)
 	{
 		iBoneIndices.emplace_back(i);
 	}
-	AnimDesc.TargetBoneIndices = iBoneIndices;
 
 	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
+	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
 	return S_OK;
 }

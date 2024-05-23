@@ -15,7 +15,7 @@ public:
 		_int					iAnimIndex = { -1 };
 		_bool					isLoop = { false };
 		_float					fWeight = { 0.f };
-		list<_uint>				TargetBoneIndices;
+		wstring					strBoneLayerTag;
 	}ANIM_PLAYING_DESC;
 
 	typedef struct tagAnimPlayingInfo : public ANIM_PLAYING_DESC
@@ -40,6 +40,8 @@ public:
 	class CBone* Get_BonePtr(const _char* pBoneName) const;
 
 	_bool isFinished(_uint iPlayingIndex);
+	void Get_Child_BonedIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices);
+
 public:	/* For.Animation */
 	//	void Set_Animation(_uint iAnimIndex, _bool isLoop);
 	void Set_Animation_Blend(ANIM_PLAYING_DESC AnimDesc, _uint iPlayingIndex);
@@ -61,13 +63,22 @@ public:	/* For.Animation */
 	void Active_RootMotion_Rotation(_bool isActive);
 	void Set_RootBone(string strBoneTag);			//	모든본을 초기화 => 루트본은 하나다 가정후 찾은 본을 루트본으로 등록
 
+
+public:		/* For.Bone_Layer */
+	void Add_Bone_Layer(const wstring& strLayerTag, list<_uint> BoneIndices);
+	void Add_Bone_Layer_All_Bone(const wstring& strLayerTag);
+	void Delete_Bone_Layer(const wstring& strLayerTag);
+
+private:
+	_bool Is_Included_BoneLayer(const wstring& strLayerTag, _uint iBoneIndex);
+
 private:
 	_int Find_RootBoneIndex();
 
 private:
 	vector<_float4x4> Initialize_ResultMatrices(const set<_uint> IncludedBoneIndices);
 
-	_float Compute_Current_TotalWeight();
+	_float Compute_Current_TotalWeight(_uint iBoneIndex);
 	_float4x4 Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fmatrix DstMatrix, _float fAdditionalWeight);
 
 public:/*For Physics Collider*/
@@ -172,6 +183,7 @@ private:
 	_float4x4					m_TransformationMatrix;
 
 	vector<class CBone*>		m_Bones;
+	map<wstring, set<_uint>>	m_BoneLayers;			//	레이어로 분리할 뼈들의 태그별로 인덱스들을 저장한다.
 
 	_uint						m_iNumAnimations = { 0 };
 	vector<class CAnimation*>	m_Animations;
