@@ -73,6 +73,9 @@ public: /* For.PipeLine */
 	_vector Get_CamPosition_Vector(CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
 	_float4 Get_CamPosition_Float4(CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
 	CPipeLine::FRUSTUM_DESC Get_Frustum(CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
+	void Add_ShadowLight(const wstring& strLightTag);
+	_uint Get_NumShadowLight();
+	const CLight* Get_ShadowLight(_uint iIndex);
 
 public: /* For.Light_Manager */
 	const LIGHT_DESC* Get_LightDesc(const wstring& strLightTag);

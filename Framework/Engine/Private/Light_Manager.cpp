@@ -34,6 +34,15 @@ const _float4x4 CLight_Manager::Get_LightProjMatrix(const wstring& strLightTag)
 	return iter->second->Get_LightProjMatrix();
 }
 
+CLight* CLight_Manager::Get_Light(const wstring& strLightTag)
+{
+	auto& iter = m_Lights.find(strLightTag);
+	if (iter == m_Lights.end())
+		return nullptr;
+
+	return iter->second;
+}
+
 HRESULT CLight_Manager::Initialize()
 {
 	return S_OK;

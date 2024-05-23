@@ -530,6 +530,36 @@ CPipeLine::FRUSTUM_DESC CGameInstance::Get_Frustum(CPipeLine::PIPELINE ePipeLine
 	return m_pPipeLine->Get_Frustum(ePipeLine);
 }
 
+void CGameInstance::Add_ShadowLight(const wstring& strLightTag)
+{
+	if (nullptr == m_pPipeLine)
+		return ;
+
+	if (nullptr == m_pLight_Manager)
+		return;
+
+	
+
+
+	return m_pPipeLine->Add_ShadowLight(m_pLight_Manager->Get_Light(strLightTag));
+}
+
+_uint CGameInstance::Get_NumShadowLight()
+{
+	if (nullptr == m_pPipeLine)
+		return 0;
+
+	return m_pPipeLine->Get_NumShadowLight();
+}
+
+const CLight* CGameInstance::Get_ShadowLight(_uint iIndex)
+{
+	if (nullptr == m_pPipeLine)
+		return nullptr;
+
+	return m_pPipeLine->Get_ShadowLight(iIndex);
+}
+
 
 const LIGHT_DESC* CGameInstance::Get_LightDesc(const wstring& strLightTag)
 {

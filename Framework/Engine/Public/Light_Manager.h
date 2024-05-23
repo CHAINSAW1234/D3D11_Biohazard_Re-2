@@ -14,6 +14,7 @@ public:
 	const LIGHT_DESC* Get_LightDesc(const wstring& strLightTag);
 	const _float4x4* Get_LightViewMatrix(const wstring& strLightTag);
 	const _float4x4 Get_LightProjMatrix(const wstring& strLightTag);
+	class CLight* Get_Light(const wstring& strLightTag);
 
 public:
 	HRESULT Initialize();

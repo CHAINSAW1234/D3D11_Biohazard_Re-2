@@ -15,8 +15,8 @@ HRESULT CLight::Initialize(const LIGHT_DESC& LightDesc, _float fFovY, _float fAs
 
 		XMStoreFloat4x4(&m_LightViewMatrix[0], XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMVectorSet(1.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
 		XMStoreFloat4x4(&m_LightViewMatrix[1], XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMVectorSet(-1.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
-		XMStoreFloat4x4(&m_LightViewMatrix[2], XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMVectorSet(0.f, 1.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
-		XMStoreFloat4x4(&m_LightViewMatrix[3], XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMVectorSet(0.f, -1.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+		XMStoreFloat4x4(&m_LightViewMatrix[2], XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMVectorSet(0.f, 1.f, 0.f, 0.f), XMVectorSet(0.f, 0.f, -1.f, 0.f)));
+		XMStoreFloat4x4(&m_LightViewMatrix[3], XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMVectorSet(0.f, -1.f, 0.f, 0.f), XMVectorSet(0.f, 0.f, 1.f, 0.f)));
 		XMStoreFloat4x4(&m_LightViewMatrix[4], XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMVectorSet(0.f, 0.f, 1.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
 		XMStoreFloat4x4(&m_LightViewMatrix[5], XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMVectorSet(0.f, 0.f, -1.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
 	}

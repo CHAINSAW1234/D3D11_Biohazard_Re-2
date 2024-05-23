@@ -1,7 +1,17 @@
 #include "..\Public\PipeLine.h"
+#include "Light.h"
 
 CPipeLine::CPipeLine()
 {
+}
+
+void CPipeLine::Add_ShadowLight(CLight* pLight)
+{
+	if (m_iNumLight < m_iMaxLight) {
+		++m_iNumLight;
+		m_Lights.push_back(pLight);
+		Safe_AddRef(pLight);
+	}
 }
 
 HRESULT CPipeLine::Initialize()
@@ -41,9 +51,26 @@ void CPipeLine::Tick()
 		memcpy(&m_vCamPosition, &m_TransformInverseMatrices[i][D3DTS_VIEW].m[3][0], sizeof(_float4));
 	}
 
+	// For.LightShadowMapping
+
+	// 1. 기존의 
+
+
+
+
 	//// For. Cascade
 	//Update_CascadeFrustum();
 	//Update_CascadeProjMatrices();
+}
+
+void CPipeLine::Reset()
+{
+
+	// 파이프라인에서 라이트 초기화
+	for (auto& pLight : m_Lights) {
+		Safe_Release(pLight);
+	}
+	m_Lights.clear();
 }
 
 

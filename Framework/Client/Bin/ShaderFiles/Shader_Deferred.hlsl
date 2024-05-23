@@ -39,8 +39,15 @@ float		g_fOutCutOff;
 
 // 현진 추가
 TextureCubeArray g_CubeTexture;
-matrix g_LightViewMatrix[6];
-matrix g_LightProjMatrix;
+int g_iNumShadowLight;
+float4 g_vShadowLightPos[2];
+float g_fShadowLightRange[2];
+//matrix g_LightViewMatrix[6];
+////matrix g_LightViewMatrix[2][6];
+////matrix g_LightProjMatrix[2];
+//matrix g_LightProjMatrix;
+
+
 //
 
 float4 g_vLightDir;
@@ -303,6 +310,34 @@ PS_OUT_LIGHT PS_MAIN_SPOT(PS_IN In)
     return Out;
 }
 
+float ShadowPCFSample(float fDistance, float3 fDirection, int iLightIndex)
+{
+    float SampleRadius = 0.01;
+    float Shadow = 0.f;
+    // PCF
+    int Samples = 20; // 샘플 수, 필요에 따라 조정
+    float SampleStep = SampleRadius / Samples; // 샘플 간격
+
+    for (int x = -Samples / 2; x <= Samples / 2; ++x)
+    {
+        for (int y = -Samples / 2; y <= Samples / 2; ++y)
+        {
+            float3 Offset = float3(x * SampleStep, y * SampleStep, 0.0);
+            float3 SamplePos = fDirection + Offset;
+            float fDepth = g_CubeTexture.Sample(LinearSampler, float4(SamplePos, iLightIndex)).r;
+
+            if (fDistance - 0.1f > fDepth * 1000)
+            {
+                Shadow += 1.0;
+            }
+        }
+    }
+
+    Shadow /= (Samples * Samples); // 샘플 수로 나누어 평균 계산
+    
+    return Shadow;
+}
+
 /* 최종적으로 480000 수행되는 쉐이더. */
 PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
 {
@@ -327,14 +362,12 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
     Out.vDepth = vDepth;
     Out.vMaterial = vMaterial;
     
-    
     /* Shadow */
     /* ProjPos.w == View.Z */
     vector vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * 1000.0f;
 
     float4 vWorldPos;
-
 	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / View.z */
     vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
     vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
@@ -343,43 +376,30 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
 
 	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 */
     vWorldPos *= fViewZ;
-
 	/* 로컬위치 * 월드행렬 * 뷰행렬 */
     vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
-
 	/* 로컬위치 * 월드행렬 */
     vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
 
-    float3 vLightDir = vWorldPos - g_vLightPos;
-    float fDistance = length(vLightDir);
-    vLightDir = normalize(vLightDir);
+    // 광원 여러개에 대해서 처리해야함
     
-    float fAtt = saturate((g_fLightRange - fDistance) / g_fLightRange);
-    
-    vector vLightDepthDesc = g_CubeTexture.Sample(PointSampler, float4(vLightDir, 0));
-    //Out.vDiffuse = vLightDepthDesc * 2000;
-	/* vPosition.w : 현재 내가 그릴려고 했던 픽셀의 광원기준의 깊이. */
-	/* vLightDepthDesc.x * 2000.f : 현재 픽셀을 광원기준으로  그릴려고 했던 위치에 이미 그려져있떤 광원 기준의 깊이.  */
-    
-    float minDepth = 0;
-    for (int i = 0; i < 6; ++i)
+    for (int i = 0; i < 1; ++i)
     {
-        vector vPosition = mul(vWorldPos, g_LightViewMatrix[i]);
-        vPosition = mul(vPosition, g_LightProjMatrix);
-        minDepth = max(minDepth, vPosition.w);
-
+        float3 vLightDir = vWorldPos - g_vShadowLightPos[i];
+        float fDistance = length(vLightDir);
+        vLightDir = normalize(vLightDir);
+    
+        float fAtt = saturate((g_fShadowLightRange[i] - fDistance) / g_fShadowLightRange[i]);
+    
+        float fShadow = ShadowPCFSample(fDistance, vLightDir, i);
+    
+        if (fShadow != 0)
+        {
+            Out.vDiffuse *= (1 - fShadow * fAtt);
+            Out.vDiffuse.a = 1;
+        }
     }
     
-    //float shadow = fDistance < vLightDepthDesc.r * 1000 ? 1.0 : 0.0;
-    
-
-    if (minDepth -0.1 > vLightDepthDesc.x * 1000)
-        Out.vDiffuse = float4(0.f,0.f,0.f,1.f);
-        
-        //lerp((g_vLightAmbient * g_vMtrlAmbient), float4(1, 1, 1, 1), );
-        
-    
-
     return Out;
 }
 

@@ -6,7 +6,7 @@
 /* 기타 클라이언트 로직에 필요한 데이터들을 만들고 저장ㅎ나다. (View, Proj Inv, CamPosition */
 
 BEGIN(Engine)
-
+class CLight;
 class CPipeLine final : public CBase
 {
 public:
@@ -61,19 +61,40 @@ public:
 		return m_Frustum[ePipeLine];
 	}
 
+	void Add_ShadowLight(CLight* pLight);
+
+	_uint Get_NumShadowLight() {
+		return m_iNumLight;
+	}
+	const CLight* Get_ShadowLight(_uint iIndex) {
+		if (iIndex >= m_iNumLight)
+			return nullptr;
+
+		auto iter = m_Lights.begin();
+		advance(iter, iIndex);
+		return *iter;
+	}
+
 public:
 	HRESULT Initialize();
 	void Tick();
+	void Reset();		// 렌더 이후에 그림자 연산에 사용한 빛을 리스트에서 제거
 
 private:
 	// cascade를 위한 절두체 분리 및 투영행렬 계산
 	void Update_CascadeFrustum();
 	void Update_CascadeProjMatrices();
+
 private:
 	_float4x4			m_TransformMatrices[D3DTS_END][PIPELINE_END];
 	_float4x4			m_TransformInverseMatrices[D3DTS_END][PIPELINE_END];
 	_float4				m_vCamPosition[PIPELINE_END];
 	FRUSTUM_DESC		m_Frustum[PIPELINE_END];
+
+	// 그림자 연산에 사용할 광원을 세팅
+	_uint m_iMaxLight = { 2 };
+	_uint m_iNumLight = { 0 };
+	list<CLight*> m_Lights;
 
 
 	// CasCade용 변수 -> 안씀

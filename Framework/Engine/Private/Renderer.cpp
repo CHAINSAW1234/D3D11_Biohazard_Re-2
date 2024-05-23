@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "GameInstance.h"
 
+#include "Light.h"
+
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
 	, m_pContext{ pContext }
@@ -884,8 +886,8 @@ HRESULT CRenderer::Render_Shadow_Point()
 	_float		fOriginViewPortWidth = { ViewportDesc.Width };
 	_float		fOriginViewPortHeight = { ViewportDesc.Height };
 
-	D3D11_VIEWPORT			ViewPortDesc2[6];
-	for (int i = 0; i < 6; ++i) {
+	D3D11_VIEWPORT*			ViewPortDesc2 = new D3D11_VIEWPORT[6 * m_iArraySize];
+	for (int i = 0; i < 6 * m_iArraySize; ++i) {
 		ZeroMemory(&ViewPortDesc2[i], sizeof(D3D11_VIEWPORT));
 		ViewPortDesc2[i].TopLeftX = 0;
 		ViewPortDesc2[i].TopLeftY = 0;
@@ -895,14 +897,12 @@ HRESULT CRenderer::Render_Shadow_Point()
 		ViewPortDesc2[i].MaxDepth = 1.f;
 	}
 
-
-	m_pContext->RSSetViewports(6, ViewPortDesc2);
+	m_pContext->RSSetViewports(6 * m_iArraySize, ViewPortDesc2);
 
 	//Set_ViewPort_Size(m_fLightDepthTargetViewCubeWidth, m_fLightDepthTargetViewCubeWidth);
 
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow_Point"), m_pLightDepthDSV_Point)))
 		return E_FAIL;
-	
 
 	for (auto& pRenderObject : m_RenderObjects[RENDER_SHADOW_POINT])
 	{
@@ -915,9 +915,9 @@ HRESULT CRenderer::Render_Shadow_Point()
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
 
-	//m_pContext->RSSetViewports(6, &ViewportDesc);
-
 	Set_ViewPort_Size(fOriginViewPortWidth, fOriginViewPortHeight);
+
+	Safe_Delete_Array(ViewPortDesc2);
 
 	return S_OK;
 }
@@ -1055,32 +1055,28 @@ HRESULT CRenderer::Render_Light_Result()
 
 
 	_float			fLightDepthFar = { 1000.f };
-	const LIGHT_DESC* pLightDesc = { m_pGameInstance->Get_LightDesc(TEXT("LIGHT_GARA_1")) };
-	if (nullptr != pLightDesc)
-	{
-		const _float4x4* ViewMatrices = m_pGameInstance->Get_LightViewMatrix(TEXT("LIGHT_GARA_1"));
-		_float4x4 ProjMatrix = m_pGameInstance->Get_LightProjMatrix(TEXT("LIGHT_GARA_1"));
 
-		if (FAILED(m_pShader->Bind_Matrices("g_LightViewMatrix", ViewMatrices, 6 * m_iArraySize)))
-			return E_FAIL;
-		if (FAILED(m_pShader->Bind_Matrix("g_LightProjMatrix", &ProjMatrix)))
-			return E_FAIL;
+	_float4* pLightPositions = new _float4[m_iArraySize];
+	_float* pLightRanges = new _float[m_iArraySize];
 
-		if (FAILED(m_pShader->Bind_RawValue("g_vLightPos", &pLightDesc->vPosition, sizeof(_float4))))
-			return E_FAIL;
+	_int iNumShadowLight = 1/*m_pGameInstance->Get_NumShadowLight()*/;
 
-		if (FAILED(m_pShader->Bind_RawValue("g_fLightRange", &pLightDesc->fRange, sizeof(_float))))
-			return E_FAIL;
-
-		if (FAILED(m_pShader->Bind_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
-			return E_FAIL;
-
-		if (FAILED(m_pShader->Bind_RawValue("g_fLightDepthFar", &fLightDepthFar, sizeof(_float))))
-			return E_FAIL;
-		if (FAILED(m_pShader->Bind_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
-			return E_FAIL;
+	for (int i = 0; i < iNumShadowLight; ++i) {
+		const CLight* pLight = m_pGameInstance->Get_ShadowLight(i);
+		if (pLight != nullptr) {
+			pLightPositions[i] = pLight->Get_LightDesc()->vPosition;
+			pLightRanges[i] = pLight->Get_LightDesc()->fRange;
+		}
 
 	}
+
+	if (FAILED(m_pShader->Bind_RawValue("g_iNumShadowLight", &iNumShadowLight, sizeof(_int))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_vShadowLightPos", pLightPositions , sizeof(_float4) * m_iArraySize)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_fShadowLightRange", pLightRanges, sizeof(_float) * m_iArraySize)))
+		return E_FAIL;
+	
 	if (FAILED(m_pVIBuffer->Bind_Buffers()))
 		return E_FAIL;
 
@@ -1093,6 +1089,9 @@ HRESULT CRenderer::Render_Light_Result()
 
 	if (FAILED(m_pVIBuffer->Render()))
 		return E_FAIL;
+
+	Safe_Delete_Array(pLightPositions);
+	Safe_Delete_Array(pLightRanges);
 
 	return S_OK;
 }

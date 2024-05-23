@@ -79,6 +79,7 @@ HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMA
 	D3D11_SHADER_RESOURCE_VIEW_DESC ResourceViewDesc = {};
 	ResourceViewDesc.Format = TextureDesc.Format;
 	ResourceViewDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURECUBE;
+	ResourceViewDesc.Texture2DArray.ArraySize = 6 * iArraySize;
 	ResourceViewDesc.Texture2DArray.MipLevels = 1;
 	ResourceViewDesc.Texture2DArray.MostDetailedMip = 0;
 
@@ -190,13 +191,6 @@ CRenderTarget* CRenderTarget::Create_Cube(ID3D11Device* pDevice, ID3D11DeviceCon
 
 void CRenderTarget::Free()
 {
-	D3D11_TEXTURE2D_DESC pDesc = {};
-	m_pTexture2D->GetDesc(&pDesc);
-	if (pDesc.MiscFlags == D3D11_RESOURCE_MISC_TEXTURECUBE) {
-		SaveDDSTextureToFile(m_pContext, m_pTexture2D, TEXT("Test.dds"));
-	}
-
-
 	Safe_Release(m_pSRV);
 	Safe_Release(m_pRTV);
 	Safe_Release(m_pTexture2D);

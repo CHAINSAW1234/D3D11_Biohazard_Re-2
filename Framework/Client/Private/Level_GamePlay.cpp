@@ -89,8 +89,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 		return E_FAIL;
 
 	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
-	LightDesc.vPosition =_float4(-5.f, 5.f, 0.f, 1.f);
-	LightDesc.fRange = 10.f;
+	LightDesc.vPosition =_float4(-5.f, 10.f, 0.f, 1.f);
+	LightDesc.fRange = 20.f;
 
 	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.2f, 0.2f, 1.f);
@@ -108,6 +108,9 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_GARA_2"), LightDesc)))
 		return E_FAIL;
 
+
+	m_pGameInstance->Add_ShadowLight(TEXT("LIGHT_GARA_1"));
+	m_pGameInstance->Add_ShadowLight(TEXT("LIGHT_GARA_2"));
 	return S_OK;
 }
 

@@ -24,6 +24,8 @@ vector g_vDissolveColor = { 1.f, 1.f, 1.f, 1.f };
 float4 g_vEmissiveLightColor = { 0.f, 0.f, 0.f, 0.f };
 
 // HyeonJin Ãß°¡
+int g_LightIndex;
+
 matrix g_LightViewMatrix[6];
 matrix g_LightProjMatrix;
 float g_fShadowFar;
@@ -129,7 +131,7 @@ void GS_MAIN(triangle GS_IN In[3], inout TriangleStream<GS_OUT> Output)
     
     for (int i = 0; i < 6; ++i)
     {
-        Out.RTIndex = i;
+        Out.RTIndex = i /*+ 6 * g_LightIndex*/;
         matrix LightViewProjMatrix = mul(g_LightViewMatrix[i], g_LightProjMatrix);
         for (uint j = 0; j < 3; j++)
         {
