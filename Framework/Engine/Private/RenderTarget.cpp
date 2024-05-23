@@ -78,10 +78,11 @@ HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMA
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC ResourceViewDesc = {};
 	ResourceViewDesc.Format = TextureDesc.Format;
-	ResourceViewDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURECUBE;
-	ResourceViewDesc.Texture2DArray.ArraySize = 6 * iArraySize;
-	ResourceViewDesc.Texture2DArray.MipLevels = 1;
-	ResourceViewDesc.Texture2DArray.MostDetailedMip = 0;
+	ResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBEARRAY;
+	ResourceViewDesc.TextureCubeArray.First2DArrayFace = 0;
+	ResourceViewDesc.TextureCubeArray.NumCubes = iArraySize;
+	ResourceViewDesc.TextureCubeArray.MipLevels = 1;
+	ResourceViewDesc.TextureCubeArray.MostDetailedMip = 0;
 
 	if (FAILED(m_pDevice->CreateShaderResourceView(m_pTexture2D, &ResourceViewDesc, &m_pSRV)))
 		return E_FAIL;

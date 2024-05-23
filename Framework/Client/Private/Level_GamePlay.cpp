@@ -99,8 +99,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 		return E_FAIL;
 
 	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
-	LightDesc.vPosition = _float4(30.f, 3.f, 20.f, 1.f);
-	LightDesc.fRange = 10.f;
+	LightDesc.vPosition = _float4(10, 10.f, 0.f, 1.f);
+	LightDesc.fRange = 20.f;
 
 	LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.2f, 0.4f, 0.2f, 1.f);

@@ -1057,26 +1057,27 @@ HRESULT CRenderer::Render_Light_Result()
 	_float			fLightDepthFar = { 1000.f };
 
 	_float4* pLightPositions = new _float4[m_iArraySize];
-	_float* pLightRanges = new _float[m_iArraySize];
+	_float4* pLightRanges = new _float4[m_iArraySize];
 
-	_int iNumShadowLight = 1/*m_pGameInstance->Get_NumShadowLight()*/;
+	_int iNumShadowLight = m_pGameInstance->Get_NumShadowLight();
 
 	for (int i = 0; i < iNumShadowLight; ++i) {
 		const CLight* pLight = m_pGameInstance->Get_ShadowLight(i);
 		if (pLight != nullptr) {
 			pLightPositions[i] = pLight->Get_LightDesc()->vPosition;
-			pLightRanges[i] = pLight->Get_LightDesc()->fRange;
+			pLightRanges[i] = _float4(pLight->Get_LightDesc()->fRange, 0,0,0);
 		}
 
 	}
 
 	if (FAILED(m_pShader->Bind_RawValue("g_iNumShadowLight", &iNumShadowLight, sizeof(_int))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Bind_RawValue("g_vShadowLightPos", pLightPositions , sizeof(_float4) * m_iArraySize)))
+	if (FAILED(m_pShader->Bind_RawValue("g_fShadowLightRange", pLightRanges, m_iArraySize * sizeof(_float4))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Bind_RawValue("g_fShadowLightRange", pLightRanges, sizeof(_float) * m_iArraySize)))
+	if (FAILED(m_pShader->Bind_RawValue("g_vShadowLightPos", pLightPositions, m_iArraySize * sizeof(_float4))))
 		return E_FAIL;
-	
+
+
 	if (FAILED(m_pVIBuffer->Bind_Buffers()))
 		return E_FAIL;
 

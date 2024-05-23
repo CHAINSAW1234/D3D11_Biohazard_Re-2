@@ -41,7 +41,7 @@ float		g_fOutCutOff;
 TextureCubeArray g_CubeTexture;
 int g_iNumShadowLight;
 float4 g_vShadowLightPos[2];
-float g_fShadowLightRange[2];
+float4 g_fShadowLightRange[2];
 //matrix g_LightViewMatrix[6];
 ////matrix g_LightViewMatrix[2][6];
 ////matrix g_LightProjMatrix[2];
@@ -150,7 +150,7 @@ PS_OUT PS_MAIN_CUBE(PS_IN In)
     //float3 vTex = normalize(float3(In.vTexcoord.x * 2 - 1.f, In.vTexcoord.y * -2.f + 1.f, 1.f));
     //float3 vTex = normalize(float3(-1.0, In.vTexcoord.y * -2 + 1.f, In.vTexcoord.x * -2.f + 1.f));
     
-    Out.vColor = g_CubeTexture.Sample(LinearSampler, float4(vTex, 0));
+    Out.vColor = g_CubeTexture.Sample(LinearSampler, float4(vTex, 1));
 
     return Out;
 }
@@ -315,7 +315,7 @@ float ShadowPCFSample(float fDistance, float3 fDirection, int iLightIndex)
     float SampleRadius = 0.01;
     float Shadow = 0.f;
     // PCF
-    int Samples = 20; // 샘플 수, 필요에 따라 조정
+    int Samples = 10; // 샘플 수, 필요에 따라 조정
     float SampleStep = SampleRadius / Samples; // 샘플 간격
 
     for (int x = -Samples / 2; x <= Samples / 2; ++x)
@@ -323,8 +323,8 @@ float ShadowPCFSample(float fDistance, float3 fDirection, int iLightIndex)
         for (int y = -Samples / 2; y <= Samples / 2; ++y)
         {
             float3 Offset = float3(x * SampleStep, y * SampleStep, 0.0);
-            float3 SamplePos = fDirection + Offset;
-            float fDepth = g_CubeTexture.Sample(LinearSampler, float4(SamplePos, iLightIndex)).r;
+            float3 SamplePos = normalize(fDirection + Offset);
+            float fDepth = g_CubeTexture.Sample(PointSampler, float4(SamplePos, iLightIndex)).r;
 
             if (fDistance - 0.1f > fDepth * 1000)
             {
@@ -383,22 +383,23 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
 
     // 광원 여러개에 대해서 처리해야함
     
-    for (int i = 0; i < 1; ++i)
+    float fShadow = 0;
+    
+    for (int i = 0; i < g_iNumShadowLight; ++i)
     {
         float3 vLightDir = vWorldPos - g_vShadowLightPos[i];
         float fDistance = length(vLightDir);
         vLightDir = normalize(vLightDir);
     
-        float fAtt = saturate((g_fShadowLightRange[i] - fDistance) / g_fShadowLightRange[i]);
+        float fAtt = saturate((g_fShadowLightRange[i].x - fDistance) / g_fShadowLightRange[i].x);
     
-        float fShadow = ShadowPCFSample(fDistance, vLightDir, i);
-    
-        if (fShadow != 0)
-        {
-            Out.vDiffuse *= (1 - fShadow * fAtt);
-            Out.vDiffuse.a = 1;
-        }
+        fShadow += ShadowPCFSample(fDistance, vLightDir, i) * fAtt;
+
     }
+    
+    Out.vDiffuse *= (1 - fShadow);
+    Out.vDiffuse.a = 1;
+    
     
     return Out;
 }

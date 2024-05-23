@@ -178,9 +178,9 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 
 	m_pModelCom->Set_RootBone("root");
-	m_pModelCom->Active_RootMotion_XZ(false);
+	//m_pModelCom->Active_RootMotion_XZ(false);
 	m_pModelCom->Active_RootMotion_Y(false);
-	m_pModelCom->Active_RootMotion_Rotation(false);
+	//m_pModelCom->Active_RootMotion_Rotation(false);
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)
@@ -411,7 +411,7 @@ HRESULT CBody_Player::Render_LightDepth_Cube()
 
 	_uint iNumLight = m_pGameInstance->Get_NumShadowLight();
 
-	for (int i = 0; i < 1/*inumlight*/; ++i) {
+	for (int i = 0; i < iNumLight; ++i) {
 		const CLight* pLight = m_pGameInstance->Get_ShadowLight(i);
 		const _float4x4* pLightViewMatrices;
 		_float4x4 LightProjMatrix;

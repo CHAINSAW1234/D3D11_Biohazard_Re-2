@@ -131,7 +131,7 @@ void GS_MAIN(triangle GS_IN In[3], inout TriangleStream<GS_OUT> Output)
     
     for (int i = 0; i < 6; ++i)
     {
-        Out.RTIndex = i /*+ 6 * g_LightIndex*/;
+        Out.RTIndex = i + 6 * g_LightIndex;
         matrix LightViewProjMatrix = mul(g_LightViewMatrix[i], g_LightProjMatrix);
         for (uint j = 0; j < 3; j++)
         {
