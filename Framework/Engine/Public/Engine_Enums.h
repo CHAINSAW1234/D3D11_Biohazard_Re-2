@@ -18,4 +18,19 @@ namespace Engine
 		PASS_RADIALBLUR,
 		PASS_END
 	};
+
+	enum Joint_Index
+	{
+		Neck = 167,
+		Spine = 61,
+		//Pelvis = 60,
+		Shoulder_L = 109,
+		Shoulder_R = 151,
+		Elbow_L = 105,
+		Elbos_R = 147,
+		Acetabulum_L = 36,
+		Acetabulum_R = 50,
+		Knee_L = 29,
+		knee_R = 43
+	};
 }

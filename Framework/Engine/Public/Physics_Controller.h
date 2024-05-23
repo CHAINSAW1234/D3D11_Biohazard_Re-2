@@ -191,6 +191,8 @@ private:
 	PxRigidDynamic* m_Right_Leg_Collider = { nullptr };
 	PxRigidDynamic* m_Left_Shin_Collider = { nullptr };
 	PxRigidDynamic* m_Right_Shin_Collider = { nullptr };
+
+	class CRagdoll_Physics* m_pRagdoll_Physics = { nullptr };
 private:
 	_bool			m_bJump = { false };
 public:

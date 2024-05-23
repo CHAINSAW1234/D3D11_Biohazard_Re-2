@@ -51,13 +51,28 @@ VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out = (VS_OUT) 0;
 
-    float fWeightW = 1.f - (In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z);
+  // 가중치의 총합 계산
+    float totalWeight = In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z + In.vBlendWeights.w;
 
+// 총합이 1보다 작을 경우 정규화
+    if (totalWeight < 1.0f)
+    {
+        float scale = 1.0f / totalWeight;
+        In.vBlendWeights.x *= scale;
+        In.vBlendWeights.y *= scale;
+        In.vBlendWeights.z *= scale;
+        In.vBlendWeights.w *= scale;
+    }
+
+// fWeightW 계산
+    float fWeightW = 1.0f - (In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z);
+
+// BoneMatrix 계산
     matrix BoneMatrix = g_BoneMatrices[In.vBlendIndices.x] * In.vBlendWeights.x +
-		g_BoneMatrices[In.vBlendIndices.y] * In.vBlendWeights.y +
-		g_BoneMatrices[In.vBlendIndices.z] * In.vBlendWeights.z +
-		g_BoneMatrices[In.vBlendIndices.w] * fWeightW;
-
+                    g_BoneMatrices[In.vBlendIndices.y] * In.vBlendWeights.y +
+                    g_BoneMatrices[In.vBlendIndices.z] * In.vBlendWeights.z +
+                    g_BoneMatrices[In.vBlendIndices.w] * In.vBlendWeights.w;
+    
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
     vector vNormal = mul(vector(In.vNormal, 0.f), BoneMatrix);
 

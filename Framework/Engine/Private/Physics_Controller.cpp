@@ -3,7 +3,7 @@
 #include "Engine_Struct.h"
 #include "Character_Controller.h"
 #include "Rigid_Dynamic.h"
-
+#include "RagDoll_Physics.h"
 
 CPhysics_Controller::CPhysics_Controller() : m_pGameInstance{ CGameInstance::Get_Instance() }
 {
@@ -67,6 +67,11 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	PxInitExtensions(*m_Physics, m_Pvd);
 
 	m_pGameInstance->SetSimulate(true);
+
+	m_pRagdoll_Physics = new CRagdoll_Physics(m_Scene,m_Physics, m_DefaultAllocatorCallback,m_DefaultErrorCallback,m_Foundation,
+		m_Dispatcher,m_Material);
+
+	m_pRagdoll_Physics->Init();
 
 	return S_OK;
 }
@@ -540,179 +545,10 @@ void CPhysics_Controller::Create_Ragdoll()
 	//physx::PxU32 size = 0;
 	//physx::PxTransform t(physx::PxVec3(0));
 	//physx::PxTransform localTm(physx::PxVec3(4.f, 0.f, 4.f));
+}
 
-	/*m_Shape_Head = m_Physics->createShape(PxSphereGeometry(radius), *m_Material);
-	m_Shape_Head->setSimulationFilterData(filterData);
-	m_Shape_Head->setContactOffset(0.1f);
-
-
-	m_Shape_Body = m_Physics->createShape(PxBoxGeometry(PxVec3(radius, 3 * radius, radius)), *m_Material);
-	m_Shape_Body->setSimulationFilterData(filterData);
-	m_Shape_Body->setContactOffset(0.1f);
-
-	m_Shape_Pelvis = m_Physics->createShape(PxBoxGeometry(PxVec3(radius, radius, radius)), *m_Material);
-	m_Shape_Pelvis->setSimulationFilterData(filterData);
-	m_Shape_Pelvis->setContactOffset(0.1f);
-
-	m_Shape_Left_Arm = m_Physics->createShape(PxCapsuleGeometry(radius * 0.5f, 1.5 * radius), *m_Material);
-	m_Shape_Left_Arm->setSimulationFilterData(filterData);
-	m_Shape_Left_Arm->setContactOffset(0.1f);
-
-
-	m_Shape_Right_Arm = m_Physics->createShape(PxCapsuleGeometry(radius * 0.5f, 1.5 * radius), *m_Material);
-	m_Shape_Right_Arm->setSimulationFilterData(filterData);
-	m_Shape_Right_Arm->setContactOffset(0.1f);
-
-	m_Shape_Left_Leg = m_Physics->createShape(PxCapsuleGeometry(radius * 0.5f, 2 * radius), *m_Material);
-	m_Shape_Left_Leg->setSimulationFilterData(filterData);
-	m_Shape_Left_Leg->setContactOffset(0.1f);
-
-	m_Shape_Right_Leg = m_Physics->createShape(PxCapsuleGeometry(radius * 0.5f, 2 * radius), *m_Material);
-	m_Shape_Right_Leg->setSimulationFilterData(filterData);
-	m_Shape_Right_Leg->setContactOffset(0.1f);
-
-	m_Shape_Left_ForeArm = m_Physics->createShape(PxCapsuleGeometry(radius * 0.5f, radius), *m_Material);
-	m_Shape_Left_ForeArm->setSimulationFilterData(filterData);
-	m_Shape_Left_ForeArm->setContactOffset(0.1f);
-
-
-	m_Shape_Right_ForeArm = m_Physics->createShape(PxCapsuleGeometry(radius * 0.5f, radius), *m_Material);
-	m_Shape_Right_ForeArm->setSimulationFilterData(filterData);
-	m_Shape_Right_ForeArm->setContactOffset(0.1f);
-
-	m_Shape_Right_Shin = m_Physics->createShape(PxCapsuleGeometry(radius * 0.5f, 2 * radius), *m_Material);
-	m_Shape_Right_Shin->setSimulationFilterData(filterData);
-	m_Shape_Right_Shin->setContactOffset(0.1f);
-
-	m_Shape_Left_Shin = m_Physics->createShape(PxCapsuleGeometry(radius * 0.5f, 2 * radius), *m_Material);
-	m_Shape_Left_Shin->setSimulationFilterData(filterData);
-	m_Shape_Left_Shin->setContactOffset(0.1f);*/
-
-#pragma region Ragdoll 임시 코드
-
-	PxInitExtensions(*m_Physics, m_Pvd);
-
-	PxReal radius = 1.0f;
-	PxVec3 offset(0, 0.5f, 0);
-
-	// Head
-	PxVec3 headPos = PxVec3(0, 25, 0);
-	PxRigidDynamic* head = PxCreateDynamic(*m_Physics, PxTransform(headPos), PxSphereGeometry(radius), *m_Material, 1.0f);
-	m_Scene->addActor(*head);
-
-	// Body (longer)
-	PxVec3 bodyPos = headPos - PxVec3(0, 4 * radius, 0);
-	//PxRigidDynamic* body = PxCreateDynamic(*m_Physics, PxTransform(bodyPos), PxBoxGeometry(PxVec3(radius, 3 * radius, radius)), *m_Material, 1.0f);
-	m_BodyCollider = PxCreateDynamic(*m_Physics, PxTransform(bodyPos), PxBoxGeometry(PxVec3(radius, 2.f * radius, radius)), *m_Material, 1.0f);
-	m_Scene->addActor(*m_BodyCollider);
-
-	PxVec3 PelvisPos = bodyPos - PxVec3(3 * radius, 0, 0);
-	PxRigidDynamic* Pelvis = PxCreateDynamic(*m_Physics, PxTransform(PelvisPos), PxBoxGeometry(PxVec3(radius, radius, radius)), *m_Material, 1.0f);
-	m_Scene->addActor(*Pelvis);
-
-	// Connect head and body
-	PxSphericalJoint* PelvisJoint = PxSphericalJointCreate(*m_Physics, m_BodyCollider, PxTransform(PxVec3(0, -radius * 1.5f, 0)), Pelvis, PxTransform(PxVec3(0, radius * 1.f, 0)));
-	PelvisJoint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
-
-	// Connect head and body
-	PxSphericalJoint* neckJoint = PxSphericalJointCreate(*m_Physics, head, PxTransform(PxVec3(0, -radius, 0)), m_BodyCollider, PxTransform(PxVec3(0, 2 * radius, 0)));
-	neckJoint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
-
-	// Arms (shorter)
-	PxVec3 leftArmPos = bodyPos - PxVec3(3 * radius, 0, 0);
-	PxRigidDynamic* leftArm = PxCreateDynamic(*m_Physics, PxTransform(leftArmPos), PxCapsuleGeometry(radius, 1.5 * radius), *m_Material, 1.0f);
-	m_Scene->addActor(*leftArm);
-
-	PxVec3 rightArmPos = bodyPos + PxVec3(3 * radius, 0, 0);
-	PxRigidDynamic* rightArm = PxCreateDynamic(*m_Physics, PxTransform(rightArmPos), PxCapsuleGeometry(radius, 1.5 * radius), *m_Material, 1.0f);
-	m_Scene->addActor(*rightArm);
-
-	// Connect arms to body
-	PxSphericalJoint* leftShoulderJoint = PxSphericalJointCreate(*m_Physics, m_BodyCollider, PxTransform(PxVec3(-radius * 1.5f, radius, 0)), leftArm, PxTransform(PxVec3(radius * 1.5f, 0, 0)));
-	leftShoulderJoint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
-
-	PxSphericalJoint* rightShoulderJoint = PxSphericalJointCreate(*m_Physics, m_BodyCollider, PxTransform(PxVec3(radius * 1.5f, radius, 0)), rightArm, PxTransform(PxVec3(-radius * 1.5f, 0, 0)));
-	rightShoulderJoint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
-
-	// Legs
-	PxVec3 leftLegPos = PelvisPos - PxVec3(5 * radius, 5.f, 0);
-	PxRigidDynamic* leftLeg = PxCreateDynamic(*m_Physics, PxTransform(leftLegPos), PxCapsuleGeometry(radius, 2 * radius), *m_Material, 1.0f);
-	m_Scene->addActor(*leftLeg);
-
-	PxVec3 rightLegPos = PelvisPos + PxVec3(5 * radius, -5.f, 0);
-	PxRigidDynamic* rightLeg = PxCreateDynamic(*m_Physics, PxTransform(rightLegPos), PxCapsuleGeometry(radius, 2 * radius), *m_Material, 1.0f);
-	m_Scene->addActor(*rightLeg);
-
-	// Connect legs to body
-	PxSphericalJoint* leftHipJoint = PxSphericalJointCreate(*m_Physics, Pelvis, PxTransform(PxVec3(-radius * 1.5f, -radius, 0)), leftLeg, PxTransform(PxVec3(radius * 1.5f, 0, 0)));
-	leftHipJoint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
-
-	PxSphericalJoint* rightHipJoint = PxSphericalJointCreate(*m_Physics, Pelvis, PxTransform(PxVec3(radius * 1.5f, -radius, 0)), rightLeg, PxTransform(PxVec3(-radius * 1.5f, 0, 0)));
-	rightHipJoint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
-
-	// Elbows
-	PxVec3 leftForearmPos = leftArmPos - PxVec3(12 * radius, 12.f, 0); // Adjust for shorter arms
-	PxRigidDynamic* leftForearm = PxCreateDynamic(*m_Physics, PxTransform(leftForearmPos), PxCapsuleGeometry(radius, radius), *m_Material, 1.0f);
-	m_Scene->addActor(*leftForearm);
-
-	PxVec3 rightForearmPos = rightArmPos + PxVec3(12 * radius, 12.f, 0); // Adjust for shorter arms
-	PxRigidDynamic* rightForearm = PxCreateDynamic(*m_Physics, PxTransform(rightForearmPos), PxCapsuleGeometry(radius, radius), *m_Material, 1.0f);
-	m_Scene->addActor(*rightForearm);
-
-	// Connect forearms to upper arms (elbows)
-	PxSphericalJoint* leftElbowJoint = PxSphericalJointCreate(*m_Physics, leftArm, PxTransform(PxVec3(-radius * 2.f, 0.f, 0)), leftForearm, PxTransform(PxVec3(radius * 1.5f, 0, 0)));
-	leftElbowJoint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
-
-	PxSphericalJoint* rightElbowJoint = PxSphericalJointCreate(*m_Physics, rightArm, PxTransform(PxVec3(radius * 2.f, 0.f, 0)), rightForearm, PxTransform(PxVec3(-radius * 1.5f, 0, 0)));
-	rightElbowJoint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
-
-	// Knees
-	PxVec3 leftShinPos = leftLegPos - PxVec3(0, 3 * radius, 0); // Adjust for body length
-	PxRigidDynamic* leftShin = PxCreateDynamic(*m_Physics, PxTransform(leftShinPos), PxCapsuleGeometry(radius, 2 * radius), *m_Material, 1.0f);
-	m_Scene->addActor(*leftShin);
-
-	PxVec3 rightShinPos = rightLegPos + PxVec3(0, 3 * radius, 0); // Adjust for body length
-	PxRigidDynamic* rightShin = PxCreateDynamic(*m_Physics, PxTransform(rightShinPos), PxCapsuleGeometry(radius, 2 * radius), *m_Material, 1.0f);
-	m_Scene->addActor(*rightShin);
-
-	// Connect shins to thighs (knees)
-	PxSphericalJoint* leftKneeJoint = PxSphericalJointCreate(*m_Physics, leftLeg, PxTransform(PxVec3(-radius * 3.f, 0.f, 0)), leftShin, PxTransform(PxVec3(radius * 2.f, 0, 0)));
-	leftKneeJoint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
-
-	PxSphericalJoint* rightKneeJoint = PxSphericalJointCreate(*m_Physics, rightLeg, PxTransform(PxVec3(radius * 3.f, 0.f, 0)), rightShin, PxTransform(PxVec3(-radius * 2.f, 0, 0)));
-	rightKneeJoint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
-#pragma endregion
-
-#pragma region Ragdoll Articulation 코드
-
-	//PxVec3 relativePosition1 = (JointTransform_Neck.p - ColliderTransform_Head.p) * 0.5f;
-	//PxVec3 relativePosition2 = (JointTransform_Neck.p - ColliderTransform.p) * 0.5f;
-
-	////Head
-	//m_pHead = m_Physics->createRigidDynamic(t.transform(localTm));
-	//m_pHead->attachShape(*m_Shape_Head);
-	//physx::PxRigidBodyExt::updateMassAndInertia(*m_pHead, 10.f);
-	//m_Scene->addActor(*m_pHead);
-	//m_pHead->setMass(1.f);
-	//m_pHead->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
-	//m_pHead->setSleepThreshold(sleepThreshold);
-
-	//m_pBody = m_Physics->createRigidDynamic(t.transform(localTm));
-	//m_pBody->attachShape(*m_Shape_Body);
-	//physx::PxRigidBodyExt::updateMassAndInertia(*m_pBody, 10.f);
-	//m_Scene->addActor(*m_pBody);
-	//m_pBody->setMass(1.f);
-	//m_pBody->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
-	//m_pBody->setSleepThreshold(sleepThreshold);
-
-	//PxArticulationReducedCoordinate* articulation = m_Physics->createArticulationReducedCoordinate();
-	//PxArticulationLink* HeadLink = articulation->createLink(nullptr, PxTransform(PxVec3(0, 1, 0)));
-	//PxArticulationLink* BodyLink = articulation->createLink(HeadLink, PxTransform(PxVec3(0, -0.5, 0)));
-
-	//// 씬에 추가
-	//m_Scene->addArticulation(*articulation);
-
-#pragma endregion
+void CPhysics_Controller::Init_Radoll()
+{
 }
 
 _float4 CPhysics_Controller::GetHeadPos()

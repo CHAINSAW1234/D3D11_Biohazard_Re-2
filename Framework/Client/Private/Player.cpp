@@ -121,7 +121,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	_float4			vMovedDirection = { Convert_Float3_To_Float4_Dir(m_vRootTranslation) };
 	
-	m_pGameInstance->Move_CCT(vMovedDirection, fTimeDelta, 0);
+	//m_pGameInstance->Move_CCT(vMovedDirection, fTimeDelta, 0);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);

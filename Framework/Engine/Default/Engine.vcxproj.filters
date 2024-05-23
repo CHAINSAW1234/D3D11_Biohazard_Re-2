@@ -205,6 +205,18 @@
     <Filter Include="01.Utility\10.Picking">
       <UniqueIdentifier>{03ba2e75-dc70-407d-bed1-fb1939c7f9dc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\97.Physics\RagDoll_Physics">
+      <UniqueIdentifier>{8b6c126f-5bdd-4efc-bc4c-22d228b39e8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\97.Physics\RagDoll_Physics\RagDoll">
+      <UniqueIdentifier>{1e343604-aa0b-4914-b4e8-84687e0b0ebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\97.Physics\RagDoll_Physics\Skeleton">
+      <UniqueIdentifier>{5208954f-b1f3-4d6e-b3fe-d84ea271d06f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\97.Physics\RagDoll_Physics\Skeletal_Mesh">
+      <UniqueIdentifier>{d43ce93c-1786-4467-b7b3-de275af8ab54}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -399,6 +411,18 @@
     <ClCompile Include="..\Private\Picking.cpp">
       <Filter>01.Utility\10.Picking</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\RagDoll_Physics.cpp">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RagDoll.cpp">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics\RagDoll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Skeleton.cpp">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics\Skeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Skeletal_Mesh.cpp">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics\Skeletal_Mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -484,9 +508,6 @@
     </ClInclude>
     <ClInclude Include="..\public\Mesh.h">
       <Filter>01.Utility\02.Components\Model\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Bone.h">
-      <Filter>01.Utility\02.Components\Model\Bone</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Animation.h">
       <Filter>01.Utility\02.Components\Model\Animation</Filter>
@@ -607,6 +628,21 @@
     </ClInclude>
     <ClInclude Include="..\Public\Picking.h">
       <Filter>01.Utility\10.Picking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Bone.h">
+      <Filter>01.Utility\02.Components\Model\Bone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RagDoll_Physics.h">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RagDoll.h">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics\RagDoll</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Skeleton.h">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics\Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Skeletal_Mesh.h">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics\Skeletal_Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
