@@ -52,10 +52,6 @@ HRESULT CBody_Player::Initialize(void * pArg)
 
 	m_pModelCom->Set_RootBone("root");
 
-	m_pModelCom->Set_SpineBone("spine_0");
-
-	m_pModelCom->Init_Separate_Bones();
-
 	return S_OK;
 }
 
@@ -116,8 +112,8 @@ void CBody_Player::Tick(_float fTimeDelta)
 	}
 
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
-	//	AnimDesc.iAnimIndex = 23;
 	AnimDesc.iAnimIndex = iAnimIndex;
+	//	AnimDesc.iAnimIndex = iAnimIndex;
 	AnimDesc.isLoop = true;
 	AnimDesc.fWeight = fWeight;
 	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
@@ -145,7 +141,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	m_pModelCom->Set_Weight(1, 1.f - fWeight);
 
 
-		//	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
+	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 
 	m_pModelCom->Set_RootBone("root");
 
@@ -300,7 +296,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 
 	
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+	//	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);

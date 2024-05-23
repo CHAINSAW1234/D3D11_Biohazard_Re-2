@@ -51,12 +51,14 @@ VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out = (VS_OUT) 0;
 
-    float fWeightW = 1.f - (In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z);
-
-    matrix BoneMatrix = g_BoneMatrices[In.vBlendIndices.x] * In.vBlendWeights.x +
-		g_BoneMatrices[In.vBlendIndices.y] * In.vBlendWeights.y +
-		g_BoneMatrices[In.vBlendIndices.z] * In.vBlendWeights.z +
-		g_BoneMatrices[In.vBlendIndices.w] * fWeightW;
+    //  float fWeightW = 1.f - (In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z);
+    //  float fTotalWeight = In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z + In.vBlendWeights.w;
+    float fTotalWeight = 1.f;
+    
+    matrix BoneMatrix = g_BoneMatrices[In.vBlendIndices.x] * In.vBlendWeights.x / fTotalWeight +
+		g_BoneMatrices[In.vBlendIndices.y] * In.vBlendWeights.y / fTotalWeight +
+		g_BoneMatrices[In.vBlendIndices.z] * In.vBlendWeights.z / fTotalWeight +
+		g_BoneMatrices[In.vBlendIndices.w] * In.vBlendWeights.w / fTotalWeight;
 
     vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
     vector vNormal = mul(vector(In.vNormal, 0.f), BoneMatrix);
@@ -229,8 +231,10 @@ technique11 DefaultTechnique
     pass Default_Atos
     {
         SetRasterizerState(RS_Default);
+        //  SetRasterizerState(RS_Wireframe);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        //  SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;

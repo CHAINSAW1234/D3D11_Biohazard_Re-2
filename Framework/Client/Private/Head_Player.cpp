@@ -62,7 +62,7 @@ void CHead_Player::Tick(_float fTimeDelta)
 	m_pColliderCom->Tick(XMLoadFloat4x4(&m_WorldMatrix));
 
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
-	AnimDesc.iAnimIndex = 3;
+	AnimDesc.iAnimIndex = 7;
 	AnimDesc.isLoop = true;
 	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 	list<_uint>		iBoneIndices;
@@ -82,7 +82,7 @@ void CHead_Player::Late_Tick(_float fTimeDelta)
 	m_pModelCom->Play_Animations(fTimeDelta);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+	//	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);

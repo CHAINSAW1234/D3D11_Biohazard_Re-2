@@ -69,7 +69,7 @@ void CHair_Player::Late_Tick(_float fTimeDelta)
 	m_pModelCom->Play_Animations(fTimeDelta);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+	//	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
