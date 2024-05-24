@@ -804,6 +804,11 @@ void CGameInstance::Create_Ragdoll()
 	m_pPhysics_Controller->Create_Ragdoll();
 }
 
+void CGameInstance::SetBone_Ragdoll(vector<class CBone*>* vecBone)
+{
+	m_pPhysics_Controller->SetBone_Ragdoll(vecBone);
+}
+
 HRESULT CGameInstance::Ready_RTVDebug(const wstring & strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
 {
 	return m_pTarget_Manager->Ready_Debug(strRenderTargetTag, fX, fY, fSizeX, fSizeY);

@@ -90,6 +90,33 @@ public:
     void Update(_float fTimeDelta);
     _bool load_mesh();
     void  update_transforms();
+    void  Set_Kinematic(_bool boolean);
+    void update_animations();
+
+    void			SetBone_Ragdoll(vector<class CBone*>* vecBone)
+    {
+        m_vecBone = vecBone;
+    }
+    bool IsIdentityMatrix(const _matrix& matrix)
+    {
+        // 항등 행렬의 주 대각선 원소와 나머지 원소를 확인
+        if (XMVectorGetX(matrix.r[0]) == 1.0f && XMVectorGetY(matrix.r[0]) == 0.0f &&
+            XMVectorGetZ(matrix.r[0]) == 0.0f && XMVectorGetW(matrix.r[0]) == 0.0f &&
+
+            XMVectorGetX(matrix.r[1]) == 0.0f && XMVectorGetY(matrix.r[1]) == 1.0f &&
+            XMVectorGetZ(matrix.r[1]) == 0.0f && XMVectorGetW(matrix.r[1]) == 0.0f &&
+
+            XMVectorGetX(matrix.r[2]) == 0.0f && XMVectorGetY(matrix.r[2]) == 0.0f &&
+            XMVectorGetZ(matrix.r[2]) == 1.0f && XMVectorGetW(matrix.r[2]) == 0.0f &&
+
+            XMVectorGetX(matrix.r[3]) == 0.0f && XMVectorGetY(matrix.r[3]) == 0.0f &&
+            XMVectorGetZ(matrix.r[3]) == 0.0f && XMVectorGetW(matrix.r[3]) == 1.0f)
+        {
+            return true;
+        }
+
+        return false;
+    }
 public:
 	static CRagdoll_Physics* Create();
 
@@ -122,6 +149,9 @@ private:
     std::vector<_int>        m_joint_Index;
     std::vector<int32_t>     m_selected_joints;
     std::vector<std::string> m_joint_names;
+    class AnimRagdoll* m_ragdoll_pose = { nullptr };
+    bool    m_simulate = false;
+    vector<class CBone*>* m_vecBone = { nullptr };
 public:
 	virtual void Free() override;
 };

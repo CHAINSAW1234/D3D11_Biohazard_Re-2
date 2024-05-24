@@ -180,6 +180,10 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//m_pModelCom->Active_RootMotion_XZ(iAnimIndex, true);
 	m_pModelCom->Active_RootMotion_Y(false);
 	//m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, true);
+
+	m_pGameInstance->SetBone_Ragdoll(m_pModelCom->GetBoneVector());
+
+	//m_pModelCom->RagDoll();
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)
@@ -188,7 +192,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 
 	static bool Temp = false;
 
-//	if(!Temp)
+	if(!Temp)
 	{
 		m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 	}

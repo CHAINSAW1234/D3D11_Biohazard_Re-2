@@ -68,7 +68,10 @@ public:	/*For Upper-Lower Separation*/
 	//	HRESULT RagDoll();
 	HRESULT Play_Animation_Separation(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
 	HRESULT RagDoll();
-
+	vector<class CBone*>* GetBoneVector()
+	{
+		return &m_Bones;
+	}
 public:/*For Physics Collider*/
 	_float4x4 GetBoneTransform(string strBoneTag);
 	_float4x4 GetBoneTransform(_int Index);

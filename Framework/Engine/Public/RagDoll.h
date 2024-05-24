@@ -39,7 +39,7 @@ public:
 class ENGINE_DLL AnimRagdoll : public CBase
 {
 public:
-    AnimRagdoll();
+    AnimRagdoll(Skeleton* skeleton);
     ~AnimRagdoll();
     class PoseTransforms* apply(CRagdoll* ragdoll, _matrix model_scale, _matrix model_rotation);
 
@@ -47,23 +47,5 @@ private:
     Skeleton* m_skeleton;
     PoseTransforms m_transforms;
 };
-
-//struct Joint
-//{
-//    std::string name;
-//    _matrix   inverse_bind_pose;
-//    _matrix   offset_from_parent;
-//    _vector   original_rotation;
-//    int32_t     parent_index;
-//
-//    inline _vector bind_pos_ws(_matrix model)
-//    {
-//        _matrix invBindPoseInverse = XMMatrixInverse(nullptr, inverse_bind_pose);
-//        _matrix m = XMMatrixMultiply(model, invBindPoseInverse);
-//        XMVECTOR scale, rotQuat, trans;
-//        XMMatrixDecompose(&scale, &rotQuat, &trans, m);
-//        return trans;
-//    }
-//};
 
 END

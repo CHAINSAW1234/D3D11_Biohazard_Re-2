@@ -70,6 +70,8 @@ public:
 	void			SetJointTransform_Acetabulum_R(_float4x4 Transform);
 	void			SetJointTransform_Knee_L(_float4x4 Transform);
 	void			SetJointTransform_Knee_R(_float4x4 Transform);
+	
+	void			SetBone_Ragdoll(vector<class CBone*>* vecBone);
 
 	PxTransform		ColliderTransform = { PxTransform(PxVec3(0.f,0.f,0.f)) };
 	PxTransform		ColliderTransform_Head = { PxTransform(PxVec3(0.f,0.f,0.f)) };

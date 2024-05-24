@@ -43,7 +43,7 @@ HRESULT CPlayer::Initialize(void * pArg)
 	if (FAILED(Initialize_PartModels()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Scaled(0.045f, 0.045f, 0.045f);
+	//m_pTransformCom->Set_Scaled(0.045f, 0.045f, 0.045f);
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, -3.5f, 0.f,1.f));
 	return S_OK;
 }

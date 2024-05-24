@@ -4,7 +4,9 @@ _matrix create_offset_transform(const _matrix& a, const _matrix& b)
 {
     // Create delta transform
     _vector pos_a = a.r[3];
+    pos_a=XMVectorSetW(pos_a, 1.f);
     _vector pos_b = b.r[3];
+    pos_b=XMVectorSetW(pos_b, 1.f);
 
     // Calculate the translation difference
     _vector translation_diff = XMVectorSubtract(pos_b, pos_a);
@@ -13,10 +15,11 @@ _matrix create_offset_transform(const _matrix& a, const _matrix& b)
     // Calculate the rotation difference
     _vector quat_a = XMQuaternionRotationMatrix(a);
     _vector quat_b = XMQuaternionRotationMatrix(b);
-    _vector rotation_diff = XMQuaternionMultiply(quat_b, XMQuaternionInverse(quat_a));
+    _vector rotation_diff = XMQuaternionMultiply(quat_b, XMQuaternionConjugate(quat_a));
     _matrix rotation_delta_mat = XMMatrixRotationQuaternion(rotation_diff);
 
-    return XMMatrixMultiply(translation_delta_mat, rotation_delta_mat);
+    //return XMMatrixMultiply(translation_delta_mat, rotation_delta_mat);
+    return XMMatrixMultiply(rotation_delta_mat, translation_delta_mat);
 }
 
 Skeleton* Skeleton::create(const aiScene* scene)
@@ -110,9 +113,7 @@ void Skeleton::build_skeleton(aiNode* node, int bone_index, const aiScene* scene
             memcpy(&OffsetMatrix, &temp_bone_list[i]->mOffsetMatrix, sizeof(_float4x4));
             XMStoreFloat4x4(&OffsetMatrix, XMMatrixTranspose(XMLoadFloat4x4(&OffsetMatrix)));
             XMMATRIX offsetMatrix = XMLoadFloat4x4(&OffsetMatrix);
-            //XMMATRIX offsetMatrix = XMLoadFloat4x4(reinterpret_cast<const XMFLOAT4X4*>(&temp_bone_list[i]->mOffsetMatrix));
-            XMMATRIX inverseBindPose = XMMatrixInverse(nullptr,offsetMatrix);
-            joint.inverse_bind_pose= inverseBindPose;
+            joint.inverse_bind_pose= offsetMatrix;
 
             XMMATRIX inverseMatrix = XMMatrixInverse(nullptr, joint.inverse_bind_pose);
             XMVECTOR rotationQuat = XMQuaternionRotationMatrix(inverseMatrix);

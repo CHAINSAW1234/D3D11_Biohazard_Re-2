@@ -187,6 +187,8 @@ public://Temp
 	void			SetJointTransform_Knee_L(_float4x4 Transform);
 	void			SetJointTransform_Knee_R(_float4x4 Transform);
 	void			Create_Ragdoll();
+
+	void			SetBone_Ragdoll(vector<class CBone*>* vecBone);
 #ifdef _DEBUG
 	HRESULT Ready_RTVDebug(const wstring& strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT Draw_RTVDebug(const wstring& strMRTTag, class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);

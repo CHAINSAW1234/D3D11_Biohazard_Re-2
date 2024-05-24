@@ -226,6 +226,14 @@ void CModel::Init_Separate_Bones()
 	}
 }
 
+HRESULT CModel::RagDoll()
+{
+	for (auto& pBone : m_Bones)
+		pBone->Invalidate_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix));
+
+	return S_OK;
+}
+
 //HRESULT CModel::Play_Animation_Separation(CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection)
 //{
 //	_bool		isFirstTick = { false };
@@ -877,7 +885,7 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 	vector<vector<_float4x4>>		TransformationMatricesLayer;
 	set<_uint>						IncludedBoneIndices;
 
-	_vector							vRollbackRootTranslation = {XMVectorSet(0.f, 0.f, 0.f, 1.f)};
+	_vector							vRollbackRootTranslation = { XMVectorSet(0.f, 0.f, 0.f, 1.f) };
 	_vector							vRollbackRootQuaternion = { XMQuaternionIdentity() };
 
 	_uint							iRootIndex = { 0 };
@@ -912,7 +920,7 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 
 		//	선형 보간중이아니었다면 이후에 일어날 선형 보간을 대비하여 마지막 키프레임들을 저장한다.
 		if (false == AnimInfo.isLinearInterpolation)
-		{			
+		{
 			Update_LastKeyFrames(TransformationMatrices, AnimInfo.LastKeyFrames);
 		}
 
@@ -944,7 +952,7 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 			vRollbackRootTranslation *= AnimInfo.fWeight;
 			vRollbackRootQuaternion = XMQuaternionSlerp(XMQuaternionIdentity(), vRollbackRootQuaternion, AnimInfo.fWeight);
 		}
-		
+
 
 		TransformationMatricesLayer.push_back(TransformationMatrices);
 
@@ -1388,7 +1396,7 @@ void CModel::Update_LastKeyFrames(const vector<_float4x4>& TransformationMatrice
 		KeyFrame.fTime = m_fTotalLinearTime;
 
 		LastKeyFrames.push_back(KeyFrame);
-	}	
+	}
 }
 
 void CModel::Update_LastKeyFrames_Bones(vector<KEYFRAME>& LastKeyFrames)
