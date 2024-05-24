@@ -64,18 +64,23 @@ public: /* For.Timer_Manager */
 	_float Compute_TimeDelta(const wstring& strTimerTag);
 
 public: /* For.PipeLine */
-	void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA);
-	void Set_Frustum(CPipeLine::FRUSTUM_DESC FrustumDesc, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA);
-	_matrix Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
-	_float4x4 Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
-	_matrix Get_Transform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
-	_float4x4 Get_Transform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
-	_vector Get_CamPosition_Vector(CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
-	_float4 Get_CamPosition_Float4(CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
-	CPipeLine::FRUSTUM_DESC Get_Frustum(CPipeLine::PIPELINE ePipeLine = CPipeLine::CAMERA) const;
+	void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
+	void Set_ShadowSpotLight(const wstring& strLightTag);
 	void Add_ShadowLight(const wstring& strLightTag);
+	_matrix Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState) const;
+	_float4x4 Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE eState) const;
+	_matrix Get_Transform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState) const;
+	_float4x4 Get_Transform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState) const;
+	_vector Get_CamPosition_Vector() const;
+	_float4 Get_CamPosition_Float4() const;
 	_uint Get_NumShadowLight();
 	const CLight* Get_ShadowLight(_uint iIndex);
+	_matrix Get_SpotLightTransform_Matrix(CPipeLine::TRANSFORMSTATE eState) const;
+	_float4x4 Get_SpotLightTransform_Float4x4(CPipeLine::TRANSFORMSTATE eState) const;
+	_matrix Get_SpotLightTransform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState) const;
+	_float4x4 Get_SpotLightTransform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState) const;
+	const CLight* Get_ShadowSpotLight();
+
 
 public: /* For.Light_Manager */
 	const LIGHT_DESC* Get_LightDesc(const wstring& strLightTag);

@@ -64,8 +64,8 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
 
-	//if (FAILED(Render_Shadow()))
-	//	return E_FAIL;
+	if (FAILED(Render_Shadow()))
+		return E_FAIL;
 
 	if (FAILED(Render_Shadow_Point()))
 		return E_FAIL;
@@ -861,13 +861,13 @@ HRESULT CRenderer::Render_Shadow()
 	}
 
 
-	for (auto& pRenderObject : m_RenderObjects[RENDER_SHADOW])
+	for (auto& pRenderObject : m_RenderObjects[RENDER_SHADOW_SPOT])
 	{
 		if (nullptr != pRenderObject)
 			pRenderObject->Render_LightDepth();
 		Safe_Release(pRenderObject);
 	}
-	m_RenderObjects[RENDER_SHADOW].clear();
+	m_RenderObjects[RENDER_SHADOW_SPOT].clear();
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
@@ -1050,9 +1050,39 @@ HRESULT CRenderer::Render_Light_Result()
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Material"), "g_MaterialTexture")))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_LightDepth_1X"), "g_SpotLightDepthTexture")))
+		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_LightDepth_Point"), "g_CubeTexture")))
 		return E_FAIL;
 
+	if (m_pGameInstance->Get_ShadowSpotLight() != nullptr) {
+		_bool isShadowSpotLight = true;
+		if (FAILED(m_pShader->Bind_RawValue("g_isShadowSpotLight", &isShadowSpotLight, sizeof(_bool))))
+			return E_FAIL;
+
+		const LIGHT_DESC* LightDesc = m_pGameInstance->Get_ShadowSpotLight()->Get_LightDesc();
+
+		if (FAILED(m_pShader->Bind_Matrix("g_SpotLightViewMatrix", &m_pGameInstance->Get_SpotLightTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_Matrix("g_SpotLightProjMatrix", &m_pGameInstance->Get_SpotLightTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_vSpotLightPosition", &LightDesc->vPosition, sizeof(_float4))))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_vSpotLightDirection", &LightDesc->vDirection, sizeof(_float4))))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_fSpotLightCutOff", &LightDesc->fCutOff, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_fSpotLightOutCutOff", &LightDesc->fOutCutOff, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_fSpotLightRange", &LightDesc->fRange, sizeof(_float))))
+			return E_FAIL;
+	}
+	else {
+		_bool isShadowSpotLight = false;
+		if (FAILED(m_pShader->Bind_RawValue("g_isShadowSpotLight", &isShadowSpotLight, sizeof(_bool))))
+			return E_FAIL;
+	}
 
 	_float			fLightDepthFar = { 1000.f };
 

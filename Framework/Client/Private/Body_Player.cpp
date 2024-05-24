@@ -316,7 +316,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 
 	
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 
 #ifdef _DEBUG
@@ -370,8 +370,8 @@ HRESULT CBody_Player::Render_LightDepth()
 
 	_float4x4		ViewMatrix, ProjMatrix;
 	
-	ViewMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW, CPipeLine::SHADOW);
-	ProjMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ, CPipeLine::SHADOW);
+	ViewMatrix = m_pGameInstance->Get_SpotLightTransform_Float4x4(CPipeLine::D3DTS_VIEW);
+	ProjMatrix = m_pGameInstance->Get_SpotLightTransform_Float4x4(CPipeLine::D3DTS_PROJ);
 	
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
 		return E_FAIL;

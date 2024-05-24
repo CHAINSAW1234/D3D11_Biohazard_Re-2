@@ -169,6 +169,9 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	m_pObject_Manager->Priority_Tick(fTimeDelta);	
 
+	/* 반복적인 갱신이 필요한 객체들의 Tick함수를 호출한다. */
+	m_pLevel_Manager->Tick(fTimeDelta);
+
 	m_pObject_Manager->Tick(fTimeDelta);	
 
 	m_pPicking->Update();
@@ -179,8 +182,7 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	m_pObject_Manager->Late_Tick(fTimeDelta);
 	
-	/* 반복적인 갱신이 필요한 객체들의 Tick함수를 호출한다. */
-	m_pLevel_Manager->Tick(fTimeDelta);
+
 
 	if (m_pPhysics_Controller)
 		m_pPhysics_Controller->Simulate(fTimeDelta);
@@ -460,90 +462,76 @@ _float CGameInstance::Compute_TimeDelta(const wstring & strTimerTag)
 	return m_pTimer_Manager->Compute_TimeDelta(strTimerTag);
 }
 
-void CGameInstance::Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix, CPipeLine::PIPELINE ePipeLine)
+void CGameInstance::Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix)
 {
 	if (nullptr == m_pPipeLine)
 		return;
 
-	m_pPipeLine->Set_Transform(eState, TransformMatrix, ePipeLine);
+	m_pPipeLine->Set_Transform(eState, TransformMatrix);
 }
 
-void CGameInstance::Set_Frustum(CPipeLine::FRUSTUM_DESC FrustumDesc, CPipeLine::PIPELINE ePipeLine)
+void CGameInstance::Set_ShadowSpotLight(const wstring& strLightTag)
 {
-	if (nullptr == m_pPipeLine)
+	if (nullptr == m_pPipeLine || nullptr == m_pLight_Manager)
 		return;
 
-	m_pPipeLine->Set_Frustum(FrustumDesc, ePipeLine);
-}
-
-_matrix CGameInstance::Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine) const
-{
-	if (nullptr == m_pPipeLine)
-		return XMMatrixIdentity();
-
-	return m_pPipeLine->Get_Transform_Matrix(eState, ePipeLine);
-}
-
-_float4x4 CGameInstance::Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine) const
-{
-	if (nullptr == m_pPipeLine)
-		return _float4x4();
-
-	return m_pPipeLine->Get_Transform_Float4x4(eState, ePipeLine);
-}
-
-_matrix CGameInstance::Get_Transform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine) const
-{
-	if (nullptr == m_pPipeLine)
-		return XMMatrixIdentity();
-
-	return m_pPipeLine->Get_Transform_Matrix_Inverse(eState, ePipeLine);
-}
-
-_float4x4 CGameInstance::Get_Transform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine) const
-{
-	if (nullptr == m_pPipeLine)
-		return _float4x4();
-
-	return m_pPipeLine->Get_Transform_Float4x4_Inverse(eState, ePipeLine);
-}
-
-_vector CGameInstance::Get_CamPosition_Vector(CPipeLine::PIPELINE ePipeLine) const
-{
-	if (nullptr == m_pPipeLine)
-		return XMVectorZero();
-
-	return m_pPipeLine->Get_CamPosition_Vector(ePipeLine);
-}
-
-_float4 CGameInstance::Get_CamPosition_Float4(CPipeLine::PIPELINE ePipeLine) const
-{
-	if (nullptr == m_pPipeLine)
-		return _float4();
-
-	return m_pPipeLine->Get_CamPosition_Float4(ePipeLine);
-}
-
-CPipeLine::FRUSTUM_DESC CGameInstance::Get_Frustum(CPipeLine::PIPELINE ePipeLine) const
-{
-	if (nullptr == m_pPipeLine)
-		return CPipeLine::FRUSTUM_DESC();
-
-	return m_pPipeLine->Get_Frustum(ePipeLine);
+	return m_pPipeLine->Set_ShadowSpotLight(m_pLight_Manager->Get_Light(strLightTag));
 }
 
 void CGameInstance::Add_ShadowLight(const wstring& strLightTag)
 {
-	if (nullptr == m_pPipeLine)
-		return ;
-
-	if (nullptr == m_pLight_Manager)
+	if (nullptr == m_pPipeLine || nullptr == m_pLight_Manager)
 		return;
 
-	
-
-
 	return m_pPipeLine->Add_ShadowLight(m_pLight_Manager->Get_Light(strLightTag));
+}
+
+_matrix CGameInstance::Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState) const
+{
+	if (nullptr == m_pPipeLine)
+		return XMMatrixIdentity();
+
+	return m_pPipeLine->Get_Transform_Matrix(eState);
+}
+
+_float4x4 CGameInstance::Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE eState) const
+{
+	if (nullptr == m_pPipeLine)
+		return _float4x4();
+
+	return m_pPipeLine->Get_Transform_Float4x4(eState);
+}
+
+_matrix CGameInstance::Get_Transform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState) const
+{
+	if (nullptr == m_pPipeLine)
+		return XMMatrixIdentity();
+
+	return m_pPipeLine->Get_Transform_Matrix_Inverse(eState);
+}
+
+_float4x4 CGameInstance::Get_Transform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState) const
+{
+	if (nullptr == m_pPipeLine)
+		return _float4x4();
+
+	return m_pPipeLine->Get_Transform_Float4x4_Inverse(eState);
+}
+
+_vector CGameInstance::Get_CamPosition_Vector() const
+{
+	if (nullptr == m_pPipeLine)
+		return XMVectorZero();
+
+	return m_pPipeLine->Get_CamPosition_Vector();
+}
+
+_float4 CGameInstance::Get_CamPosition_Float4() const
+{
+	if (nullptr == m_pPipeLine)
+		return _float4();
+
+	return m_pPipeLine->Get_CamPosition_Float4();
 }
 
 _uint CGameInstance::Get_NumShadowLight()
@@ -560,6 +548,46 @@ const CLight* CGameInstance::Get_ShadowLight(_uint iIndex)
 		return nullptr;
 
 	return m_pPipeLine->Get_ShadowLight(iIndex);
+}
+
+_matrix CGameInstance::Get_SpotLightTransform_Matrix(CPipeLine::TRANSFORMSTATE eState) const
+{
+	if (nullptr == m_pPipeLine)
+		return XMMatrixIdentity();
+
+	return m_pPipeLine->Get_SpotLightTransform_Matrix(eState);
+}
+
+_float4x4 CGameInstance::Get_SpotLightTransform_Float4x4(CPipeLine::TRANSFORMSTATE eState) const
+{
+	if (nullptr == m_pPipeLine)
+		return _float4x4();
+
+	return m_pPipeLine->Get_SpotLightTransform_Float4x4(eState);
+}
+
+_matrix CGameInstance::Get_SpotLightTransform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState) const
+{
+	if (nullptr == m_pPipeLine)
+		return XMMatrixIdentity();
+
+	return m_pPipeLine->Get_SpotLightTransform_Matrix_Inverse(eState);
+}
+
+_float4x4 CGameInstance::Get_SpotLightTransform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState) const
+{
+	if (nullptr == m_pPipeLine)
+		return _float4x4();
+
+	return m_pPipeLine->Get_SpotLightTransform_Float4x4_Inverse(eState);
+}
+
+const CLight* CGameInstance::Get_ShadowSpotLight()
+{
+	if (nullptr == m_pPipeLine)
+		return nullptr;
+
+	return m_pPipeLine->Get_ShadowSpotLight();
 }
 
 

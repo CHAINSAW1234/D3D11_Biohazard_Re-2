@@ -31,7 +31,7 @@ private:
 	LIGHT_DESC		m_LightDesc = {};
 	_float4x4*		m_LightViewMatrix = {};
 	_float4x4		m_LightProjMatrix = {};
-
+		
 public:
 	static CLight* Create(const LIGHT_DESC& LightDesc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ);
 	virtual void Free() override;

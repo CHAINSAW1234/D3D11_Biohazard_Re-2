@@ -2,6 +2,7 @@
 #include "Hair_Player.h"
 
 #include "Player.h"
+#include "Light.h"
 
 CHair_Player::CHair_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
@@ -69,7 +70,8 @@ void CHair_Player::Late_Tick(_float fTimeDelta)
 	m_pModelCom->Play_Animations(fTimeDelta);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
@@ -123,8 +125,8 @@ HRESULT CHair_Player::Render_LightDepth()
 
 	_float4x4		ViewMatrix, ProjMatrix;
 
-	ViewMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW, CPipeLine::SHADOW);
-	ProjMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ, CPipeLine::SHADOW);
+	ViewMatrix = m_pGameInstance->Get_SpotLightTransform_Float4x4(CPipeLine::D3DTS_VIEW);
+	ProjMatrix = m_pGameInstance->Get_SpotLightTransform_Float4x4(CPipeLine::D3DTS_PROJ);
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
 		return E_FAIL;
@@ -152,6 +154,52 @@ HRESULT CHair_Player::Render_LightDepth()
 
 	return S_OK;
 
+}
+
+HRESULT CHair_Player::Render_LightDepth_Cube()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+
+	_uint iNumLight = m_pGameInstance->Get_NumShadowLight();
+
+	for (int i = 0; i < iNumLight; ++i) {
+		const CLight* pLight = m_pGameInstance->Get_ShadowLight(i);
+		const _float4x4* pLightViewMatrices;
+		_float4x4 LightProjMatrix;
+		pLightViewMatrices = pLight->Get_LightViewMatrix();
+		LightProjMatrix = pLight->Get_LightProjMatrix();
+
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_LightIndex", &i, sizeof(_int))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrices("g_LightViewMatrix", pLightViewMatrices, 6)))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
+			return E_FAIL;
+
+		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+				return E_FAIL;
+
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
+			if (FAILED(m_pShaderCom->Begin(5)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+	}
+
+	return S_OK;
 }
 
 HRESULT CHair_Player::Add_Components()

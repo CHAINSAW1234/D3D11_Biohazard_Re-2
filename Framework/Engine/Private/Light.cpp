@@ -22,7 +22,20 @@ HRESULT CLight::Initialize(const LIGHT_DESC& LightDesc, _float fFovY, _float fAs
 	}
 	else {
 		m_LightViewMatrix = new _float4x4;
-		XMStoreFloat4x4(m_LightViewMatrix, XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMLoadFloat4(&m_LightDesc.vDirection), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
+
+		// Up방향 계산
+
+		_vector vWorldUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+		// If the direction is too close to the world up vector, choose a different world up vector
+		// This is to avoid numerical instability
+		if (fabs(XMVectorGetX(XMVector3Dot(XMLoadFloat4(& LightDesc.vDirection), vWorldUp))) > 0.99f) {
+			vWorldUp = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+		}
+		XMVECTOR vRight = XMVector3Normalize(XMVector3Cross(vWorldUp, XMLoadFloat4(&LightDesc.vDirection)));
+		XMVECTOR vUp = XMVector3Cross(XMLoadFloat4(&LightDesc.vDirection), vRight);
+
+		XMStoreFloat4x4(m_LightViewMatrix, XMMatrixLookToLH(XMLoadFloat4(&m_LightDesc.vPosition), XMLoadFloat4(&m_LightDesc.vDirection), vUp));
 
 	}
 
@@ -34,6 +47,7 @@ HRESULT CLight::Initialize(const LIGHT_DESC& LightDesc, _float fFovY, _float fAs
 
 HRESULT CLight::Tick(const LIGHT_DESC& Light_Desc)
 {
+
 	 if (LIGHT_DESC::TYPE_POINT == m_LightDesc.eType)
 	{
 		 m_LightDesc.vDiffuse = Light_Desc.vDiffuse;
@@ -79,7 +93,8 @@ HRESULT CLight::Render(CShader * pShader, CVIBuffer_Rect * pVIBuffer)
 
 	if (LIGHT_DESC::TYPE_DIRECTIONAL == m_LightDesc.eType)
 	{
-		iPassIndex = 1;
+
+		iPassIndex = (_uint)SHADER_PASS_DEFERRED::PASS_LIGHT_DIRECTIONAL;
 
 		if (FAILED(pShader->Bind_RawValue("g_vLightDir", &m_LightDesc.vDirection, sizeof(_float4))))
 			return E_FAIL;
@@ -87,16 +102,19 @@ HRESULT CLight::Render(CShader * pShader, CVIBuffer_Rect * pVIBuffer)
 
 	else if (LIGHT_DESC::TYPE_POINT == m_LightDesc.eType)
 	{
+		iPassIndex = (_uint)SHADER_PASS_DEFERRED::PASS_LIGHT_POINT;
+
 		if (FAILED(pShader->Bind_RawValue("g_vLightPos", &m_LightDesc.vPosition, sizeof(_float4))))
 			return E_FAIL;
 
 		if (FAILED(pShader->Bind_RawValue("g_fLightRange", &m_LightDesc.fRange, sizeof(_float))))
 			return E_FAIL;
 
-		iPassIndex = 2;
 	}
 	else if (LIGHT_DESC::TYPE_SPOT == m_LightDesc.eType)
 	{
+		iPassIndex = (_uint)SHADER_PASS_DEFERRED::PASS_LIGHT_SPOT;
+
 		if (FAILED(pShader->Bind_RawValue("g_vLightDir", &m_LightDesc.vDirection, sizeof(_float4))))
 			return E_FAIL;
 
@@ -112,7 +130,6 @@ HRESULT CLight::Render(CShader * pShader, CVIBuffer_Rect * pVIBuffer)
 		if (FAILED(pShader->Bind_RawValue("g_fOutCutOff", &m_LightDesc.fOutCutOff, sizeof(_float))))
 			return E_FAIL;
 
-		iPassIndex = 3;
 	}
 	if (FAILED(pShader->Bind_RawValue("g_vLightDiffuse", &m_LightDesc.vDiffuse, sizeof(_float4))))
 		return E_FAIL;

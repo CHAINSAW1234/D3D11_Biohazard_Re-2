@@ -44,7 +44,6 @@ void CCamera::Late_Tick(_float fTimeDelta)
 {
 }
 
-
 HRESULT CCamera::Bind_PipeLines()
 {	
 	/* dx9 : 고정기능렌더링파이프라인. 현재 카메라에서 설정할 수 있는 행렬들을 장치에 바인딩하여 추후 렌더릴ㅇ되는 정점들에게 알아서 곱할 수 있도록 한다. */
@@ -57,7 +56,7 @@ HRESULT CCamera::Bind_PipeLines()
 	FrustumDesc.fFar = m_fFar;
 	FrustumDesc.fNear = m_fNear;
 	FrustumDesc.fFovy = m_fFovy;
-	m_pGameInstance->Set_Frustum(FrustumDesc);
+	//m_pGameInstance->Set_Frustum(FrustumDesc);
 
 
 	return S_OK;

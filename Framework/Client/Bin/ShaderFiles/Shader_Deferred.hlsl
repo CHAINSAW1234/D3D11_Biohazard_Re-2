@@ -12,8 +12,6 @@ texture2D g_ShadeTexture;
 texture2D g_DepthTexture;
 texture2D g_MaterialTexture;
 
-texture2D g_LightDepthTexture;
-
 texture2D g_SpecularTexture;
 texture2D g_LightResultTexture;
 
@@ -42,6 +40,21 @@ TextureCubeArray g_CubeTexture;
 int g_iNumShadowLight;
 float4 g_vShadowLightPos[2];
 float4 g_fShadowLightRange[2];
+
+matrix g_ShadowLightViewMatrix[2][6];
+matrix g_ShadowLightProjMatrix[2];
+
+bool g_isShadowSpotLight;
+texture2D g_SpotLightDepthTexture;
+matrix g_SpotLightViewMatrix;
+matrix g_SpotLightProjMatrix;
+float4 g_vSpotLightPosition;
+float4 g_vSpotLightDirection;
+float g_fSpotLightCutOff;
+float g_fSpotLightOutCutOff;
+float g_fSpotLightRange;
+
+
 //matrix g_LightViewMatrix[6];
 ////matrix g_LightViewMatrix[2][6];
 ////matrix g_LightProjMatrix[2];
@@ -241,7 +254,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 
     Out.vShade = g_vLightDiffuse * saturate(max(dot(normalize(vLightDir) * -1.f, vNormal), 0.f) + g_vLightAmbient * g_vMtrlAmbient);
     Out.vShade *= fAtt;
-	
+    
     float4 vLook = vWorldPos - g_vCamPosition;
     float4 vReflect = reflect(normalize(vLightDir), vNormal);
 
@@ -310,7 +323,35 @@ PS_OUT_LIGHT PS_MAIN_SPOT(PS_IN In)
     return Out;
 }
 
-float ShadowPCFSample(float fDistance, float3 fDirection, int iLightIndex)
+float ShadowPCFSample_Spot(float fOriginDepth, float2 vTexcoord)
+{
+    float SampleRadius = 0.01;
+    float Shadow = 0.f;
+    // PCF
+    int Samples = 10; // 샘플 수, 필요에 따라 조정
+    float SampleStep = SampleRadius / Samples; // 샘플 간격
+
+    for (int x = -Samples / 2; x <= Samples / 2; ++x)
+    {
+        for (int y = -Samples / 2; y <= Samples / 2; ++y)
+        {
+            float2 Offset = float2(x * SampleStep, y * SampleStep);
+            float2 SampleTexcoord = vTexcoord + Offset;
+            float fDepth = g_SpotLightDepthTexture.Sample(PointSampler, SampleTexcoord).r;
+
+            if (fOriginDepth > (fDepth * 1000.f))
+                Shadow += 1.f;
+        }
+    }
+
+    Shadow /= (Samples * Samples); // 샘플 수로 나누어 평균 계산
+    
+
+    
+    return Shadow;
+}
+
+float ShadowPCFSample_Point(float fDistance, float3 fDirection, int iLightIndex)
 {
     float SampleRadius = 0.01;
     float Shadow = 0.f;
@@ -326,7 +367,7 @@ float ShadowPCFSample(float fDistance, float3 fDirection, int iLightIndex)
             float3 SamplePos = normalize(fDirection + Offset);
             float fDepth = g_CubeTexture.Sample(PointSampler, float4(SamplePos, iLightIndex)).r;
 
-            if (fDistance - 0.1f > fDepth * 1000)
+            if (fDistance > fDepth * 1000)
             {
                 Shadow += 1.0;
             }
@@ -335,6 +376,7 @@ float ShadowPCFSample(float fDistance, float3 fDirection, int iLightIndex)
 
     Shadow /= (Samples * Samples); // 샘플 수로 나누어 평균 계산
     
+
     return Shadow;
 }
 
@@ -381,8 +423,9 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
 	/* 로컬위치 * 월드행렬 */
     vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
 
-    // 광원 여러개에 대해서 처리해야함
     
+    // 광원 여러개에 대해서 처리해야함
+    // 1. Point Lights 
     float fShadow = 0;
     
     for (int i = 0; i < g_iNumShadowLight; ++i)
@@ -393,13 +436,38 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
     
         float fAtt = saturate((g_fShadowLightRange[i].x - fDistance) / g_fShadowLightRange[i].x);
     
-        fShadow += ShadowPCFSample(fDistance, vLightDir, i) * fAtt;
+        fShadow += ShadowPCFSample_Point(fDistance, vLightDir, i) * fAtt;
 
+    }
+    
+    // 2. SpotLight
+    
+    if (g_isShadowSpotLight)
+    {
+        vector vPosition = mul(vWorldPos, g_SpotLightViewMatrix);
+        vPosition = mul(vPosition, g_SpotLightProjMatrix);
+  
+        float2 vTexcoord;
+        vTexcoord.x = (vPosition.x / vPosition.w) * 0.5f + 0.5f;
+        vTexcoord.y = (vPosition.y / vPosition.w) * -0.5f + 0.5f;
+    
+        vector vLightDir = vWorldPos - g_vSpotLightPosition;
+        vector vSpotDir = g_vSpotLightDirection;
+	
+        float fResult = acos(dot(normalize(vLightDir), normalize(vSpotDir)));
+
+        if (g_fOutCutOff >= fResult) // 빛이 번질 범위 안에 있을 때
+        {
+            float fDistance = length(vLightDir);
+            float fIntensity = (fResult - g_fSpotLightOutCutOff) / (g_fSpotLightCutOff - g_fSpotLightOutCutOff);
+            float fAtt = saturate((g_fSpotLightRange - fDistance) / g_fSpotLightRange) * fIntensity; //범위 줘서 끝 범위에서는 연해지게 
+        
+            fShadow += ShadowPCFSample_Spot(vPosition.w, vTexcoord) * fAtt;
+        }
     }
     
     Out.vDiffuse *= (1 - fShadow);
     Out.vDiffuse.a = 1;
-    
     
     return Out;
 }
@@ -455,8 +523,7 @@ PS_OUT PS_POST_PROCESSING_RESULT(PS_IN In)
     float fSrcAlpha = PostprocessingDiffuseDesc.a;
     float fDstAlpha = 1.f - fSrcAlpha;
    
-    
-    
+   
     //Out.vColor = DiffuseDesc * fDstAlpha + PostprocessingDiffuseDesc * fSrcAlpha;
     //Out.vColor *= PostprocessingShadeDesc;
     Out.vColor = DiffuseDesc;
@@ -558,7 +625,7 @@ PS_OUT PS_MAIN_BLOOM(PS_IN In)
 
 technique11 DefaultTechnique
 {
-    pass Debug
+    pass Debug  // 0
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -571,7 +638,20 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN();
     }
 
-    pass Light_Directional
+    pass Debug_Cube // 1
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_CUBE();
+    }
+
+    pass Light_Directional // 2
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -584,7 +664,8 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_DIRECTIONAL();
     }
 
-    pass Light_Point
+
+    pass Light_Point    // 2
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -597,7 +678,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_POINT();
     }
     
-    pass Light_Spot
+    pass Light_Spot     // 3
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -610,7 +691,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_SPOT();
     }
     
-    pass Light_Result
+    pass Light_Result   // 4
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -623,7 +704,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_LIGHT_RESULT();
     }
 
-    pass Emissive //  4
+    pass Emissive       // 5
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -636,7 +717,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE();
     }
 
-    pass Bloom //  5
+    pass Bloom          //  6
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -650,7 +731,7 @@ technique11 DefaultTechnique
     }
 
 
-    pass Post_Processing //  6
+    pass Post_Processing //  7
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -663,7 +744,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_POSTPROCESSING();
     }
 
-    pass Post_Processing_Result //  7
+    pass Post_Processing_Result //  8
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -676,7 +757,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_POST_PROCESSING_RESULT();
     }
 
-    pass RadialBlur // 8
+    pass RadialBlur // 9
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -688,18 +769,4 @@ technique11 DefaultTechnique
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_RADIALBLUR();
     }
-
-    pass Debug_Cube // 9
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
-        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
-        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_CUBE();
-    }
-
 }

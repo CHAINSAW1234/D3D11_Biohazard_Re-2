@@ -10,7 +10,6 @@ class CLight;
 class CPipeLine final : public CBase
 {
 public:
-	enum PIPELINE { CAMERA, SHADOW, PIPELINE_END };
 	enum TRANSFORMSTATE { D3DTS_VIEW, D3DTS_PROJ, D3DTS_END };
 	enum CASCADE { CASCADE_NEAR, CASCADE_MIDDLE, CASCADE_FAR, CASCADE_END };
 
@@ -27,45 +26,38 @@ private:
 	virtual ~CPipeLine() = default;
 
 public:
-	void Set_Transform(TRANSFORMSTATE eState, _fmatrix TransformMatrix, PIPELINE ePipeLine) {
-		XMStoreFloat4x4(&m_TransformMatrices[eState][ePipeLine], TransformMatrix);
+	void Set_Transform(TRANSFORMSTATE eState, _fmatrix TransformMatrix) {
+		XMStoreFloat4x4(&m_TransformMatrices[eState], TransformMatrix);
 	}
-
-	void Set_Frustum(FRUSTUM_DESC FrustumDesc, PIPELINE ePipeLine) {
-		memcpy(&m_Frustum[ePipeLine], &FrustumDesc, sizeof(FRUSTUM_DESC));
-	}
+	void Set_ShadowSpotLight(CLight* pLight);
+	void Add_ShadowLight(CLight* pLight);
 
 public:
-	_matrix Get_Transform_Matrix(TRANSFORMSTATE eState, PIPELINE ePipeLine) const {
-		return XMLoadFloat4x4(&m_TransformMatrices[eState][ePipeLine]);
+	_matrix Get_Transform_Matrix(TRANSFORMSTATE eState) const {
+		return XMLoadFloat4x4(&m_TransformMatrices[eState]);
 	}
-	_float4x4 Get_Transform_Float4x4(TRANSFORMSTATE eState, PIPELINE ePipeLine) const {
-		return m_TransformMatrices[eState][ePipeLine];
+	_float4x4 Get_Transform_Float4x4(TRANSFORMSTATE eState) const {
+		return m_TransformMatrices[eState];
 	}
-	_matrix Get_Transform_Matrix_Inverse(TRANSFORMSTATE eState, PIPELINE ePipeLine) const {
-		return XMLoadFloat4x4(&m_TransformInverseMatrices[eState][ePipeLine]);
+	_matrix Get_Transform_Matrix_Inverse(TRANSFORMSTATE eState) const {
+		return XMLoadFloat4x4(&m_TransformInverseMatrices[eState]);
 	}
-	_float4x4 Get_Transform_Float4x4_Inverse(TRANSFORMSTATE eState, PIPELINE ePipeLine) const {
-		return m_TransformInverseMatrices[eState][ePipeLine];
-	}
-
-	_vector Get_CamPosition_Vector(PIPELINE ePipeLine) const {
-		return XMLoadFloat4(&m_vCamPosition[ePipeLine]);
+	_float4x4 Get_Transform_Float4x4_Inverse(TRANSFORMSTATE eState) const {
+		return m_TransformInverseMatrices[eState];
 	}
 
-	_float4 Get_CamPosition_Float4(PIPELINE ePipeLine) const {
-		return m_vCamPosition[ePipeLine];
+	_vector Get_CamPosition_Vector() const {
+		return XMLoadFloat4(&m_vCamPosition);
 	}
 
-	FRUSTUM_DESC Get_Frustum(PIPELINE ePipeLine) const {
-		return m_Frustum[ePipeLine];
+	_float4 Get_CamPosition_Float4() const {
+		return m_vCamPosition;
 	}
-
-	void Add_ShadowLight(CLight* pLight);
 
 	_uint Get_NumShadowLight() {
 		return m_iNumLight;
 	}
+
 	const CLight* Get_ShadowLight(_uint iIndex) {
 		if (iIndex >= m_iNumLight)
 			return nullptr;
@@ -73,6 +65,23 @@ public:
 		auto iter = m_Lights.begin();
 		advance(iter, iIndex);
 		return *iter;
+	}
+	
+	_matrix Get_SpotLightTransform_Matrix(TRANSFORMSTATE eState) const {
+		return XMLoadFloat4x4(&m_SpotLightTransformMatrices[eState]);
+	}
+	_float4x4 Get_SpotLightTransform_Float4x4(TRANSFORMSTATE eState) const {
+		return m_SpotLightTransformMatrices[eState];
+	}
+	_matrix Get_SpotLightTransform_Matrix_Inverse(TRANSFORMSTATE eState) const {
+		return XMLoadFloat4x4(&m_SpotLightTransformInverseMatrices[eState]);
+	}
+	_float4x4 Get_SpotLightTransform_Float4x4_Inverse(TRANSFORMSTATE eState) const {
+		return m_SpotLightTransformInverseMatrices[eState];
+	}
+
+	const CLight* Get_ShadowSpotLight() {
+		return m_pSpotLight;
 	}
 
 public:
@@ -86,16 +95,21 @@ private:
 	void Update_CascadeProjMatrices();
 
 private:
-	_float4x4			m_TransformMatrices[D3DTS_END][PIPELINE_END];
-	_float4x4			m_TransformInverseMatrices[D3DTS_END][PIPELINE_END];
-	_float4				m_vCamPosition[PIPELINE_END];
-	FRUSTUM_DESC		m_Frustum[PIPELINE_END];
+	_float4x4			m_TransformMatrices[D3DTS_END];
+	_float4x4			m_TransformInverseMatrices[D3DTS_END];
+	_float4				m_vCamPosition;
+	//FRUSTUM_DESC		m_Frustum;
 
-	// 그림자 연산에 사용할 광원을 세팅
-	_uint m_iMaxLight = { 2 };
-	_uint m_iNumLight = { 0 };
-	list<CLight*> m_Lights;
+	// 그림자 계산에 필요한 변수
+	// 점광원용
+	_uint				m_iMaxLight = { 2 };
+	_uint				m_iNumLight = { 0 };
+	list<CLight*>		m_Lights;
 
+	// SpotLight
+	CLight*				m_pSpotLight = { nullptr };
+	_float4x4			m_SpotLightTransformMatrices[D3DTS_END];
+	_float4x4			m_SpotLightTransformInverseMatrices[D3DTS_END];
 
 	// CasCade용 변수 -> 안씀
 	_float3				m_vOriginalPoints[8];
