@@ -56,6 +56,9 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	m_pGameInstance->Add_ShadowLight(TEXT("LIGHT_GARA_1"));
+	m_pGameInstance->Add_ShadowLight(TEXT("LIGHT_GARA_2"));
+
 	if (GetAsyncKeyState('T') & 0x0001)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_Particle_Red"))))
@@ -108,9 +111,21 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_GARA_2"), LightDesc)))
 		return E_FAIL;
 
+	LightDesc.eType = LIGHT_DESC::TYPE_SPOT;
+	LightDesc.vPosition = _float4(25, 2.f, 25.f, 1.f);
 
-	m_pGameInstance->Add_ShadowLight(TEXT("LIGHT_GARA_1"));
-	m_pGameInstance->Add_ShadowLight(TEXT("LIGHT_GARA_2"));
+	LightDesc.fRange = 10;
+	LightDesc.vDirection = _float4(0.f,-1.f,0.f,0.f);
+	LightDesc.fCutOff = 1;
+	LightDesc.fOutCutOff = 10;
+
+
+	LightDesc.vDiffuse = _float4(1.f, 0.f, 1.f, 1.f);
+	LightDesc.vAmbient = _float4(0.2f, 0.2f, 0.4f, 1.f);
+	LightDesc.vSpecular = _float4(0.4f, 0.4f, 1.f, 1.f);
+	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_GARA_3"), LightDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 

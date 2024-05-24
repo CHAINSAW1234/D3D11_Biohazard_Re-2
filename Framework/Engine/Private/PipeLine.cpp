@@ -71,6 +71,8 @@ void CPipeLine::Reset()
 		Safe_Release(pLight);
 	}
 	m_Lights.clear();
+
+	m_iNumLight = 0;
 }
 
 

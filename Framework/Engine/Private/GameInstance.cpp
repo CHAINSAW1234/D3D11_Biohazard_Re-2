@@ -163,6 +163,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 		nullptr == m_pFrustum )
 		return;
 
+	m_pPipeLine->Reset();
+
 	m_pInput_Device->Tick(fTimeDelta);
 
 	m_pObject_Manager->Priority_Tick(fTimeDelta);	
