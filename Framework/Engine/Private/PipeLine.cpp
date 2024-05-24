@@ -65,7 +65,6 @@ void CPipeLine::Tick()
 
 void CPipeLine::Reset()
 {
-
 	// 파이프라인에서 라이트 초기화
 	for (auto& pLight : m_Lights) {
 		Safe_Release(pLight);
@@ -162,4 +161,9 @@ CPipeLine * CPipeLine::Create()
 
 void CPipeLine::Free()
 {
+	for (auto& pLight : m_Lights) {
+		Safe_Release(pLight);
+	}
+	m_Lights.clear();
+
 }

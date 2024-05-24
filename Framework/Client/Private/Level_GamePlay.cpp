@@ -123,8 +123,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.vDiffuse = _float4(1.f, 0.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(0.2f, 0.2f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 0.4f, 1.f, 1.f);
-	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_GARA_3"), LightDesc)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_GARA_3"), LightDesc)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
