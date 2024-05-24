@@ -122,12 +122,12 @@ _float4x4 CBone::Invalidate_CombinedTransformationMatrix_RootMotion_WorldMatrix(
 	return CombinedFloat4x4;
 }
 
-void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBone*>& Bones, _float4x4 TransformationMatrix, _bool isActiveXZ, _bool isActiveY, _float4* pTranslation, _float4* pQuaternion)
+void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBone*>& Bones, _float4x4 TransformationMatrix, _bool isActiveXZ, _bool isActiveY, _bool isActiveRotation, _float4* pTranslation, _float4* pQuaternion)
 {
 	_vector			vScale, vQuaternion, vTranslation;
 
-	_bool			isSetTranslation = { pTranslation != nullptr };
-	_bool			isSetQuaternion = { pQuaternion != nullptr };
+	_bool			isSetTranslation = { isActiveXZ || isActiveY };
+	_bool			isSetQuaternion = { isActiveRotation };
 	_bool			isTopParrentBone = { -1 == m_iParentBoneIndex };
 
 	if (true == m_isSurbordinate)
@@ -152,6 +152,16 @@ void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBon
 		if (true == isSetQuaternion)
 		{
 			vQuaternion = Decompose_Quaternion(vQuaternion, pQuaternion);
+
+			if (false == isSetTranslation)
+			{
+				_vector			vInverseQuaternion = { XMQuaternionInverse(vQuaternion) };
+				_matrix			InverseRotationMatrix = { XMMatrixRotationQuaternion(vInverseQuaternion) };
+
+				_vector			vResultTranslation = { XMVector3TransformNormal(vTranslation, InverseRotationMatrix) };
+				
+				vTranslation = XMVectorSetW(vResultTranslation, 1.f);
+			}
 		}
 
 		MyTransformationMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
@@ -175,6 +185,16 @@ void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBon
 		if (true == isSetQuaternion)
 		{
 			vQuaternion = Decompose_Quaternion(vQuaternion, pQuaternion);
+
+			if (false == isSetTranslation)
+			{
+				_vector			vInverseQuaternion = { XMQuaternionInverse(XMLoadFloat4(pQuaternion)) };
+				_matrix			InverseRotationMatrix = { XMMatrixRotationQuaternion(vInverseQuaternion) };
+
+				_vector			vResultTranslation = { XMVector3TransformNormal(vTranslation, InverseRotationMatrix) };
+
+				vTranslation = XMVectorSetW(vResultTranslation, 1.f);
+			}
 		}
 
 		MyTransformationMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);

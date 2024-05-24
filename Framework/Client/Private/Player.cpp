@@ -118,6 +118,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	Late_Tick_PartObjects(fTimeDelta);
 
+	PART		Player_Part = { PART::PART_BODY };
+
 	_float4			vMovedDirection = { Convert_Float3_To_Float4_Dir(m_vRootTranslation) };
 	
 	_vector			vCurrentPostion = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };

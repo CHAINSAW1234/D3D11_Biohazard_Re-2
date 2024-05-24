@@ -20,6 +20,7 @@ public:
 
 	typedef struct tagAnimPlayingInfo : public ANIM_PLAYING_DESC
 	{
+		_int					iPreAnimIndex = { -1 };
 		_bool					isLinearInterpolation = { false };
 		_float					fAccLinearInterpolation = { 0.f };
 		_float3					vPreTranslationLocal = { 0.f, 0.f, 0.f };
@@ -70,9 +71,6 @@ public:		/* For.Bone_Layer */
 	void Delete_Bone_Layer(const wstring& strLayerTag);
 
 private:
-	_bool Is_Included_BoneLayer(const wstring& strLayerTag, _uint iBoneIndex);
-
-private:
 	_int Find_RootBoneIndex();
 
 private:
@@ -87,7 +85,9 @@ public:/*For Physics Collider*/
 
 private:
 	void Apply_RootMotion_Rotation(class CTransform* pTransform, _fvector vQuaternion);
+	void Apply_RootMotion_Rotation(class CTransform* pTransform, _fvector vQuaternion, _float4* pTranslation);
 	void Apply_RootMotion_Translation(class CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection, _bool isActiveRotation, _fvector vQuaternion = XMQuaternionIdentity());
+	void Apply_Translation_Inverse_Rotation(_fvector vTranslation);
 
 public:
 	void Set_CombinedMatrix(string strBoneTag, _fmatrix CombinedMatrix);
@@ -182,8 +182,8 @@ private:
 
 	_float4x4					m_TransformationMatrix;
 
-	vector<class CBone*>		m_Bones;
-	map<wstring, set<_uint>>	m_BoneLayers;			//	레이어로 분리할 뼈들의 태그별로 인덱스들을 저장한다.
+	vector<class CBone*>				m_Bones;
+	map<wstring, class CBone_Layer*>	m_BoneLayers;			//	레이어로 분리할 뼈들의 태그별로 인덱스들을 저장한다.
 
 	_uint						m_iNumAnimations = { 0 };
 	vector<class CAnimation*>	m_Animations;

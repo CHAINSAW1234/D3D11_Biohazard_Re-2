@@ -53,21 +53,27 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	m_pModelCom->Set_RootBone("root");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
-	list<_uint>			BoneIndices;
-	m_pModelCom->Get_Child_BonedIndices("l_arm_clavicle", BoneIndices);
-	m_pModelCom->Add_Bone_Layer(TEXT("Left_Arm"), BoneIndices);
+	list<_uint>			LeftArmBoneIndices;
+	m_pModelCom->Get_Child_BonedIndices("l_arm_clavicle", LeftArmBoneIndices);
+	m_pModelCom->Add_Bone_Layer(TEXT("Left_Arm"), LeftArmBoneIndices);
 
-
-	list<_uint>			UpperBoneIndices;
-	for (_uint iBoneIndex = 0; iBoneIndex < 61; ++iBoneIndex)
-		UpperBoneIndices.emplace_back(iBoneIndex);
-	m_pModelCom->Add_Bone_Layer(TEXT("Upper"), UpperBoneIndices);
 
 	list<_uint>			LowerBoneIndices;
-	for (_uint iBoneIndex = 61; iBoneIndex < static_cast<_uint>(m_pModelCom->Get_BoneNames().size()); ++iBoneIndex)
+	for (_uint iBoneIndex = 0; iBoneIndex < 60; ++iBoneIndex)
 		LowerBoneIndices.emplace_back(iBoneIndex);
-
 	m_pModelCom->Add_Bone_Layer(TEXT("Lower"), LowerBoneIndices);
+
+	list<_uint>			UpperBoneIndices;
+	for (_uint iBoneIndex = 60; iBoneIndex < static_cast<_uint>(m_pModelCom->Get_BoneNames().size()); ++iBoneIndex)
+	{
+		list<_uint>::iterator		iter = { find(LeftArmBoneIndices.begin(), LeftArmBoneIndices.end(), iBoneIndex) };
+		if (LeftArmBoneIndices.end() != iter)
+			continue;
+
+		UpperBoneIndices.emplace_back(iBoneIndex);
+	}
+
+	m_pModelCom->Add_Bone_Layer(TEXT("Upper"), UpperBoneIndices);
 
 	return S_OK;
 }
@@ -130,8 +136,8 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
 	//	AnimDesc.iAnimIndex = 30;
-	AnimDesc.iAnimIndex = 11;
-	AnimDesc.isLoop = true;
+	AnimDesc.iAnimIndex = iAnimIndex;
+	AnimDesc.isLoop = false;
 	//	AnimDesc.fWeight = fWeight;
 	AnimDesc.fWeight = 1.f;
 	AnimDesc.strBoneLayerTag = TEXT("Lower");
@@ -139,25 +145,25 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	//	AnimDesc.iAnimIndex = 34;
 	//	AnimDesc.iAnimIndex = 24;
-	AnimDesc.iAnimIndex = iAnimIndex;
-	AnimDesc.isLoop = true;
+	AnimDesc.iAnimIndex = 34;
+	AnimDesc.isLoop = false;
 	//	AnimDesc.fWeight = 1.f - fWeight;
-	AnimDesc.fWeight = 1.f;
+	AnimDesc.fWeight = 0.1f;
 	AnimDesc.strBoneLayerTag = TEXT("Upper");
 	m_pModelCom->Set_Animation_Blend(AnimDesc, 1);
 
 
-	//AnimDesc.iAnimIndex = iAnimIndex + 1;
-	//AnimDesc.isLoop = true;
-	////	AnimDesc.fWeight = 1.f - fWeight;
-	//AnimDesc.fWeight = 1.f;
-	//AnimDesc.strBoneLayerTag = TEXT("Left_Arm");
-	//m_pModelCom->Set_Animation_Blend(AnimDesc, 2);
+	AnimDesc.iAnimIndex = iAnimIndex + 1;
+	AnimDesc.isLoop = true;
+	//	AnimDesc.fWeight = 1.f - fWeight;
+	AnimDesc.fWeight = 1.f;
+	AnimDesc.strBoneLayerTag = TEXT("Left_Arm");
+	m_pModelCom->Set_Animation_Blend(AnimDesc, 2);
 
 
 	m_pModelCom->Set_Weight(0, 1.f);
-	m_pModelCom->Set_Weight(1, 0.1f);
-	//	m_pModelCom->Set_Weight(2, 1.f);
+	m_pModelCom->Set_Weight(1, 1.f);
+	m_pModelCom->Set_Weight(2, 1.f);
 
 
 	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
