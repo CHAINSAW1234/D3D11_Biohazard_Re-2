@@ -16,10 +16,8 @@ struct Joint
 
 	XMFLOAT3 bind_pos_ws(const XMMATRIX& model)
 	{
-		// 모델 행렬과 역 바인드 포즈 행렬을 곱하기
 		XMMATRIX m = XMMatrixMultiply(model, XMMatrixInverse(nullptr, inverse_bind_pose));
 
-		// m[3][0], m[3][1], m[3][2]을 추출하여 XMFLOAT3로 반환
 		XMFLOAT3 result;
 		result.x = XMVectorGetX(m.r[3]);
 		result.y = XMVectorGetY(m.r[3]);

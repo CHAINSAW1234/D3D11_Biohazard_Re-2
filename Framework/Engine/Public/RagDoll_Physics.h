@@ -25,6 +25,96 @@ inline _vector to_vec3(const PxVec3& vec3)
     return XMVectorSet(vec3.x, vec3.y, vec3.z, 1.f);
 }
 
+inline XMVECTOR QuaternionFromVectors(const XMVECTOR& a, const XMVECTOR& b) {
+    // 입력 벡터를 정규화합니다.
+    XMVECTOR normA = XMVector3Normalize(a);
+    XMVECTOR normB = XMVector3Normalize(b);
+
+    // 두 벡터의 점곱을 계산합니다.
+    float dotProduct = XMVectorGetX(XMVector3Dot(normA, normB));
+
+    // 두 벡터가 거의 반대 방향일 때를 처리합니다.
+    const float epsilon = 1e-6f;
+    if (dotProduct < -1.0f + epsilon) {
+        // 기본 축을 선택합니다. 여기서는 y축을 사용합니다.
+        XMVECTOR orthoVector = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+        // 하지만 입력 벡터가 y축과 거의 평행한 경우, 다른 축을 선택합니다.
+        if (fabs(XMVectorGetY(normA)) > 0.999f) {
+            orthoVector = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+        }
+        XMVECTOR axis = XMVector3Cross(normA, orthoVector);
+        return XMQuaternionRotationAxis(axis, XM_PI);
+    }
+
+    // 두 벡터의 교차곱을 계산합니다.
+    XMVECTOR crossProduct = XMVector3Cross(normA, normB);
+
+    // 쿼터니언의 w 성분을 계산합니다.
+    float w = sqrtf((1.0f + dotProduct) * 2.0f);
+    float invW = 1.0f / w;
+
+    // 결과 쿼터니언을 생성합니다.
+    XMVECTOR quaternion = XMVectorSet(
+        XMVectorGetX(crossProduct) * invW,
+        XMVectorGetY(crossProduct) * invW,
+        XMVectorGetZ(crossProduct) * invW,
+        w * 0.5f
+    );
+
+    return quaternion;
+}
+
+// 이 함수는 쿼터니언 q1에서 q2로의 변환 쿼터니언을 계산합니다.
+inline XMVECTOR CalculateTransitionQuaternion(XMVECTOR q1, XMVECTOR q2)
+{
+    // 먼저, q1의 역쿼터니언을 계산합니다.
+    XMVECTOR q1Inverse = XMQuaternionInverse(q1);
+
+    // 변환 쿼터니언은 q1의 역쿼터니언과 q2의 곱으로 계산됩니다.
+    XMVECTOR transitionQuaternion = XMQuaternionMultiply(q1Inverse, q2);
+
+    // 결과 쿼터니언을 정규화합니다.
+    transitionQuaternion = XMVector4Normalize(transitionQuaternion);
+
+    return transitionQuaternion;
+}
+
+
+inline XMVECTOR VectorToQuaternion(XMVECTOR direction)
+{
+    // 방향 벡터를 정규화합니다.
+    direction = XMVector3Normalize(direction);
+
+    // 기본 축 (보통은 z축)을 정의합니다.
+    XMVECTOR zAxis = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+
+    // 방향 벡터와 z축이 거의 같으면 기본 쿼터니언을 반환합니다.
+    if (XMVector3NearEqual(direction, zAxis, XMVectorSet(1e-6f, 1e-6f, 1e-6f, 1e-6f)))
+    {
+        return XMQuaternionIdentity();
+    }
+
+    // 방향 벡터와 z축이 거의 반대 방향이면, x축을 기준으로 180도 회전하는 쿼터니언을 반환합니다.
+    if (XMVector3NearEqual(direction, XMVectorNegate(zAxis), XMVectorSet(1e-6f, 1e-6f, 1e-6f, 1e-6f)))
+    {
+        return XMQuaternionRotationAxis(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), XM_PI);
+    }
+
+    // 회전 축을 계산합니다.
+    XMVECTOR rotationAxis = XMVector3Cross(zAxis, direction);
+    rotationAxis = XMVector3Normalize(rotationAxis);
+
+    // 회전 각도를 계산합니다.
+    float dotProduct = XMVectorGetX(XMVector3Dot(zAxis, direction));
+    float rotationAngle = acosf(dotProduct);
+
+    // 회전축과 각도로부터 쿼터니언을 생성합니다.
+    XMVECTOR quaternion = XMQuaternionRotationAxis(rotationAxis, rotationAngle);
+
+    return quaternion;
+}
+
+
 inline XMMATRIX to_mat4(const PxMat44& mat)
 {
     return XMMATRIX(
@@ -92,7 +182,8 @@ public:
     void  update_transforms();
     void  Set_Kinematic(_bool boolean);
     void update_animations();
-
+    void Init_Ragdoll();
+    void create_joint();
     void			SetBone_Ragdoll(vector<class CBone*>* vecBone)
     {
         m_vecBone = vecBone;
@@ -116,6 +207,10 @@ public:
         }
 
         return false;
+    }
+    void    SetWorldMatrix(_float4x4 WorldMat)
+    {
+        m_WorldMatrix = WorldMat;
     }
 public:
 	static CRagdoll_Physics* Create();
@@ -152,6 +247,26 @@ private:
     class AnimRagdoll* m_ragdoll_pose = { nullptr };
     bool    m_simulate = false;
     vector<class CBone*>* m_vecBone = { nullptr };
+    _bool               m_bRagdoll = { false };
+
+    PxRigidDynamic*     m_Head = { nullptr };
+    PxRigidDynamic*     m_Pelvis = { nullptr };
+    PxRigidDynamic*     m_Arm_L = { nullptr };
+    PxRigidDynamic*     m_Arm_R = { nullptr };
+    PxRigidDynamic*     m_ForeArm_L = { nullptr };
+    PxRigidDynamic*     m_ForeArm_R = { nullptr };
+    PxRigidDynamic*     m_Leg_R = { nullptr };
+    PxRigidDynamic*     m_Leg_L = { nullptr };
+    PxRigidDynamic*     m_Calf_L = { nullptr };
+    PxRigidDynamic*     m_Calf_R = { nullptr };
+    PxRigidDynamic*     m_Foot_L = { nullptr };
+    PxRigidDynamic*     m_Foot_R = { nullptr };
+    PxRigidDynamic*     m_Hand_R = { nullptr };
+    PxRigidDynamic*     m_Hand_L = { nullptr };
+
+    _bool               m_bJoint_Set = { false };
+
+    _float4x4           m_WorldMatrix;
 public:
 	virtual void Free() override;
 };

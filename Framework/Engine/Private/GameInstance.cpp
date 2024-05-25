@@ -752,8 +752,6 @@ void CGameInstance::SetColliderTransform_Left_Shin(_float4x4 Transform)
 	m_pPhysics_Controller->SetColliderTransform_Left_Shin(Transform);
 }
 
-#ifdef _DEBUG
-
 void CGameInstance::SetColliderTransform_Right_Shin(_float4x4 Transform)
 {
 	m_pPhysics_Controller->SetColliderTransform_Right_Shin(Transform);
@@ -808,6 +806,13 @@ void CGameInstance::SetBone_Ragdoll(vector<class CBone*>* vecBone)
 {
 	m_pPhysics_Controller->SetBone_Ragdoll(vecBone);
 }
+
+void CGameInstance::SetWorldMatrix(_float4x4 WorldMatrix)
+{
+	m_pPhysics_Controller->SetWorldMatrix(WorldMatrix);
+}
+
+#ifdef _DEBUG
 
 HRESULT CGameInstance::Ready_RTVDebug(const wstring & strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
 {

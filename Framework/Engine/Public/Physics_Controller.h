@@ -72,6 +72,7 @@ public:
 	void			SetJointTransform_Knee_R(_float4x4 Transform);
 	
 	void			SetBone_Ragdoll(vector<class CBone*>* vecBone);
+	void			SetWorldMatrix(_float4x4 WorldMatrix);
 
 	PxTransform		ColliderTransform = { PxTransform(PxVec3(0.f,0.f,0.f)) };
 	PxTransform		ColliderTransform_Head = { PxTransform(PxVec3(0.f,0.f,0.f)) };

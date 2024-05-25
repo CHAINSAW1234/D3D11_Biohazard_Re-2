@@ -273,6 +273,11 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 		m_pRagdoll_Physics->Set_Kinematic(Temp);
 	}
 
+	if (UP == m_pGameInstance->Get_KeyState(VK_BACK))
+	{
+		m_pRagdoll_Physics->Init_Ragdoll();
+	}
+
 	m_pRagdoll_Physics->Update(fTimeDelta);
 
 	m_Scene->simulate(fTimeDelta);
@@ -284,9 +289,9 @@ void CPhysics_Controller::Create_Controller(_float4 Pos)
 	//Character Controller Init
 	m_Manager = PxCreateControllerManager(*m_Scene);
 
-	m_Controll_Desc.height = 10.f; // 캐릭터의 높이
-	m_Controll_Desc.radius = 10.f; // 캐릭터의 반지름
-	m_Controll_Desc.position = PxExtendedVec3(30.0, 4.0, 30.0); // 초기 위치 설정
+	m_Controll_Desc.height = 1.f; // 캐릭터의 높이
+	m_Controll_Desc.radius = 1.f; // 캐릭터의 반지름
+	m_Controll_Desc.position = PxExtendedVec3(0.0, 20.0, 0.0); // 초기 위치 설정
 	m_Controll_Desc.material = m_Physics->createMaterial(0.f, 0.f, 0.f); // 마찰계수와 반발력 설정
 	m_Controller = m_Manager->createController(m_Controll_Desc);
 
@@ -1079,6 +1084,11 @@ void CPhysics_Controller::SetJointTransform_Knee_R(_float4x4 Transform)
 void CPhysics_Controller::SetBone_Ragdoll(vector<class CBone*>* vecBone)
 {
 	m_pRagdoll_Physics->SetBone_Ragdoll(vecBone);
+}
+
+void CPhysics_Controller::SetWorldMatrix(_float4x4 WorldMatrix)
+{
+	m_pRagdoll_Physics->SetWorldMatrix(WorldMatrix);
 }
 
 _matrix CPhysics_Controller::GetWorldMatrix_Rigid_Dynamic(_int Index)

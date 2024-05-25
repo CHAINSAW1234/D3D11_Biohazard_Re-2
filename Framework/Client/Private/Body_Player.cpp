@@ -56,6 +56,7 @@ HRESULT CBody_Player::Initialize(void * pArg)
 
 	m_pModelCom->Init_Separate_Bones();
 
+	m_pGameInstance->SetBone_Ragdoll(m_pModelCom->GetBoneVector());
 	return S_OK;
 }
 
@@ -181,21 +182,24 @@ void CBody_Player::Tick(_float fTimeDelta)
 	m_pModelCom->Active_RootMotion_Y(false);
 	//m_pModelCom->Active_RootMotion_Rotation(iAnimIndex, true);
 
-	m_pGameInstance->SetBone_Ragdoll(m_pModelCom->GetBoneVector());
-
 	//m_pModelCom->RagDoll();
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
+	
 	static bool Temp = false;
+	if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
+	{
+		Temp = true;
+	}
 
 	if(!Temp)
 	{
 		m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 	}
+
 
 	//Body
 	_float4x4 BoneCombined = m_pModelCom->GetBoneTransform(62);
@@ -408,11 +412,6 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	Mat = XMMatrixMultiply(Mat, Rot);
 	XMStoreFloat4x4(&BoneCombined, Mat);
 	m_pGameInstance->SetJointTransform_Knee_R(BoneCombined);
-
-	if (Temp == false)
-	{
-		Temp = true;
-	}
 
 	if (UP == m_pGameInstance->Get_KeyState('B'))
 	{
