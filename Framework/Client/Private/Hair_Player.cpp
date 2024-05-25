@@ -50,6 +50,9 @@ HRESULT CHair_Player::Initialize(void* pArg)
 	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
+	vector<string>		BoneTags = { m_pModelCom->Get_BoneNames() };
+
+
 	return S_OK;
 }
 
@@ -69,7 +72,129 @@ void CHair_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animations(fTimeDelta);
+	static _float		fAdditionalHeight = { 0.f };
+	static _float		fAdditionalAngle = { 0.f };
+	list<string>		BoneTags;
+	BoneTags.push_back("hair01_1");
+	BoneTags.push_back("hair02_1");
+	BoneTags.push_back("hair03_1");
+	BoneTags.push_back("hair04_1");
+	BoneTags.push_back("hair05_1");
+	BoneTags.push_back("hair06_1");
+	BoneTags.push_back("hair07_1");
+	BoneTags.push_back("hair08_1");
+	BoneTags.push_back("hair09_1");
+	BoneTags.push_back("hair01_0");
+	BoneTags.push_back("hair02_0");
+	BoneTags.push_back("hair03_0");
+	BoneTags.push_back("hair04_0");
+	BoneTags.push_back("hair05_0");
+	BoneTags.push_back("hair06_0");
+	BoneTags.push_back("hair07_0");
+	BoneTags.push_back("hair08_0");
+	BoneTags.push_back("hair09_0");
+
+	if (PRESSING == m_pGameInstance->Get_KeyState(VK_LEFT))
+	{
+		fAdditionalHeight -= 10.f * fTimeDelta;
+		//	fAdditionalAngle -= 10.f * fTimeDelta;
+	}
+
+	if (PRESSING == m_pGameInstance->Get_KeyState(VK_RIGHT))
+	{
+		fAdditionalHeight += 10.f * fTimeDelta;
+		//	fAdditionalAngle += 10.f * fTimeDelta;
+	}
+
+	static _bool		isRotationInverse = { false };
+	static _bool		isTranslationInverse = { false };
+	if (true == isRotationInverse)
+	{
+		fAdditionalAngle -= 15.f * fTimeDelta;
+
+		if (fAdditionalAngle < -10.f)
+		{
+			fAdditionalAngle = -10.f;
+			isRotationInverse = false;
+		}
+	}
+	else
+	{
+		fAdditionalAngle += 15.f * fTimeDelta;
+
+		if (fAdditionalAngle > 10.f)
+		{
+			fAdditionalAngle = 10.f;
+			isRotationInverse = true;
+		}
+	}
+
+	if (true == isTranslationInverse)
+	{
+		fAdditionalHeight -= 0.6f * fTimeDelta;
+
+		if (fAdditionalHeight < -0.3f)
+		{
+			fAdditionalHeight = -0.3f;
+			isTranslationInverse = false;
+		}
+	}
+
+	else
+	{
+		fAdditionalHeight += 0.6f * fTimeDelta;
+
+		if (fAdditionalHeight > 0.3f)
+		{
+			fAdditionalHeight = 0.3f;
+			isTranslationInverse = true;
+		}
+	}
+
+	_matrix			TranslationMatrix = { XMMatrixTranslation(0.f, fAdditionalHeight, 0.f) };
+	_matrix			RotaionMatrix = { XMMatrixRotationAxis(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), XMConvertToRadians(fAdditionalAngle)) };
+	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
+
+	//	_matrix			TransformationMatrix = { RotaionMatrix * TranslationMatrix * WorldMatrix };
+	_matrix			HeadBoneCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("head"))};
+	_matrix			HeadBoneWorldMatrix = { HeadBoneCombinedMatrix * WorldMatrix };
+
+	_float4x4		IdentityFloat4x4;
+	XMStoreFloat4x4(&IdentityFloat4x4, HeadBoneWorldMatrix);
+	static _float4x4		HeadBonePreTransformMatrix = { IdentityFloat4x4 };
+
+	_vector			vCurrentScale, vCurrentQuaternion, vCurrentTranslation;
+	XMMatrixDecompose(&vCurrentScale, &vCurrentQuaternion, &vCurrentTranslation, HeadBoneWorldMatrix);
+
+	_vector			vPreScale, vPreQuaternion, vPreTranslation;
+	XMMatrixDecompose(&vPreScale, &vPreQuaternion, &vPreTranslation, XMLoadFloat4x4(&HeadBonePreTransformMatrix));
+
+	//	_vector			vDeltaScale = { vCurrentScale - vPreScale };
+	_vector			vDeltaScale = { vCurrentScale };
+	_vector			vDeltaQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(vCurrentQuaternion), XMQuaternionInverse(XMQuaternionNormalize(vPreQuaternion))) };
+	//	_vector			vDeltaQuaternion = { XMQuaternionIdentity()};
+	_vector			vDeltaTranslation = { XMVectorSetW(vCurrentTranslation - vPreTranslation, 1.f) };
+	vDeltaTranslation *= 1.5f;
+
+	if (XMVectorGetX(XMVector3Length(vDeltaTranslation)) > 1.5f)
+	{
+		vDeltaTranslation = XMVectorSetW(XMVector3Normalize(vDeltaTranslation), 1.f) * 1.5f;
+	}
+
+	_matrix			DeltaMatrix = { XMMatrixAffineTransformation(vDeltaScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vDeltaQuaternion, vDeltaTranslation) };
+
+	XMStoreFloat4x4(&HeadBonePreTransformMatrix, HeadBoneCombinedMatrix);
+
+	for (auto& strBoneTag : BoneTags)
+	{
+		_matrix			CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix(strBoneTag)) };
+
+		m_pModelCom->Add_Additional_Transformation_World(strBoneTag, DeltaMatrix);
+	}
+
+	_float3		vMoveDir = {};
+	m_pModelCom->Play_Animations_RootMotion(m_pTransformCom, fTimeDelta, &vMoveDir);
+	//	m_pModelCom->Play_Animations(fTimeDelta);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);

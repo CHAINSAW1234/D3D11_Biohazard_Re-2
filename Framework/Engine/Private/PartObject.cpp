@@ -22,6 +22,7 @@ HRESULT CPartObject::Initialize(void * pArg)
 		PARTOBJECT_DESC*		pPartObjectDesc = (PARTOBJECT_DESC*)pArg;
 
 		m_pParentsTransform = pPartObjectDesc->pParentsTransform;
+		Safe_AddRef(m_pParentsTransform);
 		if (nullptr == m_pParentsTransform)
 		{
 			MSG_BOX(TEXT("부모 트랜스폼 없는 파트오브젝튼 없다"));

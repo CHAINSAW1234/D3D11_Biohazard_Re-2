@@ -15,9 +15,9 @@ BEGIN(Tool)
 class CWeapon final : public CPartObject
 {
 public:
-	typedef struct tagWeaponDesc: public CPartObject::PARTOBJECT_DESC
+	typedef struct tagWeaponDesc : public CPartObject::PARTOBJECT_DESC
 	{
-		CBone*		pSocket = { nullptr };
+		CBone* pSocket = { nullptr };
 	}WEAPON_DESC;
 
 private:
@@ -34,11 +34,11 @@ public:
 	virtual HRESULT Render_LightDepth() override;
 
 private:
-	CModel*					m_pModelCom = { nullptr };
-	CShader*				m_pShaderCom = { nullptr };	
-	CBone*					m_pSocket = { nullptr };
-	CCollider*				m_pColliderCom = { nullptr };
-	
+	CModel* m_pModelCom = { nullptr };
+	CShader* m_pShaderCom = { nullptr };
+	CBone* m_pSocket = { nullptr };
+	CCollider* m_pColliderCom = { nullptr };
+
 private:
 	HRESULT Add_Components();
 	HRESULT Bind_ShaderResources();

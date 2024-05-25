@@ -107,46 +107,32 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	/* Prototype_Component_police_holl */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_police_holl"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../../Client/Bin/Resources/Models/map/police_holl.fbx",
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Animation_Tool/Bin/Resources/Models/map/police_holl.fbx",
 			TransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_Boss_MantisShrimp */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonBody"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../../Client/Bin/Resources/Models/LeonTest/LeonBody.fbx",
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Animation_Tool/Bin/Resources/Models/LeonTest/LeonBody.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_Boss_MantisShrimp */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonFace"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../../Client/Bin/Resources/Models/LeonTest/LeonFace.fbx",
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Animation_Tool/Bin/Resources/Models/LeonTest/LeonFace.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_Boss_MantisShrimp */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonHair"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../../Client/Bin/Resources/Models/LeonTest/LeonHair.fbx",
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Animation_Tool/Bin/Resources/Models/LeonTest/LeonHair.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 
 	/* Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../../Client/Bin/Resources/Textures/Terrain/Height1.bmp")))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_Fiona */
-	TransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
-
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../../Client/Bin/Resources/Models/Fiona/Fiona.fbx", TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_ForkLift */
-	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_ForkLift"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../../Client/Bin/Resources/Models/ForkLift/ForkLift.fbx", TransformMatrix))))
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Animation_Tool/Bin/Resources/Textures/Terrain/Height1.bmp")))))
 		return E_FAIL;
 
 	/* Prototype_Component_VIBuffer_Cube */

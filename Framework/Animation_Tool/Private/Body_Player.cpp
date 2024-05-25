@@ -2,13 +2,14 @@
 #include "..\Public\Body_Player.h"
 
 #include "Player.h"
+#include "Light.h"
 
-CBody_Player::CBody_Player(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CBody_Player::CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
 {
 }
 
-CBody_Player::CBody_Player(const CBody_Player & rhs)
+CBody_Player::CBody_Player(const CBody_Player& rhs)
 	: CPartObject{ rhs }
 {
 
@@ -19,9 +20,9 @@ HRESULT CBody_Player::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CBody_Player::Initialize(void * pArg)
+HRESULT CBody_Player::Initialize(void* pArg)
 {
-	BODY_DESC*		pDesc = { static_cast<BODY_DESC*>(pArg) };
+	BODY_DESC* pDesc = { static_cast<BODY_DESC*>(pArg) };
 
 	pDesc->fSpeedPerSec = 10.f;
 	pDesc->fRotationPerSec = XMConvertToRadians(90.0f);
@@ -36,7 +37,7 @@ HRESULT CBody_Player::Initialize(void * pArg)
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
-		return E_FAIL;	
+		return E_FAIL;
 
 	/*CModel::ANIM_PLAYING_DESC		AnimDesc;
 	AnimDesc.iAnimIndex = 0;
@@ -89,7 +90,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	//Upper 13
 	//Lower 33
-	
+
 	_matrix         WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
 
 	_vector         vLook = { WorldMatrix.r[CTransform::STATE_LOOK] };
@@ -100,9 +101,9 @@ void CBody_Player::Tick(_float fTimeDelta)
 	WorldMatrix.r[CTransform::STATE_POSITION] = vPosition;
 
 	m_pColliderCom->Tick(WorldMatrix);
-	
+
 	static _uint iAnimIndex = { 0 };
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_UP))
+	if (UP == m_pGameInstance->Get_KeyState(VK_UP))
 	{
 		++iAnimIndex;
 		if (50 <= iAnimIndex)
@@ -114,7 +115,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 		--iAnimIndex;
 		if (0 > iAnimIndex)
 			iAnimIndex = 0;
-	}	
+	}
 
 	m_pModelCom->Set_TickPerSec(iAnimIndex, 40.f);
 
@@ -137,7 +138,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
 	//	AnimDesc.iAnimIndex = 30;
 	AnimDesc.iAnimIndex = iAnimIndex;
-	AnimDesc.isLoop = false;
+	AnimDesc.isLoop = true;
 	//	AnimDesc.fWeight = fWeight;
 	AnimDesc.fWeight = 1.f;
 	AnimDesc.strBoneLayerTag = TEXT("Lower");
@@ -323,11 +324,14 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 
 	Mat = XMMatrixMultiply(Mat, Rot);
 	XMStoreFloat4x4(&BoneCombined, Mat);
-	m_pGameInstance->SetColliderTransform_Right_Shin(BoneCombined);
 
-	
+#ifdef _DEBUG
+	m_pGameInstance->SetColliderTransform_Right_Shin(BoneCombined);
+#endif
+
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-	//	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
@@ -378,43 +382,86 @@ HRESULT CBody_Player::Render_LightDepth()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 
-	_float4x4		ViewMatrix, ProjMatrix;
-	
-	ViewMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW, CPipeLine::SHADOW);
-	ProjMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ, CPipeLine::SHADOW);
-	
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
-		return E_FAIL;
+	if (m_pGameInstance->Get_ShadowSpotLight() != nullptr) {
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &ProjMatrix)))
-		return E_FAIL;
+		const CLight* pLight = m_pGameInstance->Get_ShadowSpotLight();
+		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
 
-
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (size_t i = 0; i < iNumMeshes; i++)
-	{
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-			return E_FAIL;
+		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-		/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
-		if (FAILED(m_pShaderCom->Begin(3)))
-			return E_FAIL;
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+				return E_FAIL;
 
-		m_pModelCom->Render(static_cast<_uint>(i));
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
+			if (FAILED(m_pShaderCom->Begin(3)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
 	}
 
 	return S_OK;
+}
 
+HRESULT CBody_Player::Render_LightDepth_Cube()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+
+	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowLightDesc_List();
+	_int iIndex = 0;
+	for (auto& pLightDesc : LightDescList) {
+		const _float4x4* pLightViewMatrices;
+		_float4x4 LightProjMatrix;
+		pLightViewMatrices = pLightDesc->ViewMatrix;
+		LightProjMatrix = pLightDesc->ProjMatrix;
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_LightIndex", &iIndex, sizeof(_int))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrices("g_LightViewMatrix", pLightViewMatrices, 6)))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
+			return E_FAIL;
+
+		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+				return E_FAIL;
+
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
+			if (FAILED(m_pShaderCom->Begin(5)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+
+		++iIndex;
+	}
+
+	return S_OK;
 }
 
 HRESULT CBody_Player::Add_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxAnimModel"), 
+	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxAnimModel"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
@@ -448,12 +495,9 @@ HRESULT CBody_Player::Bind_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
-	_float4x4		ViewMatrix = { m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW) };
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
-
-	_float4x4		ProjMatrix = { m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ) };
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &ProjMatrix)))
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
 
@@ -465,9 +509,9 @@ HRESULT CBody_Player::Bind_ShaderResources()
 	return S_OK;
 }
 
-CBody_Player * CBody_Player::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CBody_Player* CBody_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CBody_Player*		pInstance = new CBody_Player(pDevice, pContext);
+	CBody_Player* pInstance = new CBody_Player(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -480,9 +524,9 @@ CBody_Player * CBody_Player::Create(ID3D11Device * pDevice, ID3D11DeviceContext 
 
 }
 
-CGameObject * CBody_Player::Clone(void * pArg)
+CGameObject* CBody_Player::Clone(void* pArg)
 {
-	CBody_Player*		pInstance = new CBody_Player(*this);
+	CBody_Player* pInstance = new CBody_Player(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -499,6 +543,6 @@ void CBody_Player::Free()
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);
-	Safe_Release(m_pShaderCom);	
+	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
 }

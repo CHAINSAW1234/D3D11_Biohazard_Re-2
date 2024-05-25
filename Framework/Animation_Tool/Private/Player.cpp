@@ -1,17 +1,17 @@
 #include "stdafx.h"
-#include "..\Public\Player.h"
+#include "Player.h"
 
 
 #include "Body_Player.h"
 #include "Head_Player.h"
 #include "Hair_Player.h"
 
-CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
 }
 
-CPlayer::CPlayer(const CPlayer & rhs)
+CPlayer::CPlayer(const CPlayer& rhs)
 	: CGameObject{ rhs }
 {
 
@@ -19,12 +19,12 @@ CPlayer::CPlayer(const CPlayer & rhs)
 
 HRESULT CPlayer::Initialize_Prototype()
 {
-	
+
 
 	return S_OK;
 }
 
-HRESULT CPlayer::Initialize(void * pArg)
+HRESULT CPlayer::Initialize(void* pArg)
 {
 	GAMEOBJECT_DESC		GameObjectDesc{};
 
@@ -56,7 +56,7 @@ void CPlayer::Tick(_float fTimeDelta)
 {
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pGameInstance->GetPosition_Physics());
 
-	if(PRESSING == m_pGameInstance->Get_KeyState('H'))
+	if (PRESSING == m_pGameInstance->Get_KeyState('H'))
 	{
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
 	}
@@ -69,7 +69,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	if (PRESSING == m_pGameInstance->Get_KeyState('U'))
 	{
 		auto Look = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-		m_pGameInstance->Move_CCT(Look, fTimeDelta,0);
+		m_pGameInstance->Move_CCT(Look, fTimeDelta, 0);
 	}
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('J'))
@@ -77,7 +77,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		auto Look = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
 		Look.z = -Look.z;
 		Look.x = -Look.x;
-		m_pGameInstance->Move_CCT(m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK), fTimeDelta,0);
+		m_pGameInstance->Move_CCT(m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK), fTimeDelta, 0);
 		m_eState |= STATE_RUN;
 		if (m_eState & STATE_IDLE)
 			m_eState ^= STATE_IDLE;
@@ -85,7 +85,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	else
 	{
 		m_eState |= STATE_IDLE;
-		if(m_eState & STATE_RUN)
+		if (m_eState & STATE_RUN)
 			m_eState ^= STATE_RUN;
 	}
 
@@ -102,14 +102,14 @@ void CPlayer::Tick(_float fTimeDelta)
 
 		vWorldPos = m_pGameInstance->Compute_WorldPos(vMousePos, TEXT("Target_FieldDepth"));
 	}*/
-	
+
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vWorldPos);
 
 
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
 	Tick_PartObjects(fTimeDelta);
-	
+
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -121,7 +121,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	PART		Player_Part = { PART::PART_BODY };
 
 	_float4			vMovedDirection = { Convert_Float3_To_Float4_Dir(m_vRootTranslation) };
-	
+
 	_vector			vCurrentPostion = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
 
 	if (DOWN == m_pGameInstance->Get_KeyState('B'))
@@ -170,7 +170,7 @@ HRESULT CPlayer::Add_Components()
 	/* 로컬상의 정보를 셋팅한다. */
 	ColliderDesc.vSize = _float3(0.8f, 1.2f, 0.8f);
 	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
-	
+
 
 	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom, &ColliderDesc)))
@@ -194,7 +194,7 @@ HRESULT CPlayer::Add_PartObjects()
 	m_PartObjects.resize(CPlayer::PART_END);
 
 	/* For.Part_Body */
-	CPartObject*				pBodyObject = { nullptr };
+	CPartObject* pBodyObject = { nullptr };
 	CBody_Player::BODY_DESC		BodyDesc{};
 
 	BodyDesc.pParentsTransform = m_pTransformCom;
@@ -208,7 +208,7 @@ HRESULT CPlayer::Add_PartObjects()
 	m_PartObjects[CPlayer::PART_BODY] = pBodyObject;
 
 	/* For.Part_Head */
-	CPartObject*				pHeadObject = { nullptr };
+	CPartObject* pHeadObject = { nullptr };
 	CHead_Player::HEAD_DESC		HeadDesc{};
 
 	HeadDesc.pParentsTransform = m_pTransformCom;
@@ -221,7 +221,7 @@ HRESULT CPlayer::Add_PartObjects()
 	m_PartObjects[CPlayer::PART_HEAD] = pHeadObject;
 
 	/* For.Part_Hair */
-	CPartObject*				pHairObject = { nullptr };
+	CPartObject* pHairObject = { nullptr };
 	CHair_Player::HAIR_DESC		HairDesc{};
 
 	HairDesc.pParentsTransform = m_pTransformCom;
@@ -232,18 +232,18 @@ HRESULT CPlayer::Add_PartObjects()
 		return E_FAIL;
 
 	m_PartObjects[CPlayer::PART_HAIR] = pHairObject;
-	
+
 	return S_OK;
 }
 
 HRESULT CPlayer::Initialize_PartModels()
 {
-	CModel*			pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Model")))};
-	CModel*			pHeadModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HEAD]->Get_Component(TEXT("Com_Model"))) };
-	CModel*			pHairModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAIR]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pHeadModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HEAD]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pHairModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAIR]->Get_Component(TEXT("Com_Model"))) };
 
-	if (nullptr == pBodyModel || 
-		nullptr == pHeadModel || 
+	if (nullptr == pBodyModel ||
+		nullptr == pHeadModel ||
 		nullptr == pHairModel)
 		return E_FAIL;
 
@@ -275,9 +275,9 @@ HRESULT CPlayer::Initialize_PartModels()
 	return S_OK;
 }
 
-CPlayer * CPlayer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CPlayer*		pInstance = new CPlayer(pDevice, pContext);
+	CPlayer* pInstance = new CPlayer(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -290,9 +290,9 @@ CPlayer * CPlayer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext
 
 }
 
-CGameObject * CPlayer::Clone(void * pArg)
+CGameObject* CPlayer::Clone(void* pArg)
 {
-	CPlayer*		pInstance = new CPlayer(*this);
+	CPlayer* pInstance = new CPlayer(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

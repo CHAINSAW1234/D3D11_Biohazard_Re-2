@@ -46,13 +46,13 @@ private:
 	void Late_Tick_PartObjects(_float fTimeDelta);
 
 public:
-	
+
 
 private:
 	vector<CPartObject*>						m_PartObjects;
 	_ubyte										m_eState = {};
-	CCollider*									m_pColliderCom = { nullptr };
-	CNavigation*								m_pNavigationCom = { nullptr };
+	CCollider* m_pColliderCom = { nullptr };
+	CNavigation* m_pNavigationCom = { nullptr };
 
 	_float3										m_vRootTranslation = {};
 

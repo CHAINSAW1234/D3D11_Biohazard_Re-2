@@ -1,14 +1,14 @@
 #include "stdafx.h"
-#include "..\Public\Weapon.h"
+#include "Weapon.h"
 
 #include "Bone.h"
 
-CWeapon::CWeapon(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CWeapon::CWeapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
 {
 }
 
-CWeapon::CWeapon(const CWeapon & rhs)
+CWeapon::CWeapon(const CWeapon& rhs)
 	: CPartObject{ rhs }
 {
 
@@ -19,9 +19,9 @@ HRESULT CWeapon::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CWeapon::Initialize(void * pArg)
+HRESULT CWeapon::Initialize(void* pArg)
 {
-	WEAPON_DESC*	pWeaponDesc = (WEAPON_DESC*)pArg;
+	WEAPON_DESC* pWeaponDesc = (WEAPON_DESC*)pArg;
 
 	m_pSocket = pWeaponDesc->pSocket;
 	Safe_AddRef(m_pSocket);
@@ -30,7 +30,7 @@ HRESULT CWeapon::Initialize(void * pArg)
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
-		return E_FAIL;	
+		return E_FAIL;
 
 	m_pTransformCom->Set_Scaled(0.1f, 0.1f, 0.1f);
 	m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(90.0f));
@@ -57,7 +57,7 @@ void CWeapon::Late_Tick(_float fTimeDelta)
 {
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
@@ -99,7 +99,7 @@ HRESULT CWeapon::Render_LightDepth()
 HRESULT CWeapon::Add_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxModel"), 
+	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxModel"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
@@ -131,20 +131,17 @@ HRESULT CWeapon::Bind_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
-	_float4x4		ViewMatrix = { m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW) };
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &ViewMatrix)))
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
-
-	_float4x4		ProjMatrix = { m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ) };
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &ProjMatrix)))
-		return E_FAIL;	
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
 
 	return S_OK;
 }
 
-CWeapon * CWeapon::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CWeapon* CWeapon::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CWeapon*		pInstance = new CWeapon(pDevice, pContext);
+	CWeapon* pInstance = new CWeapon(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -157,9 +154,9 @@ CWeapon * CWeapon::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext
 
 }
 
-CGameObject * CWeapon::Clone(void * pArg)
+CGameObject* CWeapon::Clone(void* pArg)
 {
-	CWeapon*		pInstance = new CWeapon(*this);
+	CWeapon* pInstance = new CWeapon(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -177,6 +174,6 @@ void CWeapon::Free()
 
 	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pSocket);
-	Safe_Release(m_pShaderCom);	
+	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
 }

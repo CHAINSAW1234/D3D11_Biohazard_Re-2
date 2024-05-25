@@ -70,6 +70,14 @@ public:		/* For.Bone_Layer */
 	void Add_Bone_Layer_All_Bone(const wstring& strLayerTag);
 	void Delete_Bone_Layer(const wstring& strLayerTag);
 
+public:		/* For.Additioal_Input_Forces */
+	void Add_Additional_Transformation_World(string strBoneTag, _fmatrix AdditionalTransformMatrix);
+
+private:	/* For.Additioal_Input_Forces */
+	void Apply_AdditionalForces(class CTransform* pTransform);
+	void Apply_AdditionalForce(_uint iBoneIndex);
+	void Clear_AdditionalForces();
+
 private:
 	_int Find_RootBoneIndex();
 
@@ -192,6 +200,11 @@ private:
 
 private:	/* For.Blend_Animation */
 	vector<ANIM_PLAYING_INFO>	m_PlayingAnimInfos;
+
+private: /* For.Additional_Input_Forces */
+	//	뼈의 인덱스 별로 외부적 변환을 추가적으로 적용한다.
+	//	머리뼈 흔들거나할 떄 사용해보기
+	vector<list<_float4x4>>		m_AdditionalForces;
 
 private:	/* For.Linear_Interpolation */
 	_float						m_fTotalLinearTime = { 0.f };

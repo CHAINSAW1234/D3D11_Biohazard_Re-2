@@ -138,7 +138,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
 	//	AnimDesc.iAnimIndex = 30;
 	AnimDesc.iAnimIndex = iAnimIndex;
-	AnimDesc.isLoop = false;
+	AnimDesc.isLoop = true;
 	//	AnimDesc.fWeight = fWeight;
 	AnimDesc.fWeight = 1.f;
 	AnimDesc.strBoneLayerTag = TEXT("Lower");
@@ -324,8 +324,10 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 
 	Mat = XMMatrixMultiply(Mat, Rot);
 	XMStoreFloat4x4(&BoneCombined, Mat);
-	m_pGameInstance->SetColliderTransform_Right_Shin(BoneCombined);
 
+#ifdef _DEBUG
+	m_pGameInstance->SetColliderTransform_Right_Shin(BoneCombined);
+#endif
 	
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);

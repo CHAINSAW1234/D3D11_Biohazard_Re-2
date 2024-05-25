@@ -8,10 +8,10 @@ BEGIN(Tool)
 class CBody_Player final : public CPartObject
 {
 public:
-	typedef struct tagBodyDesc: public CPartObject::PARTOBJECT_DESC
+	typedef struct tagBodyDesc : public CPartObject::PARTOBJECT_DESC
 	{
-		const _ubyte*		pState;
-		_float3*			pRootTranslation = { nullptr };
+		const _ubyte* pState;
+		_float3* pRootTranslation = { nullptr };
 	}BODY_DESC;
 
 private:
@@ -27,15 +27,15 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_LightDepth() override;
-
+	virtual HRESULT Render_LightDepth_Cube() override;
 private:
-	CModel*					m_pModelCom = { nullptr };
-	CShader*				m_pShaderCom = { nullptr };	
-	CCollider*				m_pColliderCom = { nullptr };
+	CModel* m_pModelCom = { nullptr };
+	CShader* m_pShaderCom = { nullptr };
+	CCollider* m_pColliderCom = { nullptr };
 
-	_float3*				m_pRootTranslation = { nullptr };
+	_float3* m_pRootTranslation = { nullptr };
 
-	const _ubyte*			m_pState;
+	const _ubyte* m_pState;
 private:
 	HRESULT Add_Components();
 	HRESULT Bind_ShaderResources();
