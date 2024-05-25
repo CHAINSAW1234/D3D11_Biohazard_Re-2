@@ -64,6 +64,12 @@ public:	/* For.Animation */
 	void Active_RootMotion_Rotation(_bool isActive);
 	void Set_RootBone(string strBoneTag);			//	모든본을 초기화 => 루트본은 하나다 가정후 찾은 본을 루트본으로 등록
 
+public:
+	void Set_IK(string strTargetJointTag, string strEndEffectorTag);
+	void Set_IKDirection(_fvector vDirection);
+	
+private:
+	void Apply_IK(class CTransform* pTransform);
 
 public:		/* For.Bone_Layer */
 	void Add_Bone_Layer(const wstring& strLayerTag, list<_uint> BoneIndices);
@@ -183,6 +189,12 @@ private:	/* For.RootMotion */
 	_bool						m_isRootMotion_XZ = { false };
 	_bool						m_isRootMotion_Y = { false };
 	_bool						m_isRootMotion_Rotation = { false };
+
+private:	/* For.Inverse_Kinematic */
+	_int						m_iEndEffectorIndex = { -1 };
+	_int						m_iTargetJointIndex = { -1 };
+	vector<_uint>				m_IKIndices;
+	_float3						m_vIKDirection = {};
 
 private:
 	_uint						m_iNumMaterials = { 0 };

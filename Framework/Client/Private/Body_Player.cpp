@@ -76,6 +76,8 @@ HRESULT CBody_Player::Initialize(void * pArg)
 
 	m_pModelCom->Add_Bone_Layer(TEXT("Upper"), UpperBoneIndices);
 
+	m_pModelCom->Set_IK("l_leg_femur", "l_leg_ball");
+
 	return S_OK;
 }
 
@@ -120,20 +122,24 @@ void CBody_Player::Tick(_float fTimeDelta)
 	m_pModelCom->Set_TickPerSec(iAnimIndex, 40.f);
 
 	static _float fWeight = { 1.f };
+	static _float fMoveHieght = { 0.f };
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('N'))
 	{
-		fWeight -= 0.02f;
+		/*fWeight -= 0.02f;
 		if (fWeight < 0.f)
-			fWeight = 0.f;
+			fWeight = 0.f;*/
+
+		fMoveHieght += 1.f * fTimeDelta;
 	}
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('M'))
 	{
-		fWeight += 0.02f;
-		if (fWeight > 1.f)
-			fWeight = 1.f;
+		fMoveHieght -= 1.f * fTimeDelta;
 	}
+
+	_vector			vMoveDir = { XMVectorSet(0.f, 1.f, 0.f, 0.f) * fMoveHieght };
+	m_pModelCom->Set_IKDirection(vMoveDir);
 
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
 	//	AnimDesc.iAnimIndex = 30;
