@@ -58,15 +58,16 @@ public: /* For.Component_Manager */
 	HRESULT Add_Prototype(_uint iLevelIndex, const wstring& strPrototypeTag, class CComponent* pPrototype);
 	class CComponent* Clone_Component(_uint iLevelIndex, const wstring& strPrototypeTag, void* pArg = nullptr);
 
-
 public: /* For.Timer_Manager */
 	HRESULT Add_Timer(const wstring& strTimerTag);
 	_float Compute_TimeDelta(const wstring& strTimerTag);
 
 public: /* For.PipeLine */
 	void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
-	void Set_ShadowSpotLight(const wstring& strLightTag);
-	void Add_ShadowLight(const wstring& strLightTag);
+	HRESULT Set_ShadowSpotLight(CLight* pLight);
+	HRESULT Set_ShadowSpotLight(const wstring& strLightTag);
+	HRESULT Add_ShadowLight(CLight* pLight);
+	HRESULT Add_ShadowLight(const wstring& strLightTag);
 	_matrix Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState) const;
 	_float4x4 Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE eState) const;
 	_matrix Get_Transform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState) const;
@@ -75,26 +76,22 @@ public: /* For.PipeLine */
 	_float4 Get_CamPosition_Float4() const;
 	_uint Get_NumShadowLight();
 	const CLight* Get_ShadowLight(_uint iIndex);
-	_matrix Get_SpotLightTransform_Matrix(CPipeLine::TRANSFORMSTATE eState) const;
-	_float4x4 Get_SpotLightTransform_Float4x4(CPipeLine::TRANSFORMSTATE eState) const;
-	_matrix Get_SpotLightTransform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState) const;
-	_float4x4 Get_SpotLightTransform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState) const;
-	const CLight* Get_ShadowSpotLight();
-
+	const CLight* Get_ShadowSpotLight();		// spotlight는 Light내부의 list에 LIGHT_DESC가 하나만 들어있도록 처리할 것 
+	list<LIGHT_DESC*> Get_ShadowLightDesc_List();
 
 public: /* For.Light_Manager */
-	const LIGHT_DESC* Get_LightDesc(const wstring& strLightTag);
-	const _float4x4* Get_LightViewMatrix(const wstring& strLightTag);
-	const _float4x4 Get_LightProjMatrix(const wstring& strLightTag);
+	const LIGHT_DESC* Get_LightDesc(const wstring& strLightTag, _uint iIndex);
+	class CLight* Get_Light(const wstring& strLightTag);
 	HRESULT Add_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _float fFovY = XMConvertToRadians(90.f), _float fAspect = 1, _float fNearZ = 0.01, _float fFarZ = 1000);
+	HRESULT Add_Light_Layer(const wstring& strLightTag);
+	list<LIGHT_DESC*>* Get_Light_List(const wstring& strLightTag);
+	HRESULT Update_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _uint iIndex);
 	HRESULT Render_Lights(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
-	HRESULT Tick_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc);
 
 
 public: /* For.Font_Manager */
 	HRESULT Add_Font(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const wstring& strFontTag, const wstring& strFontFilePath);
 	HRESULT Render_Font(const wstring& strFontTag, const wstring & strText, const _float2 & vPosition, _fvector vColor, _float fRadian);
-
 
 public: /* For.Target_Manager */
 	HRESULT Add_RenderTarget(const wstring& strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
@@ -122,7 +119,6 @@ public:
 	uniform_real_distribution<_float>	GetRandomDevice_Real(_float Start, _float End);
 	uniform_int_distribution<_int>		GetRandomDevice_Int(_int Start, _int End);
 
-	
 public:/*For Physics Controller*/
 	_float4 GetPosition_Physics();
 	void	Simulate();

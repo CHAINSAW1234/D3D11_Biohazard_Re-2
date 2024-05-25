@@ -11,6 +11,7 @@ texture2D g_DiffuseTexture;
 texture2D g_ShadeTexture;
 texture2D g_DepthTexture;
 texture2D g_MaterialTexture;
+texture2D g_OriginalTexture;
 
 texture2D g_SpecularTexture;
 texture2D g_LightResultTexture;
@@ -346,8 +347,6 @@ float ShadowPCFSample_Spot(float fOriginDepth, float2 vTexcoord)
 
     Shadow /= (Samples * Samples); // 샘플 수로 나누어 평균 계산
     
-
-    
     return Shadow;
 }
 
@@ -376,8 +375,73 @@ float ShadowPCFSample_Point(float fDistance, float3 fDirection, int iLightIndex)
 
     Shadow /= (Samples * Samples); // 샘플 수로 나누어 평균 계산
     
-
     return Shadow;
+}
+
+float Cal_Shadow(float2 vTexcoord)
+{
+    /* Shadow */
+    /* ProjPos.w == View.Z */
+    vector vDepthDesc = g_DepthTexture.Sample(PointSampler, vTexcoord);
+    float fViewZ = vDepthDesc.y * 1000.0f;
+
+    float4 vWorldPos;
+	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / View.z */
+    vWorldPos.x = vTexcoord.x * 2.f - 1.f;
+    vWorldPos.y = vTexcoord.y * -2.f + 1.f;
+    vWorldPos.z = vDepthDesc.x;
+    vWorldPos.w = 1.f;
+
+	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 */
+    vWorldPos *= fViewZ;
+	/* 로컬위치 * 월드행렬 * 뷰행렬 */
+    vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
+	/* 로컬위치 * 월드행렬 */
+    vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
+    
+    
+    // 광원 여러개에 대해서 처리해야함
+    // 1. Point Lights 
+    float fShadow = 0;
+    
+    for (int i = 0; i < g_iNumShadowLight; ++i)
+    {
+        float3 vLightDir = vWorldPos - g_vShadowLightPos[i];
+        float fDistance = length(vLightDir);
+        vLightDir = normalize(vLightDir);
+    
+        float fAtt = saturate((g_fShadowLightRange[i].x - fDistance) / g_fShadowLightRange[i].x);
+    
+        fShadow += ShadowPCFSample_Point(fDistance, vLightDir, i) * fAtt;
+
+    }
+    
+    // 2. SpotLight
+    if (g_isShadowSpotLight)
+    {
+        vector vPosition = mul(vWorldPos, g_SpotLightViewMatrix);
+        vPosition = mul(vPosition, g_SpotLightProjMatrix);
+  
+        float2 vTexcoord;
+        vTexcoord.x = (vPosition.x / vPosition.w) * 0.5f + 0.5f;
+        vTexcoord.y = (vPosition.y / vPosition.w) * -0.5f + 0.5f;
+    
+        vector vLightDir = vWorldPos - g_vSpotLightPosition;
+        vector vSpotDir = g_vSpotLightDirection;
+	
+        float fResult = acos(dot(normalize(vLightDir), normalize(vSpotDir)));
+
+        if (g_fOutCutOff >= fResult) // 빛이 번질 범위 안에 있을 때
+        {
+            float fDistance = length(vLightDir);
+            float fIntensity = (fResult - g_fSpotLightOutCutOff) / (g_fSpotLightCutOff - g_fSpotLightOutCutOff);
+            float fAtt = saturate((g_fSpotLightRange - fDistance) / g_fSpotLightRange) * fIntensity; //범위 줘서 끝 범위에서는 연해지게 
+        
+            fShadow += ShadowPCFSample_Spot(vPosition.w, vTexcoord) * fAtt;
+        }
+    }
+    
+    return fShadow;
 }
 
 /* 최종적으로 480000 수행되는 쉐이더. */
@@ -403,72 +467,16 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
     Out.vNormal = vNormal;
     Out.vDepth = vDepth;
     Out.vMaterial = vMaterial;
-    
-    /* Shadow */
-    /* ProjPos.w == View.Z */
-    vector vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
-    float fViewZ = vDepthDesc.y * 1000.0f;
 
-    float4 vWorldPos;
-	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / View.z */
-    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
-    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
-    vWorldPos.z = vDepthDesc.x;
-    vWorldPos.w = 1.f;
-
-	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 */
-    vWorldPos *= fViewZ;
-	/* 로컬위치 * 월드행렬 * 뷰행렬 */
-    vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
-	/* 로컬위치 * 월드행렬 */
-    vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
-
-    
-    // 광원 여러개에 대해서 처리해야함
-    // 1. Point Lights 
-    float fShadow = 0;
-    
-    for (int i = 0; i < g_iNumShadowLight; ++i)
+    // 그림자 연산
+    vector vOrigin = g_OriginalTexture.Sample(PointSampler, In.vTexcoord);
+    if (vOrigin.r == 0)
     {
-        float3 vLightDir = vWorldPos - g_vShadowLightPos[i];
-        float fDistance = length(vLightDir);
-        vLightDir = normalize(vLightDir);
-    
-        float fAtt = saturate((g_fShadowLightRange[i].x - fDistance) / g_fShadowLightRange[i].x);
-    
-        fShadow += ShadowPCFSample_Point(fDistance, vLightDir, i) * fAtt;
-
+        float fShadow = Cal_Shadow(In.vTexcoord);
+        Out.vDiffuse *= (1 - fShadow);
+        Out.vDiffuse.a = 1;
     }
-    
-    // 2. SpotLight
-    
-    if (g_isShadowSpotLight)
-    {
-        vector vPosition = mul(vWorldPos, g_SpotLightViewMatrix);
-        vPosition = mul(vPosition, g_SpotLightProjMatrix);
-  
-        float2 vTexcoord;
-        vTexcoord.x = (vPosition.x / vPosition.w) * 0.5f + 0.5f;
-        vTexcoord.y = (vPosition.y / vPosition.w) * -0.5f + 0.5f;
-    
-        vector vLightDir = vWorldPos - g_vSpotLightPosition;
-        vector vSpotDir = g_vSpotLightDirection;
-	
-        float fResult = acos(dot(normalize(vLightDir), normalize(vSpotDir)));
 
-        if (g_fOutCutOff >= fResult) // 빛이 번질 범위 안에 있을 때
-        {
-            float fDistance = length(vLightDir);
-            float fIntensity = (fResult - g_fSpotLightOutCutOff) / (g_fSpotLightCutOff - g_fSpotLightOutCutOff);
-            float fAtt = saturate((g_fSpotLightRange - fDistance) / g_fSpotLightRange) * fIntensity; //범위 줘서 끝 범위에서는 연해지게 
-        
-            fShadow += ShadowPCFSample_Spot(vPosition.w, vTexcoord) * fAtt;
-        }
-    }
-    
-    Out.vDiffuse *= (1 - fShadow);
-    Out.vDiffuse.a = 1;
-    
     return Out;
 }
 

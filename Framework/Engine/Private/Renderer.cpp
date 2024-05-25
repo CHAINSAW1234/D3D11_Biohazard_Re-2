@@ -190,7 +190,8 @@ HRESULT CRenderer::SetUp_MRTs()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Material"))))
 		return E_FAIL;
-
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Origin"))))
+		return E_FAIL;
 
 	/* MRT_LightAcc : 빛들의 연산결과 정보를 받아오기위한 렌더타겟들이다. */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
@@ -403,6 +404,9 @@ HRESULT CRenderer::SetUp_RenderTargets_GameObjects(const D3D11_VIEWPORT& Viewpor
 		return E_FAIL;
 	/* For.Target_Material */			//	금속성, 거칠기, 반사율, 이미시브
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Material"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	/* For.Target_Origin */			//	자기 그림자 방지를 위한 렌더 타겟
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Origin"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
 	return S_OK;
@@ -830,12 +834,6 @@ HRESULT CRenderer::Render_Shadow()
 
 	Set_ViewPort_Size(m_fLightDepthTargetViewWidth, m_fLightDepthTargetViewHeight);
 
-	/*
-	XMStoreFloat4x4(&ViewMatrix, XMMatrixLookAtLH(XMVectorSet(0.f, 10.f, -10.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
-	XMStoreFloat4x4(&ProjMatrix, XMMatrixPerspectiveFovLH(XMConvertToRadians(120.0f), (_float)g_iWinSizeX / g_iWinSizeY, 0.1f, 2000.f));
-
-	*/
-
 	if (SHADOW_RESOLUTION::RES_1X == m_eShadowResolution)
 	{
 		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow_1X"), m_pLightDepthDSVs[RES_1X])))
@@ -859,7 +857,6 @@ HRESULT CRenderer::Render_Shadow()
 		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow_8X"), m_pLightDepthDSVs[RES_8X])))
 			return E_FAIL;
 	}
-
 
 	for (auto& pRenderObject : m_RenderObjects[RENDER_SHADOW_SPOT])
 	{
@@ -1049,10 +1046,10 @@ HRESULT CRenderer::Render_Light_Result()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Material"), "g_MaterialTexture")))
 		return E_FAIL;
-
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Origin"), "g_OriginalTexture")))
+		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_LightDepth_1X"), "g_SpotLightDepthTexture")))
 		return E_FAIL;
-
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_LightDepth_Point"), "g_CubeTexture")))
 		return E_FAIL;
 
@@ -1061,21 +1058,22 @@ HRESULT CRenderer::Render_Light_Result()
 		if (FAILED(m_pShader->Bind_RawValue("g_isShadowSpotLight", &isShadowSpotLight, sizeof(_bool))))
 			return E_FAIL;
 
-		const LIGHT_DESC* LightDesc = m_pGameInstance->Get_ShadowSpotLight()->Get_LightDesc();
-
-		if (FAILED(m_pShader->Bind_Matrix("g_SpotLightViewMatrix", &m_pGameInstance->Get_SpotLightTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
+		const CLight* pLight = m_pGameInstance->Get_ShadowSpotLight();
+		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
+		
+		if (FAILED(m_pShader->Bind_Matrix("g_SpotLightViewMatrix", &pDesc->ViewMatrix[0])))
 			return E_FAIL;
-		if (FAILED(m_pShader->Bind_Matrix("g_SpotLightProjMatrix", &m_pGameInstance->Get_SpotLightTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
+		if (FAILED(m_pShader->Bind_Matrix("g_SpotLightProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
-		if (FAILED(m_pShader->Bind_RawValue("g_vSpotLightPosition", &LightDesc->vPosition, sizeof(_float4))))
+		if (FAILED(m_pShader->Bind_RawValue("g_vSpotLightPosition", &pDesc->vPosition, sizeof(_float4))))
 			return E_FAIL;
-		if (FAILED(m_pShader->Bind_RawValue("g_vSpotLightDirection", &LightDesc->vDirection, sizeof(_float4))))
+		if (FAILED(m_pShader->Bind_RawValue("g_vSpotLightDirection", &pDesc->vDirection, sizeof(_float4))))
 			return E_FAIL;
-		if (FAILED(m_pShader->Bind_RawValue("g_fSpotLightCutOff", &LightDesc->fCutOff, sizeof(_float))))
+		if (FAILED(m_pShader->Bind_RawValue("g_fSpotLightCutOff", &pDesc->fCutOff, sizeof(_float))))
 			return E_FAIL;
-		if (FAILED(m_pShader->Bind_RawValue("g_fSpotLightOutCutOff", &LightDesc->fOutCutOff, sizeof(_float))))
+		if (FAILED(m_pShader->Bind_RawValue("g_fSpotLightOutCutOff", &pDesc->fOutCutOff, sizeof(_float))))
 			return E_FAIL;
-		if (FAILED(m_pShader->Bind_RawValue("g_fSpotLightRange", &LightDesc->fRange, sizeof(_float))))
+		if (FAILED(m_pShader->Bind_RawValue("g_fSpotLightRange", &pDesc->fRange, sizeof(_float))))
 			return E_FAIL;
 	}
 	else {
@@ -1089,15 +1087,13 @@ HRESULT CRenderer::Render_Light_Result()
 	_float4* pLightPositions = new _float4[m_iArraySize];
 	_float4* pLightRanges = new _float4[m_iArraySize];
 
-	_int iNumShadowLight = m_pGameInstance->Get_NumShadowLight();
+	_int iNumShadowLight = 0;
 
-	for (int i = 0; i < iNumShadowLight; ++i) {
-		const CLight* pLight = m_pGameInstance->Get_ShadowLight(i);
-		if (pLight != nullptr) {
-			pLightPositions[i] = pLight->Get_LightDesc()->vPosition;
-			pLightRanges[i] = _float4(pLight->Get_LightDesc()->fRange, 0,0,0);
-		}
-
+	list<LIGHT_DESC*> LightDesc = m_pGameInstance->Get_ShadowLightDesc_List();
+	for (auto& pDesc : LightDesc) {
+		pLightPositions[iNumShadowLight] = pDesc->vPosition;
+		pLightRanges[iNumShadowLight] = _float4(pDesc->fRange, 0, 0, 0);
+		++iNumShadowLight;
 	}
 
 	if (FAILED(m_pShader->Bind_RawValue("g_iNumShadowLight", &iNumShadowLight, sizeof(_int))))

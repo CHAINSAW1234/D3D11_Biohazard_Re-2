@@ -146,7 +146,6 @@ private:
 private:
 	HRESULT Render_Bloom();
 
-
 private:
 	void Set_ViewPort_Size(_float fWidth, _float fHeight);
 

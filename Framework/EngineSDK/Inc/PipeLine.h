@@ -66,23 +66,12 @@ public:
 		advance(iter, iIndex);
 		return *iter;
 	}
-	
-	_matrix Get_SpotLightTransform_Matrix(TRANSFORMSTATE eState) const {
-		return XMLoadFloat4x4(&m_SpotLightTransformMatrices[eState]);
-	}
-	_float4x4 Get_SpotLightTransform_Float4x4(TRANSFORMSTATE eState) const {
-		return m_SpotLightTransformMatrices[eState];
-	}
-	_matrix Get_SpotLightTransform_Matrix_Inverse(TRANSFORMSTATE eState) const {
-		return XMLoadFloat4x4(&m_SpotLightTransformInverseMatrices[eState]);
-	}
-	_float4x4 Get_SpotLightTransform_Float4x4_Inverse(TRANSFORMSTATE eState) const {
-		return m_SpotLightTransformInverseMatrices[eState];
-	}
 
-	const CLight* Get_ShadowSpotLight() {
+	CLight* Get_ShadowSpotLight() {
 		return m_pSpotLight;
 	}
+
+	list<LIGHT_DESC*> Get_ShadowLightDesc_List();
 
 public:
 	HRESULT Initialize();
@@ -108,9 +97,6 @@ private:
 
 	// SpotLight
 	CLight*				m_pSpotLight = { nullptr };
-	_float4x4			m_SpotLightTransformMatrices[D3DTS_END];
-	_float4x4			m_SpotLightTransformInverseMatrices[D3DTS_END];
-
 	// CasCade¿ë º¯¼ö -> ¾È¾¸
 	_float3				m_vOriginalPoints[8];
 	_float				m_fCascadeSplitZ[CASCADE_END + 1];

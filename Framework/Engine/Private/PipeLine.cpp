@@ -5,21 +5,39 @@ CPipeLine::CPipeLine()
 {
 }
 
-void CPipeLine::Add_ShadowLight(CLight* pLight)
-{
-	if (m_iNumLight < m_iMaxLight) {
-		++m_iNumLight;
-		m_Lights.push_back(pLight);
-		Safe_AddRef(pLight);
-	}
-}
-
 void CPipeLine::Set_ShadowSpotLight(CLight* pLight)
 {
 	m_pSpotLight = pLight;
 	Safe_AddRef(pLight);
 }
 
+void CPipeLine::Add_ShadowLight(CLight* pLight)
+{
+	if (m_iNumLight < m_iMaxLight) {
+		++m_iNumLight;
+		m_Lights.push_back(pLight);
+
+		Safe_AddRef(pLight);
+
+	}
+}
+
+list<LIGHT_DESC*> CPipeLine::Get_ShadowLightDesc_List()
+{
+	list<LIGHT_DESC*> ShadowLightDesc;
+
+	for (auto& pLight : m_Lights) {
+		list<LIGHT_DESC*>* pList = pLight->Get_Light_List();
+
+		for (auto& pDesc : *pList) {
+			if (pDesc->bShadow) {
+				ShadowLightDesc.push_back(pDesc);
+			}
+		}
+	}
+
+	return ShadowLightDesc;
+}
 
 HRESULT CPipeLine::Initialize()
 {
@@ -42,7 +60,6 @@ HRESULT CPipeLine::Initialize()
 	m_vOriginalPoints[6] = _float3(1.f, -1.f, 1.f);
 	m_vOriginalPoints[7] = _float3(-1.f, -1.f, 1.f);
 
-
 	return S_OK;
 }
 
@@ -57,15 +74,15 @@ void CPipeLine::Tick()
 	
 	// For.SpotLight
 
-	if (nullptr != m_pSpotLight) {
-		XMStoreFloat4x4(&m_SpotLightTransformMatrices[D3DTS_VIEW], XMLoadFloat4x4(&m_pSpotLight->Get_LightViewMatrix()[0]));
-		XMStoreFloat4x4(&m_SpotLightTransformMatrices[D3DTS_PROJ], XMLoadFloat4x4(&m_pSpotLight->Get_LightProjMatrix()));
-		for (size_t i = 0; i < D3DTS_END; i++)
-		{
-			XMStoreFloat4x4(&m_SpotLightTransformInverseMatrices[i], XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_TransformMatrices[i])));
-		}
+	//if (nullptr != m_pSpotLight) {
+	//	XMStoreFloat4x4(&m_SpotLightTransformMatrices[D3DTS_VIEW], XMLoadFloat4x4(&m_pSpotLight->Get_LightViewMatrix()[0]));
+	//	XMStoreFloat4x4(&m_SpotLightTransformMatrices[D3DTS_PROJ], XMLoadFloat4x4(&m_pSpotLight->Get_LightProjMatrix()));
+	//	for (size_t i = 0; i < D3DTS_END; i++)
+	//	{
+	//		XMStoreFloat4x4(&m_SpotLightTransformInverseMatrices[i], XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_TransformMatrices[i])));
+	//	}
 
-	}
+	//}
 
 	// For.LightShadowMapping
 
@@ -88,7 +105,6 @@ void CPipeLine::Reset()
 	Safe_Release(m_pSpotLight);
 	m_pSpotLight = nullptr;
 }
-
 
 void CPipeLine::Update_CascadeFrustum()
 {
@@ -135,7 +151,6 @@ void CPipeLine::Update_CascadeFrustum()
 
 void CPipeLine::Update_CascadeProjMatrices()
 {
-
 	for (_int i = 0; i < CASCADE_END; ++i) {
 
 		// 1. 절두체의 중심 위치 구하기
@@ -181,6 +196,8 @@ void CPipeLine::Free()
 		Safe_Release(pLight);
 	}
 	m_Lights.clear();
+	m_iNumLight = 0;
 
 	Safe_Release(m_pSpotLight);
+	m_pSpotLight = nullptr;
 }
