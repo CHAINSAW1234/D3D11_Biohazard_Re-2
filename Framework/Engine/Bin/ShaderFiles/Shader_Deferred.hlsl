@@ -164,7 +164,7 @@ PS_OUT PS_MAIN_CUBE(PS_IN In)
     //float3 vTex = normalize(float3(In.vTexcoord.x * 2 - 1.f, In.vTexcoord.y * -2.f + 1.f, 1.f));
     //float3 vTex = normalize(float3(-1.0, In.vTexcoord.y * -2 + 1.f, In.vTexcoord.x * -2.f + 1.f));
     
-    Out.vColor = g_CubeTexture.Sample(LinearSampler, float4(vTex, 1));
+    Out.vColor = g_CubeTexture.Sample(LinearSampler, float4(vTex, 0));
 
     return Out;
 }
@@ -338,9 +338,9 @@ float ShadowPCFSample_Spot(float fOriginDepth, float2 vTexcoord)
         {
             float2 Offset = float2(x * SampleStep, y * SampleStep);
             float2 SampleTexcoord = vTexcoord + Offset;
-            float fDepth = g_SpotLightDepthTexture.Sample(PointSampler, SampleTexcoord).r;
+            float fDepth = g_SpotLightDepthTexture.Sample(PointSamplerClamp, SampleTexcoord).r;
 
-            if (fOriginDepth > (fDepth * 1000.f))
+            if (fOriginDepth -1.f > (fDepth * 1000.f))
                 Shadow += 1.f;
         }
     }
@@ -364,7 +364,7 @@ float ShadowPCFSample_Point(float fDistance, float3 fDirection, int iLightIndex)
         {
             float3 Offset = float3(x * SampleStep, y * SampleStep, 0.0);
             float3 SamplePos = normalize(fDirection + Offset);
-            float fDepth = g_CubeTexture.Sample(PointSampler, float4(SamplePos, iLightIndex)).r;
+            float fDepth = g_CubeTexture.Sample(PointSamplerClamp, float4(SamplePos, iLightIndex)).r;
 
             if (fDistance > fDepth * 1000)
             {

@@ -79,7 +79,7 @@ HRESULT CTexture::Initialize_Prototype(const wstring & strTextureFilePath, _uint
 			_wsplitpath_s(strTextureFilePath.c_str(), szDriveName, MAX_PATH, szDirName, MAX_PATH, nullptr, 0, nullptr, 0);
 			strPerfectPath += szDriveName;
 			strPerfectPath += szDirName;
-			strPerfectPath += TEXT("NullBlack.dds");
+			strPerfectPath += TEXT("NullWhite.dds");
 
 			wsprintf(szFileName, strPerfectPath.c_str(), i);
 

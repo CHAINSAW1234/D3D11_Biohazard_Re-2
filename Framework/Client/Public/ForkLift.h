@@ -23,10 +23,12 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT Render_LightDepth_Spot() override;
+	virtual HRESULT Render_LightDepth_Point() override;
 
 private:
-	CModel*					m_pModelCom = { nullptr };
-	CShader*				m_pShaderCom = { nullptr };	
+	CModel*		m_pModelCom = { nullptr };
+	CShader*	m_pShaderCom = { nullptr };	
 	
 private:
 	HRESULT Add_Components();

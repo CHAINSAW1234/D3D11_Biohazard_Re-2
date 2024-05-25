@@ -360,7 +360,7 @@ HRESULT CBody_Player::Render()
 	return S_OK;
 }
 
-HRESULT CBody_Player::Render_LightDepth()
+HRESULT CBody_Player::Render_LightDepth_Spot()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -368,9 +368,9 @@ HRESULT CBody_Player::Render_LightDepth()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 
-	if (m_pGameInstance->Get_ShadowSpotLight() != nullptr) {
+	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
 
-		const CLight* pLight = m_pGameInstance->Get_ShadowSpotLight();
+		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT);
 		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
 
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
@@ -399,7 +399,7 @@ HRESULT CBody_Player::Render_LightDepth()
 	return S_OK;
 }
 
-HRESULT CBody_Player::Render_LightDepth_Cube()
+HRESULT CBody_Player::Render_LightDepth_Point()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -407,7 +407,7 @@ HRESULT CBody_Player::Render_LightDepth_Cube()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 
-	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowLightDesc_List();
+	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
 	_int iIndex = 0;
 	for (auto& pLightDesc : LightDescList) {
 		const _float4x4* pLightViewMatrices;
@@ -486,11 +486,9 @@ HRESULT CBody_Player::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-
 	_float fFar = { 1000.f };
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFar", &fFar, sizeof(_float))))
 		return E_FAIL;
-
 
 	return S_OK;
 }
@@ -507,7 +505,6 @@ CBody_Player * CBody_Player::Create(ID3D11Device * pDevice, ID3D11DeviceContext 
 	}
 
 	return pInstance;
-
 }
 
 CGameObject * CBody_Player::Clone(void * pArg)

@@ -30,6 +30,7 @@ public:
 private:
 	CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CRenderer() = default;
+
 public:
 	HRESULT Initialize();
 	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pRenderObject);
@@ -52,7 +53,6 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT SetUp_RenderTargets_GameObjects(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT SetUp_RenderTargets_LightAcc(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT SetUp_RenderTargets_Shadow(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT SetUp_RenderTargets_Shadow_Point(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT SetUp_RenderTargets_Pre_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT SetUp_RenderTargets_Ambient(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT SetUp_RenderTargets_Distortion(const D3D11_VIEWPORT& ViewportDesc);
@@ -126,8 +126,9 @@ private:
 	HRESULT Render_OverwrapFont();
 
 private:
-	HRESULT Render_Shadow();
+	HRESULT Render_Shadow_Direction();
 	HRESULT Render_Shadow_Point();
+	HRESULT Render_Shadow_Spot();
 
 private:
 	HRESULT Render_Distortion();

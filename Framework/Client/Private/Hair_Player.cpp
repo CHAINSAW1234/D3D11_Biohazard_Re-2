@@ -115,7 +115,7 @@ HRESULT CHair_Player::Render()
 	return S_OK;
 }
 
-HRESULT CHair_Player::Render_LightDepth()
+HRESULT CHair_Player::Render_LightDepth_Spot()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -123,9 +123,9 @@ HRESULT CHair_Player::Render_LightDepth()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 
-	if (m_pGameInstance->Get_ShadowSpotLight() != nullptr) {
+	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
 
-		const CLight* pLight = m_pGameInstance->Get_ShadowSpotLight();
+		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT);
 		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
 
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
@@ -154,7 +154,7 @@ HRESULT CHair_Player::Render_LightDepth()
 	return S_OK;
 }
 
-HRESULT CHair_Player::Render_LightDepth_Cube()
+HRESULT CHair_Player::Render_LightDepth_Point()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -162,7 +162,7 @@ HRESULT CHair_Player::Render_LightDepth_Cube()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 
-	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowLightDesc_List();
+	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
 	_int iIndex = 0;
 	for (auto& pLightDesc : LightDescList) {
 		const _float4x4* pLightViewMatrices;

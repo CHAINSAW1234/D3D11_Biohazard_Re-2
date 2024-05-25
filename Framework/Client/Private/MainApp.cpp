@@ -9,8 +9,6 @@ CMainApp::CMainApp()
 {
 	Safe_AddRef(m_pGameInstance);		
 
-	
-
 	//D3D11_RASTERIZER_DESC			RState;
 	//D3D11_DEPTH_STENCIL_DESC		DSState;
 	//D3D11_BLEND_DESC				BState;
@@ -74,7 +72,7 @@ HRESULT CMainApp::Render()
 		m_iRenderCnt = 0;
 	}
 #endif
-
+	
 	m_pGameInstance->Begin_Draw(_float4(0.f, 0.f, 1.f, 1.f));
 
 	m_pGameInstance->Draw();
