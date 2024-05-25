@@ -4,8 +4,6 @@
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 vector g_vCellColor = (vector)1.f;
 
-
-
 struct VS_IN
 {
 	float3		vPosition : POSITION;	

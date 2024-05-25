@@ -182,7 +182,7 @@ _matrix CTransform::Get_RotationMatrix_Pure_Mat()
 
 void CTransform::Set_RotationMatrix_Pure(_float4x4 Mat)
 {
-	_matrix RotationMatrix;
+	//_matrix RotationMatrix;
 	_float4 Position = Get_State_Float4(STATE::STATE_POSITION);
 	_float3 Scale = Get_Scaled();
 	m_WorldMatrix = Mat;

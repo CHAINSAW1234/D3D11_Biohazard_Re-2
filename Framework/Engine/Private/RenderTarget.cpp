@@ -141,7 +141,7 @@ HRESULT CRenderTarget::Render_Debug(CShader * pShader, CVIBuffer_Rect * pVIBuffe
 		if (FAILED(pShader->Bind_Texture("g_CubeTexture", m_pSRV)))
 			return E_FAIL;
 
-		if (FAILED(pShader->Begin(9)))
+		if (FAILED(pShader->Begin((_uint)SHADER_PASS_DEFERRED::PASS_DEBUG_CUBE)))
 			return E_FAIL;
 
 		if (FAILED(pVIBuffer->Render()))
@@ -151,7 +151,7 @@ HRESULT CRenderTarget::Render_Debug(CShader * pShader, CVIBuffer_Rect * pVIBuffe
 		if (FAILED(pShader->Bind_Texture("g_Texture", m_pSRV)))
 			return E_FAIL;
 
-		if (FAILED(pShader->Begin(0)))
+		if (FAILED(pShader->Begin((_uint)SHADER_PASS_DEFERRED::PASS_DEBUG)))
 			return E_FAIL;
 
 		if (FAILED(pVIBuffer->Render()))

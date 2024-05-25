@@ -11,29 +11,30 @@ private:
 	virtual ~CLight() = default;
 
 public:
-	const LIGHT_DESC* Get_LightDesc() const {
-		return &m_LightDesc;
+	HRESULT Add_LightDesc(LIGHT_DESC desc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ);
+	LIGHT_DESC* Get_LightDesc(_uint _iIndex) const
+	{
+		if (m_Lights.empty() || m_Lights.size() < _iIndex)
+			return nullptr;
+		auto& iter = m_Lights.begin();
+		for (_uint i = 0; i < _iIndex; i++)
+			iter++;
+		return (*iter);
 	}
-	const _float4x4* Get_LightViewMatrix() const {
-		return m_LightViewMatrix;
-	}
-	const _float4x4 Get_LightProjMatrix() const {
-		return m_LightProjMatrix;
-	}
-
+	HRESULT Set_Render(_bool bRender);
+	list<LIGHT_DESC*>* Get_Light_List() { return &m_Lights; }
 
 public:
-	HRESULT Initialize(const LIGHT_DESC& LightDesc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ);
-	HRESULT Tick(const LIGHT_DESC& Light_Desc);
+	HRESULT Initialize();
+	HRESULT Update(const LIGHT_DESC& Light_Desc, _uint iIndex);
 	HRESULT Render(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
 
 private:
-	LIGHT_DESC		m_LightDesc = {};
-	_float4x4*		m_LightViewMatrix = {};
-	_float4x4		m_LightProjMatrix = {};
+	bool bUse = { false };			// 구역에 대한 설정용 
+	list<LIGHT_DESC*>			m_Lights = {};
 
 public:
-	static CLight* Create(const LIGHT_DESC& LightDesc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ);
+	static CLight* Create();
 	virtual void Free() override;
 };
 

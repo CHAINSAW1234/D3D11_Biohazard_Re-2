@@ -172,6 +172,7 @@ struct PS_OUT
     float4 vNormal : SV_TARGET1;
     float4 vDepth : SV_TARGET2;
     float4 vMaterial : SV_TARGET3;
+    float4 vOrigin : SV_TARGET4;
 };
 
 struct PS_OUT_EMISSIVE
@@ -199,7 +200,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vMaterial = g_vMaterial;
     Out.vMaterial.r = vMtrlDiffuse.a;
-	
+    Out.vOrigin = vector(1.f, 0.f, 0.f, 1.f);
     return Out;
 }
 
@@ -223,6 +224,7 @@ PS_OUT PS_MAIN_ATOS(PS_IN In)
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
     Out.vMaterial = g_vMaterial;
     Out.vMaterial.r = vMtrlDiffuse.a;
+    Out.vOrigin = vector(1.f, 0.f, 0.f, 1.f);
     
     if (0.01f >= Out.vDiffuse.a)
         discard;
@@ -295,14 +297,6 @@ PS_OUT_LIGHTDEPTH PS_LIGHTDEPTH_CUBE(PS_IN_CUBE In)
     
     return Out;
 }
-/*
-position
-near plane
-far plane
-sofrt???
-ratio
-
-*/
 
 technique11 DefaultTechnique
 {

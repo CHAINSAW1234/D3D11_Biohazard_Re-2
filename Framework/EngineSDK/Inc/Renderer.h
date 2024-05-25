@@ -12,7 +12,7 @@ class CRenderer final : public CBase
 public:
 	enum RENDERGROUP {
 		RENDER_PRIORITY,
-		RENDER_SHADOW, RENDER_SHADOW_POINT, RENDER_SHADOW_SPOT,
+		RENDER_SHADOW_POINT, RENDER_SHADOW_SPOT,
 		RENDER_FIELD,
 		RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_NON_POSTPROCESSING,
 		RENDER_AMBIENT, RENDER_DISTORTION, RENDER_EMISSIVE,
@@ -145,7 +145,6 @@ private:
 
 private:
 	HRESULT Render_Bloom();
-
 
 private:
 	void Set_ViewPort_Size(_float fWidth, _float fHeight);

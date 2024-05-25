@@ -11,8 +11,8 @@ namespace Engine
 
 	typedef struct tagLightDesc
 	{
-
-		bool bRender = { true };
+		bool bRender = { true };	// 객체에 대한 렌더 : 빛을 끄고 킨다 처리
+		bool bShadow = { false };	// 이 라이트를 그림자 연산에 사용할지 여부 처리
 
 		enum TYPE { TYPE_DIRECTIONAL, TYPE_POINT, TYPE_SPOT, TYPE_END };
 		TYPE		eType;
@@ -26,6 +26,9 @@ namespace Engine
 		XMFLOAT4	vDiffuse;
 		XMFLOAT4	vAmbient;
 		XMFLOAT4	vSpecular;
+
+		XMFLOAT4X4	ViewMatrix[6];
+		XMFLOAT4X4	ProjMatrix;
 
 	}LIGHT_DESC;
 	
