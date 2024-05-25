@@ -205,6 +205,12 @@
     <Filter Include="01.Utility\10.Picking">
       <UniqueIdentifier>{03ba2e75-dc70-407d-bed1-fb1939c7f9dc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\02.Components\Model\Animator">
+      <UniqueIdentifier>{05f7b535-efa3-4f05-900a-9a85395f1e0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.Components\Model\Bone_Layer">
+      <UniqueIdentifier>{4daac0ca-6ab0-4b19-93bb-2d1c950bf21f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -398,6 +404,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Picking.cpp">
       <Filter>01.Utility\10.Picking</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Animator.cpp">
+      <Filter>01.Utility\02.Components\Model\Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bone_Layer.cpp">
+      <Filter>01.Utility\02.Components\Model\Bone_Layer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -607,6 +619,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Picking.h">
       <Filter>01.Utility\10.Picking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Animator.h">
+      <Filter>01.Utility\02.Components\Model\Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Bone_Layer.h">
+      <Filter>01.Utility\02.Components\Model\Bone_Layer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

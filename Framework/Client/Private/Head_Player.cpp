@@ -35,6 +35,8 @@ HRESULT CHead_Player::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
+
 	/*CModel::ANIM_PLAYING_DESC		AnimDesc;
 	AnimDesc.iAnimIndex = 0;
 	AnimDesc.isLoop = true;
@@ -63,7 +65,7 @@ void CHead_Player::Tick(_float fTimeDelta)
 	m_pColliderCom->Tick(XMLoadFloat4x4(&m_WorldMatrix));
 
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
-	AnimDesc.iAnimIndex = 3;
+	AnimDesc.iAnimIndex = 7;
 	AnimDesc.isLoop = true;
 	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 	list<_uint>		iBoneIndices;
@@ -71,7 +73,6 @@ void CHead_Player::Tick(_float fTimeDelta)
 	{
 		iBoneIndices.emplace_back(i);
 	}
-	AnimDesc.TargetBoneIndices = iBoneIndices;
 
 	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
 }

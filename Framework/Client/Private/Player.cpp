@@ -118,8 +118,19 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	Late_Tick_PartObjects(fTimeDelta);
 
+	PART		Player_Part = { PART::PART_BODY };
+
 	_float4			vMovedDirection = { Convert_Float3_To_Float4_Dir(m_vRootTranslation) };
 	
+	_vector			vCurrentPostion = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+
+	if (DOWN == m_pGameInstance->Get_KeyState('B'))
+	{
+		_float4			vMoveDir = {};
+		XMStoreFloat4(&vMoveDir, vCurrentPostion * -1.f);
+		m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
+	}
+
 	m_pGameInstance->Move_CCT(vMovedDirection, fTimeDelta, 0);
 
 #ifdef _DEBUG
