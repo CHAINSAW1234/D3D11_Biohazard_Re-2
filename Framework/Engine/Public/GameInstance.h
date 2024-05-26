@@ -64,20 +64,17 @@ public: /* For.Timer_Manager */
 
 public: /* For.PipeLine */
 	void Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
-	HRESULT Set_ShadowSpotLight(CLight* pLight);
-	HRESULT Set_ShadowSpotLight(const wstring& strLightTag);
-	HRESULT Add_ShadowLight(CLight* pLight);
-	HRESULT Add_ShadowLight(const wstring& strLightTag);
+	HRESULT Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, CLight* pLight);
+	HRESULT Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, const wstring& strLightTag);
 	_matrix Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState) const;
 	_float4x4 Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE eState) const;
 	_matrix Get_Transform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState) const;
 	_float4x4 Get_Transform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState) const;
 	_vector Get_CamPosition_Vector() const;
 	_float4 Get_CamPosition_Float4() const;
-	_uint Get_NumShadowLight();
-	const CLight* Get_ShadowLight(_uint iIndex);
-	const CLight* Get_ShadowSpotLight();		// spotlight는 Light내부의 list에 LIGHT_DESC가 하나만 들어있도록 처리할 것 
-	list<LIGHT_DESC*> Get_ShadowLightDesc_List();
+	_uint Get_NumShadowSpotLight();
+	const CLight* Get_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, _uint iLightIndex = 0); // spotlight는 Light내부의 list에 LIGHT_DESC가 하나만 들어있도록 처리할 것 	
+	list<LIGHT_DESC*> Get_ShadowPointLightDesc_List();
 
 public: /* For.Light_Manager */
 	const LIGHT_DESC* Get_LightDesc(const wstring& strLightTag, _uint iIndex);

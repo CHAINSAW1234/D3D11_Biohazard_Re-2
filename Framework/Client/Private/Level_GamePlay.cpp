@@ -32,9 +32,9 @@ HRESULT CLevel_GamePlay::Initialize()
 void CLevel_GamePlay::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	m_pGameInstance->Add_ShadowLight(TEXT("LIGHT_TEST_POINT"));
-	m_pGameInstance->Set_ShadowSpotLight(TEXT("LIGHT_TEST_SPOT"));
+	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
+	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
+	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));
 	if (GetAsyncKeyState('T') & 0x0001)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_Particle_Red"))))
@@ -57,15 +57,16 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 {
 	LIGHT_DESC			LightDesc{};
 
-	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
-	LightDesc.bShadow = false;
-	//LightDesc.vDirection = _float4(0.f,-1.f,0.f,0.f);
-	LightDesc.vPosition = _float4(0.f, 100000.f, 0.f, 1.f);
-	LightDesc.fRange = 1000000.f;
+	LightDesc.eType = LIGHT_DESC::TYPE_DIRECTIONAL;
+	LightDesc.bShadow = true;
+	XMStoreFloat4(&LightDesc.vDirection, XMVectorSetW(XMVector3Normalize(XMVectorSet(-3.f, -7.f, 0.f, 0.f)), 0.f));
+	LightDesc.vPosition = _float4(-LightDesc.vDirection.x * 300, -LightDesc.vDirection.y * 300, -LightDesc.vDirection.z * 300, 1.f);
+
+	//LightDesc.fRange = 1000000.f;
 
 	LightDesc.vDiffuse = _float4(.5f, .5f, .5f, 1.f);
-	LightDesc.vAmbient = _float4(0.3f, 0.3f, 0.3f, 1.f);
-	LightDesc.vSpecular = _float4(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
+	LightDesc.vSpecular = _float4(0.4f, 0.4f, 0.4f, 1.f);
 
 	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
 		return E_FAIL;
@@ -101,7 +102,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.fCutOff = XMConvertToRadians(60.f);
 	LightDesc.fOutCutOff = XMConvertToRadians(90);
 
-	LightDesc.vDiffuse = _float4(1.f, 0.f, 1.f, 1.f);
+	LightDesc.vDiffuse = _float4(0.f, 0.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(0.2f, 0.2f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 0.4f, 1.f, 1.f);
 	
@@ -174,10 +175,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Monster"),&Desc)))
 			return E_FAIL;
 	}*/
-	
-
-
-
 	return S_OK;
 }
 
