@@ -6,6 +6,8 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
 texture2D g_Texture;
+TextureCubeArray g_CubeTexture;
+
 texture2D g_NormalTexture;
 texture2D g_DiffuseTexture;
 texture2D g_ShadeTexture;
@@ -37,10 +39,17 @@ float		g_fOutCutOff;
 //
 
 // 현진 추가
-TextureCubeArray g_CubeTexture;
-int g_iNumShadowLight;
-float4 g_vShadowLightPos[2];
-float4 g_fShadowLightRange[2];
+bool g_isShadowDirLight;
+texture2D g_DirLightDepthTexture;
+matrix g_DirLightViewMatrix;
+matrix g_DirLightProjMatrix;
+float4 g_vDirLightDirection;
+
+
+TextureCubeArray g_PointLightDepthTexture;
+int g_iNumShadowPointLight;
+float4 g_vShadowPointLightPos[2];
+float4 g_fShadowPointLightRange[2];
 
 matrix g_ShadowLightViewMatrix[2][6];
 matrix g_ShadowLightProjMatrix[2];
@@ -324,6 +333,33 @@ PS_OUT_LIGHT PS_MAIN_SPOT(PS_IN In)
     return Out;
 }
 
+float ShadowPCFSample_Dir(float fOriginDepth, float2 vTexcoord)
+{
+    float SampleRadius = 0.01;
+    float Shadow = 0.f;
+    // PCF
+    int Samples = 10; // 샘플 수, 필요에 따라 조정
+    float SampleStep = SampleRadius / Samples; // 샘플 간격
+
+    for (int x = -Samples / 2; x <= Samples / 2; ++x)
+    {
+        for (int y = -Samples / 2; y <= Samples / 2; ++y)
+        {
+            float2 Offset = float2(x * SampleStep, y * SampleStep);
+            float2 SampleTexcoord = vTexcoord + Offset;
+            float fDepth = g_DirLightDepthTexture.Sample(PointSamplerClamp, SampleTexcoord).r;
+
+            if (fOriginDepth - 1.f > (fDepth * 1000.f))
+                Shadow += 1.f;
+        }
+    }
+
+    Shadow /= (Samples * Samples); // 샘플 수로 나누어 평균 계산
+    
+    return Shadow;
+}
+
+
 float ShadowPCFSample_Spot(float fOriginDepth, float2 vTexcoord)
 {
     float SampleRadius = 0.01;
@@ -364,7 +400,7 @@ float ShadowPCFSample_Point(float fDistance, float3 fDirection, int iLightIndex)
         {
             float3 Offset = float3(x * SampleStep, y * SampleStep, 0.0);
             float3 SamplePos = normalize(fDirection + Offset);
-            float fDepth = g_CubeTexture.Sample(PointSamplerClamp, float4(SamplePos, iLightIndex)).r;
+            float fDepth = g_PointLightDepthTexture.Sample(PointSamplerClamp, float4(SamplePos, iLightIndex)).r;
 
             if (fDistance > fDepth * 1000)
             {
@@ -399,18 +435,33 @@ float Cal_Shadow(float2 vTexcoord)
 	/* 로컬위치 * 월드행렬 */
     vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
     
-    
     // 광원 여러개에 대해서 처리해야함
-    // 1. Point Lights 
+    
+        // 1. Point Lights 
     float fShadow = 0;
     
-    for (int i = 0; i < g_iNumShadowLight; ++i)
+
+    // 1. DirLight
+    if (g_isShadowDirLight)
     {
-        float3 vLightDir = vWorldPos - g_vShadowLightPos[i];
+        vector vPosition = mul(vWorldPos, g_DirLightViewMatrix);
+        vPosition = mul(vPosition, g_DirLightProjMatrix);
+  
+        float2 vTexcoord;
+        vTexcoord.x = (vPosition.x / vPosition.w) * 0.5f + 0.5f;
+        vTexcoord.y = (vPosition.y / vPosition.w) * -0.5f + 0.5f;
+
+        fShadow += ShadowPCFSample_Dir(vPosition.w, vTexcoord) * 0.5;
+    }
+    
+    // 2. PointLight
+    for (int i = 0; i < g_iNumShadowPointLight; ++i)
+    {
+        float3 vLightDir = vWorldPos - g_vShadowPointLightPos[i];
         float fDistance = length(vLightDir);
         vLightDir = normalize(vLightDir);
     
-        float fAtt = saturate((g_fShadowLightRange[i].x - fDistance) / g_fShadowLightRange[i].x);
+        float fAtt = saturate((g_fShadowPointLightRange[i].x - fDistance) / g_fShadowPointLightRange[i].x);
     
         fShadow += ShadowPCFSample_Point(fDistance, vLightDir, i) * fAtt;
 
