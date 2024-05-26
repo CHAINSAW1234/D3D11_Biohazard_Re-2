@@ -626,6 +626,12 @@
     <ClInclude Include="..\Public\Bone_Layer.h">
       <Filter>01.Utility\02.Components\Model\Bone_Layer</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Model_Struct.h">
+      <Filter>01.Utility\02.Components\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Model_Enums.h">
+      <Filter>01.Utility\02.Components\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">

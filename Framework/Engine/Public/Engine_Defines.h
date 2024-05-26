@@ -66,6 +66,9 @@ using namespace DirectX;
 #include <unordered_set>
 #include <random>
 
+// SimpleMath
+#include <DirectXTK/SimpleMath.h>
+
 /* FileSystem */
 #include <filesystem>
 #include <iostream>

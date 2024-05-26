@@ -271,7 +271,9 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\Component_Manager.h" />
     <ClInclude Include="..\Public\Engine_Enums.h" />
     <ClInclude Include="..\Public\KeyBoard.h" />
+    <ClInclude Include="..\Public\Model_Enums.h" />
     <ClInclude Include="..\Public\Model_Extractor.h" />
+    <ClInclude Include="..\Public\Model_Struct.h" />
     <ClInclude Include="..\Public\Mouse.h" />
     <ClInclude Include="..\Public\Observer.h" />
     <ClInclude Include="..\Public\Observer_Handler.h" />

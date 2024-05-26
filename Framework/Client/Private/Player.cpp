@@ -6,6 +6,10 @@
 #include "Head_Player.h"
 #include "Hair_Player.h"
 
+#include "PxParticleBuffer.h"
+
+#include "Particle_Blue.h"
+
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -44,6 +48,8 @@ HRESULT CPlayer::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_pTransformCom->Set_Scaled(0.045f, 0.045f, 0.045f);
+
+
 	return S_OK;
 }
 

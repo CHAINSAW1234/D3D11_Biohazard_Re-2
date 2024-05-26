@@ -35,6 +35,8 @@ private:
 
 	_float3*				m_pRootTranslation = { nullptr };
 
+	vector<CCollider*>		m_PartColliders;
+
 	const _ubyte*			m_pState;
 private:
 	HRESULT Add_Components();

@@ -242,11 +242,6 @@ _vector CBone::Decompose_Quaternion(_fvector vQuaternion, _float4* pQuaternion)
 
 void CBone::Set_Combined_Matrix(_fmatrix CombinedMatrix)
 {
-	_vector		vNewScale, vNewTranslation, vNewQuaternion;
-	XMMatrixDecompose(&vNewScale, &vNewQuaternion, &vNewTranslation, CombinedMatrix);
-
-
-
 	XMStoreFloat4x4(&m_CombinedTransformationMatrix, CombinedMatrix);
 }
 

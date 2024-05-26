@@ -45,7 +45,7 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 	list<_uint>		iBoneIndices;
 	for (_uint i = 0; i < iNumBones; ++i)
-	{
+	{d
 		iBoneIndices.emplace_back(i);
 	}
 	AnimDesc.TargetBoneIndices = iBoneIndices;
@@ -55,7 +55,7 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
 	list<_uint>			LeftArmBoneIndices;
-	m_pModelCom->Get_Child_BonedIndices("l_arm_clavicle", LeftArmBoneIndices);
+	m_pModelCom->Get_Child_BoneIndices("l_arm_clavicle", LeftArmBoneIndices);
 	m_pModelCom->Add_Bone_Layer(TEXT("Left_Arm"), LeftArmBoneIndices);
 
 
@@ -76,7 +76,10 @@ HRESULT CBody_Player::Initialize(void * pArg)
 
 	m_pModelCom->Add_Bone_Layer(TEXT("Upper"), UpperBoneIndices);
 
-	m_pModelCom->Set_IK("l_leg_femur", "l_leg_ball");
+	//	m_pModelCom->Add_IK("root", "l_leg_ball", TEXT("IK_L_LEG"), 1);
+	m_pModelCom->Add_IK("l_leg_femur", "l_leg_ball", TEXT("IK_L_LEG"), 1, 1.f);
+	m_pModelCom->Add_IK("r_leg_femur", "r_leg_ball", TEXT("IK_R_LEG"), 1, 1.f);
+	m_pModelCom->Add_IK("r_arm_clavicle", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
 
 	return S_OK;
 }
@@ -115,7 +118,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_DOWN))
 	{
 		--iAnimIndex;
-		if (0 > iAnimIndex)
+		if (1000000 < iAnimIndex)
 			iAnimIndex = 0;
 	}	
 
@@ -131,15 +134,59 @@ void CBody_Player::Tick(_float fTimeDelta)
 			fWeight = 0.f;*/
 
 		fMoveHieght += 1.f * fTimeDelta;
+
+		if (fMoveHieght > 0.5f)
+			fMoveHieght = 0.5f;
 	}
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('M'))
 	{
 		fMoveHieght -= 1.f * fTimeDelta;
+
+		if (fMoveHieght < -0.5f)
+			fMoveHieght = -0.5f;
 	}
 
-	_vector			vMoveDir = { XMVectorSet(0.f, 1.f, 0.f, 0.f) * fMoveHieght };
-	m_pModelCom->Set_IKDirection(vMoveDir);
+	static _float fBlend = { 1.f };
+
+	if (PRESSING == m_pGameInstance->Get_KeyState('Z'))
+	{
+		fBlend -= 0.02f;
+		if (fBlend < 0.f)
+			fBlend = 0.f;
+	}
+
+	if (PRESSING == m_pGameInstance->Get_KeyState('X'))
+	{
+		fBlend += 0.02f;
+		if (fBlend > 1.f)
+			fBlend = 1.f;
+	}
+
+	//	fMoveHieght = 0.f;
+
+	_vector			vMoveDir = { XMVectorSet(0.f, 1.f, 1.f, 0.f) * fMoveHieght };
+	_vector			vCurrentPos = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector			vCurrentBallPos = { XMVector4Transform(vCurrentPos, XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball"))) };
+
+	_vector			vDirectionToBall = { vCurrentBallPos - vCurrentPos };
+
+	//	_vector			vMoveDir = { XMVectorSetY(vCurrentBallPos, XMVectorGetY(vCurrentPos) + 0.05f) - vCurrentBallPos };
+	//	_vector			vMoveDir = { XMVectorSetY(vCurrentBallPos, XMVectorGetY(vCurrentPos) + 0.05f) - vCurrentBallPos };
+	m_pModelCom->Set_Direction_IK(TEXT("IK_L_LEG"), vMoveDir);
+	m_pModelCom->Set_Direction_IK(TEXT("IK_R_LEG"), vMoveDir);
+	m_pModelCom->Set_Direction_IK(TEXT("IK_R_ARM"), vMoveDir);
+
+	m_pModelCom->Set_Blend_IK(TEXT("IK_L_LEG"), fBlend);
+	m_pModelCom->Set_Blend_IK(TEXT("IK_R_LEG"), fBlend);
+	m_pModelCom->Set_Blend_IK(TEXT("IK_R_ARM"), fBlend);
+
+	/*_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
+	_matrix			TranslationMatrix = { XMMatrixTranslation(XMVectorGetX(vMoveDir), )}*/
+
+	m_pModelCom->Set_NumIteration_IK(TEXT("IK_L_LEG"), 10);
+	m_pModelCom->Set_NumIteration_IK(TEXT("IK_R_LEG"), 10);
+	m_pModelCom->Set_NumIteration_IK(TEXT("IK_R_ARM"), 10);
 
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
 	//	AnimDesc.iAnimIndex = 30;
@@ -152,8 +199,8 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	//	AnimDesc.iAnimIndex = 34;
 	//	AnimDesc.iAnimIndex = 24;
-	AnimDesc.iAnimIndex = 34;
-	AnimDesc.isLoop = false;
+	AnimDesc.iAnimIndex = 14;
+	AnimDesc.isLoop = true;
 	//	AnimDesc.fWeight = 1.f - fWeight;
 	AnimDesc.fWeight = 0.1f;
 	AnimDesc.strBoneLayerTag = TEXT("Upper");
@@ -198,6 +245,49 @@ void CBody_Player::Tick(_float fTimeDelta)
 	m_pModelCom->Active_RootMotion_Rotation(isSetRootRotation);
 	m_pModelCom->Active_RootMotion_XZ(isSetRootXZ);
 	m_pModelCom->Active_RootMotion_Y(isSetRootY);
+
+	//	m_pModelCom->Add_IK("l_leg_femur", "l_leg_ball", TEXT("IK_L_LEG"), 1);
+	//	m_pModelCom->Add_IK("r_arm_clavicle", "r_arm_wrist", TEXT("IK_R_ARM"), 1);
+
+	{
+		_matrix		WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+		_matrix		CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball")) };
+		_matrix		ScaleMatrix = { XMMatrixScaling(10.f, 10.f, 100.f) };
+
+		_matrix		ResultMatrix = { ScaleMatrix * CombinedMatrix * WorldMatrix  };
+
+		m_PartColliders[0]->Tick(ResultMatrix);
+	}
+
+	{
+		_matrix		WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+		_matrix		CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_femur")) };
+		_matrix		ScaleMatrix = { XMMatrixScaling(10.f, 10.f, 100.f) };
+
+		_matrix		ResultMatrix = { ScaleMatrix * CombinedMatrix * WorldMatrix };
+
+		m_PartColliders[1]->Tick(ResultMatrix);
+	}
+
+	{
+		_matrix		WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+		_matrix		CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ankle")) };
+		_matrix		ScaleMatrix = { XMMatrixScaling(10.f, 10.f, 100.f) };
+
+		_matrix		ResultMatrix = { ScaleMatrix * CombinedMatrix * WorldMatrix };
+
+		m_PartColliders[2]->Tick(ResultMatrix);
+	}
+
+	{
+		_matrix		WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+		_matrix		CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_tibia")) };
+		_matrix		ScaleMatrix = { XMMatrixScaling(10.f, 10.f, 100.f) };
+
+		_matrix		ResultMatrix = { ScaleMatrix * CombinedMatrix * WorldMatrix };
+
+		m_PartColliders[3]->Tick(ResultMatrix);
+	}
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)
@@ -341,6 +431,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
+	
 #endif
 }
 
@@ -376,6 +467,20 @@ HRESULT CBody_Player::Render()
 
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
+
+#ifdef _DEBUG
+
+	m_PartColliders[0]->Render();
+	m_PartColliders[1]->Render();
+	m_PartColliders[2]->Render();
+	m_PartColliders[3]->Render();
+
+	/*for (auto& pPartCollider : m_PartColliders)
+	{
+		pPartCollider->Render();
+	}*/
+
+#endif
 
 	return S_OK;
 }
@@ -487,6 +592,22 @@ HRESULT CBody_Player::Add_Components()
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom, &ColliderDesc)))
 		return E_FAIL;
+
+	
+	for (_uint i = 0; i < 10; ++i)
+	{
+		CBounding_OBB::BOUNDING_OBB_DESC		ColliderOBBDesc{};
+		ColliderOBBDesc.vCenter = { 0.f, 0.f, 0.f };
+		ColliderOBBDesc.vRotation = { 0.f, 0.f, 0.f };
+		ColliderOBBDesc.vSize = { 1.f, 1.f, 1.f };
+
+		CComponent*			pCollider = { m_pGameInstance->Clone_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"), &ColliderOBBDesc) };
+		if (nullptr == pCollider)
+			return E_FAIL;
+
+		m_PartColliders.push_back(dynamic_cast<CCollider*>(pCollider));
+	}
+
 
 	return S_OK;
 }

@@ -55,7 +55,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
 	list<_uint>			LeftArmBoneIndices;
-	m_pModelCom->Get_Child_BonedIndices("l_arm_clavicle", LeftArmBoneIndices);
+	m_pModelCom->Get_Child_BoneIndices("l_arm_clavicle", LeftArmBoneIndices);
 	m_pModelCom->Add_Bone_Layer(TEXT("Left_Arm"), LeftArmBoneIndices);
 
 
@@ -147,9 +147,9 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//	AnimDesc.iAnimIndex = 34;
 	//	AnimDesc.iAnimIndex = 24;
 	AnimDesc.iAnimIndex = 34;
-	AnimDesc.isLoop = false;
+	AnimDesc.isLoop = true;
 	//	AnimDesc.fWeight = 1.f - fWeight;
-	AnimDesc.fWeight = 0.1f;
+	AnimDesc.fWeight = 1.f;
 	AnimDesc.strBoneLayerTag = TEXT("Upper");
 	m_pModelCom->Set_Animation_Blend(AnimDesc, 1);
 

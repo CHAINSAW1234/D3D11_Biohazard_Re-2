@@ -10,26 +10,10 @@ BEGIN(Engine)
 class ENGINE_DLL CModel final : public CComponent
 {
 public:
-	typedef struct tagAnimPlayingDesc
-	{
-		_int					iAnimIndex = { -1 };
-		_bool					isLoop = { false };
-		_float					fWeight = { 0.f };
-		wstring					strBoneLayerTag;
-	}ANIM_PLAYING_DESC;
-
-	typedef struct tagAnimPlayingInfo : public ANIM_PLAYING_DESC
-	{
-		_int					iPreAnimIndex = { -1 };
-		_bool					isLinearInterpolation = { false };
-		_float					fAccLinearInterpolation = { 0.f };
-		_float3					vPreTranslationLocal = { 0.f, 0.f, 0.f };
-		_float4					vPreQuaternion = { 0.f, 0.f, 0.f, 0.f };
-		vector<KEYFRAME>		LastKeyFrames;
-	}ANIM_PLAYING_INFO;
+#include "Model_Struct.h"
 
 public:
-	enum MODEL_TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
+#include "Model_Enums.h"
 
 private:
 	CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -41,7 +25,7 @@ public:
 	class CBone* Get_BonePtr(const _char* pBoneName) const;
 
 	_bool isFinished(_uint iPlayingIndex);
-	void Get_Child_BonedIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices);
+	void Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices);
 
 public:	/* For.Animation */
 	//	void Set_Animation(_uint iAnimIndex, _bool isLoop);
@@ -65,11 +49,18 @@ public:	/* For.Animation */
 	void Set_RootBone(string strBoneTag);			//	모든본을 초기화 => 루트본은 하나다 가정후 찾은 본을 루트본으로 등록
 
 public:
-	void Set_IK(string strTargetJointTag, string strEndEffectorTag);
-	void Set_IKDirection(_fvector vDirection);
+	void Add_IK(string strTargetJointTag, string strEndEffectorTag, wstring strIKTag, _uint iNumIteration, _float fBlend);
+	void Set_Direction_IK(wstring strIKTag, _fvector vDirection);
+	void Set_NumIteration_IK(wstring strIKTag, _uint iNumIteration);
+	void Set_Blend_IK(wstring strIKTag, _float fBlend);
 	
 private:
-	void Apply_IK(class CTransform* pTransform);
+	void Apply_IK(class CTransform* pTransform, IK_INFO& IkInfo);
+	void Update_Distances_Translations_IK(IK_INFO& IkInfo);
+	void Update_Forward_Reaching_IK(IK_INFO& IkInfo);
+	void Update_Backward_Reaching_IK(IK_INFO& IkInfo);
+	void Update_TransformMatrices_BoneChain(IK_INFO& IkInfo);
+	void Update_CombinedMatrices_BoneChain(IK_INFO& IkInfo);
 
 public:		/* For.Bone_Layer */
 	void Add_Bone_Layer(const wstring& strLayerTag, list<_uint> BoneIndices);
@@ -191,10 +182,7 @@ private:	/* For.RootMotion */
 	_bool						m_isRootMotion_Rotation = { false };
 
 private:	/* For.Inverse_Kinematic */
-	_int						m_iEndEffectorIndex = { -1 };
-	_int						m_iTargetJointIndex = { -1 };
-	vector<_uint>				m_IKIndices;
-	_float3						m_vIKDirection = {};
+	map<wstring, IK_INFO>		m_IKInfos;
 
 private:
 	_uint						m_iNumMaterials = { 0 };

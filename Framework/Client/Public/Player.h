@@ -56,7 +56,6 @@ private:
 
 	_float3										m_vRootTranslation = {};
 
-
 private:
 	HRESULT Add_Components();
 	HRESULT Add_PartObjects();
