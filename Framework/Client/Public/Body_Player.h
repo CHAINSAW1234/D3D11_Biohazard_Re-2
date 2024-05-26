@@ -26,7 +26,7 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-	//virtual HRESULT Render_LightDepth_Dir();
+	virtual HRESULT Render_LightDepth_Dir();
 	virtual HRESULT Render_LightDepth_Spot();
 	virtual HRESULT Render_LightDepth_Point();
 private:

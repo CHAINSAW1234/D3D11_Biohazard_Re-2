@@ -86,7 +86,7 @@ private:
 
 private:
 	ID3D11DepthStencilView*		m_pLightDepthDSVs[RES_END] = {};
-	SHADOW_RESOLUTION			m_eShadowResolution = { SHADOW_RESOLUTION::RES_1X };
+	SHADOW_RESOLUTION			m_eShadowResolution = { SHADOW_RESOLUTION::RES_4X };
 	_float						m_fLightDepthTargetViewWidth = { 0.f };
 	_float						m_fLightDepthTargetViewHeight = { 0.f };
 
@@ -148,7 +148,7 @@ private:
 	HRESULT Render_Bloom();
 
 private:
-	void Set_ViewPort_Size(_float fWidth, _float fHeight);
+	void Set_ViewPort_Size(_float fWidth, _float fHeight, _int iArraySize = 1);
 
 #ifdef _DEBUG
 private:

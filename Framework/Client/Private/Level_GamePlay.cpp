@@ -60,7 +60,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.eType = LIGHT_DESC::TYPE_DIRECTIONAL;
 	LightDesc.bShadow = true;
 	XMStoreFloat4(&LightDesc.vDirection, XMVectorSetW(XMVector3Normalize(XMVectorSet(-3.f, -7.f, 0.f, 0.f)), 0.f));
-	LightDesc.vPosition = _float4(-LightDesc.vDirection.x * 200, -LightDesc.vDirection.y * 200, -LightDesc.vDirection.z * 200, 1.f);
+	LightDesc.vPosition = _float4(-LightDesc.vDirection.x * 300, -LightDesc.vDirection.y * 300, -LightDesc.vDirection.z * 300, 1.f);
 
 	//LightDesc.fRange = 1000000.f;
 

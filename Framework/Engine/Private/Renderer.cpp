@@ -16,6 +16,8 @@ CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CRenderer::Initialize()
 {
+	Set_Shadow_Resolution(m_eShadowResolution);
+
 	if (FAILED(SetUp_RenderTargets()))
 		return E_FAIL;
 
@@ -29,7 +31,7 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 
 	/* For.Shadow */
-	Set_Shadow_Resolution(SHADOW_RESOLUTION::RES_1X);
+
 	if (FAILED(SetUp_LightDSV()))
 		return E_FAIL;
 
@@ -260,8 +262,8 @@ HRESULT CRenderer::SetUp_LightDSV()
 		D3D11_TEXTURE2D_DESC	TextureDesc;
 		ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
-		TextureDesc.Width = static_cast<_uint>(m_fLightDepthTargetViewWidth * powf(2.f, static_cast<_float>(i)));
-		TextureDesc.Height = static_cast<_uint>(m_fLightDepthTargetViewHeight * powf(2.f, static_cast<_float>(i)));
+		TextureDesc.Width = static_cast<_uint>(m_fLightDepthTargetViewWidth);
+		TextureDesc.Height = static_cast<_uint>(m_fLightDepthTargetViewHeight);
 		TextureDesc.MipLevels = 1;
 		TextureDesc.ArraySize = 1;
 		TextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -413,17 +415,16 @@ HRESULT CRenderer::SetUp_RenderTargets_LightAcc(const D3D11_VIEWPORT& ViewportDe
 
 HRESULT CRenderer::SetUp_RenderTargets_Shadow(const D3D11_VIEWPORT& ViewportDesc)
 {
-
-	/* For.Target_LightDepth */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_LightDepth_Dir"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
-		return E_FAIL;
-
 	/* For.Target_LightDepth */
 	if (FAILED(m_pGameInstance->Add_RenderTarget_Cube(TEXT("Target_LightDepth_Point"), static_cast<_uint>(ViewportDesc.Width), m_iArraySize, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
 	/* For.Target_LightDepth */
-	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_LightDepth_Spot"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_LightDepth_Dir"), static_cast<_uint>(m_fLightDepthTargetViewWidth), static_cast<_uint>(m_fLightDepthTargetViewHeight), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+
+	/* For.Target_LightDepth */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_LightDepth_Spot"), static_cast<_uint>(m_fLightDepthTargetViewWidth), static_cast<_uint>(m_fLightDepthTargetViewHeight), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
 	return S_OK;
@@ -843,20 +844,7 @@ HRESULT CRenderer::Render_Shadow_Point()
 	_float		fOriginViewPortWidth = { ViewportDesc.Width };
 	_float		fOriginViewPortHeight = { ViewportDesc.Height };
 
-	D3D11_VIEWPORT*			ViewPortDesc2 = new D3D11_VIEWPORT[6 * m_iArraySize];
-	for (_uint i = 0; i < 6 * m_iArraySize; ++i) {
-		ZeroMemory(&ViewPortDesc2[i], sizeof(D3D11_VIEWPORT));
-		ViewPortDesc2[i].TopLeftX = 0;
-		ViewPortDesc2[i].TopLeftY = 0;
-		ViewPortDesc2[i].Width = m_fLightDepthTargetViewCubeWidth;
-		ViewPortDesc2[i].Height = m_fLightDepthTargetViewCubeWidth;
-		ViewPortDesc2[i].MinDepth = 0.f;
-		ViewPortDesc2[i].MaxDepth = 1.f;
-	}
-
-	m_pContext->RSSetViewports(6 * m_iArraySize, ViewPortDesc2);
-
-	//Set_ViewPort_Size(m_fLightDepthTargetViewCubeWidth, m_fLightDepthTargetViewCubeWidth);
+	Set_ViewPort_Size(m_fLightDepthTargetViewCubeWidth, m_fLightDepthTargetViewCubeWidth, 6 * m_iArraySize);
 
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow_Point"), m_pLightDepthDSV_Point)))
 		return E_FAIL;
@@ -873,8 +861,6 @@ HRESULT CRenderer::Render_Shadow_Point()
 		return E_FAIL;
 
 	Set_ViewPort_Size(fOriginViewPortWidth, fOriginViewPortHeight);
-
-	Safe_Delete_Array(ViewPortDesc2);
 
 	return S_OK;
 }
@@ -972,7 +958,6 @@ HRESULT CRenderer::Render_Lights()
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
-
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrixInv", &m_pGameInstance->Get_Transform_Float4x4_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
@@ -1256,18 +1241,22 @@ HRESULT CRenderer::Render_Bloom()
 	return S_OK;
 }
 
-void CRenderer::Set_ViewPort_Size(_float fWidth, _float fHeight)
+void CRenderer::Set_ViewPort_Size(_float fWidth, _float fHeight, _int iArraySize)
 {
-	D3D11_VIEWPORT			ViewPortDesc;
-	ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
-	ViewPortDesc.TopLeftX = 0;
-	ViewPortDesc.TopLeftY = 0;
-	ViewPortDesc.Width = fWidth;
-	ViewPortDesc.Height = fHeight;
-	ViewPortDesc.MinDepth = 0.f;
-	ViewPortDesc.MaxDepth = 1.f;
+	D3D11_VIEWPORT* ViewPortDesc = new D3D11_VIEWPORT[iArraySize];
+	for (_uint i = 0; i < iArraySize; ++i) {
+		ZeroMemory(&ViewPortDesc[i], sizeof(D3D11_VIEWPORT));
+		ViewPortDesc[i].TopLeftX = 0;
+		ViewPortDesc[i].TopLeftY = 0;
+		ViewPortDesc[i].Width = fWidth;
+		ViewPortDesc[i].Height = fHeight;
+		ViewPortDesc[i].MinDepth = 0.f;
+		ViewPortDesc[i].MaxDepth = 1.f;
+	}
 
-	m_pContext->RSSetViewports(1, &ViewPortDesc);
+	m_pContext->RSSetViewports(iArraySize, ViewPortDesc);
+
+	Safe_Delete_Array(ViewPortDesc);
 }
 
 #ifdef _DEBUG

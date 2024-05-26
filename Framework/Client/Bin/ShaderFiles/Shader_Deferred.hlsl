@@ -45,7 +45,6 @@ matrix g_DirLightViewMatrix;
 matrix g_DirLightProjMatrix;
 float4 g_vDirLightDirection;
 
-
 TextureCubeArray g_PointLightDepthTexture;
 int g_iNumShadowPointLight;
 float4 g_vShadowPointLightPos[2];
@@ -63,7 +62,6 @@ float4 g_vSpotLightDirection;
 float g_fSpotLightCutOff;
 float g_fSpotLightOutCutOff;
 float g_fSpotLightRange;
-
 
 //matrix g_LightViewMatrix[6];
 ////matrix g_LightViewMatrix[2][6];
@@ -335,7 +333,7 @@ PS_OUT_LIGHT PS_MAIN_SPOT(PS_IN In)
 
 float ShadowPCFSample_Dir(float fOriginDepth, float2 vTexcoord)
 {
-    float SampleRadius = 0.01;
+    float SampleRadius = 0.0005;
     float Shadow = 0.f;
     // PCF
     int Samples = 10; // 샘플 수, 필요에 따라 조정
@@ -362,7 +360,7 @@ float ShadowPCFSample_Dir(float fOriginDepth, float2 vTexcoord)
 
 float ShadowPCFSample_Spot(float fOriginDepth, float2 vTexcoord)
 {
-    float SampleRadius = 0.01;
+    float SampleRadius = 0.005;
     float Shadow = 0.f;
     // PCF
     int Samples = 10; // 샘플 수, 필요에 따라 조정
