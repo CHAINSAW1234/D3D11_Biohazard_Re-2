@@ -96,7 +96,6 @@ PoseTransforms* AnimRagdoll::apply(CRagdoll* ragdoll,_matrix model_scale, _matri
                 m_transforms.transforms[i] = XMMatrixIdentity();
                 continue;
             }
-
             XMMATRIX global_transform = to_mat4(body->getGlobalPose());
             XMVECTOR global_joint_pos = XMVector4Transform(ragdoll->m_relative_joint_pos[i], global_transform);
             global_joint_pos = XMVectorSetW(global_joint_pos,1.f);

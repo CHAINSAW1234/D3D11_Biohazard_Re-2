@@ -461,9 +461,9 @@ void CMesh::Static_Mesh_Cooking()
 {
 	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
 	{
-		m_pVertices_Cooking[i].x *= 50.f;
-		m_pVertices_Cooking[i].y *= 50.f;
-		m_pVertices_Cooking[i].z *= 50.f;
+		m_pVertices_Cooking[i].x *= 1.f;
+		m_pVertices_Cooking[i].y *= 1.f;
+		m_pVertices_Cooking[i].z *= 1.f;
 	}
 
 	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices);

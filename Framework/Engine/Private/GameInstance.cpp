@@ -812,6 +812,11 @@ void CGameInstance::SetWorldMatrix(_float4x4 WorldMatrix)
 	m_pPhysics_Controller->SetWorldMatrix(WorldMatrix);
 }
 
+void CGameInstance::SetRotationMatrix(_float4x4 RotationMatrix)
+{
+	m_pPhysics_Controller->SetRotationMatrix(RotationMatrix);
+}
+
 #ifdef _DEBUG
 
 HRESULT CGameInstance::Ready_RTVDebug(const wstring & strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)

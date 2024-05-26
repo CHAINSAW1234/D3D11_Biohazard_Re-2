@@ -77,6 +77,7 @@ void CHead_Player::Tick(_float fTimeDelta)
 
 void CHead_Player::Late_Tick(_float fTimeDelta)
 {
+	return;
 	__super::Late_Tick(fTimeDelta);
 
 	m_pModelCom->Play_Animations(fTimeDelta);

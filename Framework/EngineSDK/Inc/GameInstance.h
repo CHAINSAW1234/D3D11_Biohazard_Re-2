@@ -190,6 +190,7 @@ public://Temp
 
 	void			SetBone_Ragdoll(vector<class CBone*>* vecBone);
 	void			SetWorldMatrix(_float4x4 WorldMatrix);
+	void			SetRotationMatrix(_float4x4 RotationMatrix);
 #ifdef _DEBUG
 	HRESULT Ready_RTVDebug(const wstring& strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT Draw_RTVDebug(const wstring& strMRTTag, class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);

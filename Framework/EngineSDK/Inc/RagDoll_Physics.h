@@ -212,6 +212,10 @@ public:
     {
         m_WorldMatrix = WorldMat;
     }
+    void    SetRotationMatrix(_float4x4 WorldMat)
+    {
+        m_RotationMatrix = WorldMat;
+    }
 public:
 	static CRagdoll_Physics* Create();
 
@@ -267,6 +271,8 @@ private:
     _bool               m_bJoint_Set = { false };
 
     _float4x4           m_WorldMatrix;
+    _float4x4           m_RotationMatrix;
+    PoseTransforms* m_Global_transforms = { nullptr };
 public:
 	virtual void Free() override;
 };

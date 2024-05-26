@@ -6,6 +6,8 @@
 #include "Head_Player.h"
 #include "Hair_Player.h"
 
+#define MODEL_SCALE 1.f
+
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -43,8 +45,8 @@ HRESULT CPlayer::Initialize(void * pArg)
 	if (FAILED(Initialize_PartModels()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(100.f, -3.5f, 100.f,1.f));
-	//m_pTransformCom->Set_Scaled(0.45f, 0.45f, 0.45f);
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f,1.f));
+	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 	return S_OK;
 }
 
@@ -55,7 +57,7 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pGameInstance->GetPosition_Physics());
+	//m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pGameInstance->GetPosition_Physics());
 
 	if(PRESSING == m_pGameInstance->Get_KeyState('H'))
 	{
@@ -112,6 +114,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	Tick_PartObjects(fTimeDelta);
 	
 	m_pGameInstance->SetWorldMatrix(m_pTransformCom->Get_WorldFloat4x4());
+	m_pGameInstance->SetRotationMatrix(m_pTransformCom->Get_RotationMatrix_Pure());
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -122,7 +125,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	_float4			vMovedDirection = { Convert_Float3_To_Float4_Dir(m_vRootTranslation) };
 	
-	m_pGameInstance->Move_CCT(vMovedDirection, fTimeDelta, 0);
+	//m_pGameInstance->Move_CCT(vMovedDirection, fTimeDelta, 0);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);

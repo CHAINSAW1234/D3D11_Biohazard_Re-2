@@ -31,7 +31,7 @@ HRESULT CForkLift::Initialize(void * pArg)
 		return E_FAIL;	
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
-	m_pTransformCom->Set_Scaled(50.f, 50.f, 50.f);
+	m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
 	//m_pModelCom->Static_Mesh_Cooking();
 
 	//m_pGameInstance->SetSimulate(true);

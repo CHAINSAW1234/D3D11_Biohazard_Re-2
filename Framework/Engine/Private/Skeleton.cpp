@@ -113,7 +113,7 @@ void Skeleton::build_skeleton(aiNode* node, int bone_index, const aiScene* scene
             memcpy(&OffsetMatrix, &temp_bone_list[i]->mOffsetMatrix, sizeof(_float4x4));
             XMStoreFloat4x4(&OffsetMatrix, XMMatrixTranspose(XMLoadFloat4x4(&OffsetMatrix)));
             XMMATRIX offsetMatrix = XMLoadFloat4x4(&OffsetMatrix);
-            offsetMatrix =  XMMatrixRotationY(PxPi) * offsetMatrix;
+            offsetMatrix = XMMatrixRotationY(PxPi) * offsetMatrix;
             joint.inverse_bind_pose= offsetMatrix;
 
             XMMATRIX inverseMatrix = XMMatrixInverse(nullptr, joint.inverse_bind_pose);

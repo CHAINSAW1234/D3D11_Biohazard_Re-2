@@ -31,7 +31,7 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	m_Pvd = PxCreatePvd(*m_Foundation);
 	m_Transport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
 	m_Pvd->connect(*m_Transport, physx::PxPvdInstrumentationFlag::eALL);
-	m_ToleranceScale.length = 100;
+	m_ToleranceScale.length = 1000;
 	m_ToleranceScale.speed = 981;
 	m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, m_ToleranceScale, true, m_Pvd);
 	physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
@@ -291,7 +291,7 @@ void CPhysics_Controller::Create_Controller(_float4 Pos)
 
 	m_Controll_Desc.height = 1.f; // 캐릭터의 높이
 	m_Controll_Desc.radius = 1.f; // 캐릭터의 반지름
-	m_Controll_Desc.position = PxExtendedVec3(0.0, 20.0, 0.0); // 초기 위치 설정
+	m_Controll_Desc.position = PxExtendedVec3(200.0, 20.0, 200.0); // 초기 위치 설정
 	m_Controll_Desc.material = m_Physics->createMaterial(0.f, 0.f, 0.f); // 마찰계수와 반발력 설정
 	m_Controller = m_Manager->createController(m_Controll_Desc);
 
@@ -1089,6 +1089,11 @@ void CPhysics_Controller::SetBone_Ragdoll(vector<class CBone*>* vecBone)
 void CPhysics_Controller::SetWorldMatrix(_float4x4 WorldMatrix)
 {
 	m_pRagdoll_Physics->SetWorldMatrix(WorldMatrix);
+}
+
+void CPhysics_Controller::SetRotationMatrix(_float4x4 WorldMatrix)
+{
+	m_pRagdoll_Physics->SetRotationMatrix(WorldMatrix);
 }
 
 _matrix CPhysics_Controller::GetWorldMatrix_Rigid_Dynamic(_int Index)

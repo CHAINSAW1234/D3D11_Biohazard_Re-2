@@ -147,7 +147,8 @@ void CBody_Player::Tick(_float fTimeDelta)
 	}
 
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
-	AnimDesc.iAnimIndex = 22;
+	//AnimDesc.iAnimIndex = 22;
+	AnimDesc.iAnimIndex = iAnimIndex;
 	AnimDesc.isLoop = true;
 	AnimDesc.fWeight = fWeight;
 	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
@@ -199,7 +200,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	{
 		m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 	}
-
+	Temp = true;
 
 	//Body
 	_float4x4 BoneCombined = m_pModelCom->GetBoneTransform(62);
@@ -537,7 +538,6 @@ HRESULT CBody_Player::Bind_ShaderResources()
 
 	/*if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;	*/
-
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
