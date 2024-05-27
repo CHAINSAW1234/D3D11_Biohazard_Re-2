@@ -62,7 +62,6 @@ HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMA
 	TextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	TextureDesc.CPUAccessFlags = 0;
 	TextureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
-
 	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pTexture2D)))
 		return E_FAIL;
 

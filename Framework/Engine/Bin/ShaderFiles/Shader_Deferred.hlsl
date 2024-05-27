@@ -29,6 +29,8 @@ texture2D g_AdditionalLightTexture;
 texture2D g_PostprocessingDiffuseTexture;
 texture2D g_PostprocessingShadeTexture;
 
+Texture3D d;
+
 bool g_isRadialBlurActive = { false };
 float2 g_vRadialBlurUV;
 float g_fRadialAmount;

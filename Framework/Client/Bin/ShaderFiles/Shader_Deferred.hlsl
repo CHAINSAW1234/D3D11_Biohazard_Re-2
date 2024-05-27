@@ -438,7 +438,6 @@ float Cal_Shadow(float2 vTexcoord)
         // 1. Point Lights 
     float fShadow = 0;
     
-
     // 1. DirLight
     if (g_isShadowDirLight)
     {
