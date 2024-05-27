@@ -99,6 +99,20 @@ HRESULT CLoader::Loading_For_Logo()
 HRESULT CLoader::Loading_For_GamePlay()
 {
 	m_strLoadingText = TEXT("텍스쳐를(을) 로딩 중 입니다.");
+	/* Prototype_Component_Texture_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile%d.dds"), 2))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Mask*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Mask"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"), 1))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Brush */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Brush"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Brush.png"), 1))))
+		return E_FAIL;
 
 	m_strLoadingText = TEXT("모델를(을) 로딩 중 입니다.");
 
@@ -107,32 +121,32 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	/* Prototype_Component_police_holl */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_police_holl"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Animation_Tool/Bin/Resources/Models/map/police_holl.fbx",
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/map/police_holl.fbx",
 			TransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_Boss_MantisShrimp */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonBody"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Animation_Tool/Bin/Resources/Models/LeonTest/LeonBody.fbx",
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonBody.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_Boss_MantisShrimp */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonFace"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Animation_Tool/Bin/Resources/Models/LeonTest/LeonFace.fbx",
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonFace.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_Boss_MantisShrimp */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonHair"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Animation_Tool/Bin/Resources/Models/LeonTest/LeonHair.fbx",
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonHair.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 
 	/* Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Terrain"),
-		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Animation_Tool/Bin/Resources/Textures/Terrain/Height.bmp")))))
+		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Height.bmp")))))
 		return E_FAIL;
 
 	/* Prototype_Component_VIBuffer_Cube */

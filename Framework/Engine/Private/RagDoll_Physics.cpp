@@ -362,7 +362,7 @@ void CRagdoll_Physics::create_ragdoll()
 	if (!m_vecBone)
 		return;
 
-	Joint* joints = m_skeletal_mesh->skeleton()->joints();
+ 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
 	m_skeletal_mesh->skeleton()->find_joint_index("Head");
 	/* uint32_t j_neck_01_idx = m_skeletal_mesh->skeleton()->find_joint_index("Neck");
@@ -587,7 +587,7 @@ void CRagdoll_Physics::update_animations()
 	RotMat._43 = m_WorldMatrix._43;
 
 	auto World = m_WorldMatrix;
-	World._42 = 0.f;
+	//	World._42 = 0.f;
 
 	auto joint = m_skeletal_mesh->skeleton()->joints();
 

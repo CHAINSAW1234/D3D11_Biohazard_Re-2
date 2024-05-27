@@ -54,58 +54,6 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pGameInstance->GetPosition_CCT());
-
-	if (PRESSING == m_pGameInstance->Get_KeyState('H'))
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
-	}
-
-	if (PRESSING == m_pGameInstance->Get_KeyState('K'))
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
-	}
-
-	if (PRESSING == m_pGameInstance->Get_KeyState('U'))
-	{
-		auto Look = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-		m_pGameInstance->Move_CCT(Look, fTimeDelta, 0);
-	}
-
-	if (PRESSING == m_pGameInstance->Get_KeyState('J'))
-	{
-		auto Look = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-		Look.z = -Look.z;
-		Look.x = -Look.x;
-		m_pGameInstance->Move_CCT(m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK), fTimeDelta, 0);
-		m_eState |= STATE_RUN;
-		if (m_eState & STATE_IDLE)
-			m_eState ^= STATE_IDLE;
-	}
-	else
-	{
-		m_eState |= STATE_IDLE;
-		if (m_eState & STATE_RUN)
-			m_eState ^= STATE_RUN;
-	}
-
-	_vector		vWorldPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
-
-
-	/*if (GetKeyState(VK_LBUTTON) & 0x8000)
-	{
-		POINT		ptMouse;
-		GetCursorPos(&ptMouse);
-		ScreenToClient(g_hWnd, &ptMouse);
-
-		_float2		vMousePos = _float2(static_cast<_float>(ptMouse.x), static_cast<_float>(ptMouse.y));
-
-		vWorldPos = m_pGameInstance->Compute_WorldPos(vMousePos, TEXT("Target_FieldDepth"));
-	}*/
-
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vWorldPos);
-
-
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
 	Tick_PartObjects(fTimeDelta);
@@ -124,14 +72,9 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	_vector			vCurrentPostion = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
 
-	if (DOWN == m_pGameInstance->Get_KeyState('B'))
-	{
-		_float4			vMoveDir = {};
-		XMStoreFloat4(&vMoveDir, vCurrentPostion * -1.f);
-		m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
-	}
+	_vector			vMoveDir = { XMLoadFloat3(&m_vRootTranslation) };
 
-	m_pGameInstance->Move_CCT(vMovedDirection, fTimeDelta, 0);
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vMoveDir + vCurrentPostion);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
@@ -174,15 +117,6 @@ HRESULT CPlayer::Add_Components()
 
 	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom, &ColliderDesc)))
-		return E_FAIL;
-
-	/* For.Com_Navigation */
-	CNavigation::NAVIGATION_DESC			NavigationDesc{};
-
-	NavigationDesc.iCurrentIndex = 0;
-
-	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Navigation"),
-		TEXT("Com_Navigation"), (CComponent**)&m_pNavigationCom, &NavigationDesc)))
 		return E_FAIL;
 
 	return S_OK;

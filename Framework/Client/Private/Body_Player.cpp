@@ -137,16 +137,16 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 		fMoveHieght += 1.f * fTimeDelta;
 
-		if (fMoveHieght > 0.5f)
-			fMoveHieght = 0.5f;
+		if (fMoveHieght > 1.5f)
+			fMoveHieght = 1.5f;
 	}
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('M'))
 	{
 		fMoveHieght -= 1.f * fTimeDelta;
 
-		if (fMoveHieght < -0.5f)
-			fMoveHieght = -0.5f;
+		if (fMoveHieght < -1.5f)
+			fMoveHieght = -1.5f;
 	}
 
 	static _float fBlend = { 1.f };
@@ -168,7 +168,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//	fMoveHieght = 0.f;
 
 	_vector			vMoveDir = { XMVectorSet(0.f, 1.f, 1.f, 0.f) * fMoveHieght };
-	_vector			vCurrentPos = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector			vCurrentPos = { m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION) };
 	_vector			vCurrentBallPos = { XMVector4Transform(vCurrentPos, XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball"))) };
 
 	_vector			vDirectionToBall = { vCurrentBallPos - vCurrentPos };
@@ -181,7 +181,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
-	CVIBuffer_Terrain* pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_LandBackGround"), TEXT("Com_VIBuffer"), 0))) };
+	/*CVIBuffer_Terrain* pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_LandBackGround"), TEXT("Com_VIBuffer"), 0))) };
 	CTransform* pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_LandBackGround"), TEXT("Com_Transform"), 0))) };
 	if (nullptr != pTerrainBuffer &&
 		nullptr != pTerrainTransform)
@@ -201,7 +201,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 		if (0.f >= XMVectorGetY(vMoveDir))
 			vMoveDir = XMVectorZero();
-	}
+	}*/
 
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
@@ -646,11 +646,11 @@ HRESULT CBody_Player::Bind_ShaderResources()
 	/*if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;	*/
 
-	auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+	/*auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
 	WorldMat._41 = 0.f;
 	WorldMat._42 = 0.f;
-	WorldMat._43 = 0.f;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+	WorldMat._43 = 0.f;*/
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;

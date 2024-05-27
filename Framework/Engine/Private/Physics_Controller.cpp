@@ -31,8 +31,8 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	m_Pvd = PxCreatePvd(*m_Foundation);
 	m_Transport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
 	m_Pvd->connect(*m_Transport, physx::PxPvdInstrumentationFlag::eALL);
-	m_ToleranceScale.length = 1000;
-	m_ToleranceScale.speed = 981;
+	m_ToleranceScale.length = 1.f;
+	m_ToleranceScale.speed = 9.81;
 	m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, m_ToleranceScale, true, m_Pvd);
 	physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
@@ -71,7 +71,7 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	m_pRagdoll_Physics = new CRagdoll_Physics(m_Scene,m_Physics, m_DefaultAllocatorCallback,m_DefaultErrorCallback,m_Foundation,
 		m_Dispatcher,m_Material);
 
-	m_pRagdoll_Physics->Init();
+	//	m_pRagdoll_Physics->Init();
 
 	return S_OK;
 }
@@ -144,7 +144,7 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 		}
 	}
 
-	m_pRagdoll_Physics->Update(fTimeDelta);
+	//	m_pRagdoll_Physics->Update(fTimeDelta);
 
 	m_Scene->simulate(fTimeDelta);
 	m_Scene->fetchResults(true);
