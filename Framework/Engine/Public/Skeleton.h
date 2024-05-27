@@ -16,7 +16,7 @@ struct Joint
 
 	XMFLOAT3 bind_pos_ws(const XMMATRIX& model)
 	{
-		XMMATRIX m = XMMatrixMultiply(model, XMMatrixInverse(nullptr, inverse_bind_pose));
+		XMMATRIX m = XMMatrixMultiply(XMMatrixInverse(nullptr, inverse_bind_pose),model);
 
 		XMFLOAT3 result;
 		result.x = XMVectorGetX(m.r[3]);

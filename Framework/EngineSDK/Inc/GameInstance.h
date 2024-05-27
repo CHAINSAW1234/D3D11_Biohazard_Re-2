@@ -111,7 +111,7 @@ public:
 
 	
 public:/*For Physics Controller*/
-	_float4 GetPosition_Physics();
+	_float4 GetPosition_CCT(_int Index);
 	void	Simulate();
 	void	SetSimulate(_bool boolean)
 	{
@@ -127,7 +127,6 @@ public:/*For Physics Controller*/
 	_matrix	GetWorldMatrix_Rigid_Dynamic(_int Index);
 	void	Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 
-public://Temp
 	_float3* TerrainPos = { nullptr };
 	void	SetTerrainPos(_float3 * Pos)
 	{
@@ -178,19 +177,11 @@ public://Temp
 	void			SetColliderTransform_Right_Leg(_float4x4 Transform);
 	void			SetColliderTransform_Left_Shin(_float4x4 Transform);
 	void			SetColliderTransform_Right_Shin(_float4x4 Transform);
-	void			SetJointTransform_Neck(_float4x4 Transform);
-	void			SetJointTransform_L_Shoulder(_float4x4 Transform);
-	void			SetJointTransform_R_Shoulder(_float4x4 Transform);
-	void			SetJointTransform_Spine(_float4x4 Transform);
-	void			SetJointTransform_Acetabulum_L(_float4x4 Transform);
-	void			SetJointTransform_Acetabulum_R(_float4x4 Transform);
-	void			SetJointTransform_Knee_L(_float4x4 Transform);
-	void			SetJointTransform_Knee_R(_float4x4 Transform);
-	void			Create_Ragdoll();
 
 	void			SetBone_Ragdoll(vector<class CBone*>* vecBone);
 	void			SetWorldMatrix(_float4x4 WorldMatrix);
 	void			SetRotationMatrix(_float4x4 RotationMatrix);
+	_int			Create_Controller(_float4 Pos);
 #ifdef _DEBUG
 	HRESULT Ready_RTVDebug(const wstring& strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT Draw_RTVDebug(const wstring& strMRTTag, class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);

@@ -95,176 +95,37 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	if (m_pGameInstance->GetSimulate() == false)
 		return;
 
-	//if (PRESSING == m_pGameInstance->Get_KeyState('H'))
-	//{
-	//	// y축을 중심으로 회전할 쿼터니언 생성
-	//	PxQuat rotation(-0.0075f, PxVec3(0, 1, 0));
-
-	//	//// 현재 글로벌 포즈 가져오기
-	//	//PxTransform currentPose = m_BodyCollider->getGlobalPose();
-
-	//	//// 새로운 회전 적용
-	//	//currentPose.q = rotation * currentPose.q; // 현재 회전에 추가 회전 적용
-
-	//	//// 변경된 포즈를 객체에 적용
-	//	//m_BodyCollider->setGlobalPose(currentPose);
-
-	//	// 생성된 회전으로 벡터 회전
-	//	m_Look = rotation.rotate(m_Look);
-	//}
-
-	//if (PRESSING == m_pGameInstance->Get_KeyState('K'))
-	//{
-	//	// y축을 중심으로 회전할 쿼터니언 생성
-	//	PxQuat rotation(0.0075f, PxVec3(0, 1, 0));
-
-	//	//// 현재 글로벌 포즈 가져오기
-	//	//PxTransform currentPose = m_BodyCollider->getGlobalPose();
-
-	//	//// 새로운 회전 적용
-	//	//currentPose.q = rotation * currentPose.q; // 현재 회전에 추가 회전 적용
-
-	//	//// 변경된 포즈를 객체에 적용
-	//	//m_BodyCollider->setGlobalPose(currentPose);
-
-	//	// 생성된 회전으로 벡터 회전
-	//	m_Look = rotation.rotate(m_Look);
-	//}
-
-
-	//if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
-	//{
-	//	if (m_Controller)
-	//	{
-	//		if (IsGrounded(m_Controller))
-	//		{
-	//			m_bJump = true;
-
-	//			m_JumpVel = PxVec3(0.f, 4.f, 0.f);
-	//		}
-	//	}
-
-
-	//	//m_BodyCollider->addForce(m_JumpVel*2.5f, PxForceMode::eIMPULSE);
-	//}
-
-	//if (PRESSING == m_pGameInstance->Get_KeyState('U'))
-	//{
-	//	// 이동 속도 설정
-	//	PxVec3 velocity = m_Look * 10.f * fTimeDelta;
-
-	//	// 캐릭터 이동
-	//	if (m_Controller)
-	//		PxControllerCollisionFlags flags = m_Controller->move(velocity, 0.0f, fTimeDelta, PxControllerFilters());
-
-	//	//m_BodyCollider->addForce(velocity * 5.f, PxForceMode::eIMPULSE);
-	//}
-
 	PxVec3 gravity(0.0f, -9.81f * fTimeDelta, 0.0f);
-
-	//if (PRESSING == m_pGameInstance->Get_KeyState('J'))
-	//{
-	//	// 이동 속도 설정
-	//	PxVec3 velocity = -m_Look * 10.f * fTimeDelta;
-
-	//	// 캐릭터 이동
-	//	if (m_Controller)
-	//		PxControllerCollisionFlags flags = m_Controller->move(velocity, 0.0f, fTimeDelta, PxControllerFilters());
-
-	//	//m_BodyCollider->addForce(velocity * 5.f,PxForceMode::eIMPULSE);
-	//}
-
-	//if (m_bJump)
-	//{
-	//	m_JumpVel += gravity; // 중력 적용
-
-	//	// 이동 및 중력 적용
-	//	PxVec3 displacement = m_JumpVel * fTimeDelta;
-	//	PxControllerFilters filters;
-	//	PxControllerCollisionFlags flags = m_Controller->move(displacement, 0.0f, fTimeDelta, filters);
-
-	//	if (m_Controller)
-	//	{
-	//		if (IsGrounded(m_Controller))
-	//		{
-	//			m_bJump = false;
-	//			m_JumpVel = PxVec3(0.f, 0.f, 0.f); // 점프 속도 초기화
-	//		}
-	//	}
-	//}
-	//else
-	//{
-	//	if (m_Controller)
-	//		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, PxControllerFilters());
-	//}
 
 	QueryFilterCallback filterCallback;
 	PxControllerFilters controllerFilters;
 	controllerFilters.mFilterCallback = &filterCallback;
 
-	if (m_Controller)
-		PxControllerCollisionFlags flags = m_Controller->move(gravity, 0.0f, fTimeDelta, controllerFilters);
+	for (int i = 0; i < m_vecCharacter_Controller.size(); ++i)
+	{
+		if (m_vecCharacter_Controller[i])
+			m_vecCharacter_Controller[i]->Move(gravity, fTimeDelta);
+	}
 
 	for (int i = 0; i < m_vecRigid_Dynamic.size(); ++i)
 	{
 		m_vecRigid_Dynamic[i]->Update();
 	}
 
-	//m_BodyCollider->setGlobalPose(ColliderTransform);
-	//m_HeadCollider->setGlobalPose(ColliderTransform_Head);
-	//m_Left_Arm_Collider->setGlobalPose(ColliderTransform_Left_Arm);
-	//m_Right_Arm_Collider->setGlobalPose(ColliderTransform_Right_Arm);
-	//m_Right_ForeArm_Collider->setGlobalPose(ColliderTransform_Right_ForeArm);
-	//m_Left_ForeArm_Collider->setGlobalPose(ColliderTransform_Left_ForeArm);
-	////m_Pelvis_Collider->setGlobalPose(ColliderTransform_Pelvis);
-	//m_Left_Leg_Collider->setGlobalPose(ColliderTransform_Left_Leg);
-	//m_Right_Leg_Collider->setGlobalPose(ColliderTransform_Right_Leg);
-	//m_Right_Shin_Collider->setGlobalPose(ColliderTransform_Right_Shin);
-	//m_Left_Shin_Collider->setGlobalPose(ColliderTransform_Left_Shin);
-	/*if(m_pHead)
-	{
-		m_pHead->setLinearVelocity(PxVec3(0.f, 0.f, 0.f));
-		m_pHead->setAngularVelocity(PxVec3(0.f, 0.f, 0.f));
+#pragma region BodyCollider 위치 설정 코드
+	/*m_BodyCollider->setGlobalPose(ColliderTransform);
+	m_HeadCollider->setGlobalPose(ColliderTransform_Head);
+	m_Left_Arm_Collider->setGlobalPose(ColliderTransform_Left_Arm);
+	m_Right_Arm_Collider->setGlobalPose(ColliderTransform_Right_Arm);
+	m_Right_ForeArm_Collider->setGlobalPose(ColliderTransform_Right_ForeArm);
+	m_Left_ForeArm_Collider->setGlobalPose(ColliderTransform_Left_ForeArm);
+	m_Pelvis_Collider->setGlobalPose(ColliderTransform_Pelvis);
+	m_Left_Leg_Collider->setGlobalPose(ColliderTransform_Left_Leg);
+	m_Right_Leg_Collider->setGlobalPose(ColliderTransform_Right_Leg);
+	m_Right_Shin_Collider->setGlobalPose(ColliderTransform_Right_Shin);
+	m_Left_Shin_Collider->setGlobalPose(ColliderTransform_Left_Shin);*/
+#pragma endregion
 
-		m_pBody->setLinearVelocity(PxVec3(0.f, 0.f, 0.f));
-		m_pBody->setAngularVelocity(PxVec3(0.f, 0.f, 0.f));
-
-		m_pLeftArm->setLinearVelocity(PxVec3(0.f, 0.f, 0.f));
-		m_pLeftArm->setAngularVelocity(PxVec3(0.f, 0.f, 0.f));
-
-		m_pRightArm->setLinearVelocity(PxVec3(0.f, 0.f, 0.f));
-		m_pRightArm->setAngularVelocity(PxVec3(0.f, 0.f, 0.f));
-
-		m_pLeftForeArm->setLinearVelocity(PxVec3(0.f, 0.f, 0.f));
-		m_pLeftForeArm->setAngularVelocity(PxVec3(0.f, 0.f, 0.f));
-
-		m_pRightForeArm->setLinearVelocity(PxVec3(0.f, 0.f, 0.f));
-		m_pRightForeArm->setAngularVelocity(PxVec3(0.f, 0.f, 0.f));
-
-		m_pPelvis->setLinearVelocity(PxVec3(0.f, 0.f, 0.f));
-		m_pPelvis->setAngularVelocity(PxVec3(0.f, 0.f, 0.f));
-
-		m_pLeftLeg->setLinearVelocity(PxVec3(0.f, 0.f, 0.f));
-		m_pLeftLeg->setAngularVelocity(PxVec3(0.f, 0.f, 0.f));
-
-		m_pRightLeg->setLinearVelocity(PxVec3(0.f, 0.f, 0.f));
-		m_pRightLeg->setAngularVelocity(PxVec3(0.f, 0.f, 0.f));
-
-		m_pLeftShin->setLinearVelocity(PxVec3(0.f, 0.f, 0.f));
-		m_pLeftShin->setAngularVelocity(PxVec3(0.f, 0.f, 0.f));
-
-		m_pRightShin->setLinearVelocity(PxVec3(0.f, 0.f, 0.f));
-		m_pRightShin->setAngularVelocity(PxVec3(0.f, 0.f, 0.f));
-	}*/
-
-	if(m_pBody)
-	{
-		if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
-		{
-			m_JumpVel = PxVec3(0.f, 20.f, 0.f);
-			m_pBody->addForce(m_JumpVel * 2.5f, PxForceMode::eIMPULSE);
-		}
-	}
 	static bool Temp = false;
 
 	if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
@@ -276,6 +137,11 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	if (UP == m_pGameInstance->Get_KeyState(VK_BACK))
 	{
 		m_pRagdoll_Physics->Init_Ragdoll();
+
+		if (m_vecCharacter_Controller[0])
+		{
+			Safe_Release(m_vecCharacter_Controller[0]);
+		}
 	}
 
 	m_pRagdoll_Physics->Update(fTimeDelta);
@@ -284,23 +150,23 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	m_Scene->fetchResults(true);
 }
 
-void CPhysics_Controller::Create_Controller(_float4 Pos)
+_int CPhysics_Controller::Create_Controller(_float4 Pos)
 {
 	//Character Controller Init
 	m_Manager = PxCreateControllerManager(*m_Scene);
 
 	m_Controll_Desc.height = 1.f; // 캐릭터의 높이
-	m_Controll_Desc.radius = 1.f; // 캐릭터의 반지름
-	m_Controll_Desc.position = PxExtendedVec3(200.0, 20.0, 200.0); // 초기 위치 설정
+	m_Controll_Desc.radius = 0.5f; // 캐릭터의 반지름
+	m_Controll_Desc.position = PxExtendedVec3(0.0, 0.0, 0.0); // 초기 위치 설정
 	m_Controll_Desc.material = m_Physics->createMaterial(0.f, 0.f, 0.f); // 마찰계수와 반발력 설정
-	m_Controller = m_Manager->createController(m_Controll_Desc);
+	//m_Controller = m_Manager->createController(m_Controll_Desc);
 
 
-	//auto Controller = m_Manager->createController(m_Controll_Desc);
+	auto Controller = m_Manager->createController(m_Controll_Desc);
 
 
 	PxShape* shapes[1];
-	m_Controller->getActor()->getShapes(shapes, 1);
+	Controller->getActor()->getShapes(shapes, 1);
 
 	// 충돌 필터 데이터 생성
 	PxFilterData filterData_Character;
@@ -312,7 +178,7 @@ void CPhysics_Controller::Create_Controller(_float4 Pos)
 	shapes[0]->setSimulationFilterData(filterData_Character);
 	shapes[0]->setContactOffset(0.1f);
 
-	auto Character_Controller = new CCharacter_Controller(m_Controller);
+	auto Character_Controller = new CCharacter_Controller(Controller);
 	Character_Controller->SetIndex(m_iCharacter_Controller_Count);
 	m_vecCharacter_Controller.push_back(Character_Controller);
 
@@ -324,7 +190,9 @@ void CPhysics_Controller::Create_Controller(_float4 Pos)
 			});
 	}
 
+	auto Index = m_iCharacter_Controller_Count;
 	++m_iCharacter_Controller_Count;
+	return Index;
 }
 
 void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
@@ -341,12 +209,97 @@ void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
 	m_Shape = m_Physics->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), *m_Material);
 	m_Shape->setSimulationFilterData(filterData);
 	m_Shape->setContactOffset(0.1f);
-	physx::PxU32 size = 0;
+	physx::PxU32 size = 10;
 	physx::PxTransform t(physx::PxVec3(0));
 	physx::PxTransform localTm(physx::PxVec3(4.f, 0.f, 4.f));
 
+	for (physx::PxU32 i = 0; i < size; ++i) {
+		for (physx::PxU32 j = 0; j < size - i; ++j) {
+			// 필요에 따라 filterData를 설정합니다.
+			/*if (i != 0) {
+				filterData.word0 = Category2;
+				filterData.word1 = Category1 | Category3;
+			}*/
+
+			if (i == size - 1)
+			{
+				if (j == size - i - 1)
+				{
+					filterData.word0 = COLLISION_CATEGORY::Category2; // 이 객체의 카테고리
+					filterData.word1 = COLLISION_CATEGORY::Category1 | COLLISION_CATEGORY::Category3; // 이 객체와 충돌해야 하는 카테고리
+					filterData.word3 = m_iRigid_Dynamic_Count;
+
+					// 각 액터마다 새로운 PxShape 인스턴스를 생성합니다.
+					physx::PxShape* newShape = m_Physics->createShape(physx::PxBoxGeometry(halfExtent * 10.f, halfExtent * 10.f, halfExtent), *m_Material);
+					newShape->setSimulationFilterData(filterData);
+					newShape->setContactOffset(1.1f);
+					physx::PxTransform localTm(physx::PxVec3(10.f, 5.f, 10.f));
+					physx::PxRigidDynamic* body = m_Physics->createRigidDynamic(t.transform(localTm));
+					body->attachShape(*newShape);
+					physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.f);
+					m_Scene->addActor(*body);
+					m_vecBody.push_back(body);
+					// 사용 후 newShape를 release합니다.
+					newShape->release();
+					body->setMass(1.f);
+					body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+					body->setSleepThreshold(sleepThreshold);
+
+					auto RigidDynamic = new CRigid_Dynamic(body);
+					RigidDynamic->SetIndex(m_iRigid_Dynamic_Count);
+					++m_iRigid_Dynamic_Count;
+					m_vecRigid_Dynamic.push_back(RigidDynamic);
+
+					if (m_vecRigid_Dynamic.size() >= 2)
+					{
+						std::sort(m_vecRigid_Dynamic.begin(), m_vecRigid_Dynamic.end(), [](CRigid_Dynamic* a, CRigid_Dynamic* b)
+							{
+								return a->GetIndex() < b->GetIndex();
+							});
+					}
+				}
+			}
+			else
+			{
+				filterData.word0 = COLLISION_CATEGORY::Category2; // 이 객체의 카테고리
+				filterData.word1 = COLLISION_CATEGORY::Category1 | COLLISION_CATEGORY::Category3; // 이 객체와 충돌해야 하는 카테고리
+				filterData.word3 = m_iRigid_Dynamic_Count;
+
+				// 각 액터마다 새로운 PxShape 인스턴스를 생성합니다.
+				physx::PxShape* newShape = m_Physics->createShape(physx::PxBoxGeometry(halfExtent, halfExtent, halfExtent), *m_Material);
+				newShape->setSimulationFilterData(filterData);
+				newShape->setContactOffset(0.1f);
+				//physx::PxTransform localTm(physx::PxVec3(3.f,0.f, 3.f));
+				physx::PxTransform localTm(physx::PxVec3(physx::PxReal(j * 2) - physx::PxReal(size - i) + 10.f, physx::PxReal(i * 2 + 1) + 5.f, 10.f) * (halfExtent));
+				physx::PxRigidDynamic* body = m_Physics->createRigidDynamic(t.transform(localTm));
+				body->attachShape(*newShape);
+				physx::PxRigidBodyExt::updateMassAndInertia(*body, 10.f);
+				m_Scene->addActor(*body);
+				m_vecBody.push_back(body);
+				// 사용 후 newShape를 release합니다.
+				newShape->release();
+				body->setMass(1.f);
+				body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+				body->setSleepThreshold(sleepThreshold);
+
+				auto RigidDynamic = new CRigid_Dynamic(body);
+				RigidDynamic->SetIndex(m_iRigid_Dynamic_Count);
+				++m_iRigid_Dynamic_Count;
+				m_vecRigid_Dynamic.push_back(RigidDynamic);
+
+				if (m_vecRigid_Dynamic.size() >= 2)
+				{
+					std::sort(m_vecRigid_Dynamic.begin(), m_vecRigid_Dynamic.end(), [](CRigid_Dynamic* a, CRigid_Dynamic* b)
+						{
+							return a->GetIndex() < b->GetIndex();
+						});
+				}
+			}
+		}
+	}
 	return;
 
+#pragma region Collider 코드
 	////BodyCollider Temp 코드
 	//m_BodyCollider = m_Physics->createRigidDynamic(t.transform(localTm));
 	//m_BodyCollider->attachShape(*m_Shape);
@@ -479,6 +432,7 @@ void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
 	//m_Right_Shin_Collider->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
 	//m_Right_Shin_Collider->setSleepThreshold(sleepThreshold);
 	//m_Right_Shin_Collider->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+#pragma endregion
 }
 
 void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
@@ -539,162 +493,8 @@ void CPhysics_Controller::Move_CCT(_float4 Dir, _float fTimeDelta, _int Index)
 	PxDir.y = Dir.y;
 	PxDir.z = Dir.z;
 
-	m_vecCharacter_Controller[Index]->Move(PxDir, fTimeDelta);
-}
-
-void CPhysics_Controller::Create_Ragdoll()
-{
-	//float sleepThreshold = 0.5f;
-	//PxReal radius = 0.3f;
-
-	//PxFilterData filterData;
-	//filterData.word0 = COLLISION_CATEGORY::Category2; // 이 객체의 카테고리
-	//filterData.word1 = COLLISION_CATEGORY::Category1 | COLLISION_CATEGORY::Category3; // 이 객체와 충돌해야 하는 카테고리
-
-	//float halfExtent = 0.25f;
-	////m_Shape = m_Physics->createShape(PxCapsuleGeometry(halfExtent,halfExtent*2.f), *m_Material);
-	//m_Shape = m_Physics->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), *m_Material);
-	//m_Shape->setSimulationFilterData(filterData);
-	//m_Shape->setContactOffset(0.1f);
-	//physx::PxU32 size = 0;
-	//physx::PxTransform t(physx::PxVec3(0));
-	//physx::PxTransform localTm(physx::PxVec3(4.f, 0.f, 4.f));
-}
-
-void CPhysics_Controller::Init_Radoll()
-{
-}
-
-_float4 CPhysics_Controller::GetHeadPos()
-{
-	auto Pos = m_pHead->getGlobalPose();
-	_float4 Result;
-	Result.x = Pos.p.x;
-	Result.y = Pos.p.y;
-	Result.z = Pos.p.z;
-	Result.w = 1.f;
-
-	return Result;
-}
-
-_float4 CPhysics_Controller::GetBodyPos()
-{
-	auto Pos = m_pBody->getGlobalPose();
-	_float4 Result;
-	Result.x = Pos.p.x;
-	Result.y = Pos.p.y;
-	Result.z = Pos.p.z;
-	Result.w = 1.f;
-
-	return Result;
-}
-
-_float4 CPhysics_Controller::GetPelvisPos()
-{
-	auto Pos = m_pPelvis->getGlobalPose();
-	_float4 Result;
-	Result.x = Pos.p.x;
-	Result.y = Pos.p.y;
-	Result.z = Pos.p.z;
-	Result.w = 1.f;
-
-	return Result;
-}
-
-_float4 CPhysics_Controller::GetLeft_Arm_Pos()
-{
-	auto Pos = m_pLeftArm->getGlobalPose();
-	_float4 Result;
-	Result.x = Pos.p.x;
-	Result.y = Pos.p.y;
-	Result.z = Pos.p.z;
-	Result.w = 1.f;
-
-	return Result;
-}
-
-_float4 CPhysics_Controller::GetRight_Arm_Pos()
-{
-	auto Pos = m_pRightArm->getGlobalPose();
-	_float4 Result;
-	Result.x = Pos.p.x;
-	Result.y = Pos.p.y;
-	Result.z = Pos.p.z;
-	Result.w = 1.f;
-
-	return Result;
-}
-
-_float4 CPhysics_Controller::GetLeft_Fore_Arm_Pos()
-{
-	auto Pos = m_pLeftForeArm->getGlobalPose();
-	_float4 Result;
-	Result.x = Pos.p.x;
-	Result.y = Pos.p.y;
-	Result.z = Pos.p.z;
-	Result.w = 1.f;
-
-	return Result;
-}
-
-_float4 CPhysics_Controller::GetRight_Fore_Arm_Pos()
-{
-	auto Pos = m_pRightForeArm->getGlobalPose();
-	_float4 Result;
-	Result.x = Pos.p.x;
-	Result.y = Pos.p.y;
-	Result.z = Pos.p.z;
-	Result.w = 1.f;
-
-	return Result;
-}
-
-_float4 CPhysics_Controller::GetLeft_Leg_Pos()
-{
-	auto Pos = m_pLeftLeg->getGlobalPose();
-	_float4 Result;
-	Result.x = Pos.p.x;
-	Result.y = Pos.p.y;
-	Result.z = Pos.p.z;
-	Result.w = 1.f;
-
-	return Result;
-}
-
-_float4 CPhysics_Controller::GetRight_Leg_Pos()
-{
-	auto Pos = m_pRightLeg->getGlobalPose();
-	_float4 Result;
-	Result.x = Pos.p.x;
-	Result.y = Pos.p.y;
-	Result.z = Pos.p.z;
-	Result.w = 1.f;
-
-	return Result;
-}
-
-_float4 CPhysics_Controller::GetRight_Shin_Pos()
-{
-	auto Pos = m_pRightShin->getGlobalPose();
-	_float4 Result;
-	Result.x = Pos.p.x;
-	Result.y = Pos.p.y;
-	Result.z = Pos.p.z;
-	Result.w = 1.f;
-
-	return Result;
-}
-
-_float4 CPhysics_Controller::GetLeft_Shin_Pos()
-{
-	auto Pos = m_pLeftShin->getGlobalPose();
-	_float4 Result;
-	Result.x = Pos.p.x;
-	Result.y = Pos.p.y;
-	Result.z = Pos.p.z;
-	Result.w = 1.f;
-
-	return Result;
+	if(m_vecCharacter_Controller[Index])
+		m_vecCharacter_Controller[Index]->Move(PxDir, fTimeDelta);
 }
 
 void CPhysics_Controller::SetColliderTransform(_float4x4 Transform)
@@ -921,166 +721,6 @@ void CPhysics_Controller::SetColliderTransform_Right_Shin(_float4x4 Transform)
 	ColliderTransform_Right_Shin = newTransform;
 }
 
-void CPhysics_Controller::SetJointTransform_Neck(_float4x4 Transform)
-{
-	_matrix Mat = XMLoadFloat4x4(&Transform);
-
-	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
-	_float4 dxQuat;
-	XMStoreFloat4(&dxQuat, Quaternion);
-
-	// PhysX의 PxQuat에 값을 대입
-	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
-
-	_float4 fourthRow;
-	XMStoreFloat4(&fourthRow, Mat.r[3]);
-	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
-
-	PxTransform newTransform(Result);
-
-	JointTransform_Neck = newTransform;
-}
-
-void CPhysics_Controller::SetJointTransform_L_Shoulder(_float4x4 Transform)
-{
-	_matrix Mat = XMLoadFloat4x4(&Transform);
-
-	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
-	_float4 dxQuat;
-	XMStoreFloat4(&dxQuat, Quaternion);
-
-	// PhysX의 PxQuat에 값을 대입
-	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
-
-	_float4 fourthRow;
-	XMStoreFloat4(&fourthRow, Mat.r[3]);
-	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
-
-	PxTransform newTransform(Result);
-
-	JointTransform_Shoulder_L = newTransform;
-}
-
-void CPhysics_Controller::SetJointTransform_R_Shoulder(_float4x4 Transform)
-{
-	_matrix Mat = XMLoadFloat4x4(&Transform);
-
-	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
-	_float4 dxQuat;
-	XMStoreFloat4(&dxQuat, Quaternion);
-
-	// PhysX의 PxQuat에 값을 대입
-	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
-
-	_float4 fourthRow;
-	XMStoreFloat4(&fourthRow, Mat.r[3]);
-	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
-
-	PxTransform newTransform(Result);
-
-	JointTransform_Shoulder_R = newTransform;
-}
-
-void CPhysics_Controller::SetJointTransform_Spine(_float4x4 Transform)
-{
-	_matrix Mat = XMLoadFloat4x4(&Transform);
-
-	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
-	_float4 dxQuat;
-	XMStoreFloat4(&dxQuat, Quaternion);
-
-	// PhysX의 PxQuat에 값을 대입
-	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
-
-	_float4 fourthRow;
-	XMStoreFloat4(&fourthRow, Mat.r[3]);
-	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
-
-	PxTransform newTransform(Result);
-
-	JointTransform_Spine = newTransform;
-}
-
-void CPhysics_Controller::SetJointTransform_Acetabulum_L(_float4x4 Transform)
-{
-	_matrix Mat = XMLoadFloat4x4(&Transform);
-
-	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
-	_float4 dxQuat;
-	XMStoreFloat4(&dxQuat, Quaternion);
-
-	// PhysX의 PxQuat에 값을 대입
-	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
-
-	_float4 fourthRow;
-	XMStoreFloat4(&fourthRow, Mat.r[3]);
-	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
-
-	PxTransform newTransform(Result);
-
-	JointTransform_Acetabulum_L = newTransform;
-}
-
-void CPhysics_Controller::SetJointTransform_Acetabulum_R(_float4x4 Transform)
-{
-	_matrix Mat = XMLoadFloat4x4(&Transform);
-
-	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
-	_float4 dxQuat;
-	XMStoreFloat4(&dxQuat, Quaternion);
-
-	// PhysX의 PxQuat에 값을 대입
-	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
-
-	_float4 fourthRow;
-	XMStoreFloat4(&fourthRow, Mat.r[3]);
-	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
-
-	PxTransform newTransform(Result);
-
-	JointTransform_Acetabulum_R = newTransform;
-}
-
-void CPhysics_Controller::SetJointTransform_Knee_L(_float4x4 Transform)
-{
-	_matrix Mat = XMLoadFloat4x4(&Transform);
-
-	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
-	_float4 dxQuat;
-	XMStoreFloat4(&dxQuat, Quaternion);
-
-	// PhysX의 PxQuat에 값을 대입
-	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
-
-	_float4 fourthRow;
-	XMStoreFloat4(&fourthRow, Mat.r[3]);
-	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
-
-	PxTransform newTransform(Result);
-
-	JointTransform_Knee_L = newTransform;
-}
-
-void CPhysics_Controller::SetJointTransform_Knee_R(_float4x4 Transform)
-{
-	_matrix Mat = XMLoadFloat4x4(&Transform);
-
-	_vector Quaternion = XMQuaternionRotationMatrix(Mat);
-	_float4 dxQuat;
-	XMStoreFloat4(&dxQuat, Quaternion);
-
-	// PhysX의 PxQuat에 값을 대입
-	PxQuat pxQuat = PxQuat(dxQuat.x, dxQuat.y, dxQuat.z, dxQuat.w);
-
-	_float4 fourthRow;
-	XMStoreFloat4(&fourthRow, Mat.r[3]);
-	PxVec3 Result(fourthRow.x, fourthRow.y, fourthRow.z);
-
-	PxTransform newTransform(Result);
-
-	JointTransform_Knee_R = newTransform;
-}
-
 void CPhysics_Controller::SetBone_Ragdoll(vector<class CBone*>* vecBone)
 {
 	m_pRagdoll_Physics->SetBone_Ragdoll(vecBone);
@@ -1147,18 +787,11 @@ _bool CPhysics_Controller::IsGrounded(PxController* Controller)
 	return (state.collisionFlags & PxControllerCollisionFlag::eCOLLISION_DOWN) != 0;
 }
 
-_float4 CPhysics_Controller::GetPosition()
+_float4 CPhysics_Controller::GetPosition_CCT(_int Index)
 {
-	if (m_Controller)
+	if (m_vecCharacter_Controller[Index])
 	{
-		PxExtendedVec3 position = m_Controller->getPosition();
-
-		_float4 Pos;
-		Pos.x = static_cast<_float>(position.x);
-		Pos.y = static_cast<_float>(position.y - 4.f);
-		Pos.z = static_cast<_float>(position.z);
-		Pos.w = 1.f;
-		return Pos;
+		return m_vecCharacter_Controller[Index]->GetTranslation();
 	}
 
 	return _float4(0.f, 0.f, 0.f, 1.f);
@@ -1244,6 +877,8 @@ void CPhysics_Controller::Free()
 
 	PxCloseExtensions();
 
+	m_pRagdoll_Physics->Release();
+
 	if (m_HeadCollider)
 		m_HeadCollider->release();
 
@@ -1273,70 +908,6 @@ void CPhysics_Controller::Free()
 
 	if (m_Right_Shin_Collider)
 		m_Right_Shin_Collider->release();
-
-	//Ragdoll
-	if (m_pHead)
-		m_pHead->release();
-
-	if (m_pBody)
-		m_pBody->release();
-
-	if (m_pPelvis)
-		m_pPelvis->release();
-
-	if (m_pLeftArm)
-		m_pLeftArm->release();
-
-	if (m_pRightArm)
-		m_pRightArm->release();
-
-	if (m_pLeftForeArm)
-		m_pLeftForeArm->release();
-
-	if (m_pRightForeArm)
-		m_pRightForeArm->release();
-
-	if (m_pLeftLeg)
-		m_pLeftLeg->release();
-
-	if (m_pRightLeg)
-		m_pRightLeg->release();
-
-	if (m_pRightShin)
-		m_pRightShin->release();
-
-	if (m_pLeftShin)
-		m_pLeftShin->release();
-
-	if (m_pNeck_Joint)
-		m_pNeck_Joint->release();
-
-	if (m_pLeft_Shoulder_Joint)
-		m_pLeft_Shoulder_Joint->release();
-
-	if (m_pRight_Shoulder_Joint)
-		m_pRight_Shoulder_Joint->release();
-
-	if (m_pLeft_Elbow_Joint)
-		m_pLeft_Elbow_Joint->release();
-
-	if (m_pRight_Elbow_Joint)
-		m_pRight_Elbow_Joint->release();
-
-	if (m_pPelvis_Joint)
-		m_pPelvis_Joint->release();
-
-	if (m_pLeft_Hip_Joint)
-		m_pLeft_Hip_Joint->release();
-
-	if (m_pRight_Hip_Joint)
-		m_pRight_Hip_Joint->release();
-
-	if (m_pLeft_Knee_Joint)
-		m_pLeft_Knee_Joint->release();
-
-	if (m_pRight_Knee_Joint)
-		m_pRight_Knee_Joint->release();
 
 	if (m_Shape)
 		m_Shape->release();

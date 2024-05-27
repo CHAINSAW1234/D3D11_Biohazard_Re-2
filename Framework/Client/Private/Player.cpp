@@ -6,7 +6,7 @@
 #include "Head_Player.h"
 #include "Hair_Player.h"
 
-#define MODEL_SCALE 1.f
+#define MODEL_SCALE 0.01f
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject{ pDevice, pContext }
@@ -47,6 +47,8 @@ HRESULT CPlayer::Initialize(void * pArg)
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f,1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
+
+	m_iIndex_CCT = m_pGameInstance->Create_Controller(_float4(0.f, 0.f, 0.f, 1.f));
 	return S_OK;
 }
 
@@ -57,7 +59,15 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
-	//m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pGameInstance->GetPosition_Physics());
+	static _bool Temp = false;
+
+	if (UP == m_pGameInstance->Get_KeyState(VK_BACK))
+	{
+		Temp = true;
+	}
+
+	if(Temp == false)
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pGameInstance->GetPosition_CCT(m_iIndex_CCT));
 
 	if(PRESSING == m_pGameInstance->Get_KeyState('H'))
 	{
@@ -72,7 +82,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	if (PRESSING == m_pGameInstance->Get_KeyState('U'))
 	{
 		auto Look = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-		m_pGameInstance->Move_CCT(Look, fTimeDelta,0);
+		m_pGameInstance->Move_CCT(Look, fTimeDelta, m_iIndex_CCT);
 	}
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('J'))
@@ -80,7 +90,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		auto Look = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
 		Look.z = -Look.z;
 		Look.x = -Look.x;
-		m_pGameInstance->Move_CCT(m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK), fTimeDelta,0);
+		m_pGameInstance->Move_CCT(m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK), fTimeDelta, m_iIndex_CCT);
 		m_eState |= STATE_RUN;
 		if (m_eState & STATE_IDLE)
 			m_eState ^= STATE_IDLE;
@@ -125,7 +135,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	_float4			vMovedDirection = { Convert_Float3_To_Float4_Dir(m_vRootTranslation) };
 	
-	//m_pGameInstance->Move_CCT(vMovedDirection, fTimeDelta, 0);
+	m_pGameInstance->Move_CCT(vMovedDirection, fTimeDelta, 0);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);

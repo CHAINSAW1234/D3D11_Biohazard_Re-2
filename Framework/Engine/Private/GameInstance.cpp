@@ -146,8 +146,7 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 	m_pPicking = CPicking::Create(*ppDevice, *ppContext, EngineDesc.hWnd, EngineDesc.iWinSizeX, EngineDesc.iWinSizeY);
 	if (nullptr == m_pPicking)
 		return E_FAIL;
-	
-	m_pPhysics_Controller->Create_Controller(_float4(0.f,0.f,0.f,1.f));
+
 	m_pPhysics_Controller->Create_Rigid_Dynamic(_float4(0.f, 0.f, 0.f, 1.f));
 
 	m_RandomNumber = mt19937_64(m_RandomDevice());
@@ -663,10 +662,10 @@ _vector CGameInstance::Compute_WorldPos(const _float2 & vViewportPos, const wstr
 	return m_pExtractor->Compute_WorldPos(vViewportPos, strZRenderTargetTag, iOffset);	
 }
 
-_float4 CGameInstance::GetPosition_Physics()
+_float4 CGameInstance::GetPosition_CCT(_int Index)
 {
 	if (m_pPhysics_Controller)
-		return m_pPhysics_Controller->GetPosition();
+		return m_pPhysics_Controller->GetPosition_CCT(Index);
 
 	return _float4(0.f, 0.f, 0.f, 1.f);
 }
@@ -757,51 +756,6 @@ void CGameInstance::SetColliderTransform_Right_Shin(_float4x4 Transform)
 	m_pPhysics_Controller->SetColliderTransform_Right_Shin(Transform);
 }
 
-void CGameInstance::SetJointTransform_Neck(_float4x4 Transform)
-{
-	m_pPhysics_Controller->SetJointTransform_Neck(Transform);
-}
-
-void CGameInstance::SetJointTransform_L_Shoulder(_float4x4 Transform)
-{
-	m_pPhysics_Controller->SetJointTransform_L_Shoulder(Transform);
-}
-
-void CGameInstance::SetJointTransform_R_Shoulder(_float4x4 Transform)
-{
-	m_pPhysics_Controller->SetJointTransform_R_Shoulder(Transform);
-}
-
-void CGameInstance::SetJointTransform_Spine(_float4x4 Transform)
-{
-	m_pPhysics_Controller->SetJointTransform_Spine(Transform);
-}
-
-void CGameInstance::SetJointTransform_Acetabulum_L(_float4x4 Transform)
-{
-	m_pPhysics_Controller->SetJointTransform_Acetabulum_L(Transform);
-}
-
-void CGameInstance::SetJointTransform_Acetabulum_R(_float4x4 Transform)
-{
-	m_pPhysics_Controller->SetJointTransform_Acetabulum_R(Transform);
-}
-
-void CGameInstance::SetJointTransform_Knee_L(_float4x4 Transform)
-{
-	m_pPhysics_Controller->SetJointTransform_Knee_L(Transform);
-}
-
-void CGameInstance::SetJointTransform_Knee_R(_float4x4 Transform)
-{
-	m_pPhysics_Controller->SetJointTransform_Knee_R(Transform);
-}
-
-void CGameInstance::Create_Ragdoll()
-{
-	m_pPhysics_Controller->Create_Ragdoll();
-}
-
 void CGameInstance::SetBone_Ragdoll(vector<class CBone*>* vecBone)
 {
 	m_pPhysics_Controller->SetBone_Ragdoll(vecBone);
@@ -815,6 +769,11 @@ void CGameInstance::SetWorldMatrix(_float4x4 WorldMatrix)
 void CGameInstance::SetRotationMatrix(_float4x4 RotationMatrix)
 {
 	m_pPhysics_Controller->SetRotationMatrix(RotationMatrix);
+}
+
+_int CGameInstance::Create_Controller(_float4 Pos)
+{
+	return m_pPhysics_Controller->Create_Controller(_float4(0.f,0.f,0.f,1.f));
 }
 
 #ifdef _DEBUG

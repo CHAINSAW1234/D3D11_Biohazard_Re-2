@@ -97,20 +97,21 @@ PoseTransforms* AnimRagdoll::apply(CRagdoll* ragdoll,_matrix model_scale, _matri
                 continue;
             }
             XMMATRIX global_transform = to_mat4(body->getGlobalPose());
+            global_transform.r[3] = XMVectorSet(XMVectorGetX(global_transform.r[3]) * 100.f, XMVectorGetY(global_transform.r[3]) * 100.f, XMVectorGetZ(global_transform.r[3]) * 100.f, 1.f);
             XMVECTOR global_joint_pos = XMVector4Transform(ragdoll->m_relative_joint_pos[i], global_transform);
             global_joint_pos = XMVectorSetW(global_joint_pos,1.f);
 
             XMVECTOR body_rot_quat = XMQuaternionRotationMatrix(global_transform);
             XMVECTOR diff_rot = XMQuaternionMultiply(XMQuaternionConjugate(ragdoll->m_original_body_rotations[i]), body_rot_quat);
 
+            global_joint_pos = XMVectorScale(global_joint_pos, 1.f);
             XMMATRIX translation = XMMatrixTranslationFromVector(global_joint_pos);
-
+      
             XMVECTOR final_rotation_quat = XMQuaternionMultiply(joints[i].original_rotation, diff_rot);
             XMMATRIX rotation = XMMatrixRotationQuaternion(final_rotation_quat);
 
             XMMATRIX model = model_scale * model_rotation;
 
-            //m_transforms.transforms[i] = XMMatrixInverse(nullptr, model) * translation * rotation * model_scale;
             m_transforms.transforms[i] = model_scale * rotation  *translation*XMMatrixInverse(nullptr, model);
         }
     }

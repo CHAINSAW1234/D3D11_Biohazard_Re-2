@@ -272,7 +272,9 @@ private:
 
     _float4x4           m_WorldMatrix;
     _float4x4           m_RotationMatrix;
-    PoseTransforms* m_Global_transforms = { nullptr };
+    PoseTransforms     m_Global_transforms;
+
+    PxFilterData        m_FilterData;
 public:
 	virtual void Free() override;
 };
