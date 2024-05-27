@@ -81,6 +81,8 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	//	m_pModelCom->Add_IK("r_leg_femur", "r_leg_ball", TEXT("IK_R_LEG"), 1, 1.f);
 	m_pModelCom->Add_IK("r_arm_clavicle", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
 
+	m_pGameInstance->SetBone_Ragdoll(m_pModelCom->GetBoneVector());
+
 	return S_OK;
 }
 
@@ -95,7 +97,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	//Upper 13
 	//Lower 33
-	
+
 	_matrix         WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
 
 	_vector         vLook = { WorldMatrix.r[CTransform::STATE_LOOK] };
@@ -106,7 +108,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	WorldMatrix.r[CTransform::STATE_POSITION] = vPosition;
 
 	m_pColliderCom->Tick(WorldMatrix);
-	
+
 	static _uint iAnimIndex = { 0 };
 	if (UP == m_pGameInstance->Get_KeyState(VK_UP))
 	{
@@ -120,7 +122,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 		--iAnimIndex;
 		if (1000000 < iAnimIndex)
 			iAnimIndex = 0;
-	}	
+	}
 
 	m_pModelCom->Set_TickPerSec(iAnimIndex, 40.f);
 
@@ -280,60 +282,9 @@ void CBody_Player::Tick(_float fTimeDelta)
 		isSetRootRotation = !isSetRootRotation;
 	}
 
-	CModel::ANIM_PLAYING_DESC		AnimDesc;
-	//AnimDesc.iAnimIndex = 22;
-	AnimDesc.iAnimIndex = iAnimIndex;
-	AnimDesc.isLoop = true;
-	AnimDesc.fWeight = fWeight;
-	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
-	list<_uint>		iBoneIndices;
-	for (_uint i = 0; i < iNumBones; ++i)
-	m_pModelCom->Active_RootMotion_Rotation(isSetRootRotation);
 	m_pModelCom->Active_RootMotion_XZ(isSetRootXZ);
 	m_pModelCom->Active_RootMotion_Y(isSetRootY);
-
-	//	m_pModelCom->Add_IK("l_leg_femur", "l_leg_ball", TEXT("IK_L_LEG"), 1);
-	//	m_pModelCom->Add_IK("r_arm_clavicle", "r_arm_wrist", TEXT("IK_R_ARM"), 1);
-
-	{
-		_matrix		WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
-		_matrix		CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball")) };
-		_matrix		ScaleMatrix = { XMMatrixScaling(10.f, 10.f, 100.f) };
-
-		_matrix		ResultMatrix = { ScaleMatrix * CombinedMatrix * WorldMatrix  };
-
-		m_PartColliders[0]->Tick(ResultMatrix);
-	}
-
-	{
-		_matrix		WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
-		_matrix		CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_femur")) };
-		_matrix		ScaleMatrix = { XMMatrixScaling(10.f, 10.f, 100.f) };
-
-		_matrix		ResultMatrix = { ScaleMatrix * CombinedMatrix * WorldMatrix };
-
-		m_PartColliders[1]->Tick(ResultMatrix);
-	}
-
-	{
-		_matrix		WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
-		_matrix		CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ankle")) };
-		_matrix		ScaleMatrix = { XMMatrixScaling(10.f, 10.f, 100.f) };
-
-		_matrix		ResultMatrix = { ScaleMatrix * CombinedMatrix * WorldMatrix };
-
-		m_PartColliders[2]->Tick(ResultMatrix);
-	}
-
-	{
-		_matrix		WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
-		_matrix		CombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_tibia")) };
-		_matrix		ScaleMatrix = { XMMatrixScaling(10.f, 10.f, 100.f) };
-
-		_matrix		ResultMatrix = { ScaleMatrix * CombinedMatrix * WorldMatrix };
-
-		m_PartColliders[3]->Tick(ResultMatrix);
-	}
+	m_pModelCom->Active_RootMotion_Rotation(isSetRootRotation);
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)
@@ -475,17 +426,13 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	Mat = XMMatrixMultiply(Mat, Rot);
 	XMStoreFloat4x4(&BoneCombined, Mat);
 
-#ifdef _DEBUG
-	m_pGameInstance->SetColliderTransform_Right_Shin(BoneCombined);
-
-	
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+	m_pGameInstance->SetColliderTransform_Right_Shin(BoneCombined);
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
-	
+	m_pGameInstance->Add_DebugComponents(m_pColliderCom);	
 #endif
 }
 

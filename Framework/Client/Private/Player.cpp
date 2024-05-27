@@ -178,7 +178,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 
 	m_pGameInstance->Move_CCT(vMovedDirection, fTimeDelta, 0);
-	m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
+	//	m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);

@@ -220,6 +220,18 @@
     <Filter Include="01.Utility\12.FSM\State">
       <UniqueIdentifier>{9df33316-824c-41e2-a6e3-89c21a22c7ad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\97.Physics\RagDoll_Physics">
+      <UniqueIdentifier>{53f52309-6dc1-4ba7-bd2d-6823e709cf86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\97.Physics\RagDoll_Physics\RagDoll">
+      <UniqueIdentifier>{3f5ec772-4edb-450a-aa44-3d3180d273bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\97.Physics\RagDoll_Physics\Skeletal_Mesh">
+      <UniqueIdentifier>{af6c1e99-70bd-43bb-8745-c857b70a84bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\97.Physics\RagDoll_Physics\Skeleton">
+      <UniqueIdentifier>{7541368d-e681-41ca-8557-1d2d05b1f0bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -425,6 +437,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\State.cpp">
       <Filter>01.Utility\12.FSM\State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RagDoll_Physics.cpp">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Skeleton.cpp">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics\Skeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Skeletal_Mesh.cpp">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics\Skeletal_Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RagDoll.cpp">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics\RagDoll</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -653,6 +677,19 @@
     <ClInclude Include="..\Public\State.h">
       <Filter>01.Utility\12.FSM\State</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\Public\RagDoll_Physics.h">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Skeleton.h">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics\Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Skeletal_Mesh.h">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics\Skeletal_Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RagDoll.h">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics\RagDoll</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -666,5 +703,8 @@
     <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli">
       <Filter>01.Utility\98.ShaderFiles</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Engine.rc" />
   </ItemGroup>
 </Project>

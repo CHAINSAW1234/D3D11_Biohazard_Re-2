@@ -79,9 +79,9 @@ void CHead_Player::Tick(_float fTimeDelta)
 
 void CHead_Player::Late_Tick(_float fTimeDelta)
 {
-	return;
 	__super::Late_Tick(fTimeDelta);
 
+	m_pModelCom->Play_Animations(fTimeDelta);
 	static bool Temp = false;
 	if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
 	{
@@ -90,7 +90,6 @@ void CHead_Player::Late_Tick(_float fTimeDelta)
 
 	if(!Temp)
 	{
-		m_pModelCom->Play_Animations(fTimeDelta);
 	}
 	Temp = true;
 

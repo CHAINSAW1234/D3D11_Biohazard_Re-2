@@ -208,6 +208,8 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\Observer.cpp" />
     <ClCompile Include="..\Private\Observer_Handler.cpp" />
     <ClCompile Include="..\Private\Picking.cpp" />
+    <ClCompile Include="..\Private\RagDoll.cpp" />
+    <ClCompile Include="..\Private\RagDoll_Physics.cpp" />
     <ClCompile Include="..\Private\Rigid_Dynamic.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
@@ -236,6 +238,8 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\Renderer.cpp" />
     <ClCompile Include="..\private\RenderTarget.cpp" />
     <ClCompile Include="..\private\Shader.cpp" />
+    <ClCompile Include="..\Private\Skeletal_Mesh.cpp" />
+    <ClCompile Include="..\Private\Skeleton.cpp" />
     <ClCompile Include="..\Private\Sound_Manager.cpp" />
     <ClCompile Include="..\Private\State.cpp" />
     <ClCompile Include="..\private\Target_Manager.cpp" />
@@ -281,6 +285,8 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\Observer.h" />
     <ClInclude Include="..\Public\Observer_Handler.h" />
     <ClInclude Include="..\Public\Picking.h" />
+    <ClInclude Include="..\Public\RagDoll.h" />
+    <ClInclude Include="..\Public\RagDoll_Physics.h" />
     <ClInclude Include="..\Public\Rigid_Dynamic.h" />
     <ClInclude Include="..\public\CustomFont.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
@@ -314,6 +320,8 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\Renderer.h" />
     <ClInclude Include="..\public\RenderTarget.h" />
     <ClInclude Include="..\public\Shader.h" />
+    <ClInclude Include="..\Public\Skeletal_Mesh.h" />
+    <ClInclude Include="..\Public\Skeleton.h" />
     <ClInclude Include="..\Public\Sound_Manager.h" />
     <ClInclude Include="..\Public\State.h" />
     <ClInclude Include="..\public\Target_Manager.h" />
@@ -329,6 +337,7 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\VIBuffer_Instance_Rect.h" />
     <ClInclude Include="..\public\VIBuffer_Rect.h" />
     <ClInclude Include="..\Public\VIBuffer_Terrain.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl" />
@@ -336,6 +345,9 @@ UpdateLib.bat</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Engine.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -54,7 +54,7 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pGameInstance->GetPosition_Physics());
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pGameInstance->GetPosition_CCT());
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('H'))
 	{
