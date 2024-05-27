@@ -18,7 +18,7 @@ public:
 	virtual HRESULT Initialize(void* pArg);
 	virtual void	Simulate(_float fTimeDelta);
 
-	void			Create_Controller(_float4 Pos);
+	_int			Create_Controller(_float4 Pos);
 	void			Create_Rigid_Dynamic(_float4 Pos);
 	void			Create_Rigid_Static(_float4 Pos);
 	void			Create_Plane(_float4 Pos);
@@ -28,26 +28,13 @@ public:
 	_float4						 GetTranslation_Rigid_Dynamic(_int Index);
 public:
 	_bool			IsGrounded(PxController* Controller);
-	_float4			GetPosition();
+	_float4			GetPosition_CCT(_int Index);
 
 	void			InitTerrain();
 
-	_matrix						 GetWorldMatrix_Rigid_Dynamic(_int Index);
+	_matrix			GetWorldMatrix_Rigid_Dynamic(_int Index);
 	void			Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 	void			Move_CCT(_float4 Dir, _float fTimeDelta,_int Index);
-
-	//Ragdoll Temp
-	_float4			GetHeadPos();
-	_float4			GetBodyPos();
-	_float4			GetPelvisPos();
-	_float4			GetLeft_Arm_Pos();
-	_float4			GetRight_Arm_Pos();
-	_float4			GetLeft_Fore_Arm_Pos();
-	_float4			GetRight_Fore_Arm_Pos();
-	_float4			GetLeft_Leg_Pos();
-	_float4			GetRight_Leg_Pos();
-	_float4			GetRight_Shin_Pos();
-	_float4			GetLeft_Shin_Pos();
 
 	void			SetColliderTransform(_float4x4 Transform);
 	void			SetColliderTransform_Head(_float4x4 Transform);
@@ -60,6 +47,11 @@ public:
 	void			SetColliderTransform_Right_Leg(_float4x4 Transform);
 	void			SetColliderTransform_Left_Shin(_float4x4 Transform);
 	void			SetColliderTransform_Right_Shin(_float4x4 Transform);
+	
+	void			SetBone_Ragdoll(vector<class CBone*>* vecBone);
+	void			SetWorldMatrix(_float4x4 WorldMatrix);
+	void			SetRotationMatrix(_float4x4 WorldMatrix);
+
 	PxTransform		ColliderTransform = { PxTransform(PxVec3(0.f,0.f,0.f)) };
 	PxTransform		ColliderTransform_Head = { PxTransform(PxVec3(0.f,0.f,0.f)) };
 	PxTransform		ColliderTransform_Right_Arm = { PxTransform(PxVec3(0.f,0.f,0.f)) };
@@ -71,6 +63,20 @@ public:
 	PxTransform		ColliderTransform_Right_Leg = { PxTransform(PxVec3(0.f,0.f,0.f)) };
 	PxTransform		ColliderTransform_Left_Shin = { PxTransform(PxVec3(0.f,0.f,0.f)) };
 	PxTransform		ColliderTransform_Right_Shin = { PxTransform(PxVec3(0.f,0.f,0.f)) };
+
+	PxShape* m_Shape_Head = { nullptr };
+	PxShape* m_Shape_Body = { nullptr };
+	PxShape* m_Shape_Right_Arm = { nullptr };
+	PxShape* m_Shape_Left_Arm = { nullptr };
+	PxShape* m_Shape_Right_ForeArm = { nullptr };
+	PxShape* m_Shape_Left_ForeArm = { nullptr };
+	PxShape* m_Shape_Pelvis = { nullptr };
+	PxShape* m_Shape_Left_Leg = { nullptr };
+	PxShape* m_Shape_Right_Leg = { nullptr };
+	PxShape* m_Shape_Left_Shin = { nullptr };
+	PxShape* m_Shape_Right_Shin = { nullptr };
+
+	_bool	 m_bRagdoll = { false };
 public:
 	static CPhysics_Controller* Create();
 
@@ -122,31 +128,6 @@ private:
 	_int						m_iMapMeshCount = { 0 };
 	vector<PxRigidStatic*>			m_vecFullMapObject;
 
-
-
-	//Ragdoll
-	PxRigidDynamic*				m_pHead = { nullptr };
-	PxRigidDynamic*				m_pBody = { nullptr };
-	PxRigidDynamic*				m_pRightArm = { nullptr };
-	PxRigidDynamic*				m_pRightForeArm = { nullptr };
-	PxRigidDynamic*				m_pLeftArm = { nullptr };
-	PxRigidDynamic*				m_pLeftForeArm = { nullptr };
-	PxRigidDynamic*				m_pPelvis = { nullptr };
-	PxRigidDynamic*				m_pRightLeg = { nullptr };
-	PxRigidDynamic*				m_pRightShin = { nullptr };
-	PxRigidDynamic*				m_pLeftLeg = { nullptr };
-	PxRigidDynamic*				m_pLeftShin = { nullptr };
-
-	PxSphericalJoint*			m_pNeck_Joint = { nullptr };
-	PxSphericalJoint*			m_pPelvis_Joint = { nullptr };
-	PxSphericalJoint*			m_pLeft_Shoulder_Joint = { nullptr };
-	PxSphericalJoint*			m_pRight_Shoulder_Joint = { nullptr };
-	PxSphericalJoint*			m_pLeft_Elbow_Joint = { nullptr };
-	PxSphericalJoint*			m_pRight_Elbow_Joint = { nullptr };
-	PxSphericalJoint*			m_pRight_Knee_Joint = { nullptr };
-	PxSphericalJoint*			m_pLeft_Knee_Joint = { nullptr };
-	PxSphericalJoint*			m_pRight_Hip_Joint = { nullptr };
-	PxSphericalJoint*			m_pLeft_Hip_Joint = { nullptr };
 	PxRigidDynamic* m_BodyCollider = { nullptr };
 	PxRigidDynamic* m_HeadCollider = { nullptr };
 	PxRigidDynamic* m_Left_Arm_Collider = { nullptr };
@@ -158,6 +139,8 @@ private:
 	PxRigidDynamic* m_Right_Leg_Collider = { nullptr };
 	PxRigidDynamic* m_Left_Shin_Collider = { nullptr };
 	PxRigidDynamic* m_Right_Shin_Collider = { nullptr };
+
+	class CRagdoll_Physics* m_pRagdoll_Physics = { nullptr };
 private:
 	_bool			m_bJump = { false };
 public:

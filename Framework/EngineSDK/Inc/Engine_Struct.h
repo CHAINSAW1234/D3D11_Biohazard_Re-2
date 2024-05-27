@@ -175,4 +175,10 @@ namespace Engine
 
 	}SOUND_DESC;
 
+	//For Ragdoll
+	// A list of 4x4 matrices representing the finalized transforms of each bone.
+	struct PoseTransforms
+	{
+		_matrix transforms[MAX_BONES];
+	};
 }

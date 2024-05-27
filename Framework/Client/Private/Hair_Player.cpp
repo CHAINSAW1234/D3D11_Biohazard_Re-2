@@ -70,6 +70,8 @@ void CHair_Player::Tick(_float fTimeDelta)
 
 void CHair_Player::Late_Tick(_float fTimeDelta)
 {
+	return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	static _float		fAdditionalHeight = { 0.f };

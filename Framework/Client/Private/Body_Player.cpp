@@ -280,6 +280,14 @@ void CBody_Player::Tick(_float fTimeDelta)
 		isSetRootRotation = !isSetRootRotation;
 	}
 
+	CModel::ANIM_PLAYING_DESC		AnimDesc;
+	//AnimDesc.iAnimIndex = 22;
+	AnimDesc.iAnimIndex = iAnimIndex;
+	AnimDesc.isLoop = true;
+	AnimDesc.fWeight = fWeight;
+	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
+	list<_uint>		iBoneIndices;
+	for (_uint i = 0; i < iNumBones; ++i)
 	m_pModelCom->Active_RootMotion_Rotation(isSetRootRotation);
 	m_pModelCom->Active_RootMotion_XZ(isSetRootXZ);
 	m_pModelCom->Active_RootMotion_Y(isSetRootY);
@@ -331,9 +339,18 @@ void CBody_Player::Tick(_float fTimeDelta)
 void CBody_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
+	
+	static bool Temp = false;
+	if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
+	{
+		Temp = true;
+	}
 
-	m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
-	//	m_pModelCom->Play_Animations(fTimeDelta);
+	//if(!Temp)
+	{
+		m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	}
+	Temp = true;
 
 	//Body
 	_float4x4 BoneCombined = m_pModelCom->GetBoneTransform(62);
@@ -405,7 +422,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	m_pGameInstance->SetColliderTransform_Right_ForeArm(BoneCombined);
 
 	//Pelvis
-	BoneCombined = m_pModelCom->GetBoneTransform(22);
+	BoneCombined = m_pModelCom->GetBoneTransform(60);
 	BoneCombined._41 *= 0.045f;
 	BoneCombined._42 *= 0.045f;
 	BoneCombined._43 *= 0.045f;
@@ -437,7 +454,6 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	XMStoreFloat4x4(&BoneCombined, Mat);
 	m_pGameInstance->SetColliderTransform_Left_Shin(BoneCombined);
 
-
 	//Right Leg
 	BoneCombined = m_pModelCom->GetBoneTransform(41);
 	BoneCombined._41 *= 0.045f;
@@ -461,7 +477,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 
 #ifdef _DEBUG
 	m_pGameInstance->SetColliderTransform_Right_Shin(BoneCombined);
-#endif
+
 	
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
@@ -657,7 +673,6 @@ HRESULT CBody_Player::Bind_ShaderResources()
 
 	/*if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;	*/
-
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))

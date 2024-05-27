@@ -98,6 +98,9 @@ namespace Engine
 #define SOUND_WEIGHT 0.1f
 #define SOUND_CHANNEL_MAX 32
 
+//For Ragdoll
+#define MAX_BONES 182
+
 #include "Engine_Typedef.h"
 #include "Engine_Macro.h"
 #include "Engine_Function.h"
@@ -120,4 +123,3 @@ using namespace Engine;
 #endif
 
 #endif // _DEBUG
-

@@ -121,7 +121,7 @@ public:
 	uniform_int_distribution<_int>		GetRandomDevice_Int(_int Start, _int End);
 
 public:/*For Physics Controller*/
-	_float4 GetPosition_Physics();
+	_float4 GetPosition_CCT(_int Index);
 	void	Simulate();
 	void	SetSimulate(_bool boolean)
 	{
@@ -137,7 +137,6 @@ public:/*For Physics Controller*/
 	_matrix	GetWorldMatrix_Rigid_Dynamic(_int Index);
 	void	Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 
-public://Temp
 	_float3* TerrainPos = { nullptr };
 	void	SetTerrainPos(_float3 * Pos)
 	{
@@ -188,6 +187,11 @@ public://Temp
 	void			SetColliderTransform_Right_Leg(_float4x4 Transform);
 	void			SetColliderTransform_Left_Shin(_float4x4 Transform);
 	void			SetColliderTransform_Right_Shin(_float4x4 Transform);
+
+	void			SetBone_Ragdoll(vector<class CBone*>* vecBone);
+	void			SetWorldMatrix(_float4x4 WorldMatrix);
+	void			SetRotationMatrix(_float4x4 RotationMatrix);
+	_int			Create_Controller(_float4 Pos);
 #ifdef _DEBUG
 	HRESULT Ready_RTVDebug(const wstring& strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT Draw_RTVDebug(const wstring& strMRTTag, class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
