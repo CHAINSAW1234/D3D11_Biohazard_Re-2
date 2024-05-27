@@ -63,6 +63,7 @@ float g_fSpotLightCutOff;
 float g_fSpotLightOutCutOff;
 float g_fSpotLightRange;
 
+
 //matrix g_LightViewMatrix[6];
 ////matrix g_LightViewMatrix[2][6];
 ////matrix g_LightProjMatrix[2];

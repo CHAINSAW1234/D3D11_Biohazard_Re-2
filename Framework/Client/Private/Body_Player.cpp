@@ -52,10 +52,29 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);*/
 
 	m_pModelCom->Set_RootBone("root");
+	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
-	m_pModelCom->Set_SpineBone("spine_0");
+	list<_uint>			LeftArmBoneIndices;
+	m_pModelCom->Get_Child_BonedIndices("l_arm_clavicle", LeftArmBoneIndices);
+	m_pModelCom->Add_Bone_Layer(TEXT("Left_Arm"), LeftArmBoneIndices);
 
-	m_pModelCom->Init_Separate_Bones();
+
+	list<_uint>			LowerBoneIndices;
+	for (_uint iBoneIndex = 0; iBoneIndex < 60; ++iBoneIndex)
+		LowerBoneIndices.emplace_back(iBoneIndex);
+	m_pModelCom->Add_Bone_Layer(TEXT("Lower"), LowerBoneIndices);
+
+	list<_uint>			UpperBoneIndices;
+	for (_uint iBoneIndex = 60; iBoneIndex < static_cast<_uint>(m_pModelCom->Get_BoneNames().size()); ++iBoneIndex)
+	{
+		list<_uint>::iterator		iter = { find(LeftArmBoneIndices.begin(), LeftArmBoneIndices.end(), iBoneIndex) };
+		if (LeftArmBoneIndices.end() != iter)
+			continue;
+
+		UpperBoneIndices.emplace_back(iBoneIndex);
+	}
+
+	m_pModelCom->Add_Bone_Layer(TEXT("Upper"), UpperBoneIndices);
 
 	return S_OK;
 }
@@ -96,37 +115,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 		--iAnimIndex;
 		if (0 > iAnimIndex)
 			iAnimIndex = 0;
-	}
-
-	static bool Temp = false;
-	static bool Temp2 = false;
-	if (UP == m_pGameInstance->Get_KeyState('P'))
-	{
-		Temp = !Temp;
-	}
-
-	if (UP == m_pGameInstance->Get_KeyState('O'))
-	{
-		Temp2 = !Temp2;
-	}
-
-	if (Temp)
-	{
-		m_pModelCom->Active_RootMotion_Rotation(true);
-	}
-	else
-	{
-		m_pModelCom->Active_RootMotion_Rotation(false);
-	}
-
-	if (Temp2)
-	{
-		m_pModelCom->Active_RootMotion_XZ(true);
-	}
-	else
-	{
-		m_pModelCom->Active_RootMotion_XZ(false);
-	}
+	}	
 
 	m_pModelCom->Set_TickPerSec(iAnimIndex, 40.f);
 
@@ -147,40 +136,62 @@ void CBody_Player::Tick(_float fTimeDelta)
 	}
 
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
-	AnimDesc.iAnimIndex = 22;
-	AnimDesc.isLoop = true;
-	AnimDesc.fWeight = fWeight;
-	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
-	list<_uint>		iBoneIndices;
-	for (_uint i = 0; i < iNumBones; ++i)
-	{
-		iBoneIndices.emplace_back(i);
-	}
-	AnimDesc.TargetBoneIndices = iBoneIndices;
+	//	AnimDesc.iAnimIndex = 30;
+	AnimDesc.iAnimIndex = iAnimIndex;
+	AnimDesc.isLoop = false;
+	//	AnimDesc.fWeight = fWeight;
+	AnimDesc.fWeight = 1.f;
+	AnimDesc.strBoneLayerTag = TEXT("Lower");
 	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
 
-	AnimDesc.iAnimIndex = 33;
-	AnimDesc.isLoop = true;
-	AnimDesc.fWeight = 1.f - fWeight;
-	iBoneIndices.clear();
-	for (_uint i = 0; i < iNumBones; ++i)
-	{
-		iBoneIndices.emplace_back(i);
-	}
-	AnimDesc.TargetBoneIndices = iBoneIndices;
+	//	AnimDesc.iAnimIndex = 34;
+	//	AnimDesc.iAnimIndex = 24;
+	AnimDesc.iAnimIndex = 34;
+	AnimDesc.isLoop = false;
+	//	AnimDesc.fWeight = 1.f - fWeight;
+	AnimDesc.fWeight = 0.1f;
+	AnimDesc.strBoneLayerTag = TEXT("Upper");
 	m_pModelCom->Set_Animation_Blend(AnimDesc, 1);
 
 
-	m_pModelCom->Set_Weight(0, fWeight);
-	m_pModelCom->Set_Weight(1, 1.f - fWeight);
+	AnimDesc.iAnimIndex = iAnimIndex + 1;
+	AnimDesc.isLoop = true;
+	//	AnimDesc.fWeight = 1.f - fWeight;
+	AnimDesc.fWeight = 1.f;
+	AnimDesc.strBoneLayerTag = TEXT("Left_Arm");
+	m_pModelCom->Set_Animation_Blend(AnimDesc, 2);
 
 
-	//	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
+	m_pModelCom->Set_Weight(0, 1.f);
+	m_pModelCom->Set_Weight(1, 1.f);
+	m_pModelCom->Set_Weight(2, 1.f);
+
+
+	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 
 	m_pModelCom->Set_RootBone("root");
-	//m_pModelCom->Active_RootMotion_XZ(false);
-	m_pModelCom->Active_RootMotion_Y(false);
-	//m_pModelCom->Active_RootMotion_Rotation(false);
+
+	static _bool		isSetRootXZ = false;
+	static _bool		isSetRootRotation = false;
+	static _bool		isSetRootY = false;
+	if (UP == m_pGameInstance->Get_KeyState('I'))
+	{
+		isSetRootY = !isSetRootY;
+	}
+
+	if (UP == m_pGameInstance->Get_KeyState('O'))
+	{
+		isSetRootXZ = !isSetRootXZ;
+	}
+
+	if (UP == m_pGameInstance->Get_KeyState('P'))
+	{
+		isSetRootRotation = !isSetRootRotation;
+	}
+
+	m_pModelCom->Active_RootMotion_Rotation(isSetRootRotation);
+	m_pModelCom->Active_RootMotion_XZ(isSetRootXZ);
+	m_pModelCom->Active_RootMotion_Y(isSetRootY);
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)
@@ -188,6 +199,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	//	m_pModelCom->Play_Animations(fTimeDelta);
 
 	//Body
 	_float4x4 BoneCombined = m_pModelCom->GetBoneTransform(62);

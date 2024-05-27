@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Default\Cl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Default\Engine.vcxproj", "{153CB156-E1E8-43F1-B96B-2AD83F824F72}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Animation_Tool", "Animation_Tool\Default\Animation_Tool.vcxproj", "{2C0DC49C-17AB-40C0-A8C5-385F4128E9D0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,8 +36,19 @@ Global
 		{153CB156-E1E8-43F1-B96B-2AD83F824F72}.Release|x64.Build.0 = Release|x64
 		{153CB156-E1E8-43F1-B96B-2AD83F824F72}.Release|x86.ActiveCfg = Release|Win32
 		{153CB156-E1E8-43F1-B96B-2AD83F824F72}.Release|x86.Build.0 = Release|Win32
+		{2C0DC49C-17AB-40C0-A8C5-385F4128E9D0}.Debug|x64.ActiveCfg = Debug|x64
+		{2C0DC49C-17AB-40C0-A8C5-385F4128E9D0}.Debug|x64.Build.0 = Debug|x64
+		{2C0DC49C-17AB-40C0-A8C5-385F4128E9D0}.Debug|x86.ActiveCfg = Debug|Win32
+		{2C0DC49C-17AB-40C0-A8C5-385F4128E9D0}.Debug|x86.Build.0 = Debug|Win32
+		{2C0DC49C-17AB-40C0-A8C5-385F4128E9D0}.Release|x64.ActiveCfg = Release|x64
+		{2C0DC49C-17AB-40C0-A8C5-385F4128E9D0}.Release|x64.Build.0 = Release|x64
+		{2C0DC49C-17AB-40C0-A8C5-385F4128E9D0}.Release|x86.ActiveCfg = Release|Win32
+		{2C0DC49C-17AB-40C0-A8C5-385F4128E9D0}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C3587F78-B942-4D60-B112-B50836F26CCB}
 	EndGlobalSection
 EndGlobal
