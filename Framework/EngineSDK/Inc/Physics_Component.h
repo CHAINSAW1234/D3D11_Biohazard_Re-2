@@ -34,6 +34,8 @@ public:
 	virtual _float4			GetTranslation() { return _float4(0.f, 0.f, 0.f, 1.f); }
 	virtual PxTransform				GetTransform_Px() { return PxTransform(); }
 	virtual void			Move(PxVec3 Dir, _float fTimeDelta) {};
+
+	virtual void			Release_Px() {}
 public:
 	static CPhysics_Component* Create();
 

@@ -21,6 +21,7 @@ public:
 
 	virtual void Move(PxVec3 Dir, _float fTimeDelta) override;
 	virtual _float4 GetTranslation() override;
+	virtual void	Release_Px() override;
 protected:
 
 private:

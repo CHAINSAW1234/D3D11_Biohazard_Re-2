@@ -65,7 +65,7 @@ PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, uint3
 	body_pos = XMVectorSetW(body_pos, 1.f);
 
 	PxShape* shape = m_Physics->createShape(PxCapsuleGeometry(r, half_height), *m_material);
-	shape->setSimulationFilterData(m_FilterData);
+	//shape->setSimulationFilterData(m_FilterData);
 
 	XMVECTOR rot_quat = XMQuaternionRotationMatrix(rotation);
 	PxTransform local(to_quat(rot_quat));
@@ -89,7 +89,7 @@ PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, uint3
 
 	m_ragdoll->m_rigid_bodies[parent_idx] = body;
 	body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
-	float sleepThreshold = 0.5f;
+	float sleepThreshold = 1.f;
 	body->setSleepThreshold(sleepThreshold);
 	return body;
 }
@@ -109,7 +109,7 @@ PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, CRagd
 #pragma endregion
 
 	PxShape* shape = m_Physics->createShape(PxCapsuleGeometry(r, l), *m_material);
-	shape->setSimulationFilterData(m_FilterData);
+	//shape->setSimulationFilterData(m_FilterData);
 
 	PxTransform local(to_quat(XMQuaternionRotationMatrix(rotation)));
 	shape->setLocalPose(local);
@@ -154,7 +154,7 @@ PxRigidDynamic* CRagdoll_Physics::create_sphere_bone(uint32_t parent_idx, CRagdo
 #pragma endregion
 
 	PxShape* shape = m_Physics->createShape(PxSphereGeometry(r), *m_material);
-	shape->setSimulationFilterData(m_FilterData);
+	//shape->setSimulationFilterData(m_FilterData);
 
 	PxRigidDynamic* body = m_Physics->createRigidDynamic(PxTransform(to_vec3(parent_pos)));
 
@@ -163,6 +163,9 @@ PxRigidDynamic* CRagdoll_Physics::create_sphere_bone(uint32_t parent_idx, CRagdo
 
 	m_ragdoll->m_rigid_bodies[parent_idx] = body;
 	body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	float sleepThreshold = 0.5f;
+	body->setSleepThreshold(sleepThreshold);
+
 	return body;
 }
 
@@ -581,13 +584,13 @@ void CRagdoll_Physics::update_animations()
 	if (m_bRagdoll == false)
 		return;
 
+	//m_WorldMatrix._41 = 0.f;
+	//m_WorldMatrix._42 = 0.f;
+	//m_WorldMatrix._43 = 0.f;
 	auto RotMat = m_RotationMatrix;
 	RotMat._41 = m_WorldMatrix._41;
 	RotMat._42 = m_WorldMatrix._42;
 	RotMat._43 = m_WorldMatrix._43;
-
-	auto World = m_WorldMatrix;
-	World._42 = 0.f;
 
 	auto joint = m_skeletal_mesh->skeleton()->joints();
 
@@ -596,13 +599,13 @@ void CRagdoll_Physics::update_animations()
 		int i = 0;
 		for (auto& it : *m_vecBone)
 		{
-			for (int i = 0; i < 182; ++i)
+			for (int i = 0; i < 173; ++i)
 			{
 				if (joint[i].name.empty() == false)
 				{
 					if (it->Get_Name() == joint[i].name)
 					{
-						m_Global_transforms.transforms[i] = XMLoadFloat4x4(it->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(&World);
+						m_Global_transforms.transforms[i] = XMLoadFloat4x4(it->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(&m_WorldMatrix);
 						++i;
 					}
 				}
@@ -683,7 +686,7 @@ void CRagdoll_Physics::update_animations()
 
 			for (auto& it : *m_vecBone)
 			{
-				for (int i = 0; i < 182; ++i)
+				for (int i = 0; i < 173; ++i)
 				{
 					if (it->Get_Name() == joint[i].name)
 					{

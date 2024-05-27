@@ -31,8 +31,8 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	m_Pvd = PxCreatePvd(*m_Foundation);
 	m_Transport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
 	m_Pvd->connect(*m_Transport, physx::PxPvdInstrumentationFlag::eALL);
-	m_ToleranceScale.length = 1000;
-	m_ToleranceScale.speed = 981;
+	m_ToleranceScale.length = 1;
+	m_ToleranceScale.speed = 9.81;
 	m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, m_ToleranceScale, true, m_Pvd);
 	physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
@@ -140,13 +140,13 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 
 		if (m_vecCharacter_Controller[0])
 		{
-			Safe_Release(m_vecCharacter_Controller[0]);
+			m_vecCharacter_Controller[0]->Release_Px();
 		}
 	}
 
 	m_pRagdoll_Physics->Update(fTimeDelta);
 
-	m_Scene->simulate(fTimeDelta);
+	m_Scene->simulate(1/60.f);
 	m_Scene->fetchResults(true);
 }
 
@@ -844,12 +844,12 @@ void CPhysics_Controller::InitTerrain()
 	PxTriangleMeshGeometry meshGeometry(m_TerrainMesh);
 	PxShape* terrainShape = m_Physics->createShape(meshGeometry, *m_Physics->createMaterial(0.5f, 0.5f, 0.5f));
 
-	//PxFilterData filterData_Character;
-	//filterData_Character.word0 = COLLISION_CATEGORY::Category1;
-	//filterData_Character.word1 = Category1 | Category2 | Category3;
+	PxFilterData filterData_Character;
+	filterData_Character.word0 = COLLISION_CATEGORY::Category1;
+	filterData_Character.word1 = Category1 | Category2 | Category3;
 
-	//// 캐릭터 컨트롤러의 PxShape에 충돌 필터 데이터 설정
-	//terrainShape->setSimulationFilterData(filterData_Character);
+	// 캐릭터 컨트롤러의 PxShape에 충돌 필터 데이터 설정
+	terrainShape->setSimulationFilterData(filterData_Character);
 
 	m_TerrainActor->attachShape(*terrainShape);
 	terrainShape->release();
@@ -857,6 +857,8 @@ void CPhysics_Controller::InitTerrain()
 	// PhysX 씬에 지형 추가
 	PxScene* scene = m_Scene; // 이미 초기화된 PxScene 인스턴스
 	scene->addActor(*m_TerrainActor);
+
+	m_pGameInstance->SetSimulate(true);
 }
 
 void CPhysics_Controller::Free()

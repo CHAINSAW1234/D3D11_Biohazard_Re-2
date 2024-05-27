@@ -918,6 +918,11 @@ _int CGameInstance::Create_Controller(_float4 Pos)
 	return m_pPhysics_Controller->Create_Controller(_float4(0.f,0.f,0.f,1.f));
 }
 
+void CGameInstance::Cook_Terrain()
+{
+	m_pPhysics_Controller->InitTerrain();
+}
+
 #ifdef _DEBUG
 
 HRESULT CGameInstance::Ready_RTVDebug(const wstring & strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)

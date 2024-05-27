@@ -192,6 +192,7 @@ public:/*For Physics Controller*/
 	void			SetWorldMatrix(_float4x4 WorldMatrix);
 	void			SetRotationMatrix(_float4x4 RotationMatrix);
 	_int			Create_Controller(_float4 Pos);
+	void			Cook_Terrain();
 #ifdef _DEBUG
 	HRESULT Ready_RTVDebug(const wstring& strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT Draw_RTVDebug(const wstring& strMRTTag, class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);

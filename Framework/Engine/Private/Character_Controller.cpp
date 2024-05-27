@@ -57,7 +57,14 @@ _float4 CCharacter_Controller::GetTranslation()
 	return Pos;
 }
 
+void CCharacter_Controller::Release_Px()
+{
+	if (m_pController)
+		m_pController->release();
+	m_pController = nullptr;
+}
+
 void CCharacter_Controller::Free()
 {
-	m_pController->release();
+
 }
