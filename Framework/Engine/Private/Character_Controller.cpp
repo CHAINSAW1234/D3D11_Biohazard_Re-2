@@ -51,7 +51,7 @@ _float4 CCharacter_Controller::GetTranslation()
 
 	_float4 Pos;
 	Pos.x = static_cast<_float>(position.x);
-	Pos.y = static_cast<_float>(position.y) - 1.f;
+	Pos.y = static_cast<_float>(position.y)-1.f;
 	Pos.z = static_cast<_float>(position.z);
 	Pos.w = 1.f;
 	return Pos;
