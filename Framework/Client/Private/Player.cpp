@@ -298,6 +298,14 @@ HRESULT CPlayer::Initialize_PartModels()
 	pHeadModel->Set_Surbodinate("neck_0", true);
 	pHeadModel->Set_Parent_CombinedMatrix_Ptr("neck_0", pNeck0CombinedMatrix);
 
+	_float4x4* pNeck1CombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("neck_1")) };
+	pHeadModel->Set_Surbodinate("neck_1", true);
+	pHeadModel->Set_Parent_CombinedMatrix_Ptr("neck_1", pNeck1CombinedMatrix);
+
+	_float4x4* pHeadCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("head")) };
+	pHeadModel->Set_Surbodinate("head", true);
+	pHeadModel->Set_Parent_CombinedMatrix_Ptr("head", pHeadCombinedMatrix);
+
 	_float4x4* pLeftArmCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("l_arm_clavicle")) };
 	pHeadModel->Set_Surbodinate("l_arm_clavicle", true);
 	pHeadModel->Set_Parent_CombinedMatrix_Ptr("l_arm_clavicle", pLeftArmCombinedMatrix);
@@ -315,9 +323,12 @@ HRESULT CPlayer::Initialize_PartModels()
 	pHeadModel->Set_Parent_CombinedMatrix_Ptr("r_trapA_muscle", pRightTrapAMuscleCombinedMatrix);
 
 
-	_float4x4* pNeck1CombinedMatrix = { const_cast<_float4x4*>(pHeadModel->Get_CombinedMatrix("neck_1")) };
+	//	pNeck1CombinedMatrix = { const_cast<_float4x4*>(pHeadModel->Get_CombinedMatrix("neck_1")) };
 	pHairModel->Set_Surbodinate("neck_1", true);
 	pHairModel->Set_Parent_CombinedMatrix_Ptr("neck_1", pNeck1CombinedMatrix);
+
+	pHairModel->Set_Surbodinate("head", true);
+	pHairModel->Set_Parent_CombinedMatrix_Ptr("head", pHeadCombinedMatrix);
 
 	return S_OK;
 }

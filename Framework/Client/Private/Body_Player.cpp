@@ -285,6 +285,31 @@ void CBody_Player::Tick(_float fTimeDelta)
 	m_pModelCom->Active_RootMotion_XZ(isSetRootXZ);
 	m_pModelCom->Active_RootMotion_Y(isSetRootY);
 	m_pModelCom->Active_RootMotion_Rotation(isSetRootRotation);
+
+
+	WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix)};
+	_matrix			ScaleMatrix = { XMMatrixScaling(1.f, 1.f, 1.f) };
+	WorldMatrix = ScaleMatrix * WorldMatrix;
+
+	_matrix			NeckCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("neck_0")) };
+	_matrix			NeckWorldMatrix = { NeckCombinedMatrix * WorldMatrix };
+	m_PartColliders[0]->Tick(NeckWorldMatrix);
+
+	_matrix			LArmCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_arm_clavicle")) };
+	_matrix			LArmWorldMatrix = { NeckCombinedMatrix * WorldMatrix };
+	m_PartColliders[1]->Tick(LArmWorldMatrix);
+
+	_matrix			RArmCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("r_arm_clavicle")) };
+	_matrix			RArmWorldMatrix = { RArmCombinedMatrix * WorldMatrix };
+	m_PartColliders[2]->Tick(RArmWorldMatrix);
+
+	_matrix			LTrapACombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_trapA_muscle")) };
+	_matrix			LTrapAWorldMatrix = { LTrapACombinedMatrix * WorldMatrix };
+	m_PartColliders[3]->Tick(LTrapAWorldMatrix);
+
+	_matrix			LTrapBCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("r_trapA_muscle")) };
+	_matrix			LTrapBWorldMatrix = { LTrapBCombinedMatrix * WorldMatrix };
+	m_PartColliders[4]->Tick(LTrapBWorldMatrix);
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)
@@ -297,11 +322,10 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 		Temp = true;
 	}
 
-	//if(!Temp)
+	if(!Temp)
 	{
 		m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 	}
-	Temp = true;
 
 	//Body
 	_float4x4 BoneCombined = m_pModelCom->GetBoneTransform(62);
@@ -475,6 +499,7 @@ HRESULT CBody_Player::Render()
 	m_PartColliders[1]->Render();
 	m_PartColliders[2]->Render();
 	m_PartColliders[3]->Render();
+	m_PartColliders[4]->Render();
 
 	/*for (auto& pPartCollider : m_PartColliders)
 	{
@@ -600,7 +625,7 @@ HRESULT CBody_Player::Add_Components()
 		CBounding_OBB::BOUNDING_OBB_DESC		ColliderOBBDesc{};
 		ColliderOBBDesc.vCenter = { 0.f, 0.f, 0.f };
 		ColliderOBBDesc.vRotation = { 0.f, 0.f, 0.f };
-		ColliderOBBDesc.vSize = { 1.f, 1.f, 1.f };
+		ColliderOBBDesc.vSize = { 10.f, 10.f, 10.f };
 
 		CComponent*			pCollider = { m_pGameInstance->Clone_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"), &ColliderOBBDesc) };
 		if (nullptr == pCollider)
