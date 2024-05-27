@@ -167,7 +167,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	//	fMoveHieght = 0.f;
 
-	_vector			vMoveDir = { XMVectorSet(0.f, 1.f, 1.f, 0.f) * fMoveHieght };
+	_vector			vMoveDir = { XMVectorSet(0.f, 1.f, 0.f, 0.f) * fMoveHieght };
 	_vector			vCurrentPos = { m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION) };
 	_vector			vCurrentBallPos = { XMVector4Transform(vCurrentPos, XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball"))) };
 
@@ -287,29 +287,21 @@ void CBody_Player::Tick(_float fTimeDelta)
 	m_pModelCom->Active_RootMotion_Rotation(isSetRootRotation);
 
 
-	WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix)};
-	_matrix			ScaleMatrix = { XMMatrixScaling(1.f, 1.f, 1.f) };
-	WorldMatrix = ScaleMatrix * WorldMatrix;
+	vector<_float4>			Translations = { m_pModelCom->Get_ResultTranslation_IK(TEXT("IK_L_LEG")) };
 
-	_matrix			NeckCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("neck_0")) };
-	_matrix			NeckWorldMatrix = { NeckCombinedMatrix * WorldMatrix };
-	m_PartColliders[0]->Tick(NeckWorldMatrix);
+	_uint		iIndex = { 0 };
+	for (_float4 vTranslation : Translations)
+	{
+		WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
 
-	_matrix			LArmCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_arm_clavicle")) };
-	_matrix			LArmWorldMatrix = { NeckCombinedMatrix * WorldMatrix };
-	m_PartColliders[1]->Tick(LArmWorldMatrix);
+		_vector			vPosition = { XMVector3TransformCoord(vTranslation, WorldMatrix) };
+		_matrix			TranslationMatrix = { XMMatrixTranslation(vPosition.m128_f32[0], vPosition.m128_f32[1], vPosition.m128_f32[2]) };
+		_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (4 - iIndex), 0.01f * (4 - iIndex), 0.01f * (4 - iIndex))};
 
-	_matrix			RArmCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("r_arm_clavicle")) };
-	_matrix			RArmWorldMatrix = { RArmCombinedMatrix * WorldMatrix };
-	m_PartColliders[2]->Tick(RArmWorldMatrix);
+		WorldMatrix = { ScaleMatrix * TranslationMatrix };
 
-	_matrix			LTrapACombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_trapA_muscle")) };
-	_matrix			LTrapAWorldMatrix = { LTrapACombinedMatrix * WorldMatrix };
-	m_PartColliders[3]->Tick(LTrapAWorldMatrix);
-
-	_matrix			LTrapBCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("r_trapA_muscle")) };
-	_matrix			LTrapBWorldMatrix = { LTrapBCombinedMatrix * WorldMatrix };
-	m_PartColliders[4]->Tick(LTrapBWorldMatrix);
+		m_PartColliders[iIndex++]->Tick(WorldMatrix);
+	}
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)

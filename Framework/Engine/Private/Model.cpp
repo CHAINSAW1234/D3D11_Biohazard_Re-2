@@ -296,6 +296,11 @@ void CModel::Set_Blend_IK(wstring strIKTag, _float fBlend)
 	m_IKInfos[strIKTag].fBlend = fBlend;
 }
 
+vector<_float4> CModel::Get_ResultTranslation_IK(const wstring& strIKTag)
+{
+	return m_IKInfos[strIKTag].BoneTranslations;
+}
+
 void CModel::Apply_IK(class CTransform* pTransform, IK_INFO& IkInfo)
 {
 	if (-1 == IkInfo.iEndEffectorIndex || -1 == IkInfo.iIKRootBoneIndex)
@@ -330,10 +335,6 @@ void CModel::Apply_IK(class CTransform* pTransform, IK_INFO& IkInfo)
 	{
 		//	EndEffector로 부터 StartJoint로의 정방향 순회 => 자식 부터 부모순으로...
 		Update_Forward_Reaching_IK(IkInfo);
-
-		if (i == IkInfo.iNumIteration - 1) {
-			break;
-		}
 
 		//	StartJoint로 부터 EndEffector로의 역방향 순회 => 부모 부터 자식순으로
 		Update_Backward_Reaching_IK(IkInfo);
@@ -398,6 +399,8 @@ void CModel::Update_Distances_Translations_IK(IK_INFO& IkInfo)
 	{
 		IkInfo.BoneTranslations[i] = IkInfo.BoneTranslationsOrigin[i];
 	}
+
+	IkInfo.TargetDistancesToChild[iNumIKIndices - 1] = 0.f;
 }
 
 void CModel::Update_Forward_Reaching_IK(IK_INFO& IkInfo)
@@ -518,7 +521,7 @@ void CModel::Update_CombinedMatrices_BoneChain(IK_INFO& IkInfo)
 
 		_matrix		MyCombinedMatrix = { MyTransformMatrix * ParrentCombinedMatrix };
 
-		m_Bones[iBoneIndex]->Set_Combined_Matrix(MyCombinedMatrix);
+		m_Bones[iBoneIndex]->Set_Combined_Matrix(MyCombinedMatrix);		
 	}
 }
 
