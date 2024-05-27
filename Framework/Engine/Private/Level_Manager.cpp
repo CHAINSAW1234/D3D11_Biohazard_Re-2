@@ -53,6 +53,11 @@ HRESULT CLevel_Manager::Render()
 	return m_pCurrentLevel->Render();
 }
 
+_uint CLevel_Manager::Get_CurrentLevel()
+{
+	return m_iCurrentLevelID;
+}
+
 CLevel_Manager * CLevel_Manager::Create()
 {
 	CLevel_Manager*		pInstance = new CLevel_Manager();

@@ -52,6 +52,12 @@
     <Filter Include="97.ShaderFiles">
       <UniqueIdentifier>{08fbd261-09aa-4e48-b887-6193bd937ae4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\ImGui">
+      <UniqueIdentifier>{4d8ce64a-9c4e-41ee-a91f-c269cf63f96c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\ImGui\Include">
+      <UniqueIdentifier>{e7488c44-9bae-44d3-8c79-ba77aba84824}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -92,6 +98,72 @@
     </ClCompile>
     <ClCompile Include="..\Private\Weapon.cpp">
       <Filter>02.GameObject\Player\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GUIObject.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\IMGuiManager.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Model_Selector.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool_Collider.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool_Selector.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool_Transformation.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AnimationEditor.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Debuger.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Editor.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_demo.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_draw.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_impl_dx11.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_impl_win32.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_tables.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_widgets.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImGuizmo.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImSequencer.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\GraphEditor.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImCurveEdit.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImGradient.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +217,78 @@
     </ClInclude>
     <ClInclude Include="..\Public\Weapon.h">
       <Filter>02.GameObject\Player\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Debuger.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Editor.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GUIObject.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\IMGuiManager.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Model_Selector.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_Collider.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_Selector.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_Transformation.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AnimationEditor.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imgui.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imgui_impl_dx11.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imgui_impl_win32.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imgui_internal.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\ImGuizmo.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\ImSequencer.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imstb_rectpack.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imstb_textedit.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imstb_truetype.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\ImZoomSlider.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\GraphEditor.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imconfig.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\ImCurveEdit.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\ImGradient.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

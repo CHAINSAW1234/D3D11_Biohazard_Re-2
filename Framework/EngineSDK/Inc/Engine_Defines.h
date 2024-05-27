@@ -76,6 +76,11 @@ using namespace DirectX;
 
 #include <fstream>
 
+/* ImGui */
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
+
 using namespace std;
 
 namespace Engine

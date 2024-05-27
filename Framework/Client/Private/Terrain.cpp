@@ -43,7 +43,8 @@ void CTerrain::Late_Tick(_float fTimeDelta)
 	//m_pVIBufferCom->Culling(m_pTransformCom->Get_WorldMatrix_Inverse());
 
 
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD, this);
+	//	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pNavigationCom);
@@ -68,6 +69,21 @@ HRESULT CTerrain::Render()
 
 
 	return S_OK;
+}
+
+_float3 CTerrain::Compute_PickPos(_fvector vRayPos, _fvector vRayDir)
+{
+	_float4		vPickPosFloat4;
+
+	_bool		isPicked = { false };
+	isPicked = m_pVIBufferCom->Compute_Picking(m_pTransformCom, vRayPos, vRayDir, &vPickPosFloat4);
+
+	if (false == isPicked)
+	{
+		isPicked = m_pVIBufferCom->Compute_Picking(m_pTransformCom, vRayPos, vRayDir * -1.f, &vPickPosFloat4);
+	}
+
+	return vPickPosFloat4;
 }
 
 HRESULT CTerrain::Add_Components()

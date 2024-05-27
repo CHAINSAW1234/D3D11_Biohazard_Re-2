@@ -111,7 +111,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../Public/;C:\vcpkg\installed\x64-windows\include/physx;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;..\..\imguilib;C:\vcpkg\installed\x64-windows\include/physx;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/MP /Zm2000 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -160,7 +160,7 @@ UpdateLib.bat</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../Public/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;..\..\imguilib;</AdditionalIncludeDirectories>
       <AdditionalOptions>/MP /Zm2000 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -201,6 +201,7 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\Collider.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
     <ClCompile Include="..\Private\Component_Manager.cpp" />
+    <ClCompile Include="..\Private\FSM.cpp" />
     <ClCompile Include="..\Private\KeyBoard.cpp" />
     <ClCompile Include="..\Private\Model_Extractor.cpp" />
     <ClCompile Include="..\Private\Mouse.cpp" />
@@ -236,6 +237,7 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\private\RenderTarget.cpp" />
     <ClCompile Include="..\private\Shader.cpp" />
     <ClCompile Include="..\Private\Sound_Manager.cpp" />
+    <ClCompile Include="..\Private\State.cpp" />
     <ClCompile Include="..\private\Target_Manager.cpp" />
     <ClCompile Include="..\private\Texture.cpp" />
     <ClCompile Include="..\Private\Timer.cpp" />
@@ -270,6 +272,7 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\Component.h" />
     <ClInclude Include="..\Public\Component_Manager.h" />
     <ClInclude Include="..\Public\Engine_Enums.h" />
+    <ClInclude Include="..\Public\FSM.h" />
     <ClInclude Include="..\Public\KeyBoard.h" />
     <ClInclude Include="..\Public\Model_Enums.h" />
     <ClInclude Include="..\Public\Model_Extractor.h" />
@@ -312,6 +315,7 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\public\RenderTarget.h" />
     <ClInclude Include="..\public\Shader.h" />
     <ClInclude Include="..\Public\Sound_Manager.h" />
+    <ClInclude Include="..\Public\State.h" />
     <ClInclude Include="..\public\Target_Manager.h" />
     <ClInclude Include="..\public\Texture.h" />
     <ClInclude Include="..\Public\Timer.h" />

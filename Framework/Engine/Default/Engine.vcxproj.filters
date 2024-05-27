@@ -211,6 +211,15 @@
     <Filter Include="01.Utility\02.Components\Model\Bone_Layer">
       <UniqueIdentifier>{4daac0ca-6ab0-4b19-93bb-2d1c950bf21f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\12.FSM">
+      <UniqueIdentifier>{99aaf032-a00f-4c2f-a94e-916bd9843ea4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\12.FSM\FSM">
+      <UniqueIdentifier>{31d0a86e-fe17-40af-871c-0530f097fd64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\12.FSM\State">
+      <UniqueIdentifier>{9df33316-824c-41e2-a6e3-89c21a22c7ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -410,6 +419,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Bone_Layer.cpp">
       <Filter>01.Utility\02.Components\Model\Bone_Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FSM.cpp">
+      <Filter>01.Utility\12.FSM\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\State.cpp">
+      <Filter>01.Utility\12.FSM\State</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -631,6 +646,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Model_Enums.h">
       <Filter>01.Utility\02.Components\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FSM.h">
+      <Filter>01.Utility\12.FSM\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\State.h">
+      <Filter>01.Utility\12.FSM\State</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

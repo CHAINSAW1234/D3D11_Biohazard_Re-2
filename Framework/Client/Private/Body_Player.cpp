@@ -78,7 +78,7 @@ HRESULT CBody_Player::Initialize(void * pArg)
 
 	//	m_pModelCom->Add_IK("root", "l_leg_ball", TEXT("IK_L_LEG"), 1);
 	m_pModelCom->Add_IK("l_leg_femur", "l_leg_ball", TEXT("IK_L_LEG"), 1, 1.f);
-	m_pModelCom->Add_IK("r_leg_femur", "r_leg_ball", TEXT("IK_R_LEG"), 1, 1.f);
+	//	m_pModelCom->Add_IK("r_leg_femur", "r_leg_ball", TEXT("IK_R_LEG"), 1, 1.f);
 	m_pModelCom->Add_IK("r_arm_clavicle", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
 
 	return S_OK;
@@ -171,14 +171,52 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	_vector			vDirectionToBall = { vCurrentBallPos - vCurrentPos };
 
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////TEST/////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+
+	CVIBuffer_Terrain* pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_LandBackGround"), TEXT("Com_VIBuffer"), 0))) };
+	CTransform* pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_LandBackGround"), TEXT("Com_Transform"), 0))) };
+	if (nullptr != pTerrainBuffer &&
+		nullptr != pTerrainTransform)
+	{
+		_matrix			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+		_matrix			BallCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball")) };
+
+		_matrix			BallWorldMatrix = { BallCombinedMatrix * WorldMatrix };
+
+		_vector		vPosition = { BallWorldMatrix.r[CTransform::STATE_POSITION] };
+		_float4		vPickPosFloat4;
+		pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
+
+		_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
+		vMoveDir = vResultPos - vPosition;
+
+
+		if (0.f >= XMVectorGetY(vMoveDir))
+			vMoveDir = XMVectorZero();
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+
 	//	_vector			vMoveDir = { XMVectorSetY(vCurrentBallPos, XMVectorGetY(vCurrentPos) + 0.05f) - vCurrentBallPos };
 	//	_vector			vMoveDir = { XMVectorSetY(vCurrentBallPos, XMVectorGetY(vCurrentPos) + 0.05f) - vCurrentBallPos };
 	m_pModelCom->Set_Direction_IK(TEXT("IK_L_LEG"), vMoveDir);
-	m_pModelCom->Set_Direction_IK(TEXT("IK_R_LEG"), vMoveDir);
-	m_pModelCom->Set_Direction_IK(TEXT("IK_R_ARM"), vMoveDir);
+	//	m_pModelCom->Set_Direction_IK(TEXT("IK_R_LEG"), vMoveDir);
+	//	m_pModelCom->Set_Direction_IK(TEXT("IK_R_ARM"), vMoveDir);
 
 	m_pModelCom->Set_Blend_IK(TEXT("IK_L_LEG"), fBlend);
-	m_pModelCom->Set_Blend_IK(TEXT("IK_R_LEG"), fBlend);
+	//	m_pModelCom->Set_Blend_IK(TEXT("IK_R_LEG"), fBlend);
 	m_pModelCom->Set_Blend_IK(TEXT("IK_R_ARM"), fBlend);
 
 	/*_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
@@ -194,7 +232,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	AnimDesc.isLoop = true;
 	//	AnimDesc.fWeight = fWeight;
 	AnimDesc.fWeight = 1.f;
-	AnimDesc.strBoneLayerTag = TEXT("Lower");
+	AnimDesc.strBoneLayerTag = TEXT("Default");
 	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
 
 	//	AnimDesc.iAnimIndex = 34;
@@ -216,7 +254,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 
 	m_pModelCom->Set_Weight(0, 1.f);
-	m_pModelCom->Set_Weight(1, 1.f);
+	m_pModelCom->Set_Weight(1, 0.f);
 	m_pModelCom->Set_Weight(2, 1.f);
 
 
@@ -672,4 +710,8 @@ void CBody_Player::Free()
 	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pShaderCom);	
 	Safe_Release(m_pModelCom);
+
+	for (auto& pCollider : m_PartColliders)
+		Safe_Release(pCollider);
+	m_PartColliders.clear();
 }

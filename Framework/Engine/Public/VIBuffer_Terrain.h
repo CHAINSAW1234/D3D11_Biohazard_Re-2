@@ -17,6 +17,9 @@ public:
 
 public:
 	void Culling(_fmatrix WorldMatrixInv);
+	_bool Compute_Picking(const class CTransform* pTransform, _fvector vRayPos, _fvector vRayDir, _Out_ _float4* pPickPos);
+	void Compute_Height(const class CTransform* pTransform, _fvector vPosition, _Out_ _float4* pPosition);
+
 private:
 	_uint				m_iNumVerticesX = { 0 };
 	_uint				m_iNumVerticesZ = { 0 };
