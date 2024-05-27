@@ -394,6 +394,19 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		memcpy_s(&pVertices[i].vTangent, sizeof(_float3), &Vertices[i].vTangent, sizeof(_float3));
 		memcpy_s(&pVertices[i].vBlendIndices, sizeof(XMUINT4), &Vertices[i].vBlendIndices, sizeof(XMUINT4));
 		memcpy_s(&pVertices[i].vBlendWeights, sizeof(_float4), &Vertices[i].vBlendWeights, sizeof(_float4));
+
+		_float			fTotalWeights = { Vertices[i].vBlendWeights.x + Vertices[i].vBlendWeights.y + Vertices[i].vBlendWeights.z + Vertices[i].vBlendWeights.w };
+		
+
+		if (Vertices[i].vBlendWeights.w == 0.f)
+		{
+			_int		iA = 0;
+
+			if (abs(1.f - fTotalWeights) > 0.0001f)
+			{
+				_int		iA = { 0 };
+			}
+		}
 	}
 
 	m_iNumBones = (_uint)Bones.size();

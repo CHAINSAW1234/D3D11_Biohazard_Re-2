@@ -1,0 +1,3 @@
+#pragma once
+
+enum MODEL_TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };

@@ -17,6 +17,7 @@ public:
 		_float	fFar = { 0.0f };
 	}CAMERA_DESC;
 
+
 protected:
 	CCamera(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CCamera(const CCamera& rhs);	
@@ -41,12 +42,9 @@ protected:
 protected:
 	HRESULT Bind_PipeLines();
 
-
-
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;
 	virtual void Free() override;
 };
-
 
 END

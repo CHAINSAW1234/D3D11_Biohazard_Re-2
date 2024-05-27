@@ -54,12 +54,9 @@ void CForkLift::Late_Tick(_float fTimeDelta)
 
 HRESULT CForkLift::Render()
 {
-	return S_OK;
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
-
-
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 

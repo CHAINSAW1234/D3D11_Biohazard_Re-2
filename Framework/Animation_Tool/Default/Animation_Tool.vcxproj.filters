@@ -1,0 +1,330 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="00.MainApp">
+      <UniqueIdentifier>{5b3c8fab-8906-4bfd-acbd-f8af7c2664bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Default">
+      <UniqueIdentifier>{c210a329-9764-414f-a568-70bc9ada3c01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Defines">
+      <UniqueIdentifier>{006815a9-0628-485a-9c1c-236e0e5265ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels">
+      <UniqueIdentifier>{408ee095-973f-4c95-8f02-cfc640e80e92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\Logo">
+      <UniqueIdentifier>{28f489d1-1b4f-489b-99d0-f4470ecc35ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\Loading">
+      <UniqueIdentifier>{1dcbbb20-8ec0-45d2-af66-aceae1fdf511}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\Tool">
+      <UniqueIdentifier>{6ade123f-3272-49af-8a91-83a3e360dbe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\Loading\Loader">
+      <UniqueIdentifier>{aa67799f-5c89-43c6-866f-051341498c25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject">
+      <UniqueIdentifier>{d58e2f86-42b3-4bdc-9b1f-ea35ac8ced2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Camera">
+      <UniqueIdentifier>{017312b0-ccf2-4e45-b2f1-9f686d0a3929}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Player">
+      <UniqueIdentifier>{15dad106-b3c8-402d-a75a-f4f99b7e4160}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Terrain">
+      <UniqueIdentifier>{3c04d30a-6ea5-4dd2-a51b-98354273f939}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Player\Body">
+      <UniqueIdentifier>{9f22826a-0d74-40ba-970f-7c26d467298f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Player\Head">
+      <UniqueIdentifier>{1dc86499-1766-45da-b187-ba1dbf4f1d55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Player\Hair">
+      <UniqueIdentifier>{f0530ad8-e275-408c-a3fc-793a36854f9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Player\Weapon">
+      <UniqueIdentifier>{6b223267-b68d-47ed-ad2c-63b9d42e641b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles">
+      <UniqueIdentifier>{08fbd261-09aa-4e48-b887-6193bd937ae4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\ImGui">
+      <UniqueIdentifier>{4d8ce64a-9c4e-41ee-a91f-c269cf63f96c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\ImGui\Include">
+      <UniqueIdentifier>{e7488c44-9bae-44d3-8c79-ba77aba84824}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Private\MainApp.cpp">
+      <Filter>00.MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation_Tool.cpp">
+      <Filter>98.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>98.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Tool.cpp">
+      <Filter>01.Levels\Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Loader.cpp">
+      <Filter>01.Levels\Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Loading.cpp">
+      <Filter>01.Levels\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Logo.cpp">
+      <Filter>01.Levels\Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Free.cpp">
+      <Filter>02.GameObject\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Player.cpp">
+      <Filter>02.GameObject\Player\Body</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hair_Player.cpp">
+      <Filter>02.GameObject\Player\Hair</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Head_Player.cpp">
+      <Filter>02.GameObject\Player\Head</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player.cpp">
+      <Filter>02.GameObject\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Weapon.cpp">
+      <Filter>02.GameObject\Player\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GUIObject.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\IMGuiManager.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Model_Selector.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool_Collider.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool_Selector.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool_Transformation.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AnimationEditor.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Debuger.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Editor.cpp">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_demo.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_draw.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_impl_dx11.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_impl_win32.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_tables.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_widgets.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImGuizmo.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImSequencer.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\GraphEditor.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImCurveEdit.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImGradient.cpp">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Public\MainApp.h">
+      <Filter>00.MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation_Tool.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_Defines.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_Enums.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_Tool.h">
+      <Filter>01.Levels\Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Loader.h">
+      <Filter>01.Levels\Loading\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_Loading.h">
+      <Filter>01.Levels\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_Logo.h">
+      <Filter>01.Levels\Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Free.h">
+      <Filter>02.GameObject\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Player.h">
+      <Filter>02.GameObject\Player\Body</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hair_Player.h">
+      <Filter>02.GameObject\Player\Hair</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Head_Player.h">
+      <Filter>02.GameObject\Player\Head</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player.h">
+      <Filter>02.GameObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Weapon.h">
+      <Filter>02.GameObject\Player\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Debuger.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Editor.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GUIObject.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\IMGuiManager.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Model_Selector.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_Collider.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_Selector.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_Transformation.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AnimationEditor.h">
+      <Filter>02.GameObject\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imgui.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imgui_impl_dx11.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imgui_impl_win32.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imgui_internal.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\ImGuizmo.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\ImSequencer.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imstb_rectpack.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imstb_textedit.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imstb_truetype.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\ImZoomSlider.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\GraphEditor.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imconfig.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\ImCurveEdit.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\ImGradient.h">
+      <Filter>02.GameObject\ImGui\Include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Animation_Tool.ico">
+      <Filter>98.Default</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>98.Default</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Animation_Tool.rc">
+      <Filter>98.Default</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxInstance_Point.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxInstance_Rect.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

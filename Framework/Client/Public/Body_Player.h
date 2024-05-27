@@ -27,13 +27,15 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Render_LightDepth() override;
-
+	virtual HRESULT Render_LightDepth_Cube() override;
 private:
 	CModel*					m_pModelCom = { nullptr };
 	CShader*				m_pShaderCom = { nullptr };	
 	CCollider*				m_pColliderCom = { nullptr };
 
 	_float3*				m_pRootTranslation = { nullptr };
+
+	vector<CCollider*>		m_PartColliders;
 
 	const _ubyte*			m_pState;
 private:

@@ -17,6 +17,8 @@ public:
 	void Tick(_float fTimeDelta);
 	HRESULT Render();
 
+public:
+	_uint Get_CurrentLevel();
 
 private:
 	_uint					m_iCurrentLevelID = { 0 };

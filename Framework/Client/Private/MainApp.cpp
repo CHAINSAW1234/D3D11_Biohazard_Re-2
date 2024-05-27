@@ -20,7 +20,6 @@ CMainApp::CMainApp()
 	//
 }
 
-
 HRESULT CMainApp::Initialize()
 {
 	ENGINE_DESC		EngineDesc = {};
@@ -54,9 +53,9 @@ void CMainApp::Tick(_float fTimeDelta)
 
 	m_pGameInstance->Tick_Engine(fTimeDelta);
 
-#ifdef _DEBUG
+//	#ifdef _DEBUG
 	m_fTimeAcc += fTimeDelta;
-#endif
+//	#endif
 }
 
 HRESULT CMainApp::Render()
@@ -65,7 +64,7 @@ HRESULT CMainApp::Render()
 		return E_FAIL;
 	
 
-#ifdef _DEBUG
+//	#ifdef _DEBUG
 	++m_iRenderCnt;
 
 	if (m_fTimeAcc >= 1.f)
@@ -74,17 +73,17 @@ HRESULT CMainApp::Render()
 		m_fTimeAcc = 0.f;
 		m_iRenderCnt = 0;
 	}
-#endif
+//	#endif
 
 	m_pGameInstance->Begin_Draw(_float4(0.f, 0.f, 1.f, 1.f));
 
 	m_pGameInstance->Draw();
 
-#ifdef _DEBUG
+//	#ifdef _DEBUG
 
 	m_pGameInstance->Render_Font(TEXT("Font_Default"), m_szFPS, _float2(0.f, 0.f), XMVectorSet(1.f, 0.f, 0.f, 1.f), 0.f);
 
-#endif
+//	#endif
 
 	m_pGameInstance->End_Draw();
 
@@ -206,9 +205,9 @@ HRESULT CMainApp::Ready_Gara()
 
 HRESULT CMainApp::Ready_Fonts()
 {
-	//// MakeSpriteFont "³Ø½¼lv1°íµñ Bold" /FontSize:30 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 142.spritefont
-	//if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_Default"), TEXT("../Bin/Resources/Fonts/141ex.spriteFont"))))
-	//	return E_FAIL;
+	// MakeSpriteFont "³Ø½¼lv1°íµñ Bold" /FontSize:30 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 142.spritefont
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_Default"), TEXT("../Bin/Resources/Fonts/141ex.spriteFont"))))
+		return E_FAIL;
 
 	return S_OK;
 }

@@ -8,7 +8,7 @@ HRESULT CModel_Extractor::Extract_FBX(CModel::MODEL_TYPE eType, const string& st
 {
 	_uint		iOption = { aiProcessPreset_TargetRealtime_Fast | aiProcess_ConvertToLeftHanded };
 
-	iOption = eType == CModel::TYPE_NONANIM ? iOption | aiProcess_PreTransformVertices : iOption;
+	iOption = eType == CModel::TYPE_NONANIM ? iOption | aiProcess_PreTransformVertices : iOption | aiProcess_LimitBoneWeights;
 
 	Assimp::Importer Importer;
 

@@ -30,6 +30,20 @@ HRESULT CTarget_Manager::Add_RenderTarget(const wstring & strRenderTargetTag, _u
 	return S_OK;
 }
 
+HRESULT CTarget_Manager::Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+{
+	if (nullptr != Find_RenderTarget(strRenderTargetTag))
+		return E_FAIL;
+
+	CRenderTarget* pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, iSize, iArraySize, ePixelFormat, vClearColor);
+	if (nullptr == pRenderTarget)
+		return E_FAIL;
+
+	m_RenderTargets.emplace(strRenderTargetTag, pRenderTarget);
+
+	return S_OK;
+}
+
 HRESULT CTarget_Manager::Add_MRT(const wstring & strMRTTag, const wstring & strRenderTargetTag)
 {
 	CRenderTarget*		pRenderTarget = Find_RenderTarget(strRenderTargetTag);

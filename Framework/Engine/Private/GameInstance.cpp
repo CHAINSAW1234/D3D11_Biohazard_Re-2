@@ -162,9 +162,14 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 		nullptr == m_pFrustum )
 		return;
 
+	m_pPipeLine->Reset();
+
 	m_pInput_Device->Tick(fTimeDelta);
 
 	m_pObject_Manager->Priority_Tick(fTimeDelta);	
+
+	/* 반복적인 갱신이 필요한 객체들의 Tick함수를 호출한다. */
+	m_pLevel_Manager->Tick(fTimeDelta);
 
 	m_pObject_Manager->Tick(fTimeDelta);	
 
@@ -176,8 +181,7 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	m_pObject_Manager->Late_Tick(fTimeDelta);
 	
-	/* 반복적인 갱신이 필요한 객체들의 Tick함수를 호출한다. */
-	m_pLevel_Manager->Tick(fTimeDelta);
+
 
 	if (m_pPhysics_Controller)
 		m_pPhysics_Controller->Simulate(fTimeDelta);
@@ -377,6 +381,14 @@ HRESULT CGameInstance::Open_Level(_uint iNewLevelID, CLevel * pNewLevel)
 	return m_pLevel_Manager->Open_Level(iNewLevelID, pNewLevel);
 }
 
+_uint CGameInstance::Get_CurrentLevel()
+{
+	if (nullptr == m_pLevel_Manager)
+		return E_FAIL;
+
+	return m_pLevel_Manager->Get_CurrentLevel();
+}
+
 HRESULT CGameInstance::Add_Prototype(const wstring & strPrototypeTag, CGameObject * pPrototype)
 {
 	if (nullptr == m_pObject_Manager)
@@ -457,101 +469,226 @@ _float CGameInstance::Compute_TimeDelta(const wstring & strTimerTag)
 	return m_pTimer_Manager->Compute_TimeDelta(strTimerTag);
 }
 
-void CGameInstance::Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix, CPipeLine::PIPELINE ePipeLine)
+void CGameInstance::Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix)
 {
 	if (nullptr == m_pPipeLine)
 		return;
 
-	m_pPipeLine->Set_Transform(eState, TransformMatrix, ePipeLine);
+	m_pPipeLine->Set_Transform(eState, TransformMatrix);
 }
 
-_matrix CGameInstance::Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine) const
+HRESULT CGameInstance::Set_ShadowSpotLight(CLight* pLight)
+{
+	if (nullptr == m_pPipeLine)
+		return E_FAIL;
+	
+	m_pPipeLine->Set_ShadowSpotLight(pLight);
+	return S_OK;
+
+}
+
+HRESULT CGameInstance::Set_ShadowSpotLight(const wstring& strLightTag)
+{
+	if (nullptr == m_pPipeLine || nullptr == m_pLight_Manager)
+		return E_FAIL;
+
+	if (nullptr == m_pLight_Manager->Get_Light(strLightTag))
+		return E_FAIL;
+
+	m_pPipeLine->Set_ShadowSpotLight(m_pLight_Manager->Get_Light(strLightTag));
+	return S_OK;
+}
+
+HRESULT CGameInstance::Add_ShadowLight(CLight* pLight)
+{
+	if (nullptr == m_pPipeLine)
+		return E_FAIL;
+
+	m_pPipeLine->Add_ShadowLight(pLight);
+	return S_OK;
+}
+
+HRESULT CGameInstance::Add_ShadowLight(const wstring& strLightTag)
+{
+	if (nullptr == m_pPipeLine || nullptr == m_pLight_Manager)
+		return E_FAIL;
+
+	if (nullptr == m_pLight_Manager->Get_Light(strLightTag))
+		return E_FAIL;
+
+	m_pPipeLine->Add_ShadowLight(m_pLight_Manager->Get_Light(strLightTag));
+	return S_OK;
+}
+
+_matrix CGameInstance::Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState) const
 {
 	if (nullptr == m_pPipeLine)
 		return XMMatrixIdentity();
 
-	return m_pPipeLine->Get_Transform_Matrix(eState, ePipeLine);
+	return m_pPipeLine->Get_Transform_Matrix(eState);
 }
 
-_float4x4 CGameInstance::Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine) const
+_float4x4 CGameInstance::Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE eState) const
 {
 	if (nullptr == m_pPipeLine)
 		return _float4x4();
 
-	return m_pPipeLine->Get_Transform_Float4x4(eState, ePipeLine);
+	return m_pPipeLine->Get_Transform_Float4x4(eState);
 }
 
-_matrix CGameInstance::Get_Transform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine) const
+_matrix CGameInstance::Get_Transform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState) const
 {
 	if (nullptr == m_pPipeLine)
 		return XMMatrixIdentity();
 
-	return m_pPipeLine->Get_Transform_Matrix_Inverse(eState, ePipeLine);
+	return m_pPipeLine->Get_Transform_Matrix_Inverse(eState);
 }
 
-_float4x4 CGameInstance::Get_Transform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState, CPipeLine::PIPELINE ePipeLine) const
+_float4x4 CGameInstance::Get_Transform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState) const
 {
 	if (nullptr == m_pPipeLine)
 		return _float4x4();
 
-	return m_pPipeLine->Get_Transform_Float4x4_Inverse(eState, ePipeLine);
+	return m_pPipeLine->Get_Transform_Float4x4_Inverse(eState);
 }
 
-_vector CGameInstance::Get_CamPosition_Vector(CPipeLine::PIPELINE ePipeLine) const
+_vector CGameInstance::Get_CamPosition_Vector() const
 {
 	if (nullptr == m_pPipeLine)
 		return XMVectorZero();
 
-	return m_pPipeLine->Get_CamPosition_Vector(ePipeLine);
+	return m_pPipeLine->Get_CamPosition_Vector();
 }
 
-_float4 CGameInstance::Get_CamPosition_Float4(CPipeLine::PIPELINE ePipeLine) const
+_float4 CGameInstance::Get_CamPosition_Float4() const
 {
 	if (nullptr == m_pPipeLine)
 		return _float4();
 
-	return m_pPipeLine->Get_CamPosition_Float4(ePipeLine);
+	return m_pPipeLine->Get_CamPosition_Float4();
 }
 
-
-const LIGHT_DESC* CGameInstance::Get_LightDesc(const wstring& strLightTag)
+_uint CGameInstance::Get_NumShadowLight()
 {
-	if (nullptr == m_pLight_Manager)
-	{
+	if (nullptr == m_pPipeLine)
+		return 0;
+
+	return m_pPipeLine->Get_NumShadowLight();
+}
+
+const CLight* CGameInstance::Get_ShadowLight(_uint iIndex)
+{
+	if (nullptr == m_pPipeLine)
 		return nullptr;
-	}
-	return m_pLight_Manager->Get_LightDesc(strLightTag);
+	
+
+	return m_pPipeLine->Get_ShadowLight(iIndex);
+}
+//
+//_matrix CGameInstance::Get_SpotLightTransform_Matrix(CPipeLine::TRANSFORMSTATE eState) const
+//{
+//	if (nullptr == m_pPipeLine)
+//		return XMMatrixIdentity();
+//
+//	return m_pPipeLine->Get_SpotLightTransform_Matrix(eState);
+//}
+//
+//_float4x4 CGameInstance::Get_SpotLightTransform_Float4x4(CPipeLine::TRANSFORMSTATE eState) const
+//{
+//	if (nullptr == m_pPipeLine)
+//		return _float4x4();
+//
+//	return m_pPipeLine->Get_SpotLightTransform_Float4x4(eState);
+//}
+//
+//_matrix CGameInstance::Get_SpotLightTransform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState) const
+//{
+//	if (nullptr == m_pPipeLine)
+//		return XMMatrixIdentity();
+//
+//	return m_pPipeLine->Get_SpotLightTransform_Matrix_Inverse(eState);
+//}
+//
+//_float4x4 CGameInstance::Get_SpotLightTransform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState) const
+//{
+//	if (nullptr == m_pPipeLine)
+//		return _float4x4();
+//
+//	return m_pPipeLine->Get_SpotLightTransform_Float4x4_Inverse(eState);
+//}
+
+const CLight* CGameInstance::Get_ShadowSpotLight()
+{
+	if (nullptr == m_pPipeLine)
+		return nullptr;
+
+	return m_pPipeLine->Get_ShadowSpotLight();
 }
 
-HRESULT CGameInstance::Add_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc)
+list<LIGHT_DESC*> CGameInstance::Get_ShadowLightDesc_List()
 {
-	if (nullptr == m_pLight_Manager)
-	{
-		MSG_BOX(TEXT("nullptr == m_pLight_Manager : CGameInstance"));
-		return E_FAIL;
-	}
-	return m_pLight_Manager->Add_Light(strLightTag, LightDesc);
+	if (nullptr == m_pPipeLine)
+		return list<LIGHT_DESC*>();
+
+	return m_pPipeLine->Get_ShadowLightDesc_List();
 }
 
-HRESULT CGameInstance::Render_Lights(CShader * pShader, CVIBuffer_Rect * pVIBuffer)
+const LIGHT_DESC* CGameInstance::Get_LightDesc(const wstring& strLightTag, _uint iIndex)
 {
 	if (nullptr == m_pLight_Manager)
-	{
-		MSG_BOX(TEXT("nullptr == m_pLight_Manager : CGameInstance"));
+		return nullptr;
+
+	return m_pLight_Manager->Get_LightDesc(strLightTag, iIndex);
+}
+
+CLight* CGameInstance::Get_Light(const wstring& strLightTag)
+{
+	if (nullptr == m_pLight_Manager)
+		return nullptr;
+
+	return m_pLight_Manager->Get_Light(strLightTag);
+}
+
+HRESULT CGameInstance::Add_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ)
+{
+	if (nullptr == m_pLight_Manager)
 		return E_FAIL;
-	}
+
+	return m_pLight_Manager->Add_Light(strLightTag, LightDesc, fFovY, fAspect, fNearZ, fFarZ);
+}
+
+HRESULT CGameInstance::Add_Light_Layer(const wstring& strLightTag)
+{
+	if (nullptr == m_pLight_Manager)
+		return E_FAIL;
+
+	return m_pLight_Manager->Add_Light_Layer(strLightTag);
+}
+
+list<LIGHT_DESC*>* CGameInstance::Get_Light_List(const wstring& strLightTag)
+{
+	if (nullptr == m_pLight_Manager)
+		return nullptr;
+
+	return m_pLight_Manager->Get_Light_List(strLightTag);
+}
+
+HRESULT CGameInstance::Update_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _uint iIndex)
+{
+	if (nullptr == m_pLight_Manager)
+		return E_FAIL;
+
+	return m_pLight_Manager->Update_Light(strLightTag, LightDesc, iIndex);
+}
+
+HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
+{
+	if (nullptr == m_pLight_Manager)
+		return E_FAIL;
+
 	return m_pLight_Manager->Render(pShader, pVIBuffer);
 }
 
-HRESULT CGameInstance::Tick_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc)
-{
-	if (nullptr == m_pLight_Manager)
-	{
-		MSG_BOX(TEXT("nullptr == m_pLight_Manager : CGameInstance"));
-		return E_FAIL;
-	}
-	return m_pLight_Manager->Tick_Light(strLightTag, LightDesc);
-}
 HRESULT CGameInstance::Add_Font(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const wstring & strFontTag, const wstring & strFontFilePath)
 {
 	return m_pFont_Manager->Add_Font(pDevice, pContext, strFontTag, strFontFilePath);	
@@ -565,6 +702,11 @@ HRESULT CGameInstance::Render_Font(const wstring & strFontTag, const wstring & s
 HRESULT CGameInstance::Add_RenderTarget(const wstring & strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4 & vClearColor)
 {
 	return m_pTarget_Manager->Add_RenderTarget(strRenderTargetTag, iSizeX, iSizeY, ePixelFormat, vClearColor);
+}
+
+HRESULT CGameInstance::Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+{
+	return m_pTarget_Manager->Add_RenderTarget_Cube(strRenderTargetTag, iSize, iArraySize, ePixelFormat, vClearColor);
 }
 
 HRESULT CGameInstance::Add_MRT(const wstring & strMRTTag, const wstring & strRenderTargetTag)

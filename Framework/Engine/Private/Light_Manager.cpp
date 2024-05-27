@@ -7,13 +7,22 @@ CLight_Manager::CLight_Manager()
 
 }
 
-const LIGHT_DESC * CLight_Manager::Get_LightDesc(const wstring & strLightTag)
+const LIGHT_DESC* CLight_Manager::Get_LightDesc(const wstring& strLightTag, _uint iIndex)
 {
 	auto& iter = m_Lights.find(strLightTag);
 	if (iter == m_Lights.end())
 		return nullptr;
 
-	return iter->second->Get_LightDesc();	
+	return iter->second->Get_LightDesc(iIndex);
+}
+
+CLight* CLight_Manager::Get_Light(const wstring& strLightTag)
+{
+	auto& iter = m_Lights.find(strLightTag);
+	if (iter == m_Lights.end())
+		return nullptr;
+
+	return iter->second;
 }
 
 HRESULT CLight_Manager::Initialize()
@@ -21,24 +30,31 @@ HRESULT CLight_Manager::Initialize()
 	return S_OK;
 }
 
-HRESULT CLight_Manager::Add_Light(const wstring& strLightTag, const LIGHT_DESC & LightDesc)
+HRESULT CLight_Manager::Add_Light_Layer(const wstring& strLightTag)
 {
 	CLight* pLight = Find_Light(strLightTag);
-	if (pLight != nullptr)
-		return E_FAIL;
-
-
-
-	pLight = CLight::Create(LightDesc);
-	if (nullptr == pLight)
-		return E_FAIL;
-
-	m_Lights.emplace(strLightTag, pLight);
+	if (pLight == nullptr)
+	{
+		pLight = CLight::Create();
+		m_Lights.emplace(strLightTag, pLight);
+	}
 
 	return S_OK;
 }
 
-HRESULT CLight_Manager::Render(CShader * pShader, CVIBuffer_Rect * pVIBuffer)
+HRESULT CLight_Manager::Add_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ)
+{
+	CLight* pLight = Find_Light(strLightTag);
+	if (pLight == nullptr)
+	{
+		pLight = CLight::Create();
+		m_Lights.emplace(strLightTag, pLight);
+	}
+
+	return pLight->Add_LightDesc(LightDesc, fFovY, fAspect, fNearZ, fFarZ);;
+}
+
+HRESULT CLight_Manager::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 {
 	for (auto& pLight : m_Lights)
 		pLight.second->Render(pShader, pVIBuffer);
@@ -46,18 +62,26 @@ HRESULT CLight_Manager::Render(CShader * pShader, CVIBuffer_Rect * pVIBuffer)
 	return S_OK;
 }
 
-HRESULT CLight_Manager::Tick_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc)
+HRESULT CLight_Manager::Update_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _uint iIndex)
 {
 	CLight* pLight = Find_Light(strLightTag);
 	if (pLight == nullptr)
 		return E_FAIL;
 
-	return pLight->Tick(LightDesc);
+	return pLight->Update(LightDesc, iIndex);
+}
+
+list<LIGHT_DESC*>* CLight_Manager::Get_Light_List(const wstring& strLightTag)
+{
+	CLight* pLight = Find_Light(strLightTag);
+	if (pLight == nullptr)
+		return nullptr;
+
+	return pLight->Get_Light_List();
 }
 
 CLight* CLight_Manager::Find_Light(const wstring& strLightTag)
 {
-
 	auto		iter = m_Lights.find(strLightTag);
 
 	if (iter == m_Lights.end())
@@ -66,9 +90,9 @@ CLight* CLight_Manager::Find_Light(const wstring& strLightTag)
 	return iter->second;
 }
 
-CLight_Manager * CLight_Manager::Create()
+CLight_Manager* CLight_Manager::Create()
 {
-	CLight_Manager*		pInstance = new CLight_Manager();
+	CLight_Manager* pInstance = new CLight_Manager();
 
 	if (FAILED(pInstance->Initialize()))
 	{
@@ -78,7 +102,6 @@ CLight_Manager * CLight_Manager::Create()
 
 	return pInstance;
 }
-
 
 void CLight_Manager::Free()
 {

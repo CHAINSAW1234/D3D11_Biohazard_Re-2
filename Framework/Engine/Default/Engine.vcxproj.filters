@@ -205,17 +205,32 @@
     <Filter Include="01.Utility\10.Picking">
       <UniqueIdentifier>{03ba2e75-dc70-407d-bed1-fb1939c7f9dc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\02.Components\Model\Animator">
+      <UniqueIdentifier>{05f7b535-efa3-4f05-900a-9a85395f1e0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.Components\Model\Bone_Layer">
+      <UniqueIdentifier>{4daac0ca-6ab0-4b19-93bb-2d1c950bf21f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\12.FSM">
+      <UniqueIdentifier>{99aaf032-a00f-4c2f-a94e-916bd9843ea4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\12.FSM\FSM">
+      <UniqueIdentifier>{31d0a86e-fe17-40af-871c-0530f097fd64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\12.FSM\State">
+      <UniqueIdentifier>{9df33316-824c-41e2-a6e3-89c21a22c7ad}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01.Utility\97.Physics\RagDoll_Physics">
-      <UniqueIdentifier>{8b6c126f-5bdd-4efc-bc4c-22d228b39e8f}</UniqueIdentifier>
+      <UniqueIdentifier>{53f52309-6dc1-4ba7-bd2d-6823e709cf86}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\97.Physics\RagDoll_Physics\RagDoll">
-      <UniqueIdentifier>{1e343604-aa0b-4914-b4e8-84687e0b0ebe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\97.Physics\RagDoll_Physics\Skeleton">
-      <UniqueIdentifier>{5208954f-b1f3-4d6e-b3fe-d84ea271d06f}</UniqueIdentifier>
+      <UniqueIdentifier>{3f5ec772-4edb-450a-aa44-3d3180d273bf}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\97.Physics\RagDoll_Physics\Skeletal_Mesh">
-      <UniqueIdentifier>{d43ce93c-1786-4467-b7b3-de275af8ab54}</UniqueIdentifier>
+      <UniqueIdentifier>{af6c1e99-70bd-43bb-8745-c857b70a84bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\97.Physics\RagDoll_Physics\Skeleton">
+      <UniqueIdentifier>{7541368d-e681-41ca-8557-1d2d05b1f0bc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -411,17 +426,29 @@
     <ClCompile Include="..\Private\Picking.cpp">
       <Filter>01.Utility\10.Picking</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Animator.cpp">
+      <Filter>01.Utility\02.Components\Model\Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bone_Layer.cpp">
+      <Filter>01.Utility\02.Components\Model\Bone_Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FSM.cpp">
+      <Filter>01.Utility\12.FSM\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\State.cpp">
+      <Filter>01.Utility\12.FSM\State</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\RagDoll_Physics.cpp">
       <Filter>01.Utility\97.Physics\RagDoll_Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\RagDoll.cpp">
-      <Filter>01.Utility\97.Physics\RagDoll_Physics\RagDoll</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Skeleton.cpp">
       <Filter>01.Utility\97.Physics\RagDoll_Physics\Skeleton</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Skeletal_Mesh.cpp">
       <Filter>01.Utility\97.Physics\RagDoll_Physics\Skeletal_Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RagDoll.cpp">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics\RagDoll</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -508,6 +535,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Mesh.h">
       <Filter>01.Utility\02.Components\Model\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Bone.h">
+      <Filter>01.Utility\02.Components\Model\Bone</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Animation.h">
       <Filter>01.Utility\02.Components\Model\Animation</Filter>
@@ -629,20 +659,36 @@
     <ClInclude Include="..\Public\Picking.h">
       <Filter>01.Utility\10.Picking</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Bone.h">
-      <Filter>01.Utility\02.Components\Model\Bone</Filter>
+    <ClInclude Include="..\Public\Animator.h">
+      <Filter>01.Utility\02.Components\Model\Animator</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Bone_Layer.h">
+      <Filter>01.Utility\02.Components\Model\Bone_Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Model_Struct.h">
+      <Filter>01.Utility\02.Components\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Model_Enums.h">
+      <Filter>01.Utility\02.Components\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FSM.h">
+      <Filter>01.Utility\12.FSM\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\State.h">
+      <Filter>01.Utility\12.FSM\State</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="..\Public\RagDoll_Physics.h">
       <Filter>01.Utility\97.Physics\RagDoll_Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\RagDoll.h">
-      <Filter>01.Utility\97.Physics\RagDoll_Physics\RagDoll</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Skeleton.h">
       <Filter>01.Utility\97.Physics\RagDoll_Physics\Skeleton</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Skeletal_Mesh.h">
       <Filter>01.Utility\97.Physics\RagDoll_Physics\Skeletal_Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RagDoll.h">
+      <Filter>01.Utility\97.Physics\RagDoll_Physics\RagDoll</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -657,5 +703,8 @@
     <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli">
       <Filter>01.Utility\98.ShaderFiles</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Engine.rc" />
   </ItemGroup>
 </Project>

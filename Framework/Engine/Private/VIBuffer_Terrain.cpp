@@ -217,7 +217,112 @@ void CVIBuffer_Terrain::Culling(_fmatrix WorldMatrixInv)
 
 	m_iNumIndices = iNumIndices;
 }
+_bool CVIBuffer_Terrain::Compute_Picking(const CTransform* pTransform, _fvector vRayPos, _fvector vRayDir, _Out_ _float4* pPickPos)
+{
+	_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
+	_matrix			WorldMatrixInv = { XMMatrixInverse(nullptr, WorldMatrix) };
 
+	_vector			vRayOrigin = { XMVector3TransformCoord(vRayPos, WorldMatrixInv) };
+	_vector			vRayDirection = { XMVector3Normalize(XMVector3TransformNormal(vRayDir, WorldMatrixInv)) };
+
+	for (size_t i = 0; i < m_iNumVerticesZ - 1; i++)
+	{
+		for (size_t j = 0; j < m_iNumVerticesX - 1; j++)
+		{
+			_uint		iIndex = _uint(i * (m_iNumVerticesX)+j);
+
+			_uint		iIndices[4] = {
+				iIndex + m_iNumVerticesX,
+				iIndex + m_iNumVerticesX + 1,
+				iIndex + 1,
+				iIndex
+			};
+
+			_float fDistance = 0.0f;
+
+			//	우 상단 삼각형과의 검사
+			if (true == DirectX::TriangleTests::Intersects(
+				vRayOrigin, vRayDirection,
+				XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[0]]), 1.f),
+				XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[1]]), 1.f),
+				XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[2]]), 1.f),
+				fDistance))
+			{
+				_vector vPickPos = vRayOrigin + vRayDirection * fDistance;
+				vPickPos = XMVector4Transform(vPickPos, WorldMatrix);
+
+				XMStoreFloat4(pPickPos, vPickPos);
+
+				return true;
+			}
+
+			//	좌 하단 삼각형과의 검사
+			if (true == DirectX::TriangleTests::Intersects(
+				vRayOrigin, vRayDirection,
+				XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[0]]), 1.f),
+				XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[2]]), 1.f),
+				XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[3]]), 1.f),
+				fDistance))
+			{
+				_vector vPickPos = vRayOrigin + vRayDirection * fDistance;
+				vPickPos = XMVector4Transform(vPickPos, WorldMatrix);
+
+				XMStoreFloat4(pPickPos, vPickPos);
+
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+void CVIBuffer_Terrain::Compute_Height(const CTransform* pTransform, _fvector vPosition, _float4* pPosition)
+{
+	_matrix			WorldMatrixInv = { pTransform->Get_WorldMatrix_Inverse() };
+	_vector			vTargetPos = { XMVector3TransformCoord(vPosition, WorldMatrixInv) };
+
+	if (vTargetPos.m128_f32[0] < 0.f ||
+		vTargetPos.m128_f32[2] < 0.f ||
+		vTargetPos.m128_f32[0] > m_iNumVerticesX - 1.f ||
+		vTargetPos.m128_f32[2] > m_iNumVerticesZ - 1.f)
+	{
+		XMStoreFloat4(pPosition, vPosition);
+		return;
+	}
+
+	_uint		iIndex = _uint(XMVectorGetZ(vTargetPos)) * m_iNumVerticesX + _uint(XMVectorGetX(vTargetPos));
+
+	_uint		iIndices[4] = {
+		iIndex + m_iNumVerticesX,
+		iIndex + m_iNumVerticesX + 1,
+		iIndex + 1,
+		iIndex
+	};
+
+	_float		fWidth = XMVectorGetX(vTargetPos) - m_pVerticesPos[iIndices[0]].x;
+	_float		fDepth = m_pVerticesPos[iIndices[0]].z - XMVectorGetZ(vTargetPos);
+
+	_vector			vPlane ;
+
+	/* d오른쪽 위 삼각형안에 있냐. */
+	if (fWidth > fDepth)
+		vPlane = { XMPlaneFromPoints(XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[0]]), 1.f), XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[1]]), 1.f), XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[2]]), 1.f)) };
+
+	/* 왼쪽 아래 삼각형안에 있냐 */
+	else
+		vPlane = { XMPlaneFromPoints(XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[0]]), 1.f), XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[2]]), 1.f), XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[3]]), 1.f)) };
+
+	/* ax + by + cz + d = 0 */
+	/* y = (-ax - cz - d) / b*/
+	_float		fHeight = { (-XMVectorGetX(vPlane) * XMVectorGetX(vTargetPos) - XMVectorGetZ(vPlane) * XMVectorGetZ(vTargetPos) - XMVectorGetW(vPlane)) / XMVectorGetY(vPlane) };
+
+	vTargetPos = XMVectorSetY(vTargetPos, fHeight);
+
+	vTargetPos = XMVector3TransformCoord(vTargetPos, pTransform->Get_WorldMatrix());
+
+	XMStoreFloat4(pPosition, vTargetPos);
+}
 CVIBuffer_Terrain * CVIBuffer_Terrain::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const wstring& strHeightMapFilePath)
 {
 	CVIBuffer_Terrain*		pInstance = new CVIBuffer_Terrain(pDevice, pContext);

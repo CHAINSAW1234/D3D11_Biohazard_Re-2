@@ -14,6 +14,11 @@ unsigned int CBase::AddRef()
 
 unsigned int CBase::Release()
 {
+	if (m_iRefCnt > 1000000000)
+	{
+		MSG_BOX(TEXT("OverRelease 고치고 작업해라"));
+	}
+
 	if (0 == this->m_iRefCnt)
 	{
 		Free();

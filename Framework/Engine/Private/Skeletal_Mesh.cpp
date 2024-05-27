@@ -12,6 +12,9 @@ SkeletalMesh* SkeletalMesh::load(const std::string& name, Skeleton* skeleton)
     scene = importer.ReadFile(name, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_GlobalScale);*/
 
     _uint		iOption = { aiProcessPreset_TargetRealtime_Fast | aiProcess_ConvertToLeftHanded };
+
+    //  iOption = iOption | aiProcess_PreTransformVertices | aiProcess_LimitBoneWeights;
+
     const aiScene* scene;
     Assimp::Importer importer;
     scene = importer.ReadFile(name, iOption);

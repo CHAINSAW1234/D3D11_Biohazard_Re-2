@@ -10,25 +10,10 @@ BEGIN(Engine)
 class ENGINE_DLL CModel final : public CComponent
 {
 public:
-	typedef struct tagAnimPlayingDesc
-	{
-		_int					iAnimIndex = { -1 };
-		_bool					isLoop = { false };
-		_float					fWeight = { 0.f };
-		list<_uint>				TargetBoneIndices;
-	}ANIM_PLAYING_DESC;
-
-	typedef struct tagAnimPlayingInfo : public ANIM_PLAYING_DESC
-	{
-
-		_int					iPreAnimIndex = { -1 };
-		_bool					isLinearInterpolation = { false };
-		_float					fAccLinearInterpolation = { 0.f };
-		vector<KEYFRAME>		LastKeyFrames;
-	}ANIM_PLAYING_INFO;
+#include "Model_Struct.h"
 
 public:
-	enum MODEL_TYPE { TYPE_NONANIM, TYPE_ANIM, TYPE_END };
+#include "Model_Enums.h"
 
 private:
 	CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -40,6 +25,8 @@ public:
 	class CBone* Get_BonePtr(const _char* pBoneName) const;
 
 	_bool isFinished(_uint iPlayingIndex);
+	void Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices);
+
 public:	/* For.Animation */
 	//	void Set_Animation(_uint iAnimIndex, _bool isLoop);
 	void Set_Animation_Blend(ANIM_PLAYING_DESC AnimDesc, _uint iPlayingIndex);
@@ -61,9 +48,43 @@ public:	/* For.Animation */
 	void Active_RootMotion_Rotation(_bool isActive);
 	void Set_RootBone(string strBoneTag);			//	모든본을 초기화 => 루트본은 하나다 가정후 찾은 본을 루트본으로 등록
 
-public:	/*For Upper-Lower Separation*/
-	void Set_SpineBone(string strBoneTag);			//상,하체 분리를 위한 Spine Bone Select 코드
-	void Init_Separate_Bones();
+public:
+	void Add_IK(string strTargetJointTag, string strEndEffectorTag, wstring strIKTag, _uint iNumIteration, _float fBlend);
+	void Set_Direction_IK(wstring strIKTag, _fvector vDirection);
+	void Set_NumIteration_IK(wstring strIKTag, _uint iNumIteration);
+	void Set_Blend_IK(wstring strIKTag, _float fBlend);
+	
+private:
+	void Apply_IK(class CTransform* pTransform, IK_INFO& IkInfo);
+	void Update_Distances_Translations_IK(IK_INFO& IkInfo);
+	void Update_Forward_Reaching_IK(IK_INFO& IkInfo);
+	void Update_Backward_Reaching_IK(IK_INFO& IkInfo);
+	void Update_TransformMatrices_BoneChain(IK_INFO& IkInfo);
+	void Update_CombinedMatrices_BoneChain(IK_INFO& IkInfo);
+
+public:		/* For.Bone_Layer */
+	void Add_Bone_Layer(const wstring& strLayerTag, list<_uint> BoneIndices);
+	void Add_Bone_Layer_All_Bone(const wstring& strLayerTag);
+	void Delete_Bone_Layer(const wstring& strLayerTag);
+
+public:		/* For.Additioal_Input_Forces */
+	void Add_Additional_Transformation_World(string strBoneTag, _fmatrix AdditionalTransformMatrix);
+
+private:	/* For.Additioal_Input_Forces */
+	void Apply_AdditionalForces(class CTransform* pTransform);
+	void Apply_AdditionalForce(_uint iBoneIndex);
+	void Clear_AdditionalForces();
+
+private:
+	_int Find_RootBoneIndex();
+
+private:
+	vector<_float4x4> Initialize_ResultMatrices(const set<_uint> IncludedBoneIndices);
+
+	_float Compute_Current_TotalWeight(_uint iBoneIndex);
+	_float4x4 Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fmatrix DstMatrix, _float fAdditionalWeight);
+
+public:	
 	//	HRESULT Play_Animation_Separation(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
 	//	HRESULT RagDoll();
 	HRESULT Play_Animation_Separation(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
@@ -78,7 +99,9 @@ public:/*For Physics Collider*/
 
 private:
 	void Apply_RootMotion_Rotation(class CTransform* pTransform, _fvector vQuaternion);
+	void Apply_RootMotion_Rotation(class CTransform* pTransform, _fvector vQuaternion, _float4* pTranslation);
 	void Apply_RootMotion_Translation(class CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection, _bool isActiveRotation, _fvector vQuaternion = XMQuaternionIdentity());
+	void Apply_Translation_Inverse_Rotation(_fvector vTranslation);
 
 public:
 	void Set_CombinedMatrix(string strBoneTag, _fmatrix CombinedMatrix);
@@ -117,6 +140,13 @@ public:
 	HRESULT Play_Animations_RootMotion(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
 	HRESULT Render(_uint iMeshIndex);
 
+private:
+	vector<_float4x4> Apply_Animation(_float fTimeDelta, set<_uint>& IncludedBoneIndices, _uint iPlayingAnimIndex);
+	void Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMovedDirection);
+	void Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer, const set<_uint>& IncludedBoneIndices);
+	vector<_float4x4> Compute_ResultMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer, const set<_uint>& IncludedBoneIndices);
+
+public:
 	void Static_Mesh_Cooking();
 
 public:
@@ -125,9 +155,6 @@ public:
 private:
 	_int Find_BoneIndex(const string& strBoneTag);
 	void Compute_RootParentsIndicies(_uint iRootIndex, vector<_uint>& ParentsIndices);
-
-	void Reset_PreTranslation_Translation(_int iRootIndex);
-	void Reset_PreTranslation_WorldMatrix(_int iRootIndex);
 
 public:	/* For.KeyFrame */
 	_uint Get_CurrentMaxKeyFrameIndex(_uint iPlayingIndex);
@@ -149,11 +176,6 @@ private:	/* For.Linear Interpolation */
 	void Update_LinearInterpolation(_float fTimeDelta, _uint iPlayingIndex);
 	void Reset_LinearInterpolation(_uint iPlayingIndex);
 
-//private:	/* For.Linear_Interpolation */
-//	_bool						m_isLinearInterpolation = { false };
-//	_float						m_fAccLinearInterpolation = { 0.f };
-//	vector<KEYFRAME>			m_LastKeyFrames;
-
 private:
 	MODEL_TYPE					m_eModelType = { TYPE_END };
 	const aiScene*				m_pAIScene = { nullptr };
@@ -168,15 +190,17 @@ private:	/* For.RootMotion */
 	_bool						m_isRootMotion_Y = { false };
 	_bool						m_isRootMotion_Rotation = { false };
 
+private:	/* For.Inverse_Kinematic */
+	map<wstring, IK_INFO>		m_IKInfos;
+
 private:
 	_uint						m_iNumMaterials = { 0 };
 	vector<MESH_MATERIAL>		m_Materials;
 
 	_float4x4					m_TransformationMatrix;
 
-	vector<class CBone*>		m_Bones;
-	vector<class CBone*>		m_Bones_Upper;
-	vector<class CBone*>		m_Bones_Lower;
+	vector<class CBone*>				m_Bones;
+	map<wstring, class CBone_Layer*>	m_BoneLayers;			//	레이어로 분리할 뼈들의 태그별로 인덱스들을 저장한다.
 
 	_uint						m_iNumAnimations = { 0 };
 	vector<class CAnimation*>	m_Animations;
@@ -186,15 +210,13 @@ private:
 private:	/* For.Blend_Animation */
 	vector<ANIM_PLAYING_INFO>	m_PlayingAnimInfos;
 
-private:	/* For.Linear_Interpolation */
-	_float3						m_vPreTranslationLocal = { 0.f, 0.f, 0.f };
-	_float4						m_vPreQuaternion = {_float4(0.f,0.f,0.f,0.f)};
-	_float4x4					m_PreTranslationMatrix;
-	wstring						m_strRootTag = { TEXT("") };
-	_float						m_fTotalLinearTime = { 0.f };
+private: /* For.Additional_Input_Forces */
+	//	뼈의 인덱스 별로 외부적 변환을 추가적으로 적용한다.
+	//	머리뼈 흔들거나할 떄 사용해보기
+	vector<list<_float4x4>>		m_AdditionalForces;
 
-private:	/*For Upper-Lower Separation*/
-	class CBone*				m_pSpineBone = { nullptr };
+private:	/* For.Linear_Interpolation */
+	_float						m_fTotalLinearTime = { 0.f };
 
 private: /* For.FBX_Load */
 	HRESULT Ready_Meshes(const map<string, _uint>& BoneIndices);
