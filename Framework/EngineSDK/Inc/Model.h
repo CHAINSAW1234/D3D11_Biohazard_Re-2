@@ -54,6 +54,8 @@ public:
 	void Set_NumIteration_IK(wstring strIKTag, _uint iNumIteration);
 	void Set_Blend_IK(wstring strIKTag, _float fBlend);
 	vector<_float4> Get_ResultTranslation_IK(const wstring& strIKTag);
+	vector<_float4> Get_OriginTranslation_IK(const wstring& strIKTag);
+	vector<_float4x4> Get_JointCombinedMatrices_IK(const wstring& strIKTag);
 	
 private:
 	void Apply_IK(class CTransform* pTransform, IK_INFO& IkInfo);

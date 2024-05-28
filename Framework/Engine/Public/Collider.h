@@ -19,6 +19,10 @@ public:
 	virtual void Tick(_fmatrix WorldMatrix);
 	_bool Intersect(CCollider* pTargetCollider);
 
+public:
+	void Active_Color(_bool isActive);
+	void Set_Color(_float4 vColor);
+
 #ifdef _DEBUG
 public:
 	virtual HRESULT Render() override;

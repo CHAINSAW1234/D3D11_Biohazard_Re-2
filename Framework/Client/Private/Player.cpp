@@ -48,7 +48,7 @@ HRESULT CPlayer::Initialize(void * pArg)
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f,1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
-	m_iIndex_CCT = m_pGameInstance->Create_Controller(_float4(0.f, 0.f, 0.f, 1.f));
+	//	m_iIndex_CCT = m_pGameInstance->Create_Controller(_float4(0.f, 0.f, 0.f, 1.f));
 	return S_OK;
 }
 
@@ -61,15 +61,15 @@ void CPlayer::Tick(_float fTimeDelta)
 {
 	static _bool Temp = false;
 
-	if (UP == m_pGameInstance->Get_KeyState(VK_BACK))
+	/*if (UP == m_pGameInstance->Get_KeyState(VK_BACK))
 	{
 		Temp = true;
 	}
 
 	if(Temp == false)
-		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pGameInstance->GetPosition_CCT(m_iIndex_CCT));
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pGameInstance->GetPosition_CCT(m_iIndex_CCT));*/
 
-	if(PRESSING == m_pGameInstance->Get_KeyState('H'))
+	/*if(PRESSING == m_pGameInstance->Get_KeyState('H'))
 	{
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
 	}
@@ -100,7 +100,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_eState |= STATE_IDLE;
 		if(m_eState & STATE_RUN)
 			m_eState ^= STATE_RUN;
-	}
+	}*/
 
 	_vector		vWorldPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
 
@@ -135,15 +135,16 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	PART		Player_Part = { PART::PART_BODY };
 
-	_float4			vMovedDirection = { Convert_Float3_To_Float4_Dir(m_vRootTranslation) };
-	
+	_float4			vMovedDirection = { Convert_Float3_To_Float4_Dir(m_vRootTranslation) };	
 	_vector			vCurrentPostion = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+
+	_vector			vResultPosition = { vCurrentPostion + XMLoadFloat4(&vMovedDirection) };
+
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vResultPosition);
 
 	if (DOWN == m_pGameInstance->Get_KeyState('B'))
 	{
-		_float4			vMoveDir = {};
-		XMStoreFloat4(&vMoveDir, vCurrentPostion * -1.f);
-		m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
 	}
 
 
@@ -168,6 +169,9 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		vMoveDir = vResultPos - vPosition;
 
 		vMoveDir = XMVectorSet(0.f, XMVectorGetY(vMoveDir), 0.f, 0.f);
+
+		vPosition = { vPosition + vMoveDir };
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
 	}
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
@@ -177,7 +181,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
-	m_pGameInstance->Move_CCT(vMovedDirection, fTimeDelta, 0);
+	//	m_pGameInstance->Move_CCT(vMovedDirection, fTimeDelta, 0);
 	//	m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
 
 #ifdef _DEBUG

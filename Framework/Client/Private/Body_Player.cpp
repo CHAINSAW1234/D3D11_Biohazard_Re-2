@@ -78,8 +78,11 @@ HRESULT CBody_Player::Initialize(void * pArg)
 
 	//	m_pModelCom->Add_IK("root", "l_leg_ball", TEXT("IK_L_LEG"), 1);
 	m_pModelCom->Add_IK("l_leg_femur", "l_leg_ball", TEXT("IK_L_LEG"), 1, 1.f);
+	//	m_pModelCom->Add_IK("hips", "l_leg_ball", TEXT("IK_L_LEG"), 1, 1.f);
 	//	m_pModelCom->Add_IK("r_leg_femur", "r_leg_ball", TEXT("IK_R_LEG"), 1, 1.f);
+	//	m_pModelCom->Add_IK("r_arm_humerus", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
 	m_pModelCom->Add_IK("r_arm_clavicle", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
+	//	m_pModelCom->Add_IK("spine_0", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
 
 	m_pGameInstance->SetBone_Ragdoll(m_pModelCom->GetBoneVector());
 
@@ -131,22 +134,18 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('N'))
 	{
-		/*fWeight -= 0.02f;
-		if (fWeight < 0.f)
-			fWeight = 0.f;*/
-
 		fMoveHieght += 1.f * fTimeDelta;
 
-		if (fMoveHieght > 1.5f)
-			fMoveHieght = 1.5f;
+		if (fMoveHieght > 2.5f)
+			fMoveHieght = 2.5f;
 	}
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('M'))
 	{
 		fMoveHieght -= 1.f * fTimeDelta;
 
-		if (fMoveHieght < -1.5f)
-			fMoveHieght = -1.5f;
+		if (fMoveHieght < -2.5f)
+			fMoveHieght = -2.5f;
 	}
 
 	static _float fBlend = { 1.f };
@@ -167,21 +166,21 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	//	fMoveHieght = 0.f;
 
-	_vector			vMoveDir = { XMVectorSet(0.f, 1.f, 0.f, 0.f) * fMoveHieght };
+	_vector			vMoveDir = { XMVectorSet(1.f, 0.f, 0.f, 0.f) * fMoveHieght };
 	_vector			vCurrentPos = { m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION) };
 	_vector			vCurrentBallPos = { XMVector4Transform(vCurrentPos, XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball"))) };
 
 	_vector			vDirectionToBall = { vCurrentBallPos - vCurrentPos };
 
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////TEST/////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////TEST/////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
 
-	/*CVIBuffer_Terrain* pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_LandBackGround"), TEXT("Com_VIBuffer"), 0))) };
+	CVIBuffer_Terrain* pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_LandBackGround"), TEXT("Com_VIBuffer"), 0))) };
 	CTransform* pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_LandBackGround"), TEXT("Com_Transform"), 0))) };
 	if (nullptr != pTerrainBuffer &&
 		nullptr != pTerrainTransform)
@@ -196,26 +195,22 @@ void CBody_Player::Tick(_float fTimeDelta)
 		pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
 
 		_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
-		vMoveDir = vResultPos - vPosition;
+		//	vMoveDir = vResultPos - vPosition;
+	}
 
-
-		if (0.f >= XMVectorGetY(vMoveDir))
-			vMoveDir = XMVectorZero();
-	}*/
-
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
 
 	//	_vector			vMoveDir = { XMVectorSetY(vCurrentBallPos, XMVectorGetY(vCurrentPos) + 0.05f) - vCurrentBallPos };
 	//	_vector			vMoveDir = { XMVectorSetY(vCurrentBallPos, XMVectorGetY(vCurrentPos) + 0.05f) - vCurrentBallPos };
 	m_pModelCom->Set_Direction_IK(TEXT("IK_L_LEG"), vMoveDir);
-	//	m_pModelCom->Set_Direction_IK(TEXT("IK_R_LEG"), vMoveDir);
-	//	m_pModelCom->Set_Direction_IK(TEXT("IK_R_ARM"), vMoveDir);
+	//	m_pModelCom->Set_Direction_IK(TEXT("IK_R_LEG"), vMoveDir);z
+	m_pModelCom->Set_Direction_IK(TEXT("IK_R_ARM"), vMoveDir);
 
 	m_pModelCom->Set_Blend_IK(TEXT("IK_L_LEG"), fBlend);
 	//	m_pModelCom->Set_Blend_IK(TEXT("IK_R_LEG"), fBlend);
@@ -287,20 +282,96 @@ void CBody_Player::Tick(_float fTimeDelta)
 	m_pModelCom->Active_RootMotion_Rotation(isSetRootRotation);
 
 
-	vector<_float4>			Translations = { m_pModelCom->Get_ResultTranslation_IK(TEXT("IK_L_LEG")) };
-
 	_uint		iIndex = { 0 };
-	for (_float4 vTranslation : Translations)
 	{
-		WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+		vector<_float4>			Translations = { m_pModelCom->Get_ResultTranslation_IK(TEXT("IK_L_LEG")) };
+		vector<_float4>			OriginTranslations = { m_pModelCom->Get_OriginTranslation_IK(TEXT("IK_L_LEG")) };
+		vector<_float4x4>		CombiendMatrices = { m_pModelCom->Get_JointCombinedMatrices_IK(TEXT("IK_L_LEG")) };
 
-		_vector			vPosition = { XMVector3TransformCoord(vTranslation, WorldMatrix) };
-		_matrix			TranslationMatrix = { XMMatrixTranslation(vPosition.m128_f32[0], vPosition.m128_f32[1], vPosition.m128_f32[2]) };
-		_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (4 - iIndex), 0.01f * (4 - iIndex), 0.01f * (4 - iIndex))};
+		for (_float4 vTranslation : Translations)
+		{
+			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
 
-		WorldMatrix = { ScaleMatrix * TranslationMatrix };
+			_vector			vPosition = { XMVector3TransformCoord(vTranslation, WorldMatrix) };
+			_matrix			TranslationMatrix = { XMMatrixTranslation(vPosition.m128_f32[0], vPosition.m128_f32[1], vPosition.m128_f32[2]) };
+			_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (4 - iIndex), 0.01f * (4 - iIndex), 0.01f * (4 - iIndex)) };
 
-		m_PartColliders[iIndex++]->Tick(WorldMatrix);
+			WorldMatrix = { ScaleMatrix * TranslationMatrix };
+
+			m_PartColliders[iIndex++]->Tick(WorldMatrix);
+		}
+
+		for (_float4 vTranslation : OriginTranslations)
+		{
+			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+
+			_vector			vPosition = { XMVector3TransformCoord(vTranslation, WorldMatrix) };
+			_matrix			TranslationMatrix = { XMMatrixTranslation(vPosition.m128_f32[0], vPosition.m128_f32[1], vPosition.m128_f32[2]) };
+			_matrix			ScaleMatrix = { XMMatrixScaling(0.005f, 0.005f, 0.005f) };
+
+			WorldMatrix = { ScaleMatrix * TranslationMatrix };
+
+			m_PartColliders[iIndex++]->Tick(WorldMatrix);
+		}
+
+		for (_float4x4 CombinedMatrix : CombiendMatrices)
+		{
+			WorldMatrix = { XMLoadFloat4x4(&CombinedMatrix) * XMLoadFloat4x4(&m_WorldMatrix) };
+
+
+
+			_matrix			TranslationMatrix = { XMMatrixTranslation(WorldMatrix.r[3].m128_f32[0], WorldMatrix.r[3].m128_f32[1], WorldMatrix.r[3].m128_f32[2]) };
+			_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (12 - iIndex), 0.01f * (12 - iIndex), 0.01f * (12 - iIndex)) };
+
+			WorldMatrix = { ScaleMatrix * TranslationMatrix };
+
+			m_PartColliders[iIndex++]->Tick(WorldMatrix);
+		}
+	}
+	{
+		vector<_float4>			Translations = { m_pModelCom->Get_ResultTranslation_IK(TEXT("IK_R_ARM")) };
+		vector<_float4>			OriginTranslations = { m_pModelCom->Get_OriginTranslation_IK(TEXT("IK_R_ARM")) };
+		vector<_float4x4>		CombiendMatrices = { m_pModelCom->Get_JointCombinedMatrices_IK(TEXT("IK_R_ARM")) };
+
+		for (_float4 vTranslation : Translations)
+		{
+			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+
+			_vector			vPosition = { XMVector3TransformCoord(vTranslation, WorldMatrix) };
+			_matrix			TranslationMatrix = { XMMatrixTranslation(vPosition.m128_f32[0], vPosition.m128_f32[1], vPosition.m128_f32[2]) };
+			_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (16 - iIndex), 0.01f * (16 - iIndex), 0.01f * (16 - iIndex)) };
+
+			WorldMatrix = { ScaleMatrix * TranslationMatrix };
+
+			m_PartColliders[iIndex++]->Tick(WorldMatrix);
+		}
+
+		for (_float4 vTranslation : OriginTranslations)
+		{
+			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+
+			_vector			vPosition = { XMVector3TransformCoord(vTranslation, WorldMatrix) };
+			_matrix			TranslationMatrix = { XMMatrixTranslation(vPosition.m128_f32[0], vPosition.m128_f32[1], vPosition.m128_f32[2]) };
+			_matrix			ScaleMatrix = { XMMatrixScaling(0.005f, 0.005f, 0.005f) };
+
+			WorldMatrix = { ScaleMatrix * TranslationMatrix };
+
+			m_PartColliders[iIndex++]->Tick(WorldMatrix);
+		}
+
+		for (_float4x4 CombinedMatrix : CombiendMatrices)
+		{
+			WorldMatrix = { XMLoadFloat4x4(&CombinedMatrix) * XMLoadFloat4x4(&m_WorldMatrix) };
+
+
+
+			_matrix			TranslationMatrix = { XMMatrixTranslation(WorldMatrix.r[3].m128_f32[0], WorldMatrix.r[3].m128_f32[1], WorldMatrix.r[3].m128_f32[2]) };
+			_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (24 - iIndex), 0.01f * (24 - iIndex), 0.01f * (24 - iIndex)) };
+
+			WorldMatrix = { ScaleMatrix * TranslationMatrix };
+
+			m_PartColliders[iIndex++]->Tick(WorldMatrix);
+		}
 	}
 }
 
@@ -487,11 +558,49 @@ HRESULT CBody_Player::Render()
 
 #ifdef _DEBUG
 
-	m_PartColliders[0]->Render();
-	m_PartColliders[1]->Render();
-	m_PartColliders[2]->Render();
-	m_PartColliders[3]->Render();
-	m_PartColliders[4]->Render();
+	m_PartColliders[4]->Active_Color(true);
+	m_PartColliders[5]->Active_Color(true);
+	m_PartColliders[6]->Active_Color(true);
+	m_PartColliders[7]->Active_Color(true);
+
+	m_PartColliders[4]->Set_Color(_float4(0.f, 0.f, 1.f, 1.f));
+	m_PartColliders[5]->Set_Color(_float4(0.f, 0.f, 1.f, 1.f));
+	m_PartColliders[6]->Set_Color(_float4(0.f, 0.f, 1.f, 1.f));
+	m_PartColliders[7]->Set_Color(_float4(0.f, 0.f, 1.f, 1.f));
+
+	m_PartColliders[8]->Active_Color(true);
+	m_PartColliders[9]->Active_Color(true);
+	m_PartColliders[10]->Active_Color(true);
+	m_PartColliders[11]->Active_Color(true);
+
+	m_PartColliders[8]->Set_Color(_float4(1.f, 0.f, 0.f, 1.f));
+	m_PartColliders[9]->Set_Color(_float4(1.f, 0.f, 0.f, 1.f));
+	m_PartColliders[10]->Set_Color(_float4(1.f, 0.f, 0.f, 1.f));
+	m_PartColliders[11]->Set_Color(_float4(1.f, 0.f, 0.f, 1.f));
+
+
+	m_PartColliders[4 + 12]->Active_Color(true);
+	m_PartColliders[5 + 12]->Active_Color(true);
+	m_PartColliders[6 + 12]->Active_Color(true);
+	m_PartColliders[7 + 12]->Active_Color(true);
+
+	m_PartColliders[4 + 12]->Set_Color(_float4(0.f, 0.f, 1.f, 1.f));
+	m_PartColliders[5 + 12]->Set_Color(_float4(0.f, 0.f, 1.f, 1.f));
+	m_PartColliders[6 + 12]->Set_Color(_float4(0.f, 0.f, 1.f, 1.f));
+	m_PartColliders[7 + 12]->Set_Color(_float4(0.f, 0.f, 1.f, 1.f));
+
+	m_PartColliders[8 + 12]->Active_Color(true);
+	m_PartColliders[9 + 12]->Active_Color(true);
+	m_PartColliders[10 + 12]->Active_Color(true);
+	m_PartColliders[11 + 12]->Active_Color(true);
+
+	m_PartColliders[8 + 12]->Set_Color(_float4(1.f, 0.f, 0.f, 1.f));
+	m_PartColliders[9 + 12]->Set_Color(_float4(1.f, 0.f, 0.f, 1.f));
+	m_PartColliders[10 + 12]->Set_Color(_float4(1.f, 0.f, 0.f, 1.f));
+	m_PartColliders[11 + 12]->Set_Color(_float4(1.f, 0.f, 0.f, 1.f));
+
+	for (_uint i = 0; i < 24; ++i)
+		m_PartColliders[i]->Render();
 
 	/*for (auto& pPartCollider : m_PartColliders)
 	{
@@ -612,7 +721,7 @@ HRESULT CBody_Player::Add_Components()
 		return E_FAIL;
 
 	
-	for (_uint i = 0; i < 10; ++i)
+	for (_uint i = 0; i < 100; ++i)
 	{
 		CBounding_OBB::BOUNDING_OBB_DESC		ColliderOBBDesc{};
 		ColliderOBBDesc.vCenter = { 0.f, 0.f, 0.f };

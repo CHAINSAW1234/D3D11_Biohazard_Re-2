@@ -83,6 +83,16 @@ _bool CCollider::Intersect(CCollider * pTargetCollider)
 	return _bool();
 }
 
+void CCollider::Active_Color(_bool isActive)
+{
+	m_pBounding->Active_Color(isActive);
+}
+
+void CCollider::Set_Color(_float4 vColor)
+{
+	m_pBounding->Set_Color(vColor);
+}
+
 #ifdef _DEBUG
 HRESULT CCollider::Render()
 {	

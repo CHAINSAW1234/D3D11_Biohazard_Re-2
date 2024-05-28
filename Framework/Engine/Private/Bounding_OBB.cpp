@@ -86,7 +86,14 @@ _bool CBounding_OBB::Intersect(CBounding_OBB * pTargetBounding)
 
 HRESULT CBounding_OBB::Render(PrimitiveBatch<VertexPositionColor>* pBatch)
 {
-	DX::Draw(pBatch, *m_pBoundingDesc, m_isCollision == true ? XMVectorSet(1.f, 0.f, 0.f, 1.f) : XMVectorSet(0.f, 1.f, 0.f, 1.f));
+	if (false == m_isSetColor)
+	{
+		DX::Draw(pBatch, *m_pBoundingDesc, m_isCollision == true ? XMVectorSet(1.f, 0.f, 0.f, 1.f) : XMVectorSet(0.f, 1.f, 0.f, 1.f));
+	}
+	else
+	{
+		DX::Draw(pBatch, *m_pBoundingDesc, XMLoadFloat4(&m_vColor));
+	}
 
 	return S_OK;
 }

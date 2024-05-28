@@ -13,6 +13,16 @@ HRESULT CBounding::Initialize(CBounding::BOUNDING_DESC* pBoundingDesc)
 	return S_OK;
 }
 
+void CBounding::Active_Color(_bool isActive)
+{
+	m_isSetColor = isActive;
+}
+
+void CBounding::Set_Color(_float4 vColor)
+{
+	m_vColor = vColor;
+}
+
 #ifdef _DEBUG
 HRESULT CBounding::Render(PrimitiveBatch<VertexPositionColor>* pBatch)
 {
