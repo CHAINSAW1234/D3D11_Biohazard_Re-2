@@ -55,7 +55,6 @@ private:
 	CNavigation*								m_pNavigationCom = { nullptr };
 
 	_float3										m_vRootTranslation = {};
-	_int										m_iIndex_CCT = { 0 };
 
 private:
 	HRESULT Add_Components();

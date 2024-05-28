@@ -142,7 +142,7 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player")/*, LandObjectDesc*/)))
 		return E_FAIL;
 
-	///* 구한정보들을 각 랜드오브젝트르 생성할 때 던진다. */
+	/* 구한정보들을 각 랜드오브젝트르 생성할 때 던진다. */
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
@@ -167,17 +167,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const wstring & strLayerTag/*, CLand
 
 HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
-	/*for (size_t i = 0; i < 20; i++)
+	for (size_t i = 0; i < 1; i++)
 	{
 		CMonster::MONSTER_DESC Desc{};
 		Desc.Index = static_cast<_int>(i);
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Monster"),&Desc)))
 			return E_FAIL;
-	}*/
+	}
 	
-
-
-
 	return S_OK;
 }
 

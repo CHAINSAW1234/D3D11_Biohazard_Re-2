@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "..\Public\Monster.h"
+#include "Character_Controller.h"
+
+#define MODEL_SCALE 0.01f
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject{ pDevice, pContext }
@@ -39,6 +42,9 @@ HRESULT CMonster::Initialize(void * pArg)
 
 	//	m_pModelCom->Set_Animation(rand() % 20, true);
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(static_cast<_float>(rand() % 20), 0.f, static_cast<_float>(rand() % 20), 1.f));
+	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
+
+	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this);
 
 	return S_OK;
 }
@@ -48,7 +54,7 @@ void CMonster::Tick(_float fTimeDelta)
 	/*if (true == m_pModelCom->isFinished())
 		int a = 10;*/
 
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pGameInstance->GetTranslation_Rigid_Dynamic(m_iIndex));
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4());
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)
@@ -107,7 +113,7 @@ HRESULT CMonster::Add_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Fiona"),
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_LeonBody"),
 		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 

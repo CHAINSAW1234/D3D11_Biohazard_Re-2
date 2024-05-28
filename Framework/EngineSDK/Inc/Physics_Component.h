@@ -26,6 +26,7 @@ public:
 	virtual void			SetPosition(PxVec3 Pos) {}
 
 	virtual PxVec3 GetPosition() { return PxVec3(0.f, 0.f, 0.f); }
+	virtual _float4 GetPosition_Float4() { return _float4(0.f, 0.f, 0.f,1.f); }
 	void			SetUpdated(_bool boolean)
 	{
 		m_bUpdated = boolean;
@@ -33,6 +34,7 @@ public:
 	virtual void			Update() {}
 	virtual _float4			GetTranslation() { return _float4(0.f, 0.f, 0.f, 1.f); }
 	virtual PxTransform				GetTransform_Px() { return PxTransform(); }
+	virtual void			Move(_float4 Dir, _float fTimeDelta) {};
 	virtual void			Move(PxVec3 Dir, _float fTimeDelta) {};
 
 	virtual void			Release_Px() {}
@@ -49,8 +51,9 @@ protected:
 
 	PxVec3				m_UpdatePos;
 	_bool				m_bUpdated = { false };
-private:
-	
+
+protected:
+	_int m_iRefCnt_Px = { 0 };
 public:
 	virtual void Free() override;
 };

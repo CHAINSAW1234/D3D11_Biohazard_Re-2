@@ -213,7 +213,6 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\Rigid_Dynamic.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
-    <ClCompile Include="..\Private\Event_Call_Back.cpp" />
     <ClCompile Include="..\private\Extractor.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\private\Frustum.cpp" />

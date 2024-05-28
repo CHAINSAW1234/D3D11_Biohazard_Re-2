@@ -12,13 +12,12 @@ protected:
 	CPhysics_Controller();
 	CPhysics_Controller(const CPhysics_Controller& rhs);
 	virtual ~CPhysics_Controller() = default;
-
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
 	virtual void	Simulate(_float fTimeDelta);
 
-	_int			Create_Controller(_float4 Pos);
+	class CCharacter_Controller*			Create_Controller(_float4 Pos, _int* Index,class CGameObject* pCharacter);
 	void			Create_Rigid_Dynamic(_float4 Pos);
 	void			Create_Rigid_Static(_float4 Pos);
 	void			Create_Plane(_float4 Pos);
@@ -82,7 +81,7 @@ public:
 
 protected:
 	class CGameInstance* m_pGameInstance = { nullptr };
-
+	
 private:
 	PxDefaultAllocator m_DefaultAllocatorCallback;
 	PxDefaultErrorCallback m_DefaultErrorCallback;

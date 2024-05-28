@@ -913,9 +913,9 @@ void CGameInstance::SetRotationMatrix(_float4x4 RotationMatrix)
 	m_pPhysics_Controller->SetRotationMatrix(RotationMatrix);
 }
 
-_int CGameInstance::Create_Controller(_float4 Pos)
+CCharacter_Controller* CGameInstance::Create_Controller(_float4 Pos, _int* Index,CGameObject* pCharacter)
 {
-	return m_pPhysics_Controller->Create_Controller(_float4(0.f,0.f,0.f,1.f));
+	return m_pPhysics_Controller->Create_Controller(Pos, Index, pCharacter);
 }
 
 void CGameInstance::Cook_Terrain()
@@ -1035,6 +1035,7 @@ void CGameInstance::Release_Engine()
 
 void CGameInstance::Free()
 {
+	Safe_Release(m_pPhysics_Controller);
 	Safe_Release(m_pFrustum);
 	Safe_Release(m_pExtractor);
 	Safe_Release(m_pTarget_Manager);
@@ -1049,6 +1050,5 @@ void CGameInstance::Free()
 	Safe_Release(m_pLevel_Manager);
 	Safe_Release(m_pInput_Device);
 	Safe_Release(m_pGraphic_Device);
-	Safe_Release(m_pPhysics_Controller);
 	Safe_Release(m_pPicking);
 }
