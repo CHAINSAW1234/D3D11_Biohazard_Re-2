@@ -39,7 +39,6 @@ HRESULT CGameObject::Initialize_Prototype()
 	return S_OK;
 }
 
-/* 실제 게임내엣 사용되는 객체가 호출하는 함수다. */
 HRESULT CGameObject::Initialize(void* pArg)
 {
 	if(nullptr != pArg)

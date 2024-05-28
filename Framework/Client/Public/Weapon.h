@@ -26,12 +26,12 @@ private:
 	virtual ~CWeapon() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(_float fTimeDelta) override;
-	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
-	virtual HRESULT Render_LightDepth() override;
+	virtual HRESULT			Initialize_Prototype() override;
+	virtual HRESULT			Initialize(void* pArg) override;
+	virtual void			Tick(_float fTimeDelta) override;
+	virtual void			Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT			Render() override;
+	virtual HRESULT			Render_LightDepth() override;
 
 private:
 	CModel*					m_pModelCom = { nullptr };
@@ -40,8 +40,8 @@ private:
 	CCollider*				m_pColliderCom = { nullptr };
 	
 private:
-	HRESULT Add_Components();
-	HRESULT Bind_ShaderResources();
+	HRESULT					Add_Components();
+	HRESULT					Bind_ShaderResources();
 
 public:
 	static CWeapon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

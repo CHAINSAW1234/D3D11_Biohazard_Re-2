@@ -100,7 +100,6 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const wstring& strHeightMapFileP
 
 			_vector		vSour, vDest, vNormal;
 
-			/* 오른쪽 위 삼각형의 인덱스 */
 			pIndices[iNumIndices++] = iIndices[0];
 			pIndices[iNumIndices++] = iIndices[1];
 			pIndices[iNumIndices++] = iIndices[2];
@@ -139,7 +138,6 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const wstring& strHeightMapFileP
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
-	/* 정점버퍼의 byte크기 */
 	m_BufferDesc.ByteWidth = m_iVertexStride * m_iNumVertices;
 	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -156,7 +154,6 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const wstring& strHeightMapFileP
 	Safe_Delete_Array(pVertices);
 	
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
-	/* 인덱스 버퍼의 byte크기 */
 	m_BufferDesc.ByteWidth = m_iIndexStride * m_iNumIndices;
 	m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -185,7 +182,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const wstring& strHeightMapFileP
 
 
 
-	//Temp
+	//Terrain_Cooking - Physics_Controller
 	m_pGameInstance->SetTerrainPos(m_pVerticesPos);
 	m_pGameInstance->SetNumVertices(m_iNumVertices);
 	m_pGameInstance->SetNumIndicies(m_iNumIndices);
@@ -241,7 +238,6 @@ _bool CVIBuffer_Terrain::Compute_Picking(const CTransform* pTransform, _fvector 
 
 			_float fDistance = 0.0f;
 
-			//	우 상단 삼각형과의 검사
 			if (true == DirectX::TriangleTests::Intersects(
 				vRayOrigin, vRayDirection,
 				XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[0]]), 1.f),
@@ -257,7 +253,6 @@ _bool CVIBuffer_Terrain::Compute_Picking(const CTransform* pTransform, _fvector 
 				return true;
 			}
 
-			//	좌 하단 삼각형과의 검사
 			if (true == DirectX::TriangleTests::Intersects(
 				vRayOrigin, vRayDirection,
 				XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[0]]), 1.f),
@@ -306,16 +301,11 @@ void CVIBuffer_Terrain::Compute_Height(const CTransform* pTransform, _fvector vP
 
 	_vector			vPlane ;
 
-	/* d오른쪽 위 삼각형안에 있냐. */
 	if (fWidth > fDepth)
 		vPlane = { XMPlaneFromPoints(XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[0]]), 1.f), XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[1]]), 1.f), XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[2]]), 1.f)) };
-
-	/* 왼쪽 아래 삼각형안에 있냐 */
 	else
 		vPlane = { XMPlaneFromPoints(XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[0]]), 1.f), XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[2]]), 1.f), XMVectorSetW(XMLoadFloat3(&m_pVerticesPos[iIndices[3]]), 1.f)) };
 
-	/* ax + by + cz + d = 0 */
-	/* y = (-ax - cz - d) / b*/
 	_float		fHeight = { (-XMVectorGetX(vPlane) * XMVectorGetX(vTargetPos) - XMVectorGetZ(vPlane) * XMVectorGetZ(vTargetPos) - XMVectorGetW(vPlane)) / XMVectorGetY(vPlane) };
 
 	vTargetPos = XMVectorSetY(vTargetPos, fHeight);

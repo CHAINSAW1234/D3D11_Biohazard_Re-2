@@ -10,12 +10,12 @@ protected:
 	virtual ~CObserver_Handler() = default;
 
 public:
-	virtual void RegisterObserver(class CObserver* observer/*, _uint iLevelIndex*/);
-	virtual void RemoveObserver(class CObserver* observer/*, _uint iLevelIndex*/);
-	virtual void NotifyObserver();
+	virtual void					RegisterObserver(class CObserver* observer/*, _uint iLevelIndex*/);
+	virtual void					RemoveObserver(class CObserver* observer/*, _uint iLevelIndex*/);
+	virtual void					NotifyObserver();
 
 private:
-	vector<class CObserver*>	m_vecObserver;
+	vector<class CObserver*>		m_vecObserver;
 	//
 	//public:
 	//	virtual void Free() override;

@@ -12,20 +12,20 @@ protected:
 	virtual ~CBlendObject() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg);
-	virtual void Priority_Tick(_float fTimeDelta);
-	virtual void Tick(_float fTimeDelta);
-	virtual void Late_Tick(_float fTimeDelta);
-	virtual HRESULT Render();
+	virtual HRESULT			Initialize_Prototype();
+	virtual HRESULT			Initialize(void* pArg);
+	virtual void			Priority_Tick(_float fTimeDelta);
+	virtual void			Tick(_float fTimeDelta);
+	virtual void			Late_Tick(_float fTimeDelta);
+	virtual HRESULT			Render();
 
 
 
 protected:
-	_float				m_fCamDistance = { 0.0f };
+	_float					m_fCamDistance = { 0.0f };
 
 protected:
-	void Compute_CamDistance();
+	void					Compute_CamDistance();
 
 
 public:

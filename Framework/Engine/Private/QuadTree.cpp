@@ -86,7 +86,6 @@ HRESULT CQuadTree::SetUp_Neighbors()
 
 void CQuadTree::Culling(CGameInstance* pGameInstance, const _float3* pVerticesPos, _uint* pIndices, _uint* pNumIndices )
 {
-	/* 더 이상 분열이 되지 않는다면 자식들에 대한 비교를 할 필요가 없다. */
 	if (nullptr == m_pChildren[CORNER_LT] || 
 		true == isDraw(pGameInstance, pVerticesPos))
 	{
@@ -115,7 +114,6 @@ void CQuadTree::Culling(CGameInstance* pGameInstance, const _float3* pVerticesPo
 			true == isDraw[NEIGHBOR_RIGHT] &&
 			true == isDraw[NEIGHBOR_BOTTOM])
 		{
-			/* 오르ㅡㄴ쪽 위 삼가형이 그려진다면. */
 			if (true == isIn[0] ||
 				true == isIn[1] ||
 				true == isIn[2])
@@ -125,7 +123,6 @@ void CQuadTree::Culling(CGameInstance* pGameInstance, const _float3* pVerticesPo
 				pIndices[(*pNumIndices)++] = m_iCorners[CORNER_RB];
 			}
 
-			/* 왼쪽 아래 삼가형이 그려진다면. */
 			if (true == isIn[0] ||
 				true == isIn[2] ||
 				true == isIn[3])
@@ -224,11 +221,8 @@ void CQuadTree::Culling(CGameInstance* pGameInstance, const _float3* pVerticesPo
 		return;
 	}
 
-	/* 현재 쿼트리와 절두체의 충돌비교하여 충돌되었다면.?? : 자식쿼드트리에 대한 비교를 반복적으로 수행하기 위해서. */
-
 	_float		fRange = XMVector3Length(XMLoadFloat3(&pVerticesPos[m_iCorners[CORNER_LT]]) - XMLoadFloat3(&pVerticesPos[m_iCenter])).m128_f32[0];
 
-	// if (현재 쿼트리와 절두체의 충돌비교하여 충돌되었다면.)
 	if(pGameInstance->isInFrustum_LocalSpace(XMLoadFloat3(&pVerticesPos[m_iCenter]), fRange))
 	{
 		for (size_t i = 0; i < CORNER_END; i++)

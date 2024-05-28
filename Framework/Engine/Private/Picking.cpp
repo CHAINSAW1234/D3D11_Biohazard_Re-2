@@ -64,7 +64,6 @@ void CPicking::Update()
 
 void CPicking::Transform_PickingToLocalSpace(CTransform* pTransform, _Out_ _float3* pRayDir, _Out_ _float3* pRayPos)
 {
-
 	//XMFLOAT4 VecDir = Convert_Float3_To_Float4_Vec(m_vRayDir);
 
 	//_vector vRayDir = XMLoadFloat4(&VecDir);
@@ -81,7 +80,6 @@ void CPicking::Transform_PickingToLocalSpace(CTransform* pTransform, _Out_ _floa
 
 	//*pRayDir = Convert_Vector_To_Float3(vRayDir);
 	//*pRayPos = Convert_Vector_To_Float3(vRayPos);
-
 }
 
 void CPicking::Transform_PickingToWorldSpace(_float4* pRayDir, _float4* pRayPos)

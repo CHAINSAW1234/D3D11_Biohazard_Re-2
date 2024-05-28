@@ -12,20 +12,20 @@ public:
 	virtual ~CRigid_Dynamic() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT						Initialize_Prototype();
+	virtual HRESULT						Initialize(void* pArg);
 public:
-	virtual void SetPosition(PxVec3 Pos) override;
-	virtual PxVec3 GetPosition() override;
-	virtual void Update() override;
+	virtual void						SetPosition(PxVec3 Pos) override;
+	virtual PxVec3						GetPosition() override;
+	virtual void						Update() override;
 
-	virtual _float4 GetTranslation() override;
-	virtual PxTransform	GetTransform_Px() override;
+	virtual _float4						GetTranslation() override;
+	virtual PxTransform					GetTransform_Px() override;
 public:
-	static CRigid_Dynamic* Create();
+	static CRigid_Dynamic*				Create();
 
 protected:
-	_matrix			GetWorldMatrix_Rigid_Dynamic(_int Index);
+	_matrix								GetWorldMatrix_Rigid_Dynamic(_int Index);
 private:
 
 public:

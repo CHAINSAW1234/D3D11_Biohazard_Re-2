@@ -11,18 +11,18 @@ private:
 	virtual ~CFSM() = default;
 
 public:
-	HRESULT Initialize(class CState* pBaseState);
+	HRESULT								Initialize(class CState* pBaseState);
 
 public:
-	void Change_State(class CState* pNextState, _float fTimeDelta);
-	void Update_State(_float fTimeDelta);
+	void								Change_State(class CState* pNextState, _float fTimeDelta);
+	void								Update_State(_float fTimeDelta);
 
 private:
-	class CState* m_pCurState = { nullptr };
+	class CState*						m_pCurState = { nullptr };
 
 public:
-	static CFSM* Create(class CState* pBaseState);
-	virtual void Free() override;
+	static CFSM*						Create(class CState* pBaseState);
+	virtual void						Free() override;
 };
 
 END

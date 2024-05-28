@@ -88,14 +88,11 @@ _bool CNavigation::isMove(_fvector vPosition)
 
 	if (true == m_Cells[m_iCurrentIndex]->isIn(vPosition, XMLoadFloat4x4(&m_WorldMatrix), &iNeighborIndex))
 		return true;
-	/* 밖으로 나갔다. */
 	else
 	{
-		/* 나간 방향에 이웃이 없었다. */
 		if (-1 == iNeighborIndex)
 			return false;
 
-		/* 나간 방향에 이웃이 있었다. */
 		else
 		{
 			while (true)
@@ -199,6 +196,54 @@ CComponent * CNavigation::Clone(void * pArg)
 	}
 
 	return pInstance;
+}
+
+_vector CNavigation::GetPlane()
+{
+	return m_Cells[m_iCurrentIndex]->GetPlane();
+}
+
+_float CNavigation::GetCellHeight(_float4 Position)
+{
+	_vector Plane = m_Cells[m_iCurrentIndex]->GetPlane();
+	_float4 PlaneFloat4;
+	XMStoreFloat4(&PlaneFloat4, Plane);
+
+	_float YPos = (-PlaneFloat4.x * Position.x - PlaneFloat4.z * Position.z - PlaneFloat4.w) / PlaneFloat4.y;
+	return YPos;
+}
+
+_float4 CNavigation::GetSlidingNormal()
+{
+	return m_Cells[m_iCurrentIndex]->GetSlidingNormal();
+}
+
+_bool CNavigation::GetCurrentSlidingVector(_fvector vPosition, _float4* SlidingVector)
+{
+	if (-1 == m_iCurrentIndex)
+		return false;
+
+	_int		iNeighborIndex = { -1 };
+
+	m_Cells[m_iCurrentIndex]->isIn(vPosition, XMLoadFloat4x4(&m_WorldMatrix), &iNeighborIndex, &m_SlidingNormal, &m_bIsIsolated);
+	*SlidingVector = m_SlidingNormal;
+	return true;
+}
+
+_bool CNavigation::FindCell(_fvector vPosition)
+{
+	_int		iNeighborIndex = { -1 };
+
+	for (int i = 0; i < m_iNumFaces; ++i)
+	{
+		if (true == m_Cells[i]->isIn(vPosition, XMLoadFloat4x4(&m_WorldMatrix), &iNeighborIndex))
+		{
+			m_iCurrentIndex = i;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 

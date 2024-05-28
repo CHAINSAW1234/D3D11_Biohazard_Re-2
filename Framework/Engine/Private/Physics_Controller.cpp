@@ -1,10 +1,11 @@
+#pragma once
+#include "Event_Call_Back.h"
 #include "Physics_Controller.h"
 #include "GameInstance.h"
 #include "Engine_Struct.h"
 #include "Character_Controller.h"
 #include "Rigid_Dynamic.h"
 #include "RagDoll_Physics.h"
-#include "GameObject.h"
 
 CPhysics_Controller::CPhysics_Controller() : m_pGameInstance{ CGameInstance::Get_Instance() }
 {
@@ -164,7 +165,7 @@ CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int*
 	shapes[0]->setSimulationFilterData(filterData_Character);
 	shapes[0]->setContactOffset(0.1f);
 
-	auto Character_Controller = new CCharacter_Controller(Controller,pCharacter);
+	auto Character_Controller = new CCharacter_Controller(Controller, pCharacter,m_Scene,m_Physics);
 	Character_Controller->SetIndex(m_iCharacter_Controller_Count);
 	m_vecCharacter_Controller.push_back(Character_Controller);
 
@@ -320,6 +321,41 @@ void CPhysics_Controller::InitTerrain()
 	scene->addActor(*m_TerrainActor);
 
 	m_pGameInstance->SetSimulate(true);
+}
+
+CCharacter_Controller* CPhysics_Controller::GetCharacter_Controller(_int Index)
+{
+	return m_vecCharacter_Controller[Index];
+}
+
+CRigid_Dynamic* CPhysics_Controller::GetRigid_Dynamic(_int Index)
+{
+	if (m_vecRigid_Dynamic.empty() == false)
+		return m_vecRigid_Dynamic[Index];
+	else
+		return nullptr;
+}
+
+_float4 CPhysics_Controller::GetTranslation_Rigid_Dynamic(_int Index)
+{
+	return m_vecRigid_Dynamic[Index]->GetTranslation();
+}
+
+_matrix CPhysics_Controller::GetWorldMatrix_Rigid_Dynamic(_int Index)
+{
+	PxTransform globalPose = m_vecRigid_Dynamic[Index]->GetTransform_Px();
+
+	PxVec3 position = globalPose.p;
+
+	PxQuat rotation = globalPose.q;
+
+	XMMATRIX translationMatrix = XMMatrixTranslation(position.x, position.y, position.z);
+
+	XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(XMVectorSet(rotation.x, rotation.y, rotation.z, rotation.w));
+
+	XMMATRIX worldMatrix = rotationMatrix * translationMatrix;
+
+	return worldMatrix;
 }
 
 void CPhysics_Controller::Free()

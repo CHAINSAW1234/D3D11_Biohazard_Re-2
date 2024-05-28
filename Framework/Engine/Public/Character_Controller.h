@@ -32,6 +32,8 @@ public:
 public:
 	_bool			IsGrounded(PxController* Controller);
 
+#pragma endregion
+
 #pragma region Collider
 public:
 	void						SetColliderTransform_Body(_float4x4 Transform);
@@ -45,7 +47,6 @@ public:
 	void						SetColliderTransform_Right_Leg(_float4x4 Transform);
 	void						SetColliderTransform_Left_Shin(_float4x4 Transform);
 	void						SetColliderTransform_Right_Shin(_float4x4 Transform);
-	virtual void				Update() override;
 	void						Create_Collider();
 private:
 	PxTransform					ColliderTransform_Body = { PxTransform(PxVec3(0.f,0.f,0.f)) };

@@ -26,9 +26,9 @@ void CTransform::Set_Scaled(_float fScaleX, _float fScaleY, _float fScaleZ)
 
 _float4x4 CTransform::Get_WorldMatrix_Pure()
 {
-	_matrix identity = XMMatrixIdentity(); // XMMATRIX 항등 행렬 생성
+	_matrix identity = XMMatrixIdentity();
 	_float4x4 RotationMatrix;
-	XMStoreFloat4x4(&RotationMatrix, identity); // XMMATRIX를 XMFLOAT4X4로 변환
+	XMStoreFloat4x4(&RotationMatrix, identity);
 
 	_float3 vLenght_1 = _float3(m_WorldMatrix._11, m_WorldMatrix._12, m_WorldMatrix._13);
 	XMVECTOR vector = XMLoadFloat3(&vLenght_1);
@@ -67,9 +67,9 @@ _float4x4 CTransform::Get_WorldMatrix_Pure()
 
 _matrix CTransform::Get_WorldMatrix_Pure_Mat()
 {
-	_matrix identity = XMMatrixIdentity(); // XMMATRIX 항등 행렬 생성
+	_matrix identity = XMMatrixIdentity();
 	_float4x4 RotationMatrix;
-	XMStoreFloat4x4(&RotationMatrix, identity); // XMMATRIX를 XMFLOAT4X4로 변환
+	XMStoreFloat4x4(&RotationMatrix, identity);
 
 	_float3 vLenght_1 = _float3(m_WorldMatrix._11, m_WorldMatrix._12, m_WorldMatrix._13);
 	XMVECTOR vector = XMLoadFloat3(&vLenght_1);
@@ -108,9 +108,9 @@ _matrix CTransform::Get_WorldMatrix_Pure_Mat()
 
 _float4x4 CTransform::Get_RotationMatrix_Pure()
 {
-	_matrix identity = XMMatrixIdentity(); // XMMATRIX 항등 행렬 생성
+	_matrix identity = XMMatrixIdentity();
 	_float4x4 RotationMatrix;
-	XMStoreFloat4x4(&RotationMatrix, identity); // XMMATRIX를 XMFLOAT4X4로 변환
+	XMStoreFloat4x4(&RotationMatrix, identity);
 
 	_float3 vLenght_1 = _float3(m_WorldMatrix._11, m_WorldMatrix._12, m_WorldMatrix._13);
 	XMVECTOR vector = XMLoadFloat3(&vLenght_1);
@@ -145,9 +145,9 @@ _float4x4 CTransform::Get_RotationMatrix_Pure()
 
 _matrix CTransform::Get_RotationMatrix_Pure_Mat()
 {
-	_matrix identity = XMMatrixIdentity(); // XMMATRIX 항등 행렬 생성
+	_matrix identity = XMMatrixIdentity();
 	_float4x4 RotationMatrix;
-	XMStoreFloat4x4(&RotationMatrix, identity); // XMMATRIX를 XMFLOAT4X4로 변환
+	XMStoreFloat4x4(&RotationMatrix, identity);
 
 	_float3 vLenght_1 = _float3(m_WorldMatrix._11, m_WorldMatrix._12, m_WorldMatrix._13);
 	XMVECTOR vector = XMLoadFloat3(&vLenght_1);

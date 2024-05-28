@@ -212,7 +212,6 @@ HRESULT CPlayer::Add_Components()
 	/* Com_Collider */
 	CBounding_AABB::BOUNDING_AABB_DESC		ColliderDesc{};
 
-	/* 로컬상의 정보를 셋팅한다. */
 	ColliderDesc.vSize = _float3(0.8f, 1.2f, 0.8f);
 	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
 	

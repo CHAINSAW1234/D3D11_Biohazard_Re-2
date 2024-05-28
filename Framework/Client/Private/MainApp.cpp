@@ -8,16 +8,6 @@ CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::Get_Instance())
 {
 	Safe_AddRef(m_pGameInstance);		
-
-	
-
-	//D3D11_RASTERIZER_DESC			RState;
-	//D3D11_DEPTH_STENCIL_DESC		DSState;
-	//D3D11_BLEND_DESC				BState;
-	//m_pContext->RSSetState();
-	//m_pContext->OMSetDepthStencilState();
-	//m_pContext->OMSetBlendState();
-	//
 }
 
 HRESULT CMainApp::Initialize()
@@ -29,7 +19,6 @@ HRESULT CMainApp::Initialize()
 	EngineDesc.iWinSizeX = g_iWinSizeX;
 	EngineDesc.iWinSizeY = g_iWinSizeY;
 
-	/* 내 게임의 기초 초기화 과정을 거치자. */
 	if (FAILED(m_pGameInstance->Initialize_Engine(g_hInst, LEVEL_END, EngineDesc, &m_pDevice, &m_pContext)))
 		return E_FAIL;
 
@@ -69,7 +58,7 @@ HRESULT CMainApp::Render()
 
 	if (m_fTimeAcc >= 1.f)
 	{
-		wsprintf(m_szFPS, TEXT("에프피에스 : %d"), m_iRenderCnt);
+		wsprintf(m_szFPS, TEXT("FPS : %d"), m_iRenderCnt);
 		m_fTimeAcc = 0.f;
 		m_iRenderCnt = 0;
 	}

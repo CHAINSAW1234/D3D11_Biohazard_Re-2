@@ -2,7 +2,6 @@
 #pragma once
 
 #include "Base.h"
-#include "Event_Call_Back.h"
 
 BEGIN(Engine)
 
@@ -13,14 +12,14 @@ protected:
 	CPhysics_Controller(const CPhysics_Controller& rhs);
 	virtual ~CPhysics_Controller() = default;
 public:
-	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg);
-	virtual void	Simulate(_float fTimeDelta);
-	void			Create_Plane(_float4 Pos);
+	virtual HRESULT							Initialize_Prototype();
+	virtual HRESULT							Initialize(void* pArg);
+	virtual void							Simulate(_float fTimeDelta);
+	void									Create_Plane(_float4 Pos);
 public:
-	static CPhysics_Controller* Create();
+	static CPhysics_Controller*				Create();
 protected:
-	class CGameInstance* m_pGameInstance = { nullptr };
+	class CGameInstance*					m_pGameInstance = { nullptr };
 public:
 	virtual void Free() override;
 private:
@@ -48,6 +47,10 @@ public:
 	class CCharacter_Controller*			Create_Controller(_float4 Pos, _int* Index,class CGameObject* pCharacter);
 	void									Create_Rigid_Dynamic(_float4 Pos);
 	void									Create_Rigid_Static(_float4 Pos);
+	class CCharacter_Controller*			GetCharacter_Controller(_int Index);
+	class CRigid_Dynamic*					GetRigid_Dynamic(_int Index);
+	_float4									GetTranslation_Rigid_Dynamic(_int Index);
+	_matrix									GetWorldMatrix_Rigid_Dynamic(_int Index);
 private:
 	//Physics_Component
 	vector<class CCharacter_Controller*>	m_vecCharacter_Controller;
@@ -59,7 +62,6 @@ private:
 	_int									m_iMapMeshCount = { 0 };
 	vector<PxRigidStatic*>					m_vecFullMapObject;
 #pragma endregion
-
 
 #pragma region For Mesh Cooking
 public://For Mesh Cooking
@@ -76,15 +78,11 @@ private:
 
 #pragma region Ragdoll
 public://RagDoll
-	void			SetBone_Ragdoll(vector<class CBone*>* vecBone);
-	void			SetWorldMatrix(_float4x4 WorldMatrix);
-	void			SetRotationMatrix(_float4x4 WorldMatrix);
-public://RagDoll
-	_bool	 m_bRagdoll = { false };
-	void			SetBone_Ragdoll(vector<class CBone*>* vecBone);
-	void			SetWorldMatrix(_float4x4 WorldMatrix);
-	void			SetRotationMatrix(_float4x4 WorldMatrix);
-	class CRagdoll_Physics* m_pRagdoll_Physics = { nullptr };
+	_bool									m_bRagdoll = { false };
+	void									SetBone_Ragdoll(vector<class CBone*>* vecBone);
+	void									SetWorldMatrix(_float4x4 WorldMatrix);
+	void									SetRotationMatrix(_float4x4 WorldMatrix);
+	class CRagdoll_Physics*					m_pRagdoll_Physics = { nullptr };
 #pragma endregion
 };
 

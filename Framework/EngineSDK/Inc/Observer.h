@@ -10,7 +10,7 @@ protected:
 	virtual ~CObserver() = default;
 
 public:
-	virtual void OnNotify() = 0;
+	virtual void				OnNotify() = 0;
 	//virtual void Free() override {}
 };
 

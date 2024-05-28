@@ -21,7 +21,6 @@ HRESULT CBlendObject::Initialize_Prototype()
 	return S_OK;
 }
 
-/* 실제 게임내엣 사용되는 객체가 호출하는 함수다. */
 HRESULT CBlendObject::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
@@ -48,8 +47,6 @@ HRESULT CBlendObject::Render()
 {
 	return S_OK;
 }
-
-
 
 void CBlendObject::Compute_CamDistance()
 {

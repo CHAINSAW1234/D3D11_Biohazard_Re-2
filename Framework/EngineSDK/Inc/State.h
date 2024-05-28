@@ -11,13 +11,13 @@ protected:
 	virtual ~CState() = default;
 
 public:
-	virtual void Enter(_float fTimeDelta);
-	virtual void Excute(_float fTimeDelta);
-	virtual void Exit(_float fTimeDelta);
+	virtual void							Enter(_float fTimeDelta);
+	virtual void							Excute(_float fTimeDelta);
+	virtual void							Exit(_float fTimeDelta);
 
 protected:
-	class CGameObject* m_pContext = { nullptr };
-	class CGameInstance* m_pGameInstance = { nullptr };
+	class CGameObject*						m_pContext = { nullptr };
+	class CGameInstance*					m_pGameInstance = { nullptr };
 
 public:
 	virtual void Free() override;

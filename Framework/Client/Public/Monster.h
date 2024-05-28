@@ -26,11 +26,11 @@ private:
 	virtual ~CMonster() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(_float fTimeDelta) override;
-	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
+	virtual HRESULT				Initialize_Prototype() override;
+	virtual HRESULT				Initialize(void* pArg) override;
+	virtual void				Tick(_float fTimeDelta) override;
+	virtual void				Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT				Render() override;
 
 private:
 	CModel*						m_pModelCom = { nullptr };
@@ -40,8 +40,8 @@ private:
 	
 	_int						m_iIndex = { 0 };
 private:
-	HRESULT Add_Components();
-	HRESULT Bind_ShaderResources();
+	HRESULT						Add_Components();
+	HRESULT						Bind_ShaderResources();
 
 public:
 	static CMonster* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

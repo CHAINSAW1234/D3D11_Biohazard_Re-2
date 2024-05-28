@@ -12,8 +12,8 @@ private:
 	virtual ~CVIBuffer_Cube() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT				Initialize_Prototype();
+	virtual HRESULT				Initialize(void* pArg);
 
 
 public:

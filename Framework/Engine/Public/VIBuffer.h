@@ -2,8 +2,6 @@
 
 #include "Component.h"
 
-/* 각 형태를 구성하기위한 정점 인덱스를 보유하는 개겣들의 부모다. */
-
 BEGIN(Engine)
 
 class ENGINE_DLL CVIBuffer abstract : public CComponent
@@ -14,12 +12,12 @@ protected:
 	virtual ~CVIBuffer() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg);
-	virtual HRESULT Render();
+	virtual HRESULT				Initialize_Prototype();
+	virtual HRESULT				Initialize(void* pArg);
+	virtual HRESULT				Render();
 
 public:
-	virtual HRESULT Bind_Buffers();
+	virtual HRESULT				Bind_Buffers();
 
 protected:
 	ID3D11Buffer*				m_pVB = { nullptr };
@@ -41,10 +39,10 @@ protected:
 
 
 protected:
-	HRESULT Create_Buffer(_Out_ ID3D11Buffer** ppBuffer);
+	HRESULT						Create_Buffer(_Out_ ID3D11Buffer** ppBuffer);
 
 public:
-	virtual CComponent* Clone(void* pArg) = 0;
+	virtual CComponent*	Clone(void* pArg) = 0;
 	virtual void Free() override;
 };
 

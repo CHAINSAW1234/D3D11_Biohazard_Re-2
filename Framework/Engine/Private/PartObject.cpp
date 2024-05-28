@@ -25,7 +25,7 @@ HRESULT CPartObject::Initialize(void * pArg)
 		Safe_AddRef(m_pParentsTransform);
 		if (nullptr == m_pParentsTransform)
 		{
-			MSG_BOX(TEXT("부모 트랜스폼 없는 파트오브젝튼 없다"));
+			MSG_BOX(TEXT("PartObject Error - Invalid Parents_Transform"));
 			return E_FAIL;
 		}
 	}

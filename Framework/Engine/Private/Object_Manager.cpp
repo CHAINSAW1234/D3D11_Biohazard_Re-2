@@ -38,7 +38,6 @@ HRESULT CObject_Manager::Add_Prototype(const wstring & strPrototypeTag, CGameObj
 
 HRESULT CObject_Manager::Add_Clone(_uint iLevelIndex, const wstring & strLayerTag, const wstring & strPrototypeTag, void* pArg)
 {
-	/* 복제해야할 원형객체를 검색한다. */
 	CGameObject*	pPrototype = Find_Prototype(strPrototypeTag);
 	if (nullptr == pPrototype)
 		return E_FAIL;
@@ -47,10 +46,8 @@ HRESULT CObject_Manager::Add_Clone(_uint iLevelIndex, const wstring & strLayerTa
 	if (nullptr == pGameObject)
 		return E_FAIL;
 
-	/* 복제한 사본객체를 추가해야할 레이어를 찾는다.*/
 	CLayer*		pLayer = Find_Layer(iLevelIndex, strLayerTag);
 
-	/* 레이어가 없었다면 만들어서 객체를 추가하고 만든 레이어를 다시 맵에 추가해준다. */
 	if (nullptr == pLayer)
 	{
 		pLayer = CLayer::Create();
@@ -60,7 +57,6 @@ HRESULT CObject_Manager::Add_Clone(_uint iLevelIndex, const wstring & strLayerTa
 
 		m_pLayers[iLevelIndex].emplace(strLayerTag, pLayer);
 	}
-	/* 추가하려고하느 ㄴ레이어가 이미 있었다.*/
 	else	
 		pLayer->Add_GameObject(pGameObject);
 
@@ -69,7 +65,6 @@ HRESULT CObject_Manager::Add_Clone(_uint iLevelIndex, const wstring & strLayerTa
 
 CGameObject * CObject_Manager::Clone_GameObject(const wstring & strPrototypeTag, void * pArg)
 {
-	/* 복제해야할 원형객체를 검색한다. */
 	CGameObject*	pPrototype = Find_Prototype(strPrototypeTag);
 	if (nullptr == pPrototype)
 		return nullptr;
@@ -87,7 +82,6 @@ void CObject_Manager::Priority_Tick(_float fTimeDelta)
 	{
 		for (auto& Pair : m_pLayers[i])
 		{
-			/* 필요한 위치의 갱신작어블 수행한다. */
 			Pair.second->Priority_Tick(fTimeDelta);
 		}
 	}
@@ -99,7 +93,6 @@ void CObject_Manager::Tick(_float fTimeDelta)
 	{
 		for (auto& Pair : m_pLayers[i])
 		{
-			/* 필요한 위치의 갱신작어블 수행한다. */
 			Pair.second->Tick(fTimeDelta);
 		}		
 	}
@@ -111,7 +104,6 @@ void CObject_Manager::Late_Tick(_float fTimeDelta)
 	{
 		for (auto& Pair : m_pLayers[i])
 		{
-			/* 갱신된 위치를 활용하여 추가적인 기능을 수행하낟. */
 			Pair.second->Late_Tick(fTimeDelta);
 		}
 	}
@@ -124,6 +116,16 @@ void CObject_Manager::Clear(_uint iLevelIndex)
 		Safe_Release(Pair.second);
 	}
 	m_pLayers[iLevelIndex].clear();
+}
+
+void CObject_Manager::Release_Layer(_uint iLevelIndex, const wstring& LayerTag)
+{
+	CLayer* pLayer = Find_Layer(iLevelIndex, LayerTag);
+
+	if (nullptr == pLayer)
+		return;
+
+	pLayer->Release_Layer();
 }
 
 CGameObject * CObject_Manager::Find_Prototype(const wstring & strPrototypeTag)

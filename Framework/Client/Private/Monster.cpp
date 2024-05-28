@@ -95,7 +95,6 @@ HRESULT CMonster::Render()
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
 
-		/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 
@@ -120,7 +119,6 @@ HRESULT CMonster::Add_Components()
 	/* Com_Collider_Head */
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	/* 로컬상의 정보를 셋팅한다. */
 	ColliderDesc.fRadius = 0.32f;
 	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.fRadius + 0.6f, 0.f);
 
@@ -132,7 +130,6 @@ HRESULT CMonster::Add_Components()
 	/* Com_Collider_Body */
 	CBounding_OBB::BOUNDING_OBB_DESC		ColliderOBBDesc{};
 
-	/* 로컬상의 정보를 셋팅한다. */
 	ColliderOBBDesc.vRotation = _float3(0.f, XMConvertToRadians(45.0f), 0.f);
 	ColliderOBBDesc.vSize = _float3(0.8f, 0.6f, 0.8f);
 	ColliderOBBDesc.vCenter = _float3(0.f, ColliderOBBDesc.vSize.y * 0.5f, 0.f);

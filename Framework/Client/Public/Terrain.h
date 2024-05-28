@@ -22,14 +22,14 @@ private:
 	virtual ~CTerrain() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(_float fTimeDelta) override;
-	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
+	virtual HRESULT			Initialize_Prototype() override;
+	virtual HRESULT			Initialize(void* pArg) override;
+	virtual void			Tick(_float fTimeDelta) override;
+	virtual void			Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT			Render() override;
 	
 public:
-	_float3 Compute_PickPos(_fvector vRayPos, _fvector vRayDir);
+	_float3					Compute_PickPos(_fvector vRayPos, _fvector vRayDir);
 
 private:
 	CShader*				m_pShaderCom = { nullptr };
@@ -39,8 +39,8 @@ private:
 	
 	
 private:
-	HRESULT Add_Components();
-	HRESULT Bind_ShaderResources();
+	HRESULT					Add_Components();
+	HRESULT					Bind_ShaderResources();
 
 public:
 	static CTerrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

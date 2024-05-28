@@ -270,7 +270,6 @@ HRESULT CHair_Player::Render_LightDepth()
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
 
-			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
 			if (FAILED(m_pShaderCom->Begin(3)))
 				return E_FAIL;
 
@@ -313,7 +312,6 @@ HRESULT CHair_Player::Render_LightDepth_Cube()
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
 
-			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
 			if (FAILED(m_pShaderCom->Begin(5)))
 				return E_FAIL;
 
@@ -341,7 +339,6 @@ HRESULT CHair_Player::Add_Components()
 	/* Com_Collider */
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	/* 로컬상의 정보를 셋팅한다. */
 	ColliderDesc.fRadius = 0.5f;
 	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.fRadius, 0.f);
 
@@ -357,9 +354,6 @@ HRESULT CHair_Player::Bind_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
-
-	/*if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;	*/
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;

@@ -31,6 +31,17 @@ HRESULT CLayer::Add_GameObject(CGameObject * pGameObject)
 	return S_OK;
 }
 
+list<class CGameObject*>* CLayer::Get_Layer()
+{
+	return &m_GameObjects;
+}
+
+void CLayer::Release_Layer()
+{
+	for (auto& pGameObject : m_GameObjects)
+		Safe_Release(pGameObject);
+}
+
 void CLayer::Priority_Tick(_float fTimeDelta)
 {
 	for (auto& pGameObject : m_GameObjects)

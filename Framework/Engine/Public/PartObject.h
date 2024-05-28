@@ -18,16 +18,16 @@ protected:
 	virtual ~CPartObject() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Priority_Tick(_float fTimeDelta) override;
-	virtual void Tick(_float fTimeDelta) override;
-	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
-	virtual HRESULT Render_LightDepth() { return S_OK; }
+	virtual HRESULT			Initialize_Prototype() override;
+	virtual HRESULT			Initialize(void* pArg) override;
+	virtual void			Priority_Tick(_float fTimeDelta) override;
+	virtual void			Tick(_float fTimeDelta) override;
+	virtual void			Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT			Render() override;
+	virtual HRESULT			Render_LightDepth() { return S_OK; }
 
 private:
-	void Update_WorldMatrix();
+	void					Update_WorldMatrix();
 
 protected:
 	_float4x4				m_WorldMatrix;

@@ -33,17 +33,17 @@ private:
 	virtual ~CPlayer() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Priority_Tick(_float fTimeDelta) override;
-	virtual void Tick(_float fTimeDelta) override;
-	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
+	virtual HRESULT								Initialize_Prototype() override;
+	virtual HRESULT								Initialize(void* pArg) override;
+	virtual void								Priority_Tick(_float fTimeDelta) override;
+	virtual void								Tick(_float fTimeDelta) override;
+	virtual void								Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT								Render() override;
 
 private:
-	void Priority_Tick_PartObjects(_float fTimeDelta);
-	void Tick_PartObjects(_float fTimeDelta);
-	void Late_Tick_PartObjects(_float fTimeDelta);
+	void										Priority_Tick_PartObjects(_float fTimeDelta);
+	void										Tick_PartObjects(_float fTimeDelta);
+	void										Late_Tick_PartObjects(_float fTimeDelta);
 
 public:
 	

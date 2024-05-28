@@ -53,8 +53,8 @@ protected:
 	PxPhysics*						m_Physics = nullptr;
 	PxScene*						m_Scene = nullptr;
 
-	class CEventCallBack*			m_EventCallBack = { nullptr };
-	class CFilterCallBack*			m_FilterCallBack = { nullptr };
+	class CEventCallBack*			m_pEventCallBack = { nullptr };
+	class CFilterCallBack*			m_pFilterCallBack = { nullptr };
 
 protected:
 	_int m_iRefCnt_Px = { 0 };

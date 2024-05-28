@@ -14,22 +14,18 @@ HRESULT CLevel_Manager::Initialize()
 
 HRESULT CLevel_Manager::Open_Level(_uint iNewLevelID, CLevel * pNewLevel)
 {
-	/* 최초레벨할당시에는 수행하지 않는다. */
 	if (nullptr != m_pCurrentLevel)
 	{
 		CGameInstance*		pGameInstance = CGameInstance::Get_Instance();
 		Safe_AddRef(pGameInstance);
 
-		/* 기존 레벨용 자원을 파괴한다 .*/
 		pGameInstance->Clear(m_iCurrentLevelID);
 
 		Safe_Release(pGameInstance);
 	}	
 
-	/* 기존 레벨을 파괴한다. */
 	Safe_Release(m_pCurrentLevel);
 
-	/* 새로운 레벨로 교체한다. */
 	m_pCurrentLevel = pNewLevel;
 
 	m_iCurrentLevelID = iNewLevelID;

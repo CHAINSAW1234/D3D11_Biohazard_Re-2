@@ -11,22 +11,23 @@ private:
 	virtual ~CRenderTarget() = default;
 
 public:
-	ID3D11RenderTargetView* Get_RTV() const {
+	ID3D11RenderTargetView*			Get_RTV() const 
+	{
 		return m_pRTV;
 	}
 
 public:
-	HRESULT Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
-	HRESULT Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
-	HRESULT Clear();
-	HRESULT Bind_ShaderResource(class CShader* pShader, const _char* pConstantName);
-	HRESULT Copy_Resource(ID3D11Texture2D** ppTextureHub);
+	HRESULT							Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	HRESULT							Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	HRESULT							Clear();
+	HRESULT							Bind_ShaderResource(class CShader* pShader, const _char* pConstantName);
+	HRESULT							Copy_Resource(ID3D11Texture2D** ppTextureHub);
 
 
 #ifdef _DEBUG
 public:
-	HRESULT Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY);
-	HRESULT Render_Debug(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
+	HRESULT							Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY);
+	HRESULT							Render_Debug(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
 
 #endif 
 private:

@@ -30,7 +30,7 @@ private:
 
 	/* 렌더타겟용으로 만들어진 텍스쳐로부터 직접 값을 얻어올 수 없기때문에 .*/
 	/*내가 정보를 얻어오고싶은 렌더타겟의 정보를 복사받아놓기위한 텍스쳐이다. */
-	ID3D11Texture2D*			m_pTextureHub = { nullptr };
+	ID3D11Texture2D*					m_pTextureHub = { nullptr };
 
 public:
 	static CExtractor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
