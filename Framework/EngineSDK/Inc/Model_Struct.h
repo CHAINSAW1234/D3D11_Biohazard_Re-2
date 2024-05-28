@@ -24,7 +24,7 @@ typedef struct tagIK_Info
 	_int					iIKRootBoneIndex = { -1 };
 	vector<_uint>			JointIndices;
 	_float3					vIKDirection = {};
-	list<_uint>				IKChildIndices;
+	list<_uint>				IKIncludedIndices;
 
 	_uint					iNumIteration = { 0 };
 

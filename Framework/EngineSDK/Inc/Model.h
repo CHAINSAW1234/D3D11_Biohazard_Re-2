@@ -65,6 +65,9 @@ private:
 	void Update_TransformMatrices_BoneChain(IK_INFO& IkInfo);
 	void Update_CombinedMatrices_BoneChain(IK_INFO& IkInfo);
 
+private:
+	_vector Compute_Quaternion_From_TwoDirection(_fvector vSrcDirection, _fvector vDstDirection);
+
 public:		/* For.Bone_Layer */
 	void Add_Bone_Layer(const wstring& strLayerTag, list<_uint> BoneIndices);
 	void Add_Bone_Layer_All_Bone(const wstring& strLayerTag);
