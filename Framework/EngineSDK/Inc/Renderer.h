@@ -60,6 +60,8 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT SetUp_RenderTargets_Bloom(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT SetUp_RenderTargets_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT SetUp_RenderTargets_PostProcessing_Result(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT SetUp_Test();
+	HRESULT Render_Test();
 
 #ifdef _DEBUG
 	HRESULT SetUp_Debug();

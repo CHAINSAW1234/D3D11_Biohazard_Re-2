@@ -1,7 +1,7 @@
 #include "..\Public\RenderTarget.h"
 
 #include "GameInstance.h"
-
+#include "ComputeShader.h"
 
 CRenderTarget::CRenderTarget(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: m_pDevice { pDevice }
@@ -91,10 +91,60 @@ HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMA
 	return S_OK;
 }
 
+HRESULT CRenderTarget::Initialize_3D(_uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+{
+	D3D11_TEXTURE3D_DESC	TextureDesc;
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE3D_DESC));
+	TextureDesc.Width = iWidth;
+	TextureDesc.Height = iHeight;
+	TextureDesc.Depth = iDepth;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.Format = ePixelFormat;
+	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	TextureDesc.CPUAccessFlags = 0;
+	TextureDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	TextureDesc.MiscFlags = 0;
+
+	if (FAILED(m_pDevice->CreateTexture3D(&TextureDesc, nullptr, &m_pTexture3D)))
+		return E_FAIL;
+
+	D3D11_RENDER_TARGET_VIEW_DESC RenderTargetDesc = {};
+	RenderTargetDesc.Format = TextureDesc.Format;
+	RenderTargetDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE3D;
+	RenderTargetDesc.Texture3D.FirstWSlice = 0;
+	RenderTargetDesc.Texture3D.MipSlice = 0;
+	RenderTargetDesc.Texture3D.WSize = -1;
+
+	if (FAILED(m_pDevice->CreateRenderTargetView(m_pTexture3D, &RenderTargetDesc, &m_pRTV)))
+		return E_FAIL;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC ResourceViewDesc = {};
+	ResourceViewDesc.Format = TextureDesc.Format;
+	ResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE3D;
+	ResourceViewDesc.Texture3D.MipLevels = 1;
+	ResourceViewDesc.Texture3D.MostDetailedMip = 0;
+
+	if (FAILED(m_pDevice->CreateShaderResourceView(m_pTexture3D, &ResourceViewDesc, &m_pSRV)))
+		return E_FAIL;
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC   UnorderedAccessDesc = {};
+	UnorderedAccessDesc.Format = TextureDesc.Format;
+	UnorderedAccessDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE3D;
+	UnorderedAccessDesc.Texture3D.MipSlice = 0;
+	UnorderedAccessDesc.Texture3D.FirstWSlice = 0;
+	UnorderedAccessDesc.Texture3D.WSize = -1;
+
+	if (FAILED(m_pDevice->CreateUnorderedAccessView(m_pTexture3D, &UnorderedAccessDesc, &m_pUAV)))
+		return E_FAIL;
+
+	m_vClearColor = vClearColor;
+
+	return S_OK;
+}
+
 HRESULT CRenderTarget::Clear()
 {
 	m_pContext->ClearRenderTargetView(m_pRTV, (_float*)&m_vClearColor);
-
 	return S_OK;
 }
 
@@ -103,9 +153,29 @@ HRESULT CRenderTarget::Bind_ShaderResource(CShader * pShader, const _char * pCon
 	return pShader->Bind_Texture(pConstantName, m_pSRV);
 }
 
+HRESULT CRenderTarget::Bind_ShaderResource(CComputeShader* pShader, const _char* pConstantName)
+{
+	return pShader->Bind_Texture(pConstantName, m_pSRV);
+}
+
+HRESULT CRenderTarget::Bind_OutputShaderResource(CComputeShader* pShader, const _char* pConstantName)
+{
+	if (nullptr == m_pUAV)
+		return E_FAIL;
+
+	return pShader->Bind_Texture(pConstantName, m_pUAV);
+}
+
 HRESULT CRenderTarget::Copy_Resource(ID3D11Texture2D ** ppTextureHub)
 {
 	m_pContext->CopyResource(*ppTextureHub, m_pTexture2D);
+
+	return S_OK;
+}
+
+HRESULT CRenderTarget::Copy_Resource(ID3D11Texture3D** ppTextureHub)
+{
+	m_pContext->CopyResource(*ppTextureHub, m_pTexture3D);
 
 	return S_OK;
 }
@@ -134,30 +204,43 @@ HRESULT CRenderTarget::Render_Debug(CShader * pShader, CVIBuffer_Rect * pVIBuffe
 	if (FAILED(pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 
-	D3D11_TEXTURE2D_DESC pDesc = {};
-	m_pTexture2D->GetDesc(&pDesc);
-	if (pDesc.MiscFlags == D3D11_RESOURCE_MISC_TEXTURECUBE) {
-		if (FAILED(pShader->Bind_Texture("g_CubeTexture", m_pSRV)))
+	// 1.  texture3d
+	if (m_pTexture3D != nullptr) {
+		if (FAILED(pShader->Bind_Texture("g_3DTexture", m_pSRV)))
 			return E_FAIL;
 
-		if (FAILED(pShader->Begin((_uint)SHADER_PASS_DEFERRED::PASS_DEBUG_CUBE)))
+		if (FAILED(pShader->Begin((_uint)SHADER_PASS_DEFERRED::PASS_DEBUG_3D)))
 			return E_FAIL;
 
 		if (FAILED(pVIBuffer->Render()))
 			return E_FAIL;
 	}
 	else {
-		if (FAILED(pShader->Bind_Texture("g_Texture", m_pSRV)))
-			return E_FAIL;
+		D3D11_TEXTURE2D_DESC pDesc = {};
+		m_pTexture2D->GetDesc(&pDesc);
+		if (pDesc.MiscFlags == D3D11_RESOURCE_MISC_TEXTURECUBE) {
+			if (FAILED(pShader->Bind_Texture("g_CubeTexture", m_pSRV)))
+				return E_FAIL;
 
-		if (FAILED(pShader->Begin((_uint)SHADER_PASS_DEFERRED::PASS_DEBUG)))
-			return E_FAIL;
+			if (FAILED(pShader->Begin((_uint)SHADER_PASS_DEFERRED::PASS_DEBUG_CUBE)))
+				return E_FAIL;
 
-		if (FAILED(pVIBuffer->Render()))
-			return E_FAIL;
+			if (FAILED(pVIBuffer->Render()))
+				return E_FAIL;
+		}
+		// 3. 2d
+		else {
+			if (FAILED(pShader->Bind_Texture("g_Texture", m_pSRV)))
+				return E_FAIL;
+
+			if (FAILED(pShader->Begin((_uint)SHADER_PASS_DEFERRED::PASS_DEBUG)))
+				return E_FAIL;
+
+			if (FAILED(pVIBuffer->Render()))
+				return E_FAIL;
+		}
 	}
-
-
+	
 	return S_OK;
 }
 
@@ -189,11 +272,27 @@ CRenderTarget* CRenderTarget::Create_Cube(ID3D11Device* pDevice, ID3D11DeviceCon
 	return pInstance;
 }
 
+CRenderTarget* CRenderTarget::Create_3D(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+{
+	CRenderTarget* pInstance = new CRenderTarget(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_3D(iWidth, iHeight, iDepth, ePixelFormat, vClearColor)))
+	{
+		MSG_BOX(TEXT("Failed to Created : CRenderTarget"));
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
 void CRenderTarget::Free()
 {
 	Safe_Release(m_pSRV);
 	Safe_Release(m_pRTV);
 	Safe_Release(m_pTexture2D);
+
+	Safe_Release(m_pTexture3D);
+	Safe_Release(m_pUAV);
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);

@@ -7,6 +7,7 @@ matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
 texture2D g_Texture;
 TextureCubeArray g_CubeTexture;
+Texture3D g_3DTexture;
 
 texture2D g_NormalTexture;
 texture2D g_DiffuseTexture;
@@ -28,6 +29,8 @@ texture2D g_AdditionalLightTexture;
 
 texture2D g_PostprocessingDiffuseTexture;
 texture2D g_PostprocessingShadeTexture;
+
+Texture3D d;
 
 bool g_isRadialBlurActive = { false };
 float2 g_vRadialBlurUV;
@@ -173,6 +176,20 @@ PS_OUT PS_MAIN_CUBE(PS_IN In)
     
     Out.vColor = g_CubeTexture.Sample(LinearSampler, float4(vTex, 0));
 
+    return Out;
+}
+
+PS_OUT PS_MAIN_3D(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    float3 vTex = normalize(float3(1.0, In.vTexcoord.y * -2 + 1.f, In.vTexcoord.x * -2.f + 1.f));
+    //float3 vTex = normalize(float3(In.vTexcoord.x * 2 - 1.f, In.vTexcoord.y * -2.f + 1.f, 1.f));
+    //float3 vTex = normalize(float3(-1.0, In.vTexcoord.y * -2 + 1.f, In.vTexcoord.x * -2.f + 1.f));
+    
+    //Out.vColor = g_3DTexture.Load(int4(0,0,0, 0));
+    Out.vColor = g_3DTexture.Sample(LinearSampler, float3(In.vTexcoord, In.vTexcoord.y));
+    //Out.vColor = g_3DTexture.Load(int4(In.vTexcoord * 64, 6.4, 0));
     return Out;
 }
 
@@ -705,6 +722,19 @@ technique11 DefaultTechnique
         HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_MAIN_CUBE();
+    }
+
+    pass Debug_3D // 1
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_3D();
     }
 
     pass Light_Directional // 2

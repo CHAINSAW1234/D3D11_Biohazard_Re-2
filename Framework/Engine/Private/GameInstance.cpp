@@ -640,6 +640,16 @@ HRESULT CGameInstance::Add_RenderTarget_Cube(const wstring& strRenderTargetTag, 
 	return m_pTarget_Manager->Add_RenderTarget_Cube(strRenderTargetTag, iSize, iArraySize, ePixelFormat, vClearColor);
 }
 
+HRESULT CGameInstance::Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+{
+	return m_pTarget_Manager->Add_RenderTarget_3D(strRenderTargetTag, iWidth, iHeight, iDepth, ePixelFormat, vClearColor);
+}
+
+HRESULT CGameInstance::Clear_RenderTarget(const wstring& strRenderTargetTag)
+{
+	return m_pTarget_Manager->Clear_RenderTarget(strRenderTargetTag);
+}
+
 HRESULT CGameInstance::Add_MRT(const wstring & strMRTTag, const wstring & strRenderTargetTag)
 {
 	return m_pTarget_Manager->Add_MRT(strMRTTag, strRenderTargetTag);
@@ -693,6 +703,26 @@ HRESULT CGameInstance::Bind_RTShaderResource(CShader * pShader, const wstring & 
 		return E_FAIL;
 	}	
 	return m_pTarget_Manager->Bind_ShaderResource(pShader, strRenderTargetTag, pConstantName);
+}
+
+HRESULT CGameInstance::Bind_RTShaderResource(CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName)
+{
+	if (nullptr == m_pTarget_Manager)
+	{
+		MSG_BOX(TEXT("nullptr == m_pTarget_Manager : CGameInstance"));
+		return E_FAIL;
+	}
+	return m_pTarget_Manager->Bind_ShaderResource(pShader, strRenderTargetTag, pConstantName);
+}
+
+HRESULT CGameInstance::Bind_OutputShaderResource(CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName)
+{
+	if (nullptr == m_pTarget_Manager)
+	{
+		MSG_BOX(TEXT("nullptr == m_pTarget_Manager : CGameInstance"));
+		return E_FAIL;
+	}
+	return m_pTarget_Manager->Bind_OutputShaderResource(pShader, strRenderTargetTag, pConstantName);
 }
 
 HRESULT CGameInstance::Copy_Resource(const wstring & strRenderTargetTag, ID3D11Texture2D ** ppTextureHub)

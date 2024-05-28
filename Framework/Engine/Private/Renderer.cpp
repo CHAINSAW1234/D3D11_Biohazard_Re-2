@@ -2,7 +2,9 @@
 #include "GameObject.h"
 #include "GameInstance.h"
 
+#include "ComputeShader.h"
 #include "Light.h"
+
 
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -63,6 +65,10 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pRende
 
 HRESULT CRenderer::Render()
 {
+	if (FAILED(Render_Test()))
+		return E_FAIL;
+
+
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
 
@@ -177,6 +183,9 @@ HRESULT CRenderer::SetUp_RenderTargets()
 	if (FAILED(SetUp_RenderTargets_PostProcessing(ViewportDesc)))
 		return E_FAIL;
 	if (FAILED(SetUp_RenderTargets_PostProcessing_Result(ViewportDesc)))
+		return E_FAIL;
+
+	if (FAILED(SetUp_Test()))
 		return E_FAIL;
 
 	return S_OK;
@@ -509,6 +518,44 @@ HRESULT CRenderer::SetUp_RenderTargets_PostProcessing_Result(const D3D11_VIEWPOR
 	return S_OK;
 }
 
+HRESULT CRenderer::SetUp_Test()
+{
+
+	/* For.Target_PostProcessing_Shade */
+	if (FAILED(m_pGameInstance->Add_RenderTarget_3D(TEXT("Target_Test"), 64, 64, 64, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Test"), TEXT("Target_Test"))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_Test()
+{
+	//m_pGameInstance->Begin_MRT(TEXT("MRT_Test"));
+	//m_pGameInstance->End_MRT();
+
+	m_pGameInstance->Clear_RenderTarget(TEXT("Target_Test"));
+
+	CComputeShader* pShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute.hlsl"), "CS_Volume");
+
+	_float4 fTest = _float4(1.f, 0.f, 1.f, 1.f);
+
+	if(FAILED(pShader->Bind_RawValue("g_fTest", &fTest, sizeof(_float4))))
+		return E_FAIL;
+
+	if(FAILED(m_pGameInstance->Bind_OutputShaderResource(pShader, TEXT("Target_Test"), "OutputTexture")))
+		return E_FAIL;
+	
+	pShader->Render();
+
+	Safe_Release(pShader);
+
+
+	return S_OK;
+}
+
 #ifdef _DEBUG
 
 HRESULT CRenderer::SetUp_Debug()
@@ -566,6 +613,10 @@ HRESULT CRenderer::SetUp_Debug()
 
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Bloom"), 1420.0f, 500.f, 200.f, 200.f)))
 		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Test"), 500.0f, 900.f, 200.f, 200.f)))
+		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -1305,6 +1356,9 @@ HRESULT CRenderer::Render_Debug()
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Shadow_Point"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Shadow_Spot"), m_pShader, m_pVIBuffer)))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Test"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
 
 	return S_OK;
