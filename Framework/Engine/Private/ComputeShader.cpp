@@ -25,59 +25,31 @@ HRESULT CComputeShader::Initialize(const wstring& strShaderFilePath, const strin
 	if (FAILED(D3DX11CompileEffectFromFile(strShaderFilePath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, iHlslFlag, 0, m_pDevice, &m_pEffect, nullptr)))
 		return E_FAIL;
 
-	ID3DX11EffectTechnique* tech = m_pEffect->GetTechniqueByIndex(0);
+	ID3DX11EffectTechnique* pTechnique = m_pEffect->GetTechniqueByIndex(0);
 
-	ID3DX11EffectPass* pPass = tech->GetPassByIndex(0);
+	D3DX11_TECHNIQUE_DESC		TechniqueDesc{};
+	pTechnique->GetDesc(&TechniqueDesc);
 
-	D3DX11_PASS_DESC Desc = {};
+	for (_uint i = 0; i < TechniqueDesc.Passes; ++i)
+	{
+		ID3DX11EffectPass* pPass = pTechnique->GetPassByIndex(i);
 
-	D3DX11_PASS_SHADER_DESC ComputeshaderDesc;
+		D3DX11_PASS_DESC Desc = {};
+		D3DX11_PASS_SHADER_DESC ComputeshaderDesc;
 
-	pPass->GetComputeShaderDesc(&ComputeshaderDesc);
+		pPass->GetComputeShaderDesc(&ComputeshaderDesc);
 
-	D3DX11_EFFECT_SHADER_DESC shaderDesc = {};
+		D3DX11_EFFECT_SHADER_DESC shaderDesc = {};
 
-	ComputeshaderDesc.pShaderVariable->GetShaderDesc(ComputeshaderDesc.ShaderIndex, &shaderDesc);
+		ComputeshaderDesc.pShaderVariable->GetShaderDesc(ComputeshaderDesc.ShaderIndex, &shaderDesc);
 
+		ID3D11ComputeShader* pComputeShader = { nullptr };
 
-	if(FAILED(m_pDevice->CreateComputeShader(shaderDesc.pBytecode, shaderDesc.BytecodeLength, nullptr, &m_pComputeShader)))
-		return E_FAIL;
+		if (FAILED(m_pDevice->CreateComputeShader(shaderDesc.pBytecode, shaderDesc.BytecodeLength, nullptr, &pComputeShader)))
+			return E_FAIL;
 
-
-
-
-	//pPass->GetComputeShaderDesc(&Desc);
-
-	//if(FAILED(m_pDevice->CreateComputeShader(Desc.pIAInputSignature, Desc.IAInputSignatureSize, nullptr, &m_pComputeShader)))
-	//	return E_FAIL;
-
-
-	//ID3DBlob* ShaderBlob = { nullptr };
-	//ID3DBlob* ErrorBlob = { nullptr };
-
-	//if (FAILED(D3DCompileFromFile(strShaderFilePath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, strEntryPoint.c_str(), "cs_5_0", iHlslFlag, 0, &ShaderBlob, &ErrorBlob))) {
-	//	if (ErrorBlob)
-	//	{
-	//		MSG_BOX_C(((char*)ErrorBlob->GetBufferPointer()));
-
-	//		ErrorBlob->Release();
-	//	}
-
-	//	if (ShaderBlob)
-	//		ShaderBlob->Release();
-
-	//	return E_FAIL;
-	//}
-
-	//if (FAILED(m_pDevice->CreateComputeShader(ShaderBlob->GetBufferPointer(), ShaderBlob->GetBufferSize(), nullptr, &m_pComputeShader))) {
-	//	
-	//	if (ShaderBlob)
-	//		ShaderBlob->Release();
-
-	//	return E_FAIL;
-	//}
-
-	//ShaderBlob->Release();
+		m_ComputeShaders.push_back(pComputeShader);
+	}
 
 	return S_OK;
 }
@@ -175,20 +147,20 @@ HRESULT CComputeShader::Bind_Texture(const _char* pConstantName, ID3D11Unordered
 	return pUAVVariable->SetUnorderedAccessView(pUAV);
 }
 
-HRESULT CComputeShader::Render()
+HRESULT CComputeShader::Render(_uint iPassIndex)
 {
 	ID3DX11EffectTechnique* pTechnique = m_pEffect->GetTechniqueByIndex(0);
 	if (nullptr == pTechnique)
 		return E_FAIL;
 
-	ID3DX11EffectPass* pPass = pTechnique->GetPassByIndex(0);
+	ID3DX11EffectPass* pPass = pTechnique->GetPassByIndex(iPassIndex);
 	if (nullptr == pPass)
 		return E_FAIL;
 
 	pPass->Apply(0, m_pContext);
 
 
-	m_pContext->Dispatch(8, 8, 8);
+	m_pContext->Dispatch(16, 16, 16);
 	
 	ID3D11UnorderedAccessView* NullUAV = { nullptr };
 	m_pContext->CSSetUnorderedAccessViews(0, 1, &NullUAV, nullptr);
@@ -214,6 +186,9 @@ void CComputeShader::Free()
 {
 	__super::Free();
 	Safe_Release(m_pEffect);
-	Safe_Release(m_pComputeShader);
+
+	for(auto& pComputeShader: m_ComputeShaders)
+		Safe_Release(pComputeShader);
+	m_ComputeShaders.clear();
 	
 }

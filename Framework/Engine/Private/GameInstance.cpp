@@ -642,7 +642,7 @@ HRESULT CGameInstance::Add_RenderTarget_Cube(const wstring& strRenderTargetTag, 
 
 HRESULT CGameInstance::Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
 {
-	return m_pTarget_Manager->Add_RenderTarget_3D(strRenderTargetTag, iWidth, iHeight, iDepth, ePixelFormat, vClearColor);
+ 	return m_pTarget_Manager->Add_RenderTarget_3D(strRenderTargetTag, iWidth, iHeight, iDepth, ePixelFormat, vClearColor);
 }
 
 HRESULT CGameInstance::Clear_RenderTarget(const wstring& strRenderTargetTag)

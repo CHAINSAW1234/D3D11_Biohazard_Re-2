@@ -65,9 +65,6 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pRende
 
 HRESULT CRenderer::Render()
 {
-	if (FAILED(Render_Test()))
-		return E_FAIL;
-
 
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
@@ -86,6 +83,13 @@ HRESULT CRenderer::Render()
 
 	if (FAILED(Render_Lights()))
 		return E_FAIL;
+
+
+	if (FAILED(Render_Test()))
+		return E_FAIL;
+
+
+
 
 	if (FAILED(Render_Light_Result()))
 		return E_FAIL;
@@ -132,8 +136,8 @@ HRESULT CRenderer::Render()
 	//if (FAILED(Render_OverwrapFont()))
 	//	return E_FAIL;
 
-#ifdef _DEBUG
 
+#ifdef _DEBUG
 	if (FAILED(Render_Debug()))
 		return E_FAIL;
 #endif
@@ -522,7 +526,7 @@ HRESULT CRenderer::SetUp_Test()
 {
 
 	/* For.Target_PostProcessing_Shade */
-	if (FAILED(m_pGameInstance->Add_RenderTarget_3D(TEXT("Target_Test"), 64, 64, 64, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget_3D(TEXT("Target_Test"), 128, 128, 128, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Test"), TEXT("Target_Test"))))
@@ -540,18 +544,82 @@ HRESULT CRenderer::Render_Test()
 
 	CComputeShader* pShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute.hlsl"), "CS_Volume");
 
-	_float4 fTest = _float4(1.f, 0.f, 1.f, 1.f);
-
-	if(FAILED(pShader->Bind_RawValue("g_fTest", &fTest, sizeof(_float4))))
+	/* 백버퍼에다가 디퍼드 방식으로 연산된 최종 결과물을 찍어준다. */
+	if (FAILED(pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
+	if (FAILED(pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+	if (FAILED(pShader->Bind_Matrix("g_ViewMatrixInv", &m_pGameInstance->Get_Transform_Float4x4_Inverse(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+	if (FAILED(pShader->Bind_Matrix("g_ProjMatrixInv", &m_pGameInstance->Get_Transform_Float4x4_Inverse(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pShader, TEXT("Target_LightDepth_Dir"), "g_DirLightDepthTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pShader, TEXT("Target_LightDepth_Spot"), "g_SpotLightDepthTexture")))
+		return E_FAIL;
+
+	// 1. DirectionLight존재 여부 체크
+	if (m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) != nullptr) {
+		_bool isShadowDirLight = true;
+		if (FAILED(pShader->Bind_RawValue("g_isShadowDirLight", &isShadowDirLight, sizeof(_bool))))
+			return E_FAIL;
+
+		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION);
+		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
+
+		if (FAILED(pShader->Bind_Matrix("g_DirLightViewMatrix", &pDesc->ViewMatrix[0])))
+			return E_FAIL;
+		if (FAILED(pShader->Bind_Matrix("g_DirLightProjMatrix", &pDesc->ProjMatrix)))
+			return E_FAIL;
+		if (FAILED(pShader->Bind_RawValue("g_vDirLightDirection", &pDesc->vDirection, sizeof(_float4))))
+			return E_FAIL;
+		if (FAILED(pShader->Bind_RawValue("g_vDirLightDiffuse", &pDesc->vDiffuse, sizeof(_float4))))
+			return E_FAIL;
+	}
+	else {
+		_bool isShadowDirLight = false;
+		if (FAILED(pShader->Bind_RawValue("g_isShadowDirLight", &isShadowDirLight, sizeof(_bool))))
+			return E_FAIL;
+	}
+
+	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
+		_bool isShadowSpotLight = true;
+		if (FAILED(pShader->Bind_RawValue("g_isShadowSpotLight", &isShadowSpotLight, sizeof(_bool))))
+			return E_FAIL;
+
+		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT);
+		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
+
+		if (FAILED(pShader->Bind_Matrix("g_SpotLightViewMatrix", &pDesc->ViewMatrix[0])))
+			return E_FAIL;
+		if (FAILED(pShader->Bind_Matrix("g_SpotLightProjMatrix", &pDesc->ProjMatrix)))
+			return E_FAIL;
+		if (FAILED(pShader->Bind_RawValue("g_vSpotLightPosition", &pDesc->vPosition, sizeof(_float4))))
+			return E_FAIL;
+		if (FAILED(pShader->Bind_RawValue("g_vSpotLightDiffuse", &pDesc->vDiffuse, sizeof(_float4))))
+			return E_FAIL;
+	}
+	else {
+		_bool isShadowSpotLight = false;
+		if (FAILED(pShader->Bind_RawValue("g_isShadowSpotLight", &isShadowSpotLight, sizeof(_bool))))
+			return E_FAIL;
+	}
 
 	if(FAILED(m_pGameInstance->Bind_OutputShaderResource(pShader, TEXT("Target_Test"), "OutputTexture")))
 		return E_FAIL;
 	
-	pShader->Render();
+
+	pShader->Render(0);
+
+	//if (FAILED(m_pGameInstance->Bind_OutputShaderResource(pShader, TEXT("Target_Test"), "OutputTexture")))
+	//	return E_FAIL;
+
+	//pShader->Render(1);
 
 	Safe_Release(pShader);
-
 
 	return S_OK;
 }
@@ -1048,6 +1116,11 @@ HRESULT CRenderer::Render_Lights()
 
 HRESULT CRenderer::Render_Light_Result()
 {
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Test"), "g_3DTexture")))
+		return E_FAIL;
+
+
+
 	/* 백버퍼에다가 디퍼드 방식으로 연산된 최종 결과물을 찍어준다. */
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;

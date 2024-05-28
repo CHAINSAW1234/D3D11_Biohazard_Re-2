@@ -188,6 +188,8 @@ PS_OUT PS_MAIN_3D(PS_IN In)
     //float3 vTex = normalize(float3(-1.0, In.vTexcoord.y * -2 + 1.f, In.vTexcoord.x * -2.f + 1.f));
     
     //Out.vColor = g_3DTexture.Load(int4(0,0,0, 0));
+    //Out.vColor = g_3DTexture.Sample(LinearSampler,vTex);
+    
     Out.vColor = g_3DTexture.Sample(LinearSampler, float3(In.vTexcoord, In.vTexcoord.y));
     //Out.vColor = g_3DTexture.Load(int4(In.vTexcoord * 64, 6.4, 0));
     return Out;
@@ -509,6 +511,15 @@ float Cal_Shadow(float2 vTexcoord)
     return fShadow;
 }
 
+float ConvertDepthToNdcZ(float depth)
+{
+    float depthPackExponent = 2;
+    float nearPlaneDist = 0.1;
+    float farPlaneDist = 1000;
+
+    return pow(saturate((depth - nearPlaneDist) / (farPlaneDist - nearPlaneDist)), 1 / depthPackExponent);
+}
+
 /* 최종적으로 480000 수행되는 쉐이더. */
 PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
 {
@@ -542,6 +553,31 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
         Out.vDiffuse.a = 1;
     }
 
+    
+ //   vector vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
+ //   float fViewZ = vDepthDesc.y * 1000.0f;
+
+ //   float4 vWorldPos;
+	///* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / View.z */
+ //   vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+ //   vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+ //   vWorldPos.z = vDepthDesc.x;
+ //   vWorldPos.w = 1.f;
+
+	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 */
+  // vWorldPos *= fViewZ;
+	/* 로컬위치 * 월드행렬 * 뷰행렬 */
+ //   vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
+	///* 로컬위치 * 월드행렬 */
+ //   vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
+    
+    // ->  3d texture 공간 좌표로 이동해야함
+    
+    float4 vVolumeLight = g_3DTexture.Sample(LinearSamplerClamp, float3(In.vTexcoord, ConvertDepthToNdcZ(vDepth.r)));
+    
+    //Out.vDiffuse = float4(vVolumeLight, 1);
+    Out.vDiffuse = Out.vDiffuse * (1 - vVolumeLight);
+    
     return Out;
 }
 
