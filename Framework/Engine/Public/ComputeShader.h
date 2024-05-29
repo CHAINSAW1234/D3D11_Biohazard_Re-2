@@ -14,6 +14,7 @@ public:
 	virtual HRESULT Initialize(const wstring& strShaderFilePath, const string& entryPoint);
 
 public:
+
 	HRESULT Bind_Matrix(const _char* pConstantName, const _float4x4* pMatrix);
 	HRESULT Bind_Matrices(const _char* pConstantName, const _float4x4* pMatrices, _uint iNumMatrices);
 	HRESULT Bind_Texture(const _char* pConstantName, ID3D11ShaderResourceView* pSRV);
@@ -24,10 +25,10 @@ public:
 
 	HRESULT Bind_RawValue(const _char* pConstantName, const void* pData, _uint iLength);
 
-	HRESULT Render(_uint iPassIndex);
+	HRESULT Render();
 
 private:
-	vector<ID3D11ComputeShader*> m_ComputeShaders = { nullptr };
+	ID3D11ComputeShader* m_pComputeShader = { nullptr };
 	ID3DX11Effect* m_pEffect = { nullptr };
 
 public:

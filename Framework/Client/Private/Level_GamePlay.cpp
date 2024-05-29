@@ -64,7 +64,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	//LightDesc.fRange = 1000000.f;
 
-	LightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	LightDesc.vDiffuse = _float4(.5f, .5f, .5f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 0.4f, 0.4f, 1.f);
 
@@ -95,10 +95,15 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	LightDesc.eType = LIGHT_DESC::TYPE_SPOT;
 	LightDesc.bShadow = true;
-	LightDesc.vPosition = _float4(0, 20.f, 0.f, 1.f);
+	LightDesc.vPosition = _float4(0, 30.f, 0.f, 1.f);
 
+<<<<<<< HEAD
 	LightDesc.fRange = 30.f;
 	LightDesc.vDirection = _float4(0.f,-1.f, 1.f,0.f);
+=======
+	LightDesc.fRange = 40.f;
+	LightDesc.vDirection = _float4(0.f,-1.f,0.f,0.f);
+>>>>>>> parent of 122df45 (작업중)
 	LightDesc.fCutOff = XMConvertToRadians(60.f);
 	LightDesc.fOutCutOff = XMConvertToRadians(90);
 

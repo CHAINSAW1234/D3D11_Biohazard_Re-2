@@ -1,5 +1,6 @@
 #include "Engine_Shader_Defines.hlsli"
 
+<<<<<<< HEAD
 RWTexture3D<float4> OutputTexture;  // Output
 
 float Epsilon = 1e-9;
@@ -46,6 +47,13 @@ float ConvertDepthToNdcZ(float depth)
 
     return pow(saturate((depth - nearPlaneDist) / (farPlaneDist - nearPlaneDist)), 1 / depthPackExponent);
 }
+=======
+RWTexture3D<float4> OutputTexture : register(u0);
+
+
+float4 g_fTest;
+
+>>>>>>> parent of 122df45 (ìž‘ì—…ì¤‘)
 
 // ¾²·¹µå ID¸¦ Directx ÁÂÇ¥°è·ÎÀÇ º¯È¯
 float3 ConvertThreadIdToNdc( uint3 id, uint3 dims )
@@ -66,15 +74,23 @@ float2 ConvertTreahdIdToTexcoord(uint3 id, uint3 dims)
 
 float ConvertNdcZToDepth(float ndcZ)
 {
+<<<<<<< HEAD
     float depthPackExponent = 1.f;
     float nearPlaneDist = 0.1f;
     float farPlaneDist = 1000.f;
+=======
+    //float depthPackExponent = VolumetricFogParam.DepthPackExponent;
+    //float nearPlaneDist = VolumetricFogParam.NearPlaneDist;
+    //float farPlaneDist = VolumetricFogParam.FarPlaneDist;
+>>>>>>> parent of 122df45 (ìž‘ì—…ì¤‘)
 
-    return pow(ndcZ, depthPackExponent) * (farPlaneDist - nearPlaneDist) + nearPlaneDist;
+    //return pow(ndcZ, depthPackExponent) * (farPlaneDist - nearPlaneDist) + nearPlaneDist;
+    return 1;
 }
 
 float3 ConvertToWorldPosition( float3 ndc, float depth )
 {
+<<<<<<< HEAD
 	// view ray 
 	// ndcÁÂÇ¥¿¡ ´ëÇÑ Ä«¸Þ¶ó °ø°£ ±¤¼±À» °è»ê
 	float4 viewRay = mul( float4( ndc, 1.f ), g_ProjMatrixInv );
@@ -85,6 +101,20 @@ float3 ConvertToWorldPosition( float3 ndc, float depth )
     float4 worldPosition = mul(float4(viewRay.xyz * depth, 1.f), g_ViewMatrixInv);
 
 	return worldPosition.xyz;
+=======
+	//// view ray 
+	//// ndcÁÂÇ¥¿¡ ´ëÇÑ Ä«¸Þ¶ó °ø°£ ±¤¼±À» °è»ê
+    //float4 viewRay = mul(float4(ndc, 1.f), InvProjectionMatrix);
+    //viewRay /= viewRay.w;
+    //viewRay /= viewRay.z; // z°ªÀÌ 1ÀÌ µÇµµ·Ï
+    //
+	//// ndc -> world position
+    //float4 worldPosition = mul(float4(viewRay.xyz * depth, 1.f), InvViewMatrix);
+    //
+    //return worldPosition.xyz;
+    return float3(1.f, 1.f, 1.f);
+
+>>>>>>> parent of 122df45 (ìž‘ì—…ì¤‘)
 }
 
 float3 ConvertThreadIdToWorldPosition(uint3 id, uint3 dims)
@@ -96,6 +126,7 @@ float3 ConvertThreadIdToWorldPosition(uint3 id, uint3 dims)
     return ConvertToWorldPosition(ndc, depth);
 }
 
+<<<<<<< HEAD
 float HenyeyGreensteinPhaseFunction(float3 wi, float3 wo, float g)
 {
     float cosTheta = dot(wi, wo);
@@ -185,15 +216,19 @@ float Visibility_Spot(float3 vWorldPosition)
     return uv_depth.z > vDepth.r;
 
 }
+=======
+>>>>>>> parent of 122df45 (ìž‘ì—…ì¤‘)
 
 [numthreads(8, 8, 8)]
 void CS_Volume( uint3 DTid : SV_DispatchThreadID )
 {
     uint3 dims;
+    
     OutputTexture.GetDimensions(dims.x, dims.y, dims.z);
-
+    
     if (all(DTid < dims))
     {
+<<<<<<< HEAD
         
         float3 worldPosition = ConvertThreadIdToWorldPosition(DTid, dims);
         float3 toCamera = normalize(g_vCamPosition.xyz - worldPosition);
@@ -263,19 +298,15 @@ void CS_Volume2(uint3 DTid : SV_DispatchThreadID)
     if (all(DTid < dims))
     {
         float4 accum = float4(0.f, 0.f, 0.f, 1.f);
+=======
+>>>>>>> parent of 122df45 (ìž‘ì—…ì¤‘)
         uint3 pos = uint3(DTid.xy, 0);
 
-		[loop]
-        for (uint z = 0; z < dims.z; ++z)
-        {
-            pos.z = z;
-            float4 slice = OutputTexture[pos];
-            float tickness = SliceTickness((float) z / dims.z, dims.z);
+        //OutputTexture[pos] = float4(dims.x/1920 , dims.y/1080, dims.z, 1);
+        OutputTexture[DTid] = g_fTest;
 
-            accum = ScatterStep(accum.rgb, accum.a, slice.rgb, slice.a, tickness);
-            OutputTexture[pos] = accum;
-        }
     }
+    
 }
 
 technique11 Default
@@ -288,10 +319,5 @@ technique11 Default
         
         SetComputeShader(CompileShader(cs_5_0, CS_Volume()));
 
-    }
-
-    pass Default2
-    {
-        SetComputeShader(CompileShader(cs_5_0, CS_Volume2()));
-    }
+    }   
 }
