@@ -65,7 +65,6 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pRende
 
 HRESULT CRenderer::Render()
 {
-
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
 
@@ -526,8 +525,11 @@ HRESULT CRenderer::SetUp_Test()
 {
 
 	/* For.Target_PostProcessing_Shade */
-	if (FAILED(m_pGameInstance->Add_RenderTarget_3D(TEXT("Target_Test"), 128, 128, 128, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget_3D(TEXT("Target_Test"), 128, 128, 128, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_RenderTarget_3D(TEXT("Target_Test_Merge"), 128, 128, 8, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
+	//	return E_FAIL;
+
 
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Test"), TEXT("Target_Test"))))
 		return E_FAIL;
@@ -541,21 +543,25 @@ HRESULT CRenderer::Render_Test()
 	//m_pGameInstance->End_MRT();
 
 	m_pGameInstance->Clear_RenderTarget(TEXT("Target_Test"));
-
+	m_pGameInstance->Clear_RenderTarget(TEXT("Target_Test_Merge"));
 	CComputeShader* pShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute.hlsl"), "CS_Volume");
 
 	/* 백버퍼에다가 디퍼드 방식으로 연산된 최종 결과물을 찍어준다. */
 	if (FAILED(pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
-	if (FAILED(pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+	if (FAILED(pShader->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
-	if (FAILED(pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+	if (FAILED(pShader->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 	if (FAILED(pShader->Bind_Matrix("g_ViewMatrixInv", &m_pGameInstance->Get_Transform_Float4x4_Inverse(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(pShader->Bind_Matrix("g_ProjMatrixInv", &m_pGameInstance->Get_Transform_Float4x4_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pShader, TEXT("Target_Diffuse"), "g_DiffuseTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pShader, TEXT("Target_Depth"), "g_DepthTexture")))
+		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pShader, TEXT("Target_LightDepth_Dir"), "g_DirLightDepthTexture")))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pShader, TEXT("Target_LightDepth_Spot"), "g_SpotLightDepthTexture")))
@@ -611,15 +617,36 @@ HRESULT CRenderer::Render_Test()
 	if(FAILED(m_pGameInstance->Bind_OutputShaderResource(pShader, TEXT("Target_Test"), "OutputTexture")))
 		return E_FAIL;
 	
-
 	pShader->Render(0);
 
-	//if (FAILED(m_pGameInstance->Bind_OutputShaderResource(pShader, TEXT("Target_Test"), "OutputTexture")))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_OutputShaderResource(pShader, TEXT("Target_Test"), "OutputTexture")))
+		return E_FAIL;
 
-	//pShader->Render(1);
+	pShader->Render(1);
 
 	Safe_Release(pShader);
+
+	static _int iNumZ = 0;
+	static _int iSizeZ = 128;
+
+	if (m_pGameInstance->Get_KeyState('2') == PRESSING) {
+		++iNumZ;
+		if (iNumZ >128)
+			iNumZ = 128;
+	}
+	if (m_pGameInstance->Get_KeyState('1') == PRESSING) {
+		--iNumZ;
+		if (iNumZ < 0)
+			iNumZ = 0;
+	}
+
+	if (FAILED(m_pShader->Bind_RawValue("g_iNumZ", &iNumZ, sizeof(_int))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_RawValue("g_iNumSizeZ", &iSizeZ, sizeof(_int))))
+		return E_FAIL;
+
+
+
 
 	return S_OK;
 }
@@ -649,12 +676,6 @@ HRESULT CRenderer::SetUp_Debug()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Spot"), 300.0f, 900.0f, 200.f, 200.f)))
 		return E_FAIL;
-	/*if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_2X"), 300.0f, 500.0f, 200.f, 200.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_4X"), 300.0f, 500.0f, 200.f, 200.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_8X"), 300.0f, 500.0f, 200.f, 200.f)))
-		return E_FAIL;*/
 
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Diffuse"), 1620.f, 100.0f, 200.f, 200.f)))
 		return E_FAIL;
@@ -685,6 +706,8 @@ HRESULT CRenderer::SetUp_Debug()
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Test"), 500.0f, 900.f, 200.f, 200.f)))
 		return E_FAIL;
 
+	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Test_Merge"), 500.0f, 900.f, 200.f, 200.f)))
+	//	return E_FAIL;
 
 	return S_OK;
 }

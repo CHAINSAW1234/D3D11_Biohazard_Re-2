@@ -33,8 +33,8 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
-	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
-	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));
+	//m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
+	//m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));
 	if (GetAsyncKeyState('T') & 0x0001)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_Particle_Red"))))
@@ -79,8 +79,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.8f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 0.4f, 0.4f, 1.f);
-	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
+	//	return E_FAIL;
 
 	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
 	LightDesc.bShadow = true;
@@ -90,15 +90,15 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.8f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 1.f, 0.4f, 1.f);
-	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
+	//	return E_FAIL;
 
 	LightDesc.eType = LIGHT_DESC::TYPE_SPOT;
 	LightDesc.bShadow = true;
 	LightDesc.vPosition = _float4(0, 20.f, 0.f, 1.f);
 
 	LightDesc.fRange = 30.f;
-	LightDesc.vDirection = _float4(0.f,-1.f,1.f,0.f);
+	LightDesc.vDirection = _float4(0.f,-1.f, 1.f,0.f);
 	LightDesc.fCutOff = XMConvertToRadians(60.f);
 	LightDesc.fOutCutOff = XMConvertToRadians(90);
 
@@ -106,8 +106,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.vAmbient = _float4(0.2f, 0.2f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 0.4f, 1.f, 1.f);
 	
-	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_SPOT"), LightDesc)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_SPOT"), LightDesc)))
+	//	return E_FAIL;
 
 	return S_OK;
 }

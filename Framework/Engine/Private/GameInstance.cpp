@@ -181,7 +181,6 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	m_pFrustum->Tick();
 
 	m_pObject_Manager->Late_Tick(fTimeDelta);
-	
 
 
 	if (m_pPhysics_Controller)
