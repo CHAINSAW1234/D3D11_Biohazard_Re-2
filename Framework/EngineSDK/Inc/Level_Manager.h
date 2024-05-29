@@ -12,13 +12,13 @@ private:
 	virtual ~CLevel_Manager() = default;
 
 public:
-	HRESULT Initialize();
-	HRESULT Open_Level(_uint iNewLevelID, class CLevel* pNewLevel);
-	void Tick(_float fTimeDelta);
-	HRESULT Render();
+	HRESULT					Initialize();
+	HRESULT					Open_Level(_uint iNewLevelID, class CLevel* pNewLevel);
+	void					Tick(_float fTimeDelta);
+	HRESULT					Render();
 
 public:
-	_uint Get_CurrentLevel();
+	_uint					Get_CurrentLevel();
 
 private:
 	_uint					m_iCurrentLevelID = { 0 };

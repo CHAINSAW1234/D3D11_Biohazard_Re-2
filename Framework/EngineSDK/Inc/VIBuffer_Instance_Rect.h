@@ -13,9 +13,9 @@ private:
 	virtual ~CVIBuffer_Instance_Rect() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(const CVIBuffer_Instance::INSTANCE_DESC& InstanceDesc);
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual _float4 Compute_RandPosition() override;
+	virtual HRESULT					Initialize_Prototype(const CVIBuffer_Instance::INSTANCE_DESC& InstanceDesc);
+	virtual HRESULT					Initialize(void* pArg) override;
+	virtual _float4					Compute_RandPosition() override;
 
 
 public:

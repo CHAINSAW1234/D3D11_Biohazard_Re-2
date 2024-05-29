@@ -17,14 +17,38 @@ private:
 	virtual ~CNavigation() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(const wstring& strDataFile);
-	virtual HRESULT Initialize(void* pArg) override;
-	void Tick(_fmatrix WorldMatrix);
-	_bool isMove(_fvector vPosition);
-
+	virtual HRESULT						Initialize_Prototype(const wstring& strDataFile);
+	virtual HRESULT						Initialize(void* pArg) override;
+	void								Tick(_fmatrix WorldMatrix);
+	_bool								isMove(_fvector vPosition);
+	_vector								GetPlane();
+	_float								GetCellHeight(_float4 Position);
+	_float4								GetSlidingNormal();
+	_float4								GetSlidingNormal_Perfect()
+	{
+		return m_SlidingNormal;
+	}
+	_bool								GetIsIsolated()
+	{
+		return m_bIsIsolated;
+	}
+	_bool								GetCurrentSlidingVector(_fvector vPosition, _float4* SlidingVector);
+	_float4								GetLinePoint()
+	{
+		return m_LinePoint;
+	}
+	_bool								FindCell(_fvector vPosition);
+	void								SetCurrentIndex(_int Index)
+	{
+		m_iCurrentIndex = Index;
+	}
+	_int								GetCurrentIndex()
+	{
+		return m_iCurrentIndex;
+	}
 #ifdef _DEBUG
 public:
-	virtual HRESULT Render() override;
+	virtual HRESULT						Render() override;
 #endif
 
 private:
@@ -32,8 +56,11 @@ private:
 
 	static _float4x4					m_WorldMatrix;
 
-	/* 이 네비게이션을 이용하는 객체가 어떤 셀에 존재하는가?! */
 	_int								m_iCurrentIndex = { -1 };
+	_float4								m_SlidingNormal;
+	_bool								m_bIsIsolated = { false };
+	_float4								m_LinePoint;
+	_int								m_iNumFaces = { 0 };
 
 #ifdef _DEBUG
 private:

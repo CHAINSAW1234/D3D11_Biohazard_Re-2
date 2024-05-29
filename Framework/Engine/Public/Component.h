@@ -12,18 +12,18 @@ protected:
 	virtual ~CComponent() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT						Initialize_Prototype();
+	virtual HRESULT						Initialize(void* pArg);
 
 public:
-	virtual HRESULT Render() {return S_OK;}
+	virtual HRESULT						Render() {return S_OK;}
 
 protected:
 	ID3D11Device*						m_pDevice = { nullptr };
 	ID3D11DeviceContext*				m_pContext = { nullptr };
 	class CGameInstance*				m_pGameInstance = { nullptr };
 
-	_bool						m_isCloned = { false };
+	_bool								m_isCloned = { false };
 
 public:
 	virtual CComponent* Clone(void* pArg) = 0;

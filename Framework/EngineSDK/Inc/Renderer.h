@@ -2,9 +2,6 @@
 
 #include "Base.h"
 
-/* 1. 화면에 그려져야할 객체들만 그려지는 순서대로 보관하는 클래스이다.*/
-/* 2. 보관하고 있는 순서대로 객체들의 Draw콜(렌더함수를호출한다.)을 수행한다.*/
-
 BEGIN(Engine)
 
 class CRenderer final : public CBase
@@ -31,45 +28,45 @@ private:
 	CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CRenderer() = default;
 public:
-	HRESULT Initialize();
-	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pRenderObject);
-	HRESULT Render();
+	HRESULT						Initialize();
+	HRESULT						Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pRenderObject);
+	HRESULT						Render();
 
 public:
-	void Set_RadialBlur(_float fBlurAmount, _float2 BlurUV);
-	void On_RadialBlur();
-	void Off_RadialBlur();
+	void						Set_RadialBlur(_float fBlurAmount, _float2 BlurUV);
+	void						On_RadialBlur();
+	void						Off_RadialBlur();
 
 private:
-	HRESULT SetUp_RenderTargets();
-	HRESULT SetUp_MRTs();
-	HRESULT SetUp_LightDSV();
-	HRESULT SetUp_LightDSV_Point();
-	HRESULT SetUp_Components();
-	HRESULT SetUp_Matrices();
+	HRESULT						SetUp_RenderTargets();
+	HRESULT						SetUp_MRTs();
+	HRESULT						SetUp_LightDSV();
+	HRESULT						SetUp_LightDSV_Point();
+	HRESULT						SetUp_Components();
+	HRESULT						SetUp_Matrices();
 
 private:		/* For.SetUp_RenderTarget */
-	HRESULT SetUp_RenderTargets_GameObjects(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT SetUp_RenderTargets_LightAcc(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT SetUp_RenderTargets_Shadow(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT SetUp_RenderTargets_Shadow_Point(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT SetUp_RenderTargets_Pre_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT SetUp_RenderTargets_Ambient(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT SetUp_RenderTargets_Distortion(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT SetUp_RenderTargets_Emissive(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT SetUp_RenderTargets_Bloom(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT SetUp_RenderTargets_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT SetUp_RenderTargets_PostProcessing_Result(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_GameObjects(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_LightAcc(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_Shadow(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_Shadow_Point(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_Pre_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_Ambient(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_Distortion(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_Emissive(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_Bloom(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_PostProcessing_Result(const D3D11_VIEWPORT& ViewportDesc);
 
 #ifdef _DEBUG
-	HRESULT SetUp_Debug();
+	HRESULT						SetUp_Debug();
 
 #endif
 
 #ifdef _DEBUG
 public:
-	HRESULT Add_DebugComponents(class CComponent* pRenderObject);
-	void On_Off_DebugeRender();
+	HRESULT						Add_DebugComponents(class CComponent* pRenderObject);
+	void						On_Off_DebugeRender();
 
 #endif
 
@@ -91,9 +88,9 @@ private:
 	_float						m_fLightDepthTargetViewHeight = { 0.f };
 
 private:
-	_uint					m_iArraySize = { 2 };		// 동시에 적용하는 최대 점 광원 개수 지정
-	ID3D11DepthStencilView* m_pLightDepthDSV_Point = { nullptr };		// 점 광원용
-	_float					m_fLightDepthTargetViewCubeWidth = { 0.f };
+	_uint						m_iArraySize = { 2 };		// 동시에 적용하는 최대 점 광원 개수 지정
+	ID3D11DepthStencilView*		m_pLightDepthDSV_Point = { nullptr };		// 점 광원용
+	_float						m_fLightDepthTargetViewCubeWidth = { 0.f };
 
 private:
 	_bool						m_isRadialBlurActive = { false };
@@ -108,50 +105,50 @@ private:
 #endif
 
 public:
-	void Set_Shadow_Resolution(SHADOW_RESOLUTION eResolution);
+	void						Set_Shadow_Resolution(SHADOW_RESOLUTION eResolution);
 
 public:
-	HRESULT Clear();
+	HRESULT						Clear();
 
 private:
-	HRESULT Render_Priority();
-	HRESULT Render_NonBlend();
-	HRESULT Render_NonLight();
-	HRESULT Render_Blend();
-	HRESULT Render_Non_PostProcessing();
-	HRESULT Render_Filter();
-	HRESULT Render_UI();
-	HRESULT Render_Font();
-	HRESULT Render_Overwrap();
-	HRESULT Render_OverwrapFont();
+	HRESULT						Render_Priority();
+	HRESULT						Render_NonBlend();
+	HRESULT						Render_NonLight();
+	HRESULT						Render_Blend();
+	HRESULT						Render_Non_PostProcessing();
+	HRESULT						Render_Filter();
+	HRESULT						Render_UI();
+	HRESULT						Render_Font();
+	HRESULT						Render_Overwrap();
+	HRESULT						Render_OverwrapFont();
 
 private:
-	HRESULT Render_Shadow();
-	HRESULT Render_Shadow_Point();
+	HRESULT						Render_Shadow();
+	HRESULT						Render_Shadow_Point();
 
 private:
-	HRESULT Render_Distortion();
-	HRESULT Render_Emissive();
+	HRESULT						Render_Distortion();
+	HRESULT						Render_Emissive();
 
 private:
-	HRESULT Render_Lights();
-	HRESULT Render_Light_Result();
+	HRESULT						Render_Lights();
+	HRESULT						Render_Light_Result();
 
 private:
-	HRESULT Render_PostProcessing();
-	HRESULT Render_Ambient();
+	HRESULT						Render_PostProcessing();
+	HRESULT						Render_Ambient();
 
-	HRESULT Render_PostProcessing_Result();
-
-private:
-	HRESULT Render_Bloom();
+	HRESULT						Render_PostProcessing_Result();
 
 private:
-	void Set_ViewPort_Size(_float fWidth, _float fHeight);
+	HRESULT						Render_Bloom();
+
+private:
+	void						Set_ViewPort_Size(_float fWidth, _float fHeight);
 
 #ifdef _DEBUG
 private:
-	HRESULT Render_Debug();
+	HRESULT						Render_Debug();
 #endif
 
 public:

@@ -2,21 +2,19 @@
 #include "..\Public\Loader.h"
 #include <process.h>
 
-#include "Particle_Blue.h"
-#include "Particle_Red.h"
 #include "GameInstance.h"
 #include "Camera_Free.h"
 #include "Body_Player.h"
 #include "Head_Player.h"
 #include "Hair_Player.h"
 #include "BackGround.h"
-#include "ForkLift.h"
 #include "Terrain.h"
 #include "Monster.h"
 #include "Weapon.h"
 #include "Player.h"
 #include "Effect.h"
 #include "Sky.h"
+#include "Props.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -32,7 +30,6 @@ _uint APIENTRY LoadingMain(void* pArg)
 {
 	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 
-	/* 로더에게 지정된 레벨을 준비해라*/
 	CLoader* pLoader = (CLoader*)pArg;
 
 	if (FAILED(pLoader->Start()))
@@ -83,18 +80,18 @@ HRESULT CLoader::Start()
 
 HRESULT CLoader::Loading_For_Logo()
 {
-	m_strLoadingText = TEXT("텍스쳐를(을) 로딩 중 입니다.");
+	m_strLoadingText = TEXT("Now Loadin ... Texture");
 	/* For.Prototype_Component_Texture_Logo */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Logo/Logo.png")))))
 		return E_FAIL;
 
 
-	m_strLoadingText = TEXT("모델를(을) 로딩 중 입니다.");
+	m_strLoadingText = TEXT("Now Loading ... Model");
 
-	m_strLoadingText = TEXT("셰이더를(을) 로딩 중 입니다.");
+	m_strLoadingText = TEXT("Now Loading ... Shader");
 
-	m_strLoadingText = TEXT("객체의 원형를(을) 로딩 중 입니다.");
+	m_strLoadingText = TEXT("Now Loading ... Object Prototype");
 
 	/* For.Prototype_GameObject_BackGround */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BackGround"),
@@ -102,7 +99,7 @@ HRESULT CLoader::Loading_For_Logo()
 		return E_FAIL;
 
 
-	m_strLoadingText = TEXT("로딩이 완료되었습니다.");
+	m_strLoadingText = TEXT("Loading Complete");
 
 	m_isFinished = true;
 
@@ -111,7 +108,7 @@ HRESULT CLoader::Loading_For_Logo()
 
 HRESULT CLoader::Loading_For_GamePlay()
 {
-	m_strLoadingText = TEXT("텍스쳐를(을) 로딩 중 입니다.");
+	m_strLoadingText = TEXT("Now Loading Texture");
 	/* Prototype_Component_Texture_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Terrain"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile%d.dds"), 2))))
@@ -152,7 +149,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Explosion%d.png"), 90))))
 		return E_FAIL;
 
-	m_strLoadingText = TEXT("모델를(을) 로딩 중 입니다.");
+	m_strLoadingText = TEXT("Now Loading ... Model");
 
 	_matrix			TransformMatrix = { XMMatrixIdentity() };
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
@@ -198,10 +195,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* Prototype_Component_Model_ForkLift */
 	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
 
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_ForkLift"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/ForkLift/ForkLift.fbx", TransformMatrix))))
-		return E_FAIL;
-
 	/* Prototype_Component_VIBuffer_Cube */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Cube"),
 		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
@@ -225,10 +218,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CVIBuffer_Instance_Rect::Create(m_pDevice, m_pContext, InstanceDesc))))
 		return E_FAIL;
 
-	/* Prototype_Component_VIBuffer_Instance_Red */
-
 	ZeroMemory(&InstanceDesc, sizeof InstanceDesc);
-
 
 	InstanceDesc.vCenter = _float3(0.f, 0.f, 0.f);
 	InstanceDesc.vPivot = InstanceDesc.vCenter;
@@ -245,7 +235,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 
-	m_strLoadingText = TEXT("콜라이더를(을) 로딩 중 입니다.");
+	m_strLoadingText = TEXT("Now Loading ... Collider");
 
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_AABB"),
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
@@ -259,14 +249,14 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
 		return E_FAIL;
 
-	m_strLoadingText = TEXT("네비게이션를(을) 로딩 중 입니다.");
+	m_strLoadingText = TEXT("Now Loading ... Navigation Mesh");
 	/* For.Prototype_Component_Navigation */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation"),
 		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.dat")))))
 		return E_FAIL;
 
 
-	m_strLoadingText = TEXT("셰이더를(을) 로딩 중 입니다.");
+	m_strLoadingText = TEXT("Now Loading ... Shader");
 	/* For.Prototype_Component_Shader_VtxNorTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxNorTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX::Elements, VTXNORTEX::iNumElements))))
@@ -299,7 +289,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 
 
-	m_strLoadingText = TEXT("객체를(을) 로딩 중 입니다.");
+	m_strLoadingText = TEXT("Now Loading ... Object");
 	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))
@@ -311,8 +301,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 	///* For.Prototype_GameObject_ForkLift */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ForkLift"),
-		CForkLift::Create(m_pDevice, m_pContext))))
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Props"),
+		CProps::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Player */
@@ -355,17 +345,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CSky::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Particle_Blue */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Particle_Blue"),
-		CParticle_Blue::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Particle_Red */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Particle_Red"),
-		CParticle_Red::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	m_strLoadingText = TEXT("로딩이 완료되었습니다.");
+	m_strLoadingText = TEXT("Loading Complete.");
 
 	m_isFinished = true;
 

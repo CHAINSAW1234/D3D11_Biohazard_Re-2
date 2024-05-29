@@ -63,6 +63,23 @@ CRigid_Dynamic* CRigid_Dynamic::Create()
 	return nullptr;
 }
 
+_matrix CRigid_Dynamic::GetWorldMatrix_Rigid_Dynamic(_int Index)
+{
+	PxTransform globalPose = m_pRigid_Dynamic->getGlobalPose();
+
+	PxVec3 position = globalPose.p;
+
+	PxQuat rotation = globalPose.q;
+
+	XMMATRIX translationMatrix = XMMatrixTranslation(position.x, position.y, position.z);
+
+	XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(XMVectorSet(rotation.x, rotation.y, rotation.z, rotation.w));
+
+	XMMATRIX worldMatrix = rotationMatrix * translationMatrix;
+
+	return worldMatrix;
+}
+
 void CRigid_Dynamic::Free()
 {
 }

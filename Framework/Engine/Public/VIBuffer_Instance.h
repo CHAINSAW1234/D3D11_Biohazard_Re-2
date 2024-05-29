@@ -25,36 +25,36 @@ protected:
 	virtual ~CVIBuffer_Instance() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(const CVIBuffer_Instance::INSTANCE_DESC& InstanceDesc);
-	virtual HRESULT Initialize(void* pArg);
-	virtual HRESULT Bind_Buffers();
-	virtual HRESULT Render();
+	virtual HRESULT						Initialize_Prototype(const CVIBuffer_Instance::INSTANCE_DESC& InstanceDesc);
+	virtual HRESULT						Initialize(void* pArg);
+	virtual HRESULT						Bind_Buffers();
+	virtual HRESULT						Render();
 
 public:
-	virtual _float4 Compute_RandPosition() = 0;
-	virtual void Drop(_float fTimeDelta);
-	virtual void Spread(_float fTimeDelta);
+	virtual _float4						Compute_RandPosition() = 0;
+	virtual void						Drop(_float fTimeDelta);
+	virtual void						Spread(_float fTimeDelta);
 
-	void Compute_LifeTime(VTXMATRIX* pVertices, _uint iInstanceIndex, _float fTimeDelta);
+	void								Compute_LifeTime(VTXMATRIX* pVertices, _uint iInstanceIndex, _float fTimeDelta);
 
-
-protected:
-	ID3D11Buffer*			m_pVBInstance = { nullptr };
-	_uint					m_iInstanceStride = { 0 };
-	_uint					m_iNumInstance = { 0 };
-	_uint					m_iIndexCountPerInstance = { 0 };
-	VTXMATRIX*				m_pInstanceVertices = { nullptr };
-	INSTANCE_DESC			m_InstanceDesc{};
 
 protected:
-	D3D11_BUFFER_DESC		m_InstanceBufferDesc{};
-	D3D11_SUBRESOURCE_DATA	m_InstanceSubResourceData{};
+	ID3D11Buffer*						m_pVBInstance = { nullptr };
+	_uint								m_iInstanceStride = { 0 };
+	_uint								m_iNumInstance = { 0 };
+	_uint								m_iIndexCountPerInstance = { 0 };
+	VTXMATRIX*							m_pInstanceVertices = { nullptr };
+	INSTANCE_DESC						m_InstanceDesc{};
 
 protected:
-	random_device				m_RandomDevice;
-	mt19937_64					m_RandomNumber;
-	_float2*					m_pLifeTimes = { nullptr };
-	_float*						m_pSpeeds = { nullptr };
+	D3D11_BUFFER_DESC					m_InstanceBufferDesc{};
+	D3D11_SUBRESOURCE_DATA				m_InstanceSubResourceData{};
+
+protected:
+	random_device						m_RandomDevice;
+	mt19937_64							m_RandomNumber;
+	_float2*							m_pLifeTimes = { nullptr };
+	_float*								m_pSpeeds = { nullptr };
 	
 
 

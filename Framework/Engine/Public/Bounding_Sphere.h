@@ -17,18 +17,19 @@ private:
 	virtual ~CBounding_Sphere() = default;
 
 public:
-	virtual void* Get_BoundingDesc() {
+	virtual void*			Get_BoundingDesc()
+	{
 		return m_pBoundingDesc;
 	}
 
 public:
-	virtual HRESULT Initialize(CBounding::BOUNDING_DESC* pBoundingDesc) override;
-	virtual void Tick(_fmatrix WorldMatrix) override;
-	virtual _bool Intersect(CCollider::TYPE eType, CBounding* pBoundingDesc) override;
+	virtual HRESULT			Initialize(CBounding::BOUNDING_DESC* pBoundingDesc) override;
+	virtual void			Tick(_fmatrix WorldMatrix) override;
+	virtual _bool			Intersect(CCollider::TYPE eType, CBounding* pBoundingDesc) override;
 
 #ifdef _DEBUG
 public:
-	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch) override;
+	virtual HRESULT			Render(PrimitiveBatch<VertexPositionColor>* pBatch) override;
 #endif
 
 private:

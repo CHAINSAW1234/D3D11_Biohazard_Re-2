@@ -12,17 +12,17 @@ private:
 	virtual ~CShader() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(const wstring& strShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
-	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT					Initialize_Prototype(const wstring& strShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
+	virtual HRESULT					Initialize(void* pArg) override;
 
 public:
-	HRESULT Begin(_uint iPassIndex);
-	HRESULT Bind_Matrix(const _char* pConstantName, const _float4x4* pMatrix);
-	HRESULT Bind_Matrices(const _char * pConstantName, const _float4x4 * pMatrices, _uint iNumMatrices);		
-	HRESULT Bind_Texture(const _char* pConstantName, ID3D11ShaderResourceView* pSRV);
-	HRESULT Bind_Textures(const _char* pConstantName, ID3D11ShaderResourceView** ppSRVs, _uint iNumTextures);
-	HRESULT Bind_Texture_Cube(const _char* pConstantName, ID3D11ShaderResourceView* pSRV);
-	HRESULT Bind_RawValue(const _char* pConstantName, const void* pData, _uint iLength);
+	HRESULT							Begin(_uint iPassIndex);
+	HRESULT							Bind_Matrix(const _char* pConstantName, const _float4x4* pMatrix);
+	HRESULT							Bind_Matrices(const _char * pConstantName, const _float4x4 * pMatrices, _uint iNumMatrices);		
+	HRESULT							Bind_Texture(const _char* pConstantName, ID3D11ShaderResourceView* pSRV);
+	HRESULT							Bind_Textures(const _char* pConstantName, ID3D11ShaderResourceView** ppSRVs, _uint iNumTextures);
+	HRESULT							Bind_Texture_Cube(const _char* pConstantName, ID3D11ShaderResourceView* pSRV);
+	HRESULT							Bind_RawValue(const _char* pConstantName, const void* pData, _uint iLength);
 
 private:
 	ID3DX11Effect*					m_pEffect = { nullptr };

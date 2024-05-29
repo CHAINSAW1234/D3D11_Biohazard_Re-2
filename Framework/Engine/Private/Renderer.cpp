@@ -391,8 +391,6 @@ HRESULT CRenderer::SetUp_Matrices()
 
 HRESULT CRenderer::SetUp_RenderTargets_GameObjects(const D3D11_VIEWPORT& ViewportDesc)
 {
-	/* 디퍼드 쉐이딩을 위한 렌더타겟들을 생성하자. */
-
 	/* For.Target_Diffuse */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Diffuse"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
@@ -666,11 +664,6 @@ HRESULT CRenderer::Render_Priority()
 
 HRESULT CRenderer::Render_NonBlend()
 {
-	/* 렌더타겟을 교체한다. */
-	/* 이 그룹에 있는 객체들을 다 빛연산이 필요하다. => 빛연산을 후처리로 할꺼다. */
-	/* 후처리를 위해서는 빛연산을 위한 데이터가 필요하다. => 빛 : 빛매니져, ☆노멀,재질☆ : 이새끼를 받아오고 싶어서!!!!! 렌더타겟에 ㅈ2ㅓ장해서 받아올라고!! */
-	/* Diffuse를 0번째에 셋, Normal를 1번째에 셋 */
-
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GameObjects"))))
 		return E_FAIL;
 
@@ -1022,7 +1015,6 @@ HRESULT CRenderer::Render_Lights()
 
 HRESULT CRenderer::Render_Light_Result()
 {
-	/* 백버퍼에다가 디퍼드 방식으로 연산된 최종 결과물을 찍어준다. */
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
@@ -1213,7 +1205,6 @@ HRESULT CRenderer::Render_PostProcessing_Result()
 
 HRESULT CRenderer::Render_Bloom()
 {
-	/* 백버퍼에다가 디퍼드 방식으로 연산된 최종 결과물을 찍어준다. */
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))

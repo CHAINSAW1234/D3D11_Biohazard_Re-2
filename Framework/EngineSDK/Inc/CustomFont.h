@@ -11,8 +11,8 @@ private:
 	virtual ~CCustomFont() = default;
 
 public:
-	HRESULT Initialize(const wstring& strFontFilePath);
-	HRESULT Render(const wstring & strText, const _float2 & vPosition, _fvector vColor, _float fRadian);
+	HRESULT					Initialize(const wstring& strFontFilePath);
+	HRESULT					Render(const wstring & strText, const _float2 & vPosition, _fvector vColor, _float fRadian);
 	
 
 private:

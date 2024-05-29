@@ -6,6 +6,8 @@
 #include "Head_Player.h"
 #include "Hair_Player.h"
 
+#include "Character_Controller.h"
+
 #define MODEL_SCALE 0.01f
 
 CPlayer::CPlayer(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -48,7 +50,7 @@ HRESULT CPlayer::Initialize(void * pArg)
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f,1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
-	//	m_iIndex_CCT = m_pGameInstance->Create_Controller(_float4(0.f, 0.f, 0.f, 1.f));
+	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.f, 0.f, 1.f),&m_iIndex_CCT,this);
 	return S_OK;
 }
 
@@ -61,15 +63,15 @@ void CPlayer::Tick(_float fTimeDelta)
 {
 	static _bool Temp = false;
 
-	/*if (UP == m_pGameInstance->Get_KeyState(VK_BACK))
+	if (UP == m_pGameInstance->Get_KeyState(VK_BACK))
 	{
 		Temp = true;
 	}
 
 	if(Temp == false)
-		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pGameInstance->GetPosition_CCT(m_iIndex_CCT));*/
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4());
 
-	/*if(PRESSING == m_pGameInstance->Get_KeyState('H'))
+	if(PRESSING == m_pGameInstance->Get_KeyState('H'))
 	{
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
 	}
@@ -82,15 +84,13 @@ void CPlayer::Tick(_float fTimeDelta)
 	if (PRESSING == m_pGameInstance->Get_KeyState('U'))
 	{
 		auto Look = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-		m_pGameInstance->Move_CCT(Look, fTimeDelta, m_iIndex_CCT);
+		m_pController->Move(Look, fTimeDelta);
 	}
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('J'))
 	{
 		auto Look = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-		Look.z = -Look.z;
-		Look.x = -Look.x;
-		m_pGameInstance->Move_CCT(m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK), fTimeDelta, m_iIndex_CCT);
+		m_pController->Move(Look, fTimeDelta);
 		m_eState |= STATE_RUN;
 		if (m_eState & STATE_IDLE)
 			m_eState ^= STATE_IDLE;
@@ -100,7 +100,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_eState |= STATE_IDLE;
 		if(m_eState & STATE_RUN)
 			m_eState ^= STATE_RUN;
-	}*/
+	}
 
 	_vector		vWorldPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
 
@@ -144,7 +144,9 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	if (DOWN == m_pGameInstance->Get_KeyState('B'))
 	{
-		m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		_float4			vMoveDir = {};
+		XMStoreFloat4(&vMoveDir, vCurrentPostion * -1.f);
+		m_pController->Move(vMoveDir, fTimeDelta);
 	}
 
 
@@ -181,7 +183,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
-	//	m_pGameInstance->Move_CCT(vMovedDirection, fTimeDelta, 0);
+	m_pGameInstance->Move_CCT(vMovedDirection, fTimeDelta, 0);
 	//	m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
 
 #ifdef _DEBUG
@@ -218,7 +220,6 @@ HRESULT CPlayer::Add_Components()
 	/* Com_Collider */
 	CBounding_AABB::BOUNDING_AABB_DESC		ColliderDesc{};
 
-	/* 로컬상의 정보를 셋팅한다. */
 	ColliderDesc.vSize = _float3(0.8f, 1.2f, 0.8f);
 	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
 	

@@ -20,9 +20,6 @@ HRESULT CTexture::Initialize_Prototype(const wstring & strTextureFilePath, _uint
 {
 	_tchar		szEXT[MAX_PATH] = TEXT("");
 
-	/* 1번째 인자에 해당하는 문자열을 종류에 분해해준다. */
-
-	/* ..\Bin\정의훈\141\Framework\Client\Bin\Resources\Textures\Test.jpg */
 	_wsplitpath_s(strTextureFilePath.c_str(), nullptr, 0, nullptr, 0, nullptr, 0, szEXT, MAX_PATH);
 
 	HRESULT hr = { 0 };
@@ -31,7 +28,6 @@ HRESULT CTexture::Initialize_Prototype(const wstring & strTextureFilePath, _uint
 
 	ID3D11ShaderResourceView*			pSRV = { nullptr };
 	
-	/* 뜯어낸 확장자가 dds였다면. */
 	if (false == lstrcmp(szEXT, TEXT(".dds")))
 	{
 		for (size_t i = 0; i < iNumTextures; i++)
@@ -65,9 +61,6 @@ HRESULT CTexture::Initialize_Prototype(const wstring & strTextureFilePath, _uint
 
 			m_Textures.push_back(pSRV);
 		}
-
-
-		//	MSG_BOX(TEXT("TGA안됨ㅋ"));
 	}
 	else if (!lstrcmp(szEXT, TEXT(".tex")))
 	{

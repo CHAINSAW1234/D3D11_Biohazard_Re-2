@@ -3,8 +3,6 @@
 #include "Client_Defines.h"
 #include "Base.h"
 
-/* 다음레벨에 대한 자원을 로드한다. */
-
 BEGIN(Engine)
 class CGameInstance;
 END

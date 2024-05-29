@@ -12,8 +12,8 @@ private:
 	virtual ~CVIBuffer_Cell() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype(const _float3* pPoints);
-	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT						Initialize_Prototype(const _float3* pPoints);
+	virtual HRESULT						Initialize(void* pArg);
 
 
 

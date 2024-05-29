@@ -16,8 +16,8 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype(TYPE eType);
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(_fmatrix WorldMatrix);
-	_bool Intersect(CCollider* pTargetCollider);
+	virtual void	Tick(_fmatrix WorldMatrix);
+	_bool			Intersect(CCollider* pTargetCollider);
 
 public:
 	void Active_Color(_bool isActive);
@@ -30,8 +30,8 @@ public:
 #endif
 
 private:
-	TYPE						m_eType = { TYPE_END };
-	class CBounding*			m_pBounding = { nullptr };
+	TYPE										m_eType = { TYPE_END };
+	class CBounding*							m_pBounding = { nullptr };
 
 #ifdef _DEBUG
 private:

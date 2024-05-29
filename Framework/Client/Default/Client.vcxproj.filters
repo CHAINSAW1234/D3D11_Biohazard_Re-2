@@ -43,9 +43,6 @@
     <Filter Include="02.GameObjects\Monster">
       <UniqueIdentifier>{50e192cf-62e9-428c-8e92-b730a586d56b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\ForkLift">
-      <UniqueIdentifier>{26cd4efc-d8f6-4746-9a7a-3f903f687f5b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Player">
       <UniqueIdentifier>{c8892da5-ac0a-4aa1-83ab-12a0fd1f52c6}</UniqueIdentifier>
     </Filter>
@@ -61,12 +58,6 @@
     <Filter Include="02.GameObjects\Particle">
       <UniqueIdentifier>{0cbb16a0-33db-47fd-ac68-1b84e546d85c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Particle\Red">
-      <UniqueIdentifier>{aec80b62-5c02-4ee1-8a7b-76e4f9d373c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Player\Blue">
-      <UniqueIdentifier>{79274680-624c-49c9-8025-da296a5280fb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Effect">
       <UniqueIdentifier>{0edb2087-d32c-40a2-9194-da85c1f37519}</UniqueIdentifier>
     </Filter>
@@ -75,6 +66,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Player\Hair">
       <UniqueIdentifier>{06a26c20-e93f-491c-9f17-a6dabe0d4021}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Props">
+      <UniqueIdentifier>{0cb153c4-04e5-4c35-af38-153a968bfcae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -123,9 +117,6 @@
     <ClInclude Include="..\Public\Monster.h">
       <Filter>02.GameObjects\Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ForkLift.h">
-      <Filter>02.GameObjects\ForkLift</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Player.h">
       <Filter>02.GameObjects\Player</Filter>
     </ClInclude>
@@ -138,12 +129,6 @@
     <ClInclude Include="..\Public\Sky.h">
       <Filter>02.GameObjects\Sky</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Particle_Blue.h">
-      <Filter>02.GameObjects\Player\Blue</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Particle_Red.h">
-      <Filter>02.GameObjects\Particle\Red</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Effect.h">
       <Filter>02.GameObjects\Effect</Filter>
     </ClInclude>
@@ -155,6 +140,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Client_Enumsh.h">
       <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Props.h">
+      <Filter>02.GameObjects\Props</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -191,9 +179,6 @@
     <ClCompile Include="..\private\Monster.cpp">
       <Filter>02.GameObjects\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\ForkLift.cpp">
-      <Filter>02.GameObjects\ForkLift</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Player.cpp">
       <Filter>02.GameObjects\Player</Filter>
     </ClCompile>
@@ -206,12 +191,6 @@
     <ClCompile Include="..\Private\Sky.cpp">
       <Filter>02.GameObjects\Sky</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Particle_Blue.cpp">
-      <Filter>02.GameObjects\Player\Blue</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Particle_Red.cpp">
-      <Filter>02.GameObjects\Particle\Red</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Effect.cpp">
       <Filter>02.GameObjects\Effect</Filter>
     </ClCompile>
@@ -220,6 +199,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Hair_Player.cpp">
       <Filter>02.GameObjects\Player\Hair</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Props.cpp">
+      <Filter>02.GameObjects\Props</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -32,7 +32,6 @@ HRESULT CVIBuffer_Instance_Rect::Initialize_Prototype(const CVIBuffer_Instance::
 #pragma region VERTEX_BUFFER
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
-	/* 정점버퍼의 byte크기 */
 	m_BufferDesc.ByteWidth = m_iVertexStride * m_iNumVertices;
 	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -69,7 +68,6 @@ HRESULT CVIBuffer_Instance_Rect::Initialize_Prototype(const CVIBuffer_Instance::
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
-	/* 인덱스 버퍼의 byte크기 */
 	m_BufferDesc.ByteWidth = m_iIndexStride * m_iNumIndices;
 	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -116,8 +114,6 @@ HRESULT CVIBuffer_Instance_Rect::Initialize_Prototype(const CVIBuffer_Instance::
 	uniform_real_distribution<float>	LifeTime(InstanceDesc.vLifeTime.x, InstanceDesc.vLifeTime.y);
 	uniform_real_distribution<float>	Speed(InstanceDesc.vSpeed.x, InstanceDesc.vSpeed.y);
 
-	
-	/* 인덱스 버퍼의 byte크기 */
 	m_InstanceBufferDesc.ByteWidth = m_iInstanceStride * m_iNumInstance;
 	m_InstanceBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	m_InstanceBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -143,9 +139,6 @@ HRESULT CVIBuffer_Instance_Rect::Initialize_Prototype(const CVIBuffer_Instance::
 
 		m_pInstanceVertices[i].isLived = true;
 
-
-		/* 0.f 현재 라이프타임 */
-		/* LifeTime(m_RandomNumber) 인스턴스마다 랜덤하게 설정된 각각의 라이프타임디다. */
 		m_pLifeTimes[i] = _float2(0.f, LifeTime(m_RandomNumber));
 		m_pSpeeds[i] = Speed(m_RandomNumber);
 	}

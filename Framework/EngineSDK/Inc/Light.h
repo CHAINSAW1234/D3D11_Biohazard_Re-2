@@ -11,8 +11,8 @@ private:
 	virtual ~CLight() = default;
 
 public:
-	HRESULT Add_LightDesc(LIGHT_DESC desc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ);
-	LIGHT_DESC* Get_LightDesc(_uint _iIndex) const
+	HRESULT						Add_LightDesc(LIGHT_DESC desc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ);
+	LIGHT_DESC*					Get_LightDesc(_uint _iIndex) const
 	{
 		if (m_Lights.empty() || m_Lights.size() < _iIndex)
 			return nullptr;
@@ -21,20 +21,20 @@ public:
 			iter++;
 		return (*iter);
 	}
-	HRESULT Set_Render(_bool bRender);
-	list<LIGHT_DESC*>* Get_Light_List() { return &m_Lights; }
+	HRESULT						Set_Render(_bool bRender);
+	list<LIGHT_DESC*>*			Get_Light_List() { return &m_Lights; }
 
 public:
-	HRESULT Initialize();
-	HRESULT Update(const LIGHT_DESC& Light_Desc, _uint iIndex);
-	HRESULT Render(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
+	HRESULT						Initialize();
+	HRESULT						Update(const LIGHT_DESC& Light_Desc, _uint iIndex);
+	HRESULT						Render(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
 
 private:
 	bool bUse = { false };			// 구역에 대한 설정용 
 	list<LIGHT_DESC*>			m_Lights = {};
 
 public:
-	static CLight* Create();
+	static CLight*				Create();
 	virtual void Free() override;
 };
 

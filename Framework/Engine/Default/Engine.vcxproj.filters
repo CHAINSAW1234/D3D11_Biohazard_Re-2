@@ -390,9 +390,6 @@
     <ClCompile Include="..\private\QuadTree.cpp">
       <Filter>01.Utility\02.Components\VIBuffer\Terrain\QuadTree</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Event_Call_Back.cpp">
-      <Filter>01.Utility\97.Physics\CallBack</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Physics_Controller.cpp">
       <Filter>01.Utility\97.Physics</Filter>
     </ClCompile>
@@ -449,6 +446,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\RagDoll.cpp">
       <Filter>01.Utility\97.Physics\RagDoll_Physics\RagDoll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Call_Back.cpp">
+      <Filter>01.Utility\97.Physics\CallBack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

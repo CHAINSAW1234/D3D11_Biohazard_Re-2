@@ -1,6 +1,7 @@
 #include "..\Public\GameObject.h"
 #include "GameInstance.h"
-
+#include "Character_Controller.h"
+#include "Rigid_Dynamic.h"
 
 
 CGameObject::CGameObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -38,7 +39,6 @@ HRESULT CGameObject::Initialize_Prototype()
 	return S_OK;
 }
 
-/* 실제 게임내엣 사용되는 객체가 호출하는 함수다. */
 HRESULT CGameObject::Initialize(void* pArg)
 {
 	if(nullptr != pArg)
@@ -112,6 +112,8 @@ void CGameObject::Free()
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
+	Safe_Release(m_pRigid_Body);
 
-	
+	if(m_pController)
+		Safe_Release(m_pController);	
 }

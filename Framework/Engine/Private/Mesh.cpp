@@ -41,7 +41,6 @@ HRESULT CMesh::Initialize_Prototype(CModel::MODEL_TYPE eModelType, const aiMesh*
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
-	/* 인덱스 버퍼의 byte크기 */
 	m_BufferDesc.ByteWidth = m_iIndexStride * m_iNumIndices;
 	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -97,7 +96,6 @@ HRESULT CMesh::Initialize_Prototype(CModel::MODEL_TYPE eType, const MESH_DESC& M
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
-	/* 인덱스 버퍼의 byte크기 */
 	m_BufferDesc.ByteWidth = m_iIndexStride * m_iNumIndices;
 	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -174,7 +172,6 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const aiMesh* pAIMesh, _fmatrix T
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
-	/* 정점버퍼의 byte크기 */
 	m_BufferDesc.ByteWidth = m_iVertexStride * m_iNumVertices;
 	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -258,7 +255,6 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const aiMesh* pAIMesh, const map<str
 
 		m_Bones.push_back(iBoneIndex);
 
-		/* 이 뼈는 몇개의 정점들에게 영향을 준다. */
 		_uint		iNumWeights = pAIBone->mNumWeights;
 
 		for (_uint j = 0; j < iNumWeights; j++)
@@ -329,7 +325,6 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertic
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
-	/* 정점버퍼의 byte크기 */
 	m_BufferDesc.ByteWidth = m_iVertexStride * m_iNumVertices;
 	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -374,7 +369,6 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
-	/* 정점버퍼의 byte크기 */
 	m_BufferDesc.ByteWidth = m_iVertexStride * m_iNumVertices;
 	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;

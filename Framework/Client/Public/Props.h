@@ -6,24 +6,22 @@
 BEGIN(Engine)
 class CModel;
 class CShader;
-class CCollider;
 END
 
 BEGIN(Client)
 
-class CMonster final : public CGameObject
+class CProps final : public CGameObject
 {
 public:
-	typedef struct tagMonsterDesc: public GAMEOBJECT_DESC
+	typedef struct : public CGameObject::GAMEOBJECT_DESC
 	{
-		_int Index;
-	}MONSTER_DESC;
-public:
-	enum COLLIDERTYPE { COLLIDER_HEAD, COLLIDER_BODY, COLLIDER_END };
+		_int iPropsType;
+		_float4 Position;
+	}PROPS_DESC;
 private:
-	CMonster(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CMonster(const CMonster& rhs);
-	virtual ~CMonster() = default;
+	CProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CProps(const CProps& rhs);
+	virtual ~CProps() = default;
 
 public:
 	virtual HRESULT				Initialize_Prototype() override;
@@ -34,17 +32,16 @@ public:
 
 private:
 	CModel*						m_pModelCom = { nullptr };
-	CShader*					m_pShaderCom = { nullptr };	
-	CCollider*					m_pColliderCom[COLLIDER_END] = { nullptr };
+	CShader*					m_pShaderCom = { nullptr };
 
-	
-	_int						m_iIndex = { 0 };
+	_int						m_iPropsType = { 0 };
+	_bool						m_bVisible = { false };
 private:
 	HRESULT						Add_Components();
 	HRESULT						Bind_ShaderResources();
 
 public:
-	static CMonster* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CProps* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

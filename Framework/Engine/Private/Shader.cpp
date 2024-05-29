@@ -23,7 +23,7 @@ HRESULT CShader::Initialize_Prototype(const wstring & strShaderFilePath, const D
 	iHlslFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #else	
 	iHlslFlag = D3DCOMPILE_OPTIMIZATION_LEVEL1;
-#endif // 
+#endif 
 	if (FAILED(D3DX11CompileEffectFromFile(strShaderFilePath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, iHlslFlag, 0, m_pDevice, &m_pEffect, nullptr)))
 		return E_FAIL;
 
@@ -43,10 +43,7 @@ HRESULT CShader::Initialize_Prototype(const wstring & strShaderFilePath, const D
 
 		ID3D11InputLayout*		pInputLayout = { nullptr };
 		
-		///* D3D11_INPUT_ELEMENT_DESC	: 정점의 멤버변수 하나의 정보를 표현한다. */
-		
-
-		if (FAILED(m_pDevice->CreateInputLayout(/* 내 정점의 구성정보*/pElements,
+		if (FAILED(m_pDevice->CreateInputLayout(pElements,
 			iNumElements, 
 			PassDesc.pIAInputSignature,
 			PassDesc.IAInputSignatureSize,
@@ -85,12 +82,10 @@ HRESULT CShader::Begin(_uint iPassIndex)
 
 HRESULT CShader::Bind_Matrix(const _char* pConstantName, const _float4x4* pMatrix)
 {
-	/* 타입의 구분없이 pConstantName이름을 가진 전역변수에 기능을 할 수 있는 컴객체를 얻어온다. */
 	ID3DX11EffectVariable*	pVariable = m_pEffect->GetVariableByName(pConstantName);
 	if (nullptr == pVariable)
 		return E_FAIL;
 
-	/* 실제 얻어온 전역변수 객체의 타입을 명시하여 변환한다. */
 	ID3DX11EffectMatrixVariable*	pMatrixVariable = pVariable->AsMatrix();
 	if (nullptr == pMatrixVariable)
 		return E_FAIL;
@@ -100,12 +95,10 @@ HRESULT CShader::Bind_Matrix(const _char* pConstantName, const _float4x4* pMatri
 
 HRESULT CShader::Bind_Matrices(const _char * pConstantName, const _float4x4 * pMatrices, _uint iNumMatrices)
 {
-	/* 타입의 구분없이 pConstantName이름을 가진 전역변수에 기능을 할 수 있는 컴객체를 얻어온다. */
 	ID3DX11EffectVariable*	pVariable = m_pEffect->GetVariableByName(pConstantName);
 	if (nullptr == pVariable)
 		return E_FAIL;
 
-	/* 실제 얻어온 전역변수 객체의 타입을 명시하여 변환한다. */
 	ID3DX11EffectMatrixVariable*	pMatrixVariable = pVariable->AsMatrix();
 	if (nullptr == pMatrixVariable)
 		return E_FAIL;
@@ -115,12 +108,10 @@ HRESULT CShader::Bind_Matrices(const _char * pConstantName, const _float4x4 * pM
 
 HRESULT CShader::Bind_Texture(const _char* pConstantName, ID3D11ShaderResourceView* pSRV)
 {
-	/* 타입의 구분없이 pConstantName이름을 가진 전역변수에 기능을 할 수 있는 컴객체를 얻어온다. */
 	ID3DX11EffectVariable*	pVariable = m_pEffect->GetVariableByName(pConstantName);
 	if (nullptr == pVariable)
 		return E_FAIL;
 
-	/* 실제 얻어온 전역변수 객체의 타입을 명시하여 변환한다. */
 	ID3DX11EffectShaderResourceVariable*	pSRVariable = pVariable->AsShaderResource();
 	if (nullptr == pSRVariable)
 		return E_FAIL;
@@ -130,12 +121,10 @@ HRESULT CShader::Bind_Texture(const _char* pConstantName, ID3D11ShaderResourceVi
 
 HRESULT CShader::Bind_Textures(const _char * pConstantName, ID3D11ShaderResourceView ** ppSRVs, _uint iNumTextures)
 {
-	/* 타입의 구분없이 pConstantName이름을 가진 전역변수에 기능을 할 수 있는 컴객체를 얻어온다. */
 	ID3DX11EffectVariable*	pVariable = m_pEffect->GetVariableByName(pConstantName);
 	if (nullptr == pVariable)
 		return E_FAIL;
 
-	/* 실제 얻어온 전역변수 객체의 타입을 명시하여 변환한다. */
 	ID3DX11EffectShaderResourceVariable*	pSRVariable = pVariable->AsShaderResource();
 	if (nullptr == pSRVariable)
 		return E_FAIL;
@@ -145,11 +134,10 @@ HRESULT CShader::Bind_Textures(const _char * pConstantName, ID3D11ShaderResource
 
 HRESULT CShader::Bind_Texture_Cube(const _char* pConstantName, ID3D11ShaderResourceView* pSRV)
 {
-	/* 타입의 구분없이 pConstantName이름을 가진 전역변수에 기능을 할 수 있는 컴객체를 얻어온다. */
 	ID3DX11EffectVariable* pVariable = m_pEffect->GetVariableByName(pConstantName);
 	if (nullptr == pVariable)
 		return E_FAIL;
-	/* 실제 얻어온 전역변수 객체의 타입을 명시하여 변환한다. */
+
 	ID3DX11EffectShaderResourceVariable* pSRVariable = pVariable->AsShaderResource();
 	if (nullptr == pSRVariable)
 		return E_FAIL;
@@ -159,7 +147,6 @@ HRESULT CShader::Bind_Texture_Cube(const _char* pConstantName, ID3D11ShaderResou
 
 HRESULT CShader::Bind_RawValue(const _char * pConstantName, const void * pData, _uint iLength)
 {
-	/* 타입의 구분없이 pConstantName이름을 가진 전역변수에 기능을 할 수 있는 컴객체를 얻어온다. */
 	ID3DX11EffectVariable*	pVariable = m_pEffect->GetVariableByName(pConstantName);
 	if (nullptr == pVariable)
 		return E_FAIL;

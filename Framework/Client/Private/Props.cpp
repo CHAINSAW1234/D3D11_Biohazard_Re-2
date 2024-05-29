@@ -1,23 +1,25 @@
 #include "stdafx.h"
-#include "..\Public\ForkLift.h"
+#include "Props.h"
+#include "Model.h"
+#include "GameInstance.h"
 
-CForkLift::CForkLift(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CProps::CProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
 }
 
-CForkLift::CForkLift(const CForkLift & rhs)
+CProps::CProps(const CProps& rhs)
 	: CGameObject{ rhs }
 {
 
 }
 
-HRESULT CForkLift::Initialize_Prototype()
+HRESULT CProps::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CForkLift::Initialize(void * pArg)
+HRESULT CProps::Initialize(void* pArg)
 {
 	GAMEOBJECT_DESC		GameObjectDesc{};
 
@@ -28,33 +30,27 @@ HRESULT CForkLift::Initialize(void * pArg)
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
-		return E_FAIL;	
+		return E_FAIL;
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
-	//m_pModelCom->Static_Mesh_Cooking();
-
-	//m_pGameInstance->SetSimulate(true);
+	m_pModelCom->Static_Mesh_Cooking();
 
 	return S_OK;
 }
 
-void CForkLift::Tick(_float fTimeDelta)
+void CProps::Tick(_float fTimeDelta)
 {
-	/*if (true == m_pModelCom->isFinished())
-		int a = 10;*/
+	
 }
 
-void CForkLift::Late_Tick(_float fTimeDelta)
+void CProps::Late_Tick(_float fTimeDelta)
 {
-
-
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 }
 
-HRESULT CForkLift::Render()
+HRESULT CProps::Render()
 {
-
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
@@ -66,7 +62,7 @@ HRESULT CForkLift::Render()
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 			return E_FAIL;
-		
+
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS))) {
 			if (FAILED(m_pShaderCom->Begin(0)))
 				return E_FAIL;
@@ -79,14 +75,13 @@ HRESULT CForkLift::Render()
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
 
-
 	return S_OK;
 }
 
-HRESULT CForkLift::Add_Components()
+HRESULT CProps::Add_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxModel"), 
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxModel"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
@@ -98,13 +93,13 @@ HRESULT CForkLift::Add_Components()
 	return S_OK;
 }
 
-HRESULT CForkLift::Bind_ShaderResources()
+HRESULT CProps::Bind_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;	
+		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
@@ -114,13 +109,13 @@ HRESULT CForkLift::Bind_ShaderResources()
 	return S_OK;
 }
 
-CForkLift * CForkLift::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CProps* CProps::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CForkLift*		pInstance = new CForkLift(pDevice, pContext);
+	CProps* pInstance = new CProps(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX(TEXT("Failed To Created : CForkLift"));
+		MSG_BOX(TEXT("Failed To Created : CProps"));
 
 		Safe_Release(pInstance);
 	}
@@ -129,13 +124,13 @@ CForkLift * CForkLift::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pCon
 
 }
 
-CGameObject * CForkLift::Clone(void * pArg)
+CGameObject* CProps::Clone(void* pArg)
 {
-	CForkLift*		pInstance = new CForkLift(*this);
+	CProps* pInstance = new CProps(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX(TEXT("Failed To Created : CForkLift"));
+		MSG_BOX(TEXT("Failed To Created : CProps"));
 
 		Safe_Release(pInstance);
 	}
@@ -143,10 +138,10 @@ CGameObject * CForkLift::Clone(void * pArg)
 	return pInstance;
 }
 
-void CForkLift::Free()
+void CProps::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pShaderCom);	
+	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
 }

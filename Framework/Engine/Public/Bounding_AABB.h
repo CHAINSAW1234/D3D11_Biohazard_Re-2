@@ -16,7 +16,8 @@ private:
 	virtual ~CBounding_AABB() = default;
 
 public:
-	virtual void* Get_BoundingDesc() {
+	virtual void*						Get_BoundingDesc() 
+	{
 		return m_pBoundingDesc;
 	}
 
@@ -25,26 +26,28 @@ public:
 
 
 public:
-	virtual HRESULT Initialize(CBounding::BOUNDING_DESC* pBoundingDesc) override;
-	virtual void Tick(_fmatrix WorldMatrix) override;
-	virtual _bool Intersect(CCollider::TYPE eType, CBounding* pBounding) override;
-	virtual _bool Intersect(CBounding_AABB* pTargetBounding);
+	virtual HRESULT						Initialize(CBounding::BOUNDING_DESC* pBoundingDesc) override;
+	virtual void						Tick(_fmatrix WorldMatrix) override;
+	virtual _bool						Intersect(CCollider::TYPE eType, CBounding* pBounding) override;
+	virtual _bool						Intersect(CBounding_AABB* pTargetBounding);
 #ifdef _DEBUG
 public:
-	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch) override;
+	virtual HRESULT						Render(PrimitiveBatch<VertexPositionColor>* pBatch) override;
 #endif
 
 private:
-	BoundingBox*			m_pBoundingDesc_Original = { nullptr };
-	BoundingBox*			m_pBoundingDesc = { nullptr };
+	BoundingBox*						m_pBoundingDesc_Original = { nullptr };
+	BoundingBox*						m_pBoundingDesc = { nullptr };
 
 private:
-	_float3 Compute_Min() {
+	_float3								Compute_Min() 
+	{
 		_float3		vResult{};
 		XMStoreFloat3(&vResult, XMLoadFloat3(&m_pBoundingDesc->Center) - XMLoadFloat3(&m_pBoundingDesc->Extents));
 		return vResult;
 	}
-	_float3 Compute_Max() {
+	_float3								Compute_Max() 
+	{
 		_float3		vResult{};
 		XMStoreFloat3(&vResult, XMLoadFloat3(&m_pBoundingDesc->Center) + XMLoadFloat3(&m_pBoundingDesc->Extents));
 		return vResult;

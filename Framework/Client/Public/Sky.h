@@ -19,11 +19,11 @@ private:
 	virtual ~CSky() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(_float fTimeDelta) override;
-	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
+	virtual HRESULT			Initialize_Prototype() override;
+	virtual HRESULT			Initialize(void* pArg) override;
+	virtual void			Tick(_float fTimeDelta) override;
+	virtual void			Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT			Render() override;
 
 private:
 	CVIBuffer_Cube*			m_pVIBufferCom = { nullptr };
@@ -31,8 +31,8 @@ private:
 	CShader*				m_pShaderCom = { nullptr };	
 	
 private:
-	HRESULT Add_Components();
-	HRESULT Bind_ShaderResources();
+	HRESULT					Add_Components();
+	HRESULT					Bind_ShaderResources();
 
 public:
 	static CSky* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

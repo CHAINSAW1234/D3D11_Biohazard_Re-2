@@ -2,9 +2,6 @@
 
 #include "Base.h"
 
-/* 렌더링파이프라인에 필요한 ViewMatrix, ProjMatrix보존하낟. */
-/* 기타 클라이언트 로직에 필요한 데이터들을 만들고 저장ㅎ나다. (View, Proj Inv, CamPosition */
-
 BEGIN(Engine)
 class CLight;
 class CPipeLine final : public CBase
@@ -26,39 +23,47 @@ private:
 	virtual ~CPipeLine() = default;
 
 public:
-	void Set_Transform(TRANSFORMSTATE eState, _fmatrix TransformMatrix) {
+	void				Set_Transform(TRANSFORMSTATE eState, _fmatrix TransformMatrix) 
+	{
 		XMStoreFloat4x4(&m_TransformMatrices[eState], TransformMatrix);
 	}
-	void Set_ShadowSpotLight(CLight* pLight);
-	void Add_ShadowLight(CLight* pLight);
-
+	void				Set_ShadowSpotLight(CLight* pLight);
+	void				Add_ShadowLight(CLight* pLight);
 public:
-	_matrix Get_Transform_Matrix(TRANSFORMSTATE eState) const {
+	_matrix				Get_Transform_Matrix(TRANSFORMSTATE eState) const 
+	{
 		return XMLoadFloat4x4(&m_TransformMatrices[eState]);
 	}
-	_float4x4 Get_Transform_Float4x4(TRANSFORMSTATE eState) const {
+	_float4x4			Get_Transform_Float4x4(TRANSFORMSTATE eState) const 
+	{
 		return m_TransformMatrices[eState];
 	}
-	_matrix Get_Transform_Matrix_Inverse(TRANSFORMSTATE eState) const {
+	_matrix				Get_Transform_Matrix_Inverse(TRANSFORMSTATE eState) const 
+	{
 		return XMLoadFloat4x4(&m_TransformInverseMatrices[eState]);
 	}
-	_float4x4 Get_Transform_Float4x4_Inverse(TRANSFORMSTATE eState) const {
+	_float4x4			Get_Transform_Float4x4_Inverse(TRANSFORMSTATE eState) const 
+	{
 		return m_TransformInverseMatrices[eState];
 	}
 
-	_vector Get_CamPosition_Vector() const {
+	_vector				Get_CamPosition_Vector() const 
+	{
 		return XMLoadFloat4(&m_vCamPosition);
 	}
 
-	_float4 Get_CamPosition_Float4() const {
+	_float4				Get_CamPosition_Float4() const 
+	{
 		return m_vCamPosition;
 	}
 
-	_uint Get_NumShadowLight() {
+	_uint				Get_NumShadowLight() 
+	{
 		return m_iNumLight;
 	}
 
-	const CLight* Get_ShadowLight(_uint iIndex) {
+	const CLight*		Get_ShadowLight(_uint iIndex) 
+	{
 		if (iIndex >= m_iNumLight)
 			return nullptr;
 
@@ -67,21 +72,22 @@ public:
 		return *iter;
 	}
 
-	CLight* Get_ShadowSpotLight() {
+	CLight*				Get_ShadowSpotLight() 
+	{
 		return m_pSpotLight;
 	}
 
-	list<LIGHT_DESC*> Get_ShadowLightDesc_List();
+	list<LIGHT_DESC*>	Get_ShadowLightDesc_List();
 
 public:
-	HRESULT Initialize();
-	void Tick();
-	void Reset();		// 렌더 이후에 그림자 연산에 사용한 빛을 리스트에서 제거
+	HRESULT				Initialize();
+	void				Tick();
+	void				Reset();		// 렌더 이후에 그림자 연산에 사용한 빛을 리스트에서 제거
 
 private:
 	// cascade를 위한 절두체 분리 및 투영행렬 계산
-	void Update_CascadeFrustum();
-	void Update_CascadeProjMatrices();
+	void				Update_CascadeFrustum();
+	void				Update_CascadeProjMatrices();
 
 private:
 	_float4x4			m_TransformMatrices[D3DTS_END];

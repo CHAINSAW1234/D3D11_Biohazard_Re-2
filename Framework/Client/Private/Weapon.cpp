@@ -41,15 +41,6 @@ HRESULT CWeapon::Initialize(void * pArg)
 
 void CWeapon::Tick(_float fTimeDelta)
 {
-	/*_matrix		SocketMatrix = XMLoadFloat4x4(m_pSocket->Get_CombinedTransformationMatrix());
-
-	SocketMatrix.r[0] = XMVector3Normalize(SocketMatrix.r[0]);
-	SocketMatrix.r[1] = XMVector3Normalize(SocketMatrix.r[1]);
-	SocketMatrix.r[2] = XMVector3Normalize(SocketMatrix.r[2]);
-
-	XMStoreFloat4x4(&m_WorldMatrix, m_pTransformCom->Get_WorldMatrix() * SocketMatrix	* XMLoadFloat4x4(m_pParentMatrix));*/
-
-
 	m_pColliderCom->Tick(XMLoadFloat4x4(&m_WorldMatrix));
 }
 
@@ -78,7 +69,6 @@ HRESULT CWeapon::Render()
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
 
-		/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 
@@ -111,7 +101,6 @@ HRESULT CWeapon::Add_Components()
 	/* Com_Collider */
 	CBounding_OBB::BOUNDING_OBB_DESC		ColliderDesc{};
 
-	/* 로컬상의 정보를 셋팅한다. */
 	ColliderDesc.vSize = _float3(2.0f, 2.0f, 3.1f);
 	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
 
