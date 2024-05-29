@@ -85,6 +85,7 @@ public: /* For.PipeLine */
 	_float4									Get_CamPosition_Float4() const;
 	const CLight*							Get_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, _uint iLightIndex = 0); // spotlight는 Light내부의 list에 LIGHT_DESC가 하나만 들어있도록 처리할 것 	
 	list<LIGHT_DESC*>						Get_ShadowPointLightDesc_List();
+#pragma endregion
 
 #pragma region Light_Manager
 public: /* For.Light_Manager */
@@ -117,6 +118,7 @@ public: /* For.Target_Manager */
 	HRESULT									Bind_RTShaderResource(class CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName);
 	HRESULT									Bind_OutputShaderResource(class CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName);
 	HRESULT									Copy_Resource(const wstring& strRenderTargetTag, ID3D11Texture2D** ppTextureHub);
+#pragma endregion
 
 #pragma region Frustrum
 public: /* For.Frustum */
