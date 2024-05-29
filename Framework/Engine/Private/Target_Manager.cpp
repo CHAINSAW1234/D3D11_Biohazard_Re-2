@@ -44,6 +44,29 @@ HRESULT CTarget_Manager::Add_RenderTarget_Cube(const wstring& strRenderTargetTag
 	return S_OK;
 }
 
+HRESULT CTarget_Manager::Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+{
+	if (nullptr != Find_RenderTarget(strRenderTargetTag))
+		return E_FAIL;
+
+	CRenderTarget* pRenderTarget = CRenderTarget::Create_3D(m_pDevice, m_pContext, iWidth, iHeight, iDepth, ePixelFormat, vClearColor);
+	if (nullptr == pRenderTarget)
+		return E_FAIL;
+
+	m_RenderTargets.emplace(strRenderTargetTag, pRenderTarget);
+
+	return S_OK;
+}
+
+HRESULT CTarget_Manager::Clear_RenderTarget(const wstring& strRenderTargetTag)
+{
+	CRenderTarget* pRenderTarget = Find_RenderTarget(strRenderTargetTag);
+	if (nullptr == pRenderTarget)
+		return E_FAIL;
+
+	return pRenderTarget->Clear();
+}
+
 HRESULT CTarget_Manager::Add_MRT(const wstring & strMRTTag, const wstring & strRenderTargetTag)
 {
 	CRenderTarget*		pRenderTarget = Find_RenderTarget(strRenderTargetTag);
@@ -115,6 +138,24 @@ HRESULT CTarget_Manager::Bind_ShaderResource(CShader * pShader, const wstring & 
 		return E_FAIL;
 
 	return pRenderTarget->Bind_ShaderResource(pShader, pConstantName);	
+}
+
+HRESULT CTarget_Manager::Bind_ShaderResource(CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName)
+{
+	CRenderTarget* pRenderTarget = Find_RenderTarget(strRenderTargetTag);
+	if (nullptr == pRenderTarget)
+		return E_FAIL;
+
+	return pRenderTarget->Bind_ShaderResource(pShader, pConstantName);
+}
+
+HRESULT CTarget_Manager::Bind_OutputShaderResource(CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName)
+{
+	CRenderTarget* pRenderTarget = Find_RenderTarget(strRenderTargetTag);
+	if (nullptr == pRenderTarget)
+		return E_FAIL;
+
+	return 	pRenderTarget->Bind_OutputShaderResource(pShader, pConstantName);
 }
 
 HRESULT CTarget_Manager::Copy_Resource(const wstring & strRenderTargetTag, ID3D11Texture2D ** ppTextureHub)

@@ -43,6 +43,9 @@ FrameWork/Engine/Default/x64/
 FrameWork/Client/Bin/Client.pdb
 
 FrameWork/Engine/Bin/Engine.pdb
+
+FrameWork/Animation_Tool/Bin/PhysXGpu_64.dll
+
 *.db
 *.ini
 *.ipch

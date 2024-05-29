@@ -75,21 +75,17 @@ public: /* For.Timer_Manager */
 #pragma region PipeLine
 public: /* For.PipeLine */
 	void									Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
-	HRESULT									Set_ShadowSpotLight(CLight* pLight);
-	HRESULT									Set_ShadowSpotLight(const wstring& strLightTag);
-	HRESULT									Add_ShadowLight(CLight* pLight);
-	HRESULT									Add_ShadowLight(const wstring& strLightTag);
+	HRESULT									Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, CLight* pLight);
+	HRESULT									Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, const wstring& strLightTag);
 	_matrix									Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState) const;
 	_float4x4								Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE eState) const;
 	_matrix									Get_Transform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState) const;
 	_float4x4								Get_Transform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState) const;
 	_vector									Get_CamPosition_Vector() const;
 	_float4									Get_CamPosition_Float4() const;
-	_uint									Get_NumShadowLight();
-	const CLight*							Get_ShadowLight(_uint iIndex);
-	const CLight*							Get_ShadowSpotLight();		// spotlight는 Light내부의 list에 LIGHT_DESC가 하나만 들어있도록 처리할 것 
-	list<LIGHT_DESC*>						Get_ShadowLightDesc_List();
-#pragma endregion
+	_uint									Get_NumShadowSpotLight();
+	const CLight*							Get_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, _uint iLightIndex = 0); // spotlight는 Light내부의 list에 LIGHT_DESC가 하나만 들어있도록 처리할 것 	
+	list<LIGHT_DESC*>						Get_ShadowPointLightDesc_List();
 
 #pragma region Light_Manager
 public: /* For.Light_Manager */
@@ -112,12 +108,16 @@ public: /* For.Font_Manager */
 public: /* For.Target_Manager */
 	HRESULT									Add_RenderTarget(const wstring& strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
 	HRESULT									Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	HRESULT									Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	HRESULT									Clear_RenderTarget(const wstring& strRenderTargetTag);
+
 	HRESULT									Add_MRT(const wstring& strMRTTag, const wstring& strRenderTargetTag);
 	HRESULT									Begin_MRT(const wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
 	HRESULT									End_MRT();
 	HRESULT									Bind_RTShaderResource(class CShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName);
+	HRESULT									Bind_RTShaderResource(class CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName);
+	HRESULT									Bind_OutputShaderResource(class CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName);
 	HRESULT									Copy_Resource(const wstring& strRenderTargetTag, ID3D11Texture2D** ppTextureHub);
-#pragma endregion
 
 #pragma region Frustrum
 public: /* For.Frustum */

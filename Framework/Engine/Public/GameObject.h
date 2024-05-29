@@ -26,8 +26,9 @@ public:
 	virtual void								Tick(_float fTimeDelta);
 	virtual void								Late_Tick(_float fTimeDelta);
 	virtual HRESULT								Render();
-	virtual HRESULT								Render_LightDepth() { return S_OK; }
-	virtual HRESULT								Render_LightDepth_Cube() { return S_OK; }
+	virtual HRESULT								Render_LightDepth_Dir() { return S_OK; }
+	virtual HRESULT								Render_LightDepth_Spot() { return S_OK; }
+	virtual HRESULT								Render_LightDepth_Point() { return S_OK; }
 	virtual HRESULT								Render_Distortion() { return S_OK; }
 	virtual HRESULT								Render_Emissive() { return S_OK; }
 	virtual HRESULT								Render_Font() { return S_OK; }

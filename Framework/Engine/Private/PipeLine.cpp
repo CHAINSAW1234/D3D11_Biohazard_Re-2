@@ -5,24 +5,32 @@ CPipeLine::CPipeLine()
 {
 }
 
-void CPipeLine::Set_ShadowSpotLight(CLight* pLight)
+void CPipeLine::Add_ShadowLight(SHADOWLIGHT eShadowLight, CLight* pLight)
 {
-	m_pSpotLight = pLight;
-	Safe_AddRef(pLight);
-}
-
-void CPipeLine::Add_ShadowLight(CLight* pLight)
-{
-	if (m_iNumLight < m_iMaxLight) {
-		++m_iNumLight;
-		m_Lights.push_back(pLight);
-
-		Safe_AddRef(pLight);
-
+	switch (eShadowLight) {
+	case DIRECTION:
+		if (m_pDirectionLight == nullptr) {
+			m_pDirectionLight = pLight;
+			Safe_AddRef(pLight);
+		}
+		break;
+	case POINT:
+		if (m_iNumLight < m_iMaxLight) {
+			++m_iNumLight;
+			m_Lights.push_back(pLight);
+			Safe_AddRef(pLight);
+		}
+		break;
+	case SPOT:
+		if (m_pSpotLight == nullptr) {
+			m_pSpotLight = pLight;
+			Safe_AddRef(pLight);
+		}
+		break;
 	}
 }
 
-list<LIGHT_DESC*> CPipeLine::Get_ShadowLightDesc_List()
+list<LIGHT_DESC*> CPipeLine::Get_ShadowPointLightDesc_List()
 {
 	list<LIGHT_DESC*> ShadowLightDesc;
 
@@ -101,6 +109,9 @@ void CPipeLine::Reset()
 	}
 	m_Lights.clear();
 	m_iNumLight = 0;
+
+	Safe_Release(m_pDirectionLight);
+	m_pDirectionLight = nullptr;
 
 	Safe_Release(m_pSpotLight);
 	m_pSpotLight = nullptr;
@@ -197,6 +208,9 @@ void CPipeLine::Free()
 	}
 	m_Lights.clear();
 	m_iNumLight = 0;
+
+	Safe_Release(m_pDirectionLight);
+	m_pDirectionLight = nullptr;
 
 	Safe_Release(m_pSpotLight);
 	m_pSpotLight = nullptr;

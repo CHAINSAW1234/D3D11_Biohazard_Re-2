@@ -232,6 +232,9 @@
     <Filter Include="01.Utility\97.Physics\RagDoll_Physics\Skeleton">
       <UniqueIdentifier>{7541368d-e681-41ca-8557-1d2d05b1f0bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\02.Components\Shader\ComputeShader">
+      <UniqueIdentifier>{bfea47f1-f03f-466f-9d2d-30c27c0eaaa4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -449,6 +452,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Event_Call_Back.cpp">
       <Filter>01.Utility\97.Physics\CallBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ComputeShader.cpp">
+      <Filter>01.Utility\02.Components\Shader\ComputeShader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -690,12 +696,18 @@
     <ClInclude Include="..\Public\RagDoll.h">
       <Filter>01.Utility\97.Physics\RagDoll_Physics\RagDoll</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ComputeShader.h">
+      <Filter>01.Utility\02.Components\Shader\ComputeShader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
       <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl">
+      <Filter>01.Utility\98.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute.hlsl">
       <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

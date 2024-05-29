@@ -118,11 +118,6 @@ namespace Engine
 		static const D3D11_INPUT_ELEMENT_DESC	Elements[6];
 	}VTXINSTANCE_POINT;
 
-
-
-	
-
-
 	typedef struct ENGINE_DLL tagVtxMesh
 	{
 		_float3		vPosition;

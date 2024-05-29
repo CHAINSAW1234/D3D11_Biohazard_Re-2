@@ -469,17 +469,16 @@ void CGameInstance::Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix Tra
 	m_pPipeLine->Set_Transform(eState, TransformMatrix);
 }
 
-HRESULT CGameInstance::Set_ShadowSpotLight(CLight* pLight)
+HRESULT CGameInstance::Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, CLight* pLight)
 {
 	if (nullptr == m_pPipeLine)
 		return E_FAIL;
-	
-	m_pPipeLine->Set_ShadowSpotLight(pLight);
-	return S_OK;
 
+	m_pPipeLine->Add_ShadowLight(eShadowLight, pLight);
+	return S_OK;
 }
 
-HRESULT CGameInstance::Set_ShadowSpotLight(const wstring& strLightTag)
+HRESULT CGameInstance::Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, const wstring& strLightTag)
 {
 	if (nullptr == m_pPipeLine || nullptr == m_pLight_Manager)
 		return E_FAIL;
@@ -487,28 +486,7 @@ HRESULT CGameInstance::Set_ShadowSpotLight(const wstring& strLightTag)
 	if (nullptr == m_pLight_Manager->Get_Light(strLightTag))
 		return E_FAIL;
 
-	m_pPipeLine->Set_ShadowSpotLight(m_pLight_Manager->Get_Light(strLightTag));
-	return S_OK;
-}
-
-HRESULT CGameInstance::Add_ShadowLight(CLight* pLight)
-{
-	if (nullptr == m_pPipeLine)
-		return E_FAIL;
-
-	m_pPipeLine->Add_ShadowLight(pLight);
-	return S_OK;
-}
-
-HRESULT CGameInstance::Add_ShadowLight(const wstring& strLightTag)
-{
-	if (nullptr == m_pPipeLine || nullptr == m_pLight_Manager)
-		return E_FAIL;
-
-	if (nullptr == m_pLight_Manager->Get_Light(strLightTag))
-		return E_FAIL;
-
-	m_pPipeLine->Add_ShadowLight(m_pLight_Manager->Get_Light(strLightTag));
+	m_pPipeLine->Add_ShadowLight(eShadowLight, m_pLight_Manager->Get_Light(strLightTag));
 	return S_OK;
 }
 
@@ -560,69 +538,29 @@ _float4 CGameInstance::Get_CamPosition_Float4() const
 	return m_pPipeLine->Get_CamPosition_Float4();
 }
 
-_uint CGameInstance::Get_NumShadowLight()
+_uint CGameInstance::Get_NumShadowSpotLight()
 {
 	if (nullptr == m_pPipeLine)
 		return 0;
 
-	return m_pPipeLine->Get_NumShadowLight();
+	return m_pPipeLine->Get_NumShadowSpotLight();
 }
 
-const CLight* CGameInstance::Get_ShadowLight(_uint iIndex)
+const CLight* CGameInstance::Get_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, _uint iIndex)
 {
 	if (nullptr == m_pPipeLine)
 		return nullptr;
 	
 
-	return m_pPipeLine->Get_ShadowLight(iIndex);
-}
-//
-//_matrix CGameInstance::Get_SpotLightTransform_Matrix(CPipeLine::TRANSFORMSTATE eState) const
-//{
-//	if (nullptr == m_pPipeLine)
-//		return XMMatrixIdentity();
-//
-//	return m_pPipeLine->Get_SpotLightTransform_Matrix(eState);
-//}
-//
-//_float4x4 CGameInstance::Get_SpotLightTransform_Float4x4(CPipeLine::TRANSFORMSTATE eState) const
-//{
-//	if (nullptr == m_pPipeLine)
-//		return _float4x4();
-//
-//	return m_pPipeLine->Get_SpotLightTransform_Float4x4(eState);
-//}
-//
-//_matrix CGameInstance::Get_SpotLightTransform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState) const
-//{
-//	if (nullptr == m_pPipeLine)
-//		return XMMatrixIdentity();
-//
-//	return m_pPipeLine->Get_SpotLightTransform_Matrix_Inverse(eState);
-//}
-//
-//_float4x4 CGameInstance::Get_SpotLightTransform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState) const
-//{
-//	if (nullptr == m_pPipeLine)
-//		return _float4x4();
-//
-//	return m_pPipeLine->Get_SpotLightTransform_Float4x4_Inverse(eState);
-//}
-
-const CLight* CGameInstance::Get_ShadowSpotLight()
-{
-	if (nullptr == m_pPipeLine)
-		return nullptr;
-
-	return m_pPipeLine->Get_ShadowSpotLight();
+	return m_pPipeLine->Get_ShadowLight(eShadowLight, iIndex);
 }
 
-list<LIGHT_DESC*> CGameInstance::Get_ShadowLightDesc_List()
+list<LIGHT_DESC*> CGameInstance::Get_ShadowPointLightDesc_List()
 {
 	if (nullptr == m_pPipeLine)
 		return list<LIGHT_DESC*>();
 
-	return m_pPipeLine->Get_ShadowLightDesc_List();
+	return m_pPipeLine->Get_ShadowPointLightDesc_List();
 }
 #pragma endregion
 
@@ -707,6 +645,16 @@ HRESULT CGameInstance::Add_RenderTarget_Cube(const wstring& strRenderTargetTag, 
 	return m_pTarget_Manager->Add_RenderTarget_Cube(strRenderTargetTag, iSize, iArraySize, ePixelFormat, vClearColor);
 }
 
+HRESULT CGameInstance::Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+{
+	return m_pTarget_Manager->Add_RenderTarget_3D(strRenderTargetTag, iWidth, iHeight, iDepth, ePixelFormat, vClearColor);
+}
+
+HRESULT CGameInstance::Clear_RenderTarget(const wstring& strRenderTargetTag)
+{
+	return m_pTarget_Manager->Clear_RenderTarget(strRenderTargetTag);
+}
+
 HRESULT CGameInstance::Add_MRT(const wstring & strMRTTag, const wstring & strRenderTargetTag)
 {
 	return m_pTarget_Manager->Add_MRT(strMRTTag, strRenderTargetTag);
@@ -756,6 +704,26 @@ HRESULT CGameInstance::Bind_RTShaderResource(CShader * pShader, const wstring & 
 		return E_FAIL;
 	}	
 	return m_pTarget_Manager->Bind_ShaderResource(pShader, strRenderTargetTag, pConstantName);
+}
+
+HRESULT CGameInstance::Bind_RTShaderResource(CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName)
+{
+	if (nullptr == m_pTarget_Manager)
+	{
+		MSG_BOX(TEXT("nullptr == m_pTarget_Manager : CGameInstance"));
+		return E_FAIL;
+	}
+	return m_pTarget_Manager->Bind_ShaderResource(pShader, strRenderTargetTag, pConstantName);
+}
+
+HRESULT CGameInstance::Bind_OutputShaderResource(CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName)
+{
+	if (nullptr == m_pTarget_Manager)
+	{
+		MSG_BOX(TEXT("nullptr == m_pTarget_Manager : CGameInstance"));
+		return E_FAIL;
+	}
+	return m_pTarget_Manager->Bind_OutputShaderResource(pShader, strRenderTargetTag, pConstantName);
 }
 
 HRESULT CGameInstance::Copy_Resource(const wstring & strRenderTargetTag, ID3D11Texture2D ** ppTextureHub)

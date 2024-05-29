@@ -9,7 +9,7 @@ class CRenderer final : public CBase
 public:
 	enum RENDERGROUP {
 		RENDER_PRIORITY,
-		RENDER_SHADOW_POINT, RENDER_SHADOW_SPOT,
+		RENDER_SHADOW_DIR, RENDER_SHADOW_POINT, RENDER_SHADOW_SPOT,
 		RENDER_FIELD,
 		RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_NON_POSTPROCESSING,
 		RENDER_AMBIENT, RENDER_DISTORTION, RENDER_EMISSIVE,
@@ -27,6 +27,7 @@ public:
 private:
 	CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CRenderer() = default;
+
 public:
 	HRESULT						Initialize();
 	HRESULT						Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pRenderObject);
@@ -49,7 +50,6 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT						SetUp_RenderTargets_GameObjects(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_LightAcc(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_Shadow(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT						SetUp_RenderTargets_Shadow_Point(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_Pre_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_Ambient(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_Distortion(const D3D11_VIEWPORT& ViewportDesc);
@@ -57,6 +57,8 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT						SetUp_RenderTargets_Bloom(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_PostProcessing_Result(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_Test();
+	HRESULT						Render_Test();
 
 #ifdef _DEBUG
 	HRESULT						SetUp_Debug();
@@ -83,7 +85,7 @@ private:
 
 private:
 	ID3D11DepthStencilView*		m_pLightDepthDSVs[RES_END] = {};
-	SHADOW_RESOLUTION			m_eShadowResolution = { SHADOW_RESOLUTION::RES_1X };
+	SHADOW_RESOLUTION			m_eShadowResolution = { SHADOW_RESOLUTION::RES_4X };
 	_float						m_fLightDepthTargetViewWidth = { 0.f };
 	_float						m_fLightDepthTargetViewHeight = { 0.f };
 
@@ -123,8 +125,9 @@ private:
 	HRESULT						Render_OverwrapFont();
 
 private:
-	HRESULT						Render_Shadow();
+	HRESULT						Render_Shadow_Direction();
 	HRESULT						Render_Shadow_Point();
+	HRESULT						Render_Shadow_Spot();
 
 private:
 	HRESULT						Render_Distortion();
@@ -144,7 +147,7 @@ private:
 	HRESULT						Render_Bloom();
 
 private:
-	void						Set_ViewPort_Size(_float fWidth, _float fHeight);
+	void						Set_ViewPort_Size(_float fWidth, _float fHeight, _int iArraySize = 1);
 
 #ifdef _DEBUG
 private:

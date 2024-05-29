@@ -8,6 +8,8 @@ class CPipeLine final : public CBase
 {
 public:
 	enum TRANSFORMSTATE { D3DTS_VIEW, D3DTS_PROJ, D3DTS_END };
+	enum SHADOWLIGHT { DIRECTION, POINT, SPOT, SHADOWLIGHT_END };
+
 	enum CASCADE { CASCADE_NEAR, CASCADE_MIDDLE, CASCADE_FAR, CASCADE_END };
 
 	typedef struct tagFrustumDesc
@@ -27,8 +29,8 @@ public:
 	{
 		XMStoreFloat4x4(&m_TransformMatrices[eState], TransformMatrix);
 	}
-	void				Set_ShadowSpotLight(CLight* pLight);
-	void				Add_ShadowLight(CLight* pLight);
+	void				Add_ShadowLight(SHADOWLIGHT eShadowLight, CLight* pLight);
+
 public:
 	_matrix				Get_Transform_Matrix(TRANSFORMSTATE eState) const 
 	{
@@ -62,22 +64,29 @@ public:
 		return m_iNumLight;
 	}
 
-	const CLight*		Get_ShadowLight(_uint iIndex) 
-	{
-		if (iIndex >= m_iNumLight)
-			return nullptr;
+	CLight*				Get_ShadowLight(SHADOWLIGHT eShadowLight, _uint iLightIndex) {
+		switch (eShadowLight) {
+		case DIRECTION:
+			return m_pDirectionLight;
+			break;
+		case POINT: {
+			if (iLightIndex >= m_iNumLight)
+				return nullptr;
 
-		auto iter = m_Lights.begin();
-		advance(iter, iIndex);
-		return *iter;
+			auto iter = m_Lights.begin();
+			advance(iter, iLightIndex);
+			return *iter;
+		}
+			break;
+		case SPOT:
+			return m_pSpotLight;
+			break;
+		}
+
+		return nullptr;
 	}
 
-	CLight*				Get_ShadowSpotLight() 
-	{
-		return m_pSpotLight;
-	}
-
-	list<LIGHT_DESC*>	Get_ShadowLightDesc_List();
+	list<LIGHT_DESC*>	Get_ShadowPointLightDesc_List();
 
 public:
 	HRESULT				Initialize();
@@ -96,13 +105,15 @@ private:
 	//FRUSTUM_DESC		m_Frustum;
 
 	// 그림자 계산에 필요한 변수
+	
 	// 점광원용
 	_uint				m_iMaxLight = { 2 };
 	_uint				m_iNumLight = { 0 };
 	list<CLight*>		m_Lights;
 
-	// SpotLight
+	CLight*				m_pDirectionLight = { nullptr };
 	CLight*				m_pSpotLight = { nullptr };
+
 	// CasCade용 변수 -> 안씀
 	_float3				m_vOriginalPoints[8];
 	_float				m_fCascadeSplitZ[CASCADE_END + 1];

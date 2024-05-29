@@ -26,7 +26,7 @@ HRESULT CShader::Initialize_Prototype(const wstring & strShaderFilePath, const D
 #endif 
 	if (FAILED(D3DX11CompileEffectFromFile(strShaderFilePath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, iHlslFlag, 0, m_pDevice, &m_pEffect, nullptr)))
 		return E_FAIL;
-
+	
 	ID3DX11EffectTechnique*		pTechnique = m_pEffect->GetTechniqueByIndex(0);
 	if (nullptr == pTechnique)
 		return E_FAIL;
@@ -153,7 +153,6 @@ HRESULT CShader::Bind_RawValue(const _char * pConstantName, const void * pData, 
 
 	return pVariable->SetRawValue(pData, 0, iLength);	
 }
-
 
 CShader * CShader::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const wstring & strShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
 {
