@@ -13,6 +13,7 @@
 #include "Frustum.h"
 #include "Physics_Controller.h"
 #include "Picking.h"
+#include "Layer.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -397,7 +398,14 @@ const CComponent * CGameInstance::Get_Component(_uint iLevelIndex, const wstring
 
 list<class CGameObject*>* CGameInstance::Find_Layer(_uint iLevelIndex, const wstring& LayerTag)
 {
-	return m_pObject_Manager->Find_Layer(iLevelIndex, LayerTag);
+	if (nullptr == m_pObject_Manager)
+		return nullptr;
+
+	CLayer*			pLayer = m_pObject_Manager->Find_Layer(iLevelIndex, LayerTag);
+	if (nullptr == pLayer)
+		return nullptr;
+
+	return pLayer->Get_ObjectList_Ptr();
 }
 
 void CGameInstance::Release_Layer(_uint iLevelIndex, const wstring& LayerTag)
@@ -536,14 +544,6 @@ _float4 CGameInstance::Get_CamPosition_Float4() const
 		return _float4();
 
 	return m_pPipeLine->Get_CamPosition_Float4();
-}
-
-_uint CGameInstance::Get_NumShadowSpotLight()
-{
-	if (nullptr == m_pPipeLine)
-		return 0;
-
-	return m_pPipeLine->Get_NumShadowSpotLight();
 }
 
 const CLight* CGameInstance::Get_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, _uint iIndex)

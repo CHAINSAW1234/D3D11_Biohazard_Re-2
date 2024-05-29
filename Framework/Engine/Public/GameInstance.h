@@ -83,7 +83,6 @@ public: /* For.PipeLine */
 	_float4x4								Get_Transform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState) const;
 	_vector									Get_CamPosition_Vector() const;
 	_float4									Get_CamPosition_Float4() const;
-	_uint									Get_NumShadowSpotLight();
 	const CLight*							Get_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, _uint iLightIndex = 0); // spotlight는 Light내부의 list에 LIGHT_DESC가 하나만 들어있도록 처리할 것 	
 	list<LIGHT_DESC*>						Get_ShadowPointLightDesc_List();
 

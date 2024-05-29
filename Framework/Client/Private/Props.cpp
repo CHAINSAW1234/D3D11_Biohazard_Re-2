@@ -2,6 +2,7 @@
 #include "Props.h"
 #include "Model.h"
 #include "GameInstance.h"
+#include "Light.h"
 
 CProps::CProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -118,7 +119,7 @@ HRESULT CProps::Render_LightDepth_Dir()
 	return S_OK;
 }
 
-HRESULT CForkLift::Render_LightDepth_Spot()
+HRESULT CProps::Render_LightDepth_Spot()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -154,7 +155,7 @@ HRESULT CForkLift::Render_LightDepth_Spot()
 	return S_OK;
 }
 
-HRESULT CForkLift::Render_LightDepth_Point()
+HRESULT CProps::Render_LightDepth_Point()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;

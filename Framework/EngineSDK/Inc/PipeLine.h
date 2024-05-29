@@ -29,7 +29,7 @@ public:
 	{
 		XMStoreFloat4x4(&m_TransformMatrices[eState], TransformMatrix);
 	}
-	void Add_ShadowLight(SHADOWLIGHT eShadowLight, CLight* pLight);
+	void				Add_ShadowLight(SHADOWLIGHT eShadowLight, CLight* pLight);
 
 public:
 	_matrix				Get_Transform_Matrix(TRANSFORMSTATE eState) const 
@@ -59,11 +59,12 @@ public:
 		return m_vCamPosition;
 	}
 
-	_uint Get_NumShadowSpotLight() {
+	_uint				Get_NumShadowLight() 
+	{
 		return m_iNumLight;
 	}
 
-	CLight* Get_ShadowLight(SHADOWLIGHT eShadowLight, _uint iLightIndex) {
+	CLight*				Get_ShadowLight(SHADOWLIGHT eShadowLight, _uint iLightIndex) {
 		switch (eShadowLight) {
 		case DIRECTION:
 			return m_pDirectionLight;
@@ -85,7 +86,7 @@ public:
 		return nullptr;
 	}
 
-	list<LIGHT_DESC*> Get_ShadowPointLightDesc_List();
+	list<LIGHT_DESC*>	Get_ShadowPointLightDesc_List();
 
 public:
 	HRESULT				Initialize();

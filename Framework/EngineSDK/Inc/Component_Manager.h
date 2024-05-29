@@ -30,10 +30,10 @@ private:
 	virtual ~CComponent_Manager() = default;
 
 public:
-	HRESULT Initialize(_uint iNumLevels);
-	HRESULT Add_Prototype(_uint iLevelIndex, const wstring& strPrototypeTag, class CComponent* pPrototype);
-	class CComponent* Clone_Component(_uint iLevelIndex, const wstring& strPrototypeTag, void* pArg);
-	void Clear(_uint iLevelIndex);
+	HRESULT											Initialize(_uint iNumLevels);
+	HRESULT											Add_Prototype(_uint iLevelIndex, const wstring& strPrototypeTag, class CComponent* pPrototype);
+	class CComponent*								Clone_Component(_uint iLevelIndex, const wstring& strPrototypeTag, void* pArg);
+	void											Clear(_uint iLevelIndex);
 
 private:
 	map<const wstring, class CComponent*>*			m_pPrototypes = { nullptr };
@@ -41,7 +41,7 @@ private:
 	_uint											m_iNumLevels = { 0 };
 
 private:
-	class CComponent* Find_Prototype(_uint iLevelIndex, const wstring& strPrototypeTag);
+	class CComponent*								Find_Prototype(_uint iLevelIndex, const wstring& strPrototypeTag);
 
 public:
 	static CComponent_Manager* Create(_uint iNumLevels);

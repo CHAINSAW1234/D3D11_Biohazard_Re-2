@@ -12,14 +12,14 @@ public:
 
 public:
 
-	HRESULT Ready_Graphic_Device(const ENGINE_DESC& EngineDesc, 
+	HRESULT						Ready_Graphic_Device(const ENGINE_DESC& EngineDesc, 
 		_Inout_ ID3D11Device** ppDevice, _Inout_ ID3D11DeviceContext** ppContext);
 
-	HRESULT Clear_BackBuffer_View(_float4 vClearColor);
+	HRESULT						Clear_BackBuffer_View(_float4 vClearColor);
 
-	HRESULT Clear_DepthStencil_View();
+	HRESULT						Clear_DepthStencil_View();
 
-	HRESULT Present();
+	HRESULT						Present();
 
 private:	
 	ID3D11Device*				m_pDevice = { nullptr };
@@ -34,9 +34,9 @@ private:
 
 private:
 
-	HRESULT Ready_SwapChain(HWND hWnd, _bool isWindowed, _uint iWinCX, _uint iWinCY);
-	HRESULT Ready_BackBufferRenderTargetView();
-	HRESULT Ready_DepthStencilRenderTargetView(_uint iWinCX, _uint iWinCY);
+	HRESULT						Ready_SwapChain(HWND hWnd, _bool isWindowed, _uint iWinCX, _uint iWinCY);
+	HRESULT						Ready_BackBufferRenderTargetView();
+	HRESULT						Ready_DepthStencilRenderTargetView(_uint iWinCX, _uint iWinCY);
 
 public:
 	static CGraphic_Device* Create(const ENGINE_DESC& EngineDesc, _Out_ ID3D11Device** ppDevice,

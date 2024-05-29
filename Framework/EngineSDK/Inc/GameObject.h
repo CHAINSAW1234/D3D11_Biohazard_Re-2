@@ -17,33 +17,33 @@ protected:
 	virtual ~CGameObject() = default;
 
 public:
-	class CComponent* Get_Component(const wstring& strComTag);
+	class CComponent*							Get_Component(const wstring& strComTag);
 
 public:
-	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg);
-	virtual void Priority_Tick(_float fTimeDelta);
-	virtual void Tick(_float fTimeDelta);
-	virtual void Late_Tick(_float fTimeDelta);
-	virtual HRESULT Render();
-	virtual HRESULT Render_LightDepth_Dir() { return S_OK; }
-	virtual HRESULT Render_LightDepth_Spot() { return S_OK; }
-	virtual HRESULT Render_LightDepth_Point() { return S_OK; }
-	virtual HRESULT Render_Distortion() { return S_OK; }
-	virtual HRESULT Render_Emissive() { return S_OK; }
-	virtual HRESULT Render_Font() { return S_OK; }
+	virtual HRESULT								Initialize_Prototype();
+	virtual HRESULT								Initialize(void* pArg);
+	virtual void								Priority_Tick(_float fTimeDelta);
+	virtual void								Tick(_float fTimeDelta);
+	virtual void								Late_Tick(_float fTimeDelta);
+	virtual HRESULT								Render();
+	virtual HRESULT								Render_LightDepth_Dir() { return S_OK; }
+	virtual HRESULT								Render_LightDepth_Spot() { return S_OK; }
+	virtual HRESULT								Render_LightDepth_Point() { return S_OK; }
+	virtual HRESULT								Render_Distortion() { return S_OK; }
+	virtual HRESULT								Render_Emissive() { return S_OK; }
+	virtual HRESULT								Render_Font() { return S_OK; }
 
 
 protected:
-	ID3D11Device*						m_pDevice = { nullptr };
-	ID3D11DeviceContext*				m_pContext = { nullptr };
+	ID3D11Device*								m_pDevice = { nullptr };
+	ID3D11DeviceContext*						m_pContext = { nullptr };
 
-	class CGameInstance*				m_pGameInstance = { nullptr };
-	CTransform*							m_pTransformCom = { nullptr };
+	class CGameInstance*						m_pGameInstance = { nullptr };
+	CTransform*									m_pTransformCom = { nullptr };
 
 	//Physics_Component
-	class CCharacter_Controller*		m_pController = { nullptr };
-	class CRigid_Dynamic*				m_pRigid_Body = { nullptr };
+	class CCharacter_Controller*				m_pController = { nullptr };
+	class CRigid_Dynamic*						m_pRigid_Body = { nullptr };
 	_int										m_iIndex_CCT = { 0 };
 	_int										m_iIndex_RigidBody = { 0 };
 protected:

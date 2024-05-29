@@ -26,13 +26,16 @@ public:
 public:
 	void			Update_WHEEL(_int iDelta);
 
-	POINT			Get_MouseCurPos() {
+	POINT			Get_MouseCurPos()
+	{
 		return m_ptCurPos;
 	}
-	POINT			Get_MouseDeltaPos() {
+	POINT			Get_MouseDeltaPos()
+	{
 		return m_ptDeltaPos;
 	}
-	void			Set_MouseCurPos(POINT ptPos) {
+	void			Set_MouseCurPos(POINT ptPos) 
+	{
 		m_ptCurPos = ptPos;
 	}
 

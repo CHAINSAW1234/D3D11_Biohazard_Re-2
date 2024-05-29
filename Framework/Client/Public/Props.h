@@ -30,6 +30,10 @@ public:
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
 
+	virtual HRESULT				Render_LightDepth_Dir() override;
+	virtual	HRESULT				Render_LightDepth_Spot() override;
+	virtual HRESULT				Render_LightDepth_Point() override;
+
 private:
 	CModel*						m_pModelCom = { nullptr };
 	CShader*					m_pShaderCom = { nullptr };

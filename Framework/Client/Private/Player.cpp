@@ -133,18 +133,21 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	Late_Tick_PartObjects(fTimeDelta);
 
-	PART		Player_Part = { PART::PART_BODY };
+	m_pController->Move(Convert_Float3_To_Float4_Dir( m_vRootTranslation), fTimeDelta);
 
-	_float4			vMovedDirection = { Convert_Float3_To_Float4_Dir(m_vRootTranslation) };	
-	_vector			vCurrentPostion = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
 
-	_vector			vResultPosition = { vCurrentPostion + XMLoadFloat4(&vMovedDirection) };
+	//PART			Player_Part = { PART::PART_BODY };
 
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vResultPosition);
+	//_float4			vMovedDirection = { Convert_Float3_To_Float4_Dir(m_vRootTranslation) };	
+
+	//_vector			vResultPosition = { vCurrentPostion + XMLoadFloat4(&vMovedDirection) };
+
+	//	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vResultPosition);
 
 	if (DOWN == m_pGameInstance->Get_KeyState('B'))
 	{
 		_float4			vMoveDir = {};
+		_vector			vCurrentPostion = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
 		XMStoreFloat4(&vMoveDir, vCurrentPostion * -1.f);
 		m_pController->Move(vMoveDir, fTimeDelta);
 	}
@@ -157,7 +160,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
-	_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
+	/*_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
 	CVIBuffer_Terrain*		pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_LandBackGround"), TEXT("Com_VIBuffer"), 0))) };
 	CTransform*				pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_LandBackGround"), TEXT("Com_Transform"), 0))) };
 	if (nullptr != pTerrainBuffer &&
@@ -174,7 +177,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 		vPosition = { vPosition + vMoveDir };
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
-	}
+	}*/
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
@@ -182,8 +185,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
-
-	m_pGameInstance->Move_CCT(vMovedDirection, fTimeDelta, 0);
 	//	m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
 
 #ifdef _DEBUG

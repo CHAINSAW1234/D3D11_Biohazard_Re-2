@@ -26,8 +26,11 @@ public:
 	virtual void			Tick(_float fTimeDelta) override;
 	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
-	virtual HRESULT			Render_LightDepth() override;
-	virtual HRESULT			Render_LightDepth_Cube() override;
+
+	HRESULT					Render_LightDepth_Dir()override;
+	HRESULT					Render_LightDepth_Spot()override;
+	HRESULT					Render_LightDepth_Point() override;
+
 private:
 	CModel*					m_pModelCom = { nullptr };
 	CShader*				m_pShaderCom = { nullptr };	

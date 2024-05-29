@@ -11,14 +11,18 @@ private:
 	virtual ~CLayer() = default;
 
 public:
-	const class CComponent* Get_Component(const wstring& strComTag, _uint iIndex);
+	const class CComponent*			Get_Component(const wstring& strComTag, _uint iIndex);
+	list <class CGameObject*>*		Get_Layer();
+	void							Release_Layer();
+public:
+	HRESULT							Initialize();
+	HRESULT							Add_GameObject(class CGameObject* pGameObject);
+	void							Priority_Tick(_float fTimeDelta);
+	void							Tick(_float fTimeDelta);
+	void							Late_Tick(_float fTimeDelta);
 
 public:
-	HRESULT Initialize();
-	HRESULT	Add_GameObject(class CGameObject* pGameObject);
-	void Priority_Tick(_float fTimeDelta);
-	void Tick(_float fTimeDelta);
-	void Late_Tick(_float fTimeDelta);
+	list<class CGameObject*>*		Get_ObjectList_Ptr();
 
 private:
 	list<class CGameObject*>		m_GameObjects;

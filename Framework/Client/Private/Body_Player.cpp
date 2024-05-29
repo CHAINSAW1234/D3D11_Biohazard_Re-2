@@ -378,7 +378,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 void CBody_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-	
+
 	static bool Temp = false;
 	if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
 	{
@@ -386,7 +386,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 		m_bRagdoll = true;
 	}
 
-	if(!Temp)
+	if (!Temp)
 	{
 		m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 	}
@@ -782,25 +782,24 @@ HRESULT CBody_Player::Add_Components()
 
 HRESULT CBody_Player::Bind_ShaderResources()
 {
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
+	if (m_bRagdoll)
+	{
+		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+		WorldMat._41 = 0.f;
+		WorldMat._42 = 0.f;
+		WorldMat._43 = 0.f;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+			return E_FAIL;
+	}
 
-	/*if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;	*/
-
-	auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
-	WorldMat._41 = 0.f;
-	WorldMat._42 = 0.f;
-	WorldMat._43 = 0.f;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
-		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	_float fFar = { 1000.f };
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fFar", &fFar, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;

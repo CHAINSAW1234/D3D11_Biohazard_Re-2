@@ -55,7 +55,6 @@ public:
 private:
 	_char					m_szName[MAX_PATH] = { "" };
 
-	/* 이 메시는 모델에서 로드해놓은 머테리얼들 중 몇번째 머테리얼을 이용하는가? */
 	_uint					m_iMaterialIndex = { 0 };
 
 	_uint					m_iNumBones = { 0 };
@@ -70,12 +69,12 @@ private:
 	_uint*					m_pIndices_Cooking = { nullptr };
 
 private:/* For.FBXLoad */
-	HRESULT Ready_Vertices_For_NonAnimModel(const aiMesh* pAIMesh, _fmatrix TransformationMatrix);
-	HRESULT Ready_Vertices_For_AnimModel(const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices);
+	HRESULT					Ready_Vertices_For_NonAnimModel(const aiMesh* pAIMesh, _fmatrix TransformationMatrix);
+	HRESULT					Ready_Vertices_For_AnimModel(const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices);
 
 private:/* For.BinaryLoad */
-	HRESULT Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertices);
-	HRESULT Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices, const vector<_uint>& Indices, const vector<_uint>& Bones, const vector<_float4x4>& OffsetMatrices);
+	HRESULT					Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertices);
+	HRESULT					Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices, const vector<_uint>& Indices, const vector<_uint>& Bones, const vector<_float4x4>& OffsetMatrices);
 
 public:/*For Cooking*/
 	void	Static_Mesh_Cooking();
