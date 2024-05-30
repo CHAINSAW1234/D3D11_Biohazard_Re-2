@@ -133,7 +133,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	Late_Tick_PartObjects(fTimeDelta);
 
-	m_pController->Move(Convert_Float3_To_Float4_Dir( m_vRootTranslation), fTimeDelta);
+
 
 
 	//PART			Player_Part = { PART::PART_BODY };
@@ -160,9 +160,9 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
-	/*_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
-	CVIBuffer_Terrain*		pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_LandBackGround"), TEXT("Com_VIBuffer"), 0))) };
-	CTransform*				pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_LandBackGround"), TEXT("Com_Transform"), 0))) };
+	_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
+	CVIBuffer_Terrain*		pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
+	CTransform*				pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
 	if (nullptr != pTerrainBuffer &&
 		nullptr != pTerrainTransform)
 	{
@@ -172,12 +172,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 		_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
 		vMoveDir = vResultPos - vPosition;
-
-		vMoveDir = XMVectorSet(0.f, XMVectorGetY(vMoveDir), 0.f, 0.f);
-
-		vPosition = { vPosition + vMoveDir };
-		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
-	}*/
+	}
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
@@ -186,6 +181,14 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	//	m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
+
+	vMoveDir = vMoveDir + XMLoadFloat3(&m_vRootTranslation);
+
+	_float4			vMoveDirFloat4 = {};
+	XMStoreFloat4(&vMoveDirFloat4, vMoveDir);
+
+	m_pController->Move(vMoveDirFloat4, fTimeDelta);
+
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);

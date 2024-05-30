@@ -104,17 +104,17 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	PxControllerFilters controllerFilters;
 	controllerFilters.mFilterCallback = &filterCallback;
 
-	//Apply Gravity
-	for (int i = 0; i < m_vecCharacter_Controller.size(); ++i)
-	{
-		if (m_vecCharacter_Controller[i])
-			m_vecCharacter_Controller[i]->Move(gravity, fTimeDelta);
-	}
+	////Apply Gravity
+	//for (int i = 0; i < m_vecCharacter_Controller.size(); ++i)
+	//{
+	//	if (m_vecCharacter_Controller[i])
+	//		m_vecCharacter_Controller[i]->Move(gravity, fTimeDelta);
+	//}
 
-	for (int i = 0; i < m_vecRigid_Dynamic.size(); ++i)
-	{
-		m_vecRigid_Dynamic[i]->Update();
-	}
+	//for (int i = 0; i < m_vecRigid_Dynamic.size(); ++i)
+	//{
+	//	m_vecRigid_Dynamic[i]->Update();
+	//}
 
 	//Ragdoll Temp Code
 	static bool Temp = false;
