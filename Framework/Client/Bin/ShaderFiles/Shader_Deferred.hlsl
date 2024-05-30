@@ -187,14 +187,8 @@ PS_OUT PS_MAIN_3D(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
 
     
-<<<<<<< HEAD
     //Out.vColor = g_3DTexture.Load(int4(In.vTexcoord * 128, (float) g_iNumZ, 0));
     Out.vColor = g_3DTexture.Sample(PointSampler, float3(In.vTexcoord, (float) g_iNumZ / g_iNumSizeZ));
-=======
-    //Out.vColor = g_3DTexture.Load(int4(0,0,0, 0));
-    Out.vColor = g_3DTexture.Sample(LinearSampler, float3(In.vTexcoord, In.vTexcoord.y));
-    //Out.vColor = g_3DTexture.Load(int4(In.vTexcoord * 64, 6.4, 0));
->>>>>>> parent of 122df45 (ìž‘ì—…ì¤‘)
     return Out;
 }
 
@@ -514,7 +508,6 @@ float Cal_Shadow(float2 vTexcoord)
     return fShadow;
 }
 
-<<<<<<< HEAD
 float ConvertDepthToNdcZ(float depth)
 {
     float depthPackExponent = 2;
@@ -534,8 +527,6 @@ float3 HDR(float3 l)
     return l;
 }
 
-=======
->>>>>>> parent of 122df45 (ìž‘ì—…ì¤‘)
 /* ÃÖÁ¾ÀûÀ¸·Î 480000 ¼öÇàµÇ´Â ½¦ÀÌ´õ. */
 PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
 {
@@ -569,7 +560,6 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
         Out.vDiffuse.a = 1;
     }
 
-<<<<<<< HEAD
     
 
     float3 uv = float3(In.vTexcoord, vDepth.r * vDepth.g);
@@ -595,8 +585,6 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
     Out.vDiffuse = Out.vDiffuse *  vVolumeLight;
     Out.vDiffuse.a = 1.f;
     
-=======
->>>>>>> parent of 122df45 (ìž‘ì—…ì¤‘)
     return Out;
 }
 
