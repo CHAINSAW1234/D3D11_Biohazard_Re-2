@@ -179,17 +179,16 @@ PS_OUT PS_MAIN_CUBE(PS_IN In)
     return Out;
 }
 
+int g_iNumZ;
+int g_iNumSizeZ;
+
 PS_OUT PS_MAIN_3D(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    float3 vTex = normalize(float3(1.0, In.vTexcoord.y * -2 + 1.f, In.vTexcoord.x * -2.f + 1.f));
-    //float3 vTex = normalize(float3(In.vTexcoord.x * 2 - 1.f, In.vTexcoord.y * -2.f + 1.f, 1.f));
-    //float3 vTex = normalize(float3(-1.0, In.vTexcoord.y * -2 + 1.f, In.vTexcoord.x * -2.f + 1.f));
     
-    //Out.vColor = g_3DTexture.Load(int4(0,0,0, 0));
-    Out.vColor = g_3DTexture.Sample(LinearSampler, float3(In.vTexcoord, In.vTexcoord.y));
-    //Out.vColor = g_3DTexture.Load(int4(In.vTexcoord * 64, 6.4, 0));
+    //Out.vColor = g_3DTexture.Load(int4(In.vTexcoord * 128, (float) g_iNumZ, 0));
+    Out.vColor = g_3DTexture.Sample(PointSampler, float3(In.vTexcoord, (float) g_iNumZ / g_iNumSizeZ));
     return Out;
 }
 
@@ -509,6 +508,25 @@ float Cal_Shadow(float2 vTexcoord)
     return fShadow;
 }
 
+float ConvertDepthToNdcZ(float depth)
+{
+    float depthPackExponent = 2;
+    float nearPlaneDist = 0.1;
+    float farPlaneDist = 1000;
+
+    return pow(saturate((depth - nearPlaneDist) / (farPlaneDist - nearPlaneDist)), 1 / depthPackExponent);
+}
+
+float3 HDR(float3 l)
+{
+    float Exposure = 1.f;
+    l = l * Exposure;
+    l.r = l.r < 1.413f ? pow(abs(l.r * 0.38317f), 1.f / 2.2f) : 1.f - exp(-l.r);
+    l.g = l.g < 1.413f ? pow(abs(l.g * 0.38317f), 1.f / 2.2f) : 1.f - exp(-l.g);
+    l.b = l.b < 1.413f ? pow(abs(l.b * 0.38317f), 1.f / 2.2f) : 1.f - exp(-l.b);
+    return l;
+}
+
 /* 최종적으로 480000 수행되는 쉐이더. */
 PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
 {
@@ -542,6 +560,31 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
         Out.vDiffuse.a = 1;
     }
 
+    
+
+    float3 uv = float3(In.vTexcoord, vDepth.r * vDepth.g);
+
+    float4 scatteringColorAndTransmittance = g_3DTexture.Sample(PointSampler, uv);
+    float3 scatteringColor = HDR(scatteringColorAndTransmittance.rgb);
+
+    Out.vDiffuse = Out.vDiffuse * float4(scatteringColor, scatteringColorAndTransmittance.a);
+    return Out;
+  
+    
+    
+    
+    
+    
+    
+    
+    
+
+    float4 vVolumeLight = g_3DTexture.Sample(LinearSamplerClamp, float3(In.vTexcoord, 0));
+    
+    //Out.vDiffuse = float4(vVolumeLight, 1);
+    Out.vDiffuse = Out.vDiffuse *  vVolumeLight;
+    Out.vDiffuse.a = 1.f;
+    
     return Out;
 }
 
@@ -781,7 +824,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
