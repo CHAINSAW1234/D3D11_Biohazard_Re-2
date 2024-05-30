@@ -9,9 +9,10 @@ class CRenderer final : public CBase
 public:
 	enum RENDERGROUP {
 		RENDER_PRIORITY,
-		RENDER_SHADOW_DIR, RENDER_SHADOW_POINT, RENDER_SHADOW_SPOT,
 		RENDER_FIELD,
+		RENDER_SSAO,
 		RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_NON_POSTPROCESSING,
+		RENDER_SHADOW_DIR, RENDER_SHADOW_POINT, RENDER_SHADOW_SPOT,
 		RENDER_AMBIENT, RENDER_DISTORTION, RENDER_EMISSIVE,
 		RENDER_BLEND,
 		RENDER_FILTER,
@@ -49,6 +50,7 @@ private:
 private:		/* For.SetUp_RenderTarget */
 	HRESULT						SetUp_RenderTargets_GameObjects(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_LightAcc(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_SSAO(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_Shadow(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_Pre_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_Ambient(const D3D11_VIEWPORT& ViewportDesc);
@@ -81,6 +83,7 @@ private:
 private:
 	class CVIBuffer_Rect*		m_pVIBuffer = { nullptr };
 	class CShader*				m_pShader = { nullptr };
+	class CTexture*				m_pRandomTexture = { nullptr };
 	_float4x4					m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
 
 private:
@@ -93,6 +96,10 @@ private:
 	_uint						m_iArraySize = { 2 };		// 동시에 적용하는 최대 점 광원 개수 지정
 	ID3D11DepthStencilView*		m_pLightDepthDSV_Point = { nullptr };		// 점 광원용
 	_float						m_fLightDepthTargetViewCubeWidth = { 0.f };
+
+private:
+	_bool						m_isSSAO = { true };		// SSAO 온 오프
+
 
 private:
 	_bool						m_isRadialBlurActive = { false };
@@ -125,6 +132,9 @@ private:
 	HRESULT						Render_OverwrapFont();
 
 private:
+	HRESULT						Render_SSAO_Blur();
+
+private:
 	HRESULT						Render_Shadow_Direction();
 	HRESULT						Render_Shadow_Point();
 	HRESULT						Render_Shadow_Spot();
@@ -147,7 +157,7 @@ private:
 	HRESULT						Render_Bloom();
 
 private:
-	void						Set_ViewPort_Size(_float fWidth, _float fHeight, _int iArraySize = 1);
+	void						Set_ViewPort_Size(_float fWidth, _float fHeight, _uint iArraySize = 1);
 
 #ifdef _DEBUG
 private:

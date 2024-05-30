@@ -52,7 +52,6 @@ HRESULT CMainApp::Render()
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 	
-
 //	#ifdef _DEBUG
 	++m_iRenderCnt;
 

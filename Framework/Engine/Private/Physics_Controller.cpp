@@ -142,8 +142,8 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	
 
 	//Simulate
-	m_Scene->simulate(1/60.f);
-	m_Scene->fetchResults(true);
+	//m_Scene->simulate(1/60.f);
+	//m_Scene->fetchResults(true);
 }
 
 CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int* Index,CGameObject* pCharacter)

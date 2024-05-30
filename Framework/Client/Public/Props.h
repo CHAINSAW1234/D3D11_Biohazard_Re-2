@@ -13,7 +13,7 @@ BEGIN(Client)
 class CProps final : public CGameObject
 {
 public:
-	typedef struct : public CGameObject::GAMEOBJECT_DESC
+	typedef struct Props_Desc : public CGameObject::GAMEOBJECT_DESC
 	{
 		_int iPropsType;
 		_float4 Position;

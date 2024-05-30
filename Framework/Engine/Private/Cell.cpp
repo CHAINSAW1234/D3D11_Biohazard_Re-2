@@ -50,7 +50,7 @@ _bool CCell::isIn(_fvector vPosition, _fmatrix TerrainWorldMatrix, _int* pNeighb
 	{
 		_vector		vSourDir = XMVector3Normalize(vPosition - vPoints[i]);
 		//vSourDir = XMVectorSetY(vSourDir, 0.f);
-		_int Index = i + 1 >= POINT_END ? 0 : i + 1;
+		_int Index = (_int)i + 1 >= POINT_END ? 0 : (_int)i + 1;
 		_vector		vDir = vPoints[Index] - vPoints[i];
 		_vector		vDestDir = XMVector3Normalize(XMVectorSet(XMVectorGetZ(vDir) * -1.f, 0.f, XMVectorGetX(vDir), 0.0f));
 
