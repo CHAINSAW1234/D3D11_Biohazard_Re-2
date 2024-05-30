@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Model_Enums.h"
+
 typedef struct tagAnimPlayingDesc
 {
 	_int					iAnimIndex = { -1 };
@@ -18,6 +20,12 @@ typedef struct tagAnimPlayingInfo : public ANIM_PLAYING_DESC
 	vector<KEYFRAME>		LastKeyFrames;
 }ANIM_PLAYING_INFO;
 
+typedef struct tagJoint_Info
+{
+	_float					fMaxAngle = { 0.f };
+	_float					fMinAngle = { 0.f };
+}JOINT_INFO;
+
 typedef struct tagIK_Info
 {
 	_int					iEndEffectorIndex = { -1 };
@@ -33,8 +41,14 @@ typedef struct tagIK_Info
 	_float4					vTargetJointStartTranslation;
 	_float4					vEndEffectorResultPosition;
 
+	vector<_uint>			JointTypes;
+	vector<JOINT_INFO>		JointInfos;
+
+	vector<_float4>			Thetas;
+	vector<_float4>			AdditionalRotateQuaternions;
 	vector<_float>			TargetDistancesToChild;
 	vector<_float>			TargetDistancesToParrent;
 	vector<_float4>			BoneTranslations;
 	vector<_float4>			BoneTranslationsOrigin;
 }IK_INFO;
+

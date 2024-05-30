@@ -10,10 +10,10 @@ BEGIN(Engine)
 class ENGINE_DLL CModel final : public CComponent
 {
 public:
-#include "Model_Struct.h"
+#include "Model_Enums.h"
 
 public:
-#include "Model_Enums.h"
+#include "Model_Struct.h"
 
 private:
 	CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

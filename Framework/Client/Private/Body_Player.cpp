@@ -385,6 +385,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 
 	if (!Temp)
 	{
+		//	m_pModelCom->Play_Animations(fTimeDelta);
 		m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 	}
 
