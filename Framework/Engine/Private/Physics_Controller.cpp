@@ -64,9 +64,9 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	PxInitExtensions(*m_Physics, m_Pvd);
 
 	//Ragdoll Init
-	m_pRagdoll_Physics = new CRagdoll_Physics(m_Scene, m_Physics, m_DefaultAllocatorCallback, m_DefaultErrorCallback, m_Foundation,
-		m_Dispatcher, m_Material);
-	m_pRagdoll_Physics->Init();
+	//m_pRagdoll_Physics = new CRagdoll_Physics(m_Scene, m_Physics, m_DefaultAllocatorCallback, m_DefaultErrorCallback, m_Foundation,
+	//	m_Dispatcher, m_Material);
+	//m_pRagdoll_Physics->Init();
 
 	//Character Controller Init
 	m_Manager = PxCreateControllerManager(*m_Scene);
@@ -119,24 +119,27 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	//Ragdoll Temp Code
 	static bool Temp = false;
 
-	if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
-	{
-		Temp = !Temp;
-		m_pRagdoll_Physics->Set_Kinematic(Temp);
-	}
-
-	if (UP == m_pGameInstance->Get_KeyState(VK_BACK))
-	{
-		m_pRagdoll_Physics->Init_Ragdoll();
-
-		if (m_vecCharacter_Controller[0])
+	if (nullptr != m_pRagdoll_Physics) {
+		if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
 		{
-			m_vecCharacter_Controller[0]->Release_Px();
+			Temp = !Temp;
+			m_pRagdoll_Physics->Set_Kinematic(Temp);
 		}
-	}
 
-	//Update - Ragdoll
-	m_pRagdoll_Physics->Update(fTimeDelta);
+		if (UP == m_pGameInstance->Get_KeyState(VK_BACK))
+		{
+			m_pRagdoll_Physics->Init_Ragdoll();
+
+			if (m_vecCharacter_Controller[0])
+			{
+				m_vecCharacter_Controller[0]->Release_Px();
+			}
+		}
+		//Update - Ragdoll
+		m_pRagdoll_Physics->Update(fTimeDelta);
+
+	}
+	
 
 	//Simulate
 	m_Scene->simulate(1/60.f);
@@ -244,17 +247,20 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 
 void CPhysics_Controller::SetBone_Ragdoll(vector<class CBone*>* vecBone)
 {
-	m_pRagdoll_Physics->SetBone_Ragdoll(vecBone);
+	if(nullptr != m_pRagdoll_Physics)
+		m_pRagdoll_Physics->SetBone_Ragdoll(vecBone);
 }
 
 void CPhysics_Controller::SetWorldMatrix(_float4x4 WorldMatrix)
 {
-	m_pRagdoll_Physics->SetWorldMatrix(WorldMatrix);
+	if (nullptr != m_pRagdoll_Physics)
+		m_pRagdoll_Physics->SetWorldMatrix(WorldMatrix);
 }
 
 void CPhysics_Controller::SetRotationMatrix(_float4x4 WorldMatrix)
 {
-	m_pRagdoll_Physics->SetRotationMatrix(WorldMatrix);
+	if (nullptr != m_pRagdoll_Physics)
+		m_pRagdoll_Physics->SetRotationMatrix(WorldMatrix);
 }
 
 void CPhysics_Controller::Create_Rigid_Static(_float4 Pos)
@@ -371,7 +377,8 @@ void CPhysics_Controller::Free()
 
 	PxCloseExtensions();
 
-	m_pRagdoll_Physics->Release();
+	if(m_pRagdoll_Physics)
+		m_pRagdoll_Physics->Release();
 
 	if (m_Shape)
 		m_Shape->release();
