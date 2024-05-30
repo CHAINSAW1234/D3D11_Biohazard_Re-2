@@ -148,7 +148,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 			fMoveHieght = -2.5f;
 	}
 
-	static _float fBlend = { 1.f };
+	static _float fBlend = { 0.f };
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('Z'))
 	{
@@ -164,9 +164,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 			fBlend = 1.f;
 	}
 
-	//	fMoveHieght = 0.f;
-
-	_vector			vMoveDir = { XMVectorSet(1.f, 0.f, 0.f, 0.f) * fMoveHieght };
+	_vector			vMoveDir = { XMVectorSet(0.f, 1.f, 0.f, 0.f) * fMoveHieght };
 	_vector			vCurrentPos = { m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION) };
 	_vector			vCurrentBallPos = { XMVector4Transform(vCurrentPos, XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball"))) };
 

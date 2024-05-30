@@ -25,33 +25,27 @@ inline _vector              to_vec3(const PxVec3& vec3)
     return XMVectorSet(vec3.x, vec3.y, vec3.z, 1.f);
 }
 
-inline XMVECTOR             QuaternionFromVectors(const XMVECTOR& a, const XMVECTOR& b) {
-    XMVECTOR normA = XMVector3Normalize(a);
-    XMVECTOR normB = XMVector3Normalize(b);
+inline XMVECTOR             QuaternionFromVectors(const XMVECTOR& _vec1, const XMVECTOR& _vec2) {
+    // 벡터를 정규화합니다.
+    _vector vec1 = XMVector3Normalize(_vec1);
+    _vector vec2 = XMVector3Normalize(_vec2);
 
-    float dotProduct = XMVectorGetX(XMVector3Dot(normA, normB));
+    // 두 벡터의 내적을 계산합니다.
+    float dot = XMVectorGetX(XMVector3Dot(vec1, vec2));
 
-    const float epsilon = 1e-6f;
-    if (dotProduct < -1.0f + epsilon) {
-        XMVECTOR orthoVector = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-        if (fabs(XMVectorGetY(normA)) > 0.999f) {
-            orthoVector = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-        }
-        XMVECTOR axis = XMVector3Cross(normA, orthoVector);
-        return XMQuaternionRotationAxis(axis, XM_PI);
+    // 두 벡터가 거의 반대 방향을 가리킬 때를 처리합니다.
+    if (dot < -0.999999f)
+    {
+        XMVECTOR orthogonalVector = XMVector3Orthogonal(vec1);
+        return XMQuaternionRotationAxis(orthogonalVector, XM_PI);
     }
 
-    XMVECTOR crossProduct = XMVector3Cross(normA, normB);
+    // 축을 계산합니다.
+    XMVECTOR axis = XMVector3Cross(vec1, vec2);
 
-    float w = sqrtf((1.0f + dotProduct) * 2.0f);
-    float invW = 1.0f / w;
-
-    XMVECTOR quaternion = XMVectorSet(
-        XMVectorGetX(crossProduct) * invW,
-        XMVectorGetY(crossProduct) * invW,
-        XMVectorGetZ(crossProduct) * invW,
-        w * 0.5f
-    );
+    // 쿼터니언을 계산합니다.
+    float angle = acosf(dot);
+    XMVECTOR quaternion = XMQuaternionRotationAxis(axis, angle);
 
     return quaternion;
 }
@@ -60,13 +54,12 @@ inline XMVECTOR CalculateTransitionQuaternion(XMVECTOR q1, XMVECTOR q2)
 {
     XMVECTOR q1Inverse = XMQuaternionInverse(q1);
 
-    XMVECTOR transitionQuaternion = XMQuaternionMultiply(q1Inverse, q2);
+    XMVECTOR transitionQuaternion = XMQuaternionMultiply(XMQuaternionNormalize(q1Inverse), XMQuaternionNormalize(q2));
 
-    transitionQuaternion = XMVector4Normalize(transitionQuaternion);
+    transitionQuaternion = XMQuaternionNormalize(transitionQuaternion);
 
     return transitionQuaternion;
 }
-
 
 inline XMVECTOR VectorToQuaternion(XMVECTOR direction)
 {

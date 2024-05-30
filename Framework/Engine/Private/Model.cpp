@@ -467,69 +467,204 @@ void CModel::Update_Backward_Reaching_IK(IK_INFO& IkInfo)
 void CModel::Update_TransformMatrices_BoneChain(IK_INFO& IkInfo)
 {
 	_uint			iNumIKIndices = { static_cast<_uint>(IkInfo.JointIndices.size()) };
-
+	//
+	_matrix         ResultParentCombinedMatrix = { XMLoadFloat4x4(m_Bones[m_Bones[IkInfo.iIKRootBoneIndex]->Get_ParentIndex()]->Get_CombinedTransformationMatrix()) };
 	for (_uint i = 0; i < iNumIKIndices - 1; ++i)
 	{
-		_vector			vMyOriginTranslation = { XMLoadFloat4(&IkInfo.BoneTranslationsOrigin[i]) };
-		_vector			vChildOriginTranslation = { XMLoadFloat4(&IkInfo.BoneTranslationsOrigin[i + 1]) };
-		_vector			vParentOriginTranslation;
-		if (i == 0)
-		{
-			vParentOriginTranslation = { XMLoadFloat4((_float4*)m_Bones[m_Bones[IkInfo.iIKRootBoneIndex]->Get_ParentIndex()]->Get_CombinedTransformationMatrix()->m[CTransform::STATE_POSITION]) };
-		}
-
-		else
-		{
-			vParentOriginTranslation = { XMLoadFloat4(&IkInfo.BoneTranslationsOrigin[i - 1]) };
-		}
-
-		//	IK 이 전 뼈간의 방향 벡터 부모 => 자식
-		_vector			vOriginDirectionToChild = { XMVector3Normalize(vChildOriginTranslation - vMyOriginTranslation) };
-		_vector			vOriginDirectoinFromParent = { XMVector3Normalize(vMyOriginTranslation - vParentOriginTranslation) };
-
-		/////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////
-
-		_vector			vRotateQuaternionOrigin = { Compute_Quaternion_From_TwoDirection(vOriginDirectoinFromParent, vOriginDirectionToChild) };
-
-
-		_vector			vMyResultTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i]) };
-		_vector			vChildResultTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i + 1]) };
-		_vector			vParentResultTranslation;
-		if (i == 0)
-		{
-			vParentResultTranslation = { XMLoadFloat4((_float4*)m_Bones[m_Bones[IkInfo.iIKRootBoneIndex]->Get_ParentIndex()]->Get_CombinedTransformationMatrix()->m[CTransform::STATE_POSITION]) };
-		}
-		else
-		{
-			vParentResultTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i - 1]) };
-		}
-		//		IK 이 후 뼈간의 방향 벡터 부모 => 자식
-		_vector			vResultDirectionToChild = { XMVector3Normalize(vChildResultTranslation - vMyResultTranslation) };
-		_vector			vResultDirectoinFromParent = { XMVector3Normalize(vMyResultTranslation - vParentResultTranslation) };
+		_vector         vMyOriginTranslation = { XMLoadFloat4(&IkInfo.BoneTranslationsOrigin[i]) };
+		_vector         vChildOriginTranslation = { XMLoadFloat4(&IkInfo.BoneTranslationsOrigin[i + 1]) };
+		_vector         vMyResultTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i]) };
+		_vector         vChildResultTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i + 1]) };
 
 		///////////////////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////////
 
-		_vector			vRotateQuaternionResult = { Compute_Quaternion_From_TwoDirection(vResultDirectoinFromParent * -1.f, vResultDirectionToChild) };
+		_matrix			OriginParentCombinedMatrix = { XMLoadFloat4x4(m_Bones[m_Bones[IkInfo.JointIndices[i]]->Get_ParentIndex()]->Get_CombinedTransformationMatrix())};
+		_matrix			OriginParentCombinedMatrixInv = { XMMatrixInverse(nullptr, OriginParentCombinedMatrix) };
+		_matrix			ResultParentCombinedMatrixInv = { XMMatrixInverse(nullptr, ResultParentCombinedMatrix) };
 
-		_vector			vDeltaQuaternion = XMQuaternionMultiply(XMQuaternionNormalize(XMQuaternionInverse(vRotateQuaternionOrigin)), XMQuaternionNormalize(vRotateQuaternionResult));
+		_vector			vMyOriginTranslationInvalidated = { XMVector3TransformCoord(vMyOriginTranslation, OriginParentCombinedMatrixInv) };
+		_vector			vChildOriginTranslationInvalidated = { XMVector3TransformCoord(vChildOriginTranslation, OriginParentCombinedMatrixInv) };
+		_vector			vMyResultTranslationInvalidated = { XMVector3TransformCoord(vMyResultTranslation, ResultParentCombinedMatrixInv) };
+		_vector			vChildResultTranslationInvalidated = { XMVector3TransformCoord(vChildResultTranslation, ResultParentCombinedMatrixInv) };
 
-		_matrix			TransformMatrix = { XMLoadFloat4x4(&m_Bones[m_Bones[IkInfo.JointIndices[i]]->Get_ParentIndex()]->Get_TrasformationFloat4x4()) };
-		_vector			vScale, vQuaternion, vTranslation;
+		_vector			vOriginDirectionToChild = { vChildOriginTranslationInvalidated - vMyOriginTranslationInvalidated };
+		_vector			vResultDirectionToChild = { vChildResultTranslationInvalidated - vMyResultTranslationInvalidated };
 
-		XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, TransformMatrix);
+		_vector			vDeltaQuaternion = { Compute_Quaternion_From_TwoDirection(vOriginDirectionToChild, vResultDirectionToChild) };
 
-		_float			fBlend = { std::clamp(IkInfo.fBlend, 0.f, 1.f) };
+		_matrix			TransformMatrix = { m_Bones[IkInfo.JointIndices[i]]->Get_TrasformationMatrix() };
+		_matrix			RotationMatrix = { XMMatrixRotationQuaternion(vDeltaQuaternion) };
 
-		//	_vector			vApplyedQuaternion = XMQuaternionMultiply(XMQuaternionNormalize(vDeltaQuaternion), XMQuaternionNormalize(vQuaternion));
-		_vector			vApplyedQuaternion = XMQuaternionMultiply(XMQuaternionNormalize(vQuaternion), XMQuaternionNormalize(vDeltaQuaternion));
-		_matrix			ResultTransformMatrix = { XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vApplyedQuaternion, vTranslation) };
+		_matrix			OriginTransformMatrix = { m_Bones[IkInfo.JointIndices[i]]->Get_TrasformationMatrix() };
+		_matrix			ResultTransformMatrix = { OriginTransformMatrix };
+		ResultTransformMatrix.r[CTransform::STATE_POSITION] = { XMVectorSet(0.f, 0.f, 0.f, 1.f) };
+		ResultTransformMatrix = ResultTransformMatrix * RotationMatrix;
+		ResultTransformMatrix.r[CTransform::STATE_POSITION] = vMyOriginTranslationInvalidated;
 
-		m_Bones[m_Bones[IkInfo.JointIndices[i]]->Get_ParentIndex()]->Set_TransformationMatrix(ResultTransformMatrix);
+		m_Bones[IkInfo.JointIndices[i]]->Set_TransformationMatrix(ResultTransformMatrix);
+		ResultParentCombinedMatrix = ResultTransformMatrix* ResultParentCombinedMatrix;
 	}
+
+#pragma region 1안
+	//
+//	_uint			iNumIKIndices = { static_cast<_uint>(IkInfo.JointIndices.size()) };
+//
+//	_vector			vParentAccTransformQuaternion = { XMQuaternionIdentity() };
+//	for (_uint i = 0; i < 1; ++i)
+//	//	for (_uint i = 0; i < iNumIKIndices - 1; ++i)
+//	{
+//		_vector			vMyOriginTranslation = { XMLoadFloat4(&IkInfo.BoneTranslationsOrigin[i]) };
+//		_vector			vChildOriginTranslation = { XMLoadFloat4(&IkInfo.BoneTranslationsOrigin[i + 1]) };
+//
+//		_vector			vParentOriginTranslation;
+//		if (i == 0)
+//		{
+//			vParentOriginTranslation = { XMLoadFloat4((_float4*)m_Bones[m_Bones[IkInfo.iIKRootBoneIndex]->Get_ParentIndex()]->Get_CombinedTransformationMatrix()->m[CTransform::STATE_POSITION]) };
+//		}
+//
+//		else
+//		{
+//			vParentOriginTranslation = { XMLoadFloat4(&IkInfo.BoneTranslationsOrigin[i - 1]) };
+//		}
+//
+//		//	IK 이 전 뼈간의 방향 벡터 부모 => 자식
+//		_vector			vOriginDirectionToChild = { XMVector3Normalize(vChildOriginTranslation - vMyOriginTranslation) };
+//		_vector			vOriginDirectoinFromParent = { XMVector3Normalize(vMyOriginTranslation - vParentOriginTranslation) };
+//
+//		//	방식 1
+//		_vector			vRotateQuaternionOrigin = { Compute_Quaternion_From_TwoDirection(vOriginDirectoinFromParent, vOriginDirectionToChild) };
+//		//	vRotateQuaternionOrigin = { VectorToQuaternion(vOriginDirectoinFromParent, vOriginDirectionToChild) };
+//
+//
+//		//	방식 2
+//		_vector			vOriginDirQuaternionFormParent = { VectorToQuaternion(vOriginDirectoinFromParent) };
+//		_vector			vOriginDirQuaternionToChild = { VectorToQuaternion(vOriginDirectionToChild) };
+//
+//		_vector			vRotateQuaternionOrigin2 = { CalculateTransitionQuaternion(XMQuaternionNormalize(vOriginDirectoinFromParent), XMQuaternionNormalize(vOriginDirectionToChild)) };
+//
+//		/////////////////////////////////////////////////////////////////////////////////////////////
+//		/////////////////////////////////////////////////////////////////////////////////////////////
+//		/////////////////////////////////////////////////////////////////////////////////////////////
+//
+//		_vector			vMyResultTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i]) };
+//		_vector			vChildResultTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i + 1]) };
+//		_vector			vParentResultTranslation;
+//		if (i == 0)
+//		{
+//			vParentResultTranslation = { XMLoadFloat4((_float4*)m_Bones[m_Bones[IkInfo.iIKRootBoneIndex]->Get_ParentIndex()]->Get_CombinedTransformationMatrix()->m[CTransform::STATE_POSITION]) };
+//		}
+//		else
+//		{
+//			vParentResultTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i - 1]) };
+//		}
+//		//		IK 이 후 뼈간의 방향 벡터 부모 => 자식
+//		_vector			vResultDirectionToChild = { XMVector3Normalize(vChildResultTranslation - vMyResultTranslation) };
+//		_vector			vResultDirectoinFromParent = { XMVector3Normalize(vMyResultTranslation - vParentResultTranslation) };
+//
+//
+//		//		방식 1
+//		_vector			vRotateQuaternionResult = { Compute_Quaternion_From_TwoDirection(vResultDirectoinFromParent, vResultDirectionToChild) };
+//
+//
+//		//		방식 2
+//		_vector			vDirQuaternionFormParentResult = { VectorToQuaternion(vResultDirectoinFromParent) };
+//		_vector			vDirQuaternionToChildResult = { VectorToQuaternion(vResultDirectionToChild) };
+//
+//		_vector			vRotateQuaternionResult2 = { CalculateTransitionQuaternion(XMQuaternionNormalize(vDirQuaternionFormParentResult), XMQuaternionNormalize(vDirQuaternionToChildResult)) };
+//
+//		///////////////////////////////////////////////////////////////////////////////////////////////
+//		///////////////////////////////////////////////////////////////////////////////////////////////
+//		///////////////////////////////////////////////////////////////////////////////////////////////
+//
+//		_matrix			TransformMatrix = { XMLoadFloat4x4(&m_Bones[IkInfo.JointIndices[i]]->Get_TrasformationFloat4x4()) };
+//		_vector			vScale, vQuaternion, vTranslation;
+//
+//		XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, TransformMatrix);
+//
+//		_float			fBlend = { std::clamp(IkInfo.fBlend, 0.f, 1.f) };
+//
+//		//		방식 1
+//		_vector			vDeltaQuaternion = XMQuaternionMultiply(XMQuaternionNormalize(XMQuaternionInverse(vRotateQuaternionOrigin)), XMQuaternionNormalize(vRotateQuaternionResult));
+//
+//		//		방식 2
+//		_vector			vDeltaQuaternion2 = XMQuaternionMultiply(XMQuaternionNormalize(XMQuaternionInverse(vRotateQuaternionOrigin2)), XMQuaternionNormalize(vRotateQuaternionResult2));		
+//
+//		//	_vector			vApplyedQuaternion = XMQuaternionMultiply(XMQuaternionNormalize(vDeltaQuaternion), XMQuaternionNormalize(vQuaternion));
+//		_vector			vApplyedQuaternion = XMQuaternionMultiply(XMQuaternionNormalize(vQuaternion), XMQuaternionNormalize(vDeltaQuaternion));
+//		//	_vector			vApplyedQuaternion2 = XMQuaternionMultiply(XMQuaternionNormalize(vDeltaQuaternion2), XMQuaternionNormalize(vQuaternion));
+//		_vector			vApplyedQuaternion2 = XMQuaternionMultiply(XMQuaternionNormalize(vQuaternion), XMQuaternionNormalize(vDeltaQuaternion2));
+//		_vector			vBlendedQuaternion = { XMQuaternionSlerp(vQuaternion, vApplyedQuaternion, fBlend) };
+//		_vector			vBlendedQuaternion2 = { XMQuaternionSlerp(vQuaternion, vApplyedQuaternion2, fBlend) };
+//
+//		//	_matrix			ResultTransformMatrix = { XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vBlendedQuaternion2, XMVectorSet(0.f, 0.f, 0.f, 1.f))};
+//		_matrix			ResultTransformMatrix = { XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vDeltaQuaternion, vTranslation)};
+//		m_Bones[IkInfo.JointIndices[i]]->Set_TransformationMatrix(ResultTransformMatrix);
+//
+//	}
+//	
+#pragma endregion
+
+#pragma region 2안
+	//_uint         iNumIKIndices = { static_cast<_uint>(IkInfo.JointIndices.size()) };
+	//_matrix         ParentCombinedMatrix = { XMLoadFloat4x4(m_Bones[m_Bones[IkInfo.iIKRootBoneIndex]->Get_ParentIndex()]->Get_CombinedTransformationMatrix()) };
+
+	//for (_uint i = 0; i < iNumIKIndices - 1; ++i)
+	//{
+	//	_vector         vMyOriginTranslation = { XMLoadFloat4(&IkInfo.BoneTranslationsOrigin[i]) };
+	//	_vector         vMyResultTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i]) };
+	//	_vector         vChildOriginTranslation = { XMLoadFloat4(&IkInfo.BoneTranslationsOrigin[i + 1]) };
+	//	_vector         vChildResultTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i + 1]) };
+
+	//	///////////////////////////////////////////////////////////////////////////////////////////////
+	//	///////////////////////////////////////////////////////////////////////////////////////////////
+	//	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	//	_matrix         OriginCombinedMatrix = { XMLoadFloat4x4(m_Bones[IkInfo.JointIndices[i]]->Get_CombinedTransformationMatrix()) };
+	//	_matrix         OriginTransformMatrix = { m_Bones[IkInfo.JointIndices[i]]->Get_TrasformationMatrix() };
+	//	_matrix         ResultCombinedMatrix = { OriginTransformMatrix * ParentCombinedMatrix };
+
+	//	_matrix         OriginCombinedMatrixInv = { XMMatrixInverse(nullptr, OriginCombinedMatrix) };
+	//	_matrix         ResultCombinedMatrixInv = { XMMatrixInverse(nullptr, ResultCombinedMatrix) };
+
+	//	_vector         vMyOriginTranslationLocal = { XMVector3TransformCoord(vMyOriginTranslation, OriginCombinedMatrixInv) };
+	//	_vector         vMyResultTranslationLocal = { XMVector3TransformCoord(vMyResultTranslation, ResultCombinedMatrixInv) };
+
+	//	_vector         vDirectionToChildOriginLocal = { XMVector3Normalize(XMVector3TransformNormal(XMVectorSetW(vChildOriginTranslation, 0.f), OriginCombinedMatrixInv)) };
+	//	_vector         vDirectionToChildResultLocal = { XMVector3Normalize(XMVector3TransformNormal(XMVectorSetW(vChildResultTranslation, 0.f), ResultCombinedMatrixInv)) };
+
+	//	_matrix         AdditionalRotateMatrix;
+	//	_vector         vCross = { XMVector3Cross(vDirectionToChildOriginLocal, vDirectionToChildResultLocal) };
+	//	_float         fDot = { XMVectorGetX(XMVector3Dot(vDirectionToChildOriginLocal, vDirectionToChildResultLocal)) };
+	//	_float         fAngle = { acosf(fDot) * 0.5f };
+	//	if (fDot < 0.99999f)
+	//	{
+	//		AdditionalRotateMatrix = { XMMatrixRotationAxis(XMVector3Normalize(vCross), fAngle) };
+	//	}
+	//	else
+	//	{
+	//		AdditionalRotateMatrix = { XMMatrixIdentity() };
+	//	}
+
+	//	vDirectionToChildResultLocal = XMVector3TransformNormal(vDirectionToChildResultLocal, AdditionalRotateMatrix);
+
+
+	//	_matrix         ResultTransformMatrix = { OriginTransformMatrix };
+	//	_vector         vOriginTransformTranslation = { ResultTransformMatrix.r[CTransform::STATE_POSITION] };
+
+	//	ResultTransformMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+	//	ResultTransformMatrix = ResultTransformMatrix * AdditionalRotateMatrix;
+	//	ResultTransformMatrix.r[CTransform::STATE_POSITION] = vOriginTransformTranslation;
+
+	//	//   ParentsAccRotateMatrix = AdditionalRotateMatrix * ParentsAccRotateMatrix;
+	//	//   ParentsAccRotateMatrix = ParentsAccRotateMatrix * AdditionalRotateMatrix;
+	//	ParentCombinedMatrix = ResultTransformMatrix * ParentCombinedMatrix;
+
+	//	m_Bones[IkInfo.JointIndices[i]]->Set_TransformationMatrix(ResultTransformMatrix);
+	//}
+
+#pragma endregion
 }
 
 void CModel::Update_CombinedMatrices_BoneChain(IK_INFO& IkInfo)
