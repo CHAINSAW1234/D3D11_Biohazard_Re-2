@@ -417,6 +417,7 @@ void CModel::Update_Forward_Reaching_IK(IK_INFO& IkInfo)
 
 	//	EndEffector로 부터 StartJoint로의 정방향 순회 => 자식 부터 부모순으로...
 	_vector			vChildBoneResultTranslation = { XMLoadFloat4(&IkInfo.vEndEffectorResultPosition) };
+	_vector			vParentAccRotateQuaternion = { XMQuaternionIdentity() };
 	for (_int i = iNumIKIndices - 1; i >= 0; --i)
 	{
 		_bool			isEndEffector = { iNumIKIndices - 1 == i };
@@ -434,234 +435,228 @@ void CModel::Update_Forward_Reaching_IK(IK_INFO& IkInfo)
 			vResultTranslation = vChildBoneResultTranslation;
 		}
 
+
+
 		//	이동후의 위치를 뼈의 위치들로 다시 기록
 		XMStoreFloat4(&IkInfo.BoneTranslations[i], vResultTranslation);
 		vChildBoneResultTranslation = vResultTranslation;
 	}
 
 
-	//for (_int i = iNumIKIndices - 1; i >= 0; --i)
-	//{
-	//	_vector		vMyTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i]) };
-	//	_vector		vParentTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i - 1]) };
-	//	_vector		vChildTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i + 1]) };
+#pragma region Git코드 따옴
+	for (_int i = iNumIKIndices - 1; i >= 0; --i)
+	{
+		_vector		vMyTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i]) };
+		_vector		vParentTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i - 1]) };
+		_vector		vChildTranslation = { XMLoadFloat4(&IkInfo.BoneTranslations[i + 1]) };
 
-	//	_vector		vDirectionToChild = { vChildTranslation - vMyTranslation };
-	//	_vector		vDirectionFromParent = { vMyTranslation - vParentTranslation };
+		_vector		vDirectionToChild = { vChildTranslation - vMyTranslation };
+		_vector		vDirectionFromParent = { vMyTranslation - vParentTranslation };
 
-	//	_float		fScala = { XMVectorGetX(XMVector3Dot(vDirectionToChild, vDirectionFromParent)) };
+		_float		fScala = { XMVectorGetX(XMVector3Dot(vDirectionToChild, vDirectionFromParent)) };
 
-	//	_vector		vDirectionToChildUnit = { XMVector3Normalize(vDirectionToChild) };
-	//	_vector		vDirectionToChildScala = { vDirectionToChildUnit * fScala };
+		_vector		vDirectionToConeCenter = { XMVector3Normalize(vDirectionToChild) * fScala };
+		_vector		vConeCenterPosition = { vMyTranslation + vDirectionToConeCenter };
 
-	//	_vector		vConeCenterPosition = { vMyTranslation + vDirectionToChildScala };
+		if (JOINT_TYPE::JOINT_HINGE == static_cast<JOINT_TYPE>(IkInfo.JointTypes[i]))
+		{
+			//	normal plane vector of p(next), p(i), p(before)
+			_vector		vNormalPlane = { XMVector3Normalize(XMVector3Cross(vDirectionToChild, vDirectionFromParent)) };
 
-	//	if (JOINT_TYPE::JOINT_HINGE == static_cast<JOINT_TYPE>(IkInfo.JointTypes[i]))
-	//	{
-	//		//	normal plane vector of p(next), p(i), p(before)
-	//		_vector		vNormalPlane = { XMVector3Cross(vDirectionToChild, vDirectionFromParent) };
-	//		_vector		vNormalPlaneUnit = { XMVector3Normalize(vNormalPlane) };
+			//	 a vector from p_i to o
+			_vector		vDirectionToCone = { XMVector3Normalize(vConeCenterPosition - vMyTranslation) };
 
-	//		//	 a vector from p_i to o
-	//		_vector		vDirectionToCone = { XMVector3Normalize(vConeCenterPosition - vMyTranslation) };
+			//	 rotating p(i) - o C.C.W to find flexion constraint(left of pi_o)
+			_matrix		RoateMatrixDown = { XMMatrixRotationAxis(vNormalPlane, IkInfo.Thetas[i].y) };
+			_vector		vDownPosition = { XMVector3TransformCoord(vDirectionToCone, RoateMatrixDown) };
 
-	//		//	 rotating p(i) - o C.C.W to find flexion constraint(left of pi_o)
-	//		_matrix		RoateMatrixDown = { XMMatrixRotationAxis(vNormalPlaneUnit, IkInfo.Thetas[i].y) };
-	//		_vector		vDownPosition = { XMVector3TransformCoord(vDirectionToCone, RoateMatrixDown) };
+			//	 rotating p(i) - o C.W to find extension constraint(right of pi_o)
+			_matrix		RoateMatrixUp = { XMMatrixRotationAxis(vNormalPlane, IkInfo.Thetas[i].w * -1.f) };
+			_vector		vUpPosition = { XMVector3TransformCoord(vDirectionToCone, RoateMatrixUp) };
 
-	//		//	 rotating p(i) - o C.W to find extension constraint(right of pi_o)
-	//		_matrix		RoateMatrixUp = { XMMatrixRotationAxis(vNormalPlaneUnit, IkInfo.Thetas[i].w * -1.f) };
-	//		_vector		vUpPosition = { XMVector3TransformCoord(vDirectionToCone, RoateMatrixUp) };
+			_vector		vDirectionToParent = { vDirectionFromParent * -1.f };
+			_vector		vCrossToParentToCone = { XMVector3Normalize(XMVector3Cross(XMVector3Normalize(vDirectionToParent), XMVector3Normalize(vDirectionToCone))) };
 
-	//		_vector		vDirectionFromParentUnit = { XMVector3Normalize(vDirectionFromParent) };
+			_float		fDotConePlaneNorm = { XMVectorGetX(XMVector3Dot(vCrossToParentToCone, vNormalPlane)) };
 
-	//		_vector		vDirectionToParent = { vDirectionFromParent * -1.f };
-	//		_vector		vCrossToChildToCone = { XMVector3Cross(XMVector3Normalize(vDirectionToParent), XMVector3Normalize(vDirectionToCone)) };
+			// vDirectionToParent 과 vDirectionToCone 사이의 각도
+			_float		fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirectionToParent), XMVector3Normalize(vDirectionToCone))) };
+			_float		fAngle = { acosf(fDot) };
 
-	//		_float		fDot2 = { XMVectorGetX(XMVector3Dot(vCrossToChildToCone, vNormalPlaneUnit)) };
-	//		if (fDot2 > 0.f)
-	//		{
-	//			//	means it is upper side of pi_o
-	//			if (IkInfo.Thetas[i].w != 0.f)
-	//			{
-	//				_float		fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirectionToParent), XMVector3Normalize(vDirectionToCone))) };
-	//				_float		fAngle = { acosf(fDot) };
-	//				if (fAngle <= IkInfo.Thetas[i].w)
-	//				{
-	//					//	콘 안에있다?
-	//					//	return[0, 0, 0];
-	//				}
+			//	means 이것은 vMyTranslation 위 에 있다.
+			if (fDotConePlaneNorm > 0.f)
+			{
+				if (IkInfo.Thetas[i].w != 0.f)
+				{
+					//	콘 안에있다?
+					if (fAngle <= IkInfo.Thetas[i].w)
+					{
+						//	return[0, 0, 0];
+					}
 
-	//				else
-	//				{
-	//					_vector		vNearestPoint = { XMVectorSetW(vMyTranslation + XMVectorGetX(XMVector3Length(vDirectionFromParent)) * vUpPosition, 1.f) };
-	//					//	p_nearest_point = p_i + l_before_i * p_up
-	//					//	return p_nearest_point;
-	//				}
-	//			}
+					else
+					{
+						_vector		vNearestPoint = { XMVectorSetW(vMyTranslation + XMVectorGetX(XMVector3Length(vDirectionFromParent)) * vUpPosition, 1.f) };
+					}
+				}
 
-	//			else
-	//			{
-	//				_vector		vNearestPoint = { XMVectorSetW(vMyTranslation + XMVectorGetX(XMVector3Length(vDirectionFromParent)) * vDirectionToCone, 1.f) };
-	//				//	return vNearestPoint;
+				else
+				{
+					_vector		vNearestPoint = { XMVectorSetW(vMyTranslation + XMVectorGetX(XMVector3Length(vDirectionFromParent)) * vDirectionToCone, 1.f) };
+				}
+			}
 
-	//			}
-	//		}
+			//	means 이것은 vMyTranslation 아래 에 있다.
+			else
+			{
+				if (IkInfo.Thetas[i].y != 0.f)
+				{
+					if (fAngle <= IkInfo.Thetas[i].y)
+					{
+						//	return[0, 0, 0];
+					}
+					else
+					{
+						_vector		vNearestPoint = { vMyTranslation + XMVectorSetW(vDownPosition, 0.f) * XMVectorGetX(XMVector3Length(vDirectionFromParent)) };
+					}
+				}
 
-	//		else
-	//		{
-	//			//	means it is down side of pi_o
-	//			if(IkInfo.Thetas[i].y != 0.f)
-	//			{
+				else
+				{
+					_vector		vNearestPoint = { XMVectorSetW(vMyTranslation + XMVectorGetX(XMVector3Length(vDirectionFromParent)) * vDirectionToCone, 1.f) };
+				}
+			}
 
-	//				_float		fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirectionToParent), XMVector3Normalize(vDirectionToCone))) };
-	//				_float		fAngle = { acosf(fDot) };
 
-	//				if (fAngle <= IkInfo.Thetas[i].y)
-	//				{
-	//					//	콘 안에있다?
-	//					//	return[0, 0, 0];
-	//				}
-	//				else
-	//				{
+		}
 
-	//					_vector		vNearestPoint = { XMVectorSetW(vMyTranslation + , 1.f) };
-	//				}
-	//				p_nearest_point = p_i + np.dot(l_before_i, p_down)
-	//					//	return p_nearest_point
-	//			}
-	//			
-	//			else
-	//			{
-	//				p_nearest_point = [p_i[0] + np.dot(unit_vec_i_o[0], l_before_i),
-	//					p_i[1] + np.dot(unit_vec_i_o[1], l_before_i),
-	//					p_i[2] + np.dot(unit_vec_i_o[2], l_before_i)]
-	//					//	return p_nearest_point
-	//			}				
-	//		}			
-	//	}
 
-	//	if (JOINT_TYPE::JOINT_BALL == static_cast<JOINT_TYPE>(IkInfo.JointTypes[i]))
-	//	{
-	//		// Semi ellipsoidal parameter qi(1, 2, 3, 4)
-	//		q1 = round(s * math.tan(self.theta[0]), 3)
-	//			q2 = round(s * math.tan(self.theta[1]), 3)
-	//			q3 = round(s * math.tan(self.theta[2]), 3)
-	//			q4 = round(s * math.tan(self.theta[3]), 3)
+#pragma region BallJoint
 
-	//			// change the coordinate to cross section of cone and calculating the(i - 1)th position in it
-	//			l_o_next = util.distance(o, p_next)
+		//if (JOINT_TYPE::JOINT_BALL == static_cast<JOINT_TYPE>(IkInfo.JointTypes[i]))
+		//{
+		//	// Semi ellipsoidal parameter qi(1, 2, 3, 4)
+		//	q1 = round(s * math.tan(self.theta[0]), 3)
+		//		q2 = round(s * math.tan(self.theta[1]), 3)
+		//		q3 = round(s * math.tan(self.theta[2]), 3)
+		//		q4 = round(s * math.tan(self.theta[3]), 3)
 
-	//			if 0 <= round(self.si) < np.pi / 2:
-	//		sector = 1
-	//			elif np.pi / 2 <= round(self.si) < np.pi :
-	//			sector = 2
-	//			elif np.pi <= round(self.si) < 3 * np.pi / 2 :
-	//			sector = 3
-	//			elif 3 * np.pi / 2 <= round(self.si) < np.pi / 2 * np.pi :
-	//			sector = 4
+		//		// change the coordinate to cross section of cone and calculating the(i - 1)th position in it
+		//		l_o_next = util.distance(o, p_next)
 
-	//			y_t = round(l_o_next * math.sin(self.si), 2)
-	//			x_t = round(l_o_next * math.cos(self.si), 2)
+		//		if 0 <= round(self.si) < np.pi / 2:
+		//	sector = 1
+		//		elif np.pi / 2 <= round(self.si) < np.pi :
+		//		sector = 2
+		//		elif np.pi <= round(self.si) < 3 * np.pi / 2 :
+		//		sector = 3
+		//		elif 3 * np.pi / 2 <= round(self.si) < np.pi / 2 * np.pi :
+		//		sector = 4
 
-	//			// checking that the target point is in ellipsoidal shape
-	//			inbound = 0
-	//			if round(((x_t * *2) / (q3 * *2) + (y_t * *2) / (q2 * *2))) <= 1 and sector == 1:
-	//		inbound = 1
-	//			p_prime = [0, 0, 0]
-	//			return p_prime
-	//			elif round(((x_t * *2) / (q1 * *2) + (y_t * *2) / (q2 * *2))) <= 1 and sector == 2 :
-	//			inbound = 1
-	//			p_prime = [0, 0, 0]
-	//			return p_prime
-	//			elif round(((x_t * *2) / (q1 * *2) + (y_t * *2) / (q4 * *2))) <= 1 and sector == 3 :
-	//			inbound = 1
-	//			p_prime = [0, 0, 0]
-	//			return p_prime
-	//			elif round(((x_t * *2) / (q3 * *2) + (y_t * *2) / (q4 * *2))) <= 1 and sector == 4 :
-	//			inbound = 1
-	//			p_prime = [0, 0, 0]
-	//			return p_prime
+		//		y_t = round(l_o_next * math.sin(self.si), 2)
+		//		x_t = round(l_o_next * math.cos(self.si), 2)
 
-	//			//	it is out bound of the ellipsoidal shape we should find the nearest point on ellipsoidal shape
-	//			if inbound == 0 and sector == 1:
-	//		if y_t != 0 :
-	//			result = self.find_nearest_point(q3, q2, sector, x_t, y_t)
-	//			x_nearest_point = result[0]
-	//			y_nearest_point = result[1]
-	//		else :
-	//			x_nearest_point = q3
-	//			y_nearest_point = 0
-	//			elif inbound == 0 and sector == 2 :
-	//			if x_t != 0 :
-	//				result = self.find_nearest_point(q1, q2, sector, x_t, y_t)
-	//				x_nearest_point = result[0]
-	//				y_nearest_point = result[1]
-	//			else :
-	//				x_nearest_point = 0
-	//				y_nearest_point = q2
-	//				elif inbound == 0 and sector == 3 :
-	//				if y_t != 0 :
-	//					result = self.find_nearest_point(q1, q4, sector, x_t, y_t)
-	//					x_nearest_point = result[0]
-	//					y_nearest_point = result[1]
-	//				else :
-	//					x_nearest_point = -q1
-	//					y_nearest_point = 0
-	//					elif inbound == 0 and sector == 4 :
-	//					if x_t != 0 :
-	//						result = self.find_nearest_point(q3, q4, sector, x_t, y_t)
-	//						x_nearest_point = result[0]
-	//						y_nearest_point = result[1]
-	//					else :
-	//						x_nearest_point = 0
-	//						y_nearest_point = -q4
+		//		// checking that the target point is in ellipsoidal shape
+		//		inbound = 0
+		//		if round(((x_t * *2) / (q3 * *2) + (y_t * *2) / (q2 * *2))) <= 1 and sector == 1:
+		//	inbound = 1
+		//		p_prime = [0, 0, 0]
+		//		return p_prime
+		//		elif round(((x_t * *2) / (q1 * *2) + (y_t * *2) / (q2 * *2))) <= 1 and sector == 2 :
+		//		inbound = 1
+		//		p_prime = [0, 0, 0]
+		//		return p_prime
+		//		elif round(((x_t * *2) / (q1 * *2) + (y_t * *2) / (q4 * *2))) <= 1 and sector == 3 :
+		//		inbound = 1
+		//		p_prime = [0, 0, 0]
+		//		return p_prime
+		//		elif round(((x_t * *2) / (q3 * *2) + (y_t * *2) / (q4 * *2))) <= 1 and sector == 4 :
+		//		inbound = 1
+		//		p_prime = [0, 0, 0]
+		//		return p_prime
 
-	//						// finding nearest point global coordinate in 3d
-	//						l_o_before = math.sqrt(x_t * *2 + y_t * *2)
-	//						l_o_nearest_point = math.sqrt(x_nearest_point * *2 + y_nearest_point * *2)
-	//						l_nearest_before = math.sqrt((x_t - x_nearest_point) * *2 + (y_nearest_point - y_t) * *2)
+		//		//	it is out bound of the ellipsoidal shape we should find the nearest point on ellipsoidal shape
+		//		if inbound == 0 and sector == 1:
+		//	if y_t != 0 :
+		//		result = self.find_nearest_point(q3, q2, sector, x_t, y_t)
+		//		x_nearest_point = result[0]
+		//		y_nearest_point = result[1]
+		//	else :
+		//		x_nearest_point = q3
+		//		y_nearest_point = 0
+		//		elif inbound == 0 and sector == 2 :
+		//		if x_t != 0 :
+		//			result = self.find_nearest_point(q1, q2, sector, x_t, y_t)
+		//			x_nearest_point = result[0]
+		//			y_nearest_point = result[1]
+		//		else :
+		//			x_nearest_point = 0
+		//			y_nearest_point = q2
+		//			elif inbound == 0 and sector == 3 :
+		//			if y_t != 0 :
+		//				result = self.find_nearest_point(q1, q4, sector, x_t, y_t)
+		//				x_nearest_point = result[0]
+		//				y_nearest_point = result[1]
+		//			else :
+		//				x_nearest_point = -q1
+		//				y_nearest_point = 0
+		//				elif inbound == 0 and sector == 4 :
+		//				if x_t != 0 :
+		//					result = self.find_nearest_point(q3, q4, sector, x_t, y_t)
+		//					x_nearest_point = result[0]
+		//					y_nearest_point = result[1]
+		//				else :
+		//					x_nearest_point = 0
+		//					y_nearest_point = -q4
 
-	//						// rotation angle between vector from o to p_before and o to p_nearest point
-	//						rot_angle = (math.acos(round((l_nearest_before * *2 - l_o_before * *2 - l_o_nearest_point * *2) / (
-	//							-2 * l_o_before * l_o_nearest_point))))
+		//					// finding nearest point global coordinate in 3d
+		//					l_o_before = math.sqrt(x_t * *2 + y_t * *2)
+		//					l_o_nearest_point = math.sqrt(x_nearest_point * *2 + y_nearest_point * *2)
+		//					l_nearest_before = math.sqrt((x_t - x_nearest_point) * *2 + (y_nearest_point - y_t) * *2)
 
-	//						// rotating the vector from o to p_before around vector from p_next to o
+		//					// rotation angle between vector from o to p_before and o to p_nearest point
+		//					rot_angle = (math.acos(round((l_nearest_before * *2 - l_o_before * *2 - l_o_nearest_point * *2) / (
+		//						-2 * l_o_before * l_o_nearest_point))))
 
-	//						//	a vector from o to p_before
-	//						unit_vec_o_before = [(p_before[0] - o[0]) / l_o_before,
-	//						(p_before[1] - o[1]) / l_o_before,
-	//						(p_before[2] - o[2]) / l_o_before]
-	//						unit_vec_normal_plane = [(p_i[0] - p_next[0]) / l_next_i,
-	//						(p_i[1] - p_next[1]) / l_next_i,
-	//						(p_i[2] - p_next[2]) / l_next_i]
+		//					// rotating the vector from o to p_before around vector from p_next to o
 
-	//						if rot_angle == 0:
-	//		p_nearest_point_in_global = [o[0] + np.dot(l_o_nearest_point, unit_vec_o_before[0]),
-	//			o[1] + np.dot(l_o_nearest_point, unit_vec_o_before[1]),
-	//			o[2] + np.dot(l_o_nearest_point, unit_vec_o_before[2])]
-	//			return p_nearest_point_in_global
-	//						else:
-	//		// to find out nearest point is on left or right side of target point
-	//		orient_near_to_target = x_t * y_nearest_point - x_nearest_point * y_t
-	//			unit_vec_o_before = [unit_vec_o_before[0],
-	//			unit_vec_o_before[1],
-	//			unit_vec_o_before[2]]
-	//			if orient_near_to_target* unit_vec_next_i[2] > 0:
-	//		// to find nearest point should rotate the uv(o - target) in C.C.W
-	//		uv_o_nearest_point = self.times(self.rotation_matrix(unit_vec_normal_plane, rot_angle),
-	//			unit_vec_o_before)
-	//			else:
-	//		uv_o_nearest_point = self.times(self.rotation_matrix(unit_vec_normal_plane, -rot_angle),
-	//			unit_vec_o_before)
+		//					//	a vector from o to p_before
+		//					unit_vec_o_before = [(p_before[0] - o[0]) / l_o_before,
+		//					(p_before[1] - o[1]) / l_o_before,
+		//					(p_before[2] - o[2]) / l_o_before]
+		//					unit_vec_normal_plane = [(p_i[0] - p_next[0]) / l_next_i,
+		//					(p_i[1] - p_next[1]) / l_next_i,
+		//					(p_i[2] - p_next[2]) / l_next_i]
 
-	//			p_nearest_point_in_global = [o[0] + np.dot(l_o_nearest_point, uv_o_nearest_point[0]),
-	//			o[1] + np.dot(l_o_nearest_point, uv_o_nearest_point[1]),
-	//			o[2] + np.dot(l_o_nearest_point, uv_o_nearest_point[2])]
+		//					if rot_angle == 0:
+		//	p_nearest_point_in_global = [o[0] + np.dot(l_o_nearest_point, unit_vec_o_before[0]),
+		//		o[1] + np.dot(l_o_nearest_point, unit_vec_o_before[1]),
+		//		o[2] + np.dot(l_o_nearest_point, unit_vec_o_before[2])]
+		//		return p_nearest_point_in_global
+		//					else:
+		//	// to find out nearest point is on left or right side of target point
+		//	orient_near_to_target = x_t * y_nearest_point - x_nearest_point * y_t
+		//		unit_vec_o_before = [unit_vec_o_before[0],
+		//		unit_vec_o_before[1],
+		//		unit_vec_o_before[2]]
+		//		if orient_near_to_target* unit_vec_next_i[2] > 0:
+		//	// to find nearest point should rotate the uv(o - target) in C.C.W
+		//	uv_o_nearest_point = self.times(self.rotation_matrix(unit_vec_normal_plane, rot_angle),
+		//		unit_vec_o_before)
+		//		else:
+		//	uv_o_nearest_point = self.times(self.rotation_matrix(unit_vec_normal_plane, -rot_angle),
+		//		unit_vec_o_before)
 
-	//			return p_nearest_point_in_global
-	//	}
+		//		p_nearest_point_in_global = [o[0] + np.dot(l_o_nearest_point, uv_o_nearest_point[0]),
+		//		o[1] + np.dot(l_o_nearest_point, uv_o_nearest_point[1]),
+		//		o[2] + np.dot(l_o_nearest_point, uv_o_nearest_point[2])]
 
+		//		return p_nearest_point_in_global
+		//}
+
+#pragma endregion
+	}
+#pragma endregion
 }
 	
 void CModel::Update_Backward_Reaching_IK(IK_INFO& IkInfo)
