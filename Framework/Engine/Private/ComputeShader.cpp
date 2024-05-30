@@ -159,7 +159,6 @@ HRESULT CComputeShader::Render(_uint iPassIndex)
 
 	pPass->Apply(0, m_pContext);
 
-
 	m_pContext->Dispatch(16, 16, 16);
 	
 	ID3D11UnorderedAccessView* NullUAV = { nullptr };

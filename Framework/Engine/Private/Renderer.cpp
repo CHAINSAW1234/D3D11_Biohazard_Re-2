@@ -83,12 +83,8 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_Lights()))
 		return E_FAIL;
 
-
-	if (FAILED(Render_Test()))
-		return E_FAIL;
-
-
-
+	//if (FAILED(Render_Test()))
+	//	return E_FAIL;
 
 	if (FAILED(Render_Light_Result()))
 		return E_FAIL;
@@ -187,9 +183,8 @@ HRESULT CRenderer::SetUp_RenderTargets()
 		return E_FAIL;
 	if (FAILED(SetUp_RenderTargets_PostProcessing_Result(ViewportDesc)))
 		return E_FAIL;
-
-	if (FAILED(SetUp_Test()))
-		return E_FAIL;
+	//if (FAILED(SetUp_Test()))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -521,13 +516,11 @@ HRESULT CRenderer::SetUp_RenderTargets_PostProcessing_Result(const D3D11_VIEWPOR
 
 HRESULT CRenderer::SetUp_Test()
 {
-
 	/* For.Target_PostProcessing_Shade */
 	if (FAILED(m_pGameInstance->Add_RenderTarget_3D(TEXT("Target_Test"), 128, 128, 128, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 	//if (FAILED(m_pGameInstance->Add_RenderTarget_3D(TEXT("Target_Test_Merge"), 128, 128, 8, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 	//	return E_FAIL;
-
 
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Test"), TEXT("Target_Test"))))
 		return E_FAIL;
@@ -701,9 +694,8 @@ HRESULT CRenderer::SetUp_Debug()
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Bloom"), 1420.0f, 500.f, 200.f, 200.f)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Test"), 500.0f, 900.f, 200.f, 200.f)))
-		return E_FAIL;
-
+	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Test"), 500.0f, 900.f, 200.f, 200.f)))
+	//	return E_FAIL;
 	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Test_Merge"), 500.0f, 900.f, 200.f, 200.f)))
 	//	return E_FAIL;
 
@@ -1132,11 +1124,6 @@ HRESULT CRenderer::Render_Lights()
 
 HRESULT CRenderer::Render_Light_Result()
 {
-	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Test"), "g_3DTexture")))
-		return E_FAIL;
-
-
-
 	/* 백버퍼에다가 디퍼드 방식으로 연산된 최종 결과물을 찍어준다. */
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
@@ -1446,8 +1433,8 @@ HRESULT CRenderer::Render_Debug()
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Shadow_Spot"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Test"), m_pShader, m_pVIBuffer)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Test"), m_pShader, m_pVIBuffer)))
+	//	return E_FAIL;
 
 	return S_OK;
 }

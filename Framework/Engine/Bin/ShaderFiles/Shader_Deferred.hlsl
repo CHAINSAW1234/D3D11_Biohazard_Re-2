@@ -373,7 +373,6 @@ float ShadowPCFSample_Dir(float fOriginDepth, float2 vTexcoord)
     return Shadow;
 }
 
-
 float ShadowPCFSample_Spot(float fOriginDepth, float2 vTexcoord)
 {
     float SampleRadius = 0.005;
@@ -451,7 +450,6 @@ float Cal_Shadow(float2 vTexcoord)
     
     // 광원 여러개에 대해서 처리해야함
     
-        // 1. Point Lights 
     float fShadow = 0;
     
     // 1. DirLight
@@ -480,7 +478,7 @@ float Cal_Shadow(float2 vTexcoord)
 
     }
     
-    // 2. SpotLight
+    // 3. SpotLight
     if (g_isShadowSpotLight)
     {
         vector vPosition = mul(vWorldPos, g_SpotLightViewMatrix);
@@ -560,30 +558,12 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
         Out.vDiffuse.a = 1;
     }
 
-    
+    //float3 uv = float3(In.vTexcoord, vDepth.r * vDepth.g);
 
-    float3 uv = float3(In.vTexcoord, vDepth.r * vDepth.g);
+    //float4 scatteringColorAndTransmittance = g_3DTexture.Sample(PointSampler, uv);
+    //float3 scatteringColor = HDR(scatteringColorAndTransmittance.rgb);
 
-    float4 scatteringColorAndTransmittance = g_3DTexture.Sample(PointSampler, uv);
-    float3 scatteringColor = HDR(scatteringColorAndTransmittance.rgb);
-
-    Out.vDiffuse = Out.vDiffuse * float4(scatteringColor, scatteringColorAndTransmittance.a);
-    return Out;
-  
-    
-    
-    
-    
-    
-    
-    
-    
-
-    float4 vVolumeLight = g_3DTexture.Sample(LinearSamplerClamp, float3(In.vTexcoord, 0));
-    
-    //Out.vDiffuse = float4(vVolumeLight, 1);
-    Out.vDiffuse = Out.vDiffuse *  vVolumeLight;
-    Out.vDiffuse.a = 1.f;
+    //Out.vDiffuse = Out.vDiffuse * float4(scatteringColor, scatteringColorAndTransmittance.a);
     
     return Out;
 }
