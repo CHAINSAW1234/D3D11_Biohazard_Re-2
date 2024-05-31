@@ -164,7 +164,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 			fBlend = 1.f;
 	}
 
-	_vector			vMoveDir = { XMVectorSet(0.f, 1.f, 0.f, 0.f) * fMoveHieght };
+	_vector			vMoveDir = { XMVectorSet(1.f, 0.f, 0.f, 0.f) * fMoveHieght };
 	_vector			vCurrentPos = { m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION) };
 	_vector			vCurrentBallPos = { XMVector4Transform(vCurrentPos, XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball"))) };
 
@@ -194,7 +194,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 		pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
 
 		_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
-		vMoveDir = vResultPos - vPosition;
+		vMoveDir += vResultPos - vPosition;
 	}
 
 	/////////////////////////////////////////////////////////////////////////

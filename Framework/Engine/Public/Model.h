@@ -56,16 +56,31 @@ public:
 	vector<_float4>							Get_OriginTranslation_IK(const wstring& strIKTag);
 	vector<_float4x4>						Get_JointCombinedMatrices_IK(const wstring& strIKTag);
 	
-private:
+private:	/* For.IK */
 	void									Apply_IK(class CTransform* pTransform, IK_INFO& IkInfo);
 	void									Update_Distances_Translations_IK(IK_INFO& IkInfo);
+	void									Solve_IK(IK_INFO& IkInfo);
+	void									Solve_IK_Forward(IK_INFO& IkInfo);
+	void									Solve_IK_Backward(IK_INFO& IkInfo);
+	void									Solve_For_DIstatnce_IK(IK_INFO& IkInfo, _int iSrcJointIndex, _int iDstJointIndex);
+	void									Solve_For_Orientation_IK(IK_INFO& IkInfo, _int iOuterJointIndex, _int iInnerJointIndex);
+	_bool									Rotational_Constranit();
 	void									Update_Forward_Reaching_IK(IK_INFO& IkInfo);
 	void									Update_Backward_Reaching_IK(IK_INFO& IkInfo);
 	void									Update_TransformMatrices_BoneChain(IK_INFO& IkInfo);
 	void									Update_CombinedMatrices_BoneChain(IK_INFO& IkInfo);
 
+private:	/* For.IK_Constraint */
+	CONIC_SECTION							Find_ConicSection(_float fTheta);
+	_bool									Is_InBound(CONIC_SECTION eSection, _fvector vQ, _float2 vTarget);
+	_float2									Find_Nearest_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition);
+	_float2									Find_Initial_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition);
+	_float2									Find_Next_Point_Constraints(_float2 vCurrentPoint, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
+	_float2									Compute_Delta_Constratins(_float2 vCurrentPosition, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
+	_float4x4								Compute_QMatrix(_float2 vCurrentPosition, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
+
 private:
-	_vector Compute_Quaternion_From_TwoDirection(_fvector vSrcDirection, _fvector vDstDirection);
+	_vector									Compute_Quaternion_From_TwoDirection(_fvector vSrcDirection, _fvector vDstDirection);
 
 public:		/* For.Bone_Layer */
 	void									Add_Bone_Layer(const wstring& strLayerTag, list<_uint> BoneIndices);
