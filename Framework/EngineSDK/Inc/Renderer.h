@@ -13,13 +13,10 @@ public:
 		RENDER_SSAO,
 		RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_NON_POSTPROCESSING,
 		RENDER_SHADOW_DIR, RENDER_SHADOW_POINT, RENDER_SHADOW_SPOT,
-		RENDER_AMBIENT, RENDER_DISTORTION, RENDER_EMISSIVE,
+		RENDER_DISTORTION, RENDER_EMISSIVE,
 		RENDER_BLEND,
-		RENDER_FILTER,
 		RENDER_UI,
 		RENDER_FONT,
-		RENDER_OVERWRAP,
-		RENDER_OVERWRAP_FONT,
 		RENDER_END
 	};
 
@@ -53,12 +50,16 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT						SetUp_RenderTargets_SSAO(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_Shadow(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_Pre_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT						SetUp_RenderTargets_Ambient(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT						SetUp_RenderTargets_Distortion(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT						SetUp_RenderTargets_Emissive(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT						SetUp_RenderTargets_Bloom(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_PostProcessing_Result(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_SSR(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_DOF(const D3D11_VIEWPORT& ViewportDesc);
+
+	// 잘 모름 
+	HRESULT						SetUp_RenderTargets_Distortion(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_Emissive(const D3D11_VIEWPORT& ViewportDesc);
+
+
 	HRESULT						SetUp_Test();
 	HRESULT						Render_Test();
 
@@ -99,8 +100,8 @@ private:
 
 private:
 	_bool						m_isSSAO = { true };		// SSAO 온 오프
-
-
+	_bool						m_isSSR = { true };			// SSR 온 오프
+	_bool						m_isDOF = { false };			// DOF 온 오프
 private:
 	_bool						m_isRadialBlurActive = { false };
 	_float2						m_vRadialBlurUV = { 0.f, 0.f };
@@ -125,11 +126,8 @@ private:
 	HRESULT						Render_NonLight();
 	HRESULT						Render_Blend();
 	HRESULT						Render_Non_PostProcessing();
-	HRESULT						Render_Filter();
 	HRESULT						Render_UI();
 	HRESULT						Render_Font();
-	HRESULT						Render_Overwrap();
-	HRESULT						Render_OverwrapFont();
 
 private:
 	HRESULT						Render_SSAO_Blur();
@@ -140,6 +138,7 @@ private:
 	HRESULT						Render_Shadow_Spot();
 
 private:
+	// 잘 모름
 	HRESULT						Render_Distortion();
 	HRESULT						Render_Emissive();
 
@@ -148,13 +147,12 @@ private:
 	HRESULT						Render_Light_Result();
 
 private:
-	HRESULT						Render_PostProcessing();
-	HRESULT						Render_Ambient();
-
-	HRESULT						Render_PostProcessing_Result();
+	HRESULT						Render_SSR();
+	HRESULT						Render_DOF();
 
 private:
-	HRESULT						Render_Bloom();
+	HRESULT						Render_PostProcessing();
+	HRESULT						Render_PostProcessing_Result();
 
 private:
 	void						Set_ViewPort_Size(_float fWidth, _float fHeight, _uint iArraySize = 1);

@@ -29,7 +29,7 @@ public:
 	virtual HRESULT			Render() override;
 	
 public:
-	_float3					Compute_PickPos(_fvector vRayPos, _fvector vRayDir);
+	_float4					Compute_PickPos(_fvector vRayPos, _fvector vRayDir);
 
 private:
 	CShader*				m_pShaderCom = { nullptr };

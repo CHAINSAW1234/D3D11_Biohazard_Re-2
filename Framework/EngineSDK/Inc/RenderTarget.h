@@ -17,9 +17,9 @@ public:
 	}
 
 public:
-	HRESULT							Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
-	HRESULT							Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
-	HRESULT							Initialize_3D(_uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	HRESULT							Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor);
+	HRESULT							Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor);
+	HRESULT							Initialize_3D(_uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor);
 	HRESULT							Clear();
 	HRESULT							Bind_ShaderResource(class CShader* pShader, const _char* pConstantName);
 	HRESULT							Bind_ShaderResource(class CComputeShader* pShader, const _char* pConstantName);
@@ -34,6 +34,7 @@ public:
 
 #endif 
 private:
+	class CGameInstance*					m_pGameInstance = { nullptr };
 	ID3D11Device*					m_pDevice = { nullptr };
 	ID3D11DeviceContext*			m_pContext = { nullptr };
 	ID3D11Texture2D*				m_pTexture2D = { nullptr };
@@ -45,6 +46,7 @@ private:
 	ID3D11Texture3D*				m_pTexture3D = { nullptr };
 	ID3D11UnorderedAccessView*		m_pUAV = { nullptr };
 
+	wstring							m_strRenderTargetTag = {};
 	_float4							m_vClearColor = {};
 
 #ifdef _DEBUG
@@ -53,9 +55,9 @@ private:
 #endif
 
 public:
-	static CRenderTarget* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
-	static CRenderTarget* Create_Cube(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
-	static CRenderTarget* Create_3D(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	static CRenderTarget* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor);
+	static CRenderTarget* Create_Cube(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor);
+	static CRenderTarget* Create_3D(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor);
 
 	virtual void Free() override;
 };

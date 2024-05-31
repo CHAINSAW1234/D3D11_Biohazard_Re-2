@@ -52,6 +52,12 @@ void CCamera_Free::Tick(_float fTimeDelta)
 			m_pTransformCom->Go_Backward(fTimeDelta);
 		}
 
+		if (DOWN == m_pGameInstance->Get_KeyState('R'))
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * (_float)1);
+
+		}
+
 		POINT		ptDeltaPos = { m_pGameInstance->Get_MouseDeltaPos() };
 		_float		fMouseSensor = { m_fMouseSensor };
 

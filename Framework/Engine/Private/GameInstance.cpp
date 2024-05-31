@@ -51,11 +51,6 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 		return E_FAIL;
 	}
 
-	/*m_pFont_Manager = CFont_Manager::Create(*ppGraphic_Device);
-	if (nullptr == m_pFont_Manager)
-		return E_FAIL;
-	*/
-
 	m_pTimer_Manager = CTimer_Manager::Create();
 	if (nullptr == m_pTimer_Manager)
 	{
@@ -111,7 +106,11 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 		MSG_BOX(TEXT("Error: m_pFont_Manager::Create -> nullptr"));
 		return E_FAIL;
 	}	
-	
+
+	if (FAILED(Add_Font(*ppDevice, *ppContext, g_strFontTag, TEXT("../Bin/Resources/Fonts/141ex.spriteFont"))))
+		return E_FAIL;
+
+
 	m_pFrustum = CFrustum::Create();
 	if (nullptr == m_pFrustum)
 	{

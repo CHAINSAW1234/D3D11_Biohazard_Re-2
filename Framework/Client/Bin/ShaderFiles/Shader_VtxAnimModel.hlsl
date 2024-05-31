@@ -11,8 +11,6 @@ texture2D g_ATOSTexture;
 texture2D g_NoiseTexture;
 texture2D g_DissolveDiffuseTexture;
 
-float4 g_vMaterial;
-
 float g_fFar;
 
 /* For.Dissolve */
@@ -200,8 +198,8 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse.a = 1.f;
     Out.vNormal = vector(vWorldNormal * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
-    Out.vMaterial = g_vMaterial;
     Out.vMaterial.r = vMtrlDiffuse.a;
+    Out.vMaterial.g = vNormalDesc.a;
     Out.vOrigin = vector(1.f, 0.f, 0.f, 1.f);
     return Out;
 }
@@ -224,8 +222,8 @@ PS_OUT PS_MAIN_ATOS(PS_IN In)
     Out.vDiffuse.a = vATOSDesc.r;
     Out.vNormal = vector(vWorldNormal * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
-    Out.vMaterial = g_vMaterial;
     Out.vMaterial.r = vMtrlDiffuse.a;
+    Out.vMaterial.g = vNormalDesc.a;
     Out.vOrigin = vector(1.f, 0.f, 0.f, 1.f);
     
     if (0.01f >= Out.vDiffuse.a)
@@ -262,7 +260,7 @@ PS_OUT PS_DISSOLVE(PS_IN In)
     
     Out.vNormal = vector((In.vNormal * 0.5f + 0.5f).xyz, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
-    Out.vMaterial = g_vMaterial;
+    Out.vMaterial = 1;
 
     return Out;
 }

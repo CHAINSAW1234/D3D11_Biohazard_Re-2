@@ -165,6 +165,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 1000.0f, 0.0f, 0.0f);
     Out.vMaterial = 0.f;
     Out.vMaterial.r = vMtrlDiffuse.a;
+    Out.vMaterial.g = vNormalDesc.a;
 	return Out;
 }
 
@@ -190,6 +191,7 @@ PS_OUT PS_ATOS(PS_IN In)
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 1000.0f, 0.0f, 0.0f);
     Out.vMaterial = 0.f;
     Out.vMaterial.r = vMtrlDiffuse.a;
+    Out.vMaterial.g = vNormalDesc.a;
     return Out;
 }
 
@@ -222,8 +224,7 @@ technique11 DefaultTechnique
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = /*compile gs_5_0 GS_MAIN()*/
-    NULL;
+		GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
 		HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
 		DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();

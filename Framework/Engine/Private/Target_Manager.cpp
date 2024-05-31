@@ -21,7 +21,7 @@ HRESULT CTarget_Manager::Add_RenderTarget(const wstring & strRenderTargetTag, _u
 	if (nullptr != Find_RenderTarget(strRenderTargetTag))
 		return E_FAIL;
 
-	CRenderTarget*		pRenderTarget = CRenderTarget::Create(m_pDevice, m_pContext, iSizeX, iSizeY, ePixelFormat, vClearColor);
+	CRenderTarget*		pRenderTarget = CRenderTarget::Create(m_pDevice, m_pContext, iSizeX, iSizeY, ePixelFormat, strRenderTargetTag, vClearColor);
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
 
@@ -35,7 +35,7 @@ HRESULT CTarget_Manager::Add_RenderTarget_Cube(const wstring& strRenderTargetTag
 	if (nullptr != Find_RenderTarget(strRenderTargetTag))
 		return E_FAIL;
 
-	CRenderTarget* pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, iSize, iArraySize, ePixelFormat, vClearColor);
+	CRenderTarget* pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, iSize, iArraySize, ePixelFormat, strRenderTargetTag, vClearColor);
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
 
@@ -49,7 +49,7 @@ HRESULT CTarget_Manager::Add_RenderTarget_3D(const wstring& strRenderTargetTag, 
 	if (nullptr != Find_RenderTarget(strRenderTargetTag))
 		return E_FAIL;
 
-	CRenderTarget* pRenderTarget = CRenderTarget::Create_3D(m_pDevice, m_pContext, iWidth, iHeight, iDepth, ePixelFormat, vClearColor);
+	CRenderTarget* pRenderTarget = CRenderTarget::Create_3D(m_pDevice, m_pContext, iWidth, iHeight, iDepth, ePixelFormat, strRenderTargetTag, vClearColor);
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
 

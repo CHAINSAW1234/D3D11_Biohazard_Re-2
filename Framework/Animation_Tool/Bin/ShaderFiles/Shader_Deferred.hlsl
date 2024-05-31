@@ -2,7 +2,7 @@
 
 /* 전역변수 : 쉐이더 외부에 있는 데이터를 쉐이더 안으로 받아온다. */
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-//matrix g_LightViewMatrix, g_LightProjMatrix;
+matrix g_CamViewMatrix, g_CamProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
 texture2D g_Texture;
@@ -68,14 +68,6 @@ float4 g_vSpotLightDirection;
 float g_fSpotLightCutOff;
 float g_fSpotLightOutCutOff;
 float g_fSpotLightRange;
-
-//matrix g_LightViewMatrix[6];
-////matrix g_LightViewMatrix[2][6];
-////matrix g_LightProjMatrix[2];
-//matrix g_LightProjMatrix;
-
-
-//
 
 float4 g_vLightDir;
 float4 g_vLightPos;
@@ -202,7 +194,7 @@ struct PS_OUT_LIGHT
     float4 vSpecular : SV_TARGET1;
 };
 
-float3 getPosition(in float2 uv)
+float4 ConvertoTexcoordToWorldPosition(in float2 uv)
 {
     vector vDepthDesc = g_DepthTexture.Sample(PointSampler, uv);
     float fViewZ = vDepthDesc.y * 1000.0f;
@@ -220,12 +212,13 @@ float3 getPosition(in float2 uv)
     
     vWorldPos = mul(vWorldPos, InverViewProj);
     
-    return mul(vWorldPos, g_ViewMatrix).xyz;
+    return vWorldPos;
 }
 
 float doAmbientOcclusion(in float2 tcoord, in float2 uv, in float3 p, in float3 cnorm)
 {
-    float3 diff = getPosition(tcoord + uv) - p;
+    float3 diff = ConvertoTexcoordToWorldPosition(tcoord + uv);
+    diff = mul(diff, g_ViewMatrix) - p;
     const float3 v = normalize(diff);
     const float d = length(diff) * 0.5; //g_scale
     return max(0.0, dot(cnorm, v) - 0.05) * (1.0 / (1.0 + d)) * 1.5f;
@@ -235,7 +228,8 @@ float doAmbientOcclusion(in float2 tcoord, in float2 uv, in float3 p, in float3 
 float CalcAmbientOcclusion(float2 Texcoord)
 {
     const float2 vec[4] = { float2(1, 0), float2(-1, 0), float2(0, 1), float2(0, -1) };
-    float3 p = getPosition(Texcoord);
+    float4 p = ConvertoTexcoordToWorldPosition(Texcoord);
+    p = mul(p, g_ViewMatrix);
     float4 n = g_NormalTexture.Sample(PointSampler, Texcoord) * 2.f - 1.f;
     float2 rand = g_RandomNormalTexture.Sample(PointSampler, float2(1920, 1080) * Texcoord / 900).xy * 2.f - 1.f;
     float ao = 0.0f;
@@ -265,7 +259,6 @@ float CalcAmbientOcclusion(float2 Texcoord)
 }
 
 /* 빛 하나당 480000 수행되는 쉐이더. */
-
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
     PS_OUT_LIGHT Out = (PS_OUT_LIGHT) 0;
@@ -573,7 +566,7 @@ float Cal_Shadow(float2 vTexcoord)
     
         float fAtt = saturate((g_fShadowPointLightRange[i].x - fDistance) / g_fShadowPointLightRange[i].x);
         
-        fShadow += ShadowPCF_Point(g_PointLightDepthTexture, i, 0.01f, fDistance, vLightDir) * fAtt;
+        fShadow += ShadowPCF_Point(g_PointLightDepthTexture, i, 0.0001f, fDistance, vLightDir) * fAtt;
     }
     
     // 3. SpotLight
@@ -764,14 +757,6 @@ PS_OUT PS_RADIALBLUR(PS_IN In)
     return Out;
 }
 
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////
-
 float Compute_Gaussian(float fX, float fSigma)
 {
     float fResult = exp(-((fX * fX) / (2.0 * fSigma * fSigma))) / (fSigma * sqrt(2.0 * 3.14159));
@@ -827,6 +812,187 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
 
     return Out;
 }
+
+static const int SSR_MAX_STEPS = 16;
+static const int SSR_BINARY_SEARCH_STEPS = 16;
+static const float RayStep = 1.f;                   // 1 ~ 3
+static const float RayHitThreshold = .25f;           // 0.25 ~ 5
+
+float4 SSRBinarySearch(float3 vDir, inout float3 hitCoord)
+{
+    for (int i = 0; i < SSR_BINARY_SEARCH_STEPS; i++)
+    {
+        float4 vProjectedCoord = mul(float4(hitCoord, 1.0f), g_CamProjMatrix);
+        vProjectedCoord /= vProjectedCoord.w;
+        vProjectedCoord.xy = vProjectedCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+        
+        float4 ViewPosition = ConvertoTexcoordToWorldPosition(vProjectedCoord.xy);
+        ViewPosition = mul(ViewPosition, g_CamViewMatrix);
+
+        float depthDifference = hitCoord.z - ViewPosition.z;
+        
+        if (depthDifference < 0.f)
+            hitCoord += vDir;
+
+        vDir *= 0.5f;
+        hitCoord -= vDir;
+    }
+
+    float4 vProjectedCoord = mul(float4(hitCoord, 1.0f), g_CamProjMatrix);
+    vProjectedCoord.xy /= vProjectedCoord.w;
+    vProjectedCoord.xy = vProjectedCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+   
+    float fDepth = g_DepthTexture.Sample(PointSampler, vProjectedCoord.xy).r;
+    
+    float4 ViewPosition = ConvertoTexcoordToWorldPosition(vProjectedCoord.xy);
+    ViewPosition = mul(ViewPosition, g_CamViewMatrix);
+    
+
+    float depthDifference = hitCoord.z - ViewPosition.z;
+
+    return float4(vProjectedCoord.xy, fDepth, abs(depthDifference) < RayHitThreshold ? 1.0f : 0.0f);
+}
+float4 SSRRayMarch(float3 vDir, inout float3 hitCoord)
+{
+    for (int i = 0; i < SSR_MAX_STEPS; i++)
+    {
+        hitCoord += vDir;
+        float4 projectedCoord = mul(float4(hitCoord, 1.0f), g_CamProjMatrix);
+        projectedCoord /= projectedCoord.w;
+        projectedCoord.xy = projectedCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+
+        float4 vDepthDesc = g_DepthTexture.Sample(PointSampler, projectedCoord.xy);
+
+        float4 ViewPosition = ConvertoTexcoordToWorldPosition(projectedCoord.xy);
+        ViewPosition = mul(ViewPosition, g_CamViewMatrix);
+
+        float fDepthDifference = hitCoord.z - ViewPosition.z;
+
+		[branch]
+        if (fDepthDifference > 0.f)
+        {
+            return SSRBinarySearch(vDir, hitCoord);
+        }
+
+        vDir *= RayStep;
+    }
+    
+    return float4(0.0f, 0.0f, 0.0f, 0.0f);
+}
+
+PS_OUT PS_SSR(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+    
+    float4 vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    
+    float4 vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexcoord);
+    float4 vNormal = float4(vNormalDesc.xyz * 2.f - 1.f, 0.f);
+    vNormal = mul(vNormal, g_CamViewMatrix);
+    float fMetallic = g_MaterialTexture.Sample(PointSampler, In.vTexcoord).g;
+    
+    if (fMetallic < 0.01f)
+    {
+        Out.vColor = vDiffuse;
+        return Out;
+    }
+
+    float4 ViewPosition = ConvertoTexcoordToWorldPosition(In.vTexcoord);
+    ViewPosition = mul(ViewPosition, g_CamViewMatrix);
+
+    float3 vReflectDir = normalize(reflect(normalize(ViewPosition.xyz), vNormal.xyz));
+    float3 hitPosition = ViewPosition.xyz;
+    float4 coords = SSRRayMarch(vReflectDir, hitPosition);
+    float2 coordsEdgeFactor = float2(1, 1) - pow(saturate(abs(coords.xy - float2(0.5f, 0.5f)) * 2), 8);
+    float screenEdgeFactor = saturate(min(coordsEdgeFactor.x, coordsEdgeFactor.y));
+    float reflectionIntensity = saturate(screenEdgeFactor * saturate(vReflectDir.z) * (coords.w));
+    float3 reflectionColor = reflectionIntensity * g_DiffuseTexture.Sample(LinearSampler, coords.xy).rgb;
+
+    Out.vColor = vDiffuse + fMetallic * max(0, float4(reflectionColor, 1.0f));   
+    return Out;
+}
+
+float g_fTargetDepth = 3.f;
+const float g_fDOFParam = 5.f;  // 블러 적용 여부에 대한 반경 
+texture2D g_DOFTexture;
+// 뷰 공간에서의 깊이 : z  = fNear ~ fFar
+// 투영 공간에서의 깊이 : z = 0 ~ 1
+// w 나누기 수행시z = 1
+PS_OUT PS_DOF(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+    
+    float4 vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
+    float vDepth = vDepthDesc.x * vDepthDesc.y * 1000;
+    if (vDepth < g_fTargetDepth - g_fDOFParam ||
+        vDepth >= g_fTargetDepth + g_fDOFParam)
+        Out.vColor = abs(g_fTargetDepth - vDepth) / (vDepthDesc.y * 1000);
+    // 블러를 먹일 픽셀은 깊이 차이를 저장
+    Out.vColor.a = 1.f;
+    return Out;
+}
+
+PS_OUT PS_DOF_BLURX(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+    float fWidth, fHeight;
+    g_Texture.GetDimensions(fWidth, fHeight);
+    
+    float4 vResult = float4(0, 0, 0, 0);
+    float2 vTexOffset = 1.0 / float2(fWidth, fHeight); // 텍스처 각 요소에 대한 오프셋 계산 
+    float fRadius = clamp(g_DOFTexture.Sample(PointSampler, In.vTexcoord).r * 10, 0.f, 10.f);
+    
+    if (fRadius == 0)
+    {
+        Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
+        return Out;
+    }
+    
+    // 주변 픽셀들을 반복하여 블러 처리
+    for (int iX = (int) fRadius * -1.f; iX <= (int) fRadius; iX++)
+    {
+        float fDistance = sqrt(float(iX * iX));
+        float fWeight = Compute_Gaussian(fDistance, 1.f); // 가우시안 함수를 이용해 가중치 계산
+        // 가중치가 적용된 색상을 결과에 더함
+        if (0 != g_DOFTexture.Sample(PointSampler, In.vTexcoord + float2(iX, 0) * vTexOffset).r)
+            vResult += fWeight * g_Texture.Sample(LinearSampler, In.vTexcoord + float2(iX, 0) * vTexOffset);
+    }
+    
+    Out.vColor = vResult;
+
+    return Out;
+}
+
+PS_OUT PS_DOF_BLURY(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+    float fWidth, fHeight;
+    g_Texture.GetDimensions(fWidth, fHeight);
+    
+    float4 vResult = float4(0, 0, 0, 0);
+    float2 vTexOffset = 1.0 / float2(fWidth, fHeight); // 텍스처 각 요소에 대한 오프셋 계산 
+    float fRadius = clamp(g_DOFTexture.Sample(PointSampler, In.vTexcoord).r * 10, 0.f, 10.f);
+    
+    if (fRadius == 0)
+    {
+        Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
+        return Out;
+    }
+    // 주변 픽셀들을 반복하여 블러 처리
+    for (int iY = (int) fRadius * -1.f; iY <= (int) fRadius; iY++)
+    {
+        float fDistance = sqrt(float(iY * iY));
+        float fWeight = Compute_Gaussian(fDistance, 1.f); // 가우시안 함수를 이용해 가중치 계산
+        // 가중치가 적용된 색상을 결과에 더함
+        if (0 != g_DOFTexture.Sample(PointSampler, In.vTexcoord + float2(0, iY) * vTexOffset).r)
+            vResult += fWeight * g_Texture.Sample(LinearSampler, In.vTexcoord + float2(0, iY) * vTexOffset);
+    }
+    
+    Out.vColor = vResult;
+
+    return Out;
+}
+
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -970,7 +1136,6 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_BLURY();
     }
 
-
     pass Post_Processing //  10
     {
         SetRasterizerState(RS_Default);
@@ -1009,4 +1174,57 @@ technique11 DefaultTechnique
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_RADIALBLUR();
     }
+
+    pass SSR // 13
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_SSR();
+    }
+
+    pass DOF // 14
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_DOF();
+    }
+
+    pass PS_DOF_BlurX // 15
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_DOF_BLURX();
+    }
+
+    pass PS_DOF_BlurY // 16
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_DOF_BLURY();
+    }
+
 }

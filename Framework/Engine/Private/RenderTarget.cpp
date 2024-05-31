@@ -4,15 +4,19 @@
 #include "ComputeShader.h"
 
 CRenderTarget::CRenderTarget(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	: m_pDevice { pDevice }
+	: m_pGameInstance{ CGameInstance::Get_Instance()}
+	, m_pDevice { pDevice }
 	, m_pContext { pContext }
 {
+	Safe_AddRef(m_pGameInstance);
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
 }
 
-HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4 & vClearColor)
+HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4 & vClearColor)
 {
+	m_strRenderTargetTag = strRenderTargetTag;
+
 	D3D11_TEXTURE2D_DESC	TextureDesc;
 	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
@@ -44,8 +48,10 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixel
 	return S_OK;
 }
 
-HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor)
 {
+	m_strRenderTargetTag = strRenderTargetTag;
+
 	D3D11_TEXTURE2D_DESC	TextureDesc;
 	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
@@ -91,8 +97,10 @@ HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMA
 	return S_OK;
 }
 
-HRESULT CRenderTarget::Initialize_3D(_uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+HRESULT CRenderTarget::Initialize_3D(_uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor)
 {
+	m_strRenderTargetTag = strRenderTargetTag;
+
 	D3D11_TEXTURE3D_DESC	TextureDesc;
 	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE3D_DESC));
 	TextureDesc.Width = iWidth;
@@ -240,17 +248,18 @@ HRESULT CRenderTarget::Render_Debug(CShader * pShader, CVIBuffer_Rect * pVIBuffe
 				return E_FAIL;
 		}
 	}
-	
+
+	//m_pGameInstance->Render_Font(g_strFontTag, m_strRenderTargetTag, _float2(0.f, 0.f), _float4(1.f, 1.f, 1.f, 1.f), 0);
 	return S_OK;
 }
 
 #endif
 
-CRenderTarget * CRenderTarget::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4 & vClearColor)
+CRenderTarget * CRenderTarget::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4 & vClearColor)
 {
 	CRenderTarget*		pInstance = new CRenderTarget(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize(iSizeX, iSizeY, ePixelFormat, vClearColor)))
+	if (FAILED(pInstance->Initialize(iSizeX, iSizeY, ePixelFormat, strRenderTargetTag, vClearColor)))
 	{
 		MSG_BOX(TEXT("Failed to Created : CRenderTarget"));
 		Safe_Release(pInstance);
@@ -259,11 +268,11 @@ CRenderTarget * CRenderTarget::Create(ID3D11Device * pDevice, ID3D11DeviceContex
 	return pInstance;
 }
 
-CRenderTarget* CRenderTarget::Create_Cube(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+CRenderTarget* CRenderTarget::Create_Cube(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor)
 {
 	CRenderTarget* pInstance = new CRenderTarget(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Cube(iSize, iArraySize, ePixelFormat, vClearColor)))
+	if (FAILED(pInstance->Initialize_Cube(iSize, iArraySize, ePixelFormat, strRenderTargetTag, vClearColor)))
 	{
 		MSG_BOX(TEXT("Failed to Created : CRenderTarget"));
 		Safe_Release(pInstance);
@@ -272,11 +281,11 @@ CRenderTarget* CRenderTarget::Create_Cube(ID3D11Device* pDevice, ID3D11DeviceCon
 	return pInstance;
 }
 
-CRenderTarget* CRenderTarget::Create_3D(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+CRenderTarget* CRenderTarget::Create_3D(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor)
 {
 	CRenderTarget* pInstance = new CRenderTarget(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_3D(iWidth, iHeight, iDepth, ePixelFormat, vClearColor)))
+	if (FAILED(pInstance->Initialize_3D(iWidth, iHeight, iDepth, ePixelFormat, strRenderTargetTag,  vClearColor)))
 	{
 		MSG_BOX(TEXT("Failed to Created : CRenderTarget"));
 		Safe_Release(pInstance);
@@ -294,6 +303,7 @@ void CRenderTarget::Free()
 	Safe_Release(m_pTexture3D);
 	Safe_Release(m_pUAV);
 
+	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 }

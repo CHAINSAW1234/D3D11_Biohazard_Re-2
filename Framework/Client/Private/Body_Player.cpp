@@ -543,9 +543,6 @@ HRESULT CBody_Player::Render()
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_ShaderResource_MaterialDesc(m_pShaderCom, "g_vMaterial", static_cast<_uint>(i))))
-			return E_FAIL;
-
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
 

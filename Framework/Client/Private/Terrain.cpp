@@ -61,12 +61,10 @@ HRESULT CTerrain::Render()
 	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
 
-
-
 	return S_OK;
 }
 
-_float3 CTerrain::Compute_PickPos(_fvector vRayPos, _fvector vRayDir)
+_float4 CTerrain::Compute_PickPos(_fvector vRayPos, _fvector vRayDir)
 {
 	_float4		vPickPosFloat4;
 

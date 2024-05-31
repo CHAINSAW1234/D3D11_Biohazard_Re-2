@@ -17,7 +17,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 	
-	if(FAILED(Ready_Layer_Camera(TEXT("Layer_Camera"))))
+	if(FAILED(Ready_Layer_Camera(TEXT("Layer_ZZZCamera"))))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
@@ -73,8 +73,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
 	LightDesc.bShadow = true;
-	LightDesc.vPosition =_float4(-.5f, 1.f, 0.f, 1.f);
-	LightDesc.fRange = 2.f;
+	LightDesc.vPosition =_float4(-2.f, 3.f, 0.f, 1.f);
+	LightDesc.fRange = 5.f;
 
 	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.8f, 0.4f, 0.4f, 1.f);
@@ -84,8 +84,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
 	LightDesc.bShadow = true;
-	LightDesc.vPosition = _float4(1.f, 1.f, 0.f, 1.f);
-	LightDesc.fRange = 2.f;
+	LightDesc.vPosition = _float4(2.f, 3.f, 0.f, 1.f);
+	LightDesc.fRange = 5.f;
 
 	LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.8f, 0.4f, 1.f);
@@ -95,9 +95,9 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	LightDesc.eType = LIGHT_DESC::TYPE_SPOT;
 	LightDesc.bShadow = true;
-	LightDesc.vPosition = _float4(0, 2.f, -2.f, 1.f);
+	LightDesc.vPosition = _float4(0, 4.f, -2.f, 1.f);
 
-	LightDesc.fRange = 3.f;
+	LightDesc.fRange = 6.f;
 	LightDesc.vDirection = _float4(0.f,-1.f, 0.f,0.f);
 	LightDesc.fCutOff = XMConvertToRadians(60.f);
 	LightDesc.fOutCutOff = XMConvertToRadians(90);
