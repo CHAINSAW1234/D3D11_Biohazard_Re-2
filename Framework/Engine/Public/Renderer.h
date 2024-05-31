@@ -52,6 +52,7 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT						SetUp_RenderTargets_Pre_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_PostProcessing_Result(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_MotionBlur(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_SSR(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_DOF(const D3D11_VIEWPORT& ViewportDesc);
 
@@ -128,6 +129,9 @@ private:
 	HRESULT						Render_Non_PostProcessing();
 	HRESULT						Render_UI();
 	HRESULT						Render_Font();
+
+	private:
+	HRESULT						Render_MotionBlur();
 
 private:
 	HRESULT						Render_SSAO_Blur();

@@ -103,6 +103,11 @@ void CPipeLine::Tick()
 
 void CPipeLine::Reset()
 {
+	// 이번 프레임의 카메라 정보를 이전 프레임 정보로 이동
+	memcpy_s(&m_PrevTransformMatrices, sizeof(_float4x4) * D3DTS_END, &m_TransformMatrices, sizeof(_float4x4) * D3DTS_END);
+	memcpy_s(&m_PrevTransformInverseMatrices, sizeof(_float4x4) * D3DTS_END, &m_TransformInverseMatrices, sizeof(_float4x4) * D3DTS_END);
+	m_vPrevCamPosition = m_vCamPosition;
+
 	// 파이프라인에서 라이트 초기화
 	for (auto& pLight : m_Lights) {
 		Safe_Release(pLight);

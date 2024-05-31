@@ -31,6 +31,7 @@ private:
 
 protected:
 	_float4x4				m_WorldMatrix;
+	_float4x4				m_PrevWorldMatrix;
 	CTransform*				m_pParentsTransform = { nullptr };
 
 

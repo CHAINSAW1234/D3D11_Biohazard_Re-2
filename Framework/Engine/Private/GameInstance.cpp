@@ -545,6 +545,54 @@ _float4 CGameInstance::Get_CamPosition_Float4() const
 	return m_pPipeLine->Get_CamPosition_Float4();
 }
 
+_matrix CGameInstance::Get_PrevTransform_Matrix(CPipeLine::TRANSFORMSTATE eState) const
+{
+	if (nullptr == m_pPipeLine)
+		return XMMatrixIdentity();
+
+	return m_pPipeLine->Get_PrevTransform_Matrix(eState);
+}
+
+_float4x4 CGameInstance::Get_PrevTransform_Float4x4(CPipeLine::TRANSFORMSTATE eState) const
+{
+	if (nullptr == m_pPipeLine)
+		return _float4x4();
+
+	return m_pPipeLine->Get_PrevTransform_Float4x4(eState);
+}
+
+_matrix CGameInstance::Get_PrevTransform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState) const
+{
+	if (nullptr == m_pPipeLine)
+		return XMMatrixIdentity();
+
+	return m_pPipeLine->Get_PrevTransform_Matrix_Inverse(eState);
+}
+
+_float4x4 CGameInstance::Get_PrevTransform_Float4x4_Inverse(CPipeLine::TRANSFORMSTATE eState) const
+{
+	if (nullptr == m_pPipeLine)
+		return _float4x4();
+
+	return m_pPipeLine->Get_PrevTransform_Float4x4_Inverse(eState);
+}
+
+_vector CGameInstance::Get_PrevCamPosition_Vector() const
+{
+	if (nullptr == m_pPipeLine)
+		return _vector();
+
+	return m_pPipeLine->Get_PrevCamPosition_Vector();
+}
+
+_float4 CGameInstance::Get_PrevCamPosition_Float4() const
+{
+	if (nullptr == m_pPipeLine)
+		return _float4();
+
+	return m_pPipeLine->Get_PrevCamPosition_Float4();
+}
+
 const CLight* CGameInstance::Get_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, _uint iIndex)
 {
 	if (nullptr == m_pPipeLine)

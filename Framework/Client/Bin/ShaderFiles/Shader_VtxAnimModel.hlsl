@@ -3,6 +3,7 @@
 
 /* 전역변수 : 쉐이더 외부에 있는 데이터를 쉐이더 안으로 받아온다. */
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+matrix g_PrevWorldMatrix, g_PrevViewMatrix, g_PrevProjMatrix;
 
 matrix g_BoneMatrices[512];
 texture2D g_DiffuseTexture;
@@ -10,8 +11,6 @@ texture2D g_NormalTexture;
 texture2D g_ATOSTexture;
 texture2D g_NoiseTexture;
 texture2D g_DissolveDiffuseTexture;
-
-float g_fFar;
 
 /* For.Dissolve */
 float g_fDissolveRatio = { 0.f };
@@ -46,9 +45,11 @@ struct VS_OUT
     float2 vTexcoord : TEXCOORD0;
     float4 vWorldPos : TEXCOORD1;
     float4 vProjPos : TEXCOORD2;
-
+    float4 vVelocity : TEXCOORD3;
+    
     float3 vTangent : TANGENT;
     float3 vBinormal : BINORMAL;
+
 };
 
 struct VS_OUT_CUBE
@@ -79,6 +80,7 @@ VS_OUT VS_MAIN(VS_IN In)
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
 
+
     Out.vPosition = mul(vPosition, matWVP);
     Out.vNormal = normalize(mul(vNormal, g_WorldMatrix));
     Out.vTexcoord = In.vTexcoord;
@@ -87,6 +89,28 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix)).xyz;
     Out.vBinormal = normalize(cross(Out.vNormal, Out.vTangent));
 
+    // Velocity 계산
+    //float4 vNewPosition = Out.vPosition;
+    //float4 vOldPosition = mul(vPosition, g_PrevWorldMatrix);
+    //vOldPosition = mul(vOldPosition, g_PrevViewMatrix);
+    //vOldPosition = mul(vOldPosition, g_PrevProjMatrix);
+    
+    //float3 vDir = vNewPosition.xyz - vOldPosition.xyz;
+    
+    //float a = dot(normalize(vDir), normalize(Out.vNormal));
+    //if (a < 0.f)
+    //    Out.vPosition = vOldPosition;
+    //else
+    //    Out.vPosition = vNewPosition;
+    
+    //float2 vVelocity = (vNewPosition.xy / vNewPosition.w) - (vOldPosition.xy / vOldPosition.w);
+    //Out.vVelocity.xy = vVelocity * 0.5f;
+    //Out.vVelocity.z = Out.vPosition.z;
+    //Out.vVelocity.w = Out.vPosition.w;
+    
+    
+
+    
     return Out;
 }
 
@@ -152,6 +176,7 @@ struct PS_IN
     float2 vTexcoord : TEXCOORD0;
     float4 vWorldPos : TEXCOORD1;
     float4 vProjPos : TEXCOORD2;
+    float4 vVelocity : TEXCOORD3;
     
     float3 vTangent : TANGENT;
     float3 vBinormal : BINORMAL;
@@ -172,6 +197,7 @@ struct PS_OUT
     float4 vNormal : SV_TARGET1;
     float4 vDepth : SV_TARGET2;
     float4 vMaterial : SV_TARGET3;
+    //float4 vVelocity : SV_TARGET4;
     float4 vOrigin : SV_TARGET4;
 };
 
@@ -193,14 +219,17 @@ PS_OUT PS_MAIN(PS_IN In)
 
     float3 vWorldNormal = mul(vNormal, WorldMatrix);
 
+  
     Out.vDiffuse.xyz = vMtrlDiffuse.xyz;
     //  Out.vDiffuse.xyz = pow(vMtrlDiffuse.xyz, 2.2f);
     Out.vDiffuse.a = 1.f;
     Out.vNormal = vector(vWorldNormal * 0.5f + 0.5f, 0.f);
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 1000, 0.0f, 0.0f);
     Out.vMaterial.r = vMtrlDiffuse.a;
     Out.vMaterial.g = vNormalDesc.a;
     Out.vOrigin = vector(1.f, 0.f, 0.f, 1.f);
+   // Out.vVelocity = vector(In.vVelocity.xy, 1, In.vVelocity.z / In.vVelocity.w);
+    
     return Out;
 }
 
@@ -221,11 +250,11 @@ PS_OUT PS_MAIN_ATOS(PS_IN In)
     Out.vDiffuse = vMtrlDiffuse;
     Out.vDiffuse.a = vATOSDesc.r;
     Out.vNormal = vector(vWorldNormal * 0.5f + 0.5f, 0.f);
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 1000, 0.0f, 0.0f);
     Out.vMaterial.r = vMtrlDiffuse.a;
     Out.vMaterial.g = vNormalDesc.a;
     Out.vOrigin = vector(1.f, 0.f, 0.f, 1.f);
-    
+    //Out.vVelocity = vector(In.vVelocity.xy, 1, In.vVelocity.z / In.vVelocity.w);
     if (0.01f >= Out.vDiffuse.a)
         discard;
 	
@@ -259,7 +288,7 @@ PS_OUT PS_DISSOLVE(PS_IN In)
     }
     
     Out.vNormal = vector((In.vNormal * 0.5f + 0.5f).xyz, 0.f);
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 1000, 0.0f, 0.0f);
     Out.vMaterial = 1;
 
     return Out;

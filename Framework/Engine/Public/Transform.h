@@ -95,6 +95,8 @@ public:
 	void					Set_RotationMatrix_Pure(_float4x4 Mat);
 	//회전 행렬만을 설정 - XMMATRIX
 	void					Set_RotationMatrix_Pure(_matrix Mat);
+	// 현재 행렬을 이전 Tick의 행렬로써  PrevMatrix에 세팅 -> 이번 Tick의 모은 행동이 종료 된 이후에 실행 할 것
+
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
@@ -115,7 +117,6 @@ public:
 	void					Turn(_fvector vAxis, _float fTimeDelta);
 	void					Rotation(_fvector vAxis, _float fRadian);
 
-	
 private:
 	_float4x4				m_WorldMatrix;
 	_float					m_fSpeedPerSec = { 0.0f };

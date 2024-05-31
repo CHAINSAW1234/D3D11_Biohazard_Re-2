@@ -48,22 +48,44 @@ public:
 	{
 		return m_TransformInverseMatrices[eState];
 	}
-
 	_vector				Get_CamPosition_Vector() const 
 	{
 		return XMLoadFloat4(&m_vCamPosition);
 	}
-
 	_float4				Get_CamPosition_Float4() const 
 	{
 		return m_vCamPosition;
+	}
+
+	_matrix				Get_PrevTransform_Matrix(TRANSFORMSTATE eState) const
+	{
+		return XMLoadFloat4x4(&m_PrevTransformMatrices[eState]);
+	}
+	_float4x4			Get_PrevTransform_Float4x4(TRANSFORMSTATE eState) const
+	{
+		return m_PrevTransformMatrices[eState];
+	}
+	_matrix				Get_PrevTransform_Matrix_Inverse(TRANSFORMSTATE eState) const
+	{
+		return XMLoadFloat4x4(&m_PrevTransformInverseMatrices[eState]);
+	}
+	_float4x4			Get_PrevTransform_Float4x4_Inverse(TRANSFORMSTATE eState) const
+	{
+		return m_PrevTransformInverseMatrices[eState];
+	}
+	_vector				Get_PrevCamPosition_Vector() const
+	{
+		return XMLoadFloat4(&m_vPrevCamPosition);
+	}
+	_float4				Get_PrevCamPosition_Float4() const
+	{
+		return m_vPrevCamPosition;
 	}
 
 	_uint				Get_NumShadowLight() 
 	{
 		return m_iNumLight;
 	}
-
 	CLight*				Get_ShadowLight(SHADOWLIGHT eShadowLight, _uint iLightIndex) {
 		switch (eShadowLight) {
 		case DIRECTION:
@@ -85,7 +107,6 @@ public:
 
 		return nullptr;
 	}
-
 	list<LIGHT_DESC*>	Get_ShadowPointLightDesc_List();
 
 public:
@@ -102,7 +123,10 @@ private:
 	_float4x4			m_TransformMatrices[D3DTS_END];
 	_float4x4			m_TransformInverseMatrices[D3DTS_END];
 	_float4				m_vCamPosition;
-	//FRUSTUM_DESC		m_Frustum;
+
+	_float4x4			m_PrevTransformMatrices[D3DTS_END];
+	_float4x4			m_PrevTransformInverseMatrices[D3DTS_END];
+	_float4				m_vPrevCamPosition;
 
 	// 그림자 계산에 필요한 변수
 	
