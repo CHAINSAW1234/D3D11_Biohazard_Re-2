@@ -62,9 +62,9 @@ private:	/* For.IK */
 	void									Solve_IK(IK_INFO& IkInfo);
 	void									Solve_IK_Forward(IK_INFO& IkInfo);
 	void									Solve_IK_Backward(IK_INFO& IkInfo);
-	void									Solve_For_DIstatnce_IK(IK_INFO& IkInfo, _int iSrcJointIndex, _int iDstJointIndex);
+	void									Solve_For_Distance_IK(IK_INFO& IkInfo, _int iSrcJointIndex, _int iDstJointIndex);
 	void									Solve_For_Orientation_IK(IK_INFO& IkInfo, _int iOuterJointIndex, _int iInnerJointIndex);
-	_bool									Rotational_Constranit();
+	void 									Rotational_Constranit(IK_INFO& IkInfo, _int iOuterJointIndex, _int iMyJointIndex);
 	void									Update_Forward_Reaching_IK(IK_INFO& IkInfo);
 	void									Update_Backward_Reaching_IK(IK_INFO& IkInfo);
 	void									Update_TransformMatrices_BoneChain(IK_INFO& IkInfo);

@@ -77,7 +77,8 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	m_pModelCom->Add_Bone_Layer(TEXT("Upper"), UpperBoneIndices);
 
 	//	m_pModelCom->Add_IK("root", "l_leg_ball", TEXT("IK_L_LEG"), 1);
-	m_pModelCom->Add_IK("l_leg_femur", "l_leg_ankle", TEXT("IK_L_LEG"), 1, 1.f);
+	//	m_pModelCom->Add_IK("l_leg_femur", "l_leg_ankle", TEXT("IK_L_LEG"), 1, 1.f);
+	m_pModelCom->Add_IK("l_leg_femur", "l_leg_ball", TEXT("IK_L_LEG"), 1, 1.f);
 	//	m_pModelCom->Add_IK("hips", "l_leg_ball", TEXT("IK_L_LEG"), 1, 1.f);
 	//	m_pModelCom->Add_IK("r_leg_femur", "r_leg_ball", TEXT("IK_R_LEG"), 1, 1.f);
 	//	m_pModelCom->Add_IK("r_arm_humerus", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
@@ -211,12 +212,12 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	m_pModelCom->Set_Blend_IK(TEXT("IK_L_LEG"), fBlend);
 	//	m_pModelCom->Set_Blend_IK(TEXT("IK_R_LEG"), fBlend);
-	m_pModelCom->Set_Blend_IK(TEXT("IK_R_ARM"), fBlend);
+	//	m_pModelCom->Set_Blend_IK(TEXT("IK_R_ARM"), fBlend);
 
 	/*_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
 	_matrix			TranslationMatrix = { XMMatrixTranslation(XMVectorGetX(vMoveDir), )}*/
 
-	m_pModelCom->Set_NumIteration_IK(TEXT("IK_L_LEG"), 10);
+	m_pModelCom->Set_NumIteration_IK(TEXT("IK_L_LEG"), 3);
 	m_pModelCom->Set_NumIteration_IK(TEXT("IK_R_LEG"), 10);
 	m_pModelCom->Set_NumIteration_IK(TEXT("IK_R_ARM"), 10);
 

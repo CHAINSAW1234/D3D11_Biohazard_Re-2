@@ -221,9 +221,6 @@ void CModel::Add_IK(string strTargetJointTag, string strEndEffectorTag, wstring 
 	IkInfo.iNumIteration = iNumIteration;
 	IkInfo.fBlend = fBlend;
 
-	for(_uint i = 0; i < iNumBones; ++i)
-		IkInfo.BoneOrientationLimits.push_back(XMConvertToRadians(30.f));
-
 	vector<_uint>			JointIndices;
 	_uint					iBoneIndex = { static_cast<_uint>(iEndEffectorIndex) };
 	JointIndices.push_back(iBoneIndex);
@@ -261,6 +258,30 @@ void CModel::Add_IK(string strTargetJointTag, string strEndEffectorTag, wstring 
 	IkInfo.IKIncludedIndices.push_front(IkInfo.iIKRootBoneIndex);
 
 	Get_Child_BoneIndices(strTargetJointTag, IkInfo.IKIncludedIndices);
+
+	//	임시 추가
+	//	임시 추가
+	//	임시 추가
+	//	임시 추가
+
+	_uint			iNumJoint = { static_cast<_uint>(IkInfo.JointIndices.size()) };
+
+	IkInfo.BoneThetas.clear();
+	for (_uint i = 0; i < iNumJoint; ++i)
+		IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(20.f), XMConvertToRadians(30.f), XMConvertToRadians(20.f), XMConvertToRadians(30.f)));
+
+	IkInfo.BoneOrientationLimits.clear();
+	for (_uint i = 0; i < iNumJoint; ++i)
+		IkInfo.BoneOrientationLimits.push_back(XMConvertToRadians(60.f));
+
+	IkInfo.JointTypes.clear();
+	for (_uint i = 0; i < iNumJoint; ++i)
+		IkInfo.JointTypes.push_back(i % 2 == 0 ? JOINT_TYPE::JOINT_BALL : JOINT_TYPE::JOINT_HINGE);
+
+	//	임시 추가
+	//	임시 추가
+	//	임시 추가
+	//	임시 추가
 
 	m_IKInfos[strIKTag] = IkInfo;
 }
@@ -446,15 +467,20 @@ void CModel::Solve_IK_Forward(IK_INFO& IkInfo)
 
 	for (_int i = iNumIKIndices - 2; i >= 0; --i)
 	{
+		//	가장 마지막 부모인 경우
 		_bool		isLastParent = { i == iNumIKIndices - 2 };
 
-		Solve_For_DIstatnce_IK(IkInfo, i + 1, i);
+		Solve_For_Distance_IK(IkInfo, i + 1, i);
 		Solve_For_Orientation_IK(IkInfo, i + 1, i);
 
-		/*if (false == isLastParent)
+		//			최소 iNumIKIndeces - 3 => 내부에서 자식 계산이 가능한... 
+		if (false == isLastParent)
 		{
-			_bool		isConstraint = Rotational_Constranit();
-		}*/
+			//	쎄타, 첫 위치, 관절타입, 오리엔테이션 기록됨...
+			//	자식뼈, 쎄타, 첫 위치 ( length로 저장 constranints 측에서 ), 제한 조건 ( 관절 타입 자식뼈의 인덱스상... ), 오리엔테이션 ( 회전량 자식뼈 ...)
+			//	자식뼈 인덱스( IkInfo 상에서 ... ),
+			Rotational_Constranit(IkInfo, i + 1, i);
+		}
 	}
 }
 
@@ -465,17 +491,13 @@ void CModel::Solve_IK_Backward(IK_INFO& IkInfo)
 	//	엔드 이펙터의 위치를 목표위치로 옮긴다.
 	IkInfo.BoneTranslationsResult[0] = IkInfo.vTargetJointStartTranslation;
 
-	for (_int i = 2; i < static_cast<_int>(iNumIKIndices); ++i)
+	for (_int i = 1; i < static_cast<_int>(iNumIKIndices); ++i)
 	{
-		Solve_For_DIstatnce_IK(IkInfo, i - 1, i);
-		if (i < iNumIKIndices - 1)
-		{
-			Solve_For_Orientation_IK(IkInfo, i, i + 1);
-		}
+		Solve_For_Distance_IK(IkInfo, i - 1, i);
 	}
 }
 
-void CModel::Solve_For_DIstatnce_IK(IK_INFO& IkInfo, _int iSrcJointIndex, _int iDstJointIndex)
+void CModel::Solve_For_Distance_IK(IK_INFO& IkInfo, _int iSrcJointIndex, _int iDstJointIndex)
 {
 	_vector			vResultOuterJointTranslation = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iSrcJointIndex]) };
 	_vector			vResultInnerJointTranslation = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iDstJointIndex]) };
@@ -519,223 +541,245 @@ void CModel::Solve_For_Orientation_IK(IK_INFO& IkInfo, _int iOuterJointIndex, _i
 	}
 }
 
-_bool CModel::Rotational_Constranit()
+void CModel::Rotational_Constranit(IK_INFO& IkInfo, _int iOuterJointIndex, _int iMyJointIndex)
 {
-	//_vector		vParentTranslation = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[i - 1]) };
-	//_vector		vGrandParentTranslation = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[i - 2]) };
-	//_vector		vMyTranslation = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[i]) };
+	//	자식
+	_vector		p_i = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex]) };
+	//	자식의 자식
+	_vector		p_before = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex -1]) };
+	//	나
+	_vector		p_next = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex + 1]) };
 
-	//_vector		vDirectionFromParent = { vMyTranslation - vParentTranslation };
-	//_vector		vDirectionToParent = { vDirectionFromParent * -1.f };
-	//_vector		vDirectionFromGrandParentToParent = { vParentTranslation - vGrandParentTranslation };
+	_vector		v_i_next = { p_next - p_i };
+	_vector		v_before_i = { p_i - p_before };
+	/*_vector		vDirectionToParent = { v_i_next * -1.f };
+	_vector		vDirectionFromGrandParentToParent = { p_i - p_before };*/
 
-	//_float		fDistanceToConeCenter = { XMVectorGetX(XMVector3Dot(vDirectionFromParent, vDirectionFromGrandParentToParent)) };
+	//	# a unit vector of a line passing  from p(i+1) and P(i)
+	_float		s = { XMVectorGetX(XMVector3Dot(v_i_next, v_before_i)) };
 
-	//_vector		vDirectionToConeCenterFromParent = { XMVector3Normalize(vDirectionFromGrandParentToParent) * fDistanceToConeCenter };
-	//_vector		vConeCenterPosition = { vParentTranslation + vDirectionToConeCenterFromParent };
+	//	내가 자식을 바라보는 벡터
+	_float		l_next_i = { XMVectorGetX(XMVector3Length(p_next - p_i)) };
+	_vector		unit_vec_next_i = { XMVector3Normalize(p_i - p_next) };
+	//_vector		vDirectionToConeCenterFromParent = { XMVector3Normalize(vDirectionFromGrandParentToParent) * s };
 
-	//if (JOINT_TYPE::JOINT_HINGE == static_cast<JOINT_TYPE>(IkInfo.JointTypes[i + 1]))
-	//{
-	//	//	normal plane vector of p(next), p(i), p(before)
-	//	_vector		vNormalPlane = { XMVector3Normalize(XMVector3Cross(vDirectionFromParent, vDirectionFromGrandParentToParent)) };
+	//	# the center of cone
+	_vector		o = { p_i + unit_vec_next_i * s };
 
-	//	//	 a vector from p_i to o
-	//	_vector		vDirectionToCone = { XMVector3Normalize(vConeCenterPosition - vParentTranslation) };
+	if (JOINT_TYPE::JOINT_HINGE == static_cast<JOINT_TYPE>(IkInfo.JointTypes[iOuterJointIndex]))
+	{
+		//	normal plane vector of p(next), p(i), p(before)
+		_vector		normal_plane = { XMVector3Cross(v_i_next, v_before_i) };
+		_vector		uv_normal_plane = { XMVector3Normalize(normal_plane) };
 
-	//	//	 rotating p(i) - o C.C.W to find flexion constraint(left of pi_o)
-	//	_matrix		RoateMatrixDown = { XMMatrixRotationAxis(vNormalPlane, IkInfo.BoneThetas[i + 1].y) };
-	//	_vector		vDownPosition = { XMVector3TransformCoord(vDirectionToCone, RoateMatrixDown) };
+		//	 a vector from p_i to o
+		_vector		unit_vec_i_o = { XMVector3Normalize(o - p_i) };
 
-	//	//	 rotating p(i) - o C.W to find extension constraint(right of pi_o)
-	//	_matrix		RoateMatrixUp = { XMMatrixRotationAxis(vNormalPlane, IkInfo.BoneThetas[i + 1].w * -1.f) };
-	//	_vector		vUpPosition = { XMVector3TransformCoord(vDirectionToCone, RoateMatrixUp) };
+		//	 rotating p(i) - o C.C.W to find flexion constraint(left of pi_o)
+		_matrix		RoateMatrixDown = { XMMatrixRotationAxis(normal_plane, IkInfo.BoneThetas[iOuterJointIndex].y) };
+		_vector		p_down = { XMVector3TransformNormal(unit_vec_i_o, RoateMatrixDown) };
 
-	//	_vector		vDirectionToParent = { vDirectionFromGrandParentToParent * -1.f };
-	//	_vector		vCrossToParentToCone = { XMVector3Normalize(XMVector3Cross(XMVector3Normalize(vDirectionToParent), XMVector3Normalize(vDirectionToCone))) };
+		//	 rotating p(i) - o C.W to find extension constraint(right of pi_o)
+		_matrix		RoateMatrixUp = { XMMatrixRotationAxis(normal_plane, IkInfo.BoneThetas[iOuterJointIndex].w * -1.f) };
+		_vector		p_up = { XMVector3TransformNormal(unit_vec_i_o, RoateMatrixUp) };
 
-	//	_float		fDotConePlaneNorm = { XMVectorGetX(XMVector3Dot(vCrossToParentToCone, vNormalPlane)) };
+		_float		l_before_i = { XMVectorGetX(XMVector3Length(p_i - p_before)) };
+		_vector		uv_i_before = { XMVector3Normalize(p_before - p_i) };
 
-	//	// vDirectionToParent 과 vDirectionToCone 사이의 각도
-	//	_float		fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirectionToParent), XMVector3Normalize(vDirectionToCone))) };
-	//	_float		fAngle = { acosf(fDot) };
+		_vector		vCrossToParentToCone = { XMVector3Cross(uv_i_before, unit_vec_i_o) };
+		_float		fDotConePlaneNorm = { XMVectorGetX(XMVector3Dot(vCrossToParentToCone, uv_normal_plane)) };
 
-	//	//	means 이것은 vMyTranslation 위 에 있다.
-	//	if (fDotConePlaneNorm > 0.f)
-	//	{
-	//		if (IkInfo.BoneThetas[i + 1].w != 0.f)
-	//		{
-	//			//	콘 안에있다?
-	//			if (fAngle <= IkInfo.BoneThetas[i + 1].w)
-	//			{
-	//				return false;
-	//			}
+		_float		fAngle = { acosf(XMVectorGetX(XMVector3Dot(uv_i_before, unit_vec_i_o))) };
+		//	means 이것은 vMyTranslation 위 에 있다.
+		if (fDotConePlaneNorm > 0.f)
+		{
+			if (IkInfo.BoneThetas[iOuterJointIndex].w != 0.f)
+			{
+				//	콘 안에있다?
+				//	# angle between vec(i_before) and vec(i_o)
+				if (fAngle <= IkInfo.BoneThetas[iOuterJointIndex].w)
+				{
+					return;
+				}
 
-	//			else
-	//			{
-	//				_vector		vNearestPoint = { XMVectorSetW(vParentTranslation + XMVectorGetX(XMVector3Length(vDirectionFromGrandParentToParent)) * vUpPosition, 1.f) };
-	//			}
-	//		}
+				else
+				{
+					_vector		vNearestPoint = { p_i + l_before_i * p_up };
+					XMStoreFloat4(&IkInfo.BoneTranslationsResult[iMyJointIndex], vNearestPoint);
+				}
+			}
 
-	//		else
-	//		{
-	//			_vector		vNearestPoint = { XMVectorSetW(vParentTranslation + XMVectorGetX(XMVector3Length(vDirectionFromGrandParentToParent)) * vDirectionToCone, 1.f) };
-	//		}
-	//	}
+			else
+			{
+				_vector		vNearestPoint = { p_i + l_before_i * unit_vec_i_o };
+				XMStoreFloat4(&IkInfo.BoneTranslationsResult[iMyJointIndex], vNearestPoint);
+			}
+		}
 
-	//	//	means 이것은 vMyTranslation 아래 에 있다.
-	//	else
-	//	{
-	//		if (IkInfo.BoneThetas[i + 1].y != 0.f)
-	//		{
-	//			if (fAngle <= IkInfo.BoneThetas[i + 1].y)
-	//			{
-	//				return false;
-	//			}
-	//			else
-	//			{
-	//				_vector		vNearestPoint = { vParentTranslation + XMVectorSetW(vDownPosition, 0.f) * XMVectorGetX(XMVector3Length(vDirectionFromGrandParentToParent)) };
-	//			}
-	//		}
+		//	means 이것은 vMyTranslation 아래 에 있다.
+		else
+		{
+			if (IkInfo.BoneThetas[iOuterJointIndex].y != 0.f)
+			{
+				//	# angle between vec(i_before) and vec(i_o)
+				if (fAngle <= IkInfo.BoneThetas[iOuterJointIndex].y)
+				{
+					return;
+				}
+				else
+				{
+					_vector		vNearestPoint = { p_i + l_before_i * p_down };
+					XMStoreFloat4(&IkInfo.BoneTranslationsResult[iMyJointIndex], vNearestPoint);
+				}
+			}
 
-	//		else
-	//		{
-	//			_vector		vNearestPoint = { XMVectorSetW(vParentTranslation + XMVectorGetX(XMVector3Length(vDirectionFromGrandParentToParent)) * vDirectionToCone, 1.f) };
-	//		}
-	//	}
-	//}
+			else
+			{
+				_vector		vNearestPoint = { p_i + l_before_i * unit_vec_i_o };
+				XMStoreFloat4(&IkInfo.BoneTranslationsResult[iMyJointIndex], vNearestPoint);
+			}
+		}
+		return;
+	}
 
-	//if (JOINT_TYPE::JOINT_BALL == static_cast<JOINT_TYPE>(IkInfo.JointTypes[i]))
-	//{
-	//	// 반타원체 매개 변수 qi(1, 2, 3, 4)
-	//	_vector			vQ = {
-	//		XMVectorSet(
-	//		fDistanceToConeCenter * tanf(IkInfo.BoneThetas[i + 1].x),
-	//		fDistanceToConeCenter * tanf(IkInfo.BoneThetas[i + 1].y),
-	//		fDistanceToConeCenter * tanf(IkInfo.BoneThetas[i + 1].z),
-	//		fDistanceToConeCenter * tanf(IkInfo.BoneThetas[i + 1].w)) };
+	if (JOINT_TYPE::JOINT_BALL == static_cast<JOINT_TYPE>(IkInfo.JointTypes[iOuterJointIndex]))
+	{
+		// 반타원체 매개 변수 qi(1, 2, 3, 4)
+		_vector			vQ = {
+			XMVectorSet(
+			s * tanf(IkInfo.BoneThetas[iOuterJointIndex].x),
+			s * tanf(IkInfo.BoneThetas[iOuterJointIndex].y),
+			s * tanf(IkInfo.BoneThetas[iOuterJointIndex].z),
+			s * tanf(IkInfo.BoneThetas[iOuterJointIndex].w)) 
+		};
 
-	//	// 좌표를 원뿔의 단면으로 변경하고 그 안의 (i - 1)번째 위치를 계산합니다.
-	//	//		콘 중점 -> 자식 ( 현재 관절 거리 )
-	//	_float			fDistanceToCone = { XMVectorGetX(XMVector3Length(vConeCenterPosition - vMyTranslation)) };
+		// 좌표를 원뿔의 단면으로 변경하고 그 안의 (i - 1)번째 위치를 계산합니다.
+		//		콘 중점 -> 자식 ( 현재 관절 거리 )
+		//		# change the coordinate to cross section of cone and calculating the (i-1)th position in it
+		_float			l_o_next = { XMVectorGetX(XMVector3Length(o - p_next)) };
 
-	//	//		콘의 투영 평면상의 ㅇ어느 사분면에있는지 찾는다.
-	//	//		ToDo : Theta값 계산하는법 찾기 투영평면상의 섹션 을 정하는데 쓰임
-	//	_float				fTheta = { 0.f };
-	//	CONIC_SECTION		Section = { Find_ConicSection(fTheta) };
+		//		콘의 투영 평면상의 ㅇ어느 사분면에있는지 찾는다.
+		//		ToDo : Theta값 계산하는법 찾기 투영평면상의 섹션 을 정하는데 쓰임
+		//		 # the orientation of joint
+		_float				fTheta = { acosf(IkInfo.BoneOrientations[iOuterJointIndex].w) * 2.f };
+		CONIC_SECTION		eSection = { Find_ConicSection(fTheta) };
 
-	//	_float2			vTargetPoint = { fDistanceToCone * cosf(fTheta), fDistanceToCone * sinf(fTheta) };
+		_float2				vTargetPoint = { 
+			l_o_next * cosf(fTheta), 
+			l_o_next * sinf(fTheta) 
+		};
 
-	//	//	목표점이 타원형내부인지 확인		
-	//	//	현재 속한 사분면 내에서 계산
-	//	_bool			isInBound = { Is_InBound(Section, vQ, vTargetPoint) };
-	//	_float2			vNearestPoint = {};
+		//	목표점이 타원형내부인지 확인		
+		//	현재 속한 사분면 내에서 계산
+		_bool			isInBound = { Is_InBound(eSection, vQ, vTargetPoint) };
+		_float2			vNearestPoint = {};
 
-	//	//	it is out bound of the ellipsoidal shape we should find the nearest point on ellipsoidal shape
-	//	if (false == isInBound && CONIC_SECTION::SECTION_1 == Section)
-	//	{
-	//		if (vTargetPoint.y != 0.f)
-	//		{
-	//			vNearestPoint = Find_Nearest_Point_Constraints(XMVectorGetZ(vQ), XMVectorGetY(vQ), Section, vTargetPoint);
-	//		}
-	//		else
-	//		{
-	//			vNearestPoint.x = XMVectorGetZ(vQ);
-	//			vNearestPoint.y = 0.f;
-	//		}
-	//	}
+		if (true == isInBound)
+			return;
 
-	//	else if (false == isInBound && CONIC_SECTION::SECTION_2 == Section)
-	//	{
-	//		if (0.f != vTargetPoint.x)
-	//		{
-	//			vNearestPoint = Find_Nearest_Point_Constraints(XMVectorGetX(vQ), XMVectorGetY(vQ), Section, vTargetPoint);
-	//		}
-	//		else
-	//		{
-	//			vNearestPoint.x = 0.f;
-	//			vNearestPoint.y = XMVectorGetY(vQ);
-	//		}
-	//	}
+		//	it is out bound of the ellipsoidal shape we should find the nearest point on ellipsoidal shape
+		if (false == isInBound && CONIC_SECTION::SECTION_1 == eSection)
+		{
+			if (vTargetPoint.y != 0.f)
+			{
+				vNearestPoint = Find_Nearest_Point_Constraints(XMVectorGetZ(vQ), XMVectorGetY(vQ), eSection, vTargetPoint);
+			}
+			else
+			{
+				vNearestPoint.x = XMVectorGetZ(vQ);
+				vNearestPoint.y = 0.f;
+			}
+		}
 
-	//	else if (false == isInBound && CONIC_SECTION::SECTION_3 == Section)
-	//	{
-	//		if (vTargetPoint.y != 0.f)
-	//		{
-	//			vNearestPoint = Find_Nearest_Point_Constraints(XMVectorGetX(vQ), XMVectorGetW(vQ), Section, vTargetPoint);
-	//		}
-	//		else
-	//		{
-	//			vNearestPoint.x = XMVectorGetX(vQ) * -1.f;
-	//			vNearestPoint.y = 0.f;
-	//		}
-	//	}
+		else if (false == isInBound && CONIC_SECTION::SECTION_2 == eSection)
+		{
+			if (0.f != vTargetPoint.x)
+			{
+				vNearestPoint = Find_Nearest_Point_Constraints(XMVectorGetX(vQ), XMVectorGetY(vQ), eSection, vTargetPoint);
+			}
+			else
+			{
+				vNearestPoint.x = 0.f;
+				vNearestPoint.y = XMVectorGetY(vQ);
+			}
+		}
 
-	//	else if (false == isInBound && CONIC_SECTION::SECTION_4 == Section)
-	//	{
-	//		if (0.f != vTargetPoint.x)
-	//		{
-	//			vNearestPoint = Find_Nearest_Point_Constraints(XMVectorGetZ(vQ), XMVectorGetW(vQ), Section, vTargetPoint);
-	//		}
-	//		else
-	//		{
-	//			vNearestPoint.x = 0.f;
-	//			vNearestPoint.y = XMVectorGetW(vQ) * -1.f;
-	//		}
-	//	}
+		else if (false == isInBound && CONIC_SECTION::SECTION_3 == eSection)
+		{
+			if (vTargetPoint.y != 0.f)
+			{
+				vNearestPoint = Find_Nearest_Point_Constraints(XMVectorGetX(vQ), XMVectorGetW(vQ), eSection, vTargetPoint);
+			}
+			else
+			{
+				vNearestPoint.x = XMVectorGetX(vQ) * -1.f;
+				vNearestPoint.y = 0.f;
+			}
+		}
 
-
-	//	// 3D에서 가장 가까운 점 모델 로컬 스페이스 좌표 찾기
-	//	//	부모의 부모로 부터 원뿔의 평면상 중점 거리
-	//	_float		fDistanceGrandParentToConeCenter = { sqrtf(powf(vTargetPoint.x,2.f) + powf(vTargetPoint.y, 2.f)) };
-	//	//	최근접점으로부터 원뿔의 평면상 중점 거리
-	//	_float		fDistanceNearestPointToConeCenter = { sqrtf(powf(vNearestPoint.x,2.f) + powf(vNearestPoint.y, 2.f)) };
-	//	//	부모의 부모로 부터 최근접점 거리
-	//	_float		fDistanceGrandParentToNearestPoint = { sqrtf(powf((vTargetPoint.x - vNearestPoint.x),2.f) + powf((vNearestPoint.y - vTargetPoint.y), 2.f)) };
-
-	//	//	원뿔의 평면 중점에서 부모의 부모까지의 벡터와 원뿔의 평면중점에서 최근접 점까지의 벡터 사이의 회전 각도
-	//	_float		fRotationAngle = { acosf((powf(fDistanceGrandParentToNearestPoint, 2.f) - powf(fDistanceGrandParentToConeCenter, 2.f) - powf(fDistanceNearestPointToConeCenter, 2.f)) / (-2.f * fDistanceGrandParentToConeCenter * fDistanceNearestPointToConeCenter)) };
-
-	//	// rotating the vector from o to p_before around vector from p_next to o
-	//	//	나에서 원뿔의 중점으로의 벡터를 중심으로 벡터를 원뿔의 중점에서 부모의 부모 위치로 회전합니다.
-
-	//	//	a vector from o to p_before
-	//	// 원뿔의 중점에서 부모의 부모까지의 벡터
-	//	_vector		vDirectionConeCenterToGrandParent = { vGrandParentTranslation - vConeCenterPosition };
-	//	_vector		vNormalPlane = { XMVector3Normalize(vParentTranslation - vMyTranslation) };
-
-	//	if (0.f == fRotationAngle)
-	//	{
-	//		_vector			vNearestPointInModelLocal = { vConeCenterPosition + fDistanceNearestPointToConeCenter * XMVector3Normalize(vDirectionConeCenterToGrandParent) };
-	//		//	return vNearestPointInModelLocal
-	//	}
-
-	//	else
-	//	{
-	//		//	가장 가까운 지점이 목표 지점의 왼쪽 또는 오른쪽에 있는지 확인
-	//		_float			fOrientNearToTarget = { vTargetPoint.x * vNearestPoint.y - vNearestPoint.x * vTargetPoint.y };
-	//		_vector			vDirectionConeCenterToNearest = {};
-	//		if (0.f < fOrientNearToTarget * XMVectorGetY(XMVector3Normalize(vDirectionFromGrandParentToParent)))
-	//		{
-	//			// 가장 가까운 지점을 찾으려면 C.C.W에서 단위 벡터(월뿔의중심 - 대상)를 회전해야 합니다.
-	//			_matrix			RotationMatrix = { XMMatrixRotationAxis(vNormalPlane, fRotationAngle) };
-	//			vDirectionConeCenterToNearest = XMVector3TransformCoord(XMVector3Normalize(vDirectionConeCenterToGrandParent), RotationMatrix);
-	//		}
-
-	//		else
-	//		{
-	//			_matrix			RotationMatrix = { XMMatrixRotationAxis(vNormalPlane, fRotationAngle * -1.f) };
-	//			vDirectionConeCenterToNearest = XMVector3TransformCoord(XMVector3Normalize(vDirectionConeCenterToGrandParent), RotationMatrix);
-	//		}
-
-	//		_vector			vNearestPointInModelLocal = { vConeCenterPosition + vDirectionConeCenterToNearest * fDistanceNearestPointToConeCenter };
-	//		//	return vNearestPointInModelLocal
-	//	}
-	//}
+		else if (false == isInBound && CONIC_SECTION::SECTION_4 == eSection)
+		{
+			if (0.f != vTargetPoint.x)
+			{
+				vNearestPoint = Find_Nearest_Point_Constraints(XMVectorGetZ(vQ), XMVectorGetW(vQ), eSection, vTargetPoint);
+			}
+			else
+			{
+				vNearestPoint.x = 0.f;
+				vNearestPoint.y = XMVectorGetW(vQ) * -1.f;
+			}
+		}
 
 
-	//return true;
+		// 3D에서 가장 가까운 점 모델 로컬 스페이스 좌표 찾기
+		//	부모의 부모로 부터 원뿔의 평면상 중점 거리
+		_float		l_o_before = { sqrtf(powf(vTargetPoint.x,2.f) + powf(vTargetPoint.y, 2.f)) };
+		//	최근접점으로부터 원뿔의 평면상 중점 거리
+		_float		l_o_nearest_point = { sqrtf(powf(vNearestPoint.x,2.f) + powf(vNearestPoint.y, 2.f)) };
+		//	부모의 부모로 부터 최근접점 거리
+		_float		l_nearest_before = { sqrtf(powf((vTargetPoint.x - vNearestPoint.x),2.f) + powf((vNearestPoint.y - vTargetPoint.y), 2.f)) };
 
-return true;
+		//	원뿔의 평면 중점에서 부모의 부모까지의 벡터와 원뿔의 평면중점에서 최근접 점까지의 벡터 사이의 회전 각도
+		_float		rot_angle = { acosf((powf(l_nearest_before, 2.f) - powf(l_o_before, 2.f) - powf(l_o_nearest_point, 2.f)) / (-2.f * l_o_before * l_o_nearest_point)) };
+
+		// rotating the vector from o to p_before around vector from p_next to o
+		//	나에서 원뿔의 중점으로의 벡터를 중심으로 벡터를 원뿔의 중점에서 부모의 부모 위치로 회전합니다.
+
+		//	a vector from o to p_before
+		// 원뿔의 중점에서 부모의 부모까지의 벡터
+		_vector		unit_vec_o_before = { XMVector3Normalize(p_before - o) };
+		_vector		unit_vec_normal_plane = { XMVector3Normalize(p_i - p_next) };
+
+		if (0.f == rot_angle)
+		{
+			_vector			p_nearest_point_in_global = { o + l_o_nearest_point * unit_vec_o_before };
+			XMStoreFloat4(&IkInfo.BoneTranslationsResult[iMyJointIndex], p_nearest_point_in_global);
+		}
+
+		else
+		{
+			//	가장 가까운 지점이 목표 지점의 왼쪽 또는 오른쪽에 있는지 확인
+			_float			orient_near_to_target = { vTargetPoint.x * vNearestPoint.y - vNearestPoint.x * vTargetPoint.y };
+			_vector			uv_o_nearest_point = {};
+			if (0.f < orient_near_to_target * XMVectorGetZ(unit_vec_next_i))
+			{
+				//	# to find nearest point should rotate the uv(o-target) in C.C.W
+				// 가장 가까운 지점을 찾으려면 C.C.W에서 단위 벡터(월뿔의중심 - 대상)를 회전해야 합니다.
+				_matrix			RotationMatrix = { XMMatrixRotationAxis(unit_vec_normal_plane, rot_angle) };
+				uv_o_nearest_point = XMVector3TransformNormal(unit_vec_o_before, RotationMatrix);
+			}
+
+			else
+			{
+				_matrix			RotationMatrix = { XMMatrixRotationAxis(unit_vec_normal_plane, rot_angle * -1.f) };
+				uv_o_nearest_point = XMVector3TransformNormal(unit_vec_o_before, RotationMatrix);
+			}
+
+			_vector			p_nearest_point_in_global = { o + uv_o_nearest_point * l_o_nearest_point };
+			XMStoreFloat4(&IkInfo.BoneTranslationsResult[iMyJointIndex], p_nearest_point_in_global);
+		}
+	}
+	return;
 }
 
 void CModel::Update_Forward_Reaching_IK(IK_INFO& IkInfo)
@@ -790,20 +834,6 @@ void CModel::Update_Backward_Reaching_IK(IK_INFO& IkInfo)
 		else
 		{
 			vResultTranslation = vParentBoneResultTranslation;
-		}
-
-		if (false == isRootJoint)
-		{
-			JOINT_TYPE			ParentJointType = { static_cast<JOINT_TYPE>(IkInfo.JointTypes[i - 1]) };
-			if (JOINT_TYPE::JOINT_HINGE == ParentJointType)
-			{
-
-			}
-
-			else if (JOINT_TYPE::JOINT_BALL == ParentJointType)
-			{
-
-			}
 		}
 
 		//	이동후의 위치를 뼈의 위치들로 다시 기록
@@ -893,7 +923,7 @@ CModel::CONIC_SECTION CModel::Find_ConicSection(_float fTheta)
 		Section = CONIC_SECTION::SECTION_4;
 	}
 
-	return CONIC_SECTION();
+	return Section;
 }
 
 _bool CModel::Is_InBound(CONIC_SECTION eSection, _fvector vQ, _float2 vTarget)
