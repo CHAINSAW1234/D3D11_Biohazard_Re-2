@@ -50,6 +50,7 @@ public:	/* For.Animation */
 public:
 	void									Add_IK(string strTargetJointTag, string strEndEffectorTag, wstring strIKTag, _uint iNumIteration, _float fBlend);
 	void									Set_Direction_IK(wstring strIKTag, _fvector vDirection);
+	void									Set_TargetPosition_IK(wstring strIKTag, _fvector vTargetPosition);
 	void									Set_NumIteration_IK(wstring strIKTag, _uint iNumIteration);
 	void									Set_Blend_IK(wstring strIKTag, _float fBlend);
 	vector<_float4>							Get_ResultTranslation_IK(const wstring& strIKTag);

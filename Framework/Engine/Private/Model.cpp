@@ -267,19 +267,26 @@ void CModel::Add_IK(string strTargetJointTag, string strEndEffectorTag, wstring 
 	_uint			iNumJoint = { static_cast<_uint>(IkInfo.JointIndices.size()) };
 
 	IkInfo.BoneThetas.clear();
-	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f)));
-	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(30.f)));
-	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f)));
-	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f)));
+	//	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f)));
+	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(40.f)));
+	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(40.f)));
+	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(40.f)));
+	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(40.f)));
+	//	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f)));
+	//	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f)));
 
 	IkInfo.BoneOrientationLimits.clear();
 	for (_uint i = 0; i < iNumJoint; ++i)
 		IkInfo.BoneOrientationLimits.push_back(XMConvertToRadians(40.f));
 
 	IkInfo.JointTypes.clear();
-	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_BALL);
+	/*IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_BALL);
 	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_HINGE);
 	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_BALL);
+	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_END);*/
+	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_HINGE);
+	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_HINGE);
+	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_HINGE);
 	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_END);
 	//	IkInfo.JointTypes.push_back(i % 2 == 0 ? JOINT_TYPE::JOINT_BALL : JOINT_TYPE::JOINT_HINGE);
 
@@ -298,6 +305,15 @@ void CModel::Set_Direction_IK(wstring strIKTag, _fvector vDirection)
 		return;
 
 	XMStoreFloat3(&m_IKInfos[strIKTag].vIKDirection, vDirection);
+}
+
+void CModel::Set_TargetPosition_IK(wstring strIKTag, _fvector vTargetPosition)
+{
+	map<wstring, IK_INFO>::iterator		iter = { m_IKInfos.find(strIKTag) };
+	if (iter == m_IKInfos.end())
+		return;
+
+	XMStoreFloat3(&m_IKInfos[strIKTag].vIKEndTargetPosition, vTargetPosition);
 }
 
 void CModel::Set_NumIteration_IK(wstring strIKTag, _uint iNumIteration)
@@ -357,7 +373,11 @@ void CModel::Apply_IK(class CTransform* pTransform, IK_INFO& IkInfo)
 	_vector			vEndEffectorMoveDir = { XMLoadFloat3(&IkInfo.vIKDirection) };
 	vEndEffectorMoveDir = XMVector3TransformNormal(vEndEffectorMoveDir, WorldMatrixInv);
 
-	_vector			vEndEffectorResultPosition = { XMLoadFloat4((_float4*)m_Bones[IkInfo.iEndEffectorIndex]->Get_CombinedTransformationMatrix()->m[CTransform::STATE_POSITION]) + vEndEffectorMoveDir };
+	_vector			vEndEffectorPosition = { XMVectorSetW(XMLoadFloat3(&IkInfo.vIKEndTargetPosition), 1.f) };
+	vEndEffectorMoveDir = XMVector3TransformCoord(vEndEffectorPosition, WorldMatrixInv);
+	_vector			vEndEffectorResultPosition = { vEndEffectorPosition };
+
+	//	_vector			vEndEffectorResultPosition = { XMLoadFloat4((_float4*)m_Bones[IkInfo.iEndEffectorIndex]->Get_CombinedTransformationMatrix()->m[CTransform::STATE_POSITION]) + vEndEffectorMoveDir };
 	XMStoreFloat4(&IkInfo.vEndEffectorResultPosition, vEndEffectorResultPosition);
 
 	_vector			vTargetJointStartTranslation = { XMLoadFloat4((_float4*)m_Bones[IkInfo.iIKRootBoneIndex]->Get_CombinedTransformationMatrix()->m[CTransform::STATE_POSITION]) };
@@ -584,6 +604,9 @@ void CModel::Rotational_Constranit(IK_INFO& IkInfo, _int iOuterJointIndex, _int 
 		//	normal plane vector of p(next), p(i), p(before)
 		_vector		normal_plane = { XMVector3Cross(v_i_next, v_before_i) };
 		_vector		uv_normal_plane = { XMVector3Normalize(normal_plane) };
+
+		if (0.9999f < XMVectorGetX(XMVector3Dot(XMVector3Normalize(v_i_next), XMVector3Normalize(v_before_i))))
+			return;
 
 		//	 a vector from p_i to o
 		_vector		unit_vec_i_o = { XMVector3Normalize(o - p_i) };
@@ -1049,15 +1072,10 @@ _float4x4 CModel::Compute_QMatrix(_float2 vCurrentPoint, _float fMajorAxisLength
 {
 	_float4x4		QFloat4x4 = {};
 
-	//	QFloat4x4.m[0][0] = fMinorAxisLength * fMinorAxisLength * vCurrentPoint.x;
-	//	QFloat4x4.m[0][1] = fMajorAxisLength * fMajorAxisLength * vCurrentPoint.y;
-	//	QFloat4x4.m[1][0] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.y + fMinorAxisLength * fMinorAxisLength * vTargetPosition.y;
-	//	QFloat4x4.m[1][1] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.x - fMajorAxisLength * fMajorAxisLength * vTargetPosition.x;
-
-	QFloat4x4.m[0][0] = fMinorAxisLength * fMinorAxisLength * vCurrentPoint.x;
-	QFloat4x4.m[0][1] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.y + fMinorAxisLength * fMinorAxisLength * vTargetPosition.y;
-	QFloat4x4.m[1][0] = fMajorAxisLength * fMajorAxisLength * vCurrentPoint.y;
-	QFloat4x4.m[1][1] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.x - fMajorAxisLength * fMajorAxisLength * vTargetPosition.x;
+	QFloat4x4.m[0][0] = powf(fMinorAxisLength, 2.f) * vCurrentPoint.x;
+	QFloat4x4.m[0][1] = (powf(fMajorAxisLength, 2.f) - powf(fMinorAxisLength, 2.f)) * vCurrentPoint.y + powf(fMinorAxisLength, 2.f) * vTargetPosition.y;
+	QFloat4x4.m[1][0] = powf(fMajorAxisLength, 2.f) * vCurrentPoint.y;
+	QFloat4x4.m[1][1] = (powf(fMajorAxisLength, 2.f) - powf(fMinorAxisLength, 2.f)) * vCurrentPoint.x - powf(fMajorAxisLength, 2.f) * vTargetPosition.x;
 
 	return QFloat4x4;
 }

@@ -78,7 +78,7 @@ HRESULT CBody_Player::Initialize(void * pArg)
 
 	//	m_pModelCom->Add_IK("root", "l_leg_ball", TEXT("IK_L_LEG"), 1);
 	//	m_pModelCom->Add_IK("l_leg_femur", "l_leg_ankle", TEXT("IK_L_LEG"), 1, 1.f);
-	m_pModelCom->Add_IK("l_leg_femur", "l_leg_ball", TEXT("IK_L_LEG"), 20, 1.f);
+	m_pModelCom->Add_IK("l_leg_femur", "l_leg_ankle", TEXT("IK_L_LEG"), 20, 1.f);
 	//	m_pModelCom->Add_IK("hips", "l_leg_ball", TEXT("IK_L_LEG"), 1, 1.f);
 	//	m_pModelCom->Add_IK("r_leg_femur", "r_leg_ball", TEXT("IK_R_LEG"), 1, 1.f);
 	m_pModelCom->Add_IK("r_arm_humerus", "r_arm_wrist", TEXT("IK_R_ARM"), 20, 1.f);
@@ -165,7 +165,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 			fBlend = 1.f;
 	}
 
-	_vector			vMoveDir = { XMVectorSet(1.f, 0.f, 0.f, 0.f) * fMoveHieght };
+	_vector			vMoveDir = { XMVectorSet(0.f, 1.f, 0.f, 0.f) * fMoveHieght };
 	_vector			vCurrentPos = { m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION) };
 	_vector			vCurrentBallPos = { XMVector4Transform(vCurrentPos, XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball"))) };
 
@@ -190,12 +190,15 @@ void CBody_Player::Tick(_float fTimeDelta)
 		_matrix			BallWorldMatrix = { BallCombinedMatrix * WorldMatrix };
 
 		_vector		vPosition = { BallWorldMatrix.r[CTransform::STATE_POSITION] };
-		vPosition.m128_f32[2] -= 0.3f;
+		//	vPosition.m128_f32[2] -= 0.3f;
 		_float4		vPickPosFloat4;
 		pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
 
 		_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
-		vMoveDir += vResultPos - vPosition;
+
+		m_pModelCom->Set_TargetPosition_IK(TEXT("IK_L_LEG"), vResultPos);
+		
+		//	vMoveDir += vResultPos - vPosition;
 	}
 
 	/////////////////////////////////////////////////////////////////////////
@@ -206,7 +209,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	/////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////
 
-	m_pModelCom->Set_Direction_IK(TEXT("IK_L_LEG"), vMoveDir);
+	//	m_pModelCom->Set_Direction_IK(TEXT("IK_L_LEG"), vMoveDir);
 	//	m_pModelCom->Set_Direction_IK(TEXT("IK_R_LEG"), vMoveDir);z
 	//	m_pModelCom->Set_Direction_IK(TEXT("IK_R_ARM"), vMoveDir);
 
