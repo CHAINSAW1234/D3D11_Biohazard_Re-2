@@ -85,14 +85,14 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_SSAO_Blur()))
 		return E_FAIL;
 
-	//if (FAILED(Render_Shadow_Direction()))
-	//	return E_FAIL;
+	if (FAILED(Render_Shadow_Direction()))
+		return E_FAIL;
 
-	//if (FAILED(Render_Shadow_Point()))
-	//	return E_FAIL;
+	if (FAILED(Render_Shadow_Point()))
+		return E_FAIL;
 
-	//if (FAILED(Render_Shadow_Spot()))
-	//	return E_FAIL;
+	if (FAILED(Render_Shadow_Spot()))
+		return E_FAIL;
 
 	////if (FAILED(Render_Test()))
 	////	return E_FAIL;
