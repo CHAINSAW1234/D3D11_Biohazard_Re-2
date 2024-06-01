@@ -134,10 +134,12 @@ struct PS_IN_CUBE
 
 struct PS_OUT
 {
-	float4		vDiffuse : SV_TARGET0;
-	float4		vNormal : SV_TARGET1;
-	float4		vDepth : SV_TARGET2;
-    float4		vMaterial : SV_TARGET3;
+    float4 vDiffuse : SV_TARGET0;
+    float4 vNormal : SV_TARGET1;
+    float4 vDepth : SV_TARGET2;
+    float4 vMaterial : SV_TARGET3;
+    float4 vVelocity : SV_TARGET4;
+    float4 vOrigin : SV_TARGET5;
 };
 
 

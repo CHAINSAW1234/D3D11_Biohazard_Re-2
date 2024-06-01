@@ -26,7 +26,7 @@ public:
 	virtual HRESULT			Render() override;
 	virtual HRESULT			Render_LightDepth() { return S_OK; }
 
-private:
+protected:
 	void					Update_WorldMatrix();
 
 protected:

@@ -101,8 +101,9 @@ private:
 
 private:
 	_bool						m_isSSAO = { true };		// SSAO 온 오프
+	_bool						m_isMotionBlur = { true };	// MotionBlur 온 오프
 	_bool						m_isSSR = { true };			// SSR 온 오프
-	_bool						m_isDOF = { false };			// DOF 온 오프
+	_bool						m_isDOF = { false };		// DOF 온 오프
 private:
 	_bool						m_isRadialBlurActive = { false };
 	_float2						m_vRadialBlurUV = { 0.f, 0.f };

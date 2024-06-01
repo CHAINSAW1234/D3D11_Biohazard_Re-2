@@ -218,8 +218,8 @@ HRESULT CRenderer::SetUp_MRTs()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Material"))))
 		return E_FAIL;
-	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Velocity"))))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Velocity"))))
+		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Origin"))))
 		return E_FAIL;
 
@@ -721,9 +721,7 @@ HRESULT CRenderer::SetUp_Debug()
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Specular"), 300.0f, 300.0f, 200.f, 200.f)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSAO_Shade_BlurX"), 300.0f, 500.0f, 200.f, 200.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSAO_Shade_Blur_Fin"), 300.0f, 700.0f, 200.f, 200.f)))
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSAO_Shade_Blur_Fin"), 300.0f, 500.0f, 200.f, 200.f)))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Dir"), 500.0f, 100.0f, 200.f, 200.f)))
@@ -743,17 +741,14 @@ HRESULT CRenderer::SetUp_Debug()
 	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Emissive"), 1820.0f, 700.0f, 200.f, 200.f)))
 	//	return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Velocity"), 1620.f, 100.f, 200.f, 200.f)))
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_MotionBlur"), 1620.f, 100.f, 200.f, 200.f)))
 		return E_FAIL;
-
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSR"), 1620.f, 300.f, 200.f, 200.f)))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_DOF"), 1620.f, 500.f, 200.f, 200.f)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_DOF_BlurX"), 1620.f, 700.f, 200.f, 200.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_DOF_Blur_Fin"), 1620.f, 900.f, 200.f, 200.f)))
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_DOF_Blur_Fin"), 1620.f, 700.f, 200.f, 200.f)))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Diffuse"), 1820.f, 100.0f, 200.f, 200.f)))
@@ -957,7 +952,7 @@ HRESULT CRenderer::Render_Font()
 
 HRESULT CRenderer::Render_MotionBlur()
 {
-	/*if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
@@ -976,14 +971,14 @@ HRESULT CRenderer::Render_MotionBlur()
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_MotionBlur"))))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_EMISSIVE))))
+	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_MOTIONBLUR))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBuffer->Render()))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->End_MRT()))
-		return E_FAIL;*/
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -1391,8 +1386,15 @@ HRESULT CRenderer::Render_SSR()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrixInv", &m_pGameInstance->Get_Transform_Float4x4_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Pre_Post_Diffuse"), "g_DiffuseTexture")))
-		return E_FAIL;
+	if (m_isMotionBlur) {
+		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_MotionBlur"), "g_DiffuseTexture")))
+			return E_FAIL;
+	}
+	else {
+		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Pre_Post_Diffuse"), "g_DiffuseTexture")))
+			return E_FAIL;
+	}
+
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Normal"), "g_NormalTexture")))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Depth"), "g_DepthTexture")))
@@ -1453,8 +1455,15 @@ HRESULT CRenderer::Render_DOF()
 			return E_FAIL;
 	}
 	else {
-		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Pre_Post_Diffuse"), "g_Texture")))
-			return E_FAIL;
+		if (m_isMotionBlur) {
+			if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_MotionBlur"), "g_Texture")))
+				return E_FAIL;
+		}
+		else {
+			if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Pre_Post_Diffuse"), "g_Texture")))
+				return E_FAIL;
+		}
+
 	}
 
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_DOF"), "g_DOFTexture")))
@@ -1501,6 +1510,11 @@ HRESULT CRenderer::Render_PostProcessing_Result()
 
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Pre_Post_Diffuse"), "g_DiffuseTexture")))
 		return E_FAIL;
+
+	if (m_isMotionBlur) {
+		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_MotionBlur"), "g_DiffuseTexture")))
+			return E_FAIL;
+	}
 
 	if (m_isSSR) {
 		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_SSR"), "g_DiffuseTexture")))

@@ -30,8 +30,6 @@ texture2D g_AdditionalLightTexture;
 texture2D g_PostprocessingDiffuseTexture;
 texture2D g_PostprocessingShadeTexture;
 
-Texture3D d;
-
 bool g_isRadialBlurActive = { false };
 float2 g_vRadialBlurUV;
 float g_fRadialAmount;
@@ -44,6 +42,7 @@ float		g_fOutCutOff;
 // 현진 추가
 bool g_isSSAO;
 texture2D g_RandomNormalTexture;
+texture2D g_VelocityTexture;
 
 bool g_isShadowDirLight;
 texture2D g_DirLightDepthTexture;
@@ -218,7 +217,7 @@ float4 ConvertoTexcoordToWorldPosition(in float2 uv)
 float doAmbientOcclusion(in float2 tcoord, in float2 uv, in float3 p, in float3 cnorm)
 {
     float3 diff = ConvertoTexcoordToWorldPosition(tcoord + uv);
-    diff = mul(diff, g_ViewMatrix) - p;
+    diff = mul(float4(diff, 1.f), g_ViewMatrix).xyz - p;
     const float3 v = normalize(diff);
     const float d = length(diff) * 0.5; //g_scale
     return max(0.0, dot(cnorm, v) - 0.05) * (1.0 / (1.0 + d)) * 1.5f;
@@ -655,6 +654,39 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
     //float3 scatteringColor = HDR(scatteringColorAndTransmittance.rgb);
 
     //Out.vDiffuse = Out.vDiffuse * float4(scatteringColor, scatteringColorAndTransmittance.a);
+    
+    return Out;
+}
+
+PS_OUT PS_MOTIONBLUR(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+    
+    int iNumBlurSample = 5;
+    
+    float4 vVelocity = g_VelocityTexture.Sample(LinearSamplerClamp, In.vTexcoord);
+    vVelocity.xy /= (float) iNumBlurSample;
+    
+    
+    Out.vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    int iCnt = 1;
+    
+    float4 vColor;
+    
+    for (int i = iCnt; i < iNumBlurSample; ++i)
+    {
+        vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord + vVelocity.xy * (float) i);
+        
+        if (vVelocity.a != 0)
+        {
+            iCnt++;
+            Out.vColor += vColor;
+        }
+
+    }
+    
+    Out.vColor /= (float)iCnt;
+    Out.vColor.a = 1;
     
     return Out;
 }
@@ -1120,7 +1152,7 @@ technique11 DefaultTechnique
         GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
         HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
-        PixelShader = compile ps_5_0 PS_MAIN();     // 고치시오
+        PixelShader = compile ps_5_0 PS_MOTIONBLUR(); // 고치시오
     }
 
     pass BlurX          //  8

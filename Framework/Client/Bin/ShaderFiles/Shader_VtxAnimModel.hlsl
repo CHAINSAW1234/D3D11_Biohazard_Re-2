@@ -80,7 +80,6 @@ VS_OUT VS_MAIN(VS_IN In)
     matWV = mul(g_WorldMatrix, g_ViewMatrix);
     matWVP = mul(matWV, g_ProjMatrix);
 
-
     Out.vPosition = mul(vPosition, matWVP);
     Out.vNormal = normalize(mul(vNormal, g_WorldMatrix));
     Out.vTexcoord = In.vTexcoord;
@@ -90,27 +89,52 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vBinormal = normalize(cross(Out.vNormal, Out.vTangent));
 
     // Velocity 계산
-    //float4 vNewPosition = Out.vPosition;
-    //float4 vOldPosition = mul(vPosition, g_PrevWorldMatrix);
-    //vOldPosition = mul(vOldPosition, g_PrevViewMatrix);
-    //vOldPosition = mul(vOldPosition, g_PrevProjMatrix);
+    float4 vNewPosition = Out.vPosition;
+    float4 vOldPosition = mul(vPosition, g_PrevWorldMatrix);
+    vOldPosition = mul(vOldPosition, g_PrevViewMatrix);
+    vOldPosition = mul(vOldPosition, g_PrevProjMatrix);
     
-    //float3 vDir = vNewPosition.xyz - vOldPosition.xyz;
+    float3 vDir = vNewPosition.xyz - vOldPosition.xyz;
     
-    //float a = dot(normalize(vDir), normalize(Out.vNormal));
-    //if (a < 0.f)
-    //    Out.vPosition = vOldPosition;
-    //else
-    //    Out.vPosition = vNewPosition;
+    float a = dot(normalize(vDir), normalize(Out.vNormal));
+    if (a < 0.f)
+        Out.vPosition = vOldPosition;
+    else
+        Out.vPosition = vNewPosition;
     
-    //float2 vVelocity = (vNewPosition.xy / vNewPosition.w) - (vOldPosition.xy / vOldPosition.w);
-    //Out.vVelocity.xy = vVelocity * 0.5f;
-    //Out.vVelocity.z = Out.vPosition.z;
-    //Out.vVelocity.w = Out.vPosition.w;
+    float2 vVelocity = (vNewPosition.xy / vNewPosition.w) - (vOldPosition.xy / vOldPosition.w);
+    Out.vVelocity.xy = vVelocity * 0.5f;
+    Out.vVelocity.z = Out.vPosition.z;
+    Out.vVelocity.w = Out.vPosition.w;
     
-    
+    return Out;
+}
 
+/* 정점 쉐이더 */
+VS_OUT VS_LIGHT(VS_IN In)
+{
+    VS_OUT Out = (VS_OUT) 0;
+
+    //  float fWeightW = 1.f - (In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z);
+    //  float fTotalWeight = In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z + In.vBlendWeights.w;
+    float fTotalWeight = 1.f;
     
+    matrix BoneMatrix = g_BoneMatrices[In.vBlendIndices.x] * In.vBlendWeights.x / fTotalWeight +
+		g_BoneMatrices[In.vBlendIndices.y] * In.vBlendWeights.y / fTotalWeight +
+		g_BoneMatrices[In.vBlendIndices.z] * In.vBlendWeights.z / fTotalWeight +
+		g_BoneMatrices[In.vBlendIndices.w] * In.vBlendWeights.w / fTotalWeight;
+
+    vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
+    vector vNormal = mul(vector(In.vNormal, 0.f), BoneMatrix);
+
+    matrix matWV, matWVP;
+
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
+
+    Out.vPosition = mul(vPosition, matWVP);
+    Out.vTexcoord = In.vTexcoord;
+
     return Out;
 }
 
@@ -197,8 +221,8 @@ struct PS_OUT
     float4 vNormal : SV_TARGET1;
     float4 vDepth : SV_TARGET2;
     float4 vMaterial : SV_TARGET3;
-    //float4 vVelocity : SV_TARGET4;
-    float4 vOrigin : SV_TARGET4;
+    float4 vVelocity : SV_TARGET4;
+    float4 vOrigin : SV_TARGET5;
 };
 
 struct PS_OUT_EMISSIVE
@@ -228,7 +252,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vMaterial.r = vMtrlDiffuse.a;
     Out.vMaterial.g = vNormalDesc.a;
     Out.vOrigin = vector(1.f, 0.f, 0.f, 1.f);
-   // Out.vVelocity = vector(In.vVelocity.xy, 1, In.vVelocity.z / In.vVelocity.w);
+    Out.vVelocity = vector(In.vVelocity.xy, 1, In.vVelocity.z / In.vVelocity.w);
     
     return Out;
 }
@@ -254,7 +278,7 @@ PS_OUT PS_MAIN_ATOS(PS_IN In)
     Out.vMaterial.r = vMtrlDiffuse.a;
     Out.vMaterial.g = vNormalDesc.a;
     Out.vOrigin = vector(1.f, 0.f, 0.f, 1.f);
-    //Out.vVelocity = vector(In.vVelocity.xy, 1, In.vVelocity.z / In.vVelocity.w);
+    Out.vVelocity = vector(In.vVelocity.xy, 1, In.vVelocity.z / In.vVelocity.w);
     if (0.01f >= Out.vDiffuse.a)
         discard;
 	
@@ -312,7 +336,7 @@ PS_OUT_LIGHTDEPTH PS_MAIN_LIGHTDEPTH(PS_IN In)
 {
     PS_OUT_LIGHTDEPTH Out = (PS_OUT_LIGHTDEPTH) 0;
 
-    Out.vLightDepth = float4(In.vProjPos.w / 1000.f, 0.f, 0.f, 0.f);
+    Out.vLightDepth = float4(In.vPosition.w / 1000.f, 0.f, 0.f, 0.f);
 
     return Out;
 }
@@ -376,7 +400,7 @@ technique11 DefaultTechnique
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
-        VertexShader = compile vs_5_0 VS_MAIN();
+        VertexShader = compile vs_5_0 VS_LIGHT();
         GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
         HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
