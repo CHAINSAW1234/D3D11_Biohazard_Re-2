@@ -76,8 +76,8 @@ private:	/* For.IK_Constraint */
 	_float2									Find_Nearest_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition);
 	_float2									Find_Initial_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition);
 	_float2									Find_Next_Point_Constraints(_float2 vCurrentPoint, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
-	_float2									Compute_Delta_Constratins(_float2 vCurrentPosition, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
-	_float4x4								Compute_QMatrix(_float2 vCurrentPosition, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
+	_float2									Compute_Delta_Constratins(_float2 vCurrentPoint, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
+	_float4x4								Compute_QMatrix(_float2 vCurrentPoint, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
 
 private:
 	_vector									Compute_Quaternion_From_TwoDirection(_fvector vSrcDirection, _fvector vDstDirection);
@@ -150,6 +150,7 @@ private:
 
 public:
 	HRESULT									Bind_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
+	HRESULT									Bind_Pre_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 	HRESULT									Bind_ShaderResource_Texture(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eTextureType);
 	HRESULT									Bind_ShaderResource_MaterialDesc(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 

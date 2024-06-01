@@ -479,7 +479,7 @@ void CModel::Solve_IK_Forward(IK_INFO& IkInfo)
 			//	쎄타, 첫 위치, 관절타입, 오리엔테이션 기록됨...
 			//	자식뼈, 쎄타, 첫 위치 ( length로 저장 constranints 측에서 ), 제한 조건 ( 관절 타입 자식뼈의 인덱스상... ), 오리엔테이션 ( 회전량 자식뼈 ...)
 			//	자식뼈 인덱스( IkInfo 상에서 ... ),
-			Rotational_Constranit(IkInfo, i + 1, i);
+			//	Rotational_Constranit(IkInfo, i + 1, i);
 		}
 	}
 }
@@ -524,7 +524,7 @@ void CModel::Solve_For_Orientation_IK(IK_INFO& IkInfo, _int iOuterJointIndex, _i
 	if (fNeededRotation <= IkInfo.BoneOrientationLimits[iOuterJointIndex])
 	{
 		//	회전자( 부무관절 회전량 - 자식 관절 회전량 ) + 자식관절 회전량 => 기존 회전량
-		_vector		vResultInnerJointOrientation = { XMQuaternionMultiply(vRotor, vOuterJointOrientaion) };
+		_vector		vResultInnerJointOrientation = { XMQuaternionMultiply(vOuterJointOrientaion, vRotor) };
 		XMStoreFloat4(&IkInfo.BoneOrientations[iInnerJointIndex], vResultInnerJointOrientation);
 	}
 	else
@@ -533,11 +533,14 @@ void CModel::Solve_For_Orientation_IK(IK_INFO& IkInfo, _int iOuterJointIndex, _i
 		_float		fLimitAngle = { IkInfo.BoneOrientationLimits[iOuterJointIndex] };
 
 		//	쿼터니언에서 w성분을 지움 => 쿼터니언의 회전 축 방향벡터
-		_vector		vRotationAxis = { XMVector3Normalize(XMVectorSetW(vRotor, 0.f)) };
-		_vector		vLimitedRotor = { XMQuaternionRotationAxis(vRotationAxis, fLimitAngle) };
+		_vector		vLimitedOriendtation = {XMVectorSet(
+			XMVectorGetX(vRotor) / (1 / sqrtf(1.f - powf(XMVectorGetW(vRotor),2.f) * sinf(fLimitAngle *0.5f))),
+			XMVectorGetY(vRotor) / (1 / sqrtf(1.f - powf(XMVectorGetW(vRotor),2.f) * sinf(fLimitAngle *0.5f))),
+			XMVectorGetZ(vRotor) / (1 / sqrtf(1.f - powf(XMVectorGetW(vRotor),2.f) * sinf(fLimitAngle *0.5f))),
+			cosf(fLimitAngle * 0.5f))
+		};
 
-		_vector		vResultInnerJointOrientation = XMQuaternionMultiply(vLimitedRotor, vOuterJointOrientaion);
-		XMStoreFloat4(&IkInfo.BoneOrientations[iInnerJointIndex], vResultInnerJointOrientation);
+		XMStoreFloat4(&IkInfo.BoneOrientations[iInnerJointIndex], vLimitedOriendtation);
 	}
 }
 
@@ -546,7 +549,7 @@ void CModel::Rotational_Constranit(IK_INFO& IkInfo, _int iOuterJointIndex, _int 
 	//	자식
 	_vector		p_i = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex]) };
 	//	자식의 자식
-	_vector		p_before = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex -1]) };
+	_vector		p_before = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex - 1]) };
 	//	나
 	_vector		p_next = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex + 1]) };
 
@@ -555,9 +558,9 @@ void CModel::Rotational_Constranit(IK_INFO& IkInfo, _int iOuterJointIndex, _int 
 	/*_vector		vDirectionToParent = { v_i_next * -1.f };
 	_vector		vDirectionFromGrandParentToParent = { p_i - p_before };*/
 
-	//	# a unit vector of a line passing  from p(i+1) and P(i)
 	_float		s = { XMVectorGetX(XMVector3Dot(v_i_next, v_before_i)) };
 
+	//	# a unit vector of a line passing  from p(i+1) and P(i)
 	//	내가 자식을 바라보는 벡터
 	_float		l_next_i = { XMVectorGetX(XMVector3Length(p_next - p_i)) };
 	_vector		unit_vec_next_i = { XMVector3Normalize(p_i - p_next) };
@@ -957,8 +960,8 @@ _bool CModel::Is_InBound(CONIC_SECTION eSection, _fvector vQ, _float2 vTarget)
 
 _float2 CModel::Find_Nearest_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition)
 {
-	_float2			vInitialPoint = Find_Initial_Point_Constraints(fMinorAxisLength, fMinorAxisLength, eSection, vTargetPosition);
-	_float			fThresh = 0.001f;
+	_float2			vInitialPoint = Find_Initial_Point_Constraints(fMajorAxisLength, fMinorAxisLength, eSection, vTargetPosition);
+	_float			fThresh = 0.1f;
 
 	_float2			vResultPoint = Find_Next_Point_Constraints(vInitialPoint, fMajorAxisLength, fMinorAxisLength, vTargetPosition);
 	while (vResultPoint.x > fThresh || vResultPoint.y > fThresh)
@@ -968,9 +971,10 @@ _float2 CModel::Find_Nearest_Point_Constraints(_float fMajorAxisLength, _float f
 
 	return vResultPoint;
 }
-
+//	eccentricity( 이심룰 ) => 타원이 원에 비해 얼마나 찌그러졌는지
 _float2 CModel::Find_Initial_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition)
 {
+	
 	_float2			vK1 = {
 		vTargetPosition.x * fMajorAxisLength * fMinorAxisLength / sqrtf(powf(fMinorAxisLength, 2.f) * powf(vTargetPosition.x, 2.f) + powf(fMajorAxisLength, 2.f) * powf(vTargetPosition.y, 2.f)),
 		vTargetPosition.y * fMajorAxisLength * fMinorAxisLength / sqrtf(powf(fMinorAxisLength, 2.f) * powf(vTargetPosition.x, 2.f) + powf(fMajorAxisLength, 2.f) * powf(vTargetPosition.y, 2.f))
@@ -984,18 +988,21 @@ _float2 CModel::Find_Initial_Point_Constraints(_float fMajorAxisLength, _float f
 	{
 		vK2 = {
 			vTargetPosition.x,
-			iSign_Y * (fMajorAxisLength / fMajorAxisLength) * sqrtf(powf(fMajorAxisLength, 2.f) - powf(vTargetPosition.x, 2.f))
+			iSign_Y * (fMinorAxisLength / fMajorAxisLength) * sqrtf(powf(fMajorAxisLength, 2.f) - powf(vTargetPosition.x, 2.f))
 		};
 	}
 	else
 	{
 		vK2 = {
-			fMajorAxisLength * iSign_X,
+			fMajorAxisLength * iSign_X * fMajorAxisLength,
 			0.f
 		};
 	}
 
-	_float2		vInitialPoint = { 0.5f * (vK1.x + vK2.x), 0.5f * (vK1.y + vK2.y) };
+	_float2		vInitialPoint = { 
+		0.5f * (vK1.x + vK2.x), 
+		0.5f * (vK1.y + vK2.y) 
+	};
 
 	return vInitialPoint;
 }
@@ -1011,14 +1018,14 @@ _float2 CModel::Find_Next_Point_Constraints(_float2 vCurrentPoint, _float fMajor
 	return vResultPoint;
 }
 
-_float2 CModel::Compute_Delta_Constratins(_float2 vCurrentPosition, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition)
+_float2 CModel::Compute_Delta_Constratins(_float2 vCurrentPoint, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition)
 {
 	_vector		vF = XMVectorSet(
-		(powf(fMajorAxisLength, 2.f) * powf(vCurrentPosition.y, 2.f) + powf(fMinorAxisLength, 2.f) * powf(vCurrentPosition.x, 2.f) - powf(fMajorAxisLength, 2.f) * powf(fMinorAxisLength, 2.f)) * 0.5f,
-		powf(fMinorAxisLength, 2.f) * vCurrentPosition.x * (vTargetPosition.y - vCurrentPosition.y) - powf(fMajorAxisLength, 2.f) * vCurrentPosition.y * (vTargetPosition.x - vCurrentPosition.x),
+		(powf(fMajorAxisLength, 2.f) * powf(vCurrentPoint.y, 2.f) + powf(fMinorAxisLength, 2.f) * powf(vCurrentPoint.x, 2.f) - powf(fMajorAxisLength, 2.f) * powf(fMinorAxisLength, 2.f)) * 0.5f,
+		powf(fMinorAxisLength, 2.f) * vCurrentPoint.x * (vTargetPosition.y - vCurrentPoint.y) - powf(fMajorAxisLength, 2.f) * vCurrentPoint.y * (vTargetPosition.x - vCurrentPoint.x),
 		0, 0);
 
-	_matrix		QMatrix = XMLoadFloat4x4(&Compute_QMatrix(vCurrentPosition, fMajorAxisLength, fMinorAxisLength, vTargetPosition));
+	_matrix		QMatrix = XMLoadFloat4x4(&Compute_QMatrix(vCurrentPoint, fMajorAxisLength, fMinorAxisLength, vTargetPosition));
 	_vector		vDet = XMMatrixDeterminant(QMatrix);
 	_matrix		QMatrixInv = XMMatrixInverse(&vDet, QMatrix);
 
@@ -1028,14 +1035,19 @@ _float2 CModel::Compute_Delta_Constratins(_float2 vCurrentPosition, _float fMajo
 	return vDeltaFloat2;
 }
 
-_float4x4 CModel::Compute_QMatrix(_float2 vCurrentPosition, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition)
+_float4x4 CModel::Compute_QMatrix(_float2 vCurrentPoint, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition)
 {
 	_float4x4		QFloat4x4 = {};
 
-	QFloat4x4.m[0][0] = fMinorAxisLength * fMinorAxisLength * vCurrentPosition.x;
-	QFloat4x4.m[0][1] = fMajorAxisLength * fMajorAxisLength * vCurrentPosition.y;
-	QFloat4x4.m[1][0] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPosition.y + fMinorAxisLength * fMinorAxisLength * vTargetPosition.y;
-	QFloat4x4.m[1][1] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPosition.x - fMajorAxisLength * fMajorAxisLength * vTargetPosition.x;
+	QFloat4x4.m[0][0] = fMinorAxisLength * fMinorAxisLength * vCurrentPoint.x;
+	QFloat4x4.m[0][1] = fMajorAxisLength * fMajorAxisLength * vCurrentPoint.y;
+	QFloat4x4.m[1][0] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.y + fMinorAxisLength * fMinorAxisLength * vTargetPosition.y;
+	QFloat4x4.m[1][1] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.x - fMajorAxisLength * fMajorAxisLength * vTargetPosition.x;
+
+	QFloat4x4.m[0][0] = fMinorAxisLength * fMinorAxisLength * vCurrentPoint.x;
+	QFloat4x4.m[1][0] = fMajorAxisLength * fMajorAxisLength * vCurrentPoint.y;
+	QFloat4x4.m[0][1] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.y + fMinorAxisLength * fMinorAxisLength * vTargetPosition.y;
+	QFloat4x4.m[1][1] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.x - fMajorAxisLength * fMajorAxisLength * vTargetPosition.x;
 
 	return QFloat4x4;
 }
@@ -1741,6 +1753,15 @@ HRESULT CModel::Bind_BoneMatrices(CShader* pShader, const _char* pConstantName, 
 	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, 512);
 }
 
+HRESULT CModel::Bind_Pre_BoneMatrices(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
+{
+	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * 512);
+
+	m_Meshes[iMeshIndex]->Stock_Pre_Matrices(m_Bones, m_MeshBoneMatrices);
+
+	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, 512);
+}
+
 HRESULT CModel::Bind_ShaderResource_Texture(CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eTextureType)
 {
 	if (iMeshIndex >= m_iNumMeshes)
@@ -1776,6 +1797,13 @@ HRESULT CModel::Bind_ShaderResource_MaterialDesc(CShader* pShader, const _char* 
 
 HRESULT CModel::Play_Animations(_float fTimeDelta)
 {
+	for (auto& pBone : m_Bones)
+	{
+		_matrix			PreCombinedMatrix = { XMLoadFloat4x4(pBone->Get_CombinedTransformationMatrix()) };
+
+		pBone->Set_Pre_CombinedMatrix(PreCombinedMatrix);
+	}
+
 	_uint		iPlayingIndex = { 0 };
 	for (auto& AnimInfo : m_PlayingAnimInfos)
 	{
@@ -1812,6 +1840,12 @@ HRESULT CModel::Play_Animations(_float fTimeDelta)
 
 HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection)
 {
+	for (auto& pBone : m_Bones)
+	{
+		_matrix			PreCombinedMatrix = { XMLoadFloat4x4(pBone->Get_CombinedTransformationMatrix()) };
+
+		pBone->Set_Pre_CombinedMatrix(PreCombinedMatrix);
+	}
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////MOTION_BLEND////////////////////////////
