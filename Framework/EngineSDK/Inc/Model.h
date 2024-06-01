@@ -10,10 +10,10 @@ BEGIN(Engine)
 class ENGINE_DLL CModel final : public CComponent
 {
 public:
-#include "Model_Struct.h"
+#include "Model_Enums.h"
 
 public:
-#include "Model_Enums.h"
+#include "Model_Struct.h"
 
 private:
 	CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -56,16 +56,31 @@ public:
 	vector<_float4>							Get_OriginTranslation_IK(const wstring& strIKTag);
 	vector<_float4x4>						Get_JointCombinedMatrices_IK(const wstring& strIKTag);
 	
-private:
+private:	/* For.IK */
 	void									Apply_IK(class CTransform* pTransform, IK_INFO& IkInfo);
 	void									Update_Distances_Translations_IK(IK_INFO& IkInfo);
+	void									Solve_IK(IK_INFO& IkInfo);
+	void									Solve_IK_Forward(IK_INFO& IkInfo);
+	void									Solve_IK_Backward(IK_INFO& IkInfo);
+	void									Solve_For_Distance_IK(IK_INFO& IkInfo, _int iSrcJointIndex, _int iDstJointIndex);
+	void									Solve_For_Orientation_IK(IK_INFO& IkInfo, _int iOuterJointIndex, _int iInnerJointIndex);
+	void 									Rotational_Constranit(IK_INFO& IkInfo, _int iOuterJointIndex, _int iMyJointIndex);
 	void									Update_Forward_Reaching_IK(IK_INFO& IkInfo);
 	void									Update_Backward_Reaching_IK(IK_INFO& IkInfo);
 	void									Update_TransformMatrices_BoneChain(IK_INFO& IkInfo);
 	void									Update_CombinedMatrices_BoneChain(IK_INFO& IkInfo);
 
+private:	/* For.IK_Constraint */
+	CONIC_SECTION							Find_ConicSection(_float fTheta);
+	_bool									Is_InBound(CONIC_SECTION eSection, _fvector vQ, _float2 vTarget);
+	_float2									Find_Nearest_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition);
+	_float2									Find_Initial_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition);
+	_float2									Find_Next_Point_Constraints(_float2 vCurrentPoint, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
+	_float2									Compute_Delta_Constratins(_float2 vCurrentPoint, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
+	_float4x4								Compute_QMatrix(_float2 vCurrentPoint, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
+
 private:
-	_vector Compute_Quaternion_From_TwoDirection(_fvector vSrcDirection, _fvector vDstDirection);
+	_vector									Compute_Quaternion_From_TwoDirection(_fvector vSrcDirection, _fvector vDstDirection);
 
 public:		/* For.Bone_Layer */
 	void									Add_Bone_Layer(const wstring& strLayerTag, list<_uint> BoneIndices);
@@ -135,6 +150,7 @@ private:
 
 public:
 	HRESULT									Bind_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
+	HRESULT									Bind_Pre_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 	HRESULT									Bind_ShaderResource_Texture(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eTextureType);
 	HRESULT									Bind_ShaderResource_MaterialDesc(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 

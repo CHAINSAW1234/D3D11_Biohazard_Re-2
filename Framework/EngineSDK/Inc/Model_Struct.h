@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Model_Enums.h"
+
 typedef struct tagAnimPlayingDesc
 {
 	_int					iAnimIndex = { -1 };
@@ -33,8 +35,14 @@ typedef struct tagIK_Info
 	_float4					vTargetJointStartTranslation;
 	_float4					vEndEffectorResultPosition;
 
+	vector<_uint>			JointTypes;
+
+	vector<_float>			BoneOrientationLimits;
+	vector<_float4>			BoneOrientations;
+	vector<_float4>			BoneThetas;
 	vector<_float>			TargetDistancesToChild;
 	vector<_float>			TargetDistancesToParrent;
-	vector<_float4>			BoneTranslations;
+	vector<_float4>			BoneTranslationsResult;
 	vector<_float4>			BoneTranslationsOrigin;
 }IK_INFO;
+

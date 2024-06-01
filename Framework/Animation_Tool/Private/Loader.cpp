@@ -117,7 +117,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	m_strLoadingText = TEXT("모델를(을) 로딩 중 입니다.");
 
 	_matrix			TransformMatrix = { XMMatrixIdentity() };
-	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(0.f));
 
 	/* Prototype_Component_police_holl */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_police_holl"),

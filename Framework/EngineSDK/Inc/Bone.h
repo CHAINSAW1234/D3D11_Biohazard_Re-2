@@ -44,6 +44,14 @@ public:
 		return &m_CombinedTransformationMatrix;
 	}
 
+	const _float4x4*		Get_Pre_CombinedTransformationMatrix() const {
+		return &m_PreCombinedTransformationMatrix;
+	}
+
+	void Set_Pre_CombinedMatrix(_fmatrix PreCombiendMatrix) {
+		XMStoreFloat4x4(&m_PreCombinedTransformationMatrix, PreCombiendMatrix);
+	}
+
 	const _float4			Get_Translation() 
 	{
 		_vector vScale, vRotation, vTrans;
@@ -92,6 +100,7 @@ private:
 	_float4x4				m_TransformationMatrix;
 
 	_float4x4				m_CombinedTransformationMatrix;
+	_float4x4				m_PreCombinedTransformationMatrix;
 
 	_int					m_iParentBoneIndex = { -1 };
 	_bool					m_isRootBone = { false };

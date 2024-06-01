@@ -166,6 +166,21 @@ HRESULT CMesh::Stock_Matrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneM
 	return S_OK;
 }
 
+HRESULT CMesh::Stock_Pre_Matrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneMatrices)
+{
+	for (_uint i = 0; i < m_iNumBones; ++i)
+	{
+		_matrix OffsetMatrix = XMLoadFloat4x4(&m_OffsetMatrices[i]);
+		_matrix CombinedMatrix = XMLoadFloat4x4(Bones[m_Bones[i]]->Get_Pre_CombinedTransformationMatrix());
+
+		_matrix BoneMatrix = OffsetMatrix * CombinedMatrix;
+
+		XMStoreFloat4x4(&pMeshBoneMatrices[i], BoneMatrix);
+	}
+
+	return S_OK;
+}
+
 HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const aiMesh* pAIMesh, _fmatrix TransformationMatrix)
 {
 	m_iVertexStride = sizeof(VTXMESH);
