@@ -202,9 +202,6 @@
     <Filter Include="01.Utility\10.Frustum">
       <UniqueIdentifier>{54d3a672-c27f-4d9e-960a-975978b721b7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\10.Picking">
-      <UniqueIdentifier>{03ba2e75-dc70-407d-bed1-fb1939c7f9dc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\02.Components\Model\Animator">
       <UniqueIdentifier>{05f7b535-efa3-4f05-900a-9a85395f1e0a}</UniqueIdentifier>
     </Filter>
@@ -234,6 +231,9 @@
     </Filter>
     <Filter Include="01.Utility\02.Components\Shader\ComputeShader">
       <UniqueIdentifier>{bfea47f1-f03f-466f-9d2d-30c27c0eaaa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\10.Picking">
+      <UniqueIdentifier>{03ba2e75-dc70-407d-bed1-fb1939c7f9dc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

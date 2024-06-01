@@ -36,7 +36,7 @@ public:
     int32_t						find_joint_index(const std::string& channel_name);
 
     inline uint32_t				num_bones() { return m_num_joints; }
-    inline class Joint*			joints() { return &m_joints[0]; }
+    inline struct Joint*		joints() { return &m_joints[0]; }
 
 private:
     void						build_bone_list(aiNode* node, const aiScene* scene, std::vector<aiBone*>& temp_bone_list, std::unordered_set<std::string>& bone_map);

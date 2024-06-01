@@ -58,6 +58,13 @@ HRESULT CTarget_Manager::Add_RenderTarget_3D(const wstring& strRenderTargetTag, 
 	return S_OK;
 }
 
+HRESULT CTarget_Manager::Clear_RenderTarget_All()
+{
+	for (auto& pRenderTarget : m_RenderTargets)
+		pRenderTarget.second->Clear();
+	return S_OK;
+}
+
 HRESULT CTarget_Manager::Clear_RenderTarget(const wstring& strRenderTargetTag)
 {
 	CRenderTarget* pRenderTarget = Find_RenderTarget(strRenderTargetTag);
@@ -109,7 +116,7 @@ HRESULT CTarget_Manager::Begin_MRT(const wstring & strMRTTag, ID3D11DepthStencil
 
 	for (auto& pRenderTarget : *pTargetList)
 	{
-		pRenderTarget->Clear();
+		//pRenderTarget->Clear();
 		pRenderTargets[iNumRenderTargets++] = pRenderTarget->Get_RTV();
 	}
 

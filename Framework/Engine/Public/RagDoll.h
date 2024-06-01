@@ -41,7 +41,7 @@ class ENGINE_DLL AnimRagdoll : public CBase
 public:
     AnimRagdoll(Skeleton* skeleton);
     ~AnimRagdoll();
-    class PoseTransforms* apply(CRagdoll* ragdoll, _matrix model_scale, _matrix model_rotation);
+    struct PoseTransforms* apply(CRagdoll* ragdoll, _matrix model_scale, _matrix model_rotation);
 
 private:
     Skeleton*       m_skeleton;

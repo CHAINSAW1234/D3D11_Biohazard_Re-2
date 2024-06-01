@@ -150,7 +150,7 @@ private:
 
 public:
 	HRESULT									Bind_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
-	HRESULT									Bind_Pre_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
+	HRESULT									Bind_PrevBoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 	HRESULT									Bind_ShaderResource_Texture(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eTextureType);
 	HRESULT									Bind_ShaderResource_MaterialDesc(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 
@@ -223,7 +223,7 @@ private:
 	_uint									m_iNumAnimations = { 0 };
 	vector<class CAnimation*>				m_Animations;
 
-	_float4x4								m_MeshBoneMatrices[512];
+	_float4x4								m_MeshBoneMatrices[256];
 
 private:	/* For.Blend_Animation */
 	vector<ANIM_PLAYING_INFO>				m_PlayingAnimInfos;

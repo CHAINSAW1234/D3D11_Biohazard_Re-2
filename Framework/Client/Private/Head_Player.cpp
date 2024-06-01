@@ -121,6 +121,9 @@ HRESULT CHead_Player::Render()
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
 
+		if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
+			return E_FAIL;
+
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS))) {
 			if (FAILED(m_pShaderCom->Begin(0)))
 				return E_FAIL;
@@ -288,6 +291,10 @@ HRESULT CHead_Player::Add_Components()
 HRESULT CHead_Player::Bind_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	_bool isMotionBlur = m_pGameInstance->Get_ShaderState(MOTION_BLUR);
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_isMotionBlur", &isMotionBlur, sizeof(_bool))))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))

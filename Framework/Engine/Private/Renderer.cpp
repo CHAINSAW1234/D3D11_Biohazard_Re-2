@@ -67,11 +67,18 @@ HRESULT CRenderer::Render()
 {
 	// for test
 	if (m_pGameInstance->Get_KeyState('1') == DOWN)
-		m_isSSAO = !m_isSSAO;
+		m_ShaderOptions[SSAO] = !m_ShaderOptions[SSAO];
 	if (m_pGameInstance->Get_KeyState('2') == DOWN)
-		m_isSSR = !m_isSSR;
+		m_ShaderOptions[MOTION_BLUR] = !m_ShaderOptions[MOTION_BLUR];
 	if (m_pGameInstance->Get_KeyState('3') == DOWN)
-		m_isDOF = !m_isDOF;
+		m_ShaderOptions[SSR] = !m_ShaderOptions[SSR];
+	if (m_pGameInstance->Get_KeyState('4') == DOWN)
+		m_ShaderOptions[DOF] = !m_ShaderOptions[DOF];
+	if (m_pGameInstance->Get_KeyState('5') == DOWN)
+		m_ShaderOptions[FXAA] = !m_ShaderOptions[FXAA];
+
+	if(FAILED(m_pGameInstance->Clear_RenderTarget_All()))
+		return E_FAIL;
 
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
@@ -121,8 +128,13 @@ HRESULT CRenderer::Render()
 	//if (FAILED(Render_PostProcessing()))
 	//	return E_FAIL;
 
+
+	if (FAILED(Render_FXAA()))
+		return E_FAIL;
+
 	if (FAILED(Render_PostProcessing_Result()))
 		return E_FAIL;
+
 
 	//if (FAILED(Render_Non_PostProcessing()))
 	//	return E_FAIL;
@@ -169,6 +181,22 @@ void CRenderer::Off_RadialBlur()
 	m_isRadialBlurActive = false;
 }
 
+_bool CRenderer::Get_ShaderState(SHADER_STATE eState)
+{
+	if (eState >= SHADER_STATE_END)
+		return false;
+
+	return m_ShaderOptions[eState];
+}
+
+void CRenderer::Set_ShaderState(SHADER_STATE eState, _bool isState)
+{
+	if (eState >= SHADER_STATE_END)
+		return;
+
+	m_ShaderOptions[eState] = isState;
+}
+
 HRESULT CRenderer::SetUp_RenderTargets()
 {
 	_uint				iNumViewports = { 1 };
@@ -192,6 +220,8 @@ HRESULT CRenderer::SetUp_RenderTargets()
 		return E_FAIL;
 	if (FAILED(SetUp_RenderTargets_DOF(ViewportDesc)))
 		return E_FAIL;
+	if (FAILED(SetUp_RenderTargets_FXAA(ViewportDesc)))
+		return E_FAIL;
 	if (FAILED(SetUp_RenderTargets_Distortion(ViewportDesc)))
 		return E_FAIL;
 	if (FAILED(SetUp_RenderTargets_Emissive(ViewportDesc)))
@@ -200,7 +230,8 @@ HRESULT CRenderer::SetUp_RenderTargets()
 		return E_FAIL;
 	if (FAILED(SetUp_RenderTargets_PostProcessing_Result(ViewportDesc)))
 		return E_FAIL;
-
+	if (FAILED(SetUp_RenderTarget_SubResult(ViewportDesc)))
+		return E_FAIL;
 	//if (FAILED(SetUp_Test()))
 	//	return E_FAIL;
 
@@ -209,85 +240,14 @@ HRESULT CRenderer::SetUp_RenderTargets()
 
 HRESULT CRenderer::SetUp_MRTs()
 {
-	/* MRT_GameObjects : 객체들의 특정 정보를 받아오기위한 렌더타겟들이다. */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Normal"))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Depth"))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Material"))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Velocity"))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Origin"))))
-		return E_FAIL;
 
-	/* MRT_SSAO : SSAO적용시 블러를 먹이기 위해 생성. */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_SSAO_Shade_BlurX"), TEXT("Target_SSAO_Shade_BlurX"))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_SSAO_Shade_Blur_Fin"), TEXT("Target_SSAO_Shade_Blur_Fin"))))
-		return E_FAIL;
 
-	/* MRT_LightAcc : 빛들의 연산결과 정보를 받아오기위한 렌더타겟들이다. */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
-		return E_FAIL;
 
-	/* MRT_Shadow_Dir : Directional Light 그림자 연산을 위한 렌더 타겟. */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow_Dir"), TEXT("Target_LightDepth_Dir"))))
-		return E_FAIL;
-	/* MRT_Shadow_Point : Point Light 그림자 연산을 위한 렌더 타겟. */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow_Point"), TEXT("Target_LightDepth_Point"))))
-		return E_FAIL;
-	/* MRT_Shadow_Spot : Spot Light 그림자 연산을 위한 렌더 타겟. */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow_Spot"), TEXT("Target_LightDepth_Spot"))))
-		return E_FAIL;
 
-	/* MRT_Pre_PostProcessing : 그림자, 빛연산을 통해 PreProcess의 최종 연산 */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Pre_PostProcessing"), TEXT("Target_Pre_Post_Diffuse"))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Pre_PostProcessing"), TEXT("Target_Pre_Post_Normal"))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Pre_PostProcessing"), TEXT("Target_Pre_Post_Depth"))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Pre_PostProcessing"), TEXT("Target_Pre_Post_Material"))))
-		return E_FAIL;
 
-	/* MRT_MotionBlur : 모션 블러 적용 */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_MotionBlur"), TEXT("Target_MotionBlur"))))
-		return E_FAIL;
 
-	/* MRT_Distortion */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Distortion"), TEXT("Target_Distortion"))))
-		return E_FAIL;
 
-	/* MRT_Emissive */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Emissive"), TEXT("Target_Emissive"))))
-		return E_FAIL;
 
-	/* MRT_PostProcessing : 포스트 프로세싱 */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_PostProcessing"), TEXT("Target_PostProcessing_Diffuse"))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_PostProcessing"), TEXT("Target_PostProcessing_Shade"))))
-		return E_FAIL;
-
-	/* MRT_PostProcessing_Result */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_PostProcessing_Result"), TEXT("Target_PostProcessing_Result"))))
-		return E_FAIL;
-
-	/* MRT_SSR : SSR 적용을 위한 렌더 타겟 */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_SSR"), TEXT("Target_SSR"))))
-		return E_FAIL;
-
-	/* MRT_DOF : DOF 적용을 위한 렌더 타겟 */
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_DOF"), TEXT("Target_DOF"))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_DOF_BlurX"), TEXT("Target_DOF_BlurX"))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_DOF_Blur_Fin"), TEXT("Target_DOF_Blur_Fin"))))
-		return E_FAIL;
 
 	return S_OK;
 }
@@ -443,6 +403,20 @@ HRESULT CRenderer::SetUp_RenderTargets_GameObjects(const D3D11_VIEWPORT& Viewpor
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Origin"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
+	/* MRT_GameObjects : 객체들의 특정 정보를 받아오기위한 렌더타겟들이다. */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Normal"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Depth"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Material"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Velocity"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Origin"))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -455,6 +429,12 @@ HRESULT CRenderer::SetUp_RenderTargets_LightAcc(const D3D11_VIEWPORT& ViewportDe
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Specular"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
+	/* MRT_LightAcc : 빛들의 연산결과 정보를 받아오기위한 렌더타겟들이다. */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Shade"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LightAcc"), TEXT("Target_Specular"))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -465,6 +445,12 @@ HRESULT CRenderer::SetUp_RenderTargets_SSAO(const D3D11_VIEWPORT& ViewportDesc)
 		return E_FAIL;
 	/* For.Target_SSAO_Shade_Blur_Fin */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_SSAO_Shade_Blur_Fin"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.f, 0.f, 0.f, 1.f))))
+		return E_FAIL;
+
+	/* MRT_SSAO : SSAO적용시 블러를 먹이기 위해 생성. */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_SSAO_Shade_BlurX"), TEXT("Target_SSAO_Shade_BlurX"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_SSAO_Shade_Blur_Fin"), TEXT("Target_SSAO_Shade_Blur_Fin"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -480,6 +466,16 @@ HRESULT CRenderer::SetUp_RenderTargets_Shadow(const D3D11_VIEWPORT& ViewportDesc
 		return E_FAIL;
 	/* For.Target_LightDepth_Spot */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_LightDepth_Spot"), static_cast<_uint>(m_fLightDepthTargetViewWidth), static_cast<_uint>(m_fLightDepthTargetViewHeight), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+
+	/* MRT_Shadow_Dir : Directional Light 그림자 연산을 위한 렌더 타겟. */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow_Dir"), TEXT("Target_LightDepth_Dir"))))
+		return E_FAIL;
+	/* MRT_Shadow_Point : Point Light 그림자 연산을 위한 렌더 타겟. */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow_Point"), TEXT("Target_LightDepth_Point"))))
+		return E_FAIL;
+	/* MRT_Shadow_Spot : Spot Light 그림자 연산을 위한 렌더 타겟. */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow_Spot"), TEXT("Target_LightDepth_Spot"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -501,6 +497,16 @@ HRESULT CRenderer::SetUp_RenderTargets_Pre_PostProcessing(const D3D11_VIEWPORT& 
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Pre_Post_Material"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
+	/* MRT_Pre_PostProcessing : 그림자, 빛연산을 통해 PreProcess의 최종 연산 */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Pre_PostProcessing"), TEXT("Target_Pre_Post_Diffuse"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Pre_PostProcessing"), TEXT("Target_Pre_Post_Normal"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Pre_PostProcessing"), TEXT("Target_Pre_Post_Depth"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Pre_PostProcessing"), TEXT("Target_Pre_Post_Material"))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -510,6 +516,10 @@ HRESULT CRenderer::SetUp_RenderTargets_Distortion(const D3D11_VIEWPORT& Viewport
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Distortion"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.5f, 0.5f, 0.5f, 0.f))))
 		return E_FAIL;
 
+	/* MRT_Distortion */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Distortion"), TEXT("Target_Distortion"))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -517,6 +527,10 @@ HRESULT CRenderer::SetUp_RenderTargets_Emissive(const D3D11_VIEWPORT& ViewportDe
 {
 	/* For.Target_Emissive */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Emissive"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
+	/* MRT_Emissive */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Emissive"), TEXT("Target_Emissive"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -531,6 +545,12 @@ HRESULT CRenderer::SetUp_RenderTargets_PostProcessing(const D3D11_VIEWPORT& View
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_PostProcessing_Shade"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 
+	/* MRT_PostProcessing : 포스트 프로세싱 */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_PostProcessing"), TEXT("Target_PostProcessing_Diffuse"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_PostProcessing"), TEXT("Target_PostProcessing_Shade"))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -538,6 +558,10 @@ HRESULT CRenderer::SetUp_RenderTargets_PostProcessing_Result(const D3D11_VIEWPOR
 {
 	/* For.Target_PostProcessing_Shade */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_PostProcessing_Result"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
+	/* MRT_PostProcessing_Result */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_PostProcessing_Result"), TEXT("Target_PostProcessing_Result"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -549,6 +573,10 @@ HRESULT CRenderer::SetUp_RenderTargets_MotionBlur(const D3D11_VIEWPORT& Viewport
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_MotionBlur"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
+	/* MRT_MotionBlur : 모션 블러 적용 */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_MotionBlur"), TEXT("Target_MotionBlur"))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -556,6 +584,10 @@ HRESULT CRenderer::SetUp_RenderTargets_SSR(const D3D11_VIEWPORT& ViewportDesc)
 {
 	/* For.Target_PostProcessing_Shade */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_SSR"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
+	/* MRT_SSR : SSR 적용을 위한 렌더 타겟 */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_SSR"), TEXT("Target_SSR"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -571,6 +603,42 @@ HRESULT CRenderer::SetUp_RenderTargets_DOF(const D3D11_VIEWPORT& ViewportDesc)
 		return E_FAIL;
 	/* For.Target_DOF_Blur_Fin */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_DOF_Blur_Fin"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
+	/* MRT_DOF : DOF 적용을 위한 렌더 타겟 */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_DOF"), TEXT("Target_DOF"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_DOF_BlurX"), TEXT("Target_DOF_BlurX"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_DOF_Blur_Fin"), TEXT("Target_DOF_Blur_Fin"))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CRenderer::SetUp_RenderTargets_FXAA(const D3D11_VIEWPORT& ViewportDesc)
+{
+	/* For.Target_DOF_Blur_Fin */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_FXAA"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f,0.f,0.f,0.f))))
+		return E_FAIL;
+	
+	/* MRT_FXAA : 안티 앨리어싱 적용을 위한 렌더 타겟 */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_FXAA"), TEXT("Target_FXAA"))))
+		return E_FAIL;
+
+
+	return S_OK;
+}
+
+HRESULT CRenderer::SetUp_RenderTarget_SubResult(const D3D11_VIEWPORT& ViewportDesc)
+{
+	/* For.Target_DOF_Blur_Fin */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_SubResult"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
+
+	/* MRT_FXAA : 안티 앨리어싱 적용을 위한 렌더 타겟 */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_SubResult"), TEXT("Target_SubResult"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -750,7 +818,8 @@ HRESULT CRenderer::SetUp_Debug()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_DOF_Blur_Fin"), 1620.f, 700.f, 200.f, 200.f)))
 		return E_FAIL;
-
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_FXAA"), 1620.f, 900.f, 200.f, 200.f)))
+		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Diffuse"), 1820.f, 100.0f, 200.f, 200.f)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Normal"), 1820.f, 300.0f, 200.f, 200.f)))
@@ -833,13 +902,24 @@ HRESULT CRenderer::Clear()
 
 HRESULT CRenderer::Render_Priority()
 {
+	if (m_ShaderOptions[FXAA]) {
+		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_FXAA"))))
+			return E_FAIL;
+	}
+
 	for (auto& pRenderObject : m_RenderObjects[RENDER_PRIORITY])
 	{
 		if (nullptr != pRenderObject)
 			pRenderObject->Render();
+
 		Safe_Release(pRenderObject);
 	}
 	m_RenderObjects[RENDER_PRIORITY].clear();
+
+	if (m_ShaderOptions[FXAA]) {
+		if (FAILED(m_pGameInstance->End_MRT()))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -865,7 +945,6 @@ HRESULT CRenderer::Render_NonBlend()
 
 HRESULT CRenderer::Render_NonLight()
 {
-
 	for (auto& pRenderObject : m_RenderObjects[RENDER_NONLIGHT])
 	{
 		if (nullptr != pRenderObject)
@@ -950,42 +1029,9 @@ HRESULT CRenderer::Render_Font()
 	return S_OK;
 }
 
-HRESULT CRenderer::Render_MotionBlur()
-{
-	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Pre_Post_Diffuse"), "g_DiffuseTexture")))
-		return E_FAIL;
-	
-	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Velocity"), "g_VelocityTexture")))
-		return E_FAIL;
-
-	if (FAILED(m_pVIBuffer->Bind_Buffers()))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_MotionBlur"))))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_MOTIONBLUR))))
-		return E_FAIL;
-
-	if (FAILED(m_pVIBuffer->Render()))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return E_FAIL;
-
-	return S_OK;
-}
-
 HRESULT CRenderer::Render_SSAO_Blur()
 {
-	if (!m_isSSAO)
+	if (!m_ShaderOptions[SSAO])
 		return S_OK;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -1201,7 +1247,7 @@ HRESULT CRenderer::Render_Lights()
 	if (FAILED(m_pShader->Bind_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition_Float4(), sizeof(_float4))))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Bind_RawValue("g_isSSAO", &m_isSSAO, sizeof(_bool))))
+	if (FAILED(m_pShader->Bind_RawValue("g_isSSAO", &m_ShaderOptions[SSAO], sizeof(_bool))))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Normal"), "g_NormalTexture")))
@@ -1247,14 +1293,14 @@ HRESULT CRenderer::Render_Light_Result()
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Diffuse"), "g_DiffuseTexture")))
 		return E_FAIL;
 
-	if (m_isSSAO) {
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Shade"), "g_ShadeTexture")))
+		return E_FAIL;
+	if (m_ShaderOptions[SSAO]) {
 		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_SSAO_Shade_Blur_Fin"), "g_ShadeTexture")))
 			return E_FAIL;
 	}
-	else {
-		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Shade"), "g_ShadeTexture")))
-			return E_FAIL;
-	}
+
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Specular"), "g_SpecularTexture")))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Normal"), "g_NormalTexture")))
@@ -1362,12 +1408,53 @@ HRESULT CRenderer::Render_Light_Result()
 	Safe_Delete_Array(pLightPositions);
 	Safe_Delete_Array(pLightRanges);
 
+	if (FAILED(Render_SubResult(TEXT("Target_Pre_Post_Diffuse"))))
+		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_MotionBlur()
+{
+	/*if (!m_ShaderOptions[MOTION_BLUR])
+		return S_OK;
+
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_SubResult"), "g_DiffuseTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Velocity"), "g_VelocityTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBuffer->Bind_Buffers()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_MotionBlur"))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_MOTIONBLUR))))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
+
+	if (FAILED(Render_SubResult(TEXT("Target_MotionBlur"))))
+		return S_OK;*/
+
 	return S_OK;
 }
 
 HRESULT CRenderer::Render_SSR()
 {
-	if (!m_isSSR)
+	if (!m_ShaderOptions[SSR])
 		return S_OK;
 
 	/* 백버퍼에다가 디퍼드 방식으로 연산된 최종 결과물을 찍어준다. */
@@ -1386,15 +1473,8 @@ HRESULT CRenderer::Render_SSR()
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrixInv", &m_pGameInstance->Get_Transform_Float4x4_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (m_isMotionBlur) {
-		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_MotionBlur"), "g_DiffuseTexture")))
-			return E_FAIL;
-	}
-	else {
-		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Pre_Post_Diffuse"), "g_DiffuseTexture")))
-			return E_FAIL;
-	}
-
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_SubResult"), "g_DiffuseTexture")))
+		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Normal"), "g_NormalTexture")))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Depth"), "g_DepthTexture")))
@@ -1418,12 +1498,15 @@ HRESULT CRenderer::Render_SSR()
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
 
+	if (FAILED(Render_SubResult(TEXT("Target_SSR"))))
+		return S_OK;
+
 	return S_OK;
 }
 
 HRESULT CRenderer::Render_DOF()
 {
-	if (!m_isDOF)
+	if (!m_ShaderOptions[DOF])
 		return S_OK;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -1440,6 +1523,9 @@ HRESULT CRenderer::Render_DOF()
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_DOF"))))
 		return E_FAIL;
 
+	if (FAILED(m_pVIBuffer->Bind_Buffers()))
+		return E_FAIL;
+
 	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_DOF))))
 		return E_FAIL;
 
@@ -1449,22 +1535,9 @@ HRESULT CRenderer::Render_DOF()
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
 
-	// 2. X블러
-	if (m_isSSR) {
-		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_SSR"), "g_Texture")))
-			return E_FAIL;
-	}
-	else {
-		if (m_isMotionBlur) {
-			if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_MotionBlur"), "g_Texture")))
-				return E_FAIL;
-		}
-		else {
-			if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Pre_Post_Diffuse"), "g_Texture")))
-				return E_FAIL;
-		}
 
-	}
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_SubResult"), "g_Texture")))
+		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_DOF"), "g_DOFTexture")))
 		return E_FAIL;
@@ -1497,8 +1570,93 @@ HRESULT CRenderer::Render_DOF()
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
 
+	if (FAILED(Render_SubResult(TEXT("Target_DOF_Blur_Fin"))))
+		return S_OK;
+
 	return S_OK;
 }
+
+HRESULT CRenderer::Render_FXAA()
+{
+	if (!m_ShaderOptions[FXAA])
+		return S_OK;
+
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_SubResult"), "g_Texture")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_FXAA"))))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBuffer->Bind_Buffers()))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_COPY_DISCARD))))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
+
+
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_SubResult"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_FXAA"), "g_Texture")))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_FXAA))))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
+
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_SubResult(const wstring& strRenderTargetTag)
+{
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, strRenderTargetTag, "g_Texture")))
+		return E_FAIL;
+
+	// 1. 블러를 먹일 대상을 판별 
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_SubResult"))))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBuffer->Bind_Buffers()))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_DEBUG))))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 
 HRESULT CRenderer::Render_PostProcessing_Result()
 {
@@ -1508,24 +1666,8 @@ HRESULT CRenderer::Render_PostProcessing_Result()
 	//if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_PostProcessing_Shade"), "g_PostprocessingShadeTexture")))
 	//	return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Pre_Post_Diffuse"), "g_DiffuseTexture")))
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_SubResult"), "g_DiffuseTexture")))
 		return E_FAIL;
-
-	if (m_isMotionBlur) {
-		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_MotionBlur"), "g_DiffuseTexture")))
-			return E_FAIL;
-	}
-
-	if (m_isSSR) {
-		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_SSR"), "g_DiffuseTexture")))
-			return E_FAIL;
-	}
-
-	if (m_isDOF) {
-		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_DOF_Blur_Fin"), "g_DiffuseTexture")))
-			return E_FAIL;
-	}
-
 
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Distortion"), "g_DistortionTexture")))
 		return E_FAIL;
@@ -1653,6 +1795,8 @@ HRESULT CRenderer::Render_Debug()
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_DOF_Blur_Fin"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_MotionBlur"), m_pShader, m_pVIBuffer)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_FXAA"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
 
 

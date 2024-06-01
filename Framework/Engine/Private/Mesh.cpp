@@ -166,12 +166,12 @@ HRESULT CMesh::Stock_Matrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneM
 	return S_OK;
 }
 
-HRESULT CMesh::Stock_Pre_Matrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneMatrices)
+HRESULT CMesh::Stock_PrevMatrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneMatrices)
 {
 	for (_uint i = 0; i < m_iNumBones; ++i)
 	{
 		_matrix OffsetMatrix = XMLoadFloat4x4(&m_OffsetMatrices[i]);
-		_matrix CombinedMatrix = XMLoadFloat4x4(Bones[m_Bones[i]]->Get_Pre_CombinedTransformationMatrix());
+		_matrix CombinedMatrix = XMLoadFloat4x4(Bones[m_Bones[i]]->Get_PrevCombinedTransformationMatrix());
 
 		_matrix BoneMatrix = OffsetMatrix * CombinedMatrix;
 

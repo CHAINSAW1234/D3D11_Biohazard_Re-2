@@ -1746,20 +1746,20 @@ _float4x4 CModel::Invalidate_BonesCombinedMatix_TranslationMatrix(_int iRootInde
 
 HRESULT CModel::Bind_BoneMatrices(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
 {
-	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * 512);
+	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * 256);
 
 	m_Meshes[iMeshIndex]->Stock_Matrices(m_Bones, m_MeshBoneMatrices);
 
-	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, 512);
+	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, 256);
 }
 
-HRESULT CModel::Bind_Pre_BoneMatrices(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
+HRESULT CModel::Bind_PrevBoneMatrices(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
 {
-	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * 512);
+	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * 256);
 
-	m_Meshes[iMeshIndex]->Stock_Pre_Matrices(m_Bones, m_MeshBoneMatrices);
+	m_Meshes[iMeshIndex]->Stock_PrevMatrices(m_Bones, m_MeshBoneMatrices);
 
-	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, 512);
+	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, 256);
 }
 
 HRESULT CModel::Bind_ShaderResource_Texture(CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eTextureType)
