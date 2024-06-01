@@ -267,21 +267,26 @@ void CModel::Add_IK(string strTargetJointTag, string strEndEffectorTag, wstring 
 	_uint			iNumJoint = { static_cast<_uint>(IkInfo.JointIndices.size()) };
 
 	IkInfo.BoneThetas.clear();
-	for (_uint i = 0; i < iNumJoint; ++i)
-		IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(20.f), XMConvertToRadians(30.f), XMConvertToRadians(20.f), XMConvertToRadians(30.f)));
+	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f)));
+	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(30.f)));
+	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f)));
+	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f)));
 
 	IkInfo.BoneOrientationLimits.clear();
 	for (_uint i = 0; i < iNumJoint; ++i)
-		IkInfo.BoneOrientationLimits.push_back(XMConvertToRadians(60.f));
+		IkInfo.BoneOrientationLimits.push_back(XMConvertToRadians(40.f));
 
 	IkInfo.JointTypes.clear();
-	for (_uint i = 0; i < iNumJoint; ++i)
-		IkInfo.JointTypes.push_back(i % 2 == 0 ? JOINT_TYPE::JOINT_BALL : JOINT_TYPE::JOINT_HINGE);
+	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_BALL);
+	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_HINGE);
+	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_BALL);
+	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_END);
+	//	IkInfo.JointTypes.push_back(i % 2 == 0 ? JOINT_TYPE::JOINT_BALL : JOINT_TYPE::JOINT_HINGE);
 
-	//	임시 추가
-	//	임시 추가
-	//	임시 추가
-	//	임시 추가
+//	임시 추가
+//	임시 추가
+//	임시 추가
+//	임시 추가
 
 	m_IKInfos[strIKTag] = IkInfo;
 }
@@ -479,7 +484,7 @@ void CModel::Solve_IK_Forward(IK_INFO& IkInfo)
 			//	쎄타, 첫 위치, 관절타입, 오리엔테이션 기록됨...
 			//	자식뼈, 쎄타, 첫 위치 ( length로 저장 constranints 측에서 ), 제한 조건 ( 관절 타입 자식뼈의 인덱스상... ), 오리엔테이션 ( 회전량 자식뼈 ...)
 			//	자식뼈 인덱스( IkInfo 상에서 ... ),
-			//	Rotational_Constranit(IkInfo, i + 1, i);
+			Rotational_Constranit(IkInfo, i + 1, i);
 		}
 	}
 }
@@ -516,14 +521,19 @@ void CModel::Solve_For_Orientation_IK(IK_INFO& IkInfo, _int iOuterJointIndex, _i
 	_vector			vOuterJointOrientaion = { XMLoadFloat4(&IkInfo.BoneOrientations[iOuterJointIndex]) };
 	_vector			vInnerJointOrientaion = { XMLoadFloat4(&IkInfo.BoneOrientations[iInnerJointIndex]) };
 
-	//	부모 관절이 자식 관절을 향해 추가로 회전해야할 양 
-	_vector			vRotor = { XMQuaternionMultiply(XMQuaternionInverse(vOuterJointOrientaion), vInnerJointOrientaion) };
+	_vector			vOuterJointOrientationInv = { XMQuaternionConjugate(vOuterJointOrientaion) };
+	_float			vQuternionLength = { XMVectorGetX(XMQuaternionLength(vOuterJointOrientaion)) };
+	_vector			vOuterJointOrientationInvResult = { vOuterJointOrientationInv * (1 / vQuternionLength) };
+
+	_vector			vRotor = { XMQuaternionMultiply(vOuterJointOrientationInvResult, vInnerJointOrientaion) };
+
 	_float			fNeededRotation = { 2.f * acosf(XMVectorGetW(vRotor)) };
+	_float			fNeededRotation2;
+	XMQuaternionToAxisAngle(&vRotor, &fNeededRotation2, XMQuaternionIdentity());
 
 	//	필요 회전량이 자식 관절의 최대 회전량내에 있는 경우
 	if (fNeededRotation <= IkInfo.BoneOrientationLimits[iOuterJointIndex])
 	{
-		//	회전자( 부무관절 회전량 - 자식 관절 회전량 ) + 자식관절 회전량 => 기존 회전량
 		_vector		vResultInnerJointOrientation = { XMQuaternionMultiply(vOuterJointOrientaion, vRotor) };
 		XMStoreFloat4(&IkInfo.BoneOrientations[iInnerJointIndex], vResultInnerJointOrientation);
 	}
@@ -533,10 +543,10 @@ void CModel::Solve_For_Orientation_IK(IK_INFO& IkInfo, _int iOuterJointIndex, _i
 		_float		fLimitAngle = { IkInfo.BoneOrientationLimits[iOuterJointIndex] };
 
 		//	쿼터니언에서 w성분을 지움 => 쿼터니언의 회전 축 방향벡터
-		_vector		vLimitedOriendtation = {XMVectorSet(
-			XMVectorGetX(vRotor) / (1 / sqrtf(1.f - powf(XMVectorGetW(vRotor),2.f) * sinf(fLimitAngle *0.5f))),
-			XMVectorGetY(vRotor) / (1 / sqrtf(1.f - powf(XMVectorGetW(vRotor),2.f) * sinf(fLimitAngle *0.5f))),
-			XMVectorGetZ(vRotor) / (1 / sqrtf(1.f - powf(XMVectorGetW(vRotor),2.f) * sinf(fLimitAngle *0.5f))),
+		_vector		vLimitedOriendtation = { XMVectorSet(
+			XMVectorGetX(vRotor) / (1 / sqrtf(1.f - powf(XMVectorGetW(vRotor),2.f) * sinf(fLimitAngle * 0.5f))),
+			XMVectorGetY(vRotor) / (1 / sqrtf(1.f - powf(XMVectorGetW(vRotor),2.f) * sinf(fLimitAngle * 0.5f))),
+			XMVectorGetZ(vRotor) / (1 / sqrtf(1.f - powf(XMVectorGetW(vRotor),2.f) * sinf(fLimitAngle * 0.5f))),
 			cosf(fLimitAngle * 0.5f))
 		};
 
@@ -547,27 +557,27 @@ void CModel::Solve_For_Orientation_IK(IK_INFO& IkInfo, _int iOuterJointIndex, _i
 void CModel::Rotational_Constranit(IK_INFO& IkInfo, _int iOuterJointIndex, _int iMyJointIndex)
 {
 	//	자식
-	_vector		p_i = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex]) };
+	_vector			p_i = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex]) };
 	//	자식의 자식
-	_vector		p_before = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex - 1]) };
+	_vector			p_before = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex - 1]) };
 	//	나
-	_vector		p_next = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex + 1]) };
+	_vector			p_next = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex + 1]) };
 
-	_vector		v_i_next = { p_next - p_i };
-	_vector		v_before_i = { p_i - p_before };
+	_vector			v_i_next = { p_next - p_i };
+	_vector			v_before_i = { p_i - p_before };
 	/*_vector		vDirectionToParent = { v_i_next * -1.f };
 	_vector		vDirectionFromGrandParentToParent = { p_i - p_before };*/
 
-	_float		s = { XMVectorGetX(XMVector3Dot(v_i_next, v_before_i)) };
+	_float			s = { XMVectorGetX(XMVector3Dot(v_i_next, v_before_i)) };
 
 	//	# a unit vector of a line passing  from p(i+1) and P(i)
 	//	내가 자식을 바라보는 벡터
-	_float		l_next_i = { XMVectorGetX(XMVector3Length(p_next - p_i)) };
-	_vector		unit_vec_next_i = { XMVector3Normalize(p_i - p_next) };
+	_float			l_next_i = { XMVectorGetX(XMVector3Length(p_next - p_i)) };
+	_vector			unit_vec_next_i = { XMVector3Normalize(p_i - p_next) };
 	//_vector		vDirectionToConeCenterFromParent = { XMVector3Normalize(vDirectionFromGrandParentToParent) * s };
 
 	//	# the center of cone
-	_vector		o = { p_i + unit_vec_next_i * s };
+	_vector			o = { p_i + unit_vec_next_i * s };
 
 	if (JOINT_TYPE::JOINT_HINGE == static_cast<JOINT_TYPE>(IkInfo.JointTypes[iOuterJointIndex]))
 	{
@@ -653,7 +663,7 @@ void CModel::Rotational_Constranit(IK_INFO& IkInfo, _int iOuterJointIndex, _int 
 			s * tanf(IkInfo.BoneThetas[iOuterJointIndex].x),
 			s * tanf(IkInfo.BoneThetas[iOuterJointIndex].y),
 			s * tanf(IkInfo.BoneThetas[iOuterJointIndex].z),
-			s * tanf(IkInfo.BoneThetas[iOuterJointIndex].w)) 
+			s * tanf(IkInfo.BoneThetas[iOuterJointIndex].w))
 		};
 
 		// 좌표를 원뿔의 단면으로 변경하고 그 안의 (i - 1)번째 위치를 계산합니다.
@@ -667,9 +677,9 @@ void CModel::Rotational_Constranit(IK_INFO& IkInfo, _int iOuterJointIndex, _int 
 		_float				fTheta = { acosf(IkInfo.BoneOrientations[iOuterJointIndex].w) * 2.f };
 		CONIC_SECTION		eSection = { Find_ConicSection(fTheta) };
 
-		_float2				vTargetPoint = { 
-			l_o_next * cosf(fTheta), 
-			l_o_next * sinf(fTheta) 
+		_float2				vTargetPoint = {
+			l_o_next * cosf(fTheta),
+			l_o_next * sinf(fTheta)
 		};
 
 		//	목표점이 타원형내부인지 확인		
@@ -933,25 +943,26 @@ _bool CModel::Is_InBound(CONIC_SECTION eSection, _fvector vQ, _float2 vTarget)
 {
 	_bool		isInBound = { false };
 
+
 	//	현재 속한 사분면 내에서 계산
 	if (CONIC_SECTION::SECTION_1 == eSection)
 	{
-		if (1.f >= powf(vTarget.x, 2.f) / powf(XMVectorGetZ(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetY(vQ), 2.f))
+		if (1.f >= roundf(powf(vTarget.x, 2.f) / powf(XMVectorGetZ(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetY(vQ), 2.f)))
 			isInBound = true;
 	}
 	else if (CONIC_SECTION::SECTION_2 == eSection)
 	{
-		if (1.f >= powf(vTarget.x, 2.f) / powf(XMVectorGetX(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetY(vQ), 2.f))
+		if (1.f >= roundf(powf(vTarget.x, 2.f) / powf(XMVectorGetX(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetY(vQ), 2.f)))
 			isInBound = true;
 	}
 	else if (CONIC_SECTION::SECTION_3 == eSection)
 	{
-		if (1.f >= powf(vTarget.x, 2.f) / powf(XMVectorGetX(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetW(vQ), 2.f))
+		if (1.f >= roundf(powf(vTarget.x, 2.f) / powf(XMVectorGetX(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetW(vQ), 2.f)))
 			isInBound = true;
 	}
 	else if (CONIC_SECTION::SECTION_4 == eSection)
 	{
-		if (1.f >= powf(vTarget.x, 2.f) / powf(XMVectorGetZ(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetW(vQ), 2.f))
+		if (1.f >= roundf(powf(vTarget.x, 2.f) / powf(XMVectorGetZ(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetW(vQ), 2.f)))
 			isInBound = true;
 	}
 
@@ -961,7 +972,7 @@ _bool CModel::Is_InBound(CONIC_SECTION eSection, _fvector vQ, _float2 vTarget)
 _float2 CModel::Find_Nearest_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition)
 {
 	_float2			vInitialPoint = Find_Initial_Point_Constraints(fMajorAxisLength, fMinorAxisLength, eSection, vTargetPosition);
-	_float			fThresh = 0.1f;
+	_float			fThresh = 0.001f;
 
 	_float2			vResultPoint = Find_Next_Point_Constraints(vInitialPoint, fMajorAxisLength, fMinorAxisLength, vTargetPosition);
 	while (vResultPoint.x > fThresh || vResultPoint.y > fThresh)
@@ -974,7 +985,7 @@ _float2 CModel::Find_Nearest_Point_Constraints(_float fMajorAxisLength, _float f
 //	eccentricity( 이심룰 ) => 타원이 원에 비해 얼마나 찌그러졌는지
 _float2 CModel::Find_Initial_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition)
 {
-	
+
 	_float2			vK1 = {
 		vTargetPosition.x * fMajorAxisLength * fMinorAxisLength / sqrtf(powf(fMinorAxisLength, 2.f) * powf(vTargetPosition.x, 2.f) + powf(fMajorAxisLength, 2.f) * powf(vTargetPosition.y, 2.f)),
 		vTargetPosition.y * fMajorAxisLength * fMinorAxisLength / sqrtf(powf(fMinorAxisLength, 2.f) * powf(vTargetPosition.x, 2.f) + powf(fMajorAxisLength, 2.f) * powf(vTargetPosition.y, 2.f))
@@ -999,9 +1010,9 @@ _float2 CModel::Find_Initial_Point_Constraints(_float fMajorAxisLength, _float f
 		};
 	}
 
-	_float2		vInitialPoint = { 
-		0.5f * (vK1.x + vK2.x), 
-		0.5f * (vK1.y + vK2.y) 
+	_float2		vInitialPoint = {
+		0.5f * (vK1.x + vK2.x),
+		0.5f * (vK1.y + vK2.y)
 	};
 
 	return vInitialPoint;
@@ -1026,10 +1037,9 @@ _float2 CModel::Compute_Delta_Constratins(_float2 vCurrentPoint, _float fMajorAx
 		0, 0);
 
 	_matrix		QMatrix = XMLoadFloat4x4(&Compute_QMatrix(vCurrentPoint, fMajorAxisLength, fMinorAxisLength, vTargetPosition));
-	_vector		vDet = XMMatrixDeterminant(QMatrix);
-	_matrix		QMatrixInv = XMMatrixInverse(&vDet, QMatrix);
+	_matrix		QMatrixInv = XMMatrixInverse(nullptr, QMatrix);
 
-	_vector		vDelta = -1.f * XMVector2Transform(vF, QMatrixInv);
+	_vector		vDelta = XMVector2Transform(vF, QMatrixInv);
 	_float2		vDeltaFloat2 = { XMVectorGetX(vDelta), XMVectorGetY(vDelta) };
 
 	return vDeltaFloat2;
@@ -1039,14 +1049,14 @@ _float4x4 CModel::Compute_QMatrix(_float2 vCurrentPoint, _float fMajorAxisLength
 {
 	_float4x4		QFloat4x4 = {};
 
-	QFloat4x4.m[0][0] = fMinorAxisLength * fMinorAxisLength * vCurrentPoint.x;
-	QFloat4x4.m[0][1] = fMajorAxisLength * fMajorAxisLength * vCurrentPoint.y;
-	QFloat4x4.m[1][0] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.y + fMinorAxisLength * fMinorAxisLength * vTargetPosition.y;
-	QFloat4x4.m[1][1] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.x - fMajorAxisLength * fMajorAxisLength * vTargetPosition.x;
+	//	QFloat4x4.m[0][0] = fMinorAxisLength * fMinorAxisLength * vCurrentPoint.x;
+	//	QFloat4x4.m[0][1] = fMajorAxisLength * fMajorAxisLength * vCurrentPoint.y;
+	//	QFloat4x4.m[1][0] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.y + fMinorAxisLength * fMinorAxisLength * vTargetPosition.y;
+	//	QFloat4x4.m[1][1] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.x - fMajorAxisLength * fMajorAxisLength * vTargetPosition.x;
 
 	QFloat4x4.m[0][0] = fMinorAxisLength * fMinorAxisLength * vCurrentPoint.x;
-	QFloat4x4.m[1][0] = fMajorAxisLength * fMajorAxisLength * vCurrentPoint.y;
 	QFloat4x4.m[0][1] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.y + fMinorAxisLength * fMinorAxisLength * vTargetPosition.y;
+	QFloat4x4.m[1][0] = fMajorAxisLength * fMajorAxisLength * vCurrentPoint.y;
 	QFloat4x4.m[1][1] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.x - fMajorAxisLength * fMajorAxisLength * vTargetPosition.x;
 
 	return QFloat4x4;
