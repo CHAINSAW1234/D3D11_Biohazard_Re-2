@@ -42,6 +42,9 @@ public: /* For.Renderer */
 	void									Set_RadialBlur(_float fBlurAmount, _float2 BlurUV);
 	void									On_RadialBlur();
 	void									Off_RadialBlur();
+#ifdef _DEBUG
+	void									On_Off_DebugRender();
+#endif
 #pragma endregion
 
 #pragma region Level_Manager

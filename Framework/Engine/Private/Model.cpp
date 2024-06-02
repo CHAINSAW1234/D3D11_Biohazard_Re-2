@@ -48,49 +48,6 @@ CModel::CModel(const CModel& rhs)
 	m_PlayingAnimInfos.resize(3);
 }
 
-CBone* CModel::Get_BonePtr(const _char* pBoneName) const
-{
-	auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool
-		{
-			return pBone->Compare_Name(pBoneName);
-		});
-
-	return *iter;
-}
-
-_bool CModel::isFinished(_uint iPlayingIndex)
-{
-	if (iPlayingIndex >= static_cast<_uint>(m_PlayingAnimInfos.size()))
-		return false;
-
-	_uint			iAnimIndex = { static_cast<_uint>(m_PlayingAnimInfos[iPlayingIndex].iAnimIndex) };
-	return m_Animations[iAnimIndex]->isFinished();
-}
-
-void CModel::Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices)
-{
-	for (auto& pBone : m_Bones)
-	{
-		_int		iParentsIndex = { pBone->Get_ParentIndex() };
-		if (-1 == iParentsIndex)
-			continue;
-
-		string		strMyParentsBoneTag = { m_Bones[iParentsIndex]->Get_Name() };
-
-		if (strMyParentsBoneTag == strTargetParentsBoneTag)
-		{
-			string		strBoneTag = { pBone->Get_Name() };
-			_int		iBoneIndex = { Find_BoneIndex(strBoneTag) };
-			if (-1 == iBoneIndex)
-				continue;
-
-			ChildBoneIndices.push_back(iBoneIndex);
-
-			Get_Child_BoneIndices(strBoneTag, ChildBoneIndices);
-		}
-	}
-}
-
 void CModel::Set_Animation_Blend(ANIM_PLAYING_DESC AnimDesc, _uint iPlayingIndex)
 {
 	if (static_cast<_uint>(AnimDesc.iAnimIndex) >= m_iNumAnimations)
@@ -1336,48 +1293,6 @@ _float4x4 CModel::GetBoneTransform(_int Index)
 	return *CombinedFloat4x4;
 }
 
-void CModel::Apply_RootMotion_Rotation(CTransform* pTransform, _fvector vQuaternion)
-{
-	_vector			vPreQuaternion = { XMQuaternionIdentity() };
-	_vector			vIdentityQuaternion = { XMQuaternionIdentity() };
-	_uint			iRootIndex = { static_cast<_uint>(Find_RootBoneIndex()) };
-
-	for (auto& AnimInfo : m_PlayingAnimInfos)
-	{
-		if (-1 == AnimInfo.iAnimIndex || true == m_Animations[AnimInfo.iAnimIndex]->isFinished())
-			continue;
-
-		if (false == m_BoneLayers[AnimInfo.strBoneLayerTag]->Is_Included(iRootIndex))
-			continue;
-
-		_vector			vCurrentQuaternion = { XMLoadFloat4(&AnimInfo.vPreQuaternion) };
-		vCurrentQuaternion = { XMQuaternionSlerp(vIdentityQuaternion, vCurrentQuaternion, AnimInfo.fWeight) };
-		vPreQuaternion = XMQuaternionMultiply(XMQuaternionNormalize(vPreQuaternion), XMQuaternionNormalize(vCurrentQuaternion));
-
-		AnimInfo.vPreQuaternion = AnimInfo.LastKeyFrames[iRootIndex].vRotation;
-	}
-
-	_vector			vCurrentQuaternion = { vQuaternion };
-
-	// 이전 쿼터니언의 역쿼터니언 구하기
-	_vector			vPreQuaternionInv = { XMQuaternionInverse(vPreQuaternion) };
-
-	// 이전 쿼터니언의 역쿼터니언과 현재쿼터니언의 곱 => 합쿼터니언
-	_vector			vQuaternionDifference = { XMQuaternionNormalize(XMQuaternionMultiply(vPreQuaternionInv, vCurrentQuaternion)) };
-
-	_matrix			RotationMatrix = { XMMatrixRotationQuaternion(vQuaternionDifference) };
-	_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
-	_vector			vPosition = { WorldMatrix.r[CTransform::STATE_POSITION] };
-
-	WorldMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-
-	_matrix			ResultMatrix = { XMMatrixMultiply(RotationMatrix, WorldMatrix) };
-
-	ResultMatrix.r[CTransform::STATE_POSITION] = vPosition;
-
-	pTransform->Set_WorldMatrix(ResultMatrix);
-}
-
 void CModel::Apply_RootMotion_Rotation(CTransform* pTransform, _fvector vQuaternion, _float4* pTranslation)
 {
 	_vector			vPreQuaternion = { XMQuaternionIdentity() };
@@ -1558,22 +1473,6 @@ list<_uint> CModel::Get_MeshIndices(const string& strMeshTag)
 	return MeshIndices;
 }
 
-MATERIAL_DESC CModel::Get_Mesh_MaterialDesc(_uint iMeshIndex)
-{
-	if (iMeshIndex >= m_iNumMeshes)
-		return MATERIAL_DESC();
-
-	return m_Meshes[iMeshIndex]->Get_MaterialDesc();
-}
-
-void CModel::Set_Mesh_MaterialDesc(_uint iMeshIndex, const MATERIAL_DESC& MaterialDesc)
-{
-	if (iMeshIndex >= m_iNumMeshes)
-		return;
-
-	m_Meshes[iMeshIndex]->Set_MatreialDesc(MaterialDesc);
-}
-
 _float4 CModel::Invalidate_RootNode(const string& strRoot)
 {
 	for (auto& Bone : m_Bones)
@@ -1585,6 +1484,105 @@ _float4 CModel::Invalidate_RootNode(const string& strRoot)
 	}
 
 	return _float4{ 0.f, 0.f, 0.f, 0.f };
+}
+
+_uint CModel::Get_CurrentMaxKeyFrameIndex(_uint iPlayingIndex)
+{
+	if (static_cast<_uint>(m_PlayingAnimInfos.size()) <= iPlayingIndex)
+	{
+		return 0;
+	}
+
+	const vector<_uint>			KeyFrameIndices = { m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Get_CurrentKeyFrameIndices() };
+
+	_uint		iMaxIndex = { 0 };
+	for (_uint iIndex : KeyFrameIndices)
+	{
+		if (iIndex > iMaxIndex)
+			iMaxIndex = iIndex;
+	}
+
+	return iMaxIndex;
+}
+
+const vector<_uint>& CModel::Get_CurrentKeyFrameIndices(_uint iPlayingIndex)
+{
+	return m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Get_CurrentKeyFrameIndices();
+}
+
+CBone* CModel::Get_BonePtr(const _char* pBoneName) const
+{
+	auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool
+		{
+			return pBone->Compare_Name(pBoneName);
+		});
+
+	return *iter;
+}
+
+_bool CModel::isFinished(_uint iPlayingIndex)
+{
+	if (iPlayingIndex >= static_cast<_uint>(m_PlayingAnimInfos.size()))
+		return false;
+
+	_uint			iAnimIndex = { static_cast<_uint>(m_PlayingAnimInfos[iPlayingIndex].iAnimIndex) };
+	return m_Animations[iAnimIndex]->isFinished();
+}
+
+void CModel::Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices)
+{
+	for (auto& pBone : m_Bones)
+	{
+		_int		iParentsIndex = { pBone->Get_ParentIndex() };
+		if (-1 == iParentsIndex)
+			continue;
+
+		string		strMyParentsBoneTag = { m_Bones[iParentsIndex]->Get_Name() };
+
+		if (strMyParentsBoneTag == strTargetParentsBoneTag)
+		{
+			string		strBoneTag = { pBone->Get_Name() };
+			_int		iBoneIndex = { Find_BoneIndex(strBoneTag) };
+			if (-1 == iBoneIndex)
+				continue;
+
+			ChildBoneIndices.push_back(iBoneIndex);
+
+			Get_Child_BoneIndices(strBoneTag, ChildBoneIndices);
+		}
+	}
+}
+
+const _float4x4* CModel::Get_CombinedMatrix(const string& strBoneTag)
+{
+	_int		iBoneIndex = { Find_BoneIndex(strBoneTag) };
+	if (-1 == iBoneIndex)
+		return nullptr;
+
+	return m_Bones[iBoneIndex]->Get_CombinedTransformationMatrix();
+}
+
+void CModel::Set_KeyFrameIndex(_uint iPlayingIndex, _uint iKeyFrameIndex)
+{
+	m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Set_KeyFrameIndex(iKeyFrameIndex);
+}
+
+_float CModel::Get_TrackPosition(_uint iPlayingIndex)
+{
+	return m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Get_TrackPosition();
+}
+
+_float CModel::Get_Duration(_uint iPlayingIndex, _int iAnimIndex)
+{
+	if (-1 == iAnimIndex)
+		iAnimIndex = m_PlayingAnimInfos[iPlayingIndex].iAnimIndex;
+
+	return m_Animations[iAnimIndex]->Get_Duration();
+}
+
+void CModel::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition)
+{
+	m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Set_TrackPosition(fTrackPosition);
 }
 
 HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix)
@@ -1719,57 +1717,6 @@ HRESULT CModel::Initialize(void* pArg)
 	m_fTotalLinearTime = ANIM_DEFAULT_LINEARTIME;
 
 	return S_OK;
-}
-
-_float3 CModel::Invalidate_BonesCombinedMatix_Translation(_int iRootIndex)
-{
-	_vector vResultTranslationDir = { 0.f, 0.f, 0.f, 0.f };
-
-	_uint		iIndex = { 0 };
-	for (auto& pBone : m_Bones)
-	{
-		_bool		isCheck = { false };
-		if (iIndex == iRootIndex)
-		{
-			CBone* pBone = m_Bones[iRootIndex];
-
-			vResultTranslationDir = XMLoadFloat3(&pBone->Invalidate_CombinedTransformationMatrix_RootMotion_Translation(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix)));
-			isCheck = true;
-		}
-
-		if (false == isCheck)
-			pBone->Invalidate_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix));
-
-		++iIndex;
-	}
-
-	_float3 vResultDir;
-	XMStoreFloat3(&vResultDir, vResultTranslationDir);
-	return vResultDir;
-}
-
-_float4x4 CModel::Invalidate_BonesCombinedMatix_TranslationMatrix(_int iRootIndex)
-{
-	_float4x4		ResultMatrix{};
-	XMStoreFloat4x4(&ResultMatrix, XMMatrixIdentity());
-
-	_uint			iindex = { 0 };
-	for (auto& pBone : m_Bones)
-	{
-		_bool		ischeck = { false };
-		if (iindex == iRootIndex)
-		{
-			ResultMatrix = pBone->Invalidate_CombinedTransformationMatrix_RootMotion_WorldMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix));
-			ischeck = true;
-		}
-
-		if (false == ischeck)
-			pBone->Invalidate_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix));
-
-		++iindex;
-	}
-
-	return ResultMatrix;
 }
 
 HRESULT CModel::Bind_BoneMatrices(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
@@ -2169,15 +2116,6 @@ void CModel::Static_Mesh_Cooking()
 	}
 }
 
-const _float4x4* CModel::Get_CombinedMatrix(const string& strBoneTag)
-{
-	_int		iBoneIndex = { Find_BoneIndex(strBoneTag) };
-	if (-1 == iBoneIndex)
-		return nullptr;
-
-	return m_Bones[iBoneIndex]->Get_CombinedTransformationMatrix();
-}
-
 _int CModel::Find_BoneIndex(const string& strRootTag)
 {
 	_int		iIndex = { 0 };
@@ -2201,53 +2139,6 @@ void CModel::Compute_RootParentsIndicies(_uint iRootIndex, vector<_uint>& Parent
 		return;
 
 	Compute_RootParentsIndicies(iParentIndex, ParentsIndices);
-}
-
-_uint CModel::Get_CurrentMaxKeyFrameIndex(_uint iPlayingIndex)
-{
-	if (static_cast<_uint>(m_PlayingAnimInfos.size()) <= iPlayingIndex)
-	{
-		return 0;
-	}
-
-	const vector<_uint>			KeyFrameIndices = { m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Get_CurrentKeyFrameIndices() };
-
-	_uint		iMaxIndex = { 0 };
-	for (_uint iIndex : KeyFrameIndices)
-	{
-		if (iIndex > iMaxIndex)
-			iMaxIndex = iIndex;
-	}
-
-	return iMaxIndex;
-}
-
-const vector<_uint>& CModel::Get_CurrentKeyFrameIndices(_uint iPlayingIndex)
-{
-	return m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Get_CurrentKeyFrameIndices();
-}
-
-void CModel::Set_KeyFrameIndex(_uint iPlayingIndex, _uint iKeyFrameIndex)
-{
-	m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Set_KeyFrameIndex(iKeyFrameIndex);
-}
-
-_float CModel::Get_TrackPosition(_uint iPlayingIndex)
-{
-	return m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Get_TrackPosition();
-}
-
-_float CModel::Get_Duration(_uint iPlayingIndex, _int iAnimIndex)
-{
-	if (-1 == iAnimIndex)
-		iAnimIndex = m_PlayingAnimInfos[iPlayingIndex].iAnimIndex;
-
-	return m_Animations[iAnimIndex]->Get_Duration();
-}
-
-void CModel::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition)
-{
-	m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Set_TrackPosition(fTrackPosition);
 }
 
 void CModel::Motion_Changed(_uint iPlayingIndex)

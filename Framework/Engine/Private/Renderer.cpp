@@ -781,7 +781,7 @@ HRESULT CRenderer::Add_DebugComponents(CComponent* pRenderComponent)
 	return S_OK;
 }
 
-void CRenderer::On_Off_DebugeRender()
+void CRenderer::On_Off_DebugRender()
 {
 	m_isRenderDebug = !m_isRenderDebug;
 }

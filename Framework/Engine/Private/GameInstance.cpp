@@ -107,9 +107,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 		return E_FAIL;
 	}	
 
-	if (FAILED(Add_Font(*ppDevice, *ppContext, g_strFontTag, TEXT("../Bin/Resources/Fonts/141ex.spriteFont"))))
+	if (FAILED(Add_Font(*ppDevice, *ppContext, g_strFontTag, TEXT("../../Client/Bin/Resources/Fonts/141ex.spriteFont"))))
 		return E_FAIL;
-
 
 	m_pFrustum = CFrustum::Create();
 	if (nullptr == m_pFrustum)
@@ -341,6 +340,13 @@ void CGameInstance::Off_RadialBlur()
 		return;
 
 	m_pRenderer->Off_RadialBlur();
+}
+void CGameInstance::On_Off_DebugRender()
+{
+	if (nullptr == m_pRenderer)
+		return;
+
+	m_pRenderer->On_Off_DebugRender();
 }
 #pragma endregion
 

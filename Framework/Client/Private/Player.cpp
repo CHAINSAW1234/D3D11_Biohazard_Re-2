@@ -102,22 +102,8 @@ void CPlayer::Tick(_float fTimeDelta)
 			m_eState ^= STATE_RUN;
 	}
 
-	_vector		vWorldPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
-
-
-	/*if (GetKeyState(VK_LBUTTON) & 0x8000)
-	{
-		POINT		ptMouse;
-		GetCursorPos(&ptMouse);
-		ScreenToClient(g_hWnd, &ptMouse);
-
-		_float2		vMousePos = _float2(static_cast<_float>(ptMouse.x), static_cast<_float>(ptMouse.y));
-
-		vWorldPos = m_pGameInstance->Compute_WorldPos(vMousePos, TEXT("Target_FieldDepth"));
-	}*/
-	
+	_vector		vWorldPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);	
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vWorldPos);
-
 
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
@@ -133,16 +119,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	Late_Tick_PartObjects(fTimeDelta);
 
-
-
-
-	//PART			Player_Part = { PART::PART_BODY };
-
-	//_float4			vMovedDirection = { Convert_Float3_To_Float4_Dir(m_vRootTranslation) };	
-
-	//_vector			vResultPosition = { vCurrentPostion + XMLoadFloat4(&vMovedDirection) };
-
-	//	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vResultPosition);
+	_float4			vMovedDirection = { Convert_Float3_To_Float4_Dir(m_vRootTranslation) };	
 
 	if (DOWN == m_pGameInstance->Get_KeyState('B'))
 	{
@@ -152,7 +129,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		m_pController->Move(vMoveDir, fTimeDelta);
 	}
 
-
+#pragma region Terrain
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
@@ -160,33 +137,31 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
-	_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
-	CVIBuffer_Terrain*		pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
-	CTransform*				pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
-	if (nullptr != pTerrainBuffer &&
-		nullptr != pTerrainTransform)
-	{
-		_vector		vPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
-		_float4		vPickPosFloat4;
-		pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
+	//_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
+	//CVIBuffer_Terrain*		pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
+	//CTransform*				pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
+	//if (nullptr != pTerrainBuffer &&
+	//	nullptr != pTerrainTransform)
+	//{
+	//	_vector		vPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+	//	_float4		vPickPosFloat4;
+	//	pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
 
-		_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
-		vMoveDir = vResultPos - vPosition;
-	}
+	//	_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
+	//	vMoveDir = vResultPos - vPosition;
+	//}
+	/////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	//	m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
 
-	vMoveDir = vMoveDir + XMLoadFloat3(&m_vRootTranslation);
+#pragma endregion
 
 	_float4			vMoveDirFloat4 = {};
-	XMStoreFloat4(&vMoveDirFloat4, vMoveDir);
-
+	XMStoreFloat4(&vMoveDirFloat4, vMovedDirection);
 	m_pController->Move(vMoveDirFloat4, fTimeDelta);
 
 

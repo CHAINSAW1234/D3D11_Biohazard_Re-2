@@ -19,24 +19,27 @@ private:
 	virtual ~CHead_Player() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Priority_Tick(_float fTimeDelta) override;
-	virtual void Tick(_float fTimeDelta) override;
-	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
-	virtual HRESULT Render_LightDepth() override;
+	virtual HRESULT					Initialize_Prototype() override;
+	virtual HRESULT					Initialize(void* pArg) override;
+	virtual void					Priority_Tick(_float fTimeDelta) override;
+	virtual void					Tick(_float fTimeDelta) override;
+	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT					Render() override;
+
+	HRESULT							Render_LightDepth_Dir()override;
+	HRESULT							Render_LightDepth_Spot()override;
+	HRESULT							Render_LightDepth_Point() override;
 
 private:
-	CModel*			m_pModelCom = { nullptr };
-	CShader*		m_pShaderCom = { nullptr };
-	CCollider*		m_pColliderCom = { nullptr };
+	CModel* m_pModelCom = { nullptr };
+	CShader* m_pShaderCom = { nullptr };
+	CCollider* m_pColliderCom = { nullptr };
 
-	const _ubyte*	m_pState;
+	const _ubyte* m_pState;
 
 private:
-	HRESULT Add_Components();
-	HRESULT Bind_ShaderResources();
+	HRESULT							Add_Components();
+	HRESULT							Bind_ShaderResources();
 
 public:
 	static CHead_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
