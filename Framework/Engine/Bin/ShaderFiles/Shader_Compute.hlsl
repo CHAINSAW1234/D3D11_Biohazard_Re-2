@@ -77,12 +77,12 @@ float3 ConvertToWorldPosition( float3 ndc, float depth )
 {
 	// view ray 
 	// ndc좌표에 대한 카메라 공간 광선을 계산
-	float4 viewRay = mul( float4( ndc, 1.f ), g_ProjMatrixInv );
+    float4 viewRay = mul(float4(ndc, 1.f), g_ProjMatrixInv);
 	viewRay /= viewRay.w;
-	viewRay /= viewRay.z; // z값이 1이 되도록
+	//viewRay /= viewRay.z; // z값이 1이 되도록
 
 	// ndc -> world position
-    float4 worldPosition = mul(float4(viewRay.xyz * depth, 1.f), g_ViewMatrixInv);
+    float4 worldPosition = mul(float4(viewRay.xyz, 1.f), g_ViewMatrixInv);
 
 	return worldPosition.xyz;
 }
@@ -194,11 +194,9 @@ void CS_Volume( uint3 DTid : SV_DispatchThreadID )
 
     if (all(DTid < dims))
     {
-        
         float3 worldPosition = ConvertThreadIdToWorldPosition(DTid, dims);
         float3 toCamera = normalize(g_vCamPosition.xyz - worldPosition);
         
-
         float3 lighting = float3(0.f, 0.f, 0.f);
         
         if (g_isShadowDirLight)
@@ -224,21 +222,20 @@ void CS_Volume( uint3 DTid : SV_DispatchThreadID )
             //lighting += visibility * g_vSpotLightDiffuse;
         }
         
-    
-        
         OutputTexture[DTid] = float4(lighting, 1);
         //OutputTexture[DTid] = float4(float(DTid.x) / 128, float(DTid.y) / 128, float(DTid.z) / 128, 1);
+        worldPosition = mul(float4(worldPosition, 1), g_ViewMatrix);
+        worldPosition = mul(float4(worldPosition, 1), g_ProjMatrix);
+        OutputTexture[DTid] = g_DiffuseTexture.SampleLevel(LinearSampler, worldPosition.xyz, 0);
         
     }
 }
 
+static const float DensityScale = 0.01f;
 float SliceTickness(float ndcZ, uint dimZ)
 {
     return ConvertNdcZToDepth(ndcZ + 1.f / float(dimZ)) - ConvertNdcZToDepth(ndcZ);
 }
-
-static const float DensityScale = 0.01f;
-
 float4 ScatterStep(float3 accumulatedLight, float accumulatedTransmittance, float3 sliceLight, float sliceDensity, float tickness)
 {
     sliceDensity = max(sliceDensity, 0.000001f);

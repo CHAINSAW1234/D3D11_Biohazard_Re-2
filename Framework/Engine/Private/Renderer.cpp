@@ -94,8 +94,8 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_Shadow_Spot()))
 		return E_FAIL;
 
-	////if (FAILED(Render_Test()))
-	////	return E_FAIL;
+	if (FAILED(Render_Test()))
+		return E_FAIL;
 
 	if (FAILED(Render_Light_Result()))
 		return E_FAIL;
@@ -225,8 +225,8 @@ HRESULT CRenderer::SetUp_RenderTargets()
 		return E_FAIL;
 	if (FAILED(SetUp_RenderTarget_SubResult(ViewportDesc)))
 		return E_FAIL;
-	//if (FAILED(SetUp_Test()))
-	//	return E_FAIL;
+	if (FAILED(SetUp_Test()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -642,8 +642,8 @@ HRESULT CRenderer::Render_Test()
 	//m_pGameInstance->Begin_MRT(TEXT("MRT_Test"));
 	//m_pGameInstance->End_MRT();
 
-	m_pGameInstance->Clear_RenderTarget(TEXT("Target_Test"));
-	m_pGameInstance->Clear_RenderTarget(TEXT("Target_Test_Merge"));
+	//m_pGameInstance->Clear_RenderTarget(TEXT("Target_Test"));
+	//m_pGameInstance->Clear_RenderTarget(TEXT("Target_Test_Merge"));
 	CComputeShader* pShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Compute.hlsl"), "CS_Volume");
 
 	/* 백버퍼에다가 디퍼드 방식으로 연산된 최종 결과물을 찍어준다. */
@@ -719,22 +719,22 @@ HRESULT CRenderer::Render_Test()
 	
 	pShader->Render(0);
 
-	if (FAILED(m_pGameInstance->Bind_OutputShaderResource(pShader, TEXT("Target_Test"), "OutputTexture")))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Bind_OutputShaderResource(pShader, TEXT("Target_Test"), "OutputTexture")))
+	//	return E_FAIL;
 
-	pShader->Render(1);
+	//pShader->Render(1);
 
 	Safe_Release(pShader);
 
 	static _int iNumZ = 0;
 	static _int iSizeZ = 128;
 
-	if (m_pGameInstance->Get_KeyState('2') == PRESSING) {
+	if (m_pGameInstance->Get_KeyState('X') == PRESSING) {
 		++iNumZ;
 		if (iNumZ >128)
 			iNumZ = 128;
 	}
-	if (m_pGameInstance->Get_KeyState('1') == PRESSING) {
+	if (m_pGameInstance->Get_KeyState('Z') == PRESSING) {
 		--iNumZ;
 		if (iNumZ < 0)
 			iNumZ = 0;
@@ -808,8 +808,8 @@ HRESULT CRenderer::SetUp_Debug()
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Material"), 1820.f, 700.0f, 200.f, 200.f)))
 		return E_FAIL;
 
-	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Test"), 500.0f, 900.f, 200.f, 200.f)))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Test"), 500.0f, 900.f, 200.f, 200.f)))
+		return E_FAIL;
 	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Test_Merge"), 500.0f, 900.f, 200.f, 200.f)))
 	//	return E_FAIL;
 
@@ -1779,8 +1779,8 @@ HRESULT CRenderer::Render_Debug()
 		return E_FAIL;
 
 
-	//if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Test"), m_pShader, m_pVIBuffer)))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Test"), m_pShader, m_pVIBuffer)))
+		return E_FAIL;
 
 	return S_OK;
 }
