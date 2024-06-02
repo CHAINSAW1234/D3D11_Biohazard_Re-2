@@ -621,8 +621,20 @@ HRESULT CBody_Player::Render_LightDepth_Dir()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
+	if (m_bRagdoll)
+	{
+		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+		WorldMat._41 = 0.f;
+		WorldMat._42 = 0.f;
+		WorldMat._43 = 0.f;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+			return E_FAIL;
+	}
 
 	if (m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) != nullptr) {
 
@@ -660,8 +672,20 @@ HRESULT CBody_Player::Render_LightDepth_Spot()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
+	if (m_bRagdoll)
+	{
+		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+		WorldMat._41 = 0.f;
+		WorldMat._42 = 0.f;
+		WorldMat._43 = 0.f;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+			return E_FAIL;
+	}
 
 	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
 
@@ -700,8 +724,20 @@ HRESULT CBody_Player::Render_LightDepth_Point()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
+	if (m_bRagdoll)
+	{
+		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+		WorldMat._41 = 0.f;
+		WorldMat._42 = 0.f;
+		WorldMat._43 = 0.f;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+			return E_FAIL;
+	}
 
 	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
 	_int iIndex = 0;

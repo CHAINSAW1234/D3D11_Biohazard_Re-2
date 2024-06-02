@@ -828,6 +828,12 @@ void CGameInstance::TransformFrustum_LocalSpace(_fmatrix WorldMatrixInv)
 	}
 	m_pFrustum->Transform_LocalSpace(WorldMatrixInv);
 }
+
+_bool CGameInstance::isInFrustum_WorldSpace_Cube(_fvector vWorldPos, _float size, _float fRange)
+{
+	return m_pFrustum->isIn_WorldSpace_Cube(vWorldPos, size, fRange);
+}
+
 #pragma endregion
 
 #pragma region Extractor

@@ -134,6 +134,7 @@ public: /* For.Frustum */
 	_bool									isInFrustum_WorldSpace(_fvector vWorldPos, _float fRange = 0.f);
 	_bool									isInFrustum_LocalSpace(_fvector vLocalPos, _float fRange = 0.f);
 	void									TransformFrustum_LocalSpace(_fmatrix WorldMatrixInv);
+	_bool									isInFrustum_WorldSpace_Cube(_fvector vWorldPos, _float size, _float fRange = 0.f);
 #pragma endregion
 
 #pragma region Extractor

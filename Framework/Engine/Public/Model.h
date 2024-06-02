@@ -15,7 +15,7 @@ public:
 public:
 #include "Model_Struct.h"
 
-private:
+public:
 	CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CModel(const CModel& rhs);
 	virtual ~CModel() = default;
@@ -247,6 +247,20 @@ private: /* For.Binary_Load */
 	HRESULT							Ready_Materials(ifstream& ifs);
 	HRESULT							Ready_Bones(ifstream& ifs);
 	HRESULT							Ready_Animations(ifstream& ifs);
+
+public: /*For Octree Culling*/
+	vector<class CMesh*>* GetMeshes()
+	{
+		return  &m_Meshes;
+	}
+	_uint									GetNumMesh()
+	{
+		return m_iNumMeshes;
+	}
+	void									SetNumMesh(_uint NumMesh)
+	{
+		m_iNumMeshes = NumMesh;
+	}
 
 public:
 	//	fbx¿–±‚
