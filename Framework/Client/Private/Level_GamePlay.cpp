@@ -3,6 +3,7 @@
 
 #include "Camera_Free.h"
 #include "Monster.h"
+#include "Customize_UI.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel{ pDevice, pContext }
@@ -24,6 +25,9 @@ HRESULT CLevel_GamePlay::Initialize()
 		return E_FAIL;
 
 	if (FAILED(Ready_LandObject()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Layer_UI(TEXT(""))))
 		return E_FAIL;
 
 	return S_OK;
@@ -195,6 +199,122 @@ HRESULT CLevel_GamePlay::Ready_Layer_Effect(const wstring & strLayerTag)
 
 	return S_OK;
 }
+
+HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
+{
+	wstring selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/test2.dat");
+	ifstream inputFileStream;
+	inputFileStream.open(selectedFilePath, ios::binary);
+	CreatFromDat(inputFileStream, (""), nullptr);
+
+
+
+	return S_OK;
+}
+
+void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName, CGameObject* pGameParentsObj)
+{
+	CCustomize_UI::CUSTOM_UI_DESC CustomizeUIDesc;
+
+	_char TexturePath[MAX_PATH] = "";
+
+	inputFileStream.read(reinterpret_cast<_char*>(TexturePath), sizeof(_char) * MAX_PATH);
+
+	CustomizeUIDesc.strTexturePath = wstring(TexturePath, TexturePath + strlen(TexturePath));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fWorldMatrix), sizeof(_float4x4));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iColorMaxNum), sizeof(_uint));
+
+	_int iColorMAxnum = CustomizeUIDesc.iColorMaxNum;
+
+	for (_int i = 0; i < iColorMAxnum; i++)
+	{
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.vColor[i]), sizeof(CCustomize_UI::Value_Color));
+	}
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isPlay), sizeof(_bool));
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fColorTimer_Limit), sizeof(_float));
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iEndingType), sizeof(_int));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iTextBox), sizeof(_int));
+
+	for (_int i = 0; i < CustomizeUIDesc.iTextBox; i++)
+	{
+		CTextBox::TextBox_DESC TextboxDesc = {};
+		inputFileStream.read(reinterpret_cast<_char*>(&TextboxDesc), sizeof(CTextBox::TextBox_DESC));
+		CustomizeUIDesc.TextBoxDesc.push_back(TextboxDesc);
+	}
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.IsChild), sizeof(_bool));
+
+	std::string strFullfilePath;
+	strFullfilePath.assign(CustomizeUIDesc.strTexturePath.begin(), CustomizeUIDesc.strTexturePath.end());
+
+	wstring wstrFilePath = StringToWstring(strFullfilePath);
+
+	_tchar      szDir[MAX_PATH] = TEXT("");
+	_tchar      szFileName[MAX_PATH] = TEXT("");
+	_tchar		szEXT[MAX_PATH] = TEXT("");
+	_tchar      chBase[MAX_PATH] = TEXT("Bin");
+	wstring     wstrTexturePath = { TEXT("../") };
+	wstring     wstrFileName = TEXT("");
+
+	_wsplitpath_s(wstrFilePath.c_str(), nullptr, 0, szDir, MAX_PATH, szFileName, MAX_PATH, szEXT, MAX_PATH);
+
+	wstrFileName = szFileName;
+
+	string filename;
+	filename.assign(wstrFileName.begin(), wstrFileName.end());
+
+	const wchar_t* foundPosition = wcsstr(szDir, chBase);
+
+	if (foundPosition == nullptr)
+		return;
+
+	wstrTexturePath += foundPosition;
+	wstrTexturePath += szFileName;
+	wstrTexturePath += szEXT;
+
+	wstring     wstrPrototype = { TEXT("Prototype_Component_Texture_") };
+	wstrPrototype += szFileName;
+
+	/* For.Prototype_Component_Texture_ */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, wstrPrototype, CTexture::Create(m_pDevice, m_pContext, wstrTexturePath)))) {
+
+	}
+	//ShowMassageBox("텍스쳐 생성에 실패했습니다.");
+
+	CustomizeUIDesc.strTextureComTag = wstrPrototype;
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_CCustomize_UI"), &CustomizeUIDesc)))
+		MSG_BOX(TEXT("Failed to Add Clone"));
+
+	CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
+
+	if (nullptr != pGameParentsObj)
+	{
+		dynamic_cast<CCustomize_UI*>(pGameParentsObj)->PushBack_Child(pGameObj);
+	}
+
+	/*자식이 있으면 자식 정보 read*/
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iChild), sizeof(_int));
+
+	if (true == 0 < CustomizeUIDesc.iChild)
+	{
+		for (_int i = 0; i < CustomizeUIDesc.iChild; i++)
+		{
+			CreatFromDat(inputFileStream, filename, pGameObj);
+		}
+	}
+
+	if (nullptr == pGameParentsObj)
+	{
+		inputFileStream.close();
+	}
+}
+
 
 HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const wstring & strLayerTag)
 {

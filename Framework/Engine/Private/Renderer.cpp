@@ -138,8 +138,8 @@ HRESULT CRenderer::Render()
 	//if (FAILED(Render_Filter()))
 	//	return E_FAIL;
 
-	//if (FAILED(Render_UI()))
-	//	return E_FAIL;
+	if (FAILED(Render_UI()))
+		return E_FAIL;
 
 	//if (FAILED(Render_Font()))
 	//	return E_FAIL;

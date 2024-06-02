@@ -21,6 +21,10 @@ public:
 	HRESULT									Draw();
 	HRESULT									Clear(_uint iClearLevelIndex);
 
+#pragma region forCH_TEST
+	//wstring									UTF8ToUTF16(const string& utf8Str);
+#pragma endregion
+
 #pragma region Input_Device
 public: /* For.Input_Device */
 	_uint									Get_KeyState(_int iKey);
@@ -149,6 +153,13 @@ public: /* For.Extractor */
 public: /* For.Picking */
 	void									Transform_PickingToLocalSpace(class CTransform* pTransform, _Out_ _float3* pRayDir, _Out_ _float3* pRayPos);
 	void									Transform_PickingToWorldSpace(_Out_ _float4* pRayDir, _Out_ _float4* pRayPos);
+	void									Get_PickingWordSpace(_Out_ _float3* pRayDir, _Out_ _float3* pRayPos);
+	void									Get_PickingWordSpace(_Out_ _vector& pRayDir, _Out_ _vector& pRayPos);
+	void									ClipCursor(HWND hWnd);
+	_float2									Get_ProjMousePos();
+	POINT									Get_ptProjMousePos();
+	_float2									Get_ViewMousePos();
+	POINT									Get_ptViewMousePos();
 #pragma endregion
 
 #pragma region Random_Value_Generator
@@ -233,6 +244,7 @@ public:/*For Physics Controller*/
 	void									Cook_Terrain();
 	void									Simulate();
 	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
+
 private:/*For Physics_Controller*/
 	_uint*									m_pIndices = { nullptr };
 	_int									NumVertices = { 0 };

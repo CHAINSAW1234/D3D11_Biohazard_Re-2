@@ -67,6 +67,11 @@ using namespace DirectX;
 #include <unordered_set>
 #include <random>
 
+///*CH Text*/
+//#include <locale>
+//#include <codecvt>
+///**/
+
 // SimpleMath
 #include <DirectXTK/SimpleMath.h>
 

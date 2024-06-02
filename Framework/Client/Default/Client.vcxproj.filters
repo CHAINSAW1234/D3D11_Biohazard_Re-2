@@ -70,6 +70,15 @@
     <Filter Include="02.GameObjects\Props">
       <UniqueIdentifier>{0cb153c4-04e5-4c35-af38-153a968bfcae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI">
+      <UniqueIdentifier>{9832ad11-317f-47c4-a17f-42e4a22153a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\Customize_UI">
+      <UniqueIdentifier>{0740d5c9-1780-400c-9d38-ca84c8f26b22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\TextBox">
+      <UniqueIdentifier>{abdbf2c9-92cc-4833-ac49-54faee5a66fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -144,6 +153,15 @@
     <ClInclude Include="..\Public\Props.h">
       <Filter>02.GameObjects\Props</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI.h">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Customize_UI.h">
+      <Filter>02.GameObjects\UI\Customize_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TextBox.h">
+      <Filter>02.GameObjects\UI\TextBox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -203,6 +221,15 @@
     <ClCompile Include="..\Private\Props.cpp">
       <Filter>02.GameObjects\Props</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI.cpp">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Customize_UI.cpp">
+      <Filter>02.GameObjects\UI\Customize_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TextBox.cpp">
+      <Filter>02.GameObjects\UI\TextBox</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -218,9 +245,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
@@ -237,6 +261,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxInstance_Point.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

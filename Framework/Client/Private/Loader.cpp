@@ -15,6 +15,7 @@
 #include "Effect.h"
 #include "Sky.h"
 #include "Props.h"
+#include "Customize_UI.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -345,12 +346,20 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CSky::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_CCustomize_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CCustomize_UI"),
+		CCustomize_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+
 	m_strLoadingText = TEXT("Loading Complete.");
 
 	m_isFinished = true;
 
 	return S_OK;
 }
+
+
 
 CLoader* CLoader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID)
 {
