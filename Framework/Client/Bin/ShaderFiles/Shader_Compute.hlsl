@@ -133,7 +133,36 @@ float Visibility_Dir(float3 vWorldPosition, float3 toLight)
     //{
     //    return 0;
     //}
-
+    
+    
+    
+    
+    
+    
+    
+    ////vector vCamPosition = mul(float4(vWorldPosition, 1.f), g_ViewMatrix);
+    ////vCamPosition = mul(vCamPosition, g_ProjMatrix);
+    
+    ////float2 vCamTexcoord;
+    ////vCamTexcoord.x = (vCamPosition.x / vCamPosition.w) * 0.5f + 0.5f;
+    ////vCamTexcoord.y = (vCamPosition.y / vCamPosition.w) * -0.5f + 0.5f;
+    
+    ////float4 vCamDepth = g_DepthTexture.SampleLevel(PointSamplerClamp, vCamTexcoord, 0);
+    
+    ////vector vPosition = mul(float4(vWorldPosition, 1.f), g_DirLightViewMatrix);
+    ////vPosition = mul(vPosition, g_DirLightProjMatrix);
+    
+    ////float2 vTexcoord;
+    ////vTexcoord.x = (vPosition.x / vPosition.w) * 0.5f + 0.5f;
+    ////vTexcoord.y = (vPosition.y / vPosition.w) * -0.5f + 0.5f;
+    
+    ////float4 vDepth = g_DirLightDepthTexture.SampleLevel(PointSamplerClamp, vTexcoord, 0);
+    
+    ////if (vCamPosition.w > vDepth.r * 1000)
+    ////{
+    ////    return 1;
+    ////}
+    
     vector vPosition = mul(float4(vWorldPosition, 1.f), g_DirLightViewMatrix);
     vPosition = mul(vPosition, g_DirLightProjMatrix);
   
@@ -147,6 +176,8 @@ float Visibility_Dir(float3 vWorldPosition, float3 toLight)
     {
         return 1;
     }
+    
+    return 0;
     
     return 0;
     
@@ -194,8 +225,8 @@ void CS_Volume( uint3 DTid : SV_DispatchThreadID )
 
     if (all(DTid < dims))
     {
-        float3 worldPosition = ConvertThreadIdToWorldPosition(DTid, dims);
-        float3 toCamera = normalize(g_vCamPosition.xyz - worldPosition);
+        float4 worldPosition = float4(ConvertThreadIdToWorldPosition(DTid, dims), 1);
+        float3 toCamera = normalize(g_vCamPosition.xyz - worldPosition.xyz);
         
         float3 lighting = float3(0.f, 0.f, 0.f);
         
@@ -205,7 +236,7 @@ void CS_Volume( uint3 DTid : SV_DispatchThreadID )
             
             float3 toLight = -lightDirection;
             
-            float visibility = Visibility_Dir(worldPosition, toLight); // 섀도우 맵으로 가시성 검사
+            float visibility = Visibility_Dir(worldPosition.xyz, toLight); // 섀도우 맵으로 가시성 검사
             float phaseFunction = HenyeyGreensteinPhaseFunction(lightDirection, toCamera, 0);
 
             lighting += visibility * g_vDirLightDiffuse;
@@ -224,9 +255,12 @@ void CS_Volume( uint3 DTid : SV_DispatchThreadID )
         
         OutputTexture[DTid] = float4(lighting, 1);
         //OutputTexture[DTid] = float4(float(DTid.x) / 128, float(DTid.y) / 128, float(DTid.z) / 128, 1);
-        worldPosition = mul(float4(worldPosition, 1), g_ViewMatrix);
-        worldPosition = mul(float4(worldPosition, 1), g_ProjMatrix);
-        OutputTexture[DTid] = g_DiffuseTexture.SampleLevel(LinearSampler, worldPosition.xyz, 0);
+        //worldPosition = mul(worldPosition, g_ViewMatrix);
+        //worldPosition = mul(worldPosition, g_ProjMatrix);
+        //worldPosition /= worldPosition.w;
+        //worldPosition.x = worldPosition.x * 0.5 + 0.5;
+        //worldPosition.y = worldPosition.y * -0.5 + 0.5;
+        //OutputTexture[DTid] = g_DiffuseTexture.SampleLevel(LinearSampler, float3(worldPosition.xy, 0), 0);
         
     }
 }

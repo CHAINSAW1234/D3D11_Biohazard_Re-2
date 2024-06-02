@@ -657,6 +657,8 @@ HRESULT CRenderer::Render_Test()
 		return E_FAIL;
 	if (FAILED(pShader->Bind_Matrix("g_ProjMatrixInv", &m_pGameInstance->Get_Transform_Float4x4_Inverse(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
+	if (FAILED(pShader->Bind_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition_Float4(), sizeof(_float4))))
+		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pShader, TEXT("Target_Diffuse"), "g_DiffuseTexture")))
 		return E_FAIL;
