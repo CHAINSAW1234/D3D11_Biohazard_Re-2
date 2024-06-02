@@ -119,6 +119,19 @@ HRESULT CMesh::Initialize_Prototype(CModel::MODEL_TYPE eType, const MESH_DESC& M
 		m_pIndices_Cooking[i] = pIndices[i];
 	}
 
+	for (int i = 0; i < m_iNumIndices / 3; ++i)
+	{
+		auto Face = new tFace();
+		//auto Face = tFace();
+
+		for (int j = 0; j < 3; ++j)
+		{
+			Face->VertexIndex[j] = pIndices[i * 3 + j];
+		}
+
+		m_vecFaces.push_back(Face);
+	}
+
 	memcpy(m_pIndices, pIndices, sizeof(_uint) * m_iNumIndices);
 
 	ZeroMemory(&m_InitialData, sizeof m_InitialData);
@@ -166,12 +179,12 @@ HRESULT CMesh::Stock_Matrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneM
 	return S_OK;
 }
 
-HRESULT CMesh::Stock_Pre_Matrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneMatrices)
+HRESULT CMesh::Stock_PrevMatrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneMatrices)
 {
 	for (_uint i = 0; i < m_iNumBones; ++i)
 	{
 		_matrix OffsetMatrix = XMLoadFloat4x4(&m_OffsetMatrices[i]);
-		_matrix CombinedMatrix = XMLoadFloat4x4(Bones[m_Bones[i]]->Get_Pre_CombinedTransformationMatrix());
+		_matrix CombinedMatrix = XMLoadFloat4x4(Bones[m_Bones[i]]->Get_PrevCombinedTransformationMatrix());
 
 		_matrix BoneMatrix = OffsetMatrix * CombinedMatrix;
 
@@ -350,6 +363,9 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertic
 	VTXMESH* pVertices = new VTXMESH[m_iNumVertices];
 
 	m_pVertices_Cooking = new _float3[m_iNumVertices];
+	m_pNormals = new _float3[m_iNumVertices];
+	m_pTexcoords = new _float2[m_iNumVertices];
+	m_pTangents = new _float3[m_iNumVertices];
 
 	ZeroMemory(pVertices, sizeof(VTXMESH) * m_iNumVertices);
 
@@ -365,6 +381,9 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertic
 	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
 	{
 		m_pVertices_Cooking[i] = pVertices[i].vPosition;
+		m_pNormals[i] = pVertices[i].vNormal;
+		m_pTexcoords[i] = pVertices[i].vTexcoord;
+		m_pTangents[i] = pVertices[i].vTangent;
 	}
 
 	ZeroMemory(&m_InitialData, sizeof m_InitialData);
@@ -405,7 +424,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		memcpy_s(&pVertices[i].vBlendWeights, sizeof(_float4), &Vertices[i].vBlendWeights, sizeof(_float4));
 
 		_float			fTotalWeights = { Vertices[i].vBlendWeights.x + Vertices[i].vBlendWeights.y + Vertices[i].vBlendWeights.z + Vertices[i].vBlendWeights.w };
-		
+
 
 		if (Vertices[i].vBlendWeights.w == 0.f)
 		{
@@ -430,44 +449,6 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		m_OffsetMatrices.push_back(OffsetMatrix);
 	}
 
-#pragma region 별도의 노말계산 그러나 들어있던것과 오차 범위이내수준
-	//vector<_float3> vNormals;
-	//vNormals.resize(m_iNumVertices);
-
-	//for (_uint i = 0; i < m_iNumIndices; )
-	//{
-	//	_uint iIndices[] = {
-	//		Indices[i++],
-	//		Indices[i++],
-	//		Indices[i++]
-	//	};
-
-	//	_vector vSrc = XMLoadFloat3(&Vertices[iIndices[1]].vPosition) - XMLoadFloat3(&Vertices[iIndices[0]].vPosition);
-	//	_vector vDest = XMLoadFloat3(&Vertices[iIndices[2]].vPosition) - XMLoadFloat3(&Vertices[iIndices[1]].vPosition);
-
-	//	_vector vNormal = XMVector3Cross(vSrc, vDest);
-
-	//	XMStoreFloat3(&vNormals[iIndices[0]], XMLoadFloat3(&vNormals[iIndices[0]]) + vNormal);
-	//	XMStoreFloat3(&vNormals[iIndices[1]], XMLoadFloat3(&vNormals[iIndices[1]]) + vNormal);
-	//	XMStoreFloat3(&vNormals[iIndices[2]], XMLoadFloat3(&vNormals[iIndices[2]]) + vNormal);
-	//}
-
-	//for (_uint i = 0; i < m_iNumVertices; ++i)
-	//	XMStoreFloat3(&vNormals[i], XMVector3Normalize(XMLoadFloat3(&vNormals[i])));
-
-	//for (_uint i = 0; i < m_iNumVertices; i++)
-	//{
-	//	memcpy_s(&pVertices[i].vNormal, sizeof(_float3), &Vertices[i].vNormal, sizeof(_float3));
-	//}
-
-	//for (_uint i = 0; i < m_iNumVertices; ++i)
-	//{
-	//	if (false == XMVector3Equal(XMLoadFloat3(&pVertices[i].vNormal), XMLoadFloat3(&vNormals[i])))
-	//		int iA = 0;
-	//}
-
-#pragma endregion
-
 	ZeroMemory(&m_InitialData, sizeof(m_InitialData));
 	m_InitialData.pSysMem = pVertices;
 
@@ -489,6 +470,112 @@ void CMesh::Static_Mesh_Cooking()
 	}
 
 	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices);
+}
+
+void CMesh::SetVertices(_float3* pVertices)
+{
+	m_pVertices_Cooking = new _float3[m_iNumVertices];
+
+	for (int i = 0; i < m_iNumVertices; ++i)
+	{
+		m_pVertices_Cooking[i] = pVertices[i];
+	}
+}
+
+void CMesh::Init_For_Octree()
+{
+	m_pIndices_Cooking = new _uint[m_iNumIndices];
+}
+
+void CMesh::Ready_Buffer_For_Octree(_float4 vTranslation)
+{
+	if (m_iNumIndices == 0)
+		return;
+
+	m_iNumVertexBuffers = 1;
+
+	m_eIndexFormat = DXGI_FORMAT_R32_UINT;
+	m_ePrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+	m_iVertexStride = sizeof(VTXMESH);
+
+	VTXMESH* pVertices = new VTXMESH[m_iNumVertices];
+
+	ZeroMemory(pVertices, sizeof(VTXMESH) * m_iNumVertices);
+
+	for (size_t i = 0; i < static_cast<size_t>(m_iNumVertices); i++)
+	{
+		pVertices[i].vPosition = m_pVertices_Cooking[i]/* + Convert_Float4_To_Float3(vTranslation)*/;
+		pVertices[i].vNormal = m_pNormals[i];
+		pVertices[i].vTexcoord = m_pTexcoords[i];
+		pVertices[i].vTangent = m_pTangents[i];
+	}
+
+	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
+
+	m_BufferDesc.ByteWidth = m_iVertexStride * m_iNumVertices;
+	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	m_BufferDesc.CPUAccessFlags = 0;
+	m_BufferDesc.MiscFlags = 0;
+	m_BufferDesc.StructureByteStride = m_iVertexStride;
+
+	ZeroMemory(&m_InitialData, sizeof m_InitialData);
+	m_InitialData.pSysMem = pVertices;
+
+	__super::Create_Buffer(&m_pVB);
+
+	Safe_Delete_Array(pVertices);
+
+	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
+
+	m_iIndexStride = sizeof(_uint);
+	m_BufferDesc.ByteWidth = m_iIndexStride * m_iNumIndices;
+	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	m_BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	m_BufferDesc.CPUAccessFlags = 0;
+	m_BufferDesc.MiscFlags = 0;
+	m_BufferDesc.StructureByteStride = 0;
+
+	ZeroMemory(&m_InitialData, sizeof m_InitialData);
+	m_InitialData.pSysMem = m_pIndices_Cooking;
+
+	__super::Create_Buffer(&m_pIB);
+}
+
+void CMesh::Octree_Mesh_Cooking_For_PX()
+{
+	if (m_iNumIndices == 0)
+		return;
+
+	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices);
+}
+
+void CMesh::SetNormals(_float3* pNormals)
+{
+	m_pNormals = new _float3[m_iNumVertices];
+	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
+	{
+		m_pNormals[i] = pNormals[i];
+	}
+}
+
+void CMesh::SetTangents(_float3* pTangents)
+{
+	m_pTangents = new _float3[m_iNumVertices];
+	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
+	{
+		m_pTangents[i] = pTangents[i];
+	}
+}
+
+void CMesh::SetTexcoords(_float2* pTexcoords)
+{
+	m_pTexcoords = new _float2[m_iNumVertices];
+	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
+	{
+		m_pTexcoords[i] = pTexcoords[i];
+	}
 }
 
 CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::MODEL_TYPE eModelType, const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices, _fmatrix TransformationMatrix)
@@ -537,6 +624,22 @@ void CMesh::Free()
 {
 	__super::Free();
 
-	Safe_Delete_Array(m_pVertices_Cooking);
-	Safe_Delete_Array(m_pIndices_Cooking);
+	if (m_pVertices_Cooking)
+		Safe_Delete_Array(m_pVertices_Cooking);
+	if (m_pIndices_Cooking)
+		Safe_Delete_Array(m_pIndices_Cooking);
+	if (m_pNormals)
+		Safe_Delete_Array(m_pNormals);
+	if (m_pTangents)
+		Safe_Delete_Array(m_pTangents);
+	if (m_pTexcoords)
+		Safe_Delete_Array(m_pTexcoords);
+
+	if (!m_vecFaces.empty())
+	{
+		for (int i = 0; i < m_vecFaces.size(); ++i)
+		{
+			delete m_vecFaces[i];
+		}
+	}
 }

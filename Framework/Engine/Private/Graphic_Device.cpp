@@ -83,7 +83,6 @@ HRESULT CGraphic_Device::Present()
 	return m_pSwapChain->Present(0, 0);	
 }
 
-
 HRESULT CGraphic_Device::Ready_SwapChain(HWND hWnd, _bool isWindowed, _uint iWinCX, _uint iWinCY)
 {
 	IDXGIDevice*			pDevice = nullptr;

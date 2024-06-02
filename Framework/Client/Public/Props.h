@@ -6,6 +6,7 @@
 BEGIN(Engine)
 class CModel;
 class CShader;
+class COctree;
 END
 
 BEGIN(Client)
@@ -40,6 +41,8 @@ private:
 
 	_int						m_iPropsType = { 0 };
 	_bool						m_bVisible = { false };
+
+	COctree*					m_pOctree = { nullptr };
 private:
 	HRESULT						Add_Components();
 	HRESULT						Bind_ShaderResources();

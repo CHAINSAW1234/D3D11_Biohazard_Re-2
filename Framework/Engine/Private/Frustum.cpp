@@ -79,6 +79,67 @@ _bool CFrustum::isIn_LocalSpace(_fvector vLocalPos, _float fRange)
 	return true;
 }
 
+_bool CFrustum::isIn_WorldSpace_Cube(_fvector vWorldPos, _float size, _float fRange)
+{
+	//for (size_t i = 0; i < 6; i++)
+	//{
+	//	/*a b c d
+	//	x y z 1
+	//	ax + by + cz + d * 1 < 0;*/
+	//	if (fRange < XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&m_vWorldPlanes[i]), vWorldPos)))
+	//		return false;
+	//}
+
+	//return true;
+
+	_vector Point1 = XMVectorSet(XMVectorGetX(vWorldPos) - size, XMVectorGetY(vWorldPos) - size, XMVectorGetZ(vWorldPos) - size, 1.f);
+
+	_vector Point2 = XMVectorSet(XMVectorGetX(vWorldPos) + size, XMVectorGetY(vWorldPos) - size, XMVectorGetZ(vWorldPos) - size, 1.f);
+
+	_vector Point3 = XMVectorSet(XMVectorGetX(vWorldPos) - size, XMVectorGetY(vWorldPos) + size, XMVectorGetZ(vWorldPos) - size, 1.f);
+
+	_vector Point4 = XMVectorSet(XMVectorGetX(vWorldPos) - size, XMVectorGetY(vWorldPos) - size, XMVectorGetZ(vWorldPos) + size, 1.f);
+
+	_vector Point5 = XMVectorSet(XMVectorGetX(vWorldPos) + size, XMVectorGetY(vWorldPos) + size, XMVectorGetZ(vWorldPos) - size, 1.f);
+
+	_vector Point6 = XMVectorSet(XMVectorGetX(vWorldPos) - size, XMVectorGetY(vWorldPos) + size, XMVectorGetZ(vWorldPos) + size, 1.f);
+
+	_vector Point7 = XMVectorSet(XMVectorGetX(vWorldPos) + size, XMVectorGetY(vWorldPos) - size, XMVectorGetZ(vWorldPos) + size, 1.f);
+
+	_vector Point8 = XMVectorSet(XMVectorGetX(vWorldPos) + size, XMVectorGetY(vWorldPos) + size, XMVectorGetZ(vWorldPos) + size, 1.f);
+
+	for (size_t i = 0; i < 6; i++)
+	{
+		if (fRange > XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&m_vWorldPlanes[i]), Point1)))
+			continue;
+
+		if (fRange > XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&m_vWorldPlanes[i]), Point2)))
+			continue;
+
+		if (fRange > XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&m_vWorldPlanes[i]), Point3)))
+			continue;
+
+		if (fRange > XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&m_vWorldPlanes[i]), Point4)))
+			continue;
+
+		if (fRange > XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&m_vWorldPlanes[i]), Point5)))
+			continue;
+
+		if (fRange > XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&m_vWorldPlanes[i]), Point6)))
+			continue;
+
+		if (fRange > XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&m_vWorldPlanes[i]), Point7)))
+			continue;
+
+		if (fRange > XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&m_vWorldPlanes[i]), Point8)))
+			continue;
+
+		return false;
+	}
+
+	return true;
+}
+
 
 void CFrustum::Make_Planes(const _float3 * pPoints, _float4 * pPlanes)
 {

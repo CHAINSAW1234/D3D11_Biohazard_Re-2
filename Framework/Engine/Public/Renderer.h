@@ -35,10 +35,11 @@ public:
 	void						Set_RadialBlur(_float fBlurAmount, _float2 BlurUV);
 	void						On_RadialBlur();
 	void						Off_RadialBlur();
+	_bool						Get_ShaderState(SHADER_STATE eState);
+	void						Set_ShaderState(SHADER_STATE eState, _bool isState);
 
 private:
 	HRESULT						SetUp_RenderTargets();
-	HRESULT						SetUp_MRTs();
 	HRESULT						SetUp_LightDSV();
 	HRESULT						SetUp_LightDSV_Point();
 	HRESULT						SetUp_Components();
@@ -55,7 +56,8 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT						SetUp_RenderTargets_MotionBlur(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_SSR(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_DOF(const D3D11_VIEWPORT& ViewportDesc);
-
+	HRESULT						SetUp_RenderTargets_FXAA(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTarget_SubResult(const D3D11_VIEWPORT& ViewportDesc);
 	// 잘 모름 
 	HRESULT						SetUp_RenderTargets_Distortion(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_Emissive(const D3D11_VIEWPORT& ViewportDesc);
@@ -99,10 +101,8 @@ private:
 	_float						m_fLightDepthTargetViewCubeWidth = { 0.f };
 
 private:
-	_bool						m_isSSAO = { true };		// SSAO 온 오프
-	_bool						m_isMotionBlur = { true };	// MotionBlur 온 오프
-	_bool						m_isSSR = { true };			// SSR 온 오프
-	_bool						m_isDOF = { false };		// DOF 온 오프
+	_bool						m_ShaderOptions[SHADER_STATE_END] = { true };
+
 private:
 	_bool						m_isRadialBlurActive = { false };
 	_float2						m_vRadialBlurUV = { 0.f, 0.f };
@@ -130,9 +130,6 @@ private:
 	HRESULT						Render_UI();
 	HRESULT						Render_Font();
 
-	private:
-	HRESULT						Render_MotionBlur();
-
 private:
 	HRESULT						Render_SSAO_Blur();
 
@@ -151,9 +148,11 @@ private:
 	HRESULT						Render_Light_Result();
 
 private:
+	HRESULT						Render_MotionBlur();
 	HRESULT						Render_SSR();
 	HRESULT						Render_DOF();
-
+	HRESULT						Render_FXAA();
+	HRESULT						Render_SubResult(const wstring& strRenderTargetTag);	// 후처리 관리용 
 private:
 	HRESULT						Render_PostProcessing();
 	HRESULT						Render_PostProcessing_Result();

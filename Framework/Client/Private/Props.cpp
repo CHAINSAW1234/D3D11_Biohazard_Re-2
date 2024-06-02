@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "GameInstance.h"
 #include "Light.h"
+#include "Octree.h"
 
 CProps::CProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -35,7 +36,12 @@ HRESULT CProps::Initialize(void* pArg)
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
-	//m_pModelCom->Static_Mesh_Cooking();
+	m_pModelCom->Static_Mesh_Cooking();
+
+	m_pOctree = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+	m_pOctree->GetSceneDimensions(m_pModelCom);
+	int TotalTriangleCount = m_pOctree->GetSceneTriangleCount(m_pModelCom);
+	m_pOctree->CreateNode(m_pModelCom, TotalTriangleCount, m_pOctree->GetCenter(), m_pOctree->GetWidth());
 
 	return S_OK;
 }
@@ -48,7 +54,7 @@ void CProps::Tick(_float fTimeDelta)
 void CProps::Late_Tick(_float fTimeDelta)
 {
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-	//m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 }
@@ -58,27 +64,30 @@ HRESULT CProps::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+	//_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	for (size_t i = 0; i < iNumMeshes; i++)
-	{
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-			return E_FAIL;
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
-			return E_FAIL;
+	//for (size_t i = 0; i < iNumMeshes; i++)
+	//{
+	//	if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+	//		return E_FAIL;
+	//	if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
+	//		return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS))) {
-			if (FAILED(m_pShaderCom->Begin(0)))
-				return E_FAIL;
-		}
-		else {
-			if (FAILED(m_pShaderCom->Begin(1)))
-				return E_FAIL;
-		}
+	//	if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS))) 
+	//	{
+	//		if (FAILED(m_pShaderCom->Begin(0)))
+	//			return E_FAIL;
+	//	}
+	//	else 
+	//	{
+	//		if (FAILED(m_pShaderCom->Begin(1)))
+	//			return E_FAIL;
+	//	}
 
-		m_pModelCom->Render(static_cast<_uint>(i));
-	}
+	//	m_pModelCom->Render(static_cast<_uint>(i));
+	//}
 
+	m_pOctree->DrawOctree(m_pOctree, m_pModelCom, m_pShaderCom);
 
 	return S_OK;
 }
@@ -263,4 +272,5 @@ void CProps::Free()
 
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
+	Safe_Release(m_pOctree);
 }

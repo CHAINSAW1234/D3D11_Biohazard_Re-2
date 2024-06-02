@@ -19,6 +19,7 @@ public:
 	void						Transform_LocalSpace(_fmatrix WorldMatrixInv);
 	_bool						isIn_WorldSpace(_fvector vWorldPos, _float fRange);
 	_bool						isIn_LocalSpace(_fvector vLocalPos, _float fRange);
+	_bool						isIn_WorldSpace_Cube(_fvector vWorldPos, _float size, _float fRange);
 
 private:
 	_float3						m_vOriginalPoints[8];

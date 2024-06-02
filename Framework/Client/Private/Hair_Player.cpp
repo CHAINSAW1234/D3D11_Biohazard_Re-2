@@ -66,6 +66,11 @@ void CHair_Player::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_pColliderCom->Tick(XMLoadFloat4x4(&m_WorldMatrix));
+
+	if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
+	{
+		m_bRagdoll = true;
+	}
 }
 
 void CHair_Player::Late_Tick(_float fTimeDelta)
@@ -224,6 +229,9 @@ HRESULT CHair_Player::Render()
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
 
+		if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
+			return E_FAIL;
+
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS))) {
 			if (FAILED(m_pShaderCom->Begin(0)))
 				return E_FAIL;
@@ -245,8 +253,28 @@ HRESULT CHair_Player::Render_LightDepth_Dir()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
+	if (m_bRagdoll)
+	{
+		if (m_bRagdoll_Ready == true)
+		{
+			auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+			WorldMat._41 = 0.f;
+			WorldMat._42 = 0.f;
+			WorldMat._43 = 0.f;
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+				return E_FAIL;
+		}
+		else
+		{
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+				return E_FAIL;
+		}
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+			return E_FAIL;
+	}
 
 	if (m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) != nullptr) {
 
@@ -283,8 +311,28 @@ HRESULT CHair_Player::Render_LightDepth_Spot()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
+	if (m_bRagdoll)
+	{
+		if (m_bRagdoll_Ready == true)
+		{
+			auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+			WorldMat._41 = 0.f;
+			WorldMat._42 = 0.f;
+			WorldMat._43 = 0.f;
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+				return E_FAIL;
+		}
+		else
+		{
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+				return E_FAIL;
+		}
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+			return E_FAIL;
+	}
 
 	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
 
@@ -324,8 +372,30 @@ HRESULT CHair_Player::Render_LightDepth_Point()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
+	if (m_bRagdoll)
+	{
+		if (m_bRagdoll_Ready == true)
+		{
+			auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+			WorldMat._41 = 0.f;
+			WorldMat._42 = 0.f;
+			WorldMat._43 = 0.f;
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+				return E_FAIL;
+		}
+		else
+		{
+			m_bRagdoll_Ready = true;
+
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+				return E_FAIL;
+		}
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+			return E_FAIL;
+	}
 
 	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
 	_int iIndex = 0;
@@ -394,8 +464,33 @@ HRESULT CHair_Player::Bind_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+	_bool isMotionBlur = m_pGameInstance->Get_ShaderState(MOTION_BLUR);
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_isMotionBlur", &isMotionBlur, sizeof(_bool))))
 		return E_FAIL;
+
+	if (m_bRagdoll)
+	{
+		if (m_bRagdoll_Ready == true)
+		{
+			auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+			WorldMat._41 = 0.f;
+			WorldMat._42 = 0.f;
+			WorldMat._43 = 0.f;
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+				return E_FAIL;
+		}
+		else
+		{
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+				return E_FAIL;
+		}
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+			return E_FAIL;
+	}
+
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))

@@ -341,6 +341,20 @@ void CGameInstance::Off_RadialBlur()
 
 	m_pRenderer->Off_RadialBlur();
 }
+_bool CGameInstance::Get_ShaderState(SHADER_STATE eState)
+{
+	if (nullptr == m_pRenderer)
+		return false;
+
+	return m_pRenderer->Get_ShaderState(eState);
+}
+void CGameInstance::Set_ShaderState(SHADER_STATE eState, _bool isState)
+{
+	if (nullptr == m_pRenderer)
+		return;
+
+	m_pRenderer->Set_ShaderState(eState, isState);
+}
 void CGameInstance::On_Off_DebugRender()
 {
 	if (nullptr == m_pRenderer)
@@ -703,6 +717,11 @@ HRESULT CGameInstance::Add_RenderTarget_3D(const wstring& strRenderTargetTag, _u
  	return m_pTarget_Manager->Add_RenderTarget_3D(strRenderTargetTag, iWidth, iHeight, iDepth, ePixelFormat, vClearColor);
 }
 
+HRESULT CGameInstance::Clear_RenderTarget_All()
+{
+	return m_pTarget_Manager->Clear_RenderTarget_All();
+}
+
 HRESULT CGameInstance::Clear_RenderTarget(const wstring& strRenderTargetTag)
 {
 	return m_pTarget_Manager->Clear_RenderTarget(strRenderTargetTag);
@@ -815,6 +834,12 @@ void CGameInstance::TransformFrustum_LocalSpace(_fmatrix WorldMatrixInv)
 	}
 	m_pFrustum->Transform_LocalSpace(WorldMatrixInv);
 }
+
+_bool CGameInstance::isInFrustum_WorldSpace_Cube(_fvector vWorldPos, _float size, _float fRange)
+{
+	return m_pFrustum->isIn_WorldSpace_Cube(vWorldPos, size, fRange);
+}
+
 #pragma endregion
 
 #pragma region Extractor

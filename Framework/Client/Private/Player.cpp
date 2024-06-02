@@ -102,7 +102,8 @@ void CPlayer::Tick(_float fTimeDelta)
 			m_eState ^= STATE_RUN;
 	}
 
-	_vector		vWorldPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);	
+	_vector		vWorldPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+	
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vWorldPos);
 
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
@@ -137,31 +138,33 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
-	//_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
-	//CVIBuffer_Terrain*		pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
-	//CTransform*				pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
-	//if (nullptr != pTerrainBuffer &&
-	//	nullptr != pTerrainTransform)
-	//{
-	//	_vector		vPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
-	//	_float4		vPickPosFloat4;
-	//	pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
+	_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
+	CVIBuffer_Terrain*		pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
+	CTransform*				pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
+	if (nullptr != pTerrainBuffer &&
+		nullptr != pTerrainTransform)
+	{
+		_vector		vPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+		_float4		vPickPosFloat4;
+		pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
 
-	//	_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
-	//	vMoveDir = vResultPos - vPosition;
-	//}
-	/////////////////////////////////////////////////////////////////////////////
+		_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
+		vMoveDir = vResultPos - vPosition;
+	}
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	//	m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
 
 #pragma endregion
 
 	_float4			vMoveDirFloat4 = {};
-	XMStoreFloat4(&vMoveDirFloat4, vMovedDirection);
+	XMStoreFloat4(&vMoveDirFloat4, vMoveDir);
+
 	m_pController->Move(vMoveDirFloat4, fTimeDelta);
 
 

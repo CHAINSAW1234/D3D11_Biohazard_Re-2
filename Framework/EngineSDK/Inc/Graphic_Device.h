@@ -11,12 +11,10 @@ public:
 	virtual ~CGraphic_Device() = default;
 
 public:
-
 	HRESULT						Ready_Graphic_Device(const ENGINE_DESC& EngineDesc, 
 		_Inout_ ID3D11Device** ppDevice, _Inout_ ID3D11DeviceContext** ppContext);
 
 	HRESULT						Clear_BackBuffer_View(_float4 vClearColor);
-
 	HRESULT						Clear_DepthStencil_View();
 
 	HRESULT						Present();
@@ -30,7 +28,6 @@ private:
 
 	ID3D11RenderTargetView*		m_pBackBufferRTV = { nullptr };
 	ID3D11DepthStencilView*		m_pDepthStencilView = { nullptr };
-
 
 private:
 

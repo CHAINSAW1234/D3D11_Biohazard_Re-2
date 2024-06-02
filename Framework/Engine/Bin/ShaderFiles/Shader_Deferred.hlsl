@@ -155,8 +155,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
-
+    Out.vColor = g_Texture.Sample(PointSamplerClamp, In.vTexcoord);
     return Out;
 }
 
@@ -168,7 +167,7 @@ PS_OUT PS_MAIN_CUBE(PS_IN In)
     //float3 vTex = normalize(float3(In.vTexcoord.x * 2 - 1.f, In.vTexcoord.y * -2.f + 1.f, 1.f));
     //float3 vTex = normalize(float3(-1.0, In.vTexcoord.y * -2 + 1.f, In.vTexcoord.x * -2.f + 1.f));
     
-    Out.vColor = g_CubeTexture.Sample(LinearSampler, float4(vTex, 0));
+    Out.vColor = g_CubeTexture.Sample(PointSamplerClamp, float4(vTex, 0));
 
     return Out;
 }
@@ -181,11 +180,22 @@ PS_OUT PS_MAIN_3D(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    
     //Out.vColor = g_3DTexture.Load(int4(In.vTexcoord * 128, (float) g_iNumZ, 0));
     Out.vColor = g_3DTexture.Sample(PointSampler, float3(In.vTexcoord, (float) g_iNumZ / g_iNumSizeZ));
     return Out;
 }
+
+PS_OUT PS_MAIN_DISCARD(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    Out.vColor = g_Texture.Sample(PointSampler, In.vTexcoord);
+    if (Out.vColor.a == 0)
+        discard;
+    
+    return Out;
+}
+
 
 struct PS_OUT_LIGHT
 {
@@ -420,7 +430,6 @@ float ShadowPCF(texture2D ShadowTexture, float SampleRadius, float fOriginDepth,
     
     return Shadow;
 }
-
 float ShadowPCF_Point(TextureCubeArray ShadowTexture, int iLightIndex, float SampleRadius, float fDistance, float3 fDirection)
 {
     float Shadow = 0.f;
@@ -434,86 +443,6 @@ float ShadowPCF_Point(TextureCubeArray ShadowTexture, int iLightIndex, float Sam
             Shadow += 1.f;
     }
     Shadow /= 16; // 샘플 수로 나누어 평균 계산
-    
-    return Shadow;
-}
-
-float ShadowPCFSample_Dir(float fOriginDepth, float2 vTexcoord)
-{
-    float SampleRadius = 0.0005;
-    float Shadow = 0.f;
-    // PCF
-    int Samples = 10; // 샘플 수, 필요에 따라 조정
-    float SampleStep = SampleRadius / Samples; // 샘플 간격
-
-    for (int x = -Samples / 2; x <= Samples / 2; ++x)
-    {
-        for (int y = -Samples / 2; y <= Samples / 2; ++y)
-        {
-            float2 Offset = float2(x * SampleStep, y * SampleStep);
-            float2 SampleTexcoord = vTexcoord + Offset;
-            float fDepth = g_DirLightDepthTexture.Sample(PointSamplerClamp, SampleTexcoord).r;
-
-            if (fOriginDepth - 1.f > (fDepth * 1000.f))
-                Shadow += 1.f;
-        }
-    }
-    
-    Shadow /= (Samples * Samples); // 샘플 수로 나누어 평균 계산
-    
-    return Shadow;
-}
-
-float ShadowPCFSample_Spot(float fOriginDepth, float2 vTexcoord)
-{
-    float SampleRadius = 0.005;
-    float Shadow = 0.f;
-    // PCF
-    int Samples = 10; // 샘플 수, 필요에 따라 조정
-    float SampleStep = SampleRadius / Samples; // 샘플 간격
-
-    for (int x = -Samples / 2; x <= Samples / 2; ++x)
-    {
-        for (int y = -Samples / 2; y <= Samples / 2; ++y)
-        {
-            float2 Offset = float2(x * SampleStep, y * SampleStep);
-            float2 SampleTexcoord = vTexcoord + Offset;
-            float fDepth = g_SpotLightDepthTexture.Sample(PointSamplerClamp, SampleTexcoord).r;
-
-            if (fOriginDepth -1.f > (fDepth * 1000.f))
-                Shadow += 1.f;
-        }
-    }
-
-    Shadow /= (Samples * Samples); // 샘플 수로 나누어 평균 계산
-    
-    return Shadow;
-}
-
-float ShadowPCFSample_Point(float fDistance, float3 fDirection, int iLightIndex)
-{
-    float SampleRadius = 0.01;
-    float Shadow = 0.f;
-    // PCF
-    int Samples = 10; // 샘플 수, 필요에 따라 조정
-    float SampleStep = SampleRadius / Samples; // 샘플 간격
-
-    for (int x = -Samples / 2; x <= Samples / 2; ++x)
-    {
-        for (int y = -Samples / 2; y <= Samples / 2; ++y)
-        {
-            float3 Offset = float3(x * SampleStep, y * SampleStep, 0.0);
-            float3 SamplePos = normalize(fDirection + Offset);
-            float fDepth = g_PointLightDepthTexture.Sample(PointSamplerClamp, float4(SamplePos, iLightIndex)).r;
-
-            if (fDistance > fDepth * 1000)
-            {
-                Shadow += 1.0;
-            }
-        }
-    }
-
-    Shadow /= (Samples * Samples); // 샘플 수로 나누어 평균 계산
     
     return Shadow;
 }
@@ -620,11 +549,11 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
 {
     PS_OUT_PRE_POST Out = (PS_OUT_PRE_POST) 0;
 
-    vector vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    vector vDiffuse = g_DiffuseTexture.Sample(PointSamplerClamp, In.vTexcoord);
     if (0.0f == vDiffuse.a)
         discard;
-    vector vShade = g_ShadeTexture.Sample(LinearSampler, In.vTexcoord);
-    vector vSpecular = g_SpecularTexture.Sample(LinearSampler, In.vTexcoord);
+    vector vShade = g_ShadeTexture.Sample(PointSamplerClamp, In.vTexcoord);
+    vector vSpecular = g_SpecularTexture.Sample(PointSamplerClamp, In.vTexcoord);
     
     vector vDepth = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
     vector vNormal = g_NormalTexture.Sample(PointSampler, In.vTexcoord);
@@ -635,6 +564,7 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
     vSpecular = lerp(0.04, vSpecular, fMetalness);
     
     Out.vDiffuse = vDiffuse * vShade + vSpecular;
+    Out.vDiffuse.a = 1.f;
     Out.vNormal = vNormal;
     Out.vDepth = vDepth;
     Out.vMaterial = vMaterial;
@@ -668,14 +598,14 @@ PS_OUT PS_MOTIONBLUR(PS_IN In)
     vVelocity.xy /= (float) iNumBlurSample;
     
     
-    Out.vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    Out.vColor = g_DiffuseTexture.Sample(PointSamplerClamp, In.vTexcoord);g_DiffuseTexture.Sample(PointSamplerClamp, In.vTexcoord);
     int iCnt = 1;
     
     float4 vColor;
     
     for (int i = iCnt; i < iNumBlurSample; ++i)
     {
-        vColor = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord + vVelocity.xy * (float) i);
+        vColor = g_DiffuseTexture.Sample(PointSamplerClamp, In.vTexcoord + vVelocity.xy * (float) i);
         
         if (vVelocity.a != 0)
         {
@@ -686,7 +616,6 @@ PS_OUT PS_MOTIONBLUR(PS_IN In)
     }
     
     Out.vColor /= (float)iCnt;
-    Out.vColor.a = 1;
     
     return Out;
 }
@@ -813,7 +742,7 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
         float fDistance = sqrt(float(iX * iX));
         float fWeight = Compute_Gaussian(fDistance, 1.f); // 가우시안 함수를 이용해 가중치 계산
         // 가중치가 적용된 색상을 결과에 더함
-        vResult += fWeight * g_Texture.Sample(LinearSampler, In.vTexcoord + float2(iX, 0) * vTexOffset);
+        vResult += fWeight * g_Texture.Sample(PointSamplerClamp, In.vTexcoord + float2(iX, 0) * vTexOffset);
     }
     
     Out.vColor = vResult;
@@ -837,7 +766,7 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
         float fDistance = sqrt(float(iY * iY));
         float fWeight = Compute_Gaussian(fDistance, 1.f); // 가우시안 함수를 이용해 가중치 계산
         // 가중치가 적용된 색상을 결과에 더함
-        vResult += fWeight * g_Texture.Sample(LinearSampler, In.vTexcoord + float2(0, iY) * vTexOffset);
+        vResult += fWeight * g_Texture.Sample(PointSamplerClamp, In.vTexcoord + float2(0, iY) * vTexOffset);
     }
     
     Out.vColor = vResult;
@@ -916,7 +845,7 @@ PS_OUT PS_SSR(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
-    float4 vDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    float4 vDiffuse = g_DiffuseTexture.Sample(PointSamplerClamp, In.vTexcoord);
     
     float4 vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexcoord);
     float4 vNormal = float4(vNormalDesc.xyz * 2.f - 1.f, 0.f);
@@ -938,7 +867,7 @@ PS_OUT PS_SSR(PS_IN In)
     float2 coordsEdgeFactor = float2(1, 1) - pow(saturate(abs(coords.xy - float2(0.5f, 0.5f)) * 2), 8);
     float screenEdgeFactor = saturate(min(coordsEdgeFactor.x, coordsEdgeFactor.y));
     float reflectionIntensity = saturate(screenEdgeFactor * saturate(vReflectDir.z) * (coords.w));
-    float3 reflectionColor = reflectionIntensity * g_DiffuseTexture.Sample(LinearSampler, coords.xy).rgb;
+    float3 reflectionColor = reflectionIntensity * g_DiffuseTexture.Sample(PointSamplerClamp, coords.xy).rgb;
 
     Out.vColor = vDiffuse + fMetallic * max(0, float4(reflectionColor, 1.0f));   
     return Out;
@@ -976,7 +905,7 @@ PS_OUT PS_DOF_BLURX(PS_IN In)
     
     if (fRadius == 0)
     {
-        Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
+        Out.vColor = g_Texture.Sample(PointSamplerClamp, In.vTexcoord);
         return Out;
     }
     
@@ -987,14 +916,13 @@ PS_OUT PS_DOF_BLURX(PS_IN In)
         float fWeight = Compute_Gaussian(fDistance, 1.f); // 가우시안 함수를 이용해 가중치 계산
         // 가중치가 적용된 색상을 결과에 더함
         if (0 != g_DOFTexture.Sample(PointSampler, In.vTexcoord + float2(iX, 0) * vTexOffset).r)
-            vResult += fWeight * g_Texture.Sample(LinearSampler, In.vTexcoord + float2(iX, 0) * vTexOffset);
+            vResult += fWeight * g_Texture.Sample(PointSamplerClamp, In.vTexcoord + float2(iX, 0) * vTexOffset);
     }
     
     Out.vColor = vResult;
 
     return Out;
 }
-
 PS_OUT PS_DOF_BLURY(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -1007,7 +935,7 @@ PS_OUT PS_DOF_BLURY(PS_IN In)
     
     if (fRadius == 0)
     {
-        Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
+        Out.vColor = g_Texture.Sample(PointSamplerClamp, In.vTexcoord);
         return Out;
     }
     // 주변 픽셀들을 반복하여 블러 처리
@@ -1017,7 +945,7 @@ PS_OUT PS_DOF_BLURY(PS_IN In)
         float fWeight = Compute_Gaussian(fDistance, 1.f); // 가우시안 함수를 이용해 가중치 계산
         // 가중치가 적용된 색상을 결과에 더함
         if (0 != g_DOFTexture.Sample(PointSampler, In.vTexcoord + float2(0, iY) * vTexOffset).r)
-            vResult += fWeight * g_Texture.Sample(LinearSampler, In.vTexcoord + float2(0, iY) * vTexOffset);
+            vResult += fWeight * g_Texture.Sample(PointSamplerClamp, In.vTexcoord + float2(0, iY) * vTexOffset);
     }
     
     Out.vColor = vResult;
@@ -1025,6 +953,212 @@ PS_OUT PS_DOF_BLURY(PS_IN In)
     return Out;
 }
 
+float RGBToLuma(float3 rgb)
+{
+    return sqrt(dot(rgb, float3(0.299, 0.587, 0.114)));
+}
+
+float Quality[12] = { 0.f, 0.f, 0.f, 0.f, 0.f, 1.5f, 2.f, 2.f, 2.f, 2.f, 4.f, 8.f };
+
+PS_OUT PS_FXAA(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+    
+    float fWidth, fHeight;
+    g_Texture.GetDimensions(fWidth, fHeight);
+    float2 vTexOffset = 1.0 / float2(fWidth, fHeight); // 텍스처 각 요소에 대한 오프셋 계산 
+    
+    float4 fColor_Center = g_Texture.Sample(LinearSamplerClamp, In.vTexcoord);
+    float fLuma_Center = RGBToLuma(fColor_Center.rgb);
+    // 1. 가장자리를 찾기 : 현재 픽셀과 4방향 이웃의 lumas 계산
+    float fLuma_Down = RGBToLuma(g_Texture.Sample(LinearSamplerClamp, In.vTexcoord + float2(0, 1) * vTexOffset).rgb);
+    float fLuma_Up = RGBToLuma(g_Texture.Sample(LinearSamplerClamp, In.vTexcoord + float2(0, -1) * vTexOffset).rgb);
+    float fLuma_Left = RGBToLuma(g_Texture.Sample(LinearSamplerClamp, In.vTexcoord + float2(-1, 0) * vTexOffset).rgb);
+    float fLuma_Right = RGBToLuma(g_Texture.Sample(LinearSamplerClamp, In.vTexcoord + float2(1, 0) * vTexOffset).rgb);
+    
+    // 차이값을 구해서 임계치(THREADHOLD)보다 크다면 앨리어싱 수행
+    float fLuma_Min = min(fLuma_Center, min(min(fLuma_Down, fLuma_Up), min(fLuma_Left, fLuma_Right)));
+    float fLuma_Max = max(fLuma_Center, max(max(fLuma_Down, fLuma_Up), max(fLuma_Left, fLuma_Right)));
+    
+    float fLumaRange = fLuma_Max - fLuma_Min;
+    // 각각 권장값 EDGE_THRESHOLD_MIN = 0.0312, EDGE_THRESHOLD_MAX = 0.125.
+    if (fLumaRange < max(0.0312, fLuma_Max * 0.125))
+    {
+        Out.vColor = fColor_Center;
+        return Out;
+    }
+    
+    // 2. 가장자리가 수평, 수직인지 확인
+    // 수평: |(upleft - left) - (left - downleft)| + 2 * |(up - center) - (center - down)| + |(upright - right) - (right - downright)|
+    // 수직: |(upright - up) - (up - upleft)| + 2 * |(right - center) - (center - left)| + |(downright - down) - (down - downleft)|
+   
+    // 대각선 좌표의 Luma 계산
+    float fLuma_DownLeft = RGBToLuma(g_Texture.Sample(LinearSamplerClamp, In.vTexcoord + float2(-1, 1) * vTexOffset).rgb);
+    float fLuma_UpRight = RGBToLuma(g_Texture.Sample(LinearSamplerClamp, In.vTexcoord + float2(1, -1) * vTexOffset).rgb);
+    float fLuma_UpLeft = RGBToLuma(g_Texture.Sample(LinearSamplerClamp, In.vTexcoord + float2(-1, -1) * vTexOffset).rgb);
+    float fLuma_DownRight = RGBToLuma(g_Texture.Sample(LinearSamplerClamp, In.vTexcoord + float2(1, 1) * vTexOffset).rgb);
+    
+    // 상하좌우, 대각선을 조합
+    float fLuma_DownUp = fLuma_Down + fLuma_Up;
+    float fLuma_LeftRight = fLuma_Left + fLuma_Right;
+
+    float fLuma_DownCorners = fLuma_DownLeft + fLuma_DownRight;
+    float fLuma_UpCorners = fLuma_UpLeft + fLuma_UpRight;
+    float fLuma_LeftCorners = fLuma_DownLeft + fLuma_UpLeft;
+    float fLuma_RightCorners = fLuma_DownRight + fLuma_UpRight;
+    
+    // 수평 수직 계산
+    float fEdgeHorizontal = abs(-2.0 * fLuma_Left + fLuma_LeftCorners) + abs(-2.0 * fLuma_Center + fLuma_DownUp) * 2.0 + abs(-2.0 * fLuma_Right + fLuma_RightCorners);
+    float fEdgeVertical = abs(-2.0 * fLuma_Up + fLuma_UpCorners) + abs(-2.0 * fLuma_Center + fLuma_LeftRight) * 2.0 + abs(-2.0 * fLuma_Down + fLuma_DownCorners);
+    
+    bool isHorizontal = (fEdgeHorizontal >= fEdgeVertical);
+ 
+    // 가장자리의 방향에 직교하는 방향이 실제 가장자리의 경계인지 판정
+    // 현제 픽셀의 각 측면도의 변화도(Gradient)를 계산, 차이가 가장 큰 곳이 가장자리 테두리로 판정될 예정
+    
+    float fLuma1 = isHorizontal ? fLuma_Down : fLuma_Left;
+    float fLuma2 = isHorizontal ? fLuma_Up : fLuma_Right;
+    
+    // 변화도 계산
+    float fGradient1 = fLuma1 - fLuma_Center;
+    float fGradient2 = fLuma2 - fLuma_Center;
+    
+    // 더 가파른 방향을 결정
+    bool is1Steepest = abs(fGradient1) >= abs(fGradient2);
+    
+    // 정규화
+    float fGradientScaled = 0.25f * max(abs(fGradient1), abs(fGradient2));
+    
+    // 가장자리 방향에 따라 이동 거리 결정
+    float fStepLength = isHorizontal ? vTexOffset.y : vTexOffset.x;
+    
+    // 이동한 방향에서의 평균 Luma 계산
+    float fLumaLocalAverage = 0.f;
+    
+    if (is1Steepest)
+    {
+        fStepLength = -fStepLength;
+        fLumaLocalAverage = 0.5f * (fLuma1 + fLuma_Center);
+    }
+    else
+    {
+        fLumaLocalAverage = 0.5f * (fLuma2 + fLuma_Center);
+    }
+    
+    float2 vCurrentTexcoord = In.vTexcoord;
+    if (isHorizontal)
+    {
+        vCurrentTexcoord.y += fStepLength * 0.5f;
+    }
+    else
+    {
+        vCurrentTexcoord.x += fStepLength * 0.5f;
+    }
+    
+    // 가장자리의 주축(Main Axis)를 따라서 탐색
+    // 두 방향으로 한 픽셀 이동, 새로운 좌표의 Lumas를 얻고 변화량을 계산
+    // 차이가 Gradient 보다 큰 경우 가장자리의 끝에 도달한 것으로 판정 , 정지
+    
+    float2 vOffSet = isHorizontal ? float2(vTexOffset.x, 0.f) : float2(0.f, vTexOffset.y);
+      
+    float2 vTexcoord1 = vCurrentTexcoord - vOffSet;
+    float2 vTexcoord2 = vCurrentTexcoord + vOffSet;
+    
+    float fLuma_End1 = RGBToLuma(g_Texture.Sample(LinearSamplerClamp, vTexcoord1).rgb);
+    float fLuma_End2 = RGBToLuma(g_Texture.Sample(LinearSamplerClamp, vTexcoord2).rgb);
+    fLuma_End1 -= fLumaLocalAverage;
+    fLuma_End2 -= fLumaLocalAverage;
+    
+    bool isReached1 = abs(fLuma_End1) >= fGradientScaled;
+    bool isReached2 = abs(fLuma_End2) >= fGradientScaled;
+    bool isReachedBoth = isReached1 && isReached2;
+    
+    if (!isReached1)
+    {
+        vTexcoord1 -= vOffSet;
+    }
+    if (!isReached2)
+    {
+        vTexcoord2 += vOffSet;
+    }
+    
+    // 가장 자리 양쪽에 도달할 때까지 또는 최대 반복 수에 도달할 때 까지 반복
+    // 빠른 처리를 위해 이동 픽셀 양을 5번 반복후에 증가( 0,0,0,0,0,1.5, 2.0, 2.0, 2.0, 2.0, 4.0, 8.0)
+    if (!isReachedBoth)
+    {
+        for (int i = 2; i < 12; ++i)
+        {
+            if (!isReached1)
+            {
+                fLuma_End1 = RGBToLuma(g_Texture.Sample(LinearSamplerClamp, vTexcoord1).rgb);
+                fLuma_End1 -= fLumaLocalAverage;
+            }
+            if (!isReached2)
+            {
+                fLuma_End2 = RGBToLuma(g_Texture.Sample(LinearSamplerClamp, vTexcoord2).rgb);
+                fLuma_End2 -= fLumaLocalAverage;
+            }
+            
+            isReached1 = abs(fLuma_End1) >= fGradientScaled;
+            isReached2 = abs(fLuma_End2) >= fGradientScaled;
+            isReachedBoth = isReached1 && isReached2;
+            
+            if (!isReached1)
+                vTexcoord1 -= vOffSet * Quality[i];
+            if (!isReached2)
+                vTexcoord2 += vOffSet;
+            if (isReachedBoth)
+                break;
+        }
+    }
+    
+    // 도달한 두 방향에 대한 거리 계산
+    float fDistance1 = isHorizontal ? In.vTexcoord.x - vTexcoord1.x : In.vTexcoord.y - vTexcoord1.y;
+    float fDistance2 = isHorizontal ? vTexcoord2.x - In.vTexcoord.x : vTexcoord2.y - In.vTexcoord.y;
+    
+    bool isDirection1 = fDistance1 < fDistance2;
+    float fDistanceFinal = min(fDistance1, fDistance2);
+    
+    float fEdgeThickness = fDistance1 + fDistance2;
+    
+    float fPixelOffset = -fDistanceFinal / fEdgeThickness + 0.5f;
+    
+    // 현재 픽셀의 Luma와 끝점에서 관찰된 Luma의 차이가 일관되는지(CoHerent) 확인
+    // 너무 멀리 이동했을 경우 오프셋 적용하지 않음
+    bool isLumaCenterSmaller = fLuma_Center < fLumaLocalAverage;
+    bool isCorrectVariation = ((isDirection1 ? fLuma_End1 : fLuma_End2) < 0.f) != isLumaCenterSmaller;
+    
+    // 만약 luma 차이가 잘못된 경우, offset 을 적용하지 않음
+    float fFinalOffset = isCorrectVariation ? fPixelOffset : 0.f;
+    
+    // SubPixel Antialiasing
+    float fLumaAverage = (1.f / 12.f) * (2.f * (fLuma_DownUp + fLuma_LeftRight) + fLuma_LeftCorners + fLuma_RightCorners);
+   
+    float fSubPixelOffset1 = clamp(abs(fLumaAverage - fLuma_Center) / fLumaRange, 0.0, 1.0);
+    float fSubPixelOffset2 = (-2.0 * fSubPixelOffset1 + 3.0) * fSubPixelOffset1 * fSubPixelOffset1;
+    
+    //SUBPIXEL_QUALITY = 0.75
+    float fSubPixelOffsetFinal = fSubPixelOffset2 * fSubPixelOffset2 * 0.75f;
+    
+    fFinalOffset = max(fFinalOffset, fSubPixelOffsetFinal);
+    
+    // 최종 계산
+    float2 vFinalTexcoord = In.vTexcoord;
+    if (isHorizontal)
+    {
+        vFinalTexcoord.y += fFinalOffset * fStepLength;
+    }
+    else
+    {
+        vFinalTexcoord.x += fFinalOffset * fStepLength;
+    }
+
+    // 새로운 UV 좌표에서 컬러를 읽고 사용함
+    float4 vFinalColor = g_Texture.Sample(LinearSamplerClamp, vFinalTexcoord);
+    Out.vColor = vFinalColor;
+
+    return Out;
+}
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -1075,6 +1209,19 @@ technique11 DefaultTechnique
         HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_MAIN_3D();
+    }
+
+    pass Copy_With_Discard // 3
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_DISCARD();
     }
 
     pass Light_Directional // 3
@@ -1246,7 +1393,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_DOF();
     }
 
-    pass PS_DOF_BlurX // 15
+    pass DOF_BlurX // 15
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1259,7 +1406,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_DOF_BLURX();
     }
 
-    pass PS_DOF_BlurY // 16
+    pass DOF_BlurY // 16
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -1270,6 +1417,19 @@ technique11 DefaultTechnique
         HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_DOF_BLURY();
+    }
+
+    pass FXAA // 16
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_FXAA();
     }
 
 }

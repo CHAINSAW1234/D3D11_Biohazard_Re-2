@@ -42,6 +42,8 @@ public: /* For.Renderer */
 	void									Set_RadialBlur(_float fBlurAmount, _float2 BlurUV);
 	void									On_RadialBlur();
 	void									Off_RadialBlur();
+	_bool									Get_ShaderState(SHADER_STATE eState);
+	void									Set_ShaderState(SHADER_STATE eState, _bool isState);
 #ifdef _DEBUG
 	void									On_Off_DebugRender();
 #endif
@@ -118,6 +120,7 @@ public: /* For.Target_Manager */
 	HRESULT									Add_RenderTarget(const wstring& strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
 	HRESULT									Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
 	HRESULT									Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	HRESULT									Clear_RenderTarget_All();
 	HRESULT									Clear_RenderTarget(const wstring& strRenderTargetTag);
 
 	HRESULT									Add_MRT(const wstring& strMRTTag, const wstring& strRenderTargetTag);
@@ -134,6 +137,7 @@ public: /* For.Frustum */
 	_bool									isInFrustum_WorldSpace(_fvector vWorldPos, _float fRange = 0.f);
 	_bool									isInFrustum_LocalSpace(_fvector vLocalPos, _float fRange = 0.f);
 	void									TransformFrustum_LocalSpace(_fmatrix WorldMatrixInv);
+	_bool									isInFrustum_WorldSpace_Cube(_fvector vWorldPos, _float size, _float fRange = 0.f);
 #pragma endregion
 
 #pragma region Extractor

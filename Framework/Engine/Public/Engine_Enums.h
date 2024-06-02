@@ -10,6 +10,7 @@ namespace Engine
 		PASS_DEBUG,
 		PASS_DEBUG_CUBE,
 		PASS_DEBUG_3D,
+		PASS_COPY_DISCARD,
 		PASS_LIGHT_DIRECTIONAL,
 		PASS_LIGHT_POINT,
 		PASS_LIGHT_SPOT,
@@ -25,6 +26,7 @@ namespace Engine
 		PASS_DOF, 
 		PASS_DOF_BLURX, 
 		PASS_DOF_BLURY,
+		PASS_FXAA,
 		PASS_END
 	};
 
@@ -42,4 +44,6 @@ namespace Engine
 		Knee_L = 29,
 		knee_R = 43
 	};
+
+	enum SHADER_STATE { SSAO, MOTION_BLUR, SSR, DOF, FXAA, SHADER_STATE_END};
 }
