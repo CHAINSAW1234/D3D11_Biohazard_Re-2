@@ -23,9 +23,6 @@ HRESULT CRenderer::Initialize()
 	if (FAILED(SetUp_RenderTargets()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_MRTs()))
-		return E_FAIL;
-
 	if (FAILED(SetUp_Components()))
 		return E_FAIL;
 
@@ -33,19 +30,15 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 
 	/* For.Shadow */
-
 	if (FAILED(SetUp_LightDSV()))
 		return E_FAIL;
 
 	if (FAILED(SetUp_LightDSV_Point()))
 		return E_FAIL;
 
-
 #ifdef _DEBUG
-
 	if (FAILED(SetUp_Debug()))
 		return E_FAIL;
-
 #endif
 
 	return S_OK;
@@ -234,20 +227,6 @@ HRESULT CRenderer::SetUp_RenderTargets()
 		return E_FAIL;
 	//if (FAILED(SetUp_Test()))
 	//	return E_FAIL;
-
-	return S_OK;
-}
-
-HRESULT CRenderer::SetUp_MRTs()
-{
-
-
-
-
-
-
-
-
 
 	return S_OK;
 }
