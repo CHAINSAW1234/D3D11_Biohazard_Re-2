@@ -1,10 +1,14 @@
 #include "stdafx.h"
-#include "Player.h"
+#include "..\Public\Player.h"
 
 
 #include "Body_Player.h"
 #include "Head_Player.h"
 #include "Hair_Player.h"
+
+#include "Character_Controller.h"
+
+#define MODEL_SCALE 0.01f
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -43,7 +47,10 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(Initialize_PartModels()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Scaled(0.045f, 0.045f, 0.045f);
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f, 1.f));
+	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
+
+	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.f, 0.f, 1.f), &m_iIndex_CCT, this);
 	return S_OK;
 }
 
@@ -54,10 +61,27 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
+	static _bool Temp = false;
+
+	if (UP == m_pGameInstance->Get_KeyState(VK_BACK))
+	{
+		Temp = true;
+	}
+
+	if (Temp == false)
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4());
+
+
+	_vector		vWorldPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vWorldPos);
+
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
 	Tick_PartObjects(fTimeDelta);
 
+	m_pGameInstance->SetWorldMatrix(m_pTransformCom->Get_WorldFloat4x4());
+	m_pGameInstance->SetRotationMatrix(m_pTransformCom->Get_RotationMatrix_Pure());
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -66,15 +90,79 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	Late_Tick_PartObjects(fTimeDelta);
 
-	PART		Player_Part = { PART::PART_BODY };
+	_vector			vMovedDirection = { XMLoadFloat3(&m_vRootTranslation) };
+	if (DOWN == m_pGameInstance->Get_KeyState('B'))
+	{
+		_vector			vCurrentPostion = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+		vMovedDirection = XMVectorSetW(vCurrentPostion * -1.f, 0.f);
+	}
 
-	_float4			vMovedDirection = { Convert_Float3_To_Float4_Dir(m_vRootTranslation) };
+	if (PRESSING == m_pGameInstance->Get_KeyState('H'))
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
+	}
 
-	_vector			vCurrentPostion = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+	if (PRESSING == m_pGameInstance->Get_KeyState('K'))
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
+	}
 
-	_vector			vMoveDir = { XMLoadFloat3(&m_vRootTranslation) };
+	if (PRESSING == m_pGameInstance->Get_KeyState('U'))
+	{
+		_vector		vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
+		vLook = { XMVector3Normalize(vLook) };
+		_vector		vMoveDir = { vLook };
 
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vMoveDir + vCurrentPostion);
+		vMovedDirection += vMoveDir;
+	}
+
+	if (PRESSING == m_pGameInstance->Get_KeyState('J'))
+	{
+		_vector		vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
+		vLook = { XMVector3Normalize(vLook) };
+		_vector		vMoveDir = { vLook * -1.f };
+
+		vMovedDirection += vMoveDir;
+	}
+
+	_float4			vResultMoveDirFloat4 = {};
+	XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
+	m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
+
+#pragma region Terrain
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////TEST/////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	/*_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
+	CVIBuffer_Terrain*		pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_TOOL, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
+	CTransform*				pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_TOOL, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
+	if (nullptr != pTerrainBuffer &&
+		nullptr != pTerrainTransform)
+	{
+		_vector		vPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+		_float4		vPickPosFloat4;
+		pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
+
+		_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
+		vMoveDir = vResultPos - vPosition;
+	}*/
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	//	m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
+
+#pragma endregion
+
+
+
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
@@ -110,7 +198,6 @@ HRESULT CPlayer::Add_Components()
 	/* Com_Collider */
 	CBounding_AABB::BOUNDING_AABB_DESC		ColliderDesc{};
 
-	/* 로컬상의 정보를 셋팅한다. */
 	ColliderDesc.vSize = _float3(0.8f, 1.2f, 0.8f);
 	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.vSize.y * 0.5f, 0.f);
 
@@ -185,6 +272,14 @@ HRESULT CPlayer::Initialize_PartModels()
 	pHeadModel->Set_Surbodinate("neck_0", true);
 	pHeadModel->Set_Parent_CombinedMatrix_Ptr("neck_0", pNeck0CombinedMatrix);
 
+	_float4x4* pNeck1CombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("neck_1")) };
+	pHeadModel->Set_Surbodinate("neck_1", true);
+	pHeadModel->Set_Parent_CombinedMatrix_Ptr("neck_1", pNeck1CombinedMatrix);
+
+	_float4x4* pHeadCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("head")) };
+	pHeadModel->Set_Surbodinate("head", true);
+	pHeadModel->Set_Parent_CombinedMatrix_Ptr("head", pHeadCombinedMatrix);
+
 	_float4x4* pLeftArmCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("l_arm_clavicle")) };
 	pHeadModel->Set_Surbodinate("l_arm_clavicle", true);
 	pHeadModel->Set_Parent_CombinedMatrix_Ptr("l_arm_clavicle", pLeftArmCombinedMatrix);
@@ -202,9 +297,12 @@ HRESULT CPlayer::Initialize_PartModels()
 	pHeadModel->Set_Parent_CombinedMatrix_Ptr("r_trapA_muscle", pRightTrapAMuscleCombinedMatrix);
 
 
-	_float4x4* pNeck1CombinedMatrix = { const_cast<_float4x4*>(pHeadModel->Get_CombinedMatrix("neck_1")) };
+	//	pNeck1CombinedMatrix = { const_cast<_float4x4*>(pHeadModel->Get_CombinedMatrix("neck_1")) };
 	pHairModel->Set_Surbodinate("neck_1", true);
 	pHairModel->Set_Parent_CombinedMatrix_Ptr("neck_1", pNeck1CombinedMatrix);
+
+	pHairModel->Set_Surbodinate("head", true);
+	pHairModel->Set_Parent_CombinedMatrix_Ptr("head", pHeadCombinedMatrix);
 
 	return S_OK;
 }

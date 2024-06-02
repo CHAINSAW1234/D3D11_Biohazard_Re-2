@@ -12,6 +12,7 @@ public:
 		MODEL_SELECTOR,
 		TRANSFORMATION,
 		COLLIDER,
+		ANIM_LIST,
 		TOOL_END
 	};
 
@@ -37,7 +38,6 @@ public:
 
 protected: 
 	CGameInstance*			m_pGameInstance = { nullptr };
-
 	_float                  m_fHeight = { 0.f };
 
 public:

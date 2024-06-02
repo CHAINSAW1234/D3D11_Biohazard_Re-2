@@ -50,8 +50,15 @@ HRESULT CEditor::Add_Tools()
 	return S_OK;
 }
 
-HRESULT CEditor::Add_Tool(CTool** ppTool, _uint iToolType, const string& strToolTag, CBluePrint* pBluePrint, void* pArg)
+HRESULT CEditor::Add_Tool(CTool** ppTool, _uint iToolType, const string& strToolTag, void* pArg)
 {
+	map<string, CTool*>::iterator		iter = { m_Tools.find(strToolTag) };
+	if (iter != m_Tools.end())
+	{
+		MSG_BOX(TEXT("Tool Tag ม฿บน"));
+		return S_OK;
+	}
+
 	if (nullptr == ppTool)
 		return E_FAIL;
 
@@ -74,6 +81,14 @@ HRESULT CEditor::Add_Tool(CTool** ppTool, _uint iToolType, const string& strTool
 	else if (CTool::TOOL_TYPE::COLLIDER == (CTool::TOOL_TYPE)iToolType)
 	{
 		*ppTool = CTool_Collider::Create(pArg);
+
+		if (nullptr == *ppTool)
+			return E_FAIL;
+	}
+
+	else if (CTool::TOOL_TYPE::ANIM_LIST == static_cast<CTool::TOOL_TYPE>(iToolType))
+	{
+		*ppTool = CTool_AnimList::Create(pArg);
 
 		if (nullptr == *ppTool)
 			return E_FAIL;

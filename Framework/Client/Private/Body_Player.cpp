@@ -565,6 +565,49 @@ HRESULT CBody_Player::Render()
 
 #ifdef _DEBUG
 
+	vector<string>					BoneTags = { m_pModelCom->Get_BoneNames() };
+	map<string, _float4x4>			CombinedMatrices;
+	for (auto& strBoneTag : BoneTags)
+	{
+		_float4x4			CombinedMatrix = { *m_pModelCom->Get_CombinedMatrix(strBoneTag) };
+		CombinedMatrices[strBoneTag] = CombinedMatrix;
+	}
+
+	_matrix							WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+	_matrix							ViewMatrix = { m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_VIEW) };
+	_matrix							ProjMatrix = { m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_PROJ) };
+	_matrix							WVPMatrix = { WorldMatrix * ViewMatrix * ProjMatrix };
+
+	for (auto& Pair : CombinedMatrices)
+	{
+		string			strBoneTag = { Pair.first };
+		_matrix			CombinedMatrix = { XMLoadFloat4x4(&Pair.second) };
+		_matrix			ProjSpaceCombinedMatrix = { CombinedMatrix * WVPMatrix };
+
+		//	-WinSizeX * 0.5f ~ WinSizeX * 0.5f;
+
+		_vector			vProjSpacePosition = {ProjSpaceCombinedMatrix.r[CTransform::STATE_POSITION]};
+		vProjSpacePosition = { XMVectorSet(
+			XMVectorGetX(vProjSpacePosition) / XMVectorGetW(vProjSpacePosition),
+			XMVectorGetY(vProjSpacePosition) / XMVectorGetW(vProjSpacePosition),
+			XMVectorGetZ(vProjSpacePosition) / XMVectorGetW(vProjSpacePosition),
+			XMVectorGetW(vProjSpacePosition) / XMVectorGetW(vProjSpacePosition)) };
+
+		_vector			vScreenSpacePosition = {
+			XMVectorGetX(vProjSpacePosition) * static_cast<_float>(g_iWinSizeX) * 0.5f + static_cast<_float>(g_iWinSizeX * 0.5f),
+			(XMVectorGetY(vProjSpacePosition) * static_cast<_float>(g_iWinSizeY) * 0.5f - static_cast<_float>(g_iWinSizeY * 0.5f)) * -1.f,
+			0.f, 0.f
+		};
+
+		_float2			vScreenSpacePositionFloat2 = {};
+		XMStoreFloat2(&vScreenSpacePositionFloat2, vScreenSpacePosition);
+
+		_tchar			szTemp[MAX_PATH] = { L"" };
+		MultiByteToWideChar(CP_ACP, 0, strBoneTag.c_str(), (_uint)strlen(strBoneTag.c_str()), szTemp, MAX_PATH);
+		wstring			wstrBoneTag = { szTemp };
+		m_pGameInstance->Render_Font(TEXT("Font_Default"), wstrBoneTag, vScreenSpacePositionFloat2, XMVectorSet(1.f, 1.f, 1.f, 1.f), 0.f);
+	}
+
 	m_PartColliders[4]->Active_Color(true);
 	m_PartColliders[5]->Active_Color(true);
 	m_PartColliders[6]->Active_Color(true);

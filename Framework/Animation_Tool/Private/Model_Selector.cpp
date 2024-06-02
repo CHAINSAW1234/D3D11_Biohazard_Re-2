@@ -10,28 +10,6 @@ HRESULT CModel_Selector::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	MODEL_SELECTOR_DESC* pDesc = (MODEL_SELECTOR_DESC*)pArg;
-
-	m_iNumModels = (_uint)pDesc->pModelInfos->size();
-
-	m_ModelInfos.resize(m_iNumModels);
-	m_ModelTags = new string[m_iNumModels];
-
-	const vector<MODEL_INFO>* pModelInfos = pDesc->pModelInfos;
-	for (size_t i = 0; i < (size_t)m_iNumModels; ++i)
-	{
-		MODEL_INFO		ModelInfo;
-		ModelInfo = (*pModelInfos)[i];
-
-		if (nullptr == ModelInfo.pModel)
-			return E_FAIL;
-
-		m_ModelInfos[i] = ModelInfo;
-		Safe_AddRef(ModelInfo.pModel);
-
-		m_ModelTags[i] = pDesc->ModelTags[i];
-	}
-
 	return S_OK;
 }
 
@@ -46,7 +24,7 @@ void CModel_Selector::Tick(_float fTimeDelta)
 	static _uint		iSizeCurrentTextures = { 0 };
 	static _uint		iCurrentImageIndex = { 0 };
 
-	if (ImGui::BeginCombo("Model", m_ModelTags[iSelect].c_str()))
+	/*if (ImGui::BeginCombo("Model", m_ModelTags[iSelect].c_str()))
 	{
 		for (_uint i = 0; i < m_iNumModels; ++i)
 		{
@@ -63,15 +41,42 @@ void CModel_Selector::Tick(_float fTimeDelta)
 		}
 
 		ImGui::EndCombo();
-	}
+	}*/
 }
 
-void CModel_Selector::Change_CurrentModelInfo(MODEL_INFO ModelInfo)
+HRESULT CModel_Selector::Add_Componets()
 {
-	Safe_Release(m_CurrentInfo.pModel);
+	if (LEVEL_TOOL == m_pGameInstance->Get_CurrentLevel())
+	{
+		CModel* pModel = { nullptr };
 
-	m_CurrentInfo = ModelInfo;
-	Safe_AddRef(m_CurrentInfo.pModel);
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_LeonBody"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Leon_Body"] = pModel;
+	}
+	
+
+	return S_OK;
+}
+
+map<string, _float4x4> CModel_Selector::Get_BoneCombinedMatrices()
+{
+	map<string, _float4x4>			BoneCombinedMatrices;
+
+	CModel* pModel = { Get_Model(m_strSelectedModelTag) };
+	if (nullptr == pModel)
+		return BoneCombinedMatrices;
+
+	vector<string>		BoneNames = { pModel->Get_BoneNames() };
+	for (auto& strBoneTag : BoneNames)
+	{
+		_float4x4			BoneCombinedMatrix = { *pModel->Get_CombinedMatrix(strBoneTag) };
+		BoneCombinedMatrices[strBoneTag] = BoneCombinedMatrix;
+	}
+
+	return BoneCombinedMatrices;
 }
 
 CModel_Selector* CModel_Selector::Create(void* pArg)
@@ -92,14 +97,10 @@ void CModel_Selector::Free()
 {
 	__super::Free();
 
-	for (auto& ModelInfo : m_ModelInfos)
+	for (auto& Pair : m_Models)
 	{
-		Safe_Release(ModelInfo.pModel);
+		Safe_Release(Pair.second);
+		Pair.second = nullptr;
 	}
-
-	m_ModelInfos.clear();
-
-	Safe_Delete_Array(m_ModelTags);
-
-	Safe_Release(m_CurrentInfo.pModel);
+	m_Models.clear();
 }

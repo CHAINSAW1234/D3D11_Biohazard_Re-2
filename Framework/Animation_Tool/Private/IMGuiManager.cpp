@@ -29,7 +29,11 @@ HRESULT CIMGuiManager::Initialize()
 
     ZeroMemory(&m_Editors, sizeof(m_Editors));
 
-    m_Editors[EDITOR_TYPE::EDITOR_ANIMATION] = CAnimationEditor::Create(m_pDevice, m_pContext);
+    CAnimationEditor*       pAnimEditor = { CAnimationEditor::Create(m_pDevice, m_pContext) };
+    if (nullptr == pAnimEditor)
+        return E_FAIL;
+
+    m_Editors[EDITOR_TYPE::EDITOR_ANIMATION] = pAnimEditor;
 
     ZeroMemory(&m_Debugers, sizeof(m_Debugers));
 

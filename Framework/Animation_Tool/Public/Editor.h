@@ -27,7 +27,7 @@ public:
 protected:
     virtual HRESULT Add_Components() = 0;
     virtual HRESULT Add_Tools() override; 
-    HRESULT Add_Tool(CTool** ppTool, _uint iToolType, const string& strToolTag, class CBluePrint* pBluePrint, void* pArg = nullptr);
+    HRESULT Add_Tool(CTool** ppTool, _uint iToolType, const string& strToolTag, void* pArg = nullptr);
 
     //  해당 컴포넌트 태그의 컴포넌트 타입을 찾아줌
     //  컴포넌트 타입은 에디터 구현층에서 직접 enum으로 정의하기.

@@ -598,7 +598,9 @@
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\Model_Selector.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
+    <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\Private\Tool.cpp" />
+    <ClCompile Include="..\Private\Tool_AnimList.cpp" />
     <ClCompile Include="..\Private\Tool_Collider.cpp" />
     <ClCompile Include="..\Private\Tool_Selector.cpp" />
     <ClCompile Include="..\Private\Tool_Transformation.cpp" />
@@ -635,7 +637,9 @@
     <ClInclude Include="..\Public\IMGuiManager.h" />
     <ClInclude Include="..\Public\Model_Selector.h" />
     <ClInclude Include="..\Public\Player.h" />
+    <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\Public\Tool.h" />
+    <ClInclude Include="..\Public\Tool_AnimList.h" />
     <ClInclude Include="..\Public\Tool_Collider.h" />
     <ClInclude Include="..\Public\Tool_Defines.h" />
     <ClInclude Include="..\Public\Tool_Enums.h" />

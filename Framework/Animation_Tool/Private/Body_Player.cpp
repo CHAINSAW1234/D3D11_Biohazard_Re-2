@@ -281,16 +281,117 @@ void CBody_Player::Tick(_float fTimeDelta)
 	m_pModelCom->Active_RootMotion_XZ(isSetRootXZ);
 	m_pModelCom->Active_RootMotion_Y(isSetRootY);
 	m_pModelCom->Active_RootMotion_Rotation(isSetRootRotation);
-		
 
-	Update_PartColliders_Debug();
+
+	_uint		iIndex = { 0 };
+	{
+		vector<_float4>			Translations = { m_pModelCom->Get_ResultTranslation_IK(TEXT("IK_L_LEG")) };
+		vector<_float4>			OriginTranslations = { m_pModelCom->Get_OriginTranslation_IK(TEXT("IK_L_LEG")) };
+		vector<_float4x4>		CombiendMatrices = { m_pModelCom->Get_JointCombinedMatrices_IK(TEXT("IK_L_LEG")) };
+
+		for (_float4 vTranslation : Translations)
+		{
+			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+
+			_vector			vPosition = { XMVector3TransformCoord(vTranslation, WorldMatrix) };
+			_matrix			TranslationMatrix = { XMMatrixTranslation(vPosition.m128_f32[0], vPosition.m128_f32[1], vPosition.m128_f32[2]) };
+			_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (4 - iIndex), 0.01f * (4 - iIndex), 0.01f * (4 - iIndex)) };
+
+			WorldMatrix = { ScaleMatrix * TranslationMatrix };
+
+			m_PartColliders[iIndex++]->Tick(WorldMatrix);
+		}
+
+		for (_float4 vTranslation : OriginTranslations)
+		{
+			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+
+			_vector			vPosition = { XMVector3TransformCoord(vTranslation, WorldMatrix) };
+			_matrix			TranslationMatrix = { XMMatrixTranslation(vPosition.m128_f32[0], vPosition.m128_f32[1], vPosition.m128_f32[2]) };
+			_matrix			ScaleMatrix = { XMMatrixScaling(0.005f, 0.005f, 0.005f) };
+
+			WorldMatrix = { ScaleMatrix * TranslationMatrix };
+
+			m_PartColliders[iIndex++]->Tick(WorldMatrix);
+		}
+
+		for (_float4x4 CombinedMatrix : CombiendMatrices)
+		{
+			WorldMatrix = { XMLoadFloat4x4(&CombinedMatrix) * XMLoadFloat4x4(&m_WorldMatrix) };
+
+
+
+			_matrix			TranslationMatrix = { XMMatrixTranslation(WorldMatrix.r[3].m128_f32[0], WorldMatrix.r[3].m128_f32[1], WorldMatrix.r[3].m128_f32[2]) };
+			_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (12 - iIndex), 0.01f * (12 - iIndex), 0.01f * (12 - iIndex)) };
+
+			WorldMatrix = { ScaleMatrix * TranslationMatrix };
+
+			m_PartColliders[iIndex++]->Tick(WorldMatrix);
+		}
+	}
+	{
+		vector<_float4>			Translations = { m_pModelCom->Get_ResultTranslation_IK(TEXT("IK_R_ARM")) };
+		vector<_float4>			OriginTranslations = { m_pModelCom->Get_OriginTranslation_IK(TEXT("IK_R_ARM")) };
+		vector<_float4x4>		CombiendMatrices = { m_pModelCom->Get_JointCombinedMatrices_IK(TEXT("IK_R_ARM")) };
+
+		for (_float4 vTranslation : Translations)
+		{
+			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+
+			_vector			vPosition = { XMVector3TransformCoord(vTranslation, WorldMatrix) };
+			_matrix			TranslationMatrix = { XMMatrixTranslation(vPosition.m128_f32[0], vPosition.m128_f32[1], vPosition.m128_f32[2]) };
+			_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (16 - iIndex), 0.01f * (16 - iIndex), 0.01f * (16 - iIndex)) };
+
+			WorldMatrix = { ScaleMatrix * TranslationMatrix };
+
+			m_PartColliders[iIndex++]->Tick(WorldMatrix);
+		}
+
+		for (_float4 vTranslation : OriginTranslations)
+		{
+			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+
+			_vector			vPosition = { XMVector3TransformCoord(vTranslation, WorldMatrix) };
+			_matrix			TranslationMatrix = { XMMatrixTranslation(vPosition.m128_f32[0], vPosition.m128_f32[1], vPosition.m128_f32[2]) };
+			_matrix			ScaleMatrix = { XMMatrixScaling(0.005f, 0.005f, 0.005f) };
+
+			WorldMatrix = { ScaleMatrix * TranslationMatrix };
+
+			m_PartColliders[iIndex++]->Tick(WorldMatrix);
+		}
+
+		for (_float4x4 CombinedMatrix : CombiendMatrices)
+		{
+			WorldMatrix = { XMLoadFloat4x4(&CombinedMatrix) * XMLoadFloat4x4(&m_WorldMatrix) };
+
+
+
+			_matrix			TranslationMatrix = { XMMatrixTranslation(WorldMatrix.r[3].m128_f32[0], WorldMatrix.r[3].m128_f32[1], WorldMatrix.r[3].m128_f32[2]) };
+			_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (24 - iIndex), 0.01f * (24 - iIndex), 0.01f * (24 - iIndex)) };
+
+			WorldMatrix = { ScaleMatrix * TranslationMatrix };
+
+			m_PartColliders[iIndex++]->Tick(WorldMatrix);
+		}
+	}
 }
 
 void CBody_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	static bool Temp = false;
+	if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
+	{
+		Temp = true;
+		m_bRagdoll = true;
+	}
+
+	if (!Temp)
+	{
+		//	m_pModelCom->Play_Animations(fTimeDelta);
+		m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	}
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
@@ -318,6 +419,9 @@ HRESULT CBody_Player::Render()
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS))) {
@@ -378,112 +482,9 @@ HRESULT CBody_Player::Render()
 	for (_uint i = 0; i < 24; ++i)
 		m_PartColliders[i]->Render();
 
-	/*for (auto& pPartCollider : m_PartColliders)
-	{
-		pPartCollider->Render();
-	}*/
-
 #endif
 
 	return S_OK;
-}
-
-void CBody_Player::Update_PartColliders_Debug()
-{
-	_matrix			WorldMatrix;
-
-	_uint		iIndex = { 0 };
-	{
-		vector<_float4>			Translations = { m_pModelCom->Get_ResultTranslation_IK(TEXT("IK_L_LEG")) };
-		vector<_float4>			OriginTranslations = { m_pModelCom->Get_OriginTranslation_IK(TEXT("IK_L_LEG")) };
-		vector<_float4x4>		CombiendMatrices = { m_pModelCom->Get_JointCombinedMatrices_IK(TEXT("IK_L_LEG")) };
-
-		for (_float4 vTranslation : Translations)
-		{
-			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
-
-			_vector			vPosition = { XMVector3TransformCoord(vTranslation, WorldMatrix) };
-			_matrix			TranslationMatrix = { XMMatrixTranslation(vPosition.m128_f32[0], vPosition.m128_f32[1], vPosition.m128_f32[2]) };
-			_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (4 - iIndex), 0.01f * (4 - iIndex), 0.01f * (4 - iIndex)) };
-
-			WorldMatrix = { ScaleMatrix * TranslationMatrix };
-
-			m_PartColliders[iIndex++]->Tick(WorldMatrix);
-		}
-
-		for (_float4 vTranslation : OriginTranslations)
-		{
-			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
-
-			_vector			vPosition = { XMVector3TransformCoord(vTranslation, WorldMatrix) };
-			_matrix			TranslationMatrix = { XMMatrixTranslation(vPosition.m128_f32[0], vPosition.m128_f32[1], vPosition.m128_f32[2]) };
-			_matrix			ScaleMatrix = { XMMatrixScaling(0.005f, 0.005f, 0.005f) };
-
-			WorldMatrix = { ScaleMatrix * TranslationMatrix };
-
-			m_PartColliders[iIndex++]->Tick(WorldMatrix);
-		}
-
-		for (_float4x4 CombinedMatrix : CombiendMatrices)
-		{
-			WorldMatrix = { XMLoadFloat4x4(&CombinedMatrix) * XMLoadFloat4x4(&m_WorldMatrix) };
-
-
-
-			_matrix			TranslationMatrix = { XMMatrixTranslation(WorldMatrix.r[3].m128_f32[0], WorldMatrix.r[3].m128_f32[1], WorldMatrix.r[3].m128_f32[2]) };
-			_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (12 - iIndex), 0.01f * (12 - iIndex), 0.01f * (12 - iIndex)) };
-
-			WorldMatrix = { ScaleMatrix * TranslationMatrix };
-
-			m_PartColliders[iIndex++]->Tick(WorldMatrix);
-		}
-	}
-
-	{
-		vector<_float4>			Translations = { m_pModelCom->Get_ResultTranslation_IK(TEXT("IK_R_ARM")) };
-		vector<_float4>			OriginTranslations = { m_pModelCom->Get_OriginTranslation_IK(TEXT("IK_R_ARM")) };
-		vector<_float4x4>		CombiendMatrices = { m_pModelCom->Get_JointCombinedMatrices_IK(TEXT("IK_R_ARM")) };
-
-		for (_float4 vTranslation : Translations)
-		{
-			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
-
-			_vector			vPosition = { XMVector3TransformCoord(vTranslation, WorldMatrix) };
-			_matrix			TranslationMatrix = { XMMatrixTranslation(vPosition.m128_f32[0], vPosition.m128_f32[1], vPosition.m128_f32[2]) };
-			_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (16 - iIndex), 0.01f * (16 - iIndex), 0.01f * (16 - iIndex)) };
-
-			WorldMatrix = { ScaleMatrix * TranslationMatrix };
-
-			m_PartColliders[iIndex++]->Tick(WorldMatrix);
-		}
-
-		for (_float4 vTranslation : OriginTranslations)
-		{
-			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
-
-			_vector			vPosition = { XMVector3TransformCoord(vTranslation, WorldMatrix) };
-			_matrix			TranslationMatrix = { XMMatrixTranslation(vPosition.m128_f32[0], vPosition.m128_f32[1], vPosition.m128_f32[2]) };
-			_matrix			ScaleMatrix = { XMMatrixScaling(0.005f, 0.005f, 0.005f) };
-
-			WorldMatrix = { ScaleMatrix * TranslationMatrix };
-
-			m_PartColliders[iIndex++]->Tick(WorldMatrix);
-		}
-
-		for (_float4x4 CombinedMatrix : CombiendMatrices)
-		{
-			WorldMatrix = { XMLoadFloat4x4(&CombinedMatrix) * XMLoadFloat4x4(&m_WorldMatrix) };
-
-
-
-			_matrix			TranslationMatrix = { XMMatrixTranslation(WorldMatrix.r[3].m128_f32[0], WorldMatrix.r[3].m128_f32[1], WorldMatrix.r[3].m128_f32[2]) };
-			_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (24 - iIndex), 0.01f * (24 - iIndex), 0.01f * (24 - iIndex)) };
-
-			WorldMatrix = { ScaleMatrix * TranslationMatrix };
-
-			m_PartColliders[iIndex++]->Tick(WorldMatrix);
-		}
-	}	
 }
 
 HRESULT CBody_Player::Render_LightDepth_Dir()
@@ -491,8 +492,20 @@ HRESULT CBody_Player::Render_LightDepth_Dir()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
+	if (m_bRagdoll)
+	{
+		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+		WorldMat._41 = 0.f;
+		WorldMat._42 = 0.f;
+		WorldMat._43 = 0.f;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+			return E_FAIL;
+	}
 
 	if (m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) != nullptr) {
 
@@ -530,8 +543,20 @@ HRESULT CBody_Player::Render_LightDepth_Spot()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
+	if (m_bRagdoll)
+	{
+		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+		WorldMat._41 = 0.f;
+		WorldMat._42 = 0.f;
+		WorldMat._43 = 0.f;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+			return E_FAIL;
+	}
 
 	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
 
@@ -570,8 +595,20 @@ HRESULT CBody_Player::Render_LightDepth_Point()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
+	if (m_bRagdoll)
+	{
+		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+		WorldMat._41 = 0.f;
+		WorldMat._42 = 0.f;
+		WorldMat._43 = 0.f;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+			return E_FAIL;
+	}
 
 	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
 	_int iIndex = 0;
@@ -667,6 +704,10 @@ HRESULT CBody_Player::Bind_ShaderResources()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 			return E_FAIL;
 	}
+
+	_bool isMotionBlur = m_pGameInstance->Get_ShaderState(MOTION_BLUR);
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_isMotionBlur", &isMotionBlur, sizeof(_bool))))
+		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;

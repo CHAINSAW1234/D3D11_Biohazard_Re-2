@@ -3,12 +3,17 @@
 #include "Tool_Defines.h"
 #include "Tool.h"
 
+BEGIN(Engine)
+class CGameObject;
+END
+
 BEGIN(Tool)
 
 class CTool_Transformation final : public CTool
 {
 public:
 	enum MODE { MODE_PERSPECTIVE, MODE_ORTHO, MODE_END };
+
 protected:
 	CTool_Transformation();
 	virtual ~CTool_Transformation() = default;

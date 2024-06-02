@@ -8,43 +8,31 @@ BEGIN(Tool)
 class CModel_Selector final :  public CTool_Selector
 {
 public:
-	typedef struct tagModelInfo
-	{
-		CModel*			pModel = { nullptr };
-		wstring			strPrototypeTag = { TEXT("") };
-	}MODEL_INFO;
-
 	typedef struct tagModelSelectorDesc
 	{
-		const vector<MODEL_INFO>*		pModelInfos = { nullptr };
-		vector<string>					ModelTags;
-		vector<CModel::MODEL_TYPE>		Types;
-	}MODEL_SELECTOR_DESC;
-
+		list<CModel*>		Models;
+	}MODELSELECTOR_DESC;
 
 private:
 	CModel_Selector();
 	virtual ~CModel_Selector() = default;
 
 public:
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(_float fTimeDelta) override;
-
-public:
-	const MODEL_INFO& Get_CurrentModelInfo() const {
-		return m_CurrentInfo;
-	}
+	virtual HRESULT				Initialize(void* pArg) override;
+	virtual void				Tick(_float fTimeDelta) override;
 
 private:
-	void Change_CurrentModelInfo(MODEL_INFO ModelInfo);
+	HRESULT						Add_Componets();
+
+public:
+	CModel*						Get_Model(const string& strModelTag) { return m_Models[strModelTag]; }
+	map<string, _float4x4>		Get_BoneCombinedMatrices();
 
 private:
 	_uint						m_iNumModels = { 0 };
-	vector<MODEL_INFO>			m_ModelInfos;
+	map<string, CModel*>		m_Models;
 
-	string*						m_ModelTags = { nullptr };
-
-	MODEL_INFO					m_CurrentInfo = {};
+	string						m_strSelectedModelTag = { "" };
 
 public:
 	static CModel_Selector* Create(void* pArg);

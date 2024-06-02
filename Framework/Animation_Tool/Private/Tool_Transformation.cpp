@@ -2,6 +2,7 @@
 #include "Tool_Transformation.h"
 
 #include "ImGuizmo.h"
+#include "GameObject.h"
 
 CTool_Transformation::CTool_Transformation()
 {
@@ -157,7 +158,7 @@ void CTool_Transformation::Update_WorldMatrix()
 
 CTool_Transformation* CTool_Transformation::Create(void* pArg)
 {
-	CTool_Transformation* pInatnace = new CTool_Transformation();
+	CTool_Transformation*		pInatnace = { new CTool_Transformation() };
 
 	if (FAILED(pInatnace->Initialize(pArg)))
 	{
@@ -172,6 +173,6 @@ CTool_Transformation* CTool_Transformation::Create(void* pArg)
 void CTool_Transformation::Free()
 {
 	__super::Free();
-
+	
 	Safe_Release(m_pTargetTransform);
 }

@@ -9,7 +9,7 @@
 #include "Hair_Player.h"
 #include "Player.h"
 //	#include "BackGround.h"
-//	#include "Terrain.h"
+#include "Terrain.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -115,9 +115,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("모델를(을) 로딩 중 입니다.");
-
 	_matrix			TransformMatrix = { XMMatrixIdentity() };
-	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(0.f));
+	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 
 	/* Prototype_Component_police_holl */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_police_holl"),
@@ -233,6 +232,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_GameObject_Part_Hair_Player */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Hair_Player"),
 		CHair_Player::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
+		CTerrain::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	///* For.Prototype_GameObject_Part_Weapon */

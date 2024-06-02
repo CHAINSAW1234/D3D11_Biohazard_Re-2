@@ -5,6 +5,10 @@
 
 #include "Collider.h"
 
+BEGIN(Engine)
+class CGameObject;
+END
+
 BEGIN(Tool)
 
 class CTool_Collider final : public CTool
@@ -18,11 +22,11 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 
 public:
-	class CGameObject* Get_CurrentSelectCollider();
-	void Set_CurrentSelectCollider(class CGameObject* pStaticCollider) { m_pCurrentSelectCollider = pStaticCollider; }
+	CGameObject* Get_CurrentSelectCollider();
+	void Set_CurrentSelectCollider(CGameObject* pStaticCollider) { m_pCurrentSelectCollider = pStaticCollider; }
 
 private:
-	class CGameObject*						m_pCurrentSelectCollider = { nullptr };
+	CGameObject*						m_pCurrentSelectCollider = { nullptr };
 
 public:
 	static CTool_Collider* Create( void* pArg);
