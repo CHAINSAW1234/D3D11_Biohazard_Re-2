@@ -355,6 +355,7 @@ void CGameInstance::Set_ShaderState(SHADER_STATE eState, _bool isState)
 
 	m_pRenderer->Set_ShaderState(eState, isState);
 }
+#ifdef _DEBUG
 void CGameInstance::On_Off_DebugRender()
 {
 	if (nullptr == m_pRenderer)
@@ -362,6 +363,7 @@ void CGameInstance::On_Off_DebugRender()
 
 	m_pRenderer->On_Off_DebugRender();
 }
+#endif
 #pragma endregion
 
 #pragma region Level_Manager
@@ -432,6 +434,12 @@ void CGameInstance::Release_Layer(_uint iLevelIndex, const wstring& LayerTag)
 	_ASSERT(m_pObject_Manager != nullptr);
 
 	m_pObject_Manager->Release_Layer(iLevelIndex, LayerTag);
+}
+HRESULT CGameInstance::Add_Layer(_uint iLevelIndex, const wstring& strLayerTag)
+{
+	_ASSERT(m_pObject_Manager != nullptr);
+
+	return m_pObject_Manager->Add_Layer(iLevelIndex, strLayerTag);
 }
 #pragma endregion
 
