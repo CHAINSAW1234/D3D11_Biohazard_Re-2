@@ -33,6 +33,12 @@ HRESULT CProps::Initialize(void* pArg)
 	m_tagPropDesc.worldMatrix = pObj_desc->worldMatrix;
 	m_tagPropDesc.BelongIndexs = pObj_desc->BelongIndexs;
 	m_tagPropDesc.iRegionDir = pObj_desc->iRegionDir;
+
+	//memcpy_s(&m_tagPropDesc.iBelongIndexs2, sizeof(_int) * iMaxNum, &pObj_desc->iBelongIndexs2, sizeof(_int) * iMaxNum);
+	for (auto iter : m_tagPropDesc.BelongIndexs)
+	{
+		m_tagPropDesc.BelongIndexs2[iter] = true;
+	}
 	pObj_desc->fSpeedPerSec = 1.f;
 	pObj_desc->fRotationPerSec = XMConvertToRadians(1.f);
 
@@ -76,23 +82,23 @@ void CProps::Late_Tick(_float fTimeDelta)
 
 
 
-		if (m_tagPropDesc.BelongIndexs.size() == 0)
-			return;
-		auto& iter = find_if(m_tagPropDesc.BelongIndexs.begin(), m_tagPropDesc.BelongIndexs.end(), [&](_int iNum) ->_bool
-			{
-				if (m_pPlayer->Get_Player_ColIndex() == iNum)
-					return true;
-				return false;
-			});
+		//if (m_tagPropDesc.BelongIndexs.size() == 0)
+		//	return;
+		//auto& iter = find_if(m_tagPropDesc.BelongIndexs.begin(), m_tagPropDesc.BelongIndexs.end(), [&](_int iNum) ->_bool
+		//	{
+		//		if (m_pPlayer->Get_Player_ColIndex() == iNum)
+		//			return true;
+		//		return false;
+		//	});
 
-		if (iter == m_tagPropDesc.BelongIndexs.end())
-		{
-			m_bVisible = false;
-			return;
-		}
-		else
-			m_bVisible = true;
-
+		//if (iter == m_tagPropDesc.BelongIndexs.end())
+		//{
+		//	m_bVisible = false;
+		//	return;
+		//}
+		//else
+		//	m_bVisible = true;
+		m_bVisible = m_tagPropDesc.BelongIndexs2[m_pPlayer->Get_Player_ColIndex()];
 	}
 
 

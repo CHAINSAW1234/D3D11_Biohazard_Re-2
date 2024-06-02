@@ -14,8 +14,11 @@ BEGIN(Client)
 class CProps final : public CGameObject
 {
 public:
+	const static _int iMaxNum = 50;
+public:
 	typedef struct tagProp_desc: public CGameObject::GAMEOBJECT_DESC
 	{
+		_int BelongIndexs2[iMaxNum];
 		_int iPropsType;
 	}PROPS_DESC;
 private:
