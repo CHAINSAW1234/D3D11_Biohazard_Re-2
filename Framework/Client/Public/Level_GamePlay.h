@@ -27,6 +27,8 @@ private:
 	HRESULT Ready_Layer_Player(const wstring& strLayerTag/*, CLandObject::LANDOBJECT_DESC& LandObjectDesc*/);
 	HRESULT Ready_Layer_Monster(const wstring& strLayerTag);
 	HRESULT Ready_Layer_LandBackGround(const wstring& strLayerTag);
+	HRESULT Ready_RegionCollider();
+
 	HRESULT Ready_Layer_Effect(const wstring& strLayerTag);
 	HRESULT Ready_Layer_UI(const wstring& strLayerTag);
 	
@@ -43,6 +45,8 @@ private:
 		return std::wstring(buffer.data());
 	}
 
+private:
+	HRESULT Load_Collider(const wstring& strFile, const wstring& strColLayerTag);
 
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

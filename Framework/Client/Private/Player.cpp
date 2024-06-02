@@ -6,6 +6,8 @@
 #include "Head_Player.h"
 #include "Hair_Player.h"
 
+#include"CustomCollider.h"
+
 #include "Character_Controller.h"
 
 #define MODEL_SCALE 0.01f
@@ -61,6 +63,33 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
+
+
+
+#pragma region 예은ColTest - 컬링 방식에 따라 달라질 겁니당
+	if (m_iCurCol != m_iPreCol)
+	{
+		m_iPreCol = m_iCurCol;
+		m_bChange = true;
+	}
+	else
+		m_bChange = false;
+
+	m_fTimeTEST += fTimeDelta;
+	if (m_pGameInstance->Get_KeyState(VK_F7) == DOWN && m_fTimeTEST > 0.01f)
+	{
+		m_fTimeTEST = 0.f;
+		m_iCurCol++;
+	}
+	if (m_pGameInstance->Get_KeyState(VK_F6) == DOWN && m_fTimeTEST > 0.01f)
+	{
+		m_fTimeTEST = 0.f;
+		m_iCurCol--;
+	}
+#pragma endregion 예은ColTest
+
+	
+	
 	static _bool Temp = false;
 
 	if (UP == m_pGameInstance->Get_KeyState(VK_BACK))
@@ -161,6 +190,10 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 #pragma endregion
 
+
+#pragma region 예은 추가
+	Col_Section();
+#pragma endregion 
 	
 
 
@@ -192,6 +225,26 @@ void CPlayer::Late_Tick_PartObjects(_float fTimeDelta)
 	for (auto& pPartObject : m_PartObjects)
 		pPartObject->Late_Tick(fTimeDelta);
 }
+#pragma region 예은 추가
+void CPlayer::Col_Section()
+{
+	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider"));
+	for (auto& iter: *pCollider)
+	{
+		if (m_pColliderCom->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")))))
+		{
+			CCustomCollider* pColCom = static_cast<CCustomCollider*>(iter);
+
+			m_iCurCol = pColCom->Get_Col();
+			m_iDir = pColCom->Get_Dir();
+
+		}
+	}
+
+
+
+}
+#pragma endregion
 
 HRESULT CPlayer::Add_Components()
 {

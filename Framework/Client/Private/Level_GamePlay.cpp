@@ -5,6 +5,7 @@
 #include "Monster.h"
 #include "Customize_UI.h"
 
+#include"CustomCollider.h"
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel{ pDevice, pContext }
 {
@@ -29,6 +30,10 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	if (FAILED(Ready_Layer_UI(TEXT(""))))
 		return E_FAIL;
+
+	if (FAILED(Ready_RegionCollider()))
+		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -113,6 +118,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_SPOT"), LightDesc)))
 		return E_FAIL;
 
+	if (FAILED(Load_Light(TEXT("../Bin/Data/Level_0"), LEVEL_GAMEPLAY)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -183,12 +190,21 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Props"))))
+	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Props"))))
+	//	return E_FAIL;
+	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_0"), LEVEL_GAMEPLAY)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
+HRESULT CLevel_GamePlay::Ready_RegionCollider()
+{
+	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_0"), TEXT("Layer_Collider"))))
+		return E_FAIL;
+
+	return S_OK;
+}
 HRESULT CLevel_GamePlay::Ready_Layer_Effect(const wstring & strLayerTag)
 {	
 	for (size_t i = 0; i < 20; i++)
@@ -316,6 +332,71 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 }
 
 
+
+HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& strColLayerTag)
+{
+
+	wstring	strFilePath = strFile + L"\\\\Layer_Collider.dat";
+
+	HANDLE		hFile = CreateFile(strFilePath.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+
+	DWORD	dwByte(0);
+
+	_uint iObjectNum = { 0 };
+	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
+	{
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+
+	for (_uint i = 0; iObjectNum > i; ++i)
+	{
+		_float4x4 WorldMatrix = {};
+		if (!ReadFile(hFile, &WorldMatrix, sizeof(_float4x4), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		_int iNum = { 0 };
+
+		if (!ReadFile(hFile, &iNum, sizeof(_int), &dwByte, NULL)) 
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+		_int iDir = { 0 };
+
+
+
+
+		if (!ReadFile(hFile, &iDir, sizeof(_int), &dwByte, NULL)) 
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+		CCustomCollider::COLLIDER_DESC collider_desc = {};
+		collider_desc.worldMatrix = WorldMatrix;
+		collider_desc.iColNum = iNum;
+		collider_desc.iDir = iDir;
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Collider"), TEXT("Prototype_GameObject_Collider"), &collider_desc)))
+		{
+			MSG_BOX(TEXT("Failed to Add_Clone Prototype_GameObject_Monster: CImGUI"));
+			return E_FAIL;
+		}
+
+
+
+
+	}
+	CloseHandle(hFile);
+	return S_OK;
+}
 HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const wstring & strLayerTag)
 {
 	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Terrain"))))

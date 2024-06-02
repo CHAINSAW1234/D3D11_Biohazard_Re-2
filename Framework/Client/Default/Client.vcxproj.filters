@@ -79,6 +79,9 @@
     <Filter Include="02.GameObjects\UI\TextBox">
       <UniqueIdentifier>{abdbf2c9-92cc-4833-ac49-54faee5a66fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Props\CustomCollider">
+      <UniqueIdentifier>{babec81f-3e56-4dc4-8379-1b9a3d9c470c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

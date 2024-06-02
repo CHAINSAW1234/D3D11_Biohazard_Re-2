@@ -24,7 +24,9 @@ public:
 	void Output() {
 		SetWindowText(g_hWnd, m_strLoadingText.c_str());
 	}
-	
+
+private:
+	HRESULT Load_Prototype(const wstring& filePath);
 
 private:
 	ID3D11Device*				m_pDevice = { nullptr };
