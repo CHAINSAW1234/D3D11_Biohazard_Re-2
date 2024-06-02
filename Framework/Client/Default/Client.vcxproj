@@ -175,6 +175,7 @@
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\Public\Client_Enumsh.h" />
+    <ClInclude Include="..\Public\CustomCollider.h" />
     <ClInclude Include="..\Public\Customize_UI.h" />
     <ClInclude Include="..\public\Effect.h" />
     <ClInclude Include="..\Public\Hair_Player.h" />
@@ -201,6 +202,7 @@
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\Body_Player.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
+    <ClCompile Include="..\Private\CustomCollider.cpp" />
     <ClCompile Include="..\Private\Customize_UI.cpp" />
     <ClCompile Include="..\private\Effect.cpp" />
     <ClCompile Include="..\Private\Hair_Player.cpp" />

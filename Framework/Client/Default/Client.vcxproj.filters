@@ -79,8 +79,8 @@
     <Filter Include="02.GameObjects\UI\TextBox">
       <UniqueIdentifier>{abdbf2c9-92cc-4833-ac49-54faee5a66fd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Props\CustomCollider">
-      <UniqueIdentifier>{babec81f-3e56-4dc4-8379-1b9a3d9c470c}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\CustomCollider">
+      <UniqueIdentifier>{66bce26c-c0c8-4789-bb6a-591f64bef163}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +165,9 @@
     <ClInclude Include="..\Public\TextBox.h">
       <Filter>02.GameObjects\UI\TextBox</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CustomCollider.h">
+      <Filter>02.GameObjects\CustomCollider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -232,6 +235,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\TextBox.cpp">
       <Filter>02.GameObjects\UI\TextBox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CustomCollider.cpp">
+      <Filter>02.GameObjects\CustomCollider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
