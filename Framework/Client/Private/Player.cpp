@@ -70,37 +70,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	if(Temp == false)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4());
-
-	if(PRESSING == m_pGameInstance->Get_KeyState('H'))
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
-	}
-
-	if (PRESSING == m_pGameInstance->Get_KeyState('K'))
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
-	}
-
-	if (PRESSING == m_pGameInstance->Get_KeyState('U'))
-	{
-		auto Look = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-		m_pController->Move(Look, fTimeDelta);
-	}
-
-	if (PRESSING == m_pGameInstance->Get_KeyState('J'))
-	{
-		auto Look = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-		m_pController->Move(Look, fTimeDelta);
-		m_eState |= STATE_RUN;
-		if (m_eState & STATE_IDLE)
-			m_eState ^= STATE_IDLE;
-	}
-	else
-	{
-		m_eState |= STATE_IDLE;
-		if(m_eState & STATE_RUN)
-			m_eState ^= STATE_RUN;
-	}
+	
 
 	_vector		vWorldPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
 	
@@ -120,15 +90,44 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	Late_Tick_PartObjects(fTimeDelta);
 
-	_float4			vMovedDirection = { Convert_Float3_To_Float4_Dir(m_vRootTranslation) };	
-
+	_vector			vMovedDirection = { XMLoadFloat3(&m_vRootTranslation) };	
 	if (DOWN == m_pGameInstance->Get_KeyState('B'))
 	{
-		_float4			vMoveDir = {};
 		_vector			vCurrentPostion = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
-		XMStoreFloat4(&vMoveDir, vCurrentPostion * -1.f);
-		m_pController->Move(vMoveDir, fTimeDelta);
+		vMovedDirection = XMVectorSetW(vCurrentPostion * -1.f, 0.f);
 	}
+
+	if (PRESSING == m_pGameInstance->Get_KeyState('H'))
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
+	}
+
+	if (PRESSING == m_pGameInstance->Get_KeyState('K'))
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
+	}
+
+	if (PRESSING == m_pGameInstance->Get_KeyState('U'))
+	{
+		_vector		vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
+		vLook = { XMVector3Normalize(vLook) };
+		_vector		vMoveDir = { vLook };
+
+		vMovedDirection += vMoveDir;
+	}
+
+	if (PRESSING == m_pGameInstance->Get_KeyState('J'))
+	{
+		_vector		vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
+		vLook = { XMVector3Normalize(vLook) };
+		_vector		vMoveDir = { vLook * -1.f };
+
+		vMovedDirection += vMoveDir;
+	}
+
+	_float4			vResultMoveDirFloat4 = {};
+	XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
+	m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
 
 #pragma region Terrain
 	///////////////////////////////////////////////////////////////////////////
@@ -138,7 +137,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
-	_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
+	/*_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
 	CVIBuffer_Terrain*		pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
 	CTransform*				pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
 	if (nullptr != pTerrainBuffer &&
@@ -150,7 +149,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 		_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
 		vMoveDir = vResultPos - vPosition;
-	}
+	}*/
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
@@ -162,10 +161,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 #pragma endregion
 
-	_float4			vMoveDirFloat4 = {};
-	XMStoreFloat4(&vMoveDirFloat4, vMoveDir);
-
-	m_pController->Move(vMoveDirFloat4, fTimeDelta);
+	
 
 
 #ifdef _DEBUG

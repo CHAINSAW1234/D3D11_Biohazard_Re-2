@@ -240,10 +240,6 @@ HRESULT CHair_Player::Render()
 	return S_OK;
 }
 
-void CHair_Player::Update_PartColliders_Debug()
-{
-}
-
 HRESULT CHair_Player::Render_LightDepth_Dir()
 {
 	if (nullptr == m_pShaderCom)

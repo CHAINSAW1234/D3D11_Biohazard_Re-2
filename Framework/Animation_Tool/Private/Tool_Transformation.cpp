@@ -45,11 +45,6 @@ void CTool_Transformation::Set_Target(CTransform* pTransform)
 	Safe_AddRef(m_pTargetTransform);
 }
 
-void CTool_Transformation::Set_Target(CGameObject* pGameObject)
-{
-	m_p
-}
-
 void CTool_Transformation::ReSet_Target()
 {
 	Safe_Release(m_pTargetTransform);
