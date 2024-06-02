@@ -40,7 +40,6 @@ public:
 
 private:
 	HRESULT						SetUp_RenderTargets();
-	HRESULT						SetUp_MRTs();
 	HRESULT						SetUp_LightDSV();
 	HRESULT						SetUp_LightDSV_Point();
 	HRESULT						SetUp_Components();

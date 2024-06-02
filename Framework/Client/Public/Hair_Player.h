@@ -37,6 +37,7 @@ private:
 
 	const _ubyte*			m_pState;
 
+	_bool					m_bRagdoll = { false };
 private:
 	HRESULT					Add_Components();
 	HRESULT					Bind_ShaderResources();

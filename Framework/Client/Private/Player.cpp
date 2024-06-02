@@ -103,18 +103,6 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 
 	_vector		vWorldPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
-
-
-	/*if (GetKeyState(VK_LBUTTON) & 0x8000)
-	{
-		POINT		ptMouse;
-		GetCursorPos(&ptMouse);
-		ScreenToClient(g_hWnd, &ptMouse);
-
-		_float2		vMousePos = _float2(static_cast<_float>(ptMouse.x), static_cast<_float>(ptMouse.y));
-
-		vWorldPos = m_pGameInstance->Compute_WorldPos(vMousePos, TEXT("Target_FieldDepth"));
-	}*/
 	
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vWorldPos);
 
