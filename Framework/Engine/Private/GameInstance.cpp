@@ -442,6 +442,12 @@ void CGameInstance::Release_Layer(_uint iLevelIndex, const wstring& LayerTag)
 
 	m_pObject_Manager->Release_Layer(iLevelIndex, LayerTag);
 }
+HRESULT CGameInstance::Add_Layer(_uint iLevelIndex, const wstring& strLayerTag)
+{
+	_ASSERT(m_pObject_Manager != nullptr);
+
+	return m_pObject_Manager->Add_Layer(iLevelIndex, strLayerTag);
+}
 #pragma endregion
 
 #pragma region Component_Manager

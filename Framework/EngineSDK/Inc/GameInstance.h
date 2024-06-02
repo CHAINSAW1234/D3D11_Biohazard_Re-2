@@ -47,6 +47,8 @@ public: /* For.Renderer */
 	void									On_RadialBlur();
 	void									Off_RadialBlur();
 	_bool									Get_ShaderState(SHADER_STATE eState);
+
+
 	void									Set_ShaderState(SHADER_STATE eState, _bool isState);
 #ifdef _DEBUG
 	void									On_Off_DebugRender();
@@ -67,6 +69,13 @@ public: /* For.Object_Manager */
 	const CComponent*						Get_Component(_uint iLevelIndex, const wstring& strLayerTag, const wstring& strComTag, _uint iIndex = 0);
 	list<class CGameObject*>*				Find_Layer(_uint iLevelIndex, const wstring& LayerTag);
 	void									Release_Layer(_uint iLevelIndex, const wstring& LayerTag);
+
+
+	//yeeun	
+	HRESULT Add_Layer(_uint iLevelIndex, const wstring& strLayerTag);
+
+
+
 #pragma endregion
 
 #pragma region Component_Manager
