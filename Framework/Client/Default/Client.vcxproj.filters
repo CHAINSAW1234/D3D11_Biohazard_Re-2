@@ -70,6 +70,9 @@
     <Filter Include="02.GameObjects\Props">
       <UniqueIdentifier>{0cb153c4-04e5-4c35-af38-153a968bfcae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Props\CustomCollider">
+      <UniqueIdentifier>{babec81f-3e56-4dc4-8379-1b9a3d9c470c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -144,6 +147,9 @@
     <ClInclude Include="..\Public\Props.h">
       <Filter>02.GameObjects\Props</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CustomCollider.h">
+      <Filter>02.GameObjects\Props\CustomCollider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -202,6 +208,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Props.cpp">
       <Filter>02.GameObjects\Props</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CustomCollider.cpp">
+      <Filter>02.GameObjects\Props\CustomCollider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

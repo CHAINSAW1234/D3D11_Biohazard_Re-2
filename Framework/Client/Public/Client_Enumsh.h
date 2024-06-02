@@ -12,4 +12,9 @@ namespace Client
 		PASS_EMISSIVE,
 		PASS_END
 	};
+
+	enum DIRECTION { DIRECTION_WEST, DIRECTION_EAST, DIRECTION_MID };
+
+
+
 }

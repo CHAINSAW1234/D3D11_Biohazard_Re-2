@@ -14,10 +14,9 @@ BEGIN(Client)
 class CProps final : public CGameObject
 {
 public:
-	typedef struct Props_Desc : public CGameObject::GAMEOBJECT_DESC
+	typedef struct tagProp_desc: public CGameObject::GAMEOBJECT_DESC
 	{
 		_int iPropsType;
-		_float4 Position;
 	}PROPS_DESC;
 private:
 	CProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -38,9 +37,14 @@ public:
 private:
 	CModel*						m_pModelCom = { nullptr };
 	CShader*					m_pShaderCom = { nullptr };
-
+	class CPlayer*			m_pPlayer = { nullptr };
 	_int						m_iPropsType = { 0 };
 	_bool						m_bVisible = { false };
+	PROPS_DESC 					m_tagPropDesc ={};
+
+
+
+
 
 	COctree*					m_pOctree = { nullptr };
 private:
