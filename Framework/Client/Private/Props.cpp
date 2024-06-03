@@ -51,7 +51,6 @@ HRESULT CProps::Initialize(void* pArg)
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 	m_pModelCom->Static_Mesh_Cooking();
 
-	m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
 
 	m_pOctree = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 	m_pOctree->GetSceneDimensions(m_pModelCom);
@@ -63,16 +62,25 @@ HRESULT CProps::Initialize(void* pArg)
 
 void CProps::Tick(_float fTimeDelta)
 {
-	
+	m_fTimeTest += fTimeDelta;
+	if(m_pPlayer == nullptr)
+		m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+	if (m_pGameInstance->Get_KeyState(VK_F9) == DOWN && m_fTimeTest>0.5f)
+		m_bOctotree = !m_bOctotree;	
+	if (m_pGameInstance->Get_KeyState(VK_F10) == DOWN && m_fTimeTest>0.5f)
+		m_bShadow = !m_bShadow;
 }
 
 void CProps::Late_Tick(_float fTimeDelta)
 {
-	if (true == m_pPlayer->Get_Player_RegionChange())
+
+
+
+	if (m_pPlayer->Get_Player_RegionChange() == true)
 	{
 		if (m_tagPropDesc.iRegionDir == DIRECTION_MID)
 		{
-
+			;
 		}
 		else if (m_pPlayer->Get_Player_Direction() != m_tagPropDesc.iRegionDir)
 		{
@@ -80,35 +88,23 @@ void CProps::Late_Tick(_float fTimeDelta)
 			return;
 		}
 
-
-
-		//if (m_tagPropDesc.BelongIndexs.size() == 0)
-		//	return;
-		//auto& iter = find_if(m_tagPropDesc.BelongIndexs.begin(), m_tagPropDesc.BelongIndexs.end(), [&](_int iNum) ->_bool
-		//	{
-		//		if (m_pPlayer->Get_Player_ColIndex() == iNum)
-		//			return true;
-		//		return false;
-		//	});
-
-		//if (iter == m_tagPropDesc.BelongIndexs.end())
-		//{
-		//	m_bVisible = false;
-		//	return;
-		//}
-		//else
-		//	m_bVisible = true;
 		m_bVisible = m_tagPropDesc.BelongIndexs2[m_pPlayer->Get_Player_ColIndex()];
 	}
+	
 
 
-	if (m_bVisible/* && true == m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f)*/)
+
+	if (/*m_bVisible && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f)*/1)
 	{
 
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-		//m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+
+		if (m_bShadow)
+		{
+			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+		}
 	}
 }
 
@@ -117,30 +113,36 @@ HRESULT CProps::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	for (size_t i = 0; i < iNumMeshes; i++)
-	{
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-			return E_FAIL;
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
-			return E_FAIL;
+	//if (m_bOctotree)
+	//	m_pOctree->DrawOctree(m_pOctree, m_pModelCom, m_pShaderCom);
+	//else
+	//{
+	//	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS))) 
-		{
-			if (FAILED(m_pShaderCom->Begin(0)))
-				return E_FAIL;
-		}
-		else 
-		{
-			if (FAILED(m_pShaderCom->Begin(1)))
-				return E_FAIL;
-		}
+	//	for (size_t i = 0; i < iNumMeshes; i++)
+	//	{
+	//		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+	//			return E_FAIL;
+	//		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
+	//			return E_FAIL;
 
-		m_pModelCom->Render(static_cast<_uint>(i));
-	}
+	//		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+	//		{
+	//			if (FAILED(m_pShaderCom->Begin(0)))
+	//				return E_FAIL;
+	//		}
+	//		else
+	//		{
+	//			if (FAILED(m_pShaderCom->Begin(1)))
+	//				return E_FAIL;
+	//		}
 
-	//m_pOctree->DrawOctree(m_pOctree, m_pModelCom, m_pShaderCom);
+	//		m_pModelCom->Render(static_cast<_uint>(i));
+	//	}
+	//}
+
+	m_pOctree->DrawOctree(m_pOctree, m_pModelCom, m_pShaderCom);
 
 	return S_OK;
 }

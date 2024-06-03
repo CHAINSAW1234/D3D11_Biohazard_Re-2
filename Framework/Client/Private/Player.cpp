@@ -76,12 +76,12 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_bChange = false;
 
 	m_fTimeTEST += fTimeDelta;
-	if (m_pGameInstance->Get_KeyState(VK_F7) == DOWN && m_fTimeTEST > 0.01f)
+	if (m_pGameInstance->Get_KeyState(VK_F7) == DOWN && m_fTimeTEST > 0.1f)
 	{
 		m_fTimeTEST = 0.f;
 		m_iCurCol++;
 	}
-	if (m_pGameInstance->Get_KeyState(VK_F6) == DOWN && m_fTimeTEST > 0.01f)
+	if (m_pGameInstance->Get_KeyState(VK_F6) == DOWN && m_fTimeTEST > 0.1f)
 	{
 		m_fTimeTEST = 0.f;
 		m_iCurCol--;
@@ -229,6 +229,8 @@ void CPlayer::Late_Tick_PartObjects(_float fTimeDelta)
 void CPlayer::Col_Section()
 {
 	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider"));
+	if (pCollider == nullptr)
+		return;
 	for (auto& iter: *pCollider)
 	{
 		if (m_pColliderCom->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")))))

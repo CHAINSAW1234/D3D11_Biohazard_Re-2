@@ -148,6 +148,8 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 	/*CLandObject::LANDOBJECT_DESC		LandObjectDesc = {};
 	LandObjectDesc.pTerrainTransform = (CTransform*)(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), g_strTransformTag));
 	LandObjectDesc.pTerrainVIBuffer = (CVIBuffer_Terrain*)(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer")));	*/
+	if (FAILED(Ready_Layer_LandBackGround(TEXT("Layer_LandBackGround"))))
+		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player")/*, LandObjectDesc*/)))
 		return E_FAIL;
@@ -158,8 +160,6 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 	if (FAILED(Ready_Layer_Effect(TEXT("Layer_Effect"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_LandBackGround(TEXT("Layer_LandBackGround"))))
-		return E_FAIL;
 
 	return S_OK;
 }
@@ -341,7 +341,7 @@ HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& st
 	HANDLE		hFile = CreateFile(strFilePath.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
 	if (INVALID_HANDLE_VALUE == hFile)
-		return E_FAIL;
+		return S_OK;
 
 
 	DWORD	dwByte(0);

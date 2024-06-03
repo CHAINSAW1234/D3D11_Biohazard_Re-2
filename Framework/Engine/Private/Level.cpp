@@ -252,7 +252,7 @@ HRESULT CLevel::Load_Light(const wstring& strFilePath, _uint iLevel)
 	if (!filesystem::exists(strLightFilePath))
 	{
 		CloseHandle(hLightLayerFile);
-		return E_FAIL;
+		return S_OK;
 	}
 
 	_uint iMonsterNum = { 0 };
