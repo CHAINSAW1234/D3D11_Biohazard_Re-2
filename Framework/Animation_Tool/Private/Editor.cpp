@@ -64,7 +64,7 @@ HRESULT CEditor::Add_Tool(CTool** ppTool, _uint iToolType, const string& strTool
 
 	else if (CTool::TOOL_TYPE::TRANSFORMATION == (CTool::TOOL_TYPE)iToolType)
 	{
-		*ppTool = CTool_Transformation::Create(pArg);
+		*ppTool = CTool_Transformation::Create(m_pDevice, m_pContext, pArg);
 
 		if (nullptr == *ppTool)
 			return E_FAIL;
@@ -72,7 +72,7 @@ HRESULT CEditor::Add_Tool(CTool** ppTool, _uint iToolType, const string& strTool
 
 	else if (CTool::TOOL_TYPE::MODEL_SELECTOR == (CTool::TOOL_TYPE)iToolType)
 	{
-		*ppTool = CModel_Selector::Create(pArg);
+		*ppTool = CModel_Selector::Create(m_pDevice, m_pContext, pArg);
 
 		if (nullptr == *ppTool)
 			return E_FAIL;
@@ -80,7 +80,7 @@ HRESULT CEditor::Add_Tool(CTool** ppTool, _uint iToolType, const string& strTool
 
 	else if (CTool::TOOL_TYPE::COLLIDER == (CTool::TOOL_TYPE)iToolType)
 	{
-		*ppTool = CTool_Collider::Create(pArg);
+		*ppTool = CTool_Collider::Create(m_pDevice, m_pContext, pArg);
 
 		if (nullptr == *ppTool)
 			return E_FAIL;
@@ -88,7 +88,15 @@ HRESULT CEditor::Add_Tool(CTool** ppTool, _uint iToolType, const string& strTool
 
 	else if (CTool::TOOL_TYPE::ANIM_LIST == static_cast<CTool::TOOL_TYPE>(iToolType))
 	{
-		*ppTool = CTool_AnimList::Create(pArg);
+		*ppTool = CTool_AnimList::Create(m_pDevice, m_pContext, pArg);
+
+		if (nullptr == *ppTool)
+			return E_FAIL;
+	}
+
+	else if (CTool::TOOL_TYPE::ANIM_PLAYER == static_cast<CTool::TOOL_TYPE>(iToolType))
+	{
+		*ppTool = CTool_AnimPlayer::Create(m_pDevice, m_pContext, pArg);
 
 		if (nullptr == *ppTool)
 			return E_FAIL;

@@ -118,6 +118,7 @@ public:		/* For. Access */
 	vector<_float4>							Get_Translations();
 	set<string>								Get_MeshTags();
 	list<_uint>								Get_MeshIndices(const string& strMeshTag);		//	이름이 같은 메쉬들이 각각의 칸에있을수있으므로 인덱스들을 컨테이너에 담아서 반환한다.
+	vector<CAnimation*>						Get_Animations() { return m_Animations; }
 
 	_float4									Invalidate_RootNode(const string& strRoot);
 
@@ -151,6 +152,7 @@ public:
 
 	HRESULT									Play_Animations(_float fTimeDelta);
 	HRESULT									Play_Animations_RootMotion(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
+	HRESULT									Play_IK(class CTransform* pTransform, _float fTimeDelta);
 	HRESULT									Render(_uint iMeshIndex);
 
 private:

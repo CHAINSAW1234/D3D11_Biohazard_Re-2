@@ -31,23 +31,8 @@
     <Filter Include="02.GameObject\Camera">
       <UniqueIdentifier>{017312b0-ccf2-4e45-b2f1-9f686d0a3929}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Player">
-      <UniqueIdentifier>{15dad106-b3c8-402d-a75a-f4f99b7e4160}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Terrain">
       <UniqueIdentifier>{3c04d30a-6ea5-4dd2-a51b-98354273f939}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Player\Body">
-      <UniqueIdentifier>{9f22826a-0d74-40ba-970f-7c26d467298f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Player\Head">
-      <UniqueIdentifier>{1dc86499-1766-45da-b187-ba1dbf4f1d55}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Player\Hair">
-      <UniqueIdentifier>{f0530ad8-e275-408c-a3fc-793a36854f9a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Player\Weapon">
-      <UniqueIdentifier>{6b223267-b68d-47ed-ad2c-63b9d42e641b}</UniqueIdentifier>
     </Filter>
     <Filter Include="97.ShaderFiles">
       <UniqueIdentifier>{08fbd261-09aa-4e48-b887-6193bd937ae4}</UniqueIdentifier>
@@ -58,38 +43,47 @@
     <Filter Include="02.GameObject\ImGui\Include">
       <UniqueIdentifier>{e7488c44-9bae-44d3-8c79-ba77aba84824}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\ImGui\Debuger">
-      <UniqueIdentifier>{fb438d33-8041-4346-bba8-843f1168454e}</UniqueIdentifier>
+    <Filter Include="02.GameObject\ImGui\Manager">
+      <UniqueIdentifier>{59dea3a6-508f-4c98-ab4f-8dae0cb16432}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\ImGui\Editor">
+    <Filter Include="02.GameObject\Editor">
       <UniqueIdentifier>{9b230a53-4b31-497b-b508-61cc29f8656b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Editor\AnimationEditor">
+      <UniqueIdentifier>{1d9e58ca-0469-447c-8192-566cc312e708}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Debuger">
+      <UniqueIdentifier>{fb438d33-8041-4346-bba8-843f1168454e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\ImGui\GUIObject">
       <UniqueIdentifier>{08ef751d-38fe-41de-a70c-b85351ba5442}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\ImGui\Editor\AnimationEditor">
-      <UniqueIdentifier>{1d9e58ca-0469-447c-8192-566cc312e708}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\ImGui\Manager">
-      <UniqueIdentifier>{59dea3a6-508f-4c98-ab4f-8dae0cb16432}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\ImGui\Tool">
+    <Filter Include="02.GameObject\Tool">
       <UniqueIdentifier>{11af2753-1133-4c5a-a4f8-d76ea80d8a21}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\ImGui\Tool\Tool_Coolider">
+    <Filter Include="02.GameObject\Tool\Tool_Coolider">
       <UniqueIdentifier>{a890ea74-e0c9-4139-abf1-8c3f08689fca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\ImGui\Tool\Tool_Transformation">
+    <Filter Include="02.GameObject\Tool\Tool_Transformation">
       <UniqueIdentifier>{2e92ce0a-f152-43cb-8274-3cb34b781ae7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\ImGui\Tool\Tool_AnimList">
-      <UniqueIdentifier>{094976da-2136-4b85-a364-dc3d636db9bb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\ImGui\Tool\Tool_Selector">
+    <Filter Include="02.GameObject\Tool\Tool_Selector">
       <UniqueIdentifier>{64cadd65-f9a0-4224-9514-2b94ed502e8f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\ImGui\Tool\Tool_Selector\Model_Selector">
+    <Filter Include="02.GameObject\Tool\Tool_Selector\Model_Selector">
       <UniqueIdentifier>{1c01e195-a02b-42b3-b7dc-dc5634a8dadd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Tool\Tool_Selector\Tool_AnimList">
+      <UniqueIdentifier>{094976da-2136-4b85-a364-dc3d636db9bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\AnimTestObject">
+      <UniqueIdentifier>{937d03b5-0c08-420b-bcd2-aa590a358cc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\AnimTestObject\AnimTestPartObject">
+      <UniqueIdentifier>{da220758-e7bc-405d-acff-c33ecaa1bc20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Tool\Tool_AnimPlayer">
+      <UniqueIdentifier>{9726706d-1868-4141-b089-1427130c3910}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -116,21 +110,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Free.cpp">
       <Filter>02.GameObject\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Body_Player.cpp">
-      <Filter>02.GameObject\Player\Body</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Hair_Player.cpp">
-      <Filter>02.GameObject\Player\Hair</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Head_Player.cpp">
-      <Filter>02.GameObject\Player\Head</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Player.cpp">
-      <Filter>02.GameObject\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Weapon.cpp">
-      <Filter>02.GameObject\Player\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\..\imguilib\imgui.cpp">
       <Filter>02.GameObject\ImGui\Include</Filter>
@@ -169,40 +148,49 @@
       <Filter>02.GameObject\ImGui\Include</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Debuger.cpp">
-      <Filter>02.GameObject\ImGui\Debuger</Filter>
+      <Filter>02.GameObject\Debuger</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Editor.cpp">
-      <Filter>02.GameObject\ImGui\Editor</Filter>
+      <Filter>02.GameObject\Editor</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GUIObject.cpp">
       <Filter>02.GameObject\ImGui\GUIObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\AnimationEditor.cpp">
-      <Filter>02.GameObject\ImGui\Editor\AnimationEditor</Filter>
+      <Filter>02.GameObject\Editor\AnimationEditor</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\IMGuiManager.cpp">
       <Filter>02.GameObject\ImGui\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Tool.cpp">
-      <Filter>02.GameObject\ImGui\Tool</Filter>
+      <Filter>02.GameObject\Tool</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Tool_Collider.cpp">
-      <Filter>02.GameObject\ImGui\Tool\Tool_Coolider</Filter>
+      <Filter>02.GameObject\Tool\Tool_Coolider</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Tool_Selector.cpp">
-      <Filter>02.GameObject\ImGui\Tool\Tool_Selector</Filter>
+      <Filter>02.GameObject\Tool\Tool_Selector</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Tool_Transformation.cpp">
-      <Filter>02.GameObject\ImGui\Tool\Tool_Transformation</Filter>
+      <Filter>02.GameObject\Tool\Tool_Transformation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Model_Selector.cpp">
-      <Filter>02.GameObject\ImGui\Tool\Tool_Selector\Model_Selector</Filter>
+      <Filter>02.GameObject\Tool\Tool_Selector\Model_Selector</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Tool_AnimList.cpp">
-      <Filter>02.GameObject\ImGui\Tool\Tool_AnimList</Filter>
+      <Filter>02.GameObject\Tool\Tool_Selector\Tool_AnimList</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Terrain.cpp">
       <Filter>02.GameObject\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AnimTestObject.cpp">
+      <Filter>02.GameObject\AnimTestObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AnimTestPartObject.cpp">
+      <Filter>02.GameObject\AnimTestObject\AnimTestPartObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool_AnimPlayer.cpp">
+      <Filter>02.GameObject\Tool\Tool_AnimPlayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -241,21 +229,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Free.h">
       <Filter>02.GameObject\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Body_Player.h">
-      <Filter>02.GameObject\Player\Body</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Hair_Player.h">
-      <Filter>02.GameObject\Player\Hair</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Head_Player.h">
-      <Filter>02.GameObject\Player\Head</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Player.h">
-      <Filter>02.GameObject\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Weapon.h">
-      <Filter>02.GameObject\Player\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="..\..\imguilib\imgui.h">
       <Filter>02.GameObject\ImGui\Include</Filter>
@@ -300,40 +273,49 @@
       <Filter>02.GameObject\ImGui\Include</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Debuger.h">
-      <Filter>02.GameObject\ImGui\Debuger</Filter>
+      <Filter>02.GameObject\Debuger</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Editor.h">
-      <Filter>02.GameObject\ImGui\Editor</Filter>
+      <Filter>02.GameObject\Editor</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GUIObject.h">
       <Filter>02.GameObject\ImGui\GUIObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\AnimationEditor.h">
-      <Filter>02.GameObject\ImGui\Editor\AnimationEditor</Filter>
+      <Filter>02.GameObject\Editor\AnimationEditor</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\IMGuiManager.h">
       <Filter>02.GameObject\ImGui\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Tool.h">
-      <Filter>02.GameObject\ImGui\Tool</Filter>
+      <Filter>02.GameObject\Tool</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Tool_Collider.h">
-      <Filter>02.GameObject\ImGui\Tool\Tool_Coolider</Filter>
+      <Filter>02.GameObject\Tool\Tool_Coolider</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Tool_Selector.h">
-      <Filter>02.GameObject\ImGui\Tool\Tool_Selector</Filter>
+      <Filter>02.GameObject\Tool\Tool_Selector</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Tool_Transformation.h">
-      <Filter>02.GameObject\ImGui\Tool\Tool_Transformation</Filter>
+      <Filter>02.GameObject\Tool\Tool_Transformation</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Model_Selector.h">
-      <Filter>02.GameObject\ImGui\Tool\Tool_Selector\Model_Selector</Filter>
+      <Filter>02.GameObject\Tool\Tool_Selector\Model_Selector</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Tool_AnimList.h">
-      <Filter>02.GameObject\ImGui\Tool\Tool_AnimList</Filter>
+      <Filter>02.GameObject\Tool\Tool_Selector\Tool_AnimList</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Terrain.h">
       <Filter>02.GameObject\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AnimTestObject.h">
+      <Filter>02.GameObject\AnimTestObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AnimTestPartObject.h">
+      <Filter>02.GameObject\AnimTestObject\AnimTestPartObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_AnimPlayer.h">
+      <Filter>02.GameObject\Tool\Tool_AnimPlayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

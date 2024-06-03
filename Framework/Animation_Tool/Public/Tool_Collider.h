@@ -14,7 +14,7 @@ BEGIN(Tool)
 class CTool_Collider final : public CTool
 {
 protected:
-	CTool_Collider();
+	CTool_Collider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CTool_Collider() = default;
 
 public:
@@ -29,7 +29,7 @@ private:
 	CGameObject*						m_pCurrentSelectCollider = { nullptr };
 
 public:
-	static CTool_Collider* Create( void* pArg);
+	static CTool_Collider* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);
 	virtual void Free() override;
 };
 

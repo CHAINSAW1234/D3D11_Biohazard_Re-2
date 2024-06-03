@@ -33,8 +33,6 @@ protected:
     //  컴포넌트 타입은 에디터 구현층에서 직접 enum으로 정의하기.
     COMPONENT_INFO Find_ComponentInfo(const wstring& strComponentTag, _uint iComponentType);
 
-protected:
-
 public:
     virtual void Free() override;
 };

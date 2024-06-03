@@ -15,42 +15,38 @@ public:
 	enum MODE { MODE_PERSPECTIVE, MODE_ORTHO, MODE_END };
 
 protected:
-	CTool_Transformation();
+	CTool_Transformation(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CTool_Transformation() = default;
 
 public:
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(_float fTimeDelta) override;
+	virtual HRESULT				Initialize(void* pArg) override;
+	virtual void				Tick(_float fTimeDelta) override;
 
 public:
-	void Set_Target(CTransform* pTransform);
-	void Set_Target(CGameObject* pGameObject);
-	void ReSet_Target();
+	void						Set_Target(CTransform* pTransform);
+	void						Set_Target(CGameObject* pGameObject);
+	void						ReSet_Target();
 
 public:
-	CTransform* Get_Target() { return m_pTargetTransform; }
+	CTransform*					Get_Target() { return m_pTargetTransform; }
 
 private:
-	void Update_Transform();
+	void						Update_Transform();
+	void						Update_Target_Transform();
 
 public:
-	void Set_Mode(MODE eMode) { m_eMode = eMode; }
+	void						Set_Mode(MODE eMode) { m_eMode = eMode; }
 
 private:
-	void Update_WorldMatrix();
+	HRESULT						Add_Componets();
 
 private:
-	_float4x4			m_WorldMatrix;
-	MODE				m_eMode = { MODE_END };
-
-	_float3				m_vScale = { 0.f, 0.f, 0.f };
-	_float3				m_vRotation = { 0.f ,0.f, 0.f };
-	_float4				m_vTranslation = { 0.f, 0.f,0.f, 1.f };
-
-	CTransform*			m_pTargetTransform = { nullptr };
+	MODE						m_eMode = { MODE_END };
+	CTransform*					m_pTransformCom = { nullptr };
+	CTransform*					m_pTargetTransform = { nullptr };
 
 public:
-	static CTool_Transformation* Create(void* pArg);
+	static CTool_Transformation* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);
 	virtual void Free() override;
 };
 

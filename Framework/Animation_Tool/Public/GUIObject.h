@@ -8,6 +8,7 @@
 #include "Tool_Transformation.h"
 #include "Tool_Collider.h"
 #include "Tool_AnimList.h"
+#include "Tool_AnimPlayer.h"
 
 BEGIN(Tool)
 

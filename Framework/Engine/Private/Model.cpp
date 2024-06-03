@@ -172,8 +172,8 @@ void CModel::Add_IK(string strTargetJointTag, string strEndEffectorTag, wstring 
 		iEndEffectorIndex == -1)
 		return;
 
-	_bool		isCombined = { false };
-	IK_INFO			IkInfo;
+	_bool					isCombined = { false };
+	IK_INFO					IkInfo;
 
 	IkInfo.iNumIteration = iNumIteration;
 	IkInfo.fBlend = fBlend;
@@ -331,7 +331,7 @@ void CModel::Apply_IK(class CTransform* pTransform, IK_INFO& IkInfo)
 	vEndEffectorMoveDir = XMVector3TransformNormal(vEndEffectorMoveDir, WorldMatrixInv);
 
 	_vector			vEndEffectorPosition = { XMVectorSetW(XMLoadFloat3(&IkInfo.vIKEndTargetPosition), 1.f) };
-	vEndEffectorMoveDir = XMVector3TransformCoord(vEndEffectorPosition, WorldMatrixInv);
+	vEndEffectorPosition = XMVector3TransformCoord(vEndEffectorPosition, WorldMatrixInv);
 	_vector			vEndEffectorResultPosition = { vEndEffectorPosition };
 
 	//	_vector			vEndEffectorResultPosition = { XMLoadFloat4((_float4*)m_Bones[IkInfo.iEndEffectorIndex]->Get_CombinedTransformationMatrix()->m[CTransform::STATE_POSITION]) + vEndEffectorMoveDir };
@@ -1847,6 +1847,11 @@ HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeD
 	//	컴바인드 행렬 생성 및, 루트모션에 대한 성분들을 분해후 적용
 	Apply_Bone_CombinedMatrices(pTransform, pMovedDirection);
 
+	return S_OK;
+}
+
+HRESULT CModel::Play_IK(CTransform* pTransform, _float fTimeDelta)
+{
 	for (auto& Pair : m_IKInfos)
 	{
 		Apply_IK(pTransform, Pair.second);

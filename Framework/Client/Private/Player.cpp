@@ -111,7 +111,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		_vector		vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
 		vLook = { XMVector3Normalize(vLook) };
-		_vector		vMoveDir = { vLook };
+		_vector		vMoveDir = { vLook * 0.03f };
 
 		vMovedDirection += vMoveDir;
 	}
@@ -120,14 +120,12 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		_vector		vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
 		vLook = { XMVector3Normalize(vLook) };
-		_vector		vMoveDir = { vLook * -1.f };
+		_vector		vMoveDir = { vLook * 0.03f * -1.f};
 
 		vMovedDirection += vMoveDir;
 	}
 
-	_float4			vResultMoveDirFloat4 = {};
-	XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
-	m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
+	
 
 #pragma region Terrain
 	///////////////////////////////////////////////////////////////////////////
@@ -137,7 +135,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
-	/*_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
+	_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
 	CVIBuffer_Terrain*		pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
 	CTransform*				pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
 	if (nullptr != pTerrainBuffer &&
@@ -149,7 +147,9 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 		_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
 		vMoveDir = vResultPos - vPosition;
-	}*/
+
+		vMovedDirection += vMoveDir;
+	}
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
@@ -158,6 +158,9 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	//	m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
+	_float4			vResultMoveDirFloat4 = {};
+	XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
+	m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
 
 #pragma endregion
 

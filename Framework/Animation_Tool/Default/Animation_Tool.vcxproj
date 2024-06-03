@@ -583,13 +583,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Private\AnimationEditor.cpp" />
-    <ClCompile Include="..\Private\Body_Player.cpp" />
+    <ClCompile Include="..\Private\AnimTestObject.cpp" />
+    <ClCompile Include="..\Private\AnimTestPartObject.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
     <ClCompile Include="..\Private\Debuger.cpp" />
     <ClCompile Include="..\Private\Editor.cpp" />
     <ClCompile Include="..\Private\GUIObject.cpp" />
-    <ClCompile Include="..\Private\Hair_Player.cpp" />
-    <ClCompile Include="..\Private\Head_Player.cpp" />
     <ClCompile Include="..\Private\IMGuiManager.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
@@ -597,14 +596,13 @@
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\Model_Selector.cpp" />
-    <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\Private\Tool.cpp" />
     <ClCompile Include="..\Private\Tool_AnimList.cpp" />
+    <ClCompile Include="..\Private\Tool_AnimPlayer.cpp" />
     <ClCompile Include="..\Private\Tool_Collider.cpp" />
     <ClCompile Include="..\Private\Tool_Selector.cpp" />
     <ClCompile Include="..\Private\Tool_Transformation.cpp" />
-    <ClCompile Include="..\Private\Weapon.cpp" />
     <ClCompile Include="Animation_Tool.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -627,19 +625,18 @@
     <ClInclude Include="..\..\imguilib\imstb_truetype.h" />
     <ClInclude Include="..\..\imguilib\ImZoomSlider.h" />
     <ClInclude Include="..\Public\AnimationEditor.h" />
-    <ClInclude Include="..\Public\Body_Player.h" />
+    <ClInclude Include="..\Public\AnimTestObject.h" />
+    <ClInclude Include="..\Public\AnimTestPartObject.h" />
     <ClInclude Include="..\Public\Camera_Free.h" />
     <ClInclude Include="..\Public\Debuger.h" />
     <ClInclude Include="..\Public\Editor.h" />
     <ClInclude Include="..\Public\GUIObject.h" />
-    <ClInclude Include="..\Public\Hair_Player.h" />
-    <ClInclude Include="..\Public\Head_Player.h" />
     <ClInclude Include="..\Public\IMGuiManager.h" />
     <ClInclude Include="..\Public\Model_Selector.h" />
-    <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\Public\Tool.h" />
     <ClInclude Include="..\Public\Tool_AnimList.h" />
+    <ClInclude Include="..\Public\Tool_AnimPlayer.h" />
     <ClInclude Include="..\Public\Tool_Collider.h" />
     <ClInclude Include="..\Public\Tool_Defines.h" />
     <ClInclude Include="..\Public\Tool_Enums.h" />
@@ -650,7 +647,6 @@
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\Tool_Selector.h" />
     <ClInclude Include="..\Public\Tool_Transformation.h" />
-    <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="Animation_Tool.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />

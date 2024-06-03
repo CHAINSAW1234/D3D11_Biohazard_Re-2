@@ -7,6 +7,7 @@
 #define TOOL_ANIMLIST_TAG               "Tool_AnimList"
 #define TOOL_MODELSELECTOR_TAG          "Tool_ModelSelector"
 #define TOOL_TRANSFORMATION_TAG         "Tool_Transformation"
+#define TOOL_ANIMPLAYER_TAG             "Tool_AnimPlayer"
 
 BEGIN(Engine)
 class CGameObject;
@@ -28,20 +29,33 @@ public:
 private:
     virtual HRESULT             Add_Components() override;
     virtual HRESULT             Add_Tools() override;
+    HRESULT                     Add_TestObject();
 
-public:
-    void                        Set_Context(CGameObject* pGameObject);
+private:
+    void                        Add_PartObject_TestObject();
+    void                        Change_Model_TestObject();
+    void                        Update_Root_Active();
+
+private:    /* For.Transform Tool */
+    void                        Set_Transform_TransformTool();
+
+private:    /* For.AnimPlayer Tool */
+    void                        Update_AnimPlayer();
+
+private:    /* For.AnimList Tool */
+    HRESULT                     Initialize_AnimList();
 
 private:    /* For.AssistRendering */
     void                        Render_BoneTags();
 
 private:
-    CGameObject*                m_pContext = { nullptr };
-
     CTool_Collider*             m_pToolCollider = { nullptr };
     CModel_Selector*            m_pToolModelSelector = { nullptr };
     CTool_AnimList*             m_pToolAnimList = { nullptr };
     CTool_Transformation*       m_pToolTransformation = { nullptr };
+    CTool_AnimPlayer*           m_pToolAnimPlayer = { nullptr };
+
+    class CAnimTestObject*      m_pTestObject = { nullptr };
 
     _bool                       m_isActiveRoot_XZ = { false };
     _bool                       m_isActiveRoot_Y = { false };

@@ -357,6 +357,25 @@ HRESULT CIMGuiManager::Render()
         ImGui::EndFrame();
         ImGui::Render();
         ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+        _uint iIdx = { 0 };
+        for (auto& pEditor : m_Editors)
+        {
+            if (nullptr == pEditor)
+                continue;
+
+            Update_CurrentEditor(pEditor, (EDITOR_TYPE)iIdx++);
+
+            pEditor->Render();
+        }
+
+        for (auto& pDebuger : m_Debugers)
+        {
+            if (nullptr == pDebuger)
+                continue;
+
+            pDebuger->Render();
+        }
     }
 
     return S_OK;

@@ -132,11 +132,14 @@ HRESULT CGUIObject::Reset()
 
 	m_Tools.clear();
 
-	if (FAILED(Add_Components()))
+	if (FAILED(Initialize(nullptr)))
+		return E_FAIL;
+
+	/*if (FAILED(Add_Components()))
 		return E_FAIL;
 
 	if (FAILED(Add_Tools()))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	return S_OK;
 }
