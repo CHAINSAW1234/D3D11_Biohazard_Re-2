@@ -119,6 +119,8 @@ public:		/* For. Access */
 	set<string>								Get_MeshTags();
 	list<_uint>								Get_MeshIndices(const string& strMeshTag);		//	이름이 같은 메쉬들이 각각의 칸에있을수있으므로 인덱스들을 컨테이너에 담아서 반환한다.
 	vector<CAnimation*>						Get_Animations() { return m_Animations; }
+	map<wstring, class CBone_Layer*>		Get_BoneLayers() { return m_BoneLayers; }
+
 
 	_float4									Invalidate_RootNode(const string& strRoot);
 

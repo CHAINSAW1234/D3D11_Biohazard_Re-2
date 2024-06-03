@@ -39,18 +39,9 @@ void CModel_Selector::Tick(_float fTimeDelta)
 
 	if (ImGui::CollapsingHeader(m_strCollasingTag.c_str()))
 	{
-		if (ImGui::Button("Show_BoneTag ## ModelSelector"))
-		{
-			m_isShowBoneTags = !m_isShowBoneTags;
-		}
-
-		if (true == m_isShowBoneTags)
-		{
-			Show_BoneTags();
-		}
-
 		if (ImGui::BeginCombo("Model", strSelectTag.c_str()))
 		{
+			//	모델 컴포넌트 선택하는 창
 			for (_uint i = 0; i < iNumModels; ++i)
 			{
 				_bool		isSelected = { ModelTags[i] == strSelectTag };
@@ -63,6 +54,15 @@ void CModel_Selector::Tick(_float fTimeDelta)
 				{
 					ImGui::SetItemDefaultFocus();
 				}
+			}
+
+			//	애니메이션 레이어 만들기 ( 텍스트 입력 및 레이어 생성 )
+			Create_AnimLayer();
+
+			//	뼈 보이기 버튼 ( 폰트 )
+			if (ImGui::Button("Show_BoneTag ## ModelSelector"))
+			{
+				m_isShowBoneTags = !m_isShowBoneTags;
 			}
 
 			Safe_Delete_Array(ModelTags);
@@ -128,6 +128,94 @@ map<string, _float4x4> CModel_Selector::Get_BoneCombinedMatrices()
 	}
 
 	return BoneCombinedMatrices;
+}
+
+void CModel_Selector::Create_AnimLayer()
+{
+	static _char			szLayerTag[MAX_PATH] = {};
+	ImGui::InputText("AnimLayerTag : ## ModelSelctor", szLayerTag, static_cast<size_t>(sizeof(szLayerTag)));
+
+	if (ImGui::Button("Add_PartObject"))
+	{
+		_tchar		szTemp[MAX_PATH] = { L"" };
+		MultiByteToWideChar(CP_ACP, 0, szLayerTag, (_uint)strlen(szLayerTag), szTemp, MAX_PATH);
+
+		_int		iStartBoneIndex = { 0 };
+		_int		iEndBoneIndex = { 0 };
+		ImGui::InputInt("BoneStartIndex : ## ModelSelector_AnimLayer", &iStartBoneIndex);
+		ImGui::InputInt("BoneEndIndex : ## ModelSelector_AnimLayer", &iEndBoneIndex);		
+
+		//	스타트 부터 엔드 인덱스까지
+		if (ImGui::Button("Add_Layer_BoneIndices ## ModelSelector"))
+		{
+			list<_uint>			BoneIndices;
+			for (_uint i = static_cast<_uint>(iStartBoneIndex); i <= static_cast<_uint>(iEndBoneIndex); ++i)
+			{
+				BoneIndices.push_back(i);
+			}
+
+			Add_AnimLayer(szTemp, BoneIndices);
+		}
+
+		_int		iTopParentIndex = { 0 };
+		ImGui::InputInt("BoneTopParentIndex : ## ModelSelector_AnimLayer", &iTopParentIndex);
+
+		//	특정 인덱스의 자식뼈 전부
+		if (ImGui::Button("Add_Layer_ChildBones ## ModelSelector"))
+		{
+			map<string, CModel*>::iterator		iter = { m_Models.find(m_strSelectedModelTag) };
+			if (iter != m_Models.end())
+			{
+				list<_uint>		ChildBoneIndices;
+				m_Models[m_strSelectedModelTag]->Get_Child_BoneIndices(m_strCurrentSelectBoneTag, ChildBoneIndices);
+
+				Add_AnimLayer(szTemp, ChildBoneIndices);
+			}
+		}
+
+		//	모든 인덱스
+		if (ImGui::Button("Add_Layer_AllBone ## ModelSelector"))
+		{
+			Add_AnimLayer_AllBone(szTemp);
+		}
+	}
+
+		
+
+	if (true == m_isShowBoneTags)
+	{
+		Show_BoneTags();
+	}
+
+
+}
+
+void CModel_Selector::Add_AnimLayer(const wstring& strAnimLayerTag, list<_uint> BoneIndices)
+{
+	map<string, CModel*>::iterator		iter = { m_Models.find(m_strSelectedModelTag) };
+	if (iter == m_Models.end())
+		return;
+
+	m_Models[m_strSelectedModelTag]->Add_Bone_Layer(strAnimLayerTag, BoneIndices);
+}
+
+void CModel_Selector::Add_AnimLayer_AllBone(const wstring& strAnimLayerTag)
+{
+	map<string, CModel*>::iterator		iter = { m_Models.find(m_strSelectedModelTag) };
+	if (iter == m_Models.end())
+		return;
+
+	m_Models[m_strSelectedModelTag]->Add_Bone_Layer_All_Bone(strAnimLayerTag);
+}
+
+void CModel_Selector::Set_RootBone()
+{
+	map<string, CModel*>::iterator		iter = { m_Models.find(m_strSelectedModelTag) };
+	if (iter == m_Models.end())
+		return;
+
+
+	m_Models[m_strSelectedModelTag]->Set_RootBone(m_strCurrentSelectBoneTag);
 }
 
 void CModel_Selector::Show_BoneTags()

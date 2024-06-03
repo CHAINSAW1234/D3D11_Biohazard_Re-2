@@ -30,10 +30,18 @@ public:
 	CModel*						Get_CurrentSelectedModel();
 	map<string, _float4x4>		Get_BoneCombinedMatrices();
 
+private:
+	void						Create_AnimLayer();
+
 public:
+	void						Add_AnimLayer(const wstring& strAnimLayerTag, list<_uint> BoneIndices);
+	void						Add_AnimLayer_AllBone(const wstring& strAnimLayerTag);
+
+private:
+	void						Set_RootBone();
 	
 private:
-	void Show_BoneTags();
+	void						Show_BoneTags();
 
 private:
 	_uint						m_iNumModels = { 0 };
