@@ -196,7 +196,6 @@ PS_OUT PS_MAIN_DISCARD(PS_IN In)
     return Out;
 }
 
-
 struct PS_OUT_LIGHT
 {
     float4 vShade : SV_TARGET0;
@@ -249,20 +248,20 @@ float CalcAmbientOcclusion(float2 Texcoord)
     for (int j = 0; j < iterations; ++j)
     {
         float2 coord1 = reflect(vec[j], rand) * rad;
-        float2 coord2 = float2(coord1.x * 0.707 - coord1.y * 0.707, coord1.x * 0.707 + coord1.y * 0.707);
+        //float2 coord2 = float2(coord1.x * 0.707 - coord1.y * 0.707, coord1.x * 0.707 + coord1.y * 0.707);
         
         ao += doAmbientOcclusion(Texcoord, coord1 * 0.25, p, n.xyz);
         ao += doAmbientOcclusion(Texcoord, coord1 * 0.5, p, n.xyz);
         ao += doAmbientOcclusion(Texcoord, coord1 * 0.75, p, n.xyz);
         ao += doAmbientOcclusion(Texcoord, coord1, p, n.xyz);
         
-        ao += doAmbientOcclusion(Texcoord, coord2 * 0.25, p, n.xyz);
-        ao += doAmbientOcclusion(Texcoord, coord2 * 0.5, p, n.xyz);
-        ao += doAmbientOcclusion(Texcoord, coord2 * 0.75, p, n.xyz);
-        ao += doAmbientOcclusion(Texcoord, coord2, p, n.xyz);
+        //ao += doAmbientOcclusion(Texcoord, coord2 * 0.25, p, n.xyz);
+        //ao += doAmbientOcclusion(Texcoord, coord2 * 0.5, p, n.xyz);
+        //ao += doAmbientOcclusion(Texcoord, coord2 * 0.75, p, n.xyz);
+        //ao += doAmbientOcclusion(Texcoord, coord2, p, n.xyz);
     }
   
-    ao /= (float) iterations * 8.0;
+    ao /= (float) iterations * 4.0;
 
     return ao;
 }
@@ -578,12 +577,12 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
         Out.vDiffuse.a = 1;
     }
 
-    //float3 uv = float3(In.vTexcoord, vDepth.r * vDepth.g);
+    float3 uv = float3(In.vTexcoord, vDepth.r);
 
-    //float4 scatteringColorAndTransmittance = g_3DTexture.Sample(PointSampler, uv);
-    //float3 scatteringColor = HDR(scatteringColorAndTransmittance.rgb);
+    float4 scatteringColorAndTransmittance = g_3DTexture.Sample(PointSampler, uv);
+    float3 scatteringColor = HDR(scatteringColorAndTransmittance.rgb);
 
-    //Out.vDiffuse = Out.vDiffuse * float4(scatteringColor, scatteringColorAndTransmittance.a);
+    Out.vDiffuse = Out.vDiffuse * float4(scatteringColor, scatteringColorAndTransmittance.a);
     
     return Out;
 }
@@ -734,7 +733,7 @@ PS_OUT PS_MAIN_BLURX(PS_IN In)
     
     float4 vResult = float4(0, 0, 0, 0);
     float2 vTexOffset = 1.0 / float2(fWidth, fHeight); // 텍스처 각 요소에 대한 오프셋 계산 
-    float fRadius = 10.f;
+    float fRadius = 5.f;
 
     // 주변 픽셀들을 반복하여 블러 처리
     for (int iX = (int) fRadius * -1.f; iX <= (int) fRadius; iX++)
@@ -758,7 +757,7 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
     
     float4 vResult = float4(0, 0, 0, 0);
     float2 vTexOffset = 1.0 / float2(fWidth, fHeight); // 텍스처 각 요소에 대한 오프셋 계산 
-    float fRadius = 10.f;
+    float fRadius = 5.f;
 
     // 주변 픽셀들을 반복하여 블러 처리
     for (int iY = (int) fRadius * -1.f; iY <= (int) fRadius; iY++)
@@ -901,7 +900,7 @@ PS_OUT PS_DOF_BLURX(PS_IN In)
     
     float4 vResult = float4(0, 0, 0, 0);
     float2 vTexOffset = 1.0 / float2(fWidth, fHeight); // 텍스처 각 요소에 대한 오프셋 계산 
-    float fRadius = clamp(g_DOFTexture.Sample(PointSampler, In.vTexcoord).r * 10, 0.f, 10.f);
+    float fRadius = clamp(g_DOFTexture.Sample(PointSampler, In.vTexcoord).r * 5, 0.f, 5.f);
     
     if (fRadius == 0)
     {
@@ -931,7 +930,7 @@ PS_OUT PS_DOF_BLURY(PS_IN In)
     
     float4 vResult = float4(0, 0, 0, 0);
     float2 vTexOffset = 1.0 / float2(fWidth, fHeight); // 텍스처 각 요소에 대한 오프셋 계산 
-    float fRadius = clamp(g_DOFTexture.Sample(PointSampler, In.vTexcoord).r * 10, 0.f, 10.f);
+    float fRadius = clamp(g_DOFTexture.Sample(PointSampler, In.vTexcoord).r * 5, 0.f, 5.f);
     
     if (fRadius == 0)
     {

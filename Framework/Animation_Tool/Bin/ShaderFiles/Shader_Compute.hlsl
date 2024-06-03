@@ -106,63 +106,6 @@ float HenyeyGreensteinPhaseFunction(float3 wi, float3 wo, float g)
 
 float Visibility_Dir(float3 vWorldPosition, float3 toLight)
 {
-    //vector vPosition = mul(float4(vWorldPosition, 1.f), g_DirLightViewMatrix);
-    //vPosition = mul(vPosition, g_ProjMatrix);
-  
-    //float2 vTexcoord;
-    //vTexcoord.x = (vPosition.x / vPosition.w) * 0.5f + 0.5f;
-    //vTexcoord.y = (vPosition.y / vPosition.w) * -0.5f + 0.5f;
-
-    //float4 vDepth = g_DepthTexture.SampleLevel(PointSamplerClamp, vTexcoord, 0);
-    
-    //if (vPosition.w >= vDepth.r * 1000)
-    //{
-    //    return 0;
-    //}
-    
-    //vector vPosition2 = mul(float4(vWorldPosition, 1.f), g_ViewMatrix);
-    //vPosition2 = mul(vPosition2, g_ProjMatrix);
-  
-    //float2 vTexcoord2;
-    //vTexcoord2.x = (vPosition2.x / vPosition2.w) * 0.5f + 0.5f;
-    //vTexcoord2.y = (vPosition2.y / vPosition2.w) * -0.5f + 0.5f;
-
-    //float4 vDepth2 = g_DepthTexture.SampleLevel(PointSamplerClamp, vTexcoord2, 0);
-    
-    //if (vPosition2.w <= vDepth2.r * 1000)
-    //{
-    //    return 0;
-    //}
-    
-    
-    
-    
-    
-    
-    
-    ////vector vCamPosition = mul(float4(vWorldPosition, 1.f), g_ViewMatrix);
-    ////vCamPosition = mul(vCamPosition, g_ProjMatrix);
-    
-    ////float2 vCamTexcoord;
-    ////vCamTexcoord.x = (vCamPosition.x / vCamPosition.w) * 0.5f + 0.5f;
-    ////vCamTexcoord.y = (vCamPosition.y / vCamPosition.w) * -0.5f + 0.5f;
-    
-    ////float4 vCamDepth = g_DepthTexture.SampleLevel(PointSamplerClamp, vCamTexcoord, 0);
-    
-    ////vector vPosition = mul(float4(vWorldPosition, 1.f), g_DirLightViewMatrix);
-    ////vPosition = mul(vPosition, g_DirLightProjMatrix);
-    
-    ////float2 vTexcoord;
-    ////vTexcoord.x = (vPosition.x / vPosition.w) * 0.5f + 0.5f;
-    ////vTexcoord.y = (vPosition.y / vPosition.w) * -0.5f + 0.5f;
-    
-    ////float4 vDepth = g_DirLightDepthTexture.SampleLevel(PointSamplerClamp, vTexcoord, 0);
-    
-    ////if (vCamPosition.w > vDepth.r * 1000)
-    ////{
-    ////    return 1;
-    ////}
-    
     vector vPosition = mul(float4(vWorldPosition, 1.f), g_DirLightViewMatrix);
     vPosition = mul(vPosition, g_DirLightProjMatrix);
   
@@ -172,15 +115,14 @@ float Visibility_Dir(float3 vWorldPosition, float3 toLight)
     
     float4 vDepth = g_DirLightDepthTexture.SampleLevel(PointSamplerClamp, vTexcoord, 0);
     
+    vector vViewPosition = mul(float4(vWorldPosition, 1.f), g_ViewMatrix);
+    
     if (vPosition.w > vDepth.r * 1000)
     {
         return 1;
     }
     
     return 0;
-    
-    return 0;
-    
 }
 
 float Visibility_Spot(float3 vWorldPosition)
@@ -226,7 +168,7 @@ void CS_Volume( uint3 DTid : SV_DispatchThreadID )
     if (all(DTid < dims))
     {
         float4 worldPosition = float4(ConvertThreadIdToWorldPosition(DTid, dims), 1);
-        float3 toCamera = normalize(g_vCamPosition.xyz - worldPosition.xyz);
+        float3 toCamera = normalize(g_vCamPosition.xyz - worldPosition.xyz);    
         
         float3 lighting = float3(0.f, 0.f, 0.f);
         
@@ -285,7 +227,7 @@ float4 ScatterStep(float3 accumulatedLight, float accumulatedTransmittance, floa
     return float4(accumulatedLight, accumulatedTransmittance);
 }
 
-[numthreads(8, 8, 8)]
+[numthreads(8, 8, 1)]
 void CS_Volume2(uint3 DTid : SV_DispatchThreadID)
 {
     uint3 dims;

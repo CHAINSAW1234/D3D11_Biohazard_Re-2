@@ -400,7 +400,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 #pragma region YeEun Add
-	if (FAILED(Load_Prototype(TEXT("../Bin/Data/Level_0/Make_Prototype.dat"))))
+	if (FAILED(Load_Prototype(TEXT("../Bin/Data/Level_Test/Make_Prototype.dat"))))
 		return E_FAIL;
 #pragma endregion
 

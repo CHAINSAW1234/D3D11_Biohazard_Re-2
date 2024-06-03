@@ -152,10 +152,13 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	if(m_pInput_Device)
 		m_pInput_Device->Tick(fTimeDelta);
 
-	if(m_pObject_Manager)
-		m_pObject_Manager->Priority_Tick(fTimeDelta);	
+	if (m_pLevel_Manager)
+		m_pLevel_Manager->Open_Level();
 
-	if(m_pLevel_Manager)
+	if (m_pObject_Manager)
+		m_pObject_Manager->Priority_Tick(fTimeDelta);
+
+	if (m_pLevel_Manager)
 		m_pLevel_Manager->Tick(fTimeDelta);
 
 	if(m_pObject_Manager)
@@ -362,6 +365,13 @@ void CGameInstance::Set_ShaderState(SHADER_STATE eState, _bool isState)
 
 	m_pRenderer->Set_ShaderState(eState, isState);
 }
+void CGameInstance::Set_RenderFieldShadow(_bool isRenderFieldShadow)
+{
+	if (nullptr == m_pRenderer)
+		return;
+
+	m_pRenderer->Set_RenderFieldShadow(isRenderFieldShadow);
+}
 #ifdef _DEBUG
 void CGameInstance::On_Off_DebugRender()
 {
@@ -379,7 +389,7 @@ HRESULT CGameInstance::Open_Level(_uint iNewLevelID, CLevel * pNewLevel)
 	if (nullptr == m_pLevel_Manager)
 		return E_FAIL;
 
-	return m_pLevel_Manager->Open_Level(iNewLevelID, pNewLevel);
+	return m_pLevel_Manager->Request_Open_Level(iNewLevelID, pNewLevel);
 }
 
 _uint CGameInstance::Get_CurrentLevel()
@@ -717,19 +727,19 @@ HRESULT CGameInstance::Render_Font(const wstring & strFontTag, const wstring & s
 #pragma endregion
 
 #pragma region Target_Manager
-HRESULT CGameInstance::Add_RenderTarget(const wstring & strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4 & vClearColor)
+HRESULT CGameInstance::Add_RenderTarget(const wstring & strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4 & vClearColor, _bool isTickClear)
 {
-	return m_pTarget_Manager->Add_RenderTarget(strRenderTargetTag, iSizeX, iSizeY, ePixelFormat, vClearColor);
+	return m_pTarget_Manager->Add_RenderTarget(strRenderTargetTag, iSizeX, iSizeY, ePixelFormat, vClearColor, isTickClear);
 }
 
-HRESULT CGameInstance::Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+HRESULT CGameInstance::Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _bool isTickClear)
 {
-	return m_pTarget_Manager->Add_RenderTarget_Cube(strRenderTargetTag, iSize, iArraySize, ePixelFormat, vClearColor);
+	return m_pTarget_Manager->Add_RenderTarget_Cube(strRenderTargetTag, iSize, iArraySize, ePixelFormat, vClearColor, isTickClear);
 }
 
-HRESULT CGameInstance::Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+HRESULT CGameInstance::Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _bool isTickClear)
 {
- 	return m_pTarget_Manager->Add_RenderTarget_3D(strRenderTargetTag, iWidth, iHeight, iDepth, ePixelFormat, vClearColor);
+ 	return m_pTarget_Manager->Add_RenderTarget_3D(strRenderTargetTag, iWidth, iHeight, iDepth, ePixelFormat, vClearColor, isTickClear);
 }
 
 HRESULT CGameInstance::Clear_RenderTarget_All()
@@ -873,6 +883,10 @@ HRESULT CGameInstance::Bind_OutputShaderResource(CComputeShader* pShader, const 
 HRESULT CGameInstance::Copy_Resource(const wstring & strRenderTargetTag, ID3D11Texture2D ** ppTextureHub)
 {
 	return m_pTarget_Manager->Copy_Resource(strRenderTargetTag, ppTextureHub);
+}
+HRESULT CGameInstance::Copy_Resource(const wstring& strDestRenderTargetTag, const wstring& strSrcRenderTargetTag)
+{
+	return m_pTarget_Manager->Copy_Resource(strDestRenderTargetTag, strSrcRenderTargetTag);
 }
 #pragma endregion
 

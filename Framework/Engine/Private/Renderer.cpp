@@ -85,6 +85,12 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_SSAO_Blur()))
 		return E_FAIL;
 
+	if (FAILED(Render_Field_Shadow_Direction()))
+		return E_FAIL;
+
+	if (FAILED(Render_Field_Shadow_Point()))
+		return E_FAIL;
+
 	if (FAILED(Render_Shadow_Direction()))
 		return E_FAIL;
 
@@ -121,13 +127,11 @@ HRESULT CRenderer::Render()
 	//if (FAILED(Render_PostProcessing()))
 	//	return E_FAIL;
 
-
 	if (FAILED(Render_FXAA()))
 		return E_FAIL;
 
 	if (FAILED(Render_PostProcessing_Result()))
 		return E_FAIL;
-
 
 	//if (FAILED(Render_Non_PostProcessing()))
 	//	return E_FAIL;
@@ -154,6 +158,10 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_Debug()))
 		return E_FAIL;
 #endif
+
+	if (m_isRenderFieldShadow) {
+		m_isRenderFieldShadow = false;
+	}
 
 	return S_OK;
 }
@@ -437,14 +445,28 @@ HRESULT CRenderer::SetUp_RenderTargets_SSAO(const D3D11_VIEWPORT& ViewportDesc)
 
 HRESULT CRenderer::SetUp_RenderTargets_Shadow(const D3D11_VIEWPORT& ViewportDesc)
 {
-	/* For.Target_LightDepth_Point */
-	if (FAILED(m_pGameInstance->Add_RenderTarget_Cube(TEXT("Target_LightDepth_Point"), static_cast<_uint>(ViewportDesc.Width), m_iArraySize, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+	/* For.Target_LightDepth_Field_Dir */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_LightDepth_Field_Dir"), static_cast<_uint>(m_fLightDepthTargetViewWidth), static_cast<_uint>(m_fLightDepthTargetViewHeight), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f), false)))
 		return E_FAIL;
+	/* For.Target_LightDepth_Field_Point */
+	if (FAILED(m_pGameInstance->Add_RenderTarget_Cube(TEXT("Target_LightDepth_Field_Point"), static_cast<_uint>(ViewportDesc.Width), m_iArraySize, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f), false)))
+		return E_FAIL;
+
 	/* For.Target_LightDepth_Dir */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_LightDepth_Dir"), static_cast<_uint>(m_fLightDepthTargetViewWidth), static_cast<_uint>(m_fLightDepthTargetViewHeight), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
+	/* For.Target_LightDepth_Point */
+	if (FAILED(m_pGameInstance->Add_RenderTarget_Cube(TEXT("Target_LightDepth_Point"), static_cast<_uint>(ViewportDesc.Width), m_iArraySize, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
 	/* For.Target_LightDepth_Spot */
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_LightDepth_Spot"), static_cast<_uint>(m_fLightDepthTargetViewWidth), static_cast<_uint>(m_fLightDepthTargetViewHeight), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+
+	/* MRT_Shadow_Field_Dir : Directional Light 그림자 연산을 위한 렌더 타겟. */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow_Field_Dir"), TEXT("Target_LightDepth_Field_Dir"))))
+		return E_FAIL;
+	/* MRT_Shadow_Field_Point : Point Light 그림자 연산을 위한 렌더 타겟. */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Shadow_Field_Point"), TEXT("Target_LightDepth_Field_Point"))))
 		return E_FAIL;
 
 	/* MRT_Shadow_Dir : Directional Light 그림자 연산을 위한 렌더 타겟. */
@@ -626,7 +648,7 @@ HRESULT CRenderer::SetUp_RenderTarget_SubResult(const D3D11_VIEWPORT& ViewportDe
 HRESULT CRenderer::SetUp_Test()
 {
 	/* For.Target_PostProcessing_Shade */
-	if (FAILED(m_pGameInstance->Add_RenderTarget_3D(TEXT("Target_Test"), 128, 128, 128, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(m_pGameInstance->Add_RenderTarget_3D(TEXT("Target_Test"), 1024, 1024, 32, DXGI_FORMAT_R16G16B16A16_FLOAT, _float4(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 	//if (FAILED(m_pGameInstance->Add_RenderTarget_3D(TEXT("Target_Test_Merge"), 128, 128, 8, DXGI_FORMAT_R8G8B8A8_UNORM, _float4(1.f, 1.f, 1.f, 1.f))))
 	//	return E_FAIL;
@@ -719,12 +741,13 @@ HRESULT CRenderer::Render_Test()
 	if(FAILED(m_pGameInstance->Bind_OutputShaderResource(pShader, TEXT("Target_Test"), "OutputTexture")))
 		return E_FAIL;
 	
-	pShader->Render(0);
+	// 1024, 1024, 32,
+	pShader->Render(0, 1024/ 8, 1024/8, 32 / 8);
 
-	//if (FAILED(m_pGameInstance->Bind_OutputShaderResource(pShader, TEXT("Target_Test"), "OutputTexture")))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_OutputShaderResource(pShader, TEXT("Target_Test"), "OutputTexture")))
+		return E_FAIL;
 
-	//pShader->Render(1);
+	pShader->Render(1, 1024 / 8, 1024 / 8, 1);
 
 	Safe_Release(pShader);
 
@@ -771,6 +794,11 @@ HRESULT CRenderer::SetUp_Debug()
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSAO_Shade_Blur_Fin"), 300.0f, 500.0f, 200.f, 200.f)))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Field_Dir"), 700.0f, 100.0f, 200.f, 200.f)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Field_Point"), 700.0f, 300.0f, 200.f, 200.f)))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Dir"), 500.0f, 100.0f, 200.f, 200.f)))
@@ -1065,8 +1093,95 @@ HRESULT CRenderer::Render_SSAO_Blur()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_Field_Shadow_Direction()
+{
+	if (!m_isRenderFieldShadow) {
+		for (auto& pRenderObject : m_RenderObjects[RENDER_FIELD_SHADOW_DIR])
+		{
+			Safe_Release(pRenderObject);
+		}
+		m_RenderObjects[RENDER_FIELD_SHADOW_DIR].clear();
+		return S_OK;
+	}
+
+	if(FAILED(m_pGameInstance->Clear_RenderTarget(TEXT("Target_LightDepth_Field_Dir"))))
+		return E_FAIL;
+
+	_uint				iNumViewports = { 1 };
+	D3D11_VIEWPORT		ViewportDesc{};
+
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+	_float		fOriginViewPortWidth = { ViewportDesc.Width };
+	_float		fOriginViewPortHeight = { ViewportDesc.Height };
+
+	Set_ViewPort_Size(m_fLightDepthTargetViewWidth, m_fLightDepthTargetViewHeight);
+
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow_Field_Dir"), m_pLightDepthDSVs[RES_1X])))
+		return E_FAIL;
+
+	for (auto& pRenderObject : m_RenderObjects[RENDER_FIELD_SHADOW_DIR])
+	{
+		if (nullptr != pRenderObject)
+			pRenderObject->Render_LightDepth_Dir();
+		Safe_Release(pRenderObject);
+	}
+	m_RenderObjects[RENDER_FIELD_SHADOW_DIR].clear();
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
+
+	Set_ViewPort_Size(fOriginViewPortWidth, fOriginViewPortHeight);
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_Field_Shadow_Point()
+{
+	if (!m_isRenderFieldShadow) {
+		for (auto& pRenderObject : m_RenderObjects[RENDER_FIELD_SHADOW_POINT])
+		{
+			Safe_Release(pRenderObject);
+		}
+		m_RenderObjects[RENDER_FIELD_SHADOW_POINT].clear();
+		return S_OK;
+	}
+
+	if (FAILED(m_pGameInstance->Clear_RenderTarget(TEXT("Target_LightDepth_Field_Point"))))
+		return E_FAIL;
+
+	_uint				iNumViewports = { 1 };
+	D3D11_VIEWPORT		ViewportDesc{};
+
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+	_float		fOriginViewPortWidth = { ViewportDesc.Width };
+	_float		fOriginViewPortHeight = { ViewportDesc.Height };
+
+	Set_ViewPort_Size(m_fLightDepthTargetViewCubeWidth, m_fLightDepthTargetViewCubeWidth, 6 * m_iArraySize);
+
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Shadow_Point"), m_pLightDepthDSV_Point)))
+		return E_FAIL;
+
+	for (auto& pRenderObject : m_RenderObjects[RENDER_FIELD_SHADOW_POINT])
+	{
+		if (nullptr != pRenderObject)
+			pRenderObject->Render_LightDepth_Point();
+		Safe_Release(pRenderObject);
+	}
+	m_RenderObjects[RENDER_FIELD_SHADOW_POINT].clear();
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
+
+	Set_ViewPort_Size(fOriginViewPortWidth, fOriginViewPortHeight);
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_Shadow_Direction()
 {
+	if (FAILED(m_pGameInstance->Copy_Resource(TEXT("Target_LightDepth_Dir"), TEXT("Target_LightDepth_Field_Dir"))))
+		return E_FAIL;
+
 	_uint				iNumViewports = { 1 };
 	D3D11_VIEWPORT		ViewportDesc{};
 
@@ -1097,6 +1212,9 @@ HRESULT CRenderer::Render_Shadow_Direction()
 
 HRESULT CRenderer::Render_Shadow_Point()
 {
+	if (FAILED(m_pGameInstance->Copy_Resource(TEXT("Target_LightDepth_Point"), TEXT("Target_LightDepth_Field_Point"))))
+		return E_FAIL;
+
 	_uint				iNumViewports = { 1 };
 	D3D11_VIEWPORT		ViewportDesc{};
 
@@ -1479,7 +1597,7 @@ HRESULT CRenderer::Render_SSR()
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
 
-	if (FAILED(Render_SubResult(TEXT("Target_SSR"))))
+	if (FAILED(m_pGameInstance->Copy_Resource(TEXT("Target_SubResult"), TEXT("Target_SSR"))))
 		return S_OK;
 
 	return S_OK;
@@ -1551,7 +1669,7 @@ HRESULT CRenderer::Render_DOF()
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
 
-	if (FAILED(Render_SubResult(TEXT("Target_DOF_Blur_Fin"))))
+	if (FAILED(m_pGameInstance->Copy_Resource(TEXT("Target_SubResult"), TEXT("Target_DOF_Blur_Fin"))))
 		return S_OK;
 
 	return S_OK;
@@ -1637,7 +1755,6 @@ HRESULT CRenderer::Render_SubResult(const wstring& strRenderTargetTag)
 
 	return S_OK;
 }
-
 
 HRESULT CRenderer::Render_PostProcessing_Result()
 {
@@ -1762,6 +1879,10 @@ HRESULT CRenderer::Render_Debug()
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Distortion"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Emissive"), m_pShader, m_pVIBuffer)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Shadow_Field_Dir"), m_pShader, m_pVIBuffer)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Shadow_Field_Point"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Shadow_Dir"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;

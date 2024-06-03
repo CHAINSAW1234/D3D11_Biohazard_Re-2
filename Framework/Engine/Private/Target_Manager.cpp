@@ -16,12 +16,12 @@ HRESULT CTarget_Manager::Initialize()
 	return S_OK;
 }
 
-HRESULT CTarget_Manager::Add_RenderTarget(const wstring & strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4 & vClearColor)
+HRESULT CTarget_Manager::Add_RenderTarget(const wstring & strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4 & vClearColor, _bool isTickClear)
 {
 	if (nullptr != Find_RenderTarget(strRenderTargetTag))
 		return E_FAIL;
 
-	CRenderTarget*		pRenderTarget = CRenderTarget::Create(m_pDevice, m_pContext, iSizeX, iSizeY, ePixelFormat, strRenderTargetTag, vClearColor);
+	CRenderTarget*		pRenderTarget = CRenderTarget::Create(m_pDevice, m_pContext, iSizeX, iSizeY, ePixelFormat, strRenderTargetTag, vClearColor, isTickClear);
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
 
@@ -30,12 +30,12 @@ HRESULT CTarget_Manager::Add_RenderTarget(const wstring & strRenderTargetTag, _u
 	return S_OK;
 }
 
-HRESULT CTarget_Manager::Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+HRESULT CTarget_Manager::Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _bool isTickClear)
 {
 	if (nullptr != Find_RenderTarget(strRenderTargetTag))
 		return E_FAIL;
 
-	CRenderTarget* pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, iSize, iArraySize, ePixelFormat, strRenderTargetTag, vClearColor);
+	CRenderTarget* pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, iSize, iArraySize, ePixelFormat, strRenderTargetTag, vClearColor, isTickClear);
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
 
@@ -44,12 +44,12 @@ HRESULT CTarget_Manager::Add_RenderTarget_Cube(const wstring& strRenderTargetTag
 	return S_OK;
 }
 
-HRESULT CTarget_Manager::Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+HRESULT CTarget_Manager::Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _bool isTickClear)
 {
 	if (nullptr != Find_RenderTarget(strRenderTargetTag))
 		return E_FAIL;
 
-	CRenderTarget* pRenderTarget = CRenderTarget::Create_3D(m_pDevice, m_pContext, iWidth, iHeight, iDepth, ePixelFormat, strRenderTargetTag, vClearColor);
+	CRenderTarget* pRenderTarget = CRenderTarget::Create_3D(m_pDevice, m_pContext, iWidth, iHeight, iDepth, ePixelFormat, strRenderTargetTag, vClearColor, isTickClear);
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
 
@@ -61,7 +61,8 @@ HRESULT CTarget_Manager::Add_RenderTarget_3D(const wstring& strRenderTargetTag, 
 HRESULT CTarget_Manager::Clear_RenderTarget_All()
 {
 	for (auto& pRenderTarget : m_RenderTargets)
-		pRenderTarget.second->Clear();
+		if(pRenderTarget.second->Get_isTickClear())
+			pRenderTarget.second->Clear();
 	return S_OK;
 }
 
@@ -172,6 +173,20 @@ HRESULT CTarget_Manager::Copy_Resource(const wstring & strRenderTargetTag, ID3D1
 		return E_FAIL;
 
 	return pRenderTarget->Copy_Resource(ppTextureHub);
+}
+
+HRESULT CTarget_Manager::Copy_Resource(const wstring& strDestRenderTargetTag, const wstring& strSrcRenderTargetTag)
+{
+	CRenderTarget* pDestRenderTarget = Find_RenderTarget(strDestRenderTargetTag);
+	if (nullptr == pDestRenderTarget)
+		return E_FAIL;
+
+	CRenderTarget* pSrcRenderTarget = Find_RenderTarget(strSrcRenderTargetTag);
+	if (nullptr == pSrcRenderTarget)
+		return E_FAIL;
+
+
+	return pDestRenderTarget->Copy_Resource(pSrcRenderTarget->Get_Texture2D());
 }
 
 #ifdef _DEBUG
