@@ -21,7 +21,7 @@ HRESULT CCustomize_UI::Initialize_Prototype()
 
 HRESULT CCustomize_UI::Initialize(void* pArg)
 {
-	if (pArg != nullptr)
+ 	if (pArg != nullptr)
 	{
 		if (FAILED(__super::Initialize(pArg)))
 			return E_FAIL;
@@ -174,7 +174,7 @@ HRESULT CCustomize_UI::Add_Components(const wstring& strModelTag)
 	/* For.Com_Texture */
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, strModelTag,
 		TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
-		return E_FAIL;
+	return E_FAIL;
 
 	/* For.Com_VIBuffer */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
@@ -355,7 +355,7 @@ void CCustomize_UI::Color_Frame(_float fTimeDelta)
 	/* ▶ 보간이 필요하지 않다면 */
 	if (0 == m_iColorMaxNum)
 	{
-		m_vCurrentColor = m_vColor[0].vColor;
+		m_vCurrentColor = _float4(1, 1, 1, 1);/*m_vColor[0].vColor*/
 		m_fBlending = m_vColor[0].fBlender_Value;
 		m_fSplit = m_vColor[0].fSplit;
 		m_fWaveSpeed = m_vColor[0].WaveSpeed;
@@ -370,7 +370,7 @@ void CCustomize_UI::Color_Frame(_float fTimeDelta)
 		m_isWave = m_vColor[0].isWave;
 
 		/* World Matrix Change */
-		m_pTransformCom->Set_WorldMatrix(m_SavePos[0]);
+		//m_pTransformCom->Set_WorldMatrix(m_SavePos[0]);
 	}
 	/* ▶ 보간 Type */
 	if (m_iEndingType == PLAY_BUTTON::PLAY_DEFAULT)

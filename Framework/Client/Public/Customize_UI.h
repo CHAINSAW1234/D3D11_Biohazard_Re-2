@@ -43,6 +43,8 @@ public:
 		_int							iChild = { 0 };
 		_bool							IsChild = { false };
 		vector<CTextBox::TextBox_DESC>	TextBoxDesc = {};
+		_float4x4						SavePos[10] = {};
+
 	}CUSTOM_UI_DESC;
 
 private:

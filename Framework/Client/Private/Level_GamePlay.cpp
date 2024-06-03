@@ -27,7 +27,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_LandObject()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_UI(TEXT(""))))
+ 	if (FAILED(Ready_Layer_UI(TEXT(""))))
 		return E_FAIL;
 
 	return S_OK;
@@ -202,7 +202,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_Effect(const wstring & strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 {
-	wstring selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/test2.dat");
+
+
+	wstring selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/testLNY.dat");
 	ifstream inputFileStream;
 	inputFileStream.open(selectedFilePath, ios::binary);
 	CreatFromDat(inputFileStream, (""), nullptr);
@@ -224,12 +226,16 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fWorldMatrix), sizeof(_float4x4));
 
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.vSize), sizeof(_float2));
+
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iColorMaxNum), sizeof(_uint));
 
 	_int iColorMAxnum = CustomizeUIDesc.iColorMaxNum;
 
-	for (_int i = 0; i < iColorMAxnum; i++)
+	for (_int i = 0; i <= iColorMAxnum; i++)
 	{
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.SavePos[i]), sizeof(_float4x4));
+
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.vColor[i]), sizeof(CCustomize_UI::Value_Color));
 	}
 
@@ -290,7 +296,8 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_CCustomize_UI"), &CustomizeUIDesc)))
 		MSG_BOX(TEXT("Failed to Add Clone"));
 
-	CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
+	CGameObject* pGameObj = {};
+	pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
 
 	if (nullptr != pGameParentsObj)
 	{
