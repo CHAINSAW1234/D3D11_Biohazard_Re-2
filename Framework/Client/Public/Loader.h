@@ -24,7 +24,9 @@ public:
 	void Output() {
 		SetWindowText(g_hWnd, m_strLoadingText.c_str());
 	}
-	
+
+private:
+	HRESULT Load_Prototype(const wstring& filePath);
 
 private:
 	ID3D11Device*				m_pDevice = { nullptr };
@@ -41,6 +43,9 @@ private:
 private:
 	HRESULT Loading_For_Logo();
 	HRESULT Loading_For_GamePlay();
+
+
+
 
 public:
 	static CLoader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);

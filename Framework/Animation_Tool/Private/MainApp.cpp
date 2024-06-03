@@ -3,21 +3,12 @@
 
 #include "GameInstance.h"
 #include "Level_Loading.h"
+#include "IMGuiManager.h"
 
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::Get_Instance())
 {
 	Safe_AddRef(m_pGameInstance);		
-
-	
-
-	//D3D11_RASTERIZER_DESC			RState;
-	//D3D11_DEPTH_STENCIL_DESC		DSState;
-	//D3D11_BLEND_DESC				BState;
-	//m_pContext->RSSetState();
-	//m_pContext->OMSetDepthStencilState();
-	//m_pContext->OMSetBlendState();
-	//
 }
 
 
@@ -34,7 +25,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(m_pGameInstance->Initialize_Engine(g_hInst, LEVEL_END, EngineDesc, &m_pDevice, &m_pContext)))
 		return E_FAIL;
 
-	if (FAILED(Ready_Gara()))
+	if (FAILED(Ready_ImGui()))
 		return E_FAIL;
 
 	if (FAILED(Ready_Fonts()))
@@ -51,8 +42,15 @@ HRESULT CMainApp::Initialize()
 
 void CMainApp::Tick(_float fTimeDelta)
 {
+	if (DOWN == m_pGameInstance->Get_KeyState('Z'))
+	{
+		m_pGameInstance->On_Off_DebugRender();
+	}
 
 	m_pGameInstance->Tick_Engine(fTimeDelta);
+
+	if (nullptr != m_pImGui_Manager)
+		m_pImGui_Manager->Tick(fTimeDelta);
 
 #ifdef _DEBUG
 	m_fTimeAcc += fTimeDelta;
@@ -85,16 +83,12 @@ HRESULT CMainApp::Render()
 	m_pGameInstance->Render_Font(TEXT("Font_Default"), m_szFPS, _float2(0.f, 0.f), XMVectorSet(1.f, 0.f, 0.f, 1.f), 0.f);
 
 #endif
+	if (nullptr != m_pImGui_Manager)
+		m_pImGui_Manager->Render();
 
 	m_pGameInstance->End_Draw();
 
 	return	S_OK;
-}
-
-HRESULT CMainApp::Ready_Gara()
-{
-	
-	return S_OK;
 }
 
 HRESULT CMainApp::Ready_Fonts()
@@ -102,6 +96,16 @@ HRESULT CMainApp::Ready_Fonts()
 	//// MakeSpriteFont "≥ÿΩºlv1∞ÌµÒ Bold" /FontSize:30 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 142.spritefont
 	//if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_Default"), TEXT("../Bin/Resources/Fonts/141ex.spriteFont"))))
 	//	return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMainApp::Ready_ImGui()
+{
+	/* ImGui ∏≈¥œ¿˙ √ ±‚»≠ */
+	m_pImGui_Manager = CIMGuiManager::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pImGui_Manager)
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -152,6 +156,7 @@ void CMainApp::Free()
 	Safe_Release(m_pContext);
 
 	Safe_Release(m_pGameInstance);
+	Safe_Release(m_pImGui_Manager);
 
 	CGameInstance::Release_Engine();
 }

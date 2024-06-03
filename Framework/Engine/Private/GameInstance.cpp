@@ -107,9 +107,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 		return E_FAIL;
 	}	
 
-	if (FAILED(Add_Font(*ppDevice, *ppContext, g_strFontTag, TEXT("../Bin/Resources/Fonts/141ex.spriteFont"))))
+	if (FAILED(Add_Font(*ppDevice, *ppContext, g_strFontTag, TEXT("../../Client/Bin/Resources/Fonts/141ex.spriteFont"))))
 		return E_FAIL;
-
 
 	m_pFrustum = CFrustum::Create();
 	if (nullptr == m_pFrustum)
@@ -219,6 +218,13 @@ HRESULT CGameInstance::Clear(_uint iClearLevelIndex)
 
 	return S_OK;
 }
+
+//wstring CGameInstance::UTF8ToUTF16(const string& utf8Str)
+//{
+//	//wstring_convert<codecvt_utf8_utf16<wchar_t>> converter;
+//	//return converter.from_bytes(utf8Str);
+//
+//}
 
 #pragma region Input_Device
 _uint CGameInstance::Get_KeyState(_int iKey)
@@ -356,6 +362,15 @@ void CGameInstance::Set_ShaderState(SHADER_STATE eState, _bool isState)
 
 	m_pRenderer->Set_ShaderState(eState, isState);
 }
+#ifdef _DEBUG
+void CGameInstance::On_Off_DebugRender()
+{
+	if (nullptr == m_pRenderer)
+		return;
+
+	m_pRenderer->On_Off_DebugRender();
+}
+#endif
 #pragma endregion
 
 #pragma region Level_Manager
@@ -426,6 +441,12 @@ void CGameInstance::Release_Layer(_uint iLevelIndex, const wstring& LayerTag)
 	_ASSERT(m_pObject_Manager != nullptr);
 
 	m_pObject_Manager->Release_Layer(iLevelIndex, LayerTag);
+}
+HRESULT CGameInstance::Add_Layer(_uint iLevelIndex, const wstring& strLayerTag)
+{
+	_ASSERT(m_pObject_Manager != nullptr);
+
+	return m_pObject_Manager->Add_Layer(iLevelIndex, strLayerTag);
 }
 #pragma endregion
 
@@ -747,6 +768,63 @@ void CGameInstance::Transform_PickingToWorldSpace(_float4* pRayDir, _float4* pRa
 {
 	return m_pPicking->Transform_PickingToWorldSpace(pRayDir, pRayPos);
 }
+
+void CGameInstance::Get_PickingWordSpace(_float3* pRayDir, _float3* pRayPos)
+{
+	if (nullptr == m_pPicking)
+		return;
+
+	return m_pPicking->Get_PickingWordSpace(pRayDir, pRayPos);
+}
+
+void CGameInstance::Get_PickingWordSpace(_vector& pRayDir, _vector& pRayPos)
+{
+	if (nullptr == m_pPicking)
+		return;
+
+	return m_pPicking->Get_PickingWordSpace(pRayDir, pRayPos);
+}
+
+void CGameInstance::ClipCursor(HWND hWnd)
+{
+	if (nullptr == m_pPicking)
+		return;
+
+	m_pPicking->ClipCursor(hWnd);
+}
+
+_float2 CGameInstance::Get_ProjMousePos()
+{
+	if (nullptr == m_pPicking)
+		return _float2();
+
+	return m_pPicking->Get_ProjMousePos();
+}
+
+POINT CGameInstance::Get_ptProjMousePos()
+{
+	if (nullptr == m_pPicking)
+		return POINT();
+
+	return m_pPicking->Get_ptProjMousePos();
+}
+
+_float2 CGameInstance::Get_ViewMousePos()
+{
+	if (nullptr == m_pPicking)
+		return _float2();
+
+	return m_pPicking->Get_ViewMousePos();
+}
+
+POINT CGameInstance::Get_ptViewMousePos()
+{
+	if (nullptr == m_pPicking)
+		return POINT();
+
+	return m_pPicking->Get_ptViewMousePos();
+}
+
 #pragma endregion
 
 #pragma region Random_Value_Generator
@@ -828,6 +906,12 @@ void CGameInstance::TransformFrustum_LocalSpace(_fmatrix WorldMatrixInv)
 	}
 	m_pFrustum->Transform_LocalSpace(WorldMatrixInv);
 }
+
+_bool CGameInstance::isInFrustum_WorldSpace_Cube(_fvector vWorldPos, _float size, _float fRange)
+{
+	return m_pFrustum->isIn_WorldSpace_Cube(vWorldPos, size, fRange);
+}
+
 #pragma endregion
 
 #pragma region Extractor

@@ -8,6 +8,12 @@ BEGIN(Engine)
 class CMesh final : public CVIBuffer
 {
 public:
+	struct tFace
+	{
+		int VertexIndex[3];
+		int TexCoordIndex[3];
+	};
+public:
 	typedef struct tagMeshDesc
 	{
 		string				strName = { "" };
@@ -26,7 +32,7 @@ public:
 		vector<_float4x4>	OffsetMatrices;
 	}MESH_DESC;
 
-private:
+public:
 	CMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CMesh(const CMesh& rhs);
 	virtual ~CMesh() = default;
@@ -80,6 +86,80 @@ private:/* For.BinaryLoad */
 public:/*For Cooking*/
 	void	Static_Mesh_Cooking();
 
+public: /* For Octree Culling*/
+	_uint					GetNumFaces()
+	{
+		return m_iNumIndices / 3;
+	}
+	_uint					GetNumVertices()
+	{
+		return m_iNumVertices;
+	}
+	_uint					GetNumIndices()
+	{
+		return m_iNumIndices;
+	}
+	_float3* GetVertices()
+	{
+		return m_pVertices_Cooking;
+	}
+	_uint* GetIndices()
+	{
+		return m_pIndices_Cooking;
+	}
+	vector<tFace*>* GetFaces()
+	{
+		return &m_vecFaces;
+	}
+	void					SetNumFaces(_int Count)
+	{
+		m_iNumIndices = Count * 3;
+	}
+	void					SetVertices(_float3* pVertices);
+	void					Init_For_Octree();
+	void					Ready_Buffer_For_Octree(_float4 vTranslation);
+	void					SetNumVertices(_uint Num)
+	{
+		m_iNumVertices = Num;
+	}
+	void					Octree_Mesh_Cooking_For_PX();
+	ID3D11Buffer* GetVertexBuffer()
+	{
+		return m_pVB;
+	}
+	void					SetVertexBuffer(ID3D11Buffer* pBuffer)
+	{
+		m_pVB = pBuffer;
+	}
+	ID3D11Buffer* GetIndexBuffer()
+	{
+		return m_pIB;
+	}
+	void					SetIndexBuffer(ID3D11Buffer* pBuffer)
+	{
+		m_pIB = pBuffer;
+	}
+	_float3* GetNormals()
+	{
+		return m_pNormals;
+	}
+	_float3* GetTangents()
+	{
+		return m_pTangents;
+	}
+	_float2* GetTexcoords()
+	{
+		return m_pTexcoords;
+	}
+	void					SetNormals(_float3* pNormals);
+	void					SetTangents(_float3* pTangents);
+	void					SetTexcoords(_float2* pTexcoords);
+private:
+	vector<tFace*>	m_vecFaces;
+	_float3* m_pNormals = { nullptr };
+	_float2* m_pTexcoords = { nullptr };
+	_float3* m_pTangents = { nullptr };
+
 public:
 	/* For.FBXLoad*/
 	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::MODEL_TYPE eModelType, const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices, _fmatrix TransformationMatrix);
@@ -87,56 +167,6 @@ public:
 	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::MODEL_TYPE eType, const MESH_DESC& MeshDesc);
 	virtual CMesh* Clone(void* pArg);
 	virtual void Free() override;
-
-#pragma region TEST
-	//public: /* For.Test */
-	//	_bool Compare(CMesh* pMesh) {
-	//		if (string(pMesh->m_szName) != string(m_szName))
-	//		{
-	//			int iA = 0;
-	//		}
-	//
-	//		if (pMesh->m_iMaterialIndex != m_iMaterialIndex)
-	//		{
-	//			int iA = 0;
-	//		}
-	//
-	//		if (pMesh->m_iNumBones != m_iNumBones)
-	//		{
-	//			int iA = 0;
-	//		}
-	//
-	//		if (pMesh->m_iNumIndices != m_iNumIndices)
-	//		{
-	//			int iA = 0;
-	//		}
-	//
-	//		if (pMesh->m_iNumVertices != m_iNumVertices)
-	//		{
-	//			int iA = 0;
-	//		}
-	//
-	//		for (size_t i = 0; i < m_iNumBones; ++i)
-	//		{
-	//			if (pMesh->m_Bones[i] != m_Bones[i])
-	//				int iA = 0;
-	//		}
-	//
-	//		for (_uint i = 0; i < 4; ++i)
-	//		{
-	//			for (_uint j = 0; j < 4; ++j)
-	//			{
-	//				for (size_t k = 0; k < m_iNumBones; ++k)
-	//				{
-	//					if (m_OffsetMatrices[k].m[i][j] != pMesh->m_OffsetMatrices[k].m[i][j])
-	//						int iA = 0;
-	//				}
-	//			}
-	//		}
-	//
-	//		return true;
-	//	}
-#pragma endregion
 };
 
 END

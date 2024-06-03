@@ -21,6 +21,10 @@ public:
 	HRESULT									Draw();
 	HRESULT									Clear(_uint iClearLevelIndex);
 
+#pragma region forCH_TEST
+	//wstring									UTF8ToUTF16(const string& utf8Str);
+#pragma endregion
+
 #pragma region Input_Device
 public: /* For.Input_Device */
 	_uint									Get_KeyState(_int iKey);
@@ -43,7 +47,12 @@ public: /* For.Renderer */
 	void									On_RadialBlur();
 	void									Off_RadialBlur();
 	_bool									Get_ShaderState(SHADER_STATE eState);
+
+
 	void									Set_ShaderState(SHADER_STATE eState, _bool isState);
+#ifdef _DEBUG
+	void									On_Off_DebugRender();
+#endif
 #pragma endregion
 
 #pragma region Level_Manager
@@ -60,6 +69,13 @@ public: /* For.Object_Manager */
 	const CComponent*						Get_Component(_uint iLevelIndex, const wstring& strLayerTag, const wstring& strComTag, _uint iIndex = 0);
 	list<class CGameObject*>*				Find_Layer(_uint iLevelIndex, const wstring& LayerTag);
 	void									Release_Layer(_uint iLevelIndex, const wstring& LayerTag);
+
+
+	//yeeun	
+	HRESULT Add_Layer(_uint iLevelIndex, const wstring& strLayerTag);
+
+
+
 #pragma endregion
 
 #pragma region Component_Manager
@@ -134,6 +150,7 @@ public: /* For.Frustum */
 	_bool									isInFrustum_WorldSpace(_fvector vWorldPos, _float fRange = 0.f);
 	_bool									isInFrustum_LocalSpace(_fvector vLocalPos, _float fRange = 0.f);
 	void									TransformFrustum_LocalSpace(_fmatrix WorldMatrixInv);
+	_bool									isInFrustum_WorldSpace_Cube(_fvector vWorldPos, _float size, _float fRange = 0.f);
 #pragma endregion
 
 #pragma region Extractor
@@ -145,6 +162,13 @@ public: /* For.Extractor */
 public: /* For.Picking */
 	void									Transform_PickingToLocalSpace(class CTransform* pTransform, _Out_ _float3* pRayDir, _Out_ _float3* pRayPos);
 	void									Transform_PickingToWorldSpace(_Out_ _float4* pRayDir, _Out_ _float4* pRayPos);
+	void									Get_PickingWordSpace(_Out_ _float3* pRayDir, _Out_ _float3* pRayPos);
+	void									Get_PickingWordSpace(_Out_ _vector& pRayDir, _Out_ _vector& pRayPos);
+	void									ClipCursor(HWND hWnd);
+	_float2									Get_ProjMousePos();
+	POINT									Get_ptProjMousePos();
+	_float2									Get_ViewMousePos();
+	POINT									Get_ptViewMousePos();
 #pragma endregion
 
 #pragma region Random_Value_Generator
@@ -229,6 +253,7 @@ public:/*For Physics Controller*/
 	void									Cook_Terrain();
 	void									Simulate();
 	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
+
 private:/*For Physics_Controller*/
 	_uint*									m_pIndices = { nullptr };
 	_int									NumVertices = { 0 };

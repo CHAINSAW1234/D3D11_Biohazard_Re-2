@@ -12,4 +12,15 @@ namespace Client
 		PASS_EMISSIVE,
 		PASS_END
 	};
+
+	enum UI_ID {
+		ORTHOGONAL_UI,
+		PERSPECTIVE_UI,
+		BUTTON,
+		ID_END
+	};
+	enum DIRECTION { DIRECTION_WEST, DIRECTION_EAST, DIRECTION_MID };
+
+
+
 }

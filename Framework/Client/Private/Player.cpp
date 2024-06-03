@@ -6,6 +6,8 @@
 #include "Head_Player.h"
 #include "Hair_Player.h"
 
+#include"CustomCollider.h"
+
 #include "Character_Controller.h"
 
 #define MODEL_SCALE 0.01f
@@ -61,6 +63,33 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
+
+
+
+#pragma region 예은ColTest - 컬링 방식에 따라 달라질 겁니당
+	if (m_iCurCol != m_iPreCol)
+	{
+		m_iPreCol = m_iCurCol;
+		m_bChange = true;
+	}
+	else
+		m_bChange = false;
+
+	m_fTimeTEST += fTimeDelta;
+	if (m_pGameInstance->Get_KeyState(VK_F7) == DOWN && m_fTimeTEST > 0.01f)
+	{
+		m_fTimeTEST = 0.f;
+		m_iCurCol++;
+	}
+	if (m_pGameInstance->Get_KeyState(VK_F6) == DOWN && m_fTimeTEST > 0.01f)
+	{
+		m_fTimeTEST = 0.f;
+		m_iCurCol--;
+	}
+#pragma endregion 예은ColTest
+
+	
+	
 	static _bool Temp = false;
 
 	if (UP == m_pGameInstance->Get_KeyState(VK_BACK))
@@ -70,54 +99,11 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	if(Temp == false)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4());
-
-	if(PRESSING == m_pGameInstance->Get_KeyState('H'))
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
-	}
-
-	if (PRESSING == m_pGameInstance->Get_KeyState('K'))
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
-	}
-
-	if (PRESSING == m_pGameInstance->Get_KeyState('U'))
-	{
-		auto Look = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-		m_pController->Move(Look, fTimeDelta);
-	}
-
-	if (PRESSING == m_pGameInstance->Get_KeyState('J'))
-	{
-		auto Look = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-		m_pController->Move(Look, fTimeDelta);
-		m_eState |= STATE_RUN;
-		if (m_eState & STATE_IDLE)
-			m_eState ^= STATE_IDLE;
-	}
-	else
-	{
-		m_eState |= STATE_IDLE;
-		if(m_eState & STATE_RUN)
-			m_eState ^= STATE_RUN;
-	}
+	
 
 	_vector		vWorldPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
-
-
-	/*if (GetKeyState(VK_LBUTTON) & 0x8000)
-	{
-		POINT		ptMouse;
-		GetCursorPos(&ptMouse);
-		ScreenToClient(g_hWnd, &ptMouse);
-
-		_float2		vMousePos = _float2(static_cast<_float>(ptMouse.x), static_cast<_float>(ptMouse.y));
-
-		vWorldPos = m_pGameInstance->Compute_WorldPos(vMousePos, TEXT("Target_FieldDepth"));
-	}*/
 	
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vWorldPos);
-
 
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
@@ -133,26 +119,46 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	Late_Tick_PartObjects(fTimeDelta);
 
-
-
-
-	//PART			Player_Part = { PART::PART_BODY };
-
-	//_float4			vMovedDirection = { Convert_Float3_To_Float4_Dir(m_vRootTranslation) };	
-
-	//_vector			vResultPosition = { vCurrentPostion + XMLoadFloat4(&vMovedDirection) };
-
-	//	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vResultPosition);
-
+	_vector			vMovedDirection = { XMLoadFloat3(&m_vRootTranslation) };	
 	if (DOWN == m_pGameInstance->Get_KeyState('B'))
 	{
-		_float4			vMoveDir = {};
 		_vector			vCurrentPostion = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
-		XMStoreFloat4(&vMoveDir, vCurrentPostion * -1.f);
-		m_pController->Move(vMoveDir, fTimeDelta);
+		vMovedDirection = XMVectorSetW(vCurrentPostion * -1.f, 0.f);
 	}
 
+	if (PRESSING == m_pGameInstance->Get_KeyState('H'))
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * -1.f);
+	}
 
+	if (PRESSING == m_pGameInstance->Get_KeyState('K'))
+	{
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
+	}
+
+	if (PRESSING == m_pGameInstance->Get_KeyState('U'))
+	{
+		_vector		vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
+		vLook = { XMVector3Normalize(vLook) };
+		_vector		vMoveDir = { vLook };
+
+		vMovedDirection += vMoveDir;
+	}
+
+	if (PRESSING == m_pGameInstance->Get_KeyState('J'))
+	{
+		_vector		vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
+		vLook = { XMVector3Normalize(vLook) };
+		_vector		vMoveDir = { vLook * -1.f };
+
+		vMovedDirection += vMoveDir;
+	}
+
+	_float4			vResultMoveDirFloat4 = {};
+	XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
+	m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
+
+#pragma region Terrain
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
@@ -160,7 +166,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
-	_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
+	/*_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
 	CVIBuffer_Terrain*		pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
 	CTransform*				pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
 	if (nullptr != pTerrainBuffer &&
@@ -172,7 +178,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 		_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
 		vMoveDir = vResultPos - vPosition;
-	}
+	}*/
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
@@ -182,12 +188,13 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 	//	m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
 
-	vMoveDir = vMoveDir + XMLoadFloat3(&m_vRootTranslation);
+#pragma endregion
 
-	_float4			vMoveDirFloat4 = {};
-	XMStoreFloat4(&vMoveDirFloat4, vMoveDir);
 
-	m_pController->Move(vMoveDirFloat4, fTimeDelta);
+#pragma region 예은 추가
+	Col_Section();
+#pragma endregion 
+	
 
 
 #ifdef _DEBUG
@@ -218,6 +225,26 @@ void CPlayer::Late_Tick_PartObjects(_float fTimeDelta)
 	for (auto& pPartObject : m_PartObjects)
 		pPartObject->Late_Tick(fTimeDelta);
 }
+#pragma region 예은 추가
+void CPlayer::Col_Section()
+{
+	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider"));
+	for (auto& iter: *pCollider)
+	{
+		if (m_pColliderCom->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")))))
+		{
+			CCustomCollider* pColCom = static_cast<CCustomCollider*>(iter);
+
+			m_iCurCol = pColCom->Get_Col();
+			m_iDir = pColCom->Get_Dir();
+
+		}
+	}
+
+
+
+}
+#pragma endregion
 
 HRESULT CPlayer::Add_Components()
 {

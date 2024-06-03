@@ -19,14 +19,17 @@ private:
 	virtual ~CHair_Player() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Priority_Tick(_float fTimeDelta) override;
-	virtual void Tick(_float fTimeDelta) override;
-	virtual void Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT Render() override;
-	virtual HRESULT Render_LightDepth() override;
-	virtual HRESULT Render_LightDepth_Cube() override;
+	virtual HRESULT			Initialize_Prototype() override;
+	virtual HRESULT			Initialize(void* pArg) override;
+	virtual void			Priority_Tick(_float fTimeDelta) override;
+	virtual void			Tick(_float fTimeDelta) override;
+	virtual void			Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT			Render() override;
+
+private:
+	HRESULT					Render_LightDepth_Dir()override;
+	HRESULT					Render_LightDepth_Spot()override;
+	HRESULT					Render_LightDepth_Point() override;
 
 private:
 	CModel* m_pModelCom = { nullptr };
@@ -36,8 +39,8 @@ private:
 	const _ubyte* m_pState;
 
 private:
-	HRESULT Add_Components();
-	HRESULT Bind_ShaderResources();
+	HRESULT					Add_Components();
+	HRESULT					Bind_ShaderResources();
 
 public:
 	static CHair_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

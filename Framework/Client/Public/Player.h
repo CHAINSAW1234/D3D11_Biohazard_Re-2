@@ -44,11 +44,25 @@ private:
 	void										Priority_Tick_PartObjects(_float fTimeDelta);
 	void										Tick_PartObjects(_float fTimeDelta);
 	void										Late_Tick_PartObjects(_float fTimeDelta);
-
-public:
 	
-
 private:
+	void										Col_Section();
+
+#pragma region 예은 추가 
+public:
+	_int										Get_Player_ColIndex() { return m_iCurCol; }
+	_int										Get_Player_Direction() { return m_iDir; }
+	_bool										Get_Player_RegionChange() { return m_bChange; }
+private:
+
+
+	_bool											m_bChange = { true };
+	_int											m_iCurCol = {0};
+	_int											m_iDir = {0};
+	_int											m_iPreCol = {0};
+	_float										m_fTimeTEST = { 0.f };
+#pragma endregion
+
 	vector<CPartObject*>						m_PartObjects;
 	_ubyte										m_eState = {};
 	CCollider*									m_pColliderCom = { nullptr };

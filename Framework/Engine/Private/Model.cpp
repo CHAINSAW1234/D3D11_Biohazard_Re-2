@@ -48,49 +48,6 @@ CModel::CModel(const CModel& rhs)
 	m_PlayingAnimInfos.resize(3);
 }
 
-CBone* CModel::Get_BonePtr(const _char* pBoneName) const
-{
-	auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool
-		{
-			return pBone->Compare_Name(pBoneName);
-		});
-
-	return *iter;
-}
-
-_bool CModel::isFinished(_uint iPlayingIndex)
-{
-	if (iPlayingIndex >= static_cast<_uint>(m_PlayingAnimInfos.size()))
-		return false;
-
-	_uint			iAnimIndex = { static_cast<_uint>(m_PlayingAnimInfos[iPlayingIndex].iAnimIndex) };
-	return m_Animations[iAnimIndex]->isFinished();
-}
-
-void CModel::Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices)
-{
-	for (auto& pBone : m_Bones)
-	{
-		_int		iParentsIndex = { pBone->Get_ParentIndex() };
-		if (-1 == iParentsIndex)
-			continue;
-
-		string		strMyParentsBoneTag = { m_Bones[iParentsIndex]->Get_Name() };
-
-		if (strMyParentsBoneTag == strTargetParentsBoneTag)
-		{
-			string		strBoneTag = { pBone->Get_Name() };
-			_int		iBoneIndex = { Find_BoneIndex(strBoneTag) };
-			if (-1 == iBoneIndex)
-				continue;
-
-			ChildBoneIndices.push_back(iBoneIndex);
-
-			Get_Child_BoneIndices(strBoneTag, ChildBoneIndices);
-		}
-	}
-}
-
 void CModel::Set_Animation_Blend(ANIM_PLAYING_DESC AnimDesc, _uint iPlayingIndex)
 {
 	if (static_cast<_uint>(AnimDesc.iAnimIndex) >= m_iNumAnimations)
@@ -267,21 +224,33 @@ void CModel::Add_IK(string strTargetJointTag, string strEndEffectorTag, wstring 
 	_uint			iNumJoint = { static_cast<_uint>(IkInfo.JointIndices.size()) };
 
 	IkInfo.BoneThetas.clear();
-	for (_uint i = 0; i < iNumJoint; ++i)
-		IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(20.f), XMConvertToRadians(30.f), XMConvertToRadians(20.f), XMConvertToRadians(30.f)));
+	//	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f)));
+	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(40.f)));
+	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(40.f)));
+	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(40.f)));
+	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(0.f), XMConvertToRadians(40.f)));
+	//	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f)));
+	//	IkInfo.BoneThetas.push_back(_float4(XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f), XMConvertToRadians(10.f)));
 
 	IkInfo.BoneOrientationLimits.clear();
 	for (_uint i = 0; i < iNumJoint; ++i)
-		IkInfo.BoneOrientationLimits.push_back(XMConvertToRadians(60.f));
+		IkInfo.BoneOrientationLimits.push_back(XMConvertToRadians(40.f));
 
 	IkInfo.JointTypes.clear();
-	for (_uint i = 0; i < iNumJoint; ++i)
-		IkInfo.JointTypes.push_back(i % 2 == 0 ? JOINT_TYPE::JOINT_BALL : JOINT_TYPE::JOINT_HINGE);
+	/*IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_BALL);
+	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_HINGE);
+	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_BALL);
+	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_END);*/
+	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_HINGE);
+	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_HINGE);
+	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_HINGE);
+	IkInfo.JointTypes.push_back(JOINT_TYPE::JOINT_END);
+	//	IkInfo.JointTypes.push_back(i % 2 == 0 ? JOINT_TYPE::JOINT_BALL : JOINT_TYPE::JOINT_HINGE);
 
-	//	임시 추가
-	//	임시 추가
-	//	임시 추가
-	//	임시 추가
+//	임시 추가
+//	임시 추가
+//	임시 추가
+//	임시 추가
 
 	m_IKInfos[strIKTag] = IkInfo;
 }
@@ -293,6 +262,15 @@ void CModel::Set_Direction_IK(wstring strIKTag, _fvector vDirection)
 		return;
 
 	XMStoreFloat3(&m_IKInfos[strIKTag].vIKDirection, vDirection);
+}
+
+void CModel::Set_TargetPosition_IK(wstring strIKTag, _fvector vTargetPosition)
+{
+	map<wstring, IK_INFO>::iterator		iter = { m_IKInfos.find(strIKTag) };
+	if (iter == m_IKInfos.end())
+		return;
+
+	XMStoreFloat3(&m_IKInfos[strIKTag].vIKEndTargetPosition, vTargetPosition);
 }
 
 void CModel::Set_NumIteration_IK(wstring strIKTag, _uint iNumIteration)
@@ -352,7 +330,11 @@ void CModel::Apply_IK(class CTransform* pTransform, IK_INFO& IkInfo)
 	_vector			vEndEffectorMoveDir = { XMLoadFloat3(&IkInfo.vIKDirection) };
 	vEndEffectorMoveDir = XMVector3TransformNormal(vEndEffectorMoveDir, WorldMatrixInv);
 
-	_vector			vEndEffectorResultPosition = { XMLoadFloat4((_float4*)m_Bones[IkInfo.iEndEffectorIndex]->Get_CombinedTransformationMatrix()->m[CTransform::STATE_POSITION]) + vEndEffectorMoveDir };
+	_vector			vEndEffectorPosition = { XMVectorSetW(XMLoadFloat3(&IkInfo.vIKEndTargetPosition), 1.f) };
+	vEndEffectorMoveDir = XMVector3TransformCoord(vEndEffectorPosition, WorldMatrixInv);
+	_vector			vEndEffectorResultPosition = { vEndEffectorPosition };
+
+	//	_vector			vEndEffectorResultPosition = { XMLoadFloat4((_float4*)m_Bones[IkInfo.iEndEffectorIndex]->Get_CombinedTransformationMatrix()->m[CTransform::STATE_POSITION]) + vEndEffectorMoveDir };
 	XMStoreFloat4(&IkInfo.vEndEffectorResultPosition, vEndEffectorResultPosition);
 
 	_vector			vTargetJointStartTranslation = { XMLoadFloat4((_float4*)m_Bones[IkInfo.iIKRootBoneIndex]->Get_CombinedTransformationMatrix()->m[CTransform::STATE_POSITION]) };
@@ -479,7 +461,7 @@ void CModel::Solve_IK_Forward(IK_INFO& IkInfo)
 			//	쎄타, 첫 위치, 관절타입, 오리엔테이션 기록됨...
 			//	자식뼈, 쎄타, 첫 위치 ( length로 저장 constranints 측에서 ), 제한 조건 ( 관절 타입 자식뼈의 인덱스상... ), 오리엔테이션 ( 회전량 자식뼈 ...)
 			//	자식뼈 인덱스( IkInfo 상에서 ... ),
-			//	Rotational_Constranit(IkInfo, i + 1, i);
+			Rotational_Constranit(IkInfo, i + 1, i);
 		}
 	}
 }
@@ -516,14 +498,19 @@ void CModel::Solve_For_Orientation_IK(IK_INFO& IkInfo, _int iOuterJointIndex, _i
 	_vector			vOuterJointOrientaion = { XMLoadFloat4(&IkInfo.BoneOrientations[iOuterJointIndex]) };
 	_vector			vInnerJointOrientaion = { XMLoadFloat4(&IkInfo.BoneOrientations[iInnerJointIndex]) };
 
-	//	부모 관절이 자식 관절을 향해 추가로 회전해야할 양 
-	_vector			vRotor = { XMQuaternionMultiply(XMQuaternionInverse(vOuterJointOrientaion), vInnerJointOrientaion) };
+	_vector			vOuterJointOrientationInv = { XMQuaternionConjugate(vOuterJointOrientaion) };
+	_float			vQuternionLength = { XMVectorGetX(XMQuaternionLength(vOuterJointOrientaion)) };
+	_vector			vOuterJointOrientationInvResult = { vOuterJointOrientationInv * (1 / vQuternionLength) };
+
+	_vector			vRotor = { XMQuaternionMultiply(vOuterJointOrientationInvResult, vInnerJointOrientaion) };
+
 	_float			fNeededRotation = { 2.f * acosf(XMVectorGetW(vRotor)) };
+	_float			fNeededRotation2;
+	XMQuaternionToAxisAngle(&vRotor, &fNeededRotation2, XMQuaternionIdentity());
 
 	//	필요 회전량이 자식 관절의 최대 회전량내에 있는 경우
 	if (fNeededRotation <= IkInfo.BoneOrientationLimits[iOuterJointIndex])
 	{
-		//	회전자( 부무관절 회전량 - 자식 관절 회전량 ) + 자식관절 회전량 => 기존 회전량
 		_vector		vResultInnerJointOrientation = { XMQuaternionMultiply(vOuterJointOrientaion, vRotor) };
 		XMStoreFloat4(&IkInfo.BoneOrientations[iInnerJointIndex], vResultInnerJointOrientation);
 	}
@@ -533,10 +520,10 @@ void CModel::Solve_For_Orientation_IK(IK_INFO& IkInfo, _int iOuterJointIndex, _i
 		_float		fLimitAngle = { IkInfo.BoneOrientationLimits[iOuterJointIndex] };
 
 		//	쿼터니언에서 w성분을 지움 => 쿼터니언의 회전 축 방향벡터
-		_vector		vLimitedOriendtation = {XMVectorSet(
-			XMVectorGetX(vRotor) / (1 / sqrtf(1.f - powf(XMVectorGetW(vRotor),2.f) * sinf(fLimitAngle *0.5f))),
-			XMVectorGetY(vRotor) / (1 / sqrtf(1.f - powf(XMVectorGetW(vRotor),2.f) * sinf(fLimitAngle *0.5f))),
-			XMVectorGetZ(vRotor) / (1 / sqrtf(1.f - powf(XMVectorGetW(vRotor),2.f) * sinf(fLimitAngle *0.5f))),
+		_vector		vLimitedOriendtation = { XMVectorSet(
+			XMVectorGetX(vRotor) / (1 / sqrtf(1.f - powf(XMVectorGetW(vRotor),2.f) * sinf(fLimitAngle * 0.5f))),
+			XMVectorGetY(vRotor) / (1 / sqrtf(1.f - powf(XMVectorGetW(vRotor),2.f) * sinf(fLimitAngle * 0.5f))),
+			XMVectorGetZ(vRotor) / (1 / sqrtf(1.f - powf(XMVectorGetW(vRotor),2.f) * sinf(fLimitAngle * 0.5f))),
 			cosf(fLimitAngle * 0.5f))
 		};
 
@@ -547,33 +534,36 @@ void CModel::Solve_For_Orientation_IK(IK_INFO& IkInfo, _int iOuterJointIndex, _i
 void CModel::Rotational_Constranit(IK_INFO& IkInfo, _int iOuterJointIndex, _int iMyJointIndex)
 {
 	//	자식
-	_vector		p_i = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex]) };
+	_vector			p_i = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex]) };
 	//	자식의 자식
-	_vector		p_before = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex - 1]) };
+	_vector			p_before = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex - 1]) };
 	//	나
-	_vector		p_next = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex + 1]) };
+	_vector			p_next = { XMLoadFloat4(&IkInfo.BoneTranslationsResult[iOuterJointIndex + 1]) };
 
-	_vector		v_i_next = { p_next - p_i };
-	_vector		v_before_i = { p_i - p_before };
+	_vector			v_i_next = { p_next - p_i };
+	_vector			v_before_i = { p_i - p_before };
 	/*_vector		vDirectionToParent = { v_i_next * -1.f };
 	_vector		vDirectionFromGrandParentToParent = { p_i - p_before };*/
 
-	_float		s = { XMVectorGetX(XMVector3Dot(v_i_next, v_before_i)) };
+	_float			s = { XMVectorGetX(XMVector3Dot(v_i_next, v_before_i)) };
 
 	//	# a unit vector of a line passing  from p(i+1) and P(i)
 	//	내가 자식을 바라보는 벡터
-	_float		l_next_i = { XMVectorGetX(XMVector3Length(p_next - p_i)) };
-	_vector		unit_vec_next_i = { XMVector3Normalize(p_i - p_next) };
+	_float			l_next_i = { XMVectorGetX(XMVector3Length(p_next - p_i)) };
+	_vector			unit_vec_next_i = { XMVector3Normalize(p_i - p_next) };
 	//_vector		vDirectionToConeCenterFromParent = { XMVector3Normalize(vDirectionFromGrandParentToParent) * s };
 
 	//	# the center of cone
-	_vector		o = { p_i + unit_vec_next_i * s };
+	_vector			o = { p_i + unit_vec_next_i * s };
 
 	if (JOINT_TYPE::JOINT_HINGE == static_cast<JOINT_TYPE>(IkInfo.JointTypes[iOuterJointIndex]))
 	{
 		//	normal plane vector of p(next), p(i), p(before)
 		_vector		normal_plane = { XMVector3Cross(v_i_next, v_before_i) };
 		_vector		uv_normal_plane = { XMVector3Normalize(normal_plane) };
+
+		if (0.9999f < XMVectorGetX(XMVector3Dot(XMVector3Normalize(v_i_next), XMVector3Normalize(v_before_i))))
+			return;
 
 		//	 a vector from p_i to o
 		_vector		unit_vec_i_o = { XMVector3Normalize(o - p_i) };
@@ -653,7 +643,7 @@ void CModel::Rotational_Constranit(IK_INFO& IkInfo, _int iOuterJointIndex, _int 
 			s * tanf(IkInfo.BoneThetas[iOuterJointIndex].x),
 			s * tanf(IkInfo.BoneThetas[iOuterJointIndex].y),
 			s * tanf(IkInfo.BoneThetas[iOuterJointIndex].z),
-			s * tanf(IkInfo.BoneThetas[iOuterJointIndex].w)) 
+			s * tanf(IkInfo.BoneThetas[iOuterJointIndex].w))
 		};
 
 		// 좌표를 원뿔의 단면으로 변경하고 그 안의 (i - 1)번째 위치를 계산합니다.
@@ -667,9 +657,9 @@ void CModel::Rotational_Constranit(IK_INFO& IkInfo, _int iOuterJointIndex, _int 
 		_float				fTheta = { acosf(IkInfo.BoneOrientations[iOuterJointIndex].w) * 2.f };
 		CONIC_SECTION		eSection = { Find_ConicSection(fTheta) };
 
-		_float2				vTargetPoint = { 
-			l_o_next * cosf(fTheta), 
-			l_o_next * sinf(fTheta) 
+		_float2				vTargetPoint = {
+			l_o_next * cosf(fTheta),
+			l_o_next * sinf(fTheta)
 		};
 
 		//	목표점이 타원형내부인지 확인		
@@ -933,25 +923,26 @@ _bool CModel::Is_InBound(CONIC_SECTION eSection, _fvector vQ, _float2 vTarget)
 {
 	_bool		isInBound = { false };
 
+
 	//	현재 속한 사분면 내에서 계산
 	if (CONIC_SECTION::SECTION_1 == eSection)
 	{
-		if (1.f >= powf(vTarget.x, 2.f) / powf(XMVectorGetZ(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetY(vQ), 2.f))
+		if (1.f >= roundf(powf(vTarget.x, 2.f) / powf(XMVectorGetZ(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetY(vQ), 2.f)))
 			isInBound = true;
 	}
 	else if (CONIC_SECTION::SECTION_2 == eSection)
 	{
-		if (1.f >= powf(vTarget.x, 2.f) / powf(XMVectorGetX(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetY(vQ), 2.f))
+		if (1.f >= roundf(powf(vTarget.x, 2.f) / powf(XMVectorGetX(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetY(vQ), 2.f)))
 			isInBound = true;
 	}
 	else if (CONIC_SECTION::SECTION_3 == eSection)
 	{
-		if (1.f >= powf(vTarget.x, 2.f) / powf(XMVectorGetX(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetW(vQ), 2.f))
+		if (1.f >= roundf(powf(vTarget.x, 2.f) / powf(XMVectorGetX(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetW(vQ), 2.f)))
 			isInBound = true;
 	}
 	else if (CONIC_SECTION::SECTION_4 == eSection)
 	{
-		if (1.f >= powf(vTarget.x, 2.f) / powf(XMVectorGetZ(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetW(vQ), 2.f))
+		if (1.f >= roundf(powf(vTarget.x, 2.f) / powf(XMVectorGetZ(vQ), 2.f) + powf(vTarget.y, 2.f) / powf(XMVectorGetW(vQ), 2.f)))
 			isInBound = true;
 	}
 
@@ -961,7 +952,7 @@ _bool CModel::Is_InBound(CONIC_SECTION eSection, _fvector vQ, _float2 vTarget)
 _float2 CModel::Find_Nearest_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition)
 {
 	_float2			vInitialPoint = Find_Initial_Point_Constraints(fMajorAxisLength, fMinorAxisLength, eSection, vTargetPosition);
-	_float			fThresh = 0.1f;
+	_float			fThresh = 0.001f;
 
 	_float2			vResultPoint = Find_Next_Point_Constraints(vInitialPoint, fMajorAxisLength, fMinorAxisLength, vTargetPosition);
 	while (vResultPoint.x > fThresh || vResultPoint.y > fThresh)
@@ -974,7 +965,7 @@ _float2 CModel::Find_Nearest_Point_Constraints(_float fMajorAxisLength, _float f
 //	eccentricity( 이심룰 ) => 타원이 원에 비해 얼마나 찌그러졌는지
 _float2 CModel::Find_Initial_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition)
 {
-	
+
 	_float2			vK1 = {
 		vTargetPosition.x * fMajorAxisLength * fMinorAxisLength / sqrtf(powf(fMinorAxisLength, 2.f) * powf(vTargetPosition.x, 2.f) + powf(fMajorAxisLength, 2.f) * powf(vTargetPosition.y, 2.f)),
 		vTargetPosition.y * fMajorAxisLength * fMinorAxisLength / sqrtf(powf(fMinorAxisLength, 2.f) * powf(vTargetPosition.x, 2.f) + powf(fMajorAxisLength, 2.f) * powf(vTargetPosition.y, 2.f))
@@ -999,9 +990,9 @@ _float2 CModel::Find_Initial_Point_Constraints(_float fMajorAxisLength, _float f
 		};
 	}
 
-	_float2		vInitialPoint = { 
-		0.5f * (vK1.x + vK2.x), 
-		0.5f * (vK1.y + vK2.y) 
+	_float2		vInitialPoint = {
+		0.5f * (vK1.x + vK2.x),
+		0.5f * (vK1.y + vK2.y)
 	};
 
 	return vInitialPoint;
@@ -1026,10 +1017,9 @@ _float2 CModel::Compute_Delta_Constratins(_float2 vCurrentPoint, _float fMajorAx
 		0, 0);
 
 	_matrix		QMatrix = XMLoadFloat4x4(&Compute_QMatrix(vCurrentPoint, fMajorAxisLength, fMinorAxisLength, vTargetPosition));
-	_vector		vDet = XMMatrixDeterminant(QMatrix);
-	_matrix		QMatrixInv = XMMatrixInverse(&vDet, QMatrix);
+	_matrix		QMatrixInv = XMMatrixInverse(nullptr, QMatrix);
 
-	_vector		vDelta = -1.f * XMVector2Transform(vF, QMatrixInv);
+	_vector		vDelta = XMVector2Transform(vF, QMatrixInv);
 	_float2		vDeltaFloat2 = { XMVectorGetX(vDelta), XMVectorGetY(vDelta) };
 
 	return vDeltaFloat2;
@@ -1039,15 +1029,10 @@ _float4x4 CModel::Compute_QMatrix(_float2 vCurrentPoint, _float fMajorAxisLength
 {
 	_float4x4		QFloat4x4 = {};
 
-	QFloat4x4.m[0][0] = fMinorAxisLength * fMinorAxisLength * vCurrentPoint.x;
-	QFloat4x4.m[0][1] = fMajorAxisLength * fMajorAxisLength * vCurrentPoint.y;
-	QFloat4x4.m[1][0] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.y + fMinorAxisLength * fMinorAxisLength * vTargetPosition.y;
-	QFloat4x4.m[1][1] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.x - fMajorAxisLength * fMajorAxisLength * vTargetPosition.x;
-
-	QFloat4x4.m[0][0] = fMinorAxisLength * fMinorAxisLength * vCurrentPoint.x;
-	QFloat4x4.m[1][0] = fMajorAxisLength * fMajorAxisLength * vCurrentPoint.y;
-	QFloat4x4.m[0][1] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.y + fMinorAxisLength * fMinorAxisLength * vTargetPosition.y;
-	QFloat4x4.m[1][1] = (fMajorAxisLength * fMajorAxisLength - fMinorAxisLength * fMinorAxisLength) * vCurrentPoint.x - fMajorAxisLength * fMajorAxisLength * vTargetPosition.x;
+	QFloat4x4.m[0][0] = powf(fMinorAxisLength, 2.f) * vCurrentPoint.x;
+	QFloat4x4.m[0][1] = (powf(fMajorAxisLength, 2.f) - powf(fMinorAxisLength, 2.f)) * vCurrentPoint.y + powf(fMinorAxisLength, 2.f) * vTargetPosition.y;
+	QFloat4x4.m[1][0] = powf(fMajorAxisLength, 2.f) * vCurrentPoint.y;
+	QFloat4x4.m[1][1] = (powf(fMajorAxisLength, 2.f) - powf(fMinorAxisLength, 2.f)) * vCurrentPoint.x - powf(fMajorAxisLength, 2.f) * vTargetPosition.x;
 
 	return QFloat4x4;
 }
@@ -1308,48 +1293,6 @@ _float4x4 CModel::GetBoneTransform(_int Index)
 	return *CombinedFloat4x4;
 }
 
-void CModel::Apply_RootMotion_Rotation(CTransform* pTransform, _fvector vQuaternion)
-{
-	_vector			vPreQuaternion = { XMQuaternionIdentity() };
-	_vector			vIdentityQuaternion = { XMQuaternionIdentity() };
-	_uint			iRootIndex = { static_cast<_uint>(Find_RootBoneIndex()) };
-
-	for (auto& AnimInfo : m_PlayingAnimInfos)
-	{
-		if (-1 == AnimInfo.iAnimIndex || true == m_Animations[AnimInfo.iAnimIndex]->isFinished())
-			continue;
-
-		if (false == m_BoneLayers[AnimInfo.strBoneLayerTag]->Is_Included(iRootIndex))
-			continue;
-
-		_vector			vCurrentQuaternion = { XMLoadFloat4(&AnimInfo.vPreQuaternion) };
-		vCurrentQuaternion = { XMQuaternionSlerp(vIdentityQuaternion, vCurrentQuaternion, AnimInfo.fWeight) };
-		vPreQuaternion = XMQuaternionMultiply(XMQuaternionNormalize(vPreQuaternion), XMQuaternionNormalize(vCurrentQuaternion));
-
-		AnimInfo.vPreQuaternion = AnimInfo.LastKeyFrames[iRootIndex].vRotation;
-	}
-
-	_vector			vCurrentQuaternion = { vQuaternion };
-
-	// 이전 쿼터니언의 역쿼터니언 구하기
-	_vector			vPreQuaternionInv = { XMQuaternionInverse(vPreQuaternion) };
-
-	// 이전 쿼터니언의 역쿼터니언과 현재쿼터니언의 곱 => 합쿼터니언
-	_vector			vQuaternionDifference = { XMQuaternionNormalize(XMQuaternionMultiply(vPreQuaternionInv, vCurrentQuaternion)) };
-
-	_matrix			RotationMatrix = { XMMatrixRotationQuaternion(vQuaternionDifference) };
-	_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
-	_vector			vPosition = { WorldMatrix.r[CTransform::STATE_POSITION] };
-
-	WorldMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-
-	_matrix			ResultMatrix = { XMMatrixMultiply(RotationMatrix, WorldMatrix) };
-
-	ResultMatrix.r[CTransform::STATE_POSITION] = vPosition;
-
-	pTransform->Set_WorldMatrix(ResultMatrix);
-}
-
 void CModel::Apply_RootMotion_Rotation(CTransform* pTransform, _fvector vQuaternion, _float4* pTranslation)
 {
 	_vector			vPreQuaternion = { XMQuaternionIdentity() };
@@ -1530,22 +1473,6 @@ list<_uint> CModel::Get_MeshIndices(const string& strMeshTag)
 	return MeshIndices;
 }
 
-MATERIAL_DESC CModel::Get_Mesh_MaterialDesc(_uint iMeshIndex)
-{
-	if (iMeshIndex >= m_iNumMeshes)
-		return MATERIAL_DESC();
-
-	return m_Meshes[iMeshIndex]->Get_MaterialDesc();
-}
-
-void CModel::Set_Mesh_MaterialDesc(_uint iMeshIndex, const MATERIAL_DESC& MaterialDesc)
-{
-	if (iMeshIndex >= m_iNumMeshes)
-		return;
-
-	m_Meshes[iMeshIndex]->Set_MatreialDesc(MaterialDesc);
-}
-
 _float4 CModel::Invalidate_RootNode(const string& strRoot)
 {
 	for (auto& Bone : m_Bones)
@@ -1557,6 +1484,105 @@ _float4 CModel::Invalidate_RootNode(const string& strRoot)
 	}
 
 	return _float4{ 0.f, 0.f, 0.f, 0.f };
+}
+
+_uint CModel::Get_CurrentMaxKeyFrameIndex(_uint iPlayingIndex)
+{
+	if (static_cast<_uint>(m_PlayingAnimInfos.size()) <= iPlayingIndex)
+	{
+		return 0;
+	}
+
+	const vector<_uint>			KeyFrameIndices = { m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Get_CurrentKeyFrameIndices() };
+
+	_uint		iMaxIndex = { 0 };
+	for (_uint iIndex : KeyFrameIndices)
+	{
+		if (iIndex > iMaxIndex)
+			iMaxIndex = iIndex;
+	}
+
+	return iMaxIndex;
+}
+
+const vector<_uint>& CModel::Get_CurrentKeyFrameIndices(_uint iPlayingIndex)
+{
+	return m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Get_CurrentKeyFrameIndices();
+}
+
+CBone* CModel::Get_BonePtr(const _char* pBoneName) const
+{
+	auto	iter = find_if(m_Bones.begin(), m_Bones.end(), [&](CBone* pBone)->_bool
+		{
+			return pBone->Compare_Name(pBoneName);
+		});
+
+	return *iter;
+}
+
+_bool CModel::isFinished(_uint iPlayingIndex)
+{
+	if (iPlayingIndex >= static_cast<_uint>(m_PlayingAnimInfos.size()))
+		return false;
+
+	_uint			iAnimIndex = { static_cast<_uint>(m_PlayingAnimInfos[iPlayingIndex].iAnimIndex) };
+	return m_Animations[iAnimIndex]->isFinished();
+}
+
+void CModel::Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices)
+{
+	for (auto& pBone : m_Bones)
+	{
+		_int		iParentsIndex = { pBone->Get_ParentIndex() };
+		if (-1 == iParentsIndex)
+			continue;
+
+		string		strMyParentsBoneTag = { m_Bones[iParentsIndex]->Get_Name() };
+
+		if (strMyParentsBoneTag == strTargetParentsBoneTag)
+		{
+			string		strBoneTag = { pBone->Get_Name() };
+			_int		iBoneIndex = { Find_BoneIndex(strBoneTag) };
+			if (-1 == iBoneIndex)
+				continue;
+
+			ChildBoneIndices.push_back(iBoneIndex);
+
+			Get_Child_BoneIndices(strBoneTag, ChildBoneIndices);
+		}
+	}
+}
+
+const _float4x4* CModel::Get_CombinedMatrix(const string& strBoneTag)
+{
+	_int		iBoneIndex = { Find_BoneIndex(strBoneTag) };
+	if (-1 == iBoneIndex)
+		return nullptr;
+
+	return m_Bones[iBoneIndex]->Get_CombinedTransformationMatrix();
+}
+
+void CModel::Set_KeyFrameIndex(_uint iPlayingIndex, _uint iKeyFrameIndex)
+{
+	m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Set_KeyFrameIndex(iKeyFrameIndex);
+}
+
+_float CModel::Get_TrackPosition(_uint iPlayingIndex)
+{
+	return m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Get_TrackPosition();
+}
+
+_float CModel::Get_Duration(_uint iPlayingIndex, _int iAnimIndex)
+{
+	if (-1 == iAnimIndex)
+		iAnimIndex = m_PlayingAnimInfos[iPlayingIndex].iAnimIndex;
+
+	return m_Animations[iAnimIndex]->Get_Duration();
+}
+
+void CModel::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition)
+{
+	m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Set_TrackPosition(fTrackPosition);
 }
 
 HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix)
@@ -1691,57 +1717,6 @@ HRESULT CModel::Initialize(void* pArg)
 	m_fTotalLinearTime = ANIM_DEFAULT_LINEARTIME;
 
 	return S_OK;
-}
-
-_float3 CModel::Invalidate_BonesCombinedMatix_Translation(_int iRootIndex)
-{
-	_vector vResultTranslationDir = { 0.f, 0.f, 0.f, 0.f };
-
-	_uint		iIndex = { 0 };
-	for (auto& pBone : m_Bones)
-	{
-		_bool		isCheck = { false };
-		if (iIndex == iRootIndex)
-		{
-			CBone* pBone = m_Bones[iRootIndex];
-
-			vResultTranslationDir = XMLoadFloat3(&pBone->Invalidate_CombinedTransformationMatrix_RootMotion_Translation(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix)));
-			isCheck = true;
-		}
-
-		if (false == isCheck)
-			pBone->Invalidate_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix));
-
-		++iIndex;
-	}
-
-	_float3 vResultDir;
-	XMStoreFloat3(&vResultDir, vResultTranslationDir);
-	return vResultDir;
-}
-
-_float4x4 CModel::Invalidate_BonesCombinedMatix_TranslationMatrix(_int iRootIndex)
-{
-	_float4x4		ResultMatrix{};
-	XMStoreFloat4x4(&ResultMatrix, XMMatrixIdentity());
-
-	_uint			iindex = { 0 };
-	for (auto& pBone : m_Bones)
-	{
-		_bool		ischeck = { false };
-		if (iindex == iRootIndex)
-		{
-			ResultMatrix = pBone->Invalidate_CombinedTransformationMatrix_RootMotion_WorldMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix));
-			ischeck = true;
-		}
-
-		if (false == ischeck)
-			pBone->Invalidate_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix));
-
-		++iindex;
-	}
-
-	return ResultMatrix;
 }
 
 HRESULT CModel::Bind_BoneMatrices(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
@@ -2141,15 +2116,6 @@ void CModel::Static_Mesh_Cooking()
 	}
 }
 
-const _float4x4* CModel::Get_CombinedMatrix(const string& strBoneTag)
-{
-	_int		iBoneIndex = { Find_BoneIndex(strBoneTag) };
-	if (-1 == iBoneIndex)
-		return nullptr;
-
-	return m_Bones[iBoneIndex]->Get_CombinedTransformationMatrix();
-}
-
 _int CModel::Find_BoneIndex(const string& strRootTag)
 {
 	_int		iIndex = { 0 };
@@ -2173,53 +2139,6 @@ void CModel::Compute_RootParentsIndicies(_uint iRootIndex, vector<_uint>& Parent
 		return;
 
 	Compute_RootParentsIndicies(iParentIndex, ParentsIndices);
-}
-
-_uint CModel::Get_CurrentMaxKeyFrameIndex(_uint iPlayingIndex)
-{
-	if (static_cast<_uint>(m_PlayingAnimInfos.size()) <= iPlayingIndex)
-	{
-		return 0;
-	}
-
-	const vector<_uint>			KeyFrameIndices = { m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Get_CurrentKeyFrameIndices() };
-
-	_uint		iMaxIndex = { 0 };
-	for (_uint iIndex : KeyFrameIndices)
-	{
-		if (iIndex > iMaxIndex)
-			iMaxIndex = iIndex;
-	}
-
-	return iMaxIndex;
-}
-
-const vector<_uint>& CModel::Get_CurrentKeyFrameIndices(_uint iPlayingIndex)
-{
-	return m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Get_CurrentKeyFrameIndices();
-}
-
-void CModel::Set_KeyFrameIndex(_uint iPlayingIndex, _uint iKeyFrameIndex)
-{
-	m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Set_KeyFrameIndex(iKeyFrameIndex);
-}
-
-_float CModel::Get_TrackPosition(_uint iPlayingIndex)
-{
-	return m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Get_TrackPosition();
-}
-
-_float CModel::Get_Duration(_uint iPlayingIndex, _int iAnimIndex)
-{
-	if (-1 == iAnimIndex)
-		iAnimIndex = m_PlayingAnimInfos[iPlayingIndex].iAnimIndex;
-
-	return m_Animations[iAnimIndex]->Get_Duration();
-}
-
-void CModel::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition)
-{
-	m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Set_TrackPosition(fTrackPosition);
 }
 
 void CModel::Motion_Changed(_uint iPlayingIndex)

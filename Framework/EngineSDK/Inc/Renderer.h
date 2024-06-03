@@ -68,13 +68,12 @@ private:		/* For.SetUp_RenderTarget */
 
 #ifdef _DEBUG
 	HRESULT						SetUp_Debug();
-
 #endif
 
 #ifdef _DEBUG
 public:
 	HRESULT						Add_DebugComponents(class CComponent* pRenderObject);
-	void						On_Off_DebugeRender();
+	void						On_Off_DebugRender();
 
 #endif
 

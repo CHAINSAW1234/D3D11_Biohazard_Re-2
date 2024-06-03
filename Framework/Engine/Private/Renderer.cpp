@@ -138,8 +138,8 @@ HRESULT CRenderer::Render()
 	//if (FAILED(Render_Filter()))
 	//	return E_FAIL;
 
-	//if (FAILED(Render_UI()))
-	//	return E_FAIL;
+	if (FAILED(Render_UI()))
+		return E_FAIL;
 
 	//if (FAILED(Render_Font()))
 	//	return E_FAIL;
@@ -831,7 +831,7 @@ HRESULT CRenderer::Add_DebugComponents(CComponent* pRenderComponent)
 	return S_OK;
 }
 
-void CRenderer::On_Off_DebugeRender()
+void CRenderer::On_Off_DebugRender()
 {
 	m_isRenderDebug = !m_isRenderDebug;
 }

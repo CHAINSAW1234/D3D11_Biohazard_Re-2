@@ -35,19 +35,19 @@ void CDebuger::Tick(_float fTimeDelta)
 #ifdef  _DEBUG
 	if (ImGui::Button("DebugRender"))
 	{
-		//	m_pGameInstance->On_Off_DebugRender();
+		m_pGameInstance->On_Off_DebugRender();
 	}
 #endif //  _DEBUG	
 
-	/*if (ImGui::CollapsingHeader("WorldLight"))
+	if (ImGui::CollapsingHeader("WorldLight"))
 	{
-		const LIGHT_DESC* pLightDesc = { const_cast<LIGHT_DESC*>(m_pGameInstance->Get_LightDesc(0)) };
+		const LIGHT_DESC* pLightDesc = { const_cast<LIGHT_DESC*>(m_pGameInstance->Get_LightDesc(g_strDirectionalTag, 0)) };
 
 		ImGui::SliderFloat4("LightDiffuse", (_float*)&pLightDesc->vDiffuse, 0.f, 1.f);
 		ImGui::SliderFloat4("LightAmbient", (_float*)&pLightDesc->vAmbient, 0.f, 1.f);
 		ImGui::SliderFloat4("LightDirrection", (_float*)&pLightDesc->vDirection, -1.f, 1.f);
 		ImGui::SliderFloat4("LightSpecular", (_float*)&pLightDesc->vSpecular, 0.f, 1.f);
-	}*/
+	}
 
 //	for (auto Pair : Layers)
 //	{

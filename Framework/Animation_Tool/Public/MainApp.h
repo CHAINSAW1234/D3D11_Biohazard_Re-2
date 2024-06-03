@@ -25,14 +25,16 @@ private:
 	ID3D11Device*			m_pDevice = { nullptr };
 	ID3D11DeviceContext*	m_pContext = { nullptr };
 
+	class CIMGuiManager*	m_pImGui_Manager = { nullptr };
+
 private:
 	_float					m_fTimeAcc = { 0.0f };
 	_uint					m_iRenderCnt = { 0 };
 	_tchar					m_szFPS[MAX_PATH] = TEXT("");
 
 private:	
-	HRESULT Ready_Gara();
 	HRESULT Ready_Fonts();
+	HRESULT Ready_ImGui();
 	HRESULT Open_Level(LEVEL eLevelID);
 	HRESULT Ready_Prototype_Component_For_Static();
 
