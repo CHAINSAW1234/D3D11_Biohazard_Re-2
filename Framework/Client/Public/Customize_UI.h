@@ -149,11 +149,18 @@ public:// for. Set inline
 
 	/* 컬러 재생할 것인가? */
 	void Set_ColorPlay(_uint _play) { m_isPlay = _play; }
+	void Set_Color(_bool _color) {
+		m_isColorChange = _color;
+	}
+
+	void Set_Alpha(_bool _alpha) {
+		m_isAlphaChange = _alpha;
+	}
+
 
 	/*// 현재 결정할 색상*/
-	void Set_EditColor(_float4 _color, _bool _bender, _float _blending = 0.f){ 
-		m_isAlphaChange = false;
-		m_isColorChange = true;
+	void Set_EditColor(_float4 _color, _bool _bender, _float _blending = 0.f) {
+
 		m_vCurrentColor = _color;
 		m_isBlending = _bender;
 
@@ -161,23 +168,15 @@ public:// for. Set inline
 			m_fBlending = _blending;
 	}
 
-	/* 알파 '만' 재생할 것인가*/
-	void Set_Edit_AlpaColor(_float4 _color){
-		m_isColorChange = false;
-		m_isAlphaChange = true;
-		m_vCurrentColor = _color;
-
-	}
-
 	/* UV를 밀 것인가? */
-	void Set_PushUV(_bool _push, _float _speedX, _float _speedY, _float _rotation, _float _split = 1){
+	void Set_PushUV(_bool _push, _float _speedX, _float _speedY, _float _rotation, _float _split = 1) {
 		m_isPush = _push;
 		m_fPush_Speed = _float2(_speedX, _speedY);
 		m_isUVRotation = _rotation;
 		m_fSplit = _split;
 	}
 
-	void ColorChange(_float4 _color, _uint i){
+	void ColorChange(_float4 _color, _uint i) {
 		m_isColorChange = true;
 		m_vColor[i].vColor = _color;
 	}

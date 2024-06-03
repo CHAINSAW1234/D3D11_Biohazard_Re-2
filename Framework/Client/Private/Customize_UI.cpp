@@ -34,9 +34,9 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 
 		m_iColorMaxNum = CustomUIDesc->iColorMaxNum;
 
-		if (m_iColorMaxNum > 0)
+		if (m_iColorMaxNum >= 0)
 		{
-			for (_int i = 0; i < m_iColorMaxNum; i++)
+			for (_int i = 0; i <= m_iColorMaxNum; i++)
 			{
 				m_vColor[i] = CustomUIDesc->vColor[i];
 			}
