@@ -47,6 +47,8 @@ private:
 
 private:
 	HRESULT Load_Collider(const wstring& strFile, const wstring& strColLayerTag);
+private :
+	_bool		m_isGara = {};
 
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

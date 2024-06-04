@@ -43,6 +43,9 @@ public:
 		_int							iChild = { 0 };
 		_bool							IsChild = { false };
 		vector<CTextBox::TextBox_DESC>	TextBoxDesc = {};
+		_float4x4						SavePos[10] = {};
+		_bool							isMask = {};
+
 	}CUSTOM_UI_DESC;
 
 private:
@@ -148,10 +151,18 @@ public:// for. Set inline
 	/* 컬러 재생할 것인가? */
 	void Set_ColorPlay(_uint _play) { m_isPlay = _play; }
 
-	/*// 현재 결정할 색상*/
-	void Set_EditColor(_float4 _color, _bool _bender, _float _blending = 0.f){ 
-		m_isAlphaChange = false;
-		m_isColorChange = true;
+	void Set_Color(_bool _color) {
+		m_isColorChange = _color;
+	}
+
+	void Set_Alpha(_bool _alpha) {
+		m_isAlphaChange = _alpha;
+	}
+
+
+	/* 현재 결정할 색상*/
+	void Set_EditColor(_float4 _color, _bool _bender, _float _blending = 0.f) {
+
 		m_vCurrentColor = _color;
 		m_isBlending = _bender;
 
@@ -159,23 +170,15 @@ public:// for. Set inline
 			m_fBlending = _blending;
 	}
 
-	/* 알파 '만' 재생할 것인가*/
-	void Set_Edit_AlpaColor(_float4 _color){
-		m_isColorChange = false;
-		m_isAlphaChange = true;
-		m_vCurrentColor = _color;
-
-	}
-
 	/* UV를 밀 것인가? */
-	void Set_PushUV(_bool _push, _float _speedX, _float _speedY, _float _rotation, _float _split = 1){
+	void Set_PushUV(_bool _push, _float _speedX, _float _speedY, _float _rotation, _float _split = 1) {
 		m_isPush = _push;
 		m_fPush_Speed = _float2(_speedX, _speedY);
 		m_isUVRotation = _rotation;
 		m_fSplit = _split;
 	}
 
-	void ColorChange(_float4 _color, _uint i){
+	void ColorChange(_float4 _color, _uint i) {
 		m_isColorChange = true;
 		m_vColor[i].vColor = _color;
 	}
@@ -249,12 +252,12 @@ private:
 	_uint						m_iShaderPassNum = { 0 };
 	
 private : /* NY : Shader 변수 */
-	Value_Color					m_vColor[10]			= {};	// 현재 Edit 상에서 보여지는 컬러
+	Value_Color					m_vColor[10]			= {};		// 현재 Edit 상에서 보여지는 컬러
 	_float4x4					m_SavePos[10]			= {};
 
 	_float						m_fColorTimer_Limit		= { 0.f };	// 컬러 change 제한 시간
 	_float						m_fCurrentColor_Timer	= { 0.f };	// 컬러 현재 시간
-	_float4						m_vCurrentColor			= {};	// 현재 Edit 색상
+	_float4						m_vCurrentColor			= {};		// 현재 Edit 색상
 	_float						m_fColorSpeed			= { 0.f };
 
 	_int						m_iColorMaxNum			= { -1 };
@@ -266,22 +269,30 @@ private : /* NY : Shader 변수 */
 	// Shader 변수
 	_bool						m_isSelect_Color		= { false };
 
+private : /* 1.Color */
 	_bool						m_isColorChange			= { false };
 	_bool						m_isAlphaChange			= { false };
 	_bool						m_isBlending			= { false };
 	_float						m_fBlending				= { 0.f };
 
+private : /* 2. Wave*/
 	_bool						m_isWave				= { false };
 	_float						m_isWaveTimer			= { 0.f };
 	_float						m_fWaveSpeed			= { 0.f };
 
+private : /* 3. Push */
 	_bool						m_isPush				= { false };
 	_float						m_fPush_Timer			= { 0.f };
 	_float2						m_fPush_Speed			= { 0.f, 0.f };
 	_float						m_fSplit				= { 0.f };
 	_float						m_isUVRotation			= { 0.f };
 
-	_int						m_iEndingType			= {0};
+	_int						m_iEndingType			= { 0 };
+
+	_float						m_fMaskTimer			= { 0 };
+
+private : /* Client Variable */
+	_bool						m_isMask				= { false };
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
