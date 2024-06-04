@@ -5,12 +5,17 @@
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D	g_Texture;
+texture2D   g_MaskTexture;
 bool g_SelectColor, g_GreenColor;
 
 // PS
 bool g_ColorChange;
 float4 g_ColorValu;
 bool g_AlpaChange;
+
+// Timer 
+float g_MaskTimer;
+float g_fMaskSpeed;
 
 //VS
 bool g_Wave;
@@ -25,6 +30,9 @@ float g_RotationSpeed;
 float g_Split = 1;
 bool g_Blending;
 float g_BlendingStrength = 0.5f;
+
+// Client
+bool g_isMask = false;
 
 struct VS_IN
 {
@@ -133,9 +141,18 @@ struct PS_OUT
 
 PS_OUT PS_MAIN(PS_IN In)
 {
-	PS_OUT			Out = (PS_OUT)0;
-
+	PS_OUT		 Out = (PS_OUT)0;
+    float Maskvalue;
     Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord * g_Split);
+    
+    // Mask
+    if (g_isMask)
+    {    
+        float2 MaskTexcoord = In.vTexcoord;
+        MaskTexcoord.r += g_MaskTimer * -1.5f; 
+
+        Maskvalue = g_MaskTexture.Sample(LinearSampler, MaskTexcoord).r;
+    }
     
 	// º±≈√
     if (g_SelectColor)
@@ -147,11 +164,20 @@ PS_OUT PS_MAIN(PS_IN In)
         if (g_Blending)
         {
             Out.vColor = lerp(Out.vColor, g_ColorValu, g_BlendingStrength);
+            
+            if (g_isMask)
+            { 
+                float4 color = lerp(Out.vColor, float4(1, 1, 1, 1), 1.0 - Maskvalue);
+                color.a = Out.vColor;
+                
+                Out.vColor = color;
+            }
         }
         else
             Out.vColor = g_ColorValu;
     }
     
+
     return Out;
 }
 
@@ -173,7 +199,7 @@ technique11 DefaultTechnique
     pass Blend
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
