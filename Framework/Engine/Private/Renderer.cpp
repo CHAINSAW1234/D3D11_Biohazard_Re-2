@@ -233,8 +233,8 @@ HRESULT CRenderer::SetUp_RenderTargets()
 		return E_FAIL;
 	if (FAILED(SetUp_RenderTarget_SubResult(ViewportDesc)))
 		return E_FAIL;
-	if (FAILED(SetUp_Test()))
-		return E_FAIL;
+	//if (FAILED(SetUp_Test()))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -838,8 +838,8 @@ HRESULT CRenderer::SetUp_Debug()
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Material"), 1820.f, 700.0f, 200.f, 200.f)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Test"), 500.0f, 900.f, 200.f, 200.f)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Test"), 500.0f, 900.f, 200.f, 200.f)))
+	//	return E_FAIL;
 	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Test_Merge"), 500.0f, 900.f, 200.f, 200.f)))
 	//	return E_FAIL;
 
@@ -1507,8 +1507,9 @@ HRESULT CRenderer::Render_Light_Result()
 	Safe_Delete_Array(pLightPositions);
 	Safe_Delete_Array(pLightRanges);
 
-	if (FAILED(Render_SubResult(TEXT("Target_Pre_Post_Diffuse"))))
+	if (FAILED(m_pGameInstance->Copy_Resource(TEXT("Target_SubResult"), TEXT("Target_Pre_Post_Diffuse"))))
 		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -1721,37 +1722,6 @@ HRESULT CRenderer::Render_FXAA()
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
 
-
-	return S_OK;
-}
-
-HRESULT CRenderer::Render_SubResult(const wstring& strRenderTargetTag)
-{
-	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, strRenderTargetTag, "g_Texture")))
-		return E_FAIL;
-
-	// 1. 블러를 먹일 대상을 판별 
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_SubResult"))))
-		return E_FAIL;
-
-	if (FAILED(m_pVIBuffer->Bind_Buffers()))
-		return E_FAIL;
-
-	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_DEBUG))))
-		return E_FAIL;
-
-	if (FAILED(m_pVIBuffer->Render()))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->End_MRT()))
-		return E_FAIL;
 
 	return S_OK;
 }

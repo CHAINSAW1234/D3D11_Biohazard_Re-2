@@ -157,7 +157,6 @@ private:
 	HRESULT						Render_SSR();
 	HRESULT						Render_DOF();
 	HRESULT						Render_FXAA();
-	HRESULT						Render_SubResult(const wstring& strRenderTargetTag);	// 饶贸府 包府侩 
 private:
 	HRESULT						Render_PostProcessing();
 	HRESULT						Render_PostProcessing_Result();
