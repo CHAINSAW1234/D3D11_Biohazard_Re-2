@@ -38,7 +38,7 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.cpuDispatcher = m_Dispatcher;
 	sceneDesc.filterShader = MegamotionFilterShader;
-	
+
 	//Call Back
 	m_EventCallBack = new CEventCallBack();
 	m_FilterCallBack = new CFilterCallBack();
@@ -105,16 +105,16 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	controllerFilters.mFilterCallback = &filterCallback;
 
 	//Apply Gravity
-	//	for (int i = 0; i < m_vecCharacter_Controller.size(); ++i)
-	//	{
-	//		if (m_vecCharacter_Controller[i])
-	//			m_vecCharacter_Controller[i]->Move(gravity, fTimeDelta);
-	//	}
-	//	
-	//	for (int i = 0; i < m_vecRigid_Dynamic.size(); ++i)
-	//	{
-	//		m_vecRigid_Dynamic[i]->Update();
-	//	}
+	for (int i = 0; i < m_vecCharacter_Controller.size(); ++i)
+	{
+		if (m_vecCharacter_Controller[i])
+			m_vecCharacter_Controller[i]->Move(gravity, fTimeDelta);
+	}
+
+	for (int i = 0; i < m_vecRigid_Dynamic.size(); ++i)
+	{
+		m_vecRigid_Dynamic[i]->Update();
+	}
 
 	//Ragdoll Temp Code
 	static bool Temp = false;
@@ -139,14 +139,14 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 		m_pRagdoll_Physics->Update(fTimeDelta);
 
 	}
-	
+
 
 	//Simulate
-	m_Scene->simulate(1/60.f);
+	m_Scene->simulate(1 / 60.f);
 	m_Scene->fetchResults(true);
 }
 
-CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int* Index,CGameObject* pCharacter)
+CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int* Index, CGameObject* pCharacter)
 {
 	//Init Shape
 	m_Controll_Desc.height = 1.f;
@@ -162,13 +162,13 @@ CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int*
 	//Colliision Filter
 	PxFilterData filterData_Character;
 	filterData_Character.word0 = COLLISION_CATEGORY::Category1;
-	filterData_Character.word1 = COLLISION_CATEGORY::Category2 | COLLISION_CATEGORY::Category3; 
+	filterData_Character.word1 = COLLISION_CATEGORY::Category2 | COLLISION_CATEGORY::Category3;
 	filterData_Character.word3 = m_iCharacter_Controller_Count;
 
 	shapes[0]->setSimulationFilterData(filterData_Character);
 	shapes[0]->setContactOffset(0.1f);
 
-	auto Character_Controller = new CCharacter_Controller(Controller, pCharacter,m_Scene,m_Physics);
+	auto Character_Controller = new CCharacter_Controller(Controller, pCharacter, m_Scene, m_Physics);
 	Character_Controller->SetIndex(m_iCharacter_Controller_Count);
 	m_vecCharacter_Controller.push_back(Character_Controller);
 
@@ -247,7 +247,7 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 
 void CPhysics_Controller::SetBone_Ragdoll(vector<class CBone*>* vecBone)
 {
-	if(nullptr != m_pRagdoll_Physics)
+	if (nullptr != m_pRagdoll_Physics)
 		m_pRagdoll_Physics->SetBone_Ragdoll(vecBone);
 }
 
@@ -377,7 +377,7 @@ void CPhysics_Controller::Free()
 
 	PxCloseExtensions();
 
-	if(m_pRagdoll_Physics)
+	if (m_pRagdoll_Physics)
 		m_pRagdoll_Physics->Release();
 
 	if (m_Shape)
