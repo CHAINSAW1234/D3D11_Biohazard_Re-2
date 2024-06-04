@@ -48,6 +48,7 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 
 		m_iEndingType = CustomUIDesc->iEndingType;
 
+		m_isMask = CustomUIDesc->isMask;
 
 		if (FAILED(Add_Components(m_strTextureComTag)))
 			return E_FAIL;
@@ -61,14 +62,14 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 	m_isPush			= false;
 	m_fSplit			= 1;
 
+	// Ex)
+	m_isPlay			= true;
+
 	return S_OK;
 }
 
 HRESULT CCustomize_UI::Initialize_TextBox(void* pArg)
 {
-
-
-
 	return S_OK;
 }
 
@@ -77,6 +78,9 @@ void CCustomize_UI::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_fPush_Timer += fTimeDelta;
+
+	if(m_isMask)
+		m_fMaskTimer += fTimeDelta;
 
 	/* Color Timer */
 	if(m_isPlay)
@@ -103,12 +107,10 @@ void CCustomize_UI::Tick(_float fTimeDelta)
 			m_fPush_Timer = 0.f;
 	}
 
-
 	for (auto& iter : m_vecTextBoxes)
 	{
 		iter->Tick(fTimeDelta);
 	}
-
 }
 
 void CCustomize_UI::Late_Tick(_float fTimeDelta)
@@ -174,7 +176,12 @@ HRESULT CCustomize_UI::Add_Components(const wstring& strModelTag)
 	/* For.Com_Texture */
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, strModelTag,
 		TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
-	return E_FAIL;
+		return E_FAIL;
+	
+	/* For.Com_Mask_Texture */
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Mask"),
+		TEXT("Com_Mask_Texture"), (CComponent**)&m_pMask_TextureCom)))
+		return E_FAIL;
 
 	/* For.Com_VIBuffer */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
@@ -192,15 +199,13 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
-	//_float4x4			WorldMatrix = { XMMatrixScaling(400.f, 200.f, 1.f) };
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
-	//	return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+ 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureNum)))
+		return E_FAIL;
+	if (FAILED(m_pMask_TextureCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 		return E_FAIL;
 
 	// Edit
@@ -232,14 +237,22 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 	// UP Psuh 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_isPush", &m_isPush, sizeof(_bool))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVPush_Timer", &m_fPush_Timer, sizeof(float))))
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVPush_Timer", &m_fPush_Timer, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_UVSpeed", &m_fPush_Speed, sizeof(_float2))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_RotationSpeed", &m_isUVRotation, sizeof(float))))
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_RotationSpeed", &m_isUVRotation, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_Split", &m_fSplit, sizeof(float))))
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_Split", &m_fSplit, sizeof(_float))))
 		return E_FAIL;
+
+	// Mask
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_isMask", &m_isMask, sizeof(_bool))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_MaskTimer", &m_fMaskTimer, sizeof(_float))))
+		return E_FAIL;
+	
 	
 	return S_OK;
 }
@@ -355,7 +368,7 @@ void CCustomize_UI::Color_Frame(_float fTimeDelta)
 	/* ▶ 보간이 필요하지 않다면 */
 	if (0 == m_iColorMaxNum)
 	{
-		m_vCurrentColor = _float4(1, 1, 1, 1);/*m_vColor[0].vColor*/
+		m_vCurrentColor = m_vColor[0].vColor;
 		m_fBlending = m_vColor[0].fBlender_Value;
 		m_fSplit = m_vColor[0].fSplit;
 		m_fWaveSpeed = m_vColor[0].WaveSpeed;

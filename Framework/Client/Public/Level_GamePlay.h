@@ -43,6 +43,8 @@ private:
 		return std::wstring(buffer.data());
 	}
 
+private :
+	_bool		m_isGara = {};
 
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

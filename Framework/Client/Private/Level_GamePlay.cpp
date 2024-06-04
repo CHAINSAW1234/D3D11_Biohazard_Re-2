@@ -202,14 +202,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_Effect(const wstring & strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 {
-
-
-	wstring selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/testLNY.dat");
+	/* 1. HP Bar*/
+	wstring selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/HP_Bar.dat");
 	ifstream inputFileStream;
 	inputFileStream.open(selectedFilePath, ios::binary);
 	CreatFromDat(inputFileStream, (""), nullptr);
-
-
 
 	return S_OK;
 }
@@ -285,13 +282,22 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 	wstring     wstrPrototype = { TEXT("Prototype_Component_Texture_") };
 	wstrPrototype += szFileName;
 
-	/* For.Prototype_Component_Texture_ */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, wstrPrototype, CTexture::Create(m_pDevice, m_pContext, wstrTexturePath)))) {
+	/* For.Prototype_Component_Texture_Mask */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Mask"), CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/HP/IMANGE_05.png"))))) {}
 
-	}
+	/* For.Prototype_Component_Texture_ */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, wstrPrototype, CTexture::Create(m_pDevice, m_pContext, wstrTexturePath)))) { }
 	//ShowMassageBox("텍스쳐 생성에 실패했습니다.");
 
 	CustomizeUIDesc.strTextureComTag = wstrPrototype;
+
+	if(!m_isGara)
+	{
+		m_isGara = true;
+		CustomizeUIDesc.isMask = true;
+	}
+	else
+		CustomizeUIDesc.isMask = false;
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_CCustomize_UI"), &CustomizeUIDesc)))
 		MSG_BOX(TEXT("Failed to Add Clone"));
