@@ -29,20 +29,24 @@ void CPicking::Update()
 
 	ScreenToClient(m_hWnd, &ptMouse);
 
+	/*뷰변환*/
+	m_fViewMousePos.x = (_float)ptMouse.x;
+	m_fViewMousePos.y = (_float)ptMouse.y;
+
 	_float3		vMousePos;
 	_float3		vMouseEnd;
 
 	vMousePos.x = ptMouse.x / (m_iWinSizeX * 0.5f) - 1.f;
 	vMousePos.y = ptMouse.y / -(m_iWinSizeY * 0.5f) + 1.f;
 	vMousePos.z = 0.f;
-	//vMousePos.x += 40.f;
-	//vMousePos.y += 5.f;
+
+	/*투영 변환*/
+	m_fProjMousePos.x = ptMouse.x / (m_iWinSizeX * 0.5f) - 1.f;
+	m_fProjMousePos.y = ptMouse.y / -(m_iWinSizeY * 0.5f) + 1.f;
 
 	vMouseEnd.x = ptMouse.x / (m_iWinSizeX * 0.5f) - 1.f;
 	vMouseEnd.y = ptMouse.y / -(m_iWinSizeY * 0.5f) + 1.f;
 	vMouseEnd.z = 1.f;
-	//vMouseEnd.x += 40.f;
-	//vMouseEnd.y += 5.f;
 
 	_matrix	ProjMatrixInv;
 	ProjMatrixInv = CGameInstance::Get_Instance()->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_PROJ);
@@ -94,6 +98,32 @@ void CPicking::Transform_PickingToWorldSpace(_float4* pRayDir, _float4* pRayPos)
 
 	XMStoreFloat4(pRayDir, vRayDir);
 	XMStoreFloat4(pRayPos, vRayPos);
+}
+
+void CPicking::Get_PickingWordSpace(_float3* pRayDir, _float3* pRayPos)
+{
+	XMStoreFloat3(pRayDir, XMLoadFloat3(&m_vRayDir));
+	XMStoreFloat3(pRayPos, XMLoadFloat3(&m_vRayPos));
+}
+
+void CPicking::Get_PickingWordSpace(_vector& pRayDir, _vector& pRayPos)
+{
+	pRayDir = XMLoadFloat3(&m_vRayDir);
+	pRayPos = XMLoadFloat3(&m_vRayPos);
+}
+
+void CPicking::ClipCursor(HWND hWnd)
+{
+		RECT rect;
+	GetClientRect(hWnd, &rect);
+
+	_float x = rect.right * 0.5f;
+	_float y = rect.bottom * 0.5f;
+
+	POINT pt = { (_long)x, (_long)y };
+	ClientToScreen(hWnd, &pt);
+
+	SetCursorPos(pt.x, pt.y);
 }
 
 CPicking* CPicking::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, HWND hWnd, _uint iWinSizeX, _uint iWinSizeY)

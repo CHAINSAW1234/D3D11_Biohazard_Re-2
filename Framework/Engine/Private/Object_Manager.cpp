@@ -29,7 +29,7 @@ HRESULT CObject_Manager::Initialize(_uint iNumLevels)
 HRESULT CObject_Manager::Add_Prototype(const wstring & strPrototypeTag, CGameObject * pPrototype)
 {
 	if (nullptr != Find_Prototype(strPrototypeTag))
-		return E_FAIL;
+		return S_OK;// Level 바뀔때 다시 로드하는데 똑같은 prototype에 대해서는 건너뛰는 행위를 위해
 
 	m_Prototypes.emplace(strPrototypeTag, pPrototype);
 
@@ -63,17 +63,55 @@ HRESULT CObject_Manager::Add_Clone(_uint iLevelIndex, const wstring & strLayerTa
 	return S_OK;
 }
 
-CGameObject * CObject_Manager::Clone_GameObject(const wstring & strPrototypeTag, void * pArg)
+HRESULT CObject_Manager::Add_Object(CGameObject* pGameObject, _uint iLevelIndex, const wstring& strLayerTag)
 {
-	CGameObject*	pPrototype = Find_Prototype(strPrototypeTag);
+	CLayer* pLayer = Find_Layer(iLevelIndex, strLayerTag);
+	if (nullptr == pLayer)
+	{
+		pLayer = CLayer::Create();
+		if (nullptr == pLayer)
+		{
+			MSG_BOX(TEXT("Failed to Create CLayer : CObjectManager::Add_Clone"));
+			return E_FAIL;
+		}
+		pLayer->Add_GameObject(pGameObject);
+		Safe_AddRef(pGameObject);
+		m_pLayers[iLevelIndex].emplace(strLayerTag, pLayer); 
+	}
+	else
+	{
+		pLayer->Add_GameObject(pGameObject);
+		Safe_AddRef(pGameObject);
+	}
+
+	return S_OK;
+}
+
+CGameObject* CObject_Manager::Clone_GameObject(const wstring& strPrototypeTag, void* pArg)
+{
+	CGameObject* pPrototype = Find_Prototype(strPrototypeTag);
 	if (nullptr == pPrototype)
 		return nullptr;
 
-	CGameObject*	pGameObject = pPrototype->Clone(pArg);
+	CGameObject* pGameObject = pPrototype->Clone(pArg);
 	if (nullptr == pGameObject)
 		return nullptr;
 
 	return pGameObject;
+}
+
+HRESULT CObject_Manager::Add_Layer(_uint iLevelIndex, const wstring& strLayerTag)
+{
+	CLayer* pLayer = Find_Layer(iLevelIndex, strLayerTag);
+	if (nullptr == pLayer)
+	{
+		pLayer = CLayer::Create();
+		m_pLayers[iLevelIndex].emplace(strLayerTag, pLayer);
+	}
+	else
+		return E_FAIL;
+
+	return S_OK;
 }
 
 void CObject_Manager::Priority_Tick(_float fTimeDelta)

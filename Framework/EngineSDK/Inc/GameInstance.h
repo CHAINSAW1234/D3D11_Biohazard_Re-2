@@ -21,6 +21,10 @@ public:
 	HRESULT									Draw();
 	HRESULT									Clear(_uint iClearLevelIndex);
 
+#pragma region forCH_TEST
+	//wstring									UTF8ToUTF16(const string& utf8Str);
+#pragma endregion
+
 #pragma region Input_Device
 public: /* For.Input_Device */
 	_uint									Get_KeyState(_int iKey);
@@ -43,7 +47,9 @@ public: /* For.Renderer */
 	void									On_RadialBlur();
 	void									Off_RadialBlur();
 	_bool									Get_ShaderState(SHADER_STATE eState);
+
 	void									Set_ShaderState(SHADER_STATE eState, _bool isState);
+	void									Set_RenderFieldShadow(_bool isRenderFieldShadow);
 #ifdef _DEBUG
 	void									On_Off_DebugRender();
 #endif
@@ -63,6 +69,9 @@ public: /* For.Object_Manager */
 	const CComponent*						Get_Component(_uint iLevelIndex, const wstring& strLayerTag, const wstring& strComTag, _uint iIndex = 0);
 	list<class CGameObject*>*				Find_Layer(_uint iLevelIndex, const wstring& LayerTag);
 	void									Release_Layer(_uint iLevelIndex, const wstring& LayerTag);
+	//yeeun	
+	HRESULT									Add_Layer(_uint iLevelIndex, const wstring& strLayerTag);
+
 #pragma endregion
 
 #pragma region Component_Manager
@@ -118,9 +127,9 @@ public: /* For.Font_Manager */
 
 #pragma region Target_Manager
 public: /* For.Target_Manager */
-	HRESULT									Add_RenderTarget(const wstring& strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
-	HRESULT									Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
-	HRESULT									Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	HRESULT									Add_RenderTarget(const wstring& strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _bool isTickClear = true);
+	HRESULT									Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _bool isTickClear = true);
+	HRESULT									Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _bool isTickClear = true);
 	HRESULT									Clear_RenderTarget_All();
 	HRESULT									Clear_RenderTarget(const wstring& strRenderTargetTag);
 
@@ -131,6 +140,8 @@ public: /* For.Target_Manager */
 	HRESULT									Bind_RTShaderResource(class CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName);
 	HRESULT									Bind_OutputShaderResource(class CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName);
 	HRESULT									Copy_Resource(const wstring& strRenderTargetTag, ID3D11Texture2D** ppTextureHub);
+	HRESULT									Copy_Resource(const wstring& strDestRenderTargetTag, const wstring& strSrcRenderTargetTag);
+
 #pragma endregion
 
 #pragma region Frustrum
@@ -150,6 +161,13 @@ public: /* For.Extractor */
 public: /* For.Picking */
 	void									Transform_PickingToLocalSpace(class CTransform* pTransform, _Out_ _float3* pRayDir, _Out_ _float3* pRayPos);
 	void									Transform_PickingToWorldSpace(_Out_ _float4* pRayDir, _Out_ _float4* pRayPos);
+	void									Get_PickingWordSpace(_Out_ _float3* pRayDir, _Out_ _float3* pRayPos);
+	void									Get_PickingWordSpace(_Out_ _vector& pRayDir, _Out_ _vector& pRayPos);
+	void									ClipCursor(HWND hWnd);
+	_float2									Get_ProjMousePos();
+	POINT									Get_ptProjMousePos();
+	_float2									Get_ViewMousePos();
+	POINT									Get_ptViewMousePos();
 #pragma endregion
 
 #pragma region Random_Value_Generator
@@ -234,6 +252,7 @@ public:/*For Physics Controller*/
 	void									Cook_Terrain();
 	void									Simulate();
 	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
+
 private:/*For Physics_Controller*/
 	_uint*									m_pIndices = { nullptr };
 	_int									NumVertices = { 0 };

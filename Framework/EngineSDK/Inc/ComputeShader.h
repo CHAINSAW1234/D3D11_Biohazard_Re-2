@@ -22,7 +22,7 @@ public:
 	HRESULT Bind_Texture(const _char* pConstantName, ID3D11UnorderedAccessView* pUAV);	// UAV : For Output
 	HRESULT Bind_RawValue(const _char* pConstantName, const void* pData, _uint iLength);
 
-	HRESULT Render(_uint iPassIndex);
+	HRESULT Render(_uint iPassIndex, _uint iThreadNumX, _uint iThreadNumY, _uint iThreadNumZ);
 
 private:
 	vector<ID3D11ComputeShader*> m_ComputeShaders = { nullptr };

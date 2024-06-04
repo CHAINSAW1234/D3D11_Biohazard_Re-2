@@ -9,11 +9,22 @@ CLevel_Manager::CLevel_Manager()
 
 HRESULT CLevel_Manager::Initialize()
 {
+	m_pGameInstance = CGameInstance::Get_Instance();
+	Safe_AddRef(m_pGameInstance);
+
 	return S_OK;
 }
 
-HRESULT CLevel_Manager::Open_Level(_uint iNewLevelID, CLevel * pNewLevel)
+HRESULT CLevel_Manager::Open_Level()
 {
+	if (m_queueRequestLevel.empty())
+		return S_OK;
+
+	_uint iNewLevelID = m_queueRequestLevel.front().first;
+	CLevel* pNewLevel = m_queueRequestLevel.front().second;
+	m_queueRequestLevel.pop();
+
+
 	if (nullptr != m_pCurrentLevel)
 	{
 		CGameInstance*		pGameInstance = CGameInstance::Get_Instance();
@@ -27,8 +38,16 @@ HRESULT CLevel_Manager::Open_Level(_uint iNewLevelID, CLevel * pNewLevel)
 	Safe_Release(m_pCurrentLevel);
 
 	m_pCurrentLevel = pNewLevel;
-
 	m_iCurrentLevelID = iNewLevelID;
+
+	m_pGameInstance->Set_RenderFieldShadow(true);
+
+	return S_OK;
+}
+
+HRESULT CLevel_Manager::Request_Open_Level(_uint iNewLevelID, CLevel* pNewLevel)
+{
+	m_queueRequestLevel.push({ iNewLevelID , pNewLevel });
 
 	return S_OK;
 }
@@ -71,5 +90,6 @@ CLevel_Manager * CLevel_Manager::Create()
 
 void CLevel_Manager::Free()
 {
+	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pCurrentLevel);
 }

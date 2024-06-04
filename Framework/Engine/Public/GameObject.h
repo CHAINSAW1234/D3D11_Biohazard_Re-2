@@ -9,6 +9,17 @@ class ENGINE_DLL CGameObject abstract : public CBase
 public:
 	typedef struct tagGameObjectDesc: public CTransform::TRANSFORM_DESC
 	{		
+		//map툴과 파싱재료(prototype과 clone할 때 필요)
+		_bool bAnim = { false };
+		wstring strModelComponent = { TEXT("") };
+		wstring strObjectPrototype = { TEXT("") };
+		string strGamePrototypeName = { "" };
+		_int iIndex = { 0 };
+		_float4x4 worldMatrix;
+
+		vector<_int> BelongIndexs;
+		_int iRegionDir = {0};
+		//
 	}GAMEOBJECT_DESC;
 
 protected:

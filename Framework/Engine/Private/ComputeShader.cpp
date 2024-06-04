@@ -147,7 +147,7 @@ HRESULT CComputeShader::Bind_Texture(const _char* pConstantName, ID3D11Unordered
 	return pUAVVariable->SetUnorderedAccessView(pUAV);
 }
 
-HRESULT CComputeShader::Render(_uint iPassIndex)
+HRESULT CComputeShader::Render(_uint iPassIndex, _uint iThreadNumX, _uint iThreadNumY, _uint iThreadNumZ)
 {
 	ID3DX11EffectTechnique* pTechnique = m_pEffect->GetTechniqueByIndex(0);
 	if (nullptr == pTechnique)
@@ -159,7 +159,7 @@ HRESULT CComputeShader::Render(_uint iPassIndex)
 
 	pPass->Apply(0, m_pContext);
 
-	m_pContext->Dispatch(16, 16, 16);
+	m_pContext->Dispatch(iThreadNumX, iThreadNumX, iThreadNumZ);
 	
 	ID3D11UnorderedAccessView* NullUAV = { nullptr };
 	m_pContext->CSSetUnorderedAccessViews(0, 1, &NullUAV, nullptr);

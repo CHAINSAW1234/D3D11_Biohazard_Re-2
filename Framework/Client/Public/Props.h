@@ -14,10 +14,12 @@ BEGIN(Client)
 class CProps final : public CGameObject
 {
 public:
-	typedef struct Props_Desc : public CGameObject::GAMEOBJECT_DESC
+	const static _int iMaxNum = 50;
+public:
+	typedef struct tagProp_desc: public CGameObject::GAMEOBJECT_DESC
 	{
+		_int BelongIndexs2[iMaxNum];
 		_int iPropsType;
-		_float4 Position;
 	}PROPS_DESC;
 private:
 	CProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -36,11 +38,19 @@ public:
 	virtual HRESULT				Render_LightDepth_Point() override;
 
 private:
+	_bool						m_bOctotree = { false };
+	_bool						m_bShadow = { false };
+	_float m_fTimeTest = { 0.f };
 	CModel*						m_pModelCom = { nullptr };
 	CShader*					m_pShaderCom = { nullptr };
-
+	class CPlayer*			m_pPlayer = { nullptr };
 	_int						m_iPropsType = { 0 };
 	_bool						m_bVisible = { false };
+	PROPS_DESC 					m_tagPropDesc ={};
+
+
+
+
 
 	COctree*					m_pOctree = { nullptr };
 private:

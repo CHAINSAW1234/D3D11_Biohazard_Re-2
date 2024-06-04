@@ -152,10 +152,13 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	if(m_pInput_Device)
 		m_pInput_Device->Tick(fTimeDelta);
 
-	if(m_pObject_Manager)
-		m_pObject_Manager->Priority_Tick(fTimeDelta);	
+	if (m_pLevel_Manager)
+		m_pLevel_Manager->Open_Level();
 
-	if(m_pLevel_Manager)
+	if (m_pObject_Manager)
+		m_pObject_Manager->Priority_Tick(fTimeDelta);
+
+	if (m_pLevel_Manager)
 		m_pLevel_Manager->Tick(fTimeDelta);
 
 	if(m_pObject_Manager)
@@ -218,6 +221,13 @@ HRESULT CGameInstance::Clear(_uint iClearLevelIndex)
 
 	return S_OK;
 }
+
+//wstring CGameInstance::UTF8ToUTF16(const string& utf8Str)
+//{
+//	//wstring_convert<codecvt_utf8_utf16<wchar_t>> converter;
+//	//return converter.from_bytes(utf8Str);
+//
+//}
 
 #pragma region Input_Device
 _uint CGameInstance::Get_KeyState(_int iKey)
@@ -355,6 +365,14 @@ void CGameInstance::Set_ShaderState(SHADER_STATE eState, _bool isState)
 
 	m_pRenderer->Set_ShaderState(eState, isState);
 }
+void CGameInstance::Set_RenderFieldShadow(_bool isRenderFieldShadow)
+{
+	if (nullptr == m_pRenderer)
+		return;
+
+	m_pRenderer->Set_RenderFieldShadow(isRenderFieldShadow);
+}
+#ifdef _DEBUG
 void CGameInstance::On_Off_DebugRender()
 {
 	if (nullptr == m_pRenderer)
@@ -362,6 +380,7 @@ void CGameInstance::On_Off_DebugRender()
 
 	m_pRenderer->On_Off_DebugRender();
 }
+#endif
 #pragma endregion
 
 #pragma region Level_Manager
@@ -370,7 +389,7 @@ HRESULT CGameInstance::Open_Level(_uint iNewLevelID, CLevel * pNewLevel)
 	if (nullptr == m_pLevel_Manager)
 		return E_FAIL;
 
-	return m_pLevel_Manager->Open_Level(iNewLevelID, pNewLevel);
+	return m_pLevel_Manager->Request_Open_Level(iNewLevelID, pNewLevel);
 }
 
 _uint CGameInstance::Get_CurrentLevel()
@@ -432,6 +451,12 @@ void CGameInstance::Release_Layer(_uint iLevelIndex, const wstring& LayerTag)
 	_ASSERT(m_pObject_Manager != nullptr);
 
 	m_pObject_Manager->Release_Layer(iLevelIndex, LayerTag);
+}
+HRESULT CGameInstance::Add_Layer(_uint iLevelIndex, const wstring& strLayerTag)
+{
+	_ASSERT(m_pObject_Manager != nullptr);
+
+	return m_pObject_Manager->Add_Layer(iLevelIndex, strLayerTag);
 }
 #pragma endregion
 
@@ -715,19 +740,19 @@ HRESULT CGameInstance::Render_Font_Scaled(const wstring& strFontTag, const wstri
 #pragma endregion
 
 #pragma region Target_Manager
-HRESULT CGameInstance::Add_RenderTarget(const wstring & strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4 & vClearColor)
+HRESULT CGameInstance::Add_RenderTarget(const wstring & strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4 & vClearColor, _bool isTickClear)
 {
-	return m_pTarget_Manager->Add_RenderTarget(strRenderTargetTag, iSizeX, iSizeY, ePixelFormat, vClearColor);
+	return m_pTarget_Manager->Add_RenderTarget(strRenderTargetTag, iSizeX, iSizeY, ePixelFormat, vClearColor, isTickClear);
 }
 
-HRESULT CGameInstance::Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+HRESULT CGameInstance::Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _bool isTickClear)
 {
-	return m_pTarget_Manager->Add_RenderTarget_Cube(strRenderTargetTag, iSize, iArraySize, ePixelFormat, vClearColor);
+	return m_pTarget_Manager->Add_RenderTarget_Cube(strRenderTargetTag, iSize, iArraySize, ePixelFormat, vClearColor, isTickClear);
 }
 
-HRESULT CGameInstance::Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
+HRESULT CGameInstance::Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _bool isTickClear)
 {
- 	return m_pTarget_Manager->Add_RenderTarget_3D(strRenderTargetTag, iWidth, iHeight, iDepth, ePixelFormat, vClearColor);
+ 	return m_pTarget_Manager->Add_RenderTarget_3D(strRenderTargetTag, iWidth, iHeight, iDepth, ePixelFormat, vClearColor, isTickClear);
 }
 
 HRESULT CGameInstance::Clear_RenderTarget_All()
@@ -766,6 +791,63 @@ void CGameInstance::Transform_PickingToWorldSpace(_float4* pRayDir, _float4* pRa
 {
 	return m_pPicking->Transform_PickingToWorldSpace(pRayDir, pRayPos);
 }
+
+void CGameInstance::Get_PickingWordSpace(_float3* pRayDir, _float3* pRayPos)
+{
+	if (nullptr == m_pPicking)
+		return;
+
+	return m_pPicking->Get_PickingWordSpace(pRayDir, pRayPos);
+}
+
+void CGameInstance::Get_PickingWordSpace(_vector& pRayDir, _vector& pRayPos)
+{
+	if (nullptr == m_pPicking)
+		return;
+
+	return m_pPicking->Get_PickingWordSpace(pRayDir, pRayPos);
+}
+
+void CGameInstance::ClipCursor(HWND hWnd)
+{
+	if (nullptr == m_pPicking)
+		return;
+
+	m_pPicking->ClipCursor(hWnd);
+}
+
+_float2 CGameInstance::Get_ProjMousePos()
+{
+	if (nullptr == m_pPicking)
+		return _float2();
+
+	return m_pPicking->Get_ProjMousePos();
+}
+
+POINT CGameInstance::Get_ptProjMousePos()
+{
+	if (nullptr == m_pPicking)
+		return POINT();
+
+	return m_pPicking->Get_ptProjMousePos();
+}
+
+_float2 CGameInstance::Get_ViewMousePos()
+{
+	if (nullptr == m_pPicking)
+		return _float2();
+
+	return m_pPicking->Get_ViewMousePos();
+}
+
+POINT CGameInstance::Get_ptViewMousePos()
+{
+	if (nullptr == m_pPicking)
+		return POINT();
+
+	return m_pPicking->Get_ptViewMousePos();
+}
+
 #pragma endregion
 
 #pragma region Random_Value_Generator
@@ -814,6 +896,10 @@ HRESULT CGameInstance::Bind_OutputShaderResource(CComputeShader* pShader, const 
 HRESULT CGameInstance::Copy_Resource(const wstring & strRenderTargetTag, ID3D11Texture2D ** ppTextureHub)
 {
 	return m_pTarget_Manager->Copy_Resource(strRenderTargetTag, ppTextureHub);
+}
+HRESULT CGameInstance::Copy_Resource(const wstring& strDestRenderTargetTag, const wstring& strSrcRenderTargetTag)
+{
+	return m_pTarget_Manager->Copy_Resource(strDestRenderTargetTag, strSrcRenderTargetTag);
 }
 #pragma endregion
 

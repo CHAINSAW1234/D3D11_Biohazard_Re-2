@@ -77,12 +77,12 @@ float3 ConvertToWorldPosition( float3 ndc, float depth )
 {
 	// view ray 
 	// ndc좌표에 대한 카메라 공간 광선을 계산
-	float4 viewRay = mul( float4( ndc, 1.f ), g_ProjMatrixInv );
+    float4 viewRay = mul(float4(ndc, 1.f), g_ProjMatrixInv);
 	viewRay /= viewRay.w;
-	viewRay /= viewRay.z; // z값이 1이 되도록
+	//viewRay /= viewRay.z; // z값이 1이 되도록
 
 	// ndc -> world position
-    float4 worldPosition = mul(float4(viewRay.xyz * depth, 1.f), g_ViewMatrixInv);
+    float4 worldPosition = mul(float4(viewRay.xyz, 1.f), g_ViewMatrixInv);
 
 	return worldPosition.xyz;
 }
@@ -106,34 +106,6 @@ float HenyeyGreensteinPhaseFunction(float3 wi, float3 wo, float g)
 
 float Visibility_Dir(float3 vWorldPosition, float3 toLight)
 {
-    //vector vPosition = mul(float4(vWorldPosition, 1.f), g_DirLightViewMatrix);
-    //vPosition = mul(vPosition, g_ProjMatrix);
-  
-    //float2 vTexcoord;
-    //vTexcoord.x = (vPosition.x / vPosition.w) * 0.5f + 0.5f;
-    //vTexcoord.y = (vPosition.y / vPosition.w) * -0.5f + 0.5f;
-
-    //float4 vDepth = g_DepthTexture.SampleLevel(PointSamplerClamp, vTexcoord, 0);
-    
-    //if (vPosition.w >= vDepth.r * 1000)
-    //{
-    //    return 0;
-    //}
-    
-    //vector vPosition2 = mul(float4(vWorldPosition, 1.f), g_ViewMatrix);
-    //vPosition2 = mul(vPosition2, g_ProjMatrix);
-  
-    //float2 vTexcoord2;
-    //vTexcoord2.x = (vPosition2.x / vPosition2.w) * 0.5f + 0.5f;
-    //vTexcoord2.y = (vPosition2.y / vPosition2.w) * -0.5f + 0.5f;
-
-    //float4 vDepth2 = g_DepthTexture.SampleLevel(PointSamplerClamp, vTexcoord2, 0);
-    
-    //if (vPosition2.w <= vDepth2.r * 1000)
-    //{
-    //    return 0;
-    //}
-
     vector vPosition = mul(float4(vWorldPosition, 1.f), g_DirLightViewMatrix);
     vPosition = mul(vPosition, g_DirLightProjMatrix);
   
@@ -143,13 +115,14 @@ float Visibility_Dir(float3 vWorldPosition, float3 toLight)
     
     float4 vDepth = g_DirLightDepthTexture.SampleLevel(PointSamplerClamp, vTexcoord, 0);
     
+    vector vViewPosition = mul(float4(vWorldPosition, 1.f), g_ViewMatrix);
+    
     if (vPosition.w > vDepth.r * 1000)
     {
         return 1;
     }
     
     return 0;
-    
 }
 
 float Visibility_Spot(float3 vWorldPosition)
@@ -194,11 +167,9 @@ void CS_Volume( uint3 DTid : SV_DispatchThreadID )
 
     if (all(DTid < dims))
     {
+        float4 worldPosition = float4(ConvertThreadIdToWorldPosition(DTid, dims), 1);
+        float3 toCamera = normalize(g_vCamPosition.xyz - worldPosition.xyz);    
         
-        float3 worldPosition = ConvertThreadIdToWorldPosition(DTid, dims);
-        float3 toCamera = normalize(g_vCamPosition.xyz - worldPosition);
-        
-
         float3 lighting = float3(0.f, 0.f, 0.f);
         
         if (g_isShadowDirLight)
@@ -207,7 +178,7 @@ void CS_Volume( uint3 DTid : SV_DispatchThreadID )
             
             float3 toLight = -lightDirection;
             
-            float visibility = Visibility_Dir(worldPosition, toLight); // 섀도우 맵으로 가시성 검사
+            float visibility = Visibility_Dir(worldPosition.xyz, toLight); // 섀도우 맵으로 가시성 검사
             float phaseFunction = HenyeyGreensteinPhaseFunction(lightDirection, toCamera, 0);
 
             lighting += visibility * g_vDirLightDiffuse;
@@ -224,21 +195,23 @@ void CS_Volume( uint3 DTid : SV_DispatchThreadID )
             //lighting += visibility * g_vSpotLightDiffuse;
         }
         
-    
-        
         OutputTexture[DTid] = float4(lighting, 1);
         //OutputTexture[DTid] = float4(float(DTid.x) / 128, float(DTid.y) / 128, float(DTid.z) / 128, 1);
+        //worldPosition = mul(worldPosition, g_ViewMatrix);
+        //worldPosition = mul(worldPosition, g_ProjMatrix);
+        //worldPosition /= worldPosition.w;
+        //worldPosition.x = worldPosition.x * 0.5 + 0.5;
+        //worldPosition.y = worldPosition.y * -0.5 + 0.5;
+        //OutputTexture[DTid] = g_DiffuseTexture.SampleLevel(LinearSampler, float3(worldPosition.xy, 0), 0);
         
     }
 }
 
+static const float DensityScale = 0.01f;
 float SliceTickness(float ndcZ, uint dimZ)
 {
     return ConvertNdcZToDepth(ndcZ + 1.f / float(dimZ)) - ConvertNdcZToDepth(ndcZ);
 }
-
-static const float DensityScale = 0.01f;
-
 float4 ScatterStep(float3 accumulatedLight, float accumulatedTransmittance, float3 sliceLight, float sliceDensity, float tickness)
 {
     sliceDensity = max(sliceDensity, 0.000001f);
@@ -254,7 +227,7 @@ float4 ScatterStep(float3 accumulatedLight, float accumulatedTransmittance, floa
     return float4(accumulatedLight, accumulatedTransmittance);
 }
 
-[numthreads(8, 8, 8)]
+[numthreads(8, 8, 1)]
 void CS_Volume2(uint3 DTid : SV_DispatchThreadID)
 {
     uint3 dims;

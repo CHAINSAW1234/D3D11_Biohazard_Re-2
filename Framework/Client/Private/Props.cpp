@@ -4,7 +4,7 @@
 #include "GameInstance.h"
 #include "Light.h"
 #include "Octree.h"
-
+#include"Player.h"
 CProps::CProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -23,20 +23,34 @@ HRESULT CProps::Initialize_Prototype()
 
 HRESULT CProps::Initialize(void* pArg)
 {
-	GAMEOBJECT_DESC		GameObjectDesc{};
+	PROPS_DESC* pObj_desc = (PROPS_DESC*)pArg;
 
-	GameObjectDesc.fSpeedPerSec = 10.f;
-	GameObjectDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+	m_tagPropDesc.bAnim = pObj_desc->bAnim;
+	m_tagPropDesc.iIndex = pObj_desc->iIndex;
+	m_tagPropDesc.strGamePrototypeName = pObj_desc->strGamePrototypeName;
+	m_tagPropDesc.strModelComponent = pObj_desc->strModelComponent;
+	m_tagPropDesc.strObjectPrototype = pObj_desc->strObjectPrototype;
+	m_tagPropDesc.worldMatrix = pObj_desc->worldMatrix;
+	m_tagPropDesc.BelongIndexs = pObj_desc->BelongIndexs;
+	m_tagPropDesc.iRegionDir = pObj_desc->iRegionDir;
 
-	if (FAILED(__super::Initialize(&GameObjectDesc)))
+	//memcpy_s(&m_tagPropDesc.iBelongIndexs2, sizeof(_int) * iMaxNum, &pObj_desc->iBelongIndexs2, sizeof(_int) * iMaxNum);
+	for (auto iter : m_tagPropDesc.BelongIndexs)
+	{
+		m_tagPropDesc.BelongIndexs2[iter] = true;
+	}
+	pObj_desc->fSpeedPerSec = 1.f;
+	pObj_desc->fRotationPerSec = XMConvertToRadians(1.f);
+
+
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
-
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(0.f, 0.f, 0.f, 1.f));
-	m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 	m_pModelCom->Static_Mesh_Cooking();
+
 
 	m_pOctree = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 	m_pOctree->GetSceneDimensions(m_pModelCom);
@@ -48,15 +62,47 @@ HRESULT CProps::Initialize(void* pArg)
 
 void CProps::Tick(_float fTimeDelta)
 {
-	
+	m_fTimeTest += fTimeDelta;
+	if(m_pPlayer == nullptr)
+		m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+	if (m_pGameInstance->Get_KeyState(VK_F9) == DOWN && m_fTimeTest>0.5f)
+		m_bOctotree = !m_bOctotree;	
+	if (m_pGameInstance->Get_KeyState(VK_F10) == DOWN && m_fTimeTest>0.5f)
+		m_bShadow = !m_bShadow;
 }
 
 void CProps::Late_Tick(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	if (m_pPlayer->Get_Player_RegionChange() == true)
+	{
+		if (m_tagPropDesc.iRegionDir == DIRECTION_MID)
+		{
+			;
+		}
+		else if (m_pPlayer->Get_Player_Direction() != m_tagPropDesc.iRegionDir)
+		{
+			m_bVisible = false;
+			return;
+		}
+
+		m_bVisible = m_tagPropDesc.BelongIndexs2[m_pPlayer->Get_Player_ColIndex()];
+	}
+	
+
+
+	if (/*m_bVisible && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f)*/1)
+	{
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+
+		if (m_bShadow)
+		{
+			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
+			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
+			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+		}
+	}
+
 }
 
 HRESULT CProps::Render()
@@ -64,27 +110,33 @@ HRESULT CProps::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	//_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	//for (size_t i = 0; i < iNumMeshes; i++)
+	//if (m_bOctotree)
+	//	m_pOctree->DrawOctree(m_pOctree, m_pModelCom, m_pShaderCom);
+	//else
 	//{
-	//	if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-	//		return E_FAIL;
-	//	if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
-	//		return E_FAIL;
+	//	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	//	if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS))) 
+	//	for (size_t i = 0; i < iNumMeshes; i++)
 	//	{
-	//		if (FAILED(m_pShaderCom->Begin(0)))
+	//		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 	//			return E_FAIL;
-	//	}
-	//	else 
-	//	{
-	//		if (FAILED(m_pShaderCom->Begin(1)))
+	//		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 	//			return E_FAIL;
-	//	}
 
-	//	m_pModelCom->Render(static_cast<_uint>(i));
+	//		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+	//		{
+	//			if (FAILED(m_pShaderCom->Begin(0)))
+	//				return E_FAIL;
+	//		}
+	//		else
+	//		{
+	//			if (FAILED(m_pShaderCom->Begin(1)))
+	//				return E_FAIL;
+	//		}
+
+	//		m_pModelCom->Render(static_cast<_uint>(i));
+	//	}
 	//}
 
 	m_pOctree->DrawOctree(m_pOctree, m_pModelCom, m_pShaderCom);
@@ -208,13 +260,21 @@ HRESULT CProps::Render_LightDepth_Point()
 
 HRESULT CProps::Add_Components()
 {
-	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxModel"),
-		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
-		return E_FAIL;
+	if (m_tagPropDesc.bAnim)
+	{
+		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+			TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxModel"),
+			TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
+			return E_FAIL;
+	}
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_police_holl"),
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, m_tagPropDesc.strModelComponent,
 		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 

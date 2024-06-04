@@ -15,6 +15,8 @@
 #include "Effect.h"
 #include "Sky.h"
 #include "Props.h"
+#include "Customize_UI.h"
+#include "CustomCollider.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -78,6 +80,126 @@ HRESULT CLoader::Start()
 	return S_OK;
 }
 
+HRESULT CLoader::Load_Prototype(const wstring& filePath)
+{
+	HANDLE		hFile = CreateFile(filePath.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+
+	DWORD	dwByte(0);
+
+	_uint iObjectNum = { 0 };
+	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
+		return E_FAIL;
+
+	for (_uint i = 0; iObjectNum > i; ++i)
+	{
+		
+		PROTOTYPE_INFORM* Inform = new PROTOTYPE_INFORM;
+
+		_uint dwLen = { 0 };
+
+		_bool bAnim = { false };
+		if (!ReadFile(hFile, &bAnim, sizeof(_uint), &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		Inform->bAnim = bAnim;
+
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		char* strModelPath = new char[dwLen / sizeof(char) + 1];
+		if (!ReadFile(hFile, strModelPath, dwLen, &dwByte, nullptr))
+		{
+			delete[] strModelPath;
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+
+			return E_FAIL;
+		}
+		strModelPath[dwLen / sizeof(char)] = '\0';
+		Inform->strModelPath = strModelPath;
+		delete[] strModelPath;
+
+
+
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wchar_t* wstrModelPrototypeName = new wchar_t[dwLen / sizeof(wchar_t) + 1];
+		if (!ReadFile(hFile, wstrModelPrototypeName, dwLen, &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			delete[] wstrModelPrototypeName;
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wstrModelPrototypeName[dwLen / sizeof(wchar_t)] = L'\0';
+		Inform->wstrModelPrototypeName = wstrModelPrototypeName;
+		delete[] wstrModelPrototypeName;
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			Safe_Delete(Inform);
+			return E_FAIL;
+		}
+		wchar_t* wstrGameObjectPrototypeName = new wchar_t[dwLen / sizeof(wchar_t) + 1];
+		if (!ReadFile(hFile, wstrGameObjectPrototypeName, dwLen, &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			delete[] wstrGameObjectPrototypeName;
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wstrGameObjectPrototypeName[dwLen / sizeof(wchar_t)] = L'\0';
+		Inform->wstrGameObjectPrototypeName = wstrGameObjectPrototypeName;
+		delete[] wstrGameObjectPrototypeName;
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			Safe_Delete(Inform);
+			return E_FAIL;
+		}
+		char* strGameObjectPrototypeName = new char[dwLen / sizeof(char) + 1];
+		if (!ReadFile(hFile, strGameObjectPrototypeName, dwLen, &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			delete[] strGameObjectPrototypeName;
+
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		strGameObjectPrototypeName[dwLen / sizeof(char)] = '\0';
+		Inform->strGameObjectPrototypeName = strGameObjectPrototypeName; // 메쉬 파일(바이너리화)한거 
+		delete[] strGameObjectPrototypeName;
+
+		m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext,Inform->strModelPath.c_str(), XMMatrixIdentity()));
+
+		m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CProps::Create(m_pDevice, m_pContext));
+
+
+		Safe_Delete(Inform);
+
+	}
+	CloseHandle(hFile);
+	return S_OK;
+}
+
 HRESULT CLoader::Loading_For_Logo()
 {
 	m_strLoadingText = TEXT("Now Loadin ... Texture");
@@ -124,16 +246,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Brush.png"), 1))))
 		return E_FAIL;
 
-	///* Prototype_Component_Texture_Player */
-	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Player"),
-	//	CTexture::Create(m_pGraphic_Device, CTexture::TYPE_TEX2D, TEXT("../Bin/Resources/Textures/Player/Player.png")))))
-	//	return E_FAIL;
-
-	///* Prototype_Component_Texture_Monster */
-	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Monster"),
-	//	CTexture::Create(m_pGraphic_Device, CTexture::TYPE_TEX2D, TEXT("../Bin/Resources/Textures/Monster/Monster.png")))))
-	//	return E_FAIL;
-
 	/* Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
@@ -155,11 +267,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 
 
-	/* Prototype_Component_police_holl */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_police_holl"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/map/police_holl.fbx",
-			TransformMatrix))))
-		return E_FAIL;
+	///* Prototype_Component_police_holl */
+	//if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_police_holl"),
+	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/map/police_holl.fbx",
+	//		TransformMatrix))))
+	//	return E_FAIL;
 
 	/* Prototype_Component_Model_Boss_MantisShrimp */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonBody"),
@@ -287,7 +399,10 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxInstance_Point.hlsl"), VTXINSTANCE_POINT::Elements, VTXINSTANCE_POINT::iNumElements))))
 		return E_FAIL;
 
-
+#pragma region YeEun Add
+	if (FAILED(Load_Prototype(TEXT("../Bin/Data/Level_Test/Make_Prototype.dat"))))
+		return E_FAIL;
+#pragma endregion
 
 	m_strLoadingText = TEXT("Now Loading ... Object");
 	/* For.Prototype_GameObject_Terrain */
@@ -300,10 +415,10 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CCamera_Free::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	///* For.Prototype_GameObject_ForkLift */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Props"),
-		CProps::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
+	/////* For.Prototype_GameObject_ForkLift */
+	//if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Props"),
+	//	CProps::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 
 	/* For.Prototype_GameObject_Player */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Player"),
@@ -345,12 +460,25 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CSky::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_CCustomize_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CCustomize_UI"),
+		CCustomize_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Collider"), CCustomCollider::Create(m_pDevice, m_pContext))))
+	{
+		MSG_BOX(TEXT("Faild to Add_Prototype : Prototype_GameObject_Collider"));
+		return E_FAIL;
+	}
+
 	m_strLoadingText = TEXT("Loading Complete.");
 
 	m_isFinished = true;
 
 	return S_OK;
 }
+
+
 
 CLoader* CLoader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID)
 {

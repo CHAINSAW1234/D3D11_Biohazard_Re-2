@@ -9,7 +9,7 @@ class CRenderer final : public CBase
 public:
 	enum RENDERGROUP {
 		RENDER_PRIORITY,
-		RENDER_FIELD,
+		RENDER_FIELD_SHADOW_DIR, RENDER_FIELD_SHADOW_POINT,
 		RENDER_SSAO,
 		RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_NON_POSTPROCESSING,
 		RENDER_SHADOW_DIR, RENDER_SHADOW_POINT, RENDER_SHADOW_SPOT,
@@ -37,7 +37,7 @@ public:
 	void						Off_RadialBlur();
 	_bool						Get_ShaderState(SHADER_STATE eState);
 	void						Set_ShaderState(SHADER_STATE eState, _bool isState);
-
+	void						Set_RenderFieldShadow(_bool isRenderFieldShadow) { m_isRenderFieldShadow = isRenderFieldShadow; }
 private:
 	HRESULT						SetUp_RenderTargets();
 	HRESULT						SetUp_LightDSV();
@@ -101,6 +101,7 @@ private:
 	_float						m_fLightDepthTargetViewCubeWidth = { 0.f };
 
 private:
+	_bool						m_isRenderFieldShadow = { true };
 	_bool						m_ShaderOptions[SHADER_STATE_END] = { true };
 
 private:
@@ -134,6 +135,10 @@ private:
 	HRESULT						Render_SSAO_Blur();
 
 private:
+	HRESULT						Render_Field_Shadow_Direction();
+	HRESULT						Render_Field_Shadow_Point();
+
+private:
 	HRESULT						Render_Shadow_Direction();
 	HRESULT						Render_Shadow_Point();
 	HRESULT						Render_Shadow_Spot();
@@ -152,7 +157,6 @@ private:
 	HRESULT						Render_SSR();
 	HRESULT						Render_DOF();
 	HRESULT						Render_FXAA();
-	HRESULT						Render_SubResult(const wstring& strRenderTargetTag);	// 饶贸府 包府侩 
 private:
 	HRESULT						Render_PostProcessing();
 	HRESULT						Render_PostProcessing_Result();

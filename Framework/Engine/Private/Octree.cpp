@@ -438,6 +438,16 @@ void COctree::DrawOctree(COctree* pNode, CModel* pRootWorld, CShader* pShader)
 {
 	if (!pNode) return;
 
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
 	if (pNode->IsSubDivided())
 	{
 		DrawOctree(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], pRootWorld,pShader);
@@ -453,35 +463,30 @@ void COctree::DrawOctree(COctree* pNode, CModel* pRootWorld, CShader* pShader)
 	{
 		if (!pNode->m_pWorld) return;
 
-		auto vCenter = pNode->m_vCenter;
-		vCenter.x += m_vTranslation.x;
-		vCenter.y += m_vTranslation.y;
-		vCenter.z += m_vTranslation.z;
-
-		if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
-		{
-			return;
-		}
+		auto Meshes = pNode->m_pWorld->GetMeshes();
 
 		for(int i = 0;i< pNode->m_pWorld->GetNumMesh();++i)
 		{
-			if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-				return;
-			if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
-				return;
-
-			if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+			if((*Meshes)[i]->GetNumIndices() != 0)
 			{
-				if (FAILED(pShader->Begin(0)))
+				if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 					return;
-			}
-			else
-			{
-				if (FAILED(pShader->Begin(1)))
+				if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 					return;
-			}
 
-			pNode->m_pWorld->Render(i);
+				if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+				{
+					if (FAILED(pShader->Begin(0)))
+						return;
+				}
+				else
+				{
+					if (FAILED(pShader->Begin(1)))
+						return;
+				}
+
+				pNode->m_pWorld->Render(i);
+			}
 		}
 	}
 }
