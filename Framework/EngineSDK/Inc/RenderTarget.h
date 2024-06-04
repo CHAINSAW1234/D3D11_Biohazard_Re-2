@@ -17,15 +17,18 @@ public:
 	}
 
 public:
-	HRESULT							Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor);
-	HRESULT							Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor);
-	HRESULT							Initialize_3D(_uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor);
+	HRESULT							Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor, _bool isTickClear);
+	HRESULT							Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor, _bool isTickClear);
+	HRESULT							Initialize_3D(_uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor, _bool isTickClear);
 	HRESULT							Clear();
 	HRESULT							Bind_ShaderResource(class CShader* pShader, const _char* pConstantName);
 	HRESULT							Bind_ShaderResource(class CComputeShader* pShader, const _char* pConstantName);
 	HRESULT							Bind_OutputShaderResource(class CComputeShader* pShader, const _char* pConstantName);
 	HRESULT							Copy_Resource(ID3D11Texture2D** ppTextureHub);
-	HRESULT							Copy_Resource(ID3D11Texture3D** ppTextureHub);
+	HRESULT							Copy_Resource(ID3D11Texture2D* pTextureHub);
+
+	ID3D11Texture2D*				Get_Texture2D() { return m_pTexture2D; }
+	_bool							Get_isTickClear() { return m_isTickClear; }
 
 #ifdef _DEBUG
 public:
@@ -48,6 +51,7 @@ private:
 
 	wstring							m_strRenderTargetTag = {};
 	_float4							m_vClearColor = {};
+	_bool							m_isTickClear = { true };	// 매 틱마다 렌더 타겟 초기화를 하는지에 대한 처리
 
 #ifdef _DEBUG
 private:
@@ -55,9 +59,9 @@ private:
 #endif
 
 public:
-	static CRenderTarget* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor);
-	static CRenderTarget* Create_Cube(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor);
-	static CRenderTarget* Create_3D(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor);
+	static CRenderTarget* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor, _bool isTickClear);
+	static CRenderTarget* Create_Cube(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor, _bool isTickClear);
+	static CRenderTarget* Create_3D(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor, _bool isTickClear);
 
 	virtual void Free() override;
 };

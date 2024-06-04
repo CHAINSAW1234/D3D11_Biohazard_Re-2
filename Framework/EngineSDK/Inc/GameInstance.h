@@ -48,8 +48,8 @@ public: /* For.Renderer */
 	void									Off_RadialBlur();
 	_bool									Get_ShaderState(SHADER_STATE eState);
 
-
 	void									Set_ShaderState(SHADER_STATE eState, _bool isState);
+	void									Set_RenderFieldShadow(_bool isRenderFieldShadow);
 #ifdef _DEBUG
 	void									On_Off_DebugRender();
 #endif
@@ -69,12 +69,8 @@ public: /* For.Object_Manager */
 	const CComponent*						Get_Component(_uint iLevelIndex, const wstring& strLayerTag, const wstring& strComTag, _uint iIndex = 0);
 	list<class CGameObject*>*				Find_Layer(_uint iLevelIndex, const wstring& LayerTag);
 	void									Release_Layer(_uint iLevelIndex, const wstring& LayerTag);
-
-
 	//yeeun	
-	HRESULT Add_Layer(_uint iLevelIndex, const wstring& strLayerTag);
-
-
+	HRESULT									Add_Layer(_uint iLevelIndex, const wstring& strLayerTag);
 
 #pragma endregion
 
@@ -130,9 +126,9 @@ public: /* For.Font_Manager */
 
 #pragma region Target_Manager
 public: /* For.Target_Manager */
-	HRESULT									Add_RenderTarget(const wstring& strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
-	HRESULT									Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
-	HRESULT									Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor);
+	HRESULT									Add_RenderTarget(const wstring& strRenderTargetTag, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _bool isTickClear = true);
+	HRESULT									Add_RenderTarget_Cube(const wstring& strRenderTargetTag, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _bool isTickClear = true);
+	HRESULT									Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _bool isTickClear = true);
 	HRESULT									Clear_RenderTarget_All();
 	HRESULT									Clear_RenderTarget(const wstring& strRenderTargetTag);
 
@@ -143,6 +139,8 @@ public: /* For.Target_Manager */
 	HRESULT									Bind_RTShaderResource(class CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName);
 	HRESULT									Bind_OutputShaderResource(class CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName);
 	HRESULT									Copy_Resource(const wstring& strRenderTargetTag, ID3D11Texture2D** ppTextureHub);
+	HRESULT									Copy_Resource(const wstring& strDestRenderTargetTag, const wstring& strSrcRenderTargetTag);
+
 #pragma endregion
 
 #pragma region Frustrum

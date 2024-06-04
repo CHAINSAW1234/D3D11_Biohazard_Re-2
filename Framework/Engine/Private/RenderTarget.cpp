@@ -13,7 +13,7 @@ CRenderTarget::CRenderTarget(ID3D11Device * pDevice, ID3D11DeviceContext * pCont
 	Safe_AddRef(m_pContext);
 }
 
-HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4 & vClearColor)
+HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4 & vClearColor, _bool isTickClear)
 {
 	m_strRenderTargetTag = strRenderTargetTag;
 
@@ -44,11 +44,12 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixel
 		return E_FAIL;
 
 	m_vClearColor = vClearColor;
+	m_isTickClear = isTickClear;
 
 	return S_OK;
 }
 
-HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor)
+HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor, _bool isTickClear)
 {
 	m_strRenderTargetTag = strRenderTargetTag;
 
@@ -93,11 +94,12 @@ HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMA
 		return E_FAIL;
 
 	m_vClearColor = vClearColor;
+	m_isTickClear = isTickClear;
 
 	return S_OK;
 }
 
-HRESULT CRenderTarget::Initialize_3D(_uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor)
+HRESULT CRenderTarget::Initialize_3D(_uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor, _bool isTickClear)
 {
 	m_strRenderTargetTag = strRenderTargetTag;
 
@@ -146,6 +148,7 @@ HRESULT CRenderTarget::Initialize_3D(_uint iWidth, _uint iHeight, _uint iDepth, 
 		return E_FAIL;
 
 	m_vClearColor = vClearColor;
+	m_isTickClear = isTickClear;
 
 	return S_OK;
 }
@@ -181,9 +184,9 @@ HRESULT CRenderTarget::Copy_Resource(ID3D11Texture2D ** ppTextureHub)
 	return S_OK;
 }
 
-HRESULT CRenderTarget::Copy_Resource(ID3D11Texture3D** ppTextureHub)
+HRESULT CRenderTarget::Copy_Resource(ID3D11Texture2D* pTextureHub)
 {
-	m_pContext->CopyResource(*ppTextureHub, m_pTexture3D);
+	m_pContext->CopyResource(m_pTexture2D, pTextureHub);
 
 	return S_OK;
 }
@@ -255,11 +258,11 @@ HRESULT CRenderTarget::Render_Debug(CShader * pShader, CVIBuffer_Rect * pVIBuffe
 
 #endif
 
-CRenderTarget * CRenderTarget::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4 & vClearColor)
+CRenderTarget * CRenderTarget::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, _uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4 & vClearColor, _bool isTickClear)
 {
 	CRenderTarget*		pInstance = new CRenderTarget(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize(iSizeX, iSizeY, ePixelFormat, strRenderTargetTag, vClearColor)))
+	if (FAILED(pInstance->Initialize(iSizeX, iSizeY, ePixelFormat, strRenderTargetTag, vClearColor, isTickClear)))
 	{
 		MSG_BOX(TEXT("Failed to Created : CRenderTarget"));
 		Safe_Release(pInstance);
@@ -268,11 +271,11 @@ CRenderTarget * CRenderTarget::Create(ID3D11Device * pDevice, ID3D11DeviceContex
 	return pInstance;
 }
 
-CRenderTarget* CRenderTarget::Create_Cube(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor)
+CRenderTarget* CRenderTarget::Create_Cube(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iSize, _uint iArraySize, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor, _bool isTickClear)
 {
 	CRenderTarget* pInstance = new CRenderTarget(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Cube(iSize, iArraySize, ePixelFormat, strRenderTargetTag, vClearColor)))
+	if (FAILED(pInstance->Initialize_Cube(iSize, iArraySize, ePixelFormat, strRenderTargetTag, vClearColor, isTickClear)))
 	{
 		MSG_BOX(TEXT("Failed to Created : CRenderTarget"));
 		Safe_Release(pInstance);
@@ -281,11 +284,11 @@ CRenderTarget* CRenderTarget::Create_Cube(ID3D11Device* pDevice, ID3D11DeviceCon
 	return pInstance;
 }
 
-CRenderTarget* CRenderTarget::Create_3D(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor)
+CRenderTarget* CRenderTarget::Create_3D(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const wstring& strRenderTargetTag, const _float4& vClearColor, _bool isTickClear)
 {
 	CRenderTarget* pInstance = new CRenderTarget(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_3D(iWidth, iHeight, iDepth, ePixelFormat, strRenderTargetTag,  vClearColor)))
+	if (FAILED(pInstance->Initialize_3D(iWidth, iHeight, iDepth, ePixelFormat, strRenderTargetTag,  vClearColor, isTickClear)))
 	{
 		MSG_BOX(TEXT("Failed to Created : CRenderTarget"));
 		Safe_Release(pInstance);

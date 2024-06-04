@@ -22,8 +22,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if(FAILED(Ready_Layer_Camera(TEXT("Layer_ZZZCamera"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+	//	return E_FAIL;
 
 	if (FAILED(Ready_LandObject()))
 		return E_FAIL;
@@ -31,8 +31,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_UI(TEXT(""))))
 		return E_FAIL;
 
-	if (FAILED(Ready_RegionCollider()))
-		return E_FAIL;
+	//if (FAILED(Ready_RegionCollider()))
+	//	return E_FAIL;
 
 
 	return S_OK;
@@ -44,6 +44,7 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
 	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
 	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));
+	
 	if (GetAsyncKeyState('T') & 0x0001)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_Particle_Red"))))
@@ -192,7 +193,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 {
 	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Props"))))
 	//	return E_FAIL;
-	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_0"), LEVEL_GAMEPLAY)))
+	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_Test"), LEVEL_GAMEPLAY)))
 		return E_FAIL;
 
 	return S_OK;

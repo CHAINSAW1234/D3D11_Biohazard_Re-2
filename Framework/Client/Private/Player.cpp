@@ -138,18 +138,18 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('U'))
 	{
-		_vector		vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
-		vLook = { XMVector3Normalize(vLook) };
-		_vector		vMoveDir = { vLook };
+		_vector      vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
+		vLook = { XMVectorScale(XMVector3Normalize(vLook),0.01f) };
+		_vector      vMoveDir = { vLook };
 
 		vMovedDirection += vMoveDir;
 	}
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('J'))
 	{
-		_vector		vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
-		vLook = { XMVector3Normalize(vLook) };
-		_vector		vMoveDir = { vLook * -1.f };
+		_vector      vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
+		vLook = { XMVectorScale(XMVector3Normalize(vLook),0.01f) };
+		_vector      vMoveDir = { -vLook };
 
 		vMovedDirection += vMoveDir;
 	}
@@ -228,8 +228,8 @@ void CPlayer::Late_Tick_PartObjects(_float fTimeDelta)
 #pragma region 예은 추가
 void CPlayer::Col_Section()
 {
-	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider"));
-	if (pCollider == nullptr)
+	/*list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider"));
+	if(pCollider == nullptr)
 		return;
 	for (auto& iter: *pCollider)
 	{
@@ -241,7 +241,7 @@ void CPlayer::Col_Section()
 			m_iDir = pColCom->Get_Dir();
 
 		}
-	}
+	}*/
 
 
 
