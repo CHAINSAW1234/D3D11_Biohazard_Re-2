@@ -9,6 +9,7 @@
 #define TOOL_TRANSFORMATION_TAG         "Tool_Transformation"
 #define TOOL_ANIMPLAYER_TAG             "Tool_AnimPlayer"
 #define TOOL_PARTOBJECT_TAG             "Tool_PartObject"
+#define TOOL_BONELAYER_TAG              "Tool_BoneLayer"
 
 BEGIN(Engine)
 class CGameObject;
@@ -58,6 +59,7 @@ private:
     CTool_Transformation*       m_pToolTransformation = { nullptr };
     CTool_AnimPlayer*           m_pToolAnimPlayer = { nullptr };
     CTool_PartObject*           m_pToolPartObject = { nullptr };
+    CTool_BoneLayer* m_pToolBoneLayer = { nullptr };
 
     _bool                       m_isActiveRootXZ = { false };
     _bool                       m_isActiveRootY = { false };

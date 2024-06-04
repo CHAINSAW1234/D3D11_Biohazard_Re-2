@@ -15,6 +15,7 @@ public:
 		ANIM_LIST,
 		ANIM_PLAYER,
 		PART_OBJECT,
+		BONE_LAYER,
 		TOOL_END
 	};
 

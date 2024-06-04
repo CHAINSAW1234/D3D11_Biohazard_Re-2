@@ -34,7 +34,6 @@ void CTool_AnimPlayer::Tick(_float fTimeDelta)
 
 		Show_CurrentSelectedInfos();
 
-		Create_AnimLayer();
 		Set_Animation();
 		
 		if (true == m_isShowBoneTags)
@@ -160,70 +159,6 @@ void CTool_AnimPlayer::On_Off_Buttons()
 	{
 		m_isRooActive_Rotate = !m_isRooActive_Rotate;
 	}
-}
-
-void CTool_AnimPlayer::Create_AnimLayer()
-{
-	ImGui::NewLine();
-
-	static _char			szLayerTag[MAX_PATH] = {};
-	ImGui::InputText("AnimLayerTag : ## ModelSelctor", szLayerTag, static_cast<size_t>(sizeof(szLayerTag)));
-
-	_tchar		szTemp[MAX_PATH] = { L"" };
-	MultiByteToWideChar(CP_ACP, 0, szLayerTag, (_uint)strlen(szLayerTag), szTemp, MAX_PATH);
-
-	_int		iStartBoneIndex = { 0 };
-	_int		iEndBoneIndex = { 0 };
-	ImGui::InputInt("BoneStartIndex : ## ModelSelector_AnimLayer", &iStartBoneIndex);
-	ImGui::InputInt("BoneEndIndex : ## ModelSelector_AnimLayer", &iEndBoneIndex);
-
-	//	스타트 부터 엔드 인덱스까지
-	if (ImGui::Button("Add_Layer_BoneIndices ## ModelSelector"))
-	{
-		list<_uint>			BoneIndices;
-		for (_uint i = static_cast<_uint>(iStartBoneIndex); i <= static_cast<_uint>(iEndBoneIndex); ++i)
-		{
-			BoneIndices.push_back(i);
-		}
-
-		Add_AnimLayer(szTemp, BoneIndices);
-	}
-
-	_int		iTopParentIndex = { 0 };
-	ImGui::InputInt("BoneTopParentIndex : ## ModelSelector_AnimLayer", &iTopParentIndex);
-
-	//	특정 인덱스의 자식뼈 전부
-	if (ImGui::Button("Add_Layer_ChildBones ## ModelSelector"))
-	{
-		list<_uint>		ChildBoneIndices;
-		m_pAnimModel->Get_Child_BoneIndices(m_strCurrentSelectBoneTag, ChildBoneIndices);
-
-		Add_AnimLayer(szTemp, ChildBoneIndices);
-	}
-
-	//	모든 인덱스
-	if (ImGui::Button("Add_Layer_AllBone ## ModelSelector"))
-	{
-		Add_AnimLayer_AllBone(szTemp);
-	}
-
-	ImGui::NewLine();
-}
-
-void CTool_AnimPlayer::Add_AnimLayer(const wstring& strAnimLayerTag, list<_uint> BoneIndices)
-{
-	if (nullptr == m_pAnimModel)
-		return;
-
-	m_pAnimModel->Add_Bone_Layer(strAnimLayerTag, BoneIndices);
-}
-
-void CTool_AnimPlayer::Add_AnimLayer_AllBone(const wstring& strAnimLayerTag)
-{
-	if (nullptr == m_pAnimModel)
-		return;
-
-	m_pAnimModel->Add_Bone_Layer_All_Bone(strAnimLayerTag);
 }
 
 void CTool_AnimPlayer::Set_Animation()

@@ -88,6 +88,9 @@
     <Filter Include="02.GameObject\Tool\Tool_PartObject">
       <UniqueIdentifier>{f3852908-ea99-4df8-9dd2-55197a838129}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Tool\Tool_BoneLayer">
+      <UniqueIdentifier>{8999399d-a120-43ad-8b2b-720e712079b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -197,6 +200,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Tool_PartObject.cpp">
       <Filter>02.GameObject\Tool\Tool_PartObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool_BoneLayer.cpp">
+      <Filter>02.GameObject\Tool\Tool_BoneLayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -325,6 +331,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Tool_PartObject.h">
       <Filter>02.GameObject\Tool\Tool_PartObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_BoneLayer.h">
+      <Filter>02.GameObject\Tool\Tool_BoneLayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -17,9 +17,6 @@ HRESULT CTool_PartObject::Initialize(void* pArg)
 	TOOL_PARTOBJECT_DESC*		pDesc = { static_cast<TOOL_PARTOBJECT_DESC*>(pArg) };
 	m_pTestObject = pDesc->pTestObject;
 
-	if (nullptr == m_pTestObject)
-		return E_FAIL;
-
 	Safe_AddRef(m_pTestObject);
 
 	if (FAILED(__super::Initialize(pArg)))
@@ -41,6 +38,9 @@ void CTool_PartObject::Tick(_float fTimeDelta)
 	if (ImGui::CollapsingHeader(m_strCollasingTag.c_str()))
 	{
 		On_Off_Buttons();
+
+
+		Show_PartObject_Tags();
 	}
 }
 
@@ -85,7 +85,7 @@ void CTool_PartObject::Show_PartObject_Tags()
 	for (auto& Pair : m_PartObjects)
 	{
 		string		strPartObjectTag = { Convert_Wstring_String(Pair.first) };
-		ImGui::Text(string(string("Bone : ") + strPartObjectTag + string("## Show_CurrentSelectedInfos")).c_str());
+		ImGui::Text(string(string("PartObject : ") + strPartObjectTag).c_str());
 	}
 
 	ImGui::Text("=================================================");
@@ -136,7 +136,7 @@ vector<string> CTool_PartObject::Get_CurrentPartObject_BoneTags()
 
 	CModel*			pModel = { dynamic_cast<CModel*>(m_PartObjects[m_strSelectPartObjectTag]->Get_Component(TEXT("Com_Model"))) };
 	if (nullptr == pModel)
-		return;
+		return vector<string>();
 
 	vector<string>	BoneTags = { pModel->Get_BoneNames() };
 	return BoneTags;

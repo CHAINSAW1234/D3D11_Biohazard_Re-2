@@ -76,6 +76,8 @@ HRESULT CAnimationEditor::Add_Tools()
 	m_pToolTransformation = nullptr;
 	Safe_Release(m_pToolPartObject);
 	m_pToolPartObject = nullptr;
+	Safe_Release(m_pToolBoneLayer);
+	m_pToolBoneLayer = nullptr;
 
 	CTool*		pToolCollider = { nullptr };
 	CTool*		pToolAnimList = { nullptr };
@@ -83,6 +85,7 @@ HRESULT CAnimationEditor::Add_Tools()
 	CTool*		pToolTransformtaion = { nullptr };
 	CTool*		pToolAnimPlayer = { nullptr };
 	CTool*		pToolPartObject = { nullptr };
+	CTool*		pToolBoneLayer = { nullptr };
 
 	CTool_AnimPlayer::ANIMPLAYER_DESC		AnimPlayerDesc{};
 	if (nullptr != m_pTestObject)
@@ -109,6 +112,8 @@ HRESULT CAnimationEditor::Add_Tools()
 		return E_FAIL;
 	if (FAILED(__super::Add_Tool(&pToolPartObject, static_cast<_uint>(CTool::TOOL_TYPE::PART_OBJECT), TOOL_PARTOBJECT_TAG, &PartObjectDesc)))
 		return E_FAIL;
+	if (FAILED(__super::Add_Tool(&pToolBoneLayer, static_cast<_uint>(CTool::TOOL_TYPE::PART_OBJECT), TOOL_BONELAYER_TAG)))
+		return E_FAIL;
 
 	CTool_Collider*				pToolColliderConvert = dynamic_cast<CTool_Collider*>(pToolCollider);
 	CModel_Selector*			pToolModelSelectorConvert = dynamic_cast<CModel_Selector*>(pToolModelSelector);
@@ -116,8 +121,12 @@ HRESULT CAnimationEditor::Add_Tools()
 	CTool_Transformation*		pToolTransformationConvert = dynamic_cast<CTool_Transformation*>(pToolTransformtaion);
 	CTool_AnimPlayer*			pToolAnimPlayerConvert = dynamic_cast<CTool_AnimPlayer*>(pToolAnimPlayer);
 	CTool_PartObject*			pToolPartObjectConvert = dynamic_cast<CTool_PartObject*>(pToolPartObject);
+	CTool_BoneLayer*			pToolBoneLayerConvert = dynamic_cast<CTool_BoneLayer*>(pToolBoneLayer);
 
-	if (nullptr == pToolColliderConvert || nullptr == pToolModelSelectorConvert || nullptr == pToolAnimListConvert || nullptr == pToolTransformationConvert || nullptr == pToolAnimPlayerConvert || nullptr == pToolPartObjectConvert)
+	if (nullptr == pToolColliderConvert || nullptr == pToolModelSelectorConvert || 
+		nullptr == pToolAnimListConvert || nullptr == pToolTransformationConvert || 
+		nullptr == pToolAnimPlayerConvert || nullptr == pToolPartObjectConvert || 
+		nullptr == pToolBoneLayerConvert)
 	{
 		MSG_BOX(TEXT("Tool积己 肋给达"));
 		return E_FAIL;
@@ -129,6 +138,7 @@ HRESULT CAnimationEditor::Add_Tools()
 	m_pToolTransformation = pToolTransformationConvert;
 	m_pToolAnimPlayer = pToolAnimPlayerConvert;
 	m_pToolPartObject = pToolPartObjectConvert;
+	m_pToolBoneLayer = pToolBoneLayerConvert;
 
 	return S_OK;
 }
@@ -304,6 +314,7 @@ void CAnimationEditor::Free()
 	Safe_Release(m_pToolTransformation);
 	Safe_Release(m_pToolAnimPlayer);
 	Safe_Release(m_pToolPartObject);
+	Safe_Release(m_pToolBoneLayer);
 
 	Safe_Release(m_pTestObject);
 }

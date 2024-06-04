@@ -102,6 +102,22 @@ HRESULT CEditor::Add_Tool(CTool** ppTool, _uint iToolType, const string& strTool
 			return E_FAIL;
 	}
 
+	else if (CTool::TOOL_TYPE::PART_OBJECT == static_cast<CTool::TOOL_TYPE>(iToolType))
+	{
+		*ppTool = CTool_PartObject::Create(m_pDevice, m_pContext, pArg);
+
+		if (nullptr == *ppTool)
+			return E_FAIL;
+	}
+
+	else if (CTool::TOOL_TYPE::BONE_LAYER == static_cast<CTool::TOOL_TYPE>(iToolType))
+	{
+		*ppTool = CTool_BoneLayer::Create(m_pDevice, m_pContext, pArg);
+
+		if (nullptr == *ppTool)
+			return E_FAIL;
+	}
+
 	else
 	{
 		return E_FAIL;

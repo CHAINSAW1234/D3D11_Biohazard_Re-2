@@ -10,6 +10,7 @@
 #include "Tool_AnimList.h"
 #include "Tool_AnimPlayer.h"
 #include "Tool_PartObject.h"
+#include "Tool_BoneLayer.h"
 
 BEGIN(Tool)
 

@@ -600,6 +600,7 @@
     <ClCompile Include="..\Private\Tool.cpp" />
     <ClCompile Include="..\Private\Tool_AnimList.cpp" />
     <ClCompile Include="..\Private\Tool_AnimPlayer.cpp" />
+    <ClCompile Include="..\Private\Tool_BoneLayer.cpp" />
     <ClCompile Include="..\Private\Tool_Collider.cpp" />
     <ClCompile Include="..\Private\Tool_PartObject.cpp" />
     <ClCompile Include="..\Private\Tool_Selector.cpp" />
@@ -638,6 +639,7 @@
     <ClInclude Include="..\Public\Tool.h" />
     <ClInclude Include="..\Public\Tool_AnimList.h" />
     <ClInclude Include="..\Public\Tool_AnimPlayer.h" />
+    <ClInclude Include="..\Public\Tool_BoneLayer.h" />
     <ClInclude Include="..\Public\Tool_Collider.h" />
     <ClInclude Include="..\Public\Tool_Defines.h" />
     <ClInclude Include="..\Public\Tool_Enums.h" />

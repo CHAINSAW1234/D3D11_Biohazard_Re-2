@@ -39,12 +39,6 @@ private:
 private:
 	void					On_Off_Buttons();
 
-private:
-	void					Create_AnimLayer();
-
-private:
-	void					Add_AnimLayer(const wstring& strAnimLayerTag, list<_uint> BoneIndices);
-	void					Add_AnimLayer_AllBone(const wstring& strAnimLayerTag);
 
 	void					Set_Animation();
 
