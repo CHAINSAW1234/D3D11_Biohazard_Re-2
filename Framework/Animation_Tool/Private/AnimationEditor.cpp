@@ -36,7 +36,6 @@ void CAnimationEditor::Tick(_float fTimeDelta)
 	Set_Transform_TransformTool();
 
 	Add_PartObject_TestObject();
-	Update_Root_Active();
 	Change_Model_TestObject();
 
 	for (auto& pTool : m_Tools)
@@ -75,12 +74,15 @@ HRESULT CAnimationEditor::Add_Tools()
 	m_pToolAnimList = nullptr;
 	Safe_Release(m_pToolTransformation);
 	m_pToolTransformation = nullptr;
+	Safe_Release(m_pToolPartObject);
+	m_pToolPartObject = nullptr;
 
 	CTool*		pToolCollider = { nullptr };
 	CTool*		pToolAnimList = { nullptr };
 	CTool*		pToolModelSelector = { nullptr };
 	CTool*		pToolTransformtaion = { nullptr };
 	CTool*		pToolAnimPlayer = { nullptr };
+	CTool*		pToolPartObject = { nullptr };
 
 	CTool_AnimPlayer::ANIMPLAYER_DESC		AnimPlayerDesc{};
 	if (nullptr != m_pTestObject)
@@ -88,6 +90,12 @@ HRESULT CAnimationEditor::Add_Tools()
 		AnimPlayerDesc.pMoveDir = m_pTestObject->Get_RootTranslation_Ptr();
 		AnimPlayerDesc.pTransform = dynamic_cast<CTransform*>(m_pTestObject->Get_Component(TEXT("Com_Transform")));
 	}	
+
+	CTool_PartObject::TOOL_PARTOBJECT_DESC	PartObjectDesc{};
+	if (nullptr != m_pTestObject)
+	{
+		PartObjectDesc.pTestObject = m_pTestObject;
+	}
 
 	if (FAILED(__super::Add_Tool(&pToolCollider, static_cast<_uint>(CTool::TOOL_TYPE::COLLIDER), TOOL_COLLIDER_TAG)))
 		return E_FAIL;
@@ -99,14 +107,17 @@ HRESULT CAnimationEditor::Add_Tools()
 		return E_FAIL;	
 	if (FAILED(__super::Add_Tool(&pToolAnimPlayer, static_cast<_uint>(CTool::TOOL_TYPE::ANIM_PLAYER), TOOL_ANIMPLAYER_TAG, &AnimPlayerDesc)))
 		return E_FAIL;
+	if (FAILED(__super::Add_Tool(&pToolPartObject, static_cast<_uint>(CTool::TOOL_TYPE::PART_OBJECT), TOOL_PARTOBJECT_TAG, &PartObjectDesc)))
+		return E_FAIL;
 
 	CTool_Collider*				pToolColliderConvert = dynamic_cast<CTool_Collider*>(pToolCollider);
 	CModel_Selector*			pToolModelSelectorConvert = dynamic_cast<CModel_Selector*>(pToolModelSelector);
 	CTool_AnimList*				pToolAnimListConvert = dynamic_cast<CTool_AnimList*>(pToolAnimList);
 	CTool_Transformation*		pToolTransformationConvert = dynamic_cast<CTool_Transformation*>(pToolTransformtaion);
 	CTool_AnimPlayer*			pToolAnimPlayerConvert = dynamic_cast<CTool_AnimPlayer*>(pToolAnimPlayer);
+	CTool_PartObject*			pToolPartObjectConvert = dynamic_cast<CTool_PartObject*>(pToolPartObject);
 
-	if (nullptr == pToolColliderConvert || nullptr == pToolModelSelectorConvert || nullptr == pToolAnimListConvert || nullptr == pToolTransformationConvert || nullptr == pToolAnimPlayerConvert)
+	if (nullptr == pToolColliderConvert || nullptr == pToolModelSelectorConvert || nullptr == pToolAnimListConvert || nullptr == pToolTransformationConvert || nullptr == pToolAnimPlayerConvert || nullptr == pToolPartObjectConvert)
 	{
 		MSG_BOX(TEXT("Tool积己 肋给达"));
 		return E_FAIL;
@@ -117,6 +128,7 @@ HRESULT CAnimationEditor::Add_Tools()
 	m_pToolAnimList = pToolAnimListConvert;
 	m_pToolTransformation = pToolTransformationConvert;
 	m_pToolAnimPlayer = pToolAnimPlayerConvert;
+	m_pToolPartObject = pToolPartObjectConvert;
 
 	return S_OK;
 }
@@ -181,16 +193,9 @@ void CAnimationEditor::Change_Model_TestObject()
 	}
 }
 
-void CAnimationEditor::Update_Root_Active()
+void CAnimationEditor::Show_PartObjectTags()
 {
-	if (ImGui::RadioButton("Active_Root_XZ", m_isActiveRoot_XZ))
-		m_isActiveRoot_XZ = !m_isActiveRoot_XZ;
-	ImGui::SameLine();
-	if (ImGui::RadioButton("Active_Root_Y", m_isActiveRoot_Y))
-		m_isActiveRoot_Y = !m_isActiveRoot_Y;
-	ImGui::SameLine();
-	if (ImGui::RadioButton("Active_Root_Rotate", m_isActiveRoot_Rotate))
-		m_isActiveRoot_Rotate = !m_isActiveRoot_Rotate;
+
 }
 
 void CAnimationEditor::Set_Transform_TransformTool()
@@ -261,13 +266,18 @@ void CAnimationEditor::Render_BoneTags()
 			0.f, 0.f
 		};
 
+		if (fabsf(vScreenSpacePosition.m128_f32[0]) < g_iWinSizeX * 0.5f * 0.1f ||
+			fabsf(vScreenSpacePosition.m128_f32[1]) < g_iWinSizeY * 0.5f * 0.1f)
+			continue;
+
 		_float2			vScreenSpacePositionFloat2 = {};
 		XMStoreFloat2(&vScreenSpacePositionFloat2, vScreenSpacePosition);
 
 		_tchar			szTemp[MAX_PATH] = { L"" };
 		MultiByteToWideChar(CP_ACP, 0, strBoneTag.c_str(), (_uint)strlen(strBoneTag.c_str()), szTemp, MAX_PATH);
 		wstring			wstrBoneTag = { szTemp };
-		m_pGameInstance->Render_Font(TEXT("Font_Default"), wstrBoneTag, vScreenSpacePositionFloat2, XMVectorSet(1.f, 1.f, 1.f, 1.f), 0.f);
+
+		m_pGameInstance->Render_Font_Scaled(TEXT("Font_Default"), wstrBoneTag, vScreenSpacePositionFloat2, XMVectorSet(1.f, 1.f, 1.f, 1.f), 0.f, 0.35f);
 	}
 }
 
@@ -293,6 +303,7 @@ void CAnimationEditor::Free()
 	Safe_Release(m_pToolAnimList);
 	Safe_Release(m_pToolTransformation);
 	Safe_Release(m_pToolAnimPlayer);
+	Safe_Release(m_pToolPartObject);
 
 	Safe_Release(m_pTestObject);
 }

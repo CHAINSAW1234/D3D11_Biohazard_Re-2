@@ -31,26 +31,12 @@ public:
 	map<string, _float4x4>		Get_BoneCombinedMatrices();
 
 private:
-	void						Create_AnimLayer();
-
-public:
-	void						Add_AnimLayer(const wstring& strAnimLayerTag, list<_uint> BoneIndices);
-	void						Add_AnimLayer_AllBone(const wstring& strAnimLayerTag);
-
-private:
 	void						Set_RootBone();
-	
-private:
-	void						Show_BoneTags();
 
 private:
 	_uint						m_iNumModels = { 0 };
 	map<string, CModel*>		m_Models;
 	string						m_strSelectedModelTag = { "" };
-
-	_bool						m_isShowBoneTags = { false };
-
-	string						m_strCurrentSelectBoneTag = { "" };
 
 public:
 	static CModel_Selector* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

@@ -8,6 +8,7 @@
 #define TOOL_MODELSELECTOR_TAG          "Tool_ModelSelector"
 #define TOOL_TRANSFORMATION_TAG         "Tool_Transformation"
 #define TOOL_ANIMPLAYER_TAG             "Tool_AnimPlayer"
+#define TOOL_PARTOBJECT_TAG             "Tool_PartObject"
 
 BEGIN(Engine)
 class CGameObject;
@@ -34,7 +35,9 @@ private:
 private:
     void                        Add_PartObject_TestObject();
     void                        Change_Model_TestObject();
-    void                        Update_Root_Active();
+
+private:
+    void                        Show_PartObjectTags();
 
 private:    /* For.Transform Tool */
     void                        Set_Transform_TransformTool();
@@ -54,12 +57,13 @@ private:
     CTool_AnimList*             m_pToolAnimList = { nullptr };
     CTool_Transformation*       m_pToolTransformation = { nullptr };
     CTool_AnimPlayer*           m_pToolAnimPlayer = { nullptr };
+    CTool_PartObject*           m_pToolPartObject = { nullptr };
+
+    _bool                       m_isActiveRootXZ = { false };
+    _bool                       m_isActiveRootY = { false };
+    _bool                       m_isActiveRootRotate = { false };
 
     class CAnimTestObject*      m_pTestObject = { nullptr };
-
-    _bool                       m_isActiveRoot_XZ = { false };
-    _bool                       m_isActiveRoot_Y = { false };
-    _bool                       m_isActiveRoot_Rotate = { false };
 
     _bool                       m_isRenderBoneTags = { false };
 

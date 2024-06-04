@@ -85,6 +85,9 @@
     <Filter Include="02.GameObject\Tool\Tool_AnimPlayer">
       <UniqueIdentifier>{9726706d-1868-4141-b089-1427130c3910}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Tool\Tool_PartObject">
+      <UniqueIdentifier>{f3852908-ea99-4df8-9dd2-55197a838129}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -191,6 +194,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Tool_AnimPlayer.cpp">
       <Filter>02.GameObject\Tool\Tool_AnimPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool_PartObject.cpp">
+      <Filter>02.GameObject\Tool\Tool_PartObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -316,6 +322,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Tool_AnimPlayer.h">
       <Filter>02.GameObject\Tool\Tool_AnimPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_PartObject.h">
+      <Filter>02.GameObject\Tool\Tool_PartObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

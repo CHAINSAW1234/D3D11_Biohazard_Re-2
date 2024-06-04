@@ -13,6 +13,7 @@ private:
 public:
 	HRESULT										Add_Font(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const wstring& strFontTag, const wstring& strFontFilePath);
 	HRESULT										Render(const wstring& strFontTag, const wstring & strText, const _float2 & vPosition, _fvector vColor, _float fRadian);
+	HRESULT										Render_Scaled(const wstring& strFontTag, const wstring & strText, const _float2 & vPosition, _fvector vColor, _float fRadian, _float fScale);
 
 private:
 	map<const wstring, class CCustomFont*>		m_Fonts;

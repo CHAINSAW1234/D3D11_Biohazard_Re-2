@@ -2,6 +2,8 @@
 #include "AnimTestObject.h"
 #include "AnimTestPartObject.h"
 
+#include "Character_Controller.h"
+
 CAnimTestObject::CAnimTestObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CGameObject{ pDevice, pContext }
 {
@@ -30,6 +32,8 @@ HRESULT CAnimTestObject::Initialize(void* pArg)
     if (FAILED(Add_Components()))
         return E_FAIL;
 
+    //  m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.f, 0.f, 1.f), &m_iIndex_CCT, this);
+
     return S_OK;
 }
 
@@ -43,6 +47,8 @@ void CAnimTestObject::Priority_Tick(_float fTimeDelta)
 
 void CAnimTestObject::Tick(_float fTimeDelta)
 {
+    //  m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4());
+
     for (auto& Pair : m_PartObjects)
     {
         Pair.second->Tick(fTimeDelta);
@@ -51,6 +57,17 @@ void CAnimTestObject::Tick(_float fTimeDelta)
 
 void CAnimTestObject::Late_Tick(_float fTimeDelta)
 {
+   /* _vector         vMovedDirection = { XMLoadFloat3(&m_vRootTranslation) };
+    m_pController->Move(vMovedDirection, fTimeDelta);*/
+
+    _vector         vCurrentPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+    _vector         vMovedDirection = { XMLoadFloat3(&m_vRootTranslation) };
+    _vector         vResultPosition = { vCurrentPosition + vMovedDirection };
+
+    m_pTransformCom->Set_State(CTransform::STATE_POSITION, vResultPosition);
+
+    m_vRootTranslation = { 0.f, 0.f, 0.f, 0.f };
+
     for (auto& Pair : m_PartObjects)
     {
         Pair.second->Late_Tick(fTimeDelta);
@@ -71,7 +88,7 @@ void CAnimTestObject::Tick_PartObjects(_float fTimeDelta)
 }
 
 void CAnimTestObject::Late_Tick_PartObjects(_float fTimeDelta)
-{
+{    
 }
 
 CAnimTestPartObject* CAnimTestObject::Get_PartObject(const wstring& strPartTag)

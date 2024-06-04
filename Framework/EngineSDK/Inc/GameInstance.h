@@ -113,6 +113,7 @@ public: /* For.Light_Manager */
 public: /* For.Font_Manager */
 	HRESULT									Add_Font(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const wstring& strFontTag, const wstring& strFontFilePath);
 	HRESULT									Render_Font(const wstring& strFontTag, const wstring& strText, const _float2& vPosition, _fvector vColor, _float fRadian);
+	HRESULT									Render_Font_Scaled(const wstring& strFontTag, const wstring& strText, const _float2& vPosition, _fvector vColor, _float fRadian, _float fScale);
 #pragma endregion
 
 #pragma region Target_Manager

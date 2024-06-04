@@ -601,6 +601,7 @@
     <ClCompile Include="..\Private\Tool_AnimList.cpp" />
     <ClCompile Include="..\Private\Tool_AnimPlayer.cpp" />
     <ClCompile Include="..\Private\Tool_Collider.cpp" />
+    <ClCompile Include="..\Private\Tool_PartObject.cpp" />
     <ClCompile Include="..\Private\Tool_Selector.cpp" />
     <ClCompile Include="..\Private\Tool_Transformation.cpp" />
     <ClCompile Include="Animation_Tool.cpp" />
@@ -645,6 +646,7 @@
     <ClInclude Include="..\Public\Level_Tool.h" />
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\Public\MainApp.h" />
+    <ClInclude Include="..\Public\Tool_PartObject.h" />
     <ClInclude Include="..\Public\Tool_Selector.h" />
     <ClInclude Include="..\Public\Tool_Transformation.h" />
     <ClInclude Include="Animation_Tool.h" />

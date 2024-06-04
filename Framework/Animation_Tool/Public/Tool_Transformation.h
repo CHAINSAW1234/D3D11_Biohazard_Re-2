@@ -34,6 +34,9 @@ private:
 	void						Update_Transform();
 	void						Update_Target_Transform();
 
+private:
+	void						Set_Origin();
+
 public:
 	void						Set_Mode(MODE eMode) { m_eMode = eMode; }
 

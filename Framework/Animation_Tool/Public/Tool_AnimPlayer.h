@@ -37,11 +37,47 @@ private:
 	_uint					Get_CurrentKeyFrame();
 
 private:
+	void					On_Off_Buttons();
+
+private:
+	void					Create_AnimLayer();
+
+private:
+	void					Add_AnimLayer(const wstring& strAnimLayerTag, list<_uint> BoneIndices);
+	void					Add_AnimLayer_AllBone(const wstring& strAnimLayerTag);
+
+	void					Set_Animation();
+
+private:
+	void					Set_IK_Option();
+	void					Add_IK();
+
+private:
+	void					Show_CurrentSelectedInfos();
+	void					Show_BoneLayers();
+	void					Show_BoneTags();
+	void					Set_RootBone(const string& strRootBoneTag);
+
+private:
+	void					Apply_RootMotion();
+
+private:
 	CAnimation*				m_pCurrentAnimation = { nullptr };
 	CModel*					m_pAnimModel = { nullptr };
 	CTransform*				m_pTargetTransform = { nullptr };
 	_float3*				m_pRootMoveDir = { nullptr };
+
 	_bool					m_isPlayAnimation = { false };
+
+	_bool					m_isRooActive_XZ = { false };
+	_bool					m_isRooActive_Y = { false };
+	_bool					m_isRooActive_Rotate = { false };
+
+	_bool					m_isShowBoneTags = { false };
+	_bool					m_isShowLayerTags = { false };
+
+	string					m_strCurrentSelectBoneTag = { "" };
+	string					m_strCurrentSelectLayerTag = { "" };
 
 public:
 	static CTool_AnimPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

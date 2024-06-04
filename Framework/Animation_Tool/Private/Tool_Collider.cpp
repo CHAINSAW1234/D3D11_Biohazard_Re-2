@@ -37,7 +37,7 @@ CGameObject* CTool_Collider::Get_CurrentSelectCollider()
 
 CTool_Collider* CTool_Collider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
 {
-	CTool_Collider* pInatnace = new CTool_Collider(pDevice, pContext);
+	CTool_Collider*			pInatnace = { new CTool_Collider(pDevice, pContext) };
 
 	if (FAILED(pInatnace->Initialize(pArg)))
 	{

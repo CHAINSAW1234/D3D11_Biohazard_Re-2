@@ -24,6 +24,30 @@ void CTool::Tick(_float fTimeDelta)
 	
 }
 
+wstring CTool::Convert_String_Wstring(const string& strText)
+{
+	const _char*		szBuf = { strText.c_str() };
+	TCHAR				lszBuf[MAX_PATH] = { L"" };
+
+	MultiByteToWideChar(CP_ACP, 0, szBuf, (_uint)strlen(szBuf), lszBuf, MAX_PATH);
+
+	wstring				strResult = { lszBuf };
+
+	return strResult;
+}
+
+string CTool::Convert_Wstring_String(const wstring& strText)
+{
+	const TCHAR*		lszBuf = { strText.c_str() };
+	_char				szBuf[MAX_PATH] = { "" };
+
+	WideCharToMultiByte(CP_UTF8, 0, lszBuf, (_uint)lstrlen(lszBuf), szBuf, MAX_PATH, NULL, NULL);
+
+	string				strResult = { szBuf };
+
+	return strResult;
+}
+
 void CTool::Free()
 {
 	__super::Free();

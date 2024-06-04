@@ -155,6 +155,19 @@ void CModel::Set_RootBone(string strBoneTag)
 	m_Bones[iBoneIndex]->Set_RootBone(true);
 }
 
+_bool CModel::Is_Set_RootBone()
+{
+	_bool		isSetRoot = { false };
+
+	for (auto& pBone : m_Bones)
+	{
+		if (true == pBone->Is_RootBone())
+			isSetRoot = true;
+	}
+
+	return isSetRoot;
+}
+
 void CModel::Add_IK(string strTargetJointTag, string strEndEffectorTag, wstring strIKTag, _uint iNumIteration, _float fBlend)
 {
 	map<wstring, IK_INFO>::iterator		iter = { m_IKInfos.find(strIKTag) };
@@ -1473,6 +1486,32 @@ list<_uint> CModel::Get_MeshIndices(const string& strMeshTag)
 	return MeshIndices;
 }
 
+list<wstring> CModel::Get_BoneLayer_Tags()
+{
+	list <wstring>		BoneLayerTags;
+	for (auto& Pair : m_BoneLayers)
+	{
+		wstring			BoneLayerTag = { Pair.first };
+		
+		BoneLayerTags.push_back(BoneLayerTag);
+	}
+
+	return BoneLayerTags;
+}
+
+_uint CModel::Find_AnimIndex(CAnimation* pAnimation)
+{
+	_uint		iIndex = { 0 };
+	for (auto& pDstAnimation : m_Animations)
+	{
+		if (pAnimation == pDstAnimation)
+			break;
+		++iIndex;
+	}
+
+	return iIndex;
+}
+
 _float4 CModel::Invalidate_RootNode(const string& strRoot)
 {
 	for (auto& Bone : m_Bones)
@@ -1815,6 +1854,9 @@ HRESULT CModel::Play_Animations(_float fTimeDelta)
 
 HRESULT CModel::Play_Animations_RootMotion(CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection)
 {
+	if (false == Is_Set_RootBone())
+		return E_FAIL;
+
 	for (auto& pBone : m_Bones)
 	{
 		_matrix			PreCombinedMatrix = { XMLoadFloat4x4(pBone->Get_CombinedTransformationMatrix()) };
@@ -1876,7 +1918,7 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, set<_uint>& Include
 	_int						iRootBoneIndex = { Find_RootBoneIndex() };
 	vector<_float4x4>			TransformationMatrices;
 
-	ANIM_PLAYING_INFO& AnimInfo = { m_PlayingAnimInfos[iPlayingAnimIndex] };
+	ANIM_PLAYING_INFO&			AnimInfo = { m_PlayingAnimInfos[iPlayingAnimIndex] };
 	_bool						isFirstTick = { false };
 
 	if (-1 == AnimInfo.iAnimIndex ||
@@ -2051,6 +2093,9 @@ vector<_float4x4> CModel::Compute_ResultMatrices(const vector<vector<_float4x4>>
 		//	각 변환행렬을 결과행렬에 가산한다 => 웨이트를 적용하여 가산한다.
 		for (_uint iBoneIndex : IncludedBoneIndices)
 		{
+			if (-1 == m_PlayingAnimInfos[iPlayAnimIndex].iAnimIndex)
+				continue;
+
 			if (false == m_BoneLayers[m_PlayingAnimInfos[iPlayAnimIndex].strBoneLayerTag]->Is_Included(iBoneIndex))
 				continue;
 

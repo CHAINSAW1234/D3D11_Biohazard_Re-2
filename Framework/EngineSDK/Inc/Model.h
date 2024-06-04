@@ -37,6 +37,8 @@ public:		/* For.RootAnimaition ActiveControll */
 	void									Active_RootMotion_Y(_bool isActive);
 	void									Active_RootMotion_Rotation(_bool isActive);
 	void									Set_RootBone(string strBoneTag);			//	모든본을 초기화 => 루트본은 하나다 가정후 찾은 본을 루트본으로 등록
+	
+	_bool									Is_Set_RootBone();
 
 public:		/* For.IK Public*/
 	void									Add_IK(string strTargetJointTag, string strEndEffectorTag, wstring strIKTag, _uint iNumIteration, _float fBlend);
@@ -120,7 +122,11 @@ public:		/* For. Access */
 	list<_uint>								Get_MeshIndices(const string& strMeshTag);		//	이름이 같은 메쉬들이 각각의 칸에있을수있으므로 인덱스들을 컨테이너에 담아서 반환한다.
 	vector<CAnimation*>						Get_Animations() { return m_Animations; }
 	map<wstring, class CBone_Layer*>		Get_BoneLayers() { return m_BoneLayers; }
+	list<wstring>							Get_BoneLayer_Tags();
 
+	_uint									Get_NumPlayingInfos() { return static_cast<_uint>(m_PlayingAnimInfos.size()); }
+
+	_uint									Find_AnimIndex(CAnimation* pAnimation);
 
 	_float4									Invalidate_RootNode(const string& strRoot);
 

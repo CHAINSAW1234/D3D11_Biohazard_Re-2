@@ -30,6 +30,7 @@ void CTool_Transformation::Tick(_float fTimeDelta)
 
 	if (ImGui::CollapsingHeader(m_strCollasingTag.c_str()))
 	{
+		Set_Origin();
 		Update_Transform();
 		Update_Target_Transform();
 	}	
@@ -77,6 +78,14 @@ void CTool_Transformation::ReSet_Target()
 
 void CTool_Transformation::Update_Transform()
 {
+	ImGui::NewLine();
+
+	if (nullptr != m_pTargetTransform)
+	{
+		_matrix			TargetWorldMatrix = { m_pTargetTransform->Get_WorldMatrix() };
+		m_pTransformCom->Set_WorldMatrix(TargetWorldMatrix);
+	}
+
 	_float4x4		WorldFloat4x4 = { m_pTransformCom->Get_WorldFloat4x4() };
 
 	ImGuizmo::BeginFrame();
@@ -161,6 +170,20 @@ void CTool_Transformation::Update_Target_Transform()
 
 	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
 	m_pTargetTransform->Set_WorldMatrix(WorldMatrix);
+}
+
+void CTool_Transformation::Set_Origin()
+{
+	if (nullptr == m_pTransformCom)
+		return;
+
+	if (ImGui::Button("Set Position Zero"))
+	{
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorZero());
+
+		if(nullptr != m_pTargetTransform)
+			m_pTargetTransform->Set_State(CTransform::STATE_POSITION, XMVectorZero());
+	}
 }
 
 HRESULT CTool_Transformation::Add_Componets()
