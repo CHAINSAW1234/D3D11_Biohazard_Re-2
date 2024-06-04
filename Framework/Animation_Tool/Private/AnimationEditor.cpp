@@ -112,7 +112,7 @@ HRESULT CAnimationEditor::Add_Tools()
 		return E_FAIL;
 	if (FAILED(__super::Add_Tool(&pToolPartObject, static_cast<_uint>(CTool::TOOL_TYPE::PART_OBJECT), TOOL_PARTOBJECT_TAG, &PartObjectDesc)))
 		return E_FAIL;
-	if (FAILED(__super::Add_Tool(&pToolBoneLayer, static_cast<_uint>(CTool::TOOL_TYPE::PART_OBJECT), TOOL_BONELAYER_TAG)))
+	if (FAILED(__super::Add_Tool(&pToolBoneLayer, static_cast<_uint>(CTool::TOOL_TYPE::BONE_LAYER), TOOL_BONELAYER_TAG)))
 		return E_FAIL;
 
 	CTool_Collider*				pToolColliderConvert = dynamic_cast<CTool_Collider*>(pToolCollider);
@@ -206,6 +206,50 @@ void CAnimationEditor::Change_Model_TestObject()
 void CAnimationEditor::Show_PartObjectTags()
 {
 
+}
+
+void CAnimationEditor::Add_BoneLayer_AllBone()
+{
+	CModel* pModel = { m_pToolModelSelector->Get_CurrentSelectedModel() };
+	if (nullptr == pModel)
+		return;
+
+	m_pToolBoneLayer->Create_AnimLayer_AllBone(pModel);
+}
+
+void CAnimationEditor::Add_BoneLayer_ChildBones()
+{
+	CModel* pModel = { m_pToolModelSelector->Get_CurrentSelectedModel() };
+	if (nullptr == pModel)
+		return;
+
+	m_pToolBoneLayer->Create_AnimLayer_BoneChilds(pModel, strTopBoneTag);
+}
+
+void CAnimationEditor::Add_BoneLayer_BetweenIndices()
+{
+	CModel* pModel = { m_pToolModelSelector->Get_CurrentSelectedModel() };
+	if (nullptr == pModel)
+		return;
+
+	_uint				iNumBones = { static_cast<_uint>(pModel->Get_BoneNames().size()) };
+
+	static _uint		iStartBoneIndex = { 0 };
+	static _uint		iEndBoneIndex = { 0 };
+
+	if (iStartBoneIndex >= iNumBones)
+		iStartBoneIndex = iNumBones - 1;
+
+	if (iEndBoneIndex >= iNumBones)
+		iEndBoneIndex = iNumBones - 1;
+
+	list<_uint>			BoneIndices;
+	for (_uint iBoneIndex = iStartBoneIndex; iBoneIndex <= iEndBoneIndex; ++iBoneIndex)
+	{
+		BoneIndices.push_back(iBoneIndex);
+	}
+
+	m_pToolBoneLayer->Create_AnimLayer_Indices(pModel, BoneIndices);
 }
 
 void CAnimationEditor::Set_Transform_TransformTool()

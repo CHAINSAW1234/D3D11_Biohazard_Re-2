@@ -23,6 +23,8 @@ public:
 	void							Create_AnimLayer_BoneChilds(CModel* pModel, const string& strTopParentBoneTag);
 	void							Create_AnimLayer_Indices(CModel* pModel, list<_uint> BoneIndices);
 
+	wstring							Get_CurrentLayerTag() { return m_strAnimLayerTag; }
+
 	list<wstring>					Get_BoneLayerTags(CModel* pModel);
 
 private:

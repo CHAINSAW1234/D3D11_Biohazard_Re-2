@@ -24,41 +24,13 @@ void CModel_Selector::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	static ImVec2 WinSize;
-	WinSize = ImGui::GetWindowSize();
-
-	static string		strSelectTag = { "Select Model" };
-
-	_uint			iNumModels = { static_cast<_uint>(m_Models.size()) };
-	string*			ModelTags = { new string[iNumModels] };
-
-	_uint			iIndex = { 0 };
-	for (auto& Pair : m_Models)
-	{
-		ModelTags[iIndex++] = Pair.first;
-	}
+	WinSize = ImGui::GetWindowSize();	
 
 	if (ImGui::CollapsingHeader(m_strCollasingTag.c_str()))
 	{
-		if (ImGui::BeginCombo("Model", strSelectTag.c_str()))
-		{
-			//	모델 컴포넌트 선택하는 창
-			for (_uint i = 0; i < iNumModels; ++i)
-			{
-				_bool		isSelected = { ModelTags[i] == strSelectTag };
-				if (ImGui::Selectable(ModelTags[i].c_str(), isSelected))
-				{
-					strSelectTag = ModelTags[i];
-					m_strSelectedModelTag = strSelectTag;
-				}
-				if (true == isSelected)
-				{
-					ImGui::SetItemDefaultFocus();
-				}
-			}
-
-			Safe_Delete_Array(ModelTags);
-			ImGui::EndCombo();
-		}
+		Select_Model();
+		Select_Bone();		
+		Select_RootBone();
 	}	
 }
 
@@ -94,6 +66,87 @@ HRESULT CModel_Selector::Add_Components()
 	return S_OK;
 }
 
+void CModel_Selector::Select_Model()
+{
+	static string		strSelectTag = { "Select Model" };
+
+	_uint				iNumModels = { static_cast<_uint>(m_Models.size()) };
+	string*				ModelTags = { new string[iNumModels] };
+
+	_uint				iIndex = { 0 };
+	for (auto& Pair : m_Models)
+	{
+		ModelTags[iIndex++] = Pair.first;
+	}
+
+	if (ImGui::BeginCombo("Model", strSelectTag.c_str()))
+	{
+		//	모델 컴포넌트 선택하는 창
+		for (_uint i = 0; i < iNumModels; ++i)
+		{
+			_bool		isSelected = { ModelTags[i] == strSelectTag };
+			if (ImGui::Selectable(ModelTags[i].c_str(), isSelected))
+			{
+				strSelectTag = ModelTags[i];
+				m_strSelectedModelTag = strSelectTag;
+			}
+			if (true == isSelected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	Safe_Delete_Array(ModelTags);
+}
+
+void CModel_Selector::Select_Bone()
+{
+	static string		strSelectTag = { "Select Bone" };	
+
+	map<string, CModel*>::iterator		iter = { m_Models.find(m_strSelectedModelTag) };
+	if (iter == m_Models.end())
+		return;
+
+	if (ImGui::RadioButton("Show BoneTags ## CModel_Selector"), m_isShowBoneTags)
+	{
+		m_isShowBoneTags = !m_isShowBoneTags;
+	}
+
+	_uint				iNumBones = { static_cast<_uint>(m_Models.size()) };
+	string*				BoneTags = { new string[iNumBones] };
+	_uint				iIndex = { 0 };
+
+	vector<string>		vecBoneTags = { m_Models[m_strSelectedModelTag]->Get_BoneNames() };
+	for (auto& strBoneTag : vecBoneTags)
+	{
+		BoneTags[iIndex++] = strBoneTag;
+	}
+
+	if (ImGui::BeginCombo("Bone", strSelectTag.c_str()))
+	{
+		//	모델 컴포넌트 선택하는 창
+		for (_uint i = 0; i < iNumBones; ++i)
+		{
+			_bool		isSelected = { BoneTags[i] == strSelectTag };
+			if (ImGui::Selectable(BoneTags[i].c_str(), isSelected))
+			{
+				strSelectTag = BoneTags[i];
+				m_strSelectedBoneTag = strSelectTag;
+			}
+
+			if (true == isSelected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	Safe_Delete_Array(BoneTags);
+}
+
 CModel* CModel_Selector::Get_CurrentSelectedModel()
 {
 	map<string, CModel*>::iterator		iter = { m_Models.find(m_strSelectedModelTag) };
@@ -121,15 +174,23 @@ map<string, _float4x4> CModel_Selector::Get_BoneCombinedMatrices()
 	return BoneCombinedMatrices;
 }
 
+_float4x4* CModel_Selector::Get_Selected_BoneCombinedMatrix_Ptr()
+{
+	map<string, CModel*>::iterator		iter = { m_Models.find(m_strSelectedBoneTag) };
+
+	if (iter == m_Models.end())
+		return nullptr;
+
+	return const_cast<_float4x4*>(iter->second->Get_CombinedMatrix(m_strSelectedBoneTag));
+}
+
 void CModel_Selector::Set_RootBone()
 {
 	map<string, CModel*>::iterator		iter = { m_Models.find(m_strSelectedModelTag) };
 	if (iter == m_Models.end())
 		return;
 
-
-
-	//	m_Models[m_strSelectedModelTag]->Set_RootBone(m_strCurrentSelectBoneTag);
+	m_Models[m_strSelectedModelTag]->Set_RootBone(m_strSelectedBoneTag);
 
 }
 

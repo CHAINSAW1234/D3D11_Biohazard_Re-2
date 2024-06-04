@@ -40,6 +40,11 @@ private:
 private:
     void                        Show_PartObjectTags();
 
+private:    /* For.Func */
+    void                        Add_BoneLayer_AllBone();
+    void                        Add_BoneLayer_ChildBones();
+    void                        Add_BoneLayer_BetweenIndices();
+
 private:    /* For.Transform Tool */
     void                        Set_Transform_TransformTool();
 
@@ -59,7 +64,7 @@ private:
     CTool_Transformation*       m_pToolTransformation = { nullptr };
     CTool_AnimPlayer*           m_pToolAnimPlayer = { nullptr };
     CTool_PartObject*           m_pToolPartObject = { nullptr };
-    CTool_BoneLayer* m_pToolBoneLayer = { nullptr };
+    CTool_BoneLayer*            m_pToolBoneLayer = { nullptr };
 
     _bool                       m_isActiveRootXZ = { false };
     _bool                       m_isActiveRootY = { false };

@@ -77,9 +77,19 @@ void CTool_BoneLayer::Add_AnimLayer_AllBone(CModel* pModel)
 
 CTool_BoneLayer* CTool_BoneLayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
 {
-	return nullptr;
+	CTool_BoneLayer*		pInatnace = { new CTool_BoneLayer(pDevice, pContext) };
+
+	if (FAILED(pInatnace->Initialize(pArg)))
+	{
+		MSG_BOX(TEXT("Failed To Created : CTool_BoneLayer"));
+
+		Safe_Release(pInatnace);
+	}
+
+	return pInatnace;
 }
 
 void CTool_BoneLayer::Free()
 {
+	__super::Free();
 }

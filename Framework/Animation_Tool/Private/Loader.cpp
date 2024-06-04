@@ -117,10 +117,10 @@ HRESULT CLoader::Loading_For_GamePlay()
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 
 	/* Prototype_Component_police_holl */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_police_holl"),
+	/*if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_police_holl"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/map/police_holl.fbx",
 			TransformMatrix))))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	/* Prototype_Component_Model_LeonBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonBody"),
