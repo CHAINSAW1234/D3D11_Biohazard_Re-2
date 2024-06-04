@@ -577,12 +577,12 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
         Out.vDiffuse.a = 1;
     }
 
-    float3 uv = float3(In.vTexcoord, vDepth.r);
+    //float3 uv = float3(In.vTexcoord, vDepth.r);
 
-    float4 scatteringColorAndTransmittance = g_3DTexture.Sample(PointSampler, uv);
-    float3 scatteringColor = HDR(scatteringColorAndTransmittance.rgb);
+    //float4 scatteringColorAndTransmittance = g_3DTexture.Sample(PointSampler, uv);
+    //float3 scatteringColor = HDR(scatteringColorAndTransmittance.rgb);
 
-    Out.vDiffuse = Out.vDiffuse * float4(scatteringColor, scatteringColorAndTransmittance.a);
+    //Out.vDiffuse = Out.vDiffuse * float4(scatteringColor, scatteringColorAndTransmittance.a);
     
     return Out;
 }

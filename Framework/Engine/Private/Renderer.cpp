@@ -100,8 +100,8 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_Shadow_Spot()))
 		return E_FAIL;
 
-	if (FAILED(Render_Test()))
-		return E_FAIL;
+	//if (FAILED(Render_Test()))
+	//	return E_FAIL;
 
 	if (FAILED(Render_Light_Result()))
 		return E_FAIL;

@@ -31,11 +31,16 @@
 *.exe
 *.out
 *.app
+*.bak
 
 .vs/
 *.exp
 *.idb
 *.pdb
+
+
+*.dds
+*.tga
 
 FrameWork/Client/Default/x64/
 FrameWork/Engine/Default/x64/
