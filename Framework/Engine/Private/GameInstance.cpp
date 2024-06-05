@@ -139,7 +139,7 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 		return E_FAIL;
 	}
 
-	m_pThread_Pool = CThread_Pool::Create(24);
+	m_pThread_Pool = CThread_Pool::Create(8);
 	if (nullptr == m_pThread_Pool)
 	{
 		MSG_BOX(TEXT("Error: m_pThread_Pool::Create -> nullptr"));
