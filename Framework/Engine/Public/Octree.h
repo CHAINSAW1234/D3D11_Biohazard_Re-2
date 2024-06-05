@@ -12,9 +12,9 @@ extern bool g_bLighting;
 
 extern bool g_RenderMode;
 
-extern int g_MaxTriangles = 10000;
+extern int g_MaxTriangles = 5000;
 
-extern int g_MaxSubdivisions =3;
+extern int g_MaxSubdivisions =4;
 
 extern int g_EndNodeCount = 0;
 
@@ -97,6 +97,7 @@ public:
 	class CGameInstance*				m_pGameInstance = { nullptr };
 	_float4								m_vTranslation;
 	vector<class CModel*>				m_vecEntryNode;
+	vector<vector<class CMesh*>>		m_vecMesh;
 private:
 	ID3D11Device*						m_pDevice = { nullptr };
 	ID3D11DeviceContext*				m_pContext = { nullptr };

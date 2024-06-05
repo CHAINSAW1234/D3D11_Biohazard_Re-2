@@ -587,6 +587,30 @@ void CMesh::Release_IndexBuffer()
 	Safe_Delete_Array(m_pIndices);
 }
 
+void CMesh::Release_Dump()
+{
+	if (m_pVertices_Cooking)
+		Safe_Delete_Array(m_pVertices_Cooking);
+	if (m_pIndices_Cooking)
+		Safe_Delete_Array(m_pIndices_Cooking);
+	if (m_pNormals)
+		Safe_Delete_Array(m_pNormals);
+	if (m_pTangents)
+		Safe_Delete_Array(m_pTangents);
+	if (m_pTexcoords)
+		Safe_Delete_Array(m_pTexcoords);
+
+	if (!m_vecFaces.empty())
+	{
+		for (int i = 0; i < m_vecFaces.size(); ++i)
+		{
+			delete m_vecFaces[i];
+		}
+	}
+
+	m_vecFaces.clear();
+}
+
 CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::MODEL_TYPE eModelType, const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices, _fmatrix TransformationMatrix)
 {
 	CMesh* pInstance = new CMesh(pDevice, pContext);

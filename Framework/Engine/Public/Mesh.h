@@ -156,6 +156,7 @@ public: /* For Octree Culling*/
 	void					SetTangents(_float3* pTangents);
 	void					SetTexcoords(_float2* pTexcoords);
 	void					Release_IndexBuffer();
+	void					Release_Dump();
 private:
 	vector<tFace*>	m_vecFaces;
 	_float3* m_pNormals = { nullptr };

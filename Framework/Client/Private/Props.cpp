@@ -52,7 +52,7 @@ HRESULT CProps::Initialize(void* pArg)
 	m_pModelCom->Static_Mesh_Cooking();
 
 
-	/*m_pOctree = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+	m_pOctree = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 	m_pOctree->GetSceneDimensions(m_pModelCom);
 	int TotalTriangleCount = m_pOctree->GetSceneTriangleCount(m_pModelCom);
 	m_pOctree->CreateNode(m_pModelCom, TotalTriangleCount, m_pOctree->GetCenter(), m_pOctree->GetWidth());
@@ -60,7 +60,7 @@ HRESULT CProps::Initialize(void* pArg)
 	for (int i = 0; i < m_pModelCom->GetNumMesh(); ++i)
 	{
 		m_pModelCom->Release_IndexBuffer(i);
-	}*/
+	}
 
 	return S_OK;
 }
@@ -115,7 +115,7 @@ HRESULT CProps::Render()
 		return E_FAIL;
 
 
-	if (m_bOctotree)
+	/*if (m_bOctotree)
 		m_pOctree->DrawOctree(m_pOctree, m_pModelCom, m_pShaderCom);
 	else
 	{
@@ -141,10 +141,11 @@ HRESULT CProps::Render()
 
 			m_pModelCom->Render(static_cast<_uint>(i));
 		}
-	}
+	}*/
 
+	//m_pOctree->DrawOctree(m_pOctree, m_pModelCom, m_pShaderCom);
 
-	/*std::function<void()> job1 = std::bind(&COctree::DrawOctree_1, m_pOctree);
+	std::function<void()> job1 = std::bind(&COctree::DrawOctree_1, m_pOctree);
 	m_pGameInstance->Insert_Job(job1);
 
 	std::function<void()> job2 = std::bind(&COctree::DrawOctree_2, m_pOctree);
@@ -173,7 +174,7 @@ HRESULT CProps::Render()
 		this_thread::yield();
 	}
 
-	m_pOctree->Render_Node(m_pModelCom, m_pShaderCom);*/
+	m_pOctree->Render_Node(m_pModelCom, m_pShaderCom);
 
 	return S_OK;
 }
