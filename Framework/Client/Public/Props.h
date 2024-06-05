@@ -39,7 +39,7 @@ public:
 
 private:
 	_bool						m_bOctotree = { false };
-	_bool						m_bShadow = { false };
+	_bool						m_bShadow = { true };
 	_float m_fTimeTest = { 0.f };
 	CModel*						m_pModelCom = { nullptr };
 	CShader*					m_pShaderCom = { nullptr };

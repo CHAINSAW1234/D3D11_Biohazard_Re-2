@@ -48,6 +48,7 @@ bool g_isShadowDirLight;
 texture2D g_DirLightDepthTexture;
 matrix g_DirLightViewMatrix;
 matrix g_DirLightProjMatrix;
+float4 g_vDirLightDiffuse;
 float4 g_vDirLightDirection;
 
 TextureCubeArray g_PointLightDepthTexture;
@@ -62,6 +63,7 @@ bool g_isShadowSpotLight;
 texture2D g_SpotLightDepthTexture;
 matrix g_SpotLightViewMatrix;
 matrix g_SpotLightProjMatrix;
+float4 g_vSpotLightDiffuse;
 float4 g_vSpotLightPosition;
 float4 g_vSpotLightDirection;
 float g_fSpotLightCutOff;
@@ -1159,6 +1161,88 @@ PS_OUT PS_FXAA(PS_IN In)
     return Out;
 }
 
+
+PS_OUT PS_GODSRAY(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+    
+    float4 vViewPosition = mul(ConvertoTexcoordToWorldPosition(In.vTexcoord), g_CamViewMatrix);
+    
+    float3 vDir = -vViewPosition.xyz;
+    float fCameraDistance = length(vViewPosition.xyz);
+    vDir /= fCameraDistance;
+    
+    const uint SAMPLE_COUNT = 32;
+    
+    float3 rayEnd = float3(0.0f, 0.0f, 0.0f);
+    float stepSize = length(vViewPosition.xyz - rayEnd) / SAMPLE_COUNT;
+    
+    float accumulation_Dir = 0;
+    float accumulation_Spot = 0;
+    for (uint i = 0; i < SAMPLE_COUNT; ++i)
+    {
+        // 1. Direction
+        if (g_isShadowDirLight)
+        {
+            float4 ShadowMapCoord = mul(vViewPosition, g_ViewMatrixInv); // WorldPosition
+            ShadowMapCoord = mul(ShadowMapCoord, g_DirLightViewMatrix);
+            ShadowMapCoord = mul(ShadowMapCoord, g_DirLightProjMatrix);
+            ShadowMapCoord.x = ShadowMapCoord.x / ShadowMapCoord.w * 0.5f + 0.5;
+            ShadowMapCoord.y = ShadowMapCoord.y / ShadowMapCoord.w * -0.5f + 0.5;
+        
+            if (saturate(ShadowMapCoord.x) == ShadowMapCoord.x &&
+            saturate(ShadowMapCoord.y) == ShadowMapCoord.y)
+            {
+                float fDepth = g_DirLightDepthTexture.Sample(PointSampler, ShadowMapCoord.xy).r;
+            
+                if (ShadowMapCoord.w > fDepth * 1000)
+                    ++accumulation_Dir;
+            
+            }
+        }
+        // 2. SpotLight
+        if (g_isShadowSpotLight)
+        {
+            vector vLightDir = mul(vViewPosition, g_ViewMatrixInv) -g_vSpotLightPosition;
+            vector vSpotDir = g_vSpotLightDirection;
+            float fResult = acos(dot(normalize(vLightDir), normalize(vSpotDir)));
+            float fDistance = length(vLightDir);
+            float fIntensity = (fResult - g_fSpotLightOutCutOff) / (g_fSpotLightCutOff - g_fSpotLightOutCutOff);
+            float fAtt = saturate((g_fSpotLightRange - fDistance) / g_fSpotLightRange) * fIntensity; //범위 줘서 끝 범위에서는 연해지게 
+            
+            
+            if (g_fSpotLightOutCutOff >= fResult) // 빛이 번질 범위 안에 있을 때
+            {
+                float4 ShadowMapCoord = mul(vViewPosition, g_ViewMatrixInv); // WorldPosition
+                ShadowMapCoord = mul(ShadowMapCoord, g_SpotLightViewMatrix);
+                ShadowMapCoord = mul(ShadowMapCoord, g_SpotLightProjMatrix);
+                ShadowMapCoord.x = ShadowMapCoord.x / ShadowMapCoord.w * 0.5f + 0.5;
+                ShadowMapCoord.y = ShadowMapCoord.y / ShadowMapCoord.w * -0.5f + 0.5;
+        
+                if (saturate(ShadowMapCoord.x) == ShadowMapCoord.x &&
+                    saturate(ShadowMapCoord.y) == ShadowMapCoord.y)
+                {
+                    float fDepth = g_SpotLightDepthTexture.Sample(PointSampler, ShadowMapCoord.xy).r;
+            
+                    if (ShadowMapCoord.w  > fDepth * 1000)
+                        accumulation_Spot += fAtt;
+            
+                }
+            }
+        }
+        
+        vViewPosition = vViewPosition + float4(vDir * stepSize, 0);
+    }
+    
+    
+    accumulation_Dir /= SAMPLE_COUNT;
+    accumulation_Spot /= SAMPLE_COUNT;
+   
+    Out.vColor = g_vDirLightDiffuse * (1 - accumulation_Dir) + g_vSpotLightDiffuse * accumulation_Spot;
+    Out.vColor.a = 1;
+    return Out;
+}
+
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -1417,6 +1501,18 @@ technique11 DefaultTechnique
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_DOF_BLURY();
     }
+    pass GODRAY // 16
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_GODSRAY();
+    }
 
     pass FXAA // 16
     {
@@ -1430,5 +1526,7 @@ technique11 DefaultTechnique
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_FXAA();
     }
+
+
 
 }

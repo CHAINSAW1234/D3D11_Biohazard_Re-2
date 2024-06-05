@@ -68,6 +68,8 @@ HRESULT CRenderer::Render()
 	if (m_pGameInstance->Get_KeyState('4') == DOWN)
 		m_ShaderOptions[DOF] = !m_ShaderOptions[DOF];
 	if (m_pGameInstance->Get_KeyState('5') == DOWN)
+		m_ShaderOptions[GODRAY] = !m_ShaderOptions[GODRAY];
+	if (m_pGameInstance->Get_KeyState('6') == DOWN)
 		m_ShaderOptions[FXAA] = !m_ShaderOptions[FXAA];
 
 	if(FAILED(m_pGameInstance->Clear_RenderTarget_All()))
@@ -113,6 +115,9 @@ HRESULT CRenderer::Render()
 		return E_FAIL;
 
 	if (FAILED(Render_DOF()))
+		return E_FAIL;
+
+	if (FAILED(Render_GODRAY()))
 		return E_FAIL;
 
 	if (FAILED(Render_NonLight()))
@@ -220,6 +225,8 @@ HRESULT CRenderer::SetUp_RenderTargets()
 	if (FAILED(SetUp_RenderTargets_SSR(ViewportDesc)))
 		return E_FAIL;
 	if (FAILED(SetUp_RenderTargets_DOF(ViewportDesc)))
+		return E_FAIL;
+	if (FAILED(SetUp_RenderTargets_GODRAY(ViewportDesc)))
 		return E_FAIL;
 	if (FAILED(SetUp_RenderTargets_FXAA(ViewportDesc)))
 		return E_FAIL;
@@ -617,6 +624,19 @@ HRESULT CRenderer::SetUp_RenderTargets_DOF(const D3D11_VIEWPORT& ViewportDesc)
 	return S_OK;
 }
 
+HRESULT CRenderer::SetUp_RenderTargets_GODRAY(const D3D11_VIEWPORT& ViewportDesc)
+{
+	/* For.Target_DOF_Blur_Fin */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_GODRAY"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_B8G8R8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
+	/* MRT_DOF : DOF 적용을 위한 렌더 타겟 */
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GODRAY"), TEXT("Target_GODRAY"))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CRenderer::SetUp_RenderTargets_FXAA(const D3D11_VIEWPORT& ViewportDesc)
 {
 	/* For.Target_DOF_Blur_Fin */
@@ -818,6 +838,9 @@ HRESULT CRenderer::SetUp_Debug()
 	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Emissive"), 1820.0f, 700.0f, 200.f, 200.f)))
 	//	return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_FXAA"), 1420.f, 100.f, 200.f, 200.f)))
+		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_MotionBlur"), 1620.f, 100.f, 200.f, 200.f)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSR"), 1620.f, 300.f, 200.f, 200.f)))
@@ -827,8 +850,9 @@ HRESULT CRenderer::SetUp_Debug()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_DOF_Blur_Fin"), 1620.f, 700.f, 200.f, 200.f)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_FXAA"), 1620.f, 900.f, 200.f, 200.f)))
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_GODRAY"), 1620.f, 900.f, 200.f, 200.f)))
 		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Diffuse"), 1820.f, 100.0f, 200.f, 200.f)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Normal"), 1820.f, 300.0f, 200.f, 200.f)))
@@ -1676,6 +1700,110 @@ HRESULT CRenderer::Render_DOF()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_GODRAY()
+{
+	if (!m_ShaderOptions[GODRAY])
+		return S_OK;
+
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_Matrix("g_CamViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_CamProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Depth"), "g_DepthTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_LightDepth_Dir"), "g_DirLightDepthTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_LightDepth_Spot"), "g_SpotLightDepthTexture")))
+		return E_FAIL;
+
+	// 1. DirectionLight존재 여부 체크
+	if (m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) != nullptr) {
+		_bool isShadowDirLight = false;
+		if (FAILED(m_pShader->Bind_RawValue("g_isShadowDirLight", &isShadowDirLight, sizeof(_bool))))
+			return E_FAIL;
+
+		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION);
+		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
+
+		if (FAILED(m_pShader->Bind_Matrix("g_DirLightViewMatrix", &pDesc->ViewMatrix[0])))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_Matrix("g_DirLightProjMatrix", &pDesc->ProjMatrix)))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_vDirLightDirection", &pDesc->vDirection, sizeof(_float4))))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_vDirLightDiffuse", &pDesc->vDiffuse, sizeof(_float4))))
+			return E_FAIL;
+	}
+	else {
+		_bool isShadowDirLight = false;
+		if (FAILED(m_pShader->Bind_RawValue("g_isShadowDirLight", &isShadowDirLight, sizeof(_bool))))
+			return E_FAIL;
+	}
+	
+	// 2. SpotLight
+	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
+		_bool isShadowSpotLight = true;
+		if (FAILED(m_pShader->Bind_RawValue("g_isShadowSpotLight", &isShadowSpotLight, sizeof(_bool))))
+			return E_FAIL;
+
+		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT);
+		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
+
+		if (FAILED(m_pShader->Bind_Matrix("g_SpotLightViewMatrix", &pDesc->ViewMatrix[0])))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_Matrix("g_SpotLightProjMatrix", &pDesc->ProjMatrix)))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_vSpotLightPosition", &pDesc->vPosition, sizeof(_float4))))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_vSpotLightDirection", &pDesc->vDirection, sizeof(_float4))))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_fSpotLightCutOff", &pDesc->fCutOff, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_fSpotLightOutCutOff", &pDesc->fOutCutOff, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_fSpotLightRange", &pDesc->fRange, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShader->Bind_RawValue("g_vSpotLightDiffuse", &pDesc->vDiffuse, sizeof(_float4))))
+			return E_FAIL;
+	}
+	else {
+		_bool isShadowSpotLight = false;
+		if (FAILED(m_pShader->Bind_RawValue("g_isShadowSpotLight", &isShadowSpotLight, sizeof(_bool))))
+			return E_FAIL;
+	}
+
+
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GODRAY"))))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBuffer->Bind_Buffers()))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_GODRAY))))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBuffer->Render()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Copy_Resource(TEXT("Target_SubResult"), TEXT("Target_GODRAY"))))
+		return S_OK;
+
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_FXAA()
 {
 	if (!m_ShaderOptions[FXAA])
@@ -1721,7 +1849,6 @@ HRESULT CRenderer::Render_FXAA()
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
-
 
 	return S_OK;
 }
@@ -1867,6 +1994,8 @@ HRESULT CRenderer::Render_Debug()
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_DOF_Blur_Fin"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_MotionBlur"), m_pShader, m_pVIBuffer)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_GODRAY"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_FXAA"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
