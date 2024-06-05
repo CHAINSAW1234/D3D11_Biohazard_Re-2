@@ -223,106 +223,64 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	wstring selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/HP_Bar.dat");
 	ifstream inputFileStream;
 	inputFileStream.open(selectedFilePath, ios::binary);
-	CreatFromDat(inputFileStream, nullptr);
+	CreatFromDat(inputFileStream, (""), nullptr);
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 
 	return S_OK;
 }
 
-void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj)
+void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName, CGameObject* pGameParentsObj)
 {
 	CCustomize_UI::CUSTOM_UI_DESC CustomizeUIDesc;
 
-	_char DefaultTexturePath[MAX_PATH] = "";
-	_char DefaultTextureTag[MAX_PATH] = "";
-	_char MaskTexturePath[MAX_PATH] = "";
-	_char MaskTextureTag[MAX_PATH] = "";
+	_char TexturePath[MAX_PATH] = "";
 
-	inputFileStream.read(reinterpret_cast<_char*>(DefaultTexturePath), sizeof(_char) * MAX_PATH);
-	inputFileStream.read(reinterpret_cast<_char*>(DefaultTextureTag), sizeof(_char) * MAX_PATH);
-	inputFileStream.read(reinterpret_cast<_char*>(MaskTexturePath), sizeof(_char) * MAX_PATH);
-	inputFileStream.read(reinterpret_cast<_char*>(MaskTextureTag), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(TexturePath), sizeof(_char) * MAX_PATH);
 
-	CustomizeUIDesc.wstrDefaultTexturPath = wstring(DefaultTexturePath, DefaultTexturePath + strlen(DefaultTexturePath));
-	CustomizeUIDesc.wstrDefaultTexturComTag = wstring(DefaultTextureTag, DefaultTextureTag + strlen(DefaultTextureTag));
-	CustomizeUIDesc.wstrMaskPath = wstring(MaskTexturePath, MaskTexturePath + strlen(MaskTexturePath));
-	CustomizeUIDesc.wstrMaskComTag = wstring(MaskTextureTag, MaskTextureTag + strlen(MaskTextureTag));
+	CustomizeUIDesc.strTexturePath = wstring(TexturePath, TexturePath + strlen(TexturePath));
 
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.worldMatrix), sizeof(_float4x4));
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fWorldMatrix), sizeof(_float4x4));
 
-<<<<<<< Updated upstream
-=======
+<<<<<<< HEAD
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.vSize), sizeof(_float2));
 
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isPlay), sizeof(_bool));
-
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fColorTimer_Limit), sizeof(_float));
-
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iEndingType), sizeof(_int));
-
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fMaxFrame), sizeof(_float));
-
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isFrame), sizeof(_bool));
-
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoopStart), sizeof(_bool));
-
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoop), sizeof(_bool));
-
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoopStop), sizeof(_bool));
-
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.ReStart), sizeof(_bool));
-
->>>>>>> Stashed changes
+=======
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iColorMaxNum), sizeof(_uint));
 
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iTextBoxCount), sizeof(_uint));
+	_int iColorMAxnum = CustomizeUIDesc.iColorMaxNum;
 
-<<<<<<< Updated upstream
-	for (_int i = 0; i < iColorMAxnum; i++)
-=======
-	for (_int i = 0; i <= CustomizeUIDesc.iColorMaxNum; i++)
->>>>>>> Stashed changes
+<<<<<<< HEAD
+	for (_int i = 0; i <= iColorMAxnum; i++)
 	{
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.SavePos[i]), sizeof(_float4x4));
 
+=======
+	for (_int i = 0; i < iColorMAxnum; i++)
+	{
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.vColor[i]), sizeof(CCustomize_UI::Value_Color));
-
-		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.Mask[i]), sizeof(CCustomize_UI::Value_Mask));
 	}
 
-	for (_int i = 0; i < CustomizeUIDesc.iTextBoxCount; i++)
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isPlay), sizeof(_bool));
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fColorTimer_Limit), sizeof(_float));
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iEndingType), sizeof(_int));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iTextBox), sizeof(_int));
+
+	for (_int i = 0; i < CustomizeUIDesc.iTextBox; i++)
 	{
-		CTextBox::TextBox_DESC TextBoxDesc = {};
-
-		_tchar FontString[MAX_PATH] = L"";
-
-		_char FontType[MAX_PATH] = "";
-
-		inputFileStream.read(reinterpret_cast<_char*>(FontString), sizeof(_tchar) * MAX_PATH);
-
-		inputFileStream.read(reinterpret_cast<_char*>(FontType), sizeof(_char) * MAX_PATH);
-
-		TextBoxDesc.wstrText = FontString;
-
-		TextBoxDesc.wstrFontType = wstring(FontType, FontType + strlen(FontType));
-
-		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vFontColor), sizeof(_vector));
-
-		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.iFontSize), sizeof(_uint));
-
-		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vPos), sizeof(_float3));
-
-		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vSize), sizeof(_float2));
-
-		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.isOuterLine), sizeof(_bool));
-
-		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vOutLineColor), sizeof(_vector));
-
-		CustomizeUIDesc.vecTextBoxDesc.push_back(TextBoxDesc);
+		CTextBox::TextBox_DESC TextboxDesc = {};
+		inputFileStream.read(reinterpret_cast<_char*>(&TextboxDesc), sizeof(CTextBox::TextBox_DESC));
+		CustomizeUIDesc.TextBoxDesc.push_back(TextboxDesc);
 	}
 
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.IsChild), sizeof(_bool));
 
-<<<<<<< Updated upstream
 	std::string strFullfilePath;
 	strFullfilePath.assign(CustomizeUIDesc.strTexturePath.begin(), CustomizeUIDesc.strTexturePath.end());
 
@@ -374,49 +332,12 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, CGameObject* pGame
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_CCustomize_UI"), &CustomizeUIDesc)))
 		MSG_BOX(TEXT("Failed to Add Clone"));
 
-	CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
-=======
-	//디폴트 텍스쳐 싱글 텍스쳐일 경우
-	if (0 == CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
-	{
-		/* For.Prototype_Component_Texture_ */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
-			CTexture::Create(m_pDevice, m_pContext, CustomizeUIDesc.wstrDefaultTexturPath)))) {
-			int a = 0;
-		}
-	}
-
-	//디폴트 텍스쳐 멀티 텍스쳐일 경우
-	else if (0 < CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
-	{
-		/* For.Prototype_Component_Texture_ */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
-			CTexture::Create(m_pDevice, m_pContext, CustomizeUIDesc.wstrDefaultTexturPath, CustomizeUIDesc.fMaxFrame)))) {
-			int a = 0;
-		}
-	}
-
-	// 마스크 텍스쳐 생성
-	if (TEXT("") != CustomizeUIDesc.wstrMaskPath)
-	{
-		/* For.Prototype_Component_Texture_ */
-		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrMaskComTag,
-			CTexture::Create(m_pDevice, m_pContext, CustomizeUIDesc.wstrMaskPath)))) {
-			int a = 0;
-		}
-	}
-
-
-
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_CCustomize_UI"), &CustomizeUIDesc)))
-	{
-		MSG_BOX(TEXT("Failed to Add Clone UI"));
-		return;
-	}
-		
+<<<<<<< HEAD
 	CGameObject* pGameObj = {};
 	pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
->>>>>>> Stashed changes
+=======
+	CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 
 	if (nullptr != pGameParentsObj)
 	{
@@ -431,7 +352,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, CGameObject* pGame
 	{
 		for (_int i = 0; i < CustomizeUIDesc.iChild; i++)
 		{
-			CreatFromDat(inputFileStream, pGameObj);
+			CreatFromDat(inputFileStream, filename, pGameObj);
 		}
 	}
 

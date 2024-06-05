@@ -11,9 +11,12 @@ public:
 	enum UISTATE {UISTATE_POS, UISTATE_SCALE, UISTATE_END};
 	typedef struct UI_DESC : public CGameObject::GAMEOBJECT_DESC
 	{
+		_float4x4		fWorldMatrix;
+
 		_float3			vPos = {};
 		_float2			vSize = {};
 		_float			fAlpha = { 0.f };
+
 	}UI_DESC;
 
 protected:
@@ -42,10 +45,10 @@ public:
 
 protected:
 	class CShader*				m_pShaderCom = { nullptr };
-<<<<<<< Updated upstream
+<<<<<<< HEAD
+	class CTexture*				m_pMask_TextureCom = { nullptr };
 =======
-	class CTexture*				m_pMaskTextureCom = { nullptr };
->>>>>>> Stashed changes
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 	class CTexture*				m_pTextureCom = { nullptr };
 	class CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
 

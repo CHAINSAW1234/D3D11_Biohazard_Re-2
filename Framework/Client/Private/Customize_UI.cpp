@@ -1,8 +1,7 @@
 #include "stdafx.h"
 
 #include "Customize_UI.h"
-#include "TextBox.h"
-
+#include "GameInstance.h"
 
 CCustomize_UI::CCustomize_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice, pContext }
@@ -29,25 +28,23 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 
 		CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
 
-		m_wstrDefaultTexturPath = CustomUIDesc->wstrDefaultTexturPath;
+		m_strTexturePath = CustomUIDesc->strTexturePath;
 
-		m_wstrMaskPath = CustomUIDesc->wstrMaskPath;
+		m_strTextureComTag = CustomUIDesc->strTextureComTag;
 
-		m_wstrDefaultTexturComTag = CustomUIDesc->wstrDefaultTexturComTag;
+		m_iColorMaxNum = CustomUIDesc->iColorMaxNum;
 
+<<<<<<< HEAD
 		if (m_iColorMaxNum >= 0)
+=======
+		if (m_iColorMaxNum > 0)
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 		{
 			for (_int i = 0; i <= m_iColorMaxNum; i++)
 			{
 				m_vColor[i] = CustomUIDesc->vColor[i];
 			}
 		}
-=======
-		m_wstrMaskComTag = CustomUIDesc->wstrMaskComTag;
-
-		if (FAILED(Add_Components(CustomUIDesc->wstrDefaultTexturComTag ,CustomUIDesc->wstrMaskComTag)))
-			return E_FAIL;
->>>>>>> Stashed changes
 
 		m_isPlay = CustomUIDesc->isPlay;
 
@@ -55,40 +52,13 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 
 		m_iEndingType = CustomUIDesc->iEndingType;
 
-<<<<<<< Updated upstream
+<<<<<<< HEAD
+		m_isMask = CustomUIDesc->isMask;
 =======
-		m_fMaxFrame = CustomUIDesc->fMaxFrame;
->>>>>>> Stashed changes
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 
-		m_isFrame = CustomUIDesc->isFrame;
-
-		m_isLoopStart = CustomUIDesc->isLoopStart;
-
-		m_isLoop = CustomUIDesc->isLoop;
-
-		m_isLoopStop = CustomUIDesc->isLoopStop;
-
-		m_ReStart = CustomUIDesc->ReStart;
-
-		m_iColorMaxNum = CustomUIDesc->iColorMaxNum;
-
-		for (_int i = 0; i <= m_iColorMaxNum; i++)
-		{
-			m_vColor[i] = CustomUIDesc->vColor[i];
-			m_SavePos[i] = CustomUIDesc->SavePos[i];
-			m_Mask[i] = CustomUIDesc->Mask[i];
-		}
-
-		for (_int i = 0; i < CustomUIDesc->iTextBoxCount; i++)
-		{
-			CGameObject* pTextBox = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_TextBox"), &CustomUIDesc->vecTextBoxDesc[i]);
-			if (nullptr == pTextBox)
-				return E_FAIL;
-
-			m_vecTextBoxes.push_back(dynamic_cast<CTextBox*>(pTextBox));
-		}
-
-		m_IsChild = CustomUIDesc->IsChild;
+		if (FAILED(Add_Components(m_strTextureComTag)))
+			return E_FAIL;
 	}
 
 	// Shader 초기화
@@ -114,20 +84,22 @@ void CCustomize_UI::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-<<<<<<< Updated upstream
 	m_fPush_Timer += fTimeDelta;
 
+<<<<<<< HEAD
+	if(m_isMask)
+		m_fMaskTimer += fTimeDelta;
+
 =======
- 	m_fPush_Timer += fTimeDelta;
-	
->>>>>>> Stashed changes
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 	/* Color Timer */
 	if(m_isPlay)
 		Color_Frame(fTimeDelta);
+
 	else
 	{
 		/* Alpa 값 여부 */
-		if (m_isColorChange || m_isAlphaChange || m_isMask)
+		if (m_isColorChange || m_isAlphaChange)
 			m_iShaderPassNum = 1;
 		else
 			m_iShaderPassNum = 0;
@@ -143,12 +115,6 @@ void CCustomize_UI::Tick(_float fTimeDelta)
 			m_fPush_Timer += fTimeDelta;
 		else
 			m_fPush_Timer = 0.f;
-
-		/* Mask 여부 */
-		if (m_isMask)
-			m_fMaskTimer += fTimeDelta;
-		else
-			m_fMaskTimer = 0.f;
 	}
 
 	for (auto& iter : m_vecTextBoxes)
@@ -210,7 +176,7 @@ HRESULT CCustomize_UI::Render()
 	return S_OK;
 }
 
-HRESULT CCustomize_UI::Add_Components(const wstring& wstrTextureTag, const wstring& wstrMaskTag)
+HRESULT CCustomize_UI::Add_Components(const wstring& strModelTag)
 {
 	/* For.Com_Shader */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxPosTex"),
@@ -218,17 +184,17 @@ HRESULT CCustomize_UI::Add_Components(const wstring& wstrTextureTag, const wstri
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, wstrTextureTag,
-		TEXT("Com_DefaultTexture"), (CComponent**)&m_pTextureCom)))
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, strModelTag,
+		TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
-<<<<<<< Updated upstream
+<<<<<<< HEAD
+	
+	/* For.Com_Mask_Texture */
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Mask"),
+		TEXT("Com_Mask_Texture"), (CComponent**)&m_pMask_TextureCom)))
+		return E_FAIL;
 =======
-
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, wstrMaskTag,
-		TEXT("Com_MaskTexture"), (CComponent**)&m_pMaskTextureCom)))
-		return E_FAIL;
->>>>>>> Stashed changes
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 
 	/* For.Com_VIBuffer */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
@@ -245,16 +211,26 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
-<<<<<<< Updated upstream
 
+<<<<<<< HEAD
  	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+=======
+	//_float4x4			WorldMatrix = { XMMatrixScaling(400.f, 200.f, 1.f) };
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
+	//	return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureNum)))
 		return E_FAIL;
+<<<<<<< HEAD
 	if (FAILED(m_pMask_TextureCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 		return E_FAIL;
+=======
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 
 	// Edit
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_SelectColor", &m_isSelect_Color, sizeof(_bool))))
@@ -293,6 +269,7 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_Split", &m_fSplit, sizeof(_float))))
 		return E_FAIL;
+<<<<<<< HEAD
 
 	// Mask
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_isMask", &m_isMask, sizeof(_bool))))
@@ -301,22 +278,9 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_MaskTimer", &m_fMaskTimer, sizeof(_float))))
 		return E_FAIL;
 	
-<<<<<<< Updated upstream
 =======
-
-	// 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_isMask", &m_isMask, sizeof(_bool))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskControl", &m_fMaskControl, sizeof(_float2))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskSpeed", &m_fMaskSpeed, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskTime", &m_fMaskTimer, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_MaskType", &m_vMaskType, sizeof(_float2))))
-		return E_FAIL;
-
->>>>>>> Stashed changes
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
+	
 	return S_OK;
 }
 
@@ -324,53 +288,30 @@ CCustomize_UI::CUSTOM_UI_DESC CCustomize_UI::Get_Cutomize_DESC() const
 {
 	CCustomize_UI::CUSTOM_UI_DESC CustomUIDesc = {};
 
-	CustomUIDesc.wstrDefaultTexturPath = m_wstrDefaultTexturPath;
+	CustomUIDesc.strTexturePath = m_strTexturePath;
 
-	CustomUIDesc.wstrDefaultTexturComTag = m_wstrDefaultTexturComTag;
+	CustomUIDesc.iColorMaxNum = m_iColorMaxNum;
 
-	CustomUIDesc.wstrMaskPath = m_wstrMaskPath;
+	memcpy(&CustomUIDesc.fWorldMatrix, m_pTransformCom->Get_WorldFloat4x4_Ptr(), sizeof(_float4x4));
 
-	CustomUIDesc.wstrMaskComTag = m_wstrMaskComTag;
+	for (_int i = 0; i < m_iColorMaxNum; i++)
+	{
+		CustomUIDesc.vColor[i] = m_vColor[i];
+	}
 
-	CustomUIDesc.worldMatrix = m_pTransformCom->Get_WorldFloat4x4();
+	for (auto& iter : m_vecTextBoxes)
+	{
+		CustomUIDesc.TextBoxDesc.push_back(iter->Get_TextBoxDesc());
+	}
+		
 
-	CustomUIDesc.isPlay = m_isPlay;
+	CustomUIDesc.isPlay = true;
 
 	CustomUIDesc.fColorTimer_Limit = m_fColorTimer_Limit;
 
 	CustomUIDesc.iEndingType = m_iEndingType;
 
-	CustomUIDesc.fMaxFrame = m_fMaxFrame;
-
-	CustomUIDesc.isFrame = m_isFrame;
-
-	CustomUIDesc.isLoopStart = m_isLoopStart;
-
-	CustomUIDesc.isLoop = m_isLoop;
-
-	CustomUIDesc.isLoopStart = m_isLoopStart;
-
-	CustomUIDesc.ReStart = m_ReStart;
-	
-	CustomUIDesc.iColorMaxNum = m_iColorMaxNum;
-
-	for (_int i = 0; i <= m_iColorMaxNum; i++)
-	{
-		CustomUIDesc.SavePos[i] = m_SavePos[i];
-
-		CustomUIDesc.vColor[i] = m_vColor[i];
-
-		CustomUIDesc.Mask[i] = m_Mask[i];
-	}
-
-	CustomUIDesc.iChild = (_int)m_vecChildUI.size();
-
-	for (auto& iter : m_vecTextBoxes)
-	{
-		CustomUIDesc.vecTextBoxDesc.push_back(iter->Get_TextBoxDesc());
-	}
-		
-	CustomUIDesc.iTextBoxCount = m_vecTextBoxes.size();
+	CustomUIDesc.iTextBox = m_iTextBox;
 	
 	CustomUIDesc.iChild = (_int)m_vecChildUI.size();
 
@@ -521,7 +462,7 @@ void CCustomize_UI::Color_Frame(_float fTimeDelta)
 void CCustomize_UI::State_Control(_float fTimeDelta)
 {
 	/* Alpa 값 여부 */
-	if (m_isColorChange || m_isAlphaChange || m_isMask)
+	if (m_isColorChange || m_isAlphaChange)
 		m_iShaderPassNum = 1;
 	else
 		m_iShaderPassNum = 0;
@@ -590,11 +531,11 @@ void CCustomize_UI::Frame_Defalut(_float fRatio, _float fColorRatio)
 		m_fPush_Speed.y = start * (1 - fRatio) + end * fRatio;
 
 		/* World Matrix Change */
-		_matrix saveMatrix = {};
-		_float4x4 myFloat4x4 = {};
-		saveMatrix = LerpMatrix(XMLoadFloat4x4(&m_SavePos[m_iColorCurNum]), XMLoadFloat4x4(&m_SavePos[0]), fRatio);
-		XMStoreFloat4x4(&myFloat4x4, saveMatrix);
-		m_pTransformCom->Set_WorldMatrix(myFloat4x4);
+		//_matrix saveMatrix = {};
+		//_float4x4 myFloat4x4 = {};
+		//saveMatrix = LerpMatrix(XMLoadFloat4x4(&m_SavePos[m_iColorCurNum]), XMLoadFloat4x4(&m_SavePos[0]), fRatio);
+		//XMStoreFloat4x4(&myFloat4x4, saveMatrix);
+		//m_pTransformCom->Set_WorldMatrix(myFloat4x4);
 
 	}
 
@@ -640,11 +581,11 @@ void CCustomize_UI::Frame_Defalut(_float fRatio, _float fColorRatio)
 		m_fPush_Speed.y = start * (1 - fRatio) + end * fRatio;
 
 		/* World Matrix Change */
-		_matrix saveMatrix = {};
-		_float4x4 myFloat4x4 = {};
-		saveMatrix = LerpMatrix(XMLoadFloat4x4(&m_SavePos[m_iColorCurNum]), XMLoadFloat4x4(&m_SavePos[m_iColorCurNum + 1]), fRatio);
-		XMStoreFloat4x4(&myFloat4x4, saveMatrix);
-		m_pTransformCom->Set_WorldMatrix(myFloat4x4);
+		//_matrix saveMatrix = {};
+		//_float4x4 myFloat4x4 = {};
+		//saveMatrix = LerpMatrix(XMLoadFloat4x4(&m_SavePos[m_iColorCurNum]), XMLoadFloat4x4(&m_SavePos[m_iColorCurNum + 1]), fRatio);
+		//XMStoreFloat4x4(&myFloat4x4, saveMatrix);
+		//m_pTransformCom->Set_WorldMatrix(myFloat4x4);
 	}
 
 	m_isColorChange = m_vColor[m_iColorCurNum].isColorChange;
@@ -677,7 +618,7 @@ void CCustomize_UI::Frame_Change(_float fRatio, _float fColorRatio)
 		m_fPush_Speed.y = m_vColor[m_iColorMaxNum].fPushSpeed.y;
 		m_fBlending = m_vColor[m_iColorMaxNum].fBlender_Value;
 		/* World Matrix Change */
-		m_pTransformCom->Set_WorldMatrix(m_SavePos[m_iColorMaxNum]);
+		//m_pTransformCom->Set_WorldMatrix(m_SavePos[m_iColorMaxNum]);
 
 		m_isColorChange = m_vColor[m_iColorMaxNum].isColorChange;
 		m_isAlphaChange = m_vColor[m_iColorMaxNum].isAlphaChange;
@@ -725,11 +666,11 @@ void CCustomize_UI::Frame_Change(_float fRatio, _float fColorRatio)
 		m_fPush_Speed.y = start * (1 - fRatio) + end * fRatio;
 
 		/* World Matrix Change */
-		_matrix saveMatrix = {};
-		_float4x4 myFloat4x4 = {};
-		saveMatrix = LerpMatrix(XMLoadFloat4x4(&m_SavePos[m_iColorCurNum]), XMLoadFloat4x4(&m_SavePos[m_iColorCurNum + 1]), fRatio);
-		XMStoreFloat4x4(&myFloat4x4, saveMatrix);
-		m_pTransformCom->Set_WorldMatrix(myFloat4x4);
+		//_matrix saveMatrix = {};
+		//_float4x4 myFloat4x4 = {};
+		//saveMatrix = LerpMatrix(XMLoadFloat4x4(&m_SavePos[m_iColorCurNum]), XMLoadFloat4x4(&m_SavePos[m_iColorCurNum + 1]), fRatio);
+		//XMStoreFloat4x4(&myFloat4x4, saveMatrix);
+		//m_pTransformCom->Set_WorldMatrix(myFloat4x4);
 
 		m_isColorChange = m_vColor[m_iColorCurNum].isColorChange;
 		m_isAlphaChange = m_vColor[m_iColorCurNum].isAlphaChange;

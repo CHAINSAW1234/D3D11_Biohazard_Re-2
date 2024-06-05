@@ -29,51 +29,27 @@ public:
 
 	}Value_Color;
 
-	typedef struct mask
-	{
-		_bool isMask = {false};
-		_float2 fMaskControl = { 0.f, 0.f };
-		_float fMaskSpeed = { 0.f };
-		_float2 vMaskType = { 0.f, 0.f };
-
-	}Value_Mask;
-
 	typedef struct CUSTOM_UI_DESC : public CUI::UI_DESC
 	{
-		wstring							wstrDefaultTexturComTag = { TEXT("") };
-		wstring							wstrDefaultTexturPath = { TEXT("") };
-
-		wstring							wstrMaskComTag = { TEXT("") };
-		wstring							wstrMaskPath = { TEXT("") };
+		wstring							strTexturePath;
+		wstring							strTextureComTag;
 
 		_uint							iColorMaxNum = { 0 };
+		Value_Color						vColor[10] = {};
 		_bool							isPlay = { false };
 		_float							fColorTimer_Limit = {0.f};
 		_int							iEndingType = {0};
-
-		_float							fMaxFrame = { 0.f };
-		_bool							isFrame = { false };
-		_bool							isLoopStart = { false };
-		_bool							isLoop = { false };
-		_bool							isLoopStop = { false };
-		_bool							ReStart = { false };
-
-		Value_Color						vColor[10] = {};
-		_float4x4						SavePos[10] = {};
-		Value_Mask						Mask[10] = {};
-
-		_uint							iTextBoxCount = { 0 };
-		vector<CTextBox::TextBox_DESC>	vecTextBoxDesc;
-
+		_int							iTextBox = { 0 };
 		_int							iChild = { 0 };
 		_bool							IsChild = { false };
-<<<<<<< Updated upstream
 		vector<CTextBox::TextBox_DESC>	TextBoxDesc = {};
+<<<<<<< HEAD
+		_float4x4						SavePos[10] = {};
+		_bool							isMask = {};
+
 =======
->>>>>>> Stashed changes
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 	}CUSTOM_UI_DESC;
-
-
 
 private:
 	CCustomize_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -89,7 +65,7 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	HRESULT Add_Components(const wstring& wstrTextureTag, const wstring& wstrMaskTag);
+	HRESULT Add_Components(const wstring& strModelTag);
 	HRESULT Bind_ShaderResources();
 
 private: /* Frame */
@@ -112,26 +88,6 @@ public:
 	CGameObject* Find_Child(CGameObject* Child);
 	_bool IsMyChild(CGameObject* Child);
 
-public: /* Mask */
-	/* 저장할 Light State*/
-	void Set_StoreMask(_uint i, Value_Mask* _mask)
-	{
-		m_Mask[i].isMask = _mask->isMask;
-		m_Mask[i].fMaskControl = _mask->fMaskControl;
-		m_Mask[i].fMaskSpeed = _mask->fMaskSpeed;
-		m_Mask[i].vMaskType = _mask->vMaskType;
-	}
-
-	/* 현재 바뀌는 Light State*/
-	void Set_CurrentMask(Value_Mask* _mask)
-	{
-		m_isMask = _mask->isMask;
-		m_fMaskControl = _mask->fMaskControl;
-		m_fMaskSpeed = _mask->fMaskSpeed;
-		m_vMaskType = _mask->vMaskType;
-	}
-
-	Value_Mask		Get_Value_Mask(_uint i) const { return m_Mask[i]; }
 
 public:// for. Set inline
 	void Set_IsChild(_bool IsChild) { m_IsChild = IsChild; }
@@ -156,9 +112,22 @@ public:// for. Set inline
 	}
 
 	// 컬러를 넣을 배열 크기
-	void isColor_Size(_uint _size, Value_Color _desc, _int _ending)
-	{
-		m_vColor[_size] = _desc;
+	void isColor_Size(_uint _size, Value_Color _desc, _int _ending){
+		m_vColor[_size].vColor = _desc.vColor;
+		m_vColor[_size].fBlender_Value = _desc.fBlender_Value;
+		m_vColor[_size].isBlender = _desc.isBlender;
+
+		m_vColor[_size].isColorChange = _desc.isColorChange;
+		m_vColor[_size].isAlphaChange = _desc.isAlphaChange;
+
+		m_vColor[_size].WaveSpeed = _desc.WaveSpeed;
+		m_vColor[_size].isWave = _desc.isWave;
+
+		m_vColor[_size].isPush = _desc.isPush;
+		m_vColor[_size].fPushSpeed = _desc.fPushSpeed;
+		m_vColor[_size].fPushRotation = _desc.fPushRotation;
+		m_vColor[_size].fSplit = _desc.fSplit;
+
 		m_iEndingType = _ending;
 	}
 
@@ -172,7 +141,7 @@ public:// for. Set inline
 		m_isColorChange = _value->isColorChange;
 		m_isAlphaChange = _value->isAlphaChange;
 		m_isWave = _value->isWave;
-		m_fWaveSpeed = _value->WaveSpeed;
+		m_fWaveSpeed = _value->isWave;
 
 		m_isPush = _value->isPush;
 		m_fPush_Speed = _value->fPushSpeed;
@@ -185,12 +154,7 @@ public:// for. Set inline
 	/* 컬러 재생할 것인가? */
 	void Set_ColorPlay(_uint _play) { m_isPlay = _play; }
 
-<<<<<<< Updated upstream
-	/*// 현재 결정할 색상*/
-	void Set_EditColor(_float4 _color, _bool _bender, _float _blending = 0.f){ 
-		m_isAlphaChange = false;
-		m_isColorChange = true;
-=======
+<<<<<<< HEAD
 	void Set_Color(_bool _color) {
 		m_isColorChange = _color;
 	}
@@ -200,10 +164,15 @@ public:// for. Set inline
 	}
 
 
+	/* 현재 결정할 색상*/
+	void Set_EditColor(_float4 _color, _bool _bender, _float _blending = 0.f) {
+
+=======
 	/*// 현재 결정할 색상*/
 	void Set_EditColor(_float4 _color, _bool _bender, _float _blending = 0.f){ 
-	
->>>>>>> Stashed changes
+		m_isAlphaChange = false;
+		m_isColorChange = true;
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 		m_vCurrentColor = _color;
 		m_isBlending = _bender;
 
@@ -219,11 +188,11 @@ public:// for. Set inline
 		m_fSplit = _split;
 	}
 
-<<<<<<< Updated upstream
+<<<<<<< HEAD
+	void ColorChange(_float4 _color, _uint i) {
 =======
-	/* 컬러만 저장하고자 할 때 */
->>>>>>> Stashed changes
 	void ColorChange(_float4 _color, _uint i){
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 		m_isColorChange = true;
 		m_vColor[i].vColor = _color;
 	}
@@ -239,16 +208,7 @@ public:// for. Set inline
 
 	void Set_UIID(UI_ID _eID) { m_eUI_ID = _eID; }
 
-	void Set_MaxFrame(_int iMaxFrame) {
-		m_fMaxFrame = iMaxFrame * 1.f;
-	}
-
-	void Set_IsMultiTex(_bool IsMultiTex) {
-		m_isMultiTex = IsMultiTex;
-	}
-
 public:/* for.Get Inline */
-	_float4x4* Get_StoreTransform(_uint i) { return &m_SavePos[i];  }
 	/* 현재 타이머*/
 	_float Get_ColorTimer() const { return m_fCurrentColor_Timer; }
 	/* 타이머 간격*/
@@ -260,8 +220,6 @@ public:/* for.Get Inline */
 
 	_bool Get_IsChild() const { return m_IsChild; }
 
-
-
 	vector<class CTextBox*>* Get_vecTextBoxes() { return &m_vecTextBoxes; }
 
 	UI_ID Get_UIID() const { return m_eUI_ID; }
@@ -272,8 +230,7 @@ public:/* for.Get Inline */
 
 	_int Get_EndingType() const { return m_iEndingType; }
 
-	/* 현재 color 값*/
-	Value_Color* Get_Current_ColorValue() const
+	Value_Color* Get_Current_Value() const
 	{
 		Value_Color _desc = {};
 
@@ -294,66 +251,46 @@ public:/* for.Get Inline */
 		return (&_desc);
 	}
 
-	/* 현재 Mask 값*/
-	Value_Mask* Get_Current_MaskValue() const
-	{
-		Value_Mask _desc = {};
-
-		_desc.fMaskControl = m_fMaskControl;
-		_desc.fMaskSpeed = m_fMaskSpeed;
-		_desc.isMask = m_isMask;
-		_desc.vMaskType = m_vMaskType;
-
-		return (&_desc);
-	}
-
-
-
+private:
+	_int						m_iTextBox		= { 0 };
+	vector<class CTextBox*>		m_vecTextBoxes;
 
 private:
-	vector<class CTextBox*>			m_vecTextBoxes;
+	_bool						m_IsChild		= { false };//나 자식이냐..?
+	vector<CGameObject*>		m_vecChildUI;
 
 private:
-	_bool							m_IsChild		= { false };//나 자식이냐..?
-	vector<CGameObject*>			m_vecChildUI;
-
-private:
-	wstring							m_wstrMaskPath = { TEXT("") }; // 텍스쳐 페스
-	wstring							m_wstrMaskComTag = { TEXT("") };
-	wstring							m_wstrDefaultTexturPath = { TEXT("") }; // 텍스쳐 페스
-	wstring							m_wstrDefaultTexturComTag = { TEXT("") };
-	_uint							m_iTextureNum	= { 0 };
-	_uint							m_iShaderPassNum = { 0 };
+	wstring						m_strTexturePath = { L"" };
+	wstring						m_strTextureComTag = { L"" };
+	_uint						m_iTextureNum	= { 0 };
+	_uint						m_iShaderPassNum = { 0 };
 	
 private : /* NY : Shader 변수 */
-<<<<<<< Updated upstream
+<<<<<<< HEAD
+	Value_Color					m_vColor[10]			= {};		// 현재 Edit 상에서 보여지는 컬러
+=======
 	Value_Color					m_vColor[10]			= {};	// 현재 Edit 상에서 보여지는 컬러
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 	_float4x4					m_SavePos[10]			= {};
 
 	_float						m_fColorTimer_Limit		= { 0.f };	// 컬러 change 제한 시간
 	_float						m_fCurrentColor_Timer	= { 0.f };	// 컬러 현재 시간
 	_float4						m_vCurrentColor			= {};		// 현재 Edit 색상
 	_float						m_fColorSpeed			= { 0.f };
-=======
-	Value_Color						m_vColor[10]			= {};	// 현재 Edit 상에서 보여지는 컬러
-	_float4x4						m_SavePos[10]			= {};
 
-	_float							m_fColorTimer_Limit		= {};	// 컬러 change 제한 시간
-	_float							m_fCurrentColor_Timer	= {};	// 컬러 현재 시간
-	_float4							m_vCurrentColor			= {};	// 현재 Edit 색상
-	_float							m_fColorSpeed			= {};
->>>>>>> Stashed changes
+	_int						m_iColorMaxNum			= { -1 };
+	_uint						m_iColorCurNum			= { 0 };
 
-	_int							m_iColorMaxNum			= { -1 };
-	_uint							m_iColorCurNum			= { 0 };
-
-	_bool							m_isColorBack			= { false }; // Color 되감기
-	_bool							m_isPlay				= { false };
+	_bool						m_isColorBack			= { false }; // Color 되감기
+	_bool						m_isPlay				= { false };
 
 	// Shader 변수
-	_bool							m_isSelect_Color		= { false };
+	_bool						m_isSelect_Color		= { false };
 
-<<<<<<< Updated upstream
+<<<<<<< HEAD
+private : /* 1.Color */
+=======
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 	_bool						m_isColorChange			= { false };
 	_bool						m_isAlphaChange			= { false };
 	_bool						m_isBlending			= { false };
@@ -371,52 +308,16 @@ private : /* 3. Push */
 	_float						m_fSplit				= { 0.f };
 	_float						m_isUVRotation			= { 0.f };
 
-	_int						m_iEndingType			= {0};
+<<<<<<< HEAD
+	_int						m_iEndingType			= { 0 };
+
+	_float						m_fMaskTimer			= { 0 };
+
+private : /* Client Variable */
+	_bool						m_isMask				= { false };
 =======
-	_bool							m_isColorChange			= { false };
-	_bool							m_isAlphaChange			= { false };
-	_bool							m_isBlending			= { false };
-	_float							m_fBlending				= {};
-
-	_bool							m_isWave				= { false };
-	_float							m_isWaveTimer			= {};
-	_float							m_fWaveSpeed			= {};
-
-	_bool							m_isPush				= {};
-	_float							m_fPush_Timer			= {};
-	_float2							m_fPush_Speed			= {};
-	_float							m_fSplit				= {};
-	_float							m_isUVRotation			= {};
-
-	_int							m_iEndingType			= {};
-
-private :
-	// Mask
-	Value_Mask						m_Mask[10];
-	_bool							m_isMask = {};
-	_float2							m_fMaskControl = {};
-	_float							m_fMaskTimer = {};
-	_float							m_fMaskSpeed = {};
-	_float2							m_vMaskType = {};
-
-private:
-	/* Frame*/
-	_float							m_fFrame = { 0.f };
-	_float							m_fMaxFrame = { 0.f };
-	_bool							m_isFrame = { false };
-
-	_bool							m_isMultiTex = { false };
-
-	/* Texture */
-	_uint							m_iDefaultTexture = { 0 };
-	_uint							m_iMaskTexture = { 0 };
-
-	/* Loop */
-	_bool							m_isLoopStart = { false };
-	_bool							m_isLoop = { false };
-	_bool							m_isLoopStop = { false };
-	_bool							m_ReStart = { false };
->>>>>>> Stashed changes
+	_int						m_iEndingType			= {0};
+>>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

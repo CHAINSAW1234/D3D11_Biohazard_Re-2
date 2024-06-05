@@ -10,12 +10,10 @@ class CTextBox final : public CUI
 public:
 	typedef struct TextBox_DESC : public CUI::UI_DESC
 	{
-		wstring		wstrText = { TEXT("") };
-		wstring		wstrFontType = { TEXT("") };
-		_vector		vFontColor = { 1.f, 1.f, 1.f, 1.f };
-		_uint		iFontSize = { 10 };
-		_bool		isOuterLine = { false };
-		_vector		vOutLineColor = { 0.f, 0.f, 0.f, 1.f };
+		wstring wstrText = { TEXT("") };
+		wstring wstrFontType = { TEXT("") };
+		_vector vFontColor = { 1.f, 1.f, 1.f, 1.f };
+		_uint	iFontSize = { 10 };
 	}TextBox_DESC;
 
 private:
@@ -47,13 +45,13 @@ public:
 
 
 private:
-	wstring m_wstrText = { TEXT("") };
+	wstring m_wstrText = {TEXT("")};
 	wstring m_wstrFontType = { TEXT("") };
 	_uint	m_iFontSize = { 10 };
 	_vector m_vFontColor = { 1.f, 1.f, 1.f, 1.f };
 
-	_bool	m_isOuterLine = { false };
-	_vector m_vOutLineColor = { 0.f, 0.f, 0.f, 1.f };
+
+	_bool	m_IsChild = { false };
 	
 public:
 	static CTextBox* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
