@@ -45,10 +45,7 @@ public:
 
 protected:
 	class CShader*				m_pShaderCom = { nullptr };
-<<<<<<< HEAD
 	class CTexture*				m_pMask_TextureCom = { nullptr };
-=======
->>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 	class CTexture*				m_pTextureCom = { nullptr };
 	class CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
 

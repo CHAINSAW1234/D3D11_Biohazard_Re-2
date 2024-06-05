@@ -43,12 +43,9 @@ public:
 		_int							iChild = { 0 };
 		_bool							IsChild = { false };
 		vector<CTextBox::TextBox_DESC>	TextBoxDesc = {};
-<<<<<<< HEAD
 		_float4x4						SavePos[10] = {};
 		_bool							isMask = {};
 
-=======
->>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 	}CUSTOM_UI_DESC;
 
 private:
@@ -154,7 +151,6 @@ public:// for. Set inline
 	/* 컬러 재생할 것인가? */
 	void Set_ColorPlay(_uint _play) { m_isPlay = _play; }
 
-<<<<<<< HEAD
 	void Set_Color(_bool _color) {
 		m_isColorChange = _color;
 	}
@@ -167,12 +163,6 @@ public:// for. Set inline
 	/* 현재 결정할 색상*/
 	void Set_EditColor(_float4 _color, _bool _bender, _float _blending = 0.f) {
 
-=======
-	/*// 현재 결정할 색상*/
-	void Set_EditColor(_float4 _color, _bool _bender, _float _blending = 0.f){ 
-		m_isAlphaChange = false;
-		m_isColorChange = true;
->>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 		m_vCurrentColor = _color;
 		m_isBlending = _bender;
 
@@ -188,11 +178,7 @@ public:// for. Set inline
 		m_fSplit = _split;
 	}
 
-<<<<<<< HEAD
 	void ColorChange(_float4 _color, _uint i) {
-=======
-	void ColorChange(_float4 _color, _uint i){
->>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 		m_isColorChange = true;
 		m_vColor[i].vColor = _color;
 	}
@@ -266,11 +252,7 @@ private:
 	_uint						m_iShaderPassNum = { 0 };
 	
 private : /* NY : Shader 변수 */
-<<<<<<< HEAD
 	Value_Color					m_vColor[10]			= {};		// 현재 Edit 상에서 보여지는 컬러
-=======
-	Value_Color					m_vColor[10]			= {};	// 현재 Edit 상에서 보여지는 컬러
->>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 	_float4x4					m_SavePos[10]			= {};
 
 	_float						m_fColorTimer_Limit		= { 0.f };	// 컬러 change 제한 시간
@@ -287,10 +269,7 @@ private : /* NY : Shader 변수 */
 	// Shader 변수
 	_bool						m_isSelect_Color		= { false };
 
-<<<<<<< HEAD
 private : /* 1.Color */
-=======
->>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 	_bool						m_isColorChange			= { false };
 	_bool						m_isAlphaChange			= { false };
 	_bool						m_isBlending			= { false };
@@ -308,16 +287,12 @@ private : /* 3. Push */
 	_float						m_fSplit				= { 0.f };
 	_float						m_isUVRotation			= { 0.f };
 
-<<<<<<< HEAD
 	_int						m_iEndingType			= { 0 };
 
 	_float						m_fMaskTimer			= { 0 };
 
 private : /* Client Variable */
 	_bool						m_isMask				= { false };
-=======
-	_int						m_iEndingType			= {0};
->>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

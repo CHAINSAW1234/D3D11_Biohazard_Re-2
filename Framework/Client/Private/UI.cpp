@@ -219,11 +219,7 @@ void CUI::Free()
 	__super::Free();
 
 	Safe_Release(m_pShaderCom);
-<<<<<<< HEAD
 	Safe_Release(m_pTextureCom); 
 	Safe_Release(m_pMask_TextureCom);
-=======
-	Safe_Release(m_pTextureCom);
->>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 	Safe_Release(m_pVIBufferCom);
 }

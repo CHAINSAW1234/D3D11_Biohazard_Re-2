@@ -34,11 +34,7 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 
 		m_iColorMaxNum = CustomUIDesc->iColorMaxNum;
 
-<<<<<<< HEAD
 		if (m_iColorMaxNum >= 0)
-=======
-		if (m_iColorMaxNum > 0)
->>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 		{
 			for (_int i = 0; i <= m_iColorMaxNum; i++)
 			{
@@ -52,10 +48,7 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 
 		m_iEndingType = CustomUIDesc->iEndingType;
 
-<<<<<<< HEAD
 		m_isMask = CustomUIDesc->isMask;
-=======
->>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 
 		if (FAILED(Add_Components(m_strTextureComTag)))
 			return E_FAIL;
@@ -86,12 +79,9 @@ void CCustomize_UI::Tick(_float fTimeDelta)
 
 	m_fPush_Timer += fTimeDelta;
 
-<<<<<<< HEAD
 	if(m_isMask)
 		m_fMaskTimer += fTimeDelta;
 
-=======
->>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 	/* Color Timer */
 	if(m_isPlay)
 		Color_Frame(fTimeDelta);
@@ -187,14 +177,11 @@ HRESULT CCustomize_UI::Add_Components(const wstring& strModelTag)
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, strModelTag,
 		TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
-<<<<<<< HEAD
 	
 	/* For.Com_Mask_Texture */
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Mask"),
 		TEXT("Com_Mask_Texture"), (CComponent**)&m_pMask_TextureCom)))
 		return E_FAIL;
-=======
->>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 
 	/* For.Com_VIBuffer */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
@@ -212,25 +199,14 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 
-<<<<<<< HEAD
  	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
-=======
-	//_float4x4			WorldMatrix = { XMMatrixScaling(400.f, 200.f, 1.f) };
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMatrix)))
-	//	return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
->>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureNum)))
 		return E_FAIL;
-<<<<<<< HEAD
 	if (FAILED(m_pMask_TextureCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture")))
 		return E_FAIL;
-=======
->>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 
 	// Edit
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_SelectColor", &m_isSelect_Color, sizeof(_bool))))
@@ -269,7 +245,6 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_Split", &m_fSplit, sizeof(_float))))
 		return E_FAIL;
-<<<<<<< HEAD
 
 	// Mask
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_isMask", &m_isMask, sizeof(_bool))))
@@ -278,8 +253,6 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_MaskTimer", &m_fMaskTimer, sizeof(_float))))
 		return E_FAIL;
 	
-=======
->>>>>>> parent of 6f7c5be (Customize_UI Load, Value)
 	
 	return S_OK;
 }
