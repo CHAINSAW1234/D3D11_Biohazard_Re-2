@@ -122,6 +122,7 @@ HRESULT CMesh::Initialize_Prototype(CModel::MODEL_TYPE eType, const MESH_DESC& M
 	for (int i = 0; i < m_iNumIndices / 3; ++i)
 	{
 		auto Face = new tFace();
+		//auto Face = tFace();
 
 		for (int j = 0; j < 3; ++j)
 		{
