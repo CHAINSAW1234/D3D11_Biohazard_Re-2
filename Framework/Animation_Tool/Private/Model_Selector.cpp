@@ -8,6 +8,16 @@ CModel_Selector::CModel_Selector(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 HRESULT CModel_Selector::Initialize(void* pArg)
 {
+	if (nullptr == pArg)
+		return E_FAIL;
+
+	MODELSELECTOR_DESC* pDesc = { static_cast<MODELSELECTOR_DESC*>(pArg) };
+	m_pCurrentBoneTag = pDesc->pCurrentBoneTag;
+	m_pCurrentModelTag = pDesc->pCurrentModelTag;
+
+	if (nullptr == m_pCurrentBoneTag || nullptr == m_pCurrentModelTag)
+		return E_FAIL;
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -24,14 +34,15 @@ void CModel_Selector::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	static ImVec2 WinSize;
-	WinSize = ImGui::GetWindowSize();	
+	WinSize = ImGui::GetWindowSize();
 
-	if (ImGui::CollapsingHeader(m_strCollasingTag.c_str()))
-	{
-		Select_Model();
-		Select_Bone();		
-		Select_RootBone();
-	}	
+	ImGui::Begin("Model_Bone_Selector");
+
+	Show_Default();
+	Show_ModelTags();
+	Show_BoneTags();
+
+	ImGui::End();
 }
 
 HRESULT CModel_Selector::Add_Components()
@@ -61,9 +72,183 @@ HRESULT CModel_Selector::Add_Components()
 			return E_FAIL;
 
 		m_Models["Leon_Hair"] = pModel;
-	}	
+	}
 
 	return S_OK;
+}
+
+void CModel_Selector::On_Off_Buttons()
+{
+}
+
+CModel* CModel_Selector::Get_Model(const string& strModelTag)
+{
+	map<string, CModel*>::iterator		iter = { m_Models.find(strModelTag) };
+	if (iter == m_Models.end())
+		return nullptr;
+
+	return iter->second;
+}
+
+CModel* CModel_Selector::Get_CurrentSelectedModel()
+{
+	map<string, CModel*>::iterator		iter = { m_Models.find(*m_pCurrentModelTag) };
+	if (iter == m_Models.end())
+		return nullptr;
+
+	return iter->second;
+}
+
+map<string, _float4x4> CModel_Selector::Get_BoneCombinedMatrices()
+{
+	map<string, _float4x4>			BoneCombinedMatrices;
+
+	CModel* pModel = { Get_Model(*m_pCurrentModelTag) };
+	if (nullptr == pModel)
+		return BoneCombinedMatrices;
+
+	vector<string>			BoneNames = { pModel->Get_BoneNames() };
+	for (auto& strBoneTag : BoneNames)
+	{
+		_float4x4			BoneCombinedMatrix = { *pModel->Get_CombinedMatrix(strBoneTag) };
+		BoneCombinedMatrices[strBoneTag] = BoneCombinedMatrix;
+	}
+
+	return BoneCombinedMatrices;
+}
+
+_float4x4* CModel_Selector::Get_Selected_BoneCombinedMatrix_Ptr()
+{
+	map<string, CModel*>::iterator		iter = { m_Models.find(*m_pCurrentBoneTag) };
+
+	if (iter == m_Models.end())
+		return nullptr;
+
+	return const_cast<_float4x4*>(iter->second->Get_CombinedMatrix(*m_pCurrentBoneTag));
+}
+
+void CModel_Selector::Show_Default()
+{
+	ImGui::SeparatorText("Information");
+
+	ImGui::Text("Current Selected Model : ");		ImGui::SameLine();
+	ImGui::Text(m_pCurrentModelTag->c_str());
+
+	ImGui::Text("Current Selected Bone : ");		ImGui::SameLine();
+	ImGui::Text(m_pCurrentBoneTag->c_str());		ImGui::SameLine();
+	if (ImGui::Button("Set Root Bone ##CModel_Selector::Show_Default()"))
+	{
+		Set_RootBone();
+	}
+
+	ImGui::Text("Root Bone : ");					ImGui::SameLine();
+	ImGui::Text(Find_RootBoneTag().c_str());
+
+	ImGui::SeparatorText("");
+}
+
+void CModel_Selector::Show_BoneTags()
+{
+	if (false == Check_ModelExist(*m_pCurrentModelTag))
+		return;
+
+	if(ImGui::CollapsingHeader("Show Bones ##CModel_Selector::Show_BoneTags()"))
+	{
+		vector<string>			BoneTags = { m_Models[*m_pCurrentModelTag]->Get_BoneNames() };
+
+		if (ImGui::BeginListBox("Bone Tag ##CModel_Selector::Show_BoneTags()"))
+		{
+			for (auto& strBoneTag : BoneTags)
+			{
+				if (ImGui::Selectable(strBoneTag.c_str()))
+				{
+					*m_pCurrentBoneTag = strBoneTag;
+				}
+			}
+
+			ImGui::EndListBox();
+		}
+	}	
+}
+
+void CModel_Selector::Show_ModelTags()
+{
+	list<string>			ModelTags;
+	for (auto& Pair : m_Models)
+		ModelTags.push_back(Pair.first);
+
+	if (ImGui::CollapsingHeader("ModelTag Bones ##CModel_Selector::Show_ModelTags()"))
+	{
+		if (ImGui::BeginListBox("ModelTag ##CModel_Selector::Show_ModelTags()"))
+		{
+			ImGui::NewLine();
+
+			for (auto& strModelTag : ModelTags)
+			{
+				if (ImGui::Selectable(strModelTag.c_str()))
+				{
+					*m_pCurrentModelTag = strModelTag;
+				}
+			}
+
+			ImGui::EndListBox();
+		}
+	}	
+}
+
+void CModel_Selector::Select_Bone()
+{
+	//static string		strSelectTag = { "Select Bone" };
+
+	//map<string, CModel*>::iterator		iter = { m_Models.find(m_strSelectedModelTag) };
+	//if (iter == m_Models.end())
+	//	return;
+
+	//if (ImGui::RadioButton("Show BoneTags ## CModel_Selector"), m_isShowBoneTags)
+	//{
+	//	m_isShowBoneTags = !m_isShowBoneTags;
+	//}
+
+	//_uint				iNumBones = { static_cast<_uint>(m_Models.size()) };
+	//string* BoneTags = { new string[iNumBones] };
+	//_uint				iIndex = { 0 };
+
+	//vector<string>		vecBoneTags = { m_Models[m_strSelectedModelTag]->Get_BoneNames() };
+	//for (auto& strBoneTag : vecBoneTags)
+	//{
+	//	BoneTags[iIndex++] = strBoneTag;
+	//}
+
+	//if (ImGui::BeginCombo("Bone", strSelectTag.c_str()))
+	//{
+	//	//	모델 컴포넌트 선택하는 창
+	//	for (_uint i = 0; i < iNumBones; ++i)
+	//	{
+	//		_bool		isSelected = { BoneTags[i] == strSelectTag };
+	//		if (ImGui::Selectable(BoneTags[i].c_str(), isSelected))
+	//		{
+	//			strSelectTag = BoneTags[i];
+	//			m_strSelectedBoneTag = strSelectTag;
+	//		}
+
+	//		if (true == isSelected)
+	//		{
+	//			ImGui::SetItemDefaultFocus();
+	//		}
+	//	}
+	//	ImGui::EndCombo();
+	//}
+
+	//Safe_Delete_Array(BoneTags);
+}
+
+void CModel_Selector::Set_RootBone()
+{
+	if (false == Check_BoneExist_CurrentModel(*m_pCurrentBoneTag))
+		return;
+
+	m_Models[*m_pCurrentModelTag]->Set_RootBone(*m_pCurrentBoneTag);
+
 }
 
 void CModel_Selector::Select_Model()
@@ -71,7 +256,7 @@ void CModel_Selector::Select_Model()
 	static string		strSelectTag = { "Select Model" };
 
 	_uint				iNumModels = { static_cast<_uint>(m_Models.size()) };
-	string*				ModelTags = { new string[iNumModels] };
+	string* ModelTags = { new string[iNumModels] };
 
 	_uint				iIndex = { 0 };
 	for (auto& Pair : m_Models)
@@ -88,7 +273,7 @@ void CModel_Selector::Select_Model()
 			if (ImGui::Selectable(ModelTags[i].c_str(), isSelected))
 			{
 				strSelectTag = ModelTags[i];
-				m_strSelectedModelTag = strSelectTag;
+				*m_pCurrentModelTag = strSelectTag;
 			}
 			if (true == isSelected)
 			{
@@ -101,97 +286,35 @@ void CModel_Selector::Select_Model()
 	Safe_Delete_Array(ModelTags);
 }
 
-void CModel_Selector::Select_Bone()
+_bool CModel_Selector::Check_BoneExist_CurrentModel(const string& strBoneTag)
 {
-	static string		strSelectTag = { "Select Bone" };	
-
-	map<string, CModel*>::iterator		iter = { m_Models.find(m_strSelectedModelTag) };
-	if (iter == m_Models.end())
-		return;
-
-	if (ImGui::RadioButton("Show BoneTags ## CModel_Selector"), m_isShowBoneTags)
-	{
-		m_isShowBoneTags = !m_isShowBoneTags;
-	}
-
-	_uint				iNumBones = { static_cast<_uint>(m_Models.size()) };
-	string*				BoneTags = { new string[iNumBones] };
-	_uint				iIndex = { 0 };
-
-	vector<string>		vecBoneTags = { m_Models[m_strSelectedModelTag]->Get_BoneNames() };
-	for (auto& strBoneTag : vecBoneTags)
-	{
-		BoneTags[iIndex++] = strBoneTag;
-	}
-
-	if (ImGui::BeginCombo("Bone", strSelectTag.c_str()))
-	{
-		//	모델 컴포넌트 선택하는 창
-		for (_uint i = 0; i < iNumBones; ++i)
-		{
-			_bool		isSelected = { BoneTags[i] == strSelectTag };
-			if (ImGui::Selectable(BoneTags[i].c_str(), isSelected))
-			{
-				strSelectTag = BoneTags[i];
-				m_strSelectedBoneTag = strSelectTag;
-			}
-
-			if (true == isSelected)
-			{
-				ImGui::SetItemDefaultFocus();
-			}
-		}
-		ImGui::EndCombo();
-	}
-
-	Safe_Delete_Array(BoneTags);
+	return Check_BoneExist(*m_pCurrentModelTag, strBoneTag);
 }
 
-CModel* CModel_Selector::Get_CurrentSelectedModel()
+_bool CModel_Selector::Check_BoneExist(const string& strModelTag, const string& strBoneTag)
 {
-	map<string, CModel*>::iterator		iter = { m_Models.find(m_strSelectedModelTag) };
-	if (iter == m_Models.end())
-		return nullptr;
+	if (false == Check_ModelExist(strModelTag))
+		return false;
 
-	return m_Models[m_strSelectedModelTag];
+	vector<string>					BoneTags = { m_Models[strModelTag]->Get_BoneNames() };
+	vector<string>::iterator		iter = { find(BoneTags.begin(), BoneTags.end(), strBoneTag) };
+
+	return iter != BoneTags.end();
 }
 
-map<string, _float4x4> CModel_Selector::Get_BoneCombinedMatrices()
+_bool CModel_Selector::Check_ModelExist(const string& strModelTag)
 {
-	map<string, _float4x4>			BoneCombinedMatrices;
+	map<string, CModel*>::iterator		iter = { m_Models.find(strModelTag) };
 
-	CModel*					pModel = { Get_Model(m_strSelectedModelTag) };
-	if (nullptr == pModel)
-		return BoneCombinedMatrices;
-
-	vector<string>			BoneNames = { pModel->Get_BoneNames() };
-	for (auto& strBoneTag : BoneNames)
-	{
-		_float4x4			BoneCombinedMatrix = { *pModel->Get_CombinedMatrix(strBoneTag) };
-		BoneCombinedMatrices[strBoneTag] = BoneCombinedMatrix;
-	}
-
-	return BoneCombinedMatrices;
+	return iter != m_Models.end();
 }
 
-_float4x4* CModel_Selector::Get_Selected_BoneCombinedMatrix_Ptr()
+string CModel_Selector::Find_RootBoneTag()
 {
-	map<string, CModel*>::iterator		iter = { m_Models.find(m_strSelectedBoneTag) };
+	if (false == Check_ModelExist(*m_pCurrentModelTag))
+		return string();
 
-	if (iter == m_Models.end())
-		return nullptr;
-
-	return const_cast<_float4x4*>(iter->second->Get_CombinedMatrix(m_strSelectedBoneTag));
-}
-
-void CModel_Selector::Set_RootBone()
-{
-	map<string, CModel*>::iterator		iter = { m_Models.find(m_strSelectedModelTag) };
-	if (iter == m_Models.end())
-		return;
-
-	m_Models[m_strSelectedModelTag]->Set_RootBone(m_strSelectedBoneTag);
-
+	return m_Models[*m_pCurrentModelTag]->Find_RootBoneTag();
 }
 
 CModel_Selector* CModel_Selector::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)

@@ -1512,6 +1512,20 @@ _uint CModel::Find_AnimIndex(CAnimation* pAnimation)
 	return iIndex;
 }
 
+string CModel::Find_RootBoneTag()
+{
+	string			strBoneTag = { "" };
+	for (auto& pBone : m_Bones)
+	{
+		if (true == pBone->Is_RootBone())
+		{
+			strBoneTag = pBone->Get_Name();
+		}
+	}
+
+	return strBoneTag;
+}
+
 _float4 CModel::Invalidate_RootNode(const string& strRoot)
 {
 	for (auto& Bone : m_Bones)

@@ -43,7 +43,7 @@ void CAnimationEditor::Tick(_float fTimeDelta)
 		pTool.second->Tick(fTimeDelta);
 	}
 
-	Update_AnimPlayer();
+	Update_Datas();
 
 	ImGui::End();
 }
@@ -100,11 +100,20 @@ HRESULT CAnimationEditor::Add_Tools()
 		PartObjectDesc.pTestObject = m_pTestObject;
 	}
 
+	CTool_AnimList::ANIMLIST_DESC			AnimListDesc{};
+	AnimListDesc.pCurrentAnimationTag = &m_strCurrentAnimTag;
+	AnimListDesc.pCurrentModelTag = &m_strCurrentModelTag;
+
+	CModel_Selector::MODELSELECTOR_DESC		ModelSelectorDesc{};
+	ModelSelectorDesc.pCurrentBoneTag = &m_strCurrentBoneTag;
+	ModelSelectorDesc.pCurrentModelTag = &m_strCurrentModelTag;
+	
+
 	if (FAILED(__super::Add_Tool(&pToolCollider, static_cast<_uint>(CTool::TOOL_TYPE::COLLIDER), TOOL_COLLIDER_TAG)))
 		return E_FAIL;
-	if (FAILED(__super::Add_Tool(&pToolAnimList, static_cast<_uint>(CTool::TOOL_TYPE::ANIM_LIST), TOOL_ANIMLIST_TAG)))
+	if (FAILED(__super::Add_Tool(&pToolAnimList, static_cast<_uint>(CTool::TOOL_TYPE::ANIM_LIST), TOOL_ANIMLIST_TAG, &AnimListDesc)))
 		return E_FAIL;
-	if (FAILED(__super::Add_Tool(&pToolModelSelector, static_cast<_uint>(CTool::TOOL_TYPE::MODEL_SELECTOR), TOOL_MODELSELECTOR_TAG)))
+	if (FAILED(__super::Add_Tool(&pToolModelSelector, static_cast<_uint>(CTool::TOOL_TYPE::MODEL_SELECTOR), TOOL_MODELSELECTOR_TAG, &ModelSelectorDesc)))
 		return E_FAIL;
 	if (FAILED(__super::Add_Tool(&pToolTransformtaion, static_cast<_uint>(CTool::TOOL_TYPE::TRANSFORMATION), TOOL_TRANSFORMATION_TAG)))
 		return E_FAIL;	
@@ -208,6 +217,12 @@ void CAnimationEditor::Show_PartObjectTags()
 
 }
 
+void CAnimationEditor::Update_Datas()
+{
+	Set_Model_BoneLayer();
+	Update_AnimPlayer();
+}
+
 void CAnimationEditor::Add_BoneLayer_AllBone()
 {
 	CModel* pModel = { m_pToolModelSelector->Get_CurrentSelectedModel() };
@@ -219,13 +234,16 @@ void CAnimationEditor::Add_BoneLayer_AllBone()
 
 void CAnimationEditor::Add_BoneLayer_ChildBones()
 {
+	if (nullptr == m_pToolModelSelector)
+		return;
+
 	CModel* pModel = { m_pToolModelSelector->Get_CurrentSelectedModel() };
 	if (nullptr == pModel)
 		return;
 
-	m_pToolBoneLayer->Create_AnimLayer_BoneChilds(pModel, strTopBoneTag);
+	m_pToolBoneLayer->Create_AnimLayer_ChildBones(pModel, m_strCurrentBoneTag);
 }
-
+	
 void CAnimationEditor::Add_BoneLayer_BetweenIndices()
 {
 	CModel* pModel = { m_pToolModelSelector->Get_CurrentSelectedModel() };
@@ -252,6 +270,15 @@ void CAnimationEditor::Add_BoneLayer_BetweenIndices()
 	m_pToolBoneLayer->Create_AnimLayer_Indices(pModel, BoneIndices);
 }
 
+void CAnimationEditor::Set_Model_BoneLayer()
+{
+	if (nullptr == m_pToolBoneLayer || nullptr == m_pToolModelSelector)
+		return;
+
+	CModel*			pModel = { m_pToolModelSelector->Get_CurrentSelectedModel() };
+	m_pToolBoneLayer->Set_CurrentModel(pModel);
+}
+
 void CAnimationEditor::Set_Transform_TransformTool()
 {
 	if (nullptr == m_pToolTransformation)
@@ -274,19 +301,27 @@ void CAnimationEditor::Update_AnimPlayer()
 
 HRESULT CAnimationEditor::Initialize_AnimList()
 {
-	map<string, CModel*>			Models = { m_pToolModelSelector->Get_Models() };
-
+	map<string, CModel*>						Models = { m_pToolModelSelector->Get_Models() };
+	map<string, map<string, CAnimation*>>		ModelAnimations;
 	for (auto& Pair : Models)
 	{
-		CModel*			pModel = { Pair.second };
-		_uint			iNumAnims = { pModel->Get_NumAnims() };
+		string							strModelTag = { Pair.first };
+		CModel*							pModel = { Pair.second };
 
-		vector<CAnimation*>		Animations = { pModel->Get_Animations() };
-		for (auto& pAnimation : Animations)
+		vector<CAnimation*>				vecAnimations = { pModel->Get_Animations() };
+		map<string, CAnimation*>		mapAnimations;
+
+		for (auto& pAnimation : vecAnimations)
 		{
-			m_pToolAnimList->Add_Animation(pAnimation);
-		}
+			string		strAnimationTag = { pAnimation->Get_Name() };
+
+			mapAnimations.emplace(strAnimationTag, pAnimation);
+		}		
+
+		ModelAnimations.emplace(Pair.first, mapAnimations);
 	}
+
+	m_pToolAnimList->Add_Animations(ModelAnimations);
 
 	return S_OK;
 }

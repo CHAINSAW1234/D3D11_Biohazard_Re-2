@@ -10,7 +10,8 @@ class CModel_Selector final :  public CTool_Selector
 public:
 	typedef struct tagModelSelectorDesc
 	{
-		list<CModel*>		Models;
+		string*					pCurrentModelTag = { nullptr };
+		string*					pCurrentBoneTag = { nullptr };
 	}MODELSELECTOR_DESC;
 
 private:
@@ -25,27 +26,43 @@ private:
 	HRESULT						Add_Components();
 
 private:
-	void						Select_Model();
-	void						Select_Bone();
+	void						On_Off_Buttons();
 
-public:
-	CModel*						Get_Model(const string& strModelTag) { return m_Models[strModelTag]; }
+public:		/* For.Acces */
+	CModel*						Get_Model(const string& strModelTag);
 	map<string, CModel*>		Get_Models() { return m_Models; }
 	CModel*						Get_CurrentSelectedModel();
-	string						Get_CurrentSelectedModelTag() { return m_strSelectedModelTag; }
-	string						Get_CurrentSelectedBoneTag() { return m_strSelectedBoneTag; }
 	map<string, _float4x4>		Get_BoneCombinedMatrices();
 	_float4x4*					Get_Selected_BoneCombinedMatrix_Ptr();
 
-private:
+public:		/* For.SHowList */
+	void						Show_Default();
+	void						Show_BoneTags();
+	void						Show_ModelTags();
+
+private:	/* For.Bone */
+	void						Select_Bone();
 	void						Set_RootBone();
+
+private:	/* For.Model */
+	void						Select_Model();
+
+private:
+	_bool						Check_BoneExist_CurrentModel(const string& strBoneTag);
+	_bool						Check_BoneExist(const string& strModelTag, const string& strBoneTag);
+	_bool						Check_ModelExist(const string& strModelTag);
+
+	string						Find_RootBoneTag();
+
 
 private:
 	_uint						m_iNumModels = { 0 };
 	map<string, CModel*>		m_Models;
-	string						m_strSelectedModelTag = { "" };
-	string						m_strSelectedBoneTag = { "" };
 
+	string*						m_pCurrentModelTag = { nullptr };
+	string*						m_pCurrentBoneTag = { nullptr };
+
+	_bool						m_isShowModelTags = { false };
 	_bool						m_isShowBoneTags = { false };
 
 public:

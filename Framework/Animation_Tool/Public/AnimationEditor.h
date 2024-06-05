@@ -40,22 +40,37 @@ private:
 private:
     void                        Show_PartObjectTags();
 
-private:    /* For.Func */
+private:    /* UI 버튼 들 배치 */
+
+
+private:    /* 틱이 돈 이후 모든 데이터 별도 동기화 해주는 과정 */
+    void                        Update_Datas();
+
+    void                        Update_AnimPlayer();
+
+    void                        Set_Model_BoneLayer();
+
+/* For.Func 버튼 기능들.... */
+private:    /* For.BoneLayer */
     void                        Add_BoneLayer_AllBone();
     void                        Add_BoneLayer_ChildBones();
     void                        Add_BoneLayer_BetweenIndices();
 
+
 private:    /* For.Transform Tool */
     void                        Set_Transform_TransformTool();
 
+
 private:    /* For.AnimPlayer Tool */
-    void                        Update_AnimPlayer();
+
 
 private:    /* For.AnimList Tool */
     HRESULT                     Initialize_AnimList();
 
+
 private:    /* For.AssistRendering */
     void                        Render_BoneTags();
+
 
 private:
     CTool_Collider*             m_pToolCollider = { nullptr };
@@ -65,6 +80,11 @@ private:
     CTool_AnimPlayer*           m_pToolAnimPlayer = { nullptr };
     CTool_PartObject*           m_pToolPartObject = { nullptr };
     CTool_BoneLayer*            m_pToolBoneLayer = { nullptr };
+
+    string                      m_strCurrentModelTag = { "" };
+    string                      m_strCurrentBoneTag = { "" };
+    string                      m_strCurrentAnimTag = { "" };
+    wstring                     m_strCurrentBoneLayerTag = { TEXT("") };
 
     _bool                       m_isActiveRootXZ = { false };
     _bool                       m_isActiveRootY = { false };
