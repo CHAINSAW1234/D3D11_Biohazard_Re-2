@@ -246,6 +246,7 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\State.cpp" />
     <ClCompile Include="..\private\Target_Manager.cpp" />
     <ClCompile Include="..\private\Texture.cpp" />
+    <ClCompile Include="..\Private\Thread_Pool.cpp" />
     <ClCompile Include="..\Private\Timer.cpp" />
     <ClCompile Include="..\Private\Timer_Manager.cpp" />
     <ClCompile Include="..\private\Transform.cpp" />
@@ -330,6 +331,7 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\State.h" />
     <ClInclude Include="..\public\Target_Manager.h" />
     <ClInclude Include="..\public\Texture.h" />
+    <ClInclude Include="..\Public\Thread_Pool.h" />
     <ClInclude Include="..\Public\Timer.h" />
     <ClInclude Include="..\Public\Timer_Manager.h" />
     <ClInclude Include="..\public\Transform.h" />

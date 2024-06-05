@@ -64,9 +64,9 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	PxInitExtensions(*m_Physics, m_Pvd);
 
 	//Ragdoll Init
-	m_pRagdoll_Physics = new CRagdoll_Physics(m_Scene, m_Physics, m_DefaultAllocatorCallback, m_DefaultErrorCallback, m_Foundation,
+	/*m_pRagdoll_Physics = new CRagdoll_Physics(m_Scene, m_Physics, m_DefaultAllocatorCallback, m_DefaultErrorCallback, m_Foundation,
 		m_Dispatcher, m_Material);
-	m_pRagdoll_Physics->Init();
+	m_pRagdoll_Physics->Init();*/
 
 	//Character Controller Init
 	m_Manager = PxCreateControllerManager(*m_Scene);

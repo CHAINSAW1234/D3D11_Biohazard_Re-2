@@ -14,7 +14,7 @@ extern bool g_RenderMode;
 
 extern int g_MaxTriangles = 10000;
 
-extern int g_MaxSubdivisions =2;
+extern int g_MaxSubdivisions =3;
 
 extern int g_EndNodeCount = 0;
 
@@ -74,7 +74,18 @@ public:
 	void						CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangleCount,_float4 vCenter, float width, int nodeID);
 	void						AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles);
 	void						DrawOctree(COctree* pNode, CModel* pRootWorld,class CShader* pShader);
-private:
+	void						DrawOctree_Thread(COctree* pNode);
+	void						DrawOctree_Thread_Internal(COctree* pNode, vector<class CModel*>* vecModel);
+	void						DrawOctree_1();
+	void						DrawOctree_2();
+	void						DrawOctree_3();
+	void						DrawOctree_4();
+	void						DrawOctree_5();
+	void						DrawOctree_6();
+	void						DrawOctree_7();
+	void						DrawOctree_8();
+	void						Render_Node(CModel* pRootWorld, CShader* pShader);
+public:
 	bool								m_bSubDivided;
 	float								m_Width;
 	int									m_TriangleCount;
@@ -85,7 +96,7 @@ private:
 	COctree*							m_pOctreeNodes[8];
 	class CGameInstance*				m_pGameInstance = { nullptr };
 	_float4								m_vTranslation;
-
+	vector<class CModel*>				m_vecEntryNode;
 private:
 	ID3D11Device*						m_pDevice = { nullptr };
 	ID3D11DeviceContext*				m_pContext = { nullptr };
