@@ -245,6 +245,7 @@ public: /*For Octree Culling*/
 	{
 		m_iNumMeshes = NumMesh;
 	}
+	void									Release_IndexBuffer(_uint iNumMesh);
 
 public:
 	/* Create_From_FBX */

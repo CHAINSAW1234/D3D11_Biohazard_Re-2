@@ -175,6 +175,7 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 		(*TempMeshes)[i]->SetNormals(pObject->GetNormals());
 		(*TempMeshes)[i]->SetTangents(pObject->GetTangents());
 		(*TempMeshes)[i]->SetTexcoords(pObject->GetTexcoords());
+		(*TempMeshes)[i]->SetVertexBuffer(pObject->GetVertexBuffer());
 
 		int index = 0;
 
@@ -383,7 +384,7 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 
 		CMesh* newObject = new CMesh(m_pDevice, m_pContext);
 		newObject->SetNumVertices(pObject->GetNumVertices());
-		newObject->SetVertices(pObject->GetVertices());
+		//newObject->SetVertices(pObject->GetVertices());
 
 		NewMeshes->push_back(newObject);
 
@@ -395,6 +396,7 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 		(*NewMeshes)[i]->SetTangents(pObject->GetTangents());
 		(*NewMeshes)[i]->SetTexcoords(pObject->GetTexcoords());
 		(*NewMeshes)[i]->Init_For_Octree();
+		(*NewMeshes)[i]->SetVertexBuffer(pObject->GetVertexBuffer());
 
 		auto pIndices = (*NewMeshes)[i]->GetIndices();
 		auto Faces = (*Meshes)[i]->GetFaces();
