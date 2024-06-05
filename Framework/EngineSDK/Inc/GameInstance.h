@@ -260,6 +260,16 @@ private:/*For Physics_Controller*/
 	_float3*								TerrainPos = { nullptr };
 #pragma endregion
 
+#pragma region Thread Pool
+public:
+	void									Insert_Job(function<void()> job);
+	_bool									AllJobsFinished();
+#pragma endregion
+
+#pragma region For Graphic Device
+
+#pragma endregion
+
 private:
 	class CGraphic_Device*					m_pGraphic_Device = { nullptr };
 	class CInput_Device*					m_pInput_Device = { nullptr };
@@ -277,7 +287,7 @@ private:
 	class CPhysics_Controller*				m_pPhysics_Controller = { nullptr };
 	class CSound_Manager*					m_pSound_Manager = { nullptr };
 	class CPicking*							m_pPicking = { nullptr };
-
+	class CThread_Pool*						m_pThread_Pool = { nullptr };
 	/*for physics*/
 	_bool									m_bSimulate = { false };
 

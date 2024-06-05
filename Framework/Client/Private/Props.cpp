@@ -52,10 +52,15 @@ HRESULT CProps::Initialize(void* pArg)
 	m_pModelCom->Static_Mesh_Cooking();
 
 
-	m_pOctree = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+	/*m_pOctree = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 	m_pOctree->GetSceneDimensions(m_pModelCom);
 	int TotalTriangleCount = m_pOctree->GetSceneTriangleCount(m_pModelCom);
 	m_pOctree->CreateNode(m_pModelCom, TotalTriangleCount, m_pOctree->GetCenter(), m_pOctree->GetWidth());
+
+	for (int i = 0; i < m_pModelCom->GetNumMesh(); ++i)
+	{
+		m_pModelCom->Release_IndexBuffer(i);
+	}*/
 
 	return S_OK;
 }
@@ -63,11 +68,11 @@ HRESULT CProps::Initialize(void* pArg)
 void CProps::Tick(_float fTimeDelta)
 {
 	m_fTimeTest += fTimeDelta;
-	if(m_pPlayer == nullptr)
+	if (m_pPlayer == nullptr)
 		m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-	if (m_pGameInstance->Get_KeyState(VK_F9) == DOWN && m_fTimeTest>0.5f)
-		m_bOctotree = !m_bOctotree;	
-	if (m_pGameInstance->Get_KeyState(VK_F10) == DOWN && m_fTimeTest>0.5f)
+	if (m_pGameInstance->Get_KeyState(VK_F9) == DOWN && m_fTimeTest > 0.5f)
+		m_bOctotree = !m_bOctotree;
+	if (m_pGameInstance->Get_KeyState(VK_F10) == DOWN && m_fTimeTest > 0.5f)
 		m_bShadow = !m_bShadow;
 }
 
@@ -87,10 +92,10 @@ void CProps::Late_Tick(_float fTimeDelta)
 
 		m_bVisible = m_tagPropDesc.BelongIndexs2[m_pPlayer->Get_Player_ColIndex()];
 	}
-	
 
 
-	if (/*m_bVisible && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f)*/1)
+
+	if (m_bVisible && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f))
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
@@ -102,7 +107,6 @@ void CProps::Late_Tick(_float fTimeDelta)
 			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 		}
 	}
-
 }
 
 HRESULT CProps::Render()
@@ -111,35 +115,65 @@ HRESULT CProps::Render()
 		return E_FAIL;
 
 
-	//if (m_bOctotree)
-	//	m_pOctree->DrawOctree(m_pOctree, m_pModelCom, m_pShaderCom);
-	//else
-	//{
-	//	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+	if (m_bOctotree)
+		m_pOctree->DrawOctree(m_pOctree, m_pModelCom, m_pShaderCom);
+	else
+	{
+		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	//	for (size_t i = 0; i < iNumMeshes; i++)
-	//	{
-	//		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-	//			return E_FAIL;
-	//		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
-	//			return E_FAIL;
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+				return E_FAIL;
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
+				return E_FAIL;
 
-	//		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
-	//		{
-	//			if (FAILED(m_pShaderCom->Begin(0)))
-	//				return E_FAIL;
-	//		}
-	//		else
-	//		{
-	//			if (FAILED(m_pShaderCom->Begin(1)))
-	//				return E_FAIL;
-	//		}
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+			{
+				if (FAILED(m_pShaderCom->Begin(0)))
+					return E_FAIL;
+			}
+			else
+			{
+				if (FAILED(m_pShaderCom->Begin(1)))
+					return E_FAIL;
+			}
 
-	//		m_pModelCom->Render(static_cast<_uint>(i));
-	//	}
-	//}
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+	}
 
-	m_pOctree->DrawOctree(m_pOctree, m_pModelCom, m_pShaderCom);
+
+	/*std::function<void()> job1 = std::bind(&COctree::DrawOctree_1, m_pOctree);
+	m_pGameInstance->Insert_Job(job1);
+
+	std::function<void()> job2 = std::bind(&COctree::DrawOctree_2, m_pOctree);
+	m_pGameInstance->Insert_Job(job2);
+
+	std::function<void()> job3 = std::bind(&COctree::DrawOctree_3, m_pOctree);
+	m_pGameInstance->Insert_Job(job3);
+
+	std::function<void()> job4 = std::bind(&COctree::DrawOctree_4, m_pOctree);
+	m_pGameInstance->Insert_Job(job4);
+
+	std::function<void()> job5 = std::bind(&COctree::DrawOctree_5, m_pOctree);
+	m_pGameInstance->Insert_Job(job5);
+
+	std::function<void()> job6 = std::bind(&COctree::DrawOctree_6, m_pOctree);
+	m_pGameInstance->Insert_Job(job6);
+
+	std::function<void()> job7 = std::bind(&COctree::DrawOctree_7, m_pOctree);
+	m_pGameInstance->Insert_Job(job7);
+
+	std::function<void()> job8 = std::bind(&COctree::DrawOctree_8, m_pOctree);
+	m_pGameInstance->Insert_Job(job8);
+
+	while (!m_pGameInstance->AllJobsFinished())
+	{
+		this_thread::yield();
+	}
+
+	m_pOctree->Render_Node(m_pModelCom, m_pShaderCom);*/
 
 	return S_OK;
 }

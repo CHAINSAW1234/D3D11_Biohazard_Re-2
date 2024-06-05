@@ -130,6 +130,7 @@ public: /* For Octree Culling*/
 	void					SetVertexBuffer(ID3D11Buffer* pBuffer)
 	{
 		m_pVB = pBuffer;
+		Safe_AddRef(pBuffer);
 	}
 	ID3D11Buffer* GetIndexBuffer()
 	{
@@ -154,6 +155,7 @@ public: /* For Octree Culling*/
 	void					SetNormals(_float3* pNormals);
 	void					SetTangents(_float3* pTangents);
 	void					SetTexcoords(_float2* pTexcoords);
+	void					Release_IndexBuffer();
 private:
 	vector<tFace*>	m_vecFaces;
 	_float3* m_pNormals = { nullptr };

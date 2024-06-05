@@ -175,6 +175,7 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 		(*TempMeshes)[i]->SetNormals(pObject->GetNormals());
 		(*TempMeshes)[i]->SetTangents(pObject->GetTangents());
 		(*TempMeshes)[i]->SetTexcoords(pObject->GetTexcoords());
+		(*TempMeshes)[i]->SetVertexBuffer(pObject->GetVertexBuffer());
 
 		int index = 0;
 
@@ -383,7 +384,7 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 
 		CMesh* newObject = new CMesh(m_pDevice, m_pContext);
 		newObject->SetNumVertices(pObject->GetNumVertices());
-		newObject->SetVertices(pObject->GetVertices());
+		//newObject->SetVertices(pObject->GetVertices());
 
 		NewMeshes->push_back(newObject);
 
@@ -395,6 +396,7 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 		(*NewMeshes)[i]->SetTangents(pObject->GetTangents());
 		(*NewMeshes)[i]->SetTexcoords(pObject->GetTexcoords());
 		(*NewMeshes)[i]->Init_For_Octree();
+		(*NewMeshes)[i]->SetVertexBuffer(pObject->GetVertexBuffer());
 
 		auto pIndices = (*NewMeshes)[i]->GetIndices();
 		auto Faces = (*Meshes)[i]->GetFaces();
@@ -488,5 +490,358 @@ void COctree::DrawOctree(COctree* pNode, CModel* pRootWorld, CShader* pShader)
 				pNode->m_pWorld->Render(i);
 			}
 		}
+	}
+}
+
+void COctree::DrawOctree_Thread(COctree* pNode)
+{
+	if (!pNode) return;
+
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &m_vecEntryNode);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &m_vecEntryNode);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &m_vecEntryNode);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &m_vecEntryNode);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &m_vecEntryNode);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &m_vecEntryNode);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &m_vecEntryNode);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &m_vecEntryNode);
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_Thread_Internal(COctree* pNode, vector<class CModel*>* vecModel)
+{
+	if (!pNode) return;
+
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], vecModel);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], vecModel);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], vecModel);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], vecModel);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], vecModel);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], vecModel);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], vecModel);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], vecModel);
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		(*vecModel).push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_1()
+{
+	auto pNode = m_pOctreeNodes[TOP_LEFT_FRONT];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+}
+
+void COctree::DrawOctree_2()
+{
+	auto pNode = m_pOctreeNodes[TOP_LEFT_BACK];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_3()
+{
+	auto pNode = m_pOctreeNodes[TOP_RIGHT_BACK];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_4()
+{
+	auto pNode = m_pOctreeNodes[TOP_RIGHT_FRONT];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_5()
+{
+	auto pNode = m_pOctreeNodes[BOTTOM_LEFT_FRONT];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_6()
+{
+	auto pNode = m_pOctreeNodes[BOTTOM_LEFT_BACK];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_7()
+{
+	auto pNode = m_pOctreeNodes[BOTTOM_RIGHT_BACK];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_8()
+{
+	auto pNode = m_pOctreeNodes[BOTTOM_RIGHT_FRONT];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::Render_Node(CModel* pRootWorld, CShader* pShader)
+{
+	for (int i = 0; i < 8; ++i)
+	{
+		for (int j = 0; j < m_pOctreeNodes[i]->m_vecEntryNode.size(); ++j)
+		{
+			auto Meshes = m_pOctreeNodes[i]->m_vecEntryNode[j]->GetMeshes();
+
+			for (int k = 0; k < m_pOctreeNodes[i]->m_vecEntryNode[j]->GetNumMesh(); ++k)
+			{
+				if ((*Meshes)[k]->GetNumIndices() != 0)
+				{
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(k), aiTextureType_DIFFUSE)))
+						return;
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_NormalTexture", static_cast<_uint>(k), aiTextureType_NORMALS)))
+						return;
+
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_ATOSTexture", static_cast<_uint>(k), aiTextureType_METALNESS)))
+					{
+						if (FAILED(pShader->Begin(0)))
+							return;
+					}
+					else
+					{
+						if (FAILED(pShader->Begin(1)))
+							return;
+					}
+
+					m_pOctreeNodes[i]->m_vecEntryNode[j]->Render(k);
+				}
+			}
+		}
+
+		m_pOctreeNodes[i]->m_vecEntryNode.clear();
 	}
 }

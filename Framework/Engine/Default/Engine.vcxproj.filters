@@ -238,6 +238,9 @@
     <Filter Include="01.Utility\02.Components\Octree">
       <UniqueIdentifier>{6e6f8c10-923b-4ddb-8a4f-089c2634b67b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{edcc90c2-b748-4be8-8741-4496f7f03897}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -461,6 +464,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Octree.cpp">
       <Filter>01.Utility\02.Components\Octree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Thread_Pool.cpp">
+      <Filter>Thread</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -707,6 +713,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Octree.h">
       <Filter>01.Utility\02.Components\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Thread_Pool.h">
+      <Filter>Thread</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

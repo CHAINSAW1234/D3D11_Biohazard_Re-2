@@ -2614,3 +2614,8 @@ void CModel::Free()
 
 	m_Importer.FreeScene();
 }
+
+void CModel::Release_IndexBuffer(_uint iNumMesh)
+{
+	m_Meshes[iNumMesh]->Release_IndexBuffer();
+}
