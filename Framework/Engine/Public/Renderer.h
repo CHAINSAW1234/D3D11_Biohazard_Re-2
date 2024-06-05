@@ -56,6 +56,7 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT						SetUp_RenderTargets_MotionBlur(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_SSR(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_DOF(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_GODRAY(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_FXAA(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTarget_SubResult(const D3D11_VIEWPORT& ViewportDesc);
 	// Àß ¸ð¸§ 
@@ -102,7 +103,7 @@ private:
 
 private:
 	_bool						m_isRenderFieldShadow = { true };
-	_bool						m_ShaderOptions[SHADER_STATE_END] = { true };
+	_bool						m_ShaderOptions[SHADER_STATE_END] = { false };
 
 private:
 	_bool						m_isRadialBlurActive = { false };
@@ -156,6 +157,7 @@ private:
 	HRESULT						Render_MotionBlur();
 	HRESULT						Render_SSR();
 	HRESULT						Render_DOF();
+	HRESULT						Render_GODRAY();
 	HRESULT						Render_FXAA();
 private:
 	HRESULT						Render_PostProcessing();
