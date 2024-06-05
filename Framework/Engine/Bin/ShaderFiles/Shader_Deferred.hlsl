@@ -1166,13 +1166,14 @@ PS_OUT PS_GODSRAY(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
+    vector vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
     float4 vViewPosition = mul(ConvertoTexcoordToWorldPosition(In.vTexcoord), g_CamViewMatrix);
     
     float3 vDir = -vViewPosition.xyz;
     float fCameraDistance = length(vViewPosition.xyz);
     vDir /= fCameraDistance;
     
-    const uint SAMPLE_COUNT = 32;
+    const uint SAMPLE_COUNT = 64;
     
     float3 rayEnd = float3(0.0f, 0.0f, 0.0f);
     float stepSize = length(vViewPosition.xyz - rayEnd) / SAMPLE_COUNT;
@@ -1195,7 +1196,7 @@ PS_OUT PS_GODSRAY(PS_IN In)
             {
                 float fDepth = g_DirLightDepthTexture.Sample(PointSampler, ShadowMapCoord.xy).r;
             
-                if (ShadowMapCoord.w > fDepth * 1000)
+                if (ShadowMapCoord.w < fDepth * 1000)
                     ++accumulation_Dir;
             
             }
@@ -1224,7 +1225,7 @@ PS_OUT PS_GODSRAY(PS_IN In)
                 {
                     float fDepth = g_SpotLightDepthTexture.Sample(PointSampler, ShadowMapCoord.xy).r;
             
-                    if (ShadowMapCoord.w  > fDepth * 1000)
+                    if (ShadowMapCoord.w  < fDepth * 1000)
                         accumulation_Spot += fAtt;
             
                 }
@@ -1238,8 +1239,7 @@ PS_OUT PS_GODSRAY(PS_IN In)
     accumulation_Dir /= SAMPLE_COUNT;
     accumulation_Spot /= SAMPLE_COUNT;
    
-    Out.vColor = g_vDirLightDiffuse * (1 - accumulation_Dir) + g_vSpotLightDiffuse * accumulation_Spot;
-    Out.vColor.a = 1;
+    Out.vColor = vColor + g_vDirLightDiffuse * accumulation_Dir + g_vSpotLightDiffuse * accumulation_Spot;
     return Out;
 }
 

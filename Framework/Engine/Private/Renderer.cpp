@@ -1717,7 +1717,8 @@ HRESULT CRenderer::Render_GODRAY()
 	if (FAILED(m_pShader->Bind_Matrix("g_CamProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_SubResult"), "g_Texture")))
+		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Depth"), "g_DepthTexture")))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_LightDepth_Dir"), "g_DirLightDepthTexture")))
@@ -1727,7 +1728,7 @@ HRESULT CRenderer::Render_GODRAY()
 
 	// 1. DirectionLight존재 여부 체크
 	if (m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) != nullptr) {
-		_bool isShadowDirLight = false;
+		_bool isShadowDirLight = true;
 		if (FAILED(m_pShader->Bind_RawValue("g_isShadowDirLight", &isShadowDirLight, sizeof(_bool))))
 			return E_FAIL;
 
