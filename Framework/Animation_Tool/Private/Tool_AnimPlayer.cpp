@@ -14,6 +14,11 @@ HRESULT CTool_AnimPlayer::Initialize(void* pArg)
 	ANIMPLAYER_DESC* pDesc = { static_cast<ANIMPLAYER_DESC*>(pArg) };
 	m_pTargetTransform = pDesc->pTransform;
 	m_pRootMoveDir = pDesc->pMoveDir;
+	m_pCurrentBoneLayerTag = pDesc->pCurrentBoneLayerTag;
+	m_pCurrentPartObjectTag = pDesc->pCurrentPartObjectTag;
+
+	if (nullptr == m_pCurrentBoneLayerTag || nullptr == m_pCurrentPartObjectTag)
+		return E_FAIL;
 
 	Safe_AddRef(m_pTargetTransform);
 
@@ -27,31 +32,30 @@ HRESULT CTool_AnimPlayer::Initialize(void* pArg)
 
 void CTool_AnimPlayer::Tick(_float fTimeDelta)
 {
-	if (ImGui::CollapsingHeader(m_strCollasingTag.c_str()))
-	{
-		//	기본 적인 불변수 제어 => 라디오 박스 이용
-		On_Off_Buttons();
 
-		Show_CurrentSelectedInfos();
+	ImGui::Begin("Animation_Player");
+	//	기본 적인 불변수 제어 => 라디오 박스 이용
+	On_Off_Buttons();
 
-		Set_Animation();
-		
-		if (true == m_isShowBoneTags)
-		{
-			Show_BoneTags();
-		}
+	Set_Animation();
 
-		if (true == m_isShowLayerTags)
-		{
-			Show_BoneLayers();
-		}
+	Apply_RootMotion();
 
-		Apply_RootMotion();
-		Play_Animation(fTimeDelta);
-	}
+	Play_Animation(fTimeDelta);
+	Play_Bar();
+
+	ImGui::End();
 }
 
-void CTool_AnimPlayer::Change_Animation(CAnimation* pAnimation)
+void CTool_AnimPlayer::Play_Animation(_float fTimeDelta)
+{
+	if (nullptr == m_pCurrentModel || nullptr == m_pCurrentAnimation || nullptr == m_pRootMoveDir || false == m_isPlayAnimation)
+		return;
+
+	m_pCurrentModel->Play_Animations_RootMotion(m_pTargetTransform, fTimeDelta, m_pRootMoveDir);
+}
+
+void CTool_AnimPlayer::Set_Current_Animation(CAnimation* pAnimation)
 {
 	if (nullptr == pAnimation)
 		return;
@@ -60,21 +64,13 @@ void CTool_AnimPlayer::Change_Animation(CAnimation* pAnimation)
 	Safe_AddRef(m_pCurrentAnimation);
 }
 
-void CTool_AnimPlayer::Play_Animation(_float fTimeDelta)
-{
-	if (nullptr == m_pAnimModel || nullptr == m_pCurrentAnimation || nullptr == m_pRootMoveDir || false == m_isPlayAnimation)
-		return;
-
-	m_pAnimModel->Play_Animations_RootMotion(m_pTargetTransform, fTimeDelta, m_pRootMoveDir);
-}
-
-void CTool_AnimPlayer::Change_Model(CModel* pModel)
+void CTool_AnimPlayer::Set_Current_Model(CModel* pModel)
 {
 	if (nullptr == pModel)
 		return;
 
-	m_pAnimModel = pModel;
-	Safe_AddRef(m_pAnimModel);
+	m_pCurrentModel = pModel;
+	Safe_AddRef(m_pCurrentModel);
 }
 
 void CTool_AnimPlayer::Set_TargetTransform(CTransform* pTransform)
@@ -86,7 +82,7 @@ void CTool_AnimPlayer::Set_TargetTransform(CTransform* pTransform)
 	Safe_AddRef(m_pTargetTransform);
 }
 
-_float CTool_AnimPlayer::Get_Ratio()
+_float CTool_AnimPlayer::Compute_Ratio()
 {
 	_float			fDuration = { Get_CurrentAnim_Duration() };
 	_float			fTrackPosition = { Get_CurrentAnim_TrackPosition() };
@@ -94,6 +90,28 @@ _float CTool_AnimPlayer::Get_Ratio()
 	_float			fRatio = { fTrackPosition / fDuration };
 
 	return fRatio;
+}
+
+void CTool_AnimPlayer::Play_Bar()
+{
+	ImGui::SeparatorText("Play Bar");
+
+	_float			fTrackPosition = { Get_CurrentAnim_TrackPosition() };
+	_float			fDuration = { Get_CurrentAnim_Duration() };
+
+	string			strTrackPosition = { to_string(fTrackPosition) };
+	string			strDuration = { to_string(fDuration) };
+
+	ImGui::Text(string(string("TrackPosition : ") + strTrackPosition).c_str()); 
+	ImGui::Text(string(string("Duration : ") + strDuration).c_str());
+
+	ImGui::SeparatorText("##");
+
+	ImGui::SliderFloat("##CTool_AnimPlayer::Play_Bar()", &fTrackPosition, 0.f, fDuration);
+
+	Set_TrackPosition(fTrackPosition);
+
+	ImGui::SeparatorText("##");
 }
 
 _float CTool_AnimPlayer::Get_CurrentAnim_Duration()
@@ -127,23 +145,20 @@ _uint CTool_AnimPlayer::Get_CurrentKeyFrame()
 	return iCurrentKeyFrame;
 }
 
+void CTool_AnimPlayer::Set_TrackPosition(_float fTrackPosition)
+{
+	if (nullptr == m_pCurrentAnimation)
+		return;
+
+	m_pCurrentAnimation->Set_TrackPosition(fTrackPosition);
+}
+
 void CTool_AnimPlayer::On_Off_Buttons()
 {
 	if (ImGui::RadioButton("Playing ANIM ##AnimPlayer", m_isPlayAnimation))
 	{
 		m_isPlayAnimation = !m_isPlayAnimation;
 	}
-
-	if (ImGui::RadioButton("Show Bone Tags ##AnimPlayer", m_isShowBoneTags))
-	{
-		m_isShowBoneTags = !m_isShowBoneTags;
-	}
-
-	if (ImGui::RadioButton("Show Layers Tags ##AnimPlayer", m_isShowLayerTags))
-	{
-		m_isShowLayerTags = !m_isShowLayerTags;
-	}
-
 
 	ImGui::NewLine();
 	ImGui::Text("RootMotion Control ##AnimPlayer");
@@ -165,186 +180,108 @@ void CTool_AnimPlayer::Set_Animation()
 {
 	ImGui::NewLine();
 
+	Create_PlayingDesc();
+
+	ImGui::NewLine();
+}
+
+void CTool_AnimPlayer::Create_PlayingDesc()
+{
+	if (nullptr == m_pCurrentAnimation || nullptr == m_pCurrentModel)
+		return;
+
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
 
-	list<wstring>			LayerTags;
-	_bool					isSelectLayer = { false };
-	static string			strTargetLayerTag = { "" };	
-
-	static _uint			iAnimIndex = { 0 };
-	_bool					isSetAnimIndex = { false };
-
-	static _int				iPlayingIndex = { 0 };
-	_bool					isSelectPlayingIndex = { false };
-	_uint					iNumPlayingInfo = { 0 };
-
-
-	static void* pPreModel = { nullptr };
-	if (pPreModel != m_pAnimModel)
-	{
-		strTargetLayerTag = { "" };
-		iAnimIndex = { 0 };
-		iPlayingIndex = { 0 };
-	}
-	pPreModel = { m_pAnimModel };
-
-
-
-	if (nullptr != m_pAnimModel)
-	{
-		LayerTags = m_pAnimModel->Get_BoneLayer_Tags();
-	}
-
-	_uint				iLayerCnt = { 0 };
-	for (auto& wstrLayerTag : LayerTags)
-	{
-		string			strLayerTag = { Convert_Wstring_String(wstrLayerTag) };
-		string			strLayerCnt = { to_string(iLayerCnt) };
-		if (ImGui::Button(string(string("Lyaer Select : ") + strLayerTag + string(" ## ") + strLayerCnt).c_str()))
-		{
-			isSelectLayer = true;
-			strTargetLayerTag = strLayerTag;
-			break;
-		}
-
-		++iLayerCnt;
-	}
-
-
-	if (nullptr != m_pCurrentAnimation && nullptr != m_pAnimModel)
-	{
-		iAnimIndex = { m_pAnimModel->Find_AnimIndex(m_pCurrentAnimation) };
-		isSetAnimIndex = true;
-	}
+	ImGui::SeparatorText("##");
 
 	static _float			fWeight = { 1.f };
 	ImGui::SliderFloat("Anim Weight ## Tool_AnimPlayer SetANim Blend", &fWeight, 0.f, 1.f);
 
 	static _bool			isLoop = { false };
-	if (ImGui::RadioButton("Anim Loop Active ## Tool_AnimPlayer SetANim Blend", isLoop))
+	if (ImGui::RadioButton("Anim Loop Active ##CTool_AnimPlayer::Create_PlayingDesc()", isLoop))
 	{
 		isLoop = !isLoop;
 	}
 
-	if (nullptr != m_pAnimModel)
+	string					strSrcAnimTag = { m_pCurrentAnimation->Get_Name() };
+	vector<CAnimation*>		Animations = { m_pCurrentModel->Get_Animations() };
+
+	_uint					iNumAnim = { static_cast<_uint>(Animations.size()) };
+	_uint					iAnimIndex = { 0 };
+	for (auto& pAnimation : Animations)
 	{
-		iNumPlayingInfo = m_pAnimModel->Get_NumPlayingInfos();
+		string			strDstAnimTag = { pAnimation->Get_Name() };
+
+		if (strSrcAnimTag == strDstAnimTag)
+			break;
+
+		++iAnimIndex;
 	}
 
-	if (ImGui::InputInt("Anim Playing Index ## Tool_AnimPlayer SetANim Blend", &iPlayingIndex))
+	_uint					iNumPlayingInfo = {};
+	if (nullptr != m_pCurrentModel)
 	{
-		if (iPlayingIndex > iNumPlayingInfo)
-			iPlayingIndex = iNumPlayingInfo - 1;
+		iNumPlayingInfo = m_pCurrentModel->Get_NumPlayingInfos();
+	}
+	string					strNumPlayingInfo = { to_string(static_cast<_int>(iNumPlayingInfo)) };
+
+	ImGui::SeparatorText("Set Playing Info Index");
+
+	ImGui::Text(string(string("Num Playing Info : ") + strNumPlayingInfo).c_str());
+
+	_int					iPlayingIndex = { 0 };
+	if (ImGui::InputInt("Index ##CTool_AnimPlayer::Create_PlayingDesc()", &iPlayingIndex))
+	{
+		if (iPlayingIndex > static_cast<_int>(iNumPlayingInfo))
+			iPlayingIndex = static_cast<_int>(iNumPlayingInfo) - 1;
 
 		if (iPlayingIndex < 0)
 			iPlayingIndex = 0;
-
-		isSelectPlayingIndex = true;
 	}
 
+	ImGui::SeparatorText("##");
 
-	if (ImGui::Button("Set Animation ## Tool_AnimPlayer SetANim Blend"))
+	if (ImGui::Button("Set Animation ##CTool_AnimPlayer::Create_PlayingDesc()"))
 	{
-		AnimDesc.iAnimIndex = iAnimIndex;
-		AnimDesc.fWeight = fWeight;
-		AnimDesc.strBoneLayerTag = Convert_String_Wstring(strTargetLayerTag);
-		AnimDesc.isLoop = isLoop;
+		_bool				isCanCreate = { true };
+		if (iAnimIndex >= iNumAnim)
+			isCanCreate = false;
 
-		m_pAnimModel->Set_Animation_Blend(AnimDesc, iPlayingIndex);
-	}
-	
-	ImGui::NewLine();
-}
-
-void CTool_AnimPlayer::Show_CurrentSelectedInfos()
-{
-	ImGui::NewLine();
-	ImGui::Text("============= Current SelectInfos ===============");
-
-	ImGui::Text(string(string("Bone : ") + m_strCurrentSelectBoneTag + string("## Show_CurrentSelectedInfos")).c_str());
-	ImGui::Text(string(string("Layer : ") + m_strCurrentSelectLayerTag + string("## Show_CurrentSelectedInfos")).c_str());
-
-	ImGui::Text("=================================================");
-}
-
-void CTool_AnimPlayer::Show_BoneLayers()
-{
-	ImGui::NewLine();
-	ImGui::Text("================ BoneLayerTag ===================");
-	ImGui::BeginChild("Scrolling ##Show_BoneLayers() ");
-
-	_int			iLayerCnt = { 0 };
-	if (nullptr != m_pAnimModel)
-	{
-		list<wstring>			LayerTags = { m_pAnimModel->Get_BoneLayer_Tags() };
-		for (auto& wstrLayerTag : LayerTags)
+		list<wstring>		BoneLayerTags = { m_pCurrentModel->Get_BoneLayer_Tags() };
+		_bool				isIncludedLayer = { false };
+		for (auto& strBoneLayerTag : BoneLayerTags)
 		{
-			string		strLayerTag = { Convert_Wstring_String(wstrLayerTag) };
-			string		strLayerCnt = { to_string(iLayerCnt++) };
-			if (ImGui::Button(string(string("Select ## AnimPlayer_Show_BoneLayers") + strLayerCnt).c_str()))
-			{
-				m_strCurrentSelectBoneTag = strLayerTag;
-			}
-
-			ImGui::SameLine();
-			ImGui::Text(strLayerTag.c_str());
+			if (strBoneLayerTag == *m_pCurrentBoneLayerTag)
+				isIncludedLayer = true;
 		}
-	}
-	ImGui::EndChild();
-	ImGui::Text("=================================================");
-}
 
-void CTool_AnimPlayer::Show_BoneTags()
-{
-	ImGui::NewLine();
-	ImGui::Text("================== Bone Tags ====================");
-	ImGui::BeginChild("Scrolling ## ShowBoneTags() ");
+		if (false == isIncludedLayer)
+			isCanCreate = false;
 
-	_int			iBoneCnt = { 0 };
-	if (nullptr != m_pAnimModel)
-	{
-		vector<string>			BoneTags = { m_pAnimModel->Get_BoneNames() };
-		for (auto& strBoneTag : BoneTags)
+		if (0 == iNumPlayingInfo)
+			isCanCreate = false;
+
+		if (true == isCanCreate)
 		{
-			string		strBoneCnt = { to_string(iBoneCnt++) };
-			if (ImGui::Button(string(string("Select ## AnimPlayer_Show_BoneTags") + strBoneCnt).c_str()))
-			{
-				m_strCurrentSelectBoneTag = strBoneTag;
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button(string(string("RootBone ## AnimPlayer_Show_BoneTags") + strBoneCnt).c_str()))
-			{
-				Set_RootBone(strBoneTag);
-			}
-
-			ImGui::SameLine();
-
-			ImGui::Text(strBoneTag.c_str());
+			AnimDesc.iAnimIndex = iAnimIndex;
+			AnimDesc.fWeight = fWeight;
+			AnimDesc.strBoneLayerTag = *m_pCurrentBoneLayerTag;
+			AnimDesc.isLoop = isLoop;
 		}
+
+		m_pCurrentModel->Set_Animation_Blend(AnimDesc, iPlayingIndex);
 	}
-
-	ImGui::EndChild();
-	ImGui::Text("=================================================");
-}
-
-void CTool_AnimPlayer::Set_RootBone(const string& strRootBoneTag)
-{
-	if (nullptr == m_pAnimModel)
-		return;
-
-	m_pAnimModel->Set_RootBone(strRootBoneTag);
+	return;
 }
 
 void CTool_AnimPlayer::Apply_RootMotion()
 {
-	if (nullptr == m_pAnimModel)
+	if (nullptr == m_pCurrentModel)
 		return;
 
-	m_pAnimModel->Active_RootMotion_Rotation(m_isRooActive_Rotate);
-	m_pAnimModel->Active_RootMotion_XZ(m_isRooActive_XZ);
-	m_pAnimModel->Active_RootMotion_Y(m_isRooActive_Y);
+	m_pCurrentModel->Active_RootMotion_Rotation(m_isRooActive_Rotate);
+	m_pCurrentModel->Active_RootMotion_XZ(m_isRooActive_XZ);
+	m_pCurrentModel->Active_RootMotion_Y(m_isRooActive_Y);
 }
 
 CTool_AnimPlayer* CTool_AnimPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
@@ -366,6 +303,6 @@ void CTool_AnimPlayer::Free()
 	__super::Free();
 
 	Safe_Release(m_pCurrentAnimation);
-	Safe_Release(m_pAnimModel);
+	Safe_Release(m_pCurrentModel);
 	Safe_Release(m_pTargetTransform);
 }

@@ -10,6 +10,7 @@ class CTool_BoneLayer final : public CTool
 public:
 	typedef struct tagBoneLayerDesc
 	{
+		const string*				pCurrentBoneTag = { nullptr };
 		const string*				pCurrentModelTag = { nullptr };
 		wstring*					pCurrentBoneLayerTag = { nullptr };
 	}BONELAYER_DESC;
@@ -24,20 +25,22 @@ public:
 
 private:
 	void							Input_LayerTag();
+	void							Input_Start_End_BoneIndex();
+	void							Create_BoneLayer();
 
 public:
 	void							Show_BoneLayers();
 
 public:
-	void							Set_CurrentModel(CModel* pModel);
+	void							Set_Current_Model(CModel* pModel);
 
 private:
 	void							Show_Default();
 
-public:
-	void							Create_AnimLayer_AllBone(CModel* pModel);
-	void							Create_AnimLayer_ChildBones(CModel* pModel, const string& strTopParentBoneTag);
-	void							Create_AnimLayer_Indices(CModel* pModel, list<_uint> BoneIndices);
+private:
+	void							Create_BoneLayer_AllBone();
+	void							Create_BoneLayer_ChildBones();
+	void							Create_BoneLayer_Indices(list<_uint> BoneIndices);
 
 	list<wstring>					Get_BoneLayerTags(CModel* pModel);
 
@@ -50,7 +53,11 @@ private:
 	wstring							m_strInputLayerTag = { TEXT("") };
 
 	wstring*						m_pCurrentBoneLayerTag = { nullptr };
+	const string*					m_pCurrentBoneTag = { nullptr };
 	const string*					m_pCurrentModelTag = { nullptr };
+
+	_int							m_iStartBoneIndex = { 0 };
+	_int							m_iEndBoneIndex = { 0 };
 
 	CModel*							m_pCurrentModel = { nullptr };
 

@@ -42,6 +42,7 @@ public:
 public:
 	HRESULT					Chanage_Componenet_PartObject(const wstring& strPartTag, CComponent* pComponent, _uint iType);
 	HRESULT					Add_PartObject(const wstring& strPartTag);
+	HRESULT					Erase_PartObject(const wstring& strPartTag);
 	HRESULT					Link_Bone_PartObject(const wstring& strSrcPartTag, const wstring& strDstPartTag, const string& strSrcBoneTag, const string& strDstBoneTag);		//	SrcÀÇ »À¸¦ Dst »À¿¡ ºÎÂø
 
 private:

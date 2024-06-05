@@ -44,17 +44,17 @@ private:    /* UI 버튼 들 배치 */
 
 
 private:    /* 틱이 돈 이후 모든 데이터 별도 동기화 해주는 과정 */
-    void                        Update_Datas();
+    void                        Update_Backend_Datas();
 
-    void                        Update_AnimPlayer();
+    void                        Update_AnimPlayerTool();
+    void                        Update_PartObjectTool();
+    void                        Update_BoneLayerTool();
 
-    void                        Set_Model_BoneLayer();
+private:
+    void                        Update_TestObject();
 
 /* For.Func 버튼 기능들.... */
 private:    /* For.BoneLayer */
-    void                        Add_BoneLayer_AllBone();
-    void                        Add_BoneLayer_ChildBones();
-    void                        Add_BoneLayer_BetweenIndices();
 
 
 private:    /* For.Transform Tool */
@@ -85,6 +85,7 @@ private:
     string                      m_strCurrentBoneTag = { "" };
     string                      m_strCurrentAnimTag = { "" };
     wstring                     m_strCurrentBoneLayerTag = { TEXT("") };
+    wstring                     m_strCurrentPartObjectTag = { TEXT("") };
 
     _bool                       m_isActiveRootXZ = { false };
     _bool                       m_isActiveRootY = { false };
