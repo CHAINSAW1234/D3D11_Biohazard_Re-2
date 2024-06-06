@@ -9,6 +9,7 @@
 #include"CustomCollider.h"
 
 #include "Character_Controller.h"
+#include "Camera_Free.h"
 
 #define MODEL_SCALE 0.01f
 
@@ -53,6 +54,12 @@ HRESULT CPlayer::Initialize(void * pArg)
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
 	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.f, 0.f, 1.f),&m_iIndex_CCT,this);
+
+	//For Camera.
+	Load_CameraPosition();
+	if (FAILED(Ready_Camera()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -136,60 +143,63 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
 	}
 
+	//For Camera.
+	Calc_YPosition_Camera();
+
 	if (PRESSING == m_pGameInstance->Get_KeyState('U'))
 	{
+		//For Camera.
+		auto Pos_Prev = m_pController->GetPosition_Float4();
+
 		_vector      vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
 		vLook = { XMVectorScale(XMVector3Normalize(vLook),0.01f) };
 		_vector      vMoveDir = { vLook };
 
 		vMovedDirection += vMoveDir;
+
+		_float4			vResultMoveDirFloat4 = {};
+		XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
+		m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
+
+		//For Camera.
+		Pos_Prev = Sub_Float4(m_pController->GetPosition_Float4(), Pos_Prev);
+		m_vCameraPosition = Add_Float4_Coord(m_vCameraPosition, Pos_Prev);
+		m_vCamera_LookAt_Point = Add_Float4_Coord(m_vCamera_LookAt_Point, Pos_Prev);
 	}
 
 	if (PRESSING == m_pGameInstance->Get_KeyState('J'))
 	{
+		//For Camera.
+		auto Pos_Prev = m_pController->GetPosition_Float4();
+
 		_vector      vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
 		vLook = { XMVectorScale(XMVector3Normalize(vLook),0.01f) };
 		_vector      vMoveDir = { -vLook };
 
 		vMovedDirection += vMoveDir;
+
+		_float4			vResultMoveDirFloat4 = {};
+		XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
+		m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
+
+		//For Camera.
+		Pos_Prev = Sub_Float4(m_pController->GetPosition_Float4(), Pos_Prev);
+		m_vCameraPosition = Add_Float4_Coord(m_vCameraPosition, Pos_Prev);
+		m_vCamera_LookAt_Point = Add_Float4_Coord(m_vCamera_LookAt_Point, Pos_Prev);
 	}
 
-	_float4			vResultMoveDirFloat4 = {};
-	XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
-	m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
+#pragma region Camera
 
-#pragma region Terrain
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////TEST/////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	/*_vector		vMoveDir = { XMVectorSet(0.f, 0.f, 0.f, 0.f) };
-	CVIBuffer_Terrain*		pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
-	CTransform*				pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
-	if (nullptr != pTerrainBuffer &&
-		nullptr != pTerrainTransform)
+	if (m_pCamera)
 	{
-		_vector		vPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
-		_float4		vPickPosFloat4;
-		pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
+		Calc_Camera_LookAt_Point(fTimeDelta);
+	}
 
-		_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
-		vMoveDir = vResultPos - vPosition;
-	}*/
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	//	m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
+	RayCasting_Camera();
 
+	//For Camera.
+	m_vPrev_Position = m_pController->GetPosition_Float4();
 #pragma endregion
-
 
 #pragma region 예은 추가
 	Col_Section();
@@ -247,6 +257,182 @@ void CPlayer::Col_Section()
 
 }
 #pragma endregion
+
+void CPlayer::Calc_YPosition_Camera()
+{
+	_float4 YDelta = Sub_Float4(m_pController->GetPosition_Float4(), m_vPrev_Position);
+	YDelta.z = 0.f;
+	YDelta.x = 0.f;
+	m_vCameraPosition = Add_Float4_Coord(m_vCameraPosition, YDelta);
+	m_vCamera_LookAt_Point = Add_Float4_Coord(m_vCamera_LookAt_Point, YDelta);
+}
+
+void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
+{
+	POINT		ptDeltaPos = { m_pGameInstance->Get_MouseDeltaPos() };
+	_float		fMouseSensor = { 0.1f };
+
+	m_fLerpTime += fTimeDelta * 0.01f;
+
+	if (m_fLerpTime >= 1.f)
+	{
+		m_bLerp = false;
+		m_fLerpTime = 1.f;
+	}
+
+	//Y Rotate
+	{
+		auto CharacterPos = m_pController->GetPosition_Float4();
+		CharacterPos.y += 1.f;
+
+		m_vCameraPosition = Axis_Rotate_Vector(m_vCameraPosition, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor);
+		auto Pos = Axis_Rotate_Vector(m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION), _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor);
+		m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, Pos);
+
+		if (m_bLerp)
+		{
+			_vector NewPos = XMVectorLerp(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION), m_vCameraPosition, m_fLerpTime);
+			m_pCamera->SetPosition(NewPos);
+		}
+		else
+		{
+			m_pCamera->SetPosition(m_vCameraPosition);
+		}
+
+		m_vCamera_LookAt_Point = Axis_Rotate_Vector(m_vCamera_LookAt_Point, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor);
+		m_vLookPoint_To_Position_Dir = Axis_Rotate_Vector(m_vLookPoint_To_Position_Dir, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor);
+		m_pTransformCom_Camera->Look_At(m_vCamera_LookAt_Point);
+	}
+
+
+	//X Rotate
+	{
+		auto CharacterPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+		CharacterPos.y += 1.f;
+
+		m_vCameraPosition = Axis_Rotate_Vector(m_vCameraPosition, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
+		auto Pos = Axis_Rotate_Vector(m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION), m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
+		m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, Pos);
+
+		if (m_fLerpTime != 1.f)
+		{
+			_vector NewPos = XMVectorLerp(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION), m_vCameraPosition, m_fLerpTime);
+			m_pCamera->SetPosition(NewPos);
+		}
+		else
+		{
+			m_pCamera->SetPosition(m_vCameraPosition);
+		}
+
+		m_vCamera_LookAt_Point = Axis_Rotate_Vector(m_vCamera_LookAt_Point, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
+		m_vLookPoint_To_Position_Dir = Axis_Rotate_Vector(m_vLookPoint_To_Position_Dir, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
+		m_pTransformCom_Camera->Look_At(m_vCamera_LookAt_Point);
+	}
+
+
+	_vector vCamPos = XMLoadFloat4(&m_vCameraPosition);
+	_vector vLookAtPos = XMLoadFloat4(&m_vCamera_LookAt_Point);
+	_vector vDelta = XMVector4Normalize(vLookAtPos - vCamPos);
+	XMStoreFloat4(&m_vRayDir, vDelta);
+
+	POINT ptPos = {};
+
+	GetCursorPos(&ptPos);
+	ScreenToClient(g_hWnd, &ptPos);
+
+	RECT rc = {};
+	GetClientRect(g_hWnd, &rc);
+
+	ptPos.x = _long(_float(rc.right - rc.left) * 0.5f);
+	ptPos.y = _long(_float(rc.bottom - rc.top) * 0.5f);
+
+	m_pGameInstance->Set_MouseCurPos(ptPos);
+
+	ClientToScreen(g_hWnd, &ptPos);
+	SetCursorPos(ptPos.x, ptPos.y);
+}
+
+HRESULT CPlayer::Ready_Camera()
+{
+	m_pCamera = dynamic_cast<CCamera_Free*>(*(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_ZZZCamera")).begin());
+
+	if (m_pCamera == nullptr)
+		return E_FAIL;
+
+	m_pCamera->SetPlayer(this);
+
+	_vector vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
+	_vector vUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
+	_vector vRight = m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT);
+	_vector vLookAtPoint;
+	_vector vCameraPosition;
+	_vector vPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+
+	vLookAtPoint = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist);
+	XMStoreFloat4(&m_vCamera_LookAt_Point, vLookAtPoint);
+
+	m_pCamera->SetPlayer(this);
+
+	//m_pCamera->Create_Controller(m_vCameraPosition);
+	m_pCamera->SetPosition(m_vCameraPosition);
+	m_pCamera->LookAt(m_vCamera_LookAt_Point);
+
+	m_pTransformCom_Camera = m_pCamera->Get_Transform();
+	Safe_AddRef(m_pTransformCom_Camera);
+
+	m_vLookPoint_To_Position_Dir = Sub_Float4(m_vCamera_LookAt_Point, m_vCameraPosition);
+
+	_vector vCharPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+	vCharPos = XMVectorSetY(vCharPos, XMVectorGetY(vCharPos) + 1.f);
+	_vector vCameraPos = XMLoadFloat4(&m_vCameraPosition);
+
+	m_fRayDist = XMVectorGetX(XMVector4Length(vCharPos - vCameraPos));
+
+	return S_OK;
+}
+
+void CPlayer::Load_CameraPosition()
+{
+	string filePath = "../Camera_Position/Camera_Position";
+
+	//File Import
+	ifstream File(filePath, std::ios::binary | std::ios::in);
+
+	File.read((char*)&m_vCameraPosition, sizeof(_float4));
+	File.read((char*)&m_fRight_Dist, sizeof(_float));
+	File.read((char*)&m_fUp_Dist, sizeof(_float));
+	File.read((char*)&m_fLook_Dist, sizeof(_float));
+
+	File.close();
+}
+
+void CPlayer::RayCasting_Camera()
+{
+	_float4 BlockPoint;
+	_float4 TempPos;
+	TempPos.x = m_vCameraPosition.x + (m_vRayDir.x * m_fRayDist);
+	TempPos.y = m_vCameraPosition.y + (m_vRayDir.y * m_fRayDist);
+	TempPos.z = m_vCameraPosition.z + (m_vRayDir.z * m_fRayDist);
+	TempPos.w = 1.f;
+
+	m_vRayDir.x *= -1.f;
+	m_vRayDir.y *= -1.f;
+	m_vRayDir.z *= -1.f;
+	if (m_pGameInstance->RayCast(TempPos, m_vRayDir, &BlockPoint, m_fRayDist))
+	{
+		m_fLerpTime = 0.f;
+		m_bLerp = true;
+
+		m_vRayDir.x *= -1.f;
+		m_vRayDir.y *= -1.f;
+		m_vRayDir.z *= -1.f;
+
+		BlockPoint.x += m_vRayDir.x * 0.25f;
+		BlockPoint.y += m_vRayDir.y * 0.25f;
+		BlockPoint.z += m_vRayDir.z * 0.25f;
+		m_pCamera->SetPosition(BlockPoint);
+	}
+}
 
 HRESULT CPlayer::Add_Components()
 {

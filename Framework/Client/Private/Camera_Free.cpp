@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\Public\Camera_Free.h"
+#include "player.h"
 
 CCamera_Free::CCamera_Free(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CCamera{ pDevice, pContext }
@@ -88,16 +89,46 @@ void CCamera_Free::Tick(_float fTimeDelta)
 		SetCursorPos(ptPos.x, ptPos.y);
 	}
 
-
-	//m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f, 1.f));
-
-	//m_fFovy = XMConvertToRadians(120.f);
-
 	__super::Bind_PipeLines();
 }
 
 void CCamera_Free::Late_Tick(_float fTimeDelta)
 {
+}
+
+void CCamera_Free::SetPosition(_float4 vPosition)
+{
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
+}
+
+void CCamera_Free::SetPosition(_vector vPosition)
+{
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
+}
+
+_float4 CCamera_Free::Get_Position_Float4()
+{
+	return m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+}
+
+_vector CCamera_Free::Get_Position_Vector()
+{
+	return m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+}
+
+void CCamera_Free::SetPlayer(CGameObject* pPlayer)
+{
+	auto Player = dynamic_cast<CPlayer*>(pPlayer);
+	if (Player)
+		m_pPlayer = Player;
+}
+
+void CCamera_Free::LookAt(_float4 vPoint)
+{
+	if (m_pTransformCom)
+	{
+		m_pTransformCom->Look_At(XMLoadFloat4(&vPoint));
+	}
 }
 
 HRESULT CCamera_Free::Render()

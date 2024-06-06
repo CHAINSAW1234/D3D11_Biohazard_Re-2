@@ -42,7 +42,6 @@ HRESULT CProps::Initialize(void* pArg)
 	pObj_desc->fSpeedPerSec = 1.f;
 	pObj_desc->fRotationPerSec = XMConvertToRadians(1.f);
 
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -114,36 +113,28 @@ HRESULT CProps::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
+	/*_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-	/*if (m_bOctotree)
-		m_pOctree->DrawOctree(m_pOctree, m_pModelCom, m_pShaderCom);
-	else
+	for (size_t i = 0; i < iNumMeshes; i++)
 	{
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+			return E_FAIL;
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
+			return E_FAIL;
 
-		for (size_t i = 0; i < iNumMeshes; i++)
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
 		{
-			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+			if (FAILED(m_pShaderCom->Begin(0)))
 				return E_FAIL;
-			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
-				return E_FAIL;
-
-			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
-			{
-				if (FAILED(m_pShaderCom->Begin(0)))
-					return E_FAIL;
-			}
-			else
-			{
-				if (FAILED(m_pShaderCom->Begin(1)))
-					return E_FAIL;
-			}
-
-			m_pModelCom->Render(static_cast<_uint>(i));
 		}
-	}*/
+		else
+		{
+			if (FAILED(m_pShaderCom->Begin(1)))
+				return E_FAIL;
+		}
 
-	//m_pOctree->DrawOctree(m_pOctree, m_pModelCom, m_pShaderCom);
+		m_pModelCom->Render(static_cast<_uint>(i));
+	}*/
 
 	std::function<void()> job1 = std::bind(&COctree::DrawOctree_1, m_pOctree);
 	m_pGameInstance->Insert_Job(job1);

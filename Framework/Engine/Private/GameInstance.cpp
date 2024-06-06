@@ -1004,6 +1004,11 @@ void CGameInstance::Cook_Terrain()
 {
 	m_pPhysics_Controller->InitTerrain();
 }
+
+_bool CGameInstance::RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
+{
+	return m_pPhysics_Controller->RayCast(vOrigin, vDir, pBlockPoint, fMaxDist);
+}
 #pragma endregion
 
 #pragma region	Thread_Pool

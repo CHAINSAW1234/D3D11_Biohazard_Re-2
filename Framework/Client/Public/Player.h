@@ -70,6 +70,30 @@ private:
 
 	_float3										m_vRootTranslation = {};
 
+	//For Camera
+public:
+	void										Calc_Camera_LookAt_Point(_float fTimeDelta);
+	HRESULT										Ready_Camera();
+	void										Load_CameraPosition();
+	void										RayCasting_Camera();
+	void										Calc_YPosition_Camera();
+private:
+	class CCamera_Free* m_pCamera = { nullptr };
+	_float4										m_vCameraPosition;
+	_float4										m_vCamera_LookAt_Point;
+	_float										m_fLook_Dist = { 1.f };
+	_float										m_fUp_Dist = { 0.f };
+	_float										m_fRight_Dist = { 0.f };
+	CTransform* m_pTransformCom_Camera = { nullptr };
+	_float										m_fMouseSensor = { 0.0f };
+
+	_float4										m_vLookPoint_To_Position_Dir;
+	_float4										m_vPrev_Position;
+	_float										m_fRayDist = { 0.f };
+	_float4										m_vRayDir;
+	_float										m_fLerpTime = { 1.f };
+	_bool										m_bLerp = { false };
+
 private:
 	HRESULT Add_Components();
 	HRESULT Add_PartObjects();

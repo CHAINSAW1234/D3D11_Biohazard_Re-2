@@ -64,9 +64,9 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	PxInitExtensions(*m_Physics, m_Pvd);
 
 	//Ragdoll Init
-	/*m_pRagdoll_Physics = new CRagdoll_Physics(m_Scene, m_Physics, m_DefaultAllocatorCallback, m_DefaultErrorCallback, m_Foundation,
+	m_pRagdoll_Physics = new CRagdoll_Physics(m_Scene, m_Physics, m_DefaultAllocatorCallback, m_DefaultErrorCallback, m_Foundation,
 		m_Dispatcher, m_Material);
-	m_pRagdoll_Physics->Init();*/
+	m_pRagdoll_Physics->Init();
 
 	//Character Controller Init
 	m_Manager = PxCreateControllerManager(*m_Scene);
@@ -345,6 +345,23 @@ CRigid_Dynamic* CPhysics_Controller::GetRigid_Dynamic(_int Index)
 _float4 CPhysics_Controller::GetTranslation_Rigid_Dynamic(_int Index)
 {
 	return m_vecRigid_Dynamic[Index]->GetTranslation();
+}
+
+_bool CPhysics_Controller::RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
+{
+	PxVec3 PxvOrigin = Float4_To_PxVec(vOrigin);
+	PxVec3 PxvDir = Float4_To_PxVec(vDir);
+
+	PxRaycastBuffer hit;
+
+	bool Status = m_Scene->raycast(PxvOrigin, PxvDir.getNormalized(), fMaxDist, hit, PxHitFlag::eDEFAULT, PxQueryFilterData(PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC));
+
+	if (Status)
+	{
+		*pBlockPoint = PxVec_To_Float4_Coord(hit.block.position);
+	}
+
+	return Status;
 }
 
 _matrix CPhysics_Controller::GetWorldMatrix_Rigid_Dynamic(_int Index)

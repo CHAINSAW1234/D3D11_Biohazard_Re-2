@@ -20,7 +20,6 @@ private:
 
 	//편의성 함수
 public:
-public:
 	FORCEINLINE XMFLOAT4 Convert_Float3_To_Float4_Dir(XMFLOAT3 Vec)
 	{
 		XMFLOAT4 Vec4;
@@ -125,6 +124,38 @@ public:
 		Result.y = F1.y + F2.y;
 		Result.z = F1.z + F2.z;
 		Result.w = 0.f;
+
+		return Result;
+	}
+
+	FORCEINLINE _float4	Axis_Rotate_Vector(_float4 Vector, _float4 Axis, _float4 Point, _float RotateAmount)
+	{
+		_float W = Vector.w;
+
+		_vector Vec = XMLoadFloat4(&Vector);
+		_vector Pos = XMLoadFloat4(&Point);
+		_vector AxisVec = XMLoadFloat4(&Axis);
+
+		Vec -= Pos;
+		_matrix RotationMatrix = XMMatrixRotationAxis(AxisVec, RotateAmount);
+
+		Vec = XMVector4Transform(Vec, RotationMatrix);
+		Vec += Pos;
+
+		_float4 Result;
+		XMStoreFloat4(&Result, Vec);
+		Result.w = W;
+
+		return Result;
+	}
+
+	FORCEINLINE _float4 Sub_Float4(_float4 Src, _float4 Dst)
+	{
+		_float4 Result;
+		Result.x = Src.x - Dst.x;
+		Result.y = Src.y - Dst.y;
+		Result.z = Src.z - Dst.z;
+		Result.w = Src.w;
 
 		return Result;
 	}
