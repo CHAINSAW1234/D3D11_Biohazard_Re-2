@@ -5,7 +5,8 @@
 
 BEGIN(Engine)
 
-#define ANIM_DEFAULT_LINEARTIME 0.2f
+#define ANIM_DEFAULT_LINEARTIME		0.2f
+#define MAX_COUNT_BONE				256
 
 class ENGINE_DLL CModel final : public CComponent
 {
@@ -124,12 +125,19 @@ public:		/* For. Access */
 	map<wstring, class CBone_Layer*>		Get_BoneLayers() { return m_BoneLayers; }
 	list<wstring>							Get_BoneLayer_Tags();
 
+	_uint									Get_NumBones() { return static_cast<_uint>(m_Bones.size()); }
+	_uint									Get_NumMeshes() const { return m_iNumMeshes; }
 	_uint									Get_NumPlayingInfos() { return static_cast<_uint>(m_PlayingAnimInfos.size()); }
 
 	_uint									Find_AnimIndex(CAnimation* pAnimation);
 	string									Find_RootBoneTag();
 
+	_int									Get_BoneIndex(const string& strBoneTag);
+
 	_float4									Invalidate_RootNode(const string& strRoot);
+
+	_bool									Is_Surbodinate_Bone(const string& strBoneTag);
+	_bool									Is_Root_Bone(const string& strBoneTag);
 
 	_uint									Get_CurrentMaxKeyFrameIndex(_uint iPlayingIndex);
 	_float									Get_Duration(_uint iPlayingIndex, _int iAnimIndex = -1);
@@ -138,7 +146,6 @@ public:		/* For. Access */
 	void									Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition);
 	const vector<_uint>&					Get_CurrentKeyFrameIndices(_uint iPlayingIndex);
 
-	_uint									Get_NumMeshes() const { return m_iNumMeshes; }
 	class CBone*							Get_BonePtr(const _char* pBoneName) const;
 
 	_bool									isFinished(_uint iPlayingIndex);
@@ -218,7 +225,7 @@ private:
 	_uint									m_iNumAnimations = { 0 };
 	vector<class CAnimation*>				m_Animations;
 
-	_float4x4								m_MeshBoneMatrices[256];
+	_float4x4								m_MeshBoneMatrices[MAX_COUNT_BONE];
 
 private:	/* For.Blend_Animation */
 	vector<ANIM_PLAYING_INFO>				m_PlayingAnimInfos;

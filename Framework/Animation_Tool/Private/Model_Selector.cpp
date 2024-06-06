@@ -13,9 +13,10 @@ HRESULT CModel_Selector::Initialize(void* pArg)
 
 	MODELSELECTOR_DESC* pDesc = { static_cast<MODELSELECTOR_DESC*>(pArg) };
 	m_pCurrentBoneTag = pDesc->pCurrentBoneTag;
+	m_pCurrentRootBoneTag = pDesc->pCurrentRootBoneTag;
 	m_pCurrentModelTag = pDesc->pCurrentModelTag;
 
-	if (nullptr == m_pCurrentBoneTag || nullptr == m_pCurrentModelTag)
+	if (nullptr == m_pCurrentBoneTag || nullptr == m_pCurrentModelTag || nullptr == m_pCurrentRootBoneTag)
 		return E_FAIL;
 
 	if (FAILED(__super::Initialize(pArg)))
@@ -90,6 +91,23 @@ CModel* CModel_Selector::Get_Model(const string& strModelTag)
 	return iter->second;
 }
 
+string CModel_Selector::Get_Model_Tag(CModel* pModel)
+{
+	string		strModelTag = { "" };
+	if (nullptr == pModel)
+		return strModelTag;
+
+	for (auto& Pair : m_Models)
+	{
+		if (pModel == Pair.second)
+		{
+			strModelTag = { Pair.first };
+		}
+	}
+
+	return strModelTag;
+}
+
 CModel* CModel_Selector::Get_CurrentSelectedModel()
 {
 	map<string, CModel*>::iterator		iter = { m_Models.find(*m_pCurrentModelTag) };
@@ -139,6 +157,7 @@ void CModel_Selector::Show_Default()
 	if (ImGui::Button("Set Root Bone ##CModel_Selector::Show_Default()"))
 	{
 		Set_RootBone();
+		*m_pCurrentRootBoneTag = *m_pCurrentBoneTag;
 	}
 
 	ImGui::Text("Root Bone : ");					ImGui::SameLine();
@@ -158,9 +177,13 @@ void CModel_Selector::Show_BoneTags()
 
 		if (ImGui::BeginListBox("Bone Tag ##CModel_Selector::Show_BoneTags()"))
 		{
+			_uint				iBoneIndex = { 0 };
 			for (auto& strBoneTag : BoneTags)
 			{
-				if (ImGui::Selectable(strBoneTag.c_str()))
+				string			strBoneIndex = { to_string(iBoneIndex++) };
+				string			strCombinedText = { strBoneIndex + string(" : ") + strBoneTag };
+
+				if (ImGui::Selectable(strCombinedText.c_str()))
 				{
 					*m_pCurrentBoneTag = strBoneTag;
 				}
@@ -177,9 +200,13 @@ void CModel_Selector::Show_ModelTags()
 	for (auto& Pair : m_Models)
 		ModelTags.push_back(Pair.first);
 
-	if (ImGui::CollapsingHeader("ModelTag Bones ##CModel_Selector::Show_ModelTags()"))
+	static _float		fX = { 200.f };
+	static _float		fY = { 100.f };
+	static _float2		vSize = { 200.f, 100.f };
+	ImGui::SliderFloat2("ListBoxSize ", (_float*)&vSize, 100.f, 400.f);
+	if (ImGui::CollapsingHeader("Show Models ##CModel_Selector::Show_ModelTags()"))
 	{
-		if (ImGui::BeginListBox("ModelTag ##CModel_Selector::Show_ModelTags()"))
+		if (ImGui::BeginListBox("Model Tag ##CModel_Selector::Show_ModelTags()",  *(ImVec2*)&vSize))
 		{
 			ImGui::NewLine();
 

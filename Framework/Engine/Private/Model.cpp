@@ -1526,6 +1526,12 @@ string CModel::Find_RootBoneTag()
 	return strBoneTag;
 }
 
+_int CModel::Get_BoneIndex(const string& strBoneTag)
+{
+	_int			iBoneIndex = { Find_BoneIndex(strBoneTag) };
+	return iBoneIndex;
+}
+
 _float4 CModel::Invalidate_RootNode(const string& strRoot)
 {
 	for (auto& Bone : m_Bones)
@@ -1537,6 +1543,24 @@ _float4 CModel::Invalidate_RootNode(const string& strRoot)
 	}
 
 	return _float4{ 0.f, 0.f, 0.f, 0.f };
+}
+
+_bool CModel::Is_Surbodinate_Bone(const string& strBoneTag)
+{
+	_int			iBoneIndex = { Find_BoneIndex(strBoneTag) };
+	if (-1 == iBoneIndex)
+		return false;
+
+	return m_Bones[iBoneIndex]->Is_Surbodinate();
+}
+
+_bool CModel::Is_Root_Bone(const string& strBoneTag)
+{
+	_int			iBoneIndex = { Find_BoneIndex(strBoneTag) };
+	if (-1 == iBoneIndex)
+		return false;
+
+	return m_Bones[iBoneIndex]->Is_RootBone();
 }
 
 _uint CModel::Get_CurrentMaxKeyFrameIndex(_uint iPlayingIndex)

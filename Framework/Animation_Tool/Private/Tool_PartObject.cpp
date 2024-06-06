@@ -17,6 +17,7 @@ HRESULT CTool_PartObject::Initialize(void* pArg)
 	TOOL_PARTOBJECT_DESC* pDesc = { static_cast<TOOL_PARTOBJECT_DESC*>(pArg) };
 	m_pTestObject = pDesc->pTestObject;
 	m_pCurrentPartTag = pDesc->pCurrentPartTag;
+	m_pCurrentModelTag = pDesc->pCurrentModelTag;
 
 	if (nullptr == m_pCurrentPartTag)
 		return E_FAIL;
@@ -45,6 +46,8 @@ void CTool_PartObject::Tick(_float fTimeDelta)
 	Input_PartObjectTag();
 	Create_Release_PartObject();
 	Show_PartObject_Tags();
+
+	Show_LinkBone();
 
 	ImGui::End();
 }
@@ -79,15 +82,15 @@ void CTool_PartObject::Add_PartObject()
 	if (true == Check_PartObjectExist(m_strInputPartObjectTag))
 		return;
 
-	CAnimTestObject*		pTestObject = { dynamic_cast<CAnimTestObject*>(m_pTestObject) };
+	CAnimTestObject* pTestObject = { dynamic_cast<CAnimTestObject*>(m_pTestObject) };
 	if (nullptr == pTestObject)
 		return;
 
 	if (FAILED(pTestObject->Add_PartObject(m_strInputPartObjectTag)))
 		return;
-	
-	CAnimTestPartObject*		pTestPartObject = { pTestObject->Get_PartObject(m_strInputPartObjectTag) };
-	if (nullptr == pTestPartObject)		
+
+	CAnimTestPartObject* pTestPartObject = { pTestObject->Get_PartObject(m_strInputPartObjectTag) };
+	if (nullptr == pTestPartObject)
 		return;
 
 	m_PartObjects.emplace(m_strInputPartObjectTag, pTestPartObject);
@@ -125,12 +128,57 @@ void CTool_PartObject::Show_Default()
 
 void CTool_PartObject::On_Off_Buttons()
 {
+	if (ImGui::Button("UnLink Bone ##CTool_PartObject::On_Off_Buttons()"))
+	{
+		UnLink_Bone_All(*m_pCurrentPartTag);
+	}
+
+	CAnimTestObject*		pTestObject = { dynamic_cast<CAnimTestObject*>(m_pTestObject) };
+	string					strRootPartTag = { ""};
+	if (nullptr != pTestObject)
+	{
+		strRootPartTag = Convert_Wstring_String(pTestObject->Get_RootActivePartTag());
+	}
+
+	ImGui::Text("Current Root Active Part : "); ImGui::SameLine();
+	ImGui::Text(strRootPartTag.c_str());
+
+	if (ImGui::Button("Set_Root_ActivePart "))
+	{
+		pTestObject->Set_RootActivePart(*m_pCurrentPartTag);
+	}
+}
+
+void CTool_PartObject::Show_LinkBone()
+{
+	if (false == Check_PartObjectExist(*m_pCurrentPartTag))
+		return;
+
+	ImGui::SeparatorText("Link To Target PartObject");
+	if (ImGui::BeginListBox("Target PartObjects ##CTool_PartObject::Button_LinkBone()"))
+	{
+		for (auto& Pair : m_PartObjects)
+		{
+			wstring         wstrPartTag = { Pair.first };
+			if (wstrPartTag == *m_pCurrentPartTag)
+				continue;
+
+			string			strPartTag = { Convert_Wstring_String(wstrPartTag) };
+			if (ImGui::Selectable(strPartTag.c_str()))
+			{
+				Link_Bone_Auto(*m_pCurrentPartTag, wstrPartTag);
+			}
+		}
+
+		ImGui::EndListBox();
+	}
+	ImGui::SeparatorText("##");
 }
 
 _bool CTool_PartObject::Check_PartObjectExist(const wstring& strPartTag)
 {
 	map<wstring, CAnimTestPartObject*>::iterator		iter = { m_PartObjects.find(strPartTag) };
-	
+
 	return iter != m_PartObjects.end();
 }
 
@@ -147,6 +195,22 @@ void CTool_PartObject::Show_PartObject_Tags()
 				if (ImGui::Selectable(strPartTag.c_str()))
 				{
 					*m_pCurrentPartTag = wstrPartTag;
+
+					if (false == Check_PartObjectExist(*m_pCurrentPartTag))
+						continue;
+
+					CModel*			pSrcModel = { m_PartObjects[*m_pCurrentPartTag]->Get_CurrentModelComponent() };
+					string			strModelTag = { *m_pCurrentModelTag };
+
+					for (auto& Pair : *m_pModels)
+					{
+						CModel* pDstModel = { Pair.second };
+						if (pSrcModel == pDstModel)
+						{
+							*m_pCurrentModelTag = Pair.first;
+							break;
+						}
+					}
 				}
 			}
 
@@ -155,17 +219,59 @@ void CTool_PartObject::Show_PartObject_Tags()
 	}
 }
 
-void CTool_PartObject::Link_Bone(const wstring& strSrcPartTag, const wstring& strDstPartTag, const string& strSrcBoneTag, const string& strDstBoneTag)
+void CTool_PartObject::Link_Bone_Auto(const wstring& strSrcPartTag, const wstring& strDstPartTag)
 {
-	if (false == Check_PartObjectExist(strSrcPartTag) || 
+	if (false == Check_PartObjectExist(strSrcPartTag) ||
 		false == Check_PartObjectExist(strDstPartTag))
 		return;
 
-	CModel*			pSrcModel = { dynamic_cast<CModel*>(m_PartObjects[strSrcPartTag]->Get_Component(TEXT("Com_Model"))) };
-	CModel*			pDstModel = { dynamic_cast<CModel*>(m_PartObjects[strDstPartTag]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pSrcModel = { dynamic_cast<CModel*>(m_PartObjects[strSrcPartTag]->Get_CurrentModelComponent()) };
+	CModel* pDstModel = { dynamic_cast<CModel*>(m_PartObjects[strDstPartTag]->Get_CurrentModelComponent()) };
 
-	if (nullptr == pSrcModel || 
+	if (pSrcModel == pDstModel)
+		return;
+
+	if (nullptr == pSrcModel ||
 		nullptr == pDstModel)
+		return;
+
+	vector<string>			SrcBoneTags = { pSrcModel->Get_BoneNames() };
+	vector<string>			DstBoneTags = { pDstModel->Get_BoneNames() };
+
+	sort(SrcBoneTags.begin(), SrcBoneTags.end());
+	sort(DstBoneTags.begin(), DstBoneTags.end());
+
+	vector<string>			IntersectionBoneTags;
+	IntersectionBoneTags.resize(min(SrcBoneTags.size(), DstBoneTags.size()));
+
+	vector<string>::iterator			iter = { set_intersection(SrcBoneTags.begin(), SrcBoneTags.end(), DstBoneTags.begin(), DstBoneTags.end(), IntersectionBoneTags.begin()) };
+
+	IntersectionBoneTags.resize(iter - IntersectionBoneTags.begin());
+
+	for (auto& strIntersectBoneTag : IntersectionBoneTags)
+	{
+		_float4x4* pDstCombiendMatrix = { const_cast<_float4x4*>(pDstModel->Get_CombinedMatrix(strIntersectBoneTag)) };
+		if (nullptr == pDstCombiendMatrix)
+			continue;
+
+		pSrcModel->Set_Surbodinate(strIntersectBoneTag, true);
+		pSrcModel->Set_Parent_CombinedMatrix_Ptr(strIntersectBoneTag, pDstCombiendMatrix);
+	}
+}
+
+void CTool_PartObject::Link_Bone_Manual(const wstring& strSrcPartTag, const wstring& strDstPartTag, const string& strSrcBoneTag, const string& strDstBoneTag)
+{
+	if (false == Check_PartObjectExist(strSrcPartTag) ||
+		false == Check_PartObjectExist(strDstPartTag))
+		return;
+	CModel* pSrcModel = { dynamic_cast<CModel*>(m_PartObjects[strSrcPartTag]->Get_CurrentModelComponent()) };
+	CModel* pDstModel = { dynamic_cast<CModel*>(m_PartObjects[strDstPartTag]->Get_CurrentModelComponent()) };
+
+	if (nullptr == pSrcModel ||
+		nullptr == pDstModel)
+		return;
+
+	if (pSrcModel == pDstModel)
 		return;
 
 	_float4x4* pDstCombiendMatrix = { const_cast<_float4x4*>(pDstModel->Get_CombinedMatrix(strDstBoneTag)) };
@@ -174,12 +280,29 @@ void CTool_PartObject::Link_Bone(const wstring& strSrcPartTag, const wstring& st
 	pSrcModel->Set_Parent_CombinedMatrix_Ptr(strSrcBoneTag, pDstCombiendMatrix);
 }
 
+void CTool_PartObject::UnLink_Bone_All(const wstring& strPartTag)
+{
+	if (false == Check_PartObjectExist(strPartTag))
+		return;
+
+	CModel* pModel = { dynamic_cast<CModel*>(m_PartObjects[strPartTag]->Get_CurrentModelComponent()) };
+	if (nullptr == pModel)
+		return;
+
+	vector<string>		BoneTags = { pModel->Get_BoneNames() };
+	for (auto& strBoneTag : BoneTags)
+	{
+		pModel->Set_Surbodinate(strBoneTag, false);
+	}
+}
+
 void CTool_PartObject::UnLink_Bone(const wstring& strPartTag, const string& strBoneTag)
 {
 	if (false == Check_PartObjectExist(strPartTag))
 		return;
 
-	CModel*			pModel = { dynamic_cast<CModel*>(m_PartObjects[strPartTag]->Get_Component(TEXT("Com_Model")))};
+	CModel* pModel = { dynamic_cast<CModel*>(m_PartObjects[strPartTag]->Get_CurrentModelComponent()) };
+	//	CModel* pModel = { dynamic_cast<CModel*>(m_PartObjects[strPartTag]->Get_Component(TEXT("Com_Model"))) };
 	if (nullptr == pModel)
 		return;
 
@@ -193,6 +316,21 @@ void CTool_PartObject::Set_CurrentAnimation(CAnimation* pAnimation)
 
 	m_pCurrentAnimation = pAnimation;
 	Safe_AddRef(m_pCurrentAnimation);
+}
+
+HRESULT CTool_PartObject::Set_Models(map<string, CModel*>* pModels)
+{
+	if (nullptr == pModels)
+		return E_FAIL;
+
+	m_pModels = pModels;
+	for (auto& Pair : *m_pModels)
+	{
+		if (nullptr == Pair.second)
+			return E_FAIL;
+	}
+
+	return S_OK;
 }
 
 vector<string> CTool_PartObject::Get_CurrentPartObject_BoneTags()

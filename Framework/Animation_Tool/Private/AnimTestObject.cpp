@@ -176,6 +176,25 @@ HRESULT CAnimTestObject::Link_Bone_PartObject(const wstring& strSrcPartTag, cons
     return S_OK;
 }
 
+void CAnimTestObject::Set_RootActivePart(const wstring& strRootActivePartTag)
+{
+    _bool       isIncluded = { false };
+    for (auto& Pair: m_PartObjects)
+    {
+        wstring         strPartTag = { Pair.first };
+        if (strPartTag == strRootActivePartTag)
+        {
+            isIncluded = true;
+            break;
+        }
+    }
+
+    if (true == isIncluded)
+    {
+        m_strRootActivePartTag = strRootActivePartTag;
+    }
+}
+
 HRESULT CAnimTestObject::Add_Components()
 {
     return S_OK;

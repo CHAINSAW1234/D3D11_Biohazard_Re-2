@@ -12,6 +12,7 @@ public:
 	{
 		string*					pCurrentModelTag = { nullptr };
 		string*					pCurrentBoneTag = { nullptr };
+		string*					pCurrentRootBoneTag = { nullptr };
 	}MODELSELECTOR_DESC;
 
 private:
@@ -30,7 +31,9 @@ private:
 
 public:		/* For.Acces */
 	CModel*						Get_Model(const string& strModelTag);
+	string						Get_Model_Tag(CModel* pModel);
 	map<string, CModel*>		Get_Models() { return m_Models; }
+	map<string, CModel*>*		Get_Models_Ptr() { return &m_Models; }
 	CModel*						Get_CurrentSelectedModel();
 	map<string, _float4x4>		Get_BoneCombinedMatrices();
 	_float4x4*					Get_Selected_BoneCombinedMatrix_Ptr();
@@ -54,13 +57,13 @@ private:
 
 	string						Find_RootBoneTag();
 
-
 private:
 	_uint						m_iNumModels = { 0 };
 	map<string, CModel*>		m_Models;
 
 	string*						m_pCurrentModelTag = { nullptr };
 	string*						m_pCurrentBoneTag = { nullptr };
+	string*						m_pCurrentRootBoneTag = { nullptr };
 
 	_bool						m_isShowModelTags = { false };
 	_bool						m_isShowBoneTags = { false };

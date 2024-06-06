@@ -93,6 +93,7 @@ public:
 	void					Set_RootBone(_bool isRootBone);
 
 	_bool					Is_RootBone() { return m_isRootBone; }
+	_bool					Is_Surbodinate() { return m_isSurbordinate; }
 
 private:
 	_char					m_szName[MAX_PATH] = { "" };

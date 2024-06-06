@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "Tool_AnimPlayer.h"
 
+#include "AnimTestObject.h"
+#include "AnimTestPartObject.h"
+
 CTool_AnimPlayer::CTool_AnimPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CTool{ pDevice, pContext }
 {
@@ -14,13 +17,16 @@ HRESULT CTool_AnimPlayer::Initialize(void* pArg)
 	ANIMPLAYER_DESC* pDesc = { static_cast<ANIMPLAYER_DESC*>(pArg) };
 	m_pTargetTransform = pDesc->pTransform;
 	m_pRootMoveDir = pDesc->pMoveDir;
+	m_pTestObject = pDesc->pTestObject;
 	m_pCurrentBoneLayerTag = pDesc->pCurrentBoneLayerTag;
 	m_pCurrentPartObjectTag = pDesc->pCurrentPartObjectTag;
+	m_pCurrentModelTag = pDesc->pCurrentModelTag;
 
-	if (nullptr == m_pCurrentBoneLayerTag || nullptr == m_pCurrentPartObjectTag)
+	if (nullptr == m_pCurrentBoneLayerTag || nullptr == m_pCurrentPartObjectTag || nullptr == m_pCurrentModelTag)
 		return E_FAIL;
 
 	Safe_AddRef(m_pTargetTransform);
+	Safe_AddRef(m_pTestObject);
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -49,19 +55,71 @@ void CTool_AnimPlayer::Tick(_float fTimeDelta)
 
 void CTool_AnimPlayer::Play_Animation(_float fTimeDelta)
 {
-	if (nullptr == m_pCurrentModel || nullptr == m_pCurrentAnimation || nullptr == m_pRootMoveDir || false == m_isPlayAnimation)
+	if (nullptr == m_pCurrentModel || nullptr == m_pRootMoveDir || false == m_isPlayAnimation)
 		return;
 
-	m_pCurrentModel->Play_Animations_RootMotion(m_pTargetTransform, fTimeDelta, m_pRootMoveDir);
+	/*for (auto& Pair: m_isPlayingAnimations)
+	{
+		_bool			isPlaying = { Pair.second };
+		if (true == isPlaying)
+		{
+			string		strModelTag = { Pair.first };
+			map<string, CModel*>::iterator		iter = { m_pModels->find(strModelTag) };
+			if (iter != m_pModels->end())
+				iter->second->Play_Animations_RootMotion(m_pTargetTransform, fTimeDelta, m_pRootMoveDir);
+		}
+	}*/
+
+	if (true == m_isPlayAnimation)
+	{
+		for (auto& Pair : *m_pModels)
+		{
+			CModel*			pSrcModel = { Pair.second };
+			wstring			strRootPartTag = { m_pTestObject->Get_RootActivePartTag() };
+			wstring			strModelPartTag = { TEXT("") };
+			_bool			isRootPart = { false };
+			map<wstring, CAnimTestPartObject*>			PartObjects = { m_pTestObject->Get_PartObjects() };
+			for (auto& Pair : PartObjects)
+			{
+				CModel*		pModel = { Pair.second->Get_CurrentModelComponent() };
+				if (pModel == pSrcModel)
+				{
+					strModelPartTag = Pair.first;
+					
+					isRootPart = strRootPartTag == strModelPartTag;
+
+					break;
+				}
+			}
+			
+			if (false == isRootPart)
+			{
+				_float3				vTempDir = {};
+				Pair.second->Play_Animations_RootMotion(m_pTargetTransform, fTimeDelta, &vTempDir);
+			}
+			else
+			{
+				Pair.second->Play_Animations_RootMotion(m_pTargetTransform, fTimeDelta, m_pRootMoveDir);
+			}
+		}
+	}
 }
 
-void CTool_AnimPlayer::Set_Current_Animation(CAnimation* pAnimation)
+HRESULT CTool_AnimPlayer::Set_Models_Ptr(map<string, CModel*>* pModels)
 {
-	if (nullptr == pAnimation)
-		return;
+	if (nullptr == pModels)
+		return E_FAIL;
 
-	m_pCurrentAnimation = pAnimation;
-	Safe_AddRef(m_pCurrentAnimation);
+	m_pModels = pModels;
+	for (auto& Pair : *m_pModels)
+	{
+		string			strModelTag = { Pair.first };
+		CModel*			pModel = { Pair.second };
+		if (nullptr == pModel || "" == strModelTag)
+			return E_FAIL;
+	}
+
+	return S_OK;
 }
 
 void CTool_AnimPlayer::Set_Current_Model(CModel* pModel)
@@ -71,6 +129,15 @@ void CTool_AnimPlayer::Set_Current_Model(CModel* pModel)
 
 	m_pCurrentModel = pModel;
 	Safe_AddRef(m_pCurrentModel);
+}
+
+void CTool_AnimPlayer::Set_Current_Animation(CAnimation* pAnimation)
+{
+	if (nullptr == pAnimation)
+		return;
+
+	m_pCurrentAnimation = pAnimation;
+	Safe_AddRef(m_pCurrentAnimation);
 }
 
 void CTool_AnimPlayer::Set_TargetTransform(CTransform* pTransform)
@@ -199,9 +266,7 @@ void CTool_AnimPlayer::Create_PlayingDesc()
 
 	static _bool			isLoop = { false };
 	if (ImGui::RadioButton("Anim Loop Active ##CTool_AnimPlayer::Create_PlayingDesc()", isLoop))
-	{
 		isLoop = !isLoop;
-	}
 
 	string					strSrcAnimTag = { m_pCurrentAnimation->Get_Name() };
 	vector<CAnimation*>		Animations = { m_pCurrentModel->Get_Animations() };
@@ -229,7 +294,7 @@ void CTool_AnimPlayer::Create_PlayingDesc()
 
 	ImGui::Text(string(string("Num Playing Info : ") + strNumPlayingInfo).c_str());
 
-	_int					iPlayingIndex = { 0 };
+	static _int					iPlayingIndex = { 0 };
 	if (ImGui::InputInt("Index ##CTool_AnimPlayer::Create_PlayingDesc()", &iPlayingIndex))
 	{
 		if (iPlayingIndex > static_cast<_int>(iNumPlayingInfo))
@@ -305,4 +370,5 @@ void CTool_AnimPlayer::Free()
 	Safe_Release(m_pCurrentAnimation);
 	Safe_Release(m_pCurrentModel);
 	Safe_Release(m_pTargetTransform);
+	Safe_Release(m_pTestObject);
 }

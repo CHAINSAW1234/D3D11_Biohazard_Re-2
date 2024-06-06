@@ -18,7 +18,7 @@ HRESULT CAnimationEditor::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(Initialize_AnimList()))
+	if (FAILED(Initialize_Tools()))
 		return E_FAIL;
 	
 	return S_OK;
@@ -34,9 +34,6 @@ void CAnimationEditor::Tick(_float fTimeDelta)
 		m_isRenderBoneTags = !m_isRenderBoneTags;	
 
 	Set_Transform_TransformTool();
-
-	Add_PartObject_TestObject();
-	Change_Model_TestObject();
 
 	for (auto& pTool : m_Tools)
 	{
@@ -78,6 +75,8 @@ HRESULT CAnimationEditor::Add_Tools()
 	m_pToolPartObject = nullptr;
 	Safe_Release(m_pToolBoneLayer);
 	m_pToolBoneLayer = nullptr;
+	Safe_Release(m_pToolAnimPlayer);
+	m_pToolAnimPlayer = nullptr;
 
 	CTool*		pToolCollider = { nullptr };
 	CTool*		pToolAnimList = { nullptr };
@@ -91,10 +90,12 @@ HRESULT CAnimationEditor::Add_Tools()
 	if (nullptr != m_pTestObject)
 	{
 		AnimPlayerDesc.pMoveDir = m_pTestObject->Get_RootTranslation_Ptr();
+		AnimPlayerDesc.pTestObject = m_pTestObject;
 		AnimPlayerDesc.pTransform = dynamic_cast<CTransform*>(m_pTestObject->Get_Component(TEXT("Com_Transform")));
 	}	
 	AnimPlayerDesc.pCurrentBoneLayerTag = &m_strCurrentBoneLayerTag;
 	AnimPlayerDesc.pCurrentPartObjectTag = &m_strCurrentPartObjectTag;
+	AnimPlayerDesc.pCurrentModelTag = &m_strCurrentModelTag;
 
 	CTool_PartObject::TOOL_PARTOBJECT_DESC	PartObjectDesc{};
 	if (nullptr != m_pTestObject)
@@ -102,6 +103,7 @@ HRESULT CAnimationEditor::Add_Tools()
 		PartObjectDesc.pTestObject = m_pTestObject;
 	}
 	PartObjectDesc.pCurrentPartTag = &m_strCurrentPartObjectTag;
+	PartObjectDesc.pCurrentModelTag = &m_strCurrentModelTag;
 
 	CTool_AnimList::ANIMLIST_DESC			AnimListDesc{};
 	AnimListDesc.pCurrentAnimationTag = &m_strCurrentAnimTag;
@@ -110,6 +112,7 @@ HRESULT CAnimationEditor::Add_Tools()
 	CModel_Selector::MODELSELECTOR_DESC		ModelSelectorDesc{};
 	ModelSelectorDesc.pCurrentBoneTag = &m_strCurrentBoneTag;
 	ModelSelectorDesc.pCurrentModelTag = &m_strCurrentModelTag;
+	ModelSelectorDesc.pCurrentRootBoneTag = &m_strCurrentRootBoneTag;
 
 	CTool_BoneLayer::BONELAYER_DESC			BoneLayerDesc{};
 	BoneLayerDesc.pCurrentBoneLayerTag = &m_strCurrentBoneLayerTag;
@@ -182,21 +185,21 @@ HRESULT CAnimationEditor::Add_TestObject()
 	return S_OK;
 }
 
-void CAnimationEditor::Add_PartObject_TestObject()
+HRESULT CAnimationEditor::Initialize_Tools()
 {
-	static _char			szPartTag[MAX_PATH] = {};
-	ImGui::InputText("PartTag : ", szPartTag, static_cast<size_t>(sizeof(szPartTag)));
+	if (FAILED(Initialize_AnimList()))
+		return E_FAIL;
 
-	if (ImGui::Button("Add_PartObject"))
-	{
-		_tchar		szTemp[MAX_PATH] = { L"" };
-		MultiByteToWideChar(CP_ACP, 0, szPartTag, (_uint)strlen(szPartTag), szTemp, MAX_PATH);
+	if (FAILED(Initialize_AnimPlayer()))
+		return E_FAIL;
 
-		m_pTestObject->Add_PartObject(szTemp);
-	}
+	if (FAILED(Initialize_PartObjectTool()))
+		return E_FAIL;
+
+	return S_OK;
 }
 
-void CAnimationEditor::Change_Model_TestObject()
+void CAnimationEditor::Update_PartObjectsModel()
 {
 	if (nullptr == m_pToolModelSelector)
 		return;
@@ -209,20 +212,12 @@ void CAnimationEditor::Change_Model_TestObject()
 
 	for (auto& Pair : PartObjects)
 	{
-		const wchar_t*		szPartTag = { Pair.first.c_str() };
-		_char				szTemp[MAX_PATH] = { "" };
-
-		WideCharToMultiByte(CP_UTF8, 0, szPartTag, (_uint)lstrlen(szPartTag), szTemp, MAX_PATH, NULL, NULL);
-		if (ImGui::Button(string(string("Change_Part_") + string(szTemp)).c_str()))
+		wstring			strDstTag = { Pair.first };
+		if (strDstTag == m_strCurrentPartObjectTag)
 		{
-			m_pTestObject->Chanage_Componenet_PartObject(szPartTag, pModel, CAnimTestPartObject::COMPONENT_TYPE::COM_MODEL);
+			Pair.second->Chanage_Componenet(pModel, CAnimTestPartObject::COM_MODEL);
 		}
 	}
-}
-
-void CAnimationEditor::Show_PartObjectTags()
-{
-
 }
 
 void CAnimationEditor::Update_Backend_Datas()
@@ -230,6 +225,8 @@ void CAnimationEditor::Update_Backend_Datas()
 	Update_BoneLayerTool();
 	Update_AnimPlayerTool();
 	Update_PartObjectTool();
+
+	Update_PartObjectsModel();
 }
 
 void CAnimationEditor::Update_BoneLayerTool()
@@ -247,6 +244,21 @@ void CAnimationEditor::Update_TestObject()
 		return;
 
 	//	m_pTestObject->
+}
+
+HRESULT CAnimationEditor::Initialize_PartObjectTool()
+{
+	if (nullptr == m_pToolPartObject || nullptr == m_pToolModelSelector)
+		return E_FAIL;
+
+	map<string, CModel*>*		pModels = { m_pToolModelSelector->Get_Models_Ptr() };
+	if (nullptr == pModels)
+		return E_FAIL;
+
+	if (FAILED(m_pToolPartObject->Set_Models(pModels)))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 void CAnimationEditor::Set_Transform_TransformTool()
@@ -276,6 +288,17 @@ void CAnimationEditor::Update_PartObjectTool()
 
 	CAnimation*					pAnimation = { m_pToolAnimList->Get_CurrentAnimation() };
 	m_pToolPartObject->Set_CurrentAnimation(pAnimation);
+}
+
+HRESULT CAnimationEditor::Initialize_AnimPlayer()
+{
+	if (nullptr == m_pToolModelSelector || nullptr == m_pToolAnimPlayer)
+		return E_FAIL;
+
+	if (FAILED(m_pToolAnimPlayer->Set_Models_Ptr(m_pToolModelSelector->Get_Models_Ptr())))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 HRESULT CAnimationEditor::Initialize_AnimList()
@@ -347,6 +370,11 @@ void CAnimationEditor::Render_BoneTags()
 
 		m_pGameInstance->Render_Font_Scaled(TEXT("Font_Default"), wstrBoneTag, vScreenSpacePositionFloat2, XMVectorSet(1.f, 1.f, 1.f, 1.f), 0.f, 0.35f);
 	}
+}
+
+void CAnimationEditor::Save_Data()
+{
+	
 }
 
 CAnimationEditor* CAnimationEditor::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)

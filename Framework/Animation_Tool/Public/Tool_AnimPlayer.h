@@ -12,8 +12,10 @@ public:
 	{
 		const wstring*							pCurrentBoneLayerTag = { nullptr };
 		const wstring*							pCurrentPartObjectTag = { nullptr };
+		const string*							pCurrentModelTag = { nullptr };
 		_float3*								pMoveDir = { nullptr };
 		CTransform*								pTransform = { nullptr };
+		class CAnimTestObject*					pTestObject = { nullptr };
 	}ANIMPLAYER_DESC;
 
 private:
@@ -26,8 +28,9 @@ public:
 
 public:
 	void										Play_Animation(_float fTimeDelta);
-	void										Set_Current_Animation(CAnimation* pAnimation);
+	HRESULT										Set_Models_Ptr(map<string, CModel*>* pModels);
 	void										Set_Current_Model(CModel* pModel);
+	void										Set_Current_Animation(CAnimation* pAnimation);
 	void										Set_TargetTransform(CTransform* pTransform);
 
 public:
@@ -54,8 +57,13 @@ private:
 	void										Apply_RootMotion();
 
 private:
-	CAnimation*									m_pCurrentAnimation = { nullptr };
+	class CAnimTestObject*						m_pTestObject = { nullptr };
+
+	map<string, _uint>							m_ModelPlayingIndex;
+	map<string, _bool>							m_isPlayingAnimations;
+	map<string, CModel*>*						m_pModels = { nullptr };
 	CModel*										m_pCurrentModel = { nullptr };
+	CAnimation*									m_pCurrentAnimation = { nullptr };
 	CTransform*									m_pTargetTransform = { nullptr };
 	_float3*									m_pRootMoveDir = { nullptr };
 
@@ -65,6 +73,7 @@ private:
 	_bool										m_isRooActive_Y = { false };
 	_bool										m_isRooActive_Rotate = { false };
 
+	const string*								m_pCurrentModelTag = { nullptr };
 	const wstring*								m_pCurrentPartObjectTag = { nullptr };
 	const wstring*								m_pCurrentBoneLayerTag = { nullptr };
 

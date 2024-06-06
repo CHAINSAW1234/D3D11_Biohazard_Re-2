@@ -35,6 +35,7 @@ private:	/* For.SHowList */
 
 public:
 	CAnimation*					Get_Animation(const string& strAnimTag);
+	map<string, map<string, CAnimation*>>*			Get_ModelAnimations_Ptr() { return &m_ModelAnimations; }
 	CAnimation*					Get_CurrentAnimation();
 	void						Add_Animation_CurrentModel(CAnimation* pAnimation);
 

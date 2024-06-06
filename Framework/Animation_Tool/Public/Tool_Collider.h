@@ -22,11 +22,8 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 
 public:
-	CGameObject* Get_CurrentSelectCollider();
-	void Set_CurrentSelectCollider(CGameObject* pStaticCollider) { m_pCurrentSelectCollider = pStaticCollider; }
 
 private:
-	CGameObject*						m_pCurrentSelectCollider = { nullptr };
 
 public:
 	static CTool_Collider* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

@@ -32,13 +32,11 @@ private:
     virtual HRESULT             Add_Components() override;
     virtual HRESULT             Add_Tools() override;
     HRESULT                     Add_TestObject();
+    HRESULT                     Initialize_Tools();
 
 private:
     void                        Add_PartObject_TestObject();
-    void                        Change_Model_TestObject();
-
-private:
-    void                        Show_PartObjectTags();
+    void                        Update_PartObjectsModel();
 
 private:    /* UI 버튼 들 배치 */
 
@@ -57,12 +55,15 @@ private:
 private:    /* For.BoneLayer */
 
 
+private:    /* For.PartObject Tool */
+    HRESULT                     Initialize_PartObjectTool();
+
 private:    /* For.Transform Tool */
     void                        Set_Transform_TransformTool();
 
 
 private:    /* For.AnimPlayer Tool */
-
+    HRESULT                     Initialize_AnimPlayer();
 
 private:    /* For.AnimList Tool */
     HRESULT                     Initialize_AnimList();
@@ -70,6 +71,9 @@ private:    /* For.AnimList Tool */
 
 private:    /* For.AssistRendering */
     void                        Render_BoneTags();
+
+private:
+    void                        Save_Data();
 
 
 private:
@@ -82,6 +86,7 @@ private:
     CTool_BoneLayer*            m_pToolBoneLayer = { nullptr };
 
     string                      m_strCurrentModelTag = { "" };
+    string                      m_strCurrentRootBoneTag = { "" };
     string                      m_strCurrentBoneTag = { "" };
     string                      m_strCurrentAnimTag = { "" };
     wstring                     m_strCurrentBoneLayerTag = { TEXT("") };
