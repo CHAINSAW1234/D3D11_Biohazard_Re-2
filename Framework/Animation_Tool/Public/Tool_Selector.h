@@ -8,7 +8,7 @@ BEGIN(Tool)
 class CTool_Selector abstract : public CTool
 {
 protected:
-	CTool_Selector();
+	CTool_Selector(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CTool_Selector() = default;
 
 public:

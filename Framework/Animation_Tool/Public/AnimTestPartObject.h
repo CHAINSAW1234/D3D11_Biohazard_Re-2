@@ -1,23 +1,25 @@
 #pragma once
 
-#include "Client_Defines.h"
+#include "Tool_Defines.h"
 #include "PartObject.h"
 
-BEGIN(Client)
+BEGIN(Tool)
 
-class CBody_Player final : public CPartObject
+class CAnimTestPartObject final : public CPartObject
 {
 public:
-	typedef struct tagBodyDesc: public CPartObject::PARTOBJECT_DESC
+	typedef struct tagAnimTestPartObjectDesc : public PARTOBJECT_DESC
 	{
-		const _ubyte*		pState;
 		_float3*			pRootTranslation = { nullptr };
-	}BODY_DESC;
+	}ANIMTESTPART_DESC;
+
+public:
+	enum COMPONENT_TYPE { COM_MODEL, COM_END };
 
 private:
-	CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CBody_Player(const CBody_Player& rhs);
-	virtual ~CBody_Player() = default;
+	CAnimTestPartObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CAnimTestPartObject(const CAnimTestPartObject& rhs);
+	virtual ~CAnimTestPartObject() = default;
 
 public:
 	virtual HRESULT			Initialize_Prototype() override;
@@ -27,28 +29,26 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 
+private:
 	HRESULT					Render_LightDepth_Dir()override;
 	HRESULT					Render_LightDepth_Spot()override;
 	HRESULT					Render_LightDepth_Point() override;
 
+public:
+	HRESULT					Chanage_Componenet(CComponent* pComponent, COMPONENT_TYPE eType);
+	void					Set_RootBone(string strRootBoneTag);
+
 private:
+	_float3*				m_pRootTranslation = {};
 	CModel*					m_pModelCom = { nullptr };
-	CShader*				m_pShaderCom = { nullptr };	
-	CCollider*				m_pColliderCom = { nullptr };
+	CShader*				m_pShaderCom = { nullptr };
 
-	_float3*				m_pRootTranslation = { nullptr };
-
-	vector<CCollider*>		m_PartColliders;
-
-	const _ubyte*			m_pState;
-
-	_bool					m_bRagdoll = { false };
 private:
 	HRESULT					Add_Components();
 	HRESULT					Bind_ShaderResources();
 
 public:
-	static CBody_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CAnimTestPartObject* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

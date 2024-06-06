@@ -26,6 +26,7 @@ namespace Engine
 		PASS_DOF, 
 		PASS_DOF_BLURX, 
 		PASS_DOF_BLURY,
+		PASS_GODRAY,
 		PASS_FXAA,
 		PASS_END
 	};
@@ -45,5 +46,5 @@ namespace Engine
 		knee_R = 43
 	};
 
-	enum SHADER_STATE { SSAO, MOTION_BLUR, SSR, DOF, FXAA, SHADER_STATE_END};
+	enum SHADER_STATE { SSAO, MOTION_BLUR, SSR, DOF, GODRAY, FXAA, SHADER_STATE_END};
 }

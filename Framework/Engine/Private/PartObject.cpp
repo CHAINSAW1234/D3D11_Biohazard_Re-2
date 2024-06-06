@@ -42,7 +42,6 @@ void CPartObject::Priority_Tick(_float fTimeDelta)
 
 void CPartObject::Tick(_float fTimeDelta)
 {
-	m_PrevWorldMatrix = m_WorldMatrix;
 	Update_WorldMatrix();
 }
 

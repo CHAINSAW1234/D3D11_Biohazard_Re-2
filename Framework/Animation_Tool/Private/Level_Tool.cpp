@@ -131,10 +131,6 @@ HRESULT CLevel_Tool::Ready_Layer_Camera(const wstring& strLayerTag)
 
 HRESULT CLevel_Tool::Ready_LandObject()
 {
-	///* 구한정보들을 각 랜드오브젝트르 생성할 때 던진다. */
-	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player")/*, LandObjectDesc*/)))
-		return E_FAIL;
-
 	if (FAILED(Ready_Layer_LandBackGround(TEXT("Layer_LandBackGround"))))
 		return E_FAIL;
 
@@ -166,6 +162,9 @@ HRESULT CLevel_Tool::Ready_Layer_Effect(const wstring& strLayerTag)
 
 HRESULT CLevel_Tool::Ready_Layer_BackGround(const wstring& strLayerTag)
 {
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_TOOL, strLayerTag, TEXT("Prototype_GameObject_Terrain"))))
+	return E_FAIL;
+
 	return S_OK;
 }
 

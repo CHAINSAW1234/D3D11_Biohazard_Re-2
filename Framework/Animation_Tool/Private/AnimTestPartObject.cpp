@@ -1,33 +1,34 @@
 #include "stdafx.h"
-#include "Head_Player.h"
+#include "AnimTestPartObject.h"
 
-#include "Player.h"
 #include "Light.h"
 
-CHead_Player::CHead_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CAnimTestPartObject::CAnimTestPartObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
 {
 }
 
-CHead_Player::CHead_Player(const CHead_Player& rhs)
+CAnimTestPartObject::CAnimTestPartObject(const CAnimTestPartObject& rhs)
 	: CPartObject{ rhs }
 {
-
 }
 
-HRESULT CHead_Player::Initialize_Prototype()
+HRESULT CAnimTestPartObject::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CHead_Player::Initialize(void* pArg)
+HRESULT CAnimTestPartObject::Initialize(void* pArg)
 {
-	HEAD_DESC* pDesc = { static_cast<HEAD_DESC*>(pArg) };
+	if (nullptr == pArg)
+		return E_FAIL;
 
-	pDesc->fSpeedPerSec = 10.f;
-	pDesc->fRotationPerSec = XMConvertToRadians(90.0f);
+	ANIMTESTPART_DESC* pDesc = { static_cast<ANIMTESTPART_DESC*>(pArg) };
 
-	m_pState = pDesc->pState;
+	if (nullptr == pDesc->pRootTranslation)
+		return E_FAIL;
+
+	m_pRootTranslation = pDesc->pRootTranslation;
 
 	if (FAILED(__super::Initialize(pDesc)))
 		return E_FAIL;
@@ -35,80 +36,38 @@ HRESULT CHead_Player::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
-
-	/*CModel::ANIM_PLAYING_DESC		AnimDesc;
-	AnimDesc.iAnimIndex = 0;
-	AnimDesc.isLoop = true;
-	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
-	list<_uint>		iBoneIndices;
-	for (_uint i = 0; i < iNumBones; ++i)
-	{
-		iBoneIndices.emplace_back(i);
-	}
-	AnimDesc.TargetBoneIndices = iBoneIndices;
-
-	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);*/
-
 	return S_OK;
 }
 
-void CHead_Player::Priority_Tick(_float fTimeDelta)
+void CAnimTestPartObject::Priority_Tick(_float fTimeDelta)
 {
 	__super::Priority_Tick(fTimeDelta);
 }
 
-void CHead_Player::Tick(_float fTimeDelta)
+void CAnimTestPartObject::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
-	m_pColliderCom->Tick(XMLoadFloat4x4(&m_WorldMatrix));
-
-	CModel::ANIM_PLAYING_DESC		AnimDesc;
-	AnimDesc.iAnimIndex = 7;
-	AnimDesc.isLoop = true;
-	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
-	list<_uint>		iBoneIndices;
-	for (_uint i = 0; i < iNumBones; ++i)
-	{
-		iBoneIndices.emplace_back(i);
-	}
-
-	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
 }
 
-void CHead_Player::Late_Tick(_float fTimeDelta)
+void CAnimTestPartObject::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animations(fTimeDelta);
-	static bool Temp = false;
-	if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
-	{
-		Temp = true;
-	}
-
-	if (!Temp)
-	{
-	}
-	Temp = true;
-
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
-
-#ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
-#endif
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 }
 
-HRESULT CHead_Player::Render()
+HRESULT CAnimTestPartObject::Render()
 {
+	if (nullptr == m_pModelCom)
+		return E_FAIL;
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+	_uint		iNumMeshes = { m_pModelCom->Get_NumMeshes() };
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
@@ -119,6 +78,9 @@ HRESULT CHead_Player::Render()
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS))) {
@@ -132,11 +94,10 @@ HRESULT CHead_Player::Render()
 
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
-
 	return S_OK;
 }
 
-HRESULT CHead_Player::Render_LightDepth_Dir()
+HRESULT CAnimTestPartObject::Render_LightDepth_Dir()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -146,53 +107,15 @@ HRESULT CHead_Player::Render_LightDepth_Dir()
 
 	if (m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) != nullptr) {
 
-		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION);
-		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
+		const CLight*				pLight = { m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) };
+		const LIGHT_DESC*			pDesc = { pLight->Get_LightDesc(0) };
 
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
 			return E_FAIL;
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
 
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (size_t i = 0; i < iNumMeshes; i++)
-		{
-			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-				return E_FAIL;
-
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
-
-			if (FAILED(m_pShaderCom->Begin(3)))
-				return E_FAIL;
-
-			m_pModelCom->Render(static_cast<_uint>(i));
-		}
-	}
-
-	return S_OK;
-}
-
-HRESULT CHead_Player::Render_LightDepth_Spot()
-{
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
-
-	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
-
-		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT);
-		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
-
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
-			return E_FAIL;
-
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+		_uint				iNumMeshes = { m_pModelCom->Get_NumMeshes() };
 
 		for (size_t i = 0; i < iNumMeshes; i++)
 		{
@@ -206,7 +129,47 @@ HRESULT CHead_Player::Render_LightDepth_Spot()
 			if (FAILED(m_pShaderCom->Begin(3)))
 				return E_FAIL;
 
-			m_pModelCom->Render(static_cast<_uint>(i));
+			if (FAILED(m_pModelCom->Render(static_cast<_uint>(i))))
+				return E_FAIL;
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CAnimTestPartObject::Render_LightDepth_Spot()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+
+	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
+
+		const CLight* pLight = { m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) };
+		const LIGHT_DESC* pDesc = { pLight->Get_LightDesc(0) };
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
+			return E_FAIL;
+
+		_uint					iNumMeshes = { m_pModelCom->Get_NumMeshes() };
+
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+				return E_FAIL;
+
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Begin(3)))
+				return E_FAIL;
+
+			if (FAILED(m_pModelCom->Render(static_cast<_uint>(i))))
+				return E_FAIL;
 		}
 	}
 
@@ -215,7 +178,7 @@ HRESULT CHead_Player::Render_LightDepth_Spot()
 	return S_OK;
 }
 
-HRESULT CHead_Player::Render_LightDepth_Point()
+HRESULT CAnimTestPartObject::Render_LightDepth_Point()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -223,11 +186,12 @@ HRESULT CHead_Player::Render_LightDepth_Point()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 
-	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
-	_int iIndex = 0;
+	list<LIGHT_DESC*>			LightDescList = { m_pGameInstance->Get_ShadowPointLightDesc_List() };
+	_int						iIndex = { 0 };
+
 	for (auto& pLightDesc : LightDescList) {
-		const _float4x4* pLightViewMatrices;
-		_float4x4 LightProjMatrix;
+		const _float4x4*		pLightViewMatrices;
+		_float4x4				LightProjMatrix;
 		pLightViewMatrices = pLightDesc->ViewMatrix;
 		LightProjMatrix = pLightDesc->ProjMatrix;
 
@@ -250,7 +214,8 @@ HRESULT CHead_Player::Render_LightDepth_Point()
 			if (FAILED(m_pShaderCom->Begin(5)))
 				return E_FAIL;
 
-			m_pModelCom->Render(static_cast<_uint>(i));
+			if (FAILED(m_pModelCom->Render(static_cast<_uint>(i))))
+				return E_FAIL;
 		}
 
 		++iIndex;
@@ -259,39 +224,54 @@ HRESULT CHead_Player::Render_LightDepth_Point()
 	return S_OK;
 }
 
-HRESULT CHead_Player::Add_Components()
+HRESULT CAnimTestPartObject::Chanage_Componenet(CComponent* pComponent, COMPONENT_TYPE eType)
+{
+	if (nullptr == pComponent)
+		return E_FAIL;
+
+	if (COMPONENT_TYPE::COM_MODEL == eType)
+	{
+		CModel* pModel = { dynamic_cast<CModel*>(pComponent) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		Safe_Release(m_pModelCom);
+		m_pModelCom = nullptr;
+
+		m_pModelCom = pModel;
+		Safe_AddRef(m_pModelCom);
+	}
+
+	return S_OK;
+}
+
+void CAnimTestPartObject::Set_RootBone(string strRootBoneTag)
+{
+	if (nullptr == m_pModelCom)
+		return;
+
+	m_pModelCom->Set_RootBone(strRootBoneTag);
+}
+
+HRESULT CAnimTestPartObject::Add_Components()
 {
 	/* For.Com_Shader */
 	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Shader_VtxAnimModel"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_LeonFace"),
-		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-		return E_FAIL;
-
-	/* Com_Collider */
-	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
-
-	ColliderDesc.fRadius = 0.5f;
-	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.fRadius, 0.f);
-
-
-	if (FAILED(__super::Add_Component(LEVEL_TOOL, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom, &ColliderDesc)))
-		return E_FAIL;
-
 	return S_OK;
 }
 
-HRESULT CHead_Player::Bind_ShaderResources()
+HRESULT CAnimTestPartObject::Bind_ShaderResources()
 {
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
+
+	_bool isMotionBlur = m_pGameInstance->Get_ShaderState(MOTION_BLUR);
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_isMotionBlur", &isMotionBlur, sizeof(_bool))))
+		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
@@ -307,28 +287,27 @@ HRESULT CHead_Player::Bind_ShaderResources()
 	return S_OK;
 }
 
-CHead_Player* CHead_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CAnimTestPartObject* CAnimTestPartObject::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CHead_Player* pInstance = new CHead_Player(pDevice, pContext);
+	CAnimTestPartObject* pInstance = { new CAnimTestPartObject(pDevice, pContext) };
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX(TEXT("Failed To Created : CHead_Player"));
+		MSG_BOX(TEXT("Failed To Created : CAnimTestPartObject"));
 
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
-
 }
 
-CGameObject* CHead_Player::Clone(void* pArg)
+CGameObject* CAnimTestPartObject::Clone(void* pArg)
 {
-	CHead_Player* pInstance = new CHead_Player(*this);
+	CAnimTestPartObject* pInstance = { new CAnimTestPartObject(*this) };
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX(TEXT("Failed To Created : CHead_Player"));
+		MSG_BOX(TEXT("Failed To Created : CAnimTestPartObject"));
 
 		Safe_Release(pInstance);
 	}
@@ -336,11 +315,10 @@ CGameObject* CHead_Player::Clone(void* pArg)
 	return pInstance;
 }
 
-void CHead_Player::Free()
+void CAnimTestPartObject::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
 }

@@ -3,6 +3,14 @@
 #include "Tool_Defines.h"
 #include "Editor.h"
 
+#define TOOL_COLLIDER_TAG               "Tool_Collider"
+#define TOOL_ANIMLIST_TAG               "Tool_AnimList"
+#define TOOL_MODELSELECTOR_TAG          "Tool_ModelSelector"
+#define TOOL_TRANSFORMATION_TAG         "Tool_Transformation"
+#define TOOL_ANIMPLAYER_TAG             "Tool_AnimPlayer"
+#define TOOL_PARTOBJECT_TAG             "Tool_PartObject"
+#define TOOL_BONELAYER_TAG              "Tool_BoneLayer"
+
 BEGIN(Engine)
 class CGameObject;
 END
@@ -16,19 +24,50 @@ private:
     virtual ~CAnimationEditor() = default;
 
 public:
-    virtual HRESULT Initialize(void* pArg) override;
-    virtual void Tick(_float fTimeDelta) override;
-    virtual HRESULT Render() override;
+    virtual HRESULT             Initialize(void* pArg) override;
+    virtual void                Tick(_float fTimeDelta) override;
+    virtual HRESULT             Render() override;
 
 private:
-    virtual HRESULT Add_Components() override;
-    virtual HRESULT Add_Tools() override;
-
-public:
-    void Set_Context(CGameObject* pGameObject);
+    virtual HRESULT             Add_Components() override;
+    virtual HRESULT             Add_Tools() override;
+    HRESULT                     Add_TestObject();
 
 private:
-    CGameObject*        m_pContext = { nullptr };
+    void                        Add_PartObject_TestObject();
+    void                        Change_Model_TestObject();
+
+private:
+    void                        Show_PartObjectTags();
+
+private:    /* For.Transform Tool */
+    void                        Set_Transform_TransformTool();
+
+private:    /* For.AnimPlayer Tool */
+    void                        Update_AnimPlayer();
+
+private:    /* For.AnimList Tool */
+    HRESULT                     Initialize_AnimList();
+
+private:    /* For.AssistRendering */
+    void                        Render_BoneTags();
+
+private:
+    CTool_Collider*             m_pToolCollider = { nullptr };
+    CModel_Selector*            m_pToolModelSelector = { nullptr };
+    CTool_AnimList*             m_pToolAnimList = { nullptr };
+    CTool_Transformation*       m_pToolTransformation = { nullptr };
+    CTool_AnimPlayer*           m_pToolAnimPlayer = { nullptr };
+    CTool_PartObject*           m_pToolPartObject = { nullptr };
+    CTool_BoneLayer* m_pToolBoneLayer = { nullptr };
+
+    _bool                       m_isActiveRootXZ = { false };
+    _bool                       m_isActiveRootY = { false };
+    _bool                       m_isActiveRootRotate = { false };
+
+    class CAnimTestObject*      m_pTestObject = { nullptr };
+
+    _bool                       m_isRenderBoneTags = { false };
 
 public:
     static CAnimationEditor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg = nullptr);
