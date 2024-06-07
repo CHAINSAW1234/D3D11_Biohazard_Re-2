@@ -311,30 +311,38 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 	POINT		ptDeltaPos = { m_pGameInstance->Get_MouseDeltaPos() };
 	_float		fMouseSensor = { 0.1f };
 
-	if (ptDeltaPos.x > 50.f || ptDeltaPos.y > 50.f)
+	if (abs(ptDeltaPos.x) > 5.f || abs(ptDeltaPos.y) > 5.f)
 	{
 		m_bRotate_Delay = true;
-	}
-	else
-	{
-		m_bRotate_Delay = false;
+		m_bRotate_Delay_Start = false;
+		m_fRotate_Delay_Amount = 1.f;
+
+		m_fPrev_Rotate_Amount_X = ptDeltaPos.x*0.1f;
+		m_fPrev_Rotate_Amount_Y = ptDeltaPos.y*0.1f;
 	}
 
-	if (m_bRotate_Delay && (ptDeltaPos.x < 1.f || ptDeltaPos.y < 1.f))
+	if (m_bRotate_Delay && (abs(ptDeltaPos.x) <= 5.f && abs(ptDeltaPos.y) <=5.f))
 	{
 		m_bRotate_Delay_Start = true;
 		m_fRotate_Delay_Amount = 1.f;
+		m_bRotate_Delay = false;
 	}
 
 	if (m_bRotate_Delay_Start == true)
 	{
-		m_fRotate_Delay_Amount -= fTimeDelta;
+		m_fRotate_Delay_Amount -= (fTimeDelta*1.5f);
+
+		if (m_fRotate_Delay_Amount <= 0.f)
+		{
+			m_bRotate_Delay_Start = false;
+			m_fRotate_Delay_Amount = 0.f;
+		}
 	}
 
 	if (m_bRotate_Delay_Start)
 	{
-		m_fRotate_Amount_X = fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor;
-		m_fRotate_Amount_Y = fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor;
+		m_fRotate_Amount_X = (fTimeDelta* m_fRotate_Delay_Amount) * (_float)m_fPrev_Rotate_Amount_X * fMouseSensor;
+		m_fRotate_Amount_Y = (fTimeDelta *m_fRotate_Delay_Amount)* (_float)m_fPrev_Rotate_Amount_Y * fMouseSensor;
 	}
 	else
 	{
@@ -343,9 +351,9 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 	}
 
 	if (m_bAim == false)
-		m_fLerpTime += fTimeDelta * 0.03f;
-	else
 		m_fLerpTime += fTimeDelta * 0.06f;
+	else
+		m_fLerpTime += fTimeDelta * 0.12f;
 
 	if (m_fLerpTime >= 1.f)
 	{
@@ -360,8 +368,8 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 			auto CharacterPos = m_pController->GetPosition_Float4();
 			CharacterPos.y += 1.f;
 
-			m_vCameraPosition = Axis_Rotate_Vector(m_vCameraPosition, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor);
-			auto Pos = Axis_Rotate_Vector(m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION), _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor);
+			m_vCameraPosition = Axis_Rotate_Vector(m_vCameraPosition, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, m_fRotate_Amount_X);
+			auto Pos = Axis_Rotate_Vector(m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION), _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, m_fRotate_Amount_X);
 			m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, Pos);
 
 			if (m_bLerp)
@@ -374,8 +382,8 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 				m_pCamera->SetPosition(m_vCameraPosition);
 			}
 
-			m_vCamera_LookAt_Point = Axis_Rotate_Vector(m_vCamera_LookAt_Point, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor);
-			m_vLookPoint_To_Position_Dir = Axis_Rotate_Vector(m_vLookPoint_To_Position_Dir, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor);
+			m_vCamera_LookAt_Point = Axis_Rotate_Vector(m_vCamera_LookAt_Point, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, m_fRotate_Amount_X);
+			m_vLookPoint_To_Position_Dir = Axis_Rotate_Vector(m_vLookPoint_To_Position_Dir, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, m_fRotate_Amount_X);
 			m_pTransformCom_Camera->Look_At(m_vCamera_LookAt_Point);
 		}
 
@@ -385,8 +393,8 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 			auto CharacterPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 			CharacterPos.y += 1.f;
 
-			m_vCameraPosition = Axis_Rotate_Vector(m_vCameraPosition, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
-			auto Pos = Axis_Rotate_Vector(m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION), m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
+			m_vCameraPosition = Axis_Rotate_Vector(m_vCameraPosition, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, m_fRotate_Amount_Y);
+			auto Pos = Axis_Rotate_Vector(m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION), m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, m_fRotate_Amount_Y);
 			m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, Pos);
 
 			if (m_fLerpTime != 1.f)
@@ -399,8 +407,8 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 				m_pCamera->SetPosition(m_vCameraPosition);
 			}
 
-			m_vCamera_LookAt_Point = Axis_Rotate_Vector(m_vCamera_LookAt_Point, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
-			m_vLookPoint_To_Position_Dir = Axis_Rotate_Vector(m_vLookPoint_To_Position_Dir, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
+			m_vCamera_LookAt_Point = Axis_Rotate_Vector(m_vCamera_LookAt_Point, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, m_fRotate_Amount_Y);
+			m_vLookPoint_To_Position_Dir = Axis_Rotate_Vector(m_vLookPoint_To_Position_Dir, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, m_fRotate_Amount_Y);
 			m_pTransformCom_Camera->Look_At(m_vCamera_LookAt_Point);
 		}
 	}
@@ -417,7 +425,7 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 
 			if (m_bLerp)
 			{
-				_vector NewPos = XMVectorLerp(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION), m_vCameraPosition - m_vRayDir, m_fLerpTime);
+				_vector NewPos = XMVectorLerp(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION), m_vCameraPosition - (m_vRayDir*0.75), m_fLerpTime);
 				m_pCamera->SetPosition(NewPos);
 			}
 			else
@@ -442,7 +450,7 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 
 			if (m_fLerpTime != 1.f)
 			{
-				_vector NewPos = XMVectorLerp(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION), m_vCameraPosition - m_vRayDir, m_fLerpTime);
+				_vector NewPos = XMVectorLerp(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION), m_vCameraPosition - (m_vRayDir * 0.75), m_fLerpTime);
 				m_pCamera->SetPosition(NewPos);
 			}
 			else

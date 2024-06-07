@@ -104,6 +104,8 @@ private:
 	_bool										m_bRotate_Delay_Start = { false };
 	_float										m_fRotate_Amount_X = { 0.f };
 	_float										m_fRotate_Amount_Y = { 0.f };
+	_float										m_fPrev_Rotate_Amount_X = { 0.f };
+	_float										m_fPrev_Rotate_Amount_Y = { 0.f };
 private:
 	HRESULT Add_Components();
 	HRESULT Add_PartObjects();
