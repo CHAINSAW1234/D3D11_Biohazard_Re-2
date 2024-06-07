@@ -30,6 +30,8 @@ HRESULT CTextBox::Initialize(void* pArg)
 		m_wstrFontType = TextBoxDesc->wstrFontType;
 		m_vFontColor = TextBoxDesc->vFontColor;
 		m_iFontSize = TextBoxDesc->iFontSize;
+		m_isOuterLine = TextBoxDesc->isOuterLine;
+		m_vOutLineColor = TextBoxDesc->vOutLineColor ;
 	}
 
 	return S_OK;
@@ -52,6 +54,18 @@ HRESULT CTextBox::Render()
 
 	//_float4 fPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
+	if (true == m_isOuterLine)
+	{
+		if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_fX - 2, m_fY, m_fZ, 0.f), m_vOutLineColor, 0.f)))
+			return E_FAIL;
+		if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_fX + 2, m_fY, m_fZ, 0.f), m_vOutLineColor, 0.f)))
+			return E_FAIL;
+		if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_fX, m_fY - 2, m_fZ, 0.f), m_vOutLineColor, 0.f)))
+			return E_FAIL;
+		if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_fX, m_fY + 2, m_fZ, 0.f), m_vOutLineColor, 0.f)))
+			return E_FAIL;
+	}
+
 	if (FAILED(m_pGameInstance->Render_Font(strFontType, m_wstrText, XMVectorSet(m_fX, m_fY, m_fZ, 0.f), m_vFontColor, 0.f)))
 		return E_FAIL;
 
@@ -68,6 +82,15 @@ CTextBox::TextBox_DESC CTextBox::Get_TextBoxDesc() const
 
 	TextBoxDesc.vFontColor = m_vFontColor;
 
+	TextBoxDesc.iFontSize = m_iFontSize;
+
+	TextBoxDesc.vPos = _float3(m_fX, m_fY, m_fZ);
+
+	TextBoxDesc.vSize = _float2(m_fSizeX, m_fSizeY);
+
+	TextBoxDesc.isOuterLine = m_isOuterLine;
+
+	TextBoxDesc.vOutLineColor = m_vOutLineColor;
 
 	return TextBoxDesc;
 }
