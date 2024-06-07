@@ -87,6 +87,7 @@ void CCharacter_Controller::Release_Px()
 	{
 		m_pController->release();
 		m_pController = nullptr;
+		m_pCharacter->Release_Controller();
 	}
 }
 

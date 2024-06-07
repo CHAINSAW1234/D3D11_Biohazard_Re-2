@@ -119,7 +119,8 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	//Ragdoll Temp Code
 	static bool Temp = false;
 
-	if (nullptr != m_pRagdoll_Physics) {
+	if (nullptr != m_pRagdoll_Physics) 
+	{
 		if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
 		{
 			Temp = !Temp;
@@ -137,7 +138,6 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 		}
 		//Update - Ragdoll
 		m_pRagdoll_Physics->Update(fTimeDelta);
-
 	}
 	
 

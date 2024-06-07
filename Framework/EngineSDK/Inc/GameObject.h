@@ -44,6 +44,10 @@ public:
 	virtual HRESULT								Render_Emissive() { return S_OK; }
 	virtual HRESULT								Render_Font() { return S_OK; }
 
+#pragma region For Physics.
+public:
+	void										Release_Controller();
+#pragma endregion
 protected:
 	ID3D11Device*								m_pDevice = { nullptr };
 	ID3D11DeviceContext*						m_pContext = { nullptr };

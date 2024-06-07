@@ -14,7 +14,7 @@ CGameObject::CGameObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	Safe_AddRef(m_pContext);
 }
 
-CGameObject::CGameObject(const CGameObject & rhs)
+CGameObject::CGameObject(const CGameObject& rhs)
 	: m_pDevice(rhs.m_pDevice)
 	, m_pContext(rhs.m_pContext)
 	, m_pGameInstance(rhs.m_pGameInstance)
@@ -24,14 +24,14 @@ CGameObject::CGameObject(const CGameObject & rhs)
 	Safe_AddRef(m_pContext);
 }
 
-CComponent * CGameObject::Get_Component(const wstring & strComTag)
+CComponent* CGameObject::Get_Component(const wstring& strComTag)
 {
 	auto	iter = m_Components.find(strComTag);
 
 	if (iter == m_Components.end())
 		return nullptr;
 
-	return iter->second;	
+	return iter->second;
 }
 
 HRESULT CGameObject::Initialize_Prototype()
@@ -41,22 +41,22 @@ HRESULT CGameObject::Initialize_Prototype()
 
 HRESULT CGameObject::Initialize(void* pArg)
 {
-	if(nullptr != pArg)
+	if (nullptr != pArg)
 	{
-		GAMEOBJECT_DESC*		pGameObjectDesc = (GAMEOBJECT_DESC*)pArg;		
+		GAMEOBJECT_DESC* pGameObjectDesc = (GAMEOBJECT_DESC*)pArg;
 	}
 
 	m_pTransformCom = CTransform::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pTransformCom)
 		return E_FAIL;
 
- 	if (FAILED(m_pTransformCom->Initialize(pArg)))
+	if (FAILED(m_pTransformCom->Initialize(pArg)))
 		return E_FAIL;
 
 	m_Components.emplace(g_strTransformTag, m_pTransformCom);
 
 	Safe_AddRef(m_pTransformCom);
-	
+
 	return S_OK;
 }
 
@@ -78,10 +78,16 @@ HRESULT CGameObject::Render()
 	return S_OK;
 }
 
-
-HRESULT CGameObject::Add_Component(_uint iLevelIndex, const wstring & strPrototypeTag, const wstring & strComponentTag, CComponent** ppOut, void * pArg)
+void CGameObject::Release_Controller()
 {
-	CComponent*		pComponent = m_pGameInstance->Clone_Component(iLevelIndex, strPrototypeTag, pArg);
+	Safe_Release(m_pController);
+	m_pController = nullptr;
+}
+
+
+HRESULT CGameObject::Add_Component(_uint iLevelIndex, const wstring& strPrototypeTag, const wstring& strComponentTag, CComponent** ppOut, void* pArg)
+{
+	CComponent* pComponent = m_pGameInstance->Clone_Component(iLevelIndex, strPrototypeTag, pArg);
 	if (nullptr == pComponent)
 		return E_FAIL;
 
@@ -90,7 +96,7 @@ HRESULT CGameObject::Add_Component(_uint iLevelIndex, const wstring & strPrototy
 		return E_FAIL;
 
 	m_Components.emplace(strComponentTag, pComponent);
-	
+
 	*ppOut = pComponent;
 
 	Safe_AddRef(pComponent);
@@ -114,6 +120,6 @@ void CGameObject::Free()
 	Safe_Release(m_pContext);
 	Safe_Release(m_pRigid_Body);
 
-	if(m_pController)
-		Safe_Release(m_pController);	
+	if (m_pController)
+		Safe_Release(m_pController);
 }
