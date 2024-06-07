@@ -5,9 +5,9 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_CamViewMatrix, g_CamProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 
-texture2D g_Texture;
+texture2D g_Texture, g_Texture2;
 TextureCubeArray g_CubeTexture;
-Texture3D g_3DTexture;
+Texture3D g_3DTexture, g_3DTexture2;
 
 texture2D g_NormalTexture;
 texture2D g_DiffuseTexture;
