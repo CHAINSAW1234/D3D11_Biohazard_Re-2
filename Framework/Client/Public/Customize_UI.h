@@ -99,7 +99,7 @@ private: /* Frame */
 	_matrix LerpMatrix(_matrix A, _matrix B, _float t); // 보간 값 계산
 
 public :
-	HRESULT	Change_Texture(const wstring& strPrototypeTag, const wstring& strComponentTag, const wstring& strTexturePath);
+	//HRESULT	Change_Texture(const wstring& strPrototypeTag, const wstring& strComponentTag, const wstring& strTexturePath);
 
 public:
 	void PushBack_Child(CGameObject* pGameOBJ);

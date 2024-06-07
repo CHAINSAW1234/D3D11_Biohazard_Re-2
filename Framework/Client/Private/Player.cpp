@@ -378,7 +378,6 @@ HRESULT CPlayer::Ready_Camera()
 	m_pCamera->LookAt(m_vCamera_LookAt_Point);
 
 	m_pTransformCom_Camera = m_pCamera->Get_Transform();
-	Safe_AddRef(m_pTransformCom_Camera);
 
 	m_vLookPoint_To_Position_Dir = Sub_Float4(m_vCamera_LookAt_Point, m_vCameraPosition);
 
