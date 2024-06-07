@@ -66,7 +66,11 @@ private:
 #pragma region Ray Cast
 public:
 	_bool									RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
-private:
+#pragma endregion
+
+#pragma region Sphere Cast
+public:
+	_bool									SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 #pragma endregion
 
 #pragma region For Mesh Cooking

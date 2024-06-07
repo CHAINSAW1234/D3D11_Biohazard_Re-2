@@ -159,6 +159,17 @@ public:
 
 		return Result;
 	}
+
+	FORCEINLINE _float4 Float4_Normalize(_float4 vFloat4)
+	{
+		_vector Result = XMLoadFloat4(&vFloat4);
+		Result = XMVector4Normalize(Result);
+
+		_float4 ReturnFloat4;
+		XMStoreFloat4(&ReturnFloat4,Result);
+
+		return ReturnFloat4;
+	}
 public:
 	virtual void Free();
 };

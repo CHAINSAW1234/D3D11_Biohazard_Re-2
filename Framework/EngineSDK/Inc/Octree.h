@@ -14,7 +14,7 @@ extern bool g_RenderMode;
 
 extern int g_MaxTriangles = 5000;
 
-extern int g_MaxSubdivisions =4;
+extern int g_MaxSubdivisions = 3;
 
 extern int g_EndNodeCount = 0;
 

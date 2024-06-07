@@ -93,7 +93,17 @@ private:
 	_float4										m_vRayDir;
 	_float										m_fLerpTime = { 1.f };
 	_bool										m_bLerp = { false };
-
+	_bool										m_bLerp_Move = { false };
+	_bool										m_bMove_Forward = { false };
+	_bool										m_bMove_Backward = { false };
+	_bool										m_bMove_Right = { false };
+	_bool										m_bMove_Left = { false };
+	_bool										m_bAim = { false };
+	_bool										m_bRotate_Delay = { false };
+	_float										m_fRotate_Delay_Amount = { 1.f };
+	_bool										m_bRotate_Delay_Start = { false };
+	_float										m_fRotate_Amount_X = { 0.f };
+	_float										m_fRotate_Amount_Y = { 0.f };
 private:
 	HRESULT Add_Components();
 	HRESULT Add_PartObjects();

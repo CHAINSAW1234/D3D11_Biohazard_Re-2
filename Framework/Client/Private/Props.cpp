@@ -56,10 +56,10 @@ HRESULT CProps::Initialize(void* pArg)
 	int TotalTriangleCount = m_pOctree->GetSceneTriangleCount(m_pModelCom);
 	m_pOctree->CreateNode(m_pModelCom, TotalTriangleCount, m_pOctree->GetCenter(), m_pOctree->GetWidth());
 
-	for (int i = 0; i < m_pModelCom->GetNumMesh(); ++i)
-	{
-		m_pModelCom->Release_IndexBuffer(i);
-	}
+	//for (int i = 0; i < m_pModelCom->GetNumMesh(); ++i)
+	//{
+	//	m_pModelCom->Release_IndexBuffer(i);
+	//}
 
 	return S_OK;
 }
@@ -94,13 +94,12 @@ void CProps::Late_Tick(_float fTimeDelta)
 
 
 
-	if (m_bVisible && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f))
+	if (/*m_bVisible && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f)*/1)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
 		if (m_bShadow)
 		{
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
 			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
 			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);

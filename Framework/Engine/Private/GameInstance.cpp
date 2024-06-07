@@ -1009,6 +1009,10 @@ _bool CGameInstance::RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint
 {
 	return m_pPhysics_Controller->RayCast(vOrigin, vDir, pBlockPoint, fMaxDist);
 }
+_bool CGameInstance::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
+{
+	return m_pPhysics_Controller->SphereCast(vOrigin, vDir, pBlockPoint, fMaxDist);
+}
 #pragma endregion
 
 #pragma region	Thread_Pool
