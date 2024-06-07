@@ -149,7 +149,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		auto Pos_Prev = m_pController->GetPosition_Float4();
 
 		_vector      vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
-		vLook = { XMVectorScale(XMVector3Normalize(vLook),0.01f) };
+		vLook = { XMVectorScale(XMVector3Normalize(vLook),0.03f) };
 		_vector      vMoveDir = { vLook };
 
 		vMovedDirection += vMoveDir;
@@ -183,7 +183,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		auto Pos_Prev = m_pController->GetPosition_Float4();
 
 		_vector      vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
-		vLook = { XMVectorScale(XMVector3Normalize(vLook),0.01f) };
+		vLook = { XMVectorScale(XMVector3Normalize(vLook),0.03f) };
 		_vector      vMoveDir = { -vLook };
 
 		vMovedDirection += vMoveDir;
