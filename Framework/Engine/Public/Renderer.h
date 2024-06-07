@@ -133,7 +133,7 @@ private:
 	HRESULT						Render_Font();
 
 private:
-	HRESULT						Render_SSAO_Blur();
+	HRESULT						Render_SSAO();
 
 private:
 	HRESULT						Render_Field_Shadow_Direction();

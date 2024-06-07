@@ -564,6 +564,7 @@ HRESULT CBody_Player::Render()
 				return E_FAIL;
 		}
 
+
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
 
