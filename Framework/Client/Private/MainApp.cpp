@@ -194,8 +194,8 @@ HRESULT CMainApp::Ready_Gara()
 HRESULT CMainApp::Ready_Fonts()
 {
 	// MakeSpriteFont "³Ø½¼lv1°íµñ Bold" /FontSize:30 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 142.spritefont
-	//if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_Default"), TEXT("../Bin/Resources/Fonts/141ex.spriteFont"))))
-	//	return E_FAIL;
+	/*if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_Default"), TEXT("../Bin/Resources/Fonts/141ex.spriteFont"))))
+		return E_FAIL;*/
 	// ¿£Áø¿¡¼­ ÀÌ¹Ì ¸¸µë
 
 	return S_OK;

@@ -5,12 +5,16 @@
 
 #include "Collider.h"
 
+BEGIN(Engine)
+class CGameObject;
+END
+
 BEGIN(Tool)
 
 class CTool_Collider final : public CTool
 {
 protected:
-	CTool_Collider();
+	CTool_Collider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CTool_Collider() = default;
 
 public:
@@ -18,14 +22,14 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 
 public:
-	class CGameObject* Get_CurrentSelectCollider();
-	void Set_CurrentSelectCollider(class CGameObject* pStaticCollider) { m_pCurrentSelectCollider = pStaticCollider; }
+	CGameObject* Get_CurrentSelectCollider();
+	void Set_CurrentSelectCollider(CGameObject* pStaticCollider) { m_pCurrentSelectCollider = pStaticCollider; }
 
 private:
-	class CGameObject*						m_pCurrentSelectCollider = { nullptr };
+	CGameObject*						m_pCurrentSelectCollider = { nullptr };
 
 public:
-	static CTool_Collider* Create( void* pArg);
+	static CTool_Collider* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);
 	virtual void Free() override;
 };
 

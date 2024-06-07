@@ -53,6 +53,7 @@ HRESULT CObject_Manager::Add_Clone(_uint iLevelIndex, const wstring & strLayerTa
 		pLayer = CLayer::Create();
 		if (nullptr == pLayer)
 			return E_FAIL;
+
 		pLayer->Add_GameObject(pGameObject);
 
 		m_pLayers[iLevelIndex].emplace(strLayerTag, pLayer);

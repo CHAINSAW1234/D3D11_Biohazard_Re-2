@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "Tool_Selector.h"
 
-CTool_Selector::CTool_Selector()
+CTool_Selector::CTool_Selector(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CTool{ pDevice, pContext }
 {
 }
 

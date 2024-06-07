@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "Debuger.h"
 #include "GameObject.h"
-#include "Player.h"
-#include "Body_Player.h"
 
 CDebuger::CDebuger(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGUIObject{ pDevice, pContext }

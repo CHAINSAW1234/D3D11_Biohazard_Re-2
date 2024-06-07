@@ -188,7 +188,7 @@ HRESULT CLoader::Load_Prototype(const wstring& filePath)
 		Inform->strGameObjectPrototypeName = strGameObjectPrototypeName; // 메쉬 파일(바이너리화)한거 
 		delete[] strGameObjectPrototypeName;
 
-		m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, Inform->strModelPath.c_str(), XMMatrixIdentity()));
+		m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext,Inform->strModelPath.c_str(), XMMatrixIdentity()));
 
 		m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CProps::Create(m_pDevice, m_pContext));
 
@@ -236,10 +236,37 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile%d.dds"), 2))))
 		return E_FAIL;
 
+
+	///*Prototype_Component_Texture_BackGround_0*/
+	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_BackGround_0"),
+	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/BZ_UI/Background/BackGround_0.dds")))))
+	//	return E_FAIL;
+
 	/*Prototype_Component_Texture_Mask*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Mask"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"), 1))))
 		return E_FAIL;
+
+	/*Prototype_Component_Texture_BackGround_0*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Main0"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Aiming/Main0.png")))))
+		return E_FAIL;
+
+		/*Prototype_Component_Texture_Main1*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Main1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Aiming/Main1.png")))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Main2*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Main2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Aiming/Main2.png")))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Point*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Point"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Aiming/Point.png")))))
+		return E_FAIL;
+
 
 	/*Prototype_Component_Texture_Brush */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Brush"),

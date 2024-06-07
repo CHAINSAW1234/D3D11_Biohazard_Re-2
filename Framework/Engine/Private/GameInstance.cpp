@@ -725,12 +725,25 @@ HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffer
 #pragma region Font_Manager
 HRESULT CGameInstance::Add_Font(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const wstring & strFontTag, const wstring & strFontFilePath)
 {
+	if (nullptr == m_pFont_Manager)
+		return E_FAIL;
+
 	return m_pFont_Manager->Add_Font(pDevice, pContext, strFontTag, strFontFilePath);	
 }
 
 HRESULT CGameInstance::Render_Font(const wstring & strFontTag, const wstring & strText, const _float2 & vPosition, _fvector vColor, _float fRadian)
 {
+	if (nullptr == m_pFont_Manager)
+		return E_FAIL;
+
 	return m_pFont_Manager->Render(strFontTag, strText, vPosition, vColor, fRadian);
+}
+HRESULT CGameInstance::Render_Font_Scaled(const wstring& strFontTag, const wstring& strText, const _float2& vPosition, _fvector vColor, _float fRadian, _float fScale)
+{
+	if (nullptr == m_pFont_Manager)
+		return E_FAIL;
+
+	return m_pFont_Manager->Render_Scaled(strFontTag, strText, vPosition, vColor, fRadian, fScale);
 }
 #pragma endregion
 

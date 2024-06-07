@@ -29,7 +29,11 @@ HRESULT CIMGuiManager::Initialize()
 
     ZeroMemory(&m_Editors, sizeof(m_Editors));
 
-    m_Editors[EDITOR_TYPE::EDITOR_ANIMATION] = CAnimationEditor::Create(m_pDevice, m_pContext);
+    CAnimationEditor*       pAnimEditor = { CAnimationEditor::Create(m_pDevice, m_pContext) };
+    if (nullptr == pAnimEditor)
+        return E_FAIL;
+
+    m_Editors[EDITOR_TYPE::EDITOR_ANIMATION] = pAnimEditor;
 
     ZeroMemory(&m_Debugers, sizeof(m_Debugers));
 
@@ -353,6 +357,25 @@ HRESULT CIMGuiManager::Render()
         ImGui::EndFrame();
         ImGui::Render();
         ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+        _uint iIdx = { 0 };
+        for (auto& pEditor : m_Editors)
+        {
+            if (nullptr == pEditor)
+                continue;
+
+            Update_CurrentEditor(pEditor, (EDITOR_TYPE)iIdx++);
+
+            pEditor->Render();
+        }
+
+        for (auto& pDebuger : m_Debugers)
+        {
+            if (nullptr == pDebuger)
+                continue;
+
+            pDebuger->Render();
+        }
     }
 
     return S_OK;

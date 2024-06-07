@@ -44,8 +44,8 @@ private:
 
 	_bool					m_bRagdoll = { false };
 private:
-	HRESULT Add_Components();
-	HRESULT Bind_ShaderResources();
+	HRESULT					Add_Components();
+	HRESULT					Bind_ShaderResources();
 
 public:
 	static CBody_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
