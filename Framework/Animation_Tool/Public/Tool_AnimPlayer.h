@@ -44,8 +44,9 @@ private:
 	_float										Get_CurrentAnim_TrackPosition();
 	_uint										Get_CurrentKeyFrame();
 
-	void										Set_TrackPosition(_float fTrackPosition);
-
+	void										Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition);
+	void										Set_Weight(_uint iPlayingIndex, _float fWeight);
+	
 private:
 	void										On_Off_Buttons();
 	void										Set_Animation();

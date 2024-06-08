@@ -26,6 +26,7 @@ public:
 private:
 	void							Input_LayerTag();
 	void							Input_Start_End_BoneIndex();
+	void							Input_TopParent_BoneIndex();
 	void							Create_BoneLayer();
 
 public:
@@ -42,6 +43,9 @@ private:
 	void							Create_BoneLayer_ChildBones();
 	void							Create_BoneLayer_Indices(list<_uint> BoneIndices);
 
+	void							Release_BoneLayer(const wstring& strBoneLayerTag);	
+	void							Release_BoneLayer_CurrentBoneLayer();
+
 	list<wstring>					Get_BoneLayerTags(CModel* pModel);
 
 private:
@@ -56,6 +60,7 @@ private:
 	const string*					m_pCurrentBoneTag = { nullptr };
 	const string*					m_pCurrentModelTag = { nullptr };
 
+	_int							m_iTopParentBoneIndex = { 0 };
 	_int							m_iStartBoneIndex = { 0 };
 	_int							m_iEndBoneIndex = { 0 };
 

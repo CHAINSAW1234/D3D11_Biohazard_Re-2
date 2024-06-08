@@ -85,13 +85,26 @@ void CModel::Set_Animation_Blend(ANIM_PLAYING_DESC AnimDesc, _uint iPlayingIndex
 	m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Reset_TrackPostion();
 }
 
-_uint CModel::Get_CurrentAnimIndex(_uint iPlayingIndex)
+_int CModel::Get_CurrentAnimIndex(_uint iPlayingIndex)
 {
 	if (iPlayingIndex >= static_cast<_uint>(m_PlayingAnimInfos.size()))
-		return false;
+		return -1;
 
 	_uint			iAnimIndex = { static_cast<_uint>(m_PlayingAnimInfos[iPlayingIndex].iAnimIndex) };
 	return iAnimIndex;
+}
+
+string CModel::Get_CurrentAnimTag(_uint iPlayingIndex)
+{
+	_int			iAnimIndex = { Get_CurrentAnimIndex(iPlayingIndex) };
+	if (-1 == iAnimIndex)
+		return string();
+
+	_uint		iNumAnims = { static_cast<_uint>(m_Animations.size()) };
+	if (iNumAnims <= static_cast<_uint>(iAnimIndex))
+		return string();
+
+	return m_Animations[iAnimIndex]->Get_Name();
 }
 
 void CModel::Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec)
@@ -1106,7 +1119,7 @@ void CModel::Add_Bone_Layer_All_Bone(const wstring& strLayerTag)
 void CModel::Delete_Bone_Layer(const wstring& strLayerTag)
 {
 	map<wstring, CBone_Layer*>::iterator		iter = { m_BoneLayers.find(strLayerTag) };
-	if (iter == m_BoneLayers.end())
+	if (iter != m_BoneLayers.end())
 	{
 		Safe_Release(iter->second);
 		m_BoneLayers.erase(iter);
@@ -1659,7 +1672,19 @@ _float CModel::Get_Duration(_uint iPlayingIndex, _int iAnimIndex)
 
 void CModel::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition)
 {
-	m_Animations[m_PlayingAnimInfos[iPlayingIndex].iAnimIndex]->Set_TrackPosition(fTrackPosition);
+	_uint			iNumPlayingInfo = { static_cast<_uint>(m_PlayingAnimInfos.size()) };
+	if (iPlayingIndex >= iNumPlayingInfo)
+		return;
+
+	_int			iAnimIndex = { m_PlayingAnimInfos[iPlayingIndex].iAnimIndex };
+	if (-1 == iAnimIndex)
+		return;
+
+	_uint			iNumAnims = { static_cast<_uint>(m_Animations.size()) };	
+	if (iNumAnims <= iAnimIndex)
+		return;
+
+	m_Animations[iAnimIndex]->Set_TrackPosition(fTrackPosition);
 }
 
 HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix)

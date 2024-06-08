@@ -23,7 +23,8 @@ public:		/* For.Animation */
 	void									Set_Animation_Blend(ANIM_PLAYING_DESC AnimDesc, _uint iPlayingIndex);
 
 	_uint									Get_NumAnims() { return m_iNumAnimations; }
-	_uint									Get_CurrentAnimIndex(_uint iPlayingIndex);
+	_int									Get_CurrentAnimIndex(_uint iPlayingIndex);
+	string									Get_CurrentAnimTag(_uint iPlayingIndex);
 
 public:		/* For.Controll AnimSpeed */
 	void									Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec);

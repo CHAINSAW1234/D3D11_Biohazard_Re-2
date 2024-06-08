@@ -204,6 +204,7 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\Event_Call_Back.cpp" />
     <ClCompile Include="..\Private\FSM.cpp" />
     <ClCompile Include="..\Private\ComputeShader.cpp" />
+    <ClCompile Include="..\Private\IK_Solver.cpp" />
     <ClCompile Include="..\Private\KeyBoard.cpp" />
     <ClCompile Include="..\Private\Model_Extractor.cpp" />
     <ClCompile Include="..\Private\Mouse.cpp" />
@@ -280,6 +281,7 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\ComputeShader.h" />
     <ClInclude Include="..\Public\Engine_Enums.h" />
     <ClInclude Include="..\Public\FSM.h" />
+    <ClInclude Include="..\Public\IK_Solver.h" />
     <ClInclude Include="..\Public\KeyBoard.h" />
     <ClInclude Include="..\Public\Model_Enums.h" />
     <ClInclude Include="..\Public\Model_Extractor.h" />

@@ -212,6 +212,15 @@ _uint CTool_AnimPlayer::Get_CurrentKeyFrame()
 	return iCurrentKeyFrame;
 }
 
+void CTool_AnimPlayer::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition)
+{
+	m_pCurrentModel->Set_TrackPosition(iPlayingIndex, fTrackPosition);
+}
+
+void CTool_AnimPlayer::Set_Weight(_uint iPlayingIndex, _float fWeight)
+{
+}
+
 void CTool_AnimPlayer::Set_TrackPosition(_float fTrackPosition)
 {
 	if (nullptr == m_pCurrentAnimation)
