@@ -204,6 +204,11 @@ public:
 		return XMVector3Rotate(A, slerpQuat);
 	}
 
+	_float Lerp(_float a, _float b, _float f)
+	{
+		return a + f * (b - a);
+	}
+
 public:
 	virtual void Free();
 };
