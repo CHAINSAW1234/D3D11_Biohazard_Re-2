@@ -95,7 +95,6 @@ void CPlayer::Tick(_float fTimeDelta)
 	{
 		m_fTimeTEST = 0.f;
 		m_iCurCol--;
-		m_pGameInstance->Set_RenderFieldShadow(true);
 	}
 #pragma endregion ¿¹ÀºColTest
 
@@ -341,10 +340,18 @@ void CPlayer::Calc_Camera_Transform(_float fTimeDelta)
 	{
 		if (m_bAim)
 		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.85f, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
+
 			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.85f);
 		}
 		else
 		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 1.35f, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
+
 			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 1.35f);
 		}
 	}
@@ -353,10 +360,18 @@ void CPlayer::Calc_Camera_Transform(_float fTimeDelta)
 	{
 		if (m_bAim)
 		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.35f, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
+
 			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.35f);
 		}
 		else
 		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.85f, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
+
 			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.85f);
 		}
 	}
@@ -365,55 +380,47 @@ void CPlayer::Calc_Camera_Transform(_float fTimeDelta)
 	{
 		if (m_bAim)
 		{
-			if (m_fLerpAmount >= (m_fLook_Dist_Pos * 0.5f))
-			{
-				m_fLerpAmount -= fTimeDelta * 0.1f;
-			}
-			else
-			{
-				m_fLerpAmount = m_fLook_Dist_Pos * 0.5f;
-			}
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.5f, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
 
 			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.5f);
 		}
 		else
 		{
-			if (m_fLerpAmount > m_fLook_Dist_Pos)
-			{
-				m_fLerpAmount -= fTimeDelta * 0.1f;
-			}
-			else
-			{
-				m_fLerpAmount = m_fLook_Dist_Pos;
-			}
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
 
 			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos);
 		}
 	}
 
-	if (m_bLerp)
+	if (m_bCollision_Lerp == false)
 	{
-		_vector vOrigin = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLerpAmount);
-		//_vector NewPos = XMVectorLerp(m_pCamera->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION), m_vCameraPosition, m_fLerpTime);
-		_vector NewPos = XMVectorLerp(vOrigin, m_vCameraPosition, m_fLerpTime);
-		m_pCamera->SetPosition(NewPos);
+		if (m_bLerp)
+		{
+			_vector vOrigin = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fLerpAmount_Right) + XMVectorScale(XMVector4Normalize(vUp), m_fLerpAmount_Up) + XMVectorScale(XMVector4Normalize(vLook), m_fLerpAmount_Look);
+			_vector NewPos = XMVectorLerp(vOrigin, m_vCameraPosition, m_fLerpTime);
+			m_pCamera->SetPosition(NewPos);
+		}
+		else
+		{
+			m_pCamera->SetPosition(m_vCameraPosition);
+		}
 	}
 	else
 	{
-		m_pCamera->SetPosition(m_vCameraPosition);
+		if (m_bLerp)
+		{
+			_vector NewPos = XMVectorLerp(m_pCamera->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION), m_vCameraPosition, m_fLerpTime);
+			m_pCamera->SetPosition(NewPos);
+		}
+		else
+		{
+			m_pCamera->SetPosition(m_vCameraPosition);
+		}
 	}
-
-	//if (m_bLerp)
-	//{
-	//	_vector vOrigin = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos);
-	//	//_vector NewPos = XMVectorLerp(m_pCamera->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION), m_vCameraPosition, m_fLerpTime);
-	//	_vector NewPos = XMVectorLerp(vOrigin, m_vCameraPosition, m_fLerpTime);
-	//	m_pCamera->SetPosition(NewPos);
-	//}
-	//else
-	//{
-	//	m_pCamera->SetPosition(m_vCameraPosition);
-	//}
 
 	vLookAtPoint = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Look) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Look) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Look);
 	XMStoreFloat4(&m_vCamera_LookAt_Point, vLookAtPoint);
@@ -471,18 +478,28 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 		m_fRotate_Amount_Y = fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor;
 	}
 
-	if (m_bAim == false)
-		m_fLerpTime += fTimeDelta * 0.7f;
+	if (m_bCollision_Lerp == false)
+	{
+		if (m_bAim == false)
+			m_fLerpTime += fTimeDelta * 0.7f;
+		else
+			m_fLerpTime += fTimeDelta;
+	}
 	else
-		m_fLerpTime += fTimeDelta;
+	{
+		m_fLerpTime += fTimeDelta * 1.5f;
+	}
 
 	if (m_fLerpTime >= 1.f)
 	{
 		m_bLerp = false;
 		m_fLerpTime = 1.f;
+
+		if (m_bCollision_Lerp)
+			m_bCollision_Lerp = false;
 	}
 
-	if(m_bTurnAround == false)
+	if (m_bTurnAround == false)
 	{
 		if (m_bAim == false)
 		{
@@ -616,7 +633,9 @@ HRESULT CPlayer::Ready_Camera()
 
 	m_vOrigin_LookAt_Point = m_vCamera_LookAt_Point;
 
-	m_fLerpAmount = m_fLook_Dist_Pos;
+	m_fLerpAmount_Look = m_fLook_Dist_Pos;
+	m_fLerpAmount_Right = m_fRight_Dist_Pos;
+	m_fLerpAmount_Up = m_fUp_Dist_Pos;
 
 	return S_OK;
 }
@@ -665,6 +684,7 @@ void CPlayer::RayCasting_Camera()
 	if (m_pGameInstance->SphereCast(TempPos, m_vRayDir, &BlockPoint, m_fRayDist))
 	{
 		m_fLerpTime = 0.f;
+		m_bCollision_Lerp = true;
 		m_bLerp = true;
 
 		m_vRayDir.x *= -1.f;
@@ -678,9 +698,14 @@ void CPlayer::RayCasting_Camera()
 		BlockPoint.y += DeltaDir.y * 0.33f;
 		BlockPoint.z += DeltaDir.z * 0.33f;
 
-		/*BlockPoint.x += m_vRayDir.x * 0.33f;
-		BlockPoint.y += m_vRayDir.y * 0.33f;
-		BlockPoint.z += m_vRayDir.z * 0.33f;*/
+		//BlockPoint.x += m_vRayDir.x * 0.33f;
+		//BlockPoint.y += m_vRayDir.y * 0.33f;
+		//BlockPoint.z += m_vRayDir.z * 0.33f;
+
+		auto vCharacterPos = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION) - BlockPoint;
+		//m_fLerpAmount_Right = vCharacterPos.x;
+		//m_fLerpAmount_Up = abs(vCharacterPos.y);
+		//m_fLerpAmount_Look = -abs(vCharacterPos.z);
 
 		m_pCamera->SetPosition(BlockPoint);
 	}

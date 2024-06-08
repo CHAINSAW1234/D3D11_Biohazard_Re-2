@@ -44,7 +44,7 @@ private:
 	void										Priority_Tick_PartObjects(_float fTimeDelta);
 	void										Tick_PartObjects(_float fTimeDelta);
 	void										Late_Tick_PartObjects(_float fTimeDelta);
-	
+
 private:
 	void										Col_Section();
 
@@ -57,16 +57,16 @@ private:
 
 
 	_bool										m_bChange = { true };
-	_int										m_iCurCol = {0};
-	_int										m_iDir = {0};
-	_int										m_iPreCol = {0};
+	_int										m_iCurCol = { 0 };
+	_int										m_iDir = { 0 };
+	_int										m_iPreCol = { 0 };
 	_float										m_fTimeTEST = { 0.f };
 #pragma endregion
 
 	vector<CPartObject*>						m_PartObjects;
 	_ubyte										m_eState = {};
-	CCollider*									m_pColliderCom = { nullptr };
-	CNavigation*								m_pNavigationCom = { nullptr };
+	CCollider* m_pColliderCom = { nullptr };
+	CNavigation* m_pNavigationCom = { nullptr };
 
 	_float3										m_vRootTranslation = {};
 
@@ -88,7 +88,7 @@ private:
 	_float										m_fLook_Dist_Pos = { 0.f };
 	_float										m_fUp_Dist_Pos = { 0.f };
 	_float										m_fRight_Dist_Pos = { 0.f };
-	CTransform*									m_pTransformCom_Camera = { nullptr };
+	CTransform* m_pTransformCom_Camera = { nullptr };
 	_float										m_fMouseSensor = { 0.0f };
 
 	_float4										m_vLookPoint_To_Position_Dir;
@@ -116,7 +116,10 @@ private:
 	_bool										m_bTurnAround = { false };
 	_float4										m_vTurnAround_Look_Vector;
 	_float										m_fTurnAround_Time = { 0.f };
-	_float										m_fLerpAmount = { 0.f };
+	_float										m_fLerpAmount_Right = { 0.f };
+	_float										m_fLerpAmount_Up = { 0.f };
+	_float										m_fLerpAmount_Look = { 0.f };
+	_bool										m_bCollision_Lerp = { false };
 private:
 	HRESULT Add_Components();
 	HRESULT Add_PartObjects();
