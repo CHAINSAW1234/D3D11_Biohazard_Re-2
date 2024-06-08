@@ -106,6 +106,8 @@ private:
 	_float										m_fRotate_Amount_Y = { 0.f };
 	_float										m_fPrev_Rotate_Amount_X = { 0.f };
 	_float										m_fPrev_Rotate_Amount_Y = { 0.f };
+	_float										m_fTotal_Rotate_Amount_Y = { 0.f };
+	_float4										m_vOrigin_LookAt_Point;
 private:
 	HRESULT Add_Components();
 	HRESULT Add_PartObjects();

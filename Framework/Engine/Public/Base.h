@@ -170,6 +170,31 @@ public:
 
 		return ReturnFloat4;
 	}
+
+	_float GetAngleBetweenVectors_Radians(_vector vec1,_vector vec2)
+	{
+		vec1 = XMVector3Normalize(vec1);
+		vec2 = XMVector3Normalize(vec2);
+
+		float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(vec1, vec2));
+
+		float lenVec1 = DirectX::XMVectorGetX(DirectX::XMVector3Length(vec1));
+		float lenVec2 = DirectX::XMVectorGetX(DirectX::XMVector3Length(vec2));
+
+		if (lenVec1 == 0.0f || lenVec2 == 0.0f)
+		{
+			return 0.0f;
+		}
+
+		float cosAngle = dot / (lenVec1 * lenVec2);
+
+		cosAngle = max(-1.0f, min(cosAngle, 1.0f));
+
+		float angle = std::acos(cosAngle);
+
+		return angle;
+	}
+
 public:
 	virtual void Free();
 };
