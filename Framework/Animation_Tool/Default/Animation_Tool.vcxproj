@@ -512,7 +512,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>Default</ConformanceMode>
       <AdditionalIncludeDirectories>../Default/;../Public/;../../EngineSDK/Inc/;..\..\imguilib</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <AdditionalOptions>/MP /Zm2000 %(AdditionalOptions)</AdditionalOptions>
@@ -602,6 +602,8 @@
     <ClCompile Include="..\Private\Tool_AnimPlayer.cpp" />
     <ClCompile Include="..\Private\Tool_BoneLayer.cpp" />
     <ClCompile Include="..\Private\Tool_Collider.cpp" />
+    <ClCompile Include="..\Private\Tool_EventInserter.cpp" />
+    <ClCompile Include="..\Private\Tool_IK.cpp" />
     <ClCompile Include="..\Private\Tool_PartObject.cpp" />
     <ClCompile Include="..\Private\Tool_Selector.cpp" />
     <ClCompile Include="..\Private\Tool_Transformation.cpp" />
@@ -648,6 +650,8 @@
     <ClInclude Include="..\Public\Level_Tool.h" />
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\Public\MainApp.h" />
+    <ClInclude Include="..\Public\Tool_EventInserter.h" />
+    <ClInclude Include="..\Public\Tool_IK.h" />
     <ClInclude Include="..\Public\Tool_PartObject.h" />
     <ClInclude Include="..\Public\Tool_Selector.h" />
     <ClInclude Include="..\Public\Tool_Transformation.h" />

@@ -20,30 +20,3 @@ typedef struct tagAnimPlayingInfo : public ANIM_PLAYING_DESC
 	vector<KEYFRAME>		LastKeyFrames;
 }ANIM_PLAYING_INFO;
 
-typedef struct tagIK_Info
-{
-	_int					iEndEffectorIndex = { -1 };
-	_int					iIKRootBoneIndex = { -1 };
-	vector<_uint>			JointIndices;
-	_float3					vIKDirection = {};
-	_float3					vIKEndTargetPosition = {};
-	list<_uint>				IKIncludedIndices;
-
-	_uint					iNumIteration = { 0 };
-
-	_float					fBlend = { 0.f };
-
-	_float4					vTargetJointStartTranslation;
-	_float4					vEndEffectorResultPosition;
-
-	vector<_uint>			JointTypes;
-
-	vector<_float>			BoneOrientationLimits;
-	vector<_float4>			BoneOrientations;
-	vector<_float4>			BoneThetas;
-	vector<_float>			TargetDistancesToChild;
-	vector<_float>			TargetDistancesToParrent;
-	vector<_float4>			BoneTranslationsResult;
-	vector<_float4>			BoneTranslationsOrigin;
-}IK_INFO;
-

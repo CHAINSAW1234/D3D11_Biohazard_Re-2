@@ -118,6 +118,22 @@ HRESULT CEditor::Add_Tool(CTool** ppTool, _uint iToolType, const string& strTool
 			return E_FAIL;
 	}
 
+	else if (CTool::TOOL_TYPE::INVERSE_KINEMATIC == static_cast<CTool::TOOL_TYPE>(iToolType))
+	{
+		*ppTool = CTool_IK::Create(m_pDevice, m_pContext, pArg);
+
+		if (nullptr == *ppTool)
+			return E_FAIL;
+	}
+
+	else if (CTool::TOOL_TYPE::EVENT_INSERTER == static_cast<CTool::TOOL_TYPE>(iToolType))
+	{
+		*ppTool = CTool_EventInserter::Create(m_pDevice, m_pContext, pArg);
+
+		if (nullptr == *ppTool)
+			return E_FAIL;
+	}
+
 	else
 	{
 		return E_FAIL;

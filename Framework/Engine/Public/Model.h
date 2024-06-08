@@ -42,39 +42,6 @@ public:		/* For.RootAnimaition ActiveControll */
 	
 	_bool									Is_Set_RootBone();
 
-public:		/* For.IK Public*/
-	void									Add_IK(string strTargetJointTag, string strEndEffectorTag, wstring strIKTag, _uint iNumIteration, _float fBlend);
-	void									Set_Direction_IK(wstring strIKTag, _fvector vDirection);
-	void									Set_TargetPosition_IK(wstring strIKTag, _fvector vTargetPosition);
-	void									Set_NumIteration_IK(wstring strIKTag, _uint iNumIteration);
-	void									Set_Blend_IK(wstring strIKTag, _float fBlend);
-	vector<_float4>							Get_ResultTranslation_IK(const wstring& strIKTag);
-	vector<_float4>							Get_OriginTranslation_IK(const wstring& strIKTag);
-	vector<_float4x4>						Get_JointCombinedMatrices_IK(const wstring& strIKTag);
-	
-private:	/* For.IK Private */
-	void									Apply_IK(class CTransform* pTransform, IK_INFO& IkInfo);
-	void									Update_Distances_Translations_IK(IK_INFO& IkInfo);
-	void									Solve_IK(IK_INFO& IkInfo);
-	void									Solve_IK_Forward(IK_INFO& IkInfo);
-	void									Solve_IK_Backward(IK_INFO& IkInfo);
-	void									Solve_For_Distance_IK(IK_INFO& IkInfo, _int iSrcJointIndex, _int iDstJointIndex);
-	void									Solve_For_Orientation_IK(IK_INFO& IkInfo, _int iOuterJointIndex, _int iInnerJointIndex);
-	void 									Rotational_Constranit(IK_INFO& IkInfo, _int iOuterJointIndex, _int iMyJointIndex);
-	void									Update_Forward_Reaching_IK(IK_INFO& IkInfo);
-	void									Update_Backward_Reaching_IK(IK_INFO& IkInfo);
-	void									Update_TransformMatrices_BoneChain(IK_INFO& IkInfo);
-	void									Update_CombinedMatrices_BoneChain(IK_INFO& IkInfo);
-
-private:	/* For.IK_Constraint */
-	CONIC_SECTION							Find_ConicSection(_float fTheta);
-	_bool									Is_InBound(CONIC_SECTION eSection, _fvector vQ, _float2 vTarget);
-	_float2									Find_Nearest_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition);
-	_float2									Find_Initial_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition);
-	_float2									Find_Next_Point_Constraints(_float2 vCurrentPoint, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
-	_float2									Compute_Delta_Constratins(_float2 vCurrentPoint, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
-	_float4x4								Compute_QMatrix(_float2 vCurrentPoint, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
-
 private:	/* Utillity */
 	_vector									Compute_Quaternion_From_TwoDirection(_fvector vSrcDirection, _fvector vDstDirection);
 
@@ -82,6 +49,18 @@ public:		/* For.Bone_Layer */
 	void									Add_Bone_Layer(const wstring& strLayerTag, list<_uint> BoneIndices);
 	void									Add_Bone_Layer_All_Bone(const wstring& strLayerTag);
 	void									Delete_Bone_Layer(const wstring& strLayerTag);
+
+public:		/* For.IK Public*/
+	void									Add_IK(string strTargetJointTag, string strEndEffectorTag, const wstring& strIKTag, _uint iNumIteration, _float fBlend);
+	void									Release_IK(const wstring& strIKTag);
+	void									Set_TargetPosition_IK(const wstring& strIKTag, _fvector vTargetPosition);
+	void									Set_NumIteration_IK(const wstring& strIKTag, _uint iNumIteration);
+	void									Set_Blend_IK(const wstring& strIKTag, _float fBlend);
+	vector<_float4>							Get_ResultTranslation_IK(const wstring& strIKTag);
+	vector<_float4>							Get_OriginTranslation_IK(const wstring& strIKTag);
+	vector<_float4x4>						Get_JointCombinedMatrices_IK(const wstring& strIKTag);
+
+
 
 public:		/* For.Additioal_Input_Forces */
 	void									Add_Additional_Transformation_World(string strBoneTag, _fmatrix AdditionalTransformMatrix);
@@ -143,8 +122,10 @@ public:		/* For. Access */
 	_uint									Get_CurrentMaxKeyFrameIndex(_uint iPlayingIndex);
 	_float									Get_Duration(_uint iPlayingIndex, _int iAnimIndex = -1);
 	_float									Get_TrackPosition(_uint iPlayingIndex);
+	_float									Get_BlendWeight(_uint iPlayingIndex);
 	void									Set_KeyFrameIndex(_uint iPlayingIndex, _uint iKeyFrameIndex);
 	void									Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition);
+	void									Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight);
 	const vector<_uint>&					Get_CurrentKeyFrameIndices(_uint iPlayingIndex);
 
 	class CBone*							Get_BonePtr(const _char* pBoneName) const;
@@ -211,9 +192,6 @@ private:	/* For.RootMotion */
 	_bool									m_isRootMotion_Y = { false };
 	_bool									m_isRootMotion_Rotation = { false };
 
-private:	/* For.Inverse_Kinematic */
-	map<wstring, IK_INFO>					m_IKInfos;
-
 private:
 	_uint									m_iNumMaterials = { 0 };
 	vector<MESH_MATERIAL>					m_Materials;
@@ -222,6 +200,8 @@ private:
 
 	vector<class CBone*>					m_Bones;
 	map<wstring, class CBone_Layer*>		m_BoneLayers;			//	레이어로 분리할 뼈들의 태그별로 인덱스들을 저장한다.
+
+	class CIK_Solver*						m_pIK_Solver = { nullptr };
 
 	_uint									m_iNumAnimations = { 0 };
 	vector<class CAnimation*>				m_Animations;

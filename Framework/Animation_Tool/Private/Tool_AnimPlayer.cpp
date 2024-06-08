@@ -48,7 +48,7 @@ void CTool_AnimPlayer::Tick(_float fTimeDelta)
 	Apply_RootMotion();
 
 	Play_Animation(fTimeDelta);
-	Play_Bar();
+	TrackPosition_Controller();
 
 	ImGui::End();
 }
@@ -151,20 +151,20 @@ void CTool_AnimPlayer::Set_TargetTransform(CTransform* pTransform)
 
 _float CTool_AnimPlayer::Compute_Ratio()
 {
-	_float			fDuration = { Get_CurrentAnim_Duration() };
-	_float			fTrackPosition = { Get_CurrentAnim_TrackPosition() };
+	_float			fDuration = { Get_CurrentPlayingInfo_Duration() };
+	_float			fTrackPosition = { Get_CurrentPlayingInfo_TrackPosition() };
 
 	_float			fRatio = { fTrackPosition / fDuration };
 
 	return fRatio;
 }
 
-void CTool_AnimPlayer::Play_Bar()
+void CTool_AnimPlayer::TrackPosition_Controller()
 {
 	ImGui::SeparatorText("Play Bar");
 
-	_float			fTrackPosition = { Get_CurrentAnim_TrackPosition() };
-	_float			fDuration = { Get_CurrentAnim_Duration() };
+	_float			fTrackPosition = { Get_CurrentPlayingInfo_TrackPosition() };
+	_float			fDuration = { Get_CurrentPlayingInfo_Duration() };
 
 	string			strTrackPosition = { to_string(fTrackPosition) };
 	string			strDuration = { to_string(fDuration) };
@@ -174,27 +174,91 @@ void CTool_AnimPlayer::Play_Bar()
 
 	ImGui::SeparatorText("##");
 
-	ImGui::SliderFloat("##CTool_AnimPlayer::Play_Bar()", &fTrackPosition, 0.f, fDuration);
+	ImGui::SliderFloat("##CTool_AnimPlayer::TrackPosition_Controller()", &fTrackPosition, 0.f, fDuration);
 
-	Set_TrackPosition(fTrackPosition);
+	_int			iPlayingIndex = { -1 };
+	map<string, _uint>::iterator			iter = { m_ModelLastPlayingIndex.find(*m_pCurrentModelTag) };
+	if (iter != m_ModelLastPlayingIndex.end())
+	{
+		iPlayingIndex = m_ModelLastPlayingIndex[*m_pCurrentModelTag];
+	}
+
+	if (-1 != iPlayingIndex)
+	{
+		Set_TrackPosition(iPlayingIndex, fTrackPosition);
+	}
 
 	ImGui::SeparatorText("##");
 }
 
-_float CTool_AnimPlayer::Get_CurrentAnim_Duration()
+void CTool_AnimPlayer::BlendWeight_Controller()
 {
-	if (nullptr == m_pCurrentAnimation)
-		return 0.f;
+	ImGui::SeparatorText("Blend Weight");
 
-	return m_pCurrentAnimation->Get_Duration();
+	_float			fBlendWeight = { Get_CurrentAnim_BlendWeight() };
+	string			strBlendWeight = { to_string(fBlendWeight) };
+
+	ImGui::Text(string(string("BlendWeight : ") + strBlendWeight).c_str());
+
+	ImGui::SeparatorText("##");
+
+	ImGui::SliderFloat("##CTool_AnimPlayer::BlendWeight_Controller()", &fBlendWeight, 0.f, 1.f);
+
+	_int			iPlayingIndex = { -1 };
+	map<string, _uint>::iterator			iter = { m_ModelLastPlayingIndex.find(*m_pCurrentModelTag) };
+	if (iter != m_ModelLastPlayingIndex.end())
+	{
+		iPlayingIndex = m_ModelLastPlayingIndex[*m_pCurrentModelTag];
+	}
+
+	if (-1 != iPlayingIndex)
+	{
+		Set_BlendWeight(iPlayingIndex, fBlendWeight);
+	}
+
+	ImGui::SeparatorText("##");
 }
 
-_float CTool_AnimPlayer::Get_CurrentAnim_TrackPosition()
+_float CTool_AnimPlayer::Get_CurrentPlayingInfo_Duration()
 {
-	if (nullptr == m_pCurrentAnimation)
+	if (nullptr == m_pCurrentModel)
 		return 0.f;
 
-	return m_pCurrentAnimation->Get_TrackPosition();
+	_int			iPlayingIndex = { Find_LastPlayingIndex(*m_pCurrentModelTag) };
+	if (-1 == iPlayingIndex)
+		return 0.f;
+
+	_float			fDuration = { m_pCurrentModel->Get_Duration(iPlayingIndex) };
+
+	return fDuration;
+}
+
+_float CTool_AnimPlayer::Get_CurrentPlayingInfo_TrackPosition()
+{
+	if (nullptr == m_pCurrentModel)
+		return 0.f;
+
+	_int			iPlayingIndex = { Find_LastPlayingIndex(*m_pCurrentModelTag) };
+	if (-1 == iPlayingIndex)
+		return 0.f;
+
+	_float			fTrackPosition = { m_pCurrentModel->Get_TrackPosition(iPlayingIndex) };
+
+	return fTrackPosition;
+}
+
+_float CTool_AnimPlayer::Get_CurrentAnim_BlendWeight()
+{
+	if (nullptr == m_pCurrentModel)
+		return 0.f;
+
+	_int			iPlayingIndex = { Find_LastPlayingIndex(*m_pCurrentModelTag) };
+	if (-1 == iPlayingIndex)
+		return 0.f;
+
+	_float			fBlendWeight = { m_pCurrentModel->Get_BlendWeight(iPlayingIndex) };
+
+	return fBlendWeight;
 }
 
 _uint CTool_AnimPlayer::Get_CurrentKeyFrame()
@@ -214,19 +278,31 @@ _uint CTool_AnimPlayer::Get_CurrentKeyFrame()
 
 void CTool_AnimPlayer::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition)
 {
+	if (nullptr == m_pCurrentModel)
+		return;
+
 	m_pCurrentModel->Set_TrackPosition(iPlayingIndex, fTrackPosition);
 }
 
-void CTool_AnimPlayer::Set_Weight(_uint iPlayingIndex, _float fWeight)
+void CTool_AnimPlayer::Set_BlendWeight(_uint iPlayingIndex, _float fWeight)
 {
-}
-
-void CTool_AnimPlayer::Set_TrackPosition(_float fTrackPosition)
-{
-	if (nullptr == m_pCurrentAnimation)
+	if (nullptr == m_pCurrentModel)
 		return;
 
-	m_pCurrentAnimation->Set_TrackPosition(fTrackPosition);
+	m_pCurrentModel->Set_BlendWeight(iPlayingIndex, fWeight);
+}
+
+_int CTool_AnimPlayer::Find_LastPlayingIndex(const string& strModelTag)
+{
+	_int			iPlayingIndex = { -1 };
+	map<string, _uint>::iterator		iter = { m_ModelLastPlayingIndex.find(strModelTag) };
+	
+	if (iter == m_ModelLastPlayingIndex.end())
+		return iPlayingIndex;
+
+	iPlayingIndex = m_ModelLastPlayingIndex[strModelTag];
+
+	return iPlayingIndex;
 }
 
 void CTool_AnimPlayer::On_Off_Buttons()

@@ -37,15 +37,20 @@ public:
 	_float										Compute_Ratio();
 
 private:
-	void										Play_Bar();
+	void										TrackPosition_Controller();
+	void										BlendWeight_Controller();
 
 private:
-	_float										Get_CurrentAnim_Duration();
-	_float										Get_CurrentAnim_TrackPosition();
+	_float										Get_CurrentPlayingInfo_Duration();
+	_float										Get_CurrentPlayingInfo_TrackPosition();
+	_float										Get_CurrentAnim_BlendWeight();
 	_uint										Get_CurrentKeyFrame();
 
 	void										Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition);
-	void										Set_Weight(_uint iPlayingIndex, _float fWeight);
+	void										Set_BlendWeight(_uint iPlayingIndex, _float fWeight);
+
+private:
+	_int										Find_LastPlayingIndex(const string& strModelTag);
 	
 private:
 	void										On_Off_Buttons();
@@ -60,7 +65,7 @@ private:
 private:
 	class CAnimTestObject*						m_pTestObject = { nullptr };
 
-	map<string, _uint>							m_ModelPlayingIndex;
+	map<string, _uint>							m_ModelLastPlayingIndex;
 	map<string, _bool>							m_isPlayingAnimations;
 	map<string, CModel*>*						m_pModels = { nullptr };
 	CModel*										m_pCurrentModel = { nullptr };

@@ -10,6 +10,8 @@
 #define TOOL_ANIMPLAYER_TAG             "Tool_AnimPlayer"
 #define TOOL_PARTOBJECT_TAG             "Tool_PartObject"
 #define TOOL_BONELAYER_TAG              "Tool_BoneLayer"
+#define TOOL_INVERSEKINEMATIC_TAG       "Tool_IK"
+#define TOOL_EVENTINSERTER_TAG          "Tool_EventInserter"
 
 BEGIN(Engine)
 class CGameObject;
@@ -84,6 +86,8 @@ private:
     CTool_AnimPlayer*           m_pToolAnimPlayer = { nullptr };
     CTool_PartObject*           m_pToolPartObject = { nullptr };
     CTool_BoneLayer*            m_pToolBoneLayer = { nullptr };
+    CTool_IK*                   m_pToolIK = { nullptr };
+    CTool_EventInserter*        m_pToolEventInserter = { nullptr };
 
     string                      m_strCurrentModelTag = { "" };
     string                      m_strCurrentRootBoneTag = { "" };
@@ -91,6 +95,7 @@ private:
     string                      m_strCurrentAnimTag = { "" };
     wstring                     m_strCurrentBoneLayerTag = { TEXT("") };
     wstring                     m_strCurrentPartObjectTag = { TEXT("") };
+    wstring                     m_strCurrentIKTag = { TEXT("") };
 
     _bool                       m_isActiveRootXZ = { false };
     _bool                       m_isActiveRootY = { false };
