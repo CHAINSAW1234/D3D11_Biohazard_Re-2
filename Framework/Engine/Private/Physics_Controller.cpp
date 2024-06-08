@@ -142,7 +142,7 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	
 
 	//Simulate
-	m_Scene->simulate(1/60.f);
+	m_Scene->simulate(fTimeDelta);
 	m_Scene->fetchResults(true);
 }
 

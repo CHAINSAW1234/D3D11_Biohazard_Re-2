@@ -408,8 +408,8 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 			auto CharacterPos = m_pController->GetPosition_Float4();
 			CharacterPos.y += 1.f;
 
-			m_vCameraPosition = Axis_Rotate_Vector(m_vCameraPosition, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
-			auto Pos = Axis_Rotate_Vector(m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION), m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
+			m_vCameraPosition = Axis_Rotate_Vector(m_vCameraPosition, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, m_fRotate_Amount_Y);
+			auto Pos = Axis_Rotate_Vector(m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION), m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, m_fRotate_Amount_Y);
 			m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, Pos);
 
 			if (m_fLerpTime != 1.f)
@@ -422,8 +422,8 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 				m_pCamera->SetPosition(m_vCameraPosition);
 			}
 
-			m_vCamera_LookAt_Point = Axis_Rotate_Vector(m_vCamera_LookAt_Point, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
-			m_vLookPoint_To_Position_Dir = Axis_Rotate_Vector(m_vLookPoint_To_Position_Dir, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
+			m_vCamera_LookAt_Point = Axis_Rotate_Vector(m_vCamera_LookAt_Point, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, m_fRotate_Amount_Y);
+			m_vLookPoint_To_Position_Dir = Axis_Rotate_Vector(m_vLookPoint_To_Position_Dir, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, m_fRotate_Amount_Y);
 			m_pTransformCom_Camera->Look_At(m_vCamera_LookAt_Point);
 		}
 	}
