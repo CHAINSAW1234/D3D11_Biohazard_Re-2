@@ -195,6 +195,15 @@ public:
 		return angle;
 	}
 
+	XMVECTOR XMVectorSlerp(_vector A, _vector B, float t) {
+		XMVECTOR quatA = XMQuaternionRotationRollPitchYawFromVector(A);
+		XMVECTOR quatB = XMQuaternionRotationRollPitchYawFromVector(B);
+
+		XMVECTOR slerpQuat = XMQuaternionSlerp(quatA, quatB, t);
+
+		return XMVector3Rotate(A, slerpQuat);
+	}
+
 public:
 	virtual void Free();
 };

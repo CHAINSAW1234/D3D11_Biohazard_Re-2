@@ -56,6 +56,12 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.f, 0.f, 1.f), &m_iIndex_CCT, this);
 
 	//For Camera.
+	m_pTransformCom_Camera = CTransform::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pTransformCom_Camera)
+		return E_FAIL;
+	m_pTransformCom_Camera->SetRotationPerSec(0.75f);
+
+	//For Camera.
 	Load_CameraPosition();
 	if (FAILED(Ready_Camera()))
 		return E_FAIL;
@@ -92,8 +98,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 #pragma endregion 예은ColTest
 
-
-
+#pragma region 이동과 카메라
 	static _bool Temp = false;
 
 	if (UP == m_pGameInstance->Get_KeyState(VK_BACK))
@@ -105,28 +110,12 @@ void CPlayer::Tick(_float fTimeDelta)
 	{
 		if (m_pController)
 		{
-			m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4());
+			auto CameraPos = m_pController->GetPosition_Float4();
+			m_pTransformCom->Set_State(CTransform::STATE_POSITION, CameraPos);
+			CameraPos.y += CONTROLLER_GROUND_GAP;
+			m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, CameraPos);
 		}
 	}
-
-
-	_vector		vWorldPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
-
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vWorldPos);
-
-	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
-
-	Tick_PartObjects(fTimeDelta);
-
-	m_pGameInstance->SetWorldMatrix(m_pTransformCom->Get_WorldFloat4x4());
-	m_pGameInstance->SetRotationMatrix(m_pTransformCom->Get_RotationMatrix_Pure());
-}
-
-void CPlayer::Late_Tick(_float fTimeDelta)
-{
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-
-	Late_Tick_PartObjects(fTimeDelta);
 
 	_vector			vMovedDirection = { XMLoadFloat3(&m_vRootTranslation) };
 	if (DOWN == m_pGameInstance->Get_KeyState('B'))
@@ -145,19 +134,10 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta);
 	}
 
-	//For Camera.
-	if (m_pController)
-	{
-		Calc_YPosition_Camera();
-	}
-
 	if (m_pController)
 	{
 		if (PRESSING == m_pGameInstance->Get_KeyState('U'))
 		{
-			//For Camera.
-			auto Pos_Prev = m_pController->GetPosition_Float4();
-
 			_vector      vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
 			vLook = { XMVectorScale(XMVector3Normalize(vLook),0.03f) };
 			_vector      vMoveDir = { vLook };
@@ -168,12 +148,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 			XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
 			m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
 
-			//For Camera.
-			Pos_Prev = Sub_Float4(m_pController->GetPosition_Float4(), Pos_Prev);
-			m_vCameraPosition = Add_Float4_Coord(m_vCameraPosition, Pos_Prev);
-			m_vCamera_LookAt_Point = Add_Float4_Coord(m_vCamera_LookAt_Point, Pos_Prev);
-
 			m_bMove_Forward = true;
+			m_bMove = true;
 
 			if (m_bLerp_Move == false)
 			{
@@ -184,14 +160,17 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		}
 		else
 		{
+			if (m_bMove_Forward)
+			{
+				m_bLerp = true;
+				m_fLerpTime = 0.f;
+			}
+
 			m_bMove_Forward = false;
 		}
 
 		if (PRESSING == m_pGameInstance->Get_KeyState('J'))
 		{
-			//For Camera.
-			auto Pos_Prev = m_pController->GetPosition_Float4();
-
 			_vector      vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
 			vLook = { XMVectorScale(XMVector3Normalize(vLook),0.03f) };
 			_vector      vMoveDir = { -vLook };
@@ -202,13 +181,19 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 			XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
 			m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
 
-			//For Camera.
-			Pos_Prev = Sub_Float4(m_pController->GetPosition_Float4(), Pos_Prev);
-			m_vCameraPosition = Add_Float4_Coord(m_vCameraPosition, Pos_Prev);
-			m_vCamera_LookAt_Point = Add_Float4_Coord(m_vCamera_LookAt_Point, Pos_Prev);
-
 			m_bMove_Backward = true;
+			m_bMove = true;
 
+			/*if (m_bTurnAround == false)
+			{
+				m_bTurnAround = true;
+
+				auto CamLook = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
+				CamLook.x = -CamLook.x;
+				CamLook.z = -CamLook.z;
+				m_vTurnAround_Look_Vector = Float4_Normalize(CamLook);
+				m_fTurnAround_Time = 0.f;
+			}*/
 			if (m_bLerp_Move == false)
 			{
 				m_bLerp_Move = true;
@@ -218,6 +203,12 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		}
 		else
 		{
+			if (m_bMove_Backward)
+			{
+				m_bLerp = true;
+				m_fLerpTime = 0.f;
+			}
+
 			m_bMove_Backward = false;
 		}
 	}
@@ -225,6 +216,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	if (m_bMove_Backward == false && m_bMove_Forward == false)
 	{
 		m_bLerp_Move = false;
+		m_bMove = false;
 	}
 #pragma region Camera
 
@@ -234,17 +226,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	}
 
 	RayCasting_Camera();
-
-	//For Camera.
-	if (m_pController)
-	{
-		m_vPrev_Position = m_pController->GetPosition_Float4();
-	}
-#pragma endregion
-
-#pragma region 예은 추가
-	Col_Section();
-#pragma endregion 
 
 	if (PRESSING == m_pGameInstance->Get_KeyState(VK_RBUTTON))
 	{
@@ -257,8 +238,35 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	}
 	else
 	{
+		if (m_bAim)
+		{
+			m_bLerp = true;
+			m_fLerpTime = 0.f;
+		}
+
 		m_bAim = false;
 	}
+#pragma endregion
+
+#pragma endregion
+
+	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
+
+	Tick_PartObjects(fTimeDelta);
+
+	m_pGameInstance->SetWorldMatrix(m_pTransformCom->Get_WorldFloat4x4());
+	m_pGameInstance->SetRotationMatrix(m_pTransformCom->Get_RotationMatrix_Pure());
+}
+
+void CPlayer::Late_Tick(_float fTimeDelta)
+{
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+
+	Late_Tick_PartObjects(fTimeDelta);
+
+#pragma region 예은 추가
+	Col_Section();
+#pragma endregion 
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
@@ -305,9 +313,6 @@ void CPlayer::Col_Section()
 
 		}
 	}*/
-
-
-
 }
 #pragma endregion
 
@@ -320,12 +325,113 @@ void CPlayer::Calc_YPosition_Camera()
 	m_vCamera_LookAt_Point = Add_Float4_Coord(m_vCamera_LookAt_Point, YDelta);
 }
 
+void CPlayer::Calc_Camera_Transform(_float fTimeDelta)
+{
+	_vector vLook = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_LOOK);
+	_vector vUp = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_UP);
+	_vector vRight = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT);
+	_vector vLookAtPoint;
+	_vector vCameraPosition;
+	_vector vPos = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION);
+
+	auto Pos = m_pCamera->Get_Position_Float4();
+
+	if (m_bMove_Forward)
+	{
+		if (m_bAim)
+		{
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.85f);
+		}
+		else
+		{
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 1.35f);
+		}
+	}
+
+	if (m_bMove_Backward)
+	{
+		if (m_bAim)
+		{
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.35f);
+		}
+		else
+		{
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.85f);
+		}
+	}
+
+	if (m_bMove == false)
+	{
+		if (m_bAim)
+		{
+			if (m_fLerpAmount >= (m_fLook_Dist_Pos * 0.5f))
+			{
+				m_fLerpAmount -= fTimeDelta * 0.1f;
+			}
+			else
+			{
+				m_fLerpAmount = m_fLook_Dist_Pos * 0.5f;
+			}
+
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.5f);
+		}
+		else
+		{
+			if (m_fLerpAmount > m_fLook_Dist_Pos)
+			{
+				m_fLerpAmount -= fTimeDelta * 0.1f;
+			}
+			else
+			{
+				m_fLerpAmount = m_fLook_Dist_Pos;
+			}
+
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos);
+		}
+	}
+
+	if (m_bLerp)
+	{
+		_vector vOrigin = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLerpAmount);
+		//_vector NewPos = XMVectorLerp(m_pCamera->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION), m_vCameraPosition, m_fLerpTime);
+		_vector NewPos = XMVectorLerp(vOrigin, m_vCameraPosition, m_fLerpTime);
+		m_pCamera->SetPosition(NewPos);
+	}
+	else
+	{
+		m_pCamera->SetPosition(m_vCameraPosition);
+	}
+
+	//if (m_bLerp)
+	//{
+	//	_vector vOrigin = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos);
+	//	//_vector NewPos = XMVectorLerp(m_pCamera->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION), m_vCameraPosition, m_fLerpTime);
+	//	_vector NewPos = XMVectorLerp(vOrigin, m_vCameraPosition, m_fLerpTime);
+	//	m_pCamera->SetPosition(NewPos);
+	//}
+	//else
+	//{
+	//	m_pCamera->SetPosition(m_vCameraPosition);
+	//}
+
+	vLookAtPoint = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Look) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Look) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Look);
+	XMStoreFloat4(&m_vCamera_LookAt_Point, vLookAtPoint);
+	m_pCamera->LookAt(m_vCamera_LookAt_Point);
+
+	m_vLookPoint_To_Position_Dir = Sub_Float4(m_vCamera_LookAt_Point, m_vCameraPosition);
+
+	_vector vCamPos = XMLoadFloat4(&m_vCameraPosition);
+	_vector vLookAtPos = XMLoadFloat4(&m_vCamera_LookAt_Point);
+	_vector vDelta = XMVector4Normalize(vLookAtPos - vCamPos);
+	XMStoreFloat4(&m_vRayDir, vDelta);
+}
+
 void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 {
 	POINT		ptDeltaPos = { m_pGameInstance->Get_MouseDeltaPos() };
 	_float		fMouseSensor = { 0.1f };
 
-	if (abs(ptDeltaPos.x) > 5.f || abs(ptDeltaPos.y) > 5.f)
+	if (abs(ptDeltaPos.x) > 2.5f || abs(ptDeltaPos.y) > 2.5f)
 	{
 		m_bRotate_Delay = true;
 		m_bRotate_Delay_Start = false;
@@ -335,7 +441,7 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 		m_fPrev_Rotate_Amount_Y = ptDeltaPos.y * 0.1f;
 	}
 
-	if (m_bRotate_Delay && (abs(ptDeltaPos.x) <= 5.f && abs(ptDeltaPos.y) <= 5.f))
+	if (m_bRotate_Delay && (abs(ptDeltaPos.x) <= 2.5f && abs(ptDeltaPos.y) <= 2.5f))
 	{
 		m_bRotate_Delay_Start = true;
 		m_fRotate_Delay_Amount = 1.f;
@@ -344,7 +450,7 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 
 	if (m_bRotate_Delay_Start == true)
 	{
-		m_fRotate_Delay_Amount -= (fTimeDelta * 1.5f);
+		m_fRotate_Delay_Amount -= (fTimeDelta * 2.5f);
 
 		if (m_fRotate_Delay_Amount <= 0.f)
 		{
@@ -365,9 +471,9 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 	}
 
 	if (m_bAim == false)
-		m_fLerpTime += fTimeDelta * 0.06f;
+		m_fLerpTime += fTimeDelta * 0.7f;
 	else
-		m_fLerpTime += fTimeDelta * 0.12f;
+		m_fLerpTime += fTimeDelta;
 
 	if (m_fLerpTime >= 1.f)
 	{
@@ -375,116 +481,86 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 		m_fLerpTime = 1.f;
 	}
 
-	if (m_bAim == false)
+	if(m_bTurnAround == false)
 	{
-		//X Rotate
+		if (m_bAim == false)
 		{
-			auto CharacterPos = m_pController->GetPosition_Float4();
-			CharacterPos.y += 1.f;
-
-			m_vCameraPosition = Axis_Rotate_Vector(m_vCameraPosition, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, m_fRotate_Amount_X);
-			auto Pos = Axis_Rotate_Vector(m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION), _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, m_fRotate_Amount_X);
-			m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, Pos);
-
-			if (m_bLerp)
+			//Parallel Rotate
 			{
-				_vector NewPos = XMVectorLerp(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION), m_vCameraPosition, m_fLerpTime);
-				m_pCamera->SetPosition(NewPos);
-			}
-			else
-			{
-				m_pCamera->SetPosition(m_vCameraPosition);
+				m_pTransformCom_Camera->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fRotate_Amount_X);
 			}
 
-			m_vCamera_LookAt_Point = Axis_Rotate_Vector(m_vCamera_LookAt_Point, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, m_fRotate_Amount_X);
-			m_vOrigin_LookAt_Point = Axis_Rotate_Vector(m_vOrigin_LookAt_Point, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, m_fRotate_Amount_X);
-			m_vLookPoint_To_Position_Dir = Axis_Rotate_Vector(m_vLookPoint_To_Position_Dir, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, m_fRotate_Amount_X);
-			m_pTransformCom_Camera->Look_At(m_vCamera_LookAt_Point);
+			//Vertical Rotate
+			{
+				m_pTransformCom_Camera->Turn(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT), m_fRotate_Amount_Y);
+
+				auto Camera_Look = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_LOOK);
+				auto Camera_Parallel_Look = XMVectorSetY(Camera_Look, 0.f);
+
+				/*if (m_bLerp)
+				{
+					auto CamPos = m_pCamera->Get_Position_Float4();
+					auto RotatePos = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION);
+					CamPos = Axis_Rotate_Vector(CamPos, _float4(0.f,1.f,0.f,0.f), RotatePos, m_fRotate_Amount_X);
+					CamPos = Axis_Rotate_Vector(CamPos, m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT), RotatePos, m_fRotate_Amount_Y);
+					m_pCamera->SetPosition(CamPos);
+				}*/
+
+				if (abs(GetAngleBetweenVectors_Radians(Camera_Look, Camera_Parallel_Look)) > 1.f)
+				{
+					m_pTransformCom_Camera->Turn(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT), -m_fRotate_Amount_Y);
+
+					/*if (m_bLerp)
+					{
+						auto CamPos = m_pCamera->Get_Position_Float4();
+						auto RotatePos = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION);
+						CamPos = Axis_Rotate_Vector(CamPos, m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT), RotatePos, -m_fRotate_Amount_Y);
+						m_pCamera->SetPosition(CamPos);
+					}*/
+				}
+			}
 		}
-
-
-		//Y Rotate
+		else
 		{
-			auto CharacterPos = m_pController->GetPosition_Float4();
-			CharacterPos.y += 1.f;
-
-			m_vCameraPosition = Axis_Rotate_Vector(m_vCameraPosition, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, m_fRotate_Amount_Y);
-			auto Pos = Axis_Rotate_Vector(m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION), m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, m_fRotate_Amount_Y);
-			m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, Pos);
-
-			if (m_fLerpTime != 1.f)
+			//Parallel Rotate
+			if ((_long)0 != ptDeltaPos.x)
 			{
-				_vector NewPos = XMVectorLerp(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION), m_vCameraPosition, m_fLerpTime);
-				m_pCamera->SetPosition(NewPos);
-			}
-			else
-			{
-				m_pCamera->SetPosition(m_vCameraPosition);
+				m_pTransformCom_Camera->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), m_fRotate_Amount_X);
 			}
 
-			m_vCamera_LookAt_Point = Axis_Rotate_Vector(m_vCamera_LookAt_Point, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, m_fRotate_Amount_Y);
-			m_vLookPoint_To_Position_Dir = Axis_Rotate_Vector(m_vLookPoint_To_Position_Dir, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, m_fRotate_Amount_Y);
-			m_pTransformCom_Camera->Look_At(m_vCamera_LookAt_Point);
+			//Vertical Rotate
+			if ((_long)0 != ptDeltaPos.y)
+			{
+				m_pTransformCom_Camera->Turn(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT), m_fRotate_Amount_Y);
+
+				auto Camera_Look = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_LOOK);
+				auto Camera_Parallel_Look = XMVectorSetY(Camera_Look, 0.f);
+				if (abs(GetAngleBetweenVectors_Radians(Camera_Look, Camera_Parallel_Look)) > 1.f)
+				{
+					m_pTransformCom_Camera->Turn(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT), -m_fRotate_Amount_Y);
+				}
+			}
 		}
 	}
 	else
 	{
-		//X Rotate
+		m_fTurnAround_Time += fTimeDelta;
+
+		if (m_fTurnAround_Time >= 1.f)
 		{
-			auto CharacterPos = m_pController->GetPosition_Float4();
-			CharacterPos.y += 1.f;
-
-			m_vCameraPosition = Axis_Rotate_Vector(m_vCameraPosition, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor);
-			auto Pos = Axis_Rotate_Vector(m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION), _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor);
-			m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, Pos);
-
-			if (m_bLerp)
-			{
-				_vector NewPos = XMVectorLerp(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION), m_vCameraPosition - (m_vRayDir * 0.75), m_fLerpTime);
-				m_pCamera->SetPosition(NewPos);
-			}
-			else
-			{
-				m_pCamera->SetPosition(m_vCameraPosition);
-			}
-
-			m_vCamera_LookAt_Point = Axis_Rotate_Vector(m_vCamera_LookAt_Point, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor);
-			m_vOrigin_LookAt_Point = Axis_Rotate_Vector(m_vOrigin_LookAt_Point, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor);
-			m_vLookPoint_To_Position_Dir = Axis_Rotate_Vector(m_vLookPoint_To_Position_Dir, _float4(0.f, 1.f, 0.f, 0.f), CharacterPos, fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor);
-			m_pTransformCom_Camera->Look_At(m_vCamera_LookAt_Point);
+			m_fTurnAround_Time = 1.f;
+			m_bTurnAround = false;
 		}
 
+		auto CamPos = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION);
+		auto Look = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
+		XMStoreFloat4(&Look, XMVectorSlerp(XMVector3Normalize(XMLoadFloat4(&Look)), XMLoadFloat4(&m_vTurnAround_Look_Vector), m_fTurnAround_Time));
+		CamPos = Add_Float4_Coord(CamPos, Look);
 
-		//Y Rotate
-		{
-			auto CharacterPos = m_pController->GetPosition_Float4();
-			CharacterPos.y += 1.f;
-
-			m_vCameraPosition = Axis_Rotate_Vector(m_vCameraPosition, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
-			auto Pos = Axis_Rotate_Vector(m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION), m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
-			m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, Pos);
-
-			if (m_fLerpTime != 1.f)
-			{
-				_vector NewPos = XMVectorLerp(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION), m_vCameraPosition - (m_vRayDir * 0.75), m_fLerpTime);
-				m_pCamera->SetPosition(NewPos);
-			}
-			else
-			{
-				m_pCamera->SetPosition(m_vCameraPosition);
-			}
-
-			m_vCamera_LookAt_Point = Axis_Rotate_Vector(m_vCamera_LookAt_Point, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
-			m_vLookPoint_To_Position_Dir = Axis_Rotate_Vector(m_vLookPoint_To_Position_Dir, m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT), CharacterPos, fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
-			m_pTransformCom_Camera->Look_At(m_vCamera_LookAt_Point);
-		}
+		m_pTransformCom_Camera->Look_At(CamPos);
 	}
 
-
-	_vector vCamPos = XMLoadFloat4(&m_vCameraPosition);
-	_vector vLookAtPos = XMLoadFloat4(&m_vCamera_LookAt_Point);
-	_vector vDelta = XMVector4Normalize(vLookAtPos - vCamPos);
-	XMStoreFloat4(&m_vRayDir, vDelta);
+	Calc_Camera_Transform(fTimeDelta);
 
 	POINT ptPos = {};
 
@@ -501,6 +577,8 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 
 	ClientToScreen(g_hWnd, &ptPos);
 	SetCursorPos(ptPos.x, ptPos.y);
+
+	return;
 }
 
 HRESULT CPlayer::Ready_Camera()
@@ -519,16 +597,13 @@ HRESULT CPlayer::Ready_Camera()
 	_vector vCameraPosition;
 	_vector vPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
 
-	vLookAtPoint = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist);
+	vLookAtPoint = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Look) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Look) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Look);
 	XMStoreFloat4(&m_vCamera_LookAt_Point, vLookAtPoint);
 
 	m_pCamera->SetPlayer(this);
 
-	//m_pCamera->Create_Controller(m_vCameraPosition);
 	m_pCamera->SetPosition(m_vCameraPosition);
 	m_pCamera->LookAt(m_vCamera_LookAt_Point);
-
-	m_pTransformCom_Camera = m_pCamera->Get_Transform();
 
 	m_vLookPoint_To_Position_Dir = Sub_Float4(m_vCamera_LookAt_Point, m_vCameraPosition);
 
@@ -539,6 +614,8 @@ HRESULT CPlayer::Ready_Camera()
 	m_fRayDist = XMVectorGetX(XMVector4Length(vCharPos - vCameraPos));
 
 	m_vOrigin_LookAt_Point = m_vCamera_LookAt_Point;
+
+	m_fLerpAmount = m_fLook_Dist_Pos;
 
 	return S_OK;
 }
@@ -551,9 +628,15 @@ void CPlayer::Load_CameraPosition()
 	ifstream File(filePath, std::ios::binary | std::ios::in);
 
 	File.read((char*)&m_vCameraPosition, sizeof(_float4));
-	File.read((char*)&m_fRight_Dist, sizeof(_float));
-	File.read((char*)&m_fUp_Dist, sizeof(_float));
-	File.read((char*)&m_fLook_Dist, sizeof(_float));
+	File.read((char*)&m_fRight_Dist_Look, sizeof(_float));
+	File.read((char*)&m_fUp_Dist_Look, sizeof(_float));
+	File.read((char*)&m_fLook_Dist_Look, sizeof(_float));
+
+	m_fUp_Dist_Look -= CONTROLLER_GROUND_GAP;
+
+	m_fLook_Dist_Pos = m_vCameraPosition.z;
+	m_fRight_Dist_Pos = m_vCameraPosition.x;
+	m_fUp_Dist_Pos = m_vCameraPosition.y - CONTROLLER_GROUND_GAP;
 
 	File.close();
 }
@@ -571,8 +654,8 @@ void CPlayer::RayCasting_Camera()
 	m_vRayDir.y *= -1.f;
 	m_vRayDir.z *= -1.f;
 
-	_float4 vRightDir = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT);
-	_float4 vLookDir = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
+	_float4 vRightDir = m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_RIGHT);
+	_float4 vLookDir = m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK);
 	vLookDir.y = 0.f;
 	_float4 vBackDir = -vLookDir;
 	_float4 vRightBack = vBackDir + vRightDir;
@@ -593,6 +676,10 @@ void CPlayer::RayCasting_Camera()
 		BlockPoint.x += DeltaDir.x * 0.33f;
 		BlockPoint.y += DeltaDir.y * 0.33f;
 		BlockPoint.z += DeltaDir.z * 0.33f;
+
+		/*BlockPoint.x += m_vRayDir.x * 0.33f;
+		BlockPoint.y += m_vRayDir.y * 0.33f;
+		BlockPoint.z += m_vRayDir.z * 0.33f;*/
 
 		m_pCamera->SetPosition(BlockPoint);
 	}
@@ -757,6 +844,7 @@ void CPlayer::Free()
 	Safe_Release(m_pNavigationCom);
 
 	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pTransformCom_Camera);
 
 	for (auto& pPartObject : m_PartObjects)
 		Safe_Release(pPartObject);

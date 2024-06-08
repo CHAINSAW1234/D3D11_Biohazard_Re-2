@@ -34,7 +34,7 @@ HRESULT CCamera_Free::Initialize(void * pArg)
 
 void CCamera_Free::Tick(_float fTimeDelta)
 {
-	if (PRESSING == m_pGameInstance->Get_KeyState(VK_MBUTTON))
+	/*if (PRESSING == m_pGameInstance->Get_KeyState(VK_MBUTTON))
 	{
 		if (PRESSING == m_pGameInstance->Get_KeyState('A'))
 		{
@@ -87,7 +87,7 @@ void CCamera_Free::Tick(_float fTimeDelta)
 
 		ClientToScreen(g_hWnd, &ptPos);
 		SetCursorPos(ptPos.x, ptPos.y);
-	}
+	}*/
 
 	__super::Bind_PipeLines();
 }

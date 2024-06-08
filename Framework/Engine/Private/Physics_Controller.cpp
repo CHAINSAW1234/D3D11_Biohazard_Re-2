@@ -153,6 +153,7 @@ CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int*
 	m_Controll_Desc.radius = 0.5f;
 	m_Controll_Desc.position = PxExtendedVec3(Pos.x, Pos.y, Pos.z);
 	m_Controll_Desc.material = m_Physics->createMaterial(0.f, 0.f, 0.f);
+	m_Controll_Desc.stepOffset = 0.1f;
 
 	auto Controller = m_Manager->createController(m_Controll_Desc);
 

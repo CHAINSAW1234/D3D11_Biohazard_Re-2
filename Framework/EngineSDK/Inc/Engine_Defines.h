@@ -142,3 +142,9 @@ using namespace Engine;
 #include <queue>
 #include <thread>
 #include <vector>
+
+#pragma region Physics Defines
+
+#define CONTROLLER_GROUND_GAP 1.1f
+
+#pragma endregion

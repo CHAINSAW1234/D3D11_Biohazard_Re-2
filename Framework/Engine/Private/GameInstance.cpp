@@ -154,6 +154,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 
 void CGameInstance::Tick_Engine(_float fTimeDelta)
 {
+	SetCursor(false);
+
 	if(m_pPipeLine)
 		m_pPipeLine->Reset();
 
