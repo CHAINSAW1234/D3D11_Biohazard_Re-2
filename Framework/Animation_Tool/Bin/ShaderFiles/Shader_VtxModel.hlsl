@@ -6,7 +6,6 @@ texture2D	g_DiffuseTexture;
 texture2D	g_NormalTexture;
 texture2D   g_AlphaTexture;
 texture2D   g_AOTexture;
-texture2D   g_ATOSTexture;
 
 bool g_isAlphaTexture;
 bool g_isAOTexture;

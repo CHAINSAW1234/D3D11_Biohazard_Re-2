@@ -328,14 +328,6 @@ HRESULT CGameInstance::Add_RenderGroup(CRenderer::RENDERGROUP eRenderGroup, CGam
 	return m_pRenderer->Add_RenderGroup(eRenderGroup, pRenderObject);	
 }
 
-void CGameInstance::Set_Shadow_Resolution(CRenderer::SHADOW_RESOLUTION eResolution)
-{
-	if (nullptr == m_pRenderer)
-		return;
-
-	m_pRenderer->Set_Shadow_Resolution(eResolution);
-}
-
 void CGameInstance::Set_RadialBlur(_float fBlurAmount, _float2 BlurUV)
 {
 	if (nullptr == m_pRenderer)
@@ -909,6 +901,7 @@ HRESULT CGameInstance::Copy_Resource(const wstring& strDestRenderTargetTag, cons
 {
 	return m_pTarget_Manager->Copy_Resource(strDestRenderTargetTag, strSrcRenderTargetTag);
 }
+
 #pragma endregion
 
 #pragma region Frustrum

@@ -91,7 +91,7 @@ private:
 	_float4x4					m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
 
 private:
-	ID3D11DepthStencilView*		m_pLightDepthDSVs[RES_END] = {};
+	ID3D11DepthStencilView*		m_pLightDepthDSV = {};
 	SHADOW_RESOLUTION			m_eShadowResolution = { SHADOW_RESOLUTION::RES_4X };
 	_float						m_fLightDepthTargetViewWidth = { 0.f };
 	_float						m_fLightDepthTargetViewHeight = { 0.f };
@@ -117,12 +117,9 @@ private:
 	_bool						m_isRenderDebug = { true };
 #endif
 
-public:
+private:
 	void						Set_Shadow_Resolution(SHADOW_RESOLUTION eResolution);
-
-public:
-	HRESULT						Clear();
-
+	void						Copy_Depth(ID3D11DepthStencilView* pDestStencilView, ID3D11DepthStencilView* pSrcStencilView);
 private:
 	HRESULT						Render_Priority();
 	HRESULT						Render_NonBlend();
@@ -157,7 +154,7 @@ private:
 	HRESULT						Render_MotionBlur();
 	HRESULT						Render_SSR();
 	HRESULT						Render_DOF();
-	HRESULT						Render_GODRAY();
+	HRESULT						Render_Volumetric();
 	HRESULT						Render_FXAA();
 private:
 	HRESULT						Render_PostProcessing();

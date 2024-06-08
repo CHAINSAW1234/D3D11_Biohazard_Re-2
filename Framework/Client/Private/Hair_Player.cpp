@@ -222,28 +222,45 @@ HRESULT CHair_Player::Render()
 	{
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
-
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 			return E_FAIL;
-
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
-
 		if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS))) {
-			if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+		{
+			_bool isAlphaTexture = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
-		else {
-			if (FAILED(m_pShaderCom->Begin(1)))
+		else
+		{
+			_bool isAlphaTexture = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
 
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
+		{
+			_bool isAOTexture = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isAOTexture = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+
+		if (FAILED(m_pShaderCom->Begin(0)))
+			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
+
 
 	return S_OK;
 }
@@ -296,7 +313,7 @@ HRESULT CHair_Player::Render_LightDepth_Dir()
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Begin(3)))
+			if (FAILED(m_pShaderCom->Begin(2)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
@@ -355,7 +372,7 @@ HRESULT CHair_Player::Render_LightDepth_Spot()
 				return E_FAIL;
 
 			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
-			if (FAILED(m_pShaderCom->Begin(3)))
+			if (FAILED(m_pShaderCom->Begin(2)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
@@ -421,7 +438,7 @@ HRESULT CHair_Player::Render_LightDepth_Point()
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Begin(5)))
+			if (FAILED(m_pShaderCom->Begin(4)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));

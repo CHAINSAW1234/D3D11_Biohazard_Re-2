@@ -42,7 +42,6 @@ public: /* For.Input_Device */
 #pragma region Renderer
 public: /* For.Renderer */
 	HRESULT									Add_RenderGroup(CRenderer::RENDERGROUP eRenderGroup, class CGameObject* pRenderObject);
-	void									Set_Shadow_Resolution(CRenderer::SHADOW_RESOLUTION eResolution);
 	void									Set_RadialBlur(_float fBlurAmount, _float2 BlurUV);
 	void									On_RadialBlur();
 	void									Off_RadialBlur();
@@ -141,7 +140,6 @@ public: /* For.Target_Manager */
 	HRESULT									Bind_OutputShaderResource(class CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName);
 	HRESULT									Copy_Resource(const wstring& strRenderTargetTag, ID3D11Texture2D** ppTextureHub);
 	HRESULT									Copy_Resource(const wstring& strDestRenderTargetTag, const wstring& strSrcRenderTargetTag);
-
 #pragma endregion
 
 #pragma region Frustrum

@@ -85,6 +85,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	{
 		m_fTimeTEST = 0.f;
 		m_iCurCol--;
+		m_pGameInstance->Set_RenderFieldShadow(true);
 	}
 #pragma endregion ¿¹ÀºColTest
 
