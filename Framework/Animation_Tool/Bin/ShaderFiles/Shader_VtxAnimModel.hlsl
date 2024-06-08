@@ -8,14 +8,13 @@ matrix g_PrevWorldMatrix, g_PrevViewMatrix, g_PrevProjMatrix;
 matrix g_BoneMatrices[256];
 matrix g_PrevBoneMatrices[256];
 
+bool g_isAlphaTexture;
+bool g_isAOTexture;
+
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
 texture2D g_AlphaTexture;
 texture2D g_AOTexture;
-
-bool g_isAlphaTexture;
-bool g_isAOTexture;
-
 texture2D g_NoiseTexture;
 texture2D g_DissolveDiffuseTexture;
 
@@ -276,6 +275,8 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vNormal = vector(vWorldNormal * 0.5f + 0.5f, 0.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 1000.0f, 0.0f, 0.0f);
     Out.vOrigin = vector(1.f, 0.f, 0.f, 1.f);
+    Out.vVelocity = vector(In.vVelocity.xy, 1, In.vVelocity.z / In.vVelocity.w);
+    
     if (g_isAlphaTexture)
     {
         vector vAlphaDesc = g_AlphaTexture.Sample(LinearSampler, In.vTexcoord);
@@ -359,6 +360,7 @@ PS_OUT_LIGHTDEPTH PS_MAIN_LIGHTDEPTH(PS_IN In)
 
     return Out;
 }
+
 
 PS_OUT_LIGHTDEPTH PS_LIGHTDEPTH_CUBE(PS_IN_CUBE In)
 {
