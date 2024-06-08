@@ -70,11 +70,11 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.eType = LIGHT_DESC::TYPE_DIRECTIONAL;
 	LightDesc.bShadow = true;
 	XMStoreFloat4(&LightDesc.vDirection, XMVectorSetW(XMVector3Normalize(XMVectorSet(-3.f, -7.f, 0.f, 0.f)), 0.f));
-	LightDesc.vPosition = _float4(-LightDesc.vDirection.x * 60, -LightDesc.vDirection.y * 60, -LightDesc.vDirection.z * 60, 1.f);
+	LightDesc.vPosition = _float4(-LightDesc.vDirection.x * 50, -LightDesc.vDirection.y * 50, -LightDesc.vDirection.z * 50, 1.f);
 
 	//LightDesc.fRange = 1000000.f;
 
-	LightDesc.vDiffuse = _float4(.5f, .5f, .5f, .5f);
+	LightDesc.vDiffuse = _float4(.5f, .5f, .5f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 0.4f, 0.4f, 1.f);
 
@@ -87,10 +87,10 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.fRange = 5.f;
 
 	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.8f, 0.4f, 0.4f, 1.f);
+	LightDesc.vAmbient = _float4(0.f, 0.f, 0.f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 0.4f, 0.4f, 1.f);
-	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
+	//	return E_FAIL;
 
 	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
 	LightDesc.bShadow = true;
@@ -98,7 +98,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.fRange = 5.f;
 
 	LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.4f, 0.8f, 0.4f, 1.f);
+	LightDesc.vAmbient = _float4(0.f, 0.f, 0.f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 1.f, 0.4f, 1.f);
 	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
 		return E_FAIL;
@@ -109,8 +109,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	LightDesc.fRange = 6.f;
 	LightDesc.vDirection = _float4(0.f,-1.f, 0.f,0.f);
-	LightDesc.fCutOff = XMConvertToRadians(60.f);
-	LightDesc.fOutCutOff = XMConvertToRadians(90);
+	LightDesc.fCutOff = XMConvertToRadians(30.f);
+	LightDesc.fOutCutOff = XMConvertToRadians(40.f);
 
 	LightDesc.vDiffuse = _float4(0.f, 0.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(0.2f, 0.2f, 0.4f, 1.f);
@@ -119,8 +119,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_SPOT"), LightDesc)))
 		return E_FAIL;
 
-	if (FAILED(Load_Light(TEXT("../Bin/Data/Level_0"), LEVEL_GAMEPLAY)))
-		return E_FAIL;
+	//if (FAILED(Load_Light(TEXT("../Bin/Data/Level_0"), LEVEL_GAMEPLAY)))
+	//	return E_FAIL;
 	return S_OK;
 }
 

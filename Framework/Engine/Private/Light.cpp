@@ -124,6 +124,8 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 
 			if (FAILED(pShader->Bind_RawValue("g_vLightDir", &Light_desc->vDirection, sizeof(_float4))))
 				return E_FAIL;
+			if (FAILED(pShader->Bind_RawValue("g_vLightPos", &Light_desc->vPosition, sizeof(_float4))))
+				return E_FAIL;
 		}
 
 		else if (LIGHT_DESC::TYPE_POINT == Light_desc->eType)

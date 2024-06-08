@@ -10,7 +10,12 @@ matrix g_PrevBoneMatrices[256];
 
 texture2D g_DiffuseTexture;
 texture2D g_NormalTexture;
-texture2D g_ATOSTexture;
+texture2D g_AlphaTexture;
+texture2D g_AOTexture;
+
+bool g_isAlphaTexture;
+bool g_isAOTexture;
+
 texture2D g_NoiseTexture;
 texture2D g_DissolveDiffuseTexture;
 
@@ -260,35 +265,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
     vector vMtrlDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
     vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexcoord);
-    
-    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
-
-    float3x3 WorldMatrix = float3x3(In.vTangent, In.vBinormal, In.vNormal);
-
-    float3 vWorldNormal = mul(vNormal, WorldMatrix);
-
-  
-    Out.vDiffuse.xyz = vMtrlDiffuse.xyz;
-    //  Out.vDiffuse.xyz = pow(vMtrlDiffuse.xyz, 2.2f);
-    Out.vDiffuse.a = 1.f;
-    Out.vNormal = vector(vWorldNormal * 0.5f + 0.5f, 0.f);
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 1000, 0.0f, 0.0f);
-    Out.vMaterial.r = vMtrlDiffuse.a;
-    Out.vMaterial.g = vNormalDesc.a;
-    Out.vOrigin = vector(1.f, 0.f, 0.f, 1.f);
-    Out.vVelocity = vector(In.vVelocity.xy, 1, In.vVelocity.z / In.vVelocity.w);
-    
-    return Out;
-}
-
-PS_OUT PS_MAIN_ATOS(PS_IN In)
-{
-    PS_OUT Out = (PS_OUT) 0;
-
-    vector vMtrlDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
-    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexcoord);
-    vector vATOSDesc = g_ATOSTexture.Sample(LinearSampler, In.vTexcoord);
-    
+	
     float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
 
     float3x3 WorldMatrix = float3x3(In.vTangent, In.vBinormal, In.vNormal);
@@ -296,16 +273,34 @@ PS_OUT PS_MAIN_ATOS(PS_IN In)
     float3 vWorldNormal = mul(vNormal, WorldMatrix);
 
     Out.vDiffuse = vMtrlDiffuse;
-    Out.vDiffuse.a = vATOSDesc.r;
     Out.vNormal = vector(vWorldNormal * 0.5f + 0.5f, 0.f);
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 1000, 0.0f, 0.0f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 1000.0f, 0.0f, 0.0f);
+    Out.vOrigin = vector(1.f, 0.f, 0.f, 1.f);
+    if (g_isAlphaTexture)
+    {
+        vector vAlphaDesc = g_AlphaTexture.Sample(LinearSampler, In.vTexcoord);
+        Out.vDiffuse.a = vAlphaDesc.r;
+        if (0.01 >= Out.vDiffuse.a)
+            discard;
+    }
+    else
+    {
+        Out.vDiffuse.a = 1.f;
+    }
+    
     Out.vMaterial.r = vMtrlDiffuse.a;
     Out.vMaterial.g = vNormalDesc.a;
-    Out.vOrigin = vector(1.f, 0.f, 0.f, 1.f);
-    Out.vVelocity = vector(In.vVelocity.xy, 1, In.vVelocity.z / In.vVelocity.w);
-    if (0.01f >= Out.vDiffuse.a)
-        discard;
-	
+    
+    if (g_isAOTexture)
+    {
+        vector vAODesc = g_AOTexture.Sample(LinearSampler, In.vTexcoord);
+        Out.vMaterial.b = vAODesc.r;
+    }
+    else
+    {
+        Out.vMaterial.b = 1.f;
+    }
+    
     return Out;
 }
 
@@ -365,7 +360,6 @@ PS_OUT_LIGHTDEPTH PS_MAIN_LIGHTDEPTH(PS_IN In)
     return Out;
 }
 
-
 PS_OUT_LIGHTDEPTH PS_LIGHTDEPTH_CUBE(PS_IN_CUBE In)
 {
     PS_OUT_LIGHTDEPTH Out = (PS_OUT_LIGHTDEPTH) 0;
@@ -388,21 +382,6 @@ technique11 DefaultTechnique
         HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
-    }
-
-    pass Default_Atos
-    {
-        SetRasterizerState(RS_Default);
-        //  SetRasterizerState(RS_Wireframe);
-        SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        //  SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
-        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
-        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_ATOS();
     }
 
     pass Dissolve
