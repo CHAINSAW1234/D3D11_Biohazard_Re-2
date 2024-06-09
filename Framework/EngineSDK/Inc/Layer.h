@@ -20,7 +20,7 @@ public:
 	void							Priority_Tick(_float fTimeDelta);
 	void							Tick(_float fTimeDelta);
 	void							Late_Tick(_float fTimeDelta);
-
+	void							Start();
 public:
 	list<class CGameObject*>*		Get_ObjectList_Ptr();
 

@@ -36,6 +36,7 @@ public:
 	virtual void								Priority_Tick(_float fTimeDelta);
 	virtual void								Tick(_float fTimeDelta);
 	virtual void								Late_Tick(_float fTimeDelta);
+	virtual void								Start() { return; }
 	virtual HRESULT								Render();
 	virtual HRESULT								Render_LightDepth_Dir() { return S_OK; }
 	virtual HRESULT								Render_LightDepth_Spot() { return S_OK; }

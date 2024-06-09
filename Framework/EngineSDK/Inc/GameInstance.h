@@ -70,7 +70,7 @@ public: /* For.Object_Manager */
 	void									Release_Layer(_uint iLevelIndex, const wstring& LayerTag);
 	//yeeun	
 	HRESULT									Add_Layer(_uint iLevelIndex, const wstring& strLayerTag);
-
+	void									Start();
 #pragma endregion
 
 #pragma region Component_Manager
@@ -131,7 +131,6 @@ public: /* For.Target_Manager */
 	HRESULT									Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _bool isTickClear = true);
 	HRESULT									Clear_RenderTarget_All();
 	HRESULT									Clear_RenderTarget(const wstring& strRenderTargetTag);
-
 	HRESULT									Add_MRT(const wstring& strMRTTag, const wstring& strRenderTargetTag);
 	HRESULT									Begin_MRT(const wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
 	HRESULT									End_MRT();
