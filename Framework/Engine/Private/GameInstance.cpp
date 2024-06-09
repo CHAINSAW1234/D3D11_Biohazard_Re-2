@@ -460,6 +460,10 @@ HRESULT CGameInstance::Add_Layer(_uint iLevelIndex, const wstring& strLayerTag)
 
 	return m_pObject_Manager->Add_Layer(iLevelIndex, strLayerTag);
 }
+void CGameInstance::Start()
+{
+	return m_pObject_Manager->Start();
+}
 #pragma endregion
 
 #pragma region Component_Manager

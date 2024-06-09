@@ -148,6 +148,17 @@ void CObject_Manager::Late_Tick(_float fTimeDelta)
 	}
 }
 
+void CObject_Manager::Start()
+{
+	for (size_t i = 0; i < m_iNumLevels; i++)
+	{
+		for (auto& Pair : m_pLayers[i])
+		{
+			Pair.second->Start();
+		}
+	}
+}
+
 void CObject_Manager::Clear(_uint iLevelIndex)
 {
 	for (auto& Pair : m_pLayers[iLevelIndex])

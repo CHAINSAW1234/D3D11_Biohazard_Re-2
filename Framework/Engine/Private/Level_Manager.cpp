@@ -42,6 +42,8 @@ HRESULT CLevel_Manager::Open_Level()
 
 	m_pGameInstance->Set_RenderFieldShadow(true);
 
+	m_pGameInstance->Start();
+
 	return S_OK;
 }
 

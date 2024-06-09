@@ -58,15 +58,15 @@ HRESULT CPipeLine::Initialize()
 
 	
 	// 절두체 계산을 위한 OriginalPoints 그대로 가져옴 
-	m_vOriginalPoints[0] = _float3(-1.f, 1.f, 0.f);
-	m_vOriginalPoints[1] = _float3(1.f, 1.f, 0.f);
-	m_vOriginalPoints[2] = _float3(1.f, -1.f, 0.f);
-	m_vOriginalPoints[3] = _float3(-1.f, -1.f, 0.f);
-
-	m_vOriginalPoints[4] = _float3(-1.f, 1.f, 1.f);
-	m_vOriginalPoints[5] = _float3(1.f, 1.f, 1.f);
-	m_vOriginalPoints[6] = _float3(1.f, -1.f, 1.f);
-	m_vOriginalPoints[7] = _float3(-1.f, -1.f, 1.f);
+	//m_vOriginalPoints[0] = _float3(-1.f, 1.f, 0.f);
+	//m_vOriginalPoints[1] = _float3(1.f, 1.f, 0.f);
+	//m_vOriginalPoints[2] = _float3(1.f, -1.f, 0.f);
+	//m_vOriginalPoints[3] = _float3(-1.f, -1.f, 0.f);
+	//
+	//m_vOriginalPoints[4] = _float3(-1.f, 1.f, 1.f);
+	//m_vOriginalPoints[5] = _float3(1.f, 1.f, 1.f);
+	//m_vOriginalPoints[6] = _float3(1.f, -1.f, 1.f);
+	//m_vOriginalPoints[7] = _float3(-1.f, -1.f, 1.f);
 
 	return S_OK;
 }
@@ -79,22 +79,6 @@ void CPipeLine::Tick()
 	}
 
 	memcpy(&m_vCamPosition, &m_TransformInverseMatrices[D3DTS_VIEW].m[3][0], sizeof(_float4));
-	
-	// For.SpotLight
-
-	//if (nullptr != m_pSpotLight) {
-	//	XMStoreFloat4x4(&m_SpotLightTransformMatrices[D3DTS_VIEW], XMLoadFloat4x4(&m_pSpotLight->Get_LightViewMatrix()[0]));
-	//	XMStoreFloat4x4(&m_SpotLightTransformMatrices[D3DTS_PROJ], XMLoadFloat4x4(&m_pSpotLight->Get_LightProjMatrix()));
-	//	for (size_t i = 0; i < D3DTS_END; i++)
-	//	{
-	//		XMStoreFloat4x4(&m_SpotLightTransformInverseMatrices[i], XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_TransformMatrices[i])));
-	//	}
-
-	//}
-
-	// For.LightShadowMapping
-
-	// 1. 기존의 
 
 	//// For. Cascade
 	//Update_CascadeFrustum();
@@ -167,29 +151,28 @@ void CPipeLine::Update_CascadeFrustum()
 
 void CPipeLine::Update_CascadeProjMatrices()
 {
-	for (_int i = 0; i < CASCADE_END; ++i) {
-
-		// 1. 절두체의 중심 위치 구하기
-		_vector vCenterPoints = {};
-		for (_int j = 0; j < 8; ++j) {
-			vCenterPoints += XMLoadFloat3(&m_vCascadePoints[i][j]);
-		}
-		vCenterPoints /= 8.f;
-
-		// 2. 중점 위치와 각 꼭지점 사이의 가장 큰 길이 구하기
-		_float fRadius = 0.f;
-		for (_int j = 0; j < 8; ++j) {
-			_float fDistance = XMVector3Length(vCenterPoints - XMLoadFloat3(&m_vCascadePoints[i][j])).m128_f32[0];
-			fRadius = max(fRadius, fDistance);
-		}
-	}
+	//for (_int i = 0; i < CASCADE_END; ++i) {
+	//
+	//	// 1. 절두체의 중심 위치 구하기
+	//	_vector vCenterPoints = {};
+	//	for (_int j = 0; j < 8; ++j) {
+	//		vCenterPoints += XMLoadFloat3(&m_vCascadePoints[i][j]);
+	//	}
+	//	vCenterPoints /= 8.f;
+	//
+	//	// 2. 중점 위치와 각 꼭지점 사이의 가장 큰 길이 구하기
+	//	_float fRadius = 0.f;
+	//	for (_int j = 0; j < 8; ++j) {
+	//		_float fDistance = XMVector3Length(vCenterPoints - XMLoadFloat3(&m_vCascadePoints[i][j])).m128_f32[0];
+	//		fRadius = max(fRadius, fDistance);
+	//	}
+	//}
 
 	// 1. 절두체의 중점 위치 저장할 변수
 	// 2. 중점 위치와 꼭지점 사이의 가장 큰 길이 구하기
 	// 3. 구한 반지름을 기준으로 AABB 바운딩 박스 구성                                                                                                                                                                 
 	//XMMatrixOrthographicOffCenterLH();
 }
-
 
 CPipeLine * CPipeLine::Create()
 {
