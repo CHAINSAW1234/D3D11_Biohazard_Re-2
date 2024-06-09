@@ -50,25 +50,34 @@ CModel::CModel(const CModel& rhs)
 	m_PlayingAnimInfos.resize(3);
 }
 
-void CModel::Add_AnimPlayingInfo(CPlayingInfo::PLAYING_INFO_DESC AnimDesc, _uint iPlayingIndex)
+void CModel::Add_AnimPlayingInfo(_uint iAnimIndex, _bool isLoop, _uint iPlayingIndex, const wstring& strBoneLayerTag, _float fBlendWeight)
 {
-	_bool			isCanCreate = { false };
+	_bool			isCanCreate = { true };
 
 	CPlayingInfo*		pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
 	if (nullptr != pPlayingInfo)
 		isCanCreate = false;
 
-	_int				iAnimIndex = { AnimDesc.iAnimIndex };
 	const _uint			iNumAnims = { static_cast<_uint>(m_Animations.size()) };
 	if (0 > iAnimIndex || iNumAnims <= iAnimIndex)
 		isCanCreate = false;
 
-	CBone_Layer*		pBoneLayer = { Find_BoneLayer(AnimDesc.strBoneLayerTag) };
+	CBone_Layer* pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
 	if (nullptr == pBoneLayer)
 		isCanCreate = false;
 
+	if (true == isCanCreate)
+	{
+		CPlayingInfo::PLAYING_INFO_DESC		PlayingInfoDesc;
+		PlayingInfoDesc.fBlendWeight = fBlendWeight;
+		PlayingInfoDesc.iAnimIndex = iAnimIndex;
+		PlayingInfoDesc.iNumBones = static_cast<_uint>(m_Bones.size());
+		PlayingInfoDesc.isLoop = isLoop;
+		PlayingInfoDesc.strBoneLayerTag = strBoneLayerTag;
 
-
+		CPlayingInfo*		pNewPlayingInfo = { CPlayingInfo::Create(&PlayingInfoDesc) };
+		m_PlayingAnimInfos[iPlayingIndex] = pNewPlayingInfo;
+	}
 }
 
 void CModel::Erase_AnimPlayingInfo(_uint iPlayingIndex)
@@ -83,10 +92,13 @@ void CModel::Erase_AnimPlayingInfo(_uint iPlayingIndex)
 
 _int CModel::Get_CurrentAnimIndex(_uint iPlayingIndex)
 {
-	if (iPlayingIndex >= static_cast<_uint>(m_PlayingAnimInfos.size()))
-		return -1;
+	CPlayingInfo*		pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+	_int				iAnimIndex = { -1 };
+	if (nullptr != pPlayingInfo)
+	{
+		iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
+	}
 
-	_uint			iAnimIndex = { static_cast<_uint>(m_PlayingAnimInfos[iPlayingIndex].iAnimIndex) };
 	return iAnimIndex;
 }
 
@@ -109,17 +121,6 @@ void CModel::Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec)
 		return;
 
 	m_Animations[iAnimIndex]->Set_TickPerSec(fTickPerSec);
-}
-
-void CModel::Set_Weight(_uint iPlayingIndex, _float fWeight)
-{
-	if (iPlayingIndex >= static_cast<_uint>(m_PlayingAnimInfos.size()))
-		return;
-
-	if (0.f > fWeight)
-		fWeight = 0.f;
-
-	m_PlayingAnimInfos[iPlayingIndex].fWeight = fWeight;
 }
 
 _bool CModel::Is_Active_RootMotion_XZ()
@@ -308,7 +309,7 @@ vector<_float4> CModel::Get_ResultTranslation_IK(const wstring& strIKTag)
 	if (nullptr == m_pIK_Solver)
 		return vector<_float4>();
 
-	m_pIK_Solver->Get_ResultTranslation_IK(strIKTag);
+	return m_pIK_Solver->Get_ResultTranslation_IK(strIKTag);
 }
 
 vector<_float4> CModel::Get_OriginTranslation_IK(const wstring& strIKTag)
@@ -316,7 +317,7 @@ vector<_float4> CModel::Get_OriginTranslation_IK(const wstring& strIKTag)
 	if (nullptr == m_pIK_Solver)
 		return vector<_float4>();
 
-	m_pIK_Solver->Get_OriginTranslation_IK(strIKTag);
+	return m_pIK_Solver->Get_OriginTranslation_IK(strIKTag);
 }
 
 vector<_float4x4> CModel::Get_JointCombinedMatrices_IK(const wstring& strIKTag)
@@ -324,7 +325,7 @@ vector<_float4x4> CModel::Get_JointCombinedMatrices_IK(const wstring& strIKTag)
 	if (nullptr == m_pIK_Solver)
 		return vector<_float4x4>();
 
-	m_pIK_Solver->Get_JointCombinedMatrices_IK(strIKTag, m_Bones);
+	return m_pIK_Solver->Get_JointCombinedMatrices_IK(strIKTag, m_Bones);
 }
 
 void CModel::Add_Additional_Transformation_World(string strBoneTag, _fmatrix AdditionalTransformMatrix)
@@ -799,7 +800,7 @@ CPlayingInfo* CModel::Find_PlayingInfo(_uint iPlayingIndex)
 {
 	CPlayingInfo* pPlayingInfo = { nullptr };
 	_uint				iNumPlayingInfo = { static_cast<_uint>(m_PlayingAnimInfos.size()) };
-	if (iNumPlayingInfo > iNumPlayingInfo)
+	if (iNumPlayingInfo > iPlayingIndex)
 	{
 		pPlayingInfo = m_PlayingAnimInfos[iPlayingIndex];
 	}
@@ -881,7 +882,7 @@ _float CModel::Get_Duration_From_Anim(_int iAnimIndex)
 	_float			fDuration = { 0.f };
 	_uint			iNumAnims = { static_cast<_uint>(m_Animations.size()) };
 
-	if (iNumAnims > iAnimIndex && 0 <= iAnimIndex)
+	if (static_cast<_int>(iNumAnims) > iAnimIndex && 0 <= iAnimIndex)
 	{
 		fDuration = m_Animations[iAnimIndex]->Get_Duration();
 	}
@@ -1024,7 +1025,7 @@ string CModel::Get_BoneLayerTag_PlayingInfo(_uint iPlayingIndex)
 	if (iAnimIndex != -1)
 	{
 		const _uint			iNumAnims = { static_cast<_uint>(m_Animations.size()) };
-		if (iNumAnims > iAnimIndex)
+		if (static_cast<_int>(iNumAnims) > iAnimIndex)
 		{
 			strAnimTag = m_Animations[iAnimIndex]->Get_Name();
 		}
@@ -1050,15 +1051,9 @@ void CModel::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition)
 	}
 }
 
+
 void CModel::Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight)
 {
-	if (fBlendWeight < 0.f)
-		return;
-
-	_uint			iNumPlayingInfo = { static_cast<_uint>(m_PlayingAnimInfos.size()) };
-	if (iPlayingIndex >= iNumPlayingInfo)
-		return;
-
 	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
 	if (nullptr != pPlayingInfo)
 	{
@@ -1078,8 +1073,9 @@ void CModel::Change_Animation(_uint iPlayingIndex, _uint iAnimIndex)
 		CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
 		if (nullptr == pPlayingInfo)
 			return;
-
-		pPlayingInfo->Change_Animation(iAnimIndex);
+		
+		_uint			iNumChannel = { m_Animations[iAnimIndex]->Get_NumChannel() };
+		pPlayingInfo->Change_Animation(iAnimIndex, iNumChannel);
 	}
 }
 
@@ -2070,10 +2066,11 @@ void CModel::Free()
 	m_BoneLayers.clear();
 
 	for (auto& pPlayingInfo : m_PlayingAnimInfos)
-		Safe_Release(m_PlayingAnimInfos);
+		Safe_Release(pPlayingInfo);
 	m_PlayingAnimInfos.clear();
 
 	Safe_Release(m_pIK_Solver);
 
 	m_Importer.FreeScene();
 }
+

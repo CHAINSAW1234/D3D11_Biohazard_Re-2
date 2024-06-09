@@ -205,9 +205,6 @@
     <Filter Include="01.Utility\02.Components\Model\Animator">
       <UniqueIdentifier>{05f7b535-efa3-4f05-900a-9a85395f1e0a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\02.Components\Model\Bone_Layer">
-      <UniqueIdentifier>{4daac0ca-6ab0-4b19-93bb-2d1c950bf21f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\12.FSM">
       <UniqueIdentifier>{99aaf032-a00f-4c2f-a94e-916bd9843ea4}</UniqueIdentifier>
     </Filter>
@@ -243,6 +240,12 @@
     </Filter>
     <Filter Include="01.Utility\02.Components\Model\PlayingInfo">
       <UniqueIdentifier>{ae93129b-019c-42ed-a1ad-02c94bb80b6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.Components\Model\Animation_Layer">
+      <UniqueIdentifier>{869257e4-ce3f-476d-8606-dc666047a9f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.Components\Model\Bone_Layer">
+      <UniqueIdentifier>{4daac0ca-6ab0-4b19-93bb-2d1c950bf21f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -473,6 +476,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\PlayingInfo.cpp">
       <Filter>01.Utility\02.Components\Model\PlayingInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Animation_Layer.cpp">
+      <Filter>01.Utility\02.Components\Model\Animation_Layer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -725,6 +731,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\PlayingInfo.h">
       <Filter>01.Utility\02.Components\Model\PlayingInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Animation_Layer.h">
+      <Filter>01.Utility\02.Components\Model\Animation_Layer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

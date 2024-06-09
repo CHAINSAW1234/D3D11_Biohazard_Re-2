@@ -62,7 +62,6 @@ HRESULT CChannel::Initialize(const CHANNEL_DESC& ChannelDesc)
 	strcpy_s(m_szName, ChannelDesc.strName.c_str());
 
 	m_iBoneIndex = ChannelDesc.iBoneIndex;
-
 	m_iNumKeyFrames = ChannelDesc.iNumKeyFrames;
 
 	for (auto& KeyFrame : ChannelDesc.KeyFrames)
@@ -73,7 +72,7 @@ HRESULT CChannel::Initialize(const CHANNEL_DESC& ChannelDesc)
 	return S_OK;
 }
 
-void CChannel::Invalidate_TransformationMatrix(const vector<class CBone*>& Bones, _float fTrackPosition, _uint* pCurrentKeyFrameIndex)
+void CChannel::Invalidate_TransformationMatrix(const vector<class CBone*>& Bones, _float fTrackPosition, _int* pCurrentKeyFrameIndex)
 {
 	if (0.0f == fTrackPosition)
 		(*pCurrentKeyFrameIndex) = 0;
@@ -158,7 +157,7 @@ void CChannel::Invalidate_TransformationMatrix_LinearInterpolation(const vector<
 	Bones[m_iBoneIndex]->Set_TransformationMatrix(TransformationMatrix);
 }
 
-_float4x4 CChannel::Compute_TransformationMatrix(_float fTrackPosition, _uint* pCurrentKeyFrameIndex, _uint* pBoneIndex)
+_float4x4 CChannel::Compute_TransformationMatrix(_float fTrackPosition, _int* pCurrentKeyFrameIndex, _uint* pBoneIndex)
 {
 	if (0.0f == fTrackPosition)
 		(*pCurrentKeyFrameIndex) = 0;

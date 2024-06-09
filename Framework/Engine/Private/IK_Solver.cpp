@@ -702,6 +702,7 @@ void CIK_Solver::Update_TransformMatrices_BoneChain(vector<CBone*>& Bones, IK_IN
 
 		_matrix			OriginTransformMatrix = { Bones[IkInfo.JointIndices[i]]->Get_TrasformationMatrix() };
 		_matrix			ResultTransformMatrix = { OriginTransformMatrix };
+
 		ResultTransformMatrix.r[CTransform::STATE_POSITION] = { XMVectorSet(0.f, 0.f, 0.f, 1.f) };
 		ResultTransformMatrix = ResultTransformMatrix * RotationMatrix;
 		ResultTransformMatrix.r[CTransform::STATE_POSITION] = vMyOriginTranslationInvalidated;

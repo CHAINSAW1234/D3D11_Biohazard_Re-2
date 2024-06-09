@@ -35,11 +35,6 @@ HRESULT CHair_Player::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	CModel::ANIM_PLAYING_DESC		AnimDesc;
-	AnimDesc.iAnimIndex = 0;
-	AnimDesc.isLoop = true;
-	AnimDesc.strBoneLayerTag = TEXT("Default");
-
 	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 	list<_uint>		iBoneIndices;
 	for (_uint i = 0; i < iNumBones; ++i)
@@ -47,8 +42,9 @@ HRESULT CHair_Player::Initialize(void* pArg)
 		iBoneIndices.emplace_back(i);
 	}
 
-	m_pModelCom->Set_AnimPlayingInfo(AnimDesc, 0);
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
+	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Set_RootBone("root_node");
 
 	vector<string>		BoneTags = { m_pModelCom->Get_BoneNames() };
 

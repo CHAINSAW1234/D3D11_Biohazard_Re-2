@@ -1,5 +1,9 @@
 #include "PlayingInfo.h"
 
+CPlayingInfo::CPlayingInfo()
+{
+}
+
 HRESULT CPlayingInfo::Initialize(void* pArg)
 {
 	if (nullptr == pArg)
@@ -14,47 +18,52 @@ HRESULT CPlayingInfo::Initialize(void* pArg)
 	m_iPreAnimIndex = -1;
 	
 	m_LastKeyFrames.resize(pDesc->iNumBones);
+	m_CurrentKeyFrameIndices.resize(pDesc->iNumChannel);
 
 	return S_OK;
 }
 
-inline _int CPlayingInfo::Get_KeyFrameIndex(_uint iBoneIndex)
+_int CPlayingInfo::Get_KeyFrameIndex(_uint iChannelIndex)
 {
 	_uint		iNumKeyFrame = { static_cast<_uint>(m_CurrentKeyFrameIndices.size()) };
-	if (iBoneIndex >= iNumKeyFrame)
+	if (iChannelIndex >= iNumKeyFrame)
 		return -1;
 
-	return m_CurrentKeyFrameIndices[iBoneIndex];
+	return m_CurrentKeyFrameIndices[iChannelIndex];
 }
 
-KEYFRAME CPlayingInfo::Get_LastKeyFrame(_uint iKeyFrameIndex)
+KEYFRAME CPlayingInfo::Get_LastKeyFrame(_uint iBoneIndex)
 {
-	_uint			iNumKeyFrame = { static_cast<_uint>(m_LastKeyFrames.size()) };
+	_uint			iNumBones = { static_cast<_uint>(m_LastKeyFrames.size()) };
 	KEYFRAME		KeyFrame;
 
-	if (iNumKeyFrame > iKeyFrameIndex)
+	if (iNumBones > iBoneIndex)
 	{
-		KeyFrame = m_LastKeyFrames[iKeyFrameIndex];
+		KeyFrame = m_LastKeyFrames[iBoneIndex];
 	}
 
 	return KeyFrame;
 }
 
-void CPlayingInfo::Change_Animation(_uint iAnimIndex)
+void CPlayingInfo::Change_Animation(_uint iAnimIndex, _uint iNumChannel)
 {
+	if (m_iAnimIndex == iAnimIndex)
+		return;
+
 	m_iPreAnimIndex = m_iAnimIndex;
 	m_iAnimIndex = iAnimIndex;
 
+	Reset_CurrentKeyFrameIndices(iNumChannel);
 	Reset_TrackPosition();
 	Reset_Finished();
 }
 
-inline void CPlayingInfo::Set_PreTranslation(_float3 vPreTranslation)
+void CPlayingInfo::Set_PreTranslation(_fvector vPreTranslation)
 {
 	m_vPreTranslationLocal = vPreTranslation;
 }
 
-inline void CPlayingInfo::Set_PreQuaternion(_float4 vPreQuaternion)
+void CPlayingInfo::Set_PreQuaternion(_fvector vPreQuaternion)
 {
 	m_vPreQuaternion = vPreQuaternion;
 }
@@ -76,34 +85,40 @@ void CPlayingInfo::Set_KeyFrameIndex(_uint iBoneIndex, _uint iKeyFrameIndex)
 	m_CurrentKeyFrameIndices[iBoneIndex] = iKeyFrameIndex;
 }
 
-inline void CPlayingInfo::Set_LastKeyFrame_Translation(_uint iKeyFrameIndex, _float3 vTranslation)
+void CPlayingInfo::Set_LastKeyFrame_Translation(_uint iBoneIndex, _fvector vTranslation)
 {
-	_uint			iNumKeyFrames = { static_cast<_uint>(m_LastKeyFrames.size()) };
+	_uint			iNumBones = { static_cast<_uint>(m_LastKeyFrames.size()) };
 
-	if (iNumKeyFrames > iKeyFrameIndex)
+	if (iNumBones > iBoneIndex)
 	{
-		XMStoreFloat3(&m_LastKeyFrames[iKeyFrameIndex].vTranslation, vTranslation);
+		XMStoreFloat3(&m_LastKeyFrames[iBoneIndex].vTranslation, vTranslation);
 	}
 }
 
-inline void CPlayingInfo::Set_LastKeyFrame_Rotation(_uint iKeyFrameIndex, _float4 vQuaternion)
+void CPlayingInfo::Set_LastKeyFrame_Rotation(_uint iBoneIndex, _fvector vQuaternion)
 {
-	_uint			iNumKeyFrames = { static_cast<_uint>(m_LastKeyFrames.size()) };
+	_uint			iNumBones = { static_cast<_uint>(m_LastKeyFrames.size()) };
 
-	if (iNumKeyFrames > iKeyFrameIndex)
+	if (iNumBones > iBoneIndex)
 	{
-		XMStoreFloat4(&m_LastKeyFrames[iKeyFrameIndex].vRotation, vQuaternion);
+		XMStoreFloat4(&m_LastKeyFrames[iBoneIndex].vRotation, vQuaternion);
 	}
 }
 
-inline void CPlayingInfo::Set_LastKeyFrame_Scale(_uint iKeyFrameIndex, _float3 vScale)
+void CPlayingInfo::Set_LastKeyFrame_Scale(_uint iBoneIndex, _fvector vScale)
 {
-	_uint			iNumKeyFrames = { static_cast<_uint>(m_LastKeyFrames.size()) };
+	_uint			iNumBones = { static_cast<_uint>(m_LastKeyFrames.size()) };
 
-	if (iNumKeyFrames > iKeyFrameIndex)
+	if (iNumBones > iBoneIndex)
 	{
-		XMStoreFloat3(&m_LastKeyFrames[iKeyFrameIndex].vScale, vScale);
+		XMStoreFloat3(&m_LastKeyFrames[iBoneIndex].vScale, vScale);
 	}
+}
+
+void CPlayingInfo::Reset_CurrentKeyFrameIndices(_uint iNumChannel)
+{
+	m_CurrentKeyFrameIndices.clear();
+	m_CurrentKeyFrameIndices.resize(iNumChannel);
 }
 
 void CPlayingInfo::Reset_LinearInterpolation()
@@ -112,12 +127,12 @@ void CPlayingInfo::Reset_LinearInterpolation()
 	m_fAccLinearInterpolation = 0.f;
 }
 
-inline void CPlayingInfo::Add_TrackPosition(_float fAddTrackPosition)
+void CPlayingInfo::Add_TrackPosition(_float fAddTrackPosition)
 {
 	m_fTrackPosition += fAddTrackPosition;
 }
 
-inline void CPlayingInfo::Add_AccLinearInterpolation(_float fAddLinearInterpolation)
+void CPlayingInfo::Add_AccLinearInterpolation(_float fAddLinearInterpolation)
 {
 	m_fAccLinearInterpolation += fAddLinearInterpolation;
 }

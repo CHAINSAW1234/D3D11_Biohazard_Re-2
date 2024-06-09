@@ -96,7 +96,7 @@ void CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
 		_uint			iBoneIndex = { m_Channels[i]->Get_BoneIndex() };
-		_uint			iKeyFrameIndex = { pPlayingInfo->Get_KeyFrameIndex(iBoneIndex)};
+		_int			iKeyFrameIndex = { pPlayingInfo->Get_KeyFrameIndex(iBoneIndex)};
 		if (-1 == iKeyFrameIndex)
 			continue;
 
@@ -158,16 +158,19 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _b
 	{
 		/* 이 뼈의 상태행렬을 만들어서 CBone의 TransformationMatrix를 바꿔라. */
 		_uint			iBoneIndex = { m_Channels[i]->Get_BoneIndex() };
-		_uint			iKeyFrameIndex = { pPlayingInfo->Get_KeyFrameIndex(iBoneIndex) };
+		_int			iKeyFrameIndex = { pPlayingInfo->Get_KeyFrameIndex(iBoneIndex) };
 		if (-1 == iKeyFrameIndex)
 			continue;
 
-		_float4x4			TransformationFloat4x4 = { m_Channels[i]->Compute_TransformationMatrix(fTrackPosition, &iKeyFrameIndex, &iBoneIndex) };\
+		_float4x4			TransformationFloat4x4 = { m_Channels[i]->Compute_TransformationMatrix(fTrackPosition, &iKeyFrameIndex, &iBoneIndex) };
 
 		TransformationMatrices[iBoneIndex] = TransformationFloat4x4;
 		IncludedBoneIndices.insert(iBoneIndex);
 		pPlayingInfo->Set_KeyFrameIndex(iBoneIndex, iKeyFrameIndex);
 	}
+
+	pPlayingInfo->Set_TrackPosition(fTrackPosition);
+	pPlayingInfo->Set_Finished(isFinished);
 
 	return TransformationMatrices;
 }

@@ -58,7 +58,6 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	m_pModelCom->Get_Child_BoneIndices("l_arm_clavicle", LeftArmBoneIndices);
 	m_pModelCom->Add_Bone_Layer(TEXT("Left_Arm"), LeftArmBoneIndices);
 
-
 	list<_uint>			LowerBoneIndices;
 	for (_uint iBoneIndex = 0; iBoneIndex < 60; ++iBoneIndex)
 		LowerBoneIndices.emplace_back(iBoneIndex);
@@ -73,8 +72,11 @@ HRESULT CBody_Player::Initialize(void * pArg)
 
 		UpperBoneIndices.emplace_back(iBoneIndex);
 	}
-
 	m_pModelCom->Add_Bone_Layer(TEXT("Upper"), UpperBoneIndices);
+
+	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(0, true, 1, TEXT("Lower"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(0, true, 2, TEXT("Upper"), 1.f);
 
 	//	m_pModelCom->Add_IK("root", "l_leg_ball", TEXT("IK_L_LEG"), 1);
 	//	m_pModelCom->Add_IK("l_leg_femur", "l_leg_ankle", TEXT("IK_L_LEG"), 1, 1.f);
@@ -171,51 +173,22 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	_vector			vDirectionToBall = { vCurrentBallPos - vCurrentPos };	
 
-	//	m_pModelCom->Set_Direction_IK(TEXT("IK_L_LEG"), vMoveDir);
-	//	m_pModelCom->Set_Direction_IK(TEXT("IK_R_LEG"), vMoveDir);z
-	//	m_pModelCom->Set_Direction_IK(TEXT("IK_R_ARM"), vMoveDir);
-
 	m_pModelCom->Set_Blend_IK(TEXT("IK_L_LEG"), fBlend);
-	//	m_pModelCom->Set_Blend_IK(TEXT("IK_R_LEG"), fBlend);
-	//	m_pModelCom->Set_Blend_IK(TEXT("IK_R_ARM"), fBlend);
-
-	/*_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
-	_matrix			TranslationMatrix = { XMMatrixTranslation(XMVectorGetX(vMoveDir), )}*/
-
 	m_pModelCom->Set_NumIteration_IK(TEXT("IK_L_LEG"), 3);
-	//	m_pModelCom->Set_NumIteration_IK(TEXT("IK_R_LEG"), 10);
-	//	m_pModelCom->Set_NumIteration_IK(TEXT("IK_R_ARM"), 10);
 
-	CModel::ANIM_PLAYING_DESC		AnimDesc;
-	//	AnimDesc.iAnimIndex = 30;
-	AnimDesc.iAnimIndex = iAnimIndex;
-	AnimDesc.isLoop = true;
-	//	AnimDesc.fWeight = fWeight;
-	AnimDesc.fWeight = 1.f;
-	AnimDesc.strBoneLayerTag = TEXT("Default");
-	m_pModelCom->Set_AnimPlayingInfo(AnimDesc, 0);
+	m_pModelCom->Set_BoneLayer_PlayingInfo(0, TEXT("Default"));
+	m_pModelCom->Change_Animation(0, iAnimIndex);
 
-	//	AnimDesc.iAnimIndex = 34;
-	//	AnimDesc.iAnimIndex = 24;
-	AnimDesc.iAnimIndex = 14;
-	AnimDesc.isLoop = true;
-	//	AnimDesc.fWeight = 1.f - fWeight;
-	AnimDesc.fWeight = 0.1f;
-	AnimDesc.strBoneLayerTag = TEXT("Upper");
-	m_pModelCom->Set_AnimPlayingInfo(AnimDesc, 1);
+	m_pModelCom->Set_BoneLayer_PlayingInfo(1, TEXT("Upper"));
+	m_pModelCom->Change_Animation(14, iAnimIndex);
+
+	m_pModelCom->Set_BoneLayer_PlayingInfo(2, TEXT("Left_Arm"));
+	m_pModelCom->Change_Animation(iAnimIndex + 1, iAnimIndex);
 
 
-	AnimDesc.iAnimIndex = iAnimIndex + 1;
-	AnimDesc.isLoop = true;
-	//	AnimDesc.fWeight = 1.f - fWeight;
-	AnimDesc.fWeight = 1.f;
-	AnimDesc.strBoneLayerTag = TEXT("Left_Arm");
-	m_pModelCom->Set_AnimPlayingInfo(AnimDesc, 2);
-
-
-	m_pModelCom->Set_Weight(0, 1.f);
-	m_pModelCom->Set_Weight(1, 0.f);
-	m_pModelCom->Set_Weight(2, 1.f);
+	m_pModelCom->Set_BlendWeight(0, 1.f);
+	m_pModelCom->Set_BlendWeight(1, 0.f);
+	m_pModelCom->Set_BlendWeight(2, 1.f);
 
 
 	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);

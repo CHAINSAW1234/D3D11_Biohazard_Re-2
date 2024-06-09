@@ -19,9 +19,8 @@ typedef struct tagAnimPlayingInfo : public ANIM_PLAYING_DESC
 	_float3					vPreTranslationLocal = { 0.f, 0.f, 0.f };
 	_float4					vPreQuaternion = { 0.f, 0.f, 0.f, 0.f };
 
-	_float					fDuration = { 0.f };
 	_float					fTrackPosition = { 0.f };
-	_float					fTickPerSecond = { 0.f };
+	_bool					isFinished = { false };
 
 	vector<_uint>			CurrentKeyFrameIndices;
 	vector<KEYFRAME>		LastKeyFrames;

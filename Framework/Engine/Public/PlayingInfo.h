@@ -9,11 +9,12 @@ class CPlayingInfo final : public CBase
 public:
 	typedef struct ENGINE_DLL tagPlayingInfoDesc
 	{
-		_int					iAnimIndex = { -1 };
-		_uint					iNumBones = { 0 };
-		_bool					isLoop = { false };
-		_float					fBlendWeight = { 0.f };
-		wstring					strBoneLayerTag = { TEXT("") };
+		_int							iAnimIndex = { -1 };
+		_uint							iNumChannel = { 0 };
+		_uint							iNumBones = { 0 };
+		_bool							isLoop = { false };
+		_float							fBlendWeight = { 0.f };
+		wstring							strBoneLayerTag = { TEXT("") };
 	}PLAYING_INFO_DESC;
 
 private:
@@ -34,14 +35,14 @@ public:		/* For.Access */
 	inline _float						Get_BlendWeight() { return m_fBlendWeight; }
 	inline _float						Get_AccLinearInterpolation() { return m_fAccLinearInterpolation; }
 	inline vector<_uint>				Get_KeyFrameIndices() { return m_CurrentKeyFrameIndices; }
-	inline _int							Get_KeyFrameIndex(_uint iBoneIndex);
+	_int								Get_KeyFrameIndex(_uint iChannelIndex);
 	inline _float3						Get_PreTranslation_Local() { return m_vPreTranslationLocal; }
-	inline _float3						Get_PreQuaternion() { return m_vPreQuaternion; }
+	inline _float4						Get_PreQuaternion() { return m_vPreQuaternion; }
 	inline wstring						Get_BoneLayerTag() { return m_strBoneLayerTag; }
 	inline const vector<KEYFRAME>&		Get_LastKeyFrames() { return m_LastKeyFrames; }
-	KEYFRAME							Get_LastKeyFrame(_uint iKeyFrameIndex);
+	KEYFRAME							Get_LastKeyFrame(_uint iBoneIndex);
 
-	void								Change_Animation(_uint iAnimIndex);
+	void								Change_Animation(_uint iAnimIndex, _uint iNumChannel);
 
 	inline void							Set_Loop(_bool isLoop) { m_isLoop = isLoop; }
 	inline void							Set_BlendWeight(_float fBlendWeight) { m_fBlendWeight = fBlendWeight; }
@@ -51,22 +52,23 @@ public:		/* For.Access */
 	inline void							Set_BoneLayerTag(const wstring& strBoneLayerTag) { m_strBoneLayerTag = strBoneLayerTag; }
 	inline void							Set_Finished(_bool isFinished) { m_isFinished = isFinished; }
 
-	inline void							Set_PreTranslation(_float3 PreTranslation);
-	inline void							Set_PreQuaternion(_float4 vPreQuaternion);
+	void								Set_PreTranslation(_fvector PreTranslation);
+	void								Set_PreQuaternion(_fvector vPreQuaternion);
 
 	void								Set_KeyFrameIndex_AllKeyFrame(_uint iKeyFrameIndex);
 	void								Set_KeyFrameIndex(_uint iBoneIndex, _uint iKeyFrameIndex);
 
-	inline void							Set_LastKeyFrame_Translation(_uint iKeyFrameIndex, _float3 vTranslation);
-	inline void							Set_LastKeyFrame_Rotation(_uint iKeyFrameIndex, _float4 vQuaternion);
-	inline void							Set_LastKeyFrame_Scale(_uint iKeyFrameIndex, _float3 vScale);
+	void								Set_LastKeyFrame_Translation(_uint iBoneIndex, _fvector vTranslation);
+	void								Set_LastKeyFrame_Rotation(_uint iBoneIndex, _fvector vQuaternion);
+	void								Set_LastKeyFrame_Scale(_uint iBoneIndex, _fvector vScale);
 
 	inline void							Reset_TrackPosition() { m_fTrackPosition = 0.f; }
 	inline void							Reset_Finished() { m_isFinished = false; }
+	void								Reset_CurrentKeyFrameIndices(_uint iNumChannel);
 	void								Reset_LinearInterpolation();
 
-	inline void							Add_TrackPosition(_float fAddTrackPosition);
-	inline void							Add_AccLinearInterpolation(_float fAddLinearInterpolation);
+	void								Add_TrackPosition(_float fAddTrackPosition);
+	void								Add_AccLinearInterpolation(_float fAddLinearInterpolation);
 
 	void								Update_LastKeyFrames(const vector<_float4x4>& TransformationMatrices, _uint iNumBones, _float fTotalLinearTime);
 

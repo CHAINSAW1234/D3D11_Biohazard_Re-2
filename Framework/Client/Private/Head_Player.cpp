@@ -74,7 +74,9 @@ void CHead_Player::Tick(_float fTimeDelta)
 		iBoneIndices.emplace_back(i);
 	}
 
-	m_pModelCom->Set_AnimPlayingInfo(AnimDesc, 0);
+	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
+	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Set_RootBone("root_node");
 }
 
 void CHead_Player::Late_Tick(_float fTimeDelta)

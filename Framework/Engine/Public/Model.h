@@ -21,7 +21,7 @@ public:
 	virtual ~CModel() = default;
 
 public:		/* For.Animation */
-	void									Add_AnimPlayingInfo(CPlayingInfo::PLAYING_INFO_DESC AnimDesc, _uint iPlayingIndex);
+	void									Add_AnimPlayingInfo(_uint iAnimIndex, _bool isLoop, _uint iPlayingIndex, const wstring& strBoneLayerTag, _float fBlendWeight = 1.f);
 	void									Erase_AnimPlayingInfo(_uint iPlayingIndex);
 
 	_uint									Get_NumAnims() { return m_iNumAnimations; }
@@ -30,7 +30,6 @@ public:		/* For.Animation */
 
 public:		/* For.Controll AnimSpeed */
 	void									Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec);
-	void									Set_Weight(_uint iPlayingIndex, _float fWeight);
 
 public:		/* For.RootAnimaition ActiveControll */
 	_bool									Is_Active_RootMotion_XZ();

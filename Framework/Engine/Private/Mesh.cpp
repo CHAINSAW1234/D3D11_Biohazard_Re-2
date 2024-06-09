@@ -114,12 +114,12 @@ HRESULT CMesh::Initialize_Prototype(CModel::MODEL_TYPE eType, const MESH_DESC& M
 		pIndices[i] = MeshDesc.Indices[i];
 	}
 
-	for (int i = 0; i < static_cast<_int>(m_iNumIndices); ++i)
+	for (_uint i = 0; i < m_iNumIndices; ++i)
 	{
 		m_pIndices_Cooking[i] = pIndices[i];
 	}
 
-	for (int i = 0; i < m_iNumIndices / 3; ++i)
+	for (_uint i = 0; i < m_iNumIndices / 3; ++i)
 	{
 		auto Face = new tFace();
 
@@ -475,7 +475,7 @@ void CMesh::SetVertices(_float3* pVertices)
 {
 	m_pVertices_Cooking = new _float3[m_iNumVertices];
 
-	for (int i = 0; i < m_iNumVertices; ++i)
+	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
 		m_pVertices_Cooking[i] = pVertices[i];
 	}
