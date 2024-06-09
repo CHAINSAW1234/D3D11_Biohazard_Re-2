@@ -22,74 +22,44 @@ private:
 	virtual ~CAnimation() = default;
 
 public:
-	_bool isFinished() const { return m_isFinished; }
-	void Reset_Finish() { m_isFinished = false; }
-
-	_float Get_TrackPosition() { return m_fTrackPosition; }
-	_float Get_Duration() { return m_fDuration; }
-	void Reset_TrackPostion() {
-		m_fTrackPosition = 0.f;
-		for (auto& Index : m_CurrentKeyFrameIndices)
-		{
-			Index = (_uint)0;
-		}
-	}
+	_float								Get_Duration() { return m_fDuration; }
+	_float								Get_TickPerSec() { return m_fTickPerSecond; }
 
 public:
 	/* For.FBX_Load*/
-	HRESULT Initialize(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices);
+	HRESULT								Initialize(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices);
 	/* For.Binary_Load*/
-	HRESULT Initialize(const ANIM_DESC& AnimDesc);
-	void Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _bool* pFirsltTick);
-	void Invalidate_TransformationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, const vector<class CBone*>& Bones, const vector<KEYFRAME>& LastKeyFrames);
-
-	vector<_float4x4> Compute_TransfromationMatrix(_float fTimeDelta, _bool isLoop, _uint iNumBones, set<_uint>& IncludedBoneIndices, _bool* pFirstTick);
-	vector<_float4x4> Compute_TransfromationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, vector<_float4x4>& TransformationMatrices, _uint iNumBones, const vector<KEYFRAME>& LastKeyFrames);
+	HRESULT								Initialize(const ANIM_DESC& AnimDesc);
 
 public:
-	const vector<class CChannel*>& Get_Channels() {
-		return m_Channels;
-	};
+	void								Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _bool* pFirsltTick, class CPlayingInfo* pPlayingInfo);
+	void								Invalidate_TransformationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, const vector<class CBone*>& Bones, const vector<KEYFRAME>& LastKeyFrames);
 
-	const vector<_uint>& Get_CurrentKeyFrameIndices() {
-		return m_CurrentKeyFrameIndices;
-	}
+	vector<_float4x4>					Compute_TransfromationMatrix(_float fTimeDelta, _bool isLoop, _uint iNumBones, set<_uint>& IncludedBoneIndices, _bool* pFirstTick, class CPlayingInfo* pPlayingInfo);
+	vector<_float4x4>					Compute_TransfromationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, vector<_float4x4>& TransformationMatrices, _uint iNumBones, const vector<KEYFRAME>& LastKeyFrames);
 
-	string Get_Name() { return m_szName; }
+public:
+	const vector<class CChannel*>&		Get_Channels() { return m_Channels; };
+	string								Get_Name() { return m_szName; }
 
-	void Set_KeyFrameIndex(_uint iKeyFrameIndex)
-	{
-		for (auto& iIndex : m_CurrentKeyFrameIndices)
-			iIndex = iKeyFrameIndex;
-	}
-
-	void Set_TrackPosition(_float fTrackPostion)
-	{
-		m_fTrackPosition = fTrackPostion;
-	}
-
-	void Set_TickPerSec(_float fTickPerSec);
+	void								Set_TickPerSec(_float fTickPerSec);
 
 private:
-	_char							m_szName[MAX_PATH] = { "" };
+	_char								m_szName[MAX_PATH] = { "" };
 
-	_float							m_fDuration = { 0.f };			/* 전체 재생 길이*/
-	_float							m_fTickPerSecond = { 0.f };		/* 초당 얼마나 재생을 해야하는가 ( 속도 ) */
-	_float							m_fTrackPosition = { 0.f };		/* 현재 애니메이션이 어디까지 재생되었는지 */
+	_float								m_fDuration = { 0.f };			/* 전체 재생 길이*/
+	_float								m_fTickPerSecond = { 0.f };		/* 초당 얼마나 재생을 해야하는가 ( 속도 ) */
 
-	_uint							m_iNumChannels = { 0 };
-	vector<class CChannel*>			m_Channels;
-	vector<_uint>					m_CurrentKeyFrameIndices;
-
-	_bool							m_isFinished = { false };
+	_uint								m_iNumChannels = { 0 };
+	vector<class CChannel*>				m_Channels;
 
 public:
 	/* For.FBX_Load*/
-	static CAnimation* Create(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices);
+	static CAnimation*					Create(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices);
 	/* For.Binary_Load*/
-	static CAnimation* Create(const ANIM_DESC& AnimDesc);
-	CAnimation* Clone();
-	virtual void Free() override;
+	static CAnimation*					Create(const ANIM_DESC& AnimDesc);
+	CAnimation*							Clone();
+	virtual void						Free() override;
 
 #pragma endregion
 };

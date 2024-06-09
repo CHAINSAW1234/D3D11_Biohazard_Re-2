@@ -20,7 +20,7 @@ public:
 	virtual ~CModel() = default;
 
 public:		/* For.Animation */
-	void									Set_Animation_Blend(ANIM_PLAYING_DESC AnimDesc, _uint iPlayingIndex);
+	void									Set_AnimPlayingInfo(ANIM_PLAYING_DESC AnimDesc, _uint iPlayingIndex);
 
 	_uint									Get_NumAnims() { return m_iNumAnimations; }
 	_int									Get_CurrentAnimIndex(_uint iPlayingIndex);
@@ -109,7 +109,8 @@ public:		/* For. Access */
 	_uint									Get_NumMeshes() const { return m_iNumMeshes; }
 	_uint									Get_NumPlayingInfos() { return static_cast<_uint>(m_PlayingAnimInfos.size()); }
 
-	_uint									Find_AnimIndex(CAnimation* pAnimation);
+	_int									Find_AnimIndex(CAnimation* pAnimation);
+	_int									Find_AnimIndex(const string& strAnimTag);
 	string									Find_RootBoneTag();
 
 	_int									Get_BoneIndex(const string& strBoneTag);
@@ -123,9 +124,16 @@ public:		/* For. Access */
 	_float									Get_Duration(_uint iPlayingIndex, _int iAnimIndex = -1);
 	_float									Get_TrackPosition(_uint iPlayingIndex);
 	_float									Get_BlendWeight(_uint iPlayingIndex);
+	_int									Get_AnimIndex_PlayingInfo(_uint iPlayingIndex);
+	string									Get_BoneLayerTag_PlayingInfo(_uint iPlayingIndex);
+
 	void									Set_KeyFrameIndex(_uint iPlayingIndex, _uint iKeyFrameIndex);
 	void									Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition);
 	void									Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight);
+	void									Change_Animation(_uint iPlayingIndex, _uint iAnimIndex);
+	void									Change_Animation(_uint iPlayingIndex, const string& strAnimTag);
+	void									Set_BoneLayer_PlayingInfo(_uint iPlayingIndex, const wstring& strBoneLayerTag);
+
 	const vector<_uint>&					Get_CurrentKeyFrameIndices(_uint iPlayingIndex);
 
 	class CBone*							Get_BonePtr(const _char* pBoneName) const;
@@ -148,8 +156,7 @@ public:
 	HRESULT									Bind_ShaderResource_Texture(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eTextureType);
 	HRESULT									Bind_ShaderResource_MaterialDesc(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 
-	HRESULT									Play_Animations(_float fTimeDelta);
-	HRESULT									Play_Animations_RootMotion(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
+	HRESULT									Play_Animations(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
 	HRESULT									Play_IK(class CTransform* pTransform, _float fTimeDelta);
 	HRESULT									Render(_uint iMeshIndex);
 

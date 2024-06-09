@@ -2,6 +2,7 @@
 
 #include "Component.h"
 #include "Animation.h"
+#include "PlayingInfo.h"
 
 BEGIN(Engine)
 
@@ -20,7 +21,8 @@ public:
 	virtual ~CModel() = default;
 
 public:		/* For.Animation */
-	void									Set_Animation_Blend(ANIM_PLAYING_DESC AnimDesc, _uint iPlayingIndex);
+	void									Add_AnimPlayingInfo(CPlayingInfo::PLAYING_INFO_DESC AnimDesc, _uint iPlayingIndex);
+	void									Erase_AnimPlayingInfo(_uint iPlayingIndex);
 
 	_uint									Get_NumAnims() { return m_iNumAnimations; }
 	_int									Get_CurrentAnimIndex(_uint iPlayingIndex);
@@ -48,11 +50,11 @@ private:	/* Utillity */
 public:		/* For.Bone_Layer */
 	void									Add_Bone_Layer(const wstring& strLayerTag, list<_uint> BoneIndices);
 	void									Add_Bone_Layer_All_Bone(const wstring& strLayerTag);
-	void									Delete_Bone_Layer(const wstring& strLayerTag);
+	void									Erase_Bone_Layer(const wstring& strLayerTag);
 
 public:		/* For.IK Public*/
 	void									Add_IK(string strTargetJointTag, string strEndEffectorTag, const wstring& strIKTag, _uint iNumIteration, _float fBlend);
-	void									Release_IK(const wstring& strIKTag);
+	void									Erase_IK(const wstring& strIKTag);
 	void									Set_TargetPosition_IK(const wstring& strIKTag, _fvector vTargetPosition);
 	void									Set_NumIteration_IK(const wstring& strIKTag, _uint iNumIteration);
 	void									Set_Blend_IK(const wstring& strIKTag, _float fBlend);
@@ -109,8 +111,11 @@ public:		/* For. Access */
 	_uint									Get_NumMeshes() const { return m_iNumMeshes; }
 	_uint									Get_NumPlayingInfos() { return static_cast<_uint>(m_PlayingAnimInfos.size()); }
 
-	_uint									Find_AnimIndex(CAnimation* pAnimation);
+	_int									Find_AnimIndex(CAnimation* pAnimation);
+	_int									Find_AnimIndex(const string& strAnimTag);
 	string									Find_RootBoneTag();
+	class CPlayingInfo*						Find_PlayingInfo(_uint iPlayingIndex);
+	class CBone_Layer*						Find_BoneLayer(const wstring& strBoneLayerTag);
 
 	_int									Get_BoneIndex(const string& strBoneTag);
 
@@ -120,13 +125,20 @@ public:		/* For. Access */
 	_bool									Is_Root_Bone(const string& strBoneTag);
 
 	_uint									Get_CurrentMaxKeyFrameIndex(_uint iPlayingIndex);
-	_float									Get_Duration(_uint iPlayingIndex, _int iAnimIndex = -1);
+	_float									Get_Duration_From_Anim(_int iAnimIndex);
+	_float									Get_Duration_From_Anim(const string& strAnimTag);
+	_float									Get_Duration_From_PlayingInfo(_uint iPlayingIndex);
 	_float									Get_TrackPosition(_uint iPlayingIndex);
 	_float									Get_BlendWeight(_uint iPlayingIndex);
-	void									Set_KeyFrameIndex(_uint iPlayingIndex, _uint iKeyFrameIndex);
+	_int									Get_AnimIndex_PlayingInfo(_uint iPlayingIndex);
+	string									Get_BoneLayerTag_PlayingInfo(_uint iPlayingIndex);
+
+	void									Set_KeyFrameIndex_AllKeyFrame(_uint iPlayingIndex, _uint iKeyFrameIndex);
 	void									Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition);
 	void									Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight);
-	const vector<_uint>&					Get_CurrentKeyFrameIndices(_uint iPlayingIndex);
+	void									Change_Animation(_uint iPlayingIndex, _uint iAnimIndex);
+	void									Change_Animation(_uint iPlayingIndex, const string& strAnimTag);
+	void									Set_BoneLayer_PlayingInfo(_uint iPlayingIndex, const wstring& strBoneLayerTag);
 
 	class CBone*							Get_BonePtr(const _char* pBoneName) const;
 
@@ -148,8 +160,7 @@ public:
 	HRESULT									Bind_ShaderResource_Texture(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eTextureType);
 	HRESULT									Bind_ShaderResource_MaterialDesc(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 
-	HRESULT									Play_Animations(_float fTimeDelta);
-	HRESULT									Play_Animations_RootMotion(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
+	HRESULT									Play_Animations(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
 	HRESULT									Play_IK(class CTransform* pTransform, _float fTimeDelta);
 	HRESULT									Render(_uint iMeshIndex);
 
@@ -176,7 +187,6 @@ private:	/* For.Linear Interpolation */
 
 private:	/* For.Linear Interpolation */
 	void									Update_LinearInterpolation(_float fTimeDelta, _uint iPlayingIndex);
-	void									Reset_LinearInterpolation(_uint iPlayingIndex);
 
 private:
 	MODEL_TYPE								m_eModelType = { TYPE_END };
@@ -209,7 +219,7 @@ private:
 	_float4x4								m_MeshBoneMatrices[MAX_COUNT_BONE];
 
 private:	/* For.Blend_Animation */
-	vector<ANIM_PLAYING_INFO>				m_PlayingAnimInfos;
+	vector<class CPlayingInfo*>				m_PlayingAnimInfos;
 
 private: /* For.Additional_Input_Forces */
 	//	뼈의 인덱스 별로 외부적 변환을 추가적으로 적용한다.
@@ -231,7 +241,7 @@ private:	/* For.Binary_Load */
 	HRESULT									Ready_Bones(ifstream& ifs);
 	HRESULT									Ready_Animations(ifstream& ifs);
 
-public: /*For Octree Culling*/
+public:		/* For Octree Culling */
 	vector<class CMesh*>* GetMeshes()
 	{
 		return  &m_Meshes;

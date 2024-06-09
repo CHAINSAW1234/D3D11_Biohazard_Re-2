@@ -95,11 +95,11 @@ void CTool_AnimPlayer::Play_Animation(_float fTimeDelta)
 			if (false == isRootPart)
 			{
 				_float3				vTempDir = {};
-				Pair.second->Play_Animations_RootMotion(m_pTargetTransform, fTimeDelta, &vTempDir);
+				Pair.second->Play_Animations(m_pTargetTransform, fTimeDelta, &vTempDir);
 			}
 			else
 			{
-				Pair.second->Play_Animations_RootMotion(m_pTargetTransform, fTimeDelta, m_pRootMoveDir);
+				Pair.second->Play_Animations(m_pTargetTransform, fTimeDelta, m_pRootMoveDir);
 			}
 		}
 	}
@@ -419,7 +419,7 @@ void CTool_AnimPlayer::Create_PlayingDesc()
 			AnimDesc.isLoop = isLoop;
 		}
 
-		m_pCurrentModel->Set_Animation_Blend(AnimDesc, iPlayingIndex);
+		m_pCurrentModel->Set_AnimPlayingInfo(AnimDesc, iPlayingIndex);
 	}
 	return;
 }

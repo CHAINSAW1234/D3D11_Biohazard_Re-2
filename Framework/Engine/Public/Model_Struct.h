@@ -13,10 +13,16 @@ typedef struct tagAnimPlayingDesc
 typedef struct tagAnimPlayingInfo : public ANIM_PLAYING_DESC
 {
 	_int					iPreAnimIndex = { -1 };
+
 	_bool					isLinearInterpolation = { false };
 	_float					fAccLinearInterpolation = { 0.f };
 	_float3					vPreTranslationLocal = { 0.f, 0.f, 0.f };
 	_float4					vPreQuaternion = { 0.f, 0.f, 0.f, 0.f };
+
+	_float					fTrackPosition = { 0.f };
+	_bool					isFinished = { false };
+
+	vector<_uint>			CurrentKeyFrameIndices;
 	vector<KEYFRAME>		LastKeyFrames;
 }ANIM_PLAYING_INFO;
 

@@ -92,7 +92,7 @@ void CIK_Solver::Add_IK(vector<class CBone*>& Bones, list<_uint> IkIncludedIndic
 	m_IKInfos[strIKTag] = IkInfo;
 }
 
-void CIK_Solver::Release_IK(const wstring& strIKTag)
+void CIK_Solver::Erase_IK(const wstring& strIKTag)
 {
 	map<wstring, CIK_Solver::IK_INFO>::iterator			iter = { m_IKInfos.find(strIKTag) };
 	if (iter == m_IKInfos.end())
@@ -910,4 +910,5 @@ CIK_Solver* CIK_Solver::Create(void* pArg)
 
 void CIK_Solver::Free()
 {
+	__super::Free();
 }

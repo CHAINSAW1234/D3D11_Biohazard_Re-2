@@ -63,13 +63,11 @@ private:    /* For.PartObject Tool */
 private:    /* For.Transform Tool */
     void                        Set_Transform_TransformTool();
 
-
 private:    /* For.AnimPlayer Tool */
     HRESULT                     Initialize_AnimPlayer();
 
 private:    /* For.AnimList Tool */
     HRESULT                     Initialize_AnimList();
-
 
 private:    /* For.AssistRendering */
     void                        Render_BoneTags();

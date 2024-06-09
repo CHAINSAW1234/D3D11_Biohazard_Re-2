@@ -193,7 +193,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//	AnimDesc.fWeight = fWeight;
 	AnimDesc.fWeight = 1.f;
 	AnimDesc.strBoneLayerTag = TEXT("Default");
-	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
+	m_pModelCom->Set_AnimPlayingInfo(AnimDesc, 0);
 
 	//	AnimDesc.iAnimIndex = 34;
 	//	AnimDesc.iAnimIndex = 24;
@@ -202,7 +202,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//	AnimDesc.fWeight = 1.f - fWeight;
 	AnimDesc.fWeight = 0.1f;
 	AnimDesc.strBoneLayerTag = TEXT("Upper");
-	m_pModelCom->Set_Animation_Blend(AnimDesc, 1);
+	m_pModelCom->Set_AnimPlayingInfo(AnimDesc, 1);
 
 
 	AnimDesc.iAnimIndex = iAnimIndex + 1;
@@ -210,7 +210,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//	AnimDesc.fWeight = 1.f - fWeight;
 	AnimDesc.fWeight = 1.f;
 	AnimDesc.strBoneLayerTag = TEXT("Left_Arm");
-	m_pModelCom->Set_Animation_Blend(AnimDesc, 2);
+	m_pModelCom->Set_AnimPlayingInfo(AnimDesc, 2);
 
 
 	m_pModelCom->Set_Weight(0, 1.f);
@@ -352,7 +352,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	if (!Temp)
 	{
 		//	m_pModelCom->Play_Animations(fTimeDelta);
-		m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 
 		/////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////

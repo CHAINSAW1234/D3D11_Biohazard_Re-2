@@ -74,14 +74,15 @@ void CHead_Player::Tick(_float fTimeDelta)
 		iBoneIndices.emplace_back(i);
 	}
 
-	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
+	m_pModelCom->Set_AnimPlayingInfo(AnimDesc, 0);
 }
 
 void CHead_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animations(fTimeDelta);
+	_float3				vDirection = { };
+	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &vDirection);
 
 	if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
 	{

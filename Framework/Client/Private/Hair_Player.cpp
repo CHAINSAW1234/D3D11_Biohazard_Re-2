@@ -47,7 +47,7 @@ HRESULT CHair_Player::Initialize(void* pArg)
 		iBoneIndices.emplace_back(i);
 	}
 
-	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
+	m_pModelCom->Set_AnimPlayingInfo(AnimDesc, 0);
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
 	vector<string>		BoneTags = { m_pModelCom->Get_BoneNames() };
@@ -198,7 +198,7 @@ void CHair_Player::Late_Tick(_float fTimeDelta)
 	}
 
 	_float3		vMoveDir = {};
-	m_pModelCom->Play_Animations_RootMotion(m_pTransformCom, fTimeDelta, &vMoveDir);
+	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &vMoveDir);
 	//	m_pModelCom->Play_Animations(fTimeDelta);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);

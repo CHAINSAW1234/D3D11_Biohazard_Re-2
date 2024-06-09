@@ -31,9 +31,7 @@ public:
 	_float4x4 Compute_TransformationMatrix_LinearInterpolation(const vector<_float4x4>& TransformationMatrices, _float fAccLinearInterpolation, _float fTotalLinearTime, _uint* pBoneIndex, const vector<KEYFRAME>& LastKeyFrames);
 
 public:
-	const vector<KEYFRAME>& Get_KeyFrames() {
-		return m_KeyFrames;
-	}
+	const vector<KEYFRAME>& Get_KeyFrames() { return m_KeyFrames; }
 	_uint Get_BoneIndex() { return m_iBoneIndex; }
 
 private:

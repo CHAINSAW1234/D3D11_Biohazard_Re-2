@@ -46,7 +46,7 @@ public:
 
 public:		/* For.IK Public*/
 	void									Add_IK(vector<class CBone*>& Bones, list<_uint> IkIncludedIndices, _uint iIKRootBoneIndex, _uint iEndEffectorIndex, string strTargetJointTag, string strEndEffectorTag, const wstring& strIKTag, _uint iNumIteration, _float fBlend);
-	void									Release_IK(const wstring& strIKTag);
+	void									Erase_IK(const wstring& strIKTag);
 	void									Set_TargetPosition_IK(const wstring& strIKTag, _fvector vTargetPosition);
 	void									Set_NumIteration_IK(const wstring& strIKTag, _uint iNumIteration);
 	void									Set_Blend_IK(wstring strIKTag, _float fBlend);

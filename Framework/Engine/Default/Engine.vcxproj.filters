@@ -241,6 +241,9 @@
     <Filter Include="01.Utility\02.Components\Model\IK_Solver">
       <UniqueIdentifier>{32c90322-45a0-4684-8805-8cd3cb7cb7b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\02.Components\Model\PlayingInfo">
+      <UniqueIdentifier>{ae93129b-019c-42ed-a1ad-02c94bb80b6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -467,6 +470,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\IK_Solver.cpp">
       <Filter>01.Utility\02.Components\Model\IK_Solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayingInfo.cpp">
+      <Filter>01.Utility\02.Components\Model\PlayingInfo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -716,6 +722,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\IK_Solver.h">
       <Filter>01.Utility\02.Components\Model\IK_Solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayingInfo.h">
+      <Filter>01.Utility\02.Components\Model\PlayingInfo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
