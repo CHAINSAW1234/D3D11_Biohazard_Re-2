@@ -118,10 +118,11 @@ void CAnimation::Invalidate_TransformationMatrix_LinearInterpolation(_float fAcc
 	}
 }
 
-vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _bool isLoop, _uint iNumBones, set<_uint>& IncludedBoneIndices, _bool* pFirstTick, CPlayingInfo* pPlayingInfo)
+vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _uint iNumBones, set<_uint>& IncludedBoneIndices, _bool* pFirstTick, CPlayingInfo* pPlayingInfo)
 {
 	_bool		isFinished = false;
 	_float		fTrackPosition = { pPlayingInfo->Get_TrackPosition() };
+	_bool		isLoop = { pPlayingInfo->Is_Loop() };
 
 	if (fTrackPosition == 0.f)
 	{

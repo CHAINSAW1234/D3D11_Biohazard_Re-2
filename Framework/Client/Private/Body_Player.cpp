@@ -54,25 +54,12 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	m_pModelCom->Set_RootBone("root");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
-	list<_uint>			LeftArmBoneIndices;
-	m_pModelCom->Get_Child_BoneIndices("l_arm_clavicle", LeftArmBoneIndices);
-	m_pModelCom->Add_Bone_Layer(TEXT("Left_Arm"), LeftArmBoneIndices);
+	_uint			iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 
-	list<_uint>			LowerBoneIndices;
-	for (_uint iBoneIndex = 0; iBoneIndex < 60; ++iBoneIndex)
-		LowerBoneIndices.emplace_back(iBoneIndex);
-	m_pModelCom->Add_Bone_Layer(TEXT("Lower"), LowerBoneIndices);
+	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Left_Arm"), "l_arm_clavicle");
+	m_pModelCom->Add_Bone_Layer_Range(TEXT("Lower"), 0, 59);
+	m_pModelCom->Add_Bone_Layer_Range(TEXT("Upper"), 60, iNumBones -1);
 
-	list<_uint>			UpperBoneIndices;
-	for (_uint iBoneIndex = 60; iBoneIndex < static_cast<_uint>(m_pModelCom->Get_BoneNames().size()); ++iBoneIndex)
-	{
-		list<_uint>::iterator		iter = { find(LeftArmBoneIndices.begin(), LeftArmBoneIndices.end(), iBoneIndex) };
-		if (LeftArmBoneIndices.end() != iter)
-			continue;
-
-		UpperBoneIndices.emplace_back(iBoneIndex);
-	}
-	m_pModelCom->Add_Bone_Layer(TEXT("Upper"), UpperBoneIndices);
 
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 1, TEXT("Lower"), 1.f);
@@ -86,6 +73,8 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	//	m_pModelCom->Add_IK("r_arm_humerus", "r_arm_wrist", TEXT("IK_R_ARM"), 20, 1.f);
 	//	m_pModelCom->Add_IK("r_arm_clavicle", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
 	//	m_pModelCom->Add_IK("spine_0", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
+
+	m_pModelCom->Set_RootBone("root");
 
 	m_pGameInstance->SetBone_Ragdoll(m_pModelCom->GetBoneVector());
 
@@ -173,27 +162,16 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	_vector			vDirectionToBall = { vCurrentBallPos - vCurrentPos };	
 
-	m_pModelCom->Set_Blend_IK(TEXT("IK_L_LEG"), fBlend);
-	m_pModelCom->Set_NumIteration_IK(TEXT("IK_L_LEG"), 3);
+	//	m_pModelCom->Set_Blend_IK(TEXT("IK_L_LEG"), fBlend);
+	//	m_pModelCom->Set_NumIteration_IK(TEXT("IK_L_LEG"), 3);
 
 	m_pModelCom->Set_BoneLayer_PlayingInfo(0, TEXT("Default"));
 	m_pModelCom->Change_Animation(0, iAnimIndex);
 
-	m_pModelCom->Set_BoneLayer_PlayingInfo(1, TEXT("Upper"));
-	m_pModelCom->Change_Animation(14, iAnimIndex);
-
-	m_pModelCom->Set_BoneLayer_PlayingInfo(2, TEXT("Left_Arm"));
-	m_pModelCom->Change_Animation(iAnimIndex + 1, iAnimIndex);
-
-
 	m_pModelCom->Set_BlendWeight(0, 1.f);
-	m_pModelCom->Set_BlendWeight(1, 0.f);
-	m_pModelCom->Set_BlendWeight(2, 1.f);
-
 
 	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 
-	m_pModelCom->Set_RootBone("root");
 
 	static _bool		isSetRootXZ = false;
 	static _bool		isSetRootRotation = false;
@@ -216,7 +194,6 @@ void CBody_Player::Tick(_float fTimeDelta)
 	m_pModelCom->Active_RootMotion_XZ(isSetRootXZ);
 	m_pModelCom->Active_RootMotion_Y(isSetRootY);
 	m_pModelCom->Active_RootMotion_Rotation(isSetRootRotation);
-
 
 	_uint		iIndex = { 0 };
 	{
@@ -335,32 +312,32 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	/////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////
 
-		CVIBuffer_Terrain* pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
-		CTransform* pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
-		if (nullptr != pTerrainBuffer &&
-			nullptr != pTerrainTransform)
-		{
-			_matrix			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
-			_matrix			BallCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball")) };
+		//CVIBuffer_Terrain* pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
+		//CTransform* pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
+		//if (nullptr != pTerrainBuffer &&
+		//	nullptr != pTerrainTransform)
+		//{
+		//	_matrix			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+		//	_matrix			BallCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball")) };
 
-			_matrix			BallWorldMatrix = { BallCombinedMatrix * WorldMatrix };
+		//	_matrix			BallWorldMatrix = { BallCombinedMatrix * WorldMatrix };
 
-			_vector		vPosition = { BallWorldMatrix.r[CTransform::STATE_POSITION] };
-			vPosition.m128_f32[1] += 1.f;
-			//	vPosition.m128_f32[2] -= 0.3f;
+		//	_vector		vPosition = { BallWorldMatrix.r[CTransform::STATE_POSITION] };
+		//	vPosition.m128_f32[1] += 1.f;
+		//	//	vPosition.m128_f32[2] -= 0.3f;
 
-			_float4		vPickPosFloat4;
-			pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
+		//	_float4		vPickPosFloat4;
+		//	pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
 
-			_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
-			vResultPos.m128_f32[1] += 0.1f;
+		//	_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
+		//	vResultPos.m128_f32[1] += 0.1f;
 
-			m_pModelCom->Set_TargetPosition_IK(TEXT("IK_L_LEG"), vResultPos);
+		//	m_pModelCom->Set_TargetPosition_IK(TEXT("IK_L_LEG"), vResultPos);
 
-			//	vMoveDir += vResultPos - vPosition;
-		}
+		//	//	vMoveDir += vResultPos - vPosition;
+		//}
 
-		m_pModelCom->Play_IK(m_pParentsTransform, fTimeDelta);
+		//	m_pModelCom->Play_IK(m_pParentsTransform, fTimeDelta);
 		/////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////

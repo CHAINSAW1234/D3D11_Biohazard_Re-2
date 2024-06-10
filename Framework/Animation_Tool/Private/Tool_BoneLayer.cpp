@@ -95,23 +95,17 @@ void CTool_BoneLayer::Create_BoneLayer()
 {
 	if (ImGui::Button("Create Bone Layer : Range Bones ##CTool_BoneLayer::Create_BoneLayer()"))
 	{
-		list<_uint>			BoneIndices;
-		for (_int i = m_iStartBoneIndex; i <= m_iEndBoneIndex; ++i)
-		{
-			BoneIndices.push_back(static_cast<_uint>(i));
-		}
-
-		Create_BoneLayer_Indices(BoneIndices);
+		Add_AnimLayer_Range(m_pCurrentModel);
 	}
 
 	if (ImGui::Button("Create Bone Layer : Child Bones ##CTool_BoneLayer::Create_BoneLayer()"))
 	{
-		Create_BoneLayer_ChildBones();
+		Add_AnimLayer_ChildBones(m_pCurrentModel);
 	}
 
 	if (ImGui::Button("Create Bone Layer : All Bone ##CTool_BoneLayer::Create_BoneLayer()"))
 	{
-		Create_BoneLayer_AllBone();
+		Add_AnimLayer_AllBone(m_pCurrentModel);
 	}
 }
 
@@ -160,33 +154,9 @@ void CTool_BoneLayer::Show_Default()
 	ImGui::SeparatorText("");
 }
 
-void CTool_BoneLayer::Create_BoneLayer_AllBone()
-{
-	Add_AnimLayer_AllBone(m_pCurrentModel);
-}
-
-void CTool_BoneLayer::Create_BoneLayer_ChildBones()
-{
-	list<_uint>				BoneIndices;
-	vector<string>			BoneTags = { m_pCurrentModel->Get_BoneNames() };
-
-	_int					iNumBones = { static_cast<_int>(BoneTags.size()) };
-	if (iNumBones > m_iTopParentBoneIndex)
-	{
-		string				BoneTag = { BoneTags[m_iTopParentBoneIndex] };
-		m_pCurrentModel->Get_Child_BoneIndices(BoneTag, BoneIndices);
-		Add_AnimLayer(m_pCurrentModel, BoneIndices);
-	}
-}
-
-void CTool_BoneLayer::Create_BoneLayer_Indices(list<_uint> BoneIndices)
-{
-	Add_AnimLayer(m_pCurrentModel, BoneIndices);
-}
-
 void CTool_BoneLayer::Release_BoneLayer(const wstring& strBoneLayerTag)
 {
-	m_pCurrentModel->Delete_Bone_Layer(strBoneLayerTag);
+	m_pCurrentModel->Erase_Bone_Layer(strBoneLayerTag);
 }
 
 void CTool_BoneLayer::Release_BoneLayer_CurrentBoneLayer()
@@ -205,20 +175,28 @@ list<wstring> CTool_BoneLayer::Get_BoneLayerTags(CModel* pModel)
 	return pModel->Get_BoneLayer_Tags();
 }
 
-void CTool_BoneLayer::Add_AnimLayer(CModel* pModel, list<_uint> BoneIndices)
-{
-	if (nullptr == pModel)
-		return;
-
-	pModel->Add_Bone_Layer(m_strInputLayerTag, BoneIndices);
-}
-
 void CTool_BoneLayer::Add_AnimLayer_AllBone(CModel* pModel)
 {
 	if (nullptr == pModel)
 		return;
 
 	pModel->Add_Bone_Layer_All_Bone(m_strInputLayerTag);
+}
+
+void CTool_BoneLayer::Add_AnimLayer_ChildBones(CModel* pModel)
+{
+	if (nullptr == pModel)
+		return;
+
+	pModel->Add_Bone_Layer_ChildIndices(m_strInputLayerTag, *m_pCurrentBoneTag);
+}
+
+void CTool_BoneLayer::Add_AnimLayer_Range(CModel* pModel)
+{
+	if (nullptr == pModel)
+		return;
+
+	pModel->Add_Bone_Layer_Range(m_strInputLayerTag, m_iStartBoneIndex, m_iEndBoneIndex);
 }
 
 CTool_BoneLayer* CTool_BoneLayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)

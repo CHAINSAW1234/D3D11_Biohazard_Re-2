@@ -68,12 +68,15 @@ void CModel::Add_AnimPlayingInfo(_uint iAnimIndex, _bool isLoop, _uint iPlayingI
 
 	if (true == isCanCreate)
 	{
+		_uint			iNumChannel = { m_Animations[iAnimIndex]->Get_NumChannel() };
+
 		CPlayingInfo::PLAYING_INFO_DESC		PlayingInfoDesc;
 		PlayingInfoDesc.fBlendWeight = fBlendWeight;
 		PlayingInfoDesc.iAnimIndex = iAnimIndex;
 		PlayingInfoDesc.iNumBones = static_cast<_uint>(m_Bones.size());
 		PlayingInfoDesc.isLoop = isLoop;
 		PlayingInfoDesc.strBoneLayerTag = strBoneLayerTag;
+		PlayingInfoDesc.iNumChannel = iNumChannel;
 
 		CPlayingInfo*		pNewPlayingInfo = { CPlayingInfo::Create(&PlayingInfoDesc) };
 		m_PlayingAnimInfos[iPlayingIndex] = pNewPlayingInfo;
@@ -178,6 +181,21 @@ _bool CModel::Is_Set_RootBone()
 	return isSetRoot;
 }
 
+void CModel::Update_LastKeyFrames(const vector<_float4x4>& TransformationMatrices, _uint iPlayingIndex)
+{
+	CPlayingInfo*		pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+
+	if (nullptr != pPlayingInfo)
+	{
+		_bool			isLinearInterpolation = { pPlayingInfo->Is_LinearInterpolation() };
+		if (false == isLinearInterpolation)
+			return;
+
+		_uint			iNumBones = { static_cast<_uint>(m_Bones.size()) };		
+		pPlayingInfo->Update_LastKeyFrames(TransformationMatrices, iNumBones, m_fTotalLinearTime);
+	}
+}
+
 HRESULT CModel::RagDoll()
 {
 	for (auto& pBone : m_Bones)
@@ -208,22 +226,76 @@ _vector CModel::Compute_Quaternion_From_TwoDirection(_fvector vSrcDirection, _fv
 	return vResultQuaternion;
 }
 
-void CModel::Add_Bone_Layer(const wstring& strLayerTag, list<_uint> BoneIndices)
+void CModel::Add_Bone_Layer_Range(const wstring& strLayerTag, const string& strStartBoneTag, const string& strEndBoneTag)
 {
-	if (true == BoneIndices.empty())
+	_int			iStartBoneIndex = { Find_BoneIndex(strStartBoneTag) };
+	_int			iEndBoneIndex = { Find_BoneIndex(strEndBoneTag) };
+
+	if (0 > iStartBoneIndex || 0 > iEndBoneIndex)
 		return;
 
-	map<wstring, CBone_Layer*>::iterator		iter = { m_BoneLayers.find(strLayerTag) };
-	if (iter != m_BoneLayers.end())
+	Add_Bone_Layer_Range(strLayerTag, static_cast<_uint>(iStartBoneIndex), static_cast<_uint>(iEndBoneIndex));
+}
+
+void CModel::Add_Bone_Layer_Range(const wstring& strLayerTag, _uint iStartBoneIndex, _uint iEndBoneIndex)
+{
+	CBone_Layer*		pBoneLayer = { Find_BoneLayer(strLayerTag) };
+	if (nullptr != pBoneLayer)
 		return;
 
-	set<_uint>		BoneIndicesSet;
-	for (auto& iIndex : BoneIndices)
+	_uint				iNumBones = { static_cast<_uint>(m_Bones.size()) };
+	if (iStartBoneIndex >= iNumBones ||
+		iEndBoneIndex >= iNumBones)
+		return;
+
+	set<_uint>			BoneIndices;
+	for (_uint i = iStartBoneIndex; i <= iEndBoneIndex; ++i)
 	{
-		BoneIndicesSet.emplace(iIndex);
+		BoneIndices.emplace(i);
 	}
 
-	CBone_Layer* pBoneLayer = { CBone_Layer::Create(BoneIndicesSet) };
+	pBoneLayer = CBone_Layer::Create(BoneIndices);
+	if (nullptr == pBoneLayer)
+		return;
+
+	m_BoneLayers.emplace(strLayerTag, pBoneLayer);
+}
+
+void CModel::Add_Bone_Layer_ChildIndices(const wstring& strLayerTag, const string& strBoneTag)
+{
+	_int			iBoneIndex = { Find_BoneIndex(strBoneTag) };
+
+	if (0 > iBoneIndex)
+		return;
+
+	Add_Bone_Layer_ChildIndices(strLayerTag, iBoneIndex);
+}
+
+void CModel::Add_Bone_Layer_ChildIndices(const wstring& strLayerTag, _uint iParentBoneIndex)
+{
+	CBone_Layer*		pBoneLayer = { Find_BoneLayer(strLayerTag) };
+	if (nullptr != pBoneLayer)
+		return;
+
+	_uint				iNumBones = { static_cast<_uint>(m_Bones.size()) };
+	if (iParentBoneIndex >= iNumBones)
+		return;
+
+	string			strBoneTag = { m_Bones[iParentBoneIndex]->Get_Name() };
+
+	list<_uint>				ChildBoneIndices;
+	Get_Child_BoneIndices(strBoneTag, ChildBoneIndices);
+
+	if (true == ChildBoneIndices.empty())
+		return;
+
+	set<_uint>				BoneIndices;
+	for (auto& iChildIndex : ChildBoneIndices)
+	{
+		BoneIndices.emplace(iChildIndex);
+	}
+
+	pBoneLayer = CBone_Layer::Create(BoneIndices);
 	if (nullptr == pBoneLayer)
 		return;
 
@@ -232,11 +304,19 @@ void CModel::Add_Bone_Layer(const wstring& strLayerTag, list<_uint> BoneIndices)
 
 void CModel::Add_Bone_Layer_All_Bone(const wstring& strLayerTag)
 {
-	list<_uint>			BoneIndices;
-	for (_uint i = 0; i < static_cast<_uint>(m_Bones.size()); ++i)
-		BoneIndices.emplace_back(i);
+	CBone_Layer*		pBoneLayer = { Find_BoneLayer(strLayerTag) };
+	if (nullptr != pBoneLayer)
+		return;
 
-	Add_Bone_Layer(strLayerTag, BoneIndices);
+	set<_uint>			BoneIndices;
+	for (_uint i = 0; i < static_cast<_uint>(m_Bones.size()); ++i)
+		BoneIndices.emplace(i);
+
+	pBoneLayer = CBone_Layer::Create(BoneIndices);
+	if (nullptr == pBoneLayer)
+		return;
+
+	m_BoneLayers.emplace(strLayerTag, pBoneLayer);
 }
 
 void CModel::Erase_Bone_Layer(const wstring& strLayerTag)
@@ -409,6 +489,7 @@ void CModel::Apply_AdditionalForce(_uint iBoneIndex)
 		vResultQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(vCurrentQuaternion), XMQuaternionNormalize(vAdditionalQuaternion)) };
 		vResultTranslation = { XMVectorSetW(vCurrentTranslation + vAdditionalTranslation, 1.f) };
 	}
+	m_AdditionalForces[iBoneIndex].clear();
 
 	_matrix			ResultMatrix = { XMMatrixAffineTransformation(vCurrentScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vResultQuaternion, vResultTranslation) };
 	m_Bones[iBoneIndex]->Set_Combined_Matrix(ResultMatrix);
@@ -462,6 +543,9 @@ _float CModel::Compute_Current_TotalWeight(_uint iBoneIndex)
 	_float		fTotalWeight = { 0.f };
 	for (auto& pPlayingInfo : m_PlayingAnimInfos)
 	{
+		if (nullptr == pPlayingInfo)
+			continue;
+
 		_int		iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
 		if (-1 == iAnimIndex)
 			continue;
@@ -533,6 +617,9 @@ void CModel::Apply_RootMotion_Rotation(CTransform* pTransform, _fvector vQuatern
 
 	for (auto& pPlayingInfo : m_PlayingAnimInfos)
 	{
+		if (nullptr == pPlayingInfo)
+			continue;
+
 		_int			iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
 		_bool			isFinished = { pPlayingInfo->Is_Finished() };
 
@@ -540,19 +627,28 @@ void CModel::Apply_RootMotion_Rotation(CTransform* pTransform, _fvector vQuatern
 			continue;
 
 		wstring			strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
-		CBone_Layer* pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
+		CBone_Layer*	pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
 		if (nullptr == pBoneLayer)
 			continue;
 
 		if (false == pBoneLayer->Is_Included(iRootIndex))
 			continue;
 
-		_float4			vPreQuaternion = { pPlayingInfo->Get_PreQuaternion() };
-		_float			fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
-		_vector			vCurrentQuaternion = { XMLoadFloat4(&vPreQuaternion) };
-		vCurrentQuaternion = { XMQuaternionSlerp(vIdentityQuaternion, vCurrentQuaternion, fBlendWeight) };
-		vPreQuaternion = XMQuaternionMultiply(XMQuaternionNormalize(vPreQuaternion), XMQuaternionNormalize(vCurrentQuaternion));
+		//	_vector			vCurrentQuaternion = { XMLoadFloat4(&AnimInfo.vPreQuaternion) };
+		//	vCurrentQuaternion = { XMQuaternionSlerp(vIdentityQuaternion, vCurrentQuaternion, AnimInfo.fWeight) };
 
+
+		_float			fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
+
+		_vector			vCurrentQuaternion = { XMLoadFloat4(&pPlayingInfo->Get_PreQuaternion()) };
+		vCurrentQuaternion = { XMQuaternionSlerp(vIdentityQuaternion, vCurrentQuaternion, fBlendWeight) };
+
+		vPreQuaternion = XMQuaternionNormalize(vCurrentQuaternion);
+
+
+		//	AnimInfo.vPreQuaternion = AnimInfo.LastKeyFrames[iRootIndex].vRotation;
+		// 
+		//	현재 라스트 키프레임의 회전성분을 이전 회전 총합으로 기록
 		KEYFRAME		LastRootBoneKeyFrame = { pPlayingInfo->Get_LastKeyFrame(iRootIndex) };
 		pPlayingInfo->Set_PreQuaternion(LastRootBoneKeyFrame.vRotation);
 	}
@@ -578,30 +674,33 @@ void CModel::Apply_RootMotion_Rotation(CTransform* pTransform, _fvector vQuatern
 	pTransform->Set_WorldMatrix(ResultMatrix);
 }
 
-void CModel::Apply_RootMotion_Translation(CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection, _bool isActiveRotation, _fvector vQuaternion)
+void CModel::Apply_RootMotion_Translation(CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection, _fvector vQuaternion)
 {
 	_vector			vPreTranslation = { XMVectorZero() };
 	_uint			iRootIndex = { static_cast<_uint>(Find_RootBoneIndex()) };
 
 	for (auto& pPlayingInfo : m_PlayingAnimInfos)
 	{
+		if (nullptr == pPlayingInfo)
+			continue;
+
 		_int			iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
 		_bool			isFinished = { pPlayingInfo->Is_Finished() };
 		if (-1 == iAnimIndex || true == isFinished)
 			continue;
 
 		wstring			strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
-		CBone_Layer* pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
+		CBone_Layer*	pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
 		if (nullptr == pBoneLayer)
 			continue;
 
 		if (false == pBoneLayer->Is_Included(iRootIndex))
 			continue;
 
-		_vector			vTranslation = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
+		_vector			vCurrentTranslation = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
 		_float			fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
-		vTranslation = { vTranslation * fBlendWeight };
-		vPreTranslation = vPreTranslation + vTranslation;
+		vCurrentTranslation = { vCurrentTranslation * fBlendWeight };
+		vPreTranslation = vPreTranslation + vCurrentTranslation;
 
 		KEYFRAME		LastRootBoneKeyFrame = { pPlayingInfo->Get_LastKeyFrame(iRootIndex) };
 		pPlayingInfo->Set_PreTranslation(LastRootBoneKeyFrame.vTranslation);
@@ -621,15 +720,6 @@ void CModel::Apply_RootMotion_Translation(CTransform* pTransform, _fvector vTran
 	if (false == m_isRootMotion_Y)
 	{
 		vCurrentMoveDirectionLocal = XMVectorSetY(vCurrentMoveDirectionLocal, 0.f);
-	}
-
-	if (true == isActiveRotation)
-	{
-		_vector			vCurrentQuaternion = { vQuaternion };
-		_vector			vCurrentQuaternionInv = { XMQuaternionNormalize(XMQuaternionInverse(vCurrentQuaternion)) };
-		_matrix			RoatationMatrix = { XMMatrixRotationQuaternion(vCurrentQuaternionInv) };
-
-		vCurrentMoveDirectionLocal = XMVector3TransformNormal(vCurrentMoveDirectionLocal, RoatationMatrix);
 	}
 
 	_vector			vCurrentMoveDirectionWorld;
@@ -798,7 +888,7 @@ string CModel::Find_RootBoneTag()
 
 CPlayingInfo* CModel::Find_PlayingInfo(_uint iPlayingIndex)
 {
-	CPlayingInfo* pPlayingInfo = { nullptr };
+	CPlayingInfo*		pPlayingInfo = { nullptr };
 	_uint				iNumPlayingInfo = { static_cast<_uint>(m_PlayingAnimInfos.size()) };
 	if (iNumPlayingInfo > iPlayingIndex)
 	{
@@ -1051,7 +1141,6 @@ void CModel::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition)
 	}
 }
 
-
 void CModel::Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight)
 {
 	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
@@ -1066,15 +1155,11 @@ void CModel::Change_Animation(_uint iPlayingIndex, _uint iAnimIndex)
 	_uint			iNumAnims = { static_cast<_uint>(m_Animations.size()) };
 	if (iNumAnims > iAnimIndex)
 	{
-		vector<KEYFRAME>			LastKeyFrames;
-		_uint						iNumBones = { static_cast<_uint>(m_Bones.size()) };
-		LastKeyFrames.resize(iNumBones);
-
-		CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+		CPlayingInfo*		pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
 		if (nullptr == pPlayingInfo)
 			return;
 		
-		_uint			iNumChannel = { m_Animations[iAnimIndex]->Get_NumChannel() };
+		_uint				iNumChannel = { m_Animations[iAnimIndex]->Get_NumChannel() };
 		pPlayingInfo->Change_Animation(iAnimIndex, iNumChannel);
 	}
 }
@@ -1316,7 +1401,7 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 	for (_uint i = 0; i < static_cast<_uint>(m_PlayingAnimInfos.size()); ++i)
 	{
 		vector<_float4x4>			TransformationMatrices = { Apply_Animation(fTimeDelta, IncludedBoneIndices, i) };
-		//	애니메이션이 종료되거나 (루프가아닌데 종료), 가중치가 없거나, 애니메이션 인덱스가 등록되지않은경우 빈 행렬을 반환받는다.
+		//	애니메이션이 종료되거나 (루프가아닌데 종료), 가중치가 없거나, 애니메이션 인덱스가 등록되지않은경우 빈 행렬벡터를 반환받는다.
 		TransformationMatricesLayer.push_back(TransformationMatrices);
 	}
 
@@ -1349,64 +1434,82 @@ HRESULT CModel::Render(_uint iMeshIndex)
 	return S_OK;
 }
 
-vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, set<_uint>& IncludedBoneIndices, _uint iPlayingAnimIndex)
+vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, set<_uint>& IncludedBoneIndices, _uint iPlayingIndex)
 {
-	_int							iRootBoneIndex = { Find_RootBoneIndex() };
 	vector<_float4x4>				TransformationMatrices;
-	_bool							isFirstTick = { false };
-	CPlayingInfo*					pPlayingInfo = { Find_PlayingInfo(iPlayingAnimIndex) };
+	CPlayingInfo*					pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
 
 	if (nullptr == pPlayingInfo)
 		return TransformationMatrices;
 
-	_int							iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
-	_int							iPreAnimIndex = { pPlayingInfo->Get_PreAnimIndex() };
-	_bool							isFinished = { pPlayingInfo->Is_Finished() };
-	_bool							isLoop = { pPlayingInfo->Is_Loop() };
-	_bool							isLinearInterpolation = { pPlayingInfo->Is_LinearInterpolation() };
-	wstring							strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
-	_float							fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
-	_float							fAccLinearInterpolation = { pPlayingInfo->Get_AccLinearInterpolation() };
+	const wstring					strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
+	CBone_Layer*					pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
 
+	if (nullptr == pBoneLayer)
+		return TransformationMatrices;
+
+	_bool							isFirstTick = { false };
+	const _int						iRootBoneIndex = { Find_RootBoneIndex() };
+	const _int						iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
+	const _int						iPreAnimIndex = { pPlayingInfo->Get_PreAnimIndex() };
+	const _bool						isFinished = { pPlayingInfo->Is_Finished() };
+	const _float					fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
+	const _uint						iNumBones = { static_cast<_uint>(m_Bones.size()) };
+
+	//	현재 등록된 애니메이션이 없거나
+	//	블렌드 웨이트가 0이하 => 섞지않을 애니메이션
+	//	종료된 애니메이션 ( 루프도 아님 )
 	if (-1 == iAnimIndex || 0.f >= fBlendWeight || true == isFinished)
 		return TransformationMatrices;
 
-	set<_uint>					TempIncludedBoneIndices;
-	TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix(fTimeDelta, isLoop, static_cast<_uint>(m_Bones.size()), TempIncludedBoneIndices, &isFirstTick, pPlayingInfo);
+	set<_uint>						TempIncludedBoneIndices = pBoneLayer->Get_IncludedBoneIndices();
+	TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix(fTimeDelta, iNumBones, TempIncludedBoneIndices, &isFirstTick, pPlayingInfo);
+	for (auto& iBoneIndex : TempIncludedBoneIndices)
+	{
+		IncludedBoneIndices.emplace(iBoneIndex);
+	}
+
 	if (true == TransformationMatrices.empty())
 		return TransformationMatrices;
 
-	if (true == isFirstTick)
+	if (true == isFirstTick && 
+		-1 != iPreAnimIndex)
 	{
-		if (-1 != iPreAnimIndex)
-		{
-			m_PlayingAnimInfos[iPlayingAnimIndex]->Set_LinearInterpolation(true);
-			m_PlayingAnimInfos[iPlayingAnimIndex]->Set_AccLinearInterpolation(0.f);
-		}
+		pPlayingInfo->Reset_LinearInterpolation();
+		pPlayingInfo->Set_LinearInterpolation(true);
 	}
 
-	//	현재 애니메이션이 해당된 본 레이어의 뼈들만 영향받은 뼈에 등록한다.
+	//	현재 애니메이션이 해당된 본 레이어의 뼈들만 영향받은 뼈에 등록한다.	
 	for (_uint iBoneIndex : TempIncludedBoneIndices)
 	{
-		if (true == m_BoneLayers[strBoneLayerTag]->Is_Included(iBoneIndex))
+		if (true == pBoneLayer->Is_Included(iBoneIndex))
 			IncludedBoneIndices.emplace(iBoneIndex);
 	}
 
 	//	애니메이션이 선형보간중이었다면 선형보간된 매트릭스로 재 업데이트한다.
-	Update_LinearInterpolation(fTimeDelta, iPlayingAnimIndex);
+	Update_LinearInterpolation(fTimeDelta, iPlayingIndex);
 
+	const _float					fAccLinearInterpolation = { pPlayingInfo->Get_AccLinearInterpolation() };
+	const _bool						isLinearInterpolation = { pPlayingInfo->Is_LinearInterpolation() };
 	const vector<KEYFRAME>&			LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
+
+	//	선형 보간시 루트 모션시 새로운 시작 변위와 (원점에서 시작하지않는 모션등...)와 선형 보간 이전 키프레임들에서의 변위와의 차이 만큼 빨려들어감 방지 =>	별도 디벨롭 더 필요해요보임
 	if (true == isLinearInterpolation)
 	{
+		//	애니메이션 재생 결과 매트릭스
 		_matrix			RootTransformationMatrix = { XMLoadFloat4x4(&TransformationMatrices[iRootBoneIndex]) };
 		_vector			vRootScale, vRootQuaternion, vRootTranslation;
 
 		XMMatrixDecompose(&vRootScale, &vRootQuaternion, &vRootTranslation, RootTransformationMatrix);
 
+		//	선형 보간 이전 최종적으로 등록되어있던 매트릭스 
 		_vector			vLastTranslation = { XMLoadFloat3(&LastKeyFrames[iRootBoneIndex].vTranslation) };
+		//	_vector			vLastTranslation = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
 		_vector			vLastQuaternion = { XMLoadFloat4(&LastKeyFrames[iRootBoneIndex].vRotation) };
+		//	_vector			vLastQuaternion = { XMLoadFloat4(&pPlayingInfo->Get_PreQuaternion()) };
 		_vector			vResultTranslation = { vLastTranslation };
 
+		//	현재 루트본의 트랜스폼에 등록된 이동 및 회전 성분을 그대로 씌운다 => 다음 애니메이션에서 시작지점을 세팅하는 느낌
 		if (true == m_isRootMotion_XZ)
 		{
 			vResultTranslation = XMVectorSetX(vResultTranslation, XMVectorGetX(vRootTranslation));
@@ -1431,17 +1534,17 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, set<_uint>& Include
 	if (true == isFirstTick)
 	{
 		_matrix			RootTransformationMatrix = { XMLoadFloat4x4(&TransformationMatrices[iRootBoneIndex]) };
-		_vector			vScale, vQuaternion, vTranslation;
+		_vector			vRootScale, vRootQuaternion, vRootTranslation;
 
-		XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, RootTransformationMatrix);
+		XMMatrixDecompose(&vRootScale, &vRootQuaternion, &vRootTranslation, RootTransformationMatrix);
 
 		if (true == m_isRootMotion_XZ)
 		{
 			_vector			vPreTranslationLocal = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
-			_vector			vResultTranslationLocal;
+			_vector			vResultTranslationLocal = { };
 
-			vResultTranslationLocal = XMVectorSetX(vPreTranslationLocal, XMVectorGetX(vTranslation));
-			vResultTranslationLocal = XMVectorSetZ(vResultTranslationLocal, XMVectorGetZ(vTranslation));
+			vResultTranslationLocal = XMVectorSetX(vPreTranslationLocal, XMVectorGetX(vRootTranslation));
+			vResultTranslationLocal = XMVectorSetZ(vPreTranslationLocal, XMVectorGetZ(vRootTranslation));
 
 			pPlayingInfo->Set_PreTranslation(vResultTranslationLocal);
 		}
@@ -1451,23 +1554,19 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, set<_uint>& Include
 			_vector			vPreTranslationLocal = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
 			_vector			vResultTranslationLocal;
 
-			vResultTranslationLocal = XMVectorSetY(vPreTranslationLocal, XMVectorGetY(vTranslation));
+			vResultTranslationLocal = XMVectorSetY(vPreTranslationLocal, XMVectorGetY(vRootTranslation));
 
 			pPlayingInfo->Set_PreTranslation(vResultTranslationLocal);
 		}
 
 		if (true == m_isRootMotion_Rotation)
 		{
-			pPlayingInfo->Set_PreQuaternion(vQuaternion);
+			pPlayingInfo->Set_PreQuaternion(vRootQuaternion);
 		}
 	}
 
 	//	선형 보간중이아니었다면 이후에 일어날 선형 보간을 대비하여 마지막 키프레임들을 저장한다.
-	if (false == isLinearInterpolation)
-	{
-		_uint		iNumBones = { static_cast<_uint>(m_Bones.size()) };
-		pPlayingInfo->Update_LastKeyFrames(TransformationMatrices, iNumBones, m_fTotalLinearTime);
-	}
+	Update_LastKeyFrames(TransformationMatrices, iPlayingIndex);
 
 	return TransformationMatrices;
 }
@@ -1481,11 +1580,8 @@ void CModel::Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMoved
 		_bool		isRootBone = { m_Bones[iBoneIndex]->Is_RootBone() };
 		if (true == isRootBone)
 		{
-			_float4			vTranslation = { 0.f, 0.f, 0.f, 1.f };		_float4			vQuaternion = {};
-			_float4* pTranslation = { &vTranslation };			_float4* pQuaternion = { &vQuaternion };
-
-			//	if (false == m_isRootMotion_Rotation) { pQuaternion = nullptr; }
-			//	if (false == m_isRootMotion_XZ && false == m_isRootMotion_Y) { pTranslation = nullptr; }
+			_float4			vTranslation = { 0.f, 0.f, 0.f, 1.f };			_float4			vQuaternion = {};
+			_float4*		pTranslation = { &vTranslation };				_float4*		pQuaternion = { &vQuaternion };
 
 			m_Bones[iBoneIndex]->Invalidate_CombinedTransformationMatrix_RootMotion(m_Bones, m_TransformationMatrix, m_isRootMotion_XZ, m_isRootMotion_Y, m_isRootMotion_Rotation, pTranslation, pQuaternion);
 
@@ -1493,7 +1589,7 @@ void CModel::Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMoved
 				Apply_RootMotion_Rotation(pTransform, XMLoadFloat4(&vQuaternion), pTranslation);
 
 			if (true == m_isRootMotion_XZ || true == m_isRootMotion_Y)
-				Apply_RootMotion_Translation(pTransform, XMLoadFloat4(&vTranslation), pMovedDirection, m_isRootMotion_Rotation, XMLoadFloat4(&vQuaternion));
+				Apply_RootMotion_Translation(pTransform, XMLoadFloat4(&vTranslation), pMovedDirection, XMLoadFloat4(&vQuaternion));
 		}
 
 		else
@@ -1510,10 +1606,10 @@ vector<_float4x4> CModel::Compute_ResultMatrices(const vector<vector<_float4x4>>
 	vector<_float4x4>			ResultTransformationMatrices = { Initialize_ResultMatrices(IncludedBoneIndices) };
 
 	//	결과행렬을 계산한다 => 얻어온 모든 행렬을 각 뼈의 인덱스에 해당하는 인덱스들에 결과행렬을 각 저장한다.
-	_uint		iPlayingInfoIndex = { 0 };
+	_uint					iPlayingInfoIndex = { 0 };
 	for (auto& AnimLayer : TransformationMatricesLayer)
 	{
-		CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingInfoIndex) };
+		CPlayingInfo*		pPlayingInfo = { Find_PlayingInfo(iPlayingInfoIndex) };
 		if (nullptr == pPlayingInfo)
 			continue;
 
@@ -1521,27 +1617,32 @@ vector<_float4x4> CModel::Compute_ResultMatrices(const vector<vector<_float4x4>>
 		wstring				strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
 		_float				fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
 
-		//	각 변환행렬을 결과행렬에 가산한다 => 웨이트를 적용하여 가산한다.
-		for (_uint iBoneIndex : IncludedBoneIndices)
-		{
-			if (-1 == iAnimIndex)
-				continue;
+		if (-1 == iAnimIndex || 0.f >= fBlendWeight)
+			continue;
 
-			if (false == m_BoneLayers[strBoneLayerTag]->Is_Included(iBoneIndex))
+		CBone_Layer*		pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
+		if (nullptr == pBoneLayer)
+			continue;
+
+		//	각 변환행렬을 결과행렬에 가산한다 => 웨이트를 적용하여 가산한다.
+		//	각자의 가중치 만큼 보간하여 더해준 매트릭스 만들기 => 0.3 + 0.4 + 0.3 이런식으로 마지막에 최종적으로 혼합된 매트릭스가 만들어짐
+		for (_uint iBoneIndex : IncludedBoneIndices)
+		{		
+			if (false == pBoneLayer->Is_Included(iBoneIndex))
 				continue;
 
 			_float			fTotalWeight = { Compute_Current_TotalWeight(iBoneIndex) };
 			if (0.f >= fTotalWeight)
 				continue;
 
-			_float			fWeight = { fBlendWeight / fTotalWeight };
-			if (0.f >= fWeight)
+			_float			fWeightRatio = { fBlendWeight / fTotalWeight };
+			if (0.f >= fWeightRatio)
 				continue;
 
 			_matrix			ResultMatrix = { XMLoadFloat4x4(&ResultTransformationMatrices[iBoneIndex]) };
 			_matrix			TransformationMatrix = { XMLoadFloat4x4(&TransformationMatricesLayer[iPlayingInfoIndex][iBoneIndex]) };
 
-			_float4x4		ResultFloat4x4 = { Compute_BlendTransformation_Additional(ResultMatrix, TransformationMatrix, fWeight) };
+			_float4x4		ResultFloat4x4 = { Compute_BlendTransformation_Additional(ResultMatrix, TransformationMatrix, fWeightRatio) };
 
 			XMStoreFloat4x4(&ResultTransformationMatrices[iBoneIndex], XMLoadFloat4x4(&ResultFloat4x4));
 		}
@@ -1558,10 +1659,10 @@ void CModel::Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& Trans
 	//	영향을 받은뼈는 항등 행렬로 초기화 후 이후 과정에서 행렬을 블렌드한다.
 	vector<_float4x4>		ResultTransformationMatrices = { Compute_ResultMatrices(TransformationMatricesLayer, IncludedBoneIndices) };
 
-	_int	iRootBoneIndex = { Find_RootBoneIndex() };
-
+	const _int				iRootBoneIndex = { Find_RootBoneIndex() };
 	for (_uint iBoneIndex = 0; iBoneIndex < m_Bones.size(); ++iBoneIndex)
 	{
+		//	포함되지 않은 ( 업데이트가 되지않은 ) 뼈는 건너뛴다.
 		set<_uint>::iterator		iter = { find(IncludedBoneIndices.begin(), IncludedBoneIndices.end(), iBoneIndex) };
 		if (iter == IncludedBoneIndices.end())
 			continue;
@@ -1572,9 +1673,7 @@ void CModel::Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& Trans
 		XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, ResultMatrix);
 
 		vScale -= XMVectorSet(1.f, 1.f, 1.f, 0.f);
-
 		ResultMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
-
 		XMStoreFloat4x4(&ResultTransformationMatrices[iBoneIndex], ResultMatrix);
 	}
 
@@ -1632,59 +1731,17 @@ void CModel::Motion_Changed(_uint iPlayingIndex)
 	}
 }
 
-void CModel::Update_LastKeyFrames(const vector<_float4x4>& TransformationMatrices, vector<KEYFRAME>& LastKeyFrames)
-{
-	LastKeyFrames.clear();
-
-	for (_uint iBoneIndex = 0; iBoneIndex < static_cast<_uint>(m_Bones.size()); ++iBoneIndex)
-	{
-		_vector			vScale, vRotation, vTranslation;
-		KEYFRAME		KeyFrame;
-		_matrix			TransformationMatrix = { XMLoadFloat4x4(&TransformationMatrices[iBoneIndex]) };
-
-		XMMatrixDecompose(&vScale, &vRotation, &vTranslation, TransformationMatrix);
-
-		XMStoreFloat3(&KeyFrame.vScale, vScale);
-		XMStoreFloat4(&KeyFrame.vRotation, vRotation);
-		XMStoreFloat3(&KeyFrame.vTranslation, vTranslation);
-		KeyFrame.fTime = m_fTotalLinearTime;
-
-		LastKeyFrames.push_back(KeyFrame);
-	}
-}
-
-void CModel::Update_LastKeyFrames_Bones(vector<KEYFRAME>& LastKeyFrames)
-{
-	LastKeyFrames.clear();
-
-	for (auto& pBone : m_Bones)
-	{
-		_vector			vScale, vRotation, vTranslation;
-		KEYFRAME		KeyFrame;
-		_matrix			TransformationMatrix = { pBone->Get_TrasformationMatrix() };
-
-		XMMatrixDecompose(&vScale, &vRotation, &vTranslation, TransformationMatrix);
-
-		XMStoreFloat3(&KeyFrame.vScale, vScale);
-		XMStoreFloat4(&KeyFrame.vRotation, vRotation);
-		XMStoreFloat3(&KeyFrame.vTranslation, vTranslation);
-		KeyFrame.fTime = m_fTotalLinearTime;
-
-		LastKeyFrames.push_back(KeyFrame);
-	}
-}
-
 void CModel::Update_LinearInterpolation(_float fTimeDelta, _uint iPlayingIndex)
 {
 	CPlayingInfo*			pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
-	if (nullptr != pPlayingInfo)
+	const _bool				isLinearInterpolation = { pPlayingInfo->Is_LinearInterpolation() };
+	if (nullptr != pPlayingInfo && 
+		true == isLinearInterpolation)
 	{
-		if (false == pPlayingInfo->Is_LinearInterpolation())
-			return;
-
 		pPlayingInfo->Add_AccLinearInterpolation(fTimeDelta);
-		_float			fAccLinearInterpolation = { pPlayingInfo->Get_AccLinearInterpolation() };
-		if (m_fTotalLinearTime <= fAccLinearInterpolation)
+
+		const _float			fResultAccLinearInterpolation = { pPlayingInfo->Get_AccLinearInterpolation() };
+		if (m_fTotalLinearTime <= fResultAccLinearInterpolation)
 		{
 			pPlayingInfo->Reset_LinearInterpolation();
 		}

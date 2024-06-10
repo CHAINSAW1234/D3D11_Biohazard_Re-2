@@ -39,18 +39,15 @@ private:
 	void							Show_Default();
 
 private:
-	void							Create_BoneLayer_AllBone();
-	void							Create_BoneLayer_ChildBones();
-	void							Create_BoneLayer_Indices(list<_uint> BoneIndices);
-
 	void							Release_BoneLayer(const wstring& strBoneLayerTag);	
 	void							Release_BoneLayer_CurrentBoneLayer();
 
 	list<wstring>					Get_BoneLayerTags(CModel* pModel);
 
 private:
-	void							Add_AnimLayer(CModel* pModel, list<_uint> BoneIndices);
 	void							Add_AnimLayer_AllBone(CModel* pModel);
+	void							Add_AnimLayer_ChildBones(CModel* pModel);
+	void							Add_AnimLayer_Range(CModel* pModel);
 
 private:
 	//	레이어 생성할 시 레이어 태그로 사용될 태그 입력란

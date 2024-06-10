@@ -47,6 +47,7 @@ void CTool_AnimPlayer::Tick(_float fTimeDelta)
 
 	Apply_RootMotion();
 
+	Change_Animation();
 	Play_Animation(fTimeDelta);
 	TrackPosition_Controller();
 
@@ -103,6 +104,30 @@ void CTool_AnimPlayer::Play_Animation(_float fTimeDelta)
 			}
 		}
 	}
+}
+
+void CTool_AnimPlayer::Change_Animation()
+{
+	if (nullptr == m_pCurrentModel || nullptr ==m_pCurrentAnimation)
+	{
+		return;
+	}
+
+	vector<CAnimation*>			Animations = { m_pCurrentModel->Get_Animations() };
+	_uint						iNumAnim = { static_cast<_uint>(Animations.size()) };
+
+	_int						iAnimIndex = { -1 };
+	for (_uint i = 0; i < iNumAnim; ++i)
+	{
+		if (Animations[i] == m_pCurrentAnimation)
+			iAnimIndex = static_cast<_int>(i);
+	}
+
+	if (-1 == iAnimIndex)
+		return;
+	
+	//	TODO:			플레잉인덱스 변수화하기
+	m_pCurrentModel->Change_Animation(0, iAnimIndex);
 }
 
 HRESULT CTool_AnimPlayer::Set_Models_Ptr(map<string, CModel*>* pModels)
@@ -228,7 +253,8 @@ _float CTool_AnimPlayer::Get_CurrentPlayingInfo_Duration()
 	if (-1 == iPlayingIndex)
 		return 0.f;
 
-	_float			fDuration = { m_pCurrentModel->Get_Duration(iPlayingIndex) };
+	
+	_float			fDuration = { m_pCurrentModel->Get_Duration_From_PlayingInfo(iPlayingIndex) };
 
 	return fDuration;
 }
@@ -266,12 +292,11 @@ _uint CTool_AnimPlayer::Get_CurrentKeyFrame()
 	if (nullptr == m_pCurrentAnimation)
 		return 0;
 
-	vector<_uint>		KeyFrameIndices = { m_pCurrentAnimation->Get_CurrentKeyFrameIndices() };
+	_int		iPlayingIndex = { Find_LastPlayingIndex(*m_pCurrentModelTag) };
+	if (-1 == iPlayingIndex)
+		return 0;
 
-	_uint		iCurrentKeyFrame = { 0 };
-	for (auto& iKeyFrame : KeyFrameIndices)
-		if (iCurrentKeyFrame < iKeyFrame)
-			iCurrentKeyFrame = iKeyFrame;
+	_uint		iCurrentKeyFrame = { m_pCurrentModel->Get_CurrentMaxKeyFrameIndex(iPlayingIndex) };
 
 	return iCurrentKeyFrame;
 }
@@ -419,7 +444,7 @@ void CTool_AnimPlayer::Create_PlayingDesc()
 			AnimDesc.isLoop = isLoop;
 		}
 
-		m_pCurrentModel->Set_AnimPlayingInfo(AnimDesc, iPlayingIndex);
+		m_pCurrentModel->Add_AnimPlayingInfo(iAnimIndex, isLoop, iPlayingIndex, *m_pCurrentBoneLayerTag, fWeight);
 	}
 	return;
 }

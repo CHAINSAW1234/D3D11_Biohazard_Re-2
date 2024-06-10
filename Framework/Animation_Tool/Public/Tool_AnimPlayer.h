@@ -28,6 +28,7 @@ public:
 
 public:
 	void										Play_Animation(_float fTimeDelta);
+	void										Change_Animation();
 	HRESULT										Set_Models_Ptr(map<string, CModel*>* pModels);
 	void										Set_Current_Model(CModel* pModel);
 	void										Set_Current_Animation(CAnimation* pAnimation);

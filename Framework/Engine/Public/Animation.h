@@ -35,7 +35,7 @@ public:		/* For.PlayAnimation */
 	void									Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _bool* pFirsltTick, class CPlayingInfo* pPlayingInfo);
 	void									Invalidate_TransformationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, const vector<class CBone*>& Bones, const vector<KEYFRAME>& LastKeyFrames);
 
-	vector<_float4x4>						Compute_TransfromationMatrix(_float fTimeDelta, _bool isLoop, _uint iNumBones, set<_uint>& IncludedBoneIndices, _bool* pFirstTick, class CPlayingInfo* pPlayingInfo);
+	vector<_float4x4>						Compute_TransfromationMatrix(_float fTimeDelta, _uint iNumBones, set<_uint>& IncludedBoneIndices, _bool* pFirstTick, class CPlayingInfo* pPlayingInfo);
 	vector<_float4x4>						Compute_TransfromationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, vector<_float4x4>& TransformationMatrices, _uint iNumBones, const vector<KEYFRAME>& LastKeyFrames);
 
 public:		/* For.Access */

@@ -42,12 +42,18 @@ public:		/* For.RootAnimaition ActiveControll */
 	void									Set_RootBone(string strBoneTag);			//	모든본을 초기화 => 루트본은 하나다 가정후 찾은 본을 루트본으로 등록
 	
 	_bool									Is_Set_RootBone();
+	void									Update_LastKeyFrames(const vector<_float4x4>& TransformationMatrices, _uint iPlayingIndex);
 
 private:	/* Utillity */
 	_vector									Compute_Quaternion_From_TwoDirection(_fvector vSrcDirection, _fvector vDstDirection);
 
 public:		/* For.Bone_Layer */
-	void									Add_Bone_Layer(const wstring& strLayerTag, list<_uint> BoneIndices);
+	void									Add_Bone_Layer_Range(const wstring& strLayerTag, const string& strStartBoneTag, const string& strEndBoneTag);
+	void									Add_Bone_Layer_Range(const wstring& strLayerTag, _uint iStartBoneIndex, _uint iEndBoneIndex);
+
+	void									Add_Bone_Layer_ChildIndices(const wstring& strLayerTag, const string& strBoneTag);
+	void									Add_Bone_Layer_ChildIndices(const wstring& strLayerTag, _uint iParentBoneIndex);
+
 	void									Add_Bone_Layer_All_Bone(const wstring& strLayerTag);
 	void									Erase_Bone_Layer(const wstring& strLayerTag);
 
@@ -89,7 +95,7 @@ public:		/*For Physics Collider*/
 
 private:
 	void									Apply_RootMotion_Rotation(class CTransform* pTransform, _fvector vQuaternion, _float4* pTranslation);
-	void									Apply_RootMotion_Translation(class CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection, _bool isActiveRotation, _fvector vQuaternion = XMQuaternionIdentity());
+	void									Apply_RootMotion_Translation(class CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection, _fvector vQuaternion = XMQuaternionIdentity());
 	void									Apply_Translation_Inverse_Rotation(_fvector vTranslation);
 
 public:
