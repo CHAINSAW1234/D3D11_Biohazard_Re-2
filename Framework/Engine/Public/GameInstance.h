@@ -245,7 +245,7 @@ public:/*For Physics Controller*/
 	void									SetBone_Ragdoll(vector<class CBone*>* vecBone);
 	void									SetWorldMatrix(_float4x4 WorldMatrix);
 	void									SetRotationMatrix(_float4x4 RotationMatrix);
-	class CCharacter_Controller*			Create_Controller(_float4 Pos, _int* Index, class CGameObject* pCharacter);
+	class CCharacter_Controller*			Create_Controller(_float4 Pos, _int* Index, class CGameObject* pCharacter,_float fHeight,_float fRadius);
 	void									Cook_Terrain();
 	void									Simulate();
 	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);

@@ -50,7 +50,6 @@ HRESULT CProps::Initialize(void* pArg)
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 	m_pModelCom->Static_Mesh_Cooking();
 
-
 	//m_pOctree = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 	//m_pOctree->GetSceneDimensions(m_pModelCom);
 	//int TotalTriangleCount = m_pOctree->GetSceneTriangleCount(m_pModelCom);

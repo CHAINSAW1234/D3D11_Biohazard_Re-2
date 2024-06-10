@@ -33,7 +33,7 @@ public:
 	virtual HRESULT				Render() override;
 
 public://For AIController
-	HRESULT	Init_BehaviorTree_Zombie();
+	void						Init_BehaviorTree_Zombie();
 
 private:
 	CModel*						m_pModelCom = { nullptr };

@@ -45,7 +45,7 @@ HRESULT CMonster::Initialize(void * pArg)
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(static_cast<_float>(rand() % 20), 0.f, static_cast<_float>(rand() % 20), 1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
-	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this);
+	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this,1.f,0.35f);
 
 	return S_OK;
 }
@@ -105,7 +105,7 @@ HRESULT CMonster::Render()
 	return S_OK;
 }
 
-HRESULT CMonster::Init_BehaviorTree_Zombie()
+void CMonster::Init_BehaviorTree_Zombie()
 {
 	m_pBehaviorTree = m_pGameInstance->Create_BehaviorTree(&m_iAIController_ID);
 

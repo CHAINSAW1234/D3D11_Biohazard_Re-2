@@ -44,7 +44,7 @@ private:
 
 #pragma region Physics_Component 
 public:
-	class CCharacter_Controller*			Create_Controller(_float4 Pos, _int* Index,class CGameObject* pCharacter);
+	class CCharacter_Controller*			Create_Controller(_float4 Pos, _int* Index,class CGameObject* pCharacter,_float fHeight,_float fRadius);
 	void									Create_Rigid_Dynamic(_float4 Pos);
 	void									Create_Rigid_Static(_float4 Pos);
 	class CCharacter_Controller*			GetCharacter_Controller(_int Index);
