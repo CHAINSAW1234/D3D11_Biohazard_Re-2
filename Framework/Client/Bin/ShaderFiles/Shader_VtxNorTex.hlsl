@@ -7,11 +7,11 @@ texture2D	g_DiffuseTexture[2];
 texture2D	g_MaskTexture;
 texture2D	g_BrushTexture;
 
-vector		g_vBrushPos = vector(00.f, 0.0f, 20.f, 1.f);
+vector		g_vBrushPos = vector(0.0f, 0.0f, 20.f, 1.f);
 float		g_fBrushRange = 10.f;
 
 struct VS_IN
-{
+{	
 	float3		vPosition : POSITION;
 	float3		vNormal : NORMAL;
 	float2		vTexcoord : TEXCOORD0;

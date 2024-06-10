@@ -33,8 +33,9 @@ private:
 	HRESULT Ready_Layer_UI(const wstring& strLayerTag);
 	
 private:
-	void CreatFromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj);
-
+	void UI_Distinction(wstring& selectedFilePath);
+	void CreatFromDat(ifstream& inputFileStream, string strListName, CGameObject* pGameParentsObj, wstring fileName);
+	
 	wstring StringToWstring(const std::string& strString)
 	{
 		std::setlocale(LC_ALL, "");

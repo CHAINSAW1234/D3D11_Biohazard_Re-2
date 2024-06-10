@@ -61,6 +61,7 @@ protected:
 
 protected:
 	HRESULT Add_Component(_uint iLevelIndex, const wstring& strPrototypeTag, const wstring& strComponentTag, class CComponent** ppOut, void* pArg = nullptr);
+	HRESULT Change_Component(_uint iLevelIndex, const wstring& strPrototypeTag, const wstring& strComponentTag, CComponent** ppOut, void* pArg = nullptr );
 
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;

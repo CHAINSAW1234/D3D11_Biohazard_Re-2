@@ -40,7 +40,7 @@ private:
 	typedef map<const wstring, class CComponent*>	PROTOTYPES;
 	_uint											m_iNumLevels = { 0 };
 
-private:
+public:
 	class CComponent*								Find_Prototype(_uint iLevelIndex, const wstring& strPrototypeTag);
 
 public:

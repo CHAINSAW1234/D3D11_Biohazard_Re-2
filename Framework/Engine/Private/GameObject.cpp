@@ -98,6 +98,28 @@ HRESULT CGameObject::Add_Component(_uint iLevelIndex, const wstring & strPrototy
 	return S_OK;
 }
 
+HRESULT CGameObject::Change_Component(_uint iLevelIndex, const wstring& strPrototypeTag, const wstring& strComponentTag, CComponent** ppOut, void* pArg)
+{
+	CComponent* pComponent = m_pGameInstance->Clone_Component(iLevelIndex, strPrototypeTag, pArg);
+	if (nullptr == pComponent)
+		return E_FAIL;
+
+	auto iter = m_Components.find(strComponentTag);
+	if (iter != m_Components.end())
+	{
+		Safe_Release(iter->second);
+	}
+
+	m_Components.emplace(strComponentTag, pComponent);
+
+	*ppOut = pComponent;
+
+	Safe_AddRef(pComponent);
+
+	return S_OK;
+}
+
+
 void CGameObject::Free()
 {
 	__super::Free();

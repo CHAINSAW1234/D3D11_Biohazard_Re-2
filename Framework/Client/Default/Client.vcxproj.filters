@@ -82,6 +82,21 @@
     <Filter Include="02.GameObjects\CustomCollider">
       <UniqueIdentifier>{66bce26c-c0c8-4789-bb6a-591f64bef163}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\1. Crosshair">
+      <UniqueIdentifier>{de31e2a8-de06-4aa6-9adc-e319f9ef451f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\2. Cursor">
+      <UniqueIdentifier>{a6a85258-66c2-4d03-a771-07c4fb843049}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\3. Inventory">
+      <UniqueIdentifier>{480eb32d-ce0b-4c0e-9e44-864624d90274}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\3. Inventory\1. Inventory Item">
+      <UniqueIdentifier>{0ecab370-b1e7-4ba2-98ef-c2d58e26d1a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\4. HP Bar">
+      <UniqueIdentifier>{0c7a9a8f-c48d-4e15-99be-fe77c934ffef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -168,6 +183,21 @@
     <ClInclude Include="..\Public\CustomCollider.h">
       <Filter>02.GameObjects\CustomCollider</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Crosshair_UI.h">
+      <Filter>02.GameObjects\UI\1. Crosshair</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cursor_UI.h">
+      <Filter>02.GameObjects\UI\2. Cursor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Inventory.h">
+      <Filter>02.GameObjects\UI\3. Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Inventory_Item_UI.h">
+      <Filter>02.GameObjects\UI\3. Inventory\1. Inventory Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\HPBar_UI.h">
+      <Filter>02.GameObjects\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -238,6 +268,21 @@
     </ClCompile>
     <ClCompile Include="..\Private\CustomCollider.cpp">
       <Filter>02.GameObjects\CustomCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Crosshair_UI.cpp">
+      <Filter>02.GameObjects\UI\1. Crosshair</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cursor_UI.cpp">
+      <Filter>02.GameObjects\UI\2. Cursor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Inventory.cpp">
+      <Filter>02.GameObjects\UI\3. Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Inventory_Item_UI.cpp">
+      <Filter>02.GameObjects\UI\3. Inventory\1. Inventory Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HPBar_UI.cpp">
+      <Filter>02.GameObjects\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

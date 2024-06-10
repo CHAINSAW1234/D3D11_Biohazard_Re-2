@@ -34,9 +34,27 @@ public:
 	_vector						Get_Position_Vector();
 	void						SetPlayer(CGameObject* pPlayer);
 	void						LookAt(_float4 vPoint);
+
+public:
+	void	Set_Crosshair_Aiming(_bool _aiming) {
+		m_isCrosshair_Aiming = _aiming;
+	}
+	void	Set_FixedMouse(_bool _Fixed) { m_isFixedMouse = _Fixed;  }
+
 private:
-	_float						m_fMouseSensor = { 0.0f };
-	class CPlayer* m_pPlayer = { nullptr };
+	_float						m_fMouseSensor	= { 0.0f };
+	_float						m_fOriginFovy	= { 0.0f };
+	_bool						m_isFixedMouse	= { true };
+
+	class CPlayer*				m_pPlayer		= { nullptr };
+
+
+private:
+	_float EaseInQuint(_float start, _float end, _float value);
+
+private: /* UI */
+	_bool			m_isCrosshair_Aiming = { false };
+
 
 public:
 	static CCamera_Free* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

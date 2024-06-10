@@ -35,6 +35,11 @@ float g_fMaskSpeed;
 float g_fMaskTime;
 float2 g_MaskType;
 
+
+// Client 
+bool g_isLightMask;
+float4 g_vLightMask_Color;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -168,8 +173,26 @@ PS_OUT PS_MAIN(PS_IN In)
         MaskTexcoord.g += g_fMaskTime * g_MaskType.y;
 
         float value = g_MaskTexture.Sample(LinearSampler, MaskTexcoord).r;
-        float alpha = smoothstep(g_fMaskControl.x, g_fMaskControl.x + g_fMaskControl.y, value + (1.0 - g_fMaskControl.y));
-        Out.vColor *= float4(Out.vColor.rgb, alpha);
+         
+        /* Light Mask */
+        /* HP Bar를 임의로 블랜딩 함, : 나중에 쓸 일 있을 때 바꿀 것 */
+        float blendFactor = 1.0 - value;
+        float4 LightColor = float4(min(g_vLightMask_Color.r, 1.0f), min(g_vLightMask_Color.g + 0.5f, 1.0f), min(g_vLightMask_Color.b + 0.2f, 1.0f), Out.vColor.a);
+        float4 finalColor = lerp(Out.vColor, LightColor, blendFactor);
+        
+        if (true == g_isLightMask)
+        {
+            Out.vColor = finalColor;
+        }
+        
+        else if (false == g_isLightMask)
+        {
+            float alpha = smoothstep(g_fMaskControl.x, g_fMaskControl.x + g_fMaskControl.y, value + (1.0 - g_fMaskControl.y));
+            
+            Out.vColor.rgb = finalColor.rgb;
+            Out.vColor.a *= alpha;
+        }
+
     }
     
     return Out;

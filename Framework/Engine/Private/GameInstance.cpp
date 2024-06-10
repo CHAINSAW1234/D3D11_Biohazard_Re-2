@@ -184,8 +184,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	if(m_pObject_Manager)
 		m_pObject_Manager->Late_Tick(fTimeDelta);
 	
-	if (m_pPhysics_Controller)
-		m_pPhysics_Controller->Simulate(fTimeDelta);
+	/*if (m_pPhysics_Controller)
+		m_pPhysics_Controller->Simulate(fTimeDelta);*/
 }
 
 HRESULT CGameInstance::Begin_Draw(const _float4 & vClearColor)
@@ -417,6 +417,15 @@ HRESULT CGameInstance::Add_Prototype(const wstring & strPrototypeTag, CGameObjec
 
 	return m_pObject_Manager->Add_Prototype(strPrototypeTag, pPrototype);	
 }
+
+CComponent* CGameInstance::Find_Prototype(_uint iLevelIndex, const wstring& strPrototypeTag)
+{
+	if (nullptr == m_pComponent_Manager)
+		return nullptr;
+
+	return m_pComponent_Manager->Find_Prototype(iLevelIndex, strPrototypeTag);
+}
+
 
 HRESULT CGameInstance::Add_Clone(_uint iLevelIndex, const wstring & strLayerTag, const wstring & strPrototypeTag, void * pArg)
 {
