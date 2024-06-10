@@ -243,7 +243,7 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\Skeletal_Mesh.cpp" />
     <ClCompile Include="..\Private\Skeleton.cpp" />
     <ClCompile Include="..\Private\Sound_Manager.cpp" />
-    <ClCompile Include="..\Private\State.cpp" />
+    <ClCompile Include="..\Private\FSM_State.cpp" />
     <ClCompile Include="..\private\Target_Manager.cpp" />
     <ClCompile Include="..\private\Texture.cpp" />
     <ClCompile Include="..\Private\Thread_Pool.cpp" />
@@ -328,7 +328,7 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\Skeletal_Mesh.h" />
     <ClInclude Include="..\Public\Skeleton.h" />
     <ClInclude Include="..\Public\Sound_Manager.h" />
-    <ClInclude Include="..\Public\State.h" />
+    <ClInclude Include="..\Public\FSM_State.h" />
     <ClInclude Include="..\public\Target_Manager.h" />
     <ClInclude Include="..\public\Texture.h" />
     <ClInclude Include="..\Public\Thread_Pool.h" />
