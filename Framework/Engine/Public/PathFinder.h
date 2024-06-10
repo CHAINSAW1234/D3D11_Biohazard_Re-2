@@ -18,7 +18,7 @@ public:
 public:
 	void							Init_PathFinder(_uint iCellCount);
 	void							Init_Visibility_Optimization();
-	_bool							Initiate_PathFinding(_uint StartCell,_uint EndCell);
+	void							Initiate_PathFinding(_uint StartCell,_uint EndCell);
 	bool							IsValid(_uint Index);
 	bool							IsUnBlocked(_uint Index)
 	{

@@ -39,7 +39,7 @@ void CPathFinder::Init_Visibility_Optimization()
 	m_vecRight_Vertices.resize(m_Path.size());
 }
 
-_bool CPathFinder::Initiate_PathFinding(_uint StartCell, _uint EndCell)
+void CPathFinder::Initiate_PathFinding(_uint StartCell, _uint EndCell)
 {
 	typedef pair<_float, _uint > pPair;
 
