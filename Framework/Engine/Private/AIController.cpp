@@ -13,12 +13,12 @@ CAIController::CAIController(const CAIController& rhs)
 
 HRESULT CAIController::Initialize_Prototype()
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CAIController::Initialize(void* pArg)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 CBehaviorTree* CAIController::Create_BehaviorTree(_uint* iId)
