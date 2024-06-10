@@ -49,12 +49,18 @@ HRESULT CNavigation::Initialize_Prototype(const wstring & strDataFile)
 			return E_FAIL;
 
 		m_Cells.emplace_back(pCell);
+
+		auto Point1 = pCell->Get_Point_Float4(0);
+		auto Point2 = pCell->Get_Point_Float4(1);
+		auto Point3 = pCell->Get_Point_Float4(2);
+
+		auto Centroid = CalculateCentroid(Point1, Point2, Point3);
+
+		m_vecNavCell_Point.push_back(Centroid);
 	}
 
 	if (FAILED(SetUp_Neighbors()))
 		return E_FAIL;
-
-
 
 	return S_OK;
 }
