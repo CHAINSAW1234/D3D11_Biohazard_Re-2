@@ -1368,8 +1368,6 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, set<_uint>& Include
 	_float							fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
 	_float							fAccLinearInterpolation = { pPlayingInfo->Get_AccLinearInterpolation() };
 
-	const vector<KEYFRAME>& LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
-
 	if (-1 == iAnimIndex || 0.f >= fBlendWeight || true == isFinished)
 		return TransformationMatrices;
 
@@ -1397,6 +1395,7 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, set<_uint>& Include
 	//	애니메이션이 선형보간중이었다면 선형보간된 매트릭스로 재 업데이트한다.
 	Update_LinearInterpolation(fTimeDelta, iPlayingAnimIndex);
 
+	const vector<KEYFRAME>&			LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
 	if (true == isLinearInterpolation)
 	{
 		_matrix			RootTransformationMatrix = { XMLoadFloat4x4(&TransformationMatrices[iRootBoneIndex]) };
@@ -1466,7 +1465,8 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, set<_uint>& Include
 	//	선형 보간중이아니었다면 이후에 일어날 선형 보간을 대비하여 마지막 키프레임들을 저장한다.
 	if (false == isLinearInterpolation)
 	{
-		pPlayingInfo->Update_LastKeyFrames(TransformationMatrices, static_cast<_uint>(m_Bones.size()), m_fTotalLinearTime);
+		_uint		iNumBones = { static_cast<_uint>(m_Bones.size()) };
+		pPlayingInfo->Update_LastKeyFrames(TransformationMatrices, iNumBones, m_fTotalLinearTime);
 	}
 
 	return TransformationMatrices;
@@ -1478,26 +1478,6 @@ void CModel::Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMoved
 	_uint		iNumBones = { static_cast<_uint>(m_Bones.size()) };
 	for (_uint iBoneIndex = 0; iBoneIndex < iNumBones; ++iBoneIndex)
 	{
-		///////////////////////////////////////////////////////////////////////
-		///////////////////////////////////////////////////////////////////////
-		///////////////////////////////////////////////////////////////////////
-		// TODO:		레이어화하여 현재 작업중인 뼈가 포함된지 확인하는 과정필요
-		///////////////////////////////////////////////////////////////////////
-		///////////////////////////////////////////////////////////////////////
-		///////////////////////////////////////////////////////////////////////
-		/*_bool		isInclude = { false };
-		for (auto& iIndex : AnimInfo.TargetBoneIndices)
-		{
-			if (pBone == m_Bones[iIndex])
-			{
-				isInclude = true;
-				break;
-			}
-		}
-
-		if (false == isInclude)
-			continue;*/
-
 		_bool		isRootBone = { m_Bones[iBoneIndex]->Is_RootBone() };
 		if (true == isRootBone)
 		{
@@ -1696,14 +1676,13 @@ void CModel::Update_LastKeyFrames_Bones(vector<KEYFRAME>& LastKeyFrames)
 
 void CModel::Update_LinearInterpolation(_float fTimeDelta, _uint iPlayingIndex)
 {
-	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+	CPlayingInfo*			pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
 	if (nullptr != pPlayingInfo)
 	{
 		if (false == pPlayingInfo->Is_LinearInterpolation())
 			return;
 
 		pPlayingInfo->Add_AccLinearInterpolation(fTimeDelta);
-
 		_float			fAccLinearInterpolation = { pPlayingInfo->Get_AccLinearInterpolation() };
 		if (m_fTotalLinearTime <= fAccLinearInterpolation)
 		{
