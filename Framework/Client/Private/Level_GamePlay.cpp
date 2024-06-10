@@ -318,36 +318,37 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, CGameObject* pGame
 
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.IsChild), sizeof(_bool));
 
-	////디폴트 텍스쳐 싱글 텍스쳐일 경우
-	//if (0 == CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
-	//{
-	//	/* For.Prototype_Component_Texture_ */
-	//	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
-	//		CTexture::Create(m_pDevice, m_pContext, CustomizeUIDesc.wstrDefaultTexturPath))))
-	//	{
-	//		int a = 0;
-	//	}
-	//}
+	//디폴트 텍스쳐 싱글 텍스쳐일 경우
+	if (0 == CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
+	{
+		/* For.Prototype_Component_Texture_ */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
+			CTexture::Create(m_pDevice, m_pContext, CustomizeUIDesc.wstrDefaultTexturPath))))
+		{
+			int a = 0;
+		}
+	}
 
-	////디폴트 텍스쳐 멀티 텍스쳐일 경우
-	//else if (0 < CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
-	//{
-	//	/* For.Prototype_Component_Texture_ */
-	//	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
-	//		CTexture::Create(m_pDevice, m_pContext, CustomizeUIDesc.wstrDefaultTexturPath, CustomizeUIDesc.fMaxFrame)))) {
-	//		int a = 0;
-	//	}
-	//}
+	//디폴트 텍스쳐 멀티 텍스쳐일 경우
+	else if (0 < CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
+	{
+		/* For.Prototype_Component_Texture_ */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
+			CTexture::Create(m_pDevice, m_pContext, CustomizeUIDesc.wstrDefaultTexturPath, CustomizeUIDesc.fMaxFrame)))) {
+			int a = 0;
+		}
+	}
 
-	//// 마스크 텍스쳐 생성
-	//if (TEXT("") != CustomizeUIDesc.wstrMaskPath)
-	//{
-	//	/* For.Prototype_Component_Texture_ */
-	//	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrMaskComTag,
-	//		CTexture::Create(m_pDevice, m_pContext, CustomizeUIDesc.wstrMaskPath)))) {
-	//		int a = 0;
-	//	}
-	//}
+	// 마스크 텍스쳐 생성
+	if (TEXT("") != CustomizeUIDesc.wstrMaskPath)
+	{
+		/* For.Prototype_Component_Texture_ */
+		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrMaskComTag,
+			CTexture::Create(m_pDevice, m_pContext, CustomizeUIDesc.wstrMaskPath)))) 
+		{
+			int a = 0;
+		}
+	}
 
 	// 객체 생성
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_CCustomize_UI"), &CustomizeUIDesc)))
