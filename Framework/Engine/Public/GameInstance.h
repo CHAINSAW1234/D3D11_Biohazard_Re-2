@@ -268,6 +268,7 @@ public:
 #pragma region For AI Controller
 public:
 	class CBehaviorTree*					Create_BehaviorTree(_uint* iId);
+	class CPathFinder*						Create_PathFinder(_uint* iId);
 	void									Initialize_BehaviorTree(_uint* iId);
 #pragma endregion
 

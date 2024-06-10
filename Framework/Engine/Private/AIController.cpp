@@ -1,6 +1,7 @@
 #include "AIController.h"
 #include "GameInstance.h"
 #include "BehaviorTree.h"
+#include "PathFinder.h"
 
 CAIController::CAIController(): m_pGameInstance{ CGameInstance::Get_Instance() }
 {
@@ -38,6 +39,18 @@ CBehaviorTree* CAIController::Get_BehaviorTree(_uint* iId)
 	CBehaviorTree* pBehaviorTree = new CBehaviorTree();
 
 	return pBehaviorTree;
+}
+
+CPathFinder* CAIController::Create_PathFinder(_uint* iId)
+{
+	auto pPathFinder = CPathFinder::Create();
+	Safe_AddRef(pPathFinder);
+	*iId = m_iPathFinder_Count;
+	++m_iPathFinder_Count;
+
+	m_vecPathFinder.push_back(pPathFinder);
+
+	return pPathFinder;
 }
 
 CAIController* CAIController::Create()

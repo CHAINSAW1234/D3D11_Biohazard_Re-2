@@ -18,12 +18,15 @@ public:
 public:
 	class CBehaviorTree*			Create_BehaviorTree(_uint* iId);
 	class CBehaviorTree*			Get_BehaviorTree(_uint* iId);
+	class CPathFinder*				Create_PathFinder(_uint* iId);
 protected:
 	class CGameInstance*			m_pGameInstance = { nullptr };
 	vector<class CBehaviorTree*>	m_vecBehaviorTree;
+	vector<class CPathFinder*>		m_vecPathFinder;
 	
 protected:
 	_uint m_iBehaviorTree_Count = { 0 };
+	_uint m_iPathFinder_Count = { 0 };
 public:
 	static CAIController* Create();
 

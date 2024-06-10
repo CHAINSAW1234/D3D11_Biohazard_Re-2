@@ -231,16 +231,16 @@ private:	/* For.Linear_Interpolation */
 	_float									m_fTotalLinearTime = { 0.f };
 
 private:	/* For.FBX_Load */
-	HRESULT							Ready_Meshes(const map<string, _uint>& BoneIndices);
-	HRESULT							Ready_Materials(const _char* pModelFilePath);
-	HRESULT							Ready_Bones(aiNode* pAINode, map<string, _uint>& BoneIndices, _int iParentIndex = -1);
-	HRESULT							Ready_Animations(const map<string, _uint>& BoneIndices);
+	HRESULT									Ready_Meshes(const map<string, _uint>& BoneIndices);
+	HRESULT									Ready_Materials(const _char* pModelFilePath);
+	HRESULT									Ready_Bones(aiNode* pAINode, map<string, _uint>& BoneIndices, _int iParentIndex = -1);
+	HRESULT									Ready_Animations(const map<string, _uint>& BoneIndices);
 
 private:	/* For.Binary_Load */
-	HRESULT							Ready_Meshes(ifstream& ifs);
-	HRESULT							Ready_Materials(ifstream& ifs);
-	HRESULT							Ready_Bones(ifstream& ifs);
-	HRESULT							Ready_Animations(ifstream& ifs);
+	HRESULT									Ready_Meshes(ifstream& ifs);
+	HRESULT									Ready_Materials(ifstream& ifs);
+	HRESULT									Ready_Bones(ifstream& ifs);
+	HRESULT									Ready_Animations(ifstream& ifs);
 
 public: /*For Octree Culling*/
 	vector<class CMesh*>* GetMeshes()
