@@ -1541,7 +1541,7 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, set<_uint>& Include
 		if (true == m_isRootMotion_XZ)
 		{
 			_vector			vPreTranslationLocal = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
-			_vector			vResultTranslationLocal = { };
+			_vector			vResultTranslationLocal = {};
 
 			vResultTranslationLocal = XMVectorSetX(vPreTranslationLocal, XMVectorGetX(vRootTranslation));
 			vResultTranslationLocal = XMVectorSetZ(vPreTranslationLocal, XMVectorGetZ(vRootTranslation));
@@ -1552,7 +1552,7 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, set<_uint>& Include
 		if (true == m_isRootMotion_Y)
 		{
 			_vector			vPreTranslationLocal = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
-			_vector			vResultTranslationLocal;
+			_vector			vResultTranslationLocal = {};
 
 			vResultTranslationLocal = XMVectorSetY(vPreTranslationLocal, XMVectorGetY(vRootTranslation));
 

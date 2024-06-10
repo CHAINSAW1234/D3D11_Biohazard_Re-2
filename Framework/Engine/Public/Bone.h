@@ -66,10 +66,6 @@ public:
 	HRESULT					Initialize(const aiNode* pAiNode, _int iParentIndex);
 	HRESULT					Initialize(const BONE_DESC& BoneDesc);
 	void					Invalidate_CombinedTransformationMatrix(const vector<CBone*>& Bones, _fmatrix ParentsTransformatrixMatrix);
-	//	이동성분만 반환
-	_float3					Invalidate_CombinedTransformationMatrix_RootMotion_Translation(const vector<CBone*>& Bones, _fmatrix ParentsTransformatrixMatrix);
-	//	합행렬 전부 반환
-	_float4x4				Invalidate_CombinedTransformationMatrix_RootMotion_WorldMatrix(const vector<CBone*>& Bones, _fmatrix ParentsTransformatrixMatrix);
 
 	void					Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBone*>& Bones, _float4x4 TransformationMatrix, _bool isActiveXZ, _bool isActiveY, _bool isActiveRotation, _float4* pTranslation, _float4* pQuaternion);
 

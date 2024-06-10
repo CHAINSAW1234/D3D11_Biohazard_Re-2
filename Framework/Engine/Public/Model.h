@@ -187,8 +187,6 @@ public:
 
 private:	/* For.Linear Interpolation */
 	void									Motion_Changed(_uint iPlayingIndex);
-	void									Update_LastKeyFrames(const vector<_float4x4>& TransformationMatrices, vector<KEYFRAME>& LastKeyFrames);
-	void									Update_LastKeyFrames_Bones(vector<KEYFRAME>& LastKeyFrames);
 
 private:	/* For.Linear Interpolation */
 	void									Update_LinearInterpolation(_float fTimeDelta, _uint iPlayingIndex);
