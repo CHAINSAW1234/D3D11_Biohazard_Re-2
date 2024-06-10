@@ -113,6 +113,7 @@ HRESULT CMonster::Init_BehaviorTree_Zombie()
 	auto pRootNode = m_pBehaviorTree->GetRootNode();
 	
 	//Insert_Node
+	return S_OK;
 }
 
 HRESULT CMonster::Add_Components()

@@ -215,6 +215,7 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\Observer.cpp" />
     <ClCompile Include="..\Private\Observer_Handler.cpp" />
     <ClCompile Include="..\Private\Octree.cpp" />
+    <ClCompile Include="..\Private\PathFinder.cpp" />
     <ClCompile Include="..\Private\Picking.cpp" />
     <ClCompile Include="..\Private\RagDoll.cpp" />
     <ClCompile Include="..\Private\RagDoll_Physics.cpp" />
@@ -300,6 +301,7 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\Observer.h" />
     <ClInclude Include="..\Public\Observer_Handler.h" />
     <ClInclude Include="..\Public\Octree.h" />
+    <ClInclude Include="..\Public\PathFinder.h" />
     <ClInclude Include="..\Public\Picking.h" />
     <ClInclude Include="..\Public\RagDoll.h" />
     <ClInclude Include="..\Public\RagDoll_Physics.h" />

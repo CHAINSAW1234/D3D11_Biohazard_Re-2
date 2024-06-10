@@ -54,11 +54,6 @@ HRESULT CNavigation::Initialize_Prototype(const wstring & strDataFile)
 	if (FAILED(SetUp_Neighbors()))
 		return E_FAIL;
 
-#ifdef _DEBUG
-	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/shader_Cell.hlsl"), VTXPOS::Elements, VTXPOS::iNumElements);
-	if (nullptr == m_pShader)
-		return E_FAIL;
-#endif
 
 
 	return S_OK;

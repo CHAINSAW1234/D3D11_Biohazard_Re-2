@@ -259,6 +259,12 @@
     <Filter Include="01.Utility\02.Components\FSM\State">
       <UniqueIdentifier>{9df33316-824c-41e2-a6e3-89c21a22c7ad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\AIController\AINavigator">
+      <UniqueIdentifier>{cd4f0d02-01e8-4a87-b9e7-fc4815471f8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\AINavigator\PathFinder">
+      <UniqueIdentifier>{4de5589f-2883-4d82-ba7b-597b27266129}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -503,6 +509,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Task_Node.cpp">
       <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Task_Node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PathFinder.cpp">
+      <Filter>01.Utility\AIController\AINavigator\PathFinder</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -770,6 +779,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Task_Node.h">
       <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Task_Node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PathFinder.h">
+      <Filter>01.Utility\AIController\AINavigator\PathFinder</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
