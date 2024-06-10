@@ -19,16 +19,16 @@ void CThread_Pool::WorkerThread() {
             }
             job = std::move(jobs_.front());
             jobs_.pop();
-            ++active_jobs_;  // 작업 시작 시 활성 작업 수 증가
+            ++active_jobs_; 
         }
 
-        job();  // 작업 수행
+        job(); 
 
         {
             std::lock_guard<std::mutex> lock(m_job_q_);
-            --active_jobs_;  // 작업 완료 시 활성 작업 수 감소
+            --active_jobs_;  
             if (jobs_.empty() && active_jobs_ == 0) {
-                cv_job_q_.notify_all();  // 모든 작업이 완료되었음을 알림
+                cv_job_q_.notify_all(); 
             }
         }
     }

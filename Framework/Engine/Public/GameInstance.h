@@ -259,10 +259,16 @@ private:/*For Physics_Controller*/
 	_float3*								TerrainPos = { nullptr };
 #pragma endregion
 
-#pragma region Thread Pool
+#pragma region For Thread Pool
 public:
 	void									Insert_Job(function<void()> job);
 	_bool									AllJobsFinished();
+#pragma endregion
+
+#pragma region For AI Controller
+public:
+	class CBehaviorTree*					Create_BehaviorTree(_uint* iId);
+	void									Initialize_BehaviorTree(_uint* iId);
 #pragma endregion
 
 #pragma region For Graphic Device
@@ -287,6 +293,9 @@ private:
 	class CSound_Manager*					m_pSound_Manager = { nullptr };
 	class CPicking*							m_pPicking = { nullptr };
 	class CThread_Pool*						m_pThread_Pool = { nullptr };
+	class CAIController*					m_pAIController = { nullptr };
+
+
 	/*for physics*/
 	_bool									m_bSimulate = { false };
 

@@ -171,13 +171,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const wstring & strLayerTag/*, CLand
 
 HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
-	/*for (size_t i = 0; i < 20; i++)
-	{
-		CMonster::MONSTER_DESC Desc{};
-		Desc.Index = static_cast<_int>(i);
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Monster"),&Desc)))
-			return E_FAIL;
-	}*/
+	
 
 	return S_OK;
 }

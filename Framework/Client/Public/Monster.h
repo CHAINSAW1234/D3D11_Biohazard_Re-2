@@ -32,13 +32,20 @@ public:
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
 
+public://For AIController
+	HRESULT	Init_BehaviorTree_Zombie();
+
 private:
 	CModel*						m_pModelCom = { nullptr };
 	CShader*					m_pShaderCom = { nullptr };	
 	CCollider*					m_pColliderCom[COLLIDER_END] = { nullptr };
-
 	
 	_int						m_iIndex = { 0 };
+	MONSTER_TYPE				m_eType = { MONSTER_TYPE::MT_DEFAULT };
+	
+private: // For AIController
+	_uint						m_iAIController_ID = { 0 };
+	class CBehaviorTree*		m_pBehaviorTree = { nullptr };
 private:
 	HRESULT						Add_Components();
 	HRESULT						Bind_ShaderResources();

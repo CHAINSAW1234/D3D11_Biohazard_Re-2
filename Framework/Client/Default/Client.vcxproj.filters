@@ -82,6 +82,21 @@
     <Filter Include="02.GameObjects\CustomCollider">
       <UniqueIdentifier>{66bce26c-c0c8-4789-bb6a-591f64bef163}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AIController">
+      <UniqueIdentifier>{5f9b1726-6c27-40c6-a328-0a0450dd77bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie">
+      <UniqueIdentifier>{17427bf7-5af3-448b-9ab4-81220ef7dd37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Decorator">
+      <UniqueIdentifier>{e7a9caf3-8a95-42ff-9a85-661132d6ccc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Task">
+      <UniqueIdentifier>{a3234f00-5adb-4ce0-8c97-38afbd2b2638}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\BlackBoard">
+      <UniqueIdentifier>{e33e900e-5192-4c9a-b631-9e1407794ffe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

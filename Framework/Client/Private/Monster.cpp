@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Public\Monster.h"
 #include "Character_Controller.h"
+#include "BehaviorTree.h"
 
 #define MODEL_SCALE 0.01f
 
@@ -104,6 +105,16 @@ HRESULT CMonster::Render()
 	return S_OK;
 }
 
+HRESULT CMonster::Init_BehaviorTree_Zombie()
+{
+	m_pBehaviorTree = m_pGameInstance->Create_BehaviorTree(&m_iAIController_ID);
+
+	//Root Node
+	auto pRootNode = m_pBehaviorTree->GetRootNode();
+	
+	//Insert_Node
+}
+
 HRESULT CMonster::Add_Components()
 {
 	/* For.Com_Shader */
@@ -196,4 +207,5 @@ void CMonster::Free()
 
 	Safe_Release(m_pShaderCom);	
 	Safe_Release(m_pModelCom);
+	Safe_Release(m_pBehaviorTree);
 }

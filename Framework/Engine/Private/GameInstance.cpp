@@ -15,6 +15,7 @@
 #include "Picking.h"
 #include "Layer.h"
 #include "Thread_Pool.h"
+#include "AIController.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -139,10 +140,17 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 		return E_FAIL;
 	}
 
-	m_pThread_Pool = CThread_Pool::Create(8);
+	m_pThread_Pool = CThread_Pool::Create(12);
 	if (nullptr == m_pThread_Pool)
 	{
 		MSG_BOX(TEXT("Error: m_pThread_Pool::Create -> nullptr"));
+		return E_FAIL;
+	}
+
+	m_pAIController = CAIController::Create();
+	if (nullptr == m_pAIController)
+	{
+		MSG_BOX(TEXT("Error: m_pAIController::Create -> nullptr"));
 		return E_FAIL;
 	}
 
@@ -1038,6 +1046,21 @@ _bool CGameInstance::AllJobsFinished()
 }
 #pragma endregion
 
+#pragma region AIController
+
+CBehaviorTree* CGameInstance::Create_BehaviorTree(_uint* iId)
+{
+	if (m_pAIController)
+		return m_pAIController->Create_BehaviorTree(iId);
+}
+
+void CGameInstance::Initialize_BehaviorTree(_uint* iId)
+{
+
+}
+
+#pragma endregion
+
 #pragma region Graphic Device
 
 #pragma endregion
@@ -1184,4 +1207,5 @@ void CGameInstance::Free()
 	Safe_Release(m_pGraphic_Device);
 	Safe_Release(m_pPicking);
 	Safe_Release(m_pThread_Pool);
+	Safe_Release(m_pAIController);
 }

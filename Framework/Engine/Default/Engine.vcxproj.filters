@@ -241,6 +241,27 @@
     <Filter Include="Thread">
       <UniqueIdentifier>{edcc90c2-b748-4be8-8741-4496f7f03897}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\AIController">
+      <UniqueIdentifier>{bf161a16-f1e0-457b-9cc9-fe1eecb5a86e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree">
+      <UniqueIdentifier>{3c7038bd-1461-4bad-83ac-3b3884a1b4ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree\Component">
+      <UniqueIdentifier>{e98974d3-959b-42b5-9f54-59d271537eaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree\Component\Composite_Node">
+      <UniqueIdentifier>{7ff1083e-6515-4abb-a27f-ac74ea0a3fca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Decorator_Node">
+      <UniqueIdentifier>{98f5fd26-c22b-409a-8587-969c1e360f30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Task_Node">
+      <UniqueIdentifier>{646ea284-d093-4675-aafa-a3f2eef2bd3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree\Component\BlackBoard">
+      <UniqueIdentifier>{bedf6db0-771f-4884-b33b-781fe9dfea12}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -467,6 +488,24 @@
     </ClCompile>
     <ClCompile Include="..\Private\Thread_Pool.cpp">
       <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BehaviorTree.cpp">
+      <Filter>01.Utility\AIController\Behavior_Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AIController.cpp">
+      <Filter>01.Utility\AIController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Composite_Node.cpp">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Decorator_Node.cpp">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Decorator_Node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BlackBoard.cpp">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\BlackBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Task_Node.cpp">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Task_Node</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -716,6 +755,24 @@
     </ClInclude>
     <ClInclude Include="..\Public\Thread_Pool.h">
       <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BehaviorTree.h">
+      <Filter>01.Utility\AIController\Behavior_Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AIController.h">
+      <Filter>01.Utility\AIController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Composite_Node.h">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Decorator_Node.h">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Decorator_Node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BlackBoard.h">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\BlackBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Task_Node.h">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Task_Node</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
