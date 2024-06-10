@@ -35,8 +35,10 @@ float g_fMaskSpeed;
 float g_fMaskTime;
 float2 g_MaskType;
 
-bool g_isLightMask;
 
+// Client 
+bool g_isLightMask;
+float4 g_vLightMask_Color;
 
 struct VS_IN
 {
@@ -143,39 +145,6 @@ struct PS_OUT
     float4 vColor : SV_TARGET0;
 };
 
-// 거리 계산 함수
-float calculateDistance(float4 A, float4 target)
-{
-    return sqrt(
-        pow(A.x - target.x, 2) +
-        pow(A.y - target.y, 2) +
-        pow(A.z - target.z, 2) +
-        pow(A.w - target.w, 2)
-    );
-}
-
-float AdjustAlpha(float4 color)
-{
-    float4 target = { 0.0f, 0.0f, 0.0f, 1.0f };
-    float distance = calculateDistance(color, target);
-    return exp(distance); // distance가 0에 가까워질수록 B는 1에 가까워짐
-}
-
-float4 Light(float2 vTexcoord, float4 color, float2 pos)
-{
-    float2 uv = float2(pos.x, pos.y);
-    float d = length(uv);
-    
-    d = abs(d);
-    smoothstep(0, 1.f, d);
-    
-    d = pow(d, 2.0);
-    
-    float alphaA = AdjustAlpha(color);
-    return float4(d, d, d, alphaA);
-}
-
-
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -203,28 +172,25 @@ PS_OUT PS_MAIN(PS_IN In)
         MaskTexcoord.r += g_fMaskTime * g_MaskType.x;
         MaskTexcoord.g += g_fMaskTime * g_MaskType.y;
 
+        float value = g_MaskTexture.Sample(LinearSampler, MaskTexcoord).r;
+         
+        /* Light Mask */
+        /* HP Bar를 임의로 블랜딩 함, : 나중에 쓸 일 있을 때 바꿀 것 */
+        float blendFactor = 1.0 - value;
+        float4 LightColor = float4(min(g_vLightMask_Color.r, 1.0f), min(g_vLightMask_Color.g + 0.5f, 1.0f), min(g_vLightMask_Color.b + 0.2f, 1.0f), Out.vColor.a);
+        float4 finalColor = lerp(Out.vColor, LightColor, blendFactor);
         
-        float2 value = g_MaskTexture.Sample(LinearSampler, MaskTexcoord);
-        float alpha = smoothstep(g_fMaskControl.x, g_fMaskControl.x + g_fMaskControl.y, value.r + (1.0 - g_fMaskControl.y));
-
         if (true == g_isLightMask)
         {
-            float blendFactor = 1.0 - value.r;
-            /* HP Bar를 임의로 블랜딩 함, : 나중에 쓸 일 있을 때 바꿀 것 */
-            float4 LightColor = float4(min(Out.vColor.r + 0.2f, 1.0f), min(Out.vColor.g + 0.5f, 1.0f), min(Out.vColor.b + 0.2f, 1.0f), Out.vColor.a);
-            float4 finalColor = lerp(Out.vColor, LightColor, blendFactor);
-            finalColor *= Light(In.vTexcoord, finalColor, value);
             Out.vColor = finalColor;
         }
-        else
-        { 
-            float blendFactor = 1.0 - value.r;
-            /* HP Bar를 임의로 블랜딩 함, : 나중에 쓸 일 있을 때 바꿀 것 */
-            float4 LightColor = float4(min(0.f, 1.0f), min(0.f, 1.0f), min(0.f, 1.0f), min(0.f, 1.0f));
-            float4 finalColor = lerp(Out.vColor, LightColor, blendFactor);
+        
+        else if (false == g_isLightMask)
+        {
+            float alpha = smoothstep(g_fMaskControl.x, g_fMaskControl.x + g_fMaskControl.y, value + (1.0 - g_fMaskControl.y));
             
-            Out.vColor = LightColor;
-            // Out.vColor *= float4(Out.vColor.rgb, alpha);
+            Out.vColor.rgb = finalColor.rgb;
+            Out.vColor.a *= alpha;
         }
 
     }

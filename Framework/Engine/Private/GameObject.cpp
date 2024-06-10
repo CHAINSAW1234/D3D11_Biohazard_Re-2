@@ -110,6 +110,12 @@ HRESULT CGameObject::Change_Component(_uint iLevelIndex, const wstring& strProto
 		Safe_Release(iter->second);
 	}
 
+	else
+	{
+		Safe_Release(pComponent);
+		return E_FAIL;
+	}
+
 	m_Components.emplace(strComponentTag, pComponent);
 
 	*ppOut = pComponent;

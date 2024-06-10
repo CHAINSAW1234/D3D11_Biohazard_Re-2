@@ -33,6 +33,8 @@ private : /* Mask ฐüทร*/
 	_float4				m_vDefaultColor_Origin = {};
 	_float2				m_fOrigin_MaskControl = {};
 
+	_bool				m_isMaskDown = { false };
+
 private :
 	HP_TYPE				m_eCurrentHP = { HP_TYPE::NORMAL_HP };
 	wstring				m_wstrNormal;

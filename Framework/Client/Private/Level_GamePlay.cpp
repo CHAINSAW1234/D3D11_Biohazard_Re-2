@@ -243,7 +243,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Crosshair.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Crosshair_UI"));
 
 	/* 2. Cursor */
 	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Cursor.dat");
@@ -255,31 +255,31 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_Item.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Inventory_Item_UI"));
 
 	/* 4. Inventory SelectBox */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_SelectBox.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Inventory_Item_UI"));
 
 	/* 5. BackGroundHPBar_UI */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/BackGroundHPBar_UI.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_HPBar_UI"));
 
 	/* 6. UI_MainHP */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/MainHPBar_UI.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_HPBar_UI"));
 	
 	return S_OK;
 
 }
 
-void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName, CGameObject* pGameParentsObj, wstring fileName)
+HRESULT CLevel_GamePlay::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag)
 {
 	CCustomize_UI::CUSTOM_UI_DESC CustomizeUIDesc;
 
@@ -396,62 +396,13 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 			int a = 0;
 		}
 	}
-
-	// ⒑ 按眉 积己
-	/* 1. Crosshair */
-	if (TEXT("UI_Crosshair") == fileName)
-	{
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Crosshair_UI"), &CustomizeUIDesc)))
-			MSG_BOX(TEXT("Failed to Add Clone"));
-	}
-
-	/* 2. Cursor */
-	else if (TEXT("UI_Cursor") == fileName)
-	{
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Cursor_UI"), &CustomizeUIDesc)))
-			MSG_BOX(TEXT("Failed to Add Clone"));
-	}
-
-	/* 2. Inventory_Select_Box */
-	else if (TEXT("UI_Inventory_SelectBox") == fileName)
-	{
-		CustomizeUIDesc.eBox_Type = CCustomize_UI::ITEM_BOX_TYPE::SELECT_BOX;
-
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Inventory_Item_UI"), &CustomizeUIDesc)))
-			MSG_BOX(TEXT("Failed to Add Clone"));
-	}
-
-	/* 3. Inventory_Item : Child 父 冠胶烙 */
-	else if (TEXT("UI_Inventory_Item") == fileName)
-	{
-		CustomizeUIDesc.eBox_Type = CCustomize_UI::ITEM_BOX_TYPE::DEFAULT_BOX;
-
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Inventory_Item_UI"), &CustomizeUIDesc)))
-			MSG_BOX(TEXT("Failed to Add Clone"));
-	}
-
-	/* 4. BackGround HP_UI */
-	else if (TEXT("UI_BackGround_HP") == fileName)
-	{
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_HPBar_UI"), &CustomizeUIDesc)))
-			MSG_BOX(TEXT("Failed to Add Clone"));
-	}
-
-	/* 4. BackGroundHPBar_UI */
-	else if (TEXT("BackGroundHPBar_UI") == fileName)
-	{
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_HPBar_UI"), &CustomizeUIDesc)))
-			MSG_BOX(TEXT("Failed to Add Clone"));
-	}
-
-	/* 4. MainHPBar_UI */
-	else if (TEXT("MainHPBar_UI") == fileName)
-	{
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_HPBar_UI"), &CustomizeUIDesc)))
-			MSG_BOX(TEXT("Failed to Add Clone"));
-	}
-
 	
+	//按眉 积己
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), PrototypeTag, &CustomizeUIDesc)))
+	{
+		MSG_BOX(TEXT("Failed to Add Clone UI"));
+		return E_FAIL;
+	}
 
 	CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
 
@@ -468,13 +419,15 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 	{
 		for (_int i = 0; i < CustomizeUIDesc.iChild; i++)
 		{
-			CreatFromDat(inputFileStream, strListName, pGameObj, fileName);
+			if(FAILED(CreatUI_FromDat(inputFileStream, pGameObj, PrototypeTag)))
+				return E_FAIL;
 		}
 	}
 
 	if (nullptr == pGameParentsObj)
 	{
 		inputFileStream.close();
+		return S_OK;
 	}
 }
 
