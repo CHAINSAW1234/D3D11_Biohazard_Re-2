@@ -51,10 +51,10 @@ HRESULT CProps::Initialize(void* pArg)
 	m_pModelCom->Static_Mesh_Cooking();
 
 
-	m_pOctree = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-	m_pOctree->GetSceneDimensions(m_pModelCom);
-	int TotalTriangleCount = m_pOctree->GetSceneTriangleCount(m_pModelCom);
-	m_pOctree->CreateNode(m_pModelCom, TotalTriangleCount, m_pOctree->GetCenter(), m_pOctree->GetWidth());
+	//m_pOctree = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+	//m_pOctree->GetSceneDimensions(m_pModelCom);
+	//int TotalTriangleCount = m_pOctree->GetSceneTriangleCount(m_pModelCom);
+	//m_pOctree->CreateNode(m_pModelCom, TotalTriangleCount, m_pOctree->GetCenter(), m_pOctree->GetWidth());
 
 	//for (int i = 0; i < m_pModelCom->GetNumMesh(); ++i)
 	//{
@@ -112,7 +112,7 @@ HRESULT CProps::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	/*_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
 	for (size_t i = 0; i < iNumMeshes; i++)
 	{
@@ -121,50 +121,68 @@ HRESULT CProps::Render()
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
 		{
-			if (FAILED(m_pShaderCom->Begin(0)))
+			_bool isAlphaTexture = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
 		else
 		{
-			if (FAILED(m_pShaderCom->Begin(1)))
+			_bool isAlphaTexture = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
 
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
+		{
+			_bool isAOTexture = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isAOTexture = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+
+		if (FAILED(m_pShaderCom->Begin(0)))
+			return E_FAIL;
+
 		m_pModelCom->Render(static_cast<_uint>(i));
-	}*/
-
-	std::function<void()> job1 = std::bind(&COctree::DrawOctree_1, m_pOctree);
-	m_pGameInstance->Insert_Job(job1);
-
-	std::function<void()> job2 = std::bind(&COctree::DrawOctree_2, m_pOctree);
-	m_pGameInstance->Insert_Job(job2);
-
-	std::function<void()> job3 = std::bind(&COctree::DrawOctree_3, m_pOctree);
-	m_pGameInstance->Insert_Job(job3);
-
-	std::function<void()> job4 = std::bind(&COctree::DrawOctree_4, m_pOctree);
-	m_pGameInstance->Insert_Job(job4);
-
-	std::function<void()> job5 = std::bind(&COctree::DrawOctree_5, m_pOctree);
-	m_pGameInstance->Insert_Job(job5);
-
-	std::function<void()> job6 = std::bind(&COctree::DrawOctree_6, m_pOctree);
-	m_pGameInstance->Insert_Job(job6);
-
-	std::function<void()> job7 = std::bind(&COctree::DrawOctree_7, m_pOctree);
-	m_pGameInstance->Insert_Job(job7);
-
-	std::function<void()> job8 = std::bind(&COctree::DrawOctree_8, m_pOctree);
-	m_pGameInstance->Insert_Job(job8);
-
-	while (!m_pGameInstance->AllJobsFinished())
-	{
-		this_thread::yield();
 	}
 
-	m_pOctree->Render_Node(m_pModelCom, m_pShaderCom);
+	//std::function<void()> job1 = std::bind(&COctree::DrawOctree_1, m_pOctree);
+	//m_pGameInstance->Insert_Job(job1);
+
+	//std::function<void()> job2 = std::bind(&COctree::DrawOctree_2, m_pOctree);
+	//m_pGameInstance->Insert_Job(job2);
+
+	//std::function<void()> job3 = std::bind(&COctree::DrawOctree_3, m_pOctree);
+	//m_pGameInstance->Insert_Job(job3);
+
+	//std::function<void()> job4 = std::bind(&COctree::DrawOctree_4, m_pOctree);
+	//m_pGameInstance->Insert_Job(job4);
+
+	//std::function<void()> job5 = std::bind(&COctree::DrawOctree_5, m_pOctree);
+	//m_pGameInstance->Insert_Job(job5);
+
+	//std::function<void()> job6 = std::bind(&COctree::DrawOctree_6, m_pOctree);
+	//m_pGameInstance->Insert_Job(job6);
+
+	//std::function<void()> job7 = std::bind(&COctree::DrawOctree_7, m_pOctree);
+	//m_pGameInstance->Insert_Job(job7);
+
+	//std::function<void()> job8 = std::bind(&COctree::DrawOctree_8, m_pOctree);
+	//m_pGameInstance->Insert_Job(job8);
+
+	//while (!m_pGameInstance->AllJobsFinished())
+	//{
+	//	this_thread::yield();
+	//}
+
+	//m_pOctree->Render_Node(m_pModelCom, m_pShaderCom);
 
 	return S_OK;
 }
@@ -195,7 +213,7 @@ HRESULT CProps::Render_LightDepth_Dir()
 				return E_FAIL;
 
 			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
-			if (FAILED(m_pShaderCom->Begin(2)))
+			if (FAILED(m_pShaderCom->Begin(1)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
@@ -231,7 +249,7 @@ HRESULT CProps::Render_LightDepth_Spot()
 				return E_FAIL;
 
 			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
-			if (FAILED(m_pShaderCom->Begin(2)))
+			if (FAILED(m_pShaderCom->Begin(1)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
@@ -271,7 +289,7 @@ HRESULT CProps::Render_LightDepth_Point()
 				return E_FAIL;
 
 			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
-			if (FAILED(m_pShaderCom->Begin(3)))
+			if (FAILED(m_pShaderCom->Begin(2)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));

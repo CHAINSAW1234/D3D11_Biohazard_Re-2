@@ -43,7 +43,7 @@ private:
 	_float						m_fTimeTest = { 0.f };
 	CModel*						m_pModelCom = { nullptr };
 	CShader*					m_pShaderCom = { nullptr };
-	class CPlayer*			m_pPlayer = { nullptr };
+	class CPlayer*				m_pPlayer = { nullptr };
 	_int						m_iPropsType = { 0 };
 	_bool						m_bVisible = { false };
 	PROPS_DESC 					m_tagPropDesc ={};

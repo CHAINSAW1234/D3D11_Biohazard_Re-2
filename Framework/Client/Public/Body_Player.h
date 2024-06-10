@@ -26,10 +26,9 @@ public:
 	virtual void			Tick(_float fTimeDelta) override;
 	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
-
 	HRESULT					Render_LightDepth_Dir()override;
-	HRESULT					Render_LightDepth_Spot()override;
 	HRESULT					Render_LightDepth_Point() override;
+	HRESULT					Render_LightDepth_Spot()override;
 
 private:
 	CModel*					m_pModelCom = { nullptr };
@@ -44,8 +43,8 @@ private:
 
 	_bool					m_bRagdoll = { false };
 private:
-	HRESULT Add_Components();
-	HRESULT Bind_ShaderResources();
+	HRESULT					Add_Components();
+	HRESULT					Bind_ShaderResources();
 
 public:
 	static CBody_Player* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

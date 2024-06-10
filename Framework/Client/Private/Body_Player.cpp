@@ -81,7 +81,7 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	m_pModelCom->Add_IK("l_leg_femur", "l_leg_ankle", TEXT("IK_L_LEG"), 20, 1.f);
 	//	m_pModelCom->Add_IK("hips", "l_leg_ball", TEXT("IK_L_LEG"), 1, 1.f);
 	//	m_pModelCom->Add_IK("r_leg_femur", "r_leg_ball", TEXT("IK_R_LEG"), 1, 1.f);
-	m_pModelCom->Add_IK("r_arm_humerus", "r_arm_wrist", TEXT("IK_R_ARM"), 20, 1.f);
+	//	m_pModelCom->Add_IK("r_arm_humerus", "r_arm_wrist", TEXT("IK_R_ARM"), 20, 1.f);
 	//	m_pModelCom->Add_IK("r_arm_clavicle", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
 	//	m_pModelCom->Add_IK("spine_0", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
 
@@ -169,45 +169,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	_vector			vCurrentPos = { m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION) };
 	_vector			vCurrentBallPos = { XMVector4Transform(vCurrentPos, XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball"))) };
 
-	_vector			vDirectionToBall = { vCurrentBallPos - vCurrentPos };
-
-	/////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////TEST/////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////
-
-	CVIBuffer_Terrain* pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
-	CTransform* pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
-	if (nullptr != pTerrainBuffer &&
-		nullptr != pTerrainTransform)
-	{
-		_matrix			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
-		_matrix			BallCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball")) };
-
-		_matrix			BallWorldMatrix = { BallCombinedMatrix * WorldMatrix };
-
-		_vector		vPosition = { BallWorldMatrix.r[CTransform::STATE_POSITION] };
-		//	vPosition.m128_f32[2] -= 0.3f;
-		_float4		vPickPosFloat4;
-		pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
-
-		_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
-
-		m_pModelCom->Set_TargetPosition_IK(TEXT("IK_L_LEG"), vResultPos);
-		
-		//	vMoveDir += vResultPos - vPosition;
-	}
-
-	/////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////
+	_vector			vDirectionToBall = { vCurrentBallPos - vCurrentPos };	
 
 	//	m_pModelCom->Set_Direction_IK(TEXT("IK_L_LEG"), vMoveDir);
 	//	m_pModelCom->Set_Direction_IK(TEXT("IK_R_LEG"), vMoveDir);z
@@ -221,8 +183,8 @@ void CBody_Player::Tick(_float fTimeDelta)
 	_matrix			TranslationMatrix = { XMMatrixTranslation(XMVectorGetX(vMoveDir), )}*/
 
 	m_pModelCom->Set_NumIteration_IK(TEXT("IK_L_LEG"), 3);
-	m_pModelCom->Set_NumIteration_IK(TEXT("IK_R_LEG"), 10);
-	m_pModelCom->Set_NumIteration_IK(TEXT("IK_R_ARM"), 10);
+	//	m_pModelCom->Set_NumIteration_IK(TEXT("IK_R_LEG"), 10);
+	//	m_pModelCom->Set_NumIteration_IK(TEXT("IK_R_ARM"), 10);
 
 	CModel::ANIM_PLAYING_DESC		AnimDesc;
 	//	AnimDesc.iAnimIndex = 30;
@@ -391,6 +353,48 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	{
 		//m_pModelCom->Play_Animations(fTimeDelta);
 		m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+
+		/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////TEST/////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+
+		CVIBuffer_Terrain* pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
+		CTransform* pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
+		if (nullptr != pTerrainBuffer &&
+			nullptr != pTerrainTransform)
+		{
+			_matrix			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+			_matrix			BallCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball")) };
+
+			_matrix			BallWorldMatrix = { BallCombinedMatrix * WorldMatrix };
+
+			_vector		vPosition = { BallWorldMatrix.r[CTransform::STATE_POSITION] };
+			vPosition.m128_f32[1] += 1.f;
+			//	vPosition.m128_f32[2] -= 0.3f;
+
+			_float4		vPickPosFloat4;
+			pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
+
+			_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
+			vResultPos.m128_f32[1] += 0.1f;
+
+			m_pModelCom->Set_TargetPosition_IK(TEXT("IK_L_LEG"), vResultPos);
+
+			//	vMoveDir += vResultPos - vPosition;
+		}
+
+		m_pModelCom->Play_IK(m_pParentsTransform, fTimeDelta);
+		/////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////
 	}
 
 #pragma region Collider 위치 설정 코드
@@ -551,19 +555,84 @@ HRESULT CBody_Player::Render()
 		if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_ATOSTexture", static_cast<_uint>(i), aiTextureType_METALNESS))) {
-			if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+		{
+			_bool isAlphaTexture = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
-		else {
-			if (FAILED(m_pShaderCom->Begin(1)))
+		else
+		{
+			_bool isAlphaTexture = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
+
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
+		{
+			_bool isAOTexture = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isAOTexture = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+
+
+		if (FAILED(m_pShaderCom->Begin(0)))
+			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
 
+
 #ifdef _DEBUG
+
+	//vector<string>					BoneTags = { m_pModelCom->Get_BoneNames() };
+	//map<string, _float4x4>			CombinedMatrices;
+	//for (auto& strBoneTag : BoneTags)
+	//{
+	//	_float4x4					CombinedMatrix = { *m_pModelCom->Get_CombinedMatrix(strBoneTag) };
+	//	CombinedMatrices[strBoneTag] = CombinedMatrix;
+	//}
+
+	//_matrix							WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+	//_matrix							ViewMatrix = { m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_VIEW) };
+	//_matrix							ProjMatrix = { m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_PROJ) };
+	//_matrix							WVPMatrix = { WorldMatrix * ViewMatrix * ProjMatrix };
+
+	//for (auto& Pair : CombinedMatrices)
+	//{
+	//	string			strBoneTag = { Pair.first };
+	//	_matrix			CombinedMatrix = { XMLoadFloat4x4(&Pair.second) };
+	//	_matrix			ProjSpaceCombinedMatrix = { CombinedMatrix * WVPMatrix };
+
+	//	//	-WinSizeX * 0.5f ~ WinSizeX * 0.5f;
+
+	//	_vector			vProjSpacePosition = {ProjSpaceCombinedMatrix.r[CTransform::STATE_POSITION]};
+	//	vProjSpacePosition = { XMVectorSet(
+	//		XMVectorGetX(vProjSpacePosition) / XMVectorGetW(vProjSpacePosition),
+	//		XMVectorGetY(vProjSpacePosition) / XMVectorGetW(vProjSpacePosition),
+	//		XMVectorGetZ(vProjSpacePosition) / XMVectorGetW(vProjSpacePosition),
+	//		XMVectorGetW(vProjSpacePosition) / XMVectorGetW(vProjSpacePosition)) };
+
+	//	_vector			vScreenSpacePosition = {
+	//		XMVectorGetX(vProjSpacePosition) * static_cast<_float>(g_iWinSizeX) * 0.5f + static_cast<_float>(g_iWinSizeX * 0.5f),
+	//		(XMVectorGetY(vProjSpacePosition) * static_cast<_float>(g_iWinSizeY) * 0.5f - static_cast<_float>(g_iWinSizeY * 0.5f)) * -1.f,
+	//		0.f, 0.f
+	//	};
+
+	//	_float2			vScreenSpacePositionFloat2 = {};
+	//	XMStoreFloat2(&vScreenSpacePositionFloat2, vScreenSpacePosition);
+
+	//	_tchar			szTemp[MAX_PATH] = { L"" };
+	//	MultiByteToWideChar(CP_ACP, 0, strBoneTag.c_str(), (_uint)strlen(strBoneTag.c_str()), szTemp, MAX_PATH);
+	//	wstring			wstrBoneTag = { szTemp };
+	//	m_pGameInstance->Render_Font(TEXT("Font_Default"), wstrBoneTag, vScreenSpacePositionFloat2, XMVectorSet(1.f, 1.f, 1.f, 1.f), 0.f);
+	//}
 
 	m_PartColliders[4]->Active_Color(true);
 	m_PartColliders[5]->Active_Color(true);
@@ -660,64 +729,12 @@ HRESULT CBody_Player::Render_LightDepth_Dir()
 				return E_FAIL;
 
 			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
-			if (FAILED(m_pShaderCom->Begin(3)))
+			if (FAILED(m_pShaderCom->Begin(2)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
 		}
 	}
-
-	return S_OK;
-}
-
-HRESULT CBody_Player::Render_LightDepth_Spot()
-{
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
-	if (m_bRagdoll)
-	{
-		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
-		WorldMat._41 = 0.f;
-		WorldMat._42 = 0.f;
-		WorldMat._43 = 0.f;
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
-			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-			return E_FAIL;
-	}
-
-	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
-
-		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT);
-		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
-
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
-			return E_FAIL;
-
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (size_t i = 0; i < iNumMeshes; i++)
-		{
-			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-				return E_FAIL;
-
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
-
-			if (FAILED(m_pShaderCom->Begin(3)))
-				return E_FAIL;
-
-			m_pModelCom->Render(static_cast<_uint>(i));
-		}
-	}
-
-	Update_WorldMatrix();
 
 	return S_OK;
 }
@@ -766,7 +783,7 @@ HRESULT CBody_Player::Render_LightDepth_Point()
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Begin(5)))
+			if (FAILED(m_pShaderCom->Begin(4)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
@@ -774,6 +791,58 @@ HRESULT CBody_Player::Render_LightDepth_Point()
 
 		++iIndex;
 	}
+
+	return S_OK;
+}
+
+HRESULT CBody_Player::Render_LightDepth_Spot()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (m_bRagdoll)
+	{
+		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+		WorldMat._41 = 0.f;
+		WorldMat._42 = 0.f;
+		WorldMat._43 = 0.f;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+			return E_FAIL;
+	}
+
+	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
+
+		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT);
+		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
+			return E_FAIL;
+
+		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+				return E_FAIL;
+
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Begin(2)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+	}
+
+	Update_WorldMatrix();
 
 	return S_OK;
 }

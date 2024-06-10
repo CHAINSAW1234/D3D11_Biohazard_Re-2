@@ -4,18 +4,15 @@
 /* 전역변수 : 쉐이더 외부에 있는 데이터를 쉐이더 안으로 받아온다. */
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
-texture2D	g_Texture;
-texture2D   g_MaskTexture;
+texture2D g_Texture;
+texture2D g_MaskTexture;
+
 bool g_SelectColor, g_GreenColor;
 
 // PS
 bool g_ColorChange;
 float4 g_ColorValu;
 bool g_AlpaChange;
-
-// Timer 
-float g_MaskTimer;
-float g_fMaskSpeed;
 
 //VS
 bool g_Wave;
@@ -31,19 +28,23 @@ float g_Split = 1;
 bool g_Blending;
 float g_BlendingStrength = 0.5f;
 
-// Client
-bool g_isMask = false;
+// Mask
+bool g_isMask;
+float2 g_fMaskControl;
+float g_fMaskSpeed;
+float g_fMaskTime;
+float2 g_MaskType;
 
 struct VS_IN
 {
-	float3		vPosition : POSITION;
-	float2		vTexcoord : TEXCOORD0;
+    float3 vPosition : POSITION;
+    float2 vTexcoord : TEXCOORD0;
 };
 
 struct VS_OUT
 {
-	float4		vPosition : SV_POSITION;
-	float2		vTexcoord : TEXCOORD0;
+    float4 vPosition : SV_POSITION;
+    float2 vTexcoord : TEXCOORD0;
 };
 
 /* 정점 쉐이더 */
@@ -130,31 +131,21 @@ VS_OUT VS_MAIN(VS_IN In)
 
 struct PS_IN
 {
-	float4		vPosition : SV_POSITION;
-	float2		vTexcoord : TEXCOORD0;
+    float4 vPosition : SV_POSITION;
+    float2 vTexcoord : TEXCOORD0;
 };
 
 struct PS_OUT
 {
-	float4		vColor : SV_TARGET0;
+    float4 vColor : SV_TARGET0;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
 {
-	PS_OUT		 Out = (PS_OUT)0;
-    float Maskvalue;
+    PS_OUT Out = (PS_OUT) 0;
     Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord * g_Split);
     
-    // Mask
-    if (g_isMask)
-    {    
-        float2 MaskTexcoord = In.vTexcoord;
-        MaskTexcoord.r += g_MaskTimer * -1.5f; 
-
-        Maskvalue = g_MaskTexture.Sample(LinearSampler, MaskTexcoord).r;
-    }
-    
-	// 선택
+   // 선택
     if (g_SelectColor)
         Out.vColor = float4(1, 0, 0, 1);
     else if (g_AlpaChange) // 알파만 바꿀 때
@@ -164,29 +155,32 @@ PS_OUT PS_MAIN(PS_IN In)
         if (g_Blending)
         {
             Out.vColor = lerp(Out.vColor, g_ColorValu, g_BlendingStrength);
-            
-            if (g_isMask)
-            { 
-                float4 color = lerp(Out.vColor, float4(1, 1, 1, 1), 1.0 - Maskvalue);
-                color.a = Out.vColor;
-                
-                Out.vColor = color;
-            }
         }
         else
             Out.vColor = g_ColorValu;
     }
-    
+         
+    if (g_isMask)
+    {
+        float2 MaskTexcoord = In.vTexcoord;
+        
+        MaskTexcoord.r += g_fMaskTime * g_MaskType.x;
+        MaskTexcoord.g += g_fMaskTime * g_MaskType.y;
 
+        float value = g_MaskTexture.Sample(LinearSampler, MaskTexcoord).r;
+        float alpha = smoothstep(g_fMaskControl.x, g_fMaskControl.x + g_fMaskControl.y, value + (1.0 - g_fMaskControl.y));
+        Out.vColor *= float4(Out.vColor.rgb, alpha);
+    }
+    
     return Out;
 }
 
 technique11 DefaultTechnique
 {
-	pass Default
-	{
+    pass Default
+    {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -199,7 +193,7 @@ technique11 DefaultTechnique
     pass Blend
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();

@@ -154,6 +154,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 
 void CGameInstance::Tick_Engine(_float fTimeDelta)
 {
+	SetCursor(false);
+
 	if(m_pPipeLine)
 		m_pPipeLine->Reset();
 
@@ -328,14 +330,6 @@ HRESULT CGameInstance::Add_RenderGroup(CRenderer::RENDERGROUP eRenderGroup, CGam
 	return m_pRenderer->Add_RenderGroup(eRenderGroup, pRenderObject);	
 }
 
-void CGameInstance::Set_Shadow_Resolution(CRenderer::SHADOW_RESOLUTION eResolution)
-{
-	if (nullptr == m_pRenderer)
-		return;
-
-	m_pRenderer->Set_Shadow_Resolution(eResolution);
-}
-
 void CGameInstance::Set_RadialBlur(_float fBlurAmount, _float2 BlurUV)
 {
 	if (nullptr == m_pRenderer)
@@ -465,6 +459,10 @@ HRESULT CGameInstance::Add_Layer(_uint iLevelIndex, const wstring& strLayerTag)
 	_ASSERT(m_pObject_Manager != nullptr);
 
 	return m_pObject_Manager->Add_Layer(iLevelIndex, strLayerTag);
+}
+void CGameInstance::Start()
+{
+	return m_pObject_Manager->Start();
 }
 #pragma endregion
 
@@ -725,12 +723,25 @@ HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffer
 #pragma region Font_Manager
 HRESULT CGameInstance::Add_Font(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const wstring & strFontTag, const wstring & strFontFilePath)
 {
+	if (nullptr == m_pFont_Manager)
+		return E_FAIL;
+
 	return m_pFont_Manager->Add_Font(pDevice, pContext, strFontTag, strFontFilePath);	
 }
 
 HRESULT CGameInstance::Render_Font(const wstring & strFontTag, const wstring & strText, const _float2 & vPosition, _fvector vColor, _float fRadian)
 {
+	if (nullptr == m_pFont_Manager)
+		return E_FAIL;
+
 	return m_pFont_Manager->Render(strFontTag, strText, vPosition, vColor, fRadian);
+}
+HRESULT CGameInstance::Render_Font_Scaled(const wstring& strFontTag, const wstring& strText, const _float2& vPosition, _fvector vColor, _float fRadian, _float fScale)
+{
+	if (nullptr == m_pFont_Manager)
+		return E_FAIL;
+
+	return m_pFont_Manager->Render_Scaled(strFontTag, strText, vPosition, vColor, fRadian, fScale);
 }
 #pragma endregion
 
@@ -896,6 +907,7 @@ HRESULT CGameInstance::Copy_Resource(const wstring& strDestRenderTargetTag, cons
 {
 	return m_pTarget_Manager->Copy_Resource(strDestRenderTargetTag, strSrcRenderTargetTag);
 }
+
 #pragma endregion
 
 #pragma region Frustrum

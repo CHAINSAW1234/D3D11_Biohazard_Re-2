@@ -69,6 +69,15 @@ void CLayer::Late_Tick(_float fTimeDelta)
 	}
 }
 
+void CLayer::Start()
+{
+	for (auto& pGameObject : m_GameObjects)
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Start();
+	}
+}
+
 list<class CGameObject*>* CLayer::Get_ObjectList_Ptr()
 {
 	return &m_GameObjects;

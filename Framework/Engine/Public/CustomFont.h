@@ -13,6 +13,7 @@ private:
 public:
 	HRESULT					Initialize(const wstring& strFontFilePath);
 	HRESULT					Render(const wstring & strText, const _float2 & vPosition, _fvector vColor, _float fRadian);
+	HRESULT					Render_Scaled(const wstring & strText, const _float2 & vPosition, _fvector vColor, _float fRadian, _float fScale);
 	
 
 private:

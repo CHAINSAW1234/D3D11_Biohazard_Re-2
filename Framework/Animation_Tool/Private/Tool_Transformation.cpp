@@ -2,8 +2,10 @@
 #include "Tool_Transformation.h"
 
 #include "ImGuizmo.h"
+#include "GameObject.h"
 
-CTool_Transformation::CTool_Transformation()
+CTool_Transformation::CTool_Transformation(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CTool{ pDevice, pContext }
 {
 }
 
@@ -12,7 +14,10 @@ HRESULT CTool_Transformation::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
+	if (FAILED(Add_Componets()))
+		return E_FAIL;
+
+	m_strCollasingTag = "Tool_Transform";
 
 	return S_OK;
 }
@@ -23,8 +28,12 @@ void CTool_Transformation::Tick(_float fTimeDelta)
 
 	static _bool isChanged = { false };
 
-	Update_WorldMatrix();
-	Update_Transform();
+	if (ImGui::CollapsingHeader(m_strCollasingTag.c_str()))
+	{
+		Set_Origin();
+		Update_Transform();
+		Update_Target_Transform();
+	}	
 }
 
 void CTool_Transformation::Set_Target(CTransform* pTransform)
@@ -45,61 +54,67 @@ void CTool_Transformation::Set_Target(CTransform* pTransform)
 	Safe_AddRef(m_pTargetTransform);
 }
 
+void CTool_Transformation::Set_Target(CGameObject* pGameObject)
+{
+	if (nullptr == pGameObject)
+		return;
+
+	CTransform*			pTransform = { dynamic_cast<CTransform*>(pGameObject->Get_Component(TEXT("Com_Transform"))) };
+	if (nullptr == pTransform)
+		return;
+
+	Safe_Release(m_pTargetTransform);
+	m_pTargetTransform = nullptr;
+
+	m_pTargetTransform = pTransform;
+	Safe_AddRef(m_pTargetTransform);
+}
+
 void CTool_Transformation::ReSet_Target()
 {
 	Safe_Release(m_pTargetTransform);
 	m_pTargetTransform = nullptr;
-
-	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 }
 
 void CTool_Transformation::Update_Transform()
 {
-	if (nullptr == m_pTargetTransform)
-		return;
+	ImGui::NewLine();
 
-	_float4x4		WorldFloat4x4 = { m_pTargetTransform->Get_WorldFloat4x4() };
+	if (nullptr != m_pTargetTransform)
+	{
+		_matrix			TargetWorldMatrix = { m_pTargetTransform->Get_WorldMatrix() };
+		m_pTransformCom->Set_WorldMatrix(TargetWorldMatrix);
+	}
+
+	_float4x4		WorldFloat4x4 = { m_pTransformCom->Get_WorldFloat4x4() };
 
 	ImGuizmo::BeginFrame();
 
-	static ImGuizmo::OPERATION CurrentGizmoOperation(ImGuizmo::ROTATE);
-	static ImGuizmo::MODE CurrentGizmoMode(ImGuizmo::WORLD);
-
-	/*if (m_pGameInstance->Get_KeyState('V') == DOWN)
-		CurrentGizmoOperation = ImGuizmo::SCALE;
-
-	if (m_pGameInstance->Get_KeyState('R') == DOWN)
-		CurrentGizmoOperation = ImGuizmo::ROTATE;
-
-	if (m_pGameInstance->Get_KeyState('T') == DOWN)
-		CurrentGizmoOperation = ImGuizmo::TRANSLATE;*/
+	static ImGuizmo::OPERATION		CurrentGizmoOperation(ImGuizmo::ROTATE);
+	static ImGuizmo::MODE			CurrentGizmoMode(ImGuizmo::WORLD);
 
 
 	if (ImGui::RadioButton("Scale", CurrentGizmoOperation == ImGuizmo::SCALE))
 		CurrentGizmoOperation = ImGuizmo::SCALE;
-
 	ImGui::SameLine();
 
 	if (ImGui::RadioButton("Rotation", CurrentGizmoOperation == ImGuizmo::ROTATE))
 		CurrentGizmoOperation = ImGuizmo::ROTATE;
-
 	ImGui::SameLine();
 
 	if (ImGui::RadioButton(u8"Translation", CurrentGizmoOperation == ImGuizmo::TRANSLATE))
 		CurrentGizmoOperation = ImGuizmo::TRANSLATE;
 
-	float matrixTranslation[3], matrixRotation[3], matrixScale[3];
 
+	_float			matrixTranslation[3], matrixRotation[3], matrixScale[3];
 	_bool			isChanged = { false };
 
 	ImGuizmo::DecomposeMatrixToComponents((_float*)&WorldFloat4x4, matrixTranslation, matrixRotation, matrixScale);
 
 	if (ImGui::InputFloat3("Scale", matrixScale))
 		isChanged = true;
-
 	if (ImGui::InputFloat3("Rotation", matrixRotation))
 		isChanged = true;
-
 	if (ImGui::InputFloat3("Translation", matrixTranslation))
 		isChanged = true;
 
@@ -132,7 +147,7 @@ void CTool_Transformation::Update_Transform()
 		break;
 	}
 
-	ImGuiIO& io = ImGui::GetIO();
+	ImGuiIO&		io = { ImGui::GetIO() };
 	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 
 	_float4x4	ProjMatrix, ViewMatrix;
@@ -145,19 +160,47 @@ void CTool_Transformation::Update_Transform()
 
 	ImGuizmo::Manipulate((_float*)&ViewMatrix, (_float*)&ProjMatrix, CurrentGizmoOperation, CurrentGizmoMode, (_float*)&WorldFloat4x4, NULL, isUseSnap ? &vSnap.x : NULL);
 
-	//if(true == isChanged && m_pTargetTransform)
-	m_pTargetTransform->Set_WorldMatrix(WorldFloat4x4);
+	m_pTransformCom->Set_WorldMatrix(WorldFloat4x4);
 }
 
-void CTool_Transformation::Update_WorldMatrix()
+void CTool_Transformation::Update_Target_Transform()
 {
-	if (nullptr != m_pTargetTransform)
-		m_WorldMatrix = m_pTargetTransform->Get_WorldFloat4x4();
+	if (nullptr == m_pTargetTransform)
+		return;
+
+	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
+	m_pTargetTransform->Set_WorldMatrix(WorldMatrix);
 }
 
-CTool_Transformation* CTool_Transformation::Create(void* pArg)
+void CTool_Transformation::Set_Origin()
 {
-	CTool_Transformation* pInatnace = new CTool_Transformation();
+	if (nullptr == m_pTransformCom)
+		return;
+
+	if (ImGui::Button("Set Position Zero"))
+	{
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorZero());
+
+		if(nullptr != m_pTargetTransform)
+			m_pTargetTransform->Set_State(CTransform::STATE_POSITION, XMVectorZero());
+	}
+}
+
+HRESULT CTool_Transformation::Add_Componets()
+{
+	m_pTransformCom = CTransform::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pTransformCom)
+		return E_FAIL;
+
+	if (FAILED(m_pTransformCom->Initialize(nullptr)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+CTool_Transformation* CTool_Transformation::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
+{
+	CTool_Transformation*		pInatnace = { new CTool_Transformation(pDevice, pContext) };
 
 	if (FAILED(pInatnace->Initialize(pArg)))
 	{
@@ -172,6 +215,6 @@ CTool_Transformation* CTool_Transformation::Create(void* pArg)
 void CTool_Transformation::Free()
 {
 	__super::Free();
-
+	
 	Safe_Release(m_pTargetTransform);
 }

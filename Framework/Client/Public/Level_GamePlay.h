@@ -33,7 +33,7 @@ private:
 	HRESULT Ready_Layer_UI(const wstring& strLayerTag);
 	
 private:
-	void CreatFromDat(ifstream& inputFileStream, string strListName, CGameObject* pGameParentsObj);
+	void CreatFromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj);
 
 	wstring StringToWstring(const std::string& strString)
 	{

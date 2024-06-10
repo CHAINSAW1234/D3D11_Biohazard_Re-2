@@ -42,7 +42,6 @@ public: /* For.Input_Device */
 #pragma region Renderer
 public: /* For.Renderer */
 	HRESULT									Add_RenderGroup(CRenderer::RENDERGROUP eRenderGroup, class CGameObject* pRenderObject);
-	void									Set_Shadow_Resolution(CRenderer::SHADOW_RESOLUTION eResolution);
 	void									Set_RadialBlur(_float fBlurAmount, _float2 BlurUV);
 	void									On_RadialBlur();
 	void									Off_RadialBlur();
@@ -71,7 +70,7 @@ public: /* For.Object_Manager */
 	void									Release_Layer(_uint iLevelIndex, const wstring& LayerTag);
 	//yeeun	
 	HRESULT									Add_Layer(_uint iLevelIndex, const wstring& strLayerTag);
-
+	void									Start();
 #pragma endregion
 
 #pragma region Component_Manager
@@ -122,6 +121,7 @@ public: /* For.Light_Manager */
 public: /* For.Font_Manager */
 	HRESULT									Add_Font(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const wstring& strFontTag, const wstring& strFontFilePath);
 	HRESULT									Render_Font(const wstring& strFontTag, const wstring& strText, const _float2& vPosition, _fvector vColor, _float fRadian);
+	HRESULT									Render_Font_Scaled(const wstring& strFontTag, const wstring& strText, const _float2& vPosition, _fvector vColor, _float fRadian, _float fScale);
 #pragma endregion
 
 #pragma region Target_Manager
@@ -131,7 +131,6 @@ public: /* For.Target_Manager */
 	HRESULT									Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _bool isTickClear = true);
 	HRESULT									Clear_RenderTarget_All();
 	HRESULT									Clear_RenderTarget(const wstring& strRenderTargetTag);
-
 	HRESULT									Add_MRT(const wstring& strMRTTag, const wstring& strRenderTargetTag);
 	HRESULT									Begin_MRT(const wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
 	HRESULT									End_MRT();
@@ -140,7 +139,6 @@ public: /* For.Target_Manager */
 	HRESULT									Bind_OutputShaderResource(class CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName);
 	HRESULT									Copy_Resource(const wstring& strRenderTargetTag, ID3D11Texture2D** ppTextureHub);
 	HRESULT									Copy_Resource(const wstring& strDestRenderTargetTag, const wstring& strSrcRenderTargetTag);
-
 #pragma endregion
 
 #pragma region Frustrum

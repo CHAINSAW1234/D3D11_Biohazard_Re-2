@@ -119,7 +119,8 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	//Ragdoll Temp Code
 	static bool Temp = false;
 
-	if (nullptr != m_pRagdoll_Physics) {
+	if (nullptr != m_pRagdoll_Physics) 
+	{
 		if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
 		{
 			Temp = !Temp;
@@ -137,12 +138,11 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 		}
 		//Update - Ragdoll
 		m_pRagdoll_Physics->Update(fTimeDelta);
-
 	}
 	
 
 	//Simulate
-	m_Scene->simulate(1/60.f);
+	m_Scene->simulate(fTimeDelta);
 	m_Scene->fetchResults(true);
 }
 
@@ -153,6 +153,7 @@ CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int*
 	m_Controll_Desc.radius = 0.5f;
 	m_Controll_Desc.position = PxExtendedVec3(Pos.x, Pos.y, Pos.z);
 	m_Controll_Desc.material = m_Physics->createMaterial(0.f, 0.f, 0.f);
+	m_Controll_Desc.stepOffset = 0.1f;
 
 	auto Controller = m_Manager->createController(m_Controll_Desc);
 

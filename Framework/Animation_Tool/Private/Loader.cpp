@@ -4,12 +4,10 @@
 
 #include "GameInstance.h"
 #include "Camera_Free.h"
-#include "Body_Player.h"
-#include "Head_Player.h"
-#include "Hair_Player.h"
-#include "Player.h"
+#include "AnimTestObject.h"
+#include "AnimTestPartObject.h"
 //	#include "BackGround.h"
-//	#include "Terrain.h"
+#include "Terrain.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -115,9 +113,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("모델를(을) 로딩 중 입니다.");
-
 	_matrix			TransformMatrix = { XMMatrixIdentity() };
-	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(0.f));
+	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 
 	/* Prototype_Component_police_holl */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_police_holl"),
@@ -125,19 +122,19 @@ HRESULT CLoader::Loading_For_GamePlay()
 			TransformMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_Boss_MantisShrimp */
+	/* Prototype_Component_Model_LeonBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonBody"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonBody.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_Boss_MantisShrimp */
+	/* Prototype_Component_Model_LeonFace */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonFace"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonFace.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_Boss_MantisShrimp */
+	/* Prototype_Component_Model_LeonHair */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonHair"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonHair.fbx",
 			LeonTransformMatrix))))
@@ -215,24 +212,19 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CCamera_Free::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Player */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Player"),
-		CPlayer::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_Terrain */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
+		CTerrain::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Part_Body_Player */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Body_Player"),
-		CBody_Player::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_AnimTestObject */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_AnimTestObject"),
+		CAnimTestObject::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Part_Head_Player */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Head_Player"),
-		CHead_Player::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Part_Hair_Player */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Hair_Player"),
-		CHair_Player::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_AnimTestPartObject */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_AnimTestPartObject"),
+		CAnimTestPartObject::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	///* For.Prototype_GameObject_Part_Weapon */

@@ -38,7 +38,6 @@
 *.idb
 *.pdb
 
-
 *.dds
 *.tga
 
@@ -46,8 +45,14 @@ FrameWork/Client/Default/x64/
 FrameWork/Engine/Default/x64/
 
 FrameWork/Client/Bin/Client.pdb
-
 FrameWork/Engine/Bin/Engine.pdb
+
+FrameWork/Client/Bin/Engine.dll
+FrameWork/Engine/Bin/Engine.dll
+FrameWork/Animation_Tool/Bin/Engine.dll
+
+FrameWork/EngineSDK/Bin/Engine.lib
+FrameWork/Engine/Bin/Engine.lib
 
 FrameWork/Animation_Tool/Bin/PhysXGpu_64.dll
 

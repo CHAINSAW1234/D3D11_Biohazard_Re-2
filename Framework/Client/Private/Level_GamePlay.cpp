@@ -22,8 +22,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if(FAILED(Ready_Layer_Camera(TEXT("Layer_ZZZCamera"))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
+		return E_FAIL;
 
 	if (FAILED(Ready_LandObject()))
 		return E_FAIL;
@@ -70,11 +70,11 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.eType = LIGHT_DESC::TYPE_DIRECTIONAL;
 	LightDesc.bShadow = true;
 	XMStoreFloat4(&LightDesc.vDirection, XMVectorSetW(XMVector3Normalize(XMVectorSet(-3.f, -7.f, 0.f, 0.f)), 0.f));
-	LightDesc.vPosition = _float4(-LightDesc.vDirection.x * 60, -LightDesc.vDirection.y * 60, -LightDesc.vDirection.z * 60, 1.f);
+	LightDesc.vPosition = _float4(-LightDesc.vDirection.x * 50, -LightDesc.vDirection.y * 50, -LightDesc.vDirection.z * 50, 1.f);
 
 	//LightDesc.fRange = 1000000.f;
 
-	LightDesc.vDiffuse = _float4(.5f, .5f, .5f, .5f);
+	LightDesc.vDiffuse = _float4(.5f, .5f, .5f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 0.4f, 0.4f, 1.f);
 
@@ -87,7 +87,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.fRange = 5.f;
 
 	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.8f, 0.4f, 0.4f, 1.f);
+	LightDesc.vAmbient = _float4(0.f, 0.f, 0.f, 1.f);
 	LightDesc.vSpecular = _float4(1.f, 0.4f, 0.4f, 1.f);
 	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
 		return E_FAIL;
@@ -98,7 +98,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	LightDesc.fRange = 5.f;
 
 	LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.4f, 0.8f, 0.4f, 1.f);
+	LightDesc.vAmbient = _float4(0.f, 0.f, 0.f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 1.f, 0.4f, 1.f);
 	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
 		return E_FAIL;
@@ -109,8 +109,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	LightDesc.fRange = 6.f;
 	LightDesc.vDirection = _float4(0.f,-1.f, 0.f,0.f);
-	LightDesc.fCutOff = XMConvertToRadians(60.f);
-	LightDesc.fOutCutOff = XMConvertToRadians(90);
+	LightDesc.fCutOff = XMConvertToRadians(30.f);
+	LightDesc.fOutCutOff = XMConvertToRadians(40.f);
 
 	LightDesc.vDiffuse = _float4(0.f, 0.f, 1.f, 1.f);
 	LightDesc.vAmbient = _float4(0.2f, 0.2f, 0.4f, 1.f);
@@ -119,8 +119,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_SPOT"), LightDesc)))
 		return E_FAIL;
 
-	if (FAILED(Load_Light(TEXT("../Bin/Data/Level_0"), LEVEL_GAMEPLAY)))
-		return E_FAIL;
+	//if (FAILED(Load_Light(TEXT("../Bin/Data/Level_0"), LEVEL_GAMEPLAY)))
+	//	return E_FAIL;
 	return S_OK;
 }
 
@@ -213,107 +213,143 @@ HRESULT CLevel_GamePlay::Ready_Layer_Effect(const wstring & strLayerTag)
 HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 {
 	/* 1. HP Bar*/
-	wstring selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/HP_Bar.dat");
+	wstring selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Aiming.dat");
 	ifstream inputFileStream;
 	inputFileStream.open(selectedFilePath, ios::binary);
-	CreatFromDat(inputFileStream, (""), nullptr);
+	CreatFromDat(inputFileStream, nullptr);
 
 	return S_OK;
 }
 
-void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName, CGameObject* pGameParentsObj)
+void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj)
 {
 	CCustomize_UI::CUSTOM_UI_DESC CustomizeUIDesc;
 
-	_char TexturePath[MAX_PATH] = "";
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoad), sizeof(_bool));
 
-	inputFileStream.read(reinterpret_cast<_char*>(TexturePath), sizeof(_char) * MAX_PATH);
+	_char DefaultTexturePath[MAX_PATH] = "";
+	_char DefaultTextureTag[MAX_PATH] = "";
+	_char MaskTexturePath[MAX_PATH] = "";
+	_char MaskTextureTag[MAX_PATH] = "";
 
-	CustomizeUIDesc.strTexturePath = wstring(TexturePath, TexturePath + strlen(TexturePath));
+	inputFileStream.read(reinterpret_cast<_char*>(DefaultTexturePath), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(DefaultTextureTag), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(MaskTexturePath), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(MaskTextureTag), sizeof(_char) * MAX_PATH);
 
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fWorldMatrix), sizeof(_float4x4));
+	CustomizeUIDesc.wstrDefaultTexturPath = wstring(DefaultTexturePath, DefaultTexturePath + strlen(DefaultTexturePath));
+	CustomizeUIDesc.wstrDefaultTexturComTag = wstring(DefaultTextureTag, DefaultTextureTag + strlen(DefaultTextureTag));
+	CustomizeUIDesc.wstrMaskPath = wstring(MaskTexturePath, MaskTexturePath + strlen(MaskTexturePath));
+	CustomizeUIDesc.wstrMaskComTag = wstring(MaskTextureTag, MaskTextureTag + strlen(MaskTextureTag));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.worldMatrix), sizeof(_float4x4));
 
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.vSize), sizeof(_float2));
 
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isPlay), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fColorTimer_Limit), sizeof(_float));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iEndingType), sizeof(_int));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fMaxFrame), sizeof(_float));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isFrame), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoopStart), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoop), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoopStop), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.ReStart), sizeof(_bool));
+
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iColorMaxNum), sizeof(_uint));
 
-	_int iColorMAxnum = CustomizeUIDesc.iColorMaxNum;
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iTextBoxCount), sizeof(_uint));
 
-	for (_int i = 0; i <= iColorMAxnum; i++)
+	for (_int i = 0; i <= CustomizeUIDesc.iColorMaxNum; i++)
 	{
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.SavePos[i]), sizeof(_float4x4));
 
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.vColor[i]), sizeof(CCustomize_UI::Value_Color));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.Mask[i]), sizeof(CCustomize_UI::Value_Mask));
 	}
 
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isPlay), sizeof(_bool));
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fColorTimer_Limit), sizeof(_float));
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iEndingType), sizeof(_int));
-
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iTextBox), sizeof(_int));
-
-	for (_int i = 0; i < CustomizeUIDesc.iTextBox; i++)
+	for (_int i = 0; i < CustomizeUIDesc.iTextBoxCount; i++)
 	{
-		CTextBox::TextBox_DESC TextboxDesc = {};
-		inputFileStream.read(reinterpret_cast<_char*>(&TextboxDesc), sizeof(CTextBox::TextBox_DESC));
-		CustomizeUIDesc.TextBoxDesc.push_back(TextboxDesc);
+		CTextBox::TextBox_DESC TextBoxDesc = {};
+
+		_tchar FontString[MAX_PATH] = L"";
+
+		_char FontType[MAX_PATH] = "";
+
+		inputFileStream.read(reinterpret_cast<_char*>(FontString), sizeof(_tchar) * MAX_PATH);
+
+		inputFileStream.read(reinterpret_cast<_char*>(FontType), sizeof(_char) * MAX_PATH);
+
+		TextBoxDesc.wstrText = FontString;
+
+		TextBoxDesc.wstrFontType = wstring(FontType, FontType + strlen(FontType));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vFontColor), sizeof(_vector));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.iFontSize), sizeof(_uint));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vPos), sizeof(_float3));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vSize), sizeof(_float2));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.isOuterLine), sizeof(_bool));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vOutLineColor), sizeof(_vector));
+
+
+		CustomizeUIDesc.vecTextBoxDesc.push_back(TextBoxDesc);
 	}
 
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.IsChild), sizeof(_bool));
 
-	std::string strFullfilePath;
-	strFullfilePath.assign(CustomizeUIDesc.strTexturePath.begin(), CustomizeUIDesc.strTexturePath.end());
+	////디폴트 텍스쳐 싱글 텍스쳐일 경우
+	//if (0 == CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
+	//{
+	//	/* For.Prototype_Component_Texture_ */
+	//	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
+	//		CTexture::Create(m_pDevice, m_pContext, CustomizeUIDesc.wstrDefaultTexturPath))))
+	//	{
+	//		int a = 0;
+	//	}
+	//}
 
-	wstring wstrFilePath = StringToWstring(strFullfilePath);
+	////디폴트 텍스쳐 멀티 텍스쳐일 경우
+	//else if (0 < CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
+	//{
+	//	/* For.Prototype_Component_Texture_ */
+	//	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
+	//		CTexture::Create(m_pDevice, m_pContext, CustomizeUIDesc.wstrDefaultTexturPath, CustomizeUIDesc.fMaxFrame)))) {
+	//		int a = 0;
+	//	}
+	//}
 
-	_tchar      szDir[MAX_PATH] = TEXT("");
-	_tchar      szFileName[MAX_PATH] = TEXT("");
-	_tchar		szEXT[MAX_PATH] = TEXT("");
-	_tchar      chBase[MAX_PATH] = TEXT("Bin");
-	wstring     wstrTexturePath = { TEXT("../") };
-	wstring     wstrFileName = TEXT("");
+	//// 마스크 텍스쳐 생성
+	//if (TEXT("") != CustomizeUIDesc.wstrMaskPath)
+	//{
+	//	/* For.Prototype_Component_Texture_ */
+	//	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrMaskComTag,
+	//		CTexture::Create(m_pDevice, m_pContext, CustomizeUIDesc.wstrMaskPath)))) {
+	//		int a = 0;
+	//	}
+	//}
 
-	_wsplitpath_s(wstrFilePath.c_str(), nullptr, 0, szDir, MAX_PATH, szFileName, MAX_PATH, szEXT, MAX_PATH);
-
-	wstrFileName = szFileName;
-
-	string filename;
-	filename.assign(wstrFileName.begin(), wstrFileName.end());
-
-	const wchar_t* foundPosition = wcsstr(szDir, chBase);
-
-	if (foundPosition == nullptr)
-		return;
-
-	wstrTexturePath += foundPosition;
-	wstrTexturePath += szFileName;
-	wstrTexturePath += szEXT;
-
-	wstring     wstrPrototype = { TEXT("Prototype_Component_Texture_") };
-	wstrPrototype += szFileName;
-
-	/* For.Prototype_Component_Texture_Mask */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Mask"), CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/HP/IMANGE_05.png"))))) {}
-
-	/* For.Prototype_Component_Texture_ */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, wstrPrototype, CTexture::Create(m_pDevice, m_pContext, wstrTexturePath)))) { }
-	//ShowMassageBox("텍스쳐 생성에 실패했습니다.");
-
-	CustomizeUIDesc.strTextureComTag = wstrPrototype;
-
-	if(!m_isGara)
-	{
-		m_isGara = true;
-		CustomizeUIDesc.isMask = true;
-	}
-	else
-		CustomizeUIDesc.isMask = false;
-
+	// 객체 생성
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_CCustomize_UI"), &CustomizeUIDesc)))
+	{
 		MSG_BOX(TEXT("Failed to Add Clone"));
+		return;
+	}
 
-	CGameObject* pGameObj = {};
-	pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
+	CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
 
 	if (nullptr != pGameParentsObj)
 	{
@@ -328,7 +364,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 	{
 		for (_int i = 0; i < CustomizeUIDesc.iChild; i++)
 		{
-			CreatFromDat(inputFileStream, filename, pGameObj);
+			CreatFromDat(inputFileStream, pGameObj);
 		}
 	}
 

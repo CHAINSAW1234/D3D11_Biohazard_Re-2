@@ -56,6 +56,7 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT						SetUp_RenderTargets_MotionBlur(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_SSR(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_DOF(const D3D11_VIEWPORT& ViewportDesc);
+	HRESULT						SetUp_RenderTargets_GODRAY(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_FXAA(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTarget_SubResult(const D3D11_VIEWPORT& ViewportDesc);
 	// 잘 모름 
@@ -90,7 +91,7 @@ private:
 	_float4x4					m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
 
 private:
-	ID3D11DepthStencilView*		m_pLightDepthDSVs[RES_END] = {};
+	ID3D11DepthStencilView*		m_pLightDepthDSV = {};
 	SHADOW_RESOLUTION			m_eShadowResolution = { SHADOW_RESOLUTION::RES_4X };
 	_float						m_fLightDepthTargetViewWidth = { 0.f };
 	_float						m_fLightDepthTargetViewHeight = { 0.f };
@@ -102,7 +103,7 @@ private:
 
 private:
 	_bool						m_isRenderFieldShadow = { true };
-	_bool						m_ShaderOptions[SHADER_STATE_END] = { true };
+	_bool						m_ShaderOptions[SHADER_STATE_END] = { false };
 
 private:
 	_bool						m_isRadialBlurActive = { false };
@@ -116,12 +117,9 @@ private:
 	_bool						m_isRenderDebug = { true };
 #endif
 
-public:
+private:
 	void						Set_Shadow_Resolution(SHADOW_RESOLUTION eResolution);
-
-public:
-	HRESULT						Clear();
-
+	void						Copy_Depth(ID3D11DepthStencilView* pDestStencilView, ID3D11DepthStencilView* pSrcStencilView);
 private:
 	HRESULT						Render_Priority();
 	HRESULT						Render_NonBlend();
@@ -132,7 +130,7 @@ private:
 	HRESULT						Render_Font();
 
 private:
-	HRESULT						Render_SSAO_Blur();
+	HRESULT						Render_SSAO();
 
 private:
 	HRESULT						Render_Field_Shadow_Direction();
@@ -156,8 +154,8 @@ private:
 	HRESULT						Render_MotionBlur();
 	HRESULT						Render_SSR();
 	HRESULT						Render_DOF();
+	HRESULT						Render_Volumetric();
 	HRESULT						Render_FXAA();
-	HRESULT						Render_SubResult(const wstring& strRenderTargetTag);	// 후처리 관리용 
 private:
 	HRESULT						Render_PostProcessing();
 	HRESULT						Render_PostProcessing_Result();

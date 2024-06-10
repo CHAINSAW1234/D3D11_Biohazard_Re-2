@@ -55,6 +55,8 @@ public:
 		return m_CurrentKeyFrameIndices;
 	}
 
+	string Get_Name() { return m_szName; }
+
 	void Set_KeyFrameIndex(_uint iKeyFrameIndex)
 	{
 		for (auto& iIndex : m_CurrentKeyFrameIndices)

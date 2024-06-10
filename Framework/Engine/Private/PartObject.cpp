@@ -42,7 +42,6 @@ void CPartObject::Priority_Tick(_float fTimeDelta)
 
 void CPartObject::Tick(_float fTimeDelta)
 {
-	m_PrevWorldMatrix = m_WorldMatrix;
 	Update_WorldMatrix();
 }
 
@@ -57,6 +56,8 @@ HRESULT CPartObject::Render()
 
 void CPartObject::Update_WorldMatrix()
 {
+	m_PrevWorldMatrix = m_WorldMatrix;
+
 	_matrix			ParentsWorldMatrix = { m_pParentsTransform->Get_WorldMatrix() };
 	_matrix			WorldTransform = { m_pTransformCom->Get_WorldMatrix() };
 	_matrix			WorldMatrix = { WorldTransform * ParentsWorldMatrix };

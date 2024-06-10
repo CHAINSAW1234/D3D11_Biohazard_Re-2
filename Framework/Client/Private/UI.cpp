@@ -31,7 +31,7 @@ HRESULT CUI::Initialize(void* pArg)
 
 		if (UIDesc->vSize.x == 0 && UIDesc->vSize.y == 0)
 		{
-			m_pTransformCom->Set_WorldMatrix(UIDesc->fWorldMatrix);
+			m_pTransformCom->Set_WorldMatrix(UIDesc->worldMatrix);
 			XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 			XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 1.f));
 		}
@@ -219,7 +219,7 @@ void CUI::Free()
 	__super::Free();
 
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom); 
-	Safe_Release(m_pMask_TextureCom);
+	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pMaskTextureCom);
 	Safe_Release(m_pVIBufferCom);
 }

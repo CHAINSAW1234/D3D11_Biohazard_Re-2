@@ -8,46 +8,38 @@ BEGIN(Tool)
 class CModel_Selector final :  public CTool_Selector
 {
 public:
-	typedef struct tagModelInfo
-	{
-		CModel*			pModel = { nullptr };
-		wstring			strPrototypeTag = { TEXT("") };
-	}MODEL_INFO;
-
 	typedef struct tagModelSelectorDesc
 	{
-		const vector<MODEL_INFO>*		pModelInfos = { nullptr };
-		vector<string>					ModelTags;
-		vector<CModel::MODEL_TYPE>		Types;
-	}MODEL_SELECTOR_DESC;
-
+		list<CModel*>		Models;
+	}MODELSELECTOR_DESC;
 
 private:
-	CModel_Selector();
+	CModel_Selector(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CModel_Selector() = default;
 
 public:
-	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(_float fTimeDelta) override;
-
-public:
-	const MODEL_INFO& Get_CurrentModelInfo() const {
-		return m_CurrentInfo;
-	}
+	virtual HRESULT				Initialize(void* pArg) override;
+	virtual void				Tick(_float fTimeDelta) override;
 
 private:
-	void Change_CurrentModelInfo(MODEL_INFO ModelInfo);
+	HRESULT						Add_Components();
+
+public:
+	CModel*						Get_Model(const string& strModelTag) { return m_Models[strModelTag]; }
+	map<string, CModel*>		Get_Models() { return m_Models; }
+	CModel*						Get_CurrentSelectedModel();
+	map<string, _float4x4>		Get_BoneCombinedMatrices();
+
+private:
+	void						Set_RootBone();
 
 private:
 	_uint						m_iNumModels = { 0 };
-	vector<MODEL_INFO>			m_ModelInfos;
-
-	string*						m_ModelTags = { nullptr };
-
-	MODEL_INFO					m_CurrentInfo = {};
+	map<string, CModel*>		m_Models;
+	string						m_strSelectedModelTag = { "" };
 
 public:
-	static CModel_Selector* Create(void* pArg);
+	static CModel_Selector* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);
 	virtual void Free() override;
 };
 

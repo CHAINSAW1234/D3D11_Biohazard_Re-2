@@ -7,6 +7,10 @@
 #include "Model_Selector.h"
 #include "Tool_Transformation.h"
 #include "Tool_Collider.h"
+#include "Tool_AnimList.h"
+#include "Tool_AnimPlayer.h"
+#include "Tool_PartObject.h"
+#include "Tool_BoneLayer.h"
 
 BEGIN(Tool)
 
@@ -54,20 +58,20 @@ public:
     }
 
 protected:
-    CGameInstance*          m_pGameInstance = { nullptr };
-    ID3D11Device*           m_pDevice = { nullptr };
-    ID3D11DeviceContext*    m_pContext = { nullptr };
+    CGameInstance*                                  m_pGameInstance = { nullptr };
+    ID3D11Device*                                   m_pDevice = { nullptr };
+    ID3D11DeviceContext*                            m_pContext = { nullptr };
 
-    _bool                   m_isFocus = { false };
-    _bool                   m_isHovered = { false };
+    _bool                                           m_isFocus = { false };
+    _bool                                           m_isHovered = { false };
 
     //  텍스처등.. 새로운 컴포넌트를 추가하면 해당 태그에 쭉 추가하게 됌
     //  각 하위 클래스에서 enum으로 정의해서 벡터 인덱스 사용하기
-    map<const wstring, vector<COMPONENT_INFO>>     m_ComponentInfos;
+    map<const wstring, vector<COMPONENT_INFO>>      m_ComponentInfos;
 
     //  ImGui 창들 기본적인 툴들을 컴포넌트화 해서 조립식으로 작성하기
-    _uint                                       m_iNumTools = { 0 };
-    map<const string, CTool*>                   m_Tools;
+    _uint                                           m_iNumTools = { 0 };
+    map<const string, CTool*>                       m_Tools;
 
 
 public:
