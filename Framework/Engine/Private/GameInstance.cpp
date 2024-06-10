@@ -1015,9 +1015,9 @@ void CGameInstance::SetRotationMatrix(_float4x4 RotationMatrix)
 	m_pPhysics_Controller->SetRotationMatrix(RotationMatrix);
 }
 
-CCharacter_Controller* CGameInstance::Create_Controller(_float4 Pos, _int* Index,CGameObject* pCharacter)
+CCharacter_Controller* CGameInstance::Create_Controller(_float4 Pos, _int* Index,CGameObject* pCharacter,_float fHeight,_float fRadius)
 {
-	return m_pPhysics_Controller->Create_Controller(Pos, Index, pCharacter);
+	return m_pPhysics_Controller->Create_Controller(Pos, Index, pCharacter,fHeight,fRadius);
 }
 
 void CGameInstance::Cook_Terrain()

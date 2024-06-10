@@ -53,7 +53,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
-	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.f, 0.f, 1.f), &m_iIndex_CCT, this);
+	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.3f, 5.f, 1.f), &m_iIndex_CCT, this,1.f,0.35f);
 
 	//For Camera.
 	m_pTransformCom_Camera = CTransform::Create(m_pDevice, m_pContext);
