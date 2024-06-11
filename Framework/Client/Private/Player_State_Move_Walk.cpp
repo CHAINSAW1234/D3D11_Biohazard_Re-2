@@ -22,7 +22,51 @@ void CPlayer_State_Move_Walk::OnStateEnter()
 void CPlayer_State_Move_Walk::OnStateUpdate(_float fTimeDelta)
 {
 	Update_KeyInput();
+	Set_MoveAnimation();
 
+
+}
+
+void CPlayer_State_Move_Walk::OnStateExit()
+{
+	m_Prev_FRONT_BACK_Direction = DIRECTION_END;
+}
+
+void CPlayer_State_Move_Walk::Start()
+{
+}
+
+void CPlayer_State_Move_Walk::Update_KeyInput()
+{
+	DWORD dwDirection = 0;
+
+	if (m_pGameInstance->Get_KeyState('W') == PRESSING &&
+		m_pGameInstance->Get_KeyState('S') == PRESSING)
+		;
+	else if (m_pGameInstance->Get_KeyState('W') == PRESSING)
+		dwDirection |= FRONT;
+	else if (m_pGameInstance->Get_KeyState('S') == PRESSING)
+		dwDirection |= BACK;
+
+	if (m_pGameInstance->Get_KeyState('A') == PRESSING &&
+		m_pGameInstance->Get_KeyState('D') == PRESSING)
+		;
+	else if (m_pGameInstance->Get_KeyState('A') == PRESSING)
+		dwDirection |= LEFT;
+	else if (m_pGameInstance->Get_KeyState('D') == PRESSING)
+		dwDirection |= RIGHT;
+
+	m_dwDirection = dwDirection;
+
+	if (m_dwDirection & FRONT)
+		m_Prev_FRONT_BACK_Direction = FRONT;
+	if (m_dwDirection & BACK)
+		m_Prev_FRONT_BACK_Direction = BACK;
+
+}
+
+void CPlayer_State_Move_Walk::Set_MoveAnimation()
+{
 	if (m_dwDirection & FRONT) {
 		if (m_dwDirection & LEFT) {
 			CModel::ANIM_PLAYING_DESC		AnimDesc;
@@ -145,44 +189,21 @@ void CPlayer_State_Move_Walk::OnStateUpdate(_float fTimeDelta)
 		m_pPlayer->Get_Body_Model()->Set_Animation_Blend(AnimDesc, 2);
 	}
 
-
 }
 
-void CPlayer_State_Move_Walk::OnStateExit()
+void CPlayer_State_Move_Walk::Look_Cam()
 {
-	m_Prev_FRONT_BACK_Direction = DIRECTION_END;
-}
+	// freind 적극 사용에 대해 이후 처리할 것
+	
+	_float4 vCamLook = m_pPlayer->m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
+	vCamLook.y = 0;
+	vCamLook = XMVector3Normalize(vCamLook);
 
-void CPlayer_State_Move_Walk::Start()
-{
-}
+	_float4 vPlayerLook = m_pPlayer->m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
+	vPlayerLook.y = 0;
+	vPlayerLook = XMVector3Normalize(vPlayerLook);
+	Cal_Degree_From_Directions_Between_Min180_To_180(vCamLook, vPlayerLook);
 
-void CPlayer_State_Move_Walk::Update_KeyInput()
-{
-	DWORD dwDirection = 0;
-
-	if (m_pGameInstance->Get_KeyState('W') == PRESSING &&
-		m_pGameInstance->Get_KeyState('S') == PRESSING)
-		;
-	else if (m_pGameInstance->Get_KeyState('W') == PRESSING)
-		dwDirection |= FRONT;
-	else if (m_pGameInstance->Get_KeyState('S') == PRESSING)
-		dwDirection |= BACK;
-
-	if (m_pGameInstance->Get_KeyState('A') == PRESSING &&
-		m_pGameInstance->Get_KeyState('D') == PRESSING)
-		;
-	else if (m_pGameInstance->Get_KeyState('A') == PRESSING)
-		dwDirection |= LEFT;
-	else if (m_pGameInstance->Get_KeyState('D') == PRESSING)
-		dwDirection |= RIGHT;
-
-	m_dwDirection = dwDirection;
-
-	if (m_dwDirection & FRONT)
-		m_Prev_FRONT_BACK_Direction = FRONT;
-	if (m_dwDirection & BACK)
-		m_Prev_FRONT_BACK_Direction = BACK;
 
 }
 

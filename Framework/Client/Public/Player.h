@@ -77,6 +77,8 @@ public:
 private:
 	_bool m_isSpotlight = { false };
 
+	friend class CPlayer_State_Move_Walk;
+
 #pragma endregion
 
 #pragma region 예은 추가 

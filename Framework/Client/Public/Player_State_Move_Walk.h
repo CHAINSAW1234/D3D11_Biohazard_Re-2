@@ -19,6 +19,9 @@ public:
 
 private:
 	void Update_KeyInput();
+	void Set_MoveAnimation();
+	void Look_Cam();
+
 private:
 	CPlayer* m_pPlayer = { nullptr };
 
