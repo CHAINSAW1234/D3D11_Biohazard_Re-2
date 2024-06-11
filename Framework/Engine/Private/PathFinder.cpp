@@ -22,15 +22,18 @@ HRESULT CPathFinder::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CPathFinder::Init_PathFinder(_uint iCellCount)
+void CPathFinder::Init_PathFinder()
 {
-	m_iCellCount = iCellCount;
+	m_Cells = m_pGameInstance->GetCells();
+	m_vecNavCell_Point = m_pGameInstance->GetNavCellPoint();
+
+	m_iCellCount = m_Cells->size();
 
 	m_closedList = new bool[m_iCellCount];
 
 	memset(m_closedList, false, m_iCellCount);
 
-	m_cellDetails = new CELL[iCellCount];
+	m_cellDetails = new CELL[m_iCellCount];
 }
 
 void CPathFinder::Init_Visibility_Optimization()
@@ -98,6 +101,9 @@ void CPathFinder::Initiate_PathFinding(_uint StartCell, _uint EndCell)
 
 				TracePath(StartCell, EndCell);
 				foundDest = true;
+
+				Init_Visibility_Optimization();
+
 				return;
 			}
 
@@ -135,6 +141,9 @@ void CPathFinder::Initiate_PathFinding(_uint StartCell, _uint EndCell)
 
 				TracePath(StartCell, EndCell);
 				foundDest = true;
+
+				Init_Visibility_Optimization();
+
 				return;
 			}
 
@@ -172,6 +181,9 @@ void CPathFinder::Initiate_PathFinding(_uint StartCell, _uint EndCell)
 
 				TracePath(StartCell, EndCell);
 				foundDest = true;
+
+				Init_Visibility_Optimization();
+
 				return;
 			}
 
@@ -399,6 +411,10 @@ CPathFinder* CPathFinder::Create()
 
 		Safe_Release(pInstance);
 	}
+	else
+	{
+		pInstance->Init_PathFinder();
+	}
 
 	return pInstance;
 }
@@ -408,5 +424,4 @@ void CPathFinder::Free()
 	Safe_Release(m_pGameInstance);
 	Safe_Delete_Array(m_cellDetails);
 	Safe_Delete_Array(m_closedList);
-	Safe_Release(m_pNavigationCom);
 }

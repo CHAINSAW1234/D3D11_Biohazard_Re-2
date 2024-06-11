@@ -16,7 +16,7 @@ public:
 	virtual HRESULT					Initialize(void* pArg);
 
 public:
-	void							Init_PathFinder(_uint iCellCount);
+	void							Init_PathFinder();
 	void							Init_Visibility_Optimization();
 	void							Initiate_PathFinding(_uint StartCell,_uint EndCell);
 	bool							IsValid(_uint Index);
@@ -42,7 +42,6 @@ public:
 	void							Reset();
 protected:
 	class CGameInstance*			m_pGameInstance = { nullptr };
-	class CNavigation*				m_pNavigationCom = { nullptr };
 
 private:
 	bool*							m_closedList = { nullptr };

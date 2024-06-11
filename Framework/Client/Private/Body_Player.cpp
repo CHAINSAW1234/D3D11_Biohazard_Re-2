@@ -4,12 +4,12 @@
 #include "Player.h"
 #include "Light.h"
 
-CBody_Player::CBody_Player(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CBody_Player::CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
 {
 }
 
-CBody_Player::CBody_Player(const CBody_Player & rhs)
+CBody_Player::CBody_Player(const CBody_Player& rhs)
 	: CPartObject{ rhs }
 {
 
@@ -20,9 +20,9 @@ HRESULT CBody_Player::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CBody_Player::Initialize(void * pArg)
+HRESULT CBody_Player::Initialize(void* pArg)
 {
-	BODY_DESC*		pDesc = { static_cast<BODY_DESC*>(pArg) };
+	BODY_DESC* pDesc = { static_cast<BODY_DESC*>(pArg) };
 
 	pDesc->fSpeedPerSec = 10.f;
 	pDesc->fRotationPerSec = XMConvertToRadians(90.0f);
@@ -37,7 +37,7 @@ HRESULT CBody_Player::Initialize(void * pArg)
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
-		return E_FAIL;	
+		return E_FAIL;
 
 	/*CModel::ANIM_PLAYING_DESC		AnimDesc;
 	AnimDesc.iAnimIndex = 0;
@@ -84,8 +84,6 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	//	m_pModelCom->Add_IK("r_arm_humerus", "r_arm_wrist", TEXT("IK_R_ARM"), 20, 1.f);
 	//	m_pModelCom->Add_IK("r_arm_clavicle", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
 	//	m_pModelCom->Add_IK("spine_0", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
-
-	m_pGameInstance->SetBone_Ragdoll(m_pModelCom->GetBoneVector());
 
 	return S_OK;
 }
@@ -169,7 +167,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 	_vector			vCurrentPos = { m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION) };
 	_vector			vCurrentBallPos = { XMVector4Transform(vCurrentPos, XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball"))) };
 
-	_vector			vDirectionToBall = { vCurrentBallPos - vCurrentPos };	
+	_vector			vDirectionToBall = { vCurrentBallPos - vCurrentPos };
 
 	//	m_pModelCom->Set_Direction_IK(TEXT("IK_L_LEG"), vMoveDir);
 	//	m_pModelCom->Set_Direction_IK(TEXT("IK_R_LEG"), vMoveDir);z
@@ -342,19 +340,10 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	static bool Temp = false;
-	if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
-	{
-		Temp = true;
-		m_bRagdoll = true;
-	}
+	//m_pModelCom->Play_Animations(fTimeDelta);
+	m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 
-	if (!Temp)
-	{
-		//m_pModelCom->Play_Animations(fTimeDelta);
-		m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
-
-		/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////TEST/////////////////////////////////
@@ -362,40 +351,39 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	/////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////
 
-		CVIBuffer_Terrain* pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
-		CTransform* pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
-		if (nullptr != pTerrainBuffer &&
-			nullptr != pTerrainTransform)
-		{
-			_matrix			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
-			_matrix			BallCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball")) };
+	CVIBuffer_Terrain* pTerrainBuffer = { dynamic_cast<CVIBuffer_Terrain*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_VIBuffer"), 0))) };
+	CTransform* pTerrainTransform = { dynamic_cast<CTransform*>(const_cast<CComponent*>(m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_BackGround"), TEXT("Com_Transform"), 0))) };
+	if (nullptr != pTerrainBuffer &&
+		nullptr != pTerrainTransform)
+	{
+		_matrix			WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
+		_matrix			BallCombinedMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_leg_ball")) };
 
-			_matrix			BallWorldMatrix = { BallCombinedMatrix * WorldMatrix };
+		_matrix			BallWorldMatrix = { BallCombinedMatrix * WorldMatrix };
 
-			_vector		vPosition = { BallWorldMatrix.r[CTransform::STATE_POSITION] };
-			vPosition.m128_f32[1] += 1.f;
-			//	vPosition.m128_f32[2] -= 0.3f;
+		_vector		vPosition = { BallWorldMatrix.r[CTransform::STATE_POSITION] };
+		vPosition.m128_f32[1] += 1.f;
+		//	vPosition.m128_f32[2] -= 0.3f;
 
-			_float4		vPickPosFloat4;
-			pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
+		_float4		vPickPosFloat4;
+		pTerrainBuffer->Compute_Height(pTerrainTransform, vPosition, &vPickPosFloat4);
 
-			_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
-			vResultPos.m128_f32[1] += 0.1f;
+		_vector		vResultPos = { XMLoadFloat4(&vPickPosFloat4) };
+		vResultPos.m128_f32[1] += 0.1f;
 
-			m_pModelCom->Set_TargetPosition_IK(TEXT("IK_L_LEG"), vResultPos);
+		m_pModelCom->Set_TargetPosition_IK(TEXT("IK_L_LEG"), vResultPos);
 
-			//	vMoveDir += vResultPos - vPosition;
-		}
-
-		m_pModelCom->Play_IK(m_pParentsTransform, fTimeDelta);
-		/////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////
+		//	vMoveDir += vResultPos - vPosition;
 	}
+
+	m_pModelCom->Play_IK(m_pParentsTransform, fTimeDelta);
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
 
 #pragma region Collider 위치 설정 코드
 	////Body
@@ -530,7 +518,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponents(m_pColliderCom);	
+	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
 #endif
 }
 
@@ -850,7 +838,7 @@ HRESULT CBody_Player::Render_LightDepth_Spot()
 HRESULT CBody_Player::Add_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimModel"), 
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimModel"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
@@ -870,7 +858,7 @@ HRESULT CBody_Player::Add_Components()
 		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom, &ColliderDesc)))
 		return E_FAIL;
 
-	
+
 	for (_uint i = 0; i < 100; ++i)
 	{
 		CBounding_OBB::BOUNDING_OBB_DESC		ColliderOBBDesc{};
@@ -878,7 +866,7 @@ HRESULT CBody_Player::Add_Components()
 		ColliderOBBDesc.vRotation = { 0.f, 0.f, 0.f };
 		ColliderOBBDesc.vSize = { 10.f, 10.f, 10.f };
 
-		CComponent*			pCollider = { m_pGameInstance->Clone_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"), &ColliderOBBDesc) };
+		CComponent* pCollider = { m_pGameInstance->Clone_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"), &ColliderOBBDesc) };
 		if (nullptr == pCollider)
 			return E_FAIL;
 
@@ -918,16 +906,16 @@ HRESULT CBody_Player::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevWorldMatrix", &m_PrevWorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevViewMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;									
+		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-CBody_Player * CBody_Player::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CBody_Player* CBody_Player::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CBody_Player*		pInstance = new CBody_Player(pDevice, pContext);
+	CBody_Player* pInstance = new CBody_Player(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -939,9 +927,9 @@ CBody_Player * CBody_Player::Create(ID3D11Device * pDevice, ID3D11DeviceContext 
 	return pInstance;
 }
 
-CGameObject * CBody_Player::Clone(void * pArg)
+CGameObject* CBody_Player::Clone(void* pArg)
 {
-	CBody_Player*		pInstance = new CBody_Player(*this);
+	CBody_Player* pInstance = new CBody_Player(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -958,7 +946,7 @@ void CBody_Player::Free()
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);
-	Safe_Release(m_pShaderCom);	
+	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
 
 	for (auto& pCollider : m_PartColliders)

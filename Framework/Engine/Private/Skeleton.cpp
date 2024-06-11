@@ -22,7 +22,7 @@ _matrix create_offset_transform(const _matrix& a, const _matrix& b)
     return XMMatrixMultiply(rotation_delta_mat, translation_delta_mat);
 }
 
-Skeleton* Skeleton::create(const aiScene* scene)
+Skeleton* Skeleton::create(const aiScene* scene, ofstream& ofs)
 {
     Skeleton* skeleton = new Skeleton();
 
@@ -57,8 +57,12 @@ Skeleton* Skeleton::create(const aiScene* scene)
         auto& joint = skeleton->m_joints[i];
     }
 
-
     return skeleton;
+}
+
+Skeleton* Skeleton::create(ifstream& ifs)
+{
+    return nullptr;
 }
 
 Skeleton::Skeleton()

@@ -242,15 +242,16 @@ public:/*For Physics Controller*/
 	_float4									GetTranslation_Rigid_Dynamic(_int Index);
 	_matrix									GetWorldMatrix_Rigid_Dynamic(_int Index);
 	void									InitTerrainPhysics();
-	void									SetBone_Ragdoll(vector<class CBone*>* vecBone);
-	void									SetWorldMatrix(_float4x4 WorldMatrix);
-	void									SetRotationMatrix(_float4x4 RotationMatrix);
+	void									SetBone_Ragdoll_Ragdoll(vector<class CBone*>* vecBone);
+	void									SetWorldMatrix_Ragdoll(_float4x4 WorldMatrix);
+	void									SetRotationMatrix_Ragdoll(_float4x4 RotationMatrix);
 	class CCharacter_Controller*			Create_Controller(_float4 Pos, _int* Index, class CGameObject* pCharacter,_float fHeight,_float fRadius);
 	void									Cook_Terrain();
 	void									Simulate();
 	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 	_bool									RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
+	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone, _float4x4* WorldMatrix, _float4x4* RotationMatrix);
 
 private:/*For Physics_Controller*/
 	_uint*									m_pIndices = { nullptr };
@@ -268,7 +269,28 @@ public:
 #pragma region For AI Controller
 public:
 	class CBehaviorTree*					Create_BehaviorTree(_uint* iId);
+	class CPathFinder*						Create_PathFinder();
 	void									Initialize_BehaviorTree(_uint* iId);
+	void									SetNavCellPoint(vector<_float4>* pCellPoint)
+	{
+		m_vecNavCell_Point = pCellPoint;
+	}
+	vector<_float4>*						GetNavCellPoint()
+	{
+		return m_vecNavCell_Point;
+	}
+	void									SetCells(vector<class CCell*>* pCells)
+	{
+		m_Cells = pCells;
+	}
+	vector<class CCell*>* GetCells()
+	{
+		return m_Cells;
+	}
+private:
+	vector<_float4>*						m_vecNavCell_Point;
+	vector<class CCell*>*					m_Cells;
+
 #pragma endregion
 
 #pragma region For Graphic Device

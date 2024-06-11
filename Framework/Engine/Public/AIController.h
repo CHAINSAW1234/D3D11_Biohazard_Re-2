@@ -18,7 +18,7 @@ public:
 public:
 	class CBehaviorTree*			Create_BehaviorTree(_uint* iId);
 	class CBehaviorTree*			Get_BehaviorTree(_uint* iId);
-	class CPathFinder*				Create_PathFinder(_uint* iId);
+	class CPathFinder*				Create_PathFinder();
 protected:
 	class CGameInstance*			m_pGameInstance = { nullptr };
 	vector<class CBehaviorTree*>	m_vecBehaviorTree;

@@ -66,11 +66,6 @@ void CHair_Player::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	m_pColliderCom->Tick(XMLoadFloat4x4(&m_WorldMatrix));
-
-	if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
-	{
-		m_bRagdoll = true;
-	}
 }
 
 void CHair_Player::Late_Tick(_float fTimeDelta)

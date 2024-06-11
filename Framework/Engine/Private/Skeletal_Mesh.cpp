@@ -6,20 +6,54 @@
 
 SkeletalMesh* SkeletalMesh::load(const std::string& name, Skeleton* skeleton)
 {
-    _uint		iOption = { aiProcessPreset_TargetRealtime_Fast | aiProcess_ConvertToLeftHanded };
+	filesystem::path FullPath(name);
 
-    const aiScene* scene;
-    Assimp::Importer importer;
-    scene = importer.ReadFile(name, iOption);
+	string strParentsPath = FullPath.parent_path().string();
+	string strFileName = FullPath.stem().string();
 
-    SkeletalMesh* skeletal_mesh = new SkeletalMesh();
+	string strNewPath = strParentsPath + "/" + strFileName + ".bin";
 
-    if (skeleton)
-        skeletal_mesh->m_skeleton = skeleton;
-    else
-        skeletal_mesh->m_skeleton = Skeleton::create(scene);
+	filesystem::path CheckPath(strNewPath);
 
-    return skeletal_mesh;
+	if (true == filesystem::exists(CheckPath))
+	{
+		ifstream ifs(strNewPath.c_str(), ios::binary);
+
+		if (true == ifs.fail())
+		{
+			MSG_BOX(TEXT("Failed To OpenFile_Radoll"));
+
+			return nullptr;
+		}
+
+		SkeletalMesh* skeletal_mesh = new SkeletalMesh();
+
+		if (skeleton)
+			skeletal_mesh->m_skeleton = skeleton;
+		else
+			skeletal_mesh->m_skeleton = Skeleton::create(ifs);
+
+		return skeletal_mesh;
+	}
+	else
+	{
+		_uint		iOption = { aiProcessPreset_TargetRealtime_Fast | aiProcess_ConvertToLeftHanded };
+
+		const aiScene* scene;
+		Assimp::Importer importer;
+		scene = importer.ReadFile(name, iOption);
+
+		ofstream ofs(strNewPath.c_str(), ios::binary);
+
+		SkeletalMesh* skeletal_mesh = new SkeletalMesh();
+
+		if (skeleton)
+			skeletal_mesh->m_skeleton = skeleton;
+		else
+			skeletal_mesh->m_skeleton = Skeleton::create(scene, ofs);
+
+		return skeletal_mesh;
+	}
 }
 
 SkeletalMesh::SkeletalMesh()

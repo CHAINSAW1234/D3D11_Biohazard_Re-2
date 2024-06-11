@@ -41,11 +41,11 @@ CBehaviorTree* CAIController::Get_BehaviorTree(_uint* iId)
 	return pBehaviorTree;
 }
 
-CPathFinder* CAIController::Create_PathFinder(_uint* iId)
+CPathFinder* CAIController::Create_PathFinder()
 {
 	auto pPathFinder = CPathFinder::Create();
 	Safe_AddRef(pPathFinder);
-	*iId = m_iPathFinder_Count;
+
 	++m_iPathFinder_Count;
 
 	m_vecPathFinder.push_back(pPathFinder);

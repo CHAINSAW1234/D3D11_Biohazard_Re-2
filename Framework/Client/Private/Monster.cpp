@@ -2,6 +2,7 @@
 #include "..\Public\Monster.h"
 #include "Character_Controller.h"
 #include "BehaviorTree.h"
+#include "PathFinder.h"
 
 #define MODEL_SCALE 0.01f
 
@@ -46,6 +47,9 @@ HRESULT CMonster::Initialize(void * pArg)
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
 	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this,1.f,0.35f);
+
+	m_pBehaviorTree = m_pGameInstance->Create_BehaviorTree(&m_iAIController_ID);
+	m_pPathFinder = m_pGameInstance->Create_PathFinder();
 
 	return S_OK;
 }
@@ -208,4 +212,5 @@ void CMonster::Free()
 	Safe_Release(m_pShaderCom);	
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pBehaviorTree);
+	Safe_Release(m_pPathFinder);
 }

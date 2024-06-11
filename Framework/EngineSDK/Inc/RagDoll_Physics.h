@@ -26,24 +26,19 @@ inline _vector              to_vec3(const PxVec3& vec3)
 }
 
 inline XMVECTOR             QuaternionFromVectors(const XMVECTOR& _vec1, const XMVECTOR& _vec2) {
-    // 벡터를 정규화합니다.
     _vector vec1 = XMVector3Normalize(_vec1);
     _vector vec2 = XMVector3Normalize(_vec2);
 
-    // 두 벡터의 내적을 계산합니다.
     float dot = XMVectorGetX(XMVector3Dot(vec1, vec2));
 
-    // 두 벡터가 거의 반대 방향을 가리킬 때를 처리합니다.
     if (dot < -0.999999f)
     {
         XMVECTOR orthogonalVector = XMVector3Orthogonal(vec1);
         return XMQuaternionRotationAxis(orthogonalVector, XM_PI);
     }
 
-    // 축을 계산합니다.
     XMVECTOR axis = XMVector3Cross(vec1, vec2);
 
-    // 쿼터니언을 계산합니다.
     float angle = acosf(dot);
     XMVECTOR quaternion = XMQuaternionRotationAxis(axis, angle);
 
@@ -163,7 +158,6 @@ public:
     }
     bool                                IsIdentityMatrix(const _matrix& matrix)
     {
-        // 항등 행렬의 주 대각선 원소와 나머지 원소를 확인
         if (XMVectorGetX(matrix.r[0]) == 1.0f && XMVectorGetY(matrix.r[0]) == 0.0f &&
             XMVectorGetZ(matrix.r[0]) == 0.0f && XMVectorGetW(matrix.r[0]) == 0.0f &&
 
@@ -181,13 +175,13 @@ public:
 
         return false;
     }
-    void                                SetWorldMatrix(_float4x4 WorldMat)
+    void                                SetWorldMatrix(_float4x4* pWorldMat)
     {
-        m_WorldMatrix = WorldMat;
+        m_pWorldMatrix = pWorldMat;
     }
-    void                                SetRotationMatrix(_float4x4 WorldMat)
+    void                                SetRotationMatrix(_float4x4* pRotMat)
     {
-        m_RotationMatrix = WorldMat;
+        m_pRotationMatrix = pRotMat;
     }
 public:
 	static CRagdoll_Physics*            Create();
@@ -242,8 +236,8 @@ private:
 
     _bool                                           m_bJoint_Set = { false };
 
-    _float4x4                                       m_WorldMatrix;
-    _float4x4                                       m_RotationMatrix;
+    _float4x4*                                      m_pWorldMatrix;
+    _float4x4*                                      m_pRotationMatrix;
     PoseTransforms                                  m_Global_transforms;
 
     PxFilterData                                    m_FilterData;

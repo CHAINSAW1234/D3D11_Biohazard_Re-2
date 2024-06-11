@@ -1000,19 +1000,19 @@ void CGameInstance::InitTerrainPhysics()
 		m_pPhysics_Controller->InitTerrain();
 }
 
-void CGameInstance::SetBone_Ragdoll(vector<class CBone*>* vecBone)
+void CGameInstance::SetBone_Ragdoll_Ragdoll(vector<class CBone*>* vecBone)
 {
 	m_pPhysics_Controller->SetBone_Ragdoll(vecBone);
 }
 
-void CGameInstance::SetWorldMatrix(_float4x4 WorldMatrix)
+void CGameInstance::SetWorldMatrix_Ragdoll(_float4x4 WorldMatrix)
 {
-	m_pPhysics_Controller->SetWorldMatrix(WorldMatrix);
+	m_pPhysics_Controller->SetWorldMatrix_Ragdoll(WorldMatrix);
 }
 
-void CGameInstance::SetRotationMatrix(_float4x4 RotationMatrix)
+void CGameInstance::SetRotationMatrix_Ragdoll(_float4x4 RotationMatrix)
 {
-	m_pPhysics_Controller->SetRotationMatrix(RotationMatrix);
+	m_pPhysics_Controller->SetRotationMatrix_Ragdoll(RotationMatrix);
 }
 
 CCharacter_Controller* CGameInstance::Create_Controller(_float4 Pos, _int* Index,CGameObject* pCharacter,_float fHeight,_float fRadius)
@@ -1032,6 +1032,11 @@ _bool CGameInstance::RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint
 _bool CGameInstance::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
 {
 	return m_pPhysics_Controller->SphereCast(vOrigin, vDir, pBlockPoint, fMaxDist);
+}
+CRagdoll_Physics* CGameInstance::Create_Ragdoll(vector<class CBone*>* vecBone, _float4x4* WorldMatrix, _float4x4* RotationMatrix)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->Create_Ragdoll(vecBone,WorldMatrix,RotationMatrix);
 }
 #pragma endregion
 
@@ -1054,10 +1059,10 @@ CBehaviorTree* CGameInstance::Create_BehaviorTree(_uint* iId)
 		return m_pAIController->Create_BehaviorTree(iId);
 }
 
-CPathFinder* CGameInstance::Create_PathFinder(_uint* iId)
+CPathFinder* CGameInstance::Create_PathFinder()
 {
 	if (m_pAIController)
-		return m_pAIController->Create_PathFinder(iId);
+		return m_pAIController->Create_PathFinder();
 }
 
 void CGameInstance::Initialize_BehaviorTree(_uint* iId)

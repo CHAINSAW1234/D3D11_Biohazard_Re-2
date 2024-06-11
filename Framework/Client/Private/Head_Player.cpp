@@ -83,11 +83,6 @@ void CHead_Player::Late_Tick(_float fTimeDelta)
 
 	m_pModelCom->Play_Animations(fTimeDelta);
 
-	if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
-	{
-		m_bRagdoll = true;
-	}
-
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);

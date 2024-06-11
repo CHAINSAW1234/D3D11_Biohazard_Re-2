@@ -152,7 +152,7 @@ void CRagdoll_Physics::create_d6_joint(PxRigidDynamic* parent, PxRigidDynamic* c
 {
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
-	_matrix p_tf = XMLoadFloat4x4((*m_vecBone)[joint_pos]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(&m_WorldMatrix);
+	_matrix p_tf = XMLoadFloat4x4((*m_vecBone)[joint_pos]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
 	_vector p = XMVectorSet(p_tf.r[3].m128_f32[0], p_tf.r[3].m128_f32[1], p_tf.r[3].m128_f32[2], 1.0f);
 
 #pragma region 크기 줄이는 코드
@@ -178,11 +178,11 @@ void CRagdoll_Physics::create_revolute_joint(PxRigidDynamic* parent, PxRigidDyna
 {
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
-	_matrix p_tf = XMLoadFloat4x4((*m_vecBone)[joint_pos]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(&m_WorldMatrix);
+	_matrix p_tf = XMLoadFloat4x4((*m_vecBone)[joint_pos]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
 	_vector p = XMVectorSet(p_tf.r[3].m128_f32[0], p_tf.r[3].m128_f32[1], p_tf.r[3].m128_f32[2], 1.0f);
 
 	p = XMVectorSetW(p, 1.f);
-	_vector q = XMQuaternionRotationMatrix(XMMatrixInverse(nullptr, joints[joint_pos].inverse_bind_pose) * XMMatrixRotationY(PxPi) * XMLoadFloat4x4(&m_RotationMatrix));
+	_vector q = XMQuaternionRotationMatrix(XMMatrixInverse(nullptr, joints[joint_pos].inverse_bind_pose) * XMMatrixRotationY(PxPi) * XMLoadFloat4x4(m_pRotationMatrix));
 
 	PxRevoluteJoint* joint = PxRevoluteJointCreate(*m_Physics,
 		parent,
@@ -295,10 +295,6 @@ _bool CRagdoll_Physics::Init()
 	m_joint_mat.resize(MAX_BONES);
 
 	update_transforms();
-
-	//create_ragdoll();
-
-	//m_ragdoll->set_kinematic(true);
 
 	m_ragdoll_pose = new AnimRagdoll(m_skeletal_mesh->skeleton());
 
@@ -484,10 +480,10 @@ void CRagdoll_Physics::update_animations()
 	if (m_bRagdoll == false)
 		return;
 
-	auto RotMat = m_RotationMatrix;
-	RotMat._41 = m_WorldMatrix._41;
-	RotMat._42 = m_WorldMatrix._42;
-	RotMat._43 = m_WorldMatrix._43;
+	auto RotMat = m_pRotationMatrix;
+	RotMat->_41 = m_pWorldMatrix->_41;
+	RotMat->_42 = m_pWorldMatrix->_42;
+	RotMat->_43 = m_pWorldMatrix->_43;
 
 	auto joint = m_skeletal_mesh->skeleton()->joints();
 
@@ -502,7 +498,7 @@ void CRagdoll_Physics::update_animations()
 				{
 					if (it->Get_Name() == joint[i].name)
 					{
-						m_Global_transforms.transforms[i] = XMLoadFloat4x4(it->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(&m_WorldMatrix);
+						m_Global_transforms.transforms[i] = XMLoadFloat4x4(it->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
 						++i;
 					}
 				}
@@ -543,7 +539,7 @@ void CRagdoll_Physics::update_animations()
 					{
 						if (it->Get_Name() == joint[i].name)
 						{
-							PxTransform px_transform(to_vec3(world_pos), to_quat(XMQuaternionRotationMatrix(XMLoadFloat4x4(it->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(&RotMat))));
+							PxTransform px_transform(to_vec3(world_pos), to_quat(XMQuaternionRotationMatrix(XMLoadFloat4x4(it->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(RotMat))));
 							m_ragdoll->m_rigid_bodies[i]->setGlobalPose(px_transform);
 						}
 					}
@@ -567,7 +563,7 @@ void CRagdoll_Physics::update_animations()
 		{
 			int i = 0;
 
-			auto WorldMat = m_RotationMatrix;
+			auto WorldMat = m_pRotationMatrix;
 
 			for (auto& it : *m_vecBone)
 			{
@@ -577,7 +573,7 @@ void CRagdoll_Physics::update_animations()
 					{
 						if (!IsIdentityMatrix(m_Global_transforms.transforms[i]))
 						{
-							auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
+							auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(WorldMat));
 							auto Result = m_Global_transforms.transforms[i] * Inverse;
 							it->Set_Combined_Matrix(Result);
 						}

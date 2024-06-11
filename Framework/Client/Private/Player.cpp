@@ -99,22 +99,12 @@ void CPlayer::Tick(_float fTimeDelta)
 #pragma endregion 예은ColTest
 
 #pragma region 이동과 카메라
-	static _bool Temp = false;
-
-	if (UP == m_pGameInstance->Get_KeyState(VK_BACK))
+	if (m_pController)
 	{
-		Temp = true;
-	}
-
-	if (Temp == false)
-	{
-		if (m_pController)
-		{
-			auto CameraPos = m_pController->GetPosition_Float4();
-			m_pTransformCom->Set_State(CTransform::STATE_POSITION, CameraPos);
-			CameraPos.y += CONTROLLER_GROUND_GAP;
-			m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, CameraPos);
-		}
+		auto CameraPos = m_pController->GetPosition_Float4();
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, CameraPos);
+		CameraPos.y += CONTROLLER_GROUND_GAP;
+		m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, CameraPos);
 	}
 
 	_vector			vMovedDirection = { XMLoadFloat3(&m_vRootTranslation) };
@@ -253,9 +243,6 @@ void CPlayer::Tick(_float fTimeDelta)
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
 	Tick_PartObjects(fTimeDelta);
-
-	m_pGameInstance->SetWorldMatrix(m_pTransformCom->Get_WorldFloat4x4());
-	m_pGameInstance->SetRotationMatrix(m_pTransformCom->Get_RotationMatrix_Pure());
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)

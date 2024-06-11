@@ -46,6 +46,7 @@ private:
 private: // For AIController
 	_uint						m_iAIController_ID = { 0 };
 	class CBehaviorTree*		m_pBehaviorTree = { nullptr };
+	class CPathFinder*			m_pPathFinder = { nullptr };
 private:
 	HRESULT						Add_Components();
 	HRESULT						Bind_ShaderResources();

@@ -87,15 +87,19 @@ private:
 #pragma endregion
 
 #pragma region Ragdoll
-public://RagDoll
-	_bool									m_bRagdoll = { false };
+public:
+	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone, _float4x4* WorldMatrix, _float4x4* RotationMatrix);
+	void									Start_Ragdoll(class CRagdoll_Physics* pRagdoll,_uint iId);
 	void									SetBone_Ragdoll(vector<class CBone*>* vecBone);
-	void									SetWorldMatrix(_float4x4 WorldMatrix);
-	void									SetRotationMatrix(_float4x4 WorldMatrix);
-	class CRagdoll_Physics*					m_pRagdoll_Physics = { nullptr };
+	void									SetWorldMatrix_Ragdoll(_float4x4 WorldMatrix);
+	void									SetRotationMatrix_Ragdoll(_float4x4 WorldMatrix);
+private://RagDoll
+	_bool									m_bRagdoll = { false };
+	vector<class CRagdoll_Physics*>			m_vecRagdoll = { nullptr };
 #pragma endregion
 
 #pragma region 편의성 함수
+public:
 	FORCEINLINE PxVec3									Vector_To_PxVec(_vector vSrc)
 	{
 		PxVec3 PxvDst;
