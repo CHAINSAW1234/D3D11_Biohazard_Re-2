@@ -31,8 +31,6 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	if (nullptr == m_pRootTranslation)
 		return E_FAIL;
 
-	m_pState = pDesc->pState;
-
 	if (FAILED(__super::Initialize(pDesc)))
 		return E_FAIL;
 
@@ -104,7 +102,6 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//Lower 33
 
 	_matrix         WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
-
 	_vector         vLook = { WorldMatrix.r[CTransform::STATE_LOOK] };
 	_vector         vPosition = { WorldMatrix.r[CTransform::STATE_POSITION] };
 

@@ -7,6 +7,7 @@ BEGIN(Engine)
 class CCollider;
 class CPartObject;
 class CNavigation;
+class CFSM;
 END
 
 BEGIN(Client)
@@ -14,11 +15,7 @@ BEGIN(Client)
 class CPlayer final : public CGameObject
 {
 public:
-	enum STATE {
-		STATE_IDLE = 0x01,
-		STATE_RUN = 0x02,
-		STATE_ATT = 0x04,
-	};
+	enum STATE { MOVE, HOLD, DAMAGE };
 
 	enum PART {
 		PART_BODY,
@@ -55,7 +52,6 @@ public:
 	_bool										Get_Player_RegionChange() { return m_bChange; }
 private:
 
-
 	_bool										m_bChange = { true };
 	_int										m_iCurCol = { 0 };
 	_int										m_iDir = { 0 };
@@ -65,8 +61,10 @@ private:
 
 	vector<CPartObject*>						m_PartObjects;
 	_ubyte										m_eState = {};
-	CCollider* m_pColliderCom = { nullptr };
-	CNavigation* m_pNavigationCom = { nullptr };
+	CCollider*									m_pColliderCom = { nullptr };
+	CNavigation*								m_pNavigationCom = { nullptr };
+	CFSM*										m_pFSMCom = {nullptr};
+
 
 	_float3										m_vRootTranslation = {};
 
@@ -120,8 +118,10 @@ private:
 	_float										m_fLerpAmount_Up = { 0.f };
 	_float										m_fLerpAmount_Look = { 0.f };
 	_bool										m_bCollision_Lerp = { false };
+
 private:
 	HRESULT Add_Components();
+	HRESULT Add_FSM_States();
 	HRESULT Add_PartObjects();
 	HRESULT Initialize_PartModels();
 
