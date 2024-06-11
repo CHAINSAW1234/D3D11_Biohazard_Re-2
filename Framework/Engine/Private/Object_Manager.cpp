@@ -53,6 +53,7 @@ HRESULT CObject_Manager::Add_Clone(_uint iLevelIndex, const wstring & strLayerTa
 		pLayer = CLayer::Create();
 		if (nullptr == pLayer)
 			return E_FAIL;
+
 		pLayer->Add_GameObject(pGameObject);
 
 		m_pLayers[iLevelIndex].emplace(strLayerTag, pLayer);
@@ -143,6 +144,17 @@ void CObject_Manager::Late_Tick(_float fTimeDelta)
 		for (auto& Pair : m_pLayers[i])
 		{
 			Pair.second->Late_Tick(fTimeDelta);
+		}
+	}
+}
+
+void CObject_Manager::Start()
+{
+	for (size_t i = 0; i < m_iNumLevels; i++)
+	{
+		for (auto& Pair : m_pLayers[i])
+		{
+			Pair.second->Start();
 		}
 	}
 }

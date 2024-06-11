@@ -18,7 +18,6 @@ public:
 	HRESULT						Clear_DepthStencil_View();
 
 	HRESULT						Present();
-
 private:	
 	ID3D11Device*				m_pDevice = { nullptr };
 		
@@ -28,7 +27,6 @@ private:
 
 	ID3D11RenderTargetView*		m_pBackBufferRTV = { nullptr };
 	ID3D11DepthStencilView*		m_pDepthStencilView = { nullptr };
-
 private:
 
 	HRESULT						Ready_SwapChain(HWND hWnd, _bool isWindowed, _uint iWinCX, _uint iWinCY);

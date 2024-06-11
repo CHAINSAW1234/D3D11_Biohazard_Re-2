@@ -6,12 +6,12 @@
 
 int g_CurrentSubdivision = 0;
 
-COctree::COctree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,CGameInstance* pGameInstance,_float4 vTranslation)
+COctree::COctree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CGameInstance* pGameInstance, _float4 vTranslation)
 {
 	m_bSubDivided = false;
 	m_Width = 0;
 	m_TriangleCount = 0;
-	m_vCenter = _float4(0, 0, 0,1.f);
+	m_vCenter = _float4(0, 0, 0, 1.f);
 	m_pWorld = NULL;
 	memset(m_pOctreeNodes, 0, sizeof(m_pOctreeNodes));
 
@@ -62,7 +62,7 @@ void COctree::GetSceneDimensions(CModel* pWorld)
 		{
 			auto pVertices = Meshes[i]->GetVertices();
 
-			m_vCenter = Add_Float4_With_Float3_Coord( m_vCenter , pVertices[n]);
+			m_vCenter = Add_Float4_With_Float3_Coord(m_vCenter, pVertices[n]);
 		}
 	}
 
@@ -84,13 +84,13 @@ void COctree::GetSceneDimensions(CModel* pWorld)
 			currentHeight = fabsf(pVertices[j].y - m_vCenter.y);
 			currentDepth = fabsf(pVertices[j].z - m_vCenter.z);
 
-			if (currentWidth > maxWidth)	
+			if (currentWidth > maxWidth)
 				maxWidth = currentWidth;
 
-			if (currentHeight > maxHeight)	
+			if (currentHeight > maxHeight)
 				maxHeight = currentHeight;
 
-			if (currentDepth > maxDepth)		
+			if (currentDepth > maxDepth)
 				maxDepth = currentDepth;
 		}
 	}
@@ -109,14 +109,14 @@ void COctree::GetSceneDimensions(CModel* pWorld)
 
 _float4 COctree::GetNewNodeCenter(_float4 vCenter, float width, int nodeID)
 {
-	_float4 vNodeCenter(0, 0, 0,1.f);
+	_float4 vNodeCenter(0, 0, 0, 1.f);
 
 	_float4 vCtr = vCenter;
 
 	switch (nodeID)
 	{
 	case TOP_LEFT_FRONT:
-		vNodeCenter = _float4(vCtr.x - width / 4, vCtr.y + width / 4, vCtr.z + width / 4,1.f);
+		vNodeCenter = _float4(vCtr.x - width / 4, vCtr.y + width / 4, vCtr.z + width / 4, 1.f);
 		break;
 
 	case TOP_LEFT_BACK:
@@ -156,7 +156,7 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 {
 	if (!triangleCount) return;
 
-	CModel* pTempWorld = new CModel(m_pDevice,m_pContext);
+	CModel* pTempWorld = new CModel(m_pDevice, m_pContext);
 
 	pTempWorld->SetNumMesh(pWorld->GetNumMesh());
 	auto TempMeshes = pTempWorld->GetMeshes();
@@ -166,7 +166,7 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 	{
 		CMesh* pObject = (*Meshes)[i];
 
-		CMesh* newObject = new CMesh(m_pDevice,m_pContext);
+		CMesh* newObject = new CMesh(m_pDevice, m_pContext);
 		TempMeshes->push_back(newObject);
 
 		(*TempMeshes)[i]->SetNumFaces(pList[i].totalFaceCount);
@@ -175,6 +175,7 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 		(*TempMeshes)[i]->SetNormals(pObject->GetNormals());
 		(*TempMeshes)[i]->SetTangents(pObject->GetTangents());
 		(*TempMeshes)[i]->SetTexcoords(pObject->GetTexcoords());
+		(*TempMeshes)[i]->SetVertexBuffer(pObject->GetVertexBuffer());
 
 		int index = 0;
 
@@ -198,7 +199,7 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 		}
 	}
 
-	m_pOctreeNodes[nodeID] = new COctree(m_pDevice,m_pContext,m_pGameInstance,m_vTranslation);
+	m_pOctreeNodes[nodeID] = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_vTranslation);
 
 	_float4 vNodeCenter = GetNewNodeCenter(vCenter, width, nodeID);
 
@@ -220,18 +221,18 @@ void COctree::CreateNode(CModel* pWorld, int numberOfTriangles, _float4 vCenter,
 	auto NumMesh = pWorld->GetNumMesh();
 	auto Meshes = pWorld->GetMeshes();
 
-	if (/*(numberOfTriangles > g_MaxTriangles) && */(g_CurrentSubdivision < g_MaxSubdivisions))
+	if (/*(numberOfTriangles > g_MaxTriangles) &&*/ (g_CurrentSubdivision < g_MaxSubdivisions))
 	{
 		m_bSubDivided = true;
 
-		vector<tFaceList> pList1(NumMesh);	
-		vector<tFaceList> pList2(NumMesh);	
-		vector<tFaceList> pList3(NumMesh);	
-		vector<tFaceList> pList4(NumMesh);	
-		vector<tFaceList> pList5(NumMesh);	
-		vector<tFaceList> pList6(NumMesh);	
-		vector<tFaceList> pList7(NumMesh);	
-		vector<tFaceList> pList8(NumMesh);	
+		vector<tFaceList> pList1(NumMesh);
+		vector<tFaceList> pList2(NumMesh);
+		vector<tFaceList> pList3(NumMesh);
+		vector<tFaceList> pList4(NumMesh);
+		vector<tFaceList> pList5(NumMesh);
+		vector<tFaceList> pList6(NumMesh);
+		vector<tFaceList> pList7(NumMesh);
+		vector<tFaceList> pList8(NumMesh);
 
 		_float4 vCtr = vCenter;
 
@@ -284,63 +285,63 @@ void COctree::CreateNode(CModel* pWorld, int numberOfTriangles, _float4 vCenter,
 				}
 			}
 
-			pList1[i].totalFaceCount = 0;		
+			pList1[i].totalFaceCount = 0;
 			pList2[i].totalFaceCount = 0;
-			pList3[i].totalFaceCount = 0;		
+			pList3[i].totalFaceCount = 0;
 			pList4[i].totalFaceCount = 0;
-			pList5[i].totalFaceCount = 0;		
+			pList5[i].totalFaceCount = 0;
 			pList6[i].totalFaceCount = 0;
-			pList7[i].totalFaceCount = 0;		
+			pList7[i].totalFaceCount = 0;
 			pList8[i].totalFaceCount = 0;
 		}
 
-		int triCount1 = 0;	
-		int triCount2 = 0;	
-		int triCount3 = 0;	
+		int triCount1 = 0;
+		int triCount2 = 0;
+		int triCount3 = 0;
 		int triCount4 = 0;
-		int triCount5 = 0;	
-		int triCount6 = 0;	
-		int triCount7 = 0;	
+		int triCount5 = 0;
+		int triCount6 = 0;
+		int triCount7 = 0;
 		int triCount8 = 0;
 
 		for (int i = 0; i < NumMesh; i++)
 		{
 			for (int j = 0; j < (*Meshes)[i]->GetNumFaces(); j++)
 			{
-				if (pList1[i].pFaceList[j]) 
+				if (pList1[i].pFaceList[j])
 				{
 					pList1[i].totalFaceCount++;
 					triCount1++;
 				}
-				if (pList2[i].pFaceList[j]) 
-				{ 
-					pList2[i].totalFaceCount++; 
-					triCount2++; 
+				if (pList2[i].pFaceList[j])
+				{
+					pList2[i].totalFaceCount++;
+					triCount2++;
 				}
-				if (pList3[i].pFaceList[j]) 
-				{ 
+				if (pList3[i].pFaceList[j])
+				{
 					pList3[i].totalFaceCount++;
 					triCount3++;
 				}
-				if (pList4[i].pFaceList[j]) 
-				{ 
-					pList4[i].totalFaceCount++; 
+				if (pList4[i].pFaceList[j])
+				{
+					pList4[i].totalFaceCount++;
 					triCount4++;
 				}
-				if (pList5[i].pFaceList[j]) 
-				{ 
+				if (pList5[i].pFaceList[j])
+				{
 					pList5[i].totalFaceCount++;
 					triCount5++;
 				}
 				if (pList6[i].pFaceList[j])
 				{
 					pList6[i].totalFaceCount++;
-					triCount6++; 
+					triCount6++;
 				}
 				if (pList7[i].pFaceList[j])
-				{ 
-					pList7[i].totalFaceCount++; 
-					triCount7++; 
+				{
+					pList7[i].totalFaceCount++;
+					triCount7++;
 				}
 				if (pList8[i].pFaceList[j])
 				{
@@ -370,7 +371,7 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 
 	m_TriangleCount = numberOfTriangles;
 
-	m_pWorld = new CModel(m_pDevice,m_pContext);
+	m_pWorld = new CModel(m_pDevice, m_pContext);
 
 	m_pWorld->SetNumMesh(pWorld->GetNumMesh());
 
@@ -379,11 +380,11 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 
 	for (int i = 0; i < m_pWorld->GetNumMesh(); i++)
 	{
-		CMesh* pObject =(*Meshes)[i];
+		CMesh* pObject = (*Meshes)[i];
 
 		CMesh* newObject = new CMesh(m_pDevice, m_pContext);
 		newObject->SetNumVertices(pObject->GetNumVertices());
-		newObject->SetVertices(pObject->GetVertices());
+		//newObject->SetVertices(pObject->GetVertices());
 
 		NewMeshes->push_back(newObject);
 
@@ -395,11 +396,12 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 		(*NewMeshes)[i]->SetTangents(pObject->GetTangents());
 		(*NewMeshes)[i]->SetTexcoords(pObject->GetTexcoords());
 		(*NewMeshes)[i]->Init_For_Octree();
+		(*NewMeshes)[i]->SetVertexBuffer(pObject->GetVertexBuffer());
 
 		auto pIndices = (*NewMeshes)[i]->GetIndices();
 		auto Faces = (*Meshes)[i]->GetFaces();
 
-		if(pIndices)
+		if (pIndices)
 		{
 			for (int j = 0; j < numOfFaces * 3; j += 3)
 			{
@@ -410,6 +412,7 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 		}
 
 		(*NewMeshes)[i]->Ready_Buffer_For_Octree(m_vTranslation);
+		(*NewMeshes)[i]->Release_Dump();
 	}
 
 	m_DisplayListID = g_EndNodeCount;
@@ -450,8 +453,8 @@ void COctree::DrawOctree(COctree* pNode, CModel* pRootWorld, CShader* pShader)
 
 	if (pNode->IsSubDivided())
 	{
-		DrawOctree(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], pRootWorld,pShader);
-		DrawOctree(pNode->m_pOctreeNodes[TOP_LEFT_BACK], pRootWorld,pShader);
+		DrawOctree(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], pRootWorld, pShader);
+		DrawOctree(pNode->m_pOctreeNodes[TOP_LEFT_BACK], pRootWorld, pShader);
 		DrawOctree(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], pRootWorld, pShader);
 		DrawOctree(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], pRootWorld, pShader);
 		DrawOctree(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], pRootWorld, pShader);
@@ -465,9 +468,9 @@ void COctree::DrawOctree(COctree* pNode, CModel* pRootWorld, CShader* pShader)
 
 		auto Meshes = pNode->m_pWorld->GetMeshes();
 
-		for(int i = 0;i< pNode->m_pWorld->GetNumMesh();++i)
+		for (int i = 0; i < pNode->m_pWorld->GetNumMesh(); ++i)
 		{
-			if((*Meshes)[i]->GetNumIndices() != 0)
+			if ((*Meshes)[i]->GetNumIndices() != 0)
 			{
 				if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 					return;
@@ -488,5 +491,358 @@ void COctree::DrawOctree(COctree* pNode, CModel* pRootWorld, CShader* pShader)
 				pNode->m_pWorld->Render(i);
 			}
 		}
+	}
+}
+
+void COctree::DrawOctree_Thread(COctree* pNode)
+{
+	if (!pNode) return;
+
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &m_vecEntryNode);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &m_vecEntryNode);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &m_vecEntryNode);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &m_vecEntryNode);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &m_vecEntryNode);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &m_vecEntryNode);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &m_vecEntryNode);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &m_vecEntryNode);
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_Thread_Internal(COctree* pNode, vector<class CModel*>* vecModel)
+{
+	if (!pNode) return;
+
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], vecModel);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], vecModel);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], vecModel);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], vecModel);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], vecModel);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], vecModel);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], vecModel);
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], vecModel);
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		(*vecModel).push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_1()
+{
+	auto pNode = m_pOctreeNodes[TOP_LEFT_FRONT];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+}
+
+void COctree::DrawOctree_2()
+{
+	auto pNode = m_pOctreeNodes[TOP_LEFT_BACK];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_3()
+{
+	auto pNode = m_pOctreeNodes[TOP_RIGHT_BACK];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_4()
+{
+	auto pNode = m_pOctreeNodes[TOP_RIGHT_FRONT];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_5()
+{
+	auto pNode = m_pOctreeNodes[BOTTOM_LEFT_FRONT];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_6()
+{
+	auto pNode = m_pOctreeNodes[BOTTOM_LEFT_BACK];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_7()
+{
+	auto pNode = m_pOctreeNodes[BOTTOM_RIGHT_BACK];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::DrawOctree_8()
+{
+	auto pNode = m_pOctreeNodes[BOTTOM_RIGHT_FRONT];
+	auto vCenter = pNode->m_vCenter;
+	vCenter.x += m_vTranslation.x;
+	vCenter.y += m_vTranslation.y;
+	vCenter.z += m_vTranslation.z;
+
+	if (!m_pGameInstance->isInFrustum_WorldSpace_Cube(XMLoadFloat4(&vCenter), pNode->m_Width * 0.5f, 0.f))
+	{
+		return;
+	}
+
+	if (pNode->IsSubDivided())
+	{
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[TOP_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_FRONT], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
+		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+	}
+}
+
+void COctree::Render_Node(CModel* pRootWorld, CShader* pShader)
+{
+	for (int i = 0; i < 8; ++i)
+	{
+		for (int j = 0; j < m_pOctreeNodes[i]->m_vecEntryNode.size(); ++j)
+		{
+			auto Meshes = m_pOctreeNodes[i]->m_vecEntryNode[j]->GetMeshes();
+
+			for (int k = 0; k < m_pOctreeNodes[i]->m_vecEntryNode[j]->GetNumMesh(); ++k)
+			{
+				if ((*Meshes)[k]->GetNumIndices() != 0)
+				{
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(k), aiTextureType_DIFFUSE)))
+						return;
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_NormalTexture", static_cast<_uint>(k), aiTextureType_NORMALS)))
+						return;
+
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_ATOSTexture", static_cast<_uint>(k), aiTextureType_METALNESS)))
+					{
+						if (FAILED(pShader->Begin(0)))
+							return;
+					}
+					else
+					{
+						if (FAILED(pShader->Begin(1)))
+							return;
+					}
+
+					m_pOctreeNodes[i]->m_vecEntryNode[j]->Render(k);
+				}
+			}
+		}
+
+		m_pOctreeNodes[i]->m_vecEntryNode.clear();
 	}
 }

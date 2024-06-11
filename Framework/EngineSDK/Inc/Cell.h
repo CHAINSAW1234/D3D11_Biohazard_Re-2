@@ -18,7 +18,10 @@ public:
 	{
 		return XMLoadFloat3(&m_vPoints[ePoint]);
 	}
-
+	_float4							Get_Point_Float4(_int iPoint)
+	{
+		return m_vPoints[iPoint];
+	}
 	void							SetUp_Neighbor(LINE eLine, CCell* pNeighbor)
 	{
 		m_iNeighborIndices[eLine] = pNeighbor->m_iIndex;
@@ -39,6 +42,10 @@ public:
 		return m_LinePoint;
 	}
 	_vector							GetPlane();
+	_int*							GetNeighborIndices()
+	{
+		return m_iNeighborIndices;
+	}
 #ifdef _DEBUG
 public:
 	virtual HRESULT					Render();

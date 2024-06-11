@@ -75,7 +75,7 @@ _float4 CCharacter_Controller::GetTranslation()
 
 	_float4 Pos;
 	Pos.x = static_cast<_float>(position.x);
-	Pos.y = static_cast<_float>(position.y)-1.1f;
+	Pos.y = static_cast<_float>(position.y) - CONTROLLER_GROUND_GAP;
 	Pos.z = static_cast<_float>(position.z);
 	Pos.w = 1.f;
 	return Pos;
@@ -87,6 +87,7 @@ void CCharacter_Controller::Release_Px()
 	{
 		m_pController->release();
 		m_pController = nullptr;
+		m_pCharacter->Release_Controller();
 	}
 }
 
@@ -96,7 +97,7 @@ _float4 CCharacter_Controller::GetPosition_Float4()
 
 	_float4 Pos;
 	Pos.x = static_cast<_float>(position.x);
-	Pos.y = static_cast<_float>(position.y) - 1.1f;
+	Pos.y = static_cast<_float>(position.y) - CONTROLLER_GROUND_GAP;
 	Pos.z = static_cast<_float>(position.z);
 	Pos.w = 1.f;
 	return Pos;

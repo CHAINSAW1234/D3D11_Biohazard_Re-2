@@ -42,7 +42,6 @@ public: /* For.Input_Device */
 #pragma region Renderer
 public: /* For.Renderer */
 	HRESULT									Add_RenderGroup(CRenderer::RENDERGROUP eRenderGroup, class CGameObject* pRenderObject);
-	void									Set_Shadow_Resolution(CRenderer::SHADOW_RESOLUTION eResolution);
 	void									Set_RadialBlur(_float fBlurAmount, _float2 BlurUV);
 	void									On_RadialBlur();
 	void									Off_RadialBlur();
@@ -71,7 +70,7 @@ public: /* For.Object_Manager */
 	void									Release_Layer(_uint iLevelIndex, const wstring& LayerTag);
 	//yeeun	
 	HRESULT									Add_Layer(_uint iLevelIndex, const wstring& strLayerTag);
-
+	void									Start();
 #pragma endregion
 
 #pragma region Component_Manager
@@ -132,7 +131,6 @@ public: /* For.Target_Manager */
 	HRESULT									Add_RenderTarget_3D(const wstring& strRenderTargetTag, _uint iWidth, _uint iHeight, _uint iDepth, DXGI_FORMAT ePixelFormat, const _float4& vClearColor, _bool isTickClear = true);
 	HRESULT									Clear_RenderTarget_All();
 	HRESULT									Clear_RenderTarget(const wstring& strRenderTargetTag);
-
 	HRESULT									Add_MRT(const wstring& strMRTTag, const wstring& strRenderTargetTag);
 	HRESULT									Begin_MRT(const wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr);
 	HRESULT									End_MRT();
@@ -141,7 +139,6 @@ public: /* For.Target_Manager */
 	HRESULT									Bind_OutputShaderResource(class CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName);
 	HRESULT									Copy_Resource(const wstring& strRenderTargetTag, ID3D11Texture2D** ppTextureHub);
 	HRESULT									Copy_Resource(const wstring& strDestRenderTargetTag, const wstring& strSrcRenderTargetTag);
-
 #pragma endregion
 
 #pragma region Frustrum
@@ -248,16 +245,34 @@ public:/*For Physics Controller*/
 	void									SetBone_Ragdoll(vector<class CBone*>* vecBone);
 	void									SetWorldMatrix(_float4x4 WorldMatrix);
 	void									SetRotationMatrix(_float4x4 RotationMatrix);
-	class CCharacter_Controller*			Create_Controller(_float4 Pos, _int* Index, class CGameObject* pCharacter);
+	class CCharacter_Controller*			Create_Controller(_float4 Pos, _int* Index, class CGameObject* pCharacter,_float fHeight,_float fRadius);
 	void									Cook_Terrain();
 	void									Simulate();
 	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
+	_bool									RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
+	_bool									SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 
 private:/*For Physics_Controller*/
 	_uint*									m_pIndices = { nullptr };
 	_int									NumVertices = { 0 };
 	_int									NumIndices = { 0 };
 	_float3*								TerrainPos = { nullptr };
+#pragma endregion
+
+#pragma region For Thread Pool
+public:
+	void									Insert_Job(function<void()> job);
+	_bool									AllJobsFinished();
+#pragma endregion
+
+#pragma region For AI Controller
+public:
+	class CBehaviorTree*					Create_BehaviorTree(_uint* iId);
+	void									Initialize_BehaviorTree(_uint* iId);
+#pragma endregion
+
+#pragma region For Graphic Device
+
 #pragma endregion
 
 private:
@@ -277,6 +292,9 @@ private:
 	class CPhysics_Controller*				m_pPhysics_Controller = { nullptr };
 	class CSound_Manager*					m_pSound_Manager = { nullptr };
 	class CPicking*							m_pPicking = { nullptr };
+	class CThread_Pool*						m_pThread_Pool = { nullptr };
+	class CAIController*					m_pAIController = { nullptr };
+
 
 	/*for physics*/
 	_bool									m_bSimulate = { false };

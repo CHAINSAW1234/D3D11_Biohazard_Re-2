@@ -27,8 +27,8 @@ public:
 	virtual HRESULT			Render() override;
 
 	HRESULT					Render_LightDepth_Dir()override;
-	HRESULT					Render_LightDepth_Spot()override;
 	HRESULT					Render_LightDepth_Point() override;
+	HRESULT					Render_LightDepth_Spot()override;
 
 private:
 	CModel*					m_pModelCom = { nullptr };

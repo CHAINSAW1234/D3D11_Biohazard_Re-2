@@ -26,6 +26,7 @@ public:
 	void												Priority_Tick(_float fTimeDelta);
 	void												Tick(_float fTimeDelta);
 	void												Late_Tick(_float fTimeDelta);
+	void												Start();
 	void												Clear(_uint iLevelIndex);
 	void												Release_Layer(_uint iLevelIndex, const wstring& LayerTag);
 	class CLayer*										Find_Layer(_uint iLevelIndex, const wstring& strLayerTag);

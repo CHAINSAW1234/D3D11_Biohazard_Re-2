@@ -75,7 +75,7 @@ PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, uint3
 	body->attachShape(*shape);
 
 	m_ragdoll->m_rigid_bodies[parent_idx] = body;
-	body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	//body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
 	float sleepThreshold = 1.f;
 	body->setSleepThreshold(sleepThreshold);
 
@@ -117,7 +117,7 @@ PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, CRagd
 	body->setMass(m_mass);
 
 	m_ragdoll->m_rigid_bodies[parent_idx] = body;
-	body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	//body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
 	float sleepThreshold = 0.5f;
 	body->setSleepThreshold(sleepThreshold);
 	return body;
@@ -141,7 +141,7 @@ PxRigidDynamic* CRagdoll_Physics::create_sphere_bone(uint32_t parent_idx, CRagdo
 	body->setMass(m_mass);
 
 	m_ragdoll->m_rigid_bodies[parent_idx] = body;
-	body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	//body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
 	float sleepThreshold = 0.5f;
 	body->setSleepThreshold(sleepThreshold);
 

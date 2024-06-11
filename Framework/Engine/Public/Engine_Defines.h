@@ -130,3 +130,21 @@ using namespace Engine;
 #endif
 
 #endif // _DEBUG
+
+
+//For Thread Pool
+#include <chrono>
+#include <condition_variable>
+#include <cstdio>
+#include <functional>
+#include <future>
+#include <mutex>
+#include <queue>
+#include <thread>
+#include <vector>
+
+#pragma region Physics Defines
+
+#define CONTROLLER_GROUND_GAP 1.1f
+
+#pragma endregion

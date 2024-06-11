@@ -20,7 +20,6 @@ private:
 
 	//편의성 함수
 public:
-public:
 	FORCEINLINE XMFLOAT4 Convert_Float3_To_Float4_Dir(XMFLOAT3 Vec)
 	{
 		XMFLOAT4 Vec4;
@@ -128,6 +127,88 @@ public:
 
 		return Result;
 	}
+
+	FORCEINLINE _float4	Axis_Rotate_Vector(_float4 Vector, _float4 Axis, _float4 Point, _float RotateAmount)
+	{
+		_float W = Vector.w;
+
+		_vector Vec = XMLoadFloat4(&Vector);
+		_vector Pos = XMLoadFloat4(&Point);
+		_vector AxisVec = XMLoadFloat4(&Axis);
+
+		Vec -= Pos;
+		_matrix RotationMatrix = XMMatrixRotationAxis(AxisVec, RotateAmount);
+
+		Vec = XMVector4Transform(Vec, RotationMatrix);
+		Vec += Pos;
+
+		_float4 Result;
+		XMStoreFloat4(&Result, Vec);
+		Result.w = W;
+
+		return Result;
+	}
+
+	FORCEINLINE _float4 Sub_Float4(_float4 Src, _float4 Dst)
+	{
+		_float4 Result;
+		Result.x = Src.x - Dst.x;
+		Result.y = Src.y - Dst.y;
+		Result.z = Src.z - Dst.z;
+		Result.w = Src.w;
+
+		return Result;
+	}
+
+	FORCEINLINE _float4 Float4_Normalize(_float4 vFloat4)
+	{
+		_vector Result = XMLoadFloat4(&vFloat4);
+		Result = XMVector4Normalize(Result);
+
+		_float4 ReturnFloat4;
+		XMStoreFloat4(&ReturnFloat4,Result);
+
+		return ReturnFloat4;
+	}
+
+	_float GetAngleBetweenVectors_Radians(_vector vec1,_vector vec2)
+	{
+		vec1 = XMVector3Normalize(vec1);
+		vec2 = XMVector3Normalize(vec2);
+
+		float dot = DirectX::XMVectorGetX(DirectX::XMVector3Dot(vec1, vec2));
+
+		float lenVec1 = DirectX::XMVectorGetX(DirectX::XMVector3Length(vec1));
+		float lenVec2 = DirectX::XMVectorGetX(DirectX::XMVector3Length(vec2));
+
+		if (lenVec1 == 0.0f || lenVec2 == 0.0f)
+		{
+			return 0.0f;
+		}
+
+		float cosAngle = dot / (lenVec1 * lenVec2);
+
+		cosAngle = max(-1.0f, min(cosAngle, 1.0f));
+
+		float angle = std::acos(cosAngle);
+
+		return angle;
+	}
+
+	XMVECTOR XMVectorSlerp(_vector A, _vector B, float t) {
+		XMVECTOR quatA = XMQuaternionRotationRollPitchYawFromVector(A);
+		XMVECTOR quatB = XMQuaternionRotationRollPitchYawFromVector(B);
+
+		XMVECTOR slerpQuat = XMQuaternionSlerp(quatA, quatB, t);
+
+		return XMVector3Rotate(A, slerpQuat);
+	}
+
+	_float Lerp(_float a, _float b, _float f)
+	{
+		return a + f * (b - a);
+	}
+
 public:
 	virtual void Free();
 };

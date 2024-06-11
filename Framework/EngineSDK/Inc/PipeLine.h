@@ -139,10 +139,10 @@ private:
 	CLight*				m_pSpotLight = { nullptr };
 
 	// CasCade¿ë º¯¼ö -> ¾È¾¸
-	_float3				m_vOriginalPoints[8];
-	_float				m_fCascadeSplitZ[CASCADE_END + 1];
-	_float3				m_vCascadePoints[CASCADE_END][8];
-	_float4x4			m_CascadeProjectMatrices[CASCADE_END];
+	//_float3				m_vOriginalPoints[8];
+	//_float				m_fCascadeSplitZ[CASCADE_END + 1];
+	//_float3				m_vCascadePoints[CASCADE_END][8];
+	//_float4x4			m_CascadeProjectMatrices[CASCADE_END];
 
 public:
 	static CPipeLine* Create();

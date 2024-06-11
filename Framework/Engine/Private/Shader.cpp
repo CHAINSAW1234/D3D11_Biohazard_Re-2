@@ -77,6 +77,46 @@ HRESULT CShader::Begin(_uint iPassIndex)
 
 	pPass->Apply(0, m_pContext);
 
+	//if (iPassIndex >= m_InputLayouts.size())
+	//	return E_FAIL;
+
+	//ID3DX11EffectTechnique* pTechnique = m_pEffect->GetTechniqueByIndex(0);
+	//if (nullptr == pTechnique)
+	//	return E_FAIL;
+
+	//ID3DX11EffectPass* pPass = pTechnique->GetPassByIndex(iPassIndex);
+	//if (nullptr == pPass)
+	//	return E_FAIL;
+
+	///*m_pContext->IASetInputLayout(m_InputLayouts[iPassIndex]);
+
+	//pPass->Apply(0, m_pContext);*/
+
+	//// 디퍼드 컨텍스트 생성
+	//ID3D11DeviceContext* pDeferredContext = nullptr;
+	//HRESULT hr = m_pDevice->CreateDeferredContext(0, &pDeferredContext);
+	//if (FAILED(hr))
+	//	return hr;
+
+	//// 디퍼드 컨텍스트에서 명령 기록
+	//pDeferredContext->IASetInputLayout(m_InputLayouts[iPassIndex]);
+	//pPass->Apply(0, pDeferredContext);
+
+	//// 명령 리스트 생성
+	//ID3D11CommandList* pCommandList = nullptr;
+	//hr = pDeferredContext->FinishCommandList(FALSE, &pCommandList);
+	//if (FAILED(hr)) {
+	//	pDeferredContext->Release();
+	//	return hr;
+	//}
+
+	//// 메인 컨텍스트에서 명령 리스트 실행
+	//m_pContext->ExecuteCommandList(pCommandList, TRUE);
+
+	//// 리소스 해제
+	//pCommandList->Release();
+	//pDeferredContext->Release();
+
 	return S_OK;
 }
 
