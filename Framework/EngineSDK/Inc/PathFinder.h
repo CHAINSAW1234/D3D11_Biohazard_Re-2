@@ -46,6 +46,8 @@ public:
 	{
 		return m_Path;
 	}
+	_float4							GetNextTarget();
+	_float4							GetNextTarget_Opt();
 protected:
 	class CGameInstance*			m_pGameInstance = { nullptr };
 
