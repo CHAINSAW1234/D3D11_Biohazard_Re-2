@@ -75,7 +75,7 @@ void CMonster::Tick(_float fTimeDelta)
 		_float4 vDelta = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) - m_vNextTarget;
 		vDelta.y = 0.f;
 
-		if (XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta))) < 0.3f)
+		if (XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta))) < 0.5f)
 		{
 			m_bArrived = true;
 		}

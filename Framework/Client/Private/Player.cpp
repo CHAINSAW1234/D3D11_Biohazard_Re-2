@@ -581,7 +581,7 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 	m_pGameInstance->Set_MouseCurPos(ptPos);
 
 	ClientToScreen(g_hWnd, &ptPos);
-	//SetCursorPos(ptPos.x, ptPos.y);
+	SetCursorPos(ptPos.x, ptPos.y);
 
 	return;
 }
