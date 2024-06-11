@@ -281,6 +281,8 @@ void CPathFinder::Path_Optimization()
 	_float4 apex = m_vStartPos;
 	int left = 1;
 	int right = 1;
+	int nextleft = 0;
+	int nextright = 0;
 
 	for (int i = 0; i < m_Path.size() - 1; i++)
 	{
@@ -347,20 +349,21 @@ void CPathFinder::Path_Optimization()
 					m_vecRight_Vertices[right] - apex) > 0)
 				{
 					// Find next vertex.
-					auto next = right + 1;
+					//auto next = right + 1;
+					nextright = right;
 
-					for (int j = next; j <= m_Path.size(); j++)
+					for (int j = nextright; j <= m_Path.size(); j++)
 					{
-						if (m_vecRight_Vertices[j] != m_vecRight_Vertices[next])
+						if (m_vecRight_Vertices[j] != m_vecRight_Vertices[nextright])
 						{
-							next = j;
+							nextright = j;
 							break;
 						}
 					}
 
 					m_vecPath_Optimization.push_back(m_vecRight_Vertices[right]);
 					apex = m_vecRight_Vertices[right];
-					right = next;
+					right = nextright;
 				}
 				else
 				{
@@ -423,20 +426,20 @@ void CPathFinder::Path_Optimization()
 					newSide) > 0)
 				{
 					// Find next vertex.
-					auto next = left + 1;
+					nextleft = left;
 
-					for (int j = next; j <= m_Path.size(); j++)
+					for (int j = nextleft; j <= m_Path.size(); j++)
 					{
-						if (m_vecLeft_Vertices[j] != m_vecLeft_Vertices[next])
+						if (m_vecLeft_Vertices[j] != m_vecLeft_Vertices[nextleft])
 						{
-							next = j;
+							nextleft = j;
 							break;
 						}
 					}
 
 					m_vecPath_Optimization.push_back(m_vecLeft_Vertices[left]);
 					apex = m_vecLeft_Vertices[left];
-					left = next;
+					left = nextleft;
 				}
 				else
 				{
