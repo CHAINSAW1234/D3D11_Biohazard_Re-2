@@ -56,6 +56,8 @@ HRESULT CPartObject::Render()
 
 void CPartObject::Update_WorldMatrix()
 {
+	m_PrevWorldMatrix = m_WorldMatrix;
+
 	_matrix			ParentsWorldMatrix = { m_pParentsTransform->Get_WorldMatrix() };
 	_matrix			WorldTransform = { m_pTransformCom->Get_WorldMatrix() };
 	_matrix			WorldMatrix = { WorldTransform * ParentsWorldMatrix };

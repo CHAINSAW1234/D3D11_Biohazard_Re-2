@@ -14,6 +14,8 @@
 #include "Physics_Controller.h"
 #include "Picking.h"
 #include "Layer.h"
+#include "Thread_Pool.h"
+#include "AIController.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -138,6 +140,20 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 		return E_FAIL;
 	}
 
+	m_pThread_Pool = CThread_Pool::Create(12);
+	if (nullptr == m_pThread_Pool)
+	{
+		MSG_BOX(TEXT("Error: m_pThread_Pool::Create -> nullptr"));
+		return E_FAIL;
+	}
+
+	m_pAIController = CAIController::Create();
+	if (nullptr == m_pAIController)
+	{
+		MSG_BOX(TEXT("Error: m_pAIController::Create -> nullptr"));
+		return E_FAIL;
+	}
+
 	//Random Generator
 	m_RandomNumber = mt19937_64(m_RandomDevice());
 
@@ -146,6 +162,8 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 
 void CGameInstance::Tick_Engine(_float fTimeDelta)
 {
+	SetCursor(false);
+
 	if(m_pPipeLine)
 		m_pPipeLine->Reset();
 
@@ -320,14 +338,6 @@ HRESULT CGameInstance::Add_RenderGroup(CRenderer::RENDERGROUP eRenderGroup, CGam
 	return m_pRenderer->Add_RenderGroup(eRenderGroup, pRenderObject);	
 }
 
-void CGameInstance::Set_Shadow_Resolution(CRenderer::SHADOW_RESOLUTION eResolution)
-{
-	if (nullptr == m_pRenderer)
-		return;
-
-	m_pRenderer->Set_Shadow_Resolution(eResolution);
-}
-
 void CGameInstance::Set_RadialBlur(_float fBlurAmount, _float2 BlurUV)
 {
 	if (nullptr == m_pRenderer)
@@ -457,6 +467,10 @@ HRESULT CGameInstance::Add_Layer(_uint iLevelIndex, const wstring& strLayerTag)
 	_ASSERT(m_pObject_Manager != nullptr);
 
 	return m_pObject_Manager->Add_Layer(iLevelIndex, strLayerTag);
+}
+void CGameInstance::Start()
+{
+	return m_pObject_Manager->Start();
 }
 #pragma endregion
 
@@ -901,6 +915,7 @@ HRESULT CGameInstance::Copy_Resource(const wstring& strDestRenderTargetTag, cons
 {
 	return m_pTarget_Manager->Copy_Resource(strDestRenderTargetTag, strSrcRenderTargetTag);
 }
+
 #pragma endregion
 
 #pragma region Frustrum
@@ -985,30 +1000,83 @@ void CGameInstance::InitTerrainPhysics()
 		m_pPhysics_Controller->InitTerrain();
 }
 
-void CGameInstance::SetBone_Ragdoll(vector<class CBone*>* vecBone)
+void CGameInstance::SetBone_Ragdoll_Ragdoll(vector<class CBone*>* vecBone)
 {
 	m_pPhysics_Controller->SetBone_Ragdoll(vecBone);
 }
 
-void CGameInstance::SetWorldMatrix(_float4x4 WorldMatrix)
+void CGameInstance::SetWorldMatrix_Ragdoll(_float4x4 WorldMatrix)
 {
-	m_pPhysics_Controller->SetWorldMatrix(WorldMatrix);
+	m_pPhysics_Controller->SetWorldMatrix_Ragdoll(WorldMatrix);
 }
 
-void CGameInstance::SetRotationMatrix(_float4x4 RotationMatrix)
+void CGameInstance::SetRotationMatrix_Ragdoll(_float4x4 RotationMatrix)
 {
-	m_pPhysics_Controller->SetRotationMatrix(RotationMatrix);
+	m_pPhysics_Controller->SetRotationMatrix_Ragdoll(RotationMatrix);
 }
 
-CCharacter_Controller* CGameInstance::Create_Controller(_float4 Pos, _int* Index,CGameObject* pCharacter)
+CCharacter_Controller* CGameInstance::Create_Controller(_float4 Pos, _int* Index,CGameObject* pCharacter,_float fHeight,_float fRadius)
 {
-	return m_pPhysics_Controller->Create_Controller(Pos, Index, pCharacter);
+	return m_pPhysics_Controller->Create_Controller(Pos, Index, pCharacter,fHeight,fRadius);
 }
 
 void CGameInstance::Cook_Terrain()
 {
 	m_pPhysics_Controller->InitTerrain();
 }
+
+_bool CGameInstance::RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
+{
+	return m_pPhysics_Controller->RayCast(vOrigin, vDir, pBlockPoint, fMaxDist);
+}
+_bool CGameInstance::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
+{
+	return m_pPhysics_Controller->SphereCast(vOrigin, vDir, pBlockPoint, fMaxDist);
+}
+CRagdoll_Physics* CGameInstance::Create_Ragdoll(vector<class CBone*>* vecBone, _float4x4* WorldMatrix, _float4x4* RotationMatrix, const string& name)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->Create_Ragdoll(vecBone,WorldMatrix,RotationMatrix,name);
+}
+#pragma endregion
+
+#pragma region	Thread_Pool
+void CGameInstance::Insert_Job(function<void()> job)
+{
+	m_pThread_Pool->EnqueueJob(job);
+}
+_bool CGameInstance::AllJobsFinished()
+{
+	return m_pThread_Pool->AllJobsFinished();
+}
+#pragma endregion
+
+#pragma region AIController
+
+CBehaviorTree* CGameInstance::Create_BehaviorTree(_uint* iId)
+{
+	if (m_pAIController)
+		return m_pAIController->Create_BehaviorTree(iId);
+}
+
+CPathFinder* CGameInstance::Create_PathFinder()
+{
+	if (m_pAIController)
+	{
+		auto pPathFinder = m_pAIController->Create_PathFinder();
+		return pPathFinder;
+	}
+}
+
+void CGameInstance::Initialize_BehaviorTree(_uint* iId)
+{
+
+}
+
+#pragma endregion
+
+#pragma region Graphic Device
+
 #pragma endregion
 
 #pragma region Render_Target_Debugger
@@ -1152,4 +1220,6 @@ void CGameInstance::Free()
 	Safe_Release(m_pInput_Device);
 	Safe_Release(m_pGraphic_Device);
 	Safe_Release(m_pPicking);
+	Safe_Release(m_pThread_Pool);
+	Safe_Release(m_pAIController);
 }

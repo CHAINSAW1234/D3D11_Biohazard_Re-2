@@ -184,10 +184,13 @@ UpdateLib.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Private\AIController.cpp" />
     <ClCompile Include="..\private\Animation.cpp" />
     <ClCompile Include="..\Private\Animation_Layer.cpp" />
     <ClCompile Include="..\Private\Animator.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
+    <ClCompile Include="..\Private\BehaviorTree.cpp" />
+    <ClCompile Include="..\Private\BlackBoard.cpp" />
     <ClCompile Include="..\Private\BlendObject.cpp" />
     <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\Private\Bone_Layer.cpp" />
@@ -202,6 +205,7 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\Collider.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
     <ClCompile Include="..\Private\Component_Manager.cpp" />
+    <ClCompile Include="..\Private\Decorator_Node.cpp" />
     <ClCompile Include="..\Private\Event_Call_Back.cpp" />
     <ClCompile Include="..\Private\FSM.cpp" />
     <ClCompile Include="..\Private\ComputeShader.cpp" />
@@ -209,9 +213,11 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\KeyBoard.cpp" />
     <ClCompile Include="..\Private\Model_Extractor.cpp" />
     <ClCompile Include="..\Private\Mouse.cpp" />
+    <ClCompile Include="..\Private\Composite_Node.cpp" />
     <ClCompile Include="..\Private\Observer.cpp" />
     <ClCompile Include="..\Private\Observer_Handler.cpp" />
     <ClCompile Include="..\Private\Octree.cpp" />
+    <ClCompile Include="..\Private\PathFinder.cpp" />
     <ClCompile Include="..\Private\Picking.cpp" />
     <ClCompile Include="..\Private\PlayingInfo.cpp" />
     <ClCompile Include="..\Private\RagDoll.cpp" />
@@ -246,9 +252,11 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\Skeletal_Mesh.cpp" />
     <ClCompile Include="..\Private\Skeleton.cpp" />
     <ClCompile Include="..\Private\Sound_Manager.cpp" />
-    <ClCompile Include="..\Private\State.cpp" />
+    <ClCompile Include="..\Private\FSM_State.cpp" />
     <ClCompile Include="..\private\Target_Manager.cpp" />
+    <ClCompile Include="..\Private\Task_Node.cpp" />
     <ClCompile Include="..\private\Texture.cpp" />
+    <ClCompile Include="..\Private\Thread_Pool.cpp" />
     <ClCompile Include="..\Private\Timer.cpp" />
     <ClCompile Include="..\Private\Timer_Manager.cpp" />
     <ClCompile Include="..\private\Transform.cpp" />
@@ -263,10 +271,13 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Public\Engine_Struct.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Public\AIController.h" />
     <ClInclude Include="..\public\Animation.h" />
     <ClInclude Include="..\Public\Animation_Layer.h" />
     <ClInclude Include="..\Public\Animator.h" />
     <ClInclude Include="..\Public\Base.h" />
+    <ClInclude Include="..\Public\BehaviorTree.h" />
+    <ClInclude Include="..\Public\BlackBoard.h" />
     <ClInclude Include="..\Public\BlendObject.h" />
     <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\Public\Bone_Layer.h" />
@@ -282,6 +293,7 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\Component.h" />
     <ClInclude Include="..\Public\Component_Manager.h" />
     <ClInclude Include="..\Public\ComputeShader.h" />
+    <ClInclude Include="..\Public\Decorator_Node.h" />
     <ClInclude Include="..\Public\Engine_Enums.h" />
     <ClInclude Include="..\Public\FSM.h" />
     <ClInclude Include="..\Public\IK_Solver.h" />
@@ -290,9 +302,11 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\Model_Extractor.h" />
     <ClInclude Include="..\Public\Model_Struct.h" />
     <ClInclude Include="..\Public\Mouse.h" />
+    <ClInclude Include="..\Public\Composite_Node.h" />
     <ClInclude Include="..\Public\Observer.h" />
     <ClInclude Include="..\Public\Observer_Handler.h" />
     <ClInclude Include="..\Public\Octree.h" />
+    <ClInclude Include="..\Public\PathFinder.h" />
     <ClInclude Include="..\Public\Picking.h" />
     <ClInclude Include="..\Public\PlayingInfo.h" />
     <ClInclude Include="..\Public\RagDoll.h" />
@@ -333,9 +347,11 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\Skeletal_Mesh.h" />
     <ClInclude Include="..\Public\Skeleton.h" />
     <ClInclude Include="..\Public\Sound_Manager.h" />
-    <ClInclude Include="..\Public\State.h" />
+    <ClInclude Include="..\Public\FSM_State.h" />
     <ClInclude Include="..\public\Target_Manager.h" />
+    <ClInclude Include="..\Public\Task_Node.h" />
     <ClInclude Include="..\public\Texture.h" />
+    <ClInclude Include="..\Public\Thread_Pool.h" />
     <ClInclude Include="..\Public\Timer.h" />
     <ClInclude Include="..\Public\Timer_Manager.h" />
     <ClInclude Include="..\public\Transform.h" />

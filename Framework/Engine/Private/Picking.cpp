@@ -114,7 +114,7 @@ void CPicking::Get_PickingWordSpace(_vector& pRayDir, _vector& pRayPos)
 
 void CPicking::ClipCursor(HWND hWnd)
 {
-		RECT rect;
+	RECT rect;
 	GetClientRect(hWnd, &rect);
 
 	_float x = rect.right * 0.5f;

@@ -116,7 +116,10 @@ public:
 	void					Move_toTarget(_fvector vTargetPos, _float fTimeDelta, _float fMinDistance = 0.f);	
 	void					Turn(_fvector vAxis, _float fTimeDelta);
 	void					Rotation(_fvector vAxis, _float fRadian);
-
+	void					SetRotationPerSec(_float fRotationPerSec)
+	{
+		m_fRotationPerSec = fRotationPerSec;
+	}
 private:
 	_float4x4				m_WorldMatrix;
 	_float					m_fSpeedPerSec = { 0.0f };

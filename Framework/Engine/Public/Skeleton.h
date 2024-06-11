@@ -29,7 +29,8 @@ struct Joint
 class Skeleton
 {
 public:
-    static Skeleton*			create(const aiScene* scene);
+    static Skeleton*			create(const aiScene* scene, ofstream& ofs);
+    static Skeleton*			create(ifstream& ifs);
 
     Skeleton();
     ~Skeleton();

@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\Public\Monster.h"
 #include "Character_Controller.h"
+#include "BehaviorTree.h"
+#include "PathFinder.h"
 
 #define MODEL_SCALE 0.01f
 
@@ -41,10 +43,18 @@ HRESULT CMonster::Initialize(void * pArg)
 	}
 
 	//	m_pModelCom->Set_Animation(rand() % 20, true);
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(static_cast<_float>(rand() % 20), 0.f, static_cast<_float>(rand() % 20), 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(1.f, 0.3f, 5.f, 1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
-	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this);
+	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this,1.f,0.35f);
+
+	m_pBehaviorTree = m_pGameInstance->Create_BehaviorTree(&m_iAIController_ID);
+	m_pPathFinder = m_pGameInstance->Create_PathFinder();
+
+	m_pNavigationCom->FindCell(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
+	_int iCurrentIndex = m_pNavigationCom->GetCurrentIndex();
+	
+	m_pPathFinder->Initiate_PathFinding(iCurrentIndex, iCurrentIndex + 100, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 
 	return S_OK;
 }
@@ -89,11 +99,41 @@ HRESULT CMonster::Render()
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
 
-		//if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
-		//	return E_FAIL;
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
+			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+		{
+			_bool isAlphaTexture = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isAlphaTexture = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
+		{
+			_bool isAOTexture = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isAOTexture = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
@@ -102,6 +142,16 @@ HRESULT CMonster::Render()
 	}
 
 	return S_OK;
+}
+
+void CMonster::Init_BehaviorTree_Zombie()
+{
+	m_pBehaviorTree = m_pGameInstance->Create_BehaviorTree(&m_iAIController_ID);
+
+	//Root Node
+	auto pRootNode = m_pBehaviorTree->GetRootNode();
+
+	return;
 }
 
 HRESULT CMonster::Add_Components()
@@ -138,6 +188,14 @@ HRESULT CMonster::Add_Components()
 		TEXT("Com_Collider_Body"), (CComponent**)&m_pColliderCom[COLLIDER_BODY], &ColliderOBBDesc)))
 		return E_FAIL;
 
+	/* For.Com_Navigation */
+	CNavigation::NAVIGATION_DESC			NavigationDesc{};
+
+	NavigationDesc.iCurrentIndex = 0;
+
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation"),
+		TEXT("Com_Navigation"), (CComponent**)&m_pNavigationCom, &NavigationDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -196,4 +254,7 @@ void CMonster::Free()
 
 	Safe_Release(m_pShaderCom);	
 	Safe_Release(m_pModelCom);
+	Safe_Release(m_pBehaviorTree);
+	Safe_Release(m_pPathFinder);
+	Safe_Release(m_pNavigationCom);
 }

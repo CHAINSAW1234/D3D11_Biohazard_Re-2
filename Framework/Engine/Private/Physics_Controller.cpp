@@ -38,7 +38,7 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.cpuDispatcher = m_Dispatcher;
 	sceneDesc.filterShader = MegamotionFilterShader;
-
+	
 	//Call Back
 	m_EventCallBack = new CEventCallBack();
 	m_FilterCallBack = new CFilterCallBack();
@@ -63,16 +63,10 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	//Init - For Joint
 	PxInitExtensions(*m_Physics, m_Pvd);
 
-	//Ragdoll Init
-	//	m_pRagdoll_Physics = new CRagdoll_Physics(m_Scene, m_Physics, m_DefaultAllocatorCallback, m_DefaultErrorCallback, m_Foundation,
-	//		m_Dispatcher, m_Material);
-	//	m_pRagdoll_Physics->Init();
-
 	//Character Controller Init
 	m_Manager = PxCreateControllerManager(*m_Scene);
 
-	//Start Simulate
-	m_pGameInstance->SetSimulate(true);
+	m_vecRagdoll.clear();
 
 	return S_OK;
 }
@@ -114,45 +108,26 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	for (int i = 0; i < m_vecRigid_Dynamic.size(); ++i)
 	{
 		m_vecRigid_Dynamic[i]->Update();
-	}*/
-
-	//Ragdoll Temp Code
-	static bool Temp = false;
-
-	if (nullptr != m_pRagdoll_Physics) {
-		if (UP == m_pGameInstance->Get_KeyState(VK_SPACE))
-		{
-			Temp = !Temp;
-			m_pRagdoll_Physics->Set_Kinematic(Temp);
-		}
-
-		if (UP == m_pGameInstance->Get_KeyState(VK_BACK))
-		{
-			m_pRagdoll_Physics->Init_Ragdoll();
-
-			if (m_vecCharacter_Controller[0])
-			{
-				m_vecCharacter_Controller[0]->Release_Px();
-			}
-		}
-		//Update - Ragdoll
-		m_pRagdoll_Physics->Update(fTimeDelta);
-
+	}
+	
+	for (int i = 0; i < m_vecRagdoll.size(); ++i)
+	{
+		m_vecRagdoll[i]->Update(fTimeDelta);
 	}
 
-
 	//Simulate
-	m_Scene->simulate(1 / 60.f);
+	m_Scene->simulate(fTimeDelta);
 	m_Scene->fetchResults(true);
 }
 
-CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int* Index, CGameObject* pCharacter)
+CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int* Index,CGameObject* pCharacter,_float fHeight,_float fRadius)
 {
 	//Init Shape
-	m_Controll_Desc.height = 1.f;
-	m_Controll_Desc.radius = 0.5f;
+	m_Controll_Desc.height = fHeight;
+	m_Controll_Desc.radius = fRadius;
 	m_Controll_Desc.position = PxExtendedVec3(Pos.x, Pos.y, Pos.z);
 	m_Controll_Desc.material = m_Physics->createMaterial(0.f, 0.f, 0.f);
+	m_Controll_Desc.stepOffset = 0.1f;
 
 	auto Controller = m_Manager->createController(m_Controll_Desc);
 
@@ -162,13 +137,13 @@ CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int*
 	//Colliision Filter
 	PxFilterData filterData_Character;
 	filterData_Character.word0 = COLLISION_CATEGORY::Category1;
-	filterData_Character.word1 = COLLISION_CATEGORY::Category2 | COLLISION_CATEGORY::Category3;
+	filterData_Character.word1 = COLLISION_CATEGORY::Category2 | COLLISION_CATEGORY::Category3; 
 	filterData_Character.word3 = m_iCharacter_Controller_Count;
 
 	shapes[0]->setSimulationFilterData(filterData_Character);
 	shapes[0]->setContactOffset(0.1f);
 
-	auto Character_Controller = new CCharacter_Controller(Controller, pCharacter, m_Scene, m_Physics);
+	auto Character_Controller = new CCharacter_Controller(Controller, pCharacter,m_Scene,m_Physics);
 	Character_Controller->SetIndex(m_iCharacter_Controller_Count);
 	m_vecCharacter_Controller.push_back(Character_Controller);
 
@@ -243,24 +218,57 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	++m_iMapMeshCount;
 
 	Mesh->release();
+
+	//Start Simulate
+	m_pGameInstance->SetSimulate(true);
+}
+
+CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, _float4x4* WorldMatrix, _float4x4* RotationMatrix, const string& name)
+{
+	//Ragdoll Init
+	auto pRagdoll = new CRagdoll_Physics(m_Scene, m_Physics, m_DefaultAllocatorCallback, m_DefaultErrorCallback, m_Foundation,
+		m_Dispatcher, m_Material);
+
+	pRagdoll->SetBone_Ragdoll(vecBone);
+	pRagdoll->SetRotationMatrix(RotationMatrix);
+	pRagdoll->SetWorldMatrix(WorldMatrix);
+	pRagdoll->Init(name);
+
+	m_vecRagdoll.push_back(pRagdoll);
+
+	return pRagdoll;
+}
+
+void CPhysics_Controller::Start_Ragdoll(CRagdoll_Physics* pRagdoll,_uint iId)
+{
+	if (nullptr != pRagdoll)
+	{
+		pRagdoll->Set_Kinematic(false);
+		pRagdoll->Init_Ragdoll();
+		
+		if (m_vecCharacter_Controller[iId])
+		{
+			m_vecCharacter_Controller[iId]->Release_Px();
+		}
+	}
 }
 
 void CPhysics_Controller::SetBone_Ragdoll(vector<class CBone*>* vecBone)
 {
-	if (nullptr != m_pRagdoll_Physics)
-		m_pRagdoll_Physics->SetBone_Ragdoll(vecBone);
+	//if(nullptr != m_pRagdoll_Physics)
+	//	m_pRagdoll_Physics->SetBone_Ragdoll(vecBone);
 }
 
-void CPhysics_Controller::SetWorldMatrix(_float4x4 WorldMatrix)
+void CPhysics_Controller::SetWorldMatrix_Ragdoll(_float4x4 WorldMatrix)
 {
-	if (nullptr != m_pRagdoll_Physics)
-		m_pRagdoll_Physics->SetWorldMatrix(WorldMatrix);
+	//if (nullptr != m_pRagdoll_Physics)
+	//	m_pRagdoll_Physics->SetWorldMatrix(WorldMatrix);
 }
 
-void CPhysics_Controller::SetRotationMatrix(_float4x4 WorldMatrix)
+void CPhysics_Controller::SetRotationMatrix_Ragdoll(_float4x4 WorldMatrix)
 {
-	if (nullptr != m_pRagdoll_Physics)
-		m_pRagdoll_Physics->SetRotationMatrix(WorldMatrix);
+	/*if (nullptr != m_pRagdoll_Physics)
+		m_pRagdoll_Physics->SetRotationMatrix(WorldMatrix);*/
 }
 
 void CPhysics_Controller::Create_Rigid_Static(_float4 Pos)
@@ -347,6 +355,68 @@ _float4 CPhysics_Controller::GetTranslation_Rigid_Dynamic(_int Index)
 	return m_vecRigid_Dynamic[Index]->GetTranslation();
 }
 
+_bool CPhysics_Controller::RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
+{
+	PxVec3 PxvOrigin = Float4_To_PxVec(vOrigin);
+	PxVec3 PxvDir = Float4_To_PxVec(vDir);
+
+	PxRaycastBuffer hit;
+
+	bool Status = m_Scene->raycast(PxvOrigin, PxvDir.getNormalized(), fMaxDist, hit, PxHitFlag::eDEFAULT, PxQueryFilterData(PxQueryFlag::eSTATIC /*| PxQueryFlag::eDYNAMIC*/));
+
+	if (Status)
+	{
+		*pBlockPoint = PxVec_To_Float4_Coord(hit.block.position);
+	}
+
+	/*PxSweepBuffer hit;
+
+	bool Status = m_Scene->sweep(
+		PxSphereGeometry(0.1f), 
+		PxTransform(PxvOrigin), 
+		PxvDir, 
+		fMaxDist,
+		hit, 
+		PxHitFlag::eDEFAULT, PxQueryFilterData(PxQueryFlag::eSTATIC)
+	);
+
+	if (Status)
+	{
+		*pBlockPoint = PxVec_To_Float4_Coord(hit.block.position);
+	}*/
+
+	return Status;
+}
+
+_bool CPhysics_Controller::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
+{
+	PxVec3 PxvOrigin = Float4_To_PxVec(vOrigin);
+	PxVec3 PxvDir = Float4_To_PxVec(vDir);
+
+	PxSweepBuffer hit;
+
+	bool Status = m_Scene->sweep(
+		PxSphereGeometry(0.1f),
+		PxTransform(PxvOrigin),
+		PxvDir.getNormalized(),
+		fMaxDist,
+		hit,
+		PxHitFlag::eDEFAULT, PxQueryFilterData(PxQueryFlag::eSTATIC)
+	);
+
+	if (Status)
+	{
+		*pBlockPoint = PxVec_To_Float4_Coord(hit.block.position);
+
+		if (hit.block.position.x == 0 && hit.block.position.y == 0 && hit.block.position.z == 0)
+		{
+			return false;
+		}
+	}
+
+	return Status;
+}
+
 _matrix CPhysics_Controller::GetWorldMatrix_Rigid_Dynamic(_int Index)
 {
 	PxTransform globalPose = m_vecRigid_Dynamic[Index]->GetTransform_Px();
@@ -377,8 +447,10 @@ void CPhysics_Controller::Free()
 
 	PxCloseExtensions();
 
-	if (m_pRagdoll_Physics)
-		m_pRagdoll_Physics->Release();
+	for (int i = 0; i < m_vecRagdoll.size(); ++i)
+	{
+		Safe_Release(m_vecRagdoll[i]);
+	}
 
 	if (m_Shape)
 		m_Shape->release();

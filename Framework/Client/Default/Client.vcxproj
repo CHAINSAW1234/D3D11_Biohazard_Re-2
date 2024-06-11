@@ -186,6 +186,7 @@
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\Monster.h" />
+    <ClInclude Include="..\Public\NavMesh_Debug.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\Public\Props.h" />
     <ClInclude Include="..\Public\Sky.h" />
@@ -213,6 +214,7 @@
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
+    <ClCompile Include="..\Private\NavMesh_Debug.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\Private\Props.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />

@@ -46,6 +46,16 @@ public:
 	{
 		return m_iCurrentIndex;
 	}
+	_float4								CalculateCentroid(_float4 vertex1, _float4 vertex2, _float4 vertex3)
+	{
+		float centroidX = (vertex1.x + vertex2.x + vertex3.x) / 3.0f;
+		float centroidY = (vertex1.y + vertex2.y + vertex3.y) / 3.0f;
+		float centroidZ = (vertex1.z + vertex2.z + vertex3.z) / 3.0f;
+
+		float centroidW = 1.0f;
+
+		return _float4(centroidX, centroidY, centroidZ, centroidW);
+	}
 #ifdef _DEBUG
 public:
 	virtual HRESULT						Render() override;
@@ -62,6 +72,7 @@ private:
 	_float4								m_LinePoint;
 	_int								m_iNumFaces = { 0 };
 
+	vector<_float4>						m_vecNavCell_Point;
 #ifdef _DEBUG
 private:
 	class CShader*						m_pShader = { nullptr };

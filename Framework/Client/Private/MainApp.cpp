@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "Level_Loading.h"
+#include "FSM.h"
 
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::Get_Instance())
@@ -221,6 +222,11 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxPosTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPosTex.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
 		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_FSM"),
+		CFSM::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 	return	S_OK;
 }

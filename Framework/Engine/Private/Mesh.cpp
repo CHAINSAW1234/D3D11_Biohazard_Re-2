@@ -122,6 +122,7 @@ HRESULT CMesh::Initialize_Prototype(CModel::MODEL_TYPE eType, const MESH_DESC& M
 	for (_uint i = 0; i < m_iNumIndices / 3; ++i)
 	{
 		auto Face = new tFace();
+		//auto Face = tFace();
 
 		for (int j = 0; j < 3; ++j)
 		{
@@ -498,33 +499,33 @@ void CMesh::Ready_Buffer_For_Octree(_float4 vTranslation)
 
 	m_iVertexStride = sizeof(VTXMESH);
 
-	VTXMESH* pVertices = new VTXMESH[m_iNumVertices];
+	//VTXMESH* pVertices = new VTXMESH[m_iNumVertices];
 
-	ZeroMemory(pVertices, sizeof(VTXMESH) * m_iNumVertices);
+	//ZeroMemory(pVertices, sizeof(VTXMESH) * m_iNumVertices);
 
-	for (size_t i = 0; i < static_cast<size_t>(m_iNumVertices); i++)
-	{
-		pVertices[i].vPosition = m_pVertices_Cooking[i]/* + Convert_Float4_To_Float3(vTranslation)*/;
-		pVertices[i].vNormal = m_pNormals[i];
-		pVertices[i].vTexcoord = m_pTexcoords[i];
-		pVertices[i].vTangent = m_pTangents[i];
-	}
+	//for (size_t i = 0; i < static_cast<size_t>(m_iNumVertices); i++)
+	//{
+	//	pVertices[i].vPosition = m_pVertices_Cooking[i]/* + Convert_Float4_To_Float3(vTranslation)*/;
+	//	pVertices[i].vNormal = m_pNormals[i];
+	//	pVertices[i].vTexcoord = m_pTexcoords[i];
+	//	pVertices[i].vTangent = m_pTangents[i];
+	//}
 
-	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
+	//ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
-	m_BufferDesc.ByteWidth = m_iVertexStride * m_iNumVertices;
-	m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	m_BufferDesc.CPUAccessFlags = 0;
-	m_BufferDesc.MiscFlags = 0;
-	m_BufferDesc.StructureByteStride = m_iVertexStride;
+	//m_BufferDesc.ByteWidth = m_iVertexStride * m_iNumVertices;
+	//m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	//m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	//m_BufferDesc.CPUAccessFlags = 0;
+	//m_BufferDesc.MiscFlags = 0;
+	//m_BufferDesc.StructureByteStride = m_iVertexStride;
 
-	ZeroMemory(&m_InitialData, sizeof m_InitialData);
-	m_InitialData.pSysMem = pVertices;
+	//ZeroMemory(&m_InitialData, sizeof m_InitialData);
+	//m_InitialData.pSysMem = pVertices;
 
-	__super::Create_Buffer(&m_pVB);
+	//__super::Create_Buffer(&m_pVB);
 
-	Safe_Delete_Array(pVertices);
+	//Safe_Delete_Array(pVertices);
 
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
@@ -575,6 +576,39 @@ void CMesh::SetTexcoords(_float2* pTexcoords)
 	{
 		m_pTexcoords[i] = pTexcoords[i];
 	}
+}
+
+void CMesh::Release_IndexBuffer()
+{
+	Safe_Release(m_pIB);
+	Safe_Delete_Array(m_pIndices_Cooking);
+	Safe_Delete_Array(m_pVertices_Cooking);
+	Safe_Delete_Array(m_pVerticesPos);
+	Safe_Delete_Array(m_pIndices);
+}
+
+void CMesh::Release_Dump()
+{
+	if (m_pVertices_Cooking)
+		Safe_Delete_Array(m_pVertices_Cooking);
+	if (m_pIndices_Cooking)
+		Safe_Delete_Array(m_pIndices_Cooking);
+	if (m_pNormals)
+		Safe_Delete_Array(m_pNormals);
+	if (m_pTangents)
+		Safe_Delete_Array(m_pTangents);
+	if (m_pTexcoords)
+		Safe_Delete_Array(m_pTexcoords);
+
+	if (!m_vecFaces.empty())
+	{
+		for (int i = 0; i < m_vecFaces.size(); ++i)
+		{
+			delete m_vecFaces[i];
+		}
+	}
+
+	m_vecFaces.clear();
 }
 
 CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::MODEL_TYPE eModelType, const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices, _fmatrix TransformationMatrix)

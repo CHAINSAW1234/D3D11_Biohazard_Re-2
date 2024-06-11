@@ -17,6 +17,7 @@
 #include "Props.h"
 #include "Customize_UI.h"
 #include "CustomCollider.h"
+#include "NavMesh_Debug.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -231,15 +232,37 @@ HRESULT CLoader::Loading_For_Logo()
 HRESULT CLoader::Loading_For_GamePlay()
 {
 	m_strLoadingText = TEXT("Now Loading Texture");
-	/* Prototype_Component_Texture_Terrain */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Terrain"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile%d.dds"), 2))))
-		return E_FAIL;
+
+	///*Prototype_Component_Texture_BackGround_0*/
+	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_BackGround_0"),
+	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/BZ_UI/Background/BackGround_0.dds")))))
+	//	return E_FAIL;
 
 	/*Prototype_Component_Texture_Mask*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Mask"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"), 1))))
 		return E_FAIL;
+
+	/*Prototype_Component_Texture_BackGround_0*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Main0"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Aiming/Main0.png")))))
+		return E_FAIL;
+
+		/*Prototype_Component_Texture_Main1*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Main1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Aiming/Main1.png")))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Main2*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Main2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Aiming/Main2.png")))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Point*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Point"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Aiming/Point.png")))))
+		return E_FAIL;
+
 
 	/*Prototype_Component_Texture_Brush */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Brush"),
@@ -249,16 +272,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* Prototype_Component_Texture_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
-		return E_FAIL;
-
-	/* Prototype_Component_Texture_Snow */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Snow"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Snow/Snow.png"), 1))))
-		return E_FAIL;
-
-	/* Prototype_Component_Texture_Explosion */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Explosion"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Explosion/Explosion%d.png"), 90))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("Now Loading ... Model");
@@ -297,55 +310,10 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Height.bmp")))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_Fiona */
-	TransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
-
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Fiona/Fiona.fbx", TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_ForkLift */
-	TransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.0f));
-
 	/* Prototype_Component_VIBuffer_Cube */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Cube"),
 		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
-	/* Prototype_Component_VIBuffer_Instance_Rect */
-	CVIBuffer_Instance::INSTANCE_DESC		InstanceDesc{};
-
-	InstanceDesc.vPivot = _float3(0.f, -5.f, 0.f);
-	InstanceDesc.vCenter = _float3(0.f, 0.f, 0.f);
-	InstanceDesc.vRange = _float3(1.f, 1.f, 1.f);
-	InstanceDesc.vMinScale = _float3(0.2f, 0.2f, 0.2f);
-	InstanceDesc.vMaxScale = _float3(0.4f, 0.4f, 0.4f);
-	InstanceDesc.iNumInstance = 400;
-	InstanceDesc.vLifeTime = _float2(2.f, 10.0f);
-	InstanceDesc.isLoop = true;
-	InstanceDesc.vSpeed = _float2(2.f, 15.f);
-
-
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Instance_Rect"),
-		CVIBuffer_Instance_Rect::Create(m_pDevice, m_pContext, InstanceDesc))))
-		return E_FAIL;
-
-	ZeroMemory(&InstanceDesc, sizeof InstanceDesc);
-
-	InstanceDesc.vCenter = _float3(0.f, 0.f, 0.f);
-	InstanceDesc.vPivot = InstanceDesc.vCenter;
-	InstanceDesc.vRange = _float3(0.2f, 0.2f, 0.2f);
-	InstanceDesc.vMinScale = _float3(0.2f, 0.2f, 0.2f);
-	InstanceDesc.vMaxScale = _float3(0.4f, 0.4f, 0.4f);
-	InstanceDesc.iNumInstance = 300;
-	InstanceDesc.vLifeTime = _float2(0.2f, 0.7f);
-	InstanceDesc.isLoop = false;
-	InstanceDesc.vSpeed = _float2(2.f, 10.f);
-
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Instance_Point"),
-		CVIBuffer_Instance_Point::Create(m_pDevice, m_pContext, InstanceDesc))))
-		return E_FAIL;
-
 
 	m_strLoadingText = TEXT("Now Loading ... Collider");
 
@@ -363,10 +331,13 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	m_strLoadingText = TEXT("Now Loading ... Navigation Mesh");
 	/* For.Prototype_Component_Navigation */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation"),
-		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.dat")))))
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation_Debug_Model"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/NavMesh/NavMesh_Test.fbx", TransformMatrix))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation"),
+		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/NavMesh/NavMesh_Test.bin")))))
+		return E_FAIL;
 
 	m_strLoadingText = TEXT("Now Loading ... Shader");
 	/* For.Prototype_Component_Shader_VtxNorTex */
@@ -463,6 +434,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_GameObject_CCustomize_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CCustomize_UI"),
 		CCustomize_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_CNavigation_Debug */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_NavMesh_Debug"),
+		CNavMesh_Debug::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Collider"), CCustomCollider::Create(m_pDevice, m_pContext))))

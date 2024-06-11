@@ -205,6 +205,9 @@
     <Filter Include="01.Utility\02.Components\Model\Animator">
       <UniqueIdentifier>{05f7b535-efa3-4f05-900a-9a85395f1e0a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\02.Components\Model\Bone_Layer">
+      <UniqueIdentifier>{4daac0ca-6ab0-4b19-93bb-2d1c950bf21f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01.Utility\12.FSM">
       <UniqueIdentifier>{99aaf032-a00f-4c2f-a94e-916bd9843ea4}</UniqueIdentifier>
     </Filter>
@@ -234,6 +237,42 @@
     </Filter>
     <Filter Include="01.Utility\02.Components\Octree">
       <UniqueIdentifier>{6e6f8c10-923b-4ddb-8a4f-089c2634b67b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{edcc90c2-b748-4be8-8741-4496f7f03897}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController">
+      <UniqueIdentifier>{bf161a16-f1e0-457b-9cc9-fe1eecb5a86e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree">
+      <UniqueIdentifier>{3c7038bd-1461-4bad-83ac-3b3884a1b4ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree\Component">
+      <UniqueIdentifier>{e98974d3-959b-42b5-9f54-59d271537eaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree\Component\Composite_Node">
+      <UniqueIdentifier>{7ff1083e-6515-4abb-a27f-ac74ea0a3fca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Decorator_Node">
+      <UniqueIdentifier>{98f5fd26-c22b-409a-8587-969c1e360f30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Task_Node">
+      <UniqueIdentifier>{646ea284-d093-4675-aafa-a3f2eef2bd3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree\Component\BlackBoard">
+      <UniqueIdentifier>{bedf6db0-771f-4884-b33b-781fe9dfea12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.Components\FSM">
+      <UniqueIdentifier>{31d0a86e-fe17-40af-871c-0530f097fd64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.Components\FSM\State">
+      <UniqueIdentifier>{9df33316-824c-41e2-a6e3-89c21a22c7ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\AINavigator">
+      <UniqueIdentifier>{cd4f0d02-01e8-4a87-b9e7-fc4815471f8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\AINavigator\PathFinder">
+      <UniqueIdentifier>{4de5589f-2883-4d82-ba7b-597b27266129}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\02.Components\Model\IK_Solver">
       <UniqueIdentifier>{32c90322-45a0-4684-8805-8cd3cb7cb7b7}</UniqueIdentifier>
@@ -445,10 +484,10 @@
       <Filter>01.Utility\02.Components\Model\Bone_Layer</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\FSM.cpp">
-      <Filter>01.Utility\12.FSM\FSM</Filter>
+      <Filter>01.Utility\02.Components\FSM</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\State.cpp">
-      <Filter>01.Utility\12.FSM\State</Filter>
+    <ClCompile Include="..\Private\FSM_State.cpp">
+      <Filter>01.Utility\02.Components\FSM\State</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\RagDoll_Physics.cpp">
       <Filter>01.Utility\97.Physics\RagDoll_Physics</Filter>
@@ -470,6 +509,30 @@
     </ClCompile>
     <ClCompile Include="..\Private\Octree.cpp">
       <Filter>01.Utility\02.Components\Octree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Thread_Pool.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BehaviorTree.cpp">
+      <Filter>01.Utility\AIController\Behavior_Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AIController.cpp">
+      <Filter>01.Utility\AIController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Composite_Node.cpp">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Decorator_Node.cpp">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Decorator_Node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BlackBoard.cpp">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\BlackBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Task_Node.cpp">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Task_Node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PathFinder.cpp">
+      <Filter>01.Utility\AIController\AINavigator\PathFinder</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\IK_Solver.cpp">
       <Filter>01.Utility\02.Components\Model\IK_Solver</Filter>
@@ -702,10 +765,10 @@
       <Filter>01.Utility\02.Components\Model</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\FSM.h">
-      <Filter>01.Utility\12.FSM\FSM</Filter>
+      <Filter>01.Utility\02.Components\FSM</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\State.h">
-      <Filter>01.Utility\12.FSM\State</Filter>
+    <ClInclude Include="..\Public\FSM_State.h">
+      <Filter>01.Utility\02.Components\FSM\State</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="..\Public\RagDoll_Physics.h">
@@ -725,6 +788,30 @@
     </ClInclude>
     <ClInclude Include="..\Public\Octree.h">
       <Filter>01.Utility\02.Components\Octree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Thread_Pool.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BehaviorTree.h">
+      <Filter>01.Utility\AIController\Behavior_Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AIController.h">
+      <Filter>01.Utility\AIController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Composite_Node.h">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Decorator_Node.h">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Decorator_Node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BlackBoard.h">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\BlackBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Task_Node.h">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Task_Node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PathFinder.h">
+      <Filter>01.Utility\AIController\AINavigator\PathFinder</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\IK_Solver.h">
       <Filter>01.Utility\02.Components\Model\IK_Solver</Filter>

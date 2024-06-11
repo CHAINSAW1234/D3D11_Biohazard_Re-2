@@ -341,8 +341,15 @@ HRESULT CModel_Extractor::Create_NonAnimMesh(const aiMesh* pAIMesh, _fmatrix Tra
 		memcpy_s(&VtxAnimMesh.vNormal, sizeof(_float3), &pAIMesh->mNormals[i], sizeof(_float3));
 		XMStoreFloat3(&VtxAnimMesh.vNormal, XMVector3TransformNormal(XMLoadFloat3(&VtxAnimMesh.vNormal), TransformationMatrix));
 
-		memcpy_s(&VtxAnimMesh.vTexcoord, sizeof(_float2), &pAIMesh->mTextureCoords[0][i], sizeof(_float2));
-		memcpy_s(&VtxAnimMesh.vTangent, sizeof(_float3), &pAIMesh->mTangents[i], sizeof(_float3));
+		if(pAIMesh->mTextureCoords[0] != nullptr)
+			memcpy_s(&VtxAnimMesh.vTexcoord, sizeof(_float2), &pAIMesh->mTextureCoords[0][i], sizeof(_float2));
+		else
+			memcpy_s(&VtxAnimMesh.vTexcoord, sizeof(_float2), &_float2(0.f,0.f), sizeof(_float2));
+
+		if(pAIMesh->mTangents != nullptr)
+			memcpy_s(&VtxAnimMesh.vTangent, sizeof(_float3), &pAIMesh->mTangents[i], sizeof(_float3));
+		else
+			memcpy_s(&VtxAnimMesh.vTangent, sizeof(_float3), &_float3(0.f,0.f,0.f), sizeof(_float3));
 
 		Mesh.Vertices.push_back(VtxAnimMesh);
 	}

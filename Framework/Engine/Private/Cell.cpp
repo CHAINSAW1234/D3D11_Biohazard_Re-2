@@ -129,7 +129,7 @@ _bool CCell::isIn(_fvector vPosition, _fmatrix TerrainWorldMatrix, _int* pNeighb
 		_vector		vDir = vPoints[i + 1 >= POINT_END ? 0 : i + 1] - vPoints[i];
 		_vector		vDestDir = XMVector3Normalize(XMVectorSet(XMVectorGetZ(vDir) * -1.f, 0.f, XMVectorGetX(vDir), 0.0f));
 
-		if (0 < XMVectorGetX(XMVector3Dot(vSourDir, vDestDir)))
+		if (0.0002f < XMVectorGetX(XMVector3Dot(vSourDir, vDestDir)))
 		{
 			*pNeighborIndex = m_iNeighborIndices[i];
 			return false;
