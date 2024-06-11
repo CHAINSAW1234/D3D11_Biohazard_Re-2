@@ -109,6 +109,18 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Damg">
       <UniqueIdentifier>{94d3ab13-025c-408b-87af-20b5e8b80ac8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Idle">
+      <UniqueIdentifier>{b4b9c127-305b-47ed-a413-5006646ae188}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk">
+      <UniqueIdentifier>{4e0e6223-09b1-4c48-9724-01b3f455e51e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog">
+      <UniqueIdentifier>{463a6a2f-4232-4fcc-a625-804da3e0d700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Stair">
+      <UniqueIdentifier>{7b41809a-15c9-4a70-9130-c77c3c7123e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -198,6 +210,12 @@
     <ClInclude Include="..\Public\Player_State_Move.h">
       <Filter>02.GameObjects\Player\State\Player_State_Move</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move_Idle.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move_Walk.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -271,6 +289,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_State_Move.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_Idle.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_Walk.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -268,6 +268,9 @@
     <Filter Include="01.Utility\02.Components\Model\IK_Solver">
       <UniqueIdentifier>{32c90322-45a0-4684-8805-8cd3cb7cb7b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\02.Components\FSM\HState">
+      <UniqueIdentifier>{fe575399-f059-49f7-ae13-46645922dd29}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -518,6 +521,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\IK_Solver.cpp">
       <Filter>01.Utility\02.Components\Model\IK_Solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FSM_HState.cpp">
+      <Filter>01.Utility\02.Components\FSM\HState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -791,6 +797,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\IK_Solver.h">
       <Filter>01.Utility\02.Components\Model\IK_Solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FSM_HState.h">
+      <Filter>01.Utility\02.Components\FSM\HState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

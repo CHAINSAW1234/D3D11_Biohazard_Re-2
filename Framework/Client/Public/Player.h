@@ -24,6 +24,26 @@ public:
 		PART_END
 	};
 
+#pragma region ANIMATION
+	enum ANIMATION_MOVE {
+		ANIM_IDLE, TURN_L180, TURN_R180, TURN_L0, TURN_R0, TURN_L90, TURN_R90,
+		WALK_F_LOOP, WALK_L_LOOP, WALK_END_LR, WALK_END_RL, WALK_R_LOOP,
+		WALK_BACK_L_LOOP, WALK_BACK_B_LOOP, WALK_BACK_R_LOOP,
+		JOG_START_L0_LR, JOG_START_L90_LR, JOG_START_L180_LR,
+		JOG_START_R0_RL, JOG_START_R90_RL, JOG_START_R180_RL, JOG_END,
+		JOG_LCYCLE_LOOP, JOG_STRAIGHT_LOOP, JOG_RCYCLE_LOOP,
+		JOG_LCYCLE_SHORT_LOOP, JOG_RCYCLE_SHORT_LOOP,
+		STAIR_F_LOOP, STAIR_L_LOOP, STAIR_R_LOOP,
+		STAIR_BACK_L_LOOP, STAIR_BACK_B_LOOP, STAIR_BACK_R_LOOP,
+		STAIR_RUN_UP_LOOP, STAIR_RUN_DOWN_LOOP,
+		PIVOTTURN_L0, PIVOTTURN_L90, PIVOTTURN_L180,
+		PIVOTTURN_R0, PIVOTTURN_R90, PIVOTTURN_R180,
+		LIGHT_ON_OFF, WHEEL_L180, WHEEL_R180,
+		MOVE_END
+	};
+
+#pragma endregion
+
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CPlayer(const CPlayer& rhs);
@@ -44,6 +64,20 @@ private:
 
 private:
 	void										Col_Section();
+
+#pragma region 현진 추가
+public:
+	CModel*										Get_Body_Model();
+	_bool										Get_Spotlight() { return m_isSpotlight; }
+
+	void										Set_Spotlight(_bool isSpotlight) { m_isSpotlight = isSpotlight; }
+
+	HRESULT										Add_FSM_States();
+	void										Change_State(STATE eState);
+private:
+	_bool m_isSpotlight = { false };
+
+#pragma endregion
 
 #pragma region 예은 추가 
 public:
@@ -121,7 +155,7 @@ private:
 
 private:
 	HRESULT Add_Components();
-	HRESULT Add_FSM_States();
+
 	HRESULT Add_PartObjects();
 	HRESULT Initialize_PartModels();
 

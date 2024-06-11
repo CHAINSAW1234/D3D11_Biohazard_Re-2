@@ -111,7 +111,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	m_pColliderCom->Tick(WorldMatrix);
 
-	static _uint iAnimIndex = { 0 };
+	/*static _uint iAnimIndex = { 0 };
 	if (UP == m_pGameInstance->Get_KeyState(VK_UP))
 	{
 		++iAnimIndex;
@@ -124,7 +124,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 		--iAnimIndex;
 		if (1000000 < iAnimIndex)
 			iAnimIndex = 0;
-	}
+	}*/
 
 	static _float fWeight = { 1.f };
 	static _float fMoveHieght = { 0.f };
@@ -182,44 +182,44 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//	m_pModelCom->Set_NumIteration_IK(TEXT("IK_R_LEG"), 10);
 	//	m_pModelCom->Set_NumIteration_IK(TEXT("IK_R_ARM"), 10);
 
-	CModel::ANIM_PLAYING_DESC		AnimDesc;
-	//	AnimDesc.iAnimIndex = 30;
-	AnimDesc.iAnimIndex = iAnimIndex;
-	AnimDesc.isLoop = true;
-	//	AnimDesc.fWeight = fWeight;
-	AnimDesc.fWeight = 1.f;
-	AnimDesc.strBoneLayerTag = TEXT("Default");
-	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
+	//CModel::ANIM_PLAYING_DESC		AnimDesc;
+	////	AnimDesc.iAnimIndex = 30;
+	//AnimDesc.iAnimIndex = iAnimIndex;
+	//AnimDesc.isLoop = true;
+	////	AnimDesc.fWeight = fWeight;
+	//AnimDesc.fWeight = 1.f;
+	//AnimDesc.strBoneLayerTag = TEXT("Default");
+	//m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
 
-	//	AnimDesc.iAnimIndex = 34;
-	//	AnimDesc.iAnimIndex = 24;
-	AnimDesc.iAnimIndex = 14;
-	AnimDesc.isLoop = true;
-	//	AnimDesc.fWeight = 1.f - fWeight;
-	AnimDesc.fWeight = 0.1f;
-	AnimDesc.strBoneLayerTag = TEXT("Upper");
-	m_pModelCom->Set_Animation_Blend(AnimDesc, 1);
-
-
-	AnimDesc.iAnimIndex = iAnimIndex + 1;
-	AnimDesc.isLoop = true;
-	//	AnimDesc.fWeight = 1.f - fWeight;
-	AnimDesc.fWeight = 1.f;
-	AnimDesc.strBoneLayerTag = TEXT("Left_Arm");
-	m_pModelCom->Set_Animation_Blend(AnimDesc, 2);
+	////	AnimDesc.iAnimIndex = 34;
+	////	AnimDesc.iAnimIndex = 24;
+	//AnimDesc.iAnimIndex = 14;
+	//AnimDesc.isLoop = true;
+	////	AnimDesc.fWeight = 1.f - fWeight;
+	//AnimDesc.fWeight = 0.1f;
+	//AnimDesc.strBoneLayerTag = TEXT("Upper");
+	//m_pModelCom->Set_Animation_Blend(AnimDesc, 1);
 
 
-	m_pModelCom->Set_Weight(0, 1.f);
-	m_pModelCom->Set_Weight(1, 0.f);
-	m_pModelCom->Set_Weight(2, 0.f);
+	//AnimDesc.iAnimIndex = iAnimIndex + 1;
+	//AnimDesc.isLoop = true;
+	////	AnimDesc.fWeight = 1.f - fWeight;
+	//AnimDesc.fWeight = 1.f;
+	//AnimDesc.strBoneLayerTag = TEXT("Left_Arm");
+	//m_pModelCom->Set_Animation_Blend(AnimDesc, 2);
 
 
-	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
+	//m_pModelCom->Set_Weight(0, 1.f);
+	//m_pModelCom->Set_Weight(1, 0.f);
+	//m_pModelCom->Set_Weight(2, 0.f);
 
 
-	static _bool		isSetRootXZ = false;
-	static _bool		isSetRootRotation = false;
-	static _bool		isSetRootY = false;
+	//m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
+
+
+	static _bool		isSetRootXZ = true;
+	static _bool		isSetRootRotation = true;
+	static _bool		isSetRootY = true;
 	if (UP == m_pGameInstance->Get_KeyState('I'))
 	{
 		isSetRootY = !isSetRootY;
