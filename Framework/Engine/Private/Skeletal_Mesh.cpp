@@ -11,7 +11,7 @@ SkeletalMesh* SkeletalMesh::load(const std::string& name, Skeleton* skeleton)
 	string strParentsPath = FullPath.parent_path().string();
 	string strFileName = FullPath.stem().string();
 
-	string strNewPath = strParentsPath + "/" + strFileName + ".bin";
+	string strNewPath = strParentsPath + "/" + strFileName + "_Ragdoll.bin";
 
 	filesystem::path CheckPath(strNewPath);
 

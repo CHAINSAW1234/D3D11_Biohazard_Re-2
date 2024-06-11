@@ -88,7 +88,7 @@ private:
 
 #pragma region Ragdoll
 public:
-	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone, _float4x4* WorldMatrix, _float4x4* RotationMatrix);
+	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone, _float4x4* WorldMatrix, _float4x4* RotationMatrix, const string& name);
 	void									Start_Ragdoll(class CRagdoll_Physics* pRagdoll,_uint iId);
 	void									SetBone_Ragdoll(vector<class CBone*>* vecBone);
 	void									SetWorldMatrix_Ragdoll(_float4x4 WorldMatrix);

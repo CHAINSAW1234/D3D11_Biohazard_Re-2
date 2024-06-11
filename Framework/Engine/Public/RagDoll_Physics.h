@@ -143,10 +143,10 @@ public:
 	virtual HRESULT                     Initialize(void* pArg);
 
 public:
-    _bool                               Init();
+    _bool                               Init(const string& name);
     void                                create_ragdoll();
     void                                Update(_float fTimeDelta);
-    _bool                               load_mesh();
+    _bool                               load_mesh(const string& name);
     void                                update_transforms();
     void                                Set_Kinematic(_bool boolean);
     void                                update_animations();

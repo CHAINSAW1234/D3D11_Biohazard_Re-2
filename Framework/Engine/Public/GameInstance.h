@@ -251,7 +251,7 @@ public:/*For Physics Controller*/
 	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 	_bool									RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
-	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone, _float4x4* WorldMatrix, _float4x4* RotationMatrix);
+	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone, _float4x4* WorldMatrix, _float4x4* RotationMatrix, const string& name);
 
 private:/*For Physics_Controller*/
 	_uint*									m_pIndices = { nullptr };

@@ -257,9 +257,10 @@ HRESULT CRagdoll_Physics::Initialize(void* pArg)
 	return E_NOTIMPL;
 }
 
-bool CRagdoll_Physics::load_mesh()
+bool CRagdoll_Physics::load_mesh(const string& name)
 {
-	m_skeletal_mesh = SkeletalMesh::load("../Bin/Resources/Models/LeonTest/LeonBody.fbx");
+	//m_skeletal_mesh = SkeletalMesh::load("../Bin/Resources/Models/LeonTest/LeonBody.fbx");
+	m_skeletal_mesh = SkeletalMesh::load(name);
 
 	if (!m_skeletal_mesh)
 	{
@@ -269,7 +270,7 @@ bool CRagdoll_Physics::load_mesh()
 	return true;
 }
 
-_bool CRagdoll_Physics::Init()
+_bool CRagdoll_Physics::Init(const string& name)
 {
 	m_ragdoll = new CRagdoll();
 
@@ -278,7 +279,7 @@ _bool CRagdoll_Physics::Init()
 	for (int i = 0; i < JOINT_COUNT; i++)
 		m_selected_joints[i] = 0;
 
-	if (!load_mesh())
+	if (!load_mesh(name))
 		return false;
 
 	m_joint_names.push_back(" -");

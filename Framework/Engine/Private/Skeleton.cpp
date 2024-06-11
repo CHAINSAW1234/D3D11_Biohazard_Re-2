@@ -57,12 +57,43 @@ Skeleton* Skeleton::create(const aiScene* scene, ofstream& ofs)
         auto& joint = skeleton->m_joints[i];
     }
 
+    auto JointSize = skeleton->m_joints.size();
+
+    ofs.write(reinterpret_cast<_char*>(&JointSize), sizeof(JointSize));
+
+    for (int i = 0; i < JointSize; i++)
+    {
+        auto& joint = skeleton->m_joints[i];
+
+        ofs.write(reinterpret_cast<_char*>(&joint.inverse_bind_pose), sizeof(joint.inverse_bind_pose));
+        ofs.write(reinterpret_cast<_char*>(&joint.original_rotation), sizeof(joint.original_rotation));
+        ofs.write(reinterpret_cast<_char*>(&joint.parent_index), sizeof(joint.parent_index));
+    }
+
     return skeleton;
 }
 
 Skeleton* Skeleton::create(ifstream& ifs)
 {
-    return nullptr;
+    Skeleton* skeleton = new Skeleton();
+
+    _uint JointSize = 0;
+
+    ifs.read(reinterpret_cast<_char*>(&JointSize), sizeof(JointSize));
+
+    for (int i = 0; i < JointSize; i++)
+    {
+        Joint joint;
+
+        joint.name = "None";
+        ifs.read(reinterpret_cast<_char*>(&joint.inverse_bind_pose), sizeof(_matrix));
+        ifs.read(reinterpret_cast<_char*>(&joint.original_rotation), sizeof(_vector));
+        ifs.read(reinterpret_cast<_char*>(&joint.parent_index), sizeof(joint.parent_index));
+
+        skeleton->m_joints.push_back(joint);
+    }
+
+    return skeleton;
 }
 
 Skeleton::Skeleton()
