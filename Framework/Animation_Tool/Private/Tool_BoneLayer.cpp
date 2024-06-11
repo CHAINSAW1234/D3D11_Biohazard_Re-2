@@ -114,11 +114,12 @@ void CTool_BoneLayer::Show_BoneLayers()
 	if (nullptr == m_pCurrentModel)
 		return;
 
+	static _float2		vSize = { 200.f, 100.f };
 	if (ImGui::CollapsingHeader("Show Bone Layers ##CTool_BoneLayer::Show_BoneLayers()"))
 	{
 		list<wstring>			BoneLayerTags = { m_pCurrentModel->Get_BoneLayer_Tags() };
 
-		if (ImGui::BeginListBox("Bone Layer Tags ##CTool_BoneLayer::Show_BoneLayers()"))
+		if (ImGui::BeginListBox("Bone Layer Tags ##CTool_BoneLayer::Show_BoneLayers()", *(ImVec2*)&vSize))
 		{
 			for (auto& wstrBoneLayerTag : BoneLayerTags)
 			{
@@ -156,6 +157,9 @@ void CTool_BoneLayer::Show_Default()
 
 void CTool_BoneLayer::Release_BoneLayer(const wstring& strBoneLayerTag)
 {
+	if (nullptr == m_pCurrentModel)
+		return;
+
 	m_pCurrentModel->Erase_Bone_Layer(strBoneLayerTag);
 }
 

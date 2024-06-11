@@ -10,12 +10,12 @@ class CTool_AnimPlayer final : public CTool
 public:
 	typedef struct tagAnimPlayerDesc
 	{
-		const wstring*							pCurrentBoneLayerTag = { nullptr };
-		const wstring*							pCurrentPartObjectTag = { nullptr };
-		const string*							pCurrentModelTag = { nullptr };
-		_float3*								pMoveDir = { nullptr };
-		CTransform*								pTransform = { nullptr };
-		class CAnimTestObject*					pTestObject = { nullptr };
+		const wstring* pCurrentBoneLayerTag = { nullptr };
+		const wstring* pCurrentPartObjectTag = { nullptr };
+		const string* pCurrentModelTag = { nullptr };
+		_float3* pMoveDir = { nullptr };
+		CTransform* pTransform = { nullptr };
+		class CAnimTestObject* pTestObject = { nullptr };
 	}ANIMPLAYER_DESC;
 
 private:
@@ -47,32 +47,35 @@ private:
 	_float										Get_CurrentAnim_BlendWeight();
 	_uint										Get_CurrentKeyFrame();
 
+	void										Reset_AllTrackPosition();
+
 	void										Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition);
 	void										Set_BlendWeight(_uint iPlayingIndex, _float fWeight);
 
 private:
 	_int										Find_LastPlayingIndex(const string& strModelTag);
-	
+
 private:
 	void										On_Off_Buttons();
 	void										Set_Animation();
 
 private:
 	void										Create_PlayingDesc();
+	void										Show_PlayingInfos();
 
 private:
 	void										Apply_RootMotion();
 
 private:
-	class CAnimTestObject*						m_pTestObject = { nullptr };
+	class CAnimTestObject* m_pTestObject = { nullptr };
 
 	map<string, _uint>							m_ModelLastPlayingIndex;
 	map<string, _bool>							m_isPlayingAnimations;
-	map<string, CModel*>*						m_pModels = { nullptr };
-	CModel*										m_pCurrentModel = { nullptr };
-	CAnimation*									m_pCurrentAnimation = { nullptr };
-	CTransform*									m_pTargetTransform = { nullptr };
-	_float3*									m_pRootMoveDir = { nullptr };
+	map<string, CModel*>* m_pModels = { nullptr };
+	CModel* m_pCurrentModel = { nullptr };
+	CAnimation* m_pCurrentAnimation = { nullptr };
+	CTransform* m_pTargetTransform = { nullptr };
+	_float3* m_pRootMoveDir = { nullptr };
 
 	_bool										m_isPlayAnimation = { false };
 
@@ -80,9 +83,9 @@ private:
 	_bool										m_isRooActive_Y = { false };
 	_bool										m_isRooActive_Rotate = { false };
 
-	const string*								m_pCurrentModelTag = { nullptr };
-	const wstring*								m_pCurrentPartObjectTag = { nullptr };
-	const wstring*								m_pCurrentBoneLayerTag = { nullptr };
+	const string* m_pCurrentModelTag = { nullptr };
+	const wstring* m_pCurrentPartObjectTag = { nullptr };
+	const wstring* m_pCurrentBoneLayerTag = { nullptr };
 
 public:
 	static CTool_AnimPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

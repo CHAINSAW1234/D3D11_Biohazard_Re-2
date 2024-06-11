@@ -9,14 +9,14 @@ HRESULT CPlayingInfo::Initialize(void* pArg)
 	if (nullptr == pArg)
 		return E_FAIL;
 
-	PLAYING_INFO_DESC*		pDesc = { static_cast<PLAYING_INFO_DESC*> (pArg) };
+	PLAYING_INFO_DESC* pDesc = { static_cast<PLAYING_INFO_DESC*> (pArg) };
 
 	m_iAnimIndex = pDesc->iAnimIndex;
 	m_isLoop = pDesc->isLoop;
 	m_fBlendWeight = pDesc->fBlendWeight;
 	m_strBoneLayerTag = pDesc->strBoneLayerTag;
 	m_iPreAnimIndex = -1;
-	
+
 	m_LastKeyFrames.resize(pDesc->iNumBones);
 	m_CurrentKeyFrameIndices.resize(pDesc->iNumChannel);
 
@@ -34,13 +34,7 @@ _int CPlayingInfo::Get_KeyFrameIndex(_uint iChannelIndex)
 
 KEYFRAME CPlayingInfo::Get_LastKeyFrame(_uint iBoneIndex)
 {
-	_uint			iNumBones = { static_cast<_uint>(m_LastKeyFrames.size()) };
-	KEYFRAME		KeyFrame;
-
-	if (iNumBones > iBoneIndex)
-	{
-		KeyFrame = m_LastKeyFrames[iBoneIndex];
-	}
+	KEYFRAME KeyFrame = m_LastKeyFrames[iBoneIndex];
 
 	return KeyFrame;
 }
@@ -60,12 +54,12 @@ void CPlayingInfo::Change_Animation(_uint iAnimIndex, _uint iNumChannel)
 
 void CPlayingInfo::Set_PreTranslation(_fvector vPreTranslation)
 {
-	m_vPreTranslationLocal = vPreTranslation;
+	XMStoreFloat3(&m_vPreTranslationLocal, vPreTranslation);
 }
 
 void CPlayingInfo::Set_PreQuaternion(_fvector vPreQuaternion)
 {
-	m_vPreQuaternion = vPreQuaternion;
+	XMStoreFloat4(&m_vPreQuaternion, vPreQuaternion);
 }
 
 void CPlayingInfo::Set_KeyFrameIndex_AllKeyFrame(_uint iKeyFrameIndex)
@@ -76,13 +70,13 @@ void CPlayingInfo::Set_KeyFrameIndex_AllKeyFrame(_uint iKeyFrameIndex)
 	}
 }
 
-void CPlayingInfo::Set_KeyFrameIndex(_uint iBoneIndex, _uint iKeyFrameIndex)
+void CPlayingInfo::Set_KeyFrameIndex(_uint iChannelIndex, _uint iKeyFrameIndex)
 {
-	_uint			iNumKeyFrame = { static_cast<_uint>(m_CurrentKeyFrameIndices.size()) };
-	if (iNumKeyFrame <= iBoneIndex)
+	_uint			iNumChannel = { static_cast<_uint>(m_CurrentKeyFrameIndices.size()) };
+	if (iNumChannel <= iChannelIndex)
 		return;
 
-	m_CurrentKeyFrameIndices[iBoneIndex] = iKeyFrameIndex;
+	m_CurrentKeyFrameIndices[iChannelIndex] = iKeyFrameIndex;
 }
 
 void CPlayingInfo::Set_LastKeyFrame_Translation(_uint iBoneIndex, _fvector vTranslation)
@@ -140,7 +134,7 @@ void CPlayingInfo::Add_AccLinearInterpolation(_float fAddLinearInterpolation)
 void CPlayingInfo::Update_LastKeyFrames(const vector<_float4x4>& TransformationMatrices, _uint iNumBones, _float fTotalLinearTime)
 {
 	m_LastKeyFrames.clear();
-	
+
 	for (_uint iBoneIndex = 0; iBoneIndex < iNumBones; ++iBoneIndex)
 	{
 		_vector			vScale, vRotation, vTranslation;
@@ -160,11 +154,11 @@ void CPlayingInfo::Update_LastKeyFrames(const vector<_float4x4>& TransformationM
 
 CPlayingInfo* CPlayingInfo::Create(void* pArg)
 {
-	CPlayingInfo*		pInstance = { new CPlayingInfo() };
+	CPlayingInfo* pInstance = { new CPlayingInfo() };
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CPlayingInfo"));
-		
+
 		Safe_Release(pInstance);
 	}
 

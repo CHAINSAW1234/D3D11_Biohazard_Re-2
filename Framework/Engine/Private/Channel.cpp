@@ -157,14 +157,13 @@ void CChannel::Invalidate_TransformationMatrix_LinearInterpolation(const vector<
 	Bones[m_iBoneIndex]->Set_TransformationMatrix(TransformationMatrix);
 }
 
-_float4x4 CChannel::Compute_TransformationMatrix(_float fTrackPosition, _int* pCurrentKeyFrameIndex, _uint* pBoneIndex)
+_float4x4 CChannel::Compute_TransformationMatrix(_float fTrackPosition, _int* pCurrentKeyFrameIndex)
 {
 	if (0.0f == fTrackPosition)
 		(*pCurrentKeyFrameIndex) = 0;
 
 	//	마지막 키프레임을 얻어온다.
 	KEYFRAME		KeyFrame = m_KeyFrames.back();
-
 	_vector			vScale, vRotation, vTranslation;
 
 	//	이미 재생 위치가 마지막 키프레임의 위치를 넘어 섰다면..
@@ -213,21 +212,19 @@ _float4x4 CChannel::Compute_TransformationMatrix(_float fTrackPosition, _int* pC
 	_float4x4		TransformationFloat4x4;
 	XMStoreFloat4x4(&TransformationFloat4x4, TransformationMatrix);
 
-	*pBoneIndex = m_iBoneIndex;
-
 	return TransformationFloat4x4;
 }
 
-_float4x4 CChannel::Compute_TransformationMatrix_LinearInterpolation(const vector<_float4x4>& TransformationMatrices, _float fAccLinearInterpolation, _float fTotalLinearTime, _uint* pBoneIndex, const vector<KEYFRAME>& LastKeyFrames)
+_float4x4 CChannel::Compute_TransformationMatrix_LinearInterpolation(const vector<_float4x4>& TransformationMatrices, _float fAccLinearInterpolation, _float fTotalLinearTime, const vector<KEYFRAME>& LastKeyFrames)
 {
-	KEYFRAME		LinearStartKeyFrame = LastKeyFrames[m_iBoneIndex];
+	KEYFRAME		LinearStartKeyFrame = { LastKeyFrames[m_iBoneIndex] };
 	_vector			vScale, vRotation, vTranslation;
 
 	_matrix			TransformationMatrix = { XMLoadFloat4x4(&TransformationMatrices[m_iBoneIndex]) };
 
 	XMMatrixDecompose(&vScale, &vRotation, &vTranslation, TransformationMatrix);
 
-	_float		fRatio = fAccLinearInterpolation / fTotalLinearTime;
+	_float			fRatio = { fAccLinearInterpolation / fTotalLinearTime };
 
 	//	현재 키프레임과 다음 키프레임 사이의 위치에서 위치의 진행 정도에 따라 다음 키프레임과 선형 보간을 한다. 
 	//	XMVectorLerp == > Result = V0 + t * (V1 - V0);
@@ -246,8 +243,6 @@ _float4x4 CChannel::Compute_TransformationMatrix_LinearInterpolation(const vecto
 
 	_float4x4		TransformationFloat4x4;
 	XMStoreFloat4x4(&TransformationFloat4x4, TransformationMatrix);
-
-	*pBoneIndex = m_iBoneIndex;
 
 	return TransformationFloat4x4;
 }

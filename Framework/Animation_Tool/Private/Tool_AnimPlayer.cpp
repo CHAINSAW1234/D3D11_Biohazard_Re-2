@@ -45,11 +45,14 @@ void CTool_AnimPlayer::Tick(_float fTimeDelta)
 
 	Set_Animation();
 
+	Change_Animation();
+	Reset_AllTrackPosition();
+
+	Show_PlayingInfos();
+
 	Apply_RootMotion();
 
-	Change_Animation();
 	Play_Animation(fTimeDelta);
-	TrackPosition_Controller();
 
 	ImGui::End();
 }
@@ -75,24 +78,24 @@ void CTool_AnimPlayer::Play_Animation(_float fTimeDelta)
 	{
 		for (auto& Pair : *m_pModels)
 		{
-			CModel*			pSrcModel = { Pair.second };
+			CModel* pSrcModel = { Pair.second };
 			wstring			strRootPartTag = { m_pTestObject->Get_RootActivePartTag() };
 			wstring			strModelPartTag = { TEXT("") };
 			_bool			isRootPart = { false };
 			map<wstring, CAnimTestPartObject*>			PartObjects = { m_pTestObject->Get_PartObjects() };
 			for (auto& Pair : PartObjects)
 			{
-				CModel*		pModel = { Pair.second->Get_CurrentModelComponent() };
+				CModel* pModel = { Pair.second->Get_CurrentModelComponent() };
 				if (pModel == pSrcModel)
 				{
 					strModelPartTag = Pair.first;
-					
+
 					isRootPart = strRootPartTag == strModelPartTag;
 
 					break;
 				}
 			}
-			
+
 			if (false == isRootPart)
 			{
 				_float3				vTempDir = {};
@@ -108,26 +111,34 @@ void CTool_AnimPlayer::Play_Animation(_float fTimeDelta)
 
 void CTool_AnimPlayer::Change_Animation()
 {
-	if (nullptr == m_pCurrentModel || nullptr ==m_pCurrentAnimation)
+	if (nullptr == m_pCurrentModel || nullptr == m_pCurrentAnimation)
 	{
 		return;
 	}
 
-	vector<CAnimation*>			Animations = { m_pCurrentModel->Get_Animations() };
-	_uint						iNumAnim = { static_cast<_uint>(Animations.size()) };
-
-	_int						iAnimIndex = { -1 };
-	for (_uint i = 0; i < iNumAnim; ++i)
+	if (ImGui::Button("Chanage Animation ##CTool_AnimPlayer::Change_Animation()"))
 	{
-		if (Animations[i] == m_pCurrentAnimation)
-			iAnimIndex = static_cast<_int>(i);
-	}
+		vector<CAnimation*>			Animations = { m_pCurrentModel->Get_Animations() };
+		_uint						iNumAnim = { static_cast<_uint>(Animations.size()) };
 
-	if (-1 == iAnimIndex)
-		return;
-	
-	//	TODO:			플레잉인덱스 변수화하기
-	m_pCurrentModel->Change_Animation(0, iAnimIndex);
+		_int						iAnimIndex = { -1 };
+		for (_uint i = 0; i < iNumAnim; ++i)
+		{
+			if (Animations[i] == m_pCurrentAnimation)
+				iAnimIndex = static_cast<_int>(i);
+		}
+
+		if (-1 == iAnimIndex)
+			return;
+
+
+		_int			iPlayingIndex = { m_pCurrentModel->Get_PlayingIndex_From_BoneLayerTag(*m_pCurrentBoneLayerTag) };
+
+		if (-1 != iPlayingIndex)
+		{
+			m_pCurrentModel->Change_Animation(iPlayingIndex, iAnimIndex);
+		}
+	}
 }
 
 HRESULT CTool_AnimPlayer::Set_Models_Ptr(map<string, CModel*>* pModels)
@@ -139,7 +150,7 @@ HRESULT CTool_AnimPlayer::Set_Models_Ptr(map<string, CModel*>* pModels)
 	for (auto& Pair : *m_pModels)
 	{
 		string			strModelTag = { Pair.first };
-		CModel*			pModel = { Pair.second };
+		CModel* pModel = { Pair.second };
 		if (nullptr == pModel || "" == strModelTag)
 			return E_FAIL;
 	}
@@ -194,7 +205,7 @@ void CTool_AnimPlayer::TrackPosition_Controller()
 	string			strTrackPosition = { to_string(fTrackPosition) };
 	string			strDuration = { to_string(fDuration) };
 
-	ImGui::Text(string(string("TrackPosition : ") + strTrackPosition).c_str()); 
+	ImGui::Text(string(string("TrackPosition : ") + strTrackPosition).c_str());
 	ImGui::Text(string(string("Duration : ") + strDuration).c_str());
 
 	ImGui::SeparatorText("##");
@@ -253,7 +264,7 @@ _float CTool_AnimPlayer::Get_CurrentPlayingInfo_Duration()
 	if (-1 == iPlayingIndex)
 		return 0.f;
 
-	
+
 	_float			fDuration = { m_pCurrentModel->Get_Duration_From_PlayingInfo(iPlayingIndex) };
 
 	return fDuration;
@@ -301,6 +312,21 @@ _uint CTool_AnimPlayer::Get_CurrentKeyFrame()
 	return iCurrentKeyFrame;
 }
 
+void CTool_AnimPlayer::Reset_AllTrackPosition()
+{
+	if (nullptr == m_pCurrentModel)
+		return;
+
+	if (ImGui::Button("Reset All TrackPosition ##CTool_AnimPlayer::Reset_AllTrackPosition()"))
+	{
+		_uint			iNumPlayingInfo = { m_pCurrentModel->Get_NumPlayingInfos() };
+		for (_uint iPlayingIndex = 0; iPlayingIndex < iNumPlayingInfo; ++iPlayingIndex)
+		{
+			m_pCurrentModel->Set_TrackPosition(iPlayingIndex, 0.f);
+		}
+	}
+}
+
 void CTool_AnimPlayer::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition)
 {
 	if (nullptr == m_pCurrentModel)
@@ -321,7 +347,7 @@ _int CTool_AnimPlayer::Find_LastPlayingIndex(const string& strModelTag)
 {
 	_int			iPlayingIndex = { -1 };
 	map<string, _uint>::iterator		iter = { m_ModelLastPlayingIndex.find(strModelTag) };
-	
+
 	if (iter == m_ModelLastPlayingIndex.end())
 		return iPlayingIndex;
 
@@ -447,6 +473,92 @@ void CTool_AnimPlayer::Create_PlayingDesc()
 		m_pCurrentModel->Add_AnimPlayingInfo(iAnimIndex, isLoop, iPlayingIndex, *m_pCurrentBoneLayerTag, fWeight);
 	}
 	return;
+}
+
+void CTool_AnimPlayer::Show_PlayingInfos()
+{
+	if (nullptr == m_pCurrentModel)
+		return;
+
+	ImGui::SeparatorText("##");
+
+	if (ImGui::CollapsingHeader("Information From Index ##CTool_AnimPlayer::Show_PlayingInfos()"))
+	{
+		_uint			iNumPlayingInfo = { m_pCurrentModel->Get_NumPlayingInfos() };
+		for (_uint iPlayingIndex = 0; iPlayingIndex < iNumPlayingInfo; ++iPlayingIndex)
+		{
+			string			strBoneLayerTag = { m_pCurrentModel->Get_BoneLayerTag_PlayingInfo(iPlayingIndex) };
+			string			strAnimTag = { m_pCurrentModel->Get_CurrentAnimTag(iPlayingIndex) };
+
+			string			strPlayingIndex = { to_string(iPlayingIndex) };
+			string			strDefaultText = { string("Playing Info : ") + strPlayingIndex };
+
+			string			strCombinedBoneLayerTag = { strDefaultText + strBoneLayerTag };
+			string			strCombinedAnimTag = { strDefaultText + strAnimTag };
+
+			ImGui::Text(strCombinedBoneLayerTag.c_str());
+			ImGui::Text(strCombinedAnimTag.c_str());
+		}
+	}
+
+	ImGui::SeparatorText("##");
+
+	if (ImGui::CollapsingHeader("Controll Panner"))
+	{
+		//	각웨이트 제어기능
+		if (ImGui::CollapsingHeader("Weight Controll ##CTool_AnimPlayer::Show_PlayingInfos()"))
+		{
+			_uint			iNumPlayingInfo = { m_pCurrentModel->Get_NumPlayingInfos() };
+			for (_uint iPlayingIndex = 0; iPlayingIndex < iNumPlayingInfo; ++iPlayingIndex)
+			{
+				_float		fBlendWeight = { m_pCurrentModel->Get_BlendWeight(iPlayingIndex) };
+				string		strPlayingIndex = { to_string(iPlayingIndex) };
+
+				ImGui::SliderFloat(string(string("Playing Info : ") + strPlayingIndex + string("## Weight Controll")).c_str(), &fBlendWeight, 0.f, 1.f);
+
+				m_pCurrentModel->Set_BlendWeight(iPlayingIndex, fBlendWeight);
+			}
+		}
+
+		//	트랙 포지션 제어 기능
+		if (ImGui::CollapsingHeader("Track Position Controll ##CTool_AnimPlayer::Show_PlayingInfos()"))
+		{
+			_uint			iNumPlayingInfo = { m_pCurrentModel->Get_NumPlayingInfos() };
+			for (_uint iPlayingIndex = 0; iPlayingIndex < iNumPlayingInfo; ++iPlayingIndex)
+			{
+				_float		fTrackPosition = { m_pCurrentModel->Get_TrackPosition(iPlayingIndex) };
+				_int		iAnimIndex = { m_pCurrentModel->Get_AnimIndex_PlayingInfo(iPlayingIndex) };
+				if (iAnimIndex == -1)
+					continue;
+				_float		fDuration = { m_pCurrentModel->Get_Duration_From_Anim(iAnimIndex) };
+				string		strPlayingIndex = { to_string(iPlayingIndex) };
+
+				ImGui::SliderFloat(string(string("Playing Info : ") + strPlayingIndex + string("## TrackPosition Controll")).c_str(), &fTrackPosition, fTrackPosition, fDuration);
+
+				m_pCurrentModel->Set_TrackPosition(iPlayingIndex, fTrackPosition);
+			}
+		}
+
+		//	루프 키고 끄기 기능
+		if (ImGui::CollapsingHeader("Etc Controll ##CTool_AnimPlayer::Show_PlayingInfos()"))
+		{
+			_uint			iNumPlayingInfo = { m_pCurrentModel->Get_NumPlayingInfos() };
+			for (_uint iPlayingIndex = 0; iPlayingIndex < iNumPlayingInfo; ++iPlayingIndex)
+			{
+				_bool		isLoop = { m_pCurrentModel->Is_Loop_PlayingInfo(iPlayingIndex) };
+
+				string		strDefault = { string("Playing Info : ") };
+				string		strPlayingIndex = { to_string(iPlayingIndex) };
+				string		strLoopTag = { "Active Loop" };
+
+				string		strCombinedText = { strDefault + strPlayingIndex + strLoopTag };
+				if (ImGui::RadioButton(strCombinedText.c_str(), isLoop))
+					isLoop = !isLoop;
+
+				m_pCurrentModel->Set_Loop(iPlayingIndex, isLoop);
+			}
+		}
+	}
 }
 
 void CTool_AnimPlayer::Apply_RootMotion()

@@ -28,7 +28,7 @@ public:
 public:
 
 private:
-	
+
 
 public:
 	static CTool_IK* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

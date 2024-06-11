@@ -57,24 +57,9 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	_uint			iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Left_Arm"), "l_arm_clavicle");
-	m_pModelCom->Add_Bone_Layer_Range(TEXT("Lower"), 0, 59);
-	m_pModelCom->Add_Bone_Layer_Range(TEXT("Upper"), 60, iNumBones -1);
 
 
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
-	m_pModelCom->Add_AnimPlayingInfo(0, true, 1, TEXT("Lower"), 1.f);
-	m_pModelCom->Add_AnimPlayingInfo(0, true, 2, TEXT("Upper"), 1.f);
-
-	//	m_pModelCom->Add_IK("root", "l_leg_ball", TEXT("IK_L_LEG"), 1);
-	//	m_pModelCom->Add_IK("l_leg_femur", "l_leg_ankle", TEXT("IK_L_LEG"), 1, 1.f);
-	m_pModelCom->Add_IK("l_leg_femur", "l_leg_ankle", TEXT("IK_L_LEG"), 20, 1.f);
-	//	m_pModelCom->Add_IK("hips", "l_leg_ball", TEXT("IK_L_LEG"), 1, 1.f);
-	//	m_pModelCom->Add_IK("r_leg_femur", "r_leg_ball", TEXT("IK_R_LEG"), 1, 1.f);
-	//	m_pModelCom->Add_IK("r_arm_humerus", "r_arm_wrist", TEXT("IK_R_ARM"), 20, 1.f);
-	//	m_pModelCom->Add_IK("r_arm_clavicle", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
-	//	m_pModelCom->Add_IK("spine_0", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
-
-	m_pModelCom->Set_RootBone("root");
 
 	m_pGameInstance->SetBone_Ragdoll(m_pModelCom->GetBoneVector());
 

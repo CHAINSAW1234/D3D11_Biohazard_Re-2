@@ -17,7 +17,7 @@ void CTool_EventInserter::Tick(_float fTimeDelta)
 
 CTool_EventInserter* CTool_EventInserter::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
 {
-	CTool_EventInserter*		pInstance = { new CTool_EventInserter(pDevice, pContext) };
+	CTool_EventInserter* pInstance = { new CTool_EventInserter(pDevice, pContext) };
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CTool_EventInserter"));

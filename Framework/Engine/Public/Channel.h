@@ -27,8 +27,8 @@ public:
 	void Invalidate_TransformationMatrix(const vector<class CBone*>& Bones, _float fTrackPosition, _int* pCurrentKeyFrameIndex);
 	void Invalidate_TransformationMatrix_LinearInterpolation(const vector<class CBone*>& Bones, _float fAccLinearInterpolation, _float fTotalLinearTime, const vector<KEYFRAME>& LastKeyFrames);
 
-	_float4x4 Compute_TransformationMatrix(_float fTrackPosition, _int* pCurrentKeyFrameIndex, _uint* pBoneIndex);
-	_float4x4 Compute_TransformationMatrix_LinearInterpolation(const vector<_float4x4>& TransformationMatrices, _float fAccLinearInterpolation, _float fTotalLinearTime, _uint* pBoneIndex, const vector<KEYFRAME>& LastKeyFrames);
+	_float4x4 Compute_TransformationMatrix(_float fTrackPosition, _int* pCurrentKeyFrameIndex);
+	_float4x4 Compute_TransformationMatrix_LinearInterpolation(const vector<_float4x4>& TransformationMatrices, _float fAccLinearInterpolation, _float fTotalLinearTime, const vector<KEYFRAME>& LastKeyFrames);
 
 public:
 	const vector<KEYFRAME>& Get_KeyFrames() { return m_KeyFrames; }

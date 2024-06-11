@@ -39,7 +39,7 @@ public:		/* For.Access */
 	inline _float3						Get_PreTranslation_Local() { return m_vPreTranslationLocal; }
 	inline _float4						Get_PreQuaternion() { return m_vPreQuaternion; }
 	inline wstring						Get_BoneLayerTag() { return m_strBoneLayerTag; }
-	inline const vector<KEYFRAME>&		Get_LastKeyFrames() { return m_LastKeyFrames; }
+	inline const vector<KEYFRAME>& Get_LastKeyFrames() { return m_LastKeyFrames; }
 	KEYFRAME							Get_LastKeyFrame(_uint iBoneIndex);
 
 	void								Change_Animation(_uint iAnimIndex, _uint iNumChannel);
@@ -56,7 +56,7 @@ public:		/* For.Access */
 	void								Set_PreQuaternion(_fvector vPreQuaternion);
 
 	void								Set_KeyFrameIndex_AllKeyFrame(_uint iKeyFrameIndex);
-	void								Set_KeyFrameIndex(_uint iBoneIndex, _uint iKeyFrameIndex);
+	void								Set_KeyFrameIndex(_uint iChannelIndex, _uint iKeyFrameIndex);
 
 	void								Set_LastKeyFrame_Translation(_uint iBoneIndex, _fvector vTranslation);
 	void								Set_LastKeyFrame_Rotation(_uint iBoneIndex, _fvector vQuaternion);

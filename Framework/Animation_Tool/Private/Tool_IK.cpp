@@ -17,7 +17,7 @@ void CTool_IK::Tick(_float fTimeDelta)
 
 CTool_IK* CTool_IK::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
 {
-	CTool_IK*		pInstance = { new CTool_IK(pDevice, pContext) };
+	CTool_IK* pInstance = { new CTool_IK(pDevice, pContext) };
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CTool_IK"));

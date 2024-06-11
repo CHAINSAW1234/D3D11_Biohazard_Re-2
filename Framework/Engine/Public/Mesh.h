@@ -72,8 +72,8 @@ private:
 	MATERIAL_DESC			m_MaterialDesc = {};
 
 	//For Mesh Cooking
-	_float3*				m_pVertices_Cooking = { nullptr };
-	_uint*					m_pIndices_Cooking = { nullptr };
+	_float3* m_pVertices_Cooking = { nullptr };
+	_uint* m_pIndices_Cooking = { nullptr };
 
 private:/* For.FBXLoad */
 	HRESULT					Ready_Vertices_For_NonAnimModel(const aiMesh* pAIMesh, _fmatrix TransformationMatrix);

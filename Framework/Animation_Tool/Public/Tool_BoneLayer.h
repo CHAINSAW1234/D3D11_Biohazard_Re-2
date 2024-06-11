@@ -10,9 +10,9 @@ class CTool_BoneLayer final : public CTool
 public:
 	typedef struct tagBoneLayerDesc
 	{
-		const string*				pCurrentBoneTag = { nullptr };
-		const string*				pCurrentModelTag = { nullptr };
-		wstring*					pCurrentBoneLayerTag = { nullptr };
+		const string* pCurrentBoneTag = { nullptr };
+		const string* pCurrentModelTag = { nullptr };
+		wstring* pCurrentBoneLayerTag = { nullptr };
 	}BONELAYER_DESC;
 
 private:
@@ -39,7 +39,7 @@ private:
 	void							Show_Default();
 
 private:
-	void							Release_BoneLayer(const wstring& strBoneLayerTag);	
+	void							Release_BoneLayer(const wstring& strBoneLayerTag);
 	void							Release_BoneLayer_CurrentBoneLayer();
 
 	list<wstring>					Get_BoneLayerTags(CModel* pModel);
@@ -53,15 +53,15 @@ private:
 	//	레이어 생성할 시 레이어 태그로 사용될 태그 입력란
 	wstring							m_strInputLayerTag = { TEXT("") };
 
-	wstring*						m_pCurrentBoneLayerTag = { nullptr };
-	const string*					m_pCurrentBoneTag = { nullptr };
-	const string*					m_pCurrentModelTag = { nullptr };
+	wstring* m_pCurrentBoneLayerTag = { nullptr };
+	const string* m_pCurrentBoneTag = { nullptr };
+	const string* m_pCurrentModelTag = { nullptr };
 
 	_int							m_iTopParentBoneIndex = { 0 };
 	_int							m_iStartBoneIndex = { 0 };
 	_int							m_iEndBoneIndex = { 0 };
 
-	CModel*							m_pCurrentModel = { nullptr };
+	CModel* m_pCurrentModel = { nullptr };
 
 public:
 	static CTool_BoneLayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

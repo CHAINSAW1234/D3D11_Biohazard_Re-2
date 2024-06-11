@@ -10,7 +10,7 @@ END
 BEGIN(Tool)
 
 class CTool_EventInserter final :
-    public CTool
+	public CTool
 {
 public:
 	typedef struct tagEventInserterDesc

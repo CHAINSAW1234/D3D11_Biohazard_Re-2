@@ -59,7 +59,7 @@ void CIK_Solver::Add_IK(vector<class CBone*>& Bones, list<_uint> IkIncludedIndic
 
 	IkInfo.IKIncludedIndices.clear();
 	IkInfo.IKIncludedIndices.push_front(IkInfo.iIKRootBoneIndex);
-	
+
 	for (auto& iIndex : IkIncludedIndices)
 	{
 		IkInfo.IKIncludedIndices.push_back(iIndex);
@@ -897,7 +897,7 @@ _float4x4 CIK_Solver::Compute_QMatrix(_float2 vCurrentPoint, _float fMajorAxisLe
 
 CIK_Solver* CIK_Solver::Create(void* pArg)
 {
-	CIK_Solver*			pInstance = { new CIK_Solver() };
+	CIK_Solver* pInstance = { new CIK_Solver() };
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

@@ -122,7 +122,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 			TransformMatrix))))
 		return E_FAIL;*/
 
-	/* Prototype_Component_Model_LeonBody */
+#pragma region Player
+		/* Prototype_Component_Model_LeonBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonBody"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonBody.fbx",
 			LeonTransformMatrix))))
@@ -139,6 +140,42 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonHair.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Monster
+
+	/* Prototype_Component_Model_ZombieBody */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieBody"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Body.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_ZombieFace */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieFace"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Face.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_ZombieHat */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieHat"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Hat.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_ZombieShirts */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieShirts"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Shirts.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_ZombiePants */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombiePants"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Pants.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+#pragma endregion
 
 
 	/* Prototype_Component_VIBuffer_Terrain */

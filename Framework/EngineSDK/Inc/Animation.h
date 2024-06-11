@@ -26,20 +26,20 @@ public:		/* For.Access */
 	_float									Get_TickPerSec() { return m_fTickPerSecond; }
 
 public:		/* For.Load */
-			/* For.FBX_Load*/
+	/* For.FBX_Load*/
 	HRESULT									Initialize(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices);
-			/* For.Binary_Load*/
+	/* For.Binary_Load*/
 	HRESULT									Initialize(const ANIM_DESC& AnimDesc);
 
 public:		/* For.PlayAnimation */
 	void									Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _bool* pFirsltTick, class CPlayingInfo* pPlayingInfo);
 	void									Invalidate_TransformationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, const vector<class CBone*>& Bones, const vector<KEYFRAME>& LastKeyFrames);
 
-	vector<_float4x4>						Compute_TransfromationMatrix(_float fTimeDelta, _uint iNumBones, set<_uint>& IncludedBoneIndices, _bool* pFirstTick, class CPlayingInfo* pPlayingInfo);
+	vector<_float4x4>						Compute_TransfromationMatrix(_float fTimeDelta, _uint iNumBones, const set<_uint>& IncludedBoneIndices, _bool* pFirstTick, class CPlayingInfo* pPlayingInfo);
 	vector<_float4x4>						Compute_TransfromationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, vector<_float4x4>& TransformationMatrices, _uint iNumBones, const vector<KEYFRAME>& LastKeyFrames);
 
 public:		/* For.Access */
-	const vector<class CChannel*>&			Get_Channels() { return m_Channels; };
+	const vector<class CChannel*>& Get_Channels() { return m_Channels; };
 	string									Get_Name() { return m_szName; }
 	_uint									Get_NumChannel() { return static_cast<_uint>(m_Channels.size()); }
 
@@ -54,12 +54,12 @@ private:
 	_uint									m_iNumChannels = { 0 };
 	vector<class CChannel*>					m_Channels;
 
-public:		
-			/* For.FBX_Load*/
-	static CAnimation*						Create(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices);
-			/* For.Binary_Load*/
-	static CAnimation*						Create(const ANIM_DESC& AnimDesc);
-	CAnimation*								Clone();
+public:
+	/* For.FBX_Load*/
+	static CAnimation* Create(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices);
+	/* For.Binary_Load*/
+	static CAnimation* Create(const ANIM_DESC& AnimDesc);
+	CAnimation* Clone();
 	virtual void							Free() override;
 
 #pragma endregion

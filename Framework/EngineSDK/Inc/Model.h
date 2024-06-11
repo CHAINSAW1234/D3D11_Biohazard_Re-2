@@ -40,7 +40,7 @@ public:		/* For.RootAnimaition ActiveControll */
 	void									Active_RootMotion_Y(_bool isActive);
 	void									Active_RootMotion_Rotation(_bool isActive);
 	void									Set_RootBone(string strBoneTag);			//	모든본을 초기화 => 루트본은 하나다 가정후 찾은 본을 루트본으로 등록
-	
+
 	_bool									Is_Set_RootBone();
 	void									Update_LastKeyFrames(const vector<_float4x4>& TransformationMatrices, _uint iPlayingIndex);
 
@@ -77,7 +77,7 @@ private:	/* For.Additioal_Input_Forces */
 	void									Apply_AdditionalForce(_uint iBoneIndex);
 	void									Clear_AdditionalForces();
 
-private:	
+private:
 	_int									Find_RootBoneIndex();
 
 private:
@@ -85,9 +85,9 @@ private:
 	_float									Compute_Current_TotalWeight(_uint iBoneIndex);
 	_float4x4								Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fmatrix DstMatrix, _float fAdditionalWeight);
 
-public:		
+public:
 	HRESULT									RagDoll();
-	vector<class CBone*>*					GetBoneVector() { return &m_Bones; }
+	vector<class CBone*>* GetBoneVector() { return &m_Bones; }
 
 public:		/*For Physics Collider*/
 	_float4x4								GetBoneTransform(string strBoneTag);
@@ -119,8 +119,8 @@ public:		/* For. Access */
 	_int									Find_AnimIndex(CAnimation* pAnimation);
 	_int									Find_AnimIndex(const string& strAnimTag);
 	string									Find_RootBoneTag();
-	class CPlayingInfo*						Find_PlayingInfo(_uint iPlayingIndex);
-	class CBone_Layer*						Find_BoneLayer(const wstring& strBoneLayerTag);
+	class CPlayingInfo* Find_PlayingInfo(_uint iPlayingIndex);
+	class CBone_Layer* Find_BoneLayer(const wstring& strBoneLayerTag);
 
 	_int									Get_BoneIndex(const string& strBoneTag);
 
@@ -137,6 +137,10 @@ public:		/* For. Access */
 	_float									Get_BlendWeight(_uint iPlayingIndex);
 	_int									Get_AnimIndex_PlayingInfo(_uint iPlayingIndex);
 	string									Get_BoneLayerTag_PlayingInfo(_uint iPlayingIndex);
+	_int									Get_PlayingIndex_From_BoneLayerTag(wstring strBoneLayerTag);
+
+	_bool									Is_Loop_PlayingInfo(_uint iPlayingIndex);
+	void									Set_Loop(_uint iPlayingIndex, _bool isLoop);
 
 	void									Set_KeyFrameIndex_AllKeyFrame(_uint iPlayingIndex, _uint iKeyFrameIndex);
 	void									Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition);
@@ -145,12 +149,12 @@ public:		/* For. Access */
 	void									Change_Animation(_uint iPlayingIndex, const string& strAnimTag);
 	void									Set_BoneLayer_PlayingInfo(_uint iPlayingIndex, const wstring& strBoneLayerTag);
 
-	class CBone*							Get_BonePtr(const _char* pBoneName) const;
+	class CBone* Get_BonePtr(const _char* pBoneName) const;
 
 	_bool									isFinished(_uint iPlayingIndex);
 	void									Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices);
 
-	const _float4x4*						Get_CombinedMatrix(const string& strBoneTag);
+	const _float4x4* Get_CombinedMatrix(const string& strBoneTag);
 
 public:		/* For.FBX */
 	virtual HRESULT							Initialize_Prototype(MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix);
@@ -193,7 +197,7 @@ private:	/* For.Linear Interpolation */
 
 private:
 	MODEL_TYPE								m_eModelType = { TYPE_END };
-	const aiScene*							m_pAIScene = { nullptr };
+	const aiScene* m_pAIScene = { nullptr };
 	Assimp::Importer						m_Importer;
 
 private:
@@ -214,7 +218,7 @@ private:
 	vector<class CBone*>					m_Bones;
 	map<wstring, class CBone_Layer*>		m_BoneLayers;			//	레이어로 분리할 뼈들의 태그별로 인덱스들을 저장한다.
 
-	class CIK_Solver*						m_pIK_Solver = { nullptr };
+	class CIK_Solver* m_pIK_Solver = { nullptr };
 
 	_uint									m_iNumAnimations = { 0 };
 	vector<class CAnimation*>				m_Animations;

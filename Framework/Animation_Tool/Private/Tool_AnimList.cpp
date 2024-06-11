@@ -13,7 +13,7 @@ HRESULT CTool_AnimList::Initialize(void* pArg)
     if (nullptr == pArg)
         return E_FAIL;
 
-    ANIMLIST_DESC*      pDesc = { static_cast<ANIMLIST_DESC*>(pArg) };
+    ANIMLIST_DESC* pDesc = { static_cast<ANIMLIST_DESC*>(pArg) };
     m_pCurrentAnimTag = pDesc->pCurrentAnimationTag;
     m_pCurrentModelTag = pDesc->pCurrentModelTag;
 
@@ -86,10 +86,13 @@ void CTool_AnimList::Show_AnimationTags()
     if (false == Check_ModelExist(*m_pCurrentModelTag))
         return;
 
+    static _float2		vSize = { 200.f, 100.f };
+
     if (ImGui::CollapsingHeader("Show Models ##CTool_AnimList::Show_AnimationTags()"))
     {
-        if (ImGui::BeginListBox("##CTool_AnimList::Show_AnimationTags()"))
-        {       
+        ImGui::SliderFloat2("ListBoxSize ##CTool_AnimList::Show_AnimationTags()", (_float*)&vSize, 100.f, 800.f);
+        if (ImGui::BeginListBox("##CTool_AnimList::Show_AnimationTags()", *(ImVec2*)&vSize))
+        {
             Animations      Animations = { m_ModelAnimations[*m_pCurrentModelTag] };
 
             for (auto& PairAnimations : Animations)
@@ -110,7 +113,7 @@ CAnimation* CTool_AnimList::Get_Animation(const string& strAnimTag)
 {
     if (false == Check_AnimExtist(strAnimTag))
         return nullptr;
-    
+
     return m_ModelAnimations[*m_pCurrentModelTag][strAnimTag];
 }
 
@@ -158,7 +161,7 @@ _bool CTool_AnimList::Check_AnimExtist(const string& strAnimTag)
 
 CTool_AnimList* CTool_AnimList::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
 {
-    CTool_AnimList*         pInatnace = { new CTool_AnimList(pDevice, pContext) };
+    CTool_AnimList* pInatnace = { new CTool_AnimList(pDevice, pContext) };
 
     if (FAILED(pInatnace->Initialize(pArg)))
     {

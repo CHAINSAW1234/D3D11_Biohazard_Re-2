@@ -133,8 +133,8 @@ void CTool_PartObject::On_Off_Buttons()
 		UnLink_Bone_All(*m_pCurrentPartTag);
 	}
 
-	CAnimTestObject*		pTestObject = { dynamic_cast<CAnimTestObject*>(m_pTestObject) };
-	string					strRootPartTag = { ""};
+	CAnimTestObject* pTestObject = { dynamic_cast<CAnimTestObject*>(m_pTestObject) };
+	string					strRootPartTag = { "" };
 	if (nullptr != pTestObject)
 	{
 		strRootPartTag = Convert_Wstring_String(pTestObject->Get_RootActivePartTag());
@@ -154,8 +154,11 @@ void CTool_PartObject::Show_LinkBone()
 	if (false == Check_PartObjectExist(*m_pCurrentPartTag))
 		return;
 
+	static _float2		vSize = { 200.f, 100.f };
 	ImGui::SeparatorText("Link To Target PartObject");
-	if (ImGui::BeginListBox("Target PartObjects ##CTool_PartObject::Button_LinkBone()"))
+	ImGui::SliderFloat2("ListBoxSize ##CTool_PartObject::Button_LinkBone()", (_float*)&vSize, 100.f, 400.f);
+
+	if (ImGui::BeginListBox("Target PartObjects ##CTool_PartObject::Button_LinkBone()", *(ImVec2*)&vSize))
 	{
 		for (auto& Pair : m_PartObjects)
 		{
@@ -184,8 +187,11 @@ _bool CTool_PartObject::Check_PartObjectExist(const wstring& strPartTag)
 
 void CTool_PartObject::Show_PartObject_Tags()
 {
+	static _float2		vSize = { 200.f, 100.f };
+
 	if (ImGui::CollapsingHeader("Show PartObjects ##CTool_PartObject::Show_PartObject_Tags()"))
 	{
+		ImGui::SliderFloat2("ListBoxSize ##CTool_PartObject::Show_PartObject_Tags()", (_float*)&vSize, 100.f, 400.f);
 		if (ImGui::BeginListBox("##CTool_PartObject::Show_PartObject_Tags()"))
 		{
 			for (auto& Pair : m_PartObjects)
@@ -199,7 +205,7 @@ void CTool_PartObject::Show_PartObject_Tags()
 					if (false == Check_PartObjectExist(*m_pCurrentPartTag))
 						continue;
 
-					CModel*			pSrcModel = { m_PartObjects[*m_pCurrentPartTag]->Get_CurrentModelComponent() };
+					CModel* pSrcModel = { m_PartObjects[*m_pCurrentPartTag]->Get_CurrentModelComponent() };
 					string			strModelTag = { *m_pCurrentModelTag };
 
 					for (auto& Pair : *m_pModels)

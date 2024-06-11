@@ -183,6 +183,29 @@ void CTool_Transformation::Set_Origin()
 		if (nullptr != m_pTargetTransform)
 			m_pTargetTransform->Set_State(CTransform::STATE_POSITION, XMVectorZero());
 	}
+
+	if (ImGui::Button("Set Rotation Zero"))
+	{
+		_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
+		_vector			vScale, vQuaternion, vTranslation;
+		XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, WorldMatrix);
+
+		_vector			vQuaternionInv = { XMQuaternionInverse(vQuaternion) };
+
+		_matrix			RotateMatrix = { XMMatrixRotationQuaternion(vQuaternionInv) };
+		RotateMatrix.r[CTransform::STATE_POSITION].m128_f32[3] = 0.f;
+
+		WorldMatrix = WorldMatrix * RotateMatrix;
+		m_pTransformCom->Set_WorldMatrix(WorldMatrix);
+
+		if (nullptr != m_pTargetTransform)
+		{
+			_matrix			WorldMatrix = { m_pTargetTransform->Get_WorldMatrix() };
+			WorldMatrix = WorldMatrix * RotateMatrix;
+
+			m_pTargetTransform->Set_WorldMatrix(WorldMatrix);
+		}
+	}
 }
 
 HRESULT CTool_Transformation::Add_Componets()

@@ -52,6 +52,7 @@ HRESULT CModel_Selector::Add_Components()
 	{
 		CModel* pModel = { nullptr };
 
+		//	Load. Leon
 		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_LeonBody"))) };
 		if (nullptr == pModel)
 			return E_FAIL;
@@ -73,6 +74,47 @@ HRESULT CModel_Selector::Add_Components()
 			return E_FAIL;
 
 		m_Models["Leon_Hair"] = pModel;
+
+		//	Load. Zombie
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieBody"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Body"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieFace"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Face"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieHat"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Hat"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieShirts"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombiePants"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Pants"] = pModel;
 	}
 
 	return S_OK;
@@ -171,11 +213,13 @@ void CModel_Selector::Show_BoneTags()
 	if (false == Check_ModelExist(*m_pCurrentModelTag))
 		return;
 
-	if(ImGui::CollapsingHeader("Show Bones ##CModel_Selector::Show_BoneTags()"))
+	static _float2		vSize = { 200.f, 100.f };
+	if (ImGui::CollapsingHeader("Show Bones ##CModel_Selector::Show_BoneTags()"))
 	{
 		vector<string>			BoneTags = { m_Models[*m_pCurrentModelTag]->Get_BoneNames() };
 
-		if (ImGui::BeginListBox("Bone Tag ##CModel_Selector::Show_BoneTags()"))
+		ImGui::SliderFloat2("ListBoxSize ##CModel_Selector::Show_BoneTags()", (_float*)&vSize, 100.f, 400.f);
+		if (ImGui::BeginListBox("Bone Tag ##CModel_Selector::Show_BoneTags()", *(ImVec2*)&vSize))
 		{
 			_uint				iBoneIndex = { 0 };
 			for (auto& strBoneTag : BoneTags)
@@ -191,7 +235,7 @@ void CModel_Selector::Show_BoneTags()
 
 			ImGui::EndListBox();
 		}
-	}	
+	}
 }
 
 void CModel_Selector::Show_ModelTags()
@@ -200,13 +244,11 @@ void CModel_Selector::Show_ModelTags()
 	for (auto& Pair : m_Models)
 		ModelTags.push_back(Pair.first);
 
-	static _float		fX = { 200.f };
-	static _float		fY = { 100.f };
 	static _float2		vSize = { 200.f, 100.f };
-	ImGui::SliderFloat2("ListBoxSize ", (_float*)&vSize, 100.f, 400.f);
 	if (ImGui::CollapsingHeader("Show Models ##CModel_Selector::Show_ModelTags()"))
 	{
-		if (ImGui::BeginListBox("Model Tag ##CModel_Selector::Show_ModelTags()",  *(ImVec2*)&vSize))
+		ImGui::SliderFloat2("ListBoxSize ##CModel_Selector::Show_ModelTags()", (_float*)&vSize, 100.f, 400.f);
+		if (ImGui::BeginListBox("Model Tag ##CModel_Selector::Show_ModelTags()", *(ImVec2*)&vSize))
 		{
 			ImGui::NewLine();
 
@@ -220,7 +262,7 @@ void CModel_Selector::Show_ModelTags()
 
 			ImGui::EndListBox();
 		}
-	}	
+	}
 }
 
 void CModel_Selector::Select_Bone()
