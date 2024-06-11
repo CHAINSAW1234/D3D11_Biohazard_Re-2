@@ -370,6 +370,44 @@ void CPathFinder::Path_Optimization()
 		}
 
 		// If new right vertex is different, process.
+		//if ((m_vecRight_Vertices[i] != m_vecRight_Vertices[right])
+		//	&& i > right)
+		//{
+		//	_float4 newSide = m_vecRight_Vertices[i] - apex;
+		//	newSide.w = 1.f;
+
+		//	// If new side does not widen funnel, update.
+		//	if (VectorSign(newSide,
+		//		m_vecRight_Vertices[right] - apex) > 0)
+		//	{
+		//		// If new side crosses other side, update apex.
+		//		if (VectorSign(newSide,
+		//			m_vecLeft_Vertices[left] - apex) > 0)
+		//		{
+		//			// Find next vertex.
+		//			auto next = left + 1;
+
+		//			for (int j = next; j <= m_Path.size(); j++)
+		//			{
+		//				if (m_vecLeft_Vertices[j] != m_vecLeft_Vertices[next])
+		//				{
+		//					next = j;
+		//					break;
+		//				}
+		//			}
+
+		//			m_vecPath_Optimization.push_back(m_vecLeft_Vertices[left]);
+		//			apex = m_vecLeft_Vertices[left];
+		//			left = next;
+		//		}
+		//		else
+		//		{
+		//			right = i;
+		//		}
+		//	}
+		//}
+
+		// If new right vertex is different, process.
 		if ((m_vecRight_Vertices[i] != m_vecRight_Vertices[right])
 			&& i > right)
 		{
@@ -377,12 +415,12 @@ void CPathFinder::Path_Optimization()
 			newSide.w = 1.f;
 
 			// If new side does not widen funnel, update.
-			if (VectorSign(newSide,
-				m_vecRight_Vertices[right] - apex) > 0)
+			if (VectorSign(m_vecRight_Vertices[right] - apex,
+				newSide) > 0)
 			{
 				// If new side crosses other side, update apex.
-				if (VectorSign(newSide,
-					m_vecLeft_Vertices[left] - apex) > 0)
+				if (VectorSign(m_vecLeft_Vertices[left] - apex,
+					newSide) > 0)
 				{
 					// Find next vertex.
 					auto next = left + 1;
@@ -408,7 +446,7 @@ void CPathFinder::Path_Optimization()
 		}
 	}
 
-	if(m_vecPath_Optimization.empty() ==false && (m_vecPath_Optimization[m_vecPath_Optimization.size() - 1] != m_vecLeft_Vertices[m_vecLeft_Vertices.size() - 1]))
+	if(m_vecPath_Optimization.empty() == false && (m_vecPath_Optimization[m_vecPath_Optimization.size() - 1] != m_vecLeft_Vertices[m_vecLeft_Vertices.size() - 1]))
 		m_vecPath_Optimization.push_back(m_vecLeft_Vertices[m_vecLeft_Vertices.size() - 1]);
 }
 
@@ -418,6 +456,28 @@ void CPathFinder::Reset()
 	m_vecRight_Vertices.clear();
 	m_Path_Optimization.clear();
 	m_vecPath_Optimization.clear();
+}
+
+_float4 CPathFinder::GetNextTarget()
+{
+	if (m_Path.empty())
+		return _float4(0.f, 0.f, 0.f, 1.f);
+
+	auto vNextTarget = m_Path.top();
+	m_Path.pop();
+
+	return (*m_vecNavCell_Point)[vNextTarget];
+}
+
+_float4 CPathFinder::GetNextTarget_Opt()
+{
+	if (m_vecPath_Optimization.empty())
+		return _float4(0.f, 0.f, 0.f, 1.f);
+
+	auto vNextTarget = *m_vecPath_Optimization.begin();
+	m_vecPath_Optimization.erase(m_vecPath_Optimization.begin());
+	
+	return vNextTarget;
 }
 
 CPathFinder* CPathFinder::Create()

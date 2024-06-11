@@ -55,6 +55,10 @@ HRESULT CMonster::Initialize(void * pArg)
 	_int iCurrentIndex = m_pNavigationCom->GetCurrentIndex();
 	
 	m_pPathFinder->Initiate_PathFinding(iCurrentIndex, iCurrentIndex + 100, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+	m_vNextTarget = m_pPathFinder->GetNextTarget_Opt();
+
+	m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+	m_vDir.w = 0.f;
 
 	return S_OK;
 }
@@ -65,26 +69,40 @@ void CMonster::Tick(_float fTimeDelta)
 		int a = 10;*/
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4());
+
+	if (m_bArrived == false)
+	{
+		_float4 vDelta = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) - m_vNextTarget;
+		vDelta.y = 0.f;
+
+		if (XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta))) < 0.5f)
+		{
+			m_bArrived = true;
+		}
+		else
+		{
+			m_pController->Move(m_vDir * 0.01f, fTimeDelta);
+		}
+	}
+	else
+	{
+		m_vNextTarget = m_pPathFinder->GetNextTarget_Opt();
+		m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+		m_vDir.w = 0.f;
+	
+		if (m_vNextTarget.x == 0 && m_vNextTarget.y == 0 && m_vNextTarget.z == 0)
+			m_bArrived = true;
+		else
+			m_bArrived = false;
+	}
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)
 {
-	//	m_pModelCom->Play_Animation(fTimeDelta);
+	__super::Late_Tick(fTimeDelta);
 
-	for (auto& pColliderCom : m_pColliderCom)
-		pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());	
-
-	m_pColliderCom[COLLIDER_HEAD]->Intersect((CCollider*)m_pGameInstance->Get_Component(LEVEL_GAMEPLAY, TEXT("Layer_Player"), TEXT("Com_Collider")));
-
-	if (true == m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 2.0f))
-	{
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-
-#ifdef _DEBUG
-		for (auto& pColliderCom : m_pColliderCom)
-			m_pGameInstance->Add_DebugComponents(pColliderCom);
-#endif
-	}
+	//m_pModelCom->Play_Animations(fTimeDelta);
+	m_pModelCom->Play_Animations_RootMotion(m_pTransformCom, fTimeDelta, &_float3(0.f,0.f,0.f));
 }
 
 HRESULT CMonster::Render()
