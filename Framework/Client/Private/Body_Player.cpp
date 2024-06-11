@@ -86,6 +86,7 @@ HRESULT CBody_Player::Initialize(void * pArg)
 	//	m_pModelCom->Add_IK("spine_0", "r_arm_wrist", TEXT("IK_R_ARM"), 1, 1.f);
 
 	m_pGameInstance->SetBone_Ragdoll(m_pModelCom->GetBoneVector());
+	m_pModelCom->Set_RootBone("root");
 
 	return S_OK;
 }
@@ -127,8 +128,6 @@ void CBody_Player::Tick(_float fTimeDelta)
 		if (1000000 < iAnimIndex)
 			iAnimIndex = 0;
 	}
-
-	m_pModelCom->Set_TickPerSec(iAnimIndex, 40.f);
 
 	static _float fWeight = { 1.f };
 	static _float fMoveHieght = { 0.f };
@@ -215,12 +214,11 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	m_pModelCom->Set_Weight(0, 1.f);
 	m_pModelCom->Set_Weight(1, 0.f);
-	m_pModelCom->Set_Weight(2, 1.f);
+	m_pModelCom->Set_Weight(2, 0.f);
 
 
 	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 
-	m_pModelCom->Set_RootBone("root");
 
 	static _bool		isSetRootXZ = false;
 	static _bool		isSetRootRotation = false;

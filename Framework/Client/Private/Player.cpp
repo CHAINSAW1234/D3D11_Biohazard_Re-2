@@ -187,11 +187,12 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	//	m_pGameInstance->Move_CCT(vMoveDir, fTimeDelta, 0);
+#pragma endregion
+
 	_float4			vResultMoveDirFloat4 = {};
 	XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
 	m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
 
-#pragma endregion
 
 
 #pragma region 예은 추가

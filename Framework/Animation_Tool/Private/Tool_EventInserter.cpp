@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Tool_EventInserter.h"
 
 CTool_EventInserter::CTool_EventInserter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

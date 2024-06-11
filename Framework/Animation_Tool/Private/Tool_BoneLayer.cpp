@@ -38,7 +38,6 @@ void CTool_BoneLayer::Tick(_float fTimeDelta)
 	Input_Start_End_BoneIndex();
 
 	Create_BoneLayer();
-	Release_BoneLayer(*m_pCurrentBoneLayerTag);
 	Show_BoneLayers();
 
 	ImGui::End();
@@ -187,6 +186,10 @@ void CTool_BoneLayer::Create_BoneLayer_Indices(list<_uint> BoneIndices)
 
 void CTool_BoneLayer::Release_BoneLayer(const wstring& strBoneLayerTag)
 {
+	if (nullptr == m_pCurrentModel)
+		return;
+
+	
 	m_pCurrentModel->Delete_Bone_Layer(strBoneLayerTag);
 }
 

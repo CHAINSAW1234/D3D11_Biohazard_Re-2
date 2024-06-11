@@ -1348,7 +1348,7 @@ void CModel::Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMoved
 		if (true == isRootBone)
 		{
 			_float4			vTranslation = { 0.f, 0.f, 0.f, 1.f };		_float4			vQuaternion = {};
-			_float4* pTranslation = { &vTranslation };			_float4* pQuaternion = { &vQuaternion };
+			_float4*		pTranslation = { &vTranslation };			_float4*		pQuaternion = { &vQuaternion };
 
 			//	if (false == m_isRootMotion_Rotation) { pQuaternion = nullptr; }
 			//	if (false == m_isRootMotion_XZ && false == m_isRootMotion_Y) { pTranslation = nullptr; }
