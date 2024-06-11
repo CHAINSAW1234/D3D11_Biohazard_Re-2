@@ -27,8 +27,6 @@ HRESULT CHead_Player::Initialize(void* pArg)
 	pDesc->fSpeedPerSec = 10.f;
 	pDesc->fRotationPerSec = XMConvertToRadians(90.0f);
 
-	m_pState = pDesc->pState;
-
 	if (FAILED(__super::Initialize(pDesc)))
 		return E_FAIL;
 

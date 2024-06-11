@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Public\Player.h"
 
+#include "FSM.h"
 
 #include "Body_Player.h"
 #include "Head_Player.h"
@@ -733,6 +734,18 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Navigation"), (CComponent**)&m_pNavigationCom, &NavigationDesc)))
 		return E_FAIL;
 
+	if (FAILED(Add_FSM_States()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CPlayer::Add_FSM_States()
+{
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_FSM"),
+		TEXT("Com_FSM"), (CComponent**)&m_pFSMCom)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -868,10 +881,10 @@ void CPlayer::Free()
 	__super::Free();
 
 	Safe_Release(m_pNavigationCom);
-
+	Safe_Release(m_pFSMCom);
 	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pTransformCom_Camera);
-
+	
 	for (auto& pPartObject : m_PartObjects)
 		Safe_Release(pPartObject);
 	m_PartObjects.clear();

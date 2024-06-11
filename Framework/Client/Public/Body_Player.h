@@ -39,8 +39,6 @@ private:
 
 	vector<CCollider*>		m_PartColliders;
 
-	const _ubyte*			m_pState;
-
 	_bool					m_bRagdoll = { false };
 private:
 	HRESULT					Add_Components();
