@@ -18,7 +18,7 @@ public:
 public:
 	void							Init_PathFinder();
 	void							Init_Visibility_Optimization();
-	void							Initiate_PathFinding(_uint StartCell,_uint EndCell);
+	void							Initiate_PathFinding(_uint StartCell,_uint EndCell,_float4 vStartPos);
 	bool							IsValid(_uint Index);
 	bool							IsUnBlocked(_uint Index)
 	{
@@ -37,9 +37,15 @@ public:
 	}
 	_float							VectorSign(_float4 vector1, _float4 vector2)
 	{
+		vector1 = Float4_Normalize(vector1);
+		vector2 = Float4_Normalize(vector2);
 		return vector1.x * vector2.z - vector1.z * vector2.x;
 	}
 	void							Reset();
+	stack<_uint>					GetPath()
+	{
+		return m_Path;
+	}
 protected:
 	class CGameInstance*			m_pGameInstance = { nullptr };
 

@@ -1062,7 +1062,10 @@ CBehaviorTree* CGameInstance::Create_BehaviorTree(_uint* iId)
 CPathFinder* CGameInstance::Create_PathFinder()
 {
 	if (m_pAIController)
-		return m_pAIController->Create_PathFinder();
+	{
+		auto pPathFinder = m_pAIController->Create_PathFinder();
+		return pPathFinder;
+	}
 }
 
 void CGameInstance::Initialize_BehaviorTree(_uint* iId)

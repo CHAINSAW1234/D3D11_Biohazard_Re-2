@@ -97,6 +97,9 @@
     <Filter Include="AIController\Zombie\BlackBoard">
       <UniqueIdentifier>{e33e900e-5192-4c9a-b631-9e1407794ffe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\NavMesh_Debug">
+      <UniqueIdentifier>{46a49323-d9a7-4d23-ad31-69ab387de648}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -183,6 +186,9 @@
     <ClInclude Include="..\Public\CustomCollider.h">
       <Filter>02.GameObjects\CustomCollider</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\NavMesh_Debug.h">
+      <Filter>02.GameObjects\NavMesh_Debug</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -253,6 +259,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CustomCollider.cpp">
       <Filter>02.GameObjects\CustomCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\NavMesh_Debug.cpp">
+      <Filter>02.GameObjects\NavMesh_Debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

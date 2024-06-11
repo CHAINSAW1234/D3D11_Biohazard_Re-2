@@ -46,7 +46,7 @@ public:
 	{
 		return m_iCurrentIndex;
 	}
-	_float4 CalculateCentroid(_float4 vertex1, _float4 vertex2, _float4 vertex3)
+	_float4								CalculateCentroid(_float4 vertex1, _float4 vertex2, _float4 vertex3)
 	{
 		float centroidX = (vertex1.x + vertex2.x + vertex3.x) / 3.0f;
 		float centroidY = (vertex1.y + vertex2.y + vertex3.y) / 3.0f;

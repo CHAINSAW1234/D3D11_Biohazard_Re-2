@@ -32,7 +32,7 @@ CNavigation::CNavigation(const CNavigation& rhs)
 
 HRESULT CNavigation::Initialize_Prototype(const wstring& strDataFile)
 {
-	_ulong		dwByte = { 0 };
+	/*_ulong		dwByte = { 0 };
 	HANDLE		hFile = CreateFile(strDataFile.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	if (0 == hFile)
 		return E_FAIL;
@@ -65,9 +65,9 @@ HRESULT CNavigation::Initialize_Prototype(const wstring& strDataFile)
 		return E_FAIL;
 
 	m_pGameInstance->SetNavCellPoint(&m_vecNavCell_Point);
-	m_pGameInstance->SetCells(&m_Cells);
+	m_pGameInstance->SetCells(&m_Cells);*/
 
-	/*filesystem::path FullPath("strModelFilePath");
+	filesystem::path FullPath(strDataFile);
 
 	string strParentsPath = FullPath.parent_path().string();
 	string strFileName = FullPath.stem().string();
@@ -85,10 +85,17 @@ HRESULT CNavigation::Initialize_Prototype(const wstring& strDataFile)
 
 	_int iNumBones = 0;
 	_int iNumMeshes = 0;
+	_int iParentIndex = 0;
+	_char TempName[260];
+	_float4x4 TransformationMatrix;
 	CModel::MODEL_TYPE eModelType;
 
 	ifs.read(reinterpret_cast<_char*>(&eModelType), sizeof(CModel::MODEL_TYPE));
 	ifs.read(reinterpret_cast<_char*>(&iNumBones), sizeof(_uint));
+	ifs.read(reinterpret_cast<_char*>(&iParentIndex), sizeof(_int));
+	ifs.read(reinterpret_cast<_char*>(&TempName), sizeof(_char) * MAX_PATH);
+	ifs.read(reinterpret_cast<_char*>(&TransformationMatrix), sizeof(_float4x4));
+
 	ifs.read(reinterpret_cast<_char*>(&iNumMeshes), sizeof(_uint));
 	ifs.read(reinterpret_cast<_char*>(&eModelType), sizeof(CModel::MODEL_TYPE));
 
@@ -152,9 +159,9 @@ HRESULT CNavigation::Initialize_Prototype(const wstring& strDataFile)
 
 	for (int i = 0; i < MeshDesc.iNumIndices; i += 3)
 	{
-		vPoints[i] = MeshDesc.Vertices[MeshDesc.Indices[i]].vPosition;
-		vPoints[i + 1] = MeshDesc.Vertices[MeshDesc.Indices[i + 1]].vPosition;
-		vPoints[i + 2] = MeshDesc.Vertices[MeshDesc.Indices[i + 2]].vPosition;
+		vPoints[0] = MeshDesc.Vertices[MeshDesc.Indices[i]].vPosition;
+		vPoints[1] = MeshDesc.Vertices[MeshDesc.Indices[i + 1]].vPosition;
+		vPoints[2] = MeshDesc.Vertices[MeshDesc.Indices[i + 2]].vPosition;
 
 		CCell* pCell = CCell::Create(m_pDevice, m_pContext, vPoints, static_cast<_uint>(m_Cells.size()));
 		if (nullptr == pCell)
@@ -169,13 +176,13 @@ HRESULT CNavigation::Initialize_Prototype(const wstring& strDataFile)
 		auto Centroid = CalculateCentroid(Point1, Point2, Point3);
 
 		m_vecNavCell_Point.push_back(Centroid);
-	}*/
+	}
 
-	//if (FAILED(SetUp_Neighbors()))
-	//	return E_FAIL;
+	if (FAILED(SetUp_Neighbors()))
+		return E_FAIL;
 
-	//m_pGameInstance->SetNavCellPoint(&m_vecNavCell_Point);
-	//m_pGameInstance->SetCells(&m_Cells);
+	m_pGameInstance->SetNavCellPoint(&m_vecNavCell_Point);
+	m_pGameInstance->SetCells(&m_Cells);
 
 	return S_OK;
 }
@@ -346,7 +353,7 @@ _bool CNavigation::FindCell(_fvector vPosition)
 {
 	_int		iNeighborIndex = { -1 };
 
-	for (int i = 0; i < m_iNumFaces; ++i)
+	for (int i = 0; i < m_Cells.size(); ++i)
 	{
 		if (true == m_Cells[i]->isIn(vPosition, XMLoadFloat4x4(&m_WorldMatrix), &iNeighborIndex))
 		{

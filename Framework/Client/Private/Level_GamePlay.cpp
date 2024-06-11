@@ -171,7 +171,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const wstring & strLayerTag/*, CLand
 
 HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
-	
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Monster"))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -181,6 +182,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Props"))))
 	//	return E_FAIL;
 	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_Test"), LEVEL_GAMEPLAY)))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_NavMesh_Debug"))))
 		return E_FAIL;
 
 	return S_OK;

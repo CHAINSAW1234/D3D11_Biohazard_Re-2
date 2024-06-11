@@ -65,8 +65,8 @@ private:
 
 	vector<CPartObject*>						m_PartObjects;
 	_ubyte										m_eState = {};
-	CCollider* m_pColliderCom = { nullptr };
-	CNavigation* m_pNavigationCom = { nullptr };
+	CCollider*									m_pColliderCom = { nullptr };
+	CNavigation*								m_pNavigationCom = { nullptr };
 
 	_float3										m_vRootTranslation = {};
 
@@ -79,7 +79,7 @@ public:
 	void										Calc_YPosition_Camera();
 	void										Calc_Camera_Transform(_float fTimeDelta);
 private:
-	class CCamera_Free* m_pCamera = { nullptr };
+	class CCamera_Free*							m_pCamera = { nullptr };
 	_float4										m_vCameraPosition;
 	_float4										m_vCamera_LookAt_Point;
 	_float										m_fLook_Dist_Look = { 1.f };
@@ -88,7 +88,7 @@ private:
 	_float										m_fLook_Dist_Pos = { 0.f };
 	_float										m_fUp_Dist_Pos = { 0.f };
 	_float										m_fRight_Dist_Pos = { 0.f };
-	CTransform* m_pTransformCom_Camera = { nullptr };
+	CTransform*									m_pTransformCom_Camera = { nullptr };
 	_float										m_fMouseSensor = { 0.0f };
 
 	_float4										m_vLookPoint_To_Position_Dir;

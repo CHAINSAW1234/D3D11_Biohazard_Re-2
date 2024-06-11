@@ -38,12 +38,16 @@ void CPathFinder::Init_PathFinder()
 
 void CPathFinder::Init_Visibility_Optimization()
 {
-	m_vecLeft_Vertices.resize(m_Path.size());
-	m_vecRight_Vertices.resize(m_Path.size());
+	m_vecLeft_Vertices.resize(m_Path.size()+1);
+	m_vecRight_Vertices.resize(m_Path.size()+1);
+
+	Path_Optimization();
 }
 
-void CPathFinder::Initiate_PathFinding(_uint StartCell, _uint EndCell)
+void CPathFinder::Initiate_PathFinding(_uint StartCell, _uint EndCell,_float4 vStartPos)
 {
+	m_vStartPos = vStartPos;
+
 	typedef pair<_float, _uint > pPair;
 
 	if (StartCell == EndCell)
@@ -85,9 +89,23 @@ void CPathFinder::Initiate_PathFinding(_uint StartCell, _uint EndCell)
 		_int iNeighbor_2 = (*m_Cells)[iIndex]->GetNeighborIndices()[1];
 		_int iNeighbor_3 = (*m_Cells)[iIndex]->GetNeighborIndices()[2];
 
-		_float fDist_1 = Calc_Dist((*m_vecNavCell_Point)[iIndex], (*m_vecNavCell_Point)[iNeighbor_1]);
-		_float fDist_2 = Calc_Dist((*m_vecNavCell_Point)[iIndex], (*m_vecNavCell_Point)[iNeighbor_2]);
-		_float fDist_3 = Calc_Dist((*m_vecNavCell_Point)[iIndex], (*m_vecNavCell_Point)[iNeighbor_3]);
+		_float fDist_1;
+		if (iNeighbor_1 != -1)
+			fDist_1 = Calc_Dist((*m_vecNavCell_Point)[iIndex], (*m_vecNavCell_Point)[iNeighbor_1]);
+		else
+			fDist_1 = 0.f;
+
+		_float fDist_2;
+		if (iNeighbor_2 != -1)
+			fDist_2 = Calc_Dist((*m_vecNavCell_Point)[iIndex], (*m_vecNavCell_Point)[iNeighbor_2]);
+		else
+			fDist_2 = 0.f;
+
+		_float fDist_3;
+		if (iNeighbor_3 != -1)
+			fDist_3 = Calc_Dist((*m_vecNavCell_Point)[iIndex], (*m_vecNavCell_Point)[iNeighbor_3]);
+		else
+			fDist_3 = 0.f;
 
 		//√— 3πÊ«‚ ¡∏¿Á
 		//----------- 1st Successor ------------
@@ -136,7 +154,6 @@ void CPathFinder::Initiate_PathFinding(_uint StartCell, _uint EndCell)
 
 			if (iNeighbor_2 == EndCell)
 			{
-
 				m_cellDetails[iNeighbor_2].parent = iIndex;
 
 				TracePath(StartCell, EndCell);
@@ -176,7 +193,6 @@ void CPathFinder::Initiate_PathFinding(_uint StartCell, _uint EndCell)
 
 			if (iNeighbor_3 == EndCell)
 			{
-
 				m_cellDetails[iNeighbor_3].parent = iIndex;
 
 				TracePath(StartCell, EndCell);
@@ -287,7 +303,7 @@ void CPathFinder::Path_Optimization()
 	}
 
 	// Initialise portal vertices first point.
-	auto First_Cell = (*m_Cells)[0];
+	auto First_Cell = (*m_Cells)[m_Path_Optimization[0]];
 	for (int j = 0; j < 3; j++)
 	{
 		if ((First_Cell->Get_Point_Float4(j)) != m_vecLeft_Vertices[1]
@@ -299,7 +315,7 @@ void CPathFinder::Path_Optimization()
 	}
 
 	// Initialise portal vertices last point.
-	auto Last_Cell = (*m_Cells)[m_Path.size()-1];
+	auto Last_Cell = (*m_Cells)[m_Path_Optimization[m_Path_Optimization.size()-1]];
 	for (int j = 0;j < 3; j++)
 	{
 		if (Last_Cell->Get_Point_Float4(j)
@@ -316,7 +332,7 @@ void CPathFinder::Path_Optimization()
 	for (int i = 2; i <= m_Path.size() - 1; i++)
 	{
 		// If new left vertex is different, process.
-		if (m_vecLeft_Vertices[i] != m_vecLeft_Vertices[left]
+		if ((m_vecLeft_Vertices[i] != m_vecLeft_Vertices[left])
 			&& i > left)
 		{
 			_float4 newSide = m_vecLeft_Vertices[i] - apex;
@@ -354,7 +370,7 @@ void CPathFinder::Path_Optimization()
 		}
 
 		// If new right vertex is different, process.
-		if (m_vecRight_Vertices[i] != m_vecRight_Vertices[right]
+		if ((m_vecRight_Vertices[i] != m_vecRight_Vertices[right])
 			&& i > right)
 		{
 			_float4 newSide = m_vecRight_Vertices[i] - apex;
@@ -366,7 +382,7 @@ void CPathFinder::Path_Optimization()
 			{
 				// If new side crosses other side, update apex.
 				if (VectorSign(newSide,
-					m_vecRight_Vertices[left] - apex) > 0)
+					m_vecLeft_Vertices[left] - apex) > 0)
 				{
 					// Find next vertex.
 					auto next = left + 1;
@@ -391,6 +407,9 @@ void CPathFinder::Path_Optimization()
 			}
 		}
 	}
+
+	if(m_vecPath_Optimization[m_vecPath_Optimization.size()-1] != m_vecLeft_Vertices[m_vecLeft_Vertices.size() - 1])
+		m_vecPath_Optimization.push_back(m_vecLeft_Vertices[m_vecLeft_Vertices.size() - 1]);
 }
 
 void CPathFinder::Reset()

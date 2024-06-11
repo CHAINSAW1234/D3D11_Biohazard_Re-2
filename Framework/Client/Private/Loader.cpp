@@ -17,6 +17,7 @@
 #include "Props.h"
 #include "Customize_UI.h"
 #include "CustomCollider.h"
+#include "NavMesh_Debug.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -330,10 +331,13 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	m_strLoadingText = TEXT("Now Loading ... Navigation Mesh");
 	/* For.Prototype_Component_Navigation */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation"),
-		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/DataFiles/Navigation.dat")))))
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation_Debug_Model"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/NavMesh/NavMesh_Test.fbx", TransformMatrix))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation"),
+		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/NavMesh/NavMesh_Test.bin")))))
+		return E_FAIL;
 
 	m_strLoadingText = TEXT("Now Loading ... Shader");
 	/* For.Prototype_Component_Shader_VtxNorTex */
@@ -430,6 +434,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_GameObject_CCustomize_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CCustomize_UI"),
 		CCustomize_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_CNavigation_Debug */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_NavMesh_Debug"),
+		CNavMesh_Debug::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Collider"), CCustomCollider::Create(m_pDevice, m_pContext))))

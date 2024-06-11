@@ -39,6 +39,7 @@ private:
 	CModel*						m_pModelCom = { nullptr };
 	CShader*					m_pShaderCom = { nullptr };	
 	CCollider*					m_pColliderCom[COLLIDER_END] = { nullptr };
+	CNavigation*				m_pNavigationCom = { nullptr };
 	
 	_int						m_iIndex = { 0 };
 	MONSTER_TYPE				m_eType = { MONSTER_TYPE::MT_DEFAULT };
