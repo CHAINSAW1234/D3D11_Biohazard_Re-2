@@ -337,9 +337,8 @@ protected : /* NY : Shader 변수 */
 	_bool						m_isColorBack = { false }; // Color 되감기
 	_bool						m_isPlay = { false };
 	_bool						m_isLoad = { false };
-	// Shader 변수
-	_bool						m_isSelect_Color = { false };
 
+	// Shader 변수
 	_bool						m_isColorChange = { false };
 	_bool						m_isAlphaChange = { false };
 	_bool						m_isBlending = { false };
@@ -398,6 +397,7 @@ protected : /* Client*/
 	_float4						m_vLightMask_Color;
 
 public:
+	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override = 0;
 	virtual void Free() override;
 };

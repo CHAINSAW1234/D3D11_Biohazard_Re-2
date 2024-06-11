@@ -7,8 +7,6 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D g_Texture;
 texture2D g_MaskTexture;
 
-bool g_SelectColor, g_GreenColor;
-
 // PS
 bool g_ColorChange;
 float4 g_ColorValu;
@@ -150,11 +148,9 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord * g_Split);
     
-   // 선택
-    if (g_SelectColor)
-        Out.vColor = float4(1, 0, 0, 1);
-    else if (g_AlpaChange) // 알파만 바꿀 때
+    if (g_AlpaChange) // 알파만 바꿀 때
         Out.vColor.a = g_ColorValu.a;
+    
     else if (g_ColorChange)
     {
         if (g_Blending)

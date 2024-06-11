@@ -1,4 +1,5 @@
 #include "stdafx.h"
+
 #include "Inventory.h"
 #include "Camera_Free.h"
 

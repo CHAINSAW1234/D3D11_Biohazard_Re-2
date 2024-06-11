@@ -34,7 +34,6 @@ private:
 	
 private:
 	void UI_Distinction(wstring& selectedFilePath);
-	HRESULT CreatUI_FromDat(ifstream& inputFileStream,CGameObject* pGameParentsObj, wstring PrototypeTag);
 	
 	wstring StringToWstring(const std::string& strString)
 	{

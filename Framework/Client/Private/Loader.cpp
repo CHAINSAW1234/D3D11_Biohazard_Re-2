@@ -17,6 +17,7 @@
 #include "Props.h"
 #include "Customize_UI.h"
 #include "CustomCollider.h"
+#include "Tab_Window.h"
 
 
 /* UI */
@@ -412,6 +413,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxCube.hlsl"), VTXCUBE::Elements, VTXCUBE::iNumElements))))
 		return E_FAIL;
 
+
+
 	///* For.Prototype_Component_Shader_VtxModel */
 	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxModel"),
 	//	CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxModel.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements))))
@@ -519,6 +522,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 		MSG_BOX(TEXT("Faild to Add_Prototype : Prototype_GameObject_Collider"));
 		return E_FAIL;
 	}
+
+	/* For.Prototype_GameObject_Tab_Window */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Tab_Window"),
+		CTab_Window::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	m_strLoadingText = TEXT("Loading Complete.");
 

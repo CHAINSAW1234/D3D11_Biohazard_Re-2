@@ -42,7 +42,7 @@ public:
 	virtual _bool IsMouseHover();
 	virtual _bool IsMouseHover(_float& fPosZ);
 
-	virtual _bool Get_IsChild() { return m_isSelect; }
+	virtual _bool Get_IsChild() { return m_IsChild; }
 	virtual void Set_IsChild(_bool IsChild) { m_IsChild = IsChild; }
 
 protected:
@@ -62,8 +62,6 @@ protected:
 
 	_vector						m_vPrePos = {};
 	_vector						m_vPreScale = {};
-
-	_bool						m_isSelect = { false };
 
 	UI_ID						m_eUI_ID = {};
 

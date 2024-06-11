@@ -187,11 +187,8 @@ _bool CUI::IsMouseHover()
 	if (vPosition.x - (vSize.x / 2) - 105.f <= mouse.x && vPosition.y - (vSize.y / 2) - 45.f <= mouse.y
 		&& vPosition.x + (vSize.x / 2) - 105.f >= mouse.x && vPosition.y + (vSize.y / 2) - 45.f >= mouse.y)
 	{
-		m_isSelect = true;
 		return true;
 	}
-
-	m_isSelect = false;
 
 	return false;
 }
@@ -200,18 +197,18 @@ _bool CUI::IsMouseHover(_float& fPosZ)
 {
 	_float2 mouse = m_pGameInstance->Get_ViewMousePos();
 
-	_float4 vPosition = { m_pTransformCom->Get_WorldFloat4x4()._41 + g_iWinSizeX * 0.5f, -m_pTransformCom->Get_WorldFloat4x4()._42 + g_iWinSizeY * 0.5f, 0, 0 };
+	_float4 vPosition = { m_pTransformCom->Get_WorldFloat4x4()._41 + g_iWinSizeX * 0.5f, 
+							-m_pTransformCom->Get_WorldFloat4x4()._42 + g_iWinSizeY * 0.5f, 
+								0, 0 };
 	_float3 vSize = m_pTransformCom->Get_Scaled();
 
 	if (vPosition.x - (vSize.x / 2) <= mouse.x && vPosition.y - (vSize.y / 2) <= mouse.y
 		&& vPosition.x + (vSize.x / 2) >= mouse.x && vPosition.y + (vSize.y / 2) >= mouse.y)
 	{
 		fPosZ = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).z;
-		m_isSelect = true;
 		return true;
 	}
 
-	m_isSelect = false;
 	return false;
 }
 
