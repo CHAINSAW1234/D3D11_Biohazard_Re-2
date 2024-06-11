@@ -408,7 +408,7 @@ void CPathFinder::Path_Optimization()
 		}
 	}
 
-	if(m_vecPath_Optimization[m_vecPath_Optimization.size()-1] != m_vecLeft_Vertices[m_vecLeft_Vertices.size() - 1])
+	if(m_vecPath_Optimization.empty() ==false && (m_vecPath_Optimization[m_vecPath_Optimization.size() - 1] != m_vecLeft_Vertices[m_vecLeft_Vertices.size() - 1]))
 		m_vecPath_Optimization.push_back(m_vecLeft_Vertices[m_vecLeft_Vertices.size() - 1]);
 }
 
