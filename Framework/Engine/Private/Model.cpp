@@ -313,7 +313,7 @@ vector<_float4> CModel::Get_ResultTranslation_IK(const wstring& strIKTag)
 	if (nullptr == m_pIK_Solver)
 		return vector<_float4>();
 
-	m_pIK_Solver->Get_ResultTranslation_IK(strIKTag);
+	return m_pIK_Solver->Get_ResultTranslation_IK(strIKTag);
 }
 
 vector<_float4> CModel::Get_OriginTranslation_IK(const wstring& strIKTag)
@@ -321,7 +321,7 @@ vector<_float4> CModel::Get_OriginTranslation_IK(const wstring& strIKTag)
 	if (nullptr == m_pIK_Solver)
 		return vector<_float4>();
 
-	m_pIK_Solver->Get_OriginTranslation_IK(strIKTag);
+	return m_pIK_Solver->Get_OriginTranslation_IK(strIKTag);
 }
 
 vector<_float4x4> CModel::Get_JointCombinedMatrices_IK(const wstring& strIKTag)
@@ -329,7 +329,7 @@ vector<_float4x4> CModel::Get_JointCombinedMatrices_IK(const wstring& strIKTag)
 	if (nullptr == m_pIK_Solver)
 		return vector<_float4x4>();
 
-	m_pIK_Solver->Get_JointCombinedMatrices_IK(strIKTag, m_Bones);
+	return m_pIK_Solver->Get_JointCombinedMatrices_IK(strIKTag, m_Bones);
 }
 
 void CModel::Add_Additional_Transformation_World(string strBoneTag, _fmatrix AdditionalTransformMatrix)
