@@ -20,7 +20,7 @@ public:
 private:
 	void Update_KeyInput();
 	void Set_MoveAnimation();
-	void Look_Cam();
+	void Look_Cam(_float fTimeDelta);
 
 private:
 	CPlayer* m_pPlayer = { nullptr };

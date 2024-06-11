@@ -24,7 +24,7 @@ void CPlayer_State_Move_Walk::OnStateUpdate(_float fTimeDelta)
 	Update_KeyInput();
 	Set_MoveAnimation();
 
-
+	Look_Cam(fTimeDelta);
 }
 
 void CPlayer_State_Move_Walk::OnStateExit()
@@ -191,10 +191,9 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation()
 
 }
 
-void CPlayer_State_Move_Walk::Look_Cam()
+void CPlayer_State_Move_Walk::Look_Cam(_float fTimeDelta)
 {
 	// freind 적극 사용에 대해 이후 처리할 것
-	
 	_float4 vCamLook = m_pPlayer->m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
 	vCamLook.y = 0;
 	vCamLook = XMVector3Normalize(vCamLook);
@@ -202,7 +201,25 @@ void CPlayer_State_Move_Walk::Look_Cam()
 	_float4 vPlayerLook = m_pPlayer->m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
 	vPlayerLook.y = 0;
 	vPlayerLook = XMVector3Normalize(vPlayerLook);
-	Cal_Degree_From_Directions_Between_Min180_To_180(vCamLook, vPlayerLook);
+	
+	_float fDegree = Cal_Degree_From_Directions_Between_Min180_To_180(vCamLook, vPlayerLook);
+
+	if (fDegree > 10) {
+		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta);
+	}
+	else if(fDegree < -10) {
+		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta);
+	}
+/*
+	135  -> 90 ~180 비율
+	135 - 90  45
+	120 - 90 30 /90 * 100  = t    -> 1-t : t
+	45 / 90 * 100 = 50 : 0.5 0.5 비율로 섞으면 됨
+
+
+
+
+*/
 
 
 }
