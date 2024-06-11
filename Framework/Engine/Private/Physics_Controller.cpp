@@ -99,7 +99,7 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	controllerFilters.mFilterCallback = &filterCallback;
 
 	//Apply Gravity
-	/*for (int i = 0; i < m_vecCharacter_Controller.size(); ++i)
+	for (int i = 0; i < m_vecCharacter_Controller.size(); ++i)
 	{
 		if (m_vecCharacter_Controller[i])
 			m_vecCharacter_Controller[i]->Move(gravity, fTimeDelta);

@@ -49,8 +49,6 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
 
-	m_pGameInstance->SetBone_Ragdoll(m_pModelCom->GetBoneVector());
-
 	return S_OK;
 }
 
@@ -266,7 +264,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	//m_pModelCom->Play_Animations(fTimeDelta);
-	m_pModelCom->Play_Animations_RootMotion(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 
 	/////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////
@@ -309,7 +307,7 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 		/////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////
-	}
+		//	}
 
 #pragma region Collider 위치 설정 코드
 	////Body

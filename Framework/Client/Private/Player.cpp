@@ -318,7 +318,6 @@ void CPlayer::Calc_Camera_Transform(_float fTimeDelta)
 	_vector vUp = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_UP);
 	_vector vRight = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT);
 	_vector vLookAtPoint;
-	_vector vCameraPosition;
 	_vector vPos = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION);
 
 	auto Pos = m_pCamera->Get_Position_Float4();
@@ -599,7 +598,6 @@ HRESULT CPlayer::Ready_Camera()
 	_vector vUp = m_pTransformCom->Get_State_Vector(CTransform::STATE_UP);
 	_vector vRight = m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT);
 	_vector vLookAtPoint;
-	_vector vCameraPosition;
 	_vector vPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
 
 	vLookAtPoint = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Look) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Look) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Look);
