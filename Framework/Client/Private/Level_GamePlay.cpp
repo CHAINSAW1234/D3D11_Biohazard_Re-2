@@ -262,15 +262,39 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	
+	/* 6. UI_MainHP */
+	/*selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/MainHPBar_UI.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);*/
 
 	/* 5. BackGroundHPBar_UI */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/BackGroundHPBar_UI.dat");
+	/*selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/BackGroundHPBar_UI.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);*/
+
+	/* 5. Bullet_UI */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Bullet_UI.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
-	/* 6. UI_MainHP */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/MainHPBar_UI.dat");
+	/* 5. Title */
+	/*selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Title_UI.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);*/
+
+	/* 5. UI_Sub_Inventory */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Sub_Inventory.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	
+	/* 5. UI_Sub_Inventory */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_MissionBar.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
@@ -279,7 +303,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 
 }
 
-void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName, CGameObject* pGameParentsObj, wstring fileName)
+void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName, CGameObject* pGameParentsObj, wstring fileName, _int iWhich_Child)
 {
 	CCustomize_UI::CUSTOM_UI_DESC CustomizeUIDesc;
 
@@ -397,6 +421,12 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 		}
 	}
 
+	if (false == CustomizeUIDesc.IsChild)
+		CustomizeUIDesc.iWhich_Child = 0;
+	else
+		CustomizeUIDesc.iWhich_Child = iWhich_Child;
+
+
 	// ▶ 객체 생성
 	/* 1. Crosshair */
 	if (TEXT("UI_Crosshair") == fileName)
@@ -425,21 +455,17 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 	else if (TEXT("UI_Inventory_Item") == fileName)
 	{
 		CustomizeUIDesc.eBox_Type = CCustomize_UI::ITEM_BOX_TYPE::DEFAULT_BOX;
+		CustomizeUIDesc.eInventory_Type = CCustomize_UI::INVENTORY_TYPE::MAIN_INVEN;
 
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Inventory_Item_UI"), &CustomizeUIDesc)))
-			MSG_BOX(TEXT("Failed to Add Clone"));
-	}
-
-	/* 4. BackGround HP_UI */
-	else if (TEXT("UI_BackGround_HP") == fileName)
-	{
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_HPBar_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
 	}
 
 	/* 4. BackGroundHPBar_UI */
 	else if (TEXT("BackGroundHPBar_UI") == fileName)
 	{
+		CustomizeUIDesc.eHPBar_Type = CCustomize_UI::HPBAR_TYPE::BACKGROUND_BAR;
+
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_HPBar_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
 	}
@@ -447,12 +473,43 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 	/* 4. MainHPBar_UI */
 	else if (TEXT("MainHPBar_UI") == fileName)
 	{
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_HPBar_UI"), &CustomizeUIDesc)))
+		CustomizeUIDesc.eHPBar_Type = CCustomize_UI::HPBAR_TYPE::MAIN_BAR;
+
+			if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_HPBar_UI"), &CustomizeUIDesc)))
+			MSG_BOX(TEXT("Failed to Add Clone"));
+	}
+
+	/* 4. MainHPBar_UI */
+	else if (TEXT("Bullet_UI") == fileName)
+	{
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Bullet_UI"), &CustomizeUIDesc)))
+			MSG_BOX(TEXT("Failed to Add Clone"));
+	}
+
+	/* 5. Title_UI */
+	else if (TEXT("Title_UI") == fileName)
+	{
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Title_UI"), &CustomizeUIDesc)))
+			MSG_BOX(TEXT("Failed to Add Clone"));
+	}
+	
+	/* Sub Inventory */
+	else if (TEXT("UI_Sub_Inventory") == fileName)
+	{
+		CustomizeUIDesc.eBox_Type = CCustomize_UI::ITEM_BOX_TYPE::DEFAULT_BOX;
+		CustomizeUIDesc.eInventory_Type = CCustomize_UI::INVENTORY_TYPE::SUB_INVEN;
+
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Inventory_Item_UI"), &CustomizeUIDesc)))
+			MSG_BOX(TEXT("Failed to Add Clone"));
+	}
+	/* Sub Inventory */
+	else if (TEXT("UI_MissionBar") == fileName)
+	{
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_MissionBar_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
 	}
 
 	
-
 	CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
 
 	if (nullptr != pGameParentsObj)
@@ -461,14 +518,14 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 	}
 
 	/*자식이 있으면 자식 정보 read*/
-
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iChild), sizeof(_int));
+
 
 	if (true == 0 < CustomizeUIDesc.iChild)
 	{
 		for (_int i = 0; i < CustomizeUIDesc.iChild; i++)
 		{
-			CreatFromDat(inputFileStream, strListName, pGameObj, fileName);
+			CreatFromDat(inputFileStream, strListName, pGameObj, fileName, iWhich_Child + 1);
 		}
 	}
 

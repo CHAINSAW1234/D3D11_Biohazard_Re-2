@@ -99,7 +99,7 @@ void CCamera_Free::Tick(_float fTimeDelta)
 
 	if (true == m_isFixedMouse)
 	{
-		RECT rc = {};
+		/*RECT rc = {};
 		GetClientRect(g_hWnd, &rc);
 
 		ptPos.x = _long(_float(rc.right - rc.left) * 0.5f);
@@ -108,7 +108,9 @@ void CCamera_Free::Tick(_float fTimeDelta)
 		m_pGameInstance->Set_MouseCurPos(ptPos);
 
 		ClientToScreen(g_hWnd, &ptPos);
-		SetCursorPos(ptPos.x, ptPos.y);
+		SetCursorPos(ptPos.x, ptPos.y);*/
+		ClipCursor(nullptr);
+
 	}
 
 	else if (false == m_isFixedMouse)

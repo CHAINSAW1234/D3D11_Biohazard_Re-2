@@ -36,7 +36,7 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 
 		m_wstrMaskComTag = CustomUIDesc->wstrMaskComTag;
 
-		m_isMask = m_Mask[0].isMask;
+		m_isMask = m_Mask[0].isMask;	
 
 		if (FAILED(Add_Components(CustomUIDesc->wstrDefaultTexturComTag, CustomUIDesc->wstrMaskComTag)))
 			return E_FAIL;
@@ -84,7 +84,6 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 		{
 			if (0 == m_iColorMaxNum)
 			{
-				m_isLoad = true;
 				m_isPlay = false;
 			}
 		}
@@ -97,7 +96,7 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 	m_isBlending		= false;
 	m_isPush			= false;
 	m_fSplit			= 1;
-	
+	m_isLoad			= true;
 
 	return S_OK;
 }
@@ -188,7 +187,6 @@ void CCustomize_UI::Late_Tick(_float fTimeDelta)
 	}
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
-
 }
 
 HRESULT CCustomize_UI::Render()
@@ -255,6 +253,14 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 		if (FAILED(m_pMaskTextureCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
 			return E_FAIL;
 	}
+	if (nullptr != m_pSubMaskTextureCom)
+	{
+		if (FAILED(m_pSubMaskTextureCom->Bind_ShaderResource(m_pShaderCom, "g_MaskSub_Texture", 0)))
+			return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShaderCom, TEXT("Target_Depth"), "g_DepthTexture")))
+		return E_FAIL;
 
 	// Edit
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_SelectColor", &m_isSelect_Color, sizeof(_bool))))
@@ -262,7 +268,6 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_GreenColor", &m_isSelect, sizeof(_bool))))
 		return E_FAIL;
 
-	// Color Change
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_ColorValu", &m_vCurrentColor, sizeof(_float4))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_ColorChange", &m_isColorChange, sizeof(_bool))))
@@ -307,12 +312,18 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_MaskType", &m_vMaskType, sizeof(_float2))))
 		return E_FAIL;
 
-	// Client
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_isLightMask", &m_isLightMask, sizeof(_bool))))
-		return E_FAIL;
+	/////////////// Client ////////////////////
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightMask_Color", &m_vLightMask_Color, sizeof(_float4))))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_isLightMask", &m_isLightMask, sizeof(_bool))))
+		return E_FAIL;
 	
+	// Light
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_isLight", &m_isLight, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_LightPosition", &m_fLightPosition, sizeof(_float2))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -499,8 +510,6 @@ void CCustomize_UI::Color_Frame(_float fTimeDelta)
 
 	_float      fRatio = m_fCurrentColor_Timer / m_fColorTimer_Limit;
 	_float      fColorRatio = m_fCurrentColor_Timer * m_fColorSpeed;
-
-
 
 	/* ¢º º¸°£ Type */
 	if (m_iEndingType == PLAY_BUTTON::PLAY_DEFAULT)

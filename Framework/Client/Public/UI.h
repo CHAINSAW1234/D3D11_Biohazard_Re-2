@@ -49,6 +49,7 @@ protected:
 	class CShader*				m_pShaderCom = { nullptr };
 	class CTexture*				m_pTextureCom = { nullptr };
 	class CTexture*				m_pMaskTextureCom = { nullptr };
+	class CTexture*				m_pSubMaskTextureCom = { nullptr };
 	class CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
 
 protected:

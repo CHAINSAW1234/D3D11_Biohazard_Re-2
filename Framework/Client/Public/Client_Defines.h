@@ -6,8 +6,8 @@
 
 namespace Client
 {
-	const unsigned int	g_iWinSizeX = 1920;
-	const unsigned int	g_iWinSizeY = 1080;
+	const unsigned int	g_iWinSizeX = 1600;
+	const unsigned int	g_iWinSizeY = 900;
 }
 
 
@@ -16,7 +16,7 @@ extern HINSTANCE g_hInst;
 
 using namespace std;
 using namespace Client;
-
+	
 
 
 typedef struct Tag_Prototype_Inform
