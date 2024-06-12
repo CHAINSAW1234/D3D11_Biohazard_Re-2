@@ -547,12 +547,8 @@ _float CModel::Compute_Current_TotalWeight(_uint iBoneIndex)
 		if (-1 == iAnimIndex)
 			continue;
 
-		_bool		isFinished = { pPlayingInfo->Is_Finished() };
-		if (true == isFinished)
-			continue;
-
 		wstring		strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
-		if (false == m_BoneLayers[strBoneLayerTag]->Is_Included(iBoneIndex))
+		if (false == m_BoneLayers[strBoneLayerTag]->Is	_Included(iBoneIndex))
 			continue;
 
 		_float		fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
@@ -584,6 +580,30 @@ _float4x4 CModel::Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fm
 	XMStoreFloat4x4(&ResultFloat4x4, ResultMatrix);
 
 	return ResultFloat4x4;
+}
+
+set<_uint> CModel::Compute_IncludedBoneIndices_AllBoneLayer()
+{
+	set<_uint>			ResultIncludedBoneIndices;
+	for (auto& pPlayingInfo : m_PlayingAnimInfos)
+	{
+		if (nullptr == pPlayingInfo)
+			continue;
+
+		wstring			strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
+		CBone_Layer*	pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
+
+		if (nullptr == pBoneLayer)
+			continue;
+
+		set<_uint>		TempIncludedBoneIndices = { pBoneLayer->Get_IncludedBoneIndices() };
+		for (auto& iBoneIndex : TempIncludedBoneIndices)
+		{
+			ResultIncludedBoneIndices.emplace(iBoneIndex);
+		}
+	}
+
+	return ResultIncludedBoneIndices;
 }
 
 _float4x4 CModel::GetBoneTransform(string strBoneTag)
@@ -1098,7 +1118,7 @@ _float CModel::Get_BlendWeight(_uint iPlayingIndex)
 
 _int CModel::Get_AnimIndex_PlayingInfo(_uint iPlayingIndex)
 {
-	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+	CPlayingInfo*		pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
 	_int				iAnimIndex = { -1 };
 
 	if (nullptr != pPlayingInfo)
@@ -1109,20 +1129,17 @@ _int CModel::Get_AnimIndex_PlayingInfo(_uint iPlayingIndex)
 	return iAnimIndex;
 }
 
-string CModel::Get_BoneLayerTag_PlayingInfo(_uint iPlayingIndex)
+wstring CModel::Get_BoneLayerTag_PlayingInfo(_uint iPlayingIndex)
 {
-	_int			iAnimIndex = { Get_AnimIndex_PlayingInfo(iPlayingIndex) };
-	string			strAnimTag = { "" };
-	if (iAnimIndex != -1)
+	CPlayingInfo*		pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+	wstring				strBoneLayerTag = { TEXT("")};
+
+	if (nullptr != pPlayingInfo)
 	{
-		const _uint			iNumAnims = { static_cast<_uint>(m_Animations.size()) };
-		if (static_cast<_int>(iNumAnims) > iAnimIndex)
-		{
-			strAnimTag = m_Animations[iAnimIndex]->Get_Name();
-		}
+		strBoneLayerTag = pPlayingInfo->Get_BoneLayerTag();
 	}
 
-	return strAnimTag;
+	return strBoneLayerTag;
 }
 
 _int CModel::Get_PlayingIndex_From_BoneLayerTag(wstring strBoneLayerTag)
@@ -1442,7 +1459,6 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 
 	//	재생할 모든 애니메이션을 일단 재생하고 각 키프레임을 저장하여 가져온다.
 	vector<vector<_float4x4>>		TransformationMatricesLayer;
-	set<_uint>						IncludedBoneIndices;
 	XMStoreFloat3(pMovedDirection, XMVectorZero());
 
 	//	애니메이션들을 재생한다.
@@ -1450,13 +1466,13 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 	_uint			iNumPlayingInfo = { static_cast<_uint>(m_PlayingAnimInfos.size()) };
 	for (_uint i = 0; i < iNumPlayingInfo; ++i)
 	{
-		vector<_float4x4>			TransformationMatrices = { Apply_Animation(fTimeDelta, IncludedBoneIndices, i) };
+		vector<_float4x4>			TransformationMatrices = { Apply_Animation(fTimeDelta, i) };
 		//	애니메이션이 종료되거나 (루프가아닌데 종료), 가중치가 없거나, 애니메이션 인덱스가 등록되지않은경우 빈 행렬벡터를 반환받는다.
 		TransformationMatricesLayer.push_back(TransformationMatrices);
 	}
 
 	//	결과 행렬들을 뼈의 트랜스폼 행렬에 저장한다.
-	Apply_Bone_TransformMatrices(TransformationMatricesLayer, IncludedBoneIndices);
+	Apply_Bone_TransformMatrices(TransformationMatricesLayer);
 
 	//	컴바인드 행렬 생성 및, 루트모션에 대한 성분들을 분해후 적용
 	Apply_Bone_CombinedMatrices(pTransform, pMovedDirection);
@@ -1484,7 +1500,7 @@ HRESULT CModel::Render(_uint iMeshIndex)
 	return S_OK;
 }
 
-vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, set<_uint>& IncludedBoneIndices, _uint iPlayingIndex)
+vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex)
 {
 	const _int						iRootBoneIndex = { Find_RootBoneIndex() };
 	vector<_float4x4>				TransformationMatrices;
@@ -1515,11 +1531,6 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, set<_uint>& Include
 	TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix(fTimeDelta, iNumBones, TempIncludedBoneIndices, &isFirstTick, pPlayingInfo);
 	if (true == TransformationMatrices.empty())
 		return TransformationMatrices;
-
-	for (auto& iBoneIndex : TempIncludedBoneIndices)
-	{
-		IncludedBoneIndices.emplace(iBoneIndex);
-	}
 
 	if (true == isFirstTick &&
 		-1 != iPreAnimIndex)
@@ -1649,27 +1660,26 @@ void CModel::Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMoved
 	}
 }
 
-vector<_float4x4> CModel::Compute_ResultMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer, const set<_uint>& IncludedBoneIndices)
+vector<_float4x4> CModel::Compute_ResultMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer)
 {
+	set<_uint>					IncludedBoneIndices = { Compute_IncludedBoneIndices_AllBoneLayer() };
 	vector<_float4x4>			ResultTransformationMatrices = { Initialize_ResultMatrices(IncludedBoneIndices) };
 
 	//	결과행렬을 계산한다 => 얻어온 모든 행렬을 각 뼈의 인덱스에 해당하는 인덱스들에 결과행렬을 각 저장한다.
 	_uint						iPlayingInfoIndex = { 0 };
 	for (auto& AnimLayer : TransformationMatricesLayer)
 	{
-		CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingInfoIndex) };
+		CPlayingInfo*		pPlayingInfo = { Find_PlayingInfo(iPlayingInfoIndex) };
 		if (nullptr == pPlayingInfo)
 			continue;
 
 		_int				iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
-		_bool				isFinished = { pPlayingInfo->Is_Finished() };
 		wstring				strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
 		_float				fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
-
-		if (-1 == iAnimIndex || 0.f >= fBlendWeight || true == isFinished)
+		if (-1 == iAnimIndex || 0.f >= fBlendWeight)
 			continue;
 
-		CBone_Layer* pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
+		CBone_Layer*		pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
 		if (nullptr == pBoneLayer)
 			continue;
 
@@ -1702,11 +1712,12 @@ vector<_float4x4> CModel::Compute_ResultMatrices(const vector<vector<_float4x4>>
 	return ResultTransformationMatrices;
 }
 
-void CModel::Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer, const set<_uint>& IncludedBoneIndices)
+void CModel::Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer)
 {
 	//	영향을 받지 않은 뼈들은 이전 변환행렬로 초기화한다.
 	//	영향을 받은뼈는 항등 행렬로 초기화 후 이후 과정에서 행렬을 블렌드한다.
-	vector<_float4x4>		ResultTransformationMatrices = { Compute_ResultMatrices(TransformationMatricesLayer, IncludedBoneIndices) };
+	set<_uint>				IncludedBoneIndices = { Compute_IncludedBoneIndices_AllBoneLayer() };
+	vector<_float4x4>		ResultTransformationMatrices = { Compute_ResultMatrices(TransformationMatricesLayer) };
 
 	const _int				iRootBoneIndex = { Find_RootBoneIndex() };
 	const _uint				iNumBones = { static_cast<_uint>(m_Bones.size()) };
