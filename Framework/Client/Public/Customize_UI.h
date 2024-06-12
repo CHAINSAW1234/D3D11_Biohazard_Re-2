@@ -416,6 +416,7 @@ protected : /* Client*/
 
 	/* Light */
 	_float2						m_fLightPosition = {};
+	_float						m_fLightSize = {};
 	_bool						m_isLight = {};
 
 public:

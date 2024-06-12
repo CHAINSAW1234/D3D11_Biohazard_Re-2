@@ -45,7 +45,7 @@ bool g_isLightMask;
 // Light
 bool g_isLight;
 float2 g_LightPosition;
-
+float g_LightSize;
 
 // 거리 계산 함수
 float calculateDistance(float4 A, float4 target)
@@ -81,7 +81,7 @@ float4 Light(float2 vTexcoord, float4 color)
 {
     float2 uv = (vTexcoord - float2(g_LightPosition.x, g_LightPosition.y));
     float d = length(uv);
-    
+    d -= sin(d * 1.f) / g_LightSize;
     d = abs(d);
     smoothstep(0, 1.f, d);
     

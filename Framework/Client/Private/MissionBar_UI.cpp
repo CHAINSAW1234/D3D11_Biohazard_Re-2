@@ -37,7 +37,17 @@ void CMissionBar_UI::Tick(_float fTimeDelta)
     __super::Tick(fTimeDelta);
 
     if (DOWN == m_pGameInstance->Get_KeyState('M'))
-        m_isMission = true;
+    {
+        m_isPlay = true;
+        m_isLight = m_isPlay;
+    }
+
+    if (true == m_isLight)
+    {
+        m_fLightTimer += fTimeDelta;
+        m_fLightSize += fTimeDelta;
+        m_fLightPosition.x += fTimeDelta;
+    }
 
 }
 

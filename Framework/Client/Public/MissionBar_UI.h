@@ -18,6 +18,7 @@ public:
 
 private :
 	_bool					m_isMission = {};
+	_float					m_fLightTimer = {};
 
 
 public:
