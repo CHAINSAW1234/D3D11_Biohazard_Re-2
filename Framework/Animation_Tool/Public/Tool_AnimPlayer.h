@@ -71,21 +71,23 @@ private:
 
 	map<string, _uint>							m_ModelLastPlayingIndex;
 	map<string, _bool>							m_isPlayingAnimations;
-	map<string, CModel*>* m_pModels = { nullptr };
-	CModel* m_pCurrentModel = { nullptr };
-	CAnimation* m_pCurrentAnimation = { nullptr };
-	CTransform* m_pTargetTransform = { nullptr };
-	_float3* m_pRootMoveDir = { nullptr };
+	map<string, CModel*>*						m_pModels = { nullptr };
+	CModel*										m_pCurrentModel = { nullptr };
+	CAnimation*									m_pCurrentAnimation = { nullptr };
+	CTransform*									m_pTargetTransform = { nullptr };
+	_float3*									m_pRootMoveDir = { nullptr };
 
 	_bool										m_isPlayAnimation = { false };
+
+	_uint										m_iPlayingIndex = { 0 };
 
 	_bool										m_isRooActive_XZ = { false };
 	_bool										m_isRooActive_Y = { false };
 	_bool										m_isRooActive_Rotate = { false };
 
-	const string* m_pCurrentModelTag = { nullptr };
-	const wstring* m_pCurrentPartObjectTag = { nullptr };
-	const wstring* m_pCurrentBoneLayerTag = { nullptr };
+	const string*								m_pCurrentModelTag = { nullptr };
+	const wstring*								m_pCurrentPartObjectTag = { nullptr };
+	const wstring*								m_pCurrentBoneLayerTag = { nullptr };
 
 public:
 	static CTool_AnimPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

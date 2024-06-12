@@ -131,13 +131,7 @@ void CTool_AnimPlayer::Change_Animation()
 		if (-1 == iAnimIndex)
 			return;
 
-
-		_int			iPlayingIndex = { m_pCurrentModel->Get_PlayingIndex_From_BoneLayerTag(*m_pCurrentBoneLayerTag) };
-
-		if (-1 != iPlayingIndex)
-		{
-			m_pCurrentModel->Change_Animation(iPlayingIndex, iAnimIndex);
-		}
+		m_pCurrentModel->Change_Animation(m_iPlayingIndex, iAnimIndex);
 	}
 }
 
@@ -430,19 +424,18 @@ void CTool_AnimPlayer::Create_PlayingDesc()
 
 	ImGui::Text(string(string("Num Playing Info : ") + strNumPlayingInfo).c_str());
 
-	static _int					iPlayingIndex = { 0 };
-	if (ImGui::InputInt("Index ##CTool_AnimPlayer::Create_PlayingDesc()", &iPlayingIndex))
+	if (ImGui::InputInt("Index ##CTool_AnimPlayer::Create_PlayingDesc()", reinterpret_cast<_int*>(&m_iPlayingIndex)))
 	{
-		if (iPlayingIndex > static_cast<_int>(iNumPlayingInfo))
-			iPlayingIndex = static_cast<_int>(iNumPlayingInfo) - 1;
+		if (m_iPlayingIndex > iNumPlayingInfo)
+			m_iPlayingIndex = iNumPlayingInfo - 1;
 
-		if (iPlayingIndex < 0)
-			iPlayingIndex = 0;
+		if (m_iPlayingIndex < 0)
+			m_iPlayingIndex = 0;
 	}
 
 	ImGui::SeparatorText("##");
 
-	if (ImGui::Button("Set Animation ##CTool_AnimPlayer::Create_PlayingDesc()"))
+	if (ImGui::Button("Create Playing Info ##CTool_AnimPlayer::Create_PlayingDesc()"))
 	{
 		_bool				isCanCreate = { true };
 		if (iAnimIndex >= iNumAnim)
@@ -470,7 +463,7 @@ void CTool_AnimPlayer::Create_PlayingDesc()
 			AnimDesc.isLoop = isLoop;
 		}
 
-		m_pCurrentModel->Add_AnimPlayingInfo(iAnimIndex, isLoop, iPlayingIndex, *m_pCurrentBoneLayerTag, fWeight);
+		m_pCurrentModel->Add_AnimPlayingInfo(iAnimIndex, isLoop, m_iPlayingIndex, *m_pCurrentBoneLayerTag, fWeight);
 	}
 	return;
 }
@@ -484,17 +477,17 @@ void CTool_AnimPlayer::Show_PlayingInfos()
 
 	if (ImGui::CollapsingHeader("Information From Index ##CTool_AnimPlayer::Show_PlayingInfos()"))
 	{
-		_uint			iNumPlayingInfo = { m_pCurrentModel->Get_NumPlayingInfos() };
+		_uint				iNumPlayingInfo = { m_pCurrentModel->Get_NumPlayingInfos() };
 		for (_uint iPlayingIndex = 0; iPlayingIndex < iNumPlayingInfo; ++iPlayingIndex)
 		{
-			string			strBoneLayerTag = { m_pCurrentModel->Get_BoneLayerTag_PlayingInfo(iPlayingIndex) };
+			string			strBoneLayerTag = { Convert_Wstring_String(m_pCurrentModel->Get_BoneLayerTag_PlayingInfo(iPlayingIndex)) };
 			string			strAnimTag = { m_pCurrentModel->Get_CurrentAnimTag(iPlayingIndex) };
 
 			string			strPlayingIndex = { to_string(iPlayingIndex) };
 			string			strDefaultText = { string("Playing Info : ") + strPlayingIndex };
 
-			string			strCombinedBoneLayerTag = { strDefaultText + strBoneLayerTag };
-			string			strCombinedAnimTag = { strDefaultText + strAnimTag };
+			string			strCombinedBoneLayerTag = { string("BoneLayer Tag ") + strDefaultText + strBoneLayerTag};
+			string			strCombinedAnimTag = { string("Animation Tag ") + strDefaultText + strAnimTag };
 
 			ImGui::Text(strCombinedBoneLayerTag.c_str());
 			ImGui::Text(strCombinedAnimTag.c_str());
@@ -533,7 +526,7 @@ void CTool_AnimPlayer::Show_PlayingInfos()
 				_float		fDuration = { m_pCurrentModel->Get_Duration_From_Anim(iAnimIndex) };
 				string		strPlayingIndex = { to_string(iPlayingIndex) };
 
-				ImGui::SliderFloat(string(string("Playing Info : ") + strPlayingIndex + string("## TrackPosition Controll")).c_str(), &fTrackPosition, fTrackPosition, fDuration);
+				ImGui::SliderFloat(string(string("Playing Info : ") + strPlayingIndex + string("## TrackPosition Controll")).c_str(), &fTrackPosition, 0.f, fDuration);
 
 				m_pCurrentModel->Set_TrackPosition(iPlayingIndex, fTrackPosition);
 			}

@@ -136,7 +136,7 @@ public:		/* For. Access */
 	_float									Get_TrackPosition(_uint iPlayingIndex);
 	_float									Get_BlendWeight(_uint iPlayingIndex);
 	_int									Get_AnimIndex_PlayingInfo(_uint iPlayingIndex);
-	string									Get_BoneLayerTag_PlayingInfo(_uint iPlayingIndex);
+	wstring									Get_BoneLayerTag_PlayingInfo(_uint iPlayingIndex);
 	_int									Get_PlayingIndex_From_BoneLayerTag(wstring strBoneLayerTag);
 
 	_bool									Is_Loop_PlayingInfo(_uint iPlayingIndex);
