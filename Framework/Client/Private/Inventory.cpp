@@ -31,6 +31,10 @@ HRESULT CInventory::Initialize(void* pArg)
 
 void CInventory::Tick(_float fTimeDelta)
 {
+    if (true == m_bDead)
+        return;
+
+
     if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
     {
         m_isRender = !m_isRender;
@@ -49,6 +53,9 @@ void CInventory::Tick(_float fTimeDelta)
 
 void CInventory::Late_Tick(_float fTimeDelta)
 {
+    if (true == m_bDead)
+        return;
+
     __super::Late_Tick(fTimeDelta); 
 }
 

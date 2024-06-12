@@ -184,8 +184,8 @@ _bool CUI::IsMouseHover()
 
 	_float3 vSize = m_pTransformCom->Get_Scaled();
 
-	if (vPosition.x - (vSize.x / 2) - 105.f <= mouse.x && vPosition.y - (vSize.y / 2) - 45.f <= mouse.y
-		&& vPosition.x + (vSize.x / 2) - 105.f >= mouse.x && vPosition.y + (vSize.y / 2) - 45.f >= mouse.y)
+	if (vPosition.x - (vSize.x / 2) /*- 105.f*/ <= mouse.x && vPosition.y - (vSize.y / 2)/* - 45.f*/ <= mouse.y
+		&& vPosition.x + (vSize.x / 2) /*- 105.f*/ >= mouse.x && vPosition.y + (vSize.y / 2) /*- 45.f*/ >= mouse.y)
 	{
 		return true;
 	}

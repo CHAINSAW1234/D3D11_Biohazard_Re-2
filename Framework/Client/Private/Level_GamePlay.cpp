@@ -251,18 +251,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	//UI_Distinction(selectedFilePath);
 	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
-	/* 3. Inventory_Item*/
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_Item.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Inventory_Item_UI"), m_pDevice, m_pContext);
-
-	/* 4. Inventory SelectBox */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_SelectBox.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Inventory_Item_UI"), m_pDevice, m_pContext);
-
 	/* 5. BackGroundHPBar_UI */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/BackGroundHPBar_UI.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
@@ -276,11 +264,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_HPBar_UI"), m_pDevice, m_pContext);
 
 	/* 7. Tab_Widow */
-	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/TabWin_BackGround.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Tab_Window"), m_pDevice, m_pContext);
+	CUI::UI_DESC UIDesc = {};
+	UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.9f };
+	UIDesc.vSize = { g_iWinSizeX * 1.f, g_iWinSizeY * 1.f };
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
+		return E_FAIL;
 
-	
 	return S_OK;
 
 }

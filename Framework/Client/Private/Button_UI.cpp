@@ -30,19 +30,25 @@ HRESULT CButton_UI::Initialize(void* pArg)
 
 void CButton_UI::Tick(_float fTimeDelta)
 {
+	if (true == m_bDead)
+		return;
+
 	__super::Tick(fTimeDelta);
 
-	if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON) )
-	{
-		if (true == IsMouseHover())
-		{
-			m_isClicked = true;
-		}
-	}
+	//if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON) )
+	//{
+	//	if (true == IsMouseHover())
+	//	{
+	//		m_isClicked = true;
+	//	}
+	//}
 }
 
 void CButton_UI::Late_Tick(_float fTimeDelta)
 {
+	if (true == m_bDead)
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 }
 
@@ -82,4 +88,5 @@ CGameObject* CButton_UI::Clone(void* pArg)
 
 void CButton_UI::Free()
 {
+	__super::Free();
 }

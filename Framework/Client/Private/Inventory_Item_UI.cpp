@@ -64,12 +64,15 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
         }
     }
 
-    m_wstrDefaultTexturComTag;
+
     return S_OK;
 }
 
 void CInventory_Item_UI::Tick(_float fTimeDelta)
 {   
+    if (true == m_bDead)
+        return;
+
     __super::Tick(fTimeDelta);
 
     /* 기본 박스 관련 */
@@ -84,6 +87,9 @@ void CInventory_Item_UI::Tick(_float fTimeDelta)
 
 void CInventory_Item_UI::Late_Tick(_float fTimeDelta)
 {
+    if (true == m_bDead)
+        return;
+
     __super::Late_Tick(fTimeDelta);
 }
 

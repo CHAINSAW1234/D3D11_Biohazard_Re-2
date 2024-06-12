@@ -15,15 +15,16 @@
 #include "Effect.h"
 #include "Sky.h"
 #include "Props.h"
-#include "Customize_UI.h"
 #include "CustomCollider.h"
-#include "Tab_Window.h"
 
 
 /* UI */
+#include "Customize_UI.h"
+#include "Inventory_Item_UI.h"
+#include "Tab_Window.h"
+#include "Button_UI.h"
 #include "Crosshair_UI.h"
 #include "Cursor_UI.h"
-#include "Inventory_Item_UI.h"
 #include "HPBar_UI.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -295,6 +296,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Inventory/Box_Select_Click.png")))))
 		return E_FAIL;
 
+	/*Prototype_Component_Texture_Tab_Window_BackGround*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Tab_Window_BackGround"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Tab_Winodw/Tab_Window_BackGround.dds")))))
+		return E_FAIL;
+
 	m_strLoadingText = TEXT("Now Loading ... Model");
 
 	_matrix			TransformMatrix = { XMMatrixIdentity() };
@@ -517,6 +523,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CHPBar_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	/* For.Prototype_GameObject_Collider */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Collider"), CCustomCollider::Create(m_pDevice, m_pContext))))
 	{
 		MSG_BOX(TEXT("Faild to Add_Prototype : Prototype_GameObject_Collider"));
@@ -526,6 +533,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* For.Prototype_GameObject_Tab_Window */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Tab_Window"),
 		CTab_Window::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Button_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Button_UI"),
+		CButton_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("Loading Complete.");

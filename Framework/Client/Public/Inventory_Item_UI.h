@@ -1,6 +1,10 @@
 #pragma once
 #include "Inventory.h"
 
+
+
+BEGIN(Client)
+
 class CInventory_Item_UI final : public CInventory
 {
 private:
@@ -37,3 +41,4 @@ public:
 	virtual void Free() override;
 };
 
+END

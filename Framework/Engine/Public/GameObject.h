@@ -44,6 +44,12 @@ public:
 	virtual HRESULT								Render_Emissive() { return S_OK; }
 	virtual HRESULT								Render_Font() { return S_OK; }
 
+public:
+	virtual void								Set_Dead(_bool bDead) { m_bDead = bDead; }
+
+public:
+	virtual _bool								Get_Dead() { return m_bDead; }
+
 protected:
 	ID3D11Device*								m_pDevice = { nullptr };
 	ID3D11DeviceContext*						m_pContext = { nullptr };
@@ -56,6 +62,9 @@ protected:
 	class CRigid_Dynamic*						m_pRigid_Body = { nullptr };
 	_int										m_iIndex_CCT = { 0 };
 	_int										m_iIndex_RigidBody = { 0 };
+
+	_bool										m_bDead = { false };
+
 protected:
 	map<const wstring, class CComponent*>		m_Components;
 

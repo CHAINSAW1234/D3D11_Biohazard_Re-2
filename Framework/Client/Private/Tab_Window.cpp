@@ -1,6 +1,9 @@
 #include "stdafx.h"
 
 #include "Tab_Window.h"
+#include "Customize_UI.h"
+#include "Button_UI.h"
+#include "Inventory_Item_UI.h"
 
 CTab_Window::CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice , pContext }
@@ -23,6 +26,18 @@ HRESULT CTab_Window::Initialize(void* pArg)
 	{
 		if (FAILED(__super::Initialize(pArg)))
 			return E_FAIL;
+
+		if (FAILED(Add_Components()))
+			return E_FAIL;
+
+		if (FAILED(Create_Button()))
+			return E_FAIL;
+
+		if (FAILED(Create_Inventory()))
+			return E_FAIL;
+		
+
+		m_bDead = true;
 	}
 
 	return S_OK;
@@ -31,20 +46,69 @@ HRESULT CTab_Window::Initialize(void* pArg)
 void CTab_Window::Tick(_float fTimeDelta)
 {
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
-		m_IsActivation = !m_IsActivation;
-
-	if (true == m_IsActivation)
 	{
-		__super::Tick(fTimeDelta);
+		if (false == m_bDead)
+		{
+			m_bDead = true;
+			m_pHintButton->Set_Dead(m_bDead);
+			m_pInvenButton->Set_Dead(m_bDead);
+			m_pMapButton->Set_Dead(m_bDead);
+			m_pInventory1->Set_Dead(m_bDead);
+			m_pInventory2->Set_Dead(m_bDead);
+		}
+
+		else
+		{
+			m_bDead = false;
+			m_pHintButton->Set_Dead(m_bDead);
+			m_pInvenButton->Set_Dead(m_bDead);
+			m_pMapButton->Set_Dead(m_bDead);
+			m_pInventory1->Set_Dead(m_bDead);
+			m_pInventory2->Set_Dead(m_bDead);
+		}
 	}
+
+	if (true == m_bDead)
+		return;
+
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+	{
+		if (true == m_pInvenButton->IsMouseHover())
+		{
+			m_eWindowType = INVENTORY;
+			m_pInventory1->Set_Dead(false);
+			m_pInventory2->Set_Dead(false);
+
+		}
+			
+		else if (true == m_pHintButton->IsMouseHover())
+		{
+			m_eWindowType = HINT;
+			m_pInventory1->Set_Dead(true);
+			m_pInventory2->Set_Dead(true);
+		}
+
+
+		else if (true == m_pMapButton->IsMouseHover())
+		{
+			m_eWindowType = MINIMAP;
+			m_pInventory1->Set_Dead(true);
+			m_pInventory2->Set_Dead(true);
+		}
+
+	}
+
+	__super::Tick(fTimeDelta);
 }
 
 void CTab_Window::Late_Tick(_float fTimeDelta)
 {
-	if (true == m_IsActivation)
-	{
-		__super::Late_Tick(fTimeDelta);
-	}
+	if (true == m_bDead)
+		return;
+
+	__super::Late_Tick(fTimeDelta);
+
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CTab_Window::Render()
@@ -68,12 +132,12 @@ HRESULT CTab_Window::Render()
 HRESULT CTab_Window::Add_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxPosTex"),
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAlphaSortTex"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Texture_PlayerUI"),
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Tab_Window_BackGround"),
 		TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
@@ -101,6 +165,74 @@ HRESULT CTab_Window::Bind_ShaderResources()
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CTab_Window::Create_Button()
+{
+	ifstream inputFileStream;
+	wstring selectedFilePath;
+
+	/* Button_HintWin */
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Button_HintWin.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	if (FAILED(CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Button_UI"), 
+		(CGameObject**)&m_pHintButton, m_pDevice, m_pContext)))
+		return E_FAIL;
+	
+	/* Button_InvenWin */
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Button_InvenWin.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	if (FAILED(CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Button_UI"), 
+		(CGameObject**)&m_pInvenButton, m_pDevice, m_pContext)))
+		return E_FAIL;
+
+	/* Button_MapWin */
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Button_MapWin.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	if (FAILED(CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Button_UI"), 
+		(CGameObject**)&m_pMapButton, m_pDevice, m_pContext)))
+		return E_FAIL;
+
+	if (nullptr == m_pHintButton || nullptr == m_pInvenButton || nullptr == m_pMapButton)
+		return E_FAIL;
+
+	m_pHintButton->Set_Dead(true);
+	m_pInvenButton->Set_Dead(true);
+	m_pMapButton->Set_Dead(true);
+
+	Safe_AddRef(m_pHintButton);
+	Safe_AddRef(m_pInvenButton);
+	Safe_AddRef(m_pMapButton);
+
+	return S_OK;
+}
+
+HRESULT CTab_Window::Create_Inventory()
+{
+	ifstream inputFileStream;
+	wstring selectedFilePath;
+
+	/* Inventory_Item */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_Item.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	if (FAILED(CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Inventory_Item_UI"),
+		(CGameObject**)&m_pInventory1, m_pDevice, m_pContext)))
+		return E_FAIL;
+
+	/* Inventory SelectBox */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_SelectBox.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	if (FAILED(CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Inventory_Item_UI"),
+		(CGameObject**)&m_pInventory2, m_pDevice, m_pContext)))
+		return E_FAIL;
+
+	m_pInventory1->Set_Dead(true);
+	m_pInventory2->Set_Dead(true);
+
+	Safe_AddRef(m_pInventory1);
+	Safe_AddRef(m_pInventory2);
 
 	return S_OK;
 }
@@ -135,4 +267,10 @@ CGameObject* CTab_Window::Clone(void* pArg)
 void CTab_Window::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pHintButton);
+	Safe_Release(m_pInvenButton);
+	Safe_Release(m_pMapButton);
+	Safe_Release(m_pInventory1);
+	Safe_Release(m_pInventory2);
 }

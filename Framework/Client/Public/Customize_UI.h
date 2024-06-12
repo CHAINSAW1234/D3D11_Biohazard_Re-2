@@ -117,6 +117,9 @@ public:
 public :
 	_bool Select_UI();
 
+	virtual void Set_Dead(_bool bDead) override;
+
+
 public : /* Client */
 	_bool Get_Children() { return m_IsChild;  }
 	ITEM_BOX_TYPE Get_ItemBox_Type() { return m_eBox_Type;  }
@@ -398,6 +401,8 @@ protected : /* Client*/
 
 public:
 	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	//생성한 객체를 포인터로 받고싶으면 사용하시오
+	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, CGameObject** ppOut, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override = 0;
 	virtual void Free() override;
 };
