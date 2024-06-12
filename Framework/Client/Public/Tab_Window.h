@@ -26,8 +26,8 @@ private:
 	class CButton_UI* m_pInvenButton = { nullptr };
 	class CButton_UI* m_pHintButton = { nullptr };
 
-	class CInventory_Item_UI* m_pInventory1 = { nullptr }; //테스트용 임시객체
-	class CInventory_Item_UI* m_pInventory2 = { nullptr }; //테스트용 임시객체
+	//class CInventory_Item_UI* m_pInventory1 = { nullptr }; //테스트용 임시객체
+	//class CInventory_Item_UI* m_pInventory2 = { nullptr }; //테스트용 임시객체
 
 private:
 	WINDOW_TYPE m_eWindowType = { INVENTORY };

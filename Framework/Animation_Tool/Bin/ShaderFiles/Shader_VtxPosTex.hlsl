@@ -38,23 +38,14 @@ float g_fMaskSpeed;
 float g_fMaskTime;
 float2 g_MaskType;
 
-
-// Client 
+// Client // 
 float4 g_vLightMask_Color;
 bool g_isLightMask;
-float4 g_vLightMask_Color;
 
-struct VS_IN
-{
-    float3 vPosition : POSITION;
-    float2 vTexcoord : TEXCOORD0;
-};
-
-struct VS_OUT
-{
-    float4 vPosition : SV_POSITION;
-    float2 vTexcoord : TEXCOORD0;
-};
+// Light
+bool g_isLight;
+float2 g_LightPosition;
+float g_LightSize;
 
 // 거리 계산 함수
 float calculateDistance(float4 A, float4 target)
@@ -73,7 +64,7 @@ float AdjustAlpha(float4 color)
     return exp(distance); // distance가 0에 가까워질수록 B는 1에 가까워짐
 }
 
-float4 Light(float2 vTexcoord, float4 color, float blendFactor)
+float4 MaskLight(float2 vTexcoord, float4 color, float blendFactor)
 {
     float d = length(vTexcoord);
     
@@ -86,6 +77,30 @@ float4 Light(float2 vTexcoord, float4 color, float blendFactor)
     return lerp(lightColor, color, blendFactor);
 }
 
+float4 Light(float2 vTexcoord, float4 color)
+{
+    float2 uv = (vTexcoord - float2(g_LightPosition.x, g_LightPosition.y));
+    float d = length(uv);
+    d -= sin(d * 1.f) / g_LightSize;
+    d = abs(d);
+    smoothstep(0, 1.f, d);
+    
+    float alphaA = AdjustAlpha(color);
+    return float4(d, d, d, alphaA);
+}
+
+
+struct VS_IN
+{
+    float3 vPosition : POSITION;
+    float2 vTexcoord : TEXCOORD0;
+};
+
+struct VS_OUT
+{
+    float4 vPosition : SV_POSITION;
+    float2 vTexcoord : TEXCOORD0;
+};
 
 /* 정점 쉐이더 */
 VS_OUT VS_MAIN(VS_IN In)
@@ -187,11 +202,9 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord * g_Split);
     
-   // 선택
-    if (g_SelectColor)
-        Out.vColor = float4(1, 0, 0, 1);
-    else if (g_AlpaChange) // 알파만 바꿀 때
+    if (g_AlpaChange) // 알파만 바꿀 때
         Out.vColor.a = g_ColorValu.a;
+    
     else if (g_ColorChange)
     {
         if (g_Blending)
@@ -202,6 +215,12 @@ PS_OUT PS_MAIN(PS_IN In)
             Out.vColor = g_ColorValu;
     }
          
+    if (g_isLight)
+    {
+        float blackRatio = (Out.vColor.a) / 1.f;
+        Out.vColor *= Light(In.vTexcoord, Out.vColor);
+    }
+    
     if (g_isMask)
     {
         if (true == g_isLightMask)
@@ -218,7 +237,7 @@ PS_OUT PS_MAIN(PS_IN In)
             float4 LightColor = float4(min(g_vLightMask_Color.r, 1.0f), min(g_vLightMask_Color.g, 1.0f), min(g_vLightMask_Color.b, 1.0f), Out.vColor.a);
             float4 finalColor = lerp(Out.vColor, LightColor, blendFactor);
             
-            finalColor *= Light(In.vTexcoord, finalColor, blendFactor);
+            finalColor *= MaskLight(In.vTexcoord, finalColor, blendFactor);
             Out.vColor = finalColor;
             
            
@@ -234,183 +253,10 @@ PS_OUT PS_MAIN(PS_IN In)
             float alpha = smoothstep(g_fMaskControl.x, g_fMaskControl.x + g_fMaskControl.y, value + (1.0 - g_fMaskControl.y));
             Out.vColor *= float4(Out.vColor.rgb, alpha);
         }
-
     }
     
-    if (Out.vColor.a <= 0.3f)
-        discard;
     
-    return Out;
-}
 
-struct PS_IN_ALPHABLEND
-{
-    float4 vPosition : SV_POSITION;
-    float2 vTexcoord : TEXCOORD0;
-    float4 vProjPos : TEXCOORD1;
-};
-
-struct VS_OUT_ALPHABLEND
-{
-    float4 vPosition : SV_POSITION;
-    float2 vTexcoord : TEXCOORD0;
-    float4 vProjPos : TEXCOORD1;
-};
-
-
-VS_OUT_ALPHABLEND VS_MAIN_ALPHABLEND(VS_IN In)
-{
-    VS_OUT_ALPHABLEND Out = (VS_OUT_ALPHABLEND) 0;
-
-    matrix matWV, matWVP;
-
-    matWV = mul(g_WorldMatrix, g_ViewMatrix);
-    matWVP = mul(matWV, g_ProjMatrix);
-
-    if (g_Wave)
-    {
-        Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-        Out.vPosition.x += cos(gTime + Out.vPosition.x + Out.vPosition.y) * g_Speed;
-        Out.vPosition.y += sin(gTime + Out.vPosition.y + +Out.vPosition.x) * g_Speed;
-
-        float2 distortedTexcoord = In.vTexcoord;
-
-        distortedTexcoord.x += cos(gTime * time_factor) * g_Speed; // X축 울렁임
-        distortedTexcoord.y += sin(gTime * time_factor) * g_Speed; // Y축 울렁임
-
-        Out.vTexcoord = distortedTexcoord;
-        Out.vTexcoord = In.vTexcoord;
-    }
-
-    if (g_isPush)
-    {
-        if (!g_Wave)
-        {
-            Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-            Out.vTexcoord = In.vTexcoord;
-         // 기존 UV 좌표
-            float2 uv = In.vTexcoord;
-
-         // 회전 각도 (라디안 단위)
-            float angle = g_UVPush_Timer * g_RotationSpeed;
-
-         // 회전 행렬 계산
-            float cosTheta = cos(angle);
-            float sinTheta = sin(angle);
-            float2x2 rotationMatrix = float2x2(cosTheta, -sinTheta, sinTheta, cosTheta);
-
-         // UV 좌표 회전 변환
-            uv = mul(uv, rotationMatrix);
-         
-            uv.r += g_UVPush_Timer * g_UVSpeed.x;
-            uv.g += g_UVPush_Timer * g_UVSpeed.y;
-         
-            Out.vTexcoord.r = uv.r;
-            Out.vTexcoord.g = uv.g;
-        }
-        else if (g_Wave)
-        {
-            float2 uv = Out.vTexcoord;
-         // 회전 각도 (라디안 단위)
-            float angle = g_UVPush_Timer * g_RotationSpeed;
-
-         // 회전 행렬 계산
-            float cosTheta = cos(angle);
-            float sinTheta = sin(angle);
-            float2x2 rotationMatrix = float2x2(cosTheta, -sinTheta, sinTheta, cosTheta);
-
-         // UV 좌표 회전 변환
-            uv = mul(uv, rotationMatrix);
-         
-            uv.r += g_UVPush_Timer * g_UVSpeed.x;
-            uv.g += g_UVPush_Timer * g_UVSpeed.y;
-         
-            Out.vTexcoord.r = uv.r;
-            Out.vTexcoord.g = uv.g;
-        }
-    }
-
-    if (!g_isPush && !g_Wave)
-    {
-        Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-        Out.vTexcoord = In.vTexcoord;
-    }
-
-    Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-    Out.vTexcoord = In.vTexcoord;
-    Out.vProjPos = Out.vPosition;
-    
-    return Out;
-}
-
-PS_OUT PS_MAIN_ALPHABLEND(PS_IN_ALPHABLEND In)
-{
-    PS_OUT Out = (PS_OUT) 0;
-
-    Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
-
-    float2 vTexcoord = (float2) 0.f;
-
-    // 선택
-    if (g_SelectColor)
-        Out.vColor = float4(1, 0, 0, 1);
-    else if (g_AlpaChange) // 알파만 바꿀 때
-        Out.vColor.a = g_ColorValu.a;
-    
-    else if (g_ColorChange)
-    {
-        if (g_Blending)
-        {
-            Out.vColor = lerp(Out.vColor, g_ColorValu, g_BlendingStrength);
-        }
-        else
-            Out.vColor = g_ColorValu;
-    }
-         
-    if (g_isMask)
-    {
-        if (true == g_isLightMask)
-        {
-            float2 MaskTexcoord = In.vTexcoord;
-        
-            MaskTexcoord.r += g_fMaskTime * g_MaskType.x;
-            MaskTexcoord.g += g_fMaskTime * g_MaskType.y;
-            
-            float value = g_MaskTexture.Sample(LinearSampler, MaskTexcoord).r;
-         
-            /* Light Mask */
-            float blendFactor = 1.0 - value;
-            float4 LightColor = float4(min(g_vLightMask_Color.r, 1.0f), min(g_vLightMask_Color.g, 1.0f), min(g_vLightMask_Color.b, 1.0f), Out.vColor.a);
-            float4 finalColor = lerp(Out.vColor, LightColor, blendFactor);
-            
-            finalColor *= Light(In.vTexcoord, finalColor, blendFactor);
-            Out.vColor = finalColor;
-           
-        }
-        else if (false == g_isLightMask)
-        {
-            float2 MaskTexcoord = In.vTexcoord;
-        
-            MaskTexcoord.r += g_fMaskTime * g_MaskType.x;
-            MaskTexcoord.g += g_fMaskTime * g_MaskType.y;
-
-            float value = g_MaskTexture.Sample(LinearSampler, MaskTexcoord).r;
-            float alpha = smoothstep(g_fMaskControl.x, g_fMaskControl.x + g_fMaskControl.y, value + (1.0 - g_fMaskControl.y));
-            Out.vColor *= float4(Out.vColor.rgb, alpha);
-        }
-    }
-    
-    vTexcoord.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
-    vTexcoord.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
-
-    float4 vDepthDesc = g_DepthTexture.Sample(PointSampler, vTexcoord);
-    float fOldViewZ = vDepthDesc.y * fDepthValue;
-
-    Out.vColor.a = Out.vColor.a * saturate(fOldViewZ - In.vProjPos.w);
-    
-    if (Out.vColor.a <= 0.1f)
-        discard;
-    
     return Out;
 }
 

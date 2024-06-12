@@ -232,8 +232,8 @@ void CLevel_GamePlay::UI_Distinction(wstring& selectedFilePath)
 		FileName = FileName.substr(0, lastDotPos);
 	}
 	selectedFilePath = FileName;
-
 }
+
 HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 {
 	ifstream inputFileStream;

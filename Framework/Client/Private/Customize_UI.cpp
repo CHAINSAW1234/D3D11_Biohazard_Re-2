@@ -260,12 +260,6 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShaderCom, TEXT("Target_Depth"), "g_DepthTexture")))
 		return E_FAIL;
 
-	// Edit
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_SelectColor", &m_isSelect_Color, sizeof(_bool))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_GreenColor", &m_isSelect, sizeof(_bool))))
-		return E_FAIL;
-
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_ColorValu", &m_vCurrentColor, sizeof(_float4))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_ColorChange", &m_isColorChange, sizeof(_bool))))

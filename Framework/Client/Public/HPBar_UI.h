@@ -40,8 +40,6 @@ private : /* Mask ฐüทร*/
 private : 
 	CHPBar_UI*					m_pMainBar				= { nullptr };
 
-	_bool				m_isMaskDown = { false };
-
 private :
 	CCustomize_UI::HPBAR_TYPE	m_eHPBar		= { HPBAR_TYPE::END_BAR };
 	HP_TYPE						m_eCurrentHP	= { HP_TYPE::NORMAL_HP };
