@@ -84,24 +84,23 @@ void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBon
 		_matrix			MyTransformationMatrix = { XMLoadFloat4x4(&m_TransformationMatrix) };
 		XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, MyTransformationMatrix);
 
-		if (true == isSetTranslation)
-		{
-			vTranslation = Decompose_Translation(isActiveXZ, isActiveY, vTranslation, pTranslation);
-		}
 		if (true == isSetQuaternion)
 		{
 			vQuaternion = Decompose_Quaternion(vQuaternion, pQuaternion);
 
-			if (false == isSetTranslation)
-			{
-				_vector			vInverseQuaternion = { XMQuaternionInverse(vQuaternion) };
-				_matrix			InverseRotationMatrix = { XMMatrixRotationQuaternion(vInverseQuaternion) };
+			_vector			vInverseQuaternion = { XMQuaternionInverse(vQuaternion) };
+			_matrix			InverseRotationMatrix = { XMMatrixRotationQuaternion(vInverseQuaternion) };
 
-				_vector			vResultTranslation = { XMVector3TransformNormal(vTranslation, InverseRotationMatrix) };
+			_vector			vResultTranslation = { XMVector3TransformNormal(vTranslation, InverseRotationMatrix) };
 
-				vTranslation = XMVectorSetW(vResultTranslation, 1.f);
-			}
+			vTranslation = XMVectorSetW(vResultTranslation, 1.f);
 		}
+
+		if (true == isSetTranslation)
+		{
+			vTranslation = Decompose_Translation(isActiveXZ, isActiveY, vTranslation, pTranslation);
+		}
+		
 
 		MyTransformationMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
 		XMStoreFloat4x4(&m_TransformationMatrix, MyTransformationMatrix);
@@ -117,25 +116,22 @@ void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBon
 		_matrix			MyTransformationMatrix = { XMLoadFloat4x4(&m_TransformationMatrix) };
 		XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, MyTransformationMatrix);
 
-		if (true == isSetTranslation)
-		{
-			vTranslation = Decompose_Translation(isActiveXZ, isActiveY, vTranslation, pTranslation);
-		}
-
 		if (true == isSetQuaternion)
 		{
 			vQuaternion = Decompose_Quaternion(vQuaternion, pQuaternion);
 
-			if (false == isSetTranslation)
-			{
-				_vector			vInverseQuaternion = { XMQuaternionInverse(XMLoadFloat4(pQuaternion)) };
-				_matrix			InverseRotationMatrix = { XMMatrixRotationQuaternion(vInverseQuaternion) };
+			_vector			vInverseQuaternion = { XMQuaternionInverse(XMLoadFloat4(pQuaternion)) };
+			_matrix			InverseRotationMatrix = { XMMatrixRotationQuaternion(vInverseQuaternion) };
 
-				_vector			vResultTranslation = { XMVector3TransformNormal(vTranslation, InverseRotationMatrix) };
+			_vector			vResultTranslation = { XMVector3TransformNormal(vTranslation, InverseRotationMatrix) };
 
-				vTranslation = XMVectorSetW(vResultTranslation, 1.f);
-			}
+			vTranslation = XMVectorSetW(vResultTranslation, 1.f);
 		}
+
+		if (true == isSetTranslation)
+		{
+			vTranslation = Decompose_Translation(isActiveXZ, isActiveY, vTranslation, pTranslation);
+		}		
 
 		MyTransformationMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
 		XMStoreFloat4x4(&m_TransformationMatrix, MyTransformationMatrix);

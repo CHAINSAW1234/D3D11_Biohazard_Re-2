@@ -125,6 +125,8 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _u
 	_float						fTrackPosition = { pPlayingInfo->Get_TrackPosition() };
 	_bool						isLoop = { pPlayingInfo->Is_Loop() };
 
+	TransformationMatrices.resize(iNumBones);
+
 	if (fTrackPosition == 0.f)
 	{
 		*pFirstTick = true;
@@ -142,6 +144,22 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _u
 		{
 			isFinished = true;
 			pPlayingInfo->Set_Finished(isFinished);
+
+			vector<KEYFRAME>			LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
+
+			for(_uint iBoneIndex = 0; iBoneIndex < iNumBones; ++iBoneIndex)
+			{
+				KEYFRAME		LastKeyFrame = { LastKeyFrames[iBoneIndex] };
+
+				_vector			vQuaternion = { XMLoadFloat4(&LastKeyFrame.vRotation) };
+				_vector			vTranslation = { XMVectorSetW(XMLoadFloat3(&LastKeyFrame.vTranslation), 1.f) };
+				_vector			vScale = { XMLoadFloat3(&LastKeyFrame.vScale) };
+
+				_matrix			TransformationMatrix = { XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation) };
+
+				TransformationMatrices[iBoneIndex] = TransformationMatrix;
+			}
+
 			return TransformationMatrices;
 		}
 
@@ -149,7 +167,6 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _u
 		*pFirstTick = true;
 	}
 
-	TransformationMatrices.resize(iNumBones);
 	for (auto& TransformationMatrix : TransformationMatrices)
 	{
 		XMStoreFloat4x4(&TransformationMatrix, XMMatrixIdentity());

@@ -83,6 +83,7 @@ private:
 private:
 	vector<_float4x4>						Initialize_ResultMatrices(const set<_uint> IncludedBoneIndices);
 	_float									Compute_Current_TotalWeight(_uint iBoneIndex);
+	vector<_float>							Compute_Current_TotalWeights();
 	_float4x4								Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fmatrix DstMatrix, _float fAdditionalWeight);
 	set<_uint>								Compute_IncludedBoneIndices_AllBoneLayer();
 
@@ -95,8 +96,8 @@ public:		/*For Physics Collider*/
 	_float4x4								GetBoneTransform(_int Index);
 
 private:
-	void									Apply_RootMotion_Rotation(class CTransform* pTransform, _fvector vQuaternion, _float4* pTranslation);
-	void									Apply_RootMotion_Translation(class CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection, _fvector vQuaternion = XMQuaternionIdentity());
+	void									Apply_RootMotion_Rotation(class CTransform* pTransform, _fvector vQuaternion);
+	void									Apply_RootMotion_Translation(class CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection);
 	void									Apply_Translation_Inverse_Rotation(_fvector vTranslation);
 
 public:
