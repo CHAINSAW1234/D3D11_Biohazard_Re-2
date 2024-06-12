@@ -1715,7 +1715,10 @@ void CModel::Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& Trans
 		//	포함되지 않은 ( 업데이트가 되지않은 ) 뼈는 건너뛴다.
 		set<_uint>::iterator		iter = { IncludedBoneIndices.find(iBoneIndex) };
 		if (iter == IncludedBoneIndices.end())
+		{
+			XMStoreFloat4x4(&ResultTransformationMatrices[iBoneIndex], m_Bones[iBoneIndex]->Get_TrasformationMatrix());
 			continue;
+		}
 
 		_matrix			ResultMatrix = { XMLoadFloat4x4(&ResultTransformationMatrices[iBoneIndex]) };
 

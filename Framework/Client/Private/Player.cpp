@@ -137,11 +137,7 @@ void CPlayer::Tick(_float fTimeDelta)
 			vLook = { XMVectorScale(XMVector3Normalize(vLook),0.03f) };
 			_vector      vMoveDir = { vLook };
 
-			vMovedDirection += vMoveDir;
-
-			_float4			vResultMoveDirFloat4 = {};
-			XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
-			m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
+			vMovedDirection += vMoveDir;			
 
 			m_bMove_Forward = true;
 			m_bMove = true;
@@ -171,10 +167,6 @@ void CPlayer::Tick(_float fTimeDelta)
 			_vector      vMoveDir = { -vLook };
 
 			vMovedDirection += vMoveDir;
-
-			_float4			vResultMoveDirFloat4 = {};
-			XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
-			m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
 
 			m_bMove_Backward = true;
 			m_bMove = true;
@@ -206,6 +198,10 @@ void CPlayer::Tick(_float fTimeDelta)
 
 			m_bMove_Backward = false;
 		}
+
+		_float4			vResultMoveDirFloat4 = {};
+		XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
+		m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
 	}
 
 	if (m_bMove_Backward == false && m_bMove_Forward == false)

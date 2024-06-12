@@ -46,6 +46,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(0, true, 1, TEXT("Default"), 0.f);
 
 	return S_OK;
 }
@@ -131,10 +132,11 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//	m_pModelCom->Set_Blend_IK(TEXT("IK_L_LEG"), fBlend);
 	//	m_pModelCom->Set_NumIteration_IK(TEXT("IK_L_LEG"), 3);
 
-	m_pModelCom->Set_BoneLayer_PlayingInfo(0, TEXT("Default"));
-	m_pModelCom->Change_Animation(0, iAnimIndex);
+	//m_pModelCom->Set_BoneLayer_PlayingInfo(0, TEXT("Default"));
+	////m_pModelCom->Set_BoneLayer_PlayingInfo(1, TEXT("Default"));
+	//m_pModelCom->Change_Animation(0, 0);
 
-	m_pModelCom->Set_BlendWeight(0, 1.f);
+	//m_pModelCom->Set_BlendWeight(0, 1.f);
 
 	//m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 
