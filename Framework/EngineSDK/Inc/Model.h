@@ -83,7 +83,9 @@ private:
 private:
 	vector<_float4x4>						Initialize_ResultMatrices(const set<_uint> IncludedBoneIndices);
 	_float									Compute_Current_TotalWeight(_uint iBoneIndex);
+	vector<_float>							Compute_Current_TotalWeights();
 	_float4x4								Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fmatrix DstMatrix, _float fAdditionalWeight);
+	set<_uint>								Compute_IncludedBoneIndices_AllBoneLayer();
 
 public:
 	HRESULT									RagDoll();
@@ -94,8 +96,8 @@ public:		/*For Physics Collider*/
 	_float4x4								GetBoneTransform(_int Index);
 
 private:
-	void									Apply_RootMotion_Rotation(class CTransform* pTransform, _fvector vQuaternion, _float4* pTranslation);
-	void									Apply_RootMotion_Translation(class CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection, _fvector vQuaternion = XMQuaternionIdentity());
+	void									Apply_RootMotion_Rotation(class CTransform* pTransform, _fvector vQuaternion);
+	void									Apply_RootMotion_Translation(class CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection);
 	void									Apply_Translation_Inverse_Rotation(_fvector vTranslation);
 
 public:
@@ -119,8 +121,8 @@ public:		/* For. Access */
 	_int									Find_AnimIndex(CAnimation* pAnimation);
 	_int									Find_AnimIndex(const string& strAnimTag);
 	string									Find_RootBoneTag();
-	class CPlayingInfo* Find_PlayingInfo(_uint iPlayingIndex);
-	class CBone_Layer* Find_BoneLayer(const wstring& strBoneLayerTag);
+	class CPlayingInfo*						Find_PlayingInfo(_uint iPlayingIndex);
+	class CBone_Layer*						Find_BoneLayer(const wstring& strBoneLayerTag);
 
 	_int									Get_BoneIndex(const string& strBoneTag);
 
@@ -174,10 +176,10 @@ public:
 	HRESULT									Render(_uint iMeshIndex);
 
 private:
-	vector<_float4x4>						Apply_Animation(_float fTimeDelta, set<_uint>& IncludedBoneIndices, _uint iPlayingAnimIndex);
+	vector<_float4x4>						Apply_Animation(_float fTimeDelta, _uint iPlayingAnimIndex);
 	void									Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMovedDirection);
-	void									Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer, const set<_uint>& IncludedBoneIndices);
-	vector<_float4x4>						Compute_ResultMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer, const set<_uint>& IncludedBoneIndices);
+	void									Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer);
+	vector<_float4x4>						Compute_ResultMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer);
 
 public:		/* For.Cooking_Mesh */
 	void									Static_Mesh_Cooking();
