@@ -300,12 +300,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 	
 
-	///* 7. Tab_Widow */
-	//CUI::UI_DESC UIDesc = {};
-	//UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.9f };
-	//UIDesc.vSize = { g_iWinSizeX * 1.f, g_iWinSizeY * 1.f };
-	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
-	//	return E_FAIL;
+	/* 7. Tab_Widow */
+	CUI::UI_DESC UIDesc = {};
+	UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.9f };
+	UIDesc.vSize = { g_iWinSizeX * 1.f, g_iWinSizeY * 1.f };
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
+		return E_FAIL;
 
 
 	return S_OK;
