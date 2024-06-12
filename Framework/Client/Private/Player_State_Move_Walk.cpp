@@ -58,9 +58,15 @@ void CPlayer_State_Move_Walk::Update_KeyInput()
 
 	m_dwDirection = dwDirection;
 
+
+	if (!(m_dwDirection & FRONT ||
+		m_dwDirection & BACK)) {
+
+	}
+
 	if (m_dwDirection & FRONT)
 		m_Prev_FRONT_BACK_Direction = FRONT;
-	if (m_dwDirection & BACK)
+	else if (m_dwDirection & BACK)
 		m_Prev_FRONT_BACK_Direction = BACK;
 
 }
@@ -102,9 +108,9 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 		else {
 			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_F_LOOP);
 			m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
-			fTargetWeight0 = 0.5f;
+			fTargetWeight0 = 1.f;
 			//m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
-			fTargetWeight1 = 0.5f;
+			fTargetWeight1 = 0.0f;
 			//m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
 		}
 	}
@@ -157,16 +163,16 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 
 		}
 		else {
-			if (m_Prev_FRONT_BACK_Direction == FRONT) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_R_LOOP);
+			if (m_Prev_FRONT_BACK_Direction == BACK) {
+				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_R_LOOP);
 			}
 			else {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_R_LOOP);
+				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_R_LOOP);
 			}
 		}
 
 	}
-	if (abs(fTargetWeight0 - fCurWeight0) > 0.02) {
+	if (abs(fTargetWeight0 - fCurWeight0) > 0.1) {
 		if (fCurWeight0 > fTargetWeight0) {
 			fCurWeight0 -= fTimeDelta;
 		}
@@ -178,7 +184,7 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 		fCurWeight0 = fTargetWeight0;
 	}
 	
-	if (abs(fTargetWeight1 - fCurWeight1) > 0.02) {
+	if (abs(fTargetWeight1 - fCurWeight1) > 0.1) {
 		if (fCurWeight1 > fTargetWeight1) {
 			fCurWeight1 -= fTimeDelta;
 		}
@@ -196,90 +202,88 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 #pragma endregion
 
 //#pragma region 2
-	if (m_dwDirection & FRONT) {
-		if (m_dwDirection & LEFT) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_F_LOOP);
-			m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f);
-
-			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_L_LOOP);
-			m_pPlayer->Get_Body_Model()->Set_Loop(1, true);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f);
-
-		}
-		else if (m_dwDirection & RIGHT) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_F_LOOP);
-			m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f);
-
-			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_R_LOOP);
-			m_pPlayer->Get_Body_Model()->Set_Loop(1, true);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f);
-		}
-		else {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_F_LOOP);
-			m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
-
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
-		}
-	}
-
-	else if (m_dwDirection & BACK) {
-		if (m_dwDirection & LEFT) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_B_LOOP);
-			m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f);
-
-			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_BACK_L_LOOP);
-			m_pPlayer->Get_Body_Model()->Set_Loop(1, true);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f);
-
-		}
-		else if (m_dwDirection & RIGHT) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_B_LOOP);
-			m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f);
-
-			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_BACK_R_LOOP);
-			m_pPlayer->Get_Body_Model()->Set_Loop(1, true);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f);
-		}
-		else {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_B_LOOP);
-			m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
-
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
-		}
-	}
-	else {
-		m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
-		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
-
-		if (m_dwDirection & LEFT) {
-			if (m_Prev_FRONT_BACK_Direction == FRONT) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_L_LOOP);
-			}
-			else {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_L_LOOP);
-			}
-
-		}
-		else {
-			if (m_Prev_FRONT_BACK_Direction == FRONT) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_R_LOOP);
-			}
-			else {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_R_LOOP);
-			}
-		}
-
-		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
-	}
-#pragma endregion
-
-
+//	if (m_dwDirection & FRONT) {
+//		if (m_dwDirection & LEFT) {
+//			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_F_LOOP);
+//			m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
+//			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f);
+//
+//			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_L_LOOP);
+//			m_pPlayer->Get_Body_Model()->Set_Loop(1, true);
+//			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f);
+//
+//		}
+//		else if (m_dwDirection & RIGHT) {
+//			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_F_LOOP);
+//			m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
+//			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f);
+//
+//			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_R_LOOP);
+//			m_pPlayer->Get_Body_Model()->Set_Loop(1, true);
+//			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f);
+//		}
+//		else {
+//			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_F_LOOP);
+//			m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
+//			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
+//
+//			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
+//		}
+//	}
+//
+//	else if (m_dwDirection & BACK) {
+//		if (m_dwDirection & LEFT) {
+//			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_B_LOOP);
+//			m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
+//			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f);
+//
+//			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_BACK_L_LOOP);
+//			m_pPlayer->Get_Body_Model()->Set_Loop(1, true);
+//			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f);
+//
+//		}
+//		else if (m_dwDirection & RIGHT) {
+//			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_B_LOOP);
+//			m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
+//			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f);
+//
+//			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_BACK_R_LOOP);
+//			m_pPlayer->Get_Body_Model()->Set_Loop(1, true);
+//			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f);
+//		}
+//		else {
+//			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_B_LOOP);
+//			m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
+//			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
+//
+//			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
+//		}
+//	}
+//	else {
+//		m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
+//		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
+//
+//		if (m_dwDirection & LEFT) {
+//			if (m_Prev_FRONT_BACK_Direction == FRONT) {
+//				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_L_LOOP);
+//			}
+//			else {
+//				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_L_LOOP);
+//			}
+//
+//		}
+//		else {
+//			if (m_Prev_FRONT_BACK_Direction == FRONT) {
+//				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_R_LOOP);
+//			}
+//			else {
+//				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_R_LOOP);
+//			}
+//		}
+//
+//		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
+//	}
+//#pragma endregion
 
 }
 
@@ -294,22 +298,29 @@ void CPlayer_State_Move_Walk::Look_Cam(_float fTimeDelta)
 	vPlayerLook.y = 0;
 	vPlayerLook = XMVector3Normalize(vPlayerLook);
 	
-	_float fDegree = Cal_Degree_From_Directions_Between_Min180_To_180(vCamLook, vPlayerLook);
+	_float fDegree = Cal_Degree_From_Directions_Between_Min180_To_180(vPlayerLook, vCamLook);
 
-	if (fDegree > 10) {
-		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), -fTimeDelta);
+	if (abs(fDegree) > 5) {
+		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * fDegree / 10 );
 	}
-	else if(fDegree < -10) {
-		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), +fTimeDelta);
-	}
+
+	//if (fDegree > 5) {
+	//	m_pPlayer->Get_Body_Model()->Change_Animation(2, CPlayer::TURN_L180);
+	//	m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 0.3f);
+	//}
+	//else if (fDegree < -5) {
+	//	m_pPlayer->Get_Body_Model()->Change_Animation(2, CPlayer::TURN_R180);
+	//	m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 0.3f);
+	//}
+	//else {
+	//	m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 0);
+	//}
+
 /*
 	135  -> 90 ~180 ∫Ò¿≤
 	135 - 90  45
 	120 - 90 30 /90 * 100  = t    -> 1-t : t
 	45 / 90 * 100 = 50 : 0.5 0.5 ∫Ò¿≤∑Œ ºØ¿∏∏È µ 
-
-
-
 
 */
 

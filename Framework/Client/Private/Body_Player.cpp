@@ -47,6 +47,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 1, TEXT("Default"), 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(0, true, 2, TEXT("Default"), 0.f);
 
 	return S_OK;
 }
