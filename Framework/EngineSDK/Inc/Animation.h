@@ -26,9 +26,9 @@ public:		/* For.Access */
 	_float									Get_TickPerSec() { return m_fTickPerSecond; }
 
 public:		/* For.Load */
-	/* For.FBX_Load*/
+			/* For.FBX_Load*/
 	HRESULT									Initialize(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices);
-	/* For.Binary_Load*/
+			/* For.Binary_Load*/
 	HRESULT									Initialize(const ANIM_DESC& AnimDesc);
 
 public:		/* For.PlayAnimation */
@@ -39,7 +39,7 @@ public:		/* For.PlayAnimation */
 	vector<_float4x4>						Compute_TransfromationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, vector<_float4x4>& TransformationMatrices, _uint iNumBones, const vector<KEYFRAME>& LastKeyFrames);
 
 public:		/* For.Access */
-	const vector<class CChannel*>& Get_Channels() { return m_Channels; };
+	const vector<class CChannel*>&			Get_Channels() { return m_Channels; };
 	string									Get_Name() { return m_szName; }
 	_uint									Get_NumChannel() { return static_cast<_uint>(m_Channels.size()); }
 

@@ -548,7 +548,7 @@ _float CModel::Compute_Current_TotalWeight(_uint iBoneIndex)
 			continue;
 
 		wstring		strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
-		if (false == m_BoneLayers[strBoneLayerTag]->Is	_Included(iBoneIndex))
+		if (false == m_BoneLayers[strBoneLayerTag]->Is_Included(iBoneIndex))
 			continue;
 
 		_float		fBlendWeight = { pPlayingInfo->Get_BlendWeight() };

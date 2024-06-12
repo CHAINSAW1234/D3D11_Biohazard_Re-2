@@ -84,6 +84,7 @@ private:
 	vector<_float4x4>						Initialize_ResultMatrices(const set<_uint> IncludedBoneIndices);
 	_float									Compute_Current_TotalWeight(_uint iBoneIndex);
 	_float4x4								Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fmatrix DstMatrix, _float fAdditionalWeight);
+	set<_uint>								Compute_IncludedBoneIndices_AllBoneLayer();
 
 public:
 	HRESULT									RagDoll();
@@ -119,8 +120,8 @@ public:		/* For. Access */
 	_int									Find_AnimIndex(CAnimation* pAnimation);
 	_int									Find_AnimIndex(const string& strAnimTag);
 	string									Find_RootBoneTag();
-	class CPlayingInfo* Find_PlayingInfo(_uint iPlayingIndex);
-	class CBone_Layer* Find_BoneLayer(const wstring& strBoneLayerTag);
+	class CPlayingInfo*						Find_PlayingInfo(_uint iPlayingIndex);
+	class CBone_Layer*						Find_BoneLayer(const wstring& strBoneLayerTag);
 
 	_int									Get_BoneIndex(const string& strBoneTag);
 
@@ -174,10 +175,10 @@ public:
 	HRESULT									Render(_uint iMeshIndex);
 
 private:
-	vector<_float4x4>						Apply_Animation(_float fTimeDelta, set<_uint>& IncludedBoneIndices, _uint iPlayingAnimIndex);
+	vector<_float4x4>						Apply_Animation(_float fTimeDelta, _uint iPlayingAnimIndex);
 	void									Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMovedDirection);
-	void									Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer, const set<_uint>& IncludedBoneIndices);
-	vector<_float4x4>						Compute_ResultMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer, const set<_uint>& IncludedBoneIndices);
+	void									Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer);
+	vector<_float4x4>						Compute_ResultMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer);
 
 public:		/* For.Cooking_Mesh */
 	void									Static_Mesh_Cooking();

@@ -19,7 +19,7 @@ public:
 
 private:
 	void Update_KeyInput();
-	void Set_MoveAnimation();
+	void Set_MoveAnimation(_float fTimeDelta);
 	void Look_Cam(_float fTimeDelta);
 
 private:
@@ -27,7 +27,6 @@ private:
 
 	DIRECTION m_Prev_FRONT_BACK_Direction = { DIRECTION_END };
 	DWORD m_dwDirection = { 0 };
-
 
 public:
 	static	CPlayer_State_Move_Walk* Create(CPlayer* pPlayer);
