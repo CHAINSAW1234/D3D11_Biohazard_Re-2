@@ -411,7 +411,7 @@ _bool CPhysics_Controller::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pB
 		PxvDir.getNormalized(),
 		fMaxDist,
 		hit,
-		PxHitFlag::eDEFAULT, PxQueryFilterData(PxQueryFlag::eSTATIC)
+		PxHitFlag::ePRECISE_SWEEP, PxQueryFilterData(PxQueryFlag::eSTATIC)
 	);
 
 	if (Status)

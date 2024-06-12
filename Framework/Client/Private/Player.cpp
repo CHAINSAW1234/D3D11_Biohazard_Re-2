@@ -58,7 +58,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
-	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.3f, 5.f, 1.f), &m_iIndex_CCT, this, 1.f, 0.45f);
+	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.3f, 5.f, 1.f), &m_iIndex_CCT, this, 1.f, 0.475f);
 
 	//For Camera.
 	m_pTransformCom_Camera = CTransform::Create(m_pDevice, m_pContext);
@@ -145,7 +145,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		}
 		else
 		{
-			if (m_bMove_Forward)
+			if (m_bMove_Forward && m_bCollision_Lerp == false)
 			{
 				m_bLerp = true;
 				m_fLerpTime = 0.f;
@@ -156,9 +156,6 @@ void CPlayer::Tick(_float fTimeDelta)
 
 		if (PRESSING == m_pGameInstance->Get_KeyState('S'))
 		{
-			m_bMove_Backward = true;
-			m_bMove = true;
-
 			/*if (m_bTurnAround == false)
 			{
 				m_bTurnAround = true;
@@ -169,6 +166,10 @@ void CPlayer::Tick(_float fTimeDelta)
 				m_vTurnAround_Look_Vector = Float4_Normalize(CamLook);
 				m_fTurnAround_Time = 0.f;
 			}*/
+
+			m_bMove_Backward = true;
+			m_bMove = true;
+
 			if (m_bLerp_Move == false)
 			{
 				m_bLerp_Move = true;
@@ -178,7 +179,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		}
 		else
 		{
-			if (m_bMove_Backward)
+			if (m_bMove_Backward && m_bCollision_Lerp == false)
 			{
 				m_bLerp = true;
 				m_fLerpTime = 0.f;
@@ -427,6 +428,12 @@ void CPlayer::Calc_Camera_Transform(_float fTimeDelta)
 	_vector vLookAtPos = XMLoadFloat4(&m_vCamera_LookAt_Point);
 	_vector vDelta = XMVector4Normalize(vLookAtPos - vCamPos);
 	XMStoreFloat4(&m_vRayDir, vDelta);
+
+	_vector vCharPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+	vCharPos = XMVectorSetY(vCharPos, XMVectorGetY(vCharPos) + 1.f);
+	_vector vCameraPos = XMLoadFloat4(&m_vCameraPosition);
+
+	m_fRayDist = XMVectorGetX(XMVector3Length(vCharPos - vCameraPos));
 }
 
 void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
@@ -662,31 +669,36 @@ void CPlayer::RayCasting_Camera()
 	_vector vRight = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT);
 	_vector vLookAtPoint;
 	_vector vPos = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION);
-	_float4 CamPos = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos);
+	_float4 CamPos = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fLerpAmount_Right) + XMVectorScale(XMVector4Normalize(vUp), m_fLerpAmount_Up) + XMVectorScale(XMVector4Normalize(vLook), m_fLerpAmount_Look);
+	//_float4 CamPos = m_pCamera->Get_Position_Float4();
 
 	_float4 BlockPoint;
 	_float4 TempPos;
-	TempPos.x = CamPos.x + (m_vRayDir.x * m_fRayDist);
-	TempPos.y = CamPos.y + (m_vRayDir.y * m_fRayDist);
-	TempPos.z = CamPos.z + (m_vRayDir.z * m_fRayDist);
+	//TempPos.x = CamPos.x + (m_vRayDir.x * m_fRayDist*1.5f);
+	//TempPos.y = CamPos.y + (m_vRayDir.y * m_fRayDist*1.5f);
+	//TempPos.z = CamPos.z + (m_vRayDir.z * m_fRayDist*1.5f);
+	//TempPos.w = 1.f;
+
+	TempPos = CamPos + (m_vRayDir * m_fRayDist);
 	TempPos.w = 1.f;
+
+	_float4 TempCamPos = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION);
+	TempCamPos.y = m_pCamera->Get_Position_Float4().y;
+	_float4 vTempDir = Float4_Normalize(m_pCamera->Get_Position_Float4() - TempCamPos);
 
 	m_vRayDir.x *= -1.f;
 	m_vRayDir.y *= -1.f;
 	m_vRayDir.z *= -1.f;
 
-	_float4 vRightDir = m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_RIGHT);
-	_float4 vLookDir = m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK);
-	vLookDir.y = 0.f;
-	_float4 vBackDir = -vLookDir;
-	_float4 vRightBack = vBackDir + vRightDir;
-	vRightBack = Float4_Normalize(vRightBack);
-
-	if (m_pGameInstance->SphereCast(TempPos, m_vRayDir, &BlockPoint, m_fRayDist*1.25f))
+	if (m_pGameInstance->SphereCast(TempPos, m_vRayDir, &BlockPoint, m_fRayDist))
 	{
 		m_fLerpTime = 0.f;
 		m_bCollision_Lerp = true;
 		m_bLerp = true;
+		m_bMove_Forward = false;
+		m_bMove_Backward = false;
+		m_bLerp_Move = false;
+		m_bMove = false;
 
 		m_vRayDir.x *= -1.f;
 		m_vRayDir.y *= -1.f;
@@ -695,13 +707,19 @@ void CPlayer::RayCasting_Camera()
 		auto Position = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 		Position.y = m_vCameraPosition.y;
 		_float4 DeltaDir = Float4_Normalize(Position - BlockPoint);
-		BlockPoint.x += DeltaDir.x * 0.2f;
-		BlockPoint.y += DeltaDir.y * 0.2f;
-		BlockPoint.z += DeltaDir.z * 0.2f;
+		BlockPoint.x += DeltaDir.x * 0.3f;
+		BlockPoint.y += DeltaDir.y * 0.3f;
+		BlockPoint.z += DeltaDir.z * 0.3f;
 
 		auto vCharacterPos = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION) - BlockPoint;
 
 		m_pCamera->SetPosition(BlockPoint);
+	}
+	else
+	{
+		m_vRayDir.x *= -1.f;
+		m_vRayDir.y *= -1.f;
+		m_vRayDir.z *= -1.f;
 	}
 }
 
