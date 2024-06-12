@@ -54,8 +54,8 @@ HRESULT CMonster::Initialize(void * pArg)
 	m_pNavigationCom->FindCell(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
 	_int iCurrentIndex = m_pNavigationCom->GetCurrentIndex();
 	
-	m_pPathFinder->Initiate_PathFinding(iCurrentIndex, iCurrentIndex + 100, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-	m_vNextTarget = m_pPathFinder->GetNextTarget_Opt();
+	m_pPathFinder->Initiate_PathFinding(iCurrentIndex, iCurrentIndex + 110, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+	m_vNextTarget = m_pPathFinder->GetNextTarget();
 
 	m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 	m_vDir.w = 0.f;
@@ -72,21 +72,24 @@ void CMonster::Tick(_float fTimeDelta)
 
 	if (m_bArrived == false)
 	{
+		m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+		m_vDir.w = 0.f;
+
 		_float4 vDelta = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) - m_vNextTarget;
 		vDelta.y = 0.f;
 
-		if (XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta))) < 0.5f)
+		if (XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta))) < 0.35f)
 		{
 			m_bArrived = true;
 		}
 		else
 		{
-			m_pController->Move(m_vDir * 0.01f, fTimeDelta);
+			m_pController->Move(m_vDir * 0.03f, fTimeDelta);
 		}
 	}
 	else
 	{
-		m_vNextTarget = m_pPathFinder->GetNextTarget_Opt();
+		m_vNextTarget = m_pPathFinder->GetNextTarget();
 		m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 		m_vDir.w = 0.f;
 	
