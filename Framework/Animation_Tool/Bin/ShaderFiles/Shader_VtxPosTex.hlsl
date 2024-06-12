@@ -9,7 +9,6 @@ texture2D g_MaskTexture;
 texture2D g_MaskSub_Texture;
 texture2D g_DepthTexture;
 
-bool g_SelectColor, g_GreenColor;
 float fDepthValue = 1000.f;
 
 // PS

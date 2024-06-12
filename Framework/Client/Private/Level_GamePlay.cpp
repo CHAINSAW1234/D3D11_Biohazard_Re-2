@@ -299,8 +299,16 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 	
-	return S_OK;
 
+	///* 7. Tab_Widow */
+	//CUI::UI_DESC UIDesc = {};
+	//UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.9f };
+	//UIDesc.vSize = { g_iWinSizeX * 1.f, g_iWinSizeY * 1.f };
+	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
+	//	return E_FAIL;
+
+
+	return S_OK;
 }
 
 void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName, CGameObject* pGameParentsObj, wstring fileName, _int iWhich_Child)
