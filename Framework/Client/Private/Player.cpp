@@ -58,7 +58,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
-	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.3f, 5.f, 1.f), &m_iIndex_CCT, this,1.f,0.35f);
+	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.3f, 5.f, 1.f), &m_iIndex_CCT, this, 1.f, 0.45f);
 
 	//For Camera.
 	m_pTransformCom_Camera = CTransform::Create(m_pDevice, m_pContext);
@@ -131,14 +131,8 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	if (m_pController)
 	{
-		if (PRESSING == m_pGameInstance->Get_KeyState('U'))
+		if (PRESSING == m_pGameInstance->Get_KeyState('W'))
 		{
-			_vector      vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
-			vLook = { XMVectorScale(XMVector3Normalize(vLook),0.03f) };
-			_vector      vMoveDir = { vLook };
-
-			vMovedDirection += vMoveDir;			
-
 			m_bMove_Forward = true;
 			m_bMove = true;
 
@@ -160,14 +154,8 @@ void CPlayer::Tick(_float fTimeDelta)
 			m_bMove_Forward = false;
 		}
 
-		if (PRESSING == m_pGameInstance->Get_KeyState('J'))
+		if (PRESSING == m_pGameInstance->Get_KeyState('S'))
 		{
-			_vector      vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
-			vLook = { XMVectorScale(XMVector3Normalize(vLook),0.03f) };
-			_vector      vMoveDir = { -vLook };
-
-			vMovedDirection += vMoveDir;
-
 			m_bMove_Backward = true;
 			m_bMove = true;
 
@@ -341,6 +329,7 @@ void CPlayer::Calc_Camera_Transform(_float fTimeDelta)
 
 	auto Pos = m_pCamera->Get_Position_Float4();
 
+
 	if (m_bMove_Forward)
 	{
 		if (m_bAim)
@@ -400,6 +389,7 @@ void CPlayer::Calc_Camera_Transform(_float fTimeDelta)
 			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos);
 		}
 	}
+
 
 	if (m_bCollision_Lerp == false)
 	{
@@ -667,11 +657,18 @@ void CPlayer::Load_CameraPosition()
 
 void CPlayer::RayCasting_Camera()
 {
+	_vector vLook = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_LOOK);
+	_vector vUp = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_UP);
+	_vector vRight = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT);
+	_vector vLookAtPoint;
+	_vector vPos = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION);
+	_float4 CamPos = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos);
+
 	_float4 BlockPoint;
 	_float4 TempPos;
-	TempPos.x = m_vCameraPosition.x + (m_vRayDir.x * m_fRayDist*1.5f);
-	TempPos.y = m_vCameraPosition.y + (m_vRayDir.y * m_fRayDist*1.5f);
-	TempPos.z = m_vCameraPosition.z + (m_vRayDir.z * m_fRayDist*1.5f);
+	TempPos.x = CamPos.x + (m_vRayDir.x * m_fRayDist);
+	TempPos.y = CamPos.y + (m_vRayDir.y * m_fRayDist);
+	TempPos.z = CamPos.z + (m_vRayDir.z * m_fRayDist);
 	TempPos.w = 1.f;
 
 	m_vRayDir.x *= -1.f;
@@ -685,7 +682,7 @@ void CPlayer::RayCasting_Camera()
 	_float4 vRightBack = vBackDir + vRightDir;
 	vRightBack = Float4_Normalize(vRightBack);
 
-	if (m_pGameInstance->SphereCast(TempPos, m_vRayDir, &BlockPoint, m_fRayDist))
+	if (m_pGameInstance->SphereCast(TempPos, m_vRayDir, &BlockPoint, m_fRayDist*1.25f))
 	{
 		m_fLerpTime = 0.f;
 		m_bCollision_Lerp = true;
@@ -698,18 +695,11 @@ void CPlayer::RayCasting_Camera()
 		auto Position = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 		Position.y = m_vCameraPosition.y;
 		_float4 DeltaDir = Float4_Normalize(Position - BlockPoint);
-		BlockPoint.x += DeltaDir.x * 0.33f;
-		BlockPoint.y += DeltaDir.y * 0.33f;
-		BlockPoint.z += DeltaDir.z * 0.33f;
-
-		//BlockPoint.x += m_vRayDir.x * 0.33f;
-		//BlockPoint.y += m_vRayDir.y * 0.33f;
-		//BlockPoint.z += m_vRayDir.z * 0.33f;
+		BlockPoint.x += DeltaDir.x * 0.2f;
+		BlockPoint.y += DeltaDir.y * 0.2f;
+		BlockPoint.z += DeltaDir.z * 0.2f;
 
 		auto vCharacterPos = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION) - BlockPoint;
-		//m_fLerpAmount_Right = vCharacterPos.x;
-		//m_fLerpAmount_Up = abs(vCharacterPos.y);
-		//m_fLerpAmount_Look = -abs(vCharacterPos.z);
 
 		m_pCamera->SetPosition(BlockPoint);
 	}
@@ -891,7 +881,7 @@ void CPlayer::Free()
 	Safe_Release(m_pFSMCom);
 	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pTransformCom_Camera);
-	
+
 	for (auto& pPartObject : m_PartObjects)
 		Safe_Release(pPartObject);
 	m_PartObjects.clear();
