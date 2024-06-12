@@ -18,6 +18,7 @@
 #include "Customize_UI.h"
 #include "CustomCollider.h"
 #include "NavMesh_Debug.h"
+#include"Map.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -191,7 +192,10 @@ HRESULT CLoader::Load_Prototype(const wstring& filePath)
 
 		m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext,Inform->strModelPath.c_str(), XMMatrixIdentity()));
 
-		m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CProps::Create(m_pDevice, m_pContext));
+		if(Inform->wstrGameObjectPrototypeName.find(TEXT("Marge")) != wstring::npos)
+			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CProps::Create(m_pDevice, m_pContext));
+		else
+			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CMap::Create(m_pDevice, m_pContext));
 
 
 		Safe_Delete(Inform);
@@ -370,12 +374,16 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxInstance_Point.hlsl"), VTXINSTANCE_POINT::Elements, VTXINSTANCE_POINT::iNumElements))))
 		return E_FAIL;
 
+
+	m_strLoadingText = TEXT("Now Loading ... Object");
+
 #pragma region YeEun Add
 	if (FAILED(Load_Prototype(TEXT("../Bin/Data/Level_Test/Make_Prototype.dat"))))
 		return E_FAIL;
 #pragma endregion
 
-	m_strLoadingText = TEXT("Now Loading ... Object");
+
+
 	/* For.Prototype_GameObject_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
 		CTerrain::Create(m_pDevice, m_pContext))))

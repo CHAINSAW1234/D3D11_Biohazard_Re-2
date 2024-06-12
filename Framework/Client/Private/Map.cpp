@@ -1,27 +1,27 @@
 #include "stdafx.h"
-#include "Props.h"
+#include "Map.h"
 #include "Model.h"
 #include "GameInstance.h"
 #include "Light.h"
-//#include "Octree.h"
+#include "Octree.h"
 #include"Player.h"
-CProps::CProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CMap::CMap(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
 }
 
-CProps::CProps(const CProps& rhs)
+CMap::CMap(const CMap& rhs)
 	: CGameObject{ rhs }
 {
 
 }
 
-HRESULT CProps::Initialize_Prototype()
+HRESULT CMap::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CProps::Initialize(void* pArg)
+HRESULT CMap::Initialize(void* pArg)
 {
 	PROPS_DESC* pObj_desc = (PROPS_DESC*)pArg;
 
@@ -64,7 +64,7 @@ HRESULT CProps::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CProps::Tick(_float fTimeDelta)
+void CMap::Tick(_float fTimeDelta)
 {
 	m_fTimeTest += fTimeDelta;
 	if (m_pPlayer == nullptr)
@@ -75,7 +75,7 @@ void CProps::Tick(_float fTimeDelta)
 		m_bShadow = !m_bShadow;
 }
 
-void CProps::Late_Tick(_float fTimeDelta)
+void CMap::Late_Tick(_float fTimeDelta)
 {
 	if (m_pPlayer->Get_Player_RegionChange() == true)
 	{
@@ -92,7 +92,7 @@ void CProps::Late_Tick(_float fTimeDelta)
 		m_bVisible = m_tagPropDesc.BelongIndexs2[m_pPlayer->Get_Player_ColIndex()];
 	}
 
-	if (/*m_bVisible && *//*1*/true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f))
+	if (/*m_bVisible && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f)*/1)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
@@ -105,7 +105,7 @@ void CProps::Late_Tick(_float fTimeDelta)
 	}
 }
 
-HRESULT CProps::Render()
+HRESULT CMap::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -185,7 +185,7 @@ HRESULT CProps::Render()
 	return S_OK;
 }
 
-HRESULT CProps::Render_LightDepth_Dir()
+HRESULT CMap::Render_LightDepth_Dir()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -221,7 +221,7 @@ HRESULT CProps::Render_LightDepth_Dir()
 	return S_OK;
 }
 
-HRESULT CProps::Render_LightDepth_Spot()
+HRESULT CMap::Render_LightDepth_Spot()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -257,7 +257,7 @@ HRESULT CProps::Render_LightDepth_Spot()
 	return S_OK;
 }
 
-HRESULT CProps::Render_LightDepth_Point()
+HRESULT CMap::Render_LightDepth_Point()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -299,7 +299,7 @@ HRESULT CProps::Render_LightDepth_Point()
 	return S_OK;
 }
 
-HRESULT CProps::Add_Components()
+HRESULT CMap::Add_Components()
 {
 	if (m_tagPropDesc.bAnim)
 	{
@@ -322,7 +322,7 @@ HRESULT CProps::Add_Components()
 	return S_OK;
 }
 
-HRESULT CProps::Bind_ShaderResources()
+HRESULT CMap::Bind_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -338,13 +338,13 @@ HRESULT CProps::Bind_ShaderResources()
 	return S_OK;
 }
 
-CProps* CProps::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CMap* CMap::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CProps* pInstance = new CProps(pDevice, pContext);
+	CMap* pInstance = new CMap(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX(TEXT("Failed To Created : CProps"));
+		MSG_BOX(TEXT("Failed To Created : CMap"));
 
 		Safe_Release(pInstance);
 	}
@@ -353,13 +353,13 @@ CProps* CProps::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 }
 
-CGameObject* CProps::Clone(void* pArg)
+CGameObject* CMap::Clone(void* pArg)
 {
-	CProps* pInstance = new CProps(*this);
+	CMap* pInstance = new CMap(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX(TEXT("Failed To Created : CProps"));
+		MSG_BOX(TEXT("Failed To Created : CMap"));
 
 		Safe_Release(pInstance);
 	}
@@ -367,10 +367,11 @@ CGameObject* CProps::Clone(void* pArg)
 	return pInstance;
 }
 
-void CProps::Free()
+void CMap::Free()
 {
 	__super::Free();
 
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
+	Safe_Release(m_pOctree);
 }

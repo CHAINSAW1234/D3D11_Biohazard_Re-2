@@ -6,11 +6,12 @@
 BEGIN(Engine)
 class CModel;
 class CShader;
+class COctree;
 END
 
 BEGIN(Client)
 
-class CProps final : public CGameObject
+class CMap final : public CGameObject
 {
 public:
 	const static _int iMaxNum = 50;
@@ -21,9 +22,9 @@ public:
 		_int iPropsType;
 	}PROPS_DESC;
 private:
-	CProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CProps(const CProps& rhs);
-	virtual ~CProps() = default;
+	CMap(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CMap(const CMap& rhs);
+	virtual ~CMap() = default;
 
 public:
 	virtual HRESULT				Initialize_Prototype() override;
@@ -48,12 +49,16 @@ private:
 	PROPS_DESC 					m_tagPropDesc ={};
 
 
+
+
+
+	COctree*					m_pOctree = { nullptr };
 private:
 	HRESULT						Add_Components();
 	HRESULT						Bind_ShaderResources();
 
 public:
-	static CProps* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CMap* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
