@@ -669,9 +669,9 @@ void CPlayer::RayCasting_Camera()
 {
 	_float4 BlockPoint;
 	_float4 TempPos;
-	TempPos.x = m_vCameraPosition.x + (m_vRayDir.x * m_fRayDist);
-	TempPos.y = m_vCameraPosition.y + (m_vRayDir.y * m_fRayDist);
-	TempPos.z = m_vCameraPosition.z + (m_vRayDir.z * m_fRayDist);
+	TempPos.x = m_vCameraPosition.x + (m_vRayDir.x * m_fRayDist*1.5f);
+	TempPos.y = m_vCameraPosition.y + (m_vRayDir.y * m_fRayDist*1.5f);
+	TempPos.z = m_vCameraPosition.z + (m_vRayDir.z * m_fRayDist*1.5f);
 	TempPos.w = 1.f;
 
 	m_vRayDir.x *= -1.f;
