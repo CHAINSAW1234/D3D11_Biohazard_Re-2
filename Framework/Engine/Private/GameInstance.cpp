@@ -964,9 +964,9 @@ _vector CGameInstance::Compute_WorldPos(const _float2 & vViewportPos, const wstr
 #pragma endregion
 
 #pragma region Physics_Controller
-void CGameInstance::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
+void CGameInstance::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,CTransform* pTransform)
 {
-	m_pPhysics_Controller->Cook_Mesh(pVertices, pIndices, VertexNum, IndexNum);
+	m_pPhysics_Controller->Cook_Mesh(pVertices, pIndices, VertexNum, IndexNum, pTransform);
 }
 
 _matrix CGameInstance::GetWorldMatrix_Rigid_Dynamic(_int Index)

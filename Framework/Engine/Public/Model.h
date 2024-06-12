@@ -182,7 +182,7 @@ private:
 	vector<_float4x4>						Compute_ResultMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer);
 
 public:		/* For.Cooking_Mesh */
-	void									Static_Mesh_Cooking();
+	void									Static_Mesh_Cooking(class CTransform* pTransform = nullptr);
 
 private:
 	_int									Find_BoneIndex(const string& strBoneTag);

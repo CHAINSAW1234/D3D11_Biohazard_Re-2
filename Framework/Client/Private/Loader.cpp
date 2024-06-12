@@ -192,7 +192,7 @@ HRESULT CLoader::Load_Prototype(const wstring& filePath)
 
 		m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext,Inform->strModelPath.c_str(), XMMatrixIdentity()));
 
-		if(Inform->wstrGameObjectPrototypeName.find(TEXT("Marge")) != wstring::npos)
+		if(Inform->wstrGameObjectPrototypeName.find(TEXT("Merge")) == wstring::npos)
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CProps::Create(m_pDevice, m_pContext));
 		else
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CMap::Create(m_pDevice, m_pContext));

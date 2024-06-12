@@ -1732,11 +1732,11 @@ void CModel::Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& Trans
 	}
 }
 
-void CModel::Static_Mesh_Cooking()
+void CModel::Static_Mesh_Cooking(CTransform* pTransform)
 {
 	for (int i = 0; i < m_Meshes.size(); ++i)
 	{
-		m_Meshes[i]->Static_Mesh_Cooking();
+		m_Meshes[i]->Static_Mesh_Cooking(pTransform);
 	}
 }
 
