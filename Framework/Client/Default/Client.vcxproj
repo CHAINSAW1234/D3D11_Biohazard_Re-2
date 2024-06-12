@@ -188,6 +188,9 @@
     <ClInclude Include="..\Public\Monster.h" />
     <ClInclude Include="..\Public\NavMesh_Debug.h" />
     <ClInclude Include="..\public\Player.h" />
+    <ClInclude Include="..\Public\Player_State_Move.h" />
+    <ClInclude Include="..\Public\Player_State_Move_Idle.h" />
+    <ClInclude Include="..\Public\Player_State_Move_Walk.h" />
     <ClInclude Include="..\Public\Props.h" />
     <ClInclude Include="..\Public\Sky.h" />
     <ClInclude Include="..\Public\Terrain.h" />
@@ -216,6 +219,9 @@
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\Private\NavMesh_Debug.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
+    <ClCompile Include="..\Private\Player_State_Move.cpp" />
+    <ClCompile Include="..\Private\Player_State_Move_Idle.cpp" />
+    <ClCompile Include="..\Private\Player_State_Move_Walk.cpp" />
     <ClCompile Include="..\Private\Props.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />

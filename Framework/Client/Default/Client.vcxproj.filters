@@ -100,6 +100,30 @@
     <Filter Include="02.GameObjects\NavMesh_Debug">
       <UniqueIdentifier>{46a49323-d9a7-4d23-ad31-69ab387de648}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\State">
+      <UniqueIdentifier>{04af3364-0a83-49cc-b58e-1d124038f915}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move">
+      <UniqueIdentifier>{1fcbbdb0-b683-441f-8565-7169b77c8d1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Hold">
+      <UniqueIdentifier>{cf681df5-8c32-45b1-bb54-bccd9a0f60c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Damg">
+      <UniqueIdentifier>{94d3ab13-025c-408b-87af-20b5e8b80ac8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Idle">
+      <UniqueIdentifier>{b4b9c127-305b-47ed-a413-5006646ae188}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk">
+      <UniqueIdentifier>{4e0e6223-09b1-4c48-9724-01b3f455e51e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog">
+      <UniqueIdentifier>{463a6a2f-4232-4fcc-a625-804da3e0d700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Stair">
+      <UniqueIdentifier>{7b41809a-15c9-4a70-9130-c77c3c7123e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -189,6 +213,15 @@
     <ClInclude Include="..\Public\NavMesh_Debug.h">
       <Filter>02.GameObjects\NavMesh_Debug</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move_Idle.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move_Walk.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -262,6 +295,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\NavMesh_Debug.cpp">
       <Filter>02.GameObjects\NavMesh_Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_Idle.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_Walk.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

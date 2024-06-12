@@ -35,8 +35,6 @@ private:
 	CShader*				m_pShaderCom = { nullptr };
 	CCollider*				m_pColliderCom = { nullptr };
 
-	const _ubyte*			m_pState;
-
 	_bool					m_bRagdoll = { false };
 	_bool					m_bRagdoll_Ready = { false };
 private:

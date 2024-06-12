@@ -28,4 +28,3 @@ typedef struct Tag_Prototype_Inform
 	string		strGameObjectPrototypeName = { ("") }; // 이것은 IMGUI가 멍청해서 있는 것
 
 }PROTOTYPE_INFORM;
-

@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "..\Public\Player.h"
 
+#include "FSM.h"
+#include "Player_State_Move.h"
+
 
 #include "Body_Player.h"
 #include "Head_Player.h"
@@ -41,13 +44,15 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
-	if (FAILED(Add_Components()))
-		return E_FAIL;
-
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
 
+
+
 	if (FAILED(Initialize_PartModels()))
+		return E_FAIL;
+
+	if (FAILED(Add_Components()))
 		return E_FAIL;
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f, 1.f));
@@ -208,6 +213,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_bLerp_Move = false;
 		m_bMove = false;
 	}
+
 #pragma region Camera
 
 	if (m_pCamera)
@@ -238,6 +244,11 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 #pragma endregion
 
+#pragma endregion
+
+
+#pragma region 현진 추가
+	m_pFSMCom->Update(fTimeDelta);
 #pragma endregion
 
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
@@ -300,6 +311,18 @@ void CPlayer::Col_Section()
 
 		}
 	}*/
+}
+
+#pragma endregion
+
+#pragma region 현진 추가
+CModel* CPlayer::Get_Body_Model()
+{
+	return static_cast<CModel*>(m_PartObjects[0]->Get_Component(g_strModelTag));
+}
+void CPlayer::Change_State(STATE eState)
+{
+	m_pFSMCom->Change_State(eState);
 }
 #pragma endregion
 
@@ -718,6 +741,22 @@ HRESULT CPlayer::Add_Components()
 		TEXT("Com_Navigation"), (CComponent**)&m_pNavigationCom, &NavigationDesc)))
 		return E_FAIL;
 
+	if (FAILED(Add_FSM_States()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CPlayer::Add_FSM_States()
+{
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_FSM"),
+		TEXT("Com_FSM"), (CComponent**)&m_pFSMCom)))
+		return E_FAIL;
+
+
+	m_pFSMCom->Add_State(MOVE, CPlayer_State_Move::Create(this));
+	m_pFSMCom->Change_State(MOVE);
+
 	return S_OK;
 }
 
@@ -853,10 +892,10 @@ void CPlayer::Free()
 	__super::Free();
 
 	Safe_Release(m_pNavigationCom);
-
+	Safe_Release(m_pFSMCom);
 	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pTransformCom_Camera);
-
+	
 	for (auto& pPartObject : m_PartObjects)
 		Safe_Release(pPartObject);
 	m_PartObjects.clear();

@@ -31,8 +31,6 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	if (nullptr == m_pRootTranslation)
 		return E_FAIL;
 
-	m_pState = pDesc->pState;
-
 	if (FAILED(__super::Initialize(pDesc)))
 		return E_FAIL;
 
@@ -65,7 +63,6 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//Lower 33
 
 	_matrix         WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
-
 	_vector         vLook = { WorldMatrix.r[CTransform::STATE_LOOK] };
 	_vector         vPosition = { WorldMatrix.r[CTransform::STATE_POSITION] };
 
@@ -75,7 +72,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	m_pColliderCom->Tick(WorldMatrix);
 
-	static _uint iAnimIndex = { 0 };
+	/*static _uint iAnimIndex = { 0 };
 	if (UP == m_pGameInstance->Get_KeyState(VK_UP))
 	{
 		++iAnimIndex;
@@ -88,9 +85,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 		--iAnimIndex;
 		if (1000000 < iAnimIndex)
 			iAnimIndex = 0;
-	}
-
-	m_pModelCom->Set_TickPerSec(iAnimIndex, 40.f);
+	}*/
 
 	static _float fWeight = { 1.f };
 	static _float fMoveHieght = { 0.f };
@@ -141,12 +136,12 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	m_pModelCom->Set_BlendWeight(0, 1.f);
 
-	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
+	//m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 
 
-	static _bool		isSetRootXZ = false;
-	static _bool		isSetRootRotation = false;
-	static _bool		isSetRootY = false;
+	static _bool		isSetRootXZ = true;
+	static _bool		isSetRootRotation = true;
+	static _bool		isSetRootY = true;
 	if (UP == m_pGameInstance->Get_KeyState('I'))
 	{
 		isSetRootY = !isSetRootY;

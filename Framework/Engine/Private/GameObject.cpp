@@ -104,6 +104,19 @@ HRESULT CGameObject::Add_Component(_uint iLevelIndex, const wstring& strPrototyp
 	return S_OK;
 }
 
+HRESULT CGameObject::Add_Component(const wstring& strComponentTag, CComponent* pComponent)
+{
+	auto	iter = m_Components.find(strComponentTag);
+	if (iter != m_Components.end())
+		return E_FAIL;
+
+	m_Components.emplace(strComponentTag, pComponent);
+
+	Safe_AddRef(pComponent);
+
+	return S_OK;
+}
+
 void CGameObject::Free()
 {
 	__super::Free();
