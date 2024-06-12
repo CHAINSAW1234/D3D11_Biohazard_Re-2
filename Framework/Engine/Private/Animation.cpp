@@ -1,6 +1,7 @@
 #include "Animation.h"
 #include "Channel.h"
 #include "Bone.h"
+#include "PlayingInfo.h"
 
 CAnimation::CAnimation()
 {
@@ -20,10 +21,7 @@ CAnimation::CAnimation(const CAnimation& rhs)
 	}
 	//  이름 복사
 	strcpy_s(m_szName, rhs.m_szName);
-
-	m_CurrentKeyFrameIndices.resize(m_iNumChannels);
 }
-
 HRESULT CAnimation::Initialize(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices)
 {
 	strcpy_s(m_szName, pAIAnimation->mName.data);
@@ -33,8 +31,6 @@ HRESULT CAnimation::Initialize(const aiAnimation* pAIAnimation, const map<string
 
 	/* 이 애니메이션은 몇 개의 뼈를 컨트롤 하는가 */
 	m_iNumChannels = pAIAnimation->mNumChannels;
-
-	m_CurrentKeyFrameIndices.resize(m_iNumChannels);
 
 	for (size_t i = 0; i < m_iNumChannels; ++i)
 	{
@@ -56,8 +52,6 @@ HRESULT CAnimation::Initialize(const ANIM_DESC& AnimDesc)
 	m_fTickPerSecond = AnimDesc.fTickPerSecond;
 	m_iNumChannels = AnimDesc.iNumChannels;
 
-	m_CurrentKeyFrameIndices.resize(m_iNumChannels);
-
 	for (size_t i = 0; i < m_iNumChannels; ++i)
 	{
 		CChannel* pChannel = CChannel::Create(AnimDesc.ChannelDescs[i]);
@@ -70,38 +64,50 @@ HRESULT CAnimation::Initialize(const ANIM_DESC& AnimDesc)
 	return S_OK;
 }
 
-void CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _bool* pFirstTick)
+void CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _bool* pFirstTick, CPlayingInfo* pPlayingInfo)
 {
-	m_isFinished = false;
+	_bool		isFinished = false;
+	_float		fTrackPosition = { pPlayingInfo->Get_TrackPosition() };
 
-	if (m_fTrackPosition == 0.f)
+	if (fTrackPosition == 0.f)
 	{
 		*pFirstTick = true;
 	}
+
 	else
 	{
 		*pFirstTick = false;
 	}
 
-	m_fTrackPosition += m_fTickPerSecond * fTimeDelta;
+	fTrackPosition += m_fTickPerSecond * fTimeDelta;
 
-	if (m_fDuration <= m_fTrackPosition)
+	if (m_fDuration <= fTrackPosition)
 	{
 		if (false == isLoop)
 		{
-			m_isFinished = true;
+			isFinished = true;
 			return;
 		}
 
-		m_fTrackPosition = 0.f;
+		fTrackPosition = 0.f;
 		*pFirstTick = true;
 	}
 
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
+		_uint			iBoneIndex = { m_Channels[i]->Get_BoneIndex() };
+		_int			iKeyFrameIndex = { pPlayingInfo->Get_KeyFrameIndex(iBoneIndex) };
+		if (-1 == iKeyFrameIndex)
+			continue;
+
 		/* 이 뼈의 상태행렬을 만들어서 CBone의 TransformationMatrix를 바꿔라. */
-		m_Channels[i]->Invalidate_TransformationMatrix(Bones, m_fTrackPosition, &m_CurrentKeyFrameIndices[i]);
+		m_Channels[i]->Invalidate_TransformationMatrix(Bones, fTrackPosition, &iKeyFrameIndex);
+
+		pPlayingInfo->Set_KeyFrameIndex(iBoneIndex, iKeyFrameIndex);
 	}
+
+	pPlayingInfo->Set_TrackPosition(fTrackPosition);
+	pPlayingInfo->Set_Finished(isFinished);
 }
 
 void CAnimation::Invalidate_TransformationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, const vector<class CBone*>& Bones, const vector<KEYFRAME>& LastKeyFrames)
@@ -112,11 +118,16 @@ void CAnimation::Invalidate_TransformationMatrix_LinearInterpolation(_float fAcc
 	}
 }
 
-vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _bool isLoop, _uint iNumBones, set<_uint>& IncludedBoneIndices, _bool* pFirstTick)
+vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _uint iNumBones, const set<_uint>& IncludedBoneIndices, _bool* pFirstTick, CPlayingInfo* pPlayingInfo)
 {
-	m_isFinished = false;
+	vector<_float4x4>			TransformationMatrices;
+	_bool						isFinished = false;
+	_float						fTrackPosition = { pPlayingInfo->Get_TrackPosition() };
+	_bool						isLoop = { pPlayingInfo->Is_Loop() };
 
-	if (m_fTrackPosition == 0.f)
+	TransformationMatrices.resize(iNumBones);
+
+	if (fTrackPosition == 0.f)
 	{
 		*pFirstTick = true;
 	}
@@ -125,37 +136,64 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _b
 		*pFirstTick = false;
 	}
 
-	m_fTrackPosition += m_fTickPerSecond * fTimeDelta;
+	fTrackPosition += m_fTickPerSecond * fTimeDelta;
 
-	if (m_fDuration <= m_fTrackPosition)
+	if (m_fDuration <= fTrackPosition)
 	{
 		if (false == isLoop)
 		{
-			m_isFinished = true;
-			return vector<_float4x4>();
+			isFinished = true;
+			pPlayingInfo->Set_Finished(isFinished);
+
+			vector<KEYFRAME>			LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
+
+			for(_uint iBoneIndex = 0; iBoneIndex < iNumBones; ++iBoneIndex)
+			{
+				KEYFRAME		LastKeyFrame = { LastKeyFrames[iBoneIndex] };
+
+				_vector			vQuaternion = { XMLoadFloat4(&LastKeyFrame.vRotation) };
+				_vector			vTranslation = { XMVectorSetW(XMLoadFloat3(&LastKeyFrame.vTranslation), 1.f) };
+				_vector			vScale = { XMLoadFloat3(&LastKeyFrame.vScale) };
+
+				_matrix			TransformationMatrix = { XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation) };
+
+				TransformationMatrices[iBoneIndex] = TransformationMatrix;
+			}
+
+			return TransformationMatrices;
 		}
 
-		m_fTrackPosition = 0.f;
+		fTrackPosition = 0.f;
 		*pFirstTick = true;
 	}
-
-	vector<_float4x4>			TransformationMatrices;
-	TransformationMatrices.resize(iNumBones);
 
 	for (auto& TransformationMatrix : TransformationMatrices)
 	{
 		XMStoreFloat4x4(&TransformationMatrix, XMMatrixIdentity());
 	}
 
-	for (_uint i = 0; i < m_iNumChannels; ++i)
+	for (_uint iChannelIndex = 0; iChannelIndex < m_iNumChannels; ++iChannelIndex)
 	{
 		/* 이 뼈의 상태행렬을 만들어서 CBone의 TransformationMatrix를 바꿔라. */
-		_uint				iBoneIndex = {0};
-		_float4x4			TransformationFloat4x4 = { m_Channels[i]->Compute_TransformationMatrix(m_fTrackPosition, &m_CurrentKeyFrameIndices[i], &iBoneIndex) };
-		TransformationMatrices[iBoneIndex] = TransformationFloat4x4;
+		_uint			iBoneIndex = { m_Channels[iChannelIndex]->Get_BoneIndex() };
+		_int			iKeyFrameIndex = { pPlayingInfo->Get_KeyFrameIndex(iChannelIndex) };
 
-		IncludedBoneIndices.insert(iBoneIndex);
+		set<_uint>::iterator		iter = { IncludedBoneIndices.find(iBoneIndex) };
+		if (iter == IncludedBoneIndices.end())
+			continue;
+
+		if (-1 == iKeyFrameIndex)
+			continue;
+
+		_float4x4			TransformationFloat4x4 = { m_Channels[iChannelIndex]->Compute_TransformationMatrix(fTrackPosition, &iKeyFrameIndex) };
+
+		TransformationMatrices[iBoneIndex] = TransformationFloat4x4;
+		pPlayingInfo->Set_KeyFrameIndex(iChannelIndex, iKeyFrameIndex);
 	}
+
+
+	pPlayingInfo->Set_TrackPosition(fTrackPosition);
+	pPlayingInfo->Set_Finished(isFinished);
 
 	return TransformationMatrices;
 }
@@ -164,8 +202,8 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix_LinearInterpolation(_
 {
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
-		_uint		iBoneIndex = { 0 };
-		_float4x4			TransformationFloat4x4 = { m_Channels[i]->Compute_TransformationMatrix_LinearInterpolation(TransformationMatrices, fAccLinearInterpolation, fTotalLinearTime, &iBoneIndex, LastKeyFrames) };
+		_uint				iBoneIndex = { m_Channels[i]->Get_BoneIndex() };
+		_float4x4			TransformationFloat4x4 = { m_Channels[i]->Compute_TransformationMatrix_LinearInterpolation(TransformationMatrices, fAccLinearInterpolation, fTotalLinearTime, LastKeyFrames) };
 		TransformationMatrices[iBoneIndex] = TransformationFloat4x4;
 	}
 

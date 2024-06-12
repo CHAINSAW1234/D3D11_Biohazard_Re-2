@@ -99,7 +99,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	m_strLoadingText = TEXT("텍스쳐를(을) 로딩 중 입니다.");
 	/* Prototype_Component_Texture_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile%d.dds"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile%d.dds"), 1))))
 		return E_FAIL;
 
 	/*Prototype_Component_Texture_Mask*/
@@ -117,12 +117,13 @@ HRESULT CLoader::Loading_For_GamePlay()
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 
 	/* Prototype_Component_police_holl */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_police_holl"),
+	/*if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_police_holl"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/map/police_holl.fbx",
 			TransformMatrix))))
-		return E_FAIL;
+		return E_FAIL;*/
 
-	/* Prototype_Component_Model_LeonBody */
+#pragma region Player
+		/* Prototype_Component_Model_LeonBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonBody"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonBody.fbx",
 			LeonTransformMatrix))))
@@ -139,6 +140,42 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonHair.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Monster
+
+	/* Prototype_Component_Model_ZombieBody */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieBody"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Body.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_ZombieFace */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieFace"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Face.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_ZombieHat */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieHat"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Hat.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_ZombieShirts */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieShirts"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Shirts.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_ZombiePants */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombiePants"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Pants.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+#pragma endregion
 
 
 	/* Prototype_Component_VIBuffer_Terrain */

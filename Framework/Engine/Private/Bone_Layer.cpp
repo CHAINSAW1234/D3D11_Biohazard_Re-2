@@ -27,13 +27,13 @@ _bool CBone_Layer::Is_Included(_uint iBoneIndex)
 
 CBone_Layer* CBone_Layer::Create(const set<_uint>& BoneIndices)
 {
-	CBone_Layer*		pInstance = { new CBone_Layer() };
-	
+	CBone_Layer* pInstance = { new CBone_Layer() };
+
 	if (FAILED(pInstance->Initialize(BoneIndices)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CBone_Layer"));
 
-		Safe_Release(pInstance);		
+		Safe_Release(pInstance);
 	}
 
 	return pInstance;

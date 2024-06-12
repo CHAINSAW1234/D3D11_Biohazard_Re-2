@@ -27,18 +27,11 @@ HRESULT CHair_Player::Initialize(void* pArg)
 	pDesc->fSpeedPerSec = 10.f;
 	pDesc->fRotationPerSec = XMConvertToRadians(90.0f);
 
-	m_pState = pDesc->pState;
-
 	if (FAILED(__super::Initialize(pDesc)))
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
-
-	CModel::ANIM_PLAYING_DESC		AnimDesc;
-	AnimDesc.iAnimIndex = 0;
-	AnimDesc.isLoop = true;
-	AnimDesc.strBoneLayerTag = TEXT("Default");
 
 	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 	list<_uint>		iBoneIndices;
@@ -47,8 +40,9 @@ HRESULT CHair_Player::Initialize(void* pArg)
 		iBoneIndices.emplace_back(i);
 	}
 
-	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
+	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Set_RootBone("RootNode");
 
 	vector<string>		BoneTags = { m_pModelCom->Get_BoneNames() };
 
@@ -193,7 +187,7 @@ void CHair_Player::Late_Tick(_float fTimeDelta)
 	}
 
 	_float3		vMoveDir = {};
-	m_pModelCom->Play_Animations_RootMotion(m_pTransformCom, fTimeDelta, &vMoveDir);
+	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &vMoveDir);
 	//	m_pModelCom->Play_Animations(fTimeDelta);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);

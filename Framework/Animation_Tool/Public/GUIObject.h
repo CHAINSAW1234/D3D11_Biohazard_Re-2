@@ -11,6 +11,8 @@
 #include "Tool_AnimPlayer.h"
 #include "Tool_PartObject.h"
 #include "Tool_BoneLayer.h"
+#include "Tool_IK.h"
+#include "Tool_EventInserter.h"
 
 BEGIN(Tool)
 

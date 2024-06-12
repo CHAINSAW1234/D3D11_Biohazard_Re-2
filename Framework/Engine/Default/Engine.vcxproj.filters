@@ -208,6 +208,15 @@
     <Filter Include="01.Utility\02.Components\Model\Bone_Layer">
       <UniqueIdentifier>{4daac0ca-6ab0-4b19-93bb-2d1c950bf21f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\12.FSM">
+      <UniqueIdentifier>{99aaf032-a00f-4c2f-a94e-916bd9843ea4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\12.FSM\FSM">
+      <UniqueIdentifier>{31d0a86e-fe17-40af-871c-0530f097fd64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\12.FSM\State">
+      <UniqueIdentifier>{9df33316-824c-41e2-a6e3-89c21a22c7ad}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01.Utility\97.Physics\RagDoll_Physics">
       <UniqueIdentifier>{53f52309-6dc1-4ba7-bd2d-6823e709cf86}</UniqueIdentifier>
     </Filter>
@@ -264,6 +273,21 @@
     </Filter>
     <Filter Include="01.Utility\AIController\AINavigator\PathFinder">
       <UniqueIdentifier>{4de5589f-2883-4d82-ba7b-597b27266129}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.Components\Model\IK_Solver">
+      <UniqueIdentifier>{32c90322-45a0-4684-8805-8cd3cb7cb7b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.Components\Model\PlayingInfo">
+      <UniqueIdentifier>{ae93129b-019c-42ed-a1ad-02c94bb80b6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.Components\Model\Animation_Layer">
+      <UniqueIdentifier>{869257e4-ce3f-476d-8606-dc666047a9f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.Components\Model\Bone_Layer">
+      <UniqueIdentifier>{4daac0ca-6ab0-4b19-93bb-2d1c950bf21f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.Components\FSM\HState">
+      <UniqueIdentifier>{fe575399-f059-49f7-ae13-46645922dd29}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -512,6 +536,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\PathFinder.cpp">
       <Filter>01.Utility\AIController\AINavigator\PathFinder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\IK_Solver.cpp">
+      <Filter>01.Utility\02.Components\Model\IK_Solver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayingInfo.cpp">
+      <Filter>01.Utility\02.Components\Model\PlayingInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Animation_Layer.cpp">
+      <Filter>01.Utility\02.Components\Model\Animation_Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FSM_HState.cpp">
+      <Filter>01.Utility\02.Components\FSM\HState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -782,6 +818,18 @@
     </ClInclude>
     <ClInclude Include="..\Public\PathFinder.h">
       <Filter>01.Utility\AIController\AINavigator\PathFinder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\IK_Solver.h">
+      <Filter>01.Utility\02.Components\Model\IK_Solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayingInfo.h">
+      <Filter>01.Utility\02.Components\Model\PlayingInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Animation_Layer.h">
+      <Filter>01.Utility\02.Components\Model\Animation_Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FSM_HState.h">
+      <Filter>01.Utility\02.Components\FSM\HState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

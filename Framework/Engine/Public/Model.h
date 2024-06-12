@@ -2,10 +2,12 @@
 
 #include "Component.h"
 #include "Animation.h"
+#include "PlayingInfo.h"
 
 BEGIN(Engine)
 
-#define ANIM_DEFAULT_LINEARTIME 0.2f
+#define ANIM_DEFAULT_LINEARTIME		0.2f
+#define MAX_COUNT_BONE				256
 
 class ENGINE_DLL CModel final : public CComponent
 {
@@ -19,14 +21,15 @@ public:
 	virtual ~CModel() = default;
 
 public:		/* For.Animation */
-	void									Set_Animation_Blend(ANIM_PLAYING_DESC AnimDesc, _uint iPlayingIndex);
+	void									Add_AnimPlayingInfo(_uint iAnimIndex, _bool isLoop, _uint iPlayingIndex, const wstring& strBoneLayerTag, _float fBlendWeight = 1.f);
+	void									Erase_AnimPlayingInfo(_uint iPlayingIndex);
 
 	_uint									Get_NumAnims() { return m_iNumAnimations; }
-	_uint									Get_CurrentAnimIndex(_uint iPlayingIndex);
+	_int									Get_CurrentAnimIndex(_uint iPlayingIndex);
+	string									Get_CurrentAnimTag(_uint iPlayingIndex);
 
 public:		/* For.Controll AnimSpeed */
 	void									Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec);
-	void									Set_Weight(_uint iPlayingIndex, _float fWeight);
 
 public:		/* For.RootAnimaition ActiveControll */
 	_bool									Is_Active_RootMotion_XZ();
@@ -37,49 +40,34 @@ public:		/* For.RootAnimaition ActiveControll */
 	void									Active_RootMotion_Y(_bool isActive);
 	void									Active_RootMotion_Rotation(_bool isActive);
 	void									Set_RootBone(string strBoneTag);			//	모든본을 초기화 => 루트본은 하나다 가정후 찾은 본을 루트본으로 등록
-	
+
 	_bool									Is_Set_RootBone();
-
-public:		/* For.IK Public*/
-	void									Add_IK(string strTargetJointTag, string strEndEffectorTag, wstring strIKTag, _uint iNumIteration, _float fBlend);
-	void									Set_Direction_IK(wstring strIKTag, _fvector vDirection);
-	void									Set_TargetPosition_IK(wstring strIKTag, _fvector vTargetPosition);
-	void									Set_NumIteration_IK(wstring strIKTag, _uint iNumIteration);
-	void									Set_Blend_IK(wstring strIKTag, _float fBlend);
-	vector<_float4>							Get_ResultTranslation_IK(const wstring& strIKTag);
-	vector<_float4>							Get_OriginTranslation_IK(const wstring& strIKTag);
-	vector<_float4x4>						Get_JointCombinedMatrices_IK(const wstring& strIKTag);
-	
-private:	/* For.IK Private */
-	void									Apply_IK(class CTransform* pTransform, IK_INFO& IkInfo);
-	void									Update_Distances_Translations_IK(IK_INFO& IkInfo);
-	void									Solve_IK(IK_INFO& IkInfo);
-	void									Solve_IK_Forward(IK_INFO& IkInfo);
-	void									Solve_IK_Backward(IK_INFO& IkInfo);
-	void									Solve_For_Distance_IK(IK_INFO& IkInfo, _int iSrcJointIndex, _int iDstJointIndex);
-	void									Solve_For_Orientation_IK(IK_INFO& IkInfo, _int iOuterJointIndex, _int iInnerJointIndex);
-	void 									Rotational_Constranit(IK_INFO& IkInfo, _int iOuterJointIndex, _int iMyJointIndex);
-	void									Update_Forward_Reaching_IK(IK_INFO& IkInfo);
-	void									Update_Backward_Reaching_IK(IK_INFO& IkInfo);
-	void									Update_TransformMatrices_BoneChain(IK_INFO& IkInfo);
-	void									Update_CombinedMatrices_BoneChain(IK_INFO& IkInfo);
-
-private:	/* For.IK_Constraint */
-	CONIC_SECTION							Find_ConicSection(_float fTheta);
-	_bool									Is_InBound(CONIC_SECTION eSection, _fvector vQ, _float2 vTarget);
-	_float2									Find_Nearest_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition);
-	_float2									Find_Initial_Point_Constraints(_float fMajorAxisLength, _float fMinorAxisLength, CONIC_SECTION eSection, _float2 vTargetPosition);
-	_float2									Find_Next_Point_Constraints(_float2 vCurrentPoint, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
-	_float2									Compute_Delta_Constratins(_float2 vCurrentPoint, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
-	_float4x4								Compute_QMatrix(_float2 vCurrentPoint, _float fMajorAxisLength, _float fMinorAxisLength, _float2 vTargetPosition);
+	void									Update_LastKeyFrames(const vector<_float4x4>& TransformationMatrices, _uint iPlayingIndex);
 
 private:	/* Utillity */
 	_vector									Compute_Quaternion_From_TwoDirection(_fvector vSrcDirection, _fvector vDstDirection);
 
 public:		/* For.Bone_Layer */
-	void									Add_Bone_Layer(const wstring& strLayerTag, list<_uint> BoneIndices);
+	void									Add_Bone_Layer_Range(const wstring& strLayerTag, const string& strStartBoneTag, const string& strEndBoneTag);
+	void									Add_Bone_Layer_Range(const wstring& strLayerTag, _uint iStartBoneIndex, _uint iEndBoneIndex);
+
+	void									Add_Bone_Layer_ChildIndices(const wstring& strLayerTag, const string& strBoneTag);
+	void									Add_Bone_Layer_ChildIndices(const wstring& strLayerTag, _uint iParentBoneIndex);
+
 	void									Add_Bone_Layer_All_Bone(const wstring& strLayerTag);
-	void									Delete_Bone_Layer(const wstring& strLayerTag);
+	void									Erase_Bone_Layer(const wstring& strLayerTag);
+
+public:		/* For.IK Public*/
+	void									Add_IK(string strTargetJointTag, string strEndEffectorTag, const wstring& strIKTag, _uint iNumIteration, _float fBlend);
+	void									Erase_IK(const wstring& strIKTag);
+	void									Set_TargetPosition_IK(const wstring& strIKTag, _fvector vTargetPosition);
+	void									Set_NumIteration_IK(const wstring& strIKTag, _uint iNumIteration);
+	void									Set_Blend_IK(const wstring& strIKTag, _float fBlend);
+	vector<_float4>							Get_ResultTranslation_IK(const wstring& strIKTag);
+	vector<_float4>							Get_OriginTranslation_IK(const wstring& strIKTag);
+	vector<_float4x4>						Get_JointCombinedMatrices_IK(const wstring& strIKTag);
+
+
 
 public:		/* For.Additioal_Input_Forces */
 	void									Add_Additional_Transformation_World(string strBoneTag, _fmatrix AdditionalTransformMatrix);
@@ -89,25 +77,27 @@ private:	/* For.Additioal_Input_Forces */
 	void									Apply_AdditionalForce(_uint iBoneIndex);
 	void									Clear_AdditionalForces();
 
-private:	
+private:
 	_int									Find_RootBoneIndex();
 
 private:
 	vector<_float4x4>						Initialize_ResultMatrices(const set<_uint> IncludedBoneIndices);
 	_float									Compute_Current_TotalWeight(_uint iBoneIndex);
+	vector<_float>							Compute_Current_TotalWeights();
 	_float4x4								Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fmatrix DstMatrix, _float fAdditionalWeight);
+	set<_uint>								Compute_IncludedBoneIndices_AllBoneLayer();
 
-public:		
+public:
 	HRESULT									RagDoll();
-	vector<class CBone*>*					GetBoneVector() { return &m_Bones; }
+	vector<class CBone*>* GetBoneVector() { return &m_Bones; }
 
 public:		/*For Physics Collider*/
 	_float4x4								GetBoneTransform(string strBoneTag);
 	_float4x4								GetBoneTransform(_int Index);
 
 private:
-	void									Apply_RootMotion_Rotation(class CTransform* pTransform, _fvector vQuaternion, _float4* pTranslation);
-	void									Apply_RootMotion_Translation(class CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection, _bool isActiveRotation, _fvector vQuaternion = XMQuaternionIdentity());
+	void									Apply_RootMotion_Rotation(class CTransform* pTransform, _fvector vQuaternion);
+	void									Apply_RootMotion_Translation(class CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection);
 	void									Apply_Translation_Inverse_Rotation(_fvector vTranslation);
 
 public:
@@ -124,26 +114,49 @@ public:		/* For. Access */
 	map<wstring, class CBone_Layer*>		Get_BoneLayers() { return m_BoneLayers; }
 	list<wstring>							Get_BoneLayer_Tags();
 
+	_uint									Get_NumBones() { return static_cast<_uint>(m_Bones.size()); }
+	_uint									Get_NumMeshes() const { return m_iNumMeshes; }
 	_uint									Get_NumPlayingInfos() { return static_cast<_uint>(m_PlayingAnimInfos.size()); }
 
-	_uint									Find_AnimIndex(CAnimation* pAnimation);
+	_int									Find_AnimIndex(CAnimation* pAnimation);
+	_int									Find_AnimIndex(const string& strAnimTag);
+	string									Find_RootBoneTag();
+	class CPlayingInfo*						Find_PlayingInfo(_uint iPlayingIndex);
+	class CBone_Layer*						Find_BoneLayer(const wstring& strBoneLayerTag);
+
+	_int									Get_BoneIndex(const string& strBoneTag);
 
 	_float4									Invalidate_RootNode(const string& strRoot);
 
-	_uint									Get_CurrentMaxKeyFrameIndex(_uint iPlayingIndex);
-	_float									Get_Duration(_uint iPlayingIndex, _int iAnimIndex = -1);
-	_float									Get_TrackPosition(_uint iPlayingIndex);
-	void									Set_KeyFrameIndex(_uint iPlayingIndex, _uint iKeyFrameIndex);
-	void									Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition);
-	const vector<_uint>&					Get_CurrentKeyFrameIndices(_uint iPlayingIndex);
+	_bool									Is_Surbodinate_Bone(const string& strBoneTag);
+	_bool									Is_Root_Bone(const string& strBoneTag);
 
-	_uint									Get_NumMeshes() const { return m_iNumMeshes; }
-	class CBone*							Get_BonePtr(const _char* pBoneName) const;
+	_uint									Get_CurrentMaxKeyFrameIndex(_uint iPlayingIndex);
+	_float									Get_Duration_From_Anim(_int iAnimIndex);
+	_float									Get_Duration_From_Anim(const string& strAnimTag);
+	_float									Get_Duration_From_PlayingInfo(_uint iPlayingIndex);
+	_float									Get_TrackPosition(_uint iPlayingIndex);
+	_float									Get_BlendWeight(_uint iPlayingIndex);
+	_int									Get_AnimIndex_PlayingInfo(_uint iPlayingIndex);
+	wstring									Get_BoneLayerTag_PlayingInfo(_uint iPlayingIndex);
+	_int									Get_PlayingIndex_From_BoneLayerTag(wstring strBoneLayerTag);
+
+	_bool									Is_Loop_PlayingInfo(_uint iPlayingIndex);
+	void									Set_Loop(_uint iPlayingIndex, _bool isLoop);
+
+	void									Set_KeyFrameIndex_AllKeyFrame(_uint iPlayingIndex, _uint iKeyFrameIndex);
+	void									Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition);
+	void									Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight);
+	void									Change_Animation(_uint iPlayingIndex, _uint iAnimIndex);
+	void									Change_Animation(_uint iPlayingIndex, const string& strAnimTag);
+	void									Set_BoneLayer_PlayingInfo(_uint iPlayingIndex, const wstring& strBoneLayerTag);
+
+	class CBone* Get_BonePtr(const _char* pBoneName) const;
 
 	_bool									isFinished(_uint iPlayingIndex);
 	void									Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices);
 
-	const _float4x4*						Get_CombinedMatrix(const string& strBoneTag);
+	const _float4x4* Get_CombinedMatrix(const string& strBoneTag);
 
 public:		/* For.FBX */
 	virtual HRESULT							Initialize_Prototype(MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix);
@@ -158,16 +171,15 @@ public:
 	HRESULT									Bind_ShaderResource_Texture(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eTextureType);
 	HRESULT									Bind_ShaderResource_MaterialDesc(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 
-	HRESULT									Play_Animations(_float fTimeDelta);
-	HRESULT									Play_Animations_RootMotion(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
+	HRESULT									Play_Animations(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
 	HRESULT									Play_IK(class CTransform* pTransform, _float fTimeDelta);
 	HRESULT									Render(_uint iMeshIndex);
 
 private:
-	vector<_float4x4>						Apply_Animation(_float fTimeDelta, set<_uint>& IncludedBoneIndices, _uint iPlayingAnimIndex);
+	vector<_float4x4>						Apply_Animation(_float fTimeDelta, _uint iPlayingAnimIndex);
 	void									Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMovedDirection);
-	void									Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer, const set<_uint>& IncludedBoneIndices);
-	vector<_float4x4>						Compute_ResultMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer, const set<_uint>& IncludedBoneIndices);
+	void									Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer);
+	vector<_float4x4>						Compute_ResultMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer);
 
 public:		/* For.Cooking_Mesh */
 	void									Static_Mesh_Cooking();
@@ -181,16 +193,13 @@ public:
 
 private:	/* For.Linear Interpolation */
 	void									Motion_Changed(_uint iPlayingIndex);
-	void									Update_LastKeyFrames(const vector<_float4x4>& TransformationMatrices, vector<KEYFRAME>& LastKeyFrames);
-	void									Update_LastKeyFrames_Bones(vector<KEYFRAME>& LastKeyFrames);
 
 private:	/* For.Linear Interpolation */
 	void									Update_LinearInterpolation(_float fTimeDelta, _uint iPlayingIndex);
-	void									Reset_LinearInterpolation(_uint iPlayingIndex);
 
 private:
 	MODEL_TYPE								m_eModelType = { TYPE_END };
-	const aiScene*							m_pAIScene = { nullptr };
+	const aiScene* m_pAIScene = { nullptr };
 	Assimp::Importer						m_Importer;
 
 private:
@@ -202,9 +211,6 @@ private:	/* For.RootMotion */
 	_bool									m_isRootMotion_Y = { false };
 	_bool									m_isRootMotion_Rotation = { false };
 
-private:	/* For.Inverse_Kinematic */
-	map<wstring, IK_INFO>					m_IKInfos;
-
 private:
 	_uint									m_iNumMaterials = { 0 };
 	vector<MESH_MATERIAL>					m_Materials;
@@ -214,13 +220,15 @@ private:
 	vector<class CBone*>					m_Bones;
 	map<wstring, class CBone_Layer*>		m_BoneLayers;			//	레이어로 분리할 뼈들의 태그별로 인덱스들을 저장한다.
 
+	class CIK_Solver* m_pIK_Solver = { nullptr };
+
 	_uint									m_iNumAnimations = { 0 };
 	vector<class CAnimation*>				m_Animations;
 
-	_float4x4								m_MeshBoneMatrices[256];
+	_float4x4								m_MeshBoneMatrices[MAX_COUNT_BONE];
 
 private:	/* For.Blend_Animation */
-	vector<ANIM_PLAYING_INFO>				m_PlayingAnimInfos;
+	vector<class CPlayingInfo*>				m_PlayingAnimInfos;
 
 private: /* For.Additional_Input_Forces */
 	//	뼈의 인덱스 별로 외부적 변환을 추가적으로 적용한다.
@@ -242,7 +250,7 @@ private:	/* For.Binary_Load */
 	HRESULT									Ready_Bones(ifstream& ifs);
 	HRESULT									Ready_Animations(ifstream& ifs);
 
-public: /*For Octree Culling*/
+public:		/* For Octree Culling */
 	vector<class CMesh*>* GetMeshes()
 	{
 		return  &m_Meshes;

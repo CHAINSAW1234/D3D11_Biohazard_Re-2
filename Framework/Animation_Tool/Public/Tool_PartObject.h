@@ -15,7 +15,11 @@ class CTool_PartObject final : public CTool
 public:
 	typedef struct tagToolPartObjectDesc
 	{
-		CGameObject*				pTestObject = { nullptr };
+		string* pCurrentAnimTag = { nullptr };
+		string* pCurrentModelTag = { nullptr };
+		/*wstring* pCurrentBoneLayerTag = {nullptr}; */
+		wstring* pCurrentPartTag = { nullptr };
+		CGameObject* pTestObject = { nullptr };
 	}TOOL_PARTOBJECT_DESC;
 
 private:
@@ -23,30 +27,55 @@ private:
 	virtual ~CTool_PartObject() = default;
 
 public:
-	virtual HRESULT					Initialize(void* pArg) override;
-	virtual void					Tick(_float fTimeDelta) override;
+	virtual HRESULT									Initialize(void* pArg) override;
+	virtual void									Tick(_float fTimeDelta) override;
 
 private:
-	void							On_Off_Buttons();
+	void											Input_PartObjectTag();
+	void											Create_Release_PartObject();
 
 private:
-	void							Update_PartObjects();
+	void											Show_Default();
+	void											Show_PartObject_Tags();
 
-	void							Show_PartObject_Tags();
-	
 private:
-	void							Link_Bone(const wstring& strSrcPartTag, const wstring& strDstPartTag, const string& strSrcBoneTag, const string& strDstBoneTag);
-	void							UnLink_Bone(const wstring& strPartTag, const string& strBoneTag);
+	void											Add_PartObject();
+	void											Release_PartObject(const wstring& strPartTag);
+
+private:
+	void											On_Off_Buttons();
+	void											Show_LinkBone();
+
+private:
+	void											Link_Bone_Auto(const wstring& strSrcPartTag, const wstring& strDstPartTag);
+	void											Link_Bone_Manual(const wstring& strSrcPartTag, const wstring& strDstPartTag, const string& strSrcBoneTag, const string& strDstBoneTag);
+	void											UnLink_Bone_All(const wstring& strPartTag);
+	void											UnLink_Bone(const wstring& strPartTag, const string& strBoneTag);
+
+	void											Update_ModelTag();
 
 public:
-	vector<string>					Get_CurrentPartObject_BoneTags();
+	void											Set_CurrentAnimation(CAnimation* pAnimation);
+	HRESULT											Set_Models(map<string, CModel*>* pModels);
 
 private:
-	CGameObject*									m_pTestObject = { nullptr };
-	map<wstring, class CAnimTestPartObject*>		m_PartObjects;
+	_bool											Check_PartObjectExist(const wstring& strPartTag);
 
-	_bool											m_isShowPartObjectTags = { false };
-	wstring											m_strSelectPartObjectTag = { L"" };
+public:
+	vector<string>									Get_CurrentPartObject_BoneTags();
+	class CAnimTestPartObject* Get_CurrentPartObject();
+
+private:
+	CAnimation* m_pCurrentAnimation = { nullptr };
+
+	wstring											m_strInputPartObjectTag = { TEXT("") };
+
+	CGameObject* m_pTestObject = { nullptr };
+	map<wstring, class CAnimTestPartObject*>		m_PartObjects;
+	map<string, CModel*>* m_pModels = { nullptr };				//	모델 셀렉터에서 미리 지워버리면 문제 발생하므로 참조시 어떻게 풀어나갈지...
+
+	wstring* m_pCurrentPartTag = { nullptr };
+	string* m_pCurrentModelTag = { nullptr };
 
 public:
 	static CTool_PartObject* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

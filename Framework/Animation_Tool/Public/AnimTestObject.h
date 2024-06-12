@@ -42,11 +42,17 @@ public:
 public:
 	HRESULT					Chanage_Componenet_PartObject(const wstring& strPartTag, CComponent* pComponent, _uint iType);
 	HRESULT					Add_PartObject(const wstring& strPartTag);
+	HRESULT					Erase_PartObject(const wstring& strPartTag);
 	HRESULT					Link_Bone_PartObject(const wstring& strSrcPartTag, const wstring& strDstPartTag, const string& strSrcBoneTag, const string& strDstBoneTag);		//	SrcÀÇ »À¸¦ Dst »À¿¡ ºÎÂø
+
+public:
+	void					Set_RootActivePart(const wstring& strRootActivePartTag);
+	const wstring&			Get_RootActivePartTag() { return m_strRootActivePartTag; }
 
 private:
 	map<wstring, class CAnimTestPartObject*>			m_PartObjects;
 	_float3												m_vRootTranslation = {};
+	wstring												m_strRootActivePartTag = { TEXT("") };
 
 private:
 	HRESULT					Add_Components();

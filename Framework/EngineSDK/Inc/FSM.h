@@ -2,11 +2,11 @@
 #include "Component.h"
 
 BEGIN(Engine)
-class CFSM_State;
+class CFSM_HState;
 
 class ENGINE_DLL CFSM final : public CComponent
 {
-	typedef unordered_map<_uint, CFSM_State*>	MAP_FSM_STATE;
+	typedef unordered_map<_uint, CFSM_HState*>	MAP_FSM_HSTATE;
 
 private:
 	CFSM(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -20,12 +20,12 @@ public:
 	void								Start();
 
 	void								Change_State(_uint iState);
-	void								Add_State(_uint iState, CFSM_State* pInitState);
-	CFSM_State*							Find_State(_uint iState);
+	void								Add_State(_uint iState, CFSM_HState* pInitState);
+	CFSM_HState*						Find_State(_uint iState);
 
 private:
-	CFSM_State*							m_pCurrent_State = { nullptr };
-	MAP_FSM_STATE						m_mapFSM_State;
+	CFSM_HState*						m_pCurrent_State = { nullptr };
+	MAP_FSM_HSTATE						m_mapFSM_State;
 
 public:
 	static CFSM*						Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

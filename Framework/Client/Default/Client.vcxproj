@@ -171,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\BackGround.h" />
+    <ClInclude Include="..\Public\Body_Monster.h" />
     <ClInclude Include="..\Public\Body_Player.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
@@ -179,6 +180,8 @@
     <ClInclude Include="..\Public\Customize_UI.h" />
     <ClInclude Include="..\public\Effect.h" />
     <ClInclude Include="..\Public\Hair_Player.h" />
+    <ClInclude Include="..\Public\Hat_Monster.h" />
+    <ClInclude Include="..\Public\Head_Monster.h" />
     <ClInclude Include="..\Public\Head_Player.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
@@ -187,8 +190,13 @@
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\Monster.h" />
     <ClInclude Include="..\Public\NavMesh_Debug.h" />
+    <ClInclude Include="..\Public\Pants_Monster.h" />
     <ClInclude Include="..\public\Player.h" />
+    <ClInclude Include="..\Public\Player_State_Move.h" />
+    <ClInclude Include="..\Public\Player_State_Move_Idle.h" />
+    <ClInclude Include="..\Public\Player_State_Move_Walk.h" />
     <ClInclude Include="..\Public\Props.h" />
+    <ClInclude Include="..\Public\Shirts_Monster.h" />
     <ClInclude Include="..\Public\Sky.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\Public\TextBox.h" />
@@ -201,12 +209,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
+    <ClCompile Include="..\Private\Body_Monster.cpp" />
     <ClCompile Include="..\Private\Body_Player.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\Private\CustomCollider.cpp" />
     <ClCompile Include="..\Private\Customize_UI.cpp" />
     <ClCompile Include="..\private\Effect.cpp" />
     <ClCompile Include="..\Private\Hair_Player.cpp" />
+    <ClCompile Include="..\Private\Hat_Monster.cpp" />
+    <ClCompile Include="..\Private\Head_Monster.cpp" />
     <ClCompile Include="..\Private\Head_Player.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
@@ -215,8 +226,13 @@
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\Private\NavMesh_Debug.cpp" />
+    <ClCompile Include="..\Private\Pants_Monster.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
+    <ClCompile Include="..\Private\Player_State_Move.cpp" />
+    <ClCompile Include="..\Private\Player_State_Move_Idle.cpp" />
+    <ClCompile Include="..\Private\Player_State_Move_Walk.cpp" />
     <ClCompile Include="..\Private\Props.cpp" />
+    <ClCompile Include="..\Private\Shirts_Monster.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\Private\TextBox.cpp" />

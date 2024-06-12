@@ -10,6 +10,16 @@ CTool_AnimList::CTool_AnimList(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 HRESULT CTool_AnimList::Initialize(void* pArg)
 {
+    if (nullptr == pArg)
+        return E_FAIL;
+
+    ANIMLIST_DESC* pDesc = { static_cast<ANIMLIST_DESC*>(pArg) };
+    m_pCurrentAnimTag = pDesc->pCurrentAnimationTag;
+    m_pCurrentModelTag = pDesc->pCurrentModelTag;
+
+    if (nullptr == m_pCurrentAnimTag || nullptr == m_pCurrentModelTag)
+        return E_FAIL;
+
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
@@ -20,77 +30,138 @@ HRESULT CTool_AnimList::Initialize(void* pArg)
 
 void CTool_AnimList::Tick(_float fTimeDelta)
 {
-    static string		strSelectTag = { "Select Animation" };
+    __super::Tick(fTimeDelta);
 
-    _uint			iNumAnim = { static_cast<_uint>(m_Animations.size()) };
-    string*         AnimTags = { new string[iNumAnim] };
+    static ImVec2 WinSize;
+    WinSize = ImGui::GetWindowSize();
 
-    _uint			iIndex = { 0 };
-    for (auto& Pair : m_Animations)
+    ImGui::Begin("Animation_Selector");
+
+    Show_Default();
+    Show_AnimationTags();
+
+    ImGui::End();
+}
+
+HRESULT CTool_AnimList::Add_Animations(map<string, map<string, CAnimation*>> ModelAnimations)
+{
+    for (auto& PairModelAnimations : ModelAnimations)
     {
-        AnimTags[iIndex++] = Pair.first;
+        map<string, CAnimation*>            Animations;
+        for (auto& PairAnimations : PairModelAnimations.second)
+        {
+            if (nullptr == PairAnimations.second)
+                return E_FAIL;
+
+            Animations.emplace(PairAnimations.first, PairAnimations.second);
+        }
+
+        m_ModelAnimations.emplace(PairModelAnimations.first, Animations);
     }
 
-    if (ImGui::CollapsingHeader(m_strCollasingTag.c_str()))
+    for (auto& PairModelAnimations : m_ModelAnimations)
     {
-        if (ImGui::BeginCombo("Animation ## AnimListTool", strSelectTag.c_str()))
+        map<string, CAnimation*>            Animations;
+        for (auto& PairAnimations : PairModelAnimations.second)
         {
-            for (_uint i = 0; i < iNumAnim; ++i)
+            Safe_AddRef(PairAnimations.second);
+        }
+    }
+
+    return S_OK;
+}
+
+void CTool_AnimList::Show_Default()
+{
+    ImGui::SeparatorText("Information");
+
+    ImGui::Text("Current Selected Animation : ");		ImGui::SameLine();
+    ImGui::Text(m_pCurrentAnimTag->c_str());
+
+    ImGui::SeparatorText("");
+}
+
+void CTool_AnimList::Show_AnimationTags()
+{
+    if (false == Check_ModelExist(*m_pCurrentModelTag))
+        return;
+
+    static _float2		vSize = { 200.f, 100.f };
+
+    if (ImGui::CollapsingHeader("Show Models ##CTool_AnimList::Show_AnimationTags()"))
+    {
+        ImGui::SliderFloat2("ListBoxSize ##CTool_AnimList::Show_AnimationTags()", (_float*)&vSize, 100.f, 800.f);
+        if (ImGui::BeginListBox("##CTool_AnimList::Show_AnimationTags()", *(ImVec2*)&vSize))
+        {
+            Animations      Animations = { m_ModelAnimations[*m_pCurrentModelTag] };
+
+            for (auto& PairAnimations : Animations)
             {
-                _bool		isSelected = { AnimTags[i] == strSelectTag };
-                if (ImGui::Selectable(AnimTags[i].c_str(), isSelected))
+                string          strAnimTag = { PairAnimations.first };
+                if (ImGui::Selectable(strAnimTag.c_str()))
                 {
-                    strSelectTag = AnimTags[i];
-                    m_strCurrentAnimTag = strSelectTag;
-                }
-                if (true == isSelected)
-                {
-                    ImGui::SetItemDefaultFocus();
+                    *m_pCurrentAnimTag = strAnimTag;
                 }
             }
 
-            Safe_Delete_Array(AnimTags);
-            ImGui::EndCombo();
+            ImGui::EndListBox();
         }
-    }    
+    }
 }
 
 CAnimation* CTool_AnimList::Get_Animation(const string& strAnimTag)
 {
-    map<string, CAnimation*>::iterator      iter = { m_Animations.find(strAnimTag) };
-    if (iter == m_Animations.end())
+    if (false == Check_AnimExtist(strAnimTag))
         return nullptr;
-    
-    return m_Animations[strAnimTag];
+
+    return m_ModelAnimations[*m_pCurrentModelTag][strAnimTag];
 }
 
 CAnimation* CTool_AnimList::Get_CurrentAnimation()
 {
-    map<string, CAnimation*>::iterator      iter = { m_Animations.find(m_strCurrentAnimTag) };
-    if (iter == m_Animations.end())
+    if (false == Check_AnimExtist(*m_pCurrentAnimTag))
         return nullptr;
 
-    return m_Animations[m_strCurrentAnimTag];
+    return m_ModelAnimations[*m_pCurrentModelTag][*m_pCurrentAnimTag];
 }
 
-void CTool_AnimList::Add_Animation(CAnimation* pAnimation)
+void CTool_AnimList::Add_Animation_CurrentModel(CAnimation* pAnimation)
 {
     if (nullptr == pAnimation)
         return;
 
-    string                                  strAnimTag = { pAnimation->Get_Name() };
-    map<string, CAnimation*>::iterator      iter = { m_Animations.find(strAnimTag)};
-
-    if (iter != m_Animations.end())
+    if (false == Check_ModelExist(*m_pCurrentModelTag))
         return;
 
-    m_Animations[strAnimTag] = pAnimation;
+    string      strAnimTag = { pAnimation->Get_Name() };
+    if (true == Check_AnimExtist(strAnimTag))
+        return;
+
+    m_ModelAnimations[*m_pCurrentModelTag].emplace(strAnimTag, pAnimation);
     Safe_AddRef(pAnimation);
+}
+
+_bool CTool_AnimList::Check_ModelExist(const string& strModelTag)
+{
+    map<string, Animations>::iterator		iter = { m_ModelAnimations.find(strModelTag) };
+
+    return iter != m_ModelAnimations.end();
+}
+
+_bool CTool_AnimList::Check_AnimExtist(const string& strAnimTag)
+{
+    if (false == Check_ModelExist(*m_pCurrentModelTag))
+        return false;
+
+    Animations                  Animations = { m_ModelAnimations[*m_pCurrentModelTag] };
+    Animations::iterator        iter = { Animations.find(strAnimTag) };
+
+    return iter != Animations.end();
 }
 
 CTool_AnimList* CTool_AnimList::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
 {
-    CTool_AnimList*         pInatnace = { new CTool_AnimList(pDevice, pContext) };
+    CTool_AnimList* pInatnace = { new CTool_AnimList(pDevice, pContext) };
 
     if (FAILED(pInatnace->Initialize(pArg)))
     {
@@ -106,7 +177,15 @@ void CTool_AnimList::Free()
 {
     __super::Free();
 
-    for (auto& Pair : m_Animations)
-        Safe_Release(Pair.second);    
-    m_Animations.clear();
+    for (auto& PairModelAnimations : m_ModelAnimations)
+    {
+        for (auto& PairAnimations : PairModelAnimations.second)
+        {
+            Safe_Release(PairAnimations.second);
+            PairAnimations.second = nullptr;
+        }
+
+        PairModelAnimations.second.clear();
+    }
+    m_ModelAnimations.clear();
 }

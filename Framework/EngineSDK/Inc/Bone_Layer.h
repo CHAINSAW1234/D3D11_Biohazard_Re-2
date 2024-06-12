@@ -16,11 +16,11 @@ private:
 	virtual ~CBone_Layer() = default;
 
 public:
-	HRESULT Initialize(const set<_uint>& BoneIndices);
+	HRESULT					Initialize(const set<_uint>& BoneIndices);
 
 public:
-	_bool Is_Included(_uint iBoneIndex);
-
+	_bool					Is_Included(_uint iBoneIndex);
+	set<_uint>& Get_IncludedBoneIndices() { return m_IncludedBoneIndices; }
 private:
 	set<_uint>				m_IncludedBoneIndices;
 

@@ -91,6 +91,12 @@
     <Filter Include="02.GameObject\Tool\Tool_BoneLayer">
       <UniqueIdentifier>{8999399d-a120-43ad-8b2b-720e712079b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Tool\Tool_IK">
+      <UniqueIdentifier>{f1c16d49-dedb-4204-8408-b11e30e5e236}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Tool\Tool_EventInserter">
+      <UniqueIdentifier>{719e13a8-c3d8-410b-881c-a84db2f3bb47}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -203,6 +209,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Tool_BoneLayer.cpp">
       <Filter>02.GameObject\Tool\Tool_BoneLayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool_IK.cpp">
+      <Filter>02.GameObject\Tool\Tool_IK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool_EventInserter.cpp">
+      <Filter>02.GameObject\Tool\Tool_EventInserter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -334,6 +346,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Tool_BoneLayer.h">
       <Filter>02.GameObject\Tool\Tool_BoneLayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_IK.h">
+      <Filter>02.GameObject\Tool\Tool_IK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_EventInserter.h">
+      <Filter>02.GameObject\Tool\Tool_EventInserter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

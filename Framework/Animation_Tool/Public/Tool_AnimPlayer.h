@@ -10,8 +10,12 @@ class CTool_AnimPlayer final : public CTool
 public:
 	typedef struct tagAnimPlayerDesc
 	{
-		_float3*			pMoveDir = { nullptr };
-		CTransform*			pTransform = { nullptr };
+		const wstring* pCurrentBoneLayerTag = { nullptr };
+		const wstring* pCurrentPartObjectTag = { nullptr };
+		const string* pCurrentModelTag = { nullptr };
+		_float3* pMoveDir = { nullptr };
+		CTransform* pTransform = { nullptr };
+		class CAnimTestObject* pTestObject = { nullptr };
 	}ANIMPLAYER_DESC;
 
 private:
@@ -19,59 +23,71 @@ private:
 	virtual ~CTool_AnimPlayer() = default;
 
 public:
-	virtual HRESULT			Initialize(void* pArg) override;
-	virtual void			Tick(_float fTimeDelta) override;
+	virtual HRESULT								Initialize(void* pArg) override;
+	virtual void								Tick(_float fTimeDelta) override;
 
 public:
-	void					Change_Animation(CAnimation* pAnimation);
-	void					Play_Animation(_float fTimeDelta);
-	void					Change_Model(CModel* pModel);
-	void					Set_TargetTransform(CTransform* pTransform);
+	void										Play_Animation(_float fTimeDelta);
+	void										Change_Animation();
+	HRESULT										Set_Models_Ptr(map<string, CModel*>* pModels);
+	void										Set_Current_Model(CModel* pModel);
+	void										Set_Current_Animation(CAnimation* pAnimation);
+	void										Set_TargetTransform(CTransform* pTransform);
 
 public:
-	_float					Get_Ratio();
+	_float										Compute_Ratio();
 
 private:
-	_float					Get_CurrentAnim_Duration();
-	_float					Get_CurrentAnim_TrackPosition();
-	_uint					Get_CurrentKeyFrame();
+	void										TrackPosition_Controller();
+	void										BlendWeight_Controller();
 
 private:
-	void					On_Off_Buttons();
+	_float										Get_CurrentPlayingInfo_Duration();
+	_float										Get_CurrentPlayingInfo_TrackPosition();
+	_float										Get_CurrentAnim_BlendWeight();
+	_uint										Get_CurrentKeyFrame();
 
+	void										Reset_AllTrackPosition();
 
-	void					Set_Animation();
-
-private:
-	void					Set_IK_Option();
-	void					Add_IK();
-
-private:
-	void					Show_CurrentSelectedInfos();
-	void					Show_BoneLayers();
-	void					Show_BoneTags();
-	void					Set_RootBone(const string& strRootBoneTag);
+	void										Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition);
+	void										Set_BlendWeight(_uint iPlayingIndex, _float fWeight);
 
 private:
-	void					Apply_RootMotion();
+	_int										Find_LastPlayingIndex(const string& strModelTag);
 
 private:
-	CAnimation*				m_pCurrentAnimation = { nullptr };
-	CModel*					m_pAnimModel = { nullptr };
-	CTransform*				m_pTargetTransform = { nullptr };
-	_float3*				m_pRootMoveDir = { nullptr };
+	void										On_Off_Buttons();
+	void										Set_Animation();
 
-	_bool					m_isPlayAnimation = { false };
+private:
+	void										Create_PlayingDesc();
+	void										Show_PlayingInfos();
 
-	_bool					m_isRooActive_XZ = { false };
-	_bool					m_isRooActive_Y = { false };
-	_bool					m_isRooActive_Rotate = { false };
+private:
+	void										Apply_RootMotion();
 
-	_bool					m_isShowBoneTags = { false };
-	_bool					m_isShowLayerTags = { false };
+private:
+	class CAnimTestObject* m_pTestObject = { nullptr };
 
-	string					m_strCurrentSelectBoneTag = { "" };
-	string					m_strCurrentSelectLayerTag = { "" };
+	map<string, _uint>							m_ModelLastPlayingIndex;
+	map<string, _bool>							m_isPlayingAnimations;
+	map<string, CModel*>*						m_pModels = { nullptr };
+	CModel*										m_pCurrentModel = { nullptr };
+	CAnimation*									m_pCurrentAnimation = { nullptr };
+	CTransform*									m_pTargetTransform = { nullptr };
+	_float3*									m_pRootMoveDir = { nullptr };
+
+	_bool										m_isPlayAnimation = { false };
+
+	_uint										m_iPlayingIndex = { 0 };
+
+	_bool										m_isRooActive_XZ = { false };
+	_bool										m_isRooActive_Y = { false };
+	_bool										m_isRooActive_Rotate = { false };
+
+	const string*								m_pCurrentModelTag = { nullptr };
+	const wstring*								m_pCurrentPartObjectTag = { nullptr };
+	const wstring*								m_pCurrentBoneLayerTag = { nullptr };
 
 public:
 	static CTool_AnimPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

@@ -23,21 +23,11 @@ void CTool_Collider::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	static _bool isChanged = { false };
-
-	if (ImGui::CollapsingHeader(m_strCollasingTag.c_str()))
-	{
-
-	}
-}
-
-CGameObject* CTool_Collider::Get_CurrentSelectCollider()
-{
-	return m_pCurrentSelectCollider;
 }
 
 CTool_Collider* CTool_Collider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
 {
-	CTool_Collider*			pInatnace = { new CTool_Collider(pDevice, pContext) };
+	CTool_Collider* pInatnace = { new CTool_Collider(pDevice, pContext) };
 
 	if (FAILED(pInatnace->Initialize(pArg)))
 	{

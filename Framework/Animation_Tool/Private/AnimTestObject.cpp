@@ -140,6 +140,20 @@ HRESULT CAnimTestObject::Add_PartObject(const wstring& strPartTag)
     return S_OK;
 }
 
+HRESULT CAnimTestObject::Erase_PartObject(const wstring& strPartTag)
+{
+    map<wstring, CAnimTestPartObject*>::iterator        iter = { m_PartObjects.find(strPartTag) };
+    if (iter == m_PartObjects.end())
+        return E_FAIL;
+
+    Safe_Release(m_PartObjects[strPartTag]);
+    m_PartObjects[strPartTag] = nullptr;
+
+    m_PartObjects.erase(iter);
+
+    return S_OK;
+}
+
 HRESULT CAnimTestObject::Link_Bone_PartObject(const wstring& strSrcPartTag, const wstring& strDstPartTag, const string& strSrcBoneTag, const string& strDstBoneTag)
 {
     map<wstring, CAnimTestPartObject*>::iterator        iterSrc = { m_PartObjects.find(strSrcPartTag) };
@@ -160,6 +174,25 @@ HRESULT CAnimTestObject::Link_Bone_PartObject(const wstring& strSrcPartTag, cons
     pDstModel->Set_Parent_CombinedMatrix_Ptr(strDstBoneTag, pSrcBoneCombinedMatrix);
 
     return S_OK;
+}
+
+void CAnimTestObject::Set_RootActivePart(const wstring& strRootActivePartTag)
+{
+    _bool       isIncluded = { false };
+    for (auto& Pair: m_PartObjects)
+    {
+        wstring         strPartTag = { Pair.first };
+        if (strPartTag == strRootActivePartTag)
+        {
+            isIncluded = true;
+            break;
+        }
+    }
+
+    if (true == isIncluded)
+    {
+        m_strRootActivePartTag = strRootActivePartTag;
+    }
 }
 
 HRESULT CAnimTestObject::Add_Components()

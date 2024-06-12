@@ -28,7 +28,7 @@ public:
 	void						ReSet_Target();
 
 public:
-	CTransform*					Get_Target() { return m_pTargetTransform; }
+	CTransform* Get_Target() { return m_pTargetTransform; }
 
 private:
 	void						Update_Transform();
@@ -45,8 +45,8 @@ private:
 
 private:
 	MODE						m_eMode = { MODE_END };
-	CTransform*					m_pTransformCom = { nullptr };
-	CTransform*					m_pTargetTransform = { nullptr };
+	CTransform* m_pTransformCom = { nullptr };
+	CTransform* m_pTargetTransform = { nullptr };
 
 public:
 	static CTool_Transformation* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

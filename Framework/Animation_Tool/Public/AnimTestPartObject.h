@@ -36,6 +36,7 @@ private:
 
 public:
 	HRESULT					Chanage_Componenet(CComponent* pComponent, COMPONENT_TYPE eType);
+	CModel*					Get_CurrentModelComponent() { return m_pModelCom; }
 	void					Set_RootBone(string strRootBoneTag);
 
 private:

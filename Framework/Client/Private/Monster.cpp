@@ -105,7 +105,7 @@ void CMonster::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	//m_pModelCom->Play_Animations(fTimeDelta);
-	m_pModelCom->Play_Animations_RootMotion(m_pTransformCom, fTimeDelta, &_float3(0.f,0.f,0.f));
+	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &_float3(0.f,0.f,0.f));
 }
 
 HRESULT CMonster::Render()

@@ -27,8 +27,6 @@ HRESULT CHead_Player::Initialize(void* pArg)
 	pDesc->fSpeedPerSec = 10.f;
 	pDesc->fRotationPerSec = XMConvertToRadians(90.0f);
 
-	m_pState = pDesc->pState;
-
 	if (FAILED(__super::Initialize(pDesc)))
 		return E_FAIL;
 
@@ -74,14 +72,17 @@ void CHead_Player::Tick(_float fTimeDelta)
 		iBoneIndices.emplace_back(i);
 	}
 
-	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);
+	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
+	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Set_RootBone("RootNode");
 }
 
 void CHead_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animations(fTimeDelta);
+	_float3				vDirection = { };
+	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &vDirection);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);

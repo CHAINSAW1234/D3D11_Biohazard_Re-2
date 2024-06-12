@@ -42,11 +42,12 @@ HRESULT CMainApp::Initialize()
 
 void CMainApp::Tick(_float fTimeDelta)
 {
+#ifdef _DEBUG
 	if (DOWN == m_pGameInstance->Get_KeyState('Z'))
 	{
 		m_pGameInstance->On_Off_DebugRender();
 	}
-
+#endif
 	m_pGameInstance->Tick_Engine(fTimeDelta);
 
 	if (nullptr != m_pImGui_Manager)
