@@ -8,9 +8,15 @@ BEGIN(Client)
 
 class CCustomize_UI abstract : public CUI
 {
-public:
+public: 
+	/* Tool */
 	enum PLAY_BUTTON { PLAY_DEFAULT, PLAY_CHANGE, PLAY_CUT, PLAY_BUTTON_END };
+
+public :
+	/* Client*/
 	enum class ITEM_BOX_TYPE { DEFAULT_BOX, SELECT_BOX, END_BOX };
+	enum class HPBAR_TYPE { MAIN_BAR, BACKGROUND_BAR, END_BAR };
+	enum class INVENTORY_TYPE { MAIN_INVEN, SUB_INVEN, END_INVEN };
 
 	typedef struct color
 	{
@@ -72,9 +78,14 @@ public:
 
 		_bool							isLoad = { false };
 
+		/* +추가 */
+		_int							iWhich_Child = { 0 };
+
 		/* Client */
 		ITEM_BOX_TYPE					eBox_Type;
-		
+		HPBAR_TYPE						eHPBar_Type;
+		INVENTORY_TYPE					eInventory_Type;
+
 	}CUSTOM_UI_DESC;
 
 protected :
@@ -389,15 +400,26 @@ protected :
 
 protected : /* Client*/
 	_bool						m_isRender = { true };
+	_float4						m_vOriginTextColor = {};
+	_float4						m_vOriginColor = {};
 
 	/* 1. inventory Item */
 	ITEM_BOX_TYPE				m_eBox_Type = { ITEM_BOX_TYPE::END_BOX };
+	INVENTORY_TYPE				m_eInventory_Type = { INVENTORY_TYPE::END_INVEN };
 
 	/* 2. HP Bar*/
 	_bool						m_isTimerControl = { false };
 	_float						m_fShiftMaskUV_X = {};
-	_bool						m_isLightMask = { true };
 	_float4						m_vLightMask_Color;
+	_bool						m_isLightMask = { false };
+
+	/* Timer */
+	_float						m_fInterpolation_Timer = {}; /* 보간 타이머 */
+
+	/* Light */
+	_float2						m_fLightPosition = {};
+	_float						m_fLightSize = {};
+	_bool						m_isLight = {};
 
 public:
 	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

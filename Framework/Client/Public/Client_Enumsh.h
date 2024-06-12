@@ -19,6 +19,7 @@ namespace Client
 		BUTTON,
 		ID_END
 	};
+
 	enum DIRECTION { DIRECTION_WEST, DIRECTION_EAST, DIRECTION_MID };
 
 

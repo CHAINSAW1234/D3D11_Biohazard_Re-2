@@ -5,7 +5,6 @@ class CHPBar_UI final : public CCustomize_UI
 {
 public : 
 	enum class HP_TYPE { NORMAL_HP, BRUISE_HP, WARING_HP, DANGER_HP, END_HP };
-	enum class HPBAR_TYPE { MAIN_BAR, BACKGROUND_BAR, END_BAR };
 
 private:
 	CHPBar_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -19,27 +18,36 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-private :
-	void				MainBar(_float fTimeDelta);
-	void				MainBar_MaskDown(_float fTimeDelta);
 
 private :
+	void				Operation_HPBar(_float fTimeDelta);
+
+
+private :
+	void				BackGroundBar(_float fTimeDelta);
 	void				Change_HP(HP_TYPE _type);
 
-private : /* Mask 관련*/
-	_float				m_isMaskStop_Timer = {};
-	_uint				m_isDarkMaskCnt = {};
 
-	_float4				m_vDefaultColor_Origin = {};
-	_float2				m_fOrigin_MaskControl = {};
+private : /* Mask 관련*/
+	_float4						m_vDefaultColor_Origin	= {};
+	_float2						m_fOrigin_MaskControl	= {};
+
+	_bool						m_isMaskDown			= { false };
+	_bool						m_isTimerReturn			= { false };
+	_uint						m_iColorMask_Cnt		= { 2 };
+	_uint						m_iCurrent_ColorMask_Cnt = { 0 };
+
+private : 
+	CHPBar_UI*					m_pMainBar				= { nullptr };
 
 	_bool				m_isMaskDown = { false };
 
 private :
-	HP_TYPE				m_eCurrentHP = { HP_TYPE::NORMAL_HP };
-	wstring				m_wstrNormal;
-	wstring				m_wstrWaring;
-	wstring				m_wstrDanger;
+	CCustomize_UI::HPBAR_TYPE	m_eHPBar		= { HPBAR_TYPE::END_BAR };
+	HP_TYPE						m_eCurrentHP	= { HP_TYPE::NORMAL_HP };
+	wstring						m_wstrNormal;
+	wstring						m_wstrWaring;
+	wstring						m_wstrDanger;
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

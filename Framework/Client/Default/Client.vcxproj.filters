@@ -94,6 +94,15 @@
     <Filter Include="02.GameObjects\UI\3. HP Bar">
       <UniqueIdentifier>{0c7a9a8f-c48d-4e15-99be-fe77c934ffef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\4. Bullet">
+      <UniqueIdentifier>{dc11b041-87e7-45d1-a117-42f0a760c3d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\5. Title">
+      <UniqueIdentifier>{69425a38-73a5-48a8-9615-1813782dd9e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\6. MissionBar">
+      <UniqueIdentifier>{5ef54c33-f262-44ff-abd9-708bb98bc07a}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\UI\4. Button">
       <UniqueIdentifier>{7fc90c93-6b32-4a7f-a9c8-c8b678069a93}</UniqueIdentifier>
     </Filter>
@@ -210,6 +219,15 @@
     <ClInclude Include="..\Public\Button_UI.h">
       <Filter>02.GameObjects\UI\4. Button</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Bullet_UI.h">
+      <Filter>02.GameObjects\UI\4. Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Title_UI.h">
+      <Filter>02.GameObjects\UI\5. Title</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MissionBar_UI.h">
+      <Filter>02.GameObjects\UI\6. MissionBar</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -301,6 +319,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Button_UI.cpp">
       <Filter>02.GameObjects\UI\4. Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bullet_UI.cpp">
+      <Filter>02.GameObjects\UI\4. Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Title_UI.cpp">
+      <Filter>02.GameObjects\UI\5. Title</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MissionBar_UI.cpp">
+      <Filter>02.GameObjects\UI\6. MissionBar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
