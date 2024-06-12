@@ -194,6 +194,7 @@
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\Public\Player_State_Move.h" />
     <ClInclude Include="..\Public\Player_State_Move_Idle.h" />
+    <ClInclude Include="..\Public\Player_State_Move_Jog.h" />
     <ClInclude Include="..\Public\Player_State_Move_Walk.h" />
     <ClInclude Include="..\Public\Props.h" />
     <ClInclude Include="..\Public\Shirts_Monster.h" />
@@ -203,6 +204,7 @@
     <ClInclude Include="..\Public\UI.h" />
     <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="CTest.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -230,6 +232,7 @@
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\Private\Player_State_Move.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Idle.cpp" />
+    <ClCompile Include="..\Private\Player_State_Move_Jog.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Walk.cpp" />
     <ClCompile Include="..\Private\Props.cpp" />
     <ClCompile Include="..\Private\Shirts_Monster.cpp" />
@@ -239,6 +242,7 @@
     <ClCompile Include="..\Private\UI.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="CTest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
