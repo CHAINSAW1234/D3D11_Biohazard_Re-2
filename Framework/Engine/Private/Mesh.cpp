@@ -460,7 +460,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 	return S_OK;
 }
 
-void CMesh::Static_Mesh_Cooking()
+void CMesh::Static_Mesh_Cooking(CTransform* pTransform)
 {
 	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
 	{
@@ -469,7 +469,7 @@ void CMesh::Static_Mesh_Cooking()
 		m_pVertices_Cooking[i].z *= 1.f;
 	}
 
-	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices);
+	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices,pTransform);
 }
 
 void CMesh::SetVertices(_float3* pVertices)

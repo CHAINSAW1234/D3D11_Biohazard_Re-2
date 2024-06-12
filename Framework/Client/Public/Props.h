@@ -6,7 +6,6 @@
 BEGIN(Engine)
 class CModel;
 class CShader;
-class COctree;
 END
 
 BEGIN(Client)
@@ -49,10 +48,6 @@ private:
 	PROPS_DESC 					m_tagPropDesc ={};
 
 
-
-
-
-	COctree*					m_pOctree = { nullptr };
 private:
 	HRESULT						Add_Components();
 	HRESULT						Bind_ShaderResources();

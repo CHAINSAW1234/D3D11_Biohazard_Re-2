@@ -139,6 +139,9 @@
     <Filter Include="02.GameObjects\Monster\Pants">
       <UniqueIdentifier>{ef1d29e2-09f3-4957-bc74-9a1729ed5404}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Map">
+      <UniqueIdentifier>{6efea4f9-497a-4357-b128-793862780e4f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -252,6 +255,9 @@
     <ClInclude Include="..\Public\Shirts_Monster.h">
       <Filter>02.GameObjects\Monster\Shirts</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Map.h">
+      <Filter>02.GameObjects\Map</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -349,6 +355,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Shirts_Monster.cpp">
       <Filter>02.GameObjects\Monster\Shirts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Map.cpp">
+      <Filter>02.GameObjects\Map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

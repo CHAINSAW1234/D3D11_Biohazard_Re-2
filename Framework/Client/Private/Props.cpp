@@ -3,7 +3,7 @@
 #include "Model.h"
 #include "GameInstance.h"
 #include "Light.h"
-#include "Octree.h"
+//#include "Octree.h"
 #include"Player.h"
 CProps::CProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -48,7 +48,7 @@ HRESULT CProps::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
-	m_pModelCom->Static_Mesh_Cooking();
+	m_pModelCom->Static_Mesh_Cooking(m_pTransformCom);
 
 
 	/*m_pOctree = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
@@ -92,7 +92,7 @@ void CProps::Late_Tick(_float fTimeDelta)
 		m_bVisible = m_tagPropDesc.BelongIndexs2[m_pPlayer->Get_Player_ColIndex()];
 	}
 
-	if (/*m_bVisible && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f)*/1)
+	if (/*m_bVisible && *//*1*/true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f))
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
@@ -373,5 +373,4 @@ void CProps::Free()
 
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
-	Safe_Release(m_pOctree);
 }
