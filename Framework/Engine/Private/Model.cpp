@@ -1641,11 +1641,14 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 			}*/
 			KEYFRAME				FirstKeyFrame = { m_Animations[iAnimIndex]->Get_FirstKeyFrame(iRootBoneIndex) };
 
-			pPlayingInfo->Set_LastKeyFrame_Translation(iRootBoneIndex, XMLoadFloat3(&FirstKeyFrame.vTranslation));
-			pPlayingInfo->Set_LastKeyFrame_Rotation(iRootBoneIndex, XMLoadFloat4(&FirstKeyFrame.vRotation));
+			if(m_isRootMotion_XZ || m_isRootMotion_Y)
+				pPlayingInfo->Set_LastKeyFrame_Translation(iRootBoneIndex, XMLoadFloat3(&FirstKeyFrame.vTranslation));
+
+			if(m_isRootMotion_Rotation)
+				pPlayingInfo->Set_LastKeyFrame_Rotation(iRootBoneIndex, XMLoadFloat4(&FirstKeyFrame.vRotation));
 
 			vector<KEYFRAME>				LinearStartKeyFrames = { LastKeyFrames };
-			LinearStartKeyFrames[iRootBoneIndex] = FirstKeyFrame;
+			//	LinearStartKeyFrames[iRootBoneIndex] = FirstKeyFrame;
 
 			pPlayingInfo->Update_LinearStateKeyFrames(LinearStartKeyFrames);
 		}
