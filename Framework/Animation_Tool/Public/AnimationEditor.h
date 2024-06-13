@@ -12,6 +12,7 @@
 #define TOOL_BONELAYER_TAG              "Tool_BoneLayer"
 #define TOOL_INVERSEKINEMATIC_TAG       "Tool_IK"
 #define TOOL_EVENTINSERTER_TAG          "Tool_EventInserter"
+#define TOOL_MESHCONTROLLER_TAG         "Tool_MeshController"
 
 BEGIN(Engine)
 class CGameObject;
@@ -69,6 +70,9 @@ private:    /* For.AnimPlayer Tool */
 private:    /* For.AnimList Tool */
     HRESULT                     Initialize_AnimList();
 
+private:    /* For.MeshController Tool */
+    HRESULT                     Initialize_MeshController();
+
 private:    /* For.AssistRendering */
     void                        Render_BoneTags();
 
@@ -86,6 +90,7 @@ private:
     CTool_BoneLayer*            m_pToolBoneLayer = { nullptr };
     CTool_IK*                   m_pToolIK = { nullptr };
     CTool_EventInserter*        m_pToolEventInserter = { nullptr };
+    CTool_MeshController*       m_pToolMeshController = { nullptr };
 
     string                      m_strCurrentModelTag = { "" };
     string                      m_strCurrentRootBoneTag = { "" };

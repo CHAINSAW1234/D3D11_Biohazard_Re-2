@@ -81,6 +81,8 @@ HRESULT CAnimationEditor::Add_Tools()
 	m_pToolIK = nullptr;
 	Safe_Release(m_pToolEventInserter);
 	m_pToolEventInserter = nullptr;
+	Safe_Release(m_pToolMeshController);
+	m_pToolMeshController = nullptr;
 
 	CTool*		pToolCollider = { nullptr };
 	CTool*		pToolAnimList = { nullptr };
@@ -91,6 +93,7 @@ HRESULT CAnimationEditor::Add_Tools()
 	CTool*		pToolBoneLayer = { nullptr };
 	CTool*		pToolIK = { nullptr };
 	CTool* 		pToolEventInserter = { nullptr };
+	CTool*		pToolMeshController = { nullptr };
 
 	CTool_AnimPlayer::ANIMPLAYER_DESC				AnimPlayerDesc{};
 	if (nullptr != m_pTestObject)
@@ -128,6 +131,8 @@ HRESULT CAnimationEditor::Add_Tools()
 	CTool_IK::INVERSE_KINEMATIC_DESC				IKDesc{};
 
 	CTool_EventInserter::EVENTINSERTER_DESC			EventInserterDesc{};
+
+	CTool_MeshController::MESHCONTROLLER_DESC		MeshControllerDesc{};
 	
 
 	if (FAILED(__super::Add_Tool(&pToolCollider, static_cast<_uint>(CTool::TOOL_TYPE::COLLIDER), TOOL_COLLIDER_TAG)))
@@ -148,6 +153,8 @@ HRESULT CAnimationEditor::Add_Tools()
 		return E_FAIL;
 	if (FAILED(__super::Add_Tool(&pToolEventInserter, static_cast<_uint>(CTool::TOOL_TYPE::EVENT_INSERTER), TOOL_EVENTINSERTER_TAG, &EventInserterDesc)))
 		return E_FAIL;
+	if (FAILED(__super::Add_Tool(&pToolMeshController, static_cast<_uint>(CTool::TOOL_TYPE::MESH_CONTROLLER), TOOL_MESHCONTROLLER_TAG, &MeshControllerDesc)))
+		return E_FAIL;
 
 	CTool_Collider*				pToolColliderConvert = dynamic_cast<CTool_Collider*>(pToolCollider);
 	CModel_Selector*			pToolModelSelectorConvert = dynamic_cast<CModel_Selector*>(pToolModelSelector);
@@ -158,12 +165,13 @@ HRESULT CAnimationEditor::Add_Tools()
 	CTool_BoneLayer*			pToolBoneLayerConvert = dynamic_cast<CTool_BoneLayer*>(pToolBoneLayer);
 	CTool_IK*					pToolIKConvert = dynamic_cast<CTool_IK*>(pToolIK);
 	CTool_EventInserter*		pToolEventInserterConvert = dynamic_cast<CTool_EventInserter*>(pToolEventInserter);
+	CTool_MeshController*		pToolMeshControllerConvert = dynamic_cast<CTool_MeshController*>(pToolMeshController);
 
 	if (nullptr == pToolColliderConvert || nullptr == pToolModelSelectorConvert || 
 		nullptr == pToolAnimListConvert || nullptr == pToolTransformationConvert || 
 		nullptr == pToolAnimPlayerConvert || nullptr == pToolPartObjectConvert || 
 		nullptr == pToolBoneLayerConvert || nullptr == pToolIKConvert ||
-		nullptr == pToolEventInserterConvert)
+		nullptr == pToolEventInserterConvert || nullptr == pToolMeshControllerConvert)
 	{
 		MSG_BOX(TEXT("Tool积己 肋给达"));
 		return E_FAIL;
@@ -178,7 +186,7 @@ HRESULT CAnimationEditor::Add_Tools()
 	m_pToolBoneLayer = pToolBoneLayerConvert;
 	m_pToolIK = pToolIKConvert;
 	m_pToolEventInserter = pToolEventInserterConvert;
-
+	m_pToolMeshController = pToolMeshControllerConvert;
 	return S_OK;
 }
 
@@ -213,6 +221,9 @@ HRESULT CAnimationEditor::Initialize_Tools()
 		return E_FAIL;
 
 	if (FAILED(Initialize_PartObjectTool()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_MeshController()))
 		return E_FAIL;
 
 	return S_OK;
@@ -347,6 +358,18 @@ HRESULT CAnimationEditor::Initialize_AnimList()
 	return S_OK;
 }
 
+HRESULT CAnimationEditor::Initialize_MeshController()
+{
+	if (nullptr == m_pToolMeshController || nullptr == m_pToolModelSelector)
+		return E_FAIL;
+
+	map<string, CModel*>			Models = { m_pToolModelSelector->Get_Models() };
+	if(FAILED(m_pToolMeshController->Set_Models(Models)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 void CAnimationEditor::Render_BoneTags()
 {
 	map<string, _float4x4>			CombinedMatrices = { m_pToolModelSelector->Get_BoneCombinedMatrices() };
@@ -422,6 +445,7 @@ void CAnimationEditor::Free()
 	Safe_Release(m_pToolBoneLayer);
 	Safe_Release(m_pToolIK);
 	Safe_Release(m_pToolEventInserter);
+	Safe_Release(m_pToolMeshController);
 
 	Safe_Release(m_pTestObject);
 }

@@ -806,6 +806,83 @@ void CModel::Set_Surbodinate(string strBoneTag, _bool isSurbodinate)
 	m_Bones[iBoneIndex]->Set_Surbodinate(isSurbodinate);
 }
 
+_bool CModel::Is_Hide_Mesh(string strMeshTag)
+{
+	_int			iMeshIndex = { Find_Mesh_Index(strMeshTag)};
+	if(-1 == iMeshIndex)
+		return false;
+
+	return m_Meshes[iMeshIndex]->Is_Hide();
+}
+
+_bool CModel::Is_Hide_Mesh(_uint iMeshIndex)
+{
+	_uint			iNumMeshes = { static_cast<_uint>(m_Meshes.size()) };
+	if (iMeshIndex >= iNumMeshes)
+		return false;
+		
+	return m_Meshes[iMeshIndex]->Is_Hide();
+}
+
+void CModel::Hide_Mesh(_uint iMeshIndex, _bool isHide)
+{
+	_uint			iNumMesh = { static_cast<_uint>(m_Meshes.size()) };
+	if (iNumMesh <= iMeshIndex)
+		return;
+
+	m_Meshes[iMeshIndex]->Set_Hide(isHide);
+}
+
+void CModel::Hide_Mesh(string strMeshTag, _bool isHide)
+{
+	_int			iIndex = { Find_Mesh_Index(strMeshTag) };
+	if (-1 == iIndex)
+		return;
+
+	m_Meshes[iIndex]->Set_Hide(isHide);
+}
+
+_int CModel::Find_Mesh_Index(string strMeshTag)
+{
+	_uint			iNumMeshes = { static_cast<_uint>(m_Meshes.size()) };
+	for (_uint iIndex = 0; iIndex < iNumMeshes; ++iIndex)
+	{
+		string			strSrcMeshTag = { m_Meshes[iIndex]->Get_MeshName() };
+		if (strSrcMeshTag == strMeshTag)
+			return iIndex;
+	}
+
+	return -1;
+}
+
+string CModel::Find_Mesh_Tag(_uint iMeshIndex)
+{
+	_uint			iNumMeshes = { static_cast<_uint>(m_Meshes.size()) };
+	string			strMeshTag = { "" };
+
+	if (iMeshIndex < iNumMeshes)
+	{
+		strMeshTag = m_Meshes[iMeshIndex]->Get_MeshName();
+	}
+
+	return strMeshTag;
+}
+
+list<_uint> CModel::Get_NonHideMeshIndices()
+{
+	_uint			iNumMeshes = { static_cast<_uint>(m_Meshes.size()) };
+	list<_uint>		MeshIndices;
+	for (_uint iIndex = 0; iIndex < iNumMeshes; ++iIndex)
+	{
+		if (false == m_Meshes[iIndex]->Is_Hide())
+		{
+			MeshIndices.push_back(iIndex);
+		}
+	}
+
+	return MeshIndices;
+}
+
 vector<string> CModel::Get_BoneNames()
 {
 	vector<string> BoneNames;
@@ -830,13 +907,13 @@ vector<_float4> CModel::Get_Translations()
 	return Translations;
 }
 
-set<string> CModel::Get_MeshTags()
+vector<string> CModel::Get_MeshTags()
 {
-	set<string>		MeshTags;
+	vector<string>		MeshTags;
 	for (auto& pMesh : m_Meshes)
 	{
 		const string		strMeshTag = pMesh->Get_MeshName();
-		MeshTags.emplace(strMeshTag);
+		MeshTags.emplace_back(strMeshTag);
 	}
 
 	return MeshTags;
@@ -1639,7 +1716,7 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 				_vector			vResultLastRotation = { vRootQuaternion };
 				pPlayingInfo->Set_LastKeyFrame_Rotation(iRootBoneIndex, vResultLastRotation);
 			}*/
-			KEYFRAME				FirstKeyFrame = { m_Animations[iAnimIndex]->Get_FirstKeyFrame(iRootBoneIndex) };
+			KEYFRAME				FirstKeyFrame = { m_Animations[iAnimIndex]->Get_FirstKeyFrame(iRootBoneIndex) };			
 
 			if(m_isRootMotion_XZ || m_isRootMotion_Y)
 				pPlayingInfo->Set_LastKeyFrame_Translation(iRootBoneIndex, XMLoadFloat3(&FirstKeyFrame.vTranslation));
@@ -1653,9 +1730,9 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 			pPlayingInfo->Update_LinearStateKeyFrames(LinearStartKeyFrames);
 		}
 
-		//	이번에 재생된 애니메이션과 이전 최종 키프레임간의 혼합 과정
-		const vector<KEYFRAME>&			LinearStartKeyFrames = { pPlayingInfo->Get_LinearStartKeyFrames() };
-		TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearInterpolation, m_fTotalLinearTime, TransformationMatrices, iNumBones, LinearStartKeyFrames);
+		//	이번에 재생된 애니메이션과 이전 최종 키프레임간의 혼합 과정		
+		const vector<KEYFRAME>& LinearStartKeyFrames = { pPlayingInfo->Get_LinearStartKeyFrames() };
+		TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearInterpolation, m_fTotalLinearTime, TransformationMatrices, iNumBones, iRootBoneIndex, LinearStartKeyFrames);
 		//	const vector<KEYFRAME>&			LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
 		//	TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearInterpolation, m_fTotalLinearTime, TransformationMatrices, iNumBones, LastKeyFrames);
 	}
@@ -1673,28 +1750,21 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 
 		XMMatrixDecompose(&vRootScale, &vRootQuaternion, &vRootTranslation, RootTransformationMatrix);	
 
+		_vector			vPreTranslationLocal = { XMLoadFloat3(&FirstKeyFrame.vTranslation) };
+		_vector			vResultTranslationLocal = { vPreTranslationLocal };
+
 		if (true == m_isRootMotion_XZ)
 		{
-			_vector			vPreTranslationLocal = { XMLoadFloat3(&FirstKeyFrame.vTranslation) };
-			//	_vector			vPreTranslationLocal = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
-			_vector			vResultTranslationLocal = {};
-
-			vResultTranslationLocal = XMVectorSetX(vPreTranslationLocal, XMVectorGetX(vRootTranslation));
+			vResultTranslationLocal = XMVectorSetX(vResultTranslationLocal, XMVectorGetX(vRootTranslation));
 			vResultTranslationLocal = XMVectorSetZ(vResultTranslationLocal, XMVectorGetZ(vRootTranslation));
-
-			pPlayingInfo->Set_PreTranslation(vResultTranslationLocal);
 		}
 
 		if (true == m_isRootMotion_Y)
 		{
-			_vector			vPreTranslationLocal = { XMLoadFloat3(&FirstKeyFrame.vTranslation) };
-			//	_vector			vPreTranslationLocal = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
-			_vector			vResultTranslationLocal = {};
-
-			vResultTranslationLocal = XMVectorSetY(vPreTranslationLocal, XMVectorGetY(vRootTranslation));
-
-			pPlayingInfo->Set_PreTranslation(vResultTranslationLocal);
+			vResultTranslationLocal = XMVectorSetY(vResultTranslationLocal, XMVectorGetY(vRootTranslation));
 		}	
+
+		pPlayingInfo->Set_PreTranslation(vResultTranslationLocal);
 
 		if (true == m_isRootMotion_Rotation)
 		{

@@ -67,9 +67,8 @@ HRESULT CAnimTestPartObject::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	_uint		iNumMeshes = { m_pModelCom->Get_NumMeshes() };
-
-	for (size_t i = 0; i < iNumMeshes; i++)
+	list<_uint>			NonHideMeshIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+	for(_uint i : NonHideMeshIndices)
 	{
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
@@ -115,9 +114,8 @@ HRESULT CAnimTestPartObject::Render_LightDepth_Dir()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
 
-		_uint				iNumMeshes = { m_pModelCom->Get_NumMeshes() };
-
-		for (size_t i = 0; i < iNumMeshes; i++)
+		list<_uint>			NonHideMeshIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (_uint i : NonHideMeshIndices)
 		{
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
@@ -154,10 +152,8 @@ HRESULT CAnimTestPartObject::Render_LightDepth_Spot()
 			return E_FAIL;
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
-
-		_uint					iNumMeshes = { m_pModelCom->Get_NumMeshes() };
-
-		for (size_t i = 0; i < iNumMeshes; i++)
+		list<_uint>			NonHideMeshIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (_uint i : NonHideMeshIndices)
 		{
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
@@ -202,8 +198,8 @@ HRESULT CAnimTestPartObject::Render_LightDepth_Point()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
 			return E_FAIL;
 
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-		for (size_t i = 0; i < iNumMeshes; i++)
+		list<_uint>			NonHideMeshIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (_uint i : NonHideMeshIndices)
 		{
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;

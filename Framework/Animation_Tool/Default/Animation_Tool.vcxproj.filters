@@ -219,7 +219,9 @@
     <ClCompile Include="..\Private\Tool_EventInserter.cpp">
       <Filter>02.GameObject\Tool\Tool_EventInserter</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Tool_MeshController.cpp" />
+    <ClCompile Include="..\Private\Tool_MeshController.cpp">
+      <Filter>02.GameObject\Tool\Tool_MeshController</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -357,7 +359,9 @@
     <ClInclude Include="..\Public\Tool_EventInserter.h">
       <Filter>02.GameObject\Tool\Tool_EventInserter</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Tool_MeshController.h" />
+    <ClInclude Include="..\Public\Tool_MeshController.h">
+      <Filter>02.GameObject\Tool\Tool_MeshController</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Animation_Tool.ico">
