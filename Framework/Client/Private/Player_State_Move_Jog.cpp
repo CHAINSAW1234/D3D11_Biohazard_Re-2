@@ -16,10 +16,21 @@ void CPlayer_State_Move_Jog::OnStateEnter()
 
 void CPlayer_State_Move_Jog::OnStateUpdate(_float fTimeDelta)
 {
+	CPlayer::ANIMATION_MOVE Animation = (CPlayer::ANIMATION_MOVE)m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0);
+	_bool isFinish = m_pPlayer->Get_Body_Model()->isFinished(0);
+	if (isFinish) {
+		int a = 1;
+	}
+	_tprintf(TEXT("현재 애니메이션 : ") + Animation);
+
 	Update_KeyInput();
 	Update_Degree();
+
+
 	Set_MoveAnimation(fTimeDelta);
-	Look_Cam(fTimeDelta);
+
+
+	//Look_Cam(fTimeDelta);
 }
 
 void CPlayer_State_Move_Jog::OnStateExit()
@@ -60,9 +71,9 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 
 #pragma region Start
 	if (!(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) >= 15 &&
-		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) <= 26)) {
+		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) <= 26) ||
+		(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::JOG_STRAIGHT_LOOP && abs(m_fDegree) > 80) ) {
 
-		m_pPlayer->Get_Body_Model()->Set_Loop(0, false);
 		if (abs(m_fDegree) < 75) {
 			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_L0_LR);
 		}
@@ -82,14 +93,19 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_R180_RL);
 			}
 		}
+
+		m_pPlayer->Get_Body_Model()->Set_Loop(0, false); 
 	}
 	
 #pragma endregion
 
 #pragma region LOOP
+
 	if (m_pPlayer->Get_Body_Model()->isFinished(0)) {
-		m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
+
+		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(m_fDegree/90));
 		m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_STRAIGHT_LOOP);
+		//m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
 	}
 
 #pragma endregion
@@ -98,13 +114,30 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 
 void CPlayer_State_Move_Jog::Look_Cam(_float fTimeDelta)
 {
-	if (!(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) >= 15 &&
-		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) <= 20)) {
-		if (abs(m_fDegree) > 2) {
-			m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_fDegree / 10);
-		}
+	_float fDegree = m_fDegree;
+
+	switch (m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0)) {
+	case CPlayer::JOG_START_L0_LR:
+	case CPlayer::JOG_START_R0_RL:
+	case CPlayer::JOG_STRAIGHT_LOOP:
+		break;
+	case CPlayer::JOG_START_L90_LR:
+		fDegree += 90;
+		break;
+	case CPlayer::JOG_START_L180_LR:
+		fDegree += 180;
+		break;
+	case CPlayer::JOG_START_R90_RL:
+		fDegree -= 90;
+		break;
+	case CPlayer::JOG_START_R180_RL:
+		fDegree -= 180;
+		break;
 	}
 
+	if (abs(fDegree) > 2) {
+		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * fDegree / 30);
+	}
 
 	//if (fDegree > 5) {
 	//	m_pPlayer->Get_Body_Model()->Change_Animation(2, CPlayer::TURN_L180);
@@ -125,7 +158,6 @@ void CPlayer_State_Move_Jog::Look_Cam(_float fTimeDelta)
 	45 / 90 * 100 = 50 : 0.5 0.5 비율로 섞으면 됨
 
 */
-
 
 }
 

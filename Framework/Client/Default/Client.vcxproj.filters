@@ -321,7 +321,6 @@
     <ClInclude Include="..\Public\Player_State_Move_Jog.h">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
     </ClInclude>
-    <ClInclude Include="CTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -456,7 +455,6 @@
     <ClCompile Include="..\Private\Player_State_Move_Jog.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
     </ClCompile>
-    <ClCompile Include="CTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
