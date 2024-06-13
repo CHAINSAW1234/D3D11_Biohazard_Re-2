@@ -187,10 +187,12 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	for (int i = 0; i < VertexNum; ++i)
 	{
 		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
-		VertexPos = XMVector3Transform(VertexPos, WorldMat);
-		XMStoreFloat3(&pVertices[i], VertexPos);
+		VertexPos = XMVector3TransformCoord(VertexPos, WorldMat);
 
-		PxVec3 Ver = PxVec3(pVertices[i].x, pVertices[i].y, pVertices[i].z);
+		_float4 vPos;
+		XMStoreFloat4(&vPos, VertexPos);
+
+		PxVec3 Ver = PxVec3(vPos.x, vPos.y, vPos.z);
 		vertices.push_back(Ver);
 	}
 

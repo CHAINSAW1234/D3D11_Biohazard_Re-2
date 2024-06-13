@@ -82,7 +82,26 @@ public:
 	{
 		return XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_WorldMatrix));
 	}
+	bool                    IsIdentityWorldMatrix()
+	{
+		_matrix WorldMat = XMLoadFloat4x4(&m_WorldMatrix);
+		if (XMVectorGetX(WorldMat.r[0]) == 1.0f && XMVectorGetY(WorldMat.r[0]) == 0.0f &&
+			XMVectorGetZ(WorldMat.r[0]) == 0.0f && XMVectorGetW(WorldMat.r[0]) == 0.0f &&
 
+			XMVectorGetX(WorldMat.r[1]) == 0.0f && XMVectorGetY(WorldMat.r[1]) == 1.0f &&
+			XMVectorGetZ(WorldMat.r[1]) == 0.0f && XMVectorGetW(WorldMat.r[1]) == 0.0f &&
+
+			XMVectorGetX(WorldMat.r[2]) == 0.0f && XMVectorGetY(WorldMat.r[2]) == 0.0f &&
+			XMVectorGetZ(WorldMat.r[2]) == 1.0f && XMVectorGetW(WorldMat.r[2]) == 0.0f &&
+
+			XMVectorGetX(WorldMat.r[3]) == 0.0f && XMVectorGetY(WorldMat.r[3]) == 0.0f &&
+			XMVectorGetZ(WorldMat.r[3]) == 0.0f && XMVectorGetW(WorldMat.r[3]) == 1.0f)
+		{
+			return true;
+		}
+
+		return false;
+	}
 	//스케일을 1로 만든 월드 행렬 반환 -XMFLOAT4X4
 	_float4x4				Get_WorldMatrix_Pure();
 	//스케일을 1로 만든 월드 행렬 반환 -XMMATRIX
