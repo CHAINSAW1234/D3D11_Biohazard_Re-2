@@ -17,7 +17,10 @@ HRESULT CComponent_Manager::Initialize(_uint iNumLevels)
 HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const wstring & strPrototypeTag, CComponent * pPrototype)
 {
 	if (nullptr != Find_Prototype(iLevelIndex, strPrototypeTag))
+	{
+		Safe_Release(pPrototype);
 		return E_FAIL;
+	}
 
 	m_pPrototypes[iLevelIndex].emplace(strPrototypeTag, pPrototype);
 

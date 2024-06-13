@@ -9,6 +9,7 @@
 //	#include "BackGround.h"
 #include "Terrain.h"
 
+
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
 	, m_pContext{ pContext }
@@ -268,6 +269,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 	//if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Weapon"),
 	//	CWeapon::Create(m_pDevice, m_pContext))))
 	//	return E_FAIL;
+
+
 
 	m_strLoadingText = TEXT("로딩이 완료되었습니다.");
 

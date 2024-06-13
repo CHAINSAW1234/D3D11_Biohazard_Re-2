@@ -26,7 +26,6 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 		if (FAILED(__super::Initialize(pArg)))
 			return E_FAIL;
 
-
 		CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
 
 		m_wstrDefaultTexturPath = CustomUIDesc->wstrDefaultTexturPath;
@@ -36,6 +35,8 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 		m_wstrDefaultTexturComTag = CustomUIDesc->wstrDefaultTexturComTag;
 
 		m_wstrMaskComTag = CustomUIDesc->wstrMaskComTag;
+
+		m_isMask = m_Mask[0].isMask;	
 
 		if (FAILED(Add_Components(CustomUIDesc->wstrDefaultTexturComTag, CustomUIDesc->wstrMaskComTag)))
 			return E_FAIL;
@@ -67,7 +68,7 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 			m_Mask[i] = CustomUIDesc->Mask[i];
 		}
 
-		for (_int i = 0; i < CustomUIDesc->iTextBoxCount; i++)
+		for (_uint i = 0; i < CustomUIDesc->iTextBoxCount; i++)
 		{
 			CGameObject* pTextBox = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_TextBox"), &CustomUIDesc->vecTextBoxDesc[i]);
 			if (nullptr == pTextBox)
@@ -83,21 +84,17 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 		{
 			if (0 == m_iColorMaxNum)
 			{
-				m_isLoad = true;
 				m_isPlay = false;
 			}
 		}
 	}
 
 	// Shader 초기화
-	m_isSelect_Color	= false; 
-	m_isSelect			= false;
 	m_isAlphaChange		= false;
 	m_isBlending		= false;
 	m_isPush			= false;
 	m_fSplit			= 1;
-
-	
+	m_isLoad			= true;
 
 	return S_OK;
 }
@@ -119,7 +116,8 @@ void CCustomize_UI::Tick(_float fTimeDelta)
 
 	if (m_isPlay)
 		Color_Frame(fTimeDelta);
-	else
+
+	else if(false == m_isTimerControl)
 	{
 		/* Alpa 값 여부 */
 		if (m_isColorChange || m_isAlphaChange || m_isMask)
@@ -154,31 +152,30 @@ void CCustomize_UI::Tick(_float fTimeDelta)
 
 void CCustomize_UI::Late_Tick(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
+	/* Frame Work에서 사용 시 값이 뒤틀림 */
+	//if (0 != m_vecChildUI.size())
+	//{
+	//	for (auto& iter : m_vecChildUI)
+	//	{
+	//		if (nullptr != iter)
+	//		{
+	//			dynamic_cast<CCustomize_UI*>(iter)->Move_State(ComputeMovement(CUI::UISTATE_POS), CUI::UISTATE_POS);
+	//			dynamic_cast<CCustomize_UI*>(iter)->Move_State(ComputeMovement(CUI::UISTATE_SCALE), CUI::UISTATE_SCALE);
+	//		}
+	//	}
+	//}
 
-	if (0 != m_vecChildUI.size())
-	{
-		for (auto& iter : m_vecChildUI)
-		{
-			if (nullptr != iter)
-			{
-				dynamic_cast<CCustomize_UI*>(iter)->Move_State(ComputeMovement(CUI::UISTATE_POS), CUI::UISTATE_POS);
-				dynamic_cast<CCustomize_UI*>(iter)->Move_State(ComputeMovement(CUI::UISTATE_SCALE), CUI::UISTATE_SCALE);
-			}
-		}
-	}
-
-	if (0 != m_vecTextBoxes.size())
-	{
-		for (auto& iter : m_vecTextBoxes)
-		{
-			if (nullptr != iter)
-			{
-				iter->Move_State(ComputeMovement(CUI::UISTATE_POS), CUI::UISTATE_POS);
-				iter->Move_State(ComputeMovement(CUI::UISTATE_SCALE), CUI::UISTATE_SCALE);
-			}
-		}
-	}
+	//if (0 != m_vecTextBoxes.size())
+	//{
+	//	for (auto& iter : m_vecTextBoxes)
+	//	{
+	//		if (nullptr != iter)
+	//		{
+	//			iter->Move_State(ComputeMovement(CUI::UISTATE_POS), CUI::UISTATE_POS);
+	//			iter->Move_State(ComputeMovement(CUI::UISTATE_SCALE), CUI::UISTATE_SCALE);
+	//		}
+	//	}
+	//}
 
 	__super::Late_Tick(fTimeDelta);
 
@@ -186,10 +183,15 @@ void CCustomize_UI::Late_Tick(_float fTimeDelta)
 	{
 		iter->Late_Tick(fTimeDelta);
 	}
+
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CCustomize_UI::Render()
 {
+	if (false == m_isRender)
+		return E_FAIL;
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
@@ -221,7 +223,7 @@ HRESULT CCustomize_UI::Add_Components(const wstring& wstrTextureTag, const wstri
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, wstrMaskTag,
 		TEXT("Com_MaskTexture"), (CComponent**)&m_pMaskTextureCom)))
 		return E_FAIL;
-
+	
 	/* For.Com_VIBuffer */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
 		TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom)))
@@ -243,16 +245,21 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureNum)))
 		return E_FAIL;
-	if (FAILED(m_pMaskTextureCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
+
+	if(nullptr != m_pMaskTextureCom)
+	{
+		if (FAILED(m_pMaskTextureCom->Bind_ShaderResource(m_pShaderCom, "g_MaskTexture", 0)))
+			return E_FAIL;
+	}
+	if (nullptr != m_pSubMaskTextureCom)
+	{
+		if (FAILED(m_pSubMaskTextureCom->Bind_ShaderResource(m_pShaderCom, "g_MaskSub_Texture", 0)))
+			return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShaderCom, TEXT("Target_Depth"), "g_DepthTexture")))
 		return E_FAIL;
 
-	// Edit
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_SelectColor", &m_isSelect_Color, sizeof(_bool))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_GreenColor", &m_isSelect, sizeof(_bool))))
-		return E_FAIL;
-
-	// Color Change
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_ColorValu", &m_vCurrentColor, sizeof(_float4))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_ColorChange", &m_isColorChange, sizeof(_bool))))
@@ -295,6 +302,20 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaskTime", &m_fMaskTimer, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_MaskType", &m_vMaskType, sizeof(_float2))))
+		return E_FAIL;
+
+	/////////////// Client ////////////////////
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightMask_Color", &m_vLightMask_Color, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_isLightMask", &m_isLightMask, sizeof(_bool))))
+		return E_FAIL;
+	
+	// Light
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_isLight", &m_isLight, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_LightPosition", &m_fLightPosition, sizeof(_float2))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_LightSize", &m_fLightSize, sizeof(_float))))
 		return E_FAIL;
 
 	return S_OK;
@@ -350,7 +371,7 @@ CCustomize_UI::CUSTOM_UI_DESC CCustomize_UI::Get_Cutomize_DESC() const
 		CustomUIDesc.vecTextBoxDesc.push_back(iter->Get_TextBoxDesc());
 	}
 
-	CustomUIDesc.iTextBoxCount = m_vecTextBoxes.size();
+	CustomUIDesc.iTextBoxCount = (_uint)m_vecTextBoxes.size();
 
 	CustomUIDesc.iChild = (_int)m_vecChildUI.size();
 
@@ -408,19 +429,54 @@ _bool CCustomize_UI::IsMyChild(CGameObject* Child)
 	return false;
 }
 
-//HRESULT CCustomize_UI::Change_Texture(const wstring& strPrototypeTag, const wstring& strTexturePath)
-//{
-//	Safe_Release(m_pTextureCom);
-//	m_pTextureCom = nullptr;
-//
-//	m_strTexturePath = strTexturePath;
-//
-//	/* For.Com_Texture */
-//	if (FAILED(__super::Change_Component(LEVEL_GAMEPLAY, strPrototypeTag, TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
-//		return E_FAIL;
-//
-//	return S_OK;
-//}
+void CCustomize_UI::Set_Dead(_bool bDead)
+{
+	m_bDead = bDead;
+
+	for (auto& iter : m_vecChildUI)
+		iter->Set_Dead(bDead);
+}
+
+_bool CCustomize_UI::Select_UI()
+{
+	_float2 mouse = m_pGameInstance->Get_ViewMousePos();
+
+	_float4 UITrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	_float3 UIScaled = m_pTransformCom->Get_Scaled();
+
+	_float2 LU = { (g_iWinSizeX + UITrans.x) - UIScaled.x, (g_iWinSizeY + UITrans.y) - UIScaled.y };
+	_float2 RU = { (g_iWinSizeX + UITrans.x) + UIScaled.x, (g_iWinSizeY + UITrans.y) - UIScaled.y };
+	_float2 LD = { (g_iWinSizeX + UITrans.x) - UIScaled.x, (g_iWinSizeY + UITrans.y) - UIScaled.y };
+	_float2 RD = { (g_iWinSizeX + UITrans.x) + UIScaled.x, (g_iWinSizeY + UITrans.y) + UIScaled.y };
+
+
+	if ((mouse.x >= LU.x && mouse.y >= LU.y) &&
+		(mouse.x <= RU.x && mouse.y >= RU.y) &&
+		(mouse.x >= LD.x && mouse.y <= LD.y) &&
+		(mouse.x <= RD.x && mouse.y <= RD.y))
+		return true;
+
+	return false;
+}
+
+
+HRESULT CCustomize_UI::Change_Texture(const wstring& strPrototypeTag, const wstring& strComponentTag)
+{
+	if (nullptr == m_pGameInstance->Find_Prototype(m_pGameInstance->Get_CurrentLevel(), strPrototypeTag))
+		return E_FAIL;
+
+	if (TEXT("Com_DefaultTexture") == strComponentTag)
+	{
+		Safe_Release(m_pTextureCom);
+		m_pTextureCom = nullptr;
+		if (FAILED(__super::Change_Component(LEVEL_GAMEPLAY, strPrototypeTag, strComponentTag, (CComponent**)&m_pTextureCom)))
+		{
+			return E_FAIL;
+		}
+			
+	}
+	return S_OK;
+}
 
 void CCustomize_UI::Non_Frame()
 {
@@ -459,8 +515,6 @@ void CCustomize_UI::Color_Frame(_float fTimeDelta)
 
 	_float      fRatio = m_fCurrentColor_Timer / m_fColorTimer_Limit;
 	_float      fColorRatio = m_fCurrentColor_Timer * m_fColorSpeed;
-
-
 
 	/* ▶ 보간 Type */
 	if (m_iEndingType == PLAY_BUTTON::PLAY_DEFAULT)
@@ -757,10 +811,7 @@ _matrix CCustomize_UI::LerpMatrix(_matrix A, _matrix B, _float t)
 	for (int i = 0; i < 4; ++i)
 	{
 		for (int j = 0; j < 4; ++j)
-		{
-			// A와 B 행렬의 (i, j) 요소에 대해 선형 보간 수행
 			result.r[i].m128_f32[j] = A.r[i].m128_f32[j] + t * (B.r[i].m128_f32[j] - A.r[i].m128_f32[j]);
-		}
 	}
 
 	return result;
@@ -781,35 +832,6 @@ void CCustomize_UI::PushBack_TextBox(CGameObject* pGameOBJ)
 	m_vecTextBoxes.push_back(dynamic_cast<CTextBox*>(pGameOBJ));
 }
 
-CCustomize_UI* CCustomize_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-{
-	CCustomize_UI* pInstance = new CCustomize_UI(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype()))
-	{
-		MSG_BOX(TEXT("Failed To Created : CCustomize_UI"));
-
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-
-}
-
-CGameObject* CCustomize_UI::Clone(void* pArg)
-{
-	CCustomize_UI* pInstance = new CCustomize_UI(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX(TEXT("Failed To Created : CCustomize_UI"));
-
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
 void CCustomize_UI::Free()
 {
 	__super::Free();
@@ -821,4 +843,313 @@ void CCustomize_UI::Free()
 	for (auto& pChildUI : m_vecChildUI)
 		Safe_Release(pChildUI);
 	m_vecChildUI.clear();
+}
+
+HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CCustomize_UI::CUSTOM_UI_DESC CustomizeUIDesc;
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoad), sizeof(_bool));
+
+	_char DefaultTexturePath[MAX_PATH] = "";
+	_char DefaultTextureTag[MAX_PATH] = "";
+	_char MaskTexturePath[MAX_PATH] = "";
+	_char MaskTextureTag[MAX_PATH] = "";
+
+	inputFileStream.read(reinterpret_cast<_char*>(DefaultTexturePath), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(DefaultTextureTag), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(MaskTexturePath), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(MaskTextureTag), sizeof(_char) * MAX_PATH);
+
+	CustomizeUIDesc.wstrDefaultTexturPath = wstring(DefaultTexturePath, DefaultTexturePath + strlen(DefaultTexturePath));
+	CustomizeUIDesc.wstrDefaultTexturComTag = wstring(DefaultTextureTag, DefaultTextureTag + strlen(DefaultTextureTag));
+	CustomizeUIDesc.wstrMaskPath = wstring(MaskTexturePath, MaskTexturePath + strlen(MaskTexturePath));
+	CustomizeUIDesc.wstrMaskComTag = wstring(MaskTextureTag, MaskTextureTag + strlen(MaskTextureTag));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.worldMatrix), sizeof(_float4x4));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.vSize), sizeof(_float2));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isPlay), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fColorTimer_Limit), sizeof(_float));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iEndingType), sizeof(_int));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fMaxFrame), sizeof(_float));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isFrame), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoopStart), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoop), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoopStop), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.ReStart), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iColorMaxNum), sizeof(_uint));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iTextBoxCount), sizeof(_uint));
+
+	for (_uint i = 0; i <= CustomizeUIDesc.iColorMaxNum; i++)
+	{
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.SavePos[i]), sizeof(_float4x4));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.vColor[i]), sizeof(CCustomize_UI::Value_Color));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.Mask[i]), sizeof(CCustomize_UI::Value_Mask));
+	}
+
+	for (_uint i = 0; i < CustomizeUIDesc.iTextBoxCount; i++)
+	{
+		CTextBox::TextBox_DESC TextBoxDesc = {};
+
+		_tchar FontString[MAX_PATH] = L"";
+
+		_char FontType[MAX_PATH] = "";
+
+		inputFileStream.read(reinterpret_cast<_char*>(FontString), sizeof(_tchar) * MAX_PATH);
+
+		inputFileStream.read(reinterpret_cast<_char*>(FontType), sizeof(_char) * MAX_PATH);
+
+		TextBoxDesc.wstrText = FontString;
+
+		TextBoxDesc.wstrFontType = wstring(FontType, FontType + strlen(FontType));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vFontColor), sizeof(_vector));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.iFontSize), sizeof(_uint));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vPos), sizeof(_float3));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vSize), sizeof(_float2));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.isOuterLine), sizeof(_bool));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vOutLineColor), sizeof(_vector));
+
+		CustomizeUIDesc.vecTextBoxDesc.push_back(TextBoxDesc);
+	}
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.IsChild), sizeof(_bool));
+
+	if (0 == CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
+	{
+		/* For.Prototype_Component_Texture_ */
+		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
+			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrDefaultTexturPath)))) {
+			int a = 0;
+		}
+	}
+
+
+	else if (0 < CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
+	{
+		/* For.Prototype_Component_Texture_ */
+		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
+			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrDefaultTexturPath, CustomizeUIDesc.fMaxFrame)))) {
+			int a = 0;
+		}
+	}
+
+	if (TEXT("") != CustomizeUIDesc.wstrMaskPath)
+	{
+		/* For.Prototype_Component_Texture_ */
+		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrMaskComTag,
+			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrMaskPath)))) {
+			int a = 0;
+		}
+	}
+
+	//객체 생성
+	if (FAILED(CGameInstance::Get_Instance()->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), PrototypeTag, &CustomizeUIDesc)))
+	{
+		MSG_BOX(TEXT("Failed to Add Clone UI"));
+		return E_FAIL;
+	}
+
+	CGameObject* pGameObj = CGameInstance::Get_Instance()->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
+
+	if (nullptr != pGameParentsObj)
+	{
+		dynamic_cast<CCustomize_UI*>(pGameParentsObj)->PushBack_Child(pGameObj);
+	}
+
+	/*자식이 있으면 자식 정보 read*/
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iChild), sizeof(_int));
+
+	if (true == 0 < CustomizeUIDesc.iChild)
+	{
+		for (_int i = 0; i < CustomizeUIDesc.iChild; i++)
+		{
+			if (FAILED(CreatUI_FromDat(inputFileStream, pGameObj, PrototypeTag, pDevice, pContext)))
+				return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameParentsObj)
+	{
+		inputFileStream.close();
+		return S_OK;
+	}
+
+
+	return S_OK;
+}
+
+HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, CGameObject** ppOut, ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CCustomize_UI::CUSTOM_UI_DESC CustomizeUIDesc;
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoad), sizeof(_bool));
+
+	_char DefaultTexturePath[MAX_PATH] = "";
+	_char DefaultTextureTag[MAX_PATH] = "";
+	_char MaskTexturePath[MAX_PATH] = "";
+	_char MaskTextureTag[MAX_PATH] = "";
+
+	inputFileStream.read(reinterpret_cast<_char*>(DefaultTexturePath), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(DefaultTextureTag), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(MaskTexturePath), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(MaskTextureTag), sizeof(_char) * MAX_PATH);
+
+	CustomizeUIDesc.wstrDefaultTexturPath = wstring(DefaultTexturePath, DefaultTexturePath + strlen(DefaultTexturePath));
+	CustomizeUIDesc.wstrDefaultTexturComTag = wstring(DefaultTextureTag, DefaultTextureTag + strlen(DefaultTextureTag));
+	CustomizeUIDesc.wstrMaskPath = wstring(MaskTexturePath, MaskTexturePath + strlen(MaskTexturePath));
+	CustomizeUIDesc.wstrMaskComTag = wstring(MaskTextureTag, MaskTextureTag + strlen(MaskTextureTag));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.worldMatrix), sizeof(_float4x4));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.vSize), sizeof(_float2));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isPlay), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fColorTimer_Limit), sizeof(_float));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iEndingType), sizeof(_int));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fMaxFrame), sizeof(_float));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isFrame), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoopStart), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoop), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoopStop), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.ReStart), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iColorMaxNum), sizeof(_uint));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iTextBoxCount), sizeof(_uint));
+
+	for (_uint i = 0; i <= CustomizeUIDesc.iColorMaxNum; i++)
+	{
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.SavePos[i]), sizeof(_float4x4));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.vColor[i]), sizeof(CCustomize_UI::Value_Color));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.Mask[i]), sizeof(CCustomize_UI::Value_Mask));
+	}
+
+	for (_uint i = 0; i < CustomizeUIDesc.iTextBoxCount; i++)
+	{
+		CTextBox::TextBox_DESC TextBoxDesc = {};
+
+		_tchar FontString[MAX_PATH] = L"";
+
+		_char FontType[MAX_PATH] = "";
+
+		inputFileStream.read(reinterpret_cast<_char*>(FontString), sizeof(_tchar) * MAX_PATH);
+
+		inputFileStream.read(reinterpret_cast<_char*>(FontType), sizeof(_char) * MAX_PATH);
+
+		TextBoxDesc.wstrText = FontString;
+
+		TextBoxDesc.wstrFontType = wstring(FontType, FontType + strlen(FontType));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vFontColor), sizeof(_vector));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.iFontSize), sizeof(_uint));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vPos), sizeof(_float3));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vSize), sizeof(_float2));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.isOuterLine), sizeof(_bool));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vOutLineColor), sizeof(_vector));
+
+		CustomizeUIDesc.vecTextBoxDesc.push_back(TextBoxDesc);
+	}
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.IsChild), sizeof(_bool));
+
+	if (0 == CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
+	{
+		/* For.Prototype_Component_Texture_ */
+		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
+			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrDefaultTexturPath)))) {
+			int a = 0;
+		}
+	}
+
+
+	else if (0 < CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
+	{
+		/* For.Prototype_Component_Texture_ */
+		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
+			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrDefaultTexturPath, CustomizeUIDesc.fMaxFrame)))) {
+			int a = 0;
+		}
+	}
+
+	if (TEXT("") != CustomizeUIDesc.wstrMaskPath)
+	{
+		/* For.Prototype_Component_Texture_ */
+		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrMaskComTag,
+			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrMaskPath)))) {
+			int a = 0;
+		}
+	}
+
+	//객체 생성
+	if (FAILED(CGameInstance::Get_Instance()->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), PrototypeTag, &CustomizeUIDesc)))
+	{
+		MSG_BOX(TEXT("Failed to Add Clone UI"));
+		return E_FAIL;
+	}
+
+	CGameObject* pGameObj = CGameInstance::Get_Instance()->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
+
+	if (nullptr != pGameParentsObj)
+	{
+		dynamic_cast<CCustomize_UI*>(pGameParentsObj)->PushBack_Child(pGameObj);
+	}
+
+	/*자식이 있으면 자식 정보 read*/
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iChild), sizeof(_int));
+
+	if (true == 0 < CustomizeUIDesc.iChild)
+	{
+		for (_int i = 0; i < CustomizeUIDesc.iChild; i++)
+		{
+			if (FAILED(CreatUI_FromDat(inputFileStream, pGameObj, PrototypeTag, ppOut, pDevice, pContext)))
+				return E_FAIL;
+		}
+	}
+
+	if (nullptr == pGameParentsObj)
+	{
+		inputFileStream.close();
+		*ppOut = pGameObj;
+		return S_OK;
+	}
+
+
+	return S_OK;
 }

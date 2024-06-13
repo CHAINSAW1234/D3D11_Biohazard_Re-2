@@ -16,7 +16,7 @@ extern HINSTANCE g_hInst;
 
 using namespace std;
 using namespace Client;
-
+	
 
 
 typedef struct Tag_Prototype_Inform

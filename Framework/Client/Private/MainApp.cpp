@@ -199,6 +199,41 @@ HRESULT CMainApp::Ready_Fonts()
 		return E_FAIL;*/
 	// 엔진에서 이미 만듬
 
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CG10"), TEXT("../Bin/Resources/Fonts/ClearGothic10.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CG11"), TEXT("../Bin/Resources/Fonts/ClearGothic11.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CG12"), TEXT("../Bin/Resources/Fonts/ClearGothic12.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CG13"), TEXT("../Bin/Resources/Fonts/ClearGothic13.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CG14"), TEXT("../Bin/Resources/Fonts/ClearGothic14.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CG15"), TEXT("../Bin/Resources/Fonts/ClearGothic15.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CG16"), TEXT("../Bin/Resources/Fonts/ClearGothic16.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CG17"), TEXT("../Bin/Resources/Fonts/ClearGothic17.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CG18"), TEXT("../Bin/Resources/Fonts/ClearGothic18.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CG19"), TEXT("../Bin/Resources/Fonts/ClearGothic19.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CG20"), TEXT("../Bin/Resources/Fonts/ClearGothic20.spriteFont"))))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -227,6 +262,11 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		CFSM::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+
+	/* For.Prototype_Component_Shader_VtxAlphaSortTex */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAlphaSortTex"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAlphaSortTex.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
+		return E_FAIL;
 
 	return	S_OK;
 }

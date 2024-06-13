@@ -129,6 +129,10 @@ HRESULT CRenderer::Render()
 	//if (FAILED(Render_PostProcessing()))
 	//	return E_FAIL;
 
+	if (FAILED(Render_UI()))
+		return E_FAIL;
+
+
 	if (FAILED(Render_FXAA()))
 		return E_FAIL;
 
@@ -144,11 +148,9 @@ HRESULT CRenderer::Render()
 	//if (FAILED(Render_Filter()))
 	//	return E_FAIL;
 
-	if (FAILED(Render_UI()))
+	
+	if (FAILED(Render_Font()))
 		return E_FAIL;
-
-	//if (FAILED(Render_Font()))
-	//	return E_FAIL;
 
 	//if (FAILED(Render_Overwrap()))
 	//	return E_FAIL;

@@ -73,9 +73,6 @@
     <Filter Include="02.GameObjects\UI">
       <UniqueIdentifier>{9832ad11-317f-47c4-a17f-42e4a22153a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\Customize_UI">
-      <UniqueIdentifier>{0740d5c9-1780-400c-9d38-ca84c8f26b22}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\TextBox">
       <UniqueIdentifier>{abdbf2c9-92cc-4833-ac49-54faee5a66fd}</UniqueIdentifier>
     </Filter>
@@ -141,6 +138,39 @@
     </Filter>
     <Filter Include="02.GameObjects\Map">
       <UniqueIdentifier>{6efea4f9-497a-4357-b128-793862780e4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\1. Crosshair">
+      <UniqueIdentifier>{de31e2a8-de06-4aa6-9adc-e319f9ef451f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\2. Cursor">
+      <UniqueIdentifier>{a6a85258-66c2-4d03-a771-07c4fb843049}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Tab_Window">
+      <UniqueIdentifier>{ea70fdf9-35f3-4236-9447-ce5555b4d60b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\0. Customize_UI">
+      <UniqueIdentifier>{0740d5c9-1780-400c-9d38-ca84c8f26b22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\3. HP Bar">
+      <UniqueIdentifier>{0c7a9a8f-c48d-4e15-99be-fe77c934ffef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\4. Bullet">
+      <UniqueIdentifier>{dc11b041-87e7-45d1-a117-42f0a760c3d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\5. Title">
+      <UniqueIdentifier>{69425a38-73a5-48a8-9615-1813782dd9e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\6. MissionBar">
+      <UniqueIdentifier>{5ef54c33-f262-44ff-abd9-708bb98bc07a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\4. Button">
+      <UniqueIdentifier>{7fc90c93-6b32-4a7f-a9c8-c8b678069a93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\Inventory">
+      <UniqueIdentifier>{480eb32d-ce0b-4c0e-9e44-864624d90274}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\Inventory\1. Inventory Item">
+      <UniqueIdentifier>{0ecab370-b1e7-4ba2-98ef-c2d58e26d1a6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -220,7 +250,7 @@
       <Filter>02.GameObjects\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Customize_UI.h">
-      <Filter>02.GameObjects\UI\Customize_UI</Filter>
+      <Filter>02.GameObjects\UI\0. Customize_UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TextBox.h">
       <Filter>02.GameObjects\UI\TextBox</Filter>
@@ -257,6 +287,36 @@
     </ClInclude>
     <ClInclude Include="..\Public\Map.h">
       <Filter>02.GameObjects\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Crosshair_UI.h">
+      <Filter>02.GameObjects\UI\1. Crosshair</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cursor_UI.h">
+      <Filter>02.GameObjects\UI\2. Cursor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Inventory.h">
+      <Filter>02.GameObjects\UI\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Inventory_Item_UI.h">
+      <Filter>02.GameObjects\UI\Inventory\1. Inventory Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tab_Window.h">
+      <Filter>02.GameObjects\Tab_Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\HPBar_UI.h">
+      <Filter>02.GameObjects\UI\3. HP Bar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Button_UI.h">
+      <Filter>02.GameObjects\UI\4. Button</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Bullet_UI.h">
+      <Filter>02.GameObjects\UI\4. Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Title_UI.h">
+      <Filter>02.GameObjects\UI\5. Title</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MissionBar_UI.h">
+      <Filter>02.GameObjects\UI\6. MissionBar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -321,7 +381,7 @@
       <Filter>02.GameObjects\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Customize_UI.cpp">
-      <Filter>02.GameObjects\UI\Customize_UI</Filter>
+      <Filter>02.GameObjects\UI\0. Customize_UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TextBox.cpp">
       <Filter>02.GameObjects\UI\TextBox</Filter>
@@ -359,6 +419,36 @@
     <ClCompile Include="..\Private\Map.cpp">
       <Filter>02.GameObjects\Map</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Crosshair_UI.cpp">
+      <Filter>02.GameObjects\UI\1. Crosshair</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cursor_UI.cpp">
+      <Filter>02.GameObjects\UI\2. Cursor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Inventory.cpp">
+      <Filter>02.GameObjects\UI\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Inventory_Item_UI.cpp">
+      <Filter>02.GameObjects\UI\Inventory\1. Inventory Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tab_Window.cpp">
+      <Filter>02.GameObjects\Tab_Window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HPBar_UI.cpp">
+      <Filter>02.GameObjects\UI\3. HP Bar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Button_UI.cpp">
+      <Filter>02.GameObjects\UI\4. Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bullet_UI.cpp">
+      <Filter>02.GameObjects\UI\4. Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Title_UI.cpp">
+      <Filter>02.GameObjects\UI\5. Title</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MissionBar_UI.cpp">
+      <Filter>02.GameObjects\UI\6. MissionBar</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -393,6 +483,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAlphaSortTex.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

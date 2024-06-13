@@ -22,10 +22,10 @@ HRESULT CUI::Initialize(void* pArg)
 	if (pArg != nullptr)
 	{
 		UI_DESC* UIDesc = (UI_DESC*)pArg;
-		UIDesc->fSpeedPerSec = 10.f;
+		UIDesc->fSpeedPerSec = 1.f;
 		UIDesc->fRotationPerSec = XMConvertToRadians(100.0f);
 
-		if (FAILED(__super::Initialize(&UIDesc)))
+		if (FAILED(__super::Initialize(UIDesc)))
 			return E_FAIL;
 
 
@@ -183,14 +183,16 @@ _bool CUI::IsMouseHover()
 
 	_float3 vSize = m_pTransformCom->Get_Scaled();
 
-	if (vPosition.x - (vSize.x / 2) + 10.f <= mouse.x && vPosition.y - (vSize.y / 2) + 10.f <= mouse.y
-		&& vPosition.x + (vSize.x / 2) - 10.f >= mouse.x && vPosition.y + (vSize.y / 2) - 10.f >= mouse.y)
+	/* UI를 1080 720 상에서 만든 것이라 정확히 3번 나눈 비율 값인 105와 45를 집어넣어줌*/
+	/*
+	float fwinsize = g_iWinSizeX - 1080;
+	fwinsize = fwinsize / 8 
+	*/
+	if (vPosition.x - (vSize.x / 2)  <= mouse.x && vPosition.y - (vSize.y / 2)  <= mouse.y
+		&& vPosition.x + (vSize.x / 2)  >= mouse.x && vPosition.y + (vSize.y / 2) >= mouse.y)
 	{
-		m_isSelect = true;
 		return true;
 	}
-
-	m_isSelect = false;
 
 	return false;
 }
@@ -199,18 +201,18 @@ _bool CUI::IsMouseHover(_float& fPosZ)
 {
 	_float2 mouse = m_pGameInstance->Get_ViewMousePos();
 
-	_float4 vPosition = { m_pTransformCom->Get_WorldFloat4x4()._41 + g_iWinSizeX * 0.5f, -m_pTransformCom->Get_WorldFloat4x4()._42 + g_iWinSizeY * 0.5f, 0, 0 };
+	_float4 vPosition = { m_pTransformCom->Get_WorldFloat4x4()._41 + g_iWinSizeX * 0.5f, 
+							-m_pTransformCom->Get_WorldFloat4x4()._42 + g_iWinSizeY * 0.5f, 
+								0, 0 };
 	_float3 vSize = m_pTransformCom->Get_Scaled();
 
 	if (vPosition.x - (vSize.x / 2) <= mouse.x && vPosition.y - (vSize.y / 2) <= mouse.y
 		&& vPosition.x + (vSize.x / 2) >= mouse.x && vPosition.y + (vSize.y / 2) >= mouse.y)
 	{
 		fPosZ = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).z;
-		m_isSelect = true;
 		return true;
 	}
 
-	m_isSelect = false;
 	return false;
 }
 
@@ -220,6 +222,7 @@ void CUI::Free()
 
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pSubMaskTextureCom);
 	Safe_Release(m_pMaskTextureCom);
 	Safe_Release(m_pVIBufferCom);
 }
