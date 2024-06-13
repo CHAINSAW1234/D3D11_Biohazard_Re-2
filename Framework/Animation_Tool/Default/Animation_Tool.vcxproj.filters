@@ -97,6 +97,9 @@
     <Filter Include="02.GameObject\Tool\Tool_EventInserter">
       <UniqueIdentifier>{719e13a8-c3d8-410b-881c-a84db2f3bb47}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Tool\Tool_MeshController">
+      <UniqueIdentifier>{394fcd3a-c53f-4107-9c3d-5aa63bce06d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -216,6 +219,7 @@
     <ClCompile Include="..\Private\Tool_EventInserter.cpp">
       <Filter>02.GameObject\Tool\Tool_EventInserter</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Tool_MeshController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\MainApp.h">
@@ -353,6 +357,7 @@
     <ClInclude Include="..\Public\Tool_EventInserter.h">
       <Filter>02.GameObject\Tool\Tool_EventInserter</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Tool_MeshController.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Animation_Tool.ico">

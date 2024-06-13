@@ -604,6 +604,7 @@
     <ClCompile Include="..\Private\Tool_Collider.cpp" />
     <ClCompile Include="..\Private\Tool_EventInserter.cpp" />
     <ClCompile Include="..\Private\Tool_IK.cpp" />
+    <ClCompile Include="..\Private\Tool_MeshController.cpp" />
     <ClCompile Include="..\Private\Tool_PartObject.cpp" />
     <ClCompile Include="..\Private\Tool_Selector.cpp" />
     <ClCompile Include="..\Private\Tool_Transformation.cpp" />
@@ -652,6 +653,7 @@
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\Tool_EventInserter.h" />
     <ClInclude Include="..\Public\Tool_IK.h" />
+    <ClInclude Include="..\Public\Tool_MeshController.h" />
     <ClInclude Include="..\Public\Tool_PartObject.h" />
     <ClInclude Include="..\Public\Tool_Selector.h" />
     <ClInclude Include="..\Public\Tool_Transformation.h" />
