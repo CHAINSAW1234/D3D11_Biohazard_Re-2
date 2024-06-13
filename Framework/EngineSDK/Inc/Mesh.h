@@ -161,11 +161,18 @@ public: /* For Octree Culling*/
 	{
 		return m_vCenterPoint;
 	}
+
+public:
+	_bool					Is_Hide() { return m_isHide; }
+	void					Set_Hide(_bool isHide) { m_isHide = isHide; }
+
 private:
-	vector<tFace*>	m_vecFaces;
-	_float3* m_pNormals = { nullptr };
-	_float2* m_pTexcoords = { nullptr };
-	_float3* m_pTangents = { nullptr };
+	vector<tFace*>			m_vecFaces;
+	_float3*				m_pNormals = { nullptr };
+	_float2*				m_pTexcoords = { nullptr };
+	_float3*				m_pTangents = { nullptr };
+	
+	_bool					m_isHide = { false };
 
 	_float3	 m_vCenterPoint;
 public:
