@@ -58,21 +58,15 @@ void CPlayer_State_Move_Walk::Update_KeyInput()
 
 	m_dwDirection = dwDirection;
 
-
-	if (!(m_dwDirection & FRONT ||
-		m_dwDirection & BACK)) {
-
-	}
-
 	if (m_dwDirection & FRONT)
 		m_Prev_FRONT_BACK_Direction = FRONT;
 	else if (m_dwDirection & BACK)
 		m_Prev_FRONT_BACK_Direction = BACK;
-
 }
 
 void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 {
+
 #pragma region 1
 
 	static _float fCurWeight0 = 1.f;
