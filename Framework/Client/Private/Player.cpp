@@ -29,8 +29,6 @@ CPlayer::CPlayer(const CPlayer& rhs)
 
 HRESULT CPlayer::Initialize_Prototype()
 {
-
-
 	return S_OK;
 }
 
@@ -46,8 +44,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
-
-
 
 	if (FAILED(Initialize_PartModels()))
 		return E_FAIL;
