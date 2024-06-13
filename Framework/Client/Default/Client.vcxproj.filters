@@ -303,13 +303,13 @@
     <ClInclude Include="..\Public\Player_State_Move_Jog.h">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
     </ClInclude>
-    <ClInclude Include="CTest.h" />
     <ClInclude Include="..\Public\Face_Monster.h">
       <Filter>02.GameObjects\Monster\Face</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Clothes_Monster.h">
       <Filter>02.GameObjects\Monster\Clothes</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Hold.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -432,13 +432,13 @@
     <ClCompile Include="..\Private\Player_State_Move_Jog.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
     </ClCompile>
-    <ClCompile Include="CTest.cpp" />
     <ClCompile Include="..\Private\Clothes_Monster.cpp">
       <Filter>02.GameObjects\Monster\Clothes</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Face_Monster.cpp">
       <Filter>02.GameObjects\Monster\Face</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Hold.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
