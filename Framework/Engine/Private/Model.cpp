@@ -702,7 +702,7 @@ void CModel::Apply_RootMotion_Rotation(CTransform* pTransform, _fvector vQuatern
 	pTransform->Set_WorldMatrix(ResultMatrix);
 }
 
-void CModel::Apply_RootMotion_Translation(CTransform* pTransform, _fvector vTranslation, _float3* pMovedDirection)
+void CModel::Apply_RootMotion_Translation(CTransform* pTransform, _fvector vTranslation, _fvector vQuaternion, _float3* pMovedDirection)
 {
 	_vector			vPreTranslation = { XMVectorZero() };
 	_uint			iRootIndex = { static_cast<_uint>(Find_RootBoneIndex()) };
@@ -735,6 +735,16 @@ void CModel::Apply_RootMotion_Translation(CTransform* pTransform, _fvector vTran
 		KEYFRAME		LastRootBoneKeyFrame = { pPlayingInfo->Get_LastKeyFrame(iRootIndex) };
 		pPlayingInfo->Set_PreTranslation(XMLoadFloat3(&LastRootBoneKeyFrame.vTranslation));
 	}
+
+	if (true == m_isRootMotion_Rotation)
+	{
+		//	매개변수로 들어온 현재 이동량은 vQuaternion의 역 쿼터니언으로 회전이된상태이므로 
+		//	동일하게 역회전 하여 같은 스페이스 상에서 비교해야함
+		_vector			vQuaternionInverse = { XMQuaternionInverse(vQuaternion) };
+		_matrix			vRotateInverseMatrix = { XMMatrixRotationQuaternion(vQuaternionInverse) };
+		vPreTranslation = XMVectorSetW(XMVector3TransformNormal(vPreTranslation, vRotateInverseMatrix), 1.f);
+	}
+	
 
 	_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
 	_vector			vCurrentTranslationLocal = { vTranslation };
@@ -1595,7 +1605,7 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 	if (true == isLinearInterpolation)
 	{
 		//	첫 선형 보간 들어갈때 라스트 키프레임즈에서 루트성분을 적용에따라 현재 새로운 키프레임의 변환값으로 씌움
-		if (true == isFirstTick)
+		if (true /*== isFirstTick*/)
 		{
 			_matrix			RootTransformationMatrix = { XMLoadFloat4x4(&TransformationMatrices[iRootBoneIndex]) };
 			_vector			vRootScale, vRootQuaternion, vRootTranslation;
@@ -1692,10 +1702,14 @@ void CModel::Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMoved
 			m_Bones[iBoneIndex]->Invalidate_CombinedTransformationMatrix_RootMotion(m_Bones, m_TransformationMatrix, m_isRootMotion_XZ, m_isRootMotion_Y, m_isRootMotion_Rotation, &vTranslation, &vQuaternion);
 
 			if (true == m_isRootMotion_Rotation)
+			{
 				Apply_RootMotion_Rotation(pTransform, XMLoadFloat4(&vQuaternion));
+			}
 
 			if (true == m_isRootMotion_XZ || true == m_isRootMotion_Y)
-				Apply_RootMotion_Translation(pTransform, XMLoadFloat4(&vTranslation), pMovedDirection);
+			{
+				Apply_RootMotion_Translation(pTransform, XMLoadFloat4(&vTranslation), XMLoadFloat4(&vQuaternion), pMovedDirection);
+			}
 		}
 
 		else
