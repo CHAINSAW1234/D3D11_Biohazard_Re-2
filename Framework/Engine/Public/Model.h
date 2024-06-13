@@ -124,6 +124,8 @@ public:		/* For. Access */
 	class CPlayingInfo*						Find_PlayingInfo(_uint iPlayingIndex);
 	class CBone_Layer*						Find_BoneLayer(const wstring& strBoneLayerTag);
 
+	HRESULT									Link_Bone_Auto(CModel* pTargetModel);
+
 	_int									Get_BoneIndex(const string& strBoneTag);
 
 	_float4									Invalidate_RootNode(const string& strRoot);

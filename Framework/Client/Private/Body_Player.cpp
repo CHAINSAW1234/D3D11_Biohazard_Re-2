@@ -65,7 +65,6 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//Lower 33
 
 	_matrix         WorldMatrix = { XMLoadFloat4x4(&m_WorldMatrix) };
-
 	_vector         vLook = { WorldMatrix.r[CTransform::STATE_LOOK] };
 	_vector         vPosition = { WorldMatrix.r[CTransform::STATE_POSITION] };
 

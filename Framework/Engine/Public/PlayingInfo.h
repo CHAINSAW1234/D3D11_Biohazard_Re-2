@@ -44,6 +44,7 @@ public:		/* For.Access */
 
 	void								Change_Animation(_uint iAnimIndex, _uint iNumChannel);
 
+	inline void							Set_PreAnimIndex(_uint iAnimIndex) { m_iPreAnimIndex = iAnimIndex; }
 	inline void							Set_Loop(_bool isLoop) { m_isLoop = isLoop; }
 	inline void							Set_BlendWeight(_float fBlendWeight) { m_fBlendWeight = fBlendWeight; }
 	inline void							Set_TrackPosition(_float fTrackPosition) { m_fTrackPosition = fTrackPosition; }

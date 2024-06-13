@@ -163,8 +163,12 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _u
 			return TransformationMatrices;
 		}
 
-		fTrackPosition = 0.f;
-		*pFirstTick = true;
+		else
+		{
+			fTrackPosition = fTrackPosition - m_fDuration;
+			*pFirstTick = true;
+			pPlayingInfo->Set_PreAnimIndex(pPlayingInfo->Get_AnimIndex());
+		}	
 	}
 
 	for (auto& TransformationMatrix : TransformationMatrices)

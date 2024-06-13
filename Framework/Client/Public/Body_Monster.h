@@ -8,10 +8,10 @@ BEGIN(Client)
 class CBody_Monster final : public CPartObject
 {
 public:
-	typedef struct tagMonsterBodyDesc : public CPartObject::PARTOBJECT_DESC
+	typedef struct tagBodyMonsterDesc : public CPartObject::PARTOBJECT_DESC
 	{
-		_float3* pRootTranslation = { nullptr };
-	}MONSTER_BODY_DESC;
+		_float3*			pRootTranslation = { nullptr };
+	}BODY_MONSTER_DESC;
 
 private:
 	CBody_Monster(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -24,10 +24,14 @@ public:
 	virtual void			Priority_Tick(_float fTimeDelta) override;
 	virtual void			Tick(_float fTimeDelta) override;
 	virtual void			Late_Tick(_float fTimeDelta) override;
+
 	virtual HRESULT			Render() override;
 	HRESULT					Render_LightDepth_Dir()override;
 	HRESULT					Render_LightDepth_Point() override;
 	HRESULT					Render_LightDepth_Spot()override;
+
+private:
+	HRESULT					Initialize_Model();
 
 private:
 	CModel*					m_pModelCom = { nullptr };

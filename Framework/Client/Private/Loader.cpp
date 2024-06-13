@@ -4,9 +4,15 @@
 
 #include "GameInstance.h"
 #include "Camera_Free.h"
+
 #include "Body_Player.h"
 #include "Head_Player.h"
 #include "Hair_Player.h"
+
+#include "Body_Monster.h"
+#include "Face_Monster.h"
+#include "Clothes_Monster.h"
+
 #include "BackGround.h"
 #include "Terrain.h"
 #include "Monster.h"
@@ -286,23 +292,61 @@ HRESULT CLoader::Loading_For_GamePlay()
 	//		TransformMatrix))))
 	//	return E_FAIL;
 
-	/* Prototype_Component_Model_Boss_MantisShrimp */
+#pragma region Players Model 
+
+	/* Prototype_Component_Model_LeonBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonBody"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonBody.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_Boss_MantisShrimp */
+	/* Prototype_Component_Model_LeonFace */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonFace"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonFace.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_Boss_MantisShrimp */
+	/* Prototype_Component_Model_LeonHair */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonHair"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonHair.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Monsters Model
+
+	/* Prototype_Component_Model_ZombieBody */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieBody"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Body.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_ZombieFace */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieFace"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Face.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_ZombieHat */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieHat"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Hat.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_ZombieShirts */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieShirts"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Shirts.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_ZombiePants */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombiePants"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Pants.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+#pragma endregion
 
 
 	/* Prototype_Component_VIBuffer_Terrain */
@@ -391,6 +435,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 	//	CProps::Create(m_pDevice, m_pContext))))
 	//	return E_FAIL;
 
+#pragma region Players Prototype
+
 	/* For.Prototype_GameObject_Player */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Player"),
 		CPlayer::Create(m_pDevice, m_pContext))))
@@ -416,10 +462,30 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CWeapon::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+#pragma endregion
+
+#pragma region			Monsters Prototype 
+
 	/* For.Prototype_GameObject_Monster */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Monster"),
 		CMonster::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_Part_Body_Monster */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Body_Monster"),
+		CBody_Monster::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Part_Face_Monster */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Face_Monster"),
+		CFace_Monster::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Part_Hat_Monster */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Clothes_Monster"),
+		CClothes_Monster::Create(m_pDevice, m_pContext))))
+
+#pragma endregion
 
 	/* For.Prototype_GameObject_Effect */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect"),

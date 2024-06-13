@@ -4,6 +4,12 @@
 #include "BehaviorTree.h"
 #include "PathFinder.h"
 
+#include "Body_Monster.h"
+#include "Face_Monster.h"
+#include "Clothes_Monster.h"
+
+#include "PartObject.h"
+
 #define MODEL_SCALE 0.01f
 
 CMonster::CMonster(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
@@ -34,6 +40,12 @@ HRESULT CMonster::Initialize(void * pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;	
+
+	if (FAILED(Add_PartObjects()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_PartModels()))
+		return E_FAIL;
 
 	if (pArg != nullptr)
 	{
@@ -95,6 +107,9 @@ void CMonster::Tick(_float fTimeDelta)
 		else
 			m_bArrived = false;
 	}
+
+
+	Tick_PartObjects(fTimeDelta);
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)
@@ -103,6 +118,8 @@ void CMonster::Late_Tick(_float fTimeDelta)
 
 	//m_pModelCom->Play_Animations(fTimeDelta);
 	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &_float3(0.f,0.f,0.f));
+
+	Late_Tick_PartObjects(fTimeDelta);
 }
 
 HRESULT CMonster::Render()
@@ -160,6 +177,46 @@ HRESULT CMonster::Render()
 	}
 
 	return S_OK;
+}
+
+void CMonster::Priority_Tick_PartObjects(_float fTimeDelta)
+{
+	for (auto& pPartObject : m_PartObjects)
+	{
+		if (nullptr != pPartObject)
+			pPartObject->Priority_Tick(fTimeDelta);
+	}
+}
+
+void CMonster::Tick_PartObjects(_float fTimeDelta)
+{
+	for (auto& pPartObject : m_PartObjects)
+	{
+		if (nullptr != pPartObject)
+			pPartObject->Tick(fTimeDelta);
+	}
+}
+
+void CMonster::Late_Tick_PartObjects(_float fTimeDelta)
+{
+	for (auto& pPartObject : m_PartObjects)
+	{
+		if (nullptr != pPartObject)
+			pPartObject->Late_Tick(fTimeDelta);
+	}
+}
+
+CModel* CMonster::Get_Model_From_PartObject(PART_ID eID)
+{
+	CModel*				pModel = { nullptr };
+	
+	if (eID >= PART_END)
+		return pModel;
+
+	CPartObject*		pPartObject = { m_PartObjects[static_cast<_uint>(eID)] };
+	pModel = dynamic_cast<CModel*>(pPartObject->Get_Component(TEXT("Com_Model")));
+
+	return pModel;
 }
 
 void CMonster::Init_BehaviorTree_Zombie()
@@ -234,6 +291,108 @@ HRESULT CMonster::Bind_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CMonster::Add_PartObjects()
+{
+	m_PartObjects.resize(CMonster::PART_ID::PART_END);
+
+	/* For.Part_Body */
+	CPartObject*							pBodyObject = { nullptr };
+	CBody_Monster::BODY_MONSTER_DESC		BodyDesc;
+
+	BodyDesc.pParentsTransform = m_pTransformCom;
+	BodyDesc.pRootTranslation = &m_vRootTranslation;
+
+	pBodyObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Body_Monster"), &BodyDesc));
+	if (nullptr == pBodyObject)
+		return E_FAIL;
+
+	m_PartObjects[CMonster::PART_ID::PART_BODY] = pBodyObject;
+
+
+	/* For.Part_Face */
+	CPartObject*							pFaceObject = { nullptr };
+	CFace_Monster::FACE_MONSTER_DESC		FaceDesc;
+
+	FaceDesc.pParentsTransform = m_pTransformCom;
+
+	pFaceObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Face_Monster"), &FaceDesc));
+	if (nullptr == pFaceObject)
+		return E_FAIL;
+
+	m_PartObjects[CMonster::PART_ID::PART_FACE] = pFaceObject;
+
+
+	/* For.Part_Hat */
+	CPartObject*								pHatObject = { nullptr };
+	CClothes_Monster::CLOTHES_MONSTER_DESC		ClothesHatDesc;
+
+	ClothesHatDesc.pParentsTransform = m_pTransformCom;
+	ClothesHatDesc.eType = CClothes_Monster::CLOTHES_TYPE::TYPE_HAT;
+
+	pHatObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Monster"), &ClothesHatDesc));
+	if (nullptr == pHatObject)
+		return E_FAIL;
+
+	m_PartObjects[CMonster::PART_ID::PART_HAT] = pHatObject;
+
+
+	/* For.Part_Shirts */
+	CPartObject*								pShirtsObject = { nullptr };
+	CClothes_Monster::CLOTHES_MONSTER_DESC		ClothesShirtsDesc;
+
+	ClothesShirtsDesc.pParentsTransform = m_pTransformCom;
+	ClothesShirtsDesc.eType = CClothes_Monster::CLOTHES_TYPE::TYPE_SHIRTHS;
+		
+	pShirtsObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Monster"), &ClothesShirtsDesc));
+	if (nullptr == pShirtsObject)
+		return E_FAIL;
+
+	m_PartObjects[CMonster::PART_ID::PART_SHIRTS] = pShirtsObject;
+
+
+	/* For.Part_Pants */
+	CPartObject*								pPantsObject = { nullptr };
+	CClothes_Monster::CLOTHES_MONSTER_DESC		ClothesPantsDesc;
+
+	ClothesPantsDesc.pParentsTransform = m_pTransformCom;
+	ClothesPantsDesc.eType = CClothes_Monster::CLOTHES_TYPE::TYPE_PANTS;
+
+	pPantsObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Monster"), &ClothesPantsDesc));
+	if (nullptr == pPantsObject)
+		return E_FAIL;
+
+	m_PartObjects[CMonster::PART_ID::PART_PANTS] = pPantsObject;
+
+	return S_OK;
+}
+
+HRESULT CMonster::Initialize_PartModels()
+{
+	CModel*					pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Model"))) };
+	CModel*					pFaceModel = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE]->Get_Component(TEXT("Com_Model"))) };
+	CModel*					pShirtsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_SHIRTS]->Get_Component(TEXT("Com_Model"))) };
+	CModel*					pPantsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_PANTS]->Get_Component(TEXT("Com_Model"))) };
+	CModel*					pHatModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAT]->Get_Component(TEXT("Com_Model"))) };
+
+	if (nullptr == pBodyModel ||
+		nullptr == pFaceModel ||
+		nullptr == pShirtsModel ||
+		nullptr == pPantsModel ||
+		nullptr == pHatModel)
+		return E_FAIL;
+
+	if (FAILED(pFaceModel->Link_Bone_Auto(pBodyModel)))
+		return E_FAIL;
+	if (FAILED(pShirtsModel->Link_Bone_Auto(pBodyModel)))
+		return E_FAIL;
+	if (FAILED(pPantsModel->Link_Bone_Auto(pBodyModel)))
+		return E_FAIL;
+	if (FAILED(pHatModel->Link_Bone_Auto(pBodyModel)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 CMonster * CMonster::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CMonster*		pInstance = new CMonster(pDevice, pContext);
@@ -275,4 +434,11 @@ void CMonster::Free()
 	Safe_Release(m_pBehaviorTree);
 	Safe_Release(m_pPathFinder);
 	Safe_Release(m_pNavigationCom);
+
+	for (auto& pPartObject : m_PartObjects)
+	{
+		Safe_Release(pPartObject);
+		pPartObject = nullptr;
+	}
+	m_PartObjects.clear();
 }

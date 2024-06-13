@@ -7,6 +7,7 @@ BEGIN(Engine)
 class CModel;
 class CShader;
 class CCollider;
+class CPartObject;
 END
 
 BEGIN(Client)
@@ -20,6 +21,8 @@ public:
 	}MONSTER_DESC;
 public:
 	enum COLLIDERTYPE { COLLIDER_HEAD, COLLIDER_BODY, COLLIDER_END };
+	enum PART_ID { PART_BODY, PART_FACE, PART_HAT, PART_PANTS, PART_SHIRTS, PART_END };
+
 private:
 	CMonster(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CMonster(const CMonster& rhs);
@@ -31,6 +34,15 @@ public:
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
+
+private:	/* Update_PartObjects */
+	void						Priority_Tick_PartObjects(_float fTimeDelta);
+	void						Tick_PartObjects(_float fTimeDelta);
+	void						Late_Tick_PartObjects(_float fTimeDelta);
+
+public:		/* Access_PartObjects */
+	CModel*						Get_Model_From_PartObject(PART_ID eID);
+
 
 public://For AIController
 	void						Init_BehaviorTree_Zombie();
@@ -53,9 +65,18 @@ private: // For AIController
 	_bool						m_bArrived = { false };
 	_float4						m_vNextTarget;
 	_float4						m_vDir;
+
+	_float3						m_vRootTranslation = {};		/* For RootMotion */
+
+	vector<class CPartObject*>	m_PartObjects;
+	
 private:
 	HRESULT						Add_Components();
 	HRESULT						Bind_ShaderResources();
+	HRESULT						Add_PartObjects();
+
+private:	/* Initialize_PartObjects_Models */
+	virtual HRESULT 			Initialize_PartModels();
 
 public:
 	static CMonster* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

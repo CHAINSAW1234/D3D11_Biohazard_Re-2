@@ -88,7 +88,7 @@ void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBon
 		{
 			vQuaternion = Decompose_Quaternion(vQuaternion, pQuaternion);
 
-			_vector			vInverseQuaternion = { XMQuaternionInverse(vQuaternion) };
+			_vector			vInverseQuaternion = { XMQuaternionInverse(XMLoadFloat4(pQuaternion)) };
 			_matrix			InverseRotationMatrix = { XMMatrixRotationQuaternion(vInverseQuaternion) };
 
 			_vector			vResultTranslation = { XMVector3TransformNormal(vTranslation, InverseRotationMatrix) };

@@ -106,14 +106,8 @@
     <Filter Include="02.GameObjects\Monster\Head">
       <UniqueIdentifier>{f4f724c2-f86b-4319-869a-c7a8be8c2039}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Hat">
+    <Filter Include="02.GameObjects\Monster\Clothes">
       <UniqueIdentifier>{48b078ea-e64d-478b-8db2-7e8490506c6b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Shirts">
-      <UniqueIdentifier>{3341c885-a912-41cf-bbe5-f79ad62ac57e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Pants">
-      <UniqueIdentifier>{ef1d29e2-09f3-4957-bc74-9a1729ed5404}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -207,17 +201,11 @@
     <ClInclude Include="..\Public\Body_Monster.h">
       <Filter>02.GameObjects\Monster\Body</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Head_Monster.h">
-      <Filter>02.GameObjects\Monster\Head</Filter>
+    <ClInclude Include="..\Public\Clothes_Monster.h">
+      <Filter>02.GameObjects\Monster\Body</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Hat_Monster.h">
-      <Filter>02.GameObjects\Monster\Hat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Pants_Monster.h">
-      <Filter>02.GameObjects\Monster\Pants</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Shirts_Monster.h">
-      <Filter>02.GameObjects\Monster\Shirts</Filter>
+    <ClInclude Include="..\Public\Face_Monster.h">
+      <Filter>02.GameObjects\Monster\Body</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -293,20 +281,14 @@
     <ClCompile Include="..\Private\NavMesh_Debug.cpp">
       <Filter>02.GameObjects\NavMesh_Debug</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Face_Monster.cpp">
+      <Filter>02.GameObjects\Monster\Body</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Body_Monster.cpp">
       <Filter>02.GameObjects\Monster\Body</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Head_Monster.cpp">
-      <Filter>02.GameObjects\Monster\Head</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Hat_Monster.cpp">
-      <Filter>02.GameObjects\Monster\Hat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Pants_Monster.cpp">
-      <Filter>02.GameObjects\Monster\Pants</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Shirts_Monster.cpp">
-      <Filter>02.GameObjects\Monster\Shirts</Filter>
+    <ClCompile Include="..\Private\Clothes_Monster.cpp">
+      <Filter>02.GameObjects\Monster\Body</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
