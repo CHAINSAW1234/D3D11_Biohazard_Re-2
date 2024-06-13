@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "Mesh.h"
 #include "Shader.h"
+#include "GameObject.h"
 
 int g_CurrentSubdivision = 0;
 
@@ -200,7 +201,7 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 	}
 
 	m_pOctreeNodes[nodeID] = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_vTranslation);
-
+	m_pOctreeNodes[nodeID]->m_pObjects = m_pObjects;
 	_float4 vNodeCenter = GetNewNodeCenter(vCenter, width, nodeID);
 
 	g_CurrentSubdivision++;
@@ -415,6 +416,24 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 		(*NewMeshes)[i]->Release_Dump();
 	}
 
+	if (m_pObjects)
+	{
+		for (auto& it : (*m_pObjects))
+		{
+			_float4 vPos;
+
+			if (it->Get_Localized() == false)
+				vPos = it->GetPosition();
+			else
+				vPos = it->GetPosition_Local_To_World();
+
+			if (IsPointInsideCube(m_vCenter, m_Width, vPos))
+			{
+				m_vecProps.push_back(it);
+			}
+		}
+	}
+
 	m_DisplayListID = g_EndNodeCount;
 
 	g_EndNodeCount++;
@@ -557,6 +576,13 @@ void COctree::DrawOctree_Thread_Internal(COctree* pNode, vector<class CModel*>* 
 		if (!pNode->m_pWorld) return;
 
 		(*vecModel).push_back(pNode->m_pWorld);
+
+		pNode->m_bRender = true;
+
+		for (int i = 0; i < pNode->m_vecProps.size(); ++i)
+		{
+			pNode->m_vecProps[i]->Set_Render(true);
+		}
 	}
 }
 
@@ -583,6 +609,18 @@ void COctree::DrawOctree_1()
 		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_LEFT_BACK], &(pNode->m_vecEntryNode));
 		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_BACK], &(pNode->m_vecEntryNode));
 		DrawOctree_Thread_Internal(pNode->m_pOctreeNodes[BOTTOM_RIGHT_FRONT], &(pNode->m_vecEntryNode));
+	}
+	else
+	{
+		if (!pNode->m_pWorld) return;
+
+		m_vecEntryNode.push_back(pNode->m_pWorld);
+		pNode->m_bRender = true;
+
+		for (int i = 0; i < pNode->m_vecProps.size(); ++i)
+		{
+			pNode->m_vecProps[i]->Set_Render(true);
+		}
 	}
 }
 
@@ -615,6 +653,12 @@ void COctree::DrawOctree_2()
 		if (!pNode->m_pWorld) return;
 
 		m_vecEntryNode.push_back(pNode->m_pWorld);
+		pNode->m_bRender = true;
+
+		for (int i = 0; i < pNode->m_vecProps.size(); ++i)
+		{
+			pNode->m_vecProps[i]->Set_Render(true);
+		}
 	}
 }
 
@@ -647,6 +691,12 @@ void COctree::DrawOctree_3()
 		if (!pNode->m_pWorld) return;
 
 		m_vecEntryNode.push_back(pNode->m_pWorld);
+		pNode->m_bRender = true;
+
+		for (int i = 0; i < pNode->m_vecProps.size(); ++i)
+		{
+			pNode->m_vecProps[i]->Set_Render(true);
+		}
 	}
 }
 
@@ -679,6 +729,12 @@ void COctree::DrawOctree_4()
 		if (!pNode->m_pWorld) return;
 
 		m_vecEntryNode.push_back(pNode->m_pWorld);
+		pNode->m_bRender = true;
+
+		for (int i = 0; i < pNode->m_vecProps.size(); ++i)
+		{
+			pNode->m_vecProps[i]->Set_Render(true);
+		}
 	}
 }
 
@@ -711,6 +767,12 @@ void COctree::DrawOctree_5()
 		if (!pNode->m_pWorld) return;
 
 		m_vecEntryNode.push_back(pNode->m_pWorld);
+		pNode->m_bRender = true;
+
+		for (int i = 0; i < pNode->m_vecProps.size(); ++i)
+		{
+			pNode->m_vecProps[i]->Set_Render(true);
+		}
 	}
 }
 
@@ -743,6 +805,12 @@ void COctree::DrawOctree_6()
 		if (!pNode->m_pWorld) return;
 
 		m_vecEntryNode.push_back(pNode->m_pWorld);
+		pNode->m_bRender = true;
+
+		for (int i = 0; i < pNode->m_vecProps.size(); ++i)
+		{
+			pNode->m_vecProps[i]->Set_Render(true);
+		}
 	}
 }
 
@@ -775,6 +843,12 @@ void COctree::DrawOctree_7()
 		if (!pNode->m_pWorld) return;
 
 		m_vecEntryNode.push_back(pNode->m_pWorld);
+		pNode->m_bRender = true;
+
+		for (int i = 0; i < pNode->m_vecProps.size(); ++i)
+		{
+			pNode->m_vecProps[i]->Set_Render(true);
+		}
 	}
 }
 
@@ -807,6 +881,12 @@ void COctree::DrawOctree_8()
 		if (!pNode->m_pWorld) return;
 
 		m_vecEntryNode.push_back(pNode->m_pWorld);
+		pNode->m_bRender = true;
+
+		for (int i = 0; i < pNode->m_vecProps.size(); ++i)
+		{
+			pNode->m_vecProps[i]->Set_Render(true);
+		}
 	}
 }
 
@@ -827,22 +907,121 @@ void COctree::Render_Node(CModel* pRootWorld, CShader* pShader)
 					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_NormalTexture", static_cast<_uint>(k), aiTextureType_NORMALS)))
 						return;
 
-					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_ATOSTexture", static_cast<_uint>(k), aiTextureType_METALNESS)))
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_AlphaTexture", static_cast<_uint>(k), aiTextureType_METALNESS)))
 					{
-						if (FAILED(pShader->Begin(0)))
+						_bool isAlphaTexture = false;
+						if (FAILED(pShader->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
 							return;
 					}
 					else
 					{
-						if (FAILED(pShader->Begin(1)))
+						_bool isAlphaTexture = true;
+						if (FAILED(pShader->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
 							return;
 					}
+
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_AOTexture", static_cast<_uint>(k), aiTextureType_SHININESS)))
+					{
+						_bool isAOTexture = false;
+						if (FAILED(pShader->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+							return;
+					}
+					else
+					{
+						_bool isAOTexture = true;
+						if (FAILED(pShader->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+							return;
+					}
+
+					if (FAILED(pShader->Begin(0)))
+						return;
+
+					m_pOctreeNodes[i]->m_vecEntryNode[j]->Render(k);
+				}
+			}
+		}
+	}
+}
+
+void COctree::Render_Node_LightDepth_Dir(CModel* pRootWorld, CShader* pShader)
+{
+	for (int i = 0; i < 8; ++i)
+	{
+		for (int j = 0; j < m_pOctreeNodes[i]->m_vecEntryNode.size(); ++j)
+		{
+			auto Meshes = m_pOctreeNodes[i]->m_vecEntryNode[j]->GetMeshes();
+
+			for (int k = 0; k < m_pOctreeNodes[i]->m_vecEntryNode[j]->GetNumMesh(); ++k)
+			{
+				if ((*Meshes)[k]->GetNumIndices() != 0)
+				{
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+						return;
+
+					if (FAILED(pShader->Begin(1)))
+						return;
+
+					m_pOctreeNodes[i]->m_vecEntryNode[j]->Render(k);
+				}
+			}
+		}
+	}
+}
+
+void COctree::Render_Node_LightDepth_Spot(CModel* pRootWorld, CShader* pShader)
+{
+	for (int i = 0; i < 8; ++i)
+	{
+		for (int j = 0; j < m_pOctreeNodes[i]->m_vecEntryNode.size(); ++j)
+		{
+			auto Meshes = m_pOctreeNodes[i]->m_vecEntryNode[j]->GetMeshes();
+
+			for (int k = 0; k < m_pOctreeNodes[i]->m_vecEntryNode[j]->GetNumMesh(); ++k)
+			{
+				if ((*Meshes)[k]->GetNumIndices() != 0)
+				{
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+						return;
+
+					if (FAILED(pShader->Begin(1)))
+						return;
 
 					m_pOctreeNodes[i]->m_vecEntryNode[j]->Render(k);
 				}
 			}
 		}
 
+		m_pOctreeNodes[i]->m_bRender = false;
 		m_pOctreeNodes[i]->m_vecEntryNode.clear();
 	}
+}
+
+void COctree::Render_Node_LightDepth_Point(CModel* pRootWorld, CShader* pShader)
+{
+	for (int i = 0; i < 8; ++i)
+	{
+		for (int j = 0; j < m_pOctreeNodes[i]->m_vecEntryNode.size(); ++j)
+		{
+			auto Meshes = m_pOctreeNodes[i]->m_vecEntryNode[j]->GetMeshes();
+
+			for (int k = 0; k < m_pOctreeNodes[i]->m_vecEntryNode[j]->GetNumMesh(); ++k)
+			{
+				if ((*Meshes)[k]->GetNumIndices() != 0)
+				{
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+						return;
+
+					if (FAILED(pShader->Begin(2)))
+						return;
+
+					m_pOctreeNodes[i]->m_vecEntryNode[j]->Render(k);
+				}
+			}
+		}
+	}
+}
+
+void COctree::Set_Props_Layer(_int iLevel)
+{
+	m_pObjects = m_pGameInstance->Find_Layer(iLevel, L"Layer_Obj");
 }

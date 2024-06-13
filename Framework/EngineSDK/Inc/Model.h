@@ -266,7 +266,12 @@ public:		/* For Octree Culling */
 		m_iNumMeshes = NumMesh;
 	}
 	void									Release_IndexBuffer(_uint iNumMesh);
-
+	_float4									GetCenterPoint()
+	{
+		return m_vCenterPoint;
+	}
+private:
+	_float4									m_vCenterPoint;
 public:
 	/* Create_From_FBX */
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix);

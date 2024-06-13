@@ -84,6 +84,10 @@ void CGameObject::Release_Controller()
 	m_pController = nullptr;
 }
 
+_float4 CGameObject::GetPosition()
+{
+	return m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+}
 
 HRESULT CGameObject::Add_Component(_uint iLevelIndex, const wstring& strPrototypeTag, const wstring& strComponentTag, CComponent** ppOut, void* pArg)
 {

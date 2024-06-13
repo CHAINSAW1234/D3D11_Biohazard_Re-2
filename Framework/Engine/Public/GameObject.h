@@ -50,8 +50,23 @@ public:
 	void										Release_Controller();
 #pragma endregion
 public:
-	virtual void								Set_Dead(_bool bDead) { m_bDead = bDead; }
-
+	virtual void								Set_Dead(_bool bDead)
+	{
+		m_bDead = bDead; 
+	}
+	virtual void								Set_Render(_bool boolean)
+	{
+		m_bRender = boolean;
+	}
+	virtual _float4								GetPosition();
+	virtual _float4								GetPosition_Local_To_World()
+	{
+		return m_vLocal_To_World_Pos;
+	}
+	_bool										Get_Localized()
+	{
+		return m_bLocalized;
+	}
 public:
 	virtual _bool								Get_Dead() { return m_bDead; }
 
@@ -69,7 +84,9 @@ protected:
 	_int										m_iIndex_RigidBody = { 0 };
 
 	_bool										m_bDead = { false };
-
+	_bool										m_bRender = { false };
+	_bool										m_bLocalized = { false };
+	_float4										m_vLocal_To_World_Pos;
 protected:
 	map<const wstring, class CComponent*>		m_Components;
 

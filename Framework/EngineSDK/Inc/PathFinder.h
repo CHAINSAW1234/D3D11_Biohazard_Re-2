@@ -40,7 +40,7 @@ public:
 		vector1 = Float4_Normalize(vector1);
 		vector2 = Float4_Normalize(vector2);
 		
-		return vector1.x * vector2.z - vector2.z * vector1.x;
+		return vector1.x * vector2.z - vector1.z * vector2.x;
 	}
 	float calculateAngle(const _float4& vec) 
 	{
