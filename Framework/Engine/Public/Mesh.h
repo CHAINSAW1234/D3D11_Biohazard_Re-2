@@ -162,6 +162,7 @@ public:
 	_bool					Is_Hide() { return m_isHide; }
 	void					Set_Hide(_bool isHide) { m_isHide = isHide; }
 
+public:
 	_float3					Get_CenterPoint()
 	{
 		return m_vCenterPoint;
