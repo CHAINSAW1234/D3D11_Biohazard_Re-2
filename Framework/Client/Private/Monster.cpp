@@ -58,7 +58,7 @@ HRESULT CMonster::Initialize(void * pArg)
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(1.f, 0.3f, 5.f, 1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
-	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this,1.f,0.35f);
+	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this,0.35f,0.35f);
 
 	m_pBehaviorTree = m_pGameInstance->Create_BehaviorTree(&m_iAIController_ID);
 	m_pPathFinder = m_pGameInstance->Create_PathFinder();
@@ -66,7 +66,7 @@ HRESULT CMonster::Initialize(void * pArg)
 	m_pNavigationCom->FindCell(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
 	_int iCurrentIndex = m_pNavigationCom->GetCurrentIndex();
 	
-	m_pPathFinder->Initiate_PathFinding(iCurrentIndex, iCurrentIndex + 115, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+	m_pPathFinder->Initiate_PathFinding(iCurrentIndex, iCurrentIndex + 110, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 	m_vNextTarget = m_pPathFinder->GetNextTarget_Opt();
 
 	m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
@@ -90,13 +90,13 @@ void CMonster::Tick(_float fTimeDelta)
 		_float4 vDelta = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) - m_vNextTarget;
 		vDelta.y = 0.f;
 
-		if (XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta))) < 0.35f)
+		if (XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta))) < 0.75f)
 		{
 			m_bArrived = true;
 		}
 		else
 		{
-			//m_pController->Move(m_vDir * 0.03f, fTimeDelta);
+			m_pController->Move(m_vDir * 0.03f, fTimeDelta);
 		}
 	}
 	else

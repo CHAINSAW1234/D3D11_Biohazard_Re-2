@@ -39,7 +39,29 @@ public:
 	{
 		vector1 = Float4_Normalize(vector1);
 		vector2 = Float4_Normalize(vector2);
+		
 		return vector1.x * vector2.z - vector1.z * vector2.x;
+	}
+	float calculateAngle(const _float4& vec) 
+	{
+		float angle = std::atan2(vec.z, vec.x);
+
+		if (angle < 0) {
+			angle += XM_2PI;
+		}
+		return angle;
+	}
+	_float							VectorSign_Global(_float4 vector1, _float4 vector2)
+	{
+		float angle1 = calculateAngle(vector1);
+		float angle2 = calculateAngle(vector2);
+
+		if (angle1 >= angle2) {
+			return 1;
+		}
+		else {
+			return -1;
+		}
 	}
 	void							Reset();
 	stack<_uint>					GetPath()
@@ -48,7 +70,6 @@ public:
 	}
 	_float4							GetNextTarget();
 	_float4							GetNextTarget_Opt();
-	int StringPull(int nportals, const int maxPts);
 	FORCEINLINE _float triarea2(const _float* a, const _float* b, const _float* c)
 	{
 		const _float ax = b[0] - a[0];

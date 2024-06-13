@@ -298,8 +298,8 @@ void CPathFinder::Path_Optimization()
 
 				auto Point1 = (*m_Cells)[m_Path_Optimization[i]]->Get_Point_Float4(j);
 				auto Point2 = (*m_Cells)[m_Path_Optimization[i]]->Get_Point_Float4(k);
-				m_vecLeft_Vertices[i + 1] = Point1;
-				m_vecRight_Vertices[i + 1] = Point2;
+				m_vecLeft_Vertices[i + 1] = Point2;
+				m_vecRight_Vertices[i + 1] = Point1;
 
 				break;
 			}
@@ -333,90 +333,8 @@ void CPathFinder::Path_Optimization()
 	}
 
 	// Step through channel.
-	for (int i = 2; i <= m_Path.size() - 1; i++)
+	for (int i = 1; i <= m_Path.size() - 1; i++)
 	{
-#pragma region No Steering
-	//	//If new left vertex is different, process.
-	//	if ((m_vecLeft_Vertices[i] != m_vecLeft_Vertices[left])
-	//		&& i > left)
-	//	{
-	//		_float4 newSide = m_vecLeft_Vertices[i] - apex;
-	//		newSide.w = 1.f;
-
-	//		// If new side does not widen funnel, update.
-	//		if (VectorSign(newSide,
-	//			m_vecLeft_Vertices[left] - apex) > 0)
-	//		{
-	//			// If new side crosses other side, update apex.
-	//			if (VectorSign(newSide,
-	//				m_vecRight_Vertices[right] - apex) > 0)
-	//			{
-	//				// Find next vertex.
-	//				//auto next = right + 1;
-	//				nextright = right;
-
-	//				for (int j = nextright; j <= m_Path.size(); j++)
-	//				{
-	//					if (m_vecRight_Vertices[j] != m_vecRight_Vertices[nextright])
-	//					{
-	//						nextright = j;
-	//						break;
-	//					}
-	//				}
-
-	//				m_vecPath_Optimization.push_back(m_vecRight_Vertices[right]);
-	//				apex = m_vecRight_Vertices[right];
-	//				right = nextright;
-	//				left = nextright;
-	//			}
-	//			else
-	//			{
-	//				left = i;
-	//			}
-	//		}
-	//	}
-
-	//	//If new right vertex is different, process.
-	//	if ((m_vecRight_Vertices[i] != m_vecRight_Vertices[right])
-	//		&& i > right)
-	//	{
-	//		_float4 newSide = m_vecRight_Vertices[i] - apex;
-	//		newSide.w = 1.f;
-
-	//		// If new side does not widen funnel, update.
-	//		if (VectorSign(m_vecRight_Vertices[right] - apex,
-	//			newSide) > 0)
-	//		{
-	//			// If new side crosses other side, update apex.
-	//			if (VectorSign(m_vecLeft_Vertices[left] - apex,
-	//				newSide) > 0)
-	//			{
-	//				// Find next vertex.
-	//				nextleft = left;
-
-	//				for (int j = nextleft; j <= m_Path.size(); j++)
-	//				{
-	//					if (m_vecLeft_Vertices[j] != m_vecLeft_Vertices[nextleft])
-	//					{
-	//						nextleft = j;
-	//						break;
-	//					}
-	//				}
-
-	//				m_vecPath_Optimization.push_back(m_vecLeft_Vertices[left]);
-	//				apex = m_vecLeft_Vertices[left];
-	//				left = nextleft;
-	//				right = nextleft;
-	//			}
-	//			else
-	//			{
-	//				right = i;
-	//			}
-	//		}
-	//	}
-
-	//	continue;
-#pragma endregion
 
 #pragma region Steering
 		//If new left vertex is different, process.
@@ -427,12 +345,12 @@ void CPathFinder::Path_Optimization()
 			newSide.w = 1.f;
 
 			// If new side does not widen funnel, update.
-			if (VectorSign(newSide,
-				m_vecLeft_Vertices[left] - apex) > 0)
+			if (VectorSign(m_vecLeft_Vertices[left] - apex,
+				newSide) >= 0)
 			{
 				// If new side crosses other side, update apex.
-				if (VectorSign(newSide,
-					m_vecRight_Vertices[right] - apex) >= 0)
+				if (VectorSign(m_vecRight_Vertices[right] - apex,
+					newSide) > 0)
 				{
 					int next = right;
 					int prev = right;
@@ -480,15 +398,13 @@ void CPathFinder::Path_Optimization()
 					_float4 normal = Float4_Normalize(_float4((_float)cos(angle),0.f,(_float)sin(angle),0.f));
 
 					// Add new offset apex to list and update right side.
-					auto NewPath = m_vecRight_Vertices[right] - (normal * 0.1f);
+					auto NewPath = m_vecRight_Vertices[right] - (normal * 0.f);
 					NewPath.w = 1.f;
 					m_vecPath_Optimization.push_back(NewPath);
 					apex = m_vecRight_Vertices[right];
-					//Temp
-					right = next;
 
-					//left = next;
-					//i = left;
+					right = next;
+					left = next;
 				}
 				else
 				{
@@ -497,19 +413,19 @@ void CPathFinder::Path_Optimization()
 			}
 		}
 
-		if ((m_vecRight_Vertices[i] != m_vecRight_Vertices[left])
-			&& i > left)
+		if ((m_vecRight_Vertices[i] != m_vecRight_Vertices[right])
+			&& i > right)
 		{
 			_float4 newSide = m_vecRight_Vertices[i] - apex;
 			newSide.w = 1.f;
 
 			// If new side does not widen funnel, update.
-			if (VectorSign(m_vecRight_Vertices[right] - apex,
-				newSide) > 0)
+			if (VectorSign(newSide,
+				m_vecRight_Vertices[right] - apex) >= 0)
 			{
 				// If new side crosses other side, update apex.
-				if (VectorSign(m_vecLeft_Vertices[left] - apex,
-					newSide) >= 0)
+				if (VectorSign(newSide,
+					m_vecLeft_Vertices[left] - apex) > 0)
 				{
 					int next = left;
 					int prev = left;
@@ -557,15 +473,13 @@ void CPathFinder::Path_Optimization()
 					_float4 normal = Float4_Normalize(_float4((_float)cos(angle), 0.f, (_float)sin(angle), 0.f));
 
 					// Add new offset apex to list and update right side.
-					auto NewPath = m_vecLeft_Vertices[left] + (normal * 0.1f);
+					auto NewPath = m_vecLeft_Vertices[left] + (normal * 0.f);
 					NewPath.w = 1.f;
 					m_vecPath_Optimization.push_back(NewPath);
 					apex = m_vecLeft_Vertices[left];
-					//Temp
-					left = next;
 
-					//right = next;
-					//i = next;
+					left = next;
+					right = next;
 				}
 				else
 				{
@@ -580,48 +494,6 @@ void CPathFinder::Path_Optimization()
 #pragma endregion
 
 return;
-
-#pragma region ½Å¹öÀü
-	m_vecPortals.resize(2*(m_Path.size() + 1));
-	int nportals = 0;
-	_float4 vEndPos = (*m_vecNavCell_Point)[m_Path_Optimization[m_Path_Optimization.size() - 1]];
-	// ½ÃÀÛ Æ÷Å»
-	m_vecPortals[nportals * 2 + 0] =  m_vStartPos;
-	m_vecPortals[nportals * 2 + 1] = m_vStartPos;
-	nportals++;
-
-	for (int i = 0; i < m_Path.size() - 1; i++)
-	{
-		_uint Cell_Index = m_Path_Optimization[i];
-		auto Neighbors = (*m_Cells)[Cell_Index]->GetNeighborIndices();
-
-		for (int j = 0; j < 3; j++)
-		{
-			if (Neighbors[j] == m_Path_Optimization[i + 1])
-			{
-				int k = j + 1 >= 3 ? 0 : j + 1;
-
-				auto Point1 = (*m_Cells)[m_Path_Optimization[i]]->Get_Point_Float4(j);
-				auto Point2 = (*m_Cells)[m_Path_Optimization[i]]->Get_Point_Float4(k);
-				m_vecPortals[nportals * 2 + 0] = Point1;
-				m_vecPortals[nportals * 2 + 1] = Point2;
-
-				nportals++;
-
-				break;
-			}
-		}
-	}
-
-	// ³¡ Æ÷Å»
-	m_vecPortals[nportals * 2 + 0] = vEndPos;
-	m_vecPortals[nportals * 2 + 1] = vEndPos;
-	nportals++;
-
-	StringPull(nportals,nportals);
-
-#pragma endregion
-
 }
 
 void CPathFinder::Reset()
@@ -652,92 +524,6 @@ _float4 CPathFinder::GetNextTarget_Opt()
 	m_vecPath_Optimization.erase(m_vecPath_Optimization.begin());
 	
 	return vNextTarget;
-}
-
-int CPathFinder::StringPull(int nportals, const int maxPts)
-{
-	// Find straight path.
-	int npts = 0;
-	// Init scan state
-	float portalApex[2], portalLeft[2], portalRight[2];
-	int apexIndex = 0, leftIndex = 0, rightIndex = 0;
-	vcpy(portalApex, &m_vecPortals[0].x);
-	vcpy(portalLeft, &m_vecPortals[0].x);
-	vcpy(portalRight, &m_vecPortals[0].z);
-
-	// Add start point.
-	m_vecPath_Optimization.push_back(m_vecPortals[0]);
-	npts++;
-
-	for (int i = 1; i < nportals && npts < maxPts; ++i)
-	{
-		const float* left = &m_vecPortals[i].x;
-		const float* right = &m_vecPortals[i].z;
-
-		// Update right vertex.
-		if (triarea2(portalApex, portalRight, right) <= 0.0f)
-		{
-			if (vequal(portalApex, portalRight) || triarea2(portalApex, portalLeft, right) > 0.0f)
-			{
-				// Tighten the funnel.
-				vcpy(portalRight, right);
-				rightIndex = i*2;
-			}
-			else
-			{
-				// Right over left, insert left to path and restart scan from portal left point.
-				m_vecPath_Optimization.push_back(m_vecPortals[leftIndex]);
-				npts++;
-				// Make current left the new apex.
-				vcpy(portalApex, portalLeft);
-				apexIndex = leftIndex;
-				// Reset portal
-				vcpy(portalLeft, portalApex);
-				vcpy(portalRight, portalApex);
-				leftIndex = apexIndex;
-				rightIndex = apexIndex;
-				// Restart scan
-				i = apexIndex;
-				continue;
-			}
-		}
-
-		// Update left vertex.
-		if (triarea2(portalApex, portalLeft, left) >= 0.0f)
-		{
-			if (vequal(portalApex, portalLeft) || triarea2(portalApex, portalRight, left) < 0.0f)
-			{
-				// Tighten the funnel.
-				vcpy(portalLeft, left);
-				leftIndex = i*2;
-			}
-			else
-			{
-				// Left over right, insert right to path and restart scan from portal right point.
-				m_vecPath_Optimization.push_back(m_vecPortals[rightIndex]);
-				npts++;
-				// Make current right the new apex.
-				vcpy(portalApex, portalRight);
-				apexIndex = rightIndex;
-				// Reset portal
-				vcpy(portalLeft, portalApex);
-				vcpy(portalRight, portalApex);
-				leftIndex = apexIndex;
-				rightIndex = apexIndex;
-				// Restart scan
-				i = apexIndex;
-				continue;
-			}
-		}
-	}
-	// Append last point to path.
-	if (npts < maxPts)
-	{
-		m_vecPath_Optimization.push_back(m_vecPortals[nportals*2-1]);
-		npts++;
-	}
-
-	return npts;
 }
 
 CPathFinder* CPathFinder::Create()
