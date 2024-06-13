@@ -2,7 +2,7 @@
 
 #include "Base.h"
 #include "Client_Defines.h"
-#include "Inventory_Item_UI.h"
+#include "Button_UI.h"
 
 BEGIN(Client)
 
@@ -27,7 +27,7 @@ private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
 
-	vector<CInventory_Item_UI*> m_vecInventoryBox;
+	vector<CButton_UI*> m_vecInventoryBox;
 
 
 	_float2 m_fInterval = { 74.f, 76.f };

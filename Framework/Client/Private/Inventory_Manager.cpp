@@ -22,14 +22,14 @@ HRESULT CInventory_Manager::Initialize()
 			wstring selectedFilePath;
 			_float fPosX = m_fInterval.x * j;
 			_float fPosY = m_fInterval.y * i;
-			CInventory_Item_UI* pOut = { nullptr };
+			CButton_UI* pOut = { nullptr };
 			selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/VoidBox.dat");
 			inputFileStream.open(selectedFilePath, ios::binary);
-			if (FAILED(CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Inventory_Item_UI"),
+			if (FAILED(CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Button_UI"),
 				(CGameObject**)&pOut, m_pDevice, m_pContext)))
 				return E_FAIL;
 
-			pOut->Set_InvenType(CCustomize_UI::INVENTORY_TYPE::MAIN_INVEN);
+			//pOut->Set_InvenType(CCustomize_UI::INVENTORY_TYPE::MAIN_INVEN);
 			pOut->Move_State(_float3(fPosX, fPosY, 0.f), 0);
 			m_vecInventoryBox.push_back(pOut);
 		}
