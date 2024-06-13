@@ -493,7 +493,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	/*Prototype_Component_Texture_Tab_Window_BackGround*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Tab_Window_BackGround"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Tab_Winodw/Tab_Window_BackGround.dds")))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Inventory/TabWindow_BackGround.dds")))))
 		return E_FAIL;
 #pragma endregion
 

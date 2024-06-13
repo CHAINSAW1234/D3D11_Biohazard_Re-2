@@ -259,6 +259,8 @@ public:// for. Set inline
 		m_isMultiTex = IsMultiTex;
 	}
 
+	void Set_InvenType(INVENTORY_TYPE eInvenType) { m_eInventory_Type = eInvenType; }
+
 public:/* for.Get Inline */
 	_float4x4* Get_StoreTransform(_uint i) { return &m_SavePos[i]; }
 	/* 현재 타이머*/
@@ -317,6 +319,8 @@ public:/* for.Get Inline */
 		return (&_desc);
 	}
 
+	
+
 protected :
 	vector<class CTextBox*>		m_vecTextBoxes;
 
@@ -335,7 +339,8 @@ protected :
 protected :
 	_uint						m_iRenderGroup = { static_cast<_uint>(CRenderer::RENDER_UI) };
 
-protected : /* NY : Shader 변수 */
+#pragma region NY : Shader 변수
+protected :
 	_bool						m_isMovePoint = { false };
 	Value_Color					m_vColor[10] = {};	// 현재 Edit 상에서 보여지는 컬러
 	_float4x4					m_SavePos[10] = {};
@@ -396,6 +401,7 @@ protected :
 	_bool						m_isLoop = { false };
 	_bool						m_isLoopStop = { false };
 	_bool						m_ReStart = { false };
+#pragma endregion
 
 
 protected : /* Client*/
@@ -425,6 +431,7 @@ public:
 	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	//생성한 객체를 포인터로 받고싶으면 사용하시오
 	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, CGameObject** ppOut, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static void ExtractData_FromDat(ifstream& inputFileStream, vector<CUSTOM_UI_DESC>* pvecdesc, _bool IsFirst);
 	virtual CGameObject* Clone(void* pArg) override = 0;
 	virtual void Free() override;
 };

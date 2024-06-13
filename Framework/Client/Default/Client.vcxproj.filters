@@ -73,9 +73,6 @@
     <Filter Include="02.GameObjects\UI">
       <UniqueIdentifier>{9832ad11-317f-47c4-a17f-42e4a22153a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\TextBox">
-      <UniqueIdentifier>{abdbf2c9-92cc-4833-ac49-54faee5a66fd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\CustomCollider">
       <UniqueIdentifier>{66bce26c-c0c8-4789-bb6a-591f64bef163}</UniqueIdentifier>
     </Filter>
@@ -145,9 +142,6 @@
     <Filter Include="02.GameObjects\UI\2. Cursor">
       <UniqueIdentifier>{a6a85258-66c2-4d03-a771-07c4fb843049}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Tab_Window">
-      <UniqueIdentifier>{ea70fdf9-35f3-4236-9447-ce5555b4d60b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\0. Customize_UI">
       <UniqueIdentifier>{0740d5c9-1780-400c-9d38-ca84c8f26b22}</UniqueIdentifier>
     </Filter>
@@ -171,6 +165,15 @@
     </Filter>
     <Filter Include="02.GameObjects\UI\Inventory\1. Inventory Item">
       <UniqueIdentifier>{0ecab370-b1e7-4ba2-98ef-c2d58e26d1a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\7. TextBox">
+      <UniqueIdentifier>{abdbf2c9-92cc-4833-ac49-54faee5a66fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window">
+      <UniqueIdentifier>{ea70fdf9-35f3-4236-9447-ce5555b4d60b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager">
+      <UniqueIdentifier>{1bc643cf-ed81-4789-a287-ddeed43fb9bd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -253,7 +256,7 @@
       <Filter>02.GameObjects\UI\0. Customize_UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TextBox.h">
-      <Filter>02.GameObjects\UI\TextBox</Filter>
+      <Filter>02.GameObjects\UI\7. TextBox</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CustomCollider.h">
       <Filter>02.GameObjects\CustomCollider</Filter>
@@ -301,7 +304,7 @@
       <Filter>02.GameObjects\UI\Inventory\1. Inventory Item</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Tab_Window.h">
-      <Filter>02.GameObjects\Tab_Window</Filter>
+      <Filter>02.GameObjects\UI\99. Tab_Window</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\HPBar_UI.h">
       <Filter>02.GameObjects\UI\3. HP Bar</Filter>
@@ -322,6 +325,9 @@
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
     </ClInclude>
     <ClInclude Include="CTest.h" />
+    <ClInclude Include="..\Public\Inventory_Manager.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -388,7 +394,7 @@
       <Filter>02.GameObjects\UI\0. Customize_UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TextBox.cpp">
-      <Filter>02.GameObjects\UI\TextBox</Filter>
+      <Filter>02.GameObjects\UI\7. TextBox</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CustomCollider.cpp">
       <Filter>02.GameObjects\CustomCollider</Filter>
@@ -436,7 +442,7 @@
       <Filter>02.GameObjects\UI\Inventory\1. Inventory Item</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Tab_Window.cpp">
-      <Filter>02.GameObjects\Tab_Window</Filter>
+      <Filter>02.GameObjects\UI\99. Tab_Window</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\HPBar_UI.cpp">
       <Filter>02.GameObjects\UI\3. HP Bar</Filter>
@@ -457,6 +463,9 @@
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
     </ClCompile>
     <ClCompile Include="CTest.cpp" />
+    <ClCompile Include="..\Private\Inventory_Manager.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

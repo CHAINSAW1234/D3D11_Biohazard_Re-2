@@ -578,21 +578,27 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 
 	Calc_Camera_Transform(fTimeDelta);
 
-	POINT ptPos = {};
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
+		m_bMouseCursorClip = !m_bMouseCursorClip;
 
-	GetCursorPos(&ptPos);
-	ScreenToClient(g_hWnd, &ptPos);
+	if (true == m_bMouseCursorClip)
+	{
+		POINT ptPos = {};
 
-	RECT rc = {};
-	GetClientRect(g_hWnd, &rc);
+		GetCursorPos(&ptPos);
+		ScreenToClient(g_hWnd, &ptPos);
 
-	ptPos.x = _long(_float(rc.right - rc.left) * 0.5f);
-	ptPos.y = _long(_float(rc.bottom - rc.top) * 0.5f);
+		RECT rc = {};
+		GetClientRect(g_hWnd, &rc);
 
-	m_pGameInstance->Set_MouseCurPos(ptPos);
+		ptPos.x = _long(_float(rc.right - rc.left) * 0.5f);
+		ptPos.y = _long(_float(rc.bottom - rc.top) * 0.5f);
 
-	ClientToScreen(g_hWnd, &ptPos);
-	SetCursorPos(ptPos.x, ptPos.y);
+		m_pGameInstance->Set_MouseCurPos(ptPos);
+
+		ClientToScreen(g_hWnd, &ptPos);
+		SetCursorPos(ptPos.x, ptPos.y);
+	}
 
 	return;
 }

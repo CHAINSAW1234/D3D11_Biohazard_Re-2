@@ -33,8 +33,11 @@ HRESULT CTab_Window::Initialize(void* pArg)
 		if (FAILED(Create_Button()))
 			return E_FAIL;
 
-		//if (FAILED(Create_Inventory()))
-		//	return E_FAIL;
+		if (FAILED(Create_Inventory()))
+			return E_FAIL;
+
+
+
 		
 
 		m_bDead = true;
@@ -53,8 +56,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 			m_pHintButton->Set_Dead(m_bDead);
 			m_pInvenButton->Set_Dead(m_bDead);
 			m_pMapButton->Set_Dead(m_bDead);
-			//m_pInventory1->Set_Dead(m_bDead);
-			//m_pInventory2->Set_Dead(m_bDead);
+
 		}
 
 		else
@@ -63,8 +65,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 			m_pHintButton->Set_Dead(m_bDead);
 			m_pInvenButton->Set_Dead(m_bDead);
 			m_pMapButton->Set_Dead(m_bDead);
-			//m_pInventory1->Set_Dead(m_bDead);
-			//m_pInventory2->Set_Dead(m_bDead);
+
 		}
 	}
 
@@ -73,29 +74,24 @@ void CTab_Window::Tick(_float fTimeDelta)
 
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 	{
-		if (true == m_pInvenButton->IsMouseHover())
+		if (true == m_pMapButton->IsMouseHover())
+		{
+			m_eWindowType = MINIMAP;
+			m_pInventory_Manager->Set_OnOff_Inven(false);
+		}
+
+		else if (true == m_pInvenButton->IsMouseHover())
 		{
 			m_eWindowType = INVENTORY;
-			//m_pInventory1->Set_Dead(false);
-			//m_pInventory2->Set_Dead(false);
+			m_pInventory_Manager->Set_OnOff_Inven(true);
 
 		}
 			
 		else if (true == m_pHintButton->IsMouseHover())
 		{
 			m_eWindowType = HINT;
-			//m_pInventory1->Set_Dead(true);
-			//m_pInventory2->Set_Dead(true);
+			m_pInventory_Manager->Set_OnOff_Inven(false);
 		}
-
-
-		else if (true == m_pMapButton->IsMouseHover())
-		{
-			m_eWindowType = MINIMAP;
-			//m_pInventory1->Set_Dead(true);
-			//m_pInventory2->Set_Dead(true);
-		}
-
 	}
 
 	__super::Tick(fTimeDelta);
@@ -175,21 +171,21 @@ HRESULT CTab_Window::Create_Button()
 	wstring selectedFilePath;
 
 	/* Button_HintWin */
-	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Button_HintWin.dat");
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Hint_Button.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	if (FAILED(CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Button_UI"), 
 		(CGameObject**)&m_pHintButton, m_pDevice, m_pContext)))
 		return E_FAIL;
 	
 	/* Button_InvenWin */
-	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Button_InvenWin.dat");
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory_Button.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	if (FAILED(CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Button_UI"), 
 		(CGameObject**)&m_pInvenButton, m_pDevice, m_pContext)))
 		return E_FAIL;
 
 	/* Button_MapWin */
-	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Button_MapWin.dat");
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/MiniMap_Button.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	if (FAILED(CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Button_UI"), 
 		(CGameObject**)&m_pMapButton, m_pDevice, m_pContext)))
@@ -209,33 +205,25 @@ HRESULT CTab_Window::Create_Button()
 	return S_OK;
 }
 
-//HRESULT CTab_Window::Create_Inventory()
-//{
-//	ifstream inputFileStream;
-//	wstring selectedFilePath;
-//
-//	/* Inventory_Item */
-//	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_Item.dat");
-//	inputFileStream.open(selectedFilePath, ios::binary);
-//	if (FAILED(CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Inventory_Item_UI"),
-//		(CGameObject**)&m_pInventory1, m_pDevice, m_pContext)))
-//		return E_FAIL;
-//
-//	/* Inventory SelectBox */
-//	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_SelectBox.dat");
-//	inputFileStream.open(selectedFilePath, ios::binary);
-//	if (FAILED(CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Inventory_Item_UI"),
-//		(CGameObject**)&m_pInventory2, m_pDevice, m_pContext)))
-//		return E_FAIL;
-//
-//	m_pInventory1->Set_Dead(true);
-//	m_pInventory2->Set_Dead(true);
-//
-//	Safe_AddRef(m_pInventory1);
-//	Safe_AddRef(m_pInventory2);
-//
-//	return S_OK;
-//}
+HRESULT CTab_Window::Creat_MiniMap()
+{
+	return S_OK;
+}
+
+HRESULT CTab_Window::Creat_Hint()
+{
+	return S_OK;
+}
+
+HRESULT CTab_Window::Create_Inventory()
+{
+	m_pInventory_Manager = CInventory_Manager::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pInventory_Manager)
+		return E_FAIL;
+
+	
+	return S_OK;
+}
 
 CTab_Window* CTab_Window::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
@@ -271,6 +259,5 @@ void CTab_Window::Free()
 	Safe_Release(m_pHintButton);
 	Safe_Release(m_pInvenButton);
 	Safe_Release(m_pMapButton);
-	//Safe_Release(m_pInventory1);
-	//Safe_Release(m_pInventory2);
+	Safe_Release(m_pInventory_Manager);
 }

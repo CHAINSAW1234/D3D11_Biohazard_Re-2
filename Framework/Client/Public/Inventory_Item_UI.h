@@ -23,8 +23,11 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-public :
+public:
 	void		Change_BoxType(_bool _item);
+
+
+
 
 private : /* 박스 처리 */
 	void		Box_Operater(_float fTimeDelta);
@@ -51,9 +54,9 @@ private: /* Box Type 변수*/
 private : /* Sub Equipment Inventory 변수 */
 	SUB_INVEN_BOX_POSITION	m_eSubInven_Type = { SUB_INVEN_BOX_POSITION::END_INVEN };
 
-	_float			m_fOpenInven_Timer = {};
-	_float			m_fOrigin_Blending = {};
-	_bool			m_isSubInven_Open = { false };
+	_float					m_fOpenInven_Timer = {};
+	_float					m_fOrigin_Blending = {};
+	_bool					m_isSubInven_Open = { false };
 
 
 public:

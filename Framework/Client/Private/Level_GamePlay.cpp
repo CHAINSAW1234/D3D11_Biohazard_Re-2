@@ -258,17 +258,17 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	//UI_Distinction(selectedFilePath);
 	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
-	/* 3. Inventory_Item*/
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_Item.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	///* 3. Inventory_Item*/
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_Item.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
-	/* 4. Inventory SelectBox */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_SelectBox.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	///* 4. Inventory SelectBox */
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_SelectBox.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 	
 	/* 6. UI_MainHP */
 	/*selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/MainHPBar_UI.dat");
@@ -300,7 +300,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 	
-	/* 5. UI_Sub_Inventory */
+	/* 5. UI_MissionBar */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_MissionBar.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
