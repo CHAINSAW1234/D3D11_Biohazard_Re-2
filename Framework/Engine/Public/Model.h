@@ -146,6 +146,7 @@ public:		/* For. Access */
 	_bool									Is_Loop_PlayingInfo(_uint iPlayingIndex);
 	void									Set_Loop(_uint iPlayingIndex, _bool isLoop);
 
+	void									Set_TotalLinearInterpolation(_float fTime) { m_fTotalLinearTime = fTime; }
 	void									Set_KeyFrameIndex_AllKeyFrame(_uint iPlayingIndex, _uint iKeyFrameIndex);
 	void									Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition);
 	void									Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight);

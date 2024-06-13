@@ -45,6 +45,11 @@ public:		/* For.Access */
 
 	void									Set_TickPerSec(_float fTickPerSec);
 
+	KEYFRAME								Get_FirstKeyFrame(_uint iBoneIndex);
+
+private:
+	_int									Find_ChannelIndex(_uint iBoneIndex);
+
 private:
 	_char									m_szName[MAX_PATH] = { "" };
 

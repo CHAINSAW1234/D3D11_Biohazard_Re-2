@@ -39,7 +39,8 @@ public:		/* For.Access */
 	inline _float3						Get_PreTranslation_Local() { return m_vPreTranslationLocal; }
 	inline _float4						Get_PreQuaternion() { return m_vPreQuaternion; }
 	inline wstring						Get_BoneLayerTag() { return m_strBoneLayerTag; }
-	inline const vector<KEYFRAME>& Get_LastKeyFrames() { return m_LastKeyFrames; }
+	inline const vector<KEYFRAME>&		Get_LastKeyFrames() { return m_LastKeyFrames; }
+	inline const vector<KEYFRAME>&		Get_LinearStartKeyFrames() { return m_LinearStartKeyFrames; }
 	KEYFRAME							Get_LastKeyFrame(_uint iBoneIndex);
 
 	void								Change_Animation(_uint iAnimIndex, _uint iNumChannel);
@@ -72,6 +73,7 @@ public:		/* For.Access */
 	void								Add_AccLinearInterpolation(_float fAddLinearInterpolation);
 
 	void								Update_LastKeyFrames(const vector<_float4x4>& TransformationMatrices, _uint iNumBones, _float fTotalLinearTime);
+	void								Update_LinearStateKeyFrames(const vector<KEYFRAME>& KeyFrames);
 
 private:
 	_bool								m_isLoop = { false };
@@ -91,6 +93,7 @@ private:
 
 	vector<_uint>						m_CurrentKeyFrameIndices;
 	vector<KEYFRAME>					m_LastKeyFrames;
+	vector<KEYFRAME>					m_LinearStartKeyFrames;
 
 public:
 	static CPlayingInfo* Create(void* pArg);

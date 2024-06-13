@@ -371,6 +371,16 @@ void CTool_AnimPlayer::On_Off_Buttons()
 	{
 		m_isRooActive_Rotate = !m_isRooActive_Rotate;
 	}
+
+	ImGui::NewLine();
+
+	static _float			fLinearTime = { 0.2f };
+	ImGui::SliderFloat("Total Linear Time", &fLinearTime, 0.f, 5.f);
+	
+	if (nullptr != m_pCurrentModel)
+	{
+		m_pCurrentModel->Set_TotalLinearInterpolation(fLinearTime);
+	}
 }
 
 void CTool_AnimPlayer::Set_Animation()

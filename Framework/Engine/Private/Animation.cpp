@@ -145,8 +145,9 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _u
 			isFinished = true;
 			pPlayingInfo->Set_Finished(isFinished);
 
+			//	루프가아닌 경우 애니메이션 종료 시 마지막 키프레임들을 그대로 반환한다. 
+			//	마지막 포즈와 혼합되어야함
 			vector<KEYFRAME>			LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
-
 			for(_uint iBoneIndex = 0; iBoneIndex < iNumBones; ++iBoneIndex)
 			{
 				KEYFRAME		LastKeyFrame = { LastKeyFrames[iBoneIndex] };
@@ -220,6 +221,37 @@ void CAnimation::Set_TickPerSec(_float fTickPerSec)
 		return;
 
 	m_fTickPerSecond = fTickPerSec;
+}
+
+_int CAnimation::Find_ChannelIndex(_uint iBoneIndex)
+{
+	_int			iResultBoneIndex = { -1 };
+	for (auto& pChannel : m_Channels)
+	{
+		_uint			iDstBoneIndex = { pChannel->Get_BoneIndex() };
+		
+		if (iDstBoneIndex == iBoneIndex)
+		{
+			iResultBoneIndex = iBoneIndex;
+			break;
+		}
+	}
+
+	return iResultBoneIndex;
+}
+
+KEYFRAME CAnimation::Get_FirstKeyFrame(_uint iBoneIndex)
+{
+	KEYFRAME				FirstKeyFrame;
+	_int			iChannelIndex = { Find_ChannelIndex(iBoneIndex) };
+	if (-1 == iChannelIndex)
+		return FirstKeyFrame;
+
+	vector<KEYFRAME>		KeyFrames = m_Channels[static_cast<_uint>(iChannelIndex)]->Get_KeyFrames();
+
+	FirstKeyFrame = { KeyFrames.front() };
+
+	return FirstKeyFrame;
 }
 
 CAnimation* CAnimation::Create(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices)

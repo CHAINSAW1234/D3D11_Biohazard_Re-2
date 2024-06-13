@@ -1557,13 +1557,13 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 {
 	const _int						iRootBoneIndex = { Find_RootBoneIndex() };
 	vector<_float4x4>				TransformationMatrices;
-	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+	CPlayingInfo*					pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
 
 	if (nullptr == pPlayingInfo)
 		return TransformationMatrices;
 
 	const wstring					strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
-	CBone_Layer* pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
+	CBone_Layer*					pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
 
 	if (nullptr == pBoneLayer)
 		return TransformationMatrices;
@@ -1601,13 +1601,14 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 	const _bool						isLinearInterpolation = { pPlayingInfo->Is_LinearInterpolation() };
 	const vector<KEYFRAME>&			LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
 
-	//	선형 보간시 루트 모션시 새로운 시작 변위와 (원점에서 시작하지않는 모션등...)와 선형 보간 이전 키프레임들에서의 변위와의 차이 만큼 빨려들어감 방지 =>	별도 디벨롭 더 필요해요보임
+	//	선형 보간시 루트 모션시 새로운 시작 변위와 (원점에서 시작하지않는 모션등...)와 선형 보간 이전 키프레임들에서의 변위와의 차이 만큼 빨려들어감 방지 
 	if (true == isLinearInterpolation)
 	{
 		//	첫 선형 보간 들어갈때 라스트 키프레임즈에서 루트성분을 적용에따라 현재 새로운 키프레임의 변환값으로 씌움
-		if (true /*== isFirstTick*/)
+		//	전 애니메이션의 최종 루트성분을 현재 애니메이션의 시작 로컬 스페이스상의 루트로 맞춘다.			
+		if (true == isFirstTick)
 		{
-			_matrix			RootTransformationMatrix = { XMLoadFloat4x4(&TransformationMatrices[iRootBoneIndex]) };
+			/*_matrix			RootTransformationMatrix = { XMLoadFloat4x4(&TransformationMatrices[iRootBoneIndex]) };
 			_vector			vRootScale, vRootQuaternion, vRootTranslation;
 
 			XMMatrixDecompose(&vRootScale, &vRootQuaternion, &vRootTranslation, RootTransformationMatrix);
@@ -1637,23 +1638,42 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 			{
 				_vector			vResultLastRotation = { vRootQuaternion };
 				pPlayingInfo->Set_LastKeyFrame_Rotation(iRootBoneIndex, vResultLastRotation);
-			}
+			}*/
+			KEYFRAME				FirstKeyFrame = { m_Animations[iAnimIndex]->Get_FirstKeyFrame(iRootBoneIndex) };
+
+			pPlayingInfo->Set_LastKeyFrame_Translation(iRootBoneIndex, XMLoadFloat3(&FirstKeyFrame.vTranslation));
+			pPlayingInfo->Set_LastKeyFrame_Rotation(iRootBoneIndex, XMLoadFloat4(&FirstKeyFrame.vRotation));
+
+			vector<KEYFRAME>				LinearStartKeyFrames = { LastKeyFrames };
+			LinearStartKeyFrames[iRootBoneIndex] = FirstKeyFrame;
+
+			pPlayingInfo->Update_LinearStateKeyFrames(LinearStartKeyFrames);
 		}
 
-		const vector<KEYFRAME>& LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
-		TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearInterpolation, m_fTotalLinearTime, TransformationMatrices, iNumBones, LastKeyFrames);
+		//	이번에 재생된 애니메이션과 이전 최종 키프레임간의 혼합 과정
+		const vector<KEYFRAME>&			LinearStartKeyFrames = { pPlayingInfo->Get_LinearStartKeyFrames() };
+		TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearInterpolation, m_fTotalLinearTime, TransformationMatrices, iNumBones, LinearStartKeyFrames);
+		//	const vector<KEYFRAME>&			LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
+		//	TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearInterpolation, m_fTotalLinearTime, TransformationMatrices, iNumBones, LastKeyFrames);
 	}
 
+
+	//	첫 틱에 이전 변위량들을 새로 기입해줌
+	//	위의 마지막 키프레임을 맞춰주는것과 같은 원리
 	if (true == isFirstTick)
 	{
 		_matrix			RootTransformationMatrix = { XMLoadFloat4x4(&TransformationMatrices[iRootBoneIndex]) };
 		_vector			vRootScale, vRootQuaternion, vRootTranslation;
 
-		XMMatrixDecompose(&vRootScale, &vRootQuaternion, &vRootTranslation, RootTransformationMatrix);
+		//	현재 애니메이션의 첫 키프레임으로 부터의 변위량 계산하기
+		KEYFRAME		FirstKeyFrame = { m_Animations[iAnimIndex]->Get_FirstKeyFrame(iRootBoneIndex) };
+
+		XMMatrixDecompose(&vRootScale, &vRootQuaternion, &vRootTranslation, RootTransformationMatrix);	
 
 		if (true == m_isRootMotion_XZ)
 		{
-			_vector			vPreTranslationLocal = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
+			_vector			vPreTranslationLocal = { XMLoadFloat3(&FirstKeyFrame.vTranslation) };
+			//	_vector			vPreTranslationLocal = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
 			_vector			vResultTranslationLocal = {};
 
 			vResultTranslationLocal = XMVectorSetX(vPreTranslationLocal, XMVectorGetX(vRootTranslation));
@@ -1664,26 +1684,25 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 
 		if (true == m_isRootMotion_Y)
 		{
-			_vector			vPreTranslationLocal = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
+			_vector			vPreTranslationLocal = { XMLoadFloat3(&FirstKeyFrame.vTranslation) };
+			//	_vector			vPreTranslationLocal = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
 			_vector			vResultTranslationLocal = {};
 
 			vResultTranslationLocal = XMVectorSetY(vPreTranslationLocal, XMVectorGetY(vRootTranslation));
 
 			pPlayingInfo->Set_PreTranslation(vResultTranslationLocal);
-		}
+		}	
 
 		if (true == m_isRootMotion_Rotation)
 		{
-			pPlayingInfo->Set_PreQuaternion(vRootQuaternion);
+			pPlayingInfo->Set_PreQuaternion(XMLoadFloat4(&FirstKeyFrame.vRotation));
+			//	pPlayingInfo->Set_PreQuaternion(vRootQuaternion);
 		}
 	}
 
 	//	선형 보간중이아니었다면 이후에 일어날 선형 보간을 대비하여 마지막 키프레임들을 저장한다.
 	//	=> 선형 보간여부와상관없이 매번 저장
-	if (false == pPlayingInfo->Is_LinearInterpolation())
-	{
-		Update_LastKeyFrames(TransformationMatrices, iPlayingIndex);
-	}
+	Update_LastKeyFrames(TransformationMatrices, iPlayingIndex);
 
 	return TransformationMatrices;
 }

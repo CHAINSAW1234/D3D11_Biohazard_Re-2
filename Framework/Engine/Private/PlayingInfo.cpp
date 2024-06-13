@@ -152,6 +152,11 @@ void CPlayingInfo::Update_LastKeyFrames(const vector<_float4x4>& TransformationM
 	}
 }
 
+void CPlayingInfo::Update_LinearStateKeyFrames(const vector<KEYFRAME>& KeyFrames)
+{
+	m_LinearStartKeyFrames = KeyFrames;
+}
+
 CPlayingInfo* CPlayingInfo::Create(void* pArg)
 {
 	CPlayingInfo* pInstance = { new CPlayingInfo() };
