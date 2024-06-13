@@ -335,88 +335,88 @@ void CPathFinder::Path_Optimization()
 	// Step through channel.
 	for (int i = 2; i <= m_Path.size() - 1; i++)
 	{
-		//If new left vertex is different, process.
-		if ((m_vecLeft_Vertices[i] != m_vecLeft_Vertices[left])
-			&& i > left)
-		{
-			_float4 newSide = m_vecLeft_Vertices[i] - apex;
-			newSide.w = 1.f;
+#pragma region No Steering
+	//	//If new left vertex is different, process.
+	//	if ((m_vecLeft_Vertices[i] != m_vecLeft_Vertices[left])
+	//		&& i > left)
+	//	{
+	//		_float4 newSide = m_vecLeft_Vertices[i] - apex;
+	//		newSide.w = 1.f;
 
-			// If new side does not widen funnel, update.
-			if (VectorSign(newSide,
-				m_vecLeft_Vertices[left] - apex) > 0)
-			{
-				// If new side crosses other side, update apex.
-				if (VectorSign(newSide,
-					m_vecRight_Vertices[right] - apex) > 0)
-				{
-					// Find next vertex.
-					//auto next = right + 1;
-					nextright = right;
+	//		// If new side does not widen funnel, update.
+	//		if (VectorSign(newSide,
+	//			m_vecLeft_Vertices[left] - apex) > 0)
+	//		{
+	//			// If new side crosses other side, update apex.
+	//			if (VectorSign(newSide,
+	//				m_vecRight_Vertices[right] - apex) > 0)
+	//			{
+	//				// Find next vertex.
+	//				//auto next = right + 1;
+	//				nextright = right;
 
-					for (int j = nextright; j <= m_Path.size(); j++)
-					{
-						if (m_vecRight_Vertices[j] != m_vecRight_Vertices[nextright])
-						{
-							nextright = j;
-							break;
-						}
-					}
+	//				for (int j = nextright; j <= m_Path.size(); j++)
+	//				{
+	//					if (m_vecRight_Vertices[j] != m_vecRight_Vertices[nextright])
+	//					{
+	//						nextright = j;
+	//						break;
+	//					}
+	//				}
 
-					m_vecPath_Optimization.push_back(m_vecRight_Vertices[right]);
-					apex = m_vecRight_Vertices[right];
-					right = nextright;
-					left = nextright;
-				}
-				else
-				{
-					left = i;
-				}
-			}
-		}
+	//				m_vecPath_Optimization.push_back(m_vecRight_Vertices[right]);
+	//				apex = m_vecRight_Vertices[right];
+	//				right = nextright;
+	//				left = nextright;
+	//			}
+	//			else
+	//			{
+	//				left = i;
+	//			}
+	//		}
+	//	}
 
-		//If new right vertex is different, process.
-		if ((m_vecRight_Vertices[i] != m_vecRight_Vertices[right])
-			&& i > right)
-		{
-			_float4 newSide = m_vecRight_Vertices[i] - apex;
-			newSide.w = 1.f;
+	//	//If new right vertex is different, process.
+	//	if ((m_vecRight_Vertices[i] != m_vecRight_Vertices[right])
+	//		&& i > right)
+	//	{
+	//		_float4 newSide = m_vecRight_Vertices[i] - apex;
+	//		newSide.w = 1.f;
 
-			// If new side does not widen funnel, update.
-			if (VectorSign(m_vecRight_Vertices[right] - apex,
-				newSide) > 0)
-			{
-				// If new side crosses other side, update apex.
-				if (VectorSign(m_vecLeft_Vertices[left] - apex,
-					newSide) > 0)
-				{
-					// Find next vertex.
-					nextleft = left;
+	//		// If new side does not widen funnel, update.
+	//		if (VectorSign(m_vecRight_Vertices[right] - apex,
+	//			newSide) > 0)
+	//		{
+	//			// If new side crosses other side, update apex.
+	//			if (VectorSign(m_vecLeft_Vertices[left] - apex,
+	//				newSide) > 0)
+	//			{
+	//				// Find next vertex.
+	//				nextleft = left;
 
-					for (int j = nextleft; j <= m_Path.size(); j++)
-					{
-						if (m_vecLeft_Vertices[j] != m_vecLeft_Vertices[nextleft])
-						{
-							nextleft = j;
-							break;
-						}
-					}
+	//				for (int j = nextleft; j <= m_Path.size(); j++)
+	//				{
+	//					if (m_vecLeft_Vertices[j] != m_vecLeft_Vertices[nextleft])
+	//					{
+	//						nextleft = j;
+	//						break;
+	//					}
+	//				}
 
-					m_vecPath_Optimization.push_back(m_vecLeft_Vertices[left]);
-					apex = m_vecLeft_Vertices[left];
-					left = nextleft;
-					right = nextleft;
-				}
-				else
-				{
-					right = i;
-				}
-			}
-		}
+	//				m_vecPath_Optimization.push_back(m_vecLeft_Vertices[left]);
+	//				apex = m_vecLeft_Vertices[left];
+	//				left = nextleft;
+	//				right = nextleft;
+	//			}
+	//			else
+	//			{
+	//				right = i;
+	//			}
+	//		}
+	//	}
 
-		continue;
-
-
+	//	continue;
+#pragma endregion
 
 #pragma region Steering
 		//If new left vertex is different, process.
@@ -428,7 +428,7 @@ void CPathFinder::Path_Optimization()
 
 			// If new side does not widen funnel, update.
 			if (VectorSign(newSide,
-				m_vecLeft_Vertices[left] - apex) >= 0)
+				m_vecLeft_Vertices[left] - apex) > 0)
 			{
 				// If new side crosses other side, update apex.
 				if (VectorSign(newSide,
@@ -484,8 +484,11 @@ void CPathFinder::Path_Optimization()
 					NewPath.w = 1.f;
 					m_vecPath_Optimization.push_back(NewPath);
 					apex = m_vecRight_Vertices[right];
+					//Temp
 					right = next;
-					left = next+1;
+
+					//left = next;
+					//i = left;
 				}
 				else
 				{
@@ -502,7 +505,7 @@ void CPathFinder::Path_Optimization()
 
 			// If new side does not widen funnel, update.
 			if (VectorSign(m_vecRight_Vertices[right] - apex,
-				newSide) >= 0)
+				newSide) > 0)
 			{
 				// If new side crosses other side, update apex.
 				if (VectorSign(m_vecLeft_Vertices[left] - apex,
@@ -558,8 +561,11 @@ void CPathFinder::Path_Optimization()
 					NewPath.w = 1.f;
 					m_vecPath_Optimization.push_back(NewPath);
 					apex = m_vecLeft_Vertices[left];
+					//Temp
 					left = next;
-					right = next+1;
+
+					//right = next;
+					//i = next;
 				}
 				else
 				{
@@ -570,8 +576,7 @@ void CPathFinder::Path_Optimization()
 #pragma endregion
 	}
 
-	if(m_vecPath_Optimization.empty() == false && (m_vecPath_Optimization[m_vecPath_Optimization.size() - 1] != m_vecLeft_Vertices[m_vecLeft_Vertices.size() - 1]))
-		m_vecPath_Optimization.push_back(m_vecLeft_Vertices[m_vecLeft_Vertices.size() - 1]);
+	m_vecPath_Optimization.push_back(m_vecLeft_Vertices[m_vecLeft_Vertices.size() - 1]);
 #pragma endregion
 
 return;
