@@ -49,6 +49,12 @@ public:
 public:
 	void										Release_Controller();
 #pragma endregion
+public:
+	virtual void								Set_Dead(_bool bDead) { m_bDead = bDead; }
+
+public:
+	virtual _bool								Get_Dead() { return m_bDead; }
+
 protected:
 	ID3D11Device*								m_pDevice = { nullptr };
 	ID3D11DeviceContext*						m_pContext = { nullptr };
@@ -61,11 +67,16 @@ protected:
 	class CRigid_Dynamic*						m_pRigid_Body = { nullptr };
 	_int										m_iIndex_CCT = { 0 };
 	_int										m_iIndex_RigidBody = { 0 };
+
+	_bool										m_bDead = { false };
+
 protected:
 	map<const wstring, class CComponent*>		m_Components;
 
 protected:
 	HRESULT Add_Component(_uint iLevelIndex, const wstring& strPrototypeTag, const wstring& strComponentTag, class CComponent** ppOut, void* pArg = nullptr);
+	HRESULT Add_Component(const wstring& strComponentTag, class CComponent* pComponent);
+	HRESULT Change_Component(_uint iLevelIndex, const wstring& strPrototypeTag, const wstring& strComponentTag, CComponent** ppOut, void* pArg = nullptr );
 
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;

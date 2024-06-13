@@ -25,6 +25,7 @@ HRESULT CCamera_Free::Initialize(void * pArg)
 	CAMERA_FREE_DESC*	pCameraFree = (CAMERA_FREE_DESC*)pArg;
 
 	m_fMouseSensor = pCameraFree->fMouseSensor;
+	m_fOriginFovy = pCameraFree->fFovy;
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -72,12 +73,17 @@ void CCamera_Free::Tick(_float fTimeDelta)
 			m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor);
 		}
 
-		POINT ptPos = {};
+		
+	}
 
-		GetCursorPos(&ptPos);
-		ScreenToClient(g_hWnd, &ptPos);
+	POINT ptPos = {};
 
-		RECT rc = {};
+	GetCursorPos(&ptPos);
+	ScreenToClient(g_hWnd, &ptPos);
+
+	if (true == m_isFixedMouse)
+	{
+		/*RECT rc = {};
 		GetClientRect(g_hWnd, &rc);
 
 		ptPos.x = _long(_float(rc.right - rc.left) * 0.5f);
@@ -91,6 +97,14 @@ void CCamera_Free::Tick(_float fTimeDelta)
 
 	__super::Bind_PipeLines();
 }
+
+_float CCamera_Free::EaseInQuint(_float start, _float end, _float value)
+{
+	value--;
+	end -= start;
+	return end * (value * value * value * value * value + 1) + start;
+}
+
 
 void CCamera_Free::Late_Tick(_float fTimeDelta)
 {

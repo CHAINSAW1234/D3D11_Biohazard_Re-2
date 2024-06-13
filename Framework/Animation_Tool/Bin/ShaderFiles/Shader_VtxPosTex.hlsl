@@ -6,8 +6,10 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D g_Texture;
 texture2D g_MaskTexture;
+texture2D g_MaskSub_Texture;
+texture2D g_DepthTexture;
 
-bool g_SelectColor, g_GreenColor;
+float fDepthValue = 1000.f;
 
 // PS
 bool g_ColorChange;
@@ -34,6 +36,58 @@ float2 g_fMaskControl;
 float g_fMaskSpeed;
 float g_fMaskTime;
 float2 g_MaskType;
+
+// Client // 
+float4 g_vLightMask_Color;
+bool g_isLightMask;
+
+// Light
+bool g_isLight;
+float2 g_LightPosition;
+float g_LightSize;
+
+// 거리 계산 함수
+float calculateDistance(float4 A, float4 target)
+{
+    return sqrt(
+        pow(A.x - target.x, 2) +
+        pow(A.y - target.y, 2) +
+        pow(A.z - target.z, 2) +
+        pow(A.w - target.w, 2)
+    );
+}
+float AdjustAlpha(float4 color)
+{
+    float4 target = { 0.0f, 0.0f, 0.0f, 1.0f };
+    float distance = calculateDistance(color, target);
+    return exp(distance); // distance가 0에 가까워질수록 B는 1에 가까워짐
+}
+
+float4 MaskLight(float2 vTexcoord, float4 color, float blendFactor)
+{
+    float d = length(vTexcoord);
+    
+    d = abs(d);
+    smoothstep(0, 1.f, d);
+    
+    float alphaA = AdjustAlpha(color);
+    float4 lightColor = float4(d, d, d, alphaA);
+    
+    return lerp(lightColor, color, blendFactor);
+}
+
+float4 Light(float2 vTexcoord, float4 color)
+{
+    float2 uv = (vTexcoord - float2(g_LightPosition.x, g_LightPosition.y));
+    float d = length(uv);
+    d -= sin(d * 1.f) / g_LightSize;
+    d = abs(d);
+    smoothstep(0, 1.f, d);
+    
+    float alphaA = AdjustAlpha(color);
+    return float4(d, d, d, alphaA);
+}
+
 
 struct VS_IN
 {
@@ -140,16 +194,16 @@ struct PS_OUT
     float4 vColor : SV_TARGET0;
 };
 
+
+
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord * g_Split);
     
-   // 선택
-    if (g_SelectColor)
-        Out.vColor = float4(1, 0, 0, 1);
-    else if (g_AlpaChange) // 알파만 바꿀 때
+    if (g_AlpaChange) // 알파만 바꿀 때
         Out.vColor.a = g_ColorValu.a;
+    
     else if (g_ColorChange)
     {
         if (g_Blending)
@@ -160,18 +214,48 @@ PS_OUT PS_MAIN(PS_IN In)
             Out.vColor = g_ColorValu;
     }
          
-    if (g_isMask)
+    if (g_isLight)
     {
-        float2 MaskTexcoord = In.vTexcoord;
-        
-        MaskTexcoord.r += g_fMaskTime * g_MaskType.x;
-        MaskTexcoord.g += g_fMaskTime * g_MaskType.y;
-
-        float value = g_MaskTexture.Sample(LinearSampler, MaskTexcoord).r;
-        float alpha = smoothstep(g_fMaskControl.x, g_fMaskControl.x + g_fMaskControl.y, value + (1.0 - g_fMaskControl.y));
-        Out.vColor *= float4(Out.vColor.rgb, alpha);
+        float blackRatio = (Out.vColor.a) / 1.f;
+        Out.vColor *= Light(In.vTexcoord, Out.vColor);
     }
     
+    if (g_isMask)
+    {
+        if (true == g_isLightMask)
+        {
+            float2 MaskTexcoord = In.vTexcoord;
+        
+            MaskTexcoord.r += g_fMaskTime * g_MaskType.x;
+            MaskTexcoord.g += g_fMaskTime * g_MaskType.y;
+            
+            float value = g_MaskTexture.Sample(LinearSampler, MaskTexcoord).r;
+         
+            /* Light Mask */
+            float blendFactor = 1.0 - value;
+            float4 LightColor = float4(min(g_vLightMask_Color.r, 1.0f), min(g_vLightMask_Color.g, 1.0f), min(g_vLightMask_Color.b, 1.0f), Out.vColor.a);
+            float4 finalColor = lerp(Out.vColor, LightColor, blendFactor);
+            
+            finalColor *= MaskLight(In.vTexcoord, finalColor, blendFactor);
+            Out.vColor = finalColor;
+            
+           
+        }
+        else if (false == g_isLightMask)
+        {
+            float2 MaskTexcoord = In.vTexcoord;
+        
+            MaskTexcoord.r += g_fMaskTime * g_MaskType.x;
+            MaskTexcoord.g += g_fMaskTime * g_MaskType.y;
+
+            float value = g_MaskTexture.Sample(LinearSampler, MaskTexcoord).r;
+            float alpha = smoothstep(g_fMaskControl.x, g_fMaskControl.x + g_fMaskControl.y, value + (1.0 - g_fMaskControl.y));
+            Out.vColor *= float4(Out.vColor.rgb, alpha);
+        }
+    }
+    
+    
+
     return Out;
 }
 
@@ -180,8 +264,8 @@ technique11 DefaultTechnique
     pass Default
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
@@ -191,9 +275,9 @@ technique11 DefaultTechnique
     }
 
     pass Blend
-    {
+    { 
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();

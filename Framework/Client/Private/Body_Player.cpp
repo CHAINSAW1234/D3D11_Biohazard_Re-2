@@ -31,8 +31,6 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	if (nullptr == m_pRootTranslation)
 		return E_FAIL;
 
-	m_pState = pDesc->pState;
-
 	if (FAILED(__super::Initialize(pDesc)))
 		return E_FAIL;
 
@@ -48,6 +46,8 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(0, true, 1, TEXT("Default"), 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(0, true, 2, TEXT("Default"), 0.f);
 
 	return S_OK;
 }
@@ -74,7 +74,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	m_pColliderCom->Tick(WorldMatrix);
 
-	static _uint iAnimIndex = { 0 };
+	/*static _uint iAnimIndex = { 0 };
 	if (UP == m_pGameInstance->Get_KeyState(VK_UP))
 	{
 		++iAnimIndex;
@@ -87,9 +87,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 		--iAnimIndex;
 		if (1000000 < iAnimIndex)
 			iAnimIndex = 0;
-	}
-
-	m_pModelCom->Set_TickPerSec(iAnimIndex, 40.f);
+	}*/
 
 	static _float fWeight = { 1.f };
 	static _float fMoveHieght = { 0.f };
@@ -135,17 +133,18 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//	m_pModelCom->Set_Blend_IK(TEXT("IK_L_LEG"), fBlend);
 	//	m_pModelCom->Set_NumIteration_IK(TEXT("IK_L_LEG"), 3);
 
-	m_pModelCom->Set_BoneLayer_PlayingInfo(0, TEXT("Default"));
-	m_pModelCom->Change_Animation(0, iAnimIndex);
+	//m_pModelCom->Set_BoneLayer_PlayingInfo(0, TEXT("Default"));
+	////m_pModelCom->Set_BoneLayer_PlayingInfo(1, TEXT("Default"));
+	//m_pModelCom->Change_Animation(0, 0);
 
-	m_pModelCom->Set_BlendWeight(0, 1.f);
+	//m_pModelCom->Set_BlendWeight(0, 1.f);
 
-	m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
+	//m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
 
 
-	static _bool		isSetRootXZ = false;
+	static _bool		isSetRootXZ = true;
 	static _bool		isSetRootRotation = false;
-	static _bool		isSetRootY = false;
+	static _bool		isSetRootY = true;
 	if (UP == m_pGameInstance->Get_KeyState('I'))
 	{
 		isSetRootY = !isSetRootY;
@@ -761,12 +760,12 @@ HRESULT CBody_Player::Render_LightDepth_Spot()
 HRESULT CBody_Player::Add_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_LeonBody"),
+	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_LeonBody"),
 		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
@@ -777,7 +776,7 @@ HRESULT CBody_Player::Add_Components()
 	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.fRadius, 0.f);
 
 
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Sphere"),
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom, &ColliderDesc)))
 		return E_FAIL;
 
@@ -789,7 +788,7 @@ HRESULT CBody_Player::Add_Components()
 		ColliderOBBDesc.vRotation = { 0.f, 0.f, 0.f };
 		ColliderOBBDesc.vSize = { 10.f, 10.f, 10.f };
 
-		CComponent* pCollider = { m_pGameInstance->Clone_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"), &ColliderOBBDesc) };
+		CComponent* pCollider = { m_pGameInstance->Clone_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_OBB"), &ColliderOBBDesc) };
 		if (nullptr == pCollider)
 			return E_FAIL;
 

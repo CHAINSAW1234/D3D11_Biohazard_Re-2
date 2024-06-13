@@ -49,8 +49,6 @@ public:
 public:
 	TextBox_DESC Get_TextBoxDesc() const;
 
-
-private:
 private:
 	wstring m_wstrText = { TEXT("") };
 	wstring m_wstrFontType = { TEXT("") };
@@ -59,7 +57,7 @@ private:
 
 	_bool	m_isOuterLine = { false };
 	_vector m_vOutLineColor = { 0.f, 0.f, 0.f, 1.f };
-	
+
 public:
 	static CTextBox* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

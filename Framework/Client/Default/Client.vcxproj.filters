@@ -73,9 +73,6 @@
     <Filter Include="02.GameObjects\UI">
       <UniqueIdentifier>{9832ad11-317f-47c4-a17f-42e4a22153a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\Customize_UI">
-      <UniqueIdentifier>{0740d5c9-1780-400c-9d38-ca84c8f26b22}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\TextBox">
       <UniqueIdentifier>{abdbf2c9-92cc-4833-ac49-54faee5a66fd}</UniqueIdentifier>
     </Filter>
@@ -100,6 +97,30 @@
     <Filter Include="02.GameObjects\NavMesh_Debug">
       <UniqueIdentifier>{46a49323-d9a7-4d23-ad31-69ab387de648}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\State">
+      <UniqueIdentifier>{04af3364-0a83-49cc-b58e-1d124038f915}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move">
+      <UniqueIdentifier>{1fcbbdb0-b683-441f-8565-7169b77c8d1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Hold">
+      <UniqueIdentifier>{cf681df5-8c32-45b1-bb54-bccd9a0f60c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Damg">
+      <UniqueIdentifier>{94d3ab13-025c-408b-87af-20b5e8b80ac8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Idle">
+      <UniqueIdentifier>{b4b9c127-305b-47ed-a413-5006646ae188}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk">
+      <UniqueIdentifier>{4e0e6223-09b1-4c48-9724-01b3f455e51e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog">
+      <UniqueIdentifier>{463a6a2f-4232-4fcc-a625-804da3e0d700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Stair">
+      <UniqueIdentifier>{7b41809a-15c9-4a70-9130-c77c3c7123e5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Monster\Body">
       <UniqueIdentifier>{434ae696-9846-43b2-a3bd-47aad7b0c62f}</UniqueIdentifier>
     </Filter>
@@ -108,6 +129,48 @@
     </Filter>
     <Filter Include="02.GameObjects\Monster\Clothes">
       <UniqueIdentifier>{48b078ea-e64d-478b-8db2-7e8490506c6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Shirts">
+      <UniqueIdentifier>{3341c885-a912-41cf-bbe5-f79ad62ac57e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Pants">
+      <UniqueIdentifier>{ef1d29e2-09f3-4957-bc74-9a1729ed5404}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Map">
+      <UniqueIdentifier>{6efea4f9-497a-4357-b128-793862780e4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\1. Crosshair">
+      <UniqueIdentifier>{de31e2a8-de06-4aa6-9adc-e319f9ef451f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\2. Cursor">
+      <UniqueIdentifier>{a6a85258-66c2-4d03-a771-07c4fb843049}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Tab_Window">
+      <UniqueIdentifier>{ea70fdf9-35f3-4236-9447-ce5555b4d60b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\0. Customize_UI">
+      <UniqueIdentifier>{0740d5c9-1780-400c-9d38-ca84c8f26b22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\3. HP Bar">
+      <UniqueIdentifier>{0c7a9a8f-c48d-4e15-99be-fe77c934ffef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\4. Bullet">
+      <UniqueIdentifier>{dc11b041-87e7-45d1-a117-42f0a760c3d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\5. Title">
+      <UniqueIdentifier>{69425a38-73a5-48a8-9615-1813782dd9e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\6. MissionBar">
+      <UniqueIdentifier>{5ef54c33-f262-44ff-abd9-708bb98bc07a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\4. Button">
+      <UniqueIdentifier>{7fc90c93-6b32-4a7f-a9c8-c8b678069a93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\Inventory">
+      <UniqueIdentifier>{480eb32d-ce0b-4c0e-9e44-864624d90274}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\Inventory\1. Inventory Item">
+      <UniqueIdentifier>{0ecab370-b1e7-4ba2-98ef-c2d58e26d1a6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -187,7 +250,7 @@
       <Filter>02.GameObjects\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Customize_UI.h">
-      <Filter>02.GameObjects\UI\Customize_UI</Filter>
+      <Filter>02.GameObjects\UI\0. Customize_UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TextBox.h">
       <Filter>02.GameObjects\UI\TextBox</Filter>
@@ -198,6 +261,15 @@
     <ClInclude Include="..\Public\NavMesh_Debug.h">
       <Filter>02.GameObjects\NavMesh_Debug</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move_Idle.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move_Walk.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Body_Monster.h">
       <Filter>02.GameObjects\Monster\Body</Filter>
     </ClInclude>
@@ -207,6 +279,46 @@
     <ClInclude Include="..\Public\Face_Monster.h">
       <Filter>02.GameObjects\Monster\Body</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Shirts_Monster.h">
+      <Filter>02.GameObjects\Monster\Shirts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Map.h">
+      <Filter>02.GameObjects\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Crosshair_UI.h">
+      <Filter>02.GameObjects\UI\1. Crosshair</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cursor_UI.h">
+      <Filter>02.GameObjects\UI\2. Cursor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Inventory.h">
+      <Filter>02.GameObjects\UI\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Inventory_Item_UI.h">
+      <Filter>02.GameObjects\UI\Inventory\1. Inventory Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tab_Window.h">
+      <Filter>02.GameObjects\Tab_Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\HPBar_UI.h">
+      <Filter>02.GameObjects\UI\3. HP Bar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Button_UI.h">
+      <Filter>02.GameObjects\UI\4. Button</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Bullet_UI.h">
+      <Filter>02.GameObjects\UI\4. Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Title_UI.h">
+      <Filter>02.GameObjects\UI\5. Title</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MissionBar_UI.h">
+      <Filter>02.GameObjects\UI\6. MissionBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move_Jog.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
+    </ClInclude>
+    <ClInclude Include="CTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -270,7 +382,7 @@
       <Filter>02.GameObjects\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Customize_UI.cpp">
-      <Filter>02.GameObjects\UI\Customize_UI</Filter>
+      <Filter>02.GameObjects\UI\0. Customize_UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TextBox.cpp">
       <Filter>02.GameObjects\UI\TextBox</Filter>
@@ -281,6 +393,15 @@
     <ClCompile Include="..\Private\NavMesh_Debug.cpp">
       <Filter>02.GameObjects\NavMesh_Debug</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_Idle.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_Walk.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Face_Monster.cpp">
       <Filter>02.GameObjects\Monster\Body</Filter>
     </ClCompile>
@@ -290,6 +411,43 @@
     <ClCompile Include="..\Private\Clothes_Monster.cpp">
       <Filter>02.GameObjects\Monster\Body</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Map.cpp">
+      <Filter>02.GameObjects\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Crosshair_UI.cpp">
+      <Filter>02.GameObjects\UI\1. Crosshair</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cursor_UI.cpp">
+      <Filter>02.GameObjects\UI\2. Cursor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Inventory.cpp">
+      <Filter>02.GameObjects\UI\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Inventory_Item_UI.cpp">
+      <Filter>02.GameObjects\UI\Inventory\1. Inventory Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tab_Window.cpp">
+      <Filter>02.GameObjects\Tab_Window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HPBar_UI.cpp">
+      <Filter>02.GameObjects\UI\3. HP Bar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Button_UI.cpp">
+      <Filter>02.GameObjects\UI\4. Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bullet_UI.cpp">
+      <Filter>02.GameObjects\UI\4. Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Title_UI.cpp">
+      <Filter>02.GameObjects\UI\5. Title</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MissionBar_UI.cpp">
+      <Filter>02.GameObjects\UI\6. MissionBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_Jog.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
+    </ClCompile>
+    <ClCompile Include="CTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -324,6 +482,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPosTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAlphaSortTex.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

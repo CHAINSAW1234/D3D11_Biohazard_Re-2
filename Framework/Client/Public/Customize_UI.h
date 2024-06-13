@@ -6,10 +6,17 @@
 
 BEGIN(Client)
 
-class CCustomize_UI final : public CUI
+class CCustomize_UI abstract : public CUI
 {
-public:
+public: 
+	/* Tool */
 	enum PLAY_BUTTON { PLAY_DEFAULT, PLAY_CHANGE, PLAY_CUT, PLAY_BUTTON_END };
+
+public :
+	/* Client*/
+	enum class ITEM_BOX_TYPE { DEFAULT_BOX, SELECT_BOX, END_BOX };
+	enum class HPBAR_TYPE { MAIN_BAR, BACKGROUND_BAR, END_BAR };
+	enum class INVENTORY_TYPE { MAIN_INVEN, SUB_INVEN, END_INVEN };
 
 	typedef struct color
 	{
@@ -40,6 +47,7 @@ public:
 
 	typedef struct CUSTOM_UI_DESC : public CUI::UI_DESC
 	{
+		/* Tool */
 		wstring							wstrDefaultTexturComTag = { TEXT("") };
 		wstring							wstrDefaultTexturPath = { TEXT("") };
 
@@ -70,9 +78,17 @@ public:
 
 		_bool							isLoad = { false };
 
+		/* +추가 */
+		_int							iWhich_Child = { 0 };
+
+		/* Client */
+		ITEM_BOX_TYPE					eBox_Type;
+		HPBAR_TYPE						eHPBar_Type;
+		INVENTORY_TYPE					eInventory_Type;
+
 	}CUSTOM_UI_DESC;
 
-private:
+protected :
 	CCustomize_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CCustomize_UI(const CCustomize_UI& rhs);
 	virtual ~CCustomize_UI() = default;
@@ -85,11 +101,13 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-private:
+protected :
 	HRESULT Add_Components(const wstring& wstrTextureTag, const wstring& wstrMaskTag);
 	HRESULT Bind_ShaderResources();
+	HRESULT Change_Texture(const wstring& strPrototypeTag, const wstring& strComponentTag);
 
-private: /* Frame */
+protected :
+	/* Frame */
 	void Non_Frame();
 	void Color_Frame(_float fTimeDelta);
 	void State_Control(_float fTimeDelta);
@@ -97,9 +115,6 @@ private: /* Frame */
 	void Frame_Change(_float fRatio, _float fColorRatio);
 	void Frame_Cut(_float fRatio, _float fColorRatio);
 	_matrix LerpMatrix(_matrix A, _matrix B, _float t); // 보간 값 계산
-
-public :
-	//HRESULT	Change_Texture(const wstring& strPrototypeTag, const wstring& strComponentTag, const wstring& strTexturePath);
 
 public:
 	void PushBack_Child(CGameObject* pGameOBJ);
@@ -109,6 +124,16 @@ public:
 	void Release_Child(CGameObject* Child);
 	CGameObject* Find_Child(CGameObject* Child);
 	_bool IsMyChild(CGameObject* Child);
+
+public :
+	_bool Select_UI();
+
+	virtual void Set_Dead(_bool bDead) override;
+
+
+public : /* Client */
+	_bool Get_Children() { return m_IsChild;  }
+	ITEM_BOX_TYPE Get_ItemBox_Type() { return m_eBox_Type;  }
 
 
 public: /* Mask */
@@ -292,14 +317,14 @@ public:/* for.Get Inline */
 		return (&_desc);
 	}
 
-private:
+protected :
 	vector<class CTextBox*>		m_vecTextBoxes;
 
-private:
+protected :
 	_bool						m_IsChild = { false };//나 자식이냐..?
 	vector<CGameObject*>		m_vecChildUI;
 
-private:
+protected :
 	wstring						m_wstrMaskPath = { TEXT("") }; // 텍스쳐 페스
 	wstring						m_wstrMaskComTag = { TEXT("") };
 	wstring						m_wstrDefaultTexturPath = { TEXT("") }; // 텍스쳐 페스
@@ -307,10 +332,10 @@ private:
 	_uint						m_iTextureNum = { 0 };
 	_uint						m_iShaderPassNum = { 0 };
 
-private:
+protected :
 	_uint						m_iRenderGroup = { static_cast<_uint>(CRenderer::RENDER_UI) };
 
-private: /* NY : Shader 변수 */
+protected : /* NY : Shader 변수 */
 	_bool						m_isMovePoint = { false };
 	Value_Color					m_vColor[10] = {};	// 현재 Edit 상에서 보여지는 컬러
 	_float4x4					m_SavePos[10] = {};
@@ -326,9 +351,8 @@ private: /* NY : Shader 변수 */
 	_bool						m_isColorBack = { false }; // Color 되감기
 	_bool						m_isPlay = { false };
 	_bool						m_isLoad = { false };
-	// Shader 변수
-	_bool						m_isSelect_Color = { false };
 
+	// Shader 변수
 	_bool						m_isColorChange = { false };
 	_bool						m_isAlphaChange = { false };
 	_bool						m_isBlending = { false };
@@ -346,7 +370,7 @@ private: /* NY : Shader 변수 */
 
 	_int						m_iEndingType = {};
 
-private:
+protected :
 	// Mask
 	Value_Mask					m_Mask[10];
 	_bool						m_isMask = {};
@@ -355,7 +379,7 @@ private:
 	_float						m_fMaskSpeed = {};
 	_float2						m_vMaskType = {};
 
-private:
+protected :
 	/* Frame*/
 	_float						m_fFrame = { 0.f };
 	_float						m_fMaxFrame = { 0.f };
@@ -373,9 +397,35 @@ private:
 	_bool						m_isLoopStop = { false };
 	_bool						m_ReStart = { false };
 
+
+protected : /* Client*/
+	_bool						m_isRender = { true };
+	_float4						m_vOriginTextColor = {};
+	_float4						m_vOriginColor = {};
+
+	/* 1. inventory Item */
+	ITEM_BOX_TYPE				m_eBox_Type = { ITEM_BOX_TYPE::END_BOX };
+	INVENTORY_TYPE				m_eInventory_Type = { INVENTORY_TYPE::END_INVEN };
+
+	/* 2. HP Bar*/
+	_bool						m_isTimerControl = { false };
+	_float						m_fShiftMaskUV_X = {};
+	_float4						m_vLightMask_Color;
+	_bool						m_isLightMask = { false };
+
+	/* Timer */
+	_float						m_fInterpolation_Timer = {}; /* 보간 타이머 */
+
+	/* Light */
+	_float2						m_fLightPosition = {};
+	_float						m_fLightSize = {};
+	_bool						m_isLight = {};
+
 public:
-	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg) override;
+	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	//생성한 객체를 포인터로 받고싶으면 사용하시오
+	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, CGameObject** ppOut, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject* Clone(void* pArg) override = 0;
 	virtual void Free() override;
 };
 

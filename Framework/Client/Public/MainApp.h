@@ -34,7 +34,6 @@ private:
 	HRESULT Ready_Gara();
 	HRESULT Ready_Fonts();
 	HRESULT Open_Level(LEVEL eLevelID);
-	HRESULT Ready_Prototype_Component_For_Static();
 
 public:	
 	static CMainApp* Create();

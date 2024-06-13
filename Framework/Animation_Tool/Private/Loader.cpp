@@ -9,6 +9,7 @@
 //	#include "BackGround.h"
 #include "Terrain.h"
 
+
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
 	, m_pContext{ pContext }
@@ -99,7 +100,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	m_strLoadingText = TEXT("텍스쳐를(을) 로딩 중 입니다.");
 	/* Prototype_Component_Texture_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Terrain"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile%d.dds"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Tile%d.dds"), 1))))
 		return E_FAIL;
 
 	/*Prototype_Component_Texture_Mask*/
@@ -268,6 +269,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 	//if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Weapon"),
 	//	CWeapon::Create(m_pDevice, m_pContext))))
 	//	return E_FAIL;
+
+
 
 	m_strLoadingText = TEXT("로딩이 완료되었습니다.");
 

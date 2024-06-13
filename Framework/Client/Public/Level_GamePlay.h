@@ -33,8 +33,9 @@ private:
 	HRESULT Ready_Layer_UI(const wstring& strLayerTag);
 	
 private:
-	void CreatFromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj);
-
+	void UI_Distinction(wstring& selectedFilePath);
+	void CreatFromDat(ifstream& inputFileStream, string strListName, CGameObject* pGameParentsObj, wstring fileName, _int iWhich_Child = 0);
+	
 	wstring StringToWstring(const std::string& strString)
 	{
 		std::setlocale(LC_ALL, "");
@@ -47,8 +48,7 @@ private:
 
 private:
 	HRESULT Load_Collider(const wstring& strFile, const wstring& strColLayerTag);
-private :
-	_bool		m_isGara = {};
+
 
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

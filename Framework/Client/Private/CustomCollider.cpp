@@ -83,7 +83,7 @@ HRESULT CCustomCollider::Add_Components(COLLIDER_DESC* pCol)
 	ColliderDesc.vSize = vScaleVector;
 
 
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom, &ColliderDesc)))
 		return E_FAIL;
 

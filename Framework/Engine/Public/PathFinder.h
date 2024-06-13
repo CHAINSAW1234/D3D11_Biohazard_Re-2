@@ -48,6 +48,30 @@ public:
 	}
 	_float4							GetNextTarget();
 	_float4							GetNextTarget_Opt();
+	int StringPull(int nportals, const int maxPts);
+	FORCEINLINE _float triarea2(const _float* a, const _float* b, const _float* c)
+	{
+		const _float ax = b[0] - a[0];
+		const _float az = b[1] - a[1];
+		const _float bx = c[0] - a[0];
+		const _float bz = c[1] - a[1];
+		return bx * az - ax * bz;
+	}
+	FORCEINLINE _float vdistsqr(const _float* a, const _float* b)
+	{
+		_float dx = a[0] - b[0];
+		_float dz = a[1] - b[1];
+		return dx * dx + dz * dz;
+	}
+	FORCEINLINE _bool vequal(const _float* a, const _float* b)
+	{
+		static const float eq = 0.001f * 0.001f;
+		return vdistsqr(a, b) < eq;
+	}
+	FORCEINLINE void vcpy(float* dst, const float* src) {
+		dst[0] = src[0];
+		dst[1] = src[2];
+	}
 protected:
 	class CGameInstance*			m_pGameInstance = { nullptr };
 
@@ -65,6 +89,7 @@ private:
 	vector<_float4>					m_vecRight_Vertices;
 	_float4							m_vStartPos;
 	vector<_float4>					m_vecPath_Optimization;
+	vector<_float4>					m_vecPortals;
 public:
 	static CPathFinder* Create();
 

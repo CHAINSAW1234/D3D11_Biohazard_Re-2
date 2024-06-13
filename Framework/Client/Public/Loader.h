@@ -26,7 +26,10 @@ public:
 	}
 
 private:
-	HRESULT Load_Prototype(const wstring& filePath);
+	HRESULT Load_Prototype();
+	HRESULT Loading_For_Static_Component();
+
+	HRESULT Load_Field_Prototype(const wstring& filePath);
 
 private:
 	ID3D11Device*				m_pDevice = { nullptr };
@@ -38,7 +41,6 @@ private:
 	_bool						m_isFinished = { false };
 
 	CGameInstance*				m_pGameInstance = { nullptr };
-
 
 private:
 	HRESULT Loading_For_Logo();

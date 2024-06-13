@@ -13,10 +13,13 @@ namespace Client
 
 extern HWND g_hWnd;
 extern HINSTANCE g_hInst;
-
+extern Client::LEVEL g_Level;
 using namespace std;
 using namespace Client;
-
+	
+//#define USE_UI
+//#define USE_Player_Control
+#define USE_MapObject
 
 
 typedef struct Tag_Prototype_Inform
@@ -28,4 +31,3 @@ typedef struct Tag_Prototype_Inform
 	string		strGameObjectPrototypeName = { ("") }; // 이것은 IMGUI가 멍청해서 있는 것
 
 }PROTOTYPE_INFORM;
-

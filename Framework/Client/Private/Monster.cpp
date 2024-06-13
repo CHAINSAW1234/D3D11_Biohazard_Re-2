@@ -66,7 +66,7 @@ HRESULT CMonster::Initialize(void * pArg)
 	m_pNavigationCom->FindCell(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
 	_int iCurrentIndex = m_pNavigationCom->GetCurrentIndex();
 	
-	m_pPathFinder->Initiate_PathFinding(iCurrentIndex, iCurrentIndex + 100, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+	m_pPathFinder->Initiate_PathFinding(iCurrentIndex, iCurrentIndex + 115, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 	m_vNextTarget = m_pPathFinder->GetNextTarget_Opt();
 
 	m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
@@ -84,16 +84,19 @@ void CMonster::Tick(_float fTimeDelta)
 
 	if (m_bArrived == false)
 	{
+		m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+		m_vDir.w = 0.f;
+
 		_float4 vDelta = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) - m_vNextTarget;
 		vDelta.y = 0.f;
 
-		if (XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta))) < 0.5f)
+		if (XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta))) < 0.35f)
 		{
 			m_bArrived = true;
 		}
 		else
 		{
-			m_pController->Move(m_vDir * 0.01f, fTimeDelta);
+			//m_pController->Move(m_vDir * 0.03f, fTimeDelta);
 		}
 	}
 	else
@@ -232,12 +235,12 @@ void CMonster::Init_BehaviorTree_Zombie()
 HRESULT CMonster::Add_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimModel"), 
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"), 
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_LeonBody"),
+	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_LeonBody"),
 		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
@@ -248,7 +251,7 @@ HRESULT CMonster::Add_Components()
 	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.fRadius + 0.6f, 0.f);
 
 
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_Sphere"),
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider_Head"), (CComponent**)&m_pColliderCom[COLLIDER_HEAD], &ColliderDesc)))
 		return E_FAIL;
 
@@ -259,7 +262,7 @@ HRESULT CMonster::Add_Components()
 	ColliderOBBDesc.vSize = _float3(0.8f, 0.6f, 0.8f);
 	ColliderOBBDesc.vCenter = _float3(0.f, ColliderOBBDesc.vSize.y * 0.5f, 0.f);
 	
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_Body"), (CComponent**)&m_pColliderCom[COLLIDER_BODY], &ColliderOBBDesc)))
 		return E_FAIL;
 

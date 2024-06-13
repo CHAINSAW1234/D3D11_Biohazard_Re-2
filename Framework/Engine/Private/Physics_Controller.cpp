@@ -170,7 +170,7 @@ void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
 	return;
 }
 
-void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
+void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
 {
 	// Init Cooking Params 
 	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
@@ -178,8 +178,18 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	vector<PxVec3> vertices;
 	vector<PxU32> IndicesVec;
 
+	_matrix WorldMat = XMMatrixIdentity();
+	if (pTransform != nullptr)
+	{
+		WorldMat = pTransform->Get_WorldMatrix();
+	}
+
 	for (int i = 0; i < VertexNum; ++i)
 	{
+		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
+		VertexPos = XMVector3Transform(VertexPos, WorldMat);
+		XMStoreFloat3(&pVertices[i], VertexPos);
+
 		PxVec3 Ver = PxVec3(pVertices[i].x, pVertices[i].y, pVertices[i].z);
 		vertices.push_back(Ver);
 	}
@@ -401,7 +411,7 @@ _bool CPhysics_Controller::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pB
 		PxvDir.getNormalized(),
 		fMaxDist,
 		hit,
-		PxHitFlag::eDEFAULT, PxQueryFilterData(PxQueryFlag::eSTATIC)
+		PxHitFlag::ePRECISE_SWEEP, PxQueryFilterData(PxQueryFlag::eSTATIC)
 	);
 
 	if (Status)

@@ -63,6 +63,7 @@ public: /* For.Level_Manager */
 #pragma region Object_Manager
 public: /* For.Object_Manager */
 	HRESULT									Add_Prototype(const wstring& strPrototypeTag, class CGameObject* pPrototype);
+	CComponent*								Find_Prototype(_uint iLevelIndex, const wstring& strPrototypeTag);
 	HRESULT									Add_Clone(_uint iLevelIndex, const wstring& strLayerTag, const wstring& strPrototypeTag, void* pArg = nullptr);
 	class CGameObject*						Clone_GameObject(const wstring& strPrototypeTag, void* pArg = nullptr);
 	const CComponent*						Get_Component(_uint iLevelIndex, const wstring& strLayerTag, const wstring& strComTag, _uint iIndex = 0);
@@ -248,7 +249,7 @@ public:/*For Physics Controller*/
 	class CCharacter_Controller*			Create_Controller(_float4 Pos, _int* Index, class CGameObject* pCharacter,_float fHeight,_float fRadius);
 	void									Cook_Terrain();
 	void									Simulate();
-	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
+	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr);
 	_bool									RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone, _float4x4* WorldMatrix, _float4x4* RotationMatrix, const string& name);
