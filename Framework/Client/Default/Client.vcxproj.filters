@@ -166,6 +166,9 @@
     <Filter Include="02.GameObjects\Monster\Face">
       <UniqueIdentifier>{f4f724c2-f86b-4319-869a-c7a8be8c2039}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle">
+      <UniqueIdentifier>{ff8fd778-7dfc-4f28-aa3c-7e33181c9fc9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -309,7 +312,12 @@
     <ClInclude Include="..\Public\Clothes_Monster.h">
       <Filter>02.GameObjects\Monster\Clothes</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_State_Hold.h" />
+    <ClInclude Include="..\Public\Player_State_Hold.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Hold_Idle.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -438,7 +446,12 @@
     <ClCompile Include="..\Private\Face_Monster.cpp">
       <Filter>02.GameObjects\Monster\Face</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_State_Hold.cpp" />
+    <ClCompile Include="..\Private\Player_State_Hold.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Hold_Idle.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

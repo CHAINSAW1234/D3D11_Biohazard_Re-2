@@ -26,16 +26,13 @@ void CPlayer_State_Move_Jog::OnStateUpdate(_float fTimeDelta)
 
 	Update_KeyInput();
 	Update_Degree();
-
-
 	Set_MoveAnimation(fTimeDelta);
-
-
 	Look_Cam(fTimeDelta);
 }
 
 void CPlayer_State_Move_Jog::OnStateExit()
 {
+	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
 }
 
 void CPlayer_State_Move_Jog::Start()
@@ -75,14 +72,6 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) <= 26) /*||
 		(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::JOG_STRAIGHT_LOOP && abs(m_fDegree) > 80) */) {
 
-	/*	static int i = 0;
-		++i;
-		if (i % 2 == 0) {
-			CPlayer::ANIMATION_MOVE Animation = (CPlayer::ANIMATION_MOVE)m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0);
-			Animation + 1;
-		}*/
-
-
 		m_pPlayer->Get_Body_Model()->Set_Loop(0, false);
 
 
@@ -118,6 +107,7 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), m_fDegree/90);
 		m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_STRAIGHT_LOOP);
 		m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
+		m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0);
 	}
 
 #pragma endregion

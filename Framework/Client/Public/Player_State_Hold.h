@@ -6,7 +6,7 @@
 BEGIN(Client)
 class CPlayer_State_Hold final : public CFSM_HState
 {
-	enum STATE { IDLE, SHOT};
+	enum STATE { IDLE, SHOT, STATE_END };
 private:	
 	CPlayer_State_Hold(CPlayer* pPlayer);
 	virtual ~CPlayer_State_Hold() = default;

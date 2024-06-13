@@ -6,7 +6,7 @@
 BEGIN(Client)
 class CPlayer_State_Move final : public CFSM_HState
 {
-	enum STATE { IDLE, WALK, JOG, STAIR};
+	enum STATE { IDLE, WALK, JOG, STAIR, STATE_END };
 private:
 	CPlayer_State_Move(CPlayer* pPlayer);
 	virtual ~CPlayer_State_Move() = default;

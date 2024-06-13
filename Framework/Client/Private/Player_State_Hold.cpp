@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Player_State_Hold.h"
 
+#include "Player_State_Hold_Idle.h"
 
 CPlayer_State_Hold::CPlayer_State_Hold(CPlayer* pPlayer)
 {
@@ -9,6 +10,7 @@ CPlayer_State_Hold::CPlayer_State_Hold(CPlayer* pPlayer)
 
 void CPlayer_State_Hold::OnStateEnter()
 {
+	Change_State(IDLE);
 }
 
 void CPlayer_State_Hold::OnStateUpdate(_float fTimeDelta)
@@ -20,7 +22,8 @@ void CPlayer_State_Hold::OnStateUpdate(_float fTimeDelta)
 
 void CPlayer_State_Hold::OnStateExit()
 {
-	Change_State(IDLE);
+	Reset_State();
+	m_eState = STATE_END;
 }
 
 void CPlayer_State_Hold::Start()
@@ -39,6 +42,8 @@ void CPlayer_State_Hold::Update_State()
 
 HRESULT CPlayer_State_Hold::Add_States()
 {
+	Add_State(IDLE, CPlayer_State_Hold_Idle::Create(m_pPlayer));
+	Change_State(IDLE);
 
 	return S_OK;
 }
