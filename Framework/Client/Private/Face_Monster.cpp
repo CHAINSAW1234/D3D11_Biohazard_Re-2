@@ -53,7 +53,13 @@ void CFace_Monster::Late_Tick(_float fTimeDelta)
 
 	_float3			vTempTranslation = {};
 	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);
+
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 }
+
 
 HRESULT CFace_Monster::Render()
 {
@@ -288,12 +294,12 @@ HRESULT CFace_Monster::Initialize_Model()
 HRESULT CFace_Monster::Add_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_ZombieFace"),
+	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieFace"),
 		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 

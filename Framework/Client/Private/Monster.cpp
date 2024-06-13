@@ -344,7 +344,7 @@ HRESULT CMonster::Add_PartObjects()
 	CClothes_Monster::CLOTHES_MONSTER_DESC		ClothesShirtsDesc;
 
 	ClothesShirtsDesc.pParentsTransform = m_pTransformCom;
-	ClothesShirtsDesc.eType = CClothes_Monster::CLOTHES_TYPE::TYPE_SHIRTHS;
+	ClothesShirtsDesc.eType = CClothes_Monster::CLOTHES_TYPE::TYPE_SHIRTS;
 		
 	pShirtsObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Monster"), &ClothesShirtsDesc));
 	if (nullptr == pShirtsObject)

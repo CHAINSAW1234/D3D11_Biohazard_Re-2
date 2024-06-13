@@ -124,17 +124,8 @@
     <Filter Include="02.GameObjects\Monster\Body">
       <UniqueIdentifier>{434ae696-9846-43b2-a3bd-47aad7b0c62f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Head">
-      <UniqueIdentifier>{f4f724c2-f86b-4319-869a-c7a8be8c2039}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Monster\Clothes">
       <UniqueIdentifier>{48b078ea-e64d-478b-8db2-7e8490506c6b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Shirts">
-      <UniqueIdentifier>{3341c885-a912-41cf-bbe5-f79ad62ac57e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Pants">
-      <UniqueIdentifier>{ef1d29e2-09f3-4957-bc74-9a1729ed5404}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Map">
       <UniqueIdentifier>{6efea4f9-497a-4357-b128-793862780e4f}</UniqueIdentifier>
@@ -171,6 +162,9 @@
     </Filter>
     <Filter Include="02.GameObjects\UI\Inventory\1. Inventory Item">
       <UniqueIdentifier>{0ecab370-b1e7-4ba2-98ef-c2d58e26d1a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Face">
+      <UniqueIdentifier>{f4f724c2-f86b-4319-869a-c7a8be8c2039}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -273,15 +267,6 @@
     <ClInclude Include="..\Public\Body_Monster.h">
       <Filter>02.GameObjects\Monster\Body</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Clothes_Monster.h">
-      <Filter>02.GameObjects\Monster\Body</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Face_Monster.h">
-      <Filter>02.GameObjects\Monster\Body</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Shirts_Monster.h">
-      <Filter>02.GameObjects\Monster\Shirts</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Map.h">
       <Filter>02.GameObjects\Map</Filter>
     </ClInclude>
@@ -319,6 +304,12 @@
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
     </ClInclude>
     <ClInclude Include="CTest.h" />
+    <ClInclude Include="..\Public\Face_Monster.h">
+      <Filter>02.GameObjects\Monster\Face</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Clothes_Monster.h">
+      <Filter>02.GameObjects\Monster\Clothes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -402,13 +393,7 @@
     <ClCompile Include="..\Private\Player_State_Move_Walk.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Face_Monster.cpp">
-      <Filter>02.GameObjects\Monster\Body</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Body_Monster.cpp">
-      <Filter>02.GameObjects\Monster\Body</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Clothes_Monster.cpp">
       <Filter>02.GameObjects\Monster\Body</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Map.cpp">
@@ -448,6 +433,12 @@
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
     </ClCompile>
     <ClCompile Include="CTest.cpp" />
+    <ClCompile Include="..\Private\Clothes_Monster.cpp">
+      <Filter>02.GameObjects\Monster\Clothes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Face_Monster.cpp">
+      <Filter>02.GameObjects\Monster\Face</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

@@ -5,10 +5,12 @@
 #include "GameInstance.h"
 #include "Camera_Free.h"
 
+/* Player */
 #include "Body_Player.h"
 #include "Head_Player.h"
 #include "Hair_Player.h"
 
+/* Monster */
 #include "Body_Monster.h"
 #include "Face_Monster.h"
 #include "Clothes_Monster.h"
@@ -138,17 +140,37 @@ HRESULT CLoader::Load_Prototype()
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Hair_Player"),
 		CHair_Player::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-#pragma endregion
-	
+
 	///* For.Prototype_GameObject_Part_Weapon */
 	//if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Weapon"),
 	//	CWeapon::Create(m_pDevice, m_pContext))))
 	//	return E_FAIL;
 
+#pragma endregion
+	
+#pragma region Monster
+
 	/* For.Prototype_GameObject_Monster */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Monster"),
 		CMonster::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_Body_Monster */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Body_Monster"),
+		CBody_Monster::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Part_Face_Monster */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Face_Monster"),
+		CFace_Monster::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Part_Clothes_Monster */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Clothes_Monster"),
+		CClothes_Monster::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+#pragma endregion
 
 	///* For.Prototype_GameObject_Effect */
 	//if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect"),
@@ -435,11 +457,6 @@ HRESULT CLoader::Loading_For_Logo()
 
 	m_strLoadingText = TEXT("Now Loading ... Object Prototype");
 
-	/* For.Prototype_GameObject_BackGround */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BackGround"),
-		CBackGround::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
 	m_strLoadingText = TEXT("Loading Complete");
 
 	m_isFinished = true;
@@ -574,25 +591,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_VIBuffer_Terrain"),
 		CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Height.bmp")))))
-		return E_FAIL;
-
-	/* Prototype_Component_VIBuffer_Cube */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Cube"),
-		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	m_strLoadingText = TEXT("Now Loading ... Collider");
-
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Collider_AABB"),
-		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Collider_OBB"),
-		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_OBB))))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Collider_Sphere"),
-		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
 		return E_FAIL;
 
 	m_strLoadingText = TEXT("Now Loading ... Navigation Mesh");

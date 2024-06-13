@@ -178,6 +178,7 @@
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\Public\Client_Enumsh.h" />
+    <ClInclude Include="..\Public\Clothes_Monster.h" />
     <ClInclude Include="..\Public\Crosshair_UI.h" />
     <ClInclude Include="..\Public\Cursor_UI.h" />
     <ClInclude Include="..\Public\CustomCollider.h" />

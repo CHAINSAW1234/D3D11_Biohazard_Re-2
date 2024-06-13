@@ -56,6 +56,11 @@ void CBody_Monster::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 }
 
 HRESULT CBody_Monster::Render()
@@ -291,12 +296,12 @@ HRESULT CBody_Monster::Initialize_Model()
 HRESULT CBody_Monster::Add_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_ZombieBody"),
+	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieBody"),
 		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 

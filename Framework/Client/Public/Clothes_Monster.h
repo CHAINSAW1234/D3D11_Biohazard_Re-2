@@ -8,7 +8,7 @@ BEGIN(Client)
 class CClothes_Monster final : public CPartObject
 {
 public:
-	enum CLOTHES_TYPE{ TYPE_SHIRTHS, TYPE_HAT, TYPE_PANTS, TYPE_END };
+	enum CLOTHES_TYPE{ TYPE_SHIRTS, TYPE_HAT, TYPE_PANTS, TYPE_END };
 public:
 	typedef struct tagClothesMonsterDesc : public CPartObject::PARTOBJECT_DESC
 	{
