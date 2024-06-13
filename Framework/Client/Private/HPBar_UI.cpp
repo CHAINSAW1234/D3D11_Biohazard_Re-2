@@ -44,7 +44,7 @@ HRESULT CHPBar_UI::Initialize(void* pArg)
 
     else if (CCustomize_UI::HPBAR_TYPE::BACKGROUND_BAR == m_eHPBar)
     {
-        list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+        list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
 
         for (auto& iter : *pUIList)
         {

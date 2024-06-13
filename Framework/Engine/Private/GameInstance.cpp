@@ -194,8 +194,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	if(m_pObject_Manager)
 		m_pObject_Manager->Late_Tick(fTimeDelta);
 	
-	/*if (m_pPhysics_Controller)
-		m_pPhysics_Controller->Simulate(fTimeDelta);*/
+	if (m_pPhysics_Controller)
+		m_pPhysics_Controller->Simulate(fTimeDelta);
 }
 
 HRESULT CGameInstance::Begin_Draw(const _float4 & vClearColor)

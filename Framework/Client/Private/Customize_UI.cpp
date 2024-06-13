@@ -215,12 +215,12 @@ HRESULT CCustomize_UI::Add_Components(const wstring& wstrTextureTag, const wstri
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, wstrTextureTag,
+	if (FAILED(__super::Add_Component(g_Level, wstrTextureTag,
 		TEXT("Com_DefaultTexture"), (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, wstrMaskTag,
+	if (FAILED(__super::Add_Component(g_Level, wstrMaskTag,
 		TEXT("Com_MaskTexture"), (CComponent**)&m_pMaskTextureCom)))
 		return E_FAIL;
 	
@@ -462,14 +462,14 @@ _bool CCustomize_UI::Select_UI()
 
 HRESULT CCustomize_UI::Change_Texture(const wstring& strPrototypeTag, const wstring& strComponentTag)
 {
-	if (nullptr == m_pGameInstance->Find_Prototype(m_pGameInstance->Get_CurrentLevel(), strPrototypeTag))
+	if (nullptr == m_pGameInstance->Find_Prototype(g_Level, strPrototypeTag))
 		return E_FAIL;
 
 	if (TEXT("Com_DefaultTexture") == strComponentTag)
 	{
 		Safe_Release(m_pTextureCom);
 		m_pTextureCom = nullptr;
-		if (FAILED(__super::Change_Component(LEVEL_GAMEPLAY, strPrototypeTag, strComponentTag, (CComponent**)&m_pTextureCom)))
+		if (FAILED(__super::Change_Component(g_Level, strPrototypeTag, strComponentTag, (CComponent**)&m_pTextureCom)))
 		{
 			return E_FAIL;
 		}
@@ -937,7 +937,7 @@ HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* p
 	if (0 == CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
 	{
 		/* For.Prototype_Component_Texture_ */
-		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
+		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(g_Level, CustomizeUIDesc.wstrDefaultTexturComTag,
 			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrDefaultTexturPath)))) {
 			int a = 0;
 		}
@@ -947,7 +947,7 @@ HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* p
 	else if (0 < CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
 	{
 		/* For.Prototype_Component_Texture_ */
-		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
+		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(g_Level, CustomizeUIDesc.wstrDefaultTexturComTag,
 			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrDefaultTexturPath, CustomizeUIDesc.fMaxFrame)))) {
 			int a = 0;
 		}
@@ -956,20 +956,20 @@ HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* p
 	if (TEXT("") != CustomizeUIDesc.wstrMaskPath)
 	{
 		/* For.Prototype_Component_Texture_ */
-		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrMaskComTag,
+		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(g_Level, CustomizeUIDesc.wstrMaskComTag,
 			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrMaskPath)))) {
 			int a = 0;
 		}
 	}
 
 	//梓端 持失
-	if (FAILED(CGameInstance::Get_Instance()->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), PrototypeTag, &CustomizeUIDesc)))
+	if (FAILED(CGameInstance::Get_Instance()->Add_Clone(g_Level, TEXT("Layer_UI"), PrototypeTag, &CustomizeUIDesc)))
 	{
 		MSG_BOX(TEXT("Failed to Add Clone UI"));
 		return E_FAIL;
 	}
 
-	CGameObject* pGameObj = CGameInstance::Get_Instance()->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
+	CGameObject* pGameObj = CGameInstance::Get_Instance()->Find_Layer(g_Level, TEXT("Layer_UI"))->back();
 
 	if (nullptr != pGameParentsObj)
 	{
@@ -1091,7 +1091,7 @@ HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* p
 	if (0 == CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
 	{
 		/* For.Prototype_Component_Texture_ */
-		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
+		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(g_Level, CustomizeUIDesc.wstrDefaultTexturComTag,
 			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrDefaultTexturPath)))) {
 			int a = 0;
 		}
@@ -1101,7 +1101,7 @@ HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* p
 	else if (0 < CustomizeUIDesc.fMaxFrame && TEXT("") != CustomizeUIDesc.wstrDefaultTexturPath)
 	{
 		/* For.Prototype_Component_Texture_ */
-		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
+		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(g_Level, CustomizeUIDesc.wstrDefaultTexturComTag,
 			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrDefaultTexturPath, CustomizeUIDesc.fMaxFrame)))) {
 			int a = 0;
 		}
@@ -1110,20 +1110,20 @@ HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* p
 	if (TEXT("") != CustomizeUIDesc.wstrMaskPath)
 	{
 		/* For.Prototype_Component_Texture_ */
-		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrMaskComTag,
+		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(g_Level, CustomizeUIDesc.wstrMaskComTag,
 			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrMaskPath)))) {
 			int a = 0;
 		}
 	}
 
 	//梓端 持失
-	if (FAILED(CGameInstance::Get_Instance()->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), PrototypeTag, &CustomizeUIDesc)))
+	if (FAILED(CGameInstance::Get_Instance()->Add_Clone(g_Level, TEXT("Layer_UI"), PrototypeTag, &CustomizeUIDesc)))
 	{
 		MSG_BOX(TEXT("Failed to Add Clone UI"));
 		return E_FAIL;
 	}
 
-	CGameObject* pGameObj = CGameInstance::Get_Instance()->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
+	CGameObject* pGameObj = CGameInstance::Get_Instance()->Find_Layer(g_Level, TEXT("Layer_UI"))->back();
 
 	if (nullptr != pGameParentsObj)
 	{

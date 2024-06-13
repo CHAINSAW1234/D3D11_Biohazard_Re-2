@@ -42,7 +42,7 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
     // 툴 수기 수정
     m_vColor[0].vColor.w = m_vCurrentColor.w = 0.f;
 
-    list<class CGameObject*>* pBoxList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+    list<class CGameObject*>* pBoxList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
     m_fOrigin_Blending = m_fBlending;
 
     /* ▶ Main Inventory */
@@ -414,7 +414,7 @@ void CInventory_Item_UI::Sub_SelectBox(SUB_INVEN_BOX_POSITION _eBoxType)
 /* Sub Inventory를 실행했을 때 [출력/초기화] 해야 할 것들 */
 void CInventory_Item_UI::Sub_Iventory_Reset()
 {
-    list<class CGameObject*>* pBoxList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+    list<class CGameObject*>* pBoxList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
 
     for (auto& iter : *pBoxList)
     {

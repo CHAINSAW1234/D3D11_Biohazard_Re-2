@@ -94,13 +94,13 @@ HRESULT CNavMesh_Debug::Add_Components()
 {
 	if (m_tagPropDesc.bAnim)
 	{
-		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
 			TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 			return E_FAIL;
 	}
 	else
 	{
-		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxModel"),
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
 			TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 			return E_FAIL;
 	}

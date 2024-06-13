@@ -35,7 +35,7 @@ HRESULT CCrosshair_UI::Initialize(void* pArg)
         _float4 vPoint = {};
 
         /* 부모 찾기 */
-        list<class CGameObject*>* pUiLayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+        list<class CGameObject*>* pUiLayer = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
 
         for (auto& iter : *pUiLayer)
         {
@@ -127,7 +127,7 @@ HRESULT CCrosshair_UI::Render()
 
 void CCrosshair_UI::Camera_Aiming()
 {
-    CGameObject* pCameraObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_ZZZCamera"))->back();
+    CGameObject* pCameraObj = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_ZZZCamera"))->back();
 
     if (nullptr != pCameraObj)
     {

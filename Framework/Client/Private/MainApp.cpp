@@ -29,9 +29,6 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Fonts()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Prototype_Component_For_Static()))
-		return E_FAIL;
-
 	if (FAILED(Open_Level(LEVEL_GAMEPLAY)))
 		return E_FAIL;
 	
@@ -243,30 +240,6 @@ HRESULT CMainApp::Open_Level(LEVEL eLevelID)
 		return E_FAIL;
 
 	m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, eLevelID));
-
-	return	S_OK;
-}
-
-HRESULT CMainApp::Ready_Prototype_Component_For_Static()
-{
-	/* For.Prototype_Component_VIBuffer_Rect */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
-		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	/* For.Prototype_Component_Shader_VtxPosTex */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxPosTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxPosTex.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_FSM"),
-		CFSM::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-
-	/* For.Prototype_Component_Shader_VtxAlphaSortTex */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAlphaSortTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxAlphaSortTex.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
-		return E_FAIL;
 
 	return	S_OK;
 }

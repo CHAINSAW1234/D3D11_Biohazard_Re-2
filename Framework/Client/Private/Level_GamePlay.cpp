@@ -185,8 +185,21 @@ HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 {
 	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Props"))))
 	//	return E_FAIL;
+
+#ifdef USE_UI
+	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_UI"), LEVEL_GAMEPLAY)))
+		return E_FAIL;
+#endif
+#ifdef USE_Player_Control
+	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_Police"), LEVEL_GAMEPLAY)))
+		return E_FAIL;
+#endif
+#ifdef USE_MapObject
 	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_Test"), LEVEL_GAMEPLAY)))
 		return E_FAIL;
+#endif
+
+	
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_NavMesh_Debug"))))
 		return E_FAIL;

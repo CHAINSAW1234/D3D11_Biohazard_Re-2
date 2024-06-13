@@ -303,19 +303,19 @@ HRESULT CMap::Add_Components()
 {
 	if (m_tagPropDesc.bAnim)
 	{
-		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
 			TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 			return E_FAIL;
 	}
 	else
 	{
-		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxModel"),
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
 			TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 			return E_FAIL;
 	}
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, m_tagPropDesc.strModelComponent,
+	if (FAILED(__super::Add_Component(g_Level, m_tagPropDesc.strModelComponent,
 		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 

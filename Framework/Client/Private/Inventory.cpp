@@ -56,7 +56,7 @@ void CInventory::Inventory_Render(_bool _render)
     m_isRender = _render;
 
     /* 카메라 고정*/
-    CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_ZZZCamera"))->back();
+    CGameObject* pGameObj = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_ZZZCamera"))->back();
 
     if (nullptr != pGameObj)
     {
