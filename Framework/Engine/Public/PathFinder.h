@@ -37,13 +37,10 @@ public:
 	}
 	_float							VectorSign(_float4 vector1, _float4 vector2)
 	{
-		/*if (VectorSign_Global(vector1, vector2) < 0)
-			return -1.f;*/
-
 		vector1 = Float4_Normalize(vector1);
 		vector2 = Float4_Normalize(vector2);
 		
-		return vector1.x * vector2.z - vector1.z * vector2.x;
+		return vector1.x * vector2.z - vector2.z * vector1.x;
 	}
 	float calculateAngle(const _float4& vec) 
 	{
