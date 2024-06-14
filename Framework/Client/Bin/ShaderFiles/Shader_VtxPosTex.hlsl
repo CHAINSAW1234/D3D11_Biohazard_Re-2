@@ -9,6 +9,7 @@ texture2D g_MaskTexture;
 texture2D g_MaskSub_Texture;
 texture2D g_DepthTexture;
 
+bool g_SelectColor, g_GreenColor;
 float fDepthValue = 1000.f;
 
 // PS
@@ -201,9 +202,11 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord * g_Split);
     
-    if (g_AlpaChange) // 알파만 바꿀 때
+   // 선택
+    if (g_SelectColor)
+        Out.vColor = float4(1, 0, 0, 1);
+    else if (g_AlpaChange) // 알파만 바꿀 때
         Out.vColor.a = g_ColorValu.a;
-    
     else if (g_ColorChange)
     {
         if (g_Blending)
@@ -254,8 +257,6 @@ PS_OUT PS_MAIN(PS_IN In)
         }
     }
     
-    
-
     return Out;
 }
 
@@ -264,7 +265,7 @@ technique11 DefaultTechnique
     pass Default
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
@@ -275,9 +276,9 @@ technique11 DefaultTechnique
     }
 
     pass Blend
-    { 
+    {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();

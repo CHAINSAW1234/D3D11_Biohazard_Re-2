@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "MissionBar_UI.h"
 
+#define LIFE_TIME 3.f
+#define ALHPE_ZERO_VEC _vector()
+#define ALHPE_ZERO _float4(0, 0, 0, 0)
+
 CMissionBar_UI::CMissionBar_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CCustomize_UI{ pDevice, pContext }
 {
@@ -27,7 +31,51 @@ HRESULT CMissionBar_UI::Initialize(void* pArg)
         CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
     }
 
-    m_isPlay = false;
+    if (false == m_IsChild)
+    {
+        m_isPlay = false;
+        m_iEndingType = PLAY_BUTTON::PLAY_CHANGE;
+        m_eMissionUI_Type = MISSION_UI_TYPE::BAR_MISSION;
+
+        Mission_Start();
+    }
+
+    else if (true == m_IsChild) /* 부모 찾기 */
+    {
+        /* 화살표*/
+        if (m_vecTextBoxes.empty())
+        {
+            m_eMissionUI_Type = MISSION_UI_TYPE::ARROW_MISSION;
+            m_fBlending = 1.f;
+        }
+
+        /* 폰트*/
+        else
+        {
+            m_eMissionUI_Type = MISSION_UI_TYPE::FONT_MISSION;
+            m_strMissionText = TEXT("상점 탈출하기");
+
+            m_vecTextBoxes.back()->Set_Text(m_strMissionText);
+            m_vOriginTextColor = _float4(1, 1, 1, 1);
+            m_vecTextBoxes.back()->Set_FontColor(ALHPE_ZERO_VEC);
+        }
+
+
+        list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+
+        for (auto& iter : *pUIList)
+        {
+            CMissionBar_UI* pParent = dynamic_cast<CMissionBar_UI*>(iter);
+
+            if (nullptr != pParent && false == pParent->m_IsChild)
+            {
+                m_pMissionBar = pParent;
+                break;
+            }
+        }
+    }
+
+    m_isRender = false;
 
     return S_OK;
 }
@@ -36,19 +84,14 @@ void CMissionBar_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    if (DOWN == m_pGameInstance->Get_KeyState('M'))
-    {
-        m_isPlay = true;
-        m_isLight = m_isPlay;
-    }
+    if (MISSION_UI_TYPE::BAR_MISSION == m_eMissionUI_Type)
+        Operater_MissionBar(fTimeDelta);
 
-    if (true == m_isLight)
-    {
-        m_fLightTimer += fTimeDelta;
-        m_fLightSize += fTimeDelta;
-        m_fLightPosition.x += fTimeDelta;
-    }
+    else if (MISSION_UI_TYPE::ARROW_MISSION == m_eMissionUI_Type)
+        Operater_MissionArrow(fTimeDelta);
 
+    else if (MISSION_UI_TYPE::FONT_MISSION == m_eMissionUI_Type)
+        Operater_MissionFont(fTimeDelta);
 }
 
 void CMissionBar_UI::Late_Tick(_float fTimeDelta)
@@ -62,6 +105,138 @@ HRESULT CMissionBar_UI::Render()
         return E_FAIL;
 
     return S_OK;
+}
+
+/* CMissionBar_UI와 관련된 함수 하나만 불러도 쓸 수 있다. */
+void CMissionBar_UI::Write_Mission_Text(wstring _write)
+{
+    list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+
+    for (auto& iter : *pUIList)
+    {
+        CMissionBar_UI* pMissionText = dynamic_cast<CMissionBar_UI*>(iter);
+
+        if (nullptr != pMissionText && !pMissionText->m_vecTextBoxes.empty())
+        {
+            pMissionText->m_vecTextBoxes.back()->Set_Text(_write);
+            break;
+        }
+    }
+}
+
+void CMissionBar_UI::Operater_MissionBar(_float fTimeDelta)
+{
+    if (DOWN == m_pGameInstance->Get_KeyState('M'))
+        Mission_Start();
+
+    if (true == m_isLight)
+        Mission_Light(fTimeDelta);
+
+    else
+    {
+        m_fLifeTimer += fTimeDelta;
+
+        if (m_fLifeTimer >= LIFE_TIME)
+        {
+            m_fBlending += fTimeDelta * 2.f;
+
+            if (m_fBlending >= 1.f)
+                m_isRender = false;
+        }
+    }
+}
+
+void CMissionBar_UI::Operater_MissionArrow(_float fTimeDelta)
+{
+    /* 부모가 렌더를 시작했다면, */
+    if (true == m_pMissionBar->m_isRender)
+    {
+        m_fMissionArrow_Timer += fTimeDelta;
+        m_isRender = true;
+
+        /* 1. 시간이 넘었다면 다시 사라지기 */
+        if (m_pMissionBar->m_fLifeTimer >= LIFE_TIME)
+        {
+            m_fBlending += fTimeDelta;
+
+            if (m_fBlending >= 1.f)
+                m_fBlending = 1.f;
+        }
+        else if (m_fMissionArrow_Timer >= 1.f)
+        {
+            m_fBlending -= fTimeDelta;
+
+            if (m_fBlending <= 0.f)
+                m_fBlending = 0.f;
+        }
+    }
+
+    /* 시작하지 않았다면, */
+    else
+        m_isRender = false;
+}
+
+void CMissionBar_UI::Operater_MissionFont(_float fTimeDelta)
+{
+    /* 부모가 렌더를 시작했을 때*/
+    if (true == m_pMissionBar->m_isRender)
+    {
+        if(!m_vecTextBoxes.empty())
+        {
+            CTextBox* pFont = m_vecTextBoxes.back();
+
+            _float4 result = m_pMissionBar->m_fBlending * ALHPE_ZERO + (1 - m_pMissionBar->m_fBlending) * m_vOriginTextColor;
+            pFont->Set_FontColor(result);
+        }
+    }
+    /* 시작하지 않았다면, */
+    else
+    {
+        m_vCurrentColor = ALHPE_ZERO;
+        m_fMissionFont_Timer = 0.f;
+    }
+}
+
+void CMissionBar_UI::Mission_Start()
+{
+    /*Client */
+    m_isRender = m_isLight = m_isPlay = true;
+    m_fLifeTimer = 0.f;
+
+    /* Light */
+    m_isMission_NonLighting = false;
+
+    /* Tool */
+    m_isKeepPlay = false;
+}
+
+void CMissionBar_UI::Mission_Light(_float fTimeDelta)
+{
+    /* if Size 8, DownGrade */
+    if (m_fLightSize >= 10.f)
+        m_isMission_NonLighting = true;
+
+    // 빛 밝기
+    if (false == m_isMission_NonLighting)
+    {
+        m_fLightSize += fTimeDelta * 10.f;
+        m_fLightPosition.x += fTimeDelta * 6.f;
+    }
+
+    else if (true == m_isMission_NonLighting)
+    {
+        m_isPlay = false;
+
+        m_fLightSize -= fTimeDelta * 10.f;
+        m_fLightPosition.x -= fTimeDelta * 6.f;
+
+        if (3.8f >= m_fLightSize)/////////////////
+        {
+            m_fLightSize = 0.f;
+            m_isLight = false;
+            m_isKeepPlay = true;
+        }
+    }
 }
 
 CCustomize_UI* CMissionBar_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

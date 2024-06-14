@@ -1,5 +1,7 @@
 #pragma once
+
 #include "UI.h"
+#include "Inventory_Manager.h"
 
 
 BEGIN(Client)
@@ -26,8 +28,7 @@ private:
 	class CButton_UI* m_pInvenButton = { nullptr };
 	class CButton_UI* m_pHintButton = { nullptr };
 
-	//class CInventory_Item_UI* m_pInventory1 = { nullptr }; //테스트용 임시객체
-	//class CInventory_Item_UI* m_pInventory2 = { nullptr }; //테스트용 임시객체
+	CInventory_Manager* m_pInventory_Manager = { nullptr };
 
 private:
 	WINDOW_TYPE m_eWindowType = { INVENTORY };
@@ -37,6 +38,9 @@ private:
 	HRESULT Bind_ShaderResources();
 	HRESULT Create_Button();
 	HRESULT Create_Inventory();
+	HRESULT Creat_MiniMap();
+	HRESULT Creat_Hint();
+
 
 public:
 	static CTab_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

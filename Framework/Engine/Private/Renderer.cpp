@@ -1068,7 +1068,7 @@ HRESULT CRenderer::Render_Font()
 	for (auto& pRenderObject : m_RenderObjects[RENDER_FONT])
 	{
 		if (nullptr != pRenderObject)
-			pRenderObject->Render_Font();
+			pRenderObject->Render();
 		Safe_Release(pRenderObject);
 	}
 	m_RenderObjects[RENDER_FONT].clear();

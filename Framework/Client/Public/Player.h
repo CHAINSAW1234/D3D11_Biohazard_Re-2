@@ -166,6 +166,8 @@ private:
 	_float										m_fLerpAmount_Look = { 0.f };
 	_bool										m_bCollision_Lerp = { false };
 
+	_bool										m_bMouseCursorClip = { true };
+
 private:
 	HRESULT Add_Components();
 

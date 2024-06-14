@@ -45,7 +45,7 @@ void CTextBox::Tick(_float fTimeDelta)
 
 void CTextBox::Late_Tick(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FONT, this);
 }
 
 HRESULT CTextBox::Render()
