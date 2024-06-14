@@ -38,6 +38,8 @@ public:		/* For.Access */
 	_int								Get_KeyFrameIndex(_uint iChannelIndex);
 	inline _float3						Get_PreTranslation_Local() { return m_vPreTranslationLocal; }
 	inline _float4						Get_PreQuaternion() { return m_vPreQuaternion; }
+	inline _float3						Get_CurrentTranslation_Local() { return m_vCurrentTranslationLocal; }
+	inline _float4						Get_CurrentQuaternion() { return m_vCurrentQuaternion; }
 	inline wstring						Get_BoneLayerTag() { return m_strBoneLayerTag; }
 	inline const vector<KEYFRAME>&		Get_LastKeyFrames() { return m_LastKeyFrames; }
 	inline const vector<KEYFRAME>&		Get_LinearStartKeyFrames() { return m_LinearStartKeyFrames; }
@@ -54,8 +56,10 @@ public:		/* For.Access */
 	inline void							Set_BoneLayerTag(const wstring& strBoneLayerTag) { m_strBoneLayerTag = strBoneLayerTag; }
 	inline void							Set_Finished(_bool isFinished) { m_isFinished = isFinished; }
 
-	void								Set_PreTranslation(_fvector PreTranslation);
+	void								Set_PreTranslation(_fvector vPreTranslation);
 	void								Set_PreQuaternion(_fvector vPreQuaternion);
+	void								Set_CurrentTranslation(_fvector vCurrentTranslation);
+	void								Set_CurrentQuaternion(_fvector vCurrentQuaternion);
 
 	void								Set_KeyFrameIndex_AllKeyFrame(_uint iKeyFrameIndex);
 	void								Set_KeyFrameIndex(_uint iChannelIndex, _uint iKeyFrameIndex);
@@ -85,6 +89,10 @@ private:
 
 	_bool								m_isLinearInterpolation = { false };
 	_float								m_fAccLinearInterpolation = { 0.f };
+
+	_float3								m_vCurrentTranslationLocal = { 0.f, 0.f, 0.f };
+	_float4								m_vCurrentQuaternion = { 0.f, 0.f, 0.f, 0.f };
+
 	_float3								m_vPreTranslationLocal = { 0.f, 0.f, 0.f };
 	_float4								m_vPreQuaternion = { 0.f, 0.f, 0.f, 0.f };
 

@@ -14,6 +14,11 @@ HRESULT CBone_Layer::Initialize(const set<_uint>& BoneIndices)
 	return S_OK;
 }
 
+void CBone_Layer::Add_BoneIndex(_uint iBoneIndex)
+{
+	m_IncludedBoneIndices.emplace(iBoneIndex);
+}
+
 _bool CBone_Layer::Is_Included(_uint iBoneIndex)
 {
 	_bool		isIncluded = { false };

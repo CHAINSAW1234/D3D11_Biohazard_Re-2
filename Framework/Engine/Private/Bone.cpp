@@ -81,7 +81,7 @@ void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBon
 	else if (true == isTopParrentBone)
 	{
 		//	현재 뼈의 변환성분들을 분해하여 특정성분을 추출후 반환
-		_matrix			MyTransformationMatrix = { XMLoadFloat4x4(&m_TransformationMatrix) };
+		/*_matrix			MyTransformationMatrix = { XMLoadFloat4x4(&m_TransformationMatrix) };
 		XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, MyTransformationMatrix);
 
 		if (true == isSetQuaternion)
@@ -103,7 +103,7 @@ void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBon
 		
 
 		MyTransformationMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
-		XMStoreFloat4x4(&m_TransformationMatrix, MyTransformationMatrix);
+		XMStoreFloat4x4(&m_TransformationMatrix, MyTransformationMatrix);*/
 
 		// 현재 결과에서 애니메이션에 따라 특정 성분들이 제거된 매트릭스를 합행렬에 곱해준다.
 		_matrix			CombinedMatrix = XMLoadFloat4x4(&m_TransformationMatrix) * XMLoadFloat4x4(&TransformationMatrix);
@@ -113,7 +113,7 @@ void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBon
 	else
 	{
 		//	현재 뼈의 변환성분들을 분해하여 특정성분을 추출후 반환
-		_matrix			MyTransformationMatrix = { XMLoadFloat4x4(&m_TransformationMatrix) };
+		/*_matrix			MyTransformationMatrix = { XMLoadFloat4x4(&m_TransformationMatrix) };
 		XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, MyTransformationMatrix);
 
 		if (true == isSetQuaternion)
@@ -134,11 +134,10 @@ void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBon
 		}		
 
 		MyTransformationMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
-		XMStoreFloat4x4(&m_TransformationMatrix, MyTransformationMatrix);
+		XMStoreFloat4x4(&m_TransformationMatrix, MyTransformationMatrix);*/
 
-		//	스케일 회전성분만 남긴 매트릭스로 변환 매트릭스를 등록한다.
 		_matrix			ParrentsCombinedMatrix = XMLoadFloat4x4(&Bones[m_iParentBoneIndex]->m_CombinedTransformationMatrix);
-		_matrix			CombinedMatrix = MyTransformationMatrix * ParrentsCombinedMatrix;
+		_matrix			CombinedMatrix = XMLoadFloat4x4(&m_TransformationMatrix) * ParrentsCombinedMatrix;
 		XMStoreFloat4x4(&m_CombinedTransformationMatrix, CombinedMatrix);
 	}
 }
