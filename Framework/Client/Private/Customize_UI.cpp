@@ -437,6 +437,16 @@ void CCustomize_UI::Set_Dead(_bool bDead)
 		iter->Set_Dead(bDead);
 }
 
+void CCustomize_UI::Set_IsLoad(_bool IsLoad)
+{
+	m_isLoad = IsLoad;
+
+	for (auto& iter : m_vecChildUI)
+	{
+		dynamic_cast<CCustomize_UI*>(iter)->Set_IsLoad(IsLoad);
+	}
+}
+
 _bool CCustomize_UI::Select_UI()
 {
 	_float2 mouse = m_pGameInstance->Get_ViewMousePos();

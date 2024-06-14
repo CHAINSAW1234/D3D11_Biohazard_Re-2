@@ -30,7 +30,8 @@ HRESULT CInventory_Manager::Initialize()
 				return E_FAIL;
 
 			//pOut->Set_InvenType(CCustomize_UI::INVENTORY_TYPE::MAIN_INVEN);
-			pOut->Move_State(_float3(fPosX, fPosY, 0.f), 0);
+			pOut->Move_State(_float3(fPosX, -fPosY, 0.f), 0);
+			pOut->Set_IsLoad(false);
 			m_vecInventoryBox.push_back(pOut);
 		}
 	}
@@ -40,9 +41,9 @@ HRESULT CInventory_Manager::Initialize()
 		if (nullptr != iter)
 		{
 			Safe_AddRef(iter);
+			Set_OnOff_Inven(true);
 		}
 	}
-
 
 	return S_OK;
 }
@@ -59,8 +60,13 @@ void CInventory_Manager::Late_Tick(_float fTimeDelta)
 
 void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 {
-	for (auto& iter : m_vecInventoryBox)
-		iter->Set_Dead(bInput);
+	//for (auto& iter : m_vecInventoryBox)
+	//	iter->Set_Dead(bInput);
+
+	for (_uint i = 0; i < m_iInvenNum; i++)
+	{
+		m_vecInventoryBox[i] -> Set_Dead(bInput);
+	} 
 }
 
 CInventory_Manager* CInventory_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

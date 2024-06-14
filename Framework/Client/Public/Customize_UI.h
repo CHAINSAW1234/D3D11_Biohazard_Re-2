@@ -261,6 +261,8 @@ public:// for. Set inline
 
 	void Set_InvenType(INVENTORY_TYPE eInvenType) { m_eInventory_Type = eInvenType; }
 
+	void Set_IsLoad(_bool IsLoad);
+
 public:/* for.Get Inline */
 	_float4x4* Get_StoreTransform(_uint i) { return &m_SavePos[i]; }
 	/* 현재 타이머*/

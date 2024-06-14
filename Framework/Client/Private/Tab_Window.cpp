@@ -56,7 +56,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 			m_pHintButton->Set_Dead(m_bDead);
 			m_pInvenButton->Set_Dead(m_bDead);
 			m_pMapButton->Set_Dead(m_bDead);
-
+			m_pInventory_Manager->Set_OnOff_Inven(m_bDead);
 		}
 
 		else
@@ -65,7 +65,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 			m_pHintButton->Set_Dead(m_bDead);
 			m_pInvenButton->Set_Dead(m_bDead);
 			m_pMapButton->Set_Dead(m_bDead);
-
+			m_pInventory_Manager->Set_OnOff_Inven(m_bDead);//탭창열때 인벤이 초기값임
 		}
 	}
 
@@ -77,20 +77,20 @@ void CTab_Window::Tick(_float fTimeDelta)
 		if (true == m_pMapButton->IsMouseHover())
 		{
 			m_eWindowType = MINIMAP;
-			m_pInventory_Manager->Set_OnOff_Inven(false);
+			m_pInventory_Manager->Set_OnOff_Inven(true);
 		}
 
 		else if (true == m_pInvenButton->IsMouseHover())
 		{
 			m_eWindowType = INVENTORY;
-			m_pInventory_Manager->Set_OnOff_Inven(true);
+			m_pInventory_Manager->Set_OnOff_Inven(false);
 
 		}
 			
 		else if (true == m_pHintButton->IsMouseHover())
 		{
 			m_eWindowType = HINT;
-			m_pInventory_Manager->Set_OnOff_Inven(false);
+			m_pInventory_Manager->Set_OnOff_Inven(true);
 		}
 	}
 

@@ -24,13 +24,14 @@ public:
 
 
 private:
-	ID3D11Device* m_pDevice = { nullptr };
-	ID3D11DeviceContext* m_pContext = { nullptr };
+	ID3D11Device*			m_pDevice = { nullptr };
+	ID3D11DeviceContext*	m_pContext = { nullptr };
 
-	vector<CButton_UI*> m_vecInventoryBox;
+	vector<CButton_UI*>		m_vecInventoryBox;
 
+	_uint					m_iInvenNum = { 8 };
 
-	_float2 m_fInterval = { 74.f, 76.f };
+	_float2					m_fInterval = { 74.f, 76.f };
 
 
 public:
