@@ -43,7 +43,8 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	_uint			iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Left_Arm"), "l_arm_clavicle");
-
+	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("LowerBody"), "hips");
+	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("UpperBody"), "spine_0");
 
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 1, TEXT("Default"), 0.f);
@@ -143,7 +144,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 
 	static _bool		isSetRootXZ = true;
-	static _bool		isSetRootRotation = false;
+	static _bool		isSetRootRotation = true;
 	static _bool		isSetRootY = true;
 	if (UP == m_pGameInstance->Get_KeyState('I'))
 	{

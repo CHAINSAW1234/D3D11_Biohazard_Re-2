@@ -22,7 +22,6 @@ void CPlayer_State_Move::OnStateUpdate(_float fTimeDelta)
 
 	Update_State();
 
-
 }
 
 void CPlayer_State_Move::OnStateExit()
@@ -50,25 +49,30 @@ void CPlayer_State_Move::Update_State()
 		if (m_pGameInstance->Get_KeyState('W') == PRESSING ||
 			m_pGameInstance->Get_KeyState('A') == PRESSING ||
 			m_pGameInstance->Get_KeyState('S') == PRESSING ||
-			m_pGameInstance->Get_KeyState('D') == PRESSING)
-			Change_State(WALK);
+			m_pGameInstance->Get_KeyState('D') == PRESSING) {
+
+			if (m_pGameInstance->Get_KeyState(VK_SHIFT) == PRESSING) {
+				Change_State(JOG);
+			}
+			else {
+				Change_State(WALK);
+			}
+		}
 		break;
 	case WALK:
-		if (m_pGameInstance->Get_KeyState('W') != PRESSING &&
-			m_pGameInstance->Get_KeyState('A') != PRESSING &&
-			m_pGameInstance->Get_KeyState('S') != PRESSING &&
-			m_pGameInstance->Get_KeyState('D') != PRESSING)
+		if (m_pGameInstance->Get_KeyState('W') == NONE &&
+			m_pGameInstance->Get_KeyState('A') == NONE &&
+			m_pGameInstance->Get_KeyState('S') == NONE &&
+			m_pGameInstance->Get_KeyState('D') == NONE)
 			Change_State(IDLE);
-
 		if (m_pGameInstance->Get_KeyState(VK_SHIFT) == PRESSING)
 			Change_State(JOG);
-
 		break;
 	case JOG:
-		if (m_pGameInstance->Get_KeyState('W') != PRESSING &&
-			m_pGameInstance->Get_KeyState('A') != PRESSING &&
-			m_pGameInstance->Get_KeyState('S') != PRESSING &&
-			m_pGameInstance->Get_KeyState('D') != PRESSING)
+		if (m_pGameInstance->Get_KeyState('W') == NONE &&
+			m_pGameInstance->Get_KeyState('A') == NONE &&
+			m_pGameInstance->Get_KeyState('S') == NONE &&
+			m_pGameInstance->Get_KeyState('D') == NONE)
 			Change_State(IDLE);
 		break;
 	case STAIR:

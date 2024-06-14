@@ -2,13 +2,17 @@
 #include "Client_Defines.h"
 #include "FSM_State.h"
 
+BEGIN(Engine)
+class CFSM_HState;
+END
+
 BEGIN(Client)
 class CPlayer;
-class CPlayer_State_Move_Walk final : public CFSM_State
+class CPlayer_State_Hold_Start final : public CFSM_State
 {
 private:
-	CPlayer_State_Move_Walk(CPlayer* pPlayer);
-	virtual ~CPlayer_State_Move_Walk() = default;
+	CPlayer_State_Hold_Start(CPlayer* pPlayer, CFSM_HState* pHState);
+	virtual ~CPlayer_State_Hold_Start() = default;
 
 public:
 	virtual void				OnStateEnter() override;
@@ -18,17 +22,15 @@ public:
 
 private:
 	void Update_KeyInput();
-	void Set_MoveAnimation(_float fTimeDelta);
-	void Look_Cam(_float fTimeDelta);
+	void Set_StartAnimation();
 
 private:
 	CPlayer* m_pPlayer = { nullptr };
-
-	PLAYER_DIREECTION m_Prev_FRONT_BACK_Direction = { DIRECTION_END };
-	DWORD m_dwDirection = { 0 };
-
+	CFSM_HState* m_pHState = { nullptr };
+	_float m_fDegree = { 0.f };
+	
 public:
-	static	CPlayer_State_Move_Walk* Create(CPlayer* pPlayer);
+	static	CPlayer_State_Hold_Start* Create(CPlayer* pPlayer, CFSM_HState* pHState);
 	virtual void Free() override;
 
 };

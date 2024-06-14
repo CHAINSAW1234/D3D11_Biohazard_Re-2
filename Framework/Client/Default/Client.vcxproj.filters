@@ -184,6 +184,9 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle">
       <UniqueIdentifier>{ff8fd778-7dfc-4f28-aa3c-7e33181c9fc9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Start">
+      <UniqueIdentifier>{b025c7ed-6e85-4b6f-a0e9-ec6b9361ec01}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -357,6 +360,9 @@
     <ClInclude Include="..\Public\Header_Package_Zombie.h">
       <Filter>AIController\Zombie\Header_Package</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Hold_Start.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Start</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -511,6 +517,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MoveTo_Zombie.cpp">
       <Filter>AIController\Zombie\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Hold_Start.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Start</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

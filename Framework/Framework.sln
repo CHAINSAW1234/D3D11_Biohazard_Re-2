@@ -11,6 +11,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Default\Engine.vcxproj", "{153CB156-E1E8-43F1-B96B-2AD83F824F72}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Animation_Tool", "Animation_Tool\Default\Animation_Tool.vcxproj", "{2C0DC49C-17AB-40C0-A8C5-385F4128E9D0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{153CB156-E1E8-43F1-B96B-2AD83F824F72} = {153CB156-E1E8-43F1-B96B-2AD83F824F72}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
