@@ -71,6 +71,10 @@ void CPlayer_State_Hold_Start::Set_StartAnimation()
 		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f - fRatio);
 		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, fRatio);
 	}
+
+	m_pPlayer->Get_Body_Model()->Set_Loop(0, false);
+	m_pPlayer->Get_Body_Model()->Set_Loop(1, false);
+
 }
 
 CPlayer_State_Hold_Start* CPlayer_State_Hold_Start::Create(CPlayer* pPlayer, CFSM_HState* pHState)

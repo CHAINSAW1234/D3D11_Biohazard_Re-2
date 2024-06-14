@@ -87,17 +87,25 @@ public:
 	_bool										Get_Spotlight() { return m_isSpotlight; }
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
 	void										Set_Spotlight(_bool isSpotlight) { m_isSpotlight = isSpotlight; }
+	void										Set_TurnSpine(_bool isTurnSpine) { m_isTurnSpine = isTurnSpine;  m_fSpineTurnLerfTimeDelta = 0.f; }
+
+	void										Change_State(STATE eState);
+
+	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
 
 	HRESULT										Add_FSM_States();
-	void										Change_State(STATE eState);
 	void										Update_FSM();
 
 	void										Update_Direction();
-	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
+	void										Turn_Spine(_float fTimeDelta);
 
 private:
 	_bool m_isSpotlight = { false };
 	DWORD m_dwDirection = { 0 };
+	_bool m_isTurnSpine = { false };
+	_float m_fSpineTurnLerfTimeDelta = { 1.f };
+	_float m_fCurSpineTurnAxis;
+	_float m_fTargetSpineTurnAxis;
 
 	friend class CPlayer_State_Move_Walk;
 	friend class CPlayer_State_Move_Jog;
@@ -137,6 +145,7 @@ public:
 	void										Calc_Camera_Transform(_float fTimeDelta);
 	void										SetMoveDir();
 	void										ResetCamera();
+
 private:
 	class CCamera_Free*							m_pCamera = { nullptr };
 	_float4										m_vCameraPosition;

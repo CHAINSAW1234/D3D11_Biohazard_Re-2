@@ -280,6 +280,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 
 #pragma region 현진 추가
+	Turn_Spine(fTimeDelta);		// 특정 조건에서 뼈를 돌림
 	Update_Direction();
 	Update_FSM();
 	m_pFSMCom->Update(fTimeDelta);
@@ -414,6 +415,57 @@ _float CPlayer::Get_CamDegree()
 	return Cal_Degree_From_Directions_Between_Min180_To_180(vPlayerLook, vCamLook);
 }
 
+void CPlayer::Turn_Spine(_float fTimeDelta)
+{
+	if (!m_isTurnSpine && m_fSpineTurnLerfTimeDelta >= 1.f) {
+		return;
+	}
+
+	// 카메라 look 내적을 통해서 각도 구하기
+	_float4 vCamLook = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
+	_float4 vCamLandLook = vCamLook;
+	vCamLandLook.y = 0;
+	vCamLandLook = XMVector3Normalize(vCamLandLook);
+
+	_float fRadian = XMVector3AngleBetweenNormals(vCamLandLook, vCamLook).m128_f32[0];
+
+	// 외적으로 방향 찾기
+	_float vCross = XMVector3Cross(vCamLandLook, vCamLook).m128_f32[1];
+
+	// 각도를 -180 ~ 180도 사이로 세팅
+	_float fDegree = XMConvertToDegrees(fRadian * vCross / abs(vCross)); // 0 ~ 180 사이의 값 
+	// 각도가 0보다 크면 왼쪽이다
+	if (isnan(fDegree))
+		m_fTargetSpineTurnAxis = 0.f;
+	else 
+		m_fTargetSpineTurnAxis = fDegree;
+
+
+	m_fSpineTurnLerfTimeDelta += fTimeDelta;
+	if (m_fSpineTurnLerfTimeDelta > 1.f)
+		m_fSpineTurnLerfTimeDelta = 1.f;
+
+	if (m_fSpineTurnLerfTimeDelta < 1.f) {
+		if (m_isTurnSpine) {
+			m_fCurSpineTurnAxis = Lerp(0, m_fTargetSpineTurnAxis, m_fSpineTurnLerfTimeDelta);
+		}
+		else {
+			m_fCurSpineTurnAxis = Lerp(m_fTargetSpineTurnAxis, 0, m_fSpineTurnLerfTimeDelta);
+		}
+	}
+	else {
+		m_fCurSpineTurnAxis = m_isTurnSpine ? m_fTargetSpineTurnAxis : 0.f;
+	}
+
+
+	_float4x4 vSpineTransform = Get_Body_Model()->GetBoneTransform("spine_0");
+	_float4 vSpineRight = vSpineTransform.Right();
+	vSpineTransform = vSpineTransform * XMMatrixRotationAxis(vSpineRight, XMConvertToRadians(m_fCurSpineTurnAxis));
+
+	Get_Body_Model()->Set_CombinedMatrix("spine_0", vSpineTransform);
+
+}
+
 void CPlayer::SetMoveDir()
 {
 	//F
@@ -467,6 +519,8 @@ void CPlayer::SetMoveDir()
 	if (m_eMoveDir != m_ePrevMoveDir)
 	{
 		m_fLerpTime = 0.f;
+		m_bLerp_Move = true;
+		m_bLerp = true;
 	}
 
 	m_ePrevMoveDir = m_eMoveDir;
