@@ -99,8 +99,8 @@ public:		/*For Physics Collider*/
 	_float4x4								GetBoneTransform(_int Index);
 
 private:
-	void									Apply_RootMotion_Rotation(class CTransform* pTransform, _fvector vQuaternion);
-	void									Apply_RootMotion_Translation(class CTransform* pTransform, _fvector vTranslation, _fvector vQuaternion, _float3* pMovedDirection);
+	void									Apply_RootMotion_Rotation(class CTransform* pTransform);
+	void									Apply_RootMotion_Translation(class CTransform* pTransform, _float3* pMovedDirection);
 	void									Apply_Translation_Inverse_Rotation(_fvector vTranslation);
 
 public:
