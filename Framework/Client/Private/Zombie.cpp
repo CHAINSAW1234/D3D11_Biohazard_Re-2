@@ -191,6 +191,8 @@ HRESULT CZombie::Render()
 
 void CZombie::Init_BehaviorTree_Zombie()
 {
+	return;
+
 	m_pBehaviorTree = m_pGameInstance->Create_BehaviorTree(&m_iAIController_ID);
 
 	//Root Node

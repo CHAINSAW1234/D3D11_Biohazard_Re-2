@@ -5,7 +5,7 @@
 
 BEGIN(Client)
 
-class ENGINE_DLL CBlackBoard_Zombie : public CBlackBoard
+class CBlackBoard_Zombie : public CBlackBoard
 {
 public:
 	CBlackBoard_Zombie();

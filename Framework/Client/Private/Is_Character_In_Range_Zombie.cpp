@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "GameInstance.h"
 #include "Is_Character_In_Range_Zombie.h"
 

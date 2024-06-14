@@ -5,7 +5,7 @@
 
 BEGIN(Client)
 
-class ENGINE_DLL CIs_Character_In_Range_Zombie : public CDecorator_Node
+class CIs_Character_In_Range_Zombie : public CDecorator_Node
 {
 public:
 	CIs_Character_In_Range_Zombie();
