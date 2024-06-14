@@ -45,16 +45,9 @@ HRESULT CLevel_GamePlay::Initialize()
 void CLevel_GamePlay::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	//m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
-	//m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
+	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
+	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
 	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));
-	
-	/*if (GetAsyncKeyState('T') & 0x0001)
-	{
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Effect"), TEXT("Prototype_GameObject_Particle_Red"))))
-			return;
-	}*/
-	
 }
 
 HRESULT CLevel_GamePlay::Render()
