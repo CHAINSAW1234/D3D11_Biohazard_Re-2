@@ -53,6 +53,13 @@ public:
 
 #pragma endregion
 
+#pragma region Move Direction
+	enum MOVE_DIR
+	{
+		MD_F,MD_B,MD_R,MD_L,MD_FR,MD_FL,MD_BR,MD_BL,MD_DEFAULT
+	};
+#pragma endregion
+
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CPlayer(const CPlayer& rhs);
@@ -128,6 +135,8 @@ public:
 	void										RayCasting_Camera();
 	void										Calc_YPosition_Camera();
 	void										Calc_Camera_Transform(_float fTimeDelta);
+	void										SetMoveDir();
+	void										ResetCamera();
 private:
 	class CCamera_Free*							m_pCamera = { nullptr };
 	_float4										m_vCameraPosition;
@@ -135,9 +144,14 @@ private:
 	_float										m_fLook_Dist_Look = { 1.f };
 	_float										m_fUp_Dist_Look = { 0.f };
 	_float										m_fRight_Dist_Look = { 0.f };
+	_float										m_fLook_Dist_Look_Default = { 1.f };
+	_float										m_fUp_Dist_Look_Default = { 0.f };
+	_float										m_fRight_Dist_Look_Default = { 0.f };
 	_float										m_fLook_Dist_Pos = { 0.f };
 	_float										m_fUp_Dist_Pos = { 0.f };
 	_float										m_fRight_Dist_Pos = { 0.f };
+	MOVE_DIR									m_eMoveDir = { MD_DEFAULT };
+	MOVE_DIR									m_ePrevMoveDir = { MD_DEFAULT };
 	CTransform*									m_pTransformCom_Camera = { nullptr };
 	_float										m_fMouseSensor = { 0.0f };
 

@@ -184,16 +184,67 @@ void CPlayer::Tick(_float fTimeDelta)
 			m_bMove_Backward = false;
 		}
 
+		if (PRESSING == m_pGameInstance->Get_KeyState('D'))
+		{
+			m_bMove_Right = true;
+			m_bMove = true;
+
+			if (m_bLerp_Move == false)
+			{
+				m_bLerp_Move = true;
+				m_bLerp = true;
+				m_fLerpTime = 0.f;
+			}
+		}
+		else
+		{
+			if (m_bMove_Right && m_bCollision_Lerp == false)
+			{
+				m_bLerp = true;
+				m_fLerpTime = 0.f;
+			}
+
+			m_bMove_Right = false;
+		}
+
+		if (PRESSING == m_pGameInstance->Get_KeyState('A'))
+		{
+			m_bMove_Left = true;
+			m_bMove = true;
+
+			if (m_bLerp_Move == false)
+			{
+				m_bLerp_Move = true;
+				m_bLerp = true;
+				m_fLerpTime = 0.f;
+			}
+		}
+		else
+		{
+			if (m_bMove_Left && m_bCollision_Lerp == false)
+			{
+				m_bLerp = true;
+				m_fLerpTime = 0.f;
+			}
+
+			m_bMove_Left = false;
+		}
+
 		_float4			vResultMoveDirFloat4 = {};
 		XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
 		m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
 	}
 
-	if (m_bMove_Backward == false && m_bMove_Forward == false)
+	if (m_bMove_Backward == false && m_bMove_Forward == false && m_bMove_Left == false && m_bMove_Right == false)
 	{
 		m_bLerp_Move = false;
 		m_bMove = false;
+
+		m_eMoveDir = MD_DEFAULT;
 	}
+
+	//For Camera.
+	SetMoveDir();
 
 #pragma region Camera
 
@@ -252,6 +303,13 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
 #endif
+
+#pragma region Camera Reset
+	if (UP == m_pGameInstance->Get_KeyState('C'))
+	{
+		ResetCamera();
+	}
+#pragma endregion
 }
 
 HRESULT CPlayer::Render()
@@ -313,7 +371,7 @@ void CPlayer::Update_FSM()
 {
 	if (m_pGameInstance->Get_KeyState(VK_RBUTTON) == PRESSING)
 		Change_State(HOLD);
-	else 
+	else
 		Change_State(MOVE);
 }
 
@@ -356,6 +414,78 @@ _float CPlayer::Get_CamDegree()
 	return Cal_Degree_From_Directions_Between_Min180_To_180(vPlayerLook, vCamLook);
 }
 
+void CPlayer::SetMoveDir()
+{
+	//F
+	if (m_bMove_Forward == true && m_bMove_Backward == false && m_bMove_Right == false && m_bMove_Left == false)
+	{
+		m_eMoveDir = MD_F;
+	}
+
+	//B
+	if (m_bMove_Forward == false && m_bMove_Backward == true && m_bMove_Right == false && m_bMove_Left == false)
+	{
+		m_eMoveDir = MD_B;
+	}
+
+	//R
+	if (m_bMove_Forward == false && m_bMove_Backward == false && m_bMove_Right == true && m_bMove_Left == false)
+	{
+		m_eMoveDir = MD_R;
+	}
+
+	//L
+	if (m_bMove_Forward == false && m_bMove_Backward == false && m_bMove_Right == false && m_bMove_Left == true)
+	{
+		m_eMoveDir = MD_L;
+	}
+
+	//FR
+	if (m_bMove_Forward == true && m_bMove_Backward == false && m_bMove_Right == true && m_bMove_Left == false)
+	{
+		m_eMoveDir = MD_FR;
+	}
+
+	//FL
+	if (m_bMove_Forward == true && m_bMove_Backward == false && m_bMove_Right == false && m_bMove_Left == true)
+	{
+		m_eMoveDir = MD_FL;
+	}
+
+	//BR
+	if (m_bMove_Forward == false && m_bMove_Backward == true && m_bMove_Right == true && m_bMove_Left == false)
+	{
+		m_eMoveDir = MD_BR;
+	}
+
+	//BL
+	if (m_bMove_Forward == false && m_bMove_Backward == true && m_bMove_Right == false && m_bMove_Left == true)
+	{
+		m_eMoveDir = MD_BL;
+	}
+
+	if (m_eMoveDir != m_ePrevMoveDir)
+	{
+		m_fLerpTime = 0.f;
+	}
+
+	m_ePrevMoveDir = m_eMoveDir;
+}
+
+void CPlayer::ResetCamera()
+{
+	auto Char_RotMat = m_pTransformCom->Get_RotationMatrix_Pure();
+	m_pTransformCom_Camera->Set_RotationMatrix_Pure(Char_RotMat);
+
+	m_fRight_Dist_Look = m_fRight_Dist_Look_Default;
+	m_fUp_Dist_Look = m_fRight_Dist_Look_Default;
+	m_fLook_Dist_Look = m_fLook_Dist_Look_Default;
+
+	m_fLerpAmount_Right = m_fRight_Dist_Look;
+	m_fLerpAmount_Up = m_fUp_Dist_Look;
+	m_fLerpAmount_Look = m_fLook_Dist_Look;
+}
+
 #pragma endregion
 
 void CPlayer::Calc_YPosition_Camera()
@@ -377,9 +507,9 @@ void CPlayer::Calc_Camera_Transform(_float fTimeDelta)
 
 	auto Pos = m_pCamera->Get_Position_Float4();
 
-
-	if (m_bMove_Forward)
+	switch (m_eMoveDir)
 	{
+	case MD_F:
 		if (m_bAim)
 		{
 			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.85f, m_fLerpTime);
@@ -390,36 +520,140 @@ void CPlayer::Calc_Camera_Transform(_float fTimeDelta)
 		}
 		else
 		{
-			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 1.35f, m_fLerpTime);
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 1.15f, m_fLerpTime);
 			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos, m_fLerpTime);
 			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
 
-			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 1.35f);
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 1.15f);
 		}
-	}
-
-	if (m_bMove_Backward)
-	{
+		break;
+	case MD_B:
 		if (m_bAim)
 		{
-			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.35f, m_fLerpTime);
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.4f, m_fLerpTime);
 			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos, m_fLerpTime);
 			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
 
-			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.35f);
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.4f);
+		}
+		else
+		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.9f, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
+
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.9f);
+		}
+		break;
+	case MD_R:
+		if (m_bAim)
+		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.5f, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos * 0.55f, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
+
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos * 0.55f) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.5f);
+		}
+		else
+		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos * 0.55f, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
+
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos * 0.55f) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos);
+		}
+		break;
+	case MD_L:
+		if (m_bAim)
+		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.5f, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos * 1.45f, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
+
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos * 1.45f) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.5f);
+		}
+		else
+		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos * 1.45f, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
+
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos * 1.45f) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos);
+		}
+		break;
+	case MD_FR:
+		if (m_bAim)
+		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.85f, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos * 0.55f, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
+
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos * 0.55f) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.85f);
+		}
+		else
+		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 1.15f, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos * 0.55f, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
+
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos * 0.55f) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 1.15f);
+		}
+		break;
+	case MD_FL:
+		if (m_bAim)
+		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.85f, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos * 1.45f, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
+
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos * 1.45f) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.85f);
+		}
+		else
+		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 1.15f, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos * 1.45f, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
+
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos * 1.45f) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 1.15f);
+		}
+		break;
+	case MD_BR:
+		if (m_bAim)
+		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.4f, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos * 0.55f, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
+
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos * 0.55f) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.4f);
 		}
 		else
 		{
 			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.85f, m_fLerpTime);
-			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos * 0.55f, m_fLerpTime);
 			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
 
-			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.85f);
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos * 0.55f) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.85f);
 		}
-	}
+		break;
+	case MD_BL:
+		if (m_bAim)
+		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.4f, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos * 1.45f, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
 
-	if (m_bMove == false)
-	{
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos * 1.45f) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.4f);
+		}
+		else
+		{
+			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.85f, m_fLerpTime);
+			m_fLerpAmount_Right = Lerp(m_fLerpAmount_Right, m_fRight_Dist_Pos * 1.45f, m_fLerpTime);
+			m_fLerpAmount_Up = Lerp(m_fLerpAmount_Up, m_fUp_Dist_Pos, m_fLerpTime);
+
+			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos * 1.45f) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos * 0.85f);
+		}
+		break;
+	case MD_DEFAULT:
 		if (m_bAim)
 		{
 			m_fLerpAmount_Look = Lerp(m_fLerpAmount_Look, m_fLook_Dist_Pos * 0.5f, m_fLerpTime);
@@ -436,8 +670,8 @@ void CPlayer::Calc_Camera_Transform(_float fTimeDelta)
 
 			m_vCameraPosition = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fRight_Dist_Pos) + XMVectorScale(XMVector4Normalize(vUp), m_fUp_Dist_Pos) + XMVectorScale(XMVector4Normalize(vLook), m_fLook_Dist_Pos);
 		}
+		break;
 	}
-
 
 	if (m_bCollision_Lerp == false)
 	{
@@ -564,26 +798,9 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 				auto Camera_Look = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_LOOK);
 				auto Camera_Parallel_Look = XMVectorSetY(Camera_Look, 0.f);
 
-				/*if (m_bLerp)
-				{
-					auto CamPos = m_pCamera->Get_Position_Float4();
-					auto RotatePos = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION);
-					CamPos = Axis_Rotate_Vector(CamPos, _float4(0.f,1.f,0.f,0.f), RotatePos, m_fRotate_Amount_X);
-					CamPos = Axis_Rotate_Vector(CamPos, m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT), RotatePos, m_fRotate_Amount_Y);
-					m_pCamera->SetPosition(CamPos);
-				}*/
-
 				if (abs(GetAngleBetweenVectors_Radians(Camera_Look, Camera_Parallel_Look)) > 1.f)
 				{
 					m_pTransformCom_Camera->Turn(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT), -m_fRotate_Amount_Y);
-
-					/*if (m_bLerp)
-					{
-						auto CamPos = m_pCamera->Get_Position_Float4();
-						auto RotatePos = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_POSITION);
-						CamPos = Axis_Rotate_Vector(CamPos, m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT), RotatePos, -m_fRotate_Amount_Y);
-						m_pCamera->SetPosition(CamPos);
-					}*/
 				}
 			}
 		}
@@ -656,7 +873,8 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 
 HRESULT CPlayer::Ready_Camera()
 {
-	m_pCamera = dynamic_cast<CCamera_Free*>(*(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_ZZZCamera")).begin());
+	if (m_pCamera == nullptr)
+		m_pCamera = dynamic_cast<CCamera_Free*>(*(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_ZZZCamera")).begin());
 
 	if (m_pCamera == nullptr)
 		return E_FAIL;
@@ -705,6 +923,10 @@ void CPlayer::Load_CameraPosition()
 	File.read((char*)&m_fRight_Dist_Look, sizeof(_float));
 	File.read((char*)&m_fUp_Dist_Look, sizeof(_float));
 	File.read((char*)&m_fLook_Dist_Look, sizeof(_float));
+
+	m_fRight_Dist_Look_Default = m_fRight_Dist_Look;
+	m_fUp_Dist_Look_Default = m_fUp_Dist_Look;
+	m_fLook_Dist_Look_Default = m_fLook_Dist_Look;
 
 	m_fUp_Dist_Look -= CONTROLLER_GROUND_GAP;
 
