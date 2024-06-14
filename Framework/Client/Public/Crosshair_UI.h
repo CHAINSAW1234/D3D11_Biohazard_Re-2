@@ -38,9 +38,13 @@ private :
 	_float					m_fCrosshair_Aiming_Ready_Distance	= { 12.f }; /* 조준 완료 전 대기 거리*/
 	_float4					m_fCorsshair_AimPoint				= {}; /* 조준 목표점 */
 
+	_float3					m_fFixed_MinScaled						= {}; /* 최소 스케일 고정*/
+
+
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };
+
 

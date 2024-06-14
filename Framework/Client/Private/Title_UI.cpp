@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Title_UI.h"
 
-#define ALPHE_ZER           _float4(0, 0, 0, 0)
+#define ALHPE_ZERO           _float4(0, 0, 0, 0)
 #define FONT_LIGHT_COLOR    _float4(0.929f, 0.925f, 0.894f, 0)
 #define OPTION_MOVE_DISTANCE     30.f
 
@@ -28,7 +28,6 @@ HRESULT CTitle_UI::Initialize(void* pArg)
     자식 : Logo
     Text : BackGround 내부 
     */
-
     if (pArg != nullptr)
     {
         if (FAILED(__super::Initialize(pArg)))
@@ -70,13 +69,16 @@ HRESULT CTitle_UI::Initialize(void* pArg)
         {
             /* "게임 시작" Font라면,*/
             if (TEXT("게임 시작") == pText->Get_Text())
+            {
                 m_isGameStart_Text = true;
+                pText->Set_FontColor(ALHPE_ZERO);
+            }
            
             /* Option Font라면,*/
             else
             {
                 m_vOriginTextColor = pText->Get_FontColor();
-                pText->Set_FontColor(ALPHE_ZER);
+                pText->Set_FontColor(ALHPE_ZERO);
 
                 /*Position 저장 */
                 CTransform* pTextTrans = dynamic_cast<CTransform*>(pText->Get_Component(g_strTransformTag));
@@ -99,12 +101,33 @@ void CTitle_UI::Tick(_float fTimeDelta)
 
     /* 인 게임 안에 들어가기 시작할 때 :  폰트 움직임 */
     else if (true == m_pTitle_BackGround->m_isTitleGame_Start)
+    {
+        if(nullptr != m_pLogo)
+        {
+            if (m_pLogo->m_fCurrentColor_Timer >= 1.3f)
+            {
+                m_pLogo->m_isKeepPlay = true;
+                m_pLogo->m_isRender = false;
+            }
+        }
+
         InGame_Start(fTimeDelta);
+    }
 
     /* 옵션 창 안이라면, */
     if(true == m_isInOption)
         Option_Click(fTimeDelta);
         
+    if(true == m_IsChild)
+    {
+        if (!m_vecTextBoxes.empty())
+        {
+            CTextBox* pFont = m_vecTextBoxes.back();
+
+            _float4 result = m_fBlending * ALHPE_ZERO + (1 - m_fBlending) * m_vOriginTextColor;
+            pFont->Set_FontColor(result);
+        }
+    }
 }   
 
 void CTitle_UI::Late_Tick(_float fTimeDelta)
@@ -123,9 +146,9 @@ HRESULT CTitle_UI::Render()
 void CTitle_UI::TitleGame_Start()
 {
     /* 만약 로고의 플레이가 완료 되었다면, */
-    if (nullptr != m_pLogo &&true == m_pLogo->m_isPlay)
+    if (nullptr != m_pLogo && true == m_pLogo->m_isPlay)
     {
-        if (ALPHE_ZER == m_pLogo->m_vCurrentColor)
+        if (ALHPE_ZERO == m_pLogo->m_vCurrentColor)
         {
             if(nullptr != m_pTitle_BackGround)
                 m_pTitle_BackGround->m_isTitleGame_Start = true;

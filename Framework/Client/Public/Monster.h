@@ -12,7 +12,7 @@ END
 
 BEGIN(Client)
 
-class CMonster final : public CGameObject
+class CMonster : public CGameObject
 {
 public:
 	typedef struct tagMonsterDesc: public GAMEOBJECT_DESC
@@ -23,60 +23,60 @@ public:
 	enum COLLIDERTYPE { COLLIDER_HEAD, COLLIDER_BODY, COLLIDER_END };
 	enum PART_ID { PART_BODY, PART_FACE, PART_HAT, PART_PANTS, PART_SHIRTS, PART_END };
 
-private:
+protected:
 	CMonster(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CMonster(const CMonster& rhs);
 	virtual ~CMonster() = default;
 
 public:
-	virtual HRESULT				Initialize_Prototype() override;
-	virtual HRESULT				Initialize(void* pArg) override;
-	virtual void				Tick(_float fTimeDelta) override;
-	virtual void				Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT				Render() override;
+	virtual HRESULT						Initialize_Prototype() override;
+	virtual HRESULT						Initialize(void* pArg) override;
+	virtual void						Tick(_float fTimeDelta) override;
+	virtual void						Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT						Render() override;
 
-private:	/* Update_PartObjects */
-	void						Priority_Tick_PartObjects(_float fTimeDelta);
-	void						Tick_PartObjects(_float fTimeDelta);
-	void						Late_Tick_PartObjects(_float fTimeDelta);
+protected:	/* Update_PartObjects */
+	void								Priority_Tick_PartObjects(_float fTimeDelta);
+	void								Tick_PartObjects(_float fTimeDelta);
+	void								Late_Tick_PartObjects(_float fTimeDelta);
 
 public:		/* Access_PartObjects */
-	CModel*						Get_Model_From_PartObject(PART_ID eID);
+	CModel*								Get_Model_From_PartObject(PART_ID eID);
 
 
 public://For AIController
-	void						Init_BehaviorTree_Zombie();
+	virtual void						Init_BehaviorTree_Zombie() {}
 
-private:
-	CModel*						m_pModelCom = { nullptr };
-	CShader*					m_pShaderCom = { nullptr };	
-	CCollider*					m_pColliderCom[COLLIDER_END] = { nullptr };
-	CNavigation*				m_pNavigationCom = { nullptr };
+protected:
+	CModel*								m_pModelCom = { nullptr };
+	CShader*							m_pShaderCom = { nullptr };	
+	CCollider*							m_pColliderCom[COLLIDER_END] = { nullptr };
+	CNavigation*						m_pNavigationCom = { nullptr };
 	
-	_int						m_iIndex = { 0 };
-	MONSTER_TYPE				m_eType = { MONSTER_TYPE::MT_DEFAULT };
+	_int								m_iIndex = { 0 };
+	MONSTER_TYPE						m_eType = { MONSTER_TYPE::MT_DEFAULT };
 	
-private: // For AIController
-	_uint						m_iAIController_ID = { 0 };
-	class CBehaviorTree*		m_pBehaviorTree = { nullptr };
-	class CPathFinder*			m_pPathFinder = { nullptr };
+protected: // For AIController
+	_uint								m_iAIController_ID = { 0 };
+	class CBehaviorTree*				m_pBehaviorTree = { nullptr };
+	class CPathFinder*					m_pPathFinder = { nullptr };
 
 	//For Move
-	_bool						m_bArrived = { false };
-	_float4						m_vNextTarget;
-	_float4						m_vDir;
+	_bool								m_bArrived = { false };
+	_float4								m_vNextTarget;
+	_float4								m_vDir;
 
-	_float3						m_vRootTranslation = {};		/* For RootMotion */
+	_float3								m_vRootTranslation = {};		/* For RootMotion */
 
-	vector<class CPartObject*>	m_PartObjects;
+	vector<class CPartObject*>			m_PartObjects;
 	
-private:
-	HRESULT						Add_Components();
-	HRESULT						Bind_ShaderResources();
-	HRESULT						Add_PartObjects();
+protected:
+	virtual HRESULT						Add_Components();
+	virtual HRESULT						Bind_ShaderResources();
+	virtual HRESULT						Add_PartObjects();
 
-private:	/* Initialize_PartObjects_Models */
-	virtual HRESULT 			Initialize_PartModels();
+protected:	/* Initialize_PartObjects_Models */
+	virtual HRESULT 					Initialize_PartModels();
 
 public:
 	static CMonster* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

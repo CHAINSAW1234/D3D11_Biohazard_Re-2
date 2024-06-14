@@ -20,6 +20,7 @@ public:
 
 
 private :
+	void				Render_HPBar();
 	void				Operation_HPBar(_float fTimeDelta);
 
 
@@ -27,6 +28,9 @@ private :
 	void				BackGroundBar(_float fTimeDelta);
 	void				Change_HP(HP_TYPE _type);
 
+private :
+	void				Find_Main_Inventory();
+	void				HPBar_Position_Setting(_bool _main);
 
 private : /* Mask 관련*/
 	_float4						m_vDefaultColor_Origin	= {};
@@ -37,8 +41,13 @@ private : /* Mask 관련*/
 	_uint						m_iColorMask_Cnt		= { 2 };
 	_uint						m_iCurrent_ColorMask_Cnt = { 0 };
 
+
 private : 
 	CHPBar_UI*					m_pMainBar				= { nullptr };
+	class CInventory_Item_UI*	m_pMain_Inventory = { nullptr };
+
+	_float2						m_fDistance_Font = {};
+
 
 private :
 	CCustomize_UI::HPBAR_TYPE	m_eHPBar		= { HPBAR_TYPE::END_BAR };
