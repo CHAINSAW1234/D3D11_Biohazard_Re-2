@@ -3,7 +3,7 @@
 
 #include "FSM.h"
 #include "Player_State_Move.h"
-
+#include "Player_State_Hold.h"
 
 #include "Body_Player.h"
 #include "Head_Player.h"
@@ -230,6 +230,8 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region 현진 추가
 	m_pFSMCom->Update(fTimeDelta);
+
+	Update_FSM();
 #pragma endregion
 
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
@@ -301,10 +303,20 @@ CModel* CPlayer::Get_Body_Model()
 {
 	return static_cast<CModel*>(m_PartObjects[0]->Get_Component(g_strModelTag));
 }
+
 void CPlayer::Change_State(STATE eState)
 {
 	m_pFSMCom->Change_State(eState);
 }
+
+void CPlayer::Update_FSM()
+{
+	if (m_pGameInstance->Get_KeyState(VK_RBUTTON) == PRESSING)
+		Change_State(HOLD);
+	else 
+		Change_State(MOVE);
+}
+
 #pragma endregion
 
 void CPlayer::Calc_YPosition_Camera()
@@ -578,21 +590,27 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 
 	Calc_Camera_Transform(fTimeDelta);
 
-	POINT ptPos = {};
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
+		m_bMouseCursorClip = !m_bMouseCursorClip;
 
-	GetCursorPos(&ptPos);
-	ScreenToClient(g_hWnd, &ptPos);
+	if (true == m_bMouseCursorClip)
+	{
+		POINT ptPos = {};
 
-	RECT rc = {};
-	GetClientRect(g_hWnd, &rc);
+		GetCursorPos(&ptPos);
+		ScreenToClient(g_hWnd, &ptPos);
 
-	ptPos.x = _long(_float(rc.right - rc.left) * 0.5f);
-	ptPos.y = _long(_float(rc.bottom - rc.top) * 0.5f);
+		RECT rc = {};
+		GetClientRect(g_hWnd, &rc);
 
-	m_pGameInstance->Set_MouseCurPos(ptPos);
+		ptPos.x = _long(_float(rc.right - rc.left) * 0.5f);
+		ptPos.y = _long(_float(rc.bottom - rc.top) * 0.5f);
 
-	ClientToScreen(g_hWnd, &ptPos);
-	SetCursorPos(ptPos.x, ptPos.y);
+		m_pGameInstance->Set_MouseCurPos(ptPos);
+
+		ClientToScreen(g_hWnd, &ptPos);
+		SetCursorPos(ptPos.x, ptPos.y);
+	}
 
 	return;
 }
@@ -755,6 +773,8 @@ HRESULT CPlayer::Add_FSM_States()
 
 
 	m_pFSMCom->Add_State(MOVE, CPlayer_State_Move::Create(this));
+
+	m_pFSMCom->Add_State(HOLD, CPlayer_State_Hold::Create(this));
 	m_pFSMCom->Change_State(MOVE);
 
 	return S_OK;

@@ -2,9 +2,10 @@
 #include "GameInstance.h"
 #include "Is_Character_In_Range_Zombie.h"
 
-CIs_Character_In_Range_Zombie::CIs_Character_In_Range_Zombie(): m_pGameInstance{ CGameInstance::Get_Instance() }
+CIs_Character_In_Range_Zombie::CIs_Character_In_Range_Zombie()
+	: CDecorator_Node()
 {
-	Safe_AddRef(m_pGameInstance);
+
 }
 
 CIs_Character_In_Range_Zombie::CIs_Character_In_Range_Zombie(const CIs_Character_In_Range_Zombie& rhs)
@@ -37,5 +38,5 @@ CIs_Character_In_Range_Zombie* CIs_Character_In_Range_Zombie::Create()
 
 void CIs_Character_In_Range_Zombie::Free()
 {
-	Safe_Release(m_pGameInstance);
+	__super::Free();
 }

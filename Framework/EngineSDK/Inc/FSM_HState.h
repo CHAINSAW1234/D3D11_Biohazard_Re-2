@@ -19,6 +19,7 @@ public:
 	virtual void						Start();
 
 	virtual void						Change_State(_uint iState);
+	void								Reset_State();
 	void								Add_State(_uint iState, CFSM_State* pInitState);
 	CFSM_State*							Find_State(_uint iState);
 

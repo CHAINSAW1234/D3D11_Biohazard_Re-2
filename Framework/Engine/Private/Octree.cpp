@@ -940,6 +940,9 @@ void COctree::Render_Node(CModel* pRootWorld, CShader* pShader)
 				}
 			}
 		}
+
+		m_pOctreeNodes[i]->m_bRender = false;
+		m_pOctreeNodes[i]->m_vecEntryNode.clear();
 	}
 }
 
@@ -990,9 +993,6 @@ void COctree::Render_Node_LightDepth_Spot(CModel* pRootWorld, CShader* pShader)
 				}
 			}
 		}
-
-		m_pOctreeNodes[i]->m_bRender = false;
-		m_pOctreeNodes[i]->m_vecEntryNode.clear();
 	}
 }
 

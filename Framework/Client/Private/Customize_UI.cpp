@@ -96,6 +96,9 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 	m_fSplit			= 1;
 	m_isLoad			= true;
 
+	/* ▶ 만약 보간 과정에서 하얀 게 보인다면 
+	> Blending 하는 과정에서 알파를 1로 주지 않았는 지 확인, */
+
 	return S_OK;
 }
 
@@ -291,7 +294,6 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_Split", &m_fSplit, sizeof(float))))
 		return E_FAIL;
 
-
 	// Mask
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_isMask", &m_isMask, sizeof(_bool))))
 		return E_FAIL;
@@ -437,6 +439,16 @@ void CCustomize_UI::Set_Dead(_bool bDead)
 		iter->Set_Dead(bDead);
 }
 
+void CCustomize_UI::Set_IsLoad(_bool IsLoad)
+{
+	m_isLoad = IsLoad;
+
+	for (auto& iter : m_vecChildUI)
+	{
+		dynamic_cast<CCustomize_UI*>(iter)->Set_IsLoad(IsLoad);
+	}
+}
+
 _bool CCustomize_UI::Select_UI()
 {
 	_float2 mouse = m_pGameInstance->Get_ViewMousePos();
@@ -480,7 +492,10 @@ HRESULT CCustomize_UI::Change_Texture(const wstring& strPrototypeTag, const wstr
 
 void CCustomize_UI::Non_Frame()
 {
-	/* ▶ 보간이 필요하지 않다면 */
+	/* ▶ 보간이 필요하지 않다면
+		=> 정확하게는 Client가 직접 Play를 지정해주기 위해서,
+		Shader에서 실시간으로 변환시켜줄 변수 = 내가 처음 지정했던 변수
+		를 넣어주는 과정임 */
 	m_vCurrentColor = m_vColor[0].vColor;
 	m_fBlending = m_vColor[0].fBlender_Value;
 	m_fSplit = m_vColor[0].fSplit;
@@ -521,7 +536,6 @@ void CCustomize_UI::Color_Frame(_float fTimeDelta)
 	{
 		Frame_Defalut(fRatio, fColorRatio);
 	}
-	/* ▶ 보간 Type */
 	else
 	{
 		if (m_iEndingType == PLAY_BUTTON::PLAY_DEFAULT)
@@ -538,29 +552,9 @@ void CCustomize_UI::Color_Frame(_float fTimeDelta)
 		{
 			Frame_Cut(fRatio, fColorRatio);
 		}
-
-		/* ▶ 컬러 간의 간격*/
-		if (m_fCurrentColor_Timer >= m_fColorTimer_Limit)
-		{
-			if (m_iColorCurNum >= 10)
-				m_iColorCurNum = 0;
-
-			if (m_iEndingType == PLAY_BUTTON::PLAY_CHANGE)
-			{
-				// 모든 배열을 도달했다면
-				if ((_int)m_iColorCurNum > m_iColorMaxNum)
-					m_iColorCurNum = (_uint)m_iColorMaxNum;
-			}
-
-			m_iColorCurNum++;
-
-			// 모든 배열을 도달했다면
-			if ((_int)m_iColorCurNum > m_iColorMaxNum)
-				m_iColorCurNum = 0;
-
-			m_fCurrentColor_Timer = 0.f;
-		}
 	}
+
+	Frame_Reset();
 }
 
 void CCustomize_UI::State_Control(_float fTimeDelta)
@@ -815,6 +809,49 @@ _matrix CCustomize_UI::LerpMatrix(_matrix A, _matrix B, _float t)
 	}
 
 	return result;
+}
+
+void CCustomize_UI::Frame_Stop(_bool _stop)
+{
+	if (true == _stop)
+	{
+		m_isKeepPlay = true;
+		return;
+	}
+	else
+		m_iColorCurNum = 0.f;
+}
+
+void CCustomize_UI::Frame_Reset()
+{
+	/* ▶ 만약 Play 멈추고 싶다면 m_isKeepPlay 함수를 사용하면 된다.*/
+	if (true == m_isKeepPlay)
+	{
+		m_iColorCurNum = m_iColorMaxNum;
+		return;
+	}
+
+	/* ▶ 컬러 간의 간격*/
+	if (m_fCurrentColor_Timer >= m_fColorTimer_Limit)
+	{
+		if (m_iColorCurNum >= 10)
+			m_iColorCurNum = 0;
+
+		if (m_iEndingType == PLAY_BUTTON::PLAY_CHANGE)
+		{
+			// 모든 배열을 도달했다면
+			if ((_int)m_iColorCurNum > m_iColorMaxNum)
+				m_iColorCurNum = (_uint)m_iColorMaxNum;
+		}
+
+		m_iColorCurNum++;
+
+		// 모든 배열을 도달했다면
+		if ((_int)m_iColorCurNum > m_iColorMaxNum)
+			m_iColorCurNum = 0;
+
+		m_fCurrentColor_Timer = 0.f;
+	}
 }
 
 void CCustomize_UI::PushBack_Child(CGameObject* pGameOBJ)
@@ -1152,4 +1189,111 @@ HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* p
 
 
 	return S_OK;
+}
+
+void CCustomize_UI::ExtractData_FromDat(ifstream& inputFileStream, vector<CUSTOM_UI_DESC>* pvecdesc, _bool IsFirst)
+{
+	CCustomize_UI::CUSTOM_UI_DESC CustomizeUIDesc;
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoad), sizeof(_bool));
+
+	_char DefaultTexturePath[MAX_PATH] = "";
+	_char DefaultTextureTag[MAX_PATH] = "";
+	_char MaskTexturePath[MAX_PATH] = "";
+	_char MaskTextureTag[MAX_PATH] = "";
+
+	inputFileStream.read(reinterpret_cast<_char*>(DefaultTexturePath), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(DefaultTextureTag), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(MaskTexturePath), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(MaskTextureTag), sizeof(_char) * MAX_PATH);
+
+	CustomizeUIDesc.wstrDefaultTexturPath = wstring(DefaultTexturePath, DefaultTexturePath + strlen(DefaultTexturePath));
+	CustomizeUIDesc.wstrDefaultTexturComTag = wstring(DefaultTextureTag, DefaultTextureTag + strlen(DefaultTextureTag));
+	CustomizeUIDesc.wstrMaskPath = wstring(MaskTexturePath, MaskTexturePath + strlen(MaskTexturePath));
+	CustomizeUIDesc.wstrMaskComTag = wstring(MaskTextureTag, MaskTextureTag + strlen(MaskTextureTag));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.worldMatrix), sizeof(_float4x4));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.vSize), sizeof(_float2));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isPlay), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fColorTimer_Limit), sizeof(_float));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iEndingType), sizeof(_int));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fMaxFrame), sizeof(_float));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isFrame), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoopStart), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoop), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoopStop), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.ReStart), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iColorMaxNum), sizeof(_uint));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iTextBoxCount), sizeof(_uint));
+
+	for (_uint i = 0; i <= CustomizeUIDesc.iColorMaxNum; i++)
+	{
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.SavePos[i]), sizeof(_float4x4));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.vColor[i]), sizeof(CCustomize_UI::Value_Color));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.Mask[i]), sizeof(CCustomize_UI::Value_Mask));
+	}
+
+	for (_uint i = 0; i < CustomizeUIDesc.iTextBoxCount; i++)
+	{
+		CTextBox::TextBox_DESC TextBoxDesc = {};
+
+		_tchar FontString[MAX_PATH] = L"";
+
+		_char FontType[MAX_PATH] = "";
+
+		inputFileStream.read(reinterpret_cast<_char*>(FontString), sizeof(_tchar) * MAX_PATH);
+
+		inputFileStream.read(reinterpret_cast<_char*>(FontType), sizeof(_char) * MAX_PATH);
+
+		TextBoxDesc.wstrText = FontString;
+
+		TextBoxDesc.wstrFontType = wstring(FontType, FontType + strlen(FontType));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vFontColor), sizeof(_vector));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.iFontSize), sizeof(_uint));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vPos), sizeof(_float3));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vSize), sizeof(_float2));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.isOuterLine), sizeof(_bool));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vOutLineColor), sizeof(_vector));
+
+		CustomizeUIDesc.vecTextBoxDesc.push_back(TextBoxDesc);
+	}
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.IsChild), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iChild), sizeof(_int));
+
+	pvecdesc->push_back(CustomizeUIDesc);
+
+	if (true == 0 < CustomizeUIDesc.iChild)
+	{
+		for (_int i = 0; i < CustomizeUIDesc.iChild; i++)
+		{
+			ExtractData_FromDat(inputFileStream, pvecdesc, false);
+		}
+	}
+
+	if (true == IsFirst)
+	{
+		inputFileStream.close();
+	}
 }

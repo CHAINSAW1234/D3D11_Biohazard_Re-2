@@ -73,9 +73,6 @@
     <Filter Include="02.GameObjects\UI">
       <UniqueIdentifier>{9832ad11-317f-47c4-a17f-42e4a22153a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\TextBox">
-      <UniqueIdentifier>{abdbf2c9-92cc-4833-ac49-54faee5a66fd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\CustomCollider">
       <UniqueIdentifier>{66bce26c-c0c8-4789-bb6a-591f64bef163}</UniqueIdentifier>
     </Filter>
@@ -130,32 +127,44 @@
     <Filter Include="02.GameObjects\UI\2. Cursor">
       <UniqueIdentifier>{a6a85258-66c2-4d03-a771-07c4fb843049}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Tab_Window">
-      <UniqueIdentifier>{ea70fdf9-35f3-4236-9447-ce5555b4d60b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\0. Customize_UI">
       <UniqueIdentifier>{0740d5c9-1780-400c-9d38-ca84c8f26b22}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UI\3. HP Bar">
       <UniqueIdentifier>{0c7a9a8f-c48d-4e15-99be-fe77c934ffef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\4. Bullet">
-      <UniqueIdentifier>{dc11b041-87e7-45d1-a117-42f0a760c3d0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\5. Title">
-      <UniqueIdentifier>{69425a38-73a5-48a8-9615-1813782dd9e5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\6. MissionBar">
-      <UniqueIdentifier>{5ef54c33-f262-44ff-abd9-708bb98bc07a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\4. Button">
       <UniqueIdentifier>{7fc90c93-6b32-4a7f-a9c8-c8b678069a93}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\Inventory">
+    <Filter Include="02.GameObjects\UI\5. Bullet">
+      <UniqueIdentifier>{dc11b041-87e7-45d1-a117-42f0a760c3d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\6. Title">
+      <UniqueIdentifier>{69425a38-73a5-48a8-9615-1813782dd9e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\7. MissionBar">
+      <UniqueIdentifier>{5ef54c33-f262-44ff-abd9-708bb98bc07a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\8. Tutorial">
+      <UniqueIdentifier>{c966f61c-ce9f-4c2e-8899-8c498903fefd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\9. Inventory">
       <UniqueIdentifier>{480eb32d-ce0b-4c0e-9e44-864624d90274}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\Inventory\1. Inventory Item">
+    <Filter Include="02.GameObjects\UI\9. Inventory\1. Inventory Item">
       <UniqueIdentifier>{0ecab370-b1e7-4ba2-98ef-c2d58e26d1a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\7. TextBox">
+      <UniqueIdentifier>{abdbf2c9-92cc-4833-ac49-54faee5a66fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window">
+      <UniqueIdentifier>{ea70fdf9-35f3-4236-9447-ce5555b4d60b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager">
+      <UniqueIdentifier>{1bc643cf-ed81-4789-a287-ddeed43fb9bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\10. Selector">
+      <UniqueIdentifier>{a3e41bb2-6af9-484d-82ec-810385b14071}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Monster\Zombie">
       <UniqueIdentifier>{a3033983-1786-4311-8374-7759419d3fe1}</UniqueIdentifier>
@@ -171,6 +180,9 @@
     </Filter>
     <Filter Include="AIController\Zombie\Header_Package">
       <UniqueIdentifier>{963422fe-d604-40e9-916c-97d953096cd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle">
+      <UniqueIdentifier>{ff8fd778-7dfc-4f28-aa3c-7e33181c9fc9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -253,7 +265,7 @@
       <Filter>02.GameObjects\UI\0. Customize_UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TextBox.h">
-      <Filter>02.GameObjects\UI\TextBox</Filter>
+      <Filter>02.GameObjects\UI\7. TextBox</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CustomCollider.h">
       <Filter>02.GameObjects\CustomCollider</Filter>
@@ -270,9 +282,6 @@
     <ClInclude Include="..\Public\Player_State_Move_Walk.h">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Body_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Map.h">
       <Filter>02.GameObjects\Map</Filter>
     </ClInclude>
@@ -283,13 +292,13 @@
       <Filter>02.GameObjects\UI\2. Cursor</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Inventory.h">
-      <Filter>02.GameObjects\UI\Inventory</Filter>
+      <Filter>02.GameObjects\UI\9. Inventory</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Inventory_Item_UI.h">
-      <Filter>02.GameObjects\UI\Inventory\1. Inventory Item</Filter>
+      <Filter>02.GameObjects\UI\9. Inventory\1. Inventory Item</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Tab_Window.h">
-      <Filter>02.GameObjects\Tab_Window</Filter>
+      <Filter>02.GameObjects\UI\99. Tab_Window</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\HPBar_UI.h">
       <Filter>02.GameObjects\UI\3. HP Bar</Filter>
@@ -298,18 +307,35 @@
       <Filter>02.GameObjects\UI\4. Button</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Bullet_UI.h">
-      <Filter>02.GameObjects\UI\4. Bullet</Filter>
+      <Filter>02.GameObjects\UI\5. Bullet</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Title_UI.h">
-      <Filter>02.GameObjects\UI\5. Title</Filter>
+      <Filter>02.GameObjects\UI\6. Title</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MissionBar_UI.h">
-      <Filter>02.GameObjects\UI\6. MissionBar</Filter>
+      <Filter>02.GameObjects\UI\7. MissionBar</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_State_Move_Jog.h">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
     </ClInclude>
-    <ClInclude Include="CTest.h" />
+    <ClInclude Include="..\Public\Tutorial_UI.h">
+      <Filter>02.GameObjects\UI\8. Tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Selector_UI.h">
+      <Filter>02.GameObjects\UI\10. Selector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Inventory_Manager.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Hold_Idle.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Hold.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Face_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\Face</Filter>
     </ClInclude>
@@ -319,17 +345,17 @@
     <ClInclude Include="..\Public\Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MoveTo_Zombie.h">
-      <Filter>AIController\Zombie\Task</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Header_Package_Zombie.h">
-      <Filter>AIController\Zombie\Header_Package</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\BlackBoard_Zombie.h">
       <Filter>AIController\Zombie\BlackBoard</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Character_In_Range_Zombie.h">
       <Filter>AIController\Zombie\Decorator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MoveTo_Zombie.h">
+      <Filter>AIController\Zombie\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Header_Package_Zombie.h">
+      <Filter>AIController\Zombie\Header_Package</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -397,7 +423,7 @@
       <Filter>02.GameObjects\UI\0. Customize_UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TextBox.cpp">
-      <Filter>02.GameObjects\UI\TextBox</Filter>
+      <Filter>02.GameObjects\UI\7. TextBox</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CustomCollider.cpp">
       <Filter>02.GameObjects\CustomCollider</Filter>
@@ -414,9 +440,6 @@
     <ClCompile Include="..\Private\Player_State_Move_Walk.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Body_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Map.cpp">
       <Filter>02.GameObjects\Map</Filter>
     </ClCompile>
@@ -427,13 +450,13 @@
       <Filter>02.GameObjects\UI\2. Cursor</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Inventory.cpp">
-      <Filter>02.GameObjects\UI\Inventory</Filter>
+      <Filter>02.GameObjects\UI\9. Inventory</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Inventory_Item_UI.cpp">
-      <Filter>02.GameObjects\UI\Inventory\1. Inventory Item</Filter>
+      <Filter>02.GameObjects\UI\9. Inventory\1. Inventory Item</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Tab_Window.cpp">
-      <Filter>02.GameObjects\Tab_Window</Filter>
+      <Filter>02.GameObjects\UI\99. Tab_Window</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\HPBar_UI.cpp">
       <Filter>02.GameObjects\UI\3. HP Bar</Filter>
@@ -442,18 +465,35 @@
       <Filter>02.GameObjects\UI\4. Button</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Bullet_UI.cpp">
-      <Filter>02.GameObjects\UI\4. Bullet</Filter>
+      <Filter>02.GameObjects\UI\5. Bullet</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Title_UI.cpp">
-      <Filter>02.GameObjects\UI\5. Title</Filter>
+      <Filter>02.GameObjects\UI\6. Title</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MissionBar_UI.cpp">
-      <Filter>02.GameObjects\UI\6. MissionBar</Filter>
+      <Filter>02.GameObjects\UI\7. MissionBar</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_State_Move_Jog.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
     </ClCompile>
-    <ClCompile Include="CTest.cpp" />
+    <ClCompile Include="..\Private\Tutorial_UI.cpp">
+      <Filter>02.GameObjects\UI\8. Tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Selector_UI.cpp">
+      <Filter>02.GameObjects\UI\10. Selector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Inventory_Manager.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Hold_Idle.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Hold.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Clothes_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\Clothes</Filter>
     </ClCompile>
@@ -463,14 +503,14 @@
     <ClCompile Include="..\Private\Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\MoveTo_Zombie.cpp">
-      <Filter>AIController\Zombie\Task</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\BlackBoard_Zombie.cpp">
       <Filter>AIController\Zombie\BlackBoard</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Character_In_Range_Zombie.cpp">
       <Filter>AIController\Zombie\Decorator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MoveTo_Zombie.cpp">
+      <Filter>AIController\Zombie\Task</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

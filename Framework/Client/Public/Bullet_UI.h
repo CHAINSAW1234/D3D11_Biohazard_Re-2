@@ -3,12 +3,13 @@
 
 class CBullet_UI final : public CCustomize_UI
 {
-private :
+private:
 	enum class BULLET_TEXT_TYPE { CURRENT_BULLET, STORE_BULLET, END_BULLET };
 	struct Text
 	{
-		CTextBox* pText = {  };
+		CTextBox*	pText = {  };
 		_bool		isFull = { false };
+		_float4		vOriginTextColor = {};
 	};
 
 private:
@@ -23,16 +24,32 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-private :
+
+private:
 	void					Control_BulletU();
 	void					Change_BulletUI();
-private :
+	void					Render_Bullet_UI(_float fTimeDelta);
+
+	void					Find_Crosshair();
+
+private:
+	class CCrosshair_UI*	m_pCrosshair = { nullptr };
+
+private:
 	Text					m_pTextUI[2] = {};
 	_int					m_iStoreBullet = { 0 };
 	_int					m_iCurrentBullet = { 0 };
+	_float					m_fOrigin_Blending = {};
+
+	/* 원본 위치*/
 	_float4					m_fFull_CurrentBullet_Transform = {  };
 	_float4					m_fFull_StoreBullet_Transform = {  };
 	_float4					m_fOrigin_TextColor = {};
+
+	/* 시간*/
+	_float					m_fBulletTimer = {};
+	
+	_bool					m_isKeepCross = { false };
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

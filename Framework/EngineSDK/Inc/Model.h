@@ -105,14 +105,26 @@ public:
 	void									Set_Parent_CombinedMatrix_Ptr(string strBoneTag, _float4x4* pParentMatrix);
 	void									Set_Surbodinate(string strBoneTag, _bool isSurbodinate);
 
+public:		/* For. MeshControll */
+	_bool									Is_Hide_Mesh(string strMeshTag);
+	_bool									Is_Hide_Mesh(_uint iMeshIndex);
+
+	void									Hide_Mesh(_uint iMeshIndex, _bool isHide);
+	void									Hide_Mesh(string strMeshTag, _bool isHide);
+
+	_int									Find_Mesh_Index(string strMeshTag);
+	string									Find_Mesh_Tag(_uint iMeshIndex);
+
+	list<_uint>								Get_NonHideMeshIndices();
+
 public:		/* For. Access */
 	vector<string>							Get_BoneNames();
 	vector<_float4>							Get_Translations();
-	set<string>								Get_MeshTags();
+	vector<string>							Get_MeshTags();
 	list<_uint>								Get_MeshIndices(const string& strMeshTag);		//	이름이 같은 메쉬들이 각각의 칸에있을수있으므로 인덱스들을 컨테이너에 담아서 반환한다.
 	vector<CAnimation*>						Get_Animations() { return m_Animations; }
 	map<wstring, class CBone_Layer*>		Get_BoneLayers() { return m_BoneLayers; }
-	list<wstring>							Get_BoneLayer_Tags();
+	list<wstring>							Get_BoneLayer_Tags();	
 
 	_uint									Get_NumBones() { return static_cast<_uint>(m_Bones.size()); }
 	_uint									Get_NumMeshes() const { return m_iNumMeshes; }

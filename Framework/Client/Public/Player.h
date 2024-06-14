@@ -38,7 +38,16 @@ public:
 		STAIR_RUN_UP_LOOP, STAIR_RUN_DOWN_LOOP,
 		PIVOTTURN_L0, PIVOTTURN_L90, PIVOTTURN_L180,
 		PIVOTTURN_R0, PIVOTTURN_R90, PIVOTTURN_R180,
-		LIGHT_ON_OFF, WHEEL_L180, WHEEL_R180,
+		LIGHT_ON_OFF,
+		// 여기부터 Hold
+		STRAFEL_F, STRAFEL_L, STRAFEL_B, STRAFEL_R, STRAFER_L, STRAFER_R,
+		HOLD_START_L0, HOLD_START_L90, HOLD_START_L180,
+		HOLD_START_R0, HOLD_START_R90, HOLD_START_R180,
+		HOLD_IDLE_LOOP, WHEEL_L180, WHEEL_R180,
+		HOLD_SHOT, HOLD_SHOT_NO_AMMO, HOLD_RELOAD,
+		HOLSTERTOMOVE, MOVETOHOLSTER,
+
+
 		MOVE_END
 	};
 
@@ -74,11 +83,13 @@ public:
 
 	HRESULT										Add_FSM_States();
 	void										Change_State(STATE eState);
+	void										Update_FSM();
 private:
 	_bool m_isSpotlight = { false };
 
 	friend class CPlayer_State_Move_Walk;
 	friend class CPlayer_State_Move_Jog;
+	friend class CPlayer_State_Hold_Idle;
 #pragma endregion
 
 #pragma region 예은 추가 
@@ -154,6 +165,8 @@ private:
 	_float										m_fLerpAmount_Up = { 0.f };
 	_float										m_fLerpAmount_Look = { 0.f };
 	_bool										m_bCollision_Lerp = { false };
+
+	_bool										m_bMouseCursorClip = { true };
 
 private:
 	HRESULT Add_Components();

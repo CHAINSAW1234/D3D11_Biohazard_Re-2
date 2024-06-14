@@ -13,6 +13,7 @@
 #include "Tool_BoneLayer.h"
 #include "Tool_IK.h"
 #include "Tool_EventInserter.h"
+#include "Tool_MeshController.h"
 
 BEGIN(Tool)
 

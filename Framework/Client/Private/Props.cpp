@@ -104,6 +104,8 @@ HRESULT CProps::Render()
 {
 	if (m_bRender == false)
 		return S_OK;
+	else
+		m_bRender = false;
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -195,8 +197,6 @@ HRESULT CProps::Render_LightDepth_Spot()
 {
 	if (m_bRender == false)
 		return S_OK;
-	else
-		m_bRender = false;
 
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;

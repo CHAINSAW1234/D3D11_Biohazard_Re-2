@@ -116,6 +116,8 @@ protected :
 	void Frame_Cut(_float fRatio, _float fColorRatio);
 	_matrix LerpMatrix(_matrix A, _matrix B, _float t); // 보간 값 계산
 
+	void Frame_Stop(_bool _stop);
+	void Frame_Reset();
 public:
 	void PushBack_Child(CGameObject* pGameOBJ);
 	void PushBack_TextBox(CGameObject* pGameOBJ);
@@ -127,14 +129,13 @@ public:
 
 public :
 	_bool Select_UI();
-
 	virtual void Set_Dead(_bool bDead) override;
 
 
 public : /* Client */
-	_bool Get_Children() { return m_IsChild;  }
-	ITEM_BOX_TYPE Get_ItemBox_Type() { return m_eBox_Type;  }
-
+	_bool			Get_Children()		{ return m_IsChild;  }
+	ITEM_BOX_TYPE	Get_ItemBox_Type()	{ return m_eBox_Type;  }
+	INVENTORY_TYPE	Get_Inven_Type()	{ return m_eInventory_Type;  }
 
 public: /* Mask */
 	/* 저장할 Light State*/
@@ -259,6 +260,10 @@ public:// for. Set inline
 		m_isMultiTex = IsMultiTex;
 	}
 
+	void Set_InvenType(INVENTORY_TYPE eInvenType) { m_eInventory_Type = eInvenType; }
+
+	void Set_IsLoad(_bool IsLoad);
+
 public:/* for.Get Inline */
 	_float4x4* Get_StoreTransform(_uint i) { return &m_SavePos[i]; }
 	/* 현재 타이머*/
@@ -317,6 +322,9 @@ public:/* for.Get Inline */
 		return (&_desc);
 	}
 
+public : /* Clinet */
+	_bool		IsRender() { return m_isRender; }
+
 protected :
 	vector<class CTextBox*>		m_vecTextBoxes;
 
@@ -335,7 +343,8 @@ protected :
 protected :
 	_uint						m_iRenderGroup = { static_cast<_uint>(CRenderer::RENDER_UI) };
 
-protected : /* NY : Shader 변수 */
+#pragma region NY : Shader 변수
+protected :
 	_bool						m_isMovePoint = { false };
 	Value_Color					m_vColor[10] = {};	// 현재 Edit 상에서 보여지는 컬러
 	_float4x4					m_SavePos[10] = {};
@@ -396,6 +405,7 @@ protected :
 	_bool						m_isLoop = { false };
 	_bool						m_isLoopStop = { false };
 	_bool						m_ReStart = { false };
+#pragma endregion
 
 
 protected : /* Client*/
@@ -421,10 +431,12 @@ protected : /* Client*/
 	_float						m_fLightSize = {};
 	_bool						m_isLight = {};
 
+	_bool						m_isKeepPlay = {};
 public:
 	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	//생성한 객체를 포인터로 받고싶으면 사용하시오
 	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, CGameObject** ppOut, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static void ExtractData_FromDat(ifstream& inputFileStream, vector<CUSTOM_UI_DESC>* pvecdesc, _bool IsFirst);
 	virtual CGameObject* Clone(void* pArg) override = 0;
 	virtual void Free() override;
 };

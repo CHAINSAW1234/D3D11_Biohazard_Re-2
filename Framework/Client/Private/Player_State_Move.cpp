@@ -13,6 +13,7 @@ CPlayer_State_Move::CPlayer_State_Move(CPlayer* pPlayer)
 
 void CPlayer_State_Move::OnStateEnter()
 {
+	Change_State(IDLE);
 }
 
 void CPlayer_State_Move::OnStateUpdate(_float fTimeDelta)
@@ -26,7 +27,10 @@ void CPlayer_State_Move::OnStateUpdate(_float fTimeDelta)
 
 void CPlayer_State_Move::OnStateExit()
 {
-	Change_State(IDLE);
+	Reset_State();
+	m_eState = STATE_END;
+	
+	//Change_State(IDLE);
 }
 
 void CPlayer_State_Move::Start()
