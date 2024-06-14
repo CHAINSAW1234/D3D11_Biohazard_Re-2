@@ -95,7 +95,6 @@ void CCamera_Free::Tick(_float fTimeDelta)
 		SetCursorPos(ptPos.x, ptPos.y);
 	}*/
 
-	ClipCursor(NULL);
 	__super::Bind_PipeLines();
 }
 
