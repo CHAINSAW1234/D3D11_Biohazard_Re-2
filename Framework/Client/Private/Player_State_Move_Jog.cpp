@@ -4,7 +4,7 @@
 
 CPlayer_State_Move_Jog::CPlayer_State_Move_Jog(CPlayer* pPlayer)
 {
-    m_pPlayer = pPlayer;
+	m_pPlayer = pPlayer;
 }
 
 void CPlayer_State_Move_Jog::OnStateEnter()
@@ -27,7 +27,7 @@ void CPlayer_State_Move_Jog::OnStateUpdate(_float fTimeDelta)
 	Update_KeyInput();
 	Update_Degree();
 	Set_MoveAnimation(fTimeDelta);
-	Look_Cam(fTimeDelta);
+	//Look_Cam(fTimeDelta);
 }
 
 void CPlayer_State_Move_Jog::OnStateExit()
@@ -43,23 +43,27 @@ void CPlayer_State_Move_Jog::Update_KeyInput()
 {
 	DWORD dwDirection = 0;
 
-	if (m_pGameInstance->Get_KeyState('W') == PRESSING &&
-		m_pGameInstance->Get_KeyState('S') == PRESSING) {
+	if (m_pGameInstance->Get_KeyState('W') != NONE &&
+		m_pGameInstance->Get_KeyState('S') != NONE) {
 		;
 	}
-	else if (m_pGameInstance->Get_KeyState('W') == PRESSING)
+	else if (m_pGameInstance->Get_KeyState('W') != NONE) {
 		dwDirection |= FRONT;
-	else if (m_pGameInstance->Get_KeyState('S') == PRESSING)
+	}
+	else if (m_pGameInstance->Get_KeyState('S') != NONE) {
 		dwDirection |= BACK;
+	}
 
-	if (m_pGameInstance->Get_KeyState('A') == PRESSING &&
-		m_pGameInstance->Get_KeyState('D') == PRESSING) {
+	if (m_pGameInstance->Get_KeyState('A') != NONE &&
+		m_pGameInstance->Get_KeyState('D') != NONE) {
 		;
 	}
-	else if (m_pGameInstance->Get_KeyState('A') == PRESSING)
+	else if (m_pGameInstance->Get_KeyState('A') != NONE) {
 		dwDirection |= LEFT;
-	else if (m_pGameInstance->Get_KeyState('D') == PRESSING)
+	}
+	else if (m_pGameInstance->Get_KeyState('D') != NONE) {
 		dwDirection |= RIGHT;
+	}
 
 	m_dwDirection = dwDirection;
 }
@@ -73,45 +77,82 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 		(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::JOG_STRAIGHT_LOOP && abs(m_fDegree) > 80) */) {
 
 		m_pPlayer->Get_Body_Model()->Set_Loop(0, false);
+		m_pPlayer->Get_Body_Model()->Set_Loop(1, false);
 
-
-		if (abs(m_fDegree) < 75) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_L0_LR);
-		}
-		else if (abs(m_fDegree) < 150) {
+		if (abs(m_fDegree) <= 90) {
 			if (m_fDegree < 0) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_L90_LR);
+				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_L0);
+				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_L90);
 			}
 			else {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_R90_RL);
+				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_R0);
+				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_R90);
 			}
+			_float fRatio = abs(m_fDegree) / 90;
+
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f - fRatio);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, fRatio);
+
 		}
 		else {
 			if (m_fDegree < 0) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_L180_LR);
+				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_L90);
+				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_L180);
 			}
 			else {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_R180_RL);
+				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_R90);
+				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_R180);
 			}
+			_float fRatio = (abs(m_fDegree)- 90) / 90;
+
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f - fRatio);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, fRatio);
+
+
 		}
 
-		m_pPlayer->Get_Body_Model()->Set_Loop(0, false); 
 	}
-	
+		//	if (abs(m_fDegree) < 75) {
+
+		//		m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_L0_LR);
+		//	}
+		//	else if (abs(m_fDegree) < 150) {
+		//		if (m_fDegree < 0) {
+		//			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_L90_LR);
+		//		}
+		//		else {
+		//			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_R90_RL);
+		//		}
+		//	}
+		//	else {
+		//		if (m_fDegree < 0) {
+		//			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_L180_LR);
+		//		}
+		//		else {
+		//			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_R180_RL);
+		//		}
+		//	}
+
+		//	m_pPlayer->Get_Body_Model()->Set_Loop(0, false); 
+		//}
+
 #pragma endregion
 
 #pragma region LOOP
 
 	if (m_pPlayer->Get_Body_Model()->isFinished(0)) {
 
-		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), m_fDegree/90);
+		//m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), m_fDegree/90);
 		m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_STRAIGHT_LOOP);
 		m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
 		m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0);
+
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1);
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0);
 	}
 
 #pragma endregion
-
+	
 }
 
 void CPlayer_State_Move_Jog::Look_Cam(_float fTimeDelta)
@@ -119,20 +160,20 @@ void CPlayer_State_Move_Jog::Look_Cam(_float fTimeDelta)
 	_float fDegree = m_fDegree;
 
 	switch (m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0)) {
-	case CPlayer::JOG_START_L0_LR:
-	case CPlayer::JOG_START_R0_RL:
+	case CPlayer::JOG_START_L0:
+	case CPlayer::JOG_START_R0:
 	case CPlayer::JOG_STRAIGHT_LOOP:
 		break;
-	case CPlayer::JOG_START_L90_LR:
+	case CPlayer::JOG_START_L90:
 		fDegree += 90;
 		break;
-	case CPlayer::JOG_START_L180_LR:
+	case CPlayer::JOG_START_L180:
 		fDegree += 180;
 		break;
-	case CPlayer::JOG_START_R90_RL:
+	case CPlayer::JOG_START_R90:
 		fDegree -= 90;
 		break;
-	case CPlayer::JOG_START_R180_RL:
+	case CPlayer::JOG_START_R180:
 		fDegree -= 180;
 		break;
 	}
@@ -172,9 +213,13 @@ void CPlayer_State_Move_Jog::Look_Cam(_float fTimeDelta)
 void CPlayer_State_Move_Jog::Update_Degree()
 {
 	_float4 vCamLook = m_pPlayer->m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
+	vCamLook.y = 0;
+	vCamLook = XMVectorSetW(XMVector3Normalize(vCamLook), 0.f);
 
 	_float4 vCamRight = m_pPlayer->m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT);
-	
+	vCamRight.y = 0;
+	vCamRight = XMVectorSetW(XMVector3Normalize(vCamRight), 0.f);
+
 	_float4 vPlayerLook = m_pPlayer->m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
 	vPlayerLook.y = 0;
 	vPlayerLook = XMVectorSetW(XMVector3Normalize(vPlayerLook), 0.f);
@@ -189,6 +234,7 @@ void CPlayer_State_Move_Jog::Update_Degree()
 		vCamDir += vCamRight;
 	if (m_dwDirection & LEFT)
 		vCamDir -= vCamRight;
+
 
 	vCamDir.y = 0.f;
 	vCamDir = XMVectorSetW(XMVector3Normalize(vCamDir), 0);

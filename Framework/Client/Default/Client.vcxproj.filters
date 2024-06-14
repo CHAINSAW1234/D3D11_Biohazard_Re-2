@@ -169,6 +169,9 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle">
       <UniqueIdentifier>{ff8fd778-7dfc-4f28-aa3c-7e33181c9fc9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Hold\NewFilter1">
+      <UniqueIdentifier>{d6b544e9-dc14-4a0f-93cc-d4f8dfb866e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

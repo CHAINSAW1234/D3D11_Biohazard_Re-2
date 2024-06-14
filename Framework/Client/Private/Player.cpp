@@ -229,9 +229,10 @@ void CPlayer::Tick(_float fTimeDelta)
 
 
 #pragma region 현진 추가
-	m_pFSMCom->Update(fTimeDelta);
+	//Update_FSM();
+	//m_pFSMCom->Update(fTimeDelta);
 
-	Update_FSM();
+
 #pragma endregion
 
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());

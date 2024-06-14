@@ -143,7 +143,7 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 
 	static _bool		isSetRootXZ = true;
-	static _bool		isSetRootRotation = false;
+	static _bool		isSetRootRotation = true;
 	static _bool		isSetRootY = true;
 	if (UP == m_pGameInstance->Get_KeyState('I'))
 	{

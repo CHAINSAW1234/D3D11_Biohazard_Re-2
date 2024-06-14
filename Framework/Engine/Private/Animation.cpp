@@ -262,7 +262,7 @@ KEYFRAME CAnimation::Get_FirstKeyFrame(_uint iBoneIndex)
 	_int			iChannelIndex = { Find_ChannelIndex(iBoneIndex) };
 	if (-1 == iChannelIndex)
 	{
-		MSG_BOX(TEXT("CAnimation::Get_FirstKeyFrame(_uint iBoneIndex)"));
+		//MSG_BOX(TEXT("CAnimation::Get_FirstKeyFrame(_uint iBoneIndex)"));
 		return FirstKeyFrame;
 	}
 
