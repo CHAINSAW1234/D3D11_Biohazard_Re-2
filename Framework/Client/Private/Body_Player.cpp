@@ -43,7 +43,8 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	_uint			iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Left_Arm"), "l_arm_clavicle");
-
+	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("LowerBody"), "hips");
+	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("UpperBody"), "spine_0");
 
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 1, TEXT("Default"), 0.f);

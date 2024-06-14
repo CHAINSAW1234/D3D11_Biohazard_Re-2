@@ -47,7 +47,7 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	//m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
 	//m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
-	//m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));
+	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));
 	
 	/*if (GetAsyncKeyState('T') & 0x0001)
 	{

@@ -27,7 +27,7 @@ void CPlayer_State_Move_Jog::OnStateUpdate(_float fTimeDelta)
 	Update_KeyInput();
 	Update_Degree();
 	Set_MoveAnimation(fTimeDelta);
-	//Look_Cam(fTimeDelta);
+	Look_Cam(fTimeDelta);
 }
 
 void CPlayer_State_Move_Jog::OnStateExit()
@@ -107,10 +107,7 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f - fRatio);
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, fRatio);
-
-
 		}
-
 	}
 		//	if (abs(m_fDegree) < 75) {
 

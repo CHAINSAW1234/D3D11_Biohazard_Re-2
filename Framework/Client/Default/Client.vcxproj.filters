@@ -169,8 +169,8 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle">
       <UniqueIdentifier>{ff8fd778-7dfc-4f28-aa3c-7e33181c9fc9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Player\State\Player_State_Hold\NewFilter1">
-      <UniqueIdentifier>{d6b544e9-dc14-4a0f-93cc-d4f8dfb866e6}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Start">
+      <UniqueIdentifier>{b025c7ed-6e85-4b6f-a0e9-ec6b9361ec01}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -321,6 +321,9 @@
     <ClInclude Include="..\Public\Player_State_Hold_Idle.h">
       <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Hold_Start.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Start</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -454,6 +457,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_State_Hold_Idle.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Hold_Start.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Start</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

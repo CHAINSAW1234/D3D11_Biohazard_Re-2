@@ -202,6 +202,7 @@
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\Public\Player_State_Hold.h" />
     <ClInclude Include="..\Public\Player_State_Hold_Idle.h" />
+    <ClInclude Include="..\Public\Player_State_Hold_Start.h" />
     <ClInclude Include="..\Public\Player_State_Move.h" />
     <ClInclude Include="..\Public\Player_State_Move_Idle.h" />
     <ClInclude Include="..\Public\Player_State_Move_Jog.h" />
@@ -250,6 +251,7 @@
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\Private\Player_State_Hold.cpp" />
     <ClCompile Include="..\Private\Player_State_Hold_Idle.cpp" />
+    <ClCompile Include="..\Private\Player_State_Hold_Start.cpp" />
     <ClCompile Include="..\Private\Player_State_Move.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Idle.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Jog.cpp" />

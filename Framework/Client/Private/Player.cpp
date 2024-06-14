@@ -229,10 +229,9 @@ void CPlayer::Tick(_float fTimeDelta)
 
 
 #pragma region 현진 추가
-	//Update_FSM();
-	//m_pFSMCom->Update(fTimeDelta);
-
-
+	Update_Direction();
+	Update_FSM();
+	m_pFSMCom->Update(fTimeDelta);
 #pragma endregion
 
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
@@ -316,6 +315,45 @@ void CPlayer::Update_FSM()
 		Change_State(HOLD);
 	else 
 		Change_State(MOVE);
+}
+
+void CPlayer::Update_Direction()
+{
+	DWORD dwDirection = 0;
+
+	if (m_pGameInstance->Get_KeyState('W') == PRESSING &&
+		m_pGameInstance->Get_KeyState('S') == PRESSING)
+		;
+	else if (m_pGameInstance->Get_KeyState('W') == PRESSING)
+		dwDirection |= DIRECTION_FRONT;
+	else if (m_pGameInstance->Get_KeyState('S') == PRESSING)
+		dwDirection |= DIRECTION_BACK;
+
+	if (m_pGameInstance->Get_KeyState('A') == PRESSING &&
+		m_pGameInstance->Get_KeyState('D') == PRESSING)
+		;
+	else if (m_pGameInstance->Get_KeyState('A') == PRESSING)
+		dwDirection |= DIRECTION_LEFT;
+	else if (m_pGameInstance->Get_KeyState('D') == PRESSING)
+		dwDirection |= DIRECTION_RIGHT;
+
+	m_dwDirection = dwDirection;
+}
+
+_float CPlayer::Get_CamDegree()
+{
+	if (nullptr == m_pTransformCom_Camera || nullptr == m_pTransformCom)
+		return 0;
+
+	_float4 vCamLook = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
+	vCamLook.y = 0;
+	vCamLook = XMVector3Normalize(vCamLook);
+
+	_float4 vPlayerLook = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
+	vPlayerLook.y = 0;
+	vPlayerLook = XMVector3Normalize(vPlayerLook);
+
+	return Cal_Degree_From_Directions_Between_Min180_To_180(vPlayerLook, vCamLook);
 }
 
 #pragma endregion
@@ -771,6 +809,11 @@ HRESULT CPlayer::Add_FSM_States()
 
 	m_pFSMCom->Add_State(HOLD, CPlayer_State_Hold::Create(this));
 	m_pFSMCom->Change_State(MOVE);
+
+	Get_Body_Model()->Change_Animation(0, CPlayer::ANIM_IDLE);
+	Get_Body_Model()->Set_Loop(0, true);
+	Get_Body_Model()->Set_BlendWeight(0, 1.f);
+	Get_Body_Model()->Set_BlendWeight(1, 0.f);
 
 	return S_OK;
 }
