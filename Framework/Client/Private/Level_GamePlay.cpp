@@ -248,18 +248,54 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 
 	/* 1. Crosshair */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Crosshair.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
+	inputFileStream.open(selectedFilePath, ios::binary);	
 	UI_Distinction(selectedFilePath);
 	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Crosshair_UI"), m_pDevice, m_pContext);
 
-	/* 2. Cursor */
-	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Cursor.dat");
-	//inputFileStream.open(selectedFilePath, ios::binary);
-	//UI_Distinction(selectedFilePath);
-	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	///* 2. Cursor */
+	////selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Cursor.dat");
+	////inputFileStream.open(selectedFilePath, ios::binary);
+	////UI_Distinction(selectedFilePath);
+	////CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
 	/* 3. Inventory_Item*/
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_Item.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+
+	///* 6. UI_MainHP */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/MainHPBar_UI.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+
+	///* 5. BackGroundHPBar_UI */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/BackGroundHPBar_UI.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+
+	/* 5. Bullet_UI */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Bullet_UI.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+
+	/* 5. Title */
+	/*selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Title_UI.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);*/
+
+	/* 5. UI_Sub_Inventory */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Sub_Inventory.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+
+	/* 5. UI_MissionBar */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_MissionBar.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
@@ -269,52 +305,27 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
-	
-	/* 6. UI_MainHP */
-	/*selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/MainHPBar_UI.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);*/
 
-	/* 5. BackGroundHPBar_UI */
-	/*selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/BackGroundHPBar_UI.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);*/
+	///* 7. Tab_Widow */
+	///*CUI::UI_DESC UIDesc = {};
+	//UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.9f };
+	//UIDesc.vSize = { g_iWinSizeX * 1.f, g_iWinSizeY * 1.f };
+	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
+	//	return E_FAIL;*/
 
-	/* 5. Bullet_UI */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Bullet_UI.dat");
+	/* 8. UI_Tutorial */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Tutorial.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
-	/* 5. Title */
-	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Title_UI.dat");
-	//inputFileStream.open(selectedFilePath, ios::binary);
-	//UI_Distinction(selectedFilePath);
-	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
-
-	/* 5. UI_Sub_Inventory */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Sub_Inventory.dat");
+	/* 8. UI_Selecter */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Selector.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+
 	
-	/* 5. UI_Sub_Inventory */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_MissionBar.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
-	
-
-	/* 7. Tab_Widow */
-	CUI::UI_DESC UIDesc = {};
-	UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.9f };
-	UIDesc.vSize = { g_iWinSizeX * 1.f, g_iWinSizeY * 1.f };
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
-		return E_FAIL;
-
-
 	return S_OK;
 }
 
@@ -365,7 +376,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iTextBoxCount), sizeof(_uint));
 
-	for (_int i = 0; i <= CustomizeUIDesc.iColorMaxNum; i++)
+	for (_int i = 0; i <= (_int)CustomizeUIDesc.iColorMaxNum; i++)
 	{
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.SavePos[i]), sizeof(_float4x4));
 
@@ -374,7 +385,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.Mask[i]), sizeof(CCustomize_UI::Value_Mask));
 	}
 
-	for (_int i = 0; i < CustomizeUIDesc.iTextBoxCount; i++)
+	for (_int i = 0; i < (_int)CustomizeUIDesc.iTextBoxCount; i++)
 	{
 		CTextBox::TextBox_DESC TextBoxDesc = {};
 
@@ -422,7 +433,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 	{
 		/* For.Prototype_Component_Texture_ */
 		if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, CustomizeUIDesc.wstrDefaultTexturComTag,
-			CTexture::Create(m_pDevice, m_pContext, CustomizeUIDesc.wstrDefaultTexturPath, CustomizeUIDesc.fMaxFrame)))) {
+			CTexture::Create(m_pDevice, m_pContext, CustomizeUIDesc.wstrDefaultTexturPath, (_uint)CustomizeUIDesc.fMaxFrame)))) {
 			int a = 0;
 		}
 	}
@@ -517,13 +528,27 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Inventory_Item_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
 	}
-	/* Sub Inventory */
+
+	/* MissionBar */
 	else if (TEXT("UI_MissionBar") == fileName)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_MissionBar_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
 	}
 
+	/* Tutorial */
+	else if (TEXT("UI_Tutorial") == fileName)
+	{
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Tutorial_UI"), &CustomizeUIDesc)))
+			MSG_BOX(TEXT("Failed to Add Clone"));
+	}
+
+	/* UI_Selecter */
+	else if (TEXT("UI_Selector") == fileName)
+	{
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Selector_UI"), &CustomizeUIDesc)))
+			MSG_BOX(TEXT("Failed to Add Clone"));
+	}
 	
 	CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
 

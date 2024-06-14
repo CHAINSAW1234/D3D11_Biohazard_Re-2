@@ -116,6 +116,8 @@ protected :
 	void Frame_Cut(_float fRatio, _float fColorRatio);
 	_matrix LerpMatrix(_matrix A, _matrix B, _float t); // 보간 값 계산
 
+	void Frame_Stop(_bool _stop);
+	void Frame_Reset();
 public:
 	void PushBack_Child(CGameObject* pGameOBJ);
 	void PushBack_TextBox(CGameObject* pGameOBJ);
@@ -127,14 +129,13 @@ public:
 
 public :
 	_bool Select_UI();
-
 	virtual void Set_Dead(_bool bDead) override;
 
 
 public : /* Client */
-	_bool Get_Children() { return m_IsChild;  }
-	ITEM_BOX_TYPE Get_ItemBox_Type() { return m_eBox_Type;  }
-
+	_bool			Get_Children()		{ return m_IsChild;  }
+	ITEM_BOX_TYPE	Get_ItemBox_Type()	{ return m_eBox_Type;  }
+	INVENTORY_TYPE	Get_Inven_Type()	{ return m_eInventory_Type;  }
 
 public: /* Mask */
 	/* 저장할 Light State*/
@@ -317,6 +318,9 @@ public:/* for.Get Inline */
 		return (&_desc);
 	}
 
+public : /* Clinet */
+	_bool		IsRender() { return m_isRender; }
+
 protected :
 	vector<class CTextBox*>		m_vecTextBoxes;
 
@@ -402,6 +406,7 @@ protected : /* Client*/
 	_bool						m_isRender = { true };
 	_float4						m_vOriginTextColor = {};
 	_float4						m_vOriginColor = {};
+	_bool						m_isKeepPlay = {};
 
 	/* 1. inventory Item */
 	ITEM_BOX_TYPE				m_eBox_Type = { ITEM_BOX_TYPE::END_BOX };

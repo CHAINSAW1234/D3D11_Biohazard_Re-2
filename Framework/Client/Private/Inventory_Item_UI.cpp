@@ -39,10 +39,8 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    // 툴 수기 수정
-    m_vColor[0].vColor.w = m_vCurrentColor.w = 0.f;
-
-    list<class CGameObject*>* pBoxList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+   
+    list<class CGameObject*>* pBoxList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
     m_fOrigin_Blending = m_fBlending;
 
     /* ▶ Main Inventory */
@@ -70,14 +68,21 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
                     }
                 }
 
-                /* 2. Default(Void) Box은 Select Box을 가지고 있는다.*/
+                /* 2. Default(Void) Box 일 때 .*/
                 else
                 {
                     if (CCustomize_UI::ITEM_BOX_TYPE::DEFAULT_BOX == pBox->m_eBox_Type)
+                    {
+                        /* Box은 Select Box을 가지고 있는다 */
                         pBox->m_pSelectBox = this;
+                    }
+
                 }
             }
         }
+
+        // ▶ 툴 수기 수정
+        m_vColor[0].vColor.w = m_vCurrentColor.w = 0.f;
     }
 
     /* ▶ Sub Inventory */
@@ -144,10 +149,7 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
 }
 
 void CInventory_Item_UI::Tick(_float fTimeDelta)
-{   
-    if (true == m_bDead)
-        return;
-
+{
     __super::Tick(fTimeDelta);
 
     /* ▶ Box 별 동작 방식*/
@@ -155,19 +157,16 @@ void CInventory_Item_UI::Tick(_float fTimeDelta)
 
     /* ▶ Inventory 종류*/
     /* 0. Default Item Inventory */
-    if(CCustomize_UI::INVENTORY_TYPE::MAIN_INVEN == m_eInventory_Type)
-        Item_Inventory(); 
-    
+    if (CCustomize_UI::INVENTORY_TYPE::MAIN_INVEN == m_eInventory_Type)
+        Item_Inventory();
+
     /* 1. Sub Equip Inventory*/
-    else if(CCustomize_UI::INVENTORY_TYPE::SUB_INVEN == m_eInventory_Type)
+    else if (CCustomize_UI::INVENTORY_TYPE::SUB_INVEN == m_eInventory_Type)
         Sub_Equipment_Inventory(fTimeDelta);
 }
 
 void CInventory_Item_UI::Late_Tick(_float fTimeDelta)
 {
-    if (true == m_bDead)
-        return;
-
     __super::Late_Tick(fTimeDelta);
 }
 
@@ -288,6 +287,45 @@ void CInventory_Item_UI::Item_Inventory()
 {
     if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
     {
+        /* 1. Inventory를 키기 직전 : 기본 위치 찾아주기 */
+        if (false == m_isRender)
+        {
+            /* 첫 번째 Defualt Box 찾아주기*/
+            list<class CGameObject*>* pBoxList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+            CInventory_Item_UI* pDefaultBox = {};
+
+            for (auto& iter : *pBoxList)
+            {
+                pDefaultBox = dynamic_cast<CInventory_Item_UI*>(iter);
+
+                if (nullptr != pDefaultBox &&
+                    ITEM_BOX_TYPE::DEFAULT_BOX == pDefaultBox->m_eBox_Type && true == pDefaultBox->m_IsChild)
+                    break;
+            }
+
+            if (nullptr != pDefaultBox)
+            {
+                CTransform* pDefaultBox_Trans = dynamic_cast<CTransform*>(pDefaultBox->Get_Component(g_strTransformTag));
+
+                /* ◈ 매번 할당할 바에 아예 멤버 변수로 등록해놓기. ◈*/
+                /* 1. Defualt Box 를 가장 첫번 째 Defualt Box에 놓는다 */
+                if (nullptr != m_pSelectBox)
+                {
+                    CTransform* pSelectTrans = dynamic_cast<CTransform*>(m_pSelectBox->Get_Component(g_strTransformTag));
+                    pSelectTrans->Set_State(CTransform::STATE_POSITION, pDefaultBox_Trans->Get_State_Float4(CTransform::STATE_POSITION));
+                }
+
+                /* 2. Cursor를 가장 첫번 째 Defualt Box에 놓는다  => 안된다!!!!!!!!!! */
+                /*if (ITEM_BOX_TYPE::SELECT_BOX == m_eBox_Type && true == m_IsChild)
+                {
+                    _float4 vDefaultBox = pDefaultBox_Trans->Get_State_Float4(CTransform::STATE_POSITION);
+                    vDefaultBox.x -= m_fDistance_BetweenCursor.x;
+                    vDefaultBox.y -= m_fDistance_BetweenCursor.y;
+                    m_pTransformCom->Set_State(CTransform::STATE_POSITION, vDefaultBox);
+                }*/
+            }
+        }
+
         Inventory_Render(!m_isRender);
     }
 
@@ -326,45 +364,18 @@ void CInventory_Item_UI::Sub_Equipment_Inventory(_float fTimeDelta)
     /* 2. 아이템 창 CLOSE */
     if (true == m_isRender)
     {
-        m_fOpenInven_Timer += fTimeDelta;
+        if (!(PRESSING == m_pGameInstance->Get_KeyState('1') || PRESSING == m_pGameInstance->Get_KeyState('2') || PRESSING == m_pGameInstance->Get_KeyState('3') || PRESSING == m_pGameInstance->Get_KeyState('4')))
+            m_fOpenInven_Timer += fTimeDelta;
 
         if (SUB_INVEN_OPENING <= m_fOpenInven_Timer)
         {
-            /* 1. FONT COLOR  보간*/
-            if (!m_vecTextBoxes.empty())
-            {
-                m_isColorChange = true;
-                m_isBlending = true;
-
-                _vector vOriginColor = XMLoadFloat4(&m_vOriginTextColor);
-                _vector vResult = m_vecTextBoxes.back()->Get_FontColor() - vOriginColor;
-
-                /* 1. 보간 중 */
-                if (0.1f <= XMVector3Length(vResult).m128_f32[0])
-                {
-                    m_fInterpolation_Timer += fTimeDelta;
-                    _float      fColorRatio = m_fInterpolation_Timer * 1.5f;
-
-                    _vector vStartColor = m_vecTextBoxes.back()->Get_FontColor();
-                    _vector vEndColor = m_vOriginTextColor;
-                    _vector vCurrentColor = XMVectorLerp(vStartColor, vEndColor, fColorRatio);
-
-                    /* 보간 결과 값*/
-                    m_vecTextBoxes.back()->Set_FontColor(vCurrentColor);
-                }
-
-                /* 보간이 끝났다면*/
-                else
-                    m_vecTextBoxes.back()->Set_FontColor(ALPHA_ZERO);
-            }
-
             /* 2. 모든 Texture Color 보간 */
             if (m_fBlending <= 1)
             {
                 m_vCurrentColor.w = 0.f;
                 m_fBlending += fTimeDelta * 4.f;
 
-                if(nullptr != m_pSelectBox)
+                if (nullptr != m_pSelectBox)
                     m_pSelectBox->m_fBlending += fTimeDelta * 4.f;
             }
 
@@ -379,13 +390,32 @@ void CInventory_Item_UI::Sub_Equipment_Inventory(_float fTimeDelta)
                 if (nullptr != m_pSelectBox)
                 {
                     m_pSelectBox->m_isRender = false;
+                    m_pSelectBox->m_isSubRender = &m_isRender;
                     m_pSelectBox->m_fBlending = 0.f;
                 }
             }
         }
     }
 
-    if(nullptr != m_pSelectBox)
+    /* 1. FONT COLOR  보간*/
+    if (!m_vecTextBoxes.empty())
+    {
+        CTextBox* pFont = m_vecTextBoxes.back();
+
+        if (false == m_isRender|| 1.f <= m_fBlending)
+        {
+            pFont->Set_FontColor(ALPHA_ZERO);
+            return;
+        }
+
+        m_isColorChange = true;
+        m_isBlending = true;
+
+        _float4 vFontColor_Result = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * m_vOriginTextColor;
+        pFont->Set_FontColor(vFontColor_Result);
+    }
+
+    if (nullptr != m_pSelectBox)
         m_pSelectBox->m_isSubRender = &m_isRender;
 }
 
@@ -414,7 +444,7 @@ void CInventory_Item_UI::Sub_SelectBox(SUB_INVEN_BOX_POSITION _eBoxType)
 /* Sub Inventory를 실행했을 때 [출력/초기화] 해야 할 것들 */
 void CInventory_Item_UI::Sub_Iventory_Reset()
 {
-    list<class CGameObject*>* pBoxList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+    list<class CGameObject*>* pBoxList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
 
     for (auto& iter : *pBoxList)
     {
@@ -426,6 +456,7 @@ void CInventory_Item_UI::Sub_Iventory_Reset()
             pInven->m_fOpenInven_Timer = 0.f;
             pInven->m_fInterpolation_Timer = 0.f;
             pInven->m_fBlending = m_fOrigin_Blending;
+            pInven->m_vCurrentColor = pInven->m_vColor[0].vColor = ALPHA_ZERO;
         }
     }
 }

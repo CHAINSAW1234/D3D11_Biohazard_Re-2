@@ -96,6 +96,9 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 	m_fSplit			= 1;
 	m_isLoad			= true;
 
+	/* ▶ 만약 보간 과정에서 하얀 게 보인다면 
+	> Blending 하는 과정에서 알파를 1로 주지 않았는 지 확인, */
+
 	return S_OK;
 }
 
@@ -291,7 +294,6 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_Split", &m_fSplit, sizeof(float))))
 		return E_FAIL;
 
-
 	// Mask
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_isMask", &m_isMask, sizeof(_bool))))
 		return E_FAIL;
@@ -480,7 +482,10 @@ HRESULT CCustomize_UI::Change_Texture(const wstring& strPrototypeTag, const wstr
 
 void CCustomize_UI::Non_Frame()
 {
-	/* ▶ 보간이 필요하지 않다면 */
+	/* ▶ 보간이 필요하지 않다면
+		=> 정확하게는 Client가 직접 Play를 지정해주기 위해서,
+		Shader에서 실시간으로 변환시켜줄 변수 = 내가 처음 지정했던 변수
+		를 넣어주는 과정임 */
 	m_vCurrentColor = m_vColor[0].vColor;
 	m_fBlending = m_vColor[0].fBlender_Value;
 	m_fSplit = m_vColor[0].fSplit;
@@ -521,7 +526,6 @@ void CCustomize_UI::Color_Frame(_float fTimeDelta)
 	{
 		Frame_Defalut(fRatio, fColorRatio);
 	}
-	/* ▶ 보간 Type */
 	else
 	{
 		if (m_iEndingType == PLAY_BUTTON::PLAY_DEFAULT)
@@ -538,29 +542,9 @@ void CCustomize_UI::Color_Frame(_float fTimeDelta)
 		{
 			Frame_Cut(fRatio, fColorRatio);
 		}
-
-		/* ▶ 컬러 간의 간격*/
-		if (m_fCurrentColor_Timer >= m_fColorTimer_Limit)
-		{
-			if (m_iColorCurNum >= 10)
-				m_iColorCurNum = 0;
-
-			if (m_iEndingType == PLAY_BUTTON::PLAY_CHANGE)
-			{
-				// 모든 배열을 도달했다면
-				if ((_int)m_iColorCurNum > m_iColorMaxNum)
-					m_iColorCurNum = (_uint)m_iColorMaxNum;
-			}
-
-			m_iColorCurNum++;
-
-			// 모든 배열을 도달했다면
-			if ((_int)m_iColorCurNum > m_iColorMaxNum)
-				m_iColorCurNum = 0;
-
-			m_fCurrentColor_Timer = 0.f;
-		}
 	}
+
+	Frame_Reset();
 }
 
 void CCustomize_UI::State_Control(_float fTimeDelta)
@@ -815,6 +799,49 @@ _matrix CCustomize_UI::LerpMatrix(_matrix A, _matrix B, _float t)
 	}
 
 	return result;
+}
+
+void CCustomize_UI::Frame_Stop(_bool _stop)
+{
+	if (true == _stop)
+	{
+		m_isKeepPlay = true;
+		return;
+	}
+	else
+		m_iColorCurNum = 0.f;
+}
+
+void CCustomize_UI::Frame_Reset()
+{
+	/* ▶ 만약 Play 멈추고 싶다면 m_isKeepPlay 함수를 사용하면 된다.*/
+	if (true == m_isKeepPlay)
+	{
+		m_iColorCurNum = m_iColorMaxNum;
+		return;
+	}
+
+	/* ▶ 컬러 간의 간격*/
+	if (m_fCurrentColor_Timer >= m_fColorTimer_Limit)
+	{
+		if (m_iColorCurNum >= 10)
+			m_iColorCurNum = 0;
+
+		if (m_iEndingType == PLAY_BUTTON::PLAY_CHANGE)
+		{
+			// 모든 배열을 도달했다면
+			if ((_int)m_iColorCurNum > m_iColorMaxNum)
+				m_iColorCurNum = (_uint)m_iColorMaxNum;
+		}
+
+		m_iColorCurNum++;
+
+		// 모든 배열을 도달했다면
+		if ((_int)m_iColorCurNum > m_iColorMaxNum)
+			m_iColorCurNum = 0;
+
+		m_fCurrentColor_Timer = 0.f;
+	}
 }
 
 void CCustomize_UI::PushBack_Child(CGameObject* pGameOBJ)
