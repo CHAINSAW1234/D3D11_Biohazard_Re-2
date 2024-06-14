@@ -62,6 +62,16 @@ void CPlayingInfo::Set_PreQuaternion(_fvector vPreQuaternion)
 	XMStoreFloat4(&m_vPreQuaternion, vPreQuaternion);
 }
 
+void CPlayingInfo::Set_CurrentTranslation(_fvector vCurrentTranslation)
+{
+	XMStoreFloat3(&m_vCurrentTranslationLocal, vCurrentTranslation);
+}
+
+void CPlayingInfo::Set_CurrentQuaternion(_fvector vCurrentQuaternion)
+{
+	XMStoreFloat4(&m_vCurrentQuaternion, vCurrentQuaternion);
+}
+
 void CPlayingInfo::Set_KeyFrameIndex_AllKeyFrame(_uint iKeyFrameIndex)
 {
 	for (auto& iIndex : m_CurrentKeyFrameIndices)

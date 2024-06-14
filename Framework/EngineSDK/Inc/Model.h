@@ -57,6 +57,9 @@ public:		/* For.Bone_Layer */
 	void									Add_Bone_Layer_All_Bone(const wstring& strLayerTag);
 	void									Erase_Bone_Layer(const wstring& strLayerTag);
 
+	void									Add_Bone_Layer_Bone(const wstring& strBoneLayerTag, _uint iBoneIndex);
+	void									Add_Bone_Layer_Bone(const wstring& strBoneLayerTag, const string& strBoneTag);
+
 public:		/* For.IK Public*/
 	void									Add_IK(string strTargetJointTag, string strEndEffectorTag, const wstring& strIKTag, _uint iNumIteration, _float fBlend);
 	void									Erase_IK(const wstring& strIKTag);

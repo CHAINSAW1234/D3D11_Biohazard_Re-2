@@ -19,8 +19,9 @@ public:
 	HRESULT					Initialize(const set<_uint>& BoneIndices);
 
 public:
+	void					Add_BoneIndex(_uint iBoneIndex);
 	_bool					Is_Included(_uint iBoneIndex);
-	set<_uint>& Get_IncludedBoneIndices() { return m_IncludedBoneIndices; }
+	set<_uint>&				Get_IncludedBoneIndices() { return m_IncludedBoneIndices; }
 private:
 	set<_uint>				m_IncludedBoneIndices;
 

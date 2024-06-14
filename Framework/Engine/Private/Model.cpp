@@ -326,6 +326,28 @@ void CModel::Erase_Bone_Layer(const wstring& strLayerTag)
 	}
 }
 
+void CModel::Add_Bone_Layer_Bone(const wstring& strBoneLayerTag, _uint iBoneIndex)
+{
+	_uint		iNumBones = { static_cast<_uint>(m_Bones.size()) };
+	if (iBoneIndex >= iNumBones)
+		return;
+
+	CBone_Layer*		pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
+	if (nullptr != pBoneLayer)
+	{
+		pBoneLayer->Add_BoneIndex(iBoneIndex);
+	}
+}
+
+void CModel::Add_Bone_Layer_Bone(const wstring& strBoneLayerTag, const string& strBoneTag)
+{
+	_int			iBoneIndex = { Find_BoneIndex(strBoneTag) };
+	if (-1 == iBoneIndex)
+		return;
+
+	Add_Bone_Layer_Bone(strBoneLayerTag, iBoneIndex);
+}
+
 void CModel::Add_IK(string strTargetJointTag, string strEndEffectorTag, const wstring& strIKTag, _uint iNumIteration, _float fBlend)
 {
 	if (nullptr == m_pIK_Solver)
@@ -645,7 +667,68 @@ _float4x4 CModel::GetBoneTransform(_int Index)
 
 void CModel::Apply_RootMotion_Rotation(CTransform* pTransform, _fvector vQuaternion)
 {
-	_vector			vPreQuaternion = { XMQuaternionIdentity() };
+#pragma region 1안
+	//_vector			vPreQuaternion = { XMQuaternionIdentity() };
+	//_vector			vIdentityQuaternion = { XMQuaternionIdentity() };
+	//_uint			iRootIndex = { static_cast<_uint>(Find_RootBoneIndex()) };
+	//_float			fTotalWeight = { Compute_Current_TotalWeight(iRootIndex) };
+
+	//for (auto& pPlayingInfo : m_PlayingAnimInfos)
+	//{
+	//	if (nullptr == pPlayingInfo)
+	//		continue;
+
+	//	_int			iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
+
+	//	if (-1 == iAnimIndex)
+	//		continue;
+
+	//	wstring			strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
+	//	CBone_Layer*	pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
+	//	if (nullptr == pBoneLayer)
+	//		continue;
+
+	//	if (false == pBoneLayer->Is_Included(iRootIndex))
+	//		continue;
+
+	//	_float			fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
+	//	_float			fBlendWeightRatio = { fBlendWeight / fTotalWeight };
+
+	//	//	이전 회전량을 보간비율에 따라 가산시킨다.
+	//	_vector			vAdditionalQuaternion = { XMLoadFloat4(&pPlayingInfo->Get_PreQuaternion()) };
+	//	_vector			vResultAdditionalQuaternion = { XMQuaternionSlerp(vIdentityQuaternion, vAdditionalQuaternion, fBlendWeightRatio) };
+	//	//	vPreQuaternion = XMQuaternionMultiply(XMQuaternionNormalize(vPreQuaternion), XMQuaternionNormalize(vResultAdditionalQuaternion));
+	//	vPreQuaternion = XMQuaternionMultiply(XMQuaternionNormalize(vPreQuaternion), XMQuaternionNormalize(vResultAdditionalQuaternion));
+
+	//	//	현재 라스트 키프레임의 회전성분을 이전 회전 총합으로 기록
+	//	KEYFRAME		LastRootBoneKeyFrame = { pPlayingInfo->Get_LastKeyFrame(iRootIndex) };
+	//	pPlayingInfo->Set_PreQuaternion(XMLoadFloat4(&LastRootBoneKeyFrame.vRotation));
+	//}
+
+	//_vector			vCurrentQuaternion = { vQuaternion };
+
+	//// 이전 쿼터니언의 역쿼터니언 구하기
+	//_vector			vPreQuaternionInv = { XMQuaternionInverse(vPreQuaternion) };
+
+	//// 이전 쿼터니언의 역쿼터니언과 현재쿼터니언의 곱 => 합쿼터니언
+	//_vector			vQuaternionDifference = { XMQuaternionNormalize(XMQuaternionMultiply(XMQuaternionNormalize(vPreQuaternionInv), XMQuaternionNormalize(vCurrentQuaternion))) };
+
+	//_matrix			RotationMatrix = { XMMatrixRotationQuaternion(vQuaternionDifference) };
+	//_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
+	////	RotationMatrix.r[CTransform::STATE_POSITION].m128_f32[3] = 0.f;
+
+	//_vector			vPosition = { WorldMatrix.r[CTransform::STATE_POSITION] };
+	//WorldMatrix.r[CTransform::STATE_POSITION] = XMVectorSetW(XMVectorZero(), 1.f);
+
+	//_matrix			ResultMatrix = { XMMatrixMultiply(WorldMatrix, RotationMatrix) };
+	//ResultMatrix.r[CTransform::STATE_POSITION] = vPosition;
+
+	//pTransform->Set_WorldMatrix(ResultMatrix);
+
+#pragma endregion 
+
+#pragma region 2안
+	_vector			vTotalDeltaQuaternion = { XMQuaternionIdentity() };
 	_vector			vIdentityQuaternion = { XMQuaternionIdentity() };
 	_uint			iRootIndex = { static_cast<_uint>(Find_RootBoneIndex()) };
 	_float			fTotalWeight = { Compute_Current_TotalWeight(iRootIndex) };
@@ -655,42 +738,23 @@ void CModel::Apply_RootMotion_Rotation(CTransform* pTransform, _fvector vQuatern
 		if (nullptr == pPlayingInfo)
 			continue;
 
-		_int			iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
-
-		if (-1 == iAnimIndex)
-			continue;
-
-		wstring			strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
-		CBone_Layer*	pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
-		if (nullptr == pBoneLayer)
-			continue;
-
-		if (false == pBoneLayer->Is_Included(iRootIndex))
-			continue;
-
 		_float			fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
 		_float			fBlendWeightRatio = { fBlendWeight / fTotalWeight };
 
-		//	이전 회전량을 보간비율에 따라 가산시킨다.
-		_vector			vAdditionalQuaternion = { XMLoadFloat4(&pPlayingInfo->Get_PreQuaternion()) };
-		_vector			vResultAdditionalQuaternion = { XMQuaternionSlerp(vIdentityQuaternion, vAdditionalQuaternion, fBlendWeightRatio) };
-		//	vPreQuaternion = XMQuaternionMultiply(XMQuaternionNormalize(vPreQuaternion), XMQuaternionNormalize(vResultAdditionalQuaternion));
-		vPreQuaternion = XMQuaternionMultiply(XMQuaternionNormalize(vResultAdditionalQuaternion), XMQuaternionNormalize(vPreQuaternion));
+		_vector			vCurrentRotation = { XMLoadFloat4(&pPlayingInfo->Get_CurrentQuaternion()) };
+		_vector			vPreRotation = { XMLoadFloat4(&pPlayingInfo->Get_PreQuaternion()) };
 
-		//	현재 라스트 키프레임의 회전성분을 이전 회전 총합으로 기록
-		KEYFRAME		LastRootBoneKeyFrame = { pPlayingInfo->Get_LastKeyFrame(iRootIndex) };
-		pPlayingInfo->Set_PreQuaternion(XMLoadFloat4(&LastRootBoneKeyFrame.vRotation));
+		_vector			vPreRotationInv = { XMQuaternionInverse(XMQuaternionNormalize(vPreRotation)) };
+		_vector			vDeltaQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(vPreRotationInv), XMQuaternionNormalize(vCurrentRotation)) };
+
+		vDeltaQuaternion = XMQuaternionSlerp(XMQuaternionIdentity(), vDeltaQuaternion, fBlendWeightRatio);
+
+		vTotalDeltaQuaternion = XMQuaternionMultiply(vTotalDeltaQuaternion, vDeltaQuaternion);
+
+		pPlayingInfo->Set_PreQuaternion(vCurrentRotation);
 	}
 
-	_vector			vCurrentQuaternion = { vQuaternion };
-
-	// 이전 쿼터니언의 역쿼터니언 구하기
-	_vector			vPreQuaternionInv = { XMQuaternionInverse(vPreQuaternion) };
-
-	// 이전 쿼터니언의 역쿼터니언과 현재쿼터니언의 곱 => 합쿼터니언
-	_vector			vQuaternionDifference = { XMQuaternionNormalize(XMQuaternionMultiply(XMQuaternionNormalize(vPreQuaternionInv), XMQuaternionNormalize(vCurrentQuaternion))) };
-
-	_matrix			RotationMatrix = { XMMatrixRotationQuaternion(vQuaternionDifference) };
+	_matrix			RotationMatrix = { XMMatrixRotationQuaternion(vTotalDeltaQuaternion) };
 	_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
 	//	RotationMatrix.r[CTransform::STATE_POSITION].m128_f32[3] = 0.f;
 
@@ -701,10 +765,12 @@ void CModel::Apply_RootMotion_Rotation(CTransform* pTransform, _fvector vQuatern
 	ResultMatrix.r[CTransform::STATE_POSITION] = vPosition;
 
 	pTransform->Set_WorldMatrix(ResultMatrix);
+
 }
 
 void CModel::Apply_RootMotion_Translation(CTransform* pTransform, _fvector vTranslation, _fvector vQuaternion, _float3* pMovedDirection)
 {
+#pragma region 1안
 	//_vector			vPreTranslation = { XMVectorZero() };
 	//_uint			iRootIndex = { static_cast<_uint>(Find_RootBoneIndex()) };
 	//_float			fTotalWeight = { Compute_Current_TotalWeight(iRootIndex) };
@@ -769,73 +835,113 @@ void CModel::Apply_RootMotion_Translation(CTransform* pTransform, _fvector vTran
 
 	//XMStoreFloat3(pMovedDirection, vCurrentMoveDirectionWorld);
 
-	_vector			vPreTranslation = { XMVectorZero() };
-	_uint			iRootIndex = { static_cast<_uint>(Find_RootBoneIndex()) };
-	_float			fTotalWeight = { Compute_Current_TotalWeight(iRootIndex) };
+#pragma endregion
 
-	for (auto& pPlayingInfo : m_PlayingAnimInfos)
-	{
-		if (nullptr == pPlayingInfo)
-			continue;
+#pragma region 2안
+	//_vector			vPreTranslation = { XMVectorZero() };
+	//_uint			iRootIndex = { static_cast<_uint>(Find_RootBoneIndex()) };
+	//_float			fTotalWeight = { Compute_Current_TotalWeight(iRootIndex) };
 
-		_int			iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
-		if (-1 == iAnimIndex)
-			continue;
+	//for (auto& pPlayingInfo : m_PlayingAnimInfos)
+	//{
+	//	if (nullptr == pPlayingInfo)
+	//		continue;
 
-		wstring			strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
-		CBone_Layer* pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
-		if (nullptr == pBoneLayer)
-			continue;
+	//	_int			iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
+	//	if (-1 == iAnimIndex)
+	//		continue;
 
-		if (false == pBoneLayer->Is_Included(iRootIndex))
-			continue;
+	//	wstring			strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
+	//	CBone_Layer* pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
+	//	if (nullptr == pBoneLayer)
+	//		continue;
 
-		_vector			vAdditionalTranslation = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
+	//	if (false == pBoneLayer->Is_Included(iRootIndex))
+	//		continue;
 
-		if (true == m_isRootMotion_Rotation)
-		{
-			//	매개변수로 들어온 현재 이동량은 vQuaternion의 역 쿼터니언으로 회전이된상태이므로 
-			//	동일하게 역회전 하여 같은 스페이스 상에서 비교해야함
-			//	_vector			vPreQuaternion = { XMLoadFloat4(&pPlayingInfo->Get_LastKeyFrame(iRootIndex).vRotation) };
-			_vector			vPreQuaternion = { XMLoadFloat4(&pPlayingInfo->Get_PreQuaternion()) };
-			//	vPreQuaternion = { XMQuaternionSlerp(XMQuaternionIdentity(), XMQuaternionNormalize(vPreQuaternion), fBlendWeightRatio) };
-			_vector			vPreQuaternionInverse = { XMQuaternionInverse(vPreQuaternion) };
-			_matrix			vRotateInverseMatrix = { XMMatrixRotationQuaternion(vPreQuaternionInverse) };
-			vAdditionalTranslation = XMVectorSetW(XMVector3TransformNormal(vAdditionalTranslation, vRotateInverseMatrix), 0.f);
-		}
+	//	_vector			vAdditionalTranslation = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
 
-		_float			fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
-		_float			fBlendWeightRatio = { fBlendWeight / fTotalWeight };
+	//	if (true == m_isRootMotion_Rotation)
+	//	{
+	//		//	매개변수로 들어온 현재 이동량은 vQuaternion의 역 쿼터니언으로 회전이된상태이므로 
+	//		//	동일하게 역회전 하여 같은 스페이스 상에서 비교해야함
+	//		//	_vector			vPreQuaternion = { XMLoadFloat4(&pPlayingInfo->Get_LastKeyFrame(iRootIndex).vRotation) };
+	//		_vector			vPreQuaternion = { XMLoadFloat4(&pPlayingInfo->Get_PreQuaternion()) };
+	//		//	vPreQuaternion = { XMQuaternionSlerp(XMQuaternionIdentity(), XMQuaternionNormalize(vPreQuaternion), fBlendWeightRatio) };
+	//		_vector			vPreQuaternionInverse = { XMQuaternionInverse(vPreQuaternion) };
+	//		_matrix			vRotateInverseMatrix = { XMMatrixRotationQuaternion(vPreQuaternionInverse) };
+	//		vAdditionalTranslation = XMVectorSetW(XMVector3TransformNormal(vAdditionalTranslation, vRotateInverseMatrix), 0.f);
+	//	}
 
-		_vector			vResultAdditionalTranslation = { vAdditionalTranslation * fBlendWeightRatio };
+	//	_float			fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
+	//	_float			fBlendWeightRatio = { fBlendWeight / fTotalWeight };
 
-		vPreTranslation = XMVectorSetW(vPreTranslation + vResultAdditionalTranslation, 1.f);
+	//	_vector			vResultAdditionalTranslation = { vAdditionalTranslation * fBlendWeightRatio };
 
-		KEYFRAME		LastRootBoneKeyFrame = { pPlayingInfo->Get_LastKeyFrame(iRootIndex) };
-		pPlayingInfo->Set_PreTranslation(XMLoadFloat3(&LastRootBoneKeyFrame.vTranslation));
-	}
+	//	vPreTranslation = XMVectorSetW(vPreTranslation + vResultAdditionalTranslation, 1.f);
 
-	_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
-	_vector			vCurrentTranslationLocal = { vTranslation };
-	_vector			vCurrentMoveDirectionLocal = { vCurrentTranslationLocal - vPreTranslation };
+	//	KEYFRAME		LastRootBoneKeyFrame = { pPlayingInfo->Get_LastKeyFrame(iRootIndex) };
+	//	pPlayingInfo->Set_PreTranslation(XMLoadFloat3(&LastRootBoneKeyFrame.vTranslation));
+	//}
 
-	if (false == m_isRootMotion_XZ)
-	{
-		vCurrentMoveDirectionLocal = XMVectorSetX(vCurrentMoveDirectionLocal, 0.f);
-		vCurrentMoveDirectionLocal = XMVectorSetZ(vCurrentMoveDirectionLocal, 0.f);
-	}
+	//_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
+	//_vector			vCurrentTranslationLocal = { vTranslation };
+	//_vector			vCurrentMoveDirectionLocal = { vCurrentTranslationLocal - vPreTranslation };
 
-	if (false == m_isRootMotion_Y)
-	{
-		vCurrentMoveDirectionLocal = XMVectorSetY(vCurrentMoveDirectionLocal, 0.f);
-	}
+	//if (false == m_isRootMotion_XZ)
+	//{
+	//	vCurrentMoveDirectionLocal = XMVectorSetX(vCurrentMoveDirectionLocal, 0.f);
+	//	vCurrentMoveDirectionLocal = XMVectorSetZ(vCurrentMoveDirectionLocal, 0.f);
+	//}
 
-	_vector			vCurrentMoveDirectionWorld;
+	//if (false == m_isRootMotion_Y)
+	//{
+	//	vCurrentMoveDirectionLocal = XMVectorSetY(vCurrentMoveDirectionLocal, 0.f);
+	//}
 
-	vCurrentMoveDirectionWorld = { XMVector3TransformNormal(vCurrentMoveDirectionLocal, XMLoadFloat4x4(&m_TransformationMatrix)) };
-	vCurrentMoveDirectionWorld = { XMVector3TransformNormal(vCurrentMoveDirectionWorld, WorldMatrix) };
+	//_vector			vCurrentMoveDirectionWorld;
 
-	XMStoreFloat3(pMovedDirection, vCurrentMoveDirectionWorld);
+	//vCurrentMoveDirectionWorld = { XMVector3TransformNormal(vCurrentMoveDirectionLocal, XMLoadFloat4x4(&m_TransformationMatrix)) };
+	//vCurrentMoveDirectionWorld = { XMVector3TransformNormal(vCurrentMoveDirectionWorld, WorldMatrix) };
+
+	//XMStoreFloat3(pMovedDirection, vCurrentMoveDirectionWorld);
+
+#pragma endregion
+
+#pragma region 3안
+
+_vector			vTotalDeltaTranslation = { XMVectorZero() };
+_uint			iRootIndex = { static_cast<_uint>(Find_RootBoneIndex()) };
+_float			fTotalWeight = { Compute_Current_TotalWeight(iRootIndex) };
+
+for (auto& pPlayingInfo : m_PlayingAnimInfos)
+{
+	if (nullptr == pPlayingInfo)
+		continue;	
+
+	_float			fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
+	_float			fBlendWeightRatio = { fBlendWeight / fTotalWeight };
+
+	_vector			vCurrentTranslation = { XMLoadFloat3(&pPlayingInfo->Get_CurrentTranslation_Local()) };
+	_vector			vPreTranslation = { XMLoadFloat3(&pPlayingInfo->Get_PreTranslation_Local()) };
+
+	_vector			vDeltaTranslation = { vCurrentTranslation - vPreTranslation };
+
+	vDeltaTranslation = vDeltaTranslation * fBlendWeightRatio;
+
+	vTotalDeltaTranslation = vTotalDeltaTranslation + vDeltaTranslation;
+
+	pPlayingInfo->Set_PreTranslation(vCurrentTranslation);
+}
+
+_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
+
+vTotalDeltaTranslation = { XMVector3TransformNormal(vTotalDeltaTranslation, XMLoadFloat4x4(&m_TransformationMatrix)) };
+vTotalDeltaTranslation = { XMVector3TransformNormal(vTotalDeltaTranslation, WorldMatrix) };
+
+XMStoreFloat3(pMovedDirection, vTotalDeltaTranslation);
+
+#pragma endregion 
 }
 
 void CModel::Apply_Translation_Inverse_Rotation(_fvector vTranslation)
@@ -1662,11 +1768,12 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 	//	애니메이션들을 재생한다.
 	//	포함된 뼈들을 등록, 각 애니메이션에대한 트랜스폼 행렬들을 레이어 단위로 저장한다.
 	_uint			iNumPlayingInfo = { static_cast<_uint>(m_PlayingAnimInfos.size()) };
+	TransformationMatricesLayer.resize(iNumPlayingInfo);
 	for (_uint i = 0; i < iNumPlayingInfo; ++i)
 	{
 		vector<_float4x4>			TransformationMatrices = { Apply_Animation(fTimeDelta, i) };
 		//	애니메이션이 종료되거나 (루프가아닌데 종료), 가중치가 없거나, 애니메이션 인덱스가 등록되지않은경우 빈 행렬벡터를 반환받는다.
-		TransformationMatricesLayer.push_back(TransformationMatrices);
+		TransformationMatricesLayer[i] = TransformationMatrices;
 	}
 
 	//	결과 행렬들을 뼈의 트랜스폼 행렬에 저장한다.
@@ -1926,6 +2033,61 @@ vector<_float4x4> CModel::Compute_ResultMatrices(const vector<vector<_float4x4>>
 
 			_matrix			ResultMatrix = { XMLoadFloat4x4(&ResultTransformationMatrices[iBoneIndex]) };
 			_matrix			TransformationMatrix = { XMLoadFloat4x4(&TransformationMatricesLayer[iPlayingInfoIndex][iBoneIndex]) };
+			////////////////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////////////////
+			_uint			iRootBoneIndex = { static_cast<_uint>(Find_RootBoneIndex()) };
+			if (iBoneIndex == iRootBoneIndex)
+			{
+				_vector			vTempScale, vTempRotation, vTempTranslation;
+				XMMatrixDecompose(&vTempScale, &vTempRotation, &vTempTranslation, TransformationMatrix);
+
+				if (true == m_isRootMotion_Rotation)
+				{
+					pPlayingInfo->Set_CurrentQuaternion(vTempRotation);
+
+					_vector			vRotationInverse = { XMQuaternionInverse(vTempRotation) };
+					_matrix			InverseRotateMatrix = { XMMatrixRotationQuaternion(vRotationInverse) };
+
+					vTempTranslation = XMVectorSetW(XMVector3TransformNormal(vTempTranslation, InverseRotateMatrix), 1.f);
+					vTempRotation = XMQuaternionIdentity();
+				}
+
+				else
+				{
+					pPlayingInfo->Set_CurrentQuaternion(XMQuaternionIdentity());
+				}
+
+				if (true == m_isRootMotion_XZ || true == m_isRootMotion_Y)
+				{
+					pPlayingInfo->Set_CurrentTranslation(vTempTranslation);
+
+					if (true == m_isRootMotion_XZ)
+					{
+
+						vTempTranslation = XMVectorSet(XMVectorGetX(vTempTranslation), 0.f, XMVectorGetZ(vTempTranslation), 1.f);
+					}
+
+					if (true == m_isRootMotion_Y)
+					{
+
+						vTempTranslation = XMVectorSet(0.f, XMVectorGetY(vTempTranslation), 0.f, 1.f);
+					}
+				}
+
+				else
+				{
+					pPlayingInfo->Set_CurrentTranslation(XMVectorZero());
+				}
+				
+
+				TransformationMatrix = XMMatrixAffineTransformation(vTempScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vTempRotation, vTempTranslation);
+			}
+			////////////////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////////////////
+
 
 			_float4x4		ResultFloat4x4 = { Compute_BlendTransformation_Additional(ResultMatrix, TransformationMatrix, fWeightRatio) };
 
