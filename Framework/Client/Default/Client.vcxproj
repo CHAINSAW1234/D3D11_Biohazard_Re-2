@@ -171,21 +171,24 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\BackGround.h" />
-    <ClInclude Include="..\Public\Body_Monster.h" />
+    <ClInclude Include="..\Public\BlackBoard_Zombie.h" />
+    <ClInclude Include="..\Public\Body_Zombie.h" />
     <ClInclude Include="..\Public\Body_Player.h" />
     <ClInclude Include="..\Public\Bullet_UI.h" />
     <ClInclude Include="..\Public\Button_UI.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\Public\Client_Enumsh.h" />
-    <ClInclude Include="..\Public\Clothes_Monster.h" />
+    <ClInclude Include="..\Public\Clothes_Zombie.h" />
     <ClInclude Include="..\Public\Crosshair_UI.h" />
     <ClInclude Include="..\Public\Cursor_UI.h" />
     <ClInclude Include="..\Public\CustomCollider.h" />
     <ClInclude Include="..\Public\Customize_UI.h" />
+    <ClInclude Include="..\Public\Is_Character_In_Range_Zombie.h" />
     <ClInclude Include="..\public\Effect.h" />
-    <ClInclude Include="..\Public\Face_Monster.h" />
+    <ClInclude Include="..\Public\Face_Zombie.h" />
     <ClInclude Include="..\Public\Hair_Player.h" />
+    <ClInclude Include="..\Public\Header_Package_Zombie.h" />
     <ClInclude Include="..\Public\Head_Player.h" />
     <ClInclude Include="..\Public\HPBar_UI.h" />
     <ClInclude Include="..\Public\Inventory.h" />
@@ -198,6 +201,7 @@
     <ClInclude Include="..\Public\Map.h" />
     <ClInclude Include="..\Public\MissionBar_UI.h" />
     <ClInclude Include="..\Public\Monster.h" />
+    <ClInclude Include="..\Public\MoveTo_Zombie.h" />
     <ClInclude Include="..\Public\NavMesh_Debug.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\Public\Player_State_Move.h" />
@@ -212,6 +216,7 @@
     <ClInclude Include="..\Public\Title_UI.h" />
     <ClInclude Include="..\Public\UI.h" />
     <ClInclude Include="..\Public\Weapon.h" />
+    <ClInclude Include="..\Public\Zombie.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="CTest.h" />
     <ClInclude Include="Resource.h" />
@@ -220,18 +225,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
-    <ClCompile Include="..\Private\Body_Monster.cpp" />
+    <ClCompile Include="..\Private\BlackBoard_Zombie.cpp" />
+    <ClCompile Include="..\Private\Body_Zombie.cpp" />
     <ClCompile Include="..\Private\Body_Player.cpp" />
     <ClCompile Include="..\Private\Bullet_UI.cpp" />
     <ClCompile Include="..\Private\Button_UI.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\Private\Crosshair_UI.cpp" />
     <ClCompile Include="..\Private\Cursor_UI.cpp" />
-    <ClCompile Include="..\Private\Clothes_Monster.cpp" />
+    <ClCompile Include="..\Private\Clothes_Zombie.cpp" />
     <ClCompile Include="..\Private\CustomCollider.cpp" />
     <ClCompile Include="..\Private\Customize_UI.cpp" />
+    <ClCompile Include="..\Private\Is_Character_In_Range_Zombie.cpp" />
     <ClCompile Include="..\private\Effect.cpp" />
-    <ClCompile Include="..\Private\Face_Monster.cpp" />
+    <ClCompile Include="..\Private\Face_Zombie.cpp" />
     <ClCompile Include="..\Private\Hair_Player.cpp" />
     <ClCompile Include="..\Private\Head_Player.cpp" />
     <ClCompile Include="..\Private\HPBar_UI.cpp" />
@@ -245,6 +252,7 @@
     <ClCompile Include="..\Private\Map.cpp" />
     <ClCompile Include="..\Private\MissionBar_UI.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
+    <ClCompile Include="..\Private\MoveTo_Zombie.cpp" />
     <ClCompile Include="..\Private\NavMesh_Debug.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\Private\Player_State_Move.cpp" />
@@ -259,6 +267,7 @@
     <ClCompile Include="..\Private\Title_UI.cpp" />
     <ClCompile Include="..\Private\UI.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />
+    <ClCompile Include="..\Private\Zombie.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="CTest.cpp" />
     <ClCompile Include="stdafx.cpp">

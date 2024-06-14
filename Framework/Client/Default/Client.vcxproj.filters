@@ -121,12 +121,6 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Stair">
       <UniqueIdentifier>{7b41809a-15c9-4a70-9130-c77c3c7123e5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Body">
-      <UniqueIdentifier>{434ae696-9846-43b2-a3bd-47aad7b0c62f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Monster\Clothes">
-      <UniqueIdentifier>{48b078ea-e64d-478b-8db2-7e8490506c6b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Map">
       <UniqueIdentifier>{6efea4f9-497a-4357-b128-793862780e4f}</UniqueIdentifier>
     </Filter>
@@ -163,8 +157,20 @@
     <Filter Include="02.GameObjects\UI\Inventory\1. Inventory Item">
       <UniqueIdentifier>{0ecab370-b1e7-4ba2-98ef-c2d58e26d1a6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Face">
+    <Filter Include="02.GameObjects\Monster\Zombie">
+      <UniqueIdentifier>{a3033983-1786-4311-8374-7759419d3fe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Body">
+      <UniqueIdentifier>{434ae696-9846-43b2-a3bd-47aad7b0c62f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Clothes">
+      <UniqueIdentifier>{48b078ea-e64d-478b-8db2-7e8490506c6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Face">
       <UniqueIdentifier>{f4f724c2-f86b-4319-869a-c7a8be8c2039}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Header_Package">
+      <UniqueIdentifier>{963422fe-d604-40e9-916c-97d953096cd8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -264,8 +270,8 @@
     <ClInclude Include="..\Public\Player_State_Move_Walk.h">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Body_Monster.h">
-      <Filter>02.GameObjects\Monster\Body</Filter>
+    <ClInclude Include="..\Public\Body_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Map.h">
       <Filter>02.GameObjects\Map</Filter>
@@ -304,11 +310,26 @@
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
     </ClInclude>
     <ClInclude Include="CTest.h" />
-    <ClInclude Include="..\Public\Face_Monster.h">
-      <Filter>02.GameObjects\Monster\Face</Filter>
+    <ClInclude Include="..\Public\Face_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\Face</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Clothes_Monster.h">
-      <Filter>02.GameObjects\Monster\Clothes</Filter>
+    <ClInclude Include="..\Public\Clothes_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\Clothes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MoveTo_Zombie.h">
+      <Filter>AIController\Zombie\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Header_Package_Zombie.h">
+      <Filter>AIController\Zombie\Header_Package</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BlackBoard_Zombie.h">
+      <Filter>AIController\Zombie\BlackBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Is_Character_In_Range_Zombie.h">
+      <Filter>AIController\Zombie\Decorator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -393,8 +414,8 @@
     <ClCompile Include="..\Private\Player_State_Move_Walk.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Body_Monster.cpp">
-      <Filter>02.GameObjects\Monster\Body</Filter>
+    <ClCompile Include="..\Private\Body_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Map.cpp">
       <Filter>02.GameObjects\Map</Filter>
@@ -433,11 +454,23 @@
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
     </ClCompile>
     <ClCompile Include="CTest.cpp" />
-    <ClCompile Include="..\Private\Clothes_Monster.cpp">
-      <Filter>02.GameObjects\Monster\Clothes</Filter>
+    <ClCompile Include="..\Private\Clothes_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\Clothes</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Face_Monster.cpp">
-      <Filter>02.GameObjects\Monster\Face</Filter>
+    <ClCompile Include="..\Private\Face_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\Face</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MoveTo_Zombie.cpp">
+      <Filter>AIController\Zombie\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BlackBoard_Zombie.cpp">
+      <Filter>AIController\Zombie\BlackBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Is_Character_In_Range_Zombie.cpp">
+      <Filter>AIController\Zombie\Decorator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

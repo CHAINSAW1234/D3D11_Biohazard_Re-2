@@ -2,7 +2,7 @@
 #include "..\Public\Level_GamePlay.h"
 
 #include "Camera_Free.h"
-#include "Monster.h"
+#include "Zombie.h"
 #include"CustomCollider.h"
 
 /* UI */
@@ -175,7 +175,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const wstring & strLayerTag/*, CLand
 
 HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Monster"))))
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"))))
 		return E_FAIL;
 
 	return S_OK;
