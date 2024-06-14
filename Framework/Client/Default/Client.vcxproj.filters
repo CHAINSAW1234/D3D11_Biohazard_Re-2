@@ -345,14 +345,17 @@
     <ClInclude Include="..\Public\Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MoveTo_Zombie.h">
-      <Filter>AIController\Zombie</Filter>
+    <ClInclude Include="..\Public\BlackBoard_Zombie.h">
+      <Filter>AIController\Zombie\BlackBoard</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Character_In_Range_Zombie.h">
-      <Filter>AIController\Zombie</Filter>
+      <Filter>AIController\Zombie\Decorator</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\BlackBoard_Zombie.h">
-      <Filter>AIController\Zombie</Filter>
+    <ClInclude Include="..\Public\MoveTo_Zombie.h">
+      <Filter>AIController\Zombie\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Header_Package_Zombie.h">
+      <Filter>AIController\Zombie\Header_Package</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -500,14 +503,14 @@
     <ClCompile Include="..\Private\Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Is_Character_In_Range_Zombie.cpp">
-      <Filter>AIController\Zombie</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\BlackBoard_Zombie.cpp">
-      <Filter>AIController\Zombie</Filter>
+      <Filter>AIController\Zombie\BlackBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Is_Character_In_Range_Zombie.cpp">
+      <Filter>AIController\Zombie\Decorator</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MoveTo_Zombie.cpp">
-      <Filter>AIController\Zombie</Filter>
+      <Filter>AIController\Zombie\Task</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
