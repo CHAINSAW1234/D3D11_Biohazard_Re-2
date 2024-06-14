@@ -208,8 +208,8 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix_LinearInterpolation(_
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
 		_uint				iBoneIndex = { m_Channels[i]->Get_BoneIndex() };
-		if (iBoneIndex == iRootIndex)
-			continue;
+		/*if (iBoneIndex == iRootIndex)
+			continue;*/
 
 		_float4x4			TransformationFloat4x4 = { m_Channels[i]->Compute_TransformationMatrix_LinearInterpolation(TransformationMatrices, fAccLinearInterpolation, fTotalLinearTime, LastKeyFrames) };
 		TransformationMatrices[iBoneIndex] = TransformationFloat4x4;
@@ -236,7 +236,6 @@ _int CAnimation::Find_ChannelIndex(_uint iBoneIndex)
 		
 		if (iDstBoneIndex == iBoneIndex)
 		{
-			iChannelIndex = iBoneIndex;
 			isFind = true;
 
 			if (iBoneIndex != 1)

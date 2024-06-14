@@ -154,6 +154,7 @@ void CPlayingInfo::Update_LastKeyFrames(const vector<_float4x4>& TransformationM
 
 void CPlayingInfo::Update_LinearStateKeyFrames(const vector<KEYFRAME>& KeyFrames)
 {
+	m_LinearStartKeyFrames.clear();
 	m_LinearStartKeyFrames = KeyFrames;
 }
 
