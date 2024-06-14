@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "GameInstance.h"
 #include "BlackBoard_Zombie.h"
 #include "Player.h"
