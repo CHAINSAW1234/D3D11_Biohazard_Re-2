@@ -4,9 +4,9 @@
 #include "Player.h"
 #include "BlackBoard_Zombie.h"
 
-CMoveTo_Zombie::CMoveTo_Zombie() : m_pGameInstance{ CGameInstance::Get_Instance() }
+CMoveTo_Zombie::CMoveTo_Zombie() 
+	: CTask_Node()
 {
-	Safe_AddRef(m_pGameInstance);
 }
 
 CMoveTo_Zombie::CMoveTo_Zombie(const CMoveTo_Zombie& rhs)
@@ -43,5 +43,5 @@ CMoveTo_Zombie* CMoveTo_Zombie::Create()
 
 void CMoveTo_Zombie::Free()
 {
-	Safe_Release(m_pGameInstance);
+	__super::Free();
 }

@@ -78,15 +78,6 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
 
-	if (FAILED(Render_NonBlend()))
-		return E_FAIL;
-
-	if (FAILED(Render_SSAO()))
-		return E_FAIL;
-
-	if (FAILED(Render_Lights()))
-		return E_FAIL;
-
 	if (FAILED(Render_Field_Shadow_Direction()))
 		return E_FAIL;
 
@@ -100,6 +91,15 @@ HRESULT CRenderer::Render()
 		return E_FAIL;
 
 	if (FAILED(Render_Shadow_Spot()))
+		return E_FAIL;
+
+	if (FAILED(Render_NonBlend()))
+		return E_FAIL;
+
+	if (FAILED(Render_SSAO()))
+		return E_FAIL;
+
+	if (FAILED(Render_Lights()))
 		return E_FAIL;
 
 	if (FAILED(Render_Light_Result()))

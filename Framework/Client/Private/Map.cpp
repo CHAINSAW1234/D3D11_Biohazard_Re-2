@@ -105,12 +105,6 @@ void CMap::Late_Tick(_float fTimeDelta)
 			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 		}
 	}
-}
-
-HRESULT CMap::Render()
-{
-	if (FAILED(Bind_ShaderResources()))
-		return E_FAIL;
 
 	function<void()> job1 = bind(&COctree::DrawOctree_1, m_pOctree);
 	m_pGameInstance->Insert_Job(job1);
@@ -140,6 +134,14 @@ HRESULT CMap::Render()
 	{
 		this_thread::yield();
 	}
+
+	return;
+}
+
+HRESULT CMap::Render()
+{
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
 
 	m_pOctree->Render_Node(m_pModelCom, m_pShaderCom);
 

@@ -25,7 +25,6 @@ public:
 		m_pBlackBoard = pBlackBoard;
 	}
 protected:
-	class CGameInstance*			m_pGameInstance = { nullptr };
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 public:
 	static CMoveTo_Zombie* Create();

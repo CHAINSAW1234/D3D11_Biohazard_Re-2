@@ -3,9 +3,9 @@
 #include "BlackBoard_Zombie.h"
 #include "Player.h"
 
-CBlackBoard_Zombie::CBlackBoard_Zombie(): m_pGameInstance{ CGameInstance::Get_Instance() }
+CBlackBoard_Zombie::CBlackBoard_Zombie()
+	: CBlackBoard()
 {
-	Safe_AddRef(m_pGameInstance);
 }
 
 CBlackBoard_Zombie::CBlackBoard_Zombie(const CBlackBoard_Zombie& rhs)
@@ -44,5 +44,5 @@ CBlackBoard_Zombie* CBlackBoard_Zombie::Create()
 
 void CBlackBoard_Zombie::Free()
 {
-	Safe_Release(m_pGameInstance);
+	__super::Free();
 }

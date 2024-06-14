@@ -30,7 +30,6 @@ public: // Getter
 	}
 	
 protected:
-	class CGameInstance*			m_pGameInstance = { nullptr };
 	class CPathFinder*				m_pPathFinder = { nullptr };
 	class CPlayer*					m_pPlayer = { nullptr };
 public:
