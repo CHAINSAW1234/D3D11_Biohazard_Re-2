@@ -67,7 +67,7 @@ private:
 	void										Apply_RootMotion();
 
 private:
-	class CAnimTestObject* m_pTestObject = { nullptr };
+	class CAnimTestObject*						m_pTestObject = { nullptr };
 
 	map<string, _uint>							m_ModelLastPlayingIndex;
 	map<string, _bool>							m_isPlayingAnimations;

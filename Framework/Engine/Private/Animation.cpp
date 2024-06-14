@@ -203,11 +203,14 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _u
 	return TransformationMatrices;
 }
 
-vector<_float4x4> CAnimation::Compute_TransfromationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, vector<_float4x4>& TransformationMatrices, _uint iNumBones, const vector<KEYFRAME>& LastKeyFrames)
+vector<_float4x4> CAnimation::Compute_TransfromationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, vector<_float4x4>& TransformationMatrices, _uint iNumBones, _uint iRootIndex, const vector<KEYFRAME>& LastKeyFrames)
 {
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
 		_uint				iBoneIndex = { m_Channels[i]->Get_BoneIndex() };
+		if (iBoneIndex == iRootIndex)
+			continue;
+
 		_float4x4			TransformationFloat4x4 = { m_Channels[i]->Compute_TransformationMatrix_LinearInterpolation(TransformationMatrices, fAccLinearInterpolation, fTotalLinearTime, LastKeyFrames) };
 		TransformationMatrices[iBoneIndex] = TransformationFloat4x4;
 	}
@@ -225,19 +228,32 @@ void CAnimation::Set_TickPerSec(_float fTickPerSec)
 
 _int CAnimation::Find_ChannelIndex(_uint iBoneIndex)
 {
-	_int			iResultBoneIndex = { -1 };
+	_int			iChannelIndex = { 0 };
+	_bool			isFind = { false };
 	for (auto& pChannel : m_Channels)
 	{
 		_uint			iDstBoneIndex = { pChannel->Get_BoneIndex() };
 		
 		if (iDstBoneIndex == iBoneIndex)
 		{
-			iResultBoneIndex = iBoneIndex;
+			iChannelIndex = iBoneIndex;
+			isFind = true;
+
+			if (iBoneIndex != 1)
+			{
+				MSG_BOX(TEXT("·çÆ®¾Æ´Ò²¬"));
+			}
+
 			break;
 		}
+
+		++iChannelIndex;
 	}
 
-	return iResultBoneIndex;
+	if (false == isFind)
+		iChannelIndex = -1;
+
+	return iChannelIndex;
 }
 
 KEYFRAME CAnimation::Get_FirstKeyFrame(_uint iBoneIndex)
@@ -245,7 +261,10 @@ KEYFRAME CAnimation::Get_FirstKeyFrame(_uint iBoneIndex)
 	KEYFRAME				FirstKeyFrame;
 	_int			iChannelIndex = { Find_ChannelIndex(iBoneIndex) };
 	if (-1 == iChannelIndex)
+	{
+		MSG_BOX(TEXT("CAnimation::Get_FirstKeyFrame(_uint iBoneIndex)"));
 		return FirstKeyFrame;
+	}
 
 	vector<KEYFRAME>		KeyFrames = m_Channels[static_cast<_uint>(iChannelIndex)]->Get_KeyFrames();
 
