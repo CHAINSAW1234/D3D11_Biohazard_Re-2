@@ -261,8 +261,9 @@ KEYFRAME CAnimation::Get_FirstKeyFrame(_uint iBoneIndex)
 	_int			iChannelIndex = { Find_ChannelIndex(iBoneIndex) };
 	if (-1 == iChannelIndex)
 	{
-		MSG_BOX(TEXT("CAnimation::Get_FirstKeyFrame(_uint iBoneIndex)"));
 		return FirstKeyFrame;
+		//	MSG_BOX(TEXT("CAnimation::Get_FirstKeyFrame(_uint iBoneIndex)"));
+		//	return FirstKeyFrame;
 	}
 
 	vector<KEYFRAME>		KeyFrames = m_Channels[static_cast<_uint>(iChannelIndex)]->Get_KeyFrames();
