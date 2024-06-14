@@ -235,18 +235,20 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	m_pGameInstance->SetSimulate(true);
 }
 
-CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, _float4x4* WorldMatrix, _float4x4* RotationMatrix, const string& name)
+CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, CTransform* pTransform, const string& name)
 {
 	//Ragdoll Init
 	auto pRagdoll = new CRagdoll_Physics(m_Scene, m_Physics, m_DefaultAllocatorCallback, m_DefaultErrorCallback, m_Foundation,
 		m_Dispatcher, m_Material);
 
 	pRagdoll->SetBone_Ragdoll(vecBone);
-	pRagdoll->SetRotationMatrix(RotationMatrix);
-	pRagdoll->SetWorldMatrix(WorldMatrix);
+	//pRagdoll->SetRotationMatrix(RotationMatrix);
+	//pRagdoll->SetWorldMatrix(WorldMatrix);
+	pRagdoll->SetTransform(pTransform);
 	pRagdoll->Init(name);
 
 	m_vecRagdoll.push_back(pRagdoll);
+	pRagdoll->Init_Ragdoll();
 
 	return pRagdoll;
 }

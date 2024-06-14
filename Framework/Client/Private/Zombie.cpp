@@ -61,7 +61,7 @@ HRESULT CZombie::Initialize(void * pArg)
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
 #pragma region AIController Setup
-	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this,1.f,0.35f);
+	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this,0.35f,0.35f);
 
 	m_pBehaviorTree = m_pGameInstance->Create_BehaviorTree(&m_iAIController_ID);
 	m_pPathFinder = m_pGameInstance->Create_PathFinder();
@@ -84,9 +84,6 @@ HRESULT CZombie::Initialize(void * pArg)
 
 void CZombie::Tick(_float fTimeDelta)
 {
-	/*if (true == m_pModelCom->isFinished())
-		int a = 10;*/
-
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4());
 
 	if (m_bArrived == false)

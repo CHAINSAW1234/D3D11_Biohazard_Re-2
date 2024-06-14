@@ -57,7 +57,7 @@ Skeleton* Skeleton::create(const aiScene* scene, ofstream& ofs)
         auto& joint = skeleton->m_joints[i];
     }
 
-    auto JointSize = skeleton->m_joints.size();
+    _int JointSize = skeleton->m_joints.size();
 
     ofs.write(reinterpret_cast<_char*>(&JointSize), sizeof(JointSize));
 
@@ -65,10 +65,16 @@ Skeleton* Skeleton::create(const aiScene* scene, ofstream& ofs)
     {
         auto& joint = skeleton->m_joints[i];
 
-        ofs.write(reinterpret_cast<_char*>(&joint.inverse_bind_pose), sizeof(joint.inverse_bind_pose));
-        ofs.write(reinterpret_cast<_char*>(&joint.original_rotation), sizeof(joint.original_rotation));
-        ofs.write(reinterpret_cast<_char*>(&joint.parent_index), sizeof(joint.parent_index));
+        char buffer[MAX_PATH] = { 0 };
+        strncpy_s(buffer, joint.name.c_str(), MAX_PATH - 1);
+
+        ofs.write(reinterpret_cast<const char*>(buffer), sizeof(char) * MAX_PATH);
+        ofs.write((_char*)(&joint.inverse_bind_pose), sizeof(joint.inverse_bind_pose));
+        ofs.write((_char*)(&joint.original_rotation), sizeof(joint.original_rotation));
+        ofs.write((_char*)(&joint.parent_index), sizeof(joint.parent_index));
     }
+
+    ofs.close();
 
     return skeleton;
 }
@@ -77,21 +83,27 @@ Skeleton* Skeleton::create(ifstream& ifs)
 {
     Skeleton* skeleton = new Skeleton();
 
-    _uint JointSize = 0;
+    _int JointSize = 0;
 
-    ifs.read(reinterpret_cast<_char*>(&JointSize), sizeof(JointSize));
+    ifs.read((_char*)(&JointSize), sizeof(JointSize));
 
     for (int i = 0; i < JointSize; i++)
     {
         Joint joint;
 
-        joint.name = "None";
-        ifs.read(reinterpret_cast<_char*>(&joint.inverse_bind_pose), sizeof(_matrix));
-        ifs.read(reinterpret_cast<_char*>(&joint.original_rotation), sizeof(_vector));
-        ifs.read(reinterpret_cast<_char*>(&joint.parent_index), sizeof(joint.parent_index));
+        char Name[MAX_PATH] = { 0 }; // 버퍼를 0으로 초기화합니다.
+        ifs.read(reinterpret_cast<char*>(&Name), sizeof(char) * MAX_PATH);
+        ifs.read((_char*)(&joint.inverse_bind_pose), sizeof(_matrix));
+        ifs.read((_char*)(&joint.original_rotation), sizeof(_vector));
+        ifs.read((_char*)(&joint.parent_index), sizeof(joint.parent_index));
+
+        string strName = Name;
+        joint.name = strName;
 
         skeleton->m_joints.push_back(joint);
     }
+
+    ifs.close();
 
     return skeleton;
 }
@@ -177,6 +189,11 @@ void Skeleton::build_skeleton(aiNode* node, int bone_index, const aiScene* scene
 
     for (int i = 0; i < node->mNumChildren; i++)
         build_skeleton(node->mChildren[i], m_num_joints, scene, temp_bone_list);
+}
+
+void Skeleton::SetNumJoint()
+{
+    m_num_joints = m_joints.size();
 }
 
 int32_t Skeleton::find_joint_index(const std::string& channel_name)

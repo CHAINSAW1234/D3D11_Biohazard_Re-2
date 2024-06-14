@@ -33,6 +33,8 @@ SkeletalMesh* SkeletalMesh::load(const std::string& name, Skeleton* skeleton)
 		else
 			skeletal_mesh->m_skeleton = Skeleton::create(ifs);
 
+		skeletal_mesh->m_skeleton->SetNumJoint();
+
 		return skeletal_mesh;
 	}
 	else

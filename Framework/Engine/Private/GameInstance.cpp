@@ -1040,10 +1040,10 @@ _bool CGameInstance::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPo
 {
 	return m_pPhysics_Controller->SphereCast(vOrigin, vDir, pBlockPoint, fMaxDist);
 }
-CRagdoll_Physics* CGameInstance::Create_Ragdoll(vector<class CBone*>* vecBone, _float4x4* WorldMatrix, _float4x4* RotationMatrix, const string& name)
+CRagdoll_Physics* CGameInstance::Create_Ragdoll(vector<class CBone*>* vecBone,CTransform* pTransform, const string& name)
 {
 	if (m_pPhysics_Controller)
-		return m_pPhysics_Controller->Create_Ragdoll(vecBone,WorldMatrix,RotationMatrix,name);
+		return m_pPhysics_Controller->Create_Ragdoll(vecBone,pTransform,name);
 }
 #pragma endregion
 

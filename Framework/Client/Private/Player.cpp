@@ -467,6 +467,8 @@ void CPlayer::SetMoveDir()
 	if (m_eMoveDir != m_ePrevMoveDir)
 	{
 		m_fLerpTime = 0.f;
+		m_bLerp_Move = true;
+		m_bLerp = true;
 	}
 
 	m_ePrevMoveDir = m_eMoveDir;
@@ -865,7 +867,7 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 		m_pGameInstance->Set_MouseCurPos(ptPos);
 
 		ClientToScreen(g_hWnd, &ptPos);
-		SetCursorPos(ptPos.x, ptPos.y);
+		//SetCursorPos(ptPos.x, ptPos.y);
 	}
 
 	return;

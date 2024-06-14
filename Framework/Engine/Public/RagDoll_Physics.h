@@ -183,6 +183,8 @@ public:
     {
         m_pRotationMatrix = pRotMat;
     }
+    void                                SetTransform(class CTransform* pTransform);
+    void                                SetSimulate(_bool boolean);
 public:
 	static CRagdoll_Physics*            Create();
 
@@ -241,6 +243,7 @@ private:
     PoseTransforms                                  m_Global_transforms;
 
     PxFilterData                                    m_FilterData;
+    class CTransform*                               m_pTransform = { nullptr };
 public:
 	virtual void Free() override;
 };
