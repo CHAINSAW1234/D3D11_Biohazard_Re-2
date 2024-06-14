@@ -282,9 +282,6 @@
     <ClInclude Include="..\Public\Player_State_Move_Walk.h">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Body_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Map.h">
       <Filter>02.GameObjects\Map</Filter>
     </ClInclude>
@@ -321,7 +318,24 @@
     <ClInclude Include="..\Public\Player_State_Move_Jog.h">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
     </ClInclude>
-    <ClInclude Include="CTest.h" />
+    <ClInclude Include="..\Public\Tutorial_UI.h">
+      <Filter>02.GameObjects\UI\8. Tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Selector_UI.h">
+      <Filter>02.GameObjects\UI\10. Selector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Inventory_Manager.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Hold_Idle.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Hold.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Face_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\Face</Filter>
     </ClInclude>
@@ -332,31 +346,13 @@
       <Filter>02.GameObjects\Monster\Zombie</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MoveTo_Zombie.h">
-      <Filter>AIController\Zombie\Task</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Header_Package_Zombie.h">
-      <Filter>AIController\Zombie\Header_Package</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\BlackBoard_Zombie.h">
-      <Filter>AIController\Zombie\BlackBoard</Filter>
+      <Filter>AIController\Zombie</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Character_In_Range_Zombie.h">
-      <Filter>AIController\Zombie\Decorator</Filter>
+      <Filter>AIController\Zombie</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_State_Hold.h">
-      <Filter>02.GameObjects\Player\State\Player_State_Hold</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Player_State_Hold_Idle.h">
-      <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Tutorial_UI.h">
-      <Filter>02.GameObjects\UI\8. Tutorial</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Selector_UI.h">
-      <Filter>02.GameObjects\UI\10. Selector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Inventory_Manager.h">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager</Filter>
+    <ClInclude Include="..\Public\BlackBoard_Zombie.h">
+      <Filter>AIController\Zombie</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -441,9 +437,6 @@
     <ClCompile Include="..\Private\Player_State_Move_Walk.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Body_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Map.cpp">
       <Filter>02.GameObjects\Map</Filter>
     </ClCompile>
@@ -480,7 +473,24 @@
     <ClCompile Include="..\Private\Player_State_Move_Jog.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Jog</Filter>
     </ClCompile>
-    <ClCompile Include="CTest.cpp" />
+    <ClCompile Include="..\Private\Tutorial_UI.cpp">
+      <Filter>02.GameObjects\UI\8. Tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Selector_UI.cpp">
+      <Filter>02.GameObjects\UI\10. Selector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Inventory_Manager.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Hold_Idle.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Hold.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Hold</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Clothes_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\Clothes</Filter>
     </ClCompile>
@@ -490,29 +500,14 @@
     <ClCompile Include="..\Private\Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\MoveTo_Zombie.cpp">
-      <Filter>AIController\Zombie\Task</Filter>
+    <ClCompile Include="..\Private\Is_Character_In_Range_Zombie.cpp">
+      <Filter>AIController\Zombie</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BlackBoard_Zombie.cpp">
-      <Filter>AIController\Zombie\BlackBoard</Filter>
+      <Filter>AIController\Zombie</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Is_Character_In_Range_Zombie.cpp">
-      <Filter>AIController\Zombie\Decorator</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Player_State_Hold.cpp">
-      <Filter>02.GameObjects\Player\State\Player_State_Hold</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Player_State_Hold_Idle.cpp">
-      <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Tutorial_UI.cpp">
-      <Filter>02.GameObjects\UI\8. Tutorial</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Selector_UI.cpp">
-      <Filter>02.GameObjects\UI\10. Selector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Inventory_Manager.cpp">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager</Filter>
+    <ClCompile Include="..\Private\MoveTo_Zombie.cpp">
+      <Filter>AIController\Zombie</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
