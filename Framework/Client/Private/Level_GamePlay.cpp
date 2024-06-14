@@ -263,19 +263,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
-	///* 6. UI_MainHP */
+
+	///* 4. UI_MainHP */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/MainHPBar_UI.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
-	///* 5. BackGroundHPBar_UI */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/BackGroundHPBar_UI.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);*/
-
-	 5. BackGroundHPBar_UI 
+	 /*5. BackGroundHPBar_UI */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/BackGroundHPBar_UI.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
@@ -311,12 +306,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
-	///* 7. Tab_Widow */
-	///*CUI::UI_DESC UIDesc = {};
-	//UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.9f };
-	//UIDesc.vSize = { g_iWinSizeX * 1.f, g_iWinSizeY * 1.f };
-	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
-	//	return E_FAIL;*/
+	/* 7. Tab_Widow */
+	CUI::UI_DESC UIDesc = {};
+	UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.9f };
+	UIDesc.vSize = { g_iWinSizeX * 1.f, g_iWinSizeY * 1.f };
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
+		return E_FAIL;
 
 	/* 8. UI_Tutorial */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Tutorial.dat");

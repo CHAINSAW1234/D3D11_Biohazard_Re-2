@@ -431,6 +431,7 @@ protected : /* Client*/
 	_float						m_fLightSize = {};
 	_bool						m_isLight = {};
 
+	_bool						m_isKeepPlay = {};
 public:
 	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	//생성한 객체를 포인터로 받고싶으면 사용하시오
