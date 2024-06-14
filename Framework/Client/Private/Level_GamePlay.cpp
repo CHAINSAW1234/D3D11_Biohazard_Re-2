@@ -248,7 +248,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 
 	/* 1. Crosshair */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Crosshair.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);	
+	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Crosshair_UI"), m_pDevice, m_pContext);
 
@@ -263,7 +263,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
-
 	///* 6. UI_MainHP */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/MainHPBar_UI.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
@@ -271,6 +270,12 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
 	///* 5. BackGroundHPBar_UI */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/BackGroundHPBar_UI.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);*/
+
+	 5. BackGroundHPBar_UI 
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/BackGroundHPBar_UI.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
@@ -283,17 +288,17 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
 	/* 5. Title */
-	/*selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Title_UI.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);*/
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Title_UI.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
 	/* 5. UI_Sub_Inventory */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Sub_Inventory.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
-
+	
 	/* 5. UI_MissionBar */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_MissionBar.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);

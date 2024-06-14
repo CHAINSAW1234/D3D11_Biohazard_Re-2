@@ -176,6 +176,7 @@
     <ClInclude Include="..\Public\Bullet_UI.h" />
     <ClInclude Include="..\Public\Button_UI.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
+    <ClInclude Include="..\Public\Inventory_Manager.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\Public\Client_Enumsh.h" />
     <ClInclude Include="..\Public\Crosshair_UI.h" />
@@ -229,6 +230,7 @@
     <ClCompile Include="..\Private\Bullet_UI.cpp" />
     <ClCompile Include="..\Private\Button_UI.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
+    <ClCompile Include="..\Private\Inventory_Manager.cpp" />
     <ClCompile Include="..\Private\Crosshair_UI.cpp" />
     <ClCompile Include="..\Private\Cursor_UI.cpp" />
     <ClCompile Include="..\Private\CustomCollider.cpp" />

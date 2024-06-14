@@ -24,7 +24,7 @@ using namespace Client;
 
 typedef struct Tag_Prototype_Inform
 {
-	_bool			bAnim = { false };
+	_bool		bAnim = { false };
 	string		strModelPath = { ("") }; //모델.bin 파일의 위치
 	wstring		wstrModelPrototypeName = { TEXT("") }; // Prototype_Component_Model_
 	wstring		wstrGameObjectPrototypeName = { TEXT("") }; //Prototype_GameObject_

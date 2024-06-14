@@ -439,6 +439,16 @@ void CCustomize_UI::Set_Dead(_bool bDead)
 		iter->Set_Dead(bDead);
 }
 
+void CCustomize_UI::Set_IsLoad(_bool IsLoad)
+{
+	m_isLoad = IsLoad;
+
+	for (auto& iter : m_vecChildUI)
+	{
+		dynamic_cast<CCustomize_UI*>(iter)->Set_IsLoad(IsLoad);
+	}
+}
+
 _bool CCustomize_UI::Select_UI()
 {
 	_float2 mouse = m_pGameInstance->Get_ViewMousePos();
@@ -1179,4 +1189,111 @@ HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* p
 
 
 	return S_OK;
+}
+
+void CCustomize_UI::ExtractData_FromDat(ifstream& inputFileStream, vector<CUSTOM_UI_DESC>* pvecdesc, _bool IsFirst)
+{
+	CCustomize_UI::CUSTOM_UI_DESC CustomizeUIDesc;
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoad), sizeof(_bool));
+
+	_char DefaultTexturePath[MAX_PATH] = "";
+	_char DefaultTextureTag[MAX_PATH] = "";
+	_char MaskTexturePath[MAX_PATH] = "";
+	_char MaskTextureTag[MAX_PATH] = "";
+
+	inputFileStream.read(reinterpret_cast<_char*>(DefaultTexturePath), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(DefaultTextureTag), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(MaskTexturePath), sizeof(_char) * MAX_PATH);
+	inputFileStream.read(reinterpret_cast<_char*>(MaskTextureTag), sizeof(_char) * MAX_PATH);
+
+	CustomizeUIDesc.wstrDefaultTexturPath = wstring(DefaultTexturePath, DefaultTexturePath + strlen(DefaultTexturePath));
+	CustomizeUIDesc.wstrDefaultTexturComTag = wstring(DefaultTextureTag, DefaultTextureTag + strlen(DefaultTextureTag));
+	CustomizeUIDesc.wstrMaskPath = wstring(MaskTexturePath, MaskTexturePath + strlen(MaskTexturePath));
+	CustomizeUIDesc.wstrMaskComTag = wstring(MaskTextureTag, MaskTextureTag + strlen(MaskTextureTag));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.worldMatrix), sizeof(_float4x4));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.vSize), sizeof(_float2));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isPlay), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fColorTimer_Limit), sizeof(_float));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iEndingType), sizeof(_int));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.fMaxFrame), sizeof(_float));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isFrame), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoopStart), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoop), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoopStop), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.ReStart), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iColorMaxNum), sizeof(_uint));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iTextBoxCount), sizeof(_uint));
+
+	for (_uint i = 0; i <= CustomizeUIDesc.iColorMaxNum; i++)
+	{
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.SavePos[i]), sizeof(_float4x4));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.vColor[i]), sizeof(CCustomize_UI::Value_Color));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.Mask[i]), sizeof(CCustomize_UI::Value_Mask));
+	}
+
+	for (_uint i = 0; i < CustomizeUIDesc.iTextBoxCount; i++)
+	{
+		CTextBox::TextBox_DESC TextBoxDesc = {};
+
+		_tchar FontString[MAX_PATH] = L"";
+
+		_char FontType[MAX_PATH] = "";
+
+		inputFileStream.read(reinterpret_cast<_char*>(FontString), sizeof(_tchar) * MAX_PATH);
+
+		inputFileStream.read(reinterpret_cast<_char*>(FontType), sizeof(_char) * MAX_PATH);
+
+		TextBoxDesc.wstrText = FontString;
+
+		TextBoxDesc.wstrFontType = wstring(FontType, FontType + strlen(FontType));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vFontColor), sizeof(_vector));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.iFontSize), sizeof(_uint));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vPos), sizeof(_float3));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vSize), sizeof(_float2));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.isOuterLine), sizeof(_bool));
+
+		inputFileStream.read(reinterpret_cast<_char*>(&TextBoxDesc.vOutLineColor), sizeof(_vector));
+
+		CustomizeUIDesc.vecTextBoxDesc.push_back(TextBoxDesc);
+	}
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.IsChild), sizeof(_bool));
+
+	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.iChild), sizeof(_int));
+
+	pvecdesc->push_back(CustomizeUIDesc);
+
+	if (true == 0 < CustomizeUIDesc.iChild)
+	{
+		for (_int i = 0; i < CustomizeUIDesc.iChild; i++)
+		{
+			ExtractData_FromDat(inputFileStream, pvecdesc, false);
+		}
+	}
+
+	if (true == IsFirst)
+	{
+		inputFileStream.close();
+	}
 }
