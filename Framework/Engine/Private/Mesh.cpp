@@ -378,13 +378,18 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertic
 		memcpy_s(&pVertices[i].vTangent, sizeof(_float3), &Vertices[i].vTangent, sizeof(_float3));
 	}
 
+	_float3 vTotal_Pos = _float3(0.f,0.f,0.f);
+
 	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
 	{
+		vTotal_Pos += pVertices[i].vPosition;
 		m_pVertices_Cooking[i] = pVertices[i].vPosition;
 		m_pNormals[i] = pVertices[i].vNormal;
 		m_pTexcoords[i] = pVertices[i].vTexcoord;
 		m_pTangents[i] = pVertices[i].vTangent;
 	}
+
+	m_vCenterPoint = vTotal_Pos / m_iNumVertices;
 
 	ZeroMemory(&m_InitialData, sizeof m_InitialData);
 	m_InitialData.pSysMem = pVertices;
@@ -462,13 +467,6 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 
 void CMesh::Static_Mesh_Cooking(CTransform* pTransform)
 {
-	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
-	{
-		m_pVertices_Cooking[i].x *= 1.f;
-		m_pVertices_Cooking[i].y *= 1.f;
-		m_pVertices_Cooking[i].z *= 1.f;
-	}
-
 	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices,pTransform);
 }
 

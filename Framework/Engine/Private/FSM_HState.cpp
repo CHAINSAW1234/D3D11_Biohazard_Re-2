@@ -60,6 +60,12 @@ void CFSM_HState::Change_State(_uint iState)
 	m_pCurrent_State->OnStateEnter();
 }
 
+void CFSM_HState::Reset_State()
+{
+	Safe_Release(m_pCurrent_State);
+	m_pCurrent_State = nullptr;
+}
+
 void CFSM_HState::Add_State(_uint iState, CFSM_State* pInitState)
 {
 	if (nullptr == pInitState) {

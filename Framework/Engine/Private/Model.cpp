@@ -31,6 +31,7 @@ CModel::CModel(const CModel& rhs)
 	, m_Materials{ rhs.m_Materials }
 	, m_TransformationMatrix{ rhs.m_TransformationMatrix }
 	, m_iNumAnimations{ rhs.m_iNumAnimations }
+	, m_vCenterPoint{rhs.m_vCenterPoint}
 {
 	for (auto& pPrototypeAnimation : rhs.m_Animations)
 		m_Animations.push_back(pPrototypeAnimation->Clone());
@@ -2118,6 +2119,8 @@ HRESULT CModel::Ready_Animations(const map<string, _uint>& BoneIndices)
 
 HRESULT CModel::Ready_Meshes(ifstream& ifs)
 {
+	_float3 vTotal_CenterPoint = _float3(0.f, 0.f, 0.f);
+
 	ifs.read(reinterpret_cast<_char*>(&m_iNumMeshes), sizeof(_uint));
 	ifs.read(reinterpret_cast<_char*>(&m_eModelType), sizeof(MODEL_TYPE));
 
@@ -2181,7 +2184,12 @@ HRESULT CModel::Ready_Meshes(ifstream& ifs)
 			return E_FAIL;
 
 		m_Meshes.push_back(pMesh);
+
+		vTotal_CenterPoint += pMesh->Get_CenterPoint();
 	}
+
+	vTotal_CenterPoint = vTotal_CenterPoint / m_iNumMeshes;
+	m_vCenterPoint = Convert_Float3_To_Float4_Coord(vTotal_CenterPoint);
 
 	return S_OK;
 }

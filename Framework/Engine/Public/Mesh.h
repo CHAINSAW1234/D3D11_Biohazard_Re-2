@@ -163,12 +163,22 @@ public: /* For Octree Culling*/
 	void					Release_IndexBuffer();
 	void					Release_Dump();
 
+public:
+	_bool					Is_Hide() { return m_isHide; }
+	void					Set_Hide(_bool isHide) { m_isHide = isHide; }
+
+public:
+	_float3					Get_CenterPoint()
+	{
+		return m_vCenterPoint;
+	}
 private:
 	vector<tFace*>			m_vecFaces;
 	_float3*				m_pNormals = { nullptr };
 	_float2*				m_pTexcoords = { nullptr };
 	_float3*				m_pTangents = { nullptr };
 
+	_float3	 m_vCenterPoint;
 public:
 	/* For.FBXLoad*/
 	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::MODEL_TYPE eModelType, const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices, _fmatrix TransformationMatrix);
