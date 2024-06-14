@@ -11,13 +11,13 @@
 #include "Hair_Player.h"
 
 /* Monster */
-#include "Body_Monster.h"
-#include "Face_Monster.h"
-#include "Clothes_Monster.h"
+#include "Body_Zombie.h"
+#include "Face_Zombie.h"
+#include "Clothes_Zombie.h"
 
 #include "BackGround.h"
 #include "Terrain.h"
-#include "Monster.h"
+#include "Zombie.h"
 #include "Weapon.h"
 #include "Player.h"
 #include "Effect.h"
@@ -25,7 +25,7 @@
 #include "Props.h"
 #include "CustomCollider.h"
 #include "NavMesh_Debug.h"
-#include"Map.h"
+#include "Map.h"
 
 
 /* UI */
@@ -151,23 +151,23 @@ HRESULT CLoader::Load_Prototype()
 #pragma region Monster
 
 	/* For.Prototype_GameObject_Monster */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Monster"),
-		CMonster::Create(m_pDevice, m_pContext))))
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Zombie"),
+		CZombie::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Body_Monster */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Body_Monster"),
-		CBody_Monster::Create(m_pDevice, m_pContext))))
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Body_Zombie"),
+		CBody_Zombie::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Part_Face_Monster */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Face_Monster"),
-		CFace_Monster::Create(m_pDevice, m_pContext))))
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Face_Zombie"),
+		CFace_Zombie::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Part_Clothes_Monster */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Clothes_Monster"),
-		CClothes_Monster::Create(m_pDevice, m_pContext))))
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Clothes_Zombie"),
+		CClothes_Zombie::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 #pragma endregion

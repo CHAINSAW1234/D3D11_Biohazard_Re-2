@@ -54,9 +54,6 @@ public:
 public:
 	void Set_MatreialDesc(const MATERIAL_DESC& MaterialDesc);
 	MATERIAL_DESC Get_MaterialDesc();
-public:
-	_bool					Is_Hide() { return m_isHide; }
-	void					Set_Hide(_bool isHide) { m_isHide = isHide; }
 
 public:
 	HRESULT Stock_Matrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneMatrices);
@@ -74,11 +71,9 @@ private:
 
 	MATERIAL_DESC			m_MaterialDesc = {};
 
-	_bool					m_isHide = { false };
-
 	//For Mesh Cooking
-	_float3*				m_pVertices_Cooking = { nullptr };
-	_uint*					m_pIndices_Cooking = { nullptr };
+	_float3* m_pVertices_Cooking = { nullptr };
+	_uint* m_pIndices_Cooking = { nullptr };
 
 private:/* For.FBXLoad */
 	HRESULT					Ready_Vertices_For_NonAnimModel(const aiMesh* pAIMesh, _fmatrix TransformationMatrix);
@@ -162,21 +157,16 @@ public: /* For Octree Culling*/
 	void					SetTexcoords(_float2* pTexcoords);
 	void					Release_IndexBuffer();
 	void					Release_Dump();
-	_float3					Get_CenterPoint()
-	{
-		return m_vCenterPoint;
-	}
-
-private:
-	vector<tFace*>			m_vecFaces;
-	_float3*				m_pNormals = { nullptr };
-	_float2*				m_pTexcoords = { nullptr };
-	_float3*				m_pTangents = { nullptr };
 
 public:
 	_bool					Is_Hide() { return m_isHide; }
 	void					Set_Hide(_bool isHide) { m_isHide = isHide; }
 
+public:
+	_float3					Get_CenterPoint()
+	{
+		return m_vCenterPoint;
+	}
 private:
 	vector<tFace*>			m_vecFaces;
 	_float3*				m_pNormals = { nullptr };

@@ -4,10 +4,6 @@
 #include "BehaviorTree.h"
 #include "PathFinder.h"
 
-#include "Body_Monster.h"
-#include "Face_Monster.h"
-#include "Clothes_Monster.h"
-
 #include "PartObject.h"
 
 #define MODEL_SCALE 0.01f
@@ -38,81 +34,12 @@ HRESULT CMonster::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
-	if (FAILED(Add_Components()))
-		return E_FAIL;	
-
-	if (FAILED(Add_PartObjects()))
-		return E_FAIL;
-
-	if (FAILED(Initialize_PartModels()))
-		return E_FAIL;
-
-	if (pArg != nullptr)
-	{
-		MONSTER_DESC* pDesc = (MONSTER_DESC*)pArg;
-
-		m_iIndex = pDesc->Index;
-	}
-
-	//	m_pModelCom->Set_Animation(rand() % 20, true);
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(1.f, 0.3f, 5.f, 1.f));
-	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
-
-	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this,0.35f,0.35f);
-
-	m_pBehaviorTree = m_pGameInstance->Create_BehaviorTree(&m_iAIController_ID);
-	m_pPathFinder = m_pGameInstance->Create_PathFinder();
-
-	m_pNavigationCom->FindCell(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
-	_int iCurrentIndex = m_pNavigationCom->GetCurrentIndex();
-	
-	m_pPathFinder->Initiate_PathFinding(iCurrentIndex, iCurrentIndex + 150, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-	m_vNextTarget = m_pPathFinder->GetNextTarget_Opt();
-
-	m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-	m_vDir.w = 0.f;
-
 	return S_OK;
 }
 
 void CMonster::Tick(_float fTimeDelta)
 {
-	/*if (true == m_pModelCom->isFinished())
-		int a = 10;*/
-
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4());
-
-	if (m_bArrived == false)
-	{
-		m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-		m_vDir.w = 0.f;
-
-		_float4 vDelta = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) - m_vNextTarget;
-		vDelta.y = 0.f;
-
-		if (XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta))) < 0.75f)
-		{
-			m_bArrived = true;
-		}
-		else
-		{
-			m_pController->Move(m_vDir * 0.015f, fTimeDelta);
-		}
-	}
-	else
-	{
-		m_vNextTarget = m_pPathFinder->GetNextTarget_Opt();
-		m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-		m_vDir.w = 0.f;
 	
-		if (m_vNextTarget.x == 0 && m_vNextTarget.y == 0 && m_vNextTarget.z == 0)
-			m_bArrived = true;
-		else
-			m_bArrived = false;
-	}
-
-
-	Tick_PartObjects(fTimeDelta);
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)
@@ -222,59 +149,8 @@ CModel* CMonster::Get_Model_From_PartObject(PART_ID eID)
 	return pModel;
 }
 
-void CMonster::Init_BehaviorTree_Zombie()
-{
-	m_pBehaviorTree = m_pGameInstance->Create_BehaviorTree(&m_iAIController_ID);
-
-	//Root Node
-	auto pRootNode = m_pBehaviorTree->GetRootNode();
-
-	return;
-}
-
 HRESULT CMonster::Add_Components()
 {
-	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"), 
-		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
-		return E_FAIL;
-
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_LeonBody"),
-		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-		return E_FAIL;
-
-	/* Com_Collider_Head */
-	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
-
-	ColliderDesc.fRadius = 0.32f;
-	ColliderDesc.vCenter = _float3(0.f, ColliderDesc.fRadius + 0.6f, 0.f);
-
-
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider_Head"), (CComponent**)&m_pColliderCom[COLLIDER_HEAD], &ColliderDesc)))
-		return E_FAIL;
-
-	/* Com_Collider_Body */
-	CBounding_OBB::BOUNDING_OBB_DESC		ColliderOBBDesc{};
-
-	ColliderOBBDesc.vRotation = _float3(0.f, XMConvertToRadians(45.0f), 0.f);
-	ColliderOBBDesc.vSize = _float3(0.8f, 0.6f, 0.8f);
-	ColliderOBBDesc.vCenter = _float3(0.f, ColliderOBBDesc.vSize.y * 0.5f, 0.f);
-	
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_OBB"),
-		TEXT("Com_Collider_Body"), (CComponent**)&m_pColliderCom[COLLIDER_BODY], &ColliderOBBDesc)))
-		return E_FAIL;
-
-	/* For.Com_Navigation */
-	CNavigation::NAVIGATION_DESC			NavigationDesc{};
-
-	NavigationDesc.iCurrentIndex = 0;
-
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation"),
-		TEXT("Com_Navigation"), (CComponent**)&m_pNavigationCom, &NavigationDesc)))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -296,103 +172,11 @@ HRESULT CMonster::Bind_ShaderResources()
 
 HRESULT CMonster::Add_PartObjects()
 {
-	m_PartObjects.resize(CMonster::PART_ID::PART_END);
-
-	/* For.Part_Body */
-	CPartObject*							pBodyObject = { nullptr };
-	CBody_Monster::BODY_MONSTER_DESC		BodyDesc;
-
-	BodyDesc.pParentsTransform = m_pTransformCom;
-	BodyDesc.pRootTranslation = &m_vRootTranslation;
-
-	pBodyObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Body_Monster"), &BodyDesc));
-	if (nullptr == pBodyObject)
-		return E_FAIL;
-
-	m_PartObjects[CMonster::PART_ID::PART_BODY] = pBodyObject;
-
-
-	/* For.Part_Face */
-	CPartObject*							pFaceObject = { nullptr };
-	CFace_Monster::FACE_MONSTER_DESC		FaceDesc;
-
-	FaceDesc.pParentsTransform = m_pTransformCom;
-
-	pFaceObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Face_Monster"), &FaceDesc));
-	if (nullptr == pFaceObject)
-		return E_FAIL;
-
-	m_PartObjects[CMonster::PART_ID::PART_FACE] = pFaceObject;
-
-
-	/* For.Part_Hat */
-	CPartObject*								pHatObject = { nullptr };
-	CClothes_Monster::CLOTHES_MONSTER_DESC		ClothesHatDesc;
-
-	ClothesHatDesc.pParentsTransform = m_pTransformCom;
-	ClothesHatDesc.eType = CClothes_Monster::CLOTHES_TYPE::TYPE_HAT;
-
-	pHatObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Monster"), &ClothesHatDesc));
-	if (nullptr == pHatObject)
-		return E_FAIL;
-
-	m_PartObjects[CMonster::PART_ID::PART_HAT] = pHatObject;
-
-
-	/* For.Part_Shirts */
-	CPartObject*								pShirtsObject = { nullptr };
-	CClothes_Monster::CLOTHES_MONSTER_DESC		ClothesShirtsDesc;
-
-	ClothesShirtsDesc.pParentsTransform = m_pTransformCom;
-	ClothesShirtsDesc.eType = CClothes_Monster::CLOTHES_TYPE::TYPE_SHIRTS;
-		
-	pShirtsObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Monster"), &ClothesShirtsDesc));
-	if (nullptr == pShirtsObject)
-		return E_FAIL;
-
-	m_PartObjects[CMonster::PART_ID::PART_SHIRTS] = pShirtsObject;
-
-
-	/* For.Part_Pants */
-	CPartObject*								pPantsObject = { nullptr };
-	CClothes_Monster::CLOTHES_MONSTER_DESC		ClothesPantsDesc;
-
-	ClothesPantsDesc.pParentsTransform = m_pTransformCom;
-	ClothesPantsDesc.eType = CClothes_Monster::CLOTHES_TYPE::TYPE_PANTS;
-
-	pPantsObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Monster"), &ClothesPantsDesc));
-	if (nullptr == pPantsObject)
-		return E_FAIL;
-
-	m_PartObjects[CMonster::PART_ID::PART_PANTS] = pPantsObject;
-
 	return S_OK;
 }
 
 HRESULT CMonster::Initialize_PartModels()
 {
-	CModel*					pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pFaceModel = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pShirtsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_SHIRTS]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pPantsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_PANTS]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pHatModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAT]->Get_Component(TEXT("Com_Model"))) };
-
-	if (nullptr == pBodyModel ||
-		nullptr == pFaceModel ||
-		nullptr == pShirtsModel ||
-		nullptr == pPantsModel ||
-		nullptr == pHatModel)
-		return E_FAIL;
-
-	if (FAILED(pFaceModel->Link_Bone_Auto(pBodyModel)))
-		return E_FAIL;
-	if (FAILED(pShirtsModel->Link_Bone_Auto(pBodyModel)))
-		return E_FAIL;
-	if (FAILED(pPantsModel->Link_Bone_Auto(pBodyModel)))
-		return E_FAIL;
-	if (FAILED(pHatModel->Link_Bone_Auto(pBodyModel)))
-		return E_FAIL;
-
 	return S_OK;
 }
 
