@@ -424,20 +424,22 @@ _float CPlayer::Get_CamDegree()
 void CPlayer::Turn_Spine(_float fTimeDelta)
 {
 	static _float		fAccLinearTime = { 0.f };
-	if (!m_isTurnSpine /*&& m_fSpineTurnLerfTimeDelta >= 1.f*/) {
-		fAccLinearTime -= fTimeDelta;
-		if (fAccLinearTime < 0.f)
-			fAccLinearTime = 0.f;
-	}
+	//if (!m_isTurnSpine /*&& m_fSpineTurnLerfTimeDelta >= 1.f*/) {
+	//	fAccLinearTime -= fTimeDelta;
+	//	if (fAccLinearTime < 0.f)
+	//		fAccLinearTime = 0.f;
+	//}
 
-	else
-	{
-		fAccLinearTime += fTimeDelta;
-		if (fAccLinearTime > 0.5f)
-		{
-			fAccLinearTime = 0.5f;
-		}
-	}
+	//else
+	//{
+	//	fAccLinearTime += fTimeDelta;
+	//	if (fAccLinearTime > 0.5f)
+	//	{
+	//		fAccLinearTime = 0.5f;
+	//	}
+	//}
+
+	fAccLinearTime = 0.5f;
 
 	CModel*			pModel = { Get_Body_Model() };
 	if (nullptr != pModel)
@@ -464,7 +466,7 @@ void CPlayer::Turn_Spine(_float fTimeDelta)
 		_matrix				CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
 		_vector				vCamLook = { CamWorldMatrix.r[CTransform::STATE_LOOK]};
 		_vector				vCamPosition = { CamWorldMatrix.r[CTransform::STATE_POSITION] };
-		_vector				vCamFocusPosition = { vCamPosition + XMVector3Normalize(vCamLook) * 5.f };
+		_vector				vCamFocusPosition = { vCamPosition + XMVector3Normalize(vCamLook) * 7.f };
 
 		_vector				vMyPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
 		_vector				vDirectionToFocus = { vCamFocusPosition - vMyPosition };

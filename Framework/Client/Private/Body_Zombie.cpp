@@ -57,8 +57,6 @@ void CBody_Zombie::Late_Tick(_float fTimeDelta)
 
 	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 
-	return;
-
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
@@ -70,9 +68,8 @@ HRESULT CBody_Zombie::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (size_t i = 0; i < iNumMeshes; i++)
+	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+	for (auto& i : NonHideIndices)
 	{
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
@@ -150,9 +147,8 @@ HRESULT CBody_Zombie::Render_LightDepth_Dir()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
 
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (size_t i = 0; i < iNumMeshes; i++)
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
 		{
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
@@ -206,8 +202,8 @@ HRESULT CBody_Zombie::Render_LightDepth_Point()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
 			return E_FAIL;
 
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-		for (size_t i = 0; i < iNumMeshes; i++)
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
 		{
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
@@ -257,9 +253,8 @@ HRESULT CBody_Zombie::Render_LightDepth_Spot()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
 
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (size_t i = 0; i < iNumMeshes; i++)
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
 		{
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
@@ -291,6 +286,33 @@ HRESULT CBody_Zombie::Initialize_Model()
 	m_pModelCom->Active_RootMotion_XZ(true);
 	m_pModelCom->Active_RootMotion_Y(true);
 	m_pModelCom->Active_RootMotion_Rotation(true);
+
+	vector<string>			MeshTags  = { m_pModelCom->Get_MeshTags() };
+
+	vector<string>			ResultMeshTags;
+	for (auto& strMeshTag : MeshTags)
+	{
+		if (strMeshTag.find("Body") != string::npos)
+		{
+			if (strMeshTag.find("Inside") != string::npos)
+				continue;
+
+			if (strMeshTag.find("Joint") != string::npos)
+				continue;
+
+			ResultMeshTags.push_back(strMeshTag);
+		}
+	}
+
+	for (auto& strMeshTag : MeshTags)
+	{
+		m_pModelCom->Hide_Mesh(strMeshTag, true);
+	}
+
+	for (auto& strMeshTag : ResultMeshTags)
+	{
+		m_pModelCom->Hide_Mesh(strMeshTag, false);
+	}
 
 	return S_OK;
 }
