@@ -1205,6 +1205,32 @@ void CModel::Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& 
 	}
 }
 
+void CModel::Get_Child_ZointIndices(string strStartBoneTag, string strEndBoneTag, list<_uint>& ChildZointIndices)
+{
+	_int			iStartBoneIndex = { Find_BoneIndex(strStartBoneTag) };
+	_int			iEndBoneIndex = { Find_BoneIndex(strEndBoneTag) };
+	if (-1 == iEndBoneIndex || -1 == iStartBoneIndex)
+		return;
+
+
+	_int			iParentIndex = { -1 };
+	_int			iCurrentBoneIndex = { iEndBoneIndex };
+	while (iParentIndex != iStartBoneIndex)
+	{
+		iParentIndex = m_Bones[iCurrentBoneIndex]->Get_ParentIndex();
+
+		if (-1 == iParentIndex)
+		{
+			ChildZointIndices.clear();
+			break;
+		}
+
+		
+		ChildZointIndices.push_front(iCurrentBoneIndex);
+		iCurrentBoneIndex = iParentIndex;
+	}
+}
+
 const _float4x4* CModel::Get_CombinedMatrix(const string& strBoneTag)
 {
 	_int		iBoneIndex = { Find_BoneIndex(strBoneTag) };

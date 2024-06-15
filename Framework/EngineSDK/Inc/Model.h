@@ -173,6 +173,7 @@ public:		/* For. Access */
 
 	_bool									isFinished(_uint iPlayingIndex);
 	void									Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices);
+	void									Get_Child_ZointIndices(string strStartBoneTag, string strEndBoneTag, list<_uint>& ChildZointIndices);
 
 	const _float4x4*						Get_CombinedMatrix(const string& strBoneTag);
 
