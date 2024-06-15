@@ -9,8 +9,8 @@ CPlayer_State_Hold_Idle::CPlayer_State_Hold_Idle(CPlayer* pPlayer)
 
 void CPlayer_State_Hold_Idle::OnStateEnter()
 {
-	m_pPlayer->Get_Body_Model()->Set_TickPerSec(CPlayer::WHEEL_L180, 300.f);
-	m_pPlayer->Get_Body_Model()->Set_TickPerSec(CPlayer::WHEEL_R180, 300.f);
+	m_pPlayer->Get_Body_Model()->Set_TickPerSec(CPlayer::WHEEL_L180, 180.f);
+	m_pPlayer->Get_Body_Model()->Set_TickPerSec(CPlayer::WHEEL_R180,180.f);
 
 	m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
 	m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
@@ -19,7 +19,7 @@ void CPlayer_State_Hold_Idle::OnStateEnter()
 	m_pPlayer->Get_Body_Model()->Set_Loop(1, true);
 	m_pPlayer->Get_Body_Model()->Set_Loop(2, true);
 
-	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(.5f);
+	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
 }
 
 void CPlayer_State_Hold_Idle::OnStateUpdate(_float fTimeDelta)
@@ -120,10 +120,10 @@ void CPlayer_State_Hold_Idle::Set_MoveAnimation(_float fTimeDelta)
 
 	if (abs(fTargetWeight1 - fCurWeight1) > 0.1) {
 		if (fCurWeight1 > fTargetWeight1) {
-			fCurWeight1 -= fTimeDelta;
+			fCurWeight1 -= fTimeDelta * 2;
 		}
 		else {
-			fCurWeight1 += fTimeDelta;
+			fCurWeight1 += fTimeDelta* 4 ;
 		}
 	}
 	else {
@@ -159,10 +159,10 @@ void CPlayer_State_Hold_Idle::Look_Cam(_float fTimeDelta)
 
 	if (abs(fTargetWeight - fCurWeight) > 0.1) {
 		if (fCurWeight > fTargetWeight) {
-			fCurWeight -= fTimeDelta * 5;
+			fCurWeight -= fTimeDelta;
 		}
 		else {
-			fCurWeight += fTimeDelta * 5;
+			fCurWeight += fTimeDelta;
 		}
 	}
 	else {

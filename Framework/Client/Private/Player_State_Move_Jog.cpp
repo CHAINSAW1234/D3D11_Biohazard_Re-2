@@ -76,6 +76,7 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) <= 26) /*||
 		(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::JOG_STRAIGHT_LOOP && abs(m_fDegree) > 80) */) {
 
+		m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
 		m_pPlayer->Get_Body_Model()->Set_Loop(0, false);
 		m_pPlayer->Get_Body_Model()->Set_Loop(1, false);
 
@@ -139,10 +140,10 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 
 	if (m_pPlayer->Get_Body_Model()->isFinished(0)) {
 
-		//m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), m_fDegree/90);
+		//m_pPlayer->m_pTransformComssssssss->Turn(_float4(0.f, 1.f, 0.f, 0.f), m_fDegree/90);
 		m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_STRAIGHT_LOOP);
 		m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
-		m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0);
+		m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.1f);
 
 		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1);
 		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0);
@@ -175,8 +176,8 @@ void CPlayer_State_Move_Jog::Look_Cam(_float fTimeDelta)
 		break;
 	}
 
-	if (abs(m_fDegree) > 2) {
-		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * fDegree / 30);
+	if (/*m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::JOG_STRAIGHT_LOOP &&*/ abs(m_fDegree) > 2) {
+		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * m_fDegree / 30);
 	}
 
 	//if (!(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) >= 15 &&
