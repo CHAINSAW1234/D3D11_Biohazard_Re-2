@@ -28,6 +28,7 @@ public:
 
 public:
 	void										Play_Animation(_float fTimeDelta);
+	void										Change_BoneLayer();
 	void										Change_Animation();
 	HRESULT										Set_Models_Ptr(map<string, CModel*>* pModels);
 	void										Set_Current_Model(CModel* pModel);
@@ -70,7 +71,6 @@ private:
 	class CAnimTestObject*						m_pTestObject = { nullptr };
 
 	map<string, _uint>							m_ModelLastPlayingIndex;
-	map<string, _bool>							m_isPlayingAnimations;
 	map<string, CModel*>*						m_pModels = { nullptr };
 	CModel*										m_pCurrentModel = { nullptr };
 	CAnimation*									m_pCurrentAnimation = { nullptr };

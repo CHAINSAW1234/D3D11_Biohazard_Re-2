@@ -47,9 +47,9 @@ public:		/* For.Access */
 
 	void								Change_Animation(_uint iAnimIndex, _uint iNumChannel);
 
-	inline void							Set_PreAnimIndex(_uint iAnimIndex) { m_iPreAnimIndex = iAnimIndex; }
+	inline void							Set_PreAnimIndex(_int iAnimIndex) { m_iPreAnimIndex = iAnimIndex; }
 	inline void							Set_Loop(_bool isLoop) { m_isLoop = isLoop; }
-	inline void							Set_BlendWeight(_float fBlendWeight) { m_fBlendWeight = fBlendWeight; }
+	void								Set_BlendWeight(_float fBlendWeight, _float fBlendLinearTime = 0.f);
 	inline void							Set_TrackPosition(_float fTrackPosition) { m_fTrackPosition = fTrackPosition; }
 	inline void							Set_LinearInterpolation(_bool isLinearInterPolation) { m_isLinearInterpolation = isLinearInterPolation; }
 	inline void							Set_AccLinearInterpolation(_float fAccLinear) { m_fAccLinearInterpolation = fAccLinear; }
@@ -79,12 +79,19 @@ public:		/* For.Access */
 	void								Update_LastKeyFrames(const vector<_float4x4>& TransformationMatrices, _uint iNumBones, _float fTotalLinearTime);
 	void								Update_LinearStateKeyFrames(const vector<KEYFRAME>& KeyFrames);
 
+	void								Update_BlendWeight_Linear(_float fTimeDelta);
+
 private:
 	_bool								m_isLoop = { false };
 	_int								m_iPreAnimIndex = { -1 };
 	_int								m_iAnimIndex = { -1 };
 
 	_float								m_fBlendWeight = { 0.f };
+	_float								m_fStartBlendWeight = { 0.f };
+	_float								m_fTargetBlendWeight = { 0.f };
+	_float								m_fAccLinearTime_Blend = { 0.f };
+	_float								m_fTotalLinearTime_Blend = { 0.f };
+
 	wstring								m_strBoneLayerTag = { TEXT("") };
 
 	_bool								m_isLinearInterpolation = { false };

@@ -46,6 +46,7 @@ void CTool_AnimPlayer::Tick(_float fTimeDelta)
 	Set_Animation();
 
 	Change_Animation();
+	Change_BoneLayer();
 	Reset_AllTrackPosition();
 
 	Show_PlayingInfos();
@@ -106,6 +107,19 @@ void CTool_AnimPlayer::Play_Animation(_float fTimeDelta)
 				Pair.second->Play_Animations(m_pTargetTransform, fTimeDelta, m_pRootMoveDir);
 			}
 		}
+	}
+}
+
+void CTool_AnimPlayer::Change_BoneLayer()
+{
+	if (nullptr == m_pCurrentModel)
+	{
+		return;
+	}
+
+	if (ImGui::Button("Chanage BoneLayer ##CTool_AnimPlayer::CTool_AnimPlayer::Change_BoneLayer()"))
+	{
+		m_pCurrentModel->Set_BoneLayer_PlayingInfo(m_iPlayingIndex, *m_pCurrentBoneLayerTag);
 	}
 }
 
@@ -487,8 +501,8 @@ void CTool_AnimPlayer::Show_PlayingInfos()
 
 	if (ImGui::CollapsingHeader("Information From Index ##CTool_AnimPlayer::Show_PlayingInfos()"))
 	{
-		_uint				iNumPlayingInfo = { m_pCurrentModel->Get_NumPlayingInfos() };
-		for (_uint iPlayingIndex = 0; iPlayingIndex < iNumPlayingInfo; ++iPlayingIndex)
+		list<_uint>			CreatedIndices = m_pCurrentModel->Get_Created_PlayingInfo_Indices();
+		for(auto& iPlayingIndex : CreatedIndices)
 		{
 			string			strBoneLayerTag = { Convert_Wstring_String(m_pCurrentModel->Get_BoneLayerTag_PlayingInfo(iPlayingIndex)) };
 			string			strAnimTag = { m_pCurrentModel->Get_CurrentAnimTag(iPlayingIndex) };
@@ -511,8 +525,8 @@ void CTool_AnimPlayer::Show_PlayingInfos()
 		//	각웨이트 제어기능
 		if (ImGui::CollapsingHeader("Weight Controll ##CTool_AnimPlayer::Show_PlayingInfos()"))
 		{
-			_uint			iNumPlayingInfo = { m_pCurrentModel->Get_NumPlayingInfos() };
-			for (_uint iPlayingIndex = 0; iPlayingIndex < iNumPlayingInfo; ++iPlayingIndex)
+			list<_uint>			CreatedIndices = m_pCurrentModel->Get_Created_PlayingInfo_Indices();
+			for (auto& iPlayingIndex : CreatedIndices)
 			{
 				_float		fBlendWeight = { m_pCurrentModel->Get_BlendWeight(iPlayingIndex) };
 				string		strPlayingIndex = { to_string(iPlayingIndex) };
@@ -526,8 +540,8 @@ void CTool_AnimPlayer::Show_PlayingInfos()
 		//	트랙 포지션 제어 기능
 		if (ImGui::CollapsingHeader("Track Position Controll ##CTool_AnimPlayer::Show_PlayingInfos()"))
 		{
-			_uint			iNumPlayingInfo = { m_pCurrentModel->Get_NumPlayingInfos() };
-			for (_uint iPlayingIndex = 0; iPlayingIndex < iNumPlayingInfo; ++iPlayingIndex)
+			list<_uint>			CreatedIndices = m_pCurrentModel->Get_Created_PlayingInfo_Indices();
+			for (auto& iPlayingIndex : CreatedIndices)
 			{
 				_float		fTrackPosition = { m_pCurrentModel->Get_TrackPosition(iPlayingIndex) };
 				_int		iAnimIndex = { m_pCurrentModel->Get_AnimIndex_PlayingInfo(iPlayingIndex) };
@@ -545,8 +559,8 @@ void CTool_AnimPlayer::Show_PlayingInfos()
 		//	루프 키고 끄기 기능
 		if (ImGui::CollapsingHeader("Etc Controll ##CTool_AnimPlayer::Show_PlayingInfos()"))
 		{
-			_uint			iNumPlayingInfo = { m_pCurrentModel->Get_NumPlayingInfos() };
-			for (_uint iPlayingIndex = 0; iPlayingIndex < iNumPlayingInfo; ++iPlayingIndex)
+			list<_uint>			CreatedIndices = m_pCurrentModel->Get_Created_PlayingInfo_Indices();
+			for (auto& iPlayingIndex : CreatedIndices)
 			{
 				_bool		isLoop = { m_pCurrentModel->Is_Loop_PlayingInfo(iPlayingIndex) };
 

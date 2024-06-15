@@ -52,6 +52,21 @@ void CPlayingInfo::Change_Animation(_uint iAnimIndex, _uint iNumChannel)
 	Reset_Finished();
 }
 
+void CPlayingInfo::Set_BlendWeight(_float fBlendWeight, _float fBlendLinearTime)
+{
+	if (fBlendWeight < 0.f)
+		fBlendWeight = 0.f;
+
+	if (fBlendLinearTime < 0.f)
+		fBlendLinearTime = 0.f;
+
+	m_fStartBlendWeight = m_fBlendWeight;
+	m_fTargetBlendWeight = fBlendWeight;
+
+	m_fAccLinearTime_Blend = 0.f;
+	m_fTotalLinearTime_Blend = fBlendLinearTime;
+}
+
 void CPlayingInfo::Set_PreTranslation(_fvector vPreTranslation)
 {
 	XMStoreFloat3(&m_vPreTranslationLocal, vPreTranslation);
@@ -166,6 +181,19 @@ void CPlayingInfo::Update_LinearStateKeyFrames(const vector<KEYFRAME>& KeyFrames
 {
 	m_LinearStartKeyFrames.clear();
 	m_LinearStartKeyFrames = KeyFrames;
+}
+
+void CPlayingInfo::Update_BlendWeight_Linear(_float fTimeDelta)
+{
+	m_fAccLinearTime_Blend += fTimeDelta;
+	if (m_fAccLinearTime_Blend > m_fTotalLinearTime_Blend)
+		m_fAccLinearTime_Blend = m_fTotalLinearTime_Blend;
+
+	_float		fRatio = { m_fAccLinearTime_Blend / m_fTotalLinearTime_Blend };
+
+	_float		fResultBlendWeight = { m_fStartBlendWeight + (m_fTargetBlendWeight - m_fStartBlendWeight) * fRatio };
+
+	m_fBlendWeight = fResultBlendWeight;
 }
 
 CPlayingInfo* CPlayingInfo::Create(void* pArg)

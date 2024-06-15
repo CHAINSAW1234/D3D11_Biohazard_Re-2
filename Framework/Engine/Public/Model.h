@@ -28,6 +28,8 @@ public:		/* For.Animation */
 	_int									Get_CurrentAnimIndex(_uint iPlayingIndex);
 	string									Get_CurrentAnimTag(_uint iPlayingIndex);
 
+	void									Reset_PreAnimation(_uint iPlayingIndex);
+
 public:		/* For.Controll AnimSpeed */
 	void									Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec);
 
@@ -157,6 +159,7 @@ public:		/* For. Access */
 	_int									Get_AnimIndex_PlayingInfo(_uint iPlayingIndex);
 	wstring									Get_BoneLayerTag_PlayingInfo(_uint iPlayingIndex);
 	_int									Get_PlayingIndex_From_BoneLayerTag(wstring strBoneLayerTag);
+	list<_uint>								Get_Created_PlayingInfo_Indices();
 
 	_bool									Is_Loop_PlayingInfo(_uint iPlayingIndex);
 	void									Set_Loop(_uint iPlayingIndex, _bool isLoop);
@@ -164,7 +167,7 @@ public:		/* For. Access */
 	void									Set_TotalLinearInterpolation(_float fTime) { m_fTotalLinearTime = fTime; }
 	void									Set_KeyFrameIndex_AllKeyFrame(_uint iPlayingIndex, _uint iKeyFrameIndex);
 	void									Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition);
-	void									Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight);
+	void									Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight, _float fLinearTime = 0.f);
 	void									Change_Animation(_uint iPlayingIndex, _uint iAnimIndex);
 	void									Change_Animation(_uint iPlayingIndex, const string& strAnimTag);
 	void									Set_BoneLayer_PlayingInfo(_uint iPlayingIndex, const wstring& strBoneLayerTag);

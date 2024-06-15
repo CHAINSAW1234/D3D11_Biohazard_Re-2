@@ -48,7 +48,7 @@ CModel::CModel(const CModel& rhs)
 			Safe_AddRef(Material.MaterialTextures[i]);
 	}
 
-	m_PlayingAnimInfos.resize(3);
+	m_PlayingAnimInfos.resize(100);
 }
 
 #pragma region PlayInfo
@@ -119,6 +119,15 @@ string CModel::Get_CurrentAnimTag(_uint iPlayingIndex)
 		return string();
 
 	return m_Animations[iAnimIndex]->Get_Name();
+}
+
+void CModel::Reset_PreAnimation(_uint iPlayingIndex)
+{
+	CPlayingInfo*		pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+	if (nullptr != pPlayingInfo)
+	{
+		pPlayingInfo->Set_PreAnimIndex(-1);
+	}
 }
 
 #pragma endregion
@@ -782,8 +791,6 @@ void CModel::Set_CombinedMatrix(class CTransform* pTransform, _float3* pMovedDir
 		return;
 
 	m_Bones[iBoneIndex]->Set_Combined_Matrix(CombinedMatrix);
-
-	Apply_Bone_CombinedMatrices(pTransform, pMovedDirection, iBoneIndex + 1);
 }
 
 void CModel::Set_Parent_CombinedMatrix_Ptr(string strBoneTag, _float4x4* pParentMatrix)
@@ -1327,6 +1334,23 @@ _int CModel::Get_PlayingIndex_From_BoneLayerTag(wstring strBoneLayerTag)
 	return iBoneLayerIndex;
 }
 
+list<_uint> CModel::Get_Created_PlayingInfo_Indices()
+{
+	_uint			iIndex = { 0 };
+	list<_uint>		Indices;
+	for (auto& pPlayingInfo : m_PlayingAnimInfos)
+	{
+		if (nullptr != pPlayingInfo)
+		{
+			Indices.push_back(iIndex);
+		}
+
+		iIndex++;
+	}
+
+	return Indices;
+}
+
 _bool CModel::Is_Loop_PlayingInfo(_uint iPlayingIndex)
 {
 	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
@@ -1367,12 +1391,12 @@ void CModel::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition)
 	}
 }
 
-void CModel::Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight)
+void CModel::Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight, _float fLinearTime)
 {
 	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
 	if (nullptr != pPlayingInfo)
 	{
-		pPlayingInfo->Set_BlendWeight(fBlendWeight);
+		pPlayingInfo->Set_BlendWeight(fBlendWeight, fLinearTime);
 	}
 }
 
@@ -1615,12 +1639,18 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 	if (false == Is_Set_RootBone())
 		return E_FAIL;
 
+	for (auto& pPlayingInfo : m_PlayingAnimInfos)
+	{
+		pPlayingInfo->Update_BlendWeight_Linear(fTimeDelta);
+	}
+
 	for (auto& pBone : m_Bones)
 	{
 		_matrix			PreCombinedMatrix = { XMLoadFloat4x4(pBone->Get_CombinedTransformationMatrix()) };
 
 		pBone->Set_Pre_CombinedMatrix(PreCombinedMatrix);
 	}
+
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////MOTION_BLEND////////////////////////////
