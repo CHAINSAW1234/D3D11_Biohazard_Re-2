@@ -179,6 +179,16 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 #pragma endregion
 
+#pragma region TEST
+
+	/* Prototype_Component_Model_TEST */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_TEST"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/TEST/Prototype_Component_Model_TEST.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+#pragma endregion
+
 
 	/* Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_VIBuffer_Terrain"),
