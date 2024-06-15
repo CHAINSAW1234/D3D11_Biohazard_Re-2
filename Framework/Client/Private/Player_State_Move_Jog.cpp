@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Player_State_Move_Jog.h"
 #include "Player.h"
+#include "Camera_Free.h"
 
 CPlayer_State_Move_Jog::CPlayer_State_Move_Jog(CPlayer* pPlayer)
 {
@@ -210,11 +211,11 @@ void CPlayer_State_Move_Jog::Look_Cam(_float fTimeDelta)
 
 void CPlayer_State_Move_Jog::Update_Degree()
 {
-	_float4 vCamLook = m_pPlayer->m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
+	_float4 vCamLook = m_pPlayer->m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK);
 	vCamLook.y = 0;
 	vCamLook = XMVectorSetW(XMVector3Normalize(vCamLook), 0.f);
 
-	_float4 vCamRight = m_pPlayer->m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_RIGHT);
+	_float4 vCamRight = m_pPlayer->m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_RIGHT);
 	vCamRight.y = 0;
 	vCamRight = XMVectorSetW(XMVector3Normalize(vCamRight), 0.f);
 

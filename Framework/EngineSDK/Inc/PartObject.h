@@ -24,7 +24,6 @@ public:
 	virtual void			Tick(_float fTimeDelta) override;
 	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
-	virtual HRESULT			Render_LightDepth() { return S_OK; }
 
 protected:
 	void					Update_WorldMatrix();
@@ -33,7 +32,6 @@ protected:
 	_float4x4				m_WorldMatrix;
 	_float4x4				m_PrevWorldMatrix;
 	CTransform*				m_pParentsTransform = { nullptr };
-
 
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;
