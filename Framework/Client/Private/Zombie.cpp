@@ -61,7 +61,7 @@ HRESULT CZombie::Initialize(void * pArg)
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
 #pragma region AIController Setup
-	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this,0.35f,0.35f);
+	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this,1.f,0.35f);
 
 	m_pBehaviorTree = m_pGameInstance->Create_BehaviorTree(&m_iAIController_ID);
 	m_pPathFinder = m_pGameInstance->Create_PathFinder();
@@ -69,7 +69,7 @@ HRESULT CZombie::Initialize(void * pArg)
 	m_pNavigationCom->FindCell(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
 	_int iCurrentIndex = m_pNavigationCom->GetCurrentIndex();
 	
-	m_pPathFinder->Initiate_PathFinding(iCurrentIndex, iCurrentIndex + 150, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+	//m_pPathFinder->Initiate_PathFinding(iCurrentIndex, iCurrentIndex + 150, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 	m_vNextTarget = m_pPathFinder->GetNextTarget_Opt();
 
 	m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
@@ -84,7 +84,8 @@ HRESULT CZombie::Initialize(void * pArg)
 
 void CZombie::Tick(_float fTimeDelta)
 {
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4());
+	if(m_pController)
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
 
 	if (m_bArrived == false)
 	{
@@ -100,7 +101,8 @@ void CZombie::Tick(_float fTimeDelta)
 		}
 		else
 		{
-			m_pController->Move(m_vDir * 0.015f, fTimeDelta);
+			//if (m_pController)
+				//m_pController->Move(m_vDir * 0.015f, fTimeDelta);
 		}
 	}
 	else
@@ -115,6 +117,16 @@ void CZombie::Tick(_float fTimeDelta)
 			m_bArrived = false;
 	}
 
+	if (UP == m_pGameInstance->Get_KeyState('M'))
+	{
+		m_bRagdoll = true;
+
+		for (auto& pPartObject : m_PartObjects)
+		{
+			if (nullptr != pPartObject)
+				pPartObject->SetRagdoll(m_iIndex_CCT);
+		}
+	}
 
 	Tick_PartObjects(fTimeDelta);
 }

@@ -287,6 +287,17 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
+	/*if (UP == m_pGameInstance->Get_KeyState('M'))
+	{
+		m_bRagdoll = true;
+
+		for (auto& pPartObject : m_PartObjects)
+		{
+			if (nullptr != pPartObject)
+				pPartObject->SetRagdoll(m_iIndex_CCT);
+		}
+	}*/
+
 	Tick_PartObjects(fTimeDelta);
 }
 
@@ -867,7 +878,7 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 		m_pGameInstance->Set_MouseCurPos(ptPos);
 
 		ClientToScreen(g_hWnd, &ptPos);
-		//SetCursorPos(ptPos.x, ptPos.y);
+		SetCursorPos(ptPos.x, ptPos.y);
 	}
 
 	return;

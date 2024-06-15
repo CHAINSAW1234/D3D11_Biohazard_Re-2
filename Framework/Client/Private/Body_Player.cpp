@@ -3,6 +3,7 @@
 
 #include "Player.h"
 #include "Light.h"
+#include "RagDoll_Physics.h"
 
 CBody_Player::CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
@@ -49,6 +50,8 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 1, TEXT("Default"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 2, TEXT("Default"), 0.f);
+
+	//m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/LeonTest/LeonBody.fbx");
 
 	return S_OK;
 }
@@ -262,8 +265,8 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	//m_pModelCom->Play_Animations(fTimeDelta);
-	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	if (m_bRagdoll == false)
+		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 
 	/////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////
@@ -756,6 +759,12 @@ HRESULT CBody_Player::Render_LightDepth_Spot()
 	Update_WorldMatrix();
 
 	return S_OK;
+}
+
+void CBody_Player::SetRagdoll(_int iId)
+{
+	m_pGameInstance->Start_Ragdoll(m_pRagdoll, iId);
+	m_bRagdoll = true;
 }
 
 HRESULT CBody_Player::Add_Components()

@@ -130,7 +130,7 @@ public:
     PxRigidDynamic*                     create_capsule_bone(uint32_t parent_idx, uint32_t child_idx,class CRagdoll& ragdoll, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity());
     PxRigidDynamic*                     create_capsule_bone(uint32_t parent_idx, class CRagdoll& ragdoll, XMVECTOR offset, float l, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity());
     PxRigidDynamic*                     create_sphere_bone(uint32_t parent_idx, class CRagdoll& ragdoll, float r);
-    void                                create_d6_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t joint_pos);
+    void                                create_d6_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
     void                                create_revolute_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t joint_pos, XMMATRIX rotation = XMMatrixIdentity());
     void                                config_d6_joint(physx::PxReal swing0, physx::PxReal swing1, physx::PxReal twistLo, physx::PxReal twistHi, physx::PxD6Joint* joint);
 public:
@@ -185,6 +185,7 @@ public:
     }
     void                                SetTransform(class CTransform* pTransform);
     void                                SetSimulate(_bool boolean);
+    void                                ResetForce();
 public:
 	static CRagdoll_Physics*            Create();
 
@@ -244,6 +245,8 @@ private:
 
     PxFilterData                                    m_FilterData;
     class CTransform*                               m_pTransform = { nullptr };
+
+    _bool                                           m_bRagdoll_AddForce = { false };
 public:
 	virtual void Free() override;
 };

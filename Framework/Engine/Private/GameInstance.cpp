@@ -191,7 +191,7 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	if(m_pObject_Manager)
 		m_pObject_Manager->Late_Tick(fTimeDelta);
-	
+
 	if (m_pPhysics_Controller)
 		m_pPhysics_Controller->Simulate(fTimeDelta);
 }
@@ -1044,6 +1044,11 @@ CRagdoll_Physics* CGameInstance::Create_Ragdoll(vector<class CBone*>* vecBone,CT
 {
 	if (m_pPhysics_Controller)
 		return m_pPhysics_Controller->Create_Ragdoll(vecBone,pTransform,name);
+}
+void CGameInstance::Start_Ragdoll(CRagdoll_Physics* pRagdoll, _uint iId)
+{
+	if (m_pPhysics_Controller)
+		m_pPhysics_Controller->Start_Ragdoll(pRagdoll, iId);
 }
 #pragma endregion
 

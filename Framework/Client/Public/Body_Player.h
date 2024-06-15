@@ -30,6 +30,10 @@ public:
 	HRESULT					Render_LightDepth_Point() override;
 	HRESULT					Render_LightDepth_Spot()override;
 
+
+public:
+	virtual void			SetRagdoll(_int iId) override;
+
 private:
 	CModel*					m_pModelCom = { nullptr };
 	CShader*				m_pShaderCom = { nullptr };	
@@ -39,7 +43,7 @@ private:
 
 	vector<CCollider*>		m_PartColliders;
 
-	_bool					m_bRagdoll = { false };
+	class CRagdoll_Physics* m_pRagdoll = { nullptr };
 private:
 	HRESULT					Add_Components();
 	HRESULT					Bind_ShaderResources();

@@ -41,8 +41,6 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 
 	m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Ex_Default_Zombie/Body.fbx");
 
-	//m_pGameInstance->SetSimulate(true);
-
 	return S_OK;
 }
 
@@ -53,11 +51,6 @@ void CBody_Zombie::Priority_Tick(_float fTimeDelta)
 
 void CBody_Zombie::Tick(_float fTimeDelta)
 {
-	/*if (UP == m_pGameInstance->Get_KeyState('M'))
-	{
-		m_pRagdoll->SetSimulate(true);
-	}*/
-
 	__super::Tick(fTimeDelta);
 }
 
@@ -65,7 +58,8 @@ void CBody_Zombie::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	if(m_bRagdoll == false)
+		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
@@ -301,6 +295,12 @@ HRESULT CBody_Zombie::Initialize_Model()
 	m_pModelCom->Active_RootMotion_Rotation(true);
 
 	return S_OK;
+}
+
+void CBody_Zombie::SetRagdoll(_int iId)
+{
+	m_pGameInstance->Start_Ragdoll(m_pRagdoll, iId);
+	m_bRagdoll = true;
 }
 
 HRESULT CBody_Zombie::Add_Components()

@@ -67,6 +67,10 @@ public:
 	{
 		return m_bLocalized;
 	}
+	virtual void								SetRagdoll(_int iId)
+	{
+		m_bRagdoll = true;
+	}
 public:
 	virtual _bool								Get_Dead() { return m_bDead; }
 
@@ -87,6 +91,9 @@ protected:
 	_bool										m_bRender = { false };
 	_bool										m_bLocalized = { false };
 	_float4										m_vLocal_To_World_Pos;
+
+	_bool										m_bRagdoll = { false };
+	_bool										m_bRagdoll_Ready = { false };
 protected:
 	map<const wstring, class CComponent*>		m_Components;
 
