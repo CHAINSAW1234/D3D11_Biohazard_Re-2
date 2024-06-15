@@ -29,8 +29,8 @@ public:
 		ANIM_IDLE, TURN_L180, TURN_R180, TURN_L0, TURN_R0, TURN_L90, TURN_R90,
 		WALK_F_LOOP, WALK_L_LOOP, WALK_END_LR, WALK_END_RL, WALK_R_LOOP,
 		WALK_BACK_L_LOOP, WALK_BACK_B_LOOP, WALK_BACK_R_LOOP,
-		JOG_START_L0_LR, JOG_START_L90_LR, JOG_START_L180_LR,
-		JOG_START_R0_RL, JOG_START_R90_RL, JOG_START_R180_RL, JOG_END,
+		JOG_START_L0, JOG_START_L90, JOG_START_L180,
+		JOG_START_R0, JOG_START_R90, JOG_START_R180, JOG_END,
 		JOG_LCYCLE_LOOP, JOG_STRAIGHT_LOOP, JOG_RCYCLE_LOOP,
 		JOG_LCYCLE_SHORT_LOOP, JOG_RCYCLE_SHORT_LOOP,
 		STAIR_F_LOOP, STAIR_L_LOOP, STAIR_R_LOOP,
@@ -51,6 +51,13 @@ public:
 		MOVE_END
 	};
 
+#pragma endregion
+
+#pragma region Move Direction
+	enum MOVE_DIR
+	{
+		MD_F,MD_B,MD_R,MD_L,MD_FR,MD_FL,MD_BR,MD_BL,MD_DEFAULT
+	};
 #pragma endregion
 
 private:
@@ -78,14 +85,19 @@ private:
 public:
 	CModel*										Get_Body_Model();
 	_bool										Get_Spotlight() { return m_isSpotlight; }
-
+	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
 	void										Set_Spotlight(_bool isSpotlight) { m_isSpotlight = isSpotlight; }
 
 	HRESULT										Add_FSM_States();
 	void										Change_State(STATE eState);
 	void										Update_FSM();
+
+	void										Update_Direction();
+	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
+
 private:
 	_bool m_isSpotlight = { false };
+	DWORD m_dwDirection = { 0 };
 
 	friend class CPlayer_State_Move_Walk;
 	friend class CPlayer_State_Move_Jog;
@@ -123,6 +135,8 @@ public:
 	void										RayCasting_Camera();
 	void										Calc_YPosition_Camera();
 	void										Calc_Camera_Transform(_float fTimeDelta);
+	void										SetMoveDir();
+	void										ResetCamera();
 private:
 	class CCamera_Free*							m_pCamera = { nullptr };
 	_float4										m_vCameraPosition;
@@ -130,9 +144,14 @@ private:
 	_float										m_fLook_Dist_Look = { 1.f };
 	_float										m_fUp_Dist_Look = { 0.f };
 	_float										m_fRight_Dist_Look = { 0.f };
+	_float										m_fLook_Dist_Look_Default = { 1.f };
+	_float										m_fUp_Dist_Look_Default = { 0.f };
+	_float										m_fRight_Dist_Look_Default = { 0.f };
 	_float										m_fLook_Dist_Pos = { 0.f };
 	_float										m_fUp_Dist_Pos = { 0.f };
 	_float										m_fRight_Dist_Pos = { 0.f };
+	MOVE_DIR									m_eMoveDir = { MD_DEFAULT };
+	MOVE_DIR									m_ePrevMoveDir = { MD_DEFAULT };
 	CTransform*									m_pTransformCom_Camera = { nullptr };
 	_float										m_fMouseSensor = { 0.0f };
 

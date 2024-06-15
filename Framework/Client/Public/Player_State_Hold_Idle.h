@@ -17,12 +17,13 @@ public:
 	virtual void				Start() override;
 
 private:
-	void Set_StartAnimation();
-	void Update_Degree();
+
+	void Set_MoveAnimation(_float fTimeDelta);
+	void Look_Cam(_float fTimeDelta);
 
 private:
-	CPlayer* m_pPlayer = { nullptr };
-	_float m_fDegree = { 0.f };
+	CPlayer*	m_pPlayer = { nullptr };
+	_float		m_fDegree = { 0.f };
 
 public:
 	static	CPlayer_State_Hold_Idle* Create(CPlayer* pPlayer);

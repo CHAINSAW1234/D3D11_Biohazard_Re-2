@@ -62,6 +62,9 @@ void CFSM_HState::Change_State(_uint iState)
 
 void CFSM_HState::Reset_State()
 {
+	if (m_pCurrent_State != nullptr)
+		m_pCurrent_State->OnStateExit();
+
 	Safe_Release(m_pCurrent_State);
 	m_pCurrent_State = nullptr;
 }

@@ -6,7 +6,6 @@ BEGIN(Client)
 class CPlayer;
 class CPlayer_State_Move_Walk final : public CFSM_State
 {
-	enum DIRECTION { FRONT = 1, BACK = 2, RIGHT = 4, LEFT = 8, DIRECTION_END };
 private:
 	CPlayer_State_Move_Walk(CPlayer* pPlayer);
 	virtual ~CPlayer_State_Move_Walk() = default;
@@ -25,7 +24,7 @@ private:
 private:
 	CPlayer* m_pPlayer = { nullptr };
 
-	DIRECTION m_Prev_FRONT_BACK_Direction = { DIRECTION_END };
+	PLAYER_DIREECTION m_Prev_FRONT_BACK_Direction = { DIRECTION_END };
 	DWORD m_dwDirection = { 0 };
 
 public:

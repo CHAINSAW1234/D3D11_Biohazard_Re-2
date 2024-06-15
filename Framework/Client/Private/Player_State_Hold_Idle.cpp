@@ -9,35 +9,37 @@ CPlayer_State_Hold_Idle::CPlayer_State_Hold_Idle(CPlayer* pPlayer)
 
 void CPlayer_State_Hold_Idle::OnStateEnter()
 {
+	m_pPlayer->Get_Body_Model()->Set_TickPerSec(CPlayer::WHEEL_L180, 300.f);
+	m_pPlayer->Get_Body_Model()->Set_TickPerSec(CPlayer::WHEEL_R180, 300.f);
+
 	m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
 	m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
 
+	m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
+	m_pPlayer->Get_Body_Model()->Set_Loop(1, true);
+	m_pPlayer->Get_Body_Model()->Set_Loop(2, true);
 
-
+	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(.5f);
 }
 
 void CPlayer_State_Hold_Idle::OnStateUpdate(_float fTimeDelta)
 {
-	Update_Degree();
+	m_fDegree = m_pPlayer->Get_CamDegree();
 
-	Set_StartAnimation();
-
-	if (m_pPlayer->Get_Body_Model()->isFinished(0)) {
-		m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::HOLD_IDLE_LOOP);
-		m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
-		m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
-		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), m_fDegree / 90);
-	}
+	Set_MoveAnimation(fTimeDelta);
+	Look_Cam(fTimeDelta);
 
 	// 카메라 위치에 맞춰서 회전
 
 	// 카메라 위치 에 맞춰서 상체 상하 회전 
 
-
 }
 
 void CPlayer_State_Hold_Idle::OnStateExit()
 {
+	m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
+	m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0);
+	m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 0);
 	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
 }
 
@@ -45,51 +47,131 @@ void CPlayer_State_Hold_Idle::Start()
 {
 }
 
-void CPlayer_State_Hold_Idle::Set_StartAnimation()
+void CPlayer_State_Hold_Idle::Set_MoveAnimation(_float fTimeDelta)
 {
-	if (!(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) >= 42 &&
-		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) <= 59)) {
+	DWORD dwDirection = m_pPlayer->Get_Direction();
 
-		m_pPlayer->Get_Body_Model()->Set_Loop(0, false);
+#pragma region 1
 
-		if (abs(m_fDegree) < 75) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::HOLD_START_L0);
+	static _float fCurWeight0 = .5f;
+	static _float fCurWeight1 = .5f;
+
+	static _float fTargetWeight0 = .5f;
+	static _float fTargetWeight1 = .5f;
+
+	if (dwDirection & DIRECTION_FRONT) {
+		m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::STRAFEL_F);
+		fTargetWeight0 = 0.5f;
+		fTargetWeight1 = 0.5f;
+
+		if (dwDirection & DIRECTION_LEFT) {
+			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::STRAFEL_L);
 		}
-		else if (abs(m_fDegree) < 150) {
-			if (m_fDegree < 0) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::HOLD_START_L90);
-			}
-			else {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::HOLD_START_R90);
-			}
+		else if (dwDirection & DIRECTION_RIGHT) {
+			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::STRAFEL_R);
 		}
 		else {
-			if (m_fDegree < 0) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::HOLD_START_L180);
-			}
-			else {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::HOLD_START_R180);
-			}
+			fTargetWeight0 = 1.f;
+			fTargetWeight1 = 0.0f;
 		}
+	}
+	else if (dwDirection & DIRECTION_BACK) {
+		m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::STRAFEL_B);
+		fTargetWeight0 = 0.5f;
+		fTargetWeight1 = 0.5f;
 
-		m_pPlayer->Get_Body_Model()->Set_Loop(0, false);
+		if (dwDirection & DIRECTION_LEFT) {
+			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::STRAFEL_L);
+		}
+		else if (dwDirection & DIRECTION_RIGHT) {
+			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::STRAFEL_R);
+		}
+		else {
+			fTargetWeight0 = 1.f;
+			fTargetWeight1 = 0.f;
+		}
+	}
+	else {
+		fTargetWeight0 = 1.f;
+		fTargetWeight1 = 0.f;
+
+		if (dwDirection & DIRECTION_LEFT) {
+			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::STRAFEL_L);
+		}
+		else if (dwDirection & DIRECTION_RIGHT) {
+			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::STRAFEL_R);
+		}
+		else {
+			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::HOLD_IDLE_LOOP);
+		}
 	}
 
+	if (abs(fTargetWeight0 - fCurWeight0) > 0.1) {
+		if (fCurWeight0 > fTargetWeight0) {
+			fCurWeight0 -= fTimeDelta;
+		}
+		else {
+			fCurWeight0 += fTimeDelta;
+		}
+	}
+	else {
+		fCurWeight0 = fTargetWeight0;
+	}
+
+	if (abs(fTargetWeight1 - fCurWeight1) > 0.1) {
+		if (fCurWeight1 > fTargetWeight1) {
+			fCurWeight1 -= fTimeDelta;
+		}
+		else {
+			fCurWeight1 += fTimeDelta;
+		}
+	}
+	else {
+		fCurWeight1 = fTargetWeight1;
+	}
+
+	m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, fCurWeight0);
+	m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, fCurWeight1);
+#pragma endregion
 }
 
-void CPlayer_State_Hold_Idle::Update_Degree()
+
+void CPlayer_State_Hold_Idle::Look_Cam(_float fTimeDelta)
 {
-	_float4 vCamLook = m_pPlayer->m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
-	vCamLook.y = 0;
-	vCamLook = XMVector3Normalize(vCamLook);
+	static _float fCurWeight = 0.f;
+	static _float fTargetWeight = 0.f;
 
-	_float4 vPlayerLook = m_pPlayer->m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-	vPlayerLook.y = 0;
-	vPlayerLook = XMVector3Normalize(vPlayerLook);
+	if (abs(m_fDegree) > 5) {
+		fTargetWeight = 1.f;
+		m_pPlayer->Get_Body_Model()->Set_Loop(2, true);
+		//awm_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0);
+		if (m_fDegree < 0) {
+			m_pPlayer->Get_Body_Model()->Change_Animation(2, CPlayer::WHEEL_L180);
+		}
+		else {
+			m_pPlayer->Get_Body_Model()->Change_Animation(2, CPlayer::WHEEL_R180);
+		}
+	}
+	else {
+		m_pPlayer->Get_Body_Model()->Change_Animation(2, CPlayer::HOLD_IDLE_LOOP);
+		fTargetWeight = 0.f;
+	}
 
-	m_fDegree = Cal_Degree_From_Directions_Between_Min180_To_180(vPlayerLook, vCamLook);
+	if (abs(fTargetWeight - fCurWeight) > 0.1) {
+		if (fCurWeight > fTargetWeight) {
+			fCurWeight -= fTimeDelta * 5;
+		}
+		else {
+			fCurWeight += fTimeDelta * 5;
+		}
+	}
+	else {
+		fCurWeight = fTargetWeight;
+	}
+	m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, fTargetWeight);
 
 }
+
 CPlayer_State_Hold_Idle* CPlayer_State_Hold_Idle::Create(CPlayer* pPlayer)
 {
 	CPlayer_State_Hold_Idle* pInstance = new CPlayer_State_Hold_Idle(pPlayer);
