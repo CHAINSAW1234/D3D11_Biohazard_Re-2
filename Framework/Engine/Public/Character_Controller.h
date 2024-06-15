@@ -25,6 +25,7 @@ public:
 	virtual _float4 GetTranslation() override;
 	virtual void	Release_Px() override;
 	virtual _float4 GetPosition_Float4() override; 
+	virtual _float4 GetPosition_Float4_Zombie() override; 
 
 	class CGameObject* m_pCharacter = { nullptr };
 

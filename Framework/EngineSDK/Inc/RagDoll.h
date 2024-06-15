@@ -32,6 +32,7 @@ public:
     {
         return m.r[3];
     }
+    void                                        WakeUp();
 public:
 	virtual void Free() override;
 };

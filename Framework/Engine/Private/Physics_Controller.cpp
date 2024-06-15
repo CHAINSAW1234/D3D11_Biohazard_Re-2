@@ -235,15 +235,14 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	m_pGameInstance->SetSimulate(true);
 }
 
-CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, _float4x4* WorldMatrix, _float4x4* RotationMatrix, const string& name)
+CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, CTransform* pTransform, const string& name)
 {
 	//Ragdoll Init
 	auto pRagdoll = new CRagdoll_Physics(m_Scene, m_Physics, m_DefaultAllocatorCallback, m_DefaultErrorCallback, m_Foundation,
 		m_Dispatcher, m_Material);
 
 	pRagdoll->SetBone_Ragdoll(vecBone);
-	pRagdoll->SetRotationMatrix(RotationMatrix);
-	pRagdoll->SetWorldMatrix(WorldMatrix);
+	pRagdoll->SetTransform(pTransform);
 	pRagdoll->Init(name);
 
 	m_vecRagdoll.push_back(pRagdoll);
@@ -255,13 +254,13 @@ void CPhysics_Controller::Start_Ragdoll(CRagdoll_Physics* pRagdoll,_uint iId)
 {
 	if (nullptr != pRagdoll)
 	{
-		pRagdoll->Set_Kinematic(false);
-		pRagdoll->Init_Ragdoll();
-		
 		if (m_vecCharacter_Controller[iId])
 		{
 			m_vecCharacter_Controller[iId]->Release_Px();
 		}
+
+		pRagdoll->Init_Ragdoll();
+		pRagdoll->SetSimulate(true);
 	}
 }
 
@@ -380,22 +379,6 @@ _bool CPhysics_Controller::RayCast(_float4 vOrigin, _float4 vDir, _float4* pBloc
 	{
 		*pBlockPoint = PxVec_To_Float4_Coord(hit.block.position);
 	}
-
-	/*PxSweepBuffer hit;
-
-	bool Status = m_Scene->sweep(
-		PxSphereGeometry(0.1f), 
-		PxTransform(PxvOrigin), 
-		PxvDir, 
-		fMaxDist,
-		hit, 
-		PxHitFlag::eDEFAULT, PxQueryFilterData(PxQueryFlag::eSTATIC)
-	);
-
-	if (Status)
-	{
-		*pBlockPoint = PxVec_To_Float4_Coord(hit.block.position);
-	}*/
 
 	return Status;
 }

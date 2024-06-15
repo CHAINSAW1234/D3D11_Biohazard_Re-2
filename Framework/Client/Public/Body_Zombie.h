@@ -33,6 +33,9 @@ public:
 private:
 	HRESULT					Initialize_Model();
 
+public:
+	virtual void			SetRagdoll(_int iId) override;
+
 private:
 	CModel*					m_pModelCom = { nullptr };
 	CShader*				m_pShaderCom = { nullptr };
@@ -40,7 +43,9 @@ private:
 
 	_float3*				m_pRootTranslation = { nullptr };
 
-	_bool					m_bRagdoll = { false };
+	_float4x4				m_RotationMatrix;
+
+	class CRagdoll_Physics* m_pRagdoll = { nullptr };
 private:
 	HRESULT					Add_Components();
 	HRESULT					Bind_ShaderResources();

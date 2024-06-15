@@ -18,6 +18,7 @@ public:
 	virtual void					SetPosition(PxVec3 Pos) {}
 	virtual PxVec3					GetPosition() { return PxVec3(0.f, 0.f, 0.f); }
 	virtual _float4					GetPosition_Float4() { return _float4(0.f, 0.f, 0.f,1.f); }
+	virtual _float4					GetPosition_Float4_Zombie() { return _float4(0.f, 0.f, 0.f,1.f); }
 	virtual void					Update() {}
 	virtual _float4					GetTranslation() { return _float4(0.f, 0.f, 0.f, 1.f); }
 	virtual PxTransform				GetTransform_Px() { return PxTransform(); }

@@ -191,7 +191,7 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	if(m_pObject_Manager)
 		m_pObject_Manager->Late_Tick(fTimeDelta);
-	
+
 	if (m_pPhysics_Controller)
 		m_pPhysics_Controller->Simulate(fTimeDelta);
 }
@@ -1040,10 +1040,15 @@ _bool CGameInstance::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPo
 {
 	return m_pPhysics_Controller->SphereCast(vOrigin, vDir, pBlockPoint, fMaxDist);
 }
-CRagdoll_Physics* CGameInstance::Create_Ragdoll(vector<class CBone*>* vecBone, _float4x4* WorldMatrix, _float4x4* RotationMatrix, const string& name)
+CRagdoll_Physics* CGameInstance::Create_Ragdoll(vector<class CBone*>* vecBone,CTransform* pTransform, const string& name)
 {
 	if (m_pPhysics_Controller)
-		return m_pPhysics_Controller->Create_Ragdoll(vecBone,WorldMatrix,RotationMatrix,name);
+		return m_pPhysics_Controller->Create_Ragdoll(vecBone,pTransform,name);
+}
+void CGameInstance::Start_Ragdoll(CRagdoll_Physics* pRagdoll, _uint iId)
+{
+	if (m_pPhysics_Controller)
+		m_pPhysics_Controller->Start_Ragdoll(pRagdoll, iId);
 }
 #pragma endregion
 

@@ -2,6 +2,7 @@
 #include "Body_Zombie.h"
 
 #include "Light.h"
+#include "RagDoll_Physics.h"
 
 CBody_Zombie::CBody_Zombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
@@ -38,6 +39,8 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 	if (FAILED(Initialize_Model()))
 		return E_FAIL;
 
+	m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Ex_Default_Zombie/Body.fbx");
+
 	return S_OK;
 }
 
@@ -55,7 +58,8 @@ void CBody_Zombie::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	if(m_bRagdoll == false)
+		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
@@ -315,6 +319,12 @@ HRESULT CBody_Zombie::Initialize_Model()
 	}
 
 	return S_OK;
+}
+
+void CBody_Zombie::SetRagdoll(_int iId)
+{
+	m_pGameInstance->Start_Ragdoll(m_pRagdoll, iId);
+	m_bRagdoll = true;
 }
 
 HRESULT CBody_Zombie::Add_Components()
