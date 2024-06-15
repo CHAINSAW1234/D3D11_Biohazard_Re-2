@@ -34,6 +34,8 @@ HRESULT CAnimTestObject::Initialize(void* pArg)
 
     //  m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.f, 0.f, 1.f), &m_iIndex_CCT, this);
 
+    m_pTransformCom->Set_Scaled(0.05f, 0.05f, 0.05f);
+
     return S_OK;
 }
 

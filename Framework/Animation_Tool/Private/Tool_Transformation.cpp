@@ -19,8 +19,6 @@ HRESULT CTool_Transformation::Initialize(void* pArg)
 
 	m_strCollasingTag = "Tool_Transform";
 
-	m_pTransformCom->Set_Scaled(0.05f, 0.05f, 0.05f);
-
 	return S_OK;
 }
 

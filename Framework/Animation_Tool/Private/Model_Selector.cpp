@@ -25,6 +25,12 @@ HRESULT CModel_Selector::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	for (auto& Pair: m_Models)
+	{
+		CModel*			pModel = { Pair.second };
+		pModel->Add_Bone_Layer_All_Bone(TEXT("Default"));
+	}
+
 	m_strCollasingTag = "Tool_ModelSelector";
 
 	return S_OK;
@@ -411,3 +417,4 @@ void CModel_Selector::Free()
 	}
 	m_Models.clear();
 }
+

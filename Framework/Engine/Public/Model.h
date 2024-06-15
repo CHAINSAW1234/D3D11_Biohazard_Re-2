@@ -169,12 +169,12 @@ public:		/* For. Access */
 	void									Change_Animation(_uint iPlayingIndex, const string& strAnimTag);
 	void									Set_BoneLayer_PlayingInfo(_uint iPlayingIndex, const wstring& strBoneLayerTag);
 
-	class CBone* Get_BonePtr(const _char* pBoneName) const;
+	class CBone*							Get_BonePtr(const _char* pBoneName) const;
 
 	_bool									isFinished(_uint iPlayingIndex);
 	void									Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices);
 
-	const _float4x4* Get_CombinedMatrix(const string& strBoneTag);
+	const _float4x4*						Get_CombinedMatrix(const string& strBoneTag);
 
 public:		/* For.FBX */
 	virtual HRESULT							Initialize_Prototype(MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix);
