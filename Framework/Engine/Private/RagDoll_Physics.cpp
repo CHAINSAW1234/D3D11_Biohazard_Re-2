@@ -79,6 +79,7 @@
 #define MODEL_SCALE 0.01f
 #define SIZE_VALUE 3.f
 #define JOINT_GAP 0.1f
+#define RADIUS 2.5f
 
 PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, uint32_t child_idx, CRagdoll& ragdoll, float r, XMMATRIX rotation)
 {
@@ -225,10 +226,6 @@ void CRagdoll_Physics::create_d6_joint(PxRigidDynamic* parent, PxRigidDynamic* c
 	_matrix p_tf = XMLoadFloat4x4((*m_vecBone)[Bone_Pos]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
 	_vector p = XMVectorSet(p_tf.r[3].m128_f32[0], p_tf.r[3].m128_f32[1], p_tf.r[3].m128_f32[2], 1.0f);
 
-#pragma region 크기 줄이는 코드
-
-#pragma endregion
-
 	_vector q = XMQuaternionRotationMatrix(XMMatrixInverse(nullptr, joints[Joint_Pos].inverse_bind_pose));
 
 	PxD6Joint* joint = PxD6JointCreate(*m_Physics,
@@ -244,9 +241,54 @@ void CRagdoll_Physics::create_d6_joint(PxRigidDynamic* parent, PxRigidDynamic* c
 	joint->setBreakForce(FLT_MAX, FLT_MAX);
 }
 
+void CRagdoll_Physics::create_d6_joint_Foot(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos)
+{
+	Joint* joints = m_skeletal_mesh->skeleton()->joints();
+
+	_matrix p_tf = XMLoadFloat4x4((*m_vecBone)[Bone_Pos]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
+	_vector p = XMVectorSet(p_tf.r[3].m128_f32[0], p_tf.r[3].m128_f32[1], p_tf.r[3].m128_f32[2], 1.0f);
+
+	_vector q = XMQuaternionRotationMatrix(XMMatrixInverse(nullptr, joints[Joint_Pos].inverse_bind_pose));
+
+	PxD6Joint* joint = PxD6JointCreate(*m_Physics,
+		parent,
+		parent->getGlobalPose().transformInv(PxTransform(to_vec3(p), to_quat(q))),
+		child,
+		child->getGlobalPose().transformInv(PxTransform(to_vec3(p), to_quat(q))));
+
+	joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+
+	config_d6_joint(3.14 / 8.f, 3.14f / 8.f, -3.14f / 16.f, 3.14f / 16.f, joint);
+
+	joint->setBreakForce(FLT_MAX, FLT_MAX);
+}
+
+void CRagdoll_Physics::create_d6_joint_Head(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos)
+{
+	Joint* joints = m_skeletal_mesh->skeleton()->joints();
+
+	_matrix p_tf = XMLoadFloat4x4((*m_vecBone)[Bone_Pos]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
+	_vector p = XMVectorSet(p_tf.r[3].m128_f32[0], p_tf.r[3].m128_f32[1], p_tf.r[3].m128_f32[2], 1.0f);
+
+	_vector q = XMQuaternionRotationMatrix(XMMatrixInverse(nullptr, joints[Joint_Pos].inverse_bind_pose));
+
+	PxD6Joint* joint = PxD6JointCreate(*m_Physics,
+		parent,
+		parent->getGlobalPose().transformInv(PxTransform(to_vec3(p), to_quat(q))),
+		child,
+		child->getGlobalPose().transformInv(PxTransform(to_vec3(p), to_quat(q))));
+
+	joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+
+	config_d6_joint(3.14 / 12.f, 3.14f /12.f, -3.14f / 20.f, 3.14f /20.f, joint);
+
+	joint->setBreakForce(FLT_MAX, FLT_MAX);
+}
+
 void CRagdoll_Physics::create_revolute_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t joint_pos, XMMATRIX rotation)
 {
-	m_pRotationMatrix = &m_pTransform->Get_RotationMatrix_Pure();
+	//m_pRotationMatrix = &m_pTransform->Get_RotationMatrix_Pure();
+	m_pRotationMatrix = &m_pTransform->Get_WorldMatrix_Pure();
 
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
@@ -264,7 +306,7 @@ void CRagdoll_Physics::create_revolute_joint(PxRigidDynamic* parent, PxRigidDyna
 
 	joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
 
-	joint->setLimit(PxJointAngularLimitPair( PxPi*0.5f, PxPi));
+	joint->setLimit(PxJointAngularLimitPair( -PxPi, 0.f));
 	joint->setRevoluteJointFlag(PxRevoluteJointFlag::eLIMIT_ENABLED, true);
 }
 
@@ -450,9 +492,9 @@ void CRagdoll_Physics::create_ragdoll()
 	uint32_t j_head_idx = 130;
 	uint32_t j_neck_01_idx = 129;
 	uint32_t j_spine_03_idx = 1;
-	uint32_t j_spine_02_idx = 57;
-	uint32_t j_spine_01_idx = 58;
-	uint32_t j_pelvis_idx = 44;
+	uint32_t j_spine_02_idx = 58;
+	uint32_t j_spine_01_idx = 57;
+	uint32_t j_pelvis_idx = 57;
 
 	uint32_t j_thigh_l_idx = 2;
 	uint32_t j_calf_l_idx = 7;
@@ -489,7 +531,7 @@ void CRagdoll_Physics::create_ragdoll()
 	// Create rigid bodies for limbs
 	// ---------------------------------------------------------------------------------------------------------------
 
-	float     r = 2.5f * m_scale;
+	float     r = RADIUS * m_scale;
 	_matrix rot = XMMatrixIdentity();
 	rot = XMMatrixRotationZ(XM_PI * 0.5f);
 
@@ -505,12 +547,6 @@ void CRagdoll_Physics::create_ragdoll()
 	m_ragdoll->m_rigid_bodies[9] = m_Leg_R;
 #endif
 
-#ifdef ZOMBIE
-	m_ragdoll->m_rigid_bodies[1] = m_Pelvis;
-	m_ragdoll->m_rigid_bodies[3] = m_Leg_L;
-	//m_ragdoll->m_rigid_bodies[20] = m_Leg_R;
-#endif
-
 	m_Calf_L = create_capsule_bone(j_calf_l_idx, j_foot_l_idx, *m_ragdoll, r, rot);
 	m_Calf_R = create_capsule_bone(j_calf_r_idx, j_foot_r_idx, *m_ragdoll, r, rot);
 
@@ -523,10 +559,18 @@ void CRagdoll_Physics::create_ragdoll()
 	m_Hand_L = create_capsule_bone(j_hand_l_idx, j_middle_01_l_idx, *m_ragdoll, r);
 	m_Hand_R = create_capsule_bone(j_hand_r_idx, j_middle_01_r_idx, *m_ragdoll, r);
 
-	rot = XMMatrixIdentity();
+	rot = XMMatrixRotationY(PxPi*0.5f);
 
 	m_Foot_L = create_capsule_bone(j_foot_l_idx, j_ball_l_idx, *m_ragdoll, r, rot);
 	m_Foot_R = create_capsule_bone(j_foot_r_idx, j_ball_r_idx, *m_ragdoll, r, rot);
+
+#ifdef ZOMBIE
+	m_ragdoll->m_rigid_bodies[1] = m_Pelvis;
+	m_ragdoll->m_rigid_bodies[3] = m_Leg_L;
+	//m_ragdoll->m_rigid_bodies[20] = m_Leg_R;
+
+	m_ragdoll->m_rigid_bodies[44] = m_Pelvis;
+#endif
 
 #pragma endregion
 	for (int i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
@@ -603,7 +647,8 @@ void CRagdoll_Physics::update_animations()
 	if (m_bRagdoll == false)
 		return;
 
-	m_pRotationMatrix = &m_pTransform->Get_RotationMatrix_Pure();
+	//m_pRotationMatrix = &m_pTransform->Get_RotationMatrix_Pure();
+	m_pRotationMatrix = &m_pTransform->Get_WorldMatrix_Pure();
 	auto RotMat = m_pRotationMatrix;
 	RotMat->_41 = m_pWorldMatrix->_41;
 	RotMat->_42 = m_pWorldMatrix->_42;
@@ -694,7 +739,8 @@ void CRagdoll_Physics::update_animations()
 		{
 			int i = 0;
 
-			m_pRotationMatrix = &m_pTransform->Get_RotationMatrix_Pure();
+			//m_pRotationMatrix = &m_pTransform->Get_RotationMatrix_Pure();
+			m_pRotationMatrix = &m_pTransform->Get_WorldMatrix_Pure();
 			auto WorldMat = m_pRotationMatrix;
 
 			for (auto& it : *m_vecBone)
@@ -791,7 +837,7 @@ void CRagdoll_Physics::create_joint()
 #pragma endregion
 
 	//Chest and Head
-	create_d6_joint(m_Pelvis, m_Head, NECK_BONE, j_neck_01_idx);
+	create_d6_joint_Head(m_Pelvis, m_Head, NECK_BONE, j_neck_01_idx);
 
 	// Chest to Thighs
 	create_d6_joint(m_Pelvis, m_Leg_L, L_LEG_BONE, j_thigh_l_idx);
@@ -802,8 +848,8 @@ void CRagdoll_Physics::create_joint()
 	create_d6_joint(m_Leg_R, m_Calf_R, R_CALF_BONE, j_calf_r_idx);
 
 	// Calf to Foot
-	create_d6_joint(m_Calf_L, m_Foot_L, L_FOOT_BONE, j_foot_l_idx);
-	create_d6_joint(m_Calf_R, m_Foot_R, R_FOOT_BONE, j_foot_r_idx);
+	create_d6_joint_Foot(m_Calf_L, m_Foot_L, L_FOOT_BONE, j_foot_l_idx);
+	create_d6_joint_Foot(m_Calf_R, m_Foot_R, R_FOOT_BONE, j_foot_r_idx);
 
 	// Chest to Upperarm
 	create_d6_joint(m_Pelvis, m_Arm_L, L_ARM_BONE, j_upperarm_l_idx);

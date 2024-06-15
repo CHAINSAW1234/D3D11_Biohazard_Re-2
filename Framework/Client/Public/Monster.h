@@ -35,6 +35,10 @@ public:
 	virtual void						Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT						Render() override;
 
+	//Action
+public:
+	void								Move(_float4 vDir, _float fTimeDelta);
+
 protected:	/* Update_PartObjects */
 	void								Priority_Tick_PartObjects(_float fTimeDelta);
 	void								Tick_PartObjects(_float fTimeDelta);
@@ -70,6 +74,7 @@ protected: // For AIController
 
 	vector<class CPartObject*>			m_PartObjects;
 	
+	MONSTER_STATE						m_eState = { MST_DEFAULT };
 protected:
 	virtual HRESULT						Add_Components();
 	virtual HRESULT						Bind_ShaderResources();

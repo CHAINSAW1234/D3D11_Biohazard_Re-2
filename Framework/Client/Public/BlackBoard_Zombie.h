@@ -15,12 +15,16 @@ public:
 public:
 	virtual HRESULT					Initialize_Prototype();
 	virtual HRESULT					Initialize(void* pArg);
-	void							Initialize_BlackBoard();
+	void							Initialize_BlackBoard(class CZombie* pAI);
 
 public: // Setter
 	void							SetPlayer(class CPlayer* pPlayer)
 	{
 		m_pPlayer = pPlayer;
+	}
+	class CZombie* GetAI()
+	{
+		return m_pAI;
 	}
 
 public: // Getter
@@ -32,6 +36,7 @@ public: // Getter
 protected:
 	class CPathFinder*				m_pPathFinder = { nullptr };
 	class CPlayer*					m_pPlayer = { nullptr };
+	class CZombie*					m_pAI = { nullptr };
 public:
 	static CBlackBoard_Zombie* Create();
 

@@ -16,7 +16,7 @@ public:
 	virtual HRESULT					Initialize_Prototype();
 	virtual HRESULT					Initialize(void* pArg);
 
-	virtual _bool					Condition_Check() { return false; }
+	virtual _bool					Condition_Check();
 
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard)
