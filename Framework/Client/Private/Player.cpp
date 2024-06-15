@@ -296,6 +296,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	Late_Tick_PartObjects(fTimeDelta);
 
+	Turn_Spine(fTimeDelta);		// 특정 조건에서 뼈를 돌림
+
 #pragma region 예은 추가
 	Col_Section();
 #pragma endregion 
@@ -362,6 +364,11 @@ CModel* CPlayer::Get_Body_Model()
 	return static_cast<CModel*>(m_PartObjects[0]->Get_Component(g_strModelTag));
 }
 
+_float3* CPlayer::Get_Body_RootDir()
+{
+	return static_cast<CBody_Player*>(m_PartObjects[0])->Get_RootTranslation();
+}
+
 void CPlayer::Change_State(STATE eState)
 {
 	m_pFSMCom->Change_State(eState);
@@ -412,6 +419,67 @@ _float CPlayer::Get_CamDegree()
 	vPlayerLook = XMVector3Normalize(vPlayerLook);
 
 	return Cal_Degree_From_Directions_Between_Min180_To_180(vPlayerLook, vCamLook);
+}
+
+void CPlayer::Turn_Spine(_float fTimeDelta)
+{
+	if (!m_isTurnSpine && m_fSpineTurnLerfTimeDelta >= 1.f) {
+		return;
+	}
+
+	// 카메라 look 내적을 통해서 각도 구하기
+	_float4 vCamLook = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
+	_float4 vCamLandLook = vCamLook;
+	vCamLandLook.y = 0;
+	vCamLandLook = XMVector3Normalize(vCamLandLook);
+
+	_float fRadian = XMVector3AngleBetweenNormals(vCamLandLook, vCamLook).m128_f32[0];
+
+	// 외적으로 방향 찾기
+	_float vCross = XMVector3Cross(vCamLandLook, vCamLook).m128_f32[1];
+
+	// 각도를 -180 ~ 180도 사이로 세팅
+	_float fDegree = XMConvertToDegrees(fRadian * vCross / abs(vCross)); // 0 ~ 180 사이의 값 
+	// 각도가 0보다 크면 왼쪽이다
+	if (isnan(fDegree))
+		m_fTargetSpineTurnAxis = 0.f;
+	else 
+		m_fTargetSpineTurnAxis = fDegree;
+
+
+	m_fSpineTurnLerfTimeDelta += fTimeDelta;
+	if (m_fSpineTurnLerfTimeDelta > 1.f)
+		m_fSpineTurnLerfTimeDelta = 1.f;
+
+	if (m_fSpineTurnLerfTimeDelta < 1.f) {
+		if (m_isTurnSpine) {
+			m_fCurSpineTurnAxis = Lerp(0, m_fTargetSpineTurnAxis, m_fSpineTurnLerfTimeDelta);
+		}
+		else {
+			m_fCurSpineTurnAxis = Lerp(m_fTargetSpineTurnAxis, 0, m_fSpineTurnLerfTimeDelta);
+		}
+	}
+	else {
+		m_fCurSpineTurnAxis = m_isTurnSpine ? m_fTargetSpineTurnAxis : 0.f;
+	}
+
+	//_matrix vSpineTransform = Get_Body_Model()->GetBoneTransform("spine_0");
+	//_vector vTransform, vScale, vRotate;
+	//XMMatrixDecompose(&vScale, &vRotate, &vTransform, vSpineTransform);
+
+	//_float4 vSpineRight = vSpineTransform.r[0];
+	//_float4 vSpinePos = vSpineTransform.r[3];
+
+	//// 크 자 이 공 부
+	//_matrix vNewSpineTransform = XMMatrixIdentity() * XMMatrixScalingFromVector(vScale) * XMMatrixRotationQuaternion(vRotate) *
+	//	XMMatrixRotationAxis(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), XMConvertToRadians(m_fCurSpineTurnAxis)) * XMMatrixTranslationFromVector(vTransform);
+
+	//_float3 pRootDir = { 0.f,0.f,0.f };
+	//Get_Body_Model()->Set_CombinedMatrix(m_pTransformCom, Get_Body_RootDir(), "spine_0", vNewSpineTransform);
+	Get_Body_Model()->Add_Additional_Transformation_World("spine_0", XMMatrixRotationAxis(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), XMConvertToRadians(m_fCurSpineTurnAxis)));
+	//Get_Body_Model()->Set_CombinedMatrix(m_pTransformCom, /*Get_Body_RootDir()*/ &pRootDir, "spine_0", vSpineTransform);
+	
+
 }
 
 void CPlayer::SetMoveDir()
@@ -467,6 +535,8 @@ void CPlayer::SetMoveDir()
 	if (m_eMoveDir != m_ePrevMoveDir)
 	{
 		m_fLerpTime = 0.f;
+		m_bLerp_Move = true;
+		m_bLerp = true;
 	}
 
 	m_ePrevMoveDir = m_eMoveDir;

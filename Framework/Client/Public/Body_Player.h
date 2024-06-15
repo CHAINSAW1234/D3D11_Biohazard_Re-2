@@ -30,6 +30,9 @@ public:
 	HRESULT					Render_LightDepth_Point() override;
 	HRESULT					Render_LightDepth_Spot()override;
 
+public:
+	_float3*				Get_RootTranslation() { return m_pRootTranslation; }
+
 private:
 	CModel*					m_pModelCom = { nullptr };
 	CShader*				m_pShaderCom = { nullptr };	

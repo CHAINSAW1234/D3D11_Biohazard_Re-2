@@ -11,6 +11,7 @@ CPlayer_State_Hold::CPlayer_State_Hold(CPlayer* pPlayer)
 void CPlayer_State_Hold::OnStateEnter()
 {
 	Change_State(START);
+	m_pPlayer->Set_TurnSpine(true);
 }
 
 void CPlayer_State_Hold::OnStateUpdate(_float fTimeDelta)
@@ -22,6 +23,7 @@ void CPlayer_State_Hold::OnStateUpdate(_float fTimeDelta)
 
 void CPlayer_State_Hold::OnStateExit()
 {
+	m_pPlayer->Set_TurnSpine(false);
 	Reset_State();
 	m_eState = STATE_END;
 }
@@ -44,7 +46,7 @@ HRESULT CPlayer_State_Hold::Add_States()
 {
 	Add_State(START, CPlayer_State_Hold_Start::Create(m_pPlayer, this));
 	Add_State(IDLE, CPlayer_State_Hold_Idle::Create(m_pPlayer));
-	Change_State(START);
+	//Change_State(START);
 
 	return S_OK;
 }

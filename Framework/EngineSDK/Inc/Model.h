@@ -104,7 +104,7 @@ private:
 	void									Apply_Translation_Inverse_Rotation(_fvector vTranslation);
 
 public:
-	void									Set_CombinedMatrix(string strBoneTag, _fmatrix CombinedMatrix);
+	void									Set_CombinedMatrix(class CTransform* pTransform, _float3* pMovedDirection, string strBoneTag, _fmatrix CombinedMatrix);
 	void									Set_Parent_CombinedMatrix_Ptr(string strBoneTag, _float4x4* pParentMatrix);
 	void									Set_Surbodinate(string strBoneTag, _bool isSurbodinate);
 
@@ -195,7 +195,7 @@ public:
 
 private:
 	vector<_float4x4>						Apply_Animation(_float fTimeDelta, _uint iPlayingAnimIndex);
-	void									Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMovedDirection);
+	void									Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMovedDirection, _uint iStartBoneIndex =0);
 	void									Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer);
 	vector<_float4x4>						Compute_ResultMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer);
 

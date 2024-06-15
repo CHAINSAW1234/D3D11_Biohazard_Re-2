@@ -775,13 +775,15 @@ void CModel::Apply_Translation_Inverse_Rotation(_fvector vTranslation)
 		return;
 }
 
-void CModel::Set_CombinedMatrix(string strBoneTag, _fmatrix CombinedMatrix)
+void CModel::Set_CombinedMatrix(class CTransform* pTransform, _float3* pMovedDirection, string strBoneTag, _fmatrix CombinedMatrix)
 {
 	_int			iBoneIndex = { Find_BoneIndex(strBoneTag) };
 	if (-1 == iBoneIndex)
 		return;
 
 	m_Bones[iBoneIndex]->Set_Combined_Matrix(CombinedMatrix);
+
+	Apply_Bone_CombinedMatrices(pTransform, pMovedDirection, iBoneIndex + 1);
 }
 
 void CModel::Set_Parent_CombinedMatrix_Ptr(string strBoneTag, _float4x4* pParentMatrix)
@@ -1799,11 +1801,11 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 	return TransformationMatrices;
 }
 
-void CModel::Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMovedDirection)
+void CModel::Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMovedDirection, _uint iStartBoneIndex)
 {
 	//	모든 채널업데이트가 끝난후 각 뼈에 컴바인드 행렬을 설정한다.
 	const _uint		iNumBones = { static_cast<_uint>(m_Bones.size()) };
-	for (_uint iBoneIndex = 0; iBoneIndex < iNumBones; ++iBoneIndex)
+	for (_uint iBoneIndex = iStartBoneIndex; iBoneIndex < iNumBones; ++iBoneIndex)
 	{
 		_bool		isRootBone = { m_Bones[iBoneIndex]->Is_RootBone() };
 		/*if (true == isRootBone)
