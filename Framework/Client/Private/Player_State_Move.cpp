@@ -22,6 +22,7 @@ void CPlayer_State_Move::OnStateUpdate(_float fTimeDelta)
 
 	Update_State();
 
+
 }
 
 void CPlayer_State_Move::OnStateExit()

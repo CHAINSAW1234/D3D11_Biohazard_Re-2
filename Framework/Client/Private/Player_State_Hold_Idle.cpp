@@ -29,6 +29,10 @@ void CPlayer_State_Hold_Idle::OnStateUpdate(_float fTimeDelta)
 	Set_MoveAnimation(fTimeDelta);
 	Look_Cam(fTimeDelta);
 
+	Shot();
+
+
+
 	// 카메라 위치에 맞춰서 회전
 
 	// 카메라 위치 에 맞춰서 상체 상하 회전 
@@ -169,6 +173,31 @@ void CPlayer_State_Hold_Idle::Look_Cam(_float fTimeDelta)
 		fCurWeight = fTargetWeight;
 	}
 	m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, fTargetWeight);
+
+}
+
+void CPlayer_State_Hold_Idle::Shot()
+{
+	if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == PRESSING) {
+		if (m_pPlayer->Get_Body_Model()->Get_BlendWeight(3) == 0.f) {
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(3, 1);
+			if (1) {
+				// 총알 있으면
+				m_pPlayer->Get_Body_Model()->Change_Animation(3, CPlayer::HOLD_SHOT);
+			}
+			else {
+				// 총알 없음
+				m_pPlayer->Get_Body_Model()->Change_Animation(3, CPlayer::HOLD_SHOT_NO_AMMO);
+			}
+		}
+		
+	}
+	else {
+		if (m_pPlayer->Get_Body_Model()->isFinished(3)) {
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(3, 0);
+		}
+	}
+
 
 }
 
