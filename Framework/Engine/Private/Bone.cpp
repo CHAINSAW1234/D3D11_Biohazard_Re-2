@@ -178,6 +178,8 @@ _vector CBone::Decompose_Quaternion(_fvector vQuaternion, _float4* pQuaternion)
 void CBone::Set_Combined_Matrix(_fmatrix CombinedMatrix)
 {
 	XMStoreFloat4x4(&m_CombinedTransformationMatrix, CombinedMatrix);
+
+
 }
 
 void CBone::Set_Parent_CombinedMatrix_Ptr(_float4x4* pParentMatrix)

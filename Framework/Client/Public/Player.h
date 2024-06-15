@@ -84,6 +84,7 @@ private:
 #pragma region 현진 추가
 public:
 	CModel*										Get_Body_Model();
+	_float3*									Get_Body_RootDir();
 	_bool										Get_Spotlight() { return m_isSpotlight; }
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
 	void										Set_Spotlight(_bool isSpotlight) { m_isSpotlight = isSpotlight; }

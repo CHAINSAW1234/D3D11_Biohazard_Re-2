@@ -280,7 +280,6 @@ void CPlayer::Tick(_float fTimeDelta)
 
 
 #pragma region 현진 추가
-	Turn_Spine(fTimeDelta);		// 특정 조건에서 뼈를 돌림
 	Update_Direction();
 	Update_FSM();
 	m_pFSMCom->Update(fTimeDelta);
@@ -296,6 +295,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
 	Late_Tick_PartObjects(fTimeDelta);
+
+	Turn_Spine(fTimeDelta);		// 특정 조건에서 뼈를 돌림
 
 #pragma region 예은 추가
 	Col_Section();
@@ -361,6 +362,11 @@ void CPlayer::Col_Section()
 CModel* CPlayer::Get_Body_Model()
 {
 	return static_cast<CModel*>(m_PartObjects[0]->Get_Component(g_strModelTag));
+}
+
+_float3* CPlayer::Get_Body_RootDir()
+{
+	return static_cast<CBody_Player*>(m_PartObjects[0])->Get_RootTranslation();
 }
 
 void CPlayer::Change_State(STATE eState)
@@ -457,12 +463,22 @@ void CPlayer::Turn_Spine(_float fTimeDelta)
 		m_fCurSpineTurnAxis = m_isTurnSpine ? m_fTargetSpineTurnAxis : 0.f;
 	}
 
+	//_matrix vSpineTransform = Get_Body_Model()->GetBoneTransform("spine_0");
+	//_vector vTransform, vScale, vRotate;
+	//XMMatrixDecompose(&vScale, &vRotate, &vTransform, vSpineTransform);
 
-	_float4x4 vSpineTransform = Get_Body_Model()->GetBoneTransform("spine_0");
-	_float4 vSpineRight = vSpineTransform.Right();
-	vSpineTransform = vSpineTransform * XMMatrixRotationAxis(vSpineRight, XMConvertToRadians(m_fCurSpineTurnAxis));
+	//_float4 vSpineRight = vSpineTransform.r[0];
+	//_float4 vSpinePos = vSpineTransform.r[3];
 
-	Get_Body_Model()->Set_CombinedMatrix("spine_0", vSpineTransform);
+	//// 크 자 이 공 부
+	//_matrix vNewSpineTransform = XMMatrixIdentity() * XMMatrixScalingFromVector(vScale) * XMMatrixRotationQuaternion(vRotate) *
+	//	XMMatrixRotationAxis(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), XMConvertToRadians(m_fCurSpineTurnAxis)) * XMMatrixTranslationFromVector(vTransform);
+
+	//_float3 pRootDir = { 0.f,0.f,0.f };
+	//Get_Body_Model()->Set_CombinedMatrix(m_pTransformCom, Get_Body_RootDir(), "spine_0", vNewSpineTransform);
+	Get_Body_Model()->Add_Additional_Transformation_World("spine_0", XMMatrixRotationAxis(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), XMConvertToRadians(m_fCurSpineTurnAxis)));
+	//Get_Body_Model()->Set_CombinedMatrix(m_pTransformCom, /*Get_Body_RootDir()*/ &pRootDir, "spine_0", vSpineTransform);
+	
 
 }
 
