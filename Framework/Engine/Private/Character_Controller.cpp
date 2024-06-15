@@ -103,6 +103,18 @@ _float4 CCharacter_Controller::GetPosition_Float4()
 	return Pos;
 }
 
+_float4 CCharacter_Controller::GetPosition_Float4_Zombie()
+{
+	PxExtendedVec3 position = m_pController->getPosition();
+
+	_float4 Pos;
+	Pos.x = static_cast<_float>(position.x);
+	Pos.y = static_cast<_float>(position.y) - CONTROLLER_GROUND_GAP_ZOMBIE;
+	Pos.z = static_cast<_float>(position.z);
+	Pos.w = 1.f;
+	return Pos;
+}
+
 _bool CCharacter_Controller::IsGrounded(PxController* Controller)
 {
 	return _bool();

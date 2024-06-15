@@ -35,8 +35,6 @@ private:
 	CShader*						m_pShaderCom = { nullptr };
 	CCollider*						m_pColliderCom = { nullptr };
 
-	_bool							m_bRagdoll = { false };
-	_bool							m_bRagdoll_Ready = { false };
 private:
 	HRESULT							Add_Components();
 	HRESULT							Bind_ShaderResources();

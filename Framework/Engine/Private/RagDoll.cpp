@@ -28,6 +28,20 @@ CRagdoll* CRagdoll::Create()
 	return nullptr;
 }
 
+void CRagdoll::WakeUp()
+{
+    if (m_rigid_bodies.empty() == false)
+    {
+        for (int i = 0; i < m_rigid_bodies.size(); i++)
+        {
+            if (m_rigid_bodies[i])
+            {
+                m_rigid_bodies[i]->wakeUp();
+            }
+        }
+    }
+}
+
 void CRagdoll::Free()
 {
 }
@@ -62,7 +76,7 @@ void CRagdoll::set_kinematic(bool state)
         {
             if (m_rigid_bodies[i])
             {
-                m_rigid_bodies[i]->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, state);
+                m_rigid_bodies[i]->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, !state);
 
                 if (!state)
                     m_rigid_bodies[i]->wakeUp();

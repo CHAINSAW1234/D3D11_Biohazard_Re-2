@@ -39,8 +39,6 @@ private:
 	CShader*				m_pShaderCom = { nullptr };
 	CCollider*				m_pColliderCom = { nullptr };
 
-	_bool					m_bRagdoll = { false };
-
 	CLOTHES_TYPE			m_eType = { CLOTHES_TYPE::TYPE_END };
 
 private:
