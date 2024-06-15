@@ -784,7 +784,7 @@ void CModel::Apply_Translation_Inverse_Rotation(_fvector vTranslation)
 		return;
 }
 
-void CModel::Set_CombinedMatrix(class CTransform* pTransform, _float3* pMovedDirection, string strBoneTag, _fmatrix CombinedMatrix)
+void CModel::Set_CombinedMatrix(string strBoneTag, _fmatrix CombinedMatrix)
 {
 	_int			iBoneIndex = { Find_BoneIndex(strBoneTag) };
 	if (-1 == iBoneIndex)
@@ -1641,6 +1641,8 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 
 	for (auto& pPlayingInfo : m_PlayingAnimInfos)
 	{
+		if (nullptr == pPlayingInfo)
+			continue;
 		pPlayingInfo->Update_BlendWeight_Linear(fTimeDelta);
 	}
 

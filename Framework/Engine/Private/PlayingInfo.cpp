@@ -17,6 +17,9 @@ HRESULT CPlayingInfo::Initialize(void* pArg)
 	m_strBoneLayerTag = pDesc->strBoneLayerTag;
 	m_iPreAnimIndex = -1;
 
+	m_fTargetBlendWeight = m_fBlendWeight;
+	m_fTotalLinearTime_Blend = 0.f;
+
 	m_LastKeyFrames.resize(pDesc->iNumBones);
 	m_CurrentKeyFrameIndices.resize(pDesc->iNumChannel);
 
@@ -188,6 +191,12 @@ void CPlayingInfo::Update_BlendWeight_Linear(_float fTimeDelta)
 	m_fAccLinearTime_Blend += fTimeDelta;
 	if (m_fAccLinearTime_Blend > m_fTotalLinearTime_Blend)
 		m_fAccLinearTime_Blend = m_fTotalLinearTime_Blend;
+
+	if (m_fTotalLinearTime_Blend <= 0.f)
+	{
+		m_fBlendWeight = m_fTargetBlendWeight;
+		return;
+	}
 
 	_float		fRatio = { m_fAccLinearTime_Blend / m_fTotalLinearTime_Blend };
 
