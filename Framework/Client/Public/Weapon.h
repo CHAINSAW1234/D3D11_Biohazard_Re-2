@@ -26,19 +26,22 @@ private:
 	virtual ~CWeapon() = default;
 
 public:
-	virtual HRESULT			Initialize_Prototype() override;
-	virtual HRESULT			Initialize(void* pArg) override;
-	virtual void			Tick(_float fTimeDelta) override;
-	virtual void			Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT			Render() override;
-	virtual HRESULT			Render_LightDepth() override;
+	virtual HRESULT					Initialize_Prototype() override;
+	virtual HRESULT					Initialize(void* pArg) override;
+	virtual void					Tick(_float fTimeDelta) override;
+	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT					Render() override;
+
+	virtual HRESULT					Render_LightDepth_Dir()override;
+	virtual HRESULT					Render_LightDepth_Point() override;
+	virtual HRESULT					Render_LightDepth_Spot()override;
 
 private:
 	CModel*					m_pModelCom = { nullptr };
 	CShader*				m_pShaderCom = { nullptr };	
 	CBone*					m_pSocket = { nullptr };
 	CCollider*				m_pColliderCom = { nullptr };
-	
+
 private:
 	HRESULT					Add_Components();
 	HRESULT					Bind_ShaderResources();

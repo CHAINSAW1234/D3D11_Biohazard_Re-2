@@ -407,10 +407,10 @@ void CPlayer::Update_Direction()
 
 _float CPlayer::Get_CamDegree()
 {
-	if (nullptr == m_pTransformCom_Camera || nullptr == m_pTransformCom)
+	if (nullptr == m_pCamera || nullptr == m_pTransformCom)
 		return 0;
 
-	_float4 vCamLook = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
+	_float4 vCamLook = m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK);
 	vCamLook.y = 0;
 	vCamLook = XMVector3Normalize(vCamLook);
 
