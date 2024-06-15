@@ -45,11 +45,15 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Left_Arm"), "l_arm_clavicle");
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("LowerBody"), "hips");
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("UpperBody"), "spine_0");
+	m_pModelCom->Add_Bone_Layer_Range(TEXT("Shot"), 61, 62);
+	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Shot"), "r_arm_radius");
+	//m_pModelCom->Add_Bone_Layer_Bone(TEXT("Shot"), "r_arm_wrist");
 
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 1, TEXT("Default"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 2, TEXT("Default"), 0.f);
-
+	m_pModelCom->Add_AnimPlayingInfo(0, false, 3, TEXT("Shot"), 0.f);
+	//m_pModelCom->Add_AnimPlayingInfo(0, false, 4, TEXT("UpperBody"), 0.f);
 	return S_OK;
 }
 

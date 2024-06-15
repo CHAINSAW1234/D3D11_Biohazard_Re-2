@@ -22,22 +22,17 @@ HRESULT CWeapon::Initialize_Prototype()
 
 HRESULT CWeapon::Initialize(void * pArg)
 {
-	WEAPON_DESC*	pWeaponDesc = (WEAPON_DESC*)pArg;
-
-	m_pSocket = pWeaponDesc->pSocket;
-	Safe_AddRef(m_pSocket);
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;	
 
+	m_bRender = true;
 
 	m_pModelCom->Set_RootBone("root");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
-	m_pModelCom->Add_AnimPlayingInfo(0, false, 0, TEXT("Default"), 1.f);
-
+	m_pModelCom->Add_AnimPlayingInfo(2, false, 0, TEXT("Default"), 1.f);
 
 	//m_pTransformCom->Set_Scaled(0.1f, 0.1f, 0.1f);
 	//m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(90.0f));
@@ -61,7 +56,10 @@ void CWeapon::Late_Tick(_float fTimeDelta)
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	}
 
-
+	_float3				vDirection = { };
+	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &vDirection);
+	
+	
 #ifdef _DEBUG
 	//m_pGameInstance->Add_DebugComponents(m_pColliderCom);
 #endif
@@ -303,7 +301,6 @@ void CWeapon::Free()
 	__super::Free();
 
 	Safe_Release(m_pColliderCom);
-	Safe_Release(m_pSocket);
 	Safe_Release(m_pShaderCom);	
 	Safe_Release(m_pModelCom);
 }

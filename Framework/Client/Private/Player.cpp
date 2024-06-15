@@ -8,6 +8,7 @@
 #include "Body_Player.h"
 #include "Head_Player.h"
 #include "Hair_Player.h"
+#include "Weapon.h"
 
 #include"CustomCollider.h"
 
@@ -277,6 +278,14 @@ void CPlayer::Tick(_float fTimeDelta)
 #pragma endregion
 
 #pragma endregion
+
+
+	// 현진 추가
+	CModel* pWeaponModel = { dynamic_cast<CModel*>(m_PartObjects[PART_WEAPON]->Get_Component(TEXT("Com_Model"))) };
+	_float4x4* pRightWeaponCombinedMatrix = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix(/*"r_holster_main"*/"r_weapon"))};
+	pWeaponModel->Set_Surbodinate("root", true);
+	pWeaponModel->Set_Parent_CombinedMatrix_Ptr("root", pRightWeaponCombinedMatrix);
+
 
 
 #pragma region 현진 추가
@@ -1102,7 +1111,6 @@ HRESULT CPlayer::Add_FSM_States()
 		TEXT("Com_FSM"), (CComponent**)&m_pFSMCom)))
 		return E_FAIL;
 
-
 	m_pFSMCom->Add_State(MOVE, CPlayer_State_Move::Create(this));
 
 	m_pFSMCom->Add_State(HOLD, CPlayer_State_Hold::Create(this));
@@ -1161,6 +1169,18 @@ HRESULT CPlayer::Add_PartObjects()
 
 	m_PartObjects[CPlayer::PART_HAIR] = pHairObject;
 
+	/* For.Part_Weapon */
+	CPartObject* pWeaponObject = { nullptr };
+	CPartObject::PARTOBJECT_DESC		WeaponDesc{};
+
+	WeaponDesc.pParentsTransform = m_pTransformCom;
+
+	pWeaponObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_HandGun"), &WeaponDesc));
+	if (nullptr == pWeaponObject)
+		return E_FAIL;
+
+	m_PartObjects[CPlayer::PART_WEAPON] = pWeaponObject;
+
 	return S_OK;
 }
 
@@ -1202,7 +1222,6 @@ HRESULT CPlayer::Initialize_PartModels()
 	_float4x4* pRightTrapAMuscleCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("r_trapA_muscle")) };
 	pHeadModel->Set_Surbodinate("r_trapA_muscle", true);
 	pHeadModel->Set_Parent_CombinedMatrix_Ptr("r_trapA_muscle", pRightTrapAMuscleCombinedMatrix);
-
 
 	//	pNeck1CombinedMatrix = { const_cast<_float4x4*>(pHeadModel->Get_CombinedMatrix("neck_1")) };
 	pHairModel->Set_Surbodinate("neck_1", true);

@@ -103,7 +103,7 @@ private:
 	_bool					m_isRootBone = { false };
 
 	_bool					m_isSurbordinate = { false };
-	_float4x4* m_pParentCombinedMatrix = { nullptr };
+	_float4x4*				m_pParentCombinedMatrix = { nullptr };
 
 public:
 	static CBone* Create(const aiNode* pAINode, _int iParentIndex);

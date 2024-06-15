@@ -143,10 +143,10 @@ HRESULT CLoader::Load_Prototype()
 		CHair_Player::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	///* For.Prototype_GameObject_Part_Weapon */
-	//if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Weapon"),
-	//	CWeapon::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
+	/* For.Prototype_GameObject_Part_Weapon */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_HandGun"),
+		CWeapon::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 #pragma endregion
 	
@@ -545,7 +545,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	_matrix			TransformMatrix = { XMMatrixIdentity() };
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
-
+	_matrix			WeaponTransformMatrix = { XMMatrixRotationZ(XMConvertToRadians(180.f)) };
 #pragma region Players Model 
 
 	/* Prototype_Component_Model_LeonBody */
@@ -567,10 +567,10 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 	/* Prototype_Component_Model_HandGun */
-	//if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_HandGun"),
-	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/HandGun.fbx",
-	//		TransformMatrix))))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_HandGun"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/HandGun/HandGun.fbx",
+			TransformMatrix))))
+		return E_FAIL;
 
 #pragma endregion
 

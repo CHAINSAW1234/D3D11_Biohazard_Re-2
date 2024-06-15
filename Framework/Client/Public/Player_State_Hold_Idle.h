@@ -21,6 +21,8 @@ private:
 	void Set_MoveAnimation(_float fTimeDelta);
 	void Look_Cam(_float fTimeDelta);
 
+	void Shot();
+
 private:
 	CPlayer*	m_pPlayer = { nullptr };
 	_float		m_fDegree = { 0.f };

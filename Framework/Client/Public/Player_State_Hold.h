@@ -8,7 +8,7 @@ BEGIN(Client)
 class CPlayer_State_Hold final : public CFSM_HState
 {
 public:
-	enum STATE { START, IDLE, SHOT, STATE_END };
+	enum STATE { START, IDLE, STATE_END };
 
 private:	
 	CPlayer_State_Hold(CPlayer* pPlayer);
