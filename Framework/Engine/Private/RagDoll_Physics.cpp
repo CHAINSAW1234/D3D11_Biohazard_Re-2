@@ -494,7 +494,7 @@ void CRagdoll_Physics::create_ragdoll()
 	uint32_t j_spine_03_idx = 1;
 	uint32_t j_spine_02_idx = 58;
 	uint32_t j_spine_01_idx = 57;
-	uint32_t j_pelvis_idx = 57;
+	uint32_t j_pelvis_idx = 44;
 
 	uint32_t j_thigh_l_idx = 2;
 	uint32_t j_calf_l_idx = 7;
@@ -535,10 +535,21 @@ void CRagdoll_Physics::create_ragdoll()
 	_matrix rot = XMMatrixIdentity();
 	rot = XMMatrixRotationZ(XM_PI * 0.5f);
 
+#ifdef LEON
 	m_Pelvis = create_capsule_bone(j_pelvis_idx, j_neck_01_idx, *m_ragdoll, 5.0f * m_scale, rot);
+#endif
+
+#ifdef ZOMBIE
+	m_Pelvis = create_capsule_bone(j_pelvis_idx, j_spine_01_idx, *m_ragdoll, 5.0f * m_scale, rot);
+#endif
+
 	m_Head = create_capsule_bone(j_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f * m_scale, 0.0f, 1.f), 4.0f * m_scale, 6.0f * m_scale, rot);
 	m_Leg_L = create_capsule_bone(j_thigh_l_idx, j_calf_l_idx, *m_ragdoll, r, rot);
 	m_Leg_R = create_capsule_bone(j_thigh_r_idx, j_calf_r_idx, *m_ragdoll, r, rot);
+
+#ifdef ZOMBIE
+	m_Chest = create_capsule_bone(j_spine_01_idx, j_neck_01_idx, *m_ragdoll, 5.0f * m_scale, rot);
+#endif
 
 
 #ifdef LEON
@@ -568,8 +579,7 @@ void CRagdoll_Physics::create_ragdoll()
 	m_ragdoll->m_rigid_bodies[1] = m_Pelvis;
 	m_ragdoll->m_rigid_bodies[3] = m_Leg_L;
 	//m_ragdoll->m_rigid_bodies[20] = m_Leg_R;
-
-	m_ragdoll->m_rigid_bodies[44] = m_Pelvis;
+	//m_ragdoll->m_rigid_bodies[44] = m_Pelvis;
 #endif
 
 #pragma endregion
@@ -629,6 +639,10 @@ void CRagdoll_Physics::create_ragdoll()
 	m_Scene->addActor(*m_Leg_R);
 	m_Scene->addActor(*m_Calf_R);
 	m_Scene->addActor(*m_Foot_R);
+
+#ifdef ZOMBIE
+	m_Scene->addActor(*m_Chest);
+#endif
 #pragma endregion
 }
 
@@ -836,6 +850,7 @@ void CRagdoll_Physics::create_joint()
 #endif
 #pragma endregion
 
+#ifdef LEON
 	//Chest and Head
 	create_d6_joint_Head(m_Pelvis, m_Head, NECK_BONE, j_neck_01_idx);
 
@@ -862,6 +877,36 @@ void CRagdoll_Physics::create_joint()
 	// Lowerarm to Hand
 	create_d6_joint(m_ForeArm_L, m_Hand_L, L_WRIST_BONE, j_hand_l_idx);
 	create_d6_joint(m_ForeArm_R, m_Hand_R, R_WRIST_BONE, j_hand_r_idx);
+#endif
+
+#ifdef ZOMBIE
+	create_d6_joint_Head(m_Chest, m_Head, NECK_BONE, j_neck_01_idx);
+	create_d6_joint_Head(m_Pelvis, m_Chest, SPINE_02_BONE, j_spine_02_idx);
+
+	// Pelvis to Thighs
+	create_d6_joint(m_Pelvis, m_Leg_L, L_LEG_BONE, j_thigh_l_idx);
+	create_d6_joint(m_Pelvis, m_Leg_R, R_LEG_BONE, j_thigh_r_idx);
+
+	// Thighs to Calf
+	create_d6_joint(m_Leg_L, m_Calf_L, L_CALF_BONE, j_calf_l_idx);
+	create_d6_joint(m_Leg_R, m_Calf_R, R_CALF_BONE, j_calf_r_idx);
+
+	// Calf to Foot
+	create_d6_joint_Foot(m_Calf_L, m_Foot_L, L_FOOT_BONE, j_foot_l_idx);
+	create_d6_joint_Foot(m_Calf_R, m_Foot_R, R_FOOT_BONE, j_foot_r_idx);
+
+	// Chest to Upperarm
+	create_d6_joint(m_Chest, m_Arm_L, L_ARM_BONE, j_upperarm_l_idx);
+	create_d6_joint(m_Chest, m_Arm_R, R_ARM_BONE, j_upperarm_r_idx);
+
+	// Upperarm to Lowerman
+	create_d6_joint(m_Arm_L, m_ForeArm_L, L_FOREARM_BONE, j_lowerarm_l_idx);
+	create_d6_joint(m_Arm_R, m_ForeArm_R, R_FOREARM_BONE, j_lowerarm_r_idx);
+
+	// Lowerarm to Hand
+	create_d6_joint(m_ForeArm_L, m_Hand_L, L_WRIST_BONE, j_hand_l_idx);
+	create_d6_joint(m_ForeArm_R, m_Hand_R, R_WRIST_BONE, j_hand_r_idx);
+#endif
 }
 
 
@@ -1010,6 +1055,9 @@ void CRagdoll_Physics::Free()
 		m_Hand_R->release();
 		m_Foot_R->release();
 		m_Foot_L->release();
+
+		if (m_Chest)
+			m_Chest->release();
 	}
 
 	delete m_ragdoll;

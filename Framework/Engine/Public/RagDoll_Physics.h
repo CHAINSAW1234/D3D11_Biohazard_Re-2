@@ -226,6 +226,7 @@ private:
 
     PxRigidDynamic*                                 m_Head = { nullptr };
     PxRigidDynamic*                                 m_Pelvis = { nullptr };
+    PxRigidDynamic*                                 m_Chest = { nullptr };
     PxRigidDynamic*                                 m_Arm_L = { nullptr };
     PxRigidDynamic*                                 m_Arm_R = { nullptr };
     PxRigidDynamic*                                 m_ForeArm_L = { nullptr };
