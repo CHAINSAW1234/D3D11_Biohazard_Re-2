@@ -1,7 +1,6 @@
 #pragma once
 #include "Customize_UI.h"
 
-
 BEGIN(Client)
 
 class CButton_UI final : public CCustomize_UI
@@ -17,12 +16,6 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-
-public:
-	_bool Get_IsClicked() const { return m_isClicked; }
-
-private:
-	_bool m_isClicked = { false };
 
 public:
 	static CButton_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

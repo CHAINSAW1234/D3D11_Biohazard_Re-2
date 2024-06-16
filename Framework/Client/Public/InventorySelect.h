@@ -24,7 +24,6 @@ public:
 
 private:
 	_vector m_vOriginDiff = {};
-	//_vector m_vTargetPos = {};
 	CTransform* m_pCursorTranform = { nullptr };
 	
 public:

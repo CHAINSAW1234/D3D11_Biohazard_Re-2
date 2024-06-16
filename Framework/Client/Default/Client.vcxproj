@@ -176,6 +176,7 @@
     <ClInclude Include="..\Public\Body_Zombie.h" />
     <ClInclude Include="..\Public\Bullet_UI.h" />
     <ClInclude Include="..\Public\Button_UI.h" />
+    <ClInclude Include="..\Public\Inventory_Slot.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\Public\Clothes_Zombie.h" />
     <ClInclude Include="..\Public\Face_Zombie.h" />
@@ -195,6 +196,7 @@
     <ClInclude Include="..\Public\Inventory.h" />
     <ClInclude Include="..\Public\Inventory_Item_UI.h" />
     <ClInclude Include="..\Public\Is_Character_In_Range_Zombie.h" />
+    <ClInclude Include="..\public\Item_UI.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
@@ -237,6 +239,8 @@
     <ClCompile Include="..\Private\Body_Zombie.cpp" />
     <ClCompile Include="..\Private\Bullet_UI.cpp" />
     <ClCompile Include="..\Private\Button_UI.cpp" />
+    <ClCompile Include="..\private\Item_UI.cpp" />
+    <ClCompile Include="..\Private\Inventory_Slot.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\Private\Clothes_Zombie.cpp" />
     <ClCompile Include="..\Private\Face_Zombie.cpp" />

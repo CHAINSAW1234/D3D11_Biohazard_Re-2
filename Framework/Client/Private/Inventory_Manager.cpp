@@ -2,7 +2,6 @@
 
 #include "Inventory_Manager.h"
 
-
 CInventory_Manager::CInventory_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
 	, m_pContext{ pContext }
@@ -28,8 +27,8 @@ HRESULT CInventory_Manager::Initialize()
 	{
 		for (_uint j = 0; j < 4; j++)
 		{
-			_float fPosX = m_fInterval.x * j;
-			_float fPosY = -m_fInterval.y * i;
+			_float fPosX = m_fRectInterval.x * j;
+			_float fPosY = -m_fRectInterval.y * i;
 			if (FAILED(Create_InvenUI(&vecCustomInvenUIDesc, _float3(fPosX, fPosY, 0.f))))
 				return E_FAIL;
 		}
@@ -74,7 +73,7 @@ void CInventory_Manager::FirstTick_Seting()
 void CInventory_Manager::Tick(_float fTimeDelta)
 {
 	_bool IsNoOneHover = true;
-	CButton_UI* pHoveredObj = nullptr;
+	CInventory_Slot* pHoveredObj = nullptr;
 
 	for (auto& iter : m_vecInventoryUI)
 	{
@@ -92,6 +91,7 @@ void CInventory_Manager::Tick(_float fTimeDelta)
 		m_pSelectBoxTransform->Set_State(CTransform::STATE_POSITION,
 			dynamic_cast<CTransform*>(pHoveredObj->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION));
 	}
+
 
 }
 
@@ -126,7 +126,7 @@ CInventory_Manager* CInventory_Manager::Create(ID3D11Device* pDevice, ID3D11Devi
 
 HRESULT CInventory_Manager::Create_InvenUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval)
 {
-	CButton_UI* pParentInvenUI = { nullptr };
+	CInventory_Slot* pParentInvenUI = { nullptr };
 
 	for (auto& iter : *vecInvenUI)
 	{
@@ -161,12 +161,12 @@ HRESULT CInventory_Manager::Create_InvenUI(vector<CCustomize_UI::CUSTOM_UI_DESC>
 		//if (nullptr == pGameOBJ)
 		//	return E_FAIL;
 
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Button_UI"), &iter)))
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_InventorySlot"), &iter)))
 			return E_FAIL;
 
 		CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
 
-		CButton_UI* pInvenUI = dynamic_cast<CButton_UI*>(pGameObj);
+		CInventory_Slot* pInvenUI = dynamic_cast<CInventory_Slot*>(pGameObj);
 
 		pInvenUI->Move_State(fInterval, 0);
 		pInvenUI->Set_IsLoad(false);
@@ -190,6 +190,65 @@ HRESULT CInventory_Manager::Create_InvenUI(vector<CCustomize_UI::CUSTOM_UI_DESC>
 }
 
 HRESULT CInventory_Manager::Create_SelectUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI)
+{
+	CInventorySelect* pParentInvenUI = { nullptr };
+
+	for (auto& iter : *vecInvenUI)
+	{
+		if (0 == iter.fMaxFrame && TEXT("") != iter.wstrDefaultTexturPath)
+		{
+			/* For.Prototype_Component_Texture_ */
+			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrDefaultTexturComTag,
+				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath)))) {
+				int a = 0;
+			}
+		}
+
+		else if (0 < iter.fMaxFrame && TEXT("") != iter.wstrDefaultTexturPath)
+		{
+			/* For.Prototype_Component_Texture_ */
+			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrDefaultTexturComTag,
+				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath, iter.fMaxFrame)))) {
+				int a = 0;
+			}
+		}
+
+		if (TEXT("") != iter.wstrMaskPath)
+		{
+			/* For.Prototype_Component_Texture_ */
+			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrMaskComTag,
+				CTexture::Create(m_pDevice, m_pContext, iter.wstrMaskPath)))) {
+				int a = 0;
+			}
+		}
+
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_InventorySelect"), &iter)))
+			return E_FAIL;
+
+		CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
+
+		CInventorySelect* pInvenUI = dynamic_cast<CInventorySelect*>(pGameObj);
+
+		pInvenUI->Set_Dead(true);
+
+		if (nullptr != pParentInvenUI)
+		{
+			pParentInvenUI->PushBack_Child(pGameObj);
+			pParentInvenUI = nullptr;
+		}
+
+		else
+		{
+			m_pSelectBox = pInvenUI;
+		}
+
+		pParentInvenUI = pInvenUI;
+	}
+
+	return S_OK;
+}
+
+HRESULT CInventory_Manager::Create_ItemUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI)
 {
 	CInventorySelect* pParentInvenUI = { nullptr };
 
