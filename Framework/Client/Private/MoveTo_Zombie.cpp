@@ -27,9 +27,7 @@ HRESULT CMoveTo_Zombie::Initialize(void* pArg)
 void CMoveTo_Zombie::Execute()
 {
 	auto pAI = m_pBlackBoard->GetAI();
-	auto pPlayer = m_pBlackBoard->GetPlayer();
-
-	auto vPos = pPlayer->GetPosition();
+	pAI->SetState(MONSTER_STATE::MST_WALK);
 }
 
 CMoveTo_Zombie* CMoveTo_Zombie::Create()
