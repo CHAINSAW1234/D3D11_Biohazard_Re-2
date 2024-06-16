@@ -8,6 +8,7 @@ class ENGINE_DLL CComposite_Node : public CBase
 {
 public:
 	CComposite_Node();
+	CComposite_Node(COMPOSITE_NODE_TYPE eType);
 	CComposite_Node(const CComposite_Node& rhs);
 	virtual ~CComposite_Node() = default;
 
@@ -17,8 +18,6 @@ public:
 
 	void							Insert_Child_Node(class CComposite_Node* pNode)
 	{
-		if (m_bLeaf_Node)
-			return;
 
 		m_vecNode.push_back(pNode);
 	}
@@ -26,15 +25,16 @@ public:
 	void							Insert_Task_Node(class CTask_Node* pTask_Node)
 	{
 		m_vecTask_Node.push_back(pTask_Node);
-
-		m_bLeaf_Node = true;
 	}
 	void							Insert_Decorator_Node(class CDecorator_Node* pDecorator_Node)
 	{
 		m_vecDecorator_Node.push_back(pDecorator_Node);
 	}
-
 	_bool							Execute();
+	void							SetRootNode(_bool boolean)
+	{
+		m_bRootNode = boolean;
+	}
 protected:
 	class CGameInstance*					m_pGameInstance = { nullptr };
 
@@ -42,8 +42,7 @@ protected:
 	vector<class CComposite_Node*>			m_vecNode;
 	vector<class CDecorator_Node*>			m_vecDecorator_Node;
 	vector<class CTask_Node*>				m_vecTask_Node = { nullptr };
-
-	_bool									m_bLeaf_Node = { false };
+	_bool									m_bRootNode = { false };
 public:
 	static CComposite_Node* Create();
 

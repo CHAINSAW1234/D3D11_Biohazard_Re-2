@@ -7,6 +7,7 @@ CBehaviorTree::CBehaviorTree() : m_pGameInstance{ CGameInstance::Get_Instance() 
 	Safe_AddRef(m_pGameInstance);
 
 	m_pRootNode = new CComposite_Node();
+	m_pRootNode->SetRootNode(true);
 }
 
 CBehaviorTree::CBehaviorTree(const CBehaviorTree& rhs)
@@ -45,5 +46,7 @@ CBehaviorTree* CBehaviorTree::Create()
 void CBehaviorTree::Free()
 {
 	Safe_Release(m_pGameInstance);
-	Safe_Release(m_pRootNode);
+
+	if(m_pRootNode)
+		Safe_Release(m_pRootNode);
 }

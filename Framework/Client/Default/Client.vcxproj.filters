@@ -187,6 +187,12 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Start">
       <UniqueIdentifier>{b025c7ed-6e85-4b6f-a0e9-ec6b9361ec01}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AIController\Zombie\Task\MoveTo">
+      <UniqueIdentifier>{c3e3ec08-4601-40bd-8466-feb5c8686e29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Task\Wait">
+      <UniqueIdentifier>{022420cb-4aa4-4658-b312-d73a780980eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -354,14 +360,17 @@
     <ClInclude Include="..\Public\Is_Character_In_Range_Zombie.h">
       <Filter>AIController\Zombie\Decorator</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MoveTo_Zombie.h">
-      <Filter>AIController\Zombie\Task</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Header_Package_Zombie.h">
       <Filter>AIController\Zombie\Header_Package</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_State_Hold_Start.h">
       <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Start</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MoveTo_Zombie.h">
+      <Filter>AIController\Zombie\Task\MoveTo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Wait_Zombie.h">
+      <Filter>AIController\Zombie\Task\Wait</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -515,11 +524,14 @@
     <ClCompile Include="..\Private\Is_Character_In_Range_Zombie.cpp">
       <Filter>AIController\Zombie\Decorator</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\MoveTo_Zombie.cpp">
-      <Filter>AIController\Zombie\Task</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Player_State_Hold_Start.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MoveTo_Zombie.cpp">
+      <Filter>AIController\Zombie\Task\MoveTo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Wait_Zombie.cpp">
+      <Filter>AIController\Zombie\Task\Wait</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

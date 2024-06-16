@@ -63,7 +63,6 @@ HRESULT CZombie::Initialize(void * pArg)
 #pragma region AIController Setup
 	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this,1.f,0.35f);
 
-	m_pBehaviorTree = m_pGameInstance->Create_BehaviorTree(&m_iAIController_ID);
 	m_pPathFinder = m_pGameInstance->Create_PathFinder();
 
 	m_pNavigationCom->FindCell(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
@@ -77,6 +76,8 @@ HRESULT CZombie::Initialize(void * pArg)
 
 	m_pBlackBoard = new CBlackBoard_Zombie();
 	m_pBlackBoard->Initialize_BlackBoard(this);
+
+	Init_BehaviorTree_Zombie();
 #pragma endregion
 
 	m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), 5.f);
@@ -89,35 +90,41 @@ void CZombie::Tick(_float fTimeDelta)
 	if(m_pController)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
 
-	if (m_bArrived == false)
-	{
-		m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-		m_vDir.w = 0.f;
+#pragma region BehaviorTree 코드
+	m_pBehaviorTree->Initiate();
+#pragma endregion
 
-		_float4 vDelta = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) - m_vNextTarget;
-		vDelta.y = 0.f;
+#pragma region 길찾기 임시 코드
+	//if (m_bArrived == false)
+	//{
+	//	m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+	//	m_vDir.w = 0.f;
 
-		if (XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta))) < 0.75f)
-		{
-			m_bArrived = true;
-		}
-		else
-		{
-			//if (m_pController)
-				//m_pController->Move(m_vDir * 0.015f, fTimeDelta);
-		}
-	}
-	else
-	{
-		m_vNextTarget = m_pPathFinder->GetNextTarget_Opt();
-		m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-		m_vDir.w = 0.f;
-	
-		if (m_vNextTarget.x == 0 && m_vNextTarget.y == 0 && m_vNextTarget.z == 0)
-			m_bArrived = true;
-		else
-			m_bArrived = false;
-	}
+	//	_float4 vDelta = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) - m_vNextTarget;
+	//	vDelta.y = 0.f;
+
+	//	if (XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta))) < 0.75f)
+	//	{
+	//		m_bArrived = true;
+	//	}
+	//	else
+	//	{
+	//		//if (m_pController)
+	//		//	m_pController->Move(m_vDir * 0.015f, fTimeDelta);
+	//	}
+	//}
+	//else
+	//{
+	//	m_vNextTarget = m_pPathFinder->GetNextTarget_Opt();
+	//	m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+	//	m_vDir.w = 0.f;
+	//
+	//	if (m_vNextTarget.x == 0 && m_vNextTarget.y == 0 && m_vNextTarget.z == 0)
+	//		m_bArrived = true;
+	//	else
+	//		m_bArrived = false;
+	//}
+#pragma endregion
 
 	if (UP == m_pGameInstance->Get_KeyState('M'))
 	{
@@ -202,8 +209,6 @@ HRESULT CZombie::Render()
 
 void CZombie::Init_BehaviorTree_Zombie()
 {
-	return;
-
 	m_pBehaviorTree = m_pGameInstance->Create_BehaviorTree(&m_iAIController_ID);
 
 	//Root Node
@@ -211,11 +216,19 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 #pragma region RootNode Childe Section
 
-	/*Root Child_1 Section*/
+	/*
+	*Root Selector Section
+	*/
+	auto pSelectorNode_Root = new CComposite_Node(COMPOSITE_NODE_TYPE::CNT_SELECTOR);
+	pNode_Root->Insert_Child_Node(pSelectorNode_Root);
 
-	//Add RootNode Composite Node - Selector Node_1
-	auto pSelectorNode_RootChild_1 = new CComposite_Node();
-	pNode_Root->Insert_Child_Node(pSelectorNode_RootChild_1);
+	/*
+	*Root Child_1 Section
+	*/
+
+	//Add RootNode Childe Composite Node - Selector Node_1
+	auto pSelectorNode_RootChild_1 = new CComposite_Node(COMPOSITE_NODE_TYPE::CNT_SELECTOR);
+	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_1);
 
 	//Add Decorator Node
 	auto pIs_Character_In_Range = new CIs_Character_In_Range_Zombie();
@@ -226,6 +239,18 @@ void CZombie::Init_BehaviorTree_Zombie()
 	auto pMoveTo = new CMoveTo_Zombie();
 	pMoveTo->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_1->Insert_Task_Node(pMoveTo);
+
+
+
+
+	/*
+	*Root Child_2 Section
+	*/
+
+	//Add RootNode Task Node
+	auto pWait = new CWait_Zombie();
+	pWait->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Root->Insert_Task_Node(pWait);
 #pragma endregion
 	return;
 }
