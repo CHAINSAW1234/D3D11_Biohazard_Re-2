@@ -61,6 +61,11 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 2, TEXT("Default"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(0, false, 3, TEXT("Shot"), 0.f);
 	
+	m_pModelCom->Reset_PreAnimation(0);
+	m_pModelCom->Reset_PreAnimation(1);
+	m_pModelCom->Reset_PreAnimation(2);
+	m_pModelCom->Reset_PreAnimation(3);
+
 	m_pModelCom->Set_TickPerSec(CPlayer::WHEEL_L180, 180.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::WHEEL_R180, 180.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::HOLD_SHOT, 150.f);

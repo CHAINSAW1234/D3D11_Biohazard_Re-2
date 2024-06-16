@@ -62,7 +62,7 @@ void CModel::Add_AnimPlayingInfo(_uint iAnimIndex, _bool isLoop, _uint iPlayingI
 		isCanCreate = false;
 
 	const _uint			iNumAnims = { static_cast<_uint>(m_Animations.size()) };
-	if (0 > iAnimIndex || iNumAnims <= iAnimIndex)
+	if (iNumAnims <= iAnimIndex)
 		isCanCreate = false;
 
 	CBone_Layer* pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
