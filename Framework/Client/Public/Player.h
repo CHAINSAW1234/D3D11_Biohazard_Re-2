@@ -198,6 +198,11 @@ private:
 
 	_bool										m_bMouseCursorClip = { true };
 
+
+	/* For. TurnSpine */
+	_float										m_fSpineRotate_PerSec = { XMConvertToRadians(90.f) };
+	_float3										m_vPreHeadDir = { 0.f, 0.f, 1.f };
+
 private:
 	HRESULT Add_Components();
 
