@@ -45,8 +45,6 @@ void CCabinet::Tick(_float fTimeDelta)
 {
 	if (m_eState == CABINET_OPEN && m_pModelCom->isFinished(0))
 		return;
-	
-
 
 	__super::Check_Player();
 
@@ -89,9 +87,7 @@ void CCabinet::Tick(_float fTimeDelta)
 
 void CCabinet::Late_Tick(_float fTimeDelta)
 {
-
 	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
-
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
@@ -102,7 +98,6 @@ void CCabinet::Late_Tick(_float fTimeDelta)
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_SPHERE]);
 #endif
-
 }
 
 HRESULT CCabinet::Render()

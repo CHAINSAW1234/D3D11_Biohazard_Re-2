@@ -52,8 +52,6 @@ HRESULT CNewpoliceStatue::Initialize(void* pArg)
 
 void CNewpoliceStatue::Tick(_float fTimeDelta)
 {
-
-
 	if (m_pGameInstance->Get_KeyState('U') == DOWN)
 		m_eState = POLICEHALLSTATUE_0;
 	if (m_pGameInstance->Get_KeyState('I') == DOWN)
@@ -63,10 +61,6 @@ void CNewpoliceStatue::Tick(_float fTimeDelta)
 		m_eState = POLICEHALLSTATUE_3;
 	if (m_pGameInstance->Get_KeyState('P') == DOWN)
 		m_eState = POLICEHALLSTATUE_2;
-
-
-
-	
 
 	//__super::Tick(fTimeDelta);
 }
