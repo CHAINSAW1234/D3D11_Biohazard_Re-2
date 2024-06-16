@@ -56,49 +56,43 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 {
 #pragma region 1
 
-	static _float fCurWeight0 = .5f;
-	static _float fCurWeight1 = .5f;
-
-	static _float fTargetWeight0 = .5f;
-	static _float fTargetWeight1 = .5f;
-
 	if (m_dwDirection & DIRECTION_FRONT) {
 		m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_F_LOOP);
-		fTargetWeight0 = 0.5f;
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f);
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f);
 
 		if (m_dwDirection & DIRECTION_LEFT) {
 			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_L_LOOP);
-			fTargetWeight1 = 0.5f;
+
 		}
 		else if (m_dwDirection & DIRECTION_RIGHT) {
 			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_R_LOOP);
-			fTargetWeight1 = 0.5f;
+
 		}
 		else {
-			fTargetWeight0 = 1.f;
-			fTargetWeight1 = 0.0f;
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
 		}
 	}
 	else if (m_dwDirection & DIRECTION_BACK) {
 		m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_B_LOOP);
-		fTargetWeight0 = 0.5f;
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f);
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f);
 
 		if (m_dwDirection & DIRECTION_LEFT) {
 			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_BACK_L_LOOP);
-			fTargetWeight1 = 0.5f;
 		}
 		else if (m_dwDirection & DIRECTION_RIGHT) {
 			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_BACK_R_LOOP);
-			fTargetWeight1 = 0.5f;
 		}
 		else {
-			fTargetWeight0 = 1.f;
-			fTargetWeight1 = 0.f;
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f);
 		}
 	}
 	else {
-		fTargetWeight0 = 1.f;
-		fTargetWeight1 = 0.f;
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
 		if (m_dwDirection & DIRECTION_LEFT) {
 			if (m_Prev_FRONT_BACK_Direction == DIRECTION_FRONT) {
 				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_L_LOOP);
@@ -117,34 +111,6 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 			}
 		}
 	}
-
-	if (abs(fTargetWeight0 - fCurWeight0) > 0.1) {
-		if (fCurWeight0 > fTargetWeight0) {
-			fCurWeight0 -= fTimeDelta;
-		}
-		else {
-			fCurWeight0 += fTimeDelta;
-		}
-	}
-	else {
-		fCurWeight0 = fTargetWeight0;
-	}
-	
-	if (abs(fTargetWeight1 - fCurWeight1) > 0.1) {
-		if (fCurWeight1 > fTargetWeight1) {
-			fCurWeight1 -= fTimeDelta;
-		}
-		else {
-			fCurWeight1 += fTimeDelta;
-		}
-	}
-	else {
-		fCurWeight1 = fTargetWeight1;
-	}
-
-
-	m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, fCurWeight0);
-	m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, fCurWeight1);
 #pragma endregion
 }
 
@@ -155,7 +121,6 @@ void CPlayer_State_Move_Walk::Look_Cam(_float fTimeDelta)
 	if (abs(fDegree) > 5) {
 		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * fDegree / 10 );
 	}
-
 }
 
 CPlayer_State_Move_Walk* CPlayer_State_Move_Walk::Create(CPlayer* pPlayer)
