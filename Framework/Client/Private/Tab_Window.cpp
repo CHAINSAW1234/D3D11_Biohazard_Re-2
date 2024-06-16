@@ -36,10 +36,6 @@ HRESULT CTab_Window::Initialize(void* pArg)
 		if (FAILED(Create_Inventory()))
 			return E_FAIL;
 
-
-
-		
-
 		m_bDead = true;
 	}
 
@@ -48,6 +44,13 @@ HRESULT CTab_Window::Initialize(void* pArg)
 
 void CTab_Window::Tick(_float fTimeDelta)
 {
+	if (true == m_isFristTick)
+	{
+		m_pInventory_Manager->FirstTick_Seting();
+		m_isFristTick = false;
+	}
+
+
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
 	{
 		if (false == m_bDead)
@@ -94,6 +97,25 @@ void CTab_Window::Tick(_float fTimeDelta)
 		}
 	}
 
+	switch (m_eWindowType)
+	{
+	case Client::CTab_Window::MINIMAP: {
+		break;
+	}
+		
+	case Client::CTab_Window::INVENTORY: {
+		m_pInventory_Manager->Tick(fTimeDelta);
+		break;
+	}
+		
+	case Client::CTab_Window::HINT: {
+		break;
+	}
+		
+	default:
+		break;
+	}
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -101,6 +123,25 @@ void CTab_Window::Late_Tick(_float fTimeDelta)
 {
 	if (true == m_bDead)
 		return;
+
+	switch (m_eWindowType)
+	{
+	case Client::CTab_Window::MINIMAP: {
+		break;
+	}
+
+	case Client::CTab_Window::INVENTORY: {
+		m_pInventory_Manager->Late_Tick(fTimeDelta);
+		break;
+	}
+
+	case Client::CTab_Window::HINT: {
+		break;
+	}
+
+	default:
+		break;
+	}
 
 	__super::Late_Tick(fTimeDelta);
 

@@ -41,6 +41,7 @@
 #include "MissionBar_UI.h"
 #include "Tutorial_UI.h"
 #include "Selector_UI.h"
+#include "InventorySelect.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -251,7 +252,10 @@ HRESULT CLoader::Load_Prototype()
 		CButton_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-
+	/* For.Prototype_GameObject_InventorySelect */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_InventorySelect"),
+		CInventorySelect::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 	
 #pragma endregion
 
@@ -533,6 +537,12 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Tab_Window_BackGround"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Inventory/TabWindow_BackGround.dds")))))
 		return E_FAIL;
+
+	/*Prototype_Component_Texture_Tab_Window_BackGround*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Perspective_Selecter_Check"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Perspective_Selecter/Check.png")))))
+		return E_FAIL;
+
 #pragma endregion
 
 	/* Prototype_Component_Texture_Sky */

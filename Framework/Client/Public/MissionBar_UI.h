@@ -1,6 +1,8 @@
 #pragma once
 #include "Customize_UI.h"
 
+BEGIN(Client)
+
 class CMissionBar_UI final : public CCustomize_UI
 {
 private:
@@ -54,3 +56,4 @@ public:
 };
 
 
+END

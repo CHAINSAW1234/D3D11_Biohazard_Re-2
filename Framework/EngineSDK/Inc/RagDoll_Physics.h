@@ -131,6 +131,8 @@ public:
     PxRigidDynamic*                     create_capsule_bone(uint32_t parent_idx, class CRagdoll& ragdoll, XMVECTOR offset, float l, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity());
     PxRigidDynamic*                     create_sphere_bone(uint32_t parent_idx, class CRagdoll& ragdoll, float r);
     void                                create_d6_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
+    void                                create_d6_joint_Foot(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
+    void                                create_d6_joint_Head(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
     void                                create_revolute_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t joint_pos, XMMATRIX rotation = XMMatrixIdentity());
     void                                config_d6_joint(physx::PxReal swing0, physx::PxReal swing1, physx::PxReal twistLo, physx::PxReal twistHi, physx::PxD6Joint* joint);
 public:
@@ -224,6 +226,7 @@ private:
 
     PxRigidDynamic*                                 m_Head = { nullptr };
     PxRigidDynamic*                                 m_Pelvis = { nullptr };
+    PxRigidDynamic*                                 m_Chest = { nullptr };
     PxRigidDynamic*                                 m_Arm_L = { nullptr };
     PxRigidDynamic*                                 m_Arm_R = { nullptr };
     PxRigidDynamic*                                 m_ForeArm_L = { nullptr };

@@ -816,9 +816,6 @@
     <ClInclude Include="..\Public\BlackBoard.h">
       <Filter>01.Utility\AIController\Behavior_Tree\Component\BlackBoard</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Task_Node.h">
-      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Task_Node</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\PathFinder.h">
       <Filter>01.Utility\AIController\AINavigator\PathFinder</Filter>
     </ClInclude>
@@ -833,6 +830,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\FSM_HState.h">
       <Filter>01.Utility\02.Components\FSM\HState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Task_Node.h">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Task_Node</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -109,6 +109,12 @@ HRESULT CMonster::Render()
 	return S_OK;
 }
 
+void CMonster::Move(_float4 vDir, _float fTimeDelta)
+{
+	if (m_pController)
+		m_pController->Move(vDir, fTimeDelta);
+}
+
 void CMonster::Priority_Tick_PartObjects(_float fTimeDelta)
 {
 	for (auto& pPartObject : m_PartObjects)

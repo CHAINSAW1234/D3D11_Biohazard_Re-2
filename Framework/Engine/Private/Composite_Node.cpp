@@ -1,10 +1,16 @@
 #include "GameInstance.h"
 #include "Composite_Node.h"
 #include "Decorator_Node.h"
+#include "Task_Node.h"
 
-CComposite_Node::CComposite_Node(): m_pGameInstance{ CGameInstance::Get_Instance() }
+CComposite_Node::CComposite_Node() : m_pGameInstance{ CGameInstance::Get_Instance() }
 {
 	Safe_AddRef(m_pGameInstance);
+}
+
+CComposite_Node::CComposite_Node(COMPOSITE_NODE_TYPE eType) : CComposite_Node()
+{
+	m_eComposite_Type = eType;
 }
 
 CComposite_Node::CComposite_Node(const CComposite_Node& rhs)
@@ -37,30 +43,51 @@ CComposite_Node* CComposite_Node::Create()
 
 _bool CComposite_Node::Execute()
 {
-	for (int i = 0; i < m_vecDecorator_Node.size(); ++i)
+	if(m_bRootNode == false)
 	{
-		if (m_vecDecorator_Node[i]->Condition_Check() == false)
+		for (int i = 0; i < m_vecDecorator_Node.size(); ++i)
 		{
-			return false;
-		}
-	}
-
-	for (int i = 0; i < m_vecNode.size(); ++i)
-	{
-		if (m_eComposite_Type == CNT_SELECTOR)
-		{
-			if (m_vecNode[i]->Execute() == true)
-				return true;
-		}
-		else
-		{
-			if (m_vecNode[i]->Execute() == false)
+			if (m_vecDecorator_Node[i] && m_vecDecorator_Node[i]->Condition_Check() == false)
+			{
 				return false;
+			}
 		}
-	}
 
-	if (m_eComposite_Type == CNT_SEQUENCE)
+		for (int i = 0; i < m_vecNode.size(); ++i)
+		{
+			if (m_eComposite_Type == CNT_SELECTOR)
+			{
+				if (m_vecNode[i] && m_vecNode[i]->Execute() == true)
+					return true;
+			}
+			else
+			{
+				if (m_vecNode[i] && m_vecNode[i]->Execute() == false)
+					return false;
+			}
+		}
+
+		for (int i = 0; i < m_vecTask_Node.size(); ++i)
+		{
+			if (m_vecTask_Node[i])
+				m_vecTask_Node[i]->Execute();
+		}
+
+		return true;
+	}
+	else
 	{
+		for (int i = 0; i < m_vecNode.size(); ++i)
+		{
+			m_vecNode[i] && m_vecNode[i]->Execute();
+		}
+
+		for (int i = 0; i < m_vecTask_Node.size(); ++i)
+		{
+			if (m_vecTask_Node[i])
+				m_vecTask_Node[i]->Execute();
+		}
+
 		return true;
 	}
 }
@@ -68,4 +95,22 @@ _bool CComposite_Node::Execute()
 void CComposite_Node::Free()
 {
 	Safe_Release(m_pGameInstance);
+
+	for (int i = 0; i < m_vecNode.size(); ++i)
+	{
+		if(m_vecNode[i])
+			Safe_Release(m_vecNode[i]);
+	}
+
+	for (int i = 0; i < m_vecDecorator_Node.size(); ++i)
+	{
+		if(m_vecDecorator_Node[i])
+			Safe_Release(m_vecDecorator_Node[i]);
+	}
+
+	for (int i = 0; i < m_vecTask_Node.size(); ++i)
+	{
+		if (m_vecTask_Node[i])
+			Safe_Release(m_vecTask_Node[i]);
+	}
 }

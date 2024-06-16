@@ -307,11 +307,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
 		return E_FAIL;
 
-	/* 8. UI_Tutorial */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Tutorial.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	///* 8. UI_Tutorial */
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Tutorial.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
 	/* 8. UI_Selecter */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Selector.dat");

@@ -22,8 +22,10 @@ HRESULT CBlackBoard_Zombie::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CBlackBoard_Zombie::Initialize_BlackBoard()
+void CBlackBoard_Zombie::Initialize_BlackBoard(CZombie* pAI)
 {
+	m_pAI = pAI;
+
 	auto pPlayerLayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_Player");
 	m_pPlayer = dynamic_cast<CPlayer*>(*(*pPlayerLayer).begin());
 }

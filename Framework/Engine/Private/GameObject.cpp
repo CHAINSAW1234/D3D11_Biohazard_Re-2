@@ -89,6 +89,11 @@ _float4 CGameObject::GetPosition()
 	return m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 }
 
+_vector CGameObject::GetPositionVector()
+{
+	return m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+}
+
 HRESULT CGameObject::Add_Component(_uint iLevelIndex, const wstring& strPrototypeTag, const wstring& strComponentTag, CComponent** ppOut, void* pArg)
 {
 	CComponent* pComponent = m_pGameInstance->Clone_Component(iLevelIndex, strPrototypeTag, pArg);

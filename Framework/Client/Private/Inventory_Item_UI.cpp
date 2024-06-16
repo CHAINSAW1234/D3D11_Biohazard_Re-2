@@ -74,7 +74,7 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
                     if (CCustomize_UI::ITEM_BOX_TYPE::DEFAULT_BOX == pBox->m_eBox_Type)
                     {
                         /* Box은 Select Box을 가지고 있는다 */
-                        pBox->m_pSelectBox = this;
+                        pBox->m_pSelectBox = this; //★★★★★★★★Safe_AddRef()문제 해결할것
                     }
 
                 }
@@ -196,22 +196,24 @@ void CInventory_Item_UI::Box_Operater(_float fTimeDelta)
 /* 빈 박스 동작 방식 */
 void CInventory_Item_UI::VoidBox()
 {
-    /* X 박스만 */
+    /* 얘가 디폴트 박스일 때만 이 함수에 들어가는데 이때 인벤토리 메인일 때만 들어가고 */
     if (CCustomize_UI::INVENTORY_TYPE::MAIN_INVEN == m_eInventory_Type)
     {
-        if (true == m_IsChild)
+        if (true == m_IsChild) // 그중에서 차일드만 들어가고, 그래서 이 조건은 없애줘도 되고 빈객체 ㅁ안에 X
         {
             CTransform* pSelectBox_Trans = {};
 
             /* 1. Select Box 관련*/
             if (nullptr != m_pSelectBox)
             {
+                // 그렇게 될 때 그 빈 박스에 Select 박스랑 맞닿아 있는 지 확인 하고 만야 ㄱtrue가 되면 그 빈 박스의 위체에 맞춰서 Select box 를 거기로 옮기는 거임
                 pSelectBox_Trans = dynamic_cast<CTransform*>(m_pSelectBox->Get_Component(g_strTransformTag));
 
                 if (true == IsMouseHover())
                 {
+                    //이게 Defu
                     pSelectBox_Trans->Set_State(CTransform::STATE_POSITION, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-                    m_isMouseAcess = true;
+                    m_isMouseAcess = true; // 이거는이 디폴트 박스에 놓여져 이쓴 지 확인하는 용이라 혹시 나중에 스일수 있어서 사용 있는 지 ㅁ랐음
                 }
                 else
                     m_isMouseAcess = false;

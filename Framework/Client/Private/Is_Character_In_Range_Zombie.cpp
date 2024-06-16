@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "GameInstance.h"
 #include "Is_Character_In_Range_Zombie.h"
+#include "BlackBoard_Zombie.h"
+#include "Player.h"
+#include "Zombie.h"
 
 CIs_Character_In_Range_Zombie::CIs_Character_In_Range_Zombie()
 	: CDecorator_Node()
@@ -20,6 +23,24 @@ HRESULT CIs_Character_In_Range_Zombie::Initialize_Prototype()
 HRESULT CIs_Character_In_Range_Zombie::Initialize(void* pArg)
 {
 	return E_NOTIMPL;
+}
+
+_bool CIs_Character_In_Range_Zombie::Condition_Check()
+{
+	auto vPos_Player = m_pBlackBoard->GetPlayer()->GetPosition();
+	auto vPos_AI = m_pBlackBoard->GetAI()->GetPosition();
+
+	auto vDelta = vPos_Player - vPos_AI;
+	_float fDelta = XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta)));
+
+	if (fDelta < 10.f)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 CIs_Character_In_Range_Zombie* CIs_Character_In_Range_Zombie::Create()
