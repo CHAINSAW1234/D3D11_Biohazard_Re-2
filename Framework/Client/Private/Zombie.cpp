@@ -76,8 +76,10 @@ HRESULT CZombie::Initialize(void * pArg)
 	m_vDir.w = 0.f;
 
 	m_pBlackBoard = new CBlackBoard_Zombie();
-	m_pBlackBoard->Initialize_BlackBoard();
+	m_pBlackBoard->Initialize_BlackBoard(this);
 #pragma endregion
+
+	m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), 5.f);
 
 	return S_OK;
 }

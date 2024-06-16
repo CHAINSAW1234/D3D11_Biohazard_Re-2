@@ -81,7 +81,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 		fTimeAcc += pGameInstance->Compute_TimeDelta(TEXT("Timer_Default"));
 
-		//  if (fTimeAcc > 1.f / 60.f)
+		//if (fTimeAcc > 1.f / 60.f)
 		if (true)
 		{
 			pMainApp->Tick(pGameInstance->Compute_TimeDelta(TEXT("Timer_60")));

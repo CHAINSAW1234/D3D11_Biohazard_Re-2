@@ -3,6 +3,7 @@
 #include "MoveTo_Zombie.h"
 #include "Player.h"
 #include "BlackBoard_Zombie.h"
+#include "Zombie.h"
 
 CMoveTo_Zombie::CMoveTo_Zombie() 
 	: CTask_Node()
@@ -25,6 +26,8 @@ HRESULT CMoveTo_Zombie::Initialize(void* pArg)
 
 void CMoveTo_Zombie::Execute()
 {
+	auto pAI = m_pBlackBoard->GetAI();
+	pAI->SetState(MONSTER_STATE::MST_WALK);
 }
 
 CMoveTo_Zombie* CMoveTo_Zombie::Create()
