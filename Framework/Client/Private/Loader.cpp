@@ -22,11 +22,16 @@
 #include "Player.h"
 #include "Effect.h"
 #include "Sky.h"
-#include "Props.h"
 #include "CustomCollider.h"
 #include "NavMesh_Debug.h"
-#include "Map.h"
 
+/* MapObject*/
+#include "Props.h"
+#include "Map.h"
+#include "Door.h"
+#include"NewpoliceStatue.h"
+#include "Cabinet.h"
+#include "Window.h"
 
 /* UI */
 #include "Customize_UI.h"
@@ -448,15 +453,39 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			return E_FAIL;
 		}
 		strGameObjectPrototypeName[dwLen / sizeof(char)] = '\0';
-		Inform->strGameObjectPrototypeName = strGameObjectPrototypeName; // 메쉬 파일(바이너리화)한거 
+		Inform->strGameObjectPrototypeName = strGameObjectPrototypeName;
 		delete[] strGameObjectPrototypeName;
 
-		m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext,Inform->strModelPath.c_str(), XMMatrixIdentity()));
+		 
 
-		if(Inform->wstrGameObjectPrototypeName.find(TEXT("Merge")) == wstring::npos)
-			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CProps::Create(m_pDevice, m_pContext));
+		if (Inform->strGameObjectPrototypeName.find("_Anim") != string::npos)
+		{
+			Inform->bAnim = true;
+
+			_matrix Ininitmatrix  = XMMatrixRotationY(XMConvertToRadians(180.f));
+
+			m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, Inform->strModelPath.c_str(), Ininitmatrix));
+		}
 		else
+			m_pGameInstance->Add_Prototype(m_eNextLevelID, Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, Inform->strModelPath.c_str(), XMMatrixIdentity()));
+
+		_bool bDo = { false };
+
+		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("Merge")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CMap::Create(m_pDevice, m_pContext));
+
+		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("zombiewindow")) != wstring::npos) && (bDo = true))
+			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CWindow::Create(m_pDevice, m_pContext));
+		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm40")) != wstring::npos) && (bDo = true))
+			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CDoor::Create(m_pDevice, m_pContext));
+		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_024_newpolicestatue01a")) != wstring::npos) && (bDo = true))
+			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CNewpoliceStatue::Create(m_pDevice, m_pContext));
+		if (!bDo && ((Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_008")) != wstring::npos)||((Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_002")) != wstring::npos))) && (bDo = true))
+			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CCabinet::Create(m_pDevice, m_pContext));
+		if (!bDo && Inform->bAnim && (bDo = true))
+			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CCabinet::Create(m_pDevice, m_pContext));
+		if(!bDo)
+			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CProps::Create(m_pDevice, m_pContext));
 
 
 		Safe_Delete(Inform);
@@ -498,10 +527,10 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/HP/IMANGE_08.png")))))
 		return E_FAIL;
 
-	/*Prototype_Component_Texture_Mask*/
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Mask"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"), 1))))
-		return E_FAIL;
+	///*Prototype_Component_Texture_Mask*/
+	//if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Mask"),
+	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"), 1))))
+	//	return E_FAIL;
 
 	/*Prototype_Component_Texture_BackGround_0*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Main0"),
@@ -647,6 +676,10 @@ HRESULT CLoader::Loading_For_GamePlay()
 #endif
 #ifdef USE_MapObject
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_Test/Make_Prototype.dat"))))
+		return E_FAIL;
+#endif
+#ifdef USE_MapInteractObject
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_InteractObj/Make_Prototype.dat"))))
 		return E_FAIL;
 #endif
 #pragma endregion

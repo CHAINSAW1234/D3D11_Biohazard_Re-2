@@ -176,10 +176,13 @@
     <ClInclude Include="..\Public\Body_Zombie.h" />
     <ClInclude Include="..\Public\Bullet_UI.h" />
     <ClInclude Include="..\Public\Button_UI.h" />
+    <ClInclude Include="..\Public\Cabinet.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\Public\Clothes_Zombie.h" />
+    <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\Face_Zombie.h" />
     <ClInclude Include="..\Public\Header_Package_Zombie.h" />
+    <ClInclude Include="..\Public\InteractProps.h" />
     <ClInclude Include="..\Public\InventorySelect.h" />
     <ClInclude Include="..\Public\Inventory_Manager.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
@@ -205,6 +208,8 @@
     <ClInclude Include="..\Public\Monster.h" />
     <ClInclude Include="..\Public\MoveTo_Zombie.h" />
     <ClInclude Include="..\Public\NavMesh_Debug.h" />
+    <ClInclude Include="..\Public\NewpoliceStatue.h" />
+    <ClInclude Include="..\Public\Part_InteractProps.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\Public\Player_State_Hold.h" />
     <ClInclude Include="..\Public\Player_State_Hold_Idle.h" />
@@ -224,6 +229,7 @@
     <ClInclude Include="..\Public\UI.h" />
     <ClInclude Include="..\Public\Wait_Zombie.h" />
     <ClInclude Include="..\Public\Weapon.h" />
+    <ClInclude Include="..\Public\Window.h" />
     <ClInclude Include="..\Public\Zombie.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
@@ -237,9 +243,12 @@
     <ClCompile Include="..\Private\Body_Zombie.cpp" />
     <ClCompile Include="..\Private\Bullet_UI.cpp" />
     <ClCompile Include="..\Private\Button_UI.cpp" />
+    <ClCompile Include="..\Private\Cabinet.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\Private\Clothes_Zombie.cpp" />
+    <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\Face_Zombie.cpp" />
+    <ClCompile Include="..\Private\InteractProps.cpp" />
     <ClCompile Include="..\Private\InventorySelect.cpp" />
     <ClCompile Include="..\Private\Inventory_Manager.cpp" />
     <ClCompile Include="..\Private\Crosshair_UI.cpp" />
@@ -263,6 +272,8 @@
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\Private\MoveTo_Zombie.cpp" />
     <ClCompile Include="..\Private\NavMesh_Debug.cpp" />
+    <ClCompile Include="..\Private\NewpoliceStatue.cpp" />
+    <ClCompile Include="..\Private\Part_InteractProps.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\Private\Player_State_Hold.cpp" />
     <ClCompile Include="..\Private\Player_State_Hold_Idle.cpp" />
@@ -282,6 +293,7 @@
     <ClCompile Include="..\Private\UI.cpp" />
     <ClCompile Include="..\Private\Wait_Zombie.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />
+    <ClCompile Include="..\Private\Window.cpp" />
     <ClCompile Include="..\Private\Zombie.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">

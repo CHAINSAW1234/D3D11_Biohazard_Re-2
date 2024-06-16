@@ -119,8 +119,9 @@ public:
 	_int										Get_Player_ColIndex() { return m_iCurCol; }
 	_int										Get_Player_Direction() { return m_iDir; }
 	_bool										Get_Player_RegionChange() { return m_bChange; }
+	_bool*									Get_Player_Interact_Ptr() { return &m_bInteract; }
 private:
-
+	_bool										m_bInteract = { false };
 	_bool										m_bChange = { true };
 	_int										m_iCurCol = { 0 };
 	_int										m_iDir = { 0 };

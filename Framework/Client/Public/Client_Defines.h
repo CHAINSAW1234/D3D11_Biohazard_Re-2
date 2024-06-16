@@ -19,8 +19,8 @@ using namespace Client;
 	
 //#define USE_UI
 //#define USE_Player_Control
-#define USE_MapObject
-
+//#define USE_MapObject
+#define USE_MapInteractObject
 
 typedef struct Tag_Prototype_Inform
 {

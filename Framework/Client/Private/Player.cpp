@@ -74,6 +74,14 @@ HRESULT CPlayer::Initialize(void* pArg)
 void CPlayer::Priority_Tick(_float fTimeDelta)
 {
 	Priority_Tick_PartObjects(fTimeDelta);
+
+#pragma region 예은 스파이 나중에 FSM으로 옮길지도
+	if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		m_bInteract = true;
+	else
+		m_bInteract = false;
+#pragma endregion 
+
 }
 
 void CPlayer::Tick(_float fTimeDelta)
