@@ -137,8 +137,10 @@ private:
 
 	_float3										m_vRootTranslation = {};
 
-	//For Camera
-public:
+public: //For Shot
+	void										RayCast_Shoot();
+
+public:	//For Camera
 	void										Calc_Camera_LookAt_Point(_float fTimeDelta);
 	HRESULT										Ready_Camera();
 	void										Load_CameraPosition();
@@ -198,6 +200,7 @@ private:
 
 	_bool										m_bMouseCursorClip = { true };
 
+	class CModel*								m_pBodyModel = { nullptr };
 private:
 	HRESULT Add_Components();
 

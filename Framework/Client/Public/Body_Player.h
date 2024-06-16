@@ -33,6 +33,11 @@ public:
 public:
 	_float3*				Get_RootTranslation() { return m_pRootTranslation; }
 
+public:
+	class CModel* GetModel()
+	{
+		return m_pModelCom;
+	}
 
 public:
 	virtual void			SetRagdoll(_int iId) override;

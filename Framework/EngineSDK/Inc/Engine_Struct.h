@@ -145,12 +145,6 @@ namespace Engine
 		static const D3D11_INPUT_ELEMENT_DESC	Elements[6];
 	}VTXANIMMESH;
 
-	//For Physics_Controller
-	enum COLLISION_CATEGORY {
-		Category1 = 1 << 0,
-		Category2 = 1 << 1,
-		Category3 = 1 << 2,
-	};
 	// 3D음향을 위한 자료형의 모음 구조체
 	typedef struct Sound_Desc
 	{

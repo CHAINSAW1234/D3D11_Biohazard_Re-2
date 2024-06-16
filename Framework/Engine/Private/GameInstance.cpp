@@ -1022,9 +1022,9 @@ void CGameInstance::SetRotationMatrix_Ragdoll(_float4x4 RotationMatrix)
 	m_pPhysics_Controller->SetRotationMatrix_Ragdoll(RotationMatrix);
 }
 
-CCharacter_Controller* CGameInstance::Create_Controller(_float4 Pos, _int* Index,CGameObject* pCharacter,_float fHeight,_float fRadius)
+CCharacter_Controller* CGameInstance::Create_Controller(_float4 Pos, _int* Index,CGameObject* pCharacter,_float fHeight,_float fRadius, class CTransform* pTransform, vector<class CBone*>* pBones, const std::string& name)
 {
-	return m_pPhysics_Controller->Create_Controller(Pos, Index, pCharacter,fHeight,fRadius);
+	return m_pPhysics_Controller->Create_Controller(Pos, Index, pCharacter,fHeight,fRadius,pTransform,pBones,name);
 }
 
 void CGameInstance::Cook_Terrain()
@@ -1035,6 +1035,16 @@ void CGameInstance::Cook_Terrain()
 _bool CGameInstance::RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
 {
 	return m_pPhysics_Controller->RayCast(vOrigin, vDir, pBlockPoint, fMaxDist);
+}
+_bool CGameInstance::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->RayCast_Shoot(vOrigin, vDir, pBlockPoint, fMaxDist);
+}
+_bool CGameInstance::SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->SphereCast_Shoot(vOrigin, vDir, pBlockPoint, fMaxDist);
 }
 _bool CGameInstance::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
 {
@@ -1216,7 +1226,6 @@ void CGameInstance::Release_Engine()
 
 void CGameInstance::Free()
 {
-	Safe_Release(m_pPhysics_Controller);
 	Safe_Release(m_pFrustum);
 	Safe_Release(m_pExtractor);
 	Safe_Release(m_pTarget_Manager);
@@ -1234,4 +1243,5 @@ void CGameInstance::Free()
 	Safe_Release(m_pPicking);
 	Safe_Release(m_pThread_Pool);
 	Safe_Release(m_pAIController);
+	Safe_Release(m_pPhysics_Controller);
 }

@@ -45,11 +45,6 @@ void CMonster::Tick(_float fTimeDelta)
 void CMonster::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	//m_pModelCom->Play_Animations(fTimeDelta);
-	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &_float3(0.f,0.f,0.f));
-
-	Late_Tick_PartObjects(fTimeDelta);
 }
 
 HRESULT CMonster::Render()
