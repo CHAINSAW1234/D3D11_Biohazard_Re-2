@@ -61,10 +61,13 @@ namespace Engine
 		_float fDegree = XMConvertToDegrees(fRadian * vCross / abs(vCross)); // 0 ~ 180 사이의 값 
 		// 각도가 0보다 크면 왼쪽이다
 		if (isnan(fDegree))
-			if (XMVector3Equal(vDir1, XMVectorScale(vDir2, -1)))
+		{
+			if (XMVector3Equal(vDir1, XMVectorScale(vDir2, -1.f)))
 				return 180.f;
 			else
 				return 0.f;
+		}
+
 		return fDegree;
 	}
 

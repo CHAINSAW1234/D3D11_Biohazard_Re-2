@@ -73,6 +73,8 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 {
 
 #pragma region Start
+
+
 	if (!(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) >= 15 &&
 		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) <= 26) /*||
 		(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::JOG_STRAIGHT_LOOP && abs(m_fDegree) > 80) */) {
@@ -81,8 +83,8 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 		m_pPlayer->Get_Body_Model()->Set_Loop(0, false);
 		m_pPlayer->Get_Body_Model()->Set_Loop(1, false);
 
-		if (abs(m_fDegree) <= 90) {
-			if (m_fDegree < 0) {
+		if (fabsf(m_fDegree) <= 90.f) {
+			if (m_fDegree < 0.f) {
 				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_L0);
 				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_L90);
 			}
@@ -90,14 +92,14 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_R0);
 				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_R90);
 			}
-			_float fRatio = abs(m_fDegree) / 90;
+			_float fRatio = abs(m_fDegree) / 90.f;
 
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f - fRatio);
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, fRatio);
 
 		}
 		else {
-			if (m_fDegree < 0) {
+			if (m_fDegree < 0.f) {
 				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_L90);
 				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_L180);
 			}
@@ -105,7 +107,7 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_R90);
 				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_R180);
 			}
-			_float fRatio = (abs(m_fDegree)- 90) / 90;
+			_float fRatio = (abs(m_fDegree)- 90.f) / 90.f;
 
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f - fRatio);
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, fRatio);
@@ -139,7 +141,7 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 
 #pragma region LOOP
 
-	if (m_pPlayer->Get_Body_Model()->isFinished(0)) {
+	else if (m_pPlayer->Get_Body_Model()->isFinished(0)) {
 
 		//m_pPlayer->m_pTransformComssssssss->Turn(_float4(0.f, 1.f, 0.f, 0.f), m_fDegree/90);
 		m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_STRAIGHT_LOOP);
@@ -212,15 +214,15 @@ void CPlayer_State_Move_Jog::Look_Cam(_float fTimeDelta)
 void CPlayer_State_Move_Jog::Update_Degree()
 {
 	_float4 vCamLook = m_pPlayer->m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK);
-	vCamLook.y = 0;
+	vCamLook.y = 0.f;
 	vCamLook = XMVectorSetW(XMVector3Normalize(vCamLook), 0.f);
 
 	_float4 vCamRight = m_pPlayer->m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_RIGHT);
-	vCamRight.y = 0;
+	vCamRight.y = 0.f;
 	vCamRight = XMVectorSetW(XMVector3Normalize(vCamRight), 0.f);
 
 	_float4 vPlayerLook = m_pPlayer->m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-	vPlayerLook.y = 0;
+	vPlayerLook.y = 0.f;
 	vPlayerLook = XMVectorSetW(XMVector3Normalize(vPlayerLook), 0.f);
 
 	_float4 vCamDir = { 0.f,0.f,0.f,0.f };
@@ -236,7 +238,7 @@ void CPlayer_State_Move_Jog::Update_Degree()
 
 
 	vCamDir.y = 0.f;
-	vCamDir = XMVectorSetW(XMVector3Normalize(vCamDir), 0);
+	vCamDir = XMVectorSetW(XMVector3Normalize(vCamDir), 0.f);
 	m_fDegree = Cal_Degree_From_Directions_Between_Min180_To_180(vPlayerLook, vCamDir);
 
 }
