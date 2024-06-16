@@ -31,6 +31,7 @@ protected:
 public:
 	virtual HRESULT						Initialize_Prototype() override;
 	virtual HRESULT						Initialize(void* pArg) override;
+	virtual void						Priority_Tick(_float fTimeDelta);
 	virtual void						Tick(_float fTimeDelta) override;
 	virtual void						Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT						Render() override;
@@ -78,6 +79,7 @@ protected: // For AIController
 	vector<class CPartObject*>			m_PartObjects;
 	
 	MONSTER_STATE						m_eState = { MST_DEFAULT };
+
 protected:
 	virtual HRESULT						Add_Components();
 	virtual HRESULT						Bind_ShaderResources();

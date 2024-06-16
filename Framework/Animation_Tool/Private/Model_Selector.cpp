@@ -336,7 +336,7 @@ void CModel_Selector::Show_Bone_Transform()
 	ProjMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ);
 	ViewMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW);
 
-	ImGuizmo::Manipulate(&ViewMatrix.m[0][0], &ProjMatrix.m[0][0], CurrentGizmoOperation, CurrentGizmoMode, &BoneWorldFloat4x4.m[0][0], NULL, isUseSnap ? &vSnap.x : NULL);
+	//	ImGuizmo::Manipulate(&ViewMatrix.m[0][0], &ProjMatrix.m[0][0], CurrentGizmoOperation, CurrentGizmoMode, &BoneWorldFloat4x4.m[0][0], NULL, isUseSnap ? &vSnap.x : NULL);
 }
 
 void CModel_Selector::Set_Transform(CTransform* pTransform)

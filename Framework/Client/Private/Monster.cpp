@@ -37,9 +37,15 @@ HRESULT CMonster::Initialize(void * pArg)
 	return S_OK;
 }
 
+void CMonster::Priority_Tick(_float fTimeDelta)
+{
+	__super::Priority_Tick(fTimeDelta);
+}
+
 void CMonster::Tick(_float fTimeDelta)
 {
-	
+	__super::Tick(fTimeDelta);
+
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)

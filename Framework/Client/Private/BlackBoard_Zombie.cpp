@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "BlackBoard_Zombie.h"
 #include "Player.h"
+#include "Zombie.h"
 
 CBlackBoard_Zombie::CBlackBoard_Zombie()
 	: CBlackBoard()
@@ -24,6 +25,9 @@ HRESULT CBlackBoard_Zombie::Initialize(void* pArg)
 
 void CBlackBoard_Zombie::Initialize_BlackBoard(CZombie* pAI)
 {
+	if (nullptr == pAI)
+		return;
+
 	m_pAI = pAI;
 
 	auto pPlayerLayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_Player");

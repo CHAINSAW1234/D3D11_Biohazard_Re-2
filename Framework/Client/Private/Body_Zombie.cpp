@@ -47,6 +47,7 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 void CBody_Zombie::Priority_Tick(_float fTimeDelta)
 {
 	__super::Priority_Tick(fTimeDelta);
+
 }
 
 void CBody_Zombie::Tick(_float fTimeDelta)

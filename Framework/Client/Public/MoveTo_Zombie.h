@@ -19,11 +19,15 @@ public:
 
 	virtual void					Execute() override;
 
+private:
+	void							Set_Animation();
+
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard)
 	{
 		m_pBlackBoard = pBlackBoard;
 	}
+
 protected:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 public:

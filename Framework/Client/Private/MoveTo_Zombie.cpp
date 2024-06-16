@@ -16,18 +16,34 @@ CMoveTo_Zombie::CMoveTo_Zombie(const CMoveTo_Zombie& rhs)
 
 HRESULT CMoveTo_Zombie::Initialize_Prototype()
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CMoveTo_Zombie::Initialize(void* pArg)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 void CMoveTo_Zombie::Execute()
 {
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_WALK);
+}
+
+void CMoveTo_Zombie::Set_Animation()
+{
+	if (nullptr == m_pBlackBoard)
+		return;
+
+	CZombie*		pZombie = { m_pBlackBoard->GetAI() };
+	if (nullptr == pZombie)
+		return;
+
+	CModel*			pModel = { pZombie->Get_Model_From_PartObject(CZombie::PART_BODY) };
+	if (nullptr == pModel)
+		return;
+
+	//	pModel->Change_Animation(0, )
 }
 
 CMoveTo_Zombie* CMoveTo_Zombie::Create()

@@ -37,6 +37,7 @@ protected:
 	class CPathFinder*				m_pPathFinder = { nullptr };
 	class CPlayer*					m_pPlayer = { nullptr };
 	class CZombie*					m_pAI = { nullptr };
+
 public:
 	static CBlackBoard_Zombie* Create();
 

@@ -21,7 +21,6 @@ public:
 	}MONSTER_DESC;
 public:
 	enum COLLIDERTYPE { COLLIDER_HEAD, COLLIDER_BODY, COLLIDER_END };
-	enum PART_ID { PART_BODY, PART_FACE, PART_HAT, PART_PANTS, PART_SHIRTS, PART_END };
 
 private:
 	CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -31,6 +30,7 @@ private:
 public:
 	virtual HRESULT						Initialize_Prototype() override;
 	virtual HRESULT						Initialize(void* pArg) override;
+	virtual void						Priority_Tick(_float fTimeDelta) override;
 	virtual void						Tick(_float fTimeDelta) override;
 	virtual void						Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT						Render() override;

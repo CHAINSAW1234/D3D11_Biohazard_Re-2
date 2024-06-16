@@ -85,6 +85,13 @@ HRESULT CZombie::Initialize(void * pArg)
 	return S_OK;
 }
 
+void CZombie::Priority_Tick(_float fTimeDelta)
+{
+	__super::Priority_Tick(fTimeDelta);
+
+	Priority_Tick_PartObjects(fTimeDelta);
+}
+
 void CZombie::Tick(_float fTimeDelta)
 {
 	if(m_pController)

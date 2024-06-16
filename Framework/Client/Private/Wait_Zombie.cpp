@@ -16,12 +16,12 @@ CWait_Zombie::CWait_Zombie(const CWait_Zombie& rhs)
 
 HRESULT CWait_Zombie::Initialize_Prototype()
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CWait_Zombie::Initialize(void* pArg)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 void CWait_Zombie::Execute()
