@@ -23,7 +23,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 	
-	if(FAILED(Ready_Layer_Camera(TEXT("Layer_ZZZCamera"))))
+	if (FAILED(Ready_Layer_Camera(TEXT("Layer_ZZZCamera"))))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))

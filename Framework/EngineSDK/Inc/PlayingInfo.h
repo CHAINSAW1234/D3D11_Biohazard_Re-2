@@ -10,7 +10,7 @@ public:
 	typedef struct ENGINE_DLL tagPlayingInfoDesc
 	{
 		_int							iAnimIndex = { -1 };
-		_uint							iNumChannel = { 0 };
+		_uint							iNumChannel = { 0 }; 
 		_uint							iNumBones = { 0 };
 		_bool							isLoop = { false };
 		_float							fBlendWeight = { 0.f };

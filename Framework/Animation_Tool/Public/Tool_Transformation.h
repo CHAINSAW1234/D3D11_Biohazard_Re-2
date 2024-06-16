@@ -25,6 +25,7 @@ public:
 public:
 	void						Set_Target(CTransform* pTransform);
 	void						Set_Target(CGameObject* pGameObject);
+	CTransform*					GEt_Transform() { return m_pTransformCom; }
 	void						ReSet_Target();
 
 public:

@@ -43,6 +43,10 @@ public:		/* For.SHowList */
 	void						Show_BoneTags();
 	void						Show_ModelTags();
 
+	void						Show_Bone_Transform();
+
+	void						Set_Transform(CTransform* pTransform);
+
 private:	/* For.Bone */
 	void						Select_Bone();
 	void						Set_RootBone();
@@ -61,9 +65,11 @@ private:
 	_uint						m_iNumModels = { 0 };
 	map<string, CModel*>		m_Models;
 
-	string* m_pCurrentModelTag = { nullptr };
-	string* m_pCurrentBoneTag = { nullptr };
-	string* m_pCurrentRootBoneTag = { nullptr };
+	string*						m_pCurrentModelTag = { nullptr };
+	string*						m_pCurrentBoneTag = { nullptr };
+	string*						m_pCurrentRootBoneTag = { nullptr };
+
+	CTransform*					m_pTransformTarget = { nullptr };
 
 	_bool						m_isShowModelTags = { false };
 	_bool						m_isShowBoneTags = { false };

@@ -226,6 +226,9 @@ HRESULT CAnimationEditor::Initialize_Tools()
 	if (FAILED(Initialize_MeshController()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_ModelSelector()))
+		return E_FAIL;	
+
 	return S_OK;
 }
 
@@ -366,6 +369,16 @@ HRESULT CAnimationEditor::Initialize_MeshController()
 	map<string, CModel*>			Models = { m_pToolModelSelector->Get_Models() };
 	if(FAILED(m_pToolMeshController->Set_Models(Models)))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CAnimationEditor::Initialize_ModelSelector()
+{
+	if (nullptr == m_pToolModelSelector || nullptr == m_pToolTransformation)
+		return E_FAIL;
+
+	m_pToolModelSelector->Set_Transform(m_pToolTransformation->GEt_Transform());
 
 	return S_OK;
 }

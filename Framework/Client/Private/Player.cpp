@@ -281,10 +281,10 @@ void CPlayer::Tick(_float fTimeDelta)
 
 
 	// 현진 추가
-	CModel* pWeaponModel = { dynamic_cast<CModel*>(m_PartObjects[PART_WEAPON]->Get_Component(TEXT("Com_Model"))) };
-	_float4x4* pRightWeaponCombinedMatrix = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix(/*"r_holster_main"*/"r_weapon"))};
-	pWeaponModel->Set_Surbodinate("root", true);
-	pWeaponModel->Set_Parent_CombinedMatrix_Ptr("root", pRightWeaponCombinedMatrix);
+	//CModel* pWeaponModel = { dynamic_cast<CModel*>(m_PartObjects[PART_WEAPON]->Get_Component(TEXT("Com_Model"))) };
+	//_float4x4* pRightWeaponCombinedMatrix = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix(/*"r_holster_main"*/"r_weapon"))};
+	//pWeaponModel->Set_Surbodinate("root", true);
+	//pWeaponModel->Set_Parent_CombinedMatrix_Ptr("root", pRightWeaponCombinedMatrix);
 
 
 
@@ -519,7 +519,6 @@ void CPlayer::Turn_Spine(_float fTimeDelta)
 
 		for(auto& iJointIndex : ChildJointIndices)
 		{
-
 			pModel->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
 		}
 	}
@@ -1259,17 +1258,17 @@ HRESULT CPlayer::Add_PartObjects()
 
 	m_PartObjects[CPlayer::PART_HAIR] = pHairObject;
 
-	/* For.Part_Weapon */
-	CPartObject* pWeaponObject = { nullptr };
-	CPartObject::PARTOBJECT_DESC		WeaponDesc{};
+	///* For.Part_Weapon */
+	//CPartObject* pWeaponObject = { nullptr };
+	//CPartObject::PARTOBJECT_DESC		WeaponDesc{};
 
-	WeaponDesc.pParentsTransform = m_pTransformCom;
+	//WeaponDesc.pParentsTransform = m_pTransformCom;
 
-	pWeaponObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_HandGun"), &WeaponDesc));
-	if (nullptr == pWeaponObject)
-		return E_FAIL;
+	//pWeaponObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_HandGun"), &WeaponDesc));
+	//if (nullptr == pWeaponObject)
+	//	return E_FAIL;
 
-	m_PartObjects[CPlayer::PART_WEAPON] = pWeaponObject;
+	//m_PartObjects[CPlayer::PART_WEAPON] = pWeaponObject;
 
 	return S_OK;
 }

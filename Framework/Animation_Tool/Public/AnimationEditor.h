@@ -73,6 +73,9 @@ private:    /* For.AnimList Tool */
 private:    /* For.MeshController Tool */
     HRESULT                     Initialize_MeshController();
 
+private:    /* For.ModelSelector Tool */
+    HRESULT                     Initialize_ModelSelector();
+
 private:    /* For.AssistRendering */
     void                        Render_BoneTags();
 

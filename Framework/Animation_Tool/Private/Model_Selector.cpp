@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Model_Selector.h"
+#include "ImGuizmo.h"
 
 CModel_Selector::CModel_Selector(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CTool_Selector{ pDevice, pContext }
@@ -48,6 +49,8 @@ void CModel_Selector::Tick(_float fTimeDelta)
 	Show_Default();
 	Show_ModelTags();
 	Show_BoneTags();
+
+	Show_Bone_Transform();
 
 	ImGui::End();
 }
@@ -279,6 +282,75 @@ void CModel_Selector::Show_ModelTags()
 	}
 }
 
+void CModel_Selector::Show_Bone_Transform()
+{
+	if (nullptr == m_pTransformTarget)
+		return;
+
+	map<string, CModel*>::iterator		iter = { m_Models.find(*m_pCurrentModelTag) };
+	if (iter == m_Models.end())
+		return;
+
+	CModel*			pModel = { iter->second };
+	if (nullptr == pModel)
+		return;	
+
+	const _float4x4*		pBoneCombiendFloat4x4 = { pModel->Get_CombinedMatrix(*m_pCurrentBoneTag) };
+	if (nullptr == pBoneCombiendFloat4x4)
+		return;
+
+	_matrix					BoneCombinedMatrix = { XMLoadFloat4x4(pBoneCombiendFloat4x4) };
+
+	_matrix				WorldMatrix = { m_pTransformTarget->Get_WorldMatrix() };
+
+	_matrix				BoneWorldMatrix = { BoneCombinedMatrix * WorldMatrix };
+	_float4x4			BoneWorldFloat4x4;
+	XMStoreFloat4x4(&BoneWorldFloat4x4, BoneWorldMatrix);
+
+	static ImGuizmo::OPERATION		CurrentGizmoOperation(ImGuizmo::SCALE);
+	static ImGuizmo::MODE			CurrentGizmoMode(ImGuizmo::WORLD);
+
+	static _bool isUseSnap = { false };
+	ImGui::Checkbox("Grab", &isUseSnap);
+	ImGui::SameLine();
+
+	_float3 vSnap = { 0.f, 0.f, 0.f };
+	switch (CurrentGizmoOperation)
+	{
+	case ImGuizmo::TRANSLATE:
+		ImGui::InputFloat3("Translate Grab", &vSnap.x);
+		break;
+	case ImGuizmo::ROTATE:
+		ImGui::InputFloat("Rotate Grab", &vSnap.x);
+		break;
+	case ImGuizmo::SCALE:
+		ImGui::InputFloat("Scale Grab", &vSnap.x);
+		break;
+	}
+
+	ImGuiIO& io = { ImGui::GetIO() };
+	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+
+	_float4x4	ProjMatrix, ViewMatrix;
+
+	ProjMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ);
+	ViewMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW);
+
+	ImGuizmo::Manipulate(&ViewMatrix.m[0][0], &ProjMatrix.m[0][0], CurrentGizmoOperation, CurrentGizmoMode, &BoneWorldFloat4x4.m[0][0], NULL, isUseSnap ? &vSnap.x : NULL);
+}
+
+void CModel_Selector::Set_Transform(CTransform* pTransform)
+{
+	if (nullptr == pTransform)
+		return;
+
+	Safe_Release(m_pTransformTarget);
+	m_pTransformTarget = nullptr;
+
+	m_pTransformTarget = pTransform;
+	Safe_AddRef(m_pTransformTarget);
+}
+
 void CModel_Selector::Select_Bone()
 {
 	//static string		strSelectTag = { "Select Bone" };
@@ -424,5 +496,7 @@ void CModel_Selector::Free()
 		Pair.second = nullptr;
 	}
 	m_Models.clear();
+
+	Safe_Release(m_pTransformTarget);
 }
 
