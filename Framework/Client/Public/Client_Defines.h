@@ -17,9 +17,9 @@ extern Client::LEVEL g_Level;
 using namespace std;
 using namespace Client;
 	
-#define USE_UI
+//#define USE_UI
 //#define USE_Player_Control
-//#define USE_MapObject
+#define USE_MapObject
 
 
 typedef struct Tag_Prototype_Inform
