@@ -3,7 +3,7 @@
 #include "Crosshair_UI.h"
 #include "Camera_Free.h"
 
-#define Deceleration 1.f /* 감속 */
+#define Deceleration 0.6f /* 감속 */
 #define Zero 0
 
 CCrosshair_UI::CCrosshair_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -205,7 +205,7 @@ void CCrosshair_UI::Aiming(_float fTimeDelta)
         if (vCrosshair_Trans.x <= m_fCorsshair_AimPoint.x - m_fCrosshair_Aiming_Ready_Distance)
         {
             vCrosshair_Trans.x += m_fCrosshair_Timer * Deceleration;
-            vCrosshair_Scale.x -= m_fCrosshair_Timer * 0.5;
+            vCrosshair_Scale.x -= m_fCrosshair_Timer * 0.5f;
         }
     }
 
@@ -214,7 +214,7 @@ void CCrosshair_UI::Aiming(_float fTimeDelta)
         if (vCrosshair_Trans.x >= m_fCorsshair_AimPoint.x + m_fCrosshair_Aiming_Ready_Distance)
         {
             vCrosshair_Trans.x -= m_fCrosshair_Timer * Deceleration;
-            vCrosshair_Scale.x -= m_fCrosshair_Timer * 0.5;
+            vCrosshair_Scale.x -= m_fCrosshair_Timer * 0.5f;
         }
     }
 
@@ -223,7 +223,7 @@ void CCrosshair_UI::Aiming(_float fTimeDelta)
         if (vCrosshair_Trans.y <= m_fCorsshair_AimPoint.y - m_fCrosshair_Aiming_Ready_Distance)
         {
             vCrosshair_Trans.y += m_fCrosshair_Timer * Deceleration;
-            vCrosshair_Scale.x -= m_fCrosshair_Timer * 0.5;
+            vCrosshair_Scale.x -= m_fCrosshair_Timer * 0.5f;
         }
     }
 

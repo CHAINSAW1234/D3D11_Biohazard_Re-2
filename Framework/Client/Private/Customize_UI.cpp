@@ -490,33 +490,33 @@ HRESULT CCustomize_UI::Change_Texture(const wstring& strPrototypeTag, const wstr
 	return S_OK;
 }
 
-void CCustomize_UI::Non_Frame()
+void CCustomize_UI::Non_Frame(_uint i)
 {
 	/* ▶ 보간이 필요하지 않다면
 		=> 정확하게는 Client가 직접 Play를 지정해주기 위해서,
 		Shader에서 실시간으로 변환시켜줄 변수 = 내가 처음 지정했던 변수
 		를 넣어주는 과정임 */
-	m_vCurrentColor = m_vColor[0].vColor;
-	m_fBlending = m_vColor[0].fBlender_Value;
-	m_fSplit = m_vColor[0].fSplit;
-	m_fWaveSpeed = m_vColor[0].WaveSpeed;
-	m_isUVRotation = m_vColor[0].fPushRotation;
-	m_fPush_Speed.x = m_vColor[0].fPushSpeed.x;
-	m_fPush_Speed.y = m_vColor[0].fPushSpeed.y;
+	m_vCurrentColor = m_vColor[i].vColor;
+	m_fBlending = m_vColor[i].fBlender_Value;
+	m_fSplit = m_vColor[i].fSplit;
+	m_fWaveSpeed = m_vColor[i].WaveSpeed;
+	m_isUVRotation = m_vColor[i].fPushRotation;
+	m_fPush_Speed.x = m_vColor[i].fPushSpeed.x;
+	m_fPush_Speed.y = m_vColor[i].fPushSpeed.y;
 
-	m_isColorChange = m_vColor[0].isColorChange;
-	m_isAlphaChange = m_vColor[0].isAlphaChange;
-	m_isBlending = m_vColor[0].isBlender;
-	m_isPush = m_vColor[0].isPush;
-	m_isWave = m_vColor[0].isWave;
+	m_isColorChange = m_vColor[i].isColorChange;
+	m_isAlphaChange = m_vColor[i].isAlphaChange;
+	m_isBlending = m_vColor[i].isBlender;
+	m_isPush = m_vColor[i].isPush;
+	m_isWave = m_vColor[i].isWave;
 
-	m_isMask = m_Mask[0].isMask;
-	m_fMaskSpeed = m_Mask[0].fMaskSpeed;
-	m_vMaskType = m_Mask[0].vMaskType;
-	m_fMaskControl = m_Mask[0].fMaskControl;
+	m_isMask = m_Mask[i].isMask;
+	m_fMaskSpeed = m_Mask[i].fMaskSpeed;
+	m_vMaskType = m_Mask[i].vMaskType;
+	m_fMaskControl = m_Mask[i].fMaskControl;
 
 	/* World Matrix Change */
-	m_pTransformCom->Set_WorldMatrix(m_SavePos[0]);
+	m_pTransformCom->Set_WorldMatrix(m_SavePos[i]);
 
 }
 
@@ -618,7 +618,7 @@ void CCustomize_UI::Frame_Defalut(_float fRatio, _float fColorRatio)
 		end = m_vColor[0].fPushRotation;
 		m_isUVRotation = start * (1 - fRatio) + end * fRatio;
 
-		/*Position.x*/
+		/*Position.x*/ 
 		start = m_vColor[m_iColorCurNum].fPushSpeed.x;
 		end = m_vColor[0].fPushSpeed.x;
 		m_fPush_Speed.x = start * (1 - fRatio) + end * fRatio;

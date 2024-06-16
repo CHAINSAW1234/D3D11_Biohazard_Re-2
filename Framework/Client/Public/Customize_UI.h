@@ -108,7 +108,7 @@ protected :
 
 protected :
 	/* Frame */
-	void Non_Frame();
+	void Non_Frame(_uint i = 0);
 	void Color_Frame(_float fTimeDelta);
 	void State_Control(_float fTimeDelta);
 	void Frame_Defalut(_float fRatio, _float fColorRatio);
@@ -407,7 +407,7 @@ protected :
 	_bool						m_ReStart = { false };
 #pragma endregion
 
-
+	_bool						m_isMap = { false };
 protected : /* Client*/
 	_bool						m_isRender = { true };
 	_float4						m_vOriginTextColor = {};
