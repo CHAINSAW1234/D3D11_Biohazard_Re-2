@@ -193,6 +193,9 @@
     <Filter Include="AIController\Zombie\Task\Wait">
       <UniqueIdentifier>{022420cb-4aa4-4658-b312-d73a780980eb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\InventorySelect">
+      <UniqueIdentifier>{d3a9314f-e0fe-4296-944a-752b05519c2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -372,6 +375,9 @@
     <ClInclude Include="..\Public\Wait_Zombie.h">
       <Filter>AIController\Zombie\Task\Wait</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\InventorySelect.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\InventorySelect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -532,6 +538,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Wait_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Wait</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\InventorySelect.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\InventorySelect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

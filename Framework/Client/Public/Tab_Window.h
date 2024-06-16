@@ -33,6 +33,9 @@ private:
 private:
 	WINDOW_TYPE m_eWindowType = { INVENTORY };
 
+	_bool	m_isFristTick = { true };
+
+
 private:
 	HRESULT Add_Components();
 	HRESULT Bind_ShaderResources();
