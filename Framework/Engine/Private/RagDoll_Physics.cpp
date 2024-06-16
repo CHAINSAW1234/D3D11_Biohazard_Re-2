@@ -109,8 +109,8 @@ PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, uint3
 	PxShape* shape = m_Physics->createShape(PxCapsuleGeometry(r, half_height), *m_material);
 
 	PxFilterData filterData_Ragdoll;
-	filterData_Ragdoll.word0 = COLLISION_CATEGORY::Category2;
-	filterData_Ragdoll.word1 = COLLISION_CATEGORY::Category1 | COLLISION_CATEGORY::Category3;
+	filterData_Ragdoll.word0 = COLLISION_CATEGORY::RAGDOLL;
+	filterData_Ragdoll.word1 = COLLISION_CATEGORY::CCT | COLLISION_CATEGORY::COLLIDER;
 	filterData_Ragdoll.word3 = 0;
 	shape->setSimulationFilterData(filterData_Ragdoll);
 
@@ -155,8 +155,8 @@ PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, CRagd
 	PxShape* shape = m_Physics->createShape(PxCapsuleGeometry(r, l), *m_material);
 
 	PxFilterData filterData_Ragdoll;
-	filterData_Ragdoll.word0 = COLLISION_CATEGORY::Category2;
-	filterData_Ragdoll.word1 = COLLISION_CATEGORY::Category1 | COLLISION_CATEGORY::Category3;
+	filterData_Ragdoll.word0 = COLLISION_CATEGORY::RAGDOLL;
+	filterData_Ragdoll.word1 = COLLISION_CATEGORY::CCT | COLLISION_CATEGORY::COLLIDER;
 	filterData_Ragdoll.word3 = 0;
 	shape->setSimulationFilterData(filterData_Ragdoll);
 
@@ -201,8 +201,8 @@ PxRigidDynamic* CRagdoll_Physics::create_sphere_bone(uint32_t parent_idx, CRagdo
 	PxShape* shape = m_Physics->createShape(PxSphereGeometry(r), *m_material);
 
 	PxFilterData filterData_Ragdoll;
-	filterData_Ragdoll.word0 = COLLISION_CATEGORY::Category2;
-	filterData_Ragdoll.word1 = COLLISION_CATEGORY::Category1 | COLLISION_CATEGORY::Category3;
+	filterData_Ragdoll.word0 = COLLISION_CATEGORY::RAGDOLL;
+	filterData_Ragdoll.word1 = COLLISION_CATEGORY::CCT | COLLISION_CATEGORY::COLLIDER;
 	filterData_Ragdoll.word3 = 0;
 	shape->setSimulationFilterData(filterData_Ragdoll);
 
@@ -353,8 +353,8 @@ CRagdoll_Physics::CRagdoll_Physics(PxScene* Scene, PxPhysics* Physics, PxDefault
 	m_dispatcher = dispatcher;
 	m_material = Material;
 
-	m_FilterData.word0 = COLLISION_CATEGORY::Category2;
-	m_FilterData.word1 = COLLISION_CATEGORY::Category1 | COLLISION_CATEGORY::Category3;
+	m_FilterData.word0 = COLLISION_CATEGORY::RAGDOLL;
+	m_FilterData.word1 = COLLISION_CATEGORY::CCT | COLLISION_CATEGORY::COLLIDER;
 }
 
 CRagdoll_Physics::CRagdoll_Physics(const CRagdoll_Physics& rhs)
@@ -540,7 +540,7 @@ void CRagdoll_Physics::create_ragdoll()
 #endif
 
 #ifdef ZOMBIE
-	m_Pelvis = create_capsule_bone(j_pelvis_idx, j_spine_01_idx, *m_ragdoll, 5.0f * m_scale, rot);
+	m_Pelvis = create_capsule_bone(j_pelvis_idx, j_spine_02_idx, *m_ragdoll, 5.0f * m_scale, rot);
 #endif
 
 	m_Head = create_capsule_bone(j_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f * m_scale, 0.0f, 1.f), 4.0f * m_scale, 6.0f * m_scale, rot);
@@ -548,7 +548,7 @@ void CRagdoll_Physics::create_ragdoll()
 	m_Leg_R = create_capsule_bone(j_thigh_r_idx, j_calf_r_idx, *m_ragdoll, r, rot);
 
 #ifdef ZOMBIE
-	m_Chest = create_capsule_bone(j_spine_01_idx, j_neck_01_idx, *m_ragdoll, 5.0f * m_scale, rot);
+	m_Chest = create_capsule_bone(j_spine_02_idx, j_neck_01_idx, *m_ragdoll, 5.0f * m_scale, rot);
 #endif
 
 
@@ -561,8 +561,8 @@ void CRagdoll_Physics::create_ragdoll()
 	m_Calf_L = create_capsule_bone(j_calf_l_idx, j_foot_l_idx, *m_ragdoll, r, rot);
 	m_Calf_R = create_capsule_bone(j_calf_r_idx, j_foot_r_idx, *m_ragdoll, r, rot);
 
-	m_Arm_L = create_capsule_bone(j_upperarm_l_idx, j_lowerarm_l_idx, *m_ragdoll, r);
-	m_Arm_R = create_capsule_bone(j_upperarm_r_idx, j_lowerarm_r_idx, *m_ragdoll, r);
+	m_Arm_L = create_capsule_bone(j_upperarm_l_idx, j_lowerarm_l_idx, *m_ragdoll, r*1.25f);
+	m_Arm_R = create_capsule_bone(j_upperarm_r_idx, j_lowerarm_r_idx, *m_ragdoll, r*1.25f);
 
 	m_ForeArm_L = create_capsule_bone(j_lowerarm_l_idx, j_hand_l_idx, *m_ragdoll, r);
 	m_ForeArm_R = create_capsule_bone(j_lowerarm_r_idx, j_hand_r_idx, *m_ragdoll, r);
@@ -881,7 +881,7 @@ void CRagdoll_Physics::create_joint()
 
 #ifdef ZOMBIE
 	create_d6_joint_Head(m_Chest, m_Head, NECK_BONE, j_neck_01_idx);
-	create_d6_joint_Head(m_Pelvis, m_Chest, SPINE_02_BONE, j_spine_02_idx);
+	create_d6_joint_Head(m_Pelvis, m_Chest, SPINE_03_BONE, j_spine_01_idx);
 
 	// Pelvis to Thighs
 	create_d6_joint(m_Pelvis, m_Leg_L, L_LEG_BONE, j_thigh_l_idx);

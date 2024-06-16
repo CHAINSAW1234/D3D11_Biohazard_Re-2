@@ -34,6 +34,12 @@ private:
 	HRESULT					Initialize_Model();
 
 public:
+	class CModel*			GetModel()
+	{
+		return m_pModelCom;
+	}
+
+public:
 	virtual void			SetRagdoll(_int iId) override;
 
 private:

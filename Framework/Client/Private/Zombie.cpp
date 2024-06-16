@@ -61,7 +61,8 @@ HRESULT CZombie::Initialize(void * pArg)
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
 #pragma region AIController Setup
-	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this,1.f,0.35f);
+	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this,1.f,0.35f,m_pTransformCom
+		, m_pBodyModel->GetBoneVector(),"../Bin/Resources/Models/Ex_Default_Zombie/Body.fbx");
 
 	m_pPathFinder = m_pGameInstance->Create_PathFinder();
 
@@ -144,10 +145,10 @@ void CZombie::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	//m_pModelCom->Play_Animations(fTimeDelta);
-	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &_float3(0.f,0.f,0.f));
-
 	Late_Tick_PartObjects(fTimeDelta);
+
+	if(m_pController)
+		m_pController->Update_Collider();
 }
 
 HRESULT CZombie::Render()
@@ -260,11 +261,6 @@ HRESULT CZombie::Add_Components()
 	/* For.Com_Shader */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"), 
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
-		return E_FAIL;
-
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_LeonBody"),
-		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
 	/* Com_Collider_Head */
@@ -399,6 +395,8 @@ HRESULT CZombie::Initialize_PartModels()
 	CModel*					pShirtsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_SHIRTS]->Get_Component(TEXT("Com_Model"))) };
 	CModel*					pPantsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_PANTS]->Get_Component(TEXT("Com_Model"))) };
 	CModel*					pHatModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAT]->Get_Component(TEXT("Com_Model"))) };
+
+	m_pBodyModel = pBodyModel;
 
 	if (nullptr == pBodyModel ||
 		nullptr == pFaceModel ||

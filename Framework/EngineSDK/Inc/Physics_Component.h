@@ -39,6 +39,7 @@ public:
 		m_iIndex = Index;
 	}
 	virtual void					Update(_float fTimeDelta) {}
+	virtual void					Build_Skeleton(const std::string& name) {}
 public:
 	static CPhysics_Component*		Create();
 

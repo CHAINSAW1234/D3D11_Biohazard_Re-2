@@ -138,8 +138,10 @@ private:
 
 	_float3										m_vRootTranslation = {};
 
-	//For Camera
-public:
+public: //For Shot
+	void										RayCast_Shoot();
+
+public:	//For Camera
 	void										Calc_Camera_LookAt_Point(_float fTimeDelta);
 	HRESULT										Ready_Camera();
 	void										Load_CameraPosition();
@@ -204,6 +206,7 @@ private:
 	_float										m_fSpineRotate_PerSec = { XMConvertToRadians(90.f) };
 	_float3										m_vPreHeadDir = { 0.f, 0.f, 1.f };
 
+	class CModel*								m_pBodyModel = { nullptr };
 private:
 	HRESULT Add_Components();
 

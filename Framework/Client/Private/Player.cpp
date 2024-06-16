@@ -55,7 +55,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
-	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.3f, 5.f, 1.f), &m_iIndex_CCT, this, 1.f, 0.475f);
+	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.3f, 5.f, 1.f), &m_iIndex_CCT, this, 1.f, 0.45f,m_pTransformCom,
+		m_pBodyModel->GetBoneVector(), "None");
 
 	//For Camera.
 	m_pTransformCom_Camera = CTransform::Create(m_pDevice, m_pContext);
@@ -272,6 +273,11 @@ void CPlayer::Tick(_float fTimeDelta)
 			m_fLerpTime = 0.f;
 			m_bLerp = true;
 		}
+		
+		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			RayCast_Shoot();
+		}
 	}
 	else
 	{
@@ -304,6 +310,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
+	//Ragdoll Test Code
 	/*if (UP == m_pGameInstance->Get_KeyState('M'))
 	{
 		m_bRagdoll = true;
@@ -323,6 +330,9 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
 	Late_Tick_PartObjects(fTimeDelta);
+
+	if (m_pController)
+		m_pController->Update_Collider();
 
 	Turn_Spine(fTimeDelta);		// 특정 조건에서 뼈를 돌림
 
@@ -661,6 +671,15 @@ void CPlayer::ResetCamera()
 	m_fLerpAmount_Right = m_fRight_Dist_Look;
 	m_fLerpAmount_Up = m_fUp_Dist_Look;
 	m_fLerpAmount_Look = m_fLook_Dist_Look;
+}
+
+void CPlayer::RayCast_Shoot()
+{
+	_float4 vBlockPoint;
+	if (m_pGameInstance->SphereCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint))
+	{
+		int a = 0;
+	}
 }
 
 #pragma endregion
@@ -1287,6 +1306,8 @@ HRESULT CPlayer::Initialize_PartModels()
 	CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Model"))) };
 	CModel* pHeadModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HEAD]->Get_Component(TEXT("Com_Model"))) };
 	CModel* pHairModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAIR]->Get_Component(TEXT("Com_Model"))) };
+
+	m_pBodyModel = pBodyModel;
 
 	if (nullptr == pBodyModel ||
 		nullptr == pHeadModel ||
