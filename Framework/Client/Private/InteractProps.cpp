@@ -1,0 +1,294 @@
+#include "stdafx.h"
+#include "InteractProps.h"
+#include "Model.h"
+#include "GameInstance.h"
+#include "Light.h"
+#include"Player.h"
+#include"PartObject.h"
+CInteractProps::CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CGameObject{ pDevice, pContext }
+{
+}
+
+CInteractProps::CInteractProps(const CInteractProps& rhs)
+	: CGameObject{ rhs }
+{
+
+}
+
+HRESULT CInteractProps::Initialize_Prototype()
+{
+	return S_OK;
+}
+
+HRESULT CInteractProps::Initialize(void* pArg)
+{
+	INTERACTPROPS_DESC* pObj_desc = (INTERACTPROPS_DESC*)pArg;
+
+	m_tagPropDesc.bAnim = pObj_desc->bAnim;
+	m_tagPropDesc.iIndex = pObj_desc->iIndex;
+	m_tagPropDesc.strGamePrototypeName = pObj_desc->strGamePrototypeName;
+	m_tagPropDesc.strModelComponent = pObj_desc->strModelComponent;
+	m_tagPropDesc.strObjectPrototype = pObj_desc->strObjectPrototype;
+	m_tagPropDesc.worldMatrix = pObj_desc->worldMatrix;
+	m_tagPropDesc.BelongIndexs = pObj_desc->BelongIndexs;
+	m_tagPropDesc.iRegionDir = pObj_desc->iRegionDir;
+
+	for (auto iter : m_tagPropDesc.BelongIndexs)
+	{
+		m_tagPropDesc.BelongIndexs2[iter] = true;
+	}
+	pObj_desc->fSpeedPerSec = 1.f;
+	pObj_desc->fRotationPerSec = XMConvertToRadians(1.f);
+
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+	//파트 오브젝이나 컴포넌트는 커스텀
+
+
+	return S_OK;
+}
+
+void CInteractProps::Priority_Tick(_float fTimeDelta)
+{
+	Priority_Tick_PartObjects(fTimeDelta);
+}
+
+void CInteractProps::Tick(_float fTimeDelta)
+{
+	Tick_PartObjects(fTimeDelta);
+}
+
+void CInteractProps::Late_Tick(_float fTimeDelta)
+{
+	Late_Tick_PartObjects(fTimeDelta);
+}
+
+HRESULT CInteractProps::Render()
+{
+	return S_OK;
+}
+
+void CInteractProps::Priority_Tick_PartObjects(_float fTimeDelta)
+{
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject->Priority_Tick(fTimeDelta);
+}
+
+void CInteractProps::Tick_PartObjects(_float fTimeDelta)
+{
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject->Tick(fTimeDelta);
+}
+
+
+void CInteractProps::Late_Tick_PartObjects(_float fTimeDelta)
+{
+	for (auto& pPartObject : m_PartObjects)
+		pPartObject->Late_Tick(fTimeDelta);
+}
+
+void CInteractProps::Check_Player()
+{
+	if (m_pPlayer != nullptr)
+		return;
+	m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+	m_pPlayerInteract = m_pPlayer->Get_Player_Interact_Ptr();
+	m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
+
+}
+
+void CInteractProps::Check_Col_Sphere_Player()
+{
+	if (m_pColliderCom[INTERACTPROPS_COL_SPHERE] == nullptr)
+		return;
+	CCollider* pPlayerCol = static_cast<CCollider*>( m_pPlayer->Get_Component(TEXT("Com_Collider")));
+	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_SPHERE]))
+		m_bCol = true; //false를 해주는 부분은 따로 있어야 할 것임
+
+
+
+}
+
+HRESULT CInteractProps::Render_LightDepth_Dir()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
+		return E_FAIL;
+
+	if (m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) != nullptr) {
+
+		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION);
+		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
+			return E_FAIL;
+
+		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+				return E_FAIL;
+
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
+			if (FAILED(m_pShaderCom->Begin(2)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CInteractProps::Render_LightDepth_Spot()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
+		return E_FAIL;
+
+
+	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
+	_int iIndex = 0;
+	for (auto& pLightDesc : LightDescList) {
+		const _float4x4* pLightViewMatrices;
+		_float4x4 LightProjMatrix;
+		pLightViewMatrices = pLightDesc->ViewMatrix;
+		LightProjMatrix = pLightDesc->ProjMatrix;
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_LightIndex", &iIndex, sizeof(_int))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrices("g_LightViewMatrix", pLightViewMatrices, 6)))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
+			return E_FAIL;
+
+		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+				return E_FAIL;
+
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Begin(4)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+
+		++iIndex;
+	}
+
+	return S_OK;
+}
+
+HRESULT CInteractProps::Render_LightDepth_Point()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
+		return E_FAIL;
+
+
+	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
+
+		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT);
+		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
+			return E_FAIL;
+
+		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+				return E_FAIL;
+
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Begin(2)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CInteractProps::Add_Components()
+{
+	if (m_tagPropDesc.bAnim)
+	{
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+			TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
+			TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
+			return E_FAIL;
+	}
+
+	/* For.Com_Model */
+	if (FAILED(__super::Add_Component(g_Level, m_tagPropDesc.strModelComponent,
+		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CInteractProps::Add_PartObjects()
+{
+	return S_OK;
+}
+
+HRESULT CInteractProps::Initialize_PartObjects()
+{
+	return S_OK;
+}
+
+HRESULT CInteractProps::Bind_ShaderResources()
+{
+	return S_OK;
+}
+
+void CInteractProps::Free()
+{
+	__super::Free();
+
+
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pModelCom);
+	for (size_t i = 0; i < INTERACTPROPS_COL_END; i++)
+	{
+		if (m_pColliderCom[i] == nullptr)
+			continue;
+
+
+		Safe_Release(m_pColliderCom[i]);
+		m_pColliderCom[i] = nullptr;
+	}
+	
+	for (auto& pPartObject : m_PartObjects)
+		Safe_Release(pPartObject);
+	m_PartObjects.clear();
+}
