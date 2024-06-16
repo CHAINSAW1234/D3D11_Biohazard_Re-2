@@ -74,7 +74,7 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
                     if (CCustomize_UI::ITEM_BOX_TYPE::DEFAULT_BOX == pBox->m_eBox_Type)
                     {
                         /* Box은 Select Box을 가지고 있는다 */
-                        pBox->m_pSelectBox = this;
+                        pBox->m_pSelectBox = this; //★★★★★★★★Safe_AddRef()문제 해결할것
                     }
 
                 }

@@ -3,7 +3,7 @@
 #include "Crosshair_UI.h"
 #include "Camera_Free.h"
 
-#define Deceleration 0.6f /* 감속 */
+#define Deceleration 0.2f /* 감속 */
 #define Zero 0
 
 CCrosshair_UI::CCrosshair_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -1,6 +1,8 @@
 #pragma once
 #include "Customize_UI.h"
 
+BEGIN(Client)
+
 class CTitle_UI final : public CCustomize_UI
 {
 
@@ -45,3 +47,4 @@ public:
 	virtual void Free() override;
 };
 
+END

@@ -1,6 +1,8 @@
 #pragma once
 #include "Customize_UI.h"
 
+BEGIN(Client)
+
 class CInventory abstract : public CCustomize_UI
 {
 
@@ -27,3 +29,4 @@ public:
 	virtual void Free() override;
 };
 
+END

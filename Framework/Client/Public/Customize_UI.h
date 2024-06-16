@@ -437,6 +437,7 @@ public:
 	//생성한 객체를 포인터로 받고싶으면 사용하시오
 	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, CGameObject** ppOut, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	static void ExtractData_FromDat(ifstream& inputFileStream, vector<CUSTOM_UI_DESC>* pvecdesc, _bool IsFirst);
+
 	virtual CGameObject* Clone(void* pArg) override = 0;
 	virtual void Free() override;
 };

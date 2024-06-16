@@ -1,6 +1,8 @@
 #pragma once
 #include "Customize_UI.h"
 
+BEGIN(Client)
+
 class CHPBar_UI final : public CCustomize_UI
 {
 public : 
@@ -62,3 +64,4 @@ public:
 	virtual void Free() override;
 };
 
+END

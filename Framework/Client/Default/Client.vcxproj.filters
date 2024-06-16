@@ -184,6 +184,9 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle">
       <UniqueIdentifier>{ff8fd778-7dfc-4f28-aa3c-7e33181c9fc9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\InventorySelect">
+      <UniqueIdentifier>{d3a9314f-e0fe-4296-944a-752b05519c2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -354,6 +357,9 @@
     <ClInclude Include="..\Public\BlackBoard_Zombie.h">
       <Filter>AIController\Zombie</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\InventorySelect.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\InventorySelect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -508,6 +514,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MoveTo_Zombie.cpp">
       <Filter>AIController\Zombie</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\InventorySelect.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\InventorySelect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
