@@ -39,7 +39,6 @@ private: /* 인벤토리 종류 */
 
 private: /* Box Type 변수*/
 	/* 1. Rendering Type */
-	_bool*					m_isMainRender = { nullptr };
 	_bool*					m_isSubRender = { nullptr };
 
 	/* 2. Having Box Type  */

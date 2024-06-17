@@ -41,6 +41,7 @@
 #include "MissionBar_UI.h"
 #include "Tutorial_UI.h"
 #include "Selector_UI.h"
+#include "Map_UI.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -251,7 +252,10 @@ HRESULT CLoader::Load_Prototype()
 		CButton_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-
+	/* For.Prototype_GameObject_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Map_UI"),
+		CMap_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 	
 #pragma endregion
 

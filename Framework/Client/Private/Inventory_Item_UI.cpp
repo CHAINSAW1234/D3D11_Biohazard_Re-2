@@ -196,24 +196,21 @@ void CInventory_Item_UI::Box_Operater(_float fTimeDelta)
 /* 빈 박스 동작 방식 */
 void CInventory_Item_UI::VoidBox()
 {
-    /* 얘가 디폴트 박스일 때만 이 함수에 들어가는데 이때 인벤토리 메인일 때만 들어가고 */
     if (CCustomize_UI::INVENTORY_TYPE::MAIN_INVEN == m_eInventory_Type)
     {
-        if (true == m_IsChild) // 그중에서 차일드만 들어가고, 그래서 이 조건은 없애줘도 되고 빈객체 ㅁ안에 X
+        if (true == m_IsChild) 
         {
             CTransform* pSelectBox_Trans = {};
 
             /* 1. Select Box 관련*/
             if (nullptr != m_pSelectBox)
             {
-                // 그렇게 될 때 그 빈 박스에 Select 박스랑 맞닿아 있는 지 확인 하고 만야 ㄱtrue가 되면 그 빈 박스의 위체에 맞춰서 Select box 를 거기로 옮기는 거임
                 pSelectBox_Trans = dynamic_cast<CTransform*>(m_pSelectBox->Get_Component(g_strTransformTag));
 
                 if (true == IsMouseHover())
                 {
-                    //이게 Defu
                     pSelectBox_Trans->Set_State(CTransform::STATE_POSITION, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-                    m_isMouseAcess = true; // 이거는이 디폴트 박스에 놓여져 이쓴 지 확인하는 용이라 혹시 나중에 스일수 있어서 사용 있는 지 ㅁ랐음
+                    m_isMouseAcess = true;
                 }
                 else
                     m_isMouseAcess = false;
@@ -228,29 +225,27 @@ void CInventory_Item_UI::SelectBox(_float fTimeDelta)
     /* ▶ Select Box*/
     if (false == m_IsChild)
     {
-        if (nullptr == m_isMainRender || nullptr == m_isSubRender)
-            return;
+        //if (nullptr == m_isMainRender || nullptr == m_isSubRender)
+        //    return;
+        //if (true == *m_isMainRender)
+        //{
+        //    m_isRender = true;
+        //    if (false == m_IsChild)
+        //    {
+        //        /* Mouse를 클릭 했을 때와 그렇지 않을 때의 alpha 값이 다르다. */
+        //        if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+        //        {
+        //            Change_BoxType(true);
+        //        }
+        //        if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+        //        {
+        //            /* 나중에 다른 경우로 캔슬 시킬 예정*/
+        //            Change_BoxType(false);
+        //        }
+        //    }
+        //}
 
-        if (true == *m_isMainRender)
-        {
-            m_isRender = true;
-
-            if (false == m_IsChild)
-            {
-                /* Mouse를 클릭 했을 때와 그렇지 않을 때의 alpha 값이 다르다. */
-                if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-                {
-                    Change_BoxType(true);
-                }
-                if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-                {
-                    /* 나중에 다른 경우로 캔슬 시킬 예정*/
-                    Change_BoxType(false);
-                }
-            }
-        }
-
-        else if (true == *m_isSubRender)
+        if (true == *m_isSubRender)
             m_isRender = true;
 
         else
@@ -259,24 +254,7 @@ void CInventory_Item_UI::SelectBox(_float fTimeDelta)
 
     /* ▶ Cursor*/
     else if (true == m_IsChild)
-    {
-        if (true == *m_pSelectBox->m_isMainRender)
-        {
-            m_isRender = true;
-
-            CTransform* pSelectBox_Trans = dynamic_cast<CTransform*>(m_pSelectBox->Get_Component(g_strTransformTag));
-            if (nullptr != pSelectBox_Trans)
-            {
-                _float4 vSelectBox_Trans = pSelectBox_Trans->Get_State_Float4(CTransform::STATE_POSITION);
-                vSelectBox_Trans.x -= m_fDistance_BetweenCursor.x;
-                vSelectBox_Trans.y -= m_fDistance_BetweenCursor.y;
-                vSelectBox_Trans.z = INVEN_SELECT_Z;
-                m_pTransformCom->Move_toTargetUI(vSelectBox_Trans, 6.f, 5.f);
-            }
-        }
-        else
-            m_isRender = false;
-    }
+        m_isRender = false;
 }
 
 /* 박스를 클릭 했을 때 동작 방식*/
@@ -316,23 +294,11 @@ void CInventory_Item_UI::Item_Inventory()
                     CTransform* pSelectTrans = dynamic_cast<CTransform*>(m_pSelectBox->Get_Component(g_strTransformTag));
                     pSelectTrans->Set_State(CTransform::STATE_POSITION, pDefaultBox_Trans->Get_State_Float4(CTransform::STATE_POSITION));
                 }
-
-                /* 2. Cursor를 가장 첫번 째 Defualt Box에 놓는다  => 안된다!!!!!!!!!! */
-                /*if (ITEM_BOX_TYPE::SELECT_BOX == m_eBox_Type && true == m_IsChild)
-                {
-                    _float4 vDefaultBox = pDefaultBox_Trans->Get_State_Float4(CTransform::STATE_POSITION);
-                    vDefaultBox.x -= m_fDistance_BetweenCursor.x;
-                    vDefaultBox.y -= m_fDistance_BetweenCursor.y;
-                    m_pTransformCom->Set_State(CTransform::STATE_POSITION, vDefaultBox);
-                }*/
             }
         }
 
         Inventory_Render(!m_isRender);
     }
-
-    if (nullptr != m_pSelectBox)
-        m_pSelectBox->m_isMainRender = &m_isRender;
 }
 
 /* 서브 장비 인벤토리 처리 */
