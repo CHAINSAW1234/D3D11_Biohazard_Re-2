@@ -220,6 +220,9 @@
     <Filter Include="02.GameObjects\MapObject\InteractProps\Window">
       <UniqueIdentifier>{ddf175cd-bedd-42ef-b3bf-e3afee721d66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\11. Map_UI">
+      <UniqueIdentifier>{f04cdcf8-aee8-450c-b67b-e0df516a3328}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -396,20 +399,8 @@
     <ClInclude Include="..\Public\Wait_Zombie.h">
       <Filter>AIController\Zombie\Task\Wait</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Slot_Highlighter.h">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Slot_Highlighter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Inventory_Slot.h">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Inventory_Slot</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Button_UI.h">
       <Filter>02.GameObjects\UI\4. Button</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Item_UI.h">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Item_UI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Map_UI.h">
-      <Filter>02.GameObjects\UI\9. Inventory\2. Map</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\InteractProps.h">
       <Filter>02.GameObjects\MapObject\InteractProps</Filter>
@@ -428,6 +419,18 @@
     </ClInclude>
     <ClInclude Include="..\Public\Part_InteractProps.h">
       <Filter>02.GameObjects\MapObject\InteractProps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Slot_Highlighter.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Slot_Highlighter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Inventory_Slot.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Inventory_Slot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Item_UI.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Item_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Map_UI.h">
+      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -587,20 +590,8 @@
     <ClCompile Include="..\Private\Wait_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Wait</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Slot_Highlighter.cpp">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Slot_Highlighter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Inventory_Slot.cpp">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Inventory_Slot</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Button_UI.cpp">
       <Filter>02.GameObjects\UI\4. Button</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Item_UI.cpp">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Item_UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Map_UI.cpp">
-      <Filter>02.GameObjects\UI\9. Inventory\2. Map</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\InteractProps.cpp">
       <Filter>02.GameObjects\MapObject\InteractProps</Filter>
@@ -619,6 +610,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Part_InteractProps.cpp">
       <Filter>02.GameObjects\MapObject\InteractProps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Slot_Highlighter.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Slot_Highlighter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item_UI.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Item_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Inventory_Slot.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Inventory_Slot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Map_UI.cpp">
+      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

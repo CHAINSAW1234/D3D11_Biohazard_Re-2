@@ -183,7 +183,6 @@
     <ClInclude Include="..\Public\Face_Zombie.h" />
     <ClInclude Include="..\Public\Header_Package_Zombie.h" />
     <ClInclude Include="..\Public\InteractProps.h" />
-    <ClInclude Include="..\Public\InventorySelect.h" />
     <ClInclude Include="..\Public\Inventory_Manager.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\Public\Client_Enumsh.h" />
@@ -197,13 +196,16 @@
     <ClInclude Include="..\Public\HPBar_UI.h" />
     <ClInclude Include="..\Public\Inventory.h" />
     <ClInclude Include="..\Public\Inventory_Item_UI.h" />
+    <ClInclude Include="..\Public\Inventory_Slot.h" />
     <ClInclude Include="..\Public\Is_Character_In_Range_Zombie.h" />
+    <ClInclude Include="..\Public\Item_UI.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\Map.h" />
+    <ClInclude Include="..\Public\Map_UI.h" />
     <ClInclude Include="..\Public\MissionBar_UI.h" />
     <ClInclude Include="..\Public\Monster.h" />
     <ClInclude Include="..\Public\MoveTo_Zombie.h" />
@@ -221,6 +223,7 @@
     <ClInclude Include="..\Public\Props.h" />
     <ClInclude Include="..\Public\Selector_UI.h" />
     <ClInclude Include="..\Public\Sky.h" />
+    <ClInclude Include="..\Public\Slot_Highlighter.h" />
     <ClInclude Include="..\Public\Tab_Window.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\Public\TextBox.h" />
@@ -249,7 +252,6 @@
     <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\Face_Zombie.cpp" />
     <ClCompile Include="..\Private\InteractProps.cpp" />
-    <ClCompile Include="..\Private\InventorySelect.cpp" />
     <ClCompile Include="..\Private\Inventory_Manager.cpp" />
     <ClCompile Include="..\Private\Crosshair_UI.cpp" />
     <ClCompile Include="..\Private\Cursor_UI.cpp" />
@@ -261,13 +263,16 @@
     <ClCompile Include="..\Private\HPBar_UI.cpp" />
     <ClCompile Include="..\Private\Inventory.cpp" />
     <ClCompile Include="..\Private\Inventory_Item_UI.cpp" />
+    <ClCompile Include="..\Private\Inventory_Slot.cpp" />
     <ClCompile Include="..\Private\Is_Character_In_Range_Zombie.cpp" />
+    <ClCompile Include="..\Private\Item_UI.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\Private\Map.cpp" />
+    <ClCompile Include="..\Private\Map_UI.cpp" />
     <ClCompile Include="..\Private\MissionBar_UI.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\Private\MoveTo_Zombie.cpp" />
@@ -285,6 +290,7 @@
     <ClCompile Include="..\Private\Props.cpp" />
     <ClCompile Include="..\Private\Selector_UI.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
+    <ClCompile Include="..\Private\Slot_Highlighter.cpp" />
     <ClCompile Include="..\Private\Tab_Window.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\Private\TextBox.cpp" />
