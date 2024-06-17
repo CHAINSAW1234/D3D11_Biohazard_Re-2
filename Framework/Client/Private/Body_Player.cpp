@@ -66,9 +66,20 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Reset_PreAnimation(2);
 	m_pModelCom->Reset_PreAnimation(3);
 
-	m_pModelCom->Set_TickPerSec(CPlayer::WHEEL_L180, 180.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::WHEEL_R180, 180.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::WALK_F_LOOP, 64.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::WALK_L_LOOP, 67.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::WALK_R_LOOP, 64.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::WALK_BACK_L_LOOP, 65.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::WALK_BACK_B_LOOP, 65.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::WALK_BACK_R_LOOP, 63.f);
+
+
+	m_pModelCom->Set_TickPerSec(CPlayer::WHEEL_L180, 300.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::WHEEL_R180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::HOLD_SHOT, 150.f);
+
+
+
 
 	//m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/LeonTest/LeonBody.fbx");
 

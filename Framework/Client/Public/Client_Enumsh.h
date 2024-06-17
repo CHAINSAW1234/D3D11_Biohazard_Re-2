@@ -11,7 +11,7 @@ namespace Client
 		PASS_LIGHTDEPTH,
 		PASS_EMISSIVE,
 		PASS_END
-	};
+	};	
 
 	enum UI_ID {
 		ORTHOGONAL_UI,

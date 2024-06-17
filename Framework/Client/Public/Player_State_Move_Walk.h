@@ -23,9 +23,9 @@ private:
 
 private:
 	CPlayer* m_pPlayer = { nullptr };
-
 	PLAYER_DIREECTION m_Prev_FRONT_BACK_Direction = { DIRECTION_END };
 	DWORD m_dwDirection = { 0 };
+	DWORD m_dwPrevDirection = { 0 };
 
 public:
 	static	CPlayer_State_Move_Walk* Create(CPlayer* pPlayer);
