@@ -68,7 +68,7 @@ public:
 	{
 		return m_bLocalized;
 	}
-	virtual void								SetRagdoll(_int iId)
+	virtual void								SetRagdoll(_int iId,_float4 vForce = _float4(0.f,0.f,0.f,1.f))
 	{
 		m_bRagdoll = true;
 	}

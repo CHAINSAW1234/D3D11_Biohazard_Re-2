@@ -9,6 +9,8 @@
 #include "Customize_UI.h"
 #include "Inventory_Item_UI.h"
 
+/* Player */
+#include "Player.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel{ pDevice, pContext }
@@ -32,11 +34,11 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_LandObject()))
 		return E_FAIL;
 
- 	if (FAILED(Ready_Layer_UI(TEXT(""))))
+ 	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_RegionCollider()))
-	//	return E_FAIL;
+	if (FAILED(Ready_RegionCollider()))
+		return E_FAIL;
 
 
 	return S_OK;
@@ -49,6 +51,44 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
 	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));	
 	
+	/*(임시) 이벤트 처리 구간*/
+	_bool bGoal = { false };
+	_float4 vGoal = { 0.f,0.f,0.f,0.f };
+	CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+	iCurIndex = pPlayer->Get_Player_ColIndex();
+	if (iCurIndex!= iPreIndex)
+	{
+		LIGHT_DESC* plight_desc = m_pGameInstance->Get_Light_List(g_strDirectionalTag)->front();
+		LIGHT_DESC light_desc = *plight_desc;
+		if (iCurIndex == 2)
+		{
+			light_desc.vDiffuse = _float4(0.2f, 0.2f, 0.2f, 0.2f);
+			light_desc.vAmbient = _float4(0.2f, 0.2f, 0.2f, 0.2f);
+			if (plight_desc->vDiffuse.x < 0.22f && plight_desc->vDiffuse.x > 0.18f)
+				iPreIndex = iCurIndex;
+			
+			m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta);
+		}
+		else if(iCurIndex == 3)
+		{
+			light_desc.vDiffuse = _float4(0.05f, 0.05f, 0.09f, 0.05f);
+			light_desc.vAmbient = _float4(0.05f, 0.05f, 0.09f, 0.05f);
+			if (plight_desc->vDiffuse.x < 0.07f && plight_desc->vDiffuse.x > 0.03f)				
+				iPreIndex = iCurIndex;
+			
+			m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta*2.f);
+		}
+		else if (iCurIndex == 0)
+		{
+			light_desc.vDiffuse = _float4(0.4f, 0.4f, 0.4f, 0.4f);
+			light_desc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 0.4f);
+			if (plight_desc->vDiffuse.x < 0.42f && plight_desc->vDiffuse.x > 0.38f)
+				iPreIndex = iCurIndex;
+			
+			m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta);
+		}
+		
+	}
 }
 
 HRESULT CLevel_GamePlay::Render()
@@ -72,53 +112,56 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	//LightDesc.fRange = 1000000.f;
 
-	LightDesc.vDiffuse = _float4(.5f, .5f, .5f, 1.f);
+	LightDesc.vDiffuse = _float4(.4f, .4f, .4f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 0.4f, 0.4f, 1.f);
 
 	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
 		return E_FAIL;
 
-	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
-	LightDesc.bShadow = true;
-	LightDesc.vPosition =_float4(-2.f, 3.f, 0.f, 1.f);
-	LightDesc.fRange = 5.f;
+	//LightDesc.eType = LIGHT_DESC::TYPE_POINT;
+	//LightDesc.bShadow = true;
+	//LightDesc.vPosition =_float4(-2.f, 3.f, 0.f, 1.f);
+	//LightDesc.fRange = 5.f;
 
-	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.f, 0.f, 0.f, 1.f);
-	LightDesc.vSpecular = _float4(1.f, 0.4f, 0.4f, 1.f);
-	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
-		return E_FAIL;
-
-	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
-	LightDesc.bShadow = true;
-	LightDesc.vPosition = _float4(2.f, 3.f, 0.f, 1.f);
-	LightDesc.fRange = 5.f;
-
-	LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.f, 0.f, 0.f, 1.f);
-	LightDesc.vSpecular = _float4(0.4f, 1.f, 0.4f, 1.f);
-	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
-		return E_FAIL;
-
-	LightDesc.eType = LIGHT_DESC::TYPE_SPOT;
-	LightDesc.bShadow = true;
-	LightDesc.vPosition = _float4(0, 4.f, -2.f, 1.f);
-
-	LightDesc.fRange = 6.f;
-	LightDesc.vDirection = _float4(0.f,-1.f, 0.f,0.f);
-	LightDesc.fCutOff = XMConvertToRadians(30.f);
-	LightDesc.fOutCutOff = XMConvertToRadians(40.f);
-
-	LightDesc.vDiffuse = _float4(0.f, 0.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(0.2f, 0.2f, 0.4f, 1.f);
-	LightDesc.vSpecular = _float4(0.4f, 0.4f, 1.f, 1.f);
-	
-	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_SPOT"), LightDesc)))
-		return E_FAIL;
-
-	//if (FAILED(Load_Light(TEXT("../Bin/Data/Level_0"), LEVEL_GAMEPLAY)))
+	//LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
+	//LightDesc.vAmbient = _float4(0.f, 0.f, 0.f, 1.f);
+	//LightDesc.vSpecular = _float4(1.f, 0.4f, 0.4f, 1.f);
+	//if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
 	//	return E_FAIL;
+
+	//LightDesc.eType = LIGHT_DESC::TYPE_POINT;
+	//LightDesc.bShadow = true;
+	//LightDesc.vPosition = _float4(2.f, 3.f, 0.f, 1.f);
+	//LightDesc.fRange = 5.f;
+
+	//LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
+	//LightDesc.vAmbient = _float4(0.f, 0.f, 0.f, 1.f);
+	//LightDesc.vSpecular = _float4(0.4f, 1.f, 0.4f, 1.f);
+	//if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
+	//	return E_FAIL;
+
+	//LightDesc.eType = LIGHT_DESC::TYPE_SPOT;
+	//LightDesc.bShadow = true;
+	//LightDesc.vPosition = _float4(0, 4.f, -2.f, 1.f);
+
+	//LightDesc.fRange = 6.f;
+	//LightDesc.vDirection = _float4(0.f,-1.f, 0.f,0.f);
+	//LightDesc.fCutOff = XMConvertToRadians(30.f);
+	//LightDesc.fOutCutOff = XMConvertToRadians(40.f);
+
+	//LightDesc.vDiffuse = _float4(0.f, 0.f, 1.f, 1.f);
+	//LightDesc.vAmbient = _float4(0.2f, 0.2f, 0.4f, 1.f);
+	//LightDesc.vSpecular = _float4(0.4f, 0.4f, 1.f, 1.f);
+	//
+	//if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_SPOT"), LightDesc)))
+	//	return E_FAIL;
+
+
+
+	if (FAILED(Load_Light(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -192,6 +235,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_Test"), LEVEL_GAMEPLAY)))
 		return E_FAIL;
 #endif
+#ifdef USE_MapInteractObject
+	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
+		return E_FAIL;
+#endif
 
 	
 
@@ -203,7 +250,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_RegionCollider()
 {
-	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_0"), TEXT("Layer_Collider"))))
+	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_Collider"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -250,82 +297,113 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	////selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Cursor.dat");
 	////inputFileStream.open(selectedFilePath, ios::binary);
 	////UI_Distinction(selectedFilePath);
-	////CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	////CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
 	/* 3. Inventory_Item*/
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_Item.dat");
+	/*selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_Item.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);*/
 
 	///* 4. UI_MainHP */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/MainHPBar_UI.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/MainHPBar_UI.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
-	 /*5. BackGroundHPBar_UI */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/BackGroundHPBar_UI.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	// /*5. BackGroundHPBar_UI */
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/BackGroundHPBar_UI.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
 	/* 5. Bullet_UI */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Bullet_UI.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
 	/* 5. Title */
 	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Title_UI.dat");
 	//inputFileStream.open(selectedFilePath, ios::binary);
 	//UI_Distinction(selectedFilePath);
-	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	//CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
 	/* 5. UI_Sub_Inventory */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Sub_Inventory.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
-	
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
 	/* 5. UI_MissionBar */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_MissionBar.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
 	/* 4. Inventory SelectBox */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_SelectBox.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
 
 	/* 7. Tab_Widow */
 	CUI::UI_DESC UIDesc = {};
 	UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.9f };
 	UIDesc.vSize = { g_iWinSizeX * 1.f, g_iWinSizeY * 1.f };
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
 		return E_FAIL;
 
-	///* 8. UI_Tutorial */
-	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Tutorial.dat");
-	//inputFileStream.open(selectedFilePath, ios::binary);
-	//UI_Distinction(selectedFilePath);
-	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	/* 8. UI_Tutorial */
+	/*selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Tutorial.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);*/
 
 	/* 8. UI_Selecter */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Selector.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	UI_Distinction(selectedFilePath);	
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
-	
+	/* 9. Map_Mask */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Map_Mask.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
+	/* 9. UI_Map */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Map.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
+	///* 9. UI_Map_Font */
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Map_Font.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
+
+
+
+
+
+
+
+
+
 	return S_OK;
+
 }
 
-void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName, CGameObject* pGameParentsObj, wstring fileName, _int iWhich_Child)
+void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListName, CGameObject* pGameParentsObj, wstring fileName, _int iWhich_Child)
 {
 	CCustomize_UI::CUSTOM_UI_DESC CustomizeUIDesc;
+	
+	if(fileName == TEXT("UI_Map") || fileName == TEXT("UI_Map_Font") || fileName == TEXT("Map_Mask") || fileName == TEXT("Map_Mask_Font"))
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eMapUI_Type), sizeof(LOCATION_MAP_VISIT));
 
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoad), sizeof(_bool));
 
@@ -472,14 +550,14 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 	}
 
 	/* 3. Inventory_Item : Child 만 박스임 */
-	else if (TEXT("UI_Inventory_Item") == fileName)
-	{
-		CustomizeUIDesc.eBox_Type = CCustomize_UI::ITEM_BOX_TYPE::DEFAULT_BOX;
-		CustomizeUIDesc.eInventory_Type = CCustomize_UI::INVENTORY_TYPE::MAIN_INVEN;
+	//else if (TEXT("UI_Inventory_Item") == fileName)
+	//{
+	//	CustomizeUIDesc.eBox_Type = CCustomize_UI::ITEM_BOX_TYPE::DEFAULT_BOX;
+	//	CustomizeUIDesc.eInventory_Type = CCustomize_UI::INVENTORY_TYPE::MAIN_INVEN;
 
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Inventory_Item_UI"), &CustomizeUIDesc)))
-			MSG_BOX(TEXT("Failed to Add Clone"));
-	}
+	//	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Inventory_Item_UI"), &CustomizeUIDesc)))
+	//		MSG_BOX(TEXT("Failed to Add Clone"));
+	//}
 
 	/* 4. BackGroundHPBar_UI */
 	else if (TEXT("BackGroundHPBar_UI") == fileName)
@@ -543,7 +621,27 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, string strListName
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Selector_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
 	}
+
+	/* UI_Selecter */
+	else if (TEXT("UI_Map") == fileName || TEXT("Map_Mask") == fileName || TEXT("UI_Map_Font") == fileName || fileName == TEXT("Map_Mask_Font"))
+	{
+		if (TEXT("UI_Map") == fileName)
+			CustomizeUIDesc.eMapComponent_Type = CCustomize_UI::MAP_UI_TYPE::MAIN_MAP;
+
+		else if(TEXT("UI_Map_Font") == fileName)
+			CustomizeUIDesc.eMapComponent_Type = CCustomize_UI::MAP_UI_TYPE::FONT_MAP;
+
+		else if(TEXT("Map_Mask") == fileName)
+			CustomizeUIDesc.eMapComponent_Type = CCustomize_UI::MAP_UI_TYPE::MASK_MAP;
+
+		else if (TEXT("Map_Mask_Font") == fileName)
+			CustomizeUIDesc.eMapComponent_Type = CCustomize_UI::MAP_UI_TYPE::FONT_MASK_MAP;
+
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Map_UI"), &CustomizeUIDesc)))
+			MSG_BOX(TEXT("Failed to Add Clone"));
+	}
 	
+
 	CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
 
 	if (nullptr != pGameParentsObj)

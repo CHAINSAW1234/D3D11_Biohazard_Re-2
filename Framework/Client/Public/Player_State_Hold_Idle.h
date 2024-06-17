@@ -11,22 +11,21 @@ private:
 	virtual ~CPlayer_State_Hold_Idle() = default;
 
 public:
-	virtual void				OnStateEnter() override;
-	virtual void				OnStateUpdate(_float fTimeDelta) override;
-	virtual void				OnStateExit() override;
-	virtual void				Start() override;
+	virtual void			OnStateEnter() override;
+	virtual void			OnStateUpdate(_float fTimeDelta) override;
+	virtual void			OnStateExit() override;
+	virtual void			Start() override;
 
 private:
-
-	void Set_MoveAnimation(_float fTimeDelta);
-	void Look_Cam(_float fTimeDelta);
-
-	void Shot();
+	void					Set_MoveAnimation(_float fTimeDelta);
+	void					Look_Cam(_float fTimeDelta);
+	void					Shot();
 
 private:
 	CPlayer*	m_pPlayer = { nullptr };
 	_float		m_fDegree = { 0.f };
 
+	_bool		m_isShot = { false };
 public:
 	static	CPlayer_State_Hold_Idle* Create(CPlayer* pPlayer);
 	virtual void Free() override;

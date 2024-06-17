@@ -64,7 +64,7 @@ HRESULT CLight::Initialize()
 	return S_OK;
 }
 
-HRESULT CLight::Update(const LIGHT_DESC& Light_Desc, _uint iIndex)
+HRESULT CLight::Update(const LIGHT_DESC& Light_Desc, _uint iIndex, _float fLerp)
 {
 	if (m_Lights.size() < iIndex)
 		return E_FAIL;
@@ -75,32 +75,33 @@ HRESULT CLight::Update(const LIGHT_DESC& Light_Desc, _uint iIndex)
 
 	if (LIGHT_DESC::TYPE_POINT == (*iter)->eType)
 	{
-		(*iter)->vDiffuse = Light_Desc.vDiffuse;
-		(*iter)->vAmbient = Light_Desc.vAmbient;
-		(*iter)->vSpecular = Light_Desc.vSpecular;
-		(*iter)->fRange = Light_Desc.fRange;
+		(*iter)->vDiffuse =XMVectorLerp((*iter)->vDiffuse, Light_Desc.vDiffuse, fLerp);
+		(*iter)->vAmbient = XMVectorLerp((*iter)->vAmbient, Light_Desc.vAmbient, fLerp);
+		(*iter)->vSpecular = XMVectorLerp((*iter)->vSpecular, Light_Desc.vSpecular, fLerp);
+		(*iter)->fRange = Lerp((*iter)->fRange, Light_Desc.fRange, fLerp);
 		(*iter)->bRender = Light_Desc.bRender;
 
 	}
 	else if (LIGHT_DESC::TYPE_SPOT == (*iter)->eType)
 	{
-		(*iter)->vDiffuse = Light_Desc.vDiffuse;
-		(*iter)->vAmbient = Light_Desc.vAmbient;
-		(*iter)->vSpecular = Light_Desc.vSpecular;
-		(*iter)->vPosition = Light_Desc.vPosition;
-		(*iter)->vDirection = Light_Desc.vDirection;
-		(*iter)->fRange = Light_Desc.fRange;
-		(*iter)->fOutCutOff = Light_Desc.fOutCutOff;
-		(*iter)->fCutOff = Light_Desc.fCutOff;
+		(*iter)->vDiffuse = XMVectorLerp((*iter)->vDiffuse, Light_Desc.vDiffuse, fLerp);
+		(*iter)->vAmbient = XMVectorLerp((*iter)->vAmbient, Light_Desc.vAmbient, fLerp);
+		(*iter)->vSpecular = XMVectorLerp((*iter)->vSpecular, Light_Desc.vSpecular, fLerp);
+		(*iter)->vPosition =XMVectorLerp((*iter)->vPosition, Light_Desc.vPosition, fLerp);
+		(*iter)->vDirection = XMVectorLerp((*iter)->vDirection, Light_Desc.vDirection, fLerp);
+		(*iter)->fRange =Lerp((*iter)->fRange, Light_Desc.fRange, fLerp);
+		(*iter)->fOutCutOff =Lerp((*iter)->fOutCutOff, Light_Desc.fOutCutOff, fLerp);
+		(*iter)->fCutOff = Lerp((*iter)->fCutOff, Light_Desc.fCutOff, fLerp);
 		(*iter)->bRender = Light_Desc.bRender;
 		XMStoreFloat4x4(((*iter)->ViewMatrix), XMMatrixLookToLH(XMLoadFloat4(&(*iter)->vPosition), XMLoadFloat4(&(*iter)->vDirection), XMVectorSet(0.f, 1.f, 0.f, 0.f)));
 
 	}
 	else if (LIGHT_DESC::TYPE_DIRECTIONAL == (*iter)->eType)
 	{
-		(*iter)->vDiffuse = Light_Desc.vDiffuse;
-		(*iter)->vAmbient = Light_Desc.vAmbient;
-		(*iter)->vSpecular = Light_Desc.vSpecular;
+
+		(*iter)->vDiffuse =XMVectorLerp((*iter)->vDiffuse, Light_Desc.vDiffuse, fLerp);
+		(*iter)->vAmbient =XMVectorLerp((*iter)->vAmbient, Light_Desc.vAmbient, fLerp);
+		(*iter)->vSpecular = XMVectorLerp((*iter)->vSpecular, Light_Desc.vSpecular, fLerp);
 		(*iter)->bRender = Light_Desc.bRender;
 	}
 

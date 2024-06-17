@@ -2,7 +2,6 @@
 
 #include "Inventory_Manager.h"
 
-
 CInventory_Manager::CInventory_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
 	, m_pContext{ pContext }
@@ -18,8 +17,8 @@ HRESULT CInventory_Manager::Initialize()
 	ifstream inputFileStream;
 	wstring selectedFilePath;
 
-#pragma region 인벤토리 박스 20개 미리생성
-	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/VoidBox.dat");
+#pragma region 인벤토리 슬롯
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/VoidSlot.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	vector<CCustomize_UI::CUSTOM_UI_DESC> vecCustomInvenUIDesc;
 	CCustomize_UI::ExtractData_FromDat(inputFileStream, &vecCustomInvenUIDesc, true);
@@ -28,38 +27,60 @@ HRESULT CInventory_Manager::Initialize()
 	{
 		for (_uint j = 0; j < 4; j++)
 		{
-			_float fPosX = m_fInterval.x * j;
-			_float fPosY = -m_fInterval.y * i;
+			_float fPosX = m_fSlotInterval.x * j;
+			_float fPosY = -m_fSlotInterval.y * i;
 			if (FAILED(Create_InvenUI(&vecCustomInvenUIDesc, _float3(fPosX, fPosY, 0.f))))
 				return E_FAIL;
 		}
 	}
 
-	for (auto& iter : m_vecInventoryUI)
+	for (auto& iter : m_vecInvenSlot)
 	{
 		if (nullptr != iter)
 		{
 			Safe_AddRef(iter);
-			Set_OnOff_Inven(true);
+			iter->Set_Dead(true);
 		}
 	}
 #pragma endregion
 
-#pragma region SelectBox
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_SelectBox.dat");
+#pragma region ItemUI
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_UI.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	vector<CCustomize_UI::CUSTOM_UI_DESC> vecItemUIDesc;
+	CCustomize_UI::ExtractData_FromDat(inputFileStream, &vecItemUIDesc, true);
+
+	for (_uint i = 0; i < 4; i++)
+	{
+		if (FAILED(Create_ItemUI(&vecItemUIDesc)))
+			return E_FAIL;
+	}
+
+	for (auto& iter : m_vecItem_UI)
+	{
+		if (nullptr != iter)
+		{
+			Safe_AddRef(iter);
+			iter->Set_Dead(true);
+		}
+	}
+#pragma endregion
+
+#pragma region 슬롯 하이라이터
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/SlotHighlighter.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	vector<CCustomize_UI::CUSTOM_UI_DESC> vecCustomSelecUIDesc;
 	CCustomize_UI::ExtractData_FromDat(inputFileStream, &vecCustomSelecUIDesc, true);
 	if (FAILED(Create_SelectUI(&vecCustomSelecUIDesc)))
 		return E_FAIL;
 
-	m_pSelectBox->Set_Dead(true);
-	m_pSelectBoxTransform = dynamic_cast<CTransform*>(m_pSelectBox->Get_Component(g_strTransformTag));
+	m_pSlotHighlighter->Set_Dead(true);
+	m_pSlotHighlighterTransform = dynamic_cast<CTransform*>(m_pSlotHighlighter->Get_Component(g_strTransformTag));
+	m_fSlotHighlighterResetPos = m_vecInvenSlot[0]->GetPosition();
+	m_fSlotHighlighterResetPos.z = 0.7f;
 
-	m_fSelectBoxResetPos = m_vecInventoryUI[0]->GetPosition();
-
-	Safe_AddRef(m_pSelectBox);
-	Safe_AddRef(m_pSelectBoxTransform);
+	Safe_AddRef(m_pSlotHighlighter);
+	Safe_AddRef(m_pSlotHighlighterTransform);
 #pragma endregion
 
 	return S_OK;
@@ -67,32 +88,56 @@ HRESULT CInventory_Manager::Initialize()
 
 void CInventory_Manager::FirstTick_Seting()
 {
-	m_pSelectBox->FirstTick_Seting();
-	m_pSelectBox->ResetPosition(m_fSelectBoxResetPos);
+	m_pSlotHighlighter->FirstTick_Seting();
+	m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
 }
 
 void CInventory_Manager::Tick(_float fTimeDelta)
 {
 	_bool IsNoOneHover = true;
-	CButton_UI* pHoveredObj = nullptr;
+	CInventory_Slot* pHoveredObj = nullptr;
 
-	for (auto& iter : m_vecInventoryUI)
+	for (_uint i = 0; i < m_iInvenCount; i++)
 	{
-		if (true == iter->IsMouseHover())
+		if (true == m_vecInvenSlot[i]->IsMouseHover())
 		{
 			IsNoOneHover = false;
-			pHoveredObj = iter;
+			pHoveredObj = m_vecInvenSlot[i];
 		}
 	}
-	m_pSelectBox->Set_Dead(IsNoOneHover);
 
+	m_pSlotHighlighter->Set_Dead(IsNoOneHover);
 
 	if (false == IsNoOneHover)
 	{
-		m_pSelectBoxTransform->Set_State(CTransform::STATE_POSITION,
-			dynamic_cast<CTransform*>(pHoveredObj->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION));
+		_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredObj->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
+		HoveredPos.z = 0.7f;
+		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
 	}
 
+	if (UP == m_pGameInstance->Get_KeyState('Z'))
+	{
+		if(m_iInvenCount + 1 < 21)
+			m_iInvenCount++;
+
+		m_vecInvenSlot[m_iInvenCount - 1]->Set_Dead(false);
+	}
+
+	if (UP == m_pGameInstance->Get_KeyState('X'))
+	{
+		if (nullptr != pHoveredObj)
+		{
+			m_vecItem_UI[0]->Set_Dead(false);
+			m_vecItem_UI[0]->Set_isWorking(true);
+			m_vecItem_UI[0]->Set_Item(PISTOL_AMMO, EQUIP_UNBREAKABLE);
+
+			_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredObj->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
+			HoveredPos.z = 0.5f;
+
+			CTransform* pItemUITransform = dynamic_cast<CTransform*>(m_vecItem_UI[0]->Get_Component(g_strTransformTag));
+			pItemUITransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
+		}
+	}
 }
 
 void CInventory_Manager::Late_Tick(_float fTimeDelta)
@@ -102,9 +147,27 @@ void CInventory_Manager::Late_Tick(_float fTimeDelta)
 
 void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 {
-	for (_uint i = 0; i < m_iInvenNum; i++)
+	for (_uint i = 0; i < m_iInvenCount; i++)
 	{
-		m_vecInventoryUI[i] -> Set_Dead(bInput);
+		m_vecInvenSlot[i] -> Set_Dead(bInput);
+	}
+
+	m_pSlotHighlighter->Set_Dead(bInput);
+
+	for (auto& iter : m_vecItem_UI)
+	{
+		//탭창킬때 일하고 있는놈만 켜줘야함
+		if (false == bInput)
+		{
+			if (true == iter->Get_isWorking())
+				iter->Set_Dead(bInput);
+		}
+
+		//끌땐 다끄자
+		else
+		{
+			iter->Set_Dead(bInput);
+		}
 	}
 }
 
@@ -126,7 +189,7 @@ CInventory_Manager* CInventory_Manager::Create(ID3D11Device* pDevice, ID3D11Devi
 
 HRESULT CInventory_Manager::Create_InvenUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval)
 {
-	CButton_UI* pParentInvenUI = { nullptr };
+	CInventory_Slot* pParentInvenUI = { nullptr };
 
 	for (auto& iter : *vecInvenUI)
 	{
@@ -161,12 +224,12 @@ HRESULT CInventory_Manager::Create_InvenUI(vector<CCustomize_UI::CUSTOM_UI_DESC>
 		//if (nullptr == pGameOBJ)
 		//	return E_FAIL;
 
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Button_UI"), &iter)))
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_InventorySlot"), &iter)))
 			return E_FAIL;
 
 		CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
 
-		CButton_UI* pInvenUI = dynamic_cast<CButton_UI*>(pGameObj);
+		CInventory_Slot* pInvenUI = dynamic_cast<CInventory_Slot*>(pGameObj);
 
 		pInvenUI->Move_State(fInterval, 0);
 		pInvenUI->Set_IsLoad(false);
@@ -180,7 +243,7 @@ HRESULT CInventory_Manager::Create_InvenUI(vector<CCustomize_UI::CUSTOM_UI_DESC>
 
 		else
 		{
-			m_vecInventoryUI.push_back(pInvenUI);
+			m_vecInvenSlot.push_back(pInvenUI);
 		}
 
 		pParentInvenUI = pInvenUI;
@@ -191,7 +254,7 @@ HRESULT CInventory_Manager::Create_InvenUI(vector<CCustomize_UI::CUSTOM_UI_DESC>
 
 HRESULT CInventory_Manager::Create_SelectUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI)
 {
-	CInventorySelect* pParentInvenUI = { nullptr };
+	CSlot_Highlighter* pParentInvenUI = { nullptr };
 
 	for (auto& iter : *vecInvenUI)
 	{
@@ -222,12 +285,12 @@ HRESULT CInventory_Manager::Create_SelectUI(vector<CCustomize_UI::CUSTOM_UI_DESC
 			}
 		}
 
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_InventorySelect"), &iter)))
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_SlotHighlighter"), &iter)))
 			return E_FAIL;
 
 		CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
 
-		CInventorySelect* pInvenUI = dynamic_cast<CInventorySelect*>(pGameObj);
+		CSlot_Highlighter* pInvenUI = dynamic_cast<CSlot_Highlighter*>(pGameObj);
 
 		pInvenUI->Set_Dead(true);
 
@@ -239,10 +302,69 @@ HRESULT CInventory_Manager::Create_SelectUI(vector<CCustomize_UI::CUSTOM_UI_DESC
 
 		else
 		{
-			m_pSelectBox = pInvenUI;
+			m_pSlotHighlighter = pInvenUI;
 		}
 
 		pParentInvenUI = pInvenUI;
+	}
+
+	return S_OK;
+}
+
+HRESULT CInventory_Manager::Create_ItemUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI)
+{
+	CItem_UI* pParent_ItemUI = { nullptr };
+
+	for (auto& iter : *vecInvenUI)
+	{
+		if (0 == iter.fMaxFrame && TEXT("") != iter.wstrDefaultTexturPath)
+		{
+			/* For.Prototype_Component_Texture_ */
+			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrDefaultTexturComTag,
+				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath)))) {
+				int a = 0;
+			}
+		}
+
+		else if (0 < iter.fMaxFrame && TEXT("") != iter.wstrDefaultTexturPath)
+		{
+			/* For.Prototype_Component_Texture_ */
+			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrDefaultTexturComTag,
+				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath, iter.fMaxFrame)))) {
+				int a = 0;
+			}
+		}
+
+		if (TEXT("") != iter.wstrMaskPath)
+		{
+			/* For.Prototype_Component_Texture_ */
+			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrMaskComTag,
+				CTexture::Create(m_pDevice, m_pContext, iter.wstrMaskPath)))) {
+				int a = 0;
+			}
+		}
+
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_ItemUI"), &iter)))
+			return E_FAIL;
+
+		CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
+
+		CItem_UI* pItemUI = dynamic_cast<CItem_UI*>(pGameObj);
+
+		pItemUI->Set_Dead(true);
+
+		if (nullptr != pParent_ItemUI)
+		{
+			pParent_ItemUI->PushBack_Child(pGameObj);
+			pParent_ItemUI = nullptr;
+		}
+
+		else
+		{
+			m_vecItem_UI.push_back(pItemUI);
+		}
+
+		pParent_ItemUI = pItemUI;
 	}
 
 	return S_OK;
@@ -254,12 +376,18 @@ void CInventory_Manager::Free()
 	Safe_Release(m_pContext);
 	Safe_Release(m_pGameInstance);
 
-	for (auto& iter : m_vecInventoryUI)
+	for (auto& iter : m_vecInvenSlot)
 	{
 		Safe_Release(iter);
 	}
-	m_vecInventoryUI.clear();
+	m_vecInvenSlot.clear();
 
-	Safe_Release(m_pSelectBox);
-	Safe_Release(m_pSelectBoxTransform);
+	Safe_Release(m_pSlotHighlighter);
+	Safe_Release(m_pSlotHighlighterTransform);
+
+	for (auto& iter : m_vecItem_UI)
+	{
+		Safe_Release(iter);
+	}
+	m_vecItem_UI.clear();
 }

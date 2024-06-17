@@ -45,16 +45,41 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Left_Arm"), "l_arm_clavicle");
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("LowerBody"), "hips");
+	m_pModelCom->Add_Bone_Layer_Bone(TEXT("LowerBody"), "root");
+
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("UpperBody"), "spine_0");
 	m_pModelCom->Add_Bone_Layer_Range(TEXT("Shot"), 61, 62);
+	//m_pModelCom->Add_Bone_Layer_Bone(TEXT("Shot"), "root");
+
+	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Shot"), "r_arm_clavicle");
 	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Shot"), "r_arm_radius");
-	//m_pModelCom->Add_Bone_Layer_Bone(TEXT("Shot"), "r_arm_wrist");
+	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Shot"), "r_arm_humerus");
+	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Shot"), "r_arm_wrist");
 
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 1, TEXT("Default"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 2, TEXT("Default"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(0, false, 3, TEXT("Shot"), 0.f);
-	//m_pModelCom->Add_AnimPlayingInfo(0, false, 4, TEXT("UpperBody"), 0.f);
+	
+	m_pModelCom->Reset_PreAnimation(0);
+	m_pModelCom->Reset_PreAnimation(1);
+	m_pModelCom->Reset_PreAnimation(2);
+	m_pModelCom->Reset_PreAnimation(3);
+
+	m_pModelCom->Set_TickPerSec(CPlayer::WALK_F_LOOP, 64.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::WALK_L_LOOP, 67.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::WALK_R_LOOP, 64.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::WALK_BACK_L_LOOP, 65.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::WALK_BACK_B_LOOP, 65.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::WALK_BACK_R_LOOP, 63.f);
+
+
+	m_pModelCom->Set_TickPerSec(CPlayer::WHEEL_L180, 300.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::WHEEL_R180, 300.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::HOLD_SHOT, 150.f);
+
+
+
 
 	//m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/LeonTest/LeonBody.fbx");
 
@@ -315,133 +340,6 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 		/////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////
 		//	}
-
-#pragma region Collider 위치 설정 코드
-	////Body
-	//_float4x4 BoneCombined = m_pModelCom->GetBoneTransform(62);
-	//BoneCombined._41 *= 0.045f;
-	//BoneCombined._42 *= 0.045f;
-	//BoneCombined._43 *= 0.045f;
-	//_matrix Mat = XMLoadFloat4x4(&BoneCombined);
-
-	//_matrix Rot = m_pParentsTransform->Get_WorldMatrix_Pure_Mat();
-
-	//Mat = XMMatrixMultiply(Mat, Rot);
-	//XMStoreFloat4x4(&BoneCombined, Mat);
-
-	//m_pGameInstance->SetColliderTransform(BoneCombined);
-
-	////Head
-	//BoneCombined = m_pModelCom->GetBoneTransform(169);
-	//BoneCombined._41 *= 0.045f;
-	//BoneCombined._42 *= 0.045f;
-	//BoneCombined._43 *= 0.045f;
-	//Mat = XMLoadFloat4x4(&BoneCombined);
-
-	//Mat = XMMatrixMultiply(Mat, Rot);
-	//XMStoreFloat4x4(&BoneCombined, Mat);
-	//m_pGameInstance->SetColliderTransform_Head(BoneCombined);
-
-	////Left Arm
-	//BoneCombined = m_pModelCom->GetBoneTransform(84);
-	//BoneCombined._41 *= 0.045f;
-	//BoneCombined._42 *= 0.045f;
-	//BoneCombined._43 *= 0.045f;
-	//Mat = XMLoadFloat4x4(&BoneCombined);
-
-	//Mat = XMMatrixMultiply(Mat, Rot);
-	//XMStoreFloat4x4(&BoneCombined, Mat);
-	//m_pGameInstance->SetColliderTransform_Left_Arm(BoneCombined);
-
-	////Left ForeArm
-	//BoneCombined = m_pModelCom->GetBoneTransform(85);
-	//BoneCombined._41 *= 0.045f;
-	//BoneCombined._42 *= 0.045f;
-	//BoneCombined._43 *= 0.045f;
-	//Mat = XMLoadFloat4x4(&BoneCombined);
-
-	//Mat = XMMatrixMultiply(Mat, Rot);
-	//XMStoreFloat4x4(&BoneCombined, Mat);
-	//m_pGameInstance->SetColliderTransform_Left_ForeArm(BoneCombined);
-
-	////Right Arm
-	//BoneCombined = m_pModelCom->GetBoneTransform(126);
-	//BoneCombined._41 *= 0.045f;
-	//BoneCombined._42 *= 0.045f;
-	//BoneCombined._43 *= 0.045f;
-	//Mat = XMLoadFloat4x4(&BoneCombined);
-
-	//Mat = XMMatrixMultiply(Mat, Rot);
-	//XMStoreFloat4x4(&BoneCombined, Mat);
-	//m_pGameInstance->SetColliderTransform_Right_Arm(BoneCombined);
-
-	////Right ForeArm
-	//BoneCombined = m_pModelCom->GetBoneTransform(127);
-	//BoneCombined._41 *= 0.045f;
-	//BoneCombined._42 *= 0.045f;
-	//BoneCombined._43 *= 0.045f;
-	//Mat = XMLoadFloat4x4(&BoneCombined);
-
-	//Mat = XMMatrixMultiply(Mat, Rot);
-	//XMStoreFloat4x4(&BoneCombined, Mat);
-	//m_pGameInstance->SetColliderTransform_Right_ForeArm(BoneCombined);
-
-	////Pelvis
-	//BoneCombined = m_pModelCom->GetBoneTransform(60);
-	//BoneCombined._41 *= 0.045f;
-	//BoneCombined._42 *= 0.045f;
-	//BoneCombined._43 *= 0.045f;
-	//Mat = XMLoadFloat4x4(&BoneCombined);
-
-	//Mat = XMMatrixMultiply(Mat, Rot);
-	//XMStoreFloat4x4(&BoneCombined, Mat);
-	//m_pGameInstance->SetColliderTransform_Pelvis(BoneCombined);
-
-	////Left Leg
-	//BoneCombined = m_pModelCom->GetBoneTransform(27);
-	//BoneCombined._41 *= 0.045f;
-	//BoneCombined._42 *= 0.045f;
-	//BoneCombined._43 *= 0.045f;
-	//Mat = XMLoadFloat4x4(&BoneCombined);
-
-	//Mat = XMMatrixMultiply(Mat, Rot);
-	//XMStoreFloat4x4(&BoneCombined, Mat);
-	//m_pGameInstance->SetColliderTransform_Left_Leg(BoneCombined);
-
-	////Left Shin
-	//BoneCombined = m_pModelCom->GetBoneTransform(28);
-	//BoneCombined._41 *= 0.045f;
-	//BoneCombined._42 *= 0.045f;
-	//BoneCombined._43 *= 0.045f;
-	//Mat = XMLoadFloat4x4(&BoneCombined);
-
-	//Mat = XMMatrixMultiply(Mat, Rot);
-	//XMStoreFloat4x4(&BoneCombined, Mat);
-	//m_pGameInstance->SetColliderTransform_Left_Shin(BoneCombined);
-
-	////Right Leg
-	//BoneCombined = m_pModelCom->GetBoneTransform(41);
-	//BoneCombined._41 *= 0.045f;
-	//BoneCombined._42 *= 0.045f;
-	//BoneCombined._43 *= 0.045f;
-	//Mat = XMLoadFloat4x4(&BoneCombined);
-
-	//Mat = XMMatrixMultiply(Mat, Rot);
-	//XMStoreFloat4x4(&BoneCombined, Mat);
-	//m_pGameInstance->SetColliderTransform_Right_Leg(BoneCombined);
-
-	////Right Shin
-	//BoneCombined = m_pModelCom->GetBoneTransform(42);
-	//BoneCombined._41 *= 0.045f;
-	//BoneCombined._42 *= 0.045f;
-	//BoneCombined._43 *= 0.045f;
-	//Mat = XMLoadFloat4x4(&BoneCombined);
-
-	//Mat = XMMatrixMultiply(Mat, Rot);
-	//XMStoreFloat4x4(&BoneCombined, Mat);
-
-	//m_pGameInstance->SetColliderTransform_Right_Shin(BoneCombined);
-#pragma endregion
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
@@ -766,7 +664,7 @@ HRESULT CBody_Player::Render_LightDepth_Spot()
 	return S_OK;
 }
 
-void CBody_Player::SetRagdoll(_int iId)
+void CBody_Player::SetRagdoll(_int iId,_float4 vForce)
 {
 	m_pGameInstance->Start_Ragdoll(m_pRagdoll, iId);
 	m_bRagdoll = true;

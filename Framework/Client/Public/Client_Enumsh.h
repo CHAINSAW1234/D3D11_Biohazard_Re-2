@@ -11,7 +11,7 @@ namespace Client
 		PASS_LIGHTDEPTH,
 		PASS_EMISSIVE,
 		PASS_END
-	};
+	};	
 
 	enum UI_ID {
 		ORTHOGONAL_UI,
@@ -25,4 +25,22 @@ namespace Client
 
 	enum MONSTER_TYPE { MT_ZOMBIE, MT_DEFAULT };
 	enum MONSTER_STATE { MST_IDLE,MST_WALK,MST_ATTACK,MST_DEFAULT};
+
+	enum ITEM_NUMBER {
+		PISTOL_HANDGUN, PISTOL_AMMO, 
+		FIRST_AID_SPRAY, 
+		BATTLE_DAGGER, 
+		ITEM_NUMBER_END 
+	};
+
+	//인벤토리 안에서의 아이템 타입
+	enum INVEN_ITEM_TYPE {
+		CONSUMABLE_STACKABLE,//소모성인데 인벤토리 창에서 한칸으로 겹칠 수 없다.
+		SONSUMABLE_NON_STACKABLE,//소모성인데 인벤토리 창에서 겹칠 수 있다.
+		EQUIP_UNBREAKABLE, //내구가 없는 장비
+		EQUIP_BREAKABLE, //내구성 장비
+		QUEST,
+		PLACE_ABLE,
+		INVEN_ITEM_TYPE_END
+	};
 }

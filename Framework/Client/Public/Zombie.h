@@ -48,6 +48,9 @@ private:	/* Initialize_PartObjects_Models */
 	
 private: // For AIController
 	class CBlackBoard_Zombie*			m_pBlackBoard = { nullptr };
+
+private:
+	class CModel*						m_pBodyModel = { nullptr };
 public:
 	static CZombie* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

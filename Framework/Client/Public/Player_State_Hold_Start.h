@@ -21,7 +21,6 @@ public:
 	virtual void				Start() override;
 
 private:
-	void Update_KeyInput();
 	void Set_StartAnimation();
 
 private:

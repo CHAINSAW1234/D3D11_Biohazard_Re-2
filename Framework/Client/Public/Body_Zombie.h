@@ -170,6 +170,13 @@ public:	/* For.Check Anim Type */
 	_bool								Is_Loop_Anim(_uint iAnimIndex);
 	_bool								Is_Move_Anim(_uint iAnimIndex);
 	_bool								Is_Turn_Anim(_uint iAnimIndex);
+	class CModel*			GetModel()
+	{
+		return m_pModelCom;
+	}
+
+public:
+	virtual void			SetRagdoll(_int iId, _float4 vForce = _float4(0.f, 0.f, 0.f, 1.f)) override;
 
 private:
 	CModel*								m_pModelCom = { nullptr };

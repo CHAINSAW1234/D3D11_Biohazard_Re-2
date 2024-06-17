@@ -39,6 +39,15 @@ public:
 		m_iIndex = Index;
 	}
 	virtual void					Update(_float fTimeDelta) {}
+	virtual void					Build_Skeleton(const std::string& name) {}
+	void							SetReleased(_bool boolean)
+	{
+		m_bReleased = boolean;
+	}
+	_bool							IsReleased()
+	{
+		return m_bReleased;
+	}
 public:
 	static CPhysics_Component*		Create();
 
@@ -56,6 +65,8 @@ protected:
 
 	class CEventCallBack*			m_pEventCallBack = { nullptr };
 	class CFilterCallBack*			m_pFilterCallBack = { nullptr };
+
+	_bool							m_bReleased = { false };
 
 protected:
 	_int m_iRefCnt_Px = { 0 };

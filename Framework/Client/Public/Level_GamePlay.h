@@ -34,7 +34,7 @@ private:
 	
 private:
 	void UI_Distinction(wstring& selectedFilePath);
-	void CreatFromDat(ifstream& inputFileStream, string strListName, CGameObject* pGameParentsObj, wstring fileName, _int iWhich_Child = 0);
+	void CreatFromDat(ifstream& inputFileStream, wstring strListName, CGameObject* pGameParentsObj, wstring fileName, _int iWhich_Child = 0);
 	
 	wstring StringToWstring(const std::string& strString)
 	{
@@ -48,7 +48,11 @@ private:
 
 private:
 	HRESULT Load_Collider(const wstring& strFile, const wstring& strColLayerTag);
-
+#pragma region 예은 추가 (임시임)
+private:
+	_int iCurIndex = { 0 };
+	_int iPreIndex = { 0 };
+#pragma endregion
 
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

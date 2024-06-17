@@ -50,4 +50,29 @@ namespace Engine
 	enum SHADER_STATE { SSAO, MOTION_BLUR, SSR, DOF, VOLUMETRIC, FXAA, SHADER_STATE_END};
 
 	enum COMPOSITE_NODE_TYPE {CNT_SELECTOR,CNT_SEQUENCE,CNT_DEFAULT};
+
+	//For Physics_Controller
+	enum COLLISION_CATEGORY {
+		CCT = 1 << 0,
+		RAGDOLL = 1 << 1,
+		COLLIDER = 1 << 2,
+	};
+
+	enum COLLIDER_TYPE {
+		HEAD = 1 << 0,
+		CHEST = 1 << 1,
+		PELVIS = 1 << 2,
+		ARM_L = 1 << 3,
+		ARM_R = 1 << 4,
+		FOREARM_L = 1 << 5,
+		FOREARM_R = 1 << 6,
+		HAND_L = 1 << 7,
+		HAND_R = 1 << 8,
+		LEG_L = 1 << 9,
+		LEG_R = 1 << 10,
+		CALF_L = 1 << 11,
+		CALF_R = 1 << 12,
+		FOOT_L = 1 << 13,
+		FOOT_R = 1 << 14,
+	};
 }

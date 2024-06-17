@@ -55,7 +55,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
-	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.3f, 5.f, 1.f), &m_iIndex_CCT, this, 1.f, 0.475f);
+	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.3f, 5.f, 1.f), &m_iIndex_CCT, this, 1.f, 0.45f,m_pTransformCom,
+		m_pBodyModel->GetBoneVector(), "None");
 
 	//For Camera.
 	m_pTransformCom_Camera = CTransform::Create(m_pDevice, m_pContext);
@@ -74,6 +75,14 @@ HRESULT CPlayer::Initialize(void* pArg)
 void CPlayer::Priority_Tick(_float fTimeDelta)
 {
 	Priority_Tick_PartObjects(fTimeDelta);
+
+#pragma region 예은 스파이 나중에 FSM으로 옮길지도
+	if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		m_bInteract = true;
+	else
+		m_bInteract = false;
+#pragma endregion 
+
 }
 
 void CPlayer::Tick(_float fTimeDelta)
@@ -264,6 +273,11 @@ void CPlayer::Tick(_float fTimeDelta)
 			m_fLerpTime = 0.f;
 			m_bLerp = true;
 		}
+		
+		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			RayCast_Shoot();
+		}
 	}
 	else
 	{
@@ -275,6 +289,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 		m_bAim = false;
 	}
+
 #pragma endregion
 
 #pragma endregion
@@ -296,6 +311,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
+	//Ragdoll Test Code
 	/*if (UP == m_pGameInstance->Get_KeyState('M'))
 	{
 		m_bRagdoll = true;
@@ -316,7 +332,10 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	Late_Tick_PartObjects(fTimeDelta);
 
-	Turn_Spine(fTimeDelta);		// 특정 조건에서 뼈를 돌림
+	if (m_pController)
+		m_pController->Update_Collider();
+
+	//	Turn_Spine(fTimeDelta);		// 특정 조건에서 뼈를 돌림
 
 #pragma region 예은 추가
 	Col_Section();
@@ -360,7 +379,7 @@ void CPlayer::Late_Tick_PartObjects(_float fTimeDelta)
 #pragma region 예은 추가
 void CPlayer::Col_Section()
 {
-	/*list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider"));
+	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider"));
 	if(pCollider == nullptr)
 		return;
 	for (auto& iter: *pCollider)
@@ -373,7 +392,7 @@ void CPlayer::Col_Section()
 			m_iDir = pColCom->Get_Dir();
 
 		}
-	}*/
+	}
 }
 
 #pragma endregion
@@ -653,6 +672,15 @@ void CPlayer::ResetCamera()
 	m_fLerpAmount_Right = m_fRight_Dist_Look;
 	m_fLerpAmount_Up = m_fUp_Dist_Look;
 	m_fLerpAmount_Look = m_fLook_Dist_Look;
+}
+
+void CPlayer::RayCast_Shoot()
+{
+	_float4 vBlockPoint;
+	if (m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint))
+	{
+		int a = 0;
+	}
 }
 
 #pragma endregion
@@ -1279,6 +1307,8 @@ HRESULT CPlayer::Initialize_PartModels()
 	CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Model"))) };
 	CModel* pHeadModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HEAD]->Get_Component(TEXT("Com_Model"))) };
 	CModel* pHairModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAIR]->Get_Component(TEXT("Com_Model"))) };
+
+	m_pBodyModel = pBodyModel;
 
 	if (nullptr == pBodyModel ||
 		nullptr == pHeadModel ||

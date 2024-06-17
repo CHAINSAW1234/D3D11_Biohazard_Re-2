@@ -44,7 +44,7 @@ private:
 
 #pragma region Physics_Component 
 public:
-	class CCharacter_Controller*						Create_Controller(_float4 Pos, _int* Index,class CGameObject* pCharacter,_float fHeight,_float fRadius);
+	class CCharacter_Controller*						Create_Controller(_float4 Pos, _int* Index,class CGameObject* pCharacter,_float fHeight,_float fRadius, class CTransform* pTransform, vector<class CBone*>* pBones, const std::string& name = "");
 	void												Create_Rigid_Dynamic(_float4 Pos);
 	void												Create_Rigid_Static(_float4 Pos);
 	class CCharacter_Controller*						GetCharacter_Controller(_int Index);
@@ -66,6 +66,8 @@ private:
 #pragma region Ray Cast
 public:
 	_bool												RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
+	_bool												RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
+	_bool												SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 #pragma endregion
 
 #pragma region Sphere Cast

@@ -35,13 +35,6 @@ void CButton_UI::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	//if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON) )
-	//{
-	//	if (true == IsMouseHover())
-	//	{
-	//		m_isClicked = true;
-	//	}
-	//}
 }
 
 void CButton_UI::Late_Tick(_float fTimeDelta)

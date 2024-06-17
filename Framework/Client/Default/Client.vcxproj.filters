@@ -67,9 +67,6 @@
     <Filter Include="02.GameObjects\Player\Hair">
       <UniqueIdentifier>{06a26c20-e93f-491c-9f17-a6dabe0d4021}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Props">
-      <UniqueIdentifier>{0cb153c4-04e5-4c35-af38-153a968bfcae}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI">
       <UniqueIdentifier>{9832ad11-317f-47c4-a17f-42e4a22153a3}</UniqueIdentifier>
     </Filter>
@@ -117,9 +114,6 @@
     </Filter>
     <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Stair">
       <UniqueIdentifier>{7b41809a-15c9-4a70-9130-c77c3c7123e5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Map">
-      <UniqueIdentifier>{6efea4f9-497a-4357-b128-793862780e4f}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\UI\1. Crosshair">
       <UniqueIdentifier>{de31e2a8-de06-4aa6-9adc-e319f9ef451f}</UniqueIdentifier>
@@ -193,8 +187,41 @@
     <Filter Include="AIController\Zombie\Task\Wait">
       <UniqueIdentifier>{022420cb-4aa4-4658-b312-d73a780980eb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\InventorySelect">
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Inventory_Slot">
+      <UniqueIdentifier>{a479c0f1-1f8a-4f2a-9704-7abf3a9f4c84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Item_UI">
+      <UniqueIdentifier>{3b6a69ad-2251-4b94-aaa0-95402954d590}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Slot_Highlighter">
       <UniqueIdentifier>{d3a9314f-e0fe-4296-944a-752b05519c2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject">
+      <UniqueIdentifier>{7680dede-3705-429b-b9df-d9ea1119c90a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\Map">
+      <UniqueIdentifier>{6efea4f9-497a-4357-b128-793862780e4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps">
+      <UniqueIdentifier>{1e752c72-b826-4dce-825b-57f84ad1fdef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\Props">
+      <UniqueIdentifier>{0cb153c4-04e5-4c35-af38-153a968bfcae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Cabinet">
+      <UniqueIdentifier>{25134504-2b17-441f-abfe-17c502b97904}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Door">
+      <UniqueIdentifier>{d1c27c97-30d4-4b83-906a-bba728892adc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\NewpoliceStatue">
+      <UniqueIdentifier>{47257adc-c543-4f5b-b6d4-fd3f14c7e2d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Window">
+      <UniqueIdentifier>{ddf175cd-bedd-42ef-b3bf-e3afee721d66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\11. Map_UI">
+      <UniqueIdentifier>{f04cdcf8-aee8-450c-b67b-e0df516a3328}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -268,7 +295,7 @@
       <Filter>99.Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Props.h">
-      <Filter>02.GameObjects\Props</Filter>
+      <Filter>02.GameObjects\MapObject\Props</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI.h">
       <Filter>02.GameObjects\UI</Filter>
@@ -295,7 +322,7 @@
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Map.h">
-      <Filter>02.GameObjects\Map</Filter>
+      <Filter>02.GameObjects\MapObject\Map</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Crosshair_UI.h">
       <Filter>02.GameObjects\UI\1. Crosshair</Filter>
@@ -314,9 +341,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\HPBar_UI.h">
       <Filter>02.GameObjects\UI\3. HP Bar</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Button_UI.h">
-      <Filter>02.GameObjects\UI\4. Button</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Bullet_UI.h">
       <Filter>02.GameObjects\UI\5. Bullet</Filter>
@@ -375,8 +399,38 @@
     <ClInclude Include="..\Public\Wait_Zombie.h">
       <Filter>AIController\Zombie\Task\Wait</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\InventorySelect.h">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\InventorySelect</Filter>
+    <ClInclude Include="..\Public\Button_UI.h">
+      <Filter>02.GameObjects\UI\4. Button</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\InteractProps.h">
+      <Filter>02.GameObjects\MapObject\InteractProps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cabinet.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Cabinet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Door.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Door</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\NewpoliceStatue.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\NewpoliceStatue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Window.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Part_InteractProps.h">
+      <Filter>02.GameObjects\MapObject\InteractProps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Slot_Highlighter.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Slot_Highlighter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Inventory_Slot.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Inventory_Slot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Item_UI.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Item_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Map_UI.h">
+      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -435,7 +489,7 @@
       <Filter>02.GameObjects\Player\Hair</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Props.cpp">
-      <Filter>02.GameObjects\Props</Filter>
+      <Filter>02.GameObjects\MapObject\Props</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI.cpp">
       <Filter>02.GameObjects\UI</Filter>
@@ -462,7 +516,7 @@
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Walk</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Map.cpp">
-      <Filter>02.GameObjects\Map</Filter>
+      <Filter>02.GameObjects\MapObject\Map</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Crosshair_UI.cpp">
       <Filter>02.GameObjects\UI\1. Crosshair</Filter>
@@ -481,9 +535,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\HPBar_UI.cpp">
       <Filter>02.GameObjects\UI\3. HP Bar</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Button_UI.cpp">
-      <Filter>02.GameObjects\UI\4. Button</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Bullet_UI.cpp">
       <Filter>02.GameObjects\UI\5. Bullet</Filter>
@@ -539,8 +590,38 @@
     <ClCompile Include="..\Private\Wait_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Wait</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\InventorySelect.cpp">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\InventorySelect</Filter>
+    <ClCompile Include="..\Private\Button_UI.cpp">
+      <Filter>02.GameObjects\UI\4. Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\InteractProps.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cabinet.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Cabinet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Door.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\NewpoliceStatue.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\NewpoliceStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Window.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Part_InteractProps.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Slot_Highlighter.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Slot_Highlighter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item_UI.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Item_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Inventory_Slot.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Inventory_Slot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Map_UI.cpp">
+      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

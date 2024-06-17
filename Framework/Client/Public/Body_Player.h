@@ -33,9 +33,14 @@ public:
 public:
 	_float3*				Get_RootTranslation() { return m_pRootTranslation; }
 
+public:
+	class CModel* GetModel()
+	{
+		return m_pModelCom;
+	}
 
 public:
-	virtual void			SetRagdoll(_int iId) override;
+	virtual void			SetRagdoll(_int iId,_float4 vForce = _float4(0.f,0.f,0.f,1.f)) override;
 
 private:
 	CModel*					m_pModelCom = { nullptr };

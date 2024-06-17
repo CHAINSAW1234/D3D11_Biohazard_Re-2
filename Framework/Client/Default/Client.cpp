@@ -22,6 +22,15 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
+
+#ifdef _DEBUG
+#ifdef UNICODE
+    #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
+#else
+    #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+#endif
+#endif
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
@@ -81,8 +90,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 		fTimeAcc += pGameInstance->Compute_TimeDelta(TEXT("Timer_Default"));
 
-		//if (fTimeAcc > 1.f / 60.f)
-		if (true)
+		if (fTimeAcc > 1.f / 60.f)
+		//if (true)
 		{
 			pMainApp->Tick(pGameInstance->Compute_TimeDelta(TEXT("Timer_60")));
 			pMainApp->Render();

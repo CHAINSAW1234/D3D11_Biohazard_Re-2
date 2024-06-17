@@ -61,6 +61,7 @@ void CModel::Add_AnimPlayingInfo(_int iAnimIndex, _bool isLoop, _uint iPlayingIn
 	if (nullptr != pPlayingInfo)
 		isCanCreate = false;
 
+
 	const _uint			iNumAnims = { static_cast<_uint>(m_Animations.size()) };
 	if (iNumAnims <= iAnimIndex)
 		isCanCreate = false;

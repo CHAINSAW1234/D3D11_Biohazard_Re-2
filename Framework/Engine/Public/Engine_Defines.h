@@ -146,6 +146,6 @@ using namespace Engine;
 #pragma region Physics Defines
 
 #define CONTROLLER_GROUND_GAP 1.1f
-#define CONTROLLER_GROUND_GAP_ZOMBIE 0.9f
+#define CONTROLLER_GROUND_GAP_ZOMBIE 0.95f
 
 #pragma endregion
