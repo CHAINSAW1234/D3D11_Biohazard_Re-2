@@ -334,7 +334,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	if (m_pController)
 		m_pController->Update_Collider();
 
-	Turn_Spine(fTimeDelta);		// 특정 조건에서 뼈를 돌림
+	//	Turn_Spine(fTimeDelta);		// 특정 조건에서 뼈를 돌림
 
 #pragma region 예은 추가
 	Col_Section();

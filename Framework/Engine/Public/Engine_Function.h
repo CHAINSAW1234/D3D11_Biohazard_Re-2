@@ -54,7 +54,7 @@ namespace Engine
 		// 1. 정규화 한 두 벡터를 가지고 각도를 계산 하기
 		_float fRadian = XMVector3AngleBetweenNormals(vDir1, vDir2).m128_f32[0];
 
-		// 외적으로 방향 찾기
+		// 외적으로 방향 찾기 , xz 평면의 두 각도라고 가정
 		_float  vCross = XMVector3Cross(vDir1, vDir2).m128_f32[1];
 
 		// 각도를 -180 ~ 180도 사이로 세팅

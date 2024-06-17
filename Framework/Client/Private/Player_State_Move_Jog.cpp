@@ -11,11 +11,8 @@ CPlayer_State_Move_Jog::CPlayer_State_Move_Jog(CPlayer* pPlayer)
 void CPlayer_State_Move_Jog::OnStateEnter()
 {
 	m_pPlayer->Get_Body_Model()->Set_Loop(0, false);
-	m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
-	m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
 	m_dwDirection = 0;
 	m_fDegree = 0.f;
-
 }
 
 void CPlayer_State_Move_Jog::OnStateUpdate(_float fTimeDelta)
@@ -72,17 +69,17 @@ void CPlayer_State_Move_Jog::Update_KeyInput()
 
 void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 {
-
 #pragma region Start
-
-
 	if (!(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) >= 15 &&
-		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) <= 26) /*||
-		(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::JOG_STRAIGHT_LOOP && abs(m_fDegree) > 80) */) {
+		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) <= 26) ||
+		(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::JOG_STRAIGHT_LOOP && abs(m_fDegree) > 80) ) {
 
-		//m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
+		m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
 		m_pPlayer->Get_Body_Model()->Set_Loop(0, false);
 		m_pPlayer->Get_Body_Model()->Set_Loop(1, false);
+
+		m_pPlayer->Get_Body_Model()->Set_TrackPosition(0, 0)	;
+		m_pPlayer->Get_Body_Model()->Set_TrackPosition(1, 0);
 
 		if (fabsf(m_fDegree) <= 90.f) {
 			if (m_fDegree < 0.f) {
@@ -113,22 +110,36 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, fRatio);
 		}
 
-		m_pPlayer->Get_Body_Model()->Set_TrackPosition(0, 0.f);
-		m_pPlayer->Get_Body_Model()->Set_TrackPosition(1,0.f);
 	}
 
 #pragma endregion
 
 #pragma region LOOP
+	else{
+		_uint iCurrentAnimIndex = m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0);
 
-	else if (m_pPlayer->Get_Body_Model()->isFinished(0) || m_pPlayer->Get_Body_Model()->isFinished(1)) {
-		m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_STRAIGHT_LOOP);
-		m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
-		m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.1f);
+		// 오른발 달리기 시작과 왼발 달리기 시작일때 애니메이션 변경 타이밍을 다르게 처리할 것 
+		if ((CPlayer::JOG_START_R0 <= iCurrentAnimIndex && iCurrentAnimIndex <= CPlayer::JOG_START_R180 &&
+			m_pPlayer->Get_Body_Model()->Get_TrackPosition(0) >= 56 ) ||
+			(CPlayer::JOG_START_L0 <= iCurrentAnimIndex && iCurrentAnimIndex <= CPlayer::JOG_START_L180 &&
+				m_pPlayer->Get_Body_Model()->Get_TrackPosition(0) >= 36)	) {
+				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_STRAIGHT_LOOP);
+				m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
+				m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
 
-		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
-		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 0.2);
+		}
+
 	}
+	//else if (m_pPlayer->Get_Body_Model()->isFinished(0) || m_pPlayer->Get_Body_Model()->isFinished(1)) {
+	//	m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_STRAIGHT_LOOP);
+	//	m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
+	//	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
+
+	//	m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
+	//	m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
+	//}
 
 #pragma endregion
 	
