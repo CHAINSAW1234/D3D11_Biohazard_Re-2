@@ -61,8 +61,8 @@ HRESULT CZombie::Initialize(void * pArg)
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
 #pragma region AIController Setup
-	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this,1.f,0.35f,m_pTransformCom
-		, m_pBodyModel->GetBoneVector(),"../Bin/Resources/Models/Ex_Default_Zombie/Body.fbx");
+	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this, 1.f, 0.35f, m_pTransformCom
+		, m_pBodyModel->GetBoneVector(), "../Bin/Resources/Models/Ex_Default_Zombie/Body.fbx");
 
 	m_pPathFinder = m_pGameInstance->Create_PathFinder();
 
@@ -103,7 +103,8 @@ void CZombie::Tick(_float fTimeDelta)
 	_float4			vDirection = {};
 	_vector			vRootMoveDir = { XMLoadFloat3(&m_vRootTranslation) };
 	XMStoreFloat4(&vDirection, vRootMoveDir);
-	m_pController->Move(vDirection, fTimeDelta);
+	if(m_pController)
+		m_pController->Move(vDirection, fTimeDelta);
 
 #pragma region 길찾기 임시 코드
 	//if (m_bArrived == false)

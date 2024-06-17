@@ -54,8 +54,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
-
-	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.3f, 5.f, 1.f), &m_iIndex_CCT, this, 1.f, 0.45f,m_pTransformCom,
+	m_pController = m_pGameInstance->Create_Controller(_float4(0.f, 0.3f, 5.f, 1.f), &m_iIndex_CCT, this, 1.f, 0.45f, m_pTransformCom,
 		m_pBodyModel->GetBoneVector(), "None");
 
 	//For Camera.
@@ -335,7 +334,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	if (m_pController)
 		m_pController->Update_Collider();
 
-	//	Turn_Spine(fTimeDelta);		// 특정 조건에서 뼈를 돌림
+	Turn_Spine(fTimeDelta);		// 특정 조건에서 뼈를 돌림
 
 #pragma region 예은 추가
 	Col_Section();
