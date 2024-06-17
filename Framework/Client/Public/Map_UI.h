@@ -30,6 +30,9 @@ public :
 	void			Mouse_Pos(_float fTimeDelta);
 	void			Transform_Adjustment();
 	void			EX_ColorChange();
+	void			Render_Condition();
+
+	void			Search_TabWindow();
 
 private :
 	_uint			m_iWhichChild = { 0 };
@@ -38,7 +41,8 @@ private :
 	_bool			m_isGara = { false };
 
 private :
-	MAP_STATE_TYPE	m_eMapState = { MAP_STATE_TYPE::NONE_STATE };
+	MAP_STATE_TYPE		m_eMapState = { MAP_STATE_TYPE::NONE_STATE };
+	CGameObject*		m_pTab_Window = { nullptr };
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

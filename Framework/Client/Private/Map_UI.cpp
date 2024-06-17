@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Map_UI.h"
+#include "Tab_Window.h"
 
 #define RED         _float4(0.8, 0, 0, 0)
 #define BLUE        _float4(0.0, 0.7569, 0.85, 0.0)
@@ -51,25 +52,27 @@ HRESULT CMap_UI::Initialize(void* pArg)
         }
     }
 
-   
+    m_isRender = false;
+    Search_TabWindow();
     return S_OK;
 }
 
 void CMap_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
-    
+
     // ¿¹ºñ
     if (false == m_isGara)
     {
         Search_Map_Type(MAP_STATE_TYPE::SEARCH_CLEAR_STATE, MAIN_HOLL);
         Search_Map_Type(MAP_STATE_TYPE::SEARCH_STATE, ENTRANCE);
     }
-   
 
+    Render_Condition();
     Transform_Adjustment();
     Mouse_Pos(fTimeDelta);
 
+    
 }
 
 void CMap_UI::Late_Tick(_float fTimeDelta)
@@ -232,6 +235,44 @@ void CMap_UI::EX_ColorChange()
         }
     }
 }
+
+void CMap_UI::Render_Condition()
+{
+    if (nullptr == m_pTab_Window)
+        Search_TabWindow();
+
+    CTab_Window* pTab = dynamic_cast<CTab_Window*>(m_pTab_Window);
+
+    if(nullptr != pTab)
+    {
+        if (true == *pTab->Get_MinMapRender())
+        {
+            if ((true == m_IsChild && CCustomize_UI::MAP_UI_TYPE::MAIN_MAP == m_eMapComponent_Type ) || CCustomize_UI::MAP_UI_TYPE::MASK_MAP == m_eMapComponent_Type)
+                m_isRender = true;
+        }
+        else
+            m_isRender = false;
+    }
+}
+
+void CMap_UI::Search_TabWindow()
+{
+    list<CGameObject*>* pTab_Window_List = m_pGameInstance->Find_Layer(m_pGameInstance->Get_CurrentLevel(), TEXT("Layer_UI"));
+
+    if(nullptr != pTab_Window_List)
+    {
+        for (auto& iter : *pTab_Window_List)
+        {
+            m_pTab_Window = dynamic_cast<CTab_Window*>(iter);
+
+            if (nullptr != m_pTab_Window)
+            {
+                Safe_AddRef(m_pTab_Window);
+                return;
+            }
+        }
+    }
+}
    
 
 CCustomize_UI* CMap_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -264,6 +305,8 @@ CGameObject* CMap_UI::Clone(void* pArg)
 
 void CMap_UI::Free()
 {
+    Safe_Release(m_pTab_Window);
+
     __super::Free();
 
 }

@@ -23,6 +23,9 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+public :
+	_bool*	Get_MinMapRender() { return &m_isMapRender; }
+
 private:
 	class CButton_UI* m_pMapButton = { nullptr };
 	class CButton_UI* m_pInvenButton = { nullptr };
@@ -32,6 +35,7 @@ private:
 
 private:
 	WINDOW_TYPE m_eWindowType = { INVENTORY };
+	_bool		m_isMapRender = { false };
 
 private:
 	HRESULT Add_Components();

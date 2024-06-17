@@ -3,8 +3,9 @@
 #include "Crosshair_UI.h"
 #include "Camera_Free.h"
 
-#define Deceleration 0.6f /* 감속 */
+#define Deceleration 0.9f /* 감속 */
 #define Zero 0
+#define FIXED_TIME 0.5f
 
 CCrosshair_UI::CCrosshair_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CCustomize_UI{ pDevice, pContext }
@@ -91,7 +92,7 @@ HRESULT CCrosshair_UI::Initialize(void* pArg)
     }
 
     m_isRender = false;
-
+   
     return S_OK;
 }
 
@@ -157,42 +158,60 @@ void CCrosshair_UI::Aiming(_float fTimeDelta)
     m_fCrosshair_Timer += fTimeDelta * m_fCrosshair_AccTimer;
 
     /* Crosshair를 고정시켜야 할 때 */
-    if (m_fCrosshair_Timer >= 0.8f)
+    if (m_fCrosshair_Timer >= FIXED_TIME)
     {
         if (false == m_IsChild)
             m_isRender = true;
 
-        else if (true == m_IsChild)
+        else if (true == m_IsChild) 
         {
             if (m_eCrosshair_Type == CROSSHAIR_TYPE::CROSSHAIR_LEFT)
             {
                 if (vCrosshair_Trans.x <= m_fCorsshair_AimPoint.x)
-                    vCrosshair_Trans.x += m_fCrosshair_Timer * 2.f;
+                {
+                    vCrosshair_Trans.x += m_fCrosshair_Timer * 4.f;
+                    vCrosshair_Scale.x -= 1.3f;
+                }
             }
 
             else if (m_eCrosshair_Type == CROSSHAIR_TYPE::CROSSHAIR_RIGHT)
             {
                 if (vCrosshair_Trans.x >= m_fCorsshair_AimPoint.x)
-                    vCrosshair_Trans.x -= m_fCrosshair_Timer * 2.f;
+                {
+                    vCrosshair_Trans.x -= m_fCrosshair_Timer * 4.f;
+                    vCrosshair_Scale.x -= 1.3f;
+                }
             }
 
             else if (m_eCrosshair_Type == CROSSHAIR_TYPE::CROSSHAIR_UP)
             {
                 if (vCrosshair_Trans.y <= m_fCorsshair_AimPoint.y)
-                    vCrosshair_Trans.y += m_fCrosshair_Timer * 2.f;
+                {
+                    vCrosshair_Trans.y += m_fCrosshair_Timer * 4.f;
+                    vCrosshair_Scale.x -= 1.3f;
+                }
             }
 
             else if (m_eCrosshair_Type == CROSSHAIR_TYPE::CROSSHAIR_DOWN)
             {
                 if (vCrosshair_Trans.y >= m_fCorsshair_AimPoint.y)
-                    vCrosshair_Trans.y -= m_fCrosshair_Timer * 2.f;
+                {
+                    vCrosshair_Trans.y -= m_fCrosshair_Timer * 4.f;
+                    vCrosshair_Scale.x -= 1.3f;
+                }
             }
 
             m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCrosshair_Trans);
 
             /* Crosshair Min Scaled Fixed */
-            m_pTransformCom->Set_Scaled(m_fFixed_MinScaled.x, m_fFixed_MinScaled.y, m_fFixed_MinScaled.z);
+            
+
+
+            m_pTransformCom->Set_Scaled(vCrosshair_Scale.x, vCrosshair_Scale.y, vCrosshair_Scale.z);
+            m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCrosshair_Trans);
+            m_fFixed_MinScaled = vCrosshair_Scale;
         }
+
         return;
     }
 
