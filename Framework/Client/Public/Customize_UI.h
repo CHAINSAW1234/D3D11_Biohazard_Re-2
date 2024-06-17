@@ -17,6 +17,7 @@ public :
 	enum class ITEM_BOX_TYPE { DEFAULT_BOX, SELECT_BOX, END_BOX };
 	enum class HPBAR_TYPE { MAIN_BAR, BACKGROUND_BAR, END_BAR };
 	enum class INVENTORY_TYPE { MAIN_INVEN, SUB_INVEN, END_INVEN };
+	enum class MAP_UI_TYPE { MAIN_MAP, MASK_MAP, FONT_MAP, FONT_MASK_MAP, END_MAP };
 
 	typedef struct color
 	{
@@ -85,6 +86,9 @@ public :
 		ITEM_BOX_TYPE					eBox_Type;
 		HPBAR_TYPE						eHPBar_Type;
 		INVENTORY_TYPE					eInventory_Type;
+
+		LOCATION_MAP_VISIT				eMapUI_Type;
+		MAP_UI_TYPE						eMapComponent_Type;
 
 	}CUSTOM_UI_DESC;
 
@@ -264,6 +268,11 @@ public:// for. Set inline
 
 	void Set_IsLoad(_bool IsLoad);
 
+	void Set_Text(_uint iTextNum, wstring wstrSetText)
+	{
+		m_vecTextBoxes[iTextNum]->Set_Text(wstrSetText);
+	}
+
 public:/* for.Get Inline */
 	_float4x4* Get_StoreTransform(_uint i) { return &m_SavePos[i]; }
 	/* 현재 타이머*/
@@ -432,6 +441,11 @@ protected : /* Client*/
 	_bool						m_isLight = {};
 
 	_bool						m_isKeepPlay = {};
+
+	/* Map */
+	LOCATION_MAP_VISIT			m_eMap_Location = { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
+	MAP_UI_TYPE					m_eMapComponent_Type = { MAP_UI_TYPE::END_MAP };
+
 public:
 	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	//생성한 객체를 포인터로 받고싶으면 사용하시오

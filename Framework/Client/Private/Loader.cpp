@@ -38,6 +38,7 @@
 #include "Inventory_Item_UI.h"
 #include "Tab_Window.h"
 #include "Button_UI.h"
+#include "Inventory_Slot.h"
 #include "Crosshair_UI.h"
 #include "Cursor_UI.h"
 #include "HPBar_UI.h"
@@ -46,7 +47,9 @@
 #include "MissionBar_UI.h"
 #include "Tutorial_UI.h"
 #include "Selector_UI.h"
-#include "InventorySelect.h"
+#include "Slot_Highlighter.h"
+#include "Item_UI.h"
+#include "Map_UI.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -257,9 +260,24 @@ HRESULT CLoader::Load_Prototype()
 		CButton_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_InventorySelect */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_InventorySelect"),
-		CInventorySelect::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_InventorySlot */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_InventorySlot"),
+		CInventory_Slot::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_SlotHighlighter */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SlotHighlighter"),
+		CSlot_Highlighter::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_ItemUI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ItemUI"),
+		CItem_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
+	/* For.Prototype_GameObject_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Map_UI"),
+		CMap_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
 #pragma endregion

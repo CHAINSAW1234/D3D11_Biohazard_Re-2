@@ -56,6 +56,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 		if (false == m_bDead)
 		{
 			m_bDead = true;
+			m_isMapRender = false;
 			m_pHintButton->Set_Dead(m_bDead);
 			m_pInvenButton->Set_Dead(m_bDead);
 			m_pMapButton->Set_Dead(m_bDead);
@@ -80,12 +81,14 @@ void CTab_Window::Tick(_float fTimeDelta)
 		if (true == m_pMapButton->IsMouseHover())
 		{
 			m_eWindowType = MINIMAP;
+			m_isMapRender = true;
 			m_pInventory_Manager->Set_OnOff_Inven(true);
 		}
 
 		else if (true == m_pInvenButton->IsMouseHover())
 		{
 			m_eWindowType = INVENTORY;
+			m_isMapRender = false;
 			m_pInventory_Manager->Set_OnOff_Inven(false);
 
 		}
@@ -93,6 +96,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 		else if (true == m_pHintButton->IsMouseHover())
 		{
 			m_eWindowType = HINT;
+			m_isMapRender = false;
 			m_pInventory_Manager->Set_OnOff_Inven(true);
 		}
 	}
