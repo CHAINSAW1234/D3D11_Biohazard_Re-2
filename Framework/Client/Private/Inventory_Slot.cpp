@@ -34,7 +34,6 @@ void CInventory_Slot::Tick(_float fTimeDelta)
 		return;
 
 	__super::Tick(fTimeDelta);
-
 }
 
 void CInventory_Slot::Late_Tick(_float fTimeDelta)

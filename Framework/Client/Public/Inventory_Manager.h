@@ -4,7 +4,7 @@
 #include "Client_Defines.h"
 #include "Button_UI.h"
 #include "Inventory_Slot.h"
-#include "InventorySelect.h"
+#include "Slot_Highlighter.h"
 #include "Item_UI.h"
 
 BEGIN(Client)
@@ -24,6 +24,7 @@ public:
 	void Late_Tick(_float fTimeDelta);
 
 public:
+	//Set_Dead호출이라 m_bDead기준으로 변수 줄것
 	void Set_OnOff_Inven(_bool bInput);
 
 private:
@@ -32,16 +33,16 @@ private:
 	CGameInstance*					m_pGameInstance = { nullptr }; 
 
 private:
-	vector<CInventory_Slot*>		m_vecInventoryUI;
+	vector<CInventory_Slot*>		m_vecInvenSlot;
 	vector<CItem_UI*>				m_vecItem_UI;
 
-	CInventorySelect*				m_pSelectBox = { nullptr };
-	CTransform*						m_pSelectBoxTransform = { nullptr };
+	CSlot_Highlighter*				m_pSlotHighlighter = { nullptr };
+	CTransform*						m_pSlotHighlighterTransform = { nullptr };
+	_float4							m_fSlotHighlighterResetPos = {};
 
-	_uint							m_iInvenNum = { 8 };
+	_uint							m_iInvenCount = { 8 };
 
-	_float2							m_fRectInterval = { 74.f, 76.f };
-	_float4							m_fSelectBoxResetPos = {};
+	_float2							m_fSlotInterval = { 74.f, 76.f };
 
 public:
 	HRESULT Create_InvenUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval);

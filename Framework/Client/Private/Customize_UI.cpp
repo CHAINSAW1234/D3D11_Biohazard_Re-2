@@ -155,31 +155,6 @@ void CCustomize_UI::Tick(_float fTimeDelta)
 
 void CCustomize_UI::Late_Tick(_float fTimeDelta)
 {
-	/* Frame Work에서 사용 시 값이 뒤틀림 */
-	//if (0 != m_vecChildUI.size())
-	//{
-	//	for (auto& iter : m_vecChildUI)
-	//	{
-	//		if (nullptr != iter)
-	//		{
-	//			dynamic_cast<CCustomize_UI*>(iter)->Move_State(ComputeMovement(CUI::UISTATE_POS), CUI::UISTATE_POS);
-	//			dynamic_cast<CCustomize_UI*>(iter)->Move_State(ComputeMovement(CUI::UISTATE_SCALE), CUI::UISTATE_SCALE);
-	//		}
-	//	}
-	//}
-
-	//if (0 != m_vecTextBoxes.size())
-	//{
-	//	for (auto& iter : m_vecTextBoxes)
-	//	{
-	//		if (nullptr != iter)
-	//		{
-	//			iter->Move_State(ComputeMovement(CUI::UISTATE_POS), CUI::UISTATE_POS);
-	//			iter->Move_State(ComputeMovement(CUI::UISTATE_SCALE), CUI::UISTATE_SCALE);
-	//		}
-	//	}
-	//}
-
 	__super::Late_Tick(fTimeDelta);
 
 	for (auto& iter : m_vecTextBoxes)

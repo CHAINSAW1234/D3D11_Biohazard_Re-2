@@ -240,65 +240,65 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	ifstream inputFileStream;
 	wstring selectedFilePath;
 
-	/* 1. Crosshair */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Crosshair.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Crosshair_UI"), m_pDevice, m_pContext);
+	///* 1. Crosshair */
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Crosshair.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Crosshair_UI"), m_pDevice, m_pContext);
 
-	///* 2. Cursor */
-	////selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Cursor.dat");
-	////inputFileStream.open(selectedFilePath, ios::binary);
-	////UI_Distinction(selectedFilePath);
-	////CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	/////* 2. Cursor */
+	//////selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Cursor.dat");
+	//////inputFileStream.open(selectedFilePath, ios::binary);
+	//////UI_Distinction(selectedFilePath);
+	//////CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
-	/* 3. Inventory_Item*/
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_Item.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
-
-	///* 4. UI_MainHP */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/MainHPBar_UI.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
-
-	 /*5. BackGroundHPBar_UI */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/BackGroundHPBar_UI.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
-
-	/* 5. Bullet_UI */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Bullet_UI.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
-
-	/* 5. Title */
-	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Title_UI.dat");
+	///* 3. Inventory_Item*/
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_Item.dat");
 	//inputFileStream.open(selectedFilePath, ios::binary);
 	//UI_Distinction(selectedFilePath);
 	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
-	/* 5. UI_Sub_Inventory */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Sub_Inventory.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
-	
-	/* 5. UI_MissionBar */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_MissionBar.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	/////* 4. UI_MainHP */
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/MainHPBar_UI.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
-	/* 4. Inventory SelectBox */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_SelectBox.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	// /*5. BackGroundHPBar_UI */
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/BackGroundHPBar_UI.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+
+	///* 5. Bullet_UI */
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Bullet_UI.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+
+	///* 5. Title */
+	////selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Title_UI.dat");
+	////inputFileStream.open(selectedFilePath, ios::binary);
+	////UI_Distinction(selectedFilePath);
+	////CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+
+	///* 5. UI_Sub_Inventory */
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Sub_Inventory.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	//
+	///* 5. UI_MissionBar */
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_MissionBar.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+
+	///* 4. Inventory SelectBox */
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_SelectBox.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
 	/* 7. Tab_Widow */
 	CUI::UI_DESC UIDesc = {};
@@ -313,11 +313,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	//UI_Distinction(selectedFilePath);
 	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
-	/* 8. UI_Selecter */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Selector.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
+	///* 8. UI_Selecter */
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Selector.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, (""), nullptr, selectedFilePath);
 
 	
 	return S_OK;

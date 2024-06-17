@@ -42,7 +42,7 @@
 #include "MissionBar_UI.h"
 #include "Tutorial_UI.h"
 #include "Selector_UI.h"
-#include "InventorySelect.h"
+#include "Slot_Highlighter.h"
 #include "Item_UI.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -259,9 +259,9 @@ HRESULT CLoader::Load_Prototype()
 		CInventory_Slot::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_InventorySelect */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_InventorySelect"),
-		CInventorySelect::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_SlotHighlighter */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SlotHighlighter"),
+		CSlot_Highlighter::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_ItemUI */

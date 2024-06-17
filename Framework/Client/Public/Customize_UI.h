@@ -264,6 +264,11 @@ public:// for. Set inline
 
 	void Set_IsLoad(_bool IsLoad);
 
+	void Set_Text(_uint iTextNum, wstring wstrSetText)
+	{
+		m_vecTextBoxes[iTextNum]->Set_Text(wstrSetText);
+	}
+
 public:/* for.Get Inline */
 	_float4x4* Get_StoreTransform(_uint i) { return &m_SavePos[i]; }
 	/* 현재 타이머*/

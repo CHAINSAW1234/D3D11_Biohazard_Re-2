@@ -24,6 +24,7 @@ HRESULT CItem_UI::Initialize(void* pArg)
 		if (FAILED(__super::Initialize(pArg)))
 			return E_FAIL;
 
+		m_isLoad = false;
 
 		m_bDead = true;
 	}
@@ -44,7 +45,10 @@ void CItem_UI::Tick(_float fTimeDelta)
 	else
 	{
 		for (auto& iter : m_vecChildUI)
+		{
 			iter->Set_Dead(false);
+			dynamic_cast<CCustomize_UI*>(iter)->Set_Text(0, to_wstring(m_iItemCount));
+		}
 	}
 
 
@@ -56,8 +60,6 @@ void CItem_UI::Late_Tick(_float fTimeDelta)
 	if (true == m_bDead)
 		return;
 
-	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
-
 	__super::Late_Tick(fTimeDelta);
 }
 
@@ -66,6 +68,27 @@ HRESULT CItem_UI::Render()
 	__super::Render();
 
 	return S_OK;
+}
+
+void CItem_UI::Reset_Item()
+{
+	m_bDead = true;
+
+	m_isWorking = false;
+
+	m_eItemNumber = ITEM_NUMBER_END;
+
+	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
+
+	m_eInvenItemType = INVEN_ITEM_TYPE_END;
+}
+
+void CItem_UI::Set_Item(ITEM_NUMBER eItmeNum, INVEN_ITEM_TYPE eItmeType)
+{
+	m_eItemNumber = eItmeNum;
+	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
+
+	m_eInvenItemType = eItmeType;
 }
 
 CItem_UI* CItem_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
