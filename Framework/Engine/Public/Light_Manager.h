@@ -16,7 +16,7 @@ public:
 	HRESULT Add_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _float fFovY, _float fAspect, _float fNearZ, _float fFarZ);
 	HRESULT Add_Light_Layer(const wstring& strLightTag);
 	list<LIGHT_DESC*>* Get_Light_List(const wstring& strLightTag);
-	HRESULT Update_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _uint iIndex);
+	HRESULT Update_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _uint iIndex, _float fLerp);
 	HRESULT Render(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
 
 public:

@@ -114,7 +114,7 @@ public: /* For.Light_Manager */
 	HRESULT									Add_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _float fFovY = XMConvertToRadians(90.f), _float fAspect = 1, _float fNearZ = 0.01, _float fFarZ = 1000);
 	HRESULT									Add_Light_Layer(const wstring& strLightTag);
 	list<LIGHT_DESC*>*						Get_Light_List(const wstring& strLightTag);
-	HRESULT									Update_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _uint iIndex);
+	HRESULT									Update_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _uint iIndex, _float fLerp = 0.1f);
 	HRESULT									Render_Lights(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
 #pragma endregion
 

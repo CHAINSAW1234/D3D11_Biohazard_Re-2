@@ -378,7 +378,7 @@ void CPlayer::Late_Tick_PartObjects(_float fTimeDelta)
 #pragma region 예은 추가
 void CPlayer::Col_Section()
 {
-	/*list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider"));
+	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider"));
 	if(pCollider == nullptr)
 		return;
 	for (auto& iter: *pCollider)
@@ -391,7 +391,7 @@ void CPlayer::Col_Section()
 			m_iDir = pColCom->Get_Dir();
 
 		}
-	}*/
+	}
 }
 
 #pragma endregion

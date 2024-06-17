@@ -9,6 +9,8 @@
 #include "Customize_UI.h"
 #include "Inventory_Item_UI.h"
 
+/* Player */
+#include "Player.h"
 
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel{ pDevice, pContext }
@@ -35,8 +37,8 @@ HRESULT CLevel_GamePlay::Initialize()
  	if (FAILED(Ready_Layer_UI(TEXT(""))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_RegionCollider()))
-	//	return E_FAIL;
+	if (FAILED(Ready_RegionCollider()))
+		return E_FAIL;
 
 
 	return S_OK;
@@ -49,6 +51,44 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
 	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));	
 	
+	/*(임시) 이벤트 처리 구간*/
+	_bool bGoal = { false };
+	_float4 vGoal = { 0.f,0.f,0.f,0.f };
+	CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+	iCurIndex = pPlayer->Get_Player_ColIndex();
+	if (iCurIndex!= iPreIndex)
+	{
+		LIGHT_DESC* plight_desc = m_pGameInstance->Get_Light_List(g_strDirectionalTag)->front();
+		LIGHT_DESC light_desc = *plight_desc;
+		if (iCurIndex == 2)
+		{
+			light_desc.vDiffuse = _float4(0.2f, 0.2f, 0.2f, 0.2f);
+			light_desc.vAmbient = _float4(0.2f, 0.2f, 0.2f, 0.2f);
+			if (plight_desc->vDiffuse.x < 0.22f && plight_desc->vDiffuse.x > 0.18f)
+				iPreIndex = iCurIndex;
+			
+			m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta);
+		}
+		else if(iCurIndex == 3)
+		{
+			light_desc.vDiffuse = _float4(0.05f, 0.05f, 0.09f, 0.05f);
+			light_desc.vAmbient = _float4(0.05f, 0.05f, 0.09f, 0.05f);
+			if (plight_desc->vDiffuse.x < 0.07f && plight_desc->vDiffuse.x > 0.03f)				
+				iPreIndex = iCurIndex;
+			
+			m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta*2.f);
+		}
+		else if (iCurIndex == 0)
+		{
+			light_desc.vDiffuse = _float4(0.4f, 0.4f, 0.4f, 0.4f);
+			light_desc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 0.4f);
+			if (plight_desc->vDiffuse.x < 0.42f && plight_desc->vDiffuse.x > 0.38f)
+				iPreIndex = iCurIndex;
+			
+			m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta);
+		}
+		
+	}
 }
 
 HRESULT CLevel_GamePlay::Render()
@@ -72,53 +112,56 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	//LightDesc.fRange = 1000000.f;
 
-	LightDesc.vDiffuse = _float4(.5f, .5f, .5f, 1.f);
+	LightDesc.vDiffuse = _float4(.4f, .4f, .4f, 1.f);
 	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 0.4f, 0.4f, 1.f);
 
 	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
 		return E_FAIL;
 
-	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
-	LightDesc.bShadow = true;
-	LightDesc.vPosition =_float4(-2.f, 3.f, 0.f, 1.f);
-	LightDesc.fRange = 5.f;
+	//LightDesc.eType = LIGHT_DESC::TYPE_POINT;
+	//LightDesc.bShadow = true;
+	//LightDesc.vPosition =_float4(-2.f, 3.f, 0.f, 1.f);
+	//LightDesc.fRange = 5.f;
 
-	LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.f, 0.f, 0.f, 1.f);
-	LightDesc.vSpecular = _float4(1.f, 0.4f, 0.4f, 1.f);
-	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
-		return E_FAIL;
-
-	LightDesc.eType = LIGHT_DESC::TYPE_POINT;
-	LightDesc.bShadow = true;
-	LightDesc.vPosition = _float4(2.f, 3.f, 0.f, 1.f);
-	LightDesc.fRange = 5.f;
-
-	LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
-	LightDesc.vAmbient = _float4(0.f, 0.f, 0.f, 1.f);
-	LightDesc.vSpecular = _float4(0.4f, 1.f, 0.4f, 1.f);
-	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
-		return E_FAIL;
-
-	LightDesc.eType = LIGHT_DESC::TYPE_SPOT;
-	LightDesc.bShadow = true;
-	LightDesc.vPosition = _float4(0, 4.f, -2.f, 1.f);
-
-	LightDesc.fRange = 6.f;
-	LightDesc.vDirection = _float4(0.f,-1.f, 0.f,0.f);
-	LightDesc.fCutOff = XMConvertToRadians(30.f);
-	LightDesc.fOutCutOff = XMConvertToRadians(40.f);
-
-	LightDesc.vDiffuse = _float4(0.f, 0.f, 1.f, 1.f);
-	LightDesc.vAmbient = _float4(0.2f, 0.2f, 0.4f, 1.f);
-	LightDesc.vSpecular = _float4(0.4f, 0.4f, 1.f, 1.f);
-	
-	if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_SPOT"), LightDesc)))
-		return E_FAIL;
-
-	//if (FAILED(Load_Light(TEXT("../Bin/Data/Level_0"), LEVEL_GAMEPLAY)))
+	//LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
+	//LightDesc.vAmbient = _float4(0.f, 0.f, 0.f, 1.f);
+	//LightDesc.vSpecular = _float4(1.f, 0.4f, 0.4f, 1.f);
+	//if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
 	//	return E_FAIL;
+
+	//LightDesc.eType = LIGHT_DESC::TYPE_POINT;
+	//LightDesc.bShadow = true;
+	//LightDesc.vPosition = _float4(2.f, 3.f, 0.f, 1.f);
+	//LightDesc.fRange = 5.f;
+
+	//LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
+	//LightDesc.vAmbient = _float4(0.f, 0.f, 0.f, 1.f);
+	//LightDesc.vSpecular = _float4(0.4f, 1.f, 0.4f, 1.f);
+	//if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
+	//	return E_FAIL;
+
+	//LightDesc.eType = LIGHT_DESC::TYPE_SPOT;
+	//LightDesc.bShadow = true;
+	//LightDesc.vPosition = _float4(0, 4.f, -2.f, 1.f);
+
+	//LightDesc.fRange = 6.f;
+	//LightDesc.vDirection = _float4(0.f,-1.f, 0.f,0.f);
+	//LightDesc.fCutOff = XMConvertToRadians(30.f);
+	//LightDesc.fOutCutOff = XMConvertToRadians(40.f);
+
+	//LightDesc.vDiffuse = _float4(0.f, 0.f, 1.f, 1.f);
+	//LightDesc.vAmbient = _float4(0.2f, 0.2f, 0.4f, 1.f);
+	//LightDesc.vSpecular = _float4(0.4f, 0.4f, 1.f, 1.f);
+	//
+	//if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_SPOT"), LightDesc)))
+	//	return E_FAIL;
+
+
+
+	if (FAILED(Load_Light(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -207,7 +250,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_RegionCollider()
 {
-	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_0"), TEXT("Layer_Collider"))))
+	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_Collider"))))
 		return E_FAIL;
 
 	return S_OK;
