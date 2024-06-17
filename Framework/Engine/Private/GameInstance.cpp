@@ -718,12 +718,12 @@ list<LIGHT_DESC*>* CGameInstance::Get_Light_List(const wstring& strLightTag)
 	return m_pLight_Manager->Get_Light_List(strLightTag);
 }
 
-HRESULT CGameInstance::Update_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _uint iIndex)
+HRESULT CGameInstance::Update_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _uint iIndex, _float fLerp)
 {
 	if (nullptr == m_pLight_Manager)
 		return E_FAIL;
 
-	return m_pLight_Manager->Update_Light(strLightTag, LightDesc, iIndex);
+	return m_pLight_Manager->Update_Light(strLightTag, LightDesc, iIndex, fLerp);
 }
 
 HRESULT CGameInstance::Render_Lights(CShader* pShader, CVIBuffer_Rect* pVIBuffer)

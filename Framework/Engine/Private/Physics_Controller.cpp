@@ -39,6 +39,9 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	sceneDesc.cpuDispatcher = m_Dispatcher;
 	sceneDesc.filterShader = MegamotionFilterShader;
 	
+	PxCudaContextManagerDesc cudaContextManagerDesc;
+	PxCudaContextManager* cudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc);
+
 	//Call Back
 	m_EventCallBack = new CEventCallBack();
 	m_FilterCallBack = new CFilterCallBack();
