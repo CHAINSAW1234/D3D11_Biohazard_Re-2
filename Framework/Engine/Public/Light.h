@@ -26,7 +26,7 @@ public:
 
 public:
 	HRESULT						Initialize();
-	HRESULT						Update(const LIGHT_DESC& Light_Desc, _uint iIndex);
+	HRESULT						Update(const LIGHT_DESC& Light_Desc, _uint iIndex, _float fLerp);
 	HRESULT						Render(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
 
 private:

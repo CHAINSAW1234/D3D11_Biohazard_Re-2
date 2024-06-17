@@ -62,13 +62,13 @@ HRESULT CLight_Manager::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 	return S_OK;
 }
 
-HRESULT CLight_Manager::Update_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _uint iIndex)
+HRESULT CLight_Manager::Update_Light(const wstring& strLightTag, const LIGHT_DESC& LightDesc, _uint iIndex,_float fLerp)
 {
 	CLight* pLight = Find_Light(strLightTag);
 	if (pLight == nullptr)
 		return E_FAIL;
 
-	return pLight->Update(LightDesc, iIndex);
+	return pLight->Update(LightDesc, iIndex, fLerp);
 }
 
 list<LIGHT_DESC*>* CLight_Manager::Get_Light_List(const wstring& strLightTag)
