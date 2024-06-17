@@ -329,4 +329,5 @@ CGameObject* CBullet_UI::Clone(void* pArg)
 void CBullet_UI::Free()
 {
     __super::Free();
+
 }

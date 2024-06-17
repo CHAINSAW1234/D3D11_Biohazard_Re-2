@@ -390,6 +390,9 @@
     <ClInclude Include="..\public\Item_UI.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Item_UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Map_UI.h">
+      <Filter>02.GameObjects\UI\9. Inventory\2. Map</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -559,6 +562,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Item_UI.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Item_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Map_UI.cpp">
+      <Filter>02.GameObjects\UI\9. Inventory\2. Map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

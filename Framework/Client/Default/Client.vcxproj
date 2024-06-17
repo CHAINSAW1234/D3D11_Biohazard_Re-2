@@ -203,6 +203,7 @@
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\Map.h" />
+    <ClInclude Include="..\Public\Map_UI.h" />
     <ClInclude Include="..\Public\MissionBar_UI.h" />
     <ClInclude Include="..\Public\Monster.h" />
     <ClInclude Include="..\Public\MoveTo_Zombie.h" />
@@ -263,6 +264,7 @@
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\Private\Map.cpp" />
+    <ClCompile Include="..\Private\Map_UI.cpp" />
     <ClCompile Include="..\Private\MissionBar_UI.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\Private\MoveTo_Zombie.cpp" />
