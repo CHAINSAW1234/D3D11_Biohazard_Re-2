@@ -1034,7 +1034,8 @@ void CRagdoll_Physics::ResetForce()
 
 void CRagdoll_Physics::Add_Force(_float4 vForce)
 {
-	vForce = vForce * 100.f;
+	auto fPower = rand() % 100;
+	vForce = vForce * (fPower + 50.f);
 	PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
 	m_Chest->addForce(pxForce, PxForceMode::eIMPULSE);
 }
