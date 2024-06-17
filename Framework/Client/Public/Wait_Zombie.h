@@ -19,13 +19,20 @@ public:
 
 	virtual void					Execute() override;
 
+private:
+	void							Change_Animation();
+
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard)
 	{
 		m_pBlackBoard = pBlackBoard;
 	}
-protected:
+private:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
+
+private:	/* For. Active FirstTime */
+	_bool							m_isWake = { false };
+
 public:
 	static CWait_Zombie* Create();
 

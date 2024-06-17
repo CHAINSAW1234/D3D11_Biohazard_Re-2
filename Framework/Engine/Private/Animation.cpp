@@ -273,6 +273,48 @@ KEYFRAME CAnimation::Get_FirstKeyFrame(_uint iBoneIndex)
 	return FirstKeyFrame;
 }
 
+KEYFRAME CAnimation::Get_CurrentKeyFrame(_uint iBoneIndex, _float fTrackPosition)
+{
+	KEYFRAME				CurrentKeyFrame;
+	_int			iChannelIndex = { Find_ChannelIndex(iBoneIndex) };
+	if (-1 == iChannelIndex)
+	{
+		return CurrentKeyFrame;
+	}
+
+	vector<KEYFRAME>		KeyFrames = m_Channels[static_cast<_uint>(iChannelIndex)]->Get_KeyFrames();
+	_uint					iNumKeyFrame = { static_cast<_uint>(KeyFrames.size()) };
+
+	for (_uint i = 0; i < iNumKeyFrame - 1; ++i)
+	{
+		_float				fStartTime = { KeyFrames[i].fTime };
+		_float				fFinishTime = { KeyFrames[i + 1].fTime };
+
+		if (fStartTime > fTrackPosition || fFinishTime <= fFinishTime)
+			continue;
+
+		_float				fLength = { fFinishTime - fStartTime };
+		_float				fRatio = { (fTrackPosition - fStartTime) / fLength };
+
+		_vector				vScale, vQuaternion, vTranslation;
+		vScale = XMVectorLerp(XMLoadFloat3(&KeyFrames[i].vScale),
+			XMLoadFloat3(&KeyFrames[i + 1].vScale), fRatio);
+
+		vQuaternion = XMQuaternionSlerp(XMLoadFloat4(&KeyFrames[i].vRotation),
+			XMLoadFloat4(&KeyFrames[i + 1].vRotation), fRatio);
+
+		vTranslation = XMVectorLerp(XMLoadFloat3(&KeyFrames[i].vTranslation),
+			XMLoadFloat3(&KeyFrames[i + 1].vTranslation), fRatio);
+
+		XMStoreFloat3(&CurrentKeyFrame.vScale, vScale);
+		XMStoreFloat4(&CurrentKeyFrame.vRotation, vQuaternion);
+		XMStoreFloat3(&CurrentKeyFrame.vTranslation, vTranslation);
+	}
+
+
+	return CurrentKeyFrame;
+}
+
 CAnimation* CAnimation::Create(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices)
 {
 	CAnimation* pInstance = new CAnimation();

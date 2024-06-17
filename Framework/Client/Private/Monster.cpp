@@ -40,20 +40,20 @@ HRESULT CMonster::Initialize(void * pArg)
 void CMonster::Priority_Tick(_float fTimeDelta)
 {
 	__super::Priority_Tick(fTimeDelta);
+
+	Priority_Tick_PartObjects(fTimeDelta);
 }
 
 void CMonster::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	Tick_PartObjects(fTimeDelta);
 }
 
 void CMonster::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	//m_pModelCom->Play_Animations(fTimeDelta);
-	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &_float3(0.f,0.f,0.f));
 
 	Late_Tick_PartObjects(fTimeDelta);
 }
@@ -159,6 +159,14 @@ CModel* CMonster::Get_Model_From_PartObject(PART_ID eID)
 	pModel = dynamic_cast<CModel*>(pPartObject->Get_Component(TEXT("Com_Model")));
 
 	return pModel;
+}
+
+CPartObject* CMonster::Get_PartObject(PART_ID eID)
+{
+	if (eID >= PART_END)
+		return nullptr;
+
+	return m_PartObjects[static_cast<_uint>(eID)];
 }
 
 HRESULT CMonster::Add_Components()

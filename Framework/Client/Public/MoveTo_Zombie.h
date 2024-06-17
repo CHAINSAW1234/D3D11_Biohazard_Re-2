@@ -20,7 +20,7 @@ public:
 	virtual void					Execute() override;
 
 private:
-	void							Set_Animation();
+	void							Change_Animation();
 
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard)
@@ -30,6 +30,7 @@ public:
 
 protected:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
+
 public:
 	static CMoveTo_Zombie* Create();
 

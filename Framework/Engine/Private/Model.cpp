@@ -53,7 +53,7 @@ CModel::CModel(const CModel& rhs)
 
 #pragma region PlayInfo
 
-void CModel::Add_AnimPlayingInfo(_uint iAnimIndex, _bool isLoop, _uint iPlayingIndex, const wstring& strBoneLayerTag, _float fBlendWeight)
+void CModel::Add_AnimPlayingInfo(_int iAnimIndex, _bool isLoop, _uint iPlayingIndex, const wstring& strBoneLayerTag, _float fBlendWeight)
 {
 	_bool				isCanCreate = { true };
 
@@ -62,7 +62,7 @@ void CModel::Add_AnimPlayingInfo(_uint iAnimIndex, _bool isLoop, _uint iPlayingI
 		isCanCreate = false;
 
 	const _uint			iNumAnims = { static_cast<_uint>(m_Animations.size()) };
-	if (0 > iAnimIndex || iNumAnims <= iAnimIndex)
+	if (iNumAnims <= iAnimIndex)
 		isCanCreate = false;
 
 	CBone_Layer* pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
@@ -1749,7 +1749,10 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 
 	const _float					fAccLinearInterpolation = { pPlayingInfo->Get_AccLinearInterpolation() };
 	const _bool						isLinearInterpolation = { pPlayingInfo->Is_LinearInterpolation() };
-	const vector<KEYFRAME>& LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
+	const vector<KEYFRAME>&			LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
+
+	_bool							isResetRootPre = { pPlayingInfo->Is_ResetRootPre() };	
+	pPlayingInfo->Set_Root_Pre(false);
 
 	//	선형 보간시 루트 모션시 새로운 시작 변위와 (원점에서 시작하지않는 모션등...)와 선형 보간 이전 키프레임들에서의 변위와의 차이 만큼 빨려들어감 방지 
 	if (true == isLinearInterpolation)
@@ -1808,16 +1811,42 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 		//	TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearInterpolation, m_fTotalLinearTime, TransformationMatrices, iNumBones, LastKeyFrames);
 	}
 
+	//else
+	//{
+	//	if (false == isFirstTick && true == isResetRootPre)
+	//	{
+	//		KEYFRAME					CurrentKeyFrame = { m_Animations[iAnimIndex]->Get_CurrentKeyFrame(iRootBoneIndex, pPlayingInfo->Get_TrackPosition() - fTimeDelta) };
+
+	//		if (m_isRootMotion_XZ || m_isRootMotion_Y)
+	//			pPlayingInfo->Set_LastKeyFrame_Translation(iRootBoneIndex, XMLoadFloat3(&CurrentKeyFrame.vTranslation));
+
+	//		if (m_isRootMotion_Rotation)
+	//			pPlayingInfo->Set_LastKeyFrame_Rotation(iRootBoneIndex, XMLoadFloat4(&CurrentKeyFrame.vRotation));
+
+	//		vector<KEYFRAME>			LastKeyFramesTemp = { pPlayingInfo->Get_LastKeyFrames() };
+	//		pPlayingInfo->Update_LinearStateKeyFrames(LastKeyFramesTemp);
+	//	}
+	//}
+
 
 	//	첫 틱에 이전 변위량들을 새로 기입해줌
 	//	위의 마지막 키프레임을 맞춰주는것과 같은 원리
-	if (true == isFirstTick)
+	if (true == isFirstTick/* || true == isResetRootPre*/)
 	{
 		_matrix			RootTransformationMatrix = { XMLoadFloat4x4(&TransformationMatrices[iRootBoneIndex]) };
 		_vector			vRootScale, vRootQuaternion, vRootTranslation;
 
 		//	현재 애니메이션의 첫 키프레임으로 부터의 변위량 계산하기
-		KEYFRAME		FirstKeyFrame = { m_Animations[iAnimIndex]->Get_FirstKeyFrame(iRootBoneIndex) };
+		KEYFRAME		FirstKeyFrame;
+		if (true == isFirstTick)
+		{
+			FirstKeyFrame = { m_Animations[iAnimIndex]->Get_FirstKeyFrame(iRootBoneIndex) };
+		}
+
+		else
+		{
+			FirstKeyFrame = { m_Animations[iAnimIndex]->Get_CurrentKeyFrame(iRootBoneIndex, pPlayingInfo->Get_TrackPosition() - fTimeDelta) };
+		}
 
 		XMMatrixDecompose(&vRootScale, &vRootQuaternion, &vRootTranslation, RootTransformationMatrix);
 
@@ -1851,6 +1880,7 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 
 		pPlayingInfo->Set_PreTranslation(vResultTranslationLocal);
 	}
+
 
 	//	선형 보간중이아니었다면 이후에 일어날 선형 보간을 대비하여 마지막 키프레임들을 저장한다.
 	//	=> 선형 보간여부와상관없이 매번 저장

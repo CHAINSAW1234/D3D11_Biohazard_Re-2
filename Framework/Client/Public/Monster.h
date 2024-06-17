@@ -47,7 +47,7 @@ protected:	/* Update_PartObjects */
 
 public:		/* Access_PartObjects */
 	CModel*								Get_Model_From_PartObject(PART_ID eID);
-
+	CPartObject*						Get_PartObject(PART_ID eID);
 
 public://For AIController
 	virtual void						Init_BehaviorTree_Zombie() {}

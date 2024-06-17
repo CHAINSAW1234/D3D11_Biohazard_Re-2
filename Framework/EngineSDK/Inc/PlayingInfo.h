@@ -44,13 +44,16 @@ public:		/* For.Access */
 	inline const vector<KEYFRAME>&		Get_LastKeyFrames() { return m_LastKeyFrames; }
 	inline const vector<KEYFRAME>&		Get_LinearStartKeyFrames() { return m_LinearStartKeyFrames; }
 	KEYFRAME							Get_LastKeyFrame(_uint iBoneIndex);
+	_bool								Is_ResetRootPre() { return m_isResetRootPre; }
+
+	void								Set_Root_Pre(_bool isResetRootPre) { m_isResetRootPre = isResetRootPre; }
 
 	void								Change_Animation(_uint iAnimIndex, _uint iNumChannel);
 
 	inline void							Set_PreAnimIndex(_int iAnimIndex) { m_iPreAnimIndex = iAnimIndex; }
 	inline void							Set_Loop(_bool isLoop) { m_isLoop = isLoop; }
 	void								Set_BlendWeight(_float fBlendWeight, _float fBlendLinearTime = 0.f);
-	inline void							Set_TrackPosition(_float fTrackPosition) { m_fTrackPosition = fTrackPosition; }
+	void								Set_TrackPosition(_float fTrackPosition);
 	inline void							Set_LinearInterpolation(_bool isLinearInterPolation) { m_isLinearInterpolation = isLinearInterPolation; }
 	inline void							Set_AccLinearInterpolation(_float fAccLinear) { m_fAccLinearInterpolation = fAccLinear; }
 	inline void							Set_BoneLayerTag(const wstring& strBoneLayerTag) { m_strBoneLayerTag = strBoneLayerTag; }
@@ -105,6 +108,8 @@ private:
 
 	_float								m_fTrackPosition = { 0.f };
 	_bool								m_isFinished = { false };
+
+	_bool								m_isResetRootPre = { false };
 
 	vector<_uint>						m_CurrentKeyFrameIndices;
 	vector<KEYFRAME>					m_LastKeyFrames;

@@ -88,18 +88,23 @@ HRESULT CZombie::Initialize(void * pArg)
 void CZombie::Priority_Tick(_float fTimeDelta)
 {
 	__super::Priority_Tick(fTimeDelta);
-
-	Priority_Tick_PartObjects(fTimeDelta);
 }
 
 void CZombie::Tick(_float fTimeDelta)
 {
+	__super::Tick(fTimeDelta);
+
 	if(m_pController)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
 
 #pragma region BehaviorTree 코드
 	m_pBehaviorTree->Initiate();
 #pragma endregion
+
+	_float4			vDirection = {};
+	_vector			vRootMoveDir = { XMLoadFloat3(&m_vRootTranslation) };
+	XMStoreFloat4(&vDirection, vRootMoveDir);
+	m_pController->Move(vDirection, fTimeDelta);
 
 #pragma region 길찾기 임시 코드
 	//if (m_bArrived == false)
@@ -143,18 +148,11 @@ void CZombie::Tick(_float fTimeDelta)
 				pPartObject->SetRagdoll(m_iIndex_CCT);
 		}
 	}
-
-	Tick_PartObjects(fTimeDelta);
 }
 
 void CZombie::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
-
-	//m_pModelCom->Play_Animations(fTimeDelta);
-	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &_float3(0.f,0.f,0.f));
-
-	Late_Tick_PartObjects(fTimeDelta);
 }
 
 HRESULT CZombie::Render()
@@ -413,6 +411,13 @@ HRESULT CZombie::Initialize_PartModels()
 		nullptr == pPantsModel ||
 		nullptr == pHatModel)
 		return E_FAIL;
+
+	pFaceModel->Set_Surbodinate("head", true);
+	pFaceModel->Set_Surbodinate("", true);
+	pFaceModel->Set_Surbodinate("head", true);
+	pFaceModel->Set_Surbodinate("head", true);
+	pFaceModel->Set_Surbodinate("head", true);
+	pFaceModel->Set_Surbodinate("head", true);
 
 	if (FAILED(pFaceModel->Link_Bone_Auto(pBodyModel)))
 		return E_FAIL;

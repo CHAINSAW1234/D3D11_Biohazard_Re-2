@@ -46,6 +46,7 @@ public:		/* For.Access */
 	void									Set_TickPerSec(_float fTickPerSec);
 
 	KEYFRAME								Get_FirstKeyFrame(_uint iBoneIndex);
+	KEYFRAME								Get_CurrentKeyFrame(_uint iBoneIndex, _float fTrackPosition);
 
 private:
 	_int									Find_ChannelIndex(_uint iBoneIndex);

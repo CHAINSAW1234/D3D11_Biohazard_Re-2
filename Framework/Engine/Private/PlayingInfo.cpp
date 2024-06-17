@@ -70,6 +70,15 @@ void CPlayingInfo::Set_BlendWeight(_float fBlendWeight, _float fBlendLinearTime)
 	m_fTotalLinearTime_Blend = fBlendLinearTime;
 }
 
+void CPlayingInfo::Set_TrackPosition(_float fTrackPosition)
+{
+	if (fTrackPosition < 0.f)
+		fTrackPosition = 0.f;
+
+	m_isResetRootPre = true;
+	m_fTrackPosition = fTrackPosition;
+}
+
 void CPlayingInfo::Set_PreTranslation(_fvector vPreTranslation)
 {
 	XMStoreFloat3(&m_vPreTranslationLocal, vPreTranslation);

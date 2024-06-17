@@ -21,7 +21,7 @@ public:
 	virtual ~CModel() = default;
 
 public:		/* For.Animation */
-	void									Add_AnimPlayingInfo(_uint iAnimIndex, _bool isLoop, _uint iPlayingIndex, const wstring& strBoneLayerTag, _float fBlendWeight = 1.f);
+	void									Add_AnimPlayingInfo(_int iAnimIndex, _bool isLoop, _uint iPlayingIndex, const wstring& strBoneLayerTag, _float fBlendWeight = 1.f);
 	void									Erase_AnimPlayingInfo(_uint iPlayingIndex);
 
 	_uint									Get_NumAnims() { return m_iNumAnimations; }
