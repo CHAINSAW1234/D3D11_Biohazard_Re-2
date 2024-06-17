@@ -360,6 +360,8 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 
 void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 {
+	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
+
 	switch (m_eOneState)
 	{
 	case ONEDOOR_OPEN_L:
@@ -379,7 +381,6 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &fTransform3);
 
 
-	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
 
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
