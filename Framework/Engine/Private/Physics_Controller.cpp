@@ -395,7 +395,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 	PxQueryFilterData filterData;
 	filterData.flags =PxQueryFlag::eDYNAMIC;
 
-	bool Status = m_Scene->raycast(PxvOrigin, PxvDir.getNormalized(), fMaxDist, hit, PxHitFlag::eMESH_MULTIPLE | PxHitFlag::eFACE_INDEX | PxHitFlag::ePRECISE_SWEEP, filterData);
+	bool Status = m_Scene->raycast(PxvOrigin, PxvDir.getNormalized(), 10.f, hit, PxHitFlag::eDEFAULT, filterData);
 
 	if (Status)
 	{
@@ -408,8 +408,29 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 
 			PxFilterData filterData = shape->getSimulationFilterData();
 
-			if (filterData.word0 & COLLISION_CATEGORY::COLLIDER)
+			*pBlockPoint = PxVec_To_Float4_Coord(hit_Obj.position);
+			auto vDelta = Float4_Normalize(*pBlockPoint - vOrigin);
+			vDelta.y = 0.f;
+			
+			if(filterData.word0 & COLLISION_CATEGORY::CCT)
 			{
+				if (m_vecCharacter_Controller[filterData.word3] && m_vecCharacter_Controller[filterData.word3]->IsReleased() == false)
+				{
+					m_vecCharacter_Controller[filterData.word3]->Set_Hit(true);
+					m_vecCharacter_Controller[filterData.word3]->Set_Force(vDelta);
+					m_vecCharacter_Controller[filterData.word3]->SetReleased(true);
+				}
+			}
+			else
+			{
+				continue;
+			}
+
+			break;
+		/*	if (filterData.word0 & COLLISION_CATEGORY::COLLIDER)
+			{
+				COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData.word3;
+
 				*pBlockPoint = PxVec_To_Float4_Coord(hit_Obj.position);
 
 				if (hit_Obj.position.x == 0 && hit_Obj.position.y == 0 && hit_Obj.position.z == 0)
@@ -424,7 +445,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 			else
 			{
 				*pBlockPoint = _float4(0.f, 0.f, 0.f, 1.f);
-			}
+			}*/
 		}
 
 		return false;
@@ -444,7 +465,7 @@ _bool CPhysics_Controller::SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _floa
 	PxQueryFilterData filterData;
 	filterData.flags = PxQueryFlag::eDYNAMIC;
 
-	bool status = m_Scene->sweep(PxSphereGeometry(0.3f), PxTransform(PxvOrigin),
+	bool status = m_Scene->sweep(PxSphereGeometry(0.1f), PxTransform(PxvOrigin),
 		PxvDir.getNormalized(),
 		fMaxDist,
 		sweepBuffer,
@@ -464,6 +485,8 @@ _bool CPhysics_Controller::SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _floa
 
 			if (filterData.word0 & COLLISION_CATEGORY::COLLIDER)
 			{
+				COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData.word3;
+
 				*pBlockPoint = PxVec_To_Float4_Coord(hit.position);
 
 				if (hit.position.x == 0 && hit.position.y == 0 && hit.position.z == 0)

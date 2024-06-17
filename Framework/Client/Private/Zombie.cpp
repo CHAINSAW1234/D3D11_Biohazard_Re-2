@@ -57,7 +57,7 @@ HRESULT CZombie::Initialize(void * pArg)
 	}
 
 	//	m_pModelCom->Set_Animation(rand() % 20, true);
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(1.f, 0.3f, 5.f, 1.f));
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(3.f, 0.3f, 2.f, 1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
 #pragma region AIController Setup
@@ -80,8 +80,6 @@ HRESULT CZombie::Initialize(void * pArg)
 
 	Init_BehaviorTree_Zombie();
 #pragma endregion
-
-	m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), 5.f);
 
 	return S_OK;
 }
@@ -127,7 +125,7 @@ void CZombie::Tick(_float fTimeDelta)
 	//}
 #pragma endregion
 
-	if (UP == m_pGameInstance->Get_KeyState('M'))
+	/*if (UP == m_pGameInstance->Get_KeyState('M'))
 	{
 		m_bRagdoll = true;
 
@@ -135,6 +133,23 @@ void CZombie::Tick(_float fTimeDelta)
 		{
 			if (nullptr != pPartObject)
 				pPartObject->SetRagdoll(m_iIndex_CCT);
+		}
+	}*/
+
+	if (m_pController && m_bRagdoll == false)
+	{
+		if (m_pController->Is_Hit())
+		{
+			m_pController->Set_Hit(false);
+
+			m_bRagdoll = true;
+
+			auto vForce = m_pController->Get_Force();
+			for (auto& pPartObject : m_PartObjects)
+			{
+				if (nullptr != pPartObject)
+					pPartObject->SetRagdoll(m_iIndex_CCT, vForce);
+			}
 		}
 	}
 

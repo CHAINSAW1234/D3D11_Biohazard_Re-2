@@ -77,7 +77,7 @@
 #pragma endregion
 
 #define MODEL_SCALE 0.01f
-#define SIZE_VALUE 3.f
+#define SIZE_VALUE 2.f
 #define JOINT_GAP 0.1f
 #define RADIUS 2.5f
 
@@ -577,7 +577,7 @@ void CRagdoll_Physics::create_ragdoll()
 
 #ifdef ZOMBIE
 	m_ragdoll->m_rigid_bodies[1] = m_Pelvis;
-	m_ragdoll->m_rigid_bodies[3] = m_Leg_L;
+	//m_ragdoll->m_rigid_bodies[3] = m_Leg_L;
 	//m_ragdoll->m_rigid_bodies[20] = m_Leg_R;
 	//m_ragdoll->m_rigid_bodies[44] = m_Pelvis;
 #endif
@@ -740,12 +740,12 @@ void CRagdoll_Physics::update_animations()
 	{
 		m_Global_transforms = *m_ragdoll_pose->apply(m_ragdoll, m_model_only_scale, m_model_without_scale);
 
-		if (m_bRagdoll_AddForce == false)
+		/*if (m_bRagdoll_AddForce == false)
 		{
 			m_Pelvis->addForce(PxVec3(0.f, 0.f, -100.f),PxForceMode::eIMPULSE);
 
 			m_bRagdoll_AddForce = true;
-		}
+		}*/
 
 		auto joint = m_skeletal_mesh->skeleton()->joints();
 
@@ -1030,6 +1030,13 @@ void CRagdoll_Physics::ResetForce()
 		m_Foot_R->clearTorque(PxForceMode::eFORCE);
 		m_Foot_R->clearTorque(PxForceMode::eIMPULSE);
 	}
+}
+
+void CRagdoll_Physics::Add_Force(_float4 vForce)
+{
+	vForce = vForce * 100.f;
+	PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+	m_Chest->addForce(pxForce, PxForceMode::eIMPULSE);
 }
 
 CRagdoll_Physics* CRagdoll_Physics::Create()

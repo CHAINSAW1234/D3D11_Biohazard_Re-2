@@ -289,6 +289,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 		m_bAim = false;
 	}
+
 #pragma endregion
 
 #pragma endregion
@@ -676,7 +677,7 @@ void CPlayer::ResetCamera()
 void CPlayer::RayCast_Shoot()
 {
 	_float4 vBlockPoint;
-	if (m_pGameInstance->SphereCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint))
+	if (m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint))
 	{
 		int a = 0;
 	}

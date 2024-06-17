@@ -321,9 +321,10 @@ HRESULT CBody_Zombie::Initialize_Model()
 	return S_OK;
 }
 
-void CBody_Zombie::SetRagdoll(_int iId)
+void CBody_Zombie::SetRagdoll(_int iId, _float4 vForce)
 {
 	m_pGameInstance->Start_Ragdoll(m_pRagdoll, iId);
+	m_pRagdoll->Add_Force(vForce);
 	m_bRagdoll = true;
 }
 
