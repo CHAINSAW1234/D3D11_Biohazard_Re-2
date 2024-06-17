@@ -156,9 +156,6 @@ private:
 	HRESULT								Initialize_Model();
 
 public:
-	virtual void						SetRagdoll(_int iId) override;
-
-public:
 	MOTION_TYPE							Get_Current_MotionType() { return m_ePreMotionType; }
 	MOTION_TYPE							Get_Pre_MotionType() { return m_eCurrentMotionType; }
 
