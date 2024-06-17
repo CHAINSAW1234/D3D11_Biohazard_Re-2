@@ -158,9 +158,9 @@ public:
 	virtual void				Build_Skeleton(const std::string& name) override;
 	void						Update_Collider();
 	void                        load_mesh(const string& name);
-	PxRigidDynamic*				create_capsule_bone(uint32_t parent_idx, uint32_t child_idx, class CRagdoll& ragdoll, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity());
-	PxRigidDynamic*				create_capsule_bone(uint32_t parent_idx, class CRagdoll& ragdoll, XMVECTOR offset, float l, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity());
-	PxRigidDynamic*				create_sphere_bone(uint32_t parent_idx, class CRagdoll& ragdoll, float r);
+	PxRigidDynamic*				create_capsule_bone(uint32_t parent_idx, uint32_t child_idx, class CRagdoll& ragdoll, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity(),COLLIDER_TYPE eType = COLLIDER_TYPE::HEAD);
+	PxRigidDynamic*				create_capsule_bone(uint32_t parent_idx, class CRagdoll& ragdoll, XMVECTOR offset, float l, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity(), COLLIDER_TYPE eType = COLLIDER_TYPE::HEAD);
+	PxRigidDynamic*				create_sphere_bone(uint32_t parent_idx, class CRagdoll& ragdoll, float r, COLLIDER_TYPE eType);
 private:
 	PxTransform					ColliderTransform_Body = { PxTransform(PxVec3(0.f,0.f,0.f)) };
 	PxTransform					ColliderTransform_Head = { PxTransform(PxVec3(0.f,0.f,0.f)) };
@@ -215,6 +215,31 @@ private:
 	PxMaterial*					m_material = {nullptr};
 	float                       m_mass = 1.0f;
 #pragma endregion
+
+#pragma region Interaction with Player
+public:
+	void						Set_Hit(_bool boolean)
+	{
+		m_bHit = boolean;
+	}
+	_bool						Is_Hit()
+	{
+		return m_bHit;
+	}
+	void						Set_Force(_float4 vForce)
+	{
+		m_vForce = vForce;
+	}
+	_float4						Get_Force()
+	{
+		return m_vForce;
+	}
+private:
+	_bool						m_bHit = { false };
+	_float4						m_vForce;
+
+#pragma endregion
+
 public:
 	virtual void Free() override;
 };

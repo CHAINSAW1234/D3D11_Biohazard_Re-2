@@ -10,7 +10,7 @@
 #define BONE_COUNT 150
 
 #define MODEL_SCALE 0.01f
-#define SIZE_VALUE 3.f
+#define SIZE_VALUE 2.25f
 #define JOINT_GAP 0.1f
 #define RADIUS 2.5f
 
@@ -164,7 +164,7 @@ _bool CCharacter_Controller::IsGrounded(PxController* Controller)
 	return _bool();
 }
 
-PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, uint32_t child_idx, CRagdoll& ragdoll, float r, XMMATRIX rotation)
+PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, uint32_t child_idx, CRagdoll& ragdoll, float r, XMMATRIX rotation, COLLIDER_TYPE eType)
 {
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 	XMVECTOR parent_pos = XMLoadFloat3(&joints[parent_idx].bind_pos_ws(XMMatrixIdentity()));
@@ -190,11 +190,13 @@ PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, 
 
 	r *= SIZE_VALUE;
 	PxShape* shape = m_Physics->createShape(PxCapsuleGeometry(r, half_height), *m_material);
+	shape->setContactOffset(0.02f);
 
 	PxFilterData filterData_Ragdoll;
 	filterData_Ragdoll.word0 = COLLISION_CATEGORY::COLLIDER;
 	filterData_Ragdoll.word1 = COLLISION_CATEGORY::CCT | COLLISION_CATEGORY::RAGDOLL;
-	filterData_Ragdoll.word3 = 0;
+	filterData_Ragdoll.word3 = eType;
+
 	shape->setSimulationFilterData(filterData_Ragdoll);
 
 	XMVECTOR rot_quat = XMQuaternionRotationMatrix(rotation);
@@ -210,7 +212,6 @@ PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, 
 	PxTransform px_transform(to_vec3(body_pos), to_quat(XMQuaternionRotationMatrix(bind_pose_ws)));
 
 	PxRigidDynamic* body = m_Physics->createRigidDynamic(px_transform);
-	body->setMass(m_mass);
 
 	body->attachShape(*shape);
 
@@ -218,11 +219,11 @@ PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, 
 	body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
 	float sleepThreshold = 1.f;
 	body->setSleepThreshold(sleepThreshold);
-
+	
 	return body;
 }
 
-PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, CRagdoll& ragdoll, XMVECTOR offset, float l, float r, XMMATRIX rotation)
+PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, CRagdoll& ragdoll, XMVECTOR offset, float l, float r, XMMATRIX rotation, COLLIDER_TYPE eType)
 {
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
@@ -236,11 +237,12 @@ PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, 
 
 	r *= SIZE_VALUE;
 	PxShape* shape = m_Physics->createShape(PxCapsuleGeometry(r, l), *m_material);
+	shape->setContactOffset(0.02f);
 
 	PxFilterData filterData_Ragdoll;
 	filterData_Ragdoll.word0 = COLLISION_CATEGORY::COLLIDER;
 	filterData_Ragdoll.word1 = COLLISION_CATEGORY::CCT | COLLISION_CATEGORY::RAGDOLL;
-	filterData_Ragdoll.word3 = 0;
+	filterData_Ragdoll.word3 = eType;
 	shape->setSimulationFilterData(filterData_Ragdoll);
 
 	PxTransform local(to_quat(XMQuaternionRotationMatrix(rotation)));
@@ -262,7 +264,6 @@ PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, 
 	PxRigidDynamic* body = m_Physics->createRigidDynamic(px_transform);
 
 	body->attachShape(*shape);
-	body->setMass(m_mass);
 
 	m_ragdoll->m_rigid_bodies[parent_idx] = body;
 	body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
@@ -272,7 +273,7 @@ PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, 
 	return body;
 }
 
-PxRigidDynamic* CCharacter_Controller::create_sphere_bone(uint32_t parent_idx, CRagdoll& ragdoll, float r)
+PxRigidDynamic* CCharacter_Controller::create_sphere_bone(uint32_t parent_idx, CRagdoll& ragdoll, float r, COLLIDER_TYPE eType)
 {
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 	XMVECTOR parent_pos = XMLoadFloat3(&joints[parent_idx].bind_pos_ws(XMMatrixIdentity()));
@@ -283,17 +284,17 @@ PxRigidDynamic* CCharacter_Controller::create_sphere_bone(uint32_t parent_idx, C
 #pragma endregion
 
 	PxShape* shape = m_Physics->createShape(PxSphereGeometry(r), *m_material);
+	shape->setContactOffset(0.02f);
 
 	PxFilterData filterData_Ragdoll;
 	filterData_Ragdoll.word0 = COLLISION_CATEGORY::COLLIDER;
 	filterData_Ragdoll.word1 = COLLISION_CATEGORY::CCT | COLLISION_CATEGORY::RAGDOLL;
-	filterData_Ragdoll.word3 = 0;
+	filterData_Ragdoll.word3 = eType;
 	shape->setSimulationFilterData(filterData_Ragdoll);
 
 	PxRigidDynamic* body = m_Physics->createRigidDynamic(PxTransform(to_vec3(parent_pos)));
 
 	body->attachShape(*shape);
-	body->setMass(m_mass);
 
 	m_ragdoll->m_rigid_bodies[parent_idx] = body;
 	body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
@@ -358,29 +359,30 @@ void CCharacter_Controller::Create_Collider()
 	float     r = RADIUS;
 	_matrix rot = XMMatrixIdentity();
 	rot = XMMatrixRotationZ(XM_PI * 0.5f);
+	_matrix I = XMMatrixIdentity();
 
-	m_Pelvis_Collider = create_capsule_bone(j_pelvis_idx, j_spine_01_idx, *m_ragdoll, 5.0f, rot);
-	m_HeadCollider = create_capsule_bone(j_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f, 0.0f, 1.f), 4.0f, 6.0f, rot);
-	m_Left_Leg_Collider = create_capsule_bone(j_thigh_l_idx, j_calf_l_idx, *m_ragdoll, r, rot);
-	m_Right_Leg_Collider = create_capsule_bone(j_thigh_r_idx, j_calf_r_idx, *m_ragdoll, r, rot);
-	m_BodyCollider = create_capsule_bone(j_spine_01_idx, j_neck_01_idx, *m_ragdoll, 5.0f, rot);
+	m_Pelvis_Collider = create_capsule_bone(j_pelvis_idx, j_spine_01_idx, *m_ragdoll, 5.0f, rot,COLLIDER_TYPE::PELVIS);
+	m_HeadCollider = create_capsule_bone(j_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f, 0.0f, 1.f), 4.0f, 6.0f, rot,COLLIDER_TYPE::HEAD);
+	m_Left_Leg_Collider = create_capsule_bone(j_thigh_l_idx, j_calf_l_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::LEG_L);
+	m_Right_Leg_Collider = create_capsule_bone(j_thigh_r_idx, j_calf_r_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::LEG_R);
+	m_BodyCollider = create_capsule_bone(j_spine_01_idx, j_neck_01_idx, *m_ragdoll, 5.0f, rot, COLLIDER_TYPE::CHEST);
 
-	m_Left_Shin_Collider = create_capsule_bone(j_calf_l_idx, j_foot_l_idx, *m_ragdoll, r, rot);
-	m_Right_Shin_Collider = create_capsule_bone(j_calf_r_idx, j_foot_r_idx, *m_ragdoll, r, rot);
+	m_Left_Shin_Collider = create_capsule_bone(j_calf_l_idx, j_foot_l_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::CALF_L);
+	m_Right_Shin_Collider = create_capsule_bone(j_calf_r_idx, j_foot_r_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::CALF_R);
 
-	m_Left_Arm_Collider = create_capsule_bone(j_upperarm_l_idx, j_lowerarm_l_idx, *m_ragdoll, r);
-	m_Right_Arm_Collider = create_capsule_bone(j_upperarm_r_idx, j_lowerarm_r_idx, *m_ragdoll, r);
+	m_Left_Arm_Collider = create_capsule_bone(j_upperarm_l_idx, j_lowerarm_l_idx, *m_ragdoll, r,I, COLLIDER_TYPE::ARM_L);
+	m_Right_Arm_Collider = create_capsule_bone(j_upperarm_r_idx, j_lowerarm_r_idx, *m_ragdoll, r,I, COLLIDER_TYPE::ARM_R);
 
-	m_Left_ForeArm_Collider = create_capsule_bone(j_lowerarm_l_idx, j_hand_l_idx, *m_ragdoll, r);
-	m_Right_ForeArm_Collider = create_capsule_bone(j_lowerarm_r_idx, j_hand_r_idx, *m_ragdoll, r);
+	m_Left_ForeArm_Collider = create_capsule_bone(j_lowerarm_l_idx, j_hand_l_idx, *m_ragdoll, r,I, COLLIDER_TYPE::FOREARM_L);
+	m_Right_ForeArm_Collider = create_capsule_bone(j_lowerarm_r_idx, j_hand_r_idx, *m_ragdoll, r,I, COLLIDER_TYPE::FOREARM_R);
 
-	m_Left_Hand_Collider = create_capsule_bone(j_hand_l_idx, j_middle_01_l_idx, *m_ragdoll, r);
-	m_Right_Hand_Collider = create_capsule_bone(j_hand_r_idx, j_middle_01_r_idx, *m_ragdoll, r);
+	m_Left_Hand_Collider = create_capsule_bone(j_hand_l_idx, j_middle_01_l_idx, *m_ragdoll, r,I, COLLIDER_TYPE::HAND_L);
+	m_Right_Hand_Collider = create_capsule_bone(j_hand_r_idx, j_middle_01_r_idx, *m_ragdoll, r,I, COLLIDER_TYPE::HAND_R);
 
 	rot = XMMatrixRotationY(PxPi * 0.5f);
 
-	m_Left_Foot_Collider = create_capsule_bone(j_foot_l_idx, j_ball_l_idx, *m_ragdoll, r, rot);
-	m_Right_Foot_Collider = create_capsule_bone(j_foot_r_idx, j_ball_r_idx, *m_ragdoll, r, rot);
+	m_Left_Foot_Collider = create_capsule_bone(j_foot_l_idx, j_ball_l_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::FOOT_L);
+	m_Right_Foot_Collider = create_capsule_bone(j_foot_r_idx, j_ball_r_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::FOOT_R);
 
 	m_ragdoll->m_rigid_bodies[1] = m_Pelvis_Collider;
 	m_ragdoll->m_rigid_bodies[3] = m_Left_Leg_Collider;

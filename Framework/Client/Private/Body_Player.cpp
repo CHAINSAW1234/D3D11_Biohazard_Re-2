@@ -653,7 +653,7 @@ HRESULT CBody_Player::Render_LightDepth_Spot()
 	return S_OK;
 }
 
-void CBody_Player::SetRagdoll(_int iId)
+void CBody_Player::SetRagdoll(_int iId,_float4 vForce)
 {
 	m_pGameInstance->Start_Ragdoll(m_pRagdoll, iId);
 	m_bRagdoll = true;

@@ -66,7 +66,9 @@ void CNavMesh_Debug::Tick(_float fTimeDelta)
 
 void CNavMesh_Debug::Late_Tick(_float fTimeDelta)
 {
+#ifndef USE_MapInteractObject
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
+#endif
 }
 
 HRESULT CNavMesh_Debug::Render()
