@@ -54,10 +54,11 @@ HRESULT CZombie::Initialize(void * pArg)
 		MONSTER_DESC* pDesc = (MONSTER_DESC*)pArg;
 
 		m_iIndex = pDesc->Index;
+		_float3 vPos = *(_float4*)pDesc->worldMatrix.m[3];
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 	}
 
 	//	m_pModelCom->Set_Animation(rand() % 20, true);
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(3.f, 0.3f, 2.f, 1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
 #pragma region AIController Setup
