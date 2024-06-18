@@ -90,6 +90,7 @@ private:/* For.BinaryLoad */
 
 public:/*For Cooking*/
 	void	Static_Mesh_Cooking(class CTransform* pTransform = nullptr);
+	void	Convex_Mesh_Cooking(class CTransform* pTransform = nullptr);
 
 public: /* For Octree Culling*/
 	_uint					GetNumFaces()
@@ -128,7 +129,7 @@ public: /* For Octree Culling*/
 		m_iNumVertices = Num;
 	}
 	void					Octree_Mesh_Cooking_For_PX();
-	ID3D11Buffer* GetVertexBuffer()
+	ID3D11Buffer*			GetVertexBuffer()
 	{
 		return m_pVB;
 	}
@@ -137,7 +138,7 @@ public: /* For Octree Culling*/
 		m_pVB = pBuffer;
 		Safe_AddRef(pBuffer);
 	}
-	ID3D11Buffer* GetIndexBuffer()
+	ID3D11Buffer*			GetIndexBuffer()
 	{
 		return m_pIB;
 	}
@@ -145,15 +146,15 @@ public: /* For Octree Culling*/
 	{
 		m_pIB = pBuffer;
 	}
-	_float3* GetNormals()
+	_float3*				GetNormals()
 	{
 		return m_pNormals;
 	}
-	_float3* GetTangents()
+	_float3*				GetTangents()
 	{
 		return m_pTangents;
 	}
-	_float2* GetTexcoords()
+	_float2*				GetTexcoords()
 	{
 		return m_pTexcoords;
 	}
@@ -174,7 +175,7 @@ private:
 	_float2*				m_pTexcoords = { nullptr };
 	_float3*				m_pTangents = { nullptr };
 
-	_float3	 m_vCenterPoint;
+	_float3					m_vCenterPoint;
 public:
 	/* For.FBXLoad*/
 	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::MODEL_TYPE eModelType, const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices, _fmatrix TransformationMatrix);

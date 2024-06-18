@@ -233,7 +233,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
 		return E_FAIL;
 
-	for (_uint i = 0; /*iObjectNum*/1 > i; ++i)
+	for (_uint i = 0; 1 > i; ++i)
 	{
 		_uint iLength = { 0 };
 

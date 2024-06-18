@@ -78,6 +78,7 @@ public:
 #pragma region For Mesh Cooking
 public://For Mesh Cooking
 	void												Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,class CTransform* pTransform = nullptr);
+	void												Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,class CTransform* pTransform = nullptr);
 public://For Terrain Cooking
 	void												InitTerrain();
 private:

@@ -27,6 +27,7 @@ CCharacter_Controller::CCharacter_Controller(PxController* Controller, class CGa
 	m_material = m_Physics->createMaterial(0.5f, 0.5f, 0.6f);
 	m_pWorldMatrix = pTransform->Get_WorldFloat4x4_Ptr();
 	m_iId = iId;
+
 	if(name != "None")
 	{
 		Build_Skeleton(name);
@@ -104,6 +105,7 @@ void CCharacter_Controller::Release_Px()
 		{
 			m_BodyCollider->release();
 			m_HeadCollider->release();
+			m_Pelvis_Collider->release();
 			m_Left_Arm_Collider->release();
 			m_Right_Arm_Collider->release();
 			m_Left_Leg_Collider->release();
@@ -131,6 +133,7 @@ void CCharacter_Controller::Release_Px()
 			m_Right_Hand_Collider = nullptr;
 			m_Left_Foot_Collider = nullptr;
 			m_Right_Foot_Collider = nullptr;
+			m_Pelvis_Collider = nullptr;
 		}
 	}
 }

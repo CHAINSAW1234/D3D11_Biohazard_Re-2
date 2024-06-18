@@ -48,7 +48,7 @@ HRESULT CProps::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
-	m_pModelCom->Static_Mesh_Cooking(m_pTransformCom);
+	//m_pModelCom->Static_Mesh_Cooking(m_pTransformCom);
 	
 	if (m_pTransformCom->IsIdentityWorldMatrix())
 	{

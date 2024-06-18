@@ -418,6 +418,8 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 	VTXANIMMESH* pVertices = new VTXANIMMESH[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXANIMMESH) * m_iNumVertices);
 
+	m_pVertices_Cooking = new _float3[m_iNumVertices];
+
 	for (_uint i = 0; i < m_iNumVertices; i++)
 	{
 		memcpy_s(&pVertices[i].vPosition, sizeof(_float3), &Vertices[i].vPosition, sizeof(_float3));
@@ -440,6 +442,11 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 				_int		iA = { 0 };
 			}
 		}
+	}
+
+	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
+	{
+		m_pVertices_Cooking[i] = pVertices[i].vPosition;
 	}
 
 	m_iNumBones = (_uint)Bones.size();
@@ -468,6 +475,11 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 void CMesh::Static_Mesh_Cooking(CTransform* pTransform)
 {
 	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices,pTransform);
+}
+
+void CMesh::Convex_Mesh_Cooking(CTransform* pTransform)
+{
+	m_pGameInstance->Cook_Mesh_Convex(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pTransform);
 }
 
 void CMesh::SetVertices(_float3* pVertices)

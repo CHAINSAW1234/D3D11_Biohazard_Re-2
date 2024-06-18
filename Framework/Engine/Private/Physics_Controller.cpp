@@ -6,6 +6,7 @@
 #include "Character_Controller.h"
 #include "Rigid_Dynamic.h"
 #include "RagDoll_Physics.h"
+#include "Transform.h"
 
 CPhysics_Controller::CPhysics_Controller() : m_pGameInstance{ CGameInstance::Get_Instance() }
 {
@@ -38,7 +39,7 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(4);
 	sceneDesc.cpuDispatcher = m_Dispatcher;
 	sceneDesc.filterShader = MegamotionFilterShader;
-	
+
 	/*PxCudaContextManagerDesc cudaContextManagerDesc;
 	PxCudaContextManager* cudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc);*/
 
@@ -112,7 +113,7 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	{
 		m_vecRigid_Dynamic[i]->Update();
 	}
-	
+
 	for (int i = 0; i < m_vecRagdoll.size(); ++i)
 	{
 		m_vecRagdoll[i]->Update(fTimeDelta);
@@ -123,7 +124,7 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	m_Scene->fetchResults(true);
 }
 
-CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int* Index,CGameObject* pCharacter,_float fHeight,_float fRadius,CTransform* pTransform, vector<CBone*>* pBones, const std::string& name)
+CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int* Index, CGameObject* pCharacter, _float fHeight, _float fRadius, CTransform* pTransform, vector<CBone*>* pBones, const std::string& name)
 {
 	//Init Shape
 	m_Controll_Desc.height = fHeight;
@@ -140,13 +141,13 @@ CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int*
 	//Colliision Filter
 	PxFilterData filterData_Character;
 	filterData_Character.word0 = COLLISION_CATEGORY::CCT;
-	filterData_Character.word1 = COLLISION_CATEGORY::COLLIDER | COLLISION_CATEGORY::RAGDOLL; 
+	filterData_Character.word1 = COLLISION_CATEGORY::COLLIDER | COLLISION_CATEGORY::RAGDOLL;
 	filterData_Character.word3 = m_iCharacter_Controller_Count;
 
 	shapes[0]->setSimulationFilterData(filterData_Character);
 	shapes[0]->setContactOffset(0.1f);
 
-	auto Character_Controller = new CCharacter_Controller(Controller, pCharacter,m_Scene,m_Physics,pTransform,pBones,m_iCharacter_Controller_Count,name);
+	auto Character_Controller = new CCharacter_Controller(Controller, pCharacter, m_Scene, m_Physics, pTransform, pBones, m_iCharacter_Controller_Count, name);
 	Character_Controller->SetIndex(m_iCharacter_Controller_Count);
 	m_vecCharacter_Controller.push_back(Character_Controller);
 
@@ -205,7 +206,6 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 		IndicesVec.push_back(Ind);
 	}
 
-	// Init Triangle Mesh
 	PxTriangleMeshDesc meshDesc;
 	meshDesc.points.count = static_cast<PxU32>(VertexNum);
 	meshDesc.points.stride = sizeof(PxVec3);
@@ -218,7 +218,7 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 
 	auto Mesh = PxCreateTriangleMesh(cookingParams, meshDesc);
 
-	PxTransform transform(PxVec3(0.0f, 0.0f, 0.0f)); // 지형의 위치
+	PxTransform transform(PxVec3(0.0f, 0.0f, 0.0f));
 	auto Actor = m_Physics->createRigidStatic(transform);
 
 	PxTriangleMeshGeometry meshGeometry(Mesh);
@@ -238,6 +238,57 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	m_pGameInstance->SetSimulate(true);
 }
 
+void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
+{
+	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
+
+	vector<PxVec3> vertices;
+	vector<PxU32> IndicesVec;
+
+	auto WorldMat = pTransform->Get_WorldMatrix();
+
+	for (int i = 0; i < VertexNum; ++i)
+	{
+		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
+		VertexPos = XMVector3TransformCoord(VertexPos, WorldMat);
+
+		_float4 vPos;
+		XMStoreFloat4(&vPos, VertexPos);
+
+		PxVec3 Ver = PxVec3(vPos.x, vPos.y, vPos.z);
+		vertices.push_back(Ver);
+	}
+
+	for (int i = 0; i < IndexNum; ++i)
+	{
+		PxU32 Ind = pIndices[i];
+		IndicesVec.push_back(Ind);
+	}
+
+	PxConvexMeshDesc convexDesc;
+	convexDesc.points.count = static_cast<PxU32>(vertices.size());
+	convexDesc.points.stride = sizeof(PxVec3);
+	convexDesc.points.data = vertices.data();
+	convexDesc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
+
+	PxConvexMesh* convexMesh = PxCreateConvexMesh(cookingParams, convexDesc);
+
+	_float4 vPos;
+	if (pTransform)
+		vPos = pTransform->Get_State_Float4(CTransform::STATE_POSITION);
+
+	PxTransform transform(PxVec3(0.f, 0.f, 0.f));
+
+	PxConvexMeshGeometry geometry(convexMesh);
+	PxMaterial* material = m_Physics->createMaterial(0.5f, 0.5f, 0.5f);
+	PxRigidDynamic* body = m_Physics->createRigidDynamic(transform);
+	PxShape* shape = m_Physics->createShape(geometry, *material);
+	body->attachShape(*shape);
+	m_Scene->addActor(*body);
+	shape->release();
+	body->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+}
+
 CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, CTransform* pTransform, const string& name)
 {
 	//Ragdoll Init
@@ -253,7 +304,7 @@ CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecB
 	return pRagdoll;
 }
 
-void CPhysics_Controller::Start_Ragdoll(CRagdoll_Physics* pRagdoll,_uint iId)
+void CPhysics_Controller::Start_Ragdoll(CRagdoll_Physics* pRagdoll, _uint iId)
 {
 	if (nullptr != pRagdoll)
 	{
@@ -396,14 +447,13 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 	PxRaycastBufferN<maxHits> hit;
 
 	PxQueryFilterData filterData;
-	filterData.flags =PxQueryFlag::eDYNAMIC;
+	filterData.flags = PxQueryFlag::eDYNAMIC;
 
 	bool Status = m_Scene->raycast(PxvOrigin, PxvDir.getNormalized(), 50.f, hit, PxHitFlag::eDEFAULT, filterData);
 
 	if (Status)
 	{
-
-		for (PxU32 i = 0; i < hit.getNbTouches(); ++i) 
+		for (PxU32 i = 0; i < hit.getNbTouches(); ++i)
 		{
 			const PxRaycastHit& hit_Obj = hit.getTouch(i);
 
@@ -412,46 +462,25 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 
 			PxFilterData filterData = shape->getSimulationFilterData();
 
-			/*if (m_vecCharacter_Controller[filterData.word3] && m_vecCharacter_Controller[filterData.word3]->IsReleased() == false)
-			{
-				auto vDelta = Float4_Normalize(*pBlockPoint - vOrigin);
-				vDelta.y = 0.f;
-
-				m_vecCharacter_Controller[filterData.word3]->Set_Hit(true);
-				m_vecCharacter_Controller[filterData.word3]->Set_Force(vDelta, COLLIDER_TYPE::CHEST);
-				m_vecCharacter_Controller[filterData.word3]->SetReleased(true);
-			}
-
-			return true;*/
-
 			if (filterData.word0 & COLLISION_CATEGORY::COLLIDER)
 			{
 				COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData.word3;
 
 				*pBlockPoint = PxVec_To_Float4_Coord(hit_Obj.position);
 
-				if (hit_Obj.position.x == 0 && hit_Obj.position.y == 0 && hit_Obj.position.z == 0)
+				if (m_vecCharacter_Controller[filterData.word2] && m_vecCharacter_Controller[filterData.word2]->IsReleased() == false)
 				{
-					return false;
-				}
-				else
-				{
-					if (m_vecCharacter_Controller[filterData.word2] && m_vecCharacter_Controller[filterData.word2]->IsReleased() == false)
-					{
-						auto vDelta = Float4_Normalize(*pBlockPoint - vOrigin);
-						vDelta.y = 0.f;
+					auto vDelta = Float4_Normalize(*pBlockPoint - vOrigin);
+					vDelta.y = 0.f;
 
-						m_vecCharacter_Controller[filterData.word2]->Set_Hit(true);
-						m_vecCharacter_Controller[filterData.word2]->Set_Force(vDelta, eType);
-						m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
-					}
+					m_vecCharacter_Controller[filterData.word2]->Set_Hit(true);
+					m_vecCharacter_Controller[filterData.word2]->Set_Force(vDelta, eType);
+					m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
 
 					return true;
 				}
-			}
-			else
-			{
-				*pBlockPoint = _float4(0.f, 0.f, 0.f, 1.f);
+
+				return false;
 			}
 		}
 
@@ -479,7 +508,7 @@ _bool CPhysics_Controller::SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _floa
 		PxHitFlag::ePRECISE_SWEEP, filterData
 	);
 
-	if (status) 
+	if (status)
 	{
 		for (PxU32 i = 0; i < sweepBuffer.getNbTouches(); ++i)
 		{
