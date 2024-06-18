@@ -14,74 +14,14 @@ CInventory_Manager::CInventory_Manager(ID3D11Device* pDevice, ID3D11DeviceContex
 
 HRESULT CInventory_Manager::Initialize()
 {
-	ifstream inputFileStream;
-	wstring selectedFilePath;
-
-#pragma region 인벤토리 슬롯
-	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/VoidSlot.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	vector<CCustomize_UI::CUSTOM_UI_DESC> vecCustomInvenUIDesc;
-	CCustomize_UI::ExtractData_FromDat(inputFileStream, &vecCustomInvenUIDesc, true);
-
-	for (_uint i = 0; i < 5; i++)
-	{
-		for (_uint j = 0; j < 4; j++)
-		{
-			_float fPosX = m_fSlotInterval.x * j;
-			_float fPosY = -m_fSlotInterval.y * i;
-			if (FAILED(Create_InvenUI(&vecCustomInvenUIDesc, _float3(fPosX, fPosY, 0.f))))
-				return E_FAIL;
-		}
-	}
-
-	for (auto& iter : m_vecInvenSlot)
-	{
-		if (nullptr != iter)
-		{
-			Safe_AddRef(iter);
-			iter->Set_Dead(true);
-		}
-	}
-#pragma endregion
-
-#pragma region ItemUI
-	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_UI.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	vector<CCustomize_UI::CUSTOM_UI_DESC> vecItemUIDesc;
-	CCustomize_UI::ExtractData_FromDat(inputFileStream, &vecItemUIDesc, true);
-
-	for (_uint i = 0; i < 4; i++)
-	{
-		if (FAILED(Create_ItemUI(&vecItemUIDesc)))
-			return E_FAIL;
-	}
-
-	for (auto& iter : m_vecItem_UI)
-	{
-		if (nullptr != iter)
-		{
-			Safe_AddRef(iter);
-			iter->Set_Dead(true);
-		}
-	}
-#pragma endregion
-
-#pragma region 슬롯 하이라이터
-	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/SlotHighlighter.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	vector<CCustomize_UI::CUSTOM_UI_DESC> vecCustomSelecUIDesc;
-	CCustomize_UI::ExtractData_FromDat(inputFileStream, &vecCustomSelecUIDesc, true);
-	if (FAILED(Create_SelectUI(&vecCustomSelecUIDesc)))
+	if (FAILED(Init_InvenSlot()))
 		return E_FAIL;
 
-	m_pSlotHighlighter->Set_Dead(true);
-	m_pSlotHighlighterTransform = dynamic_cast<CTransform*>(m_pSlotHighlighter->Get_Component(g_strTransformTag));
-	m_fSlotHighlighterResetPos = m_vecInvenSlot[0]->GetPosition();
-	m_fSlotHighlighterResetPos.z = 0.7f;
+	if (FAILED(Init_SlotHighlighter()))
+		return E_FAIL;
 
-	Safe_AddRef(m_pSlotHighlighter);
-	Safe_AddRef(m_pSlotHighlighterTransform);
-#pragma endregion
+	if (FAILED(Init_ItemUI()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -138,6 +78,11 @@ void CInventory_Manager::Tick(_float fTimeDelta)
 			pItemUITransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
 		}
 	}
+
+	if (UP == m_pGameInstance->Get_KeyState('C'))
+	{
+		m_bisItemExamin = true;
+	}
 }
 
 void CInventory_Manager::Late_Tick(_float fTimeDelta)
@@ -185,9 +130,97 @@ CInventory_Manager* CInventory_Manager::Create(ID3D11Device* pDevice, ID3D11Devi
 	return pInstance;
 }
 
+HRESULT CInventory_Manager::Init_InvenSlot()
+{
+	ifstream inputFileStream;
+	wstring selectedFilePath;
 
+#pragma region 인벤토리 슬롯
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/VoidSlot.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	vector<CCustomize_UI::CUSTOM_UI_DESC> vecCustomInvenUIDesc;
+	CCustomize_UI::ExtractData_FromDat(inputFileStream, &vecCustomInvenUIDesc, true);
 
-HRESULT CInventory_Manager::Create_InvenUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval)
+	for (_uint i = 0; i < 5; i++)
+	{
+		for (_uint j = 0; j < 4; j++)
+		{
+			_float fPosX = m_fSlotInterval.x * j;
+			_float fPosY = -m_fSlotInterval.y * i;
+			if (FAILED(Create_InvenSlot(&vecCustomInvenUIDesc, _float3(fPosX, fPosY, 0.f))))
+				return E_FAIL;
+		}
+	}
+
+	for (auto& iter : m_vecInvenSlot)
+	{
+		if (nullptr != iter)
+		{
+			Safe_AddRef(iter);
+			iter->Set_Dead(true);
+		}
+	}
+#pragma endregion
+
+	return S_OK;
+}
+
+HRESULT CInventory_Manager::Init_SlotHighlighter()
+{
+	ifstream inputFileStream;
+	wstring selectedFilePath;
+
+#pragma region 슬롯 하이라이터
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/SlotHighlighter.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	vector<CCustomize_UI::CUSTOM_UI_DESC> vecCustomSelecUIDesc;
+	CCustomize_UI::ExtractData_FromDat(inputFileStream, &vecCustomSelecUIDesc, true);
+	if (FAILED(Create_SlotHighlighter(&vecCustomSelecUIDesc)))
+		return E_FAIL;
+
+	m_pSlotHighlighter->Set_Dead(true);
+	m_pSlotHighlighterTransform = dynamic_cast<CTransform*>(m_pSlotHighlighter->Get_Component(g_strTransformTag));
+	m_fSlotHighlighterResetPos = m_vecInvenSlot[0]->GetPosition();
+	m_fSlotHighlighterResetPos.z = 0.7f;
+
+	Safe_AddRef(m_pSlotHighlighter);
+	Safe_AddRef(m_pSlotHighlighterTransform);
+#pragma endregion
+
+	return S_OK;
+}
+
+HRESULT CInventory_Manager::Init_ItemUI()
+{
+	ifstream inputFileStream;
+	wstring selectedFilePath;
+
+#pragma region ItemUI
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_UI.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	vector<CCustomize_UI::CUSTOM_UI_DESC> vecItemUIDesc;
+	CCustomize_UI::ExtractData_FromDat(inputFileStream, &vecItemUIDesc, true);
+
+	for (_uint i = 0; i < 4; i++)
+	{
+		if (FAILED(Create_ItemUI(&vecItemUIDesc)))
+			return E_FAIL;
+	}
+
+	for (auto& iter : m_vecItem_UI)
+	{
+		if (nullptr != iter)
+		{
+			Safe_AddRef(iter);
+			iter->Set_Dead(true);
+		}
+	}
+#pragma endregion
+
+	return S_OK;
+}
+
+HRESULT CInventory_Manager::Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval)
 {
 	CInventory_Slot* pParentInvenUI = { nullptr };
 
@@ -252,7 +285,7 @@ HRESULT CInventory_Manager::Create_InvenUI(vector<CCustomize_UI::CUSTOM_UI_DESC>
 	return S_OK;
 }
 
-HRESULT CInventory_Manager::Create_SelectUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI)
+HRESULT CInventory_Manager::Create_SlotHighlighter(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI)
 {
 	CSlot_Highlighter* pParentInvenUI = { nullptr };
 

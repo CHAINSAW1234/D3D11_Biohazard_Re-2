@@ -60,6 +60,7 @@ public:
 	}
 	virtual _float4								GetPosition();
 	virtual _vector								GetPositionVector();
+	virtual _vector								GetLookDir_Vector();
 	virtual _float4								GetPosition_Local_To_World()
 	{
 		return m_vLocal_To_World_Pos;

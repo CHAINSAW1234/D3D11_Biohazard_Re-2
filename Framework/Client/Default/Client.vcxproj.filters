@@ -154,9 +154,6 @@
     <Filter Include="02.GameObjects\UI\99. Tab_Window">
       <UniqueIdentifier>{ea70fdf9-35f3-4236-9447-ce5555b4d60b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager">
-      <UniqueIdentifier>{1bc643cf-ed81-4789-a287-ddeed43fb9bd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\10. Selector">
       <UniqueIdentifier>{a3e41bb2-6af9-484d-82ec-810385b14071}</UniqueIdentifier>
     </Filter>
@@ -187,15 +184,6 @@
     <Filter Include="AIController\Zombie\Task\Wait">
       <UniqueIdentifier>{022420cb-4aa4-4658-b312-d73a780980eb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Inventory_Slot">
-      <UniqueIdentifier>{a479c0f1-1f8a-4f2a-9704-7abf3a9f4c84}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Item_UI">
-      <UniqueIdentifier>{3b6a69ad-2251-4b94-aaa0-95402954d590}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Slot_Highlighter">
-      <UniqueIdentifier>{d3a9314f-e0fe-4296-944a-752b05519c2e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\MapObject">
       <UniqueIdentifier>{7680dede-3705-429b-b9df-d9ea1119c90a}</UniqueIdentifier>
     </Filter>
@@ -222,6 +210,21 @@
     </Filter>
     <Filter Include="02.GameObjects\UI\11. Map_UI">
       <UniqueIdentifier>{f04cdcf8-aee8-450c-b67b-e0df516a3328}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager">
+      <UniqueIdentifier>{1bc643cf-ed81-4789-a287-ddeed43fb9bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Inventory_Slot">
+      <UniqueIdentifier>{a479c0f1-1f8a-4f2a-9704-7abf3a9f4c84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_UI">
+      <UniqueIdentifier>{3b6a69ad-2251-4b94-aaa0-95402954d590}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Slot_Highlighter">
+      <UniqueIdentifier>{d3a9314f-e0fe-4296-944a-752b05519c2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\3. Item_Mesh_Viewer">
+      <UniqueIdentifier>{8fc62147-6bd9-4032-995f-a57db115d6ed}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -361,7 +364,7 @@
       <Filter>02.GameObjects\UI\10. Selector</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Inventory_Manager.h">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager</Filter>
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player_State_Hold_Idle.h">
       <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle</Filter>
@@ -421,16 +424,19 @@
       <Filter>02.GameObjects\MapObject\InteractProps</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Slot_Highlighter.h">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Slot_Highlighter</Filter>
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Slot_Highlighter</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Inventory_Slot.h">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Inventory_Slot</Filter>
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Inventory_Slot</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Item_UI.h">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Item_UI</Filter>
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Map_UI.h">
       <Filter>02.GameObjects\UI\11. Map_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Item_Mesh_Viewer.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\3. Item_Mesh_Viewer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -555,7 +561,7 @@
       <Filter>02.GameObjects\UI\10. Selector</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Inventory_Manager.cpp">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager</Filter>
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player_State_Hold_Idle.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Hold\Player_State_Hold_Idle</Filter>
@@ -612,16 +618,19 @@
       <Filter>02.GameObjects\MapObject\InteractProps</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Slot_Highlighter.cpp">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Slot_Highlighter</Filter>
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Slot_Highlighter</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Item_UI.cpp">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Item_UI</Filter>
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Inventory_Slot.cpp">
-      <Filter>02.GameObjects\UI\99. Tab_Window\1. Inventory_Manager\Inventory_Slot</Filter>
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Inventory_Slot</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Map_UI.cpp">
       <Filter>02.GameObjects\UI\11. Map_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item_Mesh_Viewer.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\3. Item_Mesh_Viewer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

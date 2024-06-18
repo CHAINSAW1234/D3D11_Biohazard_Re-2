@@ -2,14 +2,14 @@
 
 #include "UI.h"
 #include "Inventory_Manager.h"
-
+#include "Item_Mesh_Viewer.h"
 
 BEGIN(Client)
 
 class CTab_Window final : public CUI
 {
 public:
-	enum WINDOW_TYPE{MINIMAP, INVENTORY, HINT, WINDOW_TYPE_END };
+	enum WINDOW_TYPE{MINIMAP, INVENTORY, HINT, EXAMINE, WINDOW_TYPE_END };
 
 protected:
 	CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -34,10 +34,13 @@ private:
 	CInventory_Manager* m_pInventory_Manager = { nullptr };
 
 private:
-	WINDOW_TYPE m_eWindowType = { INVENTORY };
-	_bool		m_isMapRender = { false };
+	WINDOW_TYPE		m_eWindowType = { INVENTORY };
+	_bool			m_isMapRender = { false };
 
-	_bool	m_isFristTick = { true };
+	_bool			m_isFristTick = { true };
+
+	/*for. Item_Mesh_Viewer*/
+	CItem_Mesh_Viewer* m_pItem_Mesh_Viewer = { nullptr };
 
 
 private:
@@ -47,6 +50,7 @@ private:
 	HRESULT Create_Inventory();
 	HRESULT Creat_MiniMap();
 	HRESULT Creat_Hint();
+	HRESULT Creat_Item_Mesh_Viewer();
 
 
 public:

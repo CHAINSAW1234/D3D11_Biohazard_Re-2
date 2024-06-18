@@ -18,6 +18,7 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+private:
 	_bool m_bFilled = { false };
 
 public:

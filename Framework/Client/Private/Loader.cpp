@@ -50,6 +50,7 @@
 #include "Slot_Highlighter.h"
 #include "Item_UI.h"
 #include "Map_UI.h"
+#include "Item_Mesh_Viewer.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -278,6 +279,11 @@ HRESULT CLoader::Load_Prototype()
 	/* For.Prototype_GameObject_Map_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Map_UI"),
 		CMap_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Item_Mesh_Viewer */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Item_Mesh_Viewer"),
+		CItem_Mesh_Viewer::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
 #pragma endregion
@@ -623,11 +629,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 			LeonTransformMatrix))))
 		return E_FAIL;
 
-	///* Prototype_Component_Model_HandGun */
-	//if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_HandGun"),
-	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/HandGun/HandGun.fbx",
-	//		TransformMatrix))))
-	//	return E_FAIL;
+	/* Prototype_Component_Model_HandGun */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_HandGun"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/HandGun/HandGun.fbx",
+			TransformMatrix))))
+		return E_FAIL;
 
 #pragma endregion
 
@@ -664,6 +670,28 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 #pragma endregion
+
+#pragma region Items Model
+	/* Prototype_Component_Model_emergencyspray01a */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_emergencyspray01a"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_000_emergencyspray01a.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_handgun_bullet01a */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_handgun_bullet01a"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_100_handgun_bullet01a.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_inkribbon01a */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_inkribbon01a"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_201_inkribbon01a.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+#pragma endregion
+
+
 
 	/* Prototype_Component_VIBuffer_Terrain */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_VIBuffer_Terrain"),
