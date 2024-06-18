@@ -188,7 +188,7 @@ public:
     void                                SetTransform(class CTransform* pTransform);
     void                                SetSimulate(_bool boolean);
     void                                ResetForce();
-    void                                Add_Force(_float4 vForce);
+    void                                Add_Force(_float4 vForce,COLLIDER_TYPE eType);
 public:
 	static CRagdoll_Physics*            Create();
 

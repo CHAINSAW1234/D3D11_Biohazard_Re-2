@@ -146,7 +146,7 @@ CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int*
 	shapes[0]->setSimulationFilterData(filterData_Character);
 	shapes[0]->setContactOffset(0.1f);
 
-	auto Character_Controller = new CCharacter_Controller(Controller, pCharacter,m_Scene,m_Physics,pTransform,pBones,name);
+	auto Character_Controller = new CCharacter_Controller(Controller, pCharacter,m_Scene,m_Physics,pTransform,pBones,m_iCharacter_Controller_Count,name);
 	Character_Controller->SetIndex(m_iCharacter_Controller_Count);
 	m_vecCharacter_Controller.push_back(Character_Controller);
 
@@ -398,10 +398,11 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 	PxQueryFilterData filterData;
 	filterData.flags =PxQueryFlag::eDYNAMIC;
 
-	bool Status = m_Scene->raycast(PxvOrigin, PxvDir.getNormalized(), 10.f, hit, PxHitFlag::eDEFAULT, filterData);
+	bool Status = m_Scene->raycast(PxvOrigin, PxvDir.getNormalized(), 50.f, hit, PxHitFlag::eDEFAULT, filterData);
 
 	if (Status)
 	{
+
 		for (PxU32 i = 0; i < hit.getNbTouches(); ++i) 
 		{
 			const PxRaycastHit& hit_Obj = hit.getTouch(i);
@@ -411,26 +412,19 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 
 			PxFilterData filterData = shape->getSimulationFilterData();
 
-			*pBlockPoint = PxVec_To_Float4_Coord(hit_Obj.position);
-			auto vDelta = Float4_Normalize(*pBlockPoint - vOrigin);
-			vDelta.y = 0.f;
-			
-			if(filterData.word0 & COLLISION_CATEGORY::CCT)
+			/*if (m_vecCharacter_Controller[filterData.word3] && m_vecCharacter_Controller[filterData.word3]->IsReleased() == false)
 			{
-				if (m_vecCharacter_Controller[filterData.word3] && m_vecCharacter_Controller[filterData.word3]->IsReleased() == false)
-				{
-					m_vecCharacter_Controller[filterData.word3]->Set_Hit(true);
-					m_vecCharacter_Controller[filterData.word3]->Set_Force(vDelta);
-					m_vecCharacter_Controller[filterData.word3]->SetReleased(true);
-				}
-			}
-			else
-			{
-				continue;
+				auto vDelta = Float4_Normalize(*pBlockPoint - vOrigin);
+				vDelta.y = 0.f;
+
+				m_vecCharacter_Controller[filterData.word3]->Set_Hit(true);
+				m_vecCharacter_Controller[filterData.word3]->Set_Force(vDelta, COLLIDER_TYPE::CHEST);
+				m_vecCharacter_Controller[filterData.word3]->SetReleased(true);
 			}
 
-			break;
-		/*	if (filterData.word0 & COLLISION_CATEGORY::COLLIDER)
+			return true;*/
+
+			if (filterData.word0 & COLLISION_CATEGORY::COLLIDER)
 			{
 				COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData.word3;
 
@@ -442,13 +436,23 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 				}
 				else
 				{
+					if (m_vecCharacter_Controller[filterData.word2] && m_vecCharacter_Controller[filterData.word2]->IsReleased() == false)
+					{
+						auto vDelta = Float4_Normalize(*pBlockPoint - vOrigin);
+						vDelta.y = 0.f;
+
+						m_vecCharacter_Controller[filterData.word2]->Set_Hit(true);
+						m_vecCharacter_Controller[filterData.word2]->Set_Force(vDelta, eType);
+						m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
+					}
+
 					return true;
 				}
 			}
 			else
 			{
 				*pBlockPoint = _float4(0.f, 0.f, 0.f, 1.f);
-			}*/
+			}
 		}
 
 		return false;

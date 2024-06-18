@@ -68,7 +68,7 @@ public:
 	{
 		return m_bLocalized;
 	}
-	virtual void								SetRagdoll(_int iId,_float4 vForce = _float4(0.f,0.f,0.f,1.f))
+	virtual void								SetRagdoll(_int iId,_float4 vForce,COLLIDER_TYPE eType)
 	{
 		m_bRagdoll = true;
 	}

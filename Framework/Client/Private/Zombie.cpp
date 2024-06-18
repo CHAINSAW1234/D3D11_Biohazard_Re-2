@@ -160,10 +160,11 @@ void CZombie::Tick(_float fTimeDelta)
 			m_bRagdoll = true;
 
 			auto vForce = m_pController->Get_Force();
+			auto eType = m_pController->Get_Hit_Collider_Type();
 			for (auto& pPartObject : m_PartObjects)
 			{
 				if (nullptr != pPartObject)
-					pPartObject->SetRagdoll(m_iIndex_CCT, vForce);
+					pPartObject->SetRagdoll(m_iIndex_CCT, vForce, eType);
 			}
 		}
 	}

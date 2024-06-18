@@ -1032,12 +1032,115 @@ void CRagdoll_Physics::ResetForce()
 	}
 }
 
-void CRagdoll_Physics::Add_Force(_float4 vForce)
+void CRagdoll_Physics::Add_Force(_float4 vForce, COLLIDER_TYPE eType)
 {
-	auto fPower = rand() % 100;
-	vForce = vForce * (fPower + 50.f);
-	PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
-	m_Chest->addForce(pxForce, PxForceMode::eIMPULSE);
+	switch (eType)
+	{
+	case COLLIDER_TYPE::HEAD:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Head->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::CHEST:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Chest->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::ARM_L:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Arm_L->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::ARM_R:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Arm_R->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::FOREARM_L:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_ForeArm_L->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::FOREARM_R:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_ForeArm_R->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::PELVIS:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Pelvis->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::LEG_L:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Leg_L->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::LEG_R:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Leg_R->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::CALF_L:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Calf_L->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::CALF_R:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Calf_R->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::FOOT_L:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Foot_L->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::FOOT_R:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Foot_R->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	}
 }
 
 CRagdoll_Physics* CRagdoll_Physics::Create()
