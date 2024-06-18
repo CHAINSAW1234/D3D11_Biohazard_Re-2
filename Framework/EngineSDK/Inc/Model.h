@@ -195,6 +195,9 @@ public:		/* For. Access */
 	const _float4x4*						Get_CombinedMatrix(const string& strBoneTag);
 
 public:		/* For.FBX */
+	virtual HRESULT							Initialize_Prototype_TEMP(MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix);
+
+public:		/* For.FBX */
 	virtual HRESULT							Initialize_Prototype(MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix);
 
 public:		/* For.Binary */
@@ -312,6 +315,9 @@ public:		/* For Octree Culling */
 private:
 	_float4									m_vCenterPoint;
 public:
+	/* Create_ */
+	static CModel* Create_Temp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix);
+
 	/* Create_From_FBX */
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix);
 	/* Create_From_Binary */

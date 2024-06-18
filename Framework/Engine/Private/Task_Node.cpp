@@ -20,20 +20,6 @@ HRESULT CTask_Node::Initialize(void* pArg)
 	return E_NOTIMPL;
 }
 
-CTask_Node* CTask_Node::Create()
-{
-	CTask_Node* pInstance = new CTask_Node();
-
-	if (FAILED(pInstance->Initialize_Prototype()))
-	{
-		MSG_BOX(TEXT("Failed To Created : CTask_Node"));
-
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
 void CTask_Node::Free()
 {
 	Safe_Release(m_pGameInstance);

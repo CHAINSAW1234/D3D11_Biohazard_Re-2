@@ -32,8 +32,12 @@ void CMoveTo_Zombie::Enter()
 
 void CMoveTo_Zombie::Execute()
 {
-	auto pAI = m_pBlackBoard->GetAI();
+	if (nullptr == m_pBlackBoard)
+		return;
 
+	m_pBlackBoard->Organize_PreState(this);
+
+	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_WALK);
 
 	cout << "Move" << endl;
@@ -43,6 +47,15 @@ void CMoveTo_Zombie::Execute()
 
 void CMoveTo_Zombie::Exit()
 {
+	if (nullptr == m_pBlackBoard)
+		return;
+
+	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	if (nullptr == pBodyModel)
+		return;
+
+	_int			iBlendPlayingIndex = { static_cast<_uint>(CBody_Zombie::PLAYING_INDEX::INDEX_1) };
+	pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f, 0.3f);
 }
 
 void CMoveTo_Zombie::Change_Animation()
@@ -518,24 +531,35 @@ void CMoveTo_Zombie::Change_Animation()
 		pBodyModel->Set_BoneLayer_PlayingInfo(iBlendPlayingIndex, strBlendBoneLayerTag);
 		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, fTurnBlendWeight);
 
-		_float			fTrackPosition = { pBodyModel->Get_TrackPosition(iBasePlayingIndex) };
-		_float			fDuration = { pBodyModel->Get_Duration_From_PlayingInfo(iBlendPlayingIndex) };
-
 		string			strBlendWeight = { to_string(fTurnBlendWeight) };
 		cout << strBlendWeight.c_str() << endl;
 		cout << "isBlend" << endl;
 
-		while (fTrackPosition > fDuration)
+		if (1.0f != fTurnBlendWeight)
 		{
-			fTrackPosition -= fDuration;
-		}
+			_float			fTrackPosition = { pBodyModel->Get_TrackPosition(iBasePlayingIndex) };
+			_float			fDuration = { pBodyModel->Get_Duration_From_PlayingInfo(iBlendPlayingIndex) };			
 
-		pBodyModel->Set_TrackPosition(iBlendPlayingIndex, fTrackPosition);
+			while (fTrackPosition > fDuration)
+			{
+				fTrackPosition -= fDuration;
+			}
+
+			pBodyModel->Set_TrackPosition(iBlendPlayingIndex, fTrackPosition);
+		}		
+
+		_float			fBaseTrackPos = { pBodyModel->Get_TrackPosition(iBasePlayingIndex) };
+		_float			fBlendTrackPos = { pBodyModel->Get_TrackPosition(iBlendPlayingIndex) };
+
+		string			strBaseTrackPos = { to_string(fBaseTrackPos) + "Base Track"};
+		string			strBlendTrackPos = { to_string(fBlendTrackPos) + "Blend Track"};
+		cout << strBaseTrackPos << endl;
+		cout << strBlendTrackPos << endl;
 	}
 
 	else
 	{
-		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f);
+		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f, 0.3f);
 		pBodyModel->Reset_PreAnimation(iBlendPlayingIndex);
 
 		cout << "isNonBlend" << endl;

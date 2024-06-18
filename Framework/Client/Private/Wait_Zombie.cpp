@@ -31,6 +31,11 @@ void CWait_Zombie::Enter()
 
 void CWait_Zombie::Execute()
 {
+	if (nullptr == m_pBlackBoard)
+		return;
+
+	m_pBlackBoard->Organize_PreState(this);
+
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_IDLE);
 
@@ -61,10 +66,10 @@ void CWait_Zombie::Change_Animation()
 	_bool			isLoop = { false };
 	wstring			strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
 
-	list<_uint>		ActiveIndices;
-	ActiveIndices.push_back(iPlayingIndex);
-
-	m_pBlackBoard->Reset_NonActive_Body(ActiveIndices);
+	//	list<_uint>		ActiveIndices;
+	//	ActiveIndices.push_back(iPlayingIndex);
+	//	
+	//	m_pBlackBoard->Reset_NonActive_Body(ActiveIndices);
 
 	m_isWake = true;
 
@@ -154,6 +159,8 @@ void CWait_Zombie::Change_Animation()
 	{
 		pBodyModel->Set_TotalLinearInterpolation(0.9f);
 	}
+
+	pBodyModel->Set_TotalLinearInterpolation(0.9f);
 
 	pBodyModel->Change_Animation(iPlayingIndex, iResultAnimationIndex);
 	pBodyModel->Set_Loop(iPlayingIndex, isLoop);

@@ -1248,6 +1248,62 @@ const _float4x4* CModel::Get_CombinedMatrix(const string& strBoneTag)
 	return m_Bones[iBoneIndex]->Get_CombinedTransformationMatrix();
 }
 
+HRESULT CModel::Initialize_Prototype_TEMP(MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix)
+{
+	m_eModelType = eType;
+
+	_uint		iOption = { aiProcessPreset_TargetRealtime_Fast | aiProcess_ConvertToLeftHanded };
+
+	iOption = m_eModelType == TYPE_NONANIM ? iOption | aiProcess_PreTransformVertices : iOption | aiProcess_LimitBoneWeights;
+
+#pragma region Log
+	//m_Importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_CAMERAS);
+	//// 로그 생성
+	//Assimp::DefaultLogger::create("", Assimp::Logger::VERBOSE);
+	//// 로그 메시지를 얻기 위해 ReadFile 전에 호출
+
+	///* 파일ㄹ의 정보를 읽어서 aiScene안에 모든 데이터를 담아주게된다. */
+	//m_pAIScene = m_Importer.ReadFile(strModelFilePath.c_str(), iOption);
+	//if (nullptr == m_pAIScene)
+	//{
+	//	MessageBoxA(NULL, m_Importer.GetErrorString(), "Error", MB_OK);
+
+	//	return E_FAIL;
+	//}
+#pragma endregion
+
+	/* 파일ㄹ의 정보를 읽어서 aiScene안에 모든 데이터를 담아주게된다. */
+	m_pAIScene = m_Importer.ReadFile(strModelFilePath.c_str(), iOption);
+	if (nullptr == m_pAIScene)
+		return E_FAIL;
+
+	XMStoreFloat4x4(&m_TransformationMatrix, TransformMatrix);
+
+	/* 읽은 정보를 바탕으로해서 내가 사용하기 좋게 정리한다.  */
+
+	/* 지역내에서 뼈의 이름별로 현재 m_Bones상에 할당된 인덱스의 번호를 저장하고 메시등 객체를 생성시 탐색용으로 던져준다. */
+	/* ReadyBones에서 값을 체우고 */
+	/* ReadyMeshes, ReadyAnimations에서 값을 이용한다. */
+	map<string, _uint> BoneIndices;
+
+	/* 레디 본즈는 아래의 차일드 노드들을 타고 재귀적으로 생성하는 이진 탐색으로 루트 노드를 넘겨주면된다 .*/
+	if (FAILED(Ready_Bones(m_pAIScene->mRootNode, BoneIndices)))
+		return E_FAIL;
+
+	/* 모델을 구성하는 메시들을 생성한다. */
+	/* 모델 = 메시 + 메시 + ... */
+	if (FAILED(Ready_Meshes(BoneIndices)))
+		return E_FAIL;
+
+	if (FAILED(Ready_Materials(strModelFilePath.c_str())))
+		return E_FAIL;
+
+	if (FAILED(Ready_Animations(BoneIndices)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 void CModel::Set_KeyFrameIndex_AllKeyFrame(_uint iPlayingIndex, _uint iKeyFrameIndex)
 {
 	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
@@ -1455,7 +1511,7 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const string& strModelFil
 	//
 	//	_uint		iOption = { aiProcessPreset_TargetRealtime_Fast | aiProcess_ConvertToLeftHanded };
 	//
-	//	iOption = m_eModelType == TYPE_NONANIM ? iOption | aiProcess_PreTransformVertices : iOption | aiProcess_LimitBoneWeights;
+	//	iOption = m_eModelType == TYPE_NONANIM ? iOption | aiProcess_PreTransformVertices : iOption;
 	//
 	//#pragma region Log
 	//	//m_Importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_CAMERAS);
@@ -1592,11 +1648,11 @@ HRESULT CModel::Initialize(void* pArg)
 
 HRESULT CModel::Bind_BoneMatrices(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
 {
-	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * 256);
+	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * MAX_COUNT_BONE);
 
 	m_Meshes[iMeshIndex]->Stock_Matrices(m_Bones, m_MeshBoneMatrices);
 
-	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, 256);
+	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, MAX_COUNT_BONE);
 }
 
 HRESULT CModel::Bind_PrevBoneMatrices(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
@@ -2551,6 +2607,20 @@ HRESULT CModel::Ready_Animations(ifstream& ifs)
 #pragma endregion
 
 #pragma region Create, Release
+
+CModel* CModel::Create_Temp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix)
+{
+	CModel* pInstance = new CModel(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype_TEMP(eType, strModelFilePath, TransformMatrix)))
+	{
+		MSG_BOX(TEXT("Failed To Created : CModel"));
+
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
 
 CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix)
 {

@@ -15,14 +15,12 @@ public:
 	virtual HRESULT					Initialize_Prototype();
 	virtual HRESULT					Initialize(void* pArg);
 
-	virtual void					Execute() {}
 	virtual void					Enter() = 0;
+	virtual void					Execute() {}
 	virtual void					Exit() = 0;
 
 protected:
 	class CGameInstance*			m_pGameInstance = { nullptr };
-public:
-	static CTask_Node* Create();
 
 public:
 	virtual void Free() override;

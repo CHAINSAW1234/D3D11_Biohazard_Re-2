@@ -635,13 +635,13 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	/* Prototype_Component_Model_ZombieBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieBody"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Body.fbx",
+		CModel::Create_Temp(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Body.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_ZombieFace */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieFace"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Face.fbx",
+		CModel::Create_Temp(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Face.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 

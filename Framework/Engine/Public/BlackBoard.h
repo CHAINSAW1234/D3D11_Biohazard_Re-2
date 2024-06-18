@@ -15,8 +15,13 @@ public:
 	virtual HRESULT					Initialize_Prototype();
 	virtual HRESULT					Initialize(void* pArg);
 
+public:
+	void							Organize_PreState(class CTask_Node* pCurrentNode);
+
 protected:
 	class CGameInstance*			m_pGameInstance = { nullptr };
+	class CTask_Node*				m_pPreTaskNode = { nullptr };
+
 public:
 	static CBlackBoard* Create();
 
