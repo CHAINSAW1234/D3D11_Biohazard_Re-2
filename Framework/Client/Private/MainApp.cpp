@@ -63,11 +63,13 @@ HRESULT CMainApp::Render()
 
 	m_pGameInstance->Begin_Draw(_float4(0.f, 0.f, 1.f, 1.f));
 
+	//	m_pGameInstance->Render_Font(TEXT("Font_Default"), m_szFPS, _float2(0.f, 0.f), XMVectorSet(1.f, 0.f, 0.f, 1.f), 0.f);
+
 	m_pGameInstance->Draw();
 
 //	#ifdef _DEBUG 
 
-	m_pGameInstance->Render_Font(TEXT("Font_Default"), m_szFPS, _float2(0.f, 0.f), XMVectorSet(1.f, 0.f, 0.f, 1.f), 0.f);
+		m_pGameInstance->Render_Font(TEXT("Font_Default"), m_szFPS, _float2(0.f, 0.f), XMVectorSet(1.f, 0.f, 0.f, 1.f), 0.f);
 
 //	#endif
 

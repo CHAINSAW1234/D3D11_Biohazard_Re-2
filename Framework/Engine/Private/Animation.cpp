@@ -276,7 +276,7 @@ KEYFRAME CAnimation::Get_FirstKeyFrame(_uint iBoneIndex)
 KEYFRAME CAnimation::Get_CurrentKeyFrame(_uint iBoneIndex, _float fTrackPosition)
 {
 	KEYFRAME				CurrentKeyFrame;
-	_int			iChannelIndex = { Find_ChannelIndex(iBoneIndex) };
+	_int					iChannelIndex = { Find_ChannelIndex(iBoneIndex) };
 	if (-1 == iChannelIndex)
 	{
 		return CurrentKeyFrame;
@@ -290,7 +290,7 @@ KEYFRAME CAnimation::Get_CurrentKeyFrame(_uint iBoneIndex, _float fTrackPosition
 		_float				fStartTime = { KeyFrames[i].fTime };
 		_float				fFinishTime = { KeyFrames[i + 1].fTime };
 
-		if (fStartTime > fTrackPosition || fFinishTime <= fFinishTime)
+		if (fStartTime > fTrackPosition && fTrackPosition <= fFinishTime)
 			continue;
 
 		_float				fLength = { fFinishTime - fStartTime };

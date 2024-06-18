@@ -17,12 +17,12 @@ CIs_Character_In_Range_Zombie::CIs_Character_In_Range_Zombie(const CIs_Character
 
 HRESULT CIs_Character_In_Range_Zombie::Initialize_Prototype()
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CIs_Character_In_Range_Zombie::Initialize(void* pArg)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 _bool CIs_Character_In_Range_Zombie::Condition_Check()
@@ -33,7 +33,7 @@ _bool CIs_Character_In_Range_Zombie::Condition_Check()
 	auto vDelta = vPos_Player - vPos_AI;
 	_float fDelta = XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta)));
 
-	if (fDelta < 7.f)
+	if (fDelta < 3.f)
 	{
 		return true;
 	}

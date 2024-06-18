@@ -1375,7 +1375,7 @@ void CModel::Set_Loop(_uint iPlayingIndex, _bool isLoop)
 	}
 }
 
-void CModel::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition)
+void CModel::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition, _bool isResetRootPre)
 {
 	_uint				iNumPlayingInfo = { static_cast<_uint>(m_PlayingAnimInfos.size()) };
 	if (iPlayingIndex >= iNumPlayingInfo)
@@ -1388,7 +1388,15 @@ void CModel::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition)
 		if (-1 == iAnimIndex)
 			return;
 
-		pPlayingInfo->Set_TrackPosition(fTrackPosition);
+		if (false == isResetRootPre)
+		{
+			pPlayingInfo->Set_TrackPosition(fTrackPosition);
+		}
+
+		else
+		{
+			pPlayingInfo->Set_TrackPosition_ResetRootPre(fTrackPosition);
+		}
 	}
 }
 
@@ -1640,6 +1648,81 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 	if (false == Is_Set_RootBone())
 		return E_FAIL;
 
+	_matrix			CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
+	_vector			vCamPosition = { CamWorldMatrix.r[CTransform::STATE_POSITION] };
+	_matrix			MyWorldMatirx = { pTransform->Get_WorldMatrix() };
+	_vector			vMyPosition = { MyWorldMatirx.r[CTransform::STATE_POSITION] };
+
+	_float			fDistance = { XMVectorGetX(XMVector3Length(vCamPosition - vMyPosition)) };
+
+	m_fAccOptimizationTime += fTimeDelta;
+	//if (fDistance < DISTANCE_FPS60)
+	//{
+	//	if (TIME_FPS60 > m_fAccOptimizationTime)
+	//		return S_OK;
+
+	//	fTimeDelta = m_fAccOptimizationTime;
+	//	m_fAccOptimizationTime = 0.f;
+	//}
+
+	//else if (fDistance < DISTANCE_FPS45)
+	//{
+	//	if (TIME_FPS45 > m_fAccOptimizationTime)
+	//		return S_OK;
+
+	//	fTimeDelta = m_fAccOptimizationTime;
+	//	m_fAccOptimizationTime = 0.f;
+	//}
+
+	//else if (fDistance < DISTANCE_FPS30)
+	//{
+	//	if (TIME_FPS30 > m_fAccOptimizationTime)
+	//		return S_OK;
+
+	//	fTimeDelta = m_fAccOptimizationTime;
+	//	m_fAccOptimizationTime = 0.f;
+	//}
+
+	//else if (fDistance < DISTANCE_FPS20)
+	//{
+	//	if (TIME_FPS20 > m_fAccOptimizationTime)
+	//		return S_OK;
+
+	//	fTimeDelta = m_fAccOptimizationTime;
+	//	m_fAccOptimizationTime = 0.f;
+	//}
+
+	//else if (fDistance < DISTANCE_FPS10)
+	//{
+	//	_float			fFramePerSec = TIME_FPS10;
+	//	if (TIME_FPS10 > m_fAccOptimizationTime)
+	//		return S_OK;
+
+	//	fTimeDelta = m_fAccOptimizationTime;
+	//	m_fAccOptimizationTime = 0.f;
+	//}
+
+	//// 5프레임
+	//else if (fDistance < DISTANCE_FPS5)
+	//{
+	//	if (TIME_FPS5 > m_fAccOptimizationTime)
+	//		return S_OK;
+
+	//	fTimeDelta = m_fAccOptimizationTime;
+	//	m_fAccOptimizationTime = 0.f;
+	//}
+
+	//else
+	//{
+	//	if (1.f > m_fAccOptimizationTime)
+	//		return S_OK;
+
+	//	fTimeDelta = m_fAccOptimizationTime;
+	//	m_fAccOptimizationTime = 0.f;
+	//}
+
+
+
 	for (auto& pPlayingInfo : m_PlayingAnimInfos)
 	{
 		if (nullptr == pPlayingInfo)
@@ -1680,6 +1763,91 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 
 	//	컴바인드 행렬 생성 및, 루트모션에 대한 성분들을 분해후 적용
 	Apply_Bone_CombinedMatrices(pTransform, pMovedDirection);
+
+	return S_OK;
+}
+
+HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
+{
+	_matrix			CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
+	_vector			vCamPosition = { CamWorldMatrix.r[CTransform::STATE_POSITION] };
+	_matrix			MyWorldMatirx = { pTransform->Get_WorldMatrix() };
+	_vector			vMyPosition = { MyWorldMatirx.r[CTransform::STATE_POSITION] };
+
+	_float			fDistance = { XMVectorGetX(XMVector3Length(vCamPosition - vMyPosition)) };
+
+	m_fAccOptimizationTime += fTimeDelta;
+	//	60프레임
+	if (fDistance < DISTANCE_FPS60)
+	{
+		_float			fFramePerSec = TIME_FPS60;
+		if (fFramePerSec > m_fAccOptimizationTime)
+			return S_OK;
+
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
+
+	if (fDistance < DISTANCE_FPS45)
+	{
+		_float			fFramePerSec = TIME_FPS45;
+		if (fFramePerSec > m_fAccOptimizationTime)
+			return S_OK;
+
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
+
+	else if (fDistance < DISTANCE_FPS30)
+	{
+		_float			fFramePerSec = TIME_FPS30;
+		if (fFramePerSec > m_fAccOptimizationTime)
+			return S_OK;
+
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
+
+	else if (fDistance < DISTANCE_FPS20)
+	{
+		_float			fFramePerSec = TIME_FPS20;
+		if (fFramePerSec > m_fAccOptimizationTime)
+			return S_OK;
+
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
+
+	else if (fDistance < DISTANCE_FPS10)
+	{
+		_float			fFramePerSec = TIME_FPS10;
+		if (fFramePerSec > m_fAccOptimizationTime)
+			return S_OK;
+
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
+
+	// 5프레임
+	else if (fDistance < DISTANCE_FPS5)
+	{
+		_float			fFramePerSec = TIME_FPS5;
+		if (fFramePerSec > m_fAccOptimizationTime)
+			return S_OK;
+
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
+
+	else
+	{
+		_float			fFramePerSec = 1.f / 1.f;
+		if (fFramePerSec > m_fAccOptimizationTime)
+			return S_OK;
+
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
 
 	return S_OK;
 }
@@ -1753,46 +1921,28 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 	const vector<KEYFRAME>&			LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
 
 	_bool							isResetRootPre = { pPlayingInfo->Is_ResetRootPre() };	
-	pPlayingInfo->Set_Root_Pre(false);
+
+	if (true == isResetRootPre)
+	{
+		KEYFRAME					CurrentKeyFrame = { m_Animations[iAnimIndex]->Get_CurrentKeyFrame(iRootBoneIndex, pPlayingInfo->Get_TrackPosition() - (m_Animations[iAnimIndex]->Get_TickPerSec() * fTimeDelta)) };
+
+		if (m_isRootMotion_XZ || m_isRootMotion_Y)
+			pPlayingInfo->Set_LastKeyFrame_Translation(iRootBoneIndex, XMLoadFloat3(&CurrentKeyFrame.vTranslation));
+
+		if (m_isRootMotion_Rotation)
+			pPlayingInfo->Set_LastKeyFrame_Rotation(iRootBoneIndex, XMLoadFloat4(&CurrentKeyFrame.vRotation));
+
+		pPlayingInfo->Set_Root_Pre(false);
+	}
 
 	//	선형 보간시 루트 모션시 새로운 시작 변위와 (원점에서 시작하지않는 모션등...)와 선형 보간 이전 키프레임들에서의 변위와의 차이 만큼 빨려들어감 방지 
-	if (true == isLinearInterpolation)
+	else  if (true == isLinearInterpolation)
+	/*if (true == isLinearInterpolation)*/
 	{
 		//	첫 선형 보간 들어갈때 라스트 키프레임즈에서 루트성분을 적용에따라 현재 새로운 키프레임의 변환값으로 씌움
 		//	전 애니메이션의 최종 루트성분을 현재 애니메이션의 시작 로컬 스페이스상의 루트로 맞춘다.			
 		if (true == isFirstTick)
 		{
-			/*_matrix			RootTransformationMatrix = { XMLoadFloat4x4(&TransformationMatrices[iRootBoneIndex]) };
-			_vector			vRootScale, vRootQuaternion, vRootTranslation;
-
-			XMMatrixDecompose(&vRootScale, &vRootQuaternion, &vRootTranslation, RootTransformationMatrix);
-
-			if (true == m_isRootMotion_XZ ||
-				true == m_isRootMotion_Y)
-			{
-				_vector			vLastTranslation = { XMLoadFloat3(&LastKeyFrames[iRootBoneIndex].vTranslation) };
-				_vector			vLastQuaternion = { XMLoadFloat4(&LastKeyFrames[iRootBoneIndex].vRotation) };
-				_vector			vResultLastTranslation = { vLastTranslation };
-
-				if (true == m_isRootMotion_XZ)
-				{
-					vResultLastTranslation = XMVectorSetX(vResultLastTranslation, XMVectorGetX(vRootTranslation));
-					vResultLastTranslation = XMVectorSetZ(vResultLastTranslation, XMVectorGetZ(vRootTranslation));
-				}
-
-				if (true == m_isRootMotion_Y)
-				{
-					vResultLastTranslation = XMVectorSetY(vResultLastTranslation, XMVectorGetY(vRootTranslation));
-				}
-
-				pPlayingInfo->Set_LastKeyFrame_Translation(iRootBoneIndex, vResultLastTranslation);
-			}
-
-			if (true == m_isRootMotion_Rotation)
-			{
-				_vector			vResultLastRotation = { vRootQuaternion };
-				pPlayingInfo->Set_LastKeyFrame_Rotation(iRootBoneIndex, vResultLastRotation);
-			}*/
 			KEYFRAME				FirstKeyFrame = { m_Animations[iAnimIndex]->Get_FirstKeyFrame(iRootBoneIndex) };
 
 			if (m_isRootMotion_XZ || m_isRootMotion_Y)
@@ -1808,31 +1958,11 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 		//	이번에 재생된 애니메이션과 이전 최종 키프레임간의 혼합 과정		
 		const vector<KEYFRAME>& LinearStartKeyFrames = { pPlayingInfo->Get_LinearStartKeyFrames() };
 		TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearInterpolation, m_fTotalLinearTime, TransformationMatrices, iNumBones, iRootBoneIndex, LinearStartKeyFrames);
-		//	const vector<KEYFRAME>&			LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
-		//	TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearInterpolation, m_fTotalLinearTime, TransformationMatrices, iNumBones, LastKeyFrames);
 	}
-
-	//else
-	//{
-	//	if (false == isFirstTick && true == isResetRootPre)
-	//	{
-	//		KEYFRAME					CurrentKeyFrame = { m_Animations[iAnimIndex]->Get_CurrentKeyFrame(iRootBoneIndex, pPlayingInfo->Get_TrackPosition() - fTimeDelta) };
-
-	//		if (m_isRootMotion_XZ || m_isRootMotion_Y)
-	//			pPlayingInfo->Set_LastKeyFrame_Translation(iRootBoneIndex, XMLoadFloat3(&CurrentKeyFrame.vTranslation));
-
-	//		if (m_isRootMotion_Rotation)
-	//			pPlayingInfo->Set_LastKeyFrame_Rotation(iRootBoneIndex, XMLoadFloat4(&CurrentKeyFrame.vRotation));
-
-	//		vector<KEYFRAME>			LastKeyFramesTemp = { pPlayingInfo->Get_LastKeyFrames() };
-	//		pPlayingInfo->Update_LinearStateKeyFrames(LastKeyFramesTemp);
-	//	}
-	//}
-
 
 	//	첫 틱에 이전 변위량들을 새로 기입해줌
 	//	위의 마지막 키프레임을 맞춰주는것과 같은 원리
-	if (true == isFirstTick/* || true == isResetRootPre*/)
+	if (true == isFirstTick || true == isResetRootPre)
 	{
 		_matrix			RootTransformationMatrix = { XMLoadFloat4x4(&TransformationMatrices[iRootBoneIndex]) };
 		_vector			vRootScale, vRootQuaternion, vRootTranslation;
@@ -1844,9 +1974,9 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 			FirstKeyFrame = { m_Animations[iAnimIndex]->Get_FirstKeyFrame(iRootBoneIndex) };
 		}
 
-		else
+		else if (true == isResetRootPre)
 		{
-			FirstKeyFrame = { m_Animations[iAnimIndex]->Get_CurrentKeyFrame(iRootBoneIndex, pPlayingInfo->Get_TrackPosition() - fTimeDelta) };
+			FirstKeyFrame = { m_Animations[iAnimIndex]->Get_CurrentKeyFrame(iRootBoneIndex, pPlayingInfo->Get_TrackPosition() - (m_Animations[iAnimIndex]->Get_TickPerSec() * fTimeDelta)) };
 		}
 
 		XMMatrixDecompose(&vRootScale, &vRootQuaternion, &vRootTranslation, RootTransformationMatrix);

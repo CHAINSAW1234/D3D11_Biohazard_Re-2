@@ -82,7 +82,7 @@ void CHead_Player::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	_float3				vDirection = { };
-	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &vDirection);
+	//	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vDirection);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);

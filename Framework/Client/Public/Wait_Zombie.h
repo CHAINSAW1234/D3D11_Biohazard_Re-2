@@ -17,7 +17,9 @@ public:
 	virtual HRESULT					Initialize_Prototype();
 	virtual HRESULT					Initialize(void* pArg);
 
+	virtual void					Enter() override;
 	virtual void					Execute() override;
+	virtual void					Exit() override;
 
 private:
 	void							Change_Animation();

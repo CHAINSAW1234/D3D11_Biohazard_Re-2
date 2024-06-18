@@ -76,6 +76,24 @@ CModel* CBlackBoard_Zombie::Get_PartModel(_uint iPartType)
 	return m_pAI->Get_Model_From_PartObject(static_cast<CMonster::PART_ID>(iPartType));
 }
 
+void CBlackBoard_Zombie::Reset_NonActive_Body(const list<_uint>& ActivePlayingIndices)
+{
+	CModel*			pBodyModel = { Get_PartModel(CZombie::PART_BODY) };
+	if (nullptr == pBodyModel)
+		return;
+
+	_uint			iNumInfo = { pBodyModel->Get_NumPlayingInfos() };
+	for (_uint i = 0; i < iNumInfo; ++i)
+	{
+		list<_uint>::const_iterator		iter = { find(ActivePlayingIndices.begin(), ActivePlayingIndices.end(), i) };
+		if (iter == ActivePlayingIndices.end())
+		{
+			pBodyModel->Reset_PreAnimation(i);
+			pBodyModel->Set_BlendWeight(i, 0.f, 0.3f);
+		}
+	}
+}
+
 _bool CBlackBoard_Zombie::Compute_Direction_To_Player(_float3* pDirection)
 {
 	_bool				isSuccess = { false };
@@ -113,6 +131,29 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Player_Local(_float3* pDirection)
 	_matrix				WorldMatrixInv = { pAITransform->Get_WorldMatrix_Inverse() };
 	_vector				vLocalDirection = { XMVector3TransformNormal(vWorldDirection, WorldMatrixInv) };
 	XMStoreFloat3(pDirection, vLocalDirection);
+
+	return true;
+}
+
+_bool CBlackBoard_Zombie::Compute_Player_Angle_XZ_Plane(_float* pAngle)
+{
+	if (nullptr == pAngle)
+		return false;
+
+	_float3				vDirectionToPlayerFloat3 = {};
+	if (false == Compute_Direction_To_Player_Local(&vDirectionToPlayerFloat3))
+		return false;
+
+	_vector				vDirectionToPlayer = { XMLoadFloat3(&vDirectionToPlayerFloat3) };
+	_vector				vAbsoluteLookDirection = { XMVectorSet(0.f, 0.f, 1.f, 0.f) };
+
+	_vector				vDirectionToPlayerXZ = { XMVectorSetY(vDirectionToPlayer, 0.f) };
+	_vector				vAbsoluteLookDirectionXZ = { XMVectorSetY(vAbsoluteLookDirection, 0.f) };
+
+	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirectionToPlayerXZ), XMVector3Normalize(vAbsoluteLookDirectionXZ))) };
+	_float				fResultAngle = { acosf(fDot) };
+
+	*pAngle = fResultAngle;
 
 	return true;
 }

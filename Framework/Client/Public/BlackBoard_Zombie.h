@@ -3,6 +3,10 @@
 #include "Client_Defines.h"
 #include "BlackBoard.h"
 
+BEGIN(Engine)
+class CTask_Node;
+END
+
 BEGIN(Client)
 
 class CBlackBoard_Zombie : public CBlackBoard
@@ -33,20 +37,23 @@ public: // Getter
 		return m_pPlayer;
 	}
 
-	_int							Get_CurrentState() { return m_iCurrentState; }
-	_int							Get_PreState() { return m_iPreState; }
-
 	_uint							Get_Current_MotionType_Body();
 	_uint							Get_Pre_MotionType_Body();
 
 	CModel*							Get_PartModel(_uint iPartType);
 
+public:		/* Anim Controll */
+	void							Reset_NonActive_Body(const list<_uint>& ActivePlayingIndices);
+
 public:		/* Utility */
 	_bool							Compute_Direction_To_Player(_float3* pDirection);
 	_bool							Compute_Direction_To_Player_Local(_float3* pDirection);
+	_bool							Compute_Player_Angle_XZ_Plane(_float* pAngle);
+
 
 	CTransform*						Get_Transform(CGameObject* pObject);
 	CTransform*						Get_Transform_AI();
+
 
 public:		/* Anim Branch Check */
 	_bool							Is_Start_Anim(_uint iPartID, _uint iAnimIndex);
@@ -61,8 +68,7 @@ protected:
 	class CPlayer*					m_pPlayer = { nullptr };
 	class CZombie*					m_pAI = { nullptr };
 
-	_int							m_iPreState = { -1 };			//	현재상태와 이전상태 => ( 최초에 -1 로 초기화 )
-	_int							m_iCurrentState = { -1 };
+	CTask_Node*						m_pPreNode = { nullptr };
 
 public:
 	static CBlackBoard_Zombie* Create();

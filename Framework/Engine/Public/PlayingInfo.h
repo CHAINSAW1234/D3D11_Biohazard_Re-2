@@ -54,6 +54,7 @@ public:		/* For.Access */
 	inline void							Set_Loop(_bool isLoop) { m_isLoop = isLoop; }
 	void								Set_BlendWeight(_float fBlendWeight, _float fBlendLinearTime = 0.f);
 	void								Set_TrackPosition(_float fTrackPosition);
+	void								Set_TrackPosition_ResetRootPre(_float fTrackPosition);
 	inline void							Set_LinearInterpolation(_bool isLinearInterPolation) { m_isLinearInterpolation = isLinearInterPolation; }
 	inline void							Set_AccLinearInterpolation(_float fAccLinear) { m_fAccLinearInterpolation = fAccLinear; }
 	inline void							Set_BoneLayerTag(const wstring& strBoneLayerTag) { m_strBoneLayerTag = strBoneLayerTag; }

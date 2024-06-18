@@ -6,12 +6,12 @@
 
 BEGIN(Client)
 
-class CMoveTo_Zombie : public CTask_Node
+class CSleep_Zombie : public CTask_Node
 {
 public:
-	CMoveTo_Zombie();
-	CMoveTo_Zombie(const CMoveTo_Zombie& rhs);
-	virtual ~CMoveTo_Zombie() = default;
+	CSleep_Zombie();
+	CSleep_Zombie(const CSleep_Zombie& rhs);
+	virtual ~CSleep_Zombie() = default;
 
 public:
 	virtual HRESULT					Initialize_Prototype();
@@ -24,20 +24,19 @@ public:
 private:
 	void							Change_Animation();
 
-	_int							Compute_Base_Anim();
-	_int							Compute_Blend_Anim();
-
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard)
 	{
 		m_pBlackBoard = pBlackBoard;
 	}
+private:
+	class CBlackBoard_Zombie* m_pBlackBoard = { nullptr };
 
-protected:
-	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
+private:	/* For. Active FirstTime */
+	_bool							m_isWake = { false };
 
 public:
-	static CMoveTo_Zombie* Create();
+	static CSleep_Zombie* Create();
 
 public:
 	virtual void Free() override;

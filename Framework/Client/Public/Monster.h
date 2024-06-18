@@ -51,10 +51,8 @@ public:		/* Access_PartObjects */
 
 public://For AIController
 	virtual void						Init_BehaviorTree_Zombie() {}
-	void								SetState(MONSTER_STATE eState)
-	{
-		m_eState = eState;
-	}
+	void								SetState(MONSTER_STATE eState) { m_eState = eState; }
+	MONSTER_STATE						GetState() { return m_eState; }
 protected:
 	CModel*								m_pModelCom = { nullptr };
 	CShader*							m_pShaderCom = { nullptr };	

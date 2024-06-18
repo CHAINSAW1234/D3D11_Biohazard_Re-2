@@ -16,6 +16,9 @@ public:
 	virtual HRESULT					Initialize(void* pArg);
 
 	virtual void					Execute() {}
+	virtual void					Enter() = 0;
+	virtual void					Exit() = 0;
+
 protected:
 	class CGameInstance*			m_pGameInstance = { nullptr };
 public:

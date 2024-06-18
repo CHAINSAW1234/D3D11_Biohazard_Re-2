@@ -223,6 +223,7 @@
     <ClInclude Include="..\Public\Props.h" />
     <ClInclude Include="..\Public\Selector_UI.h" />
     <ClInclude Include="..\Public\Sky.h" />
+    <ClInclude Include="..\Public\Sleep_Zombie.h" />
     <ClInclude Include="..\Public\Slot_Highlighter.h" />
     <ClInclude Include="..\Public\Tab_Window.h" />
     <ClInclude Include="..\Public\Terrain.h" />
@@ -290,6 +291,7 @@
     <ClCompile Include="..\Private\Props.cpp" />
     <ClCompile Include="..\Private\Selector_UI.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
+    <ClCompile Include="..\Private\Sleep_Zombie.cpp" />
     <ClCompile Include="..\Private\Slot_Highlighter.cpp" />
     <ClCompile Include="..\Private\Tab_Window.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />

@@ -73,7 +73,6 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Set_TickPerSec(CPlayer::WALK_BACK_B_LOOP, 65.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::WALK_BACK_R_LOOP, 63.f);
 
-
 	m_pModelCom->Set_TickPerSec(CPlayer::WHEEL_L180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::WHEEL_R180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::HOLD_SHOT, 150.f);

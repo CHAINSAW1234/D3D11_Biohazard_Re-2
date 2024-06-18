@@ -223,6 +223,9 @@
     <Filter Include="02.GameObjects\UI\11. Map_UI">
       <UniqueIdentifier>{f04cdcf8-aee8-450c-b67b-e0df516a3328}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AIController\Zombie\Task\Sleep">
+      <UniqueIdentifier>{4f0ee31c-a304-4a7a-b3f8-b3744827cdd2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -432,6 +435,9 @@
     <ClInclude Include="..\Public\Map_UI.h">
       <Filter>02.GameObjects\UI\11. Map_UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Sleep_Zombie.h">
+      <Filter>AIController\Zombie\Task\Sleep</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -622,6 +628,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Map_UI.cpp">
       <Filter>02.GameObjects\UI\11. Map_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sleep_Zombie.cpp">
+      <Filter>AIController\Zombie\Task\Sleep</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

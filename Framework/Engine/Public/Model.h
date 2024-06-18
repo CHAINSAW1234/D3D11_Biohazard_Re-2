@@ -7,7 +7,21 @@
 BEGIN(Engine)
 
 #define ANIM_DEFAULT_LINEARTIME		0.2f
-#define MAX_COUNT_BONE				256
+#define MAX_COUNT_BONE				512
+
+#define DISTANCE_FPS60				5.f
+#define DISTANCE_FPS45				7.f
+#define DISTANCE_FPS30				10.f
+#define DISTANCE_FPS20				13.f
+#define DISTANCE_FPS10				15.f
+#define DISTANCE_FPS5				20.f
+
+#define TIME_FPS60					(1.f / 60.f)
+#define TIME_FPS45					(1.f / 45.f)
+#define TIME_FPS30					(1.f / 30.f)
+#define TIME_FPS20					(1.f / 20.f)
+#define TIME_FPS10					(1.f / 10.f)
+#define TIME_FPS5					(1.f / 5.f)
 
 class ENGINE_DLL CModel final : public CComponent
 {
@@ -166,7 +180,7 @@ public:		/* For. Access */
 
 	void									Set_TotalLinearInterpolation(_float fTime) { m_fTotalLinearTime = fTime; }
 	void									Set_KeyFrameIndex_AllKeyFrame(_uint iPlayingIndex, _uint iKeyFrameIndex);
-	void									Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition);
+	void									Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition, _bool isResetRootPre = false);
 	void									Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight, _float fLinearTime = 0.f);
 	void									Change_Animation(_uint iPlayingIndex, _uint iAnimIndex);
 	void									Change_Animation(_uint iPlayingIndex, const string& strAnimTag);
@@ -194,6 +208,7 @@ public:
 	HRESULT									Bind_ShaderResource_MaterialDesc(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 
 	HRESULT									Play_Animations(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
+	HRESULT									Play_Animation_Light(class CTransform* pTransform, _float fTimeDelta);
 	HRESULT									Play_IK(class CTransform* pTransform, _float fTimeDelta);
 	HRESULT									Render(_uint iMeshIndex);
 
@@ -259,6 +274,10 @@ private: /* For.Additional_Input_Forces */
 
 private:	/* For.Linear_Interpolation */
 	_float									m_fTotalLinearTime = { 0.f };
+
+private:	/* Distance_Optimization */
+	_float									m_fOptimizationFrame = { 60.f };
+	_float									m_fAccOptimizationTime = { 0.f };
 
 private:	/* For.FBX_Load */
 	HRESULT									Ready_Meshes(const map<string, _uint>& BoneIndices);

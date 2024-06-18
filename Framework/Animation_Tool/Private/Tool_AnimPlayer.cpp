@@ -552,7 +552,7 @@ void CTool_AnimPlayer::Show_PlayingInfos()
 
 				ImGui::SliderFloat(string(string("Playing Info : ") + strPlayingIndex + string("## TrackPosition Controll")).c_str(), &fTrackPosition, 0.f, fDuration);
 
-				m_pCurrentModel->Set_TrackPosition(iPlayingIndex, fTrackPosition);
+				m_pCurrentModel->Set_TrackPosition(iPlayingIndex, fTrackPosition, true);
 			}
 		}
 

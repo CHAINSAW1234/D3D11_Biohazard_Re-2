@@ -70,12 +70,18 @@ void CPlayingInfo::Set_BlendWeight(_float fBlendWeight, _float fBlendLinearTime)
 	m_fTotalLinearTime_Blend = fBlendLinearTime;
 }
 
+void CPlayingInfo::Set_TrackPosition_ResetRootPre(_float fTrackPosition)
+{
+	Set_TrackPosition(fTrackPosition);
+
+	m_isResetRootPre = true;
+}
+
 void CPlayingInfo::Set_TrackPosition(_float fTrackPosition)
 {
 	if (fTrackPosition < 0.f)
 		fTrackPosition = 0.f;
 
-	m_isResetRootPre = true;
 	m_fTrackPosition = fTrackPosition;
 }
 

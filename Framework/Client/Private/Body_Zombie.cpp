@@ -39,6 +39,8 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 	if (FAILED(Initialize_Model()))
 		return E_FAIL;
 
+	m_eCurrentMotionType = MOTION_A;
+
 	m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Ex_Default_Zombie/Body.fbx");
 
 	return S_OK;

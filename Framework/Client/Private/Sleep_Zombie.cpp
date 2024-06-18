@@ -1,54 +1,52 @@
 #include "stdafx.h"
 #include "GameInstance.h"
-#include "Wait_Zombie.h"
+#include "Sleep_Zombie.h"
 #include "Player.h"
 #include "BlackBoard_Zombie.h"
 #include "Zombie.h"
 #include "Body_Zombie.h"
 
-CWait_Zombie::CWait_Zombie() 
+CSleep_Zombie::CSleep_Zombie()
 	: CTask_Node()
 {
 }
 
-CWait_Zombie::CWait_Zombie(const CWait_Zombie& rhs)
+CSleep_Zombie::CSleep_Zombie(const CSleep_Zombie& rhs)
 {
 }
 
-HRESULT CWait_Zombie::Initialize_Prototype()
-{
-	return S_OK;
-}
-
-HRESULT CWait_Zombie::Initialize(void* pArg)
+HRESULT CSleep_Zombie::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-void CWait_Zombie::Enter()
+HRESULT CSleep_Zombie::Initialize(void* pArg)
+{
+	return S_OK;
+}
+
+void CSleep_Zombie::Enter()
 {
 }
 
-void CWait_Zombie::Execute()
+void CSleep_Zombie::Execute()
 {
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_IDLE);
 
-	cout << "Wait" << endl;
 	Change_Animation();
-
 }
 
-void CWait_Zombie::Exit()
+void CSleep_Zombie::Exit()
 {
 }
 
-void CWait_Zombie::Change_Animation()
+void CSleep_Zombie::Change_Animation()
 {
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
 
@@ -161,13 +159,13 @@ void CWait_Zombie::Change_Animation()
 	pBodyModel->Set_BlendWeight(iPlayingIndex, 1.f);
 }
 
-CWait_Zombie* CWait_Zombie::Create()
+CSleep_Zombie* CSleep_Zombie::Create()
 {
-	CWait_Zombie* pInstance = new CWait_Zombie();
+	CSleep_Zombie* pInstance = new CSleep_Zombie();
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX(TEXT("Failed To Created : CWait_Zombie"));
+		MSG_BOX(TEXT("Failed To Created : CSleep_Zombie"));
 
 		Safe_Release(pInstance);
 	}
@@ -175,7 +173,7 @@ CWait_Zombie* CWait_Zombie::Create()
 	return pInstance;
 }
 
-void CWait_Zombie::Free()
+void CSleep_Zombie::Free()
 {
 	__super::Free();
 }

@@ -71,9 +71,9 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 		}
 		else if(iCurIndex == 3)
 		{
-			light_desc.vDiffuse = _float4(0.05f, 0.05f, 0.09f, 0.05f);
-			light_desc.vAmbient = _float4(0.05f, 0.05f, 0.09f, 0.05f);
-			if (plight_desc->vDiffuse.x < 0.07f && plight_desc->vDiffuse.x > 0.03f)				
+			light_desc.vDiffuse = _float4(0.09f, 0.09f, 0.12f, 0.09f);
+			light_desc.vAmbient = _float4(0.09f, 0.09f, 0.12f, 0.09f);
+			if (plight_desc->vDiffuse.x < 0.11f && plight_desc->vDiffuse.x > 0.07f)
 				iPreIndex = iCurIndex;
 			
 			m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta*2.f);
@@ -214,7 +214,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
 	//ÈñÈ÷ ³Ñ ¹Ù»Û °ü°è·Î ÇÔ¼ö ¸øÆÍ¾î¿ä - ¿¹Àº
 
-	string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
+	/*string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
 	_tchar	szFilePath[MAX_PATH] = { L"" };
 	MultiByteToWideChar(CP_ACP, 0, strFilePath.c_str(), (_uint)strlen(strFilePath.c_str()), szFilePath, MAX_PATH);
 	_uint iMonsterNum = { 0 };
@@ -256,8 +256,17 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 
 
 	}
-	CloseHandle(hFile);
+	CloseHandle(hFile);*/
 
+#ifdef USE_UI
+	CMonster::MONSTER_DESC ObjectDesc = {};
+
+	_matrix			WorldMatrix = { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
+	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+		return E_FAIL;
+#endif
 
 	return S_OK;
 }
@@ -299,6 +308,7 @@ HRESULT CLevel_GamePlay::Ready_RegionCollider()
 
 	return S_OK;
 }
+
 HRESULT CLevel_GamePlay::Ready_Layer_Effect(const wstring & strLayerTag)
 {	
 	for (size_t i = 0; i < 20; i++)

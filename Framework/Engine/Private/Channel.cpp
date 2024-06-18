@@ -231,6 +231,8 @@ _float4x4 CChannel::Compute_TransformationMatrix_LinearInterpolation(const vecto
 	vScale = XMVectorLerp(XMLoadFloat3(&LinearStartKeyFrame.vScale),
 		vScale, fRatio);
 
+	vScale = vScale;
+
 	//	쿼터니언은 XMQuaternionSlerp 함수를 이용하여 선형보간을 진행한다.
 	vRotation = XMQuaternionSlerp(XMLoadFloat4(&LinearStartKeyFrame.vRotation),
 		vRotation, fRatio);
