@@ -68,6 +68,11 @@ void CClothes_Zombie::Late_Tick(_float fTimeDelta)
 
 HRESULT CClothes_Zombie::Render()
 {
+	auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
+	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
+	if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 0.5f))
+		return S_OK;
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
@@ -123,6 +128,11 @@ HRESULT CClothes_Zombie::Render()
 
 HRESULT CClothes_Zombie::Render_LightDepth_Dir()
 {
+	auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
+	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
+	if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 0.5f))
+		return S_OK;
+
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
@@ -174,6 +184,11 @@ HRESULT CClothes_Zombie::Render_LightDepth_Dir()
 
 HRESULT CClothes_Zombie::Render_LightDepth_Point()
 {
+	auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
+	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
+	if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 0.5f))
+		return S_OK;
+
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
@@ -230,6 +245,11 @@ HRESULT CClothes_Zombie::Render_LightDepth_Point()
 
 HRESULT CClothes_Zombie::Render_LightDepth_Spot()
 {
+	auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
+	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
+	if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 0.5f))
+		return S_OK;
+
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 

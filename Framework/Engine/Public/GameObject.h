@@ -72,6 +72,10 @@ public:
 	{
 		m_bRagdoll = true;
 	}
+	void										SetOctreeNode(class COctree* pNode)
+	{
+		m_pOctreeNode = pNode;
+	}
 public:
 	virtual _bool								Get_Dead() { return m_bDead; }
 
@@ -89,12 +93,13 @@ protected:
 	_int										m_iIndex_RigidBody = { 0 };
 
 	_bool										m_bDead = { false };
-	_bool										m_bRender = { false };
+	_bool										m_bRender = { true };
 	_bool										m_bLocalized = { false };
 	_float4										m_vLocal_To_World_Pos;
 
 	_bool										m_bRagdoll = { false };
 	_bool										m_bRagdoll_Ready = { false };
+	class COctree*								m_pOctreeNode = { nullptr };
 protected:
 	map<const wstring, class CComponent*>		m_Components;
 
