@@ -27,6 +27,11 @@ public:
 	virtual HRESULT Render() override;
 
 private:
+	void PopUp_Operation(_float fTimeDelta);
+	void Idle_Operation(_float fTimeDelta);
+	void Hide_Operation(_float fTimeDelta);
+	
+private:
 	vector<CModel*>		m_vecModelCom;
 	CShader*			m_pShaderCom = { nullptr };
 	class CCamera_Free*	m_pCameraFree = { nullptr };
@@ -35,7 +40,14 @@ private:
 	ITEM_NUMBER			m_eItem_Number = { ITEM_NUMBER_END };
 	VIEWER_STATE		m_eViewer_State = { STATE_END };
 
-	_float				m_fDistCam = { 0.6f };
+	_float				m_fDistCam = { 1.f };
+	_float				m_fDistCam_FarLimit = { 1.f };
+	_float				m_fDistCam_NearLimit = { 0.1f };
+
+	_float				m_fPopupHide_TimeLimit = { 0.5f };
+	_float				m_fCurPopHide_Time = { 0.f };
+	_float				m_fPopupHide_Speed = { 0.1f };
+
 
 private:
 	HRESULT Add_Components();

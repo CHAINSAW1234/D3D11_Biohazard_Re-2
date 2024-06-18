@@ -60,37 +60,17 @@ void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 	switch (m_eViewer_State)
 	{
 	case Client::CItem_Mesh_Viewer::POP_UP: {
+		PopUp_Operation(fTimeDelta);
 		break;
 	}
 		
 	case Client::CItem_Mesh_Viewer::IDLE: {
-		if (true == m_pGameInstance->Check_Wheel_Down())
-		{
-			m_fDistCam -= 1.f;
-		}
-		else if (true == m_pGameInstance->Check_Wheel_Up())
-		{
-			m_fDistCam += 1.f;
-		}
-
-		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-		{
-			_long	MouseMove = { 0 };
-
-			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().x)
-			{
-				m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * 0.1f);
-			}
-			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().y)
-			{
-				m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * 0.1f);
-			}
-		}
-
+		Idle_Operation(fTimeDelta);
 		break;
 	}
 		
 	case Client::CItem_Mesh_Viewer::HIDE: {
+		Hide_Operation(fTimeDelta);
 		break;
 	}
 		
@@ -152,6 +132,51 @@ HRESULT CItem_Mesh_Viewer::Render()
 
 		m_vecModelCom[m_eItem_Number]->Render(static_cast<_uint>(i));
 	}
+}
+
+void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
+{
+	m_fCurPopHide_Time += fTimeDelta;
+
+	if (m_fCurPopHide_Time > m_fPopupHide_TimeLimit)
+	{
+		m_eViewer_State = IDLE;
+		m_fCurPopHide_Time = 0.f;
+	}
+
+	
+	m_fDistCam -= m_fPopupHide_Speed;
+}
+
+void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
+{
+	if (true == m_pGameInstance->Check_Wheel_Down())
+	{
+		m_fDistCam -= 1.f;
+	}
+	else if (true == m_pGameInstance->Check_Wheel_Up())
+	{
+		m_fDistCam += 1.f;
+	}
+
+	if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+	{
+		_long	MouseMove = { 0 };
+
+		if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().x)
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * 0.1f);
+		}
+		if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().y)
+		{
+			m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * 0.1f);
+		}
+	}
+}
+
+void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
+{
+
 }
 
 
