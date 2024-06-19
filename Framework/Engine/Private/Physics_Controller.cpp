@@ -247,10 +247,12 @@ void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, 
 
 	auto WorldMat = pTransform->Get_WorldMatrix();
 
+	auto Scale = pTransform->Get_Scaled();
+	auto ScaleMatrix = XMMatrixScaling(Scale.x, Scale.y, Scale.z);
 	for (int i = 0; i < VertexNum; ++i)
 	{
 		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
-		VertexPos = XMVector3TransformCoord(VertexPos, WorldMat);
+		VertexPos = XMVector3TransformCoord(VertexPos, ScaleMatrix);
 
 		_float4 vPos;
 		XMStoreFloat4(&vPos, VertexPos);
@@ -265,6 +267,10 @@ void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, 
 		IndicesVec.push_back(Ind);
 	}
 
+	auto RotationMatrix = pTransform->Get_RotationMatrix_Pure_Mat();
+	auto Quat = XMQuaternionRotationMatrix(RotationMatrix);
+	auto PxQuat = to_quat(Quat);
+
 	PxConvexMeshDesc convexDesc;
 	convexDesc.points.count = static_cast<PxU32>(vertices.size());
 	convexDesc.points.stride = sizeof(PxVec3);
@@ -277,7 +283,7 @@ void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, 
 	if (pTransform)
 		vPos = pTransform->Get_State_Float4(CTransform::STATE_POSITION);
 
-	PxTransform transform(PxVec3(0.f, 0.f, 0.f));
+	PxTransform transform(PxVec3(vPos.x, vPos.y, vPos.z),PxQuat);
 
 	PxConvexMeshGeometry geometry(convexMesh);
 	PxMaterial* material = m_Physics->createMaterial(0.5f, 0.5f, 0.5f);
