@@ -59,7 +59,7 @@ HRESULT CDoor::Initialize(void* pArg)
 
 #endif
 
-	m_pRotationBone = m_pModelCom->Get_BonePtr(1);
+	m_pRotationBone = m_pModelCom->Get_BonePtr("_01");
 	
 	return S_OK;
 }
@@ -74,11 +74,12 @@ void CDoor::Tick(_float fTimeDelta)
 		return;
 	m_eType == DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
 
-	/*auto Combined = XMLoadFloat4x4(m_pRotationBone->Get_CombinedTransformationMatrix());
-	Combined = Combined * m_pTransformCom->Get_WorldMatrix();
+	//auto Combined = XMLoadFloat4x4(m_pRotationBone->Get_CombinedTransformationMatrix());
+	auto Combined = m_pRotationBone->Get_TrasformationMatrix();
+	//Combined = Combined * m_pTransformCom->Get_WorldMatrix();
 	_float4x4 ResultMat;
 	XMStoreFloat4x4(&ResultMat, Combined);
-	m_pPx_Collider->Update_Transform(&ResultMat);*/
+	m_pPx_Collider->Update_Transform(&ResultMat);
 }
 
 void CDoor::Late_Tick(_float fTimeDelta)
