@@ -54,10 +54,12 @@ HRESULT CCabinet::Initialize(void* pArg)
 
 void CCabinet::Tick(_float fTimeDelta)
 {
+	__super::Check_Player();
+	if (!m_bVisible)
+		return;
 	if (m_eState == CABINET_OPEN && m_pModelCom->isFinished(0))
 		return;
 
-	__super::Check_Player();
 
 	if (m_pPlayer == nullptr)
 		return;
@@ -79,7 +81,8 @@ void CCabinet::Tick(_float fTimeDelta)
 
 void CCabinet::Late_Tick(_float fTimeDelta)
 {
-
+	if (!Visible())
+		return;
 	if (m_bRender == false)
 		return;
 
@@ -231,16 +234,16 @@ HRESULT CCabinet::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	_bool isMotionBlur = m_pGameInstance->Get_ShaderState(MOTION_BLUR);
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_isMotionBlur", &isMotionBlur, sizeof(_bool))))
-		return E_FAIL;
+	//_bool isMotionBlur = m_pGameInstance->Get_ShaderState(MOTION_BLUR);
+	//if (FAILED(m_pShaderCom->Bind_RawValue("g_isMotionBlur", &isMotionBlur, sizeof(_bool))))
+	//	return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevWorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevViewMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevWorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
+	//	return E_FAIL;
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevViewMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
+	//	return E_FAIL;
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
+	//	return E_FAIL;
 
 
 	return S_OK;

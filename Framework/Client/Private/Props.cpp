@@ -61,17 +61,15 @@ HRESULT CProps::Initialize(void* pArg)
 
 void CProps::Tick(_float fTimeDelta)
 {
-	m_fTimeTest += fTimeDelta;
+	// m_fTimeTest += fTimeDelta;
 	if (m_pPlayer == nullptr)
 		m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-	if (m_pGameInstance->Get_KeyState(VK_F9) == DOWN && m_fTimeTest > 0.5f)
-		m_bOctotree = !m_bOctotree;
-	if (m_pGameInstance->Get_KeyState(VK_F10) == DOWN && m_fTimeTest > 0.5f)
-		m_bShadow = !m_bShadow;
 }
 
 void CProps::Late_Tick(_float fTimeDelta)
 {
+	if (m_pPlayer == nullptr)
+		return;
 	if (m_pPlayer->Get_Player_RegionChange() == true)
 	{
 		if (m_tagPropDesc.iRegionDir == DIRECTION_MID)
@@ -87,7 +85,7 @@ void CProps::Late_Tick(_float fTimeDelta)
 		m_bVisible = m_tagPropDesc.BelongIndexs2[m_pPlayer->Get_Player_ColIndex()];
 	}
 
-	if (/*m_bVisible && *//*1*/true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f))
+	if (m_bVisible  /*1*//* && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f)*/)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
