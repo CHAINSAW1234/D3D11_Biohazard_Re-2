@@ -16,6 +16,7 @@ public:
 	{
 		_int				iColNum = {0};
 		_int				iDir = {0};
+		_int				iRegionNum = {0};
 
 		_float4x4		worldMatrix = { };
 	}COLLIDER_DESC;
@@ -46,6 +47,7 @@ private:
 private:
 	_int									m_iColNum = { 0 };
 	_int									m_iDir = { 0 };
+	_int									m_iRegionNum = { 0 };
 
 	_int									m_iIndex = { 0 };
 	CCollider*								m_pColliderCom = {nullptr};

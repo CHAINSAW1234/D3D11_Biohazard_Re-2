@@ -125,7 +125,7 @@ private:
 	_bool										m_bChange = { true };
 	_int										m_iCurCol = { 0 };
 	_int										m_iDir = { 0 };
-	_int										m_iPreCol = { 0 };
+	_int										m_iPreCol = { 1 };
 	_float										m_fTimeTEST = { 0.f };
 #pragma endregion
 

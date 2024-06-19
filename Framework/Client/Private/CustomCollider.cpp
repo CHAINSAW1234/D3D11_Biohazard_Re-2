@@ -32,6 +32,7 @@ HRESULT CCustomCollider::Initialize(void* pArg)
 		m_pTransformCom->Set_WorldMatrix((pColDesc->worldMatrix));
 		m_iColNum = pColDesc->iColNum;
 		m_iDir =pColDesc->iDir;
+		m_iRegionNum =pColDesc->iRegionNum;
 
 	}
 
@@ -80,7 +81,7 @@ HRESULT CCustomCollider::Add_Components(COLLIDER_DESC* pCol)
 
 	ColliderDesc.vCenter = vTranslationVector;
 	ColliderDesc.vRotation = vRotationQuat;
-	ColliderDesc.vSize = vScaleVector;
+	ColliderDesc.vSize = vScaleVector * _vector{ 1.7f,1.f,1.7f,1.f };
 
 
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_OBB"),

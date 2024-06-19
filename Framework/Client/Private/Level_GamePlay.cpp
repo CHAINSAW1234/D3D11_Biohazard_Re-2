@@ -259,24 +259,29 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	}
 	CloseHandle(hFile);
 
+#ifdef MAP_NOTHING
+	CMonster::MONSTER_DESC ObjectDesc = {};
+
+	_matrix			WorldMatrix = { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
+	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+		return E_FAIL;
+#endif
+
 	return S_OK;
 }
 
 HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 {
-#ifdef USE_UI
-	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_UI"), LEVEL_GAMEPLAY)))
+#ifdef MAP_NOTHING
+
+#endif
+#ifdef MAP_JUSTMAP
+	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_Map"), LEVEL_GAMEPLAY)))
 		return E_FAIL;
 #endif
-#ifdef USE_Player_Control
-	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_Police"), LEVEL_GAMEPLAY)))
-		return E_FAIL;
-#endif
-#ifdef USE_MapObject
-	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_Test"), LEVEL_GAMEPLAY)))
-		return E_FAIL;
-#endif
-#ifdef USE_MapInteractObject
+#ifdef MAP_INTERACT
 	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
 		return E_FAIL;
 #endif
@@ -759,10 +764,23 @@ HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& st
 			return E_FAIL;
 		}
 
+		_int iRegionNum = { 0 };
+
+		if (!ReadFile(hFile, &iRegionNum, sizeof(_int), &dwByte, NULL))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+
+
+
+
 		CCustomCollider::COLLIDER_DESC collider_desc = {};
 		collider_desc.worldMatrix = WorldMatrix;
 		collider_desc.iColNum = iNum;
 		collider_desc.iDir = iDir;
+		collider_desc.iRegionNum = iRegionNum;
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Collider"), TEXT("Prototype_GameObject_Collider"), &collider_desc)))
 		{
 			MSG_BOX(TEXT("Failed to Add_Clone Prototype_GameObject_Monster: CImGUI"));
