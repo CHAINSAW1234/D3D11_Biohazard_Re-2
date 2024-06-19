@@ -62,7 +62,7 @@ void CModel::Add_AnimPlayingInfo(_int iAnimIndex, _bool isLoop, _uint iPlayingIn
 		isCanCreate = false;
 
 
-	const _uint			iNumAnims = { static_cast<_uint>(m_Animations.size()) };
+	const _int			iNumAnims = { static_cast<_int>(m_Animations.size()) };
 	if (iNumAnims <= iAnimIndex)
 		isCanCreate = false;
 
@@ -72,7 +72,12 @@ void CModel::Add_AnimPlayingInfo(_int iAnimIndex, _bool isLoop, _uint iPlayingIn
 
 	if (true == isCanCreate)
 	{
-		_uint			iNumChannel = { m_Animations[iAnimIndex]->Get_NumChannel() };
+		_uint			iNumChannel = { 0 };
+
+		if (-1 != iAnimIndex)
+		{
+			iNumChannel = { m_Animations[iAnimIndex]->Get_NumChannel() };
+		}
 
 		CPlayingInfo::PLAYING_INFO_DESC		PlayingInfoDesc;
 		PlayingInfoDesc.fBlendWeight = fBlendWeight;
@@ -1479,6 +1484,9 @@ void CModel::Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight, _float fL
 
 void CModel::Change_Animation(_uint iPlayingIndex, _uint iAnimIndex)
 {
+	if (0.f != m_fAccOptimizationTime)
+		return;
+
 	_uint			iNumAnims = { static_cast<_uint>(m_Animations.size()) };
 	if (iNumAnims > iAnimIndex)
 	{
@@ -1493,6 +1501,9 @@ void CModel::Change_Animation(_uint iPlayingIndex, _uint iAnimIndex)
 
 void CModel::Change_Animation(_uint iPlayingIndex, const string& strAnimTag)
 {
+	if (0.f != m_fAccOptimizationTime)
+		return;
+
 	_int			iAnimIndex = { Find_AnimIndex(strAnimTag) };
 
 	if (-1 != iAnimIndex)

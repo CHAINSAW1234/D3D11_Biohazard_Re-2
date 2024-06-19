@@ -417,7 +417,7 @@ void CMoveTo_Zombie::Change_Animation()
 			isLoop = false;
 		}
 
-		else if (CBody_Zombie::MOTION_E == iCurrentMotionType)
+		else if (CBody_Zombie::MOTION_F == iCurrentMotionType)
 		{
 			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_START_F);
 			isLoop = false;
