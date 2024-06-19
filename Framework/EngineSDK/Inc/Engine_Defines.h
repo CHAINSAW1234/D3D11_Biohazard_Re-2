@@ -106,7 +106,7 @@ namespace Engine
 #define SOUND_CHANNEL_MAX 32
 
 //For Ragdoll
-#define MAX_BONES 182
+#define MAX_BONES 256
 
 #include "Engine_Typedef.h"
 #include "Engine_Macro.h"
