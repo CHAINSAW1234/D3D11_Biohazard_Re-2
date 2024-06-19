@@ -41,7 +41,11 @@ HRESULT CCabinet::Initialize(void* pArg)
 	m_pModelCom->Active_RootMotion_Rotation(true);
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
-	//m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+#ifndef NON_COLLISION_PROP
+
+	m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+
+#endif
 
 	m_pRotationBone = m_pModelCom->Get_BonePtr("_00");
 

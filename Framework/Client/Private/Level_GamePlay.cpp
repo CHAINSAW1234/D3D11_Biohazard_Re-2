@@ -40,6 +40,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_RegionCollider()))
 		return E_FAIL;
 
+	m_pGameInstance->SetSimulate(true);
 
 	return S_OK;
 }
@@ -258,7 +259,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	}
 	CloseHandle(hFile);
 
-#ifdef USE_UI
 	CMonster::MONSTER_DESC ObjectDesc = {};
 
 	_matrix			WorldMatrix = { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
@@ -266,7 +266,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
 		return E_FAIL;
-#endif
 
 	return S_OK;
 }

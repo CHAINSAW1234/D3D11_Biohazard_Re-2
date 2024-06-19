@@ -566,6 +566,18 @@ void CMoveTo_Zombie::Change_Animation()
 	}
 }
 
+_int CMoveTo_Zombie::Compute_Base_Anim()
+{
+
+	return -1;
+}
+
+_int CMoveTo_Zombie::Compute_Blend_Anim()
+{
+
+	return -1;
+}
+
 CMoveTo_Zombie* CMoveTo_Zombie::Create()
 {
 	CMoveTo_Zombie* pInstance = new CMoveTo_Zombie();

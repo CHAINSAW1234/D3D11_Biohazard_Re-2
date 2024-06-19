@@ -47,7 +47,11 @@ HRESULT CNewpoliceStatue::Initialize(void* pArg)
 	m_pModelCom->Active_RootMotion_Rotation(true);
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
-	//m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+#ifndef NON_COLLISION_PROP
+
+	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+
+#endif
 
 	return S_OK;
 }

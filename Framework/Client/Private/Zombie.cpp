@@ -54,7 +54,8 @@ HRESULT CZombie::Initialize(void * pArg)
 		MONSTER_DESC* pDesc = (MONSTER_DESC*)pArg;
 
 		m_iIndex = pDesc->Index;
-		_float3 vPos = *(_float4*)pDesc->worldMatrix.m[3];
+		_float4 vPos = *(_float4*)pDesc->worldMatrix.m[3];
+		vPos.y += 1.f;
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 	}
 

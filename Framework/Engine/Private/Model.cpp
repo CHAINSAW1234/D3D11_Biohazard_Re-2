@@ -1723,6 +1723,8 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 
 	_float			fDistance = { XMVectorGetX(XMVector3Length(vCamPosition - vMyPosition)) };
 
+	*pMovedDirection = { 0.f, 0.f, 0.f };
+
 	m_fAccOptimizationTime += fTimeDelta;
 	if (fDistance < DISTANCE_FPS60)
 	{
@@ -1788,7 +1790,6 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 		fTimeDelta = m_fAccOptimizationTime;
 		m_fAccOptimizationTime = 0.f;
 	}
-
 
 
 	for (auto& pPlayingInfo : m_PlayingAnimInfos)

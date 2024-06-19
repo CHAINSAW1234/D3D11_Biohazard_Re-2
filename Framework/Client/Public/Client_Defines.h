@@ -53,6 +53,8 @@ using namespace Client;
 //	#define USE_MapObject
 #define USE_MapInteractObject
 
+#define NON_COLLISION_PROP
+
 #define DISPLAY_FRAME
 #define DISPLAY_NAVMESH
 

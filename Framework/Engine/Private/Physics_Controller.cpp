@@ -237,7 +237,7 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	Mesh->release();
 
 	//Start Simulate
-	//m_pGameInstance->SetSimulate(true);
+	//	m_pGameInstance->SetSimulate(true);
 }
 
 void CPhysics_Controller::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
