@@ -187,7 +187,7 @@ void CHair_Player::Late_Tick(_float fTimeDelta)
 	}
 
 	_float3		vMoveDir = {};
-	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &vMoveDir);
+	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vMoveDir);
 	//	m_pModelCom->Play_Animations(fTimeDelta);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);

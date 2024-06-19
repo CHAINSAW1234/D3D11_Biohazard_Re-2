@@ -976,6 +976,11 @@ void CGameInstance::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexN
 	m_pPhysics_Controller->Cook_Mesh(pVertices, pIndices, VertexNum, IndexNum, pTransform);
 }
 
+void CGameInstance::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
+{
+	m_pPhysics_Controller->Cook_Mesh_Dynamic(pVertices, pIndices, VertexNum, IndexNum, pTransform);
+}
+
 void CGameInstance::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
 {
 	m_pPhysics_Controller->Cook_Mesh_Convex(pVertices, pIndices, VertexNum, IndexNum, pTransform);

@@ -141,17 +141,6 @@ void CZombie::Tick(_float fTimeDelta)
 	//}
 #pragma endregion
 
-	/*if (UP == m_pGameInstance->Get_KeyState('M'))
-	{
-		m_bRagdoll = true;
-
-		for (auto& pPartObject : m_PartObjects)
-		{
-			if (nullptr != pPartObject)
-				pPartObject->SetRagdoll(m_iIndex_CCT);
-		}
-	}*/
-
 	if (m_pController && m_bRagdoll == false)
 	{
 		if (m_pController->Is_Hit())
@@ -169,8 +158,6 @@ void CZombie::Tick(_float fTimeDelta)
 			}
 		}
 	}
-
-	Tick_PartObjects(fTimeDelta);
 }
 
 void CZombie::Late_Tick(_float fTimeDelta)

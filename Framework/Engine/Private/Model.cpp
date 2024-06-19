@@ -1640,6 +1640,79 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 	if (false == Is_Set_RootBone())
 		return E_FAIL;
 
+	_matrix         CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
+	_vector         vCamPosition = { CamWorldMatrix.r[CTransform::STATE_POSITION] };
+	_matrix         MyWorldMatirx = { pTransform->Get_WorldMatrix() };
+	_vector         vMyPosition = { MyWorldMatirx.r[CTransform::STATE_POSITION] };
+
+	_float         fDistance = { XMVectorGetX(XMVector3Length(vCamPosition - vMyPosition)) };
+
+	m_fAccOptimizationTime += fTimeDelta;
+	if (fDistance < DISTANCE_FPS60)
+	{
+	   if (TIME_FPS60 > m_fAccOptimizationTime)
+	      return S_OK;
+
+	   fTimeDelta = m_fAccOptimizationTime;
+	   m_fAccOptimizationTime = 0.f;
+	}
+
+	else if (fDistance < DISTANCE_FPS45)
+	{
+	   if (TIME_FPS45 > m_fAccOptimizationTime)
+	      return S_OK;
+
+	   fTimeDelta = m_fAccOptimizationTime;
+	   m_fAccOptimizationTime = 0.f;
+	}
+
+	else if (fDistance < DISTANCE_FPS30)
+	{
+	   if (TIME_FPS30 > m_fAccOptimizationTime)
+	      return S_OK;
+
+	   fTimeDelta = m_fAccOptimizationTime;
+	   m_fAccOptimizationTime = 0.f;
+	}
+
+	else if (fDistance < DISTANCE_FPS20)
+	{
+	   if (TIME_FPS20 > m_fAccOptimizationTime)
+	      return S_OK;
+
+	   fTimeDelta = m_fAccOptimizationTime;
+	   m_fAccOptimizationTime = 0.f;
+	}
+
+	else if (fDistance < DISTANCE_FPS10)
+	{
+	   _float         fFramePerSec = TIME_FPS10;
+	   if (TIME_FPS10 > m_fAccOptimizationTime)
+	      return S_OK;
+
+	   fTimeDelta = m_fAccOptimizationTime;
+	   m_fAccOptimizationTime = 0.f;
+	}
+
+	// 5«¡∑π¿”
+	else if (fDistance < DISTANCE_FPS5)
+	{
+	   if (TIME_FPS5 > m_fAccOptimizationTime)
+	      return S_OK;
+
+	   fTimeDelta = m_fAccOptimizationTime;
+	   m_fAccOptimizationTime = 0.f;
+	}
+
+	else
+	{
+	   if (1.f > m_fAccOptimizationTime)
+	      return S_OK;
+
+	   fTimeDelta = m_fAccOptimizationTime;
+	   m_fAccOptimizationTime = 0.f;
+	}
+
 	for (auto& pPlayingInfo : m_PlayingAnimInfos)
 	{
 		if (nullptr == pPlayingInfo)
@@ -2072,6 +2145,14 @@ void CModel::Static_Mesh_Cooking(CTransform* pTransform)
 	for (int i = 0; i < m_Meshes.size(); ++i)
 	{
 		m_Meshes[i]->Static_Mesh_Cooking(pTransform);
+	}
+}
+
+void CModel::Dynamic_Mesh_Cooking(CTransform* pTransform)
+{
+	for (int i = 0; i < m_Meshes.size(); ++i)
+	{
+		m_Meshes[i]->Dynamic_Mesh_Cooking(pTransform);
 	}
 }
 

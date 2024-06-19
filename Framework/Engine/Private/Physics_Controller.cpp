@@ -238,6 +238,80 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	m_pGameInstance->SetSimulate(true);
 }
 
+void CPhysics_Controller::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
+{
+	// Init Cooking Params 
+	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
+
+	vector<PxVec3> vertices;
+	vector<PxU32> IndicesVec;
+
+	auto WorldMat = pTransform->Get_WorldMatrix();
+	WorldMat = XMMatrixRotationY(PxPi) * WorldMat;
+	for (int i = 0; i < VertexNum; ++i)
+	{
+		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
+		VertexPos = XMVector3TransformCoord(VertexPos, WorldMat);
+
+		_float4 vPos;
+		XMStoreFloat4(&vPos, VertexPos);
+
+		PxVec3 Ver = PxVec3(vPos.x, vPos.y, vPos.z);
+		vertices.push_back(Ver);
+	}
+
+	for (int i = 0; i < VertexNum; ++i)
+	{
+		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
+		VertexPos = XMVector3TransformCoord(VertexPos, WorldMat);
+
+		_float4 vPos;
+		XMStoreFloat4(&vPos, VertexPos);
+
+		PxVec3 Ver = PxVec3(vPos.x, vPos.y, vPos.z);
+		vertices.push_back(Ver);
+	}
+
+	for (int i = 0; i < IndexNum; ++i)
+	{
+		PxU32 Ind = pIndices[i];
+		IndicesVec.push_back(Ind);
+	}
+
+	PxTriangleMeshDesc meshDesc;
+	meshDesc.points.count = static_cast<PxU32>(VertexNum);
+	meshDesc.points.stride = sizeof(PxVec3);
+	meshDesc.points.data = vertices.data();
+
+	meshDesc.triangles.count = static_cast<PxU32>(IndexNum / 3);
+	meshDesc.triangles.stride = 3 * sizeof(PxU32);
+	meshDesc.triangles.data = IndicesVec.data();
+
+
+	auto Mesh = PxCreateTriangleMesh(cookingParams, meshDesc);
+
+	PxTransform transform(PxVec3(0.0f, 0.0f, 0.0f));
+	auto Actor = m_Physics->createRigidDynamic(transform);
+
+	PxTriangleMeshGeometry meshGeometry(Mesh);
+	PxShape* Shape = m_Physics->createShape(meshGeometry, *m_Physics->createMaterial(0.5f, 0.5f, 0.5f));
+
+	Actor->attachShape(*Shape);
+	Shape->release();
+
+	m_Scene->addActor(*Actor);
+
+	Actor->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	m_vecColliderObject.push_back(Actor);
+	++m_iMapMeshCount;
+
+	Mesh->release();
+
+	//Start Simulate
+	m_pGameInstance->SetSimulate(true);
+}
+
 void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
 {
 	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
@@ -246,13 +320,11 @@ void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, 
 	vector<PxU32> IndicesVec;
 
 	auto WorldMat = pTransform->Get_WorldMatrix();
-
-	auto Scale = pTransform->Get_Scaled();
-	auto ScaleMatrix = XMMatrixScaling(Scale.x, Scale.y, Scale.z);
+	WorldMat = XMMatrixRotationY(PxPi) * WorldMat;
 	for (int i = 0; i < VertexNum; ++i)
 	{
 		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
-		VertexPos = XMVector3TransformCoord(VertexPos, ScaleMatrix);
+		VertexPos = XMVector3TransformCoord(VertexPos, WorldMat);
 
 		_float4 vPos;
 		XMStoreFloat4(&vPos, VertexPos);
@@ -283,7 +355,7 @@ void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, 
 	if (pTransform)
 		vPos = pTransform->Get_State_Float4(CTransform::STATE_POSITION);
 
-	PxTransform transform(PxVec3(vPos.x, vPos.y, vPos.z),PxQuat);
+	PxTransform transform(PxVec3(0.f, 0.f, 0.f));
 
 	PxConvexMeshGeometry geometry(convexMesh);
 	PxMaterial* material = m_Physics->createMaterial(0.5f, 0.5f, 0.5f);
@@ -624,6 +696,11 @@ void CPhysics_Controller::Free()
 	for (int i = 0; i < m_vecRigid_Dynamic.size(); ++i)
 	{
 		Safe_Release(m_vecRigid_Dynamic[i]);
+	}
+
+	for (int i = 0; i < m_vecColliderObject.size(); ++i)
+	{
+		m_vecColliderObject[i]->release();
 	}
 
 	if (m_Shape)

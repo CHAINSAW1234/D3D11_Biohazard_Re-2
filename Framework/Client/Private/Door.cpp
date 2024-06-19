@@ -51,7 +51,7 @@ HRESULT CDoor::Initialize(void* pArg)
 	m_pModelCom->Active_RootMotion_Rotation(true);
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
-	m_pModelCom->Convex_Mesh_Cooking(m_pTransformCom);
+	m_pModelCom->Dynamic_Mesh_Cooking(m_pTransformCom);
 	
 	return S_OK;
 }

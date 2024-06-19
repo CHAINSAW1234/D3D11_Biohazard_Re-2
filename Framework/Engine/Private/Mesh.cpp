@@ -477,6 +477,11 @@ void CMesh::Static_Mesh_Cooking(CTransform* pTransform)
 	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices,pTransform);
 }
 
+void CMesh::Dynamic_Mesh_Cooking(CTransform* pTransform)
+{
+	m_pGameInstance->Cook_Mesh_Dynamic(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pTransform);
+}
+
 void CMesh::Convex_Mesh_Cooking(CTransform* pTransform)
 {
 	m_pGameInstance->Cook_Mesh_Convex(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pTransform);
