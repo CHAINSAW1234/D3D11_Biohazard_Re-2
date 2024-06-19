@@ -39,9 +39,12 @@ private:
 
 	_bool			m_isFristTick = { true };
 
+	_bool			m_isAlphaControl = { false };
+
 	/*for. Item_Mesh_Viewer*/
 	CItem_Mesh_Viewer* m_pItem_Mesh_Viewer = { nullptr };
 
+	_float			m_fCurTime = { 0.f };
 
 private:
 	HRESULT Add_Components();

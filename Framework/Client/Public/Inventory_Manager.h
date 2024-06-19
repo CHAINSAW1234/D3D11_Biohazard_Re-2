@@ -24,12 +24,24 @@ public:
 public:
 	//Set_Dead호출이라 m_bDead기준으로 변수 줄것
 	void Set_OnOff_Inven(_bool bInput);
+
+	void Increase_Slot(_uint iAmount) {
+		if (m_iInvenMaxCount <= m_iInvenCount + iAmount)
+			m_iInvenCount = m_iInvenMaxCount;
+		else
+			m_iInvenCount += iAmount;
+	}
+
+
 	_bool Get_isItemExamine() const {
 		return m_bisItemExamin;
 	}
 	void Set_isItemExamine(_bool isItemExamin) {
 		m_bisItemExamin = isItemExamin;
 	}
+
+
+
 
 private: 
 	ID3D11Device*					m_pDevice = { nullptr };
@@ -42,6 +54,7 @@ private:
 	/*for. InvenSlot*/
 	vector<CInventory_Slot*>		m_vecInvenSlot;
 	_uint							m_iInvenCount = { 8 };
+	_uint                           m_iInvenMaxCount = { 20 };
 	_float2							m_fSlotInterval = { 74.f, 76.f };
 
 	/*for Highlighter*/

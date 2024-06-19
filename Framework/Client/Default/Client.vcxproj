@@ -179,6 +179,7 @@
     <ClInclude Include="..\Public\Cabinet.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\Public\Clothes_Zombie.h" />
+    <ClInclude Include="..\Public\ContextMenu.h" />
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\Face_Zombie.h" />
     <ClInclude Include="..\Public\Header_Package_Zombie.h" />
@@ -250,6 +251,7 @@
     <ClCompile Include="..\Private\Cabinet.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\Private\Clothes_Zombie.cpp" />
+    <ClCompile Include="..\Private\ContextMenu.cpp" />
     <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\Face_Zombie.cpp" />
     <ClCompile Include="..\Private\InteractProps.cpp" />

@@ -226,6 +226,9 @@
     <Filter Include="02.GameObjects\UI\99. Tab_Window\3. Item_Mesh_Viewer">
       <UniqueIdentifier>{8fc62147-6bd9-4032-995f-a57db115d6ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu">
+      <UniqueIdentifier>{c2cfdd3d-b193-4b8d-b99d-a7f70166af05}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -438,6 +441,9 @@
     <ClInclude Include="..\Public\Item_Mesh_Viewer.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\3. Item_Mesh_Viewer</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ContextMenu.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -631,6 +637,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Item_Mesh_Viewer.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\3. Item_Mesh_Viewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ContextMenu.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

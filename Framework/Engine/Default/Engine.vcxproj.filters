@@ -292,6 +292,9 @@
     <Filter Include="01.Utility\02.Components\Model\Mesh_Layer">
       <UniqueIdentifier>{96dc04dc-3537-4316-b4df-bf3698f490a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\13.Easing">
+      <UniqueIdentifier>{8c1c9201-8308-40b6-a11d-967950050dae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -551,6 +554,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\FSM_HState.cpp">
       <Filter>01.Utility\02.Components\FSM\HState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Easing.cpp">
+      <Filter>01.Utility\13.Easing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -833,6 +839,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Task_Node.h">
       <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Task_Node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Easing.h">
+      <Filter>01.Utility\13.Easing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -51,6 +51,7 @@
 #include "Item_UI.h"
 #include "Map_UI.h"
 #include "Item_Mesh_Viewer.h"
+#include "ContextMenu.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -284,6 +285,11 @@ HRESULT CLoader::Load_Prototype()
 	/* For.Prototype_GameObject_Item_Mesh_Viewer */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Item_Mesh_Viewer"),
 		CItem_Mesh_Viewer::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Item_Mesh_Viewer */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ContextMenu"),
+		CContextMenu::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
 #pragma endregion

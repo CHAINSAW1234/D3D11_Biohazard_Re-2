@@ -3,7 +3,10 @@
 /* 전역변수 : 쉐이더 외부에 있는 데이터를 쉐이더 안으로 받아온다. */
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
-texture2D g_Texture;
+texture2D	g_Texture;
+
+float		g_Alpha;
+bool		g_isAlphaControl;
 
 struct VS_IN
 {
@@ -50,6 +53,9 @@ PS_OUT PS_MAIN(PS_IN In)
 
     Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
 	
+	if(true == g_isAlphaControl)
+		Out.vColor.a = g_Alpha;
+	
     //if (Out.vColor.a <= 0.3f)
     //    discard;
 	
@@ -63,7 +69,7 @@ technique11 DefaultTechnique
 	pass Default
 	{
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();

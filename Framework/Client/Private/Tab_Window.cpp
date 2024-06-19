@@ -86,6 +86,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 		m_pInvenButton->Set_Dead(true);
 		m_pMapButton->Set_Dead(true);
 		m_pInventory_Manager->Set_OnOff_Inven(true);
+		m_isAlphaControl = true;
 	}
 
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
@@ -124,12 +125,18 @@ void CTab_Window::Tick(_float fTimeDelta)
 		break;
 	}
 		
-	case Client::CTab_Window::HINT: {
+	case Client::CTab_Window::HINT: { 
 		break;
 	}
 
 	case Client::CTab_Window::EXAMINE: {
 		m_pItem_Mesh_Viewer->Tick(fTimeDelta);
+		if (m_fCurTime / 0.5f < 1.f)
+		{
+			m_fCurTime += fTimeDelta;
+			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 0.f, 1.f, m_fCurTime / 0.5f);
+		}
+
 		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
 		{
 			m_eWindowType = INVENTORY;
@@ -137,7 +144,11 @@ void CTab_Window::Tick(_float fTimeDelta)
 			m_pInvenButton->Set_Dead(false);
 			m_pMapButton->Set_Dead(false);
 			m_pInventory_Manager->Set_OnOff_Inven(false);
-			m_pInventory_Manager->Set_isItemExamine(false);
+			m_pItem_Mesh_Viewer->Reset_Viewer();
+
+			m_fCurTime = 0.f;
+			m_fAlpha = 0.f;
+			m_isAlphaControl = false;
 		}
 		break;
 	}
@@ -234,6 +245,12 @@ HRESULT CTab_Window::Bind_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaControl", &m_isAlphaControl, sizeof(_bool))))
 		return E_FAIL;
 
 	return S_OK;

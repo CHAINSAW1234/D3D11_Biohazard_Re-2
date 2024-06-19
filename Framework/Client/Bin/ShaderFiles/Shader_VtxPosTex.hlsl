@@ -195,8 +195,6 @@ struct PS_OUT
     float4 vColor : SV_TARGET0;
 };
 
-
-
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -211,7 +209,11 @@ PS_OUT PS_MAIN(PS_IN In)
     {
         if (g_Blending)
         {
+            if (Out.vColor.a <= 0.f)
+                discard;
+            
             Out.vColor = lerp(Out.vColor, g_ColorValu, g_BlendingStrength);
+            Out.vColor.a = lerp(Out.vColor.a, g_ColorValu.a, 0);
         }
         else
             Out.vColor = g_ColorValu;

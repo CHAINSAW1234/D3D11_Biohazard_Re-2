@@ -24,7 +24,7 @@ HRESULT CItem_Mesh_Viewer::Initialize(void* pArg)
 	GAMEOBJECT_DESC		GameObjectDesc{};
 
 	GameObjectDesc.fSpeedPerSec = 10.f;
-	GameObjectDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+	GameObjectDesc.fRotationPerSec = XMConvertToRadians(360.0f);
 
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
@@ -38,11 +38,13 @@ HRESULT CItem_Mesh_Viewer::Initialize(void* pArg)
 
 	m_eItem_Number = PISTOL_AMMO;
 
-	m_eViewer_State = IDLE;
+	m_eViewer_State = POP_UP;
 
 	CGameObject* pCamera = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_ZZZCamera"))->back();
 	
 	m_pCameraFree = dynamic_cast<CCamera_Free*>(pCamera);
+
+	m_fDistCam = m_fPopupHide_StartDist;
 
 	Safe_AddRef(m_pCameraFree);
 
@@ -54,8 +56,6 @@ void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 	_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCam) + m_pCameraFree->Get_Position_Vector();
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
-
-
 
 	switch (m_eViewer_State)
 	{
@@ -136,16 +136,26 @@ HRESULT CItem_Mesh_Viewer::Render()
 
 void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
 {
-	m_fCurPopHide_Time += fTimeDelta;
+	m_fPopupHide_CurTime += fTimeDelta;
 
-	if (m_fCurPopHide_Time > m_fPopupHide_TimeLimit)
+	if (m_fPopupHide_CurTime > m_fPopupHide_TimeLimit)
 	{
 		m_eViewer_State = IDLE;
-		m_fCurPopHide_Time = 0.f;
+		m_fPopupHide_CurTime = 0.f;
+		m_fDistCam = m_fPopupHide_EndDist;
+		return;
 	}
 
-	
-	m_fDistCam -= m_fPopupHide_Speed;
+	if (1.f > m_fPopupHide_CurTime / m_fPopupHide_TimeLimit)
+	{
+		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuart, m_fPopupHide_StartDist, m_fPopupHide_EndDist, 
+			m_fPopupHide_CurTime / m_fPopupHide_TimeLimit);
+
+		_float fRadian = m_pGameInstance->Get_Ease(Ease_OutBack, m_fPopupHide_StartRadian, XMConvertToRadians(m_fPopupHide_EndRadian),
+			m_fPopupHide_CurTime / m_fPopupHide_TimeLimit);
+
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), fRadian);
+	}
 }
 
 void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
@@ -169,14 +179,37 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 		}
 		if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().y)
 		{
-			m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * 0.1f);
+			//m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * 0.1f);
+			m_pTransformCom->Turn(XMVectorSet(1.f, 0.f, 0.f, 0.f), fTimeDelta * MouseMove * 0.1f);
 		}
 	}
 }
 
 void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
 {
+	m_fPopupHide_CurTime += fTimeDelta;
 
+	if (m_fPopupHide_CurTime > m_fPopupHide_TimeLimit)
+	{
+		m_eViewer_State = POP_UP;
+		m_fPopupHide_CurTime = 0.f;
+		m_fDistCam = m_fPopupHide_EndDist;
+		m_bDead = true;
+		return;
+	}
+
+	if (1.f > m_fPopupHide_CurTime / m_fPopupHide_TimeLimit)
+	{
+		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuart, m_fPopupHide_EndDist, m_fPopupHide_StartDist,
+			m_fPopupHide_CurTime / m_fPopupHide_TimeLimit);
+	}
+}
+
+void CItem_Mesh_Viewer::Reset_Viewer()
+{
+	m_eViewer_State = POP_UP;
+	m_fDistCam = m_fPopupHide_StartDist;
+	m_fPopupHide_CurTime = 0.f;
 }
 
 

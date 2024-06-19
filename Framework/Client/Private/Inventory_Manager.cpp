@@ -74,7 +74,7 @@ void CInventory_Manager::Tick(_float fTimeDelta)
 			_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredObj->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
 			HoveredPos.z = 0.5f;
 
-			CTransform* pItemUITransform = dynamic_cast<CTransform*>(m_vecItem_UI[0]->Get_Component(g_strTransformTag));
+			CTransform* pItemUITransform = static_cast<CTransform*>(m_vecItem_UI[0]->Get_Component(g_strTransformTag));
 			pItemUITransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
 		}
 	}
@@ -114,6 +114,8 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 			iter->Set_Dead(bInput);
 		}
 	}
+
+	m_bisItemExamin = false;
 }
 
 CInventory_Manager* CInventory_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
