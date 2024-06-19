@@ -501,7 +501,7 @@ void CMoveTo_Zombie::Change_Animation()
 			}
 		}
 
-		fTurnBlendWeight = fminf(fAngleToTarget / XMConvertToRadians(180.f) * 2.f, 1.f);
+		fTurnBlendWeight = fminf(fAngleToTarget / XMConvertToRadians(180.f) * 2.f, 0.999f);
 	}
 
 	if (-1 == iResultAnimationIndex)

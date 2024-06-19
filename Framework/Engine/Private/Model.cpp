@@ -1712,70 +1712,70 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 	_float			fDistance = { XMVectorGetX(XMVector3Length(vCamPosition - vMyPosition)) };
 
 	m_fAccOptimizationTime += fTimeDelta;
-	//if (fDistance < DISTANCE_FPS60)
-	//{
-	//	if (TIME_FPS60 > m_fAccOptimizationTime)
-	//		return S_OK;
+	if (fDistance < DISTANCE_FPS60)
+	{
+		if (TIME_FPS60 > m_fAccOptimizationTime)
+			return S_OK;
 
-	//	fTimeDelta = m_fAccOptimizationTime;
-	//	m_fAccOptimizationTime = 0.f;
-	//}
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
 
-	//else if (fDistance < DISTANCE_FPS45)
-	//{
-	//	if (TIME_FPS45 > m_fAccOptimizationTime)
-	//		return S_OK;
+	else if (fDistance < DISTANCE_FPS45)
+	{
+		if (TIME_FPS45 > m_fAccOptimizationTime)
+			return S_OK;
 
-	//	fTimeDelta = m_fAccOptimizationTime;
-	//	m_fAccOptimizationTime = 0.f;
-	//}
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
 
-	//else if (fDistance < DISTANCE_FPS30)
-	//{
-	//	if (TIME_FPS30 > m_fAccOptimizationTime)
-	//		return S_OK;
+	else if (fDistance < DISTANCE_FPS30)
+	{
+		if (TIME_FPS30 > m_fAccOptimizationTime)
+			return S_OK;
 
-	//	fTimeDelta = m_fAccOptimizationTime;
-	//	m_fAccOptimizationTime = 0.f;
-	//}
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
 
-	//else if (fDistance < DISTANCE_FPS20)
-	//{
-	//	if (TIME_FPS20 > m_fAccOptimizationTime)
-	//		return S_OK;
+	else if (fDistance < DISTANCE_FPS20)
+	{
+		if (TIME_FPS20 > m_fAccOptimizationTime)
+			return S_OK;
 
-	//	fTimeDelta = m_fAccOptimizationTime;
-	//	m_fAccOptimizationTime = 0.f;
-	//}
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
 
-	//else if (fDistance < DISTANCE_FPS10)
-	//{
-	//	_float			fFramePerSec = TIME_FPS10;
-	//	if (TIME_FPS10 > m_fAccOptimizationTime)
-	//		return S_OK;
+	else if (fDistance < DISTANCE_FPS10)
+	{
+		_float			fFramePerSec = TIME_FPS10;
+		if (TIME_FPS10 > m_fAccOptimizationTime)
+			return S_OK;
 
-	//	fTimeDelta = m_fAccOptimizationTime;
-	//	m_fAccOptimizationTime = 0.f;
-	//}
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
 
-	//// 5프레임
-	//else if (fDistance < DISTANCE_FPS5)
-	//{
-	//	if (TIME_FPS5 > m_fAccOptimizationTime)
-	//		return S_OK;
+	// 5프레임
+	else if (fDistance < DISTANCE_FPS5)
+	{
+		if (TIME_FPS5 > m_fAccOptimizationTime)
+			return S_OK;
 
-	//	fTimeDelta = m_fAccOptimizationTime;
-	//	m_fAccOptimizationTime = 0.f;
-	//}
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
 
-	//else
-	//{
-	//	if (1.f > m_fAccOptimizationTime)
-	//		return S_OK;
+	else
+	{
+		if (1.f > m_fAccOptimizationTime)
+			return S_OK;
 
-	//	fTimeDelta = m_fAccOptimizationTime;
-	//	m_fAccOptimizationTime = 0.f;
-	//}
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
 
 
 

@@ -92,7 +92,7 @@ void CZombie::Priority_Tick(_float fTimeDelta)
 
 void CZombie::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
+	//	__super::Tick(fTimeDelta);
 
 	if(m_pController)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
@@ -166,13 +166,11 @@ void CZombie::Tick(_float fTimeDelta)
 			}
 		}
 	}
-
-	Tick_PartObjects(fTimeDelta);
 }
 
 void CZombie::Late_Tick(_float fTimeDelta)
 {
-	__super::Late_Tick(fTimeDelta);
+	//	__super::Late_Tick(fTimeDelta);
 
 	if(m_pController)
 		m_pController->Update_Collider();
