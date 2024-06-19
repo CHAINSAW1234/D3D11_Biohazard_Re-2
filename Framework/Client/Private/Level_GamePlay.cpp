@@ -305,6 +305,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Effect(const wstring & strLayerTag)
 			return E_FAIL;
 	}
 
+
 	return S_OK;
 }
 
