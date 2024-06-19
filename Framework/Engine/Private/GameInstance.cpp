@@ -1070,7 +1070,7 @@ void CGameInstance::Start_Ragdoll(CRagdoll_Physics* pRagdoll, _uint iId)
 	if (m_pPhysics_Controller)
 		m_pPhysics_Controller->Start_Ragdoll(pRagdoll, iId);
 }
-PxCollider* CGameInstance::Create_Px_Collider(CModel* pModel, CTransform* pTransform, _int* iId)
+CPxCollider* CGameInstance::Create_Px_Collider(CModel* pModel, CTransform* pTransform, _int* iId)
 {
 	if (m_pPhysics_Controller)
 		return m_pPhysics_Controller->Create_Px_Collider(pModel, pTransform, iId);

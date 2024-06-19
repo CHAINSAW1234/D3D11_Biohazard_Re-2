@@ -78,6 +78,7 @@ protected:
 	vector<CPartObject*>					m_PartObjects;
 
 	class CBone*							m_pRotationBone = { nullptr };
+	class CPxCollider*						m_pPx_Collider = { nullptr };
 protected:
 	void Check_Player();
 	void Check_Col_Sphere_Player();

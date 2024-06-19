@@ -360,9 +360,9 @@ void CPhysics_Controller::Create_Rigid_Static(_float4 Pos)
 {
 }
 
-PxCollider* CPhysics_Controller::Create_Px_Collider(CModel* pModel,CTransform* pTransform, _int* iId)
+CPxCollider* CPhysics_Controller::Create_Px_Collider(CModel* pModel,CTransform* pTransform, _int* iId)
 {
-	PxCollider* pCollider = new PxCollider();
+	CPxCollider* pCollider = new CPxCollider();
 	auto pColliders = pCollider->GetCollider_Container();
 	pModel->Convex_Mesh_Cooking(pColliders, pTransform);
 

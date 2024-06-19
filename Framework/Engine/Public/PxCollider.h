@@ -4,24 +4,25 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL PxCollider : public CPhysics_Component
+class ENGINE_DLL CPxCollider : public CPhysics_Component
 {
 public:
-	PxCollider();
-	PxCollider(const PxCollider& rhs);
-	virtual ~PxCollider() = default;
+	CPxCollider();
+	CPxCollider(const CPxCollider& rhs);
+	virtual ~CPxCollider() = default;
 
 public:
 	virtual HRESULT						Initialize_Prototype();
 	virtual HRESULT						Initialize(void* pArg);
 public:
-	static PxCollider*					Create();
+	static CPxCollider*					Create();
 
 public:
 	vector<PxRigidDynamic*>*			GetCollider_Container()
 	{
 		return &m_vecCollider;
 	}
+	void								Update_Transform(_float4x4* Transform);
 private:
 	vector<PxRigidDynamic*>				m_vecCollider;
 	_int								m_iColliderCount = { 0 };

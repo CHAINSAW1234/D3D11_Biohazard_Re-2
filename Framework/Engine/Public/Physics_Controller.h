@@ -47,7 +47,7 @@ public:
 	class CCharacter_Controller*						Create_Controller(_float4 Pos, _int* Index,class CGameObject* pCharacter,_float fHeight,_float fRadius, class CTransform* pTransform, vector<class CBone*>* pBones, const std::string& name = "");
 	void												Create_Rigid_Dynamic(_float4 Pos);
 	void												Create_Rigid_Static(_float4 Pos);
-	class PxCollider*									Create_Px_Collider(class CModel* pModel,class CTransform* pTransform,_int* iId);
+	class CPxCollider*									Create_Px_Collider(class CModel* pModel,class CTransform* pTransform,_int* iId);
 	class CCharacter_Controller*						GetCharacter_Controller(_int Index);
 	class CRigid_Dynamic*								GetRigid_Dynamic(_int Index);
 	_float4												GetTranslation_Rigid_Dynamic(_int Index);
@@ -62,7 +62,7 @@ private:
 	//Map Physics_Component
 	_int												m_iMapMeshCount = { 0 };
 	vector<PxRigidStatic*>								m_vecFullMapObject;
-	vector<class PxCollider*>							m_vecCollider;
+	vector<class CPxCollider*>							m_vecCollider;
 	_int												m_iCollider_Count = { 0 };
 #pragma endregion
 

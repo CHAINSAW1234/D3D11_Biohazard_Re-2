@@ -258,7 +258,7 @@ public:/*For Physics Controller*/
 	_bool									SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone,class CTransform* pTransform, const string& name);
 	void									Start_Ragdoll(class CRagdoll_Physics* pRagdoll, _uint iId);
-	class PxCollider*						Create_Px_Collider(class CModel* pModel, class CTransform* pTransform, _int* iId);
+	class CPxCollider*						Create_Px_Collider(class CModel* pModel, class CTransform* pTransform, _int* iId);
 
 private:/*For Physics_Controller*/
 	_uint*									m_pIndices = { nullptr };

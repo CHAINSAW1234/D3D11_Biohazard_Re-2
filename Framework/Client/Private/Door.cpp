@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "Door.h"
-#include"Player.h"
+#include "Player.h"
+#include "Bone.h"
+#include "PxCollider.h"
+
 CDoor::CDoor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -47,13 +50,12 @@ HRESULT CDoor::Initialize(void* pArg)
 	}
 	*/
 
-
 	m_pModelCom->Active_RootMotion_Rotation(true);
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
-	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+	m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
 
-	m_pRotationBone = m_pModelCom->Get_BonePtr("_00");
+	m_pRotationBone = m_pModelCom->Get_BonePtr(1);
 	
 	return S_OK;
 }
@@ -68,6 +70,11 @@ void CDoor::Tick(_float fTimeDelta)
 		return;
 	m_eType == DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
 
+	/*auto Combined = XMLoadFloat4x4(m_pRotationBone->Get_CombinedTransformationMatrix());
+	Combined = Combined * m_pTransformCom->Get_WorldMatrix();
+	_float4x4 ResultMat;
+	XMStoreFloat4x4(&ResultMat, Combined);
+	m_pPx_Collider->Update_Transform(&ResultMat);*/
 }
 
 void CDoor::Late_Tick(_float fTimeDelta)

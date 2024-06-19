@@ -1176,6 +1176,11 @@ CBone* CModel::Get_BonePtr(const _char* pBoneName) const
 	return *iter;
 }
 
+CBone* CModel::Get_BonePtr(_int iIndex)
+{
+	return m_Bones[iIndex];
+}
+
 _bool CModel::isFinished(_uint iPlayingIndex)
 {
 	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };

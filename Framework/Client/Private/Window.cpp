@@ -69,11 +69,6 @@ void CWindow::Tick(_float fTimeDelta)
 			Active();
 		m_bCol = false;
 	}
-
-
-
-
-
 }
 
 void CWindow::Late_Tick(_float fTimeDelta)

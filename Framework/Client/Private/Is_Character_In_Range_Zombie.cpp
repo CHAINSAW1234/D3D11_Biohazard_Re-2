@@ -17,12 +17,12 @@ CIs_Character_In_Range_Zombie::CIs_Character_In_Range_Zombie(const CIs_Character
 
 HRESULT CIs_Character_In_Range_Zombie::Initialize_Prototype()
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CIs_Character_In_Range_Zombie::Initialize(void* pArg)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 _bool CIs_Character_In_Range_Zombie::Condition_Check()

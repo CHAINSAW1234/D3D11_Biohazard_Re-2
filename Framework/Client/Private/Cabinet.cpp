@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "Cabinet.h"
 #include"Player.h"
+#include "PxCollider.h"
+#include "Bone.h"
+
 CCabinet::CCabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -38,7 +41,9 @@ HRESULT CCabinet::Initialize(void* pArg)
 	m_pModelCom->Active_RootMotion_Rotation(true);
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
-	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+	m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+
+	m_pRotationBone = m_pModelCom->Get_BonePtr("_00");
 
 	return S_OK;
 }
@@ -61,11 +66,11 @@ void CCabinet::Tick(_float fTimeDelta)
 		m_bCol = false;
 	}
 
-	
-
-
-
-
+	//auto Combined = XMLoadFloat4x4(m_pRotationBone->Get_CombinedTransformationMatrix());
+	//Combined = /*XMMatrixRotationY(-PxPi) **/ Combined * m_pTransformCom->Get_WorldMatrix();
+	//_float4x4 ResultMat;
+	//XMStoreFloat4x4(&ResultMat, Combined);
+	//m_pPx_Collider->Update_Transform(&ResultMat);
 }
 
 void CCabinet::Late_Tick(_float fTimeDelta)

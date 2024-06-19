@@ -187,6 +187,7 @@ public:		/* For. Access */
 	void									Set_BoneLayer_PlayingInfo(_uint iPlayingIndex, const wstring& strBoneLayerTag);
 
 	class CBone* Get_BonePtr(const _char* pBoneName) const;
+	class CBone* Get_BonePtr(_int iIndex);
 
 	_bool									isFinished(_uint iPlayingIndex);
 	void									Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices);
