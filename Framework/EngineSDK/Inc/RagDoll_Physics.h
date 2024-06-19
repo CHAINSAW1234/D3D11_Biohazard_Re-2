@@ -183,12 +183,12 @@ public:
     }
     void                                SetRotationMatrix(_float4x4* pRotMat)
     {
-        m_pRotationMatrix = pRotMat;
+        m_RotationMatrix = *pRotMat;
     }
     void                                SetTransform(class CTransform* pTransform);
     void                                SetSimulate(_bool boolean);
     void                                ResetForce();
-    void                                Add_Force(_float4 vForce);
+    void                                Add_Force(_float4 vForce,COLLIDER_TYPE eType);
 public:
 	static CRagdoll_Physics*            Create();
 
@@ -244,7 +244,7 @@ private:
     _bool                                           m_bJoint_Set = { false };
 
     _float4x4*                                      m_pWorldMatrix;
-    _float4x4*                                      m_pRotationMatrix;
+    _float4x4                                       m_RotationMatrix;
     PoseTransforms                                  m_Global_transforms;
 
     PxFilterData                                    m_FilterData;

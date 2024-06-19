@@ -89,7 +89,7 @@ public:
 	void								Render_Node_LightDepth_Spot(CModel* pRootWorld, CShader* pShader);
 	void								Render_Node_LightDepth_Point(CModel* pRootWorld, CShader* pShader);
 	void								Set_Props_Layer(_int iLevel);
-	bool								IsPointInsideCube(_float4 center, _float width,_float4 point) 
+	_bool								IsPointInsideCube(_float4 center, _float width,_float4 point) 
 	{
 		float halfWidth = width / 2.0f;
 
@@ -103,6 +103,10 @@ public:
 		return (point.x >= minX && point.x <= maxX &&
 			point.y >= minY && point.y <= maxY &&
 			point.z >= minZ && point.z <= maxZ);
+	}
+	_bool								GetbRender()
+	{
+		return	m_bRender;
 	}
 public:
 	bool								m_bSubDivided;

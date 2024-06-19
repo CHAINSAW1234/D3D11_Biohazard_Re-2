@@ -54,7 +54,8 @@ HRESULT CZombie::Initialize(void * pArg)
 		MONSTER_DESC* pDesc = (MONSTER_DESC*)pArg;
 
 		m_iIndex = pDesc->Index;
-		_float3 vPos = *(_float4*)pDesc->worldMatrix.m[3];
+		_float4 vPos = *(_float4*)pDesc->worldMatrix.m[3];
+		vPos.w = 1.f;
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 	}
 
@@ -139,17 +140,6 @@ void CZombie::Tick(_float fTimeDelta)
 	//}
 #pragma endregion
 
-	/*if (UP == m_pGameInstance->Get_KeyState('M'))
-	{
-		m_bRagdoll = true;
-
-		for (auto& pPartObject : m_PartObjects)
-		{
-			if (nullptr != pPartObject)
-				pPartObject->SetRagdoll(m_iIndex_CCT);
-		}
-	}*/
-
 	if (m_pController && m_bRagdoll == false)
 	{
 		if (m_pController->Is_Hit())
@@ -159,10 +149,11 @@ void CZombie::Tick(_float fTimeDelta)
 			m_bRagdoll = true;
 
 			auto vForce = m_pController->Get_Force();
+			auto eType = m_pController->Get_Hit_Collider_Type();
 			for (auto& pPartObject : m_PartObjects)
 			{
 				if (nullptr != pPartObject)
-					pPartObject->SetRagdoll(m_iIndex_CCT, vForce);
+					pPartObject->SetRagdoll(m_iIndex_CCT, vForce, eType);
 			}
 		}
 	}

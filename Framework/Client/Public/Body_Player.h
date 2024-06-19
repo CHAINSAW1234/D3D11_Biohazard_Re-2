@@ -40,7 +40,7 @@ public:
 	}
 
 public:
-	virtual void			SetRagdoll(_int iId,_float4 vForce = _float4(0.f,0.f,0.f,1.f)) override;
+	virtual void			SetRagdoll(_int iId,_float4 vForce, COLLIDER_TYPE eType) override;
 
 private:
 	CModel*					m_pModelCom = { nullptr };

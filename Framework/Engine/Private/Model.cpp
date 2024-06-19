@@ -493,7 +493,7 @@ void CModel::Apply_AdditionalForces(CTransform* pTransform)
 		if (true == m_AdditionalForces.empty())
 			continue;
 
-		for (_float4x4 InputMatrix : m_AdditionalForces[iBoneIndex])
+		for (_float4x4& InputMatrix : m_AdditionalForces[iBoneIndex])
 		{
 			_matrix		AdditionalMatrix = { XMLoadFloat4x4(&InputMatrix) };
 			_matrix		AdditionalMatrixLocal = { AdditionalMatrix * WorldMatrixInv };
@@ -528,7 +528,7 @@ void CModel::Apply_AdditionalForce(_uint iBoneIndex)
 	if (true == m_AdditionalForces.empty())
 		return;
 
-	for (_float4x4 InputMatrix : m_AdditionalForces[iBoneIndex])
+	for (_float4x4& InputMatrix : m_AdditionalForces[iBoneIndex])
 	{
 		_matrix		AdditionalMatrix = { XMLoadFloat4x4(&InputMatrix) };
 		_matrix		AdditionalMatrixLocal = { AdditionalMatrix * WorldMatrixInv };
@@ -1181,6 +1181,11 @@ CBone* CModel::Get_BonePtr(const _char* pBoneName) const
 		});
 
 	return *iter;
+}
+
+CBone* CModel::Get_BonePtr(_int iIndex)
+{
+	return m_Bones[iIndex];
 }
 
 _bool CModel::isFinished(_uint iPlayingIndex)
@@ -2267,6 +2272,22 @@ void CModel::Static_Mesh_Cooking(CTransform* pTransform)
 	for (int i = 0; i < m_Meshes.size(); ++i)
 	{
 		m_Meshes[i]->Static_Mesh_Cooking(pTransform);
+	}
+}
+
+void CModel::Dynamic_Mesh_Cooking(CTransform* pTransform)
+{
+	for (int i = 0; i < m_Meshes.size(); ++i)
+	{
+		m_Meshes[i]->Dynamic_Mesh_Cooking(pTransform);
+	}
+}
+
+void CModel::Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, CTransform* pTransform)
+{
+	for (int i = 0; i < m_Meshes.size(); ++i)
+	{
+		m_Meshes[i]->Convex_Mesh_Cooking(pColliders,pTransform);
 	}
 }
 
