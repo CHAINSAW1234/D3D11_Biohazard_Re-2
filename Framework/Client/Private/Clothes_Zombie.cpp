@@ -318,7 +318,7 @@ HRESULT CClothes_Zombie::Add_Components()
 
 	else if (CLOTHES_TYPE::TYPE_SHIRTS== m_eType)
 	{
-		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieShirts"),
+		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieShirts1"),
 			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 	}

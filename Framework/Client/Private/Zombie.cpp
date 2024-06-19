@@ -63,7 +63,7 @@ HRESULT CZombie::Initialize(void * pArg)
 
 #pragma region AIController Setup
 	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this, 1.f, 0.35f, m_pTransformCom
-		, m_pBodyModel->GetBoneVector(), "../Bin/Resources/Models/Ex_Default_Zombie/Body.fbx");
+		, m_pBodyModel->GetBoneVector(), "../Bin/Resources/Models/Zombie/Body.fbx");
 
 	m_pPathFinder = m_pGameInstance->Create_PathFinder();
 

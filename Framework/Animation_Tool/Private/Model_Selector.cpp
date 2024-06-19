@@ -95,11 +95,27 @@ HRESULT CModel_Selector::Add_Components()
 
 		pModel = { nullptr };
 
-		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieFace"))) };
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieFace1"))) };
 		if (nullptr == pModel)
 			return E_FAIL;
 
-		m_Models["Zombie_Face"] = pModel;
+		m_Models["Zombie_Face1"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieFace2"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Face3"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieFace3"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Face2"] = pModel;
 
 		pModel = { nullptr };
 
@@ -111,11 +127,27 @@ HRESULT CModel_Selector::Add_Components()
 
 		pModel = { nullptr };
 
-		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieShirts"))) };
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieShirts1"))) };
 		if (nullptr == pModel)
 			return E_FAIL;
 
-		m_Models["Zombie_Shirts"] = pModel;
+		m_Models["Zombie_Shirts1"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieShirts2"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts2"] = pModel;
+
+		/*pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieShirts3"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts3"] = pModel;*/
 
 		pModel = { nullptr };
 
@@ -130,38 +162,6 @@ HRESULT CModel_Selector::Add_Components()
 		///////////////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////
-
-		pModel = { nullptr };
-
-		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieBody_merge_all"))) };
-		if (nullptr == pModel)
-			return E_FAIL;
-
-		m_Models["Zombie_MergeAll"] = pModel;
-
-		pModel = { nullptr };
-
-		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieBody_merge_all_Nude"))) };
-		if (nullptr == pModel)
-			return E_FAIL;
-
-		m_Models["Zombie_MergeAllNude"] = pModel;
-
-		pModel = { nullptr };
-
-		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieFace_Erase_Bone"))) };
-		if (nullptr == pModel)
-			return E_FAIL;
-
-		m_Models["Face_Erase_Bone"] = pModel;
-
-		pModel = { nullptr };
-
-		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieFace_Non_Erase_Bone"))) };
-		if (nullptr == pModel)
-			return E_FAIL;
-
-		m_Models["Face_NonErase_Bone"] = pModel;
 
 		pModel = { nullptr };
 

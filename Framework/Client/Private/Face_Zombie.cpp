@@ -306,7 +306,7 @@ HRESULT CFace_Zombie::Add_Components()
 
 	if (ZOMBIE_FACE_TYPE::TYPE_FACE1 == m_eType)
 	{
-		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieFace"),
+		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieFace1"),
 			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 	}
