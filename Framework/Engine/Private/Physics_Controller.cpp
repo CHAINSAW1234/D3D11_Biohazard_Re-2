@@ -139,7 +139,7 @@ CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int*
 
 	PxShape* shapes[1];
 	Controller->getActor()->getShapes(shapes, 1);
-
+	
 	//Colliision Filter
 	PxFilterData filterData_Character;
 	filterData_Character.word0 = COLLISION_CATEGORY::CCT;
@@ -237,7 +237,7 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	Mesh->release();
 
 	//Start Simulate
-	m_pGameInstance->SetSimulate(true);
+	//m_pGameInstance->SetSimulate(true);
 }
 
 void CPhysics_Controller::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
