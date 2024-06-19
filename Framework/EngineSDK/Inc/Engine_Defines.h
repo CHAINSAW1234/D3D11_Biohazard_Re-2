@@ -148,4 +148,5 @@ using namespace Engine;
 #define CONTROLLER_GROUND_GAP 1.1f
 #define CONTROLLER_GROUND_GAP_ZOMBIE 0.95f
 
+#define CONNECT_PVD
 #pragma endregion

@@ -8,7 +8,7 @@ class ENGINE_DLL CCharacter_Controller : public CPhysics_Component
 {
 public:
 	CCharacter_Controller(PxController* Controller,class CGameObject* pCharacter,PxScene* pScene,
-		PxPhysics* pPhysics,class CTransform* pTransform, vector<class CBone*>* pBones, const std::string& name = "");
+		PxPhysics* pPhysics,class CTransform* pTransform, vector<class CBone*>* pBones, _int iId,const std::string& name = "");
 	CCharacter_Controller(const CCharacter_Controller& rhs);
 	virtual ~CCharacter_Controller() = default;
 
@@ -226,18 +226,24 @@ public:
 	{
 		return m_bHit;
 	}
-	void						Set_Force(_float4 vForce)
+	void						Set_Force(_float4 vForce, COLLIDER_TYPE eType)
 	{
 		m_vForce = vForce;
+		m_eType = eType;
 	}
 	_float4						Get_Force()
 	{
 		return m_vForce;
 	}
+	COLLIDER_TYPE			Get_Hit_Collider_Type()
+	{
+		return m_eType;
+	}
 private:
 	_bool						m_bHit = { false };
 	_float4						m_vForce;
-
+	COLLIDER_TYPE				m_eType;
+	_int						m_iId = { 0 };
 #pragma endregion
 
 public:

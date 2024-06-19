@@ -69,7 +69,10 @@ HRESULT CSelector_UI::Initialize(void* pArg)
     }
 
     /* 가라로 몬스터에 붙일 거임*/
-    m_pEx = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Monster"))->back();
+    auto pLayer_Monster = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Monster"));
+    
+    if(pLayer_Monster)
+        m_pEx = pLayer_Monster->back();
 
     /* Tool*/
     m_fColorTimer_Limit = 1.f;

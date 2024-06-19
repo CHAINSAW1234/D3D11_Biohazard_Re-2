@@ -37,12 +37,11 @@ HRESULT CMainApp::Initialize()
 
 void CMainApp::Tick(_float fTimeDelta)
 {
-
 	m_pGameInstance->Tick_Engine(fTimeDelta);
 
-//	#ifdef _DEBUG
+#ifdef DISPLAY_FRAME
 	m_fTimeAcc += fTimeDelta;
-//	#endif
+#endif
 }
 
 HRESULT CMainApp::Render()
@@ -50,7 +49,7 @@ HRESULT CMainApp::Render()
 	if (nullptr == m_pGameInstance)
 		return E_FAIL;
 	
-//	#ifdef _DEBUG
+#ifdef DISPLAY_FRAME
 	++m_iRenderCnt;
 
 	if (m_fTimeAcc >= 1.f)
@@ -59,7 +58,7 @@ HRESULT CMainApp::Render()
 		m_fTimeAcc = 0.f;
 		m_iRenderCnt = 0;
 	}
-//	#endif
+#endif
 
 	m_pGameInstance->Begin_Draw(_float4(0.f, 0.f, 1.f, 1.f));
 
@@ -67,11 +66,11 @@ HRESULT CMainApp::Render()
 
 	m_pGameInstance->Draw();
 
-//	#ifdef _DEBUG 
+#ifdef DISPLAY_FRAME 
 
 		m_pGameInstance->Render_Font(TEXT("Font_Default"), m_szFPS, _float2(0.f, 0.f), XMVectorSet(1.f, 0.f, 0.f, 1.f), 0.f);
 
-//	#endif
+#endif
 
 	m_pGameInstance->End_Draw();
 

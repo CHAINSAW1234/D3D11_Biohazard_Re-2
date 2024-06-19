@@ -26,7 +26,6 @@ public:
 
 protected:
 	_matrix								GetWorldMatrix_Rigid_Dynamic(_int Index);
-private:
 
 public:
 	virtual void Free() override;

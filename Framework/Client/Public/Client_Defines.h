@@ -53,6 +53,9 @@ using namespace Client;
 //	#define USE_MapObject
 #define USE_MapInteractObject
 
+#define DISPLAY_FRAME
+#define DISPLAY_NAVMESH
+
 typedef struct Tag_Prototype_Inform
 {
 	_bool		bAnim = { false };

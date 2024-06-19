@@ -38,6 +38,8 @@ HRESULT CWindow::Initialize(void* pArg)
 	m_pModelCom->Active_RootMotion_Rotation(true);
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
+	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+
 	return S_OK;
 }
 
@@ -67,11 +69,6 @@ void CWindow::Tick(_float fTimeDelta)
 			Active();
 		m_bCol = false;
 	}
-
-
-
-
-
 }
 
 void CWindow::Late_Tick(_float fTimeDelta)

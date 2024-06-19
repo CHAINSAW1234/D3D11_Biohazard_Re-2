@@ -68,9 +68,13 @@ public:
 	{
 		return m_bLocalized;
 	}
-	virtual void								SetRagdoll(_int iId,_float4 vForce = _float4(0.f,0.f,0.f,1.f))
+	virtual void								SetRagdoll(_int iId,_float4 vForce,COLLIDER_TYPE eType)
 	{
 		m_bRagdoll = true;
+	}
+	void										SetOctreeNode(class COctree* pNode)
+	{
+		m_pOctreeNode = pNode;
 	}
 public:
 	virtual _bool								Get_Dead() { return m_bDead; }
@@ -89,12 +93,15 @@ protected:
 	_int										m_iIndex_RigidBody = { 0 };
 
 	_bool										m_bDead = { false };
-	_bool										m_bRender = { false };
+	_bool										m_bRender = { true };
 	_bool										m_bLocalized = { false };
 	_float4										m_vLocal_To_World_Pos;
 
 	_bool										m_bRagdoll = { false };
 	_bool										m_bRagdoll_Ready = { false };
+	class COctree*								m_pOctreeNode = { nullptr };
+
+	_int										m_iPx_Collider_Id = { 0 };
 protected:
 	map<const wstring, class CComponent*>		m_Components;
 

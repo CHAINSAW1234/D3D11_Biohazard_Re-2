@@ -49,28 +49,30 @@
 #define BONE_COUNT 150
 
 #define JOINT_COUNT 20
-#define NECK_BONE  131
-#define SPINE_01_BONE 46
-#define SPINE_02_BONE 59
-#define SPINE_03_BONE 60
-#define HEAD_BONE 132
-#define PELVIS_BONE 3
-#define L_LEG_BONE 4
-#define L_CALF_BONE 9
-#define L_ANCLE_BONE 14
-#define L_FOOT_BONE 15
-#define R_LEG_BONE 20
-#define R_CALF_BONE 21
-#define R_ANCLE_BONE 26
-#define R_FOOT_BONE 27
-#define L_ARM_BONE 62
-#define L_FOREARM_BONE 67
-#define L_WRIST_BONE 70
-#define L_HAND_BONE 77
-#define R_ARM_BONE 97
-#define R_FOREARM_BONE 102
-#define R_WRIST_BONE 105
-#define R_HAND_BONE 112
+
+
+#define NECK_BONE  131		//neck_0
+#define SPINE_01_BONE 46		//spine_0
+#define SPINE_02_BONE 59		//spine_1
+#define SPINE_03_BONE 60		//spine_2
+#define HEAD_BONE 132		//neck_1
+#define PELVIS_BONE 3			//hips
+#define L_LEG_BONE 4			//l_leg_femur
+#define L_CALF_BONE 9		//l_leg_tibia
+#define L_ANCLE_BONE 14		//l_leg_ankle
+#define L_FOOT_BONE 15		//l_leg_ball
+#define R_LEG_BONE 20		//r_leg_femur
+#define R_CALF_BONE 21		//r_leg_tibia
+#define R_ANCLE_BONE 26		//r_leg_ankle
+#define R_FOOT_BONE 27		//r_leg_ball
+#define L_ARM_BONE 62		//l_arm_humerus
+#define L_FOREARM_BONE 67	//l_arm_radius
+#define L_WRIST_BONE 70		//l_arm_wrist
+#define L_HAND_BONE 77		//l_hand_middle_0
+#define R_ARM_BONE 97		//r_arm_humerus
+#define R_FOREARM_BONE 102	//r_arm_radius
+#define R_WRIST_BONE 105		//r_arm_wrist
+#define R_HAND_BONE 112		//r_hand_middle_0
 
 #endif
 
@@ -288,7 +290,7 @@ void CRagdoll_Physics::create_d6_joint_Head(PxRigidDynamic* parent, PxRigidDynam
 void CRagdoll_Physics::create_revolute_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t joint_pos, XMMATRIX rotation)
 {
 	//m_pRotationMatrix = &m_pTransform->Get_RotationMatrix_Pure();
-	m_pRotationMatrix = &m_pTransform->Get_WorldMatrix_Pure();
+	m_RotationMatrix = m_pTransform->Get_WorldMatrix_Pure();
 
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
@@ -296,7 +298,7 @@ void CRagdoll_Physics::create_revolute_joint(PxRigidDynamic* parent, PxRigidDyna
 	_vector p = XMVectorSet(p_tf.r[3].m128_f32[0], p_tf.r[3].m128_f32[1], p_tf.r[3].m128_f32[2], 1.0f);
 
 	p = XMVectorSetW(p, 1.f);
-	_vector q = XMQuaternionRotationMatrix(XMMatrixInverse(nullptr, joints[joint_pos].inverse_bind_pose)/* * XMMatrixRotationY(PxPi)*/ * XMLoadFloat4x4(m_pRotationMatrix));
+	_vector q = XMQuaternionRotationMatrix(XMMatrixInverse(nullptr, joints[joint_pos].inverse_bind_pose)/* * XMMatrixRotationY(PxPi)*/ * XMLoadFloat4x4(&m_RotationMatrix));
 
 	PxRevoluteJoint* joint = PxRevoluteJointCreate(*m_Physics,
 		parent,
@@ -452,9 +454,6 @@ void CRagdoll_Physics::create_ragdoll()
 
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
-	//For Find Bone Index
-	//m_skeletal_mesh->skeleton()->find_joint_index("Head");
-
 #pragma region Leon Bone - RigidBody
 #ifdef LEON
 	uint32_t j_head_idx = 167;
@@ -488,33 +487,32 @@ void CRagdoll_Physics::create_ragdoll()
 
 #pragma region Zombie Bone - RigidBody
 #ifdef ZOMBIE
-	//uint32_t j_head_idx = 131;
-	uint32_t j_head_idx = 130;
-	uint32_t j_neck_01_idx = 129;
-	uint32_t j_spine_03_idx = 1;
-	uint32_t j_spine_02_idx = 58;
-	uint32_t j_spine_01_idx = 57;
-	uint32_t j_pelvis_idx = 44;
+	uint32_t j_head_idx = 130;		//neck_1
+	uint32_t j_neck_01_idx = 129;	//neck_0
+	uint32_t j_spine_03_idx = 1;		//hips
+	uint32_t j_spine_02_idx = 58;		//spine_2
+	uint32_t j_spine_01_idx = 57;		//spine_1
+	uint32_t j_pelvis_idx = 44;		//spine_0
 
-	uint32_t j_thigh_l_idx = 2;
-	uint32_t j_calf_l_idx = 7;
-	uint32_t j_foot_l_idx = 12;
-	uint32_t j_ball_l_idx = 13;
+	uint32_t j_thigh_l_idx = 2;		//l_leg_femur
+	uint32_t j_calf_l_idx = 7;		//l_leg_tibia
+	uint32_t j_foot_l_idx = 12;		//l_leg_ankle
+	uint32_t j_ball_l_idx = 13;		//l_leg_ball
 
-	uint32_t j_thigh_r_idx = 18;
-	uint32_t j_calf_r_idx = 19;
-	uint32_t j_foot_r_idx = 24;
-	uint32_t j_ball_r_idx = 25;
+	uint32_t j_thigh_r_idx = 18;		//r_leg_femur
+	uint32_t j_calf_r_idx = 19;		//r_leg_tibia
+	uint32_t j_foot_r_idx = 24;		//r_leg_ankle
+	uint32_t j_ball_r_idx = 25;		//r_leg_ball
 
-	uint32_t j_upperarm_l_idx = 60;
-	uint32_t j_lowerarm_l_idx = 65;
-	uint32_t j_hand_l_idx = 68;
-	uint32_t j_middle_01_l_idx = 75;
+	uint32_t j_upperarm_l_idx = 60;	//l_arm_humerus
+	uint32_t j_lowerarm_l_idx = 65;	//l_arm_radius
+	uint32_t j_hand_l_idx = 68;		//l_arm_wrist
+	uint32_t j_middle_01_l_idx = 75;	//l_hand_middle_0
 
-	uint32_t j_upperarm_r_idx = 95;
-	uint32_t j_lowerarm_r_idx = 100;
-	uint32_t j_hand_r_idx = 103;
-	uint32_t j_middle_01_r_idx = 110;
+	uint32_t j_upperarm_r_idx = 95;	//r_arm_humerus
+	uint32_t j_lowerarm_r_idx = 100;	//r_arm_radius
+	uint32_t j_hand_r_idx = 103;		//r_arm_wrist
+	uint32_t j_middle_01_r_idx = 110;	//r_hand_middle_0
 #endif
 #pragma endregion
 
@@ -577,9 +575,6 @@ void CRagdoll_Physics::create_ragdoll()
 
 #ifdef ZOMBIE
 	m_ragdoll->m_rigid_bodies[1] = m_Pelvis;
-	//m_ragdoll->m_rigid_bodies[3] = m_Leg_L;
-	//m_ragdoll->m_rigid_bodies[20] = m_Leg_R;
-	//m_ragdoll->m_rigid_bodies[44] = m_Pelvis;
 #endif
 
 #pragma endregion
@@ -661,12 +656,12 @@ void CRagdoll_Physics::update_animations()
 	if (m_bRagdoll == false)
 		return;
 
-	//m_pRotationMatrix = &m_pTransform->Get_RotationMatrix_Pure();
-	m_pRotationMatrix = &m_pTransform->Get_WorldMatrix_Pure();
-	auto RotMat = m_pRotationMatrix;
-	RotMat->_41 = m_pWorldMatrix->_41;
-	RotMat->_42 = m_pWorldMatrix->_42;
-	RotMat->_43 = m_pWorldMatrix->_43;
+	m_RotationMatrix = m_pTransform->Get_RotationMatrix_Pure();
+	//m_pRotationMatrix = &m_pTransform->Get_WorldMatrix_Pure();
+	auto RotMat = m_RotationMatrix;
+	RotMat._41 = m_pWorldMatrix->_41;
+	RotMat._42 = m_pWorldMatrix->_42;
+	RotMat._43 = m_pWorldMatrix->_43;
 
 	auto joint = m_skeletal_mesh->skeleton()->joints();
 
@@ -722,7 +717,7 @@ void CRagdoll_Physics::update_animations()
 					{
 						if (it->Get_Name() == joint[i].name)
 						{
-							PxTransform px_transform(to_vec3(world_pos), to_quat(XMQuaternionRotationMatrix(XMLoadFloat4x4(it->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(RotMat))));
+							PxTransform px_transform(to_vec3(world_pos), to_quat(XMQuaternionRotationMatrix(XMLoadFloat4x4(it->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(&RotMat))));
 							m_ragdoll->m_rigid_bodies[i]->setGlobalPose(px_transform);
 						}
 					}
@@ -740,22 +735,15 @@ void CRagdoll_Physics::update_animations()
 	{
 		m_Global_transforms = *m_ragdoll_pose->apply(m_ragdoll, m_model_only_scale, m_model_without_scale);
 
-		/*if (m_bRagdoll_AddForce == false)
-		{
-			m_Pelvis->addForce(PxVec3(0.f, 0.f, -100.f),PxForceMode::eIMPULSE);
-
-			m_bRagdoll_AddForce = true;
-		}*/
-
 		auto joint = m_skeletal_mesh->skeleton()->joints();
 
 		if (m_vecBone)
 		{
 			int i = 0;
 
-			//m_pRotationMatrix = &m_pTransform->Get_RotationMatrix_Pure();
-			m_pRotationMatrix = &m_pTransform->Get_WorldMatrix_Pure();
-			auto WorldMat = m_pRotationMatrix;
+			m_RotationMatrix = m_pTransform->Get_RotationMatrix_Pure();
+			//m_pRotationMatrix = &m_pTransform->Get_WorldMatrix_Pure();
+			auto WorldMat = m_RotationMatrix;
 
 			for (auto& it : *m_vecBone)
 			{
@@ -765,7 +753,7 @@ void CRagdoll_Physics::update_animations()
 					{
 						if (!IsIdentityMatrix(m_Global_transforms.transforms[i]))
 						{
-							auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(WorldMat));
+							auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
 							auto Result = m_Global_transforms.transforms[i] * Inverse;
 							it->Set_Combined_Matrix(Result);
 						}
@@ -1032,12 +1020,115 @@ void CRagdoll_Physics::ResetForce()
 	}
 }
 
-void CRagdoll_Physics::Add_Force(_float4 vForce)
+void CRagdoll_Physics::Add_Force(_float4 vForce, COLLIDER_TYPE eType)
 {
-	auto fPower = rand() % 100;
-	vForce = vForce * (fPower + 50.f);
-	PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
-	m_Chest->addForce(pxForce, PxForceMode::eIMPULSE);
+	switch (eType)
+	{
+	case COLLIDER_TYPE::HEAD:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Head->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::CHEST:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Chest->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::ARM_L:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Arm_L->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::ARM_R:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Arm_R->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::FOREARM_L:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_ForeArm_L->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::FOREARM_R:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_ForeArm_R->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::PELVIS:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Pelvis->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::LEG_L:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Leg_L->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::LEG_R:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Leg_R->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::CALF_L:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Calf_L->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::CALF_R:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Calf_R->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::FOOT_L:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Foot_L->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	case COLLIDER_TYPE::FOOT_R:
+	{
+		auto fPower = rand() % 100;
+		vForce = vForce * (fPower + 50.f);
+		PxVec3 pxForce(vForce.x, vForce.y, vForce.z);
+		m_Foot_R->addForce(pxForce, PxForceMode::eIMPULSE);
+		break;
+	}
+	}
 }
 
 CRagdoll_Physics* CRagdoll_Physics::Create()
