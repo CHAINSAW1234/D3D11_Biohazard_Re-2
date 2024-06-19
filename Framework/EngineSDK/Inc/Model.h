@@ -146,7 +146,7 @@ public:		/* For. Access */
 	list<_uint>								Get_MeshIndices(const string& strMeshTag);		//	이름이 같은 메쉬들이 각각의 칸에있을수있으므로 인덱스들을 컨테이너에 담아서 반환한다.
 	vector<CAnimation*>						Get_Animations() { return m_Animations; }
 	map<wstring, class CBone_Layer*>		Get_BoneLayers() { return m_BoneLayers; }
-	list<wstring>							Get_BoneLayer_Tags();	
+	list<wstring>							Get_BoneLayer_Tags();
 
 	_uint									Get_NumBones() { return static_cast<_uint>(m_Bones.size()); }
 	_uint									Get_NumMeshes() const { return m_iNumMeshes; }
@@ -155,8 +155,8 @@ public:		/* For. Access */
 	_int									Find_AnimIndex(CAnimation* pAnimation);
 	_int									Find_AnimIndex(const string& strAnimTag);
 	string									Find_RootBoneTag();
-	class CPlayingInfo*						Find_PlayingInfo(_uint iPlayingIndex);
-	class CBone_Layer*						Find_BoneLayer(const wstring& strBoneLayerTag);
+	class CPlayingInfo* Find_PlayingInfo(_uint iPlayingIndex);
+	class CBone_Layer* Find_BoneLayer(const wstring& strBoneLayerTag);
 
 	HRESULT									Link_Bone_Auto(CModel* pTargetModel);
 
@@ -189,13 +189,14 @@ public:		/* For. Access */
 	void									Change_Animation(_uint iPlayingIndex, const string& strAnimTag);
 	void									Set_BoneLayer_PlayingInfo(_uint iPlayingIndex, const wstring& strBoneLayerTag);
 
-	class CBone*							Get_BonePtr(const _char* pBoneName) const;
+	class CBone* Get_BonePtr(const _char* pBoneName) const;
+	class CBone* Get_BonePtr(_int iIndex);
 
 	_bool									isFinished(_uint iPlayingIndex);
 	void									Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices);
 	void									Get_Child_ZointIndices(string strStartBoneTag, const string& strEndBoneTag, list<_uint>& ChildZointIndices);
 
-	const _float4x4*						Get_CombinedMatrix(const string& strBoneTag);
+	const _float4x4* Get_CombinedMatrix(const string& strBoneTag);
 
 public:		/* For.FBX */
 	virtual HRESULT							Initialize_Prototype_TEMP(MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix);
@@ -221,12 +222,14 @@ public:
 
 private:
 	vector<_float4x4>						Apply_Animation(_float fTimeDelta, _uint iPlayingAnimIndex);
-	void									Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMovedDirection, _uint iStartBoneIndex =0);
+	void									Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMovedDirection, _uint iStartBoneIndex = 0);
 	void									Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer);
 	vector<_float4x4>						Compute_ResultMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer);
 
 public:		/* For.Cooking_Mesh */
 	void									Static_Mesh_Cooking(class CTransform* pTransform = nullptr);
+	void									Dynamic_Mesh_Cooking(class CTransform* pTransform = nullptr);
+	void									Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders,class CTransform* pTransform = nullptr);
 
 private:
 	_int									Find_BoneIndex(const string& strBoneTag);
