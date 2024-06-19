@@ -24,6 +24,10 @@ HRESULT CFace_Zombie::Initialize(void* pArg)
 		return E_FAIL;
 
 	FACE_MONSTER_DESC*			pDesc = { static_cast<FACE_MONSTER_DESC*>(pArg) };
+	m_eType = pDesc->eType;
+
+	if (ZOMBIE_FACE_TYPE::TYPE_END <= m_eType)
+		return E_FAIL;
 
 	if (FAILED(__super::Initialize(pDesc)))
 		return E_FAIL;
@@ -299,9 +303,27 @@ HRESULT CFace_Zombie::Add_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieFace"),
-		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-		return E_FAIL;
+
+	if (ZOMBIE_FACE_TYPE::TYPE_FACE1 == m_eType)
+	{
+		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieFace"),
+			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+			return E_FAIL;
+	}
+	
+	else if (ZOMBIE_FACE_TYPE::TYPE_FACE2 == m_eType)
+	{
+		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieFace2"),
+			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+			return E_FAIL;
+	}
+
+	else if (ZOMBIE_FACE_TYPE::TYPE_FACE3 == m_eType)
+	{
+		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieFace3"),
+			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }

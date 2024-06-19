@@ -73,7 +73,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 void CPlayer::Priority_Tick(_float fTimeDelta)
 {
-	//	Priority_Tick_PartObjects(fTimeDelta);
+	Priority_Tick_PartObjects(fTimeDelta);
 
 #pragma region 예은 스파이 나중에 FSM으로 옮길지도
 	if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
@@ -322,14 +322,14 @@ void CPlayer::Tick(_float fTimeDelta)
 		}
 	}*/
 
-	//	Tick_PartObjects(fTimeDelta);
+	Tick_PartObjects(fTimeDelta);
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
 {
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
-	//	Late_Tick_PartObjects(fTimeDelta);
+	Late_Tick_PartObjects(fTimeDelta);
 
 	if (m_pController)
 		m_pController->Update_Collider();

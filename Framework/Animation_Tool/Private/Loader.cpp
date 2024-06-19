@@ -113,6 +113,20 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Brush.png"), 1))))
 		return E_FAIL;
 
+
+
+
+	//			TEST ANIMS
+
+
+	/* Prototype_Component_Model_LeonBody */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Test_Animsa"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/TestAnims/em0000_0000_Idle_Loop_A (960 frames).noefbxmulti - em0000_0000_Idle_Loop_A (960 frames).fbx", XMMatrixIdentity()))))
+		return E_FAIL;
+
+
+
+
 	m_strLoadingText = TEXT("모델를(을) 로딩 중 입니다.");
 	_matrix			TransformMatrix = { XMMatrixIdentity() };
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
@@ -146,7 +160,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 #pragma endregion
 
 #pragma region Monster
-
 	/* Prototype_Component_Model_ZombieBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieBody"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Ex_Default_Zombie/Body.fbx",

@@ -131,6 +131,14 @@ void CModel::Reset_PreAnimation(_uint iPlayingIndex)
 	}
 }
 
+HRESULT CModel::Add_Animation(_uint iLevelIndex, wstring& strPrototypeTag)
+{
+	/*m_pGameInstance->Clone_Component()
+	m_pGameInstance->Add_Clone(iLevelIndex, strPrototypeTag, )*/
+
+	return S_OK;
+}
+
 #pragma endregion
 
 void CModel::Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec)
@@ -368,7 +376,7 @@ void CModel::Add_Bone_Layer_Bone(const wstring& strBoneLayerTag, const string& s
 	Add_Bone_Layer_Bone(strBoneLayerTag, iBoneIndex);
 }
 
-void CModel::Add_IK(string strTargetJointTag, string strEndEffectorTag, const wstring& strIKTag, _uint iNumIteration, _float fBlend)
+void CModel::Add_IK(const string& strTargetJointTag, const string& strEndEffectorTag, const wstring& strIKTag, _uint iNumIteration, _float fBlend)
 {
 	if (nullptr == m_pIK_Solver)
 		return;
@@ -563,7 +571,7 @@ _int CModel::Find_RootBoneIndex()
 	return -1;
 }
 
-vector<_float4x4> CModel::Initialize_ResultMatrices(const set<_uint> IncludedBoneIndices)
+vector<_float4x4> CModel::Initialize_ResultMatrices(const set<_uint>& IncludedBoneIndices)
 {
 	vector<_float4x4>		ResultMatrices;
 	ResultMatrices.resize(m_Bones.size());
@@ -610,19 +618,18 @@ _float CModel::Compute_Current_TotalWeight(_uint iBoneIndex)
 	return fTotalWeight;
 }
 
-vector<_float> CModel::Compute_Current_TotalWeights()
+void CModel::Compute_Current_TotalWeights()
 {
-	vector<_float>				TotalWeights;
+	m_TotalWeights.clear();
 	_uint						iNumBones = { static_cast<_uint>(m_Bones.size()) };
-	TotalWeights.resize(iNumBones);
+	m_TotalWeights.resize(iNumBones);
 
 	for (_uint iBoneIndex = 0; iBoneIndex < iNumBones; ++iBoneIndex)
 	{
 		_float			fTotalWeight = { Compute_Current_TotalWeight(iBoneIndex) };
 
-		TotalWeights[iBoneIndex] = fTotalWeight;
+		m_TotalWeights[iBoneIndex] = fTotalWeight;
 	}
-	return TotalWeights;
 }
 
 _float4x4 CModel::Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fmatrix DstMatrix, _float fAdditionalWeight)
@@ -1213,7 +1220,7 @@ void CModel::Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& 
 	}
 }
 
-void CModel::Get_Child_ZointIndices(string strStartBoneTag, string strEndBoneTag, list<_uint>& ChildZointIndices)
+void CModel::Get_Child_ZointIndices(string strStartBoneTag, const string& strEndBoneTag, list<_uint>& ChildZointIndices)
 {
 	_int			iStartBoneIndex = { Find_BoneIndex(strStartBoneTag) };
 	_int			iEndBoneIndex = { Find_BoneIndex(strEndBoneTag) };
@@ -1786,13 +1793,6 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 		pPlayingInfo->Update_BlendWeight_Linear(fTimeDelta);
 	}
 
-	for (auto& pBone : m_Bones)
-	{
-		_matrix			PreCombinedMatrix = { XMLoadFloat4x4(pBone->Get_CombinedTransformationMatrix()) };
-
-		pBone->Set_Pre_CombinedMatrix(PreCombinedMatrix);
-	}
-
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////MOTION_BLEND////////////////////////////
@@ -1904,6 +1904,13 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 		fTimeDelta = m_fAccOptimizationTime;
 		m_fAccOptimizationTime = 0.f;
 	}
+
+	return S_OK;
+}
+
+HRESULT CModel::Play_Animation_PartModel(CTransform* pTransform, _float fTimeDelta)
+{
+
 
 	return S_OK;
 }
@@ -2134,7 +2141,7 @@ vector<_float4x4> CModel::Compute_ResultMatrices(const vector<vector<_float4x4>>
 	_uint						iRootBoneIndex = { static_cast<_uint>(Find_RootBoneIndex()) };
 
 	_uint						iNumBones = { static_cast<_uint>(m_Bones.size()) };
-	vector<_float>				TotalWeights = Compute_Current_TotalWeights();
+	Compute_Current_TotalWeights();
 
 	for (_uint iPlayingInfoIndex = 0; iPlayingInfoIndex < iNumPlayingInfo; ++iPlayingInfoIndex)
 	{
@@ -2159,7 +2166,7 @@ vector<_float4x4> CModel::Compute_ResultMatrices(const vector<vector<_float4x4>>
 			if (false == pBoneLayer->Is_Included(iBoneIndex))
 				continue;
 
-			_float			fWeightRatio = { fBlendWeight / TotalWeights[iBoneIndex] };
+			_float			fWeightRatio = { fBlendWeight / m_TotalWeights[iBoneIndex] };
 			if (0.f >= fWeightRatio)
 				continue;
 

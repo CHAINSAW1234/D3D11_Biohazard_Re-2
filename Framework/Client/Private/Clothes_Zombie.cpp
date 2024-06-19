@@ -58,8 +58,6 @@ void CClothes_Zombie::Late_Tick(_float fTimeDelta)
 	_float3			vTempTranslation = {};
 	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);
 
-	return;
-
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
@@ -321,6 +319,20 @@ HRESULT CClothes_Zombie::Add_Components()
 	else if (CLOTHES_TYPE::TYPE_SHIRTS== m_eType)
 	{
 		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieShirts"),
+			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+			return E_FAIL;
+	}
+
+	else if (CLOTHES_TYPE::TYPE_SHIRTS2 == m_eType)
+	{
+		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieShirts2"),
+			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+			return E_FAIL;
+	}
+
+	else if (CLOTHES_TYPE::TYPE_SHIRTS3 == m_eType)
+	{
+		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieShirts3"),
 			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 	}

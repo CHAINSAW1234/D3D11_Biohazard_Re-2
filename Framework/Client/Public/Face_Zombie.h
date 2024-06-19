@@ -8,8 +8,11 @@ BEGIN(Client)
 class CFace_Zombie final : public CPartObject
 {
 public:
+	enum ZOMBIE_FACE_TYPE{ TYPE_FACE1, TYPE_FACE2, TYPE_FACE3, TYPE_END };
+
 	typedef struct tagFaceMonsterDesc : public CPartObject::PARTOBJECT_DESC
 	{
+		ZOMBIE_FACE_TYPE			eType = { TYPE_END };
 	}FACE_MONSTER_DESC;
 
 private:
@@ -35,6 +38,8 @@ private:
 	CModel*					m_pModelCom = { nullptr };
 	CShader*				m_pShaderCom = { nullptr };
 	CCollider*				m_pColliderCom = { nullptr };
+
+	ZOMBIE_FACE_TYPE		m_eType = { TYPE_END };
 
 private:
 	HRESULT					Add_Components();

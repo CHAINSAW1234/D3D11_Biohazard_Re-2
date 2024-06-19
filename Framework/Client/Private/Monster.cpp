@@ -141,10 +141,72 @@ void CMonster::Tick_PartObjects(_float fTimeDelta)
 
 void CMonster::Late_Tick_PartObjects(_float fTimeDelta)
 {
+	static _uint			iCurrentShirts = { 0 };
+
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_UP))
+	{
+		iCurrentShirts += 1;
+		if (iCurrentShirts > 2)
+		{
+			iCurrentShirts = 0;
+		}
+	}
+
 	for (auto& pPartObject : m_PartObjects)
 	{
 		if (nullptr != pPartObject)
+		{
+			if (iCurrentShirts == 0)
+			{
+				if (pPartObject == m_PartObjects[PART_SHIRTS2])
+					continue;
+
+				if (pPartObject == m_PartObjects[PART_SHIRTS3])
+					continue;
+
+
+				if (pPartObject == m_PartObjects[PART_FACE2])
+					continue;
+
+				if (pPartObject == m_PartObjects[PART_FACE3])
+					continue;
+			}
+			
+			if (iCurrentShirts == 1)
+			{
+				if (pPartObject == m_PartObjects[PART_SHIRTS])
+					continue;
+
+				if (pPartObject == m_PartObjects[PART_SHIRTS3])
+					continue;
+
+
+				if (pPartObject == m_PartObjects[PART_FACE])
+					continue;
+
+				if (pPartObject == m_PartObjects[PART_FACE3])
+					continue;
+			}
+
+			if (iCurrentShirts == 2)
+			{
+				if (pPartObject == m_PartObjects[PART_SHIRTS])
+					continue;
+
+				if (pPartObject == m_PartObjects[PART_SHIRTS2])
+					continue;
+
+				if (pPartObject == m_PartObjects[PART_FACE])
+					continue;
+
+				if (pPartObject == m_PartObjects[PART_FACE2])
+					continue;
+			}
+	
+
+
 			pPartObject->Late_Tick(fTimeDelta);
+		}
 	}
 }
 

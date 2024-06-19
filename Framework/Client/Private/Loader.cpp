@@ -663,6 +663,33 @@ HRESULT CLoader::Loading_For_GamePlay()
 			LeonTransformMatrix))))
 		return E_FAIL;
 
+
+
+	/* Prototype_Component_Model_ZombieShirts */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieShirts2"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Shirts02/Shirts2.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	///* Prototype_Component_Model_ZombieShirts */
+	//if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieShirts3"),
+	//	CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Shirts03/Shirts3.fbx",
+	//		LeonTransformMatrix))))
+	//	return E_FAIL;
+
+		/* Prototype_Component_Model_ZombieFace */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieFace2"),
+		CModel::Create_Temp(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Face02/Face02.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_ZombieFace */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieFace3"),
+		CModel::Create_Temp(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Face03/Face03.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+
 #pragma endregion
 
 	/* Prototype_Component_VIBuffer_Terrain */

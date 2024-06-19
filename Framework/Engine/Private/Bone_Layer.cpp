@@ -23,7 +23,9 @@ _bool CBone_Layer::Is_Included(_uint iBoneIndex)
 {
 	_bool		isIncluded = { false };
 
-	set<_uint>::iterator		iter = { find(m_IncludedBoneIndices.begin(), m_IncludedBoneIndices.end(), iBoneIndex) };
+	
+	set<_uint>::iterator		iter = { m_IncludedBoneIndices.find(iBoneIndex) };
+	//	set<_uint>::iterator		iter = { find(m_IncludedBoneIndices.begin(), m_IncludedBoneIndices.end(), iBoneIndex) };
 	if (iter != m_IncludedBoneIndices.end())
 		isIncluded = true;
 

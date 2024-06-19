@@ -44,6 +44,9 @@ public:		/* For.Animation */
 
 	void									Reset_PreAnimation(_uint iPlayingIndex);
 
+
+	HRESULT									Add_Animation(_uint iLevelIndex, wstring& strPrototypeTag);
+
 public:		/* For.Controll AnimSpeed */
 	void									Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec);
 
@@ -77,7 +80,7 @@ public:		/* For.Bone_Layer */
 	void									Add_Bone_Layer_Bone(const wstring& strBoneLayerTag, const string& strBoneTag);
 
 public:		/* For.IK Public*/
-	void									Add_IK(string strTargetJointTag, string strEndEffectorTag, const wstring& strIKTag, _uint iNumIteration, _float fBlend);
+	void									Add_IK(const string& strTargetJointTag, const string& strEndEffectorTag, const wstring& strIKTag, _uint iNumIteration, _float fBlend);
 	void									Erase_IK(const wstring& strIKTag);
 	void									Set_TargetPosition_IK(const wstring& strIKTag, _fvector vTargetPosition);
 	void									Set_NumIteration_IK(const wstring& strIKTag, _uint iNumIteration);
@@ -100,9 +103,9 @@ private:
 	_int									Find_RootBoneIndex();
 
 private:
-	vector<_float4x4>						Initialize_ResultMatrices(const set<_uint> IncludedBoneIndices);
+	vector<_float4x4>						Initialize_ResultMatrices(const set<_uint>& IncludedBoneIndices);
 	_float									Compute_Current_TotalWeight(_uint iBoneIndex);
-	vector<_float>							Compute_Current_TotalWeights();
+	void									Compute_Current_TotalWeights();
 	_float4x4								Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fmatrix DstMatrix, _float fAdditionalWeight);
 	set<_uint>								Compute_IncludedBoneIndices_AllBoneLayer();
 
@@ -190,7 +193,7 @@ public:		/* For. Access */
 
 	_bool									isFinished(_uint iPlayingIndex);
 	void									Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices);
-	void									Get_Child_ZointIndices(string strStartBoneTag, string strEndBoneTag, list<_uint>& ChildZointIndices);
+	void									Get_Child_ZointIndices(string strStartBoneTag, const string& strEndBoneTag, list<_uint>& ChildZointIndices);
 
 	const _float4x4*						Get_CombinedMatrix(const string& strBoneTag);
 
@@ -212,6 +215,7 @@ public:
 
 	HRESULT									Play_Animations(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
 	HRESULT									Play_Animation_Light(class CTransform* pTransform, _float fTimeDelta);
+	HRESULT									Play_Animation_PartModel(class CTransform* pTransform, _float fTimeDelta);
 	HRESULT									Play_IK(class CTransform* pTransform, _float fTimeDelta);
 	HRESULT									Render(_uint iMeshIndex);
 
@@ -281,6 +285,9 @@ private:	/* For.Linear_Interpolation */
 private:	/* Distance_Optimization */
 	_float									m_fOptimizationFrame = { 60.f };
 	_float									m_fAccOptimizationTime = { 0.f };
+
+private:
+	vector<_float>							m_TotalWeights;
 
 private:	/* For.FBX_Load */
 	HRESULT									Ready_Meshes(const map<string, _uint>& BoneIndices);

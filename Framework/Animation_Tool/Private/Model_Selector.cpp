@@ -125,6 +125,44 @@ HRESULT CModel_Selector::Add_Components()
 
 		m_Models["Zombie_Pants"] = pModel;
 
+
+
+		///////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieBody_merge_all"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_MergeAll"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieBody_merge_all_Nude"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_MergeAllNude"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieFace_Erase_Bone"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Face_Erase_Bone"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieFace_Non_Erase_Bone"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Face_NonErase_Bone"] = pModel;
+
 		pModel = { nullptr };
 
 		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_TEST"))) };
