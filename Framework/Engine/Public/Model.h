@@ -220,7 +220,7 @@ private:
 public:		/* For.Cooking_Mesh */
 	void									Static_Mesh_Cooking(class CTransform* pTransform = nullptr);
 	void									Dynamic_Mesh_Cooking(class CTransform* pTransform = nullptr);
-	void									Convex_Mesh_Cooking(class CTransform* pTransform = nullptr);
+	void									Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders,class CTransform* pTransform = nullptr);
 
 private:
 	_int									Find_BoneIndex(const string& strBoneTag);

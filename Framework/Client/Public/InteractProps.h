@@ -77,7 +77,7 @@ protected:
 	INTERACTPROPS_DESC 					m_tagPropDesc ={};
 	vector<CPartObject*>					m_PartObjects;
 
-
+	class CBone*							m_pRotationBone = { nullptr };
 protected:
 	void Check_Player();
 	void Check_Col_Sphere_Player();

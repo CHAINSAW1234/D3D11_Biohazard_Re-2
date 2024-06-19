@@ -981,9 +981,9 @@ void CGameInstance::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint
 	m_pPhysics_Controller->Cook_Mesh_Dynamic(pVertices, pIndices, VertexNum, IndexNum, pTransform);
 }
 
-void CGameInstance::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
+void CGameInstance::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, CTransform* pTransform)
 {
-	m_pPhysics_Controller->Cook_Mesh_Convex(pVertices, pIndices, VertexNum, IndexNum, pTransform);
+	m_pPhysics_Controller->Cook_Mesh_Convex(pVertices, pIndices, VertexNum, IndexNum,pColliders, pTransform);
 }
 
 _matrix CGameInstance::GetWorldMatrix_Rigid_Dynamic(_int Index)
@@ -1069,6 +1069,11 @@ void CGameInstance::Start_Ragdoll(CRagdoll_Physics* pRagdoll, _uint iId)
 {
 	if (m_pPhysics_Controller)
 		m_pPhysics_Controller->Start_Ragdoll(pRagdoll, iId);
+}
+PxCollider* CGameInstance::Create_Px_Collider(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->Create_Px_Collider(pModel, pTransform, iId);
 }
 #pragma endregion
 

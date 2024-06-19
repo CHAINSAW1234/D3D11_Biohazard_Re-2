@@ -292,6 +292,9 @@
     <Filter Include="01.Utility\02.Components\Model\Mesh_Layer">
       <UniqueIdentifier>{96dc04dc-3537-4316-b4df-bf3698f490a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\97.Physics\Physics_Component\PxCollider">
+      <UniqueIdentifier>{e7549f5f-afce-4cf1-aace-7cc16a6c4cb9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -551,6 +554,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\FSM_HState.cpp">
       <Filter>01.Utility\02.Components\FSM\HState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PxCollider.cpp">
+      <Filter>01.Utility\97.Physics\Physics_Component\PxCollider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -833,6 +839,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Task_Node.h">
       <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Task_Node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PxCollider.h">
+      <Filter>01.Utility\97.Physics\Physics_Component\PxCollider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -49,28 +49,30 @@
 #define BONE_COUNT 150
 
 #define JOINT_COUNT 20
-#define NECK_BONE  131
-#define SPINE_01_BONE 46
-#define SPINE_02_BONE 59
-#define SPINE_03_BONE 60
-#define HEAD_BONE 132
-#define PELVIS_BONE 3
-#define L_LEG_BONE 4
-#define L_CALF_BONE 9
-#define L_ANCLE_BONE 14
-#define L_FOOT_BONE 15
-#define R_LEG_BONE 20
-#define R_CALF_BONE 21
-#define R_ANCLE_BONE 26
-#define R_FOOT_BONE 27
-#define L_ARM_BONE 62
-#define L_FOREARM_BONE 67
-#define L_WRIST_BONE 70
-#define L_HAND_BONE 77
-#define R_ARM_BONE 97
-#define R_FOREARM_BONE 102
-#define R_WRIST_BONE 105
-#define R_HAND_BONE 112
+
+
+#define NECK_BONE  131		//neck_0
+#define SPINE_01_BONE 46		//spine_0
+#define SPINE_02_BONE 59		//spine_1
+#define SPINE_03_BONE 60		//spine_2
+#define HEAD_BONE 132		//neck_1
+#define PELVIS_BONE 3			//hips
+#define L_LEG_BONE 4			//l_leg_femur
+#define L_CALF_BONE 9		//l_leg_tibia
+#define L_ANCLE_BONE 14		//l_leg_ankle
+#define L_FOOT_BONE 15		//l_leg_ball
+#define R_LEG_BONE 20		//r_leg_femur
+#define R_CALF_BONE 21		//r_leg_tibia
+#define R_ANCLE_BONE 26		//r_leg_ankle
+#define R_FOOT_BONE 27		//r_leg_ball
+#define L_ARM_BONE 62		//l_arm_humerus
+#define L_FOREARM_BONE 67	//l_arm_radius
+#define L_WRIST_BONE 70		//l_arm_wrist
+#define L_HAND_BONE 77		//l_hand_middle_0
+#define R_ARM_BONE 97		//r_arm_humerus
+#define R_FOREARM_BONE 102	//r_arm_radius
+#define R_WRIST_BONE 105		//r_arm_wrist
+#define R_HAND_BONE 112		//r_hand_middle_0
 
 #endif
 
@@ -452,9 +454,6 @@ void CRagdoll_Physics::create_ragdoll()
 
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
-	//For Find Bone Index
-	//m_skeletal_mesh->skeleton()->find_joint_index("Head");
-
 #pragma region Leon Bone - RigidBody
 #ifdef LEON
 	uint32_t j_head_idx = 167;
@@ -488,33 +487,32 @@ void CRagdoll_Physics::create_ragdoll()
 
 #pragma region Zombie Bone - RigidBody
 #ifdef ZOMBIE
-	//uint32_t j_head_idx = 131;
-	uint32_t j_head_idx = 130;
-	uint32_t j_neck_01_idx = 129;
-	uint32_t j_spine_03_idx = 1;
-	uint32_t j_spine_02_idx = 58;
-	uint32_t j_spine_01_idx = 57;
-	uint32_t j_pelvis_idx = 44;
+	uint32_t j_head_idx = 130;		//neck_1
+	uint32_t j_neck_01_idx = 129;	//neck_0
+	uint32_t j_spine_03_idx = 1;		//hips
+	uint32_t j_spine_02_idx = 58;		//spine_2
+	uint32_t j_spine_01_idx = 57;		//spine_1
+	uint32_t j_pelvis_idx = 44;		//spine_0
 
-	uint32_t j_thigh_l_idx = 2;
-	uint32_t j_calf_l_idx = 7;
-	uint32_t j_foot_l_idx = 12;
-	uint32_t j_ball_l_idx = 13;
+	uint32_t j_thigh_l_idx = 2;		//l_leg_femur
+	uint32_t j_calf_l_idx = 7;		//l_leg_tibia
+	uint32_t j_foot_l_idx = 12;		//l_leg_ankle
+	uint32_t j_ball_l_idx = 13;		//l_leg_ball
 
-	uint32_t j_thigh_r_idx = 18;
-	uint32_t j_calf_r_idx = 19;
-	uint32_t j_foot_r_idx = 24;
-	uint32_t j_ball_r_idx = 25;
+	uint32_t j_thigh_r_idx = 18;		//r_leg_femur
+	uint32_t j_calf_r_idx = 19;		//r_leg_tibia
+	uint32_t j_foot_r_idx = 24;		//r_leg_ankle
+	uint32_t j_ball_r_idx = 25;		//r_leg_ball
 
-	uint32_t j_upperarm_l_idx = 60;
-	uint32_t j_lowerarm_l_idx = 65;
-	uint32_t j_hand_l_idx = 68;
-	uint32_t j_middle_01_l_idx = 75;
+	uint32_t j_upperarm_l_idx = 60;	//l_arm_humerus
+	uint32_t j_lowerarm_l_idx = 65;	//l_arm_radius
+	uint32_t j_hand_l_idx = 68;		//l_arm_wrist
+	uint32_t j_middle_01_l_idx = 75;	//l_hand_middle_0
 
-	uint32_t j_upperarm_r_idx = 95;
-	uint32_t j_lowerarm_r_idx = 100;
-	uint32_t j_hand_r_idx = 103;
-	uint32_t j_middle_01_r_idx = 110;
+	uint32_t j_upperarm_r_idx = 95;	//r_arm_humerus
+	uint32_t j_lowerarm_r_idx = 100;	//r_arm_radius
+	uint32_t j_hand_r_idx = 103;		//r_arm_wrist
+	uint32_t j_middle_01_r_idx = 110;	//r_hand_middle_0
 #endif
 #pragma endregion
 
@@ -577,9 +575,6 @@ void CRagdoll_Physics::create_ragdoll()
 
 #ifdef ZOMBIE
 	m_ragdoll->m_rigid_bodies[1] = m_Pelvis;
-	//m_ragdoll->m_rigid_bodies[3] = m_Leg_L;
-	//m_ragdoll->m_rigid_bodies[20] = m_Leg_R;
-	//m_ragdoll->m_rigid_bodies[44] = m_Pelvis;
 #endif
 
 #pragma endregion

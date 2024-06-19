@@ -100,6 +100,8 @@ protected:
 	_bool										m_bRagdoll = { false };
 	_bool										m_bRagdoll_Ready = { false };
 	class COctree*								m_pOctreeNode = { nullptr };
+
+	_int										m_iPx_Collider_Id = { 0 };
 protected:
 	map<const wstring, class CComponent*>		m_Components;
 

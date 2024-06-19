@@ -51,7 +51,9 @@ HRESULT CDoor::Initialize(void* pArg)
 	m_pModelCom->Active_RootMotion_Rotation(true);
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
-	m_pModelCom->Dynamic_Mesh_Cooking(m_pTransformCom);
+	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+
+	m_pRotationBone = m_pModelCom->Get_BonePtr("_00");
 	
 	return S_OK;
 }

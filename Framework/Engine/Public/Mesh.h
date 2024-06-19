@@ -89,9 +89,9 @@ private:/* For.BinaryLoad */
 	HRESULT					Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices, const vector<_uint>& Indices, const vector<_uint>& Bones, const vector<_float4x4>& OffsetMatrices);
 
 public:/*For Cooking*/
-	void	Static_Mesh_Cooking(class CTransform* pTransform = nullptr);
-	void	Dynamic_Mesh_Cooking(class CTransform* pTransform = nullptr);
-	void	Convex_Mesh_Cooking(class CTransform* pTransform = nullptr);
+	void					Static_Mesh_Cooking(class CTransform* pTransform = nullptr);
+	void					Dynamic_Mesh_Cooking(class CTransform* pTransform = nullptr);
+	void					Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, class CTransform* pTransform = nullptr);
 
 public: /* For Octree Culling*/
 	_uint					GetNumFaces()
