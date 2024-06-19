@@ -1792,7 +1792,6 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 	}
 
 
-
 	for (auto& pPlayingInfo : m_PlayingAnimInfos)
 	{
 		if (nullptr == pPlayingInfo)

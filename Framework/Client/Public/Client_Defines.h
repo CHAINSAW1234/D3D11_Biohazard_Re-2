@@ -48,10 +48,12 @@ extern Client::LEVEL g_Level;
 using namespace std;
 using namespace Client;
 	
-#define USE_UI
+//	#define USE_UI
 //	#define USE_Player_Control
 //	#define USE_MapObject
-//	#define USE_MapInteractObject
+#define USE_MapInteractObject
+
+#define NON_COLLISION_PROP
 
 #define DISPLAY_FRAME
 #define DISPLAY_NAVMESH
