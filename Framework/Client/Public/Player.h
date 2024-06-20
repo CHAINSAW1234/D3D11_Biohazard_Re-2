@@ -21,7 +21,7 @@ public:
 		PART_BODY,
 		PART_HEAD,
 		PART_HAIR,
-		//	PART_WEAPON,
+		PART_WEAPON,
 		PART_END
 	};
 
@@ -85,6 +85,7 @@ private:
 #pragma region 현진 추가
 public:
 	CModel*										Get_Body_Model();
+	CModel*										Get_Weapon_Model();
 	_float3*									Get_Body_RootDir();
 	_bool										Get_Spotlight() { return m_isSpotlight; }
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
@@ -100,6 +101,8 @@ public:
 
 	void										Update_Direction();
 	void										Turn_Spine(_float fTimeDelta);
+
+	void										Update_KeyInput_Reload();
 
 private:
 	_bool m_isSpotlight = { false };
