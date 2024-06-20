@@ -32,6 +32,7 @@ HRESULT CTextBox::Initialize(void* pArg)
 		m_iFontSize = TextBoxDesc->iFontSize;
 		m_isOuterLine = TextBoxDesc->isOuterLine;
 		m_vOutLineColor = TextBoxDesc->vOutLineColor ;
+		m_isUIRender = TextBoxDesc->isUI_Render;
 	}
 
 	return S_OK;
@@ -45,7 +46,10 @@ void CTextBox::Tick(_float fTimeDelta)
 
 void CTextBox::Late_Tick(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FONT, this);
+	if(true == m_isUIRender)
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
+	else 
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FONT, this);
 }
 
 HRESULT CTextBox::Render()

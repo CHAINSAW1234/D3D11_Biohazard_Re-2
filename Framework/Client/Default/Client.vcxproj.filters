@@ -223,6 +223,15 @@
     <Filter Include="02.GameObjects\UI\11. Map_UI">
       <UniqueIdentifier>{f04cdcf8-aee8-450c-b67b-e0df516a3328}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\12. Get Item">
+      <UniqueIdentifier>{4a32cba5-819b-445c-96d7-9615bb363599}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\13. Read Item%28Book%29">
+      <UniqueIdentifier>{173d3427-d0a6-4f9d-9ab4-8c6fbeaca13f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\14. Loading">
+      <UniqueIdentifier>{1fab2592-4cd6-4e48-a96c-07b5219145e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -432,6 +441,12 @@
     <ClInclude Include="..\Public\Map_UI.h">
       <Filter>02.GameObjects\UI\11. Map_UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Read_Item_UI.h">
+      <Filter>02.GameObjects\UI\13. Read Item%28Book%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Loading_UI.h">
+      <Filter>02.GameObjects\UI\14. Loading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -622,6 +637,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Map_UI.cpp">
       <Filter>02.GameObjects\UI\11. Map_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Read_Item_UI.cpp">
+      <Filter>02.GameObjects\UI\13. Read Item%28Book%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Loading_UI.cpp">
+      <Filter>02.GameObjects\UI\14. Loading</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

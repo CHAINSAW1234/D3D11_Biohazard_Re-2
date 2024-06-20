@@ -74,7 +74,7 @@ public:
 	}
 public:
 	virtual _bool								Get_Dead() { return m_bDead; }
-
+	_bool*										Get_Dead_Ptr() { return &m_bDead; }
 protected:
 	ID3D11Device*								m_pDevice = { nullptr };
 	ID3D11DeviceContext*						m_pContext = { nullptr };

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "HPBar_UI.h"
-#include "Inventory_Item_UI.h"
+#include "Tab_Window.h"
 
 #define INVEN_POSITION _float2(-600.f, -244.f)
 #define INGAME_POSITION _float2(-600.f, -144.f)
@@ -53,7 +53,7 @@ HRESULT CHPBar_UI::Initialize(void* pArg)
             {
                 _float4 pMainBarTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
-                CTransform* pTextTrans = dynamic_cast<CTransform*>(m_vecTextBoxes.back()->Get_Component(g_strTransformTag));
+                CTransform* pTextTrans = static_cast<CTransform*>(m_vecTextBoxes.back()->Get_Component(g_strTransformTag));
                 _float4 vTextTrans = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
                 m_fDistance_Font = _float2(abs(pMainBarTrans.x - vTextTrans.x), abs(pMainBarTrans.y - vTextTrans.y));
             }
@@ -87,6 +87,9 @@ HRESULT CHPBar_UI::Initialize(void* pArg)
     else
         m_fBlending = 0.5f;
 
+    _float4 vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+    _float3 vScaled = m_pTransformCom->Get_Scaled();
+
     Find_Main_Inventory();
     return S_OK;
 }
@@ -94,7 +97,7 @@ HRESULT CHPBar_UI::Initialize(void* pArg)
 void CHPBar_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
- 
+
     Render_HPBar();
 
     if (true == m_isRender)
@@ -107,7 +110,7 @@ void CHPBar_UI::Tick(_float fTimeDelta)
         }
 
         /* 예시 코드 : Change_HP에 따라서 변동될 것*/
-        if(DOWN == m_pGameInstance->Get_KeyState('H'))
+        if (DOWN == m_pGameInstance->Get_KeyState('H'))
         {
             m_eCurrentHP = (HP_TYPE)((_uint)m_eCurrentHP + 1);
             if (m_eCurrentHP >= HP_TYPE::END_HP)
@@ -137,13 +140,13 @@ HRESULT CHPBar_UI::Render()
 
 void CHPBar_UI::Render_HPBar()
 {
-    if (nullptr == m_pMain_Inventory)
+    if (nullptr == m_pMain_Inven_Render)
         Find_Main_Inventory();
 
     else
     {
         /* Main Inventory HP Bar*/
-        if (true == m_pMain_Inventory->IsRender())
+        if (false == *m_pMain_Inven_Render)
         {
             HPBar_Position_Setting(true);
             m_isRender = true;
@@ -176,21 +179,21 @@ void CHPBar_UI::Operation_HPBar(_float fTimeDelta)
             m_isTimerReturn = false;
         }
     }
-    else 
-    {   
+    else
+    {
         m_isMaskDown = false;
-         m_fShiftMaskUV_X = 0.f;
+        m_fShiftMaskUV_X = 0.f;
 
-         /* BackGround Mask가 Main을 따라갈 수 있게 한 번씩 갱신해준다. */
+        /* BackGround Mask가 Main을 따라갈 수 있게 한 번씩 갱신해준다. */
         if (CCustomize_UI::HPBAR_TYPE::BACKGROUND_BAR == m_eHPBar)
-             BackGroundBar(fTimeDelta);
+            BackGroundBar(fTimeDelta);
     }
 
     /* 2. 만약 이미 Mask를 끈 상태라면 */
     if (true == m_isMaskDown)
     {
-         if (m_fMaskControl.y <= m_fOrigin_MaskControl.y + 1.f)
-             m_fMaskControl.y += fTimeDelta;
+        if (m_fMaskControl.y <= m_fOrigin_MaskControl.y + 1.f)
+            m_fMaskControl.y += fTimeDelta;
     }
 
     else if (false == m_isMaskDown)
@@ -216,7 +219,7 @@ void CHPBar_UI::Operation_HPBar(_float fTimeDelta)
 
 void CHPBar_UI::BackGroundBar(_float fTimeDelta)
 {
-    if(false == m_IsChild)
+    if (false == m_IsChild)
     {
         if (nullptr != m_pMainBar)
         {
@@ -232,7 +235,7 @@ void CHPBar_UI::BackGroundBar(_float fTimeDelta)
             m_vCurrentColor = m_pMainBar->m_vCurrentColor;
             m_vLightMask_Color = m_pMainBar->m_vLightMask_Color;
 
-            CTransform* pTrans = dynamic_cast<CTransform*>(m_pMainBar->Get_Component(g_strTransformTag));
+            CTransform* pTrans = static_cast<CTransform*>(m_pMainBar->Get_Component(g_strTransformTag));
             _float4 vBackGroundTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
             vBackGroundTrans.x = pTrans->Get_State_Float4(CTransform::STATE_POSITION).x;
             vBackGroundTrans.y = pTrans->Get_State_Float4(CTransform::STATE_POSITION).y;
@@ -325,11 +328,11 @@ void CHPBar_UI::Find_Main_Inventory()
 
     for (auto& iter : *pUIList)
     {
-        CInventory_Item_UI* pUI = dynamic_cast<CInventory_Item_UI*>(iter);
+        CTab_Window* pUI = dynamic_cast<CTab_Window*>(iter);
 
-        if (nullptr != pUI && INVENTORY_TYPE ::MAIN_INVEN == pUI->Get_Inven_Type())
+        if (nullptr != pUI)
         {
-            m_pMain_Inventory = pUI;
+            m_pMain_Inven_Render = pUI->Get_MainRender();
             break;
         }
     }
@@ -357,7 +360,7 @@ void CHPBar_UI::HPBar_Position_Setting(_bool _main)
     if (!m_vecTextBoxes.empty())
     {
         _float4 vMainTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-        CTransform* pTextTrans = dynamic_cast<CTransform*>(m_vecTextBoxes.back()->Get_Component(g_strTransformTag));
+        CTransform* pTextTrans = static_cast<CTransform*>(m_vecTextBoxes.back()->Get_Component(g_strTransformTag));
         _float4 vTextTrans = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
 
         vTextTrans.x = vMainTrans.x - m_fDistance_Font.x;

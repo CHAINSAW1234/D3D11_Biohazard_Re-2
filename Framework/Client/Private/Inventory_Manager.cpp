@@ -206,7 +206,7 @@ HRESULT CInventory_Manager::Create_InvenUI(vector<CCustomize_UI::CUSTOM_UI_DESC>
 		{
 			/* For.Prototype_Component_Texture_ */
 			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrDefaultTexturComTag,
-				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath, iter.fMaxFrame)))) {
+				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath, (_uint)iter.fMaxFrame)))) {
 				int a = 0;
 			}
 		}
@@ -271,7 +271,7 @@ HRESULT CInventory_Manager::Create_SelectUI(vector<CCustomize_UI::CUSTOM_UI_DESC
 		{
 			/* For.Prototype_Component_Texture_ */
 			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrDefaultTexturComTag,
-				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath, iter.fMaxFrame)))) {
+				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath, (_uint)iter.fMaxFrame)))) {
 				int a = 0;
 			}
 		}
@@ -330,7 +330,7 @@ HRESULT CInventory_Manager::Create_ItemUI(vector<CCustomize_UI::CUSTOM_UI_DESC>*
 		{
 			/* For.Prototype_Component_Texture_ */
 			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrDefaultTexturComTag,
-				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath, iter.fMaxFrame)))) {
+				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath, (_uint)iter.fMaxFrame)))) {
 				int a = 0;
 			}
 		}

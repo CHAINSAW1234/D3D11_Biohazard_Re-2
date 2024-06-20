@@ -23,6 +23,8 @@ private :
 	void				InGame_Start(_float fTimeDelta);
 	void				Option_Click(_float fTimeDelta);
 
+	void				Find_Logo();
+
 private :
 	CTextBox*			m_pText;
 	CTitle_UI*			m_pTitle_BackGround = { nullptr };

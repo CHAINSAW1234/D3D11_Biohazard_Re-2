@@ -32,6 +32,11 @@ private:
 	HRESULT Load_Field_Prototype(const wstring& filePath);
 
 private:
+	HRESULT Ready_Layer_UI(const wstring& strLayerTag);
+	void UI_Distinction(wstring& selectedFilePath);
+	void CreatFromDat(ifstream& inputFileStream, wstring strListName, CGameObject* pGameParentsObj, wstring fileName, _int iWhich_Child = 0);
+
+private:
 	ID3D11Device*				m_pDevice = { nullptr };
 	ID3D11DeviceContext*		m_pContext = { nullptr };
 	HANDLE						m_hThread;
@@ -45,6 +50,8 @@ private:
 private:
 	HRESULT Loading_For_Logo();
 	HRESULT Loading_For_GamePlay();
+
+	list<class CGameObject*>	m_vecLoadingUI;
 
 public:
 	static CLoader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);
