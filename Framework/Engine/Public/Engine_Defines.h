@@ -30,7 +30,7 @@ namespace Engine
 #include <physx/PxPhysics.h>
 #include <physx/PxPhysicsAPI.h>
 #include <physx/cooking/PxCooking.h>
-#include <physx/extensions/PxTetMakerExt.h>
+//#include <physx/extensions/PxTetMakerExt.h>
 using namespace physx;
 
 #include "Effects11/d3dx11effect.h"

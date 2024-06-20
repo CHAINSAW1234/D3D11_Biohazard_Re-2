@@ -441,68 +441,7 @@ void CPhysics_Controller::Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uin
 
 void CPhysics_Controller::Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
 {
-	// Init Cooking Params 
-	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
-
-	vector<PxVec3> vertices;
-	vector<PxU32> IndicesVec;
-	PxArray<physx::PxVec3> collisionMeshVertices, simulationMeshVertices;
-	PxArray<physx::PxU32> collisionMeshIndices, simulationMeshIndices;
-
-	for (int i = 0; i < VertexNum; ++i)
-	{
-		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
-
-		_float4 vPos;
-		XMStoreFloat4(&vPos, VertexPos);
-
-		PxVec3 Ver = PxVec3(vPos.x, vPos.y, vPos.z);
-		vertices.push_back(Ver);
-		collisionMeshVertices.pushBack(Ver);
-		simulationMeshVertices.pushBack(Ver);
-	}
-
-	for (int i = 0; i < IndexNum; ++i)
-	{
-		PxU32 Ind = pIndices[i];
-		IndicesVec.push_back(Ind);
-		collisionMeshIndices.pushBack(Ind);
-		simulationMeshIndices.pushBack(Ind);
-	}
-
-	// 삼각형 메쉬 설명 작성
-	PxSimpleTriangleMesh SimpleMeshDesc;
-
-	SimpleMeshDesc.points.count = static_cast<PxU32>(VertexNum);
-	SimpleMeshDesc.points.stride = sizeof(PxVec3);
-	SimpleMeshDesc.points.data = vertices.data();
-
-	SimpleMeshDesc.triangles.count = static_cast<PxU32>(IndexNum / 3);
-	SimpleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
-	SimpleMeshDesc.triangles.data = IndicesVec.data();
-
-	//Compute collision mesh
-	PxTetMaker::createConformingTetrahedronMesh(SimpleMeshDesc, collisionMeshVertices, collisionMeshIndices);
-	PxTetrahedronMeshDesc meshDesc(collisionMeshVertices, collisionMeshIndices);
-
-	//Compute simulation mesh
-	PxU32 numVoxelsAlongLongestAABBAxis = 20;
-	physx::PxArray<physx::PxI32> vertexToTet;
-	vertexToTet.resize(meshDesc.points.count);
-	PxTetMaker::createVoxelTetrahedronMesh(meshDesc, numVoxelsAlongLongestAABBAxis, simulationMeshVertices, simulationMeshIndices, vertexToTet.begin());
-	PxTetrahedronMeshDesc simMeshDesc(simulationMeshVertices, simulationMeshIndices);
-	PxSoftBodySimulationDataDesc simDesc(vertexToTet);
-
-	PxSoftBodyMesh* mesh = PxCreateSoftBodyMesh(cookingParams, simMeshDesc, meshDesc, simDesc, m_Physics->getPhysicsInsertionCallback());
-
-	PxSoftBody* softBody = m_Physics->createSoftBody(*m_CudaContextManager);
-	PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE;
-	PxFEMSoftBodyMaterial* materialPtr = m_Physics->createFEMSoftBodyMaterial(1e+9f, 0.45f, 0.5f);
-	PxTetrahedronMeshGeometry geometry(mesh->getCollisionMesh());
-	PxShape* shape = m_Physics->createShape(geometry, &materialPtr, 1, true, shapeFlags);
-	softBody->attachShape(*shape);
-	softBody->attachSimulationMesh(*mesh->getSimulationMesh(), *mesh->getSoftBodyAuxData());
-	m_Scene->addActor(*softBody);
+	
 }
 
 CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, CTransform* pTransform, const string& name)
