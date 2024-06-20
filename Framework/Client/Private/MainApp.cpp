@@ -179,8 +179,8 @@ HRESULT CMainApp::Ready_Gara()
 	if (FAILED(m_pDevice->CreateShaderResourceView(pTexture2D, nullptr, &pSRV)))
 		return E_FAIL;
 
-	if (FAILED(DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"))))
-		return E_FAIL;
+	//if (FAILED(DirectX::SaveDDSTextureToFile(m_pContext, pTexture2D, TEXT("../Bin/Resources/Textures/Terrain/Mask.dds"))))
+	//	return E_FAIL;
 
 	Safe_Release(pSRV);
 	Safe_Release(pTexture2D);

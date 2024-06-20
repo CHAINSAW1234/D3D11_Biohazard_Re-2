@@ -157,7 +157,13 @@ HRESULT CModel_Selector::Add_Components()
 
 		m_Models["Zombie_Pants"] = pModel;
 
+		pModel = { nullptr };
 
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Boss"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["BOSS"] = pModel;
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////
