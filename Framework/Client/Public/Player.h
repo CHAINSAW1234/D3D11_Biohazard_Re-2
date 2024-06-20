@@ -21,7 +21,7 @@ public:
 		PART_BODY,
 		PART_HEAD,
 		PART_HAIR,
-		//	PART_WEAPON,
+		PART_WEAPON,
 		PART_END
 	};
 

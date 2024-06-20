@@ -293,16 +293,15 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma endregion
 
+#pragma region 현진 추가
 
-	// 현진 추가
-	//CModel* pWeaponModel = { dynamic_cast<CModel*>(m_PartObjects[PART_WEAPON]->Get_Component(TEXT("Com_Model"))) };
-	//_float4x4* pRightWeaponCombinedMatrix = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix(/*"r_holster_main"*/"r_weapon"))};
+	CModel* pWeaponModel = { dynamic_cast<CModel*>(m_PartObjects[PART_WEAPON]->Get_Component(TEXT("Com_Model"))) };
+	_float4x4* pRightWeaponCombinedMatrix = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
 	//pWeaponModel->Set_Surbodinate("root", true);
 	//pWeaponModel->Set_Parent_CombinedMatrix_Ptr("root", pRightWeaponCombinedMatrix);
+	CWeapon* pWeapon = dynamic_cast<CWeapon*>(m_PartObjects[PART_WEAPON]);
+	pWeapon->Set_Socket(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")));
 
-
-
-#pragma region 현진 추가
 	Update_Direction();
 	Update_FSM();
 	m_pFSMCom->Update(fTimeDelta);
@@ -1275,16 +1274,16 @@ HRESULT CPlayer::Add_PartObjects()
 	m_PartObjects[CPlayer::PART_HAIR] = pHairObject;
 
 	///* For.Part_Weapon */
-	//CPartObject* pWeaponObject = { nullptr };
-	//CPartObject::PARTOBJECT_DESC		WeaponDesc{};
+	CPartObject* pWeaponObject = { nullptr };
+	CPartObject::PARTOBJECT_DESC		WeaponDesc{};
 
-	//WeaponDesc.pParentsTransform = m_pTransformCom;
+	WeaponDesc.pParentsTransform = m_pTransformCom;
 
-	//pWeaponObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_HandGun"), &WeaponDesc));
-	//if (nullptr == pWeaponObject)
-	//	return E_FAIL;
+	pWeaponObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_HandGun"), &WeaponDesc));
+	if (nullptr == pWeaponObject)
+		return E_FAIL;
 
-	//m_PartObjects[CPlayer::PART_WEAPON] = pWeaponObject;
+	m_PartObjects[CPlayer::PART_WEAPON] = pWeaponObject;
 
 	return S_OK;
 }
@@ -1294,6 +1293,7 @@ HRESULT CPlayer::Initialize_PartModels()
 	CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Model"))) };
 	CModel* pHeadModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HEAD]->Get_Component(TEXT("Com_Model"))) };
 	CModel* pHairModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAIR]->Get_Component(TEXT("Com_Model"))) };
+
 
 	m_pBodyModel = pBodyModel;
 
@@ -1336,6 +1336,8 @@ HRESULT CPlayer::Initialize_PartModels()
 
 	pHairModel->Set_Surbodinate("head", true);
 	pHairModel->Set_Parent_CombinedMatrix_Ptr("head", pHeadCombinedMatrix);
+
+
 
 	return S_OK;
 }
