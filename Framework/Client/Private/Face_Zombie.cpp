@@ -49,6 +49,17 @@ void CFace_Zombie::Priority_Tick(_float fTimeDelta)
 void CFace_Zombie::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
+	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
+	if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f))
+	{
+		m_bRender = false;
+	}
+	else
+	{
+		m_bRender = true;
+	}
 }
 
 void CFace_Zombie::Late_Tick(_float fTimeDelta)
@@ -58,20 +69,18 @@ void CFace_Zombie::Late_Tick(_float fTimeDelta)
 	_float3			vTempTranslation = {};
 	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);
 
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	if(m_bRender)
+	{
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	}
 }
 
 
 HRESULT CFace_Zombie::Render()
 {
-	auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos)+CONTROLLER_GROUND_GAP_ZOMBIE);
-	if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f) && m_bRagdoll == false)
-		return S_OK;
-
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
@@ -127,11 +136,6 @@ HRESULT CFace_Zombie::Render()
 
 HRESULT CFace_Zombie::Render_LightDepth_Dir()
 {
-	auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
-	if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f) && m_bRagdoll == false)
-		return S_OK;
-
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
@@ -183,11 +187,6 @@ HRESULT CFace_Zombie::Render_LightDepth_Dir()
 
 HRESULT CFace_Zombie::Render_LightDepth_Point()
 {
-	auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
-	if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f) && m_bRagdoll == false)
-		return S_OK;
-
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
@@ -244,11 +243,6 @@ HRESULT CFace_Zombie::Render_LightDepth_Point()
 
 HRESULT CFace_Zombie::Render_LightDepth_Spot()
 {
-	auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
-	if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f) && m_bRagdoll == false)
-		return S_OK;
-
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 

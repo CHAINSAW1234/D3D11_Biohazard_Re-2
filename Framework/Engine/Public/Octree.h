@@ -46,7 +46,7 @@ class ENGINE_DLL COctree : public CBase
 
 public:
 
-	COctree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,class CGameInstance* pGameInstance,_float4 vTranslation);
+	COctree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,class CGameInstance* pGameInstance,_float4 vTranslation,CGameObject* pPlayer);
 	~COctree();
 
 	_float4								GetCenter()
@@ -125,6 +125,8 @@ public:
 	_bool								m_bRender = { false };
 	list<class CGameObject*>*			m_pObjects = { nullptr };
 	vector<class CGameObject*>			m_vecProps;
+
+	CGameObject*						m_pPlayer = { nullptr };
 private:
 	ID3D11Device*						m_pDevice = { nullptr };
 	ID3D11DeviceContext*				m_pContext = { nullptr };

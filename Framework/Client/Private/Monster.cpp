@@ -115,6 +115,19 @@ HRESULT CMonster::Render()
 	return S_OK;
 }
 
+_bool CMonster::Distance_Culling()
+{
+	auto vPlayerPos = m_pGameInstance->GetPlayerPos();
+	auto vMonsterPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	auto vDelta = vPlayerPos - vMonsterPos;
+	auto fDelta = XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta)));
+
+	if (fDelta < CULLING_DISTANCE)
+		return true;
+	else
+		return false;
+}
+
 void CMonster::Move(_float4 vDir, _float fTimeDelta)
 {
 	if (m_pController)

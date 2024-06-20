@@ -52,7 +52,11 @@ HRESULT CMap::Initialize(void* pArg)
 
 
 #pragma region Initializing Octree
-	m_pOctree = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+
+	auto pPlayerLayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_Player");
+	auto pPlayer = dynamic_cast<CPlayer*>(*(*pPlayerLayer).begin());
+
+	m_pOctree = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), pPlayer);
 	m_pOctree->Set_Props_Layer(LEVEL_GAMEPLAY);
 	m_pOctree->GetSceneDimensions(m_pModelCom);
 	int TotalTriangleCount = m_pOctree->GetSceneTriangleCount(m_pModelCom);

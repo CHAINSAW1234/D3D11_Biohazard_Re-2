@@ -174,7 +174,7 @@ public:	/* For.Check Anim Type */
 
 public:
 	virtual void			SetRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType) override;
-
+	virtual void			SetCulling(_bool boolean) override;
 private:
 	CModel*								m_pModelCom = { nullptr };
 	CShader*							m_pShaderCom = { nullptr };

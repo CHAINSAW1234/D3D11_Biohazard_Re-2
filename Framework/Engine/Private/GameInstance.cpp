@@ -16,6 +16,7 @@
 #include "Layer.h"
 #include "Thread_Pool.h"
 #include "AIController.h"
+#include "GameObject.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -236,6 +237,11 @@ HRESULT CGameInstance::Clear(_uint iClearLevelIndex)
 	m_pComponent_Manager->Clear(iClearLevelIndex);
 
 	return S_OK;
+}
+
+_float4 CGameInstance::GetPlayerPos()
+{
+	return m_pPlayer->GetPosition();
 }
 
 //wstring CGameInstance::UTF8ToUTF16(const string& utf8Str)

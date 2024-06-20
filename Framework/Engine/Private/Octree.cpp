@@ -7,7 +7,7 @@
 
 int g_CurrentSubdivision = 0;
 
-COctree::COctree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CGameInstance* pGameInstance, _float4 vTranslation)
+COctree::COctree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CGameInstance* pGameInstance, _float4 vTranslation,CGameObject* pPlayer)
 {
 	m_bSubDivided = false;
 	m_Width = 0;
@@ -20,6 +20,7 @@ COctree::COctree(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CGameInst
 	m_pContext = pContext;
 	m_pGameInstance = pGameInstance;
 	m_vTranslation = vTranslation;
+	m_pPlayer = pPlayer;
 
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
@@ -200,7 +201,7 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 		}
 	}
 
-	m_pOctreeNodes[nodeID] = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_vTranslation);
+	m_pOctreeNodes[nodeID] = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_vTranslation,m_pPlayer);
 	m_pOctreeNodes[nodeID]->m_pObjects = m_pObjects;
 	_float4 vNodeCenter = GetNewNodeCenter(vCenter, width, nodeID);
 
@@ -574,6 +575,16 @@ void COctree::DrawOctree_Thread_Internal(COctree* pNode, vector<class CModel*>* 
 	else
 	{
 		if (!pNode->m_pWorld) return;
+
+		if (m_pPlayer)
+		{
+			auto vPlayerPos = m_pPlayer->GetPosition();
+			auto vDelta = vPlayerPos - pNode->m_vCenter;
+			auto fDelta = XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta)));
+
+			if (fDelta > CULLING_DISTANCE)
+				return;
+		}
 
 		(*vecModel).push_back(pNode->m_pWorld);
 

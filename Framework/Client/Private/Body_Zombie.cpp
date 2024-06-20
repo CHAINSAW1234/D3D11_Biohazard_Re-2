@@ -55,6 +55,33 @@ void CBody_Zombie::Priority_Tick(_float fTimeDelta)
 void CBody_Zombie::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	if(m_bRagdoll)
+	{
+		auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
+		vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
+		if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f))
+		{
+			m_pRagdoll->SetCulling(true);
+		}
+		else
+		{
+			m_pRagdoll->SetCulling(false);
+		}
+	}
+	else
+	{
+		auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
+		vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
+		if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f))
+		{
+			m_bRender = false;
+		}
+		else
+		{
+			m_bRender = true;
+		}
+	}
 }
 
 void CBody_Zombie::Late_Tick(_float fTimeDelta)
@@ -67,19 +94,17 @@ void CBody_Zombie::Late_Tick(_float fTimeDelta)
 	//	현재 모션이 A ~ F 타입인지 판단하고 저장 => 다음 틱에 태스크 노드에서 참조하여 모션을 결정할것이다.
 	Update_Current_MotionType();
 
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	if(m_bRender)
+	{
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	}
 }
 
 HRESULT CBody_Zombie::Render()
 {
-	auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
-	if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f) && m_bRagdoll == false)
-		return S_OK;
-
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
@@ -136,11 +161,6 @@ HRESULT CBody_Zombie::Render()
 
 HRESULT CBody_Zombie::Render_LightDepth_Dir()
 {
-	auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
-	if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f) && m_bRagdoll == false)
-		return S_OK;
-
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
@@ -191,11 +211,6 @@ HRESULT CBody_Zombie::Render_LightDepth_Dir()
 
 HRESULT CBody_Zombie::Render_LightDepth_Point()
 {
-	auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
-	if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f) && m_bRagdoll == false)
-		return S_OK;
-
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
@@ -252,11 +267,6 @@ HRESULT CBody_Zombie::Render_LightDepth_Point()
 
 HRESULT CBody_Zombie::Render_LightDepth_Spot()
 {
-	auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
-	if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f) && m_bRagdoll == false)
-		return S_OK;
-
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
@@ -535,6 +545,12 @@ void CBody_Zombie::SetRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType)
 	m_pGameInstance->Start_Ragdoll(m_pRagdoll, iId);
 	m_pRagdoll->Add_Force(vForce,eType);
 	m_bRagdoll = true;
+}
+
+void CBody_Zombie::SetCulling(_bool boolean)
+{
+	if(m_pRagdoll)
+		m_pRagdoll->SetCulling(boolean);
 }
 
 void CBody_Zombie::Update_Current_MotionType()
