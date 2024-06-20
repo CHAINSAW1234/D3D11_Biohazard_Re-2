@@ -302,8 +302,6 @@ void CPlayer::Tick(_float fTimeDelta)
 	//pWeaponModel->Set_Surbodinate("root", true);
 	//pWeaponModel->Set_Parent_CombinedMatrix_Ptr("root", pRightWeaponCombinedMatrix);
 
-
-
 #pragma region 현진 추가
 	Update_Direction();
 	Update_FSM();
