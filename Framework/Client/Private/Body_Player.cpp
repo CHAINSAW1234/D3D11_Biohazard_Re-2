@@ -48,23 +48,12 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Add_Bone_Layer_Bone(TEXT("LowerBody"), "root");
 
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("UpperBody"), "spine_0");
-	m_pModelCom->Add_Bone_Layer_Range(TEXT("Shot"), 61, 62);
-	//m_pModelCom->Add_Bone_Layer_Bone(TEXT("Shot"), "root");
-
-	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Shot"), "r_arm_clavicle");
-	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Shot"), "r_arm_radius");
-	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Shot"), "r_arm_humerus");
-	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Shot"), "r_arm_wrist");
+	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Shot"), "spine1");
 
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 1, TEXT("Default"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(0, true, 2, TEXT("Default"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(0, false, 3, TEXT("Shot"), 0.f);
-	
-	m_pModelCom->Reset_PreAnimation(0);
-	m_pModelCom->Reset_PreAnimation(1);
-	m_pModelCom->Reset_PreAnimation(2);
-	m_pModelCom->Reset_PreAnimation(3);
 
 	m_pModelCom->Set_TickPerSec(CPlayer::WALK_F_LOOP, 64.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::WALK_L_LOOP, 67.f);
@@ -230,8 +219,6 @@ void CBody_Player::Tick(_float fTimeDelta)
 		{
 			WorldMatrix = { XMLoadFloat4x4(&CombinedMatrix) * XMLoadFloat4x4(&m_WorldMatrix) };
 
-
-
 			_matrix			TranslationMatrix = { XMMatrixTranslation(WorldMatrix.r[3].m128_f32[0], WorldMatrix.r[3].m128_f32[1], WorldMatrix.r[3].m128_f32[2]) };
 			_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (12 - iIndex), 0.01f * (12 - iIndex), 0.01f * (12 - iIndex)) };
 
@@ -274,8 +261,6 @@ void CBody_Player::Tick(_float fTimeDelta)
 		for (_float4x4 CombinedMatrix : CombiendMatrices)
 		{
 			WorldMatrix = { XMLoadFloat4x4(&CombinedMatrix) * XMLoadFloat4x4(&m_WorldMatrix) };
-
-
 
 			_matrix			TranslationMatrix = { XMMatrixTranslation(WorldMatrix.r[3].m128_f32[0], WorldMatrix.r[3].m128_f32[1], WorldMatrix.r[3].m128_f32[2]) };
 			_matrix			ScaleMatrix = { XMMatrixScaling(0.01f * (24 - iIndex), 0.01f * (24 - iIndex), 0.01f * (24 - iIndex)) };
