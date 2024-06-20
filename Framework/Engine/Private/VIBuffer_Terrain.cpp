@@ -47,7 +47,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const wstring& strHeightMapFileP
 	CloseHandle(hFile);
 	
 	m_iNumVertices = m_iNumVerticesX * m_iNumVerticesZ;
-	m_iVertexStride = sizeof(VTXNORTEX);
+	m_iVertexStride = sizeof(VTXNORTEX);  
 	m_iNumIndices = (m_iNumVerticesX - 1) * (m_iNumVerticesZ - 1) * 2 * 3;
 	m_iIndexStride = sizeof(_uint);
 	m_iNumVertexBuffers = 1;
