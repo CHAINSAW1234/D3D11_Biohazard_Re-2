@@ -69,6 +69,7 @@ private:
 	TYPE_DOOR    m_eType = {DOOR_ONE};
 
 	ONEDOOR_STATE  m_eOneState = { ONEDOOR_STATIC };
+	ONEDOOR_STATE  m_eOneState_Prev = { ONEDOOR_STATIC };
 
 	DOUBLEDOOR_STATE  m_eDoubleState = { DOUBLEDOOR_STATIC };
 	class CCollider* m_pColDoubledoorCom = { nullptr };

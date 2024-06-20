@@ -17,6 +17,7 @@ public:
 		RENDER_BLEND,
 		RENDER_UI,
 		RENDER_FONT,
+		RENDER_EXAMINE,
 		RENDER_END
 	};
 
@@ -128,6 +129,7 @@ private:
 	HRESULT						Render_Non_PostProcessing();
 	HRESULT						Render_UI();
 	HRESULT						Render_Font();
+	HRESULT						Render_Examine();
 
 private:
 	HRESULT						Render_SSAO();

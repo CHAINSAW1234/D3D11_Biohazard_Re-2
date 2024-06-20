@@ -17,8 +17,8 @@ public :
 	enum class ITEM_BOX_TYPE { DEFAULT_BOX, SELECT_BOX, END_BOX };
 	enum class HPBAR_TYPE { MAIN_BAR, BACKGROUND_BAR, END_BAR };
 	enum class INVENTORY_TYPE { MAIN_INVEN, SUB_INVEN, END_INVEN };
-	enum class MAP_UI_TYPE { MAIN_MAP, MASK_MAP, FONT_MAP, FONT_MASK_MAP, END_MAP };
-
+	enum class MAP_UI_TYPE { MAIN_MAP, MASK_MAP, FONT_MAP, WINDOW_MAP, DOOR_MAP, FONT_MASK_MAP, END_MAP };
+	
 	typedef struct color
 	{
 		_float4		vColor = {};
@@ -89,6 +89,7 @@ public :
 
 		LOCATION_MAP_VISIT				eMapUI_Type;
 		MAP_UI_TYPE						eMapComponent_Type;
+		wstring							wstrFileName = { TEXT("") };
 
 	}CUSTOM_UI_DESC;
 
@@ -122,6 +123,7 @@ protected :
 
 	void Frame_Stop(_bool _stop);
 	void Frame_Reset();
+
 public:
 	void PushBack_Child(CGameObject* pGameOBJ);
 	void PushBack_TextBox(CGameObject* pGameOBJ);

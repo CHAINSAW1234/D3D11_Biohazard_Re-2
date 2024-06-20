@@ -76,7 +76,7 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 			if (nullptr == pTextBox)
 				return E_FAIL;
 
-			m_vecTextBoxes.push_back(dynamic_cast<CTextBox*>(pTextBox));
+			m_vecTextBoxes.push_back(static_cast<CTextBox*>(pTextBox));
 		}
 
 		m_IsChild = CustomUIDesc->IsChild;
@@ -365,7 +365,7 @@ void CCustomize_UI::Release_Children()
 {
 	for (auto& iter : m_vecChildUI)
 	{
-		dynamic_cast<CCustomize_UI*>(iter)->Set_IsChild(false);
+		static_cast<CCustomize_UI*>(iter)->Set_IsChild(false);
 		Safe_Release(iter);
 	}
 	m_vecChildUI.clear();
@@ -422,7 +422,7 @@ void CCustomize_UI::Set_IsLoad(_bool IsLoad)
 
 	for (auto& iter : m_vecChildUI)
 	{
-		dynamic_cast<CCustomize_UI*>(iter)->Set_IsLoad(IsLoad);
+		static_cast<CCustomize_UI*>(iter)->Set_IsLoad(IsLoad);
 	}
 }
 
@@ -462,8 +462,8 @@ HRESULT CCustomize_UI::Change_Texture(const wstring& strPrototypeTag, const wstr
 		{
 			return E_FAIL;
 		}
-			
 	}
+
 	return S_OK;
 }
 
@@ -796,7 +796,7 @@ void CCustomize_UI::Frame_Stop(_bool _stop)
 		return;
 	}
 	else
-		m_iColorCurNum = 0.f;
+		m_iColorCurNum = 0;
 }
 
 void CCustomize_UI::Frame_Reset()
@@ -835,7 +835,7 @@ void CCustomize_UI::PushBack_Child(CGameObject* pGameOBJ)
 {
 	m_vecChildUI.push_back(pGameOBJ);
 	Safe_AddRef(pGameOBJ);
-	dynamic_cast<CCustomize_UI*>(pGameOBJ)->Set_IsChild(true);
+	static_cast<CCustomize_UI*>(pGameOBJ)->Set_IsChild(true);
 }
 
 void CCustomize_UI::PushBack_TextBox(CGameObject* pGameOBJ)
@@ -843,7 +843,7 @@ void CCustomize_UI::PushBack_TextBox(CGameObject* pGameOBJ)
 	if (nullptr == pGameOBJ)
 		return;
 
-	m_vecTextBoxes.push_back(dynamic_cast<CTextBox*>(pGameOBJ));
+	m_vecTextBoxes.push_back(static_cast<CTextBox*>(pGameOBJ));
 }
 
 void CCustomize_UI::Free()
@@ -962,7 +962,7 @@ HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* p
 	{
 		/* For.Prototype_Component_Texture_ */
 		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(g_Level, CustomizeUIDesc.wstrDefaultTexturComTag,
-			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrDefaultTexturPath, CustomizeUIDesc.fMaxFrame)))) {
+			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrDefaultTexturPath, (_uint)CustomizeUIDesc.fMaxFrame)))) {
 			int a = 0;
 		}
 	}
@@ -987,7 +987,7 @@ HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* p
 
 	if (nullptr != pGameParentsObj)
 	{
-		dynamic_cast<CCustomize_UI*>(pGameParentsObj)->PushBack_Child(pGameObj);
+		static_cast<CCustomize_UI*>(pGameParentsObj)->PushBack_Child(pGameObj);
 	}
 
 	/*자식이 있으면 자식 정보 read*/
@@ -1116,7 +1116,7 @@ HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* p
 	{
 		/* For.Prototype_Component_Texture_ */
 		if (FAILED(CGameInstance::Get_Instance()->Add_Prototype(g_Level, CustomizeUIDesc.wstrDefaultTexturComTag,
-			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrDefaultTexturPath, CustomizeUIDesc.fMaxFrame)))) {
+			CTexture::Create(pDevice, pContext, CustomizeUIDesc.wstrDefaultTexturPath, (_uint)CustomizeUIDesc.fMaxFrame)))) {
 			int a = 0;
 		}
 	}
@@ -1141,7 +1141,7 @@ HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* p
 
 	if (nullptr != pGameParentsObj)
 	{
-		dynamic_cast<CCustomize_UI*>(pGameParentsObj)->PushBack_Child(pGameObj);
+		static_cast<CCustomize_UI*>(pGameParentsObj)->PushBack_Child(pGameObj);
 	}
 
 	/*자식이 있으면 자식 정보 read*/

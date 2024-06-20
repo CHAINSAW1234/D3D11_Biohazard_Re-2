@@ -61,6 +61,7 @@ public:
 	}
 	virtual _float4								GetPosition();
 	virtual _vector								GetPositionVector();
+	virtual _vector								GetLookDir_Vector();
 	virtual _float4								GetPosition_Local_To_World()
 	{
 		return m_vLocal_To_World_Pos;
@@ -79,7 +80,7 @@ public:
 	}
 public:
 	virtual _bool								Get_Dead() { return m_bDead; }
-
+	_bool*										Get_Dead_Ptr() { return &m_bDead; }
 protected:
 	ID3D11Device*								m_pDevice = { nullptr };
 	ID3D11DeviceContext*						m_pContext = { nullptr };

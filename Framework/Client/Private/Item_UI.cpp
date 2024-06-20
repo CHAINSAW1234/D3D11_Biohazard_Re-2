@@ -47,7 +47,7 @@ void CItem_UI::Tick(_float fTimeDelta)
 		for (auto& iter : m_vecChildUI)
 		{
 			iter->Set_Dead(false);
-			dynamic_cast<CCustomize_UI*>(iter)->Set_Text(0, to_wstring(m_iItemCount));
+			static_cast<CCustomize_UI*>(iter)->Set_Text(0, to_wstring(m_iItemCount));
 		}
 	}
 

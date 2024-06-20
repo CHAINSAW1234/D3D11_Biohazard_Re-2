@@ -40,13 +40,14 @@ HRESULT CBullet_UI::Initialize(void* pArg)
     {
         for (auto& iter : m_vecTextBoxes)
         {
-            CTransform* pTextTrans = dynamic_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+            CTransform* pTextTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
 
             if (m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x > pTextTrans->Get_State_Float4(CTransform::STATE_POSITION).x)
             {
                 m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText = iter;
                 m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Text(TEXT("0"));
                 m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].vOriginTextColor = iter->Get_FontColor();
+                m_fOrigin_TextColor = iter->Get_FontColor();
 
                 m_fFull_CurrentBullet_Transform = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
                 m_fFull_CurrentBullet_Transform.x -= 7.f;
@@ -57,10 +58,10 @@ HRESULT CBullet_UI::Initialize(void* pArg)
                 m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText = iter;
                 m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Text(TEXT("0"));
                 m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].vOriginTextColor = iter->Get_FontColor();
-
+                m_fOrigin_TextColor = iter->Get_FontColor();
                 /*임의로 내려주기*/
                 {
-                    CTransform* pStoreFont_Pos = dynamic_cast<CTransform*>(m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Get_Component(g_strTransformTag));
+                    CTransform* pStoreFont_Pos = static_cast<CTransform*>(m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Get_Component(g_strTransformTag));
                     _float4 vStoreFont_Pos = pStoreFont_Pos->Get_State_Float4(CTransform::STATE_POSITION);
                     vStoreFont_Pos.y += 30.f;
                 }
@@ -153,14 +154,13 @@ void CBullet_UI::Change_BulletUI()
     /* 10의 자리 숫자시 살짝 위치 옮겨줌*/
     if (10 <= m_iCurrentBullet)
     {
-        CTransform* pTextTrans = dynamic_cast<CTransform*>(m_pTextUI[0].pText->Get_Component(g_strTransformTag));
+        CTransform* pTextTrans = static_cast<CTransform*>(m_pTextUI[0].pText->Get_Component(g_strTransformTag));
         pTextTrans->Set_State(CTransform::STATE_POSITION, m_fFull_CurrentBullet_Transform);
     }
-    
 
     if (10 <= m_iStoreBullet)
     {
-        CTransform* pTextTrans = dynamic_cast<CTransform*>(m_pTextUI[1].pText->Get_Component(g_strTransformTag));
+        CTransform* pTextTrans = static_cast<CTransform*>(m_pTextUI[1].pText->Get_Component(g_strTransformTag));
         pTextTrans->Set_State(CTransform::STATE_POSITION, m_fFull_StoreBullet_Transform);
     }
     
@@ -175,7 +175,7 @@ void CBullet_UI::Change_BulletUI()
         }
     }
     /* 0 일 때 색깔 바뀌게 함*/
-    else if (0 <= m_iCurrentBullet)
+    else if (0 >= m_iCurrentBullet)
     {
         if (nullptr != m_pTextUI[0].pText)
         {
@@ -187,11 +187,9 @@ void CBullet_UI::Change_BulletUI()
 
     else
     {
-        if (true == m_pTextUI[0].isFull)
-        {
-            m_pTextUI[0].pText->Set_FontColor(m_fOrigin_TextColor);
-            m_pTextUI[0].isFull = false;
-        }
+        m_pTextUI[0].pText->Set_FontColor(m_fOrigin_TextColor);
+        m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].vOriginTextColor = m_fOrigin_TextColor;
+        m_pTextUI[0].isFull = false;
     }   
 
     if (MAX_BULLET <= m_iStoreBullet)
@@ -205,12 +203,9 @@ void CBullet_UI::Change_BulletUI()
     }
     else
     {
-        if (true == m_pTextUI[1].isFull)
-        {
-            m_pTextUI[1].isFull = false;
-            m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].vOriginTextColor = _float4(1, 1, 1, 1);
-            m_pTextUI[1].pText->Set_FontColor(m_fOrigin_TextColor);
-        }
+        m_pTextUI[1].isFull = false;
+        m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].vOriginTextColor = _float4(1, 1, 1, 1);
+        m_pTextUI[1].pText->Set_FontColor(m_fOrigin_TextColor);
     }
 }
 

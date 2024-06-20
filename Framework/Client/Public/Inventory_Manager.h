@@ -11,8 +11,6 @@ BEGIN(Client)
 
 class CInventory_Manager final : public CBase
 {
-	enum INVEN_STATE{ NON_SELECT, SELECT, STATE_END };
-
 private:
 	CInventory_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CInventory_Manager() = default;
@@ -27,26 +25,53 @@ public:
 	//Set_Dead호출이라 m_bDead기준으로 변수 줄것
 	void Set_OnOff_Inven(_bool bInput);
 
-private:
+	void Increase_Slot(_uint iAmount) {
+		if (m_iInvenMaxCount <= m_iInvenCount + iAmount)
+			m_iInvenCount = m_iInvenMaxCount;
+		else
+			m_iInvenCount += iAmount;
+	}
+
+
+	_bool Get_isItemExamine() const {
+		return m_bisItemExamin;
+	}
+	void Set_isItemExamine(_bool isItemExamin) {
+		m_bisItemExamin = isItemExamin;
+	}
+
+
+
+
+private: 
 	ID3D11Device*					m_pDevice = { nullptr };
 	ID3D11DeviceContext*			m_pContext = { nullptr };
 	CGameInstance*					m_pGameInstance = { nullptr }; 
 
-private:
-	vector<CInventory_Slot*>		m_vecInvenSlot;
-	vector<CItem_UI*>				m_vecItem_UI;
+	_bool							m_bisItemExamin = { false };
 
+private:
+	/*for. InvenSlot*/
+	vector<CInventory_Slot*>		m_vecInvenSlot;
+	_uint							m_iInvenCount = { 8 };
+	_uint                           m_iInvenMaxCount = { 20 };
+	_float2							m_fSlotInterval = { 74.f, 76.f };
+
+	/*for Highlighter*/
 	CSlot_Highlighter*				m_pSlotHighlighter = { nullptr };
 	CTransform*						m_pSlotHighlighterTransform = { nullptr };
 	_float4							m_fSlotHighlighterResetPos = {};
 
-	_uint							m_iInvenCount = { 8 };
-
-	_float2							m_fSlotInterval = { 74.f, 76.f };
+	/*for. Item_UI*/
+	vector<CItem_UI*>				m_vecItem_UI;
 
 public:
-	HRESULT Create_InvenUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval);
-	HRESULT Create_SelectUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI);
+	HRESULT Init_InvenSlot();
+	HRESULT Init_SlotHighlighter();
+	HRESULT Init_ItemUI();
+
+	HRESULT Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval);
+	HRESULT Create_SlotHighlighter(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI);
 	HRESULT Create_ItemUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI);
 
 	static CInventory_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

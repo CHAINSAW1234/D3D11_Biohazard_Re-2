@@ -47,8 +47,6 @@ HRESULT CCabinet::Initialize(void* pArg)
 
 #endif
 
-	m_pRotationBone = m_pModelCom->Get_BonePtr("_00");
-
 	return S_OK;
 }
 

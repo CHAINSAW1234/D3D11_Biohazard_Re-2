@@ -46,6 +46,7 @@ HRESULT CInteractProps::Initialize(void* pArg)
 		return E_FAIL;
 	//파트 오브젝이나 컴포넌트는 커스텀
 
+	m_vecRotationBone.resize(ANIM_BONE_COUNT);
 
 	return S_OK;
 }

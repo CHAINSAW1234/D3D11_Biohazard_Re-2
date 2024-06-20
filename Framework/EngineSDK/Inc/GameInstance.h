@@ -264,7 +264,7 @@ public:/*For Physics Controller*/
 	void									Simulate();
 	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr);
-	void									Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, class CTransform* pTransform = nullptr);
+	void									Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	_bool									RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
@@ -317,6 +317,11 @@ private:
 
 #pragma endregion
 
+#pragma region For Easing
+public:
+	_float Get_Ease(EASING_TYPE eEase, _float fCurValue, _float fTargetValue, _float fRatio);
+#pragma endregion
+
 private:
 	class CGraphic_Device*					m_pGraphic_Device = { nullptr };
 	class CInput_Device*					m_pInput_Device = { nullptr };
@@ -336,6 +341,7 @@ private:
 	class CPicking*							m_pPicking = { nullptr };
 	class CThread_Pool*						m_pThread_Pool = { nullptr };
 	class CAIController*					m_pAIController = { nullptr };
+	class CEasing*							m_pEasing = { nullptr };
 
 
 	/*for physics*/

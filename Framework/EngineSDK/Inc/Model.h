@@ -115,7 +115,7 @@ private:
 
 public:
 	HRESULT									RagDoll();
-	vector<class CBone*>* GetBoneVector() { return &m_Bones; }
+	vector<class CBone*>*					GetBoneVector() { return &m_Bones; }
 
 public:		/*For Physics Collider*/
 	_float4x4								GetBoneTransform(string strBoneTag);
@@ -233,7 +233,7 @@ private:
 public:		/* For.Cooking_Mesh */
 	void									Static_Mesh_Cooking(class CTransform* pTransform = nullptr);
 	void									Dynamic_Mesh_Cooking(class CTransform* pTransform = nullptr);
-	void									Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders,class CTransform* pTransform = nullptr);
+	void									Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms,class CTransform* pTransform = nullptr);
 
 private:
 	_int									Find_BoneIndex(const string& strBoneTag);

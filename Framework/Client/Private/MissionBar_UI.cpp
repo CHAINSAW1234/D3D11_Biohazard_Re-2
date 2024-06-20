@@ -60,7 +60,6 @@ HRESULT CMissionBar_UI::Initialize(void* pArg)
             m_vecTextBoxes.back()->Set_FontColor(ALHPE_ZERO_VEC);
         }
 
-
         list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
 
         for (auto& iter : *pUIList)
@@ -74,9 +73,15 @@ HRESULT CMissionBar_UI::Initialize(void* pArg)
             }
         }
     }
-
+    m_SavePos[1] = m_SavePos[0];
+    m_vColor[1].vColor.x = 1.f;
+    m_vColor[1].vColor.y = 1.f;
+    m_vColor[1].vColor.z = 1.f;
+    m_fColorTimer_Limit = 1.f;
+    m_isLight = false;
     m_isRender = false;
-
+    m_fLightPosition.x = 3.f;
+    m_fLightSize = 1.f;
     return S_OK;
 }
 
@@ -129,21 +134,38 @@ void CMissionBar_UI::Operater_MissionBar(_float fTimeDelta)
     if (DOWN == m_pGameInstance->Get_KeyState('M'))
         Mission_Start();
 
-    if (true == m_isLight)
-        Mission_Light(fTimeDelta);
-
+    if (m_iColorCurNum == 1)
+    {
+        m_isLight = true;
+        m_fColorTimer_Limit = 0.5f;
+    }
     else
+    {
+        m_isLight = false;  
+        m_fColorTimer_Limit = 1.f;
+    }
+
+    if (m_iColorCurNum >= m_iColorMaxNum)
+        m_isKeepPlay = true;
+
+    if (true == m_isKeepPlay)
     {
         m_fLifeTimer += fTimeDelta;
 
-        if (m_fLifeTimer >= LIFE_TIME)
+        if(LIFE_TIME <= m_fLifeTimer)
         {
-            m_fBlending += fTimeDelta * 2.f;
+            m_isPlay = false;
+            m_fBlending += fTimeDelta;
 
             if (m_fBlending >= 1.f)
+            {
+                m_fBlending = 1.f;
                 m_isRender = false;
+            }
         }
     }
+    if (true == m_isLight)
+        m_fLightPosition.x -= fTimeDelta * 6.f;
 }
 
 void CMissionBar_UI::Operater_MissionArrow(_float fTimeDelta)
@@ -200,12 +222,13 @@ void CMissionBar_UI::Operater_MissionFont(_float fTimeDelta)
 void CMissionBar_UI::Mission_Start()
 {
     /*Client */
-    m_isRender = m_isLight = m_isPlay = true;
+    m_isRender = m_isPlay = true;
     m_fLifeTimer = 0.f;
-
+    m_isPlay = true;
+    m_iColorCurNum = 0;
     /* Light */
     m_isMission_NonLighting = false;
-
+    m_fLightPosition.x = 3.f;
     /* Tool */
     m_isKeepPlay = false;
 }

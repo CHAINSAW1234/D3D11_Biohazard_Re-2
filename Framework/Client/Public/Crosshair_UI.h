@@ -24,16 +24,19 @@ public :
 	_bool					Get_Crosshair_Animing() { return m_isAiming; }
 
 private :
-	void					Camera_Aiming();
 	void					Aiming(_float fTimeDelta);
-	void					Aiming_Return();
+	void					Aiming_Return(_float fTimeDelta);
+
+private :
+	CCrosshair_UI*			m_pCenterDot = { nullptr };
 
 private :
 	CROSSHAIR_TYPE			m_eCrosshair_Type					= { CROSSHAIR_TYPE::CROSSHAIR_END };
 	_float					m_fCrosshair_Timer					= { 0.0f };
 	_float					m_fCrosshair_AccTimer				= { 1.f };
 	_bool					m_isAiming							= { false };
-	
+	_bool					m_isShoot							= { false };
+
 	_float3					m_vCrosshair_OriginScale			= {};
 	_float4					m_vCrosshair_OriginPos				= {};
 	_float					m_fCrosshair_ControlDistance		= { 12.f }; /* 중심으로부터 조준 거리 */

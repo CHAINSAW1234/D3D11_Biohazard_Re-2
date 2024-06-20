@@ -60,7 +60,8 @@ HRESULT CDoor::Initialize(void* pArg)
 
 #endif
 
-	m_pRotationBone = m_pModelCom->Get_BonePtr("_00");
+	m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L] = m_pModelCom->Get_BonePtr("_01");
+	m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R] = m_pModelCom->Get_BonePtr("_00");
 	
 	return S_OK;
 }
@@ -386,13 +387,21 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 	{
 	case ONEDOOR_OPEN_L:
 	{
+		m_eOneState_Prev = m_eOneState;
 		//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // Àß¾Ë¾Æ°©´Ï´Ù ²¨¾ï
 		m_pModelCom->Change_Animation(0, m_eOneState);
 
+		//auto Combined = XMLoadFloat4x4(m_pRotationBone->Get_CombinedTransformationMatrix());
+		auto Combined = m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L]->Get_TrasformationMatrix();
+		//Combined = Combined * m_pTransformCom->Get_WorldMatrix();
+		_float4x4 ResultMat;
+		XMStoreFloat4x4(&ResultMat, Combined);
+		m_pPx_Collider->Update_Transform(&ResultMat);
 		break;
 	}
 	case ONEDOOR_OPEN_R:
 	{
+		m_eOneState_Prev = m_eOneState;
 		m_pModelCom->Change_Animation(0, m_eOneState);
 
 		//auto Combined = XMLoadFloat4x4(m_pRotationBone->Get_CombinedTransformationMatrix());
@@ -409,13 +418,33 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 	}
 	case ONEDOOR_STATIC:
 		m_pModelCom->Change_Animation(0, m_eOneState);
+
+		switch (m_eOneState_Prev)
+		{
+		case ONEDOOR_OPEN_L:
+		{
+			auto Combined = m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L]->Get_TrasformationMatrix();
+			_float4x4 ResultMat;
+			XMStoreFloat4x4(&ResultMat, Combined);
+			m_pPx_Collider->Update_Transform(&ResultMat);
+			break;
+		}
+		case ONEDOOR_OPEN_R:
+		{
+			auto Combined = m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R]->Get_TrasformationMatrix();
+			_float4x4 ResultMat;
+			XMStoreFloat4x4(&ResultMat, Combined);
+			m_pPx_Collider->Update_Transform(&ResultMat);
+			break;
+		}
+		}
+		
 		break;
 	}
 
 	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
-	//		m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &fTransform3);
 
 
 

@@ -231,19 +231,21 @@ public:
 		m_vForce = vForce;
 		m_eType = eType;
 	}
-	_float4						Get_Force()
+	_float4								Get_Force()
 	{
 		return m_vForce;
 	}
-	COLLIDER_TYPE			Get_Hit_Collider_Type()
+	COLLIDER_TYPE						Get_Hit_Collider_Type()
 	{
 		return m_eType;
 	}
+	void                                SetBoneIndex();
 private:
-	_bool						m_bHit = { false };
-	_float4						m_vForce;
-	COLLIDER_TYPE				m_eType;
-	_int						m_iId = { 0 };
+	_bool											m_bHit = { false };
+	_float4											m_vForce;
+	COLLIDER_TYPE									m_eType;
+	_int											m_iId = { 0 };
+	vector<_int>                                    m_vecBoneIndex;
 #pragma endregion
 
 public:

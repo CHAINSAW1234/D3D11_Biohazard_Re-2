@@ -17,6 +17,7 @@
 #include "Thread_Pool.h"
 #include "AIController.h"
 #include "GameObject.h"
+#include "Easing.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -152,6 +153,13 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 	if (nullptr == m_pAIController)
 	{
 		MSG_BOX(TEXT("Error: m_pAIController::Create -> nullptr"));
+		return E_FAIL;
+	}
+
+	m_pEasing = CEasing::Create();
+	if (nullptr == m_pEasing)
+	{
+		MSG_BOX(TEXT("Error: m_pEasing::Create -> nullptr"));
 		return E_FAIL;
 	}
 
@@ -987,9 +995,9 @@ void CGameInstance::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint
 	m_pPhysics_Controller->Cook_Mesh_Dynamic(pVertices, pIndices, VertexNum, IndexNum, pTransform);
 }
 
-void CGameInstance::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, CTransform* pTransform)
+void CGameInstance::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
 {
-	m_pPhysics_Controller->Cook_Mesh_Convex(pVertices, pIndices, VertexNum, IndexNum,pColliders, pTransform);
+	m_pPhysics_Controller->Cook_Mesh_Convex(pVertices, pIndices, VertexNum, IndexNum,pColliders,pTransforms, pTransform);
 }
 
 _matrix CGameInstance::GetWorldMatrix_Rigid_Dynamic(_int Index)
@@ -1115,11 +1123,17 @@ void CGameInstance::Initialize_BehaviorTree(_uint* iId)
 {
 
 }
-
 #pragma endregion
 
 #pragma region Graphic Device
 
+#pragma endregion
+
+#pragma region Easing
+_float CGameInstance::Get_Ease(EASING_TYPE eEase, _float fCurValue, _float fTargetValue, _float fRatio)
+{
+	return m_pEasing->Get_Ease(eEase, fCurValue, fTargetValue, fRatio);
+}
 #pragma endregion
 
 #pragma region Render_Target_Debugger
@@ -1265,4 +1279,5 @@ void CGameInstance::Free()
 	Safe_Release(m_pThread_Pool);
 	Safe_Release(m_pAIController);
 	Safe_Release(m_pPhysics_Controller);
+	Safe_Release(m_pEasing);
 }

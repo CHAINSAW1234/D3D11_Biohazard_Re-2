@@ -281,7 +281,7 @@ void CRagdoll_Physics::create_d6_joint_Head(PxRigidDynamic* parent, PxRigidDynam
 
 	joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
 
-	config_d6_joint(3.14 / 12.f, 3.14f /12.f, -3.14f / 20.f, 3.14f /20.f, joint);
+	config_d6_joint(3.14 / 12.f, 3.14f / 12.f, -3.14f / 20.f, 3.14f / 20.f, joint);
 
 	joint->setBreakForce(FLT_MAX, FLT_MAX);
 }
@@ -307,7 +307,7 @@ void CRagdoll_Physics::create_revolute_joint(PxRigidDynamic* parent, PxRigidDyna
 
 	joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
 
-	joint->setLimit(PxJointAngularLimitPair( -PxPi, 0.f));
+	joint->setLimit(PxJointAngularLimitPair(-PxPi, 0.f));
 	joint->setRevoluteJointFlag(PxRevoluteJointFlag::eLIMIT_ENABLED, true);
 }
 
@@ -412,6 +412,8 @@ _bool CRagdoll_Physics::Init(const string& name)
 	update_transforms();
 
 	m_ragdoll_pose = new AnimRagdoll(m_skeletal_mesh->skeleton());
+
+	SetBoneIndex();
 
 	return true;
 }
@@ -559,8 +561,8 @@ void CRagdoll_Physics::create_ragdoll()
 	m_Calf_L = create_capsule_bone(j_calf_l_idx, j_foot_l_idx, *m_ragdoll, r, rot);
 	m_Calf_R = create_capsule_bone(j_calf_r_idx, j_foot_r_idx, *m_ragdoll, r, rot);
 
-	m_Arm_L = create_capsule_bone(j_upperarm_l_idx, j_lowerarm_l_idx, *m_ragdoll, r*1.25f);
-	m_Arm_R = create_capsule_bone(j_upperarm_r_idx, j_lowerarm_r_idx, *m_ragdoll, r*1.25f);
+	m_Arm_L = create_capsule_bone(j_upperarm_l_idx, j_lowerarm_l_idx, *m_ragdoll, r * 1.25f);
+	m_Arm_R = create_capsule_bone(j_upperarm_r_idx, j_lowerarm_r_idx, *m_ragdoll, r * 1.25f);
 
 	m_ForeArm_L = create_capsule_bone(j_lowerarm_l_idx, j_hand_l_idx, *m_ragdoll, r);
 	m_ForeArm_R = create_capsule_bone(j_lowerarm_r_idx, j_hand_r_idx, *m_ragdoll, r);
@@ -568,7 +570,7 @@ void CRagdoll_Physics::create_ragdoll()
 	m_Hand_L = create_capsule_bone(j_hand_l_idx, j_middle_01_l_idx, *m_ragdoll, r);
 	m_Hand_R = create_capsule_bone(j_hand_r_idx, j_middle_01_r_idx, *m_ragdoll, r);
 
-	rot = XMMatrixRotationY(PxPi*0.5f);
+	rot = XMMatrixRotationY(PxPi * 0.5f);
 
 	m_Foot_L = create_capsule_bone(j_foot_l_idx, j_ball_l_idx, *m_ragdoll, r, rot);
 	m_Foot_R = create_capsule_bone(j_foot_r_idx, j_ball_r_idx, *m_ragdoll, r, rot);
@@ -670,7 +672,7 @@ void CRagdoll_Physics::update_animations()
 
 	auto NumJoint = m_skeletal_mesh->skeleton()->num_bones();
 
-	if (m_vecBone)
+	/*if (m_vecBone)
 	{
 		int i = 0;
 		for (auto& it : *m_vecBone)
@@ -686,6 +688,14 @@ void CRagdoll_Physics::update_animations()
 					}
 				}
 			}
+		}
+	}*/
+
+	if (m_vecBone)
+	{
+		for (int i = 0; i < NumJoint; ++i)
+		{
+			m_Global_transforms.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
 		}
 	}
 
@@ -718,14 +728,8 @@ void CRagdoll_Physics::update_animations()
 
 					rotation = XMQuaternionNormalize(rotation);
 
-					for (auto& it : *m_vecBone)
-					{
-						if (it->Get_Name() == joint[i].name)
-						{
-							PxTransform px_transform(to_vec3(world_pos), to_quat(XMQuaternionRotationMatrix(XMLoadFloat4x4(it->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(&RotMat))));
-							m_ragdoll->m_rigid_bodies[i]->setGlobalPose(px_transform);
-						}
-					}
+					PxTransform px_transform(to_vec3(world_pos), to_quat(XMQuaternionRotationMatrix(XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(&RotMat))));
+					m_ragdoll->m_rigid_bodies[i]->setGlobalPose(px_transform);
 				}
 			}
 
@@ -750,19 +754,30 @@ void CRagdoll_Physics::update_animations()
 			//m_pRotationMatrix = &m_pTransform->Get_WorldMatrix_Pure();
 			auto WorldMat = m_RotationMatrix;
 
-			for (auto& it : *m_vecBone)
-			{
-				for (int i = 0; i < NumJoint; ++i)
+			/*	for (auto& it : *m_vecBone)
 				{
-					if (it->Get_Name() == joint[i].name)
+					for (int i = 0; i < NumJoint; ++i)
 					{
-						if (!IsIdentityMatrix(m_Global_transforms.transforms[i]))
+						if (it->Get_Name() == joint[i].name)
 						{
-							auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
-							auto Result = m_Global_transforms.transforms[i] * Inverse;
-							it->Set_Combined_Matrix(Result);
+							if (!IsIdentityMatrix(m_Global_transforms.transforms[i]))
+							{
+								auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
+								auto Result = m_Global_transforms.transforms[i] * Inverse;
+								it->Set_Combined_Matrix(Result);
+							}
 						}
 					}
+				}*/
+
+
+			for (int i = 0; i < NumJoint; ++i)
+			{
+				if (!IsIdentityMatrix(m_Global_transforms.transforms[i]))
+				{
+					auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
+					auto Result = m_Global_transforms.transforms[i] * Inverse;
+					(*m_vecBone)[m_vecBoneIndex[i]]->Set_Combined_Matrix(Result);
 				}
 			}
 		}
@@ -1133,6 +1148,26 @@ void CRagdoll_Physics::Add_Force(_float4 vForce, COLLIDER_TYPE eType)
 		m_Foot_R->addForce(pxForce, PxForceMode::eIMPULSE);
 		break;
 	}
+	}
+}
+
+void CRagdoll_Physics::SetBoneIndex()
+{
+	auto joint = m_skeletal_mesh->skeleton()->joints();
+
+	auto NumJoint = m_skeletal_mesh->skeleton()->num_bones();
+
+	m_vecBoneIndex.resize(NumJoint);
+
+	for (int i = 0; i < NumJoint; ++i)
+	{
+		for (int j = 0; j < m_vecBone->size(); ++j)
+		{
+			if ((*m_vecBone)[j]->Get_Name() == joint[i].name)
+			{
+				m_vecBoneIndex[i] = j;
+			}
+		}
 	}
 }
 

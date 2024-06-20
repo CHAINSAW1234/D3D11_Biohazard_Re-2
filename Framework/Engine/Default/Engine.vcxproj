@@ -206,6 +206,7 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\Component.cpp" />
     <ClCompile Include="..\Private\Component_Manager.cpp" />
     <ClCompile Include="..\Private\Decorator_Node.cpp" />
+    <ClCompile Include="..\Private\Easing.cpp" />
     <ClCompile Include="..\Private\Event_Call_Back.cpp" />
     <ClCompile Include="..\Private\FSM.cpp" />
     <ClCompile Include="..\Private\ComputeShader.cpp" />
@@ -296,6 +297,7 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\Component_Manager.h" />
     <ClInclude Include="..\Public\ComputeShader.h" />
     <ClInclude Include="..\Public\Decorator_Node.h" />
+    <ClInclude Include="..\Public\Easing.h" />
     <ClInclude Include="..\Public\Engine_Enums.h" />
     <ClInclude Include="..\Public\FSM.h" />
     <ClInclude Include="..\Public\FSM_HState.h" />

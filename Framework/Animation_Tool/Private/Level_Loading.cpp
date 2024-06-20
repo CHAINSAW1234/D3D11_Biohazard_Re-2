@@ -28,7 +28,6 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 }
 
 
-
 void CLevel_Loading::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);

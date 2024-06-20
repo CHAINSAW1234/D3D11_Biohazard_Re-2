@@ -81,7 +81,7 @@ void CPxCollider::Update_Transform(_float4x4* Transform)
 
 	for (int i = 0; i < m_vecCollider.size(); ++i)
 	{
-		_matrix Transform = PxTransformToXMMATRIX(m_vecCollider[i]->getGlobalPose());
+		_matrix Transform = PxTransformToXMMATRIX(m_vecCollider_Transform[i]);
 
 		Transform = Mat * Transform ;
 

@@ -22,10 +22,12 @@ public :
 	void			Interactive_Selector_UI(CGameObject* _obj, _float fTimeDelta);
 
 	_float			Distance_Player(CGameObject* _obj);
+	class CPlayer*		Find_Player();
 
 private :
-	CGameObject*		m_pEx = { nullptr }; /* 목표물 */
-	CSelector_UI*		m_pParent = { nullptr }; /* 부모 */
+	CGameObject*		m_pEx		= { nullptr }; /* 목표물 */
+	CSelector_UI*		m_pParent	= { nullptr }; /* 부모 */
+	CPlayer*			m_pPlayer	= { nullptr };
 
 	_float3				m_fOriginSize = {};
 	_bool				m_isInteractive = { false };
