@@ -31,15 +31,11 @@ HRESULT CTutorial_UI::Initialize(void* pArg)
         m_vecTextBoxes.back()->Set_FontColor(ALHPE_ZERO);
     }
 
-    // 누수
-  /*  if (nullptr != m_pMaskTextureCom)
-        m_pMaskTextureCom = nullptr;*/
-
     m_isPlay = false;
     m_iEndingType = PLAY_BUTTON::PLAY_CHANGE;
     m_fColorTimer_Limit = 1.f;
     m_Mask[0].isMask = m_isMask = false;
-
+    m_isRender = false;
     return S_OK;
 }
 
@@ -52,7 +48,7 @@ void CTutorial_UI::Tick(_float fTimeDelta)
         Non_Frame();
         m_isPlay = true;
         m_isKeepPlay = false;
-
+        m_isRender = true;
         m_fTutorial_Life_Tiemr = 0.f;
         Frame_Reset();
     }
@@ -71,6 +67,7 @@ void CTutorial_UI::Tick(_float fTimeDelta)
             if (LIFE_TIME <= m_fTutorial_Life_Tiemr)
             {
                 m_isPlay = false;
+                m_isRender = false;
             }
         }
     }
@@ -106,11 +103,11 @@ void CTutorial_UI::Play_Font(_float fTimeDelta)
     /* 만약 플레이 중이라면, */
     CTextBox* pFont = m_vecTextBoxes.back();
 
-    if (1.f > m_isBlending)
+    /*if (1.f > m_fBlending)
     {
         pFont->Set_FontColor(ALHPE_ZERO);
         return;
-    }
+    }*/
     
     _float4 result = m_fBlending * ALHPE_ZERO + (1 - m_fBlending) * m_vOriginTextColor;
     pFont->Set_FontColor(result);

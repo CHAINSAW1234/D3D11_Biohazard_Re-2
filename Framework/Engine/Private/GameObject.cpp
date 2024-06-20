@@ -135,7 +135,7 @@ HRESULT CGameObject::Change_Component(_uint iLevelIndex, const wstring& strProto
 	if (nullptr == pComponent)
 		return E_FAIL;
 
-	auto iter = m_Components.find(strComponentTag);
+	auto iter = m_Components.find(strComponentTag); 
 	if (iter != m_Components.end())
 	{
 		Safe_Release(iter->second);

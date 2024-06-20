@@ -40,11 +40,11 @@ HRESULT CCrosshair_UI::Initialize(void* pArg)
 
         for (auto& iter : *pUiLayer)
         {
-            CCrosshair_UI* pUI = dynamic_cast<CCrosshair_UI*>(iter);
+            m_pCenterDot = dynamic_cast<CCrosshair_UI*>(iter);
 
-            if (nullptr != pUI && pUI->Get_Child() == false)
+            if (nullptr != m_pCenterDot && m_pCenterDot->Get_Child() == false)
             {
-                CTransform* pPointTrans = dynamic_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+                CTransform* pPointTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
                 vPoint = pPointTrans->Get_State_Float4(CTransform::STATE_POSITION);
                 break;
             }
@@ -100,20 +100,24 @@ void CCrosshair_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    /* ▶ 예비 조작 코드 */
     if (PRESSING == m_pGameInstance->Get_KeyState(VK_RBUTTON))
         m_isAiming = true;
     else
         m_isAiming = false;
 
+    /* ▶ 조작 코드 */
+    if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+    {
+        m_isShoot = true;
+    }
+
     /* ▶ 동작 함수 */
-    if (true == m_isAiming)
-        Aiming(fTimeDelta);
+   if (false == m_isAiming || true == m_isShoot)
+       Aiming_Return(fTimeDelta);
 
-    else if (false == m_isAiming)
-        Aiming_Return();
-
-    Camera_Aiming();
+   else if (true == m_isAiming)
+        Aiming(fTimeDelta); 
+     
 }
 
 void CCrosshair_UI::Late_Tick(_float fTimeDelta)
@@ -129,23 +133,12 @@ HRESULT CCrosshair_UI::Render()
     return S_OK;
 }
 
-void CCrosshair_UI::Camera_Aiming()
-{
-    CGameObject* pCameraObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_ZZZCamera"))->back();
-
-    if (nullptr != pCameraObj)
-    {
-        CCamera_Free* pCamerFreeObj = dynamic_cast<CCamera_Free*>(pCameraObj);
-
-        pCamerFreeObj->Set_Crosshair_Aiming(m_isAiming); /* 조준 중인가? */
-    }
-}
 
 void CCrosshair_UI::Aiming(_float fTimeDelta)
 {
     /* ▶ 조준 완료 시*/
     if (true == m_IsChild && false == m_isRender)
-        m_isRender = true;
+        m_isRender = true;  
 
     _float4 vCrosshair_Trans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
     _float3 vCrosshair_Scale = m_pTransformCom->Get_Scaled();
@@ -159,11 +152,8 @@ void CCrosshair_UI::Aiming(_float fTimeDelta)
 
     /* Crosshair를 고정시켜야 할 때 */
     if (m_fCrosshair_Timer >= FIXED_TIME)
-    {
-        if (false == m_IsChild)
-            m_isRender = true;
-
-        else if (true == m_IsChild) 
+    {   
+        if (true == m_IsChild) 
         {
             if (m_eCrosshair_Type == CROSSHAIR_TYPE::CROSSHAIR_LEFT)
             {
@@ -172,6 +162,8 @@ void CCrosshair_UI::Aiming(_float fTimeDelta)
                     vCrosshair_Trans.x += m_fCrosshair_Timer * 4.f;
                     vCrosshair_Scale.x -= 1.3f;
                 }
+                else
+                    m_pCenterDot->m_isRender = true;
             }
 
             else if (m_eCrosshair_Type == CROSSHAIR_TYPE::CROSSHAIR_RIGHT)
@@ -204,9 +196,6 @@ void CCrosshair_UI::Aiming(_float fTimeDelta)
             m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCrosshair_Trans);
 
             /* Crosshair Min Scaled Fixed */
-            
-
-
             m_pTransformCom->Set_Scaled(vCrosshair_Scale.x, vCrosshair_Scale.y, vCrosshair_Scale.z);
             m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCrosshair_Trans);
             m_fFixed_MinScaled = vCrosshair_Scale;
@@ -251,7 +240,7 @@ void CCrosshair_UI::Aiming(_float fTimeDelta)
         if (vCrosshair_Trans.y >= m_fCorsshair_AimPoint.y + m_fCrosshair_Aiming_Ready_Distance)
         {
             vCrosshair_Trans.y -= m_fCrosshair_Timer * Deceleration;
-            vCrosshair_Scale.x -= m_fCrosshair_Timer * 0.5;
+            vCrosshair_Scale.x -= m_fCrosshair_Timer * 0.5f;
         }
     }
 
@@ -259,17 +248,89 @@ void CCrosshair_UI::Aiming(_float fTimeDelta)
     m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCrosshair_Trans);
     m_fFixed_MinScaled = vCrosshair_Scale;
 }
-
-void CCrosshair_UI::Aiming_Return()
+    
+void CCrosshair_UI::Aiming_Return(_float fTimeDelta)
 {
-    if (false == m_IsChild || (true == m_IsChild && true == m_isRender))
-        m_isRender = false;
-
-    m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vCrosshair_OriginPos);
-    m_pTransformCom->Set_Scaled(m_vCrosshair_OriginScale.x, m_vCrosshair_OriginScale.y, m_vCrosshair_OriginScale.z);
-
     m_fCrosshair_Timer = 0.0f;
     m_fCrosshair_AccTimer = 0.0f;
+
+    if (false == m_IsChild)
+    {
+         m_isRender = false;
+         m_isShoot = false;
+    }
+
+    /* 1. Transform */
+    m_pTransformCom->Move_toTargetUI(m_vCrosshair_OriginPos, 8.f, 0.0f);
+
+    /* 2. Scaled */
+    _float3 vCrosshair_Scale = m_pTransformCom->Get_Scaled();
+
+    if (vCrosshair_Scale.x <= m_vCrosshair_OriginScale.x)
+        m_pTransformCom->Set_Scaled(m_vCrosshair_OriginScale.x, m_vCrosshair_OriginScale.y, m_vCrosshair_OriginScale.z);
+
+    else
+    {
+        vCrosshair_Scale.x += 0.5f;
+        m_pTransformCom->Set_Scaled(vCrosshair_Scale.x, vCrosshair_Scale.y, vCrosshair_Scale.z);
+    }
+    
+    if (true == m_IsChild)
+    {
+        _float4 vTransformCrosshair = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+        if (m_eCrosshair_Type == CROSSHAIR_TYPE::CROSSHAIR_LEFT)
+        {
+            if (vTransformCrosshair.x <= m_vCrosshair_OriginPos.x)
+            {
+                m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vCrosshair_OriginPos);
+                
+                if(false == m_isShoot)
+                    m_isRender = false;
+
+                m_isShoot = false;
+            }
+        }
+
+        else if (m_eCrosshair_Type == CROSSHAIR_TYPE::CROSSHAIR_RIGHT)
+        {
+            if (vTransformCrosshair.x >= m_vCrosshair_OriginPos.x)
+            {
+                m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vCrosshair_OriginPos);
+                
+                if (false == m_isShoot)
+                    m_isRender = false;
+
+                m_isShoot = false;
+            }
+        }
+
+        else if (m_eCrosshair_Type == CROSSHAIR_TYPE::CROSSHAIR_UP)
+        {
+            if (vTransformCrosshair.y <= m_vCrosshair_OriginPos.y)
+            {
+                m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vCrosshair_OriginPos);
+                
+                if (false == m_isShoot)
+                    m_isRender = false;
+
+                m_isShoot = false;
+            }
+        }
+
+        else if (m_eCrosshair_Type == CROSSHAIR_TYPE::CROSSHAIR_DOWN)
+        {
+            if (vTransformCrosshair.y >= m_vCrosshair_OriginPos.y)
+            {
+                m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vCrosshair_OriginPos);
+                
+                if (false == m_isShoot)
+                    m_isRender = false;
+
+                m_isShoot = false;
+            }
+        }
+    }
 }
 
 CCustomize_UI* CCrosshair_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

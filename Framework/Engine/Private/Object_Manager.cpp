@@ -121,7 +121,8 @@ void CObject_Manager::Priority_Tick(_float fTimeDelta)
 	{
 		for (auto& Pair : m_pLayers[i])
 		{
-			Pair.second->Priority_Tick(fTimeDelta);
+			if(Pair.second)
+				Pair.second->Priority_Tick(fTimeDelta);
 		}
 	}
 }

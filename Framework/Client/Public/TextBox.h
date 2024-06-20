@@ -16,6 +16,8 @@ public:
 		_uint		iFontSize = { 10 };
 		_bool		isOuterLine = { false };
 		_vector		vOutLineColor = { 0.f, 0.f, 0.f, 1.f };
+		_bool		isUI_Render = { false };
+
 	}TextBox_DESC;
 
 private:
@@ -57,6 +59,9 @@ private:
 
 	_bool	m_isOuterLine = { false };
 	_vector m_vOutLineColor = { 0.f, 0.f, 0.f, 1.f };
+
+private :
+	_bool	m_isUIRender = { false };
 
 public:
 	static CTextBox* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

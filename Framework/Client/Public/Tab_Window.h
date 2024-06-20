@@ -24,8 +24,9 @@ public:
 	virtual HRESULT Render() override;
 
 public :
-	_bool*	Get_MinMapRender() { return &m_isMapRender; }
-
+	_bool*	Get_MinMapRender()	{ return &m_isMapRender; }
+	_bool*	Get_MainRender()	{ return m_pInvenButton->Get_Dead_Ptr(); }
+	
 private:
 	class CButton_UI* m_pMapButton = { nullptr };
 	class CButton_UI* m_pInvenButton = { nullptr };

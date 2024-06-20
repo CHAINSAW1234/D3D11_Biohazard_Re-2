@@ -205,13 +205,16 @@ PS_OUT PS_MAIN(PS_IN In)
    // 선택
     if (g_SelectColor)
         Out.vColor = float4(1, 0, 0, 1);
-    else if (g_AlpaChange) // 알파만 바꿀 때
-        Out.vColor.a = g_ColorValu.a;
+    
     else if (g_ColorChange)
     {
         if (g_Blending)
         {
+            if (Out.vColor.a <= 0.0f)
+                discard;
+            
             Out.vColor = lerp(Out.vColor, g_ColorValu, g_BlendingStrength);
+            Out.vColor.a = lerp(Out.vColor.a, g_ColorValu.a, 0);
         }
         else
             Out.vColor = g_ColorValu;

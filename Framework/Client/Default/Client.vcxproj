@@ -205,6 +205,7 @@
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
     <ClInclude Include="..\Public\Loader.h" />
+    <ClInclude Include="..\Public\Loading_UI.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\Map.h" />
     <ClInclude Include="..\Public\Map_UI.h" />
@@ -223,6 +224,7 @@
     <ClInclude Include="..\Public\Player_State_Move_Jog.h" />
     <ClInclude Include="..\Public\Player_State_Move_Walk.h" />
     <ClInclude Include="..\Public\Props.h" />
+    <ClInclude Include="..\Public\Read_Item_UI.h" />
     <ClInclude Include="..\Public\Selector_UI.h" />
     <ClInclude Include="..\Public\Sky.h" />
     <ClInclude Include="..\Public\Slot_Highlighter.h" />
@@ -274,6 +276,7 @@
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
     <ClCompile Include="..\Private\Loader.cpp" />
+    <ClCompile Include="..\Private\Loading_UI.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\Private\Map.cpp" />
     <ClCompile Include="..\Private\Map_UI.cpp" />
@@ -292,6 +295,7 @@
     <ClCompile Include="..\Private\Player_State_Move_Jog.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Walk.cpp" />
     <ClCompile Include="..\Private\Props.cpp" />
+    <ClCompile Include="..\Private\Read_Item_UI.cpp" />
     <ClCompile Include="..\Private\Selector_UI.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
     <ClCompile Include="..\Private\Slot_Highlighter.cpp" />

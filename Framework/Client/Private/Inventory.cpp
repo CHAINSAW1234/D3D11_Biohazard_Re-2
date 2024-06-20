@@ -51,20 +51,6 @@ HRESULT CInventory::Render()
     return S_OK;
 }
 
-void CInventory::Inventory_Render(_bool _render)
-{
-    m_isRender = _render;
-
-    /* 카메라 고정*/
-    CGameObject* pGameObj = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_ZZZCamera"))->back();
-
-    if (nullptr != pGameObj)
-    {
-        CCamera_Free* pCameraObj = dynamic_cast<CCamera_Free*>(pGameObj);
-        pCameraObj->Set_FixedMouse(!m_isRender);
-    }
-}
-
 void CInventory::Free()
 {
     __super::Free();
