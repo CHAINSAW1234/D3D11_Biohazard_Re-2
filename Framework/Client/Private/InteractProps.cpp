@@ -33,6 +33,7 @@ HRESULT CInteractProps::Initialize(void* pArg)
 	m_tagPropDesc.worldMatrix = pObj_desc->worldMatrix;
 	m_tagPropDesc.BelongIndexs = pObj_desc->BelongIndexs;
 	m_tagPropDesc.iRegionDir = pObj_desc->iRegionDir;
+	m_tagPropDesc.iRegionNum = pObj_desc->iRegionNum;
 
 	for (auto iter : m_tagPropDesc.BelongIndexs)
 	{
@@ -100,6 +101,8 @@ void CInteractProps::Check_Player()
 
 void CInteractProps::Check_Col_Sphere_Player()
 {
+	if (m_pPlayer == nullptr)
+		return;
 	if (m_pColliderCom[INTERACTPROPS_COL_SPHERE] == nullptr)
 		return;
 	CCollider* pPlayerCol = static_cast<CCollider*>( m_pPlayer->Get_Component(TEXT("Com_Collider")));
@@ -108,6 +111,28 @@ void CInteractProps::Check_Col_Sphere_Player()
 
 
 
+}
+
+_bool CInteractProps::Visible()
+{
+	if (m_pPlayer == nullptr)
+		return false;
+	m_bVisible = true;
+	if (m_pPlayer->Get_Player_RegionChange() == true)
+	{
+		if (m_tagPropDesc.iRegionDir == DIRECTION_MID)
+		{
+			;
+		}
+		else if (m_pPlayer->Get_Player_Direction() != m_tagPropDesc.iRegionDir)
+		{
+			return m_bVisible = false;
+		}
+
+		m_bVisible = m_tagPropDesc.BelongIndexs2[m_pPlayer->Get_Player_ColIndex()];
+	}
+
+	return m_bVisible;
 }
 
 HRESULT CInteractProps::Render_LightDepth_Dir()

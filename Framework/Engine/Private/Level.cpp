@@ -217,6 +217,12 @@ HRESULT CLevel::Load_Object(const wstring& strFilePath, const wstring& strLayerN
 			CloseHandle(hFile);
 			return E_FAIL;
 		}
+		
+
+		if (!ReadFile(hFile, &ObjectDesc.iRegionNum, sizeof(_int), &dwByte, NULL)) {
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
 
 
 		if (FAILED(m_pGameInstance->Add_Clone(iLevel, strLayerName, ObjectDesc.strObjectPrototype, &ObjectDesc)))

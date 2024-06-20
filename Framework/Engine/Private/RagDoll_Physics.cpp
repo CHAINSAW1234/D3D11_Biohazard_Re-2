@@ -50,12 +50,11 @@
 
 #define JOINT_COUNT 20
 
-
-#define NECK_BONE  131		//neck_0
+#define NECK_BONE  143		//neck_0
 #define SPINE_01_BONE 46		//spine_0
 #define SPINE_02_BONE 59		//spine_1
 #define SPINE_03_BONE 60		//spine_2
-#define HEAD_BONE 132		//neck_1
+#define HEAD_BONE 144		//neck_1
 #define PELVIS_BONE 3			//hips
 #define L_LEG_BONE 4			//l_leg_femur
 #define L_CALF_BONE 9		//l_leg_tibia
@@ -69,10 +68,10 @@
 #define L_FOREARM_BONE 67	//l_arm_radius
 #define L_WRIST_BONE 70		//l_arm_wrist
 #define L_HAND_BONE 77		//l_hand_middle_0
-#define R_ARM_BONE 97		//r_arm_humerus
-#define R_FOREARM_BONE 102	//r_arm_radius
-#define R_WRIST_BONE 105		//r_arm_wrist
-#define R_HAND_BONE 112		//r_hand_middle_0
+#define R_ARM_BONE 103		//r_arm_humerus
+#define R_FOREARM_BONE 108	//r_arm_radius
+#define R_WRIST_BONE 111		//r_arm_wrist
+#define R_HAND_BONE 118		//r_hand_middle_0
 
 #endif
 
@@ -487,8 +486,9 @@ void CRagdoll_Physics::create_ragdoll()
 
 #pragma region Zombie Bone - RigidBody
 #ifdef ZOMBIE
-	uint32_t j_head_idx = 130;		//neck_1
-	uint32_t j_neck_01_idx = 129;	//neck_0
+
+	uint32_t j_head_idx = 142;		//neck_1
+	uint32_t j_neck_01_idx = 141;	//neck_0
 	uint32_t j_spine_03_idx = 1;		//hips
 	uint32_t j_spine_02_idx = 58;		//spine_2
 	uint32_t j_spine_01_idx = 57;		//spine_1
@@ -509,10 +509,10 @@ void CRagdoll_Physics::create_ragdoll()
 	uint32_t j_hand_l_idx = 68;		//l_arm_wrist
 	uint32_t j_middle_01_l_idx = 75;	//l_hand_middle_0
 
-	uint32_t j_upperarm_r_idx = 95;	//r_arm_humerus
-	uint32_t j_lowerarm_r_idx = 100;	//r_arm_radius
-	uint32_t j_hand_r_idx = 103;		//r_arm_wrist
-	uint32_t j_middle_01_r_idx = 110;	//r_hand_middle_0
+	uint32_t j_upperarm_r_idx = 101;	//r_arm_humerus
+	uint32_t j_lowerarm_r_idx = 106;	//r_arm_radius
+	uint32_t j_hand_r_idx = 109;		//r_arm_wrist
+	uint32_t j_middle_01_r_idx = 116;	//r_hand_middle_0
 #endif
 #pragma endregion
 
@@ -665,12 +665,14 @@ void CRagdoll_Physics::update_animations()
 
 	auto joint = m_skeletal_mesh->skeleton()->joints();
 
+	auto NumJoint = m_skeletal_mesh->skeleton()->num_bones();
+
 	if (m_vecBone)
 	{
 		int i = 0;
 		for (auto& it : *m_vecBone)
 		{
-			for (int i = 0; i < BONE_COUNT; ++i)
+			for (int i = 0; i < NumJoint; ++i)
 			{
 				if (joint[i].name.empty() == false)
 				{
@@ -747,7 +749,7 @@ void CRagdoll_Physics::update_animations()
 
 			for (auto& it : *m_vecBone)
 			{
-				for (int i = 0; i < BONE_COUNT; ++i)
+				for (int i = 0; i < NumJoint; ++i)
 				{
 					if (it->Get_Name() == joint[i].name)
 					{

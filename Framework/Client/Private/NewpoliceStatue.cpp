@@ -58,6 +58,11 @@ HRESULT CNewpoliceStatue::Initialize(void* pArg)
 
 void CNewpoliceStatue::Tick(_float fTimeDelta)
 {
+
+	__super::Check_Player();
+	if (!m_bVisible)
+		return;
+
 	if (m_pGameInstance->Get_KeyState('U') == DOWN)
 		m_eState = POLICEHALLSTATUE_0;
 	if (m_pGameInstance->Get_KeyState('I') == DOWN)
@@ -73,6 +78,9 @@ void CNewpoliceStatue::Tick(_float fTimeDelta)
 
 void CNewpoliceStatue::Late_Tick(_float fTimeDelta)
 {
+	if (!Visible())
+		return;
+
 	if (m_bRender == false)
 		return;
 
@@ -213,16 +221,16 @@ HRESULT CNewpoliceStatue::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	_bool isMotionBlur = m_pGameInstance->Get_ShaderState(MOTION_BLUR);
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_isMotionBlur", &isMotionBlur, sizeof(_bool))))
-		return E_FAIL;
+	//_bool isMotionBlur = m_pGameInstance->Get_ShaderState(MOTION_BLUR);
+	//if (FAILED(m_pShaderCom->Bind_RawValue("g_isMotionBlur", &isMotionBlur, sizeof(_bool))))
+	//	return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevWorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevViewMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevWorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
+	//	return E_FAIL;
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevViewMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
+	//	return E_FAIL;
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
+	//	return E_FAIL;
 
 
 	return S_OK;

@@ -710,19 +710,14 @@ HRESULT CLoader::Loading_For_GamePlay()
 	m_strLoadingText = TEXT("Now Loading ... Object");
 
 #pragma region YeEun Add
-#ifdef USE_UI
-	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_UI/Make_Prototype.dat"))))
+#ifdef MAP_NOTHING
+
+#endif
+#ifdef MAP_JUSTMAP
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_Map/Make_Prototype.dat"))))
 		return E_FAIL;
 #endif
-#ifdef USE_Player_Control
-	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_Police/Make_Prototype.dat"))))
-		return E_FAIL;
-#endif
-#ifdef USE_MapObject
-	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_Test/Make_Prototype.dat"))))
-		return E_FAIL;
-#endif
-#ifdef USE_MapInteractObject
+#ifdef MAP_INTERACT
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_InteractObj/Make_Prototype.dat"))))
 		return E_FAIL;
 #endif

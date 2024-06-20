@@ -41,7 +41,7 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 
 	m_eCurrentMotionType = MOTION_A;
 
-	//	m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie/Body.fbx");
+	m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie/Body.fbx");
 
 	return S_OK;
 }

@@ -139,7 +139,7 @@ CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int*
 
 	PxShape* shapes[1];
 	Controller->getActor()->getShapes(shapes, 1);
-
+	
 	//Colliision Filter
 	PxFilterData filterData_Character;
 	filterData_Character.word0 = COLLISION_CATEGORY::CCT;

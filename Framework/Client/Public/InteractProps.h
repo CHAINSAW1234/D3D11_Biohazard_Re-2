@@ -30,6 +30,8 @@ public:
 	{
 		_int BelongIndexs2[iMaxNum];
 		_int iPropsType;
+		_int iRegion;
+
 	}INTERACTPROPS_DESC;
 protected:
 	CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -62,6 +64,7 @@ public:
 protected:
 	_bool												m_bActivity = { true };
 	_bool												m_bShadow = { true };
+	_bool												m_bVisible = { true };
 	_bool												m_bCol = { false }; // 충돌이 되었다
 	_float											m_fTimeTest = { 0.f };
 	CModel*										m_pModelCom = { nullptr };
@@ -82,7 +85,7 @@ protected:
 protected:
 	void Check_Player();
 	void Check_Col_Sphere_Player();
-
+	_bool Visible();
 	virtual HRESULT				Add_Components();
 	virtual HRESULT				Add_PartObjects();
 	virtual HRESULT				Initialize_PartObjects();

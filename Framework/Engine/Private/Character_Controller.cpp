@@ -325,32 +325,32 @@ void CCharacter_Controller::Create_Collider()
 
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
-	uint32_t j_head_idx = 130;
-	uint32_t j_neck_01_idx = 129;
-	uint32_t j_spine_03_idx = 1;
-	uint32_t j_spine_02_idx = 58;
-	uint32_t j_spine_01_idx = 57;
-	uint32_t j_pelvis_idx = 44;
+	uint32_t j_head_idx = 142;		//neck_1
+	uint32_t j_neck_01_idx = 141;	//neck_0
+	uint32_t j_spine_03_idx = 1;		//hips
+	uint32_t j_spine_02_idx = 58;		//spine_2
+	uint32_t j_spine_01_idx = 57;		//spine_1
+	uint32_t j_pelvis_idx = 44;		//spine_0
 
-	uint32_t j_thigh_l_idx = 2;
-	uint32_t j_calf_l_idx = 7;
-	uint32_t j_foot_l_idx = 12;
-	uint32_t j_ball_l_idx = 13;
+	uint32_t j_thigh_l_idx = 2;		//l_leg_femur
+	uint32_t j_calf_l_idx = 7;		//l_leg_tibia
+	uint32_t j_foot_l_idx = 12;		//l_leg_ankle
+	uint32_t j_ball_l_idx = 13;		//l_leg_ball
 
-	uint32_t j_thigh_r_idx = 18;
-	uint32_t j_calf_r_idx = 19;
-	uint32_t j_foot_r_idx = 24;
-	uint32_t j_ball_r_idx = 25;
+	uint32_t j_thigh_r_idx = 18;		//r_leg_femur
+	uint32_t j_calf_r_idx = 19;		//r_leg_tibia
+	uint32_t j_foot_r_idx = 24;		//r_leg_ankle
+	uint32_t j_ball_r_idx = 25;		//r_leg_ball
 
-	uint32_t j_upperarm_l_idx = 60;
-	uint32_t j_lowerarm_l_idx = 65;
-	uint32_t j_hand_l_idx = 68;
-	uint32_t j_middle_01_l_idx = 75;
+	uint32_t j_upperarm_l_idx = 60;	//l_arm_humerus
+	uint32_t j_lowerarm_l_idx = 65;	//l_arm_radius
+	uint32_t j_hand_l_idx = 68;		//l_arm_wrist
+	uint32_t j_middle_01_l_idx = 75;	//l_hand_middle_0
 
-	uint32_t j_upperarm_r_idx = 95;
-	uint32_t j_lowerarm_r_idx = 100;
-	uint32_t j_hand_r_idx = 103;
-	uint32_t j_middle_01_r_idx = 110;
+	uint32_t j_upperarm_r_idx = 101;	//r_arm_humerus
+	uint32_t j_lowerarm_r_idx = 106;	//r_arm_radius
+	uint32_t j_hand_r_idx = 109;		//r_arm_wrist
+	uint32_t j_middle_01_r_idx = 116;	//r_hand_middle_0
 
 	m_ragdoll->m_rigid_bodies.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_relative_joint_pos.resize(m_skeletal_mesh->skeleton()->num_bones());
