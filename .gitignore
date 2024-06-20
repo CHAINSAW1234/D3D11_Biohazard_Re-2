@@ -38,14 +38,10 @@
 *.idb
 *.pdb
 
-*.dds
 *.tga
 
 FrameWork/Client/Default/x64/
 FrameWork/Engine/Default/x64/
-
-FrameWork/Client/Bin/Client.pdb
-FrameWork/Engine/Bin/Engine.pdb
 
 FrameWork/Client/Bin/Engine.dll
 FrameWork/Engine/Bin/Engine.dll
