@@ -214,6 +214,12 @@ HRESULT CLoader::Loading_For_GamePlay()
 			LeonTransformMatrix))))
 		return E_FAIL;
 
+	/* Prototype_Component_Model_Boss */
+	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_Boss"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Boss/Boss.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
 #pragma endregion
 
 #pragma region TEST
