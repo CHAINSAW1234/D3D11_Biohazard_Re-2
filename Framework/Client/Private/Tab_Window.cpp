@@ -122,6 +122,11 @@ void CTab_Window::Tick(_float fTimeDelta)
 		
 	case Client::CTab_Window::INVENTORY: {
 		m_pInventory_Manager->Tick(fTimeDelta);
+
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		{
+
+		}
 		break;
 	}
 		

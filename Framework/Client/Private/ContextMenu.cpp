@@ -36,6 +36,8 @@ void CContextMenu::Tick(_float fTimeDelta)
 		return;
 	}
 
+	m_pBackground->Tick(fTimeDelta);
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -46,6 +48,8 @@ void CContextMenu::Late_Tick(_float fTimeDelta)
 		m_pBackground->Set_Dead(m_bDead);
 		return;
 	}
+
+	m_pBackground->Late_Tick(fTimeDelta);
 
 	__super::Late_Tick(fTimeDelta);
 }

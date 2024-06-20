@@ -294,7 +294,6 @@ void CLoader::CreatFromDat(ifstream& inputFileStream, wstring strListName, CGame
 	}
 
 	CGameObject* pGameObj = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"))->back();
-	m_vecLoadingUI.push_back(pGameObj);
 
 	if (nullptr != pGameParentsObj)
 	{
@@ -969,7 +968,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (true == m_isFinished)
 	{
 		m_pGameInstance->Release_Layer(g_Level, TEXT("Layer_UI"));
-		m_vecLoadingUI.clear();
 	}
 
 	return S_OK;
