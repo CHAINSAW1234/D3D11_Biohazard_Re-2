@@ -160,7 +160,7 @@ UpdateLib.bat</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../Public/;..\..\imguilib;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;..\..\imguilib;C:\vcpkg\installed\x64-windows\include/physx;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
       <AdditionalOptions>/MP /Zm2000 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
