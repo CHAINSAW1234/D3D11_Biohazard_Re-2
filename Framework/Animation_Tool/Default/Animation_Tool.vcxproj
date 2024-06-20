@@ -513,7 +513,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>Default</ConformanceMode>
-      <AdditionalIncludeDirectories>../Default/;../Public/;../../EngineSDK/Inc/;..\..\imguilib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Default/;../Public/;../../EngineSDK/Inc/;C:\vcpkg\installed\x64-windows\include/physx;C:\vcpkg\installed\x64-windows\include;..\..\imguilib</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <AdditionalOptions>/MP /Zm2000 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
