@@ -57,18 +57,10 @@ HRESULT CMap_UI::Initialize(void* pArg)
 
     else if (CCustomize_UI::MAP_UI_TYPE::FONT_MAP == m_eMapComponent_Type)
     {
-        if (!m_vecTextBoxes.empty())
-        {
-            for (auto& iter : m_vecTextBoxes)
-            {
-                 m_vOriginTextColor = iter->Get_FontColor();
-                //iter->Set_FontColor(ALPHA_ZERO);
-            }
-        }
     }
     else if (CCustomize_UI::MAP_UI_TYPE::MASK_MAP == m_eMapComponent_Type)
     {
-        m_vColor[0].vColor = m_vCurrentColor = _float4(1, 1, 1, 0);
+        m_vColor[0].vColor = m_vCurrentColor = _float4(0, 0, 0, 0);
     }
 
     m_isRender = false;
@@ -80,23 +72,6 @@ HRESULT CMap_UI::Initialize(void* pArg)
 void CMap_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
-
-    if (CCustomize_UI::MAP_UI_TYPE::DOOR_MAP == m_eMapComponent_Type 
-        || CCustomize_UI::MAP_UI_TYPE::WINDOW_MAP == m_eMapComponent_Type)
-    {
-        _float4 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-
-        pos.z = 0.08f;
-        m_pTransformCom->Set_State(CTransform::STATE_POSITION, pos);
-    }
-
-    if (CCustomize_UI::MAP_UI_TYPE::FONT_MAP == m_eMapComponent_Type)
-    {
-        _float4 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-
-        pos.z = 0.08f;
-        m_pTransformCom->Set_State(CTransform::STATE_POSITION, pos);
-    }
 
     // ¿¹ºñ
     if (false == m_isGara)
@@ -113,8 +88,6 @@ void CMap_UI::Tick(_float fTimeDelta)
 
 void CMap_UI::Late_Tick(_float fTimeDelta)
 {
-    if (CCustomize_UI::MAP_UI_TYPE::FONT_MAP == m_eMapComponent_Type)
-        int a = 0;
     __super::Late_Tick(fTimeDelta);
 }
 
@@ -230,9 +203,10 @@ void CMap_UI::Mouse_Pos(_float fTimeDelta)
 
 void CMap_UI::Transform_Adjustment()
 {
+
     /* Main */
     if (CCustomize_UI::MAP_UI_TYPE::MAIN_MAP == m_eMapComponent_Type || CCustomize_UI::MAP_UI_TYPE::DOOR_MAP == m_eMapComponent_Type
-        || CCustomize_UI::MAP_UI_TYPE::WINDOW_MAP == m_eMapComponent_Type)
+        || CCustomize_UI::MAP_UI_TYPE::WINDOW_MAP == m_eMapComponent_Type || CCustomize_UI::MAP_UI_TYPE::FONT_MAP == m_eMapComponent_Type)
     {
         _float4 vMainPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
         vMainPos.z = 0.1f;
@@ -266,16 +240,34 @@ void CMap_UI::Transform_Adjustment()
             {
                 CTransform* pFontTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
                 _float4 vFontTrans = pFontTrans->Get_State_Float4(CTransform::STATE_POSITION);
-                vFontTrans.z = 0.0f;
+                vFontTrans.z = 0.1f;
                 pFontTrans->Set_State(CTransform::STATE_POSITION, vFontTrans);
             }
         }
 
         /* Texture */
         _float4 pTextureTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-        pTextureTrans.z = 0.2f;
+        pTextureTrans.z = 0.1f;
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, pTextureTrans);
     }
+
+   /* if (CCustomize_UI::MAP_UI_TYPE::DOOR_MAP == m_eMapComponent_Type
+        || CCustomize_UI::MAP_UI_TYPE::WINDOW_MAP == m_eMapComponent_Type)
+    {
+        _float4 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+        pos.z = 0.08f;
+        m_pTransformCom->Set_State(CTransform::STATE_POSITION, pos);
+    }
+
+    if (CCustomize_UI::MAP_UI_TYPE::FONT_MAP == m_eMapComponent_Type)
+    {
+        _float4 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+        pos.z = 0.08f;
+        m_pTransformCom->Set_State(CTransform::STATE_POSITION, pos);
+    }*/
+
 }
 
 void CMap_UI::EX_ColorChange()

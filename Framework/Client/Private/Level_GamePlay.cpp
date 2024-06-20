@@ -344,10 +344,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	//CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
 	/* 3. Inventory_Item*/
-	/*selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_Item.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);*/
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_Item.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
 	/* 5. Bullet_UI */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Bullet_UI.dat");
@@ -387,14 +387,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);*/
 
 	/* Map */
-	/* 9. UI_Map_Font */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Map_Font.dat");
+	/* 9. Map_Mask */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Map_Mask.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
-	/* 9. Map_Mask */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Map_Mask.dat");
+	/* 9. UI_Map_Font */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Map_Font.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
