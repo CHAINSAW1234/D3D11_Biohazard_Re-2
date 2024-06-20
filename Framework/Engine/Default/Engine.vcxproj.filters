@@ -298,6 +298,9 @@
     <Filter Include="01.Utility\13.Easing">
       <UniqueIdentifier>{8c1c9201-8308-40b6-a11d-967950050dae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\14.Animation_Library">
+      <UniqueIdentifier>{5152ce05-bfbc-41e5-9d5c-16766dd8e3f5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -563,6 +566,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Easing.cpp">
       <Filter>01.Utility\13.Easing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Animation_Library.cpp">
+      <Filter>01.Utility\14.Animation_Library</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -851,6 +857,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Easing.h">
       <Filter>01.Utility\13.Easing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Animation_Library.h">
+      <Filter>01.Utility\14.Animation_Library</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
