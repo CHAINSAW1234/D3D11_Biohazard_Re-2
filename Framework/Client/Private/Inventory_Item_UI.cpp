@@ -25,7 +25,6 @@ HRESULT CInventory_Item_UI::Initialize_Prototype()
 
 HRESULT CInventory_Item_UI::Initialize(void* pArg)
 {
-    SUB_INVEN_WHICH_CHILD	eSubInven_Child = { };
 
     if (nullptr != pArg)
     {
@@ -33,13 +32,13 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
 
         m_eBox_Type = CustomUIDesc->eBox_Type;
         m_eInventory_Type = CustomUIDesc->eInventory_Type;
-        eSubInven_Child = (SUB_INVEN_WHICH_CHILD)CustomUIDesc->iWhich_Child;
+        m_eSubInven_Child = (SUB_INVEN_WHICH_CHILD)CustomUIDesc->iWhich_Child;
     }
 
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-   
+
     list<class CGameObject*>* pBoxList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
     m_fOrigin_Blending = m_fBlending;
 
@@ -60,7 +59,7 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
                     {
                         m_pSelectBox = pBox;
 
-                        CTransform* pSelectBox_Trans = static_cast<CTransform*>(pBox->Get_Component(g_strTransformTag));
+                        CTransform* pSelectBox_Trans = dynamic_cast<CTransform*>(pBox->Get_Component(g_strTransformTag));
                         _float4 fSelectBox_Trans = pSelectBox_Trans->Get_State_Float4(CTransform::STATE_POSITION);
                         _float4 fCursor_Trans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
@@ -74,7 +73,7 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
                     if (CCustomize_UI::ITEM_BOX_TYPE::DEFAULT_BOX == pBox->m_eBox_Type)
                     {
                         /* Box은 Select Box을 가지고 있는다 */
-                        pBox->m_pSelectBox = this; //★★★★★★★★Safe_AddRef()문제 해결할것
+                        pBox->m_pSelectBox = this;
                     }
 
                 }
@@ -106,9 +105,9 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
         }
 
         /* 1. Default Box */
-        if (nullptr != pCenter_UI && eSubInven_Child == SUB_INVEN_WHICH_CHILD::DEFULAT_BOX_CHILD)
+        if (nullptr != pCenter_UI && m_eSubInven_Child == SUB_INVEN_WHICH_CHILD::DEFULAT_BOX_CHILD)
         {
-            CTransform* pCenter_Trans = static_cast<CTransform*>(pCenter_UI->Get_Component(g_strTransformTag));
+            CTransform* pCenter_Trans = dynamic_cast<CTransform*>(pCenter_UI->Get_Component(g_strTransformTag));
             _float4 vCenter_Trans = pCenter_Trans->Get_State_Float4(CTransform::STATE_POSITION);
             _float4 vBox_Trans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
@@ -126,20 +125,11 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
                 m_eSubInven_Type = SUB_INVEN_BOX_POSITION::DOWN_INVEN;
             }
             else  // Left
-            {
                 m_eSubInven_Type = SUB_INVEN_BOX_POSITION::LEFT_INVEN;
-            }
 
             /* Select 변수를 가지고 있는다. */
-            for (auto& iter : *pBoxList)
-            {
-                m_pSelectBox = dynamic_cast<CInventory_Item_UI*>(iter);
-
-                if (nullptr != m_pSelectBox && CCustomize_UI::ITEM_BOX_TYPE::SELECT_BOX == m_pSelectBox->m_eBox_Type)
-                    break;
-            }
+            Find_SelectBox();
         }
-
     }
 
     return S_OK;
@@ -149,16 +139,19 @@ void CInventory_Item_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
+    if(nullptr == m_pSelectBox && m_eSubInven_Child == SUB_INVEN_WHICH_CHILD::DEFULAT_BOX_CHILD)
+        Find_SelectBox();
+
     /* ▶ Box 별 동작 방식*/
     Box_Operater(fTimeDelta);
 
     /* ▶ Inventory 종류*/
     /* 0. Default Item Inventory */
-   /* if (CCustomize_UI::INVENTORY_TYPE::MAIN_INVEN == m_eInventory_Type)
-        Item_Inventory();*/
+    if (CCustomize_UI::INVENTORY_TYPE::MAIN_INVEN == m_eInventory_Type)
+        Item_Inventory();
 
     /* 1. Sub Equip Inventory*/
-   if (CCustomize_UI::INVENTORY_TYPE::SUB_INVEN == m_eInventory_Type)
+    else if (CCustomize_UI::INVENTORY_TYPE::SUB_INVEN == m_eInventory_Type)
         Sub_Equipment_Inventory(fTimeDelta);
 }
 
@@ -195,14 +188,14 @@ void CInventory_Item_UI::VoidBox()
 {
     if (CCustomize_UI::INVENTORY_TYPE::MAIN_INVEN == m_eInventory_Type)
     {
-        if (true == m_IsChild) 
+        if (true == m_IsChild)
         {
             CTransform* pSelectBox_Trans = {};
 
             /* 1. Select Box 관련*/
             if (nullptr != m_pSelectBox)
             {
-                pSelectBox_Trans = static_cast<CTransform*>(m_pSelectBox->Get_Component(g_strTransformTag));
+                pSelectBox_Trans = dynamic_cast<CTransform*>(m_pSelectBox->Get_Component(g_strTransformTag));
 
                 if (true == IsMouseHover())
                 {
@@ -282,17 +275,19 @@ void CInventory_Item_UI::Item_Inventory()
 
             if (nullptr != pDefaultBox)
             {
-                CTransform* pDefaultBox_Trans = static_cast<CTransform*>(pDefaultBox->Get_Component(g_strTransformTag));
+                CTransform* pDefaultBox_Trans = dynamic_cast<CTransform*>(pDefaultBox->Get_Component(g_strTransformTag));
 
                 /* ◈ 매번 할당할 바에 아예 멤버 변수로 등록해놓기. ◈*/
                 /* 1. Defualt Box 를 가장 첫번 째 Defualt Box에 놓는다 */
                 if (nullptr != m_pSelectBox)
                 {
-                    CTransform* pSelectTrans = static_cast<CTransform*>(m_pSelectBox->Get_Component(g_strTransformTag));
+                    CTransform* pSelectTrans = dynamic_cast<CTransform*>(m_pSelectBox->Get_Component(g_strTransformTag));
                     pSelectTrans->Set_State(CTransform::STATE_POSITION, pDefaultBox_Trans->Get_State_Float4(CTransform::STATE_POSITION));
                 }
             }
         }
+
+        //Inventory_Render(!m_isRender);
     }
 }
 
@@ -365,7 +360,7 @@ void CInventory_Item_UI::Sub_Equipment_Inventory(_float fTimeDelta)
     {
         CTextBox* pFont = m_vecTextBoxes.back();
 
-        if (false == m_isRender|| 1.f <= m_fBlending)
+        if (false == m_isRender || 1.f <= m_fBlending)
         {
             pFont->Set_FontColor(ALPHA_ZERO);
             return;
@@ -415,8 +410,10 @@ void CInventory_Item_UI::Sub_Iventory_Reset()
 
         if (nullptr != pInven && CCustomize_UI::INVENTORY_TYPE::SUB_INVEN == pInven->m_eInventory_Type)
         {
+          //  pInven->Inventory_Render(true);
             pInven->m_fOpenInven_Timer = 0.f;
             pInven->m_fInterpolation_Timer = 0.f;
+            pInven->m_isRender = true;
             pInven->m_fBlending = m_fOrigin_Blending;
             pInven->m_vCurrentColor = pInven->m_vColor[0].vColor = ALPHA_ZERO;
         }
@@ -447,6 +444,22 @@ void CInventory_Item_UI::Change_BoxType(_bool _item)
         /* Non Item */
         else if (false == _item)
             Change_Texture(m_wstrDefaultTexturComTag, TEXT("Com_DefaultTexture"));
+    }
+}
+
+void CInventory_Item_UI::Find_SelectBox()
+{
+    list<class CGameObject*>* pBoxList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+
+    for (auto& iter : *pBoxList)
+    {
+        CInventory_Item_UI* pSelectBox = dynamic_cast<CInventory_Item_UI*>(iter);
+
+        if (nullptr != pSelectBox && CCustomize_UI::ITEM_BOX_TYPE::SELECT_BOX == pSelectBox->m_eBox_Type)
+        {
+            m_pSelectBox = dynamic_cast<CInventory_Item_UI*>(iter);
+            break;
+        }
     }
 }
 
