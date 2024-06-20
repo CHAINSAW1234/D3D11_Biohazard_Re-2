@@ -48,12 +48,14 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Add_Bone_Layer_Bone(TEXT("LowerBody"), "root");
 
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("UpperBody"), "spine_0");
-	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Shot"), "spine1");
+	m_pModelCom->Add_Bone_Layer_Range(TEXT("Shot"), 61, 62);
 
-	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
-	m_pModelCom->Add_AnimPlayingInfo(0, true, 1, TEXT("Default"), 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(0, true, 2, TEXT("Default"), 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(0, false, 3, TEXT("Shot"), 0.f);
+	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Shot"), "r_clavicle");
+
+	m_pModelCom->Add_AnimPlayingInfo(-1, true, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(-1, true, 1, TEXT("Default"), 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(-1, false, 2, TEXT("Shot"), 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(-1, false, 3, TEXT("UpperBody"), 1.f);
 
 	m_pModelCom->Set_TickPerSec(CPlayer::WALK_F_LOOP, 64.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::WALK_L_LOOP, 67.f);
@@ -64,7 +66,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 	m_pModelCom->Set_TickPerSec(CPlayer::WHEEL_L180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::WHEEL_R180, 300.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::HOLD_SHOT, 150.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::HOLD_SHOT, 180.f);
 
 	//m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/LeonTest/LeonBody.fbx");
 

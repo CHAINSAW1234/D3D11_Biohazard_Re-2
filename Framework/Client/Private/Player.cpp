@@ -304,6 +304,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	CWeapon* pWeapon = dynamic_cast<CWeapon*>(m_PartObjects[PART_WEAPON]);
 	pWeapon->Set_Socket(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")));
 
+	Update_KeyInput_Reload();
 	Update_Direction();
 	Update_FSM();
 	m_pFSMCom->Update(fTimeDelta);
@@ -388,7 +389,12 @@ void CPlayer::Col_Section()
 #pragma region 현진 추가
 CModel* CPlayer::Get_Body_Model()
 {
-	return static_cast<CModel*>(m_PartObjects[0]->Get_Component(g_strModelTag));
+	return static_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(g_strModelTag));
+}
+
+CModel* CPlayer::Get_Weapon_Model()
+{
+	return static_cast<CModel*>(m_PartObjects[PART_WEAPON]->Get_Component(g_strModelTag));
 }
 
 _float3* CPlayer::Get_Body_RootDir()
@@ -586,6 +592,24 @@ void CPlayer::Turn_Spine(_float fTimeDelta)
 	////Get_Body_Model()->Set_CombinedMatrix(m_pTransformCom, /*Get_Body_RootDir()*/ &pRootDir, "spine_0", vSpineTransform);
 	
 
+}
+
+void CPlayer::Update_KeyInput_Reload()
+{
+	if (Get_Body_Model()->isFinished(3)) {
+		if (m_pGameInstance->Get_KeyState('R') == DOWN) {
+			Get_Body_Model()->Change_Animation(3, HOLD_RELOAD);
+			Get_Body_Model()->Set_TrackPosition(3, 0.f);
+			Get_Body_Model()->Set_BlendWeight(3, 10.f, 0.4f);
+
+			Get_Weapon_Model()->Change_Animation(0, 2);
+			Get_Weapon_Model()->Set_TrackPosition(0, 0.f);
+		}
+		else {
+			if (Get_Body_Model()->isFinished(3))
+				Get_Body_Model()->Set_BlendWeight(3, 0.f, 0.1f);
+		}
+	}
 }
 
 void CPlayer::SetMoveDir()
