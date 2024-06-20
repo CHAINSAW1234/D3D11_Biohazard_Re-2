@@ -2285,19 +2285,35 @@ void CModel::Static_Mesh_Cooking(CTransform* pTransform)
 	}
 }
 
-void CModel::Dynamic_Mesh_Cooking(CTransform* pTransform)
+void CModel::Dynamic_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
 {
 	for (int i = 0; i < m_Meshes.size(); ++i)
 	{
-		m_Meshes[i]->Dynamic_Mesh_Cooking(pTransform);
+		m_Meshes[i]->Dynamic_Mesh_Cooking(pColliders, pTransforms, pTransform);
 	}
 }
 
 void CModel::Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
 {
-	for (int i = 0; i < m_Meshes.size(); ++i)
+	/*for (int i = 0; i < m_Meshes.size(); ++i)
 	{
 		m_Meshes[i]->Convex_Mesh_Cooking(pColliders,pTransforms,pTransform);
+	}*/
+
+	for (int i = 0; i < m_Meshes.size(); ++i)
+	{
+		if(i == 1)
+			m_Meshes[i]->Convex_Mesh_Cooking_Convert_Root(pColliders, pTransforms, pTransform,_float4(0.f,0.f,-2.f,0.f));
+		else
+			m_Meshes[i]->Convex_Mesh_Cooking(pColliders, pTransforms, pTransform);
+	}
+}
+
+void CModel::Create_SoftBody()
+{
+	for (int i = 0; i < m_Meshes.size(); ++i)
+	{
+		m_Meshes[i]->Create_SoftBody();
 	}
 }
 

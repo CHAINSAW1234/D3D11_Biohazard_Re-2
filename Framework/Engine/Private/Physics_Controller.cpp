@@ -42,8 +42,8 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	sceneDesc.cpuDispatcher = m_Dispatcher;
 	sceneDesc.filterShader = MegamotionFilterShader;
 
-	/*PxCudaContextManagerDesc cudaContextManagerDesc;
-	PxCudaContextManager* cudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc);*/
+	PxCudaContextManagerDesc cudaContextManagerDesc;
+	m_CudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc);
 
 	//Call Back
 	m_EventCallBack = new CEventCallBack();
@@ -240,9 +240,72 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	//	m_pGameInstance->SetSimulate(true);
 }
 
-void CPhysics_Controller::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
+void CPhysics_Controller::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform)
 {
-	
+	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
+
+	vector<PxVec3> vertices;
+	vector<PxU32> IndicesVec;
+
+	auto vScale = pTransform->Get_Scaled();
+	auto ScaleMatrix = XMMatrixScaling(vScale.x, vScale.y, vScale.z);
+
+	auto RotationMatrix = pTransform->Get_RotationMatrix_Pure_Mat();
+	auto PxQuat = to_quat(XMQuaternionRotationMatrix(RotationMatrix));
+	RotationMatrix = XMMatrixRotationY(PxPi) * RotationMatrix * ScaleMatrix;
+
+	auto WorldMat = pTransform->Get_WorldMatrix();
+	WorldMat = XMMatrixRotationY(PxPi) * WorldMat;
+
+	for (int i = 0; i < VertexNum; ++i)
+	{
+		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
+		VertexPos = XMVector3TransformCoord(VertexPos, RotationMatrix);
+
+		_float4 vPos;
+		XMStoreFloat4(&vPos, VertexPos);
+
+		PxVec3 Ver = PxVec3(vPos.x, vPos.y, vPos.z);
+		vertices.push_back(Ver);
+	}
+
+	for (int i = 0; i < IndexNum; ++i)
+	{
+		PxU32 Ind = pIndices[i];
+		IndicesVec.push_back(Ind);
+	}
+
+	PxTriangleMeshDesc meshDesc;
+	meshDesc.points.count = static_cast<PxU32>(VertexNum);
+	meshDesc.points.stride = sizeof(PxVec3);
+	meshDesc.points.data = vertices.data();
+
+	meshDesc.triangles.count = static_cast<PxU32>(IndexNum / 3);
+	meshDesc.triangles.stride = 3 * sizeof(PxU32);
+	meshDesc.triangles.data = IndicesVec.data();
+
+	auto Mesh = PxCreateTriangleMesh(cookingParams, meshDesc);
+
+	_float4 vPos;
+	if (pTransform)
+		vPos = pTransform->Get_State_Float4(CTransform::STATE_POSITION);
+
+	PxTransform transform(PxVec3(vPos.x, vPos.y, vPos.z));
+
+	PxTriangleMeshGeometry meshGeometry(Mesh);
+	PxMaterial* material = m_Physics->createMaterial(0.5f, 0.5f, 0.5f);
+	PxRigidDynamic* body = m_Physics->createRigidDynamic(transform);
+	PxShape* shape = m_Physics->createShape(meshGeometry, *material);
+	body->attachShape(*shape);
+	m_Scene->addActor(*body);
+	shape->release();
+	body->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	Mesh->release();
+	material->release();
+
+	pColliders->push_back(body);
+	pTransforms->push_back(transform);
 }
 
 void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
@@ -308,6 +371,138 @@ void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, 
 
 	pColliders->push_back(body);
 	pTransforms->push_back(transform);
+}
+
+void CPhysics_Controller::Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform, _float4 vDelta)
+{
+	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
+
+	vector<PxVec3> vertices;
+	vector<PxU32> IndicesVec;
+
+	auto vScale = pTransform->Get_Scaled();
+	auto ScaleMatrix = XMMatrixScaling(vScale.x, vScale.y, vScale.z);
+
+	auto RotationMatrix = pTransform->Get_RotationMatrix_Pure_Mat();
+	auto PxQuat = to_quat(XMQuaternionRotationMatrix(RotationMatrix));
+	RotationMatrix = XMMatrixRotationY(PxPi) * RotationMatrix * ScaleMatrix;
+
+	auto WorldMat = pTransform->Get_WorldMatrix();
+	WorldMat = XMMatrixRotationY(PxPi) * WorldMat;
+
+	for (int i = 0; i < VertexNum; ++i)
+	{
+		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
+		VertexPos = XMVector3TransformCoord(VertexPos, RotationMatrix);
+
+		_float4 vPos;
+		XMStoreFloat4(&vPos, VertexPos);
+		vPos += vDelta;
+
+		PxVec3 Ver = PxVec3(vPos.x, vPos.y, vPos.z);
+		vertices.push_back(Ver);
+	}
+
+	for (int i = 0; i < IndexNum; ++i)
+	{
+		PxU32 Ind = pIndices[i];
+		IndicesVec.push_back(Ind);
+	}
+
+	PxConvexMeshDesc convexDesc;
+	convexDesc.points.count = static_cast<PxU32>(vertices.size());
+	convexDesc.points.stride = sizeof(PxVec3);
+	convexDesc.points.data = vertices.data();
+	convexDesc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
+
+	PxConvexMesh* convexMesh = PxCreateConvexMesh(cookingParams, convexDesc);
+
+	_float4 vPos;
+	if (pTransform)
+		vPos = pTransform->Get_State_Float4(CTransform::STATE_POSITION);
+
+	PxTransform transform(PxVec3(vPos.x - vDelta.x, vPos.y - vDelta.y, vPos.z - vDelta.z));
+
+	PxConvexMeshGeometry geometry(convexMesh);
+	PxMaterial* material = m_Physics->createMaterial(0.5f, 0.5f, 0.5f);
+	PxRigidDynamic* body = m_Physics->createRigidDynamic(transform);
+	PxShape* shape = m_Physics->createShape(geometry, *material);
+	body->attachShape(*shape);
+	m_Scene->addActor(*body);
+	shape->release();
+	body->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	convexMesh->release();
+	material->release();
+
+	pColliders->push_back(body);
+	pTransforms->push_back(transform);
+}
+
+void CPhysics_Controller::Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
+{
+	// Init Cooking Params 
+	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
+
+	vector<PxVec3> vertices;
+	vector<PxU32> IndicesVec;
+	PxArray<physx::PxVec3> collisionMeshVertices, simulationMeshVertices;
+	PxArray<physx::PxU32> collisionMeshIndices, simulationMeshIndices;
+
+	for (int i = 0; i < VertexNum; ++i)
+	{
+		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
+
+		_float4 vPos;
+		XMStoreFloat4(&vPos, VertexPos);
+
+		PxVec3 Ver = PxVec3(vPos.x, vPos.y, vPos.z);
+		vertices.push_back(Ver);
+		collisionMeshVertices.pushBack(Ver);
+		simulationMeshVertices.pushBack(Ver);
+	}
+
+	for (int i = 0; i < IndexNum; ++i)
+	{
+		PxU32 Ind = pIndices[i];
+		IndicesVec.push_back(Ind);
+		collisionMeshIndices.pushBack(Ind);
+		simulationMeshIndices.pushBack(Ind);
+	}
+
+	// 삼각형 메쉬 설명 작성
+	PxSimpleTriangleMesh SimpleMeshDesc;
+
+	SimpleMeshDesc.points.count = static_cast<PxU32>(VertexNum);
+	SimpleMeshDesc.points.stride = sizeof(PxVec3);
+	SimpleMeshDesc.points.data = vertices.data();
+
+	SimpleMeshDesc.triangles.count = static_cast<PxU32>(IndexNum / 3);
+	SimpleMeshDesc.triangles.stride = 3 * sizeof(PxU32);
+	SimpleMeshDesc.triangles.data = IndicesVec.data();
+
+	//Compute collision mesh
+	PxTetMaker::createConformingTetrahedronMesh(SimpleMeshDesc, collisionMeshVertices, collisionMeshIndices);
+	PxTetrahedronMeshDesc meshDesc(collisionMeshVertices, collisionMeshIndices);
+
+	//Compute simulation mesh
+	PxU32 numVoxelsAlongLongestAABBAxis = 20;
+	physx::PxArray<physx::PxI32> vertexToTet;
+	vertexToTet.resize(meshDesc.points.count);
+	PxTetMaker::createVoxelTetrahedronMesh(meshDesc, numVoxelsAlongLongestAABBAxis, simulationMeshVertices, simulationMeshIndices, vertexToTet.begin());
+	PxTetrahedronMeshDesc simMeshDesc(simulationMeshVertices, simulationMeshIndices);
+	PxSoftBodySimulationDataDesc simDesc(vertexToTet);
+
+	PxSoftBodyMesh* mesh = PxCreateSoftBodyMesh(cookingParams, simMeshDesc, meshDesc, simDesc, m_Physics->getPhysicsInsertionCallback());
+
+	PxSoftBody* softBody = m_Physics->createSoftBody(*m_CudaContextManager);
+	PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE;
+	PxFEMSoftBodyMaterial* materialPtr = m_Physics->createFEMSoftBodyMaterial(1e+9f, 0.45f, 0.5f);
+	PxTetrahedronMeshGeometry geometry(mesh->getCollisionMesh());
+	PxShape* shape = m_Physics->createShape(geometry, &materialPtr, 1, true, shapeFlags);
+	softBody->attachShape(*shape);
+	softBody->attachSimulationMesh(*mesh->getSimulationMesh(), *mesh->getSoftBodyAuxData());
+	m_Scene->addActor(*softBody);
 }
 
 CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, CTransform* pTransform, const string& name)
@@ -678,6 +873,9 @@ void CPhysics_Controller::Free()
 
 	if (m_Manager)
 		m_Manager->release();
+
+	if (m_CudaContextManager)
+		m_CudaContextManager->release();
 
 	if (m_Scene)
 		m_Scene->release();
