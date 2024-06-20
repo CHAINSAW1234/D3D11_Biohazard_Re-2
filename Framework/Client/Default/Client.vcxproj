@@ -179,6 +179,7 @@
     <ClInclude Include="..\Public\Cabinet.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\Public\Clothes_Zombie.h" />
+    <ClInclude Include="..\Public\ContextMenu.h" />
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\Face_Zombie.h" />
     <ClInclude Include="..\Public\Header_Package_Zombie.h" />
@@ -198,11 +199,13 @@
     <ClInclude Include="..\Public\Inventory_Item_UI.h" />
     <ClInclude Include="..\Public\Inventory_Slot.h" />
     <ClInclude Include="..\Public\Is_Character_In_Range_Zombie.h" />
+    <ClInclude Include="..\Public\Item_Mesh_Viewer.h" />
     <ClInclude Include="..\Public\Item_UI.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
     <ClInclude Include="..\Public\Loader.h" />
+    <ClInclude Include="..\Public\Loading_UI.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\Map.h" />
     <ClInclude Include="..\Public\Map_UI.h" />
@@ -221,6 +224,7 @@
     <ClInclude Include="..\Public\Player_State_Move_Jog.h" />
     <ClInclude Include="..\Public\Player_State_Move_Walk.h" />
     <ClInclude Include="..\Public\Props.h" />
+    <ClInclude Include="..\Public\Read_Item_UI.h" />
     <ClInclude Include="..\Public\Selector_UI.h" />
     <ClInclude Include="..\Public\Sky.h" />
     <ClInclude Include="..\Public\Sleep_Zombie.h" />
@@ -250,6 +254,7 @@
     <ClCompile Include="..\Private\Cabinet.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\Private\Clothes_Zombie.cpp" />
+    <ClCompile Include="..\Private\ContextMenu.cpp" />
     <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\Face_Zombie.cpp" />
     <ClCompile Include="..\Private\InteractProps.cpp" />
@@ -266,11 +271,13 @@
     <ClCompile Include="..\Private\Inventory_Item_UI.cpp" />
     <ClCompile Include="..\Private\Inventory_Slot.cpp" />
     <ClCompile Include="..\Private\Is_Character_In_Range_Zombie.cpp" />
+    <ClCompile Include="..\Private\Item_Mesh_Viewer.cpp" />
     <ClCompile Include="..\Private\Item_UI.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
     <ClCompile Include="..\Private\Loader.cpp" />
+    <ClCompile Include="..\Private\Loading_UI.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\Private\Map.cpp" />
     <ClCompile Include="..\Private\Map_UI.cpp" />
@@ -289,6 +296,7 @@
     <ClCompile Include="..\Private\Player_State_Move_Jog.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Walk.cpp" />
     <ClCompile Include="..\Private\Props.cpp" />
+    <ClCompile Include="..\Private\Read_Item_UI.cpp" />
     <ClCompile Include="..\Private\Selector_UI.cpp" />
     <ClCompile Include="..\Private\Sky.cpp" />
     <ClCompile Include="..\Private\Sleep_Zombie.cpp" />

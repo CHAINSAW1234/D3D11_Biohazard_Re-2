@@ -19,11 +19,6 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-protected :
-	void		Inventory_Render(_bool _render);
-
-
-
 public:
 	virtual CGameObject* Clone(void* pArg) override = 0;
 	virtual void Free() override;

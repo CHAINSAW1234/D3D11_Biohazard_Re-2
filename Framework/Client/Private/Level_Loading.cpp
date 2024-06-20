@@ -7,6 +7,9 @@
 #include "Level_Logo.h"
 #include "Level_GamePlay.h"
 
+#include "Customize_UI.h"
+#include "TextBox.h"
+
 CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel{ pDevice, pContext }
 {
@@ -41,6 +44,7 @@ void CLevel_Loading::Tick(_float fTimeDelta)
 		case LEVEL_LOGO:
 			pLevel = CLevel_Logo::Create(m_pDevice, m_pContext);
 			break;
+
 		case LEVEL_GAMEPLAY:
 			pLevel = CLevel_GamePlay::Create(m_pDevice, m_pContext);
 			break;
@@ -70,10 +74,6 @@ HRESULT CLevel_Loading::Ready_Layer_BackGround()
 	return E_NOTIMPL;
 }
 
-HRESULT CLevel_Loading::Ready_Layer_UI()
-{
-	return E_NOTIMPL;
-}
 
 CLevel_Loading * CLevel_Loading::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID)
 {

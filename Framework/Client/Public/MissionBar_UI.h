@@ -23,7 +23,6 @@ public:
 public:
 	void					Write_Mission_Text(wstring _write);
 
-
 private:
 	void					Operater_MissionBar(_float fTimeDelta);
 	void					Operater_MissionArrow(_float fTimeDelta);
@@ -35,7 +34,7 @@ private:
 
 private:
 	MISSION_UI_TYPE			m_eMissionUI_Type = { MISSION_UI_TYPE::END_MISSION };
-	CMissionBar_UI* m_pMissionBar = { nullptr };
+	CMissionBar_UI*			m_pMissionBar = { nullptr };
 
 
 private: /* Mission Bar */
@@ -48,7 +47,6 @@ private: /* Font */
 	wstring					m_strMissionText = { TEXT("") };
 	_float					m_fMissionFont_Timer = {};
 	_float					m_fMissionArrow_Timer = {};
-
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

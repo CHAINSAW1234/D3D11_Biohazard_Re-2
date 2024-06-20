@@ -259,7 +259,15 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region Camera
 
-	if (m_pCamera)
+	if (UP == m_pGameInstance->Get_KeyState('C'))
+	{
+		if (true == m_bIsExamineItem)
+			m_bIsExamineItem = false;
+		else
+			m_bIsExamineItem = true;
+	}
+
+	if (m_pCamera && false == m_bIsExamineItem)
 	{
 		Calc_Camera_LookAt_Point(fTimeDelta);
 	}

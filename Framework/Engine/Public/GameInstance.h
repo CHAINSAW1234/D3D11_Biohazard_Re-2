@@ -317,6 +317,11 @@ private:
 
 #pragma endregion
 
+#pragma region For Easing
+public:
+	_float Get_Ease(EASING_TYPE eEase, _float fCurValue, _float fTargetValue, _float fRatio);
+#pragma endregion
+
 private:
 	class CGraphic_Device*					m_pGraphic_Device = { nullptr };
 	class CInput_Device*					m_pInput_Device = { nullptr };
@@ -336,6 +341,7 @@ private:
 	class CPicking*							m_pPicking = { nullptr };
 	class CThread_Pool*						m_pThread_Pool = { nullptr };
 	class CAIController*					m_pAIController = { nullptr };
+	class CEasing*							m_pEasing = { nullptr };
 
 
 	/*for physics*/

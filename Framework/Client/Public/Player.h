@@ -119,7 +119,7 @@ public:
 	_int										Get_Player_ColIndex() { return m_iCurCol; }
 	_int										Get_Player_Direction() { return m_iDir; }
 	_bool										Get_Player_RegionChange() { return m_bChange; }
-	_bool*									Get_Player_Interact_Ptr() { return &m_bInteract; }
+	_bool*										Get_Player_Interact_Ptr() { return &m_bInteract; }
 private:
 	_bool										m_bInteract = { false };
 	_bool										m_bChange = { true };
@@ -128,6 +128,10 @@ private:
 	_int										m_iPreCol = { 1 };
 	_float										m_fTimeTEST = { 0.f };
 #pragma endregion
+
+#pragma region Ã¢±Õ Ãß°¡
+	_bool										m_bIsExamineItem = { false };
+#pragma
 
 	vector<CPartObject*>						m_PartObjects;
 	_ubyte										m_eState = {};

@@ -5,6 +5,8 @@
 #include "Level_Loading.h"
 #include "FSM.h"
 
+#include "Loading_UI.h"
+
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::Get_Instance())
 {
@@ -29,6 +31,9 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Fonts()))
 		return E_FAIL;
 
+	if (FAILED(Ready_Prototype_Component_For_Static()))
+		return E_FAIL;
+	
 	if (FAILED(Open_Level(LEVEL_GAMEPLAY)))
 		return E_FAIL;
 	
@@ -75,6 +80,16 @@ HRESULT CMainApp::Render()
 	m_pGameInstance->End_Draw();
 
 	return	S_OK;
+}
+
+HRESULT CMainApp::Ready_Prototype_Component_For_Static()
+{
+	/* For.Prototype_GameObject_Loading_UI*/
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Loading_UI"),
+		CLoading_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 HRESULT CMainApp::Ready_Gara()

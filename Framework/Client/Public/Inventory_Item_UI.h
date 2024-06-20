@@ -23,6 +23,7 @@ public:
 
 public:
 	void		Change_BoxType(_bool _item);
+	void		Find_SelectBox();
 
 private: /* 박스 처리 */
 	void		Box_Operater(_float fTimeDelta);
@@ -44,7 +45,8 @@ private: /* Box Type 변수*/
 	_bool*					m_isSubRender = { nullptr };
 
 	/* 2. Having Box Type  */
-	CInventory_Item_UI*		m_pSelectBox = { nullptr };
+	CInventory_Item_UI*		m_pSelectBox	= { nullptr };
+	SUB_INVEN_WHICH_CHILD	m_eSubInven_Child = { };
 
 	/* 3. Select Box : Cursor */
 	_float2					m_fDistance_BetweenCursor = {}; /* Select Box와 Cursor 간의 거리*/

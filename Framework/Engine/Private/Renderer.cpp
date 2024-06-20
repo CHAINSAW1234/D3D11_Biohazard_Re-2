@@ -143,6 +143,9 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_Font()))
 		return E_FAIL;
 
+	if (FAILED(Render_Examine()))
+		return E_FAIL;
+
 	//if (FAILED(Render_Non_PostProcessing()))
 	//	return E_FAIL;
 
@@ -1074,6 +1077,19 @@ HRESULT CRenderer::Render_Font()
 		Safe_Release(pRenderObject);
 	}
 	m_RenderObjects[RENDER_FONT].clear();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_Examine()
+{
+	for (auto& pRenderObject : m_RenderObjects[RENDER_EXAMINE])
+	{
+		if (nullptr != pRenderObject)
+			pRenderObject->Render();
+		Safe_Release(pRenderObject);
+	}
+	m_RenderObjects[RENDER_EXAMINE].clear();
 
 	return S_OK;
 }

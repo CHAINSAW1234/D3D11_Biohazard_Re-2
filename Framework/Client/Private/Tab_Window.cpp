@@ -36,6 +36,9 @@ HRESULT CTab_Window::Initialize(void* pArg)
 		if (FAILED(Create_Inventory()))
 			return E_FAIL;
 
+		if (FAILED(Creat_Item_Mesh_Viewer()))
+			return E_FAIL;
+		
 		m_bDead = true;
 	}
 
@@ -49,7 +52,6 @@ void CTab_Window::Tick(_float fTimeDelta)
 		m_pInventory_Manager->FirstTick_Seting();
 		m_isFristTick = false;
 	}
-
 
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
 	{
@@ -75,6 +77,17 @@ void CTab_Window::Tick(_float fTimeDelta)
 
 	if (true == m_bDead)
 		return;
+
+	if (true == m_pInventory_Manager->Get_isItemExamine())
+	{
+		m_eWindowType = EXAMINE;
+		m_isMapRender = false;
+		m_pHintButton->Set_Dead(true);
+		m_pInvenButton->Set_Dead(true);
+		m_pMapButton->Set_Dead(true);
+		m_pInventory_Manager->Set_OnOff_Inven(true);
+		m_isAlphaControl = true;
+	}
 
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 	{
@@ -112,7 +125,31 @@ void CTab_Window::Tick(_float fTimeDelta)
 		break;
 	}
 		
-	case Client::CTab_Window::HINT: {
+	case Client::CTab_Window::HINT: { 
+		break;
+	}
+
+	case Client::CTab_Window::EXAMINE: {
+		m_pItem_Mesh_Viewer->Tick(fTimeDelta);
+		if (m_fCurTime / 0.5f < 1.f)
+		{
+			m_fCurTime += fTimeDelta;
+			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 0.f, 1.f, m_fCurTime / 0.5f);
+		}
+
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		{
+			m_eWindowType = INVENTORY;
+			m_pHintButton->Set_Dead(false);
+			m_pInvenButton->Set_Dead(false);
+			m_pMapButton->Set_Dead(false);
+			m_pInventory_Manager->Set_OnOff_Inven(false);
+			m_pItem_Mesh_Viewer->Reset_Viewer();
+
+			m_fCurTime = 0.f;
+			m_fAlpha = 0.f;
+			m_isAlphaControl = false;
+		}
 		break;
 	}
 		
@@ -127,6 +164,8 @@ void CTab_Window::Late_Tick(_float fTimeDelta)
 {
 	if (true == m_bDead)
 		return;
+
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 
 	switch (m_eWindowType)
 	{
@@ -143,13 +182,15 @@ void CTab_Window::Late_Tick(_float fTimeDelta)
 		break;
 	}
 
-	default:
+	case Client::CTab_Window::EXAMINE: {
+		m_pItem_Mesh_Viewer->Late_Tick(fTimeDelta);
 		break;
 	}
 
-	__super::Late_Tick(fTimeDelta);
 
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
+	default:
+		break;
+	}
 }
 
 HRESULT CTab_Window::Render()
@@ -157,7 +198,6 @@ HRESULT CTab_Window::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
 	if (FAILED(m_pShaderCom->Begin(0)))
 		return E_FAIL;
 
@@ -205,6 +245,12 @@ HRESULT CTab_Window::Bind_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaControl", &m_isAlphaControl, sizeof(_bool))))
 		return E_FAIL;
 
 	return S_OK;
@@ -260,13 +306,26 @@ HRESULT CTab_Window::Creat_Hint()
 	return S_OK;
 }
 
+HRESULT CTab_Window::Creat_Item_Mesh_Viewer()
+{
+	CGameObject::GAMEOBJECT_DESC GameOBJDesc = {};
+	GameOBJDesc.worldMatrix = XMMatrixIdentity();
+
+	CGameObject* pGameOBJ = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Item_Mesh_Viewer"), &GameOBJDesc);
+	m_pItem_Mesh_Viewer = dynamic_cast<CItem_Mesh_Viewer*>(pGameOBJ);
+
+	if (nullptr == m_pItem_Mesh_Viewer)
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CTab_Window::Create_Inventory()
 {
 	m_pInventory_Manager = CInventory_Manager::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pInventory_Manager)
 		return E_FAIL;
 
-	
 	return S_OK;
 }
 
@@ -305,4 +364,5 @@ void CTab_Window::Free()
 	Safe_Release(m_pInvenButton);
 	Safe_Release(m_pMapButton);
 	Safe_Release(m_pInventory_Manager);
+	Safe_Release(m_pItem_Mesh_Viewer);
 }
