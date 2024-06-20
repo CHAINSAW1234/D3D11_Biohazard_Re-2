@@ -322,7 +322,6 @@ void CMoveTo_Zombie::Change_Animation()
 	//	{
 	//		pBodyModel->Set_TrackPosition(iBasePlayingIndex, 0.f);
 	//	}
-
 	//}
 
 	//	else
