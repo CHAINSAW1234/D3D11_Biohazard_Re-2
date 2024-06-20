@@ -42,8 +42,8 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	sceneDesc.cpuDispatcher = m_Dispatcher;
 	sceneDesc.filterShader = MegamotionFilterShader;
 
-	/*PxCudaContextManagerDesc cudaContextManagerDesc;
-	PxCudaContextManager* cudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc);*/
+	PxCudaContextManagerDesc cudaContextManagerDesc;
+	m_CudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc);
 
 	//Call Back
 	m_EventCallBack = new CEventCallBack();
@@ -240,9 +240,72 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	//	m_pGameInstance->SetSimulate(true);
 }
 
-void CPhysics_Controller::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
+void CPhysics_Controller::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform)
 {
-	
+	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
+
+	vector<PxVec3> vertices;
+	vector<PxU32> IndicesVec;
+
+	auto vScale = pTransform->Get_Scaled();
+	auto ScaleMatrix = XMMatrixScaling(vScale.x, vScale.y, vScale.z);
+
+	auto RotationMatrix = pTransform->Get_RotationMatrix_Pure_Mat();
+	auto PxQuat = to_quat(XMQuaternionRotationMatrix(RotationMatrix));
+	RotationMatrix = XMMatrixRotationY(PxPi) * RotationMatrix * ScaleMatrix;
+
+	auto WorldMat = pTransform->Get_WorldMatrix();
+	WorldMat = XMMatrixRotationY(PxPi) * WorldMat;
+
+	for (int i = 0; i < VertexNum; ++i)
+	{
+		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
+		VertexPos = XMVector3TransformCoord(VertexPos, RotationMatrix);
+
+		_float4 vPos;
+		XMStoreFloat4(&vPos, VertexPos);
+
+		PxVec3 Ver = PxVec3(vPos.x, vPos.y, vPos.z);
+		vertices.push_back(Ver);
+	}
+
+	for (int i = 0; i < IndexNum; ++i)
+	{
+		PxU32 Ind = pIndices[i];
+		IndicesVec.push_back(Ind);
+	}
+
+	PxTriangleMeshDesc meshDesc;
+	meshDesc.points.count = static_cast<PxU32>(VertexNum);
+	meshDesc.points.stride = sizeof(PxVec3);
+	meshDesc.points.data = vertices.data();
+
+	meshDesc.triangles.count = static_cast<PxU32>(IndexNum / 3);
+	meshDesc.triangles.stride = 3 * sizeof(PxU32);
+	meshDesc.triangles.data = IndicesVec.data();
+
+	auto Mesh = PxCreateTriangleMesh(cookingParams, meshDesc);
+
+	_float4 vPos;
+	if (pTransform)
+		vPos = pTransform->Get_State_Float4(CTransform::STATE_POSITION);
+
+	PxTransform transform(PxVec3(vPos.x, vPos.y, vPos.z));
+
+	PxTriangleMeshGeometry meshGeometry(Mesh);
+	PxMaterial* material = m_Physics->createMaterial(0.5f, 0.5f, 0.5f);
+	PxRigidDynamic* body = m_Physics->createRigidDynamic(transform);
+	PxShape* shape = m_Physics->createShape(meshGeometry, *material);
+	body->attachShape(*shape);
+	m_Scene->addActor(*body);
+	shape->release();
+	body->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	Mesh->release();
+	material->release();
+
+	pColliders->push_back(body);
+	pTransforms->push_back(transform);
 }
 
 void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
@@ -308,6 +371,77 @@ void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, 
 
 	pColliders->push_back(body);
 	pTransforms->push_back(transform);
+}
+
+void CPhysics_Controller::Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform, _float4 vDelta)
+{
+	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
+
+	vector<PxVec3> vertices;
+	vector<PxU32> IndicesVec;
+
+	auto vScale = pTransform->Get_Scaled();
+	auto ScaleMatrix = XMMatrixScaling(vScale.x, vScale.y, vScale.z);
+
+	auto RotationMatrix = pTransform->Get_RotationMatrix_Pure_Mat();
+	auto PxQuat = to_quat(XMQuaternionRotationMatrix(RotationMatrix));
+	RotationMatrix = XMMatrixRotationY(PxPi) * RotationMatrix * ScaleMatrix;
+
+	auto WorldMat = pTransform->Get_WorldMatrix();
+	WorldMat = XMMatrixRotationY(PxPi) * WorldMat;
+
+	for (int i = 0; i < VertexNum; ++i)
+	{
+		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
+		VertexPos = XMVector3TransformCoord(VertexPos, RotationMatrix);
+
+		_float4 vPos;
+		XMStoreFloat4(&vPos, VertexPos);
+		vPos += vDelta;
+
+		PxVec3 Ver = PxVec3(vPos.x, vPos.y, vPos.z);
+		vertices.push_back(Ver);
+	}
+
+	for (int i = 0; i < IndexNum; ++i)
+	{
+		PxU32 Ind = pIndices[i];
+		IndicesVec.push_back(Ind);
+	}
+
+	PxConvexMeshDesc convexDesc;
+	convexDesc.points.count = static_cast<PxU32>(vertices.size());
+	convexDesc.points.stride = sizeof(PxVec3);
+	convexDesc.points.data = vertices.data();
+	convexDesc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
+
+	PxConvexMesh* convexMesh = PxCreateConvexMesh(cookingParams, convexDesc);
+
+	_float4 vPos;
+	if (pTransform)
+		vPos = pTransform->Get_State_Float4(CTransform::STATE_POSITION);
+
+	PxTransform transform(PxVec3(vPos.x - vDelta.x, vPos.y - vDelta.y, vPos.z - vDelta.z));
+
+	PxConvexMeshGeometry geometry(convexMesh);
+	PxMaterial* material = m_Physics->createMaterial(0.5f, 0.5f, 0.5f);
+	PxRigidDynamic* body = m_Physics->createRigidDynamic(transform);
+	PxShape* shape = m_Physics->createShape(geometry, *material);
+	body->attachShape(*shape);
+	m_Scene->addActor(*body);
+	shape->release();
+	body->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	convexMesh->release();
+	material->release();
+
+	pColliders->push_back(body);
+	pTransforms->push_back(transform);
+}
+
+void CPhysics_Controller::Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
+{
+	
 }
 
 CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, CTransform* pTransform, const string& name)
@@ -678,6 +812,9 @@ void CPhysics_Controller::Free()
 
 	if (m_Manager)
 		m_Manager->release();
+
+	if (m_CudaContextManager)
+		m_CudaContextManager->release();
 
 	if (m_Scene)
 		m_Scene->release();

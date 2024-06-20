@@ -41,7 +41,7 @@ private:
 	PxRigidStatic*										m_GroundPlane = { nullptr };
 	PxCapsuleControllerDesc								m_Controll_Desc;
 	PxShape*											m_Shape = { nullptr };
-
+	PxCudaContextManager*								m_CudaContextManager = { nullptr };
 #pragma region Physics_Component 
 public:
 	class CCharacter_Controller*						Create_Controller(_float4 Pos, _int* Index,class CGameObject* pCharacter,_float fHeight,_float fRadius, class CTransform* pTransform, vector<class CBone*>* pBones, const std::string& name = "");
@@ -81,8 +81,10 @@ public:
 #pragma region For Mesh Cooking
 public://For Mesh Cooking
 	void												Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,class CTransform* pTransform = nullptr);
-	void												Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,class CTransform* pTransform = nullptr);
+	void												Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void												Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
+	void												Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms, class CTransform* pTransform,_float4 vDelta);
+	void												Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 public://For Terrain Cooking
 	void												InitTerrain();
 private:

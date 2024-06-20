@@ -990,14 +990,25 @@ void CGameInstance::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexN
 	m_pPhysics_Controller->Cook_Mesh(pVertices, pIndices, VertexNum, IndexNum, pTransform);
 }
 
-void CGameInstance::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
+void CGameInstance::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform)
 {
-	m_pPhysics_Controller->Cook_Mesh_Dynamic(pVertices, pIndices, VertexNum, IndexNum, pTransform);
+	m_pPhysics_Controller->Cook_Mesh_Dynamic(pVertices, pIndices, VertexNum, IndexNum, pColliders, pTransforms, pTransform);
 }
 
 void CGameInstance::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
 {
 	m_pPhysics_Controller->Cook_Mesh_Convex(pVertices, pIndices, VertexNum, IndexNum,pColliders,pTransforms, pTransform);
+}
+
+void CGameInstance::Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform, _float4 vDelta)
+{
+	m_pPhysics_Controller->Cook_Mesh_Convex_Convert_Root(pVertices, pIndices, VertexNum, IndexNum, pColliders, pTransforms, pTransform, vDelta);
+}
+
+void CGameInstance::Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
+{
+	if (m_pPhysics_Controller)
+		m_pPhysics_Controller->Create_SoftBody(pVertices, pIndices, VertexNum, IndexNum);
 }
 
 _matrix CGameInstance::GetWorldMatrix_Rigid_Dynamic(_int Index)

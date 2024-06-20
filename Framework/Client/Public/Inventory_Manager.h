@@ -32,7 +32,6 @@ public:
 			m_iInvenCount += iAmount;
 	}
 
-
 	_bool Get_isItemExamine() const {
 		return m_bisItemExamin;
 	}
@@ -40,8 +39,9 @@ public:
 		m_bisItemExamin = isItemExamin;
 	}
 
-
-
+	//만약 아이템을 넣을수 없는 상황이라면 false를 반환함
+	_bool AddItem_ToInven(ITEM_NUMBER eAcquiredItem);
+	_bool IsCan_AddItem_ToInven();
 
 private: 
 	ID3D11Device*					m_pDevice = { nullptr };

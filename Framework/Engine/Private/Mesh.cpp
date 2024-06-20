@@ -477,14 +477,24 @@ void CMesh::Static_Mesh_Cooking(CTransform* pTransform)
 	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices,pTransform);
 }
 
-void CMesh::Dynamic_Mesh_Cooking(CTransform* pTransform)
+void CMesh::Dynamic_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms,CTransform* pTransform)
 {
-	m_pGameInstance->Cook_Mesh_Dynamic(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pTransform);
+	m_pGameInstance->Cook_Mesh_Dynamic(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pColliders, pTransforms, pTransform);
 }
 
 void CMesh::Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
 {
 	m_pGameInstance->Cook_Mesh_Convex(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices,pColliders,pTransforms, pTransform);
+}
+
+void CMesh::Convex_Mesh_Cooking_Convert_Root(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform, _float4 vDelta)
+{
+	m_pGameInstance->Cook_Mesh_Convex_Convert_Root(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pColliders, pTransforms, pTransform,vDelta);
+}
+
+void CMesh::Create_SoftBody()
+{
+	m_pGameInstance->Create_SoftBody(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices);
 }
 
 void CMesh::SetVertices(_float3* pVertices)

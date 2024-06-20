@@ -1,5 +1,6 @@
 #include "PxCollider.h"
 #include "Transform.h"
+#include "Bone.h"
 
 PxQuat               to_quat(const _fvector& q)
 {
@@ -21,7 +22,7 @@ _matrix PxTransformToXMMATRIX(const PxTransform& transform)
 	return finalMatrix;
 }
 
-PxTransform XMMATRIXToPxTransform(const XMMATRIX& matrix) 
+PxTransform XMMATRIXToPxTransform(const XMMATRIX& matrix)
 {
 	XMFLOAT4X4 matrixFloat4x4;
 	XMStoreFloat4x4(&matrixFloat4x4, matrix);
@@ -83,10 +84,61 @@ void CPxCollider::Update_Transform(_float4x4* Transform)
 	{
 		_matrix Transform = PxTransformToXMMATRIX(m_vecCollider_Transform[i]);
 
-		Transform = Mat * Transform ;
+		Transform = Mat * Transform;
 
 		m_vecCollider[i]->setGlobalPose(XMMATRIXToPxTransform(Transform));
 	}
+}
+
+void CPxCollider::Update_Transform_Divided_NotRoot(CBone* pRoot, CBone* pTarget,CTransform* pTransform, _int iIndex)
+{
+	auto Temp = pTarget->Get_TrasformationMatrix();
+	_float4x4 TargetTransform;
+	XMStoreFloat4x4(&TargetTransform, Temp);
+	TargetTransform._41 = 0.f;
+	TargetTransform._42 = 0.f;
+	TargetTransform._43 = 0.f;
+	_matrix Mat = XMLoadFloat4x4(&TargetTransform);
+
+	_matrix RotMat = XMMatrixRotationY(PxPi);
+	_matrix WorldMat = pTransform->Get_WorldMatrix();
+	_matrix RootMat= RotMat*XMLoadFloat4x4(pRoot->Get_CombinedTransformationMatrix())* WorldMat;
+	_matrix TargetMat= RotMat*XMLoadFloat4x4(pTarget->Get_CombinedTransformationMatrix())* WorldMat;
+
+	_vector vRootPos = RootMat.r[3];
+	_vector vTargetPos = TargetMat.r[3];
+	_vector vDelta = vRootPos - vTargetPos;
+	_vector vDir = XMVector4Normalize(vDelta);
+	_float	fDelta = XMVectorGetX(XMVector3Length(vDelta));
+
+	_matrix TransformMat = PxTransformToXMMATRIX(m_vecCollider_Transform[iIndex]);
+
+	_vector ColliderTransform = TransformMat.r[3];
+	_vector PureTransform = ColliderTransform;
+	ColliderTransform += vDelta;
+	ColliderTransform = XMVectorSetW(ColliderTransform,1.f);
+
+	TransformMat.r[3] = ColliderTransform;
+	TransformMat = Mat * TransformMat;
+	//TransformMat.r[3] = PureTransform;
+
+	m_vecCollider[iIndex]->setGlobalPose(XMMATRIXToPxTransform(TransformMat));
+}
+
+
+void CPxCollider::Update_Transform_Divided(_float4x4* Transform, _int iIndex)
+{
+	auto Temp = Transform;
+	Temp->_41 = 0.f;
+	Temp->_42 = 0.f;
+	Temp->_43 = 0.f;
+	_matrix Mat = XMLoadFloat4x4(Temp);
+
+	_matrix TransformMat = PxTransformToXMMATRIX(m_vecCollider_Transform[iIndex]);
+
+	TransformMat = Mat * TransformMat;
+
+	m_vecCollider[iIndex]->setGlobalPose(XMMATRIXToPxTransform(TransformMat));
 }
 
 void CPxCollider::Free()

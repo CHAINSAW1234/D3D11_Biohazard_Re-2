@@ -32,9 +32,9 @@ public:
 	void				Set_InvenItemType(INVEN_ITEM_TYPE eItmeType) { m_eInvenItemType = eItmeType; }
 
 public:
-	void Reset_Item();
-	void Set_Item(ITEM_NUMBER eItmeNum, INVEN_ITEM_TYPE eItmeType);
-
+	void				Reset_Item();
+	void				Set_Item(ITEM_NUMBER eItmeNum);
+	
 private:
 	_bool				m_isWorking = { false };
 

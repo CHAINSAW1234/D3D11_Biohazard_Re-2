@@ -54,35 +54,6 @@ void CInventory_Manager::Tick(_float fTimeDelta)
 		HoveredPos.z = 0.7f;
 		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
 	}
-
-	if (UP == m_pGameInstance->Get_KeyState('Z'))
-	{
-		if(m_iInvenCount + 1 < 21)
-			m_iInvenCount++;
-
-		m_vecInvenSlot[m_iInvenCount - 1]->Set_Dead(false);
-	}
-
-	if (UP == m_pGameInstance->Get_KeyState('X'))
-	{
-		if (nullptr != pHoveredObj)
-		{
-			m_vecItem_UI[0]->Set_Dead(false);
-			m_vecItem_UI[0]->Set_isWorking(true);
-			m_vecItem_UI[0]->Set_Item(PISTOL_AMMO, EQUIP_UNBREAKABLE);
-
-			_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredObj->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
-			HoveredPos.z = 0.5f;
-
-			CTransform* pItemUITransform = static_cast<CTransform*>(m_vecItem_UI[0]->Get_Component(g_strTransformTag));
-			pItemUITransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
-		}
-	}
-
-	if (UP == m_pGameInstance->Get_KeyState('C'))
-	{
-		m_bisItemExamin = true;
-	}
 }
 
 void CInventory_Manager::Late_Tick(_float fTimeDelta)
@@ -116,6 +87,31 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 	}
 
 	m_bisItemExamin = false;
+}
+
+_bool CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)
+{
+	for (auto& iter : m_vecItem_UI)
+	{
+
+	}
+
+	return true;
+}
+
+_bool CInventory_Manager::IsCan_AddItem_ToInven()
+{
+	_bool IsCanAddItem = false;
+
+	for (auto& iter : m_vecItem_UI)
+	{
+		if (false == iter->Get_isWorking())
+		{
+			IsCanAddItem = true;
+		}
+	}
+
+	return IsCanAddItem;
 }
 
 CInventory_Manager* CInventory_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

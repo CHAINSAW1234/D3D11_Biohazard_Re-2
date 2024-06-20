@@ -60,8 +60,20 @@ HRESULT CDoor::Initialize(void* pArg)
 
 #endif
 
-	m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L] = m_pModelCom->Get_BonePtr("_01");
-	m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R] = m_pModelCom->Get_BonePtr("_00");
+	switch (m_eType)
+	{
+	case DOOR_DOUBLE:
+		m_vecRotationBone[ATC_ROOT] = m_pModelCom->Get_BonePtr("_00");
+		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L] = m_pModelCom->Get_BonePtr("_01");
+		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R] = m_pModelCom->Get_BonePtr("_03");
+		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L] = m_pModelCom->Get_BonePtr("_04");
+		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R] = m_pModelCom->Get_BonePtr("_02");
+		break;
+	case DOOR_ONE:
+		m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L] = m_pModelCom->Get_BonePtr("_01");
+		m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R] = m_pModelCom->Get_BonePtr("_00");
+		break;
+	}
 	
 	return S_OK;
 }
@@ -267,29 +279,53 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 	switch (m_eDoubleState)
 	{
 	case LSIDE_DOUBLEDOOR_OPEN_L:
+	{
 		//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // Àß¾Ë¾Æ°©´Ï´Ù ²¨¾ï
 		m_pModelCom->Change_Animation(0, m_eDoubleState);
+
+		auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L]->Get_TrasformationMatrix();
+		_float4x4 ResultMat;
+		XMStoreFloat4x4(&ResultMat, Combined);
+		m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
 		break;
+	}
 	case LSIDE_DOUBLEDOOR_OPEN_R:
+	{
 		m_pModelCom->Change_Animation(0, m_eDoubleState);
+
+		auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R]->Get_TrasformationMatrix();
+		_float4x4 ResultMat;
+		XMStoreFloat4x4(&ResultMat, Combined);
+		m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
+	
 		break;
+	}
 	case RSIDE_DOUBLEDOOR_OPEN_L:
+	{
 		m_pModelCom->Change_Animation(0, m_eDoubleState);
+
+		auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L]->Get_TrasformationMatrix();
+		_float4x4 ResultMat;
+		XMStoreFloat4x4(&ResultMat, Combined);
+		m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
 		break;
+	}
 	case RSIDE_DOUBLEDOOR_OPEN_R:
+	{
 		m_pModelCom->Change_Animation(0, m_eDoubleState);
+
+		auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R]->Get_TrasformationMatrix();
+		_float4x4 ResultMat;
+		XMStoreFloat4x4(&ResultMat, Combined);
+		m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
+
 		break;
+	}
 	case DOUBLEDOOR_STATIC:
+	{
 		m_pModelCom->Change_Animation(0, m_eDoubleState);
 		break;
-		/*
-	case LSIDE_DOUBLEDOOR_OPEN:
-		m_pModelCom->Change_Animation(1, 0);
-		break;
-	case RSIDE_DOUBLEDOOR_OPEN:
-		m_pModelCom->Change_Animation(2, 0);
-		break;
-		*/
+	}
 	}
 	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
