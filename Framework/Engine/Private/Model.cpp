@@ -138,8 +138,16 @@ void CModel::Reset_PreAnimation(_uint iPlayingIndex)
 
 HRESULT CModel::Add_Animation(_uint iLevelIndex, wstring& strPrototypeTag)
 {
-	/*m_pGameInstance->Clone_Component()
-	m_pGameInstance->Add_Clone(iLevelIndex, strPrototypeTag, )*/
+	CComponent*			pComponent = { m_pGameInstance->Clone_Component(iLevelIndex, strPrototypeTag) };
+	if (nullptr == pComponent)
+		return E_FAIL;
+
+	CAnimation*			pAnimation = { dynamic_cast<CAnimation*>(pComponent) };
+	if (nullptr == pAnimation)
+		return E_FAIL;
+
+	m_Animations.push_back(pAnimation);
+	m_iNumAnimations += 1;
 
 	return S_OK;
 }
