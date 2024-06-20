@@ -45,7 +45,7 @@ public: // Getter
 public:		/* Anim Controll */
 	void							Reset_NonActive_Body(const list<_uint>& ActivePlayingIndices);
 
-public:		/* Utility */
+public:		/* Public Utility */
 	_bool							Compute_Direction_To_Player(_float3* pDirection);
 	_bool							Compute_Direction_To_Player_Local(_float3* pDirection);
 	_bool							Compute_Player_Angle_XZ_Plane(_float* pAngle);
@@ -54,6 +54,9 @@ public:		/* Utility */
 	CTransform*						Get_Transform(CGameObject* pObject);
 	CTransform*						Get_Transform_AI();
 
+private:	/* Private Utility */
+	CModel*							Find_PartModel(_uint iPartID);
+
 
 public:		/* Anim Branch Check */
 	_bool							Is_Start_Anim(_uint iPartID, _uint iAnimIndex);
@@ -61,7 +64,11 @@ public:		/* Anim Branch Check */
 
 	_bool							Is_Move_Anim(_uint iPartID, _uint iAnimIndex);
 	_bool							Is_Turn_Anim(_uint iPartID, _uint iAnimIndex);
+
+public:		/* Motion Blend Controll */
+	vector<_float>					Get_BlendWeights(_uint iPartID);
 	
+
 	
 protected:
 	class CPathFinder*				m_pPathFinder = { nullptr };

@@ -173,6 +173,20 @@ CTransform* CBlackBoard_Zombie::Get_Transform_AI()
 	return Get_Transform(m_pAI);
 }
 
+CModel* CBlackBoard_Zombie::Find_PartModel(_uint iPartID)
+{
+	if (nullptr == m_pAI)
+		return nullptr;
+
+	CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
+	if (nullptr == pPartObject)
+		return nullptr;
+
+	CModel*				pModel = { dynamic_cast<CModel*>(pPartObject->Get_Component(TEXT("Com_Model"))) };
+	
+	return pModel;
+}
+
 _bool CBlackBoard_Zombie::Is_Start_Anim(_uint iPartID, _uint iAnimIndex)
 {
 	CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
@@ -235,6 +249,24 @@ _bool CBlackBoard_Zombie::Is_Turn_Anim(_uint iPartID, _uint iAnimIndex)
 	}
 
 	return false;
+}
+
+vector<_float> CBlackBoard_Zombie::Get_BlendWeights(_uint iPartID)
+{
+	vector<_float>			BlendWeights;
+	CModel*			pModel = { Find_PartModel(iPartID) };
+	if (nullptr == pModel)
+		return BlendWeights;
+
+	_uint			iNumPlayingInfo = { pModel->Get_NumPlayingInfos() };
+	BlendWeights.resize(iNumPlayingInfo);
+
+	for (_uint i = 0; i < iNumPlayingInfo; ++i)
+	{
+		BlendWeights[i] = pModel->Get_BlendWeight(i);		
+	}
+
+	return BlendWeights;
 }
 
 CBlackBoard_Zombie* CBlackBoard_Zombie::Create()

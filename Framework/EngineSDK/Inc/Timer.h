@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-#define MAX_TIME_DELTA		1.f / 30.f
+#define MAX_TIME_DELTA		1.f / 5.f
 
 class CTimer final : public CBase
 {

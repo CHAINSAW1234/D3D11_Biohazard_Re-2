@@ -9,19 +9,20 @@ BEGIN(Engine)
 #define ANIM_DEFAULT_LINEARTIME		0.2f
 #define MAX_COUNT_BONE				512
 
-#define DISTANCE_FPS60				5.f
-#define DISTANCE_FPS45				7.f
-#define DISTANCE_FPS30				10.f
-#define DISTANCE_FPS20				13.f
-#define DISTANCE_FPS10				15.f
-#define DISTANCE_FPS5				20.f
+#define DISTANCE_FPSMAX				2.5f
+#define DISTANCE_FPS45				5.f
+#define DISTANCE_FPS30				7.5f
+#define DISTANCE_FPS20				10.f
+#define DISTANCE_FPS10				12.f
+#define DISTANCE_FPS5				15.f
 
-#define TIME_FPS60					(1.f / 60.f)
+#define TIME_FPSMAX					(fTimeDelta)
 #define TIME_FPS45					(1.f / 45.f)
 #define TIME_FPS30					(1.f / 30.f)
 #define TIME_FPS20					(1.f / 20.f)
 #define TIME_FPS10					(1.f / 10.f)
 #define TIME_FPS5					(1.f / 5.f)
+#define TIME_FPS1					(1.f)
 
 class ENGINE_DLL CModel final : public CComponent
 {
@@ -46,6 +47,9 @@ public:		/* For.Animation */
 
 
 	HRESULT									Add_Animation(_uint iLevelIndex, wstring& strPrototypeTag);
+
+private:	/* Optimization Culling */
+	_float									Compute_NewTimeDelta_Distatnce_Optimization(_float fTimeDelta, class CTransform* pTransform);
 
 public:		/* For.Controll AnimSpeed */
 	void									Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec);
@@ -216,7 +220,7 @@ public:
 
 	HRESULT									Play_Animations(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
 	HRESULT									Play_Animation_Light(class CTransform* pTransform, _float fTimeDelta);
-	HRESULT									Play_Animation_PartModel(class CTransform* pTransform, _float fTimeDelta);
+	HRESULT									Play_Pose(class CTransform* pTransform, _float fTimeDelta);
 	HRESULT									Play_IK(class CTransform* pTransform, _float fTimeDelta);
 	HRESULT									Render(_uint iMeshIndex);
 

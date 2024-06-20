@@ -56,15 +56,10 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Shot"), "r_arm_humerus");
 	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Shot"), "r_arm_wrist");
 
-	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
-	m_pModelCom->Add_AnimPlayingInfo(0, true, 1, TEXT("Default"), 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(0, true, 2, TEXT("Default"), 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(0, false, 3, TEXT("Shot"), 0.f);
-	
-	m_pModelCom->Reset_PreAnimation(0);
-	m_pModelCom->Reset_PreAnimation(1);
-	m_pModelCom->Reset_PreAnimation(2);
-	m_pModelCom->Reset_PreAnimation(3);
+	m_pModelCom->Add_AnimPlayingInfo(-1, true, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(-1, true, 1, TEXT("Default"), 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(-1, true, 2, TEXT("Default"), 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(-1, false, 3, TEXT("Shot"), 0.f);
 
 	m_pModelCom->Set_TickPerSec(CPlayer::WALK_F_LOOP, 64.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::WALK_L_LOOP, 67.f);

@@ -186,8 +186,8 @@ void CZombie::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	if(m_pController)
-		m_pController->Update_Collider();
+	/*if(m_pController)
+		m_pController->Update_Collider();*/
 }
 
 HRESULT CZombie::Render()

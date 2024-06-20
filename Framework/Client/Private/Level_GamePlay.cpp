@@ -231,7 +231,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
 		return E_FAIL;
 
-	for (_uint i = 0; 1 > i; ++i)
+	for (_uint i = 0; iObjectNum	 > i; ++i)
 	{
 		_uint iLength = { 0 };
 
@@ -251,7 +251,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	}
 	CloseHandle(hFile);
 
-#ifdef MAP_NOTHING
 	CMonster::MONSTER_DESC ObjectDesc = {};
 
 	_matrix			WorldMatrix = { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
@@ -259,7 +258,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
 		return E_FAIL;
-#endif
 
 	return S_OK;
 }

@@ -68,7 +68,7 @@ void CFace_Zombie::Late_Tick(_float fTimeDelta)
 
 	_float3			vTempTranslation = {};
 	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);
-
+	
 	if(m_bRender)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
