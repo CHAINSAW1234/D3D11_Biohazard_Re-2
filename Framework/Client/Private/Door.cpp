@@ -403,18 +403,6 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 	{
 		m_eOneState_Prev = m_eOneState;
 		m_pModelCom->Change_Animation(0, m_eOneState);
-
-		//auto Combined = XMLoadFloat4x4(m_pRotationBone->Get_CombinedTransformationMatrix());
-#ifndef NON_COLLISION_PROP
-
-		auto Combined = m_pRotationBone->Get_TrasformationMatrix();
-		//Combined = Combined * m_pTransformCom->Get_WorldMatrix();
-		_float4x4 ResultMat;
-		XMStoreFloat4x4(&ResultMat, Combined);
-		m_pPx_Collider->Update_Transform(&ResultMat);
-		break;
-
-#endif
 	}
 	case ONEDOOR_STATIC:
 		m_pModelCom->Change_Animation(0, m_eOneState);
