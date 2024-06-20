@@ -156,8 +156,8 @@ private:
 	HRESULT								Initialize_Model();
 
 public:
-	MOTION_TYPE							Get_Current_MotionType() { return m_ePreMotionType; }
-	MOTION_TYPE							Get_Pre_MotionType() { return m_eCurrentMotionType; }
+	MOTION_TYPE							Get_Current_MotionType() { return m_eCurrentMotionType; }
+	MOTION_TYPE							Get_Pre_MotionType() { return m_ePreMotionType; }
 
 private:
 	void								Update_Current_MotionType();

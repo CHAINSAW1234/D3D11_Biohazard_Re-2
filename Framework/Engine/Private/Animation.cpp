@@ -118,7 +118,7 @@ void CAnimation::Invalidate_TransformationMatrix_LinearInterpolation(_float fAcc
 	}
 }
 
-vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _uint iNumBones, const set<_uint>& IncludedBoneIndices, _bool* pFirstTick, CPlayingInfo* pPlayingInfo)
+vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _uint iNumBones, const unordered_set<_uint>& IncludedBoneIndices, _bool* pFirstTick, CPlayingInfo* pPlayingInfo)
 {
 	vector<_float4x4>			TransformationMatrices;
 	_bool						isFinished = false;
@@ -144,6 +144,7 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _u
 		{
 			isFinished = true;
 			pPlayingInfo->Set_Finished(isFinished);
+			pPlayingInfo->Set_TrackPosition(m_fDuration);
 
 			//	루프가아닌 경우 애니메이션 종료 시 마지막 키프레임들을 그대로 반환한다. 
 			//	마지막 포즈와 혼합되어야함
@@ -183,7 +184,7 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _u
 		_uint			iBoneIndex = { m_Channels[iChannelIndex]->Get_BoneIndex() };
 		_int			iKeyFrameIndex = { pPlayingInfo->Get_KeyFrameIndex(iChannelIndex) };
 
-		set<_uint>::iterator		iter = { IncludedBoneIndices.find(iBoneIndex) };
+		unordered_set<_uint>::iterator		iter = { IncludedBoneIndices.find(iBoneIndex) };
 		if (iter == IncludedBoneIndices.end())
 			continue;
 
@@ -203,13 +204,11 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _u
 	return TransformationMatrices;
 }
 
-vector<_float4x4> CAnimation::Compute_TransfromationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, vector<_float4x4>& TransformationMatrices, _uint iNumBones, _uint iRootIndex, const vector<KEYFRAME>& LastKeyFrames)
+vector<_float4x4> CAnimation::Compute_TransfromationMatrix_LinearInterpolation(_float fAccLinearInterpolation, _float fTotalLinearTime, vector<_float4x4>& TransformationMatrices, _uint iNumBones, const vector<KEYFRAME>& LastKeyFrames)
 {
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
 		_uint				iBoneIndex = { m_Channels[i]->Get_BoneIndex() };
-		/*if (iBoneIndex == iRootIndex)
-			continue;*/
 
 		_float4x4			TransformationFloat4x4 = { m_Channels[i]->Compute_TransformationMatrix_LinearInterpolation(TransformationMatrices, fAccLinearInterpolation, fTotalLinearTime, LastKeyFrames) };
 		TransformationMatrices[iBoneIndex] = TransformationFloat4x4;

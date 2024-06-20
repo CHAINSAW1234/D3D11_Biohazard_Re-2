@@ -38,8 +38,9 @@ private :
 	_uint			m_iWhichChild = { 0 };
 	_float			fMouseSensor = { 20.f };
 	_uint			m_iCnt = { 0 };
-	_bool			m_isGara = { false };
 
+	_bool			m_isGara = { false };
+	_bool			m_isPrevRender = { false };
 private :
 	MAP_STATE_TYPE		m_eMapState = { MAP_STATE_TYPE::NONE_STATE };
 	CGameObject*		m_pTab_Window = { nullptr };

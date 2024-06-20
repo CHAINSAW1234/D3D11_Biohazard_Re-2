@@ -45,7 +45,7 @@ HRESULT CSelector_UI::Initialize(void* pArg)
 
             if (nullptr != pSelector && false == pSelector->m_IsChild)
             {
-                CTransform* pParentTrans = dynamic_cast<CTransform*>(pSelector->Get_Component(g_strTransformTag));
+                CTransform* pParentTrans = static_cast<CTransform*>(pSelector->Get_Component(g_strTransformTag));
                 _float4 vParentPos = pParentTrans->Get_State_Float4(CTransform::STATE_POSITION);
                 _float3 fParentScaled = pParentTrans->Get_Scaled();
 
@@ -60,6 +60,8 @@ HRESULT CSelector_UI::Initialize(void* pArg)
             }
         }
     }
+
+    m_pPlayer = Find_Player();
 
     /* Y축 얻어오기 */
     if (false == m_isArrow)
@@ -94,6 +96,9 @@ HRESULT CSelector_UI::Initialize(void* pArg)
 void CSelector_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
+
+    if(nullptr == m_pPlayer)
+        m_pPlayer = Find_Player();
 
     m_vColor[0].isBlender = m_isBlending = true;
     m_vColor[0].vColor = m_vCurrentColor = ALHPE_ZERO;
@@ -175,7 +180,7 @@ void CSelector_UI::Render_Selector_UI(CGameObject* _obj, _float fTimeDelta)
             m_fBlending -= fTimeDelta;
 
         /* 2. 뷰에 따라 위치 조정 */
-        CTransform* pObjTrans = dynamic_cast<CTransform*>(_obj->Get_Component(g_strTransformTag));
+        CTransform* pObjTrans = static_cast<CTransform*>(_obj->Get_Component(g_strTransformTag));
         _float3 fCurrentSize = {};
 
         _float4 vTargetPosition = pObjTrans->Get_State_Float4(CTransform::STATE_POSITION);
@@ -230,7 +235,7 @@ void CSelector_UI::Interactive_Selector_UI(CGameObject* _obj, _float fTimeDelta)
     }
     else
     {
-        CTransform* pParentTrans = dynamic_cast<CTransform*>(m_pParent->Get_Component(g_strTransformTag));
+        CTransform* pParentTrans = static_cast<CTransform*>(m_pParent->Get_Component(g_strTransformTag));
         _float4 vParentTrans = pParentTrans->Get_State_Float4(CTransform::STATE_POSITION);
 
         vParentTrans.y -= X_TYPEY;
@@ -240,20 +245,25 @@ void CSelector_UI::Interactive_Selector_UI(CGameObject* _obj, _float fTimeDelta)
 
 _float CSelector_UI::Distance_Player(CGameObject* _obj)
 {
-    /* Player 찾기 */
-    CGameObject* pPlayerObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->back();
-    auto pPlayer = dynamic_cast<CPlayer*>(pPlayerObj);
-
-    if (nullptr == pPlayer)
-        return _float();
-
-    CTransform* pPlayerTrans = dynamic_cast<CTransform*>(pPlayer->Get_Component(g_strTransformTag));
-    CTransform* pTargetTrans = dynamic_cast<CTransform*>(_obj->Get_Component(g_strTransformTag));
+    CTransform* pPlayerTrans = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
+    CTransform* pTargetTrans = static_cast<CTransform*>(_obj->Get_Component(g_strTransformTag));
 
     _vector vDistanceVector = pTargetTrans->Get_State_Vector(CTransform::STATE_POSITION) - pPlayerTrans->Get_State_Vector(CTransform::STATE_POSITION);
     _float fPlayer_Distance = XMVectorGetX(XMVector3Length(vDistanceVector));
 
     return fPlayer_Distance;
+}
+
+CPlayer* CSelector_UI::Find_Player()
+{
+    /* Player 찾기 */
+    CGameObject* pPlayerObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->back();
+    auto pPlayer = dynamic_cast<CPlayer*>(pPlayerObj);
+
+    if (nullptr == pPlayer)
+        return nullptr;
+
+    return pPlayer;
 }
 
 CCustomize_UI* CSelector_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

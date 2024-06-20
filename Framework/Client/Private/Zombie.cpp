@@ -186,13 +186,8 @@ void CZombie::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	auto vPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
-	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
-	if (m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f))
-	{
-		if (m_pController)
-			m_pController->Update_Collider();
-	}
+	if(m_pController)
+		m_pController->Update_Collider();
 }
 
 HRESULT CZombie::Render()

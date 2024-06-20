@@ -17,6 +17,7 @@
 #include "Thread_Pool.h"
 #include "AIController.h"
 #include "GameObject.h"
+#include "Easing.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -152,6 +153,13 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 	if (nullptr == m_pAIController)
 	{
 		MSG_BOX(TEXT("Error: m_pAIController::Create -> nullptr"));
+		return E_FAIL;
+	}
+
+	m_pEasing = CEasing::Create();
+	if (nullptr == m_pEasing)
+	{
+		MSG_BOX(TEXT("Error: m_pEasing::Create -> nullptr"));
 		return E_FAIL;
 	}
 
@@ -1126,11 +1134,17 @@ void CGameInstance::Initialize_BehaviorTree(_uint* iId)
 {
 
 }
-
 #pragma endregion
 
 #pragma region Graphic Device
 
+#pragma endregion
+
+#pragma region Easing
+_float CGameInstance::Get_Ease(EASING_TYPE eEase, _float fCurValue, _float fTargetValue, _float fRatio)
+{
+	return m_pEasing->Get_Ease(eEase, fCurValue, fTargetValue, fRatio);
+}
 #pragma endregion
 
 #pragma region Render_Target_Debugger
@@ -1276,4 +1290,5 @@ void CGameInstance::Free()
 	Safe_Release(m_pThread_Pool);
 	Safe_Release(m_pAIController);
 	Safe_Release(m_pPhysics_Controller);
+	Safe_Release(m_pEasing);
 }

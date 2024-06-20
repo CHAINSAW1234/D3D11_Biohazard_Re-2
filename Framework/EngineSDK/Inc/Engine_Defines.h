@@ -16,6 +16,15 @@ namespace Engine
 {
 	enum MOUSEKEYSTATE { DIMKS_LBUTTON, DIMKS_RBUTTON, DIMKS_WHEEL, DIMKS_X, DIMKS_END };
 	enum MOUSEMOVESTATE { DIMMS_X, DIMMS_Y, DIMMS_WHEEL, DIMMS_END };
+	enum EASING_TYPE {
+		Ease_InQuad = 0, Ease_OutQuad, Ease_InOutQuad, Ease_InCubic, Ease_OutCubic,
+		Ease_InOutCubic = 5, Ease_InQuart, Ease_OutQuart, Ease_InOutQuart, Ease_InQuint,
+		Ease_OutQuint = 10, Ease_InOutQuint, Ease_InSine, Ease_OutSine, Ease_InOutSine,
+		Ease_InExpo = 15, Ease_OutExpo, Ease_InOutExpo, Ease_InCirc, Ease_OutCirc,
+		Ease_InOutCirc = 20, Ease_Linear, Ease_InBounce, Ease_OutBounce, Ease_InOutBounce,
+		Ease_InBack = 25, Ease_OutBack, Ease_InOutBack, Ease_InElastic,
+		Ease_OutElastic = 30, Ease_InOutElastic, Ease_END
+	};
 }
 
 #include <physx/PxPhysics.h>

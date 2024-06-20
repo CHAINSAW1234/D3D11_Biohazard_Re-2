@@ -40,7 +40,6 @@ void CPlayer_State_Hold_Idle::OnStateExit()
 	//m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
 	//m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0);
 	m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 0);
-	m_pPlayer->Get_Body_Model()->Set_BlendWeight(3, 0);
 	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
 }
 
@@ -129,26 +128,26 @@ void CPlayer_State_Hold_Idle::Look_Cam(_float fTimeDelta)
 void CPlayer_State_Hold_Idle::Shot()
 {
 	if (m_isShot) {
-		if (m_pPlayer->Get_Body_Model()->isFinished(3)) {
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(3, 0, 0.2f);
+		if (m_pPlayer->Get_Body_Model()->isFinished(2)) {
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 0, 0.1f);
 			m_isShot = false;
 		}
 	}
 
-	if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == PRESSING) {
-		if (!m_isShot && m_pPlayer->Get_Body_Model()->Get_BlendWeight(3) == 0.f) {
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(3, 1, 0.2f);
+	if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == PRESSING && m_pPlayer->Get_Body_Model()->isFinished(3)) {
+		if (!m_isShot && m_pPlayer->Get_Body_Model()->Get_BlendWeight(2) == 0.f) {
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 1, 0.1f);
 			if (1) {
 				// 총알 있으면
-				m_pPlayer->Get_Body_Model()->Change_Animation(3, CPlayer::HOLD_SHOT);
+				m_pPlayer->Get_Body_Model()->Change_Animation(2, CPlayer::HOLD_SHOT);
 				// 총알 발사하는 함수 추가
 			}
 			else {
 				// 총알 없음
-				m_pPlayer->Get_Body_Model()->Change_Animation(3, CPlayer::HOLD_SHOT_NO_AMMO);
+				m_pPlayer->Get_Body_Model()->Change_Animation(2, CPlayer::HOLD_SHOT_NO_AMMO);
 			}
 
-			m_pPlayer->Get_Body_Model()->Set_TrackPosition(3, 0);
+			m_pPlayer->Get_Body_Model()->Set_TrackPosition(2, 0);
 			m_isShot = true;
 		}
 	}

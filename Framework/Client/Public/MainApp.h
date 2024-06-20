@@ -20,6 +20,10 @@ public:
 	void Tick(_float fTimeDelta);
 	HRESULT Render();
 
+private :
+	HRESULT		Ready_Prototype_Component_For_Static();
+
+
 private:
 	CGameInstance*			m_pGameInstance = { nullptr };
 	ID3D11Device*			m_pDevice = { nullptr };

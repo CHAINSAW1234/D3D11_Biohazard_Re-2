@@ -295,6 +295,9 @@
     <Filter Include="01.Utility\97.Physics\Physics_Component\PxCollider">
       <UniqueIdentifier>{e7549f5f-afce-4cf1-aace-7cc16a6c4cb9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\13.Easing">
+      <UniqueIdentifier>{8c1c9201-8308-40b6-a11d-967950050dae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -557,6 +560,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\PxCollider.cpp">
       <Filter>01.Utility\97.Physics\Physics_Component\PxCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Easing.cpp">
+      <Filter>01.Utility\13.Easing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -842,6 +848,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\PxCollider.h">
       <Filter>01.Utility\97.Physics\Physics_Component\PxCollider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Easing.h">
+      <Filter>01.Utility\13.Easing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

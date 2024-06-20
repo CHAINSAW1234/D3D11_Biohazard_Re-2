@@ -46,7 +46,7 @@ private : /* Mask ฐüทร*/
 
 private : 
 	CHPBar_UI*					m_pMainBar				= { nullptr };
-	class CInventory_Item_UI*	m_pMain_Inventory = { nullptr };
+	_bool*						m_pMain_Inven_Render	= { nullptr };
 
 	_float2						m_fDistance_Font = {};
 

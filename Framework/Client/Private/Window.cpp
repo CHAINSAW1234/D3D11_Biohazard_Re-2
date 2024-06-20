@@ -98,7 +98,7 @@ void CWindow::Late_Tick(_float fTimeDelta)
 	}
 	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &fTransform3);
+	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
 
 
 

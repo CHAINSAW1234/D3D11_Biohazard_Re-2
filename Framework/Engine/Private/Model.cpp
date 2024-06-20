@@ -146,6 +146,83 @@ HRESULT CModel::Add_Animation(_uint iLevelIndex, wstring& strPrototypeTag)
 
 #pragma endregion
 
+_float CModel::Compute_NewTimeDelta_Distatnce_Optimization(_float fTimeDelta, CTransform* pTransform)
+{
+	_matrix			CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
+	_vector			vCamPosition = { CamWorldMatrix.r[CTransform::STATE_POSITION] };
+	_matrix			MyWorldMatirx = { pTransform->Get_WorldMatrix() };
+	_vector			vMyPosition = { MyWorldMatirx.r[CTransform::STATE_POSITION] };
+
+	_float			fDistance = { XMVectorGetX(XMVector3Length(vCamPosition - vMyPosition)) };
+
+	m_fAccOptimizationTime += fTimeDelta;
+	if (fDistance < DISTANCE_FPSMAX)
+	{
+		if (TIME_FPSMAX > m_fAccOptimizationTime)
+			return 0.f;
+
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
+
+	else if (fDistance < DISTANCE_FPS45)
+	{
+		if (TIME_FPS45 > m_fAccOptimizationTime)
+			return 0.f;
+
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
+
+	else if (fDistance < DISTANCE_FPS30)
+	{
+		if (TIME_FPS30 > m_fAccOptimizationTime)
+			return 0.f;
+
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
+
+	else if (fDistance < DISTANCE_FPS20)
+	{
+		if (TIME_FPS20 > m_fAccOptimizationTime)
+			return 0.f;
+
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
+
+	else if (fDistance < DISTANCE_FPS10)
+	{
+		if (TIME_FPS10 > m_fAccOptimizationTime)
+			return 0.f;
+
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
+
+	// 5프레임
+	else if (fDistance < DISTANCE_FPS5)
+	{
+		if (TIME_FPS5 > m_fAccOptimizationTime)
+			return 0.f;
+
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
+
+	else
+	{
+		if (TIME_FPS1 > m_fAccOptimizationTime)
+			return 0.f;
+
+		fTimeDelta = m_fAccOptimizationTime;
+		m_fAccOptimizationTime = 0.f;
+	}
+
+	return fTimeDelta;
+}
+
 void CModel::Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec)
 {
 	if (iAnimIndex >= m_Animations.size())
@@ -278,7 +355,7 @@ void CModel::Add_Bone_Layer_Range(const wstring& strLayerTag, _uint iStartBoneIn
 		iEndBoneIndex >= iNumBones)
 		return;
 
-	set<_uint>			BoneIndices;
+	unordered_set<_uint>			BoneIndices;
 	for (_uint i = iStartBoneIndex; i <= iEndBoneIndex; ++i)
 	{
 		BoneIndices.emplace(i);
@@ -319,7 +396,7 @@ void CModel::Add_Bone_Layer_ChildIndices(const wstring& strLayerTag, _uint iPare
 	if (true == ChildBoneIndices.empty())
 		return;
 
-	set<_uint>				BoneIndices;
+	unordered_set<_uint>				BoneIndices;
 	for (auto& iChildIndex : ChildBoneIndices)
 	{
 		BoneIndices.emplace(iChildIndex);
@@ -338,7 +415,7 @@ void CModel::Add_Bone_Layer_All_Bone(const wstring& strLayerTag)
 	if (nullptr != pBoneLayer)
 		return;
 
-	set<_uint>			BoneIndices;
+	unordered_set<_uint>			BoneIndices;
 	for (_uint i = 0; i < static_cast<_uint>(m_Bones.size()); ++i)
 		BoneIndices.emplace(i);
 
@@ -674,7 +751,7 @@ set<_uint> CModel::Compute_IncludedBoneIndices_AllBoneLayer()
 		if (nullptr == pBoneLayer)
 			continue;
 
-		set<_uint>		TempIncludedBoneIndices = { pBoneLayer->Get_IncludedBoneIndices() };
+		unordered_set<_uint>		TempIncludedBoneIndices = { pBoneLayer->Get_IncludedBoneIndices() };
 		for (auto& iBoneIndex : TempIncludedBoneIndices)
 		{
 			ResultIncludedBoneIndices.emplace(iBoneIndex);
@@ -715,6 +792,9 @@ void CModel::Apply_RootMotion_Rotation(CTransform* pTransform)
 		if (nullptr == pPlayingInfo)
 			continue;
 
+		if (-1 == pPlayingInfo->Get_AnimIndex())
+			continue;
+
 		_float			fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
 		_float			fBlendWeightRatio = { fBlendWeight / fTotalWeight };
 
@@ -753,6 +833,9 @@ void CModel::Apply_RootMotion_Translation(CTransform* pTransform, _float3* pMove
 	for (auto& pPlayingInfo : m_PlayingAnimInfos)
 	{
 		if (nullptr == pPlayingInfo)
+			continue;
+
+		if (-1 == pPlayingInfo->Get_AnimIndex())
 			continue;
 
 		_float			fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
@@ -1725,83 +1808,13 @@ HRESULT CModel::Bind_ShaderResource_MaterialDesc(CShader* pShader, const _char* 
 HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection)
 {
 	if (false == Is_Set_RootBone())
-		return E_FAIL;
-
-	_matrix			CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
-	_vector			vCamPosition = { CamWorldMatrix.r[CTransform::STATE_POSITION] };
-	_matrix			MyWorldMatirx = { pTransform->Get_WorldMatrix() };
-	_vector			vMyPosition = { MyWorldMatirx.r[CTransform::STATE_POSITION] };
-
-	_float			fDistance = { XMVectorGetX(XMVector3Length(vCamPosition - vMyPosition)) };
+		return E_FAIL;	
 
 	*pMovedDirection = { 0.f, 0.f, 0.f };
 
-	m_fAccOptimizationTime += fTimeDelta;
-	if (fDistance < DISTANCE_FPS60)
-	{
-		if (TIME_FPS60 > m_fAccOptimizationTime)
+		fTimeDelta = Compute_NewTimeDelta_Distatnce_Optimization(fTimeDelta, pTransform);
+		if (0.f == fTimeDelta)
 			return S_OK;
-
-		fTimeDelta = m_fAccOptimizationTime;
-		m_fAccOptimizationTime = 0.f;
-	}
-
-	else if (fDistance < DISTANCE_FPS45)
-	{
-		if (TIME_FPS45 > m_fAccOptimizationTime)
-			return S_OK;
-
-		fTimeDelta = m_fAccOptimizationTime;
-		m_fAccOptimizationTime = 0.f;
-	}
-
-	else if (fDistance < DISTANCE_FPS30)
-	{
-		if (TIME_FPS30 > m_fAccOptimizationTime)
-			return S_OK;
-
-		fTimeDelta = m_fAccOptimizationTime;
-		m_fAccOptimizationTime = 0.f;
-	}
-
-	else if (fDistance < DISTANCE_FPS20)
-	{
-		if (TIME_FPS20 > m_fAccOptimizationTime)
-			return S_OK;
-
-		fTimeDelta = m_fAccOptimizationTime;
-		m_fAccOptimizationTime = 0.f;
-	}
-
-	else if (fDistance < DISTANCE_FPS10)
-	{
-		_float			fFramePerSec = TIME_FPS10;
-		if (TIME_FPS10 > m_fAccOptimizationTime)
-			return S_OK;
-
-		fTimeDelta = m_fAccOptimizationTime;
-		m_fAccOptimizationTime = 0.f;
-	}
-
-	// 5프레임
-	else if (fDistance < DISTANCE_FPS5)
-	{
-		if (TIME_FPS5 > m_fAccOptimizationTime)
-			return S_OK;
-
-		fTimeDelta = m_fAccOptimizationTime;
-		m_fAccOptimizationTime = 0.f;
-	}
-
-	else
-	{
-		if (1.f > m_fAccOptimizationTime)
-			return S_OK;
-
-		fTimeDelta = m_fAccOptimizationTime;
-		m_fAccOptimizationTime = 0.f;
-	}
-
 
 	for (auto& pPlayingInfo : m_PlayingAnimInfos)
 	{
@@ -1842,91 +1855,86 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 
 HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 {
-	_matrix			CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
-	_vector			vCamPosition = { CamWorldMatrix.r[CTransform::STATE_POSITION] };
-	_matrix			MyWorldMatirx = { pTransform->Get_WorldMatrix() };
-	_vector			vMyPosition = { MyWorldMatirx.r[CTransform::STATE_POSITION] };
+	fTimeDelta = Compute_NewTimeDelta_Distatnce_Optimization(fTimeDelta, pTransform);
+	if (0.f == fTimeDelta)
+		return S_OK;
 
-	_float			fDistance = { XMVectorGetX(XMVector3Length(vCamPosition - vMyPosition)) };
+	_bool		isFinished = { false };
 
-	m_fAccOptimizationTime += fTimeDelta;
-	//	60프레임
-	if (fDistance < DISTANCE_FPS60)
+	CPlayingInfo*		pPlayingInfo = { Find_PlayingInfo(0) };
+	if (nullptr == pPlayingInfo)
 	{
-		_float			fFramePerSec = TIME_FPS60;
-		if (fFramePerSec > m_fAccOptimizationTime)
-			return S_OK;
+		MSG_BOX(TEXT("Default Playing Info 생성 필요 HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)"));
 
-		fTimeDelta = m_fAccOptimizationTime;
-		m_fAccOptimizationTime = 0.f;
+		return E_FAIL;
 	}
 
-	if (fDistance < DISTANCE_FPS45)
+	_int				iAnimIndex = { pPlayingInfo->Get_AnimIndex() };	
+	if (-1 == iAnimIndex)
 	{
-		_float			fFramePerSec = TIME_FPS45;
-		if (fFramePerSec > m_fAccOptimizationTime)
-			return S_OK;
+		MSG_BOX(TEXT("Anim Index == -1,  HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)"));
 
-		fTimeDelta = m_fAccOptimizationTime;
-		m_fAccOptimizationTime = 0.f;
+		return E_FAIL;
 	}
 
-	else if (fDistance < DISTANCE_FPS30)
+	CBone_Layer*		pBoneLayer = { Find_BoneLayer(pPlayingInfo->Get_BoneLayerTag()) };	
+	if (nullptr == pBoneLayer)
 	{
-		_float			fFramePerSec = TIME_FPS30;
-		if (fFramePerSec > m_fAccOptimizationTime)
-			return S_OK;
+		MSG_BOX(TEXT("Bone Layer 설정 하시오, HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)"));
 
-		fTimeDelta = m_fAccOptimizationTime;
-		m_fAccOptimizationTime = 0.f;
+		return E_FAIL;
 	}
 
-	else if (fDistance < DISTANCE_FPS20)
-	{
-		_float			fFramePerSec = TIME_FPS20;
-		if (fFramePerSec > m_fAccOptimizationTime)
-			return S_OK;
+	_uint				iNumBones = { static_cast<_uint>(m_Bones.size()) };
+	unordered_set<_uint>			IncludeBoneIndices = { pBoneLayer->Get_IncludedBoneIndices() };
+	_bool				isFirstTick = { false };
+	
+	vector<_float4x4>	TransformationMatrices = { m_Animations[iAnimIndex]->Compute_TransfromationMatrix(fTimeDelta, iNumBones, IncludeBoneIndices, &isFirstTick, pPlayingInfo) };
 
-		fTimeDelta = m_fAccOptimizationTime;
-		m_fAccOptimizationTime = 0.f;
+	if (true == isFirstTick)
+	{
+		_int						iPreAnimIndex = { pPlayingInfo->Get_PreAnimIndex() };
+
+		if (-1 != iPreAnimIndex)
+		{
+			pPlayingInfo->Reset_LinearInterpolation();
+			pPlayingInfo->Set_LinearInterpolation(true);
+
+			vector<KEYFRAME>			LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
+			pPlayingInfo->Update_LinearStateKeyFrames(LastKeyFrames);
+		}	
 	}
 
-	else if (fDistance < DISTANCE_FPS10)
+	Update_LinearInterpolation(fTimeDelta, 0);
+	if (true == pPlayingInfo->Is_LinearInterpolation())
 	{
-		_float			fFramePerSec = TIME_FPS10;
-		if (fFramePerSec > m_fAccOptimizationTime)
-			return S_OK;
+		_float						fAccLinearTime = { pPlayingInfo->Get_AccLinearInterpolation() };
+		vector<KEYFRAME>			LinearStartKeyFrames = { pPlayingInfo->Get_LinearStartKeyFrames() };		
 
-		fTimeDelta = m_fAccOptimizationTime;
-		m_fAccOptimizationTime = 0.f;
+		for (_uint i = 0; i < iNumBones; ++i)
+		{
+			TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearTime, m_fTotalLinearTime, TransformationMatrices, iNumBones, LinearStartKeyFrames);
+		}
 	}
 
-	// 5프레임
-	else if (fDistance < DISTANCE_FPS5)
+	for (_uint i = 0; i < iNumBones; ++i)
 	{
-		_float			fFramePerSec = TIME_FPS5;
-		if (fFramePerSec > m_fAccOptimizationTime)
-			return S_OK;
+		m_Bones[i]->Set_TransformationMatrix(TransformationMatrices[i]);
+	}	
 
-		fTimeDelta = m_fAccOptimizationTime;
-		m_fAccOptimizationTime = 0.f;
-	}
+	pPlayingInfo->Update_LastKeyFrames(TransformationMatrices, iNumBones, m_fTotalLinearTime);
 
-	else
+	for (_uint i = 0; i < iNumBones; ++i)
 	{
-		_float			fFramePerSec = 1.f / 1.f;
-		if (fFramePerSec > m_fAccOptimizationTime)
-			return S_OK;
-
-		fTimeDelta = m_fAccOptimizationTime;
-		m_fAccOptimizationTime = 0.f;
-	}
+		m_Bones[i]->Invalidate_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix));
+	}	
 
 	return S_OK;
 }
 
-HRESULT CModel::Play_Animation_PartModel(CTransform* pTransform, _float fTimeDelta)
+HRESULT CModel::Play_Pose(CTransform* pTransform, _float fTimeDelta)
 {
+	fTimeDelta = Compute_NewTimeDelta_Distatnce_Optimization(fTimeDelta, pTransform);
 
 
 	return S_OK;
@@ -1979,7 +1987,7 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 	if (-1 == iAnimIndex || 0.f >= fBlendWeight)
 		return TransformationMatrices;
 
-	set<_uint>						TempIncludedBoneIndices = pBoneLayer->Get_IncludedBoneIndices();
+	unordered_set<_uint>						TempIncludedBoneIndices = pBoneLayer->Get_IncludedBoneIndices();
 	TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix(fTimeDelta, iNumBones, TempIncludedBoneIndices, &isFirstTick, pPlayingInfo);
 
 	const _bool						isFinished = { pPlayingInfo->Is_Finished() };
@@ -2037,7 +2045,7 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 
 		//	이번에 재생된 애니메이션과 이전 최종 키프레임간의 혼합 과정		
 		const vector<KEYFRAME>& LinearStartKeyFrames = { pPlayingInfo->Get_LinearStartKeyFrames() };
-		TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearInterpolation, m_fTotalLinearTime, TransformationMatrices, iNumBones, iRootBoneIndex, LinearStartKeyFrames);
+		TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearInterpolation, m_fTotalLinearTime, TransformationMatrices, iNumBones, LinearStartKeyFrames);
 	}
 
 	//	첫 틱에 이전 변위량들을 새로 기입해줌

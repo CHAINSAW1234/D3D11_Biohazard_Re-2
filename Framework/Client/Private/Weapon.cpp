@@ -59,6 +59,9 @@ void CWeapon::Late_Tick(_float fTimeDelta)
 	_float3				vDirection = { };
 	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &vDirection);
 	
+	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * m_pParentsTransform->Get_WorldMatrix() };
+
+	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 	
 #ifdef _DEBUG
 	//m_pGameInstance->Add_DebugComponents(m_pColliderCom);
@@ -79,8 +82,6 @@ HRESULT CWeapon::Render()
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-			return E_FAIL;
-		if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))

@@ -40,7 +40,8 @@ HRESULT CDoor::Initialize(void* pArg)
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
-	m_pModelCom->Add_AnimPlayingInfo(0, false, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(-1, false, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Set_TotalLinearInterpolation(0.2f);
 
 	/*
 	if (m_eType == DOOR_DOUBLE)
@@ -175,7 +176,6 @@ HRESULT CDoor::Render()
 
 HRESULT CDoor::Add_Components()
 {
-
 	/* For.Com_Shader */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
@@ -329,7 +329,8 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 	}
 	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &fTransform3);
+	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
+	//		m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &fTransform3);
 
 	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
 	
@@ -438,14 +439,6 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 	{
 		m_eOneState_Prev = m_eOneState;
 		m_pModelCom->Change_Animation(0, m_eOneState);
-
-		//auto Combined = XMLoadFloat4x4(m_pRotationBone->Get_CombinedTransformationMatrix());
-		auto Combined = m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R]->Get_TrasformationMatrix();
-		//Combined = Combined * m_pTransformCom->Get_WorldMatrix();
-		_float4x4 ResultMat;
-		XMStoreFloat4x4(&ResultMat, Combined);
-		m_pPx_Collider->Update_Transform(&ResultMat);
-		break;
 	}
 	case ONEDOOR_STATIC:
 		m_pModelCom->Change_Animation(0, m_eOneState);
@@ -475,8 +468,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 
 	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &fTransform3);
-
+	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
 
 
 

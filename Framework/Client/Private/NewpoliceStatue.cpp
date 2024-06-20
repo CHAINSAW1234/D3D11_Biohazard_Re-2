@@ -40,9 +40,7 @@ HRESULT CNewpoliceStatue::Initialize(void* pArg)
 
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
-
 	m_pModelCom->Add_AnimPlayingInfo(0, false, 0, TEXT("Default"), 1.f);
-
 
 	m_pModelCom->Active_RootMotion_Rotation(true);
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
@@ -104,7 +102,8 @@ void CNewpoliceStatue::Late_Tick(_float fTimeDelta)
 
 	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &fTransform3);
+	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
+	//	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &fTransform3);
 
 
 

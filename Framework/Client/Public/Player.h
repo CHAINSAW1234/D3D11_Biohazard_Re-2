@@ -21,7 +21,7 @@ public:
 		PART_BODY,
 		PART_HEAD,
 		PART_HAIR,
-		//	PART_WEAPON,
+		PART_WEAPON,
 		PART_END
 	};
 
@@ -85,6 +85,7 @@ private:
 #pragma region 현진 추가
 public:
 	CModel*										Get_Body_Model();
+	CModel*										Get_Weapon_Model();
 	_float3*									Get_Body_RootDir();
 	_bool										Get_Spotlight() { return m_isSpotlight; }
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
@@ -100,6 +101,8 @@ public:
 
 	void										Update_Direction();
 	void										Turn_Spine(_float fTimeDelta);
+
+	void										Update_KeyInput_Reload();
 
 private:
 	_bool m_isSpotlight = { false };
@@ -119,7 +122,7 @@ public:
 	_int										Get_Player_ColIndex() { return m_iCurCol; }
 	_int										Get_Player_Direction() { return m_iDir; }
 	_bool										Get_Player_RegionChange() { return m_bChange; }
-	_bool*									Get_Player_Interact_Ptr() { return &m_bInteract; }
+	_bool*										Get_Player_Interact_Ptr() { return &m_bInteract; }
 private:
 	_bool										m_bInteract = { false };
 	_bool										m_bChange = { true };
@@ -128,6 +131,10 @@ private:
 	_int										m_iPreCol = { 1 };
 	_float										m_fTimeTEST = { 0.f };
 #pragma endregion
+
+#pragma region 창균 추가
+	_bool										m_bIsExamineItem = { false };
+#pragma
 
 	vector<CPartObject*>						m_PartObjects;
 	_ubyte										m_eState = {};
