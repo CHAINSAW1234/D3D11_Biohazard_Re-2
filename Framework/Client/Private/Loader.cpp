@@ -602,8 +602,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	_matrix			TransformMatrix = { XMMatrixIdentity() };
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
-	_matrix			WeaponTransformMatrix = { XMMatrixRotationX(XMConvertToRadians(180.f)) };
-	//WeaponTransformMatrix *= XMMatrixRotationAxis(WeaponTransformMatrix.r[1],  XMConvertToRadians(90.f));
+	_matrix			WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
+	WeaponTransformMatrix *= XMMatrixRotationX(	XMConvertToRadians(-90.f));
 #pragma region Players Model 
 
 	/* Prototype_Component_Model_LeonBody */
