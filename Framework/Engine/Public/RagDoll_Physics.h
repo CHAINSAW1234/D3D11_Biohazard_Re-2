@@ -193,6 +193,7 @@ public:
     {
         m_bCulling = boolean;
     }
+    void                                SetBoneIndex();
 public:
 	static CRagdoll_Physics*            Create();
 
@@ -256,6 +257,8 @@ private:
 
     _bool                                           m_bRagdoll_AddForce = { false };
     _bool                                           m_bCulling = { false };
+
+    vector<_int>                                    m_vecBoneIndex;
 public:
 	virtual void Free() override;
 };

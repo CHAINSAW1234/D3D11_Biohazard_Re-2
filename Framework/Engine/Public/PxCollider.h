@@ -22,9 +22,14 @@ public:
 	{
 		return &m_vecCollider;
 	}
+	vector<PxTransform>*				GetCollider_Transform_Container()
+	{
+		return &m_vecCollider_Transform;
+	}
 	void								Update_Transform(_float4x4* Transform);
 private:
 	vector<PxRigidDynamic*>				m_vecCollider;
+	vector<PxTransform>					m_vecCollider_Transform;
 	_int								m_iColliderCount = { 0 };
 public:
 	virtual void Free() override;

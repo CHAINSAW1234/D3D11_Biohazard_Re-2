@@ -2293,11 +2293,11 @@ void CModel::Dynamic_Mesh_Cooking(CTransform* pTransform)
 	}
 }
 
-void CModel::Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, CTransform* pTransform)
+void CModel::Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
 {
 	for (int i = 0; i < m_Meshes.size(); ++i)
 	{
-		m_Meshes[i]->Convex_Mesh_Cooking(pColliders,pTransform);
+		m_Meshes[i]->Convex_Mesh_Cooking(pColliders,pTransforms,pTransform);
 	}
 }
 

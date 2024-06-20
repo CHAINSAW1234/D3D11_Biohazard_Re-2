@@ -15,7 +15,7 @@
 #define RADIUS 2.5f
 
 CCharacter_Controller::CCharacter_Controller(PxController* Controller, class CGameObject* pCharacter, PxScene* pScene,
-	PxPhysics* pPhysics, class CTransform* pTransform, vector<class CBone*>* pBones, _int iId,const std::string& name)
+	PxPhysics* pPhysics, class CTransform* pTransform, vector<class CBone*>* pBones, _int iId, const std::string& name)
 {
 	m_pController = Controller;
 	m_pCharacter = pCharacter;
@@ -28,11 +28,13 @@ CCharacter_Controller::CCharacter_Controller(PxController* Controller, class CGa
 	m_pWorldMatrix = pTransform->Get_WorldFloat4x4_Ptr();
 	m_iId = iId;
 
-	if(name != "None")
+	if (name != "None")
 	{
 		Build_Skeleton(name);
 
 		Create_Collider();
+
+		SetBoneIndex();
 	}
 }
 
@@ -211,7 +213,7 @@ PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, 
 	inv_bind_pose.r[3] = XMVectorZero();
 	inv_bind_pose.r[3] = XMVectorSetW(inv_bind_pose.r[3], 1.0f);
 	XMMATRIX bind_pose = XMMatrixInverse(nullptr, inv_bind_pose);
-	XMMATRIX bind_pose_ws =  bind_pose;
+	XMMATRIX bind_pose_ws = bind_pose;
 
 	PxTransform px_transform(to_vec3(body_pos), to_quat(XMQuaternionRotationMatrix(bind_pose_ws)));
 
@@ -224,7 +226,7 @@ PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, 
 	float sleepThreshold = 1.f;
 	body->setSleepThreshold(sleepThreshold);
 	body->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
-	
+
 	return body;
 }
 
@@ -263,7 +265,7 @@ PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, 
 	inv_bind_pose.r[3] = XMVectorZero();
 	inv_bind_pose.r[3] = XMVectorSetW(inv_bind_pose.r[3], 1.0f);
 	XMMATRIX bind_pose = XMMatrixInverse(nullptr, inv_bind_pose);
-	XMMATRIX bind_pose_ws =  bind_pose;
+	XMMATRIX bind_pose_ws = bind_pose;
 
 	PxTransform px_transform(to_vec3(parent_pos), to_quat(XMQuaternionRotationMatrix(bind_pose_ws)));
 
@@ -370,7 +372,7 @@ void CCharacter_Controller::Create_Collider()
 	rot = XMMatrixRotationZ(XM_PI * 0.5f);
 	_matrix I = XMMatrixIdentity();
 
-	m_HeadCollider = create_capsule_bone(j_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f, 0.0f, 1.f), 4.0f, 6.0f, rot,COLLIDER_TYPE::HEAD);
+	m_HeadCollider = create_capsule_bone(j_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f, 0.0f, 1.f), 4.0f, 6.0f, rot, COLLIDER_TYPE::HEAD);
 	m_BodyCollider = create_capsule_bone(j_spine_01_idx, j_neck_01_idx, *m_ragdoll, 5.0f, rot, COLLIDER_TYPE::CHEST);
 	m_Pelvis_Collider = create_capsule_bone(j_pelvis_idx, j_spine_01_idx, *m_ragdoll, 5.0f, rot, COLLIDER_TYPE::PELVIS);
 
@@ -380,14 +382,14 @@ void CCharacter_Controller::Create_Collider()
 	m_Left_Shin_Collider = create_capsule_bone(j_calf_l_idx, j_foot_l_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::CALF_L);
 	m_Right_Shin_Collider = create_capsule_bone(j_calf_r_idx, j_foot_r_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::CALF_R);
 
-	m_Left_Arm_Collider = create_capsule_bone(j_upperarm_l_idx, j_lowerarm_l_idx, *m_ragdoll, r,I, COLLIDER_TYPE::ARM_L);
-	m_Right_Arm_Collider = create_capsule_bone(j_upperarm_r_idx, j_lowerarm_r_idx, *m_ragdoll, r,I, COLLIDER_TYPE::ARM_R);
+	m_Left_Arm_Collider = create_capsule_bone(j_upperarm_l_idx, j_lowerarm_l_idx, *m_ragdoll, r, I, COLLIDER_TYPE::ARM_L);
+	m_Right_Arm_Collider = create_capsule_bone(j_upperarm_r_idx, j_lowerarm_r_idx, *m_ragdoll, r, I, COLLIDER_TYPE::ARM_R);
 
-	m_Left_ForeArm_Collider = create_capsule_bone(j_lowerarm_l_idx, j_hand_l_idx, *m_ragdoll, r,I, COLLIDER_TYPE::FOREARM_L);
-	m_Right_ForeArm_Collider = create_capsule_bone(j_lowerarm_r_idx, j_hand_r_idx, *m_ragdoll, r,I, COLLIDER_TYPE::FOREARM_R);
+	m_Left_ForeArm_Collider = create_capsule_bone(j_lowerarm_l_idx, j_hand_l_idx, *m_ragdoll, r, I, COLLIDER_TYPE::FOREARM_L);
+	m_Right_ForeArm_Collider = create_capsule_bone(j_lowerarm_r_idx, j_hand_r_idx, *m_ragdoll, r, I, COLLIDER_TYPE::FOREARM_R);
 
-	m_Left_Hand_Collider = create_capsule_bone(j_hand_l_idx, j_middle_01_l_idx, *m_ragdoll, r,I, COLLIDER_TYPE::HAND_L);
-	m_Right_Hand_Collider = create_capsule_bone(j_hand_r_idx, j_middle_01_r_idx, *m_ragdoll, r,I, COLLIDER_TYPE::HAND_R);
+	m_Left_Hand_Collider = create_capsule_bone(j_hand_l_idx, j_middle_01_l_idx, *m_ragdoll, r, I, COLLIDER_TYPE::HAND_L);
+	m_Right_Hand_Collider = create_capsule_bone(j_hand_r_idx, j_middle_01_r_idx, *m_ragdoll, r, I, COLLIDER_TYPE::HAND_R);
 
 	rot = XMMatrixRotationY(PxPi * 0.5f);
 
@@ -482,23 +484,13 @@ void CCharacter_Controller::Update_Collider()
 	RotMat->_43 = m_pWorldMatrix->_43;
 
 	Joint* joint = m_skeletal_mesh->skeleton()->joints();
+	auto JointNum = m_skeletal_mesh->skeleton()->num_bones();
 
 	if (m_vecBone)
 	{
-		int i = 0;
-		for (auto& it : *m_vecBone)
+		for (int i = 0; i < JointNum; ++i)
 		{
-			for (int i = 0; i < BONE_COUNT; ++i)
-			{
-				if (joint[i].name.empty() == false)
-				{
-					if (it->Get_Name() == joint[i].name)
-					{
-						m_Global_transforms.transforms[i] = XMLoadFloat4x4(it->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
-						++i;
-					}
-				}
-			}
+			m_Global_transforms.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
 		}
 	}
 
@@ -519,7 +511,7 @@ void CCharacter_Controller::Update_Collider()
 
 				_vector world_pos = XMVectorSet(XMVectorGetX(temp), XMVectorGetY(temp), XMVectorGetZ(temp), 1.f);
 
-				XMMATRIX final_transform =global_transform;
+				XMMATRIX final_transform = global_transform;
 
 				XMVECTOR joint_rot = XMQuaternionRotationMatrix(final_transform);
 
@@ -529,14 +521,8 @@ void CCharacter_Controller::Update_Collider()
 
 				rotation = XMQuaternionNormalize(rotation);
 
-				for (auto& it : *m_vecBone)
-				{
-					if (it->Get_Name() == joint[i].name)
-					{
-						PxTransform px_transform(to_vec3(world_pos), to_quat(XMQuaternionRotationMatrix(XMLoadFloat4x4(it->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(RotMat))));
-						m_ragdoll->m_rigid_bodies[i]->setGlobalPose(px_transform);
-					}
-				}
+				PxTransform px_transform(to_vec3(world_pos), to_quat(XMQuaternionRotationMatrix(XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(RotMat))));
+				m_ragdoll->m_rigid_bodies[i]->setGlobalPose(px_transform);
 			}
 		}
 	}
@@ -545,6 +531,26 @@ void CCharacter_Controller::Update_Collider()
 void CCharacter_Controller::load_mesh(const string& name)
 {
 	m_skeletal_mesh = SkeletalMesh::load(name);
+}
+
+void CCharacter_Controller::SetBoneIndex()
+{
+	auto joint = m_skeletal_mesh->skeleton()->joints();
+
+	auto NumJoint = m_skeletal_mesh->skeleton()->num_bones();
+
+	m_vecBoneIndex.resize(NumJoint);
+
+	for (int i = 0; i < NumJoint; ++i)
+	{
+		for (int j = 0; j < m_vecBone->size(); ++j)
+		{
+			if ((*m_vecBone)[j]->Get_Name() == joint[i].name)
+			{
+				m_vecBoneIndex[i] = j;
+			}
+		}
+	}
 }
 
 void CCharacter_Controller::Free()

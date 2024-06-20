@@ -67,3 +67,7 @@ typedef struct Tag_Prototype_Inform
 	string		strGameObjectPrototypeName = { ("") }; // 이것은 IMGUI가 멍청해서 있는 것
 
 }PROTOTYPE_INFORM;
+
+#pragma region ANIM_BONE
+#define ANIM_BONE_COUNT 10
+#pragma endregion
