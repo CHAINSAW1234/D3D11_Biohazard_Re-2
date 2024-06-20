@@ -245,7 +245,7 @@ void CPhysics_Controller::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices,
 	
 }
 
-void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, CTransform* pTransform)
+void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
 {
 	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
 
@@ -307,6 +307,7 @@ void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, 
 	material->release();
 
 	pColliders->push_back(body);
+	pTransforms->push_back(transform);
 }
 
 CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, CTransform* pTransform, const string& name)
@@ -364,7 +365,8 @@ CPxCollider* CPhysics_Controller::Create_Px_Collider(CModel* pModel,CTransform* 
 {
 	CPxCollider* pCollider = new CPxCollider();
 	auto pColliders = pCollider->GetCollider_Container();
-	pModel->Convex_Mesh_Cooking(pColliders, pTransform);
+	auto pTransforms = pCollider->GetCollider_Transform_Container();
+	pModel->Convex_Mesh_Cooking(pColliders,pTransforms, pTransform);
 
 	m_vecCollider.push_back(pCollider);
 
