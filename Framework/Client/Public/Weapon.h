@@ -30,10 +30,12 @@ public:
 	virtual HRESULT					Render_LightDepth_Point() override;
 	virtual HRESULT					Render_LightDepth_Spot()override;
 
+	void Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
 private:
 	CModel*					m_pModelCom = { nullptr };
 	CShader*				m_pShaderCom = { nullptr };	
 	CCollider*				m_pColliderCom = { nullptr };
+	_float4x4* m_pSocketMatrix = { nullptr };
 
 private:
 	HRESULT					Add_Components();

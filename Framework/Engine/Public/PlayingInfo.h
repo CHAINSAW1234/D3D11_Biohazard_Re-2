@@ -108,7 +108,7 @@ private:
 	_float4								m_vPreQuaternion = { 0.f, 0.f, 0.f, 0.f };
 
 	_float								m_fTrackPosition = { 0.f };
-	_bool								m_isFinished = { false };
+	_bool								m_isFinished = { true };
 
 	_bool								m_isResetRootPre = { false };
 
