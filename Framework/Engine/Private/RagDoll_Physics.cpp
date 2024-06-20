@@ -643,6 +643,9 @@ void CRagdoll_Physics::create_ragdoll()
 
 void CRagdoll_Physics::Update(_float fTimeDelta)
 {
+	if (m_bCulling)
+		return;
+
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
 	for (int i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)

@@ -117,7 +117,7 @@ _bool CInteractProps::Visible()
 {
 	if (m_pPlayer == nullptr)
 		return false;
-	m_bVisible = true;
+
 	if (m_pPlayer->Get_Player_RegionChange() == true)
 	{
 		if (m_tagPropDesc.iRegionDir == DIRECTION_MID)

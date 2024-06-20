@@ -25,7 +25,7 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 	virtual HRESULT			Render_LightDepth() { return S_OK; }
-
+	virtual void			SetCulling(_bool boolean) {}
 protected:
 	void					Update_WorldMatrix();
 

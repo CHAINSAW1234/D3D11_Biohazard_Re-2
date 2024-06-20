@@ -59,7 +59,7 @@ HRESULT CDoor::Initialize(void* pArg)
 
 #endif
 
-	m_pRotationBone = m_pModelCom->Get_BonePtr("_01");
+	m_pRotationBone = m_pModelCom->Get_BonePtr("_00");
 	
 	return S_OK;
 }
@@ -80,13 +80,6 @@ void CDoor::Tick(_float fTimeDelta)
 	if (m_bLock)
 		return;
 	m_eType == DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
-
-	//auto Combined = XMLoadFloat4x4(m_pRotationBone->Get_CombinedTransformationMatrix());
-	auto Combined = m_pRotationBone->Get_TrasformationMatrix();
-	//Combined = Combined * m_pTransformCom->Get_WorldMatrix();
-	_float4x4 ResultMat;
-	XMStoreFloat4x4(&ResultMat, Combined);
-	m_pPx_Collider->Update_Transform(&ResultMat);
 }
 
 void CDoor::Late_Tick(_float fTimeDelta)
@@ -391,12 +384,24 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 	switch (m_eOneState)
 	{
 	case ONEDOOR_OPEN_L:
+	{
 		//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // Àß¾Ë¾Æ°©´Ï´Ù ²¨¾ï
 		m_pModelCom->Change_Animation(0, m_eOneState);
+
 		break;
+	}
 	case ONEDOOR_OPEN_R:
+	{
 		m_pModelCom->Change_Animation(0, m_eOneState);
+
+		//auto Combined = XMLoadFloat4x4(m_pRotationBone->Get_CombinedTransformationMatrix());
+		auto Combined = m_pRotationBone->Get_TrasformationMatrix();
+		//Combined = Combined * m_pTransformCom->Get_WorldMatrix();
+		_float4x4 ResultMat;
+		XMStoreFloat4x4(&ResultMat, Combined);
+		m_pPx_Collider->Update_Transform(&ResultMat);
 		break;
+	}
 	case ONEDOOR_STATIC:
 		m_pModelCom->Change_Animation(0, m_eOneState);
 		break;

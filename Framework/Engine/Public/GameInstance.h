@@ -21,6 +21,19 @@ public:
 	HRESULT									Draw();
 	HRESULT									Clear(_uint iClearLevelIndex);
 
+#pragma region 편의성 함수
+public:
+	void									SetPlayer(CGameObject* pPlayer)
+	{
+		m_pPlayer = pPlayer;
+	}
+	_float4									GetPlayerPos();
+	class CGameObject*						GetPlayer()
+	{
+		return m_pPlayer;
+	}
+#pragma endregion
+
 #pragma region forCH_TEST
 	//wstring									UTF8ToUTF16(const string& utf8Str);
 #pragma endregion
@@ -234,7 +247,7 @@ public:/*For Physics Controller*/
 	{
 		m_pIndices = Pos;
 	}
-	FORCEINLINE _uint*						GetIndices()
+	FORCEINLINE _uint* GetIndices()
 	{
 		return m_pIndices;
 	}
@@ -331,6 +344,8 @@ private:
 	//Random Number
 	random_device							m_RandomDevice;
 	mt19937_64								m_RandomNumber;
+
+	class CGameObject*							m_pPlayer = { nullptr };
 public:
 	static void Release_Engine();
 	virtual void Free() override;
