@@ -11,6 +11,7 @@
 #include "PartObject.h"
 
 #include "Header_Package_Zombie.h"
+#include "Player.h"
 
 #define MODEL_SCALE 0.01f
 
@@ -93,6 +94,25 @@ void CZombie::Priority_Tick(_float fTimeDelta)
 
 void CZombie::Tick(_float fTimeDelta)
 {
+	if (!Distance_Culling())
+	{
+		for (auto& it : m_PartObjects)
+		{
+			if(it)
+				it->SetCulling(true);
+		}
+
+		return;
+	}
+	else
+	{
+		for (auto& it : m_PartObjects)
+		{
+			if (it)
+				it->SetCulling(false);
+		}
+	}
+
 	__super::Tick(fTimeDelta);
 
 	if(m_pController)
@@ -161,6 +181,9 @@ void CZombie::Tick(_float fTimeDelta)
 
 void CZombie::Late_Tick(_float fTimeDelta)
 {
+	if (!Distance_Culling())
+		return;
+
 	__super::Late_Tick(fTimeDelta);
 
 	if(m_pController)

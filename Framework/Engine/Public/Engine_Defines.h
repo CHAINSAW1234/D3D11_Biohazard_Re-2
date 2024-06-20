@@ -150,3 +150,9 @@ using namespace Engine;
 
 #define CONNECT_PVD
 #pragma endregion
+
+#pragma region Culling region
+
+#define CULLING_DISTANCE 45.f
+
+#pragma endregion

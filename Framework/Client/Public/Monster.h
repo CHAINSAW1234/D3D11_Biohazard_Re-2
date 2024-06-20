@@ -36,6 +36,9 @@ public:
 	virtual void						Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT						Render() override;
 
+public:
+	_bool								Distance_Culling();
+
 	//Action
 public:
 	void								Move(_float4 vDir, _float fTimeDelta);
@@ -77,6 +80,9 @@ protected: // For AIController
 	vector<class CPartObject*>			m_PartObjects;
 	
 	MONSTER_STATE						m_eState = { MST_DEFAULT };
+
+	class CPlayer*						m_pPlayer = { nullptr };
+	_bool								m_bRoomCulling = { false };
 
 protected:
 	virtual HRESULT						Add_Components();

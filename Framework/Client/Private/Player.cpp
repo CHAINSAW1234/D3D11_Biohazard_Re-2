@@ -67,6 +67,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	Load_CameraPosition();
 	if (FAILED(Ready_Camera()))
 		return E_FAIL;
+	
+	m_pGameInstance->SetPlayer(this);
 
 	return S_OK;
 }
