@@ -18,8 +18,17 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+public:
+	_bool Get_IsFilled() const {
+		return m_isFilled;
+	}
+
+	void Set_IsFilled(_bool isFilled) {
+		m_isFilled = isFilled;
+	}
+
 private:
-	_bool m_bFilled = { false };
+	_bool m_isFilled = { false };
 
 public:
 	static CInventory_Slot* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -83,12 +83,12 @@ void CItem_UI::Reset_Item()
 	m_eInvenItemType = INVEN_ITEM_TYPE_END;
 }
 
-void CItem_UI::Set_Item(ITEM_NUMBER eItmeNum, INVEN_ITEM_TYPE eItmeType)
+void CItem_UI::Set_Item(ITEM_NUMBER eItmeNum)
 {
 	m_eItemNumber = eItmeNum;
 	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
 
-	m_eInvenItemType = eItmeType;
+	//m_eInvenItemType = eItmeType;
 }
 
 CItem_UI* CItem_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

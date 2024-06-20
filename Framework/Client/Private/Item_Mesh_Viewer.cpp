@@ -77,9 +77,6 @@ void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 	default:
 		break;
 	}
-
-
-
 }
 
 void CItem_Mesh_Viewer::Late_Tick(_float fTimeDelta)
@@ -200,7 +197,7 @@ void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
 
 	if (1.f > m_fPopupHide_CurTime / m_fPopupHide_TimeLimit)
 	{
-		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuart, m_fPopupHide_EndDist, m_fPopupHide_StartDist,
+		m_fDistCam = m_pGameInstance->Get_Ease(Ease_InBack, m_fPopupHide_EndDist, m_fPopupHide_StartDist,
 			m_fPopupHide_CurTime / m_fPopupHide_TimeLimit);
 	}
 }
