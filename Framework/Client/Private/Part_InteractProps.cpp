@@ -38,26 +38,12 @@ HRESULT CPart_InteractProps::Initialize(void* pArg)
 
 void CPart_InteractProps::Tick(_float fTimeDelta)
 {
-	m_fTimeTest += fTimeDelta;
-	if (m_pPlayer == nullptr)
-		m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
 
 }
 
 void CPart_InteractProps::Late_Tick(_float fTimeDelta)
 {
 
-	if (true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f))
-	{
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-
-		if (m_bShadow)
-		{
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
-		}
-	}
 }
 
 HRESULT CPart_InteractProps::Render()
@@ -65,6 +51,14 @@ HRESULT CPart_InteractProps::Render()
 	return S_OK;
 }
 
+void CPart_InteractProps::Check_Col_Sphere_Player()
+{
+	if (m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE] == nullptr)
+		return;
+	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
+	if (pPlayerCol->Intersect(m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]))
+		m_bCol = true;
+}
 
 HRESULT CPart_InteractProps::Add_Components()
 {
@@ -92,30 +86,7 @@ HRESULT CPart_InteractProps::Initialize_PartObjects()
 	return S_OK;
 }
 
-HRESULT CPart_InteractProps::Bind_ShaderResources_Anim()
-{
-
-	_bool isMotionBlur = m_pGameInstance->Get_ShaderState(MOTION_BLUR);
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_isMotionBlur", &isMotionBlur, sizeof(_bool))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevWorldMatrix", &m_PrevWorldMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevViewMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-
-	return S_OK;
-}
-
-HRESULT CPart_InteractProps::Bind_ShaderResources_NonAnim()
+HRESULT CPart_InteractProps::Bind_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -263,4 +234,13 @@ void CPart_InteractProps::Free()
 
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
+	for (size_t i = 0; i < Part_INTERACTPROPS_COL_END; i++)
+	{
+		if (m_pColliderCom[i] == nullptr)
+			continue;
+
+
+		Safe_Release(m_pColliderCom[i]);
+		m_pColliderCom[i] = nullptr;
+	}
 }

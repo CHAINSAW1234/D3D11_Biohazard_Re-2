@@ -5,6 +5,9 @@
 #include "Light.h"
 #include"Player.h"
 #include"PartObject.h"
+
+#include"Part_InteractProps.h"
+
 CInteractProps::CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -97,6 +100,10 @@ void CInteractProps::Check_Player()
 	m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
 	m_pPlayerInteract = m_pPlayer->Get_Player_Interact_Ptr();
 	m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
+	for (auto& iter: m_PartObjects)
+	{
+		static_cast<CPart_InteractProps*>(iter)->Set_PlayerSetting(m_pPlayer,m_pPlayerInteract,m_pPlayerTransform)
+	}
 
 }
 
@@ -108,9 +115,7 @@ void CInteractProps::Check_Col_Sphere_Player()
 		return;
 	CCollider* pPlayerCol = static_cast<CCollider*>( m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_SPHERE]))
-		m_bCol = true; //false를 해주는 부분은 따로 있어야 할 것임
-
-
+		m_bCol = true; 
 
 }
 
