@@ -171,3 +171,9 @@ using namespace Engine;
 #define CULLING_DISTANCE 45.f
 
 #pragma endregion
+
+#pragma region Animation LOD
+
+//#define ANIMATION_LOD
+
+#pragma endregion

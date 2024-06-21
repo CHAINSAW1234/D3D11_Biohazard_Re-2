@@ -148,6 +148,14 @@ HRESULT CModel::Add_Animation(_uint iLevelIndex, wstring& strPrototypeTag)
 
 _float CModel::Compute_NewTimeDelta_Distatnce_Optimization(_float fTimeDelta, CTransform* pTransform)
 {
+	/* TODO:
+	*LOD를 사용하면 RAGDOLL로 전환시 모델이 한 번 깜빡이는 증상이 있음
+	*수정 필요.
+	*/
+#ifndef ANIMATION_LOD
+	return fTimeDelta;
+#endif
+
 	_matrix			CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
 	_vector			vCamPosition = { CamWorldMatrix.r[CTransform::STATE_POSITION] };
 	_matrix			MyWorldMatirx = { pTransform->Get_WorldMatrix() };
