@@ -51,6 +51,7 @@ public:
 	class CPxCollider*									Create_Px_Collider_Convert_Root(class CModel* pModel,class CTransform* pTransform,_int* iId);
 	class CPxCollider*									Create_Px_Collider_Convert_Root_Double_Door(class CModel* pModel,class CTransform* pTransform,_int* iId);
 	class CPxCollider*									Create_Px_Collider_Cabinet(class CModel* pModel,class CTransform* pTransform,_int* iId);
+	class CPxCollider*									Create_Px_Collider_Toilet(class CModel* pModel,class CTransform* pTransform,_int* iId);
 	class CCharacter_Controller*						GetCharacter_Controller(_int Index);
 	class CRigid_Dynamic*								GetRigid_Dynamic(_int Index);
 	_float4												GetTranslation_Rigid_Dynamic(_int Index);

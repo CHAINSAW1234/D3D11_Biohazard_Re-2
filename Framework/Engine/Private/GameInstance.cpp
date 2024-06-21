@@ -1127,6 +1127,12 @@ CPxCollider* CGameInstance::Create_Px_Collider_Cabinet(CModel* pModel, CTransfor
 		return m_pPhysics_Controller->Create_Px_Collider_Cabinet(pModel, pTransform, iId);
 }
 
+CPxCollider* CGameInstance::Create_Px_Collider_Toilet(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->Create_Px_Collider_Toilet(pModel, pTransform, iId);
+}
+
 #pragma endregion
 
 #pragma region	Thread_Pool

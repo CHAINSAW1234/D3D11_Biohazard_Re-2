@@ -696,6 +696,21 @@ CPxCollider* CPhysics_Controller::Create_Px_Collider_Cabinet(CModel* pModel, CTr
 	return pCollider;
 }
 
+CPxCollider* CPhysics_Controller::Create_Px_Collider_Toilet(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	CPxCollider* pCollider = new CPxCollider();
+	auto pColliders = pCollider->GetCollider_Container();
+	auto pTransforms = pCollider->GetCollider_Transform_Container();
+	pModel->Convex_Mesh_Cooking_Toilet(pColliders, pTransforms, pTransform);
+
+	m_vecCollider.push_back(pCollider);
+
+	*iId = m_iCollider_Count;
+	++m_iCollider_Count;
+
+	return pCollider;
+}
+
 void CPhysics_Controller::Create_Plane(_float4 Pos)
 {
 }
