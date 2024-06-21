@@ -464,141 +464,63 @@ _float CPlayer::Get_CamDegree()
 
 void CPlayer::Turn_Spine(_float fTimeDelta)
 {
-	static _float		fAccLinearTime = { 0.f };
-	//if (!m_isTurnSpine /*&& m_fSpineTurnLerfTimeDelta >= 1.f*/) {
-	//	fAccLinearTime -= fTimeDelta;
-	//	if (fAccLinearTime < 0.f)
-	//		fAccLinearTime = 0.f;
-	//}
-
-	//else
-	//{
-	//	fAccLinearTime += fTimeDelta;
-	//	if (fAccLinearTime > 0.5f)
-	//	{
-	//		fAccLinearTime = 0.5f;
-	//	}
-	//}
-
-	fAccLinearTime = 0.5f;
-
-	CModel*			pModel = { Get_Body_Model() };
+	CModel* pModel = { Get_Body_Model() };
 	if (nullptr != pModel)
 	{
-		_matrix				HeadCombinedMatrix = { XMLoadFloat4x4(pModel->Get_CombinedMatrix("head")) };
-		_matrix				CogCombinedMatrix = { XMLoadFloat4x4(pModel->Get_CombinedMatrix("COG")) };
-
-		_vector				vScaleHead, vQuaternionHead, vTranslationHead;
-		_vector				vScaleCog, vQuaternionCog, vTranslationCog;
-
-		XMMatrixDecompose(&vScaleHead, &vQuaternionHead, &vTranslationHead, HeadCombinedMatrix);
-		XMMatrixDecompose(&vScaleCog, &vQuaternionCog, &vTranslationCog, HeadCombinedMatrix);
-
-		_vector				vCogQuaternionInv = { XMQuaternionInverse(vQuaternionCog) };
-
-		_vector				vTotalQuaternionHead = { XMQuaternionMultiply(XMQuaternionNormalize(vCogQuaternionInv), XMQuaternionNormalize(vQuaternionHead)) };
-		_matrix				HeadRotateMatrix = { XMMatrixRotationQuaternion(vTotalQuaternionHead) };
-
 		_vector				vMyLook = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
-		_vector				vHeadWorldLook = { XMVector3TransformNormal(XMVectorSet(0.f, 0.f, 1.f, 0.f), /*HeadRotateMatrix * */m_pTransformCom->Get_WorldMatrix())};
-
-		//	vHeadWorldLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
-
+		_vector				vHeadWorldLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
+		
 		_matrix				CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
-		_vector				vCamLook = { CamWorldMatrix.r[CTransform::STATE_LOOK]};/*
-		_vector				vCamPosition = { CamWorldMatrix.r[CTransform::STATE_POSITION] };
-		_vector				vCamFocusPosition = { vCamPosition + XMVector3Normalize(vCamLook) * 7.f };*/
-
-		//_vector				vMyPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
-		//_vector				vDirectionToFocus = { vCamFocusPosition - vMyPosition };
-		//		_vector				vCamLook = { m_pCamera->Get_Transform()->Get_State_Vector(CTransform::STATE_LOOK) };
-
+		_vector				vCamLook = { CamWorldMatrix.r[CTransform::STATE_LOOK] };
+		
 		_float				fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vHeadWorldLook), XMVector3Normalize(vCamLook))) };
-		//	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vHeadWorldLook), XMVector3Normalize(vCamLook))) };
 		if (fabsf(fDot) > 0.9999f)
 		{
 			return;
 		}
 
 		_vector				vRotateAxis = { XMVector3Cross(XMVector3Normalize(vHeadWorldLook), XMVector3Normalize(vCamLook)) };
-		_float				fAngle = { acosf(fDot) * fAccLinearTime / 0.5f };
+		_float				fAngle = { acosf(fDot) };
+		if (XMVectorGetX(vRotateAxis) < 0) {
+			vRotateAxis *= -1;
+			fAngle *= -1;
+		}
 
-		list<_uint>			ChildJointIndices; 
-		pModel->Get_Child_ZointIndices("spine_0", "head", ChildJointIndices);
+
+		static _float fCurAngle = 0.f;
+		if (!m_isTurnSpine) {
+			fCurAngle =0;
+		}
+		else {
+			if (fabs(fAngle - fCurAngle) > 0.01) {
+				fCurAngle += fTimeDelta * (fAngle - fCurAngle) * 10;
+			}
+		}
+
+		list<_uint>			ChildJointIndices;
+		pModel->Get_Child_ZointIndices("spine_0", "r_arm_clavicle", ChildJointIndices);
+
+		ChildJointIndices.pop_back();
 
 		_uint				iNumChildJoint = { static_cast<_uint>(ChildJointIndices.size()) };
-
-		_float				fDevidedAngle = { fAngle / iNumChildJoint };
-
+		_float				fDevidedAngle = { fCurAngle / iNumChildJoint };
 		vector<string>		BoneNames = { pModel->Get_BoneNames() };
 
 		vRotateAxis = XMVector3TransformNormal(vRotateAxis, m_pTransformCom->Get_WorldMatrix_Inverse());
 
-		_vector				vQuaternion = { XMQuaternionRotationAxis(vRotateAxis, fDevidedAngle) };
-		_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vQuaternion) };
+		_vector				vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, fDevidedAngle) };
 
-		ChildJointIndices.pop_back();
+		vNewQuaternion = XMVectorSetY(vNewQuaternion, 0.f);
+		vNewQuaternion = XMVectorSetZ(vNewQuaternion, 0.f);
+		vNewQuaternion = XMQuaternionNormalize(vNewQuaternion);
 
-		for(auto& iJointIndex : ChildJointIndices)
+		_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
+
+		for (auto& iJointIndex : ChildJointIndices)
 		{
 			pModel->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
 		}
 	}
-
-
-
-	//// 카메라 look 내적을 통해서 각도 구하기
-	//_float4 vCamLook = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
-	//_float4 vCamLandLook = vCamLook;
-	//vCamLandLook.y = 0;
-	//vCamLandLook = XMVector3Normalize(vCamLandLook);
-
-	//_float fRadian = XMVector3AngleBetweenNormals(vCamLandLook, vCamLook).m128_f32[0];
-
-	//// 외적으로 방향 찾기
-	//_float vCross = XMVector3Cross(vCamLandLook, vCamLook).m128_f32[1];
-
-	//// 각도를 -180 ~ 180도 사이로 세팅
-	//_float fDegree = XMConvertToDegrees(fRadian * vCross / abs(vCross)); // 0 ~ 180 사이의 값 
-	//// 각도가 0보다 크면 왼쪽이다
-	//if (isnan(fDegree))
-	//	m_fTargetSpineTurnAxis = 0.f;
-	//else 
-	//	m_fTargetSpineTurnAxis = fDegree;
-
-
-	//m_fSpineTurnLerfTimeDelta += fTimeDelta;
-	//if (m_fSpineTurnLerfTimeDelta > 1.f)
-	//	m_fSpineTurnLerfTimeDelta = 1.f;
-
-	//if (m_fSpineTurnLerfTimeDelta < 1.f) {
-	//	if (m_isTurnSpine) {
-	//		m_fCurSpineTurnAxis = Lerp(0, m_fTargetSpineTurnAxis, m_fSpineTurnLerfTimeDelta);
-	//	}
-	//	else {
-	//		m_fCurSpineTurnAxis = Lerp(m_fTargetSpineTurnAxis, 0, m_fSpineTurnLerfTimeDelta);
-	//	}
-	//}
-	//else {
-	//	m_fCurSpineTurnAxis = m_isTurnSpine ? m_fTargetSpineTurnAxis : 0.f;
-	//}
-
-	////_matrix vSpineTransform = Get_Body_Model()->GetBoneTransform("spine_0");
-	////_vector vTransform, vScale, vRotate;
-	////XMMatrixDecompose(&vScale, &vRotate, &vTransform, vSpineTransform);
-
-	////_float4 vSpineRight = vSpineTransform.r[0];
-	////_float4 vSpinePos = vSpineTransform.r[3];
-
-	////// 크 자 이 공 부
-	////_matrix vNewSpineTransform = XMMatrixIdentity() * XMMatrixScalingFromVector(vScale) * XMMatrixRotationQuaternion(vRotate) *
-	////	XMMatrixRotationAxis(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), XMConvertToRadians(m_fCurSpineTurnAxis)) * XMMatrixTranslationFromVector(vTransform);
-
-	////_float3 pRootDir = { 0.f,0.f,0.f };
-	////Get_Body_Model()->Set_CombinedMatrix(m_pTransformCom, Get_Body_RootDir(), "spine_0", vNewSpineTransform);
-	//Get_Body_Model()->Add_Additional_Transformation_World("spine_0", XMMatrixRotationAxis(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), XMConvertToRadians(m_fCurSpineTurnAxis)));
-	////Get_Body_Model()->Set_CombinedMatrix(m_pTransformCom, /*Get_Body_RootDir()*/ &pRootDir, "spine_0", vSpineTransform);
-	
 
 }
 

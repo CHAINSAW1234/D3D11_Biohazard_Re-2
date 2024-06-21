@@ -50,6 +50,10 @@ namespace Engine
 		return iRefCnt;
 	}
 
+	inline _int SignBit(_float fNum) {
+		return copysign(1.0, fNum) < 0 ? -1 : 1;
+	}
+
 	inline _float Cal_Degree_From_Directions_Between_Min180_To_180(_float4 vDir1, _float4 vDir2) {
 		// 1. 정규화 한 두 벡터를 가지고 각도를 계산 하기
 		_float fRadian = XMVector3AngleBetweenNormals(vDir1, vDir2).m128_f32[0];
