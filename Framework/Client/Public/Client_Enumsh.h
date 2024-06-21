@@ -73,6 +73,16 @@ namespace Client
 
 	enum FIRE_WALL_ROTATE_BONE_TYPE
 	{
-		DOOR
+		DOOR,
+	};
+
+	enum ANIM_BONE_TYPE_COLLIDER_CABINET
+	{
+		ATC_CABINET_DOOR
+	};
+
+	enum CABINET_MESH_TYPE
+	{
+		CABINET_DOOR = 2
 	};
 }

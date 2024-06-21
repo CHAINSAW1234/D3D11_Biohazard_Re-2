@@ -2345,6 +2345,17 @@ void CModel::Convex_Mesh_Cooking_Convert_Root_Double_Door_No_Rotate(vector<PxRig
 	}
 }
 
+void CModel::Convex_Mesh_Cooking_Cabinet(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
+{
+	for (int i = 0; i < m_Meshes.size(); ++i)
+	{
+		if (i == 2)
+			m_Meshes[i]->Convex_Mesh_Cooking(pColliders, pTransforms, pTransform);
+		else
+			m_Meshes[i]->Static_Mesh_Cooking_NoRotation(pTransform);
+	}
+}
+
 void CModel::Create_SoftBody()
 {
 	for (int i = 0; i < m_Meshes.size(); ++i)

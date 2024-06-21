@@ -237,6 +237,7 @@ public:		/* For.Cooking_Mesh */
 	void									Convex_Mesh_Cooking_Convert_Root(vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms,class CTransform* pTransform = nullptr);
 	void									Convex_Mesh_Cooking_Convert_Root_Double_Door(vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms,class CTransform* pTransform = nullptr);
 	void									Convex_Mesh_Cooking_Convert_Root_Double_Door_No_Rotate(vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms,class CTransform* pTransform = nullptr);
+	void									Convex_Mesh_Cooking_Cabinet(vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms,class CTransform* pTransform = nullptr);
 	void									Create_SoftBody();
 
 private:

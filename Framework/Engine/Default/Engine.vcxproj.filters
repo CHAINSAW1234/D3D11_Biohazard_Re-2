@@ -298,6 +298,9 @@
     <Filter Include="01.Utility\13.Easing">
       <UniqueIdentifier>{8c1c9201-8308-40b6-a11d-967950050dae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\97.Physics\Physics_Component\SoftBody">
+      <UniqueIdentifier>{445839c3-962a-48b7-9389-eb55ed04eaa4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -563,6 +566,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Easing.cpp">
       <Filter>01.Utility\13.Easing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SoftBody.cpp">
+      <Filter>01.Utility\97.Physics\Physics_Component\SoftBody</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -851,6 +857,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Easing.h">
       <Filter>01.Utility\13.Easing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SoftBody.h">
+      <Filter>01.Utility\97.Physics\Physics_Component\SoftBody</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

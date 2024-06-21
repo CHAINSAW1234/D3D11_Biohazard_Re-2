@@ -90,6 +90,7 @@ private:/* For.BinaryLoad */
 
 public:/*For Cooking*/
 	void					Static_Mesh_Cooking(class CTransform* pTransform = nullptr);
+	void					Static_Mesh_Cooking_NoRotation(class CTransform* pTransform = nullptr);
 	void					Dynamic_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void					Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void					Convex_Mesh_Cooking_Convert_Root(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform,_float4 vDelta);

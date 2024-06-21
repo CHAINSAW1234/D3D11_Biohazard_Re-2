@@ -160,7 +160,7 @@ UpdateLib.bat</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../Public/;..\..\imguilib;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;..\..\imguilib</AdditionalIncludeDirectories>
       <AdditionalOptions>/MP /Zm2000 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -254,6 +254,7 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\private\Shader.cpp" />
     <ClCompile Include="..\Private\Skeletal_Mesh.cpp" />
     <ClCompile Include="..\Private\Skeleton.cpp" />
+    <ClCompile Include="..\Private\SoftBody.cpp" />
     <ClCompile Include="..\Private\Sound_Manager.cpp" />
     <ClCompile Include="..\Private\FSM_State.cpp" />
     <ClCompile Include="..\private\Target_Manager.cpp" />
@@ -352,6 +353,7 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\public\Shader.h" />
     <ClInclude Include="..\Public\Skeletal_Mesh.h" />
     <ClInclude Include="..\Public\Skeleton.h" />
+    <ClInclude Include="..\Public\SoftBody.h" />
     <ClInclude Include="..\Public\Sound_Manager.h" />
     <ClInclude Include="..\Public\FSM_State.h" />
     <ClInclude Include="..\public\Target_Manager.h" />

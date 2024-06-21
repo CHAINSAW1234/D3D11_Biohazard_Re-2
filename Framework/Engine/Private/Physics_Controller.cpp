@@ -240,6 +240,70 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	//	m_pGameInstance->SetSimulate(true);
 }
 
+void CPhysics_Controller::Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
+{
+	// Init Cooking Params 
+	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
+
+	vector<PxVec3> vertices;
+	vector<PxU32> IndicesVec;
+
+	_matrix WorldMat = XMMatrixIdentity();
+	if (pTransform != nullptr)
+	{
+		WorldMat = XMMatrixRotationY(PxPi)* pTransform->Get_WorldMatrix();
+	}
+
+	for (int i = 0; i < VertexNum; ++i)
+	{
+		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
+		VertexPos = XMVector3TransformCoord(VertexPos, WorldMat);
+
+		_float4 vPos;
+		XMStoreFloat4(&vPos, VertexPos);
+
+		PxVec3 Ver = PxVec3(vPos.x, vPos.y, vPos.z);
+		vertices.push_back(Ver);
+	}
+
+	for (int i = 0; i < IndexNum; ++i)
+	{
+		PxU32 Ind = pIndices[i];
+		IndicesVec.push_back(Ind);
+	}
+
+	PxTriangleMeshDesc meshDesc;
+	meshDesc.points.count = static_cast<PxU32>(VertexNum);
+	meshDesc.points.stride = sizeof(PxVec3);
+	meshDesc.points.data = vertices.data();
+
+	meshDesc.triangles.count = static_cast<PxU32>(IndexNum / 3);
+	meshDesc.triangles.stride = 3 * sizeof(PxU32);
+	meshDesc.triangles.data = IndicesVec.data();
+
+
+	auto Mesh = PxCreateTriangleMesh(cookingParams, meshDesc);
+
+	PxTransform transform(PxVec3(0.0f, 0.0f, 0.0f));
+	auto Actor = m_Physics->createRigidStatic(transform);
+
+	PxTriangleMeshGeometry meshGeometry(Mesh);
+	PxShape* Shape = m_Physics->createShape(meshGeometry, *m_Physics->createMaterial(0.5f, 0.5f, 0.5f));
+
+	Actor->attachShape(*Shape);
+	Shape->release();
+
+	m_Scene->addActor(*Actor);
+
+	m_vecFullMapObject.push_back(Actor);
+	++m_iMapMeshCount;
+
+	Mesh->release();
+
+	//Start Simulate
+	//	m_pGameInstance->SetSimulate(true);
+}
+
 void CPhysics_Controller::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform)
 {
 	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
@@ -518,72 +582,7 @@ void CPhysics_Controller::Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVert
 
 void CPhysics_Controller::Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
 {
-	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
-
-	//Compute collision mesh
-	physx::PxArray<physx::PxVec3> collisionMeshVertices, simulationMeshVertices;
-	physx::PxArray<physx::PxU32> collisionMeshIndices, simulationMeshIndices;
-
-	// 이미 존재하는 표면 메쉬의 정점 배열과 인덱스 배열
-	std::vector<PxVec3> surfaceVertices = { /* 표면 정점 데이터 */ };
-	std::vector<PxU32> surfaceIndices = { /* 표면 인덱스 데이터 */ };
-
-	for (int i = 0; i < VertexNum; ++i)
-	{
-		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
-
-		_float4 vPos;
-		XMStoreFloat4(&vPos, VertexPos);
-
-		PxVec3 Ver = PxVec3(vPos.x, vPos.y, vPos.z);
-		surfaceVertices.push_back(Ver);
-		collisionMeshVertices.pushBack(Ver);
-		simulationMeshVertices.pushBack(Ver);
-	}
-
-	for (int i = 0; i < IndexNum; ++i)
-	{
-		PxU32 Ind = pIndices[i];
-		surfaceIndices.push_back(Ind);
-
-		collisionMeshIndices.pushBack(Ind);
-		simulationMeshIndices.pushBack(Ind);
-	}
-
-	// PxSimpleTriangleMesh 구조체 초기화
-	PxSimpleTriangleMesh surfaceMesh;
-
-	// 정점 데이터 설정
-	surfaceMesh.points.count = surfaceVertices.size();
-	surfaceMesh.points.stride = sizeof(PxVec3);
-	surfaceMesh.points.data = surfaceVertices.data();
-
-	// 인덱스 데이터 설정
-	surfaceMesh.triangles.count = surfaceIndices.size() / 3; // 인덱스는 삼각형을 정의하므로 3으로 나눕니다.
-	surfaceMesh.triangles.stride = 3 * sizeof(PxU32);
-	surfaceMesh.triangles.data = surfaceIndices.data();
-
-	PxTetMaker::createConformingTetrahedronMesh(surfaceMesh, collisionMeshVertices, collisionMeshIndices);
-	PxTetrahedronMeshDesc meshDesc(collisionMeshVertices, collisionMeshIndices);
-
-	//Compute simulation mesh
-	PxU32 numVoxelsAlongLongestAABBAxis = 20;
-	physx::PxArray<physx::PxI32> vertexToTet;
-	vertexToTet.resize(meshDesc.points.count);
-	PxTetMaker::createVoxelTetrahedronMesh(meshDesc, numVoxelsAlongLongestAABBAxis, simulationMeshVertices, simulationMeshIndices, vertexToTet.begin());
-	PxTetrahedronMeshDesc simMeshDesc(simulationMeshVertices, simulationMeshIndices);
-	PxSoftBodySimulationDataDesc simDesc(vertexToTet);
-
-	PxSoftBodyMesh* mesh = PxCreateSoftBodyMesh(cookingParams, simMeshDesc, meshDesc, simDesc, m_Physics->getPhysicsInsertionCallback());
-
-	PxSoftBody* softBody = m_Physics->createSoftBody(*m_CudaContextManager);
-	PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE;
-	PxFEMSoftBodyMaterial* materialPtr = m_Physics->createFEMSoftBodyMaterial(1e+9f, 0.45f, 0.5f);
-	PxTetrahedronMeshGeometry geometry(mesh->getCollisionMesh());
-	PxShape* shape = m_Physics->createShape(geometry, &materialPtr, 1, true, shapeFlags);
-	softBody->attachShape(*shape);
-	softBody->attachSimulationMesh(*mesh->getSimulationMesh(), *mesh->getSoftBodyAuxData());
-	m_Scene->addActor(*softBody);
+	
 }
 
 CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, CTransform* pTransform, const string& name)
@@ -673,6 +672,21 @@ CPxCollider* CPhysics_Controller::Create_Px_Collider_Convert_Root_Double_Door(CM
 	auto pColliders = pCollider->GetCollider_Container();
 	auto pTransforms = pCollider->GetCollider_Transform_Container();
 	pModel->Convex_Mesh_Cooking_Convert_Root_Double_Door_No_Rotate(pColliders, pTransforms, pTransform);
+
+	m_vecCollider.push_back(pCollider);
+
+	*iId = m_iCollider_Count;
+	++m_iCollider_Count;
+
+	return pCollider;
+}
+
+CPxCollider* CPhysics_Controller::Create_Px_Collider_Cabinet(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	CPxCollider* pCollider = new CPxCollider();
+	auto pColliders = pCollider->GetCollider_Container();
+	auto pTransforms = pCollider->GetCollider_Transform_Container();
+	pModel->Convex_Mesh_Cooking_Cabinet(pColliders, pTransforms, pTransform);
 
 	m_vecCollider.push_back(pCollider);
 

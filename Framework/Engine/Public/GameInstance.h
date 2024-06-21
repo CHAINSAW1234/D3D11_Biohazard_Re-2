@@ -263,6 +263,7 @@ public:/*For Physics Controller*/
 	void									Cook_Terrain();
 	void									Simulate();
 	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr);
+	void									Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform ,_float4 vDelta);
@@ -277,6 +278,7 @@ public:/*For Physics Controller*/
 	class CPxCollider*						Create_Px_Collider(class CModel* pModel, class CTransform* pTransform, _int* iId);
 	class CPxCollider*						Create_Px_Collider_Convert_Root(class CModel* pModel, class CTransform* pTransform, _int* iId);
 	class CPxCollider*						Create_Px_Collider_Convert_Root_Double_Door(class CModel* pModel, class CTransform* pTransform, _int* iId);
+	class CPxCollider*						Create_Px_Collider_Cabinet(class CModel* pModel, class CTransform* pTransform, _int* iId);
 
 private:/*For Physics_Controller*/
 	_uint*									m_pIndices = { nullptr };

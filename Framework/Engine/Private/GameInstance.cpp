@@ -990,6 +990,11 @@ void CGameInstance::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexN
 	m_pPhysics_Controller->Cook_Mesh(pVertices, pIndices, VertexNum, IndexNum, pTransform);
 }
 
+void CGameInstance::Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
+{
+	m_pPhysics_Controller->Cook_Mesh_NoRotation(pVertices, pIndices, VertexNum, IndexNum, pTransform);
+}
+
 void CGameInstance::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform)
 {
 	m_pPhysics_Controller->Cook_Mesh_Dynamic(pVertices, pIndices, VertexNum, IndexNum, pColliders, pTransforms, pTransform);
@@ -1114,6 +1119,12 @@ CPxCollider* CGameInstance::Create_Px_Collider_Convert_Root_Double_Door(CModel* 
 {
 	if (m_pPhysics_Controller)
 		return m_pPhysics_Controller->Create_Px_Collider_Convert_Root_Double_Door(pModel, pTransform, iId);
+}
+
+CPxCollider* CGameInstance::Create_Px_Collider_Cabinet(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->Create_Px_Collider_Cabinet(pModel, pTransform, iId);
 }
 
 #pragma endregion

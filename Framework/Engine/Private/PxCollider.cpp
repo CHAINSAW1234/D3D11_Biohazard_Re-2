@@ -161,6 +161,21 @@ void CPxCollider::Update_Transform_Divided_Double_Door_R(_float4x4* Transform)
 	}
 }
 
+void CPxCollider::Update_Transform_Cabinet(_float4x4* Transform)
+{
+	auto Temp = Transform;
+	Temp->_41 = 0.f;
+	Temp->_42 = 0.f;
+	Temp->_43 = 0.f;
+	_matrix Mat = XMLoadFloat4x4(Temp);
+
+	_matrix TransformMat = PxTransformToXMMATRIX(m_vecCollider_Transform[0]);
+
+	TransformMat = Mat * TransformMat;
+
+	m_vecCollider[0]->setGlobalPose(XMMATRIXToPxTransform(TransformMat));
+}
+
 
 void CPxCollider::Update_Transform_Divided(_float4x4* Transform, _int iIndex)
 {
