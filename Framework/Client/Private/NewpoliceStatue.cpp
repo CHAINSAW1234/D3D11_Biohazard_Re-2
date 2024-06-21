@@ -47,7 +47,7 @@ HRESULT CNewpoliceStatue::Initialize(void* pArg)
 
 #ifndef NON_COLLISION_PROP
 
-	//m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
 
 #endif
 

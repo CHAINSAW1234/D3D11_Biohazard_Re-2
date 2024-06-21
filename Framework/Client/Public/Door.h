@@ -72,7 +72,9 @@ private:
 	ONEDOOR_STATE  m_eOneState_Prev = { ONEDOOR_STATIC };
 
 	DOUBLEDOOR_STATE  m_eDoubleState = { DOUBLEDOOR_STATIC };
+	DOUBLEDOOR_STATE  m_eDoubleState_Prev = { DOUBLEDOOR_STATIC };
 	class CCollider* m_pColDoubledoorCom = { nullptr };
+	DOUBLE_DOOR_MODEL_TYPE		m_eDoorType;
 public:
 	static CDoor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

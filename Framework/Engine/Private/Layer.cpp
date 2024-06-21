@@ -39,7 +39,10 @@ list<class CGameObject*>* CLayer::Get_Layer()
 void CLayer::Release_Layer()
 {
 	for (auto& pGameObject : m_GameObjects)
+	{
 		Safe_Release(pGameObject);
+		pGameObject = nullptr;
+	}
 }
 
 void CLayer::Priority_Tick(_float fTimeDelta)
