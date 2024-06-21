@@ -31,6 +31,12 @@ namespace Engine
 #include <physx/PxPhysicsAPI.h>
 #include <physx/cooking/PxCooking.h>
 #include <physx/extensions/PxTetMakerExt.h>
+#include <physx/extensions/PxSoftBodyExt.h>
+#include <physx/extensions/PxRemeshingExt.h>
+//#include <physx/gpu/PxPhysicsGpu.h>
+//#include <physx/gpu/PxGpu.h>
+//#include "physx/cudamanager/PxCudaContextManager.h"
+//#include "physx/cudamanager/PxCudaContext.h"
 using namespace physx;
 
 #include "Effects11/d3dx11effect.h"

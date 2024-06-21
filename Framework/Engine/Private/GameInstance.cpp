@@ -1018,7 +1018,7 @@ void CGameInstance::Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVertices, 
 void CGameInstance::Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
 {
 	if (m_pPhysics_Controller)
-		m_pPhysics_Controller->Create_SoftBody(pVertices, pIndices, VertexNum, IndexNum);
+		m_pPhysics_Controller->Create_SoftBody(pVertices, pIndices, VertexNum, IndexNum,true);
 }
 
 _matrix CGameInstance::GetWorldMatrix_Rigid_Dynamic(_int Index)
