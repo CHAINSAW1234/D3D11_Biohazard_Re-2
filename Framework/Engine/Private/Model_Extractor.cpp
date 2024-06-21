@@ -49,6 +49,31 @@ HRESULT CModel_Extractor::Extract_FBX(CModel::MODEL_TYPE eType, const string& st
 	return S_OK;
 }
 
+HRESULT CModel_Extractor::Extract_FBX_AnimOnly(const string& strAnimFilePath)
+{
+	_uint		iOption = { aiProcessPreset_TargetRealtime_Fast | aiProcess_ConvertToLeftHanded | aiProcess_LimitBoneWeights };
+
+	Assimp::Importer Importer;
+
+	const aiScene* pAIScene = Importer.ReadFile(strAnimFilePath.c_str(), iOption);
+	if (nullptr == pAIScene)
+		return E_FAIL;
+
+	if (FAILED(Open_File(strAnimFilePath.c_str())))
+		return E_FAIL;
+
+	if (FAILED(Non_Write_Bones(pAIScene->mRootNode)))
+		return E_FAIL;
+
+	if (FAILED(Write_Animations(pAIScene)))
+		return E_FAIL;
+
+	Close_File();
+	Importer.FreeScene();
+
+	return S_OK;
+}
+
 //	뼈의 수 저장
 //	부모 인덱스 저장
 //	이름 저장
@@ -72,6 +97,24 @@ HRESULT CModel_Extractor::Write_Bones(aiNode* pAINode, _int iParentIndex)
 		Write_File(Bone.szName, sizeof(_char) * MAX_PATH);
 		Write_File(&Bone.TransformationMatrix, sizeof(_float4x4));
 
+		BoneIndices.emplace(Bone.szName, iIdx++);
+	}
+
+	return S_OK;
+}
+
+HRESULT CModel_Extractor::Non_Write_Bones(aiNode* pAINode, _int iParentIndex)
+{
+	vector<tagBoneInfo>		Bones;
+
+	if (FAILED(Ready_Bones(pAINode, Bones)))
+		return E_FAIL;
+
+	_uint iNumBones = (_uint)Bones.size();
+
+	_uint iIdx = { 0 };
+	for (auto& Bone : Bones)
+	{
 		BoneIndices.emplace(Bone.szName, iIdx++);
 	}
 

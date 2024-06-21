@@ -289,9 +289,6 @@
     <Filter Include="01.Utility\02.Components\FSM\HState">
       <UniqueIdentifier>{fe575399-f059-49f7-ae13-46645922dd29}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\02.Components\Model\Mesh_Layer">
-      <UniqueIdentifier>{96dc04dc-3537-4316-b4df-bf3698f490a1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\97.Physics\Physics_Component\PxCollider">
       <UniqueIdentifier>{e7549f5f-afce-4cf1-aace-7cc16a6c4cb9}</UniqueIdentifier>
     </Filter>

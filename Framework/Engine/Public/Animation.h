@@ -30,6 +30,7 @@ public:		/* For.Load */
 	HRESULT									Initialize(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices);
 			/* For.Binary_Load*/
 	HRESULT									Initialize(const ANIM_DESC& AnimDesc);
+	HRESULT									Initialize(const string& strAnimFilePath);
 
 public:		/* For.PlayAnimation */
 	void									Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _bool* pFirsltTick, class CPlayingInfo* pPlayingInfo);
@@ -52,6 +53,9 @@ private:
 	_int									Find_ChannelIndex(_uint iBoneIndex);
 
 private:
+	HRESULT									Read_Binary(ifstream& ifs);
+
+private:
 	_char									m_szName[MAX_PATH] = { "" };
 
 	_float									m_fDuration = { 0.f };			/* 전체 재생 길이 */
@@ -63,8 +67,11 @@ private:
 public:
 	/* For.FBX_Load*/
 	static CAnimation* Create(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices);
-	/* For.Binary_Load*/
+	/* For.Binary_Load From Model */
 	static CAnimation* Create(const ANIM_DESC& AnimDesc);
+
+	/* For.Binary_Load Self */
+	static CAnimation* Create(const string& strAnimFilePath);
 	CAnimation* Clone();
 	virtual void							Free() override;
 

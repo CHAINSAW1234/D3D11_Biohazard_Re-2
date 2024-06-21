@@ -299,7 +299,7 @@ HRESULT CClothes_Zombie::Initialize_Model()
 
 	m_pModelCom->Set_RootBone(m_pModelCom->Get_BoneNames().front());
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
-	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(true, 0, TEXT("Default"), 1.f);
 
 	m_pModelCom->Active_RootMotion_XZ(false);
 	m_pModelCom->Active_RootMotion_Y(false);

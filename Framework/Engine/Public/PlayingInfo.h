@@ -32,6 +32,7 @@ public:		/* For.Access */
 
 	inline _int							Get_PreAnimIndex() { return m_iPreAnimIndex; }
 	inline _int							Get_AnimIndex() { return m_iAnimIndex; }
+	inline wstring						Get_AnimLayerTag() { return m_strAnimLayerTag; }
 	inline _float						Get_TrackPosition() { return m_fTrackPosition; }
 	inline _float						Get_BlendWeight() { return m_fBlendWeight; }
 	inline _float						Get_AccLinearInterpolation() { return m_fAccLinearInterpolation; }
@@ -49,9 +50,10 @@ public:		/* For.Access */
 
 	void								Set_Root_Pre(_bool isResetRootPre) { m_isResetRootPre = isResetRootPre; }
 
-	void								Change_Animation(_uint iAnimIndex, _uint iNumChannel);
+	void								Change_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, _uint iNumChannel);
 
 	inline void							Set_PreAnimIndex(_int iAnimIndex) { m_iPreAnimIndex = iAnimIndex; }
+	inline void							Set_PreAnimLayerTag(const wstring& strPreAnimLayerTag) { m_strPreAnimLayerTag = strPreAnimLayerTag; }
 	inline void							Set_Loop(_bool isLoop) { m_isLoop = isLoop; }
 	void								Set_BlendWeight(_float fBlendWeight, _float fBlendLinearTime = 0.f);
 	void								Set_TrackPosition(_float fTrackPosition);
@@ -91,6 +93,9 @@ private:
 	_bool								m_isLoop = { false };
 	_int								m_iPreAnimIndex = { -1 };
 	_int								m_iAnimIndex = { -1 };
+
+	wstring								m_strAnimLayerTag = { TEXT("") };
+	wstring								m_strPreAnimLayerTag = { TEXT("") };
 
 	_float								m_fBlendWeight = { 0.f };
 	_float								m_fStartBlendWeight = { 0.f };

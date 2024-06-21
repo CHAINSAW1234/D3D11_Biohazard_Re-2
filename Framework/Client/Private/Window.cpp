@@ -32,7 +32,7 @@ HRESULT CWindow::Initialize(void* pArg)
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
-	m_pModelCom->Add_AnimPlayingInfo(0, false, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 
 
 	m_pModelCom->Active_RootMotion_Rotation(true);
@@ -89,10 +89,10 @@ void CWindow::Late_Tick(_float fTimeDelta)
 	{
 	case WINDOW_STATIC:
 		//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // Àß¾Ë¾Æ°©´Ï´Ù ²¨¾ï
-		m_pModelCom->Change_Animation(0, m_eState);
+		m_pModelCom->Change_Animation(0, TEXT("Default"), m_eState);
 		break;
 	case WINDOW_BREAK:
-		m_pModelCom->Change_Animation(0, m_eState);
+		m_pModelCom->Change_Animation(0, TEXT("Default"), m_eState);
 		break;
 		break;
 	}

@@ -606,11 +606,11 @@ void CPlayer::Update_KeyInput_Reload()
 {
 	if (Get_Body_Model()->isFinished(3)) {
 		if (m_pGameInstance->Get_KeyState('R') == DOWN) {
-			Get_Body_Model()->Change_Animation(3, HOLD_RELOAD);
+			Get_Body_Model()->Change_Animation(3, TEXT("Default"), HOLD_RELOAD);
 			Get_Body_Model()->Set_TrackPosition(3, 0.f);
 			Get_Body_Model()->Set_BlendWeight(3, 10.f, 0.4f);
 
-			Get_Weapon_Model()->Change_Animation(0, 2);
+			Get_Weapon_Model()->Change_Animation(0, TEXT("Default"), 2);
 			Get_Weapon_Model()->Set_TrackPosition(0, 0.f);
 		}
 		else {
@@ -1254,7 +1254,7 @@ HRESULT CPlayer::Add_FSM_States()
 	m_pFSMCom->Add_State(HOLD, CPlayer_State_Hold::Create(this));
 	m_pFSMCom->Change_State(MOVE);
 
-	Get_Body_Model()->Change_Animation(0, CPlayer::ANIM_IDLE);
+	Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::ANIM_IDLE);
 	Get_Body_Model()->Set_Loop(0, true);
 	Get_Body_Model()->Set_BlendWeight(0, 1.f);
 	Get_Body_Model()->Set_BlendWeight(1, 0.f);
