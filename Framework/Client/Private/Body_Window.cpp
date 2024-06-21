@@ -1,23 +1,25 @@
 #include "stdafx.h"
-#include "Window.h"
+#include "Body_Window.h"
 #include"Player.h"
-CWindow::CWindow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CInteractProps{ pDevice, pContext }
+
+#include"Window.h"
+CBody_Window::CBody_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CPart_InteractProps{ pDevice, pContext }
 {
 }
 
-CWindow::CWindow(const CWindow& rhs)
-	: CInteractProps{ rhs }
+CBody_Window::CBody_Window(const CBody_Window& rhs)
+	: CPart_InteractProps{ rhs }
 {
 
 }
 
-HRESULT CWindow::Initialize_Prototype()
+HRESULT CBody_Window::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CWindow::Initialize(void* pArg)
+HRESULT CBody_Window::Initialize(void* pArg)
 {
 	/*문자식 파트오브젝트 붙혀야하는데 뼈가 문고리에 없어서 직접 찍어야 하는데
 	프로토타입 끝나고 뼈 붙혀보겠나이다*/
@@ -36,7 +38,6 @@ HRESULT CWindow::Initialize(void* pArg)
 
 
 	m_pModelCom->Active_RootMotion_Rotation(true);
-	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
 #ifndef NON_COLLISION_PROP
 
@@ -47,53 +48,20 @@ HRESULT CWindow::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CWindow::Tick(_float fTimeDelta)
+void CBody_Window::Tick(_float fTimeDelta)
 {
-	__super::Check_Player();
-	if (!m_bVisible)
-		return;
-
-	if (m_pPlayer == nullptr)
-		return;
-
-
-	if (m_bActive)
-		m_fTime += fTimeDelta;
-
-	if (m_fTime > 4.f)
-	{
-		m_fTime = 0.f;
-		m_bActive = false;
-		m_eState = WINDOW_STATIC;
-	}
-
-	if (m_bCol&& !m_bActive)
-	{
-		//UI띄우고
-		if (*m_pPlayerInteract)
-			Active();
-		m_bCol = false;
-	}
 }
 
-void CWindow::Late_Tick(_float fTimeDelta)
+void CBody_Window::Late_Tick(_float fTimeDelta)
 {
-	if (!Visible())
-		return;
-
-	if (m_bRender == false)
-		return;
-
-
-	switch (m_eState)
+	switch (*m_pState)
 	{
-	case WINDOW_STATIC:
+	case CWindow::WINDOW_STATIC:
 		//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // 잘알아갑니다 꺼억
-		m_pModelCom->Change_Animation(0, m_eState);
+		m_pModelCom->Change_Animation(0, *m_pState);
 		break;
-	case WINDOW_BREAK:
-		m_pModelCom->Change_Animation(0, m_eState);
-		break;
+	case CWindow::WINDOW_BREAK:
+		m_pModelCom->Change_Animation(0, *m_pState);
 		break;
 	}
 	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
@@ -102,7 +70,7 @@ void CWindow::Late_Tick(_float fTimeDelta)
 
 
 
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+	m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 
 	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
 
@@ -114,12 +82,12 @@ void CWindow::Late_Tick(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_SPHERE]);
+	m_pGameInstance->Add_DebugComponents(m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]);
 #endif
 
 }
 
-HRESULT CWindow::Render()
+HRESULT CBody_Window::Render()
 {
 	if (m_bRender == false)
 		return S_OK;
@@ -186,7 +154,7 @@ HRESULT CWindow::Render()
 	return S_OK;
 }
 
-HRESULT CWindow::Add_Components()
+HRESULT CBody_Window::Add_Components()
 {
 
 	/* For.Com_Shader */
@@ -195,7 +163,7 @@ HRESULT CWindow::Add_Components()
 		return E_FAIL;
 	
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(g_Level, m_tagPropDesc.strModelComponent,
+	if (FAILED(__super::Add_Component(g_Level, m_strModelComponentName,
 		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
@@ -206,72 +174,30 @@ HRESULT CWindow::Add_Components()
 	ColliderDesc.vCenter = _float3(-10.f, 1.f, 0.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
 		return E_FAIL;
 	return S_OK;
 }
 
-HRESULT CWindow::Add_PartObjects()
-{
-
-	return S_OK;
-}
-
-HRESULT CWindow::Initialize_PartObjects()
+HRESULT CBody_Window::Add_PartObjects()
 {
 
 	return S_OK;
 }
 
-HRESULT CWindow::Bind_ShaderResources()
+HRESULT CBody_Window::Initialize_PartObjects()
 {
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	//_bool isMotionBlur = m_pGameInstance->Get_ShaderState(MOTION_BLUR);
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_isMotionBlur", &isMotionBlur, sizeof(_bool))))
-	//	return E_FAIL;
-
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevWorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevViewMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
-	//	return E_FAIL;
-
-
 	return S_OK;
 }
 
-void CWindow::Active()
+
+CBody_Window* CBody_Window::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	*m_pPlayerInteract = false;
-	m_bActive = true;
-
-
-	if (m_eState == WINDOW_STATIC)
-		m_eState = WINDOW_BREAK;
-	else
-		m_eState = WINDOW_STATIC;
-
-
-
-
-}
-
-CWindow* CWindow::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-{
-	CWindow* pInstance = new CWindow(pDevice, pContext);
+	CBody_Window* pInstance = new CBody_Window(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX(TEXT("Failed To Created : CWindow"));
+		MSG_BOX(TEXT("Failed To Created : CBody_Window"));
 
 		Safe_Release(pInstance);
 	}
@@ -280,13 +206,13 @@ CWindow* CWindow::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 }
 
-CGameObject* CWindow::Clone(void* pArg)
+CGameObject* CBody_Window::Clone(void* pArg)
 {
-	CWindow* pInstance = new CWindow(*this);
+	CBody_Window* pInstance = new CBody_Window(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX(TEXT("Failed To Created : CWindow"));
+		MSG_BOX(TEXT("Failed To Created : CBody_Window"));
 
 		Safe_Release(pInstance);
 	}
@@ -294,7 +220,7 @@ CGameObject* CWindow::Clone(void* pArg)
 	return pInstance;
 }
 
-void CWindow::Free()
+void CBody_Window::Free()
 {
 	__super::Free();
 

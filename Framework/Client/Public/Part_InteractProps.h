@@ -56,7 +56,7 @@ public:
 
 protected:
 	_bool				m_bCol = { false };
-
+	const _ubyte*			m_pState;
 
 	class CPlayer*		m_pPlayer = { nullptr };
 	_bool* m_pPlayerInteract = {nullptr};

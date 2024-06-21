@@ -7,10 +7,23 @@ BEGIN(Client)
 
 class CBody_Door final : public CPart_InteractProps
 {
+public:
+	typedef struct tag_BodyDoor : public PART_INTERACTPROPS_DESC
+	{
+		const _ubyte* pOneDoorState;
+		const _ubyte* pDoubleDoorState;
+
+	}BODY_DOOR_DESC;
 private:
 	CBody_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBody_Door(const CBody_Door& rhs);
 	virtual ~CBody_Door() = default;
+public:
+	virtual HRESULT				Initialize_Prototype() override;
+	virtual HRESULT				Initialize(void* pArg) override;
+	virtual void					Tick(_float fTimeDelta) override;
+	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT				Render() override;
 
 
 private:

@@ -4,6 +4,8 @@
 #include "PxCollider.h"
 #include "Bone.h"
 
+#include"Cabinet.h"
+
 CBody_Cabinet::CBody_Cabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPart_InteractProps{ pDevice, pContext }
 {
@@ -49,33 +51,24 @@ HRESULT CBody_Cabinet::Initialize(void* pArg)
 
 void CBody_Cabinet::Tick(_float fTimeDelta)
 {
-	if (m_eState == CABINET_OPEN && m_pModelCom->isFinished(0))
+	if (*m_pState == CCabinet::CABINET_OPEN && m_pModelCom->isFinished(0))
 		return;
-	// 
-	if (m_bCol&& !m_bActive)
-	{
-		//UI띄우고
-		if (*m_pPlayerInteract)
-			Active();
-		m_bCol = false;
-	}
-
 }
 
 void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 {
 	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
 
-	switch (m_eState)
+	switch (*m_pState)
 	{
-	case CABINET_CLOSED:
-		m_pModelCom->Change_Animation(0, m_eState);
+	case CCabinet::CABINET_CLOSED:
+		m_pModelCom->Change_Animation(0, *m_pState);
 		break;
-	case CABINET_OPEN:
-		m_pModelCom->Change_Animation(0, m_eState);
+	case CCabinet::CABINET_OPEN:
+		m_pModelCom->Change_Animation(0, *m_pState);
 		break;
-	case CABINET_OPENED:
-		m_pModelCom->Change_Animation(0, m_eState);
+	case CCabinet::CABINET_OPENED:
+		m_pModelCom->Change_Animation(0, *m_pState);
 		break;
 	}
 
@@ -190,11 +183,6 @@ HRESULT CBody_Cabinet::Initialize_PartObjects()
 {
 
 	return S_OK;
-}
-
-void CBody_Cabinet::Active()
-{
-	m_eState = CABINET_OPEN;
 }
 
 CBody_Cabinet* CBody_Cabinet::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

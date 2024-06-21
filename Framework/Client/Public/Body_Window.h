@@ -1,18 +1,18 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "InteractProps.h"
+#include "Part_InteractProps.h"
 
 
 
 BEGIN(Client)
 
-class CWindow final : public CInteractProps
+class CBody_Window final : public CPart_InteractProps
 {
 private:
-	CWindow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CWindow(const CWindow& rhs);
-	virtual ~CWindow() = default;
+	CBody_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CBody_Window(const CBody_Window& rhs);
+	virtual ~CBody_Window() = default;
 
 public:
 	virtual HRESULT				Initialize_Prototype() override;
@@ -25,20 +25,11 @@ private:
 	virtual HRESULT				Add_Components();
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
-	virtual HRESULT				Bind_ShaderResources() override;
 
-private:
-	void Active();
-
-
-
-private:
-	_bool				m_bActive = { false };
-	_float			m_fTime = { 0.f };
 
 
 public:
-	static CWindow* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CBody_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };

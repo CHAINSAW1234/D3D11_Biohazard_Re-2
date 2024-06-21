@@ -97,10 +97,6 @@ void CCabinet::Active()
 	*m_pPlayerInteract = false;
 	m_bActive = true;
 	m_eState = CABINET_OPEN;
-
-
-
-
 }
 
 CCabinet* CCabinet::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

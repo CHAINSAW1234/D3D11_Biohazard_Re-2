@@ -241,6 +241,18 @@
     <Filter Include="02.GameObjects\UI\14. Loading">
       <UniqueIdentifier>{1fab2592-4cd6-4e48-a96c-07b5219145e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Cabinet\Body_Cabinet">
+      <UniqueIdentifier>{9b470b2b-6182-4e01-b608-82f374349797}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Door\Body_Door">
+      <UniqueIdentifier>{e1832ad7-1f5d-4d74-a640-3437cef2aebb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\NewpoliceStatue\Body_NewpoliceStatue">
+      <UniqueIdentifier>{5d4f9fb8-2f8f-455a-958c-453e96ef2ea9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Window\Body_Window">
+      <UniqueIdentifier>{bb3b42cc-8e8f-45f8-ac1b-56d1ca31983f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -465,6 +477,18 @@
     <ClInclude Include="..\Public\Loading_UI.h">
       <Filter>02.GameObjects\UI\14. Loading</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Body_Cabinet.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Cabinet\Body_Cabinet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Door.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Door\Body_Door</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_NewpoliceStatue.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\NewpoliceStatue\Body_NewpoliceStatue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Window.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Window\Body_Window</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -670,6 +694,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Loading_UI.cpp">
       <Filter>02.GameObjects\UI\14. Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Cabinet.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Cabinet\Body_Cabinet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Door.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Door\Body_Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_NewpoliceStatue.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\NewpoliceStatue\Body_NewpoliceStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Window.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Window\Body_Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

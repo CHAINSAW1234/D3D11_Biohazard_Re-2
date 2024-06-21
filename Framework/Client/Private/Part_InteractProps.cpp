@@ -25,7 +25,7 @@ HRESULT CPart_InteractProps::Initialize(void* pArg)
 	PART_INTERACTPROPS_DESC* pPartobj_desc = (PART_INTERACTPROPS_DESC*)pArg;
 
 	m_strModelComponentName = pPartobj_desc->strModelComponentName;
-
+	m_pState = pPartobj_desc->pState;
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;

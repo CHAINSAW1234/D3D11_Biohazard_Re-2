@@ -4,6 +4,7 @@
 #include "Bone.h"
 #include "PxCollider.h"
 
+#include"Door.h"
 CBody_Door::CBody_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPart_InteractProps{ pDevice, pContext }
 {
@@ -15,6 +16,56 @@ CBody_Door::CBody_Door(const CBody_Door& rhs)
 
 }
 
+HRESULT CBody_Door::Initialize_Prototype()
+{
+	return E_NOTIMPL;
+}
+
+HRESULT CBody_Door::Initialize(void* pArg)
+{
+	/*문자식 파트오브젝트 붙혀야하는데 뼈가 문고리에 없어서 직접 찍어야 하는데
+	프로토타입 끝나고 뼈 붙혀보겠나이다*/
+
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
+	if (FAILED(Add_Components()))
+		return E_FAIL;
+
+
+	m_pModelCom->Set_RootBone("RootNode");
+	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
+
+	m_pModelCom->Add_AnimPlayingInfo(-1, false, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Set_TotalLinearInterpolation(0.2f);
+
+
+	m_pModelCom->Active_RootMotion_Rotation(true);
+
+#ifndef NON_COLLISION_PROP
+
+	m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+
+#endif
+
+	switch (*m_pState)
+	{
+	case CDoor::DOOR_DOUBLE:
+		m_vecRotationBone[ATC_ROOT] = m_pModelCom->Get_BonePtr("_00");
+		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L] = m_pModelCom->Get_BonePtr("_01");
+		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R] = m_pModelCom->Get_BonePtr("_03");
+		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L] = m_pModelCom->Get_BonePtr("_04");
+		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R] = m_pModelCom->Get_BonePtr("_02");
+		break;
+	case CDoor::DOOR_ONE:
+		m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L] = m_pModelCom->Get_BonePtr("_01");
+		m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R] = m_pModelCom->Get_BonePtr("_00");
+		break;
+	}
+
+	return S_OK;
+}
+
 HRESULT CBody_Door::Add_Components()
 {
 
@@ -24,7 +75,7 @@ HRESULT CBody_Door::Add_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(g_Level, m_tagPropDesc.strModelComponent,
+	if (FAILED(__super::Add_Component(g_Level, m_strModelComponentName,
 		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
@@ -34,9 +85,9 @@ HRESULT CBody_Door::Add_Components()
 	ColliderDesc.vCenter = _float3(-10.f, 1.f, 0.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
 		return E_FAIL;
-	if (m_eType == DOOR_DOUBLE)
+	if (*m_pState == CDoor::DOOR_DOUBLE)
 	{
 		CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc1{};
 
@@ -63,87 +114,31 @@ HRESULT CBody_Door::Initialize_PartObjects()
 	return S_OK;
 }
 
-HRESULT CBody_Door::Bind_ShaderResources()
-{
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	//_bool isMotionBlur = m_pGameInstance->Get_ShaderState(MOTION_BLUR);
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_isMotionBlur", &isMotionBlur, sizeof(_bool))))
-	//	return E_FAIL;
-
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevWorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevViewMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
-	//	return E_FAIL;
-
-
-	return S_OK;
-}
-
 void CBody_Door::DoubleDoor_Tick(_float fTimeDelta)
 {
-
-	if (m_bActive)
-		m_fTime += fTimeDelta;
-
-	if (m_fTime > 4.f)
-	{
-		m_fTime = 0.f;
-		m_bActive = false;
-		m_eDoubleState = DOUBLEDOOR_STATIC;
-	}
-
-	if ((m_bCol||m_bDoubleCol) && !m_bActive)
-	{
-		//UI띄우고
-		if (*m_pPlayerInteract)
-			DoubleDoor_Active();
-		m_bCol = false;
-		m_bDoubleCol = false;
-	}
-
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-	m_pColDoubledoorCom->Tick(m_pTransformCom->Get_WorldMatrix());
-
 }
 
 void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 {
 	switch (m_eDoubleState)
 	{
-	case LSIDE_DOUBLEDOOR_OPEN_L:
+	case  CDoor::LSIDE_DOUBLEDOOR_OPEN_L:
 		//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // 잘알아갑니다 꺼억
 		m_pModelCom->Change_Animation(0, m_eDoubleState);
 		break;
-	case LSIDE_DOUBLEDOOR_OPEN_R:
+	case  CDoor::LSIDE_DOUBLEDOOR_OPEN_R:
 		m_pModelCom->Change_Animation(0, m_eDoubleState);
 		break;
-	case RSIDE_DOUBLEDOOR_OPEN_L:
+	case  CDoor::RSIDE_DOUBLEDOOR_OPEN_L:
 		m_pModelCom->Change_Animation(0, m_eDoubleState);
 		break;
-	case RSIDE_DOUBLEDOOR_OPEN_R:
+	case  CDoor::RSIDE_DOUBLEDOOR_OPEN_R:
 		m_pModelCom->Change_Animation(0, m_eDoubleState);
 		break;
-	case DOUBLEDOOR_STATIC:
+	case  CDoor::DOUBLEDOOR_STATIC:
 		m_pModelCom->Change_Animation(0, m_eDoubleState);
 		break;
-		/*
-	case LSIDE_DOUBLEDOOR_OPEN:
-		m_pModelCom->Change_Animation(1, 0);
-		break;
-	case RSIDE_DOUBLEDOOR_OPEN:
-		m_pModelCom->Change_Animation(2, 0);
-		break;
-		*/
+	
 	}
 	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };

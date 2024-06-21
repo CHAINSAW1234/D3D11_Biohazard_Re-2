@@ -12,8 +12,8 @@ class CWindow final : public CInteractProps
 public:
 	enum WINDOW_STATE
 	{
-		WINDOW_STATIC,
 		WINDOW_BREAK,
+		WINDOW_STATIC,
 		WINDOW_END
 	};
 
