@@ -27,6 +27,7 @@ public:
 public:		/* For.Access */
 	inline _bool						Is_Loop() { return m_isLoop; }
 	inline _bool						Is_Finished() { return m_isFinished; }
+	inline _bool						Is_FirstTick() { return m_isFirstTick; }
 	inline _bool						Is_LinearInterpolation() { return m_isLinearInterpolation; }
 
 	inline _int							Get_PreAnimIndex() { return m_iPreAnimIndex; }
@@ -59,6 +60,7 @@ public:		/* For.Access */
 	inline void							Set_AccLinearInterpolation(_float fAccLinear) { m_fAccLinearInterpolation = fAccLinear; }
 	inline void							Set_BoneLayerTag(const wstring& strBoneLayerTag) { m_strBoneLayerTag = strBoneLayerTag; }
 	inline void							Set_Finished(_bool isFinished) { m_isFinished = isFinished; }
+	inline void							Set_FirstTick(_bool isFirstTick) { m_isFirstTick = isFirstTick; }
 
 	void								Set_PreTranslation(_fvector vPreTranslation);
 	void								Set_PreQuaternion(_fvector vPreQuaternion);
@@ -111,6 +113,8 @@ private:
 	_bool								m_isFinished = { true };
 
 	_bool								m_isResetRootPre = { false };
+
+	_bool								m_isFirstTick = { false };
 
 	vector<_uint>						m_CurrentKeyFrameIndices;
 	vector<KEYFRAME>					m_LastKeyFrames;

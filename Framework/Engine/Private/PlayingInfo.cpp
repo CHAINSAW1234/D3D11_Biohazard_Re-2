@@ -50,6 +50,13 @@ void CPlayingInfo::Change_Animation(_uint iAnimIndex, _uint iNumChannel)
 	m_iPreAnimIndex = m_iAnimIndex;
 	m_iAnimIndex = iAnimIndex;
 
+	_bool			isLinearActive = { -1 != m_iPreAnimIndex };
+	Reset_LinearInterpolation();
+	Set_LinearInterpolation(isLinearActive);
+	Update_LinearStateKeyFrames(m_LastKeyFrames);
+
+	Set_FirstTick(true);
+
 	Reset_CurrentKeyFrameIndices(iNumChannel);
 	Reset_TrackPosition();
 	Reset_Finished();

@@ -1895,23 +1895,8 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 
 	_uint				iNumBones = { static_cast<_uint>(m_Bones.size()) };
 	unordered_set<_uint>			IncludeBoneIndices = { pBoneLayer->Get_IncludedBoneIndices() };
-	_bool				isFirstTick = { false };
 	
-	vector<_float4x4>	TransformationMatrices = { m_Animations[iAnimIndex]->Compute_TransfromationMatrix(fTimeDelta, iNumBones, IncludeBoneIndices, &isFirstTick, pPlayingInfo) };
-
-	if (true == isFirstTick)
-	{
-		_int						iPreAnimIndex = { pPlayingInfo->Get_PreAnimIndex() };
-
-		if (-1 != iPreAnimIndex)
-		{
-			pPlayingInfo->Reset_LinearInterpolation();
-			pPlayingInfo->Set_LinearInterpolation(true);
-
-			vector<KEYFRAME>			LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
-			pPlayingInfo->Update_LinearStateKeyFrames(LastKeyFrames);
-		}	
-	}
+	vector<_float4x4>	TransformationMatrices = { m_Animations[iAnimIndex]->Compute_TransfromationMatrix(fTimeDelta, iNumBones, IncludeBoneIndices, pPlayingInfo) };
 
 	Update_LinearInterpolation(fTimeDelta, 0);
 	if (true == pPlayingInfo->Is_LinearInterpolation())
@@ -1931,6 +1916,7 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 	}	
 
 	pPlayingInfo->Update_LastKeyFrames(TransformationMatrices, iNumBones, m_fTotalLinearTime);
+	pPlayingInfo->Set_FirstTick(false);
 
 	for (_uint i = 0; i < iNumBones; ++i)
 	{
@@ -1983,7 +1969,6 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 	if (nullptr == pBoneLayer)
 		return TransformationMatrices;
 
-	_bool							isFirstTick = { false };
 	const _int						iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
 	const _int						iPreAnimIndex = { pPlayingInfo->Get_PreAnimIndex() };
 	const _float					fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
@@ -1996,18 +1981,12 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 		return TransformationMatrices;
 
 	unordered_set<_uint>						TempIncludedBoneIndices = pBoneLayer->Get_IncludedBoneIndices();
-	TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix(fTimeDelta, iNumBones, TempIncludedBoneIndices, &isFirstTick, pPlayingInfo);
+	TransformationMatrices = m_Animations[iAnimIndex]->Compute_TransfromationMatrix(fTimeDelta, iNumBones, TempIncludedBoneIndices, pPlayingInfo);
 
+	const _bool						isFirstTick = { pPlayingInfo->Is_FirstTick() };
 	const _bool						isFinished = { pPlayingInfo->Is_Finished() };
 	if (true == isFinished)
 		return TransformationMatrices;
-
-	if (true == isFirstTick &&
-		-1 != iPreAnimIndex)
-	{
-		pPlayingInfo->Reset_LinearInterpolation();
-		pPlayingInfo->Set_LinearInterpolation(true);
-	}
 
 	//	애니메이션이 선형보간중이었다면 선형보간된 매트릭스로 재 업데이트한다.
 	Update_LinearInterpolation(fTimeDelta, iPlayingIndex);
@@ -2112,6 +2091,7 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 	//	선형 보간중이아니었다면 이후에 일어날 선형 보간을 대비하여 마지막 키프레임들을 저장한다.
 	//	=> 선형 보간여부와상관없이 매번 저장
 	Update_LastKeyFrames(TransformationMatrices, iPlayingIndex);
+	pPlayingInfo->Set_FirstTick(false);
 
 	return TransformationMatrices;
 }
@@ -2370,7 +2350,7 @@ void CModel::Motion_Changed(_uint iPlayingIndex)
 
 void CModel::Update_LinearInterpolation(_float fTimeDelta, _uint iPlayingIndex)
 {
-	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+	CPlayingInfo*			pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
 	const _bool				isLinearInterpolation = { pPlayingInfo->Is_LinearInterpolation() };
 	if (nullptr != pPlayingInfo &&
 		true == isLinearInterpolation)

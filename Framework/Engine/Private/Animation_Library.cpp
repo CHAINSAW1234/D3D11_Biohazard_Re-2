@@ -17,7 +17,7 @@ HRESULT CAnimation_Library::Add_Prototype_Animation(const wstring& strAnimLayerT
 
 const vector<class CAnimation*>& CAnimation_Library::Get_Animation_PrototypeLayer(const wstring& strAnimLayerTag)
 {
-
+	return vector<class CAnimation*>();
 }
 
 CAnimation* CAnimation_Library::Get_Animation_Prototype(const wstring& strAnimLayerTag, _uint iIndex)
