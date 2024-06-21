@@ -78,7 +78,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 	if (true == m_bDead)
 		return;
 
-	if (true == m_pInventory_Manager->Get_isItemExamine())
+	if (CInventory_Manager::EXAMIN == m_pInventory_Manager->Get_InvenManagerState())
 	{
 		m_eWindowType = EXAMINE;
 		m_isMapRender = false;
@@ -123,10 +123,6 @@ void CTab_Window::Tick(_float fTimeDelta)
 	case Client::CTab_Window::INVENTORY: {
 		m_pInventory_Manager->Tick(fTimeDelta);
 
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
-		{
-
-		}
 		break;
 	}
 		

@@ -28,9 +28,9 @@ public :
 	_bool*	Get_MainRender()	{ return m_pInvenButton->Get_Dead_Ptr(); }
 	
 private:
-	class CButton_UI* m_pMapButton = { nullptr };
-	class CButton_UI* m_pInvenButton = { nullptr };
-	class CButton_UI* m_pHintButton = { nullptr };
+	class CButton_UI*	m_pMapButton = { nullptr };
+	class CButton_UI*	m_pInvenButton = { nullptr };
+	class CButton_UI*	m_pHintButton = { nullptr };
 
 	CInventory_Manager* m_pInventory_Manager = { nullptr };
 

@@ -20,7 +20,7 @@ namespace Client
 		ID_END
 	};
 
-	enum UI_OPERRATION{ POP_UP, IDLE, HIDE, STATE_END };
+	enum UI_OPERRATION{ POP_UP, UI_IDLE, HIDE, STATE_END };
 
 	enum MAP_DIRECTION { DIRECTION_WEST, DIRECTION_EAST, DIRECTION_MID };
 	enum PLAYER_DIREECTION { DIRECTION_FRONT = 1, DIRECTION_BACK = 2, DIRECTION_LEFT = 4, DIRECTION_RIGHT = 8, DIRECTION_END };
@@ -28,10 +28,33 @@ namespace Client
 	enum MONSTER_TYPE { MT_ZOMBIE, MT_DEFAULT };
 	enum MONSTER_STATE { MST_IDLE,MST_WALK,MST_ATTACK,MST_DEFAULT, MST_END };
 
-	enum ITEM_NUMBER {
-		PISTOL_HANDGUN, PISTOL_AMMO, 
-		FIRST_AID_SPRAY, 
-		BATTLE_DAGGER, 
+
+	enum ITEM_NUMBER {//파일 이름 입니다 70까지만 추가 되어 있음 대문자는 
+		emergencyspray01a,
+		greenherb01a,
+		redherb01a,
+		blueherb01a,
+		herbsgg01a,
+		herbsgr01a,
+		herbsgb01a,
+		herbsggb01a,
+		herbsggg01a,
+		herbsgrb01a,
+		herbsrb01a,
+		greenherbitem01a,
+		redherbitem01a,
+		blueherbitem01a,
+		handgun_bullet01a,
+		shotgun_bullet01a,
+		submachinegun_bullet01a,
+		magnumbulleta,
+		biggun_bullet01a,
+		inkribbon01a,
+		woodbarricade01a,
+		blastingfuse01a,
+		gunpowder01a,
+		gunpowder01b,
+		strengtheningyellow01a,
 		ITEM_NUMBER_END 
 	};
 
@@ -43,6 +66,20 @@ namespace Client
 		CONSUMABLE, //소모 아이템
 		QUEST, // 퀘스트아이템
 		INVEN_ITEM_TYPE_END
+	};
+
+	enum INVENTORY_EVENT {
+		EVENT_IDLE, 
+		EQUIP_ITEM,
+		UNEQUIP_ITEM,
+		USE_ITEM,
+		EXAMINE_ITEM,
+		COMBINED_ITEM,
+		HOTKEY_ASSIGNED_ITEM,
+		REARRANGE_ITEM,
+		DISCARD_ITEM,
+		CONTEXTUI_SELECT,
+		INVEN_EVENT_END
 	};
 
 	enum ANIM_BONE_TYPE_COLLIDER_DOOR_SINGLE

@@ -125,7 +125,7 @@ protected :
 	void Frame_Reset();
 
 public:
-	void Frame_Change_ValueColor(_uint iChange_FrameNum) {
+	virtual void Frame_Change_ValueColor(_uint iChange_FrameNum) {
 		m_vCurrentColor =	m_vColor[iChange_FrameNum].vColor;
 		m_fBlending =		m_vColor[iChange_FrameNum].fBlender_Value;
 		m_isBlending =		m_vColor[iChange_FrameNum].isBlender;

@@ -36,8 +36,6 @@ HRESULT CItem_Mesh_Viewer::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_eItem_Number = PISTOL_AMMO;
-
 	m_eViewer_State = POP_UP;
 
 	CGameObject* pCamera = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_ZZZCamera"))->back();
@@ -64,7 +62,7 @@ void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 		break;
 	}
 		
-	case Client::IDLE: {
+	case Client::UI_IDLE: {
 		Idle_Operation(fTimeDelta);
 		break;
 	}
@@ -137,7 +135,7 @@ void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
 
 	if (m_fPopupHide_CurTime > m_fPopupHide_TimeLimit)
 	{
-		m_eViewer_State = IDLE;
+		m_eViewer_State = UI_IDLE;
 		m_fPopupHide_CurTime = 0.f;
 		m_fDistCam = m_fPopupHide_EndDist;
 		return;
@@ -211,7 +209,7 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation)
 		break;
 	}
 		
-	case Client::IDLE: {
+	case Client::UI_IDLE: {
 		break;
 	}
 		

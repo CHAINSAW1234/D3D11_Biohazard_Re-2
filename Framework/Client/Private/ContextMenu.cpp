@@ -26,6 +26,8 @@ HRESULT CContextMenu::Initialize(void* pArg)
 			return E_FAIL;
 	}
 
+	m_eContext_State = UI_IDLE;
+
 	return S_OK;
 }
 
@@ -42,15 +44,17 @@ void CContextMenu::Tick(_float fTimeDelta)
 	switch (m_eContext_State)
 	{
 	case Client::POP_UP: {
-
+		PopUp_Operation(fTimeDelta);
 		break;
 	}
 		
-	case Client::IDLE: {
+	case Client::UI_IDLE: {
+		Idle_Operation(fTimeDelta);
 		break;
 	}
 		
 	case Client::HIDE: {
+		Hide_Operation(fTimeDelta);
 		break;
 	}
 
@@ -71,8 +75,6 @@ void CContextMenu::Late_Tick(_float fTimeDelta)
 
 		return;
 	}
-
-
 }
 
 HRESULT CContextMenu::Render()
@@ -86,19 +88,29 @@ void CContextMenu::PopUp_Operation(_float fTimeDelta)
 
 void CContextMenu::Idle_Operation(_float fTimeDelta)
 {
+	
+
+
 }
 
 void CContextMenu::Hide_Operation(_float fTimeDelta)
 {
 }
 
-void CContextMenu::MenuSeting(ITEM_TYPE eItemType, _bool bActive)
+void CContextMenu::MenuSeting(ITEM_TYPE eItemType, _bool bActive, _float2 fAppearPos, _float2 fArrivalPos)
 {
+	m_bDead = false;
+	m_fAppearPos = fAppearPos;
+	m_fArrivalPos = fArrivalPos;
+	m_eContext_State = POP_UP;
+
 	switch (eItemType)
 	{
 	case Client::EQUIPABLE: { //bActive가 장착 여부임
 		m_iContextMenuCount = 4;
 		
+		m_eContextType = eItemType;
+
 		if (false == bActive)
 		{
 			m_vecMenuItem[0]->Set_TextureNum(0);
@@ -126,6 +138,8 @@ void CContextMenu::MenuSeting(ITEM_TYPE eItemType, _bool bActive)
 	case Client::CONSUMABLE_EQUIPABLE: { //bActive가 장착 여부임
 		m_iContextMenuCount = 4;
 
+		m_eContextType = eItemType;
+
 		if (false == bActive)
 		{
 			m_vecMenuItem[0]->Set_TextureNum(9);
@@ -152,6 +166,8 @@ void CContextMenu::MenuSeting(ITEM_TYPE eItemType, _bool bActive)
 		
 	case Client::USEABLE: { //bActive가 사용 가능 여부임
 		m_iContextMenuCount = 4;
+
+		m_eContextType = eItemType;
 
 		m_vecMenuItem[0]->Set_TextureNum(4);
 		m_vecMenuItem[0]->Set_Text(0, TEXT("사용"));
@@ -183,6 +199,8 @@ void CContextMenu::MenuSeting(ITEM_TYPE eItemType, _bool bActive)
 	case Client::CONSUMABLE: { // 액티브 관계없음
 		m_iContextMenuCount = 3;
 
+		m_eContextType = eItemType;
+
 		m_vecMenuItem[0]->Set_TextureNum(4);
 		m_vecMenuItem[0]->Set_Text(0, TEXT("사용"));
 		m_vecMenuItem[0]->Frame_Change_ValueColor(1);
@@ -203,6 +221,14 @@ void CContextMenu::MenuSeting(ITEM_TYPE eItemType, _bool bActive)
 	}
 		
 	case Client::QUEST: {
+		m_iContextMenuCount = 1;
+
+		m_eContextType = eItemType;
+
+		m_vecMenuItem[0]->Set_TextureNum(3);
+		m_vecMenuItem[0]->Set_Text(0, TEXT("검사"));
+		m_vecMenuItem[0]->Frame_Change_ValueColor(1);
+
 		break;
 	}
 		

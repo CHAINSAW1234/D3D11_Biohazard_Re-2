@@ -23,6 +23,10 @@ HRESULT CInventory_Manager::Initialize()
 	if (FAILED(Init_ItemUI()))
 		return E_FAIL;
 
+	if (FAILED(Init_ContextMenu()))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -34,15 +38,40 @@ void CInventory_Manager::FirstTick_Seting()
 
 void CInventory_Manager::Tick(_float fTimeDelta)
 {
+	switch (m_eInven_Manager_State)
+	{
+	case Client::EVENT_IDLE: {
+		Idle_Operation(fTimeDelta);
+		break;
+	}
+
+	case Client::CONTEXTUI_SELECT: {
+		ContextUISelect_Operation(fTimeDelta);
+		break;
+	}
+
+	default:
+		break;
+	}
+}
+
+void CInventory_Manager::Late_Tick(_float fTimeDelta)
+{
+	m_pContextMenu->Late_Tick(fTimeDelta);
+}
+
+void CInventory_Manager::Idle_Operation(_float fTimeDelta)
+{
 	_bool IsNoOneHover = true;
-	CInventory_Slot* pHoveredObj = nullptr;
+
+	CInventory_Slot* pHoveredSlot = nullptr;
 
 	for (_uint i = 0; i < m_iInvenCount; i++)
 	{
 		if (true == m_vecInvenSlot[i]->IsMouseHover())
 		{
 			IsNoOneHover = false;
-			pHoveredObj = m_vecInvenSlot[i];
+			pHoveredSlot = m_vecInvenSlot[i];
 		}
 	}
 
@@ -50,15 +79,15 @@ void CInventory_Manager::Tick(_float fTimeDelta)
 
 	if (false == IsNoOneHover)
 	{
-		_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredObj->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
+		_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
 		HoveredPos.z = 0.7f;
 		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
 	}
 }
 
-void CInventory_Manager::Late_Tick(_float fTimeDelta)
+void CInventory_Manager::ContextUISelect_Operation(_float fTimeDelta)
 {
-
+	m_pContextMenu->Tick(fTimeDelta);
 }
 
 void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
@@ -85,8 +114,6 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 			iter->Set_Dead(bInput);
 		}
 	}
-
-	m_bisItemExamin = false;
 }
 
 _bool CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)
@@ -214,6 +241,17 @@ HRESULT CInventory_Manager::Init_ItemUI()
 		}
 	}
 #pragma endregion
+
+	return S_OK;
+}
+
+HRESULT CInventory_Manager::Init_ContextMenu()
+{
+	CGameObject* pGameOBJ = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_ContextMenu"));
+	if (nullptr == pGameOBJ)
+		return E_FAIL;
+
+	m_pContextMenu = dynamic_cast<CContextMenu*>(pGameOBJ);
 
 	return S_OK;
 }

@@ -6,13 +6,12 @@
 #include "Inventory_Slot.h"
 #include "Slot_Highlighter.h"
 #include "Item_UI.h"
+#include "ContextMenu.h"
 
 BEGIN(Client)
 
 class CInventory_Manager final : public CBase
 {
-public:
-	enum INVENTORY_EVENT {  };
 private:
 	CInventory_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CInventory_Manager() = default;
@@ -22,6 +21,10 @@ public:
 	void FirstTick_Seting();
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
+
+private:
+	void Idle_Operation(_float fTimeDelta);
+	void ContextUISelect_Operation(_float fTimeDelta);
 
 public:
 	//Set_Dead호출이라 m_bDead기준으로 변수 줄것
@@ -34,11 +37,12 @@ public:
 			m_iInvenCount += iAmount;
 	}
 
-	_bool Get_isItemExamine() const {
-		return m_bisItemExamin;
+	INVENTORY_EVENT Get_InvenManagerState() const {
+		return m_eInven_Manager_State;
 	}
-	void Set_isItemExamine(_bool isItemExamin) {
-		m_bisItemExamin = isItemExamin;
+
+	void Set_InvenManagerState(INVENTORY_EVENT eInvenEvent) {
+		m_eInven_Manager_State = eItemExamin;
 	}
 
 	//아이탬 인벤토리에 넣기
@@ -52,7 +56,7 @@ private:
 	ID3D11DeviceContext*			m_pContext = { nullptr };
 	CGameInstance*					m_pGameInstance = { nullptr }; 
 
-	_bool							m_bisItemExamin = { false };
+	INVENTORY_EVENT					m_eInven_Manager_State = { INVEN_EVENT_END };
 
 private:
 	/*for. InvenSlot*/
@@ -69,10 +73,14 @@ private:
 	/*for. Item_UI*/
 	vector<CItem_UI*>				m_vecItem_UI;
 
+	/*for. ContextMenu*/
+	CContextMenu*					m_pContextMenu = { nullptr };
+
 private:
 	HRESULT Init_InvenSlot();
 	HRESULT Init_SlotHighlighter();
 	HRESULT Init_ItemUI();
+	HRESULT Init_ContextMenu();
 
 	HRESULT Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval);
 	HRESULT Create_SlotHighlighter(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI);

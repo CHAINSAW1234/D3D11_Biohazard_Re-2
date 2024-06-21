@@ -18,22 +18,29 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+
 private:
 	void PopUp_Operation(_float fTimeDelta);
 	void Idle_Operation(_float fTimeDelta);
 	void Hide_Operation(_float fTimeDelta);
 
 public:
-	void MenuSeting(ITEM_TYPE eItemType, _bool bActive);
+	void MenuSeting(ITEM_TYPE eItemType, _bool bActive, _float2 fAppearPos, _float2 fArrivalPos );
 
 private:
 	vector<class CButton_UI*>	m_vecMenuItem;
 
 	UI_OPERRATION				m_eContext_State = { STATE_END };
 
+	ITEM_TYPE					m_eContextType = { INVEN_ITEM_TYPE_END };
+
 	_float						m_fItemInterval = { 19.5f };
 
 	_uint						m_iContextMenuCount = { 0 };
+
+	_float2						m_fAppearPos = {};
+
+	_float2						m_fArrivalPos = {};
 
 private:
 	HRESULT Create_MenuItem();

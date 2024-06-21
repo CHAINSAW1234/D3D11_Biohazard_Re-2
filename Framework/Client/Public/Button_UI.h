@@ -52,14 +52,15 @@ public:
 
 	virtual _bool IsMouseHover(_float& fPosZ) override;
 
-	//virtual _bool Frame_Change_ValueColor(_uint iChange_FrameNum) override {
-	//	__super::Frame_Change_ValueColor(iChange_FrameNum);
+	virtual void Frame_Change_ValueColor(_uint iChange_FrameNum) override {
 
-	//	if (0 == iChange_FrameNum)
-	//		m_bClickable = false;
-	//	else if (1 == iChange_FrameNum)
-	//		m_bClickable = true;
-	//}
+		__super::Frame_Change_ValueColor(iChange_FrameNum);
+
+		if (0 == iChange_FrameNum)
+			m_bClickable = false;
+		else if (1 == iChange_FrameNum)
+			m_bClickable = true;
+	}
 
 public:
 	_bool m_bClickable = { true };
