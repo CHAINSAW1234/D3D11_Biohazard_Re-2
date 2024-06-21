@@ -64,4 +64,15 @@ namespace Client
 		DOOR_L,
 		DOOR_R
 	};
+
+	enum DOUBLE_DOOR_MODEL_TYPE
+	{
+		NORMAL_DOOR,
+		FRONT_DOOR
+	};
+
+	enum FIRE_WALL_ROTATE_BONE_TYPE
+	{
+		DOOR
+	};
 }

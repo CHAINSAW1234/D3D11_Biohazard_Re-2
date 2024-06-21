@@ -266,6 +266,7 @@ public:/*For Physics Controller*/
 	void									Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform ,_float4 vDelta);
+	void									Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform ,_float4 vDelta);
 	void									Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 	_bool									RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
@@ -274,6 +275,8 @@ public:/*For Physics Controller*/
 	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone,class CTransform* pTransform, const string& name);
 	void									Start_Ragdoll(class CRagdoll_Physics* pRagdoll, _uint iId);
 	class CPxCollider*						Create_Px_Collider(class CModel* pModel, class CTransform* pTransform, _int* iId);
+	class CPxCollider*						Create_Px_Collider_Convert_Root(class CModel* pModel, class CTransform* pTransform, _int* iId);
+	class CPxCollider*						Create_Px_Collider_Convert_Root_Double_Door(class CModel* pModel, class CTransform* pTransform, _int* iId);
 
 private:/*For Physics_Controller*/
 	_uint*									m_pIndices = { nullptr };
