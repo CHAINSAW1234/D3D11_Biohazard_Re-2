@@ -38,6 +38,7 @@ HRESULT CClothes_Zombie::Initialize(void* pArg)
 	if (FAILED(Initialize_Model()))
 		return E_FAIL;
 
+
 	return S_OK;
 }
 

@@ -518,7 +518,72 @@ void CPhysics_Controller::Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVert
 
 void CPhysics_Controller::Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
 {
-	
+	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
+
+	//Compute collision mesh
+	physx::PxArray<physx::PxVec3> collisionMeshVertices, simulationMeshVertices;
+	physx::PxArray<physx::PxU32> collisionMeshIndices, simulationMeshIndices;
+
+	// 이미 존재하는 표면 메쉬의 정점 배열과 인덱스 배열
+	std::vector<PxVec3> surfaceVertices = { /* 표면 정점 데이터 */ };
+	std::vector<PxU32> surfaceIndices = { /* 표면 인덱스 데이터 */ };
+
+	for (int i = 0; i < VertexNum; ++i)
+	{
+		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
+
+		_float4 vPos;
+		XMStoreFloat4(&vPos, VertexPos);
+
+		PxVec3 Ver = PxVec3(vPos.x, vPos.y, vPos.z);
+		surfaceVertices.push_back(Ver);
+		collisionMeshVertices.pushBack(Ver);
+		simulationMeshVertices.pushBack(Ver);
+	}
+
+	for (int i = 0; i < IndexNum; ++i)
+	{
+		PxU32 Ind = pIndices[i];
+		surfaceIndices.push_back(Ind);
+
+		collisionMeshIndices.pushBack(Ind);
+		simulationMeshIndices.pushBack(Ind);
+	}
+
+	// PxSimpleTriangleMesh 구조체 초기화
+	PxSimpleTriangleMesh surfaceMesh;
+
+	// 정점 데이터 설정
+	surfaceMesh.points.count = surfaceVertices.size();
+	surfaceMesh.points.stride = sizeof(PxVec3);
+	surfaceMesh.points.data = surfaceVertices.data();
+
+	// 인덱스 데이터 설정
+	surfaceMesh.triangles.count = surfaceIndices.size() / 3; // 인덱스는 삼각형을 정의하므로 3으로 나눕니다.
+	surfaceMesh.triangles.stride = 3 * sizeof(PxU32);
+	surfaceMesh.triangles.data = surfaceIndices.data();
+
+	PxTetMaker::createConformingTetrahedronMesh(surfaceMesh, collisionMeshVertices, collisionMeshIndices);
+	PxTetrahedronMeshDesc meshDesc(collisionMeshVertices, collisionMeshIndices);
+
+	//Compute simulation mesh
+	PxU32 numVoxelsAlongLongestAABBAxis = 20;
+	physx::PxArray<physx::PxI32> vertexToTet;
+	vertexToTet.resize(meshDesc.points.count);
+	PxTetMaker::createVoxelTetrahedronMesh(meshDesc, numVoxelsAlongLongestAABBAxis, simulationMeshVertices, simulationMeshIndices, vertexToTet.begin());
+	PxTetrahedronMeshDesc simMeshDesc(simulationMeshVertices, simulationMeshIndices);
+	PxSoftBodySimulationDataDesc simDesc(vertexToTet);
+
+	PxSoftBodyMesh* mesh = PxCreateSoftBodyMesh(cookingParams, simMeshDesc, meshDesc, simDesc, m_Physics->getPhysicsInsertionCallback());
+
+	PxSoftBody* softBody = m_Physics->createSoftBody(*m_CudaContextManager);
+	PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSIMULATION_SHAPE;
+	PxFEMSoftBodyMaterial* materialPtr = m_Physics->createFEMSoftBodyMaterial(1e+9f, 0.45f, 0.5f);
+	PxTetrahedronMeshGeometry geometry(mesh->getCollisionMesh());
+	PxShape* shape = m_Physics->createShape(geometry, &materialPtr, 1, true, shapeFlags);
+	softBody->attachShape(*shape);
+	softBody->attachSimulationMesh(*mesh->getSimulationMesh(), *mesh->getSoftBodyAuxData());
+	m_Scene->addActor(*softBody);
 }
 
 CRagdoll_Physics* CPhysics_Controller::Create_Ragdoll(vector<class CBone*>* vecBone, CTransform* pTransform, const string& name)
