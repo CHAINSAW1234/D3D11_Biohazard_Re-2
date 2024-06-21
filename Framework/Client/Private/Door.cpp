@@ -56,36 +56,46 @@ HRESULT CDoor::Initialize(void* pArg)
 	
 #ifndef NON_COLLISION_PROP
 
-	if((m_tagPropDesc.strGamePrototypeName.find("038") != string::npos))
+	if(m_eType == DOOR_DOUBLE) 
 	{
-		m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root_Double_Door(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
-		m_eDoorType = DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR;
-
-		m_vecRotationBone[ATC_ROOT] = m_pModelCom->Get_BonePtr("_00");
-		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L] = m_pModelCom->Get_BonePtr("_01");
-		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R] = m_pModelCom->Get_BonePtr("_03");
-		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L] = m_pModelCom->Get_BonePtr("_04");
-		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R] = m_pModelCom->Get_BonePtr("_02");
-	}
-	else
-	{
-		m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
-		m_eDoorType = DOUBLE_DOOR_MODEL_TYPE::NORMAL_DOOR;
-
-		switch (m_eType)
+		if ((m_tagPropDesc.strGamePrototypeName.find("038") != string::npos))
 		{
-		case DOOR_DOUBLE:
+			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root_Double_Door(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+			m_eDoorType = DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR;
+
 			m_vecRotationBone[ATC_ROOT] = m_pModelCom->Get_BonePtr("_00");
 			m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L] = m_pModelCom->Get_BonePtr("_01");
 			m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R] = m_pModelCom->Get_BonePtr("_03");
 			m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L] = m_pModelCom->Get_BonePtr("_04");
 			m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R] = m_pModelCom->Get_BonePtr("_02");
-			break;
-		case DOOR_ONE:
-			m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L] = m_pModelCom->Get_BonePtr("_01");
-			m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R] = m_pModelCom->Get_BonePtr("_00");
-			break;
 		}
+		else
+		{
+			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+			m_eDoorType = DOUBLE_DOOR_MODEL_TYPE::NORMAL_DOOR;
+
+			switch (m_eType)
+			{
+			case DOOR_DOUBLE:
+				m_vecRotationBone[ATC_ROOT] = m_pModelCom->Get_BonePtr("_00");
+				m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L] = m_pModelCom->Get_BonePtr("_01");
+				m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R] = m_pModelCom->Get_BonePtr("_03");
+				m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L] = m_pModelCom->Get_BonePtr("_04");
+				m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R] = m_pModelCom->Get_BonePtr("_02");
+				break;
+			case DOOR_ONE:
+				m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L] = m_pModelCom->Get_BonePtr("_01");
+				m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R] = m_pModelCom->Get_BonePtr("_00");
+				break;
+			}
+		}
+	}
+	else
+	{
+		m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+
+		m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L] = m_pModelCom->Get_BonePtr("_01");
+		m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R] = m_pModelCom->Get_BonePtr("_00");
 	}
 
 #endif

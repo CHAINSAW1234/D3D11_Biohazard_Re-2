@@ -38,8 +38,6 @@ HRESULT CClothes_Zombie::Initialize(void* pArg)
 	if (FAILED(Initialize_Model()))
 		return E_FAIL;
 
-	m_pModelCom->Create_SoftBody();
-
 	return S_OK;
 }
 

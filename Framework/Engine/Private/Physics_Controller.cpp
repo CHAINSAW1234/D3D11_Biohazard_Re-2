@@ -38,13 +38,13 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, m_ToleranceScale, true, m_Pvd);
 	physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
-	m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(4);
+	m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.cpuDispatcher = m_Dispatcher;
 	sceneDesc.filterShader = MegamotionFilterShader;
 
 
 #pragma region GPU 가속 설정
-	sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
+	/*sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
 	sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
 	PxCudaContextManagerDesc cudaContextManagerDesc;
 
@@ -61,7 +61,7 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
 	sceneDesc.gpuMaxNumPartitions = 8;
 
-	sceneDesc.solverType = PxSolverType::ePGS;
+	sceneDesc.solverType = PxSolverType::ePGS;*/
 #pragma endregion
 
 	//Call Back
@@ -601,6 +601,8 @@ void CPhysics_Controller::Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVert
 
 void CPhysics_Controller::Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, _bool bHasCollider)
 {
+	return;
+
 	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
 	cookingParams.meshWeldTolerance = 0.001f;
 	cookingParams.meshPreprocessParams = PxMeshPreprocessingFlags(PxMeshPreprocessingFlag::eWELD_VERTICES);
