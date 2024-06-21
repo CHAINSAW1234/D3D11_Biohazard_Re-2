@@ -240,6 +240,70 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	//	m_pGameInstance->SetSimulate(true);
 }
 
+void CPhysics_Controller::Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
+{
+	// Init Cooking Params 
+	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
+
+	vector<PxVec3> vertices;
+	vector<PxU32> IndicesVec;
+
+	_matrix WorldMat = XMMatrixIdentity();
+	if (pTransform != nullptr)
+	{
+		WorldMat = XMMatrixRotationY(PxPi)* pTransform->Get_WorldMatrix();
+	}
+
+	for (int i = 0; i < VertexNum; ++i)
+	{
+		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
+		VertexPos = XMVector3TransformCoord(VertexPos, WorldMat);
+
+		_float4 vPos;
+		XMStoreFloat4(&vPos, VertexPos);
+
+		PxVec3 Ver = PxVec3(vPos.x, vPos.y, vPos.z);
+		vertices.push_back(Ver);
+	}
+
+	for (int i = 0; i < IndexNum; ++i)
+	{
+		PxU32 Ind = pIndices[i];
+		IndicesVec.push_back(Ind);
+	}
+
+	PxTriangleMeshDesc meshDesc;
+	meshDesc.points.count = static_cast<PxU32>(VertexNum);
+	meshDesc.points.stride = sizeof(PxVec3);
+	meshDesc.points.data = vertices.data();
+
+	meshDesc.triangles.count = static_cast<PxU32>(IndexNum / 3);
+	meshDesc.triangles.stride = 3 * sizeof(PxU32);
+	meshDesc.triangles.data = IndicesVec.data();
+
+
+	auto Mesh = PxCreateTriangleMesh(cookingParams, meshDesc);
+
+	PxTransform transform(PxVec3(0.0f, 0.0f, 0.0f));
+	auto Actor = m_Physics->createRigidStatic(transform);
+
+	PxTriangleMeshGeometry meshGeometry(Mesh);
+	PxShape* Shape = m_Physics->createShape(meshGeometry, *m_Physics->createMaterial(0.5f, 0.5f, 0.5f));
+
+	Actor->attachShape(*Shape);
+	Shape->release();
+
+	m_Scene->addActor(*Actor);
+
+	m_vecFullMapObject.push_back(Actor);
+	++m_iMapMeshCount;
+
+	Mesh->release();
+
+	//Start Simulate
+	//	m_pGameInstance->SetSimulate(true);
+}
+
 void CPhysics_Controller::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform)
 {
 	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
@@ -390,6 +454,11 @@ void CPhysics_Controller::Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uin
 	auto WorldMat = pTransform->Get_WorldMatrix();
 	WorldMat = XMMatrixRotationY(PxPi) * WorldMat;
 
+	_vector RootDelta = XMLoadFloat4(&vDelta);
+	RootDelta = XMVector4Transform(RootDelta,RotationMatrix);
+	RootDelta = XMVectorSetW(RootDelta, 0.f);
+	XMStoreFloat4(&vDelta, RootDelta);
+
 	for (int i = 0; i < VertexNum; ++i)
 	{
 		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
@@ -422,6 +491,78 @@ void CPhysics_Controller::Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uin
 		vPos = pTransform->Get_State_Float4(CTransform::STATE_POSITION);
 
 	PxTransform transform(PxVec3(vPos.x - vDelta.x, vPos.y - vDelta.y, vPos.z - vDelta.z));
+
+	PxConvexMeshGeometry geometry(convexMesh);
+	PxMaterial* material = m_Physics->createMaterial(0.5f, 0.5f, 0.5f);
+	PxRigidDynamic* body = m_Physics->createRigidDynamic(transform);
+	PxShape* shape = m_Physics->createShape(geometry, *material);
+	body->attachShape(*shape);
+	m_Scene->addActor(*body);
+	shape->release();
+	body->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+
+	convexMesh->release();
+	material->release();
+
+	pColliders->push_back(body);
+	pTransforms->push_back(transform);
+}
+
+void CPhysics_Controller::Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform, _float4 vDelta)
+{
+	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
+
+	vector<PxVec3> vertices;
+	vector<PxU32> IndicesVec;
+
+	auto vScale = pTransform->Get_Scaled();
+	auto ScaleMatrix = XMMatrixScaling(vScale.x, vScale.y, vScale.z);
+
+	auto RotationMatrix = pTransform->Get_RotationMatrix_Pure_Mat();
+	auto PxQuat = to_quat(XMQuaternionRotationMatrix(RotationMatrix));
+	RotationMatrix = XMMatrixRotationY(PxPi) * RotationMatrix * ScaleMatrix;
+
+	auto WorldMat = pTransform->Get_WorldMatrix();
+	WorldMat = XMMatrixRotationY(PxPi) * WorldMat;
+
+	_vector RootDelta = XMLoadFloat4(&vDelta);
+	RootDelta = XMVector4Transform(RootDelta, RotationMatrix);
+	RootDelta = XMVectorSetW(RootDelta, 0.f);
+	XMStoreFloat4(&vDelta, RootDelta);
+
+	for (int i = 0; i < VertexNum; ++i)
+	{
+		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
+		VertexPos = XMVector3TransformCoord(VertexPos, RotationMatrix);
+
+		_float4 vPos;
+		XMStoreFloat4(&vPos, VertexPos);
+		vPos += vDelta;
+
+		PxVec3 Ver = PxVec3(vPos.x, vPos.y, vPos.z);
+		vertices.push_back(Ver);
+	}
+
+	for (int i = 0; i < IndexNum; ++i)
+	{
+		PxU32 Ind = pIndices[i];
+		IndicesVec.push_back(Ind);
+	}
+
+	PxConvexMeshDesc convexDesc;
+	convexDesc.points.count = static_cast<PxU32>(vertices.size());
+	convexDesc.points.stride = sizeof(PxVec3);
+	convexDesc.points.data = vertices.data();
+	convexDesc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
+
+	PxConvexMesh* convexMesh = PxCreateConvexMesh(cookingParams, convexDesc);
+
+	_float4 vPos;
+	if (pTransform)
+		vPos = pTransform->Get_State_Float4(CTransform::STATE_POSITION);
+
+	PxTransform transform(PxVec3(vPos.x - vDelta.x, vPos.y - vDelta.y, vPos.z - vDelta.z));
+	//PxTransform transform(PxVec3(vPos.x, vPos.y, vPos.z));
 
 	PxConvexMeshGeometry geometry(convexMesh);
 	PxMaterial* material = m_Physics->createMaterial(0.5f, 0.5f, 0.5f);
@@ -507,6 +648,66 @@ CPxCollider* CPhysics_Controller::Create_Px_Collider(CModel* pModel,CTransform* 
 	*iId = m_iCollider_Count;
 	++m_iCollider_Count;
 	
+	return pCollider;
+}
+
+CPxCollider* CPhysics_Controller::Create_Px_Collider_Convert_Root(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	CPxCollider* pCollider = new CPxCollider();
+	auto pColliders = pCollider->GetCollider_Container();
+	auto pTransforms = pCollider->GetCollider_Transform_Container();
+	pModel->Convex_Mesh_Cooking_Convert_Root(pColliders, pTransforms, pTransform);
+
+	m_vecCollider.push_back(pCollider);
+
+	*iId = m_iCollider_Count;
+	++m_iCollider_Count;
+
+	return pCollider;
+}
+
+CPxCollider* CPhysics_Controller::Create_Px_Collider_Convert_Root_Double_Door(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	CPxCollider* pCollider = new CPxCollider();
+	auto pColliders = pCollider->GetCollider_Container();
+	auto pTransforms = pCollider->GetCollider_Transform_Container();
+	pModel->Convex_Mesh_Cooking_Convert_Root_Double_Door_No_Rotate(pColliders, pTransforms, pTransform);
+
+	m_vecCollider.push_back(pCollider);
+
+	*iId = m_iCollider_Count;
+	++m_iCollider_Count;
+
+	return pCollider;
+}
+
+CPxCollider* CPhysics_Controller::Create_Px_Collider_Cabinet(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	CPxCollider* pCollider = new CPxCollider();
+	auto pColliders = pCollider->GetCollider_Container();
+	auto pTransforms = pCollider->GetCollider_Transform_Container();
+	pModel->Convex_Mesh_Cooking_Cabinet(pColliders, pTransforms, pTransform);
+
+	m_vecCollider.push_back(pCollider);
+
+	*iId = m_iCollider_Count;
+	++m_iCollider_Count;
+
+	return pCollider;
+}
+
+CPxCollider* CPhysics_Controller::Create_Px_Collider_Toilet(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	CPxCollider* pCollider = new CPxCollider();
+	auto pColliders = pCollider->GetCollider_Container();
+	auto pTransforms = pCollider->GetCollider_Transform_Container();
+	pModel->Convex_Mesh_Cooking_Toilet(pColliders, pTransforms, pTransform);
+
+	m_vecCollider.push_back(pCollider);
+
+	*iId = m_iCollider_Count;
+	++m_iCollider_Count;
+
 	return pCollider;
 }
 

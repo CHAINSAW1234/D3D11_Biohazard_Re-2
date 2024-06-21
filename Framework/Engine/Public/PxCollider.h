@@ -29,6 +29,9 @@ public:
 	void								Update_Transform(_float4x4* Transform);
 	void								Update_Transform_Divided(_float4x4* Transform, _int iIndex);
 	void								Update_Transform_Divided_NotRoot(class CBone* pRoot,class CBone* pTarget,class CTransform* pTransform,_int iIndex);
+	void								Update_Transform_Divided_Double_Door_L(_float4x4* Transform);
+	void								Update_Transform_Divided_Double_Door_R(_float4x4* Transform);
+	void								Update_Transform_Cabinet(_float4x4* Transform);
 private:
 	vector<PxRigidDynamic*>				m_vecCollider;
 	vector<PxTransform>					m_vecCollider_Transform;

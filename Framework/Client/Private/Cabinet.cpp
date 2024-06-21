@@ -43,7 +43,23 @@ HRESULT CCabinet::Initialize(void* pArg)
 
 #ifndef NON_COLLISION_PROP
 
-	//m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+	if (m_tagPropDesc.strGamePrototypeName.find("60_033") != string::npos)
+	{
+		//m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+	}
+	else
+	{
+		if (m_tagPropDesc.strGamePrototypeName.find("44_002") != string::npos)
+		{
+			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Toilet(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+		}
+		else
+		{
+			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Cabinet(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+		}
+	}
+
+	m_vecRotationBone[ANIM_BONE_TYPE_COLLIDER_CABINET::ATC_CABINET_DOOR] = m_pModelCom->Get_BonePtr("_01");
 
 #endif
 
@@ -90,12 +106,25 @@ void CCabinet::Late_Tick(_float fTimeDelta)
 	{
 	case CABINET_CLOSED:
 		m_pModelCom->Change_Animation(0, m_eState);
+
 		break;
 	case CABINET_OPEN:
+	{
 		m_pModelCom->Change_Animation(0, m_eState);
+
+		if (m_pPx_Collider && m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR])
+		{
+			auto Combined = m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR]->Get_TrasformationMatrix();
+			_float4x4 ResultMat;
+			XMStoreFloat4x4(&ResultMat, Combined);
+			m_pPx_Collider->Update_Transform_Cabinet(&ResultMat);
+		}
+
 		break;
+	}
 	case CABINET_OPENED:
 		m_pModelCom->Change_Animation(0, m_eState);
+
 		break;
 	}
 
@@ -202,7 +231,7 @@ HRESULT CCabinet::Add_Components()
 	
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(50.f);
+	ColliderDesc.fRadius = _float(60.f);
 	ColliderDesc.vCenter = _float3(50.f, 1.f, 0.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
