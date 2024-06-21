@@ -11,6 +11,8 @@ BEGIN(Client)
 
 class CInventory_Manager final : public CBase
 {
+public:
+	enum INVENTORY_EVENT {  };
 private:
 	CInventory_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CInventory_Manager() = default;
@@ -39,8 +41,10 @@ public:
 		m_bisItemExamin = isItemExamin;
 	}
 
-	//만약 아이템을 넣을수 없는 상황이라면 false를 반환함
+	//아이탬 인벤토리에 넣기
 	_bool AddItem_ToInven(ITEM_NUMBER eAcquiredItem);
+
+	//만약 아이템을 넣을수 없는 상황이라면 false를 반환함
 	_bool IsCan_AddItem_ToInven();
 
 private: 
@@ -65,7 +69,7 @@ private:
 	/*for. Item_UI*/
 	vector<CItem_UI*>				m_vecItem_UI;
 
-public:
+private:
 	HRESULT Init_InvenSlot();
 	HRESULT Init_SlotHighlighter();
 	HRESULT Init_ItemUI();
@@ -74,6 +78,7 @@ public:
 	HRESULT Create_SlotHighlighter(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI);
 	HRESULT Create_ItemUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI);
 
+public:
 	static CInventory_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
 };

@@ -35,17 +35,17 @@ private:
 	CInventory_Manager* m_pInventory_Manager = { nullptr };
 
 private:
-	WINDOW_TYPE		m_eWindowType = { INVENTORY };
-	_bool			m_isMapRender = { false };
+	WINDOW_TYPE			m_eWindowType = { INVENTORY };
+	_bool				m_isMapRender = { false };
 
-	_bool			m_isFristTick = { true };
+	_bool				m_isFristTick = { true };
 
-	_bool			m_isAlphaControl = { false };
+	_bool				m_isAlphaControl = { false };
 
 	/*for. Item_Mesh_Viewer*/
 	CItem_Mesh_Viewer* m_pItem_Mesh_Viewer = { nullptr };
 
-	_float			m_fCurTime = { 0.f };
+	_float				m_fCurTime = { 0.f };
 
 private:
 	HRESULT Add_Components();

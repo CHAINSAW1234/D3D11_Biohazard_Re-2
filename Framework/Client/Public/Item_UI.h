@@ -28,8 +28,8 @@ public:
 	ITEM_NUMBER			Get_ItemNumber() const { return m_eItemNumber; };
 	void				Set_ItemNumber(ITEM_NUMBER eItmeNum) { m_eItemNumber = eItmeNum; }
 
-	INVEN_ITEM_TYPE		Get_InvenItemType() const { return m_eInvenItemType; };
-	void				Set_InvenItemType(INVEN_ITEM_TYPE eItmeType) { m_eInvenItemType = eItmeType; }
+	ITEM_TYPE			Get_InvenItemType() const { return m_eInvenItemType; };
+	void				Set_InvenItemType(ITEM_TYPE eItmeType) { m_eInvenItemType = eItmeType; }
 
 public:
 	void				Reset_Item();
@@ -40,11 +40,10 @@ private:
 
 private:
 	ITEM_NUMBER			m_eItemNumber = { ITEM_NUMBER::ITEM_NUMBER_END };
-	INVEN_ITEM_TYPE		m_eInvenItemType = { INVEN_ITEM_TYPE::INVEN_ITEM_TYPE_END };
+	ITEM_TYPE			m_eInvenItemType = { ITEM_TYPE::INVEN_ITEM_TYPE_END };
 
 	_bool				m_bCountable = { false };
 	_uint				m_iItemCount = { 0 };
-
 
 public:
 	static CItem_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

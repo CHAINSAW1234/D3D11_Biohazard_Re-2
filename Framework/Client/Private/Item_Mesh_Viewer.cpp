@@ -59,17 +59,17 @@ void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 
 	switch (m_eViewer_State)
 	{
-	case Client::CItem_Mesh_Viewer::POP_UP: {
+	case Client::POP_UP: {
 		PopUp_Operation(fTimeDelta);
 		break;
 	}
 		
-	case Client::CItem_Mesh_Viewer::IDLE: {
+	case Client::IDLE: {
 		Idle_Operation(fTimeDelta);
 		break;
 	}
 		
-	case Client::CItem_Mesh_Viewer::HIDE: {
+	case Client::HIDE: {
 		Hide_Operation(fTimeDelta);
 		break;
 	}
@@ -199,6 +199,28 @@ void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
 	{
 		m_fDistCam = m_pGameInstance->Get_Ease(Ease_InBack, m_fPopupHide_EndDist, m_fPopupHide_StartDist,
 			m_fPopupHide_CurTime / m_fPopupHide_TimeLimit);
+	}
+}
+
+void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation)
+{
+	switch (eOperation)
+	{
+	case Client::POP_UP: {
+		m_bDead = false;
+		break;
+	}
+		
+	case Client::IDLE: {
+		break;
+	}
+		
+	case Client::HIDE: {
+		break;
+	}
+		
+	default:
+		break;
 	}
 }
 

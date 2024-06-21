@@ -93,7 +93,7 @@ _bool CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)
 {
 	for (auto& iter : m_vecItem_UI)
 	{
-
+		
 	}
 
 	return true;
@@ -103,9 +103,9 @@ _bool CInventory_Manager::IsCan_AddItem_ToInven()
 {
 	_bool IsCanAddItem = false;
 
-	for (auto& iter : m_vecItem_UI)
+	for (_uint i = 0; i < m_iInvenCount; i++)
 	{
-		if (false == iter->Get_isWorking())
+		if (false == m_vecInvenSlot[i]->Get_IsFilled())
 		{
 			IsCanAddItem = true;
 		}

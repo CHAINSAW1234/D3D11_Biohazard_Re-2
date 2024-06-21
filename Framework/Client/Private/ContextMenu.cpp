@@ -1,14 +1,15 @@
 #include "stdafx.h"
 
 #include "ContextMenu.h"
+#include "Button_UI.h"
 
 CContextMenu::CContextMenu(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CCustomize_UI{ pDevice , pContext }
+	: CGameObject{ pDevice , pContext }
 {
 }
 
 CContextMenu::CContextMenu(const CContextMenu& rhs)
-	: CCustomize_UI{ rhs }
+	: CGameObject{ rhs }
 {
 }
 
@@ -32,46 +33,208 @@ void CContextMenu::Tick(_float fTimeDelta)
 {
 	if (true == m_bDead)
 	{
-		m_pBackground->Set_Dead(m_bDead);
+		for (auto& iter : m_vecMenuItem)
+			iter->Set_Dead(true);
+
 		return;
 	}
 
-	m_pBackground->Tick(fTimeDelta);
+	switch (m_eContext_State)
+	{
+	case Client::POP_UP: {
 
-	__super::Tick(fTimeDelta);
+		break;
+	}
+		
+	case Client::IDLE: {
+		break;
+	}
+		
+	case Client::HIDE: {
+		break;
+	}
+
+	default:
+		break;
+	}
+
+
+
 }
 
 void CContextMenu::Late_Tick(_float fTimeDelta)
 {
 	if (true == m_bDead)
 	{
-		m_pBackground->Set_Dead(m_bDead);
+		for (auto& iter : m_vecMenuItem)
+			iter->Set_Dead(true);
+
 		return;
 	}
 
-	m_pBackground->Late_Tick(fTimeDelta);
 
-	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CContextMenu::Render()
 {
-	__super::Render();
-
 	return S_OK;
 }
 
-HRESULT CContextMenu::Create_Background()
+void CContextMenu::PopUp_Operation(_float fTimeDelta)
+{
+}
+
+void CContextMenu::Idle_Operation(_float fTimeDelta)
+{
+}
+
+void CContextMenu::Hide_Operation(_float fTimeDelta)
+{
+}
+
+void CContextMenu::MenuSeting(ITEM_TYPE eItemType, _bool bActive)
+{
+	switch (eItemType)
+	{
+	case Client::EQUIPABLE: { //bActive가 장착 여부임
+		m_iContextMenuCount = 4;
+		
+		if (false == bActive)
+		{
+			m_vecMenuItem[0]->Set_TextureNum(0);
+			m_vecMenuItem[0]->Set_Text(0, TEXT("장착"));
+		}
+
+		else
+		{
+			m_vecMenuItem[0]->Set_TextureNum(1);
+			m_vecMenuItem[0]->Set_Text(0, TEXT("장착 해제"));
+		}
+
+		m_vecMenuItem[1]->Set_TextureNum(3);
+		m_vecMenuItem[1]->Set_Text(0, TEXT("검사"));
+
+		m_vecMenuItem[2]->Set_TextureNum(2);
+		m_vecMenuItem[2]->Set_Text(0, TEXT("조합"));
+
+		m_vecMenuItem[3]->Set_TextureNum(5);
+		m_vecMenuItem[3]->Set_Text(0, TEXT("단축키"));
+
+		break;
+	}
+		
+	case Client::CONSUMABLE_EQUIPABLE: { //bActive가 장착 여부임
+		m_iContextMenuCount = 4;
+
+		if (false == bActive)
+		{
+			m_vecMenuItem[0]->Set_TextureNum(9);
+			m_vecMenuItem[0]->Set_Text(0, TEXT("장착"));
+		}
+
+		else
+		{
+			m_vecMenuItem[0]->Set_TextureNum(10);
+			m_vecMenuItem[0]->Set_Text(0, TEXT("장착 해제"));
+		}
+
+		m_vecMenuItem[1]->Set_TextureNum(3);
+		m_vecMenuItem[1]->Set_Text(0, TEXT("검사"));
+
+		m_vecMenuItem[2]->Set_TextureNum(2);
+		m_vecMenuItem[2]->Set_Text(0, TEXT("조합"));
+
+		m_vecMenuItem[3]->Set_TextureNum(5);
+		m_vecMenuItem[3]->Set_Text(0, TEXT("단축키"));
+
+		break;
+	}
+		
+	case Client::USEABLE: { //bActive가 사용 가능 여부임
+		m_iContextMenuCount = 4;
+
+		m_vecMenuItem[0]->Set_TextureNum(4);
+		m_vecMenuItem[0]->Set_Text(0, TEXT("사용"));
+
+		if (false == bActive)
+		{
+			m_vecMenuItem[0]->Frame_Change_ValueColor(0);
+		}
+
+		else
+		{
+			m_vecMenuItem[0]->Frame_Change_ValueColor(1);
+		}
+
+		m_vecMenuItem[1]->Set_TextureNum(3);
+		m_vecMenuItem[1]->Set_Text(0, TEXT("검사"));
+		m_vecMenuItem[0]->Frame_Change_ValueColor(1);
+
+		m_vecMenuItem[2]->Set_TextureNum(2);
+		m_vecMenuItem[2]->Set_Text(0, TEXT("조합"));
+		m_vecMenuItem[0]->Frame_Change_ValueColor(1);
+
+		m_vecMenuItem[3]->Set_TextureNum(5);
+		m_vecMenuItem[3]->Set_Text(0, TEXT("폐기"));
+		m_vecMenuItem[0]->Frame_Change_ValueColor(1);
+		break;
+	}
+		
+	case Client::CONSUMABLE: { // 액티브 관계없음
+		m_iContextMenuCount = 3;
+
+		m_vecMenuItem[0]->Set_TextureNum(4);
+		m_vecMenuItem[0]->Set_Text(0, TEXT("사용"));
+		m_vecMenuItem[0]->Frame_Change_ValueColor(1);
+
+		m_vecMenuItem[1]->Set_TextureNum(3);
+		m_vecMenuItem[1]->Set_Text(0, TEXT("검사"));
+		m_vecMenuItem[1]->Frame_Change_ValueColor(1);
+
+		m_vecMenuItem[2]->Set_TextureNum(2);
+		m_vecMenuItem[2]->Set_Text(0, TEXT("조합"));
+		m_vecMenuItem[2]->Frame_Change_ValueColor(1);
+
+		m_vecMenuItem[3]->Set_TextureNum(5);
+		m_vecMenuItem[3]->Set_Text(0, TEXT("폐기"));
+		m_vecMenuItem[3]->Frame_Change_ValueColor(1);
+
+		break;
+	}
+		
+	case Client::QUEST: {
+		break;
+	}
+		
+	default:
+		break;
+	}
+
+
+
+}
+
+HRESULT CContextMenu::Create_MenuItem()
 {
 	ifstream inputFileStream;
-	wstring selectedFilePath;
+	wstring selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/ContextMenu.dat");
 
-	/* Button_HintWin */
-	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/ContextMenu_BackGround.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	if (FAILED(CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_ContextMenu"),
-		(CGameObject**)&m_pBackground, m_pDevice, m_pContext)))
-		return E_FAIL;
+	for (_uint i = 0; i < 4; i++)
+	{
+		CButton_UI* pButton = { nullptr };
+
+		inputFileStream.open(selectedFilePath, ios::binary);
+		if (FAILED(CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Button_UI"),
+			(CGameObject**)&pButton, m_pDevice, m_pContext)))
+			return E_FAIL;
+
+		m_vecMenuItem.push_back(pButton);
+
+		pButton->Move_State(_float3(0.f, m_fItemInterval * i, 0.f), 0);
+		pButton->Set_IsLoad(false);
+		pButton->Set_Dead(true);
+	}
+
 
 	return S_OK;
 }
@@ -86,7 +249,9 @@ CContextMenu* CContextMenu::Create(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
+
 }
 
 CGameObject* CContextMenu::Clone(void* pArg)

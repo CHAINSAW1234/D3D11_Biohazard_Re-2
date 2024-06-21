@@ -52,6 +52,22 @@ HRESULT CButton_UI::Render()
 	return S_OK;
 }
 
+_bool CButton_UI::IsMouseHover()
+{
+	if (true == m_bClickable)
+		return __super::IsMouseHover();
+
+	return false;
+}
+
+_bool CButton_UI::IsMouseHover(_float& fPosZ)
+{
+	if (true == m_bClickable)
+		return __super::IsMouseHover(fPosZ);
+
+	return false;
+}
+
 CButton_UI* CButton_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CButton_UI* pInstance = new CButton_UI(pDevice, pContext);

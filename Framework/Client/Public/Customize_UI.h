@@ -125,6 +125,23 @@ protected :
 	void Frame_Reset();
 
 public:
+	void Frame_Change_ValueColor(_uint iChange_FrameNum) {
+		m_vCurrentColor =	m_vColor[iChange_FrameNum].vColor;
+		m_fBlending =		m_vColor[iChange_FrameNum].fBlender_Value;
+		m_isBlending =		m_vColor[iChange_FrameNum].isBlender;
+
+		m_isColorChange =	m_vColor[iChange_FrameNum].isColorChange;
+		m_isAlphaChange =	m_vColor[iChange_FrameNum].isAlphaChange;
+		m_isWave =			m_vColor[iChange_FrameNum].isWave;
+		m_fWaveSpeed =		m_vColor[iChange_FrameNum].WaveSpeed;
+
+		m_isPush =			m_vColor[iChange_FrameNum].isPush;
+		m_fPush_Speed =		m_vColor[iChange_FrameNum].fPushSpeed;
+		m_isUVRotation =	m_vColor[iChange_FrameNum].fPushRotation;
+		m_fSplit =			m_vColor[iChange_FrameNum].fSplit;
+	}
+
+public:
 	void PushBack_Child(CGameObject* pGameOBJ);
 	void PushBack_TextBox(CGameObject* pGameOBJ);
 	CUSTOM_UI_DESC Get_Cutomize_DESC()const;

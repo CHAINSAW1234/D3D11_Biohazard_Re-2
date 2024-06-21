@@ -12,8 +12,6 @@ BEGIN(Client)
 
 class CItem_Mesh_Viewer final : public CGameObject
 {
-	enum VIEWER_STATE { POP_UP, IDLE, HIDE, STATE_END };
-
 private:
 	CItem_Mesh_Viewer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CItem_Mesh_Viewer(const CItem_Mesh_Viewer& rhs);
@@ -30,9 +28,10 @@ private:
 	void PopUp_Operation(_float fTimeDelta);
 	void Idle_Operation(_float fTimeDelta);
 	void Hide_Operation(_float fTimeDelta);
-	
+
 public:
 	void Reset_Viewer();
+	void Set_Operation(UI_OPERRATION eOperation);
 	
 private:
 	vector<CModel*>		m_vecModelCom;
@@ -41,7 +40,7 @@ private:
 
 private:
 	ITEM_NUMBER			m_eItem_Number = { ITEM_NUMBER_END };
-	VIEWER_STATE		m_eViewer_State = { STATE_END };
+	UI_OPERRATION		m_eViewer_State = { STATE_END };
 
 	_float				m_fDistCam = { 0.f };
 	_float				m_fDistCam_FarLimit = { 10.f };

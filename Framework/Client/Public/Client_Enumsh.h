@@ -20,6 +20,8 @@ namespace Client
 		ID_END
 	};
 
+	enum UI_OPERRATION{ POP_UP, IDLE, HIDE, STATE_END };
+
 	enum MAP_DIRECTION { DIRECTION_WEST, DIRECTION_EAST, DIRECTION_MID };
 	enum PLAYER_DIREECTION { DIRECTION_FRONT = 1, DIRECTION_BACK = 2, DIRECTION_LEFT = 4, DIRECTION_RIGHT = 8, DIRECTION_END };
 
@@ -34,13 +36,12 @@ namespace Client
 	};
 
 	//인벤토리 안에서의 아이템 타입
-	enum INVEN_ITEM_TYPE {
-		CONSUMABLE_STACKABLE,//소모성인데 인벤토리 창에서 한칸으로 겹칠 수 없다.
-		SONSUMABLE_NON_STACKABLE,//소모성인데 인벤토리 창에서 겹칠 수 있다.
-		EQUIP_UNBREAKABLE, //내구가 없는 장비
-		EQUIP_BREAKABLE, //내구성 장비
-		QUEST,
-		PLACE_ABLE,
+	enum ITEM_TYPE {
+		EQUIPABLE, // 장착 장비
+		CONSUMABLE_EQUIPABLE, //소모 장비
+		USEABLE, // 사용 아이템
+		CONSUMABLE, //소모 아이템
+		QUEST, // 퀘스트아이템
 		INVEN_ITEM_TYPE_END
 	};
 
