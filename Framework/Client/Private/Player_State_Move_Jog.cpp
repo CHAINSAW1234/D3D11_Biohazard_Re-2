@@ -128,7 +128,7 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 				m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
 
 				m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
-				m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 0.2);
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 0.2f);
 		}
 
 	}
