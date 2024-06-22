@@ -41,7 +41,26 @@ void CWait_Zombie::Execute()
 	pAI->SetState(MONSTER_STATE::MST_IDLE);
 
 	//cout << "Wait" << endl;
-	Change_Animation();
+	//	Change_Animation();
+
+	static _int				iAnimIndex = { 0 };
+	if (DOWN == m_pGameInstance->Get_KeyState('N'))
+	{
+		iAnimIndex += 1;
+		if (iAnimIndex > 380)
+			iAnimIndex = 0;
+	}
+
+	if (DOWN == m_pGameInstance->Get_KeyState('M'))
+	{
+		iAnimIndex -= 1;
+		if (iAnimIndex < 0)
+			iAnimIndex = 379;
+	}
+	CModel* pModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	pModel->Change_Animation(0, TEXT("Test"), iAnimIndex);
+	pModel->Set_OptimizationCulling(false);
+	cout << iAnimIndex << endl;
 
 }
 

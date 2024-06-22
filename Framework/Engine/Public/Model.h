@@ -284,7 +284,7 @@ private:
 	class CIK_Solver* m_pIK_Solver = { nullptr };
 
 	_uint									m_iNumAnimations = { 0 };
-	map<wstring, class CAnimation_Layer*>	m_AnimationLayers;
+	unordered_map<wstring, class CAnimation_Layer*>			m_AnimationLayers;
 
 	_float4x4								m_MeshBoneMatrices[MAX_COUNT_BONE];
 

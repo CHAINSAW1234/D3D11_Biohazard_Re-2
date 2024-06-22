@@ -4,7 +4,7 @@ map<const string, _uint>	CModel_Extractor::BoneIndices;
 ofstream					CModel_Extractor::ofs;
 
 
-HRESULT CModel_Extractor::Extract_FBX(CModel::MODEL_TYPE eType, const string& strModelFilePath)
+HRESULT CModel_Extractor::Extract_FBX(CModel::MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformationMatrix)
 {
 	_uint		iOption = { aiProcessPreset_TargetRealtime_Fast | aiProcess_ConvertToLeftHanded };
 
@@ -31,10 +31,7 @@ HRESULT CModel_Extractor::Extract_FBX(CModel::MODEL_TYPE eType, const string& st
 	if (FAILED(Write_Bones(pAIScene->mRootNode)))
 		return E_FAIL;
 
-	_matrix		TransformMatrix = XMMatrixIdentity();
-	TransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.0f));
-
-	if (FAILED(Write_Meshes(pAIScene, eType, TransformMatrix)))
+	if (FAILED(Write_Meshes(pAIScene, eType, TransformationMatrix)))
 		return E_FAIL;
 
 	if (FAILED(Write_Materials(pAIScene, strModelFilePath.c_str())))

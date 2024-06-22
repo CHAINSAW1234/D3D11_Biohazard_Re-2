@@ -44,24 +44,24 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 
 
 #pragma region GPU 가속 설정
-	sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
-	sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
-	PxCudaContextManagerDesc cudaContextManagerDesc;
+	//sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
+	//sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
+	//PxCudaContextManagerDesc cudaContextManagerDesc;
 
-	m_CudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc);
-	if (!m_CudaContextManager->contextIsValid())
-	{
-		m_CudaContextManager->release();
-		m_CudaContextManager = NULL;
-	}
-	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
-	sceneDesc.flags |= PxSceneFlag::eENABLE_ACTIVE_ACTORS;
+	//m_CudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc);
+	//if (!m_CudaContextManager->contextIsValid())
+	//{
+	//	m_CudaContextManager->release();
+	//	m_CudaContextManager = NULL;
+	//}
+	//sceneDesc.filterShader = PxDefaultSimulationFilterShader;
+	//sceneDesc.flags |= PxSceneFlag::eENABLE_ACTIVE_ACTORS;
 
-	sceneDesc.sceneQueryUpdateMode = PxSceneQueryUpdateMode::eBUILD_ENABLED_COMMIT_DISABLED;
-	sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
-	sceneDesc.gpuMaxNumPartitions = 8;
+	//sceneDesc.sceneQueryUpdateMode = PxSceneQueryUpdateMode::eBUILD_ENABLED_COMMIT_DISABLED;
+	//sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
+	//sceneDesc.gpuMaxNumPartitions = 8;
 
-	sceneDesc.solverType = PxSolverType::ePGS;
+	//sceneDesc.solverType = PxSolverType::ePGS;
 #pragma endregion
 
 	//Call Back

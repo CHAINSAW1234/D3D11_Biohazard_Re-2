@@ -106,7 +106,7 @@ _uint CModel::Get_NumAnims(const wstring& strAnimLayerTag)
 {
 	_uint			iNumAnims = { 0 };
 
-	map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
 	if (iter != m_AnimationLayers.end())
 	{
 		iNumAnims = iter->second->Get_NumAnims();
@@ -150,7 +150,7 @@ string CModel::Get_CurrentAnimTag(_uint iPlayingIndex)
 	if (TEXT("") == strAnimLayerTag)
 		return strAnimTag;
 
-	map<wstring, CAnimation_Layer*>::iterator	 iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	unordered_map<wstring, CAnimation_Layer*>::iterator	 iter = { m_AnimationLayers.find(strAnimLayerTag) };
 	if (iter != m_AnimationLayers.end())
 	{
 		strAnimTag = iter->second->Get_Animation(iAnimIndex)->Get_Name();
@@ -174,7 +174,7 @@ void CModel::Reset_PreAnimation(_uint iPlayingIndex)
 HRESULT CModel::Add_Animations(const wstring& strPrototypeLayerTag, const wstring& strAnimLayerTag)
 {
 	CAnimation_Layer* pAnimation_Layer = { nullptr };
-	map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
 	if (iter == m_AnimationLayers.end())
 	{
 		pAnimation_Layer = { CAnimation_Layer::Create() };
@@ -298,7 +298,7 @@ _float CModel::Compute_NewTimeDelta_Distatnce_Optimization(_float fTimeDelta, CT
 
 void CModel::Set_TickPerSec(const wstring& strAnimLayerTag, _uint iAnimIndex, _float fTickPerSec)
 {
-	map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
 
 	if (m_AnimationLayers.end() != iter)
 	{
@@ -1118,7 +1118,7 @@ list<_uint> CModel::Get_MeshIndices(const string& strMeshTag)
 
 vector<CAnimation*> CModel::Get_Animations(const wstring& strAnimLayerTag)
 {
-	map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
 	if (m_AnimationLayers.end() != iter)
 	{
 		return iter->second->Get_Animations();
@@ -1350,7 +1350,7 @@ _float CModel::Get_Duration_From_Anim(const wstring& strAnimLayerTag, _int iAnim
 {
 	_float			fDuration = { 0.f };
 
-	map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
 	if (iter == m_AnimationLayers.end())
 		return fDuration;
 
@@ -1366,7 +1366,7 @@ _float CModel::Get_Duration_From_Anim(const wstring& strAnimLayerTag, const stri
 {
 	_float			fDuration = { 0.f };
 
-	map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
 	if (iter == m_AnimationLayers.end())
 		return fDuration;
 
@@ -1710,7 +1710,7 @@ void CModel::Change_Animation(_uint iPlayingIndex, const wstring& strAnimLayerTa
 	if (nullptr == pPlayingInfo)
 		return;
 
-	map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
 	if (iter == m_AnimationLayers.end())
 		return;
 
@@ -1729,7 +1729,7 @@ void CModel::Change_Animation(_uint iPlayingIndex, const wstring& strAnimLayerTa
 	if (nullptr == pPlayingInfo)
 		return;
 
-	map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
 	if (iter == m_AnimationLayers.end())
 		return;
 
@@ -1832,7 +1832,7 @@ HRESULT CModel::Initialize_Prototype(MODEL_TYPE eType, const string& strModelFil
 
 	else
 	{
-		if (FAILED(CModel_Extractor::Extract_FBX(eType, strModelFilePath)))
+		if (FAILED(CModel_Extractor::Extract_FBX(eType, strModelFilePath, TransformMatrix)))
 			return E_FAIL;
 
 		if (FAILED(Initialize_Prototype(strModelFilePath, TransformMatrix)))
@@ -2035,7 +2035,7 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 	_uint				iNumBones = { static_cast<_uint>(m_Bones.size()) };
 	unordered_set<_uint>			IncludeBoneIndices = { pBoneLayer->Get_IncludedBoneIndices() };
 
-	map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
 	CAnimation*										pAnimation = { iter->second->Get_Animation(iAnimIndex) };
 
 	vector<_float4x4>				TransformationMatrices = { pAnimation->Compute_TransfromationMatrix(fTimeDelta, iNumBones, IncludeBoneIndices, pPlayingInfo) };
@@ -2122,7 +2122,7 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 	if (false == pPlayingInfo->Is_Set_CurrentAnimation() || 0.f >= fBlendWeight)
 		return TransformationMatrices;
 
-	map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
 	CAnimation*										pAnimation = { iter->second->Get_Animation(iAnimIndex) };
 
 	unordered_set<_uint>						TempIncludedBoneIndices = pBoneLayer->Get_IncludedBoneIndices();
@@ -2161,7 +2161,7 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 	{
 		//	첫 선형 보간 들어갈때 라스트 키프레임즈에서 루트성분을 적용에따라 현재 새로운 키프레임의 변환값으로 씌움
 		//	전 애니메이션의 최종 루트성분을 현재 애니메이션의 시작 로컬 스페이스상의 루트로 맞춘다.			
-		map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
+		unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
 		CAnimation*										pAnimation = { iter->second->Get_Animation(iAnimIndex) };
 
 		if (true == isFirstTick)

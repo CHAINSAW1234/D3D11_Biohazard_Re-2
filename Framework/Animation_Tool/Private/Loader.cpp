@@ -114,19 +114,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 
-
-
-	//			TEST ANIMS
-
-
-	/* Prototype_Component_Model_LeonBody */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Test_Animsa"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/TestAnims/em0000_0000_Idle_Loop_A (960 frames).noefbxmulti - em0000_0000_Idle_Loop_A (960 frames).fbx", XMMatrixIdentity()))))
-		return E_FAIL;
-
-
-
-
 	m_strLoadingText = TEXT("모델를(을) 로딩 중 입니다.");
 	_matrix			TransformMatrix = { XMMatrixIdentity() };
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
@@ -214,20 +201,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 			LeonTransformMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_Boss */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_Boss"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Boss/Boss.fbx",
-			LeonTransformMatrix))))
-		return E_FAIL;
-
 #pragma endregion
 
-#pragma region TEST
+#pragma region Animation Load 
 
-	/* Prototype_Component_Model_TEST */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_TEST"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/TEST/Prototype_Component_Model_TEST.fbx",
-			LeonTransformMatrix))))
+	if (FAILED(Load_Animations()))
 		return E_FAIL;
 
 #pragma endregion
@@ -329,6 +307,18 @@ HRESULT CLoader::Loading_For_GamePlay()
 	m_strLoadingText = TEXT("로딩이 완료되었습니다.");
 
 	m_isFinished = true;
+
+	return S_OK;
+}
+
+
+HRESULT CLoader::Load_Animations()
+{
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Player_Test"), "../Bin/Resources/Animations/Body_Player/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Test"), "../Bin/Resources/Animations/Body_Zombie/Test/")))
+		return E_FAIL;
 
 	return S_OK;
 }

@@ -42,7 +42,7 @@ void CMoveTo_Zombie::Execute()
 
 	//cout << "Move" << endl;
 
-	Change_Animation();
+	//	Change_Animation();
 }
 
 void CMoveTo_Zombie::Exit()

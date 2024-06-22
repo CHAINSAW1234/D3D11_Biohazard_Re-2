@@ -987,6 +987,213 @@ HRESULT CLoader::Load_Animations()
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Player_Test"), "../Bin/Resources/Animations/Body_Player/")))
 		return E_FAIL;
 
+#pragma region Default Zombie Ordinary Anims
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Box_ClimbOver"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Box_ClimbOver/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Crawl_Fall_Bridge"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Crawl_Fall_Bridge/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Hold"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Hold/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Idle"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Idle/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_PivotTurn"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/PivotTurn/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Railing_Fall"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Railing_Fall/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Stairs_PivotTurn"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Stairs_PivotTurn/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Stairs_Walk"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Stairs_Walk/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_StandUp"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/StandUp/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Walk"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Walk/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Walk_Lose"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Walk_Lose/")))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Default Zombie Add Anims
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Arm_L"), "../Bin/Resources/Animations/Body_Zombie/Add/Arm_L/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Arm_R"), "../Bin/Resources/Animations/Body_Zombie/Add/Arm_R/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Body"), "../Bin/Resources/Animations/Body_Zombie/Add/Body/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Head"), "../Bin/Resources/Animations/Body_Zombie/Add/Head/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Leg_L"), "../Bin/Resources/Animations/Body_Zombie/Add/Leg_L/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Leg_R"), "../Bin/Resources/Animations/Body_Zombie/Add/Leg_R/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Shoulder_L"), "../Bin/Resources/Animations/Body_Zombie/Add/Shoulder_L/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Shoulder_R"), "../Bin/Resources/Animations/Body_Zombie/Add/Shoulder_R/")))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Default Zombie Bite Anims
+
+#pragma endregion
+
+#pragma region Default Zombie Damage Anims
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Burst"), "../Bin/Resources/Animations/Body_Zombie/Damage/Burst/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Default"), "../Bin/Resources/Animations/Body_Zombie/Damage/Default/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Down"), "../Bin/Resources/Animations/Body_Zombie/Damage/Down/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Electric_Shock"), "../Bin/Resources/Animations/Body_Zombie/Damage/Electric_Shock/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Knockback"), "../Bin/Resources/Animations/Body_Zombie/Damage/Knockback/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Lost"), "../Bin/Resources/Animations/Body_Zombie/Damage/Lost/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Stairs_Down"), "../Bin/Resources/Animations/Body_Zombie/Damage/Stairs_Down/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Stairs_Up"), "../Bin/Resources/Animations/Body_Zombie/Damage/Stairs_Up/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Stun"), "../Bin/Resources/Animations/Body_Zombie/Damage/Stun/")))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Default Zombie Dead Anims
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Dead_Default"), "../Bin/Resources/Animations/Body_Zombie/Dead/Default/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Dead_FaceUp"), "../Bin/Resources/Animations/Body_Zombie/Dead/FaceUp/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Dead_LowStance"), "../Bin/Resources/Animations/Body_Zombie/Dead/LowStance/")))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Default Zombie Lost Anims
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_Bite"), "../Bin/Resources/Animations/Body_Zombie/Lost/Bite/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_Dead2_Idle"), "../Bin/Resources/Animations/Body_Zombie/Lost/Dead2_Idle/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_Hold"), "../Bin/Resources/Animations/Body_Zombie/Lost/Hold/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_Idle"), "../Bin/Resources/Animations/Body_Zombie/Lost/Idle/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_L_Ankle_Idle"), "../Bin/Resources/Animations/Body_Zombie/Lost/L_Ankle_Idle/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_L_Ankle_PivotTurn"), "../Bin/Resources/Animations/Body_Zombie/Lost/L_Ankle_PivotTurn/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_L_Ankle_Walk"), "../Bin/Resources/Animations/Body_Zombie/Lost/L_Ankle_Walk/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_R_Ankle_Idle"), "../Bin/Resources/Animations/Body_Zombie/Lost/R_Ankle_Idle/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_R_Ankle_PivotTurn"), "../Bin/Resources/Animations/Body_Zombie/Lost/R_Ankle_PivotTurn/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_R_Ankle_Walk"), "../Bin/Resources/Animations/Body_Zombie/Lost/R_Ankle_Walk/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_Turn"), "../Bin/Resources/Animations/Body_Zombie/Lost/Turn/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_TurnOver"), "../Bin/Resources/Animations/Body_Zombie/Lost/TurnOver/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_Walk"), "../Bin/Resources/Animations/Body_Zombie/Lost/Walk/")))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Default Zombie Sick Anims
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Sick_FlashGranade"), "../Bin/Resources/Animations/Body_Zombie/Sick/FlashGranade/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Sick_Knife"), "../Bin/Resources/Animations/Body_Zombie/Sick/Knife/")))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Default Zombie Undiscovered Anims
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Cage"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Cage/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Capture"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Capture/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Celling_Fall"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Celling_Fall/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Dead"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Dead/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Dead_Pose"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Dead_Pose/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Eat"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Eat/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Fance"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Fance/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_HeadBang"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/HeadBang/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Lounge"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Lounge/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Prison"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Prison/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Railing_Fall"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Railing_Fall/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Railing_Stund"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Stund/")))
+		return E_FAIL;
+
+#pragma endregion
+
+
 	return S_OK;	
 }
 
