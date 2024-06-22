@@ -37,6 +37,8 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+	if (FAILED(Add_Animations()))
+		return E_FAIL;
 
 	m_pModelCom->Set_RootBone("root");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
@@ -698,6 +700,31 @@ HRESULT CBody_Player::Add_Components()
 		m_PartColliders.push_back(dynamic_cast<CCollider*>(pCollider));
 	}
 
+
+	return S_OK;
+}
+
+HRESULT CBody_Player::Add_Animations()
+{
+	if(FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Fine"), CPlayer::Get_AnimSetMoveName(CPlayer::ANIMSET_MOVE::FINE))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Stg"), CPlayer::Get_AnimSetMoveName(CPlayer::ANIMSET_MOVE::MOVE_STG))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Light"), CPlayer::Get_AnimSetMoveName(CPlayer::ANIMSET_MOVE::FINE_LIGHT))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Caution"), CPlayer::Get_AnimSetMoveName(CPlayer::ANIMSET_MOVE::CAUTION))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Caution_Light"), CPlayer::Get_AnimSetMoveName(CPlayer::ANIMSET_MOVE::CAUTION_LIGHT))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Danger"), CPlayer::Get_AnimSetMoveName(CPlayer::ANIMSET_MOVE::DANGER))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Danger_Light"), CPlayer::Get_AnimSetMoveName(CPlayer::ANIMSET_MOVE::DANGER_LIGHT))))
+		return E_FAIL;
+
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Hg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HG))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Stg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::STG))))
+		return E_FAIL;
 
 	return S_OK;
 }

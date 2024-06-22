@@ -984,8 +984,28 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 HRESULT CLoader::Load_Animations()
 {
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Player_Test"), "../Bin/Resources/Animations/Body_Player/")))
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Fine"), "../Bin/Resources/Animations/Player/Body/move/move_fine/")))
 		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Stg"), "../Bin/Resources/Animations/Player/Body/move/move_stg/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Light"), "../Bin/Resources/Animations/Player/Body/move/move_stlight/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Caution"), "../Bin/Resources/Animations/Player/Body/move/move_caution/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Caution_Light"), "../Bin/Resources/Animations/Player/Body/move/move_caution_stlight/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Danger"), "../Bin/Resources/Animations/Player/Body/move/move_danger/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Danger_Light"), "../Bin/Resources/Animations/Player/Body/move/move_danger_stlight/")))
+		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Common"), "../Bin/Resources/Animations/Player/Body/move/move_danger_common/")))
+	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Hold_Hg"), "../Bin/Resources/Animations/Player/Body/hold/hg_hold/")))
+		return E_FAIL;															   
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Hold_Stg"), "../Bin/Resources/Animations/Player/Body/hold/stg_hold/")))
+		return E_FAIL;
+
+
 
 	return S_OK;	
 }
