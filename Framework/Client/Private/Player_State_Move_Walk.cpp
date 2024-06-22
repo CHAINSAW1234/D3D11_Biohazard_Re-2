@@ -58,8 +58,8 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 {
 #pragma region 키 입력에 따른 애니메이션 변경
 		if (m_dwDirection & DIRECTION_FRONT) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::WALK_F_LOOP);
-			//	m_pPlayer->Get_Body_Model()->Change_Animation(0, TEXT("Test"), 3);
+			//		m_pPlayer->Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::WALK_F_LOOP);
+			m_pPlayer->Get_Body_Model()->Change_Animation(0, TEXT("Test"), 3);
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f, 0.1f);
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f, 0.1f);
 

@@ -102,6 +102,19 @@ void CModel::Erase_AnimPlayingInfo(_uint iPlayingIndex)
 	}
 }
 
+_uint CModel::Get_NumAnims(const wstring& strAnimLayerTag)
+{
+	_uint			iNumAnims = { 0 };
+
+	map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	if (iter != m_AnimationLayers.end())
+	{
+		iNumAnims = iter->second->Get_NumAnims();
+	}
+
+	return iNumAnims;
+}
+
 _int CModel::Get_CurrentAnimIndex(_uint iPlayingIndex)
 {
 	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
@@ -283,7 +296,7 @@ void CModel::Set_TickPerSec(const wstring& strAnimLayerTag, _uint iAnimIndex, _f
 {
 	map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
 
-	if (m_AnimationLayers.end() == iter)
+	if (m_AnimationLayers.end() != iter)
 	{
 		CAnimation* pAnimation = { iter->second->Get_Animation(iAnimIndex) };
 		if (nullptr != pAnimation)

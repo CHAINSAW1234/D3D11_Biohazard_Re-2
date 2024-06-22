@@ -39,7 +39,7 @@ public:		/* For.Animation */
 	void									Add_AnimPlayingInfo(_bool isLoop, _uint iPlayingIndex, const wstring& strBoneLayerTag, _float fBlendWeight = 1.f);
 	void									Erase_AnimPlayingInfo(_uint iPlayingIndex);
 
-	_uint									Get_NumAnims() { return m_iNumAnimations; }
+	_uint									Get_NumAnims(const wstring& strAnimLayerTag);
 	_int									Get_CurrentAnimIndex(_uint iPlayingIndex);
 	wstring									Get_CurrentAnimLayerTag(_uint iPlayingIndex);
 	string									Get_CurrentAnimTag(_uint iPlayingIndex);
