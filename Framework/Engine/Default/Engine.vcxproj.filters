@@ -289,9 +289,6 @@
     <Filter Include="01.Utility\02.Components\FSM\HState">
       <UniqueIdentifier>{fe575399-f059-49f7-ae13-46645922dd29}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\02.Components\Model\Mesh_Layer">
-      <UniqueIdentifier>{96dc04dc-3537-4316-b4df-bf3698f490a1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\97.Physics\Physics_Component\PxCollider">
       <UniqueIdentifier>{e7549f5f-afce-4cf1-aace-7cc16a6c4cb9}</UniqueIdentifier>
     </Filter>
@@ -300,6 +297,9 @@
     </Filter>
     <Filter Include="01.Utility\97.Physics\Physics_Component\SoftBody">
       <UniqueIdentifier>{445839c3-962a-48b7-9389-eb55ed04eaa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\14.Animation_Library">
+      <UniqueIdentifier>{5152ce05-bfbc-41e5-9d5c-16766dd8e3f5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -569,6 +569,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\SoftBody.cpp">
       <Filter>01.Utility\97.Physics\Physics_Component\SoftBody</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Animation_Library.cpp">
+      <Filter>01.Utility\14.Animation_Library</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -860,6 +863,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\SoftBody.h">
       <Filter>01.Utility\97.Physics\Physics_Component\SoftBody</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Animation_Library.h">
+      <Filter>01.Utility\14.Animation_Library</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

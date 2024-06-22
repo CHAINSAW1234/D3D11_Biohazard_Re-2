@@ -328,12 +328,12 @@ HRESULT CBody_Zombie::Initialize_Model()
 	m_pModelCom->Add_Bone_Layer_All_Bone(BONE_LAYER_DEFAULT_TAG);
 
 	/* Create_AnimPlaying_Info */
-	m_pModelCom->Add_AnimPlayingInfo(-1, false, PLAYING_INDEX::INDEX_0, BONE_LAYER_DEFAULT_TAG, 1.f);
-	m_pModelCom->Add_AnimPlayingInfo(-1, false, PLAYING_INDEX::INDEX_1, BONE_LAYER_DEFAULT_TAG, 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(-1, false, PLAYING_INDEX::INDEX_2, BONE_LAYER_DEFAULT_TAG, 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(-1, false, PLAYING_INDEX::INDEX_3, BONE_LAYER_DEFAULT_TAG, 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(-1, false, PLAYING_INDEX::INDEX_4, BONE_LAYER_DEFAULT_TAG, 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(-1, false, PLAYING_INDEX::INDEX_5, BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_0, BONE_LAYER_DEFAULT_TAG, 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_1, BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_2, BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_3, BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_4, BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_5, BONE_LAYER_DEFAULT_TAG, 0.f);
 
 	/* Set_Root_Motion */
 	m_pModelCom->Active_RootMotion_XZ(true);

@@ -147,7 +147,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\imguilib;../Public/;../../EngineSDK/Inc/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\imguilib;../Public/;../../EngineSDK/Inc/;C:\vcpkg\installed\x64-windows\include/physx;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
       <AdditionalOptions>/MP /Zm2000 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>

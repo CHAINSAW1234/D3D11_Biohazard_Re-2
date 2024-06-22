@@ -41,7 +41,7 @@ HRESULT CHair_Player::Initialize(void* pArg)
 	}
 
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
-	m_pModelCom->Add_AnimPlayingInfo(0, true, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(true, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Set_RootBone("RootNode");
 
 	vector<string>		BoneTags = { m_pModelCom->Get_BoneNames() };

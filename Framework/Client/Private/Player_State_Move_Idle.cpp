@@ -8,7 +8,7 @@ CPlayer_State_Move_Idle::CPlayer_State_Move_Idle(CPlayer* pPlayer)
 
 void CPlayer_State_Move_Idle::OnStateEnter()
 {
-	m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::ANIM_IDLE);
+	m_pPlayer->Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::ANIM_IDLE);
 	m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
 	m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
 

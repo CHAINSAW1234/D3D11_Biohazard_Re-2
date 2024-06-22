@@ -36,23 +36,24 @@ public:
 	virtual ~CModel() = default;
 
 public:		/* For.Animation */
-	void									Add_AnimPlayingInfo(_int iAnimIndex, _bool isLoop, _uint iPlayingIndex, const wstring& strBoneLayerTag, _float fBlendWeight = 1.f);
+	void									Add_AnimPlayingInfo(_bool isLoop, _uint iPlayingIndex, const wstring& strBoneLayerTag, _float fBlendWeight = 1.f);
 	void									Erase_AnimPlayingInfo(_uint iPlayingIndex);
 
 	_uint									Get_NumAnims() { return m_iNumAnimations; }
 	_int									Get_CurrentAnimIndex(_uint iPlayingIndex);
+	wstring									Get_CurrentAnimLayerTag(_uint iPlayingIndex);
 	string									Get_CurrentAnimTag(_uint iPlayingIndex);
 
 	void									Reset_PreAnimation(_uint iPlayingIndex);
 
 
-	HRESULT									Add_Animation(_uint iLevelIndex, wstring& strPrototypeTag);
+	HRESULT									Add_Animations(const wstring& strPrototypeLayerTag, const wstring& strAnimLayerTag);
 
 private:	/* Optimization Culling */
 	_float									Compute_NewTimeDelta_Distatnce_Optimization(_float fTimeDelta, class CTransform* pTransform);
 
 public:		/* For.Controll AnimSpeed */
-	void									Set_TickPerSec(_uint iAnimIndex, _float fTickPerSec);
+	void									Set_TickPerSec(const wstring& strAnimLayerTag, _uint iAnimIndex, _float fTickPerSec);
 
 public:		/* For.RootAnimaition ActiveControll */
 	_bool									Is_Active_RootMotion_XZ();
@@ -148,7 +149,7 @@ public:		/* For. Access */
 	vector<_float4>							Get_Translations();
 	vector<string>							Get_MeshTags();
 	list<_uint>								Get_MeshIndices(const string& strMeshTag);		//	이름이 같은 메쉬들이 각각의 칸에있을수있으므로 인덱스들을 컨테이너에 담아서 반환한다.
-	vector<CAnimation*>						Get_Animations() { return m_Animations; }
+	vector<CAnimation*>						Get_Animations(const wstring& strAnimLayerTag);
 	map<wstring, class CBone_Layer*>		Get_BoneLayers() { return m_BoneLayers; }
 	list<wstring>							Get_BoneLayer_Tags();
 
@@ -156,11 +157,11 @@ public:		/* For. Access */
 	_uint									Get_NumMeshes() const { return m_iNumMeshes; }
 	_uint									Get_NumPlayingInfos() { return static_cast<_uint>(m_PlayingAnimInfos.size()); }
 
-	_int									Find_AnimIndex(CAnimation* pAnimation);
-	_int									Find_AnimIndex(const string& strAnimTag);
+	_bool									Find_AnimIndex(_int* pAnimIndex, wstring* pAnimLayerTag, CAnimation* pAnimation);
+	_bool									Find_AnimIndex(_int* pAnimIndex, wstring* pAnimLayerTag, const string& strAnimTag);
 	string									Find_RootBoneTag();
-	class CPlayingInfo* Find_PlayingInfo(_uint iPlayingIndex);
-	class CBone_Layer* Find_BoneLayer(const wstring& strBoneLayerTag);
+	class CPlayingInfo*						Find_PlayingInfo(_uint iPlayingIndex);
+	class CBone_Layer*						Find_BoneLayer(const wstring& strBoneLayerTag);
 
 	HRESULT									Link_Bone_Auto(CModel* pTargetModel);
 
@@ -172,8 +173,8 @@ public:		/* For. Access */
 	_bool									Is_Root_Bone(const string& strBoneTag);
 
 	_uint									Get_CurrentMaxKeyFrameIndex(_uint iPlayingIndex);
-	_float									Get_Duration_From_Anim(_int iAnimIndex);
-	_float									Get_Duration_From_Anim(const string& strAnimTag);
+	_float									Get_Duration_From_Anim(const wstring& strAnimLayerTag, _int iAnimIndex);
+	_float									Get_Duration_From_Anim(const wstring& strAnimLayerTag, const string& strAnimTag);
 	_float									Get_Duration_From_PlayingInfo(_uint iPlayingIndex);
 	_float									Get_TrackPosition(_uint iPlayingIndex);
 	_float									Get_BlendWeight(_uint iPlayingIndex);
@@ -189,18 +190,18 @@ public:		/* For. Access */
 	void									Set_KeyFrameIndex_AllKeyFrame(_uint iPlayingIndex, _uint iKeyFrameIndex);
 	void									Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition, _bool isResetRootPre = false);
 	void									Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight, _float fLinearTime = 0.f);
-	void									Change_Animation(_uint iPlayingIndex, _uint iAnimIndex);
-	void									Change_Animation(_uint iPlayingIndex, const string& strAnimTag);
+	void									Change_Animation(_uint iPlayingIndex, const wstring& strAnimLayerTag, _uint iAnimIndex);
+	void									Change_Animation(_uint iPlayingIndex, const wstring& strAnimLayerTag, const string& strAnimTag);
 	void									Set_BoneLayer_PlayingInfo(_uint iPlayingIndex, const wstring& strBoneLayerTag);
 
-	class CBone* Get_BonePtr(const _char* pBoneName) const;
-	class CBone* Get_BonePtr(_int iIndex);
+	class CBone*							Get_BonePtr(const _char* pBoneName) const;
+	class CBone*							Get_BonePtr(_int iIndex);
 
 	_bool									isFinished(_uint iPlayingIndex);
 	void									Get_Child_BoneIndices(string strTargetParentsBoneTag, list<_uint>& ChildBoneIndices);
 	void									Get_Child_ZointIndices(string strStartBoneTag, const string& strEndBoneTag, list<_uint>& ChildZointIndices);
 
-	const _float4x4* Get_CombinedMatrix(const string& strBoneTag);
+	const _float4x4*						Get_CombinedMatrix(const string& strBoneTag);
 
 public:		/* For.FBX */
 	virtual HRESULT							Initialize_Prototype_TEMP(MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix);
@@ -280,7 +281,7 @@ private:
 	class CIK_Solver* m_pIK_Solver = { nullptr };
 
 	_uint									m_iNumAnimations = { 0 };
-	vector<class CAnimation*>				m_Animations;
+	map<wstring, class CAnimation_Layer*>	m_AnimationLayers;
 
 	_float4x4								m_MeshBoneMatrices[MAX_COUNT_BONE];
 

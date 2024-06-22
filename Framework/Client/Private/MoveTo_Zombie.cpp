@@ -40,7 +40,7 @@ void CMoveTo_Zombie::Execute()
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_WALK);
 
-	cout << "Move" << endl;
+	//cout << "Move" << endl;
 
 	Change_Animation();
 }
@@ -527,14 +527,14 @@ void CMoveTo_Zombie::Change_Animation()
 		pBodyModel->Set_TotalLinearInterpolation(0.8f);
 	}
 
-	pBodyModel->Change_Animation(iBasePlayingIndex, iResultAnimationIndex);
+	pBodyModel->Change_Animation(iBasePlayingIndex, TEXT("Default"), iResultAnimationIndex);
 	pBodyModel->Set_Loop(iBasePlayingIndex, isLoop);
 	pBodyModel->Set_BoneLayer_PlayingInfo(iBasePlayingIndex, strBaseBoneLayerTag);
 	pBodyModel->Set_BlendWeight(iBasePlayingIndex, 1.f - fTurnBlendWeight);
 
 	if (true == isNeedBlend)
 	{
-		pBodyModel->Change_Animation(iBlendPlayingIndex, iBlendAnimIndex);
+		pBodyModel->Change_Animation(iBlendPlayingIndex, TEXT("Default"), iBlendAnimIndex);
 		pBodyModel->Set_Loop(iBlendPlayingIndex, true);
 		pBodyModel->Set_BoneLayer_PlayingInfo(iBlendPlayingIndex, strBlendBoneLayerTag);
 		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, fTurnBlendWeight);
