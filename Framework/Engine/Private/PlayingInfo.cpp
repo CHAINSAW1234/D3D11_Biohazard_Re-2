@@ -42,13 +42,23 @@ KEYFRAME CPlayingInfo::Get_LastKeyFrame(_uint iBoneIndex)
 	return KeyFrame;
 }
 
-void CPlayingInfo::Change_Animation(_uint iAnimIndex, _uint iNumChannel)
+void CPlayingInfo::Change_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, _uint iNumChannel)
 {
-	if (m_iAnimIndex == iAnimIndex)
+	if (m_iAnimIndex == iAnimIndex && m_strAnimLayerTag == strAnimLayerTag)
 		return;
 
 	m_iPreAnimIndex = m_iAnimIndex;
 	m_iAnimIndex = iAnimIndex;
+
+	m_strPreAnimLayerTag = m_strAnimLayerTag;
+	m_strAnimLayerTag = strAnimLayerTag;
+
+	_bool			isLinearActive = { -1 != m_iPreAnimIndex };
+	Reset_LinearInterpolation();
+	Set_LinearInterpolation(isLinearActive);
+	Update_LinearStateKeyFrames(m_LastKeyFrames);
+
+	Set_FirstTick(true);
 
 	Reset_CurrentKeyFrameIndices(iNumChannel);
 	Reset_TrackPosition();

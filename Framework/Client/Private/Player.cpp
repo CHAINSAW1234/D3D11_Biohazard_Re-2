@@ -1,4 +1,4 @@
-#include "stdafx.h"
+Ôªø#include "stdafx.h"
 #include "..\Public\Player.h"
 
 #include "FSM.h"
@@ -77,7 +77,7 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 {
 	Priority_Tick_PartObjects(fTimeDelta);
 
-#pragma region øπ¿∫ Ω∫∆ƒ¿Ã ≥™¡ﬂø° FSM¿∏∑Œ ø≈±Ê¡ˆµµ
+#pragma region ÏòàÏùÄ Ïä§ÌååÏù¥ ÎÇòÏ§ëÏóê FSMÏúºÎ°ú ÏòÆÍ∏∏ÏßÄÎèÑ
 	if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		m_bInteract = true;
 	else
@@ -88,7 +88,7 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
-#pragma region øπ¿∫ColTest - ƒ√∏µ πÊΩƒø° µ˚∂Û ¥ﬁ∂Û¡˙ ∞Ã¥œ¥Á
+#pragma region ÏòàÏùÄColTest - Ïª¨ÎßÅ Î∞©ÏãùÏóê Îî∞Îùº Îã¨ÎùºÏßà Í≤ÅÎãàÎãπ
 	if (m_iCurCol != m_iPreCol)
 	{
 		m_iPreCol = m_iCurCol;
@@ -108,9 +108,9 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_fTimeTEST = 0.f;
 		m_iCurCol--;
 	}
-#pragma endregion øπ¿∫ColTest
+#pragma endregion ÏòàÏùÄColTest
 
-#pragma region ¿Ãµø∞˙ ƒ´∏ﬁ∂Û
+#pragma region Ïù¥ÎèôÍ≥º Ïπ¥Î©îÎùº
 	if (m_pController)
 	{
 		auto CameraPos = m_pController->GetPosition_Float4();
@@ -303,7 +303,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma endregion
 
-#pragma region «ˆ¡¯ √ﬂ∞°
+#pragma region ÌòÑÏßÑ Ï∂îÍ∞Ä
 
 	CModel* pWeaponModel = { dynamic_cast<CModel*>(m_PartObjects[PART_WEAPON]->Get_Component(TEXT("Com_Model"))) };
 	_float4x4* pRightWeaponCombinedMatrix = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
@@ -332,9 +332,10 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	if (m_pController)
 		m_pController->Update_Collider();
 
-	Turn_Spine(fTimeDelta);		// ∆Ø¡§ ¡∂∞«ø°º≠ ª¿∏¶ µπ∏≤
+	Turn_Spine_UpDown(fTimeDelta);		// Hold ÏÉÅÌÉúÏóêÏÑú Ï≤ôÏ∂îÎ•º ÏÉÅÌïòÎ°úÎßå ÎèåÎ¶º
+	Turn_Spine_Light(fTimeDelta);		// Light ÏÉÅÌÉúÏóêÏÑú ÏÉÅÏ≤¥Ï†ÑÏ≤¥Î•º Ïπ¥Î©îÎùºÎ•º Î≥¥ÎèÑÎ°ù ÎèåÎ¶º
 
-#pragma region øπ¿∫ √ﬂ∞°
+#pragma region ÏòàÏùÄ Ï∂îÍ∞Ä
 	Col_Section();
 #pragma endregion 
 
@@ -373,7 +374,7 @@ void CPlayer::Late_Tick_PartObjects(_float fTimeDelta)
 	for (auto& pPartObject : m_PartObjects)
 		pPartObject->Late_Tick(fTimeDelta);
 }
-#pragma region øπ¿∫ √ﬂ∞°
+#pragma region ÏòàÏùÄ Ï∂îÍ∞Ä
 void CPlayer::Col_Section()
 {
 	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider"));
@@ -394,7 +395,7 @@ void CPlayer::Col_Section()
 
 #pragma endregion
 
-#pragma region «ˆ¡¯ √ﬂ∞°
+#pragma region ÌòÑÏßÑ Ï∂îÍ∞Ä
 CModel* CPlayer::Get_Body_Model()
 {
 	return static_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(g_strModelTag));
@@ -413,6 +414,22 @@ _float3* CPlayer::Get_Body_RootDir()
 void CPlayer::Change_State(STATE eState)
 {
 	m_pFSMCom->Change_State(eState);
+}
+
+_float CPlayer::Get_CamDegree()
+{
+	if (nullptr == m_pCamera || nullptr == m_pTransformCom)
+		return 0;
+
+	_float4 vCamLook = m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK);
+	vCamLook.y = 0;
+	vCamLook = XMVector3Normalize(vCamLook);
+
+	_float4 vPlayerLook = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
+	vPlayerLook.y = 0;
+	vPlayerLook = XMVector3Normalize(vPlayerLook);
+
+	return Cal_Degree_From_Directions_Between_Min180_To_180(vPlayerLook, vCamLook);
 }
 
 void CPlayer::Update_FSM()
@@ -446,43 +463,78 @@ void CPlayer::Update_Direction()
 	m_dwDirection = dwDirection;
 }
 
-_float CPlayer::Get_CamDegree()
+void CPlayer::Turn_Spine_UpDown(_float fTimeDelta)
 {
-	if (nullptr == m_pCamera || nullptr == m_pTransformCom)
-		return 0;
+	CModel* pModel = { Get_Body_Model() };
+	if (nullptr != pModel)
+	{
+		_vector				vMyLook = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
+		_float4				vHeadWorldLook = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
+		_float				fHeadMagnitude = sqrt(vHeadWorldLook.x * vHeadWorldLook.x + vHeadWorldLook.y * vHeadWorldLook.y + vHeadWorldLook.z * vHeadWorldLook.z);
+		_float				fHeadWorldAngle = acosf(vHeadWorldLook.y / fHeadMagnitude);
 
-	_float4 vCamLook = m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK);
-	vCamLook.y = 0;
-	vCamLook = XMVector3Normalize(vCamLook);
+		_matrix				CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
+		_float4				vCamLook = { CamWorldMatrix.r[CTransform::STATE_LOOK] };
+		_float				fCamMagnitude = sqrt(vCamLook.x * vCamLook.x + vCamLook.y * vCamLook.y + vCamLook.z * vCamLook.z);
+		_float				fCamAngle = acosf(vCamLook.y / fCamMagnitude);
 
-	_float4 vPlayerLook = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-	vPlayerLook.y = 0;
-	vPlayerLook = XMVector3Normalize(vPlayerLook);
+		_vector				vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT) };
+		_float				fAngle = fabs(fHeadWorldAngle - fCamAngle);
 
-	return Cal_Degree_From_Directions_Between_Min180_To_180(vPlayerLook, vCamLook);
+		if (vHeadWorldLook.y < vCamLook.y) {
+			fAngle *= -1;
+		}
+
+		static _float fCurAngle = 0.f;
+		if (!m_isTurnSpine) {
+			if (fabs(fCurAngle) > 0.0001) {
+				fCurAngle += fTimeDelta * -fCurAngle * 10;
+			}
+			else {
+				fCurAngle = 0.f;
+				return;
+			}
+		}
+		else {
+			fCurAngle += fTimeDelta * (fAngle - fCurAngle) * 10;
+		}
+
+		list<_uint>			ChildJointIndices;
+		pModel->Get_Child_ZointIndices("spine_0", "r_arm_clavicle", ChildJointIndices);
+
+		ChildJointIndices.pop_back();
+
+		_uint				iNumChildJoint = { static_cast<_uint>(ChildJointIndices.size()) };
+		_float				fDevidedAngle = { fCurAngle / iNumChildJoint };
+		vector<string>		BoneNames = { pModel->Get_BoneNames() };
+
+		vRotateAxis = XMVector3TransformNormal(vRotateAxis, m_pTransformCom->Get_WorldMatrix_Inverse());
+
+		_vector				vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, fDevidedAngle) };
+
+		vNewQuaternion = XMVectorSetY(vNewQuaternion, 0.f);
+		vNewQuaternion = XMVectorSetZ(vNewQuaternion, 0.f);
+		//vNewQuaternion *= -1;
+		vNewQuaternion = XMQuaternionNormalize(vNewQuaternion);
+
+
+		_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
+
+		for (auto& iJointIndex : ChildJointIndices)
+		{
+			pModel->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
+		}
+	}
+
 }
 
-void CPlayer::Turn_Spine(_float fTimeDelta)
+void CPlayer::Turn_Spine_Light(_float fTimeDelta)
 {
 	static _float		fAccLinearTime = { 0.f };
-	//if (!m_isTurnSpine /*&& m_fSpineTurnLerfTimeDelta >= 1.f*/) {
-	//	fAccLinearTime -= fTimeDelta;
-	//	if (fAccLinearTime < 0.f)
-	//		fAccLinearTime = 0.f;
-	//}
-
-	//else
-	//{
-	//	fAccLinearTime += fTimeDelta;
-	//	if (fAccLinearTime > 0.5f)
-	//	{
-	//		fAccLinearTime = 0.5f;
-	//	}
-	//}
 
 	fAccLinearTime = 0.5f;
 
-	CModel*			pModel = { Get_Body_Model() };
+	CModel* pModel = { Get_Body_Model() };
 	if (nullptr != pModel)
 	{
 		_matrix				HeadCombinedMatrix = { XMLoadFloat4x4(pModel->Get_CombinedMatrix("head")) };
@@ -500,18 +552,18 @@ void CPlayer::Turn_Spine(_float fTimeDelta)
 		_matrix				HeadRotateMatrix = { XMMatrixRotationQuaternion(vTotalQuaternionHead) };
 
 		_vector				vMyLook = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
-		_vector				vHeadWorldLook = { XMVector3TransformNormal(XMVectorSet(0.f, 0.f, 1.f, 0.f), /*HeadRotateMatrix * */m_pTransformCom->Get_WorldMatrix())};
+		_vector				vHeadWorldLook = { XMVector3TransformNormal(XMVectorSet(0.f, 0.f, 1.f, 0.f), /*HeadRotateMatrix * */m_pTransformCom->Get_WorldMatrix()) };
 
 		//	vHeadWorldLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
 
 		_matrix				CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
-		_vector				vCamLook = { CamWorldMatrix.r[CTransform::STATE_LOOK]};/*
+		_vector				vCamLook = { CamWorldMatrix.r[CTransform::STATE_LOOK] };/*
 		_vector				vCamPosition = { CamWorldMatrix.r[CTransform::STATE_POSITION] };
 		_vector				vCamFocusPosition = { vCamPosition + XMVector3Normalize(vCamLook) * 7.f };*/
 
 		//_vector				vMyPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
 		//_vector				vDirectionToFocus = { vCamFocusPosition - vMyPosition };
-		//		_vector				vCamLook = { m_pCamera->Get_Transform()->Get_State_Vector(CTransform::STATE_LOOK) };
+		//_vector				vCamLook = { m_pCamera->Get_Transform()->Get_State_Vector(CTransform::STATE_LOOK) };
 
 		_float				fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vHeadWorldLook), XMVector3Normalize(vCamLook))) };
 		//	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vHeadWorldLook), XMVector3Normalize(vCamLook))) };
@@ -519,17 +571,25 @@ void CPlayer::Turn_Spine(_float fTimeDelta)
 		{
 			return;
 		}
-
+		
+		static _vector vPreRotateAxis;
 		_vector				vRotateAxis = { XMVector3Cross(XMVector3Normalize(vHeadWorldLook), XMVector3Normalize(vCamLook)) };
-		_float				fAngle = { acosf(fDot) * fAccLinearTime / 0.5f };
+		_float				fAngle = { acosf(fDot) };
+		
+		if (fAngle > XMConvertToRadians(90)) {
+			fAngle = XMConvertToRadians(90);
+			vRotateAxis = vPreRotateAxis;
+		}
+		else {
+			vPreRotateAxis = vRotateAxis;
+		}
 
-		list<_uint>			ChildJointIndices; 
+		list<_uint>			ChildJointIndices;
 		pModel->Get_Child_ZointIndices("spine_0", "head", ChildJointIndices);
+		ChildJointIndices.pop_back();
 
 		_uint				iNumChildJoint = { static_cast<_uint>(ChildJointIndices.size()) };
-
 		_float				fDevidedAngle = { fAngle / iNumChildJoint };
-
 		vector<string>		BoneNames = { pModel->Get_BoneNames() };
 
 		vRotateAxis = XMVector3TransformNormal(vRotateAxis, m_pTransformCom->Get_WorldMatrix_Inverse());
@@ -537,80 +597,22 @@ void CPlayer::Turn_Spine(_float fTimeDelta)
 		_vector				vQuaternion = { XMQuaternionRotationAxis(vRotateAxis, fDevidedAngle) };
 		_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vQuaternion) };
 
-		ChildJointIndices.pop_back();
-
-		for(auto& iJointIndex : ChildJointIndices)
+		for (auto& iJointIndex : ChildJointIndices)
 		{
 			pModel->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
 		}
 	}
-
-
-
-	//// ƒ´∏ﬁ∂Û look ≥ª¿˚¿ª ≈Î«ÿº≠ ∞¢µµ ±∏«œ±‚
-	//_float4 vCamLook = m_pTransformCom_Camera->Get_State_Float4(CTransform::STATE_LOOK);
-	//_float4 vCamLandLook = vCamLook;
-	//vCamLandLook.y = 0;
-	//vCamLandLook = XMVector3Normalize(vCamLandLook);
-
-	//_float fRadian = XMVector3AngleBetweenNormals(vCamLandLook, vCamLook).m128_f32[0];
-
-	//// ø‹¿˚¿∏∑Œ πÊ«‚ √£±‚
-	//_float vCross = XMVector3Cross(vCamLandLook, vCamLook).m128_f32[1];
-
-	//// ∞¢µµ∏¶ -180 ~ 180µµ ªÁ¿Ã∑Œ ºº∆√
-	//_float fDegree = XMConvertToDegrees(fRadian * vCross / abs(vCross)); // 0 ~ 180 ªÁ¿Ã¿« ∞™ 
-	//// ∞¢µµ∞° 0∫∏¥Ÿ ≈©∏È øﬁ¬ ¿Ã¥Ÿ
-	//if (isnan(fDegree))
-	//	m_fTargetSpineTurnAxis = 0.f;
-	//else 
-	//	m_fTargetSpineTurnAxis = fDegree;
-
-
-	//m_fSpineTurnLerfTimeDelta += fTimeDelta;
-	//if (m_fSpineTurnLerfTimeDelta > 1.f)
-	//	m_fSpineTurnLerfTimeDelta = 1.f;
-
-	//if (m_fSpineTurnLerfTimeDelta < 1.f) {
-	//	if (m_isTurnSpine) {
-	//		m_fCurSpineTurnAxis = Lerp(0, m_fTargetSpineTurnAxis, m_fSpineTurnLerfTimeDelta);
-	//	}
-	//	else {
-	//		m_fCurSpineTurnAxis = Lerp(m_fTargetSpineTurnAxis, 0, m_fSpineTurnLerfTimeDelta);
-	//	}
-	//}
-	//else {
-	//	m_fCurSpineTurnAxis = m_isTurnSpine ? m_fTargetSpineTurnAxis : 0.f;
-	//}
-
-	////_matrix vSpineTransform = Get_Body_Model()->GetBoneTransform("spine_0");
-	////_vector vTransform, vScale, vRotate;
-	////XMMatrixDecompose(&vScale, &vRotate, &vTransform, vSpineTransform);
-
-	////_float4 vSpineRight = vSpineTransform.r[0];
-	////_float4 vSpinePos = vSpineTransform.r[3];
-
-	////// ≈© ¿⁄ ¿Ã ∞¯ ∫Œ
-	////_matrix vNewSpineTransform = XMMatrixIdentity() * XMMatrixScalingFromVector(vScale) * XMMatrixRotationQuaternion(vRotate) *
-	////	XMMatrixRotationAxis(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), XMConvertToRadians(m_fCurSpineTurnAxis)) * XMMatrixTranslationFromVector(vTransform);
-
-	////_float3 pRootDir = { 0.f,0.f,0.f };
-	////Get_Body_Model()->Set_CombinedMatrix(m_pTransformCom, Get_Body_RootDir(), "spine_0", vNewSpineTransform);
-	//Get_Body_Model()->Add_Additional_Transformation_World("spine_0", XMMatrixRotationAxis(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), XMConvertToRadians(m_fCurSpineTurnAxis)));
-	////Get_Body_Model()->Set_CombinedMatrix(m_pTransformCom, /*Get_Body_RootDir()*/ &pRootDir, "spine_0", vSpineTransform);
-	
-
 }
 
 void CPlayer::Update_KeyInput_Reload()
 {
 	if (Get_Body_Model()->isFinished(3)) {
 		if (m_pGameInstance->Get_KeyState('R') == DOWN) {
-			Get_Body_Model()->Change_Animation(3, HOLD_RELOAD);
+			Get_Body_Model()->Change_Animation(3, TEXT("Default"), HOLD_RELOAD);
 			Get_Body_Model()->Set_TrackPosition(3, 0.f);
 			Get_Body_Model()->Set_BlendWeight(3, 10.f, 0.4f);
 
-			Get_Weapon_Model()->Change_Animation(0, 2);
+			Get_Weapon_Model()->Change_Animation(0, TEXT("Default"), 2);
 			Get_Weapon_Model()->Set_TrackPosition(0, 0.f);
 		}
 		else {
@@ -1254,7 +1256,7 @@ HRESULT CPlayer::Add_FSM_States()
 	m_pFSMCom->Add_State(HOLD, CPlayer_State_Hold::Create(this));
 	m_pFSMCom->Change_State(MOVE);
 
-	Get_Body_Model()->Change_Animation(0, CPlayer::ANIM_IDLE);
+	Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::ANIM_IDLE);
 	Get_Body_Model()->Set_Loop(0, true);
 	Get_Body_Model()->Set_BlendWeight(0, 1.f);
 	Get_Body_Model()->Set_BlendWeight(1, 0.f);

@@ -27,10 +27,12 @@ public:
 public:		/* For.Access */
 	inline _bool						Is_Loop() { return m_isLoop; }
 	inline _bool						Is_Finished() { return m_isFinished; }
+	inline _bool						Is_FirstTick() { return m_isFirstTick; }
 	inline _bool						Is_LinearInterpolation() { return m_isLinearInterpolation; }
 
 	inline _int							Get_PreAnimIndex() { return m_iPreAnimIndex; }
 	inline _int							Get_AnimIndex() { return m_iAnimIndex; }
+	inline wstring						Get_AnimLayerTag() { return m_strAnimLayerTag; }
 	inline _float						Get_TrackPosition() { return m_fTrackPosition; }
 	inline _float						Get_BlendWeight() { return m_fBlendWeight; }
 	inline _float						Get_AccLinearInterpolation() { return m_fAccLinearInterpolation; }
@@ -48,9 +50,10 @@ public:		/* For.Access */
 
 	void								Set_Root_Pre(_bool isResetRootPre) { m_isResetRootPre = isResetRootPre; }
 
-	void								Change_Animation(_uint iAnimIndex, _uint iNumChannel);
+	void								Change_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, _uint iNumChannel);
 
 	inline void							Set_PreAnimIndex(_int iAnimIndex) { m_iPreAnimIndex = iAnimIndex; }
+	inline void							Set_PreAnimLayerTag(const wstring& strPreAnimLayerTag) { m_strPreAnimLayerTag = strPreAnimLayerTag; }
 	inline void							Set_Loop(_bool isLoop) { m_isLoop = isLoop; }
 	void								Set_BlendWeight(_float fBlendWeight, _float fBlendLinearTime = 0.f);
 	void								Set_TrackPosition(_float fTrackPosition);
@@ -59,6 +62,7 @@ public:		/* For.Access */
 	inline void							Set_AccLinearInterpolation(_float fAccLinear) { m_fAccLinearInterpolation = fAccLinear; }
 	inline void							Set_BoneLayerTag(const wstring& strBoneLayerTag) { m_strBoneLayerTag = strBoneLayerTag; }
 	inline void							Set_Finished(_bool isFinished) { m_isFinished = isFinished; }
+	inline void							Set_FirstTick(_bool isFirstTick) { m_isFirstTick = isFirstTick; }
 
 	void								Set_PreTranslation(_fvector vPreTranslation);
 	void								Set_PreQuaternion(_fvector vPreQuaternion);
@@ -90,6 +94,9 @@ private:
 	_int								m_iPreAnimIndex = { -1 };
 	_int								m_iAnimIndex = { -1 };
 
+	wstring								m_strAnimLayerTag = { TEXT("") };
+	wstring								m_strPreAnimLayerTag = { TEXT("") };
+
 	_float								m_fBlendWeight = { 0.f };
 	_float								m_fStartBlendWeight = { 0.f };
 	_float								m_fTargetBlendWeight = { 0.f };
@@ -111,6 +118,8 @@ private:
 	_bool								m_isFinished = { true };
 
 	_bool								m_isResetRootPre = { false };
+
+	_bool								m_isFirstTick = { false };
 
 	vector<_uint>						m_CurrentKeyFrameIndices;
 	vector<KEYFRAME>					m_LastKeyFrames;

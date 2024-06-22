@@ -39,7 +39,7 @@ void CWait_Zombie::Execute()
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_IDLE);
 
-	cout << "Wait" << endl;
+	//cout << "Wait" << endl;
 	Change_Animation();
 
 }
@@ -162,7 +162,7 @@ void CWait_Zombie::Change_Animation()
 
 	pBodyModel->Set_TotalLinearInterpolation(0.9f);
 
-	pBodyModel->Change_Animation(iPlayingIndex, iResultAnimationIndex);
+	pBodyModel->Change_Animation(iPlayingIndex, TEXT("Default"), iResultAnimationIndex);
 	pBodyModel->Set_Loop(iPlayingIndex, isLoop);
 	pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
 	pBodyModel->Set_BlendWeight(iPlayingIndex, 1.f);

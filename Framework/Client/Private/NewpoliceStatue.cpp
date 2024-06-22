@@ -40,7 +40,7 @@ HRESULT CNewpoliceStatue::Initialize(void* pArg)
 
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
-	m_pModelCom->Add_AnimPlayingInfo(0, false, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 
 	m_pModelCom->Active_RootMotion_Rotation(true);
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
@@ -87,16 +87,16 @@ void CNewpoliceStatue::Late_Tick(_float fTimeDelta)
 	switch (m_eState)
 	{
 	case POLICEHALLSTATUE_0:
-		m_pModelCom->Change_Animation(0, m_eState);
+		m_pModelCom->Change_Animation(0, TEXT("Default"), m_eState);
 		break;
 	case POLICEHALLSTATUE_1:
-		m_pModelCom->Change_Animation(0, m_eState);
+		m_pModelCom->Change_Animation(0, TEXT("Default"), m_eState);
 		break;
 	case POLICEHALLSTATUE_2:
-		m_pModelCom->Change_Animation(0, m_eState);
+		m_pModelCom->Change_Animation(0, TEXT("Default"), m_eState);
 
 	case POLICEHALLSTATUE_END:
-		m_pModelCom->Change_Animation(0, m_eState);
+		m_pModelCom->Change_Animation(0, TEXT("Default"), m_eState);
 		break;
 	}
 

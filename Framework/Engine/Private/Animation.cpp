@@ -3,6 +3,8 @@
 #include "Bone.h"
 #include "PlayingInfo.h"
 
+#include "Model_Extractor.h"
+
 CAnimation::CAnimation()
 {
 }
@@ -32,7 +34,7 @@ HRESULT CAnimation::Initialize(const aiAnimation* pAIAnimation, const map<string
 	/* 이 애니메이션은 몇 개의 뼈를 컨트롤 하는가 */
 	m_iNumChannels = pAIAnimation->mNumChannels;
 
-	for (size_t i = 0; i < m_iNumChannels; ++i)
+	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
 		CChannel* pChannel = CChannel::Create(pAIAnimation->mChannels[i], BoneIndices);
 		if (nullptr == pChannel)
@@ -59,6 +61,51 @@ HRESULT CAnimation::Initialize(const ANIM_DESC& AnimDesc)
 			return E_FAIL;
 
 		m_Channels.push_back(pChannel);
+	}
+
+	return S_OK;
+}
+
+HRESULT CAnimation::Initialize(const string& strAnimFilePath)
+{
+	filesystem::path			FullPath(strAnimFilePath);
+
+	string						strParentsPath = FullPath.parent_path().string();
+	string						strFileName = FullPath.stem().string();
+
+	//	 동일경로에 동일 파일이름에 확장자만 다르게 새로운 경로 생성
+	string						strNewPath = strParentsPath + "/" + strFileName + ".bin";
+
+	filesystem::path			CheckPath(strNewPath);
+
+	if (true == filesystem::exists(CheckPath))
+	{
+		//	바이너리로 데이터를 작성하기위해서 바이너리 플래그를 포함하였다.
+		ifstream ifs(strNewPath.c_str(), ios::binary);
+
+		//	첫 번째 인자는 데이터를 저장할 공간의 주소를 가리키는 포인터이고, 두 번째 인자는 읽어올 바이트 수입니다.
+		if (true == ifs.fail())
+		{
+			MSG_BOX(TEXT("Failed To OpenFile"));
+
+			return E_FAIL;
+		}
+
+		if (FAILED(Read_Binary(ifs)))
+			return E_FAIL;
+
+		ifs.close();
+
+		return S_OK;
+	}
+
+	else
+	{
+		if (FAILED(CModel_Extractor::Extract_FBX_AnimOnly(strAnimFilePath)))
+			return E_FAIL;
+
+		if (FAILED(Initialize(strAnimFilePath)))
+			return E_FAIL;
 	}
 
 	return S_OK;
@@ -118,7 +165,7 @@ void CAnimation::Invalidate_TransformationMatrix_LinearInterpolation(_float fAcc
 	}
 }
 
-vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _uint iNumBones, const unordered_set<_uint>& IncludedBoneIndices, _bool* pFirstTick, CPlayingInfo* pPlayingInfo)
+vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _uint iNumBones, const unordered_set<_uint>& IncludedBoneIndices, CPlayingInfo* pPlayingInfo)
 {
 	vector<_float4x4>			TransformationMatrices;
 	_bool						isFinished = false;
@@ -129,11 +176,7 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _u
 
 	if (fTrackPosition == 0.f)
 	{
-		*pFirstTick = true;
-	}
-	else
-	{
-		*pFirstTick = false;
+		pPlayingInfo->Set_FirstTick(true);
 	}
 
 	fTrackPosition += m_fTickPerSecond * fTimeDelta;
@@ -143,34 +186,35 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _u
 		if (false == isLoop)
 		{
 			isFinished = true;
+			fTrackPosition = m_fDuration;
 			pPlayingInfo->Set_Finished(isFinished);
 			pPlayingInfo->Set_TrackPosition(m_fDuration);
 
-			//	루프가아닌 경우 애니메이션 종료 시 마지막 키프레임들을 그대로 반환한다. 
-			//	마지막 포즈와 혼합되어야함
-			vector<KEYFRAME>			LastKeyFrames = { pPlayingInfo->Get_LastKeyFrames() };
-			for(_uint iBoneIndex = 0; iBoneIndex < iNumBones; ++iBoneIndex)
-			{
-				KEYFRAME		LastKeyFrame = { LastKeyFrames[iBoneIndex] };
+			////	루프가아닌 경우 애니메이션 종료 시 마지막 키프레임들을 그대로 반환한다. 
+			////	마지막 포즈와 혼합되어야함
+			//for(_uint iBoneIndex = 0; iBoneIndex < iNumBones; ++iBoneIndex)
+			//{
+			//	KEYFRAME		LastKeyFrame = { Get_CurrentKeyFrame(iBoneIndex, m_fDuration) };
 
-				_vector			vQuaternion = { XMLoadFloat4(&LastKeyFrame.vRotation) };
-				_vector			vTranslation = { XMVectorSetW(XMLoadFloat3(&LastKeyFrame.vTranslation), 1.f) };
-				_vector			vScale = { XMLoadFloat3(&LastKeyFrame.vScale) };
+			//	_vector			vQuaternion = { XMLoadFloat4(&LastKeyFrame.vRotation) };
+			//	_vector			vTranslation = { XMVectorSetW(XMLoadFloat3(&LastKeyFrame.vTranslation), 1.f) };
+			//	_vector			vScale = { XMLoadFloat3(&LastKeyFrame.vScale) };
 
-				_matrix			TransformationMatrix = { XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation) };
+			//	_matrix			TransformationMatrix = { XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation) };
 
-				TransformationMatrices[iBoneIndex] = TransformationMatrix;
-			}
+			//	TransformationMatrices[iBoneIndex] = TransformationMatrix;
+			//}
 
-			return TransformationMatrices;
+			//return TransformationMatrices;
 		}
 
 		else
 		{
 			fTrackPosition = fTrackPosition - m_fDuration;
-			*pFirstTick = true;
+			pPlayingInfo->Set_FirstTick(true);
 			pPlayingInfo->Set_PreAnimIndex(pPlayingInfo->Get_AnimIndex());
-		}	
+			pPlayingInfo->Set_PreAnimLayerTag(pPlayingInfo->Get_AnimLayerTag());
+		}
 	}
 
 	for (auto& TransformationMatrix : TransformationMatrices)
@@ -232,15 +276,10 @@ _int CAnimation::Find_ChannelIndex(_uint iBoneIndex)
 	for (auto& pChannel : m_Channels)
 	{
 		_uint			iDstBoneIndex = { pChannel->Get_BoneIndex() };
-		
+
 		if (iDstBoneIndex == iBoneIndex)
 		{
 			isFind = true;
-
-			if (iBoneIndex != 1)
-			{
-				MSG_BOX(TEXT("루트아닐껄"));
-			}
 
 			break;
 		}
@@ -252,6 +291,50 @@ _int CAnimation::Find_ChannelIndex(_uint iBoneIndex)
 		iChannelIndex = -1;
 
 	return iChannelIndex;
+}
+
+HRESULT CAnimation::Read_Binary(ifstream& ifs)
+{
+	CAnimation::ANIM_DESC		AnimDesc;
+
+	_uint			iNumAnimation = {};
+	ifs.read(reinterpret_cast<_char*>(&iNumAnimation), sizeof(_char) * sizeof(_uint));
+
+	_char		szName[MAX_PATH];
+	ifs.read(reinterpret_cast<_char*>(&szName), sizeof(_char) * MAX_PATH);
+	AnimDesc.strName = szName;
+	ifs.read(reinterpret_cast<_char*>(&AnimDesc.fDuration), sizeof(_float));
+	ifs.read(reinterpret_cast<_char*>(&AnimDesc.fTickPerSecond), sizeof(_float));
+
+	ifs.read(reinterpret_cast<_char*>(&AnimDesc.iNumChannels), sizeof(_uint));
+	for (_uint j = 0; j < AnimDesc.iNumChannels; ++j)
+	{
+		CChannel::CHANNEL_DESC		ChannelDesc;
+
+		ifs.read(reinterpret_cast<_char*>(&szName), sizeof(_char) * MAX_PATH);
+		ChannelDesc.strName = szName;
+		ifs.read(reinterpret_cast<_char*>(&ChannelDesc.iBoneIndex), sizeof(_uint));
+
+		ifs.read(reinterpret_cast<_char*>(&ChannelDesc.iNumKeyFrames), sizeof(_uint));
+		for (_uint k = 0; k < ChannelDesc.iNumKeyFrames; ++k)
+		{
+			KEYFRAME					KeyFrame;
+
+			ifs.read(reinterpret_cast<_char*>(&KeyFrame.vScale), sizeof(_float3));
+			ifs.read(reinterpret_cast<_char*>(&KeyFrame.vRotation), sizeof(_float4));
+			ifs.read(reinterpret_cast<_char*>(&KeyFrame.vTranslation), sizeof(_float3));
+			ifs.read(reinterpret_cast<_char*>(&KeyFrame.fTime), sizeof(_float));
+
+			ChannelDesc.KeyFrames.push_back(KeyFrame);
+		}
+
+		AnimDesc.ChannelDescs.push_back(ChannelDesc);
+	}
+
+	if (FAILED(Initialize(AnimDesc)))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 KEYFRAME CAnimation::Get_FirstKeyFrame(_uint iBoneIndex)
@@ -333,6 +416,20 @@ CAnimation* CAnimation::Create(const ANIM_DESC& AnimDesc)
 	CAnimation* pInstance = new CAnimation();
 
 	if (FAILED(pInstance->Initialize(AnimDesc)))
+	{
+		MSG_BOX(TEXT("Failed To Created : CAnimation"));
+
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CAnimation* CAnimation::Create(const string& strAnimFilePath)
+{
+	CAnimation* pInstance = new CAnimation();
+
+	if (FAILED(pInstance->Initialize(strAnimFilePath)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CAnimation"));
 

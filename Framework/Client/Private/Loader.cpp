@@ -1068,7 +1068,14 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	Load_Items_Model(TransformMatrix); // 아이템 모델 로드
 
+	m_strLoadingText = TEXT("Now Loading ... Animations");
 
+#pragma region Animation Load 
+	
+	if (FAILED(Load_Animations()))
+		return E_FAIL;
+
+#pragma endregion
 
 	/* Prototype_Component_VIBuffer_Terrain */
 	//if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_VIBuffer_Terrain"),
@@ -1087,6 +1094,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Navigation"),
 		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/NavMesh/NavMesh.bin")))))
 		return E_FAIL;
+
 
 	m_strLoadingText = TEXT("Now Loading ... Object");
 
@@ -1112,6 +1120,14 @@ HRESULT CLoader::Loading_For_GamePlay()
 	{
 		m_pGameInstance->Release_Layer(g_Level, TEXT("Layer_UI"));
 	}
+
+	return S_OK;
+}
+
+HRESULT CLoader::Load_Animations()
+{
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Player_Test"), "../Bin/Resources/Animations/Body_Player/")))
+		return E_FAIL;
 
 	return S_OK;
 }

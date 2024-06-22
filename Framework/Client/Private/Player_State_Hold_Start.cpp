@@ -31,8 +31,8 @@ void CPlayer_State_Hold_Start::OnStateExit()
 {
 	m_pPlayer->Get_Body_Model()->Set_TrackPosition(0, 0.f);
 	m_pPlayer->Get_Body_Model()->Set_TrackPosition(1, 0.f);
-	m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::HOLD_IDLE_LOOP);
-	m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::HOLD_IDLE_LOOP);
+	m_pPlayer->Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::HOLD_IDLE_LOOP);
+	m_pPlayer->Get_Body_Model()->Change_Animation(1, TEXT("Default"), CPlayer::HOLD_IDLE_LOOP);
 }
 
 void CPlayer_State_Hold_Start::Start()
@@ -43,12 +43,12 @@ void CPlayer_State_Hold_Start::Set_StartAnimation()
 {
 	if (abs(m_fDegree) <= 90) {
 		if (m_fDegree < 0) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::HOLD_START_L0);
-			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::HOLD_START_L90);
+			m_pPlayer->Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::HOLD_START_L0);
+			m_pPlayer->Get_Body_Model()->Change_Animation(1, TEXT("Default"), CPlayer::HOLD_START_L90);
 		}
 		else {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::HOLD_START_R0);
-			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::HOLD_START_R90);
+			m_pPlayer->Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::HOLD_START_R0);
+			m_pPlayer->Get_Body_Model()->Change_Animation(1, TEXT("Default"), CPlayer::HOLD_START_R90);
 		}
 		_float fRatio = abs(m_fDegree) / 90;
 
@@ -58,12 +58,12 @@ void CPlayer_State_Hold_Start::Set_StartAnimation()
 	}
 	else {
 		if (m_fDegree < 0) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::HOLD_START_L90);
-			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::HOLD_START_L180);
+			m_pPlayer->Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::HOLD_START_L90);
+			m_pPlayer->Get_Body_Model()->Change_Animation(1, TEXT("Default"), CPlayer::HOLD_START_L180);
 		}
 		else {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::HOLD_START_R90);
-			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::HOLD_START_R180);
+			m_pPlayer->Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::HOLD_START_R90);
+			m_pPlayer->Get_Body_Model()->Change_Animation(1, TEXT("Default"), CPlayer::HOLD_START_R180);
 		}
 		_float fRatio = (abs(m_fDegree) - 90) / 90;
 

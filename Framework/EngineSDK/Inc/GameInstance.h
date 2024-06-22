@@ -330,6 +330,14 @@ public:
 	_float Get_Ease(EASING_TYPE eEase, _float fCurValue, _float fTargetValue, _float fRatio);
 #pragma endregion
 
+#pragma region		For Animation Library
+
+	_uint Get_NumAnim_Prototypes(const wstring& strAnimLayerTag);
+	HRESULT Add_Prototypes_Animation(const wstring& strAnimLayerTag, const string& strDirPath);
+	HRESULT Clone_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, CAnimation** ppAnimation);
+
+#pragma endregion
+
 private:
 	class CGraphic_Device*					m_pGraphic_Device = { nullptr };
 	class CInput_Device*					m_pInput_Device = { nullptr };
@@ -350,6 +358,7 @@ private:
 	class CThread_Pool*						m_pThread_Pool = { nullptr };
 	class CAIController*					m_pAIController = { nullptr };
 	class CEasing*							m_pEasing = { nullptr };
+	class CAnimation_Library*				m_pAnimation_Library = { nullptr };
 
 
 	/*for physics*/

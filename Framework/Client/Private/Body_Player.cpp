@@ -52,23 +52,26 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Shot"), "r_clavicle");
 
-	m_pModelCom->Add_AnimPlayingInfo(-1, true, 0, TEXT("Default"), 1.f);
-	m_pModelCom->Add_AnimPlayingInfo(-1, true, 1, TEXT("Default"), 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(-1, false, 2, TEXT("Shot"), 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(-1, false, 3, TEXT("UpperBody"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(true, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(true, 1, TEXT("Default"), 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, 2, TEXT("Shot"), 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, 3, TEXT("UpperBody"), 1.f);
 
-	m_pModelCom->Set_TickPerSec(CPlayer::WALK_F_LOOP, 64.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::WALK_L_LOOP, 67.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::WALK_R_LOOP, 64.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::WALK_BACK_L_LOOP, 65.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::WALK_BACK_B_LOOP, 65.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::WALK_BACK_R_LOOP, 63.f);
+	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WALK_F_LOOP, 64.f);
+	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WALK_L_LOOP, 67.f);
+	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WALK_R_LOOP, 64.f);
+	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WALK_BACK_L_LOOP, 65.f);
+	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WALK_BACK_B_LOOP, 65.f);
+	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WALK_BACK_R_LOOP, 63.f);
 
-	m_pModelCom->Set_TickPerSec(CPlayer::WHEEL_L180, 300.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::WHEEL_R180, 300.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::HOLD_SHOT, 180.f);
+	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WHEEL_L180, 300.f);
+	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WHEEL_R180, 300.f);
+	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::HOLD_SHOT, 180.f);
 
 	//m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/LeonTest/LeonBody.fbx");
+
+
+	m_pModelCom->Add_Animations(TEXT("Body_Player_Test"), TEXT("Test"));
 
 	return S_OK;
 }

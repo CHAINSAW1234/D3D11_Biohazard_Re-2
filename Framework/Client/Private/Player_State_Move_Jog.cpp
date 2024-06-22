@@ -83,12 +83,12 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 
 		if (fabsf(m_fDegree) <= 90.f) {
 			if (m_fDegree < 0.f) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_L0);
-				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_L90);
+				m_pPlayer->Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::JOG_START_L0);
+				m_pPlayer->Get_Body_Model()->Change_Animation(1, TEXT("Default"), CPlayer::JOG_START_L90);
 			}
 			else {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_R0);
-				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_R90);
+				m_pPlayer->Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::JOG_START_R0);
+				m_pPlayer->Get_Body_Model()->Change_Animation(1, TEXT("Default"), CPlayer::JOG_START_R90);
 			}
 			_float fRatio = abs(m_fDegree) / 90.f;
 
@@ -97,12 +97,12 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 		}
 		else {
 			if (m_fDegree < 0.f) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_L90);
-				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_L180);
+				m_pPlayer->Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::JOG_START_L90);
+				m_pPlayer->Get_Body_Model()->Change_Animation(1, TEXT("Default"), CPlayer::JOG_START_L180);
 			}
 			else {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_R90);
-				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_R180);
+				m_pPlayer->Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::JOG_START_R90);
+				m_pPlayer->Get_Body_Model()->Change_Animation(1, TEXT("Default"), CPlayer::JOG_START_R180);
 			}
 			_float fRatio = (abs(m_fDegree)- 90.f) / 90.f;
 
@@ -123,7 +123,7 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 			m_pPlayer->Get_Body_Model()->Get_TrackPosition(0) >= 56 ) ||
 			(CPlayer::JOG_START_L0 <= iCurrentAnimIndex && iCurrentAnimIndex <= CPlayer::JOG_START_L180 &&
 				m_pPlayer->Get_Body_Model()->Get_TrackPosition(0) >= 36)	) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_STRAIGHT_LOOP);
+				m_pPlayer->Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::JOG_STRAIGHT_LOOP);
 				m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
 				m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
 

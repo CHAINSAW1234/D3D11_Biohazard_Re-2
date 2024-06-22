@@ -40,7 +40,7 @@ HRESULT CDoor::Initialize(void* pArg)
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
-	m_pModelCom->Add_AnimPlayingInfo(-1, false, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Set_TotalLinearInterpolation(0.2f);
 
 	/*
@@ -56,36 +56,46 @@ HRESULT CDoor::Initialize(void* pArg)
 	
 #ifndef NON_COLLISION_PROP
 
-	if((m_tagPropDesc.strGamePrototypeName.find("038") != string::npos))
+	if(m_eType == DOOR_DOUBLE) 
 	{
-		m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root_Double_Door(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
-		m_eDoorType = DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR;
-
-		m_vecRotationBone[ATC_ROOT] = m_pModelCom->Get_BonePtr("_00");
-		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L] = m_pModelCom->Get_BonePtr("_01");
-		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R] = m_pModelCom->Get_BonePtr("_03");
-		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L] = m_pModelCom->Get_BonePtr("_04");
-		m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R] = m_pModelCom->Get_BonePtr("_02");
-	}
-	else
-	{
-		m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
-		m_eDoorType = DOUBLE_DOOR_MODEL_TYPE::NORMAL_DOOR;
-
-		switch (m_eType)
+		if ((m_tagPropDesc.strGamePrototypeName.find("038") != string::npos))
 		{
-		case DOOR_DOUBLE:
+			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root_Double_Door(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+			m_eDoorType = DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR;
+
 			m_vecRotationBone[ATC_ROOT] = m_pModelCom->Get_BonePtr("_00");
 			m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L] = m_pModelCom->Get_BonePtr("_01");
 			m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R] = m_pModelCom->Get_BonePtr("_03");
 			m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L] = m_pModelCom->Get_BonePtr("_04");
 			m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R] = m_pModelCom->Get_BonePtr("_02");
-			break;
-		case DOOR_ONE:
-			m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L] = m_pModelCom->Get_BonePtr("_01");
-			m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R] = m_pModelCom->Get_BonePtr("_00");
-			break;
 		}
+		else
+		{
+			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+			m_eDoorType = DOUBLE_DOOR_MODEL_TYPE::NORMAL_DOOR;
+
+			switch (m_eType)
+			{
+			case DOOR_DOUBLE:
+				m_vecRotationBone[ATC_ROOT] = m_pModelCom->Get_BonePtr("_00");
+				m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L] = m_pModelCom->Get_BonePtr("_01");
+				m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R] = m_pModelCom->Get_BonePtr("_03");
+				m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L] = m_pModelCom->Get_BonePtr("_04");
+				m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R] = m_pModelCom->Get_BonePtr("_02");
+				break;
+			case DOOR_ONE:
+				m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L] = m_pModelCom->Get_BonePtr("_01");
+				m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R] = m_pModelCom->Get_BonePtr("_00");
+				break;
+			}
+		}
+	}
+	else
+	{
+		m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+
+		m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L] = m_pModelCom->Get_BonePtr("_01");
+		m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R] = m_pModelCom->Get_BonePtr("_00");
 	}
 
 #endif
@@ -300,7 +310,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 			m_eDoubleState_Prev = m_eDoubleState;
 
 			//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // Àß¾Ë¾Æ°©´Ï´Ù ²¨¾ï
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
@@ -312,7 +322,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		{
 			m_eDoubleState_Prev = m_eDoubleState;
 
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
@@ -325,7 +335,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		{
 			m_eDoubleState_Prev = m_eDoubleState;
 
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
@@ -337,7 +347,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		{
 			m_eDoubleState_Prev = m_eDoubleState;
 
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
@@ -348,7 +358,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		}
 		case DOUBLEDOOR_STATIC:
 		{
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			switch (m_eDoubleState_Prev)
 			{
@@ -399,7 +409,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 			m_eDoubleState_Prev = m_eDoubleState;
 
 			//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // Àß¾Ë¾Æ°©´Ï´Ù ²¨¾ï
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
@@ -411,7 +421,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		{
 			m_eDoubleState_Prev = m_eDoubleState;
 
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
@@ -424,7 +434,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		{
 			m_eDoubleState_Prev = m_eDoubleState;
 
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
@@ -436,7 +446,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		{
 			m_eDoubleState_Prev = m_eDoubleState;
 
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
@@ -447,7 +457,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		}
 		case DOUBLEDOOR_STATIC:
 		{
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			switch (m_eDoubleState_Prev)
 			{
@@ -588,7 +598,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 	{
 		m_eOneState_Prev = m_eOneState;
 		//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // Àß¾Ë¾Æ°©´Ï´Ù ²¨¾ï
-		m_pModelCom->Change_Animation(0, m_eOneState);
+		m_pModelCom->Change_Animation(0, TEXT("Default"), m_eOneState);
 
 		//auto Combined = XMLoadFloat4x4(m_pRotationBone->Get_CombinedTransformationMatrix());
 		auto Combined = m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L]->Get_TrasformationMatrix();
@@ -601,10 +611,10 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 	case ONEDOOR_OPEN_R:
 	{
 		m_eOneState_Prev = m_eOneState;
-		m_pModelCom->Change_Animation(0, m_eOneState);
+		m_pModelCom->Change_Animation(0, TEXT("Default"), m_eOneState);
 	}
 	case ONEDOOR_STATIC:
-		m_pModelCom->Change_Animation(0, m_eOneState);
+		m_pModelCom->Change_Animation(0, TEXT("Default"), m_eOneState);
 
 		switch (m_eOneState_Prev)
 		{

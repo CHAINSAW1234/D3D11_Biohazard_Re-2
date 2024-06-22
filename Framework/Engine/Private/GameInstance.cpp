@@ -18,6 +18,7 @@
 #include "AIController.h"
 #include "GameObject.h"
 #include "Easing.h"
+#include "Animation_Library.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -160,6 +161,13 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 	if (nullptr == m_pEasing)
 	{
 		MSG_BOX(TEXT("Error: m_pEasing::Create -> nullptr"));
+		return E_FAIL;
+	}
+
+	m_pAnimation_Library = CAnimation_Library::Create();
+	if (nullptr == m_pEasing)
+	{
+		MSG_BOX(TEXT("Error: m_pAnimation_Library::Create -> nullptr"));
 		return E_FAIL;
 	}
 
@@ -1018,7 +1026,7 @@ void CGameInstance::Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVertices, 
 void CGameInstance::Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
 {
 	if (m_pPhysics_Controller)
-		m_pPhysics_Controller->Create_SoftBody(pVertices, pIndices, VertexNum, IndexNum);
+		m_pPhysics_Controller->Create_SoftBody(pVertices, pIndices, VertexNum, IndexNum,true);
 }
 
 _matrix CGameInstance::GetWorldMatrix_Rigid_Dynamic(_int Index)
@@ -1178,6 +1186,27 @@ _float CGameInstance::Get_Ease(EASING_TYPE eEase, _float fCurValue, _float fTarg
 {
 	return m_pEasing->Get_Ease(eEase, fCurValue, fTargetValue, fRatio);
 }
+_uint CGameInstance::Get_NumAnim_Prototypes(const wstring& strAnimLayerTag)
+{
+	if (nullptr == m_pAnimation_Library)
+		return 0;
+
+	return m_pAnimation_Library->Get_NumAnim_Prototypes(strAnimLayerTag);
+}
+HRESULT CGameInstance::Add_Prototypes_Animation(const wstring& strAnimLayerTag, const string& strDirPath)
+{
+	if (nullptr == m_pAnimation_Library)
+		return E_FAIL;
+
+	return m_pAnimation_Library->Add_Prototypes_Animation(strAnimLayerTag, strDirPath);
+}
+HRESULT CGameInstance::Clone_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, CAnimation** ppAnimation)
+{
+	if (nullptr == m_pAnimation_Library)
+		return E_FAIL;
+
+	return m_pAnimation_Library->Clone_Animation(strAnimLayerTag, iAnimIndex, ppAnimation);
+}
 #pragma endregion
 
 #pragma region Render_Target_Debugger
@@ -1324,4 +1353,5 @@ void CGameInstance::Free()
 	Safe_Release(m_pAIController);
 	Safe_Release(m_pPhysics_Controller);
 	Safe_Release(m_pEasing);
+	Safe_Release(m_pAnimation_Library);
 }
