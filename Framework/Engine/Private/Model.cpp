@@ -196,6 +196,14 @@ HRESULT CModel::Add_Animations(const wstring& strPrototypeLayerTag, const wstrin
 
 _float CModel::Compute_NewTimeDelta_Distatnce_Optimization(_float fTimeDelta, CTransform* pTransform)
 {
+	/* TODO:
+	*LOD를 사용하면 RAGDOLL로 전환시 모델이 한 번 깜빡이는 증상이 있음
+	*수정 필요.
+	*/
+#ifndef ANIMATION_LOD
+	return fTimeDelta;
+#endif
+
 	_matrix			CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
 	_vector			vCamPosition = { CamWorldMatrix.r[CTransform::STATE_POSITION] };
 	_matrix			MyWorldMatirx = { pTransform->Get_WorldMatrix() };
@@ -1381,7 +1389,10 @@ CBone* CModel::Get_BonePtr(const _char* pBoneName) const
 			return pBone->Compare_Name(pBoneName);
 		});
 
-	return *iter;
+	if (iter != m_Bones.end())
+		return *iter;
+	else
+		return nullptr;
 }
 
 CBone* CModel::Get_BonePtr(_int iIndex)
@@ -2416,17 +2427,64 @@ void CModel::Dynamic_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<Px
 
 void CModel::Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
 {
-	/*for (int i = 0; i < m_Meshes.size(); ++i)
+	for (int i = 0; i < m_Meshes.size(); ++i)
 	{
 		m_Meshes[i]->Convex_Mesh_Cooking(pColliders,pTransforms,pTransform);
-	}*/
+	}
+}
 
+void CModel::Convex_Mesh_Cooking_Convert_Root(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
+{
 	for (int i = 0; i < m_Meshes.size(); ++i)
 	{
 		if (i == 1)
-			m_Meshes[i]->Convex_Mesh_Cooking_Convert_Root(pColliders, pTransforms, pTransform, _float4(0.f, 0.f, -2.f, 0.f));
+			m_Meshes[i]->Convex_Mesh_Cooking_Convert_Root(pColliders, pTransforms, pTransform, _float4(-200.f, 0.f, 0.f, 0.f));
 		else
 			m_Meshes[i]->Convex_Mesh_Cooking(pColliders, pTransforms, pTransform);
+	}
+}
+
+void CModel::Convex_Mesh_Cooking_Convert_Root_Double_Door(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
+{
+	for (int i = 0; i < m_Meshes.size(); ++i)
+	{
+		if (i == 0)
+			m_Meshes[i]->Convex_Mesh_Cooking_Convert_Root(pColliders, pTransforms, pTransform, _float4(200.f, 0.f, 0.f, 0.f));
+		else
+			m_Meshes[i]->Convex_Mesh_Cooking(pColliders, pTransforms, pTransform);
+	}
+}
+
+void CModel::Convex_Mesh_Cooking_Convert_Root_Double_Door_No_Rotate(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
+{
+	for (int i = 0; i < m_Meshes.size(); ++i)
+	{
+		if (i == 1)
+			m_Meshes[i]->Convex_Mesh_Cooking(pColliders, pTransforms, pTransform);
+		else
+			m_Meshes[i]->Convex_Mesh_Cooking_Convert_Root_No_Rotate(pColliders, pTransforms, pTransform, _float4(-200.f, 0.f, 0.f, 0.f));
+	}
+}
+
+void CModel::Convex_Mesh_Cooking_Cabinet(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
+{
+	for (int i = 0; i < m_Meshes.size(); ++i)
+	{
+		if (i == 2)
+			m_Meshes[i]->Convex_Mesh_Cooking(pColliders, pTransforms, pTransform);
+		else
+			m_Meshes[i]->Static_Mesh_Cooking_NoRotation(pTransform);
+	}
+}
+
+void CModel::Convex_Mesh_Cooking_Toilet(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
+{
+	for (int i = 0; i < m_Meshes.size(); ++i)
+	{
+		if (i == 1)
+			m_Meshes[i]->Convex_Mesh_Cooking(pColliders, pTransforms, pTransform);
+		else
+			m_Meshes[i]->Static_Mesh_Cooking_NoRotation(pTransform);
 	}
 }
 

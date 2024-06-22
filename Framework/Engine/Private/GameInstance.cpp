@@ -998,6 +998,11 @@ void CGameInstance::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexN
 	m_pPhysics_Controller->Cook_Mesh(pVertices, pIndices, VertexNum, IndexNum, pTransform);
 }
 
+void CGameInstance::Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
+{
+	m_pPhysics_Controller->Cook_Mesh_NoRotation(pVertices, pIndices, VertexNum, IndexNum, pTransform);
+}
+
 void CGameInstance::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform)
 {
 	m_pPhysics_Controller->Cook_Mesh_Dynamic(pVertices, pIndices, VertexNum, IndexNum, pColliders, pTransforms, pTransform);
@@ -1013,10 +1018,15 @@ void CGameInstance::Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIn
 	m_pPhysics_Controller->Cook_Mesh_Convex_Convert_Root(pVertices, pIndices, VertexNum, IndexNum, pColliders, pTransforms, pTransform, vDelta);
 }
 
+void CGameInstance::Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform, _float4 vDelta)
+{
+	m_pPhysics_Controller->Cook_Mesh_Convex_Convert_Root_No_Rotate(pVertices, pIndices, VertexNum, IndexNum, pColliders, pTransforms, pTransform, vDelta);
+}
+
 void CGameInstance::Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
 {
 	if (m_pPhysics_Controller)
-		m_pPhysics_Controller->Create_SoftBody(pVertices, pIndices, VertexNum, IndexNum);
+		m_pPhysics_Controller->Create_SoftBody(pVertices, pIndices, VertexNum, IndexNum,true);
 }
 
 _matrix CGameInstance::GetWorldMatrix_Rigid_Dynamic(_int Index)
@@ -1108,6 +1118,29 @@ CPxCollider* CGameInstance::Create_Px_Collider(CModel* pModel, CTransform* pTran
 	if (m_pPhysics_Controller)
 		return m_pPhysics_Controller->Create_Px_Collider(pModel, pTransform, iId);
 }
+CPxCollider* CGameInstance::Create_Px_Collider_Convert_Root(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->Create_Px_Collider_Convert_Root(pModel, pTransform, iId);
+}
+CPxCollider* CGameInstance::Create_Px_Collider_Convert_Root_Double_Door(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->Create_Px_Collider_Convert_Root_Double_Door(pModel, pTransform, iId);
+}
+
+CPxCollider* CGameInstance::Create_Px_Collider_Cabinet(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->Create_Px_Collider_Cabinet(pModel, pTransform, iId);
+}
+
+CPxCollider* CGameInstance::Create_Px_Collider_Toilet(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->Create_Px_Collider_Toilet(pModel, pTransform, iId);
+}
+
 #pragma endregion
 
 #pragma region	Thread_Pool

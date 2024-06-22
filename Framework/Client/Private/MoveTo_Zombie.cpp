@@ -40,7 +40,7 @@ void CMoveTo_Zombie::Execute()
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_WALK);
 
-	cout << "Move" << endl;
+	//cout << "Move" << endl;
 
 	Change_Animation();
 }

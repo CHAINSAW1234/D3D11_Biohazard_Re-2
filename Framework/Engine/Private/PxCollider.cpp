@@ -125,6 +125,57 @@ void CPxCollider::Update_Transform_Divided_NotRoot(CBone* pRoot, CBone* pTarget,
 	m_vecCollider[iIndex]->setGlobalPose(XMMATRIXToPxTransform(TransformMat));
 }
 
+void CPxCollider::Update_Transform_Divided_Double_Door_L(_float4x4* Transform)
+{
+	auto Temp = Transform;
+	Temp->_41 = 0.f;
+	Temp->_42 = 0.f;
+	Temp->_43 = 0.f;
+	_matrix Mat = XMLoadFloat4x4(Temp);
+
+	for(int i = 0;i<3;++i)
+	{
+		_matrix TransformMat = PxTransformToXMMATRIX(m_vecCollider_Transform[i]);
+
+		TransformMat = Mat * TransformMat;
+
+		m_vecCollider[i]->setGlobalPose(XMMATRIXToPxTransform(TransformMat));
+	}
+}
+
+void CPxCollider::Update_Transform_Divided_Double_Door_R(_float4x4* Transform)
+{
+	auto Temp = Transform;
+	Temp->_41 = 0.f;
+	Temp->_42 = 0.f;
+	Temp->_43 = 0.f;
+	_matrix Mat = XMLoadFloat4x4(Temp);
+
+	for (int i = 3; i < 6; ++i)
+	{
+		_matrix TransformMat = PxTransformToXMMATRIX(m_vecCollider_Transform[i]);
+
+		TransformMat = Mat * TransformMat;
+
+		m_vecCollider[i]->setGlobalPose(XMMATRIXToPxTransform(TransformMat));
+	}
+}
+
+void CPxCollider::Update_Transform_Cabinet(_float4x4* Transform)
+{
+	auto Temp = Transform;
+	Temp->_41 = 0.f;
+	Temp->_42 = 0.f;
+	Temp->_43 = 0.f;
+	_matrix Mat = XMLoadFloat4x4(Temp);
+
+	_matrix TransformMat = PxTransformToXMMATRIX(m_vecCollider_Transform[0]);
+
+	TransformMat = Mat * TransformMat;
+
+	m_vecCollider[0]->setGlobalPose(XMMATRIXToPxTransform(TransformMat));
+}
+
 
 void CPxCollider::Update_Transform_Divided(_float4x4* Transform, _int iIndex)
 {

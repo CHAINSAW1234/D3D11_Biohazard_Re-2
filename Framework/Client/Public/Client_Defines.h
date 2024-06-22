@@ -52,11 +52,12 @@ using namespace Client;
 //	#define MAP_JUSTMAP
 //	#define MAP_INTERACT
 
-//	#define NON_COLLISION_PROP
+//#define NON_COLLISION_PROP
 //#define PROPS_COOKING
 
 #define DISPLAY_FRAME
 #define DISPLAY_NAVMESH
+#define FRAME_LOCK
 
 typedef struct Tag_Prototype_Inform
 {

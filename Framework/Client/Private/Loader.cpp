@@ -967,7 +967,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 #ifdef MAP_INTERACT
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_InteractObj/Make_Prototype.dat"))))
 		return E_FAIL;
-#endif
+#endif 
 #pragma endregion
 
 	m_strLoadingText = TEXT("Loading Complete.");
