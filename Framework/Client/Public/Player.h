@@ -90,7 +90,8 @@ public:
 	_bool										Get_Spotlight() { return m_isSpotlight; }
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
 	void										Set_Spotlight(_bool isSpotlight) { m_isSpotlight = isSpotlight; }
-	void										Set_TurnSpine(_bool isTurnSpine) { m_isTurnSpine = isTurnSpine;  m_fSpineTurnLerfTimeDelta = 0.f; }
+	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineHold = isTurnSpineDefault; }
+	void										Set_TurnSpineHold(_bool isTurnSpineHold) { m_isTurnSpineHold = isTurnSpineHold;}
 
 	void										Change_State(STATE eState);
 
@@ -100,17 +101,17 @@ public:
 	void										Update_FSM();
 
 	void										Update_Direction();
-	void										Turn_Spine_UpDown(_float fTimeDelta);		// Hold 상태에서의 카메라 보기
+	void										Turn_Spine_Default(_float fTimeDelta);		// Idle 상태에서 카메라 반대쪽으로 머리 돌리기
+	void										Turn_Spine_Hold(_float fTimeDelta);		// Hold 상태에서의 카메라 보기
 	void										Turn_Spine_Light(_float fTimeDelta);		// Light 상태일때의 카메라 보기
 	void										Update_KeyInput_Reload();
 
 private:
 	_bool m_isSpotlight = { false };
 	DWORD m_dwDirection = { 0 };
-	_bool m_isTurnSpine = { false };
-	_float m_fSpineTurnLerfTimeDelta = { 1.f };
-	_float m_fCurSpineTurnAxis;
-	_float m_fTargetSpineTurnAxis;
+
+	_bool m_isTurnSpineDefault = { true };
+	_bool m_isTurnSpineHold = { false };
 
 	friend class CPlayer_State_Move_Walk;
 	friend class CPlayer_State_Move_Jog;

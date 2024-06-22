@@ -332,8 +332,9 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	if (m_pController)
 		m_pController->Update_Collider();
 
-	Turn_Spine_UpDown(fTimeDelta);		// Hold 상태에서 척추를 상하로만 돌림
-	Turn_Spine_Light(fTimeDelta);		// Light 상태에서 상체전체를 카메라를 보도록 돌림
+	Turn_Spine_Hold(fTimeDelta);		// Hold 상태에서 척추를 상하로만 돌림
+	//Turn_Spine_Light(fTimeDelta);		// Light 상태에서 상체전체를 카메라를 보도록 돌림
+	Turn_Spine_Default(fTimeDelta);
 
 #pragma region 예은 추가
 	Col_Section();
@@ -463,7 +464,82 @@ void CPlayer::Update_Direction()
 	m_dwDirection = dwDirection;
 }
 
-void CPlayer::Turn_Spine_UpDown(_float fTimeDelta)
+void CPlayer::Turn_Spine_Default(_float fTimeDelta)
+{
+	CModel* pModel = { Get_Body_Model() };
+	if (nullptr != pModel)
+	{
+		_vector				vMyLook = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
+		_float4				vHeadWorldLook = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
+		_float				fHeadMagnitude = sqrt(vHeadWorldLook.x * vHeadWorldLook.x + vHeadWorldLook.y * vHeadWorldLook.y + vHeadWorldLook.z * vHeadWorldLook.z);
+		
+		_matrix				CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
+		_float4				vCamLook = { CamWorldMatrix.r[CTransform::STATE_LOOK] };
+		_float				fCamMagnitude = sqrt(vCamLook.x * vCamLook.x + vCamLook.y * vCamLook.y + vCamLook.z * vCamLook.z);
+		
+		_float				fDot = { vHeadWorldLook.x * vCamLook.x + vHeadWorldLook.z * vCamLook.z };
+		_float				fAngle = acos(fDot / (fHeadMagnitude * fCamMagnitude));
+
+		_vector				vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_UP) };
+		
+		_float4				vHeadToCam = CamWorldMatrix.r[CTransform::STATE_POSITION] - m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+
+		_float4				vCross = XMVector3Cross(vMyLook, vHeadToCam);
+
+		cout << XMConvertToDegrees(fAngle) << endl;
+
+		if (fAngle > XMConvertToRadians(90.f)) {
+			fAngle = 0.f;
+		}
+		else if (fAngle > XMConvertToRadians(45.f)) {
+			fAngle = XMConvertToRadians(45.f);
+		}
+			
+		if (vCross.y < 0) {
+			fAngle *= -1;
+		}
+
+
+		static _float fCurAngle = 0.f;
+		if (!m_isTurnSpineDefault) {
+			if (fabs(fCurAngle) > 0.0001) {
+				fCurAngle += fTimeDelta * -fCurAngle * 5;
+			}
+			else {
+				fCurAngle = 0.f;
+				return;
+			}
+		}
+		else {
+			fCurAngle += fTimeDelta * (fAngle - fCurAngle) * 5;
+		}
+
+		list<_uint>			ChildJointIndices;
+		pModel->Get_Child_ZointIndices("spine_0", "head", ChildJointIndices);
+
+		ChildJointIndices.pop_back();
+
+		_uint				iNumChildJoint = { static_cast<_uint>(ChildJointIndices.size()) };
+		_float				fDevidedAngle = { fCurAngle / iNumChildJoint };
+		vector<string>		BoneNames = { pModel->Get_BoneNames() };
+
+		vRotateAxis = XMVector3TransformNormal(vRotateAxis, m_pTransformCom->Get_WorldMatrix_Inverse());
+
+		_vector				vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, fDevidedAngle) };
+
+		vNewQuaternion = XMVectorSetX(vNewQuaternion, 0.f);
+		vNewQuaternion = XMQuaternionNormalize(vNewQuaternion);
+
+		_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
+
+		for (auto& iJointIndex : ChildJointIndices)
+		{
+			pModel->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
+		}
+	}
+}
+
+void CPlayer::Turn_Spine_Hold(_float fTimeDelta)
 {
 	CModel* pModel = { Get_Body_Model() };
 	if (nullptr != pModel)
@@ -486,7 +562,7 @@ void CPlayer::Turn_Spine_UpDown(_float fTimeDelta)
 		}
 
 		static _float fCurAngle = 0.f;
-		if (!m_isTurnSpine) {
+		if (!m_isTurnSpineHold) {
 			if (fabs(fCurAngle) > 0.0001) {
 				fCurAngle += fTimeDelta * -fCurAngle * 10;
 			}
@@ -525,7 +601,6 @@ void CPlayer::Turn_Spine_UpDown(_float fTimeDelta)
 			pModel->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
 		}
 	}
-
 }
 
 void CPlayer::Turn_Spine_Light(_float fTimeDelta)
