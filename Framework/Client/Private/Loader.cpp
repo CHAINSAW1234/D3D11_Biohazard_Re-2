@@ -824,7 +824,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 	_matrix			WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
 	WeaponTransformMatrix *= XMMatrixRotationX(	XMConvertToRadians(-90.f));
-	_matrix			LightTransformMatrix = { XMMatrixRotationX(XMConvertToRadians(30.f)) };	
+	_matrix			LightTransformMatrix = { XMMatrixRotationX(XMConvertToRadians(180.f)) };	
+	LightTransformMatrix *= XMMatrixRotationY(XMConvertToRadians(-20.f));
 #pragma region Players Model 
 
 	/* Prototype_Component_Model_LeonBody */
@@ -853,8 +854,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	/* Prototype_Component_Model_FlashLight */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_FlashLight"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Weapon/FlashLight/FlashLight.fbx",
-			TransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/FlashLight/FlashLight.fbx",
+			LightTransformMatrix))))
 		return E_FAIL;
 
 #pragma endregion
@@ -997,6 +998,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 HRESULT CLoader::Load_Animations()
 {
+
+#pragma region Player
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Fine"), "../Bin/Resources/Animations/Player/Body/move/move_fine/")))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Stg"), "../Bin/Resources/Animations/Player/Body/move/move_stg/")))
@@ -1017,7 +1020,7 @@ HRESULT CLoader::Load_Animations()
 		return E_FAIL;															   
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Hold_Stg"), "../Bin/Resources/Animations/Player/Body/hold/stg_hold/")))
 		return E_FAIL;
-
+#pragma endregion
 
 
 #pragma region Default Zombie Ordinary Anims

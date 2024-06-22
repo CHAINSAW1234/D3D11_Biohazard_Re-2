@@ -57,7 +57,7 @@ private:
 	}ANIM_INFO;
 
 public:
-	static HRESULT		Extract_FBX(CModel::MODEL_TYPE eType, const string& strModelFilePath);
+	static HRESULT		Extract_FBX(CModel::MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformationMatrix);
 	static HRESULT		Extract_FBX_AnimOnly(const string& strAnimFilePath);
 
 private:	/* For.Bones */

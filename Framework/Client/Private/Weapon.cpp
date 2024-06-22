@@ -55,9 +55,9 @@ void CWeapon::Late_Tick(_float fTimeDelta)
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	}
-
+		
 	_float3				vDirection = { };
-	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &vDirection);
+	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vDirection);
 	
 	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * m_pParentsTransform->Get_WorldMatrix() };
 

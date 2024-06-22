@@ -48,18 +48,24 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	_uint			iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Left_Arm"), "l_arm_clavicle");
+	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Left_Arm"), "spine_2");
+	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Left_Arm"), "spine_1");
+	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Left_Arm"), "spine_0");
+
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("LowerBody"), "hips");
 	m_pModelCom->Add_Bone_Layer_Bone(TEXT("LowerBody"), "root");
 
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("UpperBody"), "spine_0");
-	m_pModelCom->Add_Bone_Layer_Range(TEXT("Shot"), 61, 62);
 
+	m_pModelCom->Add_Bone_Layer_Range(TEXT("Shot"), 61, 62);
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Shot"), "r_clavicle");
 
 	m_pModelCom->Add_AnimPlayingInfo(true, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Add_AnimPlayingInfo(true, 1, TEXT("Default"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(false, 2, TEXT("Shot"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(false, 3, TEXT("UpperBody"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, 4, TEXT("Left_Arm"), 1.f);
+
 
 	for (int i = 0; i < CPlayer::ANIMSET_MOVE_END; ++i) {
 		m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_F_LOOP, 64.f);
@@ -68,7 +74,6 @@ HRESULT CBody_Player::Initialize(void* pArg)
 		m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_L_LOOP, 65.f);
 		m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_B_LOOP, 65.f);
 		m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_R_LOOP, 63.f);
-		
 	}
 
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_L180, 300.f);
