@@ -241,6 +241,9 @@
     <Filter Include="02.GameObjects\UI\14. Loading">
       <UniqueIdentifier>{1fab2592-4cd6-4e48-a96c-07b5219145e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\FlashLight">
+      <UniqueIdentifier>{32eeb4ea-f24c-4bb5-b6a2-dec82cb4925a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -465,6 +468,9 @@
     <ClInclude Include="..\Public\Loading_UI.h">
       <Filter>02.GameObjects\UI\14. Loading</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\FlashLight.h">
+      <Filter>02.GameObjects\Player\FlashLight</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -670,6 +676,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Loading_UI.cpp">
       <Filter>02.GameObjects\UI\14. Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FlashLight.cpp">
+      <Filter>02.GameObjects\Player\FlashLight</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

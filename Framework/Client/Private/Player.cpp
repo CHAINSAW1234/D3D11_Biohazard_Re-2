@@ -9,6 +9,7 @@
 #include "Head_Player.h"
 #include "Hair_Player.h"
 #include "Weapon.h"
+#include "FlashLight.h"
 
 #include"CustomCollider.h"
 
@@ -308,12 +309,6 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region 현진 추가
 
-	CModel* pWeaponModel = { dynamic_cast<CModel*>(m_PartObjects[PART_WEAPON]->Get_Component(TEXT("Com_Model"))) };
-	_float4x4* pRightWeaponCombinedMatrix = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
-	//pWeaponModel->Set_Surbodinate("root", true);
-	//pWeaponModel->Set_Parent_CombinedMatrix_Ptr("root", pRightWeaponCombinedMatrix);
-	CWeapon* pWeapon = dynamic_cast<CWeapon*>(m_PartObjects[PART_WEAPON]);
-	pWeapon->Set_Socket(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")));
 
 #pragma region TEST
 	if (m_pGameInstance->Get_KeyState('Q') == DOWN) {
@@ -321,8 +316,9 @@ void CPlayer::Tick(_float fTimeDelta)
 			Change_AnimSet_Move(FINE);
 		else
 			Change_AnimSet_Move(ANIMSET_MOVE((_int)m_eAnimSet_Move + 1));
-
-
+	}
+	if (m_pGameInstance->Get_KeyState('E') == DOWN) {
+		Set_Spotlight(!m_isSpotlight);
 	}
 
 #pragma endregion
@@ -438,6 +434,25 @@ _float3* CPlayer::Get_Body_RootDir()
 	return static_cast<CBody_Player*>(m_PartObjects[0])->Get_RootTranslation();
 }
 
+void CPlayer::Set_Spotlight(_bool isSpotlight)
+{
+	m_isSpotlight = isSpotlight;
+	
+	m_PartObjects[PART_LIGHT]->Set_Render(m_isSpotlight);
+
+	Update_AnimSet();
+}
+
+void CPlayer::Set_Weapon(EQUIP eEquip)
+{
+	m_eEquip = eEquip;
+
+	// 무기 위치를 변경하시오
+
+	Update_AnimSet();
+}
+
+
 void CPlayer::Change_State(STATE eState)
 {
 	m_pFSMCom->Change_State(eState);
@@ -465,6 +480,57 @@ void CPlayer::Update_FSM()
 		Change_State(HOLD);
 	else
 		Change_State(MOVE);
+}
+
+void CPlayer::Update_AnimSet()
+{
+#pragma region Move
+	if (m_isSpotlight) {
+		if (m_iHp >= 4) {
+			m_eAnimSet_Move = FINE_LIGHT;
+		}
+		else if (m_iHp >= 2) {
+			m_eAnimSet_Move = CAUTION_LIGHT;
+		}
+		else {
+			m_eAnimSet_Move = DANGER_LIGHT;
+		}
+	}
+	else {
+		if (m_iHp >= 4) {
+			switch (m_eEquip) {
+			case HG:
+			case NONE:
+				m_eAnimSet_Move = FINE;
+				break;
+			case STG:
+				m_eAnimSet_Move = MOVE_STG;
+				break;
+			}
+
+		}
+		else if (m_iHp >= 2) {
+			m_eAnimSet_Move = CAUTION;
+		}
+		else {
+			m_eAnimSet_Move = DANGER;
+		}
+	}
+#pragma endregion
+
+#pragma region Hold
+	switch (m_eEquip) {
+	case HG:
+		m_eAnimSet_Hold = HOLD_HG;
+		break;
+	case STG:
+		m_eAnimSet_Hold = HOLD_STG;
+		break;
+	case NONE:
+		break;
+	}
+#pragma endregion
+
 }
 
 void CPlayer::Update_Direction()
@@ -512,7 +578,7 @@ void CPlayer::Turn_Spine_Default(_float fTimeDelta)
 
 		_float4				vCross = XMVector3Cross(vMyLook, vHeadToCam);
 
-		cout << XMConvertToDegrees(fAngle) << endl;
+		//cout << XMConvertToDegrees(fAngle) << endl;
 
 		if (fAngle > XMConvertToRadians(90.f)) {
 			fAngle = 0.f;
@@ -1422,6 +1488,15 @@ HRESULT CPlayer::Add_PartObjects()
 
 	m_PartObjects[CPlayer::PART_WEAPON] = pWeaponObject;
 
+	CPartObject* pFlashLightObject = { nullptr };
+
+
+	pFlashLightObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_FlashLight"), &WeaponDesc));
+	if (nullptr == pFlashLightObject)
+		return E_FAIL;
+
+	m_PartObjects[CPlayer::PART_LIGHT] = pFlashLightObject;
+
 	return S_OK;
 }
 
@@ -1474,7 +1549,21 @@ HRESULT CPlayer::Initialize_PartModels()
 	pHairModel->Set_Surbodinate("head", true);
 	pHairModel->Set_Parent_CombinedMatrix_Ptr("head", pHeadCombinedMatrix);
 
+#pragma region
+	//CModel* pWeaponModel = { dynamic_cast<CModel*>(m_PartObjects[PART_WEAPON]->Get_Component(TEXT("Com_Model"))) };
 
+	//pWeaponModel->Set_Surbodinate("root", true);
+	//pWeaponModel->Set_Parent_CombinedMatrix_Ptr("root", pRightWeaponCombinedMatrix);
+	CWeapon* pWeapon = dynamic_cast<CWeapon*>(m_PartObjects[PART_WEAPON]);
+	_float4x4* pRightWeaponCombinedMatrix = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
+	pWeapon->Set_Socket(pRightWeaponCombinedMatrix);
+
+
+	CFlashLight* pFlashLight = dynamic_cast<CFlashLight*>(m_PartObjects[PART_LIGHT]);
+	_float4x4* pLeftWeaponCombinedMatrix = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("l_weapon")) };
+	pFlashLight->Set_Socket(pLeftWeaponCombinedMatrix);
+
+#pragma endregion
 
 	return S_OK;
 }

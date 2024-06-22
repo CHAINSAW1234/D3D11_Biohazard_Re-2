@@ -40,6 +40,8 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	if (FAILED(Add_Animations()))
 		return E_FAIL;
 
+	m_pModelCom->Set_OptimizationCulling(false);
+
 	m_pModelCom->Set_RootBone("root");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
@@ -59,25 +61,25 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Add_AnimPlayingInfo(false, 2, TEXT("Shot"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(false, 3, TEXT("UpperBody"), 1.f);
 
-	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WALK_F_LOOP, 64.f);
-	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WALK_L_LOOP, 67.f);
-	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WALK_R_LOOP, 64.f);
-	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WALK_BACK_L_LOOP, 65.f);
-	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WALK_BACK_B_LOOP, 65.f);
-	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WALK_BACK_R_LOOP, 63.f);
+	for (int i = 0; i < CPlayer::ANIMSET_MOVE_END; ++i) {
+		m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_F_LOOP, 64.f);
+		m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_L_LOOP, 67.f);
+		m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_R_LOOP, 64.f);
+		m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_L_LOOP, 65.f);
+		m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_B_LOOP, 65.f);
+		m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_R_LOOP, 63.f);
+		
+	}
 
-	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WHEEL_L180, 300.f);
-	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::WHEEL_R180, 300.f);
-	m_pModelCom->Set_TickPerSec(TEXT("Default"), CPlayer::HOLD_SHOT, 180.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_L180, 300.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_R180, 300.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::HOLD_SHOT, 180.f);
+																							   
+	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::WHEEL_L180, 300.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::WHEEL_R180, 300.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::HOLD_SHOT, 180.f);
 
 	//m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/LeonTest/LeonBody.fbx");
-
-
-	m_pModelCom->Add_Animations(TEXT("Body_Player_Test"), TEXT("Test"));
-
-	_uint			iNumAnimsTest = { m_pModelCom->Get_NumAnims(TEXT("Test")) };
-	for(_uint i = 0; i < iNumAnimsTest; ++i)
-		m_pModelCom->Set_TickPerSec(TEXT("Test"), i, 60.f);
 
 	return S_OK;
 }
@@ -721,9 +723,9 @@ HRESULT CBody_Player::Add_Animations()
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Danger_Light"), CPlayer::Get_AnimSetMoveName(CPlayer::ANIMSET_MOVE::DANGER_LIGHT))))
 		return E_FAIL;
 
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Hg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HG))))
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Hg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HOLD_HG))))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Stg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::STG))))
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Stg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HOLD_STG))))
 		return E_FAIL;
 
 	return S_OK;

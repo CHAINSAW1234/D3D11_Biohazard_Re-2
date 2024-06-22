@@ -21,12 +21,13 @@ public:
 		PART_HEAD,
 		PART_HAIR,
 		PART_WEAPON,
+		PART_LIGHT,
 		PART_END
 	};
-
+	enum EQUIP { HG, STG, NONE};
 #pragma region ANIMATION
 	enum ANIMATION_MOVE {
-		ANIM_IDLE, TURN_L180, TURN_R180, TURN_L0, TURN_R0, TURN_L90, TURN_R90,
+		ANIM_IDLE, TURN_L180, TURN_R180,
 		WALK_F_LOOP, WALK_L_LOOP, WALK_END_LR, WALK_END_RL, WALK_R_LOOP,
 		WALK_BACK_L_LOOP, WALK_BACK_B_LOOP, WALK_BACK_R_LOOP,
 		JOG_START_L0, JOG_START_L90, JOG_START_L180,
@@ -36,8 +37,6 @@ public:
 		STAIR_F_LOOP, STAIR_L_LOOP, STAIR_R_LOOP,
 		STAIR_BACK_L_LOOP, STAIR_BACK_B_LOOP, STAIR_BACK_R_LOOP,
 		STAIR_RUN_UP_LOOP, STAIR_RUN_DOWN_LOOP,
-		PIVOTTURN_L0, PIVOTTURN_L90, PIVOTTURN_L180,
-		PIVOTTURN_R0, PIVOTTURN_R90, PIVOTTURN_R180,
 		LIGHT_ON_OFF, MOVE_END
 	};
 
@@ -51,7 +50,7 @@ public:
 	};
 
 	enum ANIMSET_MOVE { FINE, MOVE_STG, FINE_LIGHT, CAUTION, CAUTION_LIGHT, DANGER, DANGER_LIGHT, COMMON, ANIMSET_MOVE_END };
-	enum ANIMSET_HOLD { HG, STG, MLE, SUP, ANIMSET_HOLD_END };
+	enum ANIMSET_HOLD { HOLD_HG, HOLD_STG, HOLD_MLE, HOLD_SUP, ANIMSET_HOLD_END };
 #pragma endregion
 
 #pragma region Move Direction
@@ -98,19 +97,20 @@ public:
 	_float3*									Get_Body_RootDir();
 	_bool										Get_Spotlight() { return m_isSpotlight; }
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
-	void										Set_Spotlight(_bool isSpotlight) { m_isSpotlight = isSpotlight; }
+	void										Set_Spotlight(_bool isSpotlight); 
+	void										Set_Weapon(EQUIP eEquip);
 	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineHold = isTurnSpineDefault; }
 	void										Set_TurnSpineHold(_bool isTurnSpineHold) { m_isTurnSpineHold = isTurnSpineHold;}
 
 	void										Change_State(STATE eState);
 	void										Change_AnimSet_Move(ANIMSET_MOVE eAnimSetMove) { m_eAnimSet_Move = eAnimSetMove; }
 	void										Change_AnimSet_Hold(ANIMSET_HOLD eAnimSetHold) { m_eAnimSet_Hold = eAnimSetHold; }
-	void Change_Weapon();
 	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
 
 	HRESULT										Add_FSM_States();
 	void										Update_FSM();
 
+	void	Update_AnimSet();
 	void										Update_Direction();
 	void										Turn_Spine_Default(_float fTimeDelta);		// Idle 상태에서 카메라 반대쪽으로 머리 돌리기
 	void										Turn_Spine_Hold(_float fTimeDelta);		// Hold 상태에서의 카메라 보기
@@ -118,6 +118,8 @@ public:
 	void										Update_KeyInput_Reload();
 
 private:
+	_int m_iHp = { 5 };
+	EQUIP m_eEquip = { HG };
 	_bool m_isSpotlight = { false };
 	DWORD m_dwDirection = { 0 };
 
@@ -125,7 +127,9 @@ private:
 	_bool m_isTurnSpineHold = { false };
 
 	ANIMSET_MOVE m_eAnimSet_Move = { FINE };
-	ANIMSET_HOLD m_eAnimSet_Hold = { HG };
+	ANIMSET_HOLD m_eAnimSet_Hold = { HOLD_HG };
+
+	
 
 	friend class CPlayer_State_Move_Walk;
 	friend class CPlayer_State_Move_Jog;

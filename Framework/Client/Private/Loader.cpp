@@ -19,6 +19,7 @@
 #include "Terrain.h"
 #include "Zombie.h"
 #include "Weapon.h"
+#include "FlashLight.h"
 #include "Player.h"
 #include "Effect.h"
 #include "Sky.h"
@@ -351,6 +352,11 @@ HRESULT CLoader::Load_Prototype()
 	/* For.Prototype_GameObject_Part_Weapon */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_HandGun"),
 		CWeapon::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Part_Weapon */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_FlashLight"),
+		CFlashLight::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 #pragma endregion
@@ -818,6 +824,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 	_matrix			WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
 	WeaponTransformMatrix *= XMMatrixRotationX(	XMConvertToRadians(-90.f));
+	_matrix			LightTransformMatrix = { XMMatrixRotationX(XMConvertToRadians(30.f)) };	
 #pragma region Players Model 
 
 	/* Prototype_Component_Model_LeonBody */
@@ -842,6 +849,12 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_HandGun"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/HandGun/HandGun.fbx",
 			WeaponTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_FlashLight */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_FlashLight"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Weapon/FlashLight/FlashLight.fbx",
+			TransformMatrix))))
 		return E_FAIL;
 
 #pragma endregion
