@@ -32,14 +32,14 @@ HRESULT CFlashLight::Initialize(void* pArg)
 
 	eDesc.fRange = 6.f;
 	eDesc.fCutOff = XMConvertToRadians(30.f);
-	eDesc.fOutCutOff = XMConvertToRadians(60.f);
+	eDesc.fOutCutOff = XMConvertToRadians(35.f);
 
 	eDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	eDesc.vDirection = _float4(0.f, 0.f, 1.f, 0.f);
 
-	eDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	eDesc.vDiffuse = _float4(.4f, .4f, .4f, 1.f);
 	eDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
-	eDesc.vSpecular = _float4(0.2f, 0.2f, 0.2f, 1.f);
+	eDesc.vSpecular = _float4(0.4f, 0.4f, 0.4f, 1.f);
 
 	m_pGameInstance->Add_Light(m_strLightTag, eDesc);
 	
@@ -69,6 +69,8 @@ void CFlashLight::Late_Tick(_float fTimeDelta)
 		//m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 		//m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	}
+
+	//m_pModelCom->Play_Animations(m_pTr);
 
 	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * m_pParentsTransform->Get_WorldMatrix() };
 	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);

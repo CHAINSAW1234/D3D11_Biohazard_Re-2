@@ -81,13 +81,6 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 	//m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/LeonTest/LeonBody.fbx");
 
-
-	m_pModelCom->Add_Animations(TEXT("Body_Player_Test"), TEXT("Test"));
-
-	_uint			iNumAnimsTest = { m_pModelCom->Get_NumAnims(TEXT("Test")) };
-	for(_uint i = 0; i < iNumAnimsTest; ++i)
-		m_pModelCom->Set_TickPerSec(TEXT("Test"), i, 60.f);
-
 	return S_OK;
 }
 

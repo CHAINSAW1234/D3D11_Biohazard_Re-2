@@ -824,7 +824,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 	_matrix			WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
 	WeaponTransformMatrix *= XMMatrixRotationX(	XMConvertToRadians(-90.f));
-	_matrix			LightnTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(180.f)) };	
+	_matrix			LightTransformMatrix = { XMMatrixRotationX(XMConvertToRadians(30.f)) };	
 #pragma region Players Model 
 
 	/* Prototype_Component_Model_LeonBody */
@@ -854,7 +854,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/* Prototype_Component_Model_FlashLight */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_FlashLight"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Weapon/FlashLight/FlashLight.fbx",
-			LightnTransformMatrix))))
+			TransformMatrix))))
 		return E_FAIL;
 
 #pragma endregion
