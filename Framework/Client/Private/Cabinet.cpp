@@ -108,18 +108,19 @@ void CCabinet::Late_Tick(_float fTimeDelta)
 		m_pModelCom->Change_Animation(0, TEXT("Default"), m_eState);
 		break;
 	case CABINET_OPEN:
+		{
 		m_pModelCom->Change_Animation(0, TEXT("Default"), m_eState);
 
-		if (m_pPx_Collider && m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR])
-		{
-			auto Combined = m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR]->Get_TrasformationMatrix();
-			_float4x4 ResultMat;
-			XMStoreFloat4x4(&ResultMat, Combined);
-			m_pPx_Collider->Update_Transform_Cabinet(&ResultMat);
-		}
+			if (m_pPx_Collider && m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR])
+			{
+				auto Combined = m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR]->Get_TrasformationMatrix();
+				_float4x4 ResultMat;
+				XMStoreFloat4x4(&ResultMat, Combined);
+				m_pPx_Collider->Update_Transform_Cabinet(&ResultMat);
+			}
 
 		break;
-	}
+		}
 	case CABINET_OPENED:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), m_eState);
 		break;

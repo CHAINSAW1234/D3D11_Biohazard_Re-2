@@ -44,7 +44,7 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 
 
 #pragma region GPU 가속 설정
-	/*sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
+	sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
 	sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
 	PxCudaContextManagerDesc cudaContextManagerDesc;
 
@@ -61,7 +61,7 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
 	sceneDesc.gpuMaxNumPartitions = 8;
 
-	sceneDesc.solverType = PxSolverType::ePGS;*/
+	sceneDesc.solverType = PxSolverType::ePGS;
 #pragma endregion
 
 	//Call Back

@@ -335,7 +335,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		{
 			m_eDoubleState_Prev = m_eDoubleState;
 
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
@@ -347,7 +347,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		{
 			m_eDoubleState_Prev = m_eDoubleState;
 
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
@@ -358,7 +358,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		}
 		case DOUBLEDOOR_STATIC:
 		{
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			switch (m_eDoubleState_Prev)
 			{
@@ -409,7 +409,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 			m_eDoubleState_Prev = m_eDoubleState;
 
 			//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // Àß¾Ë¾Æ°©´Ï´Ù ²¨¾ï
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
@@ -421,7 +421,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		{
 			m_eDoubleState_Prev = m_eDoubleState;
 
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
@@ -457,7 +457,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		}
 		case DOUBLEDOOR_STATIC:
 		{
-			m_pModelCom->Change_Animation(0, m_eDoubleState);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), m_eDoubleState);
 
 			switch (m_eDoubleState_Prev)
 			{
