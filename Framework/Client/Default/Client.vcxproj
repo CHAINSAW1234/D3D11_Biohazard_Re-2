@@ -240,6 +240,7 @@
     <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="..\Public\Window.h" />
     <ClInclude Include="..\Public\Zombie.h" />
+    <ClInclude Include="Body_Zombie_Enums.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
