@@ -35,14 +35,16 @@ void CButton_UI::Tick(_float fTimeDelta)
 
 	//__super::Tick(fTimeDelta);
 
-	if (true == IsMouseHover())
-	{
-		m_vecChildUI[0]->Set_Dead(false);
-	}
-	else
-	{
-		m_vecChildUI[0]->Set_Dead(true);
-	}
+	//if (true == IsMouseHover())
+	//{
+	//	if(nullptr != m_vecChildUI[0])
+	//		m_vecChildUI[0]->Set_Dead(false);
+	//}
+	//else
+	//{
+	//	if (nullptr != m_vecChildUI[0])
+	//		m_vecChildUI[0]->Set_Dead(true);
+	//}
 }
 
 void CButton_UI::Late_Tick(_float fTimeDelta)

@@ -31,6 +31,9 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
 		return E_FAIL;
 
+	if (FAILED(Ready_TabWindow()))
+		return E_FAIL;
+
 	if (FAILED(Ready_LandObject()))
 		return E_FAIL;
 
@@ -183,6 +186,18 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const wstring & strLayerTag)
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Camera_Free"), &CameraDesc)))
 		return E_FAIL;
 	
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Ready_TabWindow()
+{
+	/* 7. Tab_Widow */
+	CUI::UI_DESC UIDesc = {};
+	UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.9f };
+	UIDesc.vSize = { g_iWinSizeX * 1.f, g_iWinSizeY * 1.f };
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -367,12 +382,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
-	/* 7. Tab_Widow */
-	CUI::UI_DESC UIDesc = {};
-	UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.9f };
-	UIDesc.vSize = { g_iWinSizeX * 1.f, g_iWinSizeY * 1.f };
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
-		return E_FAIL;
+
 
 	/* 8. UI_Selecter */
 	/*selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Selector.dat");

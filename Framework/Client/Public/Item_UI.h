@@ -32,8 +32,8 @@ public:
 	void				Set_InvenItemType(ITEM_TYPE eItmeType) { m_eInvenItemType = eItmeType; }
 
 public:
-	void				Reset_Item();
-	void				Set_Item(ITEM_NUMBER eItmeNum);
+	void				Reset_ItemUI();
+	void				Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos);
 	
 private:
 	_bool				m_isWorking = { false };

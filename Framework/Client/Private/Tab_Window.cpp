@@ -78,7 +78,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 	if (true == m_bDead)
 		return;
 
-	if (CInventory_Manager::EXAMIN == m_pInventory_Manager->Get_InvenManagerState())
+	if (EXAMINE_ITEM == m_pInventory_Manager->Get_InventoryEvent())
 	{
 		m_eWindowType = EXAMINE;
 		m_isMapRender = false;
@@ -145,7 +145,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 			m_pInvenButton->Set_Dead(false);
 			m_pMapButton->Set_Dead(false);
 			m_pInventory_Manager->Set_OnOff_Inven(false);
-			m_pItem_Mesh_Viewer->Reset_Viewer();
+			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END);
 
 			m_fCurTime = 0.f;
 			m_fAlpha = 0.f;
@@ -209,6 +209,16 @@ HRESULT CTab_Window::Render()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)
+{
+	m_pInventory_Manager->AddItem_ToInven(eAcquiredItem);
+}
+
+_bool CTab_Window::IsCan_AddItem_ToInven()
+{
+	return 	m_pInventory_Manager->IsCan_AddItem_ToInven();
 }
 
 HRESULT CTab_Window::Add_Components()

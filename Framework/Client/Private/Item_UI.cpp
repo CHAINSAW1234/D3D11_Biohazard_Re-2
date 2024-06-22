@@ -70,25 +70,61 @@ HRESULT CItem_UI::Render()
 	return S_OK;
 }
 
-void CItem_UI::Reset_Item()
+void CItem_UI::Reset_ItemUI()
 {
 	m_bDead = true;
-
 	m_isWorking = false;
-
 	m_eItemNumber = ITEM_NUMBER_END;
-
 	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
-
 	m_eInvenItemType = INVEN_ITEM_TYPE_END;
 }
 
-void CItem_UI::Set_Item(ITEM_NUMBER eItmeNum)
+void CItem_UI::Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos)
 {
+	m_bDead = false;
+	m_isWorking = true;
 	m_eItemNumber = eItmeNum;
 	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
+	m_eInvenItemType = eItmeType;
 
-	//m_eInvenItemType = eItmeType;
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vSetPos);
+
+	switch (m_eInvenItemType)
+	{
+	case Client::EQUIPABLE: {
+		for (auto& iter : m_vecChildUI)
+			iter->Set_Dead(true);
+		break;
+	}
+		
+	case Client::CONSUMABLE_EQUIPABLE: {
+		for (auto& iter : m_vecChildUI)
+			iter->Set_Dead(true);
+		break;
+	}
+		
+	case Client::USEABLE: {
+		for (auto& iter : m_vecChildUI)
+			iter->Set_Dead(true);
+		break;
+	}
+		
+	case Client::CONSUMABLE: {
+		for (auto& iter : m_vecChildUI)
+			iter->Set_Dead(true);
+		break;
+	}
+		
+	case Client::QUEST: {
+		for (auto& iter : m_vecChildUI)
+			iter->Set_Dead(true);
+		break;
+	}
+		
+	default:
+		break;
+	}
+
 }
 
 CItem_UI* CItem_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

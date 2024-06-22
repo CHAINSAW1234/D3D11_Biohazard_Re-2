@@ -26,6 +26,9 @@ HRESULT CContextMenu::Initialize(void* pArg)
 			return E_FAIL;
 	}
 
+	if(FAILED(Create_MenuItem()))
+		return E_FAIL;
+
 	m_eContext_State = UI_IDLE;
 
 	return S_OK;
@@ -94,7 +97,10 @@ void CContextMenu::Idle_Operation(_float fTimeDelta)
 
 void CContextMenu::Hide_Operation(_float fTimeDelta)
 {
-
+	for (auto& iter : m_vecMenuItem)
+	{
+		iter->Set_Dead(true);
+	}
 }
 
 void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float2 fAppearPos, _float2 fArrivalPos)
@@ -236,7 +242,10 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float2 fAp
 		break;
 	}
 
-
+	for (_uint i = 0; i < m_iContextMenuCount; i++)
+	{
+		m_vecMenuItem[i]->Set_Dead(false);
+	}
 
 }
 

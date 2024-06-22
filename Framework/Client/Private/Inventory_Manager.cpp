@@ -2,6 +2,14 @@
 
 #include "Inventory_Manager.h"
 
+constexpr _float Z_POS_SLOT = 0.8f;
+constexpr _float Z_POS_ITEM_UI = 0.7f;
+constexpr _float Z_POS_HIGH_LIGHTER = 0.6f;
+constexpr _float Z_POS_CONTEXT_MENU = 0.5f;
+
+constexpr _float SLOT_INTERVAL_X = 74.f;
+constexpr _float SLOT_INTERVAL_Y = 76.f;
+
 CInventory_Manager::CInventory_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
 	, m_pContext{ pContext }
@@ -82,12 +90,56 @@ void CInventory_Manager::Idle_Operation(_float fTimeDelta)
 		_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
 		HoveredPos.z = 0.7f;
 		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
-	}
+
+		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			for (auto& iter : m_vecItem_UI)
+			{
+				if (true == iter->IsMouseHover() && true == iter->Get_isWorking())
+				{
+					//제대로 없앨 예정
+					_float2 TempTrashCanValue = _float2(HoveredPos.x, HoveredPos.y);
+					m_pContextMenu->Set_Operation(iter->Get_InvenItemType(), true, TempTrashCanValue, TempTrashCanValue);
+					m_eInven_Manager_State = CONTEXTUI_SELECT;
+				}
+			}
+		}
+	} 
 }
 
 void CInventory_Manager::ContextUISelect_Operation(_float fTimeDelta)
 {
 	m_pContextMenu->Tick(fTimeDelta);
+
+	INVENTORY_EVENT eInvenEvent = m_pContextMenu->Get_InventoryEvent();
+
+	switch (eInvenEvent)
+	{
+	case Client::EVENT_IDLE:
+		break;
+	case Client::EQUIP_ITEM:
+		break;
+	case Client::UNEQUIP_ITEM:
+		break;
+	case Client::USE_ITEM:
+		break;
+	case Client::EXAMINE_ITEM:
+		break;
+	case Client::COMBINED_ITEM:
+		break;
+	case Client::HOTKEY_ASSIGNED_ITEM:
+		break;
+	case Client::REARRANGE_ITEM:
+		break;
+	case Client::DISCARD_ITEM:
+		break;
+	case Client::CONTEXTUI_SELECT:
+		break;
+	case Client::INVEN_EVENT_END:
+		break;
+	default:
+		break;
+	}
 }
 
 void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
@@ -116,14 +168,25 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 	}
 }
 
-_bool CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)
+void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)
 {
-	for (auto& iter : m_vecItem_UI)
+	for (auto& Itemiter : m_vecItem_UI)
 	{
-		
-	}
+		if (true == Itemiter->Get_isWorking())
+			continue;
 
-	return true;
+		for (auto& Slotiter : m_vecInvenSlot)
+		{
+			if (true == Slotiter->Get_IsFilled())
+				continue;
+
+			_vector vSlotPos = Slotiter->GetPositionVector();
+			XMVectorSetY(vSlotPos, Z_POS_ITEM_UI);
+			Itemiter->Set_ItemUI(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), vSlotPos);
+
+			return;
+		}
+	}
 }
 
 _bool CInventory_Manager::IsCan_AddItem_ToInven()
@@ -170,9 +233,7 @@ HRESULT CInventory_Manager::Init_InvenSlot()
 	{
 		for (_uint j = 0; j < 4; j++)
 		{
-			_float fPosX = m_fSlotInterval.x * j;
-			_float fPosY = -m_fSlotInterval.y * i;
-			if (FAILED(Create_InvenSlot(&vecCustomInvenUIDesc, _float3(fPosX, fPosY, 0.f))))
+			if (FAILED(Create_InvenSlot(&vecCustomInvenUIDesc, _float3((SLOT_INTERVAL_X * j), -(SLOT_INTERVAL_Y * i), 0.f))))
 				return E_FAIL;
 		}
 	}
@@ -459,4 +520,100 @@ void CInventory_Manager::Free()
 		Safe_Release(iter);
 	}
 	m_vecItem_UI.clear();
+
+	Safe_Release(m_pContextMenu);
+}
+
+ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
+{
+	switch (eItemNum)
+	{
+	case Client::emergencyspray01a:
+		return USEABLE;
+		break;
+	case Client::greenherb01a:
+		return USEABLE;
+		break;
+	case Client::redherb01a:
+		return USEABLE;
+		break;
+	case Client::blueherb01a:
+		return USEABLE;
+		break;
+	case Client::herbsgg01a:
+		return USEABLE;
+		break;
+	case Client::herbsgr01a:
+		return USEABLE;
+		break;
+	case Client::herbsgb01a:
+		return USEABLE;
+		break;
+	case Client::herbsggb01a:
+		return USEABLE;
+		break;
+	case Client::herbsggg01a:
+		return USEABLE;
+		break;
+	case Client::herbsgrb01a:
+		return USEABLE;
+		break;
+	case Client::herbsrb01a:
+		return USEABLE;
+		break;
+	case Client::greenherbitem01a:
+		return USEABLE;
+		break;
+	case Client::redherbitem01a:
+		return USEABLE;
+		break;
+	case Client::blueherbitem01a:
+		return USEABLE;
+		break;
+	case Client::handgun_bullet01a:
+		return CONSUMABLE;
+		break;
+	case Client::shotgun_bullet01a:
+		return CONSUMABLE;
+		break;
+	case Client::submachinegun_bullet01a:
+		return CONSUMABLE;
+		break;
+	case Client::magnumbulleta:
+		return CONSUMABLE;
+		break;
+	case Client::biggun_bullet01a:
+		return CONSUMABLE;
+		break;
+	case Client::inkribbon01a:
+		return QUEST;
+		break;
+	case Client::woodbarricade01a:
+		return CONSUMABLE;
+		break;
+	case Client::blastingfuse01a:
+		return QUEST;
+		break;
+	case Client::gunpowder01a:
+		return QUEST;
+		break;
+	case Client::gunpowder01b:
+		return QUEST;
+		break;
+	case Client::strengtheningyellow01a:
+		return USEABLE;
+		break;
+	case Client::HandGun:
+		return EQUIPABLE;
+		break;
+	case Client::ITEM_NUMBER_END:
+		break;
+	default:
+		break;
+	}
+
+
+
+
+	return ITEM_TYPE::INVEN_ITEM_TYPE_END;
 }

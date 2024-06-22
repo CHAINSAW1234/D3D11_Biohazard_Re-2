@@ -30,8 +30,7 @@ private:
 	void Hide_Operation(_float fTimeDelta);
 
 public:
-	void Reset_Viewer();
-	void Set_Operation(UI_OPERRATION eOperation, ITEM_TYPE eCallItemType);
+	void Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType);
 	
 private:
 	vector<CModel*>		m_vecModelCom;
@@ -57,6 +56,7 @@ private:
 
 private:
 	HRESULT Add_Components();
+	HRESULT Load_ItemsModel();
 	HRESULT Bind_ShaderResources();
 
 public:

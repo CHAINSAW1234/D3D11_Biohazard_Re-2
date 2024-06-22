@@ -27,12 +27,18 @@ private:
 public:
 	void Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float2 fAppearPos, _float2 fArrivalPos );
 
+	INVENTORY_EVENT Get_InventoryEvent() const {
+		return m_eContextEvent;
+	}
+
 private:
 	vector<class CButton_UI*>	m_vecMenuItem;
 
 	UI_OPERRATION				m_eContext_State = { STATE_END };
 
 	ITEM_TYPE					m_eContextType = { INVEN_ITEM_TYPE_END };
+
+	INVENTORY_EVENT				m_eContextEvent = { INVEN_EVENT_END };
 
 	_float						m_fItemInterval = { 19.5f };
 

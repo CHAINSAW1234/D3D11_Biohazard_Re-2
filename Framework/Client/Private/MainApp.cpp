@@ -4,8 +4,8 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 #include "FSM.h"
-
 #include "Loading_UI.h"
+#include "ImGui_Manager.h"
 
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::Get_Instance())

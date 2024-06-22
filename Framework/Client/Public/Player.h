@@ -134,6 +134,7 @@ private:
 
 #pragma region Ã¢±Õ Ãß°¡
 	_bool										m_bIsExamineItem = { false };
+	class CTab_Window*							m_pTabWindow = { nullptr };
 #pragma
 
 	vector<CPartObject*>						m_PartObjects;

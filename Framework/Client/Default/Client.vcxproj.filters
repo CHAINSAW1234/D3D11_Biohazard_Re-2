@@ -241,6 +241,15 @@
     <Filter Include="02.GameObjects\UI\14. Loading">
       <UniqueIdentifier>{1fab2592-4cd6-4e48-a96c-07b5219145e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow">
+      <UniqueIdentifier>{cc37a098-a1b3-447e-9df1-acd4471c0dbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Imgui_Manager">
+      <UniqueIdentifier>{caf0935f-0c07-45a0-a027-23aef095a854}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Imgui_Manager\Include">
+      <UniqueIdentifier>{74fbde7e-d468-46bd-85c1-27942f25cd65}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -465,6 +474,54 @@
     <ClInclude Include="..\Public\Loading_UI.h">
       <Filter>02.GameObjects\UI\14. Loading</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Item_DragShadow.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui_Manager.h">
+      <Filter>96. Imgui_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\GraphEditor.h">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imconfig.h">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\ImCurveEdit.h">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\ImGradient.h">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imgui.h">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imgui_impl_dx11.h">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imgui_impl_win32.h">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imgui_internal.h">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\ImGuizmo.h">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\ImSequencer.h">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imstb_rectpack.h">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imstb_textedit.h">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\imstb_truetype.h">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imguilib\ImZoomSlider.h">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -670,6 +727,48 @@
     </ClCompile>
     <ClCompile Include="..\Private\Loading_UI.cpp">
       <Filter>02.GameObjects\UI\14. Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item_DragShadow.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ImGui_Manager.cpp">
+      <Filter>96. Imgui_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\GraphEditor.cpp">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImCurveEdit.cpp">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImGradient.cpp">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui.cpp">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_demo.cpp">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_draw.cpp">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_impl_dx11.cpp">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_impl_win32.cpp">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_tables.cpp">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_widgets.cpp">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImGuizmo.cpp">
+      <Filter>96. Imgui_Manager\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImSequencer.cpp">
+      <Filter>96. Imgui_Manager\Include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

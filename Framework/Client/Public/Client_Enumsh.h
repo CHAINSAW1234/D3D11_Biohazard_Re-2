@@ -29,7 +29,7 @@ namespace Client
 	enum MONSTER_STATE { MST_IDLE,MST_WALK,MST_ATTACK,MST_DEFAULT, MST_END };
 
 
-	enum ITEM_NUMBER {//파일 이름 입니다 70까지만 추가 되어 있음 대문자는 
+	enum ITEM_NUMBER {//파일 이름 입니다 70까지만 추가 되어 있음 대문자는 임시임
 		emergencyspray01a,
 		greenherb01a,
 		redherb01a,
@@ -55,6 +55,7 @@ namespace Client
 		gunpowder01a,
 		gunpowder01b,
 		strengtheningyellow01a,
+		HandGun,
 		ITEM_NUMBER_END 
 	};
 
