@@ -280,6 +280,10 @@ public:/*For Physics Controller*/
 	class CPxCollider*						Create_Px_Collider_Convert_Root_Double_Door(class CModel* pModel, class CTransform* pTransform, _int* iId);
 	class CPxCollider*						Create_Px_Collider_Cabinet(class CModel* pModel, class CTransform* pTransform, _int* iId);
 	class CPxCollider*						Create_Px_Collider_Toilet(class CModel* pModel, class CTransform* pTransform, _int* iId);
+	class CGraphic_Device*						GetGraphic_Device()
+	{
+		return m_pGraphic_Device;
+	}
 
 private:/*For Physics_Controller*/
 	_uint*									m_pIndices = { nullptr };

@@ -38,15 +38,22 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, m_ToleranceScale, true, m_Pvd);
 	physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
-	m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
+	m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(4);
 	sceneDesc.cpuDispatcher = m_Dispatcher;
 	sceneDesc.filterShader = MegamotionFilterShader;
 
 
 #pragma region GPU 가속 설정
-	/*sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
+	sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
 	sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
 	PxCudaContextManagerDesc cudaContextManagerDesc;
+
+	//sceneDesc.filterShader = PxDefaultSimulationFilterShader;
+	sceneDesc.flags |= PxSceneFlag::eENABLE_ACTIVE_ACTORS;
+
+	sceneDesc.sceneQueryUpdateMode = PxSceneQueryUpdateMode::eBUILD_ENABLED_COMMIT_DISABLED;
+	sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
+	sceneDesc.gpuMaxNumPartitions = 8;
 
 	m_CudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc);
 	if (!m_CudaContextManager->contextIsValid())
@@ -54,14 +61,8 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 		m_CudaContextManager->release();
 		m_CudaContextManager = NULL;
 	}
-	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
-	sceneDesc.flags |= PxSceneFlag::eENABLE_ACTIVE_ACTORS;
 
-	sceneDesc.sceneQueryUpdateMode = PxSceneQueryUpdateMode::eBUILD_ENABLED_COMMIT_DISABLED;
-	sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
-	sceneDesc.gpuMaxNumPartitions = 8;
-
-	sceneDesc.solverType = PxSolverType::ePGS;*/
+	sceneDesc.solverType = PxSolverType::ePGS;
 #pragma endregion
 
 	//Call Back
