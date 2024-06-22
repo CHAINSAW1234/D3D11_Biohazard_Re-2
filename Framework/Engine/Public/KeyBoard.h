@@ -19,6 +19,8 @@ public:
 	EKeyState		Get_KeyState(_int iKey) { return m_KeyStates[iKey]; }
 	_float			Get_Key_Press_Time(_int iKey) { return m_fPressTime[iKey]; }
 
+	void			Clear();
+
 public:
 	static CKeyboard* Create();
 	virtual void Free() override;

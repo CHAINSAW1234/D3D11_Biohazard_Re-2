@@ -39,6 +39,8 @@ public:
 		m_ptCurPos = ptPos;
 	}
 
+	void			Clear();
+
 private:
 	void			Update_MousePosition(_float fTimeDelta);
 

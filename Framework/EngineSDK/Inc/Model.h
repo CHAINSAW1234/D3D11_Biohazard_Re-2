@@ -16,7 +16,7 @@ BEGIN(Engine)
 #define DISTANCE_FPS10				12.f
 #define DISTANCE_FPS5				15.f
 
-#define TIME_FPSMAX					(fTimeDelta)
+#define TIME_FPSMAX					(1.f / 60.f)
 #define TIME_FPS45					(1.f / 45.f)
 #define TIME_FPS30					(1.f / 30.f)
 #define TIME_FPS20					(1.f / 20.f)
@@ -49,6 +49,9 @@ public:		/* For.Animation */
 
 	HRESULT									Add_Animations(const wstring& strPrototypeLayerTag, const wstring& strAnimLayerTag);
 
+public:		/* Optimization Culling */
+	void									Set_OptimizationCulling(_bool isSetOptimization) { m_isOptimization = isSetOptimization; }
+	
 private:	/* Optimization Culling */
 	_float									Compute_NewTimeDelta_Distatnce_Optimization(_float fTimeDelta, class CTransform* pTransform);
 
@@ -299,6 +302,7 @@ private:	/* For.Linear_Interpolation */
 private:	/* Distance_Optimization */
 	_float									m_fOptimizationFrame = { 60.f };
 	_float									m_fAccOptimizationTime = { 0.f };
+	_bool									m_isOptimization = { true };
 
 private:
 	vector<_float>							m_TotalWeights;

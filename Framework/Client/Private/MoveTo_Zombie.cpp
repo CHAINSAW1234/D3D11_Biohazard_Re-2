@@ -72,8 +72,6 @@ void CMoveTo_Zombie::Change_Animation()
 	if (nullptr == pBodyModel)
 		return;
 
-
-
 	/* 기본 이동 애니메이션 */
 	_uint			iBasePlayingIndex = { static_cast<_uint>(CBody_Zombie::PLAYING_INDEX::INDEX_0) };
 	_int			iCurrentBasegAnimIndex = { pBodyModel->Get_AnimIndex_PlayingInfo(CBody_Zombie::INDEX_0) };
@@ -392,6 +390,24 @@ void CMoveTo_Zombie::Change_Animation()
 		_float			fAngleToTarget = { acosf(fDot) };
 
 
+		////	Turn
+		//if (false == isFront)
+		//{
+		//	Turn();
+		//}
+
+		//
+		//else if (fAngleToTarget < XMConvertToRadians(10.f))
+		//{
+		//	Move_Front();
+		//}
+
+		//else
+		//{
+		//	Move_Front_Include_Rotaiton();
+		//}
+
+
 		//	회전과 관련하여 블렌드 성분 정하기
 		//	10도 미만은 그냥직진하기.
 		if (XMConvertToRadians(10.f) > fAngleToTarget)
@@ -539,30 +555,26 @@ void CMoveTo_Zombie::Change_Animation()
 		pBodyModel->Set_BoneLayer_PlayingInfo(iBlendPlayingIndex, strBlendBoneLayerTag);
 		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, fTurnBlendWeight);
 
-		//string			strBlendWeight = { to_string(fTurnBlendWeight) };
-		//cout << strBlendWeight.c_str() << endl;
-		//cout << "isBlend" << endl;
+		string			strBlendWeight = { to_string(fTurnBlendWeight) };
+		cout << strBlendWeight.c_str() << endl;
+		cout << "isBlend" << endl;
 
-		//if (1.0f != fTurnBlendWeight)
-		//{
-		//	//	_float			fTrackPosition = { pBodyModel->Get_TrackPosition(iBasePlayingIndex) };
-		//	//	_float			fDuration = { pBodyModel->Get_Duration_From_PlayingInfo(iBlendPlayingIndex) };			
+		if (1.0f != fTurnBlendWeight)
+		{
+			_float			fBlendTrackPosition = { pBodyModel->Get_TrackPosition(iBlendPlayingIndex) };
+			_float			fBaseTrackPosition = { pBodyModel->Get_TrackPosition(iBasePlayingIndex) };
+			_float			fBlendDuration = { pBodyModel->Get_Duration_From_PlayingInfo(iBasePlayingIndex) };
 
+			if (0.f < fBlendDuration)
+			{
+				while (fBaseTrackPosition > fBlendDuration)
+				{
+					fBaseTrackPosition -= fBlendDuration;
+				}
+			}			
 
-		//	_float			fBlendTrackPosition = { pBodyModel->Get_TrackPosition(iBlendPlayingIndex) };
-		//	_float			fBaseTrackPosition = { pBodyModel->Get_TrackPosition(iBasePlayingIndex) };
-		//	_float			fBlendDuration = { pBodyModel->Get_Duration_From_PlayingInfo(iBasePlayingIndex) };
-
-		//	if (0.f < fBlendDuration)
-		//	{
-		//		while (fBaseTrackPosition > fBlendDuration)
-		//		{
-		//			fBaseTrackPosition -= fBlendDuration;
-		//		}
-		//	}			
-
-		//	pBodyModel->Set_TrackPosition(iBlendPlayingIndex, fBaseTrackPosition);
-		//	}		
+			pBodyModel->Set_TrackPosition(iBlendPlayingIndex, fBaseTrackPosition, false);
+		}		
 
 		_float			fBaseTrackPos = { pBodyModel->Get_TrackPosition(iBasePlayingIndex) };
 		_float			fBlendTrackPos = { pBodyModel->Get_TrackPosition(iBlendPlayingIndex) };
@@ -580,6 +592,18 @@ void CMoveTo_Zombie::Change_Animation()
 
 		cout << "isNonBlend" << endl;
 	}
+}
+
+void CMoveTo_Zombie::Move_Front()
+{
+}
+
+void CMoveTo_Zombie::Move_Front_Include_Rotaiton(_bool isRight, _float fAngle)
+{
+}
+
+void CMoveTo_Zombie::Turn()
+{
 }
 
 _int CMoveTo_Zombie::Compute_Base_Anim()

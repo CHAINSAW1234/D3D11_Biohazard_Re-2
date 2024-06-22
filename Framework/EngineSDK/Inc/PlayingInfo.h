@@ -48,6 +48,8 @@ public:		/* For.Access */
 	KEYFRAME							Get_LastKeyFrame(_uint iBoneIndex);
 	_bool								Is_ResetRootPre() { return m_isResetRootPre; }
 
+	_bool								Is_Set_CurrentAnimation() { return m_iAnimIndex != -1 && m_strAnimLayerTag != TEXT(""); }
+
 	void								Set_Root_Pre(_bool isResetRootPre) { m_isResetRootPre = isResetRootPre; }
 
 	void								Change_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, _uint iNumChannel);

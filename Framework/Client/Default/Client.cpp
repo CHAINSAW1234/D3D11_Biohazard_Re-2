@@ -10,6 +10,7 @@
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
+static _int g_iMouseWheelDelta = { 0 };
 HINSTANCE g_hInst;                                // 현재 인스턴스입니다.
 HWND g_hWnd;
 Client::LEVEL g_Level;
@@ -86,6 +87,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
+
+			pGameInstance->Update_WHEEL(g_iMouseWheelDelta);
 		}
 
 		fTimeAcc += pGameInstance->Compute_TimeDelta(TEXT("Timer_Default"));
@@ -221,6 +224,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 	}
 	break;
+	case WM_MOUSEWHEEL:
+	{
+		g_iMouseWheelDelta += GET_WHEEL_DELTA_WPARAM(wParam);
+	}
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

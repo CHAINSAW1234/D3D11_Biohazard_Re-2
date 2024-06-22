@@ -373,7 +373,14 @@ KEYFRAME CAnimation::Get_CurrentKeyFrame(_uint iBoneIndex, _float fTrackPosition
 		_float				fFinishTime = { KeyFrames[i + 1].fTime };
 
 		if (fStartTime > fTrackPosition && fTrackPosition <= fFinishTime)
-			continue;
+		{
+			if (iNumKeyFrame - 2 == i)
+			{
+				fTrackPosition = fFinishTime;
+			}
+			else
+				continue;
+		}
 
 		_float				fLength = { fFinishTime - fStartTime };
 		_float				fRatio = { (fTrackPosition - fStartTime) / fLength };

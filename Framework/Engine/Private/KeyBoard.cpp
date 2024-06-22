@@ -46,6 +46,30 @@ void CKeyboard::Tick(_float fTimeDelta)
 	}
 }
 
+void CKeyboard::Clear()
+{
+	for (auto& KeyState : m_KeyStates)
+	{
+		KeyState = NONE;
+	}
+
+	for (auto& isPrePused : m_isPrePushed)
+	{
+		isPrePused = false;
+	}
+
+	for (auto& fPressTime : m_fPressTime)
+	{
+		fPressTime = 0.f;
+	}
+
+	for (auto& isMouseWheel : m_isMouseWHEEL)
+	{
+		isMouseWheel = false;
+	}
+
+}
+
 CKeyboard* CKeyboard::Create()
 {
 	CKeyboard* pInstance = new CKeyboard();

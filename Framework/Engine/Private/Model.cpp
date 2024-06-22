@@ -213,9 +213,13 @@ _float CModel::Compute_NewTimeDelta_Distatnce_Optimization(_float fTimeDelta, CT
 	*LOD를 사용하면 RAGDOLL로 전환시 모델이 한 번 깜빡이는 증상이 있음
 	*수정 필요.
 	*/
+	
 #ifndef ANIMATION_LOD
 	return fTimeDelta;
 #endif
+
+	if (false == m_isOptimization)
+		return fTimeDelta;
 
 	_matrix			CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
 	_vector			vCamPosition = { CamWorldMatrix.r[CTransform::STATE_POSITION] };
@@ -757,8 +761,7 @@ _float CModel::Compute_Current_TotalWeight(_uint iBoneIndex)
 		if (nullptr == pPlayingInfo)
 			continue;
 
-		_int		iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
-		if (-1 == iAnimIndex)
+		if (false == pPlayingInfo->Is_Set_CurrentAnimation())
 			continue;
 
 		wstring		strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
@@ -867,7 +870,7 @@ void CModel::Apply_RootMotion_Rotation(CTransform* pTransform)
 		if (nullptr == pPlayingInfo)
 			continue;
 
-		if (-1 == pPlayingInfo->Get_AnimIndex())
+		if (false == pPlayingInfo->Is_Set_CurrentAnimation())
 			continue;
 
 		_float			fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
@@ -910,7 +913,7 @@ void CModel::Apply_RootMotion_Translation(CTransform* pTransform, _float3* pMove
 		if (nullptr == pPlayingInfo)
 			continue;
 
-		if (-1 == pPlayingInfo->Get_AnimIndex())
+		if (false == pPlayingInfo->Is_Set_CurrentAnimation())
 			continue;
 
 		_float			fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
@@ -1674,11 +1677,10 @@ void CModel::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition, _bool
 	if (iPlayingIndex >= iNumPlayingInfo)
 		return;
 
-	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+	CPlayingInfo*		pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
 	if (nullptr != pPlayingInfo)
 	{
-		_int			iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
-		if (-1 == iAnimIndex)
+		if (false == pPlayingInfo->Is_Set_CurrentAnimation())
 			return;
 
 		if (false == isResetRootPre)
@@ -2015,9 +2017,9 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 	}
 
 	_int				iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
-	if (-1 == iAnimIndex)
+	if (false == pPlayingInfo->Is_Set_CurrentAnimation())
 	{
-		MSG_BOX(TEXT("Anim Index == -1,  HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)"));
+		MSG_BOX(TEXT("false == pPlayingInfo->Is_Set_CurrentAnimation(),  HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)"));
 
 		return E_FAIL;
 	}
@@ -2117,7 +2119,7 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 	//	현재 등록된 애니메이션이 없거나
 	//	블렌드 웨이트가 0이하 => 섞지않을 애니메이션
 	//	종료된 애니메이션 ( 루프도 아님 )
-	if (-1 == iAnimIndex || 0.f >= fBlendWeight)
+	if (false == pPlayingInfo->Is_Set_CurrentAnimation() || 0.f >= fBlendWeight)
 		return TransformationMatrices;
 
 	map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
@@ -2142,9 +2144,6 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 
 	if (true == isResetRootPre)
 	{
-		map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
-		CAnimation*										pAnimation = { iter->second->Get_Animation(iAnimIndex) };
-
 		KEYFRAME					CurrentKeyFrame = { pAnimation->Get_CurrentKeyFrame(iRootBoneIndex, pPlayingInfo->Get_TrackPosition() - (pAnimation->Get_TickPerSec() * fTimeDelta)) };
 
 		if (m_isRootMotion_XZ || m_isRootMotion_Y)
@@ -2315,7 +2314,7 @@ vector<_float4x4> CModel::Compute_ResultMatrices(const vector<vector<_float4x4>>
 		wstring				strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
 		_float				fBlendWeight = { pPlayingInfo->Get_BlendWeight() };
 
-		if (-1 == iAnimIndex || 0.f >= fBlendWeight)
+		if (false == pPlayingInfo->Is_Set_CurrentAnimation() || 0.f >= fBlendWeight)
 			continue;
 		CBone_Layer* pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
 		if (nullptr == pBoneLayer)

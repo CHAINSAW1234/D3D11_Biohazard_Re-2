@@ -94,7 +94,7 @@ void CBlackBoard_Zombie::Reset_NonActive_Body(const list<_uint>& ActivePlayingIn
 	}
 }
 
-_bool CBlackBoard_Zombie::Compute_Direction_To_Player(_float3* pDirection)
+_bool CBlackBoard_Zombie::Compute_Direction_To_Player_World(_float3* pDirection)
 {
 	_bool				isSuccess = { false };
 	if (nullptr == m_pAI || nullptr == m_pPlayer || nullptr == pDirection)
@@ -102,7 +102,6 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Player(_float3* pDirection)
 
 	CTransform*			pAITransform = { Get_Transform(m_pAI) };
 	CTransform*			pPlayerTransform = { Get_Transform(m_pPlayer) };
-
 	if (nullptr == pAITransform || nullptr == pPlayerTransform)
 		return isSuccess;
 
@@ -119,7 +118,7 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Player(_float3* pDirection)
 
 _bool CBlackBoard_Zombie::Compute_Direction_To_Player_Local(_float3* pDirection)
 {
-	if (false == Compute_Direction_To_Player(pDirection))
+	if (false == Compute_Direction_To_Player_World(pDirection))
 		return false;
 
 	_vector				vWorldDirection = { XMLoadFloat3(pDirection) };
@@ -135,7 +134,7 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Player_Local(_float3* pDirection)
 	return true;
 }
 
-_bool CBlackBoard_Zombie::Compute_Player_Angle_XZ_Plane(_float* pAngle)
+_bool CBlackBoard_Zombie::Compute_Player_Angle_XZ_Plane_Local(_float* pAngle)
 {
 	if (nullptr == pAngle)
 		return false;

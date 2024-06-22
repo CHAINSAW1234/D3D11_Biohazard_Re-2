@@ -27,6 +27,7 @@ HRESULT CWait_Zombie::Initialize(void* pArg)
 
 void CWait_Zombie::Enter()
 {
+	
 }
 
 void CWait_Zombie::Execute()

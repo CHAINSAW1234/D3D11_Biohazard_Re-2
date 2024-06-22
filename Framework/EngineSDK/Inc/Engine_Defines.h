@@ -174,6 +174,6 @@ using namespace Engine;
 
 #pragma region Animation LOD
 
-//#define ANIMATION_LOD
+#define ANIMATION_LOD
 
 #pragma endregion

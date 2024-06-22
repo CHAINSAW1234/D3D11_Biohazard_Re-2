@@ -50,6 +50,17 @@ void CMouse::Update_WHEEL(_int iDelta)
 	}
 }
 
+void CMouse::Clear()
+{
+	for (auto& isMouseWHEEL : m_isMouseWHEEL)
+	{
+		isMouseWHEEL = false;
+	}
+
+	m_iDeltaWeeel = { 0 };
+	m_ptDeltaPos = { 0, 0 };
+}
+
 void CMouse::Update_MousePosition(_float fTimeDelta)
 {
 	POINT ptMouse = {};
