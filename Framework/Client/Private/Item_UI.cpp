@@ -27,6 +27,13 @@ HRESULT CItem_UI::Initialize(void* pArg)
 		m_isLoad = false;
 
 		m_bDead = true;
+
+		if (nullptr == m_vecChildUI[0] || nullptr == m_vecChildUI[1])
+			return E_FAIL;
+
+		m_mapPartUI.emplace(TEXT("EquipDisplay"), m_vecChildUI[0]);
+
+		m_mapPartUI.emplace(TEXT("CountDisplay"), m_vecChildUI[1]);
 	}
 
 	return S_OK;
@@ -36,21 +43,6 @@ void CItem_UI::Tick(_float fTimeDelta)
 {
 	if (true == m_bDead)
 		return;
-
-	if (false == m_bCountable)
-	{
-		for (auto& iter : m_vecChildUI)
-			iter->Set_Dead(true);
-	}
-	else
-	{
-		for (auto& iter : m_vecChildUI)
-		{
-			iter->Set_Dead(false);
-			static_cast<CCustomize_UI*>(iter)->Set_Text(0, to_wstring(m_iItemCount));
-		}
-	}
-
 
 	__super::Tick(fTimeDelta);
 }
@@ -65,9 +57,30 @@ void CItem_UI::Late_Tick(_float fTimeDelta)
 
 HRESULT CItem_UI::Render()
 {
-	__super::Render();
+	if (FAILED(__super::Render()))
+		return E_FAIL;
 
 	return S_OK;
+}
+
+void CItem_UI::Set_Dead(_bool bDead)
+{
+	switch (m_eInvenItemType)
+	{
+	case Client::EQUIPABLE:
+		break;
+	case Client::CONSUMABLE_EQUIPABLE:
+		break;
+	case Client::USEABLE:
+		break;
+	case Client::CONSUMABLE:
+		break;
+	case Client::QUEST:
+		break;
+
+	default:
+		break;
+	}
 }
 
 void CItem_UI::Reset_ItemUI()

@@ -46,7 +46,8 @@ void CItem_DragShadow::Late_Tick(_float fTimeDelta)
 
 HRESULT CItem_DragShadow::Render()
 {
-	__super::Render();
+	if (FAILED(__super::Render()))
+		return E_FAIL;
 
 	return S_OK;
 }

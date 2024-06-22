@@ -16,7 +16,7 @@ CImgui_Manager::CImgui_Manager()
     Safe_AddRef(m_pGameInstance);
 }
 
-HRESULT CImgui_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+HRESULT CImgui_Manager::Initialize()
 {
     ::ShowWindow(g_hWnd, SW_SHOWDEFAULT);
     ::UpdateWindow(g_hWnd);
@@ -40,11 +40,6 @@ HRESULT CImgui_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
     ImGui_ImplWin32_Init(g_hWnd);
     ImGui_ImplDX11_Init(m_pDevice, m_pContext);
 
-    m_pDevice = { pDevice };
-    m_pContext = { pContext };
-    Safe_AddRef(m_pDevice);
-    Safe_AddRef(m_pContext);
-
     list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
 
     for (auto& iter : *pUIList)
@@ -67,6 +62,14 @@ HRESULT CImgui_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* p
     return S_OK;
 }
 
+void CImgui_Manager::Set_GraphicDevice(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+    m_pDevice = { pDevice };
+    m_pContext = { pContext };
+    Safe_AddRef(m_pDevice);
+    Safe_AddRef(m_pContext);
+}
+
 void CImgui_Manager::ResetVariable()
 {
 
@@ -84,7 +87,8 @@ void CImgui_Manager::Tick()
 
     if (UP == m_pGameInstance->Get_KeyState('Z'))
     {
-        m_bTabWindow_Debuger = !m_bTabWindow_Debuger;
+        //m_bTabWindow_Debuger = !m_bTabWindow_Debuger;
+        m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(m_iItemNum));
     }
 
     if (true == m_bTabWindow_Debuger)
@@ -103,12 +107,11 @@ void CImgui_Manager::Window_TabWindow_Debuger()
 {
     ImGui::Begin("Tab_Window");
 
-    _int iITemNumber;
-    ImGui::InputInt("아이템 번호 입력", &iITemNumber);
+    ImGui::InputInt("Input_ItemNum", &m_iItemNum);
 
-    if (ImGui::Button("아이템 획득", ImVec2(110, 20)))
+    if (ImGui::Button("Get_Item", ImVec2(110, 20)))
     {
-        m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(iITemNumber));
+        m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(m_iItemNum));
     }
 
     ImGui::End();
@@ -121,7 +124,11 @@ void CImgui_Manager::Free()
     Safe_Release(m_pContext);
     Safe_Release(m_pGameInstance);
 
+    Safe_Release(m_pTabWindow);
+
+
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
+
     ImGui::DestroyContext();
 }

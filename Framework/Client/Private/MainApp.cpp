@@ -5,7 +5,7 @@
 #include "Level_Loading.h"
 #include "FSM.h"
 #include "Loading_UI.h"
-#include "ImGui_Manager.h"
+
 
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::Get_Instance())
@@ -36,6 +36,7 @@ HRESULT CMainApp::Initialize()
 	
 	if (FAILED(Open_Level(LEVEL_GAMEPLAY)))
 		return E_FAIL;
+
 	
 	return S_OK;
 }
@@ -77,7 +78,7 @@ HRESULT CMainApp::Render()
 
 #endif
 
-	m_pGameInstance->End_Draw();
+		m_pGameInstance->End_Draw();
 
 	return	S_OK;
 }

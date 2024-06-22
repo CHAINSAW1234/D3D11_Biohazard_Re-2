@@ -20,6 +20,8 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+public:
+	virtual void Set_Dead(_bool bDead) override;
 
 public:
 	_bool				Get_isWorking() const { return m_isWorking; }
@@ -44,6 +46,8 @@ private:
 
 	_bool				m_bCountable = { false };
 	_uint				m_iItemCount = { 0 };
+
+	map<wstring, CGameObject*> m_mapPartUI;
 
 public:
 	static CItem_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -16,7 +16,8 @@ public:
 
 
 public:
-	HRESULT				Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	HRESULT				Initialize();
+	void				Set_GraphicDevice(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	void				ResetVariable();
 	void				Tick();
 	void				Render();
@@ -36,7 +37,10 @@ private:
 private:
 	_bool								m_bTabWindow_Debuger = { false };
 
-private: 
+private:
+	_int								m_iItemNum = { 2 };
+
+public: 
 	virtual void Free() override;
 };
 

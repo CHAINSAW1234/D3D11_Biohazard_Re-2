@@ -477,9 +477,6 @@
     <ClInclude Include="..\Public\Item_DragShadow.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ImGui_Manager.h">
-      <Filter>96. Imgui_Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\imguilib\GraphEditor.h">
       <Filter>96. Imgui_Manager\Include</Filter>
     </ClInclude>
@@ -521,6 +518,9 @@
     </ClInclude>
     <ClInclude Include="..\..\imguilib\ImZoomSlider.h">
       <Filter>96. Imgui_Manager\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImGui_Manager.h">
+      <Filter>96. Imgui_Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -731,9 +731,6 @@
     <ClCompile Include="..\Private\Item_DragShadow.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\ImGui_Manager.cpp">
-      <Filter>96. Imgui_Manager</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\imguilib\GraphEditor.cpp">
       <Filter>96. Imgui_Manager\Include</Filter>
     </ClCompile>
@@ -769,6 +766,9 @@
     </ClCompile>
     <ClCompile Include="..\..\imguilib\ImSequencer.cpp">
       <Filter>96. Imgui_Manager\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ImGui_Manager.cpp">
+      <Filter>96. Imgui_Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

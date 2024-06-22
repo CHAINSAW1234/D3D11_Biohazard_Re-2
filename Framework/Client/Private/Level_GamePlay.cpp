@@ -12,6 +12,10 @@
 /* Player */
 #include "Player.h"
 #include "Zombie.h"
+
+#include "ImGui_Manager.h"
+
+
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel{ pDevice, pContext }
 {
@@ -45,12 +49,21 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	m_pGameInstance->SetSimulate(true);
 
+	CImgui_Manager::Get_Instance()->Set_GraphicDevice(m_pDevice, m_pContext);
+	CImgui_Manager::Get_Instance()->Initialize();
+	CImgui_Manager::Get_Instance()->Tick();
+	CImgui_Manager::Get_Instance()->Render();
+
 	return S_OK;
 }
 
 void CLevel_GamePlay::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
+
+	CImgui_Manager::Get_Instance()->Tick();
+
+
 	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
 	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
 	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));	
@@ -93,12 +106,17 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 		}
 		
 	}
+
+
+
 }
 
 HRESULT CLevel_GamePlay::Render()
 {
 	if (FAILED(__super::Render()))
 		return E_FAIL;
+
+	CImgui_Manager::Get_Instance()->Render();
 
 	SetWindowText(g_hWnd, TEXT("Level_GamePlay."));
 

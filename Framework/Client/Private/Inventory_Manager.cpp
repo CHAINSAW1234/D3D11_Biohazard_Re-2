@@ -166,6 +166,8 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 			iter->Set_Dead(bInput);
 		}
 	}
+
+
 }
 
 void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)

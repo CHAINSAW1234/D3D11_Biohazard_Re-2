@@ -7,6 +7,8 @@
 #include "MainApp.h"
 #include "GameInstance.h"
 
+#include "ImGui_Manager.h"
+
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -114,7 +116,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	Safe_Release(pGameInstance);
 	Safe_Release(pMainApp);
-
+	CImgui_Manager::Destroy_Instance();
 	return (int)msg.wParam;
 }
 

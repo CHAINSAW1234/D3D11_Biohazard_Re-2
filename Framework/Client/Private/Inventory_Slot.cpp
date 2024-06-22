@@ -46,7 +46,8 @@ void CInventory_Slot::Late_Tick(_float fTimeDelta)
 
 HRESULT CInventory_Slot::Render()
 {
-	__super::Render();
+	if (FAILED(__super::Render()))
+		return E_FAIL;
 
 	return S_OK;
 }
