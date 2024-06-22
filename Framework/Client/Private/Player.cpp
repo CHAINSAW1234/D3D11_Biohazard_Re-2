@@ -17,6 +17,9 @@
 
 #define MODEL_SCALE 0.01f
 
+const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT"), TEXT("COMMON") };
+const wstring CPlayer::strAnimSetHoldName[ANIMSET_HOLD_END] = { TEXT("HOLD_HG"), TEXT("HOLG_STG"), TEXT("HOLD_MLE"), TEXT("HOLD_SUP") };
+
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -312,6 +315,19 @@ void CPlayer::Tick(_float fTimeDelta)
 	CWeapon* pWeapon = dynamic_cast<CWeapon*>(m_PartObjects[PART_WEAPON]);
 	pWeapon->Set_Socket(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")));
 
+#pragma region TEST
+	if (m_pGameInstance->Get_KeyState('Q') == DOWN) {
+		if(ANIMSET_MOVE((_int)m_eAnimSet_Move + 1) >= COMMON)
+			Change_AnimSet_Move(FINE);
+		else
+			Change_AnimSet_Move(ANIMSET_MOVE((_int)m_eAnimSet_Move + 1));
+
+
+	}
+
+#pragma endregion
+
+
 	Update_KeyInput_Reload();
 	Update_Direction();
 	Update_FSM();
@@ -400,6 +416,16 @@ void CPlayer::Col_Section()
 CModel* CPlayer::Get_Body_Model()
 {
 	return static_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(g_strModelTag));
+}
+
+void CPlayer::Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex)
+{
+	Get_Body_Model()->Change_Animation(iPlayingIndex, Get_AnimSetMoveName(m_eAnimSet_Move), iAnimIndex);
+}
+
+void CPlayer::Change_Body_Animation_Hold(_uint iPlayingIndex, _uint iAnimIndex)
+{
+	Get_Body_Model()->Change_Animation(iPlayingIndex, Get_AnimSetHoldName(m_eAnimSet_Hold), iAnimIndex);
 }
 
 CModel* CPlayer::Get_Weapon_Model()
@@ -683,7 +709,7 @@ void CPlayer::Update_KeyInput_Reload()
 {
 	if (Get_Body_Model()->isFinished(3)) {
 		if (m_pGameInstance->Get_KeyState('R') == DOWN) {
-			Get_Body_Model()->Change_Animation(3, TEXT("Default"), HOLD_RELOAD);
+			Change_Body_Animation_Hold(3, HOLD_RELOAD);
 			Get_Body_Model()->Set_TrackPosition(3, 0.f);
 			Get_Body_Model()->Set_BlendWeight(3, 10.f, 0.4f);
 
@@ -1331,7 +1357,7 @@ HRESULT CPlayer::Add_FSM_States()
 	m_pFSMCom->Add_State(HOLD, CPlayer_State_Hold::Create(this));
 	m_pFSMCom->Change_State(MOVE);
 
-	Get_Body_Model()->Change_Animation(0, TEXT("Default"), CPlayer::ANIM_IDLE);
+	Change_Body_Animation_Move(0, CPlayer::ANIM_IDLE);
 	Get_Body_Model()->Set_Loop(0, true);
 	Get_Body_Model()->Set_BlendWeight(0, 1.f);
 	Get_Body_Model()->Set_BlendWeight(1, 0.f);
