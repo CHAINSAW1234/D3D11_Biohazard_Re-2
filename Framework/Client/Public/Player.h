@@ -100,8 +100,8 @@ public:
 	void										Update_FSM();
 
 	void										Update_Direction();
-	void										Turn_Spine(_float fTimeDelta);
-
+	void										Turn_Spine_UpDown(_float fTimeDelta);		// Hold 상태에서의 카메라 보기
+	void										Turn_Spine_Light(_float fTimeDelta);		// Light 상태일때의 카메라 보기
 	void										Update_KeyInput_Reload();
 
 private:
