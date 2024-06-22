@@ -29,7 +29,8 @@ HRESULT CAnimation::Initialize(const aiAnimation* pAIAnimation, const map<string
 	strcpy_s(m_szName, pAIAnimation->mName.data);
 
 	m_fDuration = (_float)pAIAnimation->mDuration;
-	m_fTickPerSecond = (_float)pAIAnimation->mTicksPerSecond;
+	m_fTickPerSecond = 60.f;
+	//m_fTickPerSecond = (_float)pAIAnimation->mTicksPerSecond;
 
 	/* 이 애니메이션은 몇 개의 뼈를 컨트롤 하는가 */
 	m_iNumChannels = pAIAnimation->mNumChannels;
@@ -42,7 +43,7 @@ HRESULT CAnimation::Initialize(const aiAnimation* pAIAnimation, const map<string
 
 		m_Channels.push_back(pChannel);
 	}
-
+	
 	return S_OK;
 }
 
@@ -51,7 +52,8 @@ HRESULT CAnimation::Initialize(const ANIM_DESC& AnimDesc)
 	strcpy_s(m_szName, AnimDesc.strName.c_str());
 
 	m_fDuration = AnimDesc.fDuration;
-	m_fTickPerSecond = AnimDesc.fTickPerSecond;
+	m_fTickPerSecond = 60.f;
+	//m_fTickPerSecond = AnimDesc.fTickPerSecond;
 	m_iNumChannels = AnimDesc.iNumChannels;
 
 	for (size_t i = 0; i < m_iNumChannels; ++i)

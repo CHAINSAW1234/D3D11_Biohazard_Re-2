@@ -32,14 +32,13 @@ public:
 
 	void Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
 private:
-	CModel*					m_pModelCom = { nullptr };
-	CShader*				m_pShaderCom = { nullptr };	
-	CCollider*				m_pColliderCom = { nullptr };
-	_float4x4* m_pSocketMatrix = { nullptr };
+	CModel*							m_pModelCom = { nullptr };
+	CShader*						m_pShaderCom = { nullptr };	
+	_float4x4*						m_pSocketMatrix = { nullptr };
 
 private:
-	HRESULT					Add_Components();
-	HRESULT					Bind_ShaderResources();
+	HRESULT							Add_Components();
+	HRESULT							Bind_ShaderResources();
 
 public:
 	static CWeapon* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
