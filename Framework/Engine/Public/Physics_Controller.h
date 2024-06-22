@@ -163,6 +163,12 @@ public://For Mesh Cooking
 		}
 	}
 	PxSoftBody*												Create_SoftBody_Debug(const PxCookingParams& params, const PxArray<PxVec3>& triVerts, const PxArray<PxU32>& triIndices, bool useCollisionMeshForSimulation = false);
+	void													initCloth(const PxU32 numX, const PxU32 numZ, const PxVec3& position = PxVec3(0, 0, 0), const PxReal particleSpacing = 0.2f, const PxReal totalClothMass = 10.f);
+	void													initObstacles();
+	PX_FORCE_INLINE											PxU32 id(PxU32 x, PxU32 y, PxU32 numY)
+	{
+		return x * numY + y;
+	}
 public://For Terrain Cooking
 	void												InitTerrain();
 private:

@@ -11,6 +11,12 @@
 #include "Model.h"
 #include "SoftBody.h"
 
+static PxPBDParticleSystem* gParticleSystem = NULL;
+static PxParticleClothBuffer* gClothBuffer = NULL;
+static bool							gIsRunning = true;
+PxRigidDynamic* sphere;
+static _float				SimTime = 0.f;
+
 CPhysics_Controller::CPhysics_Controller() : m_pGameInstance{ CGameInstance::Get_Instance() }
 {
 	Safe_AddRef(m_pGameInstance);
@@ -43,25 +49,60 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	sceneDesc.cpuDispatcher = m_Dispatcher;
 	sceneDesc.filterShader = MegamotionFilterShader;
 
-#pragma region GPU 가속 설정
-	sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
-	sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
-	sceneDesc.flags |= PxSceneFlag::eENABLE_ACTIVE_ACTORS;
+#pragma region GPU RigidBody
+	//PxCudaContextManagerDesc cudaContextManagerDesc;
+	//m_CudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc, PxGetProfilerCallback());
 
-	sceneDesc.sceneQueryUpdateMode = PxSceneQueryUpdateMode::eBUILD_ENABLED_COMMIT_DISABLED;
-	sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
-	sceneDesc.gpuMaxNumPartitions = 8;
+	//sceneDesc.cudaContextManager = m_CudaContextManager;
 
-	PxCudaContextManagerDesc cudaContextManagerDesc;
-	m_CudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc);
-	if (!m_CudaContextManager->contextIsValid())
-	{
-		m_CudaContextManager->release();
-		m_CudaContextManager = NULL;
-	}
+	//sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
+	//sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
+#pragma endregion
 
-	sceneDesc.solverType = PxSolverType::ePGS;
-	sceneDesc.cudaContextManager = m_CudaContextManager;
+#pragma region GPU 가속 설정 - SoftBody
+	//sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
+	//sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
+	//sceneDesc.flags |= PxSceneFlag::eENABLE_ACTIVE_ACTORS;
+
+	//sceneDesc.sceneQueryUpdateMode = PxSceneQueryUpdateMode::eBUILD_ENABLED_COMMIT_DISABLED;
+	//sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
+	//sceneDesc.gpuMaxNumPartitions = 8;
+
+	//PxCudaContextManagerDesc cudaContextManagerDesc;
+	//m_CudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc);
+	//if (!m_CudaContextManager->contextIsValid())
+	//{
+	//	m_CudaContextManager->release();
+	//	m_CudaContextManager = NULL;
+	//}
+
+	//sceneDesc.solverType = PxSolverType::ePGS;
+	//sceneDesc.cudaContextManager = m_CudaContextManager;
+#pragma endregion
+
+#pragma region GPU 가속 설정 - Cloth
+	//if (PxGetSuggestedCudaDeviceOrdinal(m_Foundation->getErrorCallback()) >= 0)
+	//{
+	//	// initialize CUDA
+	//	PxCudaContextManagerDesc cudaContextManagerDesc;
+	//	m_CudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc, PxGetProfilerCallback());
+	//	if (m_CudaContextManager && !m_CudaContextManager->contextIsValid())
+	//	{
+	//		m_CudaContextManager->release();
+	//		m_CudaContextManager = NULL;
+	//	}
+	//}
+	//if (m_CudaContextManager == NULL)
+	//{
+	//	PxGetFoundation().error(PxErrorCode::eINVALID_OPERATION, PX_FL, "Failed to initialize CUDA!\n");
+	//}
+
+	//sceneDesc.cudaContextManager = m_CudaContextManager;
+	//sceneDesc.staticStructure = PxPruningStructureType::eDYNAMIC_AABB_TREE;
+	//sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
+	//sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
+	//sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
+	//sceneDesc.solverType = PxSolverType::eTGS;
 #pragma endregion
 
 	//Call Back
@@ -94,8 +135,8 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	m_vecRagdoll.clear();
 
 
-
-	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
+#pragma region SoftBody 생성 임시 코드
+	/*PxCookingParams cookingParams(m_Physics->getTolerancesScale());
 	cookingParams.meshWeldTolerance = 0.001f;
 	cookingParams.meshPreprocessParams = PxMeshPreprocessingFlags(PxMeshPreprocessingFlag::eWELD_VERTICES);
 	cookingParams.buildTriangleAdjacencies = false;
@@ -119,7 +160,38 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	PxRigidDynamic* rigidCubeB = Create_RigidCube(halfExtent, cubePosB);
 
 	connectCubeToSoftBody(rigidCubeA, 2 * halfExtent, cubePosA, softBodySphere);
-	connectCubeToSoftBody(rigidCubeA, 2 * halfExtent, cubePosA, softBodyCube);
+	connectCubeToSoftBody(rigidCubeA, 2 * halfExtent, cubePosA, softBodyCube);*/
+#pragma endregion
+
+#pragma region Cloth 설정 임시 코드
+	//// Setup Cloth
+	//const PxReal totalClothMass = 10.0f;
+
+	//PxU32 numPointsX = 250;
+	//PxU32 numPointsZ = 250;
+	//PxReal particleSpacing = 0.05f;
+	//initCloth(numPointsX, numPointsZ, PxVec3(-0.5f * numPointsX * particleSpacing, 8.f, -0.5f * numPointsZ * particleSpacing), particleSpacing, totalClothMass);
+
+	//initObstacles();
+
+
+	//// Setup rigid bodies
+	//const PxReal boxSize = 1.0f;
+	//const PxReal boxMass = 1.0f;
+	//PxShape* shape = m_Physics->createShape(PxBoxGeometry(0.5f * boxSize, 0.5f * boxSize, 0.5f * boxSize), *m_Material);
+	//for (int i = 0; i < 500; ++i)
+	//{
+	//	PxRigidDynamic* body = m_Physics->createRigidDynamic(PxTransform(PxVec3(i - 3.0f, 10, 4.0f)));
+	//	body->attachShape(*shape);
+	//	PxRigidBodyExt::updateMassAndInertia(*body, boxMass);
+	//	m_Scene->addActor(*body);
+	//}
+	//shape->release();
+
+
+	//m_Scene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
+	//m_Scene->setVisualizationParameter(PxVisualizationParameter::eSIMULATION_MESH, 2.0f);
+#pragma endregion
 
 	return S_OK;
 }
@@ -168,15 +240,28 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 		m_vecRagdoll[i]->Update(fTimeDelta);
 	}
 
+	//const PxReal dt = fTimeDelta;
+
+	//bool rotatingSphere = true;
+	//if (rotatingSphere)
+	//{
+	//	const PxReal speed = 2.0f;
+	//	PxTransform pose = sphere->getGlobalPose();
+	//	sphere->setKinematicTarget(PxTransform(pose.p, PxQuat(PxCos(SimTime * speed), PxVec3(0, 1, 0))));
+	//}
+
+	//SimTime += fTimeDelta;
+
 	//Simulate
 	m_Scene->simulate(fTimeDelta);
 	m_Scene->fetchResults(true);
+	/*m_Scene->fetchResultsParticleSystem();
 
 	for (PxU32 i = 0; i < m_vecSoftBodies.size(); i++)
 	{
 		SoftBody* sb = m_vecSoftBodies[i];
 		sb->copyDeformedVerticesFromGPU();
-	}
+	}*/
 }
 
 CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int* Index, CGameObject* pCharacter, _float fHeight, _float fRadius, CTransform* pTransform, vector<CBone*>* pBones, const std::string& name)
@@ -950,6 +1035,138 @@ PxSoftBody* CPhysics_Controller::Create_SoftBody_Debug(const PxCookingParams& pa
 	}
 
 	return softBody;
+}
+
+void CPhysics_Controller::initCloth(const PxU32 numX, const PxU32 numZ, const PxVec3& position, const PxReal particleSpacing, const PxReal totalClothMass)
+{
+	const PxU32 numParticles = numX * numZ;
+	const PxU32 numSprings = (numX - 1) * (numZ - 1) * 4 + (numX - 1) + (numZ - 1);
+	const PxU32 numTriangles = (numX - 1) * (numZ - 1) * 2;
+
+	const PxReal restOffset = particleSpacing;
+
+	const PxReal stretchStiffness = 10000.f;
+	const PxReal shearStiffness = 100.f;
+	const PxReal springDamping = 0.001f;
+
+	// Material setup
+	PxPBDMaterial* defaultMat = m_Physics->createPBDMaterial(0.8f, 0.05f, 1e+6f, 0.001f, 0.5f, 0.005f, 0.05f, 0.f, 0.f);
+
+	PxPBDParticleSystem* particleSystem = m_Physics->createPBDParticleSystem(*m_CudaContextManager);
+	gParticleSystem = particleSystem;
+
+	// General particle system setting
+
+	const PxReal particleMass = totalClothMass / numParticles;
+	particleSystem->setRestOffset(restOffset);
+	particleSystem->setContactOffset(restOffset + 0.02f);
+	particleSystem->setParticleContactOffset(restOffset + 0.02f);
+	particleSystem->setSolidRestOffset(restOffset);
+	particleSystem->setFluidRestOffset(0.0f);
+
+	m_Scene->addActor(*particleSystem);
+
+	// Create particles and add them to the particle system
+	const PxU32 particlePhase = particleSystem->createPhase(defaultMat, PxParticlePhaseFlags(PxParticlePhaseFlag::eParticlePhaseSelfCollideFilter | PxParticlePhaseFlag::eParticlePhaseSelfCollide));
+
+	ExtGpu::PxParticleClothBufferHelper* clothBuffers = ExtGpu::PxCreateParticleClothBufferHelper(1, numTriangles, numSprings, numParticles, m_CudaContextManager);
+
+	PxU32* phase = m_CudaContextManager->allocPinnedHostBuffer<PxU32>(numParticles);
+	PxVec4* positionInvMass = m_CudaContextManager->allocPinnedHostBuffer<PxVec4>(numParticles);
+	PxVec4* velocity = m_CudaContextManager->allocPinnedHostBuffer<PxVec4>(numParticles);
+
+	PxReal x = position.x;
+	PxReal y = position.y;
+	PxReal z = position.z;
+
+	// Define springs and triangles
+	PxArray<PxParticleSpring> springs;
+	springs.reserve(numSprings);
+	PxArray<PxU32> triangles;
+	triangles.reserve(numTriangles * 3);
+
+	for (PxU32 i = 0; i < numX; ++i)
+	{
+		for (PxU32 j = 0; j < numZ; ++j)
+		{
+			const PxU32 index = i * numZ + j;
+
+			PxVec4 pos(x, y, z, 1.0f / particleMass);
+			phase[index] = particlePhase;
+			positionInvMass[index] = pos;
+			velocity[index] = PxVec4(0.0f);
+
+			if (i > 0)
+			{
+				PxParticleSpring spring = { id(i - 1, j, numZ), id(i, j, numZ), particleSpacing, stretchStiffness, springDamping, 0 };
+				springs.pushBack(spring);
+			}
+			if (j > 0)
+			{
+				PxParticleSpring spring = { id(i, j - 1, numZ), id(i, j, numZ), particleSpacing, stretchStiffness, springDamping, 0 };
+				springs.pushBack(spring);
+			}
+
+			if (i > 0 && j > 0)
+			{
+				PxParticleSpring spring0 = { id(i - 1, j - 1, numZ), id(i, j, numZ), PxSqrt(2.0f) * particleSpacing, shearStiffness, springDamping, 0 };
+				springs.pushBack(spring0);
+				PxParticleSpring spring1 = { id(i - 1, j, numZ), id(i, j - 1, numZ), PxSqrt(2.0f) * particleSpacing, shearStiffness, springDamping, 0 };
+				springs.pushBack(spring1);
+
+				//Triangles are used to compute approximated aerodynamic forces for cloth falling down
+				triangles.pushBack(id(i - 1, j - 1, numZ));
+				triangles.pushBack(id(i - 1, j, numZ));
+				triangles.pushBack(id(i, j - 1, numZ));
+
+				triangles.pushBack(id(i - 1, j, numZ));
+				triangles.pushBack(id(i, j - 1, numZ));
+				triangles.pushBack(id(i, j, numZ));
+			}
+
+			z += particleSpacing;
+		}
+		z = position.z;
+		x += particleSpacing;
+	}
+
+	PX_ASSERT(numSprings == springs.size());
+	PX_ASSERT(numTriangles == triangles.size() / 3);
+
+	clothBuffers->addCloth(0.0f, 0.0f, 0.0f, triangles.begin(), numTriangles, springs.begin(), numSprings, positionInvMass, numParticles);
+
+	ExtGpu::PxParticleBufferDesc bufferDesc;
+	bufferDesc.maxParticles = numParticles;
+	bufferDesc.numActiveParticles = numParticles;
+	bufferDesc.positions = positionInvMass;
+	bufferDesc.velocities = velocity;
+	bufferDesc.phases = phase;
+
+	const PxParticleClothDesc& clothDesc = clothBuffers->getParticleClothDesc();
+	PxParticleClothPreProcessor* clothPreProcessor = PxCreateParticleClothPreProcessor(m_CudaContextManager);
+
+	PxPartitionedParticleCloth output;
+	clothPreProcessor->partitionSprings(clothDesc, output);
+	clothPreProcessor->release();
+
+	gClothBuffer = physx::ExtGpu::PxCreateAndPopulateParticleClothBuffer(bufferDesc, clothDesc, output, m_CudaContextManager);
+	gParticleSystem->addParticleBuffer(gClothBuffer);
+
+	clothBuffers->release();
+
+	m_CudaContextManager->freePinnedHostBuffer(positionInvMass);
+	m_CudaContextManager->freePinnedHostBuffer(velocity);
+	m_CudaContextManager->freePinnedHostBuffer(phase);
+}
+
+void CPhysics_Controller::initObstacles()
+{
+	PxShape* shape = m_Physics->createShape(PxSphereGeometry(3.0f), *m_Material);
+	sphere = m_Physics->createRigidDynamic(PxTransform(PxVec3(0.f, 5.0f, 0.f)));
+	sphere->attachShape(*shape);
+	sphere->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+	m_Scene->addActor(*sphere);
+	shape->release();
 }
 
 void CPhysics_Controller::InitTerrain()

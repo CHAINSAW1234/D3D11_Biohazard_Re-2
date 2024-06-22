@@ -37,6 +37,9 @@ namespace Engine
 #include <physx/gpu/PxGpu.h>
 #include "physx/cudamanager/PxCudaContextManager.h"
 #include "physx/cudamanager/PxCudaContext.h"
+#include "physx/extensions/PxParticleExt.h"
+#include "physx/PxParticleBuffer.h"
+#include "physx/omnipvd/PxOmniPvd.h"
 using namespace physx;
 
 #include "Effects11/d3dx11effect.h"
@@ -174,6 +177,6 @@ using namespace Engine;
 
 #pragma region Animation LOD
 
-//#define ANIMATION_LOD
+#define ANIMATION_LOD
 
 #pragma endregion
