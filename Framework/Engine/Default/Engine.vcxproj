@@ -111,7 +111,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../Public/;..\..\imguilib;C:\vcpkg\installed\x64-windows\include/physx;C:\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;..\..\imguilib;C:\vcpkg\installed\x64-windows\include/physx;C:\vcpkg\installed\x64-windows\include;../Bin/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/MP /Zm2000 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
