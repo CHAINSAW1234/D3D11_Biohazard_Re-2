@@ -880,10 +880,6 @@ HRESULT CLoader::Load_Items_Model(_matrix TransformMatrix)
 		return E_FAIL;
 
 
-
-
-	 
-
 #pragma endregion
 
 

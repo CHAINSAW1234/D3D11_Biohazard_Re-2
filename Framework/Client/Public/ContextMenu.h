@@ -25,7 +25,7 @@ private:
 	void Hide_Operation(_float fTimeDelta);
 
 public:
-	void MenuSeting(ITEM_TYPE eItemType, _bool bActive, _float2 fAppearPos, _float2 fArrivalPos );
+	void Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float2 fAppearPos, _float2 fArrivalPos );
 
 private:
 	vector<class CButton_UI*>	m_vecMenuItem;

@@ -200,7 +200,7 @@ void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
 	}
 }
 
-void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation)
+void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_TYPE eCallItemType)
 {
 	switch (eOperation)
 	{

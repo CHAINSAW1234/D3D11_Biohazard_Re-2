@@ -31,7 +31,7 @@ private:
 
 public:
 	void Reset_Viewer();
-	void Set_Operation(UI_OPERRATION eOperation);
+	void Set_Operation(UI_OPERRATION eOperation, ITEM_TYPE eCallItemType);
 	
 private:
 	vector<CModel*>		m_vecModelCom;

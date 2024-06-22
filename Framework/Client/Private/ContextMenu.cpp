@@ -84,20 +84,20 @@ HRESULT CContextMenu::Render()
 
 void CContextMenu::PopUp_Operation(_float fTimeDelta)
 {
+
 }
 
 void CContextMenu::Idle_Operation(_float fTimeDelta)
 {
 	
-
-
 }
 
 void CContextMenu::Hide_Operation(_float fTimeDelta)
 {
+
 }
 
-void CContextMenu::MenuSeting(ITEM_TYPE eItemType, _bool bActive, _float2 fAppearPos, _float2 fArrivalPos)
+void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float2 fAppearPos, _float2 fArrivalPos)
 {
 	m_bDead = false;
 	m_fAppearPos = fAppearPos;
