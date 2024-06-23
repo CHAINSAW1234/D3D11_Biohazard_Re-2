@@ -191,6 +191,7 @@
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\EventProp.h" />
     <ClInclude Include="..\Public\Face_Zombie.h" />
+    <ClInclude Include="..\Public\FlashLight.h" />
     <ClInclude Include="..\Public\Header_Package_Zombie.h" />
     <ClInclude Include="..\Public\InteractProps.h" />
     <ClInclude Include="..\Public\Inventory_Manager.h" />
@@ -278,6 +279,7 @@
     <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\EventProp.cpp" />
     <ClCompile Include="..\Private\Face_Zombie.cpp" />
+    <ClCompile Include="..\Private\FlashLight.cpp" />
     <ClCompile Include="..\Private\InteractProps.cpp" />
     <ClCompile Include="..\Private\Inventory_Manager.cpp" />
     <ClCompile Include="..\Private\Crosshair_UI.cpp" />

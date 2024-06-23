@@ -32,10 +32,11 @@ HRESULT CBody_EventProp::Initialize(void* pArg)
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
-	m_pModelCom->Add_AnimPlayingInfo(0, false, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 
 
 	m_pModelCom->Active_RootMotion_Rotation(true);
+	//m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
 #ifndef NON_COLLISION_PROP
 
@@ -52,22 +53,12 @@ void CBody_EventProp::Tick(_float fTimeDelta)
 
 void CBody_EventProp::Late_Tick(_float fTimeDelta)
 {
-	//switch (*m_pState)
-	//{
-	//case CWindow::WINDOW_STATIC:
-	//	//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // 잘알아갑니다
-	//	m_pModelCom->Change_Animation(0, *m_pState);
-	//	break;
-	//case CWindow::WINDOW_BREAK:
-	//	m_pModelCom->Change_Animation(0, *m_pState);
-	//	break;
-	//}
+	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+	
+	
 	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
-
-	if(m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]!= nullptr)
-		m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 

@@ -23,6 +23,8 @@ void CPlayer_State_Move_Jog::OnStateUpdate(_float fTimeDelta)
 		int a = 1;
 	}
 
+	//cout << m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) << endl;		
+	cout << m_pPlayer->Get_Body_Model()->Get_TrackPosition(0) << endl;
 	Update_KeyInput();
 	Update_Degree();
 	Set_MoveAnimation(fTimeDelta);
@@ -70,25 +72,25 @@ void CPlayer_State_Move_Jog::Update_KeyInput()
 void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 {
 #pragma region Start
-	if (!(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) >= 15 &&
-		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) <= 26) ||
+	if (!(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) >= CPlayer::JOG_START_L0 &&
+		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) <= CPlayer::JOG_RCYCLE_SHORT_LOOP) ||
 		(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::JOG_STRAIGHT_LOOP && abs(m_fDegree) > 80) ) {
 
 		m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
 		m_pPlayer->Get_Body_Model()->Set_Loop(0, false);
 		m_pPlayer->Get_Body_Model()->Set_Loop(1, false);
 
-		m_pPlayer->Get_Body_Model()->Set_TrackPosition(0, 0)	;
+		m_pPlayer->Get_Body_Model()->Set_TrackPosition(0, 0);
 		m_pPlayer->Get_Body_Model()->Set_TrackPosition(1, 0);
 
 		if (fabsf(m_fDegree) <= 90.f) {
 			if (m_fDegree < 0.f) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_L0);
-				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_L90);
+				m_pPlayer->Change_Body_Animation_Move(0, CPlayer::JOG_START_L0);
+				m_pPlayer->Change_Body_Animation_Move(1, CPlayer::JOG_START_L90);
 			}
 			else {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_R0);
-				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_R90);
+				m_pPlayer->Change_Body_Animation_Move(0, CPlayer::JOG_START_R0);
+				m_pPlayer->Change_Body_Animation_Move(1, CPlayer::JOG_START_R90);
 			}
 			_float fRatio = abs(m_fDegree) / 90.f;
 
@@ -97,12 +99,12 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 		}
 		else {
 			if (m_fDegree < 0.f) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_L90);
-				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_L180);
+				m_pPlayer->Change_Body_Animation_Move(0, CPlayer::JOG_START_L90);
+				m_pPlayer->Change_Body_Animation_Move(1, CPlayer::JOG_START_L180);
 			}
 			else {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_START_R90);
-				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::JOG_START_R180);
+				m_pPlayer->Change_Body_Animation_Move(0, CPlayer::JOG_START_R90);
+				m_pPlayer->Change_Body_Animation_Move(1, CPlayer::JOG_START_R180);
 			}
 			_float fRatio = (abs(m_fDegree)- 90.f) / 90.f;
 
@@ -123,17 +125,17 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 			m_pPlayer->Get_Body_Model()->Get_TrackPosition(0) >= 56 ) ||
 			(CPlayer::JOG_START_L0 <= iCurrentAnimIndex && iCurrentAnimIndex <= CPlayer::JOG_START_L180 &&
 				m_pPlayer->Get_Body_Model()->Get_TrackPosition(0) >= 36)	) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_STRAIGHT_LOOP);
+				m_pPlayer->Change_Body_Animation_Move(0, CPlayer::JOG_STRAIGHT_LOOP);
 				m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
-				m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
+				m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.1f);
 
-				m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
-				m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 0.2);
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 0.2f);
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 0.2f);
 		}
 
 	}
 	//else if (m_pPlayer->Get_Body_Model()->isFinished(0) || m_pPlayer->Get_Body_Model()->isFinished(1)) {
-	//	m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::JOG_STRAIGHT_LOOP);
+	//	m_pPlayer->Change_Body_Animation_Move(0, CPlayer::JOG_STRAIGHT_LOOP);
 	//	m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
 	//	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
 
@@ -179,11 +181,11 @@ void CPlayer_State_Move_Jog::Look_Cam(_float fTimeDelta)
 
 
 	//if (fDegree > 5) {
-	//	m_pPlayer->Get_Body_Model()->Change_Animation(2, CPlayer::TURN_L180);
+	//	m_pPlayer->Change_Body_Animation_Move(2, CPlayer::TURN_L180);
 	//	m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 0.3f);
 	//}
 	//else if (fDegree < -5) {
-	//	m_pPlayer->Get_Body_Model()->Change_Animation(2, CPlayer::TURN_R180);
+	//	m_pPlayer->Change_Body_Animation_Move(2, CPlayer::TURN_R180);
 	//	m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 0.3f);
 	//}
 	//else {

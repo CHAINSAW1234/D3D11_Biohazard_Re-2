@@ -31,6 +31,18 @@ HRESULT CDoor::Initialize(void* pArg)
 		m_eType = DOOR_DOUBLE;
 	else
 		m_eType = DOOR_ONE;
+	if (m_eType == DOOR_DOUBLE)
+	{
+		if ((m_tagPropDesc.strGamePrototypeName.find("038") != string::npos))
+			m_eDoubleDoorType = DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR;
+		else
+			m_eDoubleDoorType = DOUBLE_DOOR_MODEL_TYPE::NORMAL_DOOR;
+
+	}
+
+
+
+
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -56,10 +68,13 @@ void CDoor::Tick(_float fTimeDelta)
 
 	if (m_pPlayer == nullptr)
 		return;
+
+	m_eType == CDoor::DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
+
 	__super::Tick(fTimeDelta);
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-	if (m_eType == DOOR_DOUBLE)
-		m_pColDoubledoorCom->Tick(m_pTransformCom->Get_WorldMatrix());
+	//m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+	//if (m_eType == DOOR_DOUBLE)
+	//	m_pColDoubledoorCom->Tick(m_pTransformCom->Get_WorldMatrix());
 }
 
 void CDoor::Late_Tick(_float fTimeDelta)
@@ -70,6 +85,7 @@ void CDoor::Late_Tick(_float fTimeDelta)
 	if (m_bRender == false)
 		return;
 	__super::Late_Tick(fTimeDelta);
+	m_eType == CDoor::DOOR_ONE ? OneDoor_Late_Tick(fTimeDelta) : DoubleDoor_Late_Tick(fTimeDelta);
 }
 
 HRESULT CDoor::Render()
@@ -81,23 +97,23 @@ HRESULT CDoor::Render()
 
 HRESULT CDoor::Add_Components()
 {
-
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(100.f);
+	ColliderDesc.fRadius = _float(80.f);
 	ColliderDesc.vCenter = _float3(-10.f, 1.f, 0.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Left_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
 		return E_FAIL;
 	if (m_eType == DOOR_DOUBLE)
 	{
 		CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc1{};
 
-		ColliderDesc1.fRadius = _float(100.f);
-		ColliderDesc1.vCenter = _float3(50.f, 1.f, 0.f);
+		ColliderDesc1.fRadius = _float(80.f);
+		ColliderDesc1.vCenter = _float3(-180.f, 1.f, 0.f);
+		/* For.Com_Collider */
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-			TEXT("Com_Right_Collider"), (CComponent**)&m_pColDoubledoorCom, &ColliderDesc1)))
+			TEXT("Com_Collider_Double"), (CComponent**)&m_pColDoubledoorCom, &ColliderDesc1)))
 			return E_FAIL;
 	}
 
@@ -114,7 +130,9 @@ HRESULT CDoor::Add_PartObjects()
 	CBody_Door::BODY_DOOR_DESC BodyDesc = {};
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pState = &m_eType;
+	BodyDesc.pDoubleDoorType = &m_eDoubleDoorType;
 	BodyDesc.pDoubleDoorState = &m_eDoubleState;
+	BodyDesc.pDoubleDoorState_Prev = &m_eDoubleState_Prev;
 	BodyDesc.pOneDoorState = &m_eOneState;
 	BodyDesc.pOneDoorState_Prev = &m_eOneState_Prev;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
@@ -150,52 +168,102 @@ void CDoor::DoubleDoor_Tick(_float fTimeDelta)
 		m_eDoubleState = DOUBLEDOOR_STATIC;
 	}
 
-	//if ((m_bCol||m_bDoubleCol) && !m_bActive)
-	//{
-	//	//UI띄우고
-	//	if (*m_pPlayerInteract)
-	//		DoubleDoor_Active();
-	//	m_bCol = false;
-	//	m_bDoubleCol = false;
-	//}
+	if ((m_bCol||m_bDoubleCol) && !m_bActive)
+	{
+		//UI띄우고
+		if (*m_pPlayerInteract)
+			DoubleDoor_Active();
+		m_bCol = false;
+		m_bDoubleCol = false;
+	}
 
-
-
-	//m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-	//m_pColDoubledoorCom->Tick(m_pTransformCom->Get_WorldMatrix());
+	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+	m_pColDoubledoorCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
 }
 
 void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 {
-	switch (m_eDoubleState)
+	if (m_eDoubleDoorType == DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR)
 	{
-	case CDoor::LSIDE_DOUBLEDOOR_OPEN_L:
-	{
-		break;
+		switch (m_eDoubleState)
+		{
+		case CDoor::LSIDE_DOUBLEDOOR_OPEN_L:
+		{
+			m_eDoubleState_Prev = m_eDoubleState;
+
+			break;
+
+		}
+		case CDoor::LSIDE_DOUBLEDOOR_OPEN_R:
+		{
+			m_eDoubleState_Prev = m_eDoubleState;
+
+			break;
+
+		}
+		case CDoor::RSIDE_DOUBLEDOOR_OPEN_L:
+		{
+			m_eDoubleState_Prev = m_eDoubleState;
+
+			break;
+
+		}
+		case CDoor::RSIDE_DOUBLEDOOR_OPEN_R:
+		{
+			m_eDoubleState_Prev = m_eDoubleState;
+
+			break;
+
+		}
+		case CDoor::DOUBLEDOOR_STATIC:
+		{
+			break;
+		}
+		}
 
 	}
-	case CDoor::LSIDE_DOUBLEDOOR_OPEN_R:
+	else
 	{
-		break;
+		switch (m_eDoubleState)
+		{
+		case CDoor::LSIDE_DOUBLEDOOR_OPEN_L:
+		{
+			m_eDoubleState_Prev = m_eDoubleState;
+			break;
+		}
+		case CDoor::LSIDE_DOUBLEDOOR_OPEN_R:
+		{
+			m_eDoubleState_Prev = m_eDoubleState;
 
-	}
-	case CDoor::RSIDE_DOUBLEDOOR_OPEN_L:
-	{
-		break;
+			break;
+		}
+		case CDoor::RSIDE_DOUBLEDOOR_OPEN_L:
+		{
+			m_eDoubleState_Prev = m_eDoubleState;
 
-	}
-	case CDoor::RSIDE_DOUBLEDOOR_OPEN_R:
-	{
-		break;
+			break;
+		}
+		case CDoor::RSIDE_DOUBLEDOOR_OPEN_R:
+		{
+			m_eDoubleState_Prev = m_eDoubleState;
 
+			break;
+		}
+		case CDoor::DOUBLEDOOR_STATIC:
+		{
+			break;
+		}
+
+		}
 	}
-	case CDoor::DOUBLEDOOR_STATIC:
-	{
-	}
-	}
+
+	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
+
+	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
+	if (pPlayerCol->Intersect(m_pColDoubledoorCom))
+		m_bDoubleCol = true;
 }
-
 void CDoor::DoubleDoor_Active()
 {
 
@@ -245,14 +313,14 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 		m_eOneState = ONEDOOR_STATIC;
 	}
 
-	//if (m_bCol && !m_bActive)
-	//{
-	//	//UI띄우고
-	//	if (*m_pPlayerInteract)
-	//		OneDoor_Active();
-	//	m_bCol = false;
-	//}
-	//m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+	if (m_bCol && !m_bActive)
+	{
+		//UI띄우고
+		if (*m_pPlayerInteract)
+			OneDoor_Active();
+		m_bCol = false;
+	}
+	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 
 }
 
@@ -271,6 +339,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 	case CDoor::ONEDOOR_STATIC:
 		break;
 	}
+	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
 
 }
 

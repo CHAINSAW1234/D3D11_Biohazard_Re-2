@@ -53,15 +53,15 @@ void CPlayer_State_Hold_Idle::Set_MoveAnimation(_float fTimeDelta)
 
 #pragma region 1
 	if (dwDirection & DIRECTION_FRONT) {
-		m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::STRAFEL_F);
+		m_pPlayer->Change_Body_Animation_Hold(0, CPlayer::STRAFEL_F);
 		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, .5f, 0.2f);
 		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, .5f, 0.2f);
 
 		if (dwDirection & DIRECTION_LEFT) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::STRAFEL_L);
+			m_pPlayer->Change_Body_Animation_Hold(1, CPlayer::STRAFEL_L);
 		}
 		else if (dwDirection & DIRECTION_RIGHT) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::STRAFEL_R);
+			m_pPlayer->Change_Body_Animation_Hold(1,CPlayer::STRAFEL_R);
 		}
 		else {
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 0.2f);
@@ -69,15 +69,15 @@ void CPlayer_State_Hold_Idle::Set_MoveAnimation(_float fTimeDelta)
 		}
 	}
 	else if (dwDirection & DIRECTION_BACK) {
-		m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::STRAFEL_B);
+		m_pPlayer->Change_Body_Animation_Hold(0, CPlayer::STRAFEL_B);
 		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, .5f, 0.2f);
 		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, .5f, 0.2f);
 
 		if (dwDirection & DIRECTION_LEFT) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::STRAFEL_L);
+			m_pPlayer->Change_Body_Animation_Hold(1, CPlayer::STRAFEL_L);
 		}
 		else if (dwDirection & DIRECTION_RIGHT) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::STRAFEL_R);
+			m_pPlayer->Change_Body_Animation_Hold(1, CPlayer::STRAFEL_R);
 		}
 		else {
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 0.2f);
@@ -89,13 +89,13 @@ void CPlayer_State_Hold_Idle::Set_MoveAnimation(_float fTimeDelta)
 		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 0.2f);
 
 		if (dwDirection & DIRECTION_LEFT) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::STRAFEL_L);
+			m_pPlayer->Change_Body_Animation_Hold(0, CPlayer::STRAFEL_L);
 		}
 		else if (dwDirection & DIRECTION_RIGHT) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::STRAFEL_R);
+			m_pPlayer->Change_Body_Animation_Hold(0, CPlayer::STRAFEL_R);
 		}
 		else {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::HOLD_IDLE_LOOP);
+			m_pPlayer->Change_Body_Animation_Hold(0, CPlayer::HOLD_IDLE_LOOP);
 		}
 	}
 #pragma endregion
@@ -108,14 +108,14 @@ void CPlayer_State_Hold_Idle::Look_Cam(_float fTimeDelta)
 	//	m_pPlayer->Get_Body_Model()->Set_Loop(2, true);
 
 	//	if (m_fDegree < 0) {
-	//		m_pPlayer->Get_Body_Model()->Change_Animation(2, CPlayer::WHEEL_L180);
+	//		m_pPlayer->Change_Body_Animation_Hold(2, CPlayer::WHEEL_L180);
 	//	}
 	//	else {
-	//		m_pPlayer->Get_Body_Model()->Change_Animation(2, CPlayer::WHEEL_R180);
+	//		m_pPlayer->Change_Body_Animation_Hold(2, CPlayer::WHEEL_R180);
 	//	}
 	//}
 	//else {
-	//	m_pPlayer->Get_Body_Model()->Change_Animation(2, CPlayer::HOLD_IDLE_LOOP);
+	//	m_pPlayer->Change_Body_Animation_Hold(2, CPlayer::HOLD_IDLE_LOOP);
 	//	m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 0.f, 0.2f);
 	//}
 	_float fDegree = m_pPlayer->Get_CamDegree();
@@ -139,12 +139,12 @@ void CPlayer_State_Hold_Idle::Shot()
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 1, 0.1f);
 			if (1) {
 				// 총알 있으면
-				m_pPlayer->Get_Body_Model()->Change_Animation(2, CPlayer::HOLD_SHOT);
+				m_pPlayer->Change_Body_Animation_Hold(2, CPlayer::HOLD_SHOT);
 				// 총알 발사하는 함수 추가
 			}
 			else {
 				// 총알 없음
-				m_pPlayer->Get_Body_Model()->Change_Animation(2, CPlayer::HOLD_SHOT_NO_AMMO);
+				m_pPlayer->Change_Body_Animation_Hold(2, CPlayer::HOLD_SHOT_NO_AMMO);
 			}
 
 			m_pPlayer->Get_Body_Model()->Set_TrackPosition(2, 0);

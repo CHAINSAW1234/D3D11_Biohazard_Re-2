@@ -46,9 +46,9 @@ public:		/* Anim Controll */
 	void							Reset_NonActive_Body(const list<_uint>& ActivePlayingIndices);
 
 public:		/* Public Utility */
-	_bool							Compute_Direction_To_Player(_float3* pDirection);
+	_bool							Compute_Direction_To_Player_World(_float3* pDirection);
 	_bool							Compute_Direction_To_Player_Local(_float3* pDirection);
-	_bool							Compute_Player_Angle_XZ_Plane(_float* pAngle);
+	_bool							Compute_Player_Angle_XZ_Plane_Local(_float* pAngle);
 
 
 	CTransform*						Get_Transform(CGameObject* pObject);

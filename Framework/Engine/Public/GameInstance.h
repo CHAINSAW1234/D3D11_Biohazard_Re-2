@@ -263,9 +263,11 @@ public:/*For Physics Controller*/
 	void									Cook_Terrain();
 	void									Simulate();
 	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr);
+	void									Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform ,_float4 vDelta);
+	void									Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform ,_float4 vDelta);
 	void									Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 	_bool									RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
@@ -274,6 +276,10 @@ public:/*For Physics Controller*/
 	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone,class CTransform* pTransform, const string& name);
 	void									Start_Ragdoll(class CRagdoll_Physics* pRagdoll, _uint iId);
 	class CPxCollider*						Create_Px_Collider(class CModel* pModel, class CTransform* pTransform, _int* iId);
+	class CPxCollider*						Create_Px_Collider_Convert_Root(class CModel* pModel, class CTransform* pTransform, _int* iId);
+	class CPxCollider*						Create_Px_Collider_Convert_Root_Double_Door(class CModel* pModel, class CTransform* pTransform, _int* iId);
+	class CPxCollider*						Create_Px_Collider_Cabinet(class CModel* pModel, class CTransform* pTransform, _int* iId);
+	class CPxCollider*						Create_Px_Collider_Toilet(class CModel* pModel, class CTransform* pTransform, _int* iId);
 
 private:/*For Physics_Controller*/
 	_uint*									m_pIndices = { nullptr };
@@ -324,6 +330,14 @@ public:
 	_float Get_Ease(EASING_TYPE eEase, _float fCurValue, _float fTargetValue, _float fRatio);
 #pragma endregion
 
+#pragma region		For Animation Library
+
+	_uint Get_NumAnim_Prototypes(const wstring& strAnimLayerTag);
+	HRESULT Add_Prototypes_Animation(const wstring& strAnimLayerTag, const string& strDirPath);
+	HRESULT Clone_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, CAnimation** ppAnimation);
+
+#pragma endregion
+
 private:
 	class CGraphic_Device*					m_pGraphic_Device = { nullptr };
 	class CInput_Device*					m_pInput_Device = { nullptr };
@@ -344,6 +358,7 @@ private:
 	class CThread_Pool*						m_pThread_Pool = { nullptr };
 	class CAIController*					m_pAIController = { nullptr };
 	class CEasing*							m_pEasing = { nullptr };
+	class CAnimation_Library*				m_pAnimation_Library = { nullptr };
 
 
 	/*for physics*/

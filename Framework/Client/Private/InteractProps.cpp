@@ -37,6 +37,8 @@ HRESULT CInteractProps::Initialize(void* pArg)
 	m_tagPropDesc.BelongIndexs = pObj_desc->BelongIndexs;
 	m_tagPropDesc.iRegionDir = pObj_desc->iRegionDir;
 	m_tagPropDesc.iRegionNum = pObj_desc->iRegionNum;
+	m_tagPropDesc.iPartObj = pObj_desc->iPartObj;
+	m_tagPropDesc.iPropType = pObj_desc->iPropType;
 
 	for (auto iter : m_tagPropDesc.BelongIndexs)
 	{
@@ -50,6 +52,7 @@ HRESULT CInteractProps::Initialize(void* pArg)
 	//파트 오브젝이나 컴포넌트는 커스텀
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
+	//
 
 	return S_OK;
 }

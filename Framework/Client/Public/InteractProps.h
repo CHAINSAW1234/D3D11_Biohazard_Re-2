@@ -144,9 +144,9 @@ protected:
 
 	
 protected:
-	void														Check_Player();
-	void														Check_Col_Sphere_Player();
-	_bool														Visible();
+	void												Check_Player();
+	void												Check_Col_Sphere_Player();
+	_bool												Visible();
 	virtual HRESULT										Add_Components();
 	virtual HRESULT										Add_PartObjects();
 	virtual HRESULT										Initialize_PartObjects();

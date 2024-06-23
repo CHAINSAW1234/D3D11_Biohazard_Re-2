@@ -72,6 +72,8 @@ private:
 	CMouse*			m_pMouse = { nullptr };
 	CKeyboard*		m_pKeyboard = { nullptr };
 
+	HWND			m_hWnd = { NULL };
+
 public:
 	static CInput_Device* Create(HWND hWnd);
 	virtual void Free() override;

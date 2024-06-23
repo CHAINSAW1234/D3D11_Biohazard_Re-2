@@ -3,7 +3,7 @@
 CThread_Pool::CThread_Pool(size_t num_threads)
     : num_threads_(num_threads), stop_all(false), active_jobs_(0) {
     worker_threads_.reserve(num_threads_);
-    for (size_t i = 0; i < num_threads_; ++i) {
+    for (size_t i = 0; i < 1; ++i) {
         worker_threads_.emplace_back([this]() { this->WorkerThread(); });
     }
 }

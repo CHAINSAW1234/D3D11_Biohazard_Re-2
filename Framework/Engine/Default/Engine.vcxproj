@@ -187,6 +187,7 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\AIController.cpp" />
     <ClCompile Include="..\private\Animation.cpp" />
     <ClCompile Include="..\Private\Animation_Layer.cpp" />
+    <ClCompile Include="..\Private\Animation_Library.cpp" />
     <ClCompile Include="..\Private\Animator.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
     <ClCompile Include="..\Private\BehaviorTree.cpp" />
@@ -277,6 +278,7 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\AIController.h" />
     <ClInclude Include="..\public\Animation.h" />
     <ClInclude Include="..\Public\Animation_Layer.h" />
+    <ClInclude Include="..\Public\Animation_Library.h" />
     <ClInclude Include="..\Public\Animator.h" />
     <ClInclude Include="..\Public\Base.h" />
     <ClInclude Include="..\Public\BehaviorTree.h" />

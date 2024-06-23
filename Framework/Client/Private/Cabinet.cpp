@@ -48,6 +48,13 @@ void CCabinet::Tick(_float fTimeDelta)
 	if (m_eState == CABINET_OPEN && m_pModelCom->isFinished(0))
 		return;
 
+	if (m_bCol && !m_bActive)
+	{
+		//UI¶ç¿ì°í
+		if (*m_pPlayerInteract)
+			Active();
+		m_bCol = false;
+	}
 	__super::Tick(fTimeDelta);
 
 	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
@@ -69,14 +76,13 @@ HRESULT CCabinet::Render()
 
 HRESULT CCabinet::Add_Components()
 {
-
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(100.f);
-	ColliderDesc.vCenter = _float3(-10.f, 1.f, 0.f);
+	ColliderDesc.fRadius = _float(60.f);
+	ColliderDesc.vCenter = _float3(50.f, 1.f, 0.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Left_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
 		return E_FAIL;
 
 	return S_OK;

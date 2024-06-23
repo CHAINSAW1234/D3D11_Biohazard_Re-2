@@ -28,6 +28,216 @@ HRESULT CLevel::Render()
 	return S_OK;
 }
 
+HRESULT CLevel::Load_Layer(const wstring& strFilePath, _uint iLevel)
+{
+
+
+	wstring strPerfectFilePath = strFilePath + TEXT("\\\\Layer_List.dat");
+
+
+
+	HANDLE		hFile = CreateFile(strPerfectFilePath.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+
+	DWORD	dwByte(0);
+
+	_uint iObjectNum = { 0 };
+	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
+	{
+		CloseHandle(hFile);
+		return E_FAIL;
+	}
+
+	for (_uint i = 0; iObjectNum > i; ++i)
+	{
+		string strLayer;
+		_uint dwLen = { 0 };
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		char* szLayerListName = new char[dwLen / sizeof(char) + 1];
+		if (!ReadFile(hFile, szLayerListName, dwLen, &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		szLayerListName[dwLen / sizeof(char)] = '\0';
+		strLayer = szLayerListName;
+		delete[] szLayerListName;
+
+		_tchar	szTemp[MAX_PATH] = { L"" };
+		MultiByteToWideChar(CP_ACP, 0, strLayer.c_str(), (_uint)strlen(strLayer.c_str()), szTemp, MAX_PATH);
+		if (FAILED(m_pGameInstance->Add_Layer(iLevel, szTemp)))
+			continue;
+
+
+		if (FAILED(Load_Object(strFilePath ,szTemp, iLevel)))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+
+
+
+	}
+	CloseHandle(hFile);
+
+	return S_OK;
+}
+
+HRESULT CLevel::Load_Object(const wstring& strFilePath, const wstring& strLayerName, _uint iLevel)
+{
+	wstring strLayerFile = strFilePath+TEXT("\\\\")+strLayerName + TEXT(".dat");
+	_uint iMonsterNum = { 0 };
+	HANDLE		hFile = CreateFile(strLayerFile.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	DWORD	dwByte(0);
+
+	_uint iObjectNum = { 0 };
+	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
+		return E_FAIL;
+
+	for (_uint i = 0; iObjectNum > i; ++i)
+	{
+		_uint iLength = { 0 };
+
+
+		CGameObject::GAMEOBJECT_DESC ObjectDesc = {};
+
+		if (!ReadFile(hFile, &ObjectDesc.bAnim, sizeof(_bool), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+		if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wchar_t* strModelComponent = new wchar_t[iLength / sizeof(wchar_t) + 1];
+		if (!ReadFile(hFile, strModelComponent, iLength, &dwByte, nullptr))
+		{
+			delete[] strModelComponent;
+
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		strModelComponent[iLength / sizeof(wchar_t)] = L'\0';
+		ObjectDesc.strModelComponent = strModelComponent;
+		delete[] strModelComponent;
+
+
+		if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wchar_t* strObjectPrototype = new wchar_t[iLength / sizeof(wchar_t) + 1];
+		if (!ReadFile(hFile, strObjectPrototype, iLength, &dwByte, nullptr))
+		{
+			delete[] strObjectPrototype;
+
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		strObjectPrototype[iLength / sizeof(wchar_t)] = L'\0';
+		ObjectDesc.strObjectPrototype = strObjectPrototype;
+		delete[] strObjectPrototype;
+
+
+		if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		char* strGamePrototypeName = new char[iLength / sizeof(char) + 1];
+		if (!ReadFile(hFile, strGamePrototypeName, iLength, &dwByte, nullptr))
+		{
+			delete[] strGamePrototypeName;
+
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		strGamePrototypeName[iLength / sizeof(char)] = '\0';
+		ObjectDesc.strGamePrototypeName = strGamePrototypeName;
+		delete[] strGamePrototypeName;
+
+		_uint iIndex = { 0 };
+		if (!ReadFile(hFile, &iIndex, sizeof(_uint), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+		if (!ReadFile(hFile, &ObjectDesc.worldMatrix, sizeof(_float4x4), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+		ObjectDesc.iIndex = iMonsterNum++;
+
+
+		_uint iSize;
+		if (!ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, NULL)) {
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+
+		ObjectDesc.BelongIndexs.resize(iSize);
+
+
+
+		for (size_t i = 0; i < iSize; i++)
+		{
+			_int iNum = { 0 };
+
+			if (!ReadFile(hFile, &iNum, sizeof(_int), &dwByte, NULL)) {
+				CloseHandle(hFile);
+				return E_FAIL;
+			}
+
+			ObjectDesc.BelongIndexs[i] = iNum;
+
+
+		}
+
+		if (!ReadFile(hFile, &ObjectDesc.iRegionDir, sizeof(_int), &dwByte, NULL)) {
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		
+
+		if (!ReadFile(hFile, &ObjectDesc.iRegionNum, sizeof(_int), &dwByte, NULL)) {
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+
+		if (FAILED(m_pGameInstance->Add_Clone(iLevel, strLayerName, ObjectDesc.strObjectPrototype, &ObjectDesc)))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+
+	}
+	CloseHandle(hFile);
+	return S_OK;
+}
+
+
 HRESULT CLevel::Load_Light(const wstring& strFilePath, _uint iLevel)
 {
 	wstring	strLightListFilePath = strFilePath + TEXT("\\\\Light_Layer_info.dat");

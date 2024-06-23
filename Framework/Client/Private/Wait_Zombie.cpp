@@ -27,6 +27,7 @@ HRESULT CWait_Zombie::Initialize(void* pArg)
 
 void CWait_Zombie::Enter()
 {
+	
 }
 
 void CWait_Zombie::Execute()
@@ -39,8 +40,27 @@ void CWait_Zombie::Execute()
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_IDLE);
 
-	cout << "Wait" << endl;
-	Change_Animation();
+	//cout << "Wait" << endl;
+	//	Change_Animation();
+
+	static _int				iAnimIndex = { 0 };
+	if (DOWN == m_pGameInstance->Get_KeyState('N'))
+	{
+		iAnimIndex += 1;
+		if (iAnimIndex > 380)
+			iAnimIndex = 0;
+	}
+
+	if (DOWN == m_pGameInstance->Get_KeyState('M'))
+	{
+		iAnimIndex -= 1;
+		if (iAnimIndex < 0)
+			iAnimIndex = 379;
+	}
+	CModel* pModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	pModel->Change_Animation(0, TEXT("Test"), iAnimIndex);
+	pModel->Set_OptimizationCulling(false);
+	cout << iAnimIndex << endl;
 
 }
 
@@ -162,7 +182,7 @@ void CWait_Zombie::Change_Animation()
 
 	pBodyModel->Set_TotalLinearInterpolation(0.9f);
 
-	pBodyModel->Change_Animation(iPlayingIndex, iResultAnimationIndex);
+	pBodyModel->Change_Animation(iPlayingIndex, TEXT("Default"), iResultAnimationIndex);
 	pBodyModel->Set_Loop(iPlayingIndex, isLoop);
 	pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
 	pBodyModel->Set_BlendWeight(iPlayingIndex, 1.f);

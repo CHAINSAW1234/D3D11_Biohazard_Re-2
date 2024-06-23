@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "Body_NewpoliceStatue.h"
+
+#include"NewpoliceStatue.h"
 CBody_NewpoliceStatue::CBody_NewpoliceStatue(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPart_InteractProps{ pDevice, pContext }
 {
@@ -26,8 +28,7 @@ HRESULT CBody_NewpoliceStatue::Initialize(void* pArg)
 
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
-
-	m_pModelCom->Add_AnimPlayingInfo(0, false, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 
 	m_pModelCom->Active_RootMotion_Rotation(true);
 
@@ -47,6 +48,34 @@ void CBody_NewpoliceStatue::Tick(_float fTimeDelta)
 
 void CBody_NewpoliceStatue::Late_Tick(_float fTimeDelta)
 {
+	switch (*m_pState)
+	{
+	case CNewpoliceStatue::POLICEHALLSTATUE_0:
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+		break;
+	case CNewpoliceStatue::POLICEHALLSTATUE_1:
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+		break;
+	case CNewpoliceStatue::POLICEHALLSTATUE_2:
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+
+	case CNewpoliceStatue::POLICEHALLSTATUE_END:
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+		break;
+	}
+
+	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
+	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
+	//	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &fTransform3);
+
+
+
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 }
 
 HRESULT CBody_NewpoliceStatue::Render()

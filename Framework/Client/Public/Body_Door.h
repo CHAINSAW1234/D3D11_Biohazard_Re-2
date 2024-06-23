@@ -10,9 +10,11 @@ class CBody_Door final : public CPart_InteractProps
 public:
 	typedef struct tag_BodyDoor : public PART_INTERACTPROPS_DESC
 	{
+		const _ubyte* pDoubleDoorType;
 		const _ubyte* pOneDoorState;
 		const _ubyte* pOneDoorState_Prev;
 		const _ubyte* pDoubleDoorState;
+		const _ubyte* pDoubleDoorState_Prev;
 
 	}BODY_DOOR_DESC;
 private:
@@ -45,9 +47,11 @@ private:
 
 	_bool				m_bDoubleCol = { false };
 
+	const _ubyte*			m_pDoubleDoorType = {};
 	const _ubyte*			m_pOneState = {};
 	const _ubyte*			m_pOneState_Prev = {};
 	const _ubyte*			m_pDoubleState = {};
+	const _ubyte*			m_pDoubleState_Prev = {};
 
 	_float			m_fTime = { 0.f };
 public:

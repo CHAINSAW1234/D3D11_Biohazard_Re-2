@@ -73,14 +73,16 @@ private:
 
 	_bool				m_bDoubleCol = { false };
 
-	_float			m_fTime = { 0.f };
-	_ubyte			m_eType = {DOOR_ONE};
+	_float				m_fTime = { 0.f };
+	_ubyte				m_eType = {DOOR_ONE};
 
-	_ubyte  m_eOneState = { ONEDOOR_STATIC };
-	_ubyte  m_eOneState_Prev = { ONEDOOR_STATIC };
+	_ubyte  			m_eOneState = { ONEDOOR_STATIC };
+	_ubyte  			m_eOneState_Prev = { ONEDOOR_STATIC };
 
-	_ubyte  m_eDoubleState = { DOUBLEDOOR_STATIC };
-	class CCollider* m_pColDoubledoorCom = { nullptr };
+	_ubyte   			m_eDoubleState = { DOUBLEDOOR_STATIC };
+	_ubyte   			m_eDoubleState_Prev = { DOUBLEDOOR_STATIC };
+	class CCollider* 	m_pColDoubledoorCom = { nullptr };
+	_ubyte				m_eDoubleDoorType;
 public:
 	static CDoor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

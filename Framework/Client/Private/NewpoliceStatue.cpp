@@ -68,10 +68,6 @@ void CNewpoliceStatue::Late_Tick(_float fTimeDelta)
 
 HRESULT CNewpoliceStatue::Render()
 {
-	if (m_bRender == false)
-		return S_OK;
-	else
-		m_bRender = false;
 
 	return S_OK;
 }

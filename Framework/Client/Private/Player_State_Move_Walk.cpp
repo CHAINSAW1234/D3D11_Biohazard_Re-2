@@ -58,15 +58,15 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 {
 #pragma region 키 입력에 따른 애니메이션 변경
 		if (m_dwDirection & DIRECTION_FRONT) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_F_LOOP);
+			m_pPlayer->Change_Body_Animation_Move(0, CPlayer::WALK_F_LOOP);
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f, 0.1f);
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f, 0.1f);
 
 			if (m_dwDirection & DIRECTION_LEFT) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_L_LOOP);
+				m_pPlayer->Change_Body_Animation_Move(1, CPlayer::WALK_L_LOOP);
 			}
 			else if (m_dwDirection & DIRECTION_RIGHT) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_R_LOOP);
+				m_pPlayer->Change_Body_Animation_Move(1, CPlayer::WALK_R_LOOP);
 			}
 			else {
 				m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 0.1f);
@@ -74,15 +74,15 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 			}
 		}
 		else if (m_dwDirection & DIRECTION_BACK) {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_B_LOOP);
+			m_pPlayer->Change_Body_Animation_Move(0, CPlayer::WALK_BACK_B_LOOP);
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f, 0.1f);
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f, 0.1f);
 
 			if (m_dwDirection & DIRECTION_LEFT) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_BACK_L_LOOP);
+				m_pPlayer->Change_Body_Animation_Move(1, CPlayer::WALK_BACK_L_LOOP);
 			}
 			else if (m_dwDirection & DIRECTION_RIGHT) {
-				m_pPlayer->Get_Body_Model()->Change_Animation(1, CPlayer::WALK_BACK_R_LOOP);
+				m_pPlayer->Change_Body_Animation_Move(1,CPlayer::WALK_BACK_R_LOOP);
 			}
 			else {
 				m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 0.1f);
@@ -94,19 +94,19 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 0.1f);
 			if (m_dwDirection & DIRECTION_LEFT) {
 				if (m_Prev_FRONT_BACK_Direction == DIRECTION_FRONT) {
-					m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_L_LOOP);
+					m_pPlayer->Change_Body_Animation_Move(0,CPlayer::WALK_L_LOOP);
 				}
 				else {
-					m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_L_LOOP);
+					m_pPlayer->Change_Body_Animation_Move(0, CPlayer::WALK_BACK_L_LOOP);
 				}
 
 			}
 			else if (m_dwDirection & DIRECTION_RIGHT) {
 				if (m_Prev_FRONT_BACK_Direction == DIRECTION_BACK) {
-					m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_BACK_R_LOOP);
+					m_pPlayer->Change_Body_Animation_Move(0, CPlayer::WALK_BACK_R_LOOP);
 				}
 				else {
-					m_pPlayer->Get_Body_Model()->Change_Animation(0, CPlayer::WALK_R_LOOP);
+					m_pPlayer->Change_Body_Animation_Move(0, CPlayer::WALK_R_LOOP);
 				}
 			}
 	}
@@ -141,8 +141,8 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 
 #pragma region 종료시 초기화
 	if (m_pPlayer->Get_Body_Model()->Get_BlendWeight(1) != 0 && m_pPlayer->Get_Body_Model()->isFinished(1)) {
-		m_pPlayer->Get_Body_Model()->Set_TrackPosition(0, 0.f);
-		m_pPlayer->Get_Body_Model()->Set_TrackPosition(1, 0.f);
+		m_pPlayer->Get_Body_Model()->Set_TrackPosition(0, 0.f, true);
+		m_pPlayer->Get_Body_Model()->Set_TrackPosition(1, 0.f, true);
 		m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
 	}
 	else {

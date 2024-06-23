@@ -16,18 +16,18 @@ class CPlayer final : public CGameObject
 {
 public:
 	enum STATE { MOVE, HOLD, DAMAGE };
-
 	enum PART {
 		PART_BODY,
 		PART_HEAD,
 		PART_HAIR,
 		PART_WEAPON,
+		PART_LIGHT,
 		PART_END
 	};
-
+	enum EQUIP { HG, STG, NONE};
 #pragma region ANIMATION
 	enum ANIMATION_MOVE {
-		ANIM_IDLE, TURN_L180, TURN_R180, TURN_L0, TURN_R0, TURN_L90, TURN_R90,
+		ANIM_IDLE, TURN_L180, TURN_R180,
 		WALK_F_LOOP, WALK_L_LOOP, WALK_END_LR, WALK_END_RL, WALK_R_LOOP,
 		WALK_BACK_L_LOOP, WALK_BACK_B_LOOP, WALK_BACK_R_LOOP,
 		JOG_START_L0, JOG_START_L90, JOG_START_L180,
@@ -37,21 +37,20 @@ public:
 		STAIR_F_LOOP, STAIR_L_LOOP, STAIR_R_LOOP,
 		STAIR_BACK_L_LOOP, STAIR_BACK_B_LOOP, STAIR_BACK_R_LOOP,
 		STAIR_RUN_UP_LOOP, STAIR_RUN_DOWN_LOOP,
-		PIVOTTURN_L0, PIVOTTURN_L90, PIVOTTURN_L180,
-		PIVOTTURN_R0, PIVOTTURN_R90, PIVOTTURN_R180,
-		LIGHT_ON_OFF,
-		// 여기부터 Hold
+		LIGHT_ON_OFF, MOVE_END
+	};
+
+	enum ANIMATION_HOLD {
 		STRAFEL_F, STRAFEL_L, STRAFEL_B, STRAFEL_R, STRAFER_L, STRAFER_R,
 		HOLD_START_L0, HOLD_START_L90, HOLD_START_L180,
 		HOLD_START_R0, HOLD_START_R90, HOLD_START_R180,
 		HOLD_IDLE_LOOP, WHEEL_L180, WHEEL_R180,
 		HOLD_SHOT, HOLD_SHOT_NO_AMMO, HOLD_RELOAD,
-		HOLSTERTOMOVE, MOVETOHOLSTER,
-
-
-		MOVE_END
+		HOLSTERTOMOVE, MOVETOHOLSTER, HOLD_END
 	};
 
+	enum ANIMSET_MOVE { FINE, MOVE_STG, FINE_LIGHT, CAUTION, CAUTION_LIGHT, DANGER, DANGER_LIGHT, COMMON, ANIMSET_MOVE_END };
+	enum ANIMSET_HOLD { HOLD_HG, HOLD_STG, HOLD_MLE, HOLD_SUP, ANIMSET_HOLD_END };
 #pragma endregion
 
 #pragma region Move Direction
@@ -60,6 +59,10 @@ public:
 		MD_F,MD_B,MD_R,MD_L,MD_FR,MD_FL,MD_BR,MD_BL,MD_DEFAULT
 	};
 #pragma endregion
+
+private:
+	const static wstring strAnimSetMoveName[ANIMSET_MOVE_END];
+	const static wstring strAnimSetHoldName[ANIMSET_HOLD_END];
 
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -84,33 +87,50 @@ private:
 
 #pragma region 현진 추가
 public:
+	static wstring								Get_AnimSetMoveName(ANIMSET_MOVE eAnimSetMove) { return strAnimSetMoveName[eAnimSetMove]; }
+	static wstring								Get_AnimSetHoldName(ANIMSET_HOLD eAnimSetHold) { return strAnimSetHoldName[eAnimSetHold]; }
+
 	CModel*										Get_Body_Model();
+	void										Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex);
+	void										Change_Body_Animation_Hold(_uint iPlayingIndex, _uint iAnimIndex);
 	CModel*										Get_Weapon_Model();
 	_float3*									Get_Body_RootDir();
 	_bool										Get_Spotlight() { return m_isSpotlight; }
+	EQUIP										Get_Equip() { return m_eEquip; }
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
-	void										Set_Spotlight(_bool isSpotlight) { m_isSpotlight = isSpotlight; }
-	void										Set_TurnSpine(_bool isTurnSpine) { m_isTurnSpine = isTurnSpine;  m_fSpineTurnLerfTimeDelta = 0.f; }
+	void										Set_Spotlight(_bool isSpotlight); 
+	void										Set_Weapon(EQUIP eEquip);
+	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineHold = isTurnSpineDefault; }
+	void										Set_TurnSpineHold(_bool isTurnSpineHold) { m_isTurnSpineHold = isTurnSpineHold;}
 
 	void										Change_State(STATE eState);
-
+	void										Change_AnimSet_Move(ANIMSET_MOVE eAnimSetMove) { m_eAnimSet_Move = eAnimSetMove; }
+	void										Change_AnimSet_Hold(ANIMSET_HOLD eAnimSetHold) { m_eAnimSet_Hold = eAnimSetHold; }
 	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
 
 	HRESULT										Add_FSM_States();
 	void										Update_FSM();
 
+	void	Update_AnimSet();
 	void										Update_Direction();
-	void										Turn_Spine(_float fTimeDelta);
-
+	void										Turn_Spine_Default(_float fTimeDelta);		// Idle 상태에서 카메라 반대쪽으로 머리 돌리기
+	void										Turn_Spine_Hold(_float fTimeDelta);		// Hold 상태에서의 카메라 보기
+	void										Turn_Spine_Light(_float fTimeDelta);		// Light 상태일때의 카메라 보기
 	void										Update_KeyInput_Reload();
 
 private:
+	_int m_iHp = { 5 };
+	EQUIP m_eEquip = { HG };
 	_bool m_isSpotlight = { false };
 	DWORD m_dwDirection = { 0 };
-	_bool m_isTurnSpine = { false };
-	_float m_fSpineTurnLerfTimeDelta = { 1.f };
-	_float m_fCurSpineTurnAxis;
-	_float m_fTargetSpineTurnAxis;
+
+	_bool m_isTurnSpineDefault = { true };
+	_bool m_isTurnSpineHold = { false };
+
+	ANIMSET_MOVE m_eAnimSet_Move = { FINE };
+	ANIMSET_HOLD m_eAnimSet_Hold = { HOLD_HG };
+
+	
 
 	friend class CPlayer_State_Move_Walk;
 	friend class CPlayer_State_Move_Jog;
@@ -134,7 +154,7 @@ private:
 
 #pragma region 창균 추가
 	_bool										m_bIsExamineItem = { false };
-#pragma
+#pragma endregion
 
 	vector<CPartObject*>						m_PartObjects;
 	_ubyte										m_eState = {};

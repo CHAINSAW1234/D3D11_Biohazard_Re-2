@@ -31,21 +31,35 @@ HRESULT CBody_Cabinet::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
-	m_pModelCom->Add_AnimPlayingInfo(0, false, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 
 
 	m_pModelCom->Active_RootMotion_Rotation(true);
-
+	
 #ifndef NON_COLLISION_PROP
 
-	m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+	if (m_strModelComponentName.find(L"60_033") != string::npos)
+	{
+		//m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+	}
+	else
+	{
+		if (m_strModelComponentName.find(L"44_002") != string::npos)
+		{
+			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Toilet(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+		}
+		else
+		{
+			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Cabinet(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+		}
+	}
+
+	m_vecRotationBone[ANIM_BONE_TYPE_COLLIDER_CABINET::ATC_CABINET_DOOR] = m_pModelCom->Get_BonePtr("_01");
 
 #endif
-
 	return S_OK;
 }
 
@@ -62,13 +76,24 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 	switch (*m_pState)
 	{
 	case CCabinet::CABINET_CLOSED:
-		m_pModelCom->Change_Animation(0, *m_pState);
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		break;
 	case CCabinet::CABINET_OPEN:
-		m_pModelCom->Change_Animation(0, *m_pState);
+	{
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+
+		if (m_pPx_Collider && m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR])
+		{
+			auto Combined = m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR]->Get_TrasformationMatrix();
+			_float4x4 ResultMat;
+			XMStoreFloat4x4(&ResultMat, Combined);
+			m_pPx_Collider->Update_Transform_Cabinet(&ResultMat);
+		}
+
 		break;
+	}
 	case CCabinet::CABINET_OPENED:
-		m_pModelCom->Change_Animation(0, *m_pState);
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		break;
 	}
 
@@ -76,18 +101,12 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
 
-	if (m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE] != nullptr)
-		m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 
-#ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponents(m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]);
-#endif
 }
 
 HRESULT CBody_Cabinet::Render()

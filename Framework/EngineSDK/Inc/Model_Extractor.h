@@ -57,10 +57,12 @@ private:
 	}ANIM_INFO;
 
 public:
-	static HRESULT		Extract_FBX(CModel::MODEL_TYPE eType, const string& strModelFilePath);
+	static HRESULT		Extract_FBX(CModel::MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformationMatrix);
+	static HRESULT		Extract_FBX_AnimOnly(const string& strAnimFilePath);
 
 private:	/* For.Bones */
 	static HRESULT		Write_Bones(aiNode* pAINode, _int iParentIndex = -1);
+	static HRESULT		Non_Write_Bones(aiNode* pAINode, _int iParentIndex = -1);
 	static HRESULT		Ready_Bones(aiNode* pAINode, vector<BONE_INFO>& Bones, _int iParentIndex = -1);
 
 	static BONE_INFO	Create_Bone(aiNode* pAINode, _int iParentIndex = -1);

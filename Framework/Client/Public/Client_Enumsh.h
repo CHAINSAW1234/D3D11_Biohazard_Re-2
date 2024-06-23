@@ -64,7 +64,18 @@ namespace Client
 		DOOR_L,
 		DOOR_R
 	};
-
+	enum DOUBLE_DOOR_MODEL_TYPE
+	{
+		NORMAL_DOOR,
+		FRONT_DOOR
+	};
+	
+		enum FIRE_WALL_ROTATE_BONE_TYPE
+	{
+		DOOR,
+	};
+	
+	
 	enum OBJ_TYPE
 	{
 		OBJ_NOPART,
@@ -78,5 +89,13 @@ namespace Client
 		OBJ_END
 	};
 
+	enum ANIM_BONE_TYPE_COLLIDER_CABINET
+	{
+		ATC_CABINET_DOOR
+	};
 
+	enum CABINET_MESH_TYPE
+	{
+		CABINET_DOOR = 2
+	};
 }

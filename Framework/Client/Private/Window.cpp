@@ -46,7 +46,23 @@ void CWindow::Tick(_float fTimeDelta)
 
 	if (m_pPlayer == nullptr)
 		return;
-	
+	if (m_bActive)
+		m_fTime += fTimeDelta;
+
+	if (m_fTime > 4.f)
+	{
+		m_fTime = 0.f;
+		m_bActive = false;
+		m_eState = WINDOW_STATIC;
+	}
+
+	if (m_bCol && !m_bActive)
+	{
+		//UI띄우고
+		if (*m_pPlayerInteract)
+			Active();
+		m_bCol = false;
+	}
 	__super::Tick(fTimeDelta);
 	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 
@@ -59,7 +75,9 @@ void CWindow::Late_Tick(_float fTimeDelta)
 
 	if (m_bRender == false)
 		return;
-	
+
+	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
+
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG

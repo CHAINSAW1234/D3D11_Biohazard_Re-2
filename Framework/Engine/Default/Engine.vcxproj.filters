@@ -564,6 +564,9 @@
     <ClCompile Include="..\Private\Easing.cpp">
       <Filter>01.Utility\13.Easing</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Animation_Library.cpp">
+      <Filter>01.Utility\02.Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -851,6 +854,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Easing.h">
       <Filter>01.Utility\13.Easing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Animation_Library.h">
+      <Filter>01.Utility\02.Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

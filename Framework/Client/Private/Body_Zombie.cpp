@@ -328,12 +328,12 @@ HRESULT CBody_Zombie::Initialize_Model()
 	m_pModelCom->Add_Bone_Layer_All_Bone(BONE_LAYER_DEFAULT_TAG);
 
 	/* Create_AnimPlaying_Info */
-	m_pModelCom->Add_AnimPlayingInfo(-1, false, PLAYING_INDEX::INDEX_0, BONE_LAYER_DEFAULT_TAG, 1.f);
-	m_pModelCom->Add_AnimPlayingInfo(-1, false, PLAYING_INDEX::INDEX_1, BONE_LAYER_DEFAULT_TAG, 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(-1, false, PLAYING_INDEX::INDEX_2, BONE_LAYER_DEFAULT_TAG, 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(-1, false, PLAYING_INDEX::INDEX_3, BONE_LAYER_DEFAULT_TAG, 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(-1, false, PLAYING_INDEX::INDEX_4, BONE_LAYER_DEFAULT_TAG, 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(-1, false, PLAYING_INDEX::INDEX_5, BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_0, BONE_LAYER_DEFAULT_TAG, 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_1, BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_2, BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_3, BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_4, BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_5, BONE_LAYER_DEFAULT_TAG, 0.f);
 
 	/* Set_Root_Motion */
 	m_pModelCom->Active_RootMotion_XZ(true);
@@ -466,7 +466,6 @@ HRESULT CBody_Zombie::Initialize_Model()
 
 #pragma endregion
 
-
 #pragma region MOVE_ANIM
 
 	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_START_A));	
@@ -536,6 +535,174 @@ HRESULT CBody_Zombie::Initialize_Model()
 	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_R180_F));
 
 #pragma endregion
+
+
+#pragma region Anim Load From Anim_Library
+
+#pragma region Orinary Anims 
+
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Box_ClimbOver"), TEXT("Ordinary_Box_ClimbOver"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Crawl_Fall_Bridge"), TEXT("Ordinary_Crawl_Fall_Bridge"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Hold"), TEXT("Ordinary_Hold"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Idle"), TEXT("Ordinary_Box_Idle"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_PivotTurn"), TEXT("Ordinary_PivotTurn"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Railing_Fall"), TEXT("Ordinary_Railing_Fall"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Stairs_PivotTurn"), TEXT("Ordinary_Stairs_PivotTurn"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Stairs_Walk"), TEXT("Ordinary_Box_Stairs_Walk"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_StandUp"), TEXT("Ordinary_Box_StandUp"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Walk"), TEXT("Ordinary_Walk"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Walk_Lose"), TEXT("Ordinary_Walk_Lose"))))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Add Anims
+
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Add_Arm_L"), TEXT("Add_Arm_L"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Add_Arm_R"), TEXT("Add_Arm_R"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Add_Body"), TEXT("Add_Body"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Add_Head"), TEXT("Add_Head"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Add_Leg_L"), TEXT("Add_Leg_L"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Add_Leg_R"), TEXT("Add_Leg_R"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Add_Shoulder_L"), TEXT("Add_Shoulder_L"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Add_Shoulder_R"), TEXT("Add_Shoulder_R"))))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Bite Anims 
+
+
+
+#pragma endregion
+
+#pragma region Damage Anims
+
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Damage_Burst"), TEXT("Damage_Burst"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Damage_Default"), TEXT("Damage_Default"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Damage_Down"), TEXT("Damage_Down"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Damage_Electric_Shock"), TEXT("Damage_Electric_Shock"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Damage_Knockback"), TEXT("Damage_Knockback"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Damage_Lost"), TEXT("Damage_Lost"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Damage_Stairs_Down"), TEXT("Damage_Stairs_Down"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Damage_Stairs_Up"), TEXT("Damage_Stairs_Up"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Damage_Stun"), TEXT("Damage_Stun"))))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Dead Anims 
+
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Dead_Default"), TEXT("Dead_Default"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Dead_FaceUp"), TEXT("Dead_FaceUp"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Dead_LowStance"), TEXT("Dead_LowStance"))))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Lost Anims 
+
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_Bite"), TEXT("Lost_Bite"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_Dead2_Idle"), TEXT("Lost_Dead2_Idle"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_Hold"), TEXT("Lost_Hold"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_Idle"), TEXT("Lost_Idle"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_L_Ankle_Idle"), TEXT("Lost_L_Ankle_Idle"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_L_Ankle_PivotTurn"), TEXT("Lost_L_Ankle_PivotTurn"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_L_Ankle_Walk"), TEXT("Lost_L_Ankle_Walk"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_R_Ankle_Idle"), TEXT("Lost_R_Ankle_Idle"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_R_Ankle_PivotTurn"), TEXT("Lost_R_Ankle_PivotTurn"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_R_Ankle_Walk"), TEXT("Lost_R_Ankle_Walk"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_Turn"), TEXT("Lost_Turn"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_TurnOver"), TEXT("Lost_TurnOver"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_Walk"), TEXT("Lost_Walk"))))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Sick Anims
+
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Sick_FlashGranade"), TEXT("Sick_FlashGranade"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Sick_Knife"), TEXT("Sick_Knife"))))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Undiscovered Anims
+
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Undiscovered_Cage"), TEXT("Undiscovered_Cage"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Undiscovered_Capture"), TEXT("Undiscovered_Capture"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Undiscovered_Celling_Fall"), TEXT("Undiscovered_Celling_Fall"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Undiscovered_Dead"), TEXT("Undiscovered_Dead"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Undiscovered_Dead_Pose"), TEXT("Undiscovered_Dead_Pose"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Undiscovered_Eat"), TEXT("Undiscovered_Eat"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Undiscovered_Fance"), TEXT("Undiscovered_Fance"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Undiscovered_HeadBang"), TEXT("Undiscovered_HeadBang"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Undiscovered_Lounge"), TEXT("Undiscovered_Lounge"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Undiscovered_Prison"), TEXT("Undiscovered_Prison"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Undiscovered_Railing_Fall"), TEXT("Undiscovered_Railing_Fall"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Undiscovered_Railing_Stund"), TEXT("Undiscovered_Railing_Stund"))))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma endregion
+
+	_uint			iNumTestAnim = { m_pModelCom->Get_NumAnims(TEXT("Test")) };
+	for (_uint i = 0; i < iNumTestAnim; ++i)
+	{
+		m_pModelCom->Set_TickPerSec(TEXT("Test"), i, 60.f);
+	}
 
 	return S_OK;
 }

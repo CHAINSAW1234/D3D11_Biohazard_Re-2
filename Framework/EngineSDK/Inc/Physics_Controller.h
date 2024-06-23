@@ -48,6 +48,10 @@ public:
 	void												Create_Rigid_Dynamic(_float4 Pos);
 	void												Create_Rigid_Static(_float4 Pos);
 	class CPxCollider*									Create_Px_Collider(class CModel* pModel,class CTransform* pTransform,_int* iId);
+	class CPxCollider*									Create_Px_Collider_Convert_Root(class CModel* pModel,class CTransform* pTransform,_int* iId);
+	class CPxCollider*									Create_Px_Collider_Convert_Root_Double_Door(class CModel* pModel,class CTransform* pTransform,_int* iId);
+	class CPxCollider*									Create_Px_Collider_Cabinet(class CModel* pModel,class CTransform* pTransform,_int* iId);
+	class CPxCollider*									Create_Px_Collider_Toilet(class CModel* pModel,class CTransform* pTransform,_int* iId);
 	class CCharacter_Controller*						GetCharacter_Controller(_int Index);
 	class CRigid_Dynamic*								GetRigid_Dynamic(_int Index);
 	_float4												GetTranslation_Rigid_Dynamic(_int Index);
@@ -81,10 +85,42 @@ public:
 #pragma region For Mesh Cooking
 public://For Mesh Cooking
 	void												Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,class CTransform* pTransform = nullptr);
+	void												Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,class CTransform* pTransform = nullptr);
 	void												Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void												Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void												Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms, class CTransform* pTransform,_float4 vDelta);
-	void												Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
+	void												Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms, class CTransform* pTransform,_float4 vDelta);
+	void												Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,_bool bHasCollider);
+	void												Config_SoftBody(PxSoftBody* softBody, const PxFEMParameters& femParams, PxFEMSoftBodyMaterial* femMaterial,
+		const PxTransform& transform, const PxReal density, const PxReal scale, const PxU32 iterCount/*, PxMaterial* tetMeshMaterial*/);
+	void												createCube(PxArray<PxVec3>& triVerts, PxArray<PxU32>& triIndices, const PxVec3& pos, PxReal scaling)
+	{
+		triVerts.clear();
+		triIndices.clear();
+		triVerts.pushBack(scaling * PxVec3(0.5f, -0.5f, -0.5f) + pos);
+		triVerts.pushBack(scaling * PxVec3(0.5f, -0.5f, 0.5f) + pos);
+		triVerts.pushBack(scaling * PxVec3(-0.5f, -0.5f, 0.5f) + pos);
+		triVerts.pushBack(scaling * PxVec3(-0.5f, -0.5f, -0.5f) + pos);
+		triVerts.pushBack(scaling * PxVec3(0.5f, 0.5f, -0.5f) + pos);
+		triVerts.pushBack(scaling * PxVec3(0.5f, 0.5f, 0.5f) + pos);
+		triVerts.pushBack(scaling * PxVec3(-0.5f, 0.5f, 0.5f) + pos);
+		triVerts.pushBack(scaling * PxVec3(-0.5f, 0.5f, -0.5f) + pos);
+
+		triIndices.pushBack(1); triIndices.pushBack(2); triIndices.pushBack(3);
+		triIndices.pushBack(7); triIndices.pushBack(6); triIndices.pushBack(5);
+		triIndices.pushBack(4); triIndices.pushBack(5); triIndices.pushBack(1);
+		triIndices.pushBack(5); triIndices.pushBack(6); triIndices.pushBack(2);
+
+		triIndices.pushBack(2); triIndices.pushBack(6); triIndices.pushBack(7);
+		triIndices.pushBack(0); triIndices.pushBack(3); triIndices.pushBack(7);
+		triIndices.pushBack(0); triIndices.pushBack(1); triIndices.pushBack(3);
+		triIndices.pushBack(4); triIndices.pushBack(7); triIndices.pushBack(5);
+
+		triIndices.pushBack(0); triIndices.pushBack(4); triIndices.pushBack(1);
+		triIndices.pushBack(1); triIndices.pushBack(5); triIndices.pushBack(2);
+		triIndices.pushBack(3); triIndices.pushBack(2); triIndices.pushBack(7);
+		triIndices.pushBack(4); triIndices.pushBack(0); triIndices.pushBack(7);
+	}
 public://For Terrain Cooking
 	void												InitTerrain();
 private:

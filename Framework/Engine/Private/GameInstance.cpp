@@ -18,6 +18,7 @@
 #include "AIController.h"
 #include "GameObject.h"
 #include "Easing.h"
+#include "Animation_Library.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -160,6 +161,13 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 	if (nullptr == m_pEasing)
 	{
 		MSG_BOX(TEXT("Error: m_pEasing::Create -> nullptr"));
+		return E_FAIL;
+	}
+
+	m_pAnimation_Library = CAnimation_Library::Create();
+	if (nullptr == m_pEasing)
+	{
+		MSG_BOX(TEXT("Error: m_pAnimation_Library::Create -> nullptr"));
 		return E_FAIL;
 	}
 
@@ -990,6 +998,11 @@ void CGameInstance::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexN
 	m_pPhysics_Controller->Cook_Mesh(pVertices, pIndices, VertexNum, IndexNum, pTransform);
 }
 
+void CGameInstance::Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
+{
+	m_pPhysics_Controller->Cook_Mesh_NoRotation(pVertices, pIndices, VertexNum, IndexNum, pTransform);
+}
+
 void CGameInstance::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform)
 {
 	m_pPhysics_Controller->Cook_Mesh_Dynamic(pVertices, pIndices, VertexNum, IndexNum, pColliders, pTransforms, pTransform);
@@ -1005,10 +1018,15 @@ void CGameInstance::Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIn
 	m_pPhysics_Controller->Cook_Mesh_Convex_Convert_Root(pVertices, pIndices, VertexNum, IndexNum, pColliders, pTransforms, pTransform, vDelta);
 }
 
+void CGameInstance::Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform, _float4 vDelta)
+{
+	m_pPhysics_Controller->Cook_Mesh_Convex_Convert_Root_No_Rotate(pVertices, pIndices, VertexNum, IndexNum, pColliders, pTransforms, pTransform, vDelta);
+}
+
 void CGameInstance::Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
 {
 	if (m_pPhysics_Controller)
-		m_pPhysics_Controller->Create_SoftBody(pVertices, pIndices, VertexNum, IndexNum);
+		m_pPhysics_Controller->Create_SoftBody(pVertices, pIndices, VertexNum, IndexNum,true);
 }
 
 _matrix CGameInstance::GetWorldMatrix_Rigid_Dynamic(_int Index)
@@ -1100,6 +1118,29 @@ CPxCollider* CGameInstance::Create_Px_Collider(CModel* pModel, CTransform* pTran
 	if (m_pPhysics_Controller)
 		return m_pPhysics_Controller->Create_Px_Collider(pModel, pTransform, iId);
 }
+CPxCollider* CGameInstance::Create_Px_Collider_Convert_Root(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->Create_Px_Collider_Convert_Root(pModel, pTransform, iId);
+}
+CPxCollider* CGameInstance::Create_Px_Collider_Convert_Root_Double_Door(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->Create_Px_Collider_Convert_Root_Double_Door(pModel, pTransform, iId);
+}
+
+CPxCollider* CGameInstance::Create_Px_Collider_Cabinet(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->Create_Px_Collider_Cabinet(pModel, pTransform, iId);
+}
+
+CPxCollider* CGameInstance::Create_Px_Collider_Toilet(CModel* pModel, CTransform* pTransform, _int* iId)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->Create_Px_Collider_Toilet(pModel, pTransform, iId);
+}
+
 #pragma endregion
 
 #pragma region	Thread_Pool
@@ -1144,6 +1185,27 @@ void CGameInstance::Initialize_BehaviorTree(_uint* iId)
 _float CGameInstance::Get_Ease(EASING_TYPE eEase, _float fCurValue, _float fTargetValue, _float fRatio)
 {
 	return m_pEasing->Get_Ease(eEase, fCurValue, fTargetValue, fRatio);
+}
+_uint CGameInstance::Get_NumAnim_Prototypes(const wstring& strAnimLayerTag)
+{
+	if (nullptr == m_pAnimation_Library)
+		return 0;
+
+	return m_pAnimation_Library->Get_NumAnim_Prototypes(strAnimLayerTag);
+}
+HRESULT CGameInstance::Add_Prototypes_Animation(const wstring& strAnimLayerTag, const string& strDirPath)
+{
+	if (nullptr == m_pAnimation_Library)
+		return E_FAIL;
+
+	return m_pAnimation_Library->Add_Prototypes_Animation(strAnimLayerTag, strDirPath);
+}
+HRESULT CGameInstance::Clone_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, CAnimation** ppAnimation)
+{
+	if (nullptr == m_pAnimation_Library)
+		return E_FAIL;
+
+	return m_pAnimation_Library->Clone_Animation(strAnimLayerTag, iAnimIndex, ppAnimation);
 }
 #pragma endregion
 
@@ -1291,4 +1353,5 @@ void CGameInstance::Free()
 	Safe_Release(m_pAIController);
 	Safe_Release(m_pPhysics_Controller);
 	Safe_Release(m_pEasing);
+	Safe_Release(m_pAnimation_Library);
 }

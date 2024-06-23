@@ -30,14 +30,14 @@ HRESULT CBody_Statue::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
-	m_pModelCom->Add_AnimPlayingInfo(0, false, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 
 
 	m_pModelCom->Active_RootMotion_Rotation(true);
+	//m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
 #ifndef NON_COLLISION_PROP
 
@@ -58,10 +58,10 @@ void CBody_Statue::Late_Tick(_float fTimeDelta)
 	{
 	case CStatue::STATE_PLAY:
 		//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // Àß¾Ë¾Æ°©´Ï´Ù ²¨¾ï
-		m_pModelCom->Change_Animation(0, *m_pState);
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		break;
 	case CStatue::STATE_STATIC:
-		m_pModelCom->Change_Animation(0, *m_pState);
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		break;
 	}
 	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
