@@ -1630,6 +1630,7 @@ HRESULT CPlayer::Add_PartObjects()
 	CWeapon* pWeaponObject = { nullptr };
 	CWeapon::WEAPON_DESC		WeaponDesc{};
 	WeaponDesc.pParentsTransform = m_pTransformCom;
+
 	WeaponDesc.eEquip = HG;
 	WeaponDesc.pSocket[CWeapon::MOVE] = WeaponDesc.pSocket[CWeapon::HOLD] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
 	WeaponDesc.pSocket[CWeapon::HOLSTER] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_holster_main")) };
@@ -1662,7 +1663,6 @@ HRESULT CPlayer::Initialize_PartModels()
 	CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Model"))) };
 	CModel* pHeadModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HEAD]->Get_Component(TEXT("Com_Model"))) };
 	CModel* pHairModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAIR]->Get_Component(TEXT("Com_Model"))) };
-
 
 	m_pBodyModel = pBodyModel;
 

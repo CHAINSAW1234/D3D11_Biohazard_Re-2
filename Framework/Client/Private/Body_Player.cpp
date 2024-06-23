@@ -37,6 +37,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+
 	if (FAILED(Add_Animations()))
 		return E_FAIL;
 
@@ -756,14 +757,15 @@ HRESULT CBody_Player::Add_Animations()
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Danger_Light"), CPlayer::Get_AnimSetMoveName(CPlayer::ANIMSET_MOVE::DANGER_LIGHT))))
 		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Common"), CPlayer::Get_AnimSetMoveName(CPlayer::ANIMSET_MOVE::COMMON))))
+		return E_FAIL;
 
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Hg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HOLD_HG))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Stg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HOLD_STG))))
 		return E_FAIL;
 
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Common"), TEXT("Common"))))
-		return E_FAIL;
+
 
 	return S_OK;
 }

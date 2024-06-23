@@ -191,7 +191,7 @@ HRESULT CModel::Add_Animations(const wstring& strPrototypeLayerTag, const wstrin
 	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
 	if (iter == m_AnimationLayers.end())
 	{
-		pAnimation_Layer = { CAnimation_Layer::Create() };
+		pAnimation_Layer =  { CAnimation_Layer::Create() };
 		if (nullptr == pAnimation_Layer)
 			return E_FAIL;
 	}
@@ -217,6 +217,8 @@ HRESULT CModel::Add_Animations(const wstring& strPrototypeLayerTag, const wstrin
 	}
 
 	m_AnimationLayers.emplace(strAnimLayerTag, pAnimation_Layer);
+
+	return S_OK;
 }
 
 #pragma endregion

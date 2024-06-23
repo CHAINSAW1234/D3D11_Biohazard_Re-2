@@ -71,7 +71,7 @@ void CWeapon::Late_Tick(_float fTimeDelta)
 		_float3				vDirection = { };
 		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vDirection);
 
-		_matrix			WorldMatrix = { m_fTransformationMatrices[m_eEquip] * m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix[m_eEquip]) * m_pParentsTransform->Get_WorldMatrix() };
+		_matrix			WorldMatrix = { m_fTransformationMatrices[m_eRenderLocation] * m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix[m_eRenderLocation]) * m_pParentsTransform->Get_WorldMatrix() };
 
 		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 
