@@ -783,7 +783,7 @@
       <Filter>02.GameObjects\MapObject\InteractProps\Shutter</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\FlashLight.cpp">
-      <Filter>02.GameObjects\Player\FlashLight</Filter>
+      <Filter>02.GameObjects\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

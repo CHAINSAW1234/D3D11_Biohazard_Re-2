@@ -75,8 +75,8 @@ private:
 	_float			m_fTime = { 0.f };
 	_ubyte			m_eType = { SHUTTER_NORMAL };
 	_ubyte			m_eNormalState = { SHUTTER_STATIC };
-	_ubyte			m_e033State = { SHTTER_033_CLOSED };
-	_ubyte			m_e034State = { SHTTER_034_CLOSED };
+	_ubyte			m_e033State = { SHTTER_033_FULL_OPENED };
+	_ubyte			m_e034State = { SHTTER_034_OPEN };
 
 
 public:

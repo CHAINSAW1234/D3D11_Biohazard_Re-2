@@ -128,7 +128,7 @@ protected:
 	_bool												m_bShadow = { true };
 	_bool												m_bVisible = { true };
 	_bool												m_bCol = { false }; // 충돌이 되었다
-	_float												m_fTimeTest = { 0.f };
+	_float												m_fTimeDelay = { 0.f };
 	CModel*												m_pModelCom = { nullptr };
 	CShader*											m_pShaderCom = { nullptr };
 	CCollider*											m_pColliderCom[INTERACTPROPS_COL_END] = { nullptr,nullptr,nullptr };

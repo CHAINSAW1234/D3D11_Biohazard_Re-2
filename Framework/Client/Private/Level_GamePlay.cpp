@@ -730,7 +730,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 
 HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& strColLayerTag)
 {
-	wstring	strFilePath = strFile + L"\\\\" + strColLayerTag + L"\\\\.dat";
+	wstring	strFilePath = strFile + L"\\\\" + strColLayerTag + L".dat";
 
 	HANDLE		hFile = CreateFile(strFilePath.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 

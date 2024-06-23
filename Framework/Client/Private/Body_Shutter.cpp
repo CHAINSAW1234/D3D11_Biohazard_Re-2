@@ -40,18 +40,22 @@ HRESULT CBody_Shutter::Initialize(void* pArg)
 
 
 	m_pModelCom->Active_RootMotion_Rotation(true);
-	//m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
+	//m_pParentsTransform->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
 #ifndef NON_COLLISION_PROP
 
-	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
-
+	if (m_strModelComponentName.find(L"60_033") != string::npos)
+	{
+		//m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
+	}
 #endif
 	return S_OK;
 }
 
 void CBody_Shutter::Tick(_float fTimeDelta)
 {
+	__super::Tick(fTimeDelta);
+
 }
 
 void CBody_Shutter::Late_Tick(_float fTimeDelta)
@@ -79,10 +83,10 @@ void CBody_Shutter::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_Shutter::Render()
 {
-	if (m_bRender == false)
-		return S_OK;
-	else
-		m_bRender = false;
+	//if (m_bRender == false)
+	//	return S_OK;
+	//else
+	//	m_bRender = false;
 
 
 	if (FAILED(Bind_ShaderResources()))
@@ -144,7 +148,7 @@ HRESULT CBody_Shutter::Add_Components()
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
 		TEXT("Com_Body_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-	
+
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(g_Level, m_strModelComponentName,
 		TEXT("Com_Body_Model"), (CComponent**)&m_pModelCom)))
@@ -167,22 +171,22 @@ HRESULT CBody_Shutter::Initialize_PartObjects()
 void CBody_Shutter::Shutter_Normal_Late_Tick(_float fTimeDelta)
 {
 
-	switch (*m_eNormalState)
-	{
-	case CShutter::SHUTTER_OPEN:
-		//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // Àß¾Ë¾Æ°©´Ï´Ù ²¨¾ï
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_eNormalState);
-		break;
-	case CShutter::SHUTTER_OPEN_STATIC:
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_eNormalState);
-		break;
-	case CShutter::SHUTTER_STATIC:
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_eNormalState);
-		break;
-	}
-	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	//switch (*m_eNormalState)
+	//{
+	//case CShutter::SHUTTER_OPEN:
+	//	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_eNormalState);
+	//	break;
+	//case CShutter::SHUTTER_OPEN_STATIC:
+	//	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_eNormalState);
+	//	break;
+	//case CShutter::SHUTTER_STATIC:
+	//	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_eNormalState);
+	//	break;
+	//}
+	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
+	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
+	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 
 
 
@@ -216,10 +220,10 @@ void CBody_Shutter::Shutter_033_Late_Tick(_float fTimeDelta)
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
 		break;
 	}
-	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
-		
+	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+
 }
 
 void CBody_Shutter::Shutter_034_Late_Tick(_float fTimeDelta)
@@ -243,9 +247,9 @@ void CBody_Shutter::Shutter_034_Late_Tick(_float fTimeDelta)
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e034State);
 		break;
 	}
-	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
+	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 
 
 }

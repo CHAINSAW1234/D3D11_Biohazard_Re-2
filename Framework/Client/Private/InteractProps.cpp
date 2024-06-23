@@ -39,6 +39,14 @@ HRESULT CInteractProps::Initialize(void* pArg)
 	m_tagPropDesc.iRegionNum = pObj_desc->iRegionNum;
 	m_tagPropDesc.iPartObj = pObj_desc->iPartObj;
 	m_tagPropDesc.iPropType = pObj_desc->iPropType;
+	m_tagPropDesc.tagDoor = pObj_desc->tagDoor;
+	m_tagPropDesc.tagCabinet = pObj_desc->tagCabinet;
+	m_tagPropDesc.tagBigStatue = pObj_desc->tagBigStatue;
+	m_tagPropDesc.tagHallStatue = pObj_desc->tagHallStatue;
+	m_tagPropDesc.tagShutter = pObj_desc->tagShutter;
+	m_tagPropDesc.tagStatue = pObj_desc->tagStatue;
+	m_tagPropDesc.tagWindow = pObj_desc->tagWindow;
+
 
 	for (auto iter : m_tagPropDesc.BelongIndexs)
 	{

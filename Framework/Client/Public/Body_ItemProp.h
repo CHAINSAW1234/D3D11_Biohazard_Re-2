@@ -9,6 +9,11 @@ BEGIN(Client)
 
 class CBody_ItemProp final : public CPart_InteractProps
 {
+public:
+	typedef struct tagBodyItemProp_desc : public CPart_InteractProps::PART_INTERACTPROPS_DESC
+	{
+		_bool* pObtain = { nullptr };
+	}BODY_ITEMPROPS_DESC;
 private:
 	CBody_ItemProp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBody_ItemProp(const CBody_ItemProp& rhs);
@@ -26,6 +31,14 @@ private:
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
 
+public:
+	void								Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
+
+
+private:
+	_bool								m_bRealDead = { false };
+	_bool*							m_pObtain = { nullptr };
+	_float4x4*						m_pSocketMatrix = { nullptr };
 
 
 public:

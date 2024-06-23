@@ -45,7 +45,6 @@ private:
 private:
 	_ubyte  m_eState = { ITEM_UNUSE };
 
-
 public:
 	static CItemProp* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

@@ -4,6 +4,9 @@
 #include "PxCollider.h"
 #include "Bone.h"
 
+//part-obj
+#include"Body_Cabinet.h"
+#include"Body_ItemProp.h"
 CCabinet::CCabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -22,46 +25,18 @@ HRESULT CCabinet::Initialize_Prototype()
 
 HRESULT CCabinet::Initialize(void* pArg)
 {
-	/*문자식 파트오브젝트 붙혀야하는데 뼈가 문고리에 없어서 직접 찍어야 하는데
-	프로토타입 끝나고 뼈 붙혀보겠나이다*/
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 	
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	if (FAILED(Add_PartObjects()))
+		return E_FAIL;	
+	
+	if (FAILED(Initialize_PartObjects()))
+		return E_FAIL;
 
-	m_pModelCom->Set_RootBone("RootNode");
-	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
-
-	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
-
-
-	m_pModelCom->Active_RootMotion_Rotation(true);
-	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
-
-#ifndef NON_COLLISION_PROP
-
-	if (m_tagPropDesc.strGamePrototypeName.find("60_033") != string::npos)
-	{
-		//m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
-	}
-	else
-	{
-		if (m_tagPropDesc.strGamePrototypeName.find("44_002") != string::npos)
-		{
-			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Toilet(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
-		}
-		else
-		{
-			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Cabinet(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
-		}
-	}
-
-	m_vecRotationBone[ANIM_BONE_TYPE_COLLIDER_CABINET::ATC_CABINET_DOOR] = m_pModelCom->Get_BonePtr("_01");
-
-#endif
 
 	return S_OK;
 }
@@ -69,28 +44,33 @@ HRESULT CCabinet::Initialize(void* pArg)
 void CCabinet::Tick(_float fTimeDelta)
 {
 	__super::Check_Player();
+	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 	if (!m_bVisible)
 		return;
-	if (m_eState == CABINET_OPEN && m_pModelCom->isFinished(0))
-		return;
+
+	if (m_bActive)
+		m_fTimeDelay += fTimeDelta;
+	if (m_fTimeDelay > 1.f)
+	{
+		m_bActive = false;
+		m_fTimeDelay = 0.f;
+	}
 
 
-	if (m_pPlayer == nullptr)
-		return;
-
-	if (m_bCol&& !m_bActive)
+	if (m_bCol&&!m_bActive)
 	{
 		//UI띄우고
 		if (*m_pPlayerInteract)
 			Active();
 		m_bCol = false;
+	}	
+	if (m_eState == CABINET_OPEN)
+	{
+		m_bObtain = true;
+		return;
 	}
+	__super::Tick(fTimeDelta);
 
-	//auto Combined = XMLoadFloat4x4(m_pRotationBone->Get_CombinedTransformationMatrix());
-	//Combined = /*XMMatrixRotationY(-PxPi) **/ Combined * m_pTransformCom->Get_WorldMatrix();
-	//_float4x4 ResultMat;
-	//XMStoreFloat4x4(&ResultMat, Combined);
-	//m_pPx_Collider->Update_Transform(&ResultMat);
 }
 
 void CCabinet::Late_Tick(_float fTimeDelta)
@@ -99,47 +79,9 @@ void CCabinet::Late_Tick(_float fTimeDelta)
 		return;
 	if (m_bRender == false)
 		return;
+	Check_Col_Sphere_Player(); 
 
-	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
-
-	switch (m_eState)
-	{
-	case CABINET_CLOSED:
-		m_pModelCom->Change_Animation(0, TEXT("Default"), m_eState);
-		break;
-	case CABINET_OPEN:
-		{
-		m_pModelCom->Change_Animation(0, TEXT("Default"), m_eState);
-
-			if (m_pPx_Collider && m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR])
-			{
-				auto Combined = m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR]->Get_TrasformationMatrix();
-				_float4x4 ResultMat;
-				XMStoreFloat4x4(&ResultMat, Combined);
-				m_pPx_Collider->Update_Transform_Cabinet(&ResultMat);
-			}
-
-		break;
-		}
-	case CABINET_OPENED:
-		m_pModelCom->Change_Animation(0, TEXT("Default"), m_eState);
-		break;
-	}
-
-	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
-	//	_float3	vTranslation = {};
-	//	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &vTranslation	);
-
-
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_SPHERE]);
@@ -148,104 +90,81 @@ void CCabinet::Late_Tick(_float fTimeDelta)
 
 HRESULT CCabinet::Render()
 {
-	if (m_bRender == false)
-		return S_OK;
-	else
-		m_bRender = false;
-
-
-	if (FAILED(Bind_ShaderResources()))
-		return E_FAIL;
-
-
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (size_t i = 0; i < iNumMeshes; i++)
-	{
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-			return E_FAIL;
-
-		/*if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
-			return E_FAIL;*/
-
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
-		{
-			_bool isAlphaTexture = false;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
-				return E_FAIL;
-		}
-		else
-		{
-			_bool isAlphaTexture = true;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
-				return E_FAIL;
-		}
-
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
-		{
-			_bool isAOTexture = false;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
-				return E_FAIL;
-		}
-		else
-		{
-			_bool isAOTexture = true;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
-				return E_FAIL;
-		}
-
-
-		if (FAILED(m_pShaderCom->Begin(0)))
-			return E_FAIL;
-
-		m_pModelCom->Render(static_cast<_uint>(i));
-	}
-
-
-
-
 	return S_OK;
 }
 
 HRESULT CCabinet::Add_Components()
 {
-
-	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
-		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
-		return E_FAIL;
-	
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(g_Level, m_tagPropDesc.strModelComponent,
-		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-		return E_FAIL;
-
-	
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(60.f);
-	ColliderDesc.vCenter = _float3(50.f, 1.f, 0.f);
+	ColliderDesc.fRadius = _float(50.f);
+	ColliderDesc.vCenter = _float3(50.f, 1.f, 30.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
 		return E_FAIL;
+
 	return S_OK;
 }
 
 HRESULT CCabinet::Add_PartObjects()
 {
+	m_PartObjects.clear();
+	m_PartObjects.resize(CCabinet::PART_END);
+
+	/*Part_Body*/
+	CPartObject* pBodyObj = { nullptr };
+	CBody_Cabinet::PART_INTERACTPROPS_DESC BodyDesc = {};
+	BodyDesc.pParentsTransform = m_pTransformCom;
+	BodyDesc.pState = &m_eState;
+	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
+	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(m_tagPropDesc.strObjectPrototype, &BodyDesc));
+	if (nullptr == pBodyObj)
+		return E_FAIL;
+
+	m_PartObjects[CCabinet::PART_BODY] = pBodyObj;
+	
+	/*Part_Item*/
+	if (m_tagPropDesc.tagCabinet.bItem)
+	{	
+		CPartObject* pItem = { nullptr };
+		CBody_ItemProp::BODY_ITEMPROPS_DESC ItemDesc = {};
+		ItemDesc.pParentsTransform = m_pTransformCom;
+		ItemDesc.pState = &m_eState;
+		ItemDesc.pObtain = &m_bObtain;
+		ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm70_001_greenherb01a");
+		/*if(m_tagPropDesc.tagCabinet.iItemIndex==0)*/
+		pItem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_sm70_001_greenherb01a"), &ItemDesc));
+		if (nullptr == pItem)
+			return E_FAIL;
+		m_PartObjects[CCabinet::PART_ITEM] = pItem;
+
+	}
+	else
+		m_PartObjects[CCabinet::PART_ITEM] = nullptr;
+
+
+	/*Part_Lock*/
+	m_PartObjects[CCabinet::PART_LOCK] = nullptr;
+
+
 
 	return S_OK;
 }
 
 HRESULT CCabinet::Initialize_PartObjects()
 {
+	if (m_PartObjects[PART_ITEM] == nullptr)
+		return S_OK;
+
+	CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
+	//CModel* pItemModel = { dynamic_cast<CModel*>(m_PartObjects[PART_ITEM]->Get_Component(TEXT("Com_Body_Model"))) };
+
+	CBody_ItemProp* pItem = dynamic_cast<CBody_ItemProp*>(m_PartObjects[PART_ITEM]);
+	_float4x4* pLeftWeaponCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet01")) };
+	pItem->Set_Socket(pLeftWeaponCombinedMatrix);
+
+
 
 	return S_OK;
 }
@@ -253,25 +172,13 @@ HRESULT CCabinet::Initialize_PartObjects()
 HRESULT CCabinet::Bind_ShaderResources()
 {
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	//_bool isMotionBlur = m_pGameInstance->Get_ShaderState(MOTION_BLUR);
-	//if (FAILED(m_pShaderCom->Bind_RawValue("g_isMotionBlur", &isMotionBlur, sizeof(_bool))))
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
 	//	return E_FAIL;
 
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevWorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevViewMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
+	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
-	//	return E_FAIL;
-
 
 	return S_OK;
 }
@@ -280,11 +187,11 @@ void CCabinet::Active()
 {
 	*m_pPlayerInteract = false;
 	m_bActive = true;
+	
 	m_eState = CABINET_OPEN;
-
-
-
-
+	if (m_bObtain)
+		if(nullptr != m_PartObjects[PART_ITEM])
+			m_PartObjects[PART_ITEM]->Set_Dead(true);
 }
 
 CCabinet* CCabinet::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

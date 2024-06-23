@@ -38,7 +38,7 @@ HRESULT CBody_Window::Initialize(void* pArg)
 
 #ifndef NON_COLLISION_PROP
 
-	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
 #endif
 	return S_OK;
@@ -46,6 +46,7 @@ HRESULT CBody_Window::Initialize(void* pArg)
 
 void CBody_Window::Tick(_float fTimeDelta)
 {
+	__super::Tick(fTimeDelta);
 }
 
 void CBody_Window::Late_Tick(_float fTimeDelta)
@@ -61,9 +62,9 @@ void CBody_Window::Late_Tick(_float fTimeDelta)
 		break;
 		break;
 	}
-	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
+	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
@@ -75,10 +76,11 @@ void CBody_Window::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_Window::Render()
 {
+	/*
 	if (m_bRender == false)
 		return S_OK;
 	else
-		m_bRender = false;
+		m_bRender = false;*/
 
 
 	if (FAILED(Bind_ShaderResources()))

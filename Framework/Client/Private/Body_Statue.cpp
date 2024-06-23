@@ -41,7 +41,7 @@ HRESULT CBody_Statue::Initialize(void* pArg)
 
 #ifndef NON_COLLISION_PROP
 
-	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
 #endif
 
@@ -50,6 +50,8 @@ HRESULT CBody_Statue::Initialize(void* pArg)
 
 void CBody_Statue::Tick(_float fTimeDelta)
 {
+	__super::Tick(fTimeDelta);
+
 }
 
 void CBody_Statue::Late_Tick(_float fTimeDelta)
@@ -64,11 +66,11 @@ void CBody_Statue::Late_Tick(_float fTimeDelta)
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		break;
 	}
-	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
+	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 	if (m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE] != nullptr)
-		m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+		m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(m_pParentsTransform->Get_WorldMatrix());
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
@@ -80,8 +82,8 @@ void CBody_Statue::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_Statue::Render()
 {
-	if (*m_pRender == false)
-		return S_OK;
+	//if (*m_pRender == false)
+	//	return S_OK;
 
 
 	if (FAILED(Bind_ShaderResources()))

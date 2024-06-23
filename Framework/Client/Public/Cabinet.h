@@ -48,6 +48,7 @@ private:
 
 
 private:
+	_bool				m_bObtain = { false };
 	_bool				m_bLock =	{ false };
 	_bool				m_bActive = { false };
 

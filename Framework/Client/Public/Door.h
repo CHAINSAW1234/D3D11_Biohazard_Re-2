@@ -83,7 +83,6 @@ private:
 	_ubyte   			m_eDoubleState_Prev = { DOUBLEDOOR_STATIC };
 	class CCollider* 	m_pColDoubledoorCom = { nullptr };
 	_ubyte				m_eDoubleDoorType;
-
 public:
 	static CDoor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

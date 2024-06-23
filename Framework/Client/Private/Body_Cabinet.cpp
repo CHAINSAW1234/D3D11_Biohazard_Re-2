@@ -41,21 +41,13 @@ HRESULT CBody_Cabinet::Initialize(void* pArg)
 	
 #ifndef NON_COLLISION_PROP
 
-	if (m_strModelComponentName.find(L"60_033") != string::npos)
+
+	if (m_strModelComponentName.find(L"44_002") != string::npos)
 	{
-		//m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+		m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Toilet(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 	}
 	else
-	{
-		if (m_strModelComponentName.find(L"44_002") != string::npos)
-		{
-			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Toilet(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
-		}
-		else
-		{
-			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Cabinet(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
-		}
-	}
+		m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Cabinet(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
 	m_vecRotationBone[ANIM_BONE_TYPE_COLLIDER_CABINET::ATC_CABINET_DOOR] = m_pModelCom->Get_BonePtr("_01");
 
@@ -65,14 +57,13 @@ HRESULT CBody_Cabinet::Initialize(void* pArg)
 
 void CBody_Cabinet::Tick(_float fTimeDelta)
 {
+	__super::Tick(fTimeDelta);
 	if (*m_pState == CCabinet::CABINET_OPEN && m_pModelCom->isFinished(0))
 		return;
 }
 
 void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 {
-	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
-
 	switch (*m_pState)
 	{
 	case CCabinet::CABINET_CLOSED:
@@ -97,9 +88,9 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 		break;
 	}
 
-	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
+	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
@@ -111,10 +102,10 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_Cabinet::Render()
 {
-	if (m_bRender == false)
-		return S_OK;
-	else
-		m_bRender = false;
+	//if (m_bRender == false)
+	//	return S_OK;
+	//else
+	//	m_bRender = false;
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;

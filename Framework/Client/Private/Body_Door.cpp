@@ -55,7 +55,7 @@ HRESULT CBody_Door::Initialize(void* pArg)
 	*/
 
 	m_pModelCom->Active_RootMotion_Rotation(true);
-	//m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
+	//m_pParentsTransform->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
 #ifndef NON_COLLISION_PROP
 
@@ -63,7 +63,7 @@ HRESULT CBody_Door::Initialize(void* pArg)
 	{
 		if (*m_pDoubleDoorType == DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR)
 		{
-			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root_Double_Door(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root_Double_Door(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
 			m_vecRotationBone[ATC_ROOT] = m_pModelCom->Get_BonePtr("_00");
 			m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L] = m_pModelCom->Get_BonePtr("_01");
@@ -73,7 +73,7 @@ HRESULT CBody_Door::Initialize(void* pArg)
 		}
 		else
 		{
-			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
 			switch (*m_pState)
 			{
@@ -93,7 +93,7 @@ HRESULT CBody_Door::Initialize(void* pArg)
 	}
 	else
 	{
-		m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+		m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
 		m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L] = m_pModelCom->Get_BonePtr("_01");
 		m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R] = m_pModelCom->Get_BonePtr("_00");
@@ -106,7 +106,7 @@ HRESULT CBody_Door::Initialize(void* pArg)
 
 void CBody_Door::Tick(_float fTimeDelta)
 {
-
+	__super::Tick(fTimeDelta);
 	*m_pState == CDoor::DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
 
 }
@@ -121,10 +121,10 @@ void CBody_Door::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_Door::Render()
 {
-	if (m_bRender == false)
-		return S_OK;
-	else
-		m_bRender = false;
+	//if (m_bRender == false)
+	//	return S_OK;
+	//else
+	//	m_bRender = false;
 
 
 	if (FAILED(Bind_ShaderResources()))
@@ -399,10 +399,10 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 		}
 	}
 
-	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
-	
+	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
@@ -423,12 +423,11 @@ void CBody_Door::OneDoor_Late_Tick(_float fTimeDelta)
 	{
 	case CDoor::ONEDOOR_OPEN_L:
 	{
-		//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // Àß¾Ë¾Æ°©´Ï´Ù ²¨¾ï
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pOneState);
 
 		//auto Combined = XMLoadFloat4x4(m_pRotationBone->Get_CombinedTransformationMatrix());
 		auto Combined = m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L]->Get_TrasformationMatrix();
-		//Combined = Combined * m_pTransformCom->Get_WorldMatrix();
+		//Combined = Combined * m_pParentsTransform->Get_WorldMatrix();
 		_float4x4 ResultMat;
 		XMStoreFloat4x4(&ResultMat, Combined);
 		m_pPx_Collider->Update_Transform(&ResultMat);
@@ -464,9 +463,9 @@ void CBody_Door::OneDoor_Late_Tick(_float fTimeDelta)
 		break;
 	}
 
-	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
+	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 
 
 

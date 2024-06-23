@@ -24,6 +24,14 @@ HRESULT CShutter::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 	
+	if (m_tagPropDesc.strGamePrototypeName.find("60_033") != string::npos)
+		m_eType = SHUTTER_033;
+	else if (m_tagPropDesc.strGamePrototypeName.find("60_034") != string::npos)
+		m_eType = SHUTTER_034;
+	else
+		m_eType = SHUTTER_NORMAL;
+
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
@@ -46,6 +54,8 @@ void CShutter::Tick(_float fTimeDelta)
 	if (m_pPlayer == nullptr)
 		return;
 	__super::Tick(fTimeDelta);
+	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+
 }
 
 void CShutter::Late_Tick(_float fTimeDelta)

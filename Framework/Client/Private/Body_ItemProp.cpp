@@ -27,18 +27,26 @@ HRESULT CBody_ItemProp::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pModelCom->Set_RootBone("RootNode");
+	BODY_ITEMPROPS_DESC* pDesc = (BODY_ITEMPROPS_DESC*)pArg;
+	m_pObtain = pDesc->pObtain;
+
+	/*m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 
 
-	m_pModelCom->Active_RootMotion_Rotation(true);
+	m_pModelCom->Active_RootMotion_Rotation(true);*/
 	//m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
+
+	if (m_strModelComponentName.find(TEXT("_Anim")) == wstring::npos)
+		m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
+
+
 
 #ifndef NON_COLLISION_PROP
 
-	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
 #endif
 
@@ -47,15 +55,31 @@ HRESULT CBody_ItemProp::Initialize(void* pArg)
 
 void CBody_ItemProp::Tick(_float fTimeDelta)
 {
+	//__super::Tick(fTimeDelta);
 }
 
 void CBody_ItemProp::Late_Tick(_float fTimeDelta)
 {
+	if (m_bRealDead)
+		return;
+	if (m_bDead)
+	{
+		// 아이템 정보 던지고
+		m_bRealDead = true;
+		return;
+	}
+	/*
 	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 
-	_float4 fTransform4 = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
+	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);*/
+	if (m_pSocketMatrix != nullptr)
+	{
+		_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix() /** XMMatrixScaling(100.f,100.f,100.f)*/) };
+		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+	}
+
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
@@ -67,12 +91,10 @@ void CBody_ItemProp::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_ItemProp::Render()
 {
-	if (m_bRender == false)
+	/*if (m_bRender == false)
 		return S_OK;
 	else
-		m_bRender = false;
-
-
+		m_bRender = false;*/
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
@@ -116,14 +138,13 @@ HRESULT CBody_ItemProp::Render()
 
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
-
-	return S_OK;
 }
 
 HRESULT CBody_ItemProp::Add_Components()
 {
 	/* For.Com_Body_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+	//와 이거 나중에 골때려지겠네 Anim 아이템은 어떻게 가져오냐ㅠ
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
 		TEXT("Com_Body_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 	
