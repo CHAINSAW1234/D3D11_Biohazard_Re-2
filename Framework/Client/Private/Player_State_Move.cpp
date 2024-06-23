@@ -13,6 +13,8 @@ CPlayer_State_Move::CPlayer_State_Move(CPlayer* pPlayer)
 
 void CPlayer_State_Move::OnStateEnter()
 {
+	m_pPlayer->Get_Body_Model()->Set_BoneLayer_PlayingInfo(1, TEXT("Default"));
+	m_pPlayer->Get_Body_Model()->Reset_PreAnimation(1);
 	Change_State(IDLE);
 }
 

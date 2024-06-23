@@ -19,7 +19,7 @@ void CPlayer_State_Move_Walk::OnStateEnter()
 	}
 
 	m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
-	m_pPlayer->Get_Body_Model()->Set_Loop(1, false);
+	m_pPlayer->Get_Body_Model()->Set_Loop(1, true);
 	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
 }
 
@@ -114,36 +114,36 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 
 #pragma region 애니메이션 변경시 발 맞추기
 	// 애니메이션 변경시 두 애니메이션의 위치를 동일하게 처리
-	if (m_dwDirection != m_dwPrevDirection) {
+	//if (m_dwDirection != m_dwPrevDirection) {
 
-		_float fTrackPosition = m_pPlayer->Get_Body_Model()->Get_TrackPosition(0);
-		_float fIntPart;
-		_float fFracPart = modf(fTrackPosition, &fIntPart);
+	//	_float fTrackPosition = m_pPlayer->Get_Body_Model()->Get_TrackPosition(0);
+	//	_float fIntPart;
+	//	_float fFracPart = modf(fTrackPosition, &fIntPart);
 
-		fIntPart = _float(static_cast<_int>(fIntPart) % 64);
+	//	fIntPart = _float(static_cast<_int>(fIntPart) % 64);
 
-		fTrackPosition = fIntPart + fFracPart;
+	//	fTrackPosition = fIntPart + fFracPart;
 
-		_float fDuration0 = m_pPlayer->Get_Body_Model()->Get_Duration_From_PlayingInfo(0) + 1;
+	//	_float fDuration0 = m_pPlayer->Get_Body_Model()->Get_Duration_From_PlayingInfo(0) + 1;
 
-		if (fDuration0 == 384.f)
-			fDuration0 = 64.f;
+	//	if (fDuration0 == 384.f)
+	//		fDuration0 = 64.f;
 
-		_float fDuration1 = m_pPlayer->Get_Body_Model()->Get_Duration_From_PlayingInfo(1) + 1;
+	//	_float fDuration1 = m_pPlayer->Get_Body_Model()->Get_Duration_From_PlayingInfo(1) + 1;
 
-		// fDuration0 : fDuration1 = X : fTrackposition
-		//m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
-		m_pPlayer->Get_Body_Model()->Reset_PreAnimation(1);
-		m_pPlayer->Get_Body_Model()->Set_TrackPosition(1,  fDuration0 * fTrackPosition / fDuration1, true );
-		//m_pPlayer->Get_Body_Model()->Active_RootMotion_XZ(true);
-	}
+	//	// fDuration0 : fDuration1 = X : fTrackposition
+	//	//m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
+	//	m_pPlayer->Get_Body_Model()->Reset_PreAnimation(1);
+	//	m_pPlayer->Get_Body_Model()->Set_TrackPosition(1,  fDuration0 * fTrackPosition / fDuration1, true );
+	//	//m_pPlayer->Get_Body_Model()->Active_RootMotion_XZ(true);
+	//}
 #pragma endregion
 
 #pragma region 종료시 초기화
 	if (m_pPlayer->Get_Body_Model()->Get_BlendWeight(1) != 0 && m_pPlayer->Get_Body_Model()->isFinished(1)) {
 		m_pPlayer->Get_Body_Model()->Set_TrackPosition(0, 0.f, true);
 		m_pPlayer->Get_Body_Model()->Set_TrackPosition(1, 0.f, true);
-		m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
+		//m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
 	}
 	else {
 		m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
