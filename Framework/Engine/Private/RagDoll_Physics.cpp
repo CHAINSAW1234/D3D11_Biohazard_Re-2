@@ -220,7 +220,7 @@ PxRigidDynamic* CRagdoll_Physics::create_sphere_bone(uint32_t parent_idx, CRagdo
 	return body;
 }
 
-void CRagdoll_Physics::create_d6_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos)
+PxD6Joint* CRagdoll_Physics::create_d6_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos)
 {
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
@@ -240,9 +240,11 @@ void CRagdoll_Physics::create_d6_joint(PxRigidDynamic* parent, PxRigidDynamic* c
 	config_d6_joint(3.14 / 4.f, 3.14f / 4.f, -3.14f / 8.f, 3.14f / 8.f, joint);
 
 	joint->setBreakForce(FLT_MAX, FLT_MAX);
+
+	return joint;
 }
 
-void CRagdoll_Physics::create_d6_joint_Foot(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos)
+PxD6Joint* CRagdoll_Physics::create_d6_joint_Foot(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos)
 {
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
@@ -262,9 +264,11 @@ void CRagdoll_Physics::create_d6_joint_Foot(PxRigidDynamic* parent, PxRigidDynam
 	config_d6_joint(3.14 / 8.f, 3.14f / 8.f, -3.14f / 16.f, 3.14f / 16.f, joint);
 
 	joint->setBreakForce(FLT_MAX, FLT_MAX);
+
+	return joint;
 }
 
-void CRagdoll_Physics::create_d6_joint_Head(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos)
+PxD6Joint* CRagdoll_Physics::create_d6_joint_Head(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos)
 {
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
@@ -284,6 +288,8 @@ void CRagdoll_Physics::create_d6_joint_Head(PxRigidDynamic* parent, PxRigidDynam
 	config_d6_joint(3.14 / 12.f, 3.14f / 12.f, -3.14f / 20.f, 3.14f / 20.f, joint);
 
 	joint->setBreakForce(FLT_MAX, FLT_MAX);
+
+	return joint;
 }
 
 void CRagdoll_Physics::create_revolute_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t joint_pos, XMMATRIX rotation)
@@ -850,32 +856,32 @@ void CRagdoll_Physics::create_joint()
 #endif
 
 #ifdef ZOMBIE
-	create_d6_joint_Head(m_Chest, m_Head, NECK_BONE, j_neck_01_idx);
-	create_d6_joint_Head(m_Pelvis, m_Chest, SPINE_03_BONE, j_spine_01_idx);
+	m_pNeckJoint = create_d6_joint_Head(m_Chest, m_Head, NECK_BONE, j_neck_01_idx);
+	m_pUpSpine_Joint = create_d6_joint_Head(m_Pelvis, m_Chest, SPINE_03_BONE, j_spine_01_idx);
 
 	// Pelvis to Thighs
-	create_d6_joint(m_Pelvis, m_Leg_L, L_LEG_BONE, j_thigh_l_idx);
-	create_d6_joint(m_Pelvis, m_Leg_R, R_LEG_BONE, j_thigh_r_idx);
+	m_pHip_Joint_L = create_d6_joint(m_Pelvis, m_Leg_L, L_LEG_BONE, j_thigh_l_idx);
+	m_pHip_Joint_R = create_d6_joint(m_Pelvis, m_Leg_R, R_LEG_BONE, j_thigh_r_idx);
 
 	// Thighs to Calf
-	create_d6_joint(m_Leg_L, m_Calf_L, L_CALF_BONE, j_calf_l_idx);
-	create_d6_joint(m_Leg_R, m_Calf_R, R_CALF_BONE, j_calf_r_idx);
+	m_pKnee_Joint_L = create_d6_joint(m_Leg_L, m_Calf_L, L_CALF_BONE, j_calf_l_idx);
+	m_pKnee_Joint_R = create_d6_joint(m_Leg_R, m_Calf_R, R_CALF_BONE, j_calf_r_idx);
 
 	// Calf to Foot
-	create_d6_joint_Foot(m_Calf_L, m_Foot_L, L_FOOT_BONE, j_foot_l_idx);
-	create_d6_joint_Foot(m_Calf_R, m_Foot_R, R_FOOT_BONE, j_foot_r_idx);
+	m_pAnkle_Joint_L = create_d6_joint_Foot(m_Calf_L, m_Foot_L, L_FOOT_BONE, j_foot_l_idx);
+	m_pAnkle_Joint_R = create_d6_joint_Foot(m_Calf_R, m_Foot_R, R_FOOT_BONE, j_foot_r_idx);
 
 	// Chest to Upperarm
-	create_d6_joint(m_Chest, m_Arm_L, L_ARM_BONE, j_upperarm_l_idx);
-	create_d6_joint(m_Chest, m_Arm_R, R_ARM_BONE, j_upperarm_r_idx);
+	m_pClavicle_L_Joint = create_d6_joint(m_Chest, m_Arm_L, L_ARM_BONE, j_upperarm_l_idx);
+	m_pClavicle_R_Joint = create_d6_joint(m_Chest, m_Arm_R, R_ARM_BONE, j_upperarm_r_idx);
 
 	// Upperarm to Lowerman
-	create_d6_joint(m_Arm_L, m_ForeArm_L, L_FOREARM_BONE, j_lowerarm_l_idx);
-	create_d6_joint(m_Arm_R, m_ForeArm_R, R_FOREARM_BONE, j_lowerarm_r_idx);
+	m_pElbow_L_Joint = create_d6_joint(m_Arm_L, m_ForeArm_L, L_FOREARM_BONE, j_lowerarm_l_idx);
+	m_pElbow_R_Joint = create_d6_joint(m_Arm_R, m_ForeArm_R, R_FOREARM_BONE, j_lowerarm_r_idx);
 
 	// Lowerarm to Hand
-	create_d6_joint(m_ForeArm_L, m_Hand_L, L_WRIST_BONE, j_hand_l_idx);
-	create_d6_joint(m_ForeArm_R, m_Hand_R, R_WRIST_BONE, j_hand_r_idx);
+	m_pWrist_L_Joint = create_d6_joint(m_ForeArm_L, m_Hand_L, L_WRIST_BONE, j_hand_l_idx);
+	m_pWrist_R_Joint = create_d6_joint(m_ForeArm_R, m_Hand_R, R_WRIST_BONE, j_hand_r_idx);
 #endif
 }
 

@@ -42,10 +42,7 @@ namespace Engine
 #include "physx/omnipvd/PxOmniPvd.h"
 #include "physx/extensions/PxParticleClothCooker.h"
 #include "physx/PxConstraint.h"
-#include "../NvCloth/include/NvCloth/Factory.h"
 using namespace physx;
-using namespace nv;
-using namespace cloth;
 
 #include "Effects11/d3dx11effect.h"
 #include "DirectXTK/DDSTextureLoader.h"
