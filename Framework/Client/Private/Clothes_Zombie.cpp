@@ -292,6 +292,11 @@ HRESULT CClothes_Zombie::Render_LightDepth_Spot()
 	return S_OK;
 }
 
+void CClothes_Zombie::Create_Cloth()
+{
+	m_pModelCom->Create_Cloth();
+}
+
 HRESULT CClothes_Zombie::Initialize_Model()
 {
 	if (nullptr == m_pModelCom)

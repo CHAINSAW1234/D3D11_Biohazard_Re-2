@@ -40,6 +40,8 @@ namespace Engine
 #include "physx/extensions/PxParticleExt.h"
 #include "physx/PxParticleBuffer.h"
 #include "physx/omnipvd/PxOmniPvd.h"
+#include "physx/extensions/PxParticleClothCooker.h"
+#include "physx/PxConstraint.h"
 using namespace physx;
 
 #include "Effects11/d3dx11effect.h"

@@ -68,7 +68,7 @@ private:
 	vector<PxRigidStatic*>								m_vecFullMapObject;
 	vector<class CPxCollider*>							m_vecCollider;
 	_int												m_iCollider_Count = { 0 };
-	vector<class SoftBody*>									m_vecSoftBodies;
+	vector<class SoftBody*>								m_vecSoftBodies;
 #pragma endregion
 
 #pragma region Ray Cast
@@ -164,7 +164,7 @@ public://For Mesh Cooking
 	}
 	PxSoftBody*												Create_SoftBody_Debug(const PxCookingParams& params, const PxArray<PxVec3>& triVerts, const PxArray<PxU32>& triIndices, bool useCollisionMeshForSimulation = false);
 	void													initCloth(const PxU32 numX, const PxU32 numZ, const PxVec3& position = PxVec3(0, 0, 0), const PxReal particleSpacing = 0.2f, const PxReal totalClothMass = 10.f);
-	void													initObstacles();
+	void													Create_Cloth(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr);
 	PX_FORCE_INLINE											PxU32 id(PxU32 x, PxU32 y, PxU32 numY)
 	{
 		return x * numY + y;

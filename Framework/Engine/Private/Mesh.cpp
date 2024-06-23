@@ -507,6 +507,11 @@ void CMesh::Create_SoftBody()
 	m_pGameInstance->Create_SoftBody(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices);
 }
 
+void CMesh::Create_Cloth()
+{
+	m_pGameInstance->Create_Cloth(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices);
+}
+
 void CMesh::SetVertices(_float3* pVertices)
 {
 	m_pVertices_Cooking = new _float3[m_iNumVertices];

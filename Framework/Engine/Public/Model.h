@@ -241,6 +241,7 @@ public:		/* For.Cooking_Mesh */
 	void									Convex_Mesh_Cooking_Cabinet(vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms,class CTransform* pTransform = nullptr);
 	void									Convex_Mesh_Cooking_Toilet(vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms,class CTransform* pTransform = nullptr);
 	void									Create_SoftBody();
+	void									Create_Cloth();
 
 private:
 	_int									Find_BoneIndex(const string& strBoneTag);

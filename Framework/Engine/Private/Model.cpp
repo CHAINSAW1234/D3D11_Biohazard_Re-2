@@ -2496,6 +2496,14 @@ void CModel::Create_SoftBody()
 	}
 }
 
+void CModel::Create_Cloth()
+{
+	for (int i = 0; i < 1; ++i)
+	{
+		m_Meshes[i]->Create_Cloth();
+	}
+}
+
 _int CModel::Find_BoneIndex(const string& strRootTag)
 {
 	_int		iIndex = { 0 };
