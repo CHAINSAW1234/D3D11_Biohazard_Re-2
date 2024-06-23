@@ -188,7 +188,7 @@ CModel* CBlackBoard_Zombie::Find_PartModel(_uint iPartID)
 
 _bool CBlackBoard_Zombie::Is_Start_Anim(_uint iPartID, _uint iAnimIndex)
 {
-	CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
+	/*CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
 
 	if (CMonster::PART_ID::PART_BODY == static_cast<CMonster::PART_ID>(iPartID))
 	{
@@ -197,14 +197,14 @@ _bool CBlackBoard_Zombie::Is_Start_Anim(_uint iPartID, _uint iAnimIndex)
 			return false;
 
 		return pBodyZombie->Is_Start_Anim(iAnimIndex);
-	}
+	}*/
 
 	return false;
 }
 
 _bool CBlackBoard_Zombie::Is_Loop_Anim(_uint iPartID, _uint iAnimIndex)
 {
-	CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
+	/*CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
 
 	if (CMonster::PART_ID::PART_BODY == static_cast<CMonster::PART_ID>(iPartID))
 	{
@@ -213,14 +213,14 @@ _bool CBlackBoard_Zombie::Is_Loop_Anim(_uint iPartID, _uint iAnimIndex)
 			return false;
 
 		return pBodyZombie->Is_Loop_Anim(iAnimIndex);
-	}
+	}*/
 
 	return false;
 }
 
 _bool CBlackBoard_Zombie::Is_Move_CurrentAnim(_uint iPartID, _uint iAnimIndex)
 {
-	CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
+	/*CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
 
 	if (CMonster::PART_ID::PART_BODY == static_cast<CMonster::PART_ID>(iPartID))
 	{
@@ -229,14 +229,14 @@ _bool CBlackBoard_Zombie::Is_Move_CurrentAnim(_uint iPartID, _uint iAnimIndex)
 			return false;
 
 		return pBodyZombie->Is_Move_Anim(iAnimIndex);
-	}
+	}*/
 
 	return false;
 }
 
 _bool CBlackBoard_Zombie::Is_Turn_Anim(_uint iPartID, _uint iAnimIndex)
 {
-	CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
+	/*CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
 
 	if (CMonster::PART_ID::PART_BODY == static_cast<CMonster::PART_ID>(iPartID))
 	{
@@ -245,7 +245,7 @@ _bool CBlackBoard_Zombie::Is_Turn_Anim(_uint iPartID, _uint iAnimIndex)
 			return false;
 
 		return pBodyZombie->Is_Turn_Anim(iAnimIndex);
-	}
+	}*/
 
 	return false;
 }

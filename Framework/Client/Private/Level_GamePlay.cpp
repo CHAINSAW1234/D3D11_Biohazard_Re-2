@@ -210,7 +210,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const wstring & strLayerTag/*, CLand
 
 HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
-	return S_OK;
 	//ÈñÈ÷ ³Ñ ¹Ù»Û °ü°è·Î ÇÔ¼ö ¸øÆÍ¾î¿ä - ¿¹Àº
 
 	string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
@@ -232,7 +231,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
 		return E_FAIL;
 
-	for (_uint i = 0; iObjectNum > i; ++i)
+	for (_uint i = 0; 1 > i; ++i)
 	{
 		_uint iLength = { 0 };
 
