@@ -48,6 +48,12 @@ private:
 
 private:
 	HRESULT Load_Collider(const wstring& strFile, const wstring& strColLayerTag);
+	HRESULT CLevel_GamePlay::Load_Layer(const wstring& strFilePath, _uint iLevel);
+	HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& strLayerName, _uint iLevel);
+
+
+
+
 #pragma region 예은 추가 (임시임)
 private:
 	_int iCurIndex = { 0 };

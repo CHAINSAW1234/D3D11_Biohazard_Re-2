@@ -241,8 +241,41 @@
     <Filter Include="02.GameObjects\UI\14. Loading">
       <UniqueIdentifier>{1fab2592-4cd6-4e48-a96c-07b5219145e6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Player\FlashLight">
-      <UniqueIdentifier>{32eeb4ea-f24c-4bb5-b6a2-dec82cb4925a}</UniqueIdentifier>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Cabinet\Body_Cabinet">
+      <UniqueIdentifier>{9b470b2b-6182-4e01-b608-82f374349797}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Door\Body_Door">
+      <UniqueIdentifier>{e1832ad7-1f5d-4d74-a640-3437cef2aebb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\NewpoliceStatue\Body_NewpoliceStatue">
+      <UniqueIdentifier>{5d4f9fb8-2f8f-455a-958c-453e96ef2ea9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Window\Body_Window">
+      <UniqueIdentifier>{bb3b42cc-8e8f-45f8-ac1b-56d1ca31983f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\ItemProp">
+      <UniqueIdentifier>{b2302cac-502a-4e6d-a3ed-7a95fdecf84c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Shutter">
+      <UniqueIdentifier>{871af3dc-7fdf-4f81-bb3e-ba60f3758d85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Statue">
+      <UniqueIdentifier>{aaa84b5a-e02d-4527-96e6-30a62427c239}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Statue\Body_Statue">
+      <UniqueIdentifier>{68cb08eb-88a2-4862-93c1-10f3c8420f86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\ItemProp\Body_ItemProp">
+      <UniqueIdentifier>{32ba92cd-4216-4ddc-9aca-8b87dc910340}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Shutter\Body_Shutter">
+      <UniqueIdentifier>{b69bfdbe-9213-4f80-a478-df48fcc09e11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\EventProp">
+      <UniqueIdentifier>{66f0b86d-0710-4e02-87a3-20415dcf2a3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\EventProp\Body_EventProp">
+      <UniqueIdentifier>{75dd5a41-49b8-4afa-9ec9-72c096538027}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -438,9 +471,6 @@
     <ClInclude Include="..\Public\Window.h">
       <Filter>02.GameObjects\MapObject\InteractProps\Window</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Part_InteractProps.h">
-      <Filter>02.GameObjects\MapObject\InteractProps</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Slot_Highlighter.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Slot_Highlighter</Filter>
     </ClInclude>
@@ -468,8 +498,47 @@
     <ClInclude Include="..\Public\Loading_UI.h">
       <Filter>02.GameObjects\UI\14. Loading</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Body_Cabinet.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Cabinet\Body_Cabinet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Door.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Door\Body_Door</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_NewpoliceStatue.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\NewpoliceStatue\Body_NewpoliceStatue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Window.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Window\Body_Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_EventProp.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\EventProp\Body_EventProp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_ItemProp.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\ItemProp\Body_ItemProp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ItemProp.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\ItemProp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Statue.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Statue\Body_Statue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EventProp.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\EventProp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Part_InteractProps.h">
+      <Filter>02.GameObjects\MapObject\InteractProps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Statue.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Statue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Shutter.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Shutter\Body_Shutter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Shutter.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Shutter</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\FlashLight.h">
-      <Filter>02.GameObjects\Player\FlashLight</Filter>
+      <Filter>02.GameObjects\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -647,9 +716,6 @@
     <ClCompile Include="..\Private\Window.cpp">
       <Filter>02.GameObjects\MapObject\InteractProps\Window</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Part_InteractProps.cpp">
-      <Filter>02.GameObjects\MapObject\InteractProps</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Slot_Highlighter.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Slot_Highlighter</Filter>
     </ClCompile>
@@ -676,6 +742,45 @@
     </ClCompile>
     <ClCompile Include="..\Private\Loading_UI.cpp">
       <Filter>02.GameObjects\UI\14. Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Cabinet.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Cabinet\Body_Cabinet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Door.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Door\Body_Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_NewpoliceStatue.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\NewpoliceStatue\Body_NewpoliceStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Window.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Window\Body_Window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_EventProp.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\EventProp\Body_EventProp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_ItemProp.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\ItemProp\Body_ItemProp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ItemProp.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\ItemProp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Statue.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Statue\Body_Statue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EventProp.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\EventProp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Part_InteractProps.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Statue.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Statue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Shutter.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Shutter\Body_Shutter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Shutter.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Shutter</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\FlashLight.cpp">
       <Filter>02.GameObjects\Player\FlashLight</Filter>

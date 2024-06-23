@@ -5,6 +5,9 @@
 #include "Light.h"
 #include"Player.h"
 #include"PartObject.h"
+
+#include"Part_InteractProps.h"
+
 CInteractProps::CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -34,6 +37,8 @@ HRESULT CInteractProps::Initialize(void* pArg)
 	m_tagPropDesc.BelongIndexs = pObj_desc->BelongIndexs;
 	m_tagPropDesc.iRegionDir = pObj_desc->iRegionDir;
 	m_tagPropDesc.iRegionNum = pObj_desc->iRegionNum;
+	m_tagPropDesc.iPartObj = pObj_desc->iPartObj;
+	m_tagPropDesc.iPropType = pObj_desc->iPropType;
 
 	for (auto iter : m_tagPropDesc.BelongIndexs)
 	{
@@ -45,8 +50,9 @@ HRESULT CInteractProps::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 	//파트 오브젝이나 컴포넌트는 커스텀
+	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
-	m_vecRotationBone.resize(ANIM_BONE_COUNT);
+	//
 
 	return S_OK;
 }
@@ -74,20 +80,32 @@ HRESULT CInteractProps::Render()
 void CInteractProps::Priority_Tick_PartObjects(_float fTimeDelta)
 {
 	for (auto& pPartObject : m_PartObjects)
+	{
+		if (pPartObject == nullptr)
+			continue;
 		pPartObject->Priority_Tick(fTimeDelta);
+	}
 }
 
 void CInteractProps::Tick_PartObjects(_float fTimeDelta)
 {
 	for (auto& pPartObject : m_PartObjects)
+	{
+		if (pPartObject == nullptr)
+			continue;
 		pPartObject->Tick(fTimeDelta);
+	}
 }
 
 
 void CInteractProps::Late_Tick_PartObjects(_float fTimeDelta)
 {
 	for (auto& pPartObject : m_PartObjects)
+	{
+		if (pPartObject == nullptr)
+			continue;
 		pPartObject->Late_Tick(fTimeDelta);
+	}
 }
 
 void CInteractProps::Check_Player()
@@ -97,6 +115,12 @@ void CInteractProps::Check_Player()
 	m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
 	m_pPlayerInteract = m_pPlayer->Get_Player_Interact_Ptr();
 	m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
+	for (auto& iter: m_PartObjects)
+	{
+		if (iter == nullptr)
+			continue;
+		static_cast<CPart_InteractProps*>(iter)->Set_PlayerSetting(m_pPlayer, m_pPlayerInteract, m_pPlayerTransform);
+	}
 
 }
 
@@ -108,9 +132,7 @@ void CInteractProps::Check_Col_Sphere_Player()
 		return;
 	CCollider* pPlayerCol = static_cast<CCollider*>( m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_SPHERE]))
-		m_bCol = true; //false를 해주는 부분은 따로 있어야 할 것임
-
-
+		m_bCol = true; 
 
 }
 

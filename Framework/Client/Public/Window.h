@@ -10,10 +10,16 @@ BEGIN(Client)
 class CWindow final : public CInteractProps
 {
 public:
+	enum WINDOW_PART
+	{
+		PART_BODY,
+		PART_PANNEL,
+		PART_END,
+	};
 	enum WINDOW_STATE
 	{
-		WINDOW_STATIC,
 		WINDOW_BREAK,
+		WINDOW_STATIC,
 		WINDOW_END
 	};
 
@@ -43,7 +49,7 @@ private:
 private:
 	_bool				m_bActive = { false };
 	_float			m_fTime = { 0.f };
-	WINDOW_STATE  m_eState = { WINDOW_STATIC };
+	_ubyte			m_eState = { WINDOW_STATIC };
 
 
 
