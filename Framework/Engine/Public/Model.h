@@ -43,6 +43,7 @@ public:		/* For.Animation */
 	_int									Get_CurrentAnimIndex(_uint iPlayingIndex);
 	wstring									Get_CurrentAnimLayerTag(_uint iPlayingIndex);
 	string									Get_CurrentAnimTag(_uint iPlayingIndex);
+	_float4x4								Get_TransformationMatrix();
 
 	void									Reset_PreAnimation(_uint iPlayingIndex);
 

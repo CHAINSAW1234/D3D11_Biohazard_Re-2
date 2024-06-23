@@ -159,6 +159,11 @@ string CModel::Get_CurrentAnimTag(_uint iPlayingIndex)
 	return strAnimTag;
 }
 
+_float4x4 CModel::Get_TransformationMatrix()
+{
+	return m_TransformationMatrix;
+}
+
 void CModel::Reset_PreAnimation(_uint iPlayingIndex)
 {
 	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };

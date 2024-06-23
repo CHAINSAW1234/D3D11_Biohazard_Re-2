@@ -40,6 +40,8 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	if (FAILED(Add_Animations()))
 		return E_FAIL;
 
+	m_pModelCom->Add_IK("l_arm_humerus", "l_weapon", TEXT("IK_FLASH_LIGHT"), 3, 1.f);
+
 	m_pModelCom->Set_OptimizationCulling(false);
 
 	m_pModelCom->Set_RootBone("root");
@@ -48,9 +50,8 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	_uint			iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Left_Arm"), "l_arm_clavicle");
-	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Left_Arm"), "spine_2");
-	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Left_Arm"), "spine_1");
-	m_pModelCom->Add_Bone_Layer_Bone(TEXT("Left_Arm"), "spine_0");
+	//m_pModelCom->Add_Bone_Layer_Bone(TEXT("Left_Arm"), "spine_2");
+	//m_pModelCom->Add_Bone_Layer_Bone(TEXT("Left_Arm"), "spine_1");
 
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("LowerBody"), "hips");
 	m_pModelCom->Add_Bone_Layer_Bone(TEXT("LowerBody"), "root");
@@ -61,9 +62,9 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Shot"), "r_clavicle");
 
 	m_pModelCom->Add_AnimPlayingInfo(true, 0, TEXT("Default"), 1.f);
-	m_pModelCom->Add_AnimPlayingInfo(true, 1, TEXT("Default"), 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(true, 1, TEXT("LowerBody"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(false, 2, TEXT("Shot"), 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(false, 3, TEXT("UpperBody"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(true, 3, TEXT("UpperBody"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(false, 4, TEXT("Left_Arm"), 1.f);
 
 
@@ -296,6 +297,25 @@ void CBody_Player::Late_Tick(_float fTimeDelta)
 
 	if (m_bRagdoll == false)
 		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+
+	//_matrix				LArmMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("l_arm_wrist")) };
+	//_matrix				RArmMatrix = { XMLoadFloat4x4(m_pModelCom->Get_CombinedMatrix("r_arm_wrist")) };
+
+	//_vector				vPositionLArmWrist = { LArmMatrix.r[CTransform::STATE_POSITION] };
+	//_vector				vPositionRArmWrist = { RArmMatrix.r[CTransform::STATE_POSITION] };
+
+	//_vector				vNeedDirection = { vPositionRArmWrist - vPositionLArmWrist };
+
+	//_vector				vRArmWristPositionWorld = { XMVector3TransformCoord(vPositionRArmWrist, XMLoadFloat4x4(&m_WorldMatrix)) };
+	//_vector				vNeedDirectionWorld = { XMVector3TransformNormal(vNeedDirection, XMLoadFloat4x4(&m_WorldMatrix)) };
+
+	//_vector				vTargetPositionWorld = { vRArmWristPositionWorld + vNeedDirectionWorld + XMVectorSet(0.f, -0.2f,0.f,0.f)};
+
+	//m_pModelCom->Set_TargetPosition_IK(TEXT("IK_FLASH_LIGHT"), vTargetPositionWorld);
+	//
+	//m_pModelCom->Play_IK(m_pParentsTransform, fTimeDelta);
+
+
 
 	/////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////
@@ -731,6 +751,9 @@ HRESULT CBody_Player::Add_Animations()
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Hg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HOLD_HG))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Stg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HOLD_STG))))
+		return E_FAIL;
+
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Common"), TEXT("Common"))))
 		return E_FAIL;
 
 	return S_OK;
