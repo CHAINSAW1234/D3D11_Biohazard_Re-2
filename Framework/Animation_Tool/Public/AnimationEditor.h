@@ -8,6 +8,7 @@
 #define TOOL_MODELSELECTOR_TAG          "Tool_ModelSelector"
 #define TOOL_TRANSFORMATION_TAG         "Tool_Transformation"
 #define TOOL_ANIMPLAYER_TAG             "Tool_AnimPlayer"
+#define TOOL_ANIMLIBRARY_TAG            "Tool_AnimLibrary"
 #define TOOL_PARTOBJECT_TAG             "Tool_PartObject"
 #define TOOL_BONELAYER_TAG              "Tool_BoneLayer"
 #define TOOL_INVERSEKINEMATIC_TAG       "Tool_IK"
@@ -50,6 +51,8 @@ private:    /* 틱이 돈 이후 모든 데이터 별도 동기화 해주는 과정 */
     void                        Update_AnimPlayerTool();
     void                        Update_PartObjectTool();
     void                        Update_BoneLayerTool();
+    void                        Update_AnimLibraryTool();
+    void                        Update_AnimListTool();
 
 private:
     void                        Update_TestObject();
@@ -94,11 +97,13 @@ private:
     CTool_IK*                   m_pToolIK = { nullptr };
     CTool_EventInserter*        m_pToolEventInserter = { nullptr };
     CTool_MeshController*       m_pToolMeshController = { nullptr };
+    CTool_AnimLibrary*          m_pToolAnimLibrary = { nullptr };
 
     string                      m_strCurrentModelTag = { "" };
     string                      m_strCurrentRootBoneTag = { "" };
     string                      m_strCurrentBoneTag = { "" };
     string                      m_strCurrentAnimTag = { "" };
+    wstring                     m_strCurrentAnimLayerTag = { TEXT("") };
     wstring                     m_strCurrentBoneLayerTag = { TEXT("") };
     wstring                     m_strCurrentPartObjectTag = { TEXT("") };
     wstring                     m_strCurrentIKTag = { TEXT("") };

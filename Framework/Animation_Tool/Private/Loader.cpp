@@ -113,97 +113,110 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Brush.png"), 1))))
 		return E_FAIL;
 
+#pragma region Model
+	m_strLoadingText = TEXT("Now Loading ... Model");
 
-	m_strLoadingText = TEXT("모델를(을) 로딩 중 입니다.");
 	_matrix			TransformMatrix = { XMMatrixIdentity() };
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
-	//	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(0.f));
+	_matrix			WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
+	WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-90.f));
+	_matrix			LightTransformMatrix = { XMMatrixRotationX(XMConvertToRadians(30.f)) };
+#pragma region Players Model 
 
-	/* Prototype_Component_police_holl */
-	/*if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_police_holl"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/map/police_holl.fbx",
-			TransformMatrix))))
-		return E_FAIL;*/
-
-#pragma region Player
-		/* Prototype_Component_Model_LeonBody */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonBody"),
+	/* Prototype_Component_Model_LeonBody */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_LeonBody"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonBody.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_LeonFace */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonFace"),
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_LeonFace"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonFace.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_LeonHair */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_LeonHair"),
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_LeonHair"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonHair.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
+	/* Prototype_Component_Model_HandGun */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_HandGun"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/HandGun/HandGun.fbx",
+			WeaponTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_FlashLight */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_FlashLight"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Weapon/FlashLight/FlashLight.fbx",
+			TransformMatrix))))
+		return E_FAIL;
+
 #pragma endregion
 
-#pragma region Monster
+#pragma region Monsters Model
+
 	/* Prototype_Component_Model_ZombieBody */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieBody"),
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieBody"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Body.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_ZombieFace1 */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieFace1"),
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieFace1"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Face01.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_ZombieFace2 */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieFace2"),
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieFace2"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Face02.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_ZombieFace3 */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieFace3"),
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieFace3"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Face03.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_ZombieHat */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieHat"),
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieHat"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Hat.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_ZombieShirts1 */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieShirts1"),
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieShirts1"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Shirts01.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 	/* Prototype_Component_Model_ZombieShirts2 */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieShirts2"),
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieShirts2"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Shirts02.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 	///* Prototype_Component_Model_ZombieShirts3 */
-	//	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombieShirts3"),
+	//	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieShirts3"),
 	//		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Shirts03.fbx",
 	//			LeonTransformMatrix))))
 	//		return E_FAIL;
 
 	/* Prototype_Component_Model_ZombiePants */
-	if (FAILED(m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_ZombiePants"),
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombiePants"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Pants.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 
 #pragma endregion
 
+	m_strLoadingText = TEXT("Now Loading ... Animations");
+
 #pragma region Animation Load 
+
 
 	if (FAILED(Load_Animations()))
 		return E_FAIL;
@@ -314,11 +327,208 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 HRESULT CLoader::Load_Animations()
 {
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Player_Test"), "../Bin/Resources/Animations/Body_Player/")))
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Fine"), "../Bin/Resources/Animations/Player/Body/move/move_fine/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Stg"), "../Bin/Resources/Animations/Player/Body/move/move_stg/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Light"), "../Bin/Resources/Animations/Player/Body/move/move_stlight/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Caution"), "../Bin/Resources/Animations/Player/Body/move/move_caution/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Caution_Light"), "../Bin/Resources/Animations/Player/Body/move/move_caution_stlight/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Danger"), "../Bin/Resources/Animations/Player/Body/move/move_danger/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Danger_Light"), "../Bin/Resources/Animations/Player/Body/move/move_danger_stlight/")))
+		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Common"), "../Bin/Resources/Animations/Player/Body/move/move_danger_common/")))
+	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Hold_Hg"), "../Bin/Resources/Animations/Player/Body/hold/hg_hold/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Hold_Stg"), "../Bin/Resources/Animations/Player/Body/hold/stg_hold/")))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Test"), "../Bin/Resources/Animations/Body_Zombie/Test/")))
+
+
+#pragma region Default Zombie Ordinary Anims
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Box_ClimbOver"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Box_ClimbOver/")))
 		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_ETC"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/ETC/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Hold"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Hold/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Idle"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Idle/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_PivotTurn"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/PivotTurn/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Stairs_PivotTurn"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Stairs_PivotTurn/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Stairs_Walk"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Stairs_Walk/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_StandUp"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/StandUp/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Walk"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Walk/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Walk_Lose"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Walk_Lose/")))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Default Zombie Add Anims
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Arm_L"), "../Bin/Resources/Animations/Body_Zombie/Add/Arm_L/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Arm_R"), "../Bin/Resources/Animations/Body_Zombie/Add/Arm_R/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Body"), "../Bin/Resources/Animations/Body_Zombie/Add/Body/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Head"), "../Bin/Resources/Animations/Body_Zombie/Add/Head/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Leg_L"), "../Bin/Resources/Animations/Body_Zombie/Add/Leg_L/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Leg_R"), "../Bin/Resources/Animations/Body_Zombie/Add/Leg_R/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Shoulder_L"), "../Bin/Resources/Animations/Body_Zombie/Add/Shoulder_L/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Add_Shoulder_R"), "../Bin/Resources/Animations/Body_Zombie/Add/Shoulder_R/")))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Default Zombie Bite Anims
+
+#pragma endregion
+
+#pragma region Default Zombie Damage Anims
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Burst"), "../Bin/Resources/Animations/Body_Zombie/Damage/Burst/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Default"), "../Bin/Resources/Animations/Body_Zombie/Damage/Default/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Down"), "../Bin/Resources/Animations/Body_Zombie/Damage/Down/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Electric_Shock"), "../Bin/Resources/Animations/Body_Zombie/Damage/Electric_Shock/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Knockback"), "../Bin/Resources/Animations/Body_Zombie/Damage/Knockback/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Lost"), "../Bin/Resources/Animations/Body_Zombie/Damage/Lost/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Stairs_Down"), "../Bin/Resources/Animations/Body_Zombie/Damage/Stairs_Down/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Stairs_Up"), "../Bin/Resources/Animations/Body_Zombie/Damage/Stairs_Up/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Damage_Stun"), "../Bin/Resources/Animations/Body_Zombie/Damage/Stun/")))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Default Zombie Dead Anims
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Dead_Default"), "../Bin/Resources/Animations/Body_Zombie/Dead/Default/")))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Default Zombie Lost Anims
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_Bite"), "../Bin/Resources/Animations/Body_Zombie/Lost/Bite/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_Dead2_Idle"), "../Bin/Resources/Animations/Body_Zombie/Lost/Dead2_Idle/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_Hold"), "../Bin/Resources/Animations/Body_Zombie/Lost/Hold/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_Idle"), "../Bin/Resources/Animations/Body_Zombie/Lost/Idle/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_Turn"), "../Bin/Resources/Animations/Body_Zombie/Lost/Turn/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_TurnOver"), "../Bin/Resources/Animations/Body_Zombie/Lost/TurnOver/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_Walk"), "../Bin/Resources/Animations/Body_Zombie/Lost/Walk/")))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Default Zombie Sick Anims
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Sick_FlashGranade"), "../Bin/Resources/Animations/Body_Zombie/Sick/FlashGranade/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Sick_Knife"), "../Bin/Resources/Animations/Body_Zombie/Sick/Knife/")))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Default Zombie Undiscovered Anims
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Cage"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Cage/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Capture"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Capture/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Celling_Fall"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Celling_Fall/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Dead"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Dead/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Dead_Pose"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Dead_Pose/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Eat"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Eat/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Fance"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Fance/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_HeadBang"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/HeadBang/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Lounge"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Lounge/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Prison"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Prison/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Railing_Fall"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Railing_Fall/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Railing_Stund"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Stund/")))
+		return E_FAIL;
+
+#pragma endregion
+
 
 	return S_OK;
 }

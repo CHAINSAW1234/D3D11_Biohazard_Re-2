@@ -52,9 +52,6 @@
     <Filter Include="02.GameObjects\Player\Weapon">
       <UniqueIdentifier>{b3b00c76-db29-40f1-91c2-575d98ee7852}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Sky">
-      <UniqueIdentifier>{44a9bfc4-49d4-4584-82e2-8973a2c4c1ec}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Particle">
       <UniqueIdentifier>{0cbb16a0-33db-47fd-ac68-1b84e546d85c}</UniqueIdentifier>
     </Filter>
@@ -243,6 +240,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Player\FlashLight">
       <UniqueIdentifier>{32eeb4ea-f24c-4bb5-b6a2-dec82cb4925a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Sky">
+      <UniqueIdentifier>{44a9bfc4-49d4-4584-82e2-8973a2c4c1ec}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -470,6 +470,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\FlashLight.h">
       <Filter>02.GameObjects\Player\FlashLight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Zombie_Enums.h">
+      <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Zombie_Defines.h">
+      <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

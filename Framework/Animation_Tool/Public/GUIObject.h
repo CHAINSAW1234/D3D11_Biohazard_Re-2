@@ -9,6 +9,7 @@
 #include "Tool_Collider.h"
 #include "Tool_AnimList.h"
 #include "Tool_AnimPlayer.h"
+#include "Tool_AnimLibrary.h"
 #include "Tool_PartObject.h"
 #include "Tool_BoneLayer.h"
 #include "Tool_IK.h"

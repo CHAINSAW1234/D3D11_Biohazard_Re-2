@@ -10,12 +10,13 @@ class CTool_AnimPlayer final : public CTool
 public:
 	typedef struct tagAnimPlayerDesc
 	{
-		const wstring* pCurrentBoneLayerTag = { nullptr };
-		const wstring* pCurrentPartObjectTag = { nullptr };
-		const string* pCurrentModelTag = { nullptr };
-		_float3* pMoveDir = { nullptr };
-		CTransform* pTransform = { nullptr };
-		class CAnimTestObject* pTestObject = { nullptr };
+		const wstring*							pCurrentBoneLayerTag = { nullptr };
+		const wstring*							pCurrentPartObjectTag = { nullptr };
+		const string*							pCurrentModelTag = { nullptr };
+		const wstring*							pCurrentAnimLayerTag = { nullptr };
+		_float3*								pMoveDir = { nullptr };
+		CTransform*								pTransform = { nullptr };
+		class CAnimTestObject*					pTestObject = { nullptr };
 	}ANIMPLAYER_DESC;
 
 private:
@@ -88,6 +89,7 @@ private:
 	const string*								m_pCurrentModelTag = { nullptr };
 	const wstring*								m_pCurrentPartObjectTag = { nullptr };
 	const wstring*								m_pCurrentBoneLayerTag = { nullptr };
+	const wstring*								m_pCurrentAnimLayerTag = { nullptr };
 
 public:
 	static CTool_AnimPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

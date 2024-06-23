@@ -337,9 +337,12 @@ public:
 
 #pragma region		For Animation Library
 
-	_uint Get_NumAnim_Prototypes(const wstring& strAnimLayerTag);
-	HRESULT Add_Prototypes_Animation(const wstring& strAnimLayerTag, const string& strDirPath);
-	HRESULT Clone_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, CAnimation** ppAnimation);
+	_uint									Get_NumAnim_Prototypes(const wstring& strAnimLayerTag);
+	HRESULT									Add_Prototypes_Animation(const wstring& strAnimLayerTag, const string& strDirPath);
+	HRESULT									Clone_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, CAnimation** ppAnimation);
+
+	list<wstring>							Get_AnimationLayer_Tags();
+	list<string>							Get_Animation_Tags(const wstring& setrAnimLayerTag);
 
 #pragma endregion
 

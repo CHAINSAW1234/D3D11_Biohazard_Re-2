@@ -598,6 +598,7 @@
     <ClCompile Include="..\Private\Model_Selector.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\Private\Tool.cpp" />
+    <ClCompile Include="..\Private\Tool_AnimLibrary.cpp" />
     <ClCompile Include="..\Private\Tool_AnimList.cpp" />
     <ClCompile Include="..\Private\Tool_AnimPlayer.cpp" />
     <ClCompile Include="..\Private\Tool_BoneLayer.cpp" />
@@ -640,6 +641,7 @@
     <ClInclude Include="..\Public\Model_Selector.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\Public\Tool.h" />
+    <ClInclude Include="..\Public\Tool_AnimLibrary.h" />
     <ClInclude Include="..\Public\Tool_AnimList.h" />
     <ClInclude Include="..\Public\Tool_AnimPlayer.h" />
     <ClInclude Include="..\Public\Tool_BoneLayer.h" />

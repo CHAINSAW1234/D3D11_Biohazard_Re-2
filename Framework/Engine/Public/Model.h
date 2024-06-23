@@ -46,6 +46,7 @@ public:		/* For.Animation */
 	_float4x4								Get_TransformationMatrix();
 
 	void									Reset_PreAnimation(_uint iPlayingIndex);
+	void									Reset_PreAnim_CurrentAnim(_uint iPlayingIndex);
 
 
 	HRESULT									Add_Animations(const wstring& strPrototypeLayerTag, const wstring& strAnimLayerTag);
@@ -156,6 +157,8 @@ public:		/* For. Access */
 	vector<CAnimation*>						Get_Animations(const wstring& strAnimLayerTag);
 	map<wstring, class CBone_Layer*>		Get_BoneLayers() { return m_BoneLayers; }
 	list<wstring>							Get_BoneLayer_Tags();
+	list<wstring>							Get_AnimationLayer_Tags();
+	list<string>							Get_Animation_Tags(const wstring& strAnimLayerTag);
 
 	_uint									Get_NumBones() { return static_cast<_uint>(m_Bones.size()); }
 	_uint									Get_NumMeshes() const { return m_iNumMeshes; }

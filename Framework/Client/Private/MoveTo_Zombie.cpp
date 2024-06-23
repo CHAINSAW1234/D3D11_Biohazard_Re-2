@@ -54,7 +54,7 @@ void CMoveTo_Zombie::Exit()
 	if (nullptr == pBodyModel)
 		return;
 
-	_int			iBlendPlayingIndex = { static_cast<_uint>(CBody_Zombie::PLAYING_INDEX::INDEX_1) };
+	_int			iBlendPlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_1) };
 	_float			fTrackPosition = { pBodyModel->Get_TrackPosition(iBlendPlayingIndex) };
 	_float			fDuration = { pBodyModel->Get_Duration_From_PlayingInfo(iBlendPlayingIndex) };
 
@@ -73,8 +73,8 @@ void CMoveTo_Zombie::Change_Animation()
 		return;
 
 	/* 기본 이동 애니메이션 */
-	_uint			iBasePlayingIndex = { static_cast<_uint>(CBody_Zombie::PLAYING_INDEX::INDEX_0) };
-	_int			iCurrentBasegAnimIndex = { pBodyModel->Get_AnimIndex_PlayingInfo(CBody_Zombie::INDEX_0) };
+	_uint			iBasePlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_0) };
+	_int			iCurrentBasegAnimIndex = { pBodyModel->Get_AnimIndex_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_0)) };
 	_int			iResultAnimationIndex = { -1 };
 	_bool			isLoop = { false };
 	wstring			strBaseBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
@@ -83,8 +83,8 @@ void CMoveTo_Zombie::Change_Animation()
 	_bool			isNeedBlend = { false };
 
 	/* 회전 섞여야하는경우 터닝모션 블렌드 비율 */
-	_int			iBlendPlayingIndex = { static_cast<_uint>(CBody_Zombie::PLAYING_INDEX::INDEX_1) };
-	_int			iCurrentBlendAnimIndex = { pBodyModel->Get_AnimIndex_PlayingInfo(CBody_Zombie::INDEX_1) };
+	_int			iBlendPlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_1) };
+	_int			iCurrentBlendAnimIndex = { pBodyModel->Get_AnimIndex_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_1)) };
 	_float			fTurnBlendWeight = { 0.f };
 	_int			iBlendAnimIndex = { -1 };
 	wstring			strBlendBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
@@ -317,281 +317,286 @@ void CMoveTo_Zombie::Change_Animation()
 	//}
 
 #pragma endregion
+
+
+#pragma region 다시 살려야함
 	//	else
-	if (true == isMoveAnim)
-	{
-		_bool		isFinished = { false };
-		//	아직 첫 모션 중이었을경우 => 상태 체크가 필요함 => 스타트모션의 경우 끝나야 루프로 넘어가야함
-		if (true == isStartAnim)
-		{
-			//	아직 스타트 모션 진행중
-			if (false == pBodyModel->isFinished(iBasePlayingIndex))
-			{
-				iResultAnimationIndex = iCurrentBasegAnimIndex;
-			}
+	//if (true == isMoveAnim)
+	//{
+	//	_bool		isFinished = { false };
+	//	//	아직 첫 모션 중이었을경우 => 상태 체크가 필요함 => 스타트모션의 경우 끝나야 루프로 넘어가야함
+	//	if (true == isStartAnim)
+	//	{
+	//		//	아직 스타트 모션 진행중
+	//		if (false == pBodyModel->isFinished(iBasePlayingIndex))
+	//		{
+	//			iResultAnimationIndex = iCurrentBasegAnimIndex;
+	//		}
 
-			else
-			{
-				isFinished = true;
-			}
-		}
+	//		else
+	//		{
+	//			isFinished = true;
+	//		}
+	//	}
 
-		if (true == isFinished || (true == isMoveAnim && false == isStartAnim))
-		{
-			if (CBody_Zombie::MOTION_A == iCurrentMotionType)
-			{
-				iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_LOOP_A);
-				isLoop = true;
-			}
+	//	if (true == isFinished || (true == isMoveAnim && false == isStartAnim))
+	//	{
+	//		if (CBody_Zombie::MOTION_A == iCurrentMotionType)
+	//		{
+	//			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_LOOP_A);
+	//			isLoop = true;
+	//		}
 
-			else if (CBody_Zombie::MOTION_B == iCurrentMotionType)
-			{
-				iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_LOOP_B);
-				isLoop = true;
-			}
+	//		else if (CBody_Zombie::MOTION_B == iCurrentMotionType)
+	//		{
+	//			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_LOOP_B);
+	//			isLoop = true;
+	//		}
 
-			else if (CBody_Zombie::MOTION_C == iCurrentMotionType)
-			{
-				iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_LOOP_C);
-				isLoop = true;
-			}
+	//		else if (CBody_Zombie::MOTION_C == iCurrentMotionType)
+	//		{
+	//			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_LOOP_C);
+	//			isLoop = true;
+	//		}
 
-			else if (CBody_Zombie::MOTION_D == iCurrentMotionType)
-			{
-				iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_LOOP_D);
-				isLoop = true;
-			}
+	//		else if (CBody_Zombie::MOTION_D == iCurrentMotionType)
+	//		{
+	//			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_LOOP_D);
+	//			isLoop = true;
+	//		}
 
-			else if (CBody_Zombie::MOTION_E == iCurrentMotionType)
-			{
-				iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_LOOP_E);
-				isLoop = true;
-			}
+	//		else if (CBody_Zombie::MOTION_E == iCurrentMotionType)
+	//		{
+	//			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_LOOP_E);
+	//			isLoop = true;
+	//		}
 
-			else if (CBody_Zombie::MOTION_F == iCurrentMotionType)
-			{
-				iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_LOOP_F);
-				isLoop = true;
-			}
-		}
+	//		else if (CBody_Zombie::MOTION_F == iCurrentMotionType)
+	//		{
+	//			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_LOOP_F);
+	//			isLoop = true;
+	//		}
+	//	}
 
-		_float3			vDirectionToPlayerLocalFloat3;
-		if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3))
-			return;
+	//	_float3			vDirectionToPlayerLocalFloat3;
+	//	if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3))
+	//		return;
 
-		_vector			vDirectionToPlayerLocal = { XMLoadFloat3(&vDirectionToPlayerLocalFloat3) };
-		_vector			vDirectionToPlayerLocalXZPlane = { XMVector3Normalize(XMVectorSetY(vDirectionToPlayerLocal, 0.f)) };		//	회전량을 xz평면상에서만 고려하기위함
-		_vector			vAILookLocal = { XMVectorSet(0.f, 0.f, 1.f, 0.f) };
+	//	_vector			vDirectionToPlayerLocal = { XMLoadFloat3(&vDirectionToPlayerLocalFloat3) };
+	//	_vector			vDirectionToPlayerLocalXZPlane = { XMVector3Normalize(XMVectorSetY(vDirectionToPlayerLocal, 0.f)) };		//	회전량을 xz평면상에서만 고려하기위함
+	//	_vector			vAILookLocal = { XMVectorSet(0.f, 0.f, 1.f, 0.f) };
 
-		_bool			isRight = { XMVectorGetX(vDirectionToPlayerLocalXZPlane) > 0.f };
-		_bool			isFront = { XMVectorGetZ(vDirectionToPlayerLocalXZPlane) > 0.f };
+	//	_bool			isRight = { XMVectorGetX(vDirectionToPlayerLocalXZPlane) > 0.f };
+	//	_bool			isFront = { XMVectorGetZ(vDirectionToPlayerLocalXZPlane) > 0.f };
 
-		_float			fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirectionToPlayerLocal), XMVector3Normalize(vAILookLocal))) };
-		_float			fAngleToTarget = { acosf(fDot) };
-
-
-		////	Turn
-		//if (false == isFront)
-		//{
-		//	Turn();
-		//}
-
-		//
-		//else if (fAngleToTarget < XMConvertToRadians(10.f))
-		//{
-		//	Move_Front();
-		//}
-
-		//else
-		//{
-		//	Move_Front_Include_Rotaiton();
-		//}
+	//	_float			fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirectionToPlayerLocal), XMVector3Normalize(vAILookLocal))) };
+	//	_float			fAngleToTarget = { acosf(fDot) };
 
 
-		//	회전과 관련하여 블렌드 성분 정하기
-		//	10도 미만은 그냥직진하기.
-		if (XMConvertToRadians(10.f) > fAngleToTarget)
-		{
-			isNeedBlend = false;
-		}
+	//	////	Turn
+	//	//if (false == isFront)
+	//	//{
+	//	//	Turn();
+	//	//}
 
-		else
-		{
-			isNeedBlend = true;
+	//	//
+	//	//else if (fAngleToTarget < XMConvertToRadians(10.f))
+	//	//{
+	//	//	Move_Front();
+	//	//}
 
-			if (true == isRight)
-			{
-				if (CBody_Zombie::MOTION_A == iCurrentMotionType)
-				{
-					iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FR_A);
-				}
+	//	//else
+	//	//{
+	//	//	Move_Front_Include_Rotaiton();
+	//	//}
 
-				else if (CBody_Zombie::MOTION_B == iCurrentMotionType)
-				{
-					iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FR_B);
-				}
 
-				else if (CBody_Zombie::MOTION_C == iCurrentMotionType)
-				{
-					iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FR_C);
-				}
+	//	//	회전과 관련하여 블렌드 성분 정하기
+	//	//	10도 미만은 그냥직진하기.
+	//	if (XMConvertToRadians(10.f) > fAngleToTarget)
+	//	{
+	//		isNeedBlend = false;
+	//	}
 
-				else if (CBody_Zombie::MOTION_D == iCurrentMotionType)
-				{
-					iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FR_D);
-				}
+	//	else
+	//	{
+	//		isNeedBlend = true;
 
-				else if (CBody_Zombie::MOTION_E == iCurrentMotionType)
-				{
-					iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FR_E);
-				}
+	//		if (true == isRight)
+	//		{
+	//			if (CBody_Zombie::MOTION_A == iCurrentMotionType)
+	//			{
+	//				iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FR_A);
+	//			}
 
-				else if (CBody_Zombie::MOTION_F == iCurrentMotionType)
-				{
-					iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FR_F);
-				}
-			}
+	//			else if (CBody_Zombie::MOTION_B == iCurrentMotionType)
+	//			{
+	//				iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FR_B);
+	//			}
 
-			else
-			{
-				if (CBody_Zombie::MOTION_A == iCurrentMotionType)
-				{
-					iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FL_A);
-				}
+	//			else if (CBody_Zombie::MOTION_C == iCurrentMotionType)
+	//			{
+	//				iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FR_C);
+	//			}
 
-				else if (CBody_Zombie::MOTION_B == iCurrentMotionType)
-				{
-					iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FL_B);
-				}
+	//			else if (CBody_Zombie::MOTION_D == iCurrentMotionType)
+	//			{
+	//				iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FR_D);
+	//			}
 
-				else if (CBody_Zombie::MOTION_C == iCurrentMotionType)
-				{
-					iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FL_C);
-				}
+	//			else if (CBody_Zombie::MOTION_E == iCurrentMotionType)
+	//			{
+	//				iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FR_E);
+	//			}
 
-				else if (CBody_Zombie::MOTION_D == iCurrentMotionType)
-				{
-					iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FL_D);
-				}
+	//			else if (CBody_Zombie::MOTION_F == iCurrentMotionType)
+	//			{
+	//				iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FR_F);
+	//			}
+	//		}
 
-				else if (CBody_Zombie::MOTION_E == iCurrentMotionType)
-				{
-					iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FL_E);
-				}
+	//		else
+	//		{
+	//			if (CBody_Zombie::MOTION_A == iCurrentMotionType)
+	//			{
+	//				iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FL_A);
+	//			}
 
-				else if (CBody_Zombie::MOTION_F == iCurrentMotionType)
-				{
-					iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FL_F);
-				}
-			}
+	//			else if (CBody_Zombie::MOTION_B == iCurrentMotionType)
+	//			{
+	//				iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FL_B);
+	//			}
 
-			fTurnBlendWeight = fminf(fAngleToTarget / XMConvertToRadians(180.f) * 2.f, 0.999f);
-		}
-	}
+	//			else if (CBody_Zombie::MOTION_C == iCurrentMotionType)
+	//			{
+	//				iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FL_C);
+	//			}
 
-	//	이동애니메이션으로 바뀌어야하는경우 => 재생중이던 애니메이션이 이동관련이아님
-	else
-	{
-		if (CBody_Zombie::MOTION_A == iCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_START_A);
-			isLoop = false;
-		}
+	//			else if (CBody_Zombie::MOTION_D == iCurrentMotionType)
+	//			{
+	//				iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FL_D);
+	//			}
 
-		else if (CBody_Zombie::MOTION_B == iCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_START_B);
-			isLoop = false;
-		}
+	//			else if (CBody_Zombie::MOTION_E == iCurrentMotionType)
+	//			{
+	//				iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FL_E);
+	//			}
 
-		else if (CBody_Zombie::MOTION_C == iCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_START_C);
-			isLoop = false;
-		}
+	//			else if (CBody_Zombie::MOTION_F == iCurrentMotionType)
+	//			{
+	//				iBlendAnimIndex = static_cast<_int>(CBody_Zombie::ANIM_TURNING_LOOP_FL_F);
+	//			}
+	//		}
 
-		else if (CBody_Zombie::MOTION_D == iCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_START_D);
-			isLoop = false;
-		}
+	//		fTurnBlendWeight = fminf(fAngleToTarget / XMConvertToRadians(180.f) * 2.f, 0.999f);
+	//	}
+	//}
 
-		else if (CBody_Zombie::MOTION_E == iCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_START_E);
-			isLoop = false;
-		}
+	////	이동애니메이션으로 바뀌어야하는경우 => 재생중이던 애니메이션이 이동관련이아님
+	//else
+	//{
+	//	if (CBody_Zombie::MOTION_A == iCurrentMotionType)
+	//	{
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_START_A);
+	//		isLoop = false;
+	//	}
 
-		else if (CBody_Zombie::MOTION_F == iCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_START_F);
-			isLoop = false;
-		}
-	}	
+	//	else if (CBody_Zombie::MOTION_B == iCurrentMotionType)
+	//	{
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_START_B);
+	//		isLoop = false;
+	//	}
 
-	if (-1 == iResultAnimationIndex)
-		return;
+	//	else if (CBody_Zombie::MOTION_C == iCurrentMotionType)
+	//	{
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_START_C);
+	//		isLoop = false;
+	//	}
 
-	//	루프애님이면서 이전 애니메이션과 같다면... 같은 애니메이션을 지속으로 루프 재생중이므로 보간이 필요없다고 판단
-	if (true == isLoop && iBasePlayingIndex == iResultAnimationIndex)
-	{
-		pBodyModel->Set_TotalLinearInterpolation(0.f);
-	}
+	//	else if (CBody_Zombie::MOTION_D == iCurrentMotionType)
+	//	{
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_START_D);
+	//		isLoop = false;
+	//	}
 
-	else
-	{
-		pBodyModel->Set_TotalLinearInterpolation(0.8f);
-	}
+	//	else if (CBody_Zombie::MOTION_E == iCurrentMotionType)
+	//	{
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_START_E);
+	//		isLoop = false;
+	//	}
 
-	pBodyModel->Change_Animation(iBasePlayingIndex, TEXT("Default"), iResultAnimationIndex);
-	pBodyModel->Set_Loop(iBasePlayingIndex, isLoop);
-	pBodyModel->Set_BoneLayer_PlayingInfo(iBasePlayingIndex, strBaseBoneLayerTag);
-	pBodyModel->Set_BlendWeight(iBasePlayingIndex, 1.f - fTurnBlendWeight);
+	//	else if (CBody_Zombie::MOTION_F == iCurrentMotionType)
+	//	{
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_WALK_START_F);
+	//		isLoop = false;
+	//	}
+	//}	
 
-	if (true == isNeedBlend)
-	{
-		pBodyModel->Change_Animation(iBlendPlayingIndex, TEXT("Default"), iBlendAnimIndex);
-		pBodyModel->Set_Loop(iBlendPlayingIndex, true);
-		pBodyModel->Set_BoneLayer_PlayingInfo(iBlendPlayingIndex, strBlendBoneLayerTag);
-		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, fTurnBlendWeight);
+	//if (-1 == iResultAnimationIndex)
+	//	return;
 
-		string			strBlendWeight = { to_string(fTurnBlendWeight) };
-		cout << strBlendWeight.c_str() << endl;
-		cout << "isBlend" << endl;
+	////	루프애님이면서 이전 애니메이션과 같다면... 같은 애니메이션을 지속으로 루프 재생중이므로 보간이 필요없다고 판단
+	//if (true == isLoop && iBasePlayingIndex == iResultAnimationIndex)
+	//{
+	//	pBodyModel->Set_TotalLinearInterpolation(0.f);
+	//}
 
-		if (1.0f != fTurnBlendWeight)
-		{
-			_float			fBlendTrackPosition = { pBodyModel->Get_TrackPosition(iBlendPlayingIndex) };
-			_float			fBaseTrackPosition = { pBodyModel->Get_TrackPosition(iBasePlayingIndex) };
-			_float			fBlendDuration = { pBodyModel->Get_Duration_From_PlayingInfo(iBasePlayingIndex) };
+	//else
+	//{
+	//	pBodyModel->Set_TotalLinearInterpolation(0.8f);
+	//}
 
-			if (0.f < fBlendDuration)
-			{
-				while (fBaseTrackPosition > fBlendDuration)
-				{
-					fBaseTrackPosition -= fBlendDuration;
-				}
-			}			
+	//pBodyModel->Change_Animation(iBasePlayingIndex, TEXT("Default"), iResultAnimationIndex);
+	//pBodyModel->Set_Loop(iBasePlayingIndex, isLoop);
+	//pBodyModel->Set_BoneLayer_PlayingInfo(iBasePlayingIndex, strBaseBoneLayerTag);
+	//pBodyModel->Set_BlendWeight(iBasePlayingIndex, 1.f - fTurnBlendWeight);
 
-			pBodyModel->Set_TrackPosition(iBlendPlayingIndex, fBaseTrackPosition, false);
-		}		
+	//if (true == isNeedBlend)
+	//{
+	//	pBodyModel->Change_Animation(iBlendPlayingIndex, TEXT("Default"), iBlendAnimIndex);
+	//	pBodyModel->Set_Loop(iBlendPlayingIndex, true);
+	//	pBodyModel->Set_BoneLayer_PlayingInfo(iBlendPlayingIndex, strBlendBoneLayerTag);
+	//	pBodyModel->Set_BlendWeight(iBlendPlayingIndex, fTurnBlendWeight);
 
-		_float			fBaseTrackPos = { pBodyModel->Get_TrackPosition(iBasePlayingIndex) };
-		_float			fBlendTrackPos = { pBodyModel->Get_TrackPosition(iBlendPlayingIndex) };
+	//	string			strBlendWeight = { to_string(fTurnBlendWeight) };
+	//	cout << strBlendWeight.c_str() << endl;
+	//	cout << "isBlend" << endl;
 
-		string			strBaseTrackPos = { to_string(fBaseTrackPos) + "Base Track"};
-		string			strBlendTrackPos = { to_string(fBlendTrackPos) + "Blend Track"};
-		cout << strBaseTrackPos << endl;
-		cout << strBlendTrackPos << endl;
-	}
+	//	if (1.0f != fTurnBlendWeight)
+	//	{
+	//		_float			fBlendTrackPosition = { pBodyModel->Get_TrackPosition(iBlendPlayingIndex) };
+	//		_float			fBaseTrackPosition = { pBodyModel->Get_TrackPosition(iBasePlayingIndex) };
+	//		_float			fBlendDuration = { pBodyModel->Get_Duration_From_PlayingInfo(iBasePlayingIndex) };
 
-	else
-	{
-		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f, 0.3f);
-		pBodyModel->Reset_PreAnimation(iBlendPlayingIndex);
+	//		if (0.f < fBlendDuration)
+	//		{
+	//			while (fBaseTrackPosition > fBlendDuration)
+	//			{
+	//				fBaseTrackPosition -= fBlendDuration;
+	//			}
+	//		}			
 
-		cout << "isNonBlend" << endl;
-	}
+	//		pBodyModel->Set_TrackPosition(iBlendPlayingIndex, fBaseTrackPosition, false);
+	//	}		
+
+	//	_float			fBaseTrackPos = { pBodyModel->Get_TrackPosition(iBasePlayingIndex) };
+	//	_float			fBlendTrackPos = { pBodyModel->Get_TrackPosition(iBlendPlayingIndex) };
+
+	//	string			strBaseTrackPos = { to_string(fBaseTrackPos) + "Base Track"};
+	//	string			strBlendTrackPos = { to_string(fBlendTrackPos) + "Blend Track"};
+	//	cout << strBaseTrackPos << endl;
+	//	cout << strBlendTrackPos << endl;
+	//}
+
+	//else
+	//{
+	//	pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f, 0.3f);
+	//	pBodyModel->Reset_PreAnimation(iBlendPlayingIndex);
+
+	//	cout << "isNonBlend" << endl;
+	//}
+
+#pragma endregion
 }
 
 void CMoveTo_Zombie::Move_Front()

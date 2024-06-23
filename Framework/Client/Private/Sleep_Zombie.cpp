@@ -50,113 +50,117 @@ void CSleep_Zombie::Change_Animation()
 	if (nullptr == pBodyModel)
 		return;
 
-	_uint			iPlayingIndex = { static_cast<_uint>(CBody_Zombie::PLAYING_INDEX::INDEX_0) };
-	_int			iCurrentPlayingAnimIndex = { pBodyModel->Get_AnimIndex_PlayingInfo(CBody_Zombie::INDEX_0) };
-	_int			iResultAnimationIndex = { -1 };
+#pragma region 다시 살려야함
 
-	_bool			isFaceUp = { false };
+	//_uint			iPlayingIndex = { static_cast<_uint>(CBody_Zombie::PLAYING_INDEX::INDEX_0) };
+	//_int			iCurrentPlayingAnimIndex = { pBodyModel->Get_AnimIndex_PlayingInfo(CBody_Zombie::INDEX_0) };
+	//_int			iResultAnimationIndex = { -1 };
 
-	_bool			isLoop = { false };
-	wstring			strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
+	//_bool			isFaceUp = { false };
 
-	list<_uint>		ActiveIndices;
-	ActiveIndices.push_back(iPlayingIndex);
+	//_bool			isLoop = { false };
+	//wstring			strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
 
-	m_pBlackBoard->Reset_NonActive_Body(ActiveIndices);
+	//list<_uint>		ActiveIndices;
+	//ActiveIndices.push_back(iPlayingIndex);
 
-	m_isWake = true;
+	//m_pBlackBoard->Reset_NonActive_Body(ActiveIndices);
 
-	//	TODO: 애니메이션 누워있는 모션 추가되면 사용하기 =>
-	//	현재는 누운 상태에서 일어나는 모션만있음
-	if (false == m_isWake)
-	{
-		if (false == isFaceUp)
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEDOWN_F);
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEDOWN_B);
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEDOWN_L);
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEDOWN_R);
+	//m_isWake = true;
 
-			isLoop = false;
-		}
+	////	TODO: 애니메이션 누워있는 모션 추가되면 사용하기 =>
+	////	현재는 누운 상태에서 일어나는 모션만있음
+	//if (false == m_isWake)
+	//{
+	//	if (false == isFaceUp)
+	//	{
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEDOWN_F);
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEDOWN_B);
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEDOWN_L);
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEDOWN_R);
 
-		else
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEUP_F);
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEUP_B);
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEUP_L);
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEUP_R);
+	//		isLoop = false;
+	//	}
 
-			isLoop = false;
-		}
-	}
+	//	else
+	//	{
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEUP_F);
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEUP_B);
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEUP_L);
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEUP_R);
 
-	else
-	{
-		_uint			iCurrentMotionType = { m_pBlackBoard->Get_Current_MotionType_Body() };
-		_uint			iPreMotionType = { m_pBlackBoard->Get_Pre_MotionType_Body() };
+	//		isLoop = false;
+	//	}
+	//}
 
-		if (CBody_Zombie::MOTION_A == iCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_IDLE_LOOP_A);
-			isLoop = true;
-		}
+	//else
+	//{
+	//	_uint			iCurrentMotionType = { m_pBlackBoard->Get_Current_MotionType_Body() };
+	//	_uint			iPreMotionType = { m_pBlackBoard->Get_Pre_MotionType_Body() };
 
-		else if (CBody_Zombie::MOTION_B == iCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_IDLE_LOOP_B);
-			isLoop = true;
-		}
+	//	if (CBody_Zombie::MOTION_A == iCurrentMotionType)
+	//	{
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_IDLE_LOOP_A);
+	//		isLoop = true;
+	//	}
 
-		else if (CBody_Zombie::MOTION_C == iCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_IDLE_LOOP_C);
-			isLoop = true;
-		}
+	//	else if (CBody_Zombie::MOTION_B == iCurrentMotionType)
+	//	{
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_IDLE_LOOP_B);
+	//		isLoop = true;
+	//	}
 
-		else if (CBody_Zombie::MOTION_D == iCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_IDLE_LOOP_D);
-			isLoop = true;
-		}
+	//	else if (CBody_Zombie::MOTION_C == iCurrentMotionType)
+	//	{
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_IDLE_LOOP_C);
+	//		isLoop = true;
+	//	}
 
-		else if (CBody_Zombie::MOTION_E == iCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_IDLE_LOOP_E);
-			isLoop = true;
-		}
+	//	else if (CBody_Zombie::MOTION_D == iCurrentMotionType)
+	//	{
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_IDLE_LOOP_D);
+	//		isLoop = true;
+	//	}
 
-		else if (CBody_Zombie::MOTION_F == iCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_IDLE_LOOP_F);
-			isLoop = true;
-		}
+	//	else if (CBody_Zombie::MOTION_E == iCurrentMotionType)
+	//	{
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_IDLE_LOOP_E);
+	//		isLoop = true;
+	//	}
 
-		else
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_IDLE_LOOP_F);
-			isLoop = true;
-		}
-	}
+	//	else if (CBody_Zombie::MOTION_F == iCurrentMotionType)
+	//	{
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_IDLE_LOOP_F);
+	//		isLoop = true;
+	//	}
 
-	if (-1 == iResultAnimationIndex)
-		return;
+	//	else
+	//	{
+	//		iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_IDLE_LOOP_F);
+	//		isLoop = true;
+	//	}
+	//}
 
-	//	루프애님이면서 이전 애니메이션과 같다면... 같은 애니메이션을 지속으로 루프 재생중이므로 보간이 필요없다고 판단
-	if (true == isLoop && iCurrentPlayingAnimIndex == iResultAnimationIndex)
-	{
-		pBodyModel->Set_TotalLinearInterpolation(0.f);
-	}
+	//if (-1 == iResultAnimationIndex)
+	//	return;
 
-	else
-	{
-		pBodyModel->Set_TotalLinearInterpolation(0.9f);
-	}
+	////	루프애님이면서 이전 애니메이션과 같다면... 같은 애니메이션을 지속으로 루프 재생중이므로 보간이 필요없다고 판단
+	//if (true == isLoop && iCurrentPlayingAnimIndex == iResultAnimationIndex)
+	//{
+	//	pBodyModel->Set_TotalLinearInterpolation(0.f);
+	//}
 
-	pBodyModel->Change_Animation(iPlayingIndex, TEXT("Default"), iResultAnimationIndex);
-	pBodyModel->Set_Loop(iPlayingIndex, isLoop);
-	pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
-	pBodyModel->Set_BlendWeight(iPlayingIndex, 1.f);
+	//else
+	//{
+	//	pBodyModel->Set_TotalLinearInterpolation(0.9f);
+	//}
+
+	//pBodyModel->Change_Animation(iPlayingIndex, TEXT("Default"), iResultAnimationIndex);
+	//pBodyModel->Set_Loop(iPlayingIndex, isLoop);
+	//pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
+	//pBodyModel->Set_BlendWeight(iPlayingIndex, 1.f);
+
+#pragma endregion
 }
 
 CSleep_Zombie* CSleep_Zombie::Create()

@@ -142,6 +142,14 @@ HRESULT CEditor::Add_Tool(CTool** ppTool, _uint iToolType, const string& strTool
 			return E_FAIL;
 	}
 
+	else if (CTool::TOOL_TYPE::ANIM_LIBRARY == static_cast<CTool::TOOL_TYPE>(iToolType))
+	{
+		*ppTool = CTool_AnimLibrary::Create(m_pDevice, m_pContext, pArg);
+
+		if (nullptr == *ppTool)
+			return E_FAIL;
+	}
+
 	else
 	{
 		return E_FAIL;
