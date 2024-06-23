@@ -54,10 +54,7 @@ private:
 	void								Update_Current_MotionType();
 
 public:	/* For.Check Anim Type */
-	_bool								Is_Start_Anim(_uint iAnimIndex);
-	_bool								Is_Loop_Anim(_uint iAnimIndex);
-	_bool								Is_Move_Anim(_uint iAnimIndex);
-	_bool								Is_Turn_Anim(_uint iAnimIndex);
+	ZOMBIE_BODY_ANIM_TYPE				Get_CurrentAnimType(PLAYING_INDEX eIndex);
 	class CModel*						GetModel()
 	{
 		return m_pModelCom;
@@ -81,11 +78,9 @@ private:		/* For Anim_Controll */
 	MOTION_TYPE							m_ePreMotionType = { MOTION_TYPE::MOTION_END };
 	MOTION_TYPE							m_eCurrentMotionType = { MOTION_TYPE::MOTION_END };
 
-	set<_uint>							m_StartAnimIndices;
-	set<_uint>							m_LoopAnimIndices;
-
-	set<_uint>							m_MoveAnimIndices;
-	set<_uint>							m_TurnAnimIndices;
+	unordered_set<wstring>				m_MoveAnimLayerTags;
+	unordered_set<wstring>				m_TurnAnimLayerTags;
+	unordered_set<wstring>				m_IdleAnimLayerTags;
 
 private:
 	HRESULT								Add_Components();
