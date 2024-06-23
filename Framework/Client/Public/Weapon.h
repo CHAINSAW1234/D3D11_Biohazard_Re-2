@@ -16,9 +16,14 @@ BEGIN(Client)
 class CWeapon final : public CPartObject
 {
 public:
+	enum RENDERLOCATION { MOVE, HOLD, HOLSTER, NONE };
+
+public:
 	typedef struct tagWeaponDesc : public CPartObject::PARTOBJECT_DESC
 	{
-		CPlayer::EQUIP eEquip;
+		CPlayer::EQUIP	eEquip;
+		_float4x4		fTransformationMatrices[NONE] = { XMMatrixIdentity() };
+		_float4x4*		pSocket[NONE] = { nullptr };
 	}WEAPON_DESC;
 
 private:
@@ -37,13 +42,17 @@ public:
 	virtual HRESULT					Render_LightDepth_Point() override;
 	virtual HRESULT					Render_LightDepth_Spot()override;
 
-	void							Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
+	RENDERLOCATION					Get_RenderLocation() { return m_eRenderLocation; }
+
+	void							Set_RenderLocation(RENDERLOCATION eRenderLocation) { m_eRenderLocation = eRenderLocation; }
 
 private:
 	CModel*							m_pModelCom = { nullptr };
 	CShader*						m_pShaderCom = { nullptr };	
-	_float4x4*						m_pSocketMatrix = { nullptr };
+	_float4x4*						m_pSocketMatrix[NONE];
 	CPlayer::EQUIP					m_eEquip = { CPlayer::NONE };
+	RENDERLOCATION					m_eRenderLocation = { NONE };
+	_float4x4						m_fTransformationMatrices[NONE];
 
 private:
 	HRESULT							Add_Components();
