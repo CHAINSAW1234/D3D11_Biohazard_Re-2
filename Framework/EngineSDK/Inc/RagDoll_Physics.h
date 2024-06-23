@@ -130,9 +130,9 @@ public:
     PxRigidDynamic*                     create_capsule_bone(uint32_t parent_idx, uint32_t child_idx,class CRagdoll& ragdoll, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity());
     PxRigidDynamic*                     create_capsule_bone(uint32_t parent_idx, class CRagdoll& ragdoll, XMVECTOR offset, float l, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity());
     PxRigidDynamic*                     create_sphere_bone(uint32_t parent_idx, class CRagdoll& ragdoll, float r);
-    void                                create_d6_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
-    void                                create_d6_joint_Foot(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
-    void                                create_d6_joint_Head(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
+    PxD6Joint*                          create_d6_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
+    PxD6Joint*                          create_d6_joint_Foot(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
+    PxD6Joint*                          create_d6_joint_Head(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
     void                                create_revolute_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t joint_pos, XMMATRIX rotation = XMMatrixIdentity());
     void                                config_d6_joint(physx::PxReal swing0, physx::PxReal swing1, physx::PxReal twistLo, physx::PxReal twistHi, physx::PxD6Joint* joint);
 public:
@@ -259,6 +259,21 @@ private:
     _bool                                           m_bCulling = { false };
 
     vector<_int>                                    m_vecBoneIndex;
+    PxD6Joint*                                      m_pNeckJoint = { nullptr };
+    PxD6Joint*                                      m_pUpSpine_Joint = { nullptr };
+    PxD6Joint*                                      m_pSpine_Joint = { nullptr };
+    PxD6Joint*                                      m_pClavicle_L_Joint = { nullptr };
+    PxD6Joint*                                      m_pClavicle_R_Joint = { nullptr };
+    PxD6Joint*                                      m_pElbow_L_Joint = { nullptr };
+    PxD6Joint*                                      m_pElbow_R_Joint = { nullptr };
+    PxD6Joint*                                      m_pWrist_L_Joint = { nullptr };
+    PxD6Joint*                                      m_pWrist_R_Joint = { nullptr };
+    PxD6Joint*                                      m_pHip_Joint_L = { nullptr };
+    PxD6Joint*                                      m_pHip_Joint_R = { nullptr };
+    PxD6Joint*                                      m_pKnee_Joint_L = { nullptr };
+    PxD6Joint*                                      m_pKnee_Joint_R = { nullptr };
+    PxD6Joint*                                      m_pAnkle_Joint_L = { nullptr };
+    PxD6Joint*                                      m_pAnkle_Joint_R = { nullptr };
 public:
 	virtual void Free() override;
 };
