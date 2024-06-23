@@ -15,15 +15,16 @@ HRESULT CTool_AnimList::Initialize(void* pArg)
 
     ANIMLIST_DESC* pDesc = { static_cast<ANIMLIST_DESC*>(pArg) };
     m_pCurrentAnimTag = pDesc->pCurrentAnimationTag;
-    m_pCurrentModelTag = pDesc->pCurrentModelTag;
+    m_pCurrentModelTag = pDesc->pCurrentModelTag; 
+    m_pCurrentAnimLayerTag = pDesc->pCurrentAnimLayerTag;
 
-    if (nullptr == m_pCurrentAnimTag || nullptr == m_pCurrentModelTag)
+    if (nullptr == m_pCurrentAnimTag || nullptr == m_pCurrentModelTag || nullptr == m_pCurrentAnimLayerTag)
         return E_FAIL;
 
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    m_strCollasingTag = "Tool_Animlist";
+    m_strCollasingTag = "Tool_AnimList";
 
     return S_OK;
 }
@@ -38,37 +39,19 @@ void CTool_AnimList::Tick(_float fTimeDelta)
     ImGui::Begin("Animation_Selector");
 
     Show_Default();
-    Show_AnimationTags();
+    //  Show_AnimationTags();
+    Show_LayerTags();
 
     ImGui::End();
 }
 
-HRESULT CTool_AnimList::Add_Animations(map<string, map<string, CAnimation*>> ModelAnimations)
+void CTool_AnimList::Set_CurrentModel(CModel* pModel)
 {
-    for (auto& PairModelAnimations : ModelAnimations)
-    {
-        map<string, CAnimation*>            Animations;
-        for (auto& PairAnimations : PairModelAnimations.second)
-        {
-            if (nullptr == PairAnimations.second)
-                return E_FAIL;
+    Safe_Release(m_pCurrentModel);
+    m_pCurrentModel = nullptr;
 
-            Animations.emplace(PairAnimations.first, PairAnimations.second);
-        }
-
-        m_ModelAnimations.emplace(PairModelAnimations.first, Animations);
-    }
-
-    for (auto& PairModelAnimations : m_ModelAnimations)
-    {
-        map<string, CAnimation*>            Animations;
-        for (auto& PairAnimations : PairModelAnimations.second)
-        {
-            Safe_AddRef(PairAnimations.second);
-        }
-    }
-
-    return S_OK;
+    m_pCurrentModel = pModel;
+    Safe_AddRef(m_pCurrentModel);
 }
 
 void CTool_AnimList::Show_Default()
@@ -78,29 +61,45 @@ void CTool_AnimList::Show_Default()
     ImGui::Text("Current Selected Animation : ");		ImGui::SameLine();
     ImGui::Text(m_pCurrentAnimTag->c_str());
 
+    string          strCurrentAnimLayerTag = { Convert_Wstring_String(*m_pCurrentAnimLayerTag) };
+    ImGui::Text("Current Selected Animation Layer : ");		ImGui::SameLine();
+    ImGui::Text(strCurrentAnimLayerTag.c_str());
+
     ImGui::SeparatorText("");
 }
 
-void CTool_AnimList::Show_AnimationTags()
+void CTool_AnimList::Show_LayerTags()
 {
-    if (false == Check_ModelExist(*m_pCurrentModelTag))
+    if (nullptr == m_pCurrentModel)
         return;
 
     static _float2		vSize = { 200.f, 100.f };
+    _uint               iNumAnimLayer = {};
 
-    if (ImGui::CollapsingHeader("Show Models ##CTool_AnimList::Show_AnimationTags()"))
+    list<wstring>           AnimLayerTags = { m_pCurrentModel->Get_AnimationLayer_Tags() };
+    for (auto& wstrAnimLayerTag : AnimLayerTags)
     {
-        ImGui::SliderFloat2("ListBoxSize ##CTool_AnimList::Show_AnimationTags()", (_float*)&vSize, 100.f, 800.f);
-        if (ImGui::BeginListBox("##CTool_AnimList::Show_AnimationTags()", *(ImVec2*)&vSize))
+        string          strAnimLayerTag = { Convert_Wstring_String(wstrAnimLayerTag) };
+        if(ImGui::CollapsingHeader(string(strAnimLayerTag + string("##Show_LayerTags()") + to_string(iNumAnimLayer)).c_str()))
         {
-            Animations      Animations = { m_ModelAnimations[*m_pCurrentModelTag] };
+            vector<CAnimation*>         Animations = { m_pCurrentModel->Get_Animations(wstrAnimLayerTag) };
 
-            for (auto& PairAnimations : Animations)
+            ImGui::SliderFloat2("ListBoxSize ##CTool_AnimList::Show_LayerTags()", (_float*)&vSize, 100.f, 800.f);
+            if (ImGui::BeginListBox("##CTool_AnimList::Show_LayerTags()", *(ImVec2*)&vSize))
             {
-                string          strAnimTag = { PairAnimations.first };
-                if (ImGui::Selectable(strAnimTag.c_str()))
+                for (auto& pAnimation : Animations)
                 {
-                    *m_pCurrentAnimTag = strAnimTag;
+                    if (nullptr == pAnimation)
+                        continue;
+
+                    string          strAnimTag = { pAnimation->Get_Name() };
+
+                    if (ImGui::Selectable(strAnimTag.c_str()))
+                    {
+                        *m_pCurrentAnimLayerTag = wstrAnimLayerTag;
+                        *m_pCurrentAnimTag = strAnimTag;
+                    }
+
                 }
             }
 
@@ -109,54 +108,58 @@ void CTool_AnimList::Show_AnimationTags()
     }
 }
 
-CAnimation* CTool_AnimList::Get_Animation(const string& strAnimTag)
+void CTool_AnimList::Show_AnimationTags()
 {
-    if (false == Check_AnimExtist(strAnimTag))
-        return nullptr;
+    if (nullptr == m_pCurrentModel)
+        return;
 
-    return m_ModelAnimations[*m_pCurrentModelTag][strAnimTag];
+
+    //if (ImGui::CollapsingHeader("Show Models ##CTool_AnimList::Show_AnimationTags()"))
+    //{
+    //    ImGui::SliderFloat2("ListBoxSize ##CTool_AnimList::Show_AnimationTags()", (_float*)&vSize, 100.f, 800.f);
+    //    if (ImGui::BeginListBox("##CTool_AnimList::Show_AnimationTags()", *(ImVec2*)&vSize))
+    //    {
+    //        list<wstring>           AnimLayerTags = { m_pCurrentModel->Get_AnimationLayer_Tags() };
+
+    //        for (auto& strAnimLayerTag : AnimLayerTags)
+    //        {
+    //            //  Animations              Animations = { m_ModelAnimations[*m_pCurrentModelTag] };
+    //            list<string>        AnimationTags = { m_pCurrentModel->Get_Animation_Tags(strAnimLayerTag) };
+
+    //            for (auto& strAnimTag : AnimationTags)
+    //            {
+    //                if (ImGui::Selectable(strAnimTag.c_str()))
+    //                {
+    //                    *m_pCurrentAnimTag = strAnimTag;
+    //                }
+    //            }
+    //        }
+
+    //        ImGui::EndListBox();
+    //    }
+    //}
 }
 
 CAnimation* CTool_AnimList::Get_CurrentAnimation()
 {
-    if (false == Check_AnimExtist(*m_pCurrentAnimTag))
+    if (nullptr == m_pCurrentModel)
         return nullptr;
 
-    return m_ModelAnimations[*m_pCurrentModelTag][*m_pCurrentAnimTag];
-}
+    vector<CAnimation*>         Animations = { m_pCurrentModel->Get_Animations(*m_pCurrentAnimLayerTag) };
+    
+    for (auto& pAnimation : Animations)
+    {
+        if (nullptr == pAnimation)
+            continue;
 
-void CTool_AnimList::Add_Animation_CurrentModel(CAnimation* pAnimation)
-{
-    if (nullptr == pAnimation)
-        return;
+        string          strAnimTag = { pAnimation->Get_Name() };
+        string          strCurrentAnimTag = { *m_pCurrentAnimTag };
 
-    if (false == Check_ModelExist(*m_pCurrentModelTag))
-        return;
+        if (strAnimTag == strCurrentAnimTag)
+            return pAnimation;
+    }
 
-    string      strAnimTag = { pAnimation->Get_Name() };
-    if (true == Check_AnimExtist(strAnimTag))
-        return;
-
-    m_ModelAnimations[*m_pCurrentModelTag].emplace(strAnimTag, pAnimation);
-    Safe_AddRef(pAnimation);
-}
-
-_bool CTool_AnimList::Check_ModelExist(const string& strModelTag)
-{
-    map<string, Animations>::iterator		iter = { m_ModelAnimations.find(strModelTag) };
-
-    return iter != m_ModelAnimations.end();
-}
-
-_bool CTool_AnimList::Check_AnimExtist(const string& strAnimTag)
-{
-    if (false == Check_ModelExist(*m_pCurrentModelTag))
-        return false;
-
-    Animations                  Animations = { m_ModelAnimations[*m_pCurrentModelTag] };
-    Animations::iterator        iter = { Animations.find(strAnimTag) };
-
-    return iter != Animations.end();
+    return nullptr;
 }
 
 CTool_AnimList* CTool_AnimList::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
@@ -177,15 +180,6 @@ void CTool_AnimList::Free()
 {
     __super::Free();
 
-    for (auto& PairModelAnimations : m_ModelAnimations)
-    {
-        for (auto& PairAnimations : PairModelAnimations.second)
-        {
-            Safe_Release(PairAnimations.second);
-            PairAnimations.second = nullptr;
-        }
-
-        PairModelAnimations.second.clear();
-    }
-    m_ModelAnimations.clear();
+    Safe_Release(m_pCurrentModel);
+    m_pCurrentModel = nullptr;
 }

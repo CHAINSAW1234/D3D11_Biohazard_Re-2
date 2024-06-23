@@ -24,6 +24,7 @@ public:
 	_uint											Get_NumAnim_Prototypes(const wstring& strAnimLayerTag);
 
 	list<wstring>									Get_AnimationLayer_Tags();
+	list<string>									Get_Animation_Tags(const wstring& strAnimLayerTag);
 
 private:
 	vector<class CAnimation*>&						Find_AnimLayer(const wstring& strAnimLayerTag);

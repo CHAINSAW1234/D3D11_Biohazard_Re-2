@@ -1207,6 +1207,20 @@ HRESULT CGameInstance::Clone_Animation(const wstring& strAnimLayerTag, _uint iAn
 
 	return m_pAnimation_Library->Clone_Animation(strAnimLayerTag, iAnimIndex, ppAnimation);
 }
+list<wstring> CGameInstance::Get_AnimationLayer_Tags()
+{
+	if(nullptr == m_pAnimation_Library)
+		return list<wstring>();
+
+	return m_pAnimation_Library->Get_AnimationLayer_Tags();
+}
+list<string> CGameInstance::Get_Animation_Tags(const wstring& setrAnimLayerTag)
+{
+	if (nullptr == m_pAnimation_Library)
+		return list<string>();
+
+	return m_pAnimation_Library->Get_Animation_Tags(setrAnimLayerTag);
+}
 #pragma endregion
 
 #pragma region Render_Target_Debugger

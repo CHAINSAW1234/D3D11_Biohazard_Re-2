@@ -83,12 +83,15 @@ HRESULT CAnimationEditor::Add_Tools()
 	m_pToolEventInserter = nullptr;
 	Safe_Release(m_pToolMeshController);
 	m_pToolMeshController = nullptr;
+	Safe_Release(m_pToolAnimLibrary);
+	m_pToolAnimLibrary = nullptr;
 
 	CTool*		pToolCollider = { nullptr };
 	CTool*		pToolAnimList = { nullptr };
 	CTool*		pToolModelSelector = { nullptr };
 	CTool*		pToolTransformtaion = { nullptr };
 	CTool*		pToolAnimPlayer = { nullptr };
+	CTool*		pToolAnimLibrary = { nullptr };
 	CTool*		pToolPartObject = { nullptr };
 	CTool*		pToolBoneLayer = { nullptr };
 	CTool*		pToolIK = { nullptr };
@@ -105,6 +108,7 @@ HRESULT CAnimationEditor::Add_Tools()
 	AnimPlayerDesc.pCurrentBoneLayerTag = &m_strCurrentBoneLayerTag;
 	AnimPlayerDesc.pCurrentPartObjectTag = &m_strCurrentPartObjectTag;
 	AnimPlayerDesc.pCurrentModelTag = &m_strCurrentModelTag;
+	AnimPlayerDesc.pCurrentAnimLayerTag = &m_strCurrentAnimLayerTag;
 
 	CTool_PartObject::TOOL_PARTOBJECT_DESC			PartObjectDesc{};
 	if (nullptr != m_pTestObject)
@@ -117,6 +121,7 @@ HRESULT CAnimationEditor::Add_Tools()
 	CTool_AnimList::ANIMLIST_DESC					AnimListDesc{};
 	AnimListDesc.pCurrentAnimationTag = &m_strCurrentAnimTag;
 	AnimListDesc.pCurrentModelTag = &m_strCurrentModelTag;
+	AnimListDesc.pCurrentAnimLayerTag = &m_strCurrentAnimLayerTag;
 
 	CModel_Selector::MODELSELECTOR_DESC				ModelSelectorDesc{};
 	ModelSelectorDesc.pCurrentBoneTag = &m_strCurrentBoneTag;
@@ -133,6 +138,10 @@ HRESULT CAnimationEditor::Add_Tools()
 	CTool_EventInserter::EVENTINSERTER_DESC			EventInserterDesc{};
 
 	CTool_MeshController::MESHCONTROLLER_DESC		MeshControllerDesc{};
+
+	CTool_AnimLibrary::ANIMLIBRARY_DESC				AnimLibraryDesc{};
+	AnimLibraryDesc.pCurrentModelTag = &m_strCurrentModelTag;
+	AnimLibraryDesc.pCurrentAnimLayerTag = &m_strCurrentAnimLayerTag;
 	
 
 	if (FAILED(__super::Add_Tool(&pToolCollider, static_cast<_uint>(CTool::TOOL_TYPE::COLLIDER), TOOL_COLLIDER_TAG)))
@@ -144,6 +153,8 @@ HRESULT CAnimationEditor::Add_Tools()
 	if (FAILED(__super::Add_Tool(&pToolTransformtaion, static_cast<_uint>(CTool::TOOL_TYPE::TRANSFORMATION), TOOL_TRANSFORMATION_TAG)))
 		return E_FAIL;	
 	if (FAILED(__super::Add_Tool(&pToolAnimPlayer, static_cast<_uint>(CTool::TOOL_TYPE::ANIM_PLAYER), TOOL_ANIMPLAYER_TAG, &AnimPlayerDesc)))
+		return E_FAIL;
+	if (FAILED(__super::Add_Tool(&pToolAnimLibrary, static_cast<_uint>(CTool::TOOL_TYPE::ANIM_LIBRARY), TOOL_ANIMLIBRARY_TAG, &AnimLibraryDesc)))
 		return E_FAIL;
 	if (FAILED(__super::Add_Tool(&pToolPartObject, static_cast<_uint>(CTool::TOOL_TYPE::PART_OBJECT), TOOL_PARTOBJECT_TAG, &PartObjectDesc)))
 		return E_FAIL;
@@ -161,6 +172,7 @@ HRESULT CAnimationEditor::Add_Tools()
 	CTool_AnimList*				pToolAnimListConvert = dynamic_cast<CTool_AnimList*>(pToolAnimList);
 	CTool_Transformation*		pToolTransformationConvert = dynamic_cast<CTool_Transformation*>(pToolTransformtaion);
 	CTool_AnimPlayer*			pToolAnimPlayerConvert = dynamic_cast<CTool_AnimPlayer*>(pToolAnimPlayer);
+	CTool_AnimLibrary*			pToolAnimLibraryConvert = dynamic_cast<CTool_AnimLibrary*>(pToolAnimLibrary);
 	CTool_PartObject*			pToolPartObjectConvert = dynamic_cast<CTool_PartObject*>(pToolPartObject);
 	CTool_BoneLayer*			pToolBoneLayerConvert = dynamic_cast<CTool_BoneLayer*>(pToolBoneLayer);
 	CTool_IK*					pToolIKConvert = dynamic_cast<CTool_IK*>(pToolIK);
@@ -171,7 +183,8 @@ HRESULT CAnimationEditor::Add_Tools()
 		nullptr == pToolAnimListConvert || nullptr == pToolTransformationConvert || 
 		nullptr == pToolAnimPlayerConvert || nullptr == pToolPartObjectConvert || 
 		nullptr == pToolBoneLayerConvert || nullptr == pToolIKConvert ||
-		nullptr == pToolEventInserterConvert || nullptr == pToolMeshControllerConvert)
+		nullptr == pToolEventInserterConvert || nullptr == pToolMeshControllerConvert ||
+		nullptr == pToolAnimLibrary)
 	{
 		MSG_BOX(TEXT("Tool积己 肋给达"));
 		return E_FAIL;
@@ -182,11 +195,13 @@ HRESULT CAnimationEditor::Add_Tools()
 	m_pToolAnimList = pToolAnimListConvert;
 	m_pToolTransformation = pToolTransformationConvert;
 	m_pToolAnimPlayer = pToolAnimPlayerConvert;
+	m_pToolAnimLibrary = pToolAnimLibraryConvert;
 	m_pToolPartObject = pToolPartObjectConvert;
 	m_pToolBoneLayer = pToolBoneLayerConvert;
 	m_pToolIK = pToolIKConvert;
 	m_pToolEventInserter = pToolEventInserterConvert;
 	m_pToolMeshController = pToolMeshControllerConvert;
+
 	return S_OK;
 }
 
@@ -258,6 +273,8 @@ void CAnimationEditor::Update_Backend_Datas()
 	Update_BoneLayerTool();
 	Update_AnimPlayerTool();
 	Update_PartObjectTool();
+	Update_AnimLibraryTool();
+	Update_AnimListTool();
 
 	Update_PartObjectsModel();
 }
@@ -269,6 +286,24 @@ void CAnimationEditor::Update_BoneLayerTool()
 
 	CModel*			pModel = { m_pToolModelSelector->Get_CurrentSelectedModel() };
 	m_pToolBoneLayer->Set_Current_Model(pModel);
+}
+
+void CAnimationEditor::Update_AnimLibraryTool()
+{
+	if (nullptr == m_pToolAnimLibrary || nullptr == m_pToolModelSelector)
+		return;
+
+	CModel*			pModel = { m_pToolModelSelector->Get_CurrentSelectedModel() };
+	m_pToolAnimLibrary->Set_CurrentModel(pModel);
+}
+
+void CAnimationEditor::Update_AnimListTool()
+{
+	if (nullptr == m_pToolAnimList || nullptr == m_pToolModelSelector)
+		return;
+
+	CModel* pModel = { m_pToolModelSelector->Get_CurrentSelectedModel() };
+	m_pToolAnimList->Set_CurrentModel(pModel);
 }
 
 void CAnimationEditor::Update_TestObject()
@@ -336,14 +371,14 @@ HRESULT CAnimationEditor::Initialize_AnimPlayer()
 
 HRESULT CAnimationEditor::Initialize_AnimList()
 {
-	map<string, CModel*>						Models = { m_pToolModelSelector->Get_Models() };
+	/*map<string, CModel*>						Models = { m_pToolModelSelector->Get_Models() };
 	map<string, map<string, CAnimation*>>		ModelAnimations;
 	for (auto& Pair : Models)
 	{
 		string							strModelTag = { Pair.first };
 		CModel*							pModel = { Pair.second };
 
-		vector<CAnimation*>				vecAnimations = { pModel->Get_Animations() };
+		vector<CAnimation*>				vecAnimations = { pModel->Get_Animations(TEXT("Deafault"))};
 		map<string, CAnimation*>		mapAnimations;
 
 		for (auto& pAnimation : vecAnimations)
@@ -356,7 +391,7 @@ HRESULT CAnimationEditor::Initialize_AnimList()
 		ModelAnimations.emplace(Pair.first, mapAnimations);
 	}
 
-	m_pToolAnimList->Add_Animations(ModelAnimations);
+	m_pToolAnimList->Add_Animations(ModelAnimations);*/
 
 	return S_OK;
 }
@@ -459,6 +494,7 @@ void CAnimationEditor::Free()
 	Safe_Release(m_pToolIK);
 	Safe_Release(m_pToolEventInserter);
 	Safe_Release(m_pToolMeshController);
+	Safe_Release(m_pToolAnimLibrary);
 
 	Safe_Release(m_pTestObject);
 }

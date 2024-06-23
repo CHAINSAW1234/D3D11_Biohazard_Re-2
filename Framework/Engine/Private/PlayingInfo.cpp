@@ -65,6 +65,14 @@ void CPlayingInfo::Change_Animation(const wstring& strAnimLayerTag, _uint iAnimI
 	Reset_Finished();
 }
 
+void CPlayingInfo::Reset_PreAnim_CurrentAnim()
+{
+	m_iAnimIndex = -1;
+	m_iPreAnimIndex = -1;
+	m_strAnimLayerTag = TEXT("");
+	m_strPreAnimLayerTag = TEXT("");
+}
+
 void CPlayingInfo::Set_BlendWeight(_float fBlendWeight, _float fBlendLinearTime)
 {
 	if (fBlendWeight < 0.f)

@@ -21,8 +21,9 @@ HRESULT CTool_AnimPlayer::Initialize(void* pArg)
 	m_pCurrentBoneLayerTag = pDesc->pCurrentBoneLayerTag;
 	m_pCurrentPartObjectTag = pDesc->pCurrentPartObjectTag;
 	m_pCurrentModelTag = pDesc->pCurrentModelTag;
+	m_pCurrentAnimLayerTag = pDesc->pCurrentAnimLayerTag;
 
-	if (nullptr == m_pCurrentBoneLayerTag || nullptr == m_pCurrentPartObjectTag || nullptr == m_pCurrentModelTag)
+	if (nullptr == m_pCurrentBoneLayerTag || nullptr == m_pCurrentPartObjectTag || nullptr == m_pCurrentModelTag || nullptr == m_pCurrentAnimLayerTag)
 		return E_FAIL;
 
 	Safe_AddRef(m_pTargetTransform);
@@ -125,14 +126,12 @@ void CTool_AnimPlayer::Change_BoneLayer()
 
 void CTool_AnimPlayer::Change_Animation()
 {
-	if (nullptr == m_pCurrentModel || nullptr == m_pCurrentAnimation)
-	{
+	if (nullptr == m_pCurrentModel || nullptr == m_pCurrentAnimation || nullptr == m_pCurrentAnimLayerTag)
 		return;
-	}
 
 	if (ImGui::Button("Chanage Animation ##CTool_AnimPlayer::Change_Animation()"))
 	{
-		vector<CAnimation*>			Animations = { m_pCurrentModel->Get_Animations() };
+		vector<CAnimation*>			Animations = { m_pCurrentModel->Get_Animations(*m_pCurrentAnimLayerTag) };
 		_uint						iNumAnim = { static_cast<_uint>(Animations.size()) };
 
 		_int						iAnimIndex = { -1 };
@@ -143,9 +142,9 @@ void CTool_AnimPlayer::Change_Animation()
 		}
 
 		if (-1 == iAnimIndex)
-			return;
+			return;		
 
-		m_pCurrentModel->Change_Animation(m_iPlayingIndex, iAnimIndex);
+		m_pCurrentModel->Change_Animation(m_iPlayingIndex, *m_pCurrentAnimLayerTag, iAnimIndex);
 	}
 }
 
@@ -422,21 +421,6 @@ void CTool_AnimPlayer::Create_PlayingDesc()
 	if (ImGui::RadioButton("Anim Loop Active ##CTool_AnimPlayer::Create_PlayingDesc()", isLoop))
 		isLoop = !isLoop;
 
-	string					strSrcAnimTag = { m_pCurrentAnimation->Get_Name() };
-	vector<CAnimation*>		Animations = { m_pCurrentModel->Get_Animations() };
-
-	_uint					iNumAnim = { static_cast<_uint>(Animations.size()) };
-	_uint					iAnimIndex = { 0 };
-	for (auto& pAnimation : Animations)
-	{
-		string			strDstAnimTag = { pAnimation->Get_Name() };
-
-		if (strSrcAnimTag == strDstAnimTag)
-			break;
-
-		++iAnimIndex;
-	}
-
 	_uint					iNumPlayingInfo = {};
 	if (nullptr != m_pCurrentModel)
 	{
@@ -462,9 +446,6 @@ void CTool_AnimPlayer::Create_PlayingDesc()
 	if (ImGui::Button("Create Playing Info ##CTool_AnimPlayer::Create_PlayingDesc()"))
 	{
 		_bool				isCanCreate = { true };
-		if (iAnimIndex >= iNumAnim)
-			isCanCreate = false;
-
 		list<wstring>		BoneLayerTags = { m_pCurrentModel->Get_BoneLayer_Tags() };
 		_bool				isIncludedLayer = { false };
 		for (auto& strBoneLayerTag : BoneLayerTags)
@@ -481,13 +462,12 @@ void CTool_AnimPlayer::Create_PlayingDesc()
 
 		if (true == isCanCreate)
 		{
-			AnimDesc.iAnimIndex = iAnimIndex;
 			AnimDesc.fWeight = fWeight;
 			AnimDesc.strBoneLayerTag = *m_pCurrentBoneLayerTag;
 			AnimDesc.isLoop = isLoop;
 		}
 
-		m_pCurrentModel->Add_AnimPlayingInfo(iAnimIndex, isLoop, m_iPlayingIndex, *m_pCurrentBoneLayerTag, fWeight);
+		m_pCurrentModel->Add_AnimPlayingInfo(isLoop, m_iPlayingIndex, *m_pCurrentBoneLayerTag, fWeight);
 	}
 	return;
 }
@@ -538,8 +518,10 @@ void CTool_AnimPlayer::Show_PlayingInfos()
 		}
 
 		//	트랙 포지션 제어 기능
-		if (ImGui::CollapsingHeader("Track Position Controll ##CTool_AnimPlayer::Show_PlayingInfos()"))
+		if (ImGui::CollapsingHeader("Track Position Controll ##CTool_AnimPlayer::Show_PlayingInfos()") &&
+			nullptr != m_pCurrentAnimLayerTag)
 		{
+
 			list<_uint>			CreatedIndices = m_pCurrentModel->Get_Created_PlayingInfo_Indices();
 			for (auto& iPlayingIndex : CreatedIndices)
 			{
@@ -547,7 +529,7 @@ void CTool_AnimPlayer::Show_PlayingInfos()
 				_int		iAnimIndex = { m_pCurrentModel->Get_AnimIndex_PlayingInfo(iPlayingIndex) };
 				if (iAnimIndex == -1)
 					continue;
-				_float		fDuration = { m_pCurrentModel->Get_Duration_From_Anim(iAnimIndex) };
+				_float		fDuration = { m_pCurrentModel->Get_Duration_From_Anim(*m_pCurrentAnimLayerTag, iAnimIndex) };
 				string		strPlayingIndex = { to_string(iPlayingIndex) };
 
 				ImGui::SliderFloat(string(string("Playing Info : ") + strPlayingIndex + string("## TrackPosition Controll")).c_str(), &fTrackPosition, 0.f, fDuration);

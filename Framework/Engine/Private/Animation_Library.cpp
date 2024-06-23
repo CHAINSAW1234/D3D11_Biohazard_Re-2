@@ -119,6 +119,20 @@ list<wstring> CAnimation_Library::Get_AnimationLayer_Tags()
 	return LayerTags;
 }
 
+list<string> CAnimation_Library::Get_Animation_Tags(const wstring& strAnimLayerTag)
+{
+	list<string>			AnimTags;
+	
+	vector<CAnimation*>		Animations = { Find_AnimLayer(strAnimLayerTag) };
+	for (auto& pAnimation : Animations)
+	{
+		string strAnimTag = { pAnimation->Get_Name() };
+		AnimTags.emplace_back(strAnimTag);
+	}
+
+	return AnimTags;
+}
+
 vector<CAnimation*>& CAnimation_Library::Find_AnimLayer(const wstring& strAnimLayerTag)
 {
 	_bool			isExist = { Is_Exist_AnimLayer(strAnimLayerTag) };

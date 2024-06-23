@@ -471,7 +471,10 @@
     <ClInclude Include="..\Public\FlashLight.h">
       <Filter>02.GameObjects\Player\FlashLight</Filter>
     </ClInclude>
-    <ClInclude Include="Body_Zombie_Enums.h">
+    <ClInclude Include="..\Public\Body_Zombie_Enums.h">
+      <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Zombie_Defines.h">
       <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
     </ClInclude>
   </ItemGroup>

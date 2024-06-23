@@ -169,6 +169,15 @@ void CModel::Reset_PreAnimation(_uint iPlayingIndex)
 	}
 }
 
+void CModel::Reset_PreAnim_CurrentAnim(_uint iPlayingIndex)
+{
+	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+	if (nullptr != pPlayingInfo)
+	{
+		pPlayingInfo->Reset_PreAnim_CurrentAnim();
+	}
+}
+
 //	strPrototypeLayerTag = > 프로토 타입으로 등록했던 태그
 //	strAnimLayerTag => 내가 변수로 저장할 태그map 키값
 HRESULT CModel::Add_Animations(const wstring& strPrototypeLayerTag, const wstring& strAnimLayerTag)
@@ -1138,6 +1147,35 @@ list<wstring> CModel::Get_BoneLayer_Tags()
 	}
 
 	return BoneLayerTags;
+}
+
+list<wstring> CModel::Get_AnimationLayer_Tags()
+{
+	list <wstring>		AnimLayerTags;
+	for (auto& Pair : m_AnimationLayers)
+	{
+		wstring			AnimLayerTag = { Pair.first };
+
+		AnimLayerTags.push_back(AnimLayerTag);
+	}
+
+	return AnimLayerTags;
+}
+
+list<string> CModel::Get_Animation_Tags(const wstring& strAnimLayerTag)
+{
+	list<string>		AnimationTags;
+	unordered_map<wstring, CAnimation_Layer*>::iterator			iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	if (m_AnimationLayers.end() != iter)
+	{
+		vector<CAnimation*>				Animations = { iter->second->Get_Animations() };
+		for (auto& pAnimation : Animations)
+		{
+			AnimationTags.emplace_back(pAnimation->Get_Name());
+		}
+	}
+
+	return AnimationTags;
 }
 
 _bool CModel::Find_AnimIndex(_int* pAnimIndex, wstring* pAnimLayerTag, CAnimation* pAnimation)

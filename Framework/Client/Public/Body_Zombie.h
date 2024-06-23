@@ -16,8 +16,7 @@ BEGIN(Client)
 class CBody_Zombie final : public CPartObject
 {
 public:
-	enum PLAYING_INDEX{ INDEX_0, INDEX_1, INDEX_2, INDEX_3, INDEX_4, INDEX_5, INDEX_END };
-	enum MOTION_TYPE { MOTION_A, MOTION_B, MOTION_C, MOTION_D, MOTION_E, MOTION_F, MOTION_END };
+#include "Body_Zombie_Enums.h"
 
 public:
 	typedef struct tagBodyMonsterDesc : public CPartObject::PARTOBJECT_DESC
@@ -44,6 +43,7 @@ public:
 
 private:
 	HRESULT								Initialize_Model();
+	HRESULT								Add_Animations();
 
 public:
 	MOTION_TYPE							Get_Current_MotionType() { return m_eCurrentMotionType; }
@@ -57,14 +57,14 @@ public:	/* For.Check Anim Type */
 	_bool								Is_Loop_Anim(_uint iAnimIndex);
 	_bool								Is_Move_Anim(_uint iAnimIndex);
 	_bool								Is_Turn_Anim(_uint iAnimIndex);
-	class CModel*			GetModel()
+	class CModel*						GetModel()
 	{
 		return m_pModelCom;
 	}
 
 public:
-	virtual void			SetRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType) override;
-	virtual void			SetCulling(_bool boolean) override;
+	virtual void						SetRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType) override;
+	virtual void						SetCulling(_bool boolean) override;
 private:
 	CModel*								m_pModelCom = { nullptr };
 	CShader*							m_pShaderCom = { nullptr };

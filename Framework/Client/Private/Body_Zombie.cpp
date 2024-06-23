@@ -368,190 +368,22 @@ HRESULT CBody_Zombie::Initialize_Model()
 		m_pModelCom->Hide_Mesh(strMeshTag, false);
 	}
 
-	/* Branch Anim Type ( Start, Loop ) */
-#pragma region Start Anims
-	m_StartAnimIndices.emplace(static_cast<_uint>(ANIM_START::ANIM_WALK_START_A));
-	m_StartAnimIndices.emplace(static_cast<_uint>(ANIM_START::ANIM_WALK_START_B));
-	m_StartAnimIndices.emplace(static_cast<_uint>(ANIM_START::ANIM_WALK_START_C));
-	m_StartAnimIndices.emplace(static_cast<_uint>(ANIM_START::ANIM_WALK_START_D));
-	m_StartAnimIndices.emplace(static_cast<_uint>(ANIM_START::ANIM_WALK_START_E));
-	m_StartAnimIndices.emplace(static_cast<_uint>(ANIM_START::ANIM_WALK_START_F));
+	return S_OK;
+}
 
-	m_LoopAnimIndices.emplace(static_cast<_uint>(ANIM_START::ANIM_WALK_LOOP_TO_B_WALK));
-	m_LoopAnimIndices.emplace(static_cast<_uint>(ANIM_START::ANIM_WALK_LOOP_TO_C_WALK));
-	m_LoopAnimIndices.emplace(static_cast<_uint>(ANIM_START::ANIM_WALK_LOOP_TO_D_WALK));
-	m_LoopAnimIndices.emplace(static_cast<_uint>(ANIM_START::ANIM_WALK_LOOP_TO_E_WALK));
-	m_LoopAnimIndices.emplace(static_cast<_uint>(ANIM_START::ANIM_WALK_LOOP_TO_F_WALK));
-
-	for (_uint iIndex = static_cast<_uint>(ANIM_START::ANIM_WALK_TOTTER_F_A);
-		iIndex <= static_cast<_uint>(ANIM_START::ANIM_WALK_TOTTER_F_F); ++iIndex)
-	{
-		m_StartAnimIndices.emplace(iIndex);
-	}
-
-	for (_uint iIndex = static_cast<_uint>(ANIM_START::ANIM_WALK_TURN_L180_A);
-		iIndex <= static_cast<_uint>(ANIM_START::ANIM_WALK_TURN_R180_F); ++iIndex)
-	{
-		m_StartAnimIndices.emplace(iIndex);
-	}
-
-	for (_uint iIndex = static_cast<_uint>(ANIM_START::ANIM_PIVOT_TURN_L90_A);
-		iIndex <= static_cast<_uint>(ANIM_START::ANIM_PIVOT_TURN_R90_F); ++iIndex)
-	{
-		m_StartAnimIndices.emplace(iIndex);
-	}
-
-	for (_uint iIndex = static_cast<_uint>(ANIM_START::ANIM_PIVOT_TURN_L180_A);
-		iIndex <= static_cast<_uint>(ANIM_START::ANIM_PIVOT_TURN_R180_F); ++iIndex)
-	{
-		m_StartAnimIndices.emplace(iIndex);
-	}
-
-	for (_uint iIndex = static_cast<_uint>(ANIM_START::ANIM_STANDUP_FACEDOWN_F);
-		iIndex <= static_cast<_uint>(ANIM_START::ANIM_STANDUP_FACEDOWN_R); ++iIndex)
-	{
-		m_StartAnimIndices.emplace(iIndex);
-	}
-
-	for (_uint iIndex = static_cast<_uint>(ANIM_START::ANIM_STANDUP_FACEUP_F);
-		iIndex <= static_cast<_uint>(ANIM_START::ANIM_STANDUP_FACEUP_R); ++iIndex)
-	{
-		m_StartAnimIndices.emplace(iIndex);
-	}
-#pragma endregion
-
-#pragma region Loop Anims
-	m_LoopAnimIndices.emplace(static_cast<_uint>(ANIM_LOOP::ANIM_WALK_LOOP_A));
-	m_LoopAnimIndices.emplace(static_cast<_uint>(ANIM_LOOP::ANIM_WALK_LOOP_B));
-	m_LoopAnimIndices.emplace(static_cast<_uint>(ANIM_LOOP::ANIM_WALK_LOOP_C));
-	m_LoopAnimIndices.emplace(static_cast<_uint>(ANIM_LOOP::ANIM_WALK_LOOP_D));
-	m_LoopAnimIndices.emplace(static_cast<_uint>(ANIM_LOOP::ANIM_WALK_LOOP_E));
-	m_LoopAnimIndices.emplace(static_cast<_uint>(ANIM_LOOP::ANIM_WALK_LOOP_F));
-
-	for (_uint iIndex = static_cast<_uint>(ANIM_LOOP::ANIM_TURNING_LOOP_FL_A);
-		iIndex <= static_cast<_uint>(ANIM_LOOP::ANIM_TURNING_LOOP_FR_A); ++iIndex)
-	{
-		m_LoopAnimIndices.emplace(iIndex);
-	}
-
-	for (_uint iIndex = static_cast<_uint>(ANIM_LOOP::ANIM_TURNING_LOOP_FL_B);
-		iIndex <= static_cast<_uint>(ANIM_LOOP::ANIM_TURNING_LOOP_FR_B); ++iIndex)
-	{
-		m_LoopAnimIndices.emplace(iIndex);
-	}
-
-	for (_uint iIndex = static_cast<_uint>(ANIM_LOOP::ANIM_TURNING_LOOP_FL_C);
-		iIndex <= static_cast<_uint>(ANIM_LOOP::ANIM_TURNING_LOOP_FR_C); ++iIndex)
-	{
-		m_LoopAnimIndices.emplace(iIndex);
-	}
-
-	for (_uint iIndex = static_cast<_uint>(ANIM_LOOP::ANIM_TURNING_LOOP_FL_D);
-		iIndex <= static_cast<_uint>(ANIM_LOOP::ANIM_TURNING_LOOP_FR_D); ++iIndex)
-	{
-		m_LoopAnimIndices.emplace(iIndex);
-	}
-
-	for (_uint iIndex = static_cast<_uint>(ANIM_LOOP::ANIM_TURNING_LOOP_FL_E);
-		iIndex <= static_cast<_uint>(ANIM_LOOP::ANIM_TURNING_LOOP_FR_E); ++iIndex)
-	{
-		m_LoopAnimIndices.emplace(iIndex);
-	}
-
-	for (_uint iIndex = static_cast<_uint>(ANIM_LOOP::ANIM_TURNING_LOOP_FL_F);
-		iIndex <= static_cast<_uint>(ANIM_LOOP::ANIM_TURNING_LOOP_FR_F); ++iIndex)
-	{
-		m_LoopAnimIndices.emplace(iIndex);
-	}
-
-#pragma endregion
-
-#pragma region MOVE_ANIM
-
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_START_A));	
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_START_B ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_START_C ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_START_D ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_START_E ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_START_F ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_LOOP_TO_B_WALK ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_LOOP_TO_C_WALK ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_LOOP_TO_D_WALK ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_LOOP_TO_E_WALK ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_LOOP_TO_F_WALK ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_TOTTER_F_A ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_TOTTER_F_B ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_TOTTER_F_C ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_TOTTER_F_D ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_TOTTER_F_E ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_TOTTER_F_F ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_LOOP_A ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_LOOP_B ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_LOOP_C ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_LOOP_D ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_LOOP_E ));
-	m_MoveAnimIndices.emplace(static_cast<_uint>(CBody_Zombie::ANIM_WALK_LOOP_F));
-
-#pragma endregion
-
-#pragma region TURN_ANIM
-
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_TURNING_LOOP_FL_A));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_TURNING_LOOP_FR_A));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_TURNING_LOOP_FL_B));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_TURNING_LOOP_FR_B));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_TURNING_LOOP_FL_C));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_TURNING_LOOP_FR_C));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_TURNING_LOOP_FL_D));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_TURNING_LOOP_FR_D));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_TURNING_LOOP_FL_E));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_TURNING_LOOP_FR_E));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_TURNING_LOOP_FL_F));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_TURNING_LOOP_FR_F));
-
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_L90_A));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_R90_A));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_L90_B));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_R90_B));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_L90_C));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_R90_C));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_L90_D));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_R90_D));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_L90_E));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_R90_E));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_L90_F));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_R90_F));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_L180_A));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_R180_A));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_L180_B));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_R180_B));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_L180_C));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_R180_C));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_L180_D));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_R180_D));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_L180_E));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_R180_E));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_L180_F));
-	m_TurnAnimIndices.emplace(static_cast<_uint>(ANIM_PIVOT_TURN_R180_F));
-
-#pragma endregion
-
-
-#pragma region Anim Load From Anim_Library
-
+HRESULT CBody_Zombie::Add_Animations()
+{
 #pragma region Orinary Anims 
 
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Box_ClimbOver"), TEXT("Ordinary_Box_ClimbOver"))))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Crawl_Fall_Bridge"), TEXT("Ordinary_Crawl_Fall_Bridge"))))
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_ETC"), TEXT("Ordinary_ETC"))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Hold"), TEXT("Ordinary_Hold"))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Idle"), TEXT("Ordinary_Box_Idle"))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_PivotTurn"), TEXT("Ordinary_PivotTurn"))))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Railing_Fall"), TEXT("Ordinary_Railing_Fall"))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Stairs_PivotTurn"), TEXT("Ordinary_Stairs_PivotTurn"))))
 		return E_FAIL;
@@ -620,10 +452,6 @@ HRESULT CBody_Zombie::Initialize_Model()
 
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Dead_Default"), TEXT("Dead_Default"))))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Dead_FaceUp"), TEXT("Dead_FaceUp"))))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Dead_LowStance"), TEXT("Dead_LowStance"))))
-		return E_FAIL;
 
 #pragma endregion
 
@@ -636,18 +464,6 @@ HRESULT CBody_Zombie::Initialize_Model()
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_Hold"), TEXT("Lost_Hold"))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_Idle"), TEXT("Lost_Idle"))))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_L_Ankle_Idle"), TEXT("Lost_L_Ankle_Idle"))))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_L_Ankle_PivotTurn"), TEXT("Lost_L_Ankle_PivotTurn"))))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_L_Ankle_Walk"), TEXT("Lost_L_Ankle_Walk"))))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_R_Ankle_Idle"), TEXT("Lost_R_Ankle_Idle"))))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_R_Ankle_PivotTurn"), TEXT("Lost_R_Ankle_PivotTurn"))))
-		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_R_Ankle_Walk"), TEXT("Lost_R_Ankle_Walk"))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Lost_Turn"), TEXT("Lost_Turn"))))
 		return E_FAIL;
@@ -695,15 +511,6 @@ HRESULT CBody_Zombie::Initialize_Model()
 		return E_FAIL;
 
 #pragma endregion
-
-#pragma endregion
-
-	_uint			iNumTestAnim = { m_pModelCom->Get_NumAnims(TEXT("Test")) };
-	for (_uint i = 0; i < iNumTestAnim; ++i)
-	{
-		m_pModelCom->Set_TickPerSec(TEXT("Test"), i, 60.f);
-	}
-
 	return S_OK;
 }
 

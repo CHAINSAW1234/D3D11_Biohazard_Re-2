@@ -939,14 +939,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 #pragma endregion
 
-	m_strLoadingText = TEXT("Now Loading ... Animations");
-
-#pragma region Animation Load 
-	
-	if (FAILED(Load_Animations()))
-		return E_FAIL;
-
-#pragma endregion
 
 	/* Prototype_Component_VIBuffer_Terrain */
 	//if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_VIBuffer_Terrain"),
@@ -960,6 +952,15 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 #pragma endregion
 
+	m_strLoadingText = TEXT("Now Loading ... Animations");
+
+#pragma region Animation Load 
+
+
+	if (FAILED(Load_Animations()))
+		return E_FAIL;
+
+#pragma endregion
 
 
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Navigation"),
@@ -1025,7 +1026,7 @@ HRESULT CLoader::Load_Animations()
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Box_ClimbOver"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Box_ClimbOver/")))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Crawl_Fall_Bridge"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Crawl_Fall_Bridge/")))
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_ETC"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/ETC/")))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Hold"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Hold/")))
@@ -1035,9 +1036,6 @@ HRESULT CLoader::Load_Animations()
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_PivotTurn"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/PivotTurn/")))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Railing_Fall"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Railing_Fall/")))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Ordinary_Stairs_PivotTurn"), "../Bin/Resources/Animations/Body_Zombie/Ordinary/Stairs_PivotTurn/")))
@@ -1125,12 +1123,6 @@ HRESULT CLoader::Load_Animations()
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Dead_Default"), "../Bin/Resources/Animations/Body_Zombie/Dead/Default/")))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Dead_FaceUp"), "../Bin/Resources/Animations/Body_Zombie/Dead/FaceUp/")))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Dead_LowStance"), "../Bin/Resources/Animations/Body_Zombie/Dead/LowStance/")))
-		return E_FAIL;
-
 #pragma endregion
 
 #pragma region Default Zombie Lost Anims
@@ -1145,24 +1137,6 @@ HRESULT CLoader::Load_Animations()
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_Idle"), "../Bin/Resources/Animations/Body_Zombie/Lost/Idle/")))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_L_Ankle_Idle"), "../Bin/Resources/Animations/Body_Zombie/Lost/L_Ankle_Idle/")))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_L_Ankle_PivotTurn"), "../Bin/Resources/Animations/Body_Zombie/Lost/L_Ankle_PivotTurn/")))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_L_Ankle_Walk"), "../Bin/Resources/Animations/Body_Zombie/Lost/L_Ankle_Walk/")))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_R_Ankle_Idle"), "../Bin/Resources/Animations/Body_Zombie/Lost/R_Ankle_Idle/")))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_R_Ankle_PivotTurn"), "../Bin/Resources/Animations/Body_Zombie/Lost/R_Ankle_PivotTurn/")))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_R_Ankle_Walk"), "../Bin/Resources/Animations/Body_Zombie/Lost/R_Ankle_Walk/")))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Lost_Turn"), "../Bin/Resources/Animations/Body_Zombie/Lost/Turn/")))

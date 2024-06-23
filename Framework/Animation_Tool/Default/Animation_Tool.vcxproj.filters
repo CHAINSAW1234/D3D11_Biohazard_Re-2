@@ -100,6 +100,9 @@
     <Filter Include="02.GameObject\Tool\Tool_MeshController">
       <UniqueIdentifier>{394fcd3a-c53f-4107-9c3d-5aa63bce06d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Tool\Tool_AnimLibrary">
+      <UniqueIdentifier>{9d4901c0-45bc-4e07-bd77-685e8455c80c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\MainApp.cpp">
@@ -221,6 +224,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Tool_MeshController.cpp">
       <Filter>02.GameObject\Tool\Tool_MeshController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool_AnimLibrary.cpp">
+      <Filter>02.GameObject\Tool\Tool_AnimLibrary</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -361,6 +367,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Tool_MeshController.h">
       <Filter>02.GameObject\Tool\Tool_MeshController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tool_AnimLibrary.h">
+      <Filter>02.GameObject\Tool\Tool_AnimLibrary</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

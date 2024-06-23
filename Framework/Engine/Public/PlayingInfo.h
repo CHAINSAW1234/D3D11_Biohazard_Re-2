@@ -54,6 +54,8 @@ public:		/* For.Access */
 
 	void								Change_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, _uint iNumChannel);
 
+	void								Reset_PreAnim_CurrentAnim();
+
 	inline void							Set_PreAnimIndex(_int iAnimIndex) { m_iPreAnimIndex = iAnimIndex; }
 	inline void							Set_PreAnimLayerTag(const wstring& strPreAnimLayerTag) { m_strPreAnimLayerTag = strPreAnimLayerTag; }
 	inline void							Set_Loop(_bool isLoop) { m_isLoop = isLoop; }
