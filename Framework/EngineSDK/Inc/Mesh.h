@@ -50,7 +50,6 @@ public:
 	/* For.BinaryLoad */
 	virtual HRESULT Initialize_Prototype(CModel::MODEL_TYPE eType, const MESH_DESC& MeshDesc);
 	virtual HRESULT Initialize(void* pArg) override;
-
 public:
 	void Set_MatreialDesc(const MATERIAL_DESC& MaterialDesc);
 	MATERIAL_DESC Get_MaterialDesc();
@@ -96,6 +95,7 @@ public:/*For Cooking*/
 	void					Convex_Mesh_Cooking_Convert_Root(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform,_float4 vDelta);
 	void					Convex_Mesh_Cooking_Convert_Root_No_Rotate(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform,_float4 vDelta);
 	void					Create_SoftBody();
+	void					Create_Cloth();
 
 public: /* For Octree Culling*/
 	_uint					GetNumFaces()

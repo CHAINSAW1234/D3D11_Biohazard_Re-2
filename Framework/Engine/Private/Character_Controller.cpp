@@ -222,7 +222,7 @@ PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, 
 	body->attachShape(*shape);
 
 	m_ragdoll->m_rigid_bodies[parent_idx] = body;
-	body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	//body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
 	float sleepThreshold = 1.f;
 	body->setSleepThreshold(sleepThreshold);
 	body->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
@@ -274,7 +274,7 @@ PxRigidDynamic* CCharacter_Controller::create_capsule_bone(uint32_t parent_idx, 
 	body->attachShape(*shape);
 
 	m_ragdoll->m_rigid_bodies[parent_idx] = body;
-	body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	//body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
 	float sleepThreshold = 0.5f;
 	body->setSleepThreshold(sleepThreshold);
 	body->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);

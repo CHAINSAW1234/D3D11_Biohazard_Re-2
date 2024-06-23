@@ -269,6 +269,7 @@ public:/*For Physics Controller*/
 	void									Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform ,_float4 vDelta);
 	void									Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform ,_float4 vDelta);
 	void									Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
+	void									Create_Cloth(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 	_bool									RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
@@ -280,6 +281,10 @@ public:/*For Physics Controller*/
 	class CPxCollider*						Create_Px_Collider_Convert_Root_Double_Door(class CModel* pModel, class CTransform* pTransform, _int* iId);
 	class CPxCollider*						Create_Px_Collider_Cabinet(class CModel* pModel, class CTransform* pTransform, _int* iId);
 	class CPxCollider*						Create_Px_Collider_Toilet(class CModel* pModel, class CTransform* pTransform, _int* iId);
+	class CGraphic_Device*					GetGraphic_Device()
+	{
+		return m_pGraphic_Device;
+	}
 
 private:/*For Physics_Controller*/
 	_uint*									m_pIndices = { nullptr };

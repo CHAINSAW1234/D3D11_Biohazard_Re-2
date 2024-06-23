@@ -9,6 +9,7 @@
 #include "Transform.h"
 #include "PxCollider.h"
 #include "Model.h"
+#include "SoftBody.h"
 
 CPhysics_Controller::CPhysics_Controller() : m_pGameInstance{ CGameInstance::Get_Instance() }
 {
@@ -38,30 +39,39 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, m_ToleranceScale, true, m_Pvd);
 	physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
-	m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
+	m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(4);
 	sceneDesc.cpuDispatcher = m_Dispatcher;
 	sceneDesc.filterShader = MegamotionFilterShader;
 
+#pragma region GPU 가속 설정 - RigidBody
+	//PxCudaContextManagerDesc cudaContextManagerDesc;
+	//m_CudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc, PxGetProfilerCallback());
 
-#pragma region GPU 가속 설정
+	//sceneDesc.cudaContextManager = m_CudaContextManager;
+
+	//sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
+	//sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
+#pragma endregion
+
+#pragma region GPU 가속 설정 - SoftBody
 	//sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
 	//sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
-	//PxCudaContextManagerDesc cudaContextManagerDesc;
-
-	//m_CudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc);
-	//if (!m_CudaContextManager->contextIsValid())
-	//{
-	//	m_CudaContextManager->release();
-	//	m_CudaContextManager = NULL;
-	//}
-	//sceneDesc.filterShader = PxDefaultSimulationFilterShader;
 	//sceneDesc.flags |= PxSceneFlag::eENABLE_ACTIVE_ACTORS;
 
 	//sceneDesc.sceneQueryUpdateMode = PxSceneQueryUpdateMode::eBUILD_ENABLED_COMMIT_DISABLED;
 	//sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
 	//sceneDesc.gpuMaxNumPartitions = 8;
 
+	//PxCudaContextManagerDesc cudaContextManagerDesc;
+	//m_CudaContextManager = PxCreateCudaContextManager(*m_Foundation, cudaContextManagerDesc);
+	//if (!m_CudaContextManager->contextIsValid())
+	//{
+	//	m_CudaContextManager->release();
+	//	m_CudaContextManager = NULL;
+	//}
+
 	//sceneDesc.solverType = PxSolverType::ePGS;
+	//sceneDesc.cudaContextManager = m_CudaContextManager;
 #pragma endregion
 
 	//Call Back
@@ -92,6 +102,35 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	m_Manager = PxCreateControllerManager(*m_Scene);
 
 	m_vecRagdoll.clear();
+
+
+#pragma region SoftBody 생성 임시 코드
+	/*PxCookingParams cookingParams(m_Physics->getTolerancesScale());
+	cookingParams.meshWeldTolerance = 0.001f;
+	cookingParams.meshPreprocessParams = PxMeshPreprocessingFlags(PxMeshPreprocessingFlag::eWELD_VERTICES);
+	cookingParams.buildTriangleAdjacencies = false;
+	cookingParams.buildGPUData = true;
+
+	PxArray<PxVec3> triVerts;
+	PxArray<PxU32> triIndices;
+	PxReal maxEdgeLength = 1;
+
+	createCube(triVerts, triIndices, PxVec3(0, 9.5, 0), 2.5);
+	PxRemeshingExt::limitMaxEdgeLength(triIndices, triVerts, maxEdgeLength);
+	PxSoftBody* softBodyCube = Create_SoftBody_Debug(cookingParams, triVerts, triIndices);
+
+	createSphere(triVerts, triIndices, PxVec3(0, 4.5, 0), 2.5, maxEdgeLength);
+	PxSoftBody* softBodySphere = Create_SoftBody_Debug(cookingParams, triVerts, triIndices);
+
+	PxReal halfExtent = 1;
+	PxVec3 cubePosA(0, 7.25, 0);
+	PxVec3 cubePosB(0, 11.75, 0);
+	PxRigidDynamic* rigidCubeA = Create_RigidCube(halfExtent, cubePosA);
+	PxRigidDynamic* rigidCubeB = Create_RigidCube(halfExtent, cubePosB);
+
+	connectCubeToSoftBody(rigidCubeA, 2 * halfExtent, cubePosA, softBodySphere);
+	connectCubeToSoftBody(rigidCubeA, 2 * halfExtent, cubePosA, softBodyCube);*/
+#pragma endregion
 
 	return S_OK;
 }
@@ -601,8 +640,6 @@ void CPhysics_Controller::Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVert
 
 void CPhysics_Controller::Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, _bool bHasCollider)
 {
-	return;
-
 	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
 	cookingParams.meshWeldTolerance = 0.001f;
 	cookingParams.meshPreprocessParams = PxMeshPreprocessingFlags(PxMeshPreprocessingFlag::eWELD_VERTICES);
@@ -631,7 +668,7 @@ void CPhysics_Controller::Create_SoftBody(_float3* pVertices, _uint* pIndices, _
 
 	PxReal maxEdgeLength = 1;
 
-	createCube(triVerts, triIndices, PxVec3(0, 9.5, 0), 1.f);
+	createCube(triVerts, triIndices, PxVec3(0, 9.5f, 0), 2.5f);
 	PxRemeshingExt::limitMaxEdgeLength(triIndices, triVerts, maxEdgeLength);
 
 	PxFEMSoftBodyMaterial* material = PxGetPhysics().createFEMSoftBodyMaterial(1e+6f, 0.45f, 0.5f);
@@ -668,7 +705,7 @@ void CPhysics_Controller::Create_SoftBody(_float3* pVertices, _uint* pIndices, _
 	{
 		PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE;
 
-		PxFEMSoftBodyMaterial* materialPtr = PxGetPhysics().createFEMSoftBodyMaterial(1e+6f, 0.45f, 0.5f);
+		PxFEMSoftBodyMaterial* materialPtr = m_Physics->createFEMSoftBodyMaterial(1e+6f, 0.45f, 0.5f);
 		PxTetrahedronMeshGeometry geometry(softBodyMesh->getCollisionMesh());
 		PxShape* shape = m_Physics->createShape(geometry, &materialPtr, 1, true, shapeFlags);
 		if (shape)
@@ -681,8 +718,16 @@ void CPhysics_Controller::Create_SoftBody(_float3* pVertices, _uint* pIndices, _
 		m_Scene->addActor(*softBody);
 
 		PxFEMParameters femParams;
-		Config_SoftBody(softBody, femParams, material, PxTransform(PxVec3(0.f, 0.f, 0.f), PxQuat(PxIdentity)), 100.f, 1.0f, 30);
+		Config_SoftBody(softBody, femParams, material, PxTransform(PxVec3(0.f, 5.f, 0.f), PxQuat(PxIdentity)), 100.f, 1.0f, 30);
 		softBody->setSoftBodyFlag(PxSoftBodyFlag::eDISABLE_SELF_COLLISION, true);
+
+
+		PxReal halfExtent = 1;
+		PxVec3 cubePosA(0, 7.25, 0);
+		PxVec3 cubePosB(0, 11.75, 0);
+		PxRigidDynamic* rigidCubeA = Create_RigidCube(halfExtent, cubePosA);
+
+		connectCubeToSoftBody(rigidCubeA, 2 * halfExtent, cubePosA, softBody);
 	}
 }
 
@@ -706,6 +751,9 @@ void CPhysics_Controller::Config_SoftBody(PxSoftBody* softBody, const PxFEMParam
 	PxSoftBodyExt::transform(*softBody, transform, scale, simPositionInvMassPinned, simVelocityPinned, collPositionInvMassPinned, restPositionPinned);
 	PxSoftBodyExt::updateMass(*softBody, density, maxInvMassRatio, simPositionInvMassPinned);
 	PxSoftBodyExt::copyToDevice(*softBody, PxSoftBodyDataFlag::eALL, simPositionInvMassPinned, simVelocityPinned, collPositionInvMassPinned, restPositionPinned);
+
+	SoftBody* sBody = new SoftBody(softBody, m_CudaContextManager);
+	m_vecSoftBodies.push_back(sBody);
 
 	PX_PINNED_HOST_FREE(m_CudaContextManager, simPositionInvMassPinned);
 	PX_PINNED_HOST_FREE(m_CudaContextManager, simVelocityPinned);
@@ -840,6 +888,81 @@ CPxCollider* CPhysics_Controller::Create_Px_Collider_Toilet(CModel* pModel, CTra
 }
 
 void CPhysics_Controller::Create_Plane(_float4 Pos)
+{
+}
+
+PxRigidDynamic* CPhysics_Controller::Create_RigidCube(PxReal halfExtent, const PxVec3& position)
+{
+	PxShape* shape = m_Physics->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), *m_Material);
+
+	shape->setSimulationFilterData(PxFilterData(0, 0, 1, 0));
+
+	PxTransform localTm(position);
+	PxRigidDynamic* body = m_Physics->createRigidDynamic(localTm);
+	body->attachShape(*shape);
+	PxRigidBodyExt::updateMassAndInertia(*body, 10.0f);
+	m_Scene->addActor(*body);
+
+	shape->release();
+
+	return body;
+}
+
+PxSoftBody* CPhysics_Controller::Create_SoftBody_Debug(const PxCookingParams& params, const PxArray<PxVec3>& triVerts, const PxArray<PxU32>& triIndices, bool useCollisionMeshForSimulation)
+{
+	PxFEMSoftBodyMaterial* material = PxGetPhysics().createFEMSoftBodyMaterial(1e+6f, 0.45f, 0.5f);
+	material->setDamping(0.005f);
+
+	PxSoftBodyMesh* softBodyMesh;
+
+	PxU32 numVoxelsAlongLongestAABBAxis = 8;
+
+	PxSimpleTriangleMesh surfaceMesh;
+	surfaceMesh.points.count = triVerts.size();
+	surfaceMesh.points.data = triVerts.begin();
+	surfaceMesh.triangles.count = triIndices.size() / 3;
+	surfaceMesh.triangles.data = triIndices.begin();
+
+	softBodyMesh = PxSoftBodyExt::createSoftBodyMesh(params, surfaceMesh, numVoxelsAlongLongestAABBAxis, m_Physics->getPhysicsInsertionCallback());
+
+	//Alternatively one can cook a softbody mesh in a single step
+	//tetMesh = cooking.createSoftBodyMesh(simulationMeshDesc, collisionMeshDesc, softbodyDesc, physics.getPhysicsInsertionCallback());
+	PX_ASSERT(softBodyMesh);
+
+	if (!m_CudaContextManager)
+		return nullptr;
+
+	PxSoftBody* softBody = m_Physics->createSoftBody(*m_CudaContextManager);
+	if (softBody)
+	{
+		PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE;
+
+		PxFEMSoftBodyMaterial* materialPtr = m_Physics->createFEMSoftBodyMaterial(1e+6f, 0.45f, 0.5f);
+		PxTetrahedronMeshGeometry geometry(softBodyMesh->getCollisionMesh());
+		PxShape* shape = m_Physics->createShape(geometry, &materialPtr, 1, true, shapeFlags);
+		if (shape)
+		{
+			softBody->attachShape(*shape);
+			shape->setSimulationFilterData(PxFilterData(0, 0, 2, 0));
+		}
+		softBody->attachSimulationMesh(*softBodyMesh->getSimulationMesh(), *softBodyMesh->getSoftBodyAuxData());
+
+		m_Scene->addActor(*softBody);
+
+		PxFEMParameters femParams;
+		Config_SoftBody(softBody, femParams, material, PxTransform(PxVec3(10.f, 5.f, 10.f), PxQuat(PxIdentity)), 100.f, 10.0f, 30);
+		softBody->setSoftBodyFlag(PxSoftBodyFlag::eDISABLE_SELF_COLLISION, true);
+	}
+
+	return softBody;
+}
+
+void CPhysics_Controller::initCloth(const PxU32 numX, const PxU32 numZ, const PxVec3& position, const PxReal particleSpacing, const PxReal totalClothMass)
+{
+
+}
+
+void CPhysics_Controller::Create_Cloth(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
 {
 }
 
@@ -1142,11 +1265,11 @@ void CPhysics_Controller::Free()
 	if (m_Manager)
 		m_Manager->release();
 
-	if (m_CudaContextManager)
-		m_CudaContextManager->release();
-
 	if (m_Scene)
 		m_Scene->release();
+
+	if (m_CudaContextManager)
+		m_CudaContextManager->release();
 
 	if (m_Dispatcher)
 		m_Dispatcher->release();
@@ -1165,4 +1288,5 @@ void CPhysics_Controller::Free()
 
 	delete m_EventCallBack;
 	delete m_FilterCallBack;
+
 }

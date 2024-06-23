@@ -422,7 +422,6 @@ HRESULT CZombie::Add_PartObjects()
 
 	m_PartObjects[CZombie::PART_ID::PART_HAT] = pHatObject;
 
-
 	/* For.Part_Shirts */
 	CPartObject*								pShirtsObject = { nullptr };
 	CClothes_Zombie::CLOTHES_MONSTER_DESC		ClothesShirtsDesc;
