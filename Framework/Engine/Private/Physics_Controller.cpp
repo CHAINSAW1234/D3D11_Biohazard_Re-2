@@ -131,7 +131,7 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	connectCubeToSoftBody(rigidCubeA, 2 * halfExtent, cubePosA, softBodySphere);
 	connectCubeToSoftBody(rigidCubeA, 2 * halfExtent, cubePosA, softBodyCube);*/
 #pragma endregion
-
+	
 	return S_OK;
 }
 

@@ -104,7 +104,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\imguilib;../../EngineSDK/Inc/;../Public/;C:\vcpkg\installed\x64-windows\include/physx;C:\vcpkg\installed\x64-windows\include;../Bin/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\imguilib;../../EngineSDK/Inc/;../Public/;C:\vcpkg\installed\x64-windows\include/physx;C:\vcpkg\installed\x64-windows\include;../Bin/;../NvCloth/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/MP /Zm2000 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
