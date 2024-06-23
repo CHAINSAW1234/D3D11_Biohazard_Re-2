@@ -24,15 +24,76 @@ public:
 		INTERACTPROPS_COL_OBB ,
 		INTERACTPROPS_COL_END
 	};
+	typedef struct Door_Desc
+	{
+		//lock의 여부, 엠블럼||사슬
+		_bool		bLock = { false };
+		_int		iLockType = { 0 };
+		_int		iEmblemType = { 0 };
+	}DOOR_DESC;
 
+	typedef struct Cabinet_Desc
+	{
+		//lock의 여부, 자물쇠, 아이템
+		_bool		bLock = { false };
+		_int		iLockType = { 0 };
+		_int		iLockNum[10] = { -1, };
+
+		_bool		bItem = { false };
+		_int		iItemIndex = { 0 };
+
+
+	}CABINET_DESC;
+
+	typedef struct Window_Desc
+	{
+
+	}WINDOW_DESC;
+
+	typedef struct Shutter_Desc
+	{
+		// 몇번째 레버와 동작
+
+	}SHUTTER_DESC;
+
+	typedef struct Hall_Statue_Desc
+	{
+
+	}HALL_STATUE_DESC;
+
+	typedef struct Statue_Desc
+	{
+
+	}STATUE_DESC;
+
+	typedef struct BIG_Statue_Desc
+	{
+
+	}BIG_STATUE_DESC;
+
+	typedef struct Event_Prop_Desc
+	{
+
+	}EVENT_PROP_DESC;
+
+	typedef struct ITEM_Prop_Desc
+	{
+		_int iItemIndex = { 0 };
+	}ITEM_PROP_DESC;
 
 public:
 	typedef struct tagInteractProps_desc: public CGameObject::GAMEOBJECT_DESC
 	{
 		_int BelongIndexs2[iMaxNum];
 		_int iPropsType;
-		_int iRegion;
-
+		DOOR_DESC tagDoor = {};
+		CABINET_DESC tagCabinet = {};
+		WINDOW_DESC tagWindow = {};
+		SHUTTER_DESC tagShutter = {};
+		HALL_STATUE_DESC tagHallStatue = {};
+		STATUE_DESC tagStatue = {};
+		BIG_STATUE_DESC tagBigStatue = {};
+		ITEM_PROP_DESC tagPropDesc = {};
 	}INTERACTPROPS_DESC;
 protected:
 	CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

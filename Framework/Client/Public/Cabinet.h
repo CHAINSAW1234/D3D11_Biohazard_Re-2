@@ -17,7 +17,13 @@ public:
 		CABINET_OPENED,
 		CABINET_END,
 	};
-
+	enum CABINET_PART
+	{
+		PART_BODY,
+		PART_ITEM,
+		PART_LOCK,
+		PART_END
+	};
 private:
 	CCabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CCabinet(const CCabinet& rhs);
@@ -45,7 +51,7 @@ private:
 	_bool				m_bLock =	{ false };
 	_bool				m_bActive = { false };
 
-	CABINET_STATE  m_eState = { CABINET_CLOSED };
+	_ubyte  m_eState = { CABINET_CLOSED };
 
 
 

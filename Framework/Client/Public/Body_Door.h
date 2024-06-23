@@ -11,6 +11,7 @@ public:
 	typedef struct tag_BodyDoor : public PART_INTERACTPROPS_DESC
 	{
 		const _ubyte* pOneDoorState;
+		const _ubyte* pOneDoorState_Prev;
 		const _ubyte* pDoubleDoorState;
 
 	}BODY_DOOR_DESC;
@@ -37,9 +38,6 @@ private:
 	void OneDoor_Tick(_float fTimeDelta);
 	void OneDoor_Late_Tick(_float fTimeDelta);
 
-	void OneDoor_Active();
-	void DoubleDoor_Active();
-
 
 private:
 	_bool				m_bLock =	{ false };
@@ -47,8 +45,11 @@ private:
 
 	_bool				m_bDoubleCol = { false };
 
+	const _ubyte*			m_pOneState = {};
+	const _ubyte*			m_pOneState_Prev = {};
+	const _ubyte*			m_pDoubleState = {};
+
 	_float			m_fTime = { 0.f };
-	class CCollider* m_pColDoubledoorCom = { nullptr };
 public:
 	static CBody_Door* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

@@ -76,7 +76,8 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
 
-	m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+	if (m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE] != nullptr)
+		m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
@@ -91,6 +92,10 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_Cabinet::Render()
 {
+	if (m_bRender == false)
+		return S_OK;
+	else
+		m_bRender = false;
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -151,25 +156,16 @@ HRESULT CBody_Cabinet::Render()
 HRESULT CBody_Cabinet::Add_Components()
 {
 
-	/* For.Com_Shader */
+	/* For.Com_Body_Shader */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
-		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
+		TEXT("Com_Body_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 	
-	/* For.Com_Model */
+	/* For.Com_Body_Model */
 	if (FAILED(__super::Add_Component(g_Level, m_strModelComponentName,
-		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		TEXT("Com_Body_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
-	
-	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
-
-	ColliderDesc.fRadius = _float(50.f);
-	ColliderDesc.vCenter = _float3(50.f, 1.f, 0.f);
-	/* For.Com_Collider */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
-		return E_FAIL;
 	return S_OK;
 }
 

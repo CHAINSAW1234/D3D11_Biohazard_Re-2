@@ -14,8 +14,6 @@ public:
 	virtual HRESULT						Initialize();
 	virtual void						Tick(_float fTimeDelta);
 	virtual HRESULT						Render();
-	virtual HRESULT Load_Layer(const wstring& strFilePath, _uint iLevel);
-	virtual HRESULT Load_Object(const wstring& strFilePath, const wstring& strLayerName, _uint iLevel);
 	virtual HRESULT Load_Light(const wstring& strFilePath, _uint iLevel);
 
 protected:

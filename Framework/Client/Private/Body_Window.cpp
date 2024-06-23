@@ -21,9 +21,6 @@ HRESULT CBody_Window::Initialize_Prototype()
 
 HRESULT CBody_Window::Initialize(void* pArg)
 {
-	/*문자식 파트오브젝트 붙혀야하는데 뼈가 문고리에 없어서 직접 찍어야 하는데
-	프로토타입 끝나고 뼈 붙혀보겠나이다*/
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 	
@@ -41,7 +38,7 @@ HRESULT CBody_Window::Initialize(void* pArg)
 
 #ifndef NON_COLLISION_PROP
 
-	//m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
+	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pTransformCom, &m_iPx_Collider_Id);
 
 #endif
 
@@ -68,22 +65,13 @@ void CBody_Window::Late_Tick(_float fTimeDelta)
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 	m_pModelCom->Play_Animation_Light(m_pTransformCom, fTimeDelta);
 
-
-
-	m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-
-	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
-
+	//m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
-
-#ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponents(m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]);
-#endif
 
 }
 
@@ -111,9 +99,6 @@ HRESULT CBody_Window::Render()
 
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
-
-		/*if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
-			return E_FAIL;*/
 
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
 		{
@@ -148,34 +133,30 @@ HRESULT CBody_Window::Render()
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
 
-
-
-
 	return S_OK;
 }
 
 HRESULT CBody_Window::Add_Components()
 {
-
-	/* For.Com_Shader */
+	/* For.Com_Body_Shader */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
-		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
+		TEXT("Com_Body_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 	
-	/* For.Com_Model */
+	/* For.Com_Body_Model */
 	if (FAILED(__super::Add_Component(g_Level, m_strModelComponentName,
-		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+		TEXT("Com_Body_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
 	
-	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
+	//CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(100.f);
-	ColliderDesc.vCenter = _float3(-10.f, 1.f, 0.f);
-	/* For.Com_Collider */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
-		return E_FAIL;
+	//ColliderDesc.fRadius = _float(100.f);
+	//ColliderDesc.vCenter = _float3(-10.f, 1.f, 0.f);
+	///* For.Com_Collider */
+	//if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+	//	TEXT("Com_Body_Collider"), (CComponent**)&m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+	//	return E_FAIL;
 	return S_OK;
 }
 

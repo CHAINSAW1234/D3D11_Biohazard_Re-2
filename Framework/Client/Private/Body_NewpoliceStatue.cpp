@@ -18,9 +18,6 @@ HRESULT CBody_NewpoliceStatue::Initialize_Prototype()
 
 HRESULT CBody_NewpoliceStatue::Initialize(void* pArg)
 {
-	/*문자식 파트오브젝트 붙혀야하는데 뼈가 문고리에 없어서 직접 찍어야 하는데
-	프로토타입 끝나고 뼈 붙혀보겠나이다*/
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 	
@@ -32,9 +29,7 @@ HRESULT CBody_NewpoliceStatue::Initialize(void* pArg)
 
 	m_pModelCom->Add_AnimPlayingInfo(0, false, 0, TEXT("Default"), 1.f);
 
-
 	m_pModelCom->Active_RootMotion_Rotation(true);
-	m_pTransformCom->Set_WorldMatrix(m_tagInteractprops_desc.worldMatrix);
 
 #ifndef NON_COLLISION_PROP
 
@@ -47,26 +42,11 @@ HRESULT CBody_NewpoliceStatue::Initialize(void* pArg)
 
 void CBody_NewpoliceStatue::Tick(_float fTimeDelta)
 {
-	if (!*m_pVisible)
-		return;
 
 }
 
 void CBody_NewpoliceStatue::Late_Tick(_float fTimeDelta)
 {
-	if (!*m_pVisible)
-		return;
-
-	if (m_bRender == false)
-		return;
-
-
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
-
 }
 
 HRESULT CBody_NewpoliceStatue::Render()
@@ -138,12 +118,12 @@ HRESULT CBody_NewpoliceStatue::Render()
 HRESULT CBody_NewpoliceStatue::Add_Components()
 {
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
-		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
+		TEXT("Com_Body_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 	
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(g_Level, m_tagInteractprops_desc.strModelComponent,
-		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+	if (FAILED(__super::Add_Component(g_Level, m_strModelComponentName,
+		TEXT("Com_Body_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
 	return S_OK;

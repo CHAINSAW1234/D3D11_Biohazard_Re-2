@@ -64,4 +64,19 @@ namespace Client
 		DOOR_L,
 		DOOR_R
 	};
+
+	enum OBJ_TYPE
+	{
+		OBJ_NOPART,
+		OBJ_DOOR,
+		OBJ_WINDOW,
+		OBJ_CABINET,
+		OBJ_SHUTTER,
+		OBJ_STATUE,
+		OBJ_BIGSTATUE,
+		OBJ_HALL_STATUE,
+		OBJ_END
+	};
+
+
 }

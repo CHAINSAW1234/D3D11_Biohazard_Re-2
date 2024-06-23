@@ -31,6 +31,15 @@ public:
 		DOOR_ONE,
 		DOOR_DOUBLE,
 	};
+	enum PART_DOOR
+	{
+		PART_BODY,
+		PART_LOCK,
+		PART_END
+
+	};
+
+
 private:
 	CDoor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CDoor(const CDoor& rhs);
@@ -47,7 +56,6 @@ private:
 	virtual HRESULT				Add_Components();
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
-	virtual HRESULT				Bind_ShaderResources() override;
 
 private:
 	void DoubleDoor_Tick(_float fTimeDelta);
@@ -66,12 +74,12 @@ private:
 	_bool				m_bDoubleCol = { false };
 
 	_float			m_fTime = { 0.f };
-	TYPE_DOOR    m_eType = {DOOR_ONE};
+	_ubyte			m_eType = {DOOR_ONE};
 
-	ONEDOOR_STATE  m_eOneState = { ONEDOOR_STATIC };
-	ONEDOOR_STATE  m_eOneState_Prev = { ONEDOOR_STATIC };
+	_ubyte  m_eOneState = { ONEDOOR_STATIC };
+	_ubyte  m_eOneState_Prev = { ONEDOOR_STATIC };
 
-	DOUBLEDOOR_STATE  m_eDoubleState = { DOUBLEDOOR_STATIC };
+	_ubyte  m_eDoubleState = { DOUBLEDOOR_STATIC };
 	class CCollider* m_pColDoubledoorCom = { nullptr };
 public:
 	static CDoor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

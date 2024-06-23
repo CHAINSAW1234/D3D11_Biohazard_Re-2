@@ -1034,5 +1034,5 @@ void COctree::Render_Node_LightDepth_Point(CModel* pRootWorld, CShader* pShader)
 
 void COctree::Set_Props_Layer(_int iLevel)
 {
-	m_pObjects = m_pGameInstance->Find_Layer(iLevel, L"Layer_Obj");
+	m_pObjects = m_pGameInstance->Find_Layer(iLevel, L"Layer_InteractObj");
 }
