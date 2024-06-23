@@ -368,6 +368,9 @@ HRESULT CBody_Zombie::Initialize_Model()
 		m_pModelCom->Hide_Mesh(strMeshTag, false);
 	}
 
+	if (FAILED(Add_Animations()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -381,15 +384,15 @@ HRESULT CBody_Zombie::Add_Animations()
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Hold"), TEXT("Ordinary_Hold"))))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Idle"), TEXT("Ordinary_Box_Idle"))))
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Idle"), TEXT("Ordinary_Idle"))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_PivotTurn"), TEXT("Ordinary_PivotTurn"))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Stairs_PivotTurn"), TEXT("Ordinary_Stairs_PivotTurn"))))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Stairs_Walk"), TEXT("Ordinary_Box_Stairs_Walk"))))
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Stairs_Walk"), TEXT("Ordinary_Stairs_Walk"))))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_StandUp"), TEXT("Ordinary_Box_StandUp"))))
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_StandUp"), TEXT("Ordinary_StandUp"))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Ordinary_Walk"), TEXT("Ordinary_Walk"))))
 		return E_FAIL;
@@ -647,32 +650,27 @@ void CBody_Zombie::Update_Current_MotionType()
 
 }
 
-_bool CBody_Zombie::Is_Start_Anim(_uint iAnimIndex)
+ZOMBIE_BODY_ANIM_TYPE CBody_Zombie::Get_CurrentAnimType(PLAYING_INDEX eIndex)
 {
-	set<_uint>::iterator		iter = { m_StartAnimIndices.find(iAnimIndex) };
-	
-	return iter != m_StartAnimIndices.end();
-}
+	ZOMBIE_BODY_ANIM_TYPE			eType = { ZOMBIE_BODY_ANIM_TYPE::_END };
 
-_bool CBody_Zombie::Is_Loop_Anim(_uint iAnimIndex)
-{
-	set<_uint>::iterator		iter = { m_LoopAnimIndices.find(iAnimIndex) };
+	wstring			strAnimLayerTag = { m_pModelCom->Get_CurrentAnimLayerTag(static_cast<_uint>(eIndex)) };
+	if (TEXT("") == strAnimLayerTag)
+		return eType;
 
-	return iter != m_LoopAnimIndices.end();
-}
+	unordered_set<wstring>::iterator		iterMove = { m_MoveAnimLayerTags.find(strAnimLayerTag) };
+	if (m_MoveAnimLayerTags.end() != iterMove)
+		eType = ZOMBIE_BODY_ANIM_TYPE::_MOVE;
 
-_bool CBody_Zombie::Is_Move_Anim(_uint iAnimIndex)
-{
-	set<_uint>::iterator		iter = { m_MoveAnimIndices.find(iAnimIndex) };
+	unordered_set<wstring>::iterator		iterTurn = { m_TurnAnimLayerTags.find(strAnimLayerTag) };
+	if (m_MoveAnimLayerTags.end() != iterMove)
+		eType = ZOMBIE_BODY_ANIM_TYPE::_TURN;
 
-	return iter != m_MoveAnimIndices.end();
-}
+	unordered_set<wstring>::iterator		iterIdle = { m_IdleAnimLayerTags.find(strAnimLayerTag) };
+	if (m_MoveAnimLayerTags.end() != iterMove)
+		eType = ZOMBIE_BODY_ANIM_TYPE::_IDLE;
 
-_bool CBody_Zombie::Is_Turn_Anim(_uint iAnimIndex)
-{
-	set<_uint>::iterator		iter = { m_TurnAnimIndices.find(iAnimIndex) };
-
-	return iter != m_TurnAnimIndices.end();
+	return eType;
 }
 
 HRESULT CBody_Zombie::Add_Components()

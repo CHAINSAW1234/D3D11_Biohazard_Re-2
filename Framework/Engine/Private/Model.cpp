@@ -217,6 +217,8 @@ HRESULT CModel::Add_Animations(const wstring& strPrototypeLayerTag, const wstrin
 	}
 
 	m_AnimationLayers.emplace(strAnimLayerTag, pAnimation_Layer);
+
+	return S_OK;
 }
 
 #pragma endregion

@@ -62,7 +62,7 @@ public:		/* Anim Branch Check */
 	_bool							Is_Start_Anim(_uint iPartID, _uint iAnimIndex);
 	_bool							Is_Loop_Anim(_uint iPartID, _uint iAnimIndex);
 
-	_bool							Is_Move_Anim(_uint iPartID, _uint iAnimIndex);
+	_bool							Is_Move_CurrentAnim(_uint iPartID, _uint iAnimIndex);
 	_bool							Is_Turn_Anim(_uint iPartID, _uint iAnimIndex);
 
 public:		/* Motion Blend Controll */

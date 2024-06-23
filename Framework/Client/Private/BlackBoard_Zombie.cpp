@@ -218,7 +218,7 @@ _bool CBlackBoard_Zombie::Is_Loop_Anim(_uint iPartID, _uint iAnimIndex)
 	return false;
 }
 
-_bool CBlackBoard_Zombie::Is_Move_Anim(_uint iPartID, _uint iAnimIndex)
+_bool CBlackBoard_Zombie::Is_Move_CurrentAnim(_uint iPartID, _uint iAnimIndex)
 {
 	CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
 
