@@ -1029,6 +1029,12 @@ void CGameInstance::Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint V
 		m_pPhysics_Controller->Create_SoftBody(pVertices, pIndices, VertexNum, IndexNum,true);
 }
 
+void CGameInstance::Create_Cloth(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum)
+{
+	if (m_pPhysics_Controller)
+		m_pPhysics_Controller->Create_Cloth(pVertices, pIndices, VertexNum, IndexNum);
+}
+
 _matrix CGameInstance::GetWorldMatrix_Rigid_Dynamic(_int Index)
 {
 	return m_pPhysics_Controller->GetWorldMatrix_Rigid_Dynamic(Index);

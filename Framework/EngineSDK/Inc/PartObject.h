@@ -26,6 +26,7 @@ public:
 	virtual HRESULT			Render() override;
 	virtual HRESULT			Render_LightDepth() { return S_OK; }
 	virtual void			SetCulling(_bool boolean) {}
+	virtual void			Create_Cloth() {}
 protected:
 	void					Update_WorldMatrix();
 

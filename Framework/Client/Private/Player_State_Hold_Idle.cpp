@@ -15,7 +15,6 @@ void CPlayer_State_Hold_Idle::OnStateEnter()
 	m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
 	m_pPlayer->Get_Body_Model()->Set_Loop(1, true);
 	m_pPlayer->Get_Body_Model()->Set_Loop(2, false);
-	m_pPlayer->Get_Body_Model()->Set_Loop(3, false);
 
 	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
 
@@ -134,7 +133,7 @@ void CPlayer_State_Hold_Idle::Shot()
 		}
 	}
 
-	if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == PRESSING && m_pPlayer->Get_Body_Model()->isFinished(3)) {
+	if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == PRESSING && m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
 		if (!m_isShot && m_pPlayer->Get_Body_Model()->Get_BlendWeight(2) == 0.f) {
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 1, 0.1f);
 			if (1) {

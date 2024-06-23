@@ -59,6 +59,7 @@ public:
 	{
 		m_bRender = boolean;
 	}
+	CTransform*									Get_Transform() { return m_pTransformCom; }
 	virtual _float4								GetPosition();
 	virtual _vector								GetPositionVector();
 	virtual _vector								GetLookDir_Vector();

@@ -662,7 +662,7 @@ void CRagdoll_Physics::update_animations()
 		return;
 
 	m_RotationMatrix = m_pTransform->Get_RotationMatrix_Pure();
-	//m_pRotationMatrix = &m_pTransform->Get_WorldMatrix_Pure();
+
 	auto RotMat = m_RotationMatrix;
 	RotMat._41 = m_pWorldMatrix->_41;
 	RotMat._42 = m_pWorldMatrix->_42;
@@ -671,25 +671,6 @@ void CRagdoll_Physics::update_animations()
 	auto joint = m_skeletal_mesh->skeleton()->joints();
 
 	auto NumJoint = m_skeletal_mesh->skeleton()->num_bones();
-
-	/*if (m_vecBone)
-	{
-		int i = 0;
-		for (auto& it : *m_vecBone)
-		{
-			for (int i = 0; i < NumJoint; ++i)
-			{
-				if (joint[i].name.empty() == false)
-				{
-					if (it->Get_Name() == joint[i].name)
-					{
-						m_Global_transforms.transforms[i] = XMLoadFloat4x4(it->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
-						++i;
-					}
-				}
-			}
-		}
-	}*/
 
 	if (m_vecBone)
 	{
@@ -748,28 +729,9 @@ void CRagdoll_Physics::update_animations()
 
 		if (m_vecBone)
 		{
-			int i = 0;
-
 			m_RotationMatrix = m_pTransform->Get_RotationMatrix_Pure();
-			//m_pRotationMatrix = &m_pTransform->Get_WorldMatrix_Pure();
+
 			auto WorldMat = m_RotationMatrix;
-
-			/*	for (auto& it : *m_vecBone)
-				{
-					for (int i = 0; i < NumJoint; ++i)
-					{
-						if (it->Get_Name() == joint[i].name)
-						{
-							if (!IsIdentityMatrix(m_Global_transforms.transforms[i]))
-							{
-								auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
-								auto Result = m_Global_transforms.transforms[i] * Inverse;
-								it->Set_Combined_Matrix(Result);
-							}
-						}
-					}
-				}*/
-
 
 			for (int i = 0; i < NumJoint; ++i)
 			{

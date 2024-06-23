@@ -319,8 +319,6 @@ void CLoader::CreatFromDat(ifstream& inputFileStream, wstring strListName, CGame
 	}
 }
 
-
-
 HRESULT CLoader::Load_Prototype()
 {
 	/* For.Prototype_GameObject_Camera_Free */
@@ -350,11 +348,11 @@ HRESULT CLoader::Load_Prototype()
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Part_Weapon */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_HandGun"),
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Weapon"),
 		CWeapon::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Part_Weapon */
+	/* For.Prototype_GameObject_Part_FlashLight */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_FlashLight"),
 		CFlashLight::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
@@ -401,7 +399,6 @@ HRESULT CLoader::Load_Prototype()
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Crosshair_UI"),
 		CCrosshair_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
 
 	/* For.Prototype_GameObject_CNavigation_Debug */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_NavMesh_Debug"),
@@ -498,7 +495,6 @@ HRESULT CLoader::Load_Prototype()
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Read_Item_UI"),
 		CRead_Item_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-
 #pragma endregion
 
 	/* For.Prototype_GameObject_Collider */
@@ -822,9 +818,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	_matrix			TransformMatrix = { XMMatrixIdentity() };
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
-	_matrix			WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
-	WeaponTransformMatrix *= XMMatrixRotationX(	XMConvertToRadians(-90.f));
-	_matrix			LightTransformMatrix = { XMMatrixRotationX(XMConvertToRadians(30.f)) };	
 #pragma region Players Model 
 
 	/* Prototype_Component_Model_LeonBody */
@@ -845,22 +838,34 @@ HRESULT CLoader::Loading_For_GamePlay()
 			LeonTransformMatrix))))
 		return E_FAIL;
 
+	_matrix			WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
+					WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-90.f));
+
 	/* Prototype_Component_Model_HandGun */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_HandGun"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/HandGun/HandGun.fbx",
 			WeaponTransformMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_FlashLight */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_FlashLight"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Weapon/FlashLight/FlashLight.fbx",
-			TransformMatrix))))
+	WeaponTransformMatrix *= XMMatrixRotationZ(XMConvertToRadians(-25.f));
+	WeaponTransformMatrix = WeaponTransformMatrix* XMMatrixTranslation(0.f, 0.f, -5.f);
+	/* Prototype_Component_Model_ShotGun */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ShotGun"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/ShotGun/ShotGun.fbx",
+			WeaponTransformMatrix))))
 		return E_FAIL;
 
+	_matrix			LightTransformMatrix = { XMMatrixRotationX(XMConvertToRadians(180.f)) };
+					LightTransformMatrix *= XMMatrixRotationY(XMConvertToRadians(-20.f));
+
+	/* Prototype_Component_Model_FlashLight */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_FlashLight"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/FlashLight/FlashLight.fbx",
+			LightTransformMatrix))))
+		return E_FAIL;
 #pragma endregion
 
 #pragma region Monsters Model
-
 	/* Prototype_Component_Model_ZombieBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieBody"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Body.fbx",
@@ -914,9 +919,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Pants.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
-	
-
-
 #pragma endregion
 
 #pragma region Items Model
@@ -998,6 +1000,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 HRESULT CLoader::Load_Animations()
 {
+
+#pragma region Player
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Fine"), "../Bin/Resources/Animations/Player/Body/move/move_fine/")))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Stg"), "../Bin/Resources/Animations/Player/Body/move/move_stg/")))
@@ -1012,13 +1016,13 @@ HRESULT CLoader::Load_Animations()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Danger_Light"), "../Bin/Resources/Animations/Player/Body/move/move_danger_stlight/")))
 		return E_FAIL;
-	//if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Common"), "../Bin/Resources/Animations/Player/Body/move/move_danger_common/")))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Common"), "../Bin/Resources/Animations/Player/Body/move/move_common/")))
+		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Hold_Hg"), "../Bin/Resources/Animations/Player/Body/hold/hg_hold/")))
 		return E_FAIL;															   
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Hold_Stg"), "../Bin/Resources/Animations/Player/Body/hold/stg_hold/")))
 		return E_FAIL;
-
+#pragma endregion
 
 
 #pragma region Default Zombie Ordinary Anims

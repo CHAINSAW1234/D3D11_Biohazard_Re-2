@@ -68,6 +68,7 @@ private:
 	vector<PxRigidStatic*>								m_vecFullMapObject;
 	vector<class CPxCollider*>							m_vecCollider;
 	_int												m_iCollider_Count = { 0 };
+	vector<class SoftBody*>								m_vecSoftBodies;
 #pragma endregion
 
 #pragma region Ray Cast
@@ -120,6 +121,53 @@ public://For Mesh Cooking
 		triIndices.pushBack(1); triIndices.pushBack(5); triIndices.pushBack(2);
 		triIndices.pushBack(3); triIndices.pushBack(2); triIndices.pushBack(7);
 		triIndices.pushBack(4); triIndices.pushBack(0); triIndices.pushBack(7);
+	}
+	PxRigidDynamic*												Create_RigidCube(PxReal halfExtent, const PxVec3& position);
+	void connectCubeToSoftBody(PxRigidDynamic* cube, PxReal cubeHalfExtent, const PxVec3& cubePosition, PxSoftBody* softBody, PxU32 pointGridResolution = 10)
+	{
+		float f = 2.0f * cubeHalfExtent / (pointGridResolution - 1);
+		for (PxU32 ix = 0; ix < pointGridResolution; ++ix)
+		{
+			PxReal x = ix * f - cubeHalfExtent;
+			for (PxU32 iy = 0; iy < pointGridResolution; ++iy)
+			{
+				PxReal y = iy * f - cubeHalfExtent;
+				for (PxU32 iz = 0; iz < pointGridResolution; ++iz)
+				{
+					PxReal z = iz * f - cubeHalfExtent;
+					PxVec3 p(x, y, z);
+					PxVec4 bary;
+					PxI32 tet = PxTetrahedronMeshExt::findTetrahedronContainingPoint(softBody->getCollisionMesh(), p + cubePosition, bary);
+					if (tet >= 0)
+						softBody->addTetRigidAttachment(cube, tet, bary, p);
+				}
+			}
+		}
+	}
+	void createSphere(PxArray<PxVec3>& triVerts, PxArray<PxU32>& triIndices, const PxVec3& center, PxReal radius, const PxReal maxEdgeLength)
+	{
+		triVerts.clear();
+		triIndices.clear();
+		createCube(triVerts, triIndices, center, radius);
+		projectPointsOntoSphere(triVerts, center, radius);
+		while (PxRemeshingExt::limitMaxEdgeLength(triIndices, triVerts, maxEdgeLength, 1))
+			projectPointsOntoSphere(triVerts, center, radius);
+	}
+	void projectPointsOntoSphere(PxArray<PxVec3>& triVerts, const PxVec3& center, PxReal radius)
+	{
+		for (PxU32 i = 0; i < triVerts.size(); ++i)
+		{
+			PxVec3 dir = triVerts[i] - center;
+			dir.normalize();
+			triVerts[i] = center + radius * dir;
+		}
+	}
+	PxSoftBody*												Create_SoftBody_Debug(const PxCookingParams& params, const PxArray<PxVec3>& triVerts, const PxArray<PxU32>& triIndices, bool useCollisionMeshForSimulation = false);
+	void													initCloth(const PxU32 numX, const PxU32 numZ, const PxVec3& position = PxVec3(0, 0, 0), const PxReal particleSpacing = 0.2f, const PxReal totalClothMass = 10.f);
+	void													Create_Cloth(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr);
+	PX_FORCE_INLINE											PxU32 id(PxU32 x, PxU32 y, PxU32 numY)
+	{
+		return x * numY + y;
 	}
 public://For Terrain Cooking
 	void												InitTerrain();

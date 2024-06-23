@@ -43,6 +43,7 @@ public:		/* For.Animation */
 	_int									Get_CurrentAnimIndex(_uint iPlayingIndex);
 	wstring									Get_CurrentAnimLayerTag(_uint iPlayingIndex);
 	string									Get_CurrentAnimTag(_uint iPlayingIndex);
+	_float4x4								Get_TransformationMatrix();
 
 	void									Reset_PreAnimation(_uint iPlayingIndex);
 	void									Reset_PreAnim_CurrentAnim(_uint iPlayingIndex);
@@ -247,6 +248,7 @@ public:		/* For.Cooking_Mesh */
 	void									Convex_Mesh_Cooking_Cabinet(vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms,class CTransform* pTransform = nullptr);
 	void									Convex_Mesh_Cooking_Toilet(vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms,class CTransform* pTransform = nullptr);
 	void									Create_SoftBody();
+	void									Create_Cloth();
 
 private:
 	_int									Find_BoneIndex(const string& strBoneTag);

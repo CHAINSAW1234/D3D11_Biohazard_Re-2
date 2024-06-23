@@ -22,17 +22,25 @@ HRESULT CWeapon::Initialize_Prototype()
 
 HRESULT CWeapon::Initialize(void * pArg)
 {
+
+	if (nullptr == pArg)
+		return E_FAIL;
+
+	WEAPON_DESC* pDesc = (WEAPON_DESC*)pArg;
+	m_eEquip = pDesc->eEquip;
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;	
 
-	m_bRender = true;
+	m_bRender = false;
 
 	m_pModelCom->Set_RootBone("root");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
+	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
 
 	//m_pTransformCom->Set_Scaled(0.1f, 0.1f, 0.1f);
 	//m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(90.0f));
@@ -55,9 +63,9 @@ void CWeapon::Late_Tick(_float fTimeDelta)
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	}
-
+		
 	_float3				vDirection = { };
-	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &vDirection);
+	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vDirection);
 	
 	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * m_pParentsTransform->Get_WorldMatrix() };
 
@@ -234,8 +242,18 @@ HRESULT CWeapon::Add_Components()
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
+	wstring strModelTag;
+	switch (m_eEquip) {
+	case CPlayer::HG:
+		strModelTag = TEXT("Prototype_Component_Model_HandGun");
+		break;
+	case CPlayer::STG:
+		strModelTag = TEXT("Prototype_Component_Model_ShotGun");
+		break;
+	}
+
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_HandGun"),
+	if (FAILED(__super::Add_Component(g_Level, strModelTag,
 		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 

@@ -11,6 +11,7 @@ class CFSM;
 END
 
 BEGIN(Client)
+class CWeapon;
 
 class CPlayer final : public CGameObject
 {
@@ -20,10 +21,10 @@ public:
 		PART_BODY,
 		PART_HEAD,
 		PART_HAIR,
-		PART_WEAPON,
 		PART_LIGHT,
 		PART_END
 	};
+
 	enum EQUIP { HG, STG, NONE};
 #pragma region ANIMATION
 	enum ANIMATION_MOVE {
@@ -96,9 +97,10 @@ public:
 	CModel*										Get_Weapon_Model();
 	_float3*									Get_Body_RootDir();
 	_bool										Get_Spotlight() { return m_isSpotlight; }
+	EQUIP										Get_Equip() { return m_eEquip; }
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
 	void										Set_Spotlight(_bool isSpotlight); 
-	void										Set_Weapon(EQUIP eEquip);
+	void										Set_Equip(EQUIP eEquip);
 	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineHold = isTurnSpineDefault; }
 	void										Set_TurnSpineHold(_bool isTurnSpineHold) { m_isTurnSpineHold = isTurnSpineHold;}
 
@@ -109,8 +111,9 @@ public:
 
 	HRESULT										Add_FSM_States();
 	void										Update_FSM();
-
-	void	Update_AnimSet();
+	void										Update_Equip();
+	void										Update_LightCondition();				// 현재 빛 상태에 따라 라이트를 키고 끔, 애니메이션 처리
+	void										Update_AnimSet();
 	void										Update_Direction();
 	void										Turn_Spine_Default(_float fTimeDelta);		// Idle 상태에서 카메라 반대쪽으로 머리 돌리기
 	void										Turn_Spine_Hold(_float fTimeDelta);		// Hold 상태에서의 카메라 보기
@@ -119,7 +122,7 @@ public:
 
 private:
 	_int m_iHp = { 5 };
-	EQUIP m_eEquip = { HG };
+
 	_bool m_isSpotlight = { false };
 	DWORD m_dwDirection = { 0 };
 
@@ -129,7 +132,10 @@ private:
 	ANIMSET_MOVE m_eAnimSet_Move = { FINE };
 	ANIMSET_HOLD m_eAnimSet_Hold = { HOLD_HG };
 
-	
+	EQUIP m_eEquip = { NONE };
+	CWeapon* m_pWeapon = { nullptr };
+	vector<CWeapon*> m_Weapons;
+
 
 	friend class CPlayer_State_Move_Walk;
 	friend class CPlayer_State_Move_Jog;

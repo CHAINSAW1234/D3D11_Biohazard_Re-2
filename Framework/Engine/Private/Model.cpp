@@ -159,6 +159,11 @@ string CModel::Get_CurrentAnimTag(_uint iPlayingIndex)
 	return strAnimTag;
 }
 
+_float4x4 CModel::Get_TransformationMatrix()
+{
+	return m_TransformationMatrix;
+}
+
 void CModel::Reset_PreAnimation(_uint iPlayingIndex)
 {
 	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
@@ -2540,9 +2545,17 @@ void CModel::Convex_Mesh_Cooking_Toilet(vector<PxRigidDynamic*>* pColliders, vec
 
 void CModel::Create_SoftBody()
 {
-	for (int i = 0; i < m_Meshes.size(); ++i)
+	for (int i = 0; i < 1; ++i)
 	{
 		m_Meshes[i]->Create_SoftBody();
+	}
+}
+
+void CModel::Create_Cloth()
+{
+	for (int i = 0; i < 1; ++i)
+	{
+		m_Meshes[i]->Create_Cloth();
 	}
 }
 
