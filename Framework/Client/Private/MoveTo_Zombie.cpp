@@ -54,7 +54,7 @@ void CMoveTo_Zombie::Exit()
 	if (nullptr == pBodyModel)
 		return;
 
-	_int			iBlendPlayingIndex = { static_cast<_uint>(CBody_Zombie::PLAYING_INDEX::INDEX_1) };
+	_int			iBlendPlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_1) };
 	_float			fTrackPosition = { pBodyModel->Get_TrackPosition(iBlendPlayingIndex) };
 	_float			fDuration = { pBodyModel->Get_Duration_From_PlayingInfo(iBlendPlayingIndex) };
 
@@ -73,8 +73,8 @@ void CMoveTo_Zombie::Change_Animation()
 		return;
 
 	/* 기본 이동 애니메이션 */
-	_uint			iBasePlayingIndex = { static_cast<_uint>(CBody_Zombie::PLAYING_INDEX::INDEX_0) };
-	_int			iCurrentBasegAnimIndex = { pBodyModel->Get_AnimIndex_PlayingInfo(CBody_Zombie::INDEX_0) };
+	_uint			iBasePlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_0) };
+	_int			iCurrentBasegAnimIndex = { pBodyModel->Get_AnimIndex_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_0)) };
 	_int			iResultAnimationIndex = { -1 };
 	_bool			isLoop = { false };
 	wstring			strBaseBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
@@ -83,8 +83,8 @@ void CMoveTo_Zombie::Change_Animation()
 	_bool			isNeedBlend = { false };
 
 	/* 회전 섞여야하는경우 터닝모션 블렌드 비율 */
-	_int			iBlendPlayingIndex = { static_cast<_uint>(CBody_Zombie::PLAYING_INDEX::INDEX_1) };
-	_int			iCurrentBlendAnimIndex = { pBodyModel->Get_AnimIndex_PlayingInfo(CBody_Zombie::INDEX_1) };
+	_int			iBlendPlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_1) };
+	_int			iCurrentBlendAnimIndex = { pBodyModel->Get_AnimIndex_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_1)) };
 	_float			fTurnBlendWeight = { 0.f };
 	_int			iBlendAnimIndex = { -1 };
 	wstring			strBlendBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };

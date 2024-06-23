@@ -99,8 +99,8 @@ enum class ANIM_DAMAGE_BURST {
 	_FACEUP_START_B,
 	_FACEUP_START_L,
 	_FACEUP_LOOP_L,
-	_FACEUP_START_L,
-	_FACEUP_LOOP_L,
+	_FACEUP_START_R,
+	_FACEUP_LOOP_R,
 	_END
 };
 
@@ -145,7 +145,7 @@ enum class ANIM_DAMAGE_KNOCKBACK{
 enum class ANIM_DAMAGE_LOST {
 	_B_F_L,
 	_B_F_R,
-	_C_F_R,
+	_C_F_L,
 	_C_F_R,
 	_A2_F_L,
 	_A2_F_R,
@@ -254,7 +254,7 @@ enum class ANIM_LOST_TURN {
 	_LOOP_L_E,
 	_LOOP_R_E_SYM,
 	_LOOP_R_E,
-	_LOOP_L_E,
+	_LOOP_L_E_SYM,
 	_LOOP_L_F,
 	_LOOP_R_F_SYM,
 	_LOOP_R_F,

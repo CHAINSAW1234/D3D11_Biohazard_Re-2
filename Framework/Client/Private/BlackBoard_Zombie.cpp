@@ -39,33 +39,33 @@ void CBlackBoard_Zombie::Initialize_BlackBoard(CZombie* pAI)
 _uint CBlackBoard_Zombie::Get_Current_MotionType_Body()
 {
 	if (nullptr == m_pAI)
-		return CBody_Zombie::MOTION_END;
+		return static_cast<_uint>(MOTION_TYPE::MOTION_END);
 
 	CPartObject*		pPartObject = { m_pAI->Get_PartObject(CMonster::PART_BODY) };
 	if (nullptr == pPartObject)
-		return CBody_Zombie::MOTION_END;
+		return static_cast<_uint>(MOTION_TYPE::MOTION_END);
 
 	CBody_Zombie*		pBodyObject = { dynamic_cast<CBody_Zombie*>(pPartObject) };
 	if (nullptr == pBodyObject)
-		return CBody_Zombie::MOTION_END;
+		return static_cast<_uint>(MOTION_TYPE::MOTION_END);
 
-	return pBodyObject->Get_Current_MotionType();
+	return static_cast<_uint>(pBodyObject->Get_Current_MotionType());
 }
 
 _uint CBlackBoard_Zombie::Get_Pre_MotionType_Body()
 {
 	if (nullptr == m_pAI)
-		return CBody_Zombie::MOTION_END;
+		return static_cast<_uint>(MOTION_TYPE::MOTION_END);
 
 	CPartObject* pPartObject = { m_pAI->Get_PartObject(CMonster::PART_BODY) };
 	if (nullptr == pPartObject)
-		return CBody_Zombie::MOTION_END;
+		return static_cast<_uint>(MOTION_TYPE::MOTION_END);
 
 	CBody_Zombie* pBodyObject = { dynamic_cast<CBody_Zombie*>(pPartObject) };
 	if (nullptr == pBodyObject)
-		return CBody_Zombie::MOTION_END;
+		return static_cast<_uint>(MOTION_TYPE::MOTION_END);
 
-	return pBodyObject->Get_Pre_MotionType();
+	return static_cast<_uint>(pBodyObject->Get_Pre_MotionType());
 }
 
 CModel* CBlackBoard_Zombie::Get_PartModel(_uint iPartType)

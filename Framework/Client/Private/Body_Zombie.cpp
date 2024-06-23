@@ -39,7 +39,7 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 	if (FAILED(Initialize_Model()))
 		return E_FAIL;
 
-	m_eCurrentMotionType = MOTION_A;
+	m_eCurrentMotionType = MOTION_TYPE::MOTION_A;
 
 	m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie/Body.fbx");
 
@@ -328,12 +328,12 @@ HRESULT CBody_Zombie::Initialize_Model()
 	m_pModelCom->Add_Bone_Layer_All_Bone(BONE_LAYER_DEFAULT_TAG);
 
 	/* Create_AnimPlaying_Info */
-	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_0, BONE_LAYER_DEFAULT_TAG, 1.f);
-	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_1, BONE_LAYER_DEFAULT_TAG, 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_2, BONE_LAYER_DEFAULT_TAG, 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_3, BONE_LAYER_DEFAULT_TAG, 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_4, BONE_LAYER_DEFAULT_TAG, 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(false, PLAYING_INDEX::INDEX_5, BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_0), BONE_LAYER_DEFAULT_TAG, 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_1), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_2), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_3), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_4), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_5), BONE_LAYER_DEFAULT_TAG, 0.f);
 
 	/* Set_Root_Motion */
 	m_pModelCom->Active_RootMotion_XZ(true);
@@ -532,7 +532,9 @@ void CBody_Zombie::Update_Current_MotionType()
 	if (nullptr == m_pModelCom)
 		return;
 
-	m_ePreMotionType = m_eCurrentMotionType;
+#pragma region 다시 살려야함
+
+	/*m_ePreMotionType = m_eCurrentMotionType;
 	_int			iCurrentAnimIndex = { m_pModelCom->Get_AnimIndex_PlayingInfo(PLAYING_INDEX::INDEX_0) };
 
 	if (-1 == iCurrentAnimIndex)
@@ -639,7 +641,9 @@ void CBody_Zombie::Update_Current_MotionType()
 	else
 	{
 		m_eCurrentMotionType = m_eCurrentMotionType;
-	}
+	}*/
+
+#pragma endregion
 
 }
 

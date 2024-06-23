@@ -13,10 +13,11 @@
 
 BEGIN(Client)
 
+#include "Body_Zombie_Enums.h"
+
 class CBody_Zombie final : public CPartObject
 {
 public:
-#include "Body_Zombie_Enums.h"
 
 public:
 	typedef struct tagBodyMonsterDesc : public CPartObject::PARTOBJECT_DESC
@@ -77,8 +78,8 @@ private:
 	class CRagdoll_Physics*				m_pRagdoll = { nullptr };
 
 private:		/* For Anim_Controll */
-	MOTION_TYPE							m_ePreMotionType = { MOTION_END };
-	MOTION_TYPE							m_eCurrentMotionType = { MOTION_END };
+	MOTION_TYPE							m_ePreMotionType = { MOTION_TYPE::MOTION_END };
+	MOTION_TYPE							m_eCurrentMotionType = { MOTION_TYPE::MOTION_END };
 
 	set<_uint>							m_StartAnimIndices;
 	set<_uint>							m_LoopAnimIndices;
