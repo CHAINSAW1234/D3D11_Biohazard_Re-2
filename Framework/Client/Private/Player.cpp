@@ -362,9 +362,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		pBodyModel->Play_IK(m_pTransformCom, fTimeDelta);
 	}*/
 
-	
-
-
 	if (m_pController)
 		m_pController->Update_Collider();
 
@@ -406,8 +403,10 @@ void CPlayer::Tick_PartObjects(_float fTimeDelta)
 	for (auto& pPartObject : m_PartObjects)
 		pPartObject->Tick(fTimeDelta);
 
-	if (nullptr != m_pWeapon)
-		m_pWeapon->Tick(fTimeDelta);
+	for (auto& pWeapon : m_Weapons) {
+		if (nullptr != pWeapon)
+			pWeapon->Tick(fTimeDelta);
+	}
 }
 
 void CPlayer::Late_Tick_PartObjects(_float fTimeDelta)
@@ -415,8 +414,12 @@ void CPlayer::Late_Tick_PartObjects(_float fTimeDelta)
 	for (auto& pPartObject : m_PartObjects)
 		pPartObject->Late_Tick(fTimeDelta);
 
-	if(nullptr != m_pWeapon)
-		m_pWeapon->Late_Tick(fTimeDelta);
+	for (auto& pWeapon : m_Weapons) {
+		if (nullptr != pWeapon)
+			pWeapon->Late_Tick(fTimeDelta);
+	}
+
+
 }
 #pragma region 예은 추가
 void CPlayer::Col_Section()
@@ -482,14 +485,19 @@ void CPlayer::Set_Equip(EQUIP eEquip)
 {
 	m_eEquip = eEquip;
 	
+	CWeapon::RENDERLOCATION eRenderLocation = { CWeapon::MOVE };
+
 	if (nullptr != m_pWeapon) {
-		m_pWeapon->Set_Render(false);
+		eRenderLocation = m_pWeapon->Get_RenderLocation();
+		m_pWeapon->Set_RenderLocation(CWeapon::HOLSTER);
+		//m_pWeapon->Set_Render(false);
 		Safe_Release(m_pWeapon);
 	}
 
 	m_pWeapon = m_Weapons[m_eEquip];
 	Safe_AddRef(m_pWeapon);
-	m_pWeapon->Set_Render(true);
+	m_pWeapon->Set_RenderLocation(eRenderLocation);
+
 	// 무기 위치를 변경하시오
 
 	Update_AnimSet();
@@ -531,7 +539,6 @@ void CPlayer::Update_Equip()
 	static _bool isChange = false;
 	static EQUIP TargetWeapon = { NONE };
 
-	
 	if (isChange) {
 		if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
 			Get_Body_Model()->Set_Loop(3, false);
@@ -565,8 +572,6 @@ void CPlayer::Update_Equip()
 			TargetWeapon = STG;
 		}
 	}
-
-
 }
 
 void CPlayer::Update_LightCondition()
@@ -583,13 +588,13 @@ void CPlayer::Update_LightCondition()
 	// test
 	// 이후 실제 라이트와 비교해서 처리하셈
 	if (m_pGameInstance->Get_KeyState('E') == DOWN) {
-		if (Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
+		if (Get_Body_Model()->Is_Loop_PlayingInfo(3) &&
+			Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
 			Change_Body_Animation_Move(4, LIGHT_ON_OFF);
 			Get_Body_Model()->Set_Loop(4, false);
 			Get_Body_Model()->Set_BlendWeight(4, 10, 0.2f);
 		}
 	}
-
 }
 
 void CPlayer::Update_AnimSet()
@@ -642,13 +647,13 @@ void CPlayer::Update_AnimSet()
 #pragma endregion
 
 	if (m_eState == MOVE) {
-		_float fTrackPosition = Get_Body_Model()->Get_TrackPosition(0);
+		//_float fTrackPosition = Get_Body_Model()->Get_TrackPosition(0);
 		Change_Body_Animation_Move(0, Get_Body_Model()->Get_CurrentAnimIndex(0));
-		Get_Body_Model()->Set_TrackPosition(0, fTrackPosition);
+		//Get_Body_Model()->Set_TrackPosition(0, fTrackPosition, true);
 
-		fTrackPosition = Get_Body_Model()->Get_TrackPosition(1);
+		//fTrackPosition = Get_Body_Model()->Get_TrackPosition(1);
 		Change_Body_Animation_Move(1, Get_Body_Model()->Get_CurrentAnimIndex(1));
-		Get_Body_Model()->Set_TrackPosition(1, fTrackPosition);
+		//Get_Body_Model()->Set_TrackPosition(1, fTrackPosition, true);
 	}
 	else {
 		Change_Body_Animation_Hold(0, Get_Body_Model()->Get_CurrentAnimIndex(0));
@@ -914,8 +919,11 @@ void CPlayer::Update_KeyInput_Reload()
 	}
 	else if (Get_Body_Model()->isFinished(3) &&
 		Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == HOLD_RELOAD) {
-		Get_Body_Model()->Set_Loop(3, true);
 		Get_Body_Model()->Set_BlendWeight(3, 0.f, 0.1f);
+
+		if (Get_Body_Model()->Get_BlendWeight(3) <= 0.1f) {
+			Get_Body_Model()->Set_Loop(3, true);
+		}
 	}
 }
 
@@ -1623,18 +1631,28 @@ HRESULT CPlayer::Add_PartObjects()
 	CWeapon::WEAPON_DESC		WeaponDesc{};
 	WeaponDesc.pParentsTransform = m_pTransformCom;
 	WeaponDesc.eEquip = HG;
-
+	WeaponDesc.pSocket[CWeapon::MOVE] = WeaponDesc.pSocket[CWeapon::HOLD] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
+	WeaponDesc.pSocket[CWeapon::HOLSTER] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_holster_main")) };
 	pWeaponObject = dynamic_cast<CWeapon*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Weapon"), &WeaponDesc));
 	if (nullptr == pWeaponObject)
 		return E_FAIL;
 	m_Weapons[CPlayer::HG] = pWeaponObject;
 
 	WeaponDesc.eEquip = STG;
+	WeaponDesc.pSocket[CWeapon::MOVE] = WeaponDesc.pSocket[CWeapon::HOLD] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
+	WeaponDesc.pSocket[CWeapon::HOLSTER] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("setProp_E_01")) };
+
+	_matrix			WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
+	WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-90.f));
+	WeaponTransformMatrix *= XMMatrixRotationZ(XMConvertToRadians(-25.f));
+	WeaponTransformMatrix = WeaponTransformMatrix * XMMatrixTranslation(0.f, 0.f, -5.f);
+	WeaponDesc.fTransformationMatrices[0] = WeaponDesc.fTransformationMatrices[1] = WeaponDesc.fTransformationMatrices[2] = WeaponTransformMatrix;
 
 	pWeaponObject = dynamic_cast<CWeapon*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Weapon"), &WeaponDesc));
 	if (nullptr == pWeaponObject)
 		return E_FAIL;
 	m_Weapons[CPlayer::STG] = pWeaponObject;
+
 
 	return S_OK;
 }
@@ -1692,18 +1710,6 @@ HRESULT CPlayer::Initialize_PartModels()
 	CFlashLight* pFlashLight = dynamic_cast<CFlashLight*>(m_PartObjects[PART_LIGHT]);
 	_float4x4* pLeftWeaponCombinedMatrix = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("l_weapon")) };
 	pFlashLight->Set_Socket(pLeftWeaponCombinedMatrix);
-
-	//CModel* pWeaponModel = { dynamic_cast<CModel*>(m_PartObjects[PART_WEAPON]->Get_Component(TEXT("Com_Model"))) };
-
-//pWeaponModel->Set_Surbodinate("root", true);
-//pWeaponModel->Set_Parent_CombinedMatrix_Ptr("root", pRightWeaponCombinedMatrix);
-	CWeapon* pWeapon = dynamic_cast<CWeapon*>(m_Weapons[HG]);
-	_float4x4* pRightWeaponCombinedMatrix = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
-	pWeapon->Set_Socket(pRightWeaponCombinedMatrix);
-
-	pWeapon = dynamic_cast<CWeapon*>(m_Weapons[STG]);
-	pWeapon->Set_Socket(pRightWeaponCombinedMatrix);
-
 #pragma endregion
 
 	return S_OK;

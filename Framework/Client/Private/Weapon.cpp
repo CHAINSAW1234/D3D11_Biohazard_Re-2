@@ -22,12 +22,17 @@ HRESULT CWeapon::Initialize_Prototype()
 
 HRESULT CWeapon::Initialize(void * pArg)
 {
-
 	if (nullptr == pArg)
 		return E_FAIL;
 
 	WEAPON_DESC* pDesc = (WEAPON_DESC*)pArg;
 	m_eEquip = pDesc->eEquip;
+
+	for (size_t i = 0; i < NONE; i++)
+	{
+		m_pSocketMatrix[i] = pDesc->pSocket[i];
+		m_fTransformationMatrices[i] = pDesc->fTransformationMatrices[i];
+	}
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -57,19 +62,22 @@ void CWeapon::Tick(_float fTimeDelta)
 
 void CWeapon::Late_Tick(_float fTimeDelta)
 {
-	if (m_bRender) {
+	if (m_eRenderLocation != NONE) {
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+
+		_float3				vDirection = { };
+		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vDirection);
+
+		_matrix			WorldMatrix = { m_fTransformationMatrices[m_eEquip] * m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix[m_eEquip]) * m_pParentsTransform->Get_WorldMatrix() };
+
+		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+
 	}
 		
-	_float3				vDirection = { };
-	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vDirection);
-	
-	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * m_pParentsTransform->Get_WorldMatrix() };
 
-	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 	
 #ifdef _DEBUG
 	//m_pGameInstance->Add_DebugComponents(m_pColliderCom);

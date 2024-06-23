@@ -3,6 +3,8 @@
 
 #include "Player_State_Hold_Start.h"
 #include "Player_State_Hold_Idle.h"
+#include "Weapon.h"
+
 CPlayer_State_Hold::CPlayer_State_Hold(CPlayer* pPlayer)
 {
 	m_pPlayer = pPlayer;
@@ -10,8 +12,11 @@ CPlayer_State_Hold::CPlayer_State_Hold(CPlayer* pPlayer)
 
 void CPlayer_State_Hold::OnStateEnter()
 {
+	m_pPlayer->Get_Body_Model()->Set_BoneLayer_PlayingInfo(1, TEXT("LowerBody"));
+
 	Change_State(START);
 	m_pPlayer->Set_TurnSpineHold(true);
+	m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::HOLD);
 
 }
 
@@ -46,10 +51,9 @@ void CPlayer_State_Hold::OnStateUpdate(_float fTimeDelta)
 
 void CPlayer_State_Hold::OnStateExit()
 {
-	if (m_pPlayer->Get_Body_Model()->Get_BlendWeight(4) == 10) {
-		m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.2f);
-	}
-
+	m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.2f);
+	
+	m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::MOVE);
 	m_pPlayer->Set_TurnSpineHold(false);
 	Reset_State();
 	m_eState = STATE_END;

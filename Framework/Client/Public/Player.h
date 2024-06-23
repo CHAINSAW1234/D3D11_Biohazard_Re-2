@@ -97,6 +97,7 @@ public:
 	CModel*										Get_Weapon_Model();
 	_float3*									Get_Body_RootDir();
 	_bool										Get_Spotlight() { return m_isSpotlight; }
+	CWeapon*									Get_Weapon() { return m_pWeapon; }
 	EQUIP										Get_Equip() { return m_eEquip; }
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
 	void										Set_Spotlight(_bool isSpotlight); 
