@@ -1,15 +1,12 @@
 #pragma once
 
-
-enum class ZOMBIE_BODY_TYPE {
-	BODY_MALE,
-	BODY_FEMALE,
-	BODY_HEAVY,
-	BODY_END
-};
-
-enum class ZOMBIE_BODY_ANIM_TYPE { _IDLE, _MOVE, _TURN, _END };
+/* 모델의 타입 */
+enum class ZOMBIE_BODY_TYPE { BODY_MALE, BODY_FEMALE, BODY_HEAVY, BODY_END };
+/* 어떤 종류의 애니메이션 인지 */
+enum class ZOMBIE_BODY_ANIM_TYPE { _IDLE, _MOVE, _TURN, _END };	
+/* Playing Info Index */
 enum class PLAYING_INDEX { INDEX_0, INDEX_1, INDEX_2, INDEX_3, INDEX_4, INDEX_5, INDEX_END };
+/* A ~ F 모션 타입 => 아이들 워크등 나뉘어있음 */
 enum class MOTION_TYPE { MOTION_A, MOTION_B, MOTION_C, MOTION_D, MOTION_E, MOTION_F, MOTION_END };
 
 #pragma region Body_Anims

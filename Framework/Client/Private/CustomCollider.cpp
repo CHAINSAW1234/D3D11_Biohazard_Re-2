@@ -52,6 +52,7 @@ void CCustomCollider::Tick(_float fTimeDelta)
 void CCustomCollider::Late_Tick(_float fTimeDelta)
 {
 
+
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
 #endif
@@ -60,8 +61,6 @@ void CCustomCollider::Late_Tick(_float fTimeDelta)
 
 HRESULT CCustomCollider::Render()
 {
-
-
 	return S_OK;
 }
 

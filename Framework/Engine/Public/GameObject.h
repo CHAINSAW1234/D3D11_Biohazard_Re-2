@@ -20,6 +20,8 @@ public:
 		vector<_int> BelongIndexs;
 		_int iRegionDir = {0};
 		_int iRegionNum = { 0 };
+		_int iPropType = { 0 };
+		_int iPartObj = { 0 };
 		//
 	}GAMEOBJECT_DESC;
 
