@@ -244,6 +244,9 @@
     <Filter Include="02.GameObjects\Sky">
       <UniqueIdentifier>{44a9bfc4-49d4-4584-82e2-8973a2c4c1ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AIController\Zombie\Task\Damage">
+      <UniqueIdentifier>{f14eeac9-87b4-4d86-97b3-cfb78029adea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -477,6 +480,7 @@
     <ClInclude Include="..\Public\Body_Zombie_Defines.h">
       <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Damage_Zombie.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -686,6 +690,7 @@
     <ClCompile Include="..\Private\FlashLight.cpp">
       <Filter>02.GameObjects\Player\FlashLight</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Damage_Zombie.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

@@ -182,6 +182,7 @@
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\Public\Clothes_Zombie.h" />
     <ClInclude Include="..\Public\ContextMenu.h" />
+    <ClInclude Include="..\Public\Damage_Zombie.h" />
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\Face_Zombie.h" />
     <ClInclude Include="..\Public\FlashLight.h" />
@@ -258,6 +259,7 @@
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\Private\Clothes_Zombie.cpp" />
     <ClCompile Include="..\Private\ContextMenu.cpp" />
+    <ClCompile Include="..\Private\Damage_Zombie.cpp" />
     <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\Face_Zombie.cpp" />
     <ClCompile Include="..\Private\FlashLight.cpp" />
