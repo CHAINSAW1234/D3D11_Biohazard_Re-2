@@ -17,7 +17,7 @@ public :
 	enum class ITEM_BOX_TYPE { DEFAULT_BOX, SELECT_BOX, END_BOX };
 	enum class HPBAR_TYPE { MAIN_BAR, BACKGROUND_BAR, END_BAR };
 	enum class INVENTORY_TYPE { MAIN_INVEN, SUB_INVEN, END_INVEN };
-	enum class MAP_UI_TYPE { MAIN_MAP, MASK_MAP, FONT_MAP, WINDOW_MAP, DOOR_MAP, FONT_MASK_MAP, END_MAP };
+	enum class MAP_UI_TYPE { MAIN_MAP, MASK_MAP, FONT_MAP, BACKGROUND_MAP, WINDOW_MAP, DOOR_MAP, FONT_MASK_MAP, TARGET_MAP, ITEM_MAP, PLAYER_MAP, NAMELINE_MAP, SEARCH_TYPE_MAP, END_MAP };
 	
 	typedef struct color
 	{
@@ -81,6 +81,8 @@ public :
 
 		/* +추가 */
 		_int							iWhich_Child = { 0 };
+		CGameObject*					pSupervisor;
+		CGameObject*					pImmediateSuperior;
 
 		/* Client */
 		ITEM_BOX_TYPE					eBox_Type;
@@ -125,6 +127,32 @@ protected :
 	void Frame_Reset();
 
 public:
+	virtual void Move(_float3 fMoveMent) override;
+	virtual void Set_Position(_vector vPos) override;
+
+
+public:
+	virtual void Frame_Change_ValueColor(_uint iChange_FrameNum) {
+		m_vCurrentColor =	m_vColor[iChange_FrameNum].vColor;
+		m_fBlending =		m_vColor[iChange_FrameNum].fBlender_Value;
+		m_isBlending =		m_vColor[iChange_FrameNum].isBlender;
+
+		m_isColorChange =	m_vColor[iChange_FrameNum].isColorChange;
+		m_isAlphaChange =	m_vColor[iChange_FrameNum].isAlphaChange;
+		m_isWave =			m_vColor[iChange_FrameNum].isWave;
+		m_fWaveSpeed =		m_vColor[iChange_FrameNum].WaveSpeed;
+
+		m_isPush =			m_vColor[iChange_FrameNum].isPush;
+		m_fPush_Speed =		m_vColor[iChange_FrameNum].fPushSpeed;
+		m_isUVRotation =	m_vColor[iChange_FrameNum].fPushRotation;
+		m_fSplit =			m_vColor[iChange_FrameNum].fSplit;
+	}
+
+	virtual void Child_Frame_Change_ValueColor(_uint iChild, _uint iChange_FrameNum) {
+		static_cast<CCustomize_UI*>(m_vecChildUI[iChild])->Frame_Change_ValueColor(iChange_FrameNum);
+	}
+
+public:
 	void PushBack_Child(CGameObject* pGameOBJ);
 	void PushBack_TextBox(CGameObject* pGameOBJ);
 	CUSTOM_UI_DESC Get_Cutomize_DESC()const;
@@ -134,14 +162,17 @@ public:
 	_bool IsMyChild(CGameObject* Child);
 
 public :
-	_bool Select_UI();
-	virtual void Set_Dead(_bool bDead) override;
+	_bool				Select_UI();
+	virtual void		Set_Dead(_bool bDead) override;
+	_float				Distance_Player(CGameObject* _obj);
+	void				Find_Player();
 
 
 public : /* Client */
-	_bool			Get_Children()		{ return m_IsChild;  }
-	ITEM_BOX_TYPE	Get_ItemBox_Type()	{ return m_eBox_Type;  }
-	INVENTORY_TYPE	Get_Inven_Type()	{ return m_eInventory_Type;  }
+	_bool				Get_Children()		{ return m_IsChild;  }
+	ITEM_BOX_TYPE		Get_ItemBox_Type()	{ return m_eBox_Type;  }
+	INVENTORY_TYPE		Get_Inven_Type()	{ return m_eInventory_Type;  }
+
 
 public: /* Mask */
 	/* 저장할 Light State*/
@@ -169,6 +200,10 @@ public:// for. Set inline
 	void Set_MaxColor(_uint _color) { m_iColorMaxNum = _color; }
 
 	void Set_TextureNum(_uint iTextureNum) { m_iTextureNum = iTextureNum; }
+
+	void Set_ChildTextureNum(_uint iChildNum, _uint iTextureNum){
+		static_cast<CCustomize_UI*>(m_vecChildUI[iChildNum])->Set_TextureNum(iTextureNum);
+	}
 
 	/* 컬러를 돌릴 스피드*/
 	void Set_ColorSpeed(_float _speed) { m_fColorSpeed = _speed; }
@@ -275,6 +310,10 @@ public:// for. Set inline
 		m_vecTextBoxes[iTextNum]->Set_Text(wstrSetText);
 	}
 
+	void Set_MyChild_Text(_uint iChildNum, _uint iTextNum, wstring wstrSetText) {
+		static_cast<CCustomize_UI*>(m_vecChildUI[iChildNum])->Set_Text(iTextNum, wstrSetText);
+	}
+
 public:/* for.Get Inline */
 	_float4x4* Get_StoreTransform(_uint i) { return &m_SavePos[i]; }
 	/* 현재 타이머*/
@@ -333,8 +372,11 @@ public:/* for.Get Inline */
 		return (&_desc);
 	}
 
+	_int	Get_TextureNum() const { return m_iTextureNum; }
+	_int	Get_ChildTextureNum(_uint iChild) { return static_cast<CCustomize_UI*>(m_vecChildUI[iChild])->Get_TextureNum(); }
+
 public : /* Clinet */
-	_bool		IsRender() { return m_isRender; }
+	_bool	IsRender() const { return m_isRender; }
 
 protected :
 	vector<class CTextBox*>		m_vecTextBoxes;
@@ -342,6 +384,7 @@ protected :
 protected :
 	_bool						m_IsChild = { false };//나 자식이냐..?
 	vector<CGameObject*>		m_vecChildUI;
+
 
 protected :
 	wstring						m_wstrMaskPath = { TEXT("") }; // 텍스쳐 페스
@@ -419,7 +462,13 @@ protected :
 #pragma endregion
 
 	_bool						m_isMap = { false };
+
+	CGameObject*				m_pSupervisor			= { nullptr };
+	CGameObject*				m_pImmediateSuperior	= { nullptr };
+
 protected : /* Client*/
+	class CPlayer*				m_pPlayer = { nullptr };
+	
 	_bool						m_isRender = { true };
 	_float4						m_vOriginTextColor = {};
 	_float4						m_vOriginColor = {};
@@ -450,8 +499,11 @@ protected : /* Client*/
 
 public:
 	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	
 	//생성한 객체를 포인터로 받고싶으면 사용하시오
 	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, CGameObject** ppOut, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	
+	//복잡한 구조면 사용 못함
 	static void ExtractData_FromDat(ifstream& inputFileStream, vector<CUSTOM_UI_DESC>* pvecdesc, _bool IsFirst);
 
 	virtual CGameObject* Clone(void* pArg) override = 0;

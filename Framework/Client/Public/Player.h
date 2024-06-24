@@ -86,6 +86,7 @@ private:
 private:
 	void										Col_Section();
 
+
 #pragma region 현진 추가
 public:
 	static wstring								Get_AnimSetMoveName(ANIMSET_MOVE eAnimSetMove) { return strAnimSetMoveName[eAnimSetMove]; }
@@ -143,6 +144,12 @@ private:
 	friend class CPlayer_State_Hold_Idle;
 #pragma endregion
 
+#pragma region 나옹 추가
+public:
+	_bool*										Col_Event_UI(class CCustomCollider* pCustom);
+
+#pragma
+
 #pragma region 예은 추가 
 public:
 	_int										Get_Player_ColIndex() { return m_iCurCol; }
@@ -160,7 +167,8 @@ private:
 
 #pragma region 창균 추가
 	_bool										m_bIsExamineItem = { false };
-#pragma endregion
+	class CTab_Window*							m_pTabWindow = { nullptr };
+#pragma
 
 	vector<CPartObject*>						m_PartObjects;
 	_ubyte										m_eState = {};
@@ -183,7 +191,7 @@ public:	//For Camera
 	void										Calc_Camera_Transform(_float fTimeDelta);
 	void										SetMoveDir();
 	void										ResetCamera();
-
+	void										Apply_Recoil(_float fTimeDelta);
 private:
 	class CCamera_Free*							m_pCamera = { nullptr };
 	_float4										m_vCameraPosition;
@@ -240,6 +248,14 @@ private:
 	_float3										m_vPreHeadDir = { 0.f, 0.f, 1.f };
 
 	class CModel*								m_pBodyModel = { nullptr };
+
+	_bool										m_bRecoil = { false };
+	_float										m_fRecoil_Rotate_Amount_X = { 0.f };
+	_float										m_fRecoil_Rotate_Amount_Y = { 0.f };
+	_float										m_fRecoil_Rotate_Amount_X_Current = { 0.f };
+	_float										m_fRecoil_Rotate_Amount_Y_Current = { 0.f };
+	_float										m_fRecoil_Lerp_Time = { 0.f };
+	_float										m_fRecoil_Lerp_Time_Omega = { 0.f };
 private:
 	HRESULT Add_Components();
 

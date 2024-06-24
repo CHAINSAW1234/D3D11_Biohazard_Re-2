@@ -20,6 +20,10 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void FirstTick_Seting();
+
+public:
+	virtual void		Set_Dead(_bool bDead) override;
 
 public:
 	_bool				Get_isWorking() const { return m_isWorking; }
@@ -28,23 +32,28 @@ public:
 	ITEM_NUMBER			Get_ItemNumber() const { return m_eItemNumber; };
 	void				Set_ItemNumber(ITEM_NUMBER eItmeNum) { m_eItemNumber = eItmeNum; }
 
-	INVEN_ITEM_TYPE		Get_InvenItemType() const { return m_eInvenItemType; };
-	void				Set_InvenItemType(INVEN_ITEM_TYPE eItmeType) { m_eInvenItemType = eItmeType; }
+	ITEM_TYPE			Get_InvenItemType() const { return m_eInvenItemType; };
+	void				Set_InvenItemType(ITEM_TYPE eItmeType) { m_eInvenItemType = eItmeType; }
 
 public:
-	void				Reset_Item();
-	void				Set_Item(ITEM_NUMBER eItmeNum);
-	
-private:
-	_bool				m_isWorking = { false };
+	void				Reset_ItemUI();
+	void				Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos);
+
+public:
+	_int				Get_ItemQuantity() const { return m_iItemQuantity; }
+	void				Set_ItemVariation(_int iVariation) { m_iItemQuantity += iVariation; }
 
 private:
-	ITEM_NUMBER			m_eItemNumber = { ITEM_NUMBER::ITEM_NUMBER_END };
-	INVEN_ITEM_TYPE		m_eInvenItemType = { INVEN_ITEM_TYPE::INVEN_ITEM_TYPE_END };
+	_bool						m_isWorking = { false };
 
-	_bool				m_bCountable = { false };
-	_uint				m_iItemCount = { 0 };
+private:
+	ITEM_NUMBER					m_eItemNumber = { ITEM_NUMBER::ITEM_NUMBER_END };
+	ITEM_TYPE					m_eInvenItemType = { ITEM_TYPE::INVEN_ITEM_TYPE_END };
 
+	_bool						m_bCountable = { false };
+	_int						m_iItemQuantity = { 0 };
+
+	map<wstring, CGameObject*>	m_mapPartUI;
 
 public:
 	static CItem_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

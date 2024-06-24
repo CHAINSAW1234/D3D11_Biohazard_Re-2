@@ -16,7 +16,12 @@ public:
 		POLICEHALLSTATUE_3,
 		POLICEHALLSTATUE_END
 	};
-
+	enum POLICEHALLSTATUE_PART
+	{
+		PART_BODY,
+		PART_PART,
+		PART_END
+	};
 private:
 	CNewpoliceStatue(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CNewpoliceStatue(const CNewpoliceStatue& rhs);
@@ -37,7 +42,7 @@ private:
 	virtual HRESULT				Bind_ShaderResources() override;
 
 private:
-	POLICEHALLSTATUE  m_eState = { POLICEHALLSTATUE_0 };
+	_ubyte  m_eState = { POLICEHALLSTATUE_0 };
 
 
 public:

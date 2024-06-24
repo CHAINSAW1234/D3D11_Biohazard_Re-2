@@ -42,7 +42,7 @@ HRESULT CTutorial_UI::Initialize(void* pArg)
 void CTutorial_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
-    
+
     if (DOWN == m_pGameInstance->Get_KeyState('N'))
     {
         Non_Frame();
@@ -53,7 +53,7 @@ void CTutorial_UI::Tick(_float fTimeDelta)
         Frame_Reset();
     }
 
-    if(true == m_isPlay)
+    if (true == m_isPlay)
     {
         /* ¢º Texture */
         /* UI°¡ ³ªÅ¸³µÀ½*/
@@ -63,11 +63,17 @@ void CTutorial_UI::Tick(_float fTimeDelta)
             m_iColorCurNum = m_iColorMaxNum;
 
             m_fTutorial_Life_Tiemr += fTimeDelta;
-
             if (LIFE_TIME <= m_fTutorial_Life_Tiemr)
             {
                 m_isPlay = false;
-                m_isRender = false;
+                if (1.f <= m_fBlending)
+                {
+                    m_fBlending = 1.f;
+                    m_isPlay = false;
+                    m_isRender = false;
+                }
+                else
+                    m_fBlending += fTimeDelta * 2.f;
             }
         }
     }
@@ -108,7 +114,7 @@ void CTutorial_UI::Play_Font(_float fTimeDelta)
         pFont->Set_FontColor(ALHPE_ZERO);
         return;
     }*/
-    
+
     _float4 result = m_fBlending * ALHPE_ZERO + (1 - m_fBlending) * m_vOriginTextColor;
     pFont->Set_FontColor(result);
 }

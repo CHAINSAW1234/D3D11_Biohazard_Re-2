@@ -215,8 +215,6 @@ void CMonster::Late_Tick_PartObjects(_float fTimeDelta)
 				if (pPartObject == m_PartObjects[PART_FACE2])
 					continue;
 			}
-	
-
 
 			pPartObject->Late_Tick(fTimeDelta);
 		}

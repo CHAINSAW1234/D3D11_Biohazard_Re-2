@@ -89,11 +89,11 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_L180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_R180, 300.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::HOLD_SHOT, 180.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::HOLD_SHOT, 720.f);
 																							   
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::WHEEL_L180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::WHEEL_R180, 300.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::HOLD_SHOT, 180.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::HOLD_SHOT, 1000.f);
 
 	//m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/LeonTest/LeonBody.fbx");
 

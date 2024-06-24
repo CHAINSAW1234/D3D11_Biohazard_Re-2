@@ -17,22 +17,86 @@ class CInteractProps abstract : public CGameObject
 {
 public:
 	const static _int iMaxNum = 50;
-	enum INTERACTPROPS_COL 
-	{ 
-		INTERACTPROPS_COL_AABB ,
-		INTERACTPROPS_COL_SPHERE ,
-		INTERACTPROPS_COL_OBB ,
+	enum INTERACTPROPS_COL
+	{
+		INTERACTPROPS_COL_AABB,
+		INTERACTPROPS_COL_SPHERE,
+		INTERACTPROPS_COL_OBB,
 		INTERACTPROPS_COL_END
 	};
+	typedef struct Door_Desc
+	{
+		//lock의 여부, 엠블럼||사슬
+		_bool		bLock = { false };
+		_int		iLockType = { 0 };
+		_int		iEmblemType = { 0 };
+	}DOOR_DESC;
 
+	typedef struct Cabinet_Desc
+	{
+		//lock의 여부, 자물쇠, 아이템
+		_bool		bLock = { false };
+		_int		iLockType = { 0 };
+		_int		iLockNum[10] = { -1, };
+
+		_bool		bItem = { false };
+		_int		iItemIndex = { 0 };
+		wstring Name = { TEXT("") };
+
+	}CABINET_DESC;
+
+	typedef struct Window_Desc
+	{
+
+	}WINDOW_DESC;
+
+	typedef struct Shutter_Desc
+	{
+		// 몇번째 레버와 동작
+
+	}SHUTTER_DESC;
+
+	typedef struct Hall_Statue_Desc
+	{
+
+	}HALL_STATUE_DESC;
+
+	typedef struct Statue_Desc
+	{
+
+	}STATUE_DESC;
+
+	typedef struct BIG_Statue_Desc
+	{
+
+	}BIG_STATUE_DESC;
+
+	typedef struct Event_Prop_Desc
+	{
+
+	}EVENT_PROP_DESC;
+
+
+	typedef struct ITEM_Prop_Desc
+	{
+		_int iItemIndex = { 0 };
+		wstring Name = { TEXT("") };
+
+	}ITEM_PROP_DESC;
 
 public:
-	typedef struct tagInteractProps_desc: public CGameObject::GAMEOBJECT_DESC
+	typedef struct tagInteractProps_desc : public CGameObject::GAMEOBJECT_DESC
 	{
 		_int BelongIndexs2[iMaxNum];
 		_int iPropsType;
-		_int iRegion;
-
+		DOOR_DESC tagDoor = {};
+		CABINET_DESC tagCabinet = {};
+		WINDOW_DESC tagWindow = {};
+		SHUTTER_DESC tagShutter = {};
+		HALL_STATUE_DESC tagHallStatue = {};
+		STATUE_DESC tagStatue = {};
+		BIG_STATUE_DESC tagBigStatue = {};
+		ITEM_PROP_DESC tagItemDesc = {};
 	}INTERACTPROPS_DESC;
 protected:
 	CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -61,13 +125,19 @@ public:
 public:
 	_bool*												Get_Activity() { return &m_bActivity; }
 
+	/* NY */
+	_bool*												ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
+	_bool*												Selector_Rendering() { return &m_isSelector_Rendering;  }
+
+private :
+	_bool												m_isSelector_Rendering = { false };
 
 protected:
 	_bool												m_bActivity = { true };
 	_bool												m_bShadow = { true };
 	_bool												m_bVisible = { true };
 	_bool												m_bCol = { false }; // 충돌이 되었다
-	_float												m_fTimeTest = { 0.f };
+	_float												m_fTimeDelay = { 0.f };
 	CModel*												m_pModelCom = { nullptr };
 	CShader*											m_pShaderCom = { nullptr };
 	CCollider*											m_pColliderCom[INTERACTPROPS_COL_END] = { nullptr,nullptr,nullptr };
@@ -81,8 +151,7 @@ protected:
 	INTERACTPROPS_DESC 									m_tagPropDesc ={};
 	vector<CPartObject*>								m_PartObjects;
 
-	class CPxCollider*									m_pPx_Collider = { nullptr };
-	vector<CBone*>										m_vecRotationBone;
+	
 protected:
 	void												Check_Player();
 	void												Check_Col_Sphere_Player();

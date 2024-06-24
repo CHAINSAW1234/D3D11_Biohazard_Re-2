@@ -27,6 +27,7 @@ public:
 	virtual HRESULT			Render_LightDepth() { return S_OK; }
 	virtual void			SetCulling(_bool boolean) {}
 	virtual void			Create_Cloth() {}
+	virtual void			Add_RenderGroup() {}
 protected:
 	void					Update_WorldMatrix();
 

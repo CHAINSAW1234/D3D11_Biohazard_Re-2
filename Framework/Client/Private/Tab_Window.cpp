@@ -4,6 +4,7 @@
 #include "Customize_UI.h"
 #include "Button_UI.h"
 #include "Inventory_Item_UI.h"
+#include "Cursor_UI.h"
 
 CTab_Window::CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice , pContext }
@@ -42,6 +43,8 @@ HRESULT CTab_Window::Initialize(void* pArg)
 		m_bDead = true;
 	}
 
+	Find_Cursor();
+
 	return S_OK;
 }
 
@@ -51,6 +54,14 @@ void CTab_Window::Tick(_float fTimeDelta)
 	{
 		m_pInventory_Manager->FirstTick_Seting();
 		m_isFristTick = false;
+
+		if (nullptr == m_pCursor[0] || nullptr == m_pCursor[1])
+		{
+			Find_Cursor();
+
+			if (nullptr == m_pCursor)
+				MSG_BOX(TEXT("Inventory를 위한 Cursor 생성 불가능"));
+		}
 	}
 
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
@@ -63,6 +74,12 @@ void CTab_Window::Tick(_float fTimeDelta)
 			m_pInvenButton->Set_Dead(m_bDead);
 			m_pMapButton->Set_Dead(m_bDead);
 			m_pInventory_Manager->Set_OnOff_Inven(m_bDead);
+
+			if (nullptr != m_pCursor[1])
+			{
+				m_pCursor[0]->Set_Inven_Open(false);
+				m_pCursor[1]->Set_Inven_Open(false);
+			}
 		}
 
 		else
@@ -72,13 +89,19 @@ void CTab_Window::Tick(_float fTimeDelta)
 			m_pInvenButton->Set_Dead(m_bDead);
 			m_pMapButton->Set_Dead(m_bDead);
 			m_pInventory_Manager->Set_OnOff_Inven(m_bDead);//탭창열때 인벤이 초기값임
+
+			if (nullptr != m_pCursor[1])
+			{
+				m_pCursor[0]->Set_Inven_Open(true);
+				m_pCursor[1]->Set_Inven_Open(true);
+			}
 		}
 	}
 
 	if (true == m_bDead)
 		return;
 
-	if (true == m_pInventory_Manager->Get_isItemExamine())
+	if (EXAMINE_ITEM == m_pInventory_Manager->Get_InventoryEvent())
 	{
 		m_eWindowType = EXAMINE;
 		m_isMapRender = false;
@@ -87,6 +110,23 @@ void CTab_Window::Tick(_float fTimeDelta)
 		m_pMapButton->Set_Dead(true);
 		m_pInventory_Manager->Set_OnOff_Inven(true);
 		m_isAlphaControl = true;
+
+		if (-1 == m_pInventory_Manager->Get_Selected_ItemNum())
+		{
+			m_eWindowType = INVENTORY;
+			m_isMapRender = false;
+			m_pHintButton->Set_Dead(false);
+			m_pInvenButton->Set_Dead(false);
+			m_pMapButton->Set_Dead(false);
+			m_pInventory_Manager->Set_OnOff_Inven(false);
+			m_isAlphaControl = false;
+		}
+
+		else
+		{
+			m_pItem_Mesh_Viewer->Set_Operation(POP_UP, static_cast<ITEM_NUMBER>(m_pInventory_Manager->Get_Selected_ItemNum()));
+		}
+
 	}
 
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
@@ -123,10 +163,6 @@ void CTab_Window::Tick(_float fTimeDelta)
 	case Client::CTab_Window::INVENTORY: {
 		m_pInventory_Manager->Tick(fTimeDelta);
 
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
-		{
-
-		}
 		break;
 	}
 		
@@ -149,7 +185,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 			m_pInvenButton->Set_Dead(false);
 			m_pMapButton->Set_Dead(false);
 			m_pInventory_Manager->Set_OnOff_Inven(false);
-			m_pItem_Mesh_Viewer->Reset_Viewer();
+			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END);
 
 			m_fCurTime = 0.f;
 			m_fAlpha = 0.f;
@@ -161,6 +197,10 @@ void CTab_Window::Tick(_float fTimeDelta)
 	default:
 		break;
 	}
+
+	/* Cursor */
+	if (nullptr != m_pCursor[1])
+		Select_UI();
 
 	__super::Tick(fTimeDelta);
 }
@@ -213,6 +253,59 @@ HRESULT CTab_Window::Render()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)
+{
+	m_pInventory_Manager->AddItem_ToInven(eAcquiredItem);
+}
+
+_bool CTab_Window::IsCan_AddItem_ToInven()
+{
+	return 	m_pInventory_Manager->IsCan_AddItem_ToInven();
+}
+
+void CTab_Window::Find_Cursor()
+{
+	list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+	_int i = 0;
+
+	for (auto& iter : *pUIList)
+	{
+		CCursor_UI* pCursor = dynamic_cast<CCursor_UI*>(iter);
+
+		if (nullptr != pCursor)
+		{
+			m_pCursor[i] = pCursor;
+			++i;
+			
+			if(nullptr != m_pCursor[1])
+				break;
+		}
+	}
+}
+
+void CTab_Window::Select_UI()
+{
+	_bool isResult = { false };
+
+	if (true == m_pMapButton->IsMouseHover())
+		isResult = false;
+
+	else if (true == m_pInvenButton->IsMouseHover())
+		isResult = true;
+
+	else if (true == m_pHintButton->IsMouseHover())
+		isResult = true;
+
+	else if (false == *m_pInventory_Manager->Get_NoHover_InvenBox())
+		isResult = true;
+
+	else
+		isResult = false;
+
+	m_pCursor[0]->Set_Cursor_Blur(isResult);
+	m_pCursor[1]->Set_Cursor_Blur(isResult);
 }
 
 HRESULT CTab_Window::Add_Components()

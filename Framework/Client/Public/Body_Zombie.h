@@ -41,7 +41,7 @@ public:
 	HRESULT								Render_LightDepth_Dir()override;
 	HRESULT								Render_LightDepth_Point() override;
 	HRESULT								Render_LightDepth_Spot()override;
-
+	virtual void						Add_RenderGroup() override;
 private:
 	HRESULT								Initialize_Model();
 	HRESULT								Add_Animations();

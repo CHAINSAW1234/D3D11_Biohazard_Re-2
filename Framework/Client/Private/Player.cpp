@@ -278,6 +278,11 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	RayCasting_Camera();
 
+	if (m_bRecoil)
+	{
+		Apply_Recoil(fTimeDelta);
+	}
+
 	if (PRESSING == m_pGameInstance->Get_KeyState(VK_RBUTTON))
 	{
 		if (m_bAim == false)
@@ -290,6 +295,31 @@ void CPlayer::Tick(_float fTimeDelta)
 		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
 			RayCast_Shoot();
+
+			m_bRecoil = true;
+
+			m_fRecoil_Lerp_Time = 0.f;
+			m_fRecoil_Lerp_Time_Omega = 0.f;
+			
+			switch (m_eEquip)
+			{
+			case EQUIP::HG:
+			{
+				auto Random_Real_X = m_pGameInstance->GetRandom_Real(0.075f, 0.1f);
+				auto Random_Real_Y = m_pGameInstance->GetRandom_Real(0.15f, 0.2f);
+				m_fRecoil_Rotate_Amount_X = Random_Real_X;
+				m_fRecoil_Rotate_Amount_Y = Random_Real_Y;
+				break;
+			}
+			case EQUIP::STG:
+			{
+				auto Random_Real_X = m_pGameInstance->GetRandom_Real(0.2f, 0.25f);
+				auto Random_Real_Y = m_pGameInstance->GetRandom_Real(0.25f, 0.3f);
+				m_fRecoil_Rotate_Amount_X = Random_Real_X;
+				m_fRecoil_Rotate_Amount_Y = Random_Real_Y;
+				break;
+			}
+			}
 		}
 	}
 	else
@@ -438,6 +468,21 @@ void CPlayer::Col_Section()
 
 		}
 	}
+}
+
+#pragma endregion
+
+#pragma region 나옹 추가
+_bool* CPlayer::Col_Event_UI(CCustomCollider* pCustom)
+{
+	_bool isResult;
+
+	if (m_pColliderCom->Intersect(static_cast<CCollider*>(pCustom->Get_Component(TEXT("Com_Collider")))))
+		isResult = true;
+	else
+		isResult = false;
+
+	return &isResult;
 }
 
 #pragma endregion
@@ -999,6 +1044,32 @@ void CPlayer::ResetCamera()
 	m_fLerpAmount_Right = m_fRight_Dist_Look;
 	m_fLerpAmount_Up = m_fUp_Dist_Look;
 	m_fLerpAmount_Look = m_fLook_Dist_Look;
+}
+
+void CPlayer::Apply_Recoil(_float fTimeDelta)
+{
+	//m_fRecoil_Lerp_Time += fTimeDelta*10.f;
+	m_fRecoil_Lerp_Time_Omega += fTimeDelta*20.f;
+	if (m_fRecoil_Lerp_Time_Omega >= PxPiDivTwo)
+	{
+		m_fRecoil_Lerp_Time_Omega = PxPiDivTwo;
+	}
+	m_fRecoil_Lerp_Time = sin(m_fRecoil_Lerp_Time_Omega);
+
+	m_fRecoil_Rotate_Amount_X_Current = Lerp(0, m_fRecoil_Rotate_Amount_X, m_fRecoil_Lerp_Time);
+	m_fRecoil_Rotate_Amount_Y_Current = Lerp(0, m_fRecoil_Rotate_Amount_Y, m_fRecoil_Lerp_Time);
+
+	if ((m_fRecoil_Rotate_Amount_X_Current >= m_fRecoil_Rotate_Amount_X) || (m_fRecoil_Rotate_Amount_Y_Current >= m_fRecoil_Rotate_Amount_Y))
+	{
+		m_bRecoil = false;
+		m_fRecoil_Rotate_Amount_X = 0.f;
+		m_fRecoil_Rotate_Amount_X_Current = 0.f;
+		m_fRecoil_Rotate_Amount_Y = 0.f;
+		m_fRecoil_Rotate_Amount_Y_Current = 0.f;
+	}
+
+	m_pTransformCom_Camera->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), -fTimeDelta*10.f* m_fRecoil_Rotate_Amount_X);
+	m_pTransformCom_Camera->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), -fTimeDelta*10.f * m_fRecoil_Rotate_Amount_Y);
 }
 
 void CPlayer::RayCast_Shoot()

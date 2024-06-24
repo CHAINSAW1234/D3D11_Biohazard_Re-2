@@ -20,28 +20,68 @@ namespace Client
 		ID_END
 	};
 
+	enum UI_OPERRATION{ POP_UP, UI_IDLE, HIDE, STATE_END };
+
 	enum MAP_DIRECTION { DIRECTION_WEST, DIRECTION_EAST, DIRECTION_MID };
 	enum PLAYER_DIREECTION { DIRECTION_FRONT = 1, DIRECTION_BACK = 2, DIRECTION_LEFT = 4, DIRECTION_RIGHT = 8, DIRECTION_END };
 
 	enum MONSTER_TYPE { MT_ZOMBIE, MT_DEFAULT };
 	enum MONSTER_STATE { MST_IDLE,MST_WALK,MST_ATTACK,MST_DEFAULT, MST_END };
 
-	enum ITEM_NUMBER {
-		PISTOL_HANDGUN, PISTOL_AMMO, 
-		FIRST_AID_SPRAY, 
-		BATTLE_DAGGER, 
+
+	enum ITEM_NUMBER {//파일 이름 입니다 70까지만 추가 되어 있음 대문자는 임시임
+		emergencyspray01a,
+		greenherb01a,
+		redherb01a,
+		blueherb01a,
+		herbsgg01a,
+		herbsgr01a,
+		herbsgb01a,
+		herbsggb01a,
+		herbsggg01a,
+		herbsgrb01a,
+		herbsrb01a,
+		greenherbitem01a,
+		redherbitem01a,
+		blueherbitem01a,
+		handgun_bullet01a,
+		shotgun_bullet01a,
+		submachinegun_bullet01a,
+		magnumbulleta,
+		biggun_bullet01a,
+		inkribbon01a,
+		woodbarricade01a,
+		blastingfuse01a,
+		gunpowder01a,
+		gunpowder01b,
+		strengtheningyellow01a,
+		HandGun,
 		ITEM_NUMBER_END 
 	};
 
+
 	//인벤토리 안에서의 아이템 타입
-	enum INVEN_ITEM_TYPE {
-		CONSUMABLE_STACKABLE,//소모성인데 인벤토리 창에서 한칸으로 겹칠 수 없다.
-		SONSUMABLE_NON_STACKABLE,//소모성인데 인벤토리 창에서 겹칠 수 있다.
-		EQUIP_UNBREAKABLE, //내구가 없는 장비
-		EQUIP_BREAKABLE, //내구성 장비
-		QUEST,
-		PLACE_ABLE,
+	enum ITEM_TYPE {
+		EQUIPABLE, // 장착 장비
+		CONSUMABLE_EQUIPABLE, //소모 장비
+		USEABLE, // 사용 아이템
+		CONSUMABLE, //소모 아이템
+		QUEST, // 퀘스트아이템
 		INVEN_ITEM_TYPE_END
+	};
+
+	enum INVENTORY_EVENT {
+		EVENT_IDLE, 
+		EQUIP_ITEM,
+		UNEQUIP_ITEM,
+		USE_ITEM,
+		EXAMINE_ITEM,
+		COMBINED_ITEM,
+		HOTKEY_ASSIGNED_ITEM,
+		REARRANGE_ITEM,
+		DISCARD_ITEM,
+		CONTEXTUI_SELECT,
+		INVEN_EVENT_END
 	};
 
 	enum ANIM_BONE_TYPE_COLLIDER_DOOR_SINGLE
@@ -71,9 +111,24 @@ namespace Client
 		FRONT_DOOR
 	};
 
-	enum FIRE_WALL_ROTATE_BONE_TYPE
+		enum FIRE_WALL_ROTATE_BONE_TYPE
 	{
 		DOOR,
+	};
+	
+	
+	enum OBJ_TYPE
+	{
+		OBJ_NOPART,
+		OBJ_DOOR,
+		OBJ_WINDOW,
+		OBJ_CABINET,
+		OBJ_SHUTTER,
+		OBJ_STATUE,
+		OBJ_BIGSTATUE,
+		OBJ_HALL_STATUE,
+		OBJ_ITEM,
+		OBJ_END
 	};
 
 	enum ANIM_BONE_TYPE_COLLIDER_CABINET

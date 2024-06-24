@@ -12,6 +12,7 @@ private:
 		CTextBox*	pText = {  };
 		_bool		isFull = { false };
 		_float4		vOriginTextColor = {};
+		_int		iBulletCnt = {};
 	};
 
 private:
@@ -40,7 +41,7 @@ private:
 private:
 	Text					m_pTextUI[2] = {};
 	_int					m_iStoreBullet = { 0 };
-	_int					m_iCurrentBullet = { 0 };
+	_int					m_iCurrentBullet = { 10 };
 	_float					m_fOrigin_Blending = {};
 
 	/* 원본 위치*/
