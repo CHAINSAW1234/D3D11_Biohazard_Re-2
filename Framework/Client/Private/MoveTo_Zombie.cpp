@@ -335,13 +335,13 @@ void CMoveTo_Zombie::Change_Animation()
 			_float			fBaseTrackPosition = { pBodyModel->Get_TrackPosition(static_cast<_uint>(PLAYING_INDEX::INDEX_0)) };
 			_float			fBlendDuration = { pBodyModel->Get_Duration_From_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_0)) };
 
-			if (0.f < fBlendDuration)
+			/*if (0.f < fBlendDuration)
 			{
 				while (fBaseTrackPosition > fBlendDuration)
 				{
 					fBaseTrackPosition -= fBlendDuration;
 				}
-			}			
+			}	*/		
 
 			pBodyModel->Set_TrackPosition(static_cast<_uint>(PLAYING_INDEX::INDEX_1), fBaseTrackPosition, true);
 		}		

@@ -228,6 +228,7 @@
     <ClInclude Include="..\Public\Inventory_Item_UI.h" />
     <ClInclude Include="..\Public\Inventory_Slot.h" />
     <ClInclude Include="..\Public\Is_Character_In_Range_Zombie.h" />
+    <ClInclude Include="..\Public\Is_Charactor_In_ViewAngle_Zombie.h" />
     <ClInclude Include="..\Public\ItemProp.h" />
     <ClInclude Include="..\Public\Item_DragShadow.h" />
     <ClInclude Include="..\Public\Item_Mesh_Viewer.h" />
@@ -364,6 +365,7 @@
     <ClCompile Include="..\Private\Inventory_Item_UI.cpp" />
     <ClCompile Include="..\Private\Inventory_Slot.cpp" />
     <ClCompile Include="..\Private\Is_Character_In_Range_Zombie.cpp" />
+    <ClCompile Include="..\Private\Is_Charactor_In_ViewAngle_Zombie.cpp" />
     <ClCompile Include="..\Private\ItemProp.cpp" />
     <ClCompile Include="..\Private\Item_DragShadow.cpp" />
     <ClCompile Include="..\Private\Item_Mesh_Viewer.cpp" />
