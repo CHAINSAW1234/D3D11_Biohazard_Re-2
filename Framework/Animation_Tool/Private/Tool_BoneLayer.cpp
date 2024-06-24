@@ -95,17 +95,20 @@ void CTool_BoneLayer::Create_BoneLayer()
 {
 	if (ImGui::Button("Create Bone Layer : Range Bones ##CTool_BoneLayer::Create_BoneLayer()"))
 	{
-		Add_AnimLayer_Range(m_pCurrentModel);
+		if(TEXT("") != m_strInputLayerTag)
+			Add_AnimLayer_Range(m_pCurrentModel);
 	}
 
 	if (ImGui::Button("Create Bone Layer : Child Bones ##CTool_BoneLayer::Create_BoneLayer()"))
 	{
-		Add_AnimLayer_ChildBones(m_pCurrentModel);
+		if (TEXT("") != m_strInputLayerTag)
+			Add_AnimLayer_ChildBones(m_pCurrentModel);
 	}
 
 	if (ImGui::Button("Create Bone Layer : All Bone ##CTool_BoneLayer::Create_BoneLayer()"))
 	{
-		Add_AnimLayer_AllBone(m_pCurrentModel);
+		if (TEXT("") != m_strInputLayerTag)
+			Add_AnimLayer_AllBone(m_pCurrentModel);
 	}
 }
 

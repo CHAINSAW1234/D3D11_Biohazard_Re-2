@@ -79,13 +79,13 @@ void CTool_AnimList::Show_LayerTags()
     list<wstring>           AnimLayerTags = { m_pCurrentModel->Get_AnimationLayer_Tags() };
     for (auto& wstrAnimLayerTag : AnimLayerTags)
     {
-        string          strAnimLayerTag = { Convert_Wstring_String(wstrAnimLayerTag) };
+        string              strAnimLayerTag = { Convert_Wstring_String(wstrAnimLayerTag) };
         if(ImGui::CollapsingHeader(string(strAnimLayerTag + string("##Show_LayerTags()") + to_string(iNumAnimLayer)).c_str()))
         {
             vector<CAnimation*>         Animations = { m_pCurrentModel->Get_Animations(wstrAnimLayerTag) };
 
-            ImGui::SliderFloat2("ListBoxSize ##CTool_AnimList::Show_LayerTags()", (_float*)&vSize, 100.f, 800.f);
-            if (ImGui::BeginListBox("##CTool_AnimList::Show_LayerTags()", *(ImVec2*)&vSize))
+            ImGui::SliderFloat2(string(string("ListBoxSize ##CTool_AnimList::Show_LayerTags()") + to_string(iNumAnimLayer)).c_str(), (_float*)&vSize, 100.f, 800.f);
+            if (ImGui::BeginListBox(string(string("##CTool_AnimList::Show_LayerTags()") + to_string(iNumAnimLayer)).c_str(), *(ImVec2*)&vSize))
             {
                 for (auto& pAnimation : Animations)
                 {
@@ -105,6 +105,8 @@ void CTool_AnimList::Show_LayerTags()
 
             ImGui::EndListBox();
         }
+
+        ++iNumAnimLayer;
     }
 }
 
