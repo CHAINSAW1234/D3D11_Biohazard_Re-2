@@ -92,24 +92,17 @@ void CUI::Late_Tick(_float fTimeDelta)
 
 void CUI::Set_Size(_float fSizeX, _float fSizeY)
 {
-	m_fSizeX = fSizeX;
-	m_fSizeY = fSizeY;
-
-	m_pTransformCom->Set_Scaled(m_fSizeX, m_fSizeY, 1);
+	m_pTransformCom->Set_Scaled(fSizeX, fSizeY, 1);
 }
 
 void CUI::Set_Position(_float fPosX, _float fPosY, _float fPosZ)
 {
-	m_fX = fPosX;
-	m_fY = fPosY;
-	m_fZ = fPosZ;
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(fPosX, fPosY, fPosZ, 0));
+}
 
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(
-		m_fX + g_iWinSizeX * 0.5f,
-		-m_fY + g_iWinSizeY * 0.5f,
-		m_fZ,
-		1.f
-	));
+void CUI::Set_Position(_vector vPos)
+{
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 }
 
 void CUI::Size_Stretch(_float fConversionValX, _float fConversionValY)
@@ -120,6 +113,13 @@ void CUI::Size_Stretch(_float fConversionValX, _float fConversionValY)
 	_float fSizeY = m_fSizeY + fConversionValY;
 
 	m_pTransformCom->Set_Scaled(fSizeX, fSizeY, 1);
+}
+
+void CUI::Move(_float3 fMoveMent)
+{
+	_vector	vPosition = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+	vPosition += XMLoadFloat3(&fMoveMent);
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
 }
 
 void CUI::Move_State(_float3 fMoveMent, _int iState)

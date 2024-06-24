@@ -175,7 +175,7 @@ void CHPBar_UI::Operation_HPBar(_float fTimeDelta)
         if (m_iCurrent_ColorMask_Cnt > m_iColorMask_Cnt)
         {
             m_isMaskDown = true;
-            m_iCurrent_ColorMask_Cnt = 0.f;
+            m_iCurrent_ColorMask_Cnt = 0;
             m_isTimerReturn = false;
         }
     }

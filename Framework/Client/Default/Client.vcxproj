@@ -170,6 +170,20 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\imguilib\GraphEditor.h" />
+    <ClInclude Include="..\..\imguilib\imconfig.h" />
+    <ClInclude Include="..\..\imguilib\ImCurveEdit.h" />
+    <ClInclude Include="..\..\imguilib\ImGradient.h" />
+    <ClInclude Include="..\..\imguilib\imgui.h" />
+    <ClInclude Include="..\..\imguilib\ImGuizmo.h" />
+    <ClInclude Include="..\..\imguilib\imgui_impl_dx11.h" />
+    <ClInclude Include="..\..\imguilib\imgui_impl_win32.h" />
+    <ClInclude Include="..\..\imguilib\imgui_internal.h" />
+    <ClInclude Include="..\..\imguilib\ImSequencer.h" />
+    <ClInclude Include="..\..\imguilib\imstb_rectpack.h" />
+    <ClInclude Include="..\..\imguilib\imstb_textedit.h" />
+    <ClInclude Include="..\..\imguilib\imstb_truetype.h" />
+    <ClInclude Include="..\..\imguilib\ImZoomSlider.h" />
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\Public\BlackBoard_Zombie.h" />
     <ClInclude Include="..\Public\Body_Cabinet.h" />
@@ -190,11 +204,13 @@
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\Public\Clothes_Zombie.h" />
     <ClInclude Include="..\Public\ContextMenu.h" />
+    <ClInclude Include="..\Public\Context_Highlighter.h" />
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\EventProp.h" />
     <ClInclude Include="..\Public\Face_Zombie.h" />
     <ClInclude Include="..\Public\FlashLight.h" />
     <ClInclude Include="..\Public\Header_Package_Zombie.h" />
+    <ClInclude Include="..\Public\ImGui_Manager.h" />
     <ClInclude Include="..\Public\InteractProps.h" />
     <ClInclude Include="..\Public\Inventory_Manager.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
@@ -212,6 +228,7 @@
     <ClInclude Include="..\Public\Inventory_Slot.h" />
     <ClInclude Include="..\Public\Is_Character_In_Range_Zombie.h" />
     <ClInclude Include="..\Public\ItemProp.h" />
+    <ClInclude Include="..\Public\Item_DragShadow.h" />
     <ClInclude Include="..\Public\Item_Mesh_Viewer.h" />
     <ClInclude Include="..\Public\Item_UI.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
@@ -260,6 +277,54 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\imguilib\GraphEditor.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImCurveEdit.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImGradient.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImGuizmo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_demo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_draw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_impl_dx11.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_impl_win32.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_tables.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\imgui_widgets.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\imguilib\ImSequencer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\BlackBoard_Zombie.cpp" />
     <ClCompile Include="..\Private\Body_Cabinet.cpp" />
@@ -278,10 +343,12 @@
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\Private\Clothes_Zombie.cpp" />
     <ClCompile Include="..\Private\ContextMenu.cpp" />
+    <ClCompile Include="..\Private\Context_Highlighter.cpp" />
     <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\EventProp.cpp" />
     <ClCompile Include="..\Private\Face_Zombie.cpp" />
     <ClCompile Include="..\Private\FlashLight.cpp" />
+    <ClCompile Include="..\Private\ImGui_Manager.cpp" />
     <ClCompile Include="..\Private\InteractProps.cpp" />
     <ClCompile Include="..\Private\Inventory_Manager.cpp" />
     <ClCompile Include="..\Private\Crosshair_UI.cpp" />
@@ -297,6 +364,7 @@
     <ClCompile Include="..\Private\Inventory_Slot.cpp" />
     <ClCompile Include="..\Private\Is_Character_In_Range_Zombie.cpp" />
     <ClCompile Include="..\Private\ItemProp.cpp" />
+    <ClCompile Include="..\Private\Item_DragShadow.cpp" />
     <ClCompile Include="..\Private\Item_Mesh_Viewer.cpp" />
     <ClCompile Include="..\Private\Item_UI.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />

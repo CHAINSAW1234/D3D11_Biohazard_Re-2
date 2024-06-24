@@ -472,6 +472,21 @@ void CPlayer::Col_Section()
 
 #pragma endregion
 
+#pragma region 나옹 추가
+_bool* CPlayer::Col_Event_UI(CCustomCollider* pCustom)
+{
+	_bool isResult;
+
+	if (m_pColliderCom->Intersect(static_cast<CCollider*>(pCustom->Get_Component(TEXT("Com_Collider")))))
+		isResult = true;
+	else
+		isResult = false;
+
+	return &isResult;
+}
+
+#pragma endregion
+
 #pragma region 현진 추가
 CModel* CPlayer::Get_Body_Model()
 {

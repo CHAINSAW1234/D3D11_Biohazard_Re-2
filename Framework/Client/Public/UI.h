@@ -33,7 +33,9 @@ public:
 public:
 	virtual void Set_Size(_float fSizeX, _float fSizeY);
 	virtual void Set_Position(_float fPosX, _float fPosY, _float fPosZ);
+	virtual void Set_Position(_vector vPos);
 	virtual void Size_Stretch(_float fConversionValX, _float fConversionValY);
+	virtual void Move(_float3 fMoveMent);
 
 	virtual void Move_State(_float3 fMoveMent, _int iState);
 
