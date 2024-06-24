@@ -838,17 +838,13 @@ HRESULT CLoader::Loading_For_GamePlay()
 			LeonTransformMatrix))))
 		return E_FAIL;
 
-	_matrix			WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
-					WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-90.f));
-
 	/* Prototype_Component_Model_HandGun */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_HandGun"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/HandGun/HandGun.fbx",
-			WeaponTransformMatrix))))
+			TransformMatrix))))
 		return E_FAIL;
 
-	WeaponTransformMatrix *= XMMatrixRotationZ(XMConvertToRadians(-25.f));
-	WeaponTransformMatrix = WeaponTransformMatrix* XMMatrixTranslation(0.f, 0.f, -5.f);
+
 	/* Prototype_Component_Model_ShotGun */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ShotGun"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Weapon/ShotGun/ShotGun.fbx",

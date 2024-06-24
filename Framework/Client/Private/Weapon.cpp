@@ -42,10 +42,22 @@ HRESULT CWeapon::Initialize(void * pArg)
 
 	m_bRender = false;
 
+	if (m_eEquip == CPlayer::HG) {
+		m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_1_Sub_1__wp0100_VP70Custom_Mat_mesh0002", true);
+		m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_2_Sub_1__wp0000_PowerUp_Mat_mesh0003", true);
+		m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_6_Sub_1__wp0000_PowerUp_Mat_mesh0004", true);
+	}
+
+	if (m_eEquip == CPlayer::STG) {
+		m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_3_Sub_1__wp1000_mt_mesh0004", true);
+		m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_4_Sub_1__wp1100_mt_mesh0005", true);
+	}
+
 	m_pModelCom->Set_RootBone("root");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
+
 
 	//m_pTransformCom->Set_Scaled(0.1f, 0.1f, 0.1f);
 	//m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(90.0f));
@@ -89,9 +101,8 @@ HRESULT CWeapon::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (size_t i = 0; i < iNumMeshes; i++)
+	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+	for (auto& i : NonHideIndices)
 	{
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
@@ -153,9 +164,8 @@ HRESULT CWeapon::Render_LightDepth_Dir()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
 
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (size_t i = 0; i < iNumMeshes; i++)
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
 		{
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
@@ -193,8 +203,8 @@ HRESULT CWeapon::Render_LightDepth_Point()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
 			return E_FAIL;
 
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-		for (size_t i = 0; i < iNumMeshes; i++)
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
 		{
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
@@ -229,9 +239,8 @@ HRESULT CWeapon::Render_LightDepth_Spot()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
 
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (size_t i = 0; i < iNumMeshes; i++)
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
 		{
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;

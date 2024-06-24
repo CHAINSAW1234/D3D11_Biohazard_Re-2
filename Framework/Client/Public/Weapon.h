@@ -16,7 +16,7 @@ BEGIN(Client)
 class CWeapon final : public CPartObject
 {
 public:
-	enum RENDERLOCATION { MOVE, HOLD, HOLSTER, NONE };
+	enum RENDERLOCATION { MOVE, MOVE_LIGHT, HOLD, HOLSTER, NONE };
 
 public:
 	typedef struct tagWeaponDesc : public CPartObject::PARTOBJECT_DESC

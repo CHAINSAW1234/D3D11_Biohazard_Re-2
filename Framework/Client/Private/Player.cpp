@@ -541,6 +541,9 @@ void CPlayer::Update_Equip()
 
 	if (isChange) {
 		if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
+			if(nullptr != m_pWeapon)
+				m_pWeapon->Set_RenderLocation(CWeapon::MOVE);
+
 			Get_Body_Model()->Set_Loop(3, false);
 
 			Change_Body_Animation_Hold(3, MOVETOHOLSTER);
@@ -1632,22 +1635,42 @@ HRESULT CPlayer::Add_PartObjects()
 	WeaponDesc.pParentsTransform = m_pTransformCom;
 
 	WeaponDesc.eEquip = HG;
-	WeaponDesc.pSocket[CWeapon::MOVE] = WeaponDesc.pSocket[CWeapon::HOLD] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
+	WeaponDesc.pSocket[CWeapon::MOVE] = WeaponDesc.pSocket[CWeapon::MOVE_LIGHT] = WeaponDesc.pSocket[CWeapon::HOLD] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
 	WeaponDesc.pSocket[CWeapon::HOLSTER] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_holster_main")) };
+	
+	_matrix			WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
+	WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-90.f));
+	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] = WeaponDesc.fTransformationMatrices[CWeapon::MOVE_LIGHT] 
+		= WeaponDesc.fTransformationMatrices[CWeapon::HOLD] = WeaponTransformMatrix;
+
+	WeaponTransformMatrix = { XMMatrixIdentity() };
+	WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-100.f));
+	WeaponTransformMatrix *= XMMatrixTranslation(0.f, 1.f, 6.f);
+	WeaponDesc.fTransformationMatrices[CWeapon::HOLSTER] = WeaponTransformMatrix;
 	pWeaponObject = dynamic_cast<CWeapon*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Weapon"), &WeaponDesc));
 	if (nullptr == pWeaponObject)
 		return E_FAIL;
 	m_Weapons[CPlayer::HG] = pWeaponObject;
 
 	WeaponDesc.eEquip = STG;
-	WeaponDesc.pSocket[CWeapon::MOVE] = WeaponDesc.pSocket[CWeapon::HOLD] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
-	WeaponDesc.pSocket[CWeapon::HOLSTER] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("setProp_E_01")) };
+	WeaponDesc.pSocket[CWeapon::MOVE] = WeaponDesc.pSocket[CWeapon::MOVE_LIGHT] = WeaponDesc.pSocket[CWeapon::HOLD] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
+	WeaponDesc.pSocket[CWeapon::HOLSTER] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("setProp_E_00")) };
 
-	_matrix			WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
+	WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
 	WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-90.f));
 	WeaponTransformMatrix *= XMMatrixRotationZ(XMConvertToRadians(-25.f));
-	WeaponTransformMatrix = WeaponTransformMatrix * XMMatrixTranslation(0.f, 0.f, -5.f);
-	WeaponDesc.fTransformationMatrices[0] = WeaponDesc.fTransformationMatrices[1] = WeaponDesc.fTransformationMatrices[2] = WeaponTransformMatrix;
+	WeaponTransformMatrix *= XMMatrixTranslation(0.f, 0.f, -5.f);
+	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] =  WeaponDesc.fTransformationMatrices[CWeapon::HOLD] = WeaponTransformMatrix;
+	
+	WeaponTransformMatrix = { XMMatrixIdentity() };
+	WeaponTransformMatrix *= XMMatrixRotationZ(XMConvertToRadians(-90.f));
+	WeaponTransformMatrix *= XMMatrixTranslation(0.f, 0.f, 30.f);
+	WeaponDesc.fTransformationMatrices[CWeapon::MOVE_LIGHT] = WeaponTransformMatrix;
+
+	WeaponTransformMatrix = XMMatrixIdentity();
+	WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-90.f));
+	WeaponTransformMatrix *= XMMatrixRotationY(XMConvertToRadians(90.f));
+	WeaponDesc.fTransformationMatrices[CWeapon::HOLSTER] = WeaponTransformMatrix;
 
 	pWeaponObject = dynamic_cast<CWeapon*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Weapon"), &WeaponDesc));
 	if (nullptr == pWeaponObject)
