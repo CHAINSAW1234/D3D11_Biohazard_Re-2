@@ -230,8 +230,7 @@ CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int*
 
 void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
 {
-
-	return;
+	
 }
 
 void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)

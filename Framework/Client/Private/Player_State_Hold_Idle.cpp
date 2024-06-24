@@ -128,7 +128,7 @@ void CPlayer_State_Hold_Idle::Shot()
 {
 	if (m_isShot) {
 		if (m_pPlayer->Get_Body_Model()->isFinished(2)) {
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 0, 0.1f);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 0, 0.3f);
 			m_isShot = false;
 		}
 	}

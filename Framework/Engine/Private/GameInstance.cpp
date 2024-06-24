@@ -903,6 +903,16 @@ uniform_int_distribution<_int> CGameInstance::GetRandomDevice_Int(_int Start, _i
 {
 	return uniform_int_distribution<_int>(Start,End);
 }
+_int CGameInstance::GetRandom_Int(_int Start, _int End)
+{
+	auto Device = uniform_int_distribution<_int>(Start, End);
+	return Device(m_RandomNumber);
+}
+_float CGameInstance::GetRandom_Real(_float Start, _float End)
+{
+	auto Device = uniform_real_distribution<_float>(Start, End);
+	return Device(m_RandomNumber);
+}
 #pragma endregion
 
 #pragma region Target_Manager

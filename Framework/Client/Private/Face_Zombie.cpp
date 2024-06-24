@@ -293,6 +293,17 @@ HRESULT CFace_Zombie::Render_LightDepth_Spot()
 	return S_OK;
 }
 
+void CFace_Zombie::Add_RenderGroup()
+{
+	if(m_bRender)
+	{
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	}
+}
+
 HRESULT CFace_Zombie::Initialize_Model()
 {
 	if (nullptr == m_pModelCom)

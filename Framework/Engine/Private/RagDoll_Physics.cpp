@@ -724,8 +724,6 @@ void CRagdoll_Physics::update_animations()
 			{
 				m_bJoint_Set = true;
 				create_joint();
-
-				m_pClavicle_L_Joint->release();
 			}
 		}
 	}

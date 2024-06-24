@@ -183,7 +183,7 @@ public:	//For Camera
 	void										Calc_Camera_Transform(_float fTimeDelta);
 	void										SetMoveDir();
 	void										ResetCamera();
-
+	void										Apply_Recoil(_float fTimeDelta);
 private:
 	class CCamera_Free*							m_pCamera = { nullptr };
 	_float4										m_vCameraPosition;
@@ -240,6 +240,14 @@ private:
 	_float3										m_vPreHeadDir = { 0.f, 0.f, 1.f };
 
 	class CModel*								m_pBodyModel = { nullptr };
+
+	_bool										m_bRecoil = { false };
+	_float										m_fRecoil_Rotate_Amount_X = { 0.f };
+	_float										m_fRecoil_Rotate_Amount_Y = { 0.f };
+	_float										m_fRecoil_Rotate_Amount_X_Current = { 0.f };
+	_float										m_fRecoil_Rotate_Amount_Y_Current = { 0.f };
+	_float										m_fRecoil_Lerp_Time = { 0.f };
+	_float										m_fRecoil_Lerp_Time_Omega = { 0.f };
 private:
 	HRESULT Add_Components();
 

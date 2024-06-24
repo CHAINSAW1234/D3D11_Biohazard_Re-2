@@ -186,6 +186,8 @@ public:
 	//Random Number
 	uniform_real_distribution<_float>		GetRandomDevice_Real(_float Start, _float End);
 	uniform_int_distribution<_int>			GetRandomDevice_Int(_int Start, _int End);
+	_int									GetRandom_Int(_int Start, _int End);
+	_float									GetRandom_Real(_float Start, _float End);
 #pragma endregion
 
 #pragma region Render_Target_Debugger
