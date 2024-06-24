@@ -25,39 +25,26 @@ HRESULT CPart_InteractProps::Initialize(void* pArg)
 	PART_INTERACTPROPS_DESC* pPartobj_desc = (PART_INTERACTPROPS_DESC*)pArg;
 
 	m_strModelComponentName = pPartobj_desc->strModelComponentName;
-
+	m_pState = pPartobj_desc->pState;
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+	m_vecRotationBone.resize(ANIM_BONE_COUNT);
 
 	return S_OK;
 }
 
 void CPart_InteractProps::Tick(_float fTimeDelta)
 {
-	m_fTimeTest += fTimeDelta;
-	if (m_pPlayer == nullptr)
-		m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-
+	__super::Tick(fTimeDelta);
 }
 
 void CPart_InteractProps::Late_Tick(_float fTimeDelta)
 {
 
-	if (true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f))
-	{
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-
-		if (m_bShadow)
-		{
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
-		}
-	}
 }
 
 HRESULT CPart_InteractProps::Render()
@@ -65,19 +52,27 @@ HRESULT CPart_InteractProps::Render()
 	return S_OK;
 }
 
+void CPart_InteractProps::Check_Col_Sphere_Player()
+{
+	if (m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE] == nullptr)
+		return;
+	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
+	if (pPlayerCol->Intersect(m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]))
+		m_bCol = true;
+}
 
 HRESULT CPart_InteractProps::Add_Components()
 {
 
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
-		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
-		return E_FAIL;
+	//if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
+	//	TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
+	//	return E_FAIL;
 
 
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(g_Level, m_strModelComponentName,
-		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-		return E_FAIL;
+	///* For.Com_Model */
+	//if (FAILED(__super::Add_Component(g_Level, m_strModelComponentName,
+	//	TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -92,35 +87,12 @@ HRESULT CPart_InteractProps::Initialize_PartObjects()
 	return S_OK;
 }
 
-HRESULT CPart_InteractProps::Bind_ShaderResources_Anim()
-{
-
-	_bool isMotionBlur = m_pGameInstance->Get_ShaderState(MOTION_BLUR);
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_isMotionBlur", &isMotionBlur, sizeof(_bool))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevWorldMatrix", &m_PrevWorldMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevViewMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-
-	return S_OK;
-}
-
-HRESULT CPart_InteractProps::Bind_ShaderResources_NonAnim()
+HRESULT CPart_InteractProps::Bind_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
@@ -263,4 +235,13 @@ void CPart_InteractProps::Free()
 
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
+	for (size_t i = 0; i < Part_INTERACTPROPS_COL_END; i++)
+	{
+		if (m_pColliderCom[i] == nullptr)
+			continue;
+
+
+		Safe_Release(m_pColliderCom[i]);
+		m_pColliderCom[i] = nullptr;
+	}
 }
