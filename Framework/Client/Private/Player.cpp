@@ -18,7 +18,7 @@
 
 #define MODEL_SCALE 0.01f
 
-const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT"), TEXT("COMMON") };
+const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_HG"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT"), TEXT("COMMON") };
 const wstring CPlayer::strAnimSetHoldName[ANIMSET_HOLD_END] = { TEXT("HOLD_HG"), TEXT("HOLG_STG"), TEXT("HOLD_MLE"), TEXT("HOLD_SUP") };
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -586,6 +586,9 @@ void CPlayer::Update_Equip()
 
 	if (isChange) {
 		if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
+			if(nullptr != m_pWeapon)
+				m_pWeapon->Set_RenderLocation(CWeapon::MOVE);
+
 			Get_Body_Model()->Set_Loop(3, false);
 
 			Change_Body_Animation_Hold(3, MOVETOHOLSTER);
@@ -621,9 +624,12 @@ void CPlayer::Update_Equip()
 
 void CPlayer::Update_LightCondition()
 {
+	//Get_Body_Model()->Set_Loop(4, false);
+
 	if (Get_Body_Model()->Get_CurrentAnimIndex(4) == LIGHT_ON_OFF) {
 		if (Get_Body_Model()->isFinished(4)) {
 			Set_Spotlight(!m_isSpotlight);
+			//Get_Body_Model()->Set_TrackPosition(4, 0.f, true);
 			Get_Body_Model()->Set_BlendWeight(4, 0, 0.2f);
 			Get_Body_Model()->Set_Loop(4, true);
 			Change_Body_Animation_Move(4, ANIM_IDLE);
@@ -635,6 +641,7 @@ void CPlayer::Update_LightCondition()
 	if (m_pGameInstance->Get_KeyState('E') == DOWN) {
 		if (Get_Body_Model()->Is_Loop_PlayingInfo(3) &&
 			Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
+			//Get_Body_Model()->Set_TrackPosition(4, 0.f, true);
 			Change_Body_Animation_Move(4, LIGHT_ON_OFF);
 			Get_Body_Model()->Set_Loop(4, false);
 			Get_Body_Model()->Set_BlendWeight(4, 10, 0.2f);
@@ -659,9 +666,11 @@ void CPlayer::Update_AnimSet()
 	else {
 		if (m_iHp >= 4) {
 			switch (m_eEquip) {
-			case HG:
 			case NONE:
 				m_eAnimSet_Move = FINE;
+				break;
+			case HG:
+				m_eAnimSet_Move = MOVE_HG;
 				break;
 			case STG:
 				m_eAnimSet_Move = MOVE_STG;
@@ -692,13 +701,14 @@ void CPlayer::Update_AnimSet()
 #pragma endregion
 
 	if (m_eState == MOVE) {
+		//Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
 		//_float fTrackPosition = Get_Body_Model()->Get_TrackPosition(0);
 		Change_Body_Animation_Move(0, Get_Body_Model()->Get_CurrentAnimIndex(0));
-		//Get_Body_Model()->Set_TrackPosition(0, fTrackPosition, true);
+		//Get_Body_Model()->Set_TrackPosition(0, fTrackPosition, false);
 
 		//fTrackPosition = Get_Body_Model()->Get_TrackPosition(1);
 		Change_Body_Animation_Move(1, Get_Body_Model()->Get_CurrentAnimIndex(1));
-		//Get_Body_Model()->Set_TrackPosition(1, fTrackPosition, true);
+		//Get_Body_Model()->Set_TrackPosition(1, fTrackPosition, false);
 	}
 	else {
 		Change_Body_Animation_Hold(0, Get_Body_Model()->Get_CurrentAnimIndex(0));
@@ -1703,22 +1713,42 @@ HRESULT CPlayer::Add_PartObjects()
 	WeaponDesc.pParentsTransform = m_pTransformCom;
 
 	WeaponDesc.eEquip = HG;
-	WeaponDesc.pSocket[CWeapon::MOVE] = WeaponDesc.pSocket[CWeapon::HOLD] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
+	WeaponDesc.pSocket[CWeapon::MOVE] = WeaponDesc.pSocket[CWeapon::MOVE_LIGHT] = WeaponDesc.pSocket[CWeapon::HOLD] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
 	WeaponDesc.pSocket[CWeapon::HOLSTER] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_holster_main")) };
+	
+	_matrix			WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
+	WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-90.f));
+	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] = WeaponDesc.fTransformationMatrices[CWeapon::MOVE_LIGHT] 
+		= WeaponDesc.fTransformationMatrices[CWeapon::HOLD] = WeaponTransformMatrix;
+
+	WeaponTransformMatrix = { XMMatrixIdentity() };
+	WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-100.f));
+	WeaponTransformMatrix *= XMMatrixTranslation(0.f, 1.f, 6.f);
+	WeaponDesc.fTransformationMatrices[CWeapon::HOLSTER] = WeaponTransformMatrix;
 	pWeaponObject = dynamic_cast<CWeapon*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Weapon"), &WeaponDesc));
 	if (nullptr == pWeaponObject)
 		return E_FAIL;
 	m_Weapons[CPlayer::HG] = pWeaponObject;
 
 	WeaponDesc.eEquip = STG;
-	WeaponDesc.pSocket[CWeapon::MOVE] = WeaponDesc.pSocket[CWeapon::HOLD] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
-	WeaponDesc.pSocket[CWeapon::HOLSTER] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("setProp_E_01")) };
+	WeaponDesc.pSocket[CWeapon::MOVE] = WeaponDesc.pSocket[CWeapon::MOVE_LIGHT] = WeaponDesc.pSocket[CWeapon::HOLD] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
+	WeaponDesc.pSocket[CWeapon::HOLSTER] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("setProp_E_00")) };
 
-	_matrix			WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
+	WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
 	WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-90.f));
 	WeaponTransformMatrix *= XMMatrixRotationZ(XMConvertToRadians(-25.f));
-	WeaponTransformMatrix = WeaponTransformMatrix * XMMatrixTranslation(0.f, 0.f, -5.f);
-	WeaponDesc.fTransformationMatrices[0] = WeaponDesc.fTransformationMatrices[1] = WeaponDesc.fTransformationMatrices[2] = WeaponTransformMatrix;
+	WeaponTransformMatrix *= XMMatrixTranslation(0.f, 0.f, -5.f);
+	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] =  WeaponDesc.fTransformationMatrices[CWeapon::HOLD] = WeaponTransformMatrix;
+	
+	WeaponTransformMatrix = { XMMatrixIdentity() };
+	WeaponTransformMatrix *= XMMatrixRotationZ(XMConvertToRadians(-90.f));
+	WeaponTransformMatrix *= XMMatrixTranslation(0.f, 0.f, 30.f);
+	WeaponDesc.fTransformationMatrices[CWeapon::MOVE_LIGHT] = WeaponTransformMatrix;
+
+	WeaponTransformMatrix = XMMatrixIdentity();
+	WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-90.f));
+	WeaponTransformMatrix *= XMMatrixRotationY(XMConvertToRadians(90.f));
+	WeaponDesc.fTransformationMatrices[CWeapon::HOLSTER] = WeaponTransformMatrix;
 
 	pWeaponObject = dynamic_cast<CWeapon*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Weapon"), &WeaponDesc));
 	if (nullptr == pWeaponObject)
