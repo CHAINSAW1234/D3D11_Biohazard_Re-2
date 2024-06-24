@@ -1025,6 +1025,10 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_InteractObj/Make_Prototype.dat"))))
 		return E_FAIL;
 #endif 
+#ifdef MAP_NONANIMOBJ
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_NonAnim/Make_Prototype.dat"))))
+		return E_FAIL;
+#endif 
 #pragma endregion
 
 	m_strLoadingText = TEXT("Loading Complete.");
