@@ -2,6 +2,7 @@
 
 #include "Customize_UI.h"
 #include "TextBox.h"
+#include "Player.h"
 
 CCustomize_UI::CCustomize_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice, pContext }
@@ -415,6 +416,29 @@ void CCustomize_UI::Set_Dead(_bool bDead)
 
 	for (auto& iter : m_vecChildUI)
 		iter->Set_Dead(bDead);
+}
+
+_float CCustomize_UI::Distance_Player(CGameObject* _obj)
+{
+	CTransform* pPlayerTrans = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
+	CTransform* pTargetTrans = static_cast<CTransform*>(_obj->Get_Component(g_strTransformTag));
+
+	_vector vDistanceVector = pTargetTrans->Get_State_Vector(CTransform::STATE_POSITION) - pPlayerTrans->Get_State_Vector(CTransform::STATE_POSITION);
+	_float fPlayer_Distance = XMVectorGetX(XMVector3Length(vDistanceVector));
+
+	return fPlayer_Distance;
+}
+
+void CCustomize_UI::Find_Player()
+{
+	/* Player Ã£±â */
+	CGameObject* pPlayerObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->back();
+
+	auto pPlayer = static_cast<CPlayer*>(pPlayerObj);
+
+	m_pPlayer = pPlayer;
+
+	Safe_AddRef(m_pPlayer);
 }
 
 void CCustomize_UI::Set_IsLoad(_bool IsLoad)
@@ -888,6 +912,9 @@ void CCustomize_UI::Free()
 	for (auto& pChildUI : m_vecChildUI)
 		Safe_Release(pChildUI);
 	m_vecChildUI.clear();
+
+	Safe_Release(m_pPlayer);
+
 }
 
 HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

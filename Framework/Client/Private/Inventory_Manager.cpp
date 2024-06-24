@@ -75,21 +75,21 @@ void CInventory_Manager::Late_Tick(_float fTimeDelta)
 void CInventory_Manager::Idle_Operation(_float fTimeDelta)
 {
 	_bool IsNoOneHover = true;
-
-	CInventory_Slot* pHoveredSlot = nullptr;
+	m_IsNoOneHover = true;
+	CInventory_Slot* pHoveredObj = nullptr;
 
 	for (_uint i = 0; i < m_iInvenCount; i++)
 	{
 		if (true == m_vecInvenSlot[i]->IsMouseHover())
 		{
-			IsNoOneHover = false;
-			pHoveredSlot = m_vecInvenSlot[i];
+			m_IsNoOneHover = false;
+			pHoveredObj = m_vecInvenSlot[i];
 		}
 	}
 
-	m_pSlotHighlighter->Set_Dead(IsNoOneHover);
+	m_pSlotHighlighter->Set_Dead(m_IsNoOneHover);
 
-	if (false == IsNoOneHover)
+	if (false == m_IsNoOneHover)
 	{
 		_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
 		HoveredPos.z = 0.7f;

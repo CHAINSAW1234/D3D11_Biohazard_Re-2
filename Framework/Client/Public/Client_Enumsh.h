@@ -59,6 +59,7 @@ namespace Client
 		ITEM_NUMBER_END 
 	};
 
+
 	//인벤토리 안에서의 아이템 타입
 	enum ITEM_TYPE {
 		EQUIPABLE, // 장착 장비

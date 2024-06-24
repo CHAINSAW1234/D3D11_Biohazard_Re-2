@@ -17,7 +17,7 @@ public :
 	enum class ITEM_BOX_TYPE { DEFAULT_BOX, SELECT_BOX, END_BOX };
 	enum class HPBAR_TYPE { MAIN_BAR, BACKGROUND_BAR, END_BAR };
 	enum class INVENTORY_TYPE { MAIN_INVEN, SUB_INVEN, END_INVEN };
-	enum class MAP_UI_TYPE { MAIN_MAP, MASK_MAP, FONT_MAP, WINDOW_MAP, DOOR_MAP, FONT_MASK_MAP, END_MAP };
+	enum class MAP_UI_TYPE { MAIN_MAP, MASK_MAP, FONT_MAP, BACKGROUND_MAP, WINDOW_MAP, DOOR_MAP, FONT_MASK_MAP, TARGET_MAP, ITEM_MAP, PLAYER_MAP, NAMELINE_MAP, SEARCH_TYPE_MAP, END_MAP };
 	
 	typedef struct color
 	{
@@ -81,6 +81,8 @@ public :
 
 		/* +추가 */
 		_int							iWhich_Child = { 0 };
+		CGameObject*					pSupervisor;
+		CGameObject*					pImmediateSuperior;
 
 		/* Client */
 		ITEM_BOX_TYPE					eBox_Type;
@@ -160,15 +162,16 @@ public:
 	_bool IsMyChild(CGameObject* Child);
 
 public :
-	_bool Select_UI();
-	virtual void Set_Dead(_bool bDead) override;
-
+	_bool				Select_UI();
+	virtual void		Set_Dead(_bool bDead) override;
+	_float				Distance_Player(CGameObject* _obj);
+	void				Find_Player();
 
 
 public : /* Client */
-	_bool			Get_Children()		{ return m_IsChild;  }
-	ITEM_BOX_TYPE	Get_ItemBox_Type()	{ return m_eBox_Type;  }
-	INVENTORY_TYPE	Get_Inven_Type()	{ return m_eInventory_Type;  }
+	_bool				Get_Children()		{ return m_IsChild;  }
+	ITEM_BOX_TYPE		Get_ItemBox_Type()	{ return m_eBox_Type;  }
+	INVENTORY_TYPE		Get_Inven_Type()	{ return m_eInventory_Type;  }
 
 
 public: /* Mask */
@@ -382,6 +385,7 @@ protected :
 	_bool						m_IsChild = { false };//나 자식이냐..?
 	vector<CGameObject*>		m_vecChildUI;
 
+
 protected :
 	wstring						m_wstrMaskPath = { TEXT("") }; // 텍스쳐 페스
 	wstring						m_wstrMaskComTag = { TEXT("") };
@@ -458,7 +462,13 @@ protected :
 #pragma endregion
 
 	_bool						m_isMap = { false };
+
+	CGameObject*				m_pSupervisor			= { nullptr };
+	CGameObject*				m_pImmediateSuperior	= { nullptr };
+
 protected : /* Client*/
+	class CPlayer*				m_pPlayer = { nullptr };
+	
 	_bool						m_isRender = { true };
 	_float4						m_vOriginTextColor = {};
 	_float4						m_vOriginColor = {};

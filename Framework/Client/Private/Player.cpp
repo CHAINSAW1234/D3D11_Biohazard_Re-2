@@ -77,7 +77,7 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 {
 	Priority_Tick_PartObjects(fTimeDelta);
 
-#pragma region 예은 스파이 나중에 FSM으로 옮길지도
+#pragma region ���� ������ ���߿� FSM���� �ű�����
 	if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		m_bInteract = true;
 	else
@@ -88,7 +88,7 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
-#pragma region 예은ColTest - 컬링 방식에 따라 달라질 겁니당
+#pragma region ����ColTest - �ø� ��Ŀ� ���� �޶��� �̴ϴ�
 	if (m_iCurCol != m_iPreCol)
 	{
 		m_iPreCol = m_iCurCol;
@@ -108,9 +108,9 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_fTimeTEST = 0.f;
 		m_iCurCol--;
 	}
-#pragma endregion 예은ColTest
+#pragma endregion ����ColTest
 
-#pragma region 이동과 카메라
+#pragma region �̵��� ī�޶�
 	if (m_pController)
 	{
 		auto CameraPos = m_pController->GetPosition_Float4();
@@ -303,7 +303,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma endregion
 
-#pragma region 현진 추가
+#pragma region ���� �߰�
 
 	CModel* pWeaponModel = { dynamic_cast<CModel*>(m_PartObjects[PART_WEAPON]->Get_Component(TEXT("Com_Model"))) };
 	_float4x4* pRightWeaponCombinedMatrix = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
@@ -332,13 +332,14 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	if (m_pController)
 		m_pController->Update_Collider();
 
-	Turn_Spine_UpDown(fTimeDelta);		// Hold 상태에서 척추를 상하로만 돌림
-	Turn_Spine_Light(fTimeDelta);		// Light 상태에서 상체전체를 카메라를 보도록 돌림
+	Turn_Spine_UpDown(fTimeDelta);		// Hold ���¿��� ô�߸� ���Ϸθ� ����
+	Turn_Spine_Light(fTimeDelta);		// Light ���¿��� ��ü��ü�� ī�޶� ������ ����
 
-#pragma region 예은 추가
+#pragma region ���� �߰�
 	Col_Section();
 #pragma endregion 
 
+	
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
 #endif
@@ -374,7 +375,7 @@ void CPlayer::Late_Tick_PartObjects(_float fTimeDelta)
 	for (auto& pPartObject : m_PartObjects)
 		pPartObject->Late_Tick(fTimeDelta);
 }
-#pragma region 예은 추가
+#pragma region ���� �߰�
 void CPlayer::Col_Section()
 {
 	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider"));
@@ -395,7 +396,22 @@ void CPlayer::Col_Section()
 
 #pragma endregion
 
-#pragma region 현진 추가
+#pragma region ���� �߰�
+_bool* CPlayer::Col_Event_UI(CCustomCollider* pCustom)
+{
+	_bool isResult;
+
+	if (m_pColliderCom->Intersect(static_cast<CCollider*>(pCustom->Get_Component(TEXT("Com_Collider")))))
+		isResult = true;
+	else
+		isResult = false;
+
+	return &isResult;
+}
+
+#pragma endregion
+
+#pragma region ���� �߰�
 CModel* CPlayer::Get_Body_Model()
 {
 	return static_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(g_strModelTag));

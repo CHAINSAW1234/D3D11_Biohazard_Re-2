@@ -5,6 +5,7 @@
 #include "Light.h"
 #include "Octree.h"
 #include"Player.h"
+
 CMap::CMap(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {

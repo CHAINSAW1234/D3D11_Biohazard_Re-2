@@ -40,12 +40,12 @@ public:
 
 protected:
 	_bool						m_bShadow = { true };
-	_float					m_fTimeTest = { 0.f };
-	CModel*				m_pModelCom = { nullptr };
-	CShader*				m_pShaderCom = { nullptr };
-	class CPlayer*		m_pPlayer = { nullptr };
+	_float						m_fTimeTest = { 0.f };
+	CModel*						m_pModelCom = { nullptr };
+	CShader*					m_pShaderCom = { nullptr };
+	class CPlayer*				m_pPlayer = { nullptr };
 	_int						m_iPropsType = { 0 };
-	wstring					m_strModelComponentName = { TEXT("") };
+	wstring						m_strModelComponentName = { TEXT("") };
 
 protected:
 	HRESULT						Add_Components();
