@@ -40,8 +40,10 @@ HRESULT CTextBox::Initialize(void* pArg)
 
 void CTextBox::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
-
+	if (true == m_isTransformBase)
+	{
+		__super::Tick(fTimeDelta);
+	}
 }
 
 void CTextBox::Late_Tick(_float fTimeDelta)
@@ -97,6 +99,13 @@ CTextBox::TextBox_DESC CTextBox::Get_TextBoxDesc() const
 	TextBoxDesc.vOutLineColor = m_vOutLineColor;
 
 	return TextBoxDesc;
+}
+
+void CTextBox::Move(_float3 fMove)
+{
+	m_fX += fMove.x;
+	m_fY += -fMove.y;
+	m_fZ += fMove.z;
 }
 
 

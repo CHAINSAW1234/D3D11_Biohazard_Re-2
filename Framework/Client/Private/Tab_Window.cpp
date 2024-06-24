@@ -87,6 +87,23 @@ void CTab_Window::Tick(_float fTimeDelta)
 		m_pMapButton->Set_Dead(true);
 		m_pInventory_Manager->Set_OnOff_Inven(true);
 		m_isAlphaControl = true;
+
+		if (-1 == m_pInventory_Manager->Get_Selected_ItemNum())
+		{
+			m_eWindowType = INVENTORY;
+			m_isMapRender = false;
+			m_pHintButton->Set_Dead(false);
+			m_pInvenButton->Set_Dead(false);
+			m_pMapButton->Set_Dead(false);
+			m_pInventory_Manager->Set_OnOff_Inven(false);
+			m_isAlphaControl = false;
+		}
+
+		else
+		{
+			m_pItem_Mesh_Viewer->Set_Operation(POP_UP, static_cast<ITEM_NUMBER>(m_pInventory_Manager->Get_Selected_ItemNum()));
+		}
+
 	}
 
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))

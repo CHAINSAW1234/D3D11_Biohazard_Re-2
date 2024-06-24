@@ -52,6 +52,7 @@
 #include "Map_UI.h"
 #include "Item_Mesh_Viewer.h"
 #include "ContextMenu.h"
+#include "Context_Highlighter.h"
 #include "Read_Item_UI.h"
 
 
@@ -482,11 +483,15 @@ HRESULT CLoader::Load_Prototype()
 		CItem_Mesh_Viewer::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Item_Mesh_Viewer */
+	/* For.Prototype_GameObject_ContextMenu */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ContextMenu"),
 		CContextMenu::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	
+
+	/* For.Prototype_GameObject_ContextMenu */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Context_Highlighter"),
+		CContext_Highlighter::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 	
 	/* For.Prototype_GameObject_Read_Item_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Read_Item_UI"),

@@ -17,6 +17,8 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	void FirstTick_Seting();
+
 public:
 	void TurnOn_ColorBlend()
 	{
@@ -64,6 +66,8 @@ public:
 
 public:
 	_bool m_bClickable = { true };
+
+	
 
 
 public:

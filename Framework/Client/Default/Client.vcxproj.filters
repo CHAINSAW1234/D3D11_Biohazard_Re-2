@@ -250,6 +250,9 @@
     <Filter Include="96. Imgui_Manager\Include">
       <UniqueIdentifier>{74fbde7e-d468-46bd-85c1-27942f25cd65}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu\ContextMenu_Highliter">
+      <UniqueIdentifier>{357cd323-5908-4c40-be59-632314974ee5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -522,6 +525,9 @@
     <ClInclude Include="..\Public\ImGui_Manager.h">
       <Filter>96. Imgui_Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Context_Highlighter.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu\ContextMenu_Highliter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -769,6 +775,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ImGui_Manager.cpp">
       <Filter>96. Imgui_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Context_Highlighter.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu\ContextMenu_Highliter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

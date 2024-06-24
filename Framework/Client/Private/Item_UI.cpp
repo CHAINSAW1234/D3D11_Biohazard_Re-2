@@ -27,13 +27,6 @@ HRESULT CItem_UI::Initialize(void* pArg)
 		m_isLoad = false;
 
 		m_bDead = true;
-
-		if (nullptr == m_vecChildUI[0] || nullptr == m_vecChildUI[1])
-			return E_FAIL;
-
-		m_mapPartUI.emplace(TEXT("EquipDisplay"), m_vecChildUI[0]);
-
-		m_mapPartUI.emplace(TEXT("CountDisplay"), m_vecChildUI[1]);
 	}
 
 	return S_OK;
@@ -43,6 +36,36 @@ void CItem_UI::Tick(_float fTimeDelta)
 {
 	if (true == m_bDead)
 		return;
+
+	switch (m_eInvenItemType)
+	{
+	case Client::EQUIPABLE:
+		break;
+	case Client::CONSUMABLE_EQUIPABLE:
+		break;
+	case Client::USEABLE:
+		break;
+	case Client::CONSUMABLE: {
+		if (m_iItemQuantity <= 0)
+		{
+			Reset_ItemUI();
+			return;
+		}
+
+		static_cast<CCustomize_UI*>(m_mapPartUI[TEXT("CountDisplay")])->Set_Text(0, to_wstring(m_iItemQuantity));
+		break;
+	}
+		
+	case Client::QUEST:
+		break;
+	case Client::INVEN_ITEM_TYPE_END:
+		break;
+	default:
+		break;
+	}
+
+
+	if(CONSUMABLE == m_eInvenItemType)
 
 	__super::Tick(fTimeDelta);
 }
@@ -63,21 +86,67 @@ HRESULT CItem_UI::Render()
 	return S_OK;
 }
 
+void CItem_UI::FirstTick_Seting()
+{
+	if (false == m_IsChild)
+	{
+		if (nullptr == m_vecChildUI[0] || nullptr == m_vecChildUI[1])
+			return;
+
+		m_mapPartUI.emplace(TEXT("EquipDisplay"), m_vecChildUI[0]);
+		m_mapPartUI.emplace(TEXT("CountDisplay"), m_vecChildUI[1]);
+
+
+		for (auto& iter : *(static_cast<CItem_UI*>(m_vecChildUI[0])->Get_vecTextBoxes()))
+		{
+			iter->Set_isTransformBase(false);
+			iter->Set_isUIRender(true);
+		}
+
+		for (auto& iter : *(static_cast<CItem_UI*>(m_vecChildUI[1])->Get_vecTextBoxes()))
+		{
+			iter->Set_isTransformBase(false);
+			iter->Set_isUIRender(true);
+		}
+	}
+}
+
 void CItem_UI::Set_Dead(_bool bDead)
 {
+	m_bDead = bDead;
+
 	switch (m_eInvenItemType)
 	{
-	case Client::EQUIPABLE:
+	case Client::EQUIPABLE: {
+		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(bDead);
+		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(bDead);
 		break;
-	case Client::CONSUMABLE_EQUIPABLE:
-		break;
-	case Client::USEABLE:
-		break;
-	case Client::CONSUMABLE:
-		break;
-	case Client::QUEST:
-		break;
+	}
 
+	case Client::CONSUMABLE_EQUIPABLE: {
+		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(bDead);
+		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(bDead);
+		break;
+	}
+				
+	case Client::USEABLE: {
+		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(true);
+		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(true);
+		break;
+	}
+		
+	case Client::CONSUMABLE: {
+		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(true);
+		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(bDead);
+		break;
+	}
+		
+	case Client::QUEST: {
+		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(true);
+		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(true);
+		break;
+	}
+		
 	default:
 		break;
 	}
@@ -90,19 +159,22 @@ void CItem_UI::Reset_ItemUI()
 	m_eItemNumber = ITEM_NUMBER_END;
 	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
 	m_eInvenItemType = INVEN_ITEM_TYPE_END;
+	m_iItemQuantity = 0;
 }
 
 void CItem_UI::Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos)
 {
-	m_bDead = false;
+	//m_bDead = false;
 	m_isWorking = true;
 	m_eItemNumber = eItmeNum;
 	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
 	m_eInvenItemType = eItmeType;
 
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vSetPos);
+	Set_Position(vSetPos);
 
-	switch (m_eInvenItemType)
+	//m_pTransformCom->Set_State(CTransform::STATE_POSITION, vSetPos);
+
+	/*switch (m_eInvenItemType)
 	{
 	case Client::EQUIPABLE: {
 		for (auto& iter : m_vecChildUI)
@@ -136,7 +208,7 @@ void CItem_UI::Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSe
 		
 	default:
 		break;
-	}
+	}*/
 
 }
 
@@ -169,5 +241,7 @@ CGameObject* CItem_UI::Clone(void* pArg)
 
 void CItem_UI::Free()
 {
+	m_mapPartUI.clear();
+
 	__super::Free();
 }

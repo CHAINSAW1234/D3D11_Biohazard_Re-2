@@ -41,7 +41,11 @@ HRESULT CInventory_Manager::Initialize()
 void CInventory_Manager::FirstTick_Seting()
 {
 	m_pSlotHighlighter->FirstTick_Seting();
+	
 	m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
+
+	for (auto& iter : m_vecItem_UI)
+		iter->FirstTick_Seting();
 }
 
 void CInventory_Manager::Tick(_float fTimeDelta)
@@ -97,10 +101,11 @@ void CInventory_Manager::Idle_Operation(_float fTimeDelta)
 			{
 				if (true == iter->IsMouseHover() && true == iter->Get_isWorking())
 				{
-					//제대로 없앨 예정
-					_float2 TempTrashCanValue = _float2(HoveredPos.x, HoveredPos.y);
+					//이징 스타트 도착 지점 제대로 정해주기
+					_float3 TempTrashCanValue = _float3(HoveredPos.x, HoveredPos.y, Z_POS_CONTEXT_MENU);
 					m_pContextMenu->Set_Operation(iter->Get_InvenItemType(), true, TempTrashCanValue, TempTrashCanValue);
 					m_eInven_Manager_State = CONTEXTUI_SELECT;
+					m_pSelected_ItemUI = iter;
 				}
 			}
 		}
@@ -109,6 +114,14 @@ void CInventory_Manager::Idle_Operation(_float fTimeDelta)
 
 void CInventory_Manager::ContextUISelect_Operation(_float fTimeDelta)
 {
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+	{
+		m_eInven_Manager_State = EVENT_IDLE;
+		m_pContextMenu->Set_Dead(true);
+		m_pSelected_ItemUI = nullptr;
+		return;
+	}
+
 	m_pContextMenu->Tick(fTimeDelta);
 
 	INVENTORY_EVENT eInvenEvent = m_pContextMenu->Get_InventoryEvent();
@@ -117,26 +130,61 @@ void CInventory_Manager::ContextUISelect_Operation(_float fTimeDelta)
 	{
 	case Client::EVENT_IDLE:
 		break;
-	case Client::EQUIP_ITEM:
+
+	case Client::EQUIP_ITEM: {
+		m_eInven_Manager_State = EQUIP_ITEM;
+		m_pContextMenu->Set_Dead(true);
 		break;
-	case Client::UNEQUIP_ITEM:
+	}
+		
+	case Client::UNEQUIP_ITEM: {
+		m_eInven_Manager_State = UNEQUIP_ITEM;
+		m_pContextMenu->Set_Dead(true);
 		break;
-	case Client::USE_ITEM:
+	}
+		
+	case Client::USE_ITEM: {
+		m_eInven_Manager_State = USE_ITEM;
+		m_pContextMenu->Set_Dead(true);
 		break;
-	case Client::EXAMINE_ITEM:
+	}
+		
+	case Client::EXAMINE_ITEM: {
+		m_eInven_Manager_State = EXAMINE_ITEM;
+		m_pContextMenu->Set_Dead(true);
 		break;
-	case Client::COMBINED_ITEM:
+	}
+		
+	case Client::COMBINED_ITEM: {
+		m_eInven_Manager_State = COMBINED_ITEM;
+		m_pContextMenu->Set_Dead(true);
 		break;
-	case Client::HOTKEY_ASSIGNED_ITEM:
+	}
+		
+	case Client::HOTKEY_ASSIGNED_ITEM: {
+		m_eInven_Manager_State = HOTKEY_ASSIGNED_ITEM;
+		m_pContextMenu->Set_Dead(true);
 		break;
-	case Client::REARRANGE_ITEM:
+	}
+		
+	case Client::REARRANGE_ITEM: {
+		m_eInven_Manager_State = REARRANGE_ITEM;
+		m_pContextMenu->Set_Dead(true);
 		break;
-	case Client::DISCARD_ITEM:
+	}
+		
+	case Client::DISCARD_ITEM: {
+		m_eInven_Manager_State = DISCARD_ITEM;
+		m_pContextMenu->Set_Dead(true);
 		break;
-	case Client::CONTEXTUI_SELECT:
+	}
+		
+	case Client::CONTEXTUI_SELECT: {
+		m_eInven_Manager_State = CONTEXTUI_SELECT;
+		m_pContextMenu->Set_Dead(true);
 		break;
-	case Client::INVEN_EVENT_END:
-		break;
+	}
+	
 	default:
 		break;
 	}
@@ -167,7 +215,28 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 		}
 	}
 
+	m_pContextMenu->Set_Dead(true);
 
+	m_eInven_Manager_State = EVENT_IDLE;
+}
+
+void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _uint iUsage)
+{
+	for (auto& iter : m_vecItem_UI)
+	{
+		if (eTargetItemNum == iter->Get_ItemNumber() && true == iter->Get_isWorking())
+		{
+			iter->Set_ItemVariation(-iUsage);
+
+			//todo 재귀하게 만들어보면 좋을듯 남은 수량 다 써버리게
+			//if (iter->Get_ItemQuantity() >= iUsage)
+			//	iter->Set_ItemVariation(-iUsage);
+			//else
+			//{
+			//	_uint iLeftUsage = iUsage - iter->Get_ItemQuantity();
+			//}
+		}
+	}
 }
 
 void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)
@@ -183,9 +252,9 @@ void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)
 				continue;
 
 			_vector vSlotPos = Slotiter->GetPositionVector();
-			XMVectorSetY(vSlotPos, Z_POS_ITEM_UI);
+			vSlotPos = XMVectorSetZ(vSlotPos, Z_POS_ITEM_UI);
+			Slotiter->Set_IsFilled(true);
 			Itemiter->Set_ItemUI(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), vSlotPos);
-
 			return;
 		}
 	}
@@ -280,19 +349,16 @@ HRESULT CInventory_Manager::Init_SlotHighlighter()
 
 HRESULT CInventory_Manager::Init_ItemUI()
 {
-	ifstream inputFileStream;
-	wstring selectedFilePath;
-
-#pragma region ItemUI
-	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_UI.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	vector<CCustomize_UI::CUSTOM_UI_DESC> vecItemUIDesc;
-	CCustomize_UI::ExtractData_FromDat(inputFileStream, &vecItemUIDesc, true);
-
 	for (_uint i = 0; i < 4; i++)
 	{
-		if (FAILED(Create_ItemUI(&vecItemUIDesc)))
-			return E_FAIL;
+		ifstream inputFileStream;
+		wstring selectedFilePath;
+		selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_UI.dat");
+		inputFileStream.open(selectedFilePath, ios::binary);
+		CItem_UI* pItemUI = { nullptr };
+		CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_ItemUI"), 
+			(CGameObject**)&pItemUI, m_pDevice, m_pContext);
+		m_vecItem_UI.push_back(pItemUI);
 	}
 
 	for (auto& iter : m_vecItem_UI)
@@ -303,18 +369,24 @@ HRESULT CInventory_Manager::Init_ItemUI()
 			iter->Set_Dead(true);
 		}
 	}
-#pragma endregion
 
 	return S_OK;
 }
 
 HRESULT CInventory_Manager::Init_ContextMenu()
 {
-	CGameObject* pGameOBJ = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_ContextMenu"));
-	if (nullptr == pGameOBJ)
-		return E_FAIL;
+	ifstream inputFileStream;
+	wstring selectedFilePath;
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Context_Menu.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	
+	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_ContextMenu"), 
+		(CGameObject**)&m_pContextMenu, m_pDevice, m_pContext);
 
-	m_pContextMenu = dynamic_cast<CContextMenu*>(pGameOBJ);
+	Safe_AddRef(m_pContextMenu);
+	m_pContextMenu->Set_Dead(true);
+
+
 
 	return S_OK;
 }

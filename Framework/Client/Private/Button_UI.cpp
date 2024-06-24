@@ -62,6 +62,11 @@ HRESULT CButton_UI::Render()
 	return S_OK;
 }
 
+void CButton_UI::FirstTick_Seting()
+{
+
+}
+
 _bool CButton_UI::IsMouseHover()
 {
 	if (true == m_bClickable)

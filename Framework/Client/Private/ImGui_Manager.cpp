@@ -85,10 +85,19 @@ void CImgui_Manager::Tick()
     ImGui::NewFrame();
 
 
-    if (UP == m_pGameInstance->Get_KeyState('Z'))
+    if (PRESSING == m_pGameInstance->Get_KeyState('Z'))
     {
         //m_bTabWindow_Debuger = !m_bTabWindow_Debuger;
-        m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(m_iItemNum));
+        //m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(m_iItemNum));
+
+        if (DOWN == m_pGameInstance->Get_KeyState('1'))
+            m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(0));
+        if (DOWN == m_pGameInstance->Get_KeyState('2'))
+            m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(14));
+        if (DOWN == m_pGameInstance->Get_KeyState('3'))
+            m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(23));
+        if (DOWN == m_pGameInstance->Get_KeyState('4'))
+            m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(25));
     }
 
     if (true == m_bTabWindow_Debuger)

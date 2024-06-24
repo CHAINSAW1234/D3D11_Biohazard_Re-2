@@ -45,6 +45,20 @@ public:
 		m_eInven_Manager_State = eInvenEvent;
 	}
 
+	_int Get_Selected_ItemNum(){ 
+		if (nullptr != m_pSelected_ItemUI) {
+			return m_pSelected_ItemUI->Get_ItemNumber();
+		}
+		else
+			return -1;
+	}
+
+
+
+
+	//인벤토리 밖에서 아이템을 사용하게 되었을때 쓰는 함수(ex 총알)
+	void UseItem(ITEM_NUMBER eTargetItemNum, _uint iUsage);
+
 	//아이탬 인벤토리에 넣기
 	void AddItem_ToInven(ITEM_NUMBER eAcquiredItem);
 
@@ -73,6 +87,7 @@ private:
 
 	/*for. Item_UI*/
 	vector<CItem_UI*>				m_vecItem_UI;
+	CItem_UI*						m_pSelected_ItemUI = { nullptr };
 
 	/*for. ContextMenu*/
 	CContextMenu*					m_pContextMenu = { nullptr };

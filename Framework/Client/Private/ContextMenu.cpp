@@ -1,15 +1,18 @@
 #include "stdafx.h"
 
 #include "ContextMenu.h"
-#include "Button_UI.h"
+#include "Context_Highlighter.h"
+
+
+constexpr _float CONTEXT_HIGHLIGHTER_POSZ = 0.51f;
 
 CContextMenu::CContextMenu(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CGameObject{ pDevice , pContext }
+	: CCustomize_UI{ pDevice , pContext }
 {
 }
 
 CContextMenu::CContextMenu(const CContextMenu& rhs)
-	: CGameObject{ rhs }
+	: CCustomize_UI{ rhs }
 {
 }
 
@@ -22,14 +25,17 @@ HRESULT CContextMenu::Initialize(void* pArg)
 {
 	if (nullptr != pArg)
 	{
+		if (FAILED(Init_Context_Highlighter()))
+			return E_FAIL;
+
 		if (FAILED(__super::Initialize(pArg)))
 			return E_FAIL;
+
 	}
 
-	if(FAILED(Create_MenuItem()))
-		return E_FAIL;
-
 	m_eContext_State = UI_IDLE;
+
+	Set_Value_Color(&m_vColor[0]);
 
 	return S_OK;
 }
@@ -38,8 +44,10 @@ void CContextMenu::Tick(_float fTimeDelta)
 {
 	if (true == m_bDead)
 	{
-		for (auto& iter : m_vecMenuItem)
+		for (auto& iter : m_vecChildUI)
 			iter->Set_Dead(true);
+
+		m_pContext_Highlighter->Set_Dead(true);
 
 		return;
 	}
@@ -73,15 +81,22 @@ void CContextMenu::Late_Tick(_float fTimeDelta)
 {
 	if (true == m_bDead)
 	{
-		for (auto& iter : m_vecMenuItem)
+		for (auto& iter : m_vecChildUI)
 			iter->Set_Dead(true);
 
 		return;
 	}
+
+	__super::Late_Tick(fTimeDelta);
+
+	m_vPrePos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
 }
 
 HRESULT CContextMenu::Render()
 {
+	if (FAILED(__super::Render()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -92,23 +107,53 @@ void CContextMenu::PopUp_Operation(_float fTimeDelta)
 
 void CContextMenu::Idle_Operation(_float fTimeDelta)
 {
-	
+	_bool IsNoOneHover = true;
+
+	CContextMenu* pHoveredMenu = nullptr;
+
+	m_eContextEvent = EVENT_IDLE;
+
+	for (_uint i = 0; i < m_iContextMenuCount; i++)
+	{
+		if (true == static_cast<CContextMenu*>(m_vecChildUI[i])->IsMouseHover())
+		{
+			IsNoOneHover = false;
+			pHoveredMenu = static_cast<CContextMenu*>(m_vecChildUI[i]);
+		}
+	}
+
+	m_pContext_Highlighter->Set_Dead(IsNoOneHover);
+
+	if (false == IsNoOneHover)
+	{
+		_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredMenu->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
+		HoveredPos.z = CONTEXT_HIGHLIGHTER_POSZ;
+		m_pContext_HighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
+
+		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
+		}
+	}
+
 }
 
 void CContextMenu::Hide_Operation(_float fTimeDelta)
 {
-	for (auto& iter : m_vecMenuItem)
+	for (auto& iter : m_vecChildUI)
 	{
 		iter->Set_Dead(true);
 	}
 }
 
-void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float2 fAppearPos, _float2 fArrivalPos)
+void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAppearPos, _float3 fArrivalPos)
 {
 	m_bDead = false;
 	m_fAppearPos = fAppearPos;
 	m_fArrivalPos = fArrivalPos;
-	m_eContext_State = POP_UP;
+	m_eContext_State = UI_IDLE;
+
+	Set_Position(XMLoadFloat3(&fAppearPos));
 
 	switch (eItemType)
 	{
@@ -119,24 +164,24 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float2 fAp
 
 		if (false == bActive)
 		{
-			m_vecMenuItem[0]->Set_TextureNum(0);
-			m_vecMenuItem[0]->Set_Text(0, TEXT("장착"));
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 0);
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("장착"));
 		}
 
 		else
 		{
-			m_vecMenuItem[0]->Set_TextureNum(1);
-			m_vecMenuItem[0]->Set_Text(0, TEXT("장착 해제"));
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 1);
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("장착 해제"));
 		}
 
-		m_vecMenuItem[1]->Set_TextureNum(3);
-		m_vecMenuItem[1]->Set_Text(0, TEXT("검사"));
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_ChildTextureNum(0, 3);
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_MyChild_Text(0, 0, TEXT("검사"));
 
-		m_vecMenuItem[2]->Set_TextureNum(2);
-		m_vecMenuItem[2]->Set_Text(0, TEXT("조합"));
+		static_cast<CContextMenu*>(m_vecChildUI[2])->Set_ChildTextureNum(0, 2);
+		static_cast<CContextMenu*>(m_vecChildUI[2])->Set_MyChild_Text(0, 0, TEXT("조합"));
 
-		m_vecMenuItem[3]->Set_TextureNum(5);
-		m_vecMenuItem[3]->Set_Text(0, TEXT("단축키"));
+		static_cast<CContextMenu*>(m_vecChildUI[3])->Set_ChildTextureNum(0, 5);
+		static_cast<CContextMenu*>(m_vecChildUI[3])->Set_MyChild_Text(0, 0, TEXT("단축키"));
 
 		break;
 	}
@@ -148,24 +193,24 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float2 fAp
 
 		if (false == bActive)
 		{
-			m_vecMenuItem[0]->Set_TextureNum(9);
-			m_vecMenuItem[0]->Set_Text(0, TEXT("장착"));
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 9);
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("장착"));
 		}
 
 		else
 		{
-			m_vecMenuItem[0]->Set_TextureNum(10);
-			m_vecMenuItem[0]->Set_Text(0, TEXT("장착 해제"));
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 10);
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("장착 해제"));
 		}
 
-		m_vecMenuItem[1]->Set_TextureNum(3);
-		m_vecMenuItem[1]->Set_Text(0, TEXT("검사"));
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_ChildTextureNum(0, 3);
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_MyChild_Text(0, 0, TEXT("검사"));
 
-		m_vecMenuItem[2]->Set_TextureNum(2);
-		m_vecMenuItem[2]->Set_Text(0, TEXT("조합"));
+		static_cast<CContextMenu*>(m_vecChildUI[2])->Set_ChildTextureNum(0, 2);
+		static_cast<CContextMenu*>(m_vecChildUI[2])->Set_MyChild_Text(0, 0, TEXT("조합"));
 
-		m_vecMenuItem[3]->Set_TextureNum(5);
-		m_vecMenuItem[3]->Set_Text(0, TEXT("단축키"));
+		static_cast<CContextMenu*>(m_vecChildUI[3])->Set_ChildTextureNum(0, 5);
+		static_cast<CContextMenu*>(m_vecChildUI[3])->Set_MyChild_Text(0, 0, TEXT("단축키"));
 
 		break;
 	}
@@ -175,30 +220,27 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float2 fAp
 
 		m_eContextType = eItemType;
 
-		m_vecMenuItem[0]->Set_TextureNum(4);
-		m_vecMenuItem[0]->Set_Text(0, TEXT("사용"));
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 4);
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("사용"));
 
 		if (false == bActive)
 		{
-			m_vecMenuItem[0]->Frame_Change_ValueColor(0);
+			//static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Frame_Change_ValueColor(0, 0);
 		}
 
 		else
 		{
-			m_vecMenuItem[0]->Frame_Change_ValueColor(1);
+			//static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Frame_Change_ValueColor(0, 1);
 		}
 
-		m_vecMenuItem[1]->Set_TextureNum(3);
-		m_vecMenuItem[1]->Set_Text(0, TEXT("검사"));
-		m_vecMenuItem[0]->Frame_Change_ValueColor(1);
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_ChildTextureNum(0, 3);
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_MyChild_Text(0, 0, TEXT("검사"));
 
-		m_vecMenuItem[2]->Set_TextureNum(2);
-		m_vecMenuItem[2]->Set_Text(0, TEXT("조합"));
-		m_vecMenuItem[0]->Frame_Change_ValueColor(1);
+		static_cast<CContextMenu*>(m_vecChildUI[2])->Set_ChildTextureNum(0, 2);
+		static_cast<CContextMenu*>(m_vecChildUI[2])->Set_MyChild_Text(0, 0, TEXT("조합"));
 
-		m_vecMenuItem[3]->Set_TextureNum(5);
-		m_vecMenuItem[3]->Set_Text(0, TEXT("폐기"));
-		m_vecMenuItem[0]->Frame_Change_ValueColor(1);
+		static_cast<CContextMenu*>(m_vecChildUI[3])->Set_ChildTextureNum(0, 8);
+		static_cast<CContextMenu*>(m_vecChildUI[3])->Set_MyChild_Text(0, 0, TEXT("폐기"));
 		break;
 	}
 		
@@ -207,21 +249,17 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float2 fAp
 
 		m_eContextType = eItemType;
 
-		m_vecMenuItem[0]->Set_TextureNum(4);
-		m_vecMenuItem[0]->Set_Text(0, TEXT("사용"));
-		m_vecMenuItem[0]->Frame_Change_ValueColor(1);
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 3);
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("검사"));
 
-		m_vecMenuItem[1]->Set_TextureNum(3);
-		m_vecMenuItem[1]->Set_Text(0, TEXT("검사"));
-		m_vecMenuItem[1]->Frame_Change_ValueColor(1);
 
-		m_vecMenuItem[2]->Set_TextureNum(2);
-		m_vecMenuItem[2]->Set_Text(0, TEXT("조합"));
-		m_vecMenuItem[2]->Frame_Change_ValueColor(1);
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_ChildTextureNum(0, 2);
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_MyChild_Text(0, 0, TEXT("조합"));
 
-		m_vecMenuItem[3]->Set_TextureNum(5);
-		m_vecMenuItem[3]->Set_Text(0, TEXT("폐기"));
-		m_vecMenuItem[3]->Frame_Change_ValueColor(1);
+
+		static_cast<CContextMenu*>(m_vecChildUI[2])->Set_ChildTextureNum(0, 8);
+		static_cast<CContextMenu*>(m_vecChildUI[2])->Set_MyChild_Text(0, 0, TEXT("폐기"));
+
 
 		break;
 	}
@@ -231,9 +269,8 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float2 fAp
 
 		m_eContextType = eItemType;
 
-		m_vecMenuItem[0]->Set_TextureNum(3);
-		m_vecMenuItem[0]->Set_Text(0, TEXT("검사"));
-		m_vecMenuItem[0]->Frame_Change_ValueColor(1);
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 3);
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("검사"));
 
 		break;
 	}
@@ -242,33 +279,113 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float2 fAp
 		break;
 	}
 
+
 	for (_uint i = 0; i < m_iContextMenuCount; i++)
 	{
-		m_vecMenuItem[i]->Set_Dead(false);
+		m_vecChildUI[i]->Set_Dead(false);
 	}
+
 
 }
 
-HRESULT CContextMenu::Create_MenuItem()
+void CContextMenu::Set_EventbyTexture(_uint iTextureNum)
+{
+	switch (iTextureNum)
+	{
+	case 0: {
+		m_eContextEvent = EQUIP_ITEM;
+		break;
+	}
+
+	case 1: {
+		m_eContextEvent = UNEQUIP_ITEM;
+		break;
+	}
+
+	case 2: {
+		m_eContextEvent = COMBINED_ITEM;
+		break;
+	}
+
+	case 3: {
+		m_eContextEvent = EXAMINE_ITEM;
+		break;
+	}
+
+	case 4: {
+		m_eContextEvent = USE_ITEM;
+		break;
+	}
+
+	case 5: {
+		m_eContextEvent = HOTKEY_ASSIGNED_ITEM;
+		break;
+	}
+
+	case 6: {
+		break;
+	}
+
+	case 7: {
+		break;
+	}
+
+	case 8: {
+		m_eContextEvent = DISCARD_ITEM;
+		break;
+	}
+
+	case 9: {
+		m_eContextEvent = UNEQUIP_ITEM;
+		break;
+	}
+
+	case 10: {
+		m_eContextEvent = UNEQUIP_ITEM;
+		break;
+	}
+
+	case 11: {
+		break;
+	}
+
+	case 12: {
+		break;
+	}
+
+	case 13: {
+		break;
+	}
+
+	case 14: {
+		break;
+	}
+
+	default:
+		break;
+	}
+}
+
+HRESULT CContextMenu::Init_Context_Highlighter()
 {
 	ifstream inputFileStream;
-	wstring selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/ContextMenu.dat");
+	wstring selectedFilePath;
 
-	for (_uint i = 0; i < 4; i++)
-	{
-		CButton_UI* pButton = { nullptr };
 
-		inputFileStream.open(selectedFilePath, ios::binary);
-		if (FAILED(CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Button_UI"),
-			(CGameObject**)&pButton, m_pDevice, m_pContext)))
-			return E_FAIL;
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Context_Highlighter.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Context_Highlighter"),
+		(CGameObject**)&m_pContext_Highlighter, m_pDevice, m_pContext);
 
-		m_vecMenuItem.push_back(pButton);
+	if (nullptr == m_pContext_Highlighter)
+		return E_FAIL;
 
-		pButton->Move_State(_float3(0.f, m_fItemInterval * i, 0.f), 0);
-		pButton->Set_IsLoad(false);
-		pButton->Set_Dead(true);
-	}
+	m_pContext_Highlighter->Set_Dead(true);
+	m_pContext_HighlighterTransform = dynamic_cast<CTransform*>(m_pContext_Highlighter->Get_Component(g_strTransformTag));
+
+
+	Safe_AddRef(m_pContext_Highlighter);
+	Safe_AddRef(m_pContext_HighlighterTransform);
 
 
 	return S_OK;
@@ -306,4 +423,7 @@ CGameObject* CContextMenu::Clone(void* pArg)
 void CContextMenu::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pContext_Highlighter);
+	Safe_Release(m_pContext_HighlighterTransform);
 }
