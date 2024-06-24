@@ -161,8 +161,8 @@ HRESULT CCabinet::Initialize_PartObjects()
 	//CModel* pItemModel = { dynamic_cast<CModel*>(m_PartObjects[PART_ITEM]->Get_Component(TEXT("Com_Body_Model"))) };
 
 	CBody_ItemProp* pItem = dynamic_cast<CBody_ItemProp*>(m_PartObjects[PART_ITEM]);
-	_float4x4* pLeftWeaponCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet01")) };
-	pItem->Set_Socket(pLeftWeaponCombinedMatrix);
+	_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet01")) };
+	pItem->Set_Socket(pCombinedMatrix);
 
 
 

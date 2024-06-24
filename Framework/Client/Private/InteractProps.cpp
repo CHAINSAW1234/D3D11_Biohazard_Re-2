@@ -145,6 +145,17 @@ void CInteractProps::Check_Col_Sphere_Player()
 
 }
 
+void CInteractProps::Check_Col_Obb_Player()
+{
+	if (m_pPlayer == nullptr)
+		return;
+	if (m_pColliderCom[INTERACTPROPS_COL_OBB] == nullptr)
+		return;
+	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
+	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_OBB]))
+		m_bCol = true;
+}
+
 _bool CInteractProps::Visible()
 {
 	if (m_pPlayer == nullptr)

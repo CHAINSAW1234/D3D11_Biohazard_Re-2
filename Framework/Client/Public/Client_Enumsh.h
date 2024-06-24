@@ -127,6 +127,7 @@ namespace Client
 		OBJ_STATUE,
 		OBJ_BIGSTATUE,
 		OBJ_HALL_STATUE,
+		OBJ_EVENTPROP,
 		OBJ_ITEM,
 		OBJ_END
 	};

@@ -54,13 +54,12 @@ HRESULT CDoor::Initialize(void* pArg)
 void CDoor::Tick(_float fTimeDelta)
 {
 	__super::Check_Player();
+	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+	if (m_eType == DOOR_DOUBLE)
+		m_pColDoubledoorCom->Tick(m_pTransformCom->Get_WorldMatrix());
 	if (!m_bVisible)
-	{
-		m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-		if (m_eType == DOOR_DOUBLE)
-			m_pColDoubledoorCom->Tick(m_pTransformCom->Get_WorldMatrix());
 		return;
-	}
+	
 
 	if (m_pPlayer == nullptr)
 		return;
@@ -68,9 +67,6 @@ void CDoor::Tick(_float fTimeDelta)
 	m_eType == CDoor::DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
 
 	__super::Tick(fTimeDelta);
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-	if (m_eType == DOOR_DOUBLE)
-		m_pColDoubledoorCom->Tick(m_pTransformCom->Get_WorldMatrix());
 }
 
 void CDoor::Late_Tick(_float fTimeDelta)
