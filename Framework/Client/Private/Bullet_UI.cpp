@@ -7,6 +7,8 @@
 #define MIN_BULLET_COLOR _float4(1.0, 0.0, 0.0, 0.f)
 
 #define TEN 10
+#define ZERO 0
+
 #define ALPHA_ZERO _float4(0, 0, 0, 0)
 
 #define BULLET_UI_LIFE 2.f
@@ -45,12 +47,15 @@ HRESULT CBullet_UI::Initialize(void* pArg)
             if (m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x > pTextTrans->Get_State_Float4(CTransform::STATE_POSITION).x)
             {
                 m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText = iter;
-                m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Text(TEXT("0"));
+                m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Text(TEXT("10"));
                 m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].vOriginTextColor = iter->Get_FontColor();
                 m_fOrigin_TextColor = iter->Get_FontColor();
 
                 m_fFull_CurrentBullet_Transform = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
                 m_fFull_CurrentBullet_Transform.x -= 7.f;
+
+                m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt = m_iCurrentBullet = 10;
+
             }
 
             else
@@ -69,7 +74,7 @@ HRESULT CBullet_UI::Initialize(void* pArg)
                 m_fFull_StoreBullet_Transform = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
                 m_fFull_StoreBullet_Transform.x += 7.f;
 
-
+                m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt = m_iStoreBullet = 0;
             }
         }
     }
@@ -98,13 +103,28 @@ void CBullet_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    if (nullptr == m_pCrosshair)
+   /* if (nullptr == m_pCrosshair)
+    {
         Find_Crosshair();
-    
+
+        if (nullptr == m_pCrosshair)
+            MSG_BOX(TEXT("Bullet_UI에서 참조할 Crosshair 가 없습니다."));
+    }
+    */
     if (true == m_IsChild && true == m_isRender)
     {
-        /*BulletUI를 통제하는 함수*/
-        Control_BulletU();
+        if(DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+            Control_BulletU();
+
+
+        //// /* 예시 코드//// */
+        if (DOWN == m_pGameInstance->Get_KeyState('R'))
+        {
+            m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Text(to_wstring(12));
+            m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt  = m_iCurrentBullet = 12;
+        }
+        ////////////
+
         Change_BulletUI();
     }
     
@@ -128,44 +148,46 @@ HRESULT CBullet_UI::Render()
 
 void CBullet_UI::Control_BulletU()
 {
-    /* Test Code */
-    if (DOWN == m_pGameInstance->Get_KeyState('O'))
+    /* 나중에 Weapon이랑 연결할 것 */
+    --m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt;
+
+    if (m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt <= ZERO)
     {
-        if (nullptr != m_pTextUI[0].pText)
-        {
-            m_iCurrentBullet++;
-            m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Text(to_wstring(m_iCurrentBullet));
-        }
+        m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt = 0;
+        /* 좀비가 죽으면 안 된다. */
     }
 
-    if (DOWN == m_pGameInstance->Get_KeyState('P'))
+
+    if (m_iCurrentBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt)
     {
-        if (nullptr != m_pTextUI[1].pText)
-        {
-            m_iStoreBullet++;
-            m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Text(to_wstring(m_iStoreBullet));
-        }
+        m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Text(to_wstring(m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt));
+        m_iCurrentBullet = m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt;
     }
 
+    if (m_iStoreBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt)
+    {
+        m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Text(to_wstring(m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt));
+        m_iStoreBullet = m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt;
+    }
 }
 
 void CBullet_UI::Change_BulletUI()
 {
     /* 10의 자리 숫자시 살짝 위치 옮겨줌*/
-    if (10 <= m_iCurrentBullet)
+    if (10 <= m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt)
     {
         CTransform* pTextTrans = static_cast<CTransform*>(m_pTextUI[0].pText->Get_Component(g_strTransformTag));
         pTextTrans->Set_State(CTransform::STATE_POSITION, m_fFull_CurrentBullet_Transform);
     }
 
-    if (10 <= m_iStoreBullet)
+    if (10 <= m_iStoreBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt)
     {
         CTransform* pTextTrans = static_cast<CTransform*>(m_pTextUI[1].pText->Get_Component(g_strTransformTag));
         pTextTrans->Set_State(CTransform::STATE_POSITION, m_fFull_StoreBullet_Transform);
     }
     
     /* 12자리 일 때 색깔 바뀌게 함*/
-    if (MAX_BULLET <= m_iCurrentBullet)
+    if (MAX_BULLET <= m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt)
     {
         if (nullptr != m_pTextUI[0].pText && false == m_pTextUI[0].isFull)
         {
@@ -175,7 +197,7 @@ void CBullet_UI::Change_BulletUI()
         }
     }
     /* 0 일 때 색깔 바뀌게 함*/
-    else if (0 >= m_iCurrentBullet)
+    else if (0 >= m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt)
     {
         if (nullptr != m_pTextUI[0].pText)
         {
@@ -192,7 +214,7 @@ void CBullet_UI::Change_BulletUI()
         m_pTextUI[0].isFull = false;
     }   
 
-    if (MAX_BULLET <= m_iStoreBullet)
+    if (MAX_BULLET <= m_iStoreBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt)
     {
         if (nullptr != m_pTextUI[1].pText && false == m_pTextUI[1].isFull)
         {
@@ -211,14 +233,15 @@ void CBullet_UI::Change_BulletUI()
 
 void CBullet_UI::Render_Bullet_UI(_float fTimeDelta)
 {
-    //if (nullptr == m_pCrosshair)
-    //    return;
+    if (nullptr == m_pCrosshair)
+        return;
 
     /* Texture*/
     if (true == m_pCrosshair->IsRender())
     {
         m_isKeepCross = true;
         m_isRender = true;
+        m_fBulletTimer = 0.f;
     }
 
    if (true == m_isKeepCross)
@@ -232,7 +255,7 @@ void CBullet_UI::Render_Bullet_UI(_float fTimeDelta)
             /* 크로스는 꺼졌는데 켜졌으면, 끄자*/
             if (false == m_pCrosshair->IsRender())
             {
-                /* 이미 출력을 끈 상태 */
+                /* 이미 출력을 끈 상태 */   
                 if (m_fBlending >= 1.f)
                 {
                     m_fBlending = 1.f;
@@ -288,6 +311,8 @@ void CBullet_UI::Find_Crosshair()
         if (nullptr != pCrosshair && true == pCrosshair->Get_IsChild())
         {
             m_pCrosshair = pCrosshair;
+
+            Safe_AddRef<CCrosshair_UI*>(m_pCrosshair);
             break;
         }
     }
@@ -325,4 +350,5 @@ void CBullet_UI::Free()
 {
     __super::Free();
 
+    Safe_Release<CCrosshair_UI*>(m_pCrosshair);
 }

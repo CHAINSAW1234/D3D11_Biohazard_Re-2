@@ -39,6 +39,8 @@ public:
 		m_bisItemExamin = isItemExamin;
 	}
 
+	_bool* Get_NoHover_InvenBox() { return &m_IsNoOneHover; }
+
 	//만약 아이템을 넣을수 없는 상황이라면 false를 반환함
 	_bool AddItem_ToInven(ITEM_NUMBER eAcquiredItem);
 	_bool IsCan_AddItem_ToInven();
@@ -64,6 +66,9 @@ private:
 
 	/*for. Item_UI*/
 	vector<CItem_UI*>				m_vecItem_UI;
+
+private :
+	_bool							m_IsNoOneHover = { true };
 
 public:
 	HRESULT Init_InvenSlot();

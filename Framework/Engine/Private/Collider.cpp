@@ -109,7 +109,7 @@ HRESULT CCollider::Render()
 	m_pBatch->End();
 
 	return S_OK;
-}
+}	
 #endif
 
 CCollider * CCollider::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, TYPE eType)

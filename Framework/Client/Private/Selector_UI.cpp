@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Selector_UI.h"
 #include "Player.h"
+#include "InteractProps.h"
 
 #define ALHPE_ZERO              _float4(0, 0, 0, 0)
 
@@ -32,12 +33,17 @@ HRESULT CSelector_UI::Initialize(void* pArg)
     {
         if (FAILED(__super::Initialize(pArg)))
             return E_FAIL;
+
+        CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
+
+        if (true == m_IsChild)
+            m_pSupervise = CustomUIDesc->pSupervisor;
     }
 
     /* 부모 안에 들어있지 않다면 화살표 */
     if (true == m_IsChild)
     {
-        list<CGameObject*>* pUILayer= m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+        list<CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
 
         for (auto& iter : *pUILayer)
         {
@@ -55,14 +61,28 @@ HRESULT CSelector_UI::Initialize(void* pArg)
                 {
                     m_isArrow = true;
                     m_pParent = pSelector;
+
+                    m_eSelectorType = SELECTOR_TYPE::OUTCHECK_SELECTOR;
+
                     break;
                 }
+                else
+                    m_eSelectorType = SELECTOR_TYPE::INCHECK_SELECTOR;
             }
         }
     }
+    else if (false == m_IsChild)
+    {
+        m_eSelectorType = SELECTOR_TYPE::BACKGROUND_SELECTOR;
 
-    m_pPlayer = Find_Player();
+        if (m_SelectorObj_Vec.empty())
+            Find_Selector_Obj();
+    }
 
+    /* Find Player / Object */
+    Find_Player();
+    Find_InteractObj();
+    
     /* Y축 얻어오기 */
     if (false == m_isArrow)
     {
@@ -70,17 +90,15 @@ HRESULT CSelector_UI::Initialize(void* pArg)
         m_vXTransform.y += X_TYPEY;
     }
 
-    /* 가라로 몬스터에 붙일 거임*/
-    auto pLayer_Monster = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Monster"));
-    
-    if(pLayer_Monster)
-        m_pEx = pLayer_Monster->back();
-
     /* Tool*/
     m_fColorTimer_Limit = 1.f;
     m_iEndingType = PLAY_BUTTON::PLAY_DEFAULT;
     m_vColor[0].fBlender_Value = m_fBlending = 0.f;
     m_isPlay = false;
+
+    m_vColor[0].isBlender = m_isBlending = true;
+    m_vColor[0].vColor = m_vCurrentColor = ALHPE_ZERO;
+    m_vColor[0].isColorChange = m_isColorChange = true;
 
     /* Client*/
     m_fOriginSize = m_pTransformCom->Get_Scaled();
@@ -97,46 +115,28 @@ void CSelector_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
+    /* ▶ 조건 충족하기 */
     if(nullptr == m_pPlayer)
-        m_pPlayer = Find_Player();
+        Find_Player();
 
-    m_vColor[0].isBlender = m_isBlending = true;
-    m_vColor[0].vColor = m_vCurrentColor = ALHPE_ZERO;
-    m_vColor[0].isColorChange = m_isColorChange = true;
-
-    /* 상호작용이 불가능할 때 : Check */
-    if(false == m_isInteractive)
+    if (SELECTOR_TYPE::BACKGROUND_SELECTOR == m_eSelectorType)
     {
-        Render_Selector_UI(m_pEx, fTimeDelta);
-       // m_pTransformCom->Set_Scaled(CHECK_SIZE, CHECK_SIZE, m_fOriginSize.z);
+        if (m_SelectorObj_Vec.empty())
+            Find_Selector_Obj();
 
-        /* Texture 변경 */
-        if (m_wstrDefaultTexturComTag != m_wstrNonInteractive_Tag && true == m_IsChild && false == m_isArrow)
-        {
-            m_wstrDefaultTexturComTag = m_wstrNonInteractive_Tag;
-            Change_Texture(m_wstrNonInteractive_Tag, TEXT("Com_DefaultTexture"));
-        }
-
-        if (true == m_isArrow)
-            m_isRender = false;
+        if (m_InteractPropsList.empty())
+            Find_InteractObj();
     }
 
-    /* 상호작용이 가능할 때 : X */
-    else if(true == m_isInteractive)
+    /* ▶ 사용 여부에 따른 조건 */
+    if (false == m_isUsing)
     {
-        Interactive_Selector_UI(m_pEx, fTimeDelta);
-       // m_pTransformCom->Set_Scaled(m_fOriginSize.x, m_fOriginSize.y, m_fOriginSize.z);
-
-        /* Texture 변경 */
-        if(m_wstrDefaultTexturComTag != m_wstrInteractive_Tag && true == m_IsChild && false == m_isArrow)
-        {
-            m_wstrDefaultTexturComTag = m_wstrInteractive_Tag;
-            Change_Texture(m_wstrInteractive_Tag, TEXT("Com_DefaultTexture"));
-        }
-        
-        if (true == m_isArrow)
-            m_isRender = true;
+        if (SELECTOR_TYPE::BACKGROUND_SELECTOR == m_eSelectorType)
+            Attach_InteractObj();
     }
+
+    else if (true == m_isUsing)
+        Operate_Selector(fTimeDelta);
 }
 
 void CSelector_UI::Late_Tick(_float fTimeDelta)
@@ -213,7 +213,6 @@ void CSelector_UI::Render_Selector_UI(CGameObject* _obj, _float fTimeDelta)
             m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
         }
     }
-   
 }
 
 void CSelector_UI::Interactive_Selector_UI(CGameObject* _obj, _float fTimeDelta)
@@ -243,27 +242,154 @@ void CSelector_UI::Interactive_Selector_UI(CGameObject* _obj, _float fTimeDelta)
     }
 }
 
-_float CSelector_UI::Distance_Player(CGameObject* _obj)
+void CSelector_UI::Operate_Selector(_float fTimeDelta)
 {
-    CTransform* pPlayerTrans = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
-    CTransform* pTargetTrans = static_cast<CTransform*>(_obj->Get_Component(g_strTransformTag));
+    if (nullptr == m_pInteractObj)
+        return;
 
-    _vector vDistanceVector = pTargetTrans->Get_State_Vector(CTransform::STATE_POSITION) - pPlayerTrans->Get_State_Vector(CTransform::STATE_POSITION);
-    _float fPlayer_Distance = XMVectorGetX(XMVector3Length(vDistanceVector));
+    /* 상호작용이 불가능할 때 : Check */
+    if (false == m_isInteractive)
+    {
+        Render_Selector_UI(m_pInteractObj, fTimeDelta);
 
-    return fPlayer_Distance;
+         /* Texture 변경 */
+        if (m_wstrDefaultTexturComTag != m_wstrNonInteractive_Tag && true == m_IsChild && false == m_isArrow)
+        {
+            m_wstrDefaultTexturComTag = m_wstrNonInteractive_Tag;
+            Change_Texture(m_wstrNonInteractive_Tag, TEXT("Com_DefaultTexture"));
+        }
+
+        if (true == m_isArrow)
+            m_isRender = false;
+    }
+
+    /* 상호작용이 가능할 때 : X */
+    else if (true == m_isInteractive)
+    {
+        Interactive_Selector_UI(m_pInteractObj, fTimeDelta);
+        // m_pTransformCom->Set_Scaled(m_fOriginSize.x, m_fOriginSize.y, m_fOriginSize.z);
+
+         /* Texture 변경 */
+        if (m_wstrDefaultTexturComTag != m_wstrInteractive_Tag && true == m_IsChild && false == m_isArrow)
+        {
+            m_wstrDefaultTexturComTag = m_wstrInteractive_Tag;
+            Change_Texture(m_wstrInteractive_Tag, TEXT("Com_DefaultTexture"));
+        }
+
+        if (true == m_isArrow)
+            m_isRender = true;
+    }
+
+    /* 상호작용을 하지 않는 범위까지 나갔는 지를 확인 */
+    if (false == m_pInteractObj->ComeClose_toPlayer(OUT_DISTANCE))
+    {
+        /* 다른 객체도 오픈 */
+        if (!m_SelectorObj_Vec.empty())
+        {
+            for (auto& iter_1 : m_SelectorObj_Vec)
+            {
+                if (nullptr != iter_1)
+                {
+                    iter_1->m_isUsing = false;
+                    iter_1->m_pInteractObj = nullptr;
+                }
+            }
+        }
+
+        m_isUsing = false;
+        m_pInteractObj = nullptr;
+
+        /* Player 에게도 Selector가 출력됨을 알림*/
+        _bool* pSelectorRendering = m_pInteractObj->Selector_Rendering();
+        *pSelectorRendering = m_isUsing;
+    }
 }
 
-CPlayer* CSelector_UI::Find_Player()
+void CSelector_UI::Attach_InteractObj()
 {
-    /* Player 찾기 */
-    CGameObject* pPlayerObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->back();
-    auto pPlayer = dynamic_cast<CPlayer*>(pPlayerObj);
+    /* Prop 먼저 생성 그 후에 Select */
+    /* 그래서 Selector가 Obj 관리 중인데 
+    그렇게 되면 obj를 for문을 돌아서 Player에게 가까이 왔는 지 오지 않았는 지를 인지해서 집어 넣어줘야 한다, */
 
-    if (nullptr == pPlayer)
-        return nullptr;
+    /* 반대로 Manager를 파게 되면 한 vec만 생성하고 Object도 따로 모아서 생성한다음에
+    만약 Object가 Player에 인접하면 Using을 켜서 넘겨준다.*/
 
-    return pPlayer;
+    for (auto& iter : m_InteractPropsList)
+    {
+        if(nullptr != iter)
+        {
+            _bool* isCome = iter->ComeClose_toPlayer(OUT_DISTANCE);
+
+            if (nullptr == isCome)
+                return;
+
+            if (true == *isCome)
+            {
+               if (false == *(iter->Selector_Rendering()) && false == m_isUsing)
+               {
+                   /* 다른 객체도 오픈 */
+                   if (m_SelectorObj_Vec.size() >= 2)
+                   {
+                       for (auto& iter_1 : m_SelectorObj_Vec)
+                       {
+                           if(nullptr != iter_1)
+                           {
+                               iter_1->m_isUsing = true;
+                               iter_1->m_pInteractObj = iter;
+                           }
+                       }
+                   }
+
+                   m_isUsing = true;
+                   m_pInteractObj = iter;
+
+                   /* Player 에게도 Selector가 출력됨을 알림*/
+                   _bool* pSelectorRendering = iter->Selector_Rendering();
+                   *pSelectorRendering = m_isUsing;
+               }
+            }
+        }
+    }
+}
+
+void CSelector_UI::Find_InteractObj()
+{
+    list<CGameObject*>* pInteractObj_List = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_InteractObj"));
+
+    if (nullptr != pInteractObj_List)
+    {
+        for (auto& iter : *pInteractObj_List)
+        {
+            CInteractProps* pInteractObj = static_cast<CInteractProps*>(iter);
+
+            m_InteractPropsList.push_back(pInteractObj);
+
+            //Safe_AddRef(iter);
+        }
+    }
+}
+
+void CSelector_UI::Find_Selector_Obj()
+{
+    list<CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+
+    if (nullptr == pUILayer)
+        return;
+
+    for (auto& iter : *pUILayer)
+    {
+        CSelector_UI* pSelectorObj = dynamic_cast<CSelector_UI*>(iter);
+
+        if(nullptr != pSelectorObj)
+        {
+            if (this == pSelectorObj->m_pSupervise)
+            {
+               m_SelectorObj_Vec.push_back(pSelectorObj);
+
+                //Safe_AddRef(m_SelectorObj_Vec.back());
+            }
+        }
+    }
 }
 
 CCustomize_UI* CSelector_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -298,4 +424,17 @@ void CSelector_UI::Free()
 {
     __super::Free();
 
+   /* for (auto& iter : m_SelectorObj_Vec)
+    {
+        Safe_Release(iter);
+    }
+    m_SelectorObj_Vec.clear();*/
+
+    for (auto& iter : m_InteractPropsList)
+    {
+        Safe_Release(iter);
+    }
+    m_InteractPropsList.clear();
+
+   // Safe_Release(m_pInteractObj);
 }

@@ -338,6 +338,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	Col_Section();
 #pragma endregion 
 
+	
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
 #endif
@@ -390,6 +391,21 @@ void CPlayer::Col_Section()
 
 		}
 	}
+}
+
+#pragma endregion
+
+#pragma region ³ª¿Ë Ãß°¡
+_bool* CPlayer::Col_Event_UI(CCustomCollider* pCustom)
+{
+	_bool isResult;
+
+	if (m_pColliderCom->Intersect(static_cast<CCollider*>(pCustom->Get_Component(TEXT("Com_Collider")))))
+		isResult = true;
+	else
+		isResult = false;
+
+	return &isResult;
 }
 
 #pragma endregion

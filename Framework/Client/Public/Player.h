@@ -82,6 +82,7 @@ private:
 private:
 	void										Col_Section();
 
+
 #pragma region 현진 추가
 public:
 	CModel*										Get_Body_Model();
@@ -116,6 +117,12 @@ private:
 	friend class CPlayer_State_Move_Jog;
 	friend class CPlayer_State_Hold_Idle;
 #pragma endregion
+
+#pragma region 나옹 추가
+public:
+	_bool*										Col_Event_UI(class CCustomCollider* pCustom);
+
+#pragma
 
 #pragma region 예은 추가 
 public:

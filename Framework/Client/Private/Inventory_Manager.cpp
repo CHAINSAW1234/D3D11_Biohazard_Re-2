@@ -34,21 +34,21 @@ void CInventory_Manager::FirstTick_Seting()
 
 void CInventory_Manager::Tick(_float fTimeDelta)
 {
-	_bool IsNoOneHover = true;
+	m_IsNoOneHover = true;
 	CInventory_Slot* pHoveredObj = nullptr;
 
 	for (_uint i = 0; i < m_iInvenCount; i++)
 	{
 		if (true == m_vecInvenSlot[i]->IsMouseHover())
 		{
-			IsNoOneHover = false;
+			m_IsNoOneHover = false;
 			pHoveredObj = m_vecInvenSlot[i];
 		}
 	}
 
-	m_pSlotHighlighter->Set_Dead(IsNoOneHover);
+	m_pSlotHighlighter->Set_Dead(m_IsNoOneHover);
 
-	if (false == IsNoOneHover)
+	if (false == m_IsNoOneHover)
 	{
 		_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredObj->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
 		HoveredPos.z = 0.7f;

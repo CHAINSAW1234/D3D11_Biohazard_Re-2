@@ -33,6 +33,7 @@ namespace Client
 		ITEM_NUMBER_END 
 	};
 
+
 	//인벤토리 안에서의 아이템 타입
 	enum INVEN_ITEM_TYPE {
 		CONSUMABLE_STACKABLE,//소모성인데 인벤토리 창에서 한칸으로 겹칠 수 없다.

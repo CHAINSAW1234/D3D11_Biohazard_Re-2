@@ -24,7 +24,7 @@ public:
 	virtual HRESULT Render() override;
 
 public :
-	_bool*	Get_MinMapRender()	{ return &m_isMapRender; }
+	_bool	Get_MinMapRender()	{ return m_isMapRender; }
 	_bool*	Get_MainRender()	{ return m_pInvenButton->Get_Dead_Ptr(); }
 	
 private:
@@ -33,6 +33,12 @@ private:
 	class CButton_UI* m_pHintButton = { nullptr };
 
 	CInventory_Manager* m_pInventory_Manager = { nullptr };
+
+private : /* NY */
+	void				Find_Cursor();
+	void				Select_UI();
+
+	class CCursor_UI*	m_pCursor[2] = {nullptr};
 
 private:
 	WINDOW_TYPE		m_eWindowType = { INVENTORY };
