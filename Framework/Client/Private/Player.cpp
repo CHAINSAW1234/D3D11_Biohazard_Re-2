@@ -18,7 +18,7 @@
 
 #define MODEL_SCALE 0.01f
 
-const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT"), TEXT("COMMON") };
+const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_HG"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT"), TEXT("COMMON") };
 const wstring CPlayer::strAnimSetHoldName[ANIMSET_HOLD_END] = { TEXT("HOLD_HG"), TEXT("HOLG_STG"), TEXT("HOLD_MLE"), TEXT("HOLD_SUP") };
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -579,9 +579,12 @@ void CPlayer::Update_Equip()
 
 void CPlayer::Update_LightCondition()
 {
+	//Get_Body_Model()->Set_Loop(4, false);
+
 	if (Get_Body_Model()->Get_CurrentAnimIndex(4) == LIGHT_ON_OFF) {
 		if (Get_Body_Model()->isFinished(4)) {
 			Set_Spotlight(!m_isSpotlight);
+			//Get_Body_Model()->Set_TrackPosition(4, 0.f, true);
 			Get_Body_Model()->Set_BlendWeight(4, 0, 0.2f);
 			Get_Body_Model()->Set_Loop(4, true);
 			Change_Body_Animation_Move(4, ANIM_IDLE);
@@ -593,6 +596,7 @@ void CPlayer::Update_LightCondition()
 	if (m_pGameInstance->Get_KeyState('E') == DOWN) {
 		if (Get_Body_Model()->Is_Loop_PlayingInfo(3) &&
 			Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
+			//Get_Body_Model()->Set_TrackPosition(4, 0.f, true);
 			Change_Body_Animation_Move(4, LIGHT_ON_OFF);
 			Get_Body_Model()->Set_Loop(4, false);
 			Get_Body_Model()->Set_BlendWeight(4, 10, 0.2f);
@@ -617,9 +621,11 @@ void CPlayer::Update_AnimSet()
 	else {
 		if (m_iHp >= 4) {
 			switch (m_eEquip) {
-			case HG:
 			case NONE:
 				m_eAnimSet_Move = FINE;
+				break;
+			case HG:
+				m_eAnimSet_Move = MOVE_HG;
 				break;
 			case STG:
 				m_eAnimSet_Move = MOVE_STG;
@@ -650,13 +656,14 @@ void CPlayer::Update_AnimSet()
 #pragma endregion
 
 	if (m_eState == MOVE) {
+		//Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
 		//_float fTrackPosition = Get_Body_Model()->Get_TrackPosition(0);
 		Change_Body_Animation_Move(0, Get_Body_Model()->Get_CurrentAnimIndex(0));
-		//Get_Body_Model()->Set_TrackPosition(0, fTrackPosition, true);
+		//Get_Body_Model()->Set_TrackPosition(0, fTrackPosition, false);
 
 		//fTrackPosition = Get_Body_Model()->Get_TrackPosition(1);
 		Change_Body_Animation_Move(1, Get_Body_Model()->Get_CurrentAnimIndex(1));
-		//Get_Body_Model()->Set_TrackPosition(1, fTrackPosition, true);
+		//Get_Body_Model()->Set_TrackPosition(1, fTrackPosition, false);
 	}
 	else {
 		Change_Body_Animation_Hold(0, Get_Body_Model()->Get_CurrentAnimIndex(0));

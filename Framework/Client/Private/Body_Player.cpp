@@ -69,7 +69,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Add_AnimPlayingInfo(true, 1, TEXT("Default"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(false, 2, TEXT("Shot"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(true, 3, TEXT("UpperBody"), 0.f);
-	m_pModelCom->Add_AnimPlayingInfo(true, 4, TEXT("Left_Arm"), 1.f);
+	m_pModelCom->Add_AnimPlayingInfo(true, 4, TEXT("Left_Arm"), 0.f);
 
 
 	//for (int i = 0; i < CPlayer::ANIMSET_MOVE_END; ++i) {
@@ -88,6 +88,8 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	//	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_R_LOOP,
 	//		m_pModelCom->Get_Duration_From_Anim(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_R_LOOP) + 1);
 	//}
+	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName(CPlayer::COMMON), 0, 1.f);
+
 
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_L180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_R180, 300.f);
@@ -743,6 +745,8 @@ HRESULT CBody_Player::Add_Components()
 HRESULT CBody_Player::Add_Animations()
 {
 	if(FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Fine"), CPlayer::Get_AnimSetMoveName(CPlayer::ANIMSET_MOVE::FINE))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Hg"), CPlayer::Get_AnimSetMoveName(CPlayer::ANIMSET_MOVE::MOVE_HG))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Stg"), CPlayer::Get_AnimSetMoveName(CPlayer::ANIMSET_MOVE::MOVE_STG))))
 		return E_FAIL;
