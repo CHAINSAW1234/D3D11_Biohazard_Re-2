@@ -1103,6 +1103,28 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 
 				return false;
 			}
+
+			if (filterData.word0 & COLLISION_CATEGORY::RAGDOLL)
+			{
+				COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData.word3;
+
+				*pBlockPoint = PxVec_To_Float4_Coord(hit_Obj.position);
+
+				PxRigidDynamic* dynamicActor = actor->is<PxRigidDynamic>();
+				if (dynamicActor)
+				{
+					auto vDelta = Float4_Normalize(*pBlockPoint - vOrigin);
+					vDelta.y = 0.f;
+
+					auto fPower = rand() % 100;
+					vDelta = vDelta * (fPower + 50.f);
+
+					PxVec3 pxForce = PxVec3(vDelta.x, vDelta.y, vDelta.z);
+					dynamicActor->addForce(pxForce, PxForceMode::eIMPULSE);
+				}
+
+				return true;
+			}
 		}
 
 		return false;

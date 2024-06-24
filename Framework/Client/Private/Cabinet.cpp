@@ -79,6 +79,17 @@ void CCabinet::Late_Tick(_float fTimeDelta)
 		return;
 	if (m_bRender == false)
 		return;
+	else
+	{
+		for (auto& it : m_PartObjects)
+		{
+			if(it != nullptr)
+				it->Set_Render(true);
+		}
+
+		m_bRender = false;
+	}
+
 	Check_Col_Sphere_Player(); 
 
 	__super::Late_Tick(fTimeDelta);
