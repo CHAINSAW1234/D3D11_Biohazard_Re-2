@@ -37,20 +37,35 @@ void CItem_UI::Tick(_float fTimeDelta)
 	if (true == m_bDead)
 		return;
 
-	if (false == m_bCountable)
+	switch (m_eInvenItemType)
 	{
-		for (auto& iter : m_vecChildUI)
-			iter->Set_Dead(true);
-	}
-	else
-	{
-		for (auto& iter : m_vecChildUI)
+	case Client::EQUIPABLE:
+		break;
+	case Client::CONSUMABLE_EQUIPABLE:
+		break;
+	case Client::USEABLE:
+		break;
+	case Client::CONSUMABLE: {
+		if (m_iItemQuantity <= 0)
 		{
-			iter->Set_Dead(false);
-			static_cast<CCustomize_UI*>(iter)->Set_Text(0, to_wstring(m_iItemCount));
+			Reset_ItemUI();
+			return;
 		}
+
+		static_cast<CCustomize_UI*>(m_mapPartUI[TEXT("CountDisplay")])->Set_Text(0, to_wstring(m_iItemQuantity));
+		break;
+	}
+		
+	case Client::QUEST:
+		break;
+	case Client::INVEN_ITEM_TYPE_END:
+		break;
+	default:
+		break;
 	}
 
+
+	if(CONSUMABLE == m_eInvenItemType)
 
 	__super::Tick(fTimeDelta);
 }
@@ -65,30 +80,136 @@ void CItem_UI::Late_Tick(_float fTimeDelta)
 
 HRESULT CItem_UI::Render()
 {
-	__super::Render();
+	if (FAILED(__super::Render()))
+		return E_FAIL;
 
 	return S_OK;
 }
 
-void CItem_UI::Reset_Item()
+void CItem_UI::FirstTick_Seting()
 {
-	m_bDead = true;
+	if (false == m_IsChild)
+	{
+		if (nullptr == m_vecChildUI[0] || nullptr == m_vecChildUI[1])
+			return;
 
-	m_isWorking = false;
+		m_mapPartUI.emplace(TEXT("EquipDisplay"), m_vecChildUI[0]);
+		m_mapPartUI.emplace(TEXT("CountDisplay"), m_vecChildUI[1]);
 
-	m_eItemNumber = ITEM_NUMBER_END;
 
-	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
+		for (auto& iter : *(static_cast<CItem_UI*>(m_vecChildUI[0])->Get_vecTextBoxes()))
+		{
+			iter->Set_isTransformBase(false);
+			iter->Set_isUIRender(true);
+		}
 
-	m_eInvenItemType = INVEN_ITEM_TYPE_END;
+		for (auto& iter : *(static_cast<CItem_UI*>(m_vecChildUI[1])->Get_vecTextBoxes()))
+		{
+			iter->Set_isTransformBase(false);
+			iter->Set_isUIRender(true);
+		}
+	}
 }
 
-void CItem_UI::Set_Item(ITEM_NUMBER eItmeNum)
+void CItem_UI::Set_Dead(_bool bDead)
 {
+	m_bDead = bDead;
+
+	switch (m_eInvenItemType)
+	{
+	case Client::EQUIPABLE: {
+		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(bDead);
+		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(bDead);
+		break;
+	}
+
+	case Client::CONSUMABLE_EQUIPABLE: {
+		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(bDead);
+		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(bDead);
+		break;
+	}
+				
+	case Client::USEABLE: {
+		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(true);
+		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(true);
+		break;
+	}
+		
+	case Client::CONSUMABLE: {
+		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(true);
+		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(bDead);
+		break;
+	}
+		
+	case Client::QUEST: {
+		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(true);
+		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(true);
+		break;
+	}
+		
+	default:
+		break;
+	}
+}
+
+void CItem_UI::Reset_ItemUI()
+{
+	m_bDead = true;
+	m_isWorking = false;
+	m_eItemNumber = ITEM_NUMBER_END;
+	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
+	m_eInvenItemType = INVEN_ITEM_TYPE_END;
+	m_iItemQuantity = 0;
+}
+
+void CItem_UI::Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos)
+{
+	//m_bDead = false;
+	m_isWorking = true;
 	m_eItemNumber = eItmeNum;
 	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
+	m_eInvenItemType = eItmeType;
 
-	//m_eInvenItemType = eItmeType;
+	Set_Position(vSetPos);
+
+	//m_pTransformCom->Set_State(CTransform::STATE_POSITION, vSetPos);
+
+	/*switch (m_eInvenItemType)
+	{
+	case Client::EQUIPABLE: {
+		for (auto& iter : m_vecChildUI)
+			iter->Set_Dead(true);
+		break;
+	}
+		
+	case Client::CONSUMABLE_EQUIPABLE: {
+		for (auto& iter : m_vecChildUI)
+			iter->Set_Dead(true);
+		break;
+	}
+		
+	case Client::USEABLE: {
+		for (auto& iter : m_vecChildUI)
+			iter->Set_Dead(true);
+		break;
+	}
+		
+	case Client::CONSUMABLE: {
+		for (auto& iter : m_vecChildUI)
+			iter->Set_Dead(true);
+		break;
+	}
+		
+	case Client::QUEST: {
+		for (auto& iter : m_vecChildUI)
+			iter->Set_Dead(true);
+		break;
+	}
+		
+	default:
+		break;
+	}*/
+
 }
 
 CItem_UI* CItem_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -120,5 +241,7 @@ CGameObject* CItem_UI::Clone(void* pArg)
 
 void CItem_UI::Free()
 {
+	m_mapPartUI.clear();
+
 	__super::Free();
 }

@@ -89,6 +89,17 @@ float4 Light(float2 vTexcoord, float4 color)
     return float4(d, d, d, alphaA);
 }
 
+float4 ModifyAlpha(float4 color, float3 lightColor, float2 texcoord)
+{
+    color *= Light(texcoord, color);
+
+    float Intensity = length(color.rgb);
+    
+    float smoothAlpha = smoothstep(0.0, 1.0, Intensity);
+    color.a *= smoothAlpha;
+
+    return color;
+}
 
 struct VS_IN
 {
@@ -221,7 +232,9 @@ PS_OUT PS_MAIN(PS_IN In)
     if (g_isLight)
     {
         float blackRatio = (Out.vColor.a) / 1.f;
-        Out.vColor *= Light(In.vTexcoord, Out.vColor);
+        
+        Out.vColor = ModifyAlpha(Out.vColor, blackRatio, In.vTexcoord);
+
     }
     
     if (g_isMask)

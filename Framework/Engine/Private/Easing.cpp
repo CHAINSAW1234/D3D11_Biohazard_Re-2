@@ -14,6 +14,11 @@ _float CEasing::Get_Ease(EASING_TYPE eEase, _float fStartValue, _float fEndValue
 	return Find_Ease(eEase, fStartValue, fEndValue, fRatio);
 }
 
+_float3 CEasing::Get_Ease(EASING_TYPE eEase, _float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return Find_Ease(eEase, fStartValue, fEndValue, fRatio);
+}
+
 _float CEasing::EaseInQuad(_float fStartValue, _float fEndValue, _float fRatio)
 {
 	fEndValue -= fStartValue;
@@ -319,6 +324,172 @@ _float CEasing::EaseInOutElastic(_float fStartValue, _float fEndValue, _float fR
 	return a * pow(2, -10 * (fRatio -= 1)) * sinf((fRatio * d - s) * (2 * XM_PI) / p) * 0.5f + fEndValue + fStartValue;
 }
 
+
+
+
+_float3 CEasing::EaseInQuad(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	fEndValue.x -= fStartValue.x;
+	fEndValue.y -= fStartValue.y;
+	fEndValue.z -= fStartValue.z;
+
+	return fEndValue * fRatio * fRatio + fStartValue;
+}
+
+_float3 CEasing::EaseOutQuad(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	fEndValue.x -= fStartValue.x;
+	fEndValue.y -= fStartValue.y;
+	fEndValue.z -= fStartValue.z;
+
+	return -fEndValue * fRatio * (fRatio - 2) + fStartValue;
+}
+
+_float3 CEasing::EaseInOutQuad(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInCubic(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseOutCubic(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInOutCubic(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInQuart(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseOutQuart(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInOutQuart(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInQuint(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseOutQuint(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInOutQuint(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInSine(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseOutSine(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInOutSine(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInExpo(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseOutExpo(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInOutExpo(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInCirc(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseOutCirc(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInOutCirc(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::Linear(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInBounce(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseOutBounce(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInOutBounce(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInBack(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseOutBack(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInOutBack(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInElastic(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseOutElastic(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
+_float3 CEasing::EaseInOutElastic(_float3 fStartValue, _float3 fEndValue, _float fRatio)
+{
+	return _float3();
+}
+
 _float CEasing::Find_Ease(EASING_TYPE eEase, _float fStart, _float fEnd, _float fValue)
 {
 	switch (eEase)
@@ -392,6 +563,81 @@ _float CEasing::Find_Ease(EASING_TYPE eEase, _float fStart, _float fEnd, _float 
 	}
 
 	return 1000.f;
+}
+
+_float3 CEasing::Find_Ease(EASING_TYPE eEase, _float3 fStart, _float3 fEnd, _float fValue)
+{
+	switch (eEase)
+	{
+	case Ease_InQuad:
+		return EaseInQuad(fStart, fEnd, fValue);
+	case Ease_OutQuad:
+		return EaseOutQuad(fStart, fEnd, fValue);
+	case Ease_InOutQuad:
+		return EaseInOutQuad(fStart, fEnd, fValue);
+	case Ease_InCubic:
+		return EaseInCubic(fStart, fEnd, fValue);
+	case Ease_OutCubic:
+		return EaseOutCubic(fStart, fEnd, fValue);
+	case Ease_InOutCubic:
+		return EaseInOutCubic(fStart, fEnd, fValue);
+	case Ease_InQuart:
+		return EaseInQuart(fStart, fEnd, fValue);
+	case Ease_OutQuart:
+		return EaseOutQuart(fStart, fEnd, fValue);
+	case Ease_InOutQuart:
+		return EaseInOutQuart(fStart, fEnd, fValue);
+	case Ease_InQuint:
+		return EaseInQuint(fStart, fEnd, fValue);
+	case Ease_OutQuint:
+		return EaseOutQuint(fStart, fEnd, fValue);
+	case Ease_InOutQuint:
+		return EaseInOutQuint(fStart, fEnd, fValue);
+	case Ease_InSine:
+		return EaseInSine(fStart, fEnd, fValue);
+	case Ease_OutSine:
+		return EaseOutSine(fStart, fEnd, fValue);
+	case Ease_InOutSine:
+		return EaseInOutSine(fStart, fEnd, fValue);
+	case Ease_InExpo:
+		return EaseInExpo(fStart, fEnd, fValue);
+	case Ease_OutExpo:
+		return EaseOutExpo(fStart, fEnd, fValue);
+	case Ease_InOutExpo:
+		return EaseInOutExpo(fStart, fEnd, fValue);
+	case Ease_InCirc:
+		return EaseInCirc(fStart, fEnd, fValue);
+	case Ease_OutCirc:
+		return EaseOutCirc(fStart, fEnd, fValue);
+	case Ease_InOutCirc:
+		return EaseInOutCirc(fStart, fEnd, fValue);
+	case Ease_Linear:
+		return Linear(fStart, fEnd, fValue);
+	case Ease_InBounce:
+		return EaseInBounce(fStart, fEnd, fValue);
+	case Ease_OutBounce:
+		return EaseOutBounce(fStart, fEnd, fValue);
+	case Ease_InOutBounce:
+		return EaseInOutBounce(fStart, fEnd, fValue);
+	case Ease_InBack:
+		return EaseInBack(fStart, fEnd, fValue);
+	case Ease_OutBack:
+		return EaseOutBack(fStart, fEnd, fValue);
+	case Ease_InOutBack:
+		return EaseInOutBack(fStart, fEnd, fValue);
+	case Ease_InElastic:
+		return EaseInElastic(fStart, fEnd, fValue);
+	case Ease_OutElastic:
+		return EaseOutElastic(fStart, fEnd, fValue);
+	case Ease_InOutElastic:
+		return EaseInOutElastic(fStart, fEnd, fValue);
+	case Ease_END:
+		break;
+	default:
+		break;
+	}
+
+	return _float3(1000.f, 1000.f, 1000.f);
 }
 
 CEasing* CEasing::Create()

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+
 #include "Tutorial_UI.h"
 
 #define ALHPE_ZERO _float4(0, 0, 0, 0)

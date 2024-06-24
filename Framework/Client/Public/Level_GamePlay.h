@@ -23,6 +23,8 @@ private:
 	HRESULT Ready_Layer_Camera(const wstring& strLayerTag);
 	HRESULT Ready_Layer_BackGround(const wstring& strLayerTag);
 	
+
+	HRESULT Ready_TabWindow();
 	HRESULT Ready_LandObject();
 	HRESULT Ready_Layer_Player(const wstring& strLayerTag/*, CLandObject::LANDOBJECT_DESC& LandObjectDesc*/);
 	HRESULT Ready_Layer_Monster(const wstring& strLayerTag);
@@ -34,7 +36,7 @@ private:
 	
 private:
 	void UI_Distinction(wstring& selectedFilePath);
-	void CreatFromDat(ifstream& inputFileStream, wstring strListName, CGameObject* pGameParentsObj, wstring fileName, _int iWhich_Child = 0);
+	void CreatFromDat(ifstream& inputFileStream, wstring strListName, CGameObject* pGameParentsObj, wstring fileName, _int iWhich_Child = 0, CGameObject* pSupervisor = nullptr );
 	
 	wstring StringToWstring(const std::string& strString)
 	{

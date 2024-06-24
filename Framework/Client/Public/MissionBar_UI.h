@@ -20,33 +20,47 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+private :
+	void							Mission_Text();
+	void							Find_EventCollider();
+	void							MissionCollider_Access();
+
 public:
-	void					Write_Mission_Text(wstring _write);
+	void							Write_Mission_Text(wstring _write);
+	
 
 private:
-	void					Operater_MissionBar(_float fTimeDelta);
-	void					Operater_MissionArrow(_float fTimeDelta);
-	void					Operater_MissionFont(_float fTimeDelta);
+	void							Operater_MissionBar(_float fTimeDelta);
+	void							Operater_MissionArrow(_float fTimeDelta);
+	void							Operater_MissionFont(_float fTimeDelta);
 
-	void					Mission_Start();
-	void					Mission_Light(_float fTimeDelta);
+	void							Mission_Start();
 
 
 private:
-	MISSION_UI_TYPE			m_eMissionUI_Type = { MISSION_UI_TYPE::END_MISSION };
-	CMissionBar_UI*			m_pMissionBar = { nullptr };
-
+	MISSION_UI_TYPE					m_eMissionUI_Type	= { MISSION_UI_TYPE::END_MISSION };
+	CMissionBar_UI*					m_pMissionBar		= { nullptr };
 
 private: /* Mission Bar */
-	_bool					m_isMission = {};
-	_bool					m_isMission_NonLighting = { false };
-	_float					m_fLifeTimer = {};
-
+	_bool							m_isMission = {};
+	_bool							m_isMission_NonLighting = { false };
+	_float							m_fLifeTimer = {};
+	_float							m_fLightPositionY = {};
 
 private: /* Font */
-	wstring					m_strMissionText = { TEXT("") };
-	_float					m_fMissionFont_Timer = {};
-	_float					m_fMissionArrow_Timer = {};
+	wstring							m_strMissionText = { TEXT("") };
+	_float							m_fMissionFont_Timer = {};
+	_float							m_fMissionArrow_Timer = {};
+	_bool							m_isFontStart = { false };
+
+private : 
+	/* Font 包府 */
+	queue<wstring>					m_pEventsQueue;
+
+	/* Collider 包府 */
+	queue<class CCustomCollider*>	m_pMission_ColliderQueue;
+	vector<CCustomCollider*>		m_pMissionCollVec;
+
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

@@ -86,6 +86,7 @@ private:
 private:
 	void										Col_Section();
 
+
 #pragma region 현진 추가
 public:
 	static wstring								Get_AnimSetMoveName(ANIMSET_MOVE eAnimSetMove) { return strAnimSetMoveName[eAnimSetMove]; }
@@ -143,6 +144,12 @@ private:
 	friend class CPlayer_State_Hold_Idle;
 #pragma endregion
 
+#pragma region 나옹 추가
+public:
+	_bool*										Col_Event_UI(class CCustomCollider* pCustom);
+
+#pragma
+
 #pragma region 예은 추가 
 public:
 	_int										Get_Player_ColIndex() { return m_iCurCol; }
@@ -160,7 +167,8 @@ private:
 
 #pragma region 창균 추가
 	_bool										m_bIsExamineItem = { false };
-#pragma endregion
+	class CTab_Window*							m_pTabWindow = { nullptr };
+#pragma
 
 	vector<CPartObject*>						m_PartObjects;
 	_ubyte										m_eState = {};

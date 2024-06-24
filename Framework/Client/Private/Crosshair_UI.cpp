@@ -46,6 +46,8 @@ HRESULT CCrosshair_UI::Initialize(void* pArg)
             {
                 CTransform* pPointTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
                 vPoint = pPointTrans->Get_State_Float4(CTransform::STATE_POSITION);
+
+                //Safe_AddRef(m_pCenterDot);
                 break;
             }
         }
@@ -261,7 +263,7 @@ void CCrosshair_UI::Aiming_Return(_float fTimeDelta)
     }
 
     /* 1. Transform */
-    m_pTransformCom->Move_toTargetUI(m_vCrosshair_OriginPos, 8.f, 0.0f);
+    m_pTransformCom->Move_toTargetUI(m_vCrosshair_OriginPos, 15.f, 0.0f);
 
     /* 2. Scaled */
     _float3 vCrosshair_Scale = m_pTransformCom->Get_Scaled();
@@ -363,5 +365,7 @@ CGameObject* CCrosshair_UI::Clone(void* pArg)
 
 void CCrosshair_UI::Free()
 {
+    //Safe_Release(m_pCenterDot);
+
     __super::Free();
 }

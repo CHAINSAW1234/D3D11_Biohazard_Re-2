@@ -24,28 +24,43 @@ public:
 	virtual HRESULT Render() override;
 
 public :
-	_bool*	Get_MinMapRender()	{ return &m_isMapRender; }
+	_bool	Get_MinMapRender()	{ return m_isMapRender; }
 	_bool*	Get_MainRender()	{ return m_pInvenButton->Get_Dead_Ptr(); }
+
+
+	//아이탬 인벤토리에 넣기
+	void AddItem_ToInven(ITEM_NUMBER eAcquiredItem);
+
+	//만약 아이템을 넣을수 없는 상황이라면 false를 반환함
+	_bool IsCan_AddItem_ToInven();
+
+
 	
 private:
-	class CButton_UI* m_pMapButton = { nullptr };
-	class CButton_UI* m_pInvenButton = { nullptr };
-	class CButton_UI* m_pHintButton = { nullptr };
+	class CButton_UI*	m_pMapButton = { nullptr };
+	class CButton_UI*	m_pInvenButton = { nullptr };
+	class CButton_UI*	m_pHintButton = { nullptr };
 
 	CInventory_Manager* m_pInventory_Manager = { nullptr };
 
+private : /* NY */
+	void				Find_Cursor();
+	void				Select_UI();
+
+	class CCursor_UI*	m_pCursor[2] = {nullptr};
+
 private:
-	WINDOW_TYPE		m_eWindowType = { INVENTORY };
-	_bool			m_isMapRender = { false };
+	WINDOW_TYPE			m_eWindowType = { INVENTORY };
+	_bool				m_isMapRender = { false };
 
-	_bool			m_isFristTick = { true };
+	_bool				m_isFristTick = { true };
 
-	_bool			m_isAlphaControl = { false };
+	_bool				m_isAlphaControl = { false };
 
 	/*for. Item_Mesh_Viewer*/
 	CItem_Mesh_Viewer* m_pItem_Mesh_Viewer = { nullptr };
 
-	_float			m_fCurTime = { 0.f };
+	_float				m_fCurTime = { 0.f };
 
 private:
 	HRESULT Add_Components();

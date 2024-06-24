@@ -2,6 +2,7 @@
 
 #include "Customize_UI.h"
 #include "TextBox.h"
+#include "Player.h"
 
 CCustomize_UI::CCustomize_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice, pContext }
@@ -159,12 +160,13 @@ void CCustomize_UI::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
+
 	for (auto& iter : m_vecTextBoxes)
 	{
 		iter->Late_Tick(fTimeDelta);
 	}
-
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CCustomize_UI::Render()
@@ -414,6 +416,29 @@ void CCustomize_UI::Set_Dead(_bool bDead)
 
 	for (auto& iter : m_vecChildUI)
 		iter->Set_Dead(bDead);
+}
+
+_float CCustomize_UI::Distance_Player(CGameObject* _obj)
+{
+	CTransform* pPlayerTrans = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
+	CTransform* pTargetTrans = static_cast<CTransform*>(_obj->Get_Component(g_strTransformTag));
+
+	_vector vDistanceVector = pTargetTrans->Get_State_Vector(CTransform::STATE_POSITION) - pPlayerTrans->Get_State_Vector(CTransform::STATE_POSITION);
+	_float fPlayer_Distance = XMVectorGetX(XMVector3Length(vDistanceVector));
+
+	return fPlayer_Distance;
+}
+
+void CCustomize_UI::Find_Player()
+{
+	/* Player Ã£±â */
+	CGameObject* pPlayerObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->back();
+
+	auto pPlayer = static_cast<CPlayer*>(pPlayerObj);
+
+	m_pPlayer = pPlayer;
+
+	Safe_AddRef(m_pPlayer);
 }
 
 void CCustomize_UI::Set_IsLoad(_bool IsLoad)
@@ -831,6 +856,36 @@ void CCustomize_UI::Frame_Reset()
 	}
 }
 
+void CCustomize_UI::Move(_float3 fMoveMent)
+{
+	_vector	vPosition = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+	vPosition += XMLoadFloat3(&fMoveMent);
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
+
+	for (auto& iter : m_vecTextBoxes)
+		iter->Move(fMoveMent);
+
+	for (auto& iter : m_vecChildUI)
+		static_cast<CCustomize_UI*>(iter)->Move(fMoveMent);
+}
+
+void CCustomize_UI::Set_Position(_vector vPos)
+{
+	_vector vprePos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
+
+	_float3 fMovement = {};
+	XMStoreFloat3(&fMovement, vPos - vprePos);
+	fMovement.z = 0.f;
+
+	for (auto& iter : m_vecTextBoxes)
+		iter->Move(fMovement);
+
+	for (auto& iter : m_vecChildUI)
+		static_cast<CCustomize_UI*>(iter)->Move(fMovement);
+}
+
 void CCustomize_UI::PushBack_Child(CGameObject* pGameOBJ)
 {
 	m_vecChildUI.push_back(pGameOBJ);
@@ -857,6 +912,9 @@ void CCustomize_UI::Free()
 	for (auto& pChildUI : m_vecChildUI)
 		Safe_Release(pChildUI);
 	m_vecChildUI.clear();
+
+	Safe_Release(m_pPlayer);
+
 }
 
 HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

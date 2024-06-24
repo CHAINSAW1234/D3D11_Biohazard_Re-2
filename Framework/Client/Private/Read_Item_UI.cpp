@@ -122,7 +122,7 @@ void CRead_Item_UI::Tick(_float fTimeDelta)
     __super::Tick(fTimeDelta);
 
     /* 예시 코드 */
-    if (m_pGameInstance->Get_KeyState('R') && READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
+    if (m_pGameInstance->Get_KeyState('I') && READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
     {
         m_isRender = true;
         Reset();
