@@ -172,43 +172,34 @@ void CItem_UI::Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSe
 
 	Set_Position(vSetPos);
 
-	//m_pTransformCom->Set_State(CTransform::STATE_POSITION, vSetPos);
-
-	/*switch (m_eInvenItemType)
+	switch (eItmeType)
 	{
 	case Client::EQUIPABLE: {
-		for (auto& iter : m_vecChildUI)
-			iter->Set_Dead(true);
+		m_iItemQuantity = 15;
 		break;
 	}
 		
 	case Client::CONSUMABLE_EQUIPABLE: {
-		for (auto& iter : m_vecChildUI)
-			iter->Set_Dead(true);
+		m_iItemQuantity = 1;
 		break;
 	}
 		
 	case Client::USEABLE: {
-		for (auto& iter : m_vecChildUI)
-			iter->Set_Dead(true);
 		break;
 	}
 		
 	case Client::CONSUMABLE: {
-		for (auto& iter : m_vecChildUI)
-			iter->Set_Dead(true);
+		m_iItemQuantity = 15;
 		break;
 	}
 		
 	case Client::QUEST: {
-		for (auto& iter : m_vecChildUI)
-			iter->Set_Dead(true);
 		break;
 	}
 		
 	default:
 		break;
-	}*/
+	}
 
 }
 

@@ -364,7 +364,7 @@ void CSelector_UI::Find_InteractObj()
 
             m_InteractPropsList.push_back(pInteractObj);
 
-            //Safe_AddRef(iter);
+            Safe_AddRef(iter);
         }
     }
 }
@@ -386,7 +386,7 @@ void CSelector_UI::Find_Selector_Obj()
             {
                m_SelectorObj_Vec.push_back(pSelectorObj);
 
-                //Safe_AddRef(m_SelectorObj_Vec.back());
+                Safe_AddRef(m_SelectorObj_Vec.back());
             }
         }
     }
@@ -424,11 +424,11 @@ void CSelector_UI::Free()
 {
     __super::Free();
 
-   /* for (auto& iter : m_SelectorObj_Vec)
+    for (auto& iter : m_SelectorObj_Vec)
     {
         Safe_Release(iter);
     }
-    m_SelectorObj_Vec.clear();*/
+    m_SelectorObj_Vec.clear();
 
     for (auto& iter : m_InteractPropsList)
     {

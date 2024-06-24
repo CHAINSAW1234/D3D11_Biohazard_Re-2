@@ -71,7 +71,6 @@ private:
 	HRESULT Creat_Hint();
 	HRESULT Creat_Item_Mesh_Viewer();
 
-
 public:
 	static CTab_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

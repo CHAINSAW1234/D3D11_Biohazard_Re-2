@@ -561,9 +561,6 @@
     <ClInclude Include="..\Public\FlashLight.h">
       <Filter>02.GameObjects\Player\FlashLight</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Item_DragShadow.h">
-      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\imguilib\GraphEditor.h">
       <Filter>96. Imgui_Manager\Include</Filter>
     </ClInclude>
@@ -611,6 +608,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Context_Highlighter.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu\ContextMenu_Highliter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Item_DragShadow.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -857,9 +857,6 @@
     <ClCompile Include="..\Private\FlashLight.cpp">
       <Filter>02.GameObjects\Player\FlashLight</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Item_DragShadow.cpp">
-      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\imguilib\GraphEditor.cpp">
       <Filter>96. Imgui_Manager\Include</Filter>
     </ClCompile>
@@ -901,6 +898,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Context_Highlighter.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu\ContextMenu_Highliter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item_DragShadow.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -76,14 +76,14 @@ void CInventory_Manager::Idle_Operation(_float fTimeDelta)
 {
 	_bool IsNoOneHover = true;
 	m_IsNoOneHover = true;
-	CInventory_Slot* pHoveredObj = nullptr;
+	CInventory_Slot* pHoveredSlot = nullptr;
 
 	for (_uint i = 0; i < m_iInvenCount; i++)
 	{
 		if (true == m_vecInvenSlot[i]->IsMouseHover())
 		{
 			m_IsNoOneHover = false;
-			pHoveredObj = m_vecInvenSlot[i];
+			pHoveredSlot = m_vecInvenSlot[i];
 		}
 	}
 

@@ -50,18 +50,18 @@ HRESULT CTab_Window::Initialize(void* pArg)
 
 void CTab_Window::Tick(_float fTimeDelta)
 {
-	if (nullptr == m_pCursor)
-	{
-		Find_Cursor();
-
-		if (nullptr == m_pCursor)
-			MSG_BOX(TEXT("Inventory를 위한 Cursor 생성 불가능"));
-	}
-
 	if (true == m_isFristTick)
 	{
 		m_pInventory_Manager->FirstTick_Seting();
 		m_isFristTick = false;
+
+		if (nullptr == m_pCursor[0] || nullptr == m_pCursor[1])
+		{
+			Find_Cursor();
+
+			if (nullptr == m_pCursor)
+				MSG_BOX(TEXT("Inventory를 위한 Cursor 생성 불가능"));
+		}
 	}
 
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
