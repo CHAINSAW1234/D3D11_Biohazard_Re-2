@@ -17,11 +17,11 @@ class CInteractProps abstract : public CGameObject
 {
 public:
 	const static _int iMaxNum = 50;
-	enum INTERACTPROPS_COL 
-	{ 
-		INTERACTPROPS_COL_AABB ,
-		INTERACTPROPS_COL_SPHERE ,
-		INTERACTPROPS_COL_OBB ,
+	enum INTERACTPROPS_COL
+	{
+		INTERACTPROPS_COL_AABB,
+		INTERACTPROPS_COL_SPHERE,
+		INTERACTPROPS_COL_OBB,
 		INTERACTPROPS_COL_END
 	};
 	typedef struct Door_Desc
@@ -41,7 +41,7 @@ public:
 
 		_bool		bItem = { false };
 		_int		iItemIndex = { 0 };
-
+		wstring Name = { TEXT("") };
 
 	}CABINET_DESC;
 
@@ -76,13 +76,16 @@ public:
 
 	}EVENT_PROP_DESC;
 
+
 	typedef struct ITEM_Prop_Desc
 	{
 		_int iItemIndex = { 0 };
+		wstring Name = { TEXT("") };
+
 	}ITEM_PROP_DESC;
 
 public:
-	typedef struct tagInteractProps_desc: public CGameObject::GAMEOBJECT_DESC
+	typedef struct tagInteractProps_desc : public CGameObject::GAMEOBJECT_DESC
 	{
 		_int BelongIndexs2[iMaxNum];
 		_int iPropsType;
@@ -93,7 +96,7 @@ public:
 		HALL_STATUE_DESC tagHallStatue = {};
 		STATUE_DESC tagStatue = {};
 		BIG_STATUE_DESC tagBigStatue = {};
-		ITEM_PROP_DESC tagPropDesc = {};
+		ITEM_PROP_DESC tagItemDesc = {};
 	}INTERACTPROPS_DESC;
 protected:
 	CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

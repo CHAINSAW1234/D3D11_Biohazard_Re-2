@@ -46,6 +46,7 @@ HRESULT CInteractProps::Initialize(void* pArg)
 	m_tagPropDesc.tagShutter = pObj_desc->tagShutter;
 	m_tagPropDesc.tagStatue = pObj_desc->tagStatue;
 	m_tagPropDesc.tagWindow = pObj_desc->tagWindow;
+	m_tagPropDesc.tagItemDesc = pObj_desc->tagItemDesc;
 
 
 	for (auto iter : m_tagPropDesc.BelongIndexs)

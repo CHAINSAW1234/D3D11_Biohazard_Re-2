@@ -1076,18 +1076,36 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 					tagInteractprops.tagCabinet.iLockNum[i] = iNum;
 
 				}
-
 				if (!ReadFile(hFile, &tagInteractprops.tagCabinet.bItem, sizeof(_bool), &dwByte, NULL))
 				{
 					CloseHandle(hFile);
-					return false;
+					return E_FAIL;
 				}
 
 				if (!ReadFile(hFile, &tagInteractprops.tagCabinet.iItemIndex, sizeof(_int), &dwByte, NULL))
 				{
 					CloseHandle(hFile);
-					return false;
+					return E_FAIL;
 				}
+
+
+				if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+				{
+					CloseHandle(hFile);
+					return E_FAIL;
+				}
+				wchar_t* szName = new wchar_t[iLength / sizeof(wchar_t) + 1];
+				if (!ReadFile(hFile, szName, iLength, &dwByte, nullptr))
+				{
+					CloseHandle(hFile);
+					return E_FAIL;
+				}
+				szName[iLength / sizeof(wchar_t)] = L'\0';
+				tagInteractprops.tagCabinet.Name = szName;
+				delete[] szName;
+
+
+
 			}
 			break;
 
@@ -1110,19 +1128,42 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 			case OBJ_HALL_STATUE:
 
 				break;
+			case OBJ_ITEM:
+			{
+				if (!ReadFile(hFile, &tagInteractprops.tagItemDesc.iItemIndex, sizeof(_int), &dwByte, NULL))
+				{
+					CloseHandle(hFile);
+					return E_FAIL;
+				}
+				if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
+				{
+					CloseHandle(hFile);
+					return E_FAIL;
+				}
+				wchar_t* szName = new wchar_t[iLength / sizeof(wchar_t) + 1];
+				if (!ReadFile(hFile, szName, iLength, &dwByte, nullptr))
+				{
+					CloseHandle(hFile);
+					return E_FAIL;
+				}
+				szName[iLength / sizeof(wchar_t)] = L'\0';
+				tagInteractprops.tagItemDesc.Name = szName;
+				delete[] szName;
+			}
+			break;
 			}
 
 			//파트오브젝트의 게임 프로토타입
 			if (!ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr))
 			{
 				CloseHandle(hFile);
-				return false;
+				return E_FAIL;
 			}
 			wchar_t* strMainPartObjProtoType = new wchar_t[iLength / sizeof(wchar_t) + 1];
 			if (!ReadFile(hFile, strMainPartObjProtoType, iLength, &dwByte, nullptr))
 			{
 				CloseHandle(hFile);
-				return false;
+				return E_FAIL;
 			}
 			strMainPartObjProtoType[iLength / sizeof(wchar_t)] = L'\0';
 			strObjectName = strMainPartObjProtoType;
@@ -1149,7 +1190,6 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 	CloseHandle(hFile);
 	return S_OK;
 }
-
 
 HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const wstring & strLayerTag)
 {

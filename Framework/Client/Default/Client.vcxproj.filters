@@ -277,6 +277,9 @@
     <Filter Include="02.GameObjects\Sky">
       <UniqueIdentifier>{44a9bfc4-49d4-4584-82e2-8973a2c4c1ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\FlashLight">
+      <UniqueIdentifier>{490f3668-20b6-4ec9-8ffb-c1b847d9e205}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -537,14 +540,14 @@
     <ClInclude Include="..\Public\Shutter.h">
       <Filter>02.GameObjects\MapObject\InteractProps\Shutter</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\FlashLight.h">
-      <Filter>02.GameObjects\Player</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Body_Zombie_Enums.h">
       <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Body_Zombie_Defines.h">
       <Filter>02.GameObjects\Monster\Zombie\Body</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FlashLight.h">
+      <Filter>02.GameObjects\Player\FlashLight</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -789,7 +792,7 @@
       <Filter>02.GameObjects\MapObject\InteractProps\Shutter</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\FlashLight.cpp">
-      <Filter>02.GameObjects\Player</Filter>
+      <Filter>02.GameObjects\Player\FlashLight</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

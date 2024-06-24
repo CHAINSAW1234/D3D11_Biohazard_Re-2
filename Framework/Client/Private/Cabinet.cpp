@@ -126,15 +126,15 @@ HRESULT CCabinet::Add_PartObjects()
 	
 	/*Part_Item*/
 	if (m_tagPropDesc.tagCabinet.bItem)
-	{	
+	{
 		CPartObject* pItem = { nullptr };
 		CBody_ItemProp::BODY_ITEMPROPS_DESC ItemDesc = {};
 		ItemDesc.pParentsTransform = m_pTransformCom;
 		ItemDesc.pState = &m_eState;
 		ItemDesc.pObtain = &m_bObtain;
-		ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm70_001_greenherb01a");
+		ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_") + m_tagPropDesc.tagCabinet.Name;
 		/*if(m_tagPropDesc.tagCabinet.iItemIndex==0)*/
-		pItem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_sm70_001_greenherb01a"), &ItemDesc));
+		pItem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_") + m_tagPropDesc.tagCabinet.Name, &ItemDesc));
 		if (nullptr == pItem)
 			return E_FAIL;
 		m_PartObjects[CCabinet::PART_ITEM] = pItem;
