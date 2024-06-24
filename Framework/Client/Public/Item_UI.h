@@ -40,8 +40,8 @@ public:
 	void				Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos);
 
 public:
-	_uint				Get_ItemQuantity() const { return m_iItemQuantity; }
-	void				Set_ItemVariation(_uint iVariation) { m_iItemQuantity += iVariation; }
+	_int				Get_ItemQuantity() const { return m_iItemQuantity; }
+	void				Set_ItemVariation(_int iVariation) { m_iItemQuantity += iVariation; }
 
 private:
 	_bool						m_isWorking = { false };
@@ -51,7 +51,7 @@ private:
 	ITEM_TYPE					m_eInvenItemType = { ITEM_TYPE::INVEN_ITEM_TYPE_END };
 
 	_bool						m_bCountable = { false };
-	_uint						m_iItemQuantity = { 0 };
+	_int						m_iItemQuantity = { 0 };
 
 	map<wstring, CGameObject*>	m_mapPartUI;
 

@@ -220,7 +220,7 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 	m_eInven_Manager_State = EVENT_IDLE;
 }
 
-void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _uint iUsage)
+void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
 {
 	for (auto& iter : m_vecItem_UI)
 	{

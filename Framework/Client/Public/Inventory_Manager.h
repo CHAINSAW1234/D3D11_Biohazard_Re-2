@@ -57,7 +57,7 @@ public:
 
 
 	//인벤토리 밖에서 아이템을 사용하게 되었을때 쓰는 함수(ex 총알)
-	void UseItem(ITEM_NUMBER eTargetItemNum, _uint iUsage);
+	void UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage);
 
 	//아이탬 인벤토리에 넣기
 	void AddItem_ToInven(ITEM_NUMBER eAcquiredItem);
