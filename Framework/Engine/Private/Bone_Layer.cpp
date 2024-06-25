@@ -9,6 +9,16 @@ HRESULT CBone_Layer::Initialize(const unordered_set<_uint>& BoneIndices)
 	if (true == BoneIndices.empty())
 		return E_FAIL;
 
+	/*set<_uint>			NewIncludeBoneIndices;
+	for (auto& iBoneIndex : BoneIndices)
+	{
+		NewIncludeBoneIndices.emplace(iBoneIndex);
+	}
+	for (auto& iBoneIndex : NewIncludeBoneIndices)
+	{
+		m_IncludedBoneIndices.emplace(iBoneIndex);
+	}*/
+
 	m_IncludedBoneIndices = BoneIndices;
 
 	return S_OK;
@@ -17,6 +27,18 @@ HRESULT CBone_Layer::Initialize(const unordered_set<_uint>& BoneIndices)
 void CBone_Layer::Add_BoneIndex(_uint iBoneIndex)
 {
 	m_IncludedBoneIndices.emplace(iBoneIndex);
+
+	/*set<_uint>			NewIncludeBoneIndices;
+	for (auto& iBoneIndex : m_IncludedBoneIndices)
+	{
+		NewIncludeBoneIndices.emplace(iBoneIndex);
+	}
+
+	m_IncludedBoneIndices.clear();
+	for (auto& iBoneIndex : NewIncludeBoneIndices)
+	{
+		m_IncludedBoneIndices.emplace(iBoneIndex);
+	}*/
 }
 
 _bool CBone_Layer::Is_Included(_uint iBoneIndex)
