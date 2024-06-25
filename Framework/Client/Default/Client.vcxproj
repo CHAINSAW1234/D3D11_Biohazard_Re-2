@@ -205,6 +205,7 @@
     <ClInclude Include="..\Public\Clothes_Zombie.h" />
     <ClInclude Include="..\Public\ContextMenu.h" />
     <ClInclude Include="..\Public\Context_Highlighter.h" />
+    <ClInclude Include="..\Public\Damage_Zombie.h" />
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\EventProp.h" />
     <ClInclude Include="..\Public\Face_Zombie.h" />

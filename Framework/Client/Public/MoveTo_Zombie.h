@@ -2,7 +2,7 @@
 
 #include "Client_Defines.h"
 #include "Task_Node.h"
-
+#include "Body_Zombie.h"
 
 BEGIN(Client)
 
@@ -28,6 +28,9 @@ private:
 	void							Move_Front_Include_Rotaiton(_bool isRight, _float fAngle);
 	void							Turn();
 
+	_bool							Is_CurrentAnim_StartAnim(PLAYING_INDEX eIndex);
+	_bool							Is_CurrentAnim_LoopAnim(PLAYING_INDEX eIndex);
+
 private:
 
 
@@ -45,6 +48,9 @@ protected:
 
 	_int							m_iBlendPlayingIndex = { -1 };
 	_int							m_iBasePlayingIndex = { -1 };
+
+	unordered_map<wstring, unordered_set<_uint>>			m_StartAnimIndicesLayer;
+	unordered_map<wstring, unordered_set<_uint>>			m_LoopAnimIndicesLayer;
 
 public:
 	static CMoveTo_Zombie* Create();

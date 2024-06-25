@@ -10,6 +10,7 @@
 CMoveTo_Zombie::CMoveTo_Zombie()
 	: CTask_Node()
 {
+	Initialize(nullptr);
 }
 
 CMoveTo_Zombie::CMoveTo_Zombie(const CMoveTo_Zombie& rhs)
@@ -23,11 +24,55 @@ HRESULT CMoveTo_Zombie::Initialize_Prototype()
 
 HRESULT CMoveTo_Zombie::Initialize(void* pArg)
 {
+
+	//	Lost류 애님 처리 필요
+	//	Tooter 애님 처리 필요 
+	//	Turning 애님 처리 필요
+
+
+	/* For.Brach Start */
+	unordered_set<_uint>			OrdinaryStairWalkStartIndices;
+	OrdinaryStairWalkStartIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_STAIRS_WALK::_START));
+	m_StartAnimIndicesLayer.emplace(TEXT("Ordinary_Stairs_Walk"), OrdinaryStairWalkStartIndices);
+
+	unordered_set<_uint>			OrdinaryWalkStartIndices;
+	OrdinaryWalkStartIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_WALK::_START_A));
+	OrdinaryWalkStartIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_WALK::_START_B));
+	OrdinaryWalkStartIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_WALK::_START_C));
+	OrdinaryWalkStartIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_WALK::_START_D));
+	OrdinaryWalkStartIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_WALK::_START_E));
+	OrdinaryWalkStartIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_WALK::_START_F));
+	m_StartAnimIndicesLayer.emplace(TEXT("Ordinary_Walk"), OrdinaryWalkStartIndices);
+
+	unordered_set<_uint>			OrdinaryWalkLoseStartIndices;
+	OrdinaryWalkLoseStartIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_WALK_LOSE::_ONES_FOOTING_START));
+	m_StartAnimIndicesLayer.emplace(TEXT("Ordinary_Walk_Lose"), OrdinaryWalkLoseStartIndices);
+
+
+	/* For.Branch Loop */
+	unordered_set<_uint>			OrdinaryWalkLoopIndices;
+	OrdinaryWalkLoopIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_WALK::_LOOP_A));
+	OrdinaryWalkLoopIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_WALK::_LOOP_B));
+	OrdinaryWalkLoopIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_WALK::_LOOP_C));
+	OrdinaryWalkLoopIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_WALK::_LOOP_D));
+	OrdinaryWalkLoopIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_WALK::_LOOP_E));
+	OrdinaryWalkLoopIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_WALK::_LOOP_F));
+	m_LoopAnimIndicesLayer.emplace(TEXT("Ordinary_Walk"), OrdinaryWalkLoopIndices);
+
+	unordered_set<_uint>			OrdinaryWalkLoseLoopIndices;
+	OrdinaryWalkLoseLoopIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_WALK_LOSE::_ONES_FOOTING_LOOP));
+	m_StartAnimIndicesLayer.emplace(TEXT("Ordinary_Walk_Lose"), OrdinaryWalkLoseLoopIndices);
+
 	return S_OK;
 }
 
 void CMoveTo_Zombie::Enter()
 {
+	if (nullptr == m_pBlackBoard)
+		return;
+
+	_int				iType = { m_pGameInstance->GetRandom_Int(0, static_cast<_uint>(MOTION_TYPE::MOTION_F)) };
+	m_pBlackBoard->Set_Current_MotionType_Body(static_cast<MOTION_TYPE>(iType));
 }
 
 void CMoveTo_Zombie::Execute()
@@ -50,7 +95,7 @@ void CMoveTo_Zombie::Exit()
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
 
@@ -60,7 +105,7 @@ void CMoveTo_Zombie::Exit()
 
 	_float			fDelta = { fDuration - fTrackPosition };
 
-	pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f, fDelta);
+		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f, fDelta);
 }
 
 void CMoveTo_Zombie::Change_Animation()
@@ -71,10 +116,21 @@ void CMoveTo_Zombie::Change_Animation()
 	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
+	PLAYING_INDEX					eBasePlayingIndex = { PLAYING_INDEX::INDEX_0 };
+	PLAYING_INDEX					eBlendPlayingIndex = { PLAYING_INDEX::INDEX_1 };
+
+	ZOMBIE_BODY_ANIM_GROUP			eCurrentGroup = { m_pBlackBoard->Get_Current_AnimGroup(eBasePlayingIndex) };
+	ZOMBIE_BODY_ANIM_TYPE			eCurrentType = { m_pBlackBoard->Get_Current_AnimType(eBasePlayingIndex) };
+
+	_bool			isMoveEntry = { false };
+	if (ZOMBIE_BODY_ANIM_TYPE::_MOVE != eCurrentType)
+	{
+		isMoveEntry = true;
+	}
 
 	/* 기본 이동 애니메이션 */
-	_uint			iBasePlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_0) };
-	_int			iCurrentBasegAnimIndex = { pBodyModel->Get_AnimIndex_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_0)) };
+	//	_int			iCurrentBasegAnimIndex = { pBodyModel->Get_AnimIndex_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_0)) };
+	//	wstring			strCurrentBaseAnimLayerTag = { pBodyModel->Get_CurrentAnimLayerTag(static_cast<_uint>(PLAYING_INDEX::INDEX_0)) };
 	_int			iResultAnimationIndex = { -1 };
 	_bool			isLoop = { false };
 	wstring			strBaseBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
@@ -83,8 +139,8 @@ void CMoveTo_Zombie::Change_Animation()
 	_bool			isNeedBlend = { false };
 
 	/* 회전 섞여야하는경우 터닝모션 블렌드 비율 */
-	_int			iBlendPlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_1) };
-	_int			iCurrentBlendAnimIndex = { pBodyModel->Get_AnimIndex_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_1)) };
+	//	_int			iCurrentBlendAnimIndex = { pBodyModel->Get_AnimIndex_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_1)) };
+	//	wstring			strCurrentBlendAnimLayerTag = { pBodyModel->Get_CurrentAnimLayerTag(static_cast<_uint>(PLAYING_INDEX::INDEX_1)) };
 	_float			fTurnBlendWeight = { 0.f };
 	_int			iBlendAnimIndex = { -1 };
 	wstring			strBlendBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
@@ -92,290 +148,59 @@ void CMoveTo_Zombie::Change_Animation()
 	MOTION_TYPE		eCurrentMotionType = { static_cast<MOTION_TYPE>(m_pBlackBoard->Get_Current_MotionType_Body()) };
 	MOTION_TYPE		ePreMotionType = { static_cast<MOTION_TYPE>(m_pBlackBoard->Get_Pre_MotionType_Body()) };
 
-	//	기본 이동 => 프론트 뿐이다.
-	//	현재 애니메이션이 이동애니메이션이었다면 => 피니쉬 체크이후 루프 애니메이션으로 넘어가야함
-
-	_bool			isStartAnim = { m_pBlackBoard->Is_Start_Anim(CMonster::PART_BODY, iCurrentBasegAnimIndex) };
-	_bool			isMoveAnim = { m_pBlackBoard->Is_Move_CurrentAnim(CMonster::PART_BODY, iCurrentBasegAnimIndex) };
-	_bool			isTurnAnim = { m_pBlackBoard->Is_Turn_Anim(CMonster::PART_BODY, iCurrentBasegAnimIndex) };
-
-
-#pragma region	TEMP
-	//	90도 초과 => 피벗 턴
-	//if (XMConvertToRadians(90.f) < fAngleToTarget)
-	//{
-	//	_bool		isFinished = { false };
-
-	//	if (true == isTurnAnim)
-	//	{
-	//		//	아직 스타트 모션 진행중
-	//		if (false == pBodyModel->isFinished(iBasePlayingIndex))
-	//		{
-	//			iResultAnimationIndex = iCurrentBasegAnimIndex;
-	//		}
-
-	//		else
-	//		{
-	//			isFinished = true;
-	//		}
-	//	}
-
-	//	if (true == isFinished || false == isTurnAnim)
-	//	{
-	//		if (XMConvertToRadians(135.f) > fAngleToTarget)
-	//		{
-	//			if (CBody_Zombie::MOTION_A == iCurrentMotionType)
-	//			{
-	//				if (false == isRight)
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_L90_A);
-	//				}
-
-	//				else
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_R90_A);
-	//				}
-
-	//				isLoop = false;
-	//			}
-
-	//			else if (CBody_Zombie::MOTION_B == iCurrentMotionType)
-	//			{
-	//				if (false == isRight)
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_L90_B);
-	//				}
-
-	//				else
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_R90_B);
-	//				}
-
-	//				isLoop = false;
-	//			}
-
-	//			else if (CBody_Zombie::MOTION_C == iCurrentMotionType)
-	//			{
-	//				if (false == isRight)
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_L90_C);
-	//				}
-
-	//				else
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_R90_C);
-	//				}
-
-	//				isLoop = false;
-	//			}
-
-	//			else if (CBody_Zombie::MOTION_D == iCurrentMotionType)
-	//			{
-	//				if (false == isRight)
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_L90_D);
-	//				}
-
-	//				else
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_R90_D);
-	//				}
-
-	//				isLoop = false;
-	//			}
-
-	//			else if (CBody_Zombie::MOTION_E == iCurrentMotionType)
-	//			{
-	//				if (false == isRight)
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_L90_E);
-	//				}
-
-	//				else
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_R90_E);
-	//				}
-
-	//				isLoop = false;
-	//			}
-
-	//			else if (CBody_Zombie::MOTION_F == iCurrentMotionType)
-	//			{
-	//				if (false == isRight)
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_L90_F);
-	//				}
-
-	//				else
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_R90_F);
-	//				}
-
-	//				isLoop = false;
-	//			}
-	//		}
-
-	//		else
-	//		{
-	//			if (CBody_Zombie::MOTION_A == iCurrentMotionType)
-	//			{
-	//				if (false == isRight)
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_L180_A);
-	//				}
-
-	//				else
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_R180_A);
-	//				}
-
-	//				isLoop = false;
-	//			}
-
-	//			else if (CBody_Zombie::MOTION_B == iCurrentMotionType)
-	//			{
-	//				if (false == isRight)
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_L180_B);
-	//				}
-
-	//				else
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_R180_B);
-	//				}
-
-	//				isLoop = false;
-	//			}
-
-	//			else if (CBody_Zombie::MOTION_C == iCurrentMotionType)
-	//			{
-	//				if (false == isRight)
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_L180_C);
-	//				}
-
-	//				else
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_R180_C);
-	//				}
-
-	//				isLoop = false;
-	//			}
-
-	//			else if (CBody_Zombie::MOTION_D == iCurrentMotionType)
-	//			{
-	//				if (false == isRight)
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_L180_D);
-	//				}
-
-	//				else
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_R180_D);
-	//				}
-
-	//				isLoop = false;
-	//			}
-
-	//			else if (CBody_Zombie::MOTION_E == iCurrentMotionType)
-	//			{
-	//				if (false == isRight)
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_L180_E);
-	//				}
-
-	//				else
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_R180_E);
-	//				}
-
-	//				isLoop = false;
-	//			}
-
-	//			else if (CBody_Zombie::MOTION_F == iCurrentMotionType)
-	//			{
-	//				if (false == isRight)
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_L180_F);
-	//				}
-
-	//				else
-	//				{
-	//					iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_PIVOT_TURN_R180_F);
-	//				}
-
-	//				isLoop = false;
-	//			}
-	//		}
-	//	}
-	//	
-
-	//	if (iResultAnimationIndex == iCurrentBasegAnimIndex && true == isFinished)
-	//	{
-	//		pBodyModel->Set_TrackPosition(iBasePlayingIndex, 0.f);
-	//	}
-	//}
-
-#pragma endregion
-
-
-#pragma region 다시 살려야함
-	//	else
-	if (true == isMoveAnim)
+	//	무브 상태 첫 진입
+	if (true == isMoveEntry)
 	{
+		if (MOTION_TYPE::MOTION_A == eCurrentMotionType)
+			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_START_A);
+		else if (MOTION_TYPE::MOTION_B == eCurrentMotionType)
+			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_START_B);
+		else if (MOTION_TYPE::MOTION_C == eCurrentMotionType)
+			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_START_C);
+		else if (MOTION_TYPE::MOTION_D == eCurrentMotionType)
+			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_START_D);
+		else if (MOTION_TYPE::MOTION_E == eCurrentMotionType)
+			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_START_E);
+		else if (MOTION_TYPE::MOTION_F == eCurrentMotionType)
+			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_START_F);
+		else
+			MSG_BOX(TEXT("이럴리없어 좀비 담당자 호출 ㄱ"));
+
+		isLoop = false;
+	}
+
+	else
+	{
+		_bool		isStartAnim = { Is_CurrentAnim_StartAnim(PLAYING_INDEX::INDEX_0) };
 		_bool		isFinished = { false };
 		//	아직 첫 모션 중이었을경우 => 상태 체크가 필요함 => 스타트모션의 경우 끝나야 루프로 넘어가야함
 		if (true == isStartAnim)
 		{
+			_int	iCurrentAnimIndex = { m_pBlackBoard->Get_Current_AnimIndex(CMonster::PART_BODY, PLAYING_INDEX::INDEX_0) };
 			//	아직 스타트 모션 진행중
-			if (false == pBodyModel->isFinished(iBasePlayingIndex))
-			{
-				iResultAnimationIndex = iCurrentBasegAnimIndex;
-			}
+			if (false == pBodyModel->isFinished(static_cast<_uint>(PLAYING_INDEX::INDEX_0)))
+				iResultAnimationIndex = iCurrentAnimIndex;
 
 			else
-			{
-				isFinished = true;
-			}
+				isStartAnim = false;
 		}
 
-		if (true == isFinished || (true == isMoveAnim && false == isStartAnim))
+		if (false == isStartAnim)
 		{
 			if (MOTION_TYPE::MOTION_A == eCurrentMotionType)
-			{
 				iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_LOOP_A);
-				isLoop = true;
-			}
-
 			else if (MOTION_TYPE::MOTION_B == eCurrentMotionType)
-			{
 				iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_LOOP_B);
-				isLoop = true;
-			}
-
 			else if (MOTION_TYPE::MOTION_C == eCurrentMotionType)
-			{
 				iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_LOOP_C);
-				isLoop = true;
-			}
-
 			else if (MOTION_TYPE::MOTION_D == eCurrentMotionType)
-			{
 				iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_LOOP_D);
-				isLoop = true;
-			}
-
 			else if (MOTION_TYPE::MOTION_E == eCurrentMotionType)
-			{
 				iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_LOOP_E);
-				isLoop = true;
-			}
-
 			else if (MOTION_TYPE::MOTION_F == eCurrentMotionType)
-			{
 				iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_LOOP_F);
-				isLoop = true;
-			}
+
+			isLoop = true;
 		}
 
 		_float3			vDirectionToPlayerLocalFloat3;
@@ -393,24 +218,6 @@ void CMoveTo_Zombie::Change_Animation()
 		_float			fAngleToTarget = { acosf(fDot) };
 
 
-		////	Turn
-		//if (false == isFront)
-		//{
-		//	Turn();
-		//}
-
-		//
-		//else if (fAngleToTarget < XMConvertToRadians(10.f))
-		//{
-		//	Move_Front();
-		//}
-
-		//else
-		//{
-		//	Move_Front_Include_Rotaiton();
-		//}
-
-
 		//	회전과 관련하여 블렌드 성분 정하기
 		//	10도 미만은 그냥직진하기.
 		if (XMConvertToRadians(10.f) > fAngleToTarget)
@@ -424,119 +231,79 @@ void CMoveTo_Zombie::Change_Animation()
 
 			if (true == isRight)
 			{
+				_int			iPreAnimIndex = { m_pBlackBoard->Get_Current_AnimIndex(CMonster::PART_BODY, PLAYING_INDEX::INDEX_1) };
+
+				if (iPreAnimIndex == static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FL_A) ||
+					iPreAnimIndex == static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FL_B) ||
+					iPreAnimIndex == static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FL_C) ||
+					iPreAnimIndex == static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FL_D) ||
+					iPreAnimIndex == static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FL_E) ||
+					iPreAnimIndex == static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FL_F))
+				{
+					CModel* pBody = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+					if (nullptr != pBody)
+					{
+						pBody->Reset_PreAnim_CurrentAnim(static_cast<_uint>(PLAYING_INDEX::INDEX_1));
+					}
+				}
+
+
 				if (MOTION_TYPE::MOTION_A == eCurrentMotionType)
-				{
 					iBlendAnimIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FR_A);
-				}
-
 				else if (MOTION_TYPE::MOTION_B == eCurrentMotionType)
-				{
 					iBlendAnimIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FR_B);
-				}
-
 				else if (MOTION_TYPE::MOTION_C == eCurrentMotionType)
-				{
 					iBlendAnimIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FR_C);
-				}
-
 				else if (MOTION_TYPE::MOTION_D == eCurrentMotionType)
-				{
 					iBlendAnimIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FR_D);
-				}
-
 				else if (MOTION_TYPE::MOTION_E == eCurrentMotionType)
-				{
 					iBlendAnimIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FR_E);
-				}
-
 				else if (MOTION_TYPE::MOTION_F == eCurrentMotionType)
-				{
-					iBlendAnimIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FR_F);
-				}
+					iBlendAnimIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FR_F);			
 			}
 
 			else
 			{
+				_int			iPreAnimIndex = { m_pBlackBoard->Get_Current_AnimIndex(CMonster::PART_BODY, PLAYING_INDEX::INDEX_1) };
+
+				if (iPreAnimIndex == static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FR_A) ||
+					iPreAnimIndex == static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FR_B) ||
+					iPreAnimIndex == static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FR_C) ||
+					iPreAnimIndex == static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FR_D) ||
+					iPreAnimIndex == static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FR_E) ||
+					iPreAnimIndex == static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FR_F))
+				{
+					CModel* pBody = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+					if (nullptr != pBody)
+					{
+						pBody->Reset_PreAnim_CurrentAnim(static_cast<_uint>(PLAYING_INDEX::INDEX_1));
+					}
+				}
+
+
 				if (MOTION_TYPE::MOTION_A == eCurrentMotionType)
-				{
 					iBlendAnimIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FL_A);
-				}
-
 				else if (MOTION_TYPE::MOTION_B == eCurrentMotionType)
-				{
 					iBlendAnimIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FL_B);
-				}
-
 				else if (MOTION_TYPE::MOTION_C == eCurrentMotionType)
-				{
 					iBlendAnimIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FL_C);
-				}
-
 				else if (MOTION_TYPE::MOTION_D == eCurrentMotionType)
-				{
 					iBlendAnimIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FL_D);
-				}
-
 				else if (MOTION_TYPE::MOTION_E == eCurrentMotionType)
-				{
 					iBlendAnimIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FL_E);
-				}
-
 				else if (MOTION_TYPE::MOTION_F == eCurrentMotionType)
-				{
-					iBlendAnimIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FL_F);
-				}
+					iBlendAnimIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_TURNING_LOOP_FL_F);			
 			}
 
 			fTurnBlendWeight = fminf(fAngleToTarget / XMConvertToRadians(180.f) * 2.f, 0.999f);
 		}
 	}
 
-	//	이동애니메이션으로 바뀌어야하는경우 => 재생중이던 애니메이션이 이동관련이아님
-	else
-	{
-		if (MOTION_TYPE::MOTION_A == eCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_START_A);
-			isLoop = false;
-		}
-
-		else if (MOTION_TYPE::MOTION_B == eCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_START_B);
-			isLoop = false;
-		}
-
-		else if (MOTION_TYPE::MOTION_C == eCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_START_C);
-			isLoop = false;
-		}
-
-		else if (MOTION_TYPE::MOTION_D == eCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_START_D);
-			isLoop = false;
-		}
-
-		else if (MOTION_TYPE::MOTION_E == eCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_START_E);
-			isLoop = false;
-		}
-
-		else if (MOTION_TYPE::MOTION_F == eCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_WALK::_START_F);
-			isLoop = false;
-		}
-	}	
-
 	if (-1 == iResultAnimationIndex)
 		return;
 
 	//	루프애님이면서 이전 애니메이션과 같다면... 같은 애니메이션을 지속으로 루프 재생중이므로 보간이 필요없다고 판단
-	if (true == isLoop && iBasePlayingIndex == iResultAnimationIndex)
+	if (true == isLoop && m_pBlackBoard->Get_Current_AnimIndex(CMonster::PART_BODY, PLAYING_INDEX::INDEX_0) == iResultAnimationIndex)
 	{
 		pBodyModel->Set_TotalLinearInterpolation(0.f);
 	}
@@ -546,17 +313,17 @@ void CMoveTo_Zombie::Change_Animation()
 		pBodyModel->Set_TotalLinearInterpolation(0.8f);
 	}
 
-	pBodyModel->Change_Animation(iBasePlayingIndex, TEXT("Ordinary_Walk"), iResultAnimationIndex);
-	pBodyModel->Set_Loop(iBasePlayingIndex, isLoop);
-	pBodyModel->Set_BoneLayer_PlayingInfo(iBasePlayingIndex, strBaseBoneLayerTag);
-	pBodyModel->Set_BlendWeight(iBasePlayingIndex, 1.f - fTurnBlendWeight);
+	pBodyModel->Change_Animation(static_cast<_uint>(PLAYING_INDEX::INDEX_0), TEXT("Ordinary_Walk"), iResultAnimationIndex);
+	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), isLoop);
+	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_0), strBaseBoneLayerTag);
+	pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_0), 1.f - fTurnBlendWeight);
 
 	if (true == isNeedBlend)
 	{
-		pBodyModel->Change_Animation(iBlendPlayingIndex, TEXT("Ordinary_Walk"), iBlendAnimIndex);
-		pBodyModel->Set_Loop(iBlendPlayingIndex, true);
-		pBodyModel->Set_BoneLayer_PlayingInfo(iBlendPlayingIndex, strBlendBoneLayerTag);
-		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, fTurnBlendWeight);
+		pBodyModel->Change_Animation(static_cast<_uint>(PLAYING_INDEX::INDEX_1), TEXT("Ordinary_Walk"), iBlendAnimIndex);
+		pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_1), true);
+		pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_1), strBlendBoneLayerTag);
+		pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), fTurnBlendWeight);
 
 		string			strBlendWeight = { to_string(fTurnBlendWeight) };
 		cout << strBlendWeight.c_str() << endl;
@@ -564,9 +331,9 @@ void CMoveTo_Zombie::Change_Animation()
 
 		if (1.0f != fTurnBlendWeight)
 		{
-			_float			fBlendTrackPosition = { pBodyModel->Get_TrackPosition(iBlendPlayingIndex) };
-			_float			fBaseTrackPosition = { pBodyModel->Get_TrackPosition(iBasePlayingIndex) };
-			_float			fBlendDuration = { pBodyModel->Get_Duration_From_PlayingInfo(iBasePlayingIndex) };
+			_float			fBlendTrackPosition = { pBodyModel->Get_TrackPosition(static_cast<_uint>(PLAYING_INDEX::INDEX_1)) };
+			_float			fBaseTrackPosition = { pBodyModel->Get_TrackPosition(static_cast<_uint>(PLAYING_INDEX::INDEX_0)) };
+			_float			fBlendDuration = { pBodyModel->Get_Duration_From_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_0)) };
 
 			if (0.f < fBlendDuration)
 			{
@@ -576,11 +343,11 @@ void CMoveTo_Zombie::Change_Animation()
 				}
 			}			
 
-			pBodyModel->Set_TrackPosition(iBlendPlayingIndex, fBaseTrackPosition, false);
+			pBodyModel->Set_TrackPosition(static_cast<_uint>(PLAYING_INDEX::INDEX_1), fBaseTrackPosition, true);
 		}		
-
-		_float			fBaseTrackPos = { pBodyModel->Get_TrackPosition(iBasePlayingIndex) };
-		_float			fBlendTrackPos = { pBodyModel->Get_TrackPosition(iBlendPlayingIndex) };
+			
+		_float			fBaseTrackPos = { pBodyModel->Get_TrackPosition(static_cast<_uint>(PLAYING_INDEX::INDEX_0)) };
+		_float			fBlendTrackPos = { pBodyModel->Get_TrackPosition(static_cast<_uint>(PLAYING_INDEX::INDEX_1)) };
 
 		string			strBaseTrackPos = { to_string(fBaseTrackPos) + "Base Track"};
 		string			strBlendTrackPos = { to_string(fBlendTrackPos) + "Blend Track"};
@@ -590,8 +357,8 @@ void CMoveTo_Zombie::Change_Animation()
 
 	else
 	{
-		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f, 0.3f);
-		pBodyModel->Reset_PreAnimation(iBlendPlayingIndex);
+		pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), 0.f, 0.3f);
+		pBodyModel->Reset_PreAnimation(static_cast<_uint>(PLAYING_INDEX::INDEX_1));
 
 		cout << "isNonBlend" << endl;
 	}
@@ -609,6 +376,64 @@ void CMoveTo_Zombie::Move_Front_Include_Rotaiton(_bool isRight, _float fAngle)
 
 void CMoveTo_Zombie::Turn()
 {
+}
+
+_bool CMoveTo_Zombie::Is_CurrentAnim_StartAnim(PLAYING_INDEX eIndex)
+{
+	_bool				isStartAnim = { false };
+
+	CModel*				pBodyModel = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+	if (nullptr == pBodyModel)
+		return isStartAnim;
+
+	_int				iAnimIndex = { m_pBlackBoard->Get_Current_AnimIndex(CMonster::PART_BODY, eIndex) };
+	if (-1 == iAnimIndex)
+		return isStartAnim;
+
+	wstring				strAnimLayerTag = { m_pBlackBoard->Get_Current_AnimLayerTag(CMonster::PART_BODY, eIndex) };
+	if (TEXT("") == strAnimLayerTag)
+		return isStartAnim;
+
+	unordered_map<wstring, unordered_set<_uint>>::iterator			iterLayer = { m_StartAnimIndicesLayer.find(strAnimLayerTag) };
+	if (iterLayer != m_StartAnimIndicesLayer.end())
+	{
+		unordered_set<_uint>::iterator			iterIndices = { iterLayer->second.find(iAnimIndex) };
+		if (iterIndices != iterLayer->second.end())
+		{
+			isStartAnim = true;
+		}
+	}
+
+	return isStartAnim;
+}
+
+_bool CMoveTo_Zombie::Is_CurrentAnim_LoopAnim(PLAYING_INDEX eIndex)
+{
+	_bool				isLoopAnim = { false };
+
+	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+	if (nullptr == pBodyModel)
+		return isLoopAnim;
+
+	_int				iAnimIndex = { m_pBlackBoard->Get_Current_AnimIndex(CMonster::PART_BODY, eIndex) };
+	if (-1 == iAnimIndex)
+		return isLoopAnim;
+
+	wstring				strAnimLayerTag = { m_pBlackBoard->Get_Current_AnimLayerTag(CMonster::PART_BODY, eIndex) };
+	if (TEXT("") == strAnimLayerTag)
+		return isLoopAnim;
+
+	unordered_map<wstring, unordered_set<_uint>>::iterator			iterLayer = { m_LoopAnimIndicesLayer.find(strAnimLayerTag) };
+	if (iterLayer != m_LoopAnimIndicesLayer.end())
+	{
+		unordered_set<_uint>::iterator			iterIndices = { iterLayer->second.find(iAnimIndex) };
+		if (iterIndices != iterLayer->second.end())
+		{
+			isLoopAnim = true;
+		}
+	}
+
+	return isLoopAnim;
 }
 
 _int CMoveTo_Zombie::Compute_Base_Anim()
