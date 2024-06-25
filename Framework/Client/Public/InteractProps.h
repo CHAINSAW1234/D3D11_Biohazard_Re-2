@@ -151,9 +151,12 @@ protected:
 	INTERACTPROPS_DESC 									m_tagPropDesc ={};
 	vector<CPartObject*>								m_PartObjects;
 
-	
+	//Ã¢±Õ Ãß°¡
+	class CTab_Window* m_pTab_Window = { nullptr };
+
 protected:
 	void												Check_Player();
+	void												Check_TabWindow();
 	void												Check_Col_Sphere_Player();
 	_bool												Visible();
 	virtual HRESULT										Add_Components();

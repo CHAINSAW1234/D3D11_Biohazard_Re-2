@@ -11,6 +11,9 @@ constexpr _float Z_POS_CONTEXT_MENU = 0.5f;
 constexpr _float SLOT_INTERVAL_X = 74.f;
 constexpr _float SLOT_INTERVAL_Y = 76.f;
 
+constexpr _int FIRST = 0;
+constexpr _int SECOND = 1;
+
 CInventory_Manager::CInventory_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
 	, m_pContext{ pContext }
@@ -35,6 +38,7 @@ HRESULT CInventory_Manager::Initialize()
 	if (FAILED(Init_ContextMenu()))
 		return E_FAIL;
 
+	Set_ItemRecipe();
 
 	return S_OK;
 }
@@ -114,7 +118,7 @@ void CInventory_Manager::Late_Tick(_float fTimeDelta)
 
 void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 {
-	_bool IsNoOneHover = true;
+	//_bool IsNoOneHover = true;
 	m_IsNoOneHover = true;
 	CInventory_Slot* pHoveredSlot = nullptr;
 
@@ -132,7 +136,7 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 	if (false == m_IsNoOneHover)
 	{
 		_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
-		HoveredPos.z = 0.7f;
+		HoveredPos.z = Z_POS_ITEM_UI;
 		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
 
 		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
@@ -164,11 +168,96 @@ void CInventory_Manager::UNEQUIP_ITEM_Operation(_float fTimeDelta)
 
 void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 {
+	m_pSelected_ItemUI->Set_ItemVariation(-1);
+
+	m_eInven_Manager_State = EVENT_IDLE;
+	m_pContextMenu->Set_Dead(true);
+	m_pSelected_ItemUI = nullptr;
 
 }
 
 void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 {
+	switch (m_eCTS)
+	{
+	case Client::CInventory_Manager::COMBINABLE_SETING: {
+		m_CombineResources[FIRST] = m_pSelected_ItemUI->Get_ItemNumber();
+		vector<ITEM_RECIPE> vecRecipe = m_mapItemRecipe[m_CombineResources[FIRST]];
+
+		for (auto& ItemUIiter : m_vecItem_UI) //모든 아이템 순회
+		{
+			if (false == ItemUIiter->Get_isWorking() || m_pSelected_ItemUI == ItemUIiter) // 일안하거나 자기 자신 있으면 패스
+				continue;
+
+			_bool isCanCombined = false; //todo : 나중에 선택 가능과 불가능으로 바꿔야함
+
+			for (auto& RecipeIter : vecRecipe) //아이탬 레시피에 자신이 있는지 검색
+			{
+				if (ItemUIiter->Get_ItemNumber() == RecipeIter.eCombination_Item) 
+				{
+					isCanCombined = true;
+				}
+			}
+
+			if (false == isCanCombined)
+				ItemUIiter->Reset_ItemUI();
+		}
+
+		m_eCTS = SELECT;
+
+		break;
+	}
+
+	case Client::CInventory_Manager::SELECT: {
+		_bool IsNoOneHover = true;
+		CInventory_Slot* pHoveredSlot = nullptr;
+
+		for (_uint i = 0; i < m_iInvenCount; i++)
+		{
+			if (true == m_vecInvenSlot[i]->IsMouseHover())
+			{
+				IsNoOneHover = false;
+				pHoveredSlot = m_vecInvenSlot[i];
+			}
+		}
+
+		//m_pSlotHighlighter->Set_Dead(IsNoOneHover);
+
+		if (false == IsNoOneHover)
+		{
+			_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
+			HoveredPos.z = Z_POS_ITEM_UI;
+			m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos); //하이라이터 움직임
+
+			if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+			{
+				for (auto& iter : m_vecItem_UI) //클릭된 재료 검사
+				{
+					if (true == iter->IsMouseHover() && true == iter->Get_isWorking()) // todo : Get_isWorking말고 선택 가능한지 한 함수로 바꾸기
+					{
+						m_CombineResources[SECOND] = iter->Get_ItemNumber();
+						iter->Reset_ItemUI();
+						m_eCTS = APPLY;
+					}
+				}
+			}
+		}
+		 
+
+		break;
+	}
+		
+	case Client::CInventory_Manager::APPLY: {
+		m_pSelected_ItemUI->Set_ItemNumber(Find_Recipe(m_CombineResources[FIRST], m_CombineResources[SECOND]));
+		m_eCTS = COMBINED_TS_END;
+		m_eInven_Manager_State = EXAMINE_ITEM;
+		break;
+	}
+
+
+	default:
+		break;
+	}
 
 }
 
@@ -232,6 +321,7 @@ void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 		
 	case Client::COMBINED_ITEM: {
 		m_eInven_Manager_State = COMBINED_ITEM;
+		m_eCTS = COMBINABLE_SETING;
 		m_pContextMenu->Set_Dead(true);
 		break;
 	}
@@ -294,8 +384,7 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 
 	m_eInven_Manager_State = EVENT_IDLE;
 
-	_bool subrender = !bInput;
-	//m_pInven_Item_UI->Set_isSubRender(&subrender);
+	m_pInven_Item_UI->Reset_Call(!bInput);
 }
 
 void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
@@ -317,7 +406,7 @@ void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
 	}
 }
 
-void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)
+void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)
 {
 	for (auto& Itemiter : m_vecItem_UI)
 	{
@@ -332,7 +421,7 @@ void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)
 			_vector vSlotPos = Slotiter->GetPositionVector();
 			vSlotPos = XMVectorSetZ(vSlotPos, Z_POS_ITEM_UI);
 			Slotiter->Set_IsFilled(true);
-			Itemiter->Set_ItemUI(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), vSlotPos);
+			Itemiter->Set_ItemUI(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), vSlotPos, iItemQuantity);
 			return;
 		}
 	}
@@ -427,7 +516,7 @@ HRESULT CInventory_Manager::Init_SlotHighlighter()
 
 HRESULT CInventory_Manager::Init_ItemUI()
 {
-	for (_uint i = 0; i < 4; i++)
+	for (_uint i = 0; i < 20; i++)
 	{
 		ifstream inputFileStream;
 		wstring selectedFilePath;
@@ -787,3 +876,33 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 
 	return ITEM_TYPE::INVEN_ITEM_TYPE_END;
 }
+
+void CInventory_Manager::Set_ItemRecipe()
+{
+	Add_Recipe(greenherb01a, greenherb01a,	herbsgg01a);
+	Add_Recipe(greenherb01a, redherb01a,	herbsgr01a);
+	Add_Recipe(greenherb01a, blueherb01a,	herbsgb01a);
+	Add_Recipe(greenherb01a, herbsgg01a,	herbsggg01a);
+	Add_Recipe(greenherb01a, herbsgr01a,	herbsgg01a);
+	Add_Recipe(greenherb01a, herbsgb01a,	herbsgg01a);
+}
+
+void CInventory_Manager::Add_Recipe(ITEM_NUMBER eKeyItemNum, ITEM_NUMBER eCombinableItemNum, ITEM_NUMBER eResultItemNum)
+{
+	ITEM_RECIPE sRecipe = { eCombinableItemNum , eResultItemNum };
+	m_mapItemRecipe[eKeyItemNum].push_back(sRecipe);
+}
+
+ITEM_NUMBER CInventory_Manager::Find_Recipe(ITEM_NUMBER eKeyItemNum, ITEM_NUMBER eCombinableItemNum)
+{
+	vector<ITEM_RECIPE> vecRecipe = m_mapItemRecipe[eKeyItemNum];
+
+	for (auto& iter : vecRecipe)
+	{
+		if (eCombinableItemNum == iter.eCombination_Item)
+			return iter.eResult_Item;
+	}
+
+	return ITEM_NUMBER_END;
+}
+

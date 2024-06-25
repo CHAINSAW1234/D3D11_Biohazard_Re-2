@@ -43,6 +43,7 @@ HRESULT CCabinet::Initialize(void* pArg)
 
 void CCabinet::Tick(_float fTimeDelta)
 {
+	__super::Check_TabWindow();
 	__super::Check_Player();
 	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 	if (!m_bVisible)
@@ -143,6 +144,7 @@ HRESULT CCabinet::Add_PartObjects()
 		ItemDesc.pParentsTransform = m_pTransformCom;
 		ItemDesc.pState = &m_eState;
 		ItemDesc.pObtain = &m_bObtain;
+		ItemDesc.iItemIndex = m_tagPropDesc.tagCabinet.iItemIndex;
 		ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_") + m_tagPropDesc.tagCabinet.Name;
 		/*if(m_tagPropDesc.tagCabinet.iItemIndex==0)*/
 		pItem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_") + m_tagPropDesc.tagCabinet.Name, &ItemDesc));
@@ -201,8 +203,11 @@ void CCabinet::Active()
 	
 	m_eState = CABINET_OPEN;
 	if (m_bObtain)
-		if(nullptr != m_PartObjects[PART_ITEM])
+		if (nullptr != m_PartObjects[PART_ITEM])
+		{
+			//여기서 window 불러서 아이템 죽일지 말지 결정!
 			m_PartObjects[PART_ITEM]->Set_Dead(true);
+		}
 }
 
 CCabinet* CCabinet::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

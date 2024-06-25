@@ -37,7 +37,7 @@ public:
 
 public:
 	void				Reset_ItemUI();
-	void				Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos);
+	void				Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos, _int iVariation);
 
 public:
 	_int				Get_ItemQuantity() const { return m_iItemQuantity; }

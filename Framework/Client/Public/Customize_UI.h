@@ -377,7 +377,9 @@ public:/* for.Get Inline */
 
 public : /* Clinet */
 	_bool	Get_IsRender() const { return m_isRender; }
-	void    Set_IsRender(_bool isRender) { m_isRender = isRender; }
+	virtual void    Set_IsRender(_bool isRender) { m_isRender = isRender; 
+	for (auto& iter : m_vecChildUI){
+		static_cast<CCustomize_UI*>(iter)->Set_IsRender(isRender);}}
 
 protected :
 	vector<class CTextBox*>		m_vecTextBoxes;

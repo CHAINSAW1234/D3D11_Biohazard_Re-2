@@ -3,6 +3,8 @@
 #include"Player.h"
 
 #include"ItemProp.h"
+
+
 CBody_ItemProp::CBody_ItemProp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPart_InteractProps{ pDevice, pContext }
 {
@@ -29,6 +31,7 @@ HRESULT CBody_ItemProp::Initialize(void* pArg)
 
 	BODY_ITEMPROPS_DESC* pDesc = (BODY_ITEMPROPS_DESC*)pArg;
 	m_pObtain = pDesc->pObtain;
+	m_iItemIndex = pDesc->iItemIndex;
 
 	/*m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
@@ -46,9 +49,11 @@ HRESULT CBody_ItemProp::Initialize(void* pArg)
 
 #ifndef NON_COLLISION_PROP
 
-	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
+	//m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
 #endif
+
+
 
 	return S_OK;
 }
@@ -64,7 +69,6 @@ void CBody_ItemProp::Late_Tick(_float fTimeDelta)
 		return;
 	if (m_bDead)
 	{
-		// 아이템 정보 던지고
 		m_bRealDead = true;
 		return;
 	}
@@ -76,7 +80,12 @@ void CBody_ItemProp::Late_Tick(_float fTimeDelta)
 	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);*/
 	if (m_pSocketMatrix != nullptr)
 	{
-		_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix() /** XMMatrixScaling(100.f,100.f,100.f)*/) };
+		_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
+		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+	}
+	else
+	{
+		_matrix			WorldMatrix = { (m_pTransformCom->Get_WorldMatrix() *  m_pParentsTransform->Get_WorldMatrix() ) };
 		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 	}
 
@@ -91,11 +100,10 @@ void CBody_ItemProp::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_ItemProp::Render()
 {
-	if (m_bRender == false)
+	/*if (m_bRender == false)
 		return S_OK;
 	else
-		m_bRender = false;
-
+		m_bRender = false;*/
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 

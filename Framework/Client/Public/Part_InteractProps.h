@@ -46,9 +46,10 @@ public:
 	virtual HRESULT				Render() override;
 
 
-	virtual HRESULT					Render_LightDepth_Dir()override;
-	virtual HRESULT					Render_LightDepth_Point() override;
-	virtual HRESULT					Render_LightDepth_Spot()override;
+	virtual HRESULT				Render_LightDepth_Dir()override;
+	virtual HRESULT				Render_LightDepth_Point() override;
+	virtual HRESULT				Render_LightDepth_Spot()override;
+
 public:
 	void Set_PlayerSetting(class CPlayer* pPlayer, _bool* pPlayerInteract, CTransform* pPlayerTransform)
 	{
@@ -58,31 +59,31 @@ public:
 	}
 
 protected:
-	_bool				m_bCol = { false };
-	_bool*			m_pRender;
-	const _ubyte*			m_pState;
+	_bool						m_bCol = { false };
+	_bool*						m_pRender;
+	const _ubyte*				m_pState;
 
-	class CPlayer*		m_pPlayer = { nullptr };
-	_bool* m_pPlayerInteract = {nullptr};
-	CTransform* m_pPlayerTransform = {nullptr};
+	class CPlayer*				m_pPlayer = { nullptr };
+	_bool*						 m_pPlayerInteract = {nullptr};
+	CTransform*					m_pPlayerTransform = {nullptr};
 
 
-	CModel*				m_pModelCom = { nullptr };
-	CShader*				m_pShaderCom = { nullptr };
-	wstring					m_strModelComponentName = { TEXT("") };
-	CCollider*				m_pColliderCom[Part_INTERACTPROPS_COL_END] = { nullptr,nullptr,nullptr };
+	CModel*						m_pModelCom = { nullptr };
+	CShader*					m_pShaderCom = { nullptr };
+	wstring						m_strModelComponentName = { TEXT("") };
+	CCollider*					m_pColliderCom[Part_INTERACTPROPS_COL_END] = { nullptr,nullptr,nullptr };
 
-	class CPxCollider*	m_pPx_Collider = { nullptr };
-	vector<CBone*>										m_vecRotationBone;
+	class CPxCollider*			m_pPx_Collider = { nullptr };
+	vector<CBone*>				m_vecRotationBone;
 
 protected:
-	void								Check_Col_Sphere_Player();
+	void						Check_Col_Sphere_Player();
 	HRESULT						Add_Components();
 	virtual HRESULT				Add_PartObjects();
 	virtual HRESULT				Initialize_PartObjects();
 
 protected:
-	HRESULT					Bind_ShaderResources();
+	HRESULT						Bind_ShaderResources();
 
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;

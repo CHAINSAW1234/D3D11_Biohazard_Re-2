@@ -12,6 +12,8 @@ BEGIN(Client)
 
 class CInventory_Manager final : public CBase
 {
+	enum COMBINED_TASK_SEQUENCE{ COMBINABLE_SETING, SELECT, APPLY, COMBINED_TS_END  };
+
 private:
 	CInventory_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CInventory_Manager() = default;
@@ -62,12 +64,12 @@ public:
 
 	_bool* Get_NoHover_InvenBox() { return &m_IsNoOneHover; }
 
-
+public:
 	//인벤토리 밖에서 아이템을 사용하게 되었을때 쓰는 함수(ex 총알)
 	void UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage);
 
 	//아이탬 인벤토리에 넣기
-	void AddItem_ToInven(ITEM_NUMBER eAcquiredItem);
+	void AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity = 1);
 
 	//만약 아이템을 넣을수 없는 상황이라면 false를 반환함
 	_bool IsCan_AddItem_ToInven();
@@ -102,8 +104,19 @@ private:
 	/* for. SubInven */
 	class CInventory_Item_UI*		m_pInven_Item_UI = { nullptr };
 
-private :
+private :	/*for IDLE_Operation*/
 	_bool							m_IsNoOneHover = { true };
+
+
+private:	/*for. COMBINED_ITEM_Operation*/
+	unordered_map<ITEM_NUMBER, vector<ITEM_RECIPE>> m_mapItemRecipe;
+
+	COMBINED_TASK_SEQUENCE							m_eCTS = { COMBINED_TS_END };
+
+	ITEM_NUMBER										m_CombineResources[2] = {ITEM_NUMBER_END, ITEM_NUMBER_END};
+
+
+
 
 private:
 	HRESULT Init_InvenSlot();
@@ -120,6 +133,11 @@ public:
 	static CInventory_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
 	static ITEM_TYPE ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum);
+
+	void Set_ItemRecipe();
+	void Add_Recipe(ITEM_NUMBER eKeyItemNum, ITEM_NUMBER eCombinableItemNum, ITEM_NUMBER eResultItemNum);
+	ITEM_NUMBER Find_Recipe(ITEM_NUMBER eKeyItemNum, ITEM_NUMBER eCombinableItemNum);
+	//static ITEM_NUMBER Get_CombinationResult(ITEM_NUMBER eFirst_Item, ITEM_NUMBER eSecond_Item);
 };
 
 END
