@@ -30,10 +30,13 @@ void CWait_Zombie::Enter()
 	
 }
 
-void CWait_Zombie::Execute()
+_bool CWait_Zombie::Execute()
 {
 	if (nullptr == m_pBlackBoard)
-		return;
+		return false;
+
+	if (Check_Permition_To_Execute() == false)
+		return false;
 
 	m_pBlackBoard->Organize_PreState(this);
 
@@ -43,6 +46,7 @@ void CWait_Zombie::Execute()
 	cout << "Wait" << endl;
 		Change_Animation();
 
+	return true;
 }
 
 void CWait_Zombie::Exit()

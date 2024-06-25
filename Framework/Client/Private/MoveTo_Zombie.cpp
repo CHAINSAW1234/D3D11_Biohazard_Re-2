@@ -75,10 +75,13 @@ void CMoveTo_Zombie::Enter()
 	m_pBlackBoard->Set_Current_MotionType_Body(static_cast<MOTION_TYPE>(iType));
 }
 
-void CMoveTo_Zombie::Execute()
+_bool CMoveTo_Zombie::Execute()
 {
 	if (nullptr == m_pBlackBoard)
-		return;
+		return false;
+
+	if (Check_Permition_To_Execute() == false)
+		return false;
 
 	m_pBlackBoard->Organize_PreState(this);
 
@@ -88,6 +91,8 @@ void CMoveTo_Zombie::Execute()
 	cout << "move" << endl;
 
 	Change_Animation();
+
+	return true;
 }
 
 void CMoveTo_Zombie::Exit()

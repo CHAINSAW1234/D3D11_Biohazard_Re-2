@@ -1,9 +1,9 @@
 #include "GameInstance.h"
 #include "Decorator_Node.h"
 
-CDecorator_Node::CDecorator_Node(): m_pGameInstance{ CGameInstance::Get_Instance() }
+CDecorator_Node::CDecorator_Node(): CNode()
 {
-	Safe_AddRef(m_pGameInstance);
+
 }
 
 CDecorator_Node::CDecorator_Node(const CDecorator_Node& rhs)

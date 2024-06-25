@@ -288,7 +288,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//Add Task Node
 	auto pMoveTo = new CMoveTo_Zombie();
 	pMoveTo->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_1->Insert_Task_Node(pMoveTo);
+	pSelectorNode_RootChild_1->Insert_Child_Node(pMoveTo);
 
 
 
@@ -300,7 +300,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//Add RootNode Task Node
 	auto pWait = new CWait_Zombie();
 	pWait->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_Root->Insert_Task_Node(pWait);
+	pSelectorNode_Root->Insert_Child_Node(pWait);
 #pragma endregion
 	return;
 }

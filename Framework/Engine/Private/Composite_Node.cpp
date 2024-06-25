@@ -3,9 +3,9 @@
 #include "Decorator_Node.h"
 #include "Task_Node.h"
 
-CComposite_Node::CComposite_Node() : m_pGameInstance{ CGameInstance::Get_Instance() }
+CComposite_Node::CComposite_Node() : CNode()
 {
-	Safe_AddRef(m_pGameInstance);
+
 }
 
 CComposite_Node::CComposite_Node(COMPOSITE_NODE_TYPE eType) : CComposite_Node()
@@ -45,13 +45,8 @@ _bool CComposite_Node::Execute()
 {
 	if(m_bRootNode == false)
 	{
-		for (int i = 0; i < m_vecDecorator_Node.size(); ++i)
-		{
-			if (m_vecDecorator_Node[i] && m_vecDecorator_Node[i]->Condition_Check() == false)
-			{
-				return false;
-			}
-		}
+		if (Check_Permition_To_Execute() == false)
+			return false;
 
 		for (int i = 0; i < m_vecNode.size(); ++i)
 		{
@@ -67,12 +62,6 @@ _bool CComposite_Node::Execute()
 			}
 		}
 
-		for (int i = 0; i < m_vecTask_Node.size(); ++i)
-		{
-			if (m_vecTask_Node[i])
-				m_vecTask_Node[i]->Execute();
-		}
-
 		return true;
 	}
 	else
@@ -82,35 +71,11 @@ _bool CComposite_Node::Execute()
 			m_vecNode[i] && m_vecNode[i]->Execute();
 		}
 
-		for (int i = 0; i < m_vecTask_Node.size(); ++i)
-		{
-			if (m_vecTask_Node[i])
-				m_vecTask_Node[i]->Execute();
-		}
-
 		return true;
 	}
 }
 
 void CComposite_Node::Free()
 {
-	Safe_Release(m_pGameInstance);
-
-	for (int i = 0; i < m_vecNode.size(); ++i)
-	{
-		if(m_vecNode[i])
-			Safe_Release(m_vecNode[i]);
-	}
-
-	for (int i = 0; i < m_vecDecorator_Node.size(); ++i)
-	{
-		if(m_vecDecorator_Node[i])
-			Safe_Release(m_vecDecorator_Node[i]);
-	}
-
-	for (int i = 0; i < m_vecTask_Node.size(); ++i)
-	{
-		if (m_vecTask_Node[i])
-			Safe_Release(m_vecTask_Node[i]);
-	}
+	__super::Free();
 }
