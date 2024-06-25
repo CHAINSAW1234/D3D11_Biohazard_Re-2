@@ -159,7 +159,7 @@ float Visibility_Spot(float3 vWorldPosition)
 
 }
 
-[numthreads(8, 8, 8)]
+[numthreads(8, 8, 1)]
 void CS_Volume( uint3 DTid : SV_DispatchThreadID )
 {
     uint3 dims;

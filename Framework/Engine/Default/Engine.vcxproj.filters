@@ -250,15 +250,6 @@
     <Filter Include="01.Utility\AIController\Behavior_Tree\Component">
       <UniqueIdentifier>{e98974d3-959b-42b5-9f54-59d271537eaf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\AIController\Behavior_Tree\Component\Composite_Node">
-      <UniqueIdentifier>{7ff1083e-6515-4abb-a27f-ac74ea0a3fca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Decorator_Node">
-      <UniqueIdentifier>{98f5fd26-c22b-409a-8587-969c1e360f30}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Task_Node">
-      <UniqueIdentifier>{646ea284-d093-4675-aafa-a3f2eef2bd3e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\AIController\Behavior_Tree\Component\BlackBoard">
       <UniqueIdentifier>{bedf6db0-771f-4884-b33b-781fe9dfea12}</UniqueIdentifier>
     </Filter>
@@ -300,6 +291,18 @@
     </Filter>
     <Filter Include="01.Utility\14.Animation_Library">
       <UniqueIdentifier>{5152ce05-bfbc-41e5-9d5c-16766dd8e3f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree\Component\Node">
+      <UniqueIdentifier>{22f9ba96-2483-4a58-b72f-6e1116aa1cc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree\Component\Node\Composite_Node">
+      <UniqueIdentifier>{7ff1083e-6515-4abb-a27f-ac74ea0a3fca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree\Component\Node\Decorator_Node">
+      <UniqueIdentifier>{98f5fd26-c22b-409a-8587-969c1e360f30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\AIController\Behavior_Tree\Component\Node\Task_Node">
+      <UniqueIdentifier>{646ea284-d093-4675-aafa-a3f2eef2bd3e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -535,16 +538,16 @@
       <Filter>01.Utility\AIController</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Composite_Node.cpp">
-      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node</Filter>
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Node\Composite_Node</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Decorator_Node.cpp">
-      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Decorator_Node</Filter>
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Node\Decorator_Node</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\BlackBoard.cpp">
       <Filter>01.Utility\AIController\Behavior_Tree\Component\BlackBoard</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Task_Node.cpp">
-      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Task_Node</Filter>
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Node\Task_Node</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PathFinder.cpp">
       <Filter>01.Utility\AIController\AINavigator\PathFinder</Filter>
@@ -572,6 +575,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Animation_Library.cpp">
       <Filter>01.Utility\14.Animation_Library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Node.cpp">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Node</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -829,10 +835,10 @@
       <Filter>01.Utility\AIController</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Composite_Node.h">
-      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node</Filter>
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Node\Composite_Node</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Decorator_Node.h">
-      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Decorator_Node</Filter>
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Node\Decorator_Node</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\BlackBoard.h">
       <Filter>01.Utility\AIController\Behavior_Tree\Component\BlackBoard</Filter>
@@ -853,7 +859,7 @@
       <Filter>01.Utility\02.Components\FSM\HState</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Task_Node.h">
-      <Filter>01.Utility\AIController\Behavior_Tree\Component\Composite_Node\Task_Node</Filter>
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Node\Task_Node</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PxCollider.h">
       <Filter>01.Utility\97.Physics\Physics_Component\PxCollider</Filter>
@@ -866,6 +872,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Animation_Library.h">
       <Filter>01.Utility\14.Animation_Library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Node.h">
+      <Filter>01.Utility\AIController\Behavior_Tree\Component\Node</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

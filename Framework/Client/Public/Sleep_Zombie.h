@@ -18,7 +18,7 @@ public:
 	virtual HRESULT					Initialize(void* pArg);
 
 	virtual void					Enter() override;
-	virtual void					Execute() override;
+	virtual _bool					Execute() override;
 	virtual void					Exit() override;
 
 private:

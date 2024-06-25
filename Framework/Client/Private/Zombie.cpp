@@ -86,6 +86,11 @@ void CZombie::Priority_Tick(_float fTimeDelta)
 
 void CZombie::Tick(_float fTimeDelta)
 {
+	if (m_pGameInstance->IsPaused())
+	{
+		fTimeDelta = 0.f;
+	}
+
 	if (!Distance_Culling())
 	{
 		for (auto& it : m_PartObjects)
@@ -173,6 +178,11 @@ void CZombie::Tick(_float fTimeDelta)
 
 void CZombie::Late_Tick(_float fTimeDelta)
 {
+	if (m_pGameInstance->IsPaused())
+	{
+		fTimeDelta = 0.f;
+	}
+
 	if (!Distance_Culling())
 		return;
 
@@ -276,7 +286,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//Add Task Node
 	CMove_Front_Zombie*							pTask_Move = { CMove_Front_Zombie::Create() };
 	pTask_Move->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_1->Insert_Task_Node(pTask_Move);
+	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Move);
 
 
 
@@ -287,7 +297,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//Add RootNode Task Node
 	CWait_Zombie*							pTask_Wait = { CWait_Zombie::Create() };
 	pTask_Wait->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_Root->Insert_Task_Node(pTask_Wait);
+	pSelectorNode_Root->Insert_Child_Node(pTask_Wait);
 #pragma endregion
 	return;
 }

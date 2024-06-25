@@ -203,6 +203,7 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 
 	m_pOctreeNodes[nodeID] = new COctree(m_pDevice, m_pContext, m_pGameInstance, m_vTranslation,m_pPlayer);
 	m_pOctreeNodes[nodeID]->m_pObjects = m_pObjects;
+	m_pOctreeNodes[nodeID]->m_pObjects_Anim = m_pObjects_Anim;
 	_float4 vNodeCenter = GetNewNodeCenter(vCenter, width, nodeID);
 
 	g_CurrentSubdivision++;
@@ -420,6 +421,24 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 	if (m_pObjects)
 	{
 		for (auto& it : (*m_pObjects))
+		{
+			_float4 vPos;
+
+			if (it->Get_Localized() == false)
+				vPos = it->GetPosition();
+			else
+				vPos = it->GetPosition_Local_To_World();
+
+			if (IsPointInsideCube(m_vCenter, m_Width, vPos))
+			{
+				m_vecProps.push_back(it);
+			}
+		}
+	}
+
+	if (m_pObjects_Anim)
+	{
+		for (auto& it : (*m_pObjects_Anim))
 		{
 			_float4 vPos;
 
@@ -1035,4 +1054,5 @@ void COctree::Render_Node_LightDepth_Point(CModel* pRootWorld, CShader* pShader)
 void COctree::Set_Props_Layer(_int iLevel)
 {
 	m_pObjects = m_pGameInstance->Find_Layer(iLevel, L"Layer_Obj");
+	m_pObjects_Anim = m_pGameInstance->Find_Layer(iLevel, L"Layer_InteractObj");
 }

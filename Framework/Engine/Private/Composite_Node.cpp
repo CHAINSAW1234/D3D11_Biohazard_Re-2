@@ -3,8 +3,9 @@
 #include "Decorator_Node.h"
 #include "Task_Node.h"
 
-CComposite_Node::CComposite_Node()
+CComposite_Node::CComposite_Node() : CNode()
 {
+
 }
 
 CComposite_Node::CComposite_Node(const CComposite_Node& rhs)
@@ -40,13 +41,8 @@ _bool CComposite_Node::Execute()
 {
 	if(m_bRootNode == false)
 	{
-		for (int i = 0; i < m_vecDecorator_Node.size(); ++i)
-		{
-			if (m_vecDecorator_Node[i] && m_vecDecorator_Node[i]->Condition_Check() == false)
-			{
-				return false;
-			}
-		}
+		if (Check_Permition_To_Execute() == false)
+			return false;
 
 		for (int i = 0; i < m_vecNode.size(); ++i)
 		{
@@ -62,12 +58,6 @@ _bool CComposite_Node::Execute()
 			}
 		}
 
-		for (int i = 0; i < m_vecTask_Node.size(); ++i)
-		{
-			if (m_vecTask_Node[i])
-				m_vecTask_Node[i]->Execute();
-		}
-
 		return true;
 	}
 	else
@@ -77,33 +67,13 @@ _bool CComposite_Node::Execute()
 			m_vecNode[i] && m_vecNode[i]->Execute();
 		}
 
-		for (int i = 0; i < m_vecTask_Node.size(); ++i)
-		{
-			if (m_vecTask_Node[i])
-				m_vecTask_Node[i]->Execute();
-		}
-
 		return true;
 	}
 }
 
 void CComposite_Node::Free()
 {
-	for (int i = 0; i < m_vecNode.size(); ++i)
-	{
-		if(m_vecNode[i])
-			Safe_Release(m_vecNode[i]);
-	}
-
-	for (int i = 0; i < m_vecDecorator_Node.size(); ++i)
-	{
-		if(m_vecDecorator_Node[i])
-			Safe_Release(m_vecDecorator_Node[i]);
-	}
-
-	for (int i = 0; i < m_vecTask_Node.size(); ++i)
-	{
-		if (m_vecTask_Node[i])
+	__super::Free();
 			Safe_Release(m_vecTask_Node[i]);
 	}
 }

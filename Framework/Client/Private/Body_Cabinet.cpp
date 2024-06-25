@@ -102,10 +102,10 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_Cabinet::Render()
 {
-	//if (m_bRender == false)
-	//	return S_OK;
-	//else
-	//	m_bRender = false;
+	if (m_bRender == false)
+		return S_OK;
+	else
+		m_bRender = false;
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
