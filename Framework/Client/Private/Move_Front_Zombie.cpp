@@ -69,7 +69,7 @@ void CMove_Front_Zombie::Enter()
 	m_pBlackBoard->Set_Current_MotionType_Body(static_cast<MOTION_TYPE>(iType));
 }
 
-_bool CMoveTo_Zombie::Execute()
+_bool CMove_Front_Zombie::Execute()
 {
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)

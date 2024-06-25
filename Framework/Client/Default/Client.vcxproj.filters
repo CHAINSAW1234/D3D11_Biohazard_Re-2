@@ -657,7 +657,7 @@
     <ClInclude Include="..\Public\Move_Include_Turn.h">
       <Filter>AIController\Zombie\Task\Move\Move_Include_Turn</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Is_Can_Partrol_Zombie.h">
+    <ClInclude Include="..\Public\Is_Can_Patrol_Zombie.h">
       <Filter>AIController\Zombie\Decorator\Checker_Can_Patrol</Filter>
     </ClInclude>
   </ItemGroup>
@@ -959,7 +959,7 @@
     <ClCompile Include="..\Private\Move_Include_Turn.cpp">
       <Filter>AIController\Zombie\Task\Move\Move_Include_Turn</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Is_Can_Partrol_Zombie.cpp">
+    <ClCompile Include="..\Private\Is_Can_Patrol_Zombie.cpp">
       <Filter>AIController\Zombie\Decorator\Checker_Can_Patrol</Filter>
     </ClCompile>
   </ItemGroup>

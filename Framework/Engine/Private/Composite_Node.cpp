@@ -74,6 +74,4 @@ _bool CComposite_Node::Execute()
 void CComposite_Node::Free()
 {
 	__super::Free();
-			Safe_Release(m_vecTask_Node[i]);
-	}
 }

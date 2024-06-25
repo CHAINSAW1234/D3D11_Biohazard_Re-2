@@ -23,8 +23,9 @@ void CPivot_Turn_Zombie::Enter()
 {
 }
 
-void CPivot_Turn_Zombie::Execute()
+_bool CPivot_Turn_Zombie::Execute()
 {
+	return true;
 }
 
 void CPivot_Turn_Zombie::Exit()
