@@ -31,11 +31,13 @@ void CSleep_Zombie::Enter()
 
 _bool CSleep_Zombie::Execute()
 {
+#pragma region Default Function
 	if (nullptr == m_pBlackBoard)
 		return false;
 
 	if (Check_Permition_To_Execute() == false)
 		return false;
+#pragma endregion
 
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_IDLE);
