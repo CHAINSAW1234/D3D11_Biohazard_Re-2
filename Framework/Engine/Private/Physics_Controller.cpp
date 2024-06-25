@@ -131,7 +131,7 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	connectCubeToSoftBody(rigidCubeA, 2 * halfExtent, cubePosA, softBodySphere);
 	connectCubeToSoftBody(rigidCubeA, 2 * halfExtent, cubePosA, softBodyCube);*/
 #pragma endregion
-	
+
 	return S_OK;
 }
 
@@ -151,7 +151,7 @@ CPhysics_Controller* CPhysics_Controller::Create()
 
 void CPhysics_Controller::Simulate(_float fTimeDelta)
 {
-	if (m_pGameInstance->GetSimulate() == false)
+	if (m_pGameInstance->GetSimulate() == false || m_pGameInstance->IsPaused())
 		return;
 
 	//Gravity Setting
@@ -230,7 +230,7 @@ CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int*
 
 void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
 {
-	
+
 }
 
 void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)

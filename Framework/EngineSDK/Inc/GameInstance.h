@@ -32,6 +32,10 @@ public:
 	{
 		return m_pPlayer;
 	}
+	_bool									IsPaused()
+	{
+		return m_bPause;
+	}
 #pragma endregion
 
 #pragma region forCH_TEST
@@ -378,7 +382,8 @@ private:
 	random_device							m_RandomDevice;
 	mt19937_64								m_RandomNumber;
 
-	class CGameObject*							m_pPlayer = { nullptr };
+	class CGameObject*						m_pPlayer = { nullptr };
+	_bool									m_bPause = { false };
 public:
 	static void Release_Engine();
 	virtual void Free() override;

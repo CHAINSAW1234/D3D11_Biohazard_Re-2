@@ -92,6 +92,10 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
+	if (m_pGameInstance->IsPaused())
+	{
+		fTimeDelta = 0.f;
+	}
 #pragma region 예은ColTest - 컬링 방식에 따라 달라질 겁니당
 	if (m_iCurCol != m_iPreCol)
 	{
@@ -365,6 +369,11 @@ void CPlayer::Tick(_float fTimeDelta)
 
 void CPlayer::Late_Tick(_float fTimeDelta)
 {
+	if (m_pGameInstance->IsPaused())
+	{
+		fTimeDelta = 0.f;
+	}
+
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
 	Late_Tick_PartObjects(fTimeDelta);
