@@ -71,10 +71,10 @@ void CBody_EventProp::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_EventProp::Render()
 {
-	//if (m_bRender == false)
-	//	return S_OK;
-	//else
-	//	m_bRender = false;
+	if (m_bRender == false)
+		return S_OK;
+	else
+		m_bRender = false;
 
 
 	if (FAILED(Bind_ShaderResources()))

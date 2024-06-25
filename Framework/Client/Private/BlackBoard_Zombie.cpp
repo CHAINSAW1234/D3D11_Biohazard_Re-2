@@ -4,8 +4,6 @@
 #include "Player.h"
 #include "Zombie.h"
 
-#include "Body_Zombie.h"
-
 CBlackBoard_Zombie::CBlackBoard_Zombie()
 	: CBlackBoard()
 {
@@ -34,6 +32,15 @@ void CBlackBoard_Zombie::Initialize_BlackBoard(CZombie* pAI)
 
 	auto pPlayerLayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_Player");
 	m_pPlayer = dynamic_cast<CPlayer*>(*(*pPlayerLayer).begin());
+}
+
+void CBlackBoard_Zombie::Set_Current_MotionType_Body(MOTION_TYPE eType)
+{
+	CBody_Zombie*		pBodyZombie = { Get_PartObject_Body() };
+	if(nullptr == pBodyZombie)
+		return;
+
+	pBodyZombie->Set_MotionType(eType);
 }
 
 _uint CBlackBoard_Zombie::Get_Current_MotionType_Body()
@@ -66,6 +73,24 @@ _uint CBlackBoard_Zombie::Get_Pre_MotionType_Body()
 		return static_cast<_uint>(MOTION_TYPE::MOTION_END);
 
 	return static_cast<_uint>(pBodyObject->Get_Pre_MotionType());
+}
+
+_int CBlackBoard_Zombie::Get_Current_AnimIndex(CMonster::PART_ID ePartID, PLAYING_INDEX eIndex)
+{
+	CModel*			pModel = { Get_PartModel(ePartID) };
+	if (nullptr == pModel)
+		return -1;
+
+	return pModel->Get_CurrentAnimIndex(static_cast<_uint>(eIndex));
+}
+
+wstring CBlackBoard_Zombie::Get_Current_AnimLayerTag(CMonster::PART_ID ePartID, PLAYING_INDEX eIndex)
+{
+	CModel* pModel = { Get_PartModel(ePartID) };
+	if (nullptr == pModel)
+		return TEXT("");
+
+	return pModel->Get_CurrentAnimLayerTag(static_cast<_uint>(eIndex));
 }
 
 CModel* CBlackBoard_Zombie::Get_PartModel(_uint iPartType)
@@ -186,68 +211,38 @@ CModel* CBlackBoard_Zombie::Find_PartModel(_uint iPartID)
 	return pModel;
 }
 
-_bool CBlackBoard_Zombie::Is_Start_Anim(_uint iPartID, _uint iAnimIndex)
+CBody_Zombie* CBlackBoard_Zombie::Get_PartObject_Body()
 {
-	/*CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
+	if (nullptr == m_pAI)
+		return nullptr;
 
-	if (CMonster::PART_ID::PART_BODY == static_cast<CMonster::PART_ID>(iPartID))
-	{
-		CBody_Zombie*		pBodyZombie = { dynamic_cast<CBody_Zombie*>(pPartObject) };
-		if (nullptr == pBodyZombie)
-			return false;
+	CPartObject* pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(CMonster::PART_BODY)) };
+	if (nullptr == pPartObject)
+		return nullptr;
 
-		return pBodyZombie->Is_Start_Anim(iAnimIndex);
-	}*/
+	CBody_Zombie* pPartBody = { dynamic_cast<CBody_Zombie*>(pPartObject) };
+	if (nullptr == pPartBody)
+		return nullptr;
 
-	return false;
+	return pPartBody;
 }
 
-_bool CBlackBoard_Zombie::Is_Loop_Anim(_uint iPartID, _uint iAnimIndex)
+ZOMBIE_BODY_ANIM_GROUP CBlackBoard_Zombie::Get_Current_AnimGroup(PLAYING_INDEX eIndex)
 {
-	/*CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
+	CBody_Zombie*			pPartBody = { Get_PartObject_Body() };
+	if (nullptr == pPartBody)
+		return ZOMBIE_BODY_ANIM_GROUP::_END;
 
-	if (CMonster::PART_ID::PART_BODY == static_cast<CMonster::PART_ID>(iPartID))
-	{
-		CBody_Zombie*		pBodyZombie = { dynamic_cast<CBody_Zombie*>(pPartObject) };
-		if (nullptr == pBodyZombie)
-			return false;
-
-		return pBodyZombie->Is_Loop_Anim(iAnimIndex);
-	}*/
-
-	return false;
+	return pPartBody->Get_Current_AnimGroup(eIndex);
 }
 
-_bool CBlackBoard_Zombie::Is_Move_CurrentAnim(_uint iPartID, _uint iAnimIndex)
+ZOMBIE_BODY_ANIM_TYPE CBlackBoard_Zombie::Get_Current_AnimType(PLAYING_INDEX eIndex)
 {
-	/*CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
+	CBody_Zombie* pPartBody = { Get_PartObject_Body() };
+	if (nullptr == pPartBody)
+		return ZOMBIE_BODY_ANIM_TYPE::_END;
 
-	if (CMonster::PART_ID::PART_BODY == static_cast<CMonster::PART_ID>(iPartID))
-	{
-		CBody_Zombie*		pBodyZombie = { dynamic_cast<CBody_Zombie*>(pPartObject) };
-		if (nullptr == pBodyZombie)
-			return false;
-
-		return pBodyZombie->Is_Move_Anim(iAnimIndex);
-	}*/
-
-	return false;
-}
-
-_bool CBlackBoard_Zombie::Is_Turn_Anim(_uint iPartID, _uint iAnimIndex)
-{
-	/*CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
-
-	if (CMonster::PART_ID::PART_BODY == static_cast<CMonster::PART_ID>(iPartID))
-	{
-		CBody_Zombie*		pBodyZombie = { dynamic_cast<CBody_Zombie*>(pPartObject) };
-		if (nullptr == pBodyZombie)
-			return false;
-
-		return pBodyZombie->Is_Turn_Anim(iAnimIndex);
-	}*/
-
-	return false;
+	return pPartBody->Get_Current_AnimType(eIndex);
 }
 
 vector<_float> CBlackBoard_Zombie::Get_BlendWeights(_uint iPartID)

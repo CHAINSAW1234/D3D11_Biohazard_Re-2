@@ -122,7 +122,6 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 		return E_FAIL;
 	}	
 	
-
 	m_pExtractor = CExtractor::Create(*ppDevice, *ppContext);
 	if (nullptr == m_pExtractor)
 	{
@@ -211,6 +210,11 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	if (m_pPhysics_Controller)
 		m_pPhysics_Controller->Simulate(fTimeDelta);
+
+	if (DOWN == Get_KeyState(VK_TAB))
+	{
+		m_bPause = !m_bPause;
+	}
 }
 
 HRESULT CGameInstance::Begin_Draw(const _float4 & vClearColor)

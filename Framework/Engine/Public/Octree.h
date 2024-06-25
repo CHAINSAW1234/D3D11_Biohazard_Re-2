@@ -124,6 +124,7 @@ public:
 
 	_bool								m_bRender = { false };
 	list<class CGameObject*>*			m_pObjects = { nullptr };
+	list<class CGameObject*>*			m_pObjects_Anim = { nullptr };
 	vector<class CGameObject*>			m_vecProps;
 
 	CGameObject*						m_pPlayer = { nullptr };

@@ -2,6 +2,8 @@
 
 #include "Client_Defines.h"
 #include "BlackBoard.h"
+#include "Body_Zombie.h"
+#include "Zombie.h"
 
 BEGIN(Engine)
 class CTask_Node;
@@ -37,9 +39,12 @@ public: // Getter
 		return m_pPlayer;
 	}
 
+	void							Set_Current_MotionType_Body(MOTION_TYPE eType);
 	_uint							Get_Current_MotionType_Body();
 	_uint							Get_Pre_MotionType_Body();
 
+	_int							Get_Current_AnimIndex(CMonster::PART_ID ePartID, PLAYING_INDEX eIndex);
+	wstring							Get_Current_AnimLayerTag(CMonster::PART_ID ePartID, PLAYING_INDEX eIndex);
 	CModel*							Get_PartModel(_uint iPartType);
 
 public:		/* Anim Controll */
@@ -57,18 +62,16 @@ public:		/* Public Utility */
 private:	/* Private Utility */
 	CModel*							Find_PartModel(_uint iPartID);
 
+	CBody_Zombie*					Get_PartObject_Body();
+
 
 public:		/* Anim Branch Check */
-	_bool							Is_Start_Anim(_uint iPartID, _uint iAnimIndex);
-	_bool							Is_Loop_Anim(_uint iPartID, _uint iAnimIndex);
+	ZOMBIE_BODY_ANIM_GROUP			Get_Current_AnimGroup(PLAYING_INDEX eIndex);
+	ZOMBIE_BODY_ANIM_TYPE			Get_Current_AnimType(PLAYING_INDEX eIndex);
 
-	_bool							Is_Move_CurrentAnim(_uint iPartID, _uint iAnimIndex);
-	_bool							Is_Turn_Anim(_uint iPartID, _uint iAnimIndex);
 
 public:		/* Motion Blend Controll */
 	vector<_float>					Get_BlendWeights(_uint iPartID);
-	
-
 	
 protected:
 	class CPathFinder*				m_pPathFinder = { nullptr };

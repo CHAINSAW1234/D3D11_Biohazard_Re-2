@@ -94,6 +94,11 @@ void CZombie::Priority_Tick(_float fTimeDelta)
 
 void CZombie::Tick(_float fTimeDelta)
 {
+	if (m_pGameInstance->IsPaused())
+	{
+		fTimeDelta = 0.f;
+	}
+
 	if (!Distance_Culling())
 	{
 		for (auto& it : m_PartObjects)
@@ -181,6 +186,11 @@ void CZombie::Tick(_float fTimeDelta)
 
 void CZombie::Late_Tick(_float fTimeDelta)
 {
+	if (m_pGameInstance->IsPaused())
+	{
+		fTimeDelta = 0.f;
+	}
+
 	if (!Distance_Culling())
 		return;
 

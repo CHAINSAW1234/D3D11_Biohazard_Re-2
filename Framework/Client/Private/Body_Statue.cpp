@@ -82,8 +82,10 @@ void CBody_Statue::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_Statue::Render()
 {
-	//if (*m_pRender == false)
-	//	return S_OK;
+	if (m_bRender == false)
+		return S_OK;
+	else
+		m_bRender = false;
 
 
 	if (FAILED(Bind_ShaderResources()))

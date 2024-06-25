@@ -131,7 +131,7 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	connectCubeToSoftBody(rigidCubeA, 2 * halfExtent, cubePosA, softBodySphere);
 	connectCubeToSoftBody(rigidCubeA, 2 * halfExtent, cubePosA, softBodyCube);*/
 #pragma endregion
-	
+
 	return S_OK;
 }
 
@@ -151,7 +151,7 @@ CPhysics_Controller* CPhysics_Controller::Create()
 
 void CPhysics_Controller::Simulate(_float fTimeDelta)
 {
-	if (m_pGameInstance->GetSimulate() == false)
+	if (m_pGameInstance->GetSimulate() == false || m_pGameInstance->IsPaused())
 		return;
 
 	//Gravity Setting
@@ -230,7 +230,7 @@ CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int*
 
 void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
 {
-	
+
 }
 
 void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
@@ -1102,6 +1102,28 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 				}
 
 				return false;
+			}
+
+			if (filterData.word0 & COLLISION_CATEGORY::RAGDOLL)
+			{
+				COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData.word3;
+
+				*pBlockPoint = PxVec_To_Float4_Coord(hit_Obj.position);
+
+				PxRigidDynamic* dynamicActor = actor->is<PxRigidDynamic>();
+				if (dynamicActor)
+				{
+					auto vDelta = Float4_Normalize(*pBlockPoint - vOrigin);
+					vDelta.y = 0.f;
+
+					auto fPower = rand() % 100;
+					vDelta = vDelta * (fPower + 50.f);
+
+					PxVec3 pxForce = PxVec3(vDelta.x, vDelta.y, vDelta.z);
+					dynamicActor->addForce(pxForce, PxForceMode::eIMPULSE);
+				}
+
+				return true;
 			}
 		}
 

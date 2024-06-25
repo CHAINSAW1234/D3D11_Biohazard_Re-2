@@ -521,6 +521,9 @@ void CTool_AnimPlayer::Show_PlayingInfos()
 		if (ImGui::CollapsingHeader("Track Position Controll ##CTool_AnimPlayer::Show_PlayingInfos()") &&
 			nullptr != m_pCurrentAnimLayerTag)
 		{
+			static _bool			isResetPre = { false };
+			if (ImGui::Button("IsResetPre"))
+				isResetPre = !isResetPre;
 
 			list<_uint>			CreatedIndices = m_pCurrentModel->Get_Created_PlayingInfo_Indices();
 			for (auto& iPlayingIndex : CreatedIndices)
@@ -532,9 +535,9 @@ void CTool_AnimPlayer::Show_PlayingInfos()
 				_float		fDuration = { m_pCurrentModel->Get_Duration_From_Anim(*m_pCurrentAnimLayerTag, iAnimIndex) };
 				string		strPlayingIndex = { to_string(iPlayingIndex) };
 
-				ImGui::SliderFloat(string(string("Playing Info : ") + strPlayingIndex + string("## TrackPosition Controll")).c_str(), &fTrackPosition, 0.f, fDuration);
+				ImGui::SliderFloat(string(string("Playing Info : ") + strPlayingIndex + string("## TrackPosition Controll")).c_str(), &fTrackPosition, 0.f, fDuration);						
 
-				m_pCurrentModel->Set_TrackPosition(iPlayingIndex, fTrackPosition, true);
+				m_pCurrentModel->Set_TrackPosition(iPlayingIndex, fTrackPosition, isResetPre);
 			}
 		}
 

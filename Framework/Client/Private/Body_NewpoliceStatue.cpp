@@ -81,10 +81,10 @@ void CBody_NewpoliceStatue::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_NewpoliceStatue::Render()
 {
-	//if (m_bRender == false)
-	//	return S_OK;
-	//else
-	//	m_bRender = false;
+	if (m_bRender == false)
+		return S_OK;
+	else
+		m_bRender = false;
 
 
 	if (FAILED(__super::Bind_ShaderResources()))

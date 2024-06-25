@@ -2,8 +2,10 @@
 
 /* 모델의 타입 */
 enum class ZOMBIE_BODY_TYPE { BODY_MALE, BODY_FEMALE, BODY_HEAVY, BODY_END };
+/* 어떤 그룹의 애니메이션 인지 Ordinary .... */
+enum class ZOMBIE_BODY_ANIM_GROUP { _ADD, _BITE, _DAMAGE, _DEAD, _LOST, _ORDINARY, _SICK, _UNDISCOVERED, _END};
 /* 어떤 종류의 애니메이션 인지 */
-enum class ZOMBIE_BODY_ANIM_TYPE { _IDLE, _MOVE, _TURN, _END };	
+enum class ZOMBIE_BODY_ANIM_TYPE { _IDLE, _MOVE, _TURN, _BLEND_MASK, _DAMAGE, _DEAD, _BITE, _STAND_UP, _END };	
 /* Playing Info Index */
 enum class PLAYING_INDEX { INDEX_0, INDEX_1, INDEX_2, INDEX_3, INDEX_4, INDEX_5, INDEX_END };
 /* A ~ F 모션 타입 => 아이들 워크등 나뉘어있음 */
@@ -78,6 +80,7 @@ enum class ANIM_ADD_SHOULDER_R {
 
 #pragma region Damage
 
+//	맞고 멀리 날라가는 모션들
 enum class ANIM_DAMAGE_BURST {
 	_START_F,
 	_LOOP_F,
@@ -102,6 +105,7 @@ enum class ANIM_DAMAGE_BURST {
 	_END
 };
 
+//	누운 채로 맞아서 흔들리는 모션들
 enum class ANIM_DAMAGE_DEFAULT {
 	_FACEDOWN_ARM_L,
 	_FACEDOWN_ARM_R,
@@ -110,6 +114,7 @@ enum class ANIM_DAMAGE_DEFAULT {
 	_END
 };
 
+//	맞고 뻗는 모션들 ( 거의 제자리 )
 enum class ANIM_DAMAGE_DOWN {
 	_F_L,
 	_B_L,
@@ -120,6 +125,7 @@ enum class ANIM_DAMAGE_DOWN {
 	_END
 };
 
+//	감전
 enum class ANIM_DAMAGE_ELECTRIC_SHOCK {
 	_END_F,
 	_FACE_UP_START,
@@ -129,6 +135,7 @@ enum class ANIM_DAMAGE_ELECTRIC_SHOCK {
 	_END
 };
 
+//	맞고 강하게 밀려나는 모션들 ( 방향 F등 => 공격의 방향 F면 B로 밀려남 )
 enum class ANIM_DAMAGE_KNOCKBACK{
 	_HEAD_F,
 	_HEAD_FL,
@@ -140,6 +147,7 @@ enum class ANIM_DAMAGE_KNOCKBACK{
 	_END
 };
 
+//	부위를 잃게되는 모션들? => 애니메이션 재생이후 부위 파괴상태 바꿔줘야하는 기점이될듯
 enum class ANIM_DAMAGE_LOST {
 	_B_F_L,
 	_B_F_R,
@@ -160,6 +168,7 @@ enum class ANIM_DAMAGE_LOST {
 	_END
 };
 
+//	계단에서 자빠지는 모션 ( FaceDown => 전방으로 쓰러짐, 아래로 내려감, Face Up => 후방으로 쓰러짐, 위로 올라감 )
 enum class ANIM_DAMAGE_STAIRS_DOWN {
 	_FACEDOWN1,
 	_FACEDOWN2,
@@ -168,6 +177,7 @@ enum class ANIM_DAMAGE_STAIRS_DOWN {
 	_END
 };
 
+//	계단에서 자빠지는 모션 ( FaceDown => 전방으로 쓰러짐, 위로 올라감, Face Up => 후방으로 쓰러짐, 아래로 내려감 )
 enum class ANIM_DAMAGE_STAIRS_UP {
 	_FACEDOWN1,
 	_FACEDOWN2,
@@ -176,6 +186,7 @@ enum class ANIM_DAMAGE_STAIRS_UP {
 	_END
 };
 
+//	부위 피격별 약하게 밀려나면서 경직이후 제자리 ( 넉백은 강하게 밀리고 스턴은 약하게 밀림 )
 enum class ANIM_DAMAGE_STUN {
 	_HEAD_LEFT_SIDE_F,
 	_BODY_F,

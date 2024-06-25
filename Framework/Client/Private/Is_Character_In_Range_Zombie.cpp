@@ -33,7 +33,7 @@ _bool CIs_Character_In_Range_Zombie::Condition_Check()
 	auto vDelta = vPos_Player - vPos_AI;
 	_float fDelta = XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta)));
 
-	if (fDelta < 0.01f)
+	if (fDelta < 5.f)
 	{
 		return true;
 	}

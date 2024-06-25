@@ -59,6 +59,16 @@ void CEventProp::Late_Tick(_float fTimeDelta)
 
 	if (m_bRender == false)
 		return;
+	else
+	{
+		for (auto& it : m_PartObjects)
+		{
+			if (it != nullptr)
+				it->Set_Render(true);
+		}
+
+		m_bRender = false;
+	}
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
