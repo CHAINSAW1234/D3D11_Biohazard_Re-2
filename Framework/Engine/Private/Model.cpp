@@ -504,6 +504,25 @@ void CModel::Add_Bone_Layer_ChildIndices(const wstring& strLayerTag, _uint iPare
 	m_BoneLayers.emplace(strLayerTag, pBoneLayer);
 }
 
+void CModel::Add_Bone_Layer_BoneIndices(const wstring& strLayerTag, const list<_uint>& BoneIndices)
+{
+	CBone_Layer* pBoneLayer = { Find_BoneLayer(strLayerTag) };
+	if (nullptr != pBoneLayer)
+		return;
+
+	unordered_set<_uint>			BoneIndicesSet;
+	for (auto& iBoneIndex : BoneIndices)
+	{
+		BoneIndicesSet.emplace(iBoneIndex);
+	}
+
+	pBoneLayer = CBone_Layer::Create(BoneIndicesSet);
+	if (nullptr == pBoneLayer)
+		return;
+
+	m_BoneLayers.emplace(strLayerTag, pBoneLayer);
+}
+
 void CModel::Add_Bone_Layer_All_Bone(const wstring& strLayerTag)
 {
 	CBone_Layer* pBoneLayer = { Find_BoneLayer(strLayerTag) };
@@ -1441,6 +1460,58 @@ _float CModel::Get_Duration_From_PlayingInfo(_uint iPlayingIndex)
 	}
 
 	return fDuration;
+}
+
+_float CModel::Get_TickPerSec_From_Anim(const wstring& strAnimLayerTag, _int iAnimIndex)
+{
+	_float			fTickPerSec = { 0.f };
+
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	if (iter == m_AnimationLayers.end())
+		return fTickPerSec;
+
+	if (iAnimIndex >= iter->second->Get_NumAnims())
+		return fTickPerSec;
+
+	fTickPerSec = iter->second->Get_Animation(iAnimIndex)->Get_TickPerSec();
+
+	return fTickPerSec;
+}
+
+_float CModel::Get_TickPerSec_From_Anim(const wstring& strAnimLayerTag, const string& strAnimTag)
+{
+	_float			fTickPerSec = { 0.f };
+
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	if (iter == m_AnimationLayers.end())
+		return fTickPerSec;
+
+	const vector<CAnimation*>& Animations = { iter->second->Get_Animations() };
+	for (auto& pAnimation : Animations)
+	{
+		if (pAnimation->Get_Name() == strAnimTag)
+		{
+			fTickPerSec = pAnimation->Get_TickPerSec();
+			break;
+		}
+	}
+
+	return fTickPerSec;
+}
+
+_float CModel::Get_TickPerSec_From_PlayingInfo(_uint iPlayingIndex)
+{
+	_float					fTIckPerSec = { 0.f };
+	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+	if (nullptr != pPlayingInfo)
+	{
+		_int				iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
+		wstring				strAnimLayerTag = { pPlayingInfo->Get_AnimLayerTag() };
+
+		fTIckPerSec = Get_TickPerSec_From_Anim(strAnimLayerTag, iAnimIndex);
+	}
+
+	return fTIckPerSec;
 }
 
 CBone* CModel::Get_BonePtr(const _char* pBoneName) const

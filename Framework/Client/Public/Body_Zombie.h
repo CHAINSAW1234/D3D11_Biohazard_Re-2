@@ -11,6 +11,9 @@
 #define BONE_LAYER_LOWER_TAG			TEXT("Lower")
 #define BONE_LAYER_UPPER_TAG			TEXT("Upper")
 
+#define BONE_LAYER_L_LEG_TWIST_TAG		TEXT("L_Leg_Twistter")
+#define BONE_LAYER_R_LEG_TWIST_TAG		TEXT("R_Leg_Twistter")
+
 BEGIN(Client)
 
 #include "Body_Zombie_Enums.h"
@@ -47,6 +50,8 @@ private:
 	HRESULT								Add_Animations();
 	HRESULT								Register_Animation_Branches_AnimType();
 	HRESULT								Register_Animation_Branches_AnimGroup();
+	//	ÇÇ°Ý½Ã Èçµé¸± »Àµé
+	HRESULT								Register_BoneLayer_Additional_TwisterBones();
 
 public:
 	void								Set_MotionType(MOTION_TYPE eType) { m_eCurrentMotionType = eType; }

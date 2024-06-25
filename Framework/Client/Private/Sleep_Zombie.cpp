@@ -29,7 +29,7 @@ void CSleep_Zombie::Enter()
 {
 }
 
-_bool CSleep_Zombie::Execute()
+_bool CSleep_Zombie::Execute(_float fTimeDelta)
 {
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)

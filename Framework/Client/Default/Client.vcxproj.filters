@@ -325,6 +325,12 @@
     <Filter Include="AIController\Zombie\Decorator\Checker_Can_Patrol">
       <UniqueIdentifier>{90a16696-589b-4940-862e-1fd58d4658c7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AIController\Zombie\Decorator\Checker_Can_Change_State">
+      <UniqueIdentifier>{9edbb823-7423-4ed3-b135-3bd281cb3515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Decorator\Checker_Is_Hit">
+      <UniqueIdentifier>{01c6a90a-aa7c-4607-9519-62cb132e54d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -660,6 +666,12 @@
     <ClInclude Include="..\Public\Is_Can_Patrol_Zombie.h">
       <Filter>AIController\Zombie\Decorator\Checker_Can_Patrol</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Is_Can_Change_State_Zombie.h">
+      <Filter>AIController\Zombie\Decorator\Checker_Can_Change_State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Is_Hit_Zombie.h">
+      <Filter>AIController\Zombie\Decorator\Checker_Is_Hit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -961,6 +973,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Is_Can_Patrol_Zombie.cpp">
       <Filter>AIController\Zombie\Decorator\Checker_Can_Patrol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Is_Can_Change_State_Zombie.cpp">
+      <Filter>AIController\Zombie\Decorator\Checker_Can_Change_State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Is_Hit_Zombie.cpp">
+      <Filter>AIController\Zombie\Decorator\Checker_Is_Hit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

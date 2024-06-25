@@ -15,7 +15,7 @@ HRESULT CTask_Node::Initialize(void* pArg)
 	return S_OK;
 }
 
-_bool CTask_Node::Execute()
+_bool CTask_Node::Execute(_float fTimeDelta)
 {
 	return true;
 }

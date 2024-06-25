@@ -116,7 +116,7 @@ void CZombie::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
 
 #pragma region BehaviorTree ÄÚµå
-	m_pBehaviorTree->Initiate();
+		m_pBehaviorTree->Initiate(fTimeDelta);
 #pragma endregion
 
 	_float4			vDirection = {};
@@ -172,6 +172,14 @@ void CZombie::Tick(_float fTimeDelta)
 				if (nullptr != pPartObject)
 					pPartObject->SetRagdoll(m_iIndex_CCT, vForce, eType);
 			}
+
+
+			//	For.Anim
+			m_eCurrentHitCollider = eType;
+		}
+		else
+		{
+			m_eCurrentHitCollider = COLLIDER_TYPE::_END;
 		}
 	}
 }
@@ -266,7 +274,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 	CComposite_Node::COMPOSITE_NODE_DESC		CompositeNodeDesc;
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
-	CComposite_Node*						pSelectorNode_Root = { CComposite_Node::Create(&CompositeNodeDesc) };
+	CComposite_Node*							pSelectorNode_Root = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pNode_Root->Insert_Child_Node(pSelectorNode_Root);
 
 	/*
@@ -275,11 +283,10 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 	//Add RootNode Childe Composite Node - Selector Node_1
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
-	CComposite_Node*						pSelectorNode_RootChild_1 = { CComposite_Node::Create(&CompositeNodeDesc) };
+	CComposite_Node*							pSelectorNode_RootChild_1 = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_1);
-
 	//Add Decorator Node
-	CIs_Character_In_Range_Zombie*			pDeco_Charactor_In_Range = { CIs_Character_In_Range_Zombie::Create() };
+	CIs_Character_In_Range_Zombie*				pDeco_Charactor_In_Range = { CIs_Character_In_Range_Zombie::Create() };
 	pDeco_Charactor_In_Range->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_1->Insert_Decorator_Node(pDeco_Charactor_In_Range);
 
@@ -287,17 +294,43 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CMove_Front_Zombie*							pTask_Move = { CMove_Front_Zombie::Create() };
 	pTask_Move->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Move);
+	//Add Decorator Node		=>		Task Move, Deco In View
+	CIs_Charactor_In_ViewAngle_Zombie*			pDeco_Charactor_In_View = { CIs_Charactor_In_ViewAngle_Zombie::Create() };
+	pDeco_Charactor_In_View->SetBlackBoard(m_pBlackBoard);
+	pTask_Move->Insert_Decorator_Node(pDeco_Charactor_In_View);
+	//Add Decorator Node		=>		Task Move, Deco Can Change State
+	CIs_Can_Change_State_Zombie::CAN_CHANGE_STATE_ZOMBIE_DESC		CanChangeStateForMoveDesc;
+	//	CanChangeStateDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_TURN);
+	CIs_Can_Change_State_Zombie*				pDeco_Can_Change_StateForMove = { CIs_Can_Change_State_Zombie::Create(&CanChangeStateForMoveDesc) };
+	pDeco_Can_Change_StateForMove->SetBlackBoard(m_pBlackBoard);
+	pTask_Move->Insert_Decorator_Node(pDeco_Can_Change_StateForMove);
 
 
+	//Add Task Node
+	CPivot_Turn_Zombie*							pTask_Pivot_Turn = { CPivot_Turn_Zombie::Create() };
+	pTask_Pivot_Turn->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Pivot_Turn);
+	//Add Decorator Node		=>		Task Turn, Deco Can Change State
+	CIs_Can_Change_State_Zombie::CAN_CHANGE_STATE_ZOMBIE_DESC		CanChangeStateForTurnDesc;
+	CanChangeStateForTurnDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_TURN);
+	CIs_Can_Change_State_Zombie*				pDeco_Can_Change_State_ForTurn = { CIs_Can_Change_State_Zombie::Create(&CanChangeStateForTurnDesc) };
+	pDeco_Can_Change_State_ForTurn->SetBlackBoard(m_pBlackBoard);
+	pTask_Pivot_Turn->Insert_Decorator_Node(pDeco_Can_Change_State_ForTurn);
 
 	/*
 	*Root Child_2 Section
 	*/
 
 	//Add RootNode Task Node
-	CWait_Zombie*							pTask_Wait = { CWait_Zombie::Create() };
+	CWait_Zombie*								pTask_Wait = { CWait_Zombie::Create() };
 	pTask_Wait->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_Root->Insert_Child_Node(pTask_Wait);
+	//Add Decorator Node		=>		Task Wait, Deco Can Change State
+	CIs_Can_Change_State_Zombie::CAN_CHANGE_STATE_ZOMBIE_DESC		CanChangeStateForWaitDesc;
+	CIs_Can_Change_State_Zombie*				pDeco_Can_Change_State_ForWait = { CIs_Can_Change_State_Zombie::Create(&CanChangeStateForWaitDesc) };
+	pDeco_Can_Change_State_ForWait->SetBlackBoard(m_pBlackBoard);
+	pTask_Wait->Insert_Decorator_Node(pDeco_Can_Change_State_ForWait);
+
 #pragma endregion
 	return;
 }
@@ -491,7 +524,7 @@ HRESULT CZombie::Initialize_Status()
 
 	m_pStatus->fAttack = STATUS_ZOMBIE_ATTACK;
 	m_pStatus->fViewAngle = STATUS_ZOMBIE_VIEW_ANGLE;
-	m_pStatus->fRecognitionRange = STATUS_ZOMBIE_RECOGNIZE_DISTANCE;
+	m_pStatus->fRecognitionRange = STATUS_ZOMBIE_DEFAULT_RECOGNIZE_DISTANCE;
 	m_pStatus->fHealth = STATUS_ZOMBIE_HEALTH;
 
 	return S_OK;

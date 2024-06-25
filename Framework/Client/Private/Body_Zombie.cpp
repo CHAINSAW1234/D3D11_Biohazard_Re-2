@@ -82,6 +82,11 @@ void CBody_Zombie::Tick(_float fTimeDelta)
 			m_bRender = true;
 		}
 	}
+
+	m_pModelCom->Change_Animation(3, TEXT("Add_Leg_L"), static_cast<_uint>(ANIM_ADD_LEG_L::_FRONT));
+	m_pModelCom->Set_BoneLayer_PlayingInfo(3, BONE_LAYER_L_LEG_TWIST_TAG);
+	m_pModelCom->Set_BlendWeight(3, 100.f, 0.f);
+	m_pModelCom->Set_Loop(3, true);
 }
 
 void CBody_Zombie::Late_Tick(_float fTimeDelta)
@@ -388,6 +393,9 @@ HRESULT CBody_Zombie::Initialize_Model()
 	if (FAILED(Register_Animation_Branches_AnimType()))
 		return E_FAIL;
 
+	if (FAILED(Register_BoneLayer_Additional_TwisterBones()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -681,6 +689,29 @@ HRESULT CBody_Zombie::Register_Animation_Branches_AnimGroup()
 	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Prison"));
 	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Railing_Fall"));
 	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Railing_Stund"));
+
+	return S_OK;
+}
+
+HRESULT CBody_Zombie::Register_BoneLayer_Additional_TwisterBones()
+{
+	list<_uint>				ChildBoneIndices;
+	m_pModelCom->Get_Child_BoneIndices("l_leg_femur", ChildBoneIndices);
+
+	list<_uint>				ChildJointIndices;
+	m_pModelCom->Get_Child_ZointIndices("l_leg_femur", "l_leg_ball", ChildJointIndices);
+
+	for (auto& iterSrc = ChildBoneIndices.begin(); iterSrc != ChildBoneIndices.end(); )
+	{
+		list<_uint>::iterator		iterDst = { find(ChildJointIndices.begin(), ChildJointIndices.end(), *iterSrc) };
+		if (iterDst != ChildJointIndices.end())
+		{
+			iterSrc = ChildBoneIndices.erase(iterSrc);
+		}
+		else
+			++iterSrc;
+	}
+	m_pModelCom->Add_Bone_Layer_BoneIndices(BONE_LAYER_L_LEG_TWIST_TAG, ChildBoneIndices);
 
 	return S_OK;
 }

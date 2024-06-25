@@ -8,6 +8,9 @@ BEGIN(Client)
 
 class CMove_Front_Zombie : public CTask_Node
 {
+public:
+	enum TURN_DIR { DIR_LEFT, DIR_RIGHT, DIR_END };
+
 private:
 	CMove_Front_Zombie();
 	CMove_Front_Zombie(const CMove_Front_Zombie& rhs);
@@ -17,11 +20,11 @@ public:
 	virtual HRESULT					Initialize(void* pArg);
 
 	virtual void					Enter() override;
-	virtual _bool					Execute() override;
+	virtual _bool					Execute(_float fTimeDelta) override;
 	virtual void					Exit() override;
 
 private:
-	void							Change_Animation();
+	void							Change_Animation(_float fTimeDelta);
 
 	void							Move_Front();
 	void							Move_Front_Include_Rotaiton(_bool isRight, _float fAngle);
@@ -45,6 +48,10 @@ protected:
 
 	_int							m_iBlendPlayingIndex = { -1 };
 	_int							m_iBasePlayingIndex = { -1 };
+
+	_bool							m_isPreBlended = { false };
+	TURN_DIR						m_ePreTurnDir = { DIR_END };
+	_float							m_fAccBlendTime = { 0.f };
 
 	unordered_map<wstring, unordered_set<_uint>>			m_StartAnimIndicesLayer;
 	unordered_map<wstring, unordered_set<_uint>>			m_LoopAnimIndicesLayer;

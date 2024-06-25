@@ -25,7 +25,7 @@ void CWait_Zombie::Enter()
 	
 }
 
-_bool CWait_Zombie::Execute()
+_bool CWait_Zombie::Execute(_float fTimeDelta)
 {
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)

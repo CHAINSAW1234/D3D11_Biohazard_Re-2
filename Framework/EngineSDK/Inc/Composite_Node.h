@@ -18,7 +18,7 @@ protected:
 
 public:
 	virtual HRESULT					Initialize(void* pArg);
-	virtual _bool					Execute() override;
+	virtual _bool					Execute(_float fTimeDelta = 0.f) override;
 protected:
 
 public:

@@ -83,6 +83,8 @@ public:		/* For.Bone_Layer */
 	void									Add_Bone_Layer_ChildIndices(const wstring& strLayerTag, const string& strBoneTag);
 	void									Add_Bone_Layer_ChildIndices(const wstring& strLayerTag, _uint iParentBoneIndex);
 
+	void									Add_Bone_Layer_BoneIndices(const wstring& strLayerTag, const list<_uint>& BoneIndices);
+
 	void									Add_Bone_Layer_All_Bone(const wstring& strLayerTag);
 	void									Erase_Bone_Layer(const wstring& strLayerTag);
 
@@ -183,6 +185,9 @@ public:		/* For. Access */
 	_float									Get_Duration_From_Anim(const wstring& strAnimLayerTag, _int iAnimIndex);
 	_float									Get_Duration_From_Anim(const wstring& strAnimLayerTag, const string& strAnimTag);
 	_float									Get_Duration_From_PlayingInfo(_uint iPlayingIndex);
+	_float									Get_TickPerSec_From_Anim(const wstring& strAnimLayerTag, _int iAnimIndex);
+	_float									Get_TickPerSec_From_Anim(const wstring& strAnimLayerTag, const string& strAnimTag);
+	_float									Get_TickPerSec_From_PlayingInfo(_uint iPlayingIndex);
 	_float									Get_TrackPosition(_uint iPlayingIndex);
 	_float									Get_BlendWeight(_uint iPlayingIndex);
 	_int									Get_AnimIndex_PlayingInfo(_uint iPlayingIndex);

@@ -20,7 +20,7 @@ public:
 		return m_pRootNode;
 	}
 public:
-	void							Initiate();
+	void							Initiate(_float fTimeDelta);
 protected:
 	class CGameInstance*			m_pGameInstance = { nullptr };
 	class CComposite_Node*			m_pRootNode = { nullptr };

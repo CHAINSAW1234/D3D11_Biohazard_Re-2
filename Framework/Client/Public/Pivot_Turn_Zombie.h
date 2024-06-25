@@ -14,23 +14,14 @@ public:
 	virtual ~CPivot_Turn_Zombie() = default;
 
 public:
-	virtual HRESULT					Initialize_Prototype();
 	virtual HRESULT					Initialize(void* pArg);
 
 	virtual void					Enter() override;
-	virtual _bool					Execute() override;
+	virtual _bool					Execute(_float fTimeDelta) override;
 	virtual void					Exit() override;
 
 private:
-	void							Change_Animation();
-
-	void							Turn();
-
-	_bool							Is_CurrentAnim_StartAnim(PLAYING_INDEX eIndex);
-	_bool							Is_CurrentAnim_LoopAnim(PLAYING_INDEX eIndex);
-
-private:
-	_int							Compute_Base_Anim();
+	void							Change_Animation(_float fTimeDelta);
 
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard)
@@ -47,7 +38,7 @@ protected:
 	unordered_map<wstring, unordered_set<_uint>>			m_LoopAnimIndicesLayer;
 
 public:
-	static CPivot_Turn_Zombie* Create();
+	static CPivot_Turn_Zombie* Create(void* pArg = nullptr);
 
 public:
 	virtual void Free() override;

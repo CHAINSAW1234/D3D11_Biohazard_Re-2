@@ -25,7 +25,7 @@ public:
 	{
 		m_vecDecorator_Node.push_back(pDecorator_Node);
 	}
-	virtual _bool					Execute() { return false; }
+	virtual _bool					Execute(_float fTimeDelta = 0.f) { return false; }
 	void							SetRootNode(_bool boolean)
 	{
 		m_bRootNode = boolean;

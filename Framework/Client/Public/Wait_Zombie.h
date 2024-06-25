@@ -17,7 +17,7 @@ public:
 	virtual HRESULT					Initialize(void* pArg);
 
 	virtual void					Enter() override;
-	virtual _bool					Execute() override;
+	virtual _bool					Execute(_float fTimeDelta) override;
 	virtual void					Exit() override;
 
 private:
