@@ -39,7 +39,6 @@ private: /* 인벤토리 종류 */
 	void		Sub_Iventory_Reset();
 	void		Sub_SelectBox(SUB_INVEN_BOX_POSITION _eBoxType);
 
-
 private: /* Box Type 변수*/
 	/* 1. Rendering Type */
 	_bool*					m_isSubRender = { nullptr };
@@ -47,7 +46,7 @@ private: /* Box Type 변수*/
 	/* 2. Having Box Type  */
 	CInventory_Item_UI*		m_pSelectBox	= { nullptr };
 	SUB_INVEN_WHICH_CHILD	m_eSubInven_Child = { };
-
+		
 	/* 3. Select Box : Cursor */
 	_float2					m_fDistance_BetweenCursor = {}; /* Select Box와 Cursor 간의 거리*/
 	_bool					m_isMouseAcess = { false };

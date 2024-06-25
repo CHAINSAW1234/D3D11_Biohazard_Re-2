@@ -23,8 +23,15 @@ public:
 	void Late_Tick(_float fTimeDelta);
 
 private:
-	void Idle_Operation(_float fTimeDelta);
-	void ContextUISelect_Operation(_float fTimeDelta);
+	void EVENT_IDLE_Operation(_float fTimeDelta);
+	void EQUIP_ITEM_Operation(_float fTimeDelta);
+	void UNEQUIP_ITEM_Operation(_float fTimeDelta);
+	void USE_ITEM_Operation(_float fTimeDelta);
+	void COMBINED_ITEM_Operation(_float fTimeDelta);
+	void HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta);
+	void REARRANGE_ITEM_Operation(_float fTimeDelta);
+	void DISCARD_ITEM_Operation(_float fTimeDelta);
+	void CONTEXTUI_SELECT_Operation(_float fTimeDelta);
 
 public:
 	//Set_Dead호출이라 m_bDead기준으로 변수 줄것
@@ -74,23 +81,26 @@ private:
 	INVENTORY_EVENT					m_eInven_Manager_State = { EVENT_IDLE };
 
 private:
-	/*for. InvenSlot*/
+	/* for. InvenSlot */
 	vector<CInventory_Slot*>		m_vecInvenSlot;
 	_uint							m_iInvenCount = { 8 };
 	_uint                           m_iInvenMaxCount = { 20 };
 
 
-	/*for Highlighter*/
+	/* for Highlighter */
 	CSlot_Highlighter*				m_pSlotHighlighter = { nullptr };
 	CTransform*						m_pSlotHighlighterTransform = { nullptr };
 	_float4							m_fSlotHighlighterResetPos = {};
 
-	/*for. Item_UI*/
+	/* for. Item_UI */
 	vector<CItem_UI*>				m_vecItem_UI;
 	CItem_UI*						m_pSelected_ItemUI = { nullptr };
 
-	/*for. ContextMenu*/
+	/* for. ContextMenu */
 	CContextMenu*					m_pContextMenu = { nullptr };
+
+	/* for. SubInven */
+	class CInventory_Item_UI*		m_pInven_Item_UI = { nullptr };
 
 private :
 	_bool							m_IsNoOneHover = { true };
@@ -100,6 +110,7 @@ private:
 	HRESULT Init_SlotHighlighter();
 	HRESULT Init_ItemUI();
 	HRESULT Init_ContextMenu();
+	HRESULT Seting_SubInven();
 
 	HRESULT Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval);
 	HRESULT Create_SlotHighlighter(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI);

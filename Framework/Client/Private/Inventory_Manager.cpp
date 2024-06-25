@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "Inventory_Manager.h"
+#include "Inventory_Item_UI.h"
 
 constexpr _float Z_POS_SLOT = 0.8f;
 constexpr _float Z_POS_ITEM_UI = 0.7f;
@@ -46,6 +47,9 @@ void CInventory_Manager::FirstTick_Seting()
 
 	for (auto& iter : m_vecItem_UI)
 		iter->FirstTick_Seting();
+
+	if (FAILED(Seting_SubInven()))
+		MSG_BOX(TEXT("Failed to Find SubInven"));
 }
 
 void CInventory_Manager::Tick(_float fTimeDelta)
@@ -53,18 +57,54 @@ void CInventory_Manager::Tick(_float fTimeDelta)
 	switch (m_eInven_Manager_State)
 	{
 	case Client::EVENT_IDLE: {
-		Idle_Operation(fTimeDelta);
+		EVENT_IDLE_Operation(fTimeDelta);
 		break;
 	}
-
+		
+	case Client::EQUIP_ITEM: {
+		EQUIP_ITEM_Operation(fTimeDelta);
+		break;
+	}
+		
+	case Client::UNEQUIP_ITEM: {
+		UNEQUIP_ITEM_Operation(fTimeDelta);
+		break;
+	}
+		
+	case Client::USE_ITEM: {
+		USE_ITEM_Operation(fTimeDelta);
+		break;
+	}
+		
+	case Client::COMBINED_ITEM: {
+		COMBINED_ITEM_Operation(fTimeDelta);
+		break;
+	}
+		
+	case Client::HOTKEY_ASSIGNED_ITEM: {
+		HOTKEY_ASSIGNED_ITEM_Operation(fTimeDelta);
+		break;
+	}
+		
+	case Client::REARRANGE_ITEM: {
+		REARRANGE_ITEM_Operation(fTimeDelta);
+		break;
+	}
+		
+	case Client::DISCARD_ITEM: {
+		DISCARD_ITEM_Operation(fTimeDelta);
+		break;
+	}
+		
 	case Client::CONTEXTUI_SELECT: {
-		ContextUISelect_Operation(fTimeDelta);
+		CONTEXTUI_SELECT_Operation(fTimeDelta);
 		break;
 	}
-
+		
 	default:
 		break;
 	}
+
 }
 
 void CInventory_Manager::Late_Tick(_float fTimeDelta)
@@ -72,7 +112,7 @@ void CInventory_Manager::Late_Tick(_float fTimeDelta)
 	m_pContextMenu->Late_Tick(fTimeDelta);
 }
 
-void CInventory_Manager::Idle_Operation(_float fTimeDelta)
+void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 {
 	_bool IsNoOneHover = true;
 	m_IsNoOneHover = true;
@@ -112,7 +152,42 @@ void CInventory_Manager::Idle_Operation(_float fTimeDelta)
 	} 
 }
 
-void CInventory_Manager::ContextUISelect_Operation(_float fTimeDelta)
+void CInventory_Manager::EQUIP_ITEM_Operation(_float fTimeDelta)
+{
+
+}
+
+void CInventory_Manager::UNEQUIP_ITEM_Operation(_float fTimeDelta)
+{
+
+}
+
+void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
+{
+
+}
+
+void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
+{
+
+}
+
+void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
+{
+
+}
+
+void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
+{
+
+}
+
+void CInventory_Manager::DISCARD_ITEM_Operation(_float fTimeDelta)
+{
+
+}
+
+void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 {
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
 	{
@@ -218,6 +293,9 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 	m_pContextMenu->Set_Dead(true);
 
 	m_eInven_Manager_State = EVENT_IDLE;
+
+	_bool subrender = !bInput;
+	//m_pInven_Item_UI->Set_isSubRender(&subrender);
 }
 
 void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
@@ -389,6 +467,24 @@ HRESULT CInventory_Manager::Init_ContextMenu()
 
 
 	return S_OK;
+}
+
+HRESULT CInventory_Manager::Seting_SubInven()
+{
+	list<CGameObject*>* pGameObjList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+	for (auto& iter : *pGameObjList)
+	{
+		CInventory_Item_UI* pInven_item_UI = dynamic_cast<CInventory_Item_UI*>(iter);
+
+		if (nullptr != pInven_item_UI)
+		{
+			m_pInven_Item_UI = pInven_item_UI;
+			return S_OK;
+		}
+	}
+
+	return E_FAIL;
 }
 
 HRESULT CInventory_Manager::Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval)
