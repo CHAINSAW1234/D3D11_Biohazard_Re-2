@@ -22,6 +22,7 @@ public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard;	}
 protected:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
+
 public:
 	static CIs_Charactor_In_ViewAngle_Zombie* Create();
 

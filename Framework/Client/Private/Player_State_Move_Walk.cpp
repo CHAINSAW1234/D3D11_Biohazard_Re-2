@@ -21,6 +21,7 @@ void CPlayer_State_Move_Walk::OnStateEnter()
 	m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
 	m_pPlayer->Get_Body_Model()->Set_Loop(1, true);
 	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
+	m_pPlayer->Get_Body_Model()->Reset_PreAnim_CurrentAnim(1);
 }
 
 void CPlayer_State_Move_Walk::OnStateUpdate(_float fTimeDelta)

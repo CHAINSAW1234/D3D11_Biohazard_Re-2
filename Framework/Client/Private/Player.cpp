@@ -585,7 +585,7 @@ void CPlayer::Update_Equip()
 	static EQUIP TargetWeapon = { NONE };
 
 	if (isChange) {
-		if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
+			if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
 			Get_Body_Model()->Set_Loop(3, false);
 
 			Change_Body_Animation_Hold(3, MOVETOHOLSTER);
@@ -597,7 +597,7 @@ void CPlayer::Update_Equip()
 				Get_Body_Model()->Set_Loop(3, true);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == HOLSTERTOMOVE) {
-				Get_Body_Model()->Set_BlendWeight(3, 0.f, 0.1f);
+					Get_Body_Model()->Set_BlendWeight(3, 0.f, 0.1f);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == MOVETOHOLSTER) {
 				Set_Equip(TargetWeapon);
@@ -637,7 +637,7 @@ void CPlayer::Update_LightCondition()
 			Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
 			Change_Body_Animation_Move(4, LIGHT_ON_OFF);
 			Get_Body_Model()->Set_Loop(4, false);
-			Get_Body_Model()->Set_BlendWeight(4, 10, 0.2f);
+			Get_Body_Model()->Set_BlendWeight(4, 0.1f, 0.2f);
 		}
 	}
 }

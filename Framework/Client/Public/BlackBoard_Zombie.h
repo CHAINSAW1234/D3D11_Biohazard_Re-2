@@ -14,14 +14,17 @@ BEGIN(Client)
 class CBlackBoard_Zombie : public CBlackBoard
 {
 public:
+	typedef struct tagBlackBoardZombieDesc
+	{
+		class CZombie*				pAI = { nullptr };
+	}BLACKBOARD_ZOMBIE_DESC;
+private:
 	CBlackBoard_Zombie();
 	CBlackBoard_Zombie(const CBlackBoard_Zombie& rhs);
 	virtual ~CBlackBoard_Zombie() = default;
 
 public:
-	virtual HRESULT					Initialize_Prototype();
 	virtual HRESULT					Initialize(void* pArg);
-	void							Initialize_BlackBoard(class CZombie* pAI);
 
 public: // Setter
 	void							SetPlayer(class CPlayer* pPlayer)
@@ -42,6 +45,8 @@ public: // Getter
 	void							Set_Current_MotionType_Body(MOTION_TYPE eType);
 	_uint							Get_Current_MotionType_Body();
 	_uint							Get_Pre_MotionType_Body();
+
+	CZombie::ZOMBIE_STATUS*			Get_ZombieStatus_Ptr();
 
 	_int							Get_Current_AnimIndex(CMonster::PART_ID ePartID, PLAYING_INDEX eIndex);
 	wstring							Get_Current_AnimLayerTag(CMonster::PART_ID ePartID, PLAYING_INDEX eIndex);
@@ -81,7 +86,7 @@ protected:
 	CTask_Node*						m_pPreNode = { nullptr };
 
 public:
-	static CBlackBoard_Zombie* Create();
+	static CBlackBoard_Zombie* Create(void* pArg);
 
 public:
 	virtual void Free() override;

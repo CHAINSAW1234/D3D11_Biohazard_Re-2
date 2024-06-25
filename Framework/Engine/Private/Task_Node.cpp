@@ -10,14 +10,9 @@ CTask_Node::CTask_Node(const CTask_Node& rhs)
 {
 }
 
-HRESULT CTask_Node::Initialize_Prototype()
-{
-	return E_NOTIMPL;
-}
-
 HRESULT CTask_Node::Initialize(void* pArg)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 void CTask_Node::Free()

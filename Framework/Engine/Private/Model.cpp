@@ -2272,10 +2272,8 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 		{
 			vResultRotationLocal = vFirstKeyFrameRotationLocal;
 		}
-
+		
 		pPlayingInfo->Set_PreQuaternion(vResultRotationLocal);
-
-
 
 		if (true == m_isRootMotion_XZ)
 		{

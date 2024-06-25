@@ -3,35 +3,30 @@
 #include "Decorator_Node.h"
 #include "Task_Node.h"
 
-CComposite_Node::CComposite_Node() : m_pGameInstance{ CGameInstance::Get_Instance() }
+CComposite_Node::CComposite_Node()
 {
-	Safe_AddRef(m_pGameInstance);
-}
-
-CComposite_Node::CComposite_Node(COMPOSITE_NODE_TYPE eType) : CComposite_Node()
-{
-	m_eComposite_Type = eType;
 }
 
 CComposite_Node::CComposite_Node(const CComposite_Node& rhs)
 {
 }
 
-HRESULT CComposite_Node::Initialize_Prototype()
-{
-	return E_NOTIMPL;
-}
-
 HRESULT CComposite_Node::Initialize(void* pArg)
 {
-	return E_NOTIMPL;
+	if (nullptr == pArg)
+		return E_FAIL;
+
+	COMPOSITE_NODE_DESC*			pDesc = { static_cast<COMPOSITE_NODE_DESC*>(pArg) };
+	m_eComposite_Type = pDesc->eType;
+
+	return S_OK;
 }
 
-CComposite_Node* CComposite_Node::Create()
+CComposite_Node* CComposite_Node::Create(void* pArg)
 {
 	CComposite_Node* pInstance = new CComposite_Node();
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CComposite_Node"));
 
@@ -94,8 +89,6 @@ _bool CComposite_Node::Execute()
 
 void CComposite_Node::Free()
 {
-	Safe_Release(m_pGameInstance);
-
 	for (int i = 0; i < m_vecNode.size(); ++i)
 	{
 		if(m_vecNode[i])

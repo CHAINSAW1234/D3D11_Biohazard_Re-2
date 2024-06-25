@@ -15,11 +15,6 @@ CWait_Zombie::CWait_Zombie(const CWait_Zombie& rhs)
 {
 }
 
-HRESULT CWait_Zombie::Initialize_Prototype()
-{
-	return S_OK;
-}
-
 HRESULT CWait_Zombie::Initialize(void* pArg)
 {
 	return S_OK;
@@ -172,11 +167,11 @@ void CWait_Zombie::Change_Animation()
 #pragma endregion
 }
 
-CWait_Zombie* CWait_Zombie::Create()
+CWait_Zombie* CWait_Zombie::Create(void* pArg)
 {
-	CWait_Zombie* pInstance = new CWait_Zombie();
+	CWait_Zombie*			pInstance = { new CWait_Zombie() };
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CWait_Zombie"));
 
