@@ -18,6 +18,24 @@ CIs_Hit_Zombie::CIs_Hit_Zombie(const CIs_Hit_Zombie& rhs)
 
 HRESULT CIs_Hit_Zombie::Initialize(void* pArg)
 {
+	if (nullptr == pArg)
+		return E_FAIL;
+
+	IS_HIT_ZOMBIE_DESC*				pDesc = { static_cast<IS_HIT_ZOMBIE_DESC*>(pArg) };
+	for (auto& eHitType : pDesc->CheckHitTypes)
+	{
+		m_CheckHitTypes.emplace(eHitType);
+	}
+
+	for (auto& eColliderType : pDesc->CheckColliderTypes)
+	{
+		m_CheckColliderTypes.emplace(eColliderType);
+	}
+
+	if (true == m_CheckHitTypes.empty() ||
+		true == m_CheckColliderTypes.empty())
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -31,7 +49,13 @@ _bool CIs_Hit_Zombie::Condition_Check()
 		return false;
 
 	COLLIDER_TYPE			eCurrentIntersectCollider = { pZombie->Get_Current_IntersectCollider() };
-	if (COLLIDER_TYPE::_END == eCurrentIntersectCollider)
+	unordered_set<COLLIDER_TYPE>::iterator		iterCheckCollider = { m_CheckColliderTypes.find(eCurrentIntersectCollider) };
+	if (iterCheckCollider == m_CheckColliderTypes.end())
+		return false;
+
+	HIT_TYPE				eCurrentHitType = { pZombie->Get_Current_HitType() };
+	unordered_set<HIT_TYPE>::iterator			iterCheckHitType = { m_CheckHitTypes.find(eCurrentHitType) };
+	if (iterCheckHitType == m_CheckHitTypes.end())
 		return false;
 
 	return true;
@@ -66,4 +90,3 @@ void CIs_Hit_Zombie::Free()
 {
 	__super::Free();
 }
-

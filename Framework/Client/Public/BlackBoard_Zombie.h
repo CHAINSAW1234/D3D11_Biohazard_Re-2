@@ -42,6 +42,8 @@ public: // Getter
 		return m_pPlayer;
 	}
 
+	inline CTask_Node*				Get_PreTaskNode() { return m_pPreTaskNode; }
+
 	void							Set_Current_MotionType_Body(MOTION_TYPE eType);
 	_uint							Get_Current_MotionType_Body();
 	_uint							Get_Pre_MotionType_Body();
@@ -58,6 +60,8 @@ public:		/* Anim Controll */
 public:		/* Public Utility */
 	_bool							Compute_Direction_To_Player_World(_float3* pDirection);
 	_bool							Compute_Direction_To_Player_Local(_float3* pDirection);
+	_bool							Compute_Direction_From_Hit_World(_float3* pDirection);
+	_bool							Compute_Direction_From_Hit_Local(_float3* pDirection);
 	_bool							Compute_Player_Angle_XZ_Plane_Local(_float* pAngle);
 
 
@@ -82,8 +86,6 @@ protected:
 	class CPathFinder*				m_pPathFinder = { nullptr };
 	class CPlayer*					m_pPlayer = { nullptr };
 	class CZombie*					m_pAI = { nullptr };
-
-	CTask_Node*						m_pPreNode = { nullptr };
 
 public:
 	static CBlackBoard_Zombie* Create(void* pArg);

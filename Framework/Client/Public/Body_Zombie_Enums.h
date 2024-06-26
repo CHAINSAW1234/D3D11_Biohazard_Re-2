@@ -7,11 +7,16 @@ enum class ZOMBIE_BODY_ANIM_GROUP { _ADD, _BITE, _DAMAGE, _DEAD, _LOST, _ORDINAR
 /* 어떤 종류의 애니메이션 인지 */
 enum class ZOMBIE_BODY_ANIM_TYPE { _IDLE, _MOVE, _TURN, _BLEND_MASK, _DAMAGE, _DEAD, _BITE, _STAND_UP, _END };	
 /* Playing Info Index */
-enum class PLAYING_INDEX { INDEX_0, INDEX_1, INDEX_2, INDEX_3, INDEX_4, INDEX_5, INDEX_6, INDEX_7, INDEX_8, INDEX_9, INDEX_10, INDEX_END };
+enum class PLAYING_INDEX { 
+	INDEX_0,	INDEX_1,	INDEX_2,	INDEX_3,	INDEX_4,	INDEX_5,	INDEX_6,	INDEX_7,	INDEX_8,	INDEX_9, 
+	INDEX_10,	INDEX_11,	INDEX_12,	INDEX_13,	INDEX_14,	INDEX_15,	INDEX_16,	INDEX_17,	INDEX_18,	INDEX_19, 
+	INDEX_20,	INDEX_21,	INDEX_22,	INDEX_23,	INDEX_24,	INDEX_25,	INDEX_26,	INDEX_27,	INDEX_28,	INDEX_29, 
+	INDEX_END };
 /* A ~ F 모션 타입 => 아이들 워크등 나뉘어있음 */
 enum class MOTION_TYPE { MOTION_A, MOTION_B, MOTION_C, MOTION_D, MOTION_E, MOTION_F, MOTION_END };
 
 #pragma region Body_Anims
+
 ///////////////////////////////////////////////////////////////
 /////////////////////////.....BODY..../////////////////////////
 /////////////////////////..ANIMATION../////////////////////////
@@ -107,60 +112,107 @@ enum class ANIM_DAMAGE_BURST {
 
 //	누운 채로 맞아서 흔들리는 모션들
 enum class ANIM_DAMAGE_DEFAULT {
+	_FACEDOWN_BODY,
 	_FACEDOWN_ARM_L,
 	_FACEDOWN_ARM_R,
+	_FACEDOWN_LEG_L,
+	_FACEDOWN_LEG_R,
+	_FACEUP_BODY,
 	_FACEUP_ARM_L,
 	_FACEUP_ARM_R,
+	_FACEUP_LEG_L,
+	_FACEUP_LEG_R,
 	_END
 };
 
 //	맞고 뻗는 모션들 ( 거의 제자리 )
 enum class ANIM_DAMAGE_DOWN {
-	_F_L,
-	_B_L,
-	_F_R,
-	_B_R,
-	_LOWSTATNCE_B,
+	_F_L1,
+	_F_L2,
+	_B_L1,
+	_B_L2,
+	_F_R1,
+	_F_R2,
+	_B_R1,
+	_B_R2,
+	_LOWSTATNCE_F1,
+	_LOWSTATNCE_F2,
+	_LOWSTATNCE_B1,
+	_LOWSTATNCE_B2,
+	_FACEDOWN_F,
 	_FACEUP_F,
+	_SEPARAT_F1,
+	_SEPARAT_F2,
+	_SEPARAT_FACEDOWN,
+	_SEPARAT_FACEUP,
 	_END
 };
 
 //	감전
 enum class ANIM_DAMAGE_ELECTRIC_SHOCK {
-	_END_F,
-	_FACE_UP_START,
-	_FACE_UP_CANCEL,
-	_FACE_DOWN_START,
-	_FACE_DOWN_CANCEL,
+	_END_F1,
+	_END_F2,
+	_FACEUP_START1,
+	_FACEUP_START2,
+	_FACE_UP_CANCEL1,
+	_FACE_UP_CANCEL2,
+	_FACE_DOWN_START1,
+	_FACE_DOWN_START2,
+	_FACE_DOWN_CANCEL1,
+	_FACE_DOWN_CANCEL2,
 	_END
 };
 
 //	맞고 강하게 밀려나는 모션들 ( 방향 F등 => 공격의 방향 F면 B로 밀려남 )
 enum class ANIM_DAMAGE_KNOCKBACK{
-	_HEAD_F,
-	_HEAD_FL,
-	_HEAD_FR,
+	_HEAD_F1,
+	_HEAD_F2,
+	_HEAD_F3,
+	_HEAD_F4,
+	_HEAD_FL1,
+	_HEAD_FR1,
+	_HEAD_FL2,
+	_HEAD_FR2,
 	_HEAD_B,
+	_HEAD_L,
+	_HEAD_R,
+	_BODY_F,
+	_BODY_B,
 	_BODY_L,
 	_BODY_R,
 	_F,
+	_F_L_SLANT,		//	기울여 치기 => 팔등 맞았을때 적용하기로 일단
+	_F_R_SLANT,
+	_B,
+	_B_L_SLANT,
+	_B_R_SLANT,
 	_END
 };
 
 //	부위를 잃게되는 모션들? => 애니메이션 재생이후 부위 파괴상태 바꿔줘야하는 기점이될듯
 enum class ANIM_DAMAGE_LOST {
+	_A_F_L,
+	_A_F_R,
 	_B_F_L,
 	_B_F_R,
 	_C_F_L,
 	_C_F_R,
 	_A2_F_L,
 	_A2_F_R,
+	_B2_F_L,
+	_B2_F_R,
 	_C2_F_L,
 	_C2_F_R,
+	_B3_F_L,
+	_B3_F_R,
 	_D_F_L1,
 	_D_F_L2,
 	_D_F_R1,
 	_D_F_R2,
+	_B4_F_LL,
+	_B4_F_LR,
+	_B4_F_RR,
+	_B4_F_RL,
 	_C3_F_LL,
 	_C3_F_LR,
 	_C3_F_RR,
@@ -188,11 +240,25 @@ enum class ANIM_DAMAGE_STAIRS_UP {
 
 //	부위 피격별 약하게 밀려나면서 경직이후 제자리 ( 넉백은 강하게 밀리고 스턴은 약하게 밀림 )
 enum class ANIM_DAMAGE_STUN {
+	_HEAD_F1,
+	_HEAD_F2,
+	_HEAD_F3,
+	_HEAD_F4,
+	_HEAD_B,
 	_HEAD_LEFT_SIDE_F,
+	_HEAD_RIGHT_SIDE_F,
 	_BODY_F,
-	_SHOULDERR_F,
-	_LEG_L_F1,
-	_LEG_L_F2,
+	_BODY_B,
+	_SHOULDERR_L_F,
+	_SHOULDERR_L_B,
+	_SHOULDERR_R_F,
+	_SHOULDERR_R_B,
+	_LEG_L_F,
+	_LEG_L_B,
+	_LEG_R_F,
+	_LEG_R_B,
+	_CREEP1,
+	_CREEP2,
 	_END
 };
 

@@ -10,7 +10,7 @@ class CCollider;
 class CPartObject;
 END
 
-#define	STATUS_ZOMBIE_DEFAULT_RECOGNIZE_DISTANCE		3.f
+#define	STATUS_ZOMBIE_DEFAULT_RECOGNIZE_DISTANCE		0.1f
 #define	STATUS_ZOMBIE_MAX_RECOGNIZE_DISTANCE			5.f
 #define	STATUS_ZOMBIE_VIEW_ANGLE						XMConvertToRadians(180.f)
 #define	STATUS_ZOMBIE_HEALTH							100.f
@@ -56,7 +56,12 @@ private:
 	virtual HRESULT						Initialize_Status() override;
 
 public:		/* For.Collision Part */
-	COLLIDER_TYPE						Get_Current_IntersectCollider() { return m_eCurrentHitCollider; }
+	inline COLLIDER_TYPE				Get_Current_IntersectCollider() { return m_eCurrentHitCollider; }
+	inline HIT_TYPE						Get_Current_HitType() { return m_eCurrentHitType; }
+
+public:		/* Access */
+	inline MONSTER_STATE				Get_Current_MonsterState() { return m_eState; }
+	inline _float3						Get_Current_HitDirection() { return m_vHitDirection; }
 
 private:	/* Initialize_PartObjects_Models */
 	virtual HRESULT 					Initialize_PartModels() override;
@@ -66,7 +71,11 @@ private: // For AIController
 
 private:
 	class CModel*						m_pBodyModel = { nullptr };
+
+private:	/* For. Hit Interact */
 	COLLIDER_TYPE						m_eCurrentHitCollider = { _END };
+	HIT_TYPE							m_eCurrentHitType = { HIT_END };
+	_float3								m_vHitDirection = {};
 
 public:
 	static CZombie* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

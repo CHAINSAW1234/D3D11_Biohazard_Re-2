@@ -2452,7 +2452,11 @@ vector<_float4x4> CModel::Compute_ResultMatrices(const vector<vector<_float4x4>>
 			if (false == pBoneLayer->Is_Included(iBoneIndex))
 				continue;
 
-			_float			fWeightRatio = { fBlendWeight / m_TotalWeights[iBoneIndex] };
+			_float			fTotalWeightThisBone = { m_TotalWeights[iBoneIndex] };
+			_float			fWeightRatio = { fBlendWeight / fTotalWeightThisBone };
+			if (fTotalWeightThisBone <= 0.f)
+				continue;
+
 			if (0.f >= fWeightRatio)
 				continue;
 

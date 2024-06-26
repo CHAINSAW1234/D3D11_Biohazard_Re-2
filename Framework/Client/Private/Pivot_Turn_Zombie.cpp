@@ -195,4 +195,5 @@ CPivot_Turn_Zombie* CPivot_Turn_Zombie::Create(void* pArg)
 
 void CPivot_Turn_Zombie::Free()
 {
+	__super::Free();
 }

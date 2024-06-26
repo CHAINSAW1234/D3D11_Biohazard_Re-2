@@ -70,6 +70,8 @@ void CMove_Front_Zombie::Enter()
 		return;
 
 	m_pBlackBoard->GetAI()->Get_Status_Ptr()->fRecognitionRange = STATUS_ZOMBIE_MAX_RECOGNIZE_DISTANCE;
+
+	m_fAccBlendTime = 0.f;
 }
 
 _bool CMove_Front_Zombie::Execute(_float fTimeDelta)
@@ -104,13 +106,18 @@ void CMove_Front_Zombie::Exit()
 		return;
 
 	_int			iBlendPlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_1) };
-	_float			fTrackPosition = { pBodyModel->Get_TrackPosition(iBlendPlayingIndex) };
-	_float			fDuration = { pBodyModel->Get_Duration_From_PlayingInfo(iBlendPlayingIndex) };
-	_float			fTickPerSec = { pBodyModel->Get_TickPerSec_From_PlayingInfo(iBlendPlayingIndex) };
 
-	_float			fDelta = { fDuration - fTrackPosition };
+	_float			fPreBlendWeight = { pBodyModel->Get_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1)) };
+	if (fPreBlendWeight > 0.f)
+	{
+		_float			fTrackPosition = { pBodyModel->Get_TrackPosition(iBlendPlayingIndex) };
+		_float			fDuration = { pBodyModel->Get_Duration_From_PlayingInfo(iBlendPlayingIndex) };
+		_float			fTickPerSec = { pBodyModel->Get_TickPerSec_From_PlayingInfo(iBlendPlayingIndex) };
 
-	pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f, fDelta / fTickPerSec);
+		_float			fDelta = { fDuration - fTrackPosition };
+
+		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f, fDelta / fTickPerSec);
+	}	
 
 	m_pBlackBoard->GetAI()->Get_Status_Ptr()->fRecognitionRange = STATUS_ZOMBIE_DEFAULT_RECOGNIZE_DISTANCE;
 }
