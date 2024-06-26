@@ -25,15 +25,15 @@ public:
 	void Late_Tick(_float fTimeDelta);
 
 private:
-	void EVENT_IDLE_Operation(_float fTimeDelta);
-	void EQUIP_ITEM_Operation(_float fTimeDelta);
-	void UNEQUIP_ITEM_Operation(_float fTimeDelta);
-	void USE_ITEM_Operation(_float fTimeDelta);
-	void COMBINED_ITEM_Operation(_float fTimeDelta);
-	void HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta);
-	void REARRANGE_ITEM_Operation(_float fTimeDelta);
-	void DISCARD_ITEM_Operation(_float fTimeDelta);
-	void CONTEXTUI_SELECT_Operation(_float fTimeDelta);
+	void EVENT_IDLE_Operation(_float fTimeDelta);			//평상시
+	void EQUIP_ITEM_Operation(_float fTimeDelta);			//장비 장착
+	void UNEQUIP_ITEM_Operation(_float fTimeDelta);			//장비 해제
+	void USE_ITEM_Operation(_float fTimeDelta);				//아이템 사용
+	void COMBINED_ITEM_Operation(_float fTimeDelta);		//아이템 조합
+	void HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta); //단축키 등록
+	void REARRANGE_ITEM_Operation(_float fTimeDelta);		//아이템 드래그 드랍
+	void DISCARD_ITEM_Operation(_float fTimeDelta);			//아이템 삭제
+	void CONTEXTUI_SELECT_Operation(_float fTimeDelta);		//콘텍스트 UI
 
 public:
 	//Set_Dead호출이라 m_bDead기준으로 변수 줄것

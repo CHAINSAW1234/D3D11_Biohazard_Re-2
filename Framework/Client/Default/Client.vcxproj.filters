@@ -280,9 +280,6 @@
     <Filter Include="02.GameObjects\Player\FlashLight">
       <UniqueIdentifier>{490f3668-20b6-4ec9-8ffb-c1b847d9e205}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow">
-      <UniqueIdentifier>{cc37a098-a1b3-447e-9df1-acd4471c0dbb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="96. Imgui_Manager">
       <UniqueIdentifier>{caf0935f-0c07-45a0-a027-23aef095a854}</UniqueIdentifier>
     </Filter>
@@ -609,9 +606,7 @@
     <ClInclude Include="..\Public\Context_Highlighter.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu\ContextMenu_Highliter</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Item_DragShadow.h">
-      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
-    </ClInclude>
+    <ClInclude Include="..\Public\Damage_Zombie.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -898,9 +893,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Context_Highlighter.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu\ContextMenu_Highliter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Item_DragShadow.cpp">
-      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

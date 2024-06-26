@@ -43,6 +43,8 @@ void CItem_UI::Tick(_float fTimeDelta)
 		return;
 	}
 
+	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
+
 	switch (m_eInvenItemType)
 	{
 	case Client::EQUIPABLE:

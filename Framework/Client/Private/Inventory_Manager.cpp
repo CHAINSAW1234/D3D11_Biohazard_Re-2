@@ -139,7 +139,12 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 		HoveredPos.z = Z_POS_ITEM_UI;
 		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
 
-		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			int a = 0;
+		}
+
+		else if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
 			for (auto& iter : m_vecItem_UI)
 			{
@@ -233,7 +238,8 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 			{
 				for (auto& iter : m_vecItem_UI) //클릭된 재료 검사
 				{
-					if (true == iter->IsMouseHover() && true == iter->Get_isWorking()) // todo : Get_isWorking말고 선택 가능한지 한 함수로 바꾸기
+					if (true == iter->IsMouseHover() && true == iter->Get_isWorking() &&
+						m_pSelected_ItemUI != iter) // todo : Get_isWorking말고 선택 가능한지 한 함수로 바꾸기
 					{
 						m_CombineResources[SECOND] = iter->Get_ItemNumber();
 						iter->Reset_ItemUI();
@@ -251,6 +257,8 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 		m_pSelected_ItemUI->Set_ItemNumber(Find_Recipe(m_CombineResources[FIRST], m_CombineResources[SECOND]));
 		m_eCTS = COMBINED_TS_END;
 		m_eInven_Manager_State = EXAMINE_ITEM;
+		m_CombineResources[0] = { ITEM_NUMBER_END };
+		m_CombineResources[1] = { ITEM_NUMBER_END };
 		break;
 	}
 

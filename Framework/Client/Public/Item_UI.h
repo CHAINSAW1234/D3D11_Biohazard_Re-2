@@ -33,7 +33,10 @@ public:
 	void				Set_ItemNumber(ITEM_NUMBER eItmeNum) { m_eItemNumber = eItmeNum; }
 
 	ITEM_TYPE			Get_InvenItemType() const { return m_eInvenItemType; };
-	void				Set_InvenItemType(ITEM_TYPE eItmeType) { m_eInvenItemType = eItmeType; }
+	void				Set_InvenItemType(ITEM_TYPE eItmeType) { 
+		m_eInvenItemType = eItmeType;
+		m_iTextureNum = static_cast<_uint>(m_eInvenItemType);
+	}
 
 public:
 	void				Reset_ItemUI();
