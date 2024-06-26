@@ -292,6 +292,9 @@
     <Filter Include="02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu\ContextMenu_Highliter">
       <UniqueIdentifier>{357cd323-5908-4c40-be59-632314974ee5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Camera\Camera_Event">
+      <UniqueIdentifier>{ee555b89-e04f-4401-b4d8-37201d791dcc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -612,6 +615,13 @@
     <ClInclude Include="..\Public\Item_DragShadow.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Damage_Zombie.h" />
+    <ClInclude Include="..\Public\Camera_Event.h">
+      <Filter>02.GameObjects\Camera\Camera_Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Event_Struct.h">
+      <Filter>02.GameObjects\Camera\Camera_Event</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -901,6 +911,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Item_DragShadow.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Event.cpp">
+      <Filter>02.GameObjects\Camera\Camera_Event</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

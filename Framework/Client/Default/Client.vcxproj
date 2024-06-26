@@ -201,6 +201,8 @@
     <ClInclude Include="..\Public\Bullet_UI.h" />
     <ClInclude Include="..\Public\Button_UI.h" />
     <ClInclude Include="..\Public\Cabinet.h" />
+    <ClInclude Include="..\Public\Camera_Event.h" />
+    <ClInclude Include="..\Public\Camera_Event_Struct.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\Public\Clothes_Zombie.h" />
     <ClInclude Include="..\Public\ContextMenu.h" />
@@ -341,6 +343,7 @@
     <ClCompile Include="..\Private\Bullet_UI.cpp" />
     <ClCompile Include="..\Private\Button_UI.cpp" />
     <ClCompile Include="..\Private\Cabinet.cpp" />
+    <ClCompile Include="..\Private\Camera_Event.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\Private\Clothes_Zombie.cpp" />
     <ClCompile Include="..\Private\ContextMenu.cpp" />

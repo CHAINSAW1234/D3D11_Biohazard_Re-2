@@ -15,11 +15,13 @@
 
 #include "Character_Controller.h"
 #include "Camera_Free.h"
+#include "Camera_Event.h"
 
 #define MODEL_SCALE 0.01f
 
-const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_HG"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT"), TEXT("COMMON") };
+const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_HG"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT")};
 const wstring CPlayer::strAnimSetHoldName[ANIMSET_HOLD_END] = { TEXT("HOLD_HG"), TEXT("HOLG_STG"), TEXT("HOLD_MLE"), TEXT("HOLD_SUP") };
+const wstring CPlayer::strAnimSetEtcName[ANIMSET_ETC_END] = { TEXT("COMMON"), TEXT("BITE") };
 
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -29,7 +31,6 @@ CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CPlayer::CPlayer(const CPlayer& rhs)
 	: CGameObject{ rhs }
 {
-
 }
 
 HRESULT CPlayer::Initialize_Prototype()
@@ -339,13 +340,41 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region 현진 추가
 
-
 #pragma region TEST
+
+	if (m_pGameInstance->Get_KeyState('E') == DOWN) {
+		Swap_Camera();
+		m_pCamera_Event->Set_DefaultMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
+	}
+
+	static _int Test = -1;
+
 	if (m_pGameInstance->Get_KeyState('Q') == DOWN) {
-		if(ANIMSET_MOVE((_int)m_eAnimSet_Move + 1) >= COMMON)
-			Change_AnimSet_Move(FINE);
-		else
-			Change_AnimSet_Move(ANIMSET_MOVE((_int)m_eAnimSet_Move + 1));
+		m_pCamera_Event->Set_DefaultMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
+		Test = 0;
+		Get_Body_Model()->Change_Animation(0, Get_AnimSetEtcName(BITE), 7);
+
+		if (!FAILED(m_pCamera_Event->Set_CurrentMCAM(TEXT("2070")))) {
+			m_pCamera_Event->Get_Transform()->Set_WorldMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
+			Swap_Camera();
+		}
+		//if (ANIMSET_MOVE((_int)m_eAnimSet_Move + 1) >= COMMON)
+		//	Change_AnimSet_Move(FINE);
+		//else
+		//	Change_AnimSet_Move(ANIMSET_MOVE((_int)m_eAnimSet_Move + 1));
+	}
+	
+	if (Test!= -1) {
+		if (m_pCamera_Event->m_isActive == false) {
+			if (Test == 0) {
+				Get_Body_Model()->Change_Animation(0, Get_AnimSetEtcName(BITE), 9);
+				Test = -1;
+				if (!FAILED(m_pCamera_Event->Set_CurrentMCAM(TEXT("2080")))) {
+					m_pCamera_Event->Get_Transform()->Set_WorldMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
+					Swap_Camera();
+				}
+			}
+		}
 	}
 
 #pragma endregion
@@ -982,6 +1011,12 @@ void CPlayer::Update_KeyInput_Reload()
 	}
 }
 
+void CPlayer::Swap_Camera()
+{
+	m_pCamera->Active_Camera(!m_pCamera->Get_IsActive());
+	m_pCamera_Event->Active_Camera(!m_pCamera_Event->Get_IsActive());
+}
+
 void CPlayer::SetMoveDir()
 {
 	//F
@@ -1484,6 +1519,8 @@ HRESULT CPlayer::Ready_Camera()
 	if (m_pCamera == nullptr)
 		return E_FAIL;
 
+	m_pCamera->Active_Camera(true);
+
 	m_pCamera->SetPlayer(this);
 
 	_vector vLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
@@ -1514,6 +1551,18 @@ HRESULT CPlayer::Ready_Camera()
 	m_fLerpAmount_Right = m_fRight_Dist_Pos;
 	m_fLerpAmount_Up = m_fUp_Dist_Pos;
 
+	if (m_pCamera_Event == nullptr)
+		m_pCamera_Event = dynamic_cast<CCamera_Event*>(*++(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_ZZZCamera")).begin());
+
+	if (m_pCamera_Event == nullptr)
+		return E_FAIL;
+
+	m_pCamera_Event->SetPlayer(this);
+	//m_pCamera_Event->Set_DefaultMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
+	m_pCamera_Event->Set_SocketMatrix(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("spine_2")));
+	//m_pCamera_Event->Set_SocketMatrix(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_backVest_start")));
+
+	
 	return S_OK;
 }
 

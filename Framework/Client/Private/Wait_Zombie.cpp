@@ -40,8 +40,8 @@ void CWait_Zombie::Execute()
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_IDLE);
 
-	cout << "Wait" << endl;
-		Change_Animation();
+	//cout << "Wait" << endl;
+	Change_Animation();
 
 }
 
