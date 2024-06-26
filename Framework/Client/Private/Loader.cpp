@@ -733,12 +733,14 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Door::Create(m_pDevice, m_pContext));
 		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_024_newpolicestatue01a")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_NewpoliceStatue::Create(m_pDevice, m_pContext));
-		if (!bDo && ((Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_008")) != wstring::npos)
+		if (!bDo &&
+			((Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_008")) != wstring::npos)
 			||(Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_002")) != wstring::npos)
 			||(Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_005")) != wstring::npos)
 			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_003")) != wstring::npos)
 			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_010")) != wstring::npos)
-			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_011")) != wstring::npos)) && (bDo = true))
+			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_011")) != wstring::npos))
+			&& (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Cabinet::Create(m_pDevice, m_pContext));
 		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm7")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_ItemProp::Create(m_pDevice, m_pContext));	

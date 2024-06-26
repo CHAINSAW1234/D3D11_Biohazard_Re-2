@@ -53,7 +53,7 @@ using namespace Client;
 //#define MAP_NONANIMOBJ
 #define MAP_INTERACT
 
-#define UI_POS
+//#define UI_POS
 
 //#define NON_COLLISION_PROP
 #define PROPS_COOKING
