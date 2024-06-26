@@ -6,6 +6,8 @@
 
 #include"Cabinet.h"
 
+static _int i44_005Type = 0;
+
 CBody_Cabinet::CBody_Cabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPart_InteractProps{ pDevice, pContext }
 {
@@ -24,12 +26,24 @@ HRESULT CBody_Cabinet::Initialize_Prototype()
 
 HRESULT CBody_Cabinet::Initialize(void* pArg)
 {
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-	
+	if (m_strModelComponentName.find(L"44_005") != string::npos)
+		++i44_005Type;
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+
+	if (m_strModelComponentName.find(L"44_005") != wstring::npos)
+	{
+		if (FAILED(Initialize_Model_i44()))
+			return E_FAIL;
+	}
+	else
+		if (FAILED(Initialize_Model()))
+			return E_FAIL;
+
+
 
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
@@ -60,6 +74,7 @@ void CBody_Cabinet::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	if (*m_pState == CCabinet::CABINET_OPEN && m_pModelCom->isFinished(0))
 		return;
+	//Get_Pos();
 }
 
 void CBody_Cabinet::Late_Tick(_float fTimeDelta)
@@ -98,6 +113,11 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 
+	Get_SpecialBone_Rotation(); // for UI
+
+//#ifdef _DEBUG
+//	m_pGameInstance->Add_DebugComponents(m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]);
+//#endif
 }
 
 HRESULT CBody_Cabinet::Render()
@@ -176,6 +196,16 @@ HRESULT CBody_Cabinet::Add_Components()
 		TEXT("Com_Body_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
+	//CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
+
+	//ColliderDesc.fRadius = _float(50.f);
+	//ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
+	///* For.Com_Collider */
+	//if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+	//	TEXT("Com_Body_Collider"), (CComponent**)&m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+	//	return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -190,6 +220,83 @@ HRESULT CBody_Cabinet::Initialize_PartObjects()
 
 	return S_OK;
 }
+
+HRESULT CBody_Cabinet::Initialize_Model_i44()
+{
+	/* Set_Hide_Mesh */
+	vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
+
+	vector<string>			ResultMeshTags;
+	for (auto& strMeshTag : MeshTags)
+	{
+		string strFindTag = "10" + i44_005Type;
+		if (i44_005Type >= 10)
+			strFindTag = "20" + (i44_005Type - 9);
+		if ((strMeshTag.find(strFindTag) != string::npos) || (strMeshTag.find("Group_0_") != string::npos) || (strMeshTag.find("Group_1_") != string::npos))
+			ResultMeshTags.push_back(strMeshTag);
+
+	}
+
+	for (auto& strMeshTag : MeshTags)
+	{
+		m_pModelCom->Hide_Mesh(strMeshTag, true);
+	}
+
+	for (auto& strMeshTag : ResultMeshTags)
+	{
+		m_pModelCom->Hide_Mesh(strMeshTag, false);
+	}
+	return S_OK;
+}
+
+HRESULT CBody_Cabinet::Initialize_Model()
+{
+
+	vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
+	for (auto& strMeshTag : MeshTags)
+	{
+		if ((strMeshTag.find("Group_1_Sub_2") != string::npos)||(strMeshTag.find("Group_3_Sub_1") != string::npos)||(strMeshTag.find("Group_2_Sub_1") != string::npos))
+			m_strMeshTag = strMeshTag;
+	}
+	
+	return S_OK;
+
+}
+
+_float4 CBody_Cabinet::Get_Pos()
+{
+	//_float4 vPos =m_pModelCom->Get_Mesh_Local_Pos(m_strMeshTag);
+	//_matrix Local_Mesh_Matrix = m_pTransformCom->Get_WorldMatrix();
+	//Local_Mesh_Matrix.r[3] -= _vector{ vPos.x,-vPos.y,vPos.z };
+	//_matrix TransformationMatrix = m_pParentsTransform->Get_WorldMatrix();
+	//_float4x4 WorldMatrix = Local_Mesh_Matrix * TransformationMatrix;
+	
+
+
+	_float4 vLocalPos =m_pModelCom->Get_Mesh_Local_Pos(m_strMeshTag);
+	_matrix Local_Mesh_Matrix = m_pTransformCom->Get_WorldMatrix();
+	Local_Mesh_Matrix.r[3] -= _vector{ vLocalPos.x,-vLocalPos.y,vLocalPos.z };
+	_matrix TransformationMatrix = m_pParentsTransform->Get_WorldMatrix();
+
+	
+	XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(m_vRotation);
+
+	_float4x4 WorldMatrix = Local_Mesh_Matrix* rotationMatrix * TransformationMatrix;
+
+	/*m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(WorldMatrix);*/
+	_float4 vPos = WorldMatrix.Translation();
+	return vPos;
+}
+
+void CBody_Cabinet::Get_SpecialBone_Rotation()
+{
+	_matrix Combined = m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR]->Get_TrasformationMatrix();
+
+	_vector scale, rotation, translation;
+	XMMatrixDecompose(&scale, &rotation, &translation, Combined);
+	m_vRotation = rotation;
+}
+
 
 CBody_Cabinet* CBody_Cabinet::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

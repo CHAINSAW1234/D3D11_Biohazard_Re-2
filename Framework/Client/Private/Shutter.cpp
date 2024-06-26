@@ -138,6 +138,11 @@ HRESULT CShutter::Bind_ShaderResources()
 	return S_OK;
 }
 
+_float4 CShutter::Get_Object_Pos()
+{
+	return _float4();
+}
+
 void CShutter::Active()
 {
 	*m_pPlayerInteract = false;

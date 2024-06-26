@@ -139,6 +139,11 @@ HRESULT CItemProp::Bind_ShaderResources()
 	return S_OK;
 }
 
+_float4 CItemProp::Get_Object_Pos()
+{
+	return _float4();
+}
+
 void CItemProp::Active()
 {
 	*m_pPlayerInteract = false;

@@ -28,7 +28,17 @@ HRESULT CBody_Door::Initialize(void* pArg)
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
+
 		return E_FAIL;
+	if (*m_pState == CDoor::DOOR_DOUBLE)
+	{
+		if (FAILED(Initialize_DoubleDoorModel()))
+			return E_FAIL;
+	}
+	else
+		if (FAILED(Initialize_Model()))
+			return E_FAIL;
+
 	if (pArg != nullptr)
 	{
 		BODY_DOOR_DESC* pbody_door_desc = (BODY_DOOR_DESC*)pArg;
@@ -55,7 +65,6 @@ HRESULT CBody_Door::Initialize(void* pArg)
 	*/
 
 	m_pModelCom->Active_RootMotion_Rotation(true);
-	//m_pParentsTransform->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
 #ifndef NON_COLLISION_PROP
 
@@ -209,6 +218,35 @@ HRESULT CBody_Door::Add_PartObjects()
 HRESULT CBody_Door::Initialize_PartObjects()
 {
 	return S_OK;
+}
+
+HRESULT CBody_Door::Initialize_DoubleDoorModel()
+{
+	vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
+	for (auto& strMeshTag : MeshTags)
+	{
+		if ((strMeshTag.find("Group_100_") != string::npos))
+			m_strDoorPart[BODY_PART_L_LHANDLE] = strMeshTag;
+		if ((strMeshTag.find("Group_101_") != string::npos))
+			m_strDoorPart[BODY_PART_L_RHANDLE] = strMeshTag;
+
+	}
+	return S_OK;
+}
+
+HRESULT CBody_Door::Initialize_Model()
+{
+	vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
+	for (auto& strMeshTag : MeshTags)
+	{
+		if ((strMeshTag.find("Group_100_") != string::npos))
+			m_strDoorPart[BODY_PART_L_LHANDLE] = strMeshTag;
+		if ((strMeshTag.find("Group_101_") != string::npos))
+			m_strDoorPart[BODY_PART_L_RHANDLE] = strMeshTag;
+
+	}
+	return S_OK;
+
 }
 
 void CBody_Door::DoubleDoor_Tick(_float fTimeDelta)

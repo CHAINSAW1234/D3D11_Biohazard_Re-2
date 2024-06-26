@@ -127,6 +127,11 @@ HRESULT CNewpoliceStatue::Bind_ShaderResources()
 	return S_OK;
 }
 
+_float4 CNewpoliceStatue::Get_Object_Pos()
+{
+	return _float4();
+}
+
 CNewpoliceStatue* CNewpoliceStatue::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CNewpoliceStatue* pInstance = new CNewpoliceStatue(pDevice, pContext);

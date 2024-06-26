@@ -87,6 +87,11 @@ HRESULT CPart_InteractProps::Initialize_PartObjects()
 	return S_OK;
 }
 
+void CPart_InteractProps::Get_SpecialBone_Rotation()
+{
+}
+
+
 HRESULT CPart_InteractProps::Bind_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)

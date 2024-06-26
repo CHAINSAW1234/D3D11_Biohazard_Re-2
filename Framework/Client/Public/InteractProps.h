@@ -128,6 +128,9 @@ public:
 	/* NY */
 	_bool*												ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
 	_bool*												Selector_Rendering() { return &m_isSelector_Rendering;  }
+	/*To NY*/
+	virtual _float4									Get_Object_Pos() = 0;
+
 
 private :
 	_bool												m_isSelector_Rendering = { false };

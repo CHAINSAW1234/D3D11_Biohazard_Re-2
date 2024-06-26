@@ -13,6 +13,7 @@ public:
 	typedef struct tagBodyItemProp_desc : public CPart_InteractProps::PART_INTERACTPROPS_DESC
 	{
 		_bool* pObtain = { nullptr };
+		_int	   iItemIndex = { 0 };
 	}BODY_ITEMPROPS_DESC;
 private:
 	CBody_ItemProp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -36,6 +37,7 @@ public:
 
 
 private:
+	_int								m_iItemIndex = { 0 };
 	_bool								m_bRealDead = { false };
 	_bool*							m_pObtain = { nullptr };
 	_float4x4*						m_pSocketMatrix = { nullptr };

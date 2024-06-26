@@ -29,6 +29,7 @@ HRESULT CBody_ItemProp::Initialize(void* pArg)
 
 	BODY_ITEMPROPS_DESC* pDesc = (BODY_ITEMPROPS_DESC*)pArg;
 	m_pObtain = pDesc->pObtain;
+	m_iItemIndex = pDesc->iItemIndex;
 
 	/*m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));

@@ -47,7 +47,6 @@ HRESULT CDoor::Initialize(void* pArg)
 		return E_FAIL;
 
 
-
 	return S_OK;
 }
 
@@ -143,6 +142,8 @@ HRESULT CDoor::Add_PartObjects()
 
 	/*PART_LOCK*/
 	m_PartObjects[CDoor::PART_LOCK] = nullptr;
+	
+	/*PART_HANDLE*/
 
 
 	return S_OK;
@@ -263,6 +264,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 	if (pPlayerCol->Intersect(m_pColDoubledoorCom))
 		m_bDoubleCol = true;
 }
+
 void CDoor::DoubleDoor_Active()
 {
 
@@ -297,6 +299,31 @@ void CDoor::DoubleDoor_Active()
 	}
 	
 
+}
+
+_float4 CDoor::Get_Object_Pos()
+{
+
+	//if (m_eType == DOOR_DOUBLE)
+	//{
+	//	if ((!m_bCol && !m_bDoubleCol) || (m_bCol && m_bDoubleCol))
+	//	{
+	//		
+	//		return (vPos1+vPos2)/2.f;
+	//	}
+	//	else if (m_bCol)
+	//	{
+
+	//	}
+	//	else
+	//	{
+
+	//	}
+	//}
+	//else
+	//	return
+	//	
+	return _float4();
 }
 
 void CDoor::OneDoor_Tick(_float fTimeDelta)

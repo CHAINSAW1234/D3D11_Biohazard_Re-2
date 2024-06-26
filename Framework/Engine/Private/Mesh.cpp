@@ -193,7 +193,6 @@ HRESULT CMesh::Stock_PrevMatrices(const vector<CBone*>& Bones, _float4x4* pMeshB
 
 	return S_OK;
 }
-
 HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const aiMesh* pAIMesh, _fmatrix TransformationMatrix)
 {
 	m_iVertexStride = sizeof(VTXMESH);
@@ -463,6 +462,15 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 
 	ZeroMemory(&m_InitialData, sizeof(m_InitialData));
 	m_InitialData.pSysMem = pVertices;
+	/*예은 추가 : 중점 알아야 하는 일이 있어요(UI 붙힐 때)*/
+	_float3 vTotal_Pos = _float3(0.f, 0.f, 0.f);
+
+	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
+	{
+		vTotal_Pos += pVertices[i].vPosition;
+	}
+
+	m_vCenterPoint = vTotal_Pos / m_iNumVertices;
 
 	if (FAILED(__super::Create_Buffer(&m_pVB)))
 		return E_FAIL;

@@ -7,6 +7,15 @@ BEGIN(Client)
 
 class CBody_Door final : public CPart_InteractProps
 {
+private:
+	enum DOOR_BODY_PART
+	{
+		BODY_PART_L_LHANDLE,
+		BODY_PART_L_RHANDLE,
+		BODY_PART_R_LHANDLE,
+		BODY_PART_R_HRANDLE,
+		BODY_PART_END,
+	};
 public:
 	typedef struct tag_BodyDoor : public PART_INTERACTPROPS_DESC
 	{
@@ -33,6 +42,8 @@ private:
 	virtual HRESULT				Add_Components();
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
+	 HRESULT				Initialize_DoubleDoorModel() ;
+	 HRESULT				Initialize_Model() ;
 
 private:
 	void DoubleDoor_Tick(_float fTimeDelta);
@@ -42,6 +53,7 @@ private:
 
 
 private:
+	string			m_strDoorPart[BODY_PART_END];
 	_bool				m_bLock =	{ false };
 	_bool				m_bActive = { false };
 
