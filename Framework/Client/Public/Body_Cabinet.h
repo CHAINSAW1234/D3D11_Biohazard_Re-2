@@ -28,7 +28,7 @@ private:
 	HRESULT						Initialize_Model_i44();
 	HRESULT						Initialize_Model();
 public:
-	virtual _float4				Get_Pos() override;
+	virtual _float4				Get_Pos(_int iArg = 0) override;
 	virtual void					Get_SpecialBone_Rotation() override;
 public:
 	static CBody_Cabinet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

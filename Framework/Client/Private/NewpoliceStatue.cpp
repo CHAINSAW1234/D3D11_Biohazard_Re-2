@@ -41,6 +41,11 @@ void CNewpoliceStatue::Tick(_float fTimeDelta)
 
 		return;
 	}
+#ifdef _DEBUG
+#ifdef UI_POS
+		Get_Object_Pos();
+#endif
+#endif
 
 	if (m_pGameInstance->Get_KeyState('U') == DOWN)
 		m_eState = POLICEHALLSTATUE_0;
@@ -129,6 +134,11 @@ HRESULT CNewpoliceStatue::Bind_ShaderResources()
 
 _float4 CNewpoliceStatue::Get_Object_Pos()
 {
+
+	
+	return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
+
+
 	return _float4();
 }
 

@@ -43,6 +43,13 @@ void CItemProp::Tick(_float fTimeDelta)
 
 	if (!m_bVisible)
 		return;
+#ifdef _DEBUG
+#ifdef UI_POS
+	Get_Object_Pos();
+#endif
+#endif
+
+
 	if (m_pPlayer == nullptr)
 		return;
 	if (m_bCol)
@@ -66,7 +73,6 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 
 	if (!Visible())
 		return;
-
 	if (m_bRender == false)
 		return;
 	Check_Col_Sphere_Player();
@@ -132,6 +138,7 @@ HRESULT CItemProp::Bind_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
@@ -141,7 +148,10 @@ HRESULT CItemProp::Bind_ShaderResources()
 
 _float4 CItemProp::Get_Object_Pos()
 {
-	return _float4();
+	if (!m_bDead)
+		return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
+	else
+		return _float4();
 }
 
 void CItemProp::Active()

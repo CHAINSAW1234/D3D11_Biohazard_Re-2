@@ -30,12 +30,7 @@ HRESULT CBody_Door::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 
 		return E_FAIL;
-	if (*m_pState == CDoor::DOOR_DOUBLE)
-	{
-		if (FAILED(Initialize_DoubleDoorModel()))
-			return E_FAIL;
-	}
-	else
+	if (*m_pState != CDoor::DOOR_DOUBLE)
 		if (FAILED(Initialize_Model()))
 			return E_FAIL;
 
@@ -124,8 +119,12 @@ void CBody_Door::Late_Tick(_float fTimeDelta)
 {
 
 	*m_pState == CDoor::DOOR_ONE ? OneDoor_Late_Tick(fTimeDelta) : DoubleDoor_Late_Tick(fTimeDelta);
-
-
+	Get_SpecialBone_Rotation();
+#ifdef _DEBUG
+#ifdef UI_POS
+	m_pGameInstance->Add_DebugComponents(m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]);
+#endif
+#endif
 }
 
 HRESULT CBody_Door::Render()
@@ -207,6 +206,18 @@ HRESULT CBody_Door::Add_Components()
 		TEXT("Com_Body_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
+#ifdef _DEBUG
+#ifdef UI_POS
+	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
+
+	ColliderDesc.fRadius = _float(20.f);
+	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
+	/* For.Com_Collider */
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Body_Collider"), (CComponent**)&m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+		return E_FAIL;
+#endif
+#endif
 	return S_OK;
 }
 
@@ -220,19 +231,6 @@ HRESULT CBody_Door::Initialize_PartObjects()
 	return S_OK;
 }
 
-HRESULT CBody_Door::Initialize_DoubleDoorModel()
-{
-	vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
-	for (auto& strMeshTag : MeshTags)
-	{
-		if ((strMeshTag.find("Group_100_") != string::npos))
-			m_strDoorPart[BODY_PART_L_LHANDLE] = strMeshTag;
-		if ((strMeshTag.find("Group_101_") != string::npos))
-			m_strDoorPart[BODY_PART_L_RHANDLE] = strMeshTag;
-
-	}
-	return S_OK;
-}
 
 HRESULT CBody_Door::Initialize_Model()
 {
@@ -240,13 +238,112 @@ HRESULT CBody_Door::Initialize_Model()
 	for (auto& strMeshTag : MeshTags)
 	{
 		if ((strMeshTag.find("Group_100_") != string::npos))
-			m_strDoorPart[BODY_PART_L_LHANDLE] = strMeshTag;
-		if ((strMeshTag.find("Group_101_") != string::npos))
 			m_strDoorPart[BODY_PART_L_RHANDLE] = strMeshTag;
+		if ((strMeshTag.find("Group_101_") != string::npos))
+			m_strDoorPart[BODY_PART_L_LHANDLE] = strMeshTag;
 
 	}
 	return S_OK;
 
+}
+
+void CBody_Door::Get_SpecialBone_Rotation()
+{
+
+	_matrix Combined;
+	if(CDoor::DOOR_DOUBLE == *m_pState)
+	{
+		if (*m_pDoubleState == CDoor::DOUBLEDOOR_STATIC)
+			Combined = m_vecRotationBone[0]->Get_TrasformationMatrix();
+		else
+		{
+			if (*m_pDoubleState == CDoor::LSIDE_DOUBLEDOOR_OPEN || *m_pDoubleState == CDoor::RSIDE_DOUBLEDOOR_OPEN)
+				Combined = m_vecRotationBone[0]->Get_TrasformationMatrix();
+			else
+				Combined = m_vecRotationBone[(_int)(*m_pDoubleState)]->Get_TrasformationMatrix();
+		}
+	}
+	else
+		if(*m_pOneState == CDoor::ONEDOOR_STATIC)
+			Combined = m_vecRotationBone[0]->Get_TrasformationMatrix();
+		else
+			Combined = m_vecRotationBone[(_int)(*m_pOneState)]->Get_TrasformationMatrix();
+
+	_vector scale, rotation, translation;
+	XMMatrixDecompose(&scale, &rotation, &translation, Combined);
+	m_vRotation = rotation;
+
+}
+
+_float4 CBody_Door::Get_Pos(_int iArg)
+{
+	if (CDoor::DOOR_DOUBLE == *m_pState)
+	{
+		_matrix Local_Mesh_Matrix = m_pTransformCom->Get_WorldMatrix();
+		_float4 vLocalPos;
+		_matrix TransformationMatrix = m_pParentsTransform->Get_WorldMatrix();
+		_matrix TranslationMatrix = XMMatrixIdentity();
+		if (iArg == 0)
+		{
+			vLocalPos = _float4(94.7047043f, 110.019104f, -7.74451256, 1.f);
+			Local_Mesh_Matrix.r[3] -= _vector{ vLocalPos.x,-vLocalPos.y,vLocalPos.z };
+		}
+		else if(iArg == 1)
+		{
+			vLocalPos = _float4(94.7142487f, 110.010277f, 3.20764256f, 1.f);
+			Local_Mesh_Matrix.r[3] -= _vector{ vLocalPos.x,-vLocalPos.y,vLocalPos.z };
+
+		}
+		else if(iArg == 2)
+		{
+			vLocalPos = _float4(104.7047043f, 110.019104f, -7.74451256, 1.f);
+			Local_Mesh_Matrix.r[3] += _vector{ vLocalPos.x,vLocalPos.y, -vLocalPos.z };
+			TranslationMatrix.r[3] = _vector{ -vLocalPos.x*2.f, 0.f,  7.74451256*2.f,1.f };
+		}
+		else if (iArg == 3)
+		{
+			vLocalPos = _float4(104.7047043f, 110.010277f, 3.20764256f, 1.f);
+			Local_Mesh_Matrix.r[3] += _vector{ vLocalPos.x,vLocalPos.y, vLocalPos.z };
+			TranslationMatrix.r[3] = _vector{ -vLocalPos.x*2.f, 0.f, -3.20764256f*2.f,1.f };
+		}
+
+
+		XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(m_vRotation);
+
+		_float4x4 WorldMatrix = Local_Mesh_Matrix * rotationMatrix* TranslationMatrix  * TransformationMatrix ;
+#ifdef _DEBUG
+#ifdef UI_POS
+		m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(WorldMatrix);
+#endif
+#endif
+		_float4 vPos = XMVectorSetW( WorldMatrix.Translation(),1.f);
+		return vPos;
+	}
+	else
+	{
+		_float4 vLocalPos;
+		if(iArg == 0)
+			vLocalPos = m_pModelCom->Get_Mesh_Local_Pos(m_strDoorPart[BODY_PART_L_LHANDLE]);
+		else
+			vLocalPos = m_pModelCom->Get_Mesh_Local_Pos(m_strDoorPart[BODY_PART_L_RHANDLE]);
+
+		_matrix Local_Mesh_Matrix = m_pTransformCom->Get_WorldMatrix();
+		Local_Mesh_Matrix.r[3] -= _vector{ vLocalPos.x,-vLocalPos.y,vLocalPos.z };
+		_matrix TransformationMatrix = m_pParentsTransform->Get_WorldMatrix();
+
+		XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(m_vRotation);
+
+		_float4x4 WorldMatrix = Local_Mesh_Matrix * rotationMatrix * TransformationMatrix;
+
+		_float4 vPos = XMVectorSetW(WorldMatrix.Translation(), 1.f);
+#ifdef _DEBUG
+#ifdef UI_POS
+		m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(WorldMatrix);
+#endif
+#endif
+		return vPos;
+	}
+	return _float4();
 }
 
 void CBody_Door::DoubleDoor_Tick(_float fTimeDelta)
@@ -440,6 +537,8 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+
+	Get_SpecialBone_Rotation();
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 

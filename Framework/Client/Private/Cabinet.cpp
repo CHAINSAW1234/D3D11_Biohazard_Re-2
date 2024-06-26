@@ -48,7 +48,11 @@ void CCabinet::Tick(_float fTimeDelta)
 	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 	if (!m_bVisible)
 		return;
-
+#ifdef _DEBUG
+#ifdef UI_POS
+	Get_Object_Pos();
+#endif
+#endif
 	if (m_bActive)
 		m_fTimeDelay += fTimeDelta;
 	if (m_fTimeDelay > 1.f)
@@ -235,8 +239,6 @@ void CCabinet::Free()
 _float4 CCabinet::Get_Object_Pos()
 {
 	//m_bObtain => 아이템을 얻을 수 있는 상태
-	
-
 	if (m_bObtain)
 		if (m_tagPropDesc.tagCabinet.bItem)
 			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_ITEM])->Get_Pos();

@@ -140,7 +140,9 @@ HRESULT CShutter::Bind_ShaderResources()
 
 _float4 CShutter::Get_Object_Pos()
 {
-	return _float4();
+
+	return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
+
 }
 
 void CShutter::Active()

@@ -25,8 +25,8 @@ private:
 	virtual HRESULT				Add_Components();
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
-
-
+public:
+	
 
 public:
 	static CBody_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -74,7 +74,6 @@ void CBody_Cabinet::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 	if (*m_pState == CCabinet::CABINET_OPEN && m_pModelCom->isFinished(0))
 		return;
-	//Get_Pos();
 }
 
 void CBody_Cabinet::Late_Tick(_float fTimeDelta)
@@ -115,9 +114,11 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 
 	Get_SpecialBone_Rotation(); // for UI
 
-//#ifdef _DEBUG
-//	m_pGameInstance->Add_DebugComponents(m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]);
-//#endif
+#ifdef _DEBUG
+#ifdef UI_POS
+	m_pGameInstance->Add_DebugComponents(m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]);
+#endif
+#endif
 }
 
 HRESULT CBody_Cabinet::Render()
@@ -196,15 +197,18 @@ HRESULT CBody_Cabinet::Add_Components()
 		TEXT("Com_Body_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
-	//CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
+#ifdef _DEBUG
+#ifdef UI_POS
+	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	//ColliderDesc.fRadius = _float(50.f);
-	//ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
-	///* For.Com_Collider */
-	//if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-	//	TEXT("Com_Body_Collider"), (CComponent**)&m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
-	//	return E_FAIL;
-
+	ColliderDesc.fRadius = _float(20.f);
+	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
+	/* For.Com_Collider */
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Body_Collider"), (CComponent**)&m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+		return E_FAIL;
+#endif
+#endif
 
 	return S_OK;
 }
@@ -263,28 +267,22 @@ HRESULT CBody_Cabinet::Initialize_Model()
 
 }
 
-_float4 CBody_Cabinet::Get_Pos()
+_float4 CBody_Cabinet::Get_Pos(_int iArg)
 {
-	//_float4 vPos =m_pModelCom->Get_Mesh_Local_Pos(m_strMeshTag);
-	//_matrix Local_Mesh_Matrix = m_pTransformCom->Get_WorldMatrix();
-	//Local_Mesh_Matrix.r[3] -= _vector{ vPos.x,-vPos.y,vPos.z };
-	//_matrix TransformationMatrix = m_pParentsTransform->Get_WorldMatrix();
-	//_float4x4 WorldMatrix = Local_Mesh_Matrix * TransformationMatrix;
-	
-
-
 	_float4 vLocalPos =m_pModelCom->Get_Mesh_Local_Pos(m_strMeshTag);
 	_matrix Local_Mesh_Matrix = m_pTransformCom->Get_WorldMatrix();
 	Local_Mesh_Matrix.r[3] -= _vector{ vLocalPos.x,-vLocalPos.y,vLocalPos.z };
 	_matrix TransformationMatrix = m_pParentsTransform->Get_WorldMatrix();
 
-	
 	XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(m_vRotation);
 
 	_float4x4 WorldMatrix = Local_Mesh_Matrix* rotationMatrix * TransformationMatrix;
-
-	/*m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(WorldMatrix);*/
-	_float4 vPos = WorldMatrix.Translation();
+#ifdef _DEBUG
+#ifdef UI_POS
+	m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(WorldMatrix);
+#endif
+#endif
+	_float4 vPos = XMVectorSetW(WorldMatrix.Translation(), 1.f);
 	return vPos;
 }
 

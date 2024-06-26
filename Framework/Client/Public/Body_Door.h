@@ -16,6 +16,7 @@ private:
 		BODY_PART_R_HRANDLE,
 		BODY_PART_END,
 	};
+
 public:
 	typedef struct tag_BodyDoor : public PART_INTERACTPROPS_DESC
 	{
@@ -42,8 +43,10 @@ private:
 	virtual HRESULT				Add_Components();
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
-	 HRESULT				Initialize_DoubleDoorModel() ;
-	 HRESULT				Initialize_Model() ;
+	 HRESULT						Initialize_Model() ;
+	virtual void					Get_SpecialBone_Rotation() override;
+public:
+	virtual _float4				Get_Pos(_int iArg = 0) override;
 
 private:
 	void DoubleDoor_Tick(_float fTimeDelta);

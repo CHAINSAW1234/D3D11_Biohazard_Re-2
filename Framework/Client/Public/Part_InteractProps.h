@@ -56,7 +56,7 @@ public:
 		m_pPlayerInteract = pPlayerInteract;
 		m_pPlayerTransform = pPlayerTransform;
 	}
-	virtual _float4 Get_Pos() { return XMVectorSetW( m_WorldMatrix.Translation(),1.f); }
+	virtual _float4 Get_Pos(_int iArg = 0) { return XMVectorSetW( m_WorldMatrix.Translation(),1.f); }
 	
 protected:
 	_bool				m_bCol = { false };

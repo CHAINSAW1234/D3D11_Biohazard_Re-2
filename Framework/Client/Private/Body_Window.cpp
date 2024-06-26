@@ -148,15 +148,6 @@ HRESULT CBody_Window::Add_Components()
 		TEXT("Com_Body_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
 
-	
-	//CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
-
-	//ColliderDesc.fRadius = _float(100.f);
-	//ColliderDesc.vCenter = _float3(-10.f, 1.f, 0.f);
-	///* For.Com_Collider */
-	//if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-	//	TEXT("Com_Body_Collider"), (CComponent**)&m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
-	//	return E_FAIL;
 	return S_OK;
 }
 
