@@ -31,6 +31,63 @@ HRESULT CBlackBoard_Zombie::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CBlackBoard_Zombie::Priority_Tick(_float fTimeDelta)
+{
+	Update_Timers(fTimeDelta);
+}
+
+void CBlackBoard_Zombie::Late_Tick(_float fTimeDelta)
+{
+}
+
+void CBlackBoard_Zombie::Update_Timers(_float fTimeDelta)
+{
+	Update_Recognition_Timer(fTimeDelta);
+}
+
+void CBlackBoard_Zombie::Update_Recognition_Timer(_float fTimeDelta)
+{
+	if (nullptr == m_pAI)
+		return;
+
+	MONSTER_STATE					eCurrentState = { m_pAI->Get_Current_MonsterState() };
+	CMonster::MONSTER_STATUS*		pMonsterStatus = { m_pAI->Get_Status_Ptr() };
+	if (MONSTER_STATE::MST_WALK != eCurrentState)
+	{
+		pMonsterStatus->fAccRecognitionTime -= fTimeDelta;
+		if (pMonsterStatus->fAccRecognitionTime < 0.f)
+			pMonsterStatus->fAccRecognitionTime = 0.f;
+		return;
+	}
+		
+
+	_float								fDistanceToPlayer = {};
+	if (false == Compute_Distance_To_Player(&fDistanceToPlayer))
+		return;
+
+	_bool								isInRange = { fDistanceToPlayer <= pMonsterStatus->fRecognitionRange };
+	if (true == isInRange)
+	{
+		pMonsterStatus->fAccRecognitionTime += fTimeDelta;
+
+		if (pMonsterStatus->fAccRecognitionTime > pMonsterStatus->fMaxRecognitionTime)
+			pMonsterStatus->fAccRecognitionTime = pMonsterStatus->fMaxRecognitionTime;
+	}
+
+	else
+	{
+		pMonsterStatus->fAccRecognitionTime -= fTimeDelta;
+		if (pMonsterStatus->fAccRecognitionTime < 0.f)
+			pMonsterStatus->fAccRecognitionTime = 0.f;
+	}
+
+#ifdef			_DEBUG
+	
+	cout << "Acc Time Recognition : " << to_string(pMonsterStatus->fAccRecognitionTime) << endl;
+
+#endif
+}
+
 void CBlackBoard_Zombie::Set_Current_MotionType_Body(MOTION_TYPE eType)
 {
 	CBody_Zombie*		pBodyZombie = { Get_PartObject_Body() };
@@ -218,6 +275,141 @@ _bool CBlackBoard_Zombie::Compute_Player_Angle_XZ_Plane_Local(_float* pAngle)
 	*pAngle = fResultAngle;
 
 	return true;
+}
+
+_bool CBlackBoard_Zombie::Compute_Direction_To_Player_8Direction_Local(DIRECTION* pDiection)
+{
+	_bool				isSuccess = { false };
+	if (nullptr == m_pPlayer)
+		return isSuccess;
+
+	_vector				vPlayerPosition = { m_pPlayer->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+
+	return Compute_Direction_To_Target_8Direction_Local(vPlayerPosition, pDiection);
+}
+
+_bool CBlackBoard_Zombie::Compute_Direction_To_Player_4Direction_Local(DIRECTION* pDiection)
+{
+	_bool				isSuccess = { false };
+	if (nullptr == m_pPlayer)
+		return isSuccess;
+
+	_vector				vPlayerPosition = { m_pPlayer->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+
+	return Compute_Direction_To_Target_4Direction_Local(vPlayerPosition, pDiection);
+}
+
+_bool CBlackBoard_Zombie::Compute_Direction_To_Target_8Direction_Local(_fvector vTargetPosition, DIRECTION* pDirection)
+{
+	_bool				isSuccess = { false };
+
+	_vector				vAIPosition = { m_pAI->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector				vDirectionToTargetWorld = { XMVector3Normalize(vTargetPosition - vAIPosition) };
+
+	_matrix				AIWorldMatrixInv = { m_pAI->Get_Transform()->Get_WorldMatrix_Inverse() };
+	_vector				vDirectionToTargetLocal = { XMVector3TransformNormal(vDirectionToTargetWorld, AIWorldMatrixInv) };
+
+	_bool				isRight = { XMVectorGetX(vDirectionToTargetLocal) > 0.f };
+	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f), vDirectionToTargetLocal)) };
+	_float				fAngle = { acosf(fDot) };
+
+	
+	if (XMConvertToRadians(22.5f) > fAngle)
+	{
+		*pDirection = DIRECTION::_F;
+	}
+
+	else if (XMConvertToRadians(67.5f) > fAngle)
+	{
+		if (true == isRight)
+			*pDirection = DIRECTION::_FR;
+
+		else
+			*pDirection = DIRECTION::_FL;
+	}
+
+	else if (XMConvertToRadians(112.5f) > fAngle)
+	{
+		if (true == isRight)
+			*pDirection = DIRECTION::_R;
+
+		else
+			*pDirection = DIRECTION::_L;
+	}
+
+	else if (XMConvertToRadians(157.5f) > fAngle)
+	{
+		if (true == isRight)
+			*pDirection = DIRECTION::_BR;
+
+		else
+			*pDirection = DIRECTION::_BL;
+	}
+
+	else
+	{
+		*pDirection = DIRECTION::_B;
+	}
+
+	if (false == isSuccess)
+		*pDirection = DIRECTION::_END;
+
+	return isSuccess;
+}
+
+_bool CBlackBoard_Zombie::Compute_Direction_To_Target_4Direction_Local(_fvector vTargetPosition, DIRECTION* pDirection)
+{
+	_vector				vAIPosition = { m_pAI->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector				vDirectionToTargetWorld = { XMVector3Normalize(vTargetPosition - vAIPosition) };
+
+	_matrix				AIWorldMatrixInv = { m_pAI->Get_Transform()->Get_WorldMatrix_Inverse() };
+	_vector				vDirectionToTargetLocal = { XMVector3TransformNormal(vDirectionToTargetWorld, AIWorldMatrixInv) };
+	_vector				vDirectionToTargetLocalXZPlane = { XMVectorSetY(vDirectionToTargetLocal, 0.f) };
+
+	_bool				isRight = { XMVectorGetX(vDirectionToTargetLocal) > 0.f };
+	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMVector3Normalize(vDirectionToTargetLocalXZPlane))) };
+	_float				fAngle = { acosf(fDot) };
+
+
+	if (XMConvertToRadians(22.5f) > fAngle)
+	{
+		*pDirection = DIRECTION::_F;
+	}
+
+	else if (XMConvertToRadians(112.5f) > fAngle)
+	{
+		if (true == isRight)
+			*pDirection = DIRECTION::_R;
+
+		else
+			*pDirection = DIRECTION::_L;
+	}
+
+	else
+	{
+		*pDirection = DIRECTION::_B;
+	}
+
+	return true;
+}
+
+_bool CBlackBoard_Zombie::Compute_Distance_To_Player(_float* pDistance)
+{
+	_bool			isSuccess = { false };
+
+	if (nullptr == m_pPlayer || nullptr == m_pAI)
+		return isSuccess;
+
+	_vector			vPlayerPosition = { m_pPlayer->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector			vAIPosition = { m_pAI->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+
+	_vector			vDirectionToPlayer = { vPlayerPosition - vAIPosition };
+	_float			fDistance = { XMVectorGetX(XMVector3Length(vDirectionToPlayer)) };
+
+	*pDistance = fDistance;
+	isSuccess = true;
+	
+	return isSuccess;
 }
 
 CTransform* CBlackBoard_Zombie::Get_Transform(CGameObject* pObject)

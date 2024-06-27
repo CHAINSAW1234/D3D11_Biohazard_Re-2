@@ -420,10 +420,12 @@ enum class ANIM_ORDINARY_ETC {
 enum class ANIM_ORDINARY_HOLD {
 	_F1,
 	_F2,
-	_TRIP_L_FOOT_UP,
-	_TRIP_R_FOOT_UP,
-	_L,
-	_R,
+	_TRIP_L_FOOT_UP,			//	홀드 중 다리 맞으면 해당 모션으로 전환하기
+	_TRIP_R_FOOT_UP,			//	홀드 중 다리 맞으면 해당 모션으로 전환하기
+	_L90,
+	_R90,
+	_L180,
+	_R180,
 	_END
 };
 

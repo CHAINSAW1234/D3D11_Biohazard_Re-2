@@ -93,6 +93,8 @@ HRESULT CZombie::Initialize(void* pArg)
 void CZombie::Priority_Tick(_float fTimeDelta)
 {
 	__super::Priority_Tick(fTimeDelta);
+
+	m_pBlackBoard->Priority_Tick(fTimeDelta);
 }
 
 void CZombie::Tick(_float fTimeDelta)
@@ -127,7 +129,9 @@ void CZombie::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
 
 #pragma region BehaviorTree ÄÚµå
-		m_pBehaviorTree->Initiate(fTimeDelta);
+
+	m_pBehaviorTree->Initiate(fTimeDelta);
+
 #pragma endregion
 
 	_float4			vDirection = {};
@@ -221,6 +225,8 @@ void CZombie::Tick(_float fTimeDelta)
 
 void CZombie::Late_Tick(_float fTimeDelta)
 {
+	m_pBlackBoard->Late_Tick(fTimeDelta);
+
 	if (m_pGameInstance->IsPaused())
 	{
 		fTimeDelta = 0.f;
@@ -313,7 +319,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 	CComposite_Node::COMPOSITE_NODE_DESC		CompositeNodeDesc;
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
-	CComposite_Node* pSelectorNode_Root = { CComposite_Node::Create(&CompositeNodeDesc) };
+	CComposite_Node*							pSelectorNode_Root = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pNode_Root->Insert_Child_Node(pSelectorNode_Root);
 
 	/*
@@ -340,9 +346,37 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_1);
 
 
+	//	Add Task Node		=> Damage Hold Stun
+	CStun_Hold_Zombie*							pTask_Hold_Stun = { CStun_Hold_Zombie::Create() };
+	pTask_Hold_Stun->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Hold_Stun);
+
+	//	Add Decorator		=> Is Can Link? ( From Hold )
+	list<MONSTER_STATE>							CanLinkMonsterStatesHoldStun;
+	CanLinkMonsterStatesHoldStun.emplace_back(MONSTER_STATE::MST_HOLD);
+	CIs_Can_Link_Pre_State_Zombie*				pDeco_Is_Can_Link_Hold_Stun = { CIs_Can_Link_Pre_State_Zombie::Create(CanLinkMonsterStatesHoldStun) };
+	pDeco_Is_Can_Link_Hold_Stun->SetBlackBoard(m_pBlackBoard);
+	pTask_Hold_Stun->Insert_Decorator_Node(pDeco_Is_Can_Link_Hold_Stun);
+
+	//	Add Decorator		=> Is Hit? ( All HitType, Leg Collider )
+	CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitAllType_LegCollision;
+	for (_uint i = 0; i < MONSTER_STATE::MST_END; ++i)
+	{
+		IsHitAllType_LegCollision.CheckHitTypes.emplace_back(static_cast<HIT_TYPE>(i));
+	}
+	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::LEG_L);
+	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::LEG_R);
+	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::CALF_L);
+	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::CALF_R);
+	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::FOOT_L);
+	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::FOOT_R);
+	CIs_Hit_Zombie*								pDeco_Is_Hit_AllType = { CIs_Hit_Zombie::Create(&IsHitAllType_LegCollision) };
+	pDeco_Is_Hit_AllType->SetBlackBoard(m_pBlackBoard);
+	pTask_Hold_Stun->Insert_Decorator_Node(pDeco_Is_Hit_AllType);
+
 
 	//	Add Task Node		=> Damage Stun
-	CStun_Zombie* pTask_Stun = { CStun_Zombie::Create() };
+	CStun_Zombie*								pTask_Stun = { CStun_Zombie::Create() };
 	pTask_Stun->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Stun);
 
@@ -386,22 +420,33 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CComposite_Node*							pSelectorNode_RootChild_2 = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_2);
 
-	//Add Decorator Node
-	CIs_Character_In_Range_Zombie*				pDeco_Charactor_In_Range = { CIs_Character_In_Range_Zombie::Create() };
-	pDeco_Charactor_In_Range->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_2->Insert_Decorator_Node(pDeco_Charactor_In_Range);
+	//	Add Decorator Node
+	CIs_Character_In_Range_Zombie*				pDeco_Charactor_In_Range_Recognition = { CIs_Character_In_Range_Zombie::Create(m_pStatus->fRecognitionRange) };
+	pDeco_Charactor_In_Range_Recognition->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Root->Insert_Decorator_Node(pDeco_Charactor_In_Range_Recognition);
 
-	//Add Task Node
+	//	Add Task Node (Hold)
+	CHold_Zombie*								pTask_Hold = { CHold_Zombie::Create() };
+	pTask_Hold->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_2->Insert_Child_Node(pTask_Hold);
+
+	CIs_Enough_Time_Zombie*						pDeco_Enough_Time_For_Hold = { CIs_Enough_Time_Zombie::Create(&m_pStatus->fAccRecognitionTime, &m_pStatus->fTryAttackRecognitionTime) };
+	pDeco_Enough_Time_For_Hold->SetBlackBoard(m_pBlackBoard);
+	pTask_Hold->Insert_Decorator_Node(pDeco_Enough_Time_For_Hold);
+
+	//	Add Task Node (Move)
 	CMove_Front_Zombie*							pTask_Move = { CMove_Front_Zombie::Create() };
 	pTask_Move->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_2->Insert_Child_Node(pTask_Move);
 
-	//Add Decorator Node		=>		Task Move, Deco In View
+
+
+	//	Add Decorator Node		=>		Task Move, Deco In View
 	CIs_Charactor_In_ViewAngle_Zombie*			pDeco_Charactor_In_View = { CIs_Charactor_In_ViewAngle_Zombie::Create() };
 	pDeco_Charactor_In_View->SetBlackBoard(m_pBlackBoard);
 	pTask_Move->Insert_Decorator_Node(pDeco_Charactor_In_View);
 
-	////Add Decorator Node		=>		Task Move, Deco Can Change State
+	//	Add Decorator Node		=>		Task Move, Deco Can Change State
 	/*CIs_Can_Change_State_Zombie::CAN_CHANGE_STATE_ZOMBIE_DESC		CanChangeStateForMoveDesc;
 	CanChangeStateForMoveDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE);
 	CanChangeStateForMoveDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_TURN);
@@ -645,7 +690,10 @@ HRESULT CZombie::Initialize_Status()
 
 	m_pStatus->fAttack = STATUS_ZOMBIE_ATTACK;
 	m_pStatus->fViewAngle = STATUS_ZOMBIE_VIEW_ANGLE;
-	m_pStatus->fRecognitionRange = STATUS_ZOMBIE_DEFAULT_RECOGNIZE_DISTANCE;
+	m_pStatus->fRecognitionRange = STATUS_ZOMBIE_DEFAULT_RECOGNITION_DISTANCE;
+	m_pStatus->fMaxRecognitionTime = STATUS_ZOMBIE_MAX_RECOGNITION_TIME;
+	m_pStatus->fTryAttackRecognitionTime = STATUS_ZOMBIE_TRY_ATTACK_RICOGNITION_TIME;
+	m_pStatus->fTryAttackRange = STATUS_ZOMBIE_TRY_ATTACK_DISTANCE;
 	m_pStatus->fHealth = STATUS_ZOMBIE_HEALTH;
 
 	return S_OK;

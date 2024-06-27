@@ -23,7 +23,14 @@ public:
 	typedef struct tagMonsterStatus
 	{
 		_float				fSpeed = { 0.f };
+
 		_float				fRecognitionRange = { 0.f };
+		_float				fAccRecognitionTime = { 0.f };
+		_float				fMaxRecognitionTime = { 0.f };
+
+		_float				fTryAttackRange = { 0.f };
+		_float				fTryAttackRecognitionTime = { 0.f };
+
 		_float				fViewAngle = { 0.f };
 		_float				fAttack = { 0.f };
 		_float				fHealth = { 0.f };

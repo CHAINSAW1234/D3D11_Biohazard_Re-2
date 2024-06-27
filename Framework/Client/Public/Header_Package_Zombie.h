@@ -11,6 +11,8 @@
 #include "Is_Hit_Zombie.h"
 #include "Is_Maintain_PreTask_Zombie.h"
 #include "Is_Down_Zombie.h"
+#include "Is_Enough_Time_Zombie.h"
+#include "Is_Can_Link_Pre_State_Zombie.h"
 
 ///////////////////////////////////////////////////////////////
 //	For. Task
@@ -21,6 +23,7 @@
 
 /* Damage */
 #include "Stun_Zombie.h"
+#include "Stun_Hold_Zombie.h"
 #include "Burst_Zombie.h"
 #include "Knock_Back_Zombie.h"
 #include "Down_Zombie.h"
@@ -28,6 +31,9 @@
 /* Down */
 #include "Turn_Over_Zombie.h"
 #include "Stand_Up_Zombie.h"
+
+/* Hold */
+#include "Hold_Zombie.h"
 
 /* Additional */
 #include "Shake_Skin_Zombie.h"

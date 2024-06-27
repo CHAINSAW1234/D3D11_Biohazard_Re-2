@@ -10,26 +10,26 @@ class CCollider;
 class CPartObject;
 END
 
-#define	STATUS_ZOMBIE_DEFAULT_RECOGNIZE_DISTANCE		3.f
-#define	STATUS_ZOMBIE_MAX_RECOGNIZE_DISTANCE			5.f
+BEGIN(Client)
+
+/* For.Status */
+#define	STATUS_ZOMBIE_DEFAULT_RECOGNITION_DISTANCE		5.f
+#define	STATUS_ZOMBIE_MAX_RECOGNITION_DISTANCE			7.f
+#define STATUS_ZOMBIE_MAX_RECOGNITION_TIME				5.f
+#define	STATUS_ZOMBIE_TRY_ATTACK_RICOGNITION_TIME		4.f
+#define	STATUS_ZOMBIE_TRY_ATTACK_DISTANCE				3.f
 #define	STATUS_ZOMBIE_VIEW_ANGLE						XMConvertToRadians(180.f)
 #define	STATUS_ZOMBIE_HEALTH							100.f
 #define	STATUS_ZOMBIE_ATTACK							10.f
 
-BEGIN(Client)
-
 class CZombie final : public CMonster
 {
 public:
-	typedef struct tagMonsterDesc: public GAMEOBJECT_DESC
-	{
-		_int Index;
-	}MONSTER_DESC;
-
 	typedef struct tagZombieStatus : public MONSTER_STATUS
 	{
 
 	}ZOMBIE_STATUS;
+
 public:
 	enum COLLIDERTYPE { COLLIDER_HEAD, COLLIDER_BODY, COLLIDER_END };
 

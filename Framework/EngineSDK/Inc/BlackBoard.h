@@ -13,6 +13,10 @@ protected:
 
 public:
 	virtual HRESULT					Initialize(void* pArg);
+	
+public:
+	virtual void					Priority_Tick(_float fTimeDelta) = 0;
+	virtual void					Late_Tick(_float fTimeDelta) = 0;
 
 public:
 	void							Organize_PreState(class CTask_Node* pCurrentNode);
@@ -20,9 +24,6 @@ public:
 protected:
 	class CGameInstance*			m_pGameInstance = { nullptr };
 	class CTask_Node*				m_pPreTaskNode = { nullptr };
-
-public:
-	static CBlackBoard*				Create(void* pArg);
 
 public:
 	virtual void Free() override;

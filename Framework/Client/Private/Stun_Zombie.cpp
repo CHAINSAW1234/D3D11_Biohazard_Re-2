@@ -31,7 +31,6 @@ void CStun_Zombie::Enter()
 
 	pBodyModel->Set_TotalLinearInterpolation(0.2f);
 	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), false);
-	m_eCurrentHitCollider = m_pBlackBoard->GetAI()->Get_Current_IntersectCollider();
 
 	m_isEntry = true;
 }
@@ -59,6 +58,7 @@ _bool CStun_Zombie::Execute(_float fTimeDelta)
 
 void CStun_Zombie::Exit()
 {
+	m_eCurrentHitCollider = COLLIDER_TYPE::_END;
 }
 
 void CStun_Zombie::Change_Animation()
@@ -66,9 +66,17 @@ void CStun_Zombie::Change_Animation()
 	if (nullptr == m_pBlackBoard)
 		return;
 
+	_bool						isSameColliderPreCollision = { false }; 
 	if (true == m_isEntry)
 	{
 		m_isEntry = false;
+		COLLIDER_TYPE			eCurrentCollisionColliderType = { m_pBlackBoard->GetAI()->Get_Current_IntersectCollider() };
+		if (m_eCurrentHitCollider == eCurrentCollisionColliderType)
+		{
+			isSameColliderPreCollision = true;
+		}	
+
+		m_eCurrentHitCollider = eCurrentCollisionColliderType;
 	}
 
 	else
@@ -80,22 +88,6 @@ void CStun_Zombie::Change_Animation()
 	if (nullptr == pBodyModel)
 		return;
 
-	/*_uint			iPlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_END) };
-	for (_uint i = static_cast<_uint>(PLAYING_INDEX::INDEX_10); i < static_cast<_uint>(PLAYING_INDEX::INDEX_20); ++i)
-	{
-		_float			fBlendWeight = { pBodyModel->Get_BlendWeight(iPlayingIndex) };
-		if (0.f == fBlendWeight)
-		{
-			iPlayingIndex = i;
-			pBodyModel->Set_BlendWeight(i, 2.f, 0.2f);
-			break;
-		}
-	}
-
-	if (static_cast<_uint>(PLAYING_INDEX::INDEX_END) == iPlayingIndex)
-		return;*/
-
-	//	_uint			iPlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_10) };
 	_uint			iPlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_0) };
 	_int			iResultAnimationIndex = { -1 };
 	wstring			strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
@@ -209,8 +201,15 @@ void CStun_Zombie::Change_Animation()
 	if (-1 == iResultAnimationIndex)
 		return;
 
-	pBodyModel->Change_Animation(iPlayingIndex, strAnimLayerTag, iResultAnimationIndex);
-	pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
+	if (false == isSameColliderPreCollision)
+	{
+		pBodyModel->Change_Animation(iPlayingIndex, strAnimLayerTag, iResultAnimationIndex);
+		pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
+	}
+	else
+	{
+		pBodyModel->Set_TrackPosition(iPlayingIndex, 0.f, true);
+	}
 }
 
 CStun_Zombie* CStun_Zombie::Create(void* pArg)

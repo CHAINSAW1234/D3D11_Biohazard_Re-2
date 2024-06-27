@@ -343,12 +343,6 @@
     <Filter Include="AIController\Zombie\Task\Additional\ShakeSkin">
       <UniqueIdentifier>{acf145ab-b930-419e-a81d-e6dcfeda6b4a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="AIController\Zombie\Task\Additional\Hold_Zombie">
-      <UniqueIdentifier>{48c4e195-7f2d-4cad-ae99-73d3733ba54b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="AIController\Zombie\Decorator\Checker_MainTain_PreTask">
-      <UniqueIdentifier>{8283ac8d-e2dc-4a0a-85c4-1756898df535}</UniqueIdentifier>
-    </Filter>
     <Filter Include="AIController\Zombie\Decorator\Checker_Is_Down">
       <UniqueIdentifier>{fe7d57b2-dd4a-4f52-a9d3-281720a08b3d}</UniqueIdentifier>
     </Filter>
@@ -375,6 +369,21 @@
     </Filter>
     <Filter Include="02.GameObjects\Camera\Camera_Event">
       <UniqueIdentifier>{ee555b89-e04f-4401-b4d8-37201d791dcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Decorator\Checker_Is_EnoughTime">
+      <UniqueIdentifier>{8d544143-2331-44aa-b90a-ffaf7f8e9c95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Decorator\Checker_Can_Link_Pre_State">
+      <UniqueIdentifier>{6d98541e-9c4f-409c-a171-313d094d4e4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Decorator\Checker_MainTain_Pre_Task">
+      <UniqueIdentifier>{8283ac8d-e2dc-4a0a-85c4-1756898df535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Task\Hold_Zombie">
+      <UniqueIdentifier>{48c4e195-7f2d-4cad-ae99-73d3733ba54b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Task\Damage\Stun_Hold">
+      <UniqueIdentifier>{9a24aab7-ef1e-4341-a35f-cc92ec5d9758}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -727,7 +736,7 @@
       <Filter>AIController\Zombie\Task\Additional\ShakeSkin</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Maintain_PreTask_Zombie.h">
-      <Filter>AIController\Zombie\Decorator\Checker_MainTain_PreTask</Filter>
+      <Filter>AIController\Zombie\Decorator\Checker_MainTain_Pre_Task</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Execute_PreTask_Zombie.h">
       <Filter>AIController\Zombie\Task\Utility\ExecutePreTask</Filter>
@@ -741,7 +750,6 @@
     <ClInclude Include="..\Public\Stand_Up_Zombie.h">
       <Filter>AIController\Zombie\Task\Down\StandUp</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Damage_Zombie.h" />
     <ClInclude Include="..\Public\Decal_Blood.h">
       <Filter>02.GameObjects\Decal\Blood</Filter>
     </ClInclude>
@@ -750,6 +758,18 @@
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Event_Struct.h">
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hold_Zombie.h">
+      <Filter>AIController\Zombie\Task\Hold_Zombie</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Is_Enough_Time_Zombie.h">
+      <Filter>AIController\Zombie\Decorator\Checker_Is_EnoughTime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Is_Can_Link_Pre_State_Zombie.h">
+      <Filter>AIController\Zombie\Decorator\Checker_Can_Link_Pre_State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stun_Hold_Zombie.h">
+      <Filter>AIController\Zombie\Task\Damage\Stun_Hold</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1075,7 +1095,7 @@
       <Filter>AIController\Zombie\Task\Additional\ShakeSkin</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Maintain_PreTask_Zombie.cpp">
-      <Filter>AIController\Zombie\Decorator\Checker_MainTain_PreTask</Filter>
+      <Filter>AIController\Zombie\Decorator\Checker_MainTain_Pre_Task</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Execute_PreTask_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Utility\ExecutePreTask</Filter>
@@ -1094,6 +1114,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Event.cpp">
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hold_Zombie.cpp">
+      <Filter>AIController\Zombie\Task\Hold_Zombie</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Is_Enough_Time_Zombie.cpp">
+      <Filter>AIController\Zombie\Decorator\Checker_Is_EnoughTime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Is_Can_Link_Pre_State_Zombie.cpp">
+      <Filter>AIController\Zombie\Decorator\Checker_Can_Link_Pre_State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stun_Hold_Zombie.cpp">
+      <Filter>AIController\Zombie\Task\Damage\Stun_Hold</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
