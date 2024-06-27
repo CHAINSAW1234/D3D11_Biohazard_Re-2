@@ -237,7 +237,7 @@ void CBullet_UI::Render_Bullet_UI(_float fTimeDelta)
         return;
 
     /* Texture*/
-    if (true == m_pCrosshair->IsRender())
+    if (true == m_pCrosshair->Get_IsRender())
     {
         m_isKeepCross = true;
         m_isRender = true;
@@ -253,7 +253,7 @@ void CBullet_UI::Render_Bullet_UI(_float fTimeDelta)
         if (BULLET_UI_LIFE <= m_fBulletTimer)
         {
             /* 크로스는 꺼졌는데 켜졌으면, 끄자*/
-            if (false == m_pCrosshair->IsRender())
+            if (false == m_pCrosshair->Get_IsRender())
             {
                 /* 이미 출력을 끈 상태 */   
                 if (m_fBlending >= 1.f)
@@ -270,7 +270,7 @@ void CBullet_UI::Render_Bullet_UI(_float fTimeDelta)
         {
             if (m_fBlending <= m_fOrigin_Blending)
             {
-                if (false == m_pCrosshair->IsRender())
+                if (false == m_pCrosshair->Get_IsRender())
                     m_fBulletTimer += fTimeDelta;
                 else
                     m_fBlending = m_fOrigin_Blending;

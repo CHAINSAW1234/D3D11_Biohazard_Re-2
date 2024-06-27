@@ -39,6 +39,13 @@ private: /* 인벤토리 종류 */
 	void		Sub_Iventory_Reset();
 	void		Sub_SelectBox(SUB_INVEN_BOX_POSITION _eBoxType);
 
+public:
+	void		Set_InvenOpen(_bool isInvenOpen) { m_isInvenOpen = isInvenOpen; 
+	for (auto& iter : m_vecChildUI){
+		static_cast<CInventory_Item_UI*>(iter)->Set_InvenOpen(isInvenOpen);}}
+
+	void		Reset_Call(_bool bInput);
+
 
 private: /* Box Type 변수*/
 	/* 1. Rendering Type */

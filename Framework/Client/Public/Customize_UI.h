@@ -374,7 +374,10 @@ public:/* for.Get Inline */
 	_int	Get_ChildTextureNum(_uint iChild) { return static_cast<CCustomize_UI*>(m_vecChildUI[iChild])->Get_TextureNum(); }
 
 public : /* Clinet */
-	_bool	IsRender() const { return m_isRender; }
+	_bool	Get_IsRender() const { return m_isRender; }
+	virtual void    Set_IsRender(_bool isRender) { m_isRender = isRender; 
+	for (auto& iter : m_vecChildUI){
+		static_cast<CCustomize_UI*>(iter)->Set_IsRender(isRender);}}
 
 protected :
 	vector<class CTextBox*>		m_vecTextBoxes;

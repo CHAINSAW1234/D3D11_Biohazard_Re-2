@@ -324,7 +324,9 @@ void CInventory_Item_UI::Sub_Equipment_Inventory(_float fTimeDelta)
     /* 2. 아이템 창 CLOSE */
     if (true == m_isRender)
     {
-        if (!(PRESSING == m_pGameInstance->Get_KeyState('1') || PRESSING == m_pGameInstance->Get_KeyState('2') || PRESSING == m_pGameInstance->Get_KeyState('3') || PRESSING == m_pGameInstance->Get_KeyState('4')))
+        if (!(PRESSING == m_pGameInstance->Get_KeyState('1') || PRESSING == m_pGameInstance->Get_KeyState('2') ||
+            PRESSING == m_pGameInstance->Get_KeyState('3') || PRESSING == m_pGameInstance->Get_KeyState('4') ||
+            true == m_isInvenOpen))
             m_fOpenInven_Timer += fTimeDelta;
 
         if (SUB_INVEN_OPENING <= m_fOpenInven_Timer)
@@ -399,6 +401,24 @@ void CInventory_Item_UI::Sub_SelectBox(SUB_INVEN_BOX_POSITION _eBoxType)
             pSelectBox_Trans->Set_State(CTransform::STATE_POSITION, vBoxTrans);
         }
     }
+}
+
+void CInventory_Item_UI::Reset_Call(_bool bInput)
+{
+    Set_IsRender(bInput);
+    Set_InvenOpen(bInput);
+
+    //Sub_SelectBox(SUB_INVEN_BOX_POSITION::LEFT_INVEN);
+    //Sub_SelectBox(SUB_INVEN_BOX_POSITION::UP_INVEN);
+    //Sub_SelectBox(SUB_INVEN_BOX_POSITION::RIGHT_INVEN);
+    //Sub_SelectBox(SUB_INVEN_BOX_POSITION::DOWN_INVEN);
+
+    //Sub_Iventory_Reset();
+
+    //if (false == bInput)
+    //{
+
+    //}
 }
 
 /* Sub Inventory를 실행했을 때 [출력/초기화] 해야 할 것들 */

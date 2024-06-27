@@ -416,7 +416,10 @@ void CCustomize_UI::Set_Dead(_bool bDead)
 	m_bDead = bDead;
 
 	for (auto& iter : m_vecChildUI)
-		iter->Set_Dead(bDead);
+		static_cast<CCustomize_UI*>(iter)->Set_Dead(m_bDead);
+
+	for (auto& iter : m_vecTextBoxes)
+		iter->Set_Dead(m_bDead);
 }
 
 _float CCustomize_UI::Distance_Player(CGameObject* _obj)

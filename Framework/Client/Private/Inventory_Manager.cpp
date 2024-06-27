@@ -1,14 +1,20 @@
 #include "stdafx.h"
 
 #include "Inventory_Manager.h"
+#include "Inventory_Item_UI.h"
 
 constexpr _float Z_POS_SLOT = 0.8f;
-constexpr _float Z_POS_ITEM_UI = 0.7f;
-constexpr _float Z_POS_HIGH_LIGHTER = 0.6f;
+constexpr _float Z_POS_HIGH_LIGHTER = 0.7f;
+constexpr _float Z_POS_ITEM_UI = 0.6f;
 constexpr _float Z_POS_CONTEXT_MENU = 0.5f;
 
 constexpr _float SLOT_INTERVAL_X = 74.f;
 constexpr _float SLOT_INTERVAL_Y = 76.f;
+
+constexpr _int FIRST = 0;
+constexpr _int SECOND = 1;
+
+constexpr _float PRESSING_TIME = 0.5f;
 
 CInventory_Manager::CInventory_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -31,9 +37,13 @@ HRESULT CInventory_Manager::Initialize()
 	if (FAILED(Init_ItemUI()))
 		return E_FAIL;
 
+	if (FAILED(Init_DragShdow()))
+		return E_FAIL;
+
 	if (FAILED(Init_ContextMenu()))
 		return E_FAIL;
 
+	Set_ItemRecipe();
 
 	return S_OK;
 }
@@ -46,6 +56,11 @@ void CInventory_Manager::FirstTick_Seting()
 
 	for (auto& iter : m_vecItem_UI)
 		iter->FirstTick_Seting();
+
+	m_pDragShadow->FirstTick_Seting();
+
+	if (FAILED(Seting_SubInven()))
+		MSG_BOX(TEXT("Failed to Find SubInven"));
 }
 
 void CInventory_Manager::Tick(_float fTimeDelta)
@@ -53,18 +68,54 @@ void CInventory_Manager::Tick(_float fTimeDelta)
 	switch (m_eInven_Manager_State)
 	{
 	case Client::EVENT_IDLE: {
-		Idle_Operation(fTimeDelta);
+		EVENT_IDLE_Operation(fTimeDelta);
 		break;
 	}
-
+		
+	case Client::EQUIP_ITEM: {
+		EQUIP_ITEM_Operation(fTimeDelta);
+		break;
+	}
+		
+	case Client::UNEQUIP_ITEM: {
+		UNEQUIP_ITEM_Operation(fTimeDelta);
+		break;
+	}
+		
+	case Client::USE_ITEM: {
+		USE_ITEM_Operation(fTimeDelta);
+		break;
+	}
+		
+	case Client::COMBINED_ITEM: {
+		COMBINED_ITEM_Operation(fTimeDelta);
+		break;
+	}
+		
+	case Client::HOTKEY_ASSIGNED_ITEM: {
+		HOTKEY_ASSIGNED_ITEM_Operation(fTimeDelta);
+		break;
+	}
+		
+	case Client::REARRANGE_ITEM: {
+		REARRANGE_ITEM_Operation(fTimeDelta);
+		break;
+	}
+		
+	case Client::DISCARD_ITEM: {
+		DISCARD_ITEM_Operation(fTimeDelta);
+		break;
+	}
+		
 	case Client::CONTEXTUI_SELECT: {
-		ContextUISelect_Operation(fTimeDelta);
+		CONTEXTUI_SELECT_Operation(fTimeDelta);
 		break;
 	}
-
+		
 	default:
 		break;
 	}
+
 }
 
 void CInventory_Manager::Late_Tick(_float fTimeDelta)
@@ -72,9 +123,9 @@ void CInventory_Manager::Late_Tick(_float fTimeDelta)
 	m_pContextMenu->Late_Tick(fTimeDelta);
 }
 
-void CInventory_Manager::Idle_Operation(_float fTimeDelta)
+void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 {
-	_bool IsNoOneHover = true;
+	//_bool IsNoOneHover = true;
 	m_IsNoOneHover = true;
 	CInventory_Slot* pHoveredSlot = nullptr;
 
@@ -87,12 +138,12 @@ void CInventory_Manager::Idle_Operation(_float fTimeDelta)
 		}
 	}
 
-	m_pSlotHighlighter->Set_Dead(m_IsNoOneHover);
+	//m_pSlotHighlighter->Set_Dead(m_IsNoOneHover);
 
 	if (false == m_IsNoOneHover)
 	{
 		_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
-		HoveredPos.z = 0.7f;
+		HoveredPos.z = Z_POS_HIGH_LIGHTER;
 		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
 
 		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
@@ -103,16 +154,198 @@ void CInventory_Manager::Idle_Operation(_float fTimeDelta)
 				{
 					//이징 스타트 도착 지점 제대로 정해주기
 					_float3 TempTrashCanValue = _float3(HoveredPos.x, HoveredPos.y, Z_POS_CONTEXT_MENU);
-					m_pContextMenu->Set_Operation(iter->Get_InvenItemType(), true, TempTrashCanValue, TempTrashCanValue);
+					m_pContextMenu->Set_Operation(iter->Get_ItemType(), true, TempTrashCanValue, TempTrashCanValue);
 					m_eInven_Manager_State = CONTEXTUI_SELECT;
 					m_pSelected_ItemUI = iter;
+				}
+			}
+		}
+
+		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			m_fPressingTime += fTimeDelta;
+			if (m_fPressingTime >= PRESSING_TIME)
+			{
+				for (auto& iter : m_vecItem_UI)
+				{
+					if (true == iter->IsMouseHover() && true == iter->Get_isWorking())
+					{
+						_vector TempTrashCanValue = XMVectorSet(HoveredPos.x, HoveredPos.y, Z_POS_ITEM_UI, 0.f);
+						m_eInven_Manager_State = REARRANGE_ITEM;
+						
+						m_pDragShadow->Set_ItemUI(iter->Get_ItemNumber(), DRAG_SHADOW, TempTrashCanValue, iter->Get_ItemQuantity());
+						m_pDragShadow->Set_Dead(false);
+
+						m_pSelected_ItemUI = iter;
+						
+						m_fPressingTime = 0.f;
+
+						m_pSlotHighlighter->Set_DragShadow(true);
+						break;
+					}
 				}
 			}
 		}
 	} 
 }
 
-void CInventory_Manager::ContextUISelect_Operation(_float fTimeDelta)
+void CInventory_Manager::EQUIP_ITEM_Operation(_float fTimeDelta)
+{
+
+}
+
+void CInventory_Manager::UNEQUIP_ITEM_Operation(_float fTimeDelta)
+{
+
+}
+
+void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
+{
+	m_pSelected_ItemUI->Set_ItemVariation(-1);
+
+	m_eInven_Manager_State = EVENT_IDLE;
+	m_pContextMenu->Set_Dead(true);
+	m_pSelected_ItemUI = nullptr;
+
+}
+
+void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
+{
+	switch (m_eTaskSequence)
+	{
+	case Client::CInventory_Manager::SETING: {
+		m_CombineResources[FIRST] = m_pSelected_ItemUI->Get_ItemNumber();
+		vector<ITEM_RECIPE> vecRecipe = m_mapItemRecipe[m_CombineResources[FIRST]];
+
+		for (auto& ItemUIiter : m_vecItem_UI) //모든 아이템 순회
+		{
+			if (false == ItemUIiter->Get_isWorking() || m_pSelected_ItemUI == ItemUIiter) // 일안하거나 자기 자신 있으면 패스
+				continue;
+
+			_bool isCanCombined = false; //todo : 나중에 선택 가능과 불가능으로 바꿔야함
+
+			for (auto& RecipeIter : vecRecipe) //아이탬 레시피에 자신이 있는지 검색
+			{
+				if (ItemUIiter->Get_ItemNumber() == RecipeIter.eCombination_Item) 
+				{
+					isCanCombined = true;
+				}
+			}
+
+			if (false == isCanCombined)
+				ItemUIiter->Reset_ItemUI();
+		}
+
+		m_eTaskSequence = SELECT;
+
+		break;
+	}
+
+	case Client::CInventory_Manager::SELECT: {
+		_bool IsNoOneHover = true;
+		CInventory_Slot* pHoveredSlot = nullptr;
+
+		for (_uint i = 0; i < m_iInvenCount; i++)
+		{
+			if (true == m_vecInvenSlot[i]->IsMouseHover())
+			{
+				IsNoOneHover = false;
+				pHoveredSlot = m_vecInvenSlot[i];
+			}
+		}
+
+		//m_pSlotHighlighter->Set_Dead(IsNoOneHover);
+
+		if (false == IsNoOneHover)
+		{
+			_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
+			HoveredPos.z = Z_POS_ITEM_UI;
+			m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos); //하이라이터 움직임
+
+			if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+			{
+				for (auto& iter : m_vecItem_UI) //클릭된 재료 검사
+				{
+					if (true == iter->IsMouseHover() && true == iter->Get_isWorking() &&
+						m_pSelected_ItemUI != iter) // todo : Get_isWorking말고 선택 가능한지 한 함수로 바꾸기
+					{
+						m_CombineResources[SECOND] = iter->Get_ItemNumber();
+						iter->Reset_ItemUI();
+						m_eTaskSequence = APPLY;
+					}
+				}
+			}
+		}
+		 
+
+		break;
+	}
+		
+	case Client::CInventory_Manager::APPLY: {
+		m_pSelected_ItemUI->Set_ItemNumber(Find_Recipe(m_CombineResources[FIRST], m_CombineResources[SECOND]));
+		m_eTaskSequence = TS_END;
+		m_eInven_Manager_State = EXAMINE_ITEM;
+		m_CombineResources[0] = { ITEM_NUMBER_END };
+		m_CombineResources[1] = { ITEM_NUMBER_END };
+		break;
+	}
+
+
+	default:
+		break;
+	}
+
+}
+
+void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
+{
+
+}
+
+void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
+{
+	m_IsNoOneHover = true;
+	CInventory_Slot* pHoveredSlot = nullptr;
+
+	for (_uint i = 0; i < m_iInvenCount; i++)
+	{
+		if (true == m_vecInvenSlot[i]->IsMouseHover())
+		{
+			m_IsNoOneHover = false;
+			pHoveredSlot = m_vecInvenSlot[i];
+		}
+	}
+
+	if (false == m_IsNoOneHover)
+	{
+		_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
+		HoveredPos.z = Z_POS_HIGH_LIGHTER;
+		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
+
+		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			m_pDragShadowTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
+		}
+
+		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			CTransform* pSelectedItemTransform = m_pSelected_ItemUI->Get_Transform();
+			_float4 fPos = { HoveredPos.x, HoveredPos.y, Z_POS_ITEM_UI, 0.f };
+			pSelectedItemTransform->Set_State(CTransform::STATE_POSITION, fPos);
+			m_pSlotHighlighter->Set_DragShadow(false);
+			m_eInven_Manager_State = EVENT_IDLE;
+			m_pDragShadow->Set_Dead(true);
+			m_pSelected_ItemUI = nullptr;
+		}
+	}
+}
+
+void CInventory_Manager::DISCARD_ITEM_Operation(_float fTimeDelta)
+{
+
+}
+
+void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 {
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
 	{
@@ -157,6 +390,7 @@ void CInventory_Manager::ContextUISelect_Operation(_float fTimeDelta)
 		
 	case Client::COMBINED_ITEM: {
 		m_eInven_Manager_State = COMBINED_ITEM;
+		m_eTaskSequence = SETING;
 		m_pContextMenu->Set_Dead(true);
 		break;
 	}
@@ -218,6 +452,8 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 	m_pContextMenu->Set_Dead(true);
 
 	m_eInven_Manager_State = EVENT_IDLE;
+
+	m_pInven_Item_UI->Reset_Call(!bInput);
 }
 
 void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
@@ -239,7 +475,7 @@ void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
 	}
 }
 
-void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)
+void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)
 {
 	for (auto& Itemiter : m_vecItem_UI)
 	{
@@ -254,7 +490,7 @@ void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)
 			_vector vSlotPos = Slotiter->GetPositionVector();
 			vSlotPos = XMVectorSetZ(vSlotPos, Z_POS_ITEM_UI);
 			Slotiter->Set_IsFilled(true);
-			Itemiter->Set_ItemUI(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), vSlotPos);
+			Itemiter->Set_ItemUI(eAcquiredItem, ItemType_Classify_ByNumber(eAcquiredItem), vSlotPos, iItemQuantity);
 			return;
 		}
 	}
@@ -326,14 +562,10 @@ HRESULT CInventory_Manager::Init_SlotHighlighter()
 {
 	ifstream inputFileStream;
 	wstring selectedFilePath;
-
-#pragma region 슬롯 하이라이터
 	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/SlotHighlighter.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
-	vector<CCustomize_UI::CUSTOM_UI_DESC> vecCustomSelecUIDesc;
-	CCustomize_UI::ExtractData_FromDat(inputFileStream, &vecCustomSelecUIDesc, true);
-	if (FAILED(Create_SlotHighlighter(&vecCustomSelecUIDesc)))
-		return E_FAIL;
+	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_SlotHighlighter"),
+		(CGameObject**)&m_pSlotHighlighter, m_pDevice, m_pContext);
 
 	m_pSlotHighlighter->Set_Dead(true);
 	m_pSlotHighlighterTransform = dynamic_cast<CTransform*>(m_pSlotHighlighter->Get_Component(g_strTransformTag));
@@ -342,14 +574,13 @@ HRESULT CInventory_Manager::Init_SlotHighlighter()
 
 	Safe_AddRef(m_pSlotHighlighter);
 	Safe_AddRef(m_pSlotHighlighterTransform);
-#pragma endregion
 
 	return S_OK;
 }
 
 HRESULT CInventory_Manager::Init_ItemUI()
 {
-	for (_uint i = 0; i < 4; i++)
+	for (_uint i = 0; i < 20; i++)
 	{
 		ifstream inputFileStream;
 		wstring selectedFilePath;
@@ -373,6 +604,27 @@ HRESULT CInventory_Manager::Init_ItemUI()
 	return S_OK;
 }
 
+HRESULT CInventory_Manager::Init_DragShdow()
+{
+	ifstream inputFileStream;
+	wstring selectedFilePath;
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_UI.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_ItemUI"),
+		(CGameObject**)&m_pDragShadow, m_pDevice, m_pContext);
+	if (nullptr == m_pDragShadow)
+		return E_FAIL;
+
+	m_pDragShadow->Set_Dead(true);
+	m_pDragShadow->Set_ItemType(DRAG_SHADOW);
+
+	m_pDragShadowTransform = dynamic_cast<CTransform*>(m_pDragShadow->Get_Component(g_strTransformTag));
+
+	Safe_AddRef(m_pDragShadow);
+	Safe_AddRef(m_pDragShadowTransform);
+	return S_OK;
+}
+
 HRESULT CInventory_Manager::Init_ContextMenu()
 {
 	ifstream inputFileStream;
@@ -389,6 +641,24 @@ HRESULT CInventory_Manager::Init_ContextMenu()
 
 
 	return S_OK;
+}
+
+HRESULT CInventory_Manager::Seting_SubInven()
+{
+	list<CGameObject*>* pGameObjList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+	for (auto& iter : *pGameObjList)
+	{
+		CInventory_Item_UI* pInven_item_UI = dynamic_cast<CInventory_Item_UI*>(iter);
+
+		if (nullptr != pInven_item_UI)
+		{
+			m_pInven_Item_UI = pInven_item_UI;
+			return S_OK;
+		}
+	}
+
+	return E_FAIL;
 }
 
 HRESULT CInventory_Manager::Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval)
@@ -456,124 +726,6 @@ HRESULT CInventory_Manager::Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DES
 	return S_OK;
 }
 
-HRESULT CInventory_Manager::Create_SlotHighlighter(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI)
-{
-	CSlot_Highlighter* pParentInvenUI = { nullptr };
-
-	for (auto& iter : *vecInvenUI)
-	{
-		if (0 == iter.fMaxFrame && TEXT("") != iter.wstrDefaultTexturPath)
-		{
-			/* For.Prototype_Component_Texture_ */
-			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrDefaultTexturComTag,
-				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath)))) {
-				int a = 0;
-			}
-		}
-
-		else if (0 < iter.fMaxFrame && TEXT("") != iter.wstrDefaultTexturPath)
-		{
-			/* For.Prototype_Component_Texture_ */
-			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrDefaultTexturComTag,
-				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath, (_uint)iter.fMaxFrame)))) {
-				int a = 0;
-			}
-		}
-
-		if (TEXT("") != iter.wstrMaskPath)
-		{
-			/* For.Prototype_Component_Texture_ */
-			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrMaskComTag,
-				CTexture::Create(m_pDevice, m_pContext, iter.wstrMaskPath)))) {
-				int a = 0;
-			}
-		}
-
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_SlotHighlighter"), &iter)))
-			return E_FAIL;
-
-		CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
-
-		CSlot_Highlighter* pInvenUI = dynamic_cast<CSlot_Highlighter*>(pGameObj);
-
-		pInvenUI->Set_Dead(true);
-
-		if (nullptr != pParentInvenUI)
-		{
-			pParentInvenUI->PushBack_Child(pGameObj);
-			pParentInvenUI = nullptr;
-		}
-
-		else
-		{
-			m_pSlotHighlighter = pInvenUI;
-		}
-
-		pParentInvenUI = pInvenUI;
-	}
-
-	return S_OK;
-}
-
-HRESULT CInventory_Manager::Create_ItemUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI)
-{
-	CItem_UI* pParent_ItemUI = { nullptr };
-
-	for (auto& iter : *vecInvenUI)
-	{
-		if (0 == iter.fMaxFrame && TEXT("") != iter.wstrDefaultTexturPath)
-		{
-			/* For.Prototype_Component_Texture_ */
-			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrDefaultTexturComTag,
-				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath)))) {
-				int a = 0;
-			}
-		}
-
-		else if (0 < iter.fMaxFrame && TEXT("") != iter.wstrDefaultTexturPath)
-		{
-			/* For.Prototype_Component_Texture_ */
-			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrDefaultTexturComTag,
-				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath, (_uint)iter.fMaxFrame)))) {
-				int a = 0;
-			}
-		}
-
-		if (TEXT("") != iter.wstrMaskPath)
-		{
-			/* For.Prototype_Component_Texture_ */
-			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrMaskComTag,
-				CTexture::Create(m_pDevice, m_pContext, iter.wstrMaskPath)))) {
-				int a = 0;
-			}
-		}
-
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_ItemUI"), &iter)))
-			return E_FAIL;
-
-		CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
-
-		CItem_UI* pItemUI = dynamic_cast<CItem_UI*>(pGameObj);
-
-		pItemUI->Set_Dead(true);
-
-		if (nullptr != pParent_ItemUI)
-		{
-			pParent_ItemUI->PushBack_Child(pGameObj);
-			pParent_ItemUI = nullptr;
-		}
-
-		else
-		{
-			m_vecItem_UI.push_back(pItemUI);
-		}
-
-		pParent_ItemUI = pItemUI;
-	}
-
-	return S_OK;
-}
-
 void CInventory_Manager::Free()
 {
 	Safe_Release(m_pDevice);
@@ -596,6 +748,9 @@ void CInventory_Manager::Free()
 	m_vecItem_UI.clear();
 
 	Safe_Release(m_pContextMenu);
+
+	Safe_Release(m_pDragShadow);
+	Safe_Release(m_pDragShadowTransform);
 }
 
 ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
@@ -691,3 +846,33 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 
 	return ITEM_TYPE::INVEN_ITEM_TYPE_END;
 }
+
+void CInventory_Manager::Set_ItemRecipe()
+{
+	Add_Recipe(greenherb01a, greenherb01a,	herbsgg01a);
+	Add_Recipe(greenherb01a, redherb01a,	herbsgr01a);
+	Add_Recipe(greenherb01a, blueherb01a,	herbsgb01a);
+	Add_Recipe(greenherb01a, herbsgg01a,	herbsggg01a);
+	Add_Recipe(greenherb01a, herbsgr01a,	herbsgg01a);
+	Add_Recipe(greenherb01a, herbsgb01a,	herbsgg01a);
+}
+
+void CInventory_Manager::Add_Recipe(ITEM_NUMBER eKeyItemNum, ITEM_NUMBER eCombinableItemNum, ITEM_NUMBER eResultItemNum)
+{
+	ITEM_RECIPE sRecipe = { eCombinableItemNum , eResultItemNum };
+	m_mapItemRecipe[eKeyItemNum].push_back(sRecipe);
+}
+
+ITEM_NUMBER CInventory_Manager::Find_Recipe(ITEM_NUMBER eKeyItemNum, ITEM_NUMBER eCombinableItemNum)
+{
+	vector<ITEM_RECIPE> vecRecipe = m_mapItemRecipe[eKeyItemNum];
+
+	for (auto& iter : vecRecipe)
+	{
+		if (eCombinableItemNum == iter.eCombination_Item)
+			return iter.eResult_Item;
+	}
+
+	return ITEM_NUMBER_END;
+}
+

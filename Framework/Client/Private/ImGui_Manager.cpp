@@ -91,13 +91,20 @@ void CImgui_Manager::Tick()
         //m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(m_iItemNum));
 
         if (DOWN == m_pGameInstance->Get_KeyState('1'))
-            m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(0));
+            m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(1));
         if (DOWN == m_pGameInstance->Get_KeyState('2'))
-            m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(14));
+            m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(2));
         if (DOWN == m_pGameInstance->Get_KeyState('3'))
-            m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(23));
+            m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(3));
         if (DOWN == m_pGameInstance->Get_KeyState('4'))
+            m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(4));
+        if (DOWN == m_pGameInstance->Get_KeyState('5'))
+            m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(5));
+        if (DOWN == m_pGameInstance->Get_KeyState('6'))
+            m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(6));
+        if (DOWN == m_pGameInstance->Get_KeyState('7'))
             m_pTabWindow->AddItem_ToInven(static_cast<ITEM_NUMBER>(25));
+
     }
 
     if (true == m_bTabWindow_Debuger)

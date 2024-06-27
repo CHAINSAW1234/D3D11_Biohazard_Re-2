@@ -255,9 +255,9 @@ HRESULT CTab_Window::Render()
 	return S_OK;
 }
 
-void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)
+void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)
 {
-	m_pInventory_Manager->AddItem_ToInven(eAcquiredItem);
+	m_pInventory_Manager->AddItem_ToInven(eAcquiredItem, iItemQuantity);
 }
 
 _bool CTab_Window::IsCan_AddItem_ToInven()

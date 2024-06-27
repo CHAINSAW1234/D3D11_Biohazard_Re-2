@@ -24,12 +24,12 @@ public:
 	virtual HRESULT Render() override;
 
 public :
-	_bool	Get_MinMapRender()	{ return m_isMapRender; }
+	_bool	Get_MinMapRender() const { return m_isMapRender; }
 	_bool*	Get_MainRender()	{ return m_pInvenButton->Get_Dead_Ptr(); }
 
 
 	//아이탬 인벤토리에 넣기
-	void AddItem_ToInven(ITEM_NUMBER eAcquiredItem);
+	void AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity = 1);
 
 	//만약 아이템을 넣을수 없는 상황이라면 false를 반환함
 	_bool IsCan_AddItem_ToInven();
