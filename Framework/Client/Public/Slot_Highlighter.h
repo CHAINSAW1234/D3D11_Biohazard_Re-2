@@ -30,7 +30,7 @@ private:
 	_vector			m_vOriginDiff = {};
 	CTransform*		m_pCursorTranform = { nullptr };
 
-	_bool			m_isDragShadow = { false };
+	//_bool			m_isDragShadow = { false };
 	
 public:
 	static CSlot_Highlighter* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

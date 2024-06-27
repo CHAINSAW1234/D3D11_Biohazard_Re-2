@@ -84,18 +84,18 @@ void CSlot_Highlighter::Set_DragShadow(_bool IsDragShadow)
 	if (true == m_IsChild)
 		return;
 
-	m_isDragShadow = IsDragShadow;
-
-	if (true == m_isDragShadow)
+	if (true == IsDragShadow)
 	{
 		m_vecChildUI[GLITTER_SH]->Set_Dead(false);
 		CTransform* pTransform = static_cast<CTransform*>(m_vecChildUI[GLITTER_SH]->Get_Component(g_strTransformTag));
 		pTransform->Set_State(CTransform::STATE_POSITION, GetPositionVector());
+		Set_Value_Color(&m_vColor[1]);
 	}
 
 	else
 	{
 		m_vecChildUI[GLITTER_SH]->Set_Dead(true);
+		Set_Value_Color(&m_vColor[0]);
 	}
 }
 

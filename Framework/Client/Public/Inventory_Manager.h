@@ -12,7 +12,7 @@ BEGIN(Client)
 
 class CInventory_Manager final : public CBase
 {
-	enum COMBINED_TASK_SEQUENCE{ COMBINABLE_SETING, SELECT, APPLY, COMBINED_TS_END  };
+	enum TASK_SEQUENCE{ SETING, SELECT, APPLY, TS_END  };
 
 private:
 	CInventory_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -25,15 +25,24 @@ public:
 	void Late_Tick(_float fTimeDelta);
 
 private:
-	void EVENT_IDLE_Operation(_float fTimeDelta);			//평상시
-	void EQUIP_ITEM_Operation(_float fTimeDelta);			//장비 장착
-	void UNEQUIP_ITEM_Operation(_float fTimeDelta);			//장비 해제
-	void USE_ITEM_Operation(_float fTimeDelta);				//아이템 사용
-	void COMBINED_ITEM_Operation(_float fTimeDelta);		//아이템 조합
-	void HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta); //단축키 등록
-	void REARRANGE_ITEM_Operation(_float fTimeDelta);		//아이템 드래그 드랍
-	void DISCARD_ITEM_Operation(_float fTimeDelta);			//아이템 삭제
-	void CONTEXTUI_SELECT_Operation(_float fTimeDelta);		//콘텍스트 UI
+	//평상시
+	void EVENT_IDLE_Operation(_float fTimeDelta);			
+	//장비 장착
+	void EQUIP_ITEM_Operation(_float fTimeDelta);			
+	//장비 해제
+	void UNEQUIP_ITEM_Operation(_float fTimeDelta);			
+	//아이템 사용
+	void USE_ITEM_Operation(_float fTimeDelta);				
+	//아이템 조합
+	void COMBINED_ITEM_Operation(_float fTimeDelta);		
+	//단축키 등록
+	void HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta); 
+	//아이템 드래그 드랍
+	void REARRANGE_ITEM_Operation(_float fTimeDelta);		
+	//아이템 삭제
+	void DISCARD_ITEM_Operation(_float fTimeDelta);			
+	//콘텍스트 UI
+	void CONTEXTUI_SELECT_Operation(_float fTimeDelta);
 
 public:
 	//Set_Dead호출이라 m_bDead기준으로 변수 줄것
@@ -111,12 +120,9 @@ private :	/*for IDLE_Operation*/
 private:	/*for. COMBINED_ITEM_Operation*/
 	unordered_map<ITEM_NUMBER, vector<ITEM_RECIPE>> m_mapItemRecipe;
 
-	COMBINED_TASK_SEQUENCE							m_eCTS = { COMBINED_TS_END };
+	TASK_SEQUENCE									m_eTaskSequence = { TS_END };
 
 	ITEM_NUMBER										m_CombineResources[2] = {ITEM_NUMBER_END, ITEM_NUMBER_END};
-
-
-
 
 private:
 	HRESULT Init_InvenSlot();

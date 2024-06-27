@@ -67,6 +67,7 @@ namespace Client
 		USEABLE, // 사용 아이템
 		CONSUMABLE, //소모 아이템
 		QUEST, // 퀘스트아이템
+		DRAG_SHADOW,//드레그 쉐도우
 		INVEN_ITEM_TYPE_END
 	};
 

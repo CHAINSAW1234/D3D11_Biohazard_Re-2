@@ -183,9 +183,9 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 
 void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 {
-	switch (m_eCTS)
+	switch (m_eTaskSequence)
 	{
-	case Client::CInventory_Manager::COMBINABLE_SETING: {
+	case Client::CInventory_Manager::SETING: {
 		m_CombineResources[FIRST] = m_pSelected_ItemUI->Get_ItemNumber();
 		vector<ITEM_RECIPE> vecRecipe = m_mapItemRecipe[m_CombineResources[FIRST]];
 
@@ -208,7 +208,7 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 				ItemUIiter->Reset_ItemUI();
 		}
 
-		m_eCTS = SELECT;
+		m_eTaskSequence = SELECT;
 
 		break;
 	}
@@ -243,7 +243,7 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 					{
 						m_CombineResources[SECOND] = iter->Get_ItemNumber();
 						iter->Reset_ItemUI();
-						m_eCTS = APPLY;
+						m_eTaskSequence = APPLY;
 					}
 				}
 			}
@@ -255,7 +255,7 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 		
 	case Client::CInventory_Manager::APPLY: {
 		m_pSelected_ItemUI->Set_ItemNumber(Find_Recipe(m_CombineResources[FIRST], m_CombineResources[SECOND]));
-		m_eCTS = COMBINED_TS_END;
+		m_eTaskSequence = TS_END;
 		m_eInven_Manager_State = EXAMINE_ITEM;
 		m_CombineResources[0] = { ITEM_NUMBER_END };
 		m_CombineResources[1] = { ITEM_NUMBER_END };
@@ -329,7 +329,7 @@ void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 		
 	case Client::COMBINED_ITEM: {
 		m_eInven_Manager_State = COMBINED_ITEM;
-		m_eCTS = COMBINABLE_SETING;
+		m_eTaskSequence = SETING;
 		m_pContextMenu->Set_Dead(true);
 		break;
 	}
