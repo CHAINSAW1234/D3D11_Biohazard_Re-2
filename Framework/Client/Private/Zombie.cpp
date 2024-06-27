@@ -43,14 +43,14 @@ HRESULT CZombie::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;	
 
-	if (FAILED(Add_Components()))
-		return E_FAIL;
+	//if (FAILED(Add_Components()))
+	//	return E_FAIL;
 
-	if (FAILED(Add_PartObjects()))
-		return E_FAIL;
+	//if (FAILED(Add_PartObjects()))
+	//	return E_FAIL;
 
-	if (FAILED(Initialize_PartModels()))
-		return E_FAIL;
+	//if (FAILED(Initialize_PartModels()))
+	//	return E_FAIL;
 
 	if (pArg != nullptr)
 	{
