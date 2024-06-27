@@ -88,6 +88,7 @@ protected: // For AIController
 
 public://For Decal
 	virtual void						Perform_Skinning() {}
+	virtual void						Ready_Decal() {}
 public:
 	class CDecal_Blood*					m_pDecal_Blood = { nullptr };
 

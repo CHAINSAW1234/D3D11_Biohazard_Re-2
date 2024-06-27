@@ -185,32 +185,10 @@ void CZombie::Tick(_float fTimeDelta)
 		}
 	}
 
+	//For Decal.
 	m_pColliderCom_Bounding->Tick(m_pTransformCom->Get_WorldMatrix_Pure_Mat());
 
-	auto vRayOrigin = m_pGameInstance->Get_RayOrigin_Aim();
-	auto vRayDir = m_pGameInstance->Get_RayDir_Aim();
-	_float	fMinDist = 0.f;
-	_float	fMaxDist = 0.f;
-	if (m_pColliderCom_Bounding->IntersectRayAABB(XMLoadFloat4(&vRayOrigin), XMLoadFloat4(&vRayDir), fMinDist, fMaxDist))
-	{
-		HitResult hitResult;
-		hitResult.hitModel = this;
-		hitResult.minHitDistance = fMinDist;
-		hitResult.maxHitDistance = fMaxDist;
-
-		_matrix rotMatrix = XMMatrixIdentity();
-		//rotMatrix.SetRotation(mainCamera->GetDirection(), decalAngle);
-
-		AddDecalInfo decalInfo;
-		decalInfo.rayOrigin = vRayOrigin;
-		decalInfo.rayDir = vRayDir;
-		XMStoreFloat4(&decalInfo.decalTangent,XMVector4Transform(m_pGameInstance->Get_Camera_Transform()->Get_State_Float4(CTransform::STATE_RIGHT), rotMatrix));
-		decalInfo.decalSize = _float3(5.f, 5.f, 5.0f);
-		decalInfo.minHitDistance = hitResult.minHitDistance;
-		decalInfo.maxHitDistance = hitResult.maxHitDistance;
-		decalInfo.decalMaterialIndex = 0;
-		m_pDecal_Blood->Add_Skinned_Decal(decalInfo);
-	}
+	Ready_Decal();
 }
 
 void CZombie::Late_Tick(_float fTimeDelta)
@@ -227,8 +205,6 @@ void CZombie::Late_Tick(_float fTimeDelta)
 
 	if (m_pController)
 		m_pController->Update_Collider();
-
-	Perform_Skinning();
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom_Bounding);
@@ -587,6 +563,36 @@ void CZombie::Perform_Skinning()
 		m_pBodyModel->Bind_Resource_Skinning(i);
 		m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
 		m_pBodyModel->Staging_Skinning(i);
+	}
+}
+
+void CZombie::Ready_Decal()
+{
+	auto vRayOrigin = m_pGameInstance->Get_RayOrigin_Aim();
+	auto vRayDir = m_pGameInstance->Get_RayDir_Aim();
+	_float	fMinDist = 0.f;
+	_float	fMaxDist = 0.f;
+	if (m_pColliderCom_Bounding->IntersectRayAABB(XMLoadFloat4(&vRayOrigin), XMLoadFloat4(&vRayDir), fMinDist, fMaxDist))
+	{
+		Perform_Skinning();
+
+		HitResult hitResult;
+		hitResult.hitModel = this;
+		hitResult.minHitDistance = fMinDist;
+		hitResult.maxHitDistance = fMaxDist;
+
+		_matrix rotMatrix = XMMatrixIdentity();
+		//rotMatrix.SetRotation(mainCamera->GetDirection(), decalAngle);
+
+		AddDecalInfo decalInfo;
+		decalInfo.rayOrigin = vRayOrigin;
+		decalInfo.rayDir = vRayDir;
+		XMStoreFloat4(&decalInfo.decalTangent, XMVector4Transform(m_pGameInstance->Get_Camera_Transform()->Get_State_Float4(CTransform::STATE_RIGHT), rotMatrix));
+		decalInfo.decalSize = _float3(5.f, 5.f, 5.0f);
+		decalInfo.minHitDistance = hitResult.minHitDistance;
+		decalInfo.maxHitDistance = hitResult.maxHitDistance;
+		decalInfo.decalMaterialIndex = 0;
+		m_pDecal_Blood->Add_Skinned_Decal(decalInfo);
 	}
 }
 

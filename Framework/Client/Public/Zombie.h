@@ -48,6 +48,7 @@ private:	/* Initialize_PartObjects_Models */
 	
 public://For Decal
 	virtual void						Perform_Skinning() override;
+	virtual void						Ready_Decal() override;
 
 private: // For AIController
 	class CBlackBoard_Zombie*			m_pBlackBoard = { nullptr };
