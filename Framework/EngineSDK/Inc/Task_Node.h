@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Base.h"
+#include "Node.h"
 
 BEGIN(Engine)
 
-class ENGINE_DLL CTask_Node : public CBase
+class ENGINE_DLL CTask_Node : public CNode
 {
 protected:
 	CTask_Node();
@@ -12,15 +12,12 @@ protected:
 	virtual ~CTask_Node() = default;
 
 public:
-	virtual HRESULT					Initialize_Prototype();
 	virtual HRESULT					Initialize(void* pArg);
 
 	virtual void					Enter() = 0;
-	virtual void					Execute() {}
+	virtual _bool					Execute() override;
 	virtual void					Exit() = 0;
 
-protected:
-	class CGameInstance*			m_pGameInstance = { nullptr };
 
 public:
 	virtual void Free() override;

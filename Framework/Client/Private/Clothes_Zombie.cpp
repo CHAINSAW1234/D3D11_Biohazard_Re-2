@@ -126,7 +126,7 @@ HRESULT CClothes_Zombie::Render()
 		}
 
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(5)))
 			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(i));

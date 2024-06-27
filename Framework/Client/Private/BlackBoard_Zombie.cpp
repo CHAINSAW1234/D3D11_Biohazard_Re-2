@@ -12,26 +12,23 @@ CBlackBoard_Zombie::CBlackBoard_Zombie()
 CBlackBoard_Zombie::CBlackBoard_Zombie(const CBlackBoard_Zombie& rhs)
 {
 }
-
-HRESULT CBlackBoard_Zombie::Initialize_Prototype()
-{
-	return S_OK;
-}
-
 HRESULT CBlackBoard_Zombie::Initialize(void* pArg)
 {
-	return S_OK;
-}
+	if (nullptr == pArg)
+		return E_FAIL;
 
-void CBlackBoard_Zombie::Initialize_BlackBoard(CZombie* pAI)
-{
-	if (nullptr == pAI)
-		return;
+	BLACKBOARD_ZOMBIE_DESC*			pDesc = { static_cast<BLACKBOARD_ZOMBIE_DESC*>(pArg) };
 
-	m_pAI = pAI;
+	m_pAI = pDesc->pAI;
+	if (nullptr == m_pAI)
+		return E_FAIL;
+
+	if (FAILED(__super::Initialize(nullptr)))
+		return E_FAIL;
 
 	auto pPlayerLayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_Player");
 	m_pPlayer = dynamic_cast<CPlayer*>(*(*pPlayerLayer).begin());
+	return S_OK;
 }
 
 void CBlackBoard_Zombie::Set_Current_MotionType_Body(MOTION_TYPE eType)
@@ -73,6 +70,13 @@ _uint CBlackBoard_Zombie::Get_Pre_MotionType_Body()
 		return static_cast<_uint>(MOTION_TYPE::MOTION_END);
 
 	return static_cast<_uint>(pBodyObject->Get_Pre_MotionType());
+}
+
+CZombie::ZOMBIE_STATUS* CBlackBoard_Zombie::Get_ZombieStatus_Ptr()
+{
+	CZombie::ZOMBIE_STATUS*		pStatus = { static_cast<CZombie::ZOMBIE_STATUS*>(m_pAI->Get_Status_Ptr()) };
+
+	return pStatus;
 }
 
 _int CBlackBoard_Zombie::Get_Current_AnimIndex(CMonster::PART_ID ePartID, PLAYING_INDEX eIndex)
@@ -263,11 +267,11 @@ vector<_float> CBlackBoard_Zombie::Get_BlendWeights(_uint iPartID)
 	return BlendWeights;
 }
 
-CBlackBoard_Zombie* CBlackBoard_Zombie::Create()
+CBlackBoard_Zombie* CBlackBoard_Zombie::Create(void* pArg)
 {
 	CBlackBoard_Zombie* pInstance = new CBlackBoard_Zombie();
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CBlackBoard_Zombie"));
 

@@ -217,6 +217,7 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\Model_Extractor.cpp" />
     <ClCompile Include="..\Private\Mouse.cpp" />
     <ClCompile Include="..\Private\Composite_Node.cpp" />
+    <ClCompile Include="..\Private\Node.cpp" />
     <ClCompile Include="..\Private\Observer.cpp" />
     <ClCompile Include="..\Private\Observer_Handler.cpp" />
     <ClCompile Include="..\Private\Octree.cpp" />
@@ -311,6 +312,7 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\Model_Struct.h" />
     <ClInclude Include="..\Public\Mouse.h" />
     <ClInclude Include="..\Public\Composite_Node.h" />
+    <ClInclude Include="..\Public\Node.h" />
     <ClInclude Include="..\Public\Observer.h" />
     <ClInclude Include="..\Public\Observer_Handler.h" />
     <ClInclude Include="..\Public\Octree.h" />

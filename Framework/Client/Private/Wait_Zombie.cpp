@@ -15,11 +15,6 @@ CWait_Zombie::CWait_Zombie(const CWait_Zombie& rhs)
 {
 }
 
-HRESULT CWait_Zombie::Initialize_Prototype()
-{
-	return S_OK;
-}
-
 HRESULT CWait_Zombie::Initialize(void* pArg)
 {
 	return S_OK;
@@ -30,10 +25,15 @@ void CWait_Zombie::Enter()
 	
 }
 
-void CWait_Zombie::Execute()
+_bool CWait_Zombie::Execute()
 {
+#pragma region Default Function
 	if (nullptr == m_pBlackBoard)
-		return;
+		return false;
+
+	if (Check_Permition_To_Execute() == false)
+		return false;
+#pragma endregion
 
 	m_pBlackBoard->Organize_PreState(this);
 
@@ -43,6 +43,7 @@ void CWait_Zombie::Execute()
 	cout << "Wait" << endl;
 		Change_Animation();
 
+	return true;
 }
 
 void CWait_Zombie::Exit()
@@ -172,11 +173,11 @@ void CWait_Zombie::Change_Animation()
 #pragma endregion
 }
 
-CWait_Zombie* CWait_Zombie::Create()
+CWait_Zombie* CWait_Zombie::Create(void* pArg)
 {
-	CWait_Zombie* pInstance = new CWait_Zombie();
+	CWait_Zombie*			pInstance = { new CWait_Zombie() };
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CWait_Zombie"));
 

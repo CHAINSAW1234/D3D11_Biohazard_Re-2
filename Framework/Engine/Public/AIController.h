@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CAIController : public CBase
+class ENGINE_DLL CAIController final : public CBase
 {
 protected:
 	CAIController();

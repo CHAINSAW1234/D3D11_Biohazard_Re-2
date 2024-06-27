@@ -92,6 +92,9 @@ void CPlayingInfo::Set_TrackPosition_ResetRootPre(_float fTrackPosition)
 {
 	Set_TrackPosition(fTrackPosition);
 
+	_bool			isFirstTick = { fTrackPosition <= 0.f };
+	Set_FirstTick(isFirstTick);
+	Reset_LinearInterpolation();
 	m_isResetRootPre = true;
 }
 
