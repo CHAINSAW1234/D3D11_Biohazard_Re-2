@@ -57,6 +57,16 @@ void CStatue::Late_Tick(_float fTimeDelta)
 
 	if (m_bRender == false)
 		return;
+	else
+	{
+		for (auto& it : m_PartObjects)
+		{
+			if (it != nullptr)
+				it->Set_Render(true);
+		}
+
+		m_bRender = false;
+	}
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
@@ -132,6 +142,11 @@ void CStatue::Active()
 	*m_pPlayerInteract = false;
 	m_bActive = true;
 
+}
+
+_float4 CStatue::Get_Object_Pos()
+{
+	return _float4();
 }
 
 CStatue* CStatue::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

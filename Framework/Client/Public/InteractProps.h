@@ -88,7 +88,6 @@ public:
 	typedef struct tagInteractProps_desc : public CGameObject::GAMEOBJECT_DESC
 	{
 		_int BelongIndexs2[iMaxNum];
-		_int iPropsType;
 		DOOR_DESC tagDoor = {};
 		CABINET_DESC tagCabinet = {};
 		WINDOW_DESC tagWindow = {};
@@ -128,6 +127,9 @@ public:
 	/* NY */
 	_bool*												ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
 	_bool*												Selector_Rendering() { return &m_isSelector_Rendering;  }
+	/*To NY*/
+	virtual _float4									Get_Object_Pos() = 0;
+
 
 private :
 	_bool												m_isSelector_Rendering = { false };
@@ -156,6 +158,8 @@ protected:
 protected:
 	void												Check_Player();
 	void												Check_Col_Sphere_Player();
+	void												Check_Col_OBB_Player();
+	void												Check_Col_AABB_Player();
 	_bool												Visible();
 	virtual HRESULT										Add_Components();
 	virtual HRESULT										Add_PartObjects();

@@ -27,8 +27,13 @@ HRESULT CBody_ItemProp::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Model()))
+		return E_FAIL; 
+
+
 	BODY_ITEMPROPS_DESC* pDesc = (BODY_ITEMPROPS_DESC*)pArg;
 	m_pObtain = pDesc->pObtain;
+	m_iItemIndex = pDesc->iItemIndex;
 
 	/*m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
@@ -46,7 +51,7 @@ HRESULT CBody_ItemProp::Initialize(void* pArg)
 
 #ifndef NON_COLLISION_PROP
 
-	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
+	//m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
 #endif
 
@@ -76,7 +81,12 @@ void CBody_ItemProp::Late_Tick(_float fTimeDelta)
 	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);*/
 	if (m_pSocketMatrix != nullptr)
 	{
-		_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix() /** XMMatrixScaling(100.f,100.f,100.f)*/) };
+		_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
+		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+	}
+	else
+	{
+		_matrix			WorldMatrix = { (m_pTransformCom->Get_WorldMatrix() *  m_pParentsTransform->Get_WorldMatrix() ) };
 		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 	}
 
@@ -87,14 +97,17 @@ void CBody_ItemProp::Late_Tick(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 
+	Get_SpecialBone_Rotation();
+
 }
 
 HRESULT CBody_ItemProp::Render()
 {
-	/*if (m_bRender == false)
+	if (m_bRender == false)
 		return S_OK;
 	else
-		m_bRender = false;*/
+		m_bRender = false;
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
@@ -138,6 +151,7 @@ HRESULT CBody_ItemProp::Render()
 
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
+	return S_OK;
 }
 
 HRESULT CBody_ItemProp::Add_Components()
@@ -152,6 +166,18 @@ HRESULT CBody_ItemProp::Add_Components()
 	if (FAILED(__super::Add_Component(g_Level, m_strModelComponentName,
 		TEXT("Com_Body_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
+#ifdef _DEBUG
+#ifdef UI_POS
+	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
+
+	ColliderDesc.fRadius = _float(20.f);
+	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
+	/* For.Com_Collider */
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Body_Collider"), (CComponent**)&m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+		return E_FAIL;
+#endif
+#endif
 
 	return S_OK;
 }
@@ -165,6 +191,72 @@ HRESULT CBody_ItemProp::Add_PartObjects()
 HRESULT CBody_ItemProp::Initialize_PartObjects()
 {
 	return S_OK;
+}
+
+void CBody_ItemProp::Get_SpecialBone_Rotation()
+{
+
+}
+
+HRESULT CBody_ItemProp::Initialize_Model()
+{
+	vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
+	for (auto& strMeshTag : MeshTags)
+	{
+		if ((strMeshTag.find("Group_0_") != string::npos)|| (strMeshTag.find("Group_1_") != string::npos))
+			m_strMeshTag = strMeshTag;
+	}
+
+	return S_OK;
+}
+
+_float4 CBody_ItemProp::Get_Pos(_int iArg)
+{
+
+	if (m_pSocketMatrix == nullptr)
+	{
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		_float4 vLocalPos = m_pModelCom->Get_Mesh_Local_Pos(m_strMeshTag) + _float4(0.f, 10.f, 0.f, 0.f);
+
+		_matrix Local_Mesh_Matrix = m_pTransformCom->Get_WorldMatrix();
+		Local_Mesh_Matrix.r[3] += vLocalPos;
+		_matrix TransformationMatrix = m_pParentsTransform->Get_WorldMatrix();
+
+		_float4x4 WorldMatrix = (Local_Mesh_Matrix)*TransformationMatrix;
+
+		_float4 vPos = XMVectorSetW(WorldMatrix.Translation(), 1.f);
+		m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
+#ifdef _DEBUG
+#ifdef UI_POS
+		m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(WorldMatrix);
+		m_pGameInstance->Add_DebugComponents(m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]);
+#endif
+#endif
+		return vPos;
+	}
+	else
+	{
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		_float4 vLocalPos = m_pModelCom->Get_Mesh_Local_Pos(m_strMeshTag) + _float4(0.f, 10.f, 0.f, 0.f);
+
+		_matrix Local_Mesh_Matrix = m_pTransformCom->Get_WorldMatrix();
+		Local_Mesh_Matrix.r[3] += vLocalPos;
+		_matrix TransformationMatrix = m_pParentsTransform->Get_WorldMatrix();
+
+		_float4x4 WorldMatrix = (Local_Mesh_Matrix)*XMLoadFloat4x4(m_pSocketMatrix) *TransformationMatrix;
+
+		_float4 vPos = XMVectorSetW(WorldMatrix.Translation(), 1.f);
+		m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
+#ifdef _DEBUG
+#ifdef UI_POS
+		m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(WorldMatrix);
+		m_pGameInstance->Add_DebugComponents(m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]);
+#endif
+#endif
+		return vPos;
+	}
+
+	return _float4();
 }
 
 

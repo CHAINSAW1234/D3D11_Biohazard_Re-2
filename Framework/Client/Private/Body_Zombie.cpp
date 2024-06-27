@@ -49,7 +49,6 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 void CBody_Zombie::Priority_Tick(_float fTimeDelta)
 {
 	__super::Priority_Tick(fTimeDelta);
-
 }
 
 void CBody_Zombie::Tick(_float fTimeDelta)
@@ -82,6 +81,81 @@ void CBody_Zombie::Tick(_float fTimeDelta)
 			m_bRender = true;
 		}
 	}
+
+
+#pragma region TEST Add Mask Anim
+
+	static			_uint iNum = { 3 };
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_RIGHT))
+	{
+		++iNum;
+		if (iNum > 8)
+		{
+			iNum = 3;
+		}
+	}
+
+	for (_uint i = 3; i < 9; ++i)
+	{
+		m_pModelCom->Set_BlendWeight(i, 0.f, 0.f);
+	}
+
+	switch (iNum)
+	{
+	case 3:
+	{
+		m_pModelCom->Change_Animation(3, TEXT("Add_Leg_L"), static_cast<_uint>(ANIM_ADD_LEG_L::_FRONT));
+		m_pModelCom->Set_BoneLayer_PlayingInfo(3, BONE_LAYER_L_LEG_TWIST_TAG);
+		m_pModelCom->Set_BlendWeight(3, 100.f, 0.f);
+		m_pModelCom->Set_Loop(3, true);
+		break;
+	}
+	case 4:
+	{
+		m_pModelCom->Change_Animation(4, TEXT("Add_Leg_R"), static_cast<_uint>(ANIM_ADD_LEG_R::_FRONT));
+		m_pModelCom->Set_BoneLayer_PlayingInfo(4, BONE_LAYER_R_LEG_TWIST_TAG);
+		m_pModelCom->Set_BlendWeight(4, 100.f, 0.f);
+		m_pModelCom->Set_Loop(4, true);
+		break;
+	}
+	case 5:
+	{
+		m_pModelCom->Change_Animation(5, TEXT("Add_Arm_L"), static_cast<_uint>(ANIM_ADD_ARM_L::_FRONT));
+		m_pModelCom->Set_BoneLayer_PlayingInfo(5, BONE_LAYER_L_ARM_TWIST_TAG);
+		m_pModelCom->Set_BlendWeight(5, 100.f, 0.f);
+		m_pModelCom->Set_Loop(5, true);
+		break;
+	}
+
+	case 6:
+	{
+		m_pModelCom->Change_Animation(6, TEXT("Add_Arm_R"), static_cast<_uint>(ANIM_ADD_ARM_R::_FRONT));
+		m_pModelCom->Set_BoneLayer_PlayingInfo(6, BONE_LAYER_R_ARM_TWIST_TAG);
+		m_pModelCom->Set_BlendWeight(6, 100.f, 0.f);
+		m_pModelCom->Set_Loop(6, true);
+		break;
+	}
+
+	case 7:
+	{
+		m_pModelCom->Change_Animation(7, TEXT("Add_Shoulder_L"), static_cast<_uint>(ANIM_ADD_SHOULDER_L::_FRONT));
+		m_pModelCom->Set_BoneLayer_PlayingInfo(7, BONE_LAYER_L_SHOULDER_TWIST_TAG);
+		m_pModelCom->Set_BlendWeight(7, 100.f, 0.f);
+		m_pModelCom->Set_Loop(7, true);
+		break;
+	}
+
+	case 8:
+	{
+		m_pModelCom->Change_Animation(8, TEXT("Add_Shoulder_R"), static_cast<_uint>(ANIM_ADD_SHOULDER_R::_FRONT));
+		m_pModelCom->Set_BoneLayer_PlayingInfo(8, BONE_LAYER_R_SHOULDER_TWIST_TAG);
+		m_pModelCom->Set_BlendWeight(8, 100.f, 0.f);
+		m_pModelCom->Set_Loop(8, true);
+		break;
+	}
+	}
+
+#pragma endregion
 }
 
 void CBody_Zombie::Late_Tick(_float fTimeDelta)
@@ -90,6 +164,22 @@ void CBody_Zombie::Late_Tick(_float fTimeDelta)
 
 	if(m_bRagdoll == false)
 		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+
+
+#pragma region TEST
+
+	for (_uint i = static_cast<_uint>(PLAYING_INDEX::INDEX_10); i < static_cast<_uint>(PLAYING_INDEX::INDEX_20); ++i)
+	{
+		_bool			isFinished = { m_pModelCom->isFinished(i) };
+		if (true == isFinished)
+		{
+			_float			fCurrentBlendWeight = { m_pModelCom->Get_BlendWeight(i) };
+			if(fCurrentBlendWeight > 0.f)
+				m_pModelCom->Set_BlendWeight(i, fCurrentBlendWeight - (fTimeDelta * 3.f));
+		}
+	}
+
+#pragma endregion
 
 	//	현재 모션이 A ~ F 타입인지 판단하고 저장 => 다음 틱에 태스크 노드에서 참조하여 모션을 결정할것이다.
 	Update_Current_MotionType();
@@ -345,7 +435,32 @@ HRESULT CBody_Zombie::Initialize_Model()
 	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_3), BONE_LAYER_DEFAULT_TAG, 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_4), BONE_LAYER_DEFAULT_TAG, 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_5), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_6), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_7), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_8), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_9), BONE_LAYER_DEFAULT_TAG, 0.f);
 
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_10), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_11), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_12), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_13), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_14), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_15), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_16), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_17), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_18), BONE_LAYER_DEFAULT_TAG, 0.f);
+
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_20), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_21), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_22), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_23), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_24), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_25), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_26), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_27), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_28), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_29), BONE_LAYER_DEFAULT_TAG, 0.f);
+	
 	/* Set_Root_Motion */
 	m_pModelCom->Active_RootMotion_XZ(true);
 	m_pModelCom->Active_RootMotion_Y(true);
@@ -380,6 +495,15 @@ HRESULT CBody_Zombie::Initialize_Model()
 	}
 
 	if (FAILED(Add_Animations()))
+		return E_FAIL;
+
+	if (FAILED(Register_Animation_Branches_AnimGroup()))
+		return E_FAIL;
+
+	if (FAILED(Register_Animation_Branches_AnimType()))
+		return E_FAIL;
+
+	if (FAILED(Register_BoneLayer_Additional_TwisterBones()))
 		return E_FAIL;
 
 	return S_OK;
@@ -528,6 +652,257 @@ HRESULT CBody_Zombie::Add_Animations()
 	return S_OK;
 }
 
+HRESULT CBody_Zombie::Register_Animation_Branches_AnimType()
+{
+	m_AnimTypeAnimLayerTags.resize(static_cast<size_t>(ZOMBIE_BODY_ANIM_TYPE::_END));
+
+	/* For.Anim Type BlendMask */
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_BLEND_MASK)].emplace(TEXT("Add_Arm_L"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_BLEND_MASK)].emplace(TEXT("Add_Arm_R"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_BLEND_MASK)].emplace(TEXT("Add_Body"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_BLEND_MASK)].emplace(TEXT("Add_Head"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_BLEND_MASK)].emplace(TEXT("Add_Leg_L"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_BLEND_MASK)].emplace(TEXT("Add_Leg_R"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_BLEND_MASK)].emplace(TEXT("Add_Shoulder_L"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_BLEND_MASK)].emplace(TEXT("Add_Shoulder_R"));
+
+	/* For.Anim Type Idle*/
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_IDLE)].emplace(TEXT("Lost_Idle"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_IDLE)].emplace(TEXT("Ordinary_Idle"));
+
+	/* For.Anim Type Move */
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_MOVE)].emplace(TEXT("Lost_Walk"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_MOVE)].emplace(TEXT("Ordinary_Walk"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_MOVE)].emplace(TEXT("Ordinary_Walk_Lose"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_MOVE)].emplace(TEXT("Ordinary_Stairs_Walk"));
+
+	/* For.Anim Type Turn */
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_TURN)].emplace(TEXT("Lost_Turn"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_TURN)].emplace(TEXT("Ordinary_PivotTurn"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_TURN)].emplace(TEXT("Ordinary_Stairs_PivotTurn"));
+
+	/* For.Anim Type Damage */
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE)].emplace(TEXT("Damage_Burst"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE)].emplace(TEXT("Damage_Default"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE)].emplace(TEXT("Damage_Down"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE)].emplace(TEXT("Damage_Electric_Shock"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE)].emplace(TEXT("Damage_Knockback"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE)].emplace(TEXT("Damage_Lost"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE)].emplace(TEXT("Damage_Stairs_Down"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE)].emplace(TEXT("Damage_Stairs_Up"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE)].emplace(TEXT("Damage_Stun"));
+
+	/* For.Anim Type Dead */
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_DEAD)].emplace(TEXT("Dead_Default"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_DEAD)].emplace(TEXT("Lost_Dead2_Idle"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_DEAD)].emplace(TEXT("Undiscovered_Dead"));
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_DEAD)].emplace(TEXT("Undiscovered_Dead_Pose"));
+
+	/* For.Anim Type Bite */
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_DEAD)].emplace(TEXT("Lost_Bite"));
+
+	/* For.Anim Type StandUp */
+	m_AnimTypeAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_TYPE::_DEAD)].emplace(TEXT("Ordinary_StandUp"));
+
+
+	/*(TEXT("Lost_Hold"));
+	(TEXT("Lost_TurnOver"));
+
+	(TEXT("Ordinary_Box_ClimbOver"));
+	(TEXT("Ordinary_ETC"));
+	(TEXT("Ordinary_Hold"));
+
+	(TEXT("Sick_FlashGranade"));
+	(TEXT("Sick_Knife"));
+
+	(TEXT("Undiscovered_Cage"));
+	(TEXT("Undiscovered_Capture"));
+	(TEXT("Undiscovered_Celling_Fall"));
+
+	(TEXT("Undiscovered_Eat"));
+	(TEXT("Undiscovered_Fance"));
+	(TEXT("Undiscovered_HeadBang"));
+	(TEXT("Undiscovered_Lounge"));
+	(TEXT("Undiscovered_Prison"));
+	(TEXT("Undiscovered_Railing_Fall"));
+	(TEXT("Undiscovered_Railing_Stund"));*/
+
+	return S_OK;
+}
+
+HRESULT CBody_Zombie::Register_Animation_Branches_AnimGroup()
+{
+	m_GroupAnimLayerTags.resize(static_cast<size_t>(ZOMBIE_BODY_ANIM_GROUP::_END));
+	
+	/* For.Anim Group Add */
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ADD)].emplace(TEXT("Add_Arm_L"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ADD)].emplace(TEXT("Add_Arm_R"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ADD)].emplace(TEXT("Add_Body"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ADD)].emplace(TEXT("Add_Head"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ADD)].emplace(TEXT("Add_Leg_L"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ADD)].emplace(TEXT("Add_Leg_R"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ADD)].emplace(TEXT("Add_Shoulder_L"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ADD)].emplace(TEXT("Add_Shoulder_R"));
+
+	/* For.Anim Group Bite */
+	//	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_BITE)].emplace(TEXT("Add_Arm_L"));
+
+	/* For.Anim Group Damage */
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_DAMAGE)].emplace(TEXT("Damage_Burst"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_DAMAGE)].emplace(TEXT("Damage_Default"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_DAMAGE)].emplace(TEXT("Damage_Down"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_DAMAGE)].emplace(TEXT("Damage_Electric_Shock"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_DAMAGE)].emplace(TEXT("Damage_Knockback"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_DAMAGE)].emplace(TEXT("Damage_Lost"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_DAMAGE)].emplace(TEXT("Damage_Stairs_Down"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_DAMAGE)].emplace(TEXT("Damage_Stairs_Up"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_DAMAGE)].emplace(TEXT("Damage_Stun"));
+
+	/* For.Anim Group Dead */
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_DEAD)].emplace(TEXT("Dead_Default"));
+
+	/* For.Anim Group Lost */
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_LOST)].emplace(TEXT("Lost_Bite"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_LOST)].emplace(TEXT("Lost_Dead2_Idle"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_LOST)].emplace(TEXT("Lost_Hold"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_LOST)].emplace(TEXT("Lost_Idle"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_LOST)].emplace(TEXT("Lost_Turn"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_LOST)].emplace(TEXT("Lost_TurnOver"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_LOST)].emplace(TEXT("Lost_Walk"));
+
+	/* For.Anim Group Ordinary */
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ORDINARY)].emplace(TEXT("Ordinary_Box_ClimbOver"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ORDINARY)].emplace(TEXT("Ordinary_ETC"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ORDINARY)].emplace(TEXT("Ordinary_Hold"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ORDINARY)].emplace(TEXT("Ordinary_Idle"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ORDINARY)].emplace(TEXT("Ordinary_PivotTurn"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ORDINARY)].emplace(TEXT("Ordinary_Stairs_PivotTurn"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ORDINARY)].emplace(TEXT("Ordinary_Stairs_Walk"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ORDINARY)].emplace(TEXT("Ordinary_StandUp"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ORDINARY)].emplace(TEXT("Ordinary_Walk"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_ORDINARY)].emplace(TEXT("Ordinary_Walk_Lose"));
+
+	/* For.Anim Group Sick */
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_SICK)].emplace(TEXT("Sick_FlashGranade"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_SICK)].emplace(TEXT("Sick_Knife"));
+
+	/* For.Anim Group Undiscovered */
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Cage"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Capture"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Celling_Fall"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Dead"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Dead_Pose"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Eat"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Fance"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_HeadBang"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Lounge"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Prison"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Railing_Fall"));
+	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Railing_Stund"));
+
+	return S_OK;
+}
+
+HRESULT CBody_Zombie::Register_BoneLayer_Additional_TwisterBones()
+{
+	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_LEG_TWIST_TAG, "l_leg_femur", "l_leg_ball")))
+		return E_FAIL;
+
+	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_R_LEG_TWIST_TAG, "r_leg_femur", "r_leg_ball")))
+		return E_FAIL;
+
+	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_ARM_TWIST_TAG, "l_arm_humerus", "l_arm_humerus")))
+		return E_FAIL;
+
+	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_R_ARM_TWIST_TAG, "r_arm_humerus", "r_arm_humerus")))
+		return E_FAIL;
+
+	//if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_SHOULDER_TWIST_TAG, "l_arm_clavicle", "l_arm_humerus")))
+	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_SHOULDER_TWIST_TAG, "spine_1", "l_arm_humerus")))
+		return E_FAIL;
+
+	//	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_R_SHOULDER_TWIST_TAG, "r_arm_clavicle", "r_arm_humerus")))
+	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_R_SHOULDER_TWIST_TAG, "spine_1", "r_arm_humerus")))
+		return E_FAIL;
+
+	//if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_LEG_TWIST_TAG, "COG", "l_leg_ball")))
+	//	return E_FAIL;
+
+	//if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_LEG_TWIST_TAG, "neck_0", "head")))
+	//	return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CBody_Zombie::Register_BoneLayer_Childs_NonInclude_Joint(const wstring& strBoneLayerTag, const string& strTopParentTag, const string& strEndEffectorTag)
+{
+	list<_uint>				ChildBoneIndices;
+	m_pModelCom->Get_Child_BoneIndices(strTopParentTag, ChildBoneIndices);
+
+	list<_uint>				ChildJointIndices;
+	m_pModelCom->Get_Child_ZointIndices(strTopParentTag, strEndEffectorTag, ChildJointIndices);
+
+	for (auto& iterSrc = ChildBoneIndices.begin(); iterSrc != ChildBoneIndices.end(); )
+	{
+		list<_uint>::iterator		iterDst = { find(ChildJointIndices.begin(), ChildJointIndices.end(), *iterSrc) };
+		if (iterDst != ChildJointIndices.end())
+		{
+			iterSrc = ChildBoneIndices.erase(iterSrc);
+		}
+		else
+			++iterSrc;
+	}
+	m_pModelCom->Add_Bone_Layer_BoneIndices(strBoneLayerTag, ChildBoneIndices);
+
+	return S_OK;
+}
+
+ZOMBIE_BODY_ANIM_TYPE CBody_Zombie::Get_Current_AnimType(PLAYING_INDEX eIndex)
+{
+	ZOMBIE_BODY_ANIM_TYPE			eType = { ZOMBIE_BODY_ANIM_TYPE::_END };
+
+	wstring			strAnimLayerTag = { m_pModelCom->Get_CurrentAnimLayerTag(static_cast<_uint>(eIndex)) };
+	if (TEXT("") == strAnimLayerTag)
+		return eType;
+
+	_uint							iType = { 0 };
+	for (auto& AnimTypeAnimLayerTags : m_AnimTypeAnimLayerTags)
+	{
+		unordered_set<wstring>::iterator			iter = { AnimTypeAnimLayerTags.find(strAnimLayerTag) };
+		if (iter != AnimTypeAnimLayerTags.end())
+		{
+			eType = static_cast<ZOMBIE_BODY_ANIM_TYPE>(iType);
+			break;
+		}
+		++iType;
+	}
+
+	return eType;
+}
+
+ZOMBIE_BODY_ANIM_GROUP CBody_Zombie::Get_Current_AnimGroup(PLAYING_INDEX eIndex)
+{
+	ZOMBIE_BODY_ANIM_GROUP			eType = { ZOMBIE_BODY_ANIM_GROUP::_END };
+
+	wstring			strAnimLayerTag = { m_pModelCom->Get_CurrentAnimLayerTag(static_cast<_uint>(eIndex)) };
+	if (TEXT("") == strAnimLayerTag)
+		return eType;
+
+	_uint							iType = { 0 };
+	for (auto& GroupAnimLayerTags : m_GroupAnimLayerTags)
+	{
+		unordered_set<wstring>::iterator			iter = { GroupAnimLayerTags.find(strAnimLayerTag) };
+		if (iter != GroupAnimLayerTags.end())
+		{
+			eType = static_cast<ZOMBIE_BODY_ANIM_GROUP>(iType);
+			break;
+		}
+		++iType;
+	}
+
+	return eType;
+}
+
 void CBody_Zombie::SetRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType)
 {
 	m_pGameInstance->Start_Ragdoll(m_pRagdoll, iId);
@@ -659,29 +1034,6 @@ void CBody_Zombie::Update_Current_MotionType()
 
 #pragma endregion
 
-}
-
-ZOMBIE_BODY_ANIM_TYPE CBody_Zombie::Get_CurrentAnimType(PLAYING_INDEX eIndex)
-{
-	ZOMBIE_BODY_ANIM_TYPE			eType = { ZOMBIE_BODY_ANIM_TYPE::_END };
-
-	wstring			strAnimLayerTag = { m_pModelCom->Get_CurrentAnimLayerTag(static_cast<_uint>(eIndex)) };
-	if (TEXT("") == strAnimLayerTag)
-		return eType;
-
-	unordered_set<wstring>::iterator		iterMove = { m_MoveAnimLayerTags.find(strAnimLayerTag) };
-	if (m_MoveAnimLayerTags.end() != iterMove)
-		eType = ZOMBIE_BODY_ANIM_TYPE::_MOVE;
-
-	unordered_set<wstring>::iterator		iterTurn = { m_TurnAnimLayerTags.find(strAnimLayerTag) };
-	if (m_MoveAnimLayerTags.end() != iterMove)
-		eType = ZOMBIE_BODY_ANIM_TYPE::_TURN;
-
-	unordered_set<wstring>::iterator		iterIdle = { m_IdleAnimLayerTags.find(strAnimLayerTag) };
-	if (m_MoveAnimLayerTags.end() != iterMove)
-		eType = ZOMBIE_BODY_ANIM_TYPE::_IDLE;
-
-	return eType;
 }
 
 HRESULT CBody_Zombie::Add_Components()

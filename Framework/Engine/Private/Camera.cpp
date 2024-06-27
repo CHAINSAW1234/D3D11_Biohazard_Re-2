@@ -46,6 +46,9 @@ void CCamera::Late_Tick(_float fTimeDelta)
 
 HRESULT CCamera::Bind_PipeLines()
 {	
+	if (!m_isActive)
+		return E_FAIL;
+
 	m_pGameInstance->Set_Transform(CPipeLine::D3DTS_VIEW, m_pTransformCom->Get_WorldMatrix_Inverse());
 	m_pGameInstance->Set_Transform(CPipeLine::D3DTS_PROJ, XMMatrixPerspectiveFovLH(m_fFovy, m_fAspect, m_fNear, m_fFar));
 	

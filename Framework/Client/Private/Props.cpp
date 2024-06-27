@@ -33,7 +33,7 @@ HRESULT CProps::Initialize(void* pArg)
 	m_tagPropDesc.worldMatrix = pObj_desc->worldMatrix;
 	m_tagPropDesc.BelongIndexs = pObj_desc->BelongIndexs;
 	m_tagPropDesc.iRegionDir = pObj_desc->iRegionDir;
-
+	m_tagPropDesc.iPropType = pObj_desc->iPropType;
 	//memcpy_s(&m_tagPropDesc.iBelongIndexs2, sizeof(_int) * iMaxNum, &pObj_desc->iBelongIndexs2, sizeof(_int) * iMaxNum);
 	for (auto iter : m_tagPropDesc.BelongIndexs)
 	{
@@ -48,6 +48,11 @@ HRESULT CProps::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
+
+	if (m_tagPropDesc.strModelComponent.find(L"218_ElectronicLocker") != wstring::npos)
+		if (FAILED(Initialize_Model()))
+			return E_FAIL;
+
 
 #ifdef PROPS_COOKING
 	m_pModelCom->Static_Mesh_Cooking(m_pTransformCom);
@@ -111,46 +116,94 @@ HRESULT CProps::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (size_t i = 0; i < iNumMeshes; i++)
+	if (m_NonHideIndices.size()!=0)
 	{
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-			return E_FAIL;
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+		for (auto& i : m_NonHideIndices)
 		{
-			_bool isAlphaTexture = false;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
-		}
-		else
-		{
-			_bool isAlphaTexture = true;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 				return E_FAIL;
+
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+			{
+				_bool isAlphaTexture = false;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+			else
+			{
+				_bool isAlphaTexture = true;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
+			{
+				_bool isAOTexture = false;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+			else
+			{
+				_bool isAOTexture = true;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+
+
+			if (FAILED(m_pShaderCom->Begin(0)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
 		}
 
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
-		{
-			_bool isAOTexture = false;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
-				return E_FAIL;
-		}
-		else
-		{
-			_bool isAOTexture = true;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
-				return E_FAIL;
-		}
-
-		if (FAILED(m_pShaderCom->Begin(0)))
-			return E_FAIL;
-
-		m_pModelCom->Render(static_cast<_uint>(i));
 	}
+	else
+	{
+		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+				return E_FAIL;
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
+				return E_FAIL;
+
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+			{
+				_bool isAlphaTexture = false;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+			else
+			{
+				_bool isAlphaTexture = true;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
+			{
+				_bool isAOTexture = false;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+			else
+			{
+				_bool isAOTexture = true;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+
+			if (FAILED(m_pShaderCom->Begin(0)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+	}
+	
 
 	return S_OK;
 }
@@ -175,19 +228,36 @@ HRESULT CProps::Render_LightDepth_Dir()
 			return E_FAIL;
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
-
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (size_t i = 0; i < iNumMeshes; i++)
+		if(m_NonHideIndices.size() == 0)
 		{
-			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-				return E_FAIL;
+			_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
-			if (FAILED(m_pShaderCom->Begin(1)))
-				return E_FAIL;
+			for (size_t i = 0; i < iNumMeshes; i++)
+			{
+				if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+					return E_FAIL;
 
-			m_pModelCom->Render(static_cast<_uint>(i));
+				/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
+				if (FAILED(m_pShaderCom->Begin(1)))
+					return E_FAIL;
+
+				m_pModelCom->Render(static_cast<_uint>(i));
+			}
+		}
+		else
+		{
+			for (auto& i : m_NonHideIndices)
+			{
+
+				if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+					return E_FAIL;
+
+				/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
+				if (FAILED(m_pShaderCom->Begin(1)))
+					return E_FAIL;
+
+				m_pModelCom->Render(static_cast<_uint>(i));
+			}
 		}
 	}
 
@@ -214,20 +284,38 @@ HRESULT CProps::Render_LightDepth_Spot()
 			return E_FAIL;
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
-
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (size_t i = 0; i < iNumMeshes; i++)
+		if (m_NonHideIndices.size() == 0)
 		{
-			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-				return E_FAIL;
+			_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
-			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
-			if (FAILED(m_pShaderCom->Begin(1)))
-				return E_FAIL;
+			for (size_t i = 0; i < iNumMeshes; i++)
+			{
+				if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+					return E_FAIL;
 
-			m_pModelCom->Render(static_cast<_uint>(i));
+				/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
+				if (FAILED(m_pShaderCom->Begin(1)))
+					return E_FAIL;
+
+				m_pModelCom->Render(static_cast<_uint>(i));
+			}
 		}
+		else
+		{
+			for (auto& i : m_NonHideIndices)
+			{
+
+				if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+					return E_FAIL;
+
+				/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
+				if (FAILED(m_pShaderCom->Begin(1)))
+					return E_FAIL;
+
+				m_pModelCom->Render(static_cast<_uint>(i));
+			}
+		}
+		
 	}
 
 	return S_OK;
@@ -258,18 +346,35 @@ HRESULT CProps::Render_LightDepth_Point()
 			return E_FAIL;
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
 			return E_FAIL;
-
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-		for (size_t i = 0; i < iNumMeshes; i++)
+		if (m_NonHideIndices.size()==0)
 		{
-			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-				return E_FAIL;
+			_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+			for (size_t i = 0; i < iNumMeshes; i++)
+			{
+				if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+					return E_FAIL;
 
-			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
-			if (FAILED(m_pShaderCom->Begin(2)))
-				return E_FAIL;
+				/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
+				if (FAILED(m_pShaderCom->Begin(2)))
+					return E_FAIL;
 
-			m_pModelCom->Render(static_cast<_uint>(i));
+				m_pModelCom->Render(static_cast<_uint>(i));
+			}
+		}
+		else
+		{
+			for (auto& i : m_NonHideIndices)
+			{
+
+				if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+					return E_FAIL;
+
+				/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
+				if (FAILED(m_pShaderCom->Begin(1)))
+					return E_FAIL;
+
+				m_pModelCom->Render(static_cast<_uint>(i));
+			}
 		}
 
 		++iIndex;
@@ -297,6 +402,39 @@ HRESULT CProps::Add_Components()
 	if (FAILED(__super::Add_Component(g_Level, m_tagPropDesc.strModelComponent,
 		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CProps::Initialize_Model()
+{
+	vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
+	_int iRand = rand() % 4 + 1;
+	if ((m_tagPropDesc.iPropType == 14) || (m_tagPropDesc.iPropType == 19) || (m_tagPropDesc.iPropType == 8) || (m_tagPropDesc.iPropType == 1) || (m_tagPropDesc.iPropType == 5))
+		iRand = rand() % 2 + 1;
+
+	vector<string>			ResultMeshTags;
+	for (auto& strMeshTag : MeshTags)
+	{
+		string strFindTag = "10" + to_string(m_tagPropDesc.iPropType);
+		if (m_tagPropDesc.iPropType >= 10)
+			strFindTag = "20" + to_string(m_tagPropDesc.iPropType - 10);
+		if ((strMeshTag.find(strFindTag) != string::npos) || (strMeshTag.find("Group_0_") != string::npos) || (strMeshTag.find("Group_"+to_string(iRand)+"_") != string::npos))
+			ResultMeshTags.push_back(strMeshTag);
+
+	}
+
+	for (auto& strMeshTag : MeshTags)
+	{
+		m_pModelCom->Hide_Mesh(strMeshTag, true);
+	}
+
+	for (auto& strMeshTag : ResultMeshTags)
+	{
+		m_pModelCom->Hide_Mesh(strMeshTag, false);
+	}
+
+	m_NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 
 	return S_OK;
 }

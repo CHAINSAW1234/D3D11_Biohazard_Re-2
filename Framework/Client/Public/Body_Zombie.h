@@ -7,9 +7,18 @@
 #define ROOT_BONE_TAG					"root"
 
 /* For. Bone_Layer Tag */
-#define BONE_LAYER_DEFAULT_TAG			TEXT("Default")
-#define BONE_LAYER_LOWER_TAG			TEXT("Lower")
-#define BONE_LAYER_UPPER_TAG			TEXT("Upper")
+#define BONE_LAYER_DEFAULT_TAG				TEXT("Default")
+#define BONE_LAYER_LOWER_TAG				TEXT("Lower")
+#define BONE_LAYER_UPPER_TAG				TEXT("Upper")
+
+#define BONE_LAYER_L_LEG_TWIST_TAG			TEXT("L_Leg_Twistter")
+#define BONE_LAYER_R_LEG_TWIST_TAG			TEXT("R_Leg_Twistter")
+#define BONE_LAYER_L_ARM_TWIST_TAG			TEXT("L_Arm_Twistter")
+#define BONE_LAYER_R_ARM_TWIST_TAG			TEXT("R_Arm_Twistter")
+#define BONE_LAYER_L_SHOULDER_TWIST_TAG		TEXT("L_Shoulder_Twistter")
+#define BONE_LAYER_R_SHOULDER_TWIST_TAG		TEXT("R_Shoulder_Twistter")
+#define BONE_LAYER_BODY_TWIST_TAG			TEXT("Body_Twistter")
+#define BONE_LAYER_Head_TWIST_TAG			TEXT("Head_Twistter")
 
 BEGIN(Client)
 
@@ -45,8 +54,17 @@ public:
 private:
 	HRESULT								Initialize_Model();
 	HRESULT								Add_Animations();
+	HRESULT								Register_Animation_Branches_AnimType();
+	HRESULT								Register_Animation_Branches_AnimGroup();
+	//	ÇÇ°Ý½Ã Èçµé¸± »Àµé
+	HRESULT								Register_BoneLayer_Additional_TwisterBones();
+
+private:		/* For. Register BoneLayer */
+	HRESULT								Register_BoneLayer_Childs_NonInclude_Joint(const wstring& strBoneLayerTag, const string& strTopParentTag, const string& strEndEffectorTag);
 
 public:
+	void								Set_MotionType(MOTION_TYPE eType) { m_eCurrentMotionType = eType; }
+
 	MOTION_TYPE							Get_Current_MotionType() { return m_eCurrentMotionType; }
 	MOTION_TYPE							Get_Pre_MotionType() { return m_ePreMotionType; }
 
@@ -54,11 +72,14 @@ private:
 	void								Update_Current_MotionType();
 
 public:	/* For.Check Anim Type */
-	ZOMBIE_BODY_ANIM_TYPE				Get_CurrentAnimType(PLAYING_INDEX eIndex);
 	class CModel*						GetModel()
 	{
 		return m_pModelCom;
 	}
+
+public: /* For. Anim Branch */
+	ZOMBIE_BODY_ANIM_TYPE				Get_Current_AnimType(PLAYING_INDEX eIndex);
+	ZOMBIE_BODY_ANIM_GROUP				Get_Current_AnimGroup(PLAYING_INDEX eIndex);
 
 public:
 	virtual void						SetRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType) override;
@@ -78,9 +99,11 @@ private:		/* For Anim_Controll */
 	MOTION_TYPE							m_ePreMotionType = { MOTION_TYPE::MOTION_END };
 	MOTION_TYPE							m_eCurrentMotionType = { MOTION_TYPE::MOTION_END };
 
-	unordered_set<wstring>				m_MoveAnimLayerTags;
-	unordered_set<wstring>				m_TurnAnimLayerTags;
-	unordered_set<wstring>				m_IdleAnimLayerTags;
+private:		/* For Anim_Branch_AnimType */
+	vector<unordered_set<wstring>>		m_AnimTypeAnimLayerTags;
+
+private:		/* For Anim_Branch_AnimGroup */
+	vector<unordered_set<wstring>>		m_GroupAnimLayerTags;
 
 private:
 	HRESULT								Add_Components();

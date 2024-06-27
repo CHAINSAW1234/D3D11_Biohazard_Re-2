@@ -30,9 +30,9 @@ void CPlayer_State_Hold::OnStateUpdate(_float fTimeDelta)
 		if (m_pPlayer->Get_Spotlight()) {
 			if (m_pPlayer->Get_Equip() == CPlayer::HG) {
 				// 왼팔 들어놓기
-				m_pPlayer->Get_Body_Model()->Change_Animation(4, CPlayer::Get_AnimSetMoveName(CPlayer::COMMON), 0);
+				m_pPlayer->Get_Body_Model()->Change_Animation(4, CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), 0);
 				m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 10, 0.2f);
-				;
+
 			}
 			else if (m_pPlayer->Get_Equip() == CPlayer::STG) {
 				// 스포트라이트 렌더는 끄고 불은 켜

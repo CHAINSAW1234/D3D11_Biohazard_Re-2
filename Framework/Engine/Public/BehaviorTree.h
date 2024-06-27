@@ -4,9 +4,9 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CBehaviorTree : public CBase
+class ENGINE_DLL CBehaviorTree final : public CBase
 {
-public:
+private:
 	CBehaviorTree();
 	CBehaviorTree(const CBehaviorTree& rhs);
 	virtual ~CBehaviorTree() = default;
@@ -20,7 +20,7 @@ public:
 		return m_pRootNode;
 	}
 public:
-	void							Initiate();
+	void							Initiate(_float fTimeDelta);
 protected:
 	class CGameInstance*			m_pGameInstance = { nullptr };
 	class CComposite_Node*			m_pRootNode = { nullptr };

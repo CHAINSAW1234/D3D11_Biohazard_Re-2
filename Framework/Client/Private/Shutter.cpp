@@ -65,6 +65,16 @@ void CShutter::Late_Tick(_float fTimeDelta)
 
 	if (m_bRender == false)
 		return;
+	else
+	{
+		for (auto& it : m_PartObjects)
+		{
+			if (it != nullptr)
+				it->Set_Render(true);
+		}
+
+		m_bRender = false;
+	}
 
 	__super::Late_Tick(fTimeDelta);
 
@@ -136,6 +146,13 @@ HRESULT CShutter::Bind_ShaderResources()
 
 
 	return S_OK;
+}
+
+_float4 CShutter::Get_Object_Pos()
+{
+
+	return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
+
 }
 
 void CShutter::Active()

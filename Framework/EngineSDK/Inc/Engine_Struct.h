@@ -34,11 +34,11 @@ namespace Engine
 		_float4x4	ProjMatrix;
 
 	}LIGHT_DESC;
-	
+
 
 	typedef struct tagMeshMaterial
 	{
-		class CTexture*	MaterialTextures[AI_TEXTURE_TYPE_MAX];
+		class CTexture* MaterialTextures[AI_TEXTURE_TYPE_MAX];
 	}MESH_MATERIAL;
 
 	typedef struct tagMaterialDesc
@@ -59,7 +59,7 @@ namespace Engine
 
 	typedef struct ENGINE_DLL tagVtxPos
 	{
-		_float3		vPosition;		
+		_float3		vPosition;
 
 		static const unsigned int	iNumElements = { 1 };
 		static const D3D11_INPUT_ELEMENT_DESC	Elements[1];
@@ -101,7 +101,7 @@ namespace Engine
 		_float4		vRight;
 		_float4		vUp;
 		_float4		vLook;
-		_float4		vPosition;		
+		_float4		vPosition;
 		bool		isLived;
 
 	}VTXMATRIX;
@@ -109,7 +109,7 @@ namespace Engine
 	typedef struct ENGINE_DLL tagVtxInstance_Rect
 	{
 		static const unsigned int	iNumElements = { 7 };
-		static const D3D11_INPUT_ELEMENT_DESC	Elements[7];		
+		static const D3D11_INPUT_ELEMENT_DESC	Elements[7];
 	}VTXINSTANCE_RECT;
 
 	typedef struct ENGINE_DLL tagVtxInstance_Point
@@ -123,7 +123,7 @@ namespace Engine
 		_float3		vPosition;
 		_float3		vNormal;
 		_float2		vTexcoord;
-		_float3		vTangent;	
+		_float3		vTangent;
 
 		static const unsigned int	iNumElements = { 4 };
 		static const D3D11_INPUT_ELEMENT_DESC	Elements[4];
@@ -177,4 +177,87 @@ namespace Engine
 
 		_float f, g, h;
 	}CELL;
+
+#pragma region Decal
+	struct SubModelInfo
+	{
+		UINT firstIndex;
+		UINT numTris;
+		float decalLookupMapWidth;
+		float decalLookupMapHeight;
+	};
+
+	struct DecalConstData
+	{
+		SubModelInfo subModelInfo;
+		_float4 rayOrigin;
+		_float4 rayDir;
+		_float4 decalTangent;
+		_float4 hitDistances; // x = minHitDistance, y = maxHitDistance - minHitDistance, z = 1.0f / y
+		float decalLookupRtWidth;
+		float decalLookupRtHeight;
+		float decalSizeX;
+		float decalSizeY;
+		float decalSizeZ;
+		UINT decalIndex;
+		UINT decalMaterialIndex;
+	};
+
+	struct DecalInfo
+	{
+		UINT decalHitMask; // bit 0-19: triangleIndex, bit 20-23: subModelIndex, bit 24-31: hitDistance
+		UINT decalIndex;
+		_float2 decalScale;
+		_float2 decalBias;
+		_float3 decalNormal;
+		_float4x4 decalMatrix;
+	};
+
+	struct HitResult
+	{
+		class CGameObject* hitModel;
+		float minHitDistance;
+		float maxHitDistance;
+	};
+
+	struct AddDecalInfo
+	{
+		_float4 rayOrigin;
+		_float4 rayDir;
+		_float4 decalTangent;
+		_float3 decalSize;
+		float	minHitDistance;
+		float	maxHitDistance;
+		UINT decalMaterialIndex;
+	};
+
+	//typedef struct
+	//{
+	//	_float3		vPosition;
+	//	_float3		vNormal;
+	//	_float3		vTangent;
+
+	//	XMUINT4		vBlendIndices;
+	//	_float4		vBlendWeights;
+	//}VERTEX_DECAL;
+
+	typedef struct
+	{
+		_float3		vPosition;
+		_float3		vNormal;
+		_float3		vTangent;
+
+	}SKINNING_OUTPUT;
+
+	typedef struct
+	{
+		ID3D11UnorderedAccessView* pUav;
+		ID3D11ShaderResourceView* pSRV_Vertex_Position;
+		ID3D11ShaderResourceView* pSRV_Vertex_Normal;
+		ID3D11ShaderResourceView* pSRV_Vertex_Tangent;
+		ID3D11ShaderResourceView* pSRV_Vertex_BlendIndices;
+		ID3D11ShaderResourceView* pSRV_Vertex_BlendWeights;
+		_uint iNumVertex;
+	}SKINNING_INPUT;
+#pragma endregion
 }

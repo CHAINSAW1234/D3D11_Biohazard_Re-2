@@ -47,30 +47,28 @@ HRESULT CDoor::Initialize(void* pArg)
 		return E_FAIL;
 
 
-
 	return S_OK;
 }
 
 void CDoor::Tick(_float fTimeDelta)
 {
 	__super::Check_Player();
+	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+	if (m_eType == DOOR_DOUBLE)
+		m_pColDoubledoorCom->Tick(m_pTransformCom->Get_WorldMatrix());
 	if (!m_bVisible)
-	{
-		m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-		if (m_eType == DOOR_DOUBLE)
-			m_pColDoubledoorCom->Tick(m_pTransformCom->Get_WorldMatrix());
 		return;
-	}
-
+#ifdef _DEBUG
+#ifdef UI_POS
+	Get_Object_Pos();
+#endif
+#endif
 	if (m_pPlayer == nullptr)
 		return;
 
 	m_eType == CDoor::DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
 
 	__super::Tick(fTimeDelta);
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-	if (m_eType == DOOR_DOUBLE)
-		m_pColDoubledoorCom->Tick(m_pTransformCom->Get_WorldMatrix());
 }
 
 void CDoor::Late_Tick(_float fTimeDelta)
@@ -80,6 +78,16 @@ void CDoor::Late_Tick(_float fTimeDelta)
 
 	if (m_bRender == false)
 		return;
+	else
+	{
+		for (auto& it : m_PartObjects)
+		{
+			if (it != nullptr)
+				it->Set_Render(true);
+		}
+
+		m_bRender = false;
+	}
 	__super::Late_Tick(fTimeDelta);
 	m_eType == CDoor::DOOR_ONE ? OneDoor_Late_Tick(fTimeDelta) : DoubleDoor_Late_Tick(fTimeDelta);
 
@@ -100,25 +108,37 @@ HRESULT CDoor::Render()
 
 HRESULT CDoor::Add_Components()
 {
-	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
-
-	ColliderDesc.fRadius = _float(80.f);
-	ColliderDesc.vCenter = _float3(-10.f, 1.f, 0.f);
-	/* For.Com_Collider */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
-		return E_FAIL;
 	if (m_eType == DOOR_DOUBLE)
 	{
+		CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
+
+		ColliderDesc.fRadius = _float(100.f);
+		ColliderDesc.vCenter = _float3(-30.f, 1.f, 0.f);
+		/* For.Com_Collider */
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+			TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+			return E_FAIL;
 		CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc1{};
 
-		ColliderDesc1.fRadius = _float(80.f);
-		ColliderDesc1.vCenter = _float3(-180.f, 1.f, 0.f);
+		ColliderDesc1.fRadius = _float(100.f);
+		ColliderDesc1.vCenter = _float3(-150.f, 1.f, 0.f);
 		/* For.Com_Collider */
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Double"), (CComponent**)&m_pColDoubledoorCom, &ColliderDesc1)))
 			return E_FAIL;
 	}
+	else
+	{
+		CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
+
+		ColliderDesc.fRadius = _float(100.f);
+		ColliderDesc.vCenter = _float3(-70.f, 1.f, 0.f);
+		/* For.Com_Collider */
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+			TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+			return E_FAIL;
+	}
+
 
 	return S_OK;
 }
@@ -147,6 +167,8 @@ HRESULT CDoor::Add_PartObjects()
 
 	/*PART_LOCK*/
 	m_PartObjects[CDoor::PART_LOCK] = nullptr;
+	
+	/*PART_HANDLE*/
 
 
 	return S_OK;
@@ -262,23 +284,19 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 	}
 
 	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
+	//Check_Col_OBB_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
 
 	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColDoubledoorCom))
 		m_bDoubleCol = true;
 }
+
 void CDoor::DoubleDoor_Active()
 {
 
 	*m_pPlayerInteract = false;
 	m_bActive = true;
-	_vector vLook = XMVector4Normalize(m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK));
-	_vector vDir = XMVector4Normalize(m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION) - m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
-	_float fScala = XMVectorGetX(XMVector4Dot(vLook, vDir));
-	if (fScala > 1.f)
-		fScala = 1.f;
-	else if (fScala < -1.f)
-		fScala = -1.f;
+	_float fScala = Radian_To_Player();
 
 	if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
 	{
@@ -301,6 +319,58 @@ void CDoor::DoubleDoor_Active()
 	}
 	
 
+}
+
+_float4 CDoor::Get_Object_Pos()
+{
+	if (m_fTime > 0.3f)
+		return _float4();
+	if (m_eType == DOOR_DOUBLE)
+	{
+		_float fScala = Radian_To_Player();
+		if ((!m_bCol && !m_bDoubleCol) || (m_bCol && m_bDoubleCol))
+		{
+			_float4 vPosR; 
+			_float4 vPosL;
+			if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
+			{
+				vPosR = static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(0); // Lside_L
+				vPosL = static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(2); // Rside_L
+			}
+			else
+			{
+				vPosR = static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(1); //Lside_R
+				vPosL = static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(3); //Rside_R
+			}
+			return XMVectorSetW( (vPosR+vPosL)/2.f,1.f);
+		}
+		else if (m_bCol)
+		{
+			if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
+				return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(0);
+			else
+				return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(1);
+		}
+		else
+			if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
+				return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(2);
+			else
+				return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(3);
+
+	}
+	else
+	{
+		
+		_float fScala = Radian_To_Player();
+		if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
+			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(0);
+		else
+			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(1);
+
+	}
+
+		
+	return _float4();
 }
 
 void CDoor::OneDoor_Tick(_float fTimeDelta)
@@ -343,13 +413,12 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 		break;
 	}
 	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
+	//Check_Col_OBB_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
 
 }
 
-void CDoor::OneDoor_Active()
+_float CDoor::Radian_To_Player()
 {
-	*m_pPlayerInteract = false;
-	m_bActive = true;
 	_vector vLook = XMVector4Normalize(m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK));
 	_vector vDir = XMVector4Normalize(m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION) - m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
 	_float fScala = XMVectorGetX(XMVector4Dot(vLook, vDir));
@@ -357,6 +426,15 @@ void CDoor::OneDoor_Active()
 		fScala = 1.f;
 	else if (fScala < -1.f)
 		fScala = -1.f;
+	return fScala;
+}
+
+void CDoor::OneDoor_Active()
+{
+	*m_pPlayerInteract = false;
+	m_bActive = true;
+
+	_float fScala = Radian_To_Player();
 
 	if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
 		m_eOneState = ONEDOOR_OPEN_L;

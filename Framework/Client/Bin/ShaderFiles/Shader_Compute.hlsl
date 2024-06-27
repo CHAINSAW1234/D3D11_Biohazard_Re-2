@@ -2,6 +2,8 @@
 
 RWTexture3D<float4> OutputTexture;  // Output
 
+
+
 float Epsilon = 1e-9;
 float Pi = 3.14;
 float UniformDensity = 0.975f;
@@ -159,7 +161,7 @@ float Visibility_Spot(float3 vWorldPosition)
 
 }
 
-[numthreads(8, 8, 8)]
+[numthreads(8, 8, 1)]
 void CS_Volume( uint3 DTid : SV_DispatchThreadID )
 {
     uint3 dims;

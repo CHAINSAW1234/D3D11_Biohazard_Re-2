@@ -75,6 +75,16 @@ void CWindow::Late_Tick(_float fTimeDelta)
 
 	if (m_bRender == false)
 		return;
+	else
+	{
+		for (auto& it : m_PartObjects)
+		{
+			if (it != nullptr)
+				it->Set_Render(true);
+		}
+
+		m_bRender = false;
+	}
 
 	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
 
@@ -158,6 +168,14 @@ void CWindow::Active()
 	else
 		m_eState = WINDOW_STATIC;
 
+}
+
+_float4 CWindow::Get_Object_Pos()
+{
+	// Break 활성화시 나무판자 붙히기 위해 떠야함
+	if (!m_bActive)
+		return _float4(0.f, 0.f, 0.f, 1.f);
+	return m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION)+_float4(0.f,50.f,0.f,0.f);
 }
 
 CWindow* CWindow::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

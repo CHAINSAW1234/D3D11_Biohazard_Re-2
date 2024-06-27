@@ -41,6 +41,11 @@ void CNewpoliceStatue::Tick(_float fTimeDelta)
 
 		return;
 	}
+#ifdef _DEBUG
+#ifdef UI_POS
+		Get_Object_Pos();
+#endif
+#endif
 
 	if (m_pGameInstance->Get_KeyState('U') == DOWN)
 		m_eState = POLICEHALLSTATUE_0;
@@ -62,6 +67,16 @@ void CNewpoliceStatue::Late_Tick(_float fTimeDelta)
 
 	if (m_bRender == false)
 		return;
+	else
+	{
+		for (auto& it : m_PartObjects)
+		{
+			if (it != nullptr)
+				it->Set_Render(true);
+		}
+
+		m_bRender = false;
+	}
 
 	__super::Late_Tick(fTimeDelta);
 
@@ -125,6 +140,16 @@ HRESULT CNewpoliceStatue::Bind_ShaderResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+_float4 CNewpoliceStatue::Get_Object_Pos()
+{
+
+	
+	return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
+
+
+	return _float4();
 }
 
 CNewpoliceStatue* CNewpoliceStatue::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

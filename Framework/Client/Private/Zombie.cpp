@@ -12,15 +12,17 @@
 
 #include "Header_Package_Zombie.h"
 #include "Player.h"
+#include "Decal_Blood.h"
+#include "Mesh.h"
 
 #define MODEL_SCALE 0.01f
 
-CZombie::CZombie(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CZombie::CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMonster{ pDevice, pContext }
 {
 }
 
-CZombie::CZombie(const CZombie & rhs)
+CZombie::CZombie(const CZombie& rhs)
 	: CMonster{ rhs }
 {
 
@@ -31,7 +33,7 @@ HRESULT CZombie::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CZombie::Initialize(void * pArg)
+HRESULT CZombie::Initialize(void* pArg)
 {
 	GAMEOBJECT_DESC		GameObjectDesc{};
 
@@ -39,16 +41,16 @@ HRESULT CZombie::Initialize(void * pArg)
 	GameObjectDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
-		return E_FAIL;
-
-	if (FAILED(Add_Components()))
 		return E_FAIL;	
 
-	if (FAILED(Add_PartObjects()))
-		return E_FAIL;
+	//if (FAILED(Add_Components()))
+	//	return E_FAIL;
 
-	if (FAILED(Initialize_PartModels()))
-		return E_FAIL;
+	//if (FAILED(Add_PartObjects()))
+	//	return E_FAIL;
+
+	//if (FAILED(Initialize_PartModels()))
+	//	return E_FAIL;
 
 	if (pArg != nullptr)
 	{
@@ -71,15 +73,16 @@ HRESULT CZombie::Initialize(void * pArg)
 
 	m_pNavigationCom->FindCell(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
 	_int iCurrentIndex = m_pNavigationCom->GetCurrentIndex();
-	
+
 	//m_pPathFinder->Initiate_PathFinding(iCurrentIndex, iCurrentIndex + 150, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 	m_vNextTarget = m_pPathFinder->GetNextTarget_Opt();
 
 	m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 	m_vDir.w = 0.f;
 
-	m_pBlackBoard = new CBlackBoard_Zombie();
-	m_pBlackBoard->Initialize_BlackBoard(this);
+	CBlackBoard_Zombie::BLACKBOARD_ZOMBIE_DESC			Desc;
+	Desc.pAI = this;
+	m_pBlackBoard = CBlackBoard_Zombie::Create(&Desc);	
 
 	Init_BehaviorTree_Zombie();
 #pragma endregion
@@ -94,11 +97,16 @@ void CZombie::Priority_Tick(_float fTimeDelta)
 
 void CZombie::Tick(_float fTimeDelta)
 {
+	if (m_pGameInstance->IsPaused())
+	{
+		fTimeDelta = 0.f;
+	}
+
 	if (!Distance_Culling())
 	{
 		for (auto& it : m_PartObjects)
 		{
-			if(it)
+			if (it)
 				it->SetCulling(true);
 		}
 
@@ -115,17 +123,17 @@ void CZombie::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	if(m_pController)
+	if (m_pController)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
 
 #pragma region BehaviorTree 코드
-	m_pBehaviorTree->Initiate();
+		m_pBehaviorTree->Initiate(fTimeDelta);
 #pragma endregion
 
 	_float4			vDirection = {};
 	_vector			vRootMoveDir = { XMLoadFloat3(&m_vRootTranslation) };
 	XMStoreFloat4(&vDirection, vRootMoveDir);
-	if(m_pController)
+	if (m_pController)
 		m_pController->Move(vDirection, fTimeDelta);
 
 #pragma region 길찾기 임시 코드
@@ -166,28 +174,69 @@ void CZombie::Tick(_float fTimeDelta)
 		{
 			m_pController->Set_Hit(false);
 
-			m_bRagdoll = true;
+			//	m_bRagdoll = true;
 
 			auto vForce = m_pController->Get_Force();
 			auto eType = m_pController->Get_Hit_Collider_Type();
-			for (auto& pPartObject : m_PartObjects)
+				//	for (auto& pPartObject : m_PartObjects)
+				//	{
+				//		if (nullptr != pPartObject)
+				//			pPartObject->SetRagdoll(m_iIndex_CCT, vForce, eType);
+				//	}
+
+
+			//	For.Anim
+			m_eCurrentHitCollider = eType;
+			XMStoreFloat3(&m_vHitDirection,  XMLoadFloat4(&vForce));
+
+#pragma region HIT TYPE 분할 임시
+
+			
+			CPlayer::EQUIP		eEquip = m_pBlackBoard->GetPlayer()->Get_Equip();
+			if (CPlayer::EQUIP::HG == eEquip)
 			{
-				if (nullptr != pPartObject)
-					pPartObject->SetRagdoll(m_iIndex_CCT, vForce, eType);
+				m_eCurrentHitType = HIT_TYPE::HIT_SMALL;
 			}
+
+			else if (CPlayer::EQUIP::STG == eEquip)
+			{
+				m_eCurrentHitType = HIT_TYPE::HIT_BIG;
+			}
+
+#pragma endregion
+		}
+		else
+		{
+			m_eCurrentHitType = HIT_TYPE::HIT_END;
+			m_eCurrentHitCollider = COLLIDER_TYPE::_END;
+			XMStoreFloat3(&m_vHitDirection, XMVectorZero());
 		}
 	}
+
+	//For Decal.
+	m_pColliderCom_Bounding->Tick(m_pTransformCom->Get_WorldMatrix_Pure_Mat());
+
+	//	Ready_Decal();
 }
 
 void CZombie::Late_Tick(_float fTimeDelta)
 {
+	if (m_pGameInstance->IsPaused())
+	{
+		fTimeDelta = 0.f;
+	}
+
 	if (!Distance_Culling())
 		return;
 
 	__super::Late_Tick(fTimeDelta);
 
-	if(m_pController)
+	if (m_pController)
 		m_pController->Update_Collider();
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponents(m_pColliderCom_Bounding);
+#endif
 }
 
 HRESULT CZombie::Render()
@@ -256,41 +305,141 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 #pragma region RootNode Childe Section
 
+	//		Selector => 성공을 반환 받을 떄 까지
+	//		Sequence => 실패를 반환 받을 떄 까지
 	/*
 	*Root Selector Section
 	*/
-	auto pSelectorNode_Root = new CComposite_Node(COMPOSITE_NODE_TYPE::CNT_SELECTOR);
+
+	CComposite_Node::COMPOSITE_NODE_DESC		CompositeNodeDesc;
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	CComposite_Node* pSelectorNode_Root = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pNode_Root->Insert_Child_Node(pSelectorNode_Root);
 
 	/*
-	*Root Child_1 Section
+	* Root CHild_1 Section ( Maintain_Check )
 	*/
 
-	//Add RootNode Childe Composite Node - Selector Node_1
-	auto pSelectorNode_RootChild_1 = new CComposite_Node(COMPOSITE_NODE_TYPE::CNT_SELECTOR);
+	//	Add Task Node		=> Execture Pre Task
+	CExecute_PreTask_Zombie* pTask_ExecutePreTask = { CExecute_PreTask_Zombie::Create() };
+	pTask_ExecutePreTask->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Root->Insert_Child_Node(pTask_ExecutePreTask);
+
+	//	Add Decorator		=> Is Maintain?
+	CIs_Maintain_PreTask_Zombie* pDeco_Maintain_PreTask = { CIs_Maintain_PreTask_Zombie::Create() };
+	pDeco_Maintain_PreTask->SetBlackBoard(m_pBlackBoard);
+	pTask_ExecutePreTask->Insert_Decorator_Node(pDeco_Maintain_PreTask);
+
+	/*
+	*Root Child_2 Section ( Hit )
+	*/
+
+	//	Add RootNode Child Composite Node - Selector Node			(Is Hit?)
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	CComposite_Node* pSelectorNode_RootChild_1 = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_1);
 
-	//Add Decorator Node
-	auto pIs_Character_In_Range = new CIs_Character_In_Range_Zombie();
-	pIs_Character_In_Range->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_1->Insert_Decorator_Node(pIs_Character_In_Range);
-
-	//Add Task Node
-	auto pMoveTo = new CMoveTo_Zombie();
-	pMoveTo->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_1->Insert_Task_Node(pMoveTo);
 
 
+	//	Add Task Node		=> Damage Stun
+	CStun_Zombie* pTask_Stun = { CStun_Zombie::Create() };
+	pTask_Stun->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Stun);
+
+	//	Add Decorator		=> Is Hit?
+	CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitSmallDesc;
+	IsHitSmallDesc.CheckHitTypes.emplace_back(HIT_TYPE::HIT_SMALL);
+
+	for (_uint i = 0; i < static_cast<_uint>(COLLIDER_TYPE::_END); ++i)
+	{
+		IsHitSmallDesc.CheckColliderTypes.emplace_back(static_cast<COLLIDER_TYPE>(i));
+	}
+	CIs_Hit_Zombie* pDeco_Is_HitSmall = { CIs_Hit_Zombie::Create(&IsHitSmallDesc) };
+	pDeco_Is_HitSmall->SetBlackBoard(m_pBlackBoard);
+	pTask_Stun->Insert_Decorator_Node(pDeco_Is_HitSmall);
+
+
+	//	Add Task Node		=> Damage Knock Back
+	CKnock_Back_Zombie*							pTask_Knockback = { CKnock_Back_Zombie::Create() };
+	pTask_Knockback->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Knockback);
+	
+	//	Add Decorator		=> Is Hit?
+	CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitBigDesc;
+	IsHitBigDesc.CheckHitTypes.emplace_back(HIT_TYPE::HIT_BIG);
+
+	for (_uint i = 0; i < static_cast<_uint>(COLLIDER_TYPE::_END); ++i)
+	{
+		IsHitBigDesc.CheckColliderTypes.emplace_back(static_cast<COLLIDER_TYPE>(i));
+	}
+	CIs_Hit_Zombie*								pDeco_Is_HitBig= { CIs_Hit_Zombie::Create(&IsHitBigDesc) };
+	pDeco_Is_HitBig->SetBlackBoard(m_pBlackBoard);
+	pTask_Knockback->Insert_Decorator_Node(pDeco_Is_HitBig);
 
 
 	/*
-	*Root Child_2 Section
+	*Root Child_3 Section ( Select Move Or Turn )
+	*/
+
+	//	Add RootNode Child Composite Node - Selector Node			(Is Move Or Turn ?)
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	CComposite_Node*							pSelectorNode_RootChild_2 = { CComposite_Node::Create(&CompositeNodeDesc) };
+	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_2);
+
+	//Add Decorator Node
+	CIs_Character_In_Range_Zombie*				pDeco_Charactor_In_Range = { CIs_Character_In_Range_Zombie::Create() };
+	pDeco_Charactor_In_Range->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_2->Insert_Decorator_Node(pDeco_Charactor_In_Range);
+
+	//Add Task Node
+	CMove_Front_Zombie*							pTask_Move = { CMove_Front_Zombie::Create() };
+	pTask_Move->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_2->Insert_Child_Node(pTask_Move);
+
+	//Add Decorator Node		=>		Task Move, Deco In View
+	CIs_Charactor_In_ViewAngle_Zombie*			pDeco_Charactor_In_View = { CIs_Charactor_In_ViewAngle_Zombie::Create() };
+	pDeco_Charactor_In_View->SetBlackBoard(m_pBlackBoard);
+	pTask_Move->Insert_Decorator_Node(pDeco_Charactor_In_View);
+
+	////Add Decorator Node		=>		Task Move, Deco Can Change State
+	/*CIs_Can_Change_State_Zombie::CAN_CHANGE_STATE_ZOMBIE_DESC		CanChangeStateForMoveDesc;
+	CanChangeStateForMoveDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE);
+	CanChangeStateForMoveDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_TURN);
+	CIs_Can_Change_State_Zombie*				pDeco_Can_Change_StateForMove = { CIs_Can_Change_State_Zombie::Create(&CanChangeStateForMoveDesc) };
+	pDeco_Can_Change_StateForMove->SetBlackBoard(m_pBlackBoard);
+	pTask_Move->Insert_Decorator_Node(pDeco_Can_Change_StateForMove);*/
+
+
+	//Add Task Node
+	CPivot_Turn_Zombie*							pTask_Pivot_Turn = { CPivot_Turn_Zombie::Create() };
+	pTask_Pivot_Turn->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_2->Insert_Child_Node(pTask_Pivot_Turn);
+
+	//Add Decorator Node		=>		Task Turn, Deco Can Change State
+	/*CIs_Can_Change_State_Zombie::CAN_CHANGE_STATE_ZOMBIE_DESC		CanChangeStateForTurnDesc;
+	CanChangeStateForTurnDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE);
+	CanChangeStateForTurnDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_TURN);
+	CIs_Can_Change_State_Zombie*				pDeco_Can_Change_State_ForTurn = { CIs_Can_Change_State_Zombie::Create(&CanChangeStateForTurnDesc) };
+	pDeco_Can_Change_State_ForTurn->SetBlackBoard(m_pBlackBoard);
+	pTask_Pivot_Turn->Insert_Decorator_Node(pDeco_Can_Change_State_ForTurn);*/
+
+	/*
+	*Root Child_4 Section		( Idle )
 	*/
 
 	//Add RootNode Task Node
-	auto pWait = new CWait_Zombie();
-	pWait->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_Root->Insert_Task_Node(pWait);
+	CWait_Zombie*								pTask_Wait = { CWait_Zombie::Create() };
+	pTask_Wait->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Root->Insert_Child_Node(pTask_Wait);
+
+	//Add Decorator Node		=>		Task Wait, Deco Can Change State
+	/*CIs_Can_Change_State_Zombie::CAN_CHANGE_STATE_ZOMBIE_DESC		CanChangeStateForWaitDesc;
+	CanChangeStateForWaitDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE);
+	CanChangeStateForWaitDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_TURN);
+	CIs_Can_Change_State_Zombie*				pDeco_Can_Change_State_ForWait = { CIs_Can_Change_State_Zombie::Create(&CanChangeStateForWaitDesc) };
+	pDeco_Can_Change_State_ForWait->SetBlackBoard(m_pBlackBoard);
+	pTask_Wait->Insert_Decorator_Node(pDeco_Can_Change_State_ForWait);*/
+
 #pragma endregion
 	return;
 }
@@ -298,7 +447,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 HRESULT CZombie::Add_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"), 
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
@@ -319,19 +468,31 @@ HRESULT CZombie::Add_Components()
 	ColliderOBBDesc.vRotation = _float3(0.f, XMConvertToRadians(45.0f), 0.f);
 	ColliderOBBDesc.vSize = _float3(0.8f, 0.6f, 0.8f);
 	ColliderOBBDesc.vCenter = _float3(0.f, ColliderOBBDesc.vSize.y * 0.5f, 0.f);
-	
+
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_Body"), (CComponent**)&m_pColliderCom[COLLIDER_BODY], &ColliderOBBDesc)))
 		return E_FAIL;
 
 	/* For.Com_Navigation */
 	CNavigation::NAVIGATION_DESC			NavigationDesc{};
-	
+
 	NavigationDesc.iCurrentIndex = 0;
-	
+
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation"),
 		TEXT("Com_Navigation"), (CComponent**)&m_pNavigationCom, &NavigationDesc)))
 		return E_FAIL;
+
+	/* Com_Collider_Body */
+	CBounding_AABB::BOUNDING_AABB_DESC		ColliderAABBDesc{};
+
+	ColliderAABBDesc.vSize = _float3(0.4f, 1.6f, 0.4f);
+	ColliderAABBDesc.vCenter = _float3(0.f, ColliderAABBDesc.vSize.y * 0.5f, 0.f);
+
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
+		TEXT("Com_Collider_Bounding"), (CComponent**)&m_pColliderCom_Bounding, &ColliderAABBDesc)))
+		return E_FAIL;
+
+	m_pDecal_Blood = CDecal_Blood::Create(m_pDevice, m_pContext);
 
 	return S_OK;
 }
@@ -342,7 +503,7 @@ HRESULT CZombie::Bind_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;	
+		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
@@ -357,7 +518,7 @@ HRESULT CZombie::Add_PartObjects()
 	m_PartObjects.resize(CZombie::PART_ID::PART_END);
 
 	/* For.Part_Body */
-	CPartObject*							pBodyObject = { nullptr };
+	CPartObject* pBodyObject = { nullptr };
 	CBody_Zombie::BODY_MONSTER_DESC			BodyDesc;
 
 	BodyDesc.pParentsTransform = m_pTransformCom;
@@ -371,7 +532,7 @@ HRESULT CZombie::Add_PartObjects()
 
 
 	/* For.Part_Face */
-	CPartObject*							pFaceObject = { nullptr };
+	CPartObject* pFaceObject = { nullptr };
 	CFace_Zombie::FACE_MONSTER_DESC			FaceDesc;
 
 	FaceDesc.pParentsTransform = m_pTransformCom;
@@ -384,7 +545,7 @@ HRESULT CZombie::Add_PartObjects()
 	m_PartObjects[CZombie::PART_ID::PART_FACE] = pFaceObject;
 
 
-	CPartObject*							pFace2Object = { nullptr };
+	CPartObject* pFace2Object = { nullptr };
 	CFace_Zombie::FACE_MONSTER_DESC			Face2Desc;
 
 	Face2Desc.pParentsTransform = m_pTransformCom;
@@ -396,7 +557,7 @@ HRESULT CZombie::Add_PartObjects()
 
 	m_PartObjects[CZombie::PART_ID::PART_FACE2] = pFace2Object;
 
-	CPartObject*							pFace3Object = { nullptr };
+	CPartObject* pFace3Object = { nullptr };
 	CFace_Zombie::FACE_MONSTER_DESC			Face3Desc;
 
 	Face3Desc.pParentsTransform = m_pTransformCom;
@@ -410,7 +571,7 @@ HRESULT CZombie::Add_PartObjects()
 
 
 	/* For.Part_Hat */
-	CPartObject*								pHatObject = { nullptr };
+	CPartObject* pHatObject = { nullptr };
 	CClothes_Zombie::CLOTHES_MONSTER_DESC		ClothesHatDesc;
 
 	ClothesHatDesc.pParentsTransform = m_pTransformCom;
@@ -423,12 +584,12 @@ HRESULT CZombie::Add_PartObjects()
 	m_PartObjects[CZombie::PART_ID::PART_HAT] = pHatObject;
 
 	/* For.Part_Shirts */
-	CPartObject*								pShirtsObject = { nullptr };
+	CPartObject* pShirtsObject = { nullptr };
 	CClothes_Zombie::CLOTHES_MONSTER_DESC		ClothesShirtsDesc;
 
 	ClothesShirtsDesc.pParentsTransform = m_pTransformCom;
 	ClothesShirtsDesc.eType = CClothes_Zombie::CLOTHES_TYPE::TYPE_SHIRTS;
-		
+
 	pShirtsObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Zombie"), &ClothesShirtsDesc));
 	if (nullptr == pShirtsObject)
 		return E_FAIL;
@@ -463,7 +624,7 @@ HRESULT CZombie::Add_PartObjects()
 
 
 	/* For.Part_Pants */
-	CPartObject*								pPantsObject = { nullptr };
+	CPartObject* pPantsObject = { nullptr };
 	CClothes_Zombie::CLOTHES_MONSTER_DESC		ClothesPantsDesc;
 
 	ClothesPantsDesc.pParentsTransform = m_pTransformCom;
@@ -478,16 +639,28 @@ HRESULT CZombie::Add_PartObjects()
 	return S_OK;
 }
 
+HRESULT CZombie::Initialize_Status()
+{
+	m_pStatus = new MONSTER_STATUS();
+
+	m_pStatus->fAttack = STATUS_ZOMBIE_ATTACK;
+	m_pStatus->fViewAngle = STATUS_ZOMBIE_VIEW_ANGLE;
+	m_pStatus->fRecognitionRange = STATUS_ZOMBIE_DEFAULT_RECOGNIZE_DISTANCE;
+	m_pStatus->fHealth = STATUS_ZOMBIE_HEALTH;
+
+	return S_OK;
+}
+
 HRESULT CZombie::Initialize_PartModels()
 {
-	CModel*					pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pFaceModel = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pFace2Model = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE2]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pFace3Model = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE3]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pShirtsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_SHIRTS]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pShirts2Model = { dynamic_cast<CModel*>(m_PartObjects[PART_SHIRTS2]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pPantsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_PANTS]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pHatModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAT]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pFaceModel = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pFace2Model = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE2]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pFace3Model = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE3]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pShirtsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_SHIRTS]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pShirts2Model = { dynamic_cast<CModel*>(m_PartObjects[PART_SHIRTS2]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pPantsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_PANTS]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pHatModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAT]->Get_Component(TEXT("Com_Model"))) };
 
 	m_pBodyModel = pBodyModel;
 
@@ -519,9 +692,53 @@ HRESULT CZombie::Initialize_PartModels()
 	return S_OK;
 }
 
-CZombie * CZombie::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+void CZombie::Perform_Skinning()
 {
-	CZombie*		pInstance = new CZombie(pDevice, pContext);
+	m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldMatrix());
+
+	_uint iNumMesh = m_pBodyModel->GetNumMesh();
+
+	for (int i = 0; i < iNumMesh; ++i)
+	{
+		m_pBodyModel->Bind_Resource_Skinning(i);
+		m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
+		m_pBodyModel->Staging_Skinning(i);
+	}
+}
+
+void CZombie::Ready_Decal()
+{
+	auto vRayOrigin = m_pGameInstance->Get_RayOrigin_Aim();
+	auto vRayDir = m_pGameInstance->Get_RayDir_Aim();
+	_float	fMinDist = 0.f;
+	_float	fMaxDist = 0.f;
+	if (m_pColliderCom_Bounding->IntersectRayAABB(XMLoadFloat4(&vRayOrigin), XMLoadFloat4(&vRayDir), fMinDist, fMaxDist))
+	{
+		Perform_Skinning();
+
+		HitResult hitResult;
+		hitResult.hitModel = this;
+		hitResult.minHitDistance = fMinDist;
+		hitResult.maxHitDistance = fMaxDist;
+
+		_matrix rotMatrix = XMMatrixIdentity();
+		//rotMatrix.SetRotation(mainCamera->GetDirection(), decalAngle);
+
+		AddDecalInfo decalInfo;
+		decalInfo.rayOrigin = vRayOrigin;
+		decalInfo.rayDir = vRayDir;
+		XMStoreFloat4(&decalInfo.decalTangent, XMVector4Transform(m_pGameInstance->Get_Camera_Transform()->Get_State_Float4(CTransform::STATE_RIGHT), rotMatrix));
+		decalInfo.decalSize = _float3(5.f, 5.f, 5.0f);
+		decalInfo.minHitDistance = hitResult.minHitDistance;
+		decalInfo.maxHitDistance = hitResult.maxHitDistance;
+		decalInfo.decalMaterialIndex = 0;
+		m_pDecal_Blood->Add_Skinned_Decal(decalInfo);
+	}
+}
+
+CZombie* CZombie::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CZombie* pInstance = new CZombie(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -534,9 +751,9 @@ CZombie * CZombie::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext
 
 }
 
-CGameObject * CZombie::Clone(void * pArg)
+CGameObject* CZombie::Clone(void* pArg)
 {
-	CZombie*		pInstance = new CZombie(*this);
+	CZombie* pInstance = new CZombie(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

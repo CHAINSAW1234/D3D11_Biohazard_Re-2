@@ -21,6 +21,9 @@ public:
 	HRESULT Bind_Texture_Cube(const _char* pConstantName, ID3D11ShaderResourceView* pSRV);
 	HRESULT Bind_Texture(const _char* pConstantName, ID3D11UnorderedAccessView* pUAV);	// UAV : For Output
 	HRESULT Bind_RawValue(const _char* pConstantName, const void* pData, _uint iLength);
+	HRESULT Bind_Uav(const _char* pConstantName, ID3D11UnorderedAccessView* pUav);
+	HRESULT Bind_Constant_Buffer(const _char* pConstantName, ID3D11Buffer* pCB);
+	HRESULT Bind_Structured_Buffer(const _char* pConstantName, ID3D11ShaderResourceView* pSRV);
 
 	HRESULT Render(_uint iPassIndex, _uint iThreadNumX, _uint iThreadNumY, _uint iThreadNumZ);
 

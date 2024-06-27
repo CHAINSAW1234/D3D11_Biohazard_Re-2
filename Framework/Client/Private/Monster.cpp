@@ -5,6 +5,7 @@
 #include "PathFinder.h"
 
 #include "PartObject.h"
+#include "Decal_Blood.h"
 
 #define MODEL_SCALE 0.01f
 
@@ -32,6 +33,18 @@ HRESULT CMonster::Initialize(void * pArg)
 	GameObjectDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
+		return E_FAIL;
+
+	if (FAILED(Add_Components()))
+		return E_FAIL;
+
+	if (FAILED(Add_PartObjects()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_PartModels()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_Status()))
 		return E_FAIL;
 
 	return S_OK;
@@ -242,11 +255,6 @@ CPartObject* CMonster::Get_PartObject(PART_ID eID)
 	return m_PartObjects[static_cast<_uint>(eID)];
 }
 
-HRESULT CMonster::Add_Components()
-{
-	return S_OK;
-}
-
 HRESULT CMonster::Bind_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
@@ -263,45 +271,6 @@ HRESULT CMonster::Bind_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CMonster::Add_PartObjects()
-{
-	return S_OK;
-}
-
-HRESULT CMonster::Initialize_PartModels()
-{
-	return S_OK;
-}
-
-CMonster * CMonster::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-{
-	CMonster*		pInstance = new CMonster(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype()))
-	{
-		MSG_BOX(TEXT("Failed To Created : CMonster"));
-
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-
-}
-
-CGameObject * CMonster::Clone(void * pArg)
-{
-	CMonster*		pInstance = new CMonster(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX(TEXT("Failed To Created : CMonster"));
-
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
 void CMonster::Free()
 {
 	__super::Free();
@@ -314,6 +283,8 @@ void CMonster::Free()
 	Safe_Release(m_pBehaviorTree);
 	Safe_Release(m_pPathFinder);
 	Safe_Release(m_pNavigationCom);
+	Safe_Release(m_pColliderCom_Bounding);
+	Safe_Release(m_pDecal_Blood);
 
 	for (auto& pPartObject : m_PartObjects)
 	{
@@ -321,4 +292,6 @@ void CMonster::Free()
 		pPartObject = nullptr;
 	}
 	m_PartObjects.clear();
+
+	Safe_Delete(m_pStatus);
 }

@@ -208,6 +208,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const wstring & strLayerTag)
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Camera_Free"), &CameraDesc)))
 		return E_FAIL;
 	
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Camera_Event"), &CameraDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -231,8 +234,8 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 	if (FAILED(Ready_Layer_LandBackGround(TEXT("Layer_LandBackGround"))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -268,7 +271,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
 		return E_FAIL;
 
-	for (_uint i = 0; 1 > i; ++i)
+	for (_uint i = 0; iObjectNum > i; ++i)
 	{
 		_uint iLength = { 0 };
 

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Base.h"
+#include "Node.h"
 
 BEGIN(Engine)
 
-class ENGINE_DLL CDecorator_Node : public CBase
+class ENGINE_DLL CDecorator_Node : public CNode
 {
 protected:
 	CDecorator_Node();
@@ -12,14 +12,12 @@ protected:
 	virtual ~CDecorator_Node() = default;
 
 public:
-	virtual HRESULT					Initialize_Prototype();
 	virtual HRESULT					Initialize(void* pArg);
 
 	virtual _bool					Condition_Check() { return false; }
-protected:
-	class CGameInstance*			m_pGameInstance = { nullptr };
+
 public:
-	static CDecorator_Node* Create();
+	static CDecorator_Node*			Create(void* pArg);
 
 public:
 	virtual void Free() override;

@@ -30,6 +30,8 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	m_isActive = true;
+
 	return S_OK;
 }
 

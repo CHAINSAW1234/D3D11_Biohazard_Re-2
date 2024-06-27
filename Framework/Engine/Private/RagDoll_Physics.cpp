@@ -77,7 +77,7 @@
 
 #pragma endregion
 
-#define MODEL_SCALE 0.01f
+#define MODEL_SCALE 0.009f
 #define SIZE_VALUE 2.f
 #define JOINT_GAP 0.1f
 #define RADIUS 2.5f

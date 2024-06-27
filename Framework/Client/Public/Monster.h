@@ -12,13 +12,23 @@ END
 
 BEGIN(Client)
 
-class CMonster : public CGameObject
+class CMonster abstract : public CGameObject
 {
 public:
 	typedef struct tagMonsterDesc: public GAMEOBJECT_DESC
 	{
 		_int Index;
 	}MONSTER_DESC;
+
+	typedef struct tagMonsterStatus
+	{
+		_float				fSpeed = { 0.f };
+		_float				fRecognitionRange = { 0.f };
+		_float				fViewAngle = { 0.f };
+		_float				fAttack = { 0.f };
+		_float				fHealth = { 0.f };
+	}MONSTER_STATUS;
+
 public:
 	enum COLLIDERTYPE { COLLIDER_HEAD, COLLIDER_BODY, COLLIDER_END };
 	enum PART_ID { PART_BODY, PART_FACE, PART_FACE2, PART_FACE3, PART_HAT, PART_PANTS, PART_SHIRTS, PART_SHIRTS2, PART_SHIRTS3, PART_END };
@@ -43,6 +53,9 @@ public:
 public:
 	void								Move(_float4 vDir, _float fTimeDelta);
 
+public:		/* For.Access */
+	MONSTER_STATUS*						Get_Status_Ptr() { return m_pStatus; }
+
 protected:	/* Update_PartObjects */
 	void								Priority_Tick_PartObjects(_float fTimeDelta);
 	void								Tick_PartObjects(_float fTimeDelta);
@@ -64,7 +77,9 @@ protected:
 	
 	_int								m_iIndex = { 0 };
 	MONSTER_TYPE						m_eType = { MONSTER_TYPE::MT_DEFAULT };
-	
+
+	//For Decal
+	CCollider*							m_pColliderCom_Bounding = { nullptr };
 protected: // For AIController
 	_uint								m_iAIController_ID = { 0 };
 	class CBehaviorTree*				m_pBehaviorTree = { nullptr };
@@ -84,17 +99,26 @@ protected: // For AIController
 	class CPlayer*						m_pPlayer = { nullptr };
 	_bool								m_bRoomCulling = { false };
 
+public://For Decal
+	virtual void						Perform_Skinning() {}
+	virtual void						Ready_Decal() {}
+public:
+	class CDecal_Blood*					m_pDecal_Blood = { nullptr };
+
 protected:
-	virtual HRESULT						Add_Components();
+	MONSTER_STATUS*						m_pStatus = { nullptr };
+
+protected:
+	virtual HRESULT						Add_Components() = 0;
 	virtual HRESULT						Bind_ShaderResources();
-	virtual HRESULT						Add_PartObjects();
+	virtual HRESULT						Add_PartObjects() = 0;
+	virtual HRESULT						Initialize_Status() = 0;
 
 protected:	/* Initialize_PartObjects_Models */
-	virtual HRESULT 					Initialize_PartModels();
+	virtual HRESULT 					Initialize_PartModels() = 0;
 
 public:
-	static CMonster* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg) override;
+	virtual CGameObject* Clone(void* pArg) = 0;
 	virtual void Free() override;
 };
 

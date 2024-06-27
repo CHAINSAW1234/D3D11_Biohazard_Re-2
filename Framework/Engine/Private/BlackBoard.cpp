@@ -2,18 +2,14 @@
 #include "BlackBoard.h"
 #include "Task_Node.h"
 
-CBlackBoard::CBlackBoard(): m_pGameInstance{ CGameInstance::Get_Instance() }
+CBlackBoard::CBlackBoard()
+	: m_pGameInstance{ CGameInstance::Get_Instance() }
 {
 	Safe_AddRef(m_pGameInstance);
 }
 
 CBlackBoard::CBlackBoard(const CBlackBoard& rhs)
 {
-}
-
-HRESULT CBlackBoard::Initialize_Prototype()
-{
-	return S_OK;
 }
 
 HRESULT CBlackBoard::Initialize(void* pArg)
@@ -39,11 +35,11 @@ void CBlackBoard::Organize_PreState(CTask_Node* pCurrentNode)
 	}
 }
 
-CBlackBoard* CBlackBoard::Create()
+CBlackBoard* CBlackBoard::Create(void* pArg)
 {
-	CBlackBoard* pInstance = new CBlackBoard();
+	CBlackBoard*			pInstance = new CBlackBoard();
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CBlackBoard"));
 

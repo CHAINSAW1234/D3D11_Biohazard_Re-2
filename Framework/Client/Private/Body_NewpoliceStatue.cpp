@@ -24,6 +24,9 @@ HRESULT CBody_NewpoliceStatue::Initialize(void* pArg)
 		return E_FAIL;
 	
 	if (FAILED(Add_Components()))
+		return E_FAIL;	
+
+	if (FAILED(Initialize_Model()))
 		return E_FAIL;
 
 	m_pModelCom->Set_RootBone("RootNode");
@@ -81,10 +84,10 @@ void CBody_NewpoliceStatue::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_NewpoliceStatue::Render()
 {
-	//if (m_bRender == false)
-	//	return S_OK;
-	//else
-	//	m_bRender = false;
+	if (m_bRender == false)
+		return S_OK;
+	else
+		m_bRender = false;
 
 
 	if (FAILED(__super::Bind_ShaderResources()))
@@ -155,7 +158,18 @@ HRESULT CBody_NewpoliceStatue::Add_Components()
 	if (FAILED(__super::Add_Component(g_Level, m_strModelComponentName,
 		TEXT("Com_Body_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
+#ifdef _DEBUG
+#ifdef UI_POS
+	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
+	ColliderDesc.fRadius = _float(20.f);
+	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
+	/* For.Com_Collider */
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Body_Collider"), (CComponent**)&m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+		return E_FAIL;
+#endif
+#endif
 	return S_OK;
 }
 
@@ -169,6 +183,40 @@ HRESULT CBody_NewpoliceStatue::Initialize_PartObjects()
 {
 
 	return S_OK;
+}
+
+HRESULT CBody_NewpoliceStatue::Initialize_Model()
+{
+	vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
+	for (auto& strMeshTag : MeshTags)
+	{
+		if ((strMeshTag.find("Group_53_Sub_1") != string::npos))
+			m_strMeshTag = strMeshTag;
+	}
+
+	return S_OK;
+}
+
+_float4 CBody_NewpoliceStatue::Get_Pos(_int iArg)
+{
+
+	_float4 vLocalPos = m_pModelCom->Get_Mesh_Local_Pos(m_strMeshTag) + _float4(0.f, 10.f, -10.f, 0.f);
+
+	_matrix Local_Mesh_Matrix = m_pTransformCom->Get_WorldMatrix();
+	Local_Mesh_Matrix.r[3] -= _vector{ vLocalPos.x,-vLocalPos.y,vLocalPos.z }; 
+	_matrix TransformationMatrix = m_pParentsTransform->Get_WorldMatrix();
+
+	_float4x4 WorldMatrix = (Local_Mesh_Matrix)*TransformationMatrix;
+
+	_float4 vPos = XMVectorSetW(WorldMatrix.Translation(), 1.f);
+#ifdef _DEBUG
+#ifdef UI_POS
+	m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(WorldMatrix);
+	m_pGameInstance->Add_DebugComponents(m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]);
+#endif
+#endif
+	return vPos;
+	return _float4();
 }
 
 CBody_NewpoliceStatue* CBody_NewpoliceStatue::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -5,6 +5,8 @@
 
 #define JOINT_COUNT 10
 
+#define MODEL_SCALE_INVERSE 100.f
+
 CRagdoll::CRagdoll()
 {
 }
@@ -111,7 +113,7 @@ PoseTransforms* AnimRagdoll::apply(CRagdoll* ragdoll,_matrix model_scale, _matri
                 continue;
             }
             XMMATRIX global_transform = to_mat4(body->getGlobalPose());
-            global_transform.r[3] = XMVectorSet(XMVectorGetX(global_transform.r[3]) * 100.f, XMVectorGetY(global_transform.r[3]) * 100.f, XMVectorGetZ(global_transform.r[3]) * 100.f, 1.f);
+            global_transform.r[3] = XMVectorSet(XMVectorGetX(global_transform.r[3]) * MODEL_SCALE_INVERSE, XMVectorGetY(global_transform.r[3]) * MODEL_SCALE_INVERSE, XMVectorGetZ(global_transform.r[3]) * MODEL_SCALE_INVERSE, 1.f);
             XMVECTOR global_joint_pos = XMVector4Transform(ragdoll->m_relative_joint_pos[i], global_transform);
             global_joint_pos = XMVectorSetW(global_joint_pos,1.f);
 

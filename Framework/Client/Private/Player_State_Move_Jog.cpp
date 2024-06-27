@@ -23,7 +23,6 @@ void CPlayer_State_Move_Jog::OnStateUpdate(_float fTimeDelta)
 		int a = 1;
 	}
 
-	//cout << m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) << endl;		
 	cout << m_pPlayer->Get_Body_Model()->Get_TrackPosition(0) << endl;
 	Update_KeyInput();
 	Update_Degree();

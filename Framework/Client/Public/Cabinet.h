@@ -45,10 +45,14 @@ private:
 private:
 	void Active();
 
+public:
+	virtual _float4 Get_Object_Pos() override;
+
 
 
 private:
 	_bool				m_bObtain = { false };
+	_bool				m_bOpened = { false };
 	_bool				m_bLock =	{ false };
 	_bool				m_bActive = { false };
 
@@ -60,6 +64,7 @@ public:
 	static CCabinet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
+
 };
 
 END
