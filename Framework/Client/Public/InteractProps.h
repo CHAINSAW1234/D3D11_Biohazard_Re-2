@@ -131,6 +131,7 @@ public:
 
 private :
 	_bool												m_isSelector_Rendering = { false };
+	_bool												m_isNYResult				= { false };
 
 protected:
 	_bool												m_bActivity = { true };

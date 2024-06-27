@@ -42,12 +42,12 @@ HRESULT CCrosshair_UI::Initialize(void* pArg)
         {
             m_pCenterDot = dynamic_cast<CCrosshair_UI*>(iter);
 
-            if (nullptr != m_pCenterDot && m_pCenterDot->Get_Child() == false)
+            if (nullptr != m_pCenterDot && m_pCenterDot->m_IsChild== false)
             {
                 CTransform* pPointTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
                 vPoint = pPointTrans->Get_State_Float4(CTransform::STATE_POSITION);
 
-                //Safe_AddRef(m_pCenterDot);
+                //Safe_AddRef<CCrosshair_UI*>(m_pCenterDot);
                 break;
             }
         }
@@ -94,7 +94,7 @@ HRESULT CCrosshair_UI::Initialize(void* pArg)
     }
 
     m_isRender = false;
-   
+
     return S_OK;
 }
 
@@ -114,12 +114,12 @@ void CCrosshair_UI::Tick(_float fTimeDelta)
     }
 
     /* ▶ 동작 함수 */
-   if (false == m_isAiming || true == m_isShoot)
-       Aiming_Return(fTimeDelta);
+    if (false == m_isAiming || true == m_isShoot)
+        Aiming_Return(fTimeDelta);
 
-   else if (true == m_isAiming)
-        Aiming(fTimeDelta); 
-     
+    else if (true == m_isAiming)
+        Aiming(fTimeDelta);
+
 }
 
 void CCrosshair_UI::Late_Tick(_float fTimeDelta)
@@ -140,7 +140,7 @@ void CCrosshair_UI::Aiming(_float fTimeDelta)
 {
     /* ▶ 조준 완료 시*/
     if (true == m_IsChild && false == m_isRender)
-        m_isRender = true;  
+        m_isRender = true;
 
     _float4 vCrosshair_Trans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
     _float3 vCrosshair_Scale = m_pTransformCom->Get_Scaled();
@@ -154,8 +154,8 @@ void CCrosshair_UI::Aiming(_float fTimeDelta)
 
     /* Crosshair를 고정시켜야 할 때 */
     if (m_fCrosshair_Timer >= FIXED_TIME)
-    {   
-        if (true == m_IsChild) 
+    {
+        if (true == m_IsChild)
         {
             if (m_eCrosshair_Type == CROSSHAIR_TYPE::CROSSHAIR_LEFT)
             {
@@ -250,7 +250,7 @@ void CCrosshair_UI::Aiming(_float fTimeDelta)
     m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCrosshair_Trans);
     m_fFixed_MinScaled = vCrosshair_Scale;
 }
-    
+
 void CCrosshair_UI::Aiming_Return(_float fTimeDelta)
 {
     m_fCrosshair_Timer = 0.0f;
@@ -258,8 +258,8 @@ void CCrosshair_UI::Aiming_Return(_float fTimeDelta)
 
     if (false == m_IsChild)
     {
-         m_isRender = false;
-         m_isShoot = false;
+        m_isRender = false;
+        m_isShoot = false;
     }
 
     /* 1. Transform */
@@ -276,7 +276,7 @@ void CCrosshair_UI::Aiming_Return(_float fTimeDelta)
         vCrosshair_Scale.x += 0.5f;
         m_pTransformCom->Set_Scaled(vCrosshair_Scale.x, vCrosshair_Scale.y, vCrosshair_Scale.z);
     }
-    
+
     if (true == m_IsChild)
     {
         _float4 vTransformCrosshair = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
@@ -286,8 +286,8 @@ void CCrosshair_UI::Aiming_Return(_float fTimeDelta)
             if (vTransformCrosshair.x <= m_vCrosshair_OriginPos.x)
             {
                 m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vCrosshair_OriginPos);
-                
-                if(false == m_isShoot)
+
+                if (false == m_isShoot)
                     m_isRender = false;
 
                 m_isShoot = false;
@@ -299,7 +299,7 @@ void CCrosshair_UI::Aiming_Return(_float fTimeDelta)
             if (vTransformCrosshair.x >= m_vCrosshair_OriginPos.x)
             {
                 m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vCrosshair_OriginPos);
-                
+
                 if (false == m_isShoot)
                     m_isRender = false;
 
@@ -312,7 +312,7 @@ void CCrosshair_UI::Aiming_Return(_float fTimeDelta)
             if (vTransformCrosshair.y <= m_vCrosshair_OriginPos.y)
             {
                 m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vCrosshair_OriginPos);
-                
+
                 if (false == m_isShoot)
                     m_isRender = false;
 
@@ -325,7 +325,7 @@ void CCrosshair_UI::Aiming_Return(_float fTimeDelta)
             if (vTransformCrosshair.y >= m_vCrosshair_OriginPos.y)
             {
                 m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vCrosshair_OriginPos);
-                
+
                 if (false == m_isShoot)
                     m_isRender = false;
 
@@ -365,7 +365,11 @@ CGameObject* CCrosshair_UI::Clone(void* pArg)
 
 void CCrosshair_UI::Free()
 {
-    //Safe_Release(m_pCenterDot);
+   /* if (nullptr != m_pCenterDot)
+    {
+        Safe_Release<CCrosshair_UI*>(m_pCenterDot);
+        m_pCenterDot = nullptr;
+    }*/
 
     __super::Free();
 }

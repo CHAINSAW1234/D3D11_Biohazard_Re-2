@@ -131,7 +131,7 @@ HRESULT CShader::Bind_Matrix(const _char* pConstantName, const _float4x4* pMatri
 		return E_FAIL;
 
 	return pMatrixVariable->SetMatrix((_float*)pMatrix);	
-}
+	}
 
 HRESULT CShader::Bind_Matrices(const _char * pConstantName, const _float4x4 * pMatrices, _uint iNumMatrices)
 {

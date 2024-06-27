@@ -312,7 +312,7 @@ void CBullet_UI::Find_Crosshair()
         {
             m_pCrosshair = pCrosshair;
 
-            Safe_AddRef<CCrosshair_UI*>(m_pCrosshair);
+          //  Safe_AddRef<CCrosshair_UI*>(m_pCrosshair);
             break;
         }
     }
@@ -350,5 +350,9 @@ void CBullet_UI::Free()
 {
     __super::Free();
 
-    Safe_Release<CCrosshair_UI*>(m_pCrosshair);
+ /*   if(nullptr != m_pCrosshair)
+    {
+        Safe_Release<CCrosshair_UI*>(m_pCrosshair);
+        m_pCrosshair = nullptr;
+    }*/
 }

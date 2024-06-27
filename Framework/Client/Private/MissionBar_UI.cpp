@@ -125,10 +125,14 @@ void CMissionBar_UI::Tick(_float fTimeDelta)
     }
 
     else if (MISSION_UI_TYPE::ARROW_MISSION == m_eMissionUI_Type)
+    {
         Operater_MissionArrow(fTimeDelta);
+    }
 
     else if (MISSION_UI_TYPE::FONT_MISSION == m_eMissionUI_Type)
+    {
         Operater_MissionFont(fTimeDelta);
+    }
 }
 
 void CMissionBar_UI::Late_Tick(_float fTimeDelta)
@@ -358,9 +362,10 @@ CGameObject* CMissionBar_UI::Clone(void* pArg)
 
 void CMissionBar_UI::Free()
 {
-    //Safe_Release<CMissionBar_UI*>(m_pMissionBar);
-
     __super::Free();
+
+  /*  if (nullptr != m_pMissionBar)
+        Safe_Release<CMissionBar_UI*>(m_pMissionBar);*/
 
     for(auto& iter : m_pMissionCollVec)
         Safe_Release(iter);

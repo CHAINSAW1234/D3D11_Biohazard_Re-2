@@ -27,20 +27,23 @@ private :
 
 private :
 	CTextBox*			m_pText;
-	CTitle_UI*			m_pTitle_BackGround = { nullptr };
-	CTitle_UI*			m_pLogo = {};
+	CTitle_UI*			m_pTitle_BackGround			= { nullptr };
+	CTitle_UI*			m_pLogo						= {};
 
 private :
-	_bool				m_isTitleGame_Start = { false };
-	_bool				m_isInGame_Start = { false };
-	_bool				m_isInOption = { false };
+	wstring				m_wstrLogo_Broken;
 
-	_bool				m_isGameStart_Text = { false };
-	_float4				m_vOriginTextColor = {};
+private :
+	_bool				m_isTitleGame_Start			= { false };
+	_bool				m_isInGame_Start			= { false };
+	_bool				m_isInOption				= { false };
+
+	_bool				m_isGameStart_Text			= { false };
+	_float4				m_vOriginTextColor			= {};
 
 
 private :
-	_float4				m_vOriginOption_Pos = {};
+	_float4				m_vOriginOption_Pos			= {};
 
 
 public:

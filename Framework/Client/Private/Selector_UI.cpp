@@ -187,7 +187,7 @@ void CSelector_UI::Render_Selector_UI(CGameObject* _obj, _float fTimeDelta)
         _vector vViewPos = XMVector3TransformCoord(vTargetPosition, m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_VIEW));
         _vector vProjPos = XMVector3TransformCoord(vViewPos, m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_PROJ));
 
-        _float2 vProjPosition = { (XMVectorGetX(vProjPos) + 1.f) * 0.5f * g_iWinSizeX, (1.f - XMVectorGetY(vProjPos)) * 0.5f * g_iWinSizeY };
+        _float2 vProjPosition = { (XMVectorGetX(vProjPos) + 1.f) * 0.5f * (1.f - XMVectorGetY(vProjPos)) * 0.5f, 0 };
 
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, _vector{ g_iWinSizeX * -0.5f + vProjPosition.x, g_iWinSizeY * 0.5f - vProjPosition.y, 0.8f, 1.f });
 
@@ -364,7 +364,7 @@ void CSelector_UI::Find_InteractObj()
 
             m_InteractPropsList.push_back(pInteractObj);
 
-            Safe_AddRef(iter);
+           // Safe_AddRef(iter);
         }
     }
 }

@@ -475,14 +475,14 @@ void CPlayer::Col_Section()
 #pragma region 나옹 추가
 _bool* CPlayer::Col_Event_UI(CCustomCollider* pCustom)
 {
-	_bool isResult;
+	m_isNYResult = false;
 
 	if (m_pColliderCom->Intersect(static_cast<CCollider*>(pCustom->Get_Component(TEXT("Com_Collider")))))
-		isResult = true;
+		m_isNYResult = true;
 	else
-		isResult = false;
+		m_isNYResult = false;
 
-	return &isResult;
+	return &m_isNYResult;
 }
 
 #pragma endregion

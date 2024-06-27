@@ -196,7 +196,7 @@ HRESULT CCustomize_UI::Add_Components(const wstring& wstrTextureTag, const wstri
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	/* For.Com_Texture */
+	/* For.Com_Texture */ 
 	if (FAILED(__super::Add_Component(g_Level, wstrTextureTag,
 		TEXT("Com_DefaultTexture"), (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
@@ -209,6 +209,7 @@ HRESULT CCustomize_UI::Add_Components(const wstring& wstrTextureTag, const wstri
 	/* For.Com_VIBuffer */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
 		TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom)))
+
 		return E_FAIL;
 
 	return S_OK;
