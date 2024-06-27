@@ -23,7 +23,7 @@ public:
 		const _ubyte*	pState;
 		_float3*				pRootTranslation = { nullptr };
 		wstring				strModelComponentName = { TEXT("") };
-
+		_int				iPropType = {0};
 	}PART_INTERACTPROPS_DESC;
 	enum Part_INTERACTPROPS_COL
 	{
@@ -59,6 +59,7 @@ public:
 	virtual _float4 Get_Pos(_int iArg = 0) { return XMVectorSetW( m_WorldMatrix.Translation(),1.f); }
 	
 protected:
+	_int				m_iPropType = { 0 };
 	_bool				m_bCol = { false };
 	_bool*			m_pRender;
 	const _ubyte*			m_pState;

@@ -755,7 +755,8 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_EventProp::Create(m_pDevice, m_pContext));
 
 		if(!bDo)
-			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CProps::Create(m_pDevice, m_pContext));
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CProps::Create(m_pDevice, m_pContext));
+
 
 
 		Safe_Delete(Inform);

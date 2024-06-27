@@ -88,7 +88,6 @@ public:
 	typedef struct tagInteractProps_desc : public CGameObject::GAMEOBJECT_DESC
 	{
 		_int BelongIndexs2[iMaxNum];
-		_int iPropsType;
 		DOOR_DESC tagDoor = {};
 		CABINET_DESC tagCabinet = {};
 		WINDOW_DESC tagWindow = {};

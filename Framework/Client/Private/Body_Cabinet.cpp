@@ -6,7 +6,6 @@
 
 #include"Cabinet.h"
 
-static _int i44_005Type = 0;
 
 CBody_Cabinet::CBody_Cabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPart_InteractProps{ pDevice, pContext }
@@ -28,8 +27,6 @@ HRESULT CBody_Cabinet::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-	if (m_strModelComponentName.find(L"44_005") != string::npos)
-		++i44_005Type;
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -283,12 +280,11 @@ HRESULT CBody_Cabinet::Initialize_Model_i44()
 	vector<string>			ResultMeshTags;
 	for (auto& strMeshTag : MeshTags)
 	{
-		string strFindTag = "10" + to_string(i44_005Type);
-		if (i44_005Type >= 10)
-			strFindTag = "20" + to_string(i44_005Type - 9);
+		string strFindTag = "10" + to_string(m_iPropType);
+		if (m_iPropType >= 10)
+			strFindTag = "20" + to_string(m_iPropType - 10);
 		if ((strMeshTag.find(strFindTag) != string::npos) || (strMeshTag.find("Group_0_") != string::npos) || (strMeshTag.find("Group_1_") != string::npos))
 			ResultMeshTags.push_back(strMeshTag);
-
 	}
 
 	for (auto& strMeshTag : MeshTags)
