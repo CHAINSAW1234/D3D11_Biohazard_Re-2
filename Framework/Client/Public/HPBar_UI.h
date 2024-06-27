@@ -43,13 +43,11 @@ private : /* Mask ฐüทร*/
 	_uint						m_iColorMask_Cnt		= { 2 };
 	_uint						m_iCurrent_ColorMask_Cnt = { 0 };
 
-
 private : 
 	CHPBar_UI*					m_pMainBar				= { nullptr };
 	_bool*						m_pMain_Inven_Render	= { nullptr };
 
 	_float2						m_fDistance_Font = {};
-
 
 private :
 	CCustomize_UI::HPBAR_TYPE	m_eHPBar		= { HPBAR_TYPE::END_BAR };

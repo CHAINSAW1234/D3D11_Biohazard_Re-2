@@ -128,14 +128,14 @@ void CPlayer_State_Hold_Idle::Shot()
 {
 	if (m_isShot) {
 		if (m_pPlayer->Get_Body_Model()->isFinished(2)) {
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 0, 0.3f);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 0, 20.f);
 			m_isShot = false;
 		}
 	}
 
 	if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == PRESSING && m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
 		if (!m_isShot && m_pPlayer->Get_Body_Model()->Get_BlendWeight(2) == 0.f) {
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 1, 10.f);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 1, 20.f);
 			if (1) {
 				// ÃÑ¾Ë ÀÖÀ¸¸é
 				m_pPlayer->Change_Body_Animation_Hold(2, CPlayer::HOLD_SHOT);

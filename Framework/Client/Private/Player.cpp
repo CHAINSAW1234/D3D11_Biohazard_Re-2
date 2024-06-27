@@ -436,9 +436,9 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	/*if (m_pController)
 		m_pController->Update_Collider();*/
 
-	//Turn_Spine_Default(fTimeDelta);
+	Turn_Spine_Default(fTimeDelta);
 	Turn_Spine_Hold(fTimeDelta);		// Hold 상태에서 척추를 상하로만 돌림
-	//Turn_Spine_Light(fTimeDelta);		// Light 상태에서 상체전체를 카메라를 보도록 돌림
+	Turn_Spine_Light(fTimeDelta);		// Light 상태에서 상체전체를 카메라를 보도록 돌림
 
 
 #pragma region 예은 추가
@@ -580,9 +580,15 @@ void CPlayer::Set_Equip(EQUIP eEquip)
 		Safe_Release(m_pWeapon);
 	}
 
-	m_pWeapon = m_Weapons[m_eEquip];
-	Safe_AddRef(m_pWeapon);
-	m_pWeapon->Set_RenderLocation(eRenderLocation);
+	if (m_eEquip == NONE) {
+		m_pWeapon = nullptr;
+	}
+	else {
+		m_pWeapon = m_Weapons[m_eEquip];
+		Safe_AddRef(m_pWeapon);
+		m_pWeapon->Set_RenderLocation(eRenderLocation);
+
+	}
 
 	// 무기 위치를 변경하시오
 
@@ -612,8 +618,10 @@ _float CPlayer::Get_CamDegree()
 
 void CPlayer::Update_FSM()
 {
+
 	if (m_pGameInstance->Get_KeyState(VK_RBUTTON) == PRESSING) {
-		if(nullptr != m_pWeapon)
+		if(nullptr != m_pWeapon &&
+			Get_Body_Model()->Is_Loop_PlayingInfo(3)	)
 			Change_State(HOLD);
 	}
 	else
@@ -711,6 +719,11 @@ void CPlayer::Update_Equip()
 		if (m_pGameInstance->Get_KeyState('4') == DOWN) {
 			isChange = true;
 			TargetWeapon = STG;
+		}
+
+		if (m_pGameInstance->Get_KeyState('6') == TRUE) {
+			isChange = true;
+			TargetWeapon = NONE;
 		}
 	}
 }
@@ -814,39 +827,34 @@ void CPlayer::Turn_Spine_Default(_float fTimeDelta)
 	{
 		_vector				vMyLook = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
 		_float4				vHeadWorldLook = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-		_float				fHeadMagnitude = sqrt(vHeadWorldLook.x * vHeadWorldLook.x + vHeadWorldLook.y * vHeadWorldLook.y + vHeadWorldLook.z * vHeadWorldLook.z);
+		_float				fHeadMagnitude = sqrt(vHeadWorldLook.x * vHeadWorldLook.x + vHeadWorldLook.z * vHeadWorldLook.z);
 		
 		_matrix				CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
 		_float4				vCamLook = { CamWorldMatrix.r[CTransform::STATE_LOOK] };
-		_float				fCamMagnitude = sqrt(vCamLook.x * vCamLook.x + vCamLook.y * vCamLook.y + vCamLook.z * vCamLook.z);
+		_float				fCamMagnitude = sqrt(vCamLook.x * vCamLook.x + vCamLook.z * vCamLook.z);
 		
 		_float				fDot = { vHeadWorldLook.x * vCamLook.x + vHeadWorldLook.z * vCamLook.z };
 		_float				fAngle = acos(fDot / (fHeadMagnitude * fCamMagnitude));
-
 		_vector				vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_UP) };
-		
-		_float4				vHeadToCam = CamWorldMatrix.r[CTransform::STATE_POSITION] - m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
 
+		_float4				vHeadToCam = CamWorldMatrix.r[CTransform::STATE_POSITION] - m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
 		_float4				vCross = XMVector3Cross(vMyLook, vHeadToCam);
 
-		//cout << XMConvertToDegrees(fAngle) << endl;
-
-		if (fAngle > XMConvertToRadians(90.f)) {
+		if (fAngle < XMConvertToRadians(100.f)) {
 			fAngle = 0.f;
 		}
-		else if (fAngle > XMConvertToRadians(45.f)) {
+		else {
 			fAngle = XMConvertToRadians(45.f);
 		}
 			
-		if (vCross.y < 0) {
+		if (vCross.y > 0) {
 			fAngle *= -1;
 		}
-
 
 		static _float fCurAngle = 0.f;
 		if (!m_isTurnSpineDefault) {
 			if (fabs(fCurAngle) > 0.0001) {
-				fCurAngle += fTimeDelta * -fCurAngle * 5;
+				fCurAngle += fTimeDelta * -fCurAngle * 2;
 			}
 			else {
 				fCurAngle = 0.f;
@@ -854,7 +862,7 @@ void CPlayer::Turn_Spine_Default(_float fTimeDelta)
 			}
 		}
 		else {
-			fCurAngle += fTimeDelta * (fAngle - fCurAngle) * 5;
+			fCurAngle += fTimeDelta * (fAngle - fCurAngle) * 2;
 		}
 
 		list<_uint>			ChildJointIndices;
@@ -948,72 +956,58 @@ void CPlayer::Turn_Spine_Hold(_float fTimeDelta)
 
 void CPlayer::Turn_Spine_Light(_float fTimeDelta)
 {
-	static _float		fAccLinearTime = { 0.f };
-
-	fAccLinearTime = 0.5f;
-
 	CModel* pModel = { Get_Body_Model() };
 	if (nullptr != pModel)
 	{
-		_matrix				HeadCombinedMatrix = { XMLoadFloat4x4(pModel->Get_CombinedMatrix("head")) };
-		_matrix				CogCombinedMatrix = { XMLoadFloat4x4(pModel->Get_CombinedMatrix("COG")) };
-
-		_vector				vScaleHead, vQuaternionHead, vTranslationHead;
-		_vector				vScaleCog, vQuaternionCog, vTranslationCog;
-
-		XMMatrixDecompose(&vScaleHead, &vQuaternionHead, &vTranslationHead, HeadCombinedMatrix);
-		XMMatrixDecompose(&vScaleCog, &vQuaternionCog, &vTranslationCog, HeadCombinedMatrix);
-
-		_vector				vCogQuaternionInv = { XMQuaternionInverse(vQuaternionCog) };
-
-		_vector				vTotalQuaternionHead = { XMQuaternionMultiply(XMQuaternionNormalize(vCogQuaternionInv), XMQuaternionNormalize(vQuaternionHead)) };
-		_matrix				HeadRotateMatrix = { XMMatrixRotationQuaternion(vTotalQuaternionHead) };
-
 		_vector				vMyLook = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
-		_vector				vHeadWorldLook = { XMVector3TransformNormal(XMVectorSet(0.f, 0.f, 1.f, 0.f), /*HeadRotateMatrix * */m_pTransformCom->Get_WorldMatrix()) };
-
-		//	vHeadWorldLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
+		_float4				vHeadWorldLook = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
+		_float				fHeadMagnitude = sqrt(vHeadWorldLook.x * vHeadWorldLook.x + vHeadWorldLook.y * vHeadWorldLook.y + vHeadWorldLook.z * vHeadWorldLook.z);
+		_float				fHeadWorldAngle = acosf(vHeadWorldLook.y / fHeadMagnitude);
 
 		_matrix				CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
-		_vector				vCamLook = { CamWorldMatrix.r[CTransform::STATE_LOOK] };/*
-		_vector				vCamPosition = { CamWorldMatrix.r[CTransform::STATE_POSITION] };
-		_vector				vCamFocusPosition = { vCamPosition + XMVector3Normalize(vCamLook) * 7.f };*/
+		_float4				vCamLook = { CamWorldMatrix.r[CTransform::STATE_LOOK] };
+		_float				fCamMagnitude = sqrt(vCamLook.x * vCamLook.x + vCamLook.y * vCamLook.y + vCamLook.z * vCamLook.z);
+		_float				fCamAngle = acosf(vCamLook.y / fCamMagnitude);
 
-		//_vector				vMyPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
-		//_vector				vDirectionToFocus = { vCamFocusPosition - vMyPosition };
-		//_vector				vCamLook = { m_pCamera->Get_Transform()->Get_State_Vector(CTransform::STATE_LOOK) };
+		_vector				vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT) };
+		_float				fAngle = fabs(fHeadWorldAngle - fCamAngle);
 
-		_float				fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vHeadWorldLook), XMVector3Normalize(vCamLook))) };
-		//	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vHeadWorldLook), XMVector3Normalize(vCamLook))) };
-		if (fabsf(fDot) > 0.9999f)
-		{
-			return;
+		if (vHeadWorldLook.y < vCamLook.y) {
+			fAngle *= -1;
 		}
-		
-		static _vector vPreRotateAxis;
-		_vector				vRotateAxis = { XMVector3Cross(XMVector3Normalize(vHeadWorldLook), XMVector3Normalize(vCamLook)) };
-		_float				fAngle = { acosf(fDot) };
-		
-		if (fAngle > XMConvertToRadians(90)) {
-			fAngle = XMConvertToRadians(90);
-			vRotateAxis = vPreRotateAxis;
+
+		cout << XMConvertToDegrees(fAngle) << endl;
+
+
+		static _float fCurAngle = 0.f;
+		if (!m_isTurnSpineLight) {
+			if (fabs(fCurAngle) > 0.0001) {
+				fCurAngle += fTimeDelta * -fCurAngle * 3;
+			}
+			else {
+				fCurAngle = 0.f;
+				return;
+			}
 		}
 		else {
-			vPreRotateAxis = vRotateAxis;
+			fCurAngle += fTimeDelta * (fAngle - fCurAngle) * 3;
 		}
 
 		list<_uint>			ChildJointIndices;
-		pModel->Get_Child_ZointIndices("spine_0", "head", ChildJointIndices);
-		ChildJointIndices.pop_back();
+		pModel->Get_Child_ZointIndices("l_arm_clavicle", "l_weapon", ChildJointIndices);
 
 		_uint				iNumChildJoint = { static_cast<_uint>(ChildJointIndices.size()) };
-		_float				fDevidedAngle = { fAngle / iNumChildJoint };
+		_float				fDevidedAngle = { fCurAngle / iNumChildJoint };
 		vector<string>		BoneNames = { pModel->Get_BoneNames() };
 
 		vRotateAxis = XMVector3TransformNormal(vRotateAxis, m_pTransformCom->Get_WorldMatrix_Inverse());
 
-		_vector				vQuaternion = { XMQuaternionRotationAxis(vRotateAxis, fDevidedAngle) };
-		_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vQuaternion) };
+		_vector				vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, fDevidedAngle) };
+
+		vNewQuaternion = XMVectorSetX(vNewQuaternion, 0.f);
+		vNewQuaternion = XMQuaternionNormalize(vNewQuaternion);
+
+		_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
 
 		for (auto& iJointIndex : ChildJointIndices)
 		{
@@ -1814,7 +1808,6 @@ HRESULT CPlayer::Add_PartObjects()
 	if (nullptr == pWeaponObject)
 		return E_FAIL;
 	m_Weapons[CPlayer::STG] = pWeaponObject;
-
 
 	return S_OK;
 }

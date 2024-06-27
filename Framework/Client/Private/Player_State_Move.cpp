@@ -26,6 +26,13 @@ void CPlayer_State_Move::OnStateUpdate(_float fTimeDelta)
 
 	Update_State();
 
+	if (m_pPlayer->Get_Spotlight()) {
+		m_pPlayer->Set_TurnSpineLight(true);
+	}
+	else {
+		m_pPlayer->Set_TurnSpineLight(false);
+	}
+
 	if (m_pPlayer->Get_Weapon() != nullptr) {
 		if (m_pPlayer->Get_Spotlight() &&
 			m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
@@ -35,8 +42,6 @@ void CPlayer_State_Move::OnStateUpdate(_float fTimeDelta)
 			m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::MOVE);
 		}
 	}
-
-
 }
 
 void CPlayer_State_Move::OnStateExit()

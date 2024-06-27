@@ -122,9 +122,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	CImgui_Manager::Destroy_Instance();
 	return (int)msg.wParam;
 }
-
-
-
 //
 //  ÇÔ¼ö: MyRegisterClass()
 //

@@ -374,8 +374,6 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 	finalMatrix = m_pTransformCom->Get_WorldMatrix() * CombinedMatrix; //* CombinedPlayerMatrix;
 
 
-	cout << finalMatrix.r[3].m128_f32[0] << ' ' << finalMatrix.r[3].m128_f32[1] << ' ' << finalMatrix.r[3].m128_f32[2] << endl;
-
 //		* m_pPlayer->Get_Transform()->Get_WorldMatrix()
 //		* XMMatrixTranslationFromVector(m_pPlayer->Get_Transform()->Get_State_Vector(CTransform::STATE_LOOK) * -100.f);
 

@@ -19,7 +19,7 @@ void CPlayer_State_Move_Walk::OnStateEnter()
 	}
 
 	m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
-	m_pPlayer->Get_Body_Model()->Set_Loop(1, true);
+	m_pPlayer->Get_Body_Model()->Set_Loop(1, false);
 	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
 	m_pPlayer->Get_Body_Model()->Reset_PreAnim_CurrentAnim(1);
 }
@@ -141,9 +141,9 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 #pragma endregion
 
 #pragma region 종료시 초기화
-	if (m_pPlayer->Get_Body_Model()->Get_BlendWeight(1) != 0 && m_pPlayer->Get_Body_Model()->isFinished(1)) {
-		m_pPlayer->Get_Body_Model()->Set_TrackPosition(0, 0.f, true);
-		m_pPlayer->Get_Body_Model()->Set_TrackPosition(1, 0.f, true);
+	if (m_pPlayer->Get_Body_Model()->Get_BlendWeight(1) >= 0.1f	 && m_pPlayer->Get_Body_Model()->isFinished(1)) {
+		m_pPlayer->Get_Body_Model()->Set_TrackPosition(0, 0.f, false);
+		m_pPlayer->Get_Body_Model()->Set_TrackPosition(1, 0.f, false);
 		//m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
 	}
 	else {

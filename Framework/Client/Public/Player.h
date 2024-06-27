@@ -105,8 +105,9 @@ public:
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
 	void										Set_Spotlight(_bool isSpotlight); 
 	void										Set_Equip(EQUIP eEquip);
-	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineHold = isTurnSpineDefault; }
+	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineDefault = isTurnSpineDefault; }
 	void										Set_TurnSpineHold(_bool isTurnSpineHold) { m_isTurnSpineHold = isTurnSpineHold;}
+	void										Set_TurnSpineLight(_bool isTurnSpineLight) { m_isTurnSpineLight = isTurnSpineLight; }
 
 	void										Change_State(STATE eState);
 	void										Change_AnimSet_Move(ANIMSET_MOVE eAnimSetMove) { m_eAnimSet_Move = eAnimSetMove; }
@@ -132,8 +133,9 @@ private:
 	_bool m_isSpotlight = { false };
 	DWORD m_dwDirection = { 0 };
 
-	_bool m_isTurnSpineDefault = { true };
+	_bool m_isTurnSpineDefault = { false };
 	_bool m_isTurnSpineHold = { false };
+	_bool m_isTurnSpineLight = { false };
 
 	ANIMSET_MOVE m_eAnimSet_Move = { FINE };
 	ANIMSET_HOLD m_eAnimSet_Hold = { HOLD_HG };
