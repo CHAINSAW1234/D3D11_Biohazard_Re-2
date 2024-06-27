@@ -138,6 +138,33 @@ HRESULT CComputeShader::Bind_RawValue(const _char* pConstantName, const void* pD
 	return pVariable->SetRawValue(pData, 0, iLength);
 }
 
+HRESULT CComputeShader::Bind_Uav(const _char* pConstantName, ID3D11UnorderedAccessView* pUav)
+{
+	ID3DX11EffectUnorderedAccessViewVariable* pUAVVariable = m_pEffect->GetVariableByName(pConstantName)->AsUnorderedAccessView();
+	if (nullptr == pUAVVariable)
+		return E_FAIL;
+
+	return pUAVVariable->SetUnorderedAccessView(pUav);
+}
+
+HRESULT CComputeShader::Bind_Constant_Buffer(const _char* pConstantName, ID3D11Buffer* pCB)
+{
+	ID3DX11EffectConstantBuffer* pEffectCB = m_pEffect->GetVariableByName(pConstantName)->AsConstantBuffer();
+	if (nullptr == pEffectCB)
+		return E_FAIL;
+
+	return pEffectCB->SetConstantBuffer(pCB);
+}
+
+HRESULT CComputeShader::Bind_Structured_Buffer(const _char* pConstantName, ID3D11ShaderResourceView* pSRV)
+{
+	ID3DX11EffectShaderResourceVariable* pEffectSRV = m_pEffect->GetVariableByName(pConstantName)->AsShaderResource();
+	if (nullptr == pEffectSRV)
+		return E_FAIL;
+
+	return pEffectSRV->SetResource(pSRV);
+}
+
 HRESULT CComputeShader::Bind_Texture(const _char* pConstantName, ID3D11UnorderedAccessView* pUAV)
 {
 	ID3DX11EffectUnorderedAccessViewVariable* pUAVVariable = m_pEffect->GetVariableByName(pConstantName)->AsUnorderedAccessView();

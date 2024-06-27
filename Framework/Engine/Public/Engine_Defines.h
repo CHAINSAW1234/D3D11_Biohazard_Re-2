@@ -182,3 +182,9 @@ using namespace Engine;
 #define ANIMATION_LOD
 
 #pragma endregion
+
+#pragma region Skinned Mesh Decal
+
+#define SKINNING_THREAD_GROUP_SIZE 64
+
+#pragma endregion

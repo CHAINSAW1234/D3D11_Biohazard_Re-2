@@ -19,6 +19,7 @@
 #include "GameObject.h"
 #include "Easing.h"
 #include "Animation_Library.h"
+#include "Compute_Shader_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -164,9 +165,16 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 	}
 
 	m_pAnimation_Library = CAnimation_Library::Create();
-	if (nullptr == m_pEasing)
+	if (nullptr == m_pAnimation_Library)
 	{
 		MSG_BOX(TEXT("Error: m_pAnimation_Library::Create -> nullptr"));
+		return E_FAIL;
+	}
+
+	m_pCS_Manager = CCompute_Shader_Manager::Create(*ppDevice,*ppContext);
+	if (nullptr == m_pCS_Manager)
+	{
+		MSG_BOX(TEXT("Error: m_pCS_Manager::Create -> nullptr"));
 		return E_FAIL;
 	}
 
@@ -1241,6 +1249,19 @@ list<string> CGameInstance::Get_Animation_Tags(const wstring& setrAnimLayerTag)
 
 	return m_pAnimation_Library->Get_Animation_Tags(setrAnimLayerTag);
 }
+void CGameInstance::Bind_Essential_Resource_Skinning(_float4x4 WorldMat, _float4x4* pBoneMatrices)
+{
+	m_pCS_Manager->Bind_Essential_Resource_Skinning(WorldMat, pBoneMatrices);
+}
+
+void CGameInstance::Bind_Resource_Skinning(SKINNING_INPUT Input)
+{
+	m_pCS_Manager->Bind_Resource_Skinning(Input);
+}
+void CGameInstance::Perform_Skinning(_uint iNumVertices)
+{
+	m_pCS_Manager->Perform_Skinning(iNumVertices);
+}
 #pragma endregion
 
 #pragma region Render_Target_Debugger
@@ -1388,4 +1409,5 @@ void CGameInstance::Free()
 	Safe_Release(m_pPhysics_Controller);
 	Safe_Release(m_pEasing);
 	Safe_Release(m_pAnimation_Library);
+	Safe_Release(m_pCS_Manager);
 }

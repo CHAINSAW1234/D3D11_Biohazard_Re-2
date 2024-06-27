@@ -282,6 +282,11 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	RayCasting_Camera();
 
+#pragma region RaySetting
+	m_pGameInstance->Set_RayOrigin_Aim(m_pCamera->GetPosition());
+	m_pGameInstance->Set_RayDir_Aim(m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK));
+#pragma endregion
+
 	if (m_bRecoil)
 	{
 		Apply_Recoil(fTimeDelta);
@@ -296,7 +301,7 @@ void CPlayer::Tick(_float fTimeDelta)
 			m_bLerp = true;
 		}
 		
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
 			RayCast_Shoot();
 
@@ -401,8 +406,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		pBodyModel->Play_IK(m_pTransformCom, fTimeDelta);
 	}*/
 
-	if (m_pController)
-		m_pController->Update_Collider();
+	/*if (m_pController)
+		m_pController->Update_Collider();*/
 
 	Turn_Spine_Default(fTimeDelta);
 	Turn_Spine_Hold(fTimeDelta);		// Hold 상태에서 척추를 상하로만 돌림
@@ -1057,12 +1062,12 @@ void CPlayer::ResetCamera()
 	m_pTransformCom_Camera->Set_RotationMatrix_Pure(Char_RotMat);
 
 	m_fRight_Dist_Look = m_fRight_Dist_Look_Default;
-	m_fUp_Dist_Look = m_fRight_Dist_Look_Default;
+	m_fUp_Dist_Look = m_fUp_Dist_Look_Default;
 	m_fLook_Dist_Look = m_fLook_Dist_Look_Default;
 
-	m_fLerpAmount_Right = m_fRight_Dist_Look;
-	m_fLerpAmount_Up = m_fUp_Dist_Look;
-	m_fLerpAmount_Look = m_fLook_Dist_Look;
+	m_fLerpAmount_Right = m_fRight_Dist_Pos;
+	m_fLerpAmount_Up = m_fUp_Dist_Pos;
+	m_fLerpAmount_Look = m_fLook_Dist_Pos;
 }
 
 void CPlayer::Apply_Recoil(_float fTimeDelta)

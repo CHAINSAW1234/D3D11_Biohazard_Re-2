@@ -30,6 +30,7 @@ public:
 	virtual void						Tick(_fmatrix WorldMatrix) override;
 	virtual _bool						Intersect(CCollider::TYPE eType, CBounding* pBounding) override;
 	virtual _bool						Intersect(CBounding_AABB* pTargetBounding);
+	virtual _bool						IntersectRayAABB(const _vector& rayOrigin, const _vector& rayDir, float& minDistance, float& maxDistance);
 #ifdef _DEBUG
 public:
 	virtual HRESULT						Render(PrimitiveBatch<VertexPositionColor>* pBatch) override;

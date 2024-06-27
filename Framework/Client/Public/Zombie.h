@@ -66,6 +66,10 @@ public:		/* Access */
 private:	/* Initialize_PartObjects_Models */
 	virtual HRESULT 					Initialize_PartModels() override;
 	
+public://For Decal
+	virtual void						Perform_Skinning() override;
+	virtual void						Ready_Decal() override;
+
 private: // For AIController
 	class CBlackBoard_Zombie*			m_pBlackBoard = { nullptr };
 

@@ -352,6 +352,40 @@ public:
 
 #pragma endregion
 
+#pragma region For Camera & Picking
+public:
+	void									Set_RayOrigin_Aim(_float4 vRayOrigin)
+	{
+		m_vRayOrigin_Aim = vRayOrigin;
+	}
+	void									Set_RayDir_Aim(_float4 vRayDir)
+	{
+		m_vRayDir_Aim = vRayDir;
+	}
+	_float4									Get_RayOrigin_Aim()
+	{
+		return m_vRayOrigin_Aim;
+	}
+	_float4									Get_RayDir_Aim()
+	{
+		return m_vRayDir_Aim;
+	}
+	void									Set_Camera_Transform(class CTransform* pTransform)
+	{
+		m_pCameraTransform = pTransform;
+	}
+	class CTransform*						Get_Camera_Transform()
+	{
+		return m_pCameraTransform;
+	}
+#pragma endregion
+
+#pragma region For Compute Shader Manager
+	void									Bind_Essential_Resource_Skinning(_float4x4 WorldMat, _float4x4* pBoneMatrices);
+	void									Bind_Resource_Skinning(SKINNING_INPUT Input);
+	void									Perform_Skinning(_uint iNumVertices);
+#pragma endregion
+
 private:
 	class CGraphic_Device*					m_pGraphic_Device = { nullptr };
 	class CInput_Device*					m_pInput_Device = { nullptr };
@@ -373,7 +407,7 @@ private:
 	class CAIController*					m_pAIController = { nullptr };
 	class CEasing*							m_pEasing = { nullptr };
 	class CAnimation_Library*				m_pAnimation_Library = { nullptr };
-
+	class CCompute_Shader_Manager*			m_pCS_Manager = { nullptr };
 
 	/*for physics*/
 	_bool									m_bSimulate = { false };
@@ -384,6 +418,10 @@ private:
 
 	class CGameObject*						m_pPlayer = { nullptr };
 	_bool									m_bPause = { false };
+
+	_float4									m_vRayOrigin_Aim;
+	_float4									m_vRayDir_Aim;
+	class CTransform*						m_pCameraTransform = { nullptr };
 public:
 	static void Release_Engine();
 	virtual void Free() override;
