@@ -97,7 +97,6 @@ private:
 	_uint							m_iInvenCount = { 8 };
 	_uint                           m_iInvenMaxCount = { 20 };
 
-
 	/* for Highlighter */
 	CSlot_Highlighter*				m_pSlotHighlighter = { nullptr };
 	CTransform*						m_pSlotHighlighterTransform = { nullptr };
@@ -106,6 +105,10 @@ private:
 	/* for. Item_UI */
 	vector<CItem_UI*>				m_vecItem_UI;
 	CItem_UI*						m_pSelected_ItemUI = { nullptr };
+	
+	/*for. Drag_Shadow*/
+	CItem_UI*						m_pDragShadow = { nullptr };
+	CTransform*						m_pDragShadowTransform = { nullptr };
 
 	/* for. ContextMenu */
 	CContextMenu*					m_pContextMenu = { nullptr };
@@ -115,6 +118,7 @@ private:
 
 private :	/*for IDLE_Operation*/
 	_bool							m_IsNoOneHover = { true };
+	_float							m_fPressingTime = { 0.f };
 
 
 private:	/*for. COMBINED_ITEM_Operation*/
@@ -128,12 +132,11 @@ private:
 	HRESULT Init_InvenSlot();
 	HRESULT Init_SlotHighlighter();
 	HRESULT Init_ItemUI();
+	HRESULT Init_DragShdow();
 	HRESULT Init_ContextMenu();
-	HRESULT Seting_SubInven();
 
+	HRESULT Seting_SubInven();
 	HRESULT Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval);
-	HRESULT Create_SlotHighlighter(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI);
-	HRESULT Create_ItemUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI);
 
 public:
 	static CInventory_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

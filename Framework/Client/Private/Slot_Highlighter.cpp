@@ -32,6 +32,9 @@ void CSlot_Highlighter::FirstTick_Seting()
 {
 	if(false == m_IsChild)
 	{
+		static_cast<CSlot_Highlighter*>(m_vecChildUI[CURSOR_SH])->Set_SH_Role(CURSOR_SH);
+		static_cast<CSlot_Highlighter*>(m_vecChildUI[GLITTER_SH])->Set_SH_Role(GLITTER_SH);
+
 		m_pCursorTranform = static_cast<CTransform*>(m_vecChildUI[CURSOR_SH]->Get_Component(g_strTransformTag));
 		Safe_AddRef(m_pCursorTranform);
 		m_vOriginDiff = GetPositionVector() - m_vecChildUI[CURSOR_SH]->GetPositionVector();
@@ -77,14 +80,46 @@ void CSlot_Highlighter::Set_Dead(_bool bDead)
 
 	for (auto& iter : m_vecChildUI)
 	{
+		if (true == m_isDragShadow)
+		{
+			switch (static_cast<CSlot_Highlighter*>(iter)->Get_SH_Role())
+			{
+			case CURSOR_SH: {
+				iter->Set_Dead(bDead);
+				break;
+			}
+
+			case GLITTER_SH: {
+				iter->Set_Dead(bDead);
+				break;
+			}
+
+			default:
+				break;
+			}
+		}
+
+		else
+		{
+			switch (static_cast<CSlot_Highlighter*>(iter)->Get_SH_Role())
+			{
+			case CURSOR_SH: {
+				iter->Set_Dead(bDead);
+				break;
+			}
+
+			case GLITTER_SH: {
+				iter->Set_Dead(true);
+				break;
+			}
+
+
+			default:
+				break;
+			}
+		}
 
 	}
-
-	if (nullptr != m_vecChildUI[CURSOR_SH])
-		m_vecChildUI[CURSOR_SH]->Set_Dead(bDead);
-
-	if (nullptr != m_vecChildUI[GLITTER_SH])
-		m_vecChildUI[GLITTER_SH]->Set_Dead(true);
 }
 
 void CSlot_Highlighter::ResetPosition(_float4 fResetPos)

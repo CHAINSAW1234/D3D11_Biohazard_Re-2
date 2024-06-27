@@ -37,7 +37,7 @@ void CItem_UI::Tick(_float fTimeDelta)
 	if (true == m_bDead)
 		return;
 
-	if (m_iItemQuantity <= 0)
+	if (m_iItemQuantity <= 0 && CONSUMABLE == m_eInvenItemType)
 	{
 		Reset_ItemUI();
 		return;
@@ -57,11 +57,13 @@ void CItem_UI::Tick(_float fTimeDelta)
 		static_cast<CCustomize_UI*>(m_mapPartUI[TEXT("CountDisplay")])->Set_Text(0, to_wstring(m_iItemQuantity));
 		break;
 	}
-		
+
 	case Client::QUEST:
 		break;
+
 	case Client::INVEN_ITEM_TYPE_END:
 		break;
+
 	default:
 		break;
 	}
@@ -145,6 +147,11 @@ void CItem_UI::Set_Dead(_bool bDead)
 		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(true);
 		break;
 	}
+
+	case Client::DRAG_SHADOW: {
+		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(true);
+		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(true);
+	}
 		
 	default:
 		break;
@@ -175,6 +182,9 @@ void CItem_UI::Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSe
 	Set_Position(vSetPos);
 
 	m_iItemQuantity = iVariation;
+
+	if (DRAG_SHADOW == m_eInvenItemType)
+		Set_Value_Color(&m_vColor[1]);
 }
 
 CItem_UI* CItem_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

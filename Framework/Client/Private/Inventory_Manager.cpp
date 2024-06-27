@@ -4,8 +4,8 @@
 #include "Inventory_Item_UI.h"
 
 constexpr _float Z_POS_SLOT = 0.8f;
-constexpr _float Z_POS_ITEM_UI = 0.7f;
-constexpr _float Z_POS_HIGH_LIGHTER = 0.6f;
+constexpr _float Z_POS_HIGH_LIGHTER = 0.7f;
+constexpr _float Z_POS_ITEM_UI = 0.6f;
 constexpr _float Z_POS_CONTEXT_MENU = 0.5f;
 
 constexpr _float SLOT_INTERVAL_X = 74.f;
@@ -13,6 +13,8 @@ constexpr _float SLOT_INTERVAL_Y = 76.f;
 
 constexpr _int FIRST = 0;
 constexpr _int SECOND = 1;
+
+constexpr _float PRESSING_TIME = 0.5f;
 
 CInventory_Manager::CInventory_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -35,6 +37,9 @@ HRESULT CInventory_Manager::Initialize()
 	if (FAILED(Init_ItemUI()))
 		return E_FAIL;
 
+	if (FAILED(Init_DragShdow()))
+		return E_FAIL;
+
 	if (FAILED(Init_ContextMenu()))
 		return E_FAIL;
 
@@ -51,6 +56,8 @@ void CInventory_Manager::FirstTick_Seting()
 
 	for (auto& iter : m_vecItem_UI)
 		iter->FirstTick_Seting();
+
+	m_pDragShadow->FirstTick_Seting();
 
 	if (FAILED(Seting_SubInven()))
 		MSG_BOX(TEXT("Failed to Find SubInven"));
@@ -136,15 +143,10 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 	if (false == m_IsNoOneHover)
 	{
 		_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
-		HoveredPos.z = Z_POS_ITEM_UI;
+		HoveredPos.z = Z_POS_HIGH_LIGHTER;
 		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
 
-		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-		{
-			int a = 0;
-		}
-
-		else if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
 			for (auto& iter : m_vecItem_UI)
 			{
@@ -152,9 +154,35 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 				{
 					//이징 스타트 도착 지점 제대로 정해주기
 					_float3 TempTrashCanValue = _float3(HoveredPos.x, HoveredPos.y, Z_POS_CONTEXT_MENU);
-					m_pContextMenu->Set_Operation(iter->Get_InvenItemType(), true, TempTrashCanValue, TempTrashCanValue);
+					m_pContextMenu->Set_Operation(iter->Get_ItemType(), true, TempTrashCanValue, TempTrashCanValue);
 					m_eInven_Manager_State = CONTEXTUI_SELECT;
 					m_pSelected_ItemUI = iter;
+				}
+			}
+		}
+
+		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			m_fPressingTime += fTimeDelta;
+			if (m_fPressingTime >= PRESSING_TIME)
+			{
+				for (auto& iter : m_vecItem_UI)
+				{
+					if (true == iter->IsMouseHover() && true == iter->Get_isWorking())
+					{
+						_vector TempTrashCanValue = XMVectorSet(HoveredPos.x, HoveredPos.y, Z_POS_ITEM_UI, 0.f);
+						m_eInven_Manager_State = REARRANGE_ITEM;
+						
+						m_pDragShadow->Set_ItemUI(iter->Get_ItemNumber(), DRAG_SHADOW, TempTrashCanValue, iter->Get_ItemQuantity());
+						m_pDragShadow->Set_Dead(false);
+
+						m_pSelected_ItemUI = iter;
+						
+						m_fPressingTime = 0.f;
+
+						m_pSlotHighlighter->Set_DragShadow(true);
+						break;
+					}
 				}
 			}
 		}
@@ -276,7 +304,40 @@ void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 
 void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 {
+	m_IsNoOneHover = true;
+	CInventory_Slot* pHoveredSlot = nullptr;
 
+	for (_uint i = 0; i < m_iInvenCount; i++)
+	{
+		if (true == m_vecInvenSlot[i]->IsMouseHover())
+		{
+			m_IsNoOneHover = false;
+			pHoveredSlot = m_vecInvenSlot[i];
+		}
+	}
+
+	if (false == m_IsNoOneHover)
+	{
+		_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
+		HoveredPos.z = Z_POS_HIGH_LIGHTER;
+		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
+
+		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			m_pDragShadowTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
+		}
+
+		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			CTransform* pSelectedItemTransform = m_pSelected_ItemUI->Get_Transform();
+			_float4 fPos = { HoveredPos.x, HoveredPos.y, Z_POS_ITEM_UI, 0.f };
+			pSelectedItemTransform->Set_State(CTransform::STATE_POSITION, fPos);
+			m_pSlotHighlighter->Set_DragShadow(false);
+			m_eInven_Manager_State = EVENT_IDLE;
+			m_pDragShadow->Set_Dead(true);
+			m_pSelected_ItemUI = nullptr;
+		}
+	}
 }
 
 void CInventory_Manager::DISCARD_ITEM_Operation(_float fTimeDelta)
@@ -543,6 +604,27 @@ HRESULT CInventory_Manager::Init_ItemUI()
 	return S_OK;
 }
 
+HRESULT CInventory_Manager::Init_DragShdow()
+{
+	ifstream inputFileStream;
+	wstring selectedFilePath;
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_UI.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_ItemUI"),
+		(CGameObject**)&m_pDragShadow, m_pDevice, m_pContext);
+	if (nullptr == m_pDragShadow)
+		return E_FAIL;
+
+	m_pDragShadow->Set_Dead(true);
+	m_pDragShadow->Set_ItemType(DRAG_SHADOW);
+
+	m_pDragShadowTransform = dynamic_cast<CTransform*>(m_pDragShadow->Get_Component(g_strTransformTag));
+
+	Safe_AddRef(m_pDragShadow);
+	Safe_AddRef(m_pDragShadowTransform);
+	return S_OK;
+}
+
 HRESULT CInventory_Manager::Init_ContextMenu()
 {
 	ifstream inputFileStream;
@@ -644,65 +726,6 @@ HRESULT CInventory_Manager::Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DES
 	return S_OK;
 }
 
-HRESULT CInventory_Manager::Create_ItemUI(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI)
-{
-	CItem_UI* pParent_ItemUI = { nullptr };
-
-	for (auto& iter : *vecInvenUI)
-	{
-		if (0 == iter.fMaxFrame && TEXT("") != iter.wstrDefaultTexturPath)
-		{
-			/* For.Prototype_Component_Texture_ */
-			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrDefaultTexturComTag,
-				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath)))) {
-				int a = 0;
-			}
-		}
-
-		else if (0 < iter.fMaxFrame && TEXT("") != iter.wstrDefaultTexturPath)
-		{
-			/* For.Prototype_Component_Texture_ */
-			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrDefaultTexturComTag,
-				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath, (_uint)iter.fMaxFrame)))) {
-				int a = 0;
-			}
-		}
-
-		if (TEXT("") != iter.wstrMaskPath)
-		{
-			/* For.Prototype_Component_Texture_ */
-			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrMaskComTag,
-				CTexture::Create(m_pDevice, m_pContext, iter.wstrMaskPath)))) {
-				int a = 0;
-			}
-		}
-
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_ItemUI"), &iter)))
-			return E_FAIL;
-
-		CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
-
-		CItem_UI* pItemUI = dynamic_cast<CItem_UI*>(pGameObj);
-
-		pItemUI->Set_Dead(true);
-
-		if (nullptr != pParent_ItemUI)
-		{
-			pParent_ItemUI->PushBack_Child(pGameObj);
-			pParent_ItemUI = nullptr;
-		}
-
-		else
-		{
-			m_vecItem_UI.push_back(pItemUI);
-		}
-
-		pParent_ItemUI = pItemUI;
-	}
-
-	return S_OK;
-}
-
 void CInventory_Manager::Free()
 {
 	Safe_Release(m_pDevice);
@@ -725,6 +748,9 @@ void CInventory_Manager::Free()
 	m_vecItem_UI.clear();
 
 	Safe_Release(m_pContextMenu);
+
+	Safe_Release(m_pDragShadow);
+	Safe_Release(m_pDragShadowTransform);
 }
 
 ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)

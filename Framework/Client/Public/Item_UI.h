@@ -30,13 +30,13 @@ public:
 	void				Set_isWorking(_bool IsWorking) { m_isWorking = IsWorking; }
 
 	ITEM_NUMBER			Get_ItemNumber() const { return m_eItemNumber; };
-	void				Set_ItemNumber(ITEM_NUMBER eItmeNum) { m_eItemNumber = eItmeNum; }
-
-	ITEM_TYPE			Get_InvenItemType() const { return m_eInvenItemType; };
-	void				Set_InvenItemType(ITEM_TYPE eItmeType) { 
-		m_eInvenItemType = eItmeType;
-		m_iTextureNum = static_cast<_uint>(m_eInvenItemType);
+	void				Set_ItemNumber(ITEM_NUMBER eItmeNum) { 
+		m_eItemNumber = eItmeNum;
+		m_iTextureNum = static_cast<_uint>(m_eItemNumber);
 	}
+
+	ITEM_TYPE			Get_ItemType() const { return m_eInvenItemType; };
+	void				Set_ItemType(ITEM_TYPE eItmeType) { m_eInvenItemType = eItmeType; }
 
 public:
 	void				Reset_ItemUI();
