@@ -388,7 +388,7 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertic
 		m_pTangents[i] = pVertices[i].vTangent;
 	}
 
-	m_vCenterPoint = vTotal_Pos / m_iNumVertices;
+	m_vCenterPoint = vTotal_Pos / (_float)m_iNumVertices;
 
 	ZeroMemory(&m_InitialData, sizeof m_InitialData);
 	m_InitialData.pSysMem = pVertices;
@@ -490,7 +490,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		vTotal_Pos += pVertices[i].vPosition;
 	}
 
-	m_vCenterPoint = vTotal_Pos / m_iNumVertices;
+	m_vCenterPoint = vTotal_Pos / (_float)m_iNumVertices;
 
 	if (FAILED(__super::Create_Buffer(&m_pVB)))
 		return E_FAIL;
@@ -868,7 +868,7 @@ void CMesh::Release_Dump()
 
 void CMesh::Bind_Resource_Skinning()
 {
-	SKINNING_INPUT Input;
+	SKINNING_INPUT Input = {};
 	Input.pUav = m_pUAV;
 	Input.pSRV_Vertex_Position = m_pSRV_Vertex_Position;
 	Input.pSRV_Vertex_Normal =	m_pSRV_Vertex_Normal;

@@ -60,8 +60,8 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 #pragma region 키 입력에 따른 애니메이션 변경
 		if (m_dwDirection & DIRECTION_FRONT) {
 			m_pPlayer->Change_Body_Animation_Move(0, CPlayer::WALK_F_LOOP);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f, 0.1f);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f, 0.1f);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 0.5f, 10.f);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.5f, 10.f);
 
 			if (m_dwDirection & DIRECTION_LEFT) {
 				m_pPlayer->Change_Body_Animation_Move(1, CPlayer::WALK_L_LOOP);
@@ -70,8 +70,8 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 				m_pPlayer->Change_Body_Animation_Move(1, CPlayer::WALK_R_LOOP);
 			}
 			else {
-				m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 0.1f);
-				m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 0.1f);
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 10.f);
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 10.f);
 			}
 		}
 		else if (m_dwDirection & DIRECTION_BACK) {
@@ -86,13 +86,13 @@ void CPlayer_State_Move_Walk::Set_MoveAnimation(_float fTimeDelta)
 				m_pPlayer->Change_Body_Animation_Move(1,CPlayer::WALK_BACK_R_LOOP);
 			}
 			else {
-				m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 0.1f);
-				m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 0.1f);
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 10.f);
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 10.f);
 			}
 		}
 		else {
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 0.1f);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 0.1f);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 10.f);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 10.f);
 			if (m_dwDirection & DIRECTION_LEFT) {
 				if (m_Prev_FRONT_BACK_Direction == DIRECTION_FRONT) {
 					m_pPlayer->Change_Body_Animation_Move(0,CPlayer::WALK_L_LOOP);

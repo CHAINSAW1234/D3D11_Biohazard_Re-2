@@ -11,12 +11,12 @@ matrix g_BoneMatrices[512];
 bool g_isAlphaTexture;
 bool g_isAOTexture;
 
-texture2D g_DiffuseTexture;
-texture2D g_NormalTexture;
-texture2D g_AlphaTexture;
-texture2D g_AOTexture;
-texture2D g_NoiseTexture;
-texture2D g_DissolveDiffuseTexture;
+Texture2D g_DiffuseTexture;
+Texture2D g_NormalTexture;
+Texture2D g_AlphaTexture;
+Texture2D g_AOTexture;
+Texture2D g_NoiseTexture;
+Texture2D g_DissolveDiffuseTexture;
 
 /* For.Dissolve */
 float g_fDissolveRatio = { 0.f };
@@ -88,7 +88,7 @@ VS_OUT VS_MAIN(VS_IN In)
     matWVP = mul(matWV, g_ProjMatrix);
 
     Out.vPosition = mul(vPosition, matWVP);
-    Out.vNormal = normalize(mul(vNormal, g_WorldMatrix));
+    Out.vNormal = normalize(mul(vNormal, g_WorldMatrix)).xyz;
     Out.vTexcoord = In.vTexcoord;
     Out.vWorldPos = mul(vPosition, g_WorldMatrix);
     Out.vProjPos = Out.vPosition;

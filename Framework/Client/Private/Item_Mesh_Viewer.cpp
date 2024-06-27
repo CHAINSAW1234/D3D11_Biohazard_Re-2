@@ -127,6 +127,8 @@ HRESULT CItem_Mesh_Viewer::Render()
 
 		m_vecModelCom[m_eItem_Number]->Render(static_cast<_uint>(i));
 	}
+
+	return S_OK;
 }
 
 void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)

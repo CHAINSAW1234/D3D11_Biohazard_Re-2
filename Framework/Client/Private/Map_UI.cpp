@@ -3,9 +3,9 @@
 #include "Tab_Window.h"
 #include "Player.h"
 
-#define RED         _float4(0.8, 0, 0, 0)
-#define BLUE        _float4(0.0, 0.7569, 0.85, 0.0)
-#define ALPHA_ZERO  _float4(0, 0, 0, 0)
+#define RED         _float4(0.8f, 0.f, 0.f, 0.f)
+#define BLUE        _float4(0.0f, 0.7569f, 0.85f, 0.0f)
+#define ALPHA_ZERO  _float4(0.f, 0.f, 0.f, 0.f)
 
 #define BLENDING    0.7f
 #define ZERO        0.f

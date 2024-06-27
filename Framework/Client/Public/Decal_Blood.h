@@ -13,7 +13,7 @@ BEGIN(Client)
 class CDecal_Blood : public CDecal
 {
 public:
-	typedef struct : public CGameObject::GAMEOBJECT_DESC
+	typedef struct Decal_Desc: public CGameObject::GAMEOBJECT_DESC
 	{
 		_int iSubType;
 		_int iType;
@@ -24,7 +24,7 @@ protected:
 	virtual ~CDecal_Blood() = default;
 
 public:
-	virtual void	Add_Skinned_Decal(class AddDecalInfo Info) override;
+	virtual void	Add_Skinned_Decal(struct AddDecalInfo Info) override;
 	void			Set_Model(class CModel* pModel)
 	{
 		m_pModel = pModel;

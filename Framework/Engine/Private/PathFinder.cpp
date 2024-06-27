@@ -27,7 +27,7 @@ void CPathFinder::Init_PathFinder()
 	m_Cells = m_pGameInstance->GetCells();
 	m_vecNavCell_Point = m_pGameInstance->GetNavCellPoint();
 
-	m_iCellCount = m_Cells->size();
+	m_iCellCount = (_uint)m_Cells->size();
 
 	m_closedList = new bool[m_iCellCount];
 
@@ -55,7 +55,7 @@ void CPathFinder::Initiate_PathFinding(_uint StartCell, _uint EndCell,_float4 vS
 
 	memset(m_closedList, false, m_iCellCount);
 
-	for (int i = 0; i < m_iCellCount; i++)
+	for (_uint i = 0; i < m_iCellCount; i++)
 	{
 		m_cellDetails[i].f = FLT_MAX;
 		m_cellDetails[i].g = FLT_MAX;

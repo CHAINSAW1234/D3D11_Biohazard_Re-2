@@ -188,10 +188,10 @@ public:		/* For. Access */
 	_bool									Is_Root_Bone(const string& strBoneTag);
 
 	_uint									Get_CurrentMaxKeyFrameIndex(_uint iPlayingIndex);
-	_float									Get_Duration_From_Anim(const wstring& strAnimLayerTag, _int iAnimIndex);
+	_float									Get_Duration_From_Anim(const wstring& strAnimLayerTag, _uint iAnimIndex);
 	_float									Get_Duration_From_Anim(const wstring& strAnimLayerTag, const string& strAnimTag);
 	_float									Get_Duration_From_PlayingInfo(_uint iPlayingIndex);
-	_float									Get_TickPerSec_From_Anim(const wstring& strAnimLayerTag, _int iAnimIndex);
+	_float									Get_TickPerSec_From_Anim(const wstring& strAnimLayerTag, _uint iAnimIndex);
 	_float									Get_TickPerSec_From_Anim(const wstring& strAnimLayerTag, const string& strAnimTag);
 	_float									Get_TickPerSec_From_PlayingInfo(_uint iPlayingIndex);
 	_float									Get_TrackPosition(_uint iPlayingIndex);

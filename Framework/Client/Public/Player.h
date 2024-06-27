@@ -88,7 +88,6 @@ private:
 private:
 	void										Col_Section();
 
-
 #pragma region 현진 추가
 public:
 	static wstring								Get_AnimSetMoveName(ANIMSET_MOVE eAnimSetMove) { return strAnimSetMoveName[eAnimSetMove]; }
@@ -116,14 +115,15 @@ public:
 
 	HRESULT										Add_FSM_States();
 	void										Update_FSM();
-	void										Update_Equip();
+	void										Update_KeyInput_Reload();
 	void										Update_LightCondition();				// 현재 빛 상태에 따라 라이트를 키고 끔, 애니메이션 처리
+	void										Update_Equip();
 	void										Update_AnimSet();
 	void										Update_Direction();
 	void										Turn_Spine_Default(_float fTimeDelta);		// Idle 상태에서 카메라 반대쪽으로 머리 돌리기
 	void										Turn_Spine_Hold(_float fTimeDelta);		// Hold 상태에서의 카메라 보기
 	void										Turn_Spine_Light(_float fTimeDelta);		// Light 상태일때의 카메라 보기
-	void										Update_KeyInput_Reload();
+
 
 	void Swap_Camera();
 private:

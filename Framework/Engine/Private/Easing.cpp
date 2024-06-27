@@ -127,22 +127,22 @@ _float CEasing::EaseInOutSine(_float fStartValue, _float fEndValue, _float fRati
 _float CEasing::EaseInExpo(_float fStartValue, _float fEndValue, _float fRatio)
 {
 	fEndValue -= fStartValue;
-	return fEndValue * pow(2, 10 * (fRatio - 1)) + fStartValue;
+	return fEndValue * _float(pow(2, 10 * (fRatio - 1))) + fStartValue;
 }
 
 _float CEasing::EaseOutExpo(_float fStartValue, _float fEndValue, _float fRatio)
 {
 	fEndValue -= fStartValue;
-	return fEndValue * (-pow(2, -10 * fRatio) + 1) + fStartValue;
+	return fEndValue * _float((-pow(2, -10 * fRatio) + 1)) + fStartValue;
 }
 
 _float CEasing::EaseInOutExpo(_float fStartValue, _float fEndValue, _float fRatio)
 {
 	fRatio /= .5f;
 	fEndValue -= fStartValue;
-	if (fRatio < 1) return fEndValue * 0.5f * pow(2, 10 * (fRatio - 1)) + fStartValue;
+	if (fRatio < 1) return fEndValue * 0.5f * _float(pow(2, 10 * (fRatio - 1))) + fStartValue;
 	fRatio--;
-	return fEndValue * 0.5f * (-pow(2, -10 * fRatio) + 2) + fStartValue;
+	return fEndValue * 0.5f * _float((-pow(2, -10 * fRatio) + 2)) + fStartValue;
 }
 
 _float CEasing::EaseInCirc(_float fStartValue, _float fEndValue, _float fRatio)
@@ -268,7 +268,7 @@ _float CEasing::EaseInElastic(_float fStartValue, _float fEndValue, _float fRati
 		s = p / (2 * XM_PI) * asinf(fEndValue / a);
 	}
 
-	return -(a * pow(2, 10 * (fRatio -= 1)) * sinf((fRatio * d - s) * (2 * XM_PI) / p)) + fStartValue;
+	return -(a * _float(pow(2, 10 * (fRatio -= 1))) * sinf((fRatio * d - s) * (2 * XM_PI) / p)) + fStartValue;
 }
 
 _float CEasing::EaseOutElastic(_float fStartValue, _float fEndValue, _float fRatio)
@@ -294,7 +294,7 @@ _float CEasing::EaseOutElastic(_float fStartValue, _float fEndValue, _float fRat
 		s = p / (2 * XM_PI) * asinf(fEndValue / a);
 	}
 
-	return (a * pow(2, -10 * fRatio) * sinf((fRatio * d - s) * (2 * XM_PI) / p) + fEndValue + fStartValue);
+	return (a * _float(pow(2, -10 * fRatio)) * sinf((fRatio * d - s) * (2 * XM_PI) / p) + fEndValue + fStartValue);
 }
 
 _float CEasing::EaseInOutElastic(_float fStartValue, _float fEndValue, _float fRatio)
@@ -320,8 +320,8 @@ _float CEasing::EaseInOutElastic(_float fStartValue, _float fEndValue, _float fR
 		s = p / (2 * XM_PI) * asinf(fEndValue / a);
 	}
 
-	if (fRatio < 1) return -0.5f * (a * pow(2, 10 * (fRatio -= 1)) * sinf((fRatio * d - s) * (2 * XM_PI) / p)) + fStartValue;
-	return a * pow(2, -10 * (fRatio -= 1)) * sinf((fRatio * d - s) * (2 * XM_PI) / p) * 0.5f + fEndValue + fStartValue;
+	if (fRatio < 1) return -0.5f * (a * _float(pow(2, 10 * (fRatio -= 1))) * sinf((fRatio * d - s) * (2 * XM_PI) / p)) + fStartValue;
+	return a * _float(pow(2, -10 * (fRatio -= 1))) * sinf((fRatio * d - s) * (2 * XM_PI) / p) * 0.5f + fEndValue + fStartValue;
 }
 
 

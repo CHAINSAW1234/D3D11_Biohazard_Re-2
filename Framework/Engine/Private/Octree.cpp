@@ -39,7 +39,7 @@ int COctree::GetSceneTriangleCount(CModel* pWorld)
 	auto Meshes = *pWorld->GetMeshes();
 	auto NumMesh = pWorld->GetNumMesh();
 
-	for (int i = 0; i < NumMesh; i++)
+	for (_uint i = 0; i < NumMesh; i++)
 	{
 		numberOfTriangles += Meshes[i]->GetNumFaces();
 	}
@@ -56,11 +56,11 @@ void COctree::GetSceneDimensions(CModel* pWorld)
 
 	int numberOfVerts = 0;
 
-	for (int i = 0; i < NumMesh; i++)
+	for (_uint i = 0; i < NumMesh; i++)
 	{
 		numberOfVerts += Meshes[i]->GetNumVertices();
 
-		for (int n = 0; n < Meshes[i]->GetNumVertices(); n++)
+		for (_uint n = 0; n < Meshes[i]->GetNumVertices(); n++)
 		{
 			auto pVertices = Meshes[i]->GetVertices();
 
@@ -76,9 +76,9 @@ void COctree::GetSceneDimensions(CModel* pWorld)
 
 	float maxWidth = 0.0f, maxHeight = 0.0f, maxDepth = 0.0f;
 
-	for (int i = 0; i < NumMesh; i++)
+	for (_uint i = 0; i < NumMesh; i++)
 	{
-		for (int j = 0; j < Meshes[i]->GetNumVertices(); j++)
+		for (_uint j = 0; j < Meshes[i]->GetNumVertices(); j++)
 		{
 			auto pVertices = Meshes[i]->GetVertices();
 
@@ -164,7 +164,7 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 	auto TempMeshes = pTempWorld->GetMeshes();
 	auto Meshes = pWorld->GetMeshes();
 
-	for (int i = 0; i < pWorld->GetNumMesh(); i++)
+	for (_uint i = 0; i < pWorld->GetNumMesh(); i++)
 	{
 		CMesh* pObject = (*Meshes)[i];
 
@@ -185,7 +185,7 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 		auto TempFaces = (*TempMeshes)[i]->GetFaces();
 		TempFaces->resize(pObject->GetNumFaces());
 
-		for (int j = 0; j < pObject->GetNumFaces(); j++)
+		for (_uint j = 0; j < pObject->GetNumFaces(); j++)
 		{
 			if (pList[i].pFaceList[j])
 			{
@@ -239,7 +239,7 @@ void COctree::CreateNode(CModel* pWorld, int numberOfTriangles, _float4 vCenter,
 
 		_float4 vCtr = vCenter;
 
-		for (int i = 0; i < NumMesh; i++)
+		for (_uint i = 0; i < NumMesh; i++)
 		{
 			CMesh* pObject = (*Meshes)[i];
 
@@ -256,7 +256,7 @@ void COctree::CreateNode(CModel* pWorld, int numberOfTriangles, _float4 vCenter,
 			auto pIndices = pObject->GetIndices();
 			auto Faces = pObject->GetFaces();
 
-			for (int j = 0; j < pObject->GetNumFaces(); j++)
+			for (_uint j = 0; j < pObject->GetNumFaces(); j++)
 			{
 				for (int whichVertex = 0; whichVertex < 3; whichVertex++)
 				{
@@ -307,9 +307,9 @@ void COctree::CreateNode(CModel* pWorld, int numberOfTriangles, _float4 vCenter,
 		int triCount7 = 0;
 		int triCount8 = 0;
 
-		for (int i = 0; i < NumMesh; i++)
+		for (_uint i = 0; i < NumMesh; i++)
 		{
-			for (int j = 0; j < (*Meshes)[i]->GetNumFaces(); j++)
+			for (_uint j = 0; j < (*Meshes)[i]->GetNumFaces(); j++)
 			{
 				if (pList1[i].pFaceList[j])
 				{
@@ -381,7 +381,7 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 	auto Meshes = pWorld->GetMeshes();
 	auto NewMeshes = m_pWorld->GetMeshes();
 
-	for (int i = 0; i < m_pWorld->GetNumMesh(); i++)
+	for (_uint i = 0; i < m_pWorld->GetNumMesh(); i++)
 	{
 		CMesh* pObject = (*Meshes)[i];
 
@@ -391,7 +391,7 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 
 		NewMeshes->push_back(newObject);
 
-		int numOfFaces = pObject->GetNumFaces();
+		_uint numOfFaces = pObject->GetNumFaces();
 
 		(*NewMeshes)[i]->SetNumFaces(numOfFaces);
 		(*NewMeshes)[i]->SetNumVertices(pObject->GetNumVertices());
@@ -406,7 +406,7 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 
 		if (pIndices)
 		{
-			for (int j = 0; j < numOfFaces * 3; j += 3)
+			for (_uint j = 0; j < numOfFaces * 3; j += 3)
 			{
 				pIndices[j] = (*Faces)[j / 3]->VertexIndex[0];
 				pIndices[j + 1] = (*Faces)[j / 3]->VertexIndex[1];
@@ -507,7 +507,7 @@ void COctree::DrawOctree(COctree* pNode, CModel* pRootWorld, CShader* pShader)
 
 		auto Meshes = pNode->m_pWorld->GetMeshes();
 
-		for (int i = 0; i < pNode->m_pWorld->GetNumMesh(); ++i)
+		for (_uint i = 0; i < pNode->m_pWorld->GetNumMesh(); ++i)
 		{
 			if ((*Meshes)[i]->GetNumIndices() != 0)
 			{
@@ -928,7 +928,7 @@ void COctree::Render_Node(CModel* pRootWorld, CShader* pShader)
 		{
 			auto Meshes = m_pOctreeNodes[i]->m_vecEntryNode[j]->GetMeshes();
 
-			for (int k = 0; k < m_pOctreeNodes[i]->m_vecEntryNode[j]->GetNumMesh(); ++k)
+			for (_uint k = 0; k < m_pOctreeNodes[i]->m_vecEntryNode[j]->GetNumMesh(); ++k)
 			{
 				if ((*Meshes)[k]->GetNumIndices() != 0)
 				{
@@ -984,7 +984,7 @@ void COctree::Render_Node_LightDepth_Dir(CModel* pRootWorld, CShader* pShader)
 		{
 			auto Meshes = m_pOctreeNodes[i]->m_vecEntryNode[j]->GetMeshes();
 
-			for (int k = 0; k < m_pOctreeNodes[i]->m_vecEntryNode[j]->GetNumMesh(); ++k)
+			for (_uint k = 0; k < m_pOctreeNodes[i]->m_vecEntryNode[j]->GetNumMesh(); ++k)
 			{
 				if ((*Meshes)[k]->GetNumIndices() != 0)
 				{
@@ -1009,7 +1009,7 @@ void COctree::Render_Node_LightDepth_Spot(CModel* pRootWorld, CShader* pShader)
 		{
 			auto Meshes = m_pOctreeNodes[i]->m_vecEntryNode[j]->GetMeshes();
 
-			for (int k = 0; k < m_pOctreeNodes[i]->m_vecEntryNode[j]->GetNumMesh(); ++k)
+			for (_uint k = 0; k < m_pOctreeNodes[i]->m_vecEntryNode[j]->GetNumMesh(); ++k)
 			{
 				if ((*Meshes)[k]->GetNumIndices() != 0)
 				{
@@ -1034,7 +1034,7 @@ void COctree::Render_Node_LightDepth_Point(CModel* pRootWorld, CShader* pShader)
 		{
 			auto Meshes = m_pOctreeNodes[i]->m_vecEntryNode[j]->GetMeshes();
 
-			for (int k = 0; k < m_pOctreeNodes[i]->m_vecEntryNode[j]->GetNumMesh(); ++k)
+			for (_uint k = 0; k < m_pOctreeNodes[i]->m_vecEntryNode[j]->GetNumMesh(); ++k)
 			{
 				if ((*Meshes)[k]->GetNumIndices() != 0)
 				{

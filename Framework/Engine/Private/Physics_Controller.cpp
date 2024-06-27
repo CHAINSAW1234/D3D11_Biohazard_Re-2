@@ -247,7 +247,7 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 		WorldMat = pTransform->Get_WorldMatrix();
 	}
 
-	for (int i = 0; i < VertexNum; ++i)
+	for (_uint i = 0; i < VertexNum; ++i)
 	{
 		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
 		VertexPos = XMVector3TransformCoord(VertexPos, WorldMat);
@@ -259,7 +259,7 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 		vertices.push_back(Ver);
 	}
 
-	for (int i = 0; i < IndexNum; ++i)
+	for (_uint i = 0; i < IndexNum; ++i)
 	{
 		PxU32 Ind = pIndices[i];
 		IndicesVec.push_back(Ind);
@@ -311,7 +311,7 @@ void CPhysics_Controller::Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndic
 		WorldMat = XMMatrixRotationY(PxPi) * pTransform->Get_WorldMatrix();
 	}
 
-	for (int i = 0; i < VertexNum; ++i)
+	for (_uint i = 0; i < VertexNum; ++i)
 	{
 		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
 		VertexPos = XMVector3TransformCoord(VertexPos, WorldMat);
@@ -323,7 +323,7 @@ void CPhysics_Controller::Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndic
 		vertices.push_back(Ver);
 	}
 
-	for (int i = 0; i < IndexNum; ++i)
+	for (_uint i = 0; i < IndexNum; ++i)
 	{
 		PxU32 Ind = pIndices[i];
 		IndicesVec.push_back(Ind);
@@ -378,7 +378,7 @@ void CPhysics_Controller::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices,
 	auto WorldMat = pTransform->Get_WorldMatrix();
 	WorldMat = XMMatrixRotationY(PxPi) * WorldMat;
 
-	for (int i = 0; i < VertexNum; ++i)
+	for (_uint i = 0; i < VertexNum; ++i)
 	{
 		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
 		VertexPos = XMVector3TransformCoord(VertexPos, RotationMatrix);
@@ -390,7 +390,7 @@ void CPhysics_Controller::Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices,
 		vertices.push_back(Ver);
 	}
 
-	for (int i = 0; i < IndexNum; ++i)
+	for (_uint i = 0; i < IndexNum; ++i)
 	{
 		PxU32 Ind = pIndices[i];
 		IndicesVec.push_back(Ind);
@@ -446,7 +446,7 @@ void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, 
 	auto WorldMat = pTransform->Get_WorldMatrix();
 	WorldMat = XMMatrixRotationY(PxPi) * WorldMat;
 
-	for (int i = 0; i < VertexNum; ++i)
+	for (_uint i = 0; i < VertexNum; ++i)
 	{
 		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
 		VertexPos = XMVector3TransformCoord(VertexPos, RotationMatrix);
@@ -458,7 +458,7 @@ void CPhysics_Controller::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, 
 		vertices.push_back(Ver);
 	}
 
-	for (int i = 0; i < IndexNum; ++i)
+	for (_uint i = 0; i < IndexNum; ++i)
 	{
 		PxU32 Ind = pIndices[i];
 		IndicesVec.push_back(Ind);
@@ -516,7 +516,7 @@ void CPhysics_Controller::Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uin
 	RootDelta = XMVectorSetW(RootDelta, 0.f);
 	XMStoreFloat4(&vDelta, RootDelta);
 
-	for (int i = 0; i < VertexNum; ++i)
+	for (_uint i = 0; i < VertexNum; ++i)
 	{
 		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
 		VertexPos = XMVector3TransformCoord(VertexPos, RotationMatrix);
@@ -529,7 +529,7 @@ void CPhysics_Controller::Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uin
 		vertices.push_back(Ver);
 	}
 
-	for (int i = 0; i < IndexNum; ++i)
+	for (_uint i = 0; i < IndexNum; ++i)
 	{
 		PxU32 Ind = pIndices[i];
 		IndicesVec.push_back(Ind);
@@ -587,7 +587,7 @@ void CPhysics_Controller::Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVert
 	RootDelta = XMVectorSetW(RootDelta, 0.f);
 	XMStoreFloat4(&vDelta, RootDelta);
 
-	for (int i = 0; i < VertexNum; ++i)
+	for (_uint i = 0; i < VertexNum; ++i)
 	{
 		_vector VertexPos = XMLoadFloat3(&pVertices[i]);
 		VertexPos = XMVector3TransformCoord(VertexPos, RotationMatrix);
@@ -600,7 +600,7 @@ void CPhysics_Controller::Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVert
 		vertices.push_back(Ver);
 	}
 
-	for (int i = 0; i < IndexNum; ++i)
+	for (_uint i = 0; i < IndexNum; ++i)
 	{
 		PxU32 Ind = pIndices[i];
 		IndicesVec.push_back(Ind);

@@ -387,6 +387,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	Update_Direction();
 	Update_FSM();
 	m_pFSMCom->Update(fTimeDelta);
+
 	Update_KeyInput_Reload();
 	Update_LightCondition();
 	Update_Equip();
@@ -619,6 +620,58 @@ void CPlayer::Update_FSM()
 		Change_State(MOVE);
 }
 
+void CPlayer::Update_KeyInput_Reload()
+{
+	if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
+		if (m_pGameInstance->Get_KeyState('R') == DOWN) {
+			Get_Body_Model()->Set_Loop(3, false);
+			Change_Body_Animation_Hold(3, HOLD_RELOAD);
+			Get_Body_Model()->Set_TrackPosition(3, 0.f);
+			Get_Body_Model()->Set_BlendWeight(3, 10.f, 6.f);
+			//Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.2f);
+			if (nullptr != m_pWeapon) {
+				Get_Weapon_Model()->Change_Animation(0, TEXT("Default"), 2);
+				Get_Weapon_Model()->Set_TrackPosition(0, 0.f);
+			}
+		}
+
+	}
+	else if (Get_Body_Model()->isFinished(3) &&
+		Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == HOLD_RELOAD) {
+		Get_Body_Model()->Set_BlendWeight(3, 0.f, 6.f);
+
+		if (Get_Body_Model()->Get_BlendWeight(3) <= 0.01f) {
+			Get_Body_Model()->Set_Loop(3, true);
+		}
+	}
+}
+
+void CPlayer::Update_LightCondition()
+{
+	//Get_Body_Model()->Set_Loop(4, false);
+	if (Get_Body_Model()->Get_CurrentAnimIndex(4) == LIGHT_ON_OFF) {
+		if (Get_Body_Model()->isFinished(4)) {
+			Set_Spotlight(!m_isSpotlight);
+			//Get_Body_Model()->Set_TrackPosition(4, 0.f, true);
+			Get_Body_Model()->Set_BlendWeight(4, 0, 6.f);
+			Get_Body_Model()->Set_Loop(4, true);
+			Change_Body_Animation_Move(4, ANIM_IDLE);
+		}
+	}
+
+	// test
+	// 이후 실제 라이트와 비교해서 처리하셈
+	if (m_pGameInstance->Get_KeyState('E') == DOWN) {
+		if (Get_Body_Model()->Is_Loop_PlayingInfo(3) &&
+			Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
+			//Get_Body_Model()->Set_TrackPosition(4, 0.f, true);
+			Change_Body_Animation_Move(4, LIGHT_ON_OFF);
+			Get_Body_Model()->Set_Loop(4, false);
+			Get_Body_Model()->Set_BlendWeight(4, 10.f, 6.f);
+		}
+	}
+}
+
 void CPlayer::Update_Equip()
 {
 	static _bool isChange = false;
@@ -632,15 +685,15 @@ void CPlayer::Update_Equip()
 			Get_Body_Model()->Set_Loop(3, false);
 
 			Change_Body_Animation_Hold(3, MOVETOHOLSTER);
-			Get_Body_Model()->Set_BlendWeight(3, 10.f, 0.2f);
+			Get_Body_Model()->Set_BlendWeight(3, 10.f, 6.f);
 		}
 		else if(Get_Body_Model()->isFinished(3)) {
-			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.1f) {
+			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.01f) {
 				isChange = false;
 				Get_Body_Model()->Set_Loop(3, true);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == HOLSTERTOMOVE) {
-					Get_Body_Model()->Set_BlendWeight(3, 0.f, 0.1f);
+					Get_Body_Model()->Set_BlendWeight(3, 0.f, 6.f);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == MOVETOHOLSTER) {
 				Set_Equip(TargetWeapon);
@@ -658,33 +711,6 @@ void CPlayer::Update_Equip()
 		if (m_pGameInstance->Get_KeyState('4') == DOWN) {
 			isChange = true;
 			TargetWeapon = STG;
-		}
-	}
-}
-
-void CPlayer::Update_LightCondition()
-{
-	//Get_Body_Model()->Set_Loop(4, false);
-
-	if (Get_Body_Model()->Get_CurrentAnimIndex(4) == LIGHT_ON_OFF) {
-		if (Get_Body_Model()->isFinished(4)) {
-			Set_Spotlight(!m_isSpotlight);
-			//Get_Body_Model()->Set_TrackPosition(4, 0.f, true);
-			Get_Body_Model()->Set_BlendWeight(4, 0, 0.2f);
-			Get_Body_Model()->Set_Loop(4, true);
-			Change_Body_Animation_Move(4, ANIM_IDLE);
-		}
-	}
-
-	// test
-	// 이후 실제 라이트와 비교해서 처리하셈
-	if (m_pGameInstance->Get_KeyState('E') == DOWN) {
-		if (Get_Body_Model()->Is_Loop_PlayingInfo(3) &&
-			Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
-			//Get_Body_Model()->Set_TrackPosition(4, 0.f, true);
-			Change_Body_Animation_Move(4, LIGHT_ON_OFF);
-			Get_Body_Model()->Set_Loop(4, false);
-			Get_Body_Model()->Set_BlendWeight(4, 0.1f, 0.2f);
 		}
 	}
 }
@@ -992,32 +1018,6 @@ void CPlayer::Turn_Spine_Light(_float fTimeDelta)
 		for (auto& iJointIndex : ChildJointIndices)
 		{
 			pModel->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
-		}
-	}
-}
-
-void CPlayer::Update_KeyInput_Reload()
-{
-	if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
-		if (m_pGameInstance->Get_KeyState('R') == DOWN) {
-			Get_Body_Model()->Set_Loop(3, false);
-			Change_Body_Animation_Hold(3, HOLD_RELOAD);
-			Get_Body_Model()->Set_TrackPosition(3, 0.f);
-			Get_Body_Model()->Set_BlendWeight(3, 10.f, 0.4f);
-			//Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.2f);
-			if (nullptr != m_pWeapon) {
-				Get_Weapon_Model()->Change_Animation(0, TEXT("Default"), 2);
-				Get_Weapon_Model()->Set_TrackPosition(0, 0.f);
-			}
-		}
-		
-	}
-	else if (Get_Body_Model()->isFinished(3) &&
-		Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == HOLD_RELOAD) {
-		Get_Body_Model()->Set_BlendWeight(3, 0.f, 0.1f);
-
-		if (Get_Body_Model()->Get_BlendWeight(3) <= 0.1f) {
-			Get_Body_Model()->Set_Loop(3, true);
 		}
 	}
 }
@@ -1607,7 +1607,7 @@ void CPlayer::RayCasting_Camera()
 	_vector vLook = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_LOOK);
 	_vector vUp = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_UP);
 	_vector vRight = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT);
-	_vector vLookAtPoint;
+	//_vector vLookAtPoint;
 	_vector vPos = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION);
 	_float4 CamPos = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fLerpAmount_Right) + XMVectorScale(XMVector4Normalize(vUp), m_fLerpAmount_Up) + XMVectorScale(XMVector4Normalize(vLook), m_fLerpAmount_Look);
 	//_float4 CamPos = m_pCamera->Get_Position_Float4();

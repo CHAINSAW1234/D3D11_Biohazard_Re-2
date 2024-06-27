@@ -53,8 +53,8 @@ void CPlayer_State_Hold_Idle::Set_MoveAnimation(_float fTimeDelta)
 #pragma region 1
 	if (dwDirection & DIRECTION_FRONT) {
 		m_pPlayer->Change_Body_Animation_Hold(0, CPlayer::STRAFEL_F);
-		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, .5f, 0.2f);
-		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, .5f, 0.2f);
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, .5f, 10.f);
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, .5f, 10.f);
 
 		if (dwDirection & DIRECTION_LEFT) {
 			m_pPlayer->Change_Body_Animation_Hold(1, CPlayer::STRAFEL_L);
@@ -63,14 +63,14 @@ void CPlayer_State_Hold_Idle::Set_MoveAnimation(_float fTimeDelta)
 			m_pPlayer->Change_Body_Animation_Hold(1,CPlayer::STRAFEL_R);
 		}
 		else {
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 0.2f);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 0.2f);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 10.f);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 10.f);
 		}
 	}
 	else if (dwDirection & DIRECTION_BACK) {
 		m_pPlayer->Change_Body_Animation_Hold(0, CPlayer::STRAFEL_B);
-		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, .5f, 0.2f);
-		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, .5f, 0.2f);
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, .5f, 10.f);
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, .5f, 10.f);
 
 		if (dwDirection & DIRECTION_LEFT) {
 			m_pPlayer->Change_Body_Animation_Hold(1, CPlayer::STRAFEL_L);
@@ -79,8 +79,8 @@ void CPlayer_State_Hold_Idle::Set_MoveAnimation(_float fTimeDelta)
 			m_pPlayer->Change_Body_Animation_Hold(1, CPlayer::STRAFEL_R);
 		}
 		else {
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 0.2f);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 0.2f);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 10.f);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 10.f);
 		}
 	}
 	else {
@@ -135,7 +135,7 @@ void CPlayer_State_Hold_Idle::Shot()
 
 	if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == PRESSING && m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
 		if (!m_isShot && m_pPlayer->Get_Body_Model()->Get_BlendWeight(2) == 0.f) {
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 1, 0.1f);
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 1, 10.f);
 			if (1) {
 				// ÃÑ¾Ë ÀÖÀ¸¸é
 				m_pPlayer->Change_Body_Animation_Hold(2, CPlayer::HOLD_SHOT);

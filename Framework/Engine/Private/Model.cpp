@@ -1104,7 +1104,8 @@ _float4 CModel::Get_Mesh_Local_Pos(string strMeshTag)
 	_int			iIndex = { Find_Mesh_Index(strMeshTag) };
 	if (-1 == iIndex)
 		return _float4();
-	return m_Meshes[iIndex]->Get_CenterPoint();
+
+	return _float4(m_Meshes[iIndex]->Get_CenterPoint().x, m_Meshes[iIndex]->Get_CenterPoint().y, m_Meshes[iIndex]->Get_CenterPoint().z, 1.f);
 }
 
 #pragma endregion
@@ -1418,7 +1419,7 @@ _uint CModel::Get_CurrentMaxKeyFrameIndex(_uint iPlayingIndex)
 	return iMaxIndex;
 }
 
-_float CModel::Get_Duration_From_Anim(const wstring& strAnimLayerTag, _int iAnimIndex)
+_float CModel::Get_Duration_From_Anim(const wstring& strAnimLayerTag, _uint iAnimIndex)
 {
 	_float			fDuration = { 0.f };
 
@@ -1470,7 +1471,7 @@ _float CModel::Get_Duration_From_PlayingInfo(_uint iPlayingIndex)
 	return fDuration;
 }
 
-_float CModel::Get_TickPerSec_From_Anim(const wstring& strAnimLayerTag, _int iAnimIndex)
+_float CModel::Get_TickPerSec_From_Anim(const wstring& strAnimLayerTag, _uint iAnimIndex)
 {
 	_float			fTickPerSec = { 0.f };
 
@@ -2891,7 +2892,7 @@ HRESULT CModel::Ready_Meshes(ifstream& ifs)
 		vTotal_CenterPoint += pMesh->Get_CenterPoint();
 	}
 
-	vTotal_CenterPoint = vTotal_CenterPoint / m_iNumMeshes;
+	vTotal_CenterPoint = vTotal_CenterPoint / (_float)m_iNumMeshes;
 	m_vCenterPoint = Convert_Float3_To_Float4_Coord(vTotal_CenterPoint);
 
 	return S_OK;
@@ -2957,7 +2958,7 @@ HRESULT CModel::Ready_Animations(ifstream& ifs)
 	ifs.read(reinterpret_cast<_char*>(&m_iNumAnimations), sizeof(_uint));
 
 	/* For.Animation */
-	_char		szName[MAX_PATH];
+	_char		szName[MAX_PATH] = {};
 
 	if (0 != m_iNumAnimations)
 	{

@@ -837,17 +837,17 @@ HRESULT CGameInstance::End_MRT()
 #pragma endregion
 
 #pragma region Picking
-void CGameInstance::Transform_PickingToLocalSpace(CTransform* pTransform, _float3* pRayDir, _float3* pRayPos)
+void CGameInstance::Transform_PickingToLocalSpace(CTransform* pTransform, _Out_ _float3* pRayDir, _Out_ _float3* pRayPos)
 {
 	return m_pPicking->Transform_PickingToLocalSpace(pTransform, pRayDir, pRayPos);
 }
 
-void CGameInstance::Transform_PickingToWorldSpace(_float4* pRayDir, _float4* pRayPos)
+void CGameInstance::Transform_PickingToWorldSpace(_Out_ _float4* pRayDir, _Out_ _float4* pRayPos)
 {
 	return m_pPicking->Transform_PickingToWorldSpace(pRayDir, pRayPos);
 }
 
-void CGameInstance::Get_PickingWordSpace(_float3* pRayDir, _float3* pRayPos)
+void CGameInstance::Get_PickingWordSpace(_Out_ _float3* pRayDir, _Out_ _float3* pRayPos)
 {
 	if (nullptr == m_pPicking)
 		return;
@@ -855,7 +855,7 @@ void CGameInstance::Get_PickingWordSpace(_float3* pRayDir, _float3* pRayPos)
 	return m_pPicking->Get_PickingWordSpace(pRayDir, pRayPos);
 }
 
-void CGameInstance::Get_PickingWordSpace(_vector& pRayDir, _vector& pRayPos)
+void CGameInstance::Get_PickingWordSpace(_Out_ _vector& pRayDir, _Out_ _vector& pRayPos)
 {
 	if (nullptr == m_pPicking)
 		return;
@@ -1121,20 +1121,29 @@ _bool CGameInstance::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBloc
 {
 	if (m_pPhysics_Controller)
 		return m_pPhysics_Controller->RayCast_Shoot(vOrigin, vDir, pBlockPoint, fMaxDist);
+
+	return false;
 }
 _bool CGameInstance::SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
 {
 	if (m_pPhysics_Controller)
 		return m_pPhysics_Controller->SphereCast_Shoot(vOrigin, vDir, pBlockPoint, fMaxDist);
+
+	return false;
 }
 _bool CGameInstance::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
 {
-	return m_pPhysics_Controller->SphereCast(vOrigin, vDir, pBlockPoint, fMaxDist);
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->SphereCast(vOrigin, vDir, pBlockPoint, fMaxDist);
+
+	return false;
 }
 CRagdoll_Physics* CGameInstance::Create_Ragdoll(vector<class CBone*>* vecBone,CTransform* pTransform, const string& name)
 {
 	if (m_pPhysics_Controller)
 		return m_pPhysics_Controller->Create_Ragdoll(vecBone,pTransform,name);
+	
+	return nullptr;
 }
 void CGameInstance::Start_Ragdoll(CRagdoll_Physics* pRagdoll, _uint iId)
 {
@@ -1145,28 +1154,38 @@ CPxCollider* CGameInstance::Create_Px_Collider(CModel* pModel, CTransform* pTran
 {
 	if (m_pPhysics_Controller)
 		return m_pPhysics_Controller->Create_Px_Collider(pModel, pTransform, iId);
+
+	return nullptr;
 }
 CPxCollider* CGameInstance::Create_Px_Collider_Convert_Root(CModel* pModel, CTransform* pTransform, _int* iId)
 {
 	if (m_pPhysics_Controller)
 		return m_pPhysics_Controller->Create_Px_Collider_Convert_Root(pModel, pTransform, iId);
+
+	return nullptr;
 }
 CPxCollider* CGameInstance::Create_Px_Collider_Convert_Root_Double_Door(CModel* pModel, CTransform* pTransform, _int* iId)
 {
 	if (m_pPhysics_Controller)
 		return m_pPhysics_Controller->Create_Px_Collider_Convert_Root_Double_Door(pModel, pTransform, iId);
+
+	return nullptr;
 }
 
 CPxCollider* CGameInstance::Create_Px_Collider_Cabinet(CModel* pModel, CTransform* pTransform, _int* iId)
 {
 	if (m_pPhysics_Controller)
 		return m_pPhysics_Controller->Create_Px_Collider_Cabinet(pModel, pTransform, iId);
+
+	return nullptr;
 }
 
 CPxCollider* CGameInstance::Create_Px_Collider_Toilet(CModel* pModel, CTransform* pTransform, _int* iId)
 {
 	if (m_pPhysics_Controller)
 		return m_pPhysics_Controller->Create_Px_Collider_Toilet(pModel, pTransform, iId);
+
+	return nullptr;
 }
 
 #pragma endregion
@@ -1188,6 +1207,8 @@ CBehaviorTree* CGameInstance::Create_BehaviorTree(_uint* iId)
 {
 	if (m_pAIController)
 		return m_pAIController->Create_BehaviorTree(iId);
+
+	return nullptr;
 }
 
 CPathFinder* CGameInstance::Create_PathFinder()
@@ -1197,6 +1218,8 @@ CPathFinder* CGameInstance::Create_PathFinder()
 		auto pPathFinder = m_pAIController->Create_PathFinder();
 		return pPathFinder;
 	}
+
+	return nullptr;
 }
 
 void CGameInstance::Initialize_BehaviorTree(_uint* iId)
