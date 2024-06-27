@@ -292,6 +292,12 @@
     <Filter Include="02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu\ContextMenu_Highliter">
       <UniqueIdentifier>{357cd323-5908-4c40-be59-632314974ee5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Decal">
+      <UniqueIdentifier>{3faddc07-8871-4e40-9c1c-1fb18c4c3945}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Decal\Blood">
+      <UniqueIdentifier>{0bc76a0b-c492-43e3-8c07-bfc815ee613f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -612,6 +618,10 @@
     <ClInclude Include="..\Public\Item_DragShadow.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Damage_Zombie.h" />
+    <ClInclude Include="..\Public\Decal_Blood.h">
+      <Filter>02.GameObjects\Decal\Blood</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -901,6 +911,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Item_DragShadow.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Decal_Blood.cpp">
+      <Filter>02.GameObjects\Decal\Blood</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

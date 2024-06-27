@@ -304,6 +304,18 @@
     <Filter Include="01.Utility\AIController\Behavior_Tree\Component\Node\Task_Node">
       <UniqueIdentifier>{646ea284-d093-4675-aafa-a3f2eef2bd3e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\01.GameObjects\Decal">
+      <UniqueIdentifier>{23582ae5-eb33-4b94-8f76-ab319055548b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.Components\Shader\CS_Manager">
+      <UniqueIdentifier>{d8358a95-31d9-4a46-a577-1f1c36614a58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\98.ShaderFiles\Compute_Shader">
+      <UniqueIdentifier>{b2ed8d7a-16d8-4477-88e0-ca617eb559b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\98.ShaderFiles\Compute_Shader\Include">
+      <UniqueIdentifier>{f594eb01-c7e4-4690-8097-f43b811b1306}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -578,6 +590,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Node.cpp">
       <Filter>01.Utility\AIController\Behavior_Tree\Component\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Decal.cpp">
+      <Filter>01.Utility\01.GameObjects\Decal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Compute_Shader_Manager.cpp">
+      <Filter>01.Utility\02.Components\Shader\CS_Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -876,6 +894,12 @@
     <ClInclude Include="..\Public\Node.h">
       <Filter>01.Utility\AIController\Behavior_Tree\Component\Node</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Decal.h">
+      <Filter>01.Utility\01.GameObjects\Decal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Compute_Shader_Manager.h">
+      <Filter>01.Utility\02.Components\Shader\CS_Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -887,10 +911,19 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute.hlsl">
       <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Skinning.csh">
+      <Filter>01.Utility\98.ShaderFiles\Compute_Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\RayCast.csh">
+      <Filter>01.Utility\98.ShaderFiles\Compute_Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli">
       <Filter>01.Utility\98.ShaderFiles</Filter>
+    </None>
+    <None Include="..\Bin\ShaderFiles\globals.shi">
+      <Filter>01.Utility\98.ShaderFiles\Compute_Shader\Include</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

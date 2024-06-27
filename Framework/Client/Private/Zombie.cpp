@@ -12,15 +12,17 @@
 
 #include "Header_Package_Zombie.h"
 #include "Player.h"
+#include "Decal_Blood.h"
+#include "Mesh.h"
 
 #define MODEL_SCALE 0.01f
 
-CZombie::CZombie(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CZombie::CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMonster{ pDevice, pContext }
 {
 }
 
-CZombie::CZombie(const CZombie & rhs)
+CZombie::CZombie(const CZombie& rhs)
 	: CMonster{ rhs }
 {
 
@@ -31,7 +33,7 @@ HRESULT CZombie::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CZombie::Initialize(void * pArg)
+HRESULT CZombie::Initialize(void* pArg)
 {
 	GAMEOBJECT_DESC		GameObjectDesc{};
 
@@ -42,7 +44,7 @@ HRESULT CZombie::Initialize(void * pArg)
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
-		return E_FAIL;	
+		return E_FAIL;
 
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
@@ -71,7 +73,7 @@ HRESULT CZombie::Initialize(void * pArg)
 
 	m_pNavigationCom->FindCell(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
 	_int iCurrentIndex = m_pNavigationCom->GetCurrentIndex();
-	
+
 	//m_pPathFinder->Initiate_PathFinding(iCurrentIndex, iCurrentIndex + 150, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 	m_vNextTarget = m_pPathFinder->GetNextTarget_Opt();
 
@@ -103,7 +105,7 @@ void CZombie::Tick(_float fTimeDelta)
 	{
 		for (auto& it : m_PartObjects)
 		{
-			if(it)
+			if (it)
 				it->SetCulling(true);
 		}
 
@@ -120,7 +122,7 @@ void CZombie::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	if(m_pController)
+	if (m_pController)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
 
 #pragma region BehaviorTree 코드
@@ -130,7 +132,7 @@ void CZombie::Tick(_float fTimeDelta)
 	_float4			vDirection = {};
 	_vector			vRootMoveDir = { XMLoadFloat3(&m_vRootTranslation) };
 	XMStoreFloat4(&vDirection, vRootMoveDir);
-	if(m_pController)
+	if (m_pController)
 		m_pController->Move(vDirection, fTimeDelta);
 
 #pragma region 길찾기 임시 코드
@@ -182,6 +184,33 @@ void CZombie::Tick(_float fTimeDelta)
 			}
 		}
 	}
+
+	m_pColliderCom_Bounding->Tick(m_pTransformCom->Get_WorldMatrix_Pure_Mat());
+
+	auto vRayOrigin = m_pGameInstance->Get_RayOrigin_Aim();
+	auto vRayDir = m_pGameInstance->Get_RayDir_Aim();
+	_float	fMinDist = 0.f;
+	_float	fMaxDist = 0.f;
+	if (m_pColliderCom_Bounding->IntersectRayAABB(XMLoadFloat4(&vRayOrigin), XMLoadFloat4(&vRayDir), fMinDist, fMaxDist))
+	{
+		HitResult hitResult;
+		hitResult.hitModel = this;
+		hitResult.minHitDistance = fMinDist;
+		hitResult.maxHitDistance = fMaxDist;
+
+		_matrix rotMatrix = XMMatrixIdentity();
+		//rotMatrix.SetRotation(mainCamera->GetDirection(), decalAngle);
+
+		AddDecalInfo decalInfo;
+		decalInfo.rayOrigin = vRayOrigin;
+		decalInfo.rayDir = vRayDir;
+		XMStoreFloat4(&decalInfo.decalTangent,XMVector4Transform(m_pGameInstance->Get_Camera_Transform()->Get_State_Float4(CTransform::STATE_RIGHT), rotMatrix));
+		decalInfo.decalSize = _float3(5.f, 5.f, 5.0f);
+		decalInfo.minHitDistance = hitResult.minHitDistance;
+		decalInfo.maxHitDistance = hitResult.maxHitDistance;
+		decalInfo.decalMaterialIndex = 0;
+		m_pDecal_Blood->Add_Skinned_Decal(decalInfo);
+	}
 }
 
 void CZombie::Late_Tick(_float fTimeDelta)
@@ -196,8 +225,14 @@ void CZombie::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	if(m_pController)
+	if (m_pController)
 		m_pController->Update_Collider();
+
+	Perform_Skinning();
+
+#ifdef _DEBUG
+	m_pGameInstance->Add_DebugComponents(m_pColliderCom_Bounding);
+#endif
 }
 
 HRESULT CZombie::Render()
@@ -308,7 +343,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 HRESULT CZombie::Add_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"), 
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
@@ -329,19 +364,31 @@ HRESULT CZombie::Add_Components()
 	ColliderOBBDesc.vRotation = _float3(0.f, XMConvertToRadians(45.0f), 0.f);
 	ColliderOBBDesc.vSize = _float3(0.8f, 0.6f, 0.8f);
 	ColliderOBBDesc.vCenter = _float3(0.f, ColliderOBBDesc.vSize.y * 0.5f, 0.f);
-	
+
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_Body"), (CComponent**)&m_pColliderCom[COLLIDER_BODY], &ColliderOBBDesc)))
 		return E_FAIL;
 
 	/* For.Com_Navigation */
 	CNavigation::NAVIGATION_DESC			NavigationDesc{};
-	
+
 	NavigationDesc.iCurrentIndex = 0;
-	
+
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation"),
 		TEXT("Com_Navigation"), (CComponent**)&m_pNavigationCom, &NavigationDesc)))
 		return E_FAIL;
+
+	/* Com_Collider_Body */
+	CBounding_AABB::BOUNDING_AABB_DESC		ColliderAABBDesc{};
+
+	ColliderAABBDesc.vSize = _float3(0.4f, 1.6f, 0.4f);
+	ColliderAABBDesc.vCenter = _float3(0.f, ColliderAABBDesc.vSize.y * 0.5f, 0.f);
+
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
+		TEXT("Com_Collider_Bounding"), (CComponent**)&m_pColliderCom_Bounding, &ColliderAABBDesc)))
+		return E_FAIL;
+
+	m_pDecal_Blood = CDecal_Blood::Create(m_pDevice, m_pContext);
 
 	return S_OK;
 }
@@ -352,7 +399,7 @@ HRESULT CZombie::Bind_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;	
+		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
@@ -367,7 +414,7 @@ HRESULT CZombie::Add_PartObjects()
 	m_PartObjects.resize(CZombie::PART_ID::PART_END);
 
 	/* For.Part_Body */
-	CPartObject*							pBodyObject = { nullptr };
+	CPartObject* pBodyObject = { nullptr };
 	CBody_Zombie::BODY_MONSTER_DESC			BodyDesc;
 
 	BodyDesc.pParentsTransform = m_pTransformCom;
@@ -381,7 +428,7 @@ HRESULT CZombie::Add_PartObjects()
 
 
 	/* For.Part_Face */
-	CPartObject*							pFaceObject = { nullptr };
+	CPartObject* pFaceObject = { nullptr };
 	CFace_Zombie::FACE_MONSTER_DESC			FaceDesc;
 
 	FaceDesc.pParentsTransform = m_pTransformCom;
@@ -394,7 +441,7 @@ HRESULT CZombie::Add_PartObjects()
 	m_PartObjects[CZombie::PART_ID::PART_FACE] = pFaceObject;
 
 
-	CPartObject*							pFace2Object = { nullptr };
+	CPartObject* pFace2Object = { nullptr };
 	CFace_Zombie::FACE_MONSTER_DESC			Face2Desc;
 
 	Face2Desc.pParentsTransform = m_pTransformCom;
@@ -406,7 +453,7 @@ HRESULT CZombie::Add_PartObjects()
 
 	m_PartObjects[CZombie::PART_ID::PART_FACE2] = pFace2Object;
 
-	CPartObject*							pFace3Object = { nullptr };
+	CPartObject* pFace3Object = { nullptr };
 	CFace_Zombie::FACE_MONSTER_DESC			Face3Desc;
 
 	Face3Desc.pParentsTransform = m_pTransformCom;
@@ -420,7 +467,7 @@ HRESULT CZombie::Add_PartObjects()
 
 
 	/* For.Part_Hat */
-	CPartObject*								pHatObject = { nullptr };
+	CPartObject* pHatObject = { nullptr };
 	CClothes_Zombie::CLOTHES_MONSTER_DESC		ClothesHatDesc;
 
 	ClothesHatDesc.pParentsTransform = m_pTransformCom;
@@ -433,12 +480,12 @@ HRESULT CZombie::Add_PartObjects()
 	m_PartObjects[CZombie::PART_ID::PART_HAT] = pHatObject;
 
 	/* For.Part_Shirts */
-	CPartObject*								pShirtsObject = { nullptr };
+	CPartObject* pShirtsObject = { nullptr };
 	CClothes_Zombie::CLOTHES_MONSTER_DESC		ClothesShirtsDesc;
 
 	ClothesShirtsDesc.pParentsTransform = m_pTransformCom;
 	ClothesShirtsDesc.eType = CClothes_Zombie::CLOTHES_TYPE::TYPE_SHIRTS;
-		
+
 	pShirtsObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Zombie"), &ClothesShirtsDesc));
 	if (nullptr == pShirtsObject)
 		return E_FAIL;
@@ -473,7 +520,7 @@ HRESULT CZombie::Add_PartObjects()
 
 
 	/* For.Part_Pants */
-	CPartObject*								pPantsObject = { nullptr };
+	CPartObject* pPantsObject = { nullptr };
 	CClothes_Zombie::CLOTHES_MONSTER_DESC		ClothesPantsDesc;
 
 	ClothesPantsDesc.pParentsTransform = m_pTransformCom;
@@ -490,14 +537,14 @@ HRESULT CZombie::Add_PartObjects()
 
 HRESULT CZombie::Initialize_PartModels()
 {
-	CModel*					pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pFaceModel = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pFace2Model = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE2]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pFace3Model = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE3]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pShirtsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_SHIRTS]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pShirts2Model = { dynamic_cast<CModel*>(m_PartObjects[PART_SHIRTS2]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pPantsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_PANTS]->Get_Component(TEXT("Com_Model"))) };
-	CModel*					pHatModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAT]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pFaceModel = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pFace2Model = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE2]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pFace3Model = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE3]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pShirtsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_SHIRTS]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pShirts2Model = { dynamic_cast<CModel*>(m_PartObjects[PART_SHIRTS2]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pPantsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_PANTS]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pHatModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAT]->Get_Component(TEXT("Com_Model"))) };
 
 	m_pBodyModel = pBodyModel;
 
@@ -529,9 +576,23 @@ HRESULT CZombie::Initialize_PartModels()
 	return S_OK;
 }
 
-CZombie * CZombie::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+void CZombie::Perform_Skinning()
 {
-	CZombie*		pInstance = new CZombie(pDevice, pContext);
+	m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldMatrix());
+
+	_uint iNumMesh = m_pBodyModel->GetNumMesh();
+
+	for (int i = 0; i < iNumMesh; ++i)
+	{
+		m_pBodyModel->Bind_Resource_Skinning(i);
+		m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
+		m_pBodyModel->Staging_Skinning(i);
+	}
+}
+
+CZombie* CZombie::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CZombie* pInstance = new CZombie(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -544,9 +605,9 @@ CZombie * CZombie::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext
 
 }
 
-CGameObject * CZombie::Clone(void * pArg)
+CGameObject* CZombie::Clone(void* pArg)
 {
-	CZombie*		pInstance = new CZombie(*this);
+	CZombie* pInstance = new CZombie(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

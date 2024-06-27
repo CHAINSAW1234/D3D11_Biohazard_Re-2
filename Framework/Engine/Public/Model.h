@@ -344,6 +344,11 @@ public:		/* For Octree Culling */
 	}
 private:
 	_float4									m_vCenterPoint;
+
+public:/*For Skinned Mesh Decal*/
+	void									Bind_Resource_Skinning(_uint iIndex);
+	void									Bind_Essential_Resource_Skinning(_float4x4 WorldMat);
+	void									Staging_Skinning(_uint iIndex);
 public:
 	/* Create_ */
 	static CModel* Create_Temp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix);

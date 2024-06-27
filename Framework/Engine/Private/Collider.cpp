@@ -81,6 +81,11 @@ _bool CCollider::Intersect(CCollider * pTargetCollider)
 	return m_pBounding->Intersect(pTargetCollider->m_eType, pTargetCollider->m_pBounding);
 }
 
+_bool CCollider::IntersectRayAABB(const _vector& rayOrigin, const _vector& rayDir, float& minDistance, float& maxDistance)
+{
+	return m_pBounding->IntersectRayAABB(rayOrigin, rayDir, minDistance, maxDistance);
+}
+
 void CCollider::Active_Color(_bool isActive)
 {
 	m_pBounding->Active_Color(isActive);

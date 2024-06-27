@@ -206,6 +206,7 @@
     <ClInclude Include="..\Public\ContextMenu.h" />
     <ClInclude Include="..\Public\Context_Highlighter.h" />
     <ClInclude Include="..\Public\Damage_Zombie.h" />
+    <ClInclude Include="..\Public\Decal_Blood.h" />
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\EventProp.h" />
     <ClInclude Include="..\Public\Face_Zombie.h" />
@@ -345,6 +346,7 @@
     <ClCompile Include="..\Private\Clothes_Zombie.cpp" />
     <ClCompile Include="..\Private\ContextMenu.cpp" />
     <ClCompile Include="..\Private\Context_Highlighter.cpp" />
+    <ClCompile Include="..\Private\Decal_Blood.cpp" />
     <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\EventProp.cpp" />
     <ClCompile Include="..\Private\Face_Zombie.cpp" />

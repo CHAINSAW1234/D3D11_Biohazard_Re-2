@@ -2930,6 +2930,21 @@ HRESULT CModel::Ready_Animations(ifstream& ifs)
 
 #pragma region Create, Release
 
+void CModel::Bind_Resource_Skinning(_uint iIndex)
+{
+	m_Meshes[iIndex]->Bind_Resource_Skinning();
+}
+
+void CModel::Bind_Essential_Resource_Skinning(_float4x4 WorldMat)
+{
+	m_pGameInstance->Bind_Essential_Resource_Skinning(WorldMat, m_MeshBoneMatrices);
+}
+
+void CModel::Staging_Skinning(_uint iIndex)
+{
+	m_Meshes[iIndex]->Staging_Skinning();
+}
+
 CModel* CModel::Create_Temp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix)
 {
 	CModel* pInstance = new CModel(pDevice, pContext);

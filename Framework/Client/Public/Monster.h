@@ -64,7 +64,9 @@ protected:
 	
 	_int								m_iIndex = { 0 };
 	MONSTER_TYPE						m_eType = { MONSTER_TYPE::MT_DEFAULT };
-	
+
+	//For Decal
+	CCollider*							m_pColliderCom_Bounding = { nullptr };
 protected: // For AIController
 	_uint								m_iAIController_ID = { 0 };
 	class CBehaviorTree*				m_pBehaviorTree = { nullptr };
@@ -83,6 +85,11 @@ protected: // For AIController
 
 	class CPlayer*						m_pPlayer = { nullptr };
 	_bool								m_bRoomCulling = { false };
+
+public://For Decal
+	virtual void						Perform_Skinning() {}
+public:
+	class CDecal_Blood*					m_pDecal_Blood = { nullptr };
 
 protected:
 	virtual HRESULT						Add_Components();

@@ -18,6 +18,7 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void	Tick(_fmatrix WorldMatrix);
 	_bool			Intersect(CCollider* pTargetCollider);
+	_bool			IntersectRayAABB(const _vector& rayOrigin, const _vector& rayDir, float& minDistance, float& maxDistance);
 
 public:
 	void Active_Color(_bool isActive);

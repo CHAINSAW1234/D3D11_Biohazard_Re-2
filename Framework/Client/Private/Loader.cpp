@@ -26,6 +26,9 @@
 #include "CustomCollider.h"
 #include "NavMesh_Debug.h"
 
+/* Decal*/
+#include "Decal_Blood.h"
+
 /* MapObject*/
 #include "Props.h"
 #include "Map.h"
@@ -1120,6 +1123,14 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombiePants"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Pants.fbx",
 			LeonTransformMatrix))))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Decal
+	/* For.Prototype_GameObject_Read_Item_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Decal_Blood"),
+		CDecal_Blood::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 #pragma endregion
 

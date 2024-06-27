@@ -2,6 +2,8 @@
 
 RWTexture3D<float4> OutputTexture;  // Output
 
+
+
 float Epsilon = 1e-9;
 float Pi = 3.14;
 float UniformDensity = 0.975f;
