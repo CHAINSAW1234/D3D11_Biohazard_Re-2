@@ -63,9 +63,12 @@ private:
 	void OneDoor_Tick(_float fTimeDelta);
 	void OneDoor_Late_Tick(_float fTimeDelta);
 
+	_float Radian_To_Player();
+
 	void OneDoor_Active();
 	void DoubleDoor_Active();
-
+public:
+	virtual _float4 Get_Object_Pos() override;
 
 private:
 	_bool				m_bLock =	{ false };

@@ -9,6 +9,8 @@ namespace Client
 	const unsigned int	g_iWinSizeX = 1600;
 	const unsigned int	g_iWinSizeY = 900;
 
+	//static _int g_i44_005Type = 0; //저희 게임 디테일을 위해 죄송합니다- 예은
+
 	enum LOCATION_MAP_VISIT
 	{
 		MAIN_HOLL,						/* 0. 메인 홀*/

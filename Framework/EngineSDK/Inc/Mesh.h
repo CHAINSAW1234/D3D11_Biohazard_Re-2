@@ -58,6 +58,7 @@ public:
 	HRESULT Stock_Matrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneMatrices);
 	HRESULT Stock_PrevMatrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneMatrices);
 
+
 private:
 	_char					m_szName[MAX_PATH] = { "" };
 

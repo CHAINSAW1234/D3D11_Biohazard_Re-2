@@ -373,6 +373,9 @@
     <Filter Include="02.GameObjects\Decal\Blood">
       <UniqueIdentifier>{0bc76a0b-c492-43e3-8c07-bfc815ee613f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Camera\Camera_Event">
+      <UniqueIdentifier>{ee555b89-e04f-4401-b4d8-37201d791dcc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -742,6 +745,12 @@
     <ClInclude Include="..\Public\Decal_Blood.h">
       <Filter>02.GameObjects\Decal\Blood</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Camera_Event.h">
+      <Filter>02.GameObjects\Camera\Camera_Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Event_Struct.h">
+      <Filter>02.GameObjects\Camera\Camera_Event</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1082,6 +1091,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Decal_Blood.cpp">
       <Filter>02.GameObjects\Decal\Blood</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Event.cpp">
+      <Filter>02.GameObjects\Camera\Camera_Event</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

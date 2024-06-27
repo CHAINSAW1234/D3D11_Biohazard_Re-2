@@ -27,7 +27,7 @@ HRESULT CCabinet::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-	
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
@@ -35,7 +35,8 @@ HRESULT CCabinet::Initialize(void* pArg)
 		return E_FAIL;	
 	
 	if (FAILED(Initialize_PartObjects()))
-		return E_FAIL;
+		return E_FAIL;	
+
 
 
 	return S_OK;
@@ -47,7 +48,11 @@ void CCabinet::Tick(_float fTimeDelta)
 	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 	if (!m_bVisible)
 		return;
-
+#ifdef _DEBUG
+#ifdef UI_POS
+	Get_Object_Pos();
+#endif
+#endif
 	if (m_bActive)
 		m_fTimeDelay += fTimeDelta;
 	if (m_fTimeDelay > 1.f)
@@ -70,7 +75,7 @@ void CCabinet::Tick(_float fTimeDelta)
 		return;
 	}
 	__super::Tick(fTimeDelta);
-
+	//
 }
 
 void CCabinet::Late_Tick(_float fTimeDelta)
@@ -93,6 +98,7 @@ void CCabinet::Late_Tick(_float fTimeDelta)
 	Check_Col_Sphere_Player(); 
 
 	__super::Late_Tick(fTimeDelta);
+
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_SPHERE]);
@@ -129,6 +135,7 @@ HRESULT CCabinet::Add_PartObjects()
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pState = &m_eState;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
+	BodyDesc.iPropType = m_tagPropDesc.iPropType;
 	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(m_tagPropDesc.strObjectPrototype, &BodyDesc));
 	if (nullptr == pBodyObj)
 		return E_FAIL;
@@ -141,6 +148,7 @@ HRESULT CCabinet::Add_PartObjects()
 		CPartObject* pItem = { nullptr };
 		CBody_ItemProp::BODY_ITEMPROPS_DESC ItemDesc = {};
 		ItemDesc.pParentsTransform = m_pTransformCom;
+		ItemDesc.iItemIndex = m_tagPropDesc.tagCabinet.iItemIndex;
 		ItemDesc.pState = &m_eState;
 		ItemDesc.pObtain = &m_bObtain;
 		ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_") + m_tagPropDesc.tagCabinet.Name;
@@ -172,8 +180,8 @@ HRESULT CCabinet::Initialize_PartObjects()
 	//CModel* pItemModel = { dynamic_cast<CModel*>(m_PartObjects[PART_ITEM]->Get_Component(TEXT("Com_Body_Model"))) };
 
 	CBody_ItemProp* pItem = dynamic_cast<CBody_ItemProp*>(m_PartObjects[PART_ITEM]);
-	_float4x4* pLeftWeaponCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet01")) };
-	pItem->Set_Socket(pLeftWeaponCombinedMatrix);
+	_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet01")) };
+	pItem->Set_Socket(pCombinedMatrix);
 
 
 
@@ -237,5 +245,23 @@ CGameObject* CCabinet::Clone(void* pArg)
 void CCabinet::Free()
 {
 	__super::Free();
+
+}
+
+_float4 CCabinet::Get_Object_Pos()
+{
+	//m_bObtain => 아이템을 얻을 수 있는 상태
+	if (m_bObtain)
+		if (m_tagPropDesc.tagCabinet.bItem)
+			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_ITEM])->Get_Pos();
+		else if (!m_bOpened)
+			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
+		else
+			return _float4(0.f, 0.f, 0.f, 1.f);
+
+	if(m_PartObjects[PART_LOCK] == nullptr)
+		return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
+	else
+		return static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK])->Get_Pos();
 
 }

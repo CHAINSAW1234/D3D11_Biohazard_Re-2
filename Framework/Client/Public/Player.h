@@ -50,8 +50,9 @@ public:
 		HOLSTERTOMOVE, MOVETOHOLSTER, HOLD_END
 	};
 
-	enum ANIMSET_MOVE { FINE, MOVE_HG, MOVE_STG, FINE_LIGHT, CAUTION, CAUTION_LIGHT, DANGER, DANGER_LIGHT, COMMON, ANIMSET_MOVE_END };
+	enum ANIMSET_MOVE { FINE, MOVE_HG, MOVE_STG, FINE_LIGHT, CAUTION, CAUTION_LIGHT, DANGER, DANGER_LIGHT, ANIMSET_MOVE_END };
 	enum ANIMSET_HOLD { HOLD_HG, HOLD_STG, HOLD_MLE, HOLD_SUP, ANIMSET_HOLD_END };
+	enum ANIMSET_ETC { COMMON , BITE, ANIMSET_ETC_END };
 #pragma endregion
 
 #pragma region Move Direction
@@ -64,6 +65,7 @@ public:
 private:
 	const static wstring strAnimSetMoveName[ANIMSET_MOVE_END];
 	const static wstring strAnimSetHoldName[ANIMSET_HOLD_END];
+	const static wstring strAnimSetEtcName[ANIMSET_ETC_END];
 
 private:
 	CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -91,6 +93,7 @@ private:
 public:
 	static wstring								Get_AnimSetMoveName(ANIMSET_MOVE eAnimSetMove) { return strAnimSetMoveName[eAnimSetMove]; }
 	static wstring								Get_AnimSetHoldName(ANIMSET_HOLD eAnimSetHold) { return strAnimSetHoldName[eAnimSetHold]; }
+	static wstring								Get_AnimSetEtcName(ANIMSET_ETC eAnimEtcHold) { return strAnimSetEtcName[eAnimEtcHold]; }
 
 	CModel*										Get_Body_Model();
 	void										Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex);
@@ -122,6 +125,7 @@ public:
 	void										Turn_Spine_Light(_float fTimeDelta);		// Light 상태일때의 카메라 보기
 	void										Update_KeyInput_Reload();
 
+	void Swap_Camera();
 private:
 	_int m_iHp = { 5 };
 
@@ -137,6 +141,8 @@ private:
 	EQUIP m_eEquip = { NONE };
 	CWeapon* m_pWeapon = { nullptr };
 	vector<CWeapon*> m_Weapons;
+
+	class CCamera_Event* m_pCamera_Event = { nullptr };
 
 
 	friend class CPlayer_State_Move_Walk;

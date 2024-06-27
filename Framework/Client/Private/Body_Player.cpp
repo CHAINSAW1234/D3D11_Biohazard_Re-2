@@ -88,8 +88,8 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	//	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_R_LOOP,
 	//		m_pModelCom->Get_Duration_From_Anim(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_R_LOOP) + 1);
 	//}
-	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName(CPlayer::COMMON), 0, 1.f);
-
+	 
+	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), 0, 1.f);
 
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_L180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_R180, 300.f);
@@ -760,12 +760,15 @@ HRESULT CBody_Player::Add_Animations()
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Danger_Light"), CPlayer::Get_AnimSetMoveName(CPlayer::ANIMSET_MOVE::DANGER_LIGHT))))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Move_Common"), CPlayer::Get_AnimSetMoveName(CPlayer::ANIMSET_MOVE::COMMON))))
-		return E_FAIL;
 
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Hg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HOLD_HG))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Stg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HOLD_STG))))
+		return E_FAIL;
+
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Common"), CPlayer::Get_AnimSetEtcName(CPlayer::ANIMSET_ETC::COMMON))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Bite"), CPlayer::Get_AnimSetEtcName(CPlayer::ANIMSET_ETC::BITE))))
 		return E_FAIL;
 
 

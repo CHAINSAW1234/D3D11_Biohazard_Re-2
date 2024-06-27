@@ -40,7 +40,8 @@ private:
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
 	virtual HRESULT				Bind_ShaderResources() override;
-
+public:
+	virtual _float4 Get_Object_Pos() override;
 private:
 	_ubyte  m_eState = { POLICEHALLSTATUE_0 };
 

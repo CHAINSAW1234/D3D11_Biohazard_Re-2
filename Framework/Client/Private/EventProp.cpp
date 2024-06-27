@@ -181,3 +181,8 @@ void CEventProp::Free()
 	__super::Free();
 
 }
+
+_float4 CEventProp::Get_Object_Pos()
+{
+	return _float4();
+}

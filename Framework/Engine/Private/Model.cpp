@@ -1099,6 +1099,14 @@ list<_uint> CModel::Get_NonHideMeshIndices()
 	return MeshIndices;
 }
 
+_float4 CModel::Get_Mesh_Local_Pos(string strMeshTag)
+{
+	_int			iIndex = { Find_Mesh_Index(strMeshTag) };
+	if (-1 == iIndex)
+		return _float4();
+	return m_Meshes[iIndex]->Get_CenterPoint();
+}
+
 #pragma endregion
 
 #pragma region Access2

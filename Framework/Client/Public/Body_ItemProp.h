@@ -13,6 +13,7 @@ public:
 	typedef struct tagBodyItemProp_desc : public CPart_InteractProps::PART_INTERACTPROPS_DESC
 	{
 		_bool* pObtain = { nullptr };
+		_int	   iItemIndex = { 0 };
 	}BODY_ITEMPROPS_DESC;
 private:
 	CBody_ItemProp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -30,12 +31,14 @@ private:
 	virtual HRESULT				Add_Components();
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
-
+	virtual void					Get_SpecialBone_Rotation() override;
+	HRESULT						Initialize_Model();
 public:
 	void								Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
-
-
+public:
+	virtual _float4				Get_Pos(_int iArg = 0) override;
 private:
+	_int								m_iItemIndex = { 0 };
 	_bool								m_bRealDead = { false };
 	_bool*							m_pObtain = { nullptr };
 	_float4x4*						m_pSocketMatrix = { nullptr };
