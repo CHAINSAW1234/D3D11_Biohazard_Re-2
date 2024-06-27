@@ -9,12 +9,12 @@ BEGIN(Engine)
 #define ANIM_DEFAULT_LINEARTIME		0.2f
 #define MAX_COUNT_BONE				512
 
-#define DISTANCE_FPSMAX				2.5f
-#define DISTANCE_FPS45				5.f
-#define DISTANCE_FPS30				7.5f
-#define DISTANCE_FPS20				10.f
-#define DISTANCE_FPS10				12.f
-#define DISTANCE_FPS5				15.f
+#define DISTANCE_FPSMAX				5.f
+#define DISTANCE_FPS45				7.5f
+#define DISTANCE_FPS30				10.f
+#define DISTANCE_FPS20				12.5f
+#define DISTANCE_FPS10				15.f
+#define DISTANCE_FPS5				20.f
 
 #define TIME_FPSMAX					(1.f / 60.f)
 #define TIME_FPS45					(1.f / 45.f)

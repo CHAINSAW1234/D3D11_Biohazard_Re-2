@@ -8,30 +8,26 @@ CComposite_Node::CComposite_Node() : CNode()
 
 }
 
-CComposite_Node::CComposite_Node(COMPOSITE_NODE_TYPE eType) : CComposite_Node()
-{
-	m_eComposite_Type = eType;
-}
-
 CComposite_Node::CComposite_Node(const CComposite_Node& rhs)
 {
 }
 
-HRESULT CComposite_Node::Initialize_Prototype()
-{
-	return E_NOTIMPL;
-}
-
 HRESULT CComposite_Node::Initialize(void* pArg)
 {
-	return E_NOTIMPL;
+	if (nullptr == pArg)
+		return E_FAIL;
+
+	COMPOSITE_NODE_DESC*			pDesc = { static_cast<COMPOSITE_NODE_DESC*>(pArg) };
+	m_eComposite_Type = pDesc->eType;
+
+	return S_OK;
 }
 
-CComposite_Node* CComposite_Node::Create()
+CComposite_Node* CComposite_Node::Create(void* pArg)
 {
 	CComposite_Node* pInstance = new CComposite_Node();
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CComposite_Node"));
 

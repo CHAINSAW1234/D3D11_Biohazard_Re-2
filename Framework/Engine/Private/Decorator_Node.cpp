@@ -10,21 +10,16 @@ CDecorator_Node::CDecorator_Node(const CDecorator_Node& rhs)
 {
 }
 
-HRESULT CDecorator_Node::Initialize_Prototype()
-{
-	return E_NOTIMPL;
-}
-
 HRESULT CDecorator_Node::Initialize(void* pArg)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
-CDecorator_Node* CDecorator_Node::Create()
+CDecorator_Node* CDecorator_Node::Create(void* pArg)
 {
 	CDecorator_Node* pInstance = new CDecorator_Node();
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CDecorator_Node"));
 

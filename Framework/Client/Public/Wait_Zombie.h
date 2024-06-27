@@ -8,13 +8,12 @@ BEGIN(Client)
 
 class CWait_Zombie : public CTask_Node
 {
-public:
+private:
 	CWait_Zombie();
 	CWait_Zombie(const CWait_Zombie& rhs);
 	virtual ~CWait_Zombie() = default;
 
 public:
-	virtual HRESULT					Initialize_Prototype();
 	virtual HRESULT					Initialize(void* pArg);
 
 	virtual void					Enter() override;
@@ -36,7 +35,7 @@ private:	/* For. Active FirstTime */
 	_bool							m_isWake = { false };
 
 public:
-	static CWait_Zombie* Create();
+	static CWait_Zombie* Create(void* pArg = nullptr);
 
 public:
 	virtual void Free() override;

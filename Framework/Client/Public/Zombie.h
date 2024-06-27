@@ -10,6 +10,11 @@ class CCollider;
 class CPartObject;
 END
 
+#define	STATUS_ZOMBIE_RECOGNIZE_DISTANCE		3.f
+#define	STATUS_ZOMBIE_VIEW_ANGLE				XMConvertToRadians(30.f)
+#define	STATUS_ZOMBIE_HEALTH					100.f
+#define	STATUS_ZOMBIE_ATTACK					10.f
+
 BEGIN(Client)
 
 class CZombie final : public CMonster
@@ -19,6 +24,11 @@ public:
 	{
 		_int Index;
 	}MONSTER_DESC;
+
+	typedef struct tagZombieStatus : public MONSTER_STATUS
+	{
+
+	}ZOMBIE_STATUS;
 public:
 	enum COLLIDERTYPE { COLLIDER_HEAD, COLLIDER_BODY, COLLIDER_END };
 
@@ -42,6 +52,7 @@ private:
 	virtual HRESULT						Add_Components() override;
 	virtual HRESULT						Bind_ShaderResources() override;
 	virtual HRESULT						Add_PartObjects() override;
+	virtual HRESULT						Initialize_Status() override;
 
 private:	/* Initialize_PartObjects_Models */
 	virtual HRESULT 					Initialize_PartModels() override;

@@ -12,7 +12,6 @@ protected:
 	virtual ~CTask_Node() = default;
 
 public:
-	virtual HRESULT					Initialize_Prototype();
 	virtual HRESULT					Initialize(void* pArg);
 
 	virtual void					Enter() = 0;

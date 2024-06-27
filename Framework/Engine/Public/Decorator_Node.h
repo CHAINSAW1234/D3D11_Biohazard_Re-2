@@ -12,13 +12,12 @@ protected:
 	virtual ~CDecorator_Node() = default;
 
 public:
-	virtual HRESULT					Initialize_Prototype();
 	virtual HRESULT					Initialize(void* pArg);
 
 	virtual _bool					Condition_Check() { return false; }
 
 public:
-	static CDecorator_Node* Create();
+	static CDecorator_Node*			Create(void* pArg);
 
 public:
 	virtual void Free() override;

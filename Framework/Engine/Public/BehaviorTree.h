@@ -4,9 +4,9 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CBehaviorTree : public CBase
+class ENGINE_DLL CBehaviorTree final : public CBase
 {
-public:
+private:
 	CBehaviorTree();
 	CBehaviorTree(const CBehaviorTree& rhs);
 	virtual ~CBehaviorTree() = default;

@@ -15,11 +15,6 @@ CIs_Character_In_Range_Zombie::CIs_Character_In_Range_Zombie(const CIs_Character
 {
 }
 
-HRESULT CIs_Character_In_Range_Zombie::Initialize_Prototype()
-{
-	return S_OK;
-}
-
 HRESULT CIs_Character_In_Range_Zombie::Initialize(void* pArg)
 {
 	return S_OK;
@@ -27,13 +22,18 @@ HRESULT CIs_Character_In_Range_Zombie::Initialize(void* pArg)
 
 _bool CIs_Character_In_Range_Zombie::Condition_Check()
 {
+	if (nullptr == m_pBlackBoard)
+		return false;
+
+	_float			fRecognizeDistance = { m_pBlackBoard->GetAI()->Get_Status_Ptr()->fRecognitionRange };
+
 	auto vPos_Player = m_pBlackBoard->GetPlayer()->GetPosition();
 	auto vPos_AI = m_pBlackBoard->GetAI()->GetPosition();
 
 	auto vDelta = vPos_Player - vPos_AI;
 	_float fDelta = XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta)));
 
-	if (fDelta < 5.f)
+	if (fDelta < fRecognizeDistance)
 	{
 		return true;
 	}
@@ -43,11 +43,11 @@ _bool CIs_Character_In_Range_Zombie::Condition_Check()
 	}
 }
 
-CIs_Character_In_Range_Zombie* CIs_Character_In_Range_Zombie::Create()
+CIs_Character_In_Range_Zombie* CIs_Character_In_Range_Zombie::Create(void* pArg)
 {
-	CIs_Character_In_Range_Zombie* pInstance = new CIs_Character_In_Range_Zombie();
+	CIs_Character_In_Range_Zombie*		pInstance = { new CIs_Character_In_Range_Zombie() };
 
-	if (FAILED(pInstance->Initialize_Prototype()))
+	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CIs_Character_In_Range_Zombie"));
 

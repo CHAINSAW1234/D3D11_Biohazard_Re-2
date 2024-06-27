@@ -374,7 +374,7 @@ KEYFRAME CAnimation::Get_CurrentKeyFrame(_uint iBoneIndex, _float fTrackPosition
 		_float				fStartTime = { KeyFrames[i].fTime };
 		_float				fFinishTime = { KeyFrames[i + 1].fTime };
 
-		if (fStartTime > fTrackPosition || fTrackPosition >= fFinishTime)
+		if (fStartTime > fTrackPosition || fTrackPosition > fFinishTime)
 		{
 			if (iNumKeyFrame - 2 == i)
 			{

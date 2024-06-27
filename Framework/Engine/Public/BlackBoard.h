@@ -12,7 +12,6 @@ protected:
 	virtual ~CBlackBoard() = default;
 
 public:
-	virtual HRESULT					Initialize_Prototype();
 	virtual HRESULT					Initialize(void* pArg);
 
 public:
@@ -23,7 +22,7 @@ protected:
 	class CTask_Node*				m_pPreTaskNode = { nullptr };
 
 public:
-	static CBlackBoard* Create();
+	static CBlackBoard*				Create(void* pArg);
 
 public:
 	virtual void Free() override;

@@ -41,7 +41,7 @@ HRESULT CZombie::Initialize(void* pArg)
 	GameObjectDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
-		return E_FAIL;
+		return E_FAIL;	
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -80,8 +80,9 @@ HRESULT CZombie::Initialize(void* pArg)
 	m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 	m_vDir.w = 0.f;
 
-	m_pBlackBoard = new CBlackBoard_Zombie();
-	m_pBlackBoard->Initialize_BlackBoard(this);
+	CBlackBoard_Zombie::BLACKBOARD_ZOMBIE_DESC			Desc;
+	Desc.pAI = this;
+	m_pBlackBoard = CBlackBoard_Zombie::Create(&Desc);	
 
 	Init_BehaviorTree_Zombie();
 #pragma endregion
@@ -277,30 +278,35 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 #pragma region RootNode Childe Section
 
+	//		Selector => 성공을 반환 받을 떄 까지
+	//		Sequence => 실패를 반환 받을 떄 까지
 	/*
 	*Root Selector Section
 	*/
-	auto pSelectorNode_Root = new CComposite_Node(COMPOSITE_NODE_TYPE::CNT_SELECTOR);
+
+	CComposite_Node::COMPOSITE_NODE_DESC		CompositeNodeDesc;
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	CComposite_Node*						pSelectorNode_Root = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pNode_Root->Insert_Child_Node(pSelectorNode_Root);
 
 	/*
-	*Root Child_1 Section
+	*Root Child_1 Section ( Select Move Or Turn )
 	*/
 
 	//Add RootNode Childe Composite Node - Selector Node_1
-	auto pSelectorNode_RootChild_1 = new CComposite_Node(COMPOSITE_NODE_TYPE::CNT_SELECTOR);
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	CComposite_Node*						pSelectorNode_RootChild_1 = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_1);
 
 	//Add Decorator Node
-	auto pIs_Character_In_Range = new CIs_Character_In_Range_Zombie();
-	pIs_Character_In_Range->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_1->Insert_Decorator_Node(pIs_Character_In_Range);
+	CIs_Character_In_Range_Zombie*			pDeco_Charactor_In_Range = { CIs_Character_In_Range_Zombie::Create() };
+	pDeco_Charactor_In_Range->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_1->Insert_Decorator_Node(pDeco_Charactor_In_Range);
 
 	//Add Task Node
-	auto pMoveTo = new CMoveTo_Zombie();
-	pMoveTo->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_1->Insert_Child_Node(pMoveTo);
-
+	CMove_Front_Zombie*							pTask_Move = { CMove_Front_Zombie::Create() };
+	pTask_Move->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Move);
 
 
 
@@ -309,9 +315,9 @@ void CZombie::Init_BehaviorTree_Zombie()
 	*/
 
 	//Add RootNode Task Node
-	auto pWait = new CWait_Zombie();
-	pWait->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_Root->Insert_Child_Node(pWait);
+	CWait_Zombie*							pTask_Wait = { CWait_Zombie::Create() };
+	pTask_Wait->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Root->Insert_Child_Node(pTask_Wait);
 #pragma endregion
 	return;
 }
@@ -507,6 +513,18 @@ HRESULT CZombie::Add_PartObjects()
 		return E_FAIL;
 
 	m_PartObjects[CZombie::PART_ID::PART_PANTS] = pPantsObject;
+
+	return S_OK;
+}
+
+HRESULT CZombie::Initialize_Status()
+{
+	m_pStatus = new MONSTER_STATUS();
+
+	m_pStatus->fAttack = STATUS_ZOMBIE_ATTACK;
+	m_pStatus->fViewAngle = STATUS_ZOMBIE_VIEW_ANGLE;
+	m_pStatus->fRecognitionRange = STATUS_ZOMBIE_RECOGNIZE_DISTANCE;
+	m_pStatus->fHealth = STATUS_ZOMBIE_HEALTH;
 
 	return S_OK;
 }
