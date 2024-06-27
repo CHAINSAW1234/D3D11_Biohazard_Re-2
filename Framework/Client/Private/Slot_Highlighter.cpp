@@ -71,6 +71,22 @@ HRESULT CSlot_Highlighter::Render()
 	return S_OK;
 }
 
+void CSlot_Highlighter::Set_Dead(_bool bDead)
+{
+	m_bDead = bDead;
+
+	for (auto& iter : m_vecChildUI)
+	{
+
+	}
+
+	if (nullptr != m_vecChildUI[CURSOR_SH])
+		m_vecChildUI[CURSOR_SH]->Set_Dead(bDead);
+
+	if (nullptr != m_vecChildUI[GLITTER_SH])
+		m_vecChildUI[GLITTER_SH]->Set_Dead(true);
+}
+
 void CSlot_Highlighter::ResetPosition(_float4 fResetPos)
 {
 	if (false == m_IsChild)
@@ -84,7 +100,9 @@ void CSlot_Highlighter::Set_DragShadow(_bool IsDragShadow)
 	if (true == m_IsChild)
 		return;
 
-	if (true == IsDragShadow)
+	m_isDragShadow = IsDragShadow;
+
+	if (true == m_isDragShadow)
 	{
 		m_vecChildUI[GLITTER_SH]->Set_Dead(false);
 		CTransform* pTransform = static_cast<CTransform*>(m_vecChildUI[GLITTER_SH]->Get_Component(g_strTransformTag));

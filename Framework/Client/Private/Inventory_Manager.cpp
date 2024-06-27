@@ -131,7 +131,7 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 		}
 	}
 
-	m_pSlotHighlighter->Set_Dead(m_IsNoOneHover);
+	//m_pSlotHighlighter->Set_Dead(m_IsNoOneHover);
 
 	if (false == m_IsNoOneHover)
 	{
@@ -501,14 +501,10 @@ HRESULT CInventory_Manager::Init_SlotHighlighter()
 {
 	ifstream inputFileStream;
 	wstring selectedFilePath;
-
-#pragma region 슬롯 하이라이터
 	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/SlotHighlighter.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
-	vector<CCustomize_UI::CUSTOM_UI_DESC> vecCustomSelecUIDesc;
-	CCustomize_UI::ExtractData_FromDat(inputFileStream, &vecCustomSelecUIDesc, true);
-	if (FAILED(Create_SlotHighlighter(&vecCustomSelecUIDesc)))
-		return E_FAIL;
+	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_SlotHighlighter"),
+		(CGameObject**)&m_pSlotHighlighter, m_pDevice, m_pContext);
 
 	m_pSlotHighlighter->Set_Dead(true);
 	m_pSlotHighlighterTransform = dynamic_cast<CTransform*>(m_pSlotHighlighter->Get_Component(g_strTransformTag));
@@ -517,7 +513,6 @@ HRESULT CInventory_Manager::Init_SlotHighlighter()
 
 	Safe_AddRef(m_pSlotHighlighter);
 	Safe_AddRef(m_pSlotHighlighterTransform);
-#pragma endregion
 
 	return S_OK;
 }
@@ -641,65 +636,6 @@ HRESULT CInventory_Manager::Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DES
 		else
 		{
 			m_vecInvenSlot.push_back(pInvenUI);
-		}
-
-		pParentInvenUI = pInvenUI;
-	}
-
-	return S_OK;
-}
-
-HRESULT CInventory_Manager::Create_SlotHighlighter(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI)
-{
-	CSlot_Highlighter* pParentInvenUI = { nullptr };
-
-	for (auto& iter : *vecInvenUI)
-	{
-		if (0 == iter.fMaxFrame && TEXT("") != iter.wstrDefaultTexturPath)
-		{
-			/* For.Prototype_Component_Texture_ */
-			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrDefaultTexturComTag,
-				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath)))) {
-				int a = 0;
-			}
-		}
-
-		else if (0 < iter.fMaxFrame && TEXT("") != iter.wstrDefaultTexturPath)
-		{
-			/* For.Prototype_Component_Texture_ */
-			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrDefaultTexturComTag,
-				CTexture::Create(m_pDevice, m_pContext, iter.wstrDefaultTexturPath, (_uint)iter.fMaxFrame)))) {
-				int a = 0;
-			}
-		}
-
-		if (TEXT("") != iter.wstrMaskPath)
-		{
-			/* For.Prototype_Component_Texture_ */
-			if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, iter.wstrMaskComTag,
-				CTexture::Create(m_pDevice, m_pContext, iter.wstrMaskPath)))) {
-				int a = 0;
-			}
-		}
-
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_SlotHighlighter"), &iter)))
-			return E_FAIL;
-
-		CGameObject* pGameObj = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back();
-
-		CSlot_Highlighter* pInvenUI = dynamic_cast<CSlot_Highlighter*>(pGameObj);
-
-		pInvenUI->Set_Dead(true);
-
-		if (nullptr != pParentInvenUI)
-		{
-			pParentInvenUI->PushBack_Child(pGameObj);
-			pParentInvenUI = nullptr;
-		}
-
-		else
-		{
-			m_pSlotHighlighter = pInvenUI;
 		}
 
 		pParentInvenUI = pInvenUI;
