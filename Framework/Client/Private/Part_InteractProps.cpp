@@ -26,6 +26,7 @@ HRESULT CPart_InteractProps::Initialize(void* pArg)
 
 	m_strModelComponentName = pPartobj_desc->strModelComponentName;
 	m_pState = pPartobj_desc->pState;
+	m_iPropType = pPartobj_desc->iPropType;
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -86,6 +87,11 @@ HRESULT CPart_InteractProps::Initialize_PartObjects()
 {
 	return S_OK;
 }
+
+void CPart_InteractProps::Get_SpecialBone_Rotation()
+{
+}
+
 
 HRESULT CPart_InteractProps::Bind_ShaderResources()
 {

@@ -149,6 +149,12 @@ public:		/* For. MeshControll */
 
 	list<_uint>								Get_NonHideMeshIndices();
 
+public: /*For. Mesh pos*/
+	_float4								Get_Mesh_Local_Pos(string strMeshTag);
+
+
+
+
 public:		/* For. Access */
 	vector<string>							Get_BoneNames();
 	vector<_float4>							Get_Translations();

@@ -82,8 +82,14 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 	Priority_Tick_PartObjects(fTimeDelta);
 
 #pragma region 예은 스파이 나중에 FSM으로 옮길지도
-	if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+	m_fTimeTEST += fTimeDelta;
+
+
+	if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON) && m_fTimeTEST > 0.5f)
+	{
+		m_fTimeTEST = 0.f;
 		m_bInteract = true;
+	}
 	else
 		m_bInteract = false;
 #pragma endregion 
@@ -105,17 +111,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	else
 		m_bChange = false;
 
-	m_fTimeTEST += fTimeDelta;
-	if (m_pGameInstance->Get_KeyState(VK_F7) == DOWN && m_fTimeTEST > 0.1f)
-	{
-		m_fTimeTEST = 0.f;
-		m_iCurCol++;
-	}
-	if (m_pGameInstance->Get_KeyState(VK_F6) == DOWN && m_fTimeTEST > 0.1f)
-	{
-		m_fTimeTEST = 0.f;
-		m_iCurCol--;
-	}
+	
 #pragma endregion 예은ColTest
 
 #pragma region 이동과 카메라
