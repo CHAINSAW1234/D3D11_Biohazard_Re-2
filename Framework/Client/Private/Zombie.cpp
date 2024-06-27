@@ -216,7 +216,7 @@ void CZombie::Tick(_float fTimeDelta)
 	//For Decal.
 	m_pColliderCom_Bounding->Tick(m_pTransformCom->Get_WorldMatrix_Pure_Mat());
 
-	Ready_Decal();
+	//	Ready_Decal();
 }
 
 void CZombie::Late_Tick(_float fTimeDelta)
