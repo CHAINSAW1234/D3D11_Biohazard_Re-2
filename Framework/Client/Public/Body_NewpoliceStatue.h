@@ -24,9 +24,10 @@ private:
 	virtual HRESULT				Add_Components();
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
+	HRESULT						Initialize_Model() ;
 
-private:
-
+public:
+	virtual _float4				Get_Pos(_int iArg = 0) override;
 
 public:
 	static CBody_NewpoliceStatue* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -9,6 +9,8 @@ namespace Client
 	const unsigned int	g_iWinSizeX = 1600;
 	const unsigned int	g_iWinSizeY = 900;
 
+	//static _int g_i44_005Type = 0; //저희 게임 디테일을 위해 죄송합니다- 예은
+
 	enum LOCATION_MAP_VISIT
 	{
 		MAIN_HOLL,						/* 0. 메인 홀*/
@@ -48,10 +50,13 @@ extern Client::LEVEL g_Level;
 using namespace std;
 using namespace Client;
 	
-	#define MAP_NOTHING
-//	#define MAP_JUSTMAP
-//	#define MAP_NONANIMOBJ
-//#define MAP_INTERACT
+
+//#define MAP_NOTHING
+//#define MAP_JUSTMAP
+//#define MAP_NONANIMOBJ
+#define MAP_INTERACT
+
+//#define UI_POS
 
 //#define NON_COLLISION_PROP
 #define PROPS_COOKING

@@ -47,11 +47,13 @@ private:
 	_bool						m_bVisible = { false };
 	PROPS_DESC 					m_tagPropDesc ={};
 
+	list<_uint>					m_NonHideIndices;
 
 private:
 	HRESULT						Add_Components();
+	HRESULT						Initialize_Model();
 	HRESULT						Bind_ShaderResources();
-
+private:
 public:
 	static CProps* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

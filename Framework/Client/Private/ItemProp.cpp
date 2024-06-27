@@ -29,27 +29,40 @@ HRESULT CItemProp::Initialize(void* pArg)
 
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
-
+	if (!m_tagPropDesc.bAnim)
+		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
 	return S_OK;
 }
 
 void CItemProp::Tick(_float fTimeDelta)
 {
 	__super::Check_Player();
+
 	if (m_bDead)
 		return;
 
 	if (!m_bVisible)
-	{
-		m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 		return;
-	}
+#ifdef _DEBUG
+#ifdef UI_POS
+	Get_Object_Pos();
+#endif
+#endif
+
 
 	if (m_pPlayer == nullptr)
 		return;
+	if (m_bCol)
+	{
+		//UI¶ç¿ì°í
+		if (*m_pPlayerInteract)
+			Active();
+		m_bCol = false;
+	}
+	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+
 	__super::Tick(fTimeDelta);
 
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 
 }
 
@@ -60,7 +73,6 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 
 	if (!Visible())
 		return;
-
 	if (m_bRender == false)
 		return;
 	else
@@ -73,6 +85,8 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 
 		m_bRender = false;
 	}
+
+	Check_Col_Sphere_Player();
 
 	__super::Late_Tick(fTimeDelta);
 
@@ -91,7 +105,7 @@ HRESULT CItemProp::Add_Components()
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
 	ColliderDesc.fRadius = _float(100.f);
-	ColliderDesc.vCenter = _float3(-10.f, 1.f, 0.f);
+	ColliderDesc.vCenter = _float3(0.f, -50.f, 0.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
@@ -109,8 +123,8 @@ HRESULT CItemProp::Add_PartObjects()
 	CBody_ItemProp::PART_INTERACTPROPS_DESC BodyDesc = {};
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pState = &m_eState;
-	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
-	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(m_tagPropDesc.strObjectPrototype, &BodyDesc));
+	BodyDesc.strModelComponentName = TEXT("Prototype_Component_Model_") + m_tagPropDesc.tagItemDesc.Name;
+	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_") + m_tagPropDesc.tagItemDesc.Name, &BodyDesc));
 	if (nullptr == pBodyObj)
 		return E_FAIL;
 
@@ -136,11 +150,20 @@ HRESULT CItemProp::Bind_ShaderResources()
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
 
 	return S_OK;
+}
+
+_float4 CItemProp::Get_Object_Pos()
+{
+	if (!m_bDead)
+		return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
+	else
+		return _float4();
 }
 
 void CItemProp::Active()
