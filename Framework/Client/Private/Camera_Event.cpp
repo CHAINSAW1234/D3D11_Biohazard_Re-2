@@ -1,0 +1,416 @@
+#include "stdafx.h"
+#include "Camera_Event.h"
+#include "Player.h"
+
+CCamera_Event::CCamera_Event(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: CCamera{ pDevice, pContext }
+{
+}
+
+CCamera_Event::CCamera_Event(const CCamera_Event& rhs)
+	: CCamera{ rhs }
+{
+}
+
+HRESULT CCamera_Event::Initialize_Prototype()
+{
+	return S_OK;
+}
+
+HRESULT CCamera_Event::Initialize(void* pArg)
+{
+	if (nullptr == pArg)
+		return E_FAIL;
+
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
+	if (FAILED(Read_CamList(TEXT("../Bin/DataFiles/mcamlist/em0000_maincam00.mcamlist.13"))))
+		return E_FAIL;
+
+	Load_CamPosition();
+
+	//m_Defaultmatrix = XMMatrixIdentity();
+
+	return S_OK;
+}
+
+void CCamera_Event::Tick(_float fTimeDelta)
+{
+	//Reset_CamPosition();
+
+
+	if (m_isPlay) {
+		Play_MCAM(fTimeDelta);
+	}
+	else {
+		;
+		//_float3 vRight = m_Defaultmatrix.Right() * m_fRight_Dist_Pos;
+		//_float3 vUp = m_Defaultmatrix.Up() * (m_fUp_Dist_Pos + CONTROLLER_GROUND_GAP);
+		//_float3 vLook = -m_Defaultmatrix.Forward() * m_fLook_Dist_Pos;
+
+		//_matrix Default = m_Defaultmatrix;
+		//	Default.r[3] = XMVectorSetW(m_Defaultmatrix.Translation() + vRight + vUp + vLook, 1.f);
+
+		//m_pTransformCom->Set_WorldMatrix(Default);
+		//m_pTransformCom->Look_At(XMVectorSetW(m_Defaultmatrix.Translation() + _float3(0.f,CONTROLLER_GROUND_GAP, 0.f), 1.f));
+	}
+	__super::Bind_PipeLines();
+}
+
+void CCamera_Event::Late_Tick(_float fTimeDelta)
+{
+}
+
+HRESULT CCamera_Event::Render()
+{
+	return S_OK;
+}
+
+void CCamera_Event::Active_Camera(_bool isActive)
+{
+	__super::Active_Camera(isActive);
+	
+	if (!m_isActive)
+		Reset();
+}
+
+_float4 CCamera_Event::Get_Position_Float4()
+{
+	return m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+}
+
+_vector CCamera_Event::Get_Position_Vector()
+{
+	return m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+}
+
+void CCamera_Event::SetPlayer(CGameObject* pPlayer)
+{
+	auto Player = dynamic_cast<CPlayer*>(pPlayer);
+	if (Player)
+		m_pPlayer = Player;
+
+	m_pParentMatrix = m_pPlayer->Get_Transform()->Get_WorldFloat4x4_Ptr();
+}
+
+void CCamera_Event::Reset()
+{
+	m_pCurrentMCAM = nullptr;
+	m_isPlay = false;
+	m_fTrackPosition = 0.f;
+}
+
+HRESULT CCamera_Event::Set_CurrentMCAM(const wstring& strCamTag)
+{
+	MCAM* pMCAM = Find_MCAM(strCamTag);
+	if (nullptr == pMCAM)
+		return E_FAIL;
+
+	m_pCurrentMCAM = pMCAM;
+	m_isPlay = true;
+	m_fTrackPosition = 0.f;
+	
+	m_PrePlayerMatrix = XMLoadFloat4x4(m_pSocketMatrix);
+
+	//m_PrePlayerMatrix = m_pPlayer->Get_Transform()->Get_WorldMatrix();
+	
+
+	//m_isActive = true;	--> Player∞° «ÿ¡‹
+
+	return S_OK;
+}
+
+void CCamera_Event::Load_CamPosition()
+{
+	string filePath = "../Camera_Position/Camera_Position";
+
+	//File Import
+	ifstream File(filePath, std::ios::binary | std::ios::in);
+
+	File.read((char*)&m_vCameraPosition, sizeof(_float4));
+	File.read((char*)&m_fRight_Dist_Look, sizeof(_float));
+	File.read((char*)&m_fUp_Dist_Look, sizeof(_float));
+	File.read((char*)&m_fLook_Dist_Look, sizeof(_float));
+
+	m_fRight_Dist_Look_Default = m_fRight_Dist_Look;
+	m_fUp_Dist_Look_Default = m_fUp_Dist_Look;
+	m_fLook_Dist_Look_Default = m_fLook_Dist_Look;
+
+	m_fUp_Dist_Look -= CONTROLLER_GROUND_GAP;
+
+	m_fLook_Dist_Pos = m_vCameraPosition.z;
+	m_fRight_Dist_Pos = m_vCameraPosition.x;
+	m_fUp_Dist_Pos = m_vCameraPosition.y - CONTROLLER_GROUND_GAP;
+
+	File.close();
+}
+
+HRESULT CCamera_Event::Read_CamList(const wstring& strFilePath)
+{
+	ifstream inputFileStream{ strFilePath, std::ios::binary };
+	if (!inputFileStream) {
+		return E_FAIL;
+	}
+
+	uint32_t magic;
+	inputFileStream.seekg(4);
+	inputFileStream.read(reinterpret_cast<char*>(&magic), sizeof(magic));
+
+	if (magic == 1835098989) {
+		MSG_BOX(TEXT("Warning : Read_CamList -> magic == 1835098989"));
+		return E_FAIL;
+	}
+	
+	// 1. read header
+	Header header = Read_Header(inputFileStream);
+
+	for (size_t i = 0; i < header.mcamCount; i++) {
+		MCam mcam = {};
+
+		uint64_t position = header.mcamEntry[i];
+
+		mcam.CAMHeader = Read_CamHeader(inputFileStream, position);
+
+		// Read translation frames
+		inputFileStream.seekg(mcam.CAMHeader.TranslateHeader.DataOffset + position, std::ios::beg);
+		mcam.Translations = vector<_float3>(mcam.CAMHeader.TranslateHeader.numFrames);
+		inputFileStream.read(reinterpret_cast<char*>(mcam.Translations.data()), sizeof(_float3) * mcam.CAMHeader.TranslateHeader.numFrames);
+
+		// Read Rotation frames
+		inputFileStream.seekg(mcam.CAMHeader.RotationHeader.DataOffset + position, std::ios::beg);
+		mcam.Rotations = vector<_float4>(mcam.CAMHeader.RotationHeader.numFrames);
+		inputFileStream.read(reinterpret_cast<char*>(mcam.Rotations.data()), sizeof(_float4) * mcam.CAMHeader.RotationHeader.numFrames);
+
+		// Read Zoom frames
+		inputFileStream.seekg(mcam.CAMHeader.ZoomHeader.DataOffset + position, std::ios::beg);
+		mcam.Zooms = vector<_float3>(mcam.CAMHeader.ZoomHeader.numFrames);
+		inputFileStream.read(reinterpret_cast<char*>(mcam.Zooms.data()), sizeof(_float3) * mcam.CAMHeader.ZoomHeader.numFrames);
+
+		if (nullptr== Find_MCAM(mcam.CAMHeader.name3)) {
+			m_Camlist.emplace(mcam.CAMHeader.name3, mcam);
+		}
+
+	}
+
+	return S_OK;
+}
+
+Header CCamera_Event::Read_Header(ifstream& inputFileStream)
+{
+	Header header = {};
+
+	inputFileStream.seekg(0);
+	inputFileStream.read(reinterpret_cast<char*>(&header.version), sizeof(header.version));
+	inputFileStream.read(reinterpret_cast<char*>(&header.magic), sizeof(header.magic));
+	skipToNextLine(inputFileStream);
+	inputFileStream.read(reinterpret_cast<char*>(&header.uknLong1), sizeof(header.uknLong1));
+	inputFileStream.read(reinterpret_cast<char*>(&header.idxOffset), sizeof(header.idxOffset));
+	inputFileStream.read(reinterpret_cast<char*>(&header.uknLong3), sizeof(header.uknLong3));
+	inputFileStream.read(reinterpret_cast<char*>(&header.uknLong4), sizeof(header.uknLong4));
+	inputFileStream.read(reinterpret_cast<char*>(&header.mcamCount), sizeof(header.mcamCount));
+	header.name = readWString(inputFileStream);
+	skipToNextLine(inputFileStream);
+
+	header.mcamEntry.resize(header.mcamCount);
+	inputFileStream.read(reinterpret_cast<char*>(header.mcamEntry.data()), sizeof(uint64_t) * header.mcamCount);
+	skipToNextLine(inputFileStream);
+
+	return header;
+}
+
+MCAMHeader CCamera_Event::Read_CamHeader(ifstream& inputFileStream, streampos Position)
+{
+	MCAMHeader mcam;
+
+	inputFileStream.seekg(Position, std::ios::beg);
+	inputFileStream.read(reinterpret_cast<char*>(&mcam.version), sizeof(mcam.version));
+	inputFileStream.read(reinterpret_cast<char*>(&mcam.magic), sizeof(mcam.magic));
+	skipToNextLine(inputFileStream);
+	inputFileStream.read(reinterpret_cast<char*>(&mcam.offsets), sizeof(mcam.offsets));
+	inputFileStream.read(reinterpret_cast<char*>(&mcam.uknShort), sizeof(mcam.uknShort));
+	inputFileStream.read(reinterpret_cast<char*>(&mcam.frameRate), sizeof(mcam.frameRate));
+	inputFileStream.read(reinterpret_cast<char*>(&mcam.frameCount), sizeof(mcam.frameCount));
+	inputFileStream.read(reinterpret_cast<char*>(&mcam.blending), sizeof(mcam.blending));
+	mcam.name3 = readWString(inputFileStream);
+	skipToNextLine(inputFileStream);
+
+	inputFileStream.seekg(mcam.offsets[0] +  Position, std::ios::beg);
+
+	uint64_t trash;
+	inputFileStream.read(reinterpret_cast<char*>(&trash), sizeof(uint16_t));
+	inputFileStream.read(reinterpret_cast<char*>(&trash), sizeof(uint16_t));
+	inputFileStream.read(reinterpret_cast<char*>(&trash), sizeof(uint32_t));
+	inputFileStream.read(reinterpret_cast<char*>(&trash), sizeof(uint32_t));
+	inputFileStream.read(reinterpret_cast<char*>(&trash), sizeof(uint32_t));
+	inputFileStream.read(reinterpret_cast<char*>(&trash), sizeof(uint64_t));
+
+	inputFileStream.read(reinterpret_cast<char*>(&mcam.TranslateHeader), sizeof(TrackHeader));
+	inputFileStream.read(reinterpret_cast<char*>(&mcam.RotationHeader), sizeof(TrackHeader));
+
+
+	inputFileStream.seekg(mcam.offsets[1] + Position, std::ios::beg);
+
+
+	inputFileStream.read(reinterpret_cast<char*>(&trash), sizeof(uint16_t));
+	inputFileStream.read(reinterpret_cast<char*>(&trash), sizeof(uint16_t));
+	inputFileStream.read(reinterpret_cast<char*>(&trash), sizeof(uint32_t));
+	inputFileStream.read(reinterpret_cast<char*>(&trash), sizeof(uint32_t));
+	inputFileStream.read(reinterpret_cast<char*>(&trash), sizeof(uint32_t));
+	inputFileStream.read(reinterpret_cast<char*>(&trash), sizeof(uint64_t));
+
+	inputFileStream.read(reinterpret_cast<char*>(&mcam.ZoomHeader), sizeof(TrackHeader));
+	return mcam;
+}
+
+void CCamera_Event::Reset_CamPosition()
+{
+	//m_Defaultmatrix = m_pPlayer->Get_Transform()->Get_WorldMatrix_Pure();
+
+	m_fRight_Dist_Look = m_fRight_Dist_Look_Default;
+	m_fUp_Dist_Look = m_fUp_Dist_Look_Default;
+	m_fLook_Dist_Look = m_fLook_Dist_Look_Default;
+}
+
+MCAM* CCamera_Event::Find_MCAM(const wstring& strCamTag)
+{
+	for (auto& pair : m_Camlist) {
+		if (pair.first.find(strCamTag) != wstring::npos) {
+			return &pair.second;
+		}
+	}
+
+	return nullptr;
+}
+
+void CCamera_Event::Play_MCAM(_float fTimeDelta)
+{
+	if (nullptr == m_pCurrentMCAM)
+		return;
+
+	_float fPreTrackPosition = m_fTrackPosition;
+	m_fTrackPosition += fTimeDelta * m_pCurrentMCAM->CAMHeader.frameRate;
+	
+	if (m_fTrackPosition > m_pCurrentMCAM->CAMHeader.frameCount) {
+		m_fTrackPosition = m_pCurrentMCAM->CAMHeader.frameCount;
+		m_pPlayer->Swap_Camera();
+		Reset();
+		return;
+		// ¿Ã ƒ´∏ﬁ∂Û¥¬ ¿Ã¡¶ ≥°¿Ãø©
+	}
+
+	_float3 vPreTranslation, vCurrentTranslation, vDeltaTranslation;
+
+	if (m_fTrackPosition >= m_pCurrentMCAM->CAMHeader.TranslateHeader.numFrames -1) {
+		vDeltaTranslation = { 0.f,0.f,0.f };
+	}
+	else {
+		vPreTranslation = XMVectorLerp(m_pCurrentMCAM->Translations[int(floor(fPreTrackPosition))],
+			m_pCurrentMCAM->Translations[int(floor(fPreTrackPosition)) + 1], fPreTrackPosition - floor(fPreTrackPosition));
+		vCurrentTranslation = XMVectorLerp(m_pCurrentMCAM->Translations[int(floor(m_fTrackPosition))],
+			m_pCurrentMCAM->Translations[int(floor(m_fTrackPosition)) + 1], m_fTrackPosition - floor(m_fTrackPosition));
+		vDeltaTranslation = vCurrentTranslation - vPreTranslation;
+	}
+
+	_float4 vPreRotation, vCurrentRotation, vDeltaRotation;
+
+	if (m_fTrackPosition > m_pCurrentMCAM->CAMHeader.RotationHeader.numFrames - 1) {
+		vDeltaRotation = { 0.f,0.f,0.f };
+	}
+	else {
+		vPreRotation = XMQuaternionSlerp(m_pCurrentMCAM->Rotations[int(floor(fPreTrackPosition))],
+			m_pCurrentMCAM->Rotations[int(floor(fPreTrackPosition)) + 1], fPreTrackPosition - floor(fPreTrackPosition));
+		_float4 vPreRotationInv = XMQuaternionInverse(XMQuaternionNormalize(vPreRotation));
+		vCurrentRotation = XMQuaternionSlerp(m_pCurrentMCAM->Rotations[int(floor(m_fTrackPosition))],
+			m_pCurrentMCAM->Rotations[int(floor(m_fTrackPosition)) + 1], m_fTrackPosition - floor(m_fTrackPosition));
+
+		vDeltaRotation = XMQuaternionMultiply(XMQuaternionNormalize(vPreRotationInv), XMQuaternionNormalize(vCurrentRotation));
+	}
+
+	_float vPreZoom, vCurrentZoom, vDeltaZoom;
+
+	if (m_fTrackPosition > m_pCurrentMCAM->CAMHeader.ZoomHeader.numFrames - 1) {
+		vDeltaZoom = 0.f;
+	}
+	else {
+		vPreZoom = XMVectorGetX(XMVectorLerp(m_pCurrentMCAM->Zooms[int(floor(fPreTrackPosition))],
+			m_pCurrentMCAM->Zooms[int(floor(fPreTrackPosition)) + 1], fPreTrackPosition - floor(fPreTrackPosition)));
+		vCurrentZoom = XMVectorGetX(XMVectorLerp(m_pCurrentMCAM->Zooms[int(floor(m_fTrackPosition))],
+			m_pCurrentMCAM->Zooms[int(floor(m_fTrackPosition)) + 1], m_fTrackPosition - floor(m_fTrackPosition)));
+		vDeltaZoom = vCurrentZoom - vPreZoom;
+	}
+
+	//_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
+	//	XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 0.f),
+	//	vDeltaTranslation); // rotation ¡◊¿” 
+
+	//_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
+	//	XMVectorSet(0.f, 0.f, 0.f, 1.f), XMQuaternionConjugate(vDeltaRotation),
+	//	XMVectorSet(0.f, 0.f, 0.f, 0.f)); // translation  ¡◊¿”
+
+	
+	_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
+		XMVectorSet(0.f, 0.f, 0.f, 1.f), XMQuaternionConjugate(vDeltaRotation),
+		vDeltaTranslation * 0.01); // µ—¥Ÿ 
+
+
+	_vector vPreDecomposeVector[3], vCurrentDecomposeVector[3];
+
+	XMMatrixDecompose(&vPreDecomposeVector[0], &vPreDecomposeVector[1], &vPreDecomposeVector[2], m_PrePlayerMatrix);
+	XMMatrixDecompose(&vCurrentDecomposeVector[0], &vCurrentDecomposeVector[1], &vCurrentDecomposeVector[2], XMLoadFloat4x4(m_pSocketMatrix));
+
+	_vector vPlayerDeltaTranslation = vCurrentDecomposeVector[2] - vPreDecomposeVector[2];	
+	_float4 vPlayerPreRotationInv = XMQuaternionInverse(XMQuaternionNormalize(vPreDecomposeVector[1]));
+	_vector vPlayerDeltaRotation = XMQuaternionMultiply(XMQuaternionNormalize(vPlayerPreRotationInv), XMQuaternionNormalize(vCurrentDecomposeVector[1]));
+
+	m_PrePlayerMatrix = XMLoadFloat4x4(m_pSocketMatrix);
+
+	_matrix CombinedPlayerMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
+		XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 0.f),
+		vPlayerDeltaTranslation * 0.01); // rotation ¡◊¿” 
+
+	_matrix finalMatrix;
+	
+	finalMatrix = m_pTransformCom->Get_WorldMatrix() * CombinedMatrix; //* CombinedPlayerMatrix;
+
+
+	cout << finalMatrix.r[3].m128_f32[0] << ' ' << finalMatrix.r[3].m128_f32[1] << ' ' << finalMatrix.r[3].m128_f32[2] << endl;
+
+//		* m_pPlayer->Get_Transform()->Get_WorldMatrix()
+//		* XMMatrixTranslationFromVector(m_pPlayer->Get_Transform()->Get_State_Vector(CTransform::STATE_LOOK) * -100.f);
+
+	m_pTransformCom->Set_WorldMatrix(finalMatrix);
+}
+
+CCamera_Event* CCamera_Event::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CCamera_Event* pInstance = new CCamera_Event(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype()))
+	{
+		MSG_BOX(TEXT("Failed To Created : CCamera_Free"));
+
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CGameObject* CCamera_Event::Clone(void* pArg)
+{
+	CCamera_Event* pInstance = new CCamera_Event(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX(TEXT("Failed To Created : CCamera_Event"));
+
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+void CCamera_Event::Free()
+{
+	__super::Free();
+}

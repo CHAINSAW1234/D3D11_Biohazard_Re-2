@@ -4,6 +4,7 @@
 
 #include "GameInstance.h"
 #include "Camera_Free.h"
+#include "Camera_Event.h"
 
 /* Player */
 #include "Body_Player.h"
@@ -344,6 +345,12 @@ HRESULT CLoader::Load_Prototype()
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Free"),
 		CCamera_Free::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_Camera_Free */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Event"),
+		CCamera_Event::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 #pragma region Player
 	/* For.Prototype_GameObject_Player */
@@ -1221,12 +1228,17 @@ HRESULT CLoader::Load_Animations()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Danger_Light"), "../Bin/Resources/Animations/Player/Body/move/move_danger_stlight/")))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Common"), "../Bin/Resources/Animations/Player/Body/move/move_common/")))
-		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Hold_Hg"), "../Bin/Resources/Animations/Player/Body/hold/hg_hold/")))
 		return E_FAIL;															   
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Hold_Stg"), "../Bin/Resources/Animations/Player/Body/hold/stg_hold/")))
 		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Common"), "../Bin/Resources/Animations/Player/Body/move/move_common/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Bite"), "../Bin/Resources/Animations/Player/Body/bite/")))
+		return E_FAIL;
+
 #pragma endregion
 
 

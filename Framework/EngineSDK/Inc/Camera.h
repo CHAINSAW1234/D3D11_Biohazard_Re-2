@@ -29,6 +29,16 @@ public:
 	virtual void	Tick(_float fTimeDelta) override;
 	virtual void	Late_Tick(_float fTimeDelta) override;
 
+	_bool			Get_IsActive() { return m_isActive; }
+	virtual void	Active_Camera(_bool isActive) { 
+		m_isActive = isActive; 
+		if (m_isActive)
+			Bind_PipeLines();
+	}
+
+public:
+	_bool			m_isActive = { false };
+
 protected:
 	_float			m_fFovy = { 0.0f };
 	_float			m_fAspect = { 0.0f };
