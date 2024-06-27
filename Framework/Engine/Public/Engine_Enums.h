@@ -74,5 +74,6 @@ namespace Engine
 		CALF_R = 1 << 12,
 		FOOT_L = 1 << 13,
 		FOOT_R = 1 << 14,
+		_END
 	};
 }

@@ -23,7 +23,7 @@ public:
 		const _ubyte*	pState;
 		_float3*				pRootTranslation = { nullptr };
 		wstring				strModelComponentName = { TEXT("") };
-
+		_int				iPropType = {0};
 	}PART_INTERACTPROPS_DESC;
 	enum Part_INTERACTPROPS_COL
 	{
@@ -57,11 +57,14 @@ public:
 		m_pPlayerInteract = pPlayerInteract;
 		m_pPlayerTransform = pPlayerTransform;
 	}
-
+	virtual _float4 Get_Pos(_int iArg = 0) { return XMVectorSetW( m_WorldMatrix.Translation(),1.f); }
+	
 protected:
-	_bool						m_bCol = { false };
-	_bool*						m_pRender;
-	const _ubyte*				m_pState;
+	_int				m_iPropType = { 0 };
+	_bool				m_bCol = { false };
+	_bool*			m_pRender;
+	const _ubyte*			m_pState;
+	_float4			m_vRotation = {};
 
 	class CPlayer*				m_pPlayer = { nullptr };
 	_bool*						 m_pPlayerInteract = {nullptr};
@@ -73,15 +76,18 @@ protected:
 	wstring						m_strModelComponentName = { TEXT("") };
 	CCollider*					m_pColliderCom[Part_INTERACTPROPS_COL_END] = { nullptr,nullptr,nullptr };
 
-	class CPxCollider*			m_pPx_Collider = { nullptr };
-	vector<CBone*>				m_vecRotationBone;
+	string							m_strMeshTag = {};
+
+
+	class CPxCollider*	m_pPx_Collider = { nullptr };
+	vector<CBone*>										m_vecRotationBone;
 
 protected:
 	void						Check_Col_Sphere_Player();
 	HRESULT						Add_Components();
 	virtual HRESULT				Add_PartObjects();
 	virtual HRESULT				Initialize_PartObjects();
-
+	virtual void					Get_SpecialBone_Rotation();
 protected:
 	HRESULT						Bind_ShaderResources();
 

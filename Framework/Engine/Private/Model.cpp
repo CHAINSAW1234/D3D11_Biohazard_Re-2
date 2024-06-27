@@ -504,6 +504,25 @@ void CModel::Add_Bone_Layer_ChildIndices(const wstring& strLayerTag, _uint iPare
 	m_BoneLayers.emplace(strLayerTag, pBoneLayer);
 }
 
+void CModel::Add_Bone_Layer_BoneIndices(const wstring& strLayerTag, const list<_uint>& BoneIndices)
+{
+	CBone_Layer* pBoneLayer = { Find_BoneLayer(strLayerTag) };
+	if (nullptr != pBoneLayer)
+		return;
+
+	unordered_set<_uint>			BoneIndicesSet;
+	for (auto& iBoneIndex : BoneIndices)
+	{
+		BoneIndicesSet.emplace(iBoneIndex);
+	}
+
+	pBoneLayer = CBone_Layer::Create(BoneIndicesSet);
+	if (nullptr == pBoneLayer)
+		return;
+
+	m_BoneLayers.emplace(strLayerTag, pBoneLayer);
+}
+
 void CModel::Add_Bone_Layer_All_Bone(const wstring& strLayerTag)
 {
 	CBone_Layer* pBoneLayer = { Find_BoneLayer(strLayerTag) };
@@ -1009,7 +1028,7 @@ _bool CModel::Is_Hide_Mesh(string strMeshTag)
 	if (-1 == iMeshIndex)
 		return false;
 
-	return m_Meshes[iMeshIndex]->Is_Hide();
+	return m_IsHideMesh[iMeshIndex];
 }
 
 _bool CModel::Is_Hide_Mesh(_uint iMeshIndex)
@@ -1018,7 +1037,7 @@ _bool CModel::Is_Hide_Mesh(_uint iMeshIndex)
 	if (iMeshIndex >= iNumMeshes)
 		return false;
 
-	return m_Meshes[iMeshIndex]->Is_Hide();
+	return m_IsHideMesh[iMeshIndex];
 }
 
 void CModel::Hide_Mesh(_uint iMeshIndex, _bool isHide)
@@ -1027,7 +1046,7 @@ void CModel::Hide_Mesh(_uint iMeshIndex, _bool isHide)
 	if (iNumMesh <= iMeshIndex)
 		return;
 
-	m_Meshes[iMeshIndex]->Set_Hide(isHide);
+	m_IsHideMesh[iMeshIndex] = isHide;
 }
 
 void CModel::Hide_Mesh(string strMeshTag, _bool isHide)
@@ -1036,7 +1055,7 @@ void CModel::Hide_Mesh(string strMeshTag, _bool isHide)
 	if (-1 == iIndex)
 		return;
 
-	m_Meshes[iIndex]->Set_Hide(isHide);
+	m_IsHideMesh[iIndex] = isHide;
 }
 
 _int CModel::Find_Mesh_Index(string strMeshTag)
@@ -1071,13 +1090,21 @@ list<_uint> CModel::Get_NonHideMeshIndices()
 	list<_uint>		MeshIndices;
 	for (_uint iIndex = 0; iIndex < iNumMeshes; ++iIndex)
 	{
-		if (false == m_Meshes[iIndex]->Is_Hide())
+		if (false == m_IsHideMesh[iIndex])
 		{
 			MeshIndices.push_back(iIndex);
 		}
 	}
 
 	return MeshIndices;
+}
+
+_float4 CModel::Get_Mesh_Local_Pos(string strMeshTag)
+{
+	_int			iIndex = { Find_Mesh_Index(strMeshTag) };
+	if (-1 == iIndex)
+		return _float4();
+	return m_Meshes[iIndex]->Get_CenterPoint();
 }
 
 #pragma endregion
@@ -1441,6 +1468,58 @@ _float CModel::Get_Duration_From_PlayingInfo(_uint iPlayingIndex)
 	}
 
 	return fDuration;
+}
+
+_float CModel::Get_TickPerSec_From_Anim(const wstring& strAnimLayerTag, _int iAnimIndex)
+{
+	_float			fTickPerSec = { 0.f };
+
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	if (iter == m_AnimationLayers.end())
+		return fTickPerSec;
+
+	if (iAnimIndex >= iter->second->Get_NumAnims())
+		return fTickPerSec;
+
+	fTickPerSec = iter->second->Get_Animation(iAnimIndex)->Get_TickPerSec();
+
+	return fTickPerSec;
+}
+
+_float CModel::Get_TickPerSec_From_Anim(const wstring& strAnimLayerTag, const string& strAnimTag)
+{
+	_float			fTickPerSec = { 0.f };
+
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	if (iter == m_AnimationLayers.end())
+		return fTickPerSec;
+
+	const vector<CAnimation*>& Animations = { iter->second->Get_Animations() };
+	for (auto& pAnimation : Animations)
+	{
+		if (pAnimation->Get_Name() == strAnimTag)
+		{
+			fTickPerSec = pAnimation->Get_TickPerSec();
+			break;
+		}
+	}
+
+	return fTickPerSec;
+}
+
+_float CModel::Get_TickPerSec_From_PlayingInfo(_uint iPlayingIndex)
+{
+	_float					fTIckPerSec = { 0.f };
+	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+	if (nullptr != pPlayingInfo)
+	{
+		_int				iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
+		wstring				strAnimLayerTag = { pPlayingInfo->Get_AnimLayerTag() };
+
+		fTIckPerSec = Get_TickPerSec_From_Anim(strAnimLayerTag, iAnimIndex);
+	}
+
+	return fTIckPerSec;
 }
 
 CBone* CModel::Get_BonePtr(const _char* pBoneName) const
@@ -1937,6 +2016,8 @@ HRESULT CModel::Initialize(void* pArg)
 	if (nullptr == m_pIK_Solver)
 		return E_FAIL;
 
+	m_IsHideMesh.resize(m_iNumMeshes);
+
 	return S_OK;
 }
 
@@ -2381,7 +2462,11 @@ vector<_float4x4> CModel::Compute_ResultMatrices(const vector<vector<_float4x4>>
 			if (false == pBoneLayer->Is_Included(iBoneIndex))
 				continue;
 
-			_float			fWeightRatio = { fBlendWeight / m_TotalWeights[iBoneIndex] };
+			_float			fTotalWeightThisBone = { m_TotalWeights[iBoneIndex] };
+			_float			fWeightRatio = { fBlendWeight / fTotalWeightThisBone };
+			if (fTotalWeightThisBone <= 0.f)
+				continue;
+
 			if (0.f >= fWeightRatio)
 				continue;
 
@@ -2927,6 +3012,21 @@ HRESULT CModel::Ready_Animations(ifstream& ifs)
 #pragma endregion
 
 #pragma region Create, Release
+
+void CModel::Bind_Resource_Skinning(_uint iIndex)
+{
+	m_Meshes[iIndex]->Bind_Resource_Skinning();
+}
+
+void CModel::Bind_Essential_Resource_Skinning(_float4x4 WorldMat)
+{
+	m_pGameInstance->Bind_Essential_Resource_Skinning(WorldMat, m_MeshBoneMatrices);
+}
+
+void CModel::Staging_Skinning(_uint iIndex)
+{
+	m_Meshes[iIndex]->Staging_Skinning();
+}
 
 CModel* CModel::Create_Temp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix)
 {

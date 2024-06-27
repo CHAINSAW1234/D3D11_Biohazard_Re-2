@@ -70,6 +70,23 @@ _bool CBounding_AABB::Intersect(CBounding_AABB * pTargetBounding)
 	return m_isCollision = true;
 }
 
+_bool CBounding_AABB::IntersectRayAABB(const _vector& rayOrigin, const _vector& rayDir, float& minDistance, float& maxDistance)
+{
+	_vector boxMin = XMLoadFloat3(&m_pBoundingDesc->Center) - XMLoadFloat3(&m_pBoundingDesc->Extents);
+	_vector boxMax = XMLoadFloat3(&m_pBoundingDesc->Center) + XMLoadFloat3(&m_pBoundingDesc->Extents);
+
+	_vector t1 = (boxMin - rayOrigin) / rayDir;
+	_vector t2 = (boxMax - rayOrigin) / rayDir;
+
+	_vector tMin = XMVectorMin(t1, t2);
+	_vector tMax = XMVectorMax(t1, t2);
+
+	minDistance = XMVectorGetX(XMVectorMax(XMVectorSplatX(tMin), XMVectorMax(XMVectorSplatY(tMin), XMVectorSplatZ(tMin))));
+	maxDistance = XMVectorGetX(XMVectorMin(XMVectorSplatX(tMax), XMVectorMin(XMVectorSplatY(tMax), XMVectorSplatZ(tMax))));
+
+	return maxDistance >= 0 && maxDistance >= minDistance;
+}
+
 #ifdef _DEBUG
 
 HRESULT CBounding_AABB::Render(PrimitiveBatch<VertexPositionColor>* pBatch)

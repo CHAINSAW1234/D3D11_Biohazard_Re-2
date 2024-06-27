@@ -23,7 +23,7 @@ public:
 	virtual HRESULT			Initialize(CBounding::BOUNDING_DESC* pBoundingDesc);
 	virtual void			Tick(_fmatrix WorldMatrix) = 0;
 	virtual _bool			Intersect(CCollider::TYPE eType, CBounding* pBoundingDesc) = 0;
-
+	virtual _bool			IntersectRayAABB(const _vector& rayOrigin, const _vector& rayDir, float& minDistance, float& maxDistance) { return false; }
 public:
 	void Active_Color(_bool isActive);
 	void Set_Color(_float4 vColor);

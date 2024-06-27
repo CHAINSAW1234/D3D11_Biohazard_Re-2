@@ -25,9 +25,9 @@ HRESULT CBehaviorTree::Initialize()
 	return S_OK;
 }
 
-void CBehaviorTree::Initiate()
+void CBehaviorTree::Initiate(_float fTImeDelta)
 {
-	m_pRootNode->Execute();
+	m_pRootNode->Execute(fTImeDelta);
 }
 
 CBehaviorTree* CBehaviorTree::Create()

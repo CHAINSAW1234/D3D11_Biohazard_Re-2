@@ -30,6 +30,8 @@ HRESULT CCamera_Free::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	m_pGameInstance->Set_Camera_Transform(m_pTransformCom);
+
 	return S_OK;
 }
 
@@ -124,3 +126,4 @@ void CCamera_Free::Free()
 	__super::Free();
 
 }
+

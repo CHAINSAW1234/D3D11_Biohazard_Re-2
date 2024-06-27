@@ -37,7 +37,7 @@ CComposite_Node* CComposite_Node::Create(void* pArg)
 	return pInstance;
 }
 
-_bool CComposite_Node::Execute()
+_bool CComposite_Node::Execute(_float fTimeDelta)
 {
 	if(m_bRootNode == false)
 	{
@@ -48,23 +48,30 @@ _bool CComposite_Node::Execute()
 		{
 			if (m_eComposite_Type == CNT_SELECTOR)
 			{
-				if (m_vecNode[i] && m_vecNode[i]->Execute() == true)
+				if (m_vecNode[i] && m_vecNode[i]->Execute(fTimeDelta) == true)
 					return true;
 			}
 			else
 			{
-				if (m_vecNode[i] && m_vecNode[i]->Execute() == false)
+				if (m_vecNode[i] && m_vecNode[i]->Execute(fTimeDelta) == false)
 					return false;
 			}
 		}
 
-		return true;
+		if (m_eComposite_Type == CNT_SELECTOR)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 	}
 	else
 	{
 		for (int i = 0; i < m_vecNode.size(); ++i)
 		{
-			m_vecNode[i] && m_vecNode[i]->Execute();
+			m_vecNode[i] && m_vecNode[i]->Execute(fTimeDelta);
 		}
 
 		return true;

@@ -25,7 +25,7 @@ void CWait_Zombie::Enter()
 	
 }
 
-_bool CWait_Zombie::Execute()
+_bool CWait_Zombie::Execute(_float fTimeDelta)
 {
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)
@@ -40,8 +40,8 @@ _bool CWait_Zombie::Execute()
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_IDLE);
 
-	cout << "Wait" << endl;
-		Change_Animation();
+	//cout << "Wait" << endl;
+	Change_Animation();
 
 	return true;
 }

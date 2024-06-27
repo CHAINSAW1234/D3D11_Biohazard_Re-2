@@ -1096,7 +1096,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 
 					m_vecCharacter_Controller[filterData.word2]->Set_Hit(true);
 					m_vecCharacter_Controller[filterData.word2]->Set_Force(vDelta, eType);
-					m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
+					//	m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
 
 					return true;
 				}

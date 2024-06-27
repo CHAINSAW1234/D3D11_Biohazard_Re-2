@@ -10,10 +10,11 @@ class CCollider;
 class CPartObject;
 END
 
-#define	STATUS_ZOMBIE_RECOGNIZE_DISTANCE		3.f
-#define	STATUS_ZOMBIE_VIEW_ANGLE				XMConvertToRadians(30.f)
-#define	STATUS_ZOMBIE_HEALTH					100.f
-#define	STATUS_ZOMBIE_ATTACK					10.f
+#define	STATUS_ZOMBIE_DEFAULT_RECOGNIZE_DISTANCE		3.f
+#define	STATUS_ZOMBIE_MAX_RECOGNIZE_DISTANCE			5.f
+#define	STATUS_ZOMBIE_VIEW_ANGLE						XMConvertToRadians(180.f)
+#define	STATUS_ZOMBIE_HEALTH							100.f
+#define	STATUS_ZOMBIE_ATTACK							10.f
 
 BEGIN(Client)
 
@@ -45,7 +46,7 @@ public:
 	virtual void						Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT						Render() override;
 
-public://For AIController
+public://For AIController;
 	virtual void						Init_BehaviorTree_Zombie() override;
 	
 private:
@@ -54,14 +55,32 @@ private:
 	virtual HRESULT						Add_PartObjects() override;
 	virtual HRESULT						Initialize_Status() override;
 
+public:		/* For.Collision Part */
+	inline COLLIDER_TYPE				Get_Current_IntersectCollider() { return m_eCurrentHitCollider; }
+	inline HIT_TYPE						Get_Current_HitType() { return m_eCurrentHitType; }
+
+public:		/* Access */
+	inline MONSTER_STATE				Get_Current_MonsterState() { return m_eState; }
+	inline _float3						Get_Current_HitDirection() { return m_vHitDirection; }
+
 private:	/* Initialize_PartObjects_Models */
 	virtual HRESULT 					Initialize_PartModels() override;
 	
+public://For Decal
+	virtual void						Perform_Skinning() override;
+	virtual void						Ready_Decal() override;
+
 private: // For AIController
 	class CBlackBoard_Zombie*			m_pBlackBoard = { nullptr };
 
 private:
 	class CModel*						m_pBodyModel = { nullptr };
+
+private:	/* For. Hit Interact */
+	COLLIDER_TYPE						m_eCurrentHitCollider = { _END };
+	HIT_TYPE							m_eCurrentHitType = { HIT_END };
+	_float3								m_vHitDirection = {};
+
 public:
 	static CZombie* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

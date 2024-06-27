@@ -43,7 +43,8 @@ private:
 private:
 	void Active();
 
-
+public:
+	virtual _float4 Get_Object_Pos() override;
 
 private:
 	_bool				m_bActive = { false };

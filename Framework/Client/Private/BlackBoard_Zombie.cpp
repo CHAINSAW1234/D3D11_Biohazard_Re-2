@@ -163,6 +163,40 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Player_Local(_float3* pDirection)
 	return true;
 }
 
+_bool CBlackBoard_Zombie::Compute_Direction_From_Hit_World(_float3* pDirection)
+{
+	_bool				isSuccess = { false };
+	if (nullptr == m_pAI || nullptr == pDirection)
+		return isSuccess;
+
+	_vector				vDirectionFromHit = { XMLoadFloat3(&m_pAI->Get_Current_HitDirection()) };
+
+	XMStoreFloat3(pDirection, vDirectionFromHit);
+	isSuccess = true;
+
+	return isSuccess;
+}
+
+_bool CBlackBoard_Zombie::Compute_Direction_From_Hit_Local(_float3* pDirection)
+{
+	_bool				isSuccess = { Compute_Direction_From_Hit_World(pDirection) };
+	if (nullptr == m_pAI || false == isSuccess)
+		return isSuccess;
+
+	CTransform*			pAITransform = { Get_Transform(m_pAI) };
+	if (nullptr == pAITransform)
+		return isSuccess;
+
+	_matrix				WorldMatrixInv = { pAITransform->Get_WorldMatrix_Inverse() };
+	_vector				vDirectionFromHit = { XMLoadFloat3(pDirection) };
+
+	_vector				vDirectionFromHitLocal = { XMVector3TransformNormal(vDirectionFromHit, WorldMatrixInv) };
+	XMStoreFloat3(pDirection, vDirectionFromHitLocal);
+	isSuccess = true;
+
+	return isSuccess;
+}
+
 _bool CBlackBoard_Zombie::Compute_Player_Angle_XZ_Plane_Local(_float* pAngle)
 {
 	if (nullptr == pAngle)

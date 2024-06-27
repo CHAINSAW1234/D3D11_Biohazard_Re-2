@@ -53,13 +53,11 @@ public:
 public:
 	void Set_MatreialDesc(const MATERIAL_DESC& MaterialDesc);
 	MATERIAL_DESC Get_MaterialDesc();
-public:
-	_bool					Is_Hide() { return m_isHide; }
-	void					Set_Hide(_bool isHide) { m_isHide = isHide; }
 
 public:
 	HRESULT Stock_Matrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneMatrices);
 	HRESULT Stock_PrevMatrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneMatrices);
+
 
 private:
 	_char					m_szName[MAX_PATH] = { "" };
@@ -72,8 +70,6 @@ private:
 	vector<_float4x4>		m_OffsetMatrices;
 
 	MATERIAL_DESC			m_MaterialDesc = {};
-
-	_bool					m_isHide = { false };
 
 	//For Mesh Cooking
 	_float3*				m_pVertices_Cooking = { nullptr };
@@ -174,13 +170,39 @@ public:
 	{
 		return m_vCenterPoint;
 	}
-private:
-	vector<tFace*>			m_vecFaces;
-	_float3*				m_pNormals = { nullptr };
-	_float2*				m_pTexcoords = { nullptr };
-	_float3*				m_pTangents = { nullptr };
 
-	_float3					m_vCenterPoint;
+#pragma region For Decal
+	void					Bind_Resource_Skinning();
+	void					Staging_Skinning();
+#pragma endregion
+
+private:
+	vector<tFace*>					m_vecFaces;
+	_float3*						m_pNormals = { nullptr };
+	_float2*						m_pTexcoords = { nullptr };
+	_float3*						m_pTangents = { nullptr };
+
+	_float3							m_vCenterPoint;
+
+#pragma region For Decal
+	ID3D11Buffer*					m_pSB_Skinning_Output = { nullptr };
+	ID3D11UnorderedAccessView*		m_pUAV = { nullptr };
+	SKINNING_OUTPUT*				m_pVertices_Skinning = { nullptr };
+	ID3D11Buffer*					m_pStaging_Buffer_Skinning = { nullptr };
+	ID3D11Buffer*					m_pSB_Vertex_Position = { nullptr };
+	ID3D11Buffer*					m_pSB_Vertex_Normal = { nullptr };
+	ID3D11Buffer*					m_pSB_Vertex_Tangent = { nullptr };
+	ID3D11Buffer*					m_pSB_Vertex_BlendIndices = { nullptr };
+	ID3D11Buffer*					m_pSB_Vertex_BlendWeights = { nullptr };
+	ID3D11ShaderResourceView*		m_pSRV_Vertex_Position = { nullptr };
+	ID3D11ShaderResourceView*		m_pSRV_Vertex_Normal = { nullptr };
+	ID3D11ShaderResourceView*		m_pSRV_Vertex_Tangent = { nullptr };
+	ID3D11ShaderResourceView*		m_pSRV_Vertex_BlendIndices = { nullptr };
+	ID3D11ShaderResourceView*		m_pSRV_Vertex_BlendWeights = { nullptr };
+
+	XMUINT4*						m_pBlendIndices = { nullptr };
+	_float4*						m_pBlendWeights = { nullptr };
+#pragma endregion
 public:
 	/* For.FBXLoad*/
 	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::MODEL_TYPE eModelType, const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices, _fmatrix TransformationMatrix);

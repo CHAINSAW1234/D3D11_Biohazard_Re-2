@@ -49,7 +49,6 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 void CBody_Zombie::Priority_Tick(_float fTimeDelta)
 {
 	__super::Priority_Tick(fTimeDelta);
-
 }
 
 void CBody_Zombie::Tick(_float fTimeDelta)
@@ -82,6 +81,81 @@ void CBody_Zombie::Tick(_float fTimeDelta)
 			m_bRender = true;
 		}
 	}
+
+
+#pragma region TEST Add Mask Anim
+
+	static			_uint iNum = { 3 };
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_RIGHT))
+	{
+		++iNum;
+		if (iNum > 8)
+		{
+			iNum = 3;
+		}
+	}
+
+	for (_uint i = 3; i < 9; ++i)
+	{
+		m_pModelCom->Set_BlendWeight(i, 0.f, 0.f);
+	}
+
+	switch (iNum)
+	{
+	case 3:
+	{
+		m_pModelCom->Change_Animation(3, TEXT("Add_Leg_L"), static_cast<_uint>(ANIM_ADD_LEG_L::_FRONT));
+		m_pModelCom->Set_BoneLayer_PlayingInfo(3, BONE_LAYER_L_LEG_TWIST_TAG);
+		m_pModelCom->Set_BlendWeight(3, 100.f, 0.f);
+		m_pModelCom->Set_Loop(3, true);
+		break;
+	}
+	case 4:
+	{
+		m_pModelCom->Change_Animation(4, TEXT("Add_Leg_R"), static_cast<_uint>(ANIM_ADD_LEG_R::_FRONT));
+		m_pModelCom->Set_BoneLayer_PlayingInfo(4, BONE_LAYER_R_LEG_TWIST_TAG);
+		m_pModelCom->Set_BlendWeight(4, 100.f, 0.f);
+		m_pModelCom->Set_Loop(4, true);
+		break;
+	}
+	case 5:
+	{
+		m_pModelCom->Change_Animation(5, TEXT("Add_Arm_L"), static_cast<_uint>(ANIM_ADD_ARM_L::_FRONT));
+		m_pModelCom->Set_BoneLayer_PlayingInfo(5, BONE_LAYER_L_ARM_TWIST_TAG);
+		m_pModelCom->Set_BlendWeight(5, 100.f, 0.f);
+		m_pModelCom->Set_Loop(5, true);
+		break;
+	}
+
+	case 6:
+	{
+		m_pModelCom->Change_Animation(6, TEXT("Add_Arm_R"), static_cast<_uint>(ANIM_ADD_ARM_R::_FRONT));
+		m_pModelCom->Set_BoneLayer_PlayingInfo(6, BONE_LAYER_R_ARM_TWIST_TAG);
+		m_pModelCom->Set_BlendWeight(6, 100.f, 0.f);
+		m_pModelCom->Set_Loop(6, true);
+		break;
+	}
+
+	case 7:
+	{
+		m_pModelCom->Change_Animation(7, TEXT("Add_Shoulder_L"), static_cast<_uint>(ANIM_ADD_SHOULDER_L::_FRONT));
+		m_pModelCom->Set_BoneLayer_PlayingInfo(7, BONE_LAYER_L_SHOULDER_TWIST_TAG);
+		m_pModelCom->Set_BlendWeight(7, 100.f, 0.f);
+		m_pModelCom->Set_Loop(7, true);
+		break;
+	}
+
+	case 8:
+	{
+		m_pModelCom->Change_Animation(8, TEXT("Add_Shoulder_R"), static_cast<_uint>(ANIM_ADD_SHOULDER_R::_FRONT));
+		m_pModelCom->Set_BoneLayer_PlayingInfo(8, BONE_LAYER_R_SHOULDER_TWIST_TAG);
+		m_pModelCom->Set_BlendWeight(8, 100.f, 0.f);
+		m_pModelCom->Set_Loop(8, true);
+		break;
+	}
+	}
+
+#pragma endregion
 }
 
 void CBody_Zombie::Late_Tick(_float fTimeDelta)
@@ -90,6 +164,22 @@ void CBody_Zombie::Late_Tick(_float fTimeDelta)
 
 	if(m_bRagdoll == false)
 		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+
+
+#pragma region TEST
+
+	for (_uint i = static_cast<_uint>(PLAYING_INDEX::INDEX_10); i < static_cast<_uint>(PLAYING_INDEX::INDEX_20); ++i)
+	{
+		_bool			isFinished = { m_pModelCom->isFinished(i) };
+		if (true == isFinished)
+		{
+			_float			fCurrentBlendWeight = { m_pModelCom->Get_BlendWeight(i) };
+			if(fCurrentBlendWeight > 0.f)
+				m_pModelCom->Set_BlendWeight(i, fCurrentBlendWeight - (fTimeDelta * 3.f));
+		}
+	}
+
+#pragma endregion
 
 	//	현재 모션이 A ~ F 타입인지 판단하고 저장 => 다음 틱에 태스크 노드에서 참조하여 모션을 결정할것이다.
 	Update_Current_MotionType();
@@ -345,7 +435,32 @@ HRESULT CBody_Zombie::Initialize_Model()
 	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_3), BONE_LAYER_DEFAULT_TAG, 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_4), BONE_LAYER_DEFAULT_TAG, 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_5), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_6), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_7), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_8), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_9), BONE_LAYER_DEFAULT_TAG, 0.f);
 
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_10), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_11), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_12), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_13), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_14), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_15), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_16), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_17), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_18), BONE_LAYER_DEFAULT_TAG, 0.f);
+
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_20), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_21), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_22), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_23), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_24), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_25), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_26), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_27), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_28), BONE_LAYER_DEFAULT_TAG, 0.f);
+	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_29), BONE_LAYER_DEFAULT_TAG, 0.f);
+	
 	/* Set_Root_Motion */
 	m_pModelCom->Active_RootMotion_XZ(true);
 	m_pModelCom->Active_RootMotion_Y(true);
@@ -386,6 +501,9 @@ HRESULT CBody_Zombie::Initialize_Model()
 		return E_FAIL;
 
 	if (FAILED(Register_Animation_Branches_AnimType()))
+		return E_FAIL;
+
+	if (FAILED(Register_BoneLayer_Additional_TwisterBones()))
 		return E_FAIL;
 
 	return S_OK;
@@ -681,6 +799,60 @@ HRESULT CBody_Zombie::Register_Animation_Branches_AnimGroup()
 	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Prison"));
 	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Railing_Fall"));
 	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Railing_Stund"));
+
+	return S_OK;
+}
+
+HRESULT CBody_Zombie::Register_BoneLayer_Additional_TwisterBones()
+{
+	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_LEG_TWIST_TAG, "l_leg_femur", "l_leg_ball")))
+		return E_FAIL;
+
+	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_R_LEG_TWIST_TAG, "r_leg_femur", "r_leg_ball")))
+		return E_FAIL;
+
+	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_ARM_TWIST_TAG, "l_arm_humerus", "l_arm_humerus")))
+		return E_FAIL;
+
+	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_R_ARM_TWIST_TAG, "r_arm_humerus", "r_arm_humerus")))
+		return E_FAIL;
+
+	//if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_SHOULDER_TWIST_TAG, "l_arm_clavicle", "l_arm_humerus")))
+	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_SHOULDER_TWIST_TAG, "spine_1", "l_arm_humerus")))
+		return E_FAIL;
+
+	//	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_R_SHOULDER_TWIST_TAG, "r_arm_clavicle", "r_arm_humerus")))
+	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_R_SHOULDER_TWIST_TAG, "spine_1", "r_arm_humerus")))
+		return E_FAIL;
+
+	//if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_LEG_TWIST_TAG, "COG", "l_leg_ball")))
+	//	return E_FAIL;
+
+	//if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_LEG_TWIST_TAG, "neck_0", "head")))
+	//	return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CBody_Zombie::Register_BoneLayer_Childs_NonInclude_Joint(const wstring& strBoneLayerTag, const string& strTopParentTag, const string& strEndEffectorTag)
+{
+	list<_uint>				ChildBoneIndices;
+	m_pModelCom->Get_Child_BoneIndices(strTopParentTag, ChildBoneIndices);
+
+	list<_uint>				ChildJointIndices;
+	m_pModelCom->Get_Child_ZointIndices(strTopParentTag, strEndEffectorTag, ChildJointIndices);
+
+	for (auto& iterSrc = ChildBoneIndices.begin(); iterSrc != ChildBoneIndices.end(); )
+	{
+		list<_uint>::iterator		iterDst = { find(ChildJointIndices.begin(), ChildJointIndices.end(), *iterSrc) };
+		if (iterDst != ChildJointIndices.end())
+		{
+			iterSrc = ChildBoneIndices.erase(iterSrc);
+		}
+		else
+			++iterSrc;
+	}
+	m_pModelCom->Add_Bone_Layer_BoneIndices(strBoneLayerTag, ChildBoneIndices);
 
 	return S_OK;
 }

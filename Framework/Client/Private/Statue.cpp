@@ -144,6 +144,11 @@ void CStatue::Active()
 
 }
 
+_float4 CStatue::Get_Object_Pos()
+{
+	return _float4();
+}
+
 CStatue* CStatue::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CStatue* pInstance = new CStatue(pDevice, pContext);

@@ -38,7 +38,8 @@ _bool CIs_Charactor_In_ViewAngle_Zombie::Condition_Check()
 
 		_vector		vLookTargetXZPlange = { XMVectorSetY(vLookTarget, 0.f) };
 
-		_float		fAngle = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vAbsoluteLook), XMVector3Normalize(vLookTargetXZPlange))) };
+		_float		fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vAbsoluteLook), XMVector3Normalize(vLookTargetXZPlange))) };
+		_float		fAngle = { acosf(fDot) };
 
 		if (fAngle <= fViewAngle)
 		{

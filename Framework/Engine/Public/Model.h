@@ -83,6 +83,8 @@ public:		/* For.Bone_Layer */
 	void									Add_Bone_Layer_ChildIndices(const wstring& strLayerTag, const string& strBoneTag);
 	void									Add_Bone_Layer_ChildIndices(const wstring& strLayerTag, _uint iParentBoneIndex);
 
+	void									Add_Bone_Layer_BoneIndices(const wstring& strLayerTag, const list<_uint>& BoneIndices);
+
 	void									Add_Bone_Layer_All_Bone(const wstring& strLayerTag);
 	void									Erase_Bone_Layer(const wstring& strLayerTag);
 
@@ -149,6 +151,12 @@ public:		/* For. MeshControll */
 
 	list<_uint>								Get_NonHideMeshIndices();
 
+public: /*For. Mesh pos*/
+	_float4								Get_Mesh_Local_Pos(string strMeshTag);
+
+
+
+
 public:		/* For. Access */
 	vector<string>							Get_BoneNames();
 	vector<_float4>							Get_Translations();
@@ -183,6 +191,9 @@ public:		/* For. Access */
 	_float									Get_Duration_From_Anim(const wstring& strAnimLayerTag, _int iAnimIndex);
 	_float									Get_Duration_From_Anim(const wstring& strAnimLayerTag, const string& strAnimTag);
 	_float									Get_Duration_From_PlayingInfo(_uint iPlayingIndex);
+	_float									Get_TickPerSec_From_Anim(const wstring& strAnimLayerTag, _int iAnimIndex);
+	_float									Get_TickPerSec_From_Anim(const wstring& strAnimLayerTag, const string& strAnimTag);
+	_float									Get_TickPerSec_From_PlayingInfo(_uint iPlayingIndex);
 	_float									Get_TrackPosition(_uint iPlayingIndex);
 	_float									Get_BlendWeight(_uint iPlayingIndex);
 	_int									Get_AnimIndex_PlayingInfo(_uint iPlayingIndex);
@@ -271,6 +282,7 @@ private:
 private:
 	_uint									m_iNumMeshes = { 0 };
 	vector<class CMesh*>					m_Meshes;
+	vector<_bool>							m_IsHideMesh;
 
 private:	/* For.RootMotion */
 	_bool									m_isRootMotion_XZ = { false };
@@ -344,6 +356,11 @@ public:		/* For Octree Culling */
 	}
 private:
 	_float4									m_vCenterPoint;
+
+public:/*For Skinned Mesh Decal*/
+	void									Bind_Resource_Skinning(_uint iIndex);
+	void									Bind_Essential_Resource_Skinning(_float4x4 WorldMat);
+	void									Staging_Skinning(_uint iIndex);
 public:
 	/* Create_ */
 	static CModel* Create_Temp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix);

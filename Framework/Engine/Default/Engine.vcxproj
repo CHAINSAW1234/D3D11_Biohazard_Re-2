@@ -206,8 +206,10 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\Collider.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
     <ClCompile Include="..\Private\Component_Manager.cpp" />
+    <ClCompile Include="..\Private\Compute_Shader_Manager.cpp" />
     <ClCompile Include="..\Private\Decorator_Node.cpp" />
     <ClCompile Include="..\Private\Easing.cpp" />
+    <ClCompile Include="..\Private\Decal.cpp" />
     <ClCompile Include="..\Private\Event_Call_Back.cpp" />
     <ClCompile Include="..\Private\FSM.cpp" />
     <ClCompile Include="..\Private\ComputeShader.cpp" />
@@ -300,8 +302,10 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\Component.h" />
     <ClInclude Include="..\Public\Component_Manager.h" />
     <ClInclude Include="..\Public\ComputeShader.h" />
+    <ClInclude Include="..\Public\Compute_Shader_Manager.h" />
     <ClInclude Include="..\Public\Decorator_Node.h" />
     <ClInclude Include="..\Public\Easing.h" />
+    <ClInclude Include="..\Public\Decal.h" />
     <ClInclude Include="..\Public\Engine_Enums.h" />
     <ClInclude Include="..\Public\FSM.h" />
     <ClInclude Include="..\Public\FSM_HState.h" />
@@ -378,6 +382,7 @@ UpdateLib.bat</Command>
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\RayCast.csh" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
@@ -392,9 +397,11 @@ UpdateLib.bat</Command>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_Volume</EntryPointName>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Skinning.csh" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli" />
+    <None Include="..\Bin\ShaderFiles\globals.shi" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc" />

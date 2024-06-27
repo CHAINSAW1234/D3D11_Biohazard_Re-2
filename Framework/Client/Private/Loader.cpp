@@ -4,6 +4,7 @@
 
 #include "GameInstance.h"
 #include "Camera_Free.h"
+#include "Camera_Event.h"
 
 /* Player */
 #include "Body_Player.h"
@@ -25,6 +26,9 @@
 #include "Sky.h"
 #include "CustomCollider.h"
 #include "NavMesh_Debug.h"
+
+/* Decal*/
+#include "Decal_Blood.h"
 
 /* MapObject*/
 #include "Props.h"
@@ -341,6 +345,12 @@ HRESULT CLoader::Load_Prototype()
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Free"),
 		CCamera_Free::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_Camera_Free */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Event"),
+		CCamera_Event::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 #pragma region Player
 	/* For.Prototype_GameObject_Player */
@@ -733,11 +743,14 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Door::Create(m_pDevice, m_pContext));
 		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_024_newpolicestatue01a")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_NewpoliceStatue::Create(m_pDevice, m_pContext));
-		if (!bDo && ((Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_008")) != wstring::npos)
+		if (!bDo &&
+			((Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_008")) != wstring::npos)
 			||(Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_002")) != wstring::npos)
+			||(Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_005")) != wstring::npos)
 			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_003")) != wstring::npos)
 			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_010")) != wstring::npos)
-			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_011")) != wstring::npos)) && (bDo = true))
+			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_011")) != wstring::npos))
+			&& (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Cabinet::Create(m_pDevice, m_pContext));
 		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm7")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_ItemProp::Create(m_pDevice, m_pContext));	
@@ -752,7 +765,8 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_EventProp::Create(m_pDevice, m_pContext));
 
 		if(!bDo)
-			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CProps::Create(m_pDevice, m_pContext));
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CProps::Create(m_pDevice, m_pContext));
+
 
 
 		Safe_Delete(Inform);
@@ -1121,6 +1135,14 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Pants.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Decal
+	/* For.Prototype_GameObject_Read_Item_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Decal_Blood"),
+		CDecal_Blood::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 #pragma endregion
 
 	Load_Items_Model(TransformMatrix); // 아이템 모델 로드
@@ -1206,12 +1228,17 @@ HRESULT CLoader::Load_Animations()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Danger_Light"), "../Bin/Resources/Animations/Player/Body/move/move_danger_stlight/")))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Move_Common"), "../Bin/Resources/Animations/Player/Body/move/move_common/")))
-		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Hold_Hg"), "../Bin/Resources/Animations/Player/Body/hold/hg_hold/")))
 		return E_FAIL;															   
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Hold_Stg"), "../Bin/Resources/Animations/Player/Body/hold/stg_hold/")))
 		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Common"), "../Bin/Resources/Animations/Player/Body/move/move_common/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Bite"), "../Bin/Resources/Animations/Player/Body/bite/")))
+		return E_FAIL;
+
 #pragma endregion
 
 

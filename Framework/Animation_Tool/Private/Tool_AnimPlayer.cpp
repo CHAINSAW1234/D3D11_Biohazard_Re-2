@@ -339,7 +339,7 @@ void CTool_AnimPlayer::Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosit
 	if (nullptr == m_pCurrentModel)
 		return;
 
-	m_pCurrentModel->Set_TrackPosition(iPlayingIndex, fTrackPosition);
+	m_pCurrentModel->Set_TrackPosition(iPlayingIndex, fTrackPosition, true);
 }
 
 void CTool_AnimPlayer::Set_BlendWeight(_uint iPlayingIndex, _float fWeight)
