@@ -314,21 +314,22 @@ HRESULT CInteractProps::Render_LightDepth_Point()
 
 _bool* CInteractProps::ComeClose_toPlayer(_float _come)
 {
-	_bool isResult = { false };
-
 	if (nullptr == m_pPlayer)
 		return nullptr;
 	
+	m_isNYResult = false;
+
 	/* Player와의 거리 */
 	_vector vDistanceVector = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) - m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION);
 	_float fPlayer_Distance = XMVectorGetX(XMVector3Length(vDistanceVector));
 
 	if (fPlayer_Distance <= _come)
-		isResult = true;
-	else
-		isResult = false;
+		m_isNYResult = true;
 
-	return &isResult;
+	else
+		m_isNYResult = false;
+
+	return &m_isNYResult;
 }
 
 HRESULT CInteractProps::Add_Components()

@@ -46,6 +46,7 @@ HRESULT CTitle_UI::Initialize(void* pArg)
 
         m_pTitle_BackGround = this;
 
+        //Safe_AddRef<CTitle_UI*>(m_pTitle_BackGround);
         Find_Logo();
     }
 
@@ -63,6 +64,8 @@ HRESULT CTitle_UI::Initialize(void* pArg)
             if (nullptr != m_pTitle_BackGround && false == m_pTitle_BackGround->m_IsChild)
                 break;
         }
+
+        m_wstrLogo_Broken = TEXT("Prototype_Component_Texture_LogoBroken");
     }
 
     for (auto& iter : m_vecTextBoxes)
@@ -265,6 +268,8 @@ void CTitle_UI::Find_Logo()
         {
             m_pLogo = dynamic_cast<CTitle_UI*>(iter);
 
+            //Safe_AddRef<CTitle_UI*>(m_pLogo);
+
             if (nullptr != m_pLogo && true == m_pLogo->m_IsChild)
                 break;
         }
@@ -302,4 +307,16 @@ CGameObject* CTitle_UI::Clone(void* pArg)
 void CTitle_UI::Free()
 {
     __super::Free();
+
+  /*  if(nullptr != m_pTitle_BackGround)
+    {
+        Safe_Release< CTitle_UI*>(m_pTitle_BackGround);
+        m_pTitle_BackGround = nullptr;
+    }
+    
+    if(nullptr != m_pLogo)
+    {
+        Safe_Release< CTitle_UI*>(m_pLogo);
+        m_pLogo = nullptr;
+    }*/
 }

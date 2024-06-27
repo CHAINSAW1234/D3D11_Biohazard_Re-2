@@ -59,6 +59,8 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
                     {
                         m_pSelectBox = pBox;
 
+                     //   Safe_AddRef<CInventory_Item_UI*>(m_pSelectBox);
+
                         CTransform* pSelectBox_Trans = dynamic_cast<CTransform*>(pBox->Get_Component(g_strTransformTag));
                         _float4 fSelectBox_Trans = pSelectBox_Trans->Get_State_Float4(CTransform::STATE_POSITION);
                         _float4 fCursor_Trans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
@@ -495,4 +497,11 @@ CGameObject* CInventory_Item_UI::Clone(void* pArg)
 void CInventory_Item_UI::Free()
 {
     __super::Free();
+
+    //if(nullptr != m_pSelectBox)
+    //{
+    //    Safe_Release<CInventory_Item_UI*>(m_pSelectBox);
+    //    m_pSelectBox = nullptr;
+    //}
 }
+

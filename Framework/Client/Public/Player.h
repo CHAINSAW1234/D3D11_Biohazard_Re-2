@@ -153,7 +153,9 @@ private:
 #pragma region 나옹 추가
 public:
 	_bool*										Col_Event_UI(class CCustomCollider* pCustom);
+	_int*										Get_Hp_Ptr() { return &m_iHp;  }
 
+	_bool										m_isNYResult;
 #pragma
 
 #pragma region 예은 추가 
