@@ -16,6 +16,7 @@ public:
 	virtual void				OnStateExit() override;
 	virtual void				Start() override;
 
+
 private:
 	CPlayer* m_pPlayer = { nullptr };
 
