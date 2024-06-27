@@ -531,11 +531,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
-	/* 9. Map_Target */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Map_Target.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+	///* 9. Map_Target */
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Map_Target.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 	
 	///////////////////////////* ¢º Map : END */////////////////////////////
 

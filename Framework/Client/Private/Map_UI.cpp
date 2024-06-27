@@ -190,7 +190,7 @@ HRESULT CMap_UI::Initialize(void* pArg)
     m_isRender = false;
     Search_TabWindow();
 
-    if(m_wstrFile == TEXT(""))
+    //if(m_wstrFile == TEXT(""))
     return S_OK;
 }
 
