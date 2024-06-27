@@ -170,7 +170,7 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 				{
 					if (true == iter->IsMouseHover() && true == iter->Get_isWorking())
 					{
-						_vector TempTrashCanValue = XMVectorSet(HoveredPos.x, HoveredPos.y, Z_POS_ITEM_UI, 0.f);
+						_vector TempTrashCanValue = XMVectorSet(HoveredPos.x, HoveredPos.y, Z_POS_ITEM_UI, 1.f);
 						m_eInven_Manager_State = REARRANGE_ITEM;
 						
 						m_pDragShadow->Set_ItemUI(iter->Get_ItemNumber(), DRAG_SHADOW, TempTrashCanValue, iter->Get_ItemQuantity());
@@ -330,7 +330,7 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
 			CTransform* pSelectedItemTransform = m_pSelected_ItemUI->Get_Transform();
-			_float4 fPos = { HoveredPos.x, HoveredPos.y, Z_POS_ITEM_UI, 0.f };
+			_float4 fPos = { HoveredPos.x, HoveredPos.y, Z_POS_ITEM_UI, 1.f };
 			pSelectedItemTransform->Set_State(CTransform::STATE_POSITION, fPos);
 			m_pSlotHighlighter->Set_DragShadow(false);
 			m_eInven_Manager_State = EVENT_IDLE;

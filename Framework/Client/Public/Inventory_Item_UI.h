@@ -40,32 +40,36 @@ private: /* 인벤토리 종류 */
 	void		Sub_SelectBox(SUB_INVEN_BOX_POSITION _eBoxType);
 
 public:
-	void		Set_InvenOpen(_bool isInvenOpen) { m_isInvenOpen = isInvenOpen; 
-	for (auto& iter : m_vecChildUI){
-		static_cast<CInventory_Item_UI*>(iter)->Set_InvenOpen(isInvenOpen);}}
+	void		Set_InvenOpen(_bool isInvenOpen)
+	{
+		m_isInvenOpen = isInvenOpen;
+		for (auto& iter : m_vecChildUI) {
+			static_cast<CInventory_Item_UI*>(iter)->Set_InvenOpen(isInvenOpen);
+		}
+	}
 
 	void		Reset_Call(_bool bInput);
 
 
 private: /* Box Type 변수*/
 	/* 1. Rendering Type */
-	_bool*					m_isSubRender					= { nullptr };
+	_bool* m_isSubRender = { nullptr };
 
 	/* 2. Having Box Type  */
-	CInventory_Item_UI*		m_pSelectBox					= { nullptr };
-	SUB_INVEN_WHICH_CHILD	m_eSubInven_Child				= { };
+	CInventory_Item_UI* m_pSelectBox = { nullptr };
+	SUB_INVEN_WHICH_CHILD	m_eSubInven_Child = { };
 
 	/* 3. Select Box : Cursor */
-	_float2					m_fDistance_BetweenCursor		= {}; /* Select Box와 Cursor 간의 거리*/
-	_bool					m_isMouseAcess					= { false };
-
+	_float2					m_fDistance_BetweenCursor = {}; /* Select Box와 Cursor 간의 거리*/
+	_bool					m_isMouseAcess = { false };
+	_bool					m_isInvenOpen = { false };
 
 private: /* Sub Equipment Inventory 변수 */
-	SUB_INVEN_BOX_POSITION	m_eSubInven_Type				= { SUB_INVEN_BOX_POSITION::END_INVEN };
+	SUB_INVEN_BOX_POSITION	m_eSubInven_Type = { SUB_INVEN_BOX_POSITION::END_INVEN };
 
-	_float					m_fOpenInven_Timer				= {};
-	_float					m_fOrigin_Blending				= {};
-	_bool					m_isSubInven_Open				= { false };
+	_float					m_fOpenInven_Timer = {};
+	_float					m_fOrigin_Blending = {};
+	_bool					m_isSubInven_Open = { false };
 
 
 public:
