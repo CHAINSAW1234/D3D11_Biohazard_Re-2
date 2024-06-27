@@ -342,40 +342,41 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region TEST
 
-	if (m_pGameInstance->Get_KeyState('E') == DOWN) {
-		Swap_Camera();
-		m_pCamera_Event->Set_DefaultMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
-	}
+	//if (m_pGameInstance->Get_KeyState('E') == DOWN) {
+	//	Swap_Camera();
+	//	//m_pCamera_Event->Set_DefaultMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
+	//}
 
-	static _int Test = -1;
+	//static _int Test = -1;
 
-	if (m_pGameInstance->Get_KeyState('Q') == DOWN) {
-		m_pCamera_Event->Set_DefaultMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
-		Test = 0;
-		Get_Body_Model()->Change_Animation(0, Get_AnimSetEtcName(BITE), 7);
+	//if (m_pGameInstance->Get_KeyState('Q') == DOWN) {
+	//	Test = 0;
+	//	Get_Body_Model()->Change_Animation(0, Get_AnimSetEtcName(BITE), 6);
 
-		if (!FAILED(m_pCamera_Event->Set_CurrentMCAM(TEXT("2070")))) {
-			m_pCamera_Event->Get_Transform()->Set_WorldMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
-			Swap_Camera();
-		}
-		//if (ANIMSET_MOVE((_int)m_eAnimSet_Move + 1) >= COMMON)
-		//	Change_AnimSet_Move(FINE);
-		//else
-		//	Change_AnimSet_Move(ANIMSET_MOVE((_int)m_eAnimSet_Move + 1));
-	}
-	
-	if (Test!= -1) {
-		if (m_pCamera_Event->m_isActive == false) {
-			if (Test == 0) {
-				Get_Body_Model()->Change_Animation(0, Get_AnimSetEtcName(BITE), 9);
-				Test = -1;
-				if (!FAILED(m_pCamera_Event->Set_CurrentMCAM(TEXT("2080")))) {
-					m_pCamera_Event->Get_Transform()->Set_WorldMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
-					Swap_Camera();
-				}
-			}
-		}
-	}
+	//	if (!FAILED(m_pCamera_Event->Set_CurrentMCAM(TEXT("2030")))) {
+	//		_float4x4 vWorldMatrix = m_pCamera->Get_Transform()->Get_WorldFloat4x4();
+	//		//vWorldMatrix.m[3][1] -= 2.f;
+	//		m_pCamera_Event->Get_Transform()->Set_WorldMatrix(vWorldMatrix);
+	//		Swap_Camera();
+	//	}
+	//	//if (ANIMSET_MOVE((_int)m_eAnimSet_Move + 1) >= COMMON)
+	//	//	Change_AnimSet_Move(FINE);
+	//	//else
+	//	//	Change_AnimSet_Move(ANIMSET_MOVE((_int)m_eAnimSet_Move + 1));
+	//}
+	//
+	//if (Test!= -1) {
+	//	if (m_pCamera_Event->m_isActive == false) {
+	//		if (Test == 0) {
+	//			Get_Body_Model()->Change_Animation(0, Get_AnimSetEtcName(BITE), 27);
+	//			Test = -1;
+	//			if (!FAILED(m_pCamera_Event->Set_CurrentMCAM(TEXT("2610")))) {
+	//				//m_pCamera_Event->Get_Transform()->Set_WorldMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
+	//				Swap_Camera();
+	//			}
+	//		}
+	//	}
+	//}
 
 #pragma endregion
 	Update_Direction();
@@ -424,7 +425,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	if (m_pController)
 		m_pController->Update_Collider();
 
-	Turn_Spine_Default(fTimeDelta);
+	//Turn_Spine_Default(fTimeDelta);
 	Turn_Spine_Hold(fTimeDelta);		// Hold 상태에서 척추를 상하로만 돌림
 	//Turn_Spine_Light(fTimeDelta);		// Light 상태에서 상체전체를 카메라를 보도록 돌림
 
@@ -1559,7 +1560,7 @@ HRESULT CPlayer::Ready_Camera()
 
 	m_pCamera_Event->SetPlayer(this);
 	//m_pCamera_Event->Set_DefaultMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
-	m_pCamera_Event->Set_SocketMatrix(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("spine_2")));
+	m_pCamera_Event->Set_SocketMatrix(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("neck_0")));
 	//m_pCamera_Event->Set_SocketMatrix(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_backVest_start")));
 
 	

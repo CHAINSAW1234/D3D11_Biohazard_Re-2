@@ -26,7 +26,7 @@ public:
 	_vector						Get_Position_Vector();
 	void						SetPlayer(CGameObject* pPlayer);
 	void						Set_SocketMatrix(_float4x4* pParentMatrix) { m_pSocketMatrix = pParentMatrix; }
-	void Set_DefaultMatrix(_float4x4 DefaultMatrix) { memcpy(&m_Defaultmatrix, &DefaultMatrix, sizeof(_float4x4)); }
+	//void						Set_DefaultMatrix(_float4x4 DefaultMatrix) { memcpy(&m_Defaultmatrix, &DefaultMatrix, sizeof(_float4x4)); }
 	void						Reset();
 	HRESULT						Set_CurrentMCAM(const wstring& strCamTag);
 
@@ -46,14 +46,13 @@ private:
 	class						CPlayer* m_pPlayer = { nullptr };
 	_float4x4*					m_pParentMatrix = { nullptr };
 	_float4x4*					m_pSocketMatrix = { nullptr };
-	_bool						m_isLockPlayer = { false };
 	map<wstring, MCAM>			m_Camlist;
 
 	_bool						m_isPlay = { false };
 	MCAM*						m_pCurrentMCAM;
 	_float						m_fTrackPosition = { 0.f };
 	_float						m_fLinearTimeDelta = { 0.f };
-	_float4x4					m_Defaultmatrix;
+	_float4x4					m_PrePlayerMatrix;
 
 	_float4						m_vCameraPosition;
 	_float4						m_vCamera_LookAt_Point;

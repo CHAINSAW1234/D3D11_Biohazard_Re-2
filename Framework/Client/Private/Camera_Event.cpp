@@ -30,29 +30,30 @@ HRESULT CCamera_Event::Initialize(void* pArg)
 
 	Load_CamPosition();
 
-	m_Defaultmatrix = XMMatrixIdentity();
+	//m_Defaultmatrix = XMMatrixIdentity();
 
 	return S_OK;
 }
 
 void CCamera_Event::Tick(_float fTimeDelta)
 {
-	Reset_CamPosition();
+	//Reset_CamPosition();
 
 
 	if (m_isPlay) {
 		Play_MCAM(fTimeDelta);
 	}
 	else {
-		_float3 vRight = m_Defaultmatrix.Right() * m_fRight_Dist_Pos;
-		_float3 vUp = m_Defaultmatrix.Up() * (m_fUp_Dist_Pos + CONTROLLER_GROUND_GAP);
-		_float3 vLook = -m_Defaultmatrix.Forward() * m_fLook_Dist_Pos;
+		;
+		//_float3 vRight = m_Defaultmatrix.Right() * m_fRight_Dist_Pos;
+		//_float3 vUp = m_Defaultmatrix.Up() * (m_fUp_Dist_Pos + CONTROLLER_GROUND_GAP);
+		//_float3 vLook = -m_Defaultmatrix.Forward() * m_fLook_Dist_Pos;
 
-		_matrix Default = m_Defaultmatrix;
-			Default.r[3] = XMVectorSetW(m_Defaultmatrix.Translation() + vRight + vUp + vLook, 1.f);
+		//_matrix Default = m_Defaultmatrix;
+		//	Default.r[3] = XMVectorSetW(m_Defaultmatrix.Translation() + vRight + vUp + vLook, 1.f);
 
-		m_pTransformCom->Set_WorldMatrix(Default);
-		m_pTransformCom->Look_At(XMVectorSetW(m_Defaultmatrix.Translation() + _float3(0.f,CONTROLLER_GROUND_GAP, 0.f), 1.f));
+		//m_pTransformCom->Set_WorldMatrix(Default);
+		//m_pTransformCom->Look_At(XMVectorSetW(m_Defaultmatrix.Translation() + _float3(0.f,CONTROLLER_GROUND_GAP, 0.f), 1.f));
 	}
 	__super::Bind_PipeLines();
 }
@@ -109,6 +110,12 @@ HRESULT CCamera_Event::Set_CurrentMCAM(const wstring& strCamTag)
 	m_pCurrentMCAM = pMCAM;
 	m_isPlay = true;
 	m_fTrackPosition = 0.f;
+	
+	m_PrePlayerMatrix = XMLoadFloat4x4(m_pSocketMatrix);
+
+	//m_PrePlayerMatrix = m_pPlayer->Get_Transform()->Get_WorldMatrix();
+	
+
 	//m_isActive = true;	--> Player°¡ ÇØÁÜ
 
 	return S_OK;
@@ -258,7 +265,7 @@ MCAMHeader CCamera_Event::Read_CamHeader(ifstream& inputFileStream, streampos Po
 
 void CCamera_Event::Reset_CamPosition()
 {
-	m_Defaultmatrix = m_pPlayer->Get_Transform()->Get_WorldMatrix_Pure();
+	//m_Defaultmatrix = m_pPlayer->Get_Transform()->Get_WorldMatrix_Pure();
 
 	m_fRight_Dist_Look = m_fRight_Dist_Look_Default;
 	m_fUp_Dist_Look = m_fUp_Dist_Look_Default;
@@ -281,6 +288,7 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 	if (nullptr == m_pCurrentMCAM)
 		return;
 
+	_float fPreTrackPosition = m_fTrackPosition;
 	m_fTrackPosition += fTimeDelta * m_pCurrentMCAM->CAMHeader.frameRate;
 	
 	if (m_fTrackPosition > m_pCurrentMCAM->CAMHeader.frameCount) {
@@ -291,60 +299,83 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 		// ÀÌ Ä«¸Þ¶ó´Â ÀÌÁ¦ ³¡ÀÌ¿©
 	}
 
-	_float fTranslationFrame = m_fTrackPosition;
-	_float3 vTranslation; 
+	_float3 vPreTranslation, vCurrentTranslation, vDeltaTranslation;
 
-	if (fTranslationFrame > m_pCurrentMCAM->CAMHeader.TranslateHeader.numFrames -1) {
-		vTranslation = m_pCurrentMCAM->Translations[m_pCurrentMCAM->CAMHeader.TranslateHeader.numFrames - 1];
+	if (m_fTrackPosition >= m_pCurrentMCAM->CAMHeader.TranslateHeader.numFrames -1) {
+		vDeltaTranslation = { 0.f,0.f,0.f };
 	}
 	else {
-		vTranslation = XMVectorLerp(m_pCurrentMCAM->Translations[int(floor(fTranslationFrame))],
-			m_pCurrentMCAM->Translations[int(floor(fTranslationFrame)) + 1], fTranslationFrame - floor(fTranslationFrame));
+		vPreTranslation = XMVectorLerp(m_pCurrentMCAM->Translations[int(floor(fPreTrackPosition))],
+			m_pCurrentMCAM->Translations[int(floor(fPreTrackPosition)) + 1], fPreTrackPosition - floor(fPreTrackPosition));
+		vCurrentTranslation = XMVectorLerp(m_pCurrentMCAM->Translations[int(floor(m_fTrackPosition))],
+			m_pCurrentMCAM->Translations[int(floor(m_fTrackPosition)) + 1], m_fTrackPosition - floor(m_fTrackPosition));
+		vDeltaTranslation = vCurrentTranslation - vPreTranslation;
 	}
 
-	_float fRotationFrame = m_fTrackPosition;
-	_float4 vRotation;
+	_float4 vPreRotation, vCurrentRotation, vDeltaRotation;
 
-	if (fRotationFrame > m_pCurrentMCAM->CAMHeader.RotationHeader.numFrames - 1) {
-		vRotation = m_pCurrentMCAM->Rotations[m_pCurrentMCAM->CAMHeader.RotationHeader.numFrames - 1];
-	}
-	else {
-		vRotation = XMQuaternionSlerp(m_pCurrentMCAM->Rotations[int(floor(fRotationFrame))],
-			m_pCurrentMCAM->Rotations[int(floor(fRotationFrame)) + 1], fRotationFrame - floor(fRotationFrame));
-	}
-
-	_float fZoomFrame = m_fTrackPosition;
-	_float vZoom;
-
-	if (fZoomFrame > m_pCurrentMCAM->CAMHeader.ZoomHeader.numFrames - 1) {
-		vZoom = m_pCurrentMCAM->Zooms[m_pCurrentMCAM->CAMHeader.ZoomHeader.numFrames - 1].x;
+	if (m_fTrackPosition > m_pCurrentMCAM->CAMHeader.RotationHeader.numFrames - 1) {
+		vDeltaRotation = { 0.f,0.f,0.f };
 	}
 	else {
-		vZoom = XMVectorGetX(XMVectorLerp(m_pCurrentMCAM->Zooms[int(floor(fTranslationFrame))],
-			m_pCurrentMCAM->Zooms[int(floor(fTranslationFrame)) + 1], fTranslationFrame - floor(fTranslationFrame)));
+		vPreRotation = XMQuaternionSlerp(m_pCurrentMCAM->Rotations[int(floor(fPreTrackPosition))],
+			m_pCurrentMCAM->Rotations[int(floor(fPreTrackPosition)) + 1], fPreTrackPosition - floor(fPreTrackPosition));
+		_float4 vPreRotationInv = XMQuaternionInverse(XMQuaternionNormalize(vPreRotation));
+		vCurrentRotation = XMQuaternionSlerp(m_pCurrentMCAM->Rotations[int(floor(m_fTrackPosition))],
+			m_pCurrentMCAM->Rotations[int(floor(m_fTrackPosition)) + 1], m_fTrackPosition - floor(m_fTrackPosition));
+
+		vDeltaRotation = XMQuaternionMultiply(XMQuaternionNormalize(vPreRotationInv), XMQuaternionNormalize(vCurrentRotation));
 	}
 
-	_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
-		XMVectorSet(0.f, 0.f, 0.f, 1.f), XMQuaternionConjugate(vRotation), vTranslation);
+	_float vPreZoom, vCurrentZoom, vDeltaZoom;
 
-	_float3 vRight = m_Defaultmatrix.Right() * 1.5;
-	_float3 vUp = m_Defaultmatrix.Up() * 1.7;
-	_float3 vLook = m_Defaultmatrix.Forward() * 0.2;
+	if (m_fTrackPosition > m_pCurrentMCAM->CAMHeader.ZoomHeader.numFrames - 1) {
+		vDeltaZoom = 0.f;
+	}
+	else {
+		vPreZoom = XMVectorGetX(XMVectorLerp(m_pCurrentMCAM->Zooms[int(floor(fPreTrackPosition))],
+			m_pCurrentMCAM->Zooms[int(floor(fPreTrackPosition)) + 1], fPreTrackPosition - floor(fPreTrackPosition)));
+		vCurrentZoom = XMVectorGetX(XMVectorLerp(m_pCurrentMCAM->Zooms[int(floor(m_fTrackPosition))],
+			m_pCurrentMCAM->Zooms[int(floor(m_fTrackPosition)) + 1], m_fTrackPosition - floor(m_fTrackPosition)));
+		vDeltaZoom = vCurrentZoom - vPreZoom;
+	}
 
-	_matrix Default = m_Defaultmatrix;
-	Default.r[3] = XMVectorSetW(m_Defaultmatrix.Translation()  + vRight + vUp  -  vLook, 1.f);
+	//_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
+	//	XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 0.f),
+	//	vDeltaTranslation); // rotation Á×ÀÓ 
 
-	//m_pTransformCom->Set_WorldMatrix(Default);
-	//m_pTransformCom->Look_At(XMVectorSetW(m_Defaultmatrix.Translation() + _float3(0.f, CONTROLLER_GROUND_GAP, 0.f), 1.f));
-	//
-	//Default = m_pTransformCom->Get_WorldFloat4x4();
-
+	//_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
+	//	XMVectorSet(0.f, 0.f, 0.f, 1.f), XMQuaternionConjugate(vDeltaRotation),
+	//	XMVectorSet(0.f, 0.f, 0.f, 0.f)); // translation  Á×ÀÓ
 
 	
-	_matrix finalMatrix;
+	_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
+		XMVectorSet(0.f, 0.f, 0.f, 1.f), XMQuaternionConjugate(vDeltaRotation),
+		vDeltaTranslation * 0.01); // µÑ´Ù 
 
-	finalMatrix = XMMatrixRotationY(XMConvertToRadians(180)) * CombinedMatrix
-		* Default;
+
+	_vector vPreDecomposeVector[3], vCurrentDecomposeVector[3];
+
+	XMMatrixDecompose(&vPreDecomposeVector[0], &vPreDecomposeVector[1], &vPreDecomposeVector[2], m_PrePlayerMatrix);
+	XMMatrixDecompose(&vCurrentDecomposeVector[0], &vCurrentDecomposeVector[1], &vCurrentDecomposeVector[2], XMLoadFloat4x4(m_pSocketMatrix));
+
+	_vector vPlayerDeltaTranslation = vCurrentDecomposeVector[2] - vPreDecomposeVector[2];	
+	_float4 vPlayerPreRotationInv = XMQuaternionInverse(XMQuaternionNormalize(vPreDecomposeVector[1]));
+	_vector vPlayerDeltaRotation = XMQuaternionMultiply(XMQuaternionNormalize(vPlayerPreRotationInv), XMQuaternionNormalize(vCurrentDecomposeVector[1]));
+
+	m_PrePlayerMatrix = XMLoadFloat4x4(m_pSocketMatrix);
+
+	_matrix CombinedPlayerMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
+		XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 0.f),
+		vPlayerDeltaTranslation * 0.01); // rotation Á×ÀÓ 
+
+	_matrix finalMatrix;
+	
+	finalMatrix = m_pTransformCom->Get_WorldMatrix() * CombinedMatrix; //* CombinedPlayerMatrix;
+
+
+	cout << finalMatrix.r[3].m128_f32[0] << ' ' << finalMatrix.r[3].m128_f32[1] << ' ' << finalMatrix.r[3].m128_f32[2] << endl;
+
 //		* m_pPlayer->Get_Transform()->Get_WorldMatrix()
 //		* XMMatrixTranslationFromVector(m_pPlayer->Get_Transform()->Get_State_Vector(CTransform::STATE_LOOK) * -100.f);
 
