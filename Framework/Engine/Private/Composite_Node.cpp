@@ -58,7 +58,14 @@ _bool CComposite_Node::Execute(_float fTimeDelta)
 			}
 		}
 
-		return true;
+		if (m_eComposite_Type == CNT_SELECTOR)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 	}
 	else
 	{

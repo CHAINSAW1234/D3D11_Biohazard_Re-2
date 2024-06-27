@@ -188,9 +188,26 @@ void CZombie::Tick(_float fTimeDelta)
 			//	For.Anim
 			m_eCurrentHitCollider = eType;
 			XMStoreFloat3(&m_vHitDirection,  XMLoadFloat4(&vForce));
+
+#pragma region HIT TYPE 분할 임시
+
+			
+			CPlayer::EQUIP		eEquip = m_pBlackBoard->GetPlayer()->Get_Equip();
+			if (CPlayer::EQUIP::HG == eEquip)
+			{
+				m_eCurrentHitType = HIT_TYPE::HIT_SMALL;
+			}
+
+			else if (CPlayer::EQUIP::STG == eEquip)
+			{
+				m_eCurrentHitType = HIT_TYPE::HIT_BIG;
+			}
+
+#pragma endregion
 		}
 		else
 		{
+			m_eCurrentHitType = HIT_TYPE::HIT_END;
 			m_eCurrentHitCollider = COLLIDER_TYPE::_END;
 			XMStoreFloat3(&m_vHitDirection, XMVectorZero());
 		}
@@ -322,31 +339,44 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CComposite_Node* pSelectorNode_RootChild_1 = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_1);
 
+
+
+	//	Add Task Node		=> Damage Stun
+	CStun_Zombie* pTask_Stun = { CStun_Zombie::Create() };
+	pTask_Stun->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Stun);
+
 	//	Add Decorator		=> Is Hit?
-	CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitDesc;
-	for (_uint i = 0; i < static_cast<_uint>(HIT_TYPE::HIT_END); ++i)
-	{
-		IsHitDesc.CheckHitTypes.emplace_back(static_cast<HIT_TYPE>(i));
-	}
+	CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitSmallDesc;
+	IsHitSmallDesc.CheckHitTypes.emplace_back(HIT_TYPE::HIT_SMALL);
 
 	for (_uint i = 0; i < static_cast<_uint>(COLLIDER_TYPE::_END); ++i)
 	{
-		IsHitDesc.CheckColliderTypes.emplace_back(static_cast<COLLIDER_TYPE>(i));
+		IsHitSmallDesc.CheckColliderTypes.emplace_back(static_cast<COLLIDER_TYPE>(i));
 	}
-	CIs_Hit_Zombie*								pDeco_Is_Hit = { CIs_Hit_Zombie::Create(&IsHitDesc) };
-	pDeco_Is_Hit->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_1->Insert_Decorator_Node(pDeco_Is_Hit);
+	CIs_Hit_Zombie* pDeco_Is_HitSmall = { CIs_Hit_Zombie::Create(&IsHitSmallDesc) };
+	pDeco_Is_HitSmall->SetBlackBoard(m_pBlackBoard);
+	pTask_Stun->Insert_Decorator_Node(pDeco_Is_HitSmall);
 
-	//	Add Task Node		=> Damage Stun
-	/*CStun_Zombie*								pTask_Stun = { CStun_Zombie::Create() };
-	pTask_Stun->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Stun);*/
 
 	//	Add Task Node		=> Damage Knock Back
 	CKnock_Back_Zombie*							pTask_Knockback = { CKnock_Back_Zombie::Create() };
 	pTask_Knockback->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Knockback);
 	
+	//	Add Decorator		=> Is Hit?
+	CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitBigDesc;
+	IsHitBigDesc.CheckHitTypes.emplace_back(HIT_TYPE::HIT_BIG);
+
+	for (_uint i = 0; i < static_cast<_uint>(COLLIDER_TYPE::_END); ++i)
+	{
+		IsHitBigDesc.CheckColliderTypes.emplace_back(static_cast<COLLIDER_TYPE>(i));
+	}
+	CIs_Hit_Zombie*								pDeco_Is_HitBig= { CIs_Hit_Zombie::Create(&IsHitBigDesc) };
+	pDeco_Is_HitBig->SetBlackBoard(m_pBlackBoard);
+	pTask_Knockback->Insert_Decorator_Node(pDeco_Is_HitBig);
+
+
 	/*
 	*Root Child_3 Section ( Select Move Or Turn )
 	*/
