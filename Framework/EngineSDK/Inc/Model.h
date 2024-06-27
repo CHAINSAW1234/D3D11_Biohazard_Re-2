@@ -276,6 +276,7 @@ private:
 private:
 	_uint									m_iNumMeshes = { 0 };
 	vector<class CMesh*>					m_Meshes;
+	vector<_bool>							m_IsHideMesh;
 
 private:	/* For.RootMotion */
 	_bool									m_isRootMotion_XZ = { false };

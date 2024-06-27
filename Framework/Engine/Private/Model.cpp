@@ -1028,7 +1028,7 @@ _bool CModel::Is_Hide_Mesh(string strMeshTag)
 	if (-1 == iMeshIndex)
 		return false;
 
-	return m_Meshes[iMeshIndex]->Is_Hide();
+	return m_IsHideMesh[iMeshIndex];
 }
 
 _bool CModel::Is_Hide_Mesh(_uint iMeshIndex)
@@ -1037,7 +1037,7 @@ _bool CModel::Is_Hide_Mesh(_uint iMeshIndex)
 	if (iMeshIndex >= iNumMeshes)
 		return false;
 
-	return m_Meshes[iMeshIndex]->Is_Hide();
+	return m_IsHideMesh[iMeshIndex];
 }
 
 void CModel::Hide_Mesh(_uint iMeshIndex, _bool isHide)
@@ -1046,7 +1046,7 @@ void CModel::Hide_Mesh(_uint iMeshIndex, _bool isHide)
 	if (iNumMesh <= iMeshIndex)
 		return;
 
-	m_Meshes[iMeshIndex]->Set_Hide(isHide);
+	m_IsHideMesh[iMeshIndex] = isHide;
 }
 
 void CModel::Hide_Mesh(string strMeshTag, _bool isHide)
@@ -1055,7 +1055,7 @@ void CModel::Hide_Mesh(string strMeshTag, _bool isHide)
 	if (-1 == iIndex)
 		return;
 
-	m_Meshes[iIndex]->Set_Hide(isHide);
+	m_IsHideMesh[iIndex] = isHide;
 }
 
 _int CModel::Find_Mesh_Index(string strMeshTag)
@@ -1090,7 +1090,7 @@ list<_uint> CModel::Get_NonHideMeshIndices()
 	list<_uint>		MeshIndices;
 	for (_uint iIndex = 0; iIndex < iNumMeshes; ++iIndex)
 	{
-		if (false == m_Meshes[iIndex]->Is_Hide())
+		if (false == m_IsHideMesh[iIndex])
 		{
 			MeshIndices.push_back(iIndex);
 		}
@@ -2007,6 +2007,8 @@ HRESULT CModel::Initialize(void* pArg)
 	m_pIK_Solver = CIK_Solver::Create(nullptr);
 	if (nullptr == m_pIK_Solver)
 		return E_FAIL;
+
+	m_IsHideMesh.resize(m_iNumMeshes);
 
 	return S_OK;
 }

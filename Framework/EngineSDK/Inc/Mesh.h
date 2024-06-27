@@ -53,9 +53,6 @@ public:
 public:
 	void Set_MatreialDesc(const MATERIAL_DESC& MaterialDesc);
 	MATERIAL_DESC Get_MaterialDesc();
-public:
-	_bool					Is_Hide() { return m_isHide; }
-	void					Set_Hide(_bool isHide) { m_isHide = isHide; }
 
 public:
 	HRESULT Stock_Matrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneMatrices);
@@ -72,8 +69,6 @@ private:
 	vector<_float4x4>		m_OffsetMatrices;
 
 	MATERIAL_DESC			m_MaterialDesc = {};
-
-	_bool					m_isHide = { false };
 
 	//For Mesh Cooking
 	_float3*				m_pVertices_Cooking = { nullptr };

@@ -296,7 +296,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 	CComposite_Node::COMPOSITE_NODE_DESC		CompositeNodeDesc;
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
-	CComposite_Node*							pSelectorNode_Root = { CComposite_Node::Create(&CompositeNodeDesc) };
+	CComposite_Node* pSelectorNode_Root = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pNode_Root->Insert_Child_Node(pSelectorNode_Root);
 
 	/*
@@ -304,12 +304,12 @@ void CZombie::Init_BehaviorTree_Zombie()
 	*/
 
 	//	Add Task Node		=> Execture Pre Task
-	CExecute_PreTask_Zombie*					pTask_ExecutePreTask = { CExecute_PreTask_Zombie::Create() };
+	CExecute_PreTask_Zombie* pTask_ExecutePreTask = { CExecute_PreTask_Zombie::Create() };
 	pTask_ExecutePreTask->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_Root->Insert_Child_Node(pTask_ExecutePreTask);
 
 	//	Add Decorator		=> Is Maintain?
-	CIs_Maintain_PreTask_Zombie*				pDeco_Maintain_PreTask = { CIs_Maintain_PreTask_Zombie::Create() };
+	CIs_Maintain_PreTask_Zombie* pDeco_Maintain_PreTask = { CIs_Maintain_PreTask_Zombie::Create() };
 	pDeco_Maintain_PreTask->SetBlackBoard(m_pBlackBoard);
 	pTask_ExecutePreTask->Insert_Decorator_Node(pDeco_Maintain_PreTask);
 
@@ -319,12 +319,21 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 	//	Add RootNode Child Composite Node - Selector Node			(Is Hit?)
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
-	CComposite_Node*							pSelectorNode_RootChild_1 = { CComposite_Node::Create(&CompositeNodeDesc) };
+	CComposite_Node* pSelectorNode_RootChild_1 = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_1);
 
 	//	Add Decorator		=> Is Hit?
 	CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitDesc;
-	CIs_Hit_Zombie*								pDeco_Is_Hit = { CIs_Hit_Zombie::Create() };
+	for (_uint i = 0; i < static_cast<_uint>(HIT_TYPE::HIT_END); ++i)
+	{
+		IsHitDesc.CheckHitTypes.emplace_back(static_cast<HIT_TYPE>(i));
+	}
+
+	for (_uint i = 0; i < static_cast<_uint>(COLLIDER_TYPE::_END); ++i)
+	{
+		IsHitDesc.CheckColliderTypes.emplace_back(static_cast<COLLIDER_TYPE>(i));
+	}
+	CIs_Hit_Zombie*								pDeco_Is_Hit = { CIs_Hit_Zombie::Create(&IsHitDesc) };
 	pDeco_Is_Hit->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_1->Insert_Decorator_Node(pDeco_Is_Hit);
 
