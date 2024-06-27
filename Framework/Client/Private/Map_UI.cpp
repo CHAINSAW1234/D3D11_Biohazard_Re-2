@@ -437,6 +437,12 @@ void CMap_UI::Find_MapStateType(CUSTOM_UI_DESC* CustomUIDesc)
         m_eMapComponent_Type = MAP_UI_TYPE::FONT_MAP;
         m_eFloorType = MAP_FLOOR_TYPE::FLOOR_3;
     }
+    
+    else if (TEXT("UI_Map_Item_Floor3") == m_wstrFile)
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::ITEM_MAP;
+        m_eFloorType = MAP_FLOOR_TYPE::FLOOR_3;
+    }
 }
 
 void CMap_UI::Floor_Sort()
@@ -526,7 +532,7 @@ void CMap_UI::Mouse_Pos(_float fTimeDelta)
                 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
                 if (MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
-                    pos.x -= (fTimeDelta * (_float)ptDeltaPos.x * 20.f);
+                    pos.x -= (fTimeDelta * (_float)ptDeltaPos.x * 5.f);
                 else
                     pos.x += fTimeDelta * (_float)ptDeltaPos.x * m_fMouseSensor;
 
@@ -544,7 +550,7 @@ void CMap_UI::Mouse_Pos(_float fTimeDelta)
                 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
                 if (MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
-                    pos.y += (fTimeDelta * (_float)ptDeltaPos.y * 20.f);
+                    pos.y += (fTimeDelta * (_float)ptDeltaPos.y * 5.f);
                 else
                     pos.y -= fTimeDelta * (_float)ptDeltaPos.y * m_fMouseSensor;
 

@@ -79,7 +79,7 @@ private :
 
 	
 private : /* Mouse Move*/
-	_float					m_fMouseSensor						= { 40.f };
+	_float					m_fMouseSensor						= { 15.f };
 
 	_bool					m_isTransfrom_Setting				= { false };
 	_bool					m_isPrevRender						= { false }; /* Player Target 객체에도 처음 플레이어를 찾기 위해 사용함*/

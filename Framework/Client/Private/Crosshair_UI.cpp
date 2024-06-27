@@ -3,6 +3,7 @@
 #include "Crosshair_UI.h"
 #include "Camera_Free.h"
 
+
 #define Deceleration 0.9f /* °¨¼Ó */
 #define Zero 0
 #define FIXED_TIME 0.5f
@@ -42,7 +43,7 @@ HRESULT CCrosshair_UI::Initialize(void* pArg)
         {
             m_pCenterDot = dynamic_cast<CCrosshair_UI*>(iter);
 
-            if (nullptr != m_pCenterDot && m_pCenterDot->m_IsChild== false)
+            if (nullptr != m_pCenterDot && m_pCenterDot->m_IsChild == false)
             {
                 CTransform* pPointTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
                 vPoint = pPointTrans->Get_State_Float4(CTransform::STATE_POSITION);
@@ -365,11 +366,11 @@ CGameObject* CCrosshair_UI::Clone(void* pArg)
 
 void CCrosshair_UI::Free()
 {
-   /* if (nullptr != m_pCenterDot)
-    {
-        Safe_Release<CCrosshair_UI*>(m_pCenterDot);
-        m_pCenterDot = nullptr;
-    }*/
+    /* if (nullptr != m_pCenterDot)
+     {
+         Safe_Release<CCrosshair_UI*>(m_pCenterDot);
+         m_pCenterDot = nullptr;
+     }*/
 
     __super::Free();
 }
