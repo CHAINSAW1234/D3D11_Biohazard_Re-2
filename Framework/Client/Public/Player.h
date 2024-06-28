@@ -50,6 +50,8 @@ public:
 		HOLD_SHOT, HOLD_SHOT_NO_AMMO, HOLD_RELOAD,
 		HOLSTERTOMOVE, MOVETOHOLSTER, HOLD_END
 	};
+	
+
 
 	enum ANIMSET_MOVE { FINE, MOVE_HG, MOVE_STG, FINE_LIGHT, CAUTION, CAUTION_LIGHT, DANGER, DANGER_LIGHT, ANIMSET_MOVE_END };
 	enum ANIMSET_HOLD { HOLD_HG, HOLD_STG, HOLD_MLE, HOLD_SUP, ANIMSET_HOLD_END };
@@ -100,6 +102,7 @@ public:
 	CModel*										Get_Body_Model();
 	CModel*										Get_Weapon_Model();
 	_float3*									Get_Body_RootDir();
+	_bool										Get_isBite() { return m_isBite; }
 	_bool										Get_Spotlight() { return m_isSpotlight; }
 	_int										Get_Hp() { return m_iHp; }
 	CWeapon*									Get_Weapon() { return m_pWeapon; }
@@ -108,7 +111,9 @@ public:
 	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
 
 	// =============================== SET ===============================
+	void										Set_isBite(_bool isBite) { m_isBite = isBite; }
 	void										Set_Spotlight(_bool isSpotlight); 
+	void										Requst_Change_Equip(EQUIP eEquip);
 	void										Set_Equip(EQUIP eEquip);
 	void										Set_Hp(_int iHp);					
 	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineDefault = isTurnSpineDefault; }
@@ -121,10 +126,10 @@ public:
 	void										Change_State(STATE eState);
 	void										Change_AnimSet_Move(ANIMSET_MOVE eAnimSetMove) { m_eAnimSet_Move = eAnimSetMove; }
 	void										Change_AnimSet_Hold(ANIMSET_HOLD eAnimSetHold) { m_eAnimSet_Hold = eAnimSetHold; }
-	void										Change_Player_State_Bite(_int iAnimIndex, wstring& strLayerTag, _float4x4 Interpolationmatrix, _float fInterpolateTime);
+	void										Change_Player_State_Bite(_int iAnimIndex, wstring& strBiteLayerTag, _float4x4 Interpolationmatrix, _float fTotalInterpolateTime);
 
 	// ============================ UPDATE ============================
-	void										Update_InterplationMatrix();
+	void										Update_InterplationMatrix(_float fTimeDelta);
 
 private:
 	void										Update_FSM();
@@ -160,10 +165,14 @@ private:
 	_bool m_isBite = { false };
 	_uint m_eBiteType;
 	_float4x4 m_vBiteInterpolateMatrix;
-	_float m_fInterpolateTime;
+	_float m_fTotalInterpolateTime = 0.f;
+	_float m_fCurrentInterpolateTime = 0.f;
+	wstring m_strBiteLayerTag;
 
 
 	EQUIP m_eEquip = { NONE };
+	_bool m_isRequestChangeEquip = { false };				// 무기 교체 요청 들어옴
+	EQUIP m_eTargetEquip = { NONE };
 	CWeapon* m_pWeapon = { nullptr };
 	vector<CWeapon*> m_Weapons;
 
