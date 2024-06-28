@@ -256,6 +256,7 @@
     <ClInclude Include="..\Public\Monster.h" />
     <ClInclude Include="..\Public\Move_Front_Zombie.h" />
     <ClInclude Include="..\Public\Move_Include_Turn.h" />
+    <ClInclude Include="..\Public\Muzzle_Flash.h" />
     <ClInclude Include="..\Public\NavMesh_Debug.h" />
     <ClInclude Include="..\Public\NewpoliceStatue.h" />
     <ClInclude Include="..\Public\Part_InteractProps.h" />
@@ -410,6 +411,7 @@
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\Private\Move_Front_Zombie.cpp" />
     <ClCompile Include="..\Private\Move_Include_Turn.cpp" />
+    <ClCompile Include="..\Private\Muzzle_Flash.cpp" />
     <ClCompile Include="..\Private\NavMesh_Debug.cpp" />
     <ClCompile Include="..\Private\NewpoliceStatue.cpp" />
     <ClCompile Include="..\Private\Part_InteractProps.cpp" />
@@ -461,6 +463,7 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAlphaSortTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl" />

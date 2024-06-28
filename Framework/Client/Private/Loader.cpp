@@ -1036,7 +1036,19 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/Note/ui3210_file_13_1_iam.tex_noesispreviewdata.png")))))
 		return E_FAIL;
 
-	
+#pragma endregion
+
+#pragma region Effect
+	CTexture::TEXTURE_DESC Desc{};
+	Desc.iWidth = 0;
+	Desc.iHeight = 0;
+	Desc.iCountX = 0;
+	Desc.iCountY = 0;
+
+	/*Prototype_Component_Texture_Muzzle_Flash*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Flash"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Flash/Muzzle_Flash.dds"),&Desc))))
+		return E_FAIL;
 #pragma endregion
 
 	/* Prototype_Component_Texture_Sky */

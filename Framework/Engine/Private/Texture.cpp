@@ -16,7 +16,7 @@ CTexture::CTexture(const CTexture & rhs)
 		Safe_AddRef(pSRV);
 }
 
-HRESULT CTexture::Initialize_Prototype(const wstring & strTextureFilePath, _uint iNumTextures)
+HRESULT CTexture::Initialize_Prototype(const wstring & strTextureFilePath, _uint iNumTextures, TEXTURE_DESC* pDesc)
 {
 	_tchar		szEXT[MAX_PATH] = TEXT("");
 
@@ -102,6 +102,17 @@ HRESULT CTexture::Initialize_Prototype(const wstring & strTextureFilePath, _uint
 
 	m_iNumTextures = iNumTextures;
 
+	if (pDesc != nullptr)
+	{
+		IMG_SIZE Size;
+		Size.iSizeX = pDesc->iWidth;
+		Size.iSizeY = pDesc->iHeight;
+		m_TextureSize = Size;
+
+		m_DivideCount.first = pDesc->iCountX;
+		m_DivideCount.second = pDesc->iCountY;
+	}
+
 	return S_OK;
 }
 
@@ -123,11 +134,11 @@ HRESULT CTexture::Bind_ShaderResources(CShader * pShader, const _char * pConstan
 	return pShader->Bind_Textures(pConstantName, &m_Textures.front(), m_iNumTextures);
 }
 
-CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const wstring & strTextureFilePath, _uint iNumTexture)
+CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const wstring & strTextureFilePath, _uint iNumTexture, TEXTURE_DESC* pDesc)
 {
 	CTexture*		pInstance = new CTexture(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(strTextureFilePath, iNumTexture)))
+	if (FAILED(pInstance->Initialize_Prototype(strTextureFilePath, iNumTexture,pDesc)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CTexture"));
 

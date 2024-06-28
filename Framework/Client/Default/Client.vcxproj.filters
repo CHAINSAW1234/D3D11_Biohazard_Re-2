@@ -376,6 +376,9 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Bite">
       <UniqueIdentifier>{dcef7ff1-dad3-4a5c-b033-5486bfa5ff8b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Muzzle_Flash">
+      <UniqueIdentifier>{f75f75e3-3ac4-46fb-a428-5ac0cd54c644}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -751,6 +754,9 @@
     <ClInclude Include="..\Public\Player_State_Bite.h">
       <Filter>02.GameObjects\Player\State\Player_State_Bite</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Muzzle_Flash.h">
+      <Filter>02.GameObjects\Effect\Muzzle_Flash</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1095,6 +1101,9 @@
     <ClCompile Include="..\Private\Player_State_Bite.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Bite</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Muzzle_Flash.cpp">
+      <Filter>02.GameObjects\Effect\Muzzle_Flash</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1132,6 +1141,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAlphaSortTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

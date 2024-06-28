@@ -259,5 +259,11 @@ namespace Engine
 		ID3D11ShaderResourceView* pSRV_Vertex_BlendWeights;
 		_uint iNumVertex;
 	}SKINNING_INPUT;
+
+	typedef struct tagImgSize
+	{
+		_uint      iSizeX = { 0 };
+		_uint      iSizeY = { 0 };
+	}IMG_SIZE;
 #pragma endregion
 }
