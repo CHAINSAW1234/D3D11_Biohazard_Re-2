@@ -162,6 +162,15 @@ CModel* CBlackBoard_Zombie::Get_PartModel(_uint iPartType)
 	return m_pAI->Get_Model_From_PartObject(static_cast<CMonster::PART_ID>(iPartType));
 }
 
+_matrix CBlackBoard_Zombie::Get_FirstKeyFrame_RootTransformationMatrix(CMonster::PART_ID eID, const wstring& strAnimLayerTag, _int iAnimIndex)
+{
+	CModel*			pModel = { Get_PartModel(eID) };
+	if (nullptr == pModel)
+		return XMMatrixIdentity();
+
+	return pModel->Get_FirstKeyFrame_Root_TransformationMatrix(strAnimLayerTag, iAnimIndex);
+}
+
 void CBlackBoard_Zombie::Reset_NonActive_Body(const list<_uint>& ActivePlayingIndices)
 {
 	CModel*			pBodyModel = { Get_PartModel(CZombie::PART_BODY) };
@@ -214,6 +223,46 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Player_Local(_float3* pDirection)
 		return false;
 
 	_matrix				WorldMatrixInv = { pAITransform->Get_WorldMatrix_Inverse() };
+	_vector				vLocalDirection = { XMVector3TransformNormal(vWorldDirection, WorldMatrixInv) };
+	XMStoreFloat3(pDirection, vLocalDirection);
+
+	return true;
+}
+
+_bool CBlackBoard_Zombie::Compute_Direction_From_Player_World(_float3* pDirection)
+{
+	_bool				isSuccess = { false };
+	if (nullptr == m_pAI || nullptr == m_pPlayer || nullptr == pDirection)
+		return isSuccess;
+
+	CTransform*			pAITransform = { Get_Transform(m_pAI) };
+	CTransform*			pPlayerTransform = { Get_Transform(m_pPlayer) };
+	if (nullptr == pAITransform || nullptr == pPlayerTransform)
+		return isSuccess;
+
+	_vector				vAIPosition = { pAITransform->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector				vPlayerPosition = { pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION) };
+
+	_vector				vDirctionFromPlayer = { vAIPosition - vPlayerPosition };
+	XMStoreFloat3(pDirection, vDirctionFromPlayer);
+
+	isSuccess = true;
+
+	return isSuccess;
+}
+
+_bool CBlackBoard_Zombie::Compute_Direction_From_Player_Local(_float3* pDirection)
+{
+	if (false == Compute_Direction_From_Player_World(pDirection))
+		return false;
+
+	_vector				vWorldDirection = { XMLoadFloat3(pDirection) };
+
+	CTransform*			pPlayerTransform = { Get_Transform(m_pPlayer) };
+	if (nullptr == pPlayerTransform)
+		return false;
+
+	_matrix				WorldMatrixInv = { pPlayerTransform->Get_WorldMatrix_Inverse() };
 	_vector				vLocalDirection = { XMVector3TransformNormal(vWorldDirection, WorldMatrixInv) };
 	XMStoreFloat3(pDirection, vLocalDirection);
 
@@ -425,6 +474,42 @@ CTransform* CBlackBoard_Zombie::Get_Transform(CGameObject* pObject)
 CTransform* CBlackBoard_Zombie::Get_Transform_AI()
 {
 	return Get_Transform(m_pAI);
+}
+
+_bool CBlackBoard_Zombie::Compute_HalfMatrix_Current_BiteAnim(const wstring& strBiteAnimLayerTag, _int iAnimIndex, _float4x4* pResultMatrix)
+{
+	if (nullptr == m_pAI || nullptr == m_pPlayer || nullptr == pResultMatrix)
+		return false;
+
+	CModel*				pBodyPlayer_Model = { m_pPlayer->Get_Body_Model() };
+	CModel*				pBodyZombie_Model = { Get_PartModel(CMonster::PART_BODY) };
+
+	if (nullptr == pBodyPlayer_Model || nullptr == pBodyZombie_Model)
+		return false;
+
+	CTransform*			pPlayerTransform = { m_pPlayer->Get_Transform() };
+	CTransform*			pAITransform = { m_pAI->Get_Transform() };
+
+	if (nullptr == pPlayerTransform || nullptr == pAITransform)
+		return false;
+
+	_matrix				PlayerWorldMatrix = { pPlayerTransform->Get_WorldMatrix() };
+	_matrix				ZombieWorldMatrix = { pAITransform->Get_WorldMatrix() };
+
+	_matrix				RootFirstKeyFramePlayer = { pBodyPlayer_Model->Get_FirstKeyFrame_Root_TransformationMatrix(strBiteAnimLayerTag, iAnimIndex) };
+	_matrix				RootFirstKeyFrameZombie = { pBodyZombie_Model->Get_FirstKeyFrame_Root_TransformationMatrix(strBiteAnimLayerTag, iAnimIndex) };
+
+	_matrix				RootFirstKeyFramePlayerWorld = { RootFirstKeyFramePlayer * PlayerWorldMatrix };
+	_matrix				RootFirstKeyFrameZombieWorld = { RootFirstKeyFrameZombie * ZombieWorldMatrix };
+
+	_matrix				ResultMatix;
+	RootFirstKeyFramePlayer *= 0.5f;
+	RootFirstKeyFrameZombie *= 0.5f;
+
+	ResultMatix = RootFirstKeyFramePlayer + RootFirstKeyFrameZombie;
+	XMStoreFloat4x4(pResultMatrix, ResultMatix);
+
+	return true;
 }
 
 CModel* CBlackBoard_Zombie::Find_PartModel(_uint iPartID)

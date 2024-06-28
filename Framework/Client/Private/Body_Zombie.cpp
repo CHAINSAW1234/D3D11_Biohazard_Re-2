@@ -559,7 +559,18 @@ HRESULT CBody_Zombie::Add_Animations()
 
 #pragma region Bite Anims 
 
-
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Bite_Push_Down"), TEXT("Bite_Push_Down"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Bite_Creep"), TEXT("Bite_Creep"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Bite_Default_Front"), TEXT("Bite_Default_Front"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Bite_Default_Back"), TEXT("Bite_Default_Back"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Bite_Lightly_Hold"), TEXT("Bite_Lightly_Hold"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Bite_ETC"), TEXT("Bite_ETC"))))
+		return E_FAIL;
 
 #pragma endregion
 

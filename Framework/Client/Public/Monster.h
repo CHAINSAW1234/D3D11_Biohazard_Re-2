@@ -60,6 +60,9 @@ public:
 public:
 	void								Move(_float4 vDir, _float fTimeDelta);
 
+public:
+	void								Add_Root_Translation(_fvector vAdditionalTranslation);
+
 public:		/* For.Access */
 	MONSTER_STATUS*						Get_Status_Ptr() { return m_pStatus; }
 

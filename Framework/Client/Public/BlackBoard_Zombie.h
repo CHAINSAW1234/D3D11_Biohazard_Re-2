@@ -63,12 +63,17 @@ public: // Getter
 	wstring							Get_Current_AnimLayerTag(CMonster::PART_ID ePartID, PLAYING_INDEX eIndex);
 	CModel*							Get_PartModel(_uint iPartType);
 
+	_matrix							Get_FirstKeyFrame_RootTransformationMatrix(CMonster::PART_ID eID, const wstring& strAnimLayerTag, _int iAnimIndex);
+
 public:		/* Anim Controll */
 	void							Reset_NonActive_Body(const list<_uint>& ActivePlayingIndices);
 
 public:		/* Public Utility */
 	_bool							Compute_Direction_To_Player_World(_float3* pDirection);
 	_bool							Compute_Direction_To_Player_Local(_float3* pDirection);
+
+	_bool							Compute_Direction_From_Player_World(_float3* pDirection);
+	_bool							Compute_Direction_From_Player_Local(_float3* pDirection);
 
 	_bool							Compute_Direction_From_Hit_World(_float3* pDirection);
 	_bool							Compute_Direction_From_Hit_Local(_float3* pDirection);
@@ -85,6 +90,9 @@ public:		/* Public Utility */
 
 	CTransform*						Get_Transform(CGameObject* pObject);
 	CTransform*						Get_Transform_AI();
+
+	/* For Bite Sequence Utility */
+	_bool							Compute_HalfMatrix_Current_BiteAnim(const wstring& strBiteAnimLayerTag, _int iAnimIndex, _float4x4*	pResultMatrix);
 
 private:	/* Private Utility */
 	CModel*							Find_PartModel(_uint iPartID);

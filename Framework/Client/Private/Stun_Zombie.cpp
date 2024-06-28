@@ -51,7 +51,12 @@ _bool CStun_Zombie::Execute(_float fTimeDelta)
 	pAI->SetState(MONSTER_STATE::MST_DAMAGE);
 
 	//	cout << "Wait" << endl;
-	Change_Animation();
+	if (true == m_isEntry)
+	{
+		Update_Current_Collider();
+		Change_Animation();
+		m_isEntry = false;
+	}
 
 	return true;
 }
@@ -61,37 +66,21 @@ void CStun_Zombie::Exit()
 	m_eCurrentHitCollider = COLLIDER_TYPE::_END;
 }
 
+void CStun_Zombie::Update_Current_Collider()
+{
+	m_eCurrentHitCollider = { m_pBlackBoard->GetAI()->Get_Current_IntersectCollider() };
+}
+
 void CStun_Zombie::Change_Animation()
 {
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	_bool						isSameColliderPreCollision = { false }; 
-	if (true == m_isEntry)
-	{
-		m_isEntry = false;
-		COLLIDER_TYPE			eCurrentCollisionColliderType = { m_pBlackBoard->GetAI()->Get_Current_IntersectCollider() };
-		if (m_eCurrentHitCollider == eCurrentCollisionColliderType)
-		{
-			isSameColliderPreCollision = true;
-		}	
-
-		m_eCurrentHitCollider = eCurrentCollisionColliderType;
-	}
-
-	else
-	{
-		return;
-	}
-
 	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
 
-	_uint			iPlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_0) };
 	_int			iResultAnimationIndex = { -1 };
-	wstring			strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
-	wstring			strAnimLayerTag = { TEXT("Damage_Stun") };
 
 	_float3			vDirectionFromHitFloat3;
 	if (false == m_pBlackBoard->Compute_Direction_From_Hit_Local(&vDirectionFromHitFloat3))
@@ -107,66 +96,46 @@ void CStun_Zombie::Change_Animation()
 	if (m_eCurrentHitCollider == COLLIDER_TYPE::ARM_L || m_eCurrentHitCollider == COLLIDER_TYPE::FOREARM_L || m_eCurrentHitCollider == COLLIDER_TYPE::HAND_L)
 	{
 		if (true == isFromFront)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDERR_L_F);
-		}
+			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDER_L_F);
 
 		else
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDERR_L_B);
-		}
+			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDER_L_B);
 	}
 	
 	else if (m_eCurrentHitCollider == COLLIDER_TYPE::ARM_R || m_eCurrentHitCollider == COLLIDER_TYPE::FOREARM_R || m_eCurrentHitCollider == COLLIDER_TYPE::HAND_R)
 	{
 		if (true == isFromFront)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDERR_R_F);
-		}
+			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDER_R_F);
 
 		else
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDERR_R_B);
-		}
+			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDER_R_B);
 	}
 
 	else if (m_eCurrentHitCollider == COLLIDER_TYPE::LEG_L || m_eCurrentHitCollider == COLLIDER_TYPE::CALF_L || m_eCurrentHitCollider == COLLIDER_TYPE::FOOT_L)
 	{
 		if (true == isFromFront)
-		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_LEG_L_F);
-		}
 
 		else
-		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_LEG_L_B);
-		}
 	}
 
 	else if (m_eCurrentHitCollider == COLLIDER_TYPE::LEG_R || m_eCurrentHitCollider == COLLIDER_TYPE::CALF_R || m_eCurrentHitCollider == COLLIDER_TYPE::FOOT_R)
 	{
 		if (true == isFromFront)
-		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_LEG_R_F);
-		}
 
 		else
-		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_LEG_R_B);
-		}
 	}
 
 	else if (m_eCurrentHitCollider == COLLIDER_TYPE::CHEST || m_eCurrentHitCollider == COLLIDER_TYPE::PELVIS)
 	{
 		if (true == isFromFront)
-		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_BODY_F);
-		}
 
 		else
-		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_BODY_B);
-		}
 	}
 
 	else if (m_eCurrentHitCollider == COLLIDER_TYPE::HEAD)
@@ -174,14 +143,10 @@ void CStun_Zombie::Change_Animation()
 		if (true == isBigXAxis)
 		{
 			if (true == isFromRight)
-			{
 				iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_HEAD_LEFT_SIDE_F);
-			}
 
 			else
-			{
 				iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_HEAD_RIGHT_SIDE_F);
-			}
 		}
 		else
 		{
@@ -201,14 +166,17 @@ void CStun_Zombie::Change_Animation()
 	if (-1 == iResultAnimationIndex)
 		return;
 
-	if (false == isSameColliderPreCollision)
+	_int				iCurrentAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
+	_bool				isSameAnim = { iCurrentAnimIndex == iResultAnimationIndex };
+
+	if (false == isSameAnim)
 	{
-		pBodyModel->Change_Animation(iPlayingIndex, strAnimLayerTag, iResultAnimationIndex);
-		pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
+		pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strAnimLayerTag, iResultAnimationIndex);
+		pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
 	}
 	else
 	{
-		pBodyModel->Set_TrackPosition(iPlayingIndex, 0.f, true);
+		pBodyModel->Set_TrackPosition(static_cast<_uint>(m_ePlayingIndex), 0.f, true);
 	}
 }
 

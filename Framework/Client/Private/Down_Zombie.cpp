@@ -100,12 +100,12 @@ void CDown_Zombie::Change_Animation()
 	{
 		if (true == isFromFront)
 		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDERR_L_F);
+			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDER_L_F);
 		}
 
 		else
 		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDERR_L_B);
+			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDER_L_B);
 		}
 	}
 

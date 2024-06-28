@@ -34,6 +34,10 @@
 
 /* Hold */
 #include "Hold_Zombie.h"
+#include "Lightly_Hold_Zombie.h"
+
+/* Bite */
+#include "Bite_Zombie.h"	
 
 /* Additional */
 #include "Shake_Skin_Zombie.h"

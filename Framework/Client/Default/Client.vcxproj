@@ -185,6 +185,7 @@
     <ClInclude Include="..\..\imguilib\imstb_truetype.h" />
     <ClInclude Include="..\..\imguilib\ImZoomSlider.h" />
     <ClInclude Include="..\public\BackGround.h" />
+    <ClInclude Include="..\Public\Bite_Zombie.h" />
     <ClInclude Include="..\Public\BlackBoard_Zombie.h" />
     <ClInclude Include="..\Public\Body_Cabinet.h" />
     <ClInclude Include="..\Public\Body_Door.h" />
@@ -250,6 +251,7 @@
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
+    <ClInclude Include="..\Public\Lightly_Hold_Zombie.h" />
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\Public\Loading_UI.h" />
     <ClInclude Include="..\public\MainApp.h" />
@@ -349,6 +351,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\private\BackGround.cpp" />
+    <ClCompile Include="..\Private\Bite_Zombie.cpp" />
     <ClCompile Include="..\Private\BlackBoard_Zombie.cpp" />
     <ClCompile Include="..\Private\Body_Cabinet.cpp" />
     <ClCompile Include="..\Private\Body_Door.cpp" />
@@ -408,6 +411,7 @@
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
+    <ClCompile Include="..\Private\Lightly_Hold_Zombie.cpp" />
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\Private\Loading_UI.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />

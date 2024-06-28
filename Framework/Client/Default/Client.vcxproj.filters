@@ -379,11 +379,14 @@
     <Filter Include="AIController\Zombie\Decorator\Checker_MainTain_Pre_Task">
       <UniqueIdentifier>{8283ac8d-e2dc-4a0a-85c4-1756898df535}</UniqueIdentifier>
     </Filter>
-    <Filter Include="AIController\Zombie\Task\Hold_Zombie">
-      <UniqueIdentifier>{48c4e195-7f2d-4cad-ae99-73d3733ba54b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="AIController\Zombie\Task\Damage\Stun_Hold">
       <UniqueIdentifier>{9a24aab7-ef1e-4341-a35f-cc92ec5d9758}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Task\Hold">
+      <UniqueIdentifier>{48c4e195-7f2d-4cad-ae99-73d3733ba54b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Task\Lightly_Hold_Zombie">
+      <UniqueIdentifier>{bd1bb944-b4f1-4ede-a608-1796bffc4e2a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -760,7 +763,7 @@
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Hold_Zombie.h">
-      <Filter>AIController\Zombie\Task\Hold_Zombie</Filter>
+      <Filter>AIController\Zombie\Task\Hold</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Enough_Time_Zombie.h">
       <Filter>AIController\Zombie\Decorator\Checker_Is_EnoughTime</Filter>
@@ -770,6 +773,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Stun_Hold_Zombie.h">
       <Filter>AIController\Zombie\Task\Damage\Stun_Hold</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Bite_Zombie.h">
+      <Filter>AIController\Zombie\Task\Bite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Lightly_Hold_Zombie.h">
+      <Filter>AIController\Zombie\Task\Lightly_Hold_Zombie</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1116,7 +1125,7 @@
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Hold_Zombie.cpp">
-      <Filter>AIController\Zombie\Task\Hold_Zombie</Filter>
+      <Filter>AIController\Zombie\Task\Hold</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Enough_Time_Zombie.cpp">
       <Filter>AIController\Zombie\Decorator\Checker_Is_EnoughTime</Filter>
@@ -1126,6 +1135,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Stun_Hold_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Damage\Stun_Hold</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bite_Zombie.cpp">
+      <Filter>AIController\Zombie\Task\Bite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lightly_Hold_Zombie.cpp">
+      <Filter>AIController\Zombie\Task\Lightly_Hold_Zombie</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

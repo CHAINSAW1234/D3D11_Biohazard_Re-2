@@ -147,6 +147,12 @@ void CMonster::Move(_float4 vDir, _float fTimeDelta)
 		m_pController->Move(vDir, fTimeDelta);
 }
 
+void CMonster::Add_Root_Translation(_fvector vAdditionalTranslation)
+{
+	_vector			vReulstTranslation = { XMLoadFloat3(&m_vRootTranslation) + vAdditionalTranslation };
+	XMStoreFloat3(&m_vRootTranslation, vReulstTranslation);
+}
+
 void CMonster::Priority_Tick_PartObjects(_float fTimeDelta)
 {
 	for (auto& pPartObject : m_PartObjects)

@@ -2,7 +2,7 @@
 
 #include "Client_Defines.h"
 #include "Task_Node.h"
-
+#include "Body_Zombie.h"
 
 BEGIN(Client)
 
@@ -24,6 +24,7 @@ public:
 	inline void						Reset_Entry() { m_isEntry = true; }
 
 private:
+	void							Update_Current_Collider();
 	void							Change_Animation();
 
 public:
@@ -34,6 +35,10 @@ private:
 private:	/* For. Active FirstTime */
 	_bool							m_isEntry = { false };
 	COLLIDER_TYPE					m_eCurrentHitCollider = { COLLIDER_TYPE::_END };
+
+	const wstring&					m_strAnimLayerTag = { TEXT("Damage_Knockback") };
+	const wstring&					m_strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
+	const PLAYING_INDEX				m_ePlayingIndex = { PLAYING_INDEX::INDEX_0 };
 
 public:
 	static CKnock_Back_Zombie* Create(void* pArg = nullptr);

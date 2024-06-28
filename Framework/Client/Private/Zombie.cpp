@@ -138,7 +138,10 @@ void CZombie::Tick(_float fTimeDelta)
 	_vector			vRootMoveDir = { XMLoadFloat3(&m_vRootTranslation) };
 	XMStoreFloat4(&vDirection, vRootMoveDir);
 	if (m_pController)
+	{
 		m_pController->Move(vDirection, fTimeDelta);
+	}
+	XMStoreFloat3(&m_vRootTranslation, XMVectorZero());
 
 #pragma region 길찾기 임시 코드
 	//if (m_bArrived == false)

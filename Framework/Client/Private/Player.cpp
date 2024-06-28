@@ -249,6 +249,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		_float4			vResultMoveDirFloat4 = {};
 		XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
 		m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
+		XMStoreFloat3(&m_vRootTranslation, XMVectorZero());
 	}
 
 	if (m_bMove_Backward == false && m_bMove_Forward == false && m_bMove_Left == false && m_bMove_Right == false)
