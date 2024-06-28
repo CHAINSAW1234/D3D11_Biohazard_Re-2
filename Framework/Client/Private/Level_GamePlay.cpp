@@ -14,6 +14,7 @@
 #include "Zombie.h"
 
 /* MapObj*/
+#include"Prop_Manager.h"
 #include"InteractProps.h"
 
 
@@ -240,6 +241,14 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 	return S_OK;
 }
 
+HRESULT CLevel_GamePlay::Ready_PropManager()
+{
+	m_pPropManager = CProp_Manager::Create();
+	if (m_pPropManager == nullptr)
+		return E_FAIL;
+	return S_OK;
+}
+
 HRESULT CLevel_GamePlay::Ready_Layer_Player(const wstring & strLayerTag/*, CLandObject::LANDOBJECT_DESC& LandObjectDesc*/)
 {
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Player"))))
@@ -323,6 +332,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 	
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_NavMesh_Debug"))))
+		return E_FAIL;
+
+
+	if (FAILED(Ready_PropManager()))
 		return E_FAIL;
 
 	return S_OK;
@@ -1345,4 +1358,5 @@ CLevel_GamePlay * CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceCon
 void CLevel_GamePlay::Free()
 {
 	__super::Free();
+	Safe_Release(m_pPropManager);
 }

@@ -39,7 +39,10 @@ void CItemProp::Tick(_float fTimeDelta)
 	__super::Check_Player();
 
 	if (m_bDead)
+	{
+		Set_Region(-1);
 		return;
+	}
 
 	if (!m_bVisible)
 		return;

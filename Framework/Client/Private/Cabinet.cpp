@@ -47,8 +47,13 @@ void CCabinet::Tick(_float fTimeDelta)
 	__super::Check_TabWindow();
 	__super::Check_Player();
 	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+	
 	if (!m_bVisible)
 		return;
+	if (m_PartObjects[PART_ITEM] != nullptr)
+		if (m_PartObjects[PART_ITEM]->Get_Dead() == true)
+			Set_Region(-1);
+	
 #ifdef _DEBUG
 #ifdef UI_POS
 	Get_Object_Pos();

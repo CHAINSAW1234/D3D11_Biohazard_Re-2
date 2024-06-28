@@ -130,7 +130,8 @@ public:
 	/*To NY*/
 	virtual _float4									Get_Object_Pos() = 0;
 
-
+	_int												Get_Region() { return m_tagPropDesc.iRegionNum; }
+	void												Set_Region(_int iRegion) { m_tagPropDesc.iRegionNum = iRegion; }
 private :
 	_bool												m_isSelector_Rendering = { false };
 	_bool												m_isNYResult				= { false };

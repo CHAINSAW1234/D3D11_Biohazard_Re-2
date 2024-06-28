@@ -268,6 +268,7 @@
     <ClInclude Include="..\Public\Player_State_Move_Jog.h" />
     <ClInclude Include="..\Public\Player_State_Move_Walk.h" />
     <ClInclude Include="..\Public\Props.h" />
+    <ClInclude Include="..\Public\Prop_Manager.h" />
     <ClInclude Include="..\Public\Read_Item_UI.h" />
     <ClInclude Include="..\Public\Selector_UI.h" />
     <ClInclude Include="..\Public\Shake_Skin_Zombie.h" />
@@ -421,6 +422,7 @@
     <ClCompile Include="..\Private\Player_State_Move_Jog.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Walk.cpp" />
     <ClCompile Include="..\Private\Props.cpp" />
+    <ClCompile Include="..\Private\Prop_Manager.cpp" />
     <ClCompile Include="..\Private\Read_Item_UI.cpp" />
     <ClCompile Include="..\Private\Selector_UI.cpp" />
     <ClCompile Include="..\Private\Shake_Skin_Zombie.cpp" />

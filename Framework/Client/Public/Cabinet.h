@@ -49,7 +49,6 @@ public:
 	virtual _float4 Get_Object_Pos() override;
 
 
-
 private:
 	_bool				m_bObtain = { false };
 	_bool				m_bOpened = { false };
