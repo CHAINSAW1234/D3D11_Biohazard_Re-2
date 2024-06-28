@@ -53,7 +53,7 @@ public:
 
 	enum ANIMSET_MOVE { FINE, MOVE_HG, MOVE_STG, FINE_LIGHT, CAUTION, CAUTION_LIGHT, DANGER, DANGER_LIGHT, ANIMSET_MOVE_END };
 	enum ANIMSET_HOLD { HOLD_HG, HOLD_STG, HOLD_MLE, HOLD_SUP, ANIMSET_HOLD_END };
-	enum ANIMSET_ETC { COMMON , BITE, ANIMSET_ETC_END };
+	enum ANIMSET_ETC { COMMON , ANIM_BITE, ANIMSET_ETC_END };
 #pragma endregion
 
 #pragma region Move Direction
@@ -140,7 +140,9 @@ private:
 	// ============================ INITIALIZE ============================
 	HRESULT										Add_FSM_States();
 
+public:
 	void Swap_Camera();
+
 private:
 	_int m_iMaxHp = { 5 };
 	_int m_iHp = { 5 };

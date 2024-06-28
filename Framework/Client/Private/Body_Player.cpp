@@ -768,7 +768,7 @@ HRESULT CBody_Player::Add_Animations()
 
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Common"), CPlayer::Get_AnimSetEtcName(CPlayer::ANIMSET_ETC::COMMON))))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Bite"), CPlayer::Get_AnimSetEtcName(CPlayer::ANIMSET_ETC::BITE))))
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Bite"), CPlayer::Get_AnimSetEtcName(CPlayer::ANIMSET_ETC::ANIM_BITE))))
 		return E_FAIL;
 
 
