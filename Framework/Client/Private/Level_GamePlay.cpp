@@ -63,9 +63,11 @@ HRESULT CLevel_GamePlay::Initialize()
 
 void CLevel_GamePlay::Tick(_float fTimeDelta)
 {
+	CImgui_Manager::Get_Instance()->Tick();
+
 	__super::Tick(fTimeDelta);
 
-	CImgui_Manager::Get_Instance()->Tick();
+
 
 
 	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
@@ -120,9 +122,9 @@ HRESULT CLevel_GamePlay::Render()
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
-	CImgui_Manager::Get_Instance()->Render();
-
 	SetWindowText(g_hWnd, TEXT("Level_GamePlay."));
+
+	CImgui_Manager::Get_Instance()->Render();
 
 	return S_OK;
 }

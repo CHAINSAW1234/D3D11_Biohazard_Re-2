@@ -511,6 +511,28 @@ _bool CInventory_Manager::IsCan_AddItem_ToInven()
 	return IsCanAddItem;
 }
 
+_int CInventory_Manager::Get_Search_Item_Quantity(ITEM_NUMBER eItemNum)
+{
+	_int iItemQuantity = 0;
+
+	for (auto& iter : m_vecItem_UI)
+	{
+		if (eItemNum == iter->Get_ItemNumber())
+		{
+			iItemQuantity += iter->Get_ItemQuantity();
+		}
+	}
+
+	return iItemQuantity;
+}
+
+ITEM_NUMBER CInventory_Manager::Get_Item_On_HotKey(_uint iHotKeyNum)
+{
+
+	
+	return ITEM_NUMBER();
+}
+
 CInventory_Manager* CInventory_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CInventory_Manager* pInstance = new CInventory_Manager(pDevice, pContext);

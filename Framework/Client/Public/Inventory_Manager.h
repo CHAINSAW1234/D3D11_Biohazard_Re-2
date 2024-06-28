@@ -83,6 +83,12 @@ public:
 	//만약 아이템을 넣을수 없는 상황이라면 false를 반환함
 	_bool IsCan_AddItem_ToInven();
 
+	//원하는 아이템의 수량 or 장탄을 반환함
+	_int Get_Search_Item_Quantity(ITEM_NUMBER eItemNum);
+
+	//몇번 단축키에 몇번 아이템이 있는가
+	ITEM_NUMBER Get_Item_On_HotKey(_uint iHotKeyNum);
+
 
 private: 
 	ID3D11Device*					m_pDevice = { nullptr };
@@ -116,17 +122,21 @@ private:
 	/* for. SubInven */
 	class CInventory_Item_UI*		m_pInven_Item_UI = { nullptr };
 
-private :	/*for IDLE_Operation*/
+private :	
+	/*for IDLE_Operation*/
 	_bool							m_IsNoOneHover = { true };
 	_float							m_fPressingTime = { 0.f };
 
 
-private:	/*for. COMBINED_ITEM_Operation*/
+	/*for. COMBINED_ITEM_Operation*/
 	unordered_map<ITEM_NUMBER, vector<ITEM_RECIPE>> m_mapItemRecipe;
 
 	TASK_SEQUENCE									m_eTaskSequence = { TS_END };
 
 	ITEM_NUMBER										m_CombineResources[2] = {ITEM_NUMBER_END, ITEM_NUMBER_END};
+
+
+
 
 private:
 	HRESULT Init_InvenSlot();

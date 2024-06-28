@@ -39,6 +39,8 @@ private :
 	_bool			m_isCursor_Blur				= { false };
 	_bool			m_isCursor_Blur_Blending	= { false };
 
+	_bool			m_isShowCursor				= { false };
+
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

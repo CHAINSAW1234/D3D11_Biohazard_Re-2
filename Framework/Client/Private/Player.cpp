@@ -264,7 +264,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region Camera
 
-	if (UP == m_pGameInstance->Get_KeyState('C'))
+	if (UP == m_pGameInstance->Get_KeyState('Z'))
 	{
 		if (true == m_bIsExamineItem)
 			m_bIsExamineItem = false;
