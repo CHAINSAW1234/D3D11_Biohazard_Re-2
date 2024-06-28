@@ -396,6 +396,9 @@
     </Filter>
     <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Reader_Observer\Reader_Observer_Handle">
       <UniqueIdentifier>{0512293c-6b46-4f82-9b55-01b90a3aff6e}</UniqueIdentifier>
+	</Filter>
+    <Filter Include="02.GameObjects\UI\15. LayOut">
+      <UniqueIdentifier>{57e7ebf9-dbcd-44f9-8d5f-e0a91f6637a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -771,6 +774,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Prop_Manager.h">
       <Filter>02.GameObjects\MapObject\Manager</Filter>
+	</ClInclude>
+    <ClInclude Include="..\Public\LayOut_UI.h">
+      <Filter>02.GameObjects\UI\15. LayOut</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1115,6 +1121,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Prop_Manager.cpp">
       <Filter>02.GameObjects\MapObject\Manager</Filter>
+	</ClCompile>
+    <ClCompile Include="..\Private\LayOut_UI.cpp">
+      <Filter>02.GameObjects\UI\15. LayOut</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

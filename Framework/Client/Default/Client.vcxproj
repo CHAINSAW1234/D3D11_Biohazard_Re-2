@@ -244,6 +244,7 @@
     <ClInclude Include="..\Public\Item_Mesh_Viewer.h" />
     <ClInclude Include="..\Public\Item_UI.h" />
     <ClInclude Include="..\Public\Knock_Back_Zombie.h" />
+    <ClInclude Include="..\Public\LayOut_UI.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
@@ -398,6 +399,7 @@
     <ClCompile Include="..\Private\Item_Mesh_Viewer.cpp" />
     <ClCompile Include="..\Private\Item_UI.cpp" />
     <ClCompile Include="..\Private\Knock_Back_Zombie.cpp" />
+    <ClCompile Include="..\Private\LayOut_UI.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />

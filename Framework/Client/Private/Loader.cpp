@@ -75,7 +75,7 @@
 #include "Context_Highlighter.h"
 #include "Read_Item_UI.h"
 #include "Loading_UI.h"
-
+#include "LayOut_UI.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -531,6 +531,13 @@ HRESULT CLoader::Load_Prototype()
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Read_Item_UI"),
 		CRead_Item_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_LayOut_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LayOut_UI"),
+		CLayOut_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	
 #pragma endregion
 
 	/* For.Prototype_GameObject_Collider */
