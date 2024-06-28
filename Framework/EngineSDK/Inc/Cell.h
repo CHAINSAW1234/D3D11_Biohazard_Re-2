@@ -16,11 +16,11 @@ private:
 public:
 	_vector							Get_Point(POINT ePoint) 
 	{
-		return XMLoadFloat3(&m_vPoints[ePoint]);
+		return XMVectorSetW(XMLoadFloat3(&m_vPoints[ePoint]), 1.f);					// ***** 워닝 잡았음 문제 생기면 다시 체크 바람
 	}
 	_float4							Get_Point_Float4(_int iPoint)
 	{
-		return m_vPoints[iPoint];
+		return _float4(m_vPoints[iPoint].x, m_vPoints[iPoint].y, m_vPoints[iPoint].z, 1.f);		// ***** 워닝 잡았음 문제 생기면 다시 체크 바람
 	}
 	void							SetUp_Neighbor(LINE eLine, CCell* pNeighbor)
 	{

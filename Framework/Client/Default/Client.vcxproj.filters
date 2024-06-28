@@ -271,9 +271,6 @@
     <Filter Include="02.GameObjects\Player\FlashLight">
       <UniqueIdentifier>{490f3668-20b6-4ec9-8ffb-c1b847d9e205}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow">
-      <UniqueIdentifier>{cc37a098-a1b3-447e-9df1-acd4471c0dbb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="96. Imgui_Manager">
       <UniqueIdentifier>{caf0935f-0c07-45a0-a027-23aef095a854}</UniqueIdentifier>
     </Filter>
@@ -387,6 +384,9 @@
     </Filter>
     <Filter Include="AIController\Zombie\Task\Lightly_Hold_Zombie">
       <UniqueIdentifier>{bd1bb944-b4f1-4ede-a608-1796bffc4e2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Bite">
+      <UniqueIdentifier>{dcef7ff1-dad3-4a5c-b033-5486bfa5ff8b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -699,9 +699,6 @@
     <ClInclude Include="..\Public\Context_Highlighter.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu\ContextMenu_Highliter</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Item_DragShadow.h">
-      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Is_Character_In_Range_Zombie.h">
       <Filter>AIController\Zombie\Decorator\Checker_RangeDistance</Filter>
     </ClInclude>
@@ -779,6 +776,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Lightly_Hold_Zombie.h">
       <Filter>AIController\Zombie\Task\Lightly_Hold_Zombie</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Bite.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Bite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1064,9 +1064,6 @@
     <ClCompile Include="..\Private\Context_Highlighter.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu\ContextMenu_Highliter</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Item_DragShadow.cpp">
-      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Is_Character_In_Range_Zombie.cpp">
       <Filter>AIController\Zombie\Decorator\Checker_RangeDistance</Filter>
     </ClCompile>
@@ -1141,6 +1138,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Lightly_Hold_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Lightly_Hold_Zombie</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Bite.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Bite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

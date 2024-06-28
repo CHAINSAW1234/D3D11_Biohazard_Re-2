@@ -74,6 +74,7 @@
 #include "ContextMenu.h"
 #include "Context_Highlighter.h"
 #include "Read_Item_UI.h"
+#include "Loading_UI.h"
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -137,8 +138,8 @@ HRESULT CLoader::Start()
 	case LEVEL_GAMEPLAY:
 		g_Level = LEVEL_GAMEPLAY;
 
-		if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-			return E_FAIL;
+		//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+		//	return E_FAIL;
 
 		hr = Loading_For_GamePlay();
 		break;
@@ -158,12 +159,18 @@ HRESULT CLoader::Ready_Layer_UI(const wstring& strLayerTag)
 	ifstream inputFileStream;
 	wstring selectedFilePath;
 
-	/* Title */
+	/* UI_Loading */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Loading.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
+	/* UI_Loading_Text */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Loading_Text.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+	
 	return S_OK;
 
 }
@@ -188,7 +195,8 @@ void CLoader::CreatFromDat(ifstream& inputFileStream, wstring strListName, CGame
 {
 	CCustomize_UI::CUSTOM_UI_DESC CustomizeUIDesc;
 
-	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eMapUI_Type), sizeof(LOCATION_MAP_VISIT));
+	if(TEXT("UI_Loading_Text") != fileName)
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eMapUI_Type), sizeof(LOCATION_MAP_VISIT));
 
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoad), sizeof(_bool));
 
@@ -308,11 +316,9 @@ void CLoader::CreatFromDat(ifstream& inputFileStream, wstring strListName, CGame
 	else
 		CustomizeUIDesc.iWhich_Child = iWhich_Child;
 
-	if (TEXT("UI_Loading") == fileName)
-	{
-		if (FAILED(m_pGameInstance->Add_Clone(g_Level, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Loading_UI"), &CustomizeUIDesc)))
-			MSG_BOX(TEXT("Failed to Add Clone"));
-	}
+	CustomizeUIDesc.wstrFileName = fileName;
+	if (FAILED(m_pGameInstance->Add_Clone(g_Level, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Loading_UI"), &CustomizeUIDesc)))
+		MSG_BOX(TEXT("Failed to Add Clone"));
 
 	CGameObject* pGameObj = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"))->back();
 
@@ -976,6 +982,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 	/*Prototype_Component_Texture_HP_Mask*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_LogoBroken"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Title/Logo2.png")))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_HP_Mask*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_BackGroundHP_Mask"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/HP/IMANGE_08.png")))))
 		return E_FAIL;
@@ -1170,6 +1181,12 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 #pragma endregion
 
+	//CGameObject* pGameObj = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"))->back();
+
+	//if(nullptr != pGameObj)
+	//{
+	//	static_cast<CLoading_UI*>(pGameObj)->Set_LoadingEnd(true);
+	//}
 
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Navigation"),
 		CNavigation::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Models/NavMesh/NavMesh.bin")))))
@@ -1200,10 +1217,10 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	m_isFinished = true;
 
-	if (true == m_isFinished)
-	{
-		m_pGameInstance->Release_Layer(g_Level, TEXT("Layer_UI"));
-	}
+	//if (true == m_isFinished)
+	//{
+	//	m_pGameInstance->Release_Layer(g_Level, TEXT("Layer_UI"));
+	//}
 
 	return S_OK;
 }
@@ -1438,7 +1455,6 @@ HRESULT CLoader::Load_Animations()
 		return E_FAIL;
 
 #pragma endregion
-
 
 	return S_OK;	
 }

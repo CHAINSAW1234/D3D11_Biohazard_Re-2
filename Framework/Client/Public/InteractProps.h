@@ -133,6 +133,7 @@ public:
 
 private :
 	_bool												m_isSelector_Rendering = { false };
+	_bool												m_isNYResult				= { false };
 
 protected:
 	_bool												m_bActivity = { true };
@@ -153,9 +154,12 @@ protected:
 	INTERACTPROPS_DESC 									m_tagPropDesc ={};
 	vector<CPartObject*>								m_PartObjects;
 
-	
+	//Ã¢±Õ Ãß°¡
+	class CTab_Window* m_pTab_Window = { nullptr };
+
 protected:
 	void												Check_Player();
+	void												Check_TabWindow();
 	void												Check_Col_Sphere_Player();
 	void												Check_Col_OBB_Player();
 	void												Check_Col_AABB_Player();

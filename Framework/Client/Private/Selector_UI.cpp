@@ -204,7 +204,7 @@ void CSelector_UI::Render_Selector_UI(CGameObject* _obj, _float fTimeDelta)
     }
 
     /* y Ãà Á¶Á¤*/
-    if(false == m_isArrow)
+    if (false == m_isArrow)
     {
         if (m_vXTransform.y - X_TYPEY > m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y)
         {
@@ -364,7 +364,7 @@ void CSelector_UI::Find_InteractObj()
 
             m_InteractPropsList.push_back(pInteractObj);
 
-            Safe_AddRef(iter);
+           // Safe_AddRef(iter);
         }
     }
 }
@@ -430,11 +430,11 @@ void CSelector_UI::Free()
     }
     m_SelectorObj_Vec.clear();
 
-    for (auto& iter : m_InteractPropsList)
+  /*for (auto& iter : m_InteractPropsList)
     {
         Safe_Release(iter);
     }
-    m_InteractPropsList.clear();
+    m_InteractPropsList.clear();*/
 
    // Safe_Release(m_pInteractObj);
 }

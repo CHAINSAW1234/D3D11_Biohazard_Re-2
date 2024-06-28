@@ -62,7 +62,7 @@ HRESULT CMap::Initialize(void* pArg)
 	m_pOctree->GetSceneDimensions(m_pModelCom);
 	int TotalTriangleCount = m_pOctree->GetSceneTriangleCount(m_pModelCom);
 	m_pOctree->CreateNode(m_pModelCom, TotalTriangleCount, m_pOctree->GetCenter(), m_pOctree->GetWidth());
-	for (int i = 0; i < m_pModelCom->GetNumMesh(); ++i)
+	for (_uint i = 0; i < m_pModelCom->GetNumMesh(); ++i)
 	{
 		m_pModelCom->Release_IndexBuffer(i);
 	}

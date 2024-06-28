@@ -17,7 +17,6 @@ public :
 	enum class ITEM_BOX_TYPE { DEFAULT_BOX, SELECT_BOX, END_BOX };
 	enum class HPBAR_TYPE { MAIN_BAR, BACKGROUND_BAR, END_BAR };
 	enum class INVENTORY_TYPE { MAIN_INVEN, SUB_INVEN, END_INVEN };
-	enum class MAP_UI_TYPE { MAIN_MAP, MASK_MAP, FONT_MAP, BACKGROUND_MAP, WINDOW_MAP, DOOR_MAP, FONT_MASK_MAP, TARGET_MAP, ITEM_MAP, PLAYER_MAP, NAMELINE_MAP, SEARCH_TYPE_MAP, END_MAP };
 	
 	typedef struct color
 	{
@@ -90,7 +89,6 @@ public :
 		INVENTORY_TYPE					eInventory_Type;
 
 		LOCATION_MAP_VISIT				eMapUI_Type;
-		MAP_UI_TYPE						eMapComponent_Type;
 		wstring							wstrFileName = { TEXT("") };
 
 	}CUSTOM_UI_DESC;
@@ -376,7 +374,10 @@ public:/* for.Get Inline */
 	_int	Get_ChildTextureNum(_uint iChild) { return static_cast<CCustomize_UI*>(m_vecChildUI[iChild])->Get_TextureNum(); }
 
 public : /* Clinet */
-	_bool	IsRender() const { return m_isRender; }
+	_bool	Get_IsRender() const { return m_isRender; }
+	virtual void    Set_IsRender(_bool isRender) { m_isRender = isRender; 
+	for (auto& iter : m_vecChildUI){
+		static_cast<CCustomize_UI*>(iter)->Set_IsRender(isRender);}}
 
 protected :
 	vector<class CTextBox*>		m_vecTextBoxes;
@@ -495,7 +496,6 @@ protected : /* Client*/
 
 	/* Map */
 	LOCATION_MAP_VISIT			m_eMap_Location = { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
-	MAP_UI_TYPE					m_eMapComponent_Type = { MAP_UI_TYPE::END_MAP };
 
 public:
 	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

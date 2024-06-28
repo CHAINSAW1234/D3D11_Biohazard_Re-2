@@ -7,7 +7,7 @@
 #include"PartObject.h"
 
 #include"Part_InteractProps.h"
-
+#include"Tab_Window.h"
 CInteractProps::CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -131,6 +131,29 @@ void CInteractProps::Check_Player()
 		static_cast<CPart_InteractProps*>(iter)->Set_PlayerSetting(m_pPlayer, m_pPlayerInteract, m_pPlayerTransform);
 	}
 
+}
+
+void CInteractProps::Check_TabWindow()
+{
+	if (m_pTab_Window != nullptr)
+		return;
+
+#pragma region 창균 인벤토리 세팅
+	//레이어 리스트 순회해서 객체 검색임 이거 말고 생각이 안나는데 더 좋은방법 있으면 진짜 알려주세요...
+	list<CGameObject*>* pGObjList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+	for (auto& iter : *pGObjList)
+	{
+		CTab_Window* pTabWindow = dynamic_cast<CTab_Window*>(iter);
+		if (nullptr != pTabWindow)
+		{
+			m_pTab_Window = pTabWindow;
+			Safe_AddRef(m_pTab_Window);
+			break;
+		}
+	}
+
+#pragma endregion
 }
 
 void CInteractProps::Check_Col_Sphere_Player()
@@ -314,21 +337,22 @@ HRESULT CInteractProps::Render_LightDepth_Point()
 
 _bool* CInteractProps::ComeClose_toPlayer(_float _come)
 {
-	_bool isResult = { false };
-
 	if (nullptr == m_pPlayer)
 		return nullptr;
 	
+	m_isNYResult = false;
+
 	/* Player와의 거리 */
 	_vector vDistanceVector = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) - m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION);
 	_float fPlayer_Distance = XMVectorGetX(XMVector3Length(vDistanceVector));
 
 	if (fPlayer_Distance <= _come)
-		isResult = true;
-	else
-		isResult = false;
+		m_isNYResult = true;
 
-	return &isResult;
+	else
+		m_isNYResult = false;
+
+	return &m_isNYResult;
 }
 
 HRESULT CInteractProps::Add_Components()

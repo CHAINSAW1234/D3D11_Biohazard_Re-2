@@ -265,7 +265,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region Camera
 
-	if (UP == m_pGameInstance->Get_KeyState('C'))
+	if (UP == m_pGameInstance->Get_KeyState('Z'))
 	{
 		if (true == m_bIsExamineItem)
 			m_bIsExamineItem = false;
@@ -348,6 +348,24 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region TEST
 
+	if (m_pGameInstance->Get_KeyState('1') == DOWN) {
+		Set_Hp(1);
+	}
+	if (m_pGameInstance->Get_KeyState('2') == DOWN) {
+		Set_Hp(2);
+	}
+	if (m_pGameInstance->Get_KeyState('3') == DOWN) {
+		Set_Hp(3);
+	}
+	if (m_pGameInstance->Get_KeyState('4') == DOWN) {
+		Set_Hp(4);
+	}
+	if (m_pGameInstance->Get_KeyState('5') == DOWN) {
+		Set_Hp(5);
+	}
+
+
+
 	//if (m_pGameInstance->Get_KeyState('E') == DOWN) {
 	//	Swap_Camera();
 	//	//m_pCamera_Event->Set_DefaultMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
@@ -388,6 +406,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	Update_Direction();
 	Update_FSM();
 	m_pFSMCom->Update(fTimeDelta);
+
 	Update_KeyInput_Reload();
 	Update_LightCondition();
 	Update_Equip();
@@ -436,9 +455,9 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	/*if (m_pController)
 		m_pController->Update_Collider();*/
 
-	//Turn_Spine_Default(fTimeDelta);
+	Turn_Spine_Default(fTimeDelta);
+	Turn_Spine_Light(fTimeDelta);		// Light 상태에서 상체전체를 카메라를 보도록 돌림
 	Turn_Spine_Hold(fTimeDelta);		// Hold 상태에서 척추를 상하로만 돌림
-	//Turn_Spine_Light(fTimeDelta);		// Light 상태에서 상체전체를 카메라를 보도록 돌림
 
 
 #pragma region 예은 추가
@@ -459,7 +478,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 HRESULT CPlayer::Render()
 {
-
 	return S_OK;
 }
 
@@ -516,14 +534,14 @@ void CPlayer::Col_Section()
 #pragma region 나옹 추가
 _bool* CPlayer::Col_Event_UI(CCustomCollider* pCustom)
 {
-	_bool isResult;
+	m_isNYResult = false;
 
 	if (m_pColliderCom->Intersect(static_cast<CCollider*>(pCustom->Get_Component(TEXT("Com_Collider")))))
-		isResult = true;
+		m_isNYResult = true;
 	else
-		isResult = false;
+		m_isNYResult = false;
 
-	return &isResult;
+	return &m_isNYResult;
 }
 
 #pragma endregion
@@ -566,7 +584,6 @@ void CPlayer::Set_Spotlight(_bool isSpotlight)
 	Update_AnimSet();
 }
 
-
 void CPlayer::Set_Equip(EQUIP eEquip)
 {
 	m_eEquip = eEquip;
@@ -580,13 +597,32 @@ void CPlayer::Set_Equip(EQUIP eEquip)
 		Safe_Release(m_pWeapon);
 	}
 
-	m_pWeapon = m_Weapons[m_eEquip];
-	Safe_AddRef(m_pWeapon);
-	m_pWeapon->Set_RenderLocation(eRenderLocation);
+	if (m_eEquip == NONE) {
+		m_pWeapon = nullptr;
+	}
+	else {
+		m_pWeapon = m_Weapons[m_eEquip];
+		Safe_AddRef(m_pWeapon);
+		m_pWeapon->Set_RenderLocation(eRenderLocation);
+
+	}
 
 	// 무기 위치를 변경하시오
 
 	Update_AnimSet();
+}
+
+void CPlayer::Set_Hp(_int iHp)
+{
+	m_iHp = iHp;
+	if (m_iHp >= m_iMaxHp)
+		m_iHp = m_iMaxHp;
+
+	if (m_iHp <= 0) {
+		;;		// 사망 처리?
+	}
+
+	NotifyObserver();
 }
 
 void CPlayer::Change_State(STATE eState)
@@ -610,14 +646,72 @@ _float CPlayer::Get_CamDegree()
 	return Cal_Degree_From_Directions_Between_Min180_To_180(vPlayerLook, vCamLook);
 }
 
+void CPlayer::Update_InterplationMatrix()
+{
+}
+
 void CPlayer::Update_FSM()
 {
+
 	if (m_pGameInstance->Get_KeyState(VK_RBUTTON) == PRESSING) {
-		if(nullptr != m_pWeapon)
+		if(nullptr != m_pWeapon &&
+			Get_Body_Model()->Is_Loop_PlayingInfo(3)	)
 			Change_State(HOLD);
 	}
 	else
 		Change_State(MOVE);
+}
+
+void CPlayer::Update_KeyInput_Reload()
+{
+	if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
+		if (m_pGameInstance->Get_KeyState('R') == DOWN) {
+			Get_Body_Model()->Set_Loop(3, false);
+			Change_Body_Animation_Hold(3, HOLD_RELOAD);
+			Get_Body_Model()->Set_TrackPosition(3, 0.f);
+			Get_Body_Model()->Set_BlendWeight(3, 10.f, 6.f);
+			//Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.2f);
+			if (nullptr != m_pWeapon) {
+				Get_Weapon_Model()->Change_Animation(0, TEXT("Default"), 2);
+				Get_Weapon_Model()->Set_TrackPosition(0, 0.f);
+			}
+		}
+
+	}
+	else if (Get_Body_Model()->isFinished(3) &&
+		Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == HOLD_RELOAD) {
+		Get_Body_Model()->Set_BlendWeight(3, 0.f, 6.f);
+
+		if (Get_Body_Model()->Get_BlendWeight(3) <= 0.01f) {
+			Get_Body_Model()->Set_Loop(3, true);
+		}
+	}
+}
+
+void CPlayer::Update_LightCondition()
+{
+	//Get_Body_Model()->Set_Loop(4, false);
+	if (Get_Body_Model()->Get_CurrentAnimIndex(4) == LIGHT_ON_OFF) {
+		if (Get_Body_Model()->isFinished(4)) {
+			Set_Spotlight(!m_isSpotlight);
+			//Get_Body_Model()->Set_TrackPosition(4, 0.f, true);
+			Get_Body_Model()->Set_BlendWeight(4, 0, 6.f);
+			Get_Body_Model()->Set_Loop(4, true);
+			Change_Body_Animation_Move(4, ANIM_IDLE);
+		}
+	}
+
+	// test
+	// 이후 실제 라이트와 비교해서 처리하셈
+	if (m_pGameInstance->Get_KeyState('E') == DOWN) {
+		if (Get_Body_Model()->Is_Loop_PlayingInfo(3) &&
+			Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
+			//Get_Body_Model()->Set_TrackPosition(4, 0.f, true);
+			Change_Body_Animation_Move(4, LIGHT_ON_OFF);
+			Get_Body_Model()->Set_Loop(4, false);
+			Get_Body_Model()->Set_BlendWeight(4, 10.f, 6.f);
+		}
+	}
 }
 
 void CPlayer::Update_Equip()
@@ -633,15 +727,15 @@ void CPlayer::Update_Equip()
 			Get_Body_Model()->Set_Loop(3, false);
 
 			Change_Body_Animation_Hold(3, MOVETOHOLSTER);
-			Get_Body_Model()->Set_BlendWeight(3, 10.f, 0.2f);
+			Get_Body_Model()->Set_BlendWeight(3, 10.f, 6.f);
 		}
 		else if(Get_Body_Model()->isFinished(3)) {
-			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.1f) {
+			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.01f) {
 				isChange = false;
 				Get_Body_Model()->Set_Loop(3, true);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == HOLSTERTOMOVE) {
-					Get_Body_Model()->Set_BlendWeight(3, 0.f, 0.1f);
+					Get_Body_Model()->Set_BlendWeight(3, 0.f, 6.f);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == MOVETOHOLSTER) {
 				Set_Equip(TargetWeapon);
@@ -660,32 +754,10 @@ void CPlayer::Update_Equip()
 			isChange = true;
 			TargetWeapon = STG;
 		}
-	}
-}
 
-void CPlayer::Update_LightCondition()
-{
-	//Get_Body_Model()->Set_Loop(4, false);
-
-	if (Get_Body_Model()->Get_CurrentAnimIndex(4) == LIGHT_ON_OFF) {
-		if (Get_Body_Model()->isFinished(4)) {
-			Set_Spotlight(!m_isSpotlight);
-			//Get_Body_Model()->Set_TrackPosition(4, 0.f, true);
-			Get_Body_Model()->Set_BlendWeight(4, 0, 0.2f);
-			Get_Body_Model()->Set_Loop(4, true);
-			Change_Body_Animation_Move(4, ANIM_IDLE);
-		}
-	}
-
-	// test
-	// 이후 실제 라이트와 비교해서 처리하셈
-	if (m_pGameInstance->Get_KeyState('E') == DOWN) {
-		if (Get_Body_Model()->Is_Loop_PlayingInfo(3) &&
-			Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
-			//Get_Body_Model()->Set_TrackPosition(4, 0.f, true);
-			Change_Body_Animation_Move(4, LIGHT_ON_OFF);
-			Get_Body_Model()->Set_Loop(4, false);
-			Get_Body_Model()->Set_BlendWeight(4, 0.1f, 0.2f);
+		if (m_pGameInstance->Get_KeyState('6') == TRUE) {
+			isChange = true;
+			TargetWeapon = NONE;
 		}
 	}
 }
@@ -789,39 +861,34 @@ void CPlayer::Turn_Spine_Default(_float fTimeDelta)
 	{
 		_vector				vMyLook = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
 		_float4				vHeadWorldLook = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-		_float				fHeadMagnitude = sqrt(vHeadWorldLook.x * vHeadWorldLook.x + vHeadWorldLook.y * vHeadWorldLook.y + vHeadWorldLook.z * vHeadWorldLook.z);
+		_float				fHeadMagnitude = sqrt(vHeadWorldLook.x * vHeadWorldLook.x + vHeadWorldLook.z * vHeadWorldLook.z);
 		
 		_matrix				CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
 		_float4				vCamLook = { CamWorldMatrix.r[CTransform::STATE_LOOK] };
-		_float				fCamMagnitude = sqrt(vCamLook.x * vCamLook.x + vCamLook.y * vCamLook.y + vCamLook.z * vCamLook.z);
+		_float				fCamMagnitude = sqrt(vCamLook.x * vCamLook.x + vCamLook.z * vCamLook.z);
 		
 		_float				fDot = { vHeadWorldLook.x * vCamLook.x + vHeadWorldLook.z * vCamLook.z };
 		_float				fAngle = acos(fDot / (fHeadMagnitude * fCamMagnitude));
-
 		_vector				vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_UP) };
-		
-		_float4				vHeadToCam = CamWorldMatrix.r[CTransform::STATE_POSITION] - m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
 
+		_float4				vHeadToCam = CamWorldMatrix.r[CTransform::STATE_POSITION] - m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
 		_float4				vCross = XMVector3Cross(vMyLook, vHeadToCam);
 
-		//cout << XMConvertToDegrees(fAngle) << endl;
-
-		if (fAngle > XMConvertToRadians(90.f)) {
+		if (fAngle < XMConvertToRadians(100.f)) {
 			fAngle = 0.f;
 		}
-		else if (fAngle > XMConvertToRadians(45.f)) {
+		else {
 			fAngle = XMConvertToRadians(45.f);
 		}
 			
-		if (vCross.y < 0) {
+		if (vCross.y > 0) {
 			fAngle *= -1;
 		}
-
 
 		static _float fCurAngle = 0.f;
 		if (!m_isTurnSpineDefault) {
 			if (fabs(fCurAngle) > 0.0001) {
-				fCurAngle += fTimeDelta * -fCurAngle * 5;
+				fCurAngle += fTimeDelta * -fCurAngle * 2;
 			}
 			else {
 				fCurAngle = 0.f;
@@ -829,7 +896,7 @@ void CPlayer::Turn_Spine_Default(_float fTimeDelta)
 			}
 		}
 		else {
-			fCurAngle += fTimeDelta * (fAngle - fCurAngle) * 5;
+			fCurAngle += fTimeDelta * (fAngle - fCurAngle) * 2;
 		}
 
 		list<_uint>			ChildJointIndices;
@@ -911,7 +978,6 @@ void CPlayer::Turn_Spine_Hold(_float fTimeDelta)
 		//vNewQuaternion *= -1;
 		vNewQuaternion = XMQuaternionNormalize(vNewQuaternion);
 
-
 		_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
 
 		for (auto& iJointIndex : ChildJointIndices)
@@ -923,102 +989,61 @@ void CPlayer::Turn_Spine_Hold(_float fTimeDelta)
 
 void CPlayer::Turn_Spine_Light(_float fTimeDelta)
 {
-	static _float		fAccLinearTime = { 0.f };
-
-	fAccLinearTime = 0.5f;
-
 	CModel* pModel = { Get_Body_Model() };
 	if (nullptr != pModel)
 	{
-		_matrix				HeadCombinedMatrix = { XMLoadFloat4x4(pModel->Get_CombinedMatrix("head")) };
-		_matrix				CogCombinedMatrix = { XMLoadFloat4x4(pModel->Get_CombinedMatrix("COG")) };
-
-		_vector				vScaleHead, vQuaternionHead, vTranslationHead;
-		_vector				vScaleCog, vQuaternionCog, vTranslationCog;
-
-		XMMatrixDecompose(&vScaleHead, &vQuaternionHead, &vTranslationHead, HeadCombinedMatrix);
-		XMMatrixDecompose(&vScaleCog, &vQuaternionCog, &vTranslationCog, HeadCombinedMatrix);
-
-		_vector				vCogQuaternionInv = { XMQuaternionInverse(vQuaternionCog) };
-
-		_vector				vTotalQuaternionHead = { XMQuaternionMultiply(XMQuaternionNormalize(vCogQuaternionInv), XMQuaternionNormalize(vQuaternionHead)) };
-		_matrix				HeadRotateMatrix = { XMMatrixRotationQuaternion(vTotalQuaternionHead) };
-
 		_vector				vMyLook = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
-		_vector				vHeadWorldLook = { XMVector3TransformNormal(XMVectorSet(0.f, 0.f, 1.f, 0.f), /*HeadRotateMatrix * */m_pTransformCom->Get_WorldMatrix()) };
-
-		//	vHeadWorldLook = m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK);
+		_float4				vHeadWorldLook = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
+		_float				fHeadMagnitude = sqrt(vHeadWorldLook.x * vHeadWorldLook.x + vHeadWorldLook.y * vHeadWorldLook.y + vHeadWorldLook.z * vHeadWorldLook.z);
+		_float				fHeadWorldAngle = acosf(vHeadWorldLook.y / fHeadMagnitude);
 
 		_matrix				CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
-		_vector				vCamLook = { CamWorldMatrix.r[CTransform::STATE_LOOK] };/*
-		_vector				vCamPosition = { CamWorldMatrix.r[CTransform::STATE_POSITION] };
-		_vector				vCamFocusPosition = { vCamPosition + XMVector3Normalize(vCamLook) * 7.f };*/
+		_float4				vCamLook = { CamWorldMatrix.r[CTransform::STATE_LOOK] };
+		_float				fCamMagnitude = sqrt(vCamLook.x * vCamLook.x + vCamLook.y * vCamLook.y + vCamLook.z * vCamLook.z);
+		_float				fCamAngle = acosf(vCamLook.y / fCamMagnitude);
 
-		//_vector				vMyPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
-		//_vector				vDirectionToFocus = { vCamFocusPosition - vMyPosition };
-		//_vector				vCamLook = { m_pCamera->Get_Transform()->Get_State_Vector(CTransform::STATE_LOOK) };
+		_vector				vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT) };
+		_float				fAngle = fabs(fHeadWorldAngle - fCamAngle);
 
-		_float				fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vHeadWorldLook), XMVector3Normalize(vCamLook))) };
-		//	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vHeadWorldLook), XMVector3Normalize(vCamLook))) };
-		if (fabsf(fDot) > 0.9999f)
-		{
-			return;
+		if (vHeadWorldLook.y < vCamLook.y) {
+			fAngle *= -1;
 		}
-		
-		static _vector vPreRotateAxis;
-		_vector				vRotateAxis = { XMVector3Cross(XMVector3Normalize(vHeadWorldLook), XMVector3Normalize(vCamLook)) };
-		_float				fAngle = { acosf(fDot) };
-		
-		if (fAngle > XMConvertToRadians(90)) {
-			fAngle = XMConvertToRadians(90);
-			vRotateAxis = vPreRotateAxis;
+
+		static _float fCurAngle = 0.f;
+		if (!m_isTurnSpineLight) {
+			if (fabs(fCurAngle) > 0.0001) {
+				fCurAngle += fTimeDelta * -fCurAngle * 10;
+			}
+			else {
+				fCurAngle = 0.f;
+				return;
+			}
 		}
 		else {
-			vPreRotateAxis = vRotateAxis;
+			fCurAngle += fTimeDelta * (fAngle - fCurAngle) * 10;
 		}
 
 		list<_uint>			ChildJointIndices;
-		pModel->Get_Child_ZointIndices("spine_0", "head", ChildJointIndices);
-		ChildJointIndices.pop_back();
+		pModel->Get_Child_ZointIndices("l_arm_clavicle", "l_arm_wrist", ChildJointIndices);
+
 
 		_uint				iNumChildJoint = { static_cast<_uint>(ChildJointIndices.size()) };
-		_float				fDevidedAngle = { fAngle / iNumChildJoint };
+		_float				fDevidedAngle = { fCurAngle / iNumChildJoint };
 		vector<string>		BoneNames = { pModel->Get_BoneNames() };
 
 		vRotateAxis = XMVector3TransformNormal(vRotateAxis, m_pTransformCom->Get_WorldMatrix_Inverse());
 
-		_vector				vQuaternion = { XMQuaternionRotationAxis(vRotateAxis, fDevidedAngle) };
-		_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vQuaternion) };
+		_vector				vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, fDevidedAngle) };
+
+		vNewQuaternion = XMVectorSetY(vNewQuaternion, 0.f);
+		vNewQuaternion = XMVectorSetZ(vNewQuaternion, 0.f);
+		//vNewQuaternion *= -1;
+		vNewQuaternion = XMQuaternionNormalize(vNewQuaternion);
+		_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
 
 		for (auto& iJointIndex : ChildJointIndices)
 		{
 			pModel->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
-		}
-	}
-}
-
-void CPlayer::Update_KeyInput_Reload()
-{
-	if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
-		if (m_pGameInstance->Get_KeyState('R') == DOWN) {
-			Get_Body_Model()->Set_Loop(3, false);
-			Change_Body_Animation_Hold(3, HOLD_RELOAD);
-			Get_Body_Model()->Set_TrackPosition(3, 0.f);
-			Get_Body_Model()->Set_BlendWeight(3, 10.f, 0.4f);
-			//Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.2f);
-			if (nullptr != m_pWeapon) {
-				Get_Weapon_Model()->Change_Animation(0, TEXT("Default"), 2);
-				Get_Weapon_Model()->Set_TrackPosition(0, 0.f);
-			}
-		}
-		
-	}
-	else if (Get_Body_Model()->isFinished(3) &&
-		Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == HOLD_RELOAD) {
-		Get_Body_Model()->Set_BlendWeight(3, 0.f, 0.1f);
-
-		if (Get_Body_Model()->Get_BlendWeight(3) <= 0.1f) {
-			Get_Body_Model()->Set_Loop(3, true);
 		}
 	}
 }
@@ -1608,7 +1633,7 @@ void CPlayer::RayCasting_Camera()
 	_vector vLook = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_LOOK);
 	_vector vUp = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_UP);
 	_vector vRight = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT);
-	_vector vLookAtPoint;
+	//_vector vLookAtPoint;
 	_vector vPos = m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_POSITION);
 	_float4 CamPos = vPos + XMVectorScale(XMVector4Normalize(vRight), m_fLerpAmount_Right) + XMVectorScale(XMVector4Normalize(vUp), m_fLerpAmount_Up) + XMVectorScale(XMVector4Normalize(vLook), m_fLerpAmount_Look);
 	//_float4 CamPos = m_pCamera->Get_Position_Float4();
@@ -1815,7 +1840,6 @@ HRESULT CPlayer::Add_PartObjects()
 	if (nullptr == pWeaponObject)
 		return E_FAIL;
 	m_Weapons[CPlayer::STG] = pWeaponObject;
-
 
 	return S_OK;
 }

@@ -2,6 +2,7 @@
 
 #include "Client_Defines.h"
 #include "GameObject.h"
+#include "Observer_Handler.h"
 
 BEGIN(Engine)
 class CCollider;
@@ -13,10 +14,10 @@ END
 BEGIN(Client)
 class CWeapon;
 
-class CPlayer final : public CGameObject
+class CPlayer final : public CGameObject, public CObserver_Handler
 {
 public:
-	enum STATE { MOVE, HOLD, DAMAGE };
+	enum STATE { MOVE, HOLD, BITE, DAMAGE };
 	enum PART {
 		PART_BODY,
 		PART_HEAD,
@@ -52,7 +53,7 @@ public:
 
 	enum ANIMSET_MOVE { FINE, MOVE_HG, MOVE_STG, FINE_LIGHT, CAUTION, CAUTION_LIGHT, DANGER, DANGER_LIGHT, ANIMSET_MOVE_END };
 	enum ANIMSET_HOLD { HOLD_HG, HOLD_STG, HOLD_MLE, HOLD_SUP, ANIMSET_HOLD_END };
-	enum ANIMSET_ETC { COMMON , BITE, ANIMSET_ETC_END };
+	enum ANIMSET_ETC { COMMON , ANIM_BITE, ANIMSET_ETC_END };
 #pragma endregion
 
 #pragma region Move Direction
@@ -88,55 +89,79 @@ private:
 private:
 	void										Col_Section();
 
-
 #pragma region 현진 추가
+
 public:
 	static wstring								Get_AnimSetMoveName(ANIMSET_MOVE eAnimSetMove) { return strAnimSetMoveName[eAnimSetMove]; }
 	static wstring								Get_AnimSetHoldName(ANIMSET_HOLD eAnimSetHold) { return strAnimSetHoldName[eAnimSetHold]; }
 	static wstring								Get_AnimSetEtcName(ANIMSET_ETC eAnimEtcHold) { return strAnimSetEtcName[eAnimEtcHold]; }
 
+	// =============================== GET ===============================
 	CModel*										Get_Body_Model();
-	void										Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex);
-	void										Change_Body_Animation_Hold(_uint iPlayingIndex, _uint iAnimIndex);
 	CModel*										Get_Weapon_Model();
 	_float3*									Get_Body_RootDir();
 	_bool										Get_Spotlight() { return m_isSpotlight; }
+	_int										Get_Hp() { return m_iHp; }
 	CWeapon*									Get_Weapon() { return m_pWeapon; }
 	EQUIP										Get_Equip() { return m_eEquip; }
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
+	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
+
+	// =============================== SET ===============================
 	void										Set_Spotlight(_bool isSpotlight); 
 	void										Set_Equip(EQUIP eEquip);
-	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineHold = isTurnSpineDefault; }
+	void										Set_Hp(_int iHp);					
+	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineDefault = isTurnSpineDefault; }
 	void										Set_TurnSpineHold(_bool isTurnSpineHold) { m_isTurnSpineHold = isTurnSpineHold;}
+	void										Set_TurnSpineLight(_bool isTurnSpineLight) { m_isTurnSpineLight = isTurnSpineLight; }
 
+	// ============================ CHANGE == SET ============================
+	void										Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex);
+	void										Change_Body_Animation_Hold(_uint iPlayingIndex, _uint iAnimIndex);
 	void										Change_State(STATE eState);
 	void										Change_AnimSet_Move(ANIMSET_MOVE eAnimSetMove) { m_eAnimSet_Move = eAnimSetMove; }
 	void										Change_AnimSet_Hold(ANIMSET_HOLD eAnimSetHold) { m_eAnimSet_Hold = eAnimSetHold; }
-	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
+	void										Change_Player_State_Bite(_int iAnimIndex, wstring& strLayerTag, _float4x4 Interpolationmatrix, _float fInterpolateTime);
 
-	HRESULT										Add_FSM_States();
+	// ============================ UPDATE ============================
+	void										Update_InterplationMatrix();
+
+private:
 	void										Update_FSM();
-	void										Update_Equip();
+	void										Update_KeyInput_Reload();
 	void										Update_LightCondition();				// 현재 빛 상태에 따라 라이트를 키고 끔, 애니메이션 처리
+	void										Update_Equip();
 	void										Update_AnimSet();
 	void										Update_Direction();
 	void										Turn_Spine_Default(_float fTimeDelta);		// Idle 상태에서 카메라 반대쪽으로 머리 돌리기
 	void										Turn_Spine_Hold(_float fTimeDelta);		// Hold 상태에서의 카메라 보기
 	void										Turn_Spine_Light(_float fTimeDelta);		// Light 상태일때의 카메라 보기
-	void										Update_KeyInput_Reload();
 
+	// ============================ INITIALIZE ============================
+	HRESULT										Add_FSM_States();
+
+public:
 	void Swap_Camera();
+
 private:
+	_int m_iMaxHp = { 5 };
 	_int m_iHp = { 5 };
 
 	_bool m_isSpotlight = { false };
 	DWORD m_dwDirection = { 0 };
 
-	_bool m_isTurnSpineDefault = { true };
+	_bool m_isTurnSpineDefault = { false };
 	_bool m_isTurnSpineHold = { false };
+	_bool m_isTurnSpineLight = { false };
 
 	ANIMSET_MOVE m_eAnimSet_Move = { FINE };
 	ANIMSET_HOLD m_eAnimSet_Hold = { HOLD_HG };
+
+	_bool m_isBite = { false };
+	_uint m_eBiteType;
+	_float4x4 m_vBiteInterpolateMatrix;
+	_float m_fInterpolateTime;
+
 
 	EQUIP m_eEquip = { NONE };
 	CWeapon* m_pWeapon = { nullptr };
@@ -153,7 +178,9 @@ private:
 #pragma region 나옹 추가
 public:
 	_bool*										Col_Event_UI(class CCustomCollider* pCustom);
+	_int*										Get_Hp_Ptr() { return &m_iHp;  }
 
+	_bool										m_isNYResult;
 #pragma
 
 #pragma region 예은 추가 

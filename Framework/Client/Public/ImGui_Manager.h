@@ -26,6 +26,13 @@ private:
 	void				Window_TabWindow_Debuger();
 
 private:
+	wstring				Classify_ItemNum_To_String(ITEM_NUMBER eItemNum);
+	ITEM_NUMBER			Classify_String_To_ItemNum(wstring wstrItemNum);
+
+private:
+	string				WStringToString(const std::wstring& wstr);
+
+private:
 	ImGuiIO								m_ImGuiIO;
 	ID3D11Device*						m_pDevice = { nullptr };
 	ID3D11DeviceContext*				m_pContext = { nullptr };
@@ -38,7 +45,10 @@ private:
 	_bool								m_bTabWindow_Debuger = { false };
 
 private:
-	_int								m_iItemNum = { 2 };
+	_int								m_icurrent_Item = { 0 };
+	wstring								m_wstrCurrent_Item = { TEXT("") };
+	vector<wstring>						m_vecItemNums;
+
 
 public: 
 	virtual void Free() override;

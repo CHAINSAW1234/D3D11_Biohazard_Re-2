@@ -59,6 +59,8 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
                     {
                         m_pSelectBox = pBox;
 
+                     //   Safe_AddRef<CInventory_Item_UI*>(m_pSelectBox);
+
                         CTransform* pSelectBox_Trans = dynamic_cast<CTransform*>(pBox->Get_Component(g_strTransformTag));
                         _float4 fSelectBox_Trans = pSelectBox_Trans->Get_State_Float4(CTransform::STATE_POSITION);
                         _float4 fCursor_Trans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
@@ -322,7 +324,9 @@ void CInventory_Item_UI::Sub_Equipment_Inventory(_float fTimeDelta)
     /* 2. 아이템 창 CLOSE */
     if (true == m_isRender)
     {
-        if (!(PRESSING == m_pGameInstance->Get_KeyState('1') || PRESSING == m_pGameInstance->Get_KeyState('2') || PRESSING == m_pGameInstance->Get_KeyState('3') || PRESSING == m_pGameInstance->Get_KeyState('4')))
+        if (!(PRESSING == m_pGameInstance->Get_KeyState('1') || PRESSING == m_pGameInstance->Get_KeyState('2') ||
+            PRESSING == m_pGameInstance->Get_KeyState('3') || PRESSING == m_pGameInstance->Get_KeyState('4') ||
+            true == m_isInvenOpen))
             m_fOpenInven_Timer += fTimeDelta;
 
         if (SUB_INVEN_OPENING <= m_fOpenInven_Timer)
@@ -397,6 +401,24 @@ void CInventory_Item_UI::Sub_SelectBox(SUB_INVEN_BOX_POSITION _eBoxType)
             pSelectBox_Trans->Set_State(CTransform::STATE_POSITION, vBoxTrans);
         }
     }
+}
+
+void CInventory_Item_UI::Reset_Call(_bool bInput)
+{
+    Set_IsRender(bInput);
+    Set_InvenOpen(bInput);
+
+    //Sub_SelectBox(SUB_INVEN_BOX_POSITION::LEFT_INVEN);
+    //Sub_SelectBox(SUB_INVEN_BOX_POSITION::UP_INVEN);
+    //Sub_SelectBox(SUB_INVEN_BOX_POSITION::RIGHT_INVEN);
+    //Sub_SelectBox(SUB_INVEN_BOX_POSITION::DOWN_INVEN);
+
+    //Sub_Iventory_Reset();
+
+    //if (false == bInput)
+    //{
+
+    //}
 }
 
 /* Sub Inventory를 실행했을 때 [출력/초기화] 해야 할 것들 */
@@ -495,4 +517,11 @@ CGameObject* CInventory_Item_UI::Clone(void* pArg)
 void CInventory_Item_UI::Free()
 {
     __super::Free();
+
+    //if(nullptr != m_pSelectBox)
+    //{
+    //    Safe_Release<CInventory_Item_UI*>(m_pSelectBox);
+    //    m_pSelectBox = nullptr;
+    //}
 }
+

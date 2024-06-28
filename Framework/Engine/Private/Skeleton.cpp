@@ -119,11 +119,11 @@ Skeleton::~Skeleton()
 
 void Skeleton::build_bone_list(aiNode* node, const aiScene* scene, std::vector<aiBone*>& temp_bone_list, std::unordered_set<std::string>& bone_map)
 {
-    for (int i = 0; i < node->mNumMeshes; i++)
+    for (_uint i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* current_mesh = scene->mMeshes[node->mMeshes[i]];
 
-        for (int j = 0; j < current_mesh->mNumBones; j++)
+        for (_uint j = 0; j < current_mesh->mNumBones; j++)
         {
             std::string bone_name = std::string(current_mesh->mBones[j]->mName.C_Str());
 
@@ -137,7 +137,7 @@ void Skeleton::build_bone_list(aiNode* node, const aiScene* scene, std::vector<a
         }
     }
 
-    for (int i = 0; i < node->mNumChildren; i++)
+    for (_uint i = 0; i < node->mNumChildren; i++)
         build_bone_list(node->mChildren[i], scene, temp_bone_list, bone_map);
 }
 
@@ -168,7 +168,7 @@ void Skeleton::build_skeleton(aiNode* node, int bone_index, const aiScene* scene
             joint.original_rotation = rotationQuat;
 
             aiNode* parent = node->mParent;
-            int     index;
+            int     index = {};
 
             while (parent)
             {
@@ -187,7 +187,7 @@ void Skeleton::build_skeleton(aiNode* node, int bone_index, const aiScene* scene
         }
     }
 
-    for (int i = 0; i < node->mNumChildren; i++)
+    for (_uint i = 0; i < node->mNumChildren; i++)
         build_skeleton(node->mChildren[i], m_num_joints, scene, temp_bone_list);
 }
 

@@ -7,7 +7,7 @@ BEGIN(Engine)
 class ENGINE_DLL CDecal : public CGameObject
 {
 public:
-	typedef struct : public CGameObject::GAMEOBJECT_DESC
+	typedef struct Decal_Desc : public CGameObject::GAMEOBJECT_DESC
 	{
 		_int iSubType;
 		_int iType;
@@ -32,7 +32,7 @@ protected:
 	class CTexture* m_pTextureCom = { nullptr };
 	class CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 
-	class DecalConstData decalConstData;
+	struct DecalConstData decalConstData;
 protected:
 	_float					m_fX, m_fY, m_fSizeX, m_fSizeY,m_fSizeZ;
 

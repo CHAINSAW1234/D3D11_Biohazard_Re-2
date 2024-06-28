@@ -32,23 +32,23 @@ private :
 	void				Reset();
 
 private :
-	READ_UI_TYPE		m_eRead_type		= { READ_UI_TYPE::END_READ };
-	READ_ARROW_TYPE		m_eRead_Arrow_Type	= { READ_ARROW_TYPE::END_ARROW };
-	BOOK_TYPE			m_eBook_Type		= { BOOK_TYPE::END_BOOK };
+	READ_UI_TYPE					m_eRead_type		= { READ_UI_TYPE::END_READ };
+	READ_ARROW_TYPE					m_eRead_Arrow_Type	= { READ_ARROW_TYPE::END_ARROW };
+	BOOK_TYPE						m_eBook_Type		= { BOOK_TYPE::END_BOOK };
 
 private :
-	CRead_Item_UI*		m_pIntro_UI = { nullptr };
-	CRead_Item_UI*		m_pMain_UI = { nullptr };
+	CRead_Item_UI*					m_pIntro_UI			= { nullptr };
+	CRead_Item_UI*					m_pMain_UI			= { nullptr };
 
-	_float				m_fIntro_Timer = { 0.0f };
-	_bool				m_isRead_Start = { false };
+	_float							m_fIntro_Timer		= { 0.0f };
+	_bool							m_isRead_Start		= { false };
 
 private : 
-	vector<vector<wstring>> m_vecBookTexture;
-	_int				m_iBookCnt = { 0 };
-	_int				m_iBook_PrevCnt = { 0 };
+	vector<vector<wstring>>			m_vecBookTexture;
+	_int							m_iBookCnt			= { 0 };
+	_int							m_iBook_PrevCnt		= { 0 };
 
-	_float4				m_vFont_Position = {};
+	_float4							m_vFont_Position	= {};
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -749,7 +749,7 @@ void CZombie::Perform_Skinning()
 
 	_uint iNumMesh = m_pBodyModel->GetNumMesh();
 
-	for (int i = 0; i < iNumMesh; ++i)
+	for (_uint i = 0; i < iNumMesh; ++i)
 	{
 		m_pBodyModel->Bind_Resource_Skinning(i);
 		m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());

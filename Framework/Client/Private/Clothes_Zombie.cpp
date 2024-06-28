@@ -131,6 +131,7 @@ HRESULT CClothes_Zombie::Render()
 
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
+	return S_OK;
 }
 
 HRESULT CClothes_Zombie::Render_LightDepth_Dir()

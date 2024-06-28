@@ -24,6 +24,7 @@ public :
 	_bool					Get_Crosshair_Animing() { return m_isAiming; }
 
 private :
+	void					Find_CenterDat();
 	void					Aiming(_float fTimeDelta);
 	void					Aiming_Return(_float fTimeDelta);
 

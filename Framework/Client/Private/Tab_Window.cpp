@@ -255,14 +255,24 @@ HRESULT CTab_Window::Render()
 	return S_OK;
 }
 
-void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem)
+void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)
 {
-	m_pInventory_Manager->AddItem_ToInven(eAcquiredItem);
+	m_pInventory_Manager->AddItem_ToInven(eAcquiredItem, iItemQuantity);
 }
 
 _bool CTab_Window::IsCan_AddItem_ToInven()
 {
 	return 	m_pInventory_Manager->IsCan_AddItem_ToInven();
+}
+
+_int CTab_Window::Get_Search_Item_Quantity(ITEM_NUMBER eItemNum)
+{
+	return 	m_pInventory_Manager->Get_Search_Item_Quantity(eItemNum);
+}
+
+ITEM_NUMBER CTab_Window::Get_Item_On_HotKey(_uint iHotKeyNum)
+{
+	return 	m_pInventory_Manager->Get_Item_On_HotKey(iHotKeyNum);
 }
 
 void CTab_Window::Find_Cursor()

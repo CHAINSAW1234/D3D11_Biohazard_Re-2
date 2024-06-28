@@ -244,7 +244,6 @@
     <ClInclude Include="..\Public\Is_Hit_Zombie.h" />
     <ClInclude Include="..\Public\Is_Maintain_PreTask_Zombie.h" />
     <ClInclude Include="..\Public\ItemProp.h" />
-    <ClInclude Include="..\Public\Item_DragShadow.h" />
     <ClInclude Include="..\Public\Item_Mesh_Viewer.h" />
     <ClInclude Include="..\Public\Item_UI.h" />
     <ClInclude Include="..\Public\Knock_Back_Zombie.h" />
@@ -265,6 +264,7 @@
     <ClInclude Include="..\Public\NewpoliceStatue.h" />
     <ClInclude Include="..\Public\Part_InteractProps.h" />
     <ClInclude Include="..\public\Player.h" />
+    <ClInclude Include="..\Public\Player_State_Bite.h" />
     <ClInclude Include="..\Public\Player_State_Hold.h" />
     <ClInclude Include="..\Public\Player_State_Hold_Idle.h" />
     <ClInclude Include="..\Public\Player_State_Hold_Start.h" />
@@ -404,7 +404,6 @@
     <ClCompile Include="..\Private\Is_Hit_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Maintain_PreTask_Zombie.cpp" />
     <ClCompile Include="..\Private\ItemProp.cpp" />
-    <ClCompile Include="..\Private\Item_DragShadow.cpp" />
     <ClCompile Include="..\Private\Item_Mesh_Viewer.cpp" />
     <ClCompile Include="..\Private\Item_UI.cpp" />
     <ClCompile Include="..\Private\Knock_Back_Zombie.cpp" />
@@ -425,6 +424,7 @@
     <ClCompile Include="..\Private\NewpoliceStatue.cpp" />
     <ClCompile Include="..\Private\Part_InteractProps.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
+    <ClCompile Include="..\Private\Player_State_Bite.cpp" />
     <ClCompile Include="..\Private\Player_State_Hold.cpp" />
     <ClCompile Include="..\Private\Player_State_Hold_Idle.cpp" />
     <ClCompile Include="..\Private\Player_State_Hold_Start.cpp" />

@@ -4,6 +4,7 @@
 #define     TYPING_RETURN 1.5f
 #define     TEXT_LIFE   1.f
 #define     ZERO_ALPHA    _float4(0, 0, 0, 0)
+#define     BLACK_COLOR    _float4(0, 0, 0, 1);
 
 CLoading_UI::CLoading_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CCustomize_UI{ pDevice, pContext }
@@ -29,6 +30,8 @@ HRESULT CLoading_UI::Initialize(void* pArg)
     의 자식 : 타자기 몸체, 타자기 머리
     의 자식 : 타자기 머리에 텍스쳐
     */
+    wstring fileName = {};
+
     if (pArg != nullptr)
     {
         if (FAILED(__super::Initialize(pArg)))
@@ -36,20 +39,29 @@ HRESULT CLoading_UI::Initialize(void* pArg)
 
         CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
         m_iWhich_Child = CustomUIDesc->iWhich_Child;
+        fileName = CustomUIDesc->wstrFileName;
     }
 
-    /* 1. Type 맞추기*/
-    if (false == m_IsChild)
-        m_eLoadingType = LOADING_UI_TYPE::BACKGROUND_LOADING_UI;
+    if (fileName == TEXT("UI_Loading_Text"))
+    {
+        m_eLoadingType = LOADING_UI_TYPE::BACKGROUND_TEXT;
+    }
 
-    else if (1 == m_iWhich_Child)
-        m_eLoadingType = LOADING_UI_TYPE::TYPING_BACKGROUND_LOADING_UI;
+    else
+    {
+        if (false == m_IsChild)
+            m_eLoadingType = LOADING_UI_TYPE::BACKGROUND_LOADING_UI;
 
-    else if (!m_vecTextBoxes.empty())
-        m_eLoadingType = LOADING_UI_TYPE::TYPING_HEAD_LOADING_UI;
+        else if (1 == m_iWhich_Child)
+            m_eLoadingType = LOADING_UI_TYPE::TYPING_BACKGROUND_LOADING_UI;
 
-    else 
-        m_eLoadingType = LOADING_UI_TYPE::TYPING_BODY_LOADING_UI;
+        else if (!m_vecTextBoxes.empty())
+            m_eLoadingType = LOADING_UI_TYPE::TYPING_HEAD_LOADING_UI;
+
+        else
+            m_eLoadingType = LOADING_UI_TYPE::TYPING_BODY_LOADING_UI;
+    }
+
 
     /* 2. 조건 */
     if (LOADING_UI_TYPE::TYPING_HEAD_LOADING_UI == m_eLoadingType)
@@ -82,14 +94,15 @@ HRESULT CLoading_UI::Initialize(void* pArg)
             {
                 m_vOriginTextColor = iter->Get_FontColor();
                 iter->Set_FontColor(ZERO_ALPHA);
-
-                
             }
 
             m_iMaxText = (_int)m_vecTextBoxes.size();
+
+            Find_Loading_BackGround();
         }
     }
 
+    
     /* 2. Type에 따른 조건 */
     m_isPlay = false;
 
@@ -99,9 +112,9 @@ HRESULT CLoading_UI::Initialize(void* pArg)
 void CLoading_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
-
-    if (LOADING_UI_TYPE::TYPING_HEAD_LOADING_UI == m_eLoadingType)
-        Typing_Head_Moving(fTimeDelta);
+  
+    Operate_Typing(fTimeDelta);
+    Operate_Ending(fTimeDelta);
 }   
 
 void CLoading_UI::Late_Tick(_float fTimeDelta)
@@ -115,6 +128,26 @@ HRESULT CLoading_UI::Render()
         return E_FAIL;
 
     return S_OK;
+}
+
+void CLoading_UI::Operate_Typing(_float fTimeDelta)
+{
+    if (LOADING_UI_TYPE::BACKGROUND_TEXT == m_eLoadingType)
+    {
+        if(nullptr == m_pBackGroundUI)
+        {
+            Find_Loading_BackGround();
+
+            if (nullptr == m_pBackGroundUI)
+                MSG_BOX(TEXT("Loading_UI에서 Loading BackGround를 찾을 수 없습니다."));
+        }
+    }
+
+    else if (LOADING_UI_TYPE::TYPING_HEAD_LOADING_UI == m_eLoadingType)
+    {
+        Typing_Head_Moving(fTimeDelta);
+        //Typing_Rolling_Moving(fTimeDelta);
+    }
 }
 
 void CLoading_UI::Typing_Head_Moving(_float fTimeDelta)
@@ -151,6 +184,14 @@ void CLoading_UI::Typing_Head_Moving(_float fTimeDelta)
     Render_Text(fTimeDelta);
 }
 
+void CLoading_UI::Typing_Rolling_Moving(_float fTimeDelta)
+{
+    if (m_eLoadingType == LOADING_UI_TYPE::ROLLING_LOADING_UI) 
+    {
+        m_pTransformCom->Turn(_float4(0, 0, 1, 0), fTimeDelta);
+    }
+}
+
 void CLoading_UI::Render_Text(_float fTimeDelta)
 {
     if (m_vecTextBoxes.empty())
@@ -167,6 +208,80 @@ void CLoading_UI::Render_Text(_float fTimeDelta)
         m_iTextCnt++;
         m_fText_Timer = 0.f;
     }
+}
+
+void CLoading_UI::Render_Ending(float fTimeDelta)
+{
+    if (m_fBlending >= 1.f)
+    {
+        m_vCurrentColor = _float4(1, 1, 1, 0);
+        m_fBlending = 1.f;
+        return;
+    }
+   
+    if (!m_vecTextBoxes.empty())
+    {
+        _float4 result = m_pBackGroundUI->m_fBlending * ZERO_ALPHA + (1 - m_pBackGroundUI->m_fBlending * 1.5f) * _float4(0, 0, 0, 0);
+
+        for (auto& iter : m_vecTextBoxes)
+        {
+            iter->Set_FontColor(result);
+        }
+    }
+
+    else
+    {
+        m_vCurrentColor = m_vColor[0].vColor = _float4(0, 0, 0, 1);
+
+        m_fBlending += fTimeDelta;
+    }
+}
+
+void CLoading_UI::Operate_Ending(_float fTimeDelta)
+{
+    if (true == m_isLoading_Notification)
+    {
+        Ending_Notification();
+    }
+
+    if (true == m_isLoadingEnd)
+    {
+        Render_Ending(fTimeDelta);
+    }
+}
+
+void CLoading_UI::Ending_Notification()
+{
+    list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+    for (auto& iter : *pUIList)
+    {
+        CLoading_UI* pLoadingList = static_cast<CLoading_UI*>(iter);
+
+        pLoadingList->m_isLoadingEnd = true;
+
+    }
+
+    m_isLoading_Notification = false;
+}
+
+void CLoading_UI::Find_Loading_BackGround()
+{
+    list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+    for (auto& iter : *pUIList)
+    {
+        CLoading_UI* pLoadingList = static_cast<CLoading_UI*>(iter);
+
+        if (LOADING_UI_TYPE::BACKGROUND_LOADING_UI == pLoadingList->m_eLoadingType)
+        {
+            m_pBackGroundUI = pLoadingList;
+
+           // Safe_AddRef<CLoading_UI*>(m_pBackGroundUI);
+            return;
+        }
+    }
+
 }
 
 CCustomize_UI* CLoading_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -200,4 +315,10 @@ CGameObject* CLoading_UI::Clone(void* pArg)
 void CLoading_UI::Free()
 {
     __super::Free();
+
+   /* if (nullptr != m_pBackGroundUI)
+    {
+        Safe_Release<CLoading_UI*>(m_pBackGroundUI);
+        m_pBackGroundUI = nullptr;
+    }*/
 }

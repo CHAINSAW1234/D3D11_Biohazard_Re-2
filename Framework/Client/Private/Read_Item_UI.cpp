@@ -77,7 +77,7 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
             m_pIntro_UI = Find_ReadUI(READ_UI_TYPE::INTRODUCE_READ, false);
             m_pMain_UI = Find_ReadUI(READ_UI_TYPE::MAIN_READ, true);
 
-            if (nullptr != m_pIntro_UI)
+           if (nullptr != m_pIntro_UI)
                 Safe_AddRef<CRead_Item_UI*>(m_pIntro_UI);
 
             if (nullptr != m_pMain_UI)
@@ -329,6 +329,6 @@ void CRead_Item_UI::Free()
     if (nullptr != m_pIntro_UI)
         Safe_Release(m_pIntro_UI);
 
-    if(nullptr != m_pMain_UI)
+    if (nullptr != m_pMain_UI)
         Safe_Release(m_pMain_UI);
 }

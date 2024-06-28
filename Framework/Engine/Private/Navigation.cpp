@@ -83,12 +83,12 @@ HRESULT CNavigation::Initialize_Prototype(const wstring& strDataFile)
 		return E_FAIL;
 	}
 
-	_int iNumBones = 0;
-	_int iNumMeshes = 0;
+	_uint iNumBones = 0;
+	_uint iNumMeshes = 0;
 	_int iParentIndex = 0;
-	_char TempName[260];
-	_float4x4 TransformationMatrix;
-	CModel::MODEL_TYPE eModelType;
+	_char TempName[260] = {};
+	_float4x4 TransformationMatrix = {};
+	CModel::MODEL_TYPE eModelType = {};
 
 	ifs.read(reinterpret_cast<_char*>(&eModelType), sizeof(CModel::MODEL_TYPE));
 	ifs.read(reinterpret_cast<_char*>(&iNumBones), sizeof(_uint));
@@ -157,7 +157,7 @@ HRESULT CNavigation::Initialize_Prototype(const wstring& strDataFile)
 
 	_float3		vPoints[3];
 
-	for (int i = 0; i < MeshDesc.iNumIndices; i += 3)
+	for (_uint i = 0; i < MeshDesc.iNumIndices; i += 3)
 	{
 		vPoints[0] = MeshDesc.Vertices[MeshDesc.Indices[i]].vPosition;
 		vPoints[1] = MeshDesc.Vertices[MeshDesc.Indices[i + 1]].vPosition;

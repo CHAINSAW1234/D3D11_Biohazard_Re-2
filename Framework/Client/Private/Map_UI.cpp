@@ -3,12 +3,29 @@
 #include "Tab_Window.h"
 #include "Player.h"
 
-#define RED         _float4(0.8, 0, 0, 0)
-#define BLUE        _float4(0.0, 0.7569, 0.85, 0.0)
-#define ALPHA_ZERO  _float4(0, 0, 0, 0)
+#define RED                     _float4(0.8, 0, 0, 0)
+#define BLUE                    _float4(0.0, 0.7569, 0.85, 0.0)
+#define ALPHA_ZERO              _float4(0, 0, 0, 0)
 
-#define BLENDING    0.7f
-#define ZERO        0.f
+#define BLENDING                0.7f
+#define ZERO                    0.f
+
+#define MINMAP_X_SCALED       1011.f
+#define MINMAP_Y_SCALED       743.f
+
+/* 1층 크기*/
+#define MODELMAP_X_SCALED     82.0969925
+#define MODELMAP_Y_SCALED     60.4390125   
+
+/* 2층 크기*/
+#define MODELMAP_X_SCALED     82.0969925
+#define MODELMAP_Y_SCALED     60.4390125  
+
+/* 3층 크기*/
+#define MODELMAP_X_SCALED     82.0969925
+#define MODELMAP_Y_SCALED     60.4390125  
+
+#define FLOOR_TYPE_BLENDING   0.244f /* Floor 선택 시 블렌딩할 값*/
 
 CMap_UI::CMap_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CCustomize_UI{ pDevice, pContext }
@@ -36,11 +53,13 @@ HRESULT CMap_UI::Initialize(void* pArg)
         CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
 
         m_iWhichChild = CustomUIDesc->iWhich_Child;
-        m_eMapComponent_Type = CustomUIDesc->eMapComponent_Type;
+        m_wstrFile = CustomUIDesc->wstrFileName;
+
+        Find_MapStateType(CustomUIDesc);
     }
 
     /* 부모는 렌더하지 않을 것임*/
-    if(CCustomize_UI::MAP_UI_TYPE::MAIN_MAP == m_eMapComponent_Type)
+    if(MAP_UI_TYPE::MAIN_MAP == m_eMapComponent_Type)
     {
         if (false == m_IsChild)
         {
@@ -58,47 +77,39 @@ HRESULT CMap_UI::Initialize(void* pArg)
         }
     }
 
-    else if (CCustomize_UI::MAP_UI_TYPE::MASK_MAP == m_eMapComponent_Type)
+    else if (MAP_UI_TYPE::MASK_MAP == m_eMapComponent_Type)
     {
         m_vColor[0].vColor = m_vCurrentColor = _float4(0, 0, 0, 0);
     }
 
-    else if (CCustomize_UI::MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
+    else if (MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
     {
         Find_Player();
 
         if (nullptr != m_pPlayer)
         {
             m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
-
-            Safe_AddRef<CTransform*>(m_pPlayerTransform);
+            // Safe_AddRef<CTransform*>(m_pPlayerTransform);
         }
 
-        m_vPlayer_InitPosition = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+        m_vPlayer_MovePos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
         
-        m_vPlayer_InitPosition_Distance = m_vPlayer_InitPosition;
+        m_vPlayer_InitPos.x = 0.f + m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x;
+        m_vPlayer_InitPos.y = 0.f + m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y;
     }
 
-    else if (CCustomize_UI::MAP_UI_TYPE::NAMELINE_MAP == m_eMapComponent_Type)
+    else if (MAP_UI_TYPE::SEARCH_TYPE_MAP == m_eMapComponent_Type)
     {
         _float4 vTransform = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
-        vTransform.x += 15.f;
+        vTransform.x += 100.f;
 
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, vTransform);
     }
-
-    else if (CCustomize_UI::MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
+        
+    else if (MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
     {
-        if(false == m_IsChild)
-        {
-            Find_InMap_Player();
-
-            if (nullptr == m_pInMap_Player)
-                MSG_BOX(TEXT("Map UI의 Target이 InMap 안의 Player를 찾을 수 없습니다."));
-        }
-
-        else if (true == m_IsChild)
+        if (true == m_IsChild)
         {
             list<CGameObject*>* pMapUI_List = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
 
@@ -109,7 +120,7 @@ HRESULT CMap_UI::Initialize(void* pArg)
 
                 if (nullptr != pMainObj)
                 {
-                    if (pMainTarget->m_eMapComponent_Type == CCustomize_UI::MAP_UI_TYPE::TARGET_MAP)
+                    if (pMainTarget->m_eMapComponent_Type == MAP_UI_TYPE::TARGET_MAP)
                     {
                         if (false == pMainTarget->m_IsChild) /* 직속 상관이라면 */
                             m_pTarget_Main = pMainTarget;
@@ -119,6 +130,8 @@ HRESULT CMap_UI::Initialize(void* pArg)
 
                         if (nullptr != m_pTarget_Main)
                         {
+                        //  Safe_AddRef<CMap_UI*>(m_pTarget_Main);
+
                             CTransform* pMainTarget_Transform = static_cast<CTransform*>(m_pTarget_Main->Get_Component(g_strTransformTag));
 
                             m_pTarget_Transform = pMainTarget_Transform;
@@ -129,7 +142,7 @@ HRESULT CMap_UI::Initialize(void* pArg)
                             if (vMainTarget_Trans.x > vSubTarget_Trans.x && ZERO == vSubTarget_Trans.y)
                             {
                                 m_eSubTarget_Type = SUB_TARGET_TYPE::LEFT_TARGET;
-                                m_fTarget_Distance = abs(vMainTarget_Trans.x - vSubTarget_Trans.x);
+                                m_fTarget_Distance = vMainTarget_Trans.x - vSubTarget_Trans.x;
                             }
 
                             else if (vMainTarget_Trans.x < vSubTarget_Trans.x && ZERO == vSubTarget_Trans.y)
@@ -138,15 +151,16 @@ HRESULT CMap_UI::Initialize(void* pArg)
                                 m_fTarget_Distance = abs(vSubTarget_Trans.x - vMainTarget_Trans.x);
                             }
 
-                            else if (vMainTarget_Trans.y > vSubTarget_Trans.y )
+                            else if (vMainTarget_Trans.y > vSubTarget_Trans.y)
                             {
                                 m_eSubTarget_Type = SUB_TARGET_TYPE::DOWN_TARGET;
-                                m_fTarget_Distance = abs(vSubTarget_Trans.y - vMainTarget_Trans.y);
+                                m_fTarget_Distance = vMainTarget_Trans.y - vSubTarget_Trans.y;
                             }
+
                             else
                             {
                                 m_eSubTarget_Type = SUB_TARGET_TYPE::UP_TARGET;
-                                m_fTarget_Distance = abs(vMainTarget_Trans.y - vSubTarget_Trans.y);
+                                m_fTarget_Distance = vSubTarget_Trans.y - vMainTarget_Trans.y;
                             }
                         }
                     }
@@ -154,7 +168,15 @@ HRESULT CMap_UI::Initialize(void* pArg)
             }
         }
     }
-        
+
+    else if (MAP_UI_TYPE::FLOOR_TYPE_MAP == m_eMapComponent_Type)
+    {
+        m_isRender = true;
+
+        if (!m_vecTextBoxes.empty())
+            m_vOriginTextColor = m_vecTextBoxes.back()->Get_FontColor();
+    }
+
     if (!m_vecTextBoxes.empty())
     {
         m_vOriginTextColor = m_vecTextBoxes.back()->Get_FontColor();
@@ -168,6 +190,7 @@ HRESULT CMap_UI::Initialize(void* pArg)
     m_isRender = false;
     Search_TabWindow();
 
+    //if(m_wstrFile == TEXT(""))
     return S_OK;
 }
 
@@ -175,25 +198,40 @@ void CMap_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    // 예비
-    if (false == m_isGara)
+    if (nullptr == m_pInMap_Player)
     {
-        Search_Map_Type(MAP_STATE_TYPE::SEARCH_CLEAR_STATE, MAIN_HOLL);
-        Search_Map_Type(MAP_STATE_TYPE::SEARCH_STATE, ENTRANCE);
+        Find_InMap_Player();
+
+        if (nullptr == m_pInMap_Player)
+            MSG_BOX(TEXT("Map UI의 Target이 InMap 안의 Player를 찾을 수 없습니다."));
     }
 
     /* 1. Render */
-    Render_Condition();
+    Render_Condition(fTimeDelta);
 
-    /* 2. Transform */
-    Transform_Condition(fTimeDelta);
+    /* 2. Floor Selector에 관련된 것 */
+    if (MAP_UI_TYPE::FLOOR_TYPE_MAP == m_eMapComponent_Type)
+        FloorType_Search();
 
-    /* Player*/
-    if (CCustomize_UI::MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
+    /* 3. Player 움직임에 관련된 것 */
+    if (MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
         Map_Player_Control(fTimeDelta);
 
-    else if (CCustomize_UI::MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
-        Map_Target_Control(fTimeDelta);
+    /* 4. Map에 관련된 것 */
+    if (m_eFloorType == m_pInMap_Player->m_eCurrent_Floor || MAP_FLOOR_TYPE::FLOOR_FREE == m_eFloorType)
+    {
+        // EX CODE
+        if (false == m_isGara)
+        {
+            Search_Map_Type(MAP_STATE_TYPE::SEARCH_CLEAR_STATE, MAIN_HOLL);
+            Search_Map_Type(MAP_STATE_TYPE::SEARCH_STATE, ENTRANCE);
+        }
+
+        /* Transform */
+        Transform_Condition(fTimeDelta);
+    }
+    else
+        m_isRender = false;
 }
 
 void CMap_UI::Late_Tick(_float fTimeDelta)
@@ -213,7 +251,7 @@ void CMap_UI::Search_Map_Type(MAP_STATE_TYPE _searType, LOCATION_MAP_VISIT _mapT
 {
     const list<CGameObject*>* pMapUI_List = m_pGameInstance->Find_Layer(m_pGameInstance->Get_CurrentLevel(), TEXT("Layer_UI"));
 
-    if(nullptr != pMapUI_List)
+    if (nullptr != pMapUI_List)
     {
         for (auto& iter : *pMapUI_List)
         {
@@ -222,17 +260,17 @@ void CMap_UI::Search_Map_Type(MAP_STATE_TYPE _searType, LOCATION_MAP_VISIT _mapT
             if (nullptr != pMap)
             {
                 if (_mapType == pMap->m_eMap_Location &&
-                    CCustomize_UI::MAP_UI_TYPE::FONT_MASK_MAP != pMap->m_eMapComponent_Type &&
-                    CCustomize_UI::MAP_UI_TYPE::MASK_MAP != pMap->m_eMapComponent_Type &&
-                    CCustomize_UI::MAP_UI_TYPE::ITEM_MAP != pMap->m_eMapComponent_Type &&
-                    CCustomize_UI::MAP_UI_TYPE::WINDOW_MAP != pMap->m_eMapComponent_Type &&
+                    MAP_UI_TYPE::FONT_MASK_MAP != pMap->m_eMapComponent_Type &&
+                    MAP_UI_TYPE::MASK_MAP != pMap->m_eMapComponent_Type &&
+                    MAP_UI_TYPE::ITEM_MAP != pMap->m_eMapComponent_Type &&
+                    MAP_UI_TYPE::WINDOW_MAP != pMap->m_eMapComponent_Type &&
                     MAP_CHILD_TYPE::BACKGROUND_MAP == (MAP_CHILD_TYPE)pMap->m_iWhichChild)
                 {
                     m_isGara = true;
                     Change_Search_Type(_searType, pMap);
                 }
             }
-        }   
+        }
     }
 }
 
@@ -267,13 +305,12 @@ void CMap_UI::Find_InMap_Player()
         {
             m_pInMap_Player = dynamic_cast<CMap_UI*>(iter);
 
-            if (nullptr != m_pInMap_Player && CCustomize_UI::MAP_UI_TYPE::PLAYER_MAP == m_pInMap_Player->m_eMapComponent_Type)
+            if (nullptr != m_pInMap_Player && MAP_UI_TYPE::PLAYER_MAP == m_pInMap_Player->m_eMapComponent_Type)
             {
                 m_pInMap_PlayerTrans = static_cast<CTransform*>(m_pInMap_Player->Get_Component(g_strTransformTag));
-                
-                Safe_AddRef<CMap_UI*>(m_pInMap_Player);
-                Safe_AddRef<CTransform*>(m_pInMap_PlayerTrans);
 
+                //Safe_AddRef<CMap_UI*>(m_pInMap_Player);
+                //Safe_AddRef<CTransform*>(m_pInMap_PlayerTrans);
                 return;
             }
         }
@@ -281,9 +318,182 @@ void CMap_UI::Find_InMap_Player()
 
 }
 
+void CMap_UI::Find_MapStateType(CUSTOM_UI_DESC* CustomUIDesc)
+{
+    /* 1 Floor */
+    if (TEXT("UI_Map") == m_wstrFile)
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::MAIN_MAP;
+        m_eFloorType = MAP_FLOOR_TYPE::FLOOR_1;
+    }
+
+    else if (TEXT("UI_Map_Font") == m_wstrFile)
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::FONT_MAP;
+        m_eFloorType = MAP_FLOOR_TYPE::FLOOR_1;
+    }
+
+    else if (TEXT("UI_Map_Door") == m_wstrFile)
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::DOOR_MAP;
+        m_eFloorType = MAP_FLOOR_TYPE::FLOOR_1;
+    }
+
+    else if (TEXT("UI_Map_Window") == m_wstrFile)
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::WINDOW_MAP;
+        m_eFloorType = MAP_FLOOR_TYPE::FLOOR_1;
+    }
+
+    else if (m_wstrFile == TEXT("UI_Map_Item"))
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::ITEM_MAP;
+        m_eFloorType = MAP_FLOOR_TYPE::FLOOR_1;
+    }
+
+    /* 2 Floor */
+    else if (m_wstrFile == TEXT("UI_Map_Floor2"))
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::MAIN_MAP;
+        m_eFloorType = MAP_FLOOR_TYPE::FLOOR_2;
+    }
+
+    else if (m_wstrFile == TEXT("UI_Map_Font2"))
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::FONT_MAP;
+        m_eFloorType = MAP_FLOOR_TYPE::FLOOR_2;
+    }
+
+    /* 공용 */
+    else if (m_wstrFile == TEXT("UI_Map_Player"))
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::PLAYER_MAP;
+    }
+
+    else if (m_wstrFile == TEXT("Map_Line"))
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::NAMELINE_MAP;
+    }
+
+    else if (m_wstrFile == TEXT("Map_Search_Type"))
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::SEARCH_TYPE_MAP;
+    }
+
+    else if (m_wstrFile == TEXT("Map_Target"))
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::TARGET_MAP;
+    }
+
+    else if (m_wstrFile == TEXT("Map_BackGround"))
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::BACKGROUND_MAP;
+    }
+
+    else if (TEXT("Map_Mask") == m_wstrFile)
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::MASK_MAP;
+    }
+
+    else if (TEXT("Map_Mask_Font") == m_wstrFile)
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::FONT_MASK_MAP;
+    }
+
+    else if (TEXT("UI_Map_Floor_Type") == m_wstrFile)
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::FLOOR_TYPE_MAP;
+    }
+
+    else if (TEXT("UI_Map_Floor3") == m_wstrFile)
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::MAIN_MAP;
+        m_eFloorType = MAP_FLOOR_TYPE::FLOOR_3;
+
+    }
+
+    else if (TEXT("UI_Map_Item_Floor2") == m_wstrFile)
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::ITEM_MAP;
+        m_eFloorType = MAP_FLOOR_TYPE::FLOOR_2;
+
+    }
+
+    else if (TEXT("UI_Map_Door_Floor2") == m_wstrFile)
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::DOOR_MAP;
+        m_eFloorType = MAP_FLOOR_TYPE::FLOOR_2;
+
+    }
+
+    else if (TEXT("Map_Font2") == m_wstrFile)
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::FONT_MAP;
+        m_eFloorType = MAP_FLOOR_TYPE::FLOOR_2;
+    }
+
+    else if (TEXT("Map_Font3") == m_wstrFile)
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::FONT_MAP;
+        m_eFloorType = MAP_FLOOR_TYPE::FLOOR_3;
+    }
+    
+    else if (TEXT("UI_Map_Item_Floor3") == m_wstrFile)
+    {
+        m_eMapComponent_Type = MAP_UI_TYPE::ITEM_MAP;
+        m_eFloorType = MAP_FLOOR_TYPE::FLOOR_3;
+    }
+}
+
+void CMap_UI::Floor_Sort()
+{
+    list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+    vector<CMap_UI*> FloorVec;
+
+    if (nullptr == pUIList)
+        return;
+
+    for (auto* iter : *pUIList)
+    {
+        CMap_UI* pFloor = dynamic_cast<CMap_UI*>(iter);
+
+        if (nullptr != pFloor)
+        {
+            if (MAP_UI_TYPE::FLOOR_TYPE_MAP == pFloor->m_eMapComponent_Type)
+            {
+                FloorVec.push_back(pFloor);
+            }
+        }
+    }
+
+    if (!FloorVec.empty())
+    {
+        MAP_FLOOR_TYPE eType = (MAP_FLOOR_TYPE)0;
+
+        for (_uint i = 0; i < FloorVec.size(); i++)
+            FloorVec[i]->m_eSelect_Floor = static_cast<MAP_FLOOR_TYPE>(i);
+
+        auto CompareByY = [](CMap_UI* a, CMap_UI* b) {
+            CTransform* pTransformA = static_cast<CTransform*>(a->Get_Component(g_strTransformTag));
+            CTransform* pTransformB = static_cast<CTransform*>(b->Get_Component(g_strTransformTag));
+
+            _float4 vA = pTransformA->Get_State_Float4(CTransform::STATE_POSITION);
+            _float4 vB = pTransformB->Get_State_Float4(CTransform::STATE_POSITION);
+
+            return vA.y < vB.y;
+            };
+
+        sort(FloorVec.begin(), FloorVec.end(), CompareByY);
+    }
+
+    for (_uint i = 0; i < FloorVec.size(); i++) {
+        FloorVec[i]->m_eSelect_Floor = static_cast<MAP_FLOOR_TYPE>(i);
+    }
+}
+
 void CMap_UI::Transform_Condition(_float fTimeDelta)
 {
-    if(false == m_isTransfrom_Setting)
+    if (false == m_isTransfrom_Setting)
     {
         Transform_Adjustment();
 
@@ -291,43 +501,63 @@ void CMap_UI::Transform_Condition(_float fTimeDelta)
             MSG_BOX(TEXT("CMap_UI에서 무언가가 Transform Setting이 설정되지 않았습니다."));
     }
 
-    Mouse_Pos(fTimeDelta);
+    /* Player가 현재 플로어에 적합하거나 || 현재 맵이 플로어에 적합할 때 */
+    if (true == m_isRender)
+        Mouse_Pos(fTimeDelta);
 }
 
 void CMap_UI::Mouse_Pos(_float fTimeDelta)
 {
-    if (CCustomize_UI::MAP_UI_TYPE::MAIN_MAP == m_eMapComponent_Type)
+    if (MAP_UI_TYPE::MAIN_MAP == m_eMapComponent_Type)
+    {
         m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+    }
 
-    if (CCustomize_UI::MAP_UI_TYPE::MAIN_MAP == m_eMapComponent_Type    || CCustomize_UI::MAP_UI_TYPE::FONT_MAP == m_eMapComponent_Type ||
-        CCustomize_UI::MAP_UI_TYPE::DOOR_MAP == m_eMapComponent_Type    || CCustomize_UI::MAP_UI_TYPE::WINDOW_MAP == m_eMapComponent_Type ||
-        CCustomize_UI::MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type  || CCustomize_UI::MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type || 
-        CCustomize_UI::MAP_UI_TYPE::ITEM_MAP == m_eMapComponent_Type)
+    if (MAP_UI_TYPE::MAIN_MAP == m_eMapComponent_Type || MAP_UI_TYPE::FONT_MAP == m_eMapComponent_Type ||
+        MAP_UI_TYPE::DOOR_MAP == m_eMapComponent_Type || MAP_UI_TYPE::WINDOW_MAP == m_eMapComponent_Type ||
+        MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type ||  MAP_UI_TYPE::ITEM_MAP == m_eMapComponent_Type ||
+        MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
     {
         if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
         {
             POINT		ptDeltaPos = m_pGameInstance->Get_MouseDeltaPos();
 
+            /* 속도 방향 정해주기 */
+
+
             if ((_long)0 != ptDeltaPos.x)
             {
                 _float4 pos = {};
+
                 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-                pos.x += fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor;
+
+                if (MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
+                    pos.x -= (fTimeDelta * (_float)ptDeltaPos.x * 5.f);
+                else
+                    pos.x += fTimeDelta * (_float)ptDeltaPos.x * m_fMouseSensor;
+
                 m_pTransformCom->Set_State(CTransform::STATE_POSITION, pos);
 
-                if (CCustomize_UI::MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
-                    m_vPlayer_InitPosition.x += fTimeDelta * (_float)ptDeltaPos.x * fMouseSensor;
+                if (MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
+                    m_vPlayer_MovePos.x += fTimeDelta * (_float)ptDeltaPos.x * m_fMouseSensor;
+                
             }
 
             if ((_long)0 != ptDeltaPos.y)
             {
                 _float4 pos = {};
+
                 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-                pos.y -= fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor;
+
+                if (MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
+                    pos.y += (fTimeDelta * (_float)ptDeltaPos.y * 5.f);
+                else
+                    pos.y -= fTimeDelta * (_float)ptDeltaPos.y * m_fMouseSensor;
+
                 m_pTransformCom->Set_State(CTransform::STATE_POSITION, pos);
-                
-                if (CCustomize_UI::MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
-                    m_vPlayer_InitPosition.y -= fTimeDelta * (_float)ptDeltaPos.y * fMouseSensor;
+
+                if (MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
+                    m_vPlayer_MovePos.y -= fTimeDelta * (_float)ptDeltaPos.y * m_fMouseSensor;
             }
         }
     }
@@ -336,9 +566,9 @@ void CMap_UI::Mouse_Pos(_float fTimeDelta)
 void CMap_UI::Transform_Adjustment()
 {
     /* Main */
-    if (CCustomize_UI::MAP_UI_TYPE::MAIN_MAP == m_eMapComponent_Type        || CCustomize_UI::MAP_UI_TYPE::DOOR_MAP == m_eMapComponent_Type
-        || CCustomize_UI::MAP_UI_TYPE::WINDOW_MAP == m_eMapComponent_Type   || CCustomize_UI::MAP_UI_TYPE::FONT_MAP == m_eMapComponent_Type
-        || CCustomize_UI::MAP_UI_TYPE::ITEM_MAP == m_eMapComponent_Type     || CCustomize_UI::MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
+    if (MAP_UI_TYPE::MAIN_MAP == m_eMapComponent_Type || MAP_UI_TYPE::DOOR_MAP == m_eMapComponent_Type
+        || MAP_UI_TYPE::WINDOW_MAP == m_eMapComponent_Type || MAP_UI_TYPE::FONT_MAP == m_eMapComponent_Type
+        || MAP_UI_TYPE::ITEM_MAP == m_eMapComponent_Type || MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
     {
         _float4 vMainPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
         vMainPos.z = 0.1f;
@@ -347,10 +577,10 @@ void CMap_UI::Transform_Adjustment()
         m_isTransfrom_Setting = true;
     }
 
-    else if (CCustomize_UI::MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
+    else if (MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
     {
         _float4 vMainPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-       
+
         if (false == m_IsChild)
             vMainPos.z = 0.1f;
 
@@ -362,11 +592,9 @@ void CMap_UI::Transform_Adjustment()
         m_isTransfrom_Setting = true;
     }
 
-    /* Mask */
-    else if (CCustomize_UI::MAP_UI_TYPE::MASK_MAP == m_eMapComponent_Type ||
-        CCustomize_UI::MAP_UI_TYPE::NAMELINE_MAP == m_eMapComponent_Type ||
-        CCustomize_UI::MAP_UI_TYPE::SEARCH_TYPE_MAP == m_eMapComponent_Type ||
-        CCustomize_UI::MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
+    else if (MAP_UI_TYPE::MASK_MAP == m_eMapComponent_Type || MAP_UI_TYPE::NAMELINE_MAP == m_eMapComponent_Type ||
+        MAP_UI_TYPE::SEARCH_TYPE_MAP == m_eMapComponent_Type || MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type ||
+        MAP_UI_TYPE::FLOOR_TYPE_MAP == m_eMapComponent_Type)
     {
         _float4 vMainPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
         vMainPos.z = 0.0f;
@@ -376,7 +604,7 @@ void CMap_UI::Transform_Adjustment()
     }
 
     /* Mask */
-    else if (CCustomize_UI::MAP_UI_TYPE::BACKGROUND_MAP == m_eMapComponent_Type )
+    else if (MAP_UI_TYPE::BACKGROUND_MAP == m_eMapComponent_Type)
     {
         _float4 vMainPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
         vMainPos.z = 0.9f;
@@ -385,7 +613,7 @@ void CMap_UI::Transform_Adjustment()
         m_isTransfrom_Setting = true;
     }
 
-    else if (CCustomize_UI::MAP_UI_TYPE::FONT_MAP == m_eMapComponent_Type)
+    else if (MAP_UI_TYPE::FONT_MAP == m_eMapComponent_Type)
     {
         /* Font */
         if (!m_vecTextBoxes.empty())
@@ -408,9 +636,44 @@ void CMap_UI::Transform_Adjustment()
     }
 }
 
+void CMap_UI::Player_Transform(_float fTimeDelta)
+{
+    if (nullptr == m_pPlayerTransform)
+    {
+        Find_Player();
+
+        if (nullptr == m_pPlayerTransform)
+        {
+            MSG_BOX(TEXT("MinMap이 Player를 찾을 수 없습니다."));
+            return;
+        }
+    }
+
+    _float2 fComparison = {};
+
+    // MINMAP과 MODELMAP의 크기 비율 계산
+    fComparison.x = MINMAP_X_SCALED / MODELMAP_X_SCALED;
+    fComparison.y = MINMAP_Y_SCALED / MODELMAP_Y_SCALED;
+
+    _float2 Moving_Value = {};
+
+    Moving_Value.x = 0.f - m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION).x;
+    Moving_Value.y = 0.f - m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION).z; // 플레이어의 초기 위치와 현재 위치의 차이 계산
+
+    // MINMAP 비율에 맞춰 이동 값을 조정
+    Moving_Value.x *= fComparison.x;
+    Moving_Value.y *= fComparison.y;
+
+    _float4 vMiniMapPlayer = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+    vMiniMapPlayer.x = m_vPlayer_MovePos.x + Moving_Value.x;
+    vMiniMapPlayer.y = m_vPlayer_MovePos.y + Moving_Value.y - (m_vPlayer_InitPos.y * 0.5f);
+
+    m_pTransformCom->Set_State(CTransform::STATE_POSITION, vMiniMapPlayer);
+}
+
 void CMap_UI::EX_ColorChange()
-{   
-    if (CCustomize_UI::MAP_UI_TYPE::MAIN_MAP == m_eMapComponent_Type)
+{
+    if (MAP_UI_TYPE::MAIN_MAP == m_eMapComponent_Type)
     {
         /* 예시 코드*/
         if (DOWN == m_pGameInstance->Get_KeyState('I') && false == m_IsChild)
@@ -423,7 +686,54 @@ void CMap_UI::EX_ColorChange()
     }
 }
 
-void CMap_UI::Render_Condition()
+void CMap_UI::FloorType_Search()
+{
+    if (false == m_isRender)
+    {
+        if(!m_vecTextBoxes.empty())
+            m_vecTextBoxes.back()->Set_FontColor(ALPHA_ZERO);
+
+        return;
+    }
+
+    if (m_eSelect_Floor >= MAP_FLOOR_TYPE::FLOOR_FREE)
+    {
+        Floor_Sort();
+
+        if (m_eSelect_Floor >= MAP_FLOOR_TYPE::FLOOR_FREE)
+            MSG_BOX(TEXT("Floor 설정이 제대로 적용되지 않았습니다.")); // Floor type을 고치면 된다.
+    }
+
+    if (MAP_UI_TYPE::FLOOR_TYPE_MAP == m_eMapComponent_Type)
+    {
+        if (true == IsMouseHover())
+        {
+            if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+            {
+                m_pInMap_Player->m_eCurrent_Floor = m_eSelect_Floor;
+
+                // 지도에게도 넘겨줘야 한다.
+            }
+        }
+
+        if (m_pInMap_Player->m_eCurrent_Floor == m_eSelect_Floor)
+        {
+            if (!m_vecTextBoxes.empty())
+            {
+                m_vecTextBoxes.back()->Set_FontColor(_float4(1, 1, 1, 1));
+                m_vCurrentColor = _float4(1, 1, 1, 1);
+                m_fBlending = FLOOR_TYPE_BLENDING;
+            }
+        }
+        else
+        {
+            m_vecTextBoxes.back()->Set_FontColor(m_vOriginTextColor);
+            m_fBlending = 0.f;
+        }
+    }
+}
+
+void CMap_UI::Render_Condition(_float fTimeDelta)
 {
     //////////    :   Font Render 
     if (!m_vecTextBoxes.empty())
@@ -437,12 +747,12 @@ void CMap_UI::Render_Condition()
                 if (true == m_isRender)
                     iter->Set_FontColor(m_vOriginTextColor);
 
-                else if(false == m_isRender)
+                else if (false == m_isRender)
                     iter->Set_FontColor(ALPHA_ZERO);
             }
         }
     }
-        
+
     //////////    :   Texture Render 
     if (nullptr == m_pTab_Window)
     {
@@ -452,17 +762,45 @@ void CMap_UI::Render_Condition()
             MSG_BOX(TEXT("Map_UI에서 Tab Window을 참조할 수 없습니다."));
     }
 
-    if(nullptr != m_pTab_Window)
+    if (nullptr != m_pTab_Window)
     {
         if (true == m_pTab_Window->Get_MinMapRender())
         {
-            if (CCustomize_UI::MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type && m_IsChild)
-                m_fBlending = 0.f;
+            if (m_eFloorType == m_pInMap_Player->m_eCurrent_Floor || MAP_FLOOR_TYPE::FLOOR_FREE == m_eFloorType)
+            {
+                if (MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type && m_IsChild)
+                    m_fBlending = 0.f;
 
-            m_isRender = true;
+                m_isRender = true;
+            }
         }
         else
             m_isRender = false;
+    }
+
+    //////////    :   Player Render State
+    if (MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
+    {
+        if (nullptr != m_pTab_Window)
+        {
+            if (true == m_pTab_Window->Get_MinMapRender())
+            {
+                if (m_pInMap_Player->m_eCurrent_Floor == m_eCurrent_PlayerFloor)
+                    m_isRender = true;
+
+                else 
+                    m_isRender = false;
+            }
+            else
+                m_isRender = false;
+        }
+    }
+
+
+    /* Player 를 조준하는 Player Target */
+    if (MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
+    {
+        Map_Target_Control(fTimeDelta);
     }
 }
 
@@ -489,103 +827,103 @@ void CMap_UI::Map_Player_Control(_float fTimeDelta)
         return;
     }
 
-    m_fBlending = 1.f;
+    else if(false == m_isRender && m_pInMap_Player->m_eCurrent_Floor == m_eCurrent_PlayerFloor)
+    {
+        m_fBlending = 1.f;
 
-    _matrix playerMatrix = m_pPlayerTransform->Get_WorldMatrix();
+        _matrix playerMatrix = m_pPlayerTransform->Get_WorldMatrix();
 
-    ///////////  :   회전 
-    _vector col0 = XMVector4Normalize(playerMatrix.r[0]);
-    _vector col1 = XMVector4Normalize(playerMatrix.r[1]);
-    _vector col2 = XMVector4Normalize(playerMatrix.r[2]);
-    _vector col3 = XMVector4Normalize(playerMatrix.r[3]);
+        ///////////  :   회전 
+        _vector col0 = XMVector4Normalize(playerMatrix.r[0]);
+        _vector col1 = XMVector4Normalize(playerMatrix.r[1]);
+        _vector col2 = XMVector4Normalize(playerMatrix.r[2]);
+        _vector col3 = XMVector4Normalize(playerMatrix.r[3]);
 
-    _float4x4 mapPlayer = m_pTransformCom->Get_WorldFloat4x4();
-    mapPlayer = XMMatrixIdentity();
-    mapPlayer._11 = XMVectorGetX(col0);
-    mapPlayer._12 = XMVectorGetZ(col0);
-    mapPlayer._21 = XMVectorGetX(col2);
-    mapPlayer._22 = XMVectorGetZ(col2);
+        _float4x4 mapPlayer = m_pTransformCom->Get_WorldFloat4x4();
+        mapPlayer = XMMatrixIdentity();
+        mapPlayer._11 = XMVectorGetX(col0);
+        mapPlayer._12 = XMVectorGetZ(col0);
+        mapPlayer._21 = XMVectorGetX(col2);
+        mapPlayer._22 = XMVectorGetZ(col2);
 
-    ///////////  :   이동
-    _float4 vPlayerTrans = m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION);
-    _float2 fPlayerDistance = {};
+        ///////////  :   설정 값
+        m_pTransformCom->Set_WorldMatrix(mapPlayer);
 
-    fPlayerDistance.x = 0.f - vPlayerTrans.x;
-    fPlayerDistance.y = 0.f - vPlayerTrans.z;
+        if (false == m_IsChild)
+            m_pTransformCom->Set_Scaled(55.f, 55.f, 1);
 
-    mapPlayer._41 = (m_vPlayer_InitPosition.x + m_vPlayer_InitPosition_Distance.x) + (fPlayerDistance.x * 12.7f); // 13.3f; //160 / 8 -> 20 / 1.5
-    mapPlayer._42 = (m_vPlayer_InitPosition.y - m_vPlayer_InitPosition_Distance.y * 0.5f) + fPlayerDistance.y * 13.7f; // 14.6f; // 90 / 4 -> 22
-    mapPlayer._44 = 1.f;
+        else if (true == m_IsChild)
+            m_pTransformCom->Set_Scaled(25.f, 25.f, 1);
 
-    ///////////  :   설정 값
-    m_pTransformCom->Set_WorldMatrix(mapPlayer);
-
-    if(false == m_IsChild)
-        m_pTransformCom->Set_Scaled(55.f, 55.f, 1);
-
-    else if(true == m_IsChild)
-        m_pTransformCom->Set_Scaled(25.f, 25.f, 1);
+        ///////////  :   이동
+        Player_Transform(fTimeDelta);
+    }
 }
 
 void CMap_UI::Map_Target_Control(_float fTimeDelta)
 {
     /* 부모는 Player를 잡아야 함*/
-    if (false == m_IsChild)
+    if(m_isPrevRender != m_isRender)
     {
-        if (nullptr == m_pInMap_Player)
-            MSG_BOX(TEXT("Map_UI에서 Target 부모가 Map Player를 발견하지 못했습니다."));
-
-        m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pInMap_PlayerTrans->Get_State_Float4(CTransform::STATE_POSITION));
-    }
-
-    else if (true == m_IsChild)
-    {
-        if (nullptr == m_pTarget_Transform)
-            MSG_BOX(TEXT("Map_UI에서 Target들 중 하나가 Main Target을 발견하지 못했습니다."));
-
-        if (m_eSubTarget_Type == SUB_TARGET_TYPE::LEFT_TARGET)
+        if (false == m_IsChild)
         {
-            _float4 vMainTarget = m_pTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
-            _float4 vCurrentLine = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+            if (nullptr == m_pInMap_Player)
+                MSG_BOX(TEXT("Map_UI에서 Target 부모가 Map Player를 발견하지 못했습니다."));
 
-            vCurrentLine.y = vMainTarget.y;
-            vCurrentLine.x = vMainTarget.x + m_fTarget_Distance;
-
-            m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCurrentLine);
+            m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pInMap_PlayerTrans->Get_State_Float4(CTransform::STATE_POSITION));
         }
 
-        else if (m_eSubTarget_Type == SUB_TARGET_TYPE::RIGHT_TARGET)
+        else if (true == m_IsChild)
         {
-            _float4 vMainTarget = m_pTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
-            _float4 vCurrentLine = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+            if (nullptr == m_pTarget_Transform)
+                MSG_BOX(TEXT("Map_UI에서 Target들 중 하나가 Main Target을 발견하지 못했습니다."));
 
-            vCurrentLine.y = vMainTarget.y;
-            vCurrentLine.x = vMainTarget.x - m_fTarget_Distance;
+            if (m_eSubTarget_Type == SUB_TARGET_TYPE::LEFT_TARGET)
+            {
+                _float4 vMainTarget = m_pTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
+                _float4 vCurrentLine = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
-            m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCurrentLine);
+                vCurrentLine.y = vMainTarget.y;
+                vCurrentLine.x = vMainTarget.x + m_fTarget_Distance;
+
+                m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCurrentLine);
+            }
+
+            else if (m_eSubTarget_Type == SUB_TARGET_TYPE::RIGHT_TARGET)
+            {
+                _float4 vMainTarget = m_pTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
+                _float4 vCurrentLine = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+                vCurrentLine.y = vMainTarget.y;
+                vCurrentLine.x = vMainTarget.x - m_fTarget_Distance;
+
+                m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCurrentLine);
+            }
+
+            else if (m_eSubTarget_Type == SUB_TARGET_TYPE::UP_TARGET)
+            {
+                _float4 vMainTarget = m_pTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
+                _float4 vCurrentLine = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+                vCurrentLine.x = vMainTarget.x;
+                vCurrentLine.y = vMainTarget.y - m_fTarget_Distance;
+
+                m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCurrentLine);
+            }
+
+            else
+            {
+                _float4 vMainTarget = m_pTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
+                _float4 vCurrentLine = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+                vCurrentLine.x = vMainTarget.x;
+                vCurrentLine.y = vMainTarget.y + m_fTarget_Distance;
+
+                m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCurrentLine);
+            }
         }
 
-        else if (m_eSubTarget_Type == SUB_TARGET_TYPE::UP_TARGET)
-        {
-            _float4 vMainTarget = m_pTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
-            _float4 vCurrentLine = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-
-            vCurrentLine.x = vMainTarget.x;
-            vCurrentLine.y = vMainTarget.y - m_fTarget_Distance;
-
-            m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCurrentLine);
-        }
-
-        else
-        {
-            _float4 vMainTarget = m_pTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
-            _float4 vCurrentLine = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-
-            vCurrentLine.x = vMainTarget.x;
-            vCurrentLine.y = vMainTarget.y + m_fTarget_Distance;
-
-            m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCurrentLine);
-        }
+        m_isPrevRender = m_isRender;
     }
 }
 
@@ -601,7 +939,7 @@ void CMap_UI::Search_TabWindow()
 
             if (nullptr != m_pTab_Window)
             {
-               // Safe_AddRef(m_pTab_Window);
+        //        Safe_AddRef(m_pTab_Window);
                 return;
             }
         }
@@ -626,7 +964,7 @@ CCustomize_UI* CMap_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 CGameObject* CMap_UI::Clone(void* pArg)
 {
     CMap_UI* pInstance = new CMap_UI(*this);
-
+    
     if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX(TEXT("Failed To Created : CMap_UI"));
@@ -641,14 +979,29 @@ void CMap_UI::Free()
 {
     __super::Free();
 
-    /*if(nullptr != m_pTab_Window)
-        Safe_Release(m_pTab_Window);*/
+   // Safe_Release<CTransform*>(m_pPlayerTransform);
 
-    Safe_Release<CTransform*>(m_pPlayerTransform);
-    
-    if(nullptr != m_pInMap_Player)
+    //if (nullptr != m_pPlayerTransform)
+    //{
+    //    Safe_Release<CTransform*>(m_pPlayerTransform);
+    //    m_pPlayerTransform = nullptr;
+    //}
+
+ /*   if (nullptr != m_pInMap_Player)
+    {
         Safe_Release<CMap_UI*>(m_pInMap_Player);
+        m_pInMap_Player = nullptr;
+    }
 
     if (nullptr != m_pInMap_PlayerTrans)
+    {
         Safe_Release<CTransform*>(m_pInMap_PlayerTrans);
+        m_pInMap_PlayerTrans = nullptr;
+    }
+
+    if (nullptr != m_pTab_Window)
+    {
+        Safe_Release<CTab_Window*>(m_pTab_Window);
+        m_pTab_Window = nullptr;
+    }*/
 }

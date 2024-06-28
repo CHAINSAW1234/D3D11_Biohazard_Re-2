@@ -37,6 +37,14 @@ void CItem_UI::Tick(_float fTimeDelta)
 	if (true == m_bDead)
 		return;
 
+	if (m_iItemQuantity <= 0 && CONSUMABLE == m_eInvenItemType)
+	{
+		Reset_ItemUI();
+		return;
+	}
+
+	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
+
 	switch (m_eInvenItemType)
 	{
 	case Client::EQUIPABLE:
@@ -46,26 +54,19 @@ void CItem_UI::Tick(_float fTimeDelta)
 	case Client::USEABLE:
 		break;
 	case Client::CONSUMABLE: {
-		if (m_iItemQuantity <= 0)
-		{
-			Reset_ItemUI();
-			return;
-		}
-
 		static_cast<CCustomize_UI*>(m_mapPartUI[TEXT("CountDisplay")])->Set_Text(0, to_wstring(m_iItemQuantity));
 		break;
 	}
-		
+
 	case Client::QUEST:
 		break;
+
 	case Client::INVEN_ITEM_TYPE_END:
 		break;
+
 	default:
 		break;
 	}
-
-
-	if(CONSUMABLE == m_eInvenItemType)
 
 	__super::Tick(fTimeDelta);
 }
@@ -146,6 +147,11 @@ void CItem_UI::Set_Dead(_bool bDead)
 		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(true);
 		break;
 	}
+
+	case Client::DRAG_SHADOW: {
+		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(true);
+		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(true);
+	}
 		
 	default:
 		break;
@@ -160,9 +166,12 @@ void CItem_UI::Reset_ItemUI()
 	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
 	m_eInvenItemType = INVEN_ITEM_TYPE_END;
 	m_iItemQuantity = 0;
+	for (auto& iter : m_vecChildUI)
+		static_cast<CCustomize_UI*>(iter)->Set_Dead(true);
+	
 }
 
-void CItem_UI::Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos)
+void CItem_UI::Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos, _int iVariation)
 {
 	//m_bDead = false;
 	m_isWorking = true;
@@ -172,35 +181,10 @@ void CItem_UI::Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSe
 
 	Set_Position(vSetPos);
 
-	switch (eItmeType)
-	{
-	case Client::EQUIPABLE: {
-		m_iItemQuantity = 15;
-		break;
-	}
-		
-	case Client::CONSUMABLE_EQUIPABLE: {
-		m_iItemQuantity = 1;
-		break;
-	}
-		
-	case Client::USEABLE: {
-		break;
-	}
-		
-	case Client::CONSUMABLE: {
-		m_iItemQuantity = 15;
-		break;
-	}
-		
-	case Client::QUEST: {
-		break;
-	}
-		
-	default:
-		break;
-	}
+	m_iItemQuantity = iVariation;
 
+	if (DRAG_SHADOW == m_eInvenItemType)
+		Set_Value_Color(&m_vColor[1]);
 }
 
 CItem_UI* CItem_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

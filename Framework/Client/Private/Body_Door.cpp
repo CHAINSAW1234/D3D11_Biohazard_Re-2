@@ -285,7 +285,7 @@ _float4 CBody_Door::Get_Pos(_int iArg)
 		_matrix TranslationMatrix = XMMatrixIdentity();
 		if (iArg == 0)
 		{
-			vLocalPos = _float4(94.7047043f, 110.019104f, -7.74451256, 1.f);
+			vLocalPos = _float4(94.7047043f, 110.019104f, -7.74451256f, 1.f);
 			Local_Mesh_Matrix.r[3] -= _vector{ vLocalPos.x,-vLocalPos.y,vLocalPos.z };
 		}
 		else if(iArg == 1)
@@ -296,9 +296,9 @@ _float4 CBody_Door::Get_Pos(_int iArg)
 		}
 		else if(iArg == 2)
 		{
-			vLocalPos = _float4(104.7047043f, 110.019104f, -7.74451256, 1.f);
+			vLocalPos = _float4(104.7047043f, 110.019104f, -7.74451256f, 1.f);
 			Local_Mesh_Matrix.r[3] += _vector{ vLocalPos.x,vLocalPos.y, -vLocalPos.z };
-			TranslationMatrix.r[3] = _vector{ -vLocalPos.x*2.f, 0.f,  7.74451256*2.f,1.f };
+			TranslationMatrix.r[3] = _vector{ -vLocalPos.x*2.f, 0.f,  7.74451256f*2.f,1.f };
 		}
 		else if (iArg == 3)
 		{

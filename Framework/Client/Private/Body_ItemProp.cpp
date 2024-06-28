@@ -3,6 +3,8 @@
 #include"Player.h"
 
 #include"ItemProp.h"
+
+
 CBody_ItemProp::CBody_ItemProp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPart_InteractProps{ pDevice, pContext }
 {
@@ -55,6 +57,8 @@ HRESULT CBody_ItemProp::Initialize(void* pArg)
 
 #endif
 
+
+
 	return S_OK;
 }
 
@@ -69,7 +73,6 @@ void CBody_ItemProp::Late_Tick(_float fTimeDelta)
 		return;
 	if (m_bDead)
 	{
-		// 아이템 정보 던지고
 		m_bRealDead = true;
 		return;
 	}
@@ -103,11 +106,10 @@ void CBody_ItemProp::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_ItemProp::Render()
 {
-	if (m_bRender == false)
+	/*if (m_bRender == false)
 		return S_OK;
 	else
-		m_bRender = false;
-
+		m_bRender = false;*/
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 

@@ -153,7 +153,7 @@ HRESULT CCamera_Event::Read_CamList(const wstring& strFilePath)
 		return E_FAIL;
 	}
 
-	uint32_t magic;
+	uint32_t magic = {};
 	inputFileStream.seekg(4);
 	inputFileStream.read(reinterpret_cast<char*>(&magic), sizeof(magic));
 
@@ -237,7 +237,7 @@ MCAMHeader CCamera_Event::Read_CamHeader(ifstream& inputFileStream, streampos Po
 
 	inputFileStream.seekg(mcam.offsets[0] +  Position, std::ios::beg);
 
-	uint64_t trash;
+	uint64_t trash = {};
 	inputFileStream.read(reinterpret_cast<char*>(&trash), sizeof(uint16_t));
 	inputFileStream.read(reinterpret_cast<char*>(&trash), sizeof(uint16_t));
 	inputFileStream.read(reinterpret_cast<char*>(&trash), sizeof(uint32_t));
@@ -351,10 +351,10 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 	
 	_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
 		XMVectorSet(0.f, 0.f, 0.f, 1.f), XMQuaternionConjugate(vDeltaRotation),
-		vDeltaTranslation * 0.01); // µÑ´Ù 
+		vDeltaTranslation * 0.01f); // µÑ´Ù 
 
 
-	_vector vPreDecomposeVector[3], vCurrentDecomposeVector[3];
+	_vector vPreDecomposeVector[3] = {}, vCurrentDecomposeVector[3] = {};
 
 	XMMatrixDecompose(&vPreDecomposeVector[0], &vPreDecomposeVector[1], &vPreDecomposeVector[2], m_PrePlayerMatrix);
 	XMMatrixDecompose(&vCurrentDecomposeVector[0], &vCurrentDecomposeVector[1], &vCurrentDecomposeVector[2], XMLoadFloat4x4(m_pSocketMatrix));
@@ -367,14 +367,12 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 
 	_matrix CombinedPlayerMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
 		XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 0.f),
-		vPlayerDeltaTranslation * 0.01); // rotation Á×ÀÓ 
+		vPlayerDeltaTranslation * 0.01f); // rotation Á×ÀÓ 
 
 	_matrix finalMatrix;
 	
 	finalMatrix = m_pTransformCom->Get_WorldMatrix() * CombinedMatrix; //* CombinedPlayerMatrix;
 
-
-	cout << finalMatrix.r[3].m128_f32[0] << ' ' << finalMatrix.r[3].m128_f32[1] << ' ' << finalMatrix.r[3].m128_f32[2] << endl;
 
 //		* m_pPlayer->Get_Transform()->Get_WorldMatrix()
 //		* XMMatrixTranslationFromVector(m_pPlayer->Get_Transform()->Get_State_Vector(CTransform::STATE_LOOK) * -100.f);
