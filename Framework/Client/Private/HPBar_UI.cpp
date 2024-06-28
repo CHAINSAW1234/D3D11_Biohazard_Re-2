@@ -84,7 +84,10 @@ HRESULT CHPBar_UI::Initialize(void* pArg)
         }
 
         Find_Player();
-        Change_HP(HP_TYPE::NORMAL_HP);
+        
+        m_pPlayer->RegisterObserver(this);
+        OnNotify();
+
         m_isLightMask = true;
     }
     else
@@ -93,8 +96,12 @@ HRESULT CHPBar_UI::Initialize(void* pArg)
     _float4 vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
     _float3 vScaled = m_pTransformCom->Get_Scaled();
 
-    m_isRender = false;
     Find_Main_Inventory();
+    HPBar_Position_Setting();
+
+    m_SavePos[0] = m_pTransformCom->Get_WorldMatrix();
+    m_isRender = false;
+
     return S_OK;
 }
 
@@ -102,16 +109,6 @@ void CHPBar_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    if (nullptr == m_pPlayer)
-    {
-        Find_Player();
-
-        if (nullptr == m_pPlayer)
-            MSG_BOX(TEXT("Player가 HP에 존재하지 않습니다."));
-
-    }
-
-    Render_HPBar(fTimeDelta);
     HP_Condition(fTimeDelta);
   
     if (false == m_IsChild)
@@ -131,29 +128,23 @@ HRESULT CHPBar_UI::Render()
     return S_OK;
 }
 
-void CHPBar_UI::Render_HPBar(_float fTimeDelta)
+void CHPBar_UI::OnNotify()
 {
-    if (nullptr == m_pMain_Inven_Render)
-        Find_Main_Inventory();
+    _int iPlayerHp = m_pPlayer->Get_Hp();
 
-    else
-    {
-        ///* Main Inventory HP Bar*/
-        //if (false == *m_pMain_Inven_Render)
-        //{
-        //    HPBar_Position_Setting(true);
-        //    m_isRender = true;
-        //}
-        //else
-        //{
-        //    m_isRender = false;
+    HP_TYPE eCurrentHP_TYPE = (HP_TYPE)(iPlayerHp / 2);      //       0 ~ 5 ->  0 ~ 2
 
-        //    if (!m_vecTextBoxes.empty())
-        //        m_vecTextBoxes.back()->Set_FontColor(ALPHA_ZERO);
-        //}
+    if (eCurrentHP_TYPE != m_eCurrentHP) {
+
+        m_isRender = true;
+        m_isInGame_HPBar_Render = true;
+
+        m_eCurrentHP = eCurrentHP_TYPE;
+        Change_HP(m_eCurrentHP);
+
+        if (!m_vecTextBoxes.empty())
+            m_vecTextBoxes.back()->Set_FontColor(m_vCurrentColor);
     }
-
-    /* Show -Hp */
 }
 
 void CHPBar_UI::Operation_HPBar(_float fTimeDelta)
@@ -244,7 +235,7 @@ void CHPBar_UI::Change_HP(HP_TYPE _type)
     if (!m_vecTextBoxes.empty())
         pText = m_vecTextBoxes.back();
 
-    if (HP_TYPE::NORMAL_HP == _type)
+    if (HP_TYPE::FINE == _type)
     {
         m_vCurrentColor = m_vDefaultColor_Origin;
         m_vLightMask_Color = _float4(0.412f, 1.f, 0.f, 0.f);
@@ -261,25 +252,7 @@ void CHPBar_UI::Change_HP(HP_TYPE _type)
             Change_Texture(m_wstrNormal, TEXT("Com_DefaultTexture"));
         }
     }
-
-    else if (HP_TYPE::BRUISE_HP == _type)
-    {
-        m_vCurrentColor = _float4(0.376f, 0.753f, 0.114f, 0.f);
-        m_vLightMask_Color = _float4(0.412f, 1.f, 0.f, 0.f);
-
-        if (nullptr != pText)
-        {
-            pText->Set_Text(TEXT("정상"));
-            pText->Set_FontColor(m_vCurrentColor);
-        }
-
-        if (CCustomize_UI::HPBAR_TYPE::MAIN_BAR == m_eHPBar && m_wstrNormal != m_wstrDefaultTexturComTag)
-        {
-            m_wstrDefaultTexturComTag = m_wstrNormal;
-            Change_Texture(m_wstrNormal, TEXT("Com_DefaultTexture"));
-        }
-    }
-    else if (HP_TYPE::WARING_HP_1 == _type || HP_TYPE::WARING_HP_2 == _type)
+    else if (HP_TYPE::CAUTION == _type)
     {
         m_vCurrentColor = _float4(0.714f, 0.404f, 0.071f, 0.f);
         m_vLightMask_Color = _float4(1.f, 0.518f, 0.f, 0.f);
@@ -296,7 +269,7 @@ void CHPBar_UI::Change_HP(HP_TYPE _type)
             Change_Texture(m_wstrWaring, TEXT("Com_DefaultTexture"));
         }
     }
-    else if (HP_TYPE::DANGER_HP == _type)
+    else if (HP_TYPE::DANGER == _type)
     {
         m_vCurrentColor = _float4(0.651f, 0.11f, 0.11f, 0.f);
         m_vLightMask_Color = _float4(1.f, 0.f, 0.f, 0.f);
@@ -331,31 +304,19 @@ void CHPBar_UI::Find_Main_Inventory()
     }
 }
 
-void CHPBar_UI::HPBar_Position_Setting(_bool _main)
+void CHPBar_UI::HPBar_Position_Setting()
 {
-    if (true == _main)
-    {
-        _float4 pTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-        pTrans.x = INVEN_POSITION.x;
-        pTrans.y = INVEN_POSITION.y;
+    _float4 pTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+    pTrans.x = INVEN_POSITION.x;
+    pTrans.y = INVEN_POSITION.y;
 
-        m_pTransformCom->Set_State(CTransform::STATE_POSITION, pTrans);
-    }
-    else if (false == _main)
-    {
-        _float4 pTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-        pTrans.x = INGAME_POSITION.x;
-        pTrans.y = INGAME_POSITION.y;
-
-        m_pTransformCom->Set_State(CTransform::STATE_POSITION, pTrans);
-    }
+    m_pTransformCom->Set_State(CTransform::STATE_POSITION, pTrans);
 
     if (!m_vecTextBoxes.empty())
     {
         _float4 vMainTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
         CTransform* pTextTrans = static_cast<CTransform*>(m_vecTextBoxes.back()->Get_Component(g_strTransformTag));
         _float4 vTextTrans = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
-
         vTextTrans.x = vMainTrans.x - m_fDistance_Font.x;
         vTextTrans.y = vMainTrans.y - m_fDistance_Font.y;
         pTextTrans->Set_State(CTransform::STATE_POSITION, vTextTrans);
@@ -364,15 +325,9 @@ void CHPBar_UI::HPBar_Position_Setting(_bool _main)
 
 void CHPBar_UI::HP_Condition(_float fTimeDelta)
 {
-    if (DOWN == m_pGameInstance->Get_KeyState('L'))
-    {
-        m_isGara = true;
-    }
-
-    /* 1. Inventory */
+    /* 1. Inventory Open or Close */
     if (false == *m_pMain_Inven_Render)
     {
-        HPBar_Position_Setting(true);
         m_isRender = true;
         m_isInGame_HPBar_Render = false;
 
@@ -387,34 +342,7 @@ void CHPBar_UI::HP_Condition(_float fTimeDelta)
         }
 
     }
-
-    /* 2. 물렸을 때 */
-    if ((_int)m_eCurrentHP < (*m_pPlayer->Get_Hp_Ptr()) || m_isGara)
-    {
-         m_isRender = true;
-         m_isGara = false;
-         m_isInGame_HPBar_Render = true;
-
-         m_eCurrentHP = (HP_TYPE)(*m_pPlayer->Get_Hp_Ptr());
-
-         HPBar_Position_Setting(false);
-
-         if (false == m_IsChild)
-             Change_HP(m_eCurrentHP);
-
-         /* FONT */
-         if (!m_vecTextBoxes.empty())
-             m_vecTextBoxes.back()->Set_FontColor(m_vCurrentColor);
-    }
-
-    /* HP를 다시 채울 때 */
-    if ((_int)m_eCurrentHP > (*m_pPlayer->Get_Hp_Ptr()))
-    {
-        m_eCurrentHP = (HP_TYPE)(*m_pPlayer->Get_Hp_Ptr());
-        Change_HP(m_eCurrentHP);
-    }
-
-    if(true == *m_pMain_Inven_Render && false == m_isInGame_HPBar_Render)
+    else if (true == *m_pMain_Inven_Render && false == m_isInGame_HPBar_Render)
     {
         m_isRender = false;
 
@@ -422,7 +350,8 @@ void CHPBar_UI::HP_Condition(_float fTimeDelta)
             m_vecTextBoxes.back()->Set_FontColor(ALPHA_ZERO);
     }
 
-    else if (true == m_isInGame_HPBar_Render)
+    /* 2. Minus HP  */
+    if (true == m_isInGame_HPBar_Render)
     {
         m_fHPLifeTimer += fTimeDelta;
 

@@ -376,6 +376,9 @@
     <Filter Include="02.GameObjects\Camera\Camera_Event">
       <UniqueIdentifier>{ee555b89-e04f-4401-b4d8-37201d791dcc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Bite">
+      <UniqueIdentifier>{dcef7ff1-dad3-4a5c-b033-5486bfa5ff8b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -751,6 +754,7 @@
     <ClInclude Include="..\Public\Camera_Event_Struct.h">
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Bite.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1095,6 +1099,7 @@
     <ClCompile Include="..\Private\Camera_Event.cpp">
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Bite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

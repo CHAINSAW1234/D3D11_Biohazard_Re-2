@@ -133,8 +133,6 @@ VS_OUT VS_MAIN(VS_IN In)
   //      Out.vVelocity.z = Out.vPosition.z;
   //      Out.vVelocity.w = Out.vPosition.w;
   //  }
-        
-    
     return Out;
 }
 
