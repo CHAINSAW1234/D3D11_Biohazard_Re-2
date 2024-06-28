@@ -26,7 +26,6 @@ BEGIN(Client)
 
 class CBody_Zombie final : public CPartObject
 {
-public:
 
 public:
 	typedef struct tagBodyMonsterDesc : public CPartObject::PARTOBJECT_DESC

@@ -347,6 +347,24 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region TEST
 
+	if (m_pGameInstance->Get_KeyState('1') == DOWN) {
+		Set_Hp(1);
+	}
+	if (m_pGameInstance->Get_KeyState('2') == DOWN) {
+		Set_Hp(2);
+	}
+	if (m_pGameInstance->Get_KeyState('3') == DOWN) {
+		Set_Hp(3);
+	}
+	if (m_pGameInstance->Get_KeyState('4') == DOWN) {
+		Set_Hp(4);
+	}
+	if (m_pGameInstance->Get_KeyState('5') == DOWN) {
+		Set_Hp(5);
+	}
+
+
+
 	//if (m_pGameInstance->Get_KeyState('E') == DOWN) {
 	//	Swap_Camera();
 	//	//m_pCamera_Event->Set_DefaultMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
@@ -437,8 +455,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		m_pController->Update_Collider();*/
 
 	Turn_Spine_Default(fTimeDelta);
-	Turn_Spine_Hold(fTimeDelta);		// Hold 상태에서 척추를 상하로만 돌림
 	Turn_Spine_Light(fTimeDelta);		// Light 상태에서 상체전체를 카메라를 보도록 돌림
+	Turn_Spine_Hold(fTimeDelta);		// Hold 상태에서 척추를 상하로만 돌림
 
 
 #pragma region 예은 추가
@@ -459,7 +477,6 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 HRESULT CPlayer::Render()
 {
-
 	return S_OK;
 }
 
@@ -566,7 +583,6 @@ void CPlayer::Set_Spotlight(_bool isSpotlight)
 	Update_AnimSet();
 }
 
-
 void CPlayer::Set_Equip(EQUIP eEquip)
 {
 	m_eEquip = eEquip;
@@ -593,6 +609,19 @@ void CPlayer::Set_Equip(EQUIP eEquip)
 	// 무기 위치를 변경하시오
 
 	Update_AnimSet();
+}
+
+void CPlayer::Set_Hp(_int iHp)
+{
+	m_iHp = iHp;
+	if (m_iHp >= m_iMaxHp)
+		m_iHp = m_iMaxHp;
+
+	if (m_iHp <= 0) {
+		;;		// 사망 처리?
+	}
+
+	NotifyObserver();
 }
 
 void CPlayer::Change_State(STATE eState)
@@ -944,7 +973,6 @@ void CPlayer::Turn_Spine_Hold(_float fTimeDelta)
 		//vNewQuaternion *= -1;
 		vNewQuaternion = XMQuaternionNormalize(vNewQuaternion);
 
-
 		_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
 
 		for (auto& iJointIndex : ChildJointIndices)
@@ -976,13 +1004,10 @@ void CPlayer::Turn_Spine_Light(_float fTimeDelta)
 			fAngle *= -1;
 		}
 
-		cout << XMConvertToDegrees(fAngle) << endl;
-
-
 		static _float fCurAngle = 0.f;
 		if (!m_isTurnSpineLight) {
 			if (fabs(fCurAngle) > 0.0001) {
-				fCurAngle += fTimeDelta * -fCurAngle * 3;
+				fCurAngle += fTimeDelta * -fCurAngle * 10;
 			}
 			else {
 				fCurAngle = 0.f;
@@ -990,11 +1015,12 @@ void CPlayer::Turn_Spine_Light(_float fTimeDelta)
 			}
 		}
 		else {
-			fCurAngle += fTimeDelta * (fAngle - fCurAngle) * 3;
+			fCurAngle += fTimeDelta * (fAngle - fCurAngle) * 10;
 		}
 
 		list<_uint>			ChildJointIndices;
-		pModel->Get_Child_ZointIndices("l_arm_clavicle", "l_weapon", ChildJointIndices);
+		pModel->Get_Child_ZointIndices("l_arm_clavicle", "l_arm_wrist", ChildJointIndices);
+
 
 		_uint				iNumChildJoint = { static_cast<_uint>(ChildJointIndices.size()) };
 		_float				fDevidedAngle = { fCurAngle / iNumChildJoint };
@@ -1004,9 +1030,10 @@ void CPlayer::Turn_Spine_Light(_float fTimeDelta)
 
 		_vector				vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, fDevidedAngle) };
 
-		vNewQuaternion = XMVectorSetX(vNewQuaternion, 0.f);
+		vNewQuaternion = XMVectorSetY(vNewQuaternion, 0.f);
+		vNewQuaternion = XMVectorSetZ(vNewQuaternion, 0.f);
+		//vNewQuaternion *= -1;
 		vNewQuaternion = XMQuaternionNormalize(vNewQuaternion);
-
 		_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
 
 		for (auto& iJointIndex : ChildJointIndices)

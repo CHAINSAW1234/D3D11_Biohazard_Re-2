@@ -1,12 +1,13 @@
 #pragma once
 #include "Customize_UI.h"
+#include "Observer.h"
 
 BEGIN(Client)
 
-class CHPBar_UI final : public CCustomize_UI
+class CHPBar_UI final : public CCustomize_UI , public CObserver
 {
 public : 
-	enum class HP_TYPE { NORMAL_HP, BRUISE_HP, WARING_HP_1, WARING_HP_2, DANGER_HP, END_HP };
+	enum class HP_TYPE {DANGER, CAUTION, FINE, HP_END };
 
 private:
 	CHPBar_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -19,10 +20,9 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-
+	virtual void OnNotify() override;
 
 private :
-	void						Render_HPBar(_float fTimeDelta);
 	void						Operation_HPBar(_float fTimeDelta);
 
 
@@ -32,7 +32,7 @@ private :
 
 private :
 	void						Find_Main_Inventory();
-	void						HPBar_Position_Setting(_bool _main);
+	void						HPBar_Position_Setting();
 
 private :
 	void						HP_Condition(_float fTimeDelta);
@@ -53,16 +53,15 @@ private : /* HP BAR */
 	_bool*						m_pMain_Inven_Render	= { nullptr };
 	
 	_bool						m_isInGame_HPBar_Render = { false };
-	_float						m_fHPLifeTimer			= { 0.f };
+	_float						m_fHPLifeTimer = { 0.f };
 	_float						m_fOriginBlending		= {};
 
 private : /* FONT */
 	_float2						m_fDistance_Font		= {};
-	_bool						m_isGara				= { false };
 
 private :
 	CCustomize_UI::HPBAR_TYPE	m_eHPBar		= { HPBAR_TYPE::END_BAR };
-	HP_TYPE						m_eCurrentHP	= { HP_TYPE::NORMAL_HP };
+	HP_TYPE						m_eCurrentHP	= { HP_TYPE::FINE };
 	wstring						m_wstrNormal;
 	wstring						m_wstrWaring;
 	wstring						m_wstrDanger;
