@@ -34,6 +34,11 @@ public :
 	//만약 아이템을 넣을수 없는 상황이라면 false를 반환함
 	_bool IsCan_AddItem_ToInven();
 
+	//원하는 아이템의 수량 or 장탄을 반환함
+	_int Get_Search_Item_Quantity(ITEM_NUMBER eItemNum);
+
+	//몇번 단축키에 몇번 아이템이 있는가
+	ITEM_NUMBER Get_Item_On_HotKey(_uint iHotKeyNum);
 
 	
 private:

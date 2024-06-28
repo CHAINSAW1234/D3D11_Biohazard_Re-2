@@ -265,6 +265,16 @@ _bool CTab_Window::IsCan_AddItem_ToInven()
 	return 	m_pInventory_Manager->IsCan_AddItem_ToInven();
 }
 
+_int CTab_Window::Get_Search_Item_Quantity(ITEM_NUMBER eItemNum)
+{
+	return 	m_pInventory_Manager->Get_Search_Item_Quantity(eItemNum);
+}
+
+ITEM_NUMBER CTab_Window::Get_Item_On_HotKey(_uint iHotKeyNum)
+{
+	return 	m_pInventory_Manager->Get_Item_On_HotKey(iHotKeyNum);
+}
+
 void CTab_Window::Find_Cursor()
 {
 	list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
