@@ -299,6 +299,13 @@ PS_OUT PS_MAIN(PS_IN In)
     {
         Out.vMaterial.b = 1.f;
     }
+
+    if ((-20.5f <= In.vWorldPos.x && In.vWorldPos.x <= 20.5f) &&
+        (-20.5f <= In.vWorldPos.y && In.vWorldPos.y <= 20.5f) &&
+        (-20.5f <= In.vWorldPos.z && In.vWorldPos.z <= 20.5f))
+    {
+        Out.vDiffuse = float4(1.f, 0.f, 0.f,1.f);
+    }
     
     return Out;
 }

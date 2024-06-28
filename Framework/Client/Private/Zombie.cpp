@@ -214,9 +214,7 @@ void CZombie::Tick(_float fTimeDelta)
 	}
 
 	//For Decal.
-	m_pColliderCom_Bounding->Tick(m_pTransformCom->Get_WorldMatrix_Pure_Mat());
-
-	//	Ready_Decal();
+	//m_pColliderCom_Bounding->Tick(m_pTransformCom->Get_WorldMatrix_Pure_Mat());
 }
 
 void CZombie::Late_Tick(_float fTimeDelta)
@@ -483,7 +481,7 @@ HRESULT CZombie::Add_Components()
 		return E_FAIL;
 
 	/* Com_Collider_Body */
-	CBounding_AABB::BOUNDING_AABB_DESC		ColliderAABBDesc{};
+	/*CBounding_AABB::BOUNDING_AABB_DESC		ColliderAABBDesc{};
 
 	ColliderAABBDesc.vSize = _float3(0.4f, 1.6f, 0.4f);
 	ColliderAABBDesc.vCenter = _float3(0.f, ColliderAABBDesc.vSize.y * 0.5f, 0.f);
@@ -492,7 +490,7 @@ HRESULT CZombie::Add_Components()
 		TEXT("Com_Collider_Bounding"), (CComponent**)&m_pColliderCom_Bounding, &ColliderAABBDesc)))
 		return E_FAIL;
 
-	m_pDecal_Blood = CDecal_Blood::Create(m_pDevice, m_pContext);
+	m_pDecal_Blood = CDecal_Blood::Create(m_pDevice, m_pContext);*/
 
 	return S_OK;
 }

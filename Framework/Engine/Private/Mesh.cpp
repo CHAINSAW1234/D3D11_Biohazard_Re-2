@@ -417,20 +417,20 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 	VTXANIMMESH* pVertices = new VTXANIMMESH[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXANIMMESH) * m_iNumVertices);
 
-	m_pNormals = new _float3[m_iNumVertices];
-	ZeroMemory(m_pNormals, sizeof(_float3) * m_iNumVertices);
+	//m_pNormals = new _float3[m_iNumVertices];
+	//ZeroMemory(m_pNormals, sizeof(_float3) * m_iNumVertices);
 
-	m_pTangents = new _float3[m_iNumVertices];
-	ZeroMemory(m_pTangents, sizeof(_float3) * m_iNumVertices);
+	//m_pTangents = new _float3[m_iNumVertices];
+	//ZeroMemory(m_pTangents, sizeof(_float3) * m_iNumVertices);
 
-	m_pBlendIndices = new XMUINT4[m_iNumVertices];
-	ZeroMemory(m_pBlendIndices, sizeof(XMUINT4) * m_iNumVertices);
+	//m_pBlendIndices = new XMUINT4[m_iNumVertices];
+	//ZeroMemory(m_pBlendIndices, sizeof(XMUINT4) * m_iNumVertices);
 
-	m_pBlendWeights = new _float4[m_iNumVertices];
-	ZeroMemory(m_pBlendWeights, sizeof(_float4) * m_iNumVertices);
+	//m_pBlendWeights = new _float4[m_iNumVertices];
+	//ZeroMemory(m_pBlendWeights, sizeof(_float4) * m_iNumVertices);
 
-	m_pVertices_Skinning = new SKINNING_OUTPUT[m_iNumVertices];
-	ZeroMemory(m_pVertices_Skinning, sizeof(SKINNING_OUTPUT) * m_iNumVertices);
+	//m_pVertices_Skinning = new SKINNING_OUTPUT[m_iNumVertices];
+	//ZeroMemory(m_pVertices_Skinning, sizeof(SKINNING_OUTPUT) * m_iNumVertices);
 
 	m_pVertices_Cooking = new _float3[m_iNumVertices];
 
@@ -457,10 +457,10 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 			}
 		}
 
-		m_pNormals[i] = pVertices[i].vNormal;
+		/*m_pNormals[i] = pVertices[i].vNormal;
 		m_pTangents[i] = pVertices[i].vTangent;
 		m_pBlendIndices[i] = pVertices[i].vBlendIndices;
-		m_pBlendWeights[i] = pVertices[i].vBlendWeights;
+		m_pBlendWeights[i] = pVertices[i].vBlendWeights;*/
 	}
 
 	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
@@ -496,190 +496,190 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		return E_FAIL;
 
 #pragma region For Compute Shader
-	//Vertex Buffer for Write
-	{
-		D3D11_BUFFER_DESC sbDesc = {};
-		sbDesc.Usage = D3D11_USAGE_DEFAULT;
-		sbDesc.ByteWidth = sizeof(SKINNING_OUTPUT) * m_iNumVertices;
-		sbDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
-		sbDesc.StructureByteStride = sizeof(SKINNING_OUTPUT);
-		sbDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED; // 추가
+	////Vertex Buffer for Write
+	//{
+	//	D3D11_BUFFER_DESC sbDesc = {};
+	//	sbDesc.Usage = D3D11_USAGE_DEFAULT;
+	//	sbDesc.ByteWidth = sizeof(SKINNING_OUTPUT) * m_iNumVertices;
+	//	sbDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+	//	sbDesc.StructureByteStride = sizeof(SKINNING_OUTPUT);
+	//	sbDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED; // 추가
 
-		D3D11_SUBRESOURCE_DATA initData = {};
-		initData.pSysMem = m_pVertices_Skinning;
+	//	D3D11_SUBRESOURCE_DATA initData = {};
+	//	initData.pSysMem = m_pVertices_Skinning;
 
-		HRESULT hr = m_pDevice->CreateBuffer(&sbDesc, &initData, &m_pSB_Skinning_Output);
+	//	HRESULT hr = m_pDevice->CreateBuffer(&sbDesc, &initData, &m_pSB_Skinning_Output);
 
-		if (FAILED(hr))
-			return E_FAIL;
+	//	if (FAILED(hr))
+	//		return E_FAIL;
 
-		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-		uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-		uavDesc.Buffer.NumElements = sbDesc.ByteWidth / sbDesc.StructureByteStride;
+	//	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+	//	uavDesc.Format = DXGI_FORMAT_UNKNOWN;
+	//	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+	//	uavDesc.Buffer.NumElements = sbDesc.ByteWidth / sbDesc.StructureByteStride;
 
-		hr = m_pDevice->CreateUnorderedAccessView(m_pSB_Skinning_Output, &uavDesc, &m_pUAV);
+	//	hr = m_pDevice->CreateUnorderedAccessView(m_pSB_Skinning_Output, &uavDesc, &m_pUAV);
 
-		if (FAILED(hr))
-			return E_FAIL;
-	}
+	//	if (FAILED(hr))
+	//		return E_FAIL;
+	//}
 
-	//Create Structured Buffer
-	{
-		D3D11_BUFFER_DESC bufferDesc = {};
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.ByteWidth = sizeof(_float3) * m_iNumVertices;
-		bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		bufferDesc.StructureByteStride = sizeof(_float3);
-		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	////Create Structured Buffer
+	//{
+	//	D3D11_BUFFER_DESC bufferDesc = {};
+	//	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	//	bufferDesc.ByteWidth = sizeof(_float3) * m_iNumVertices;
+	//	bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	//	bufferDesc.StructureByteStride = sizeof(_float3);
+	//	bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
-		D3D11_SUBRESOURCE_DATA initData = {};
-		initData.pSysMem = m_pVertices_Cooking;
+	//	D3D11_SUBRESOURCE_DATA initData = {};
+	//	initData.pSysMem = m_pVertices_Cooking;
 
-		HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Vertex_Position);
+	//	HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Vertex_Position);
 
-		if (FAILED(hr))
-			return E_FAIL;
+	//	if (FAILED(hr))
+	//		return E_FAIL;
 
-		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.ElementWidth = m_iNumVertices;
+	//	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	//	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	//	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	//	srvDesc.Buffer.ElementWidth = m_iNumVertices;
 
-		hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_Position, &srvDesc, &m_pSRV_Vertex_Position);
+	//	hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_Position, &srvDesc, &m_pSRV_Vertex_Position);
 
-		if (FAILED(hr))
-			return E_FAIL;
-	}
-
-
-
-	//Create Structured Buffer
-	{
-		D3D11_BUFFER_DESC bufferDesc = {};
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.ByteWidth = sizeof(_float3) * m_iNumVertices;
-		bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		bufferDesc.StructureByteStride = sizeof(_float3);
-		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-
-		D3D11_SUBRESOURCE_DATA initData = {};
-		initData.pSysMem = m_pNormals;
-
-		HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Vertex_Normal);
-		if (FAILED(hr))
-			return E_FAIL;
-
-		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.ElementWidth = m_iNumVertices;
-
-		hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_Normal, &srvDesc, &m_pSRV_Vertex_Normal);
-
-		if (FAILED(hr))
-			return E_FAIL;
-	}
+	//	if (FAILED(hr))
+	//		return E_FAIL;
+	//}
 
 
 
-	//Create Structured Buffer
-	{
-		D3D11_BUFFER_DESC bufferDesc = {};
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.ByteWidth = sizeof(_float3) * m_iNumVertices;
-		bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		bufferDesc.StructureByteStride = sizeof(_float3);
-		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	////Create Structured Buffer
+	//{
+	//	D3D11_BUFFER_DESC bufferDesc = {};
+	//	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	//	bufferDesc.ByteWidth = sizeof(_float3) * m_iNumVertices;
+	//	bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	//	bufferDesc.StructureByteStride = sizeof(_float3);
+	//	bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
-		D3D11_SUBRESOURCE_DATA initData = {};
-		initData.pSysMem = m_pTangents;
+	//	D3D11_SUBRESOURCE_DATA initData = {};
+	//	initData.pSysMem = m_pNormals;
 
-		HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Vertex_Tangent);
-		if (FAILED(hr))
-			return E_FAIL;
+	//	HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Vertex_Normal);
+	//	if (FAILED(hr))
+	//		return E_FAIL;
 
-		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.ElementWidth = m_iNumVertices;
+	//	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	//	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	//	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	//	srvDesc.Buffer.ElementWidth = m_iNumVertices;
 
-		hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_Tangent, &srvDesc, &m_pSRV_Vertex_Tangent);
+	//	hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_Normal, &srvDesc, &m_pSRV_Vertex_Normal);
 
-		if (FAILED(hr))
-			return E_FAIL;
-	}
-
-
-
-	//Create Structured Buffer
-	{
-		D3D11_BUFFER_DESC bufferDesc = {};
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.ByteWidth = sizeof(XMUINT4) * m_iNumVertices;
-		bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		bufferDesc.StructureByteStride = sizeof(XMUINT4);
-		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-
-		D3D11_SUBRESOURCE_DATA initData = {};
-		initData.pSysMem = m_pBlendIndices;
-
-		HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Vertex_BlendIndices);
-
-		if (FAILED(hr))
-			return E_FAIL;
-
-		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.ElementWidth = m_iNumVertices;
-
-		hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_BlendIndices, &srvDesc, &m_pSRV_Vertex_BlendIndices);
-
-		if (FAILED(hr))
-			return E_FAIL;
-	}
+	//	if (FAILED(hr))
+	//		return E_FAIL;
+	//}
 
 
 
+	////Create Structured Buffer
+	//{
+	//	D3D11_BUFFER_DESC bufferDesc = {};
+	//	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	//	bufferDesc.ByteWidth = sizeof(_float3) * m_iNumVertices;
+	//	bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	//	bufferDesc.StructureByteStride = sizeof(_float3);
+	//	bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
-	//Create Structured Buffer
-	{
-		D3D11_BUFFER_DESC bufferDesc = {};
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.ByteWidth = sizeof(_float4) * m_iNumVertices;
-		bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		bufferDesc.StructureByteStride = sizeof(_float4);
-		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	//	D3D11_SUBRESOURCE_DATA initData = {};
+	//	initData.pSysMem = m_pTangents;
 
-		D3D11_SUBRESOURCE_DATA initData = {};
-		initData.pSysMem = m_pBlendWeights;
+	//	HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Vertex_Tangent);
+	//	if (FAILED(hr))
+	//		return E_FAIL;
 
-		HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Vertex_BlendWeights);
+	//	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	//	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	//	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	//	srvDesc.Buffer.ElementWidth = m_iNumVertices;
 
-		if (FAILED(hr))
-			return E_FAIL;
+	//	hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_Tangent, &srvDesc, &m_pSRV_Vertex_Tangent);
 
-		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.ElementWidth = m_iNumVertices;
+	//	if (FAILED(hr))
+	//		return E_FAIL;
+	//}
 
-		hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_BlendWeights, &srvDesc, &m_pSRV_Vertex_BlendWeights);
 
-		if (FAILED(hr))
-			return E_FAIL;
-	}
 
-	//Create Staging Buffer
-	D3D11_BUFFER_DESC stagingDesc = {};
-	stagingDesc.Usage = D3D11_USAGE_STAGING;
-	stagingDesc.ByteWidth = sizeof(SKINNING_OUTPUT) * m_iNumVertices;
-	stagingDesc.BindFlags = 0;
-	stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-	stagingDesc.StructureByteStride = sizeof(SKINNING_OUTPUT);
+	////Create Structured Buffer
+	//{
+	//	D3D11_BUFFER_DESC bufferDesc = {};
+	//	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	//	bufferDesc.ByteWidth = sizeof(XMUINT4) * m_iNumVertices;
+	//	bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	//	bufferDesc.StructureByteStride = sizeof(XMUINT4);
+	//	bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 
-	m_pDevice->CreateBuffer(&stagingDesc, nullptr, &m_pStaging_Buffer_Skinning);
+	//	D3D11_SUBRESOURCE_DATA initData = {};
+	//	initData.pSysMem = m_pBlendIndices;
+
+	//	HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Vertex_BlendIndices);
+
+	//	if (FAILED(hr))
+	//		return E_FAIL;
+
+	//	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	//	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	//	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	//	srvDesc.Buffer.ElementWidth = m_iNumVertices;
+
+	//	hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_BlendIndices, &srvDesc, &m_pSRV_Vertex_BlendIndices);
+
+	//	if (FAILED(hr))
+	//		return E_FAIL;
+	//}
+
+
+
+
+	////Create Structured Buffer
+	//{
+	//	D3D11_BUFFER_DESC bufferDesc = {};
+	//	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	//	bufferDesc.ByteWidth = sizeof(_float4) * m_iNumVertices;
+	//	bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	//	bufferDesc.StructureByteStride = sizeof(_float4);
+	//	bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+	//	D3D11_SUBRESOURCE_DATA initData = {};
+	//	initData.pSysMem = m_pBlendWeights;
+
+	//	HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Vertex_BlendWeights);
+
+	//	if (FAILED(hr))
+	//		return E_FAIL;
+
+	//	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	//	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	//	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	//	srvDesc.Buffer.ElementWidth = m_iNumVertices;
+
+	//	hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_BlendWeights, &srvDesc, &m_pSRV_Vertex_BlendWeights);
+
+	//	if (FAILED(hr))
+	//		return E_FAIL;
+	//}
+
+	////Create Staging Buffer
+	//D3D11_BUFFER_DESC stagingDesc = {};
+	//stagingDesc.Usage = D3D11_USAGE_STAGING;
+	//stagingDesc.ByteWidth = sizeof(SKINNING_OUTPUT) * m_iNumVertices;
+	//stagingDesc.BindFlags = 0;
+	//stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	//stagingDesc.StructureByteStride = sizeof(SKINNING_OUTPUT);
+
+	//m_pDevice->CreateBuffer(&stagingDesc, nullptr, &m_pStaging_Buffer_Skinning);
 #pragma endregion
 
 	Safe_Delete_Array(pVertices);
