@@ -730,10 +730,8 @@ void CPlayer::Update_LightCondition()
 
 void CPlayer::Update_Equip()
 {
-	static _bool isChange = false;
-	static EQUIP TargetWeapon = { NONE };
 
-	if (isChange) {
+	if (m_isRequestChangeEquip) {
 		if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
 			if(nullptr != m_pWeapon)
 				m_pWeapon->Set_RenderLocation(CWeapon::MOVE);
@@ -745,14 +743,15 @@ void CPlayer::Update_Equip()
 		}
 		else if(Get_Body_Model()->isFinished(3)) {
 			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.01f) {
-				isChange = false;
+				m_isRequestChangeEquip = false;
 				Get_Body_Model()->Set_Loop(3, true);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == HOLSTERTOMOVE) {
 					Get_Body_Model()->Set_BlendWeight(3, 0.f, 6.f);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == MOVETOHOLSTER) {
-				Set_Equip(TargetWeapon);
+				Set_Equip(m_eTargetEquip);
+				m_eEquip = NONE;
 				Change_Body_Animation_Hold(3, HOLSTERTOMOVE);
 			}
 		}
