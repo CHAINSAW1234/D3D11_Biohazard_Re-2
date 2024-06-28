@@ -2,14 +2,14 @@
 
 #include "Client_Defines.h"
 #include "FSM_State.h"
+#include "Player.h"
 
 BEGIN(Client)
-class CPlayer;
 class CPlayer_State_Bite_kill final : public CFSM_State
 {
 private:
-	CPlayer_State_Bite_Reject(CPlayer* pPlayer);
-	virtual ~CPlayer_State_Bite_Reject() = default;
+	CPlayer_State_Bite_kill(CPlayer* pPlayer);
+	virtual ~CPlayer_State_Bite_kill() = default;
 
 public:
 	virtual void				OnStateEnter() override;
@@ -22,7 +22,7 @@ private:
 	CPlayer* m_pPlayer = { nullptr };
 
 public:
-	static	CPlayer_State_Bite_Reject* Create(CPlayer* pPlayer);
+	static	CPlayer_State_Bite_kill* Create(CPlayer* pPlayer);
 	virtual void Free() override;
 
 };

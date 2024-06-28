@@ -584,6 +584,14 @@ void CPlayer::Set_Spotlight(_bool isSpotlight)
 	Update_AnimSet();
 }
 
+void CPlayer::Requst_Change_Equip(EQUIP eEquip)
+{
+	if (!m_isRequestChangeEquip) {
+		m_isRequestChangeEquip = true;
+		m_eTargetEquip = eEquip;
+	}
+}
+
 void CPlayer::Set_Equip(EQUIP eEquip)
 {
 	m_eEquip = eEquip;
@@ -630,6 +638,12 @@ void CPlayer::Change_State(STATE eState)
 	m_pFSMCom->Change_State(eState);
 }
 
+void CPlayer::Change_Player_State_Bite(_int iAnimIndex, wstring& strLayerTag, _float4x4 Interpolationmatrix, _float fTotalInterpolateTime)
+{
+	m_strBiteLayerTag = 0.f;
+	m_fCurrentInterpolateTime = 0.f;
+}
+
 _float CPlayer::Get_CamDegree()
 {
 	if (nullptr == m_pCamera || nullptr == m_pTransformCom)
@@ -646,7 +660,7 @@ _float CPlayer::Get_CamDegree()
 	return Cal_Degree_From_Directions_Between_Min180_To_180(vPlayerLook, vCamLook);
 }
 
-void CPlayer::Update_InterplationMatrix()
+void CPlayer::Update_InterplationMatrix(_float fTimeDelta)
 {
 }
 
@@ -746,18 +760,15 @@ void CPlayer::Update_Equip()
 	else {
 		// test
 		if (m_pGameInstance->Get_KeyState('2') == DOWN) {
-			isChange = true;
-			TargetWeapon = HG;
+			Requst_Change_Equip(HG);
 		}
 
 		if (m_pGameInstance->Get_KeyState('4') == DOWN) {
-			isChange = true;
-			TargetWeapon = STG;
+			Requst_Change_Equip(STG);
 		}
 
-		if (m_pGameInstance->Get_KeyState('6') == TRUE) {
-			isChange = true;
-			TargetWeapon = NONE;
+		if (m_pGameInstance->Get_KeyState('6') == DOWN) {
+			Requst_Change_Equip(NONE);
 		}
 	}
 }

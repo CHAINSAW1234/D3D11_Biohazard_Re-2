@@ -2,9 +2,10 @@
 
 #include "Client_Defines.h"
 #include "FSM_State.h"
+#include "Player.h"
 
 BEGIN(Client)
-class CPlayer;
+
 class CPlayer_State_Bite_Start final : public CFSM_State
 {
 private:
