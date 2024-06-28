@@ -33,6 +33,7 @@ HRESULT CCustomCollider::Initialize(void* pArg)
 		m_iColNum = pColDesc->iColNum;
 		m_iDir =pColDesc->iDir;
 		m_iRegionNum =pColDesc->iRegionNum;
+		m_iFloor =pColDesc->iFloor;
 
 	}
 

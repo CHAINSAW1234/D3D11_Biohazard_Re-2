@@ -345,8 +345,8 @@ HRESULT CLevel_GamePlay::Ready_RegionCollider()
 {
 	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_Collider"))))
 		return E_FAIL;
-	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_EventCollider"))))
-		return E_FAIL;
+	//if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_EventCollider"))))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -919,6 +919,13 @@ HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& st
 		{
 			CloseHandle(hFile);
 			return E_FAIL;
+		}		
+		
+		_int iFloor = { 0 };
+		if (!ReadFile(hFile, &iFloor, sizeof(_int), &dwByte, NULL))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
 		}
 
 
@@ -930,6 +937,7 @@ HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& st
 		collider_desc.iColNum = iNum;
 		collider_desc.iDir = iDir;
 		collider_desc.iRegionNum = iRegionNum;
+		collider_desc.iFloor = iFloor;
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strColLayerTag, TEXT("Prototype_GameObject_Collider"), &collider_desc)))
 		{
 			MSG_BOX(TEXT("Failed to Add_Clone Prototype_GameObject_Monster: CImGUI"));

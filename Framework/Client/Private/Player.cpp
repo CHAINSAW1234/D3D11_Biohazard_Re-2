@@ -506,7 +506,9 @@ void CPlayer::Col_Section()
 
 			m_iCurCol = pColCom->Get_Col();
 			m_iDir = pColCom->Get_Dir();
-
+			m_iRegion = pColCom->Get_Region();
+			m_iFloor = pColCom->Get_Floor();
+			m_bRegion[m_iRegion] = true;
 		}
 	}
 }

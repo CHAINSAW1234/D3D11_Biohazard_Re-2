@@ -62,7 +62,8 @@ void CItemProp::Tick(_float fTimeDelta)
 			Active();
 		m_bCol = false;
 	}
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+	
+	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(XMMatrixTranslation(0.f, -1.2f, 0.f) * m_pTransformCom->Get_WorldMatrix());
 
 	__super::Tick(fTimeDelta);
 

@@ -164,15 +164,21 @@ public:
 public:
 	_int										Get_Player_ColIndex() { return m_iCurCol; }
 	_int										Get_Player_Direction() { return m_iDir; }
+	_int										Get_Player_Floor() { return m_iFloor; }
+	_int										Get_Player_Region() { return m_iRegion; }
 	_bool										Get_Player_RegionChange() { return m_bChange; }
-	_bool*										Get_Player_Interact_Ptr() { return &m_bInteract; }
+	_bool*									Get_Player_Interact_Ptr() { return &m_bInteract; }
+	_bool*									Get_Player_Region_Array() { return m_bRegion; }
 private:
 	_bool										m_bInteract = { false };
 	_bool										m_bChange = { true };
 	_int										m_iCurCol = { 0 };
+	_int										m_iRegion = { 0 };
 	_int										m_iDir = { 0 };
 	_int										m_iPreCol = { 1 };
-	_float										m_fTimeTEST = { 0.f };
+	_int										m_iFloor = { 0 };
+	_float									m_fTimeTEST = { 0.f };
+	_bool										m_bRegion[100] = { false, };
 #pragma endregion
 
 #pragma region Ã¢±Õ Ãß°¡
