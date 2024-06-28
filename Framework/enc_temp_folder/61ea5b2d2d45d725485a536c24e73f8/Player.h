@@ -17,7 +17,7 @@ class CWeapon;
 class CPlayer final : public CGameObject, public CObserver_Handler
 {
 public:
-	enum STATE { MOVE, HOLD, BITE, DAMAGE };
+	enum STATE { MOVE, HOLD, DAMAGE };
 	enum PART {
 		PART_BODY,
 		PART_HEAD,
@@ -154,12 +154,6 @@ private:
 
 	ANIMSET_MOVE m_eAnimSet_Move = { FINE };
 	ANIMSET_HOLD m_eAnimSet_Hold = { HOLD_HG };
-
-	_bool m_isBite = { false };
-	_uint m_eBiteType;
-	_float4x4 m_vBiteInterpolateMatrix;
-	_float m_fInterpolateTime;
-
 
 	EQUIP m_eEquip = { NONE };
 	CWeapon* m_pWeapon = { nullptr };

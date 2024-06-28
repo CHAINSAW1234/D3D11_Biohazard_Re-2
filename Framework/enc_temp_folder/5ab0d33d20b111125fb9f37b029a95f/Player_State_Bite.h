@@ -10,10 +10,6 @@ class CPlayer_State_Bite : public CFSM_HState
 {
 	//
 	enum STATE { START, DEFAULT, REJECT, KILL, STATE_END };
-	// start -> default ->reject -> end
-	// start -> default ->kill
-	// start -> reject
-	// start -> kill
 private:
 	CPlayer_State_Bite(CPlayer* pPlayer);
 	virtual ~CPlayer_State_Bite() = default;
@@ -33,7 +29,7 @@ private:
 
 private:
 	CPlayer* m_pPlayer = { nullptr };
-	STATE						m_eState = { STATE_END };
+	STATE						m_eState = { IDLE };
 
 public:
 	static	CPlayer_State_Bite* Create(CPlayer* pPlayer);

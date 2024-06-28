@@ -645,6 +645,10 @@ _float CPlayer::Get_CamDegree()
 	return Cal_Degree_From_Directions_Between_Min180_To_180(vPlayerLook, vCamLook);
 }
 
+void CPlayer::Update_InterplationMatrix()
+{
+}
+
 void CPlayer::Update_FSM()
 {
 

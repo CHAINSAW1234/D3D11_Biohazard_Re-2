@@ -687,9 +687,6 @@
     <ClInclude Include="..\Public\Context_Highlighter.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu\ContextMenu_Highliter</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Item_DragShadow.h">
-      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Is_Character_In_Range_Zombie.h">
       <Filter>AIController\Zombie\Decorator\Checker_RangeDistance</Filter>
     </ClInclude>
@@ -751,7 +748,9 @@
     <ClInclude Include="..\Public\Camera_Event_Struct.h">
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_State_Bite.h" />
+    <ClInclude Include="..\Public\Player_State_Bite.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Bite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1036,9 +1035,6 @@
     <ClCompile Include="..\Private\Context_Highlighter.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu\ContextMenu_Highliter</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Item_DragShadow.cpp">
-      <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_Drag_Shadow</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Is_Character_In_Range_Zombie.cpp">
       <Filter>AIController\Zombie\Decorator\Checker_RangeDistance</Filter>
     </ClCompile>
@@ -1096,7 +1092,9 @@
     <ClCompile Include="..\Private\Camera_Event.cpp">
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_State_Bite.cpp" />
+    <ClCompile Include="..\Private\Player_State_Bite.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Bite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
