@@ -376,6 +376,9 @@
     <Filter Include="02.GameObjects\Camera\Camera_Event">
       <UniqueIdentifier>{ee555b89-e04f-4401-b4d8-37201d791dcc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\15. LayOut">
+      <UniqueIdentifier>{57e7ebf9-dbcd-44f9-8d5f-e0a91f6637a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -751,6 +754,9 @@
     <ClInclude Include="..\Public\Camera_Event_Struct.h">
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\LayOut_UI.h">
+      <Filter>02.GameObjects\UI\15. LayOut</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1094,6 +1100,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Event.cpp">
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LayOut_UI.cpp">
+      <Filter>02.GameObjects\UI\15. LayOut</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

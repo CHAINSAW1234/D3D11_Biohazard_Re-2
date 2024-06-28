@@ -290,7 +290,7 @@ void CTab_Window::Select_UI()
 	_bool isResult = { false };
 
 	if (true == m_pMapButton->IsMouseHover())
-		isResult = false;
+		isResult = true;
 
 	else if (true == m_pInvenButton->IsMouseHover())
 		isResult = true;

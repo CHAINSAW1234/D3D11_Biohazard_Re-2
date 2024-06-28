@@ -23,10 +23,13 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-public :
-	_bool	Get_MinMapRender()	{ return m_isMapRender; }
-	_bool*	Get_MainRender()	{ return m_pInvenButton->Get_Dead_Ptr(); }
+#pragma region 나옹
+public:
+	_bool				Get_MinMapRender()				{ return m_isMapRender; }
+	_bool*				Get_MainRender()				{ return m_pInvenButton->Get_Dead_Ptr(); }
+	WINDOW_TYPE*		Get_Window_Render_Type()		{ return &m_eWindowType; }
 
+#pragma endregion
 
 	//아이탬 인벤토리에 넣기
 	void AddItem_ToInven(ITEM_NUMBER eAcquiredItem);

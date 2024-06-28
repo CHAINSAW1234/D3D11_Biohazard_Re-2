@@ -55,6 +55,10 @@ private:
 
 
 
+#pragma region 나옹
+private:
+	_bool m_isMapType = { false };
+#pragma endregion
 
 #pragma region 예은 추가 (임시임)
 private:
