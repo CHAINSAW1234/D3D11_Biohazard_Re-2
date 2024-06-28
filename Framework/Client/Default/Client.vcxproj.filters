@@ -94,9 +94,6 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Hold">
       <UniqueIdentifier>{cf681df5-8c32-45b1-bb54-bccd9a0f60c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Player\State\Player_State_Damg">
-      <UniqueIdentifier>{94d3ab13-025c-408b-87af-20b5e8b80ac8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Idle">
       <UniqueIdentifier>{b4b9c127-305b-47ed-a413-5006646ae188}</UniqueIdentifier>
     </Filter>
@@ -396,6 +393,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Kill">
       <UniqueIdentifier>{7a4d43e5-b41b-4ce9-8d91-07ffc20ccbf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Damg">
+      <UniqueIdentifier>{94d3ab13-025c-408b-87af-20b5e8b80ac8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -52,7 +52,7 @@ _bool CBite_Zombie::Execute(_float fTimeDelta)
 	pAI->SetState(MONSTER_STATE::MST_HOLD);
 
 	BITE_ANIM_STATE			eAnimState = { Compute_Current_AnimState_Bite() };
-	Change_Animation();
+	Change_Animation(eAnimState);
 
 	Apply_HalfMatrix(fTimeDelta);
 
@@ -91,7 +91,7 @@ void CBite_Zombie::Change_Animation_Default(BITE_ANIM_STATE eState)
 	//	플레이어의 전면인 경우
 	if (DIRECTION::_F == eDirection)
 	{
-
+		
 	}
 
 	//	플레이어의 후면인 경우 
@@ -180,15 +180,55 @@ _bool CBite_Zombie::Is_CurrentAnim_StartAnim()
 
 _bool CBite_Zombie::Is_CurrentAnim_MiddleAnim()
 {
-	return _bool();
+	_bool				isMiddleAnim = { false };
+	if (nullptr == m_pBlackBoard)
+		return isMiddleAnim;
+
+	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+	if (nullptr == pBodyModel)
+		return isMiddleAnim;
+
+	wstring				strCurrentAnimLayerTag = { pBodyModel->Get_CurrentAnimLayerTag(static_cast<_uint>(m_ePlayingIndex)) };
+	_int				iCurrentAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
+
+	unordered_map<wstring, unordered_set<_uint>>::iterator			iterLayerTag = { m_MiddleAnims.find(strCurrentAnimLayerTag) };
+	if (iterLayerTag == m_MiddleAnims.end())
+		return isMiddleAnim;
+
+	unordered_set<_uint >::iterator									iterIndex = { m_MiddleAnims[strCurrentAnimLayerTag].find(iCurrentAnimIndex) };
+	if (iterIndex == m_MiddleAnims[strCurrentAnimLayerTag].end())
+		return isMiddleAnim;
+
+	isMiddleAnim = true;
+	return isMiddleAnim;
 }
 
 _bool CBite_Zombie::Is_CurrentAnim_FinishAnim()
 {
-	return _bool();
+	_bool				isFInishAnim = { false };
+	if (nullptr == m_pBlackBoard)
+		return isFInishAnim;
+
+	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+	if (nullptr == pBodyModel)
+		return isFInishAnim;
+
+	wstring				strCurrentAnimLayerTag = { pBodyModel->Get_CurrentAnimLayerTag(static_cast<_uint>(m_ePlayingIndex)) };
+	_int				iCurrentAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
+
+	unordered_map<wstring, unordered_set<_uint>>::iterator			iterLayerTag = { m_FinishAnims.find(strCurrentAnimLayerTag) };
+	if (iterLayerTag == m_FinishAnims.end())
+		return isFInishAnim;
+
+	unordered_set<_uint >::iterator									iterIndex = { m_FinishAnims[strCurrentAnimLayerTag].find(iCurrentAnimIndex) };
+	if (iterIndex == m_FinishAnims[strCurrentAnimLayerTag].end())
+		return isFInishAnim;
+
+	isFInishAnim = true;
+	return isFInishAnim;
 }
 
-void CBite_Zombie::Change_Animation()
+void CBite_Zombie::Change_Animation(BITE_ANIM_STATE eState)
 {
 	/*if ()
 		Change_Animation_Creep();
@@ -201,6 +241,8 @@ void CBite_Zombie::Change_Animation()
 
 	else
 		Change_Animation_Default();*/
+
+	Change_Animation_Default(eState);
 }
 
 void CBite_Zombie::Set_Bite_LinearStart_HalfMatrix()
@@ -219,6 +261,8 @@ void CBite_Zombie::Set_Bite_LinearStart_HalfMatrix()
 	_float4x4				ResultMatrixFloat4x4;
 	if (false == m_pBlackBoard->Compute_HalfMatrix_Current_BiteAnim(strAnimLayerTag, iAnimIndex, &ResultMatrixFloat4x4))
 		return;
+
+	m_pBlackBoard->GetPlayer()->Change_Player_State_Bite(iAnimIndex, strAnimLayerTag, ResultMatrixFloat4x4, m_fTotalLinearTime_HalfMatrix);
 
 	_matrix					ResultMatrix = XMLoadFloat4x4(&ResultMatrixFloat4x4);
 	_matrix					WorldMatrixInv = { m_pBlackBoard->GetAI()->Get_Transform()->Get_WorldMatrix_Inverse()};

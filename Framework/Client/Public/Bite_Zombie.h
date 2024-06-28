@@ -23,7 +23,7 @@ public:
 	virtual void					Exit() override;
 
 private:
-	void							Change_Animation();
+	void							Change_Animation(BITE_ANIM_STATE eState);
 
 	void							Change_Animation_Default(BITE_ANIM_STATE eState);
 	void							Change_Animation_Creep(BITE_ANIM_STATE eState);
