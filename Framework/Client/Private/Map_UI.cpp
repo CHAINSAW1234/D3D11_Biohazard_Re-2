@@ -332,8 +332,8 @@ void CMap_UI::Find_InMap_Player()
                 return;
             }
         }
-    }
-
+    }  
+     
 }
 
 void CMap_UI::Find_Player_Target()
