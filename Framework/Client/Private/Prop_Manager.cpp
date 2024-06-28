@@ -3,17 +3,19 @@
 #include "Prop_Manager.h"
 #include "InteractProps.h"
 
+IMPLEMENT_SINGLETON(CProp_Manager)
+
 CProp_Manager::CProp_Manager()
 	: m_pGameInstance{ CGameInstance::Get_Instance() }
 {
 	Safe_AddRef(m_pGameInstance);
-
+	Initialize_List();
+		
 }
 
 HRESULT CProp_Manager::Initialize()
 {
-	if (FAILED(Initialize_List()))
-		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -51,21 +53,6 @@ list<class CGameObject*>* CProp_Manager::Find_List(_int iTag)
 		return nullptr;
 
 	return iter->second;
-}
-
-CProp_Manager* CProp_Manager::Create()
-{
-	CProp_Manager* pInstance = new CProp_Manager();
-
-	if (FAILED(pInstance->Initialize()))
-	{
-		MSG_BOX(TEXT("Failed To Created : Prop_Manager"));
-
-		Safe_Release(pInstance);
-		pInstance = nullptr;
-	}
-
-	return pInstance;
 }
 
 void CProp_Manager::Free()

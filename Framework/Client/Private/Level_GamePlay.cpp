@@ -243,9 +243,9 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 
 HRESULT CLevel_GamePlay::Ready_PropManager()
 {
-	m_pPropManager = CProp_Manager::Create();
-	if (m_pPropManager == nullptr)
-		return E_FAIL;
+	//m_pPropManager = CProp_Manager::Create();
+	//if (m_pPropManager == nullptr)
+	//	return E_FAIL;
 	return S_OK;
 }
 

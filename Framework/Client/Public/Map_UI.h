@@ -126,6 +126,8 @@ private : /* Target */
 	/* 3. Target Public */
 	CTransform*						m_pTarget_Transform					= { nullptr }; // Target Notify에서 Main Target 위치를 가져오기 위해 사용
 	
+	class CProp_Manager* m_pPropManager = { nullptr };
+
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

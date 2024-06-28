@@ -6,12 +6,9 @@
 맵 UI에게 상호작용 가능한 오브젝트를 구역별로 던지는 클래스
 아이템 종류에따라서에 대해서도 
 */
-
-
 BEGIN(Engine)
 class CGameObject;
 END
-
 
 BEGIN(Client)
 
@@ -33,7 +30,6 @@ private:
 	HRESULT									Initialize_List();
 	list<class CGameObject*>*			Find_List(_int iTag);
 public:
-	static CProp_Manager* Create();
 	virtual void Free() override;
 };
 
