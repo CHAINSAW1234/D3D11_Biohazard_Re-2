@@ -10,7 +10,6 @@ CProp_Manager::CProp_Manager()
 {
 	Safe_AddRef(m_pGameInstance);
 	Initialize_List();
-		
 }
 
 HRESULT CProp_Manager::Initialize()
@@ -33,6 +32,25 @@ HRESULT CProp_Manager::Initialize_List()
 			pnewList->emplace_back(iter);
 			Safe_AddRef(iter);
 			m_RegionProps[iRegion] = pnewList;
+		}
+		else
+		{
+			pList->emplace_back(iter);
+			Safe_AddRef(iter);
+		}
+
+	}
+
+	for (auto& iter : *pInteractList)
+	{
+		_int iType = static_cast<CInteractProps*>(iter)->Get_Type();
+		list<class CGameObject*>* pList = Find_List(iType);
+		if (pList == nullptr)
+		{
+			list<class CGameObject*>* pnewList = new list<class CGameObject*>;
+			pnewList->emplace_back(iter);
+			Safe_AddRef(iter);
+			m_TypeProps[iType] = pnewList;
 		}
 		else
 		{
@@ -71,4 +89,16 @@ void CProp_Manager::Free()
 		Safe_Delete((list.second));
 	}
 	m_RegionProps.clear();
+
+	for (auto& list: m_TypeProps)
+	{
+		for (auto& iter: *(list.second))
+		{
+			Safe_Release(iter);
+			iter = nullptr;
+		}
+		(*list.second).clear();
+		Safe_Delete((list.second));
+	}
+	m_TypeProps.clear();
 }

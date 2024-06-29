@@ -21,11 +21,13 @@ private:
 public:
 	HRESULT									Initialize();
 public:
-	list<class CGameObject*>*		Get_Props(_int iRegion) { return m_RegionProps[iRegion]; }
-
+	list<class CGameObject*>*		Get_Region_Props(_int iRegion) { return m_RegionProps[iRegion]; }
+	list<class CGameObject*>*		Get_Type_Props(_int iType) { return m_TypeProps[iType]; }
+	
 private:	
 	class CGameInstance*				m_pGameInstance = { nullptr };
 	map<_int, list<class CGameObject*>*>				m_RegionProps;
+	map<_int, list<class CGameObject*>*>				m_TypeProps;
 private:
 	HRESULT									Initialize_List();
 	list<class CGameObject*>*			Find_List(_int iTag);

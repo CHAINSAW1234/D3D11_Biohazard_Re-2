@@ -37,35 +37,18 @@ HRESULT CWindow::Initialize(void* pArg)
 void CWindow::Tick(_float fTimeDelta)
 {
 	__super::Check_Player();
+	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+	
 	if (!m_bVisible)
-	{
-		m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-
 		return;
-	}
 
 	if (m_pPlayer == nullptr)
 		return;
-	if (m_bActive)
-		m_fTime += fTimeDelta;
-
-	if (m_fTime > 4.f)
-	{
-		m_fTime = 0.f;
-		m_bActive = false;
-		m_eState = WINDOW_STATIC;
-	}
-
-	if (m_bCol && !m_bActive)
-	{
-		//UI띄우고
-		if (*m_pPlayerInteract)
-			Active();
-		m_bCol = false;
-	}
+	
+	if (m_iHP[PART_BODY] <= 0)
+		m_eState = WINDOW_BREAK;
+	
 	__super::Tick(fTimeDelta);
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-
 }
 
 void CWindow::Late_Tick(_float fTimeDelta)
@@ -85,9 +68,9 @@ void CWindow::Late_Tick(_float fTimeDelta)
 
 		m_bRender = false;
 	}
-
-	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
-
+	//if (m_iHP[PART_PANNEL] <= 0)
+	//	m_PartObjects[PART_BODY]->Set_Render(false);
+	
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
@@ -172,8 +155,7 @@ void CWindow::Active()
 
 _float4 CWindow::Get_Object_Pos()
 {
-	// Break 활성화시 나무판자 붙히기 위해 떠야함
-	if (!m_bActive)
+	if (!m_bBarrigateInstallable)
 		return _float4(0.f, 0.f, 0.f, 1.f);
 	return m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION)+_float4(0.f,50.f,0.f,0.f);
 }

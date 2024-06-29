@@ -130,7 +130,10 @@ public:
 	/*To NY*/
 	virtual _float4									Get_Object_Pos() = 0;
 
+	_bool												Get_Interact_With_Player_Once() { return m_bInteract; }
+
 	_int												Get_Region() { return m_tagPropDesc.iRegionNum; }
+	_int												Get_Type() { return m_tagPropDesc.iPropType; }
 	void												Set_Region(_int iRegion) { m_tagPropDesc.iRegionNum = iRegion; }
 private :
 	_bool												m_isSelector_Rendering = { false };
@@ -138,6 +141,7 @@ private :
 
 protected:
 	_bool												m_bActivity = { true };
+	_bool												m_bInteract = { true };
 	_bool												m_bShadow = { true };
 	_bool												m_bVisible = { true };
 	_bool												m_bCol = { false }; // 충돌이 되었다

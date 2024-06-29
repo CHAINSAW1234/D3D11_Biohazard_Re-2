@@ -164,7 +164,10 @@ void CInteractProps::Check_Col_Sphere_Player()
 		return;
 	CCollider* pPlayerCol = static_cast<CCollider*>( m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_SPHERE]))
+	{
+		m_bInteract = true;
 		m_bCol = true; 
+	}
 
 }
 
@@ -176,7 +179,10 @@ void CInteractProps::Check_Col_OBB_Player()
 		return;
 	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_OBB]))
+	{
+		m_bInteract = true;
 		m_bCol = true;
+	}
 }
 
 void CInteractProps::Check_Col_AABB_Player()
@@ -187,7 +193,10 @@ void CInteractProps::Check_Col_AABB_Player()
 		return;
 	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_AABB]))
+	{
+		m_bInteract = true;
 		m_bCol = true;
+	}
 }
 
 _bool CInteractProps::Visible()
