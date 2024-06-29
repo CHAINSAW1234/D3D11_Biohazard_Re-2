@@ -319,6 +319,9 @@ void CPlayer::Tick(_float fTimeDelta)
 				auto Random_Real_Y = m_pGameInstance->GetRandom_Real(0.15f, 0.2f);
 				m_fRecoil_Rotate_Amount_X = Random_Real_X;
 				m_fRecoil_Rotate_Amount_Y = Random_Real_Y;
+
+				m_pMuzzle_Flash->Set_Render(true);
+				m_pMuzzle_Flash->SetPosition(Get_MuzzlePosition());
 				break;
 			}
 			case EQUIP::STG:
@@ -1722,7 +1725,7 @@ void CPlayer::RayCasting_Camera()
 void CPlayer::Ready_Effect()
 {
 	m_pMuzzle_Flash = CMuzzle_Flash::Create(m_pDevice, m_pContext);
-	m_pMuzzle_Flash->SetSize(1.f, 1.f);
+	m_pMuzzle_Flash->SetSize(0.3f, 0.3f);
 }
 
 void CPlayer::Release_Effect()
@@ -1732,8 +1735,6 @@ void CPlayer::Release_Effect()
 
 void CPlayer::Tick_Effect(_float fTimeDelta)
 {
-	m_pMuzzle_Flash->SetPosition(Get_MuzzlePosition());
-
 	m_pMuzzle_Flash->Tick(fTimeDelta);
 }
 

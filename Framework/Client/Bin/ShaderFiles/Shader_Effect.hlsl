@@ -127,9 +127,11 @@ PS_OUT_EFFECT PS_EFFECT(PS_IN In)
 	float2      vTexcoordLinear = float2(fTexcoordLinearX, fTexcoordLinearY);
 
 	Out.vDiffuse = g_Texture.Sample(LinearSampler, vTexcoordLinear);
+
+	if (Out.vDiffuse.a <= 0.1f)
+		discard;
 	
 	//Out.vDiffuse.a *= g_fAlpha;
-	Out.vDiffuse.a *= 1.f;
 
 	//Out.vMaterial = 0.f;
 	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
