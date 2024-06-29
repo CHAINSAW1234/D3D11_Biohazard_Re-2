@@ -84,14 +84,14 @@ void CFlashLight::Late_Tick(_float fTimeDelta)
 
 	if (m_bRender) {
 
-		const _float4x4* pMatrix = m_pModelCom->Get_BonePtr(0)->Get_CombinedTransformationMatrix();
+		const _float4x4 pMatrix = m_pModelCom->Get_BonePtr(0)->Get_CombinedTransformationMatrix_Var();
 
 		_vector vScale;
 		_vector vRoation;
 		_vector vTranspose;
 		XMMatrixDecompose(&vScale, &vRoation, &vTranspose, XMLoadFloat4x4(&m_WorldMatrix));
 
-		_matrix vMatrix = XMLoadFloat4x4(pMatrix) * XMLoadFloat4x4(&m_WorldMatrix);
+		_matrix vMatrix = XMLoadFloat4x4(&pMatrix) * XMLoadFloat4x4(&m_WorldMatrix);
 		_float4x4 fMatrix;
 		XMStoreFloat4x4(&fMatrix, vMatrix);
 		_float4 vPos = _float4(fMatrix._41, fMatrix._42, fMatrix._43, 1.f);
