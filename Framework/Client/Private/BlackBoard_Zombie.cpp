@@ -189,6 +189,20 @@ void CBlackBoard_Zombie::Reset_NonActive_Body(const list<_uint>& ActivePlayingIn
 	}
 }
 
+_bool CBlackBoard_Zombie::Compute_Distance_To_Player_World(_float* pDistance)
+{
+	_bool			isSuccess = { false };
+
+	_float3				vDirectionToPlayer = {};
+	if (false == Compute_Direction_To_Player_World(&vDirectionToPlayer))
+		return isSuccess;
+
+	*pDistance = XMVectorGetX(XMVector3Length(XMLoadFloat3(&vDirectionToPlayer)));
+
+	isSuccess = true;
+	return isSuccess;
+}
+
 _bool CBlackBoard_Zombie::Compute_Direction_To_Player_World(_float3* pDirection)
 {
 	_bool				isSuccess = { false };

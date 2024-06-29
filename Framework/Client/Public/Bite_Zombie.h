@@ -10,6 +10,7 @@ class CBite_Zombie : public CTask_Node
 {
 public:
 	enum class BITE_ANIM_STATE { _START, _MIDDLE, _FINISH, _END };
+	enum class BITE_ANIM_TYPE { _DEFAULT_F, _DEFAULT_B, _CREEP, _PUSH_DOWN, _END };
 private:
 	CBite_Zombie();
 	CBite_Zombie(const CBite_Zombie& rhs);
@@ -36,7 +37,11 @@ private:
 	_bool							Is_CurrentAnim_MiddleAnim();
 	_bool							Is_CurrentAnim_FinishAnim();
 
+	_bool							Is_Can_Start_Bite();
+
 	void							Set_Bite_LinearStart_HalfMatrix();
+
+	_bool							Is_StateFinished(BITE_ANIM_STATE eState);
 
 private:
 	void							Apply_HalfMatrix(_float fTimeDelta);
@@ -57,9 +62,13 @@ private:
 	const wstring&					m_strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
 	const PLAYING_INDEX				m_ePlayingIndex = { PLAYING_INDEX::INDEX_0 };
 
+	BITE_ANIM_TYPE					m_eAnimType = { BITE_ANIM_TYPE::_END };
+
 	unordered_map<wstring, unordered_set<_uint>>		m_StartAnims;
 	unordered_map<wstring, unordered_set<_uint>>		m_MiddleAnims;
 	unordered_map<wstring, unordered_set<_uint>>		m_FinishAnims;
+
+	_bool							m_isSendMSG_To_Player = { false };
 
 	_float							m_fAccLinearTime_HalfMatrix = { 0.f };
 	_float							m_fTotalLinearTime_HalfMatrix = { 0.f };

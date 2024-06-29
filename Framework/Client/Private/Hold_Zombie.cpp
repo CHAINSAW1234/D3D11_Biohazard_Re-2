@@ -27,10 +27,10 @@ void CHold_Zombie::Enter()
 		return;
 
 	pBodyModel->Set_TotalLinearInterpolation(0.2f);
-	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), false);
+	pBodyModel->Set_Loop(static_cast<_uint>(m_eBasePlayingIndex), false);
 
-	pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), 0.f, 0.f);
-	pBodyModel->Reset_PreAnim_CurrentAnim(static_cast<_uint>(PLAYING_INDEX::INDEX_1));
+	pBodyModel->Set_BlendWeight(static_cast<_uint>(m_eBlendPlayingIndex), 0.f, 0.f);
+	pBodyModel->Reset_PreAnim_CurrentAnim(static_cast<_uint>(m_eBlendPlayingIndex));
 
 	m_isEntry = true;
 }
@@ -44,13 +44,20 @@ _bool CHold_Zombie::Execute(_float fTimeDelta)
 	if (Check_Permition_To_Execute() == false)
 		return false;
 #pragma endregion
-
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_HOLD);
 
+	if (false == m_isEntry)
+	{
+		if (true == Is_StateFinished())
+			return false;
+	}
+
 	Change_Animation();
+
+	m_isEntry = false;
 
 #ifdef _DEBUG
 
@@ -83,9 +90,7 @@ void CHold_Zombie::Change_Animation()
 		return;
 	}
 
-	m_isEntry = false;
-
- 
+	m_isEntry = false; 
 
 	DIRECTION		eDirection = { DIRECTION::_END };
 	if (false == m_pBlackBoard->Compute_Direction_To_Player_4Direction_Local(&eDirection))
@@ -106,7 +111,10 @@ void CHold_Zombie::Change_Animation()
 	else if (DIRECTION::_B == eDirection)
 	{
 		_float3				vDirectionToPlayerLocalFloat3;
-		if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3));
+		if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3))
+		{
+			return;
+		}
 		_vector				vDirectionToPlayerLocal = { XMLoadFloat3(&vDirectionToPlayerLocalFloat3) };
 		_bool				isRight = { 0.f < XMVectorGetX(vDirectionToPlayerLocal) };
 
@@ -134,13 +142,21 @@ void CHold_Zombie::Change_Animation()
 	if (-1 == iResultAnimationIndex)
 		return;
 
-	for (_uint i = 0; i < static_cast<_uint>(ANIM_ORDINARY_HOLD::_END); ++i)
-	{
-		pBodyModel->Set_TickPerSec(TEXT("Ordinary_Hold"), i, 5.f);
-
-	}
 	pBodyModel->Change_Animation(iPlayingIndex, strAnimLayerTag, iResultAnimationIndex);
 	pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
+}
+
+_bool CHold_Zombie::Is_StateFinished()
+{
+	_bool					isFinished = { false };
+	
+	CModel*					pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+	if (nullptr == pBody_Model)
+		return isFinished;
+
+	isFinished = pBody_Model->isFinished(static_cast<_uint>(m_eBasePlayingIndex));
+
+	return isFinished;
 }
 
 CHold_Zombie* CHold_Zombie::Create(void* pArg)

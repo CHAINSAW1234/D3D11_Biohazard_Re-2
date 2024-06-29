@@ -20,7 +20,8 @@ BEGIN(Client)
 #define	STATUS_ZOMBIE_TRY_ATTACK_DISTANCE				3.f
 #define	STATUS_ZOMBIE_VIEW_ANGLE						XMConvertToRadians(180.f)
 #define	STATUS_ZOMBIE_HEALTH							100.f
-#define	STATUS_ZOMBIE_ATTACK							10.f
+#define	STATUS_ZOMBIE_ATTACK							1.f
+#define	STATUS_ZOMBIE_BITE_RANGE						1.f
 
 class CZombie final : public CMonster
 {

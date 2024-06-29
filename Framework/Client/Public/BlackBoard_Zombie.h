@@ -69,6 +69,8 @@ public:		/* Anim Controll */
 	void							Reset_NonActive_Body(const list<_uint>& ActivePlayingIndices);
 
 public:		/* Public Utility */
+	_bool							Compute_Distance_To_Player_World(_float* pDistance);
+
 	_bool							Compute_Direction_To_Player_World(_float3* pDirection);
 	_bool							Compute_Direction_To_Player_Local(_float3* pDirection);
 

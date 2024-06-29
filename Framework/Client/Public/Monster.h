@@ -28,6 +28,8 @@ public:
 		_float				fAccRecognitionTime = { 0.f };
 		_float				fMaxRecognitionTime = { 0.f };
 
+		_float				fBiteRange = { 0.f };
+
 		_float				fTryAttackRange = { 0.f };
 		_float				fTryAttackRecognitionTime = { 0.f };
 

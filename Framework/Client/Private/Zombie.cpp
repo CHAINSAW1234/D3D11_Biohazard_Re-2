@@ -326,10 +326,10 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pNode_Root->Insert_Child_Node(pSelectorNode_Root);
 
 	/*
-	* Root CHild_1 Section ( Maintain_Check )
+	* Root CHild_Maintain Section ( Maintain_Check )
 	*/
 
-	//	Add Task Node		=> Execture Pre Task
+	//	Add Task Node		=> Execute Pre Task
 	CExecute_PreTask_Zombie* pTask_ExecutePreTask = { CExecute_PreTask_Zombie::Create() };
 	pTask_ExecutePreTask->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_Root->Insert_Child_Node(pTask_ExecutePreTask);
@@ -340,19 +340,40 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_ExecutePreTask->Insert_Decorator_Node(pDeco_Maintain_PreTask);
 
 	/*
-	*Root Child_2 Section ( Hit )
+	*Root Child Section ( Bite )
+	*/
+
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	CComposite_Node*			pSelectorNode_RootChild_Bite = { CComposite_Node::Create(&CompositeNodeDesc) };
+	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_Bite);
+
+	//	Add Task Node		=> Bite 
+	CBite_Zombie*				pTask_Bite_Zombie = { CBite_Zombie::Create() };
+	pTask_Bite_Zombie->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_Bite->Insert_Child_Node(pTask_Bite_Zombie);
+
+	//	Add Decorator		=> Is Can Link? ( From Hold )
+	list<MONSTER_STATE>					CanLinkMonsterStatesBite;
+	CanLinkMonsterStatesBite.emplace_back(MONSTER_STATE::MST_HOLD);
+	CanLinkMonsterStatesBite.emplace_back(MONSTER_STATE::MST_LIGHTLY_HOLD);
+	CIs_Can_Link_Pre_State_Zombie*		pDeco_Is_Can_Link_Bite = { CIs_Can_Link_Pre_State_Zombie::Create(CanLinkMonsterStatesBite) };
+	pDeco_Is_Can_Link_Bite->SetBlackBoard(m_pBlackBoard);
+	pDeco_Is_Can_Link_Bite->Insert_Decorator_Node(pDeco_Is_Can_Link_Bite);
+
+	/*
+	*Root Child Section ( Hit )
 	*/
 
 	//	Add RootNode Child Composite Node - Selector Node			(Is Hit?)
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
-	CComposite_Node* pSelectorNode_RootChild_1 = { CComposite_Node::Create(&CompositeNodeDesc) };
-	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_1);
+	CComposite_Node* pSelectorNode_RootChild_Hit = { CComposite_Node::Create(&CompositeNodeDesc) };
+	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_Hit);
 
 
 	//	Add Task Node		=> Damage Hold Stun
 	CStun_Hold_Zombie*							pTask_Hold_Stun = { CStun_Hold_Zombie::Create() };
 	pTask_Hold_Stun->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Hold_Stun);
+	pSelectorNode_RootChild_Hit->Insert_Child_Node(pTask_Hold_Stun);
 
 	//	Add Decorator		=> Is Can Link? ( From Hold )
 	list<MONSTER_STATE>							CanLinkMonsterStatesHoldStun;
@@ -381,7 +402,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//	Add Task Node		=> Damage Stun
 	CStun_Zombie*								pTask_Stun = { CStun_Zombie::Create() };
 	pTask_Stun->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Stun);
+	pSelectorNode_RootChild_Hit->Insert_Child_Node(pTask_Stun);
 
 	//	Add Decorator		=> Is Hit?
 	CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitSmallDesc;
@@ -399,7 +420,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//	Add Task Node		=> Damage Knock Back
 	CKnock_Back_Zombie*							pTask_Knockback = { CKnock_Back_Zombie::Create() };
 	pTask_Knockback->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Knockback);
+	pSelectorNode_RootChild_Hit->Insert_Child_Node(pTask_Knockback);
 	
 	//	Add Decorator		=> Is Hit?
 	CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitBigDesc;
@@ -414,14 +435,26 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_Knockback->Insert_Decorator_Node(pDeco_Is_HitBig);
 
 
+
 	/*
-	*Root Child_3 Section ( Select Move Or Turn )
+	*Root Child Section ( Lightly Hold )
+	*/
+
+	//	Add Task Node		=> Lightly Hold 
+	CLightly_Hold_Zombie*						pTask_Lightly_Hold = { CLightly_Hold_Zombie::Create() };
+	pTask_Lightly_Hold->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Root->Insert_Child_Node(pTask_Lightly_Hold);
+
+	
+
+	/*
+	*Root Child Section ( Select Move Or Turn )
 	*/
 
 	//	Add RootNode Child Composite Node - Selector Node			(Is Move Or Turn ?)
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
-	CComposite_Node*							pSelectorNode_RootChild_2 = { CComposite_Node::Create(&CompositeNodeDesc) };
-	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_2);
+	CComposite_Node*							pSelectorNode_RootChild_Move = { CComposite_Node::Create(&CompositeNodeDesc) };
+	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_Move);
 
 	//	Add Decorator Node
 	CIs_Character_In_Range_Zombie*				pDeco_Charactor_In_Range_Recognition = { CIs_Character_In_Range_Zombie::Create(m_pStatus->fRecognitionRange) };
@@ -431,7 +464,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//	Add Task Node (Hold)
 	CHold_Zombie*								pTask_Hold = { CHold_Zombie::Create() };
 	pTask_Hold->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_2->Insert_Child_Node(pTask_Hold);
+	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Hold);
 
 	CIs_Enough_Time_Zombie*						pDeco_Enough_Time_For_Hold = { CIs_Enough_Time_Zombie::Create(&m_pStatus->fAccRecognitionTime, &m_pStatus->fTryAttackRecognitionTime) };
 	pDeco_Enough_Time_For_Hold->SetBlackBoard(m_pBlackBoard);
@@ -440,9 +473,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//	Add Task Node (Move)
 	CMove_Front_Zombie*							pTask_Move = { CMove_Front_Zombie::Create() };
 	pTask_Move->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_2->Insert_Child_Node(pTask_Move);
-
-
+	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Move);
 
 	//	Add Decorator Node		=>		Task Move, Deco In View
 	CIs_Charactor_In_ViewAngle_Zombie*			pDeco_Charactor_In_View = { CIs_Charactor_In_ViewAngle_Zombie::Create() };
@@ -461,7 +492,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//Add Task Node
 	CPivot_Turn_Zombie*							pTask_Pivot_Turn = { CPivot_Turn_Zombie::Create() };
 	pTask_Pivot_Turn->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_2->Insert_Child_Node(pTask_Pivot_Turn);
+	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Pivot_Turn);
 
 	//Add Decorator Node		=>		Task Turn, Deco Can Change State
 	/*CIs_Can_Change_State_Zombie::CAN_CHANGE_STATE_ZOMBIE_DESC		CanChangeStateForTurnDesc;
@@ -472,7 +503,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_Pivot_Turn->Insert_Decorator_Node(pDeco_Can_Change_State_ForTurn);*/
 
 	/*
-	*Root Child_4 Section		( Idle )
+	*Root Child Section		( Idle )
 	*/
 
 	//Add RootNode Task Node
@@ -695,6 +726,7 @@ HRESULT CZombie::Initialize_Status()
 	m_pStatus->fViewAngle = STATUS_ZOMBIE_VIEW_ANGLE;
 	m_pStatus->fRecognitionRange = STATUS_ZOMBIE_DEFAULT_RECOGNITION_DISTANCE;
 	m_pStatus->fMaxRecognitionTime = STATUS_ZOMBIE_MAX_RECOGNITION_TIME;
+	m_pStatus->fBiteRange = STATUS_ZOMBIE_BITE_RANGE;
 	m_pStatus->fTryAttackRecognitionTime = STATUS_ZOMBIE_TRY_ATTACK_RICOGNITION_TIME;
 	m_pStatus->fTryAttackRange = STATUS_ZOMBIE_TRY_ATTACK_DISTANCE;
 	m_pStatus->fHealth = STATUS_ZOMBIE_HEALTH;

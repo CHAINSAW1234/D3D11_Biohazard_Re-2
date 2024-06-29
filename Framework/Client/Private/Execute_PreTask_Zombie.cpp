@@ -48,8 +48,10 @@ _bool CExecute_PreTask_Zombie::Execute(_float fTimeDelta)
 	}
 
 	m_pPreTaskNode = { m_pBlackBoard->Get_PreTaskNode() };
-	if(nullptr != m_pPreTaskNode)
-		m_pPreTaskNode->Execute(fTimeDelta);
+	if (nullptr != m_pPreTaskNode)
+	{
+		return m_pPreTaskNode->Execute(fTimeDelta);
+	}
 
 #ifdef _DEBUG
 
@@ -60,7 +62,7 @@ _bool CExecute_PreTask_Zombie::Execute(_float fTimeDelta)
 
 #endif
 
-	return true;
+	return false;
 }
 
 void CExecute_PreTask_Zombie::Exit()

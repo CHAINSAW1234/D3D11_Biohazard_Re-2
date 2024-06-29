@@ -33,15 +33,17 @@ _bool CIs_Maintain_PreTask_Zombie::Condition_Check()
 		return isMaintain;
 
 	MONSTER_STATE			eCurrentState = { m_pBlackBoard->GetAI()->Get_Current_MonsterState() };
-	if (true == Is_Maintain_State(eCurrentState))
-	{
-		if (false == Is_CanFinish(eCurrentState))
-		{
-			isMaintain = true;
-		}
-	}
+	//if (true == Is_Maintain_State(eCurrentState))
+	//{
+	//	if (false == Is_CanFinish(eCurrentState))
+	//	{
+	//		isMaintain = true;
+	//	}
+	//}
 
-	return isMaintain;
+	//return isMaintain;
+
+	return Is_Maintain_State(eCurrentState);
 }
 
 _bool CIs_Maintain_PreTask_Zombie::Is_Maintain_State(MONSTER_STATE eState)

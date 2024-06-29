@@ -116,10 +116,6 @@ void CStun_Hold_Zombie::Change_Animation()
 
 	pBodyModel->Change_Animation(iPlayingIndex, strAnimLayerTag, iResultAnimationIndex);
 	pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
-
-	//		TEST			//
-
-	pBodyModel->Set_TickPerSec(strAnimLayerTag, iResultAnimationIndex, 60.f);
 }
 
 CStun_Hold_Zombie* CStun_Hold_Zombie::Create(void* pArg)

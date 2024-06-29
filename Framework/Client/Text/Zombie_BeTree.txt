@@ -1,0 +1,54 @@
+Root Node ( ZOMBIE )
+|
+|			TYPE A ~ F
+|
+Sequence Root ----------------------------	Deco		IsHit
+|											Task 		Additional Shake Skin ( Only Blend Anim )
+|
+|
+Selector Root-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------		Task 		Idle Wait
+|							|																											|										|
+|							|																											|										|
+|							|																											|										|
+Deco 	Is MainTain			Deco		IsHit 																							Deco		IsInRange(VeryNear)			Deco 		IsInRange ( Recognition Ragne )
+Task 	Execute Pre Task	Selector 	Child Hit	------------------------------------------------------------						Deco 		IsLinkFromMove, Idle		Selector 	Move Or Turn	---------------------------------------------------------------------------------
+							|												|									|						Task		LightlyHold					|															|												|
+							|												|									|																|															|												|
+							|												|									|																|															|												|
+							Deco		IsLinkFromHold						Deco 	IsHit(Small)				Deco		IsHit(Big)											Deco 		Is Enough Time ( Try Attack Rec Time )			Deco		In View Angle()						Task		Pivot Turn
+							Deco		IsHit(Leg, AllType)					Task		Stun					Task 		Knock_Back											Task 		Hold											Task 		Move With TurnBlend 
+							Task 		Hold Stun
+							
+
+
+
+추가해야할 상태 판단 => 각 상태 내부적으로 몬스터 자체가 Creep 상태인지 추가적으로 판단하여 상태분기를 더 해야함
+
+	Creep => Move => Need StandUp	
+	Creep => Hold => Need StandUp
+	Creep => Bite => 바로 가능 ( Creep  Bite  FaceUp, Down )
+
+부위 파괴에 따른 로스트 상태
+
+	각 팔, 다리, 하체 전체 절단 가능
+	=> 메쉬 숨기기 및 애니메이션 상태를 별도로 부위별 로스트 상태 체크 필요함
+
+추가해야할 상태	( Big Cat )
+
+	=> Dead
+
+		1. Pose
+		2. RagDoll
+		3. DeadAnim
+
+	=> StandUp
+
+		=> Need Creep
+		=> Face Up, Down 분기
+
+	=> Start ( Undiscovered 류...)
+
+		=> 철창
+		=> 벽넘기
+		=> 벽기대기
+		=> Creep
