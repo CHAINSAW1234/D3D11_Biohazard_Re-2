@@ -289,6 +289,14 @@ private:
 	_float										m_fRecoil_Rotate_Amount_Y_Current = { 0.f };
 	_float										m_fRecoil_Lerp_Time = { 0.f };
 	_float										m_fRecoil_Lerp_Time_Omega = { 0.f };
+
+#pragma region Effect
+public:
+	void	Ready_Effect();
+	void	Release_Effect();
+private:
+	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
+#pragma endregion
 private:
 	HRESULT Add_Components();
 

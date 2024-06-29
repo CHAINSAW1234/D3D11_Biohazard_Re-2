@@ -7,7 +7,7 @@ BEGIN(Client)
 
 class CMuzzle_Flash final : public CEffect
 {
-protected:
+public:
 	CMuzzle_Flash(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CMuzzle_Flash(const CMuzzle_Flash& rhs);
 	virtual ~CMuzzle_Flash() = default;
@@ -19,8 +19,10 @@ public:
 	virtual void			Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
 
-private:
-	_float					m_fFrame = { 0.f };
+public:
+	void					SetSize(_float fSizeX, _float fSizeY);
+
+
 private:
 	virtual HRESULT			Add_Components();
 	virtual HRESULT			Bind_ShaderResources();

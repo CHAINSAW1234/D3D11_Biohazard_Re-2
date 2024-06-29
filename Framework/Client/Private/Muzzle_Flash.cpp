@@ -28,7 +28,6 @@ HRESULT CMuzzle_Flash::Initialize(void * pArg)
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(static_cast<_float>(rand() % 10), 3.f, static_cast<_float>(rand() % 10), 1.f));
 
-
 	return S_OK;
 }
 
@@ -61,10 +60,18 @@ HRESULT CMuzzle_Flash::Render()
 	return S_OK;
 }
 
+void CMuzzle_Flash::SetSize(_float fSizeX, _float fSizeY)
+{
+	m_fSizeX = fSizeX;
+	m_fSizeY = fSizeY;
+
+	m_pTransformCom->Set_Scaled(fSizeX, fSizeY,1.f);
+}
+
 HRESULT CMuzzle_Flash::Add_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxPosTex"),
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Effect"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
@@ -122,6 +129,8 @@ CMuzzle_Flash * CMuzzle_Flash::Create(ID3D11Device * pDevice, ID3D11DeviceContex
 
 		Safe_Release(pInstance);
 	}
+
+	pInstance->Initialize(nullptr);
 
 	return pInstance;
 

@@ -212,6 +212,7 @@
     <ClInclude Include="..\Public\Decal_Blood.h" />
     <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\Down_Zombie.h" />
+    <ClInclude Include="..\Public\Effect_Header.h" />
     <ClInclude Include="..\Public\EventProp.h" />
     <ClInclude Include="..\Public\Execute_PreTask_Zombie.h" />
     <ClInclude Include="..\Public\Face_Zombie.h" />

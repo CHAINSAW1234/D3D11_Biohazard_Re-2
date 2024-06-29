@@ -23,6 +23,11 @@ public:
 	void					Compute_CurrentUV();
 
 protected:
+	_float					m_fSizeX = { 0.f };
+	_float					m_fSizeY = { 0.f };
+	_float					m_fSizeZ = { 0.f };
+
+protected:
 	CShader*				m_pShaderCom = { nullptr };
 	CTexture*				m_pTextureCom = { nullptr };
 	CVIBuffer_Rect*			m_pVIBufferCom = { nullptr };

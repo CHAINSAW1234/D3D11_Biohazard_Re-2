@@ -379,6 +379,9 @@
     <Filter Include="02.GameObjects\Effect\Muzzle_Flash">
       <UniqueIdentifier>{f75f75e3-3ac4-46fb-a428-5ac0cd54c644}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\Effect_Header">
+      <UniqueIdentifier>{2f676497-0d0d-432c-8fdd-ad297219ae70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -756,6 +759,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Muzzle_Flash.h">
       <Filter>02.GameObjects\Effect\Muzzle_Flash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Effect_Header.h">
+      <Filter>02.GameObjects\Player\Effect_Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
