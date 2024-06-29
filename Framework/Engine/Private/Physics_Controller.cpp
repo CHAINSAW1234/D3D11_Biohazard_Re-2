@@ -1088,7 +1088,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 				COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData.word3;
 
 				*pBlockPoint = PxVec_To_Float4_Coord(hit_Obj.position);
-
+				
 				if (m_vecCharacter_Controller[filterData.word2] && m_vecCharacter_Controller[filterData.word2]->IsReleased() == false)
 				{
 					auto vDelta = Float4_Normalize(*pBlockPoint - vOrigin);
@@ -1096,7 +1096,10 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 
 					m_vecCharacter_Controller[filterData.word2]->Set_Hit(true);
 					m_vecCharacter_Controller[filterData.word2]->Set_Force(vDelta, eType);
-					//	m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
+					m_vecCharacter_Controller[filterData.word2]->SetBlockPoint(*pBlockPoint);
+					m_vecCharacter_Controller[filterData.word2]->SetHitNormal(PxVec_To_Float4_Coord(hit_Obj.normal));
+					/*Ragdoll을 구동하려면 살려야 함.*/
+					//m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
 
 					return true;
 				}

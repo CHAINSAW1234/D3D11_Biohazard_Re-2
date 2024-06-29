@@ -17,7 +17,7 @@
 #include "Character_Controller.h"
 #include "Camera_Free.h"
 #include "Camera_Event.h"
-#include "Effect_Header.h"
+#include "Effect_Header_Player.h"
 
 #define MODEL_SCALE 0.01f
 
@@ -331,6 +331,9 @@ void CPlayer::Tick(_float fTimeDelta)
 				auto Random_Real_Y = m_pGameInstance->GetRandom_Real(0.25f, 0.3f);
 				m_fRecoil_Rotate_Amount_X = Random_Real_X;
 				m_fRecoil_Rotate_Amount_Y = Random_Real_Y;
+
+				m_pMuzzle_Flash_SG->Set_Render(true);
+				m_pMuzzle_Flash_SG->SetPosition(Get_MuzzlePosition());
 				break;
 			}
 			}
@@ -1237,7 +1240,7 @@ void CPlayer::Apply_Recoil(_float fTimeDelta)
 	}
 
 	m_pTransformCom_Camera->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), -fTimeDelta * 10.f * m_fRecoil_Rotate_Amount_X);
-	m_pTransformCom_Camera->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), -fTimeDelta * 10.f * m_fRecoil_Rotate_Amount_Y);
+	m_pTransformCom_Camera->Turn(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT), -fTimeDelta * 10.f * m_fRecoil_Rotate_Amount_Y);
 }
 
 void CPlayer::RayCast_Shoot()
@@ -1780,21 +1783,27 @@ void CPlayer::Ready_Effect()
 {
 	m_pMuzzle_Flash = CMuzzle_Flash::Create(m_pDevice, m_pContext);
 	m_pMuzzle_Flash->SetSize(0.3f, 0.3f);
+
+	m_pMuzzle_Flash_SG = CMuzzle_Flash_SG::Create(m_pDevice, m_pContext);
+	m_pMuzzle_Flash_SG->SetSize(0.6f, 0.6f);
 }
 
 void CPlayer::Release_Effect()
 {
 	Safe_Release(m_pMuzzle_Flash);
+	Safe_Release(m_pMuzzle_Flash_SG);
 }
 
 void CPlayer::Tick_Effect(_float fTimeDelta)
 {
 	m_pMuzzle_Flash->Tick(fTimeDelta);
+	m_pMuzzle_Flash_SG->Tick(fTimeDelta);
 }
 
 void CPlayer::Late_Tick_Effect(_float fTimeDelta)
 {
 	m_pMuzzle_Flash->Late_Tick(fTimeDelta);
+	m_pMuzzle_Flash_SG->Late_Tick(fTimeDelta);
 }
 
 HRESULT CPlayer::Add_Components()

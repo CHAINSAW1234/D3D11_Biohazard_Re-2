@@ -48,6 +48,23 @@ public:
 	{
 		return m_bReleased;
 	}
+	_float4							GetBlockPoint()
+	{
+		return m_vBlockPoint;
+	}
+	void							SetBlockPoint(_float4 vPoint)
+	{
+		m_vBlockPoint = vPoint;
+	}
+	_float4							GetHitNormal()
+	{
+		return m_vHitNormal;
+	}
+	void							SetHitNormal(_float4 HitNormal)
+	{
+		m_vHitNormal = HitNormal;
+		m_vHitNormal.w = 0.f;
+	}
 public:
 	static CPhysics_Component*		Create();
 
@@ -68,6 +85,8 @@ protected:
 
 	_bool							m_bReleased = { false };
 
+	_float4							m_vBlockPoint;
+	_float4							m_vHitNormal;
 protected:
 	_int m_iRefCnt_Px = { 0 };
 public:

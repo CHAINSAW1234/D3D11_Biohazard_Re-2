@@ -311,6 +311,7 @@ public:
 	void	Late_Tick_Effect(_float fTimeDelta);
 private:
 	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
+	class CMuzzle_Flash_SG*						m_pMuzzle_Flash_SG = { nullptr };
 #pragma endregion
 private:
 	HRESULT Add_Components();

@@ -34,12 +34,12 @@ HRESULT CDecal::Initialize(void* pArg)
 
 void CDecal::Tick(_float fTimeDelta)
 {
-	
+
 }
 
 void CDecal::Late_Tick(_float fTimeDelta)
 {
-	
+
 }
 
 HRESULT CDecal::Render()
@@ -93,4 +93,9 @@ void CDecal::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
+	Safe_Delete(m_DecalInfo);
+	Safe_Release(m_pSB_DecalInfo);
+	Safe_Release(m_pUAV_DecalInfo);
+	Safe_Release(m_pCB_DecalConstData);
+	Safe_Release(m_pStaging_Buffer_Decal_Info);
 }
