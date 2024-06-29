@@ -30,6 +30,7 @@ public:
 private:
 	vector<ID3D11ComputeShader*> m_ComputeShaders = { nullptr };
 	ID3DX11Effect* m_pEffect = { nullptr };
+	ID3D11Query* m_pQuery = { nullptr };
 
 public:
 	static CComputeShader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const wstring& strShaderFilePath, const string& entryPoint);

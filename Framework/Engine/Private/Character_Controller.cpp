@@ -12,7 +12,7 @@
 #define MODEL_SCALE 0.01f
 #define SIZE_VALUE 2.25f
 #define JOINT_GAP 0.1f
-#define RADIUS 2.5f
+#define RADIUS 3.5f
 
 CCharacter_Controller::CCharacter_Controller(PxController* Controller, class CGameObject* pCharacter, PxScene* pScene,
 	PxPhysics* pPhysics, class CTransform* pTransform, vector<class CBone*>* pBones, _int iId, const std::string& name)

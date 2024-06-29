@@ -32,6 +32,7 @@ public:
 
 public:
 	void							Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
+
 private:
 	CModel*							m_pModelCom = { nullptr };
 	CShader*						m_pShaderCom = { nullptr };

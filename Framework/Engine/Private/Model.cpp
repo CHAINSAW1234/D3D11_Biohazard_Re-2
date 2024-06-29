@@ -3018,8 +3018,7 @@ HRESULT CModel::Ready_Animations(ifstream& ifs)
 
 #pragma endregion
 
-#pragma region Create, Release
-
+#pragma region Decal
 void CModel::Bind_Resource_Skinning(_uint iIndex)
 {
 	m_Meshes[iIndex]->Bind_Resource_Skinning();
@@ -3034,6 +3033,37 @@ void CModel::Staging_Skinning(_uint iIndex)
 {
 	m_Meshes[iIndex]->Staging_Skinning();
 }
+
+void CModel::Perform_Skinning(_uint iIndex)
+{
+	m_pGameInstance->Perform_Skinning(m_Meshes[iIndex]->GetNumVertices());
+}
+
+_uint CModel::Perform_RayCasting(_uint iIndex, AddDecalInfo Info)
+{
+	//if (m_Meshes[iIndex]->Is_Hide() == false)
+		return m_Meshes[iIndex]->RayCasting_Decal(Info);
+	//return 999;
+}
+
+void CModel::Perform_Calc_DecalInfo(_uint iIndex)
+{
+	m_Meshes[iIndex]->Calc_Decal_Info();
+}
+
+void CModel::Bind_Resource_DecalMap(_uint iIndex, class CShader* pShader)
+{
+	m_Meshes[iIndex]->Bind_Resource_DecalMap(pShader);
+}
+
+void CModel::Perform_Init_DecalMap(_uint iIndex, class CShader* pShader)
+{
+	m_Meshes[iIndex]->Init_DecalMap(pShader);
+}
+
+#pragma endregion
+
+#pragma region Create, Release
 
 CModel* CModel::Create_Temp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix)
 {

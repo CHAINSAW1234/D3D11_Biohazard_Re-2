@@ -189,5 +189,6 @@ using namespace Engine;
 #pragma region Skinned Mesh Decal
 
 #define SKINNING_THREAD_GROUP_SIZE 64
+#define RAYCAST_THREAD_GROUP_SIZE 64 
 
 #pragma endregion

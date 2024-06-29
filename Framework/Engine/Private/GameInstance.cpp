@@ -1308,6 +1308,11 @@ _vector CGameInstance::Get_Camera_Pos_Vector()
 {
 	return m_pCameraTransform->Get_State_Vector(CTransform::STATE_POSITION);
 }
+
+#pragma endregion
+
+#pragma region CS_Manager
+
 void CGameInstance::Bind_Essential_Resource_Skinning(_float4x4 WorldMat, _float4x4* pBoneMatrices)
 {
 	m_pCS_Manager->Bind_Essential_Resource_Skinning(WorldMat, pBoneMatrices);
@@ -1317,10 +1322,32 @@ void CGameInstance::Bind_Resource_Skinning(SKINNING_INPUT Input)
 {
 	m_pCS_Manager->Bind_Resource_Skinning(Input);
 }
+
 void CGameInstance::Perform_Skinning(_uint iNumVertices)
 {
 	m_pCS_Manager->Perform_Skinning(iNumVertices);
 }
+
+void CGameInstance::Bind_Resource_RayCasting(RAYCASTING_INPUT Input)
+{
+	m_pCS_Manager->Bind_Resource_RayCasting(Input);
+}
+
+void CGameInstance::Perform_RayCasting(_uint iNumTris)
+{
+	m_pCS_Manager->Perform_RayCasting(iNumTris);
+}
+
+void CGameInstance::Bind_Resource_Calc_Decal_Info(CALC_DECAL_INPUT Input)
+{
+	m_pCS_Manager->Bind_Resource_CalcDecalInfo(Input);
+}
+
+void CGameInstance::Perform_Calc_Decal_Info()
+{
+	m_pCS_Manager->Perform_Calc_Decal_Info();
+}
+
 #pragma endregion
 
 #pragma region Render_Target_Debugger

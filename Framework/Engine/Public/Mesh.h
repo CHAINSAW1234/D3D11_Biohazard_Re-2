@@ -172,8 +172,23 @@ public:
 	}
 
 #pragma region For Decal
+	//Skinning
 	void					Bind_Resource_Skinning();
 	void					Staging_Skinning();
+
+	//Ray Casting
+	_uint					RayCasting_Decal(class AddDecalInfo Info);
+
+	//Calc Decal Info
+	void					Calc_Decal_Info();
+	void					SetMeshIndex(_uint iIndex)
+	{
+		m_iMeshIndex = iIndex;
+	}
+
+	//For Render Decal To Map
+	void					Bind_Resource_DecalMap(class CShader* pShader);
+	void					Init_DecalMap(class CShader* pShader);
 #pragma endregion
 
 private:
@@ -185,23 +200,32 @@ private:
 	_float3							m_vCenterPoint;
 
 #pragma region For Decal
-	ID3D11Buffer*					m_pSB_Skinning_Output = { nullptr };
-	ID3D11UnorderedAccessView*		m_pUAV = { nullptr };
-	SKINNING_OUTPUT*				m_pVertices_Skinning = { nullptr };
-	ID3D11Buffer*					m_pStaging_Buffer_Skinning = { nullptr };
-	ID3D11Buffer*					m_pSB_Vertex_Position = { nullptr };
-	ID3D11Buffer*					m_pSB_Vertex_Normal = { nullptr };
-	ID3D11Buffer*					m_pSB_Vertex_Tangent = { nullptr };
-	ID3D11Buffer*					m_pSB_Vertex_BlendIndices = { nullptr };
-	ID3D11Buffer*					m_pSB_Vertex_BlendWeights = { nullptr };
-	ID3D11ShaderResourceView*		m_pSRV_Vertex_Position = { nullptr };
-	ID3D11ShaderResourceView*		m_pSRV_Vertex_Normal = { nullptr };
-	ID3D11ShaderResourceView*		m_pSRV_Vertex_Tangent = { nullptr };
-	ID3D11ShaderResourceView*		m_pSRV_Vertex_BlendIndices = { nullptr };
-	ID3D11ShaderResourceView*		m_pSRV_Vertex_BlendWeights = { nullptr };
+	ID3D11Buffer* m_pSB_Skinning_Output = { nullptr };
+	ID3D11UnorderedAccessView* m_pUAV_Skinning = { nullptr };
+	SKINNING_OUTPUT* m_pVertices_Skinning = { nullptr };
+	ID3D11Buffer* m_pStaging_Buffer_Skinning = { nullptr };
+	ID3D11Buffer* m_pSB_Vertex_Position = { nullptr };
+	ID3D11Buffer* m_pSB_Vertex_Normal = { nullptr };
+	ID3D11Buffer* m_pSB_Vertex_Tangent = { nullptr };
+	ID3D11Buffer* m_pSB_Vertex_BlendIndices = { nullptr };
+	ID3D11Buffer* m_pSB_Vertex_BlendWeights = { nullptr };
+	ID3D11Buffer* m_pSB_Indices = { nullptr };
+	ID3D11Buffer* m_pSB_Texcoord = { nullptr };
+	ID3D11ShaderResourceView* m_pSRV_Vertex_Position = { nullptr };
+	ID3D11ShaderResourceView* m_pSRV_Vertex_Normal = { nullptr };
+	ID3D11ShaderResourceView* m_pSRV_Vertex_Tangent = { nullptr };
+	ID3D11ShaderResourceView* m_pSRV_Vertex_BlendIndices = { nullptr };
+	ID3D11ShaderResourceView* m_pSRV_Vertex_BlendWeights = { nullptr };
+	ID3D11ShaderResourceView* m_pSRV_Indices = { nullptr };
+	ID3D11ShaderResourceView* m_pSRV_Texcoord = { nullptr };
+	ID3D11RenderTargetView* m_pRTV_DecalMap = { nullptr };
+	ID3D11ShaderResourceView* m_pSRV_DecalMap = { nullptr };
 
-	XMUINT4*						m_pBlendIndices = { nullptr };
-	_float4*						m_pBlendWeights = { nullptr };
+	XMUINT4* m_pBlendIndices = { nullptr };
+	_float4* m_pBlendWeights = { nullptr };
+
+	class CDecal_Blood* m_pDecal_Blood = { nullptr };
+	_uint							m_iMeshIndex = { 0 };
 #pragma endregion
 public:
 	/* For.FBXLoad*/

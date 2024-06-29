@@ -29,6 +29,7 @@ namespace Engine
 		PASS_DOF_BLURY,
 		PASS_GODRAY,
 		PASS_FXAA,
+		PASS_BLOOM,
 		PASS_END
 	};
 
