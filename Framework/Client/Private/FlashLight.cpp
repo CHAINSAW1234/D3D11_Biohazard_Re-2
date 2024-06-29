@@ -104,7 +104,7 @@ void CFlashLight::Late_Tick(_float fTimeDelta)
 
 		eNewDesc.bRender = true;
 		eNewDesc.bShadow = true;
-
+		m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, m_strLightTag);
 	}
 	else {
 		eNewDesc.bRender = false;
@@ -112,7 +112,7 @@ void CFlashLight::Late_Tick(_float fTimeDelta)
 	}
 
 	m_pGameInstance->Update_Light(m_strLightTag, eNewDesc, 0, 1.f);
-	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, m_strLightTag);
+
 
 
 #ifdef _DEBUG
