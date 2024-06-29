@@ -38,9 +38,9 @@ void CPlayer_State_Bite::OnStateEnter()
 
 void CPlayer_State_Bite::OnStateUpdate(_float fTimeDelta)
 {
-	//__super::OnStateUpdate(fTimeDelta);
 
-	//m_pPlayer->Update_InterplationMatrix(fTimeDelta);
+	m_pPlayer->Update_InterplationMatrix(fTimeDelta);
+
 	if (m_pPlayer->Get_BiteLayerTag() == TEXT("Bite_Default") && (
 		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == 0 ||
 		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == 2)) {
@@ -49,13 +49,16 @@ void CPlayer_State_Bite::OnStateUpdate(_float fTimeDelta)
 
 	if (m_pPlayer->Get_Body_Model()->isFinished(0)) {
 		if (m_iHp != m_pPlayer->Get_Hp() && 
-			m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == m_pPlayer->Get_BiteAnimIndex()) {
+			m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == m_pPlayer->Get_BiteAnimIndex()
+			|| (m_pPlayer->Get_BiteAnimIndex() == -1)
+			) {
 			m_pPlayer->Change_State(CPlayer::MOVE);
 		}
+		else {
+			m_pPlayer->Get_Body_Model()->Change_Animation(0, m_pPlayer->Get_BiteLayerTag(), m_pPlayer->Get_BiteAnimIndex());
+		}
 	}
-	else {
-		m_pPlayer->Get_Body_Model()->Change_Animation(0, m_pPlayer->Get_BiteLayerTag(), m_pPlayer->Get_BiteAnimIndex());
-	}
+
 
 }
 
