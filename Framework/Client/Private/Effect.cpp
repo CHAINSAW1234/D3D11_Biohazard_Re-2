@@ -26,8 +26,6 @@ HRESULT CEffect::Initialize(void * pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(static_cast<_float>(rand() % 10), 3.f, static_cast<_float>(rand() % 10), 1.f));
-
 	return S_OK;
 }
 
@@ -37,39 +35,15 @@ void CEffect::Tick(_float fTimeDelta)
 
 void CEffect::Late_Tick(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 }
 
 HRESULT CEffect::Render()
 {
-	if (FAILED(Bind_ShaderResources()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin(2);
-
-	m_pVIBufferCom->Bind_Buffers();
-
-	m_pVIBufferCom->Render();
-
 	return S_OK;
 }
 
 void CEffect::Compute_CurrentUV()
 {
-	IMG_SIZE      ImgSize = m_pTextureCom->GetImgSize();
-
-	_uint   iSizeX = { (_uint)((_float)ImgSize.iSizeX / (_float)m_iFrameX) };
-	_uint   iSizeY = { (_uint)((_float)ImgSize.iSizeY / (_float)m_iFrameY) };
-
-	_uint   iCurrentFrame = { (_uint)m_fFrame };
-
-	_uint   iCurrentX = iCurrentFrame % m_iFrameX;
-	_uint   iCurrentY = iCurrentFrame / m_iFrameX;
-
-	m_fMinUV_X = _float(iCurrentX * iSizeX) / ImgSize.iSizeX;
-	m_fMaxUV_X = _float((iCurrentX + 1) * iSizeX) / ImgSize.iSizeX;
-	m_fMinUV_Y = _float(iCurrentY * iSizeY) / ImgSize.iSizeY;
-	m_fMaxUV_Y = _float((iCurrentY + 1) * iSizeY) / ImgSize.iSizeY;
 }
 
 void CEffect::SetPosition(_float4 Pos)

@@ -35,6 +35,7 @@ public:
 	void						SetPlayer(CGameObject* pPlayer);
 	void						LookAt(_float4 vPoint);
 
+	void						Bind_PipeLine();
 public:
 	void	Set_Crosshair_Aiming(_bool _aiming) {
 		m_isCrosshair_Aiming = _aiming;

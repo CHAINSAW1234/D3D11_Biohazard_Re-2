@@ -20,7 +20,7 @@
 
 #define MODEL_SCALE 0.01f
 
-const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_HG"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT")};
+const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_HG"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT") };
 const wstring CPlayer::strAnimSetHoldName[ANIMSET_HOLD_END] = { TEXT("HOLD_HG"), TEXT("HOLG_STG"), TEXT("HOLD_MLE"), TEXT("HOLD_SUP") };
 const wstring CPlayer::strAnimSetEtcName[ANIMSET_ETC_END] = { TEXT("COMMON"), TEXT("BITE") };
 
@@ -73,7 +73,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	Load_CameraPosition();
 	if (FAILED(Ready_Camera()))
 		return E_FAIL;
-	
+
 	m_pGameInstance->SetPlayer(this);
 
 	Ready_Effect();
@@ -115,7 +115,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	else
 		m_bChange = false;
 
-	
+
 #pragma endregion 예은ColTest
 
 #pragma region 이동과 카메라
@@ -301,7 +301,7 @@ void CPlayer::Tick(_float fTimeDelta)
 			m_fLerpTime = 0.f;
 			m_bLerp = true;
 		}
-		
+
 		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
 			RayCast_Shoot();
@@ -310,7 +310,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 			m_fRecoil_Lerp_Time = 0.f;
 			m_fRecoil_Lerp_Time_Omega = 0.f;
-			
+
 			switch (m_eEquip)
 			{
 			case EQUIP::HG:
@@ -438,7 +438,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		CModel* pBodyModel = { Get_Body_Model() };
 		CModel* pWeaponModel = { Get_Weapon_Model() };
-		
+
 		_matrix				LWeaponMatrix = { XMLoadFloat4x4(pBodyModel->Get_CombinedMatrix("l_weapon")) };
 		_matrix				ShotGunrHandleMatrix = {  XMLoadFloat4x4(pWeaponModel->Get_CombinedMatrix("_101"))};
 
@@ -521,9 +521,9 @@ void CPlayer::Late_Tick_PartObjects(_float fTimeDelta)
 void CPlayer::Col_Section()
 {
 	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider"));
-	if(pCollider == nullptr)
+	if (pCollider == nullptr)
 		return;
-	for (auto& iter: *pCollider)
+	for (auto& iter : *pCollider)
 	{
 		if (m_pColliderCom->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")))))
 		{
@@ -585,7 +585,7 @@ _float3* CPlayer::Get_Body_RootDir()
 void CPlayer::Set_Spotlight(_bool isSpotlight)
 {
 	m_isSpotlight = isSpotlight;
-	
+
 	m_PartObjects[PART_LIGHT]->Set_Render(m_isSpotlight);
 
 	Update_AnimSet();
@@ -602,7 +602,7 @@ void CPlayer::Requst_Change_Equip(EQUIP eEquip)
 void CPlayer::Set_Equip(EQUIP eEquip)
 {
 	m_eEquip = eEquip;
-	
+
 	CWeapon::RENDERLOCATION eRenderLocation = { CWeapon::MOVE };
 
 	if (nullptr != m_pWeapon) {
@@ -673,7 +673,7 @@ _float CPlayer::Get_CamDegree()
 _float4 CPlayer::Get_MuzzlePosition()
 {
 	if (nullptr == m_pWeapon) {
-		return _float4(0.f, 0.f, 0.f, 0.f);			// 수정 필요함?
+		return _float4(0.f, 0.f, 0.f, 1.f);
 	}
 
 	return m_pWeapon->Get_MuzzlePosition();
@@ -687,8 +687,8 @@ void CPlayer::Update_FSM()
 {
 
 	if (m_pGameInstance->Get_KeyState(VK_RBUTTON) == PRESSING) {
-		if(nullptr != m_pWeapon &&
-			Get_Body_Model()->Is_Loop_PlayingInfo(3)	)
+		if (nullptr != m_pWeapon &&
+			Get_Body_Model()->Is_Loop_PlayingInfo(3))
 			Change_State(HOLD);
 	}
 	else
@@ -752,7 +752,7 @@ void CPlayer::Update_Equip()
 
 	if (m_isRequestChangeEquip) {
 		if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
-			if(nullptr != m_pWeapon)
+			if (nullptr != m_pWeapon)
 				m_pWeapon->Set_RenderLocation(CWeapon::MOVE);
 
 			Get_Body_Model()->Set_Loop(3, false);
@@ -760,13 +760,13 @@ void CPlayer::Update_Equip()
 			Change_Body_Animation_Hold(3, MOVETOHOLSTER);
 			Get_Body_Model()->Set_BlendWeight(3, 10.f, 6.f);
 		}
-		else if(Get_Body_Model()->isFinished(3)) {
+		else if (Get_Body_Model()->isFinished(3)) {
 			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.01f) {
 				m_isRequestChangeEquip = false;
 				Get_Body_Model()->Set_Loop(3, true);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == HOLSTERTOMOVE) {
-					Get_Body_Model()->Set_BlendWeight(3, 0.f, 6.f);
+				Get_Body_Model()->Set_BlendWeight(3, 0.f, 6.f);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == MOVETOHOLSTER) {
 				Set_Equip(m_eTargetEquip);
@@ -891,11 +891,11 @@ void CPlayer::Turn_Spine_Default(_float fTimeDelta)
 		_vector				vMyLook = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
 		_float4				vHeadWorldLook = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
 		_float				fHeadMagnitude = sqrt(vHeadWorldLook.x * vHeadWorldLook.x + vHeadWorldLook.z * vHeadWorldLook.z);
-		
+
 		_matrix				CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
 		_float4				vCamLook = { CamWorldMatrix.r[CTransform::STATE_LOOK] };
 		_float				fCamMagnitude = sqrt(vCamLook.x * vCamLook.x + vCamLook.z * vCamLook.z);
-		
+
 		_float				fDot = { vHeadWorldLook.x * vCamLook.x + vHeadWorldLook.z * vCamLook.z };
 		_float				fAngle = acos(fDot / (fHeadMagnitude * fCamMagnitude));
 		_vector				vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_UP) };
@@ -909,7 +909,7 @@ void CPlayer::Turn_Spine_Default(_float fTimeDelta)
 		else {
 			fAngle = XMConvertToRadians(45.f);
 		}
-			
+
 		if (vCross.y > 0) {
 			fAngle *= -1;
 		}
@@ -1160,7 +1160,7 @@ void CPlayer::ResetCamera()
 void CPlayer::Apply_Recoil(_float fTimeDelta)
 {
 	//m_fRecoil_Lerp_Time += fTimeDelta*10.f;
-	m_fRecoil_Lerp_Time_Omega += fTimeDelta*20.f;
+	m_fRecoil_Lerp_Time_Omega += fTimeDelta * 20.f;
 	if (m_fRecoil_Lerp_Time_Omega >= PxPiDivTwo)
 	{
 		m_fRecoil_Lerp_Time_Omega = PxPiDivTwo;
@@ -1179,8 +1179,8 @@ void CPlayer::Apply_Recoil(_float fTimeDelta)
 		m_fRecoil_Rotate_Amount_Y_Current = 0.f;
 	}
 
-	m_pTransformCom_Camera->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), -fTimeDelta*10.f* m_fRecoil_Rotate_Amount_X);
-	m_pTransformCom_Camera->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), -fTimeDelta*10.f * m_fRecoil_Rotate_Amount_Y);
+	m_pTransformCom_Camera->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), -fTimeDelta * 10.f * m_fRecoil_Rotate_Amount_X);
+	m_pTransformCom_Camera->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), -fTimeDelta * 10.f * m_fRecoil_Rotate_Amount_Y);
 }
 
 void CPlayer::RayCast_Shoot()
@@ -1628,7 +1628,8 @@ HRESULT CPlayer::Ready_Camera()
 	m_pCamera_Event->Set_SocketMatrix(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("neck_0")));
 	//m_pCamera_Event->Set_SocketMatrix(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_backVest_start")));
 
-	
+	m_pCamera->Bind_PipeLine();
+
 	return S_OK;
 }
 
@@ -1731,6 +1732,8 @@ void CPlayer::Release_Effect()
 
 void CPlayer::Tick_Effect(_float fTimeDelta)
 {
+	m_pMuzzle_Flash->SetPosition(Get_MuzzlePosition());
+
 	m_pMuzzle_Flash->Tick(fTimeDelta);
 }
 
@@ -1754,7 +1757,7 @@ HRESULT CPlayer::Add_Components()
 
 	/* For.Com_Navigation */
 	CNavigation::NAVIGATION_DESC			NavigationDesc{};
-	
+
 	NavigationDesc.iCurrentIndex = 0;
 
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation"),
@@ -1851,10 +1854,10 @@ HRESULT CPlayer::Add_PartObjects()
 	WeaponDesc.eEquip = HG;
 	WeaponDesc.pSocket[CWeapon::MOVE] = WeaponDesc.pSocket[CWeapon::MOVE_LIGHT] = WeaponDesc.pSocket[CWeapon::HOLD] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
 	WeaponDesc.pSocket[CWeapon::HOLSTER] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_holster_main")) };
-	
+
 	_matrix			WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
 	WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-90.f));
-	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] = WeaponDesc.fTransformationMatrices[CWeapon::MOVE_LIGHT] 
+	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] = WeaponDesc.fTransformationMatrices[CWeapon::MOVE_LIGHT]
 		= WeaponDesc.fTransformationMatrices[CWeapon::HOLD] = WeaponTransformMatrix;
 
 	WeaponTransformMatrix = { XMMatrixIdentity() };
@@ -1874,8 +1877,8 @@ HRESULT CPlayer::Add_PartObjects()
 	WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-90.f));
 	WeaponTransformMatrix *= XMMatrixRotationZ(XMConvertToRadians(-25.f));
 	WeaponTransformMatrix *= XMMatrixTranslation(0.f, 0.f, -5.f);
-	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] =  WeaponDesc.fTransformationMatrices[CWeapon::HOLD] = WeaponTransformMatrix;
-	
+	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] = WeaponDesc.fTransformationMatrices[CWeapon::HOLD] = WeaponTransformMatrix;
+
 	WeaponTransformMatrix = { XMMatrixIdentity() };
 	WeaponTransformMatrix *= XMMatrixRotationZ(XMConvertToRadians(-90.f));
 	WeaponTransformMatrix *= XMMatrixTranslation(0.f, 0.f, 30.f);
@@ -1998,6 +2001,6 @@ void CPlayer::Free()
 	m_Weapons.clear();
 
 	Safe_Release(m_pWeapon);
-	
+
 	Release_Effect();
 }

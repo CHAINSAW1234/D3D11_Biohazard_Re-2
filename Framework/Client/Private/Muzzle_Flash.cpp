@@ -26,7 +26,8 @@ HRESULT CMuzzle_Flash::Initialize(void * pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(static_cast<_float>(rand() % 10), 3.f, static_cast<_float>(rand() % 10), 1.f));
+	m_ImgSize = m_pTextureCom->GetImgSize();
+	m_DivideCount = m_pTextureCom->GetDivideCount();
 
 	return S_OK;
 }
@@ -39,11 +40,13 @@ void CMuzzle_Flash::Tick(_float fTimeDelta)
 		m_iFrame = 0;
 
 	Compute_CurrentUV();
+
+	Setup_Billboard();
 }
 
 void CMuzzle_Flash::Late_Tick(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
 }
 
 HRESULT CMuzzle_Flash::Render()
@@ -51,13 +54,36 @@ HRESULT CMuzzle_Flash::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(1);
+	m_pShaderCom->Begin(2);
 
 	m_pVIBufferCom->Bind_Buffers();
 
 	m_pVIBufferCom->Render();
 
 	return S_OK;
+}
+
+void CMuzzle_Flash::Compute_CurrentUV()
+{
+	IMG_SIZE      ImgSize = m_pTextureCom->GetImgSize();
+
+	_uint   iSizeX = { (_uint)((_float)ImgSize.iSizeX / (_float)m_DivideCount.first) };
+	_uint   iSizeY = { (_uint)((_float)ImgSize.iSizeY / (_float)m_DivideCount.second) };
+
+	_uint   iCurrentFrame =	m_iFrame;
+
+	_uint   iCurrentX = iCurrentFrame % m_DivideCount.first;
+	_uint   iCurrentY = iCurrentFrame / m_DivideCount.first;
+
+	m_fMinUV_X = _float(iCurrentX * iSizeX) / ImgSize.iSizeX;
+	m_fMaxUV_X = _float((iCurrentX + 1) * iSizeX) / ImgSize.iSizeX;
+	m_fMinUV_Y = _float(iCurrentY * iSizeY) / ImgSize.iSizeY;
+	m_fMaxUV_Y = _float((iCurrentY + 1) * iSizeY) / ImgSize.iSizeY;
+}
+
+void CMuzzle_Flash::Setup_Billboard()
+{
+	m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Float4());
 }
 
 void CMuzzle_Flash::SetSize(_float fSizeX, _float fSizeY)

@@ -378,6 +378,8 @@ public:
 	{
 		return m_pCameraTransform;
 	}
+	_float4									Get_Camera_Pos_Float4();
+	_vector									Get_Camera_Pos_Vector();
 #pragma endregion
 
 #pragma region For Compute Shader Manager

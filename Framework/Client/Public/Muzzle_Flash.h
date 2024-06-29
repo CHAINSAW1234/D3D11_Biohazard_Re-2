@@ -20,6 +20,9 @@ public:
 	virtual HRESULT			Render() override;
 
 public:
+	virtual void			Compute_CurrentUV();
+	virtual void			Setup_Billboard() override;
+public:
 	void					SetSize(_float fSizeX, _float fSizeY);
 
 

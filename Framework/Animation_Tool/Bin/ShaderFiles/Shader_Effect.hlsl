@@ -6,8 +6,11 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D	g_Texture;
 texture2D	g_DepthTexture;
 
-uint g_PIndex;
-uint g_VIndex;
+float g_fMinUV_X;
+float g_fMinUV_Y;
+float g_fMaxUV_X;
+float g_fMaxUV_Y;
+float g_fAlpha;
 
 struct VS_IN
 {
@@ -74,6 +77,11 @@ struct PS_OUT
 	float4		vColor : SV_TARGET0;
 };
 
+struct PS_OUT_EFFECT
+{
+	float4		vDiffuse : SV_TARGET0;
+};
+
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -110,37 +118,21 @@ PS_OUT PS_MAIN_ALPHABLEND(PS_IN_ALPHABLEND In)
 	return Out;
 }
 
-PS_OUT PS_EFFECT(PS_IN In)
+PS_OUT_EFFECT PS_EFFECT(PS_IN In)
 {
-	PS_OUT      Out = (PS_OUT)0;
-
-	g_Texture.GetDimensions(fWidth, fHeight);
-
-	_uint   iSizeX = { (_uint)((_float)ImgSize.iSizeX / (_float)m_iFrameX) };
-	_uint   iSizeY = { (_uint)((_float)ImgSize.iSizeY / (_float)m_iFrameY) };
-
-	_uint   iCurrentFrame = { (_uint)m_fFrame };
-
-	_uint   iCurrentX = iCurrentFrame % m_iFrameX;
-	_uint   iCurrentY = iCurrentFrame / m_iFrameX;
-
-	m_fMinUV_X = _float(iCurrentX * iSizeX) / ImgSize.iSizeX;
-	m_fMaxUV_X = _float((iCurrentX + 1) * iSizeX) / ImgSize.iSizeX;
-	m_fMinUV_Y = _float(iCurrentY * iSizeY) / ImgSize.iSizeY;
-	m_fMaxUV_Y = _float((iCurrentY + 1) * iSizeY) / ImgSize.iSizeY;
-
-	
+	PS_OUT_EFFECT      Out = (PS_OUT_EFFECT)0;
 
 	float       fTexcoordLinearX = g_fMinUV_X + (In.vTexcoord.x * (g_fMaxUV_X - g_fMinUV_X));
 	float       fTexcoordLinearY = g_fMinUV_Y + (In.vTexcoord.y * (g_fMaxUV_Y - g_fMinUV_Y));
 	float2      vTexcoordLinear = float2(fTexcoordLinearX, fTexcoordLinearY);
 
 	Out.vDiffuse = g_Texture.Sample(LinearSampler, vTexcoordLinear);
+	
+	//Out.vDiffuse.a *= g_fAlpha;
+	Out.vDiffuse.a *= 1.f;
 
-	Out.vDiffuse.a *= g_fAlpha;
-
-	Out.vMaterial = 0.f;
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
+	//Out.vMaterial = 0.f;
+	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
 
 	return Out;
 }
@@ -175,7 +167,7 @@ technique11 DefaultTechnique
 
 	pass SingleSprite
 	{
-		SetRasterizerState(RS_Default);
+		SetRasterizerState(RS_NoCulling);
 		SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 

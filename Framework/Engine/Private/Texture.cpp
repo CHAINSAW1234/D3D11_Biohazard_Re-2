@@ -11,6 +11,8 @@ CTexture::CTexture(const CTexture & rhs)
 	: CComponent{ rhs }
 	, m_Textures{ rhs.m_Textures }
 	, m_iNumTextures{ rhs.m_iNumTextures }
+	, m_TextureSize{ rhs.m_TextureSize }
+	, m_DivideCount{rhs.m_DivideCount}
 {
 	for (auto& pSRV : m_Textures)
 		Safe_AddRef(pSRV);

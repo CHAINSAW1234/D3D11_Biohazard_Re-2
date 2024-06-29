@@ -1272,6 +1272,14 @@ list<string> CGameInstance::Get_Animation_Tags(const wstring& setrAnimLayerTag)
 
 	return m_pAnimation_Library->Get_Animation_Tags(setrAnimLayerTag);
 }
+_float4 CGameInstance::Get_Camera_Pos_Float4()
+{
+	return m_pCameraTransform->Get_State_Float4(CTransform::STATE_POSITION);
+}
+_vector CGameInstance::Get_Camera_Pos_Vector()
+{
+	return m_pCameraTransform->Get_State_Vector(CTransform::STATE_POSITION);
+}
 void CGameInstance::Bind_Essential_Resource_Skinning(_float4x4 WorldMat, _float4x4* pBoneMatrices)
 {
 	m_pCS_Manager->Bind_Essential_Resource_Skinning(WorldMat, pBoneMatrices);

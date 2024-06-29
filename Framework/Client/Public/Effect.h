@@ -20,9 +20,9 @@ public:
 	virtual HRESULT			Render();
 
 public:
-	void					Compute_CurrentUV();
+	virtual void			Compute_CurrentUV();
 	void					SetPosition(_float4 Pos);
-
+	virtual void			Setup_Billboard() {}
 protected:
 	_float					m_fSizeX = { 0.f };
 	_float					m_fSizeY = { 0.f };
@@ -35,7 +35,7 @@ protected:
 
 protected:
 	_float					m_fFrame = { 0.f };
-	_uint					m_iFrame = { 0.f };
+	_uint					m_iFrame = { 0 };
 	IMG_SIZE				m_ImgSize;
 	pair<_uint, _uint>		m_DivideCount;
 	_uint					m_iFrameX = { 0 };
