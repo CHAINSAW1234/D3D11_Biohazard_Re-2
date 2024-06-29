@@ -106,7 +106,9 @@ void CLightly_Hold_Zombie::Change_Animation()
 	else if (DIRECTION::_B == eDirection)
 	{
 		_float3				vDirectionToPlayerLocalFloat3;
-		if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3));
+		if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3))
+			return;
+
 		_vector				vDirectionToPlayerLocal = { XMLoadFloat3(&vDirectionToPlayerLocalFloat3) };
 		_bool				isRight = { 0.f < XMVectorGetX(vDirectionToPlayerLocal) };
 
@@ -134,11 +136,11 @@ void CLightly_Hold_Zombie::Change_Animation()
 	if (-1 == iResultAnimationIndex)
 		return;
 
-	for (_uint i = 0; i < static_cast<_uint>(ANIM_ORDINARY_HOLD::_END); ++i)
-	{
-		pBodyModel->Set_TickPerSec(TEXT("Ordinary_Hold"), i, 5.f);
+	//for (_uint i = 0; i < static_cast<_uint>(ANIM_ORDINARY_HOLD::_END); ++i)
+	//{
+	//	pBodyModel->Set_TickPerSec(TEXT("Ordinary_Hold"), i, 5.f);
 
-	}
+	//}
 	pBodyModel->Change_Animation(iPlayingIndex, strAnimLayerTag, iResultAnimationIndex);
 	pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
 }
