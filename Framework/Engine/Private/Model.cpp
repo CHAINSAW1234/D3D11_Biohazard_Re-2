@@ -3039,10 +3039,10 @@ void CModel::Perform_Skinning(_uint iIndex)
 	m_pGameInstance->Perform_Skinning(m_Meshes[iIndex]->GetNumVertices());
 }
 
-_uint CModel::Perform_RayCasting(_uint iIndex, AddDecalInfo Info)
+_uint CModel::Perform_RayCasting(_uint iIndex, AddDecalInfo Info, _float* pDist)
 {
 	//if (m_Meshes[iIndex]->Is_Hide() == false)
-		return m_Meshes[iIndex]->RayCasting_Decal(Info);
+		return m_Meshes[iIndex]->RayCasting_Decal(Info,pDist);
 	//return 999;
 }
 

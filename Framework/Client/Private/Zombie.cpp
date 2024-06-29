@@ -191,8 +191,8 @@ void CZombie::Tick(_float fTimeDelta)
 			/*For Blood Effect*/
 			m_bSetBlood = true;
 			m_BloodTime = GetTickCount64();
-			m_vHitPosition = m_pController->GetBlockPoint();
-			m_vHitNormal = m_pController->GetHitNormal();
+			//m_vHitPosition = m_pController->GetBlockPoint();
+			//m_vHitNormal = m_pController->GetHitNormal();
 
 			m_pController->Set_Hit(false);
 
@@ -559,7 +559,7 @@ HRESULT CZombie::Add_Components()
 	/* Com_Collider_Body */
 	CBounding_AABB::BOUNDING_AABB_DESC		ColliderAABBDesc{};
 
-	ColliderAABBDesc.vSize = _float3(0.4f, 1.6f, 0.4f);
+	ColliderAABBDesc.vSize = _float3(0.8f, 2.f, 0.8f);
 	ColliderAABBDesc.vCenter = _float3(0.f, ColliderAABBDesc.vSize.y * 0.5f, 0.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
@@ -811,11 +811,16 @@ void CZombie::Ready_Decal()
 		_int iMeshIndex = -1;
 		for (int i = 0; i < m_pBodyModel->GetNumMesh(); ++i)
 		{
-			iMeshIndex = m_pBodyModel->Perform_RayCasting(i, decalInfo);
+			iMeshIndex = m_pBodyModel->Perform_RayCasting(i, decalInfo,&m_fHitDistance);
 
 			if (iMeshIndex != 999)
 			{
 				iMeshIndex = i;
+
+				_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK),m_fHitDistance);
+				_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
+				XMStoreFloat4(&m_vHitPosition, CameraPos);
+
 				break;
 			}
 		}
@@ -870,6 +875,7 @@ void CZombie::SetBlood()
 	{
 		m_bSetBlood = false;
 		m_iBloodCount = 0;
+		m_vHitPosition = _float4(0.f, 0.f, 0.f, 1.f);
 		return;
 	}
 
@@ -877,7 +883,7 @@ void CZombie::SetBlood()
 	{
 		m_BloodTime = GetTickCount64();
 		m_vecBlood[m_iBloodCount]->Set_Render(true);
-		m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
+		//m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
 
 		if(m_iBloodCount == 0)
 		{
@@ -918,6 +924,7 @@ void CZombie::SetBlood()
 		{
 			m_bSetBlood = false;
 			m_iBloodCount = 0;
+			m_vHitPosition = _float4(0.f, 0.f, 0.f, 1.f);
 			return;
 		}
 	}

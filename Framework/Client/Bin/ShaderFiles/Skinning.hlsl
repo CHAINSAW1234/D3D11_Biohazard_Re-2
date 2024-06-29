@@ -23,13 +23,13 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID)
         float3 vertexPosition = float3(0.0f, 0.0f, 0.0f);
         float3 vertexNormal = float3(0.0f, 0.0f, 0.0f);
         float3 vertexTangent = float3(0.0f, 0.0f, 0.0f);
-        
+
         float fTotalWeight = 1.f;
-    
+
         matrix BoneMatrix = g_BoneMatrices[g_VertexBlendIndices[vertexIndex].x] * g_VertexBlendWeights[vertexIndex].x / fTotalWeight +
-		g_BoneMatrices[g_VertexBlendIndices[vertexIndex].y] * g_VertexBlendWeights[vertexIndex].y / fTotalWeight +
-		g_BoneMatrices[g_VertexBlendIndices[vertexIndex].z] * g_VertexBlendWeights[vertexIndex].z / fTotalWeight +
-		g_BoneMatrices[g_VertexBlendIndices[vertexIndex].w] * g_VertexBlendWeights[vertexIndex].w / fTotalWeight;
+            g_BoneMatrices[g_VertexBlendIndices[vertexIndex].y] * g_VertexBlendWeights[vertexIndex].y / fTotalWeight +
+            g_BoneMatrices[g_VertexBlendIndices[vertexIndex].z] * g_VertexBlendWeights[vertexIndex].z / fTotalWeight +
+            g_BoneMatrices[g_VertexBlendIndices[vertexIndex].w] * g_VertexBlendWeights[vertexIndex].w / fTotalWeight;
 
         float4 vPosition = mul(float4(g_VertexPositions[vertexIndex], 1.f), BoneMatrix);
         float4 vNormal = mul(float4(g_VertexNormals[vertexIndex], 0.f), BoneMatrix);
@@ -37,7 +37,7 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID)
         vertexPosition = mul(g_WorldMatrix, vPosition).xyz;
         vertexNormal = normalize(mul(g_WorldMatrix, vNormal));
         vertexTangent = normalize(mul(g_WorldMatrix, g_VertexTangents[vertexIndex])).xyz;
-        
+
         g_Skinnig_Output[vertexIndex].vPosition = vertexPosition;
         g_Skinnig_Output[vertexIndex].vNormal = vertexNormal;
         g_Skinnig_Output[vertexIndex].vTangent = vertexTangent;

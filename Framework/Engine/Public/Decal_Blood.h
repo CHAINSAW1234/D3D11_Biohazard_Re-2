@@ -24,7 +24,7 @@ public:
 		m_pModel = pModel;
 	}
 	virtual void	Bind_Resource_DecalInfo() override;
-	virtual _uint	Staging_DecalInfo_RayCasting() override;
+	virtual _uint	Staging_DecalInfo_RayCasting(_float* pDist) override;
 	virtual void	Staging_Calc_Decal_Info() override;
 	virtual void	Calc_Decal_Info(CALC_DECAL_INPUT Input) override;
 public:

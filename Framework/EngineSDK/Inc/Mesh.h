@@ -177,7 +177,7 @@ public:
 	void					Staging_Skinning();
 
 	//Ray Casting
-	_uint					RayCasting_Decal(class AddDecalInfo Info);
+	_uint					RayCasting_Decal(class AddDecalInfo Info,_float* pDist);
 
 	//Calc Decal Info
 	void					Calc_Decal_Info();

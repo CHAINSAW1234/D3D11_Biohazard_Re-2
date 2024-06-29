@@ -27,7 +27,7 @@ public:
 public:
 	virtual void	Add_Skinned_Decal(AddDecalInfo Info, RAYCASTING_INPUT Input) {}
 	virtual void	Bind_Resource_DecalInfo() {}
-	virtual _uint	Staging_DecalInfo_RayCasting() { return 0; }
+	virtual _uint	Staging_DecalInfo_RayCasting(_float* pDist) { return 0; }
 	virtual void	Calc_Decal_Info(CALC_DECAL_INPUT Input) {}
 	virtual void	Staging_Calc_Decal_Info() {}
 

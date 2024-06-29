@@ -98,6 +98,7 @@ protected:
 	_float4								m_vHitPosition;
 	_float4								m_vHitNormal;
 	_uint								m_iBloodType = { 0 };
+	_float								m_fHitDistance = { 0.f };
 #pragma endregion
 
 public:

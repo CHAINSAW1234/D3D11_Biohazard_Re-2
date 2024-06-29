@@ -50,7 +50,7 @@ void CDecal_Blood::Bind_Resource_DecalInfo()
 
 }
 
-_uint CDecal_Blood::Staging_DecalInfo_RayCasting()
+_uint CDecal_Blood::Staging_DecalInfo_RayCasting(_float* pDist)
 {
 	m_pContext->CopyResource(m_pStaging_Buffer_Decal_Info, m_pSB_DecalInfo);
 
@@ -63,6 +63,14 @@ _uint CDecal_Blood::Staging_DecalInfo_RayCasting()
 	_uint iResult = pDecalInfo->isHit;
 	_uint iHitDistance = (pDecalInfo->decalHitMask >> 24u) & 0xff;
 	pDecalInfo->isHit = 0xffff;
+
+	float hitDistanceN = iHitDistance / 255.0f;
+
+	float hitDistancesX = m_DecalConstData.hitDistances.x;
+	float hitDistancesZ = m_DecalConstData.hitDistances.z;
+	float hitDistance = hitDistanceN / hitDistancesZ + hitDistancesX;
+
+	*pDist = hitDistance;
 	//pDecalInfo->decalHitMask = 0;
 
 	m_pContext->Unmap(m_pStaging_Buffer_Decal_Info, 0);

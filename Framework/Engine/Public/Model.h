@@ -366,7 +366,7 @@ public:/*For Skinned Mesh Decal*/
 	void									Perform_Skinning(_uint iIndex);
 
 public:/*For Mesh RayCasting*/
-	_uint									Perform_RayCasting(_uint iIndex, AddDecalInfo Info);
+	_uint									Perform_RayCasting(_uint iIndex, AddDecalInfo Info,_float* pDist);
 
 public:/*For Calc Decal Info*/
 	void									Perform_Calc_DecalInfo(_uint iIndex);
