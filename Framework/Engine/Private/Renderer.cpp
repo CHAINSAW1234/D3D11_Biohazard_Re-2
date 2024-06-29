@@ -122,8 +122,7 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 
-	if (FAILED(Render_Effect_Bloom()))
-		return E_FAIL;
+
 
 	//if (FAILED(Render_Distortion()))
 	//	return E_FAIL;
@@ -138,6 +137,9 @@ HRESULT CRenderer::Render()
 		return E_FAIL;
 
 	if (FAILED(Render_PostProcessing_Result()))
+		return E_FAIL;
+	
+	if (FAILED(Render_Effect_Bloom()))
 		return E_FAIL;
 
 	if (FAILED(Render_UI()))
