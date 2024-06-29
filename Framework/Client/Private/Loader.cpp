@@ -494,7 +494,7 @@ HRESULT CLoader::Load_Prototype()
 
 	/* For.Prototype_GameObject_InventorySlot */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_InventorySlot"),
-		CInventory_Slot::Create(m_pDevice, m_pContext))))
+		CItem_Discription::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_SlotHighlighter */

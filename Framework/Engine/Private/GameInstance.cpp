@@ -272,12 +272,40 @@ _float4 CGameInstance::GetPlayerPos()
 	return m_pPlayer->GetPosition();
 }
 
-//wstring CGameInstance::UTF8ToUTF16(const string& utf8Str)
-//{
-//	//wstring_convert<codecvt_utf8_utf16<wchar_t>> converter;
-//	//return converter.from_bytes(utf8Str);
-//
-//}
+wstring CGameInstance::StringToWstring(const std::string& strString)
+{
+	std::setlocale(LC_ALL, "");
+	size_t requiredSize = 0;
+	mbstowcs_s(&requiredSize, nullptr, 0, strString.c_str(), strString.size());
+	std::vector<wchar_t> buffer(requiredSize);
+	mbstowcs_s(&requiredSize, buffer.data(), buffer.size(), strString.c_str(), strString.size());
+	return std::wstring(buffer.data());
+}
+
+string CGameInstance::WstringToString(const wstring& wstrString)
+{
+	std::setlocale(LC_ALL, "");
+	size_t requiredSize = 0;
+	wcstombs_s(&requiredSize, nullptr, 0, wstrString.c_str(), wstrString.size());
+	std::vector<char> buffer(requiredSize);
+	wcstombs_s(&requiredSize, buffer.data(), buffer.size(), wstrString.c_str(), wstrString.size());
+	return std::string(buffer.data());
+}
+
+wstring CGameInstance::ConvertToWString(const char* str, size_t len)
+{
+	vector<wchar_t> buffer(len + 1);
+
+	int numChars = MultiByteToWideChar(CP_UTF8, 0, str, -1, buffer.data(), static_cast<int>(buffer.size()));
+
+	if (numChars > 0) 
+	{
+		return wstring(buffer.data());
+	}
+
+	return wstring();
+}
+
 
 #pragma region Input_Device
 _uint CGameInstance::Get_KeyState(_int iKey)

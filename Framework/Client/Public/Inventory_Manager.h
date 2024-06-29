@@ -136,8 +136,6 @@ private :
 	ITEM_NUMBER										m_CombineResources[2] = {ITEM_NUMBER_END, ITEM_NUMBER_END};
 
 
-
-
 private:
 	HRESULT Init_InvenSlot();
 	HRESULT Init_SlotHighlighter();
@@ -147,6 +145,8 @@ private:
 
 	HRESULT Seting_SubInven();
 	HRESULT Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval);
+
+
 
 public:
 	static CInventory_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
