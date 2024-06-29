@@ -29,15 +29,23 @@ HRESULT CMuzzle_Flash::Initialize(void * pArg)
 	m_ImgSize = m_pTextureCom->GetImgSize();
 	m_DivideCount = m_pTextureCom->GetDivideCount();
 
+	m_bRender = false;
+
 	return S_OK;
 }
 
 void CMuzzle_Flash::Tick(_float fTimeDelta)
 {
+	if (m_bRender == false)
+		return;
+
 	++m_iFrame;
 
 	if (m_iFrame >= 2)
+	{
+		m_bRender = false;
 		m_iFrame = 0;
+	}
 
 	Compute_CurrentUV();
 
@@ -46,7 +54,8 @@ void CMuzzle_Flash::Tick(_float fTimeDelta)
 
 void CMuzzle_Flash::Late_Tick(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONLIGHT, this);
+	if(m_bRender == true)
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CMuzzle_Flash::Render()
