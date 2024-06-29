@@ -669,11 +669,11 @@ void CPlayer::Change_Player_State_Bite(_int iAnimIndex, const wstring& strLayerT
 
 	// bite zombie apply m
 
-}
+}   
 
 void CPlayer::Request_NextBiteAnimation(_int iAnimIndex)
 {
-	m_iBiteAnimIndex = iAnimIndex;
+ 	m_iBiteAnimIndex = iAnimIndex;
 }
 
 _float CPlayer::Get_CamDegree()
@@ -725,12 +725,16 @@ void CPlayer::Update_InterplationMatrix(_float fTimeDelta)
 	_matrix				vCurrentRotationInverse = { XMMatrixRotationQuaternion(vCurrentQuaternionInv) };
 	vCurrentTranslation = XMVector3TransformNormal(vCurrentQuaternion, vCurrentRotationInverse);
 
-	_matrix				AIWorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
-	_matrix				CurrentRotationMatrix = { XMMatrixRotationQuaternion(vCurrentQuaternion) };
-	_matrix				CurrentTimesMatrix = { CurrentRotationMatrix };
-	CurrentTimesMatrix.r[CTransform::STATE_POSITION].m128_f32[3] = 0.f;
+	_matrix            AIWorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
+	_matrix            CurrentRotationMatrix = { XMMatrixRotationQuaternion(vCurrentQuaternion) };
+	_matrix            CurrentTimesMatrix = { CurrentRotationMatrix };
+	//   CurrentTimesMatrix.r[CTransform::STATE_POSITION].m128_f32[3] = 0.f;
 
-	_matrix				TimesCombinedMatrix = { AIWorldMatrix * CurrentTimesMatrix };
+	_vector            vPosition = { AIWorldMatrix.r[CTransform::STATE_POSITION] };
+	AIWorldMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+
+	_matrix            TimesCombinedMatrix = { AIWorldMatrix * CurrentTimesMatrix };
+	TimesCombinedMatrix.r[CTransform::STATE_POSITION] = vPosition;
 
 	m_pTransformCom->Set_WorldMatrix(TimesCombinedMatrix);
 	m_vRootTranslation = { XMLoadFloat3(&m_vRootTranslation) + vCurrentTranslation };

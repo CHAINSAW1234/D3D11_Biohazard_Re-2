@@ -769,7 +769,7 @@ HRESULT CBody_Player::Add_Animations()
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Common"), CPlayer::Get_AnimSetEtcName(CPlayer::ANIMSET_ETC::COMMON))))
 		return E_FAIL;
 
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Bite_Default"), TEXT("Bite_Default"))))
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Bite_Default"), TEXT("Bite_Default_Front"))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Bite_Default_Back"), TEXT("Bite_Default_Back"))))
 		return E_FAIL;

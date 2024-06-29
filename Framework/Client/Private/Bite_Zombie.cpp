@@ -110,7 +110,6 @@ void CBite_Zombie::Change_Animation_Default_Front(BITE_ANIM_STATE eState)
 	{
 		iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_DEFAULT);
 #ifdef _DEBUG
-		else
 		{
 			MSG_BOX(TEXT("Calld : void CBite_Zombie::Change_Animation_Default(BITE_ANIM_STATE eState)"));
 		}
@@ -182,19 +181,19 @@ void CBite_Zombie::Change_Animation_Default_Back(BITE_ANIM_STATE eState)
 		if (true == isCanKillPlayer)
 		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_BACK::_KILL_B);
-	}
+		}
 
 		else
 		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_BACK::_REJECT_B);
 		}
+	}
 #ifdef _DEBUG
 	else
 	{
 		MSG_BOX(TEXT("Calld : void CBite_Zombie::Change_Animation_Default(BITE_ANIM_STATE eState)"));
 	}
 #endif
-	}
 
 	_int			iPreAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
 	if (iPreAnimIndex != iResultAnimationIndex)
