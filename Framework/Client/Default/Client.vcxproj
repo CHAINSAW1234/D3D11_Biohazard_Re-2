@@ -267,9 +267,6 @@
     <ClInclude Include="..\Public\Part_InteractProps.h" />
     <ClInclude Include="..\public\Player.h" />
     <ClInclude Include="..\Public\Player_State_Bite.h" />
-    <ClInclude Include="..\Public\Player_State_Bite_Kill.h" />
-    <ClInclude Include="..\Public\Player_State_Bite_Reject.h" />
-    <ClInclude Include="..\Public\Player_State_Bite_Start.h" />
     <ClInclude Include="..\Public\Player_State_Hold.h" />
     <ClInclude Include="..\Public\Player_State_Hold_Idle.h" />
     <ClInclude Include="..\Public\Player_State_Hold_Start.h" />
@@ -431,9 +428,6 @@
     <ClCompile Include="..\Private\Part_InteractProps.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
     <ClCompile Include="..\Private\Player_State_Bite.cpp" />
-    <ClCompile Include="..\Private\Player_State_Bite_Kill.cpp" />
-    <ClCompile Include="..\Private\Player_State_Bite_Reject.cpp" />
-    <ClCompile Include="..\Private\Player_State_Bite_Start.cpp" />
     <ClCompile Include="..\Private\Player_State_Hold.cpp" />
     <ClCompile Include="..\Private\Player_State_Hold_Idle.cpp" />
     <ClCompile Include="..\Private\Player_State_Hold_Start.cpp" />

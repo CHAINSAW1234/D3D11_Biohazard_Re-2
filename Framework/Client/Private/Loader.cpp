@@ -1271,8 +1271,21 @@ HRESULT CLoader::Load_Animations()
 
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Common"), "../Bin/Resources/Animations/Player/Body/move/move_common/")))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Bite"), "../Bin/Resources/Animations/Player/Body/bite/")))
+
+#pragma region Player_Bite
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Bite_Push_Down"), "../Bin/Resources/Animations/Player/Body/bite/Bite_Push_Down/")))
 		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Bite_Creep"), "../Bin/Resources/Animations/Player/Body/bite/Bite_Creep/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Bite_Default"), "../Bin/Resources/Animations/Player/Body/bite/Bite_Default/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Bite_Default_Back"), "../Bin/Resources/Animations/Player/Body/bite/Bite_Default_Back/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Bite_Lightly_Hold"), "../Bin/Resources/Animations/Player/Body/bite/Bite_Lightly_Hold/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Bite_ETC"), "../Bin/Resources/Animations/Player/Body/bite/Bite_ETC/")))
+		return E_FAIL;
+#pragma endregion
 
 #pragma endregion
 

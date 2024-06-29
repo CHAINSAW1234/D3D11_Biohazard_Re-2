@@ -4,6 +4,7 @@
 #include "FSM.h"
 #include "Player_State_Move.h"
 #include "Player_State_Hold.h"
+#include "Player_State_Bite.h"
 
 #include "Body_Player.h"
 #include "Head_Player.h"
@@ -367,6 +368,11 @@ void CPlayer::Tick(_float fTimeDelta)
 		Set_Hp(5);
 	}
 
+	if (m_pGameInstance->Get_KeyState('T') == DOWN) {
+		Change_Player_State_Bite(0, TEXT("Bite_Default"), XMMatrixIdentity(), 0.2f);
+		Request_NextBiteAnimation(1);
+
+	}
 
 
 	//if (m_pGameInstance->Get_KeyState('E') == DOWN) {
@@ -602,7 +608,7 @@ void CPlayer::Requst_Change_Equip(EQUIP eEquip)
 void CPlayer::Set_Equip(EQUIP eEquip)
 {
 	m_eEquip = eEquip;
-
+	eEquip = NONE;
 	CWeapon::RENDERLOCATION eRenderLocation = { CWeapon::MOVE };
 
 	if (nullptr != m_pWeapon) {
@@ -636,22 +642,35 @@ void CPlayer::Set_Hp(_int iHp)
 	if (m_iHp <= 0) {
 		;;		// 사망 처리?
 	}
-
+	
+	Update_AnimSet();
 	NotifyObserver();
+
 }
 
 void CPlayer::Change_State(STATE eState)
 {
 	m_pFSMCom->Change_State(eState);
+	m_eState = eState;
 }
 
-void CPlayer::Change_Player_State_Bite(_int iAnimIndex, wstring& strLayerTag, _float4x4 Interpolationmatrix, _float fTotalInterpolateTime)
+void CPlayer::Change_Player_State_Bite(_int iAnimIndex, const wstring& strLayerTag, _float4x4 Interpolationmatrix, _float fTotalInterpolateTime)
 {
-	m_strBiteLayerTag = 0.f;
 	m_fCurrentInterpolateTime = 0.f;
+	m_fTotalInterpolateTime = fTotalInterpolateTime;
+
+	m_iBiteAnimIndex = iAnimIndex;
+	m_strBiteLayerTag = strLayerTag;
+
+	Change_State(BITE);
 
 	// bite zombie apply m
 
+}
+
+void CPlayer::Request_NextBiteAnimation(_int iAnimIndex)
+{
+	m_iBiteAnimIndex = iAnimIndex;
 }
 
 _float CPlayer::Get_CamDegree()
@@ -681,18 +700,58 @@ _float4 CPlayer::Get_MuzzlePosition()
 
 void CPlayer::Update_InterplationMatrix(_float fTimeDelta)
 {
+
+
+	m_fCurrentInterpolateTime += fTimeDelta;
+	if (m_fCurrentInterpolateTime > m_fTotalInterpolateTime)
+	{
+		fTimeDelta += m_fTotalInterpolateTime - m_fCurrentInterpolateTime;
+		m_fCurrentInterpolateTime = m_fTotalInterpolateTime;
+	}
+
+	_float				fRatio = { fTimeDelta / m_fTotalInterpolateTime };
+
+	_vector				vScale, vTranslation, vQuaternion;
+
+	XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, XMLoadFloat4x4(&m_vBiteInterpolateMatrix));
+
+	_vector				vCurrentTranslation = { vTranslation * fRatio };
+	_vector				vCurrentQuaternion = { XMQuaternionSlerp(XMQuaternionIdentity(), vQuaternion, fRatio) };
+
+	_vector				vCurrentQuaternionInv = { XMQuaternionInverse(XMQuaternionNormalize(vCurrentQuaternion)) };
+	_matrix				vCurrentRotationInverse = { XMMatrixRotationQuaternion(vCurrentQuaternionInv) };
+	vCurrentTranslation = XMVector3TransformNormal(vCurrentQuaternion, vCurrentRotationInverse);
+
+	_matrix				AIWorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
+	_matrix				CurrentRotationMatrix = { XMMatrixRotationQuaternion(vCurrentQuaternion) };
+	_matrix				CurrentTimesMatrix = { CurrentRotationMatrix };
+	CurrentTimesMatrix.r[CTransform::STATE_POSITION].m128_f32[3] = 0.f;
+
+	_matrix				TimesCombinedMatrix = { AIWorldMatrix * CurrentTimesMatrix };
+
+	m_pTransformCom->Set_WorldMatrix(TimesCombinedMatrix);
+	m_vRootTranslation = { XMLoadFloat3(&m_vRootTranslation) + vCurrentTranslation };
+
 }
 
 void CPlayer::Update_FSM()
 {
-
-	if (m_pGameInstance->Get_KeyState(VK_RBUTTON) == PRESSING) {
-		if (nullptr != m_pWeapon &&
-			Get_Body_Model()->Is_Loop_PlayingInfo(3))
-			Change_State(HOLD);
+	switch(m_eState) {
+	case MOVE:
+		if (m_pGameInstance->Get_KeyState(VK_RBUTTON) == PRESSING) {
+			if (nullptr != m_pWeapon &&
+				Get_Body_Model()->Is_Loop_PlayingInfo(3))
+				Change_State(HOLD);
+		}
+		break;
+	case HOLD:
+		if (m_pGameInstance->Get_KeyState(VK_RBUTTON) != PRESSING) {
+			Change_State(MOVE);
+		}
+		break;
+	case BITE:
+		break;
 	}
-	else
-		Change_State(MOVE);
 }
 
 void CPlayer::Update_KeyInput_Reload()
@@ -770,7 +829,6 @@ void CPlayer::Update_Equip()
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == MOVETOHOLSTER) {
 				Set_Equip(m_eTargetEquip);
-				m_eEquip = NONE;
 				Change_Body_Animation_Hold(3, HOLSTERTOMOVE);
 			}
 		}
@@ -794,7 +852,7 @@ void CPlayer::Update_Equip()
 void CPlayer::Update_AnimSet()
 {
 #pragma region Move
-	if (m_isSpotlight) {
+		if (m_isSpotlight) {
 		if (m_iHp >= 4) {
 			m_eAnimSet_Move = FINE_LIGHT;
 		}
@@ -842,19 +900,15 @@ void CPlayer::Update_AnimSet()
 	}
 #pragma endregion
 
-	if (m_eState == MOVE) {
-		//Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
-		//_float fTrackPosition = Get_Body_Model()->Get_TrackPosition(0);
+	switch(m_eState) {
+	case MOVE:
 		Change_Body_Animation_Move(0, Get_Body_Model()->Get_CurrentAnimIndex(0));
-		//Get_Body_Model()->Set_TrackPosition(0, fTrackPosition, false);
-
-		//fTrackPosition = Get_Body_Model()->Get_TrackPosition(1);
 		Change_Body_Animation_Move(1, Get_Body_Model()->Get_CurrentAnimIndex(1));
-		//Get_Body_Model()->Set_TrackPosition(1, fTrackPosition, false);
-	}
-	else {
+		break;
+	case HOLD:
 		Change_Body_Animation_Hold(0, Get_Body_Model()->Get_CurrentAnimIndex(0));
 		Change_Body_Animation_Hold(1, Get_Body_Model()->Get_CurrentAnimIndex(1));
+		break;
 	}
 
 
@@ -1779,6 +1833,8 @@ HRESULT CPlayer::Add_FSM_States()
 	m_pFSMCom->Add_State(MOVE, CPlayer_State_Move::Create(this));
 
 	m_pFSMCom->Add_State(HOLD, CPlayer_State_Hold::Create(this));
+	m_pFSMCom->Add_State(BITE, CPlayer_State_Bite::Create(this));
+
 	m_pFSMCom->Change_State(MOVE);
 
 	Change_Body_Animation_Move(0, CPlayer::ANIM_IDLE);
