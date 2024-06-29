@@ -495,12 +495,6 @@ _bool CBlackBoard_Zombie::Compute_HalfMatrix_Current_BiteAnim(const wstring& str
 	if (nullptr == m_pAI || nullptr == m_pPlayer || nullptr == pResultMatrix)
 		return false;
 
-	CModel*				pBodyPlayer_Model = { m_pPlayer->Get_Body_Model() };
-	CModel*				pBodyZombie_Model = { Get_PartModel(CMonster::PART_BODY) };
-
-	if (nullptr == pBodyPlayer_Model || nullptr == pBodyZombie_Model)
-		return false;
-
 	CTransform*			pPlayerTransform = { m_pPlayer->Get_Transform() };
 	CTransform*			pAITransform = { m_pAI->Get_Transform() };
 
@@ -510,17 +504,18 @@ _bool CBlackBoard_Zombie::Compute_HalfMatrix_Current_BiteAnim(const wstring& str
 	_matrix				PlayerWorldMatrix = { pPlayerTransform->Get_WorldMatrix() };
 	_matrix				ZombieWorldMatrix = { pAITransform->Get_WorldMatrix() };
 
-	_matrix				RootFirstKeyFramePlayer = { pBodyPlayer_Model->Get_FirstKeyFrame_Root_TransformationMatrix(strBiteAnimLayerTag, iAnimIndex) };
-	_matrix				RootFirstKeyFrameZombie = { pBodyZombie_Model->Get_FirstKeyFrame_Root_TransformationMatrix(strBiteAnimLayerTag, iAnimIndex) };
-
-	_matrix				RootFirstKeyFramePlayerWorld = { RootFirstKeyFramePlayer * PlayerWorldMatrix };
-	_matrix				RootFirstKeyFrameZombieWorld = { RootFirstKeyFrameZombie * ZombieWorldMatrix };
-
 	_matrix				ResultMatix;
-	RootFirstKeyFramePlayer *= 0.5f;
-	RootFirstKeyFrameZombie *= 0.5f;
+	_vector				vScalePlayer, vQuaternionPlayer, vTranslationPlayer;
+	_vector				vScaleZombie, vQuaternionZombie, vTranslationZombie;
+	XMMatrixDecompose(&vScalePlayer, &vQuaternionPlayer, &vTranslationPlayer, PlayerWorldMatrix);
+	XMMatrixDecompose(&vScaleZombie, &vQuaternionZombie, &vTranslationZombie, ZombieWorldMatrix);
 
-	ResultMatix = RootFirstKeyFramePlayer + RootFirstKeyFrameZombie;
+	//	_vector				vHalfScale = { vScalePlayer };
+	_vector				vHalfScale = { XMVectorSet(1.f, 1.f, 1.f, 0.f) };
+	_vector				vHalfQuaternion = { XMQuaternionSlerp(vQuaternionPlayer, vQuaternionZombie, 0.5f) };
+	_vector				vHalfTranslation = { XMVectorLerp(vTranslationPlayer, vTranslationZombie, 0.5f) };
+
+	ResultMatix = XMMatrixAffineTransformation(vHalfScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vHalfQuaternion, vHalfTranslation);
 	XMStoreFloat4x4(pResultMatrix, ResultMatix);
 
 	return true;

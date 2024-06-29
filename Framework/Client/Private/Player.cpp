@@ -665,6 +665,8 @@ void CPlayer::Change_Player_State_Bite(_int iAnimIndex, const wstring& strLayerT
 	m_iBiteAnimIndex = iAnimIndex;
 	m_strBiteLayerTag = strLayerTag;
 
+	XMStoreFloat4x4(&m_vBiteInterpolateMatrix, Interpolationmatrix);
+
 	Change_State(BITE);
 
 	// bite zombie apply m
@@ -703,14 +705,17 @@ _float4 CPlayer::Get_MuzzlePosition()
 
 void CPlayer::Update_InterplationMatrix(_float fTimeDelta)
 {
+	if (m_fCurrentInterpolateTime >= m_fTotalInterpolateTime)
+		return;
+
+		m_fCurrentInterpolateTime += fTimeDelta;
+		if (m_fCurrentInterpolateTime > m_fTotalInterpolateTime)
+		{
+			fTimeDelta += m_fTotalInterpolateTime - m_fCurrentInterpolateTime;
+			m_fCurrentInterpolateTime = m_fTotalInterpolateTime;
+		}
 
 
-	m_fCurrentInterpolateTime += fTimeDelta;
-	if (m_fCurrentInterpolateTime > m_fTotalInterpolateTime)
-	{
-		fTimeDelta += m_fTotalInterpolateTime - m_fCurrentInterpolateTime;
-		m_fCurrentInterpolateTime = m_fTotalInterpolateTime;
-	}
 
 	_float				fRatio = { fTimeDelta / m_fTotalInterpolateTime };
 
@@ -721,14 +726,14 @@ void CPlayer::Update_InterplationMatrix(_float fTimeDelta)
 	_vector				vCurrentTranslation = { vTranslation * fRatio };
 	_vector				vCurrentQuaternion = { XMQuaternionSlerp(XMQuaternionIdentity(), vQuaternion, fRatio) };
 
-	_vector				vCurrentQuaternionInv = { XMQuaternionInverse(XMQuaternionNormalize(vCurrentQuaternion)) };
-	_matrix				vCurrentRotationInverse = { XMMatrixRotationQuaternion(vCurrentQuaternionInv) };
-	vCurrentTranslation = XMVector3TransformNormal(vCurrentQuaternion, vCurrentRotationInverse);
+	//	_vector				vCurrentQuaternionInv = { XMQuaternionInverse(XMQuaternionNormalize(vCurrentQuaternion)) };
+	//	_matrix				vCurrentRotationInverse = { XMMatrixRotationQuaternion(vCurrentQuaternionInv) };
+	//	vCurrentTranslation = XMVector3TransformNormal(vCurrentTranslation, vCurrentRotationInverse);
 
 	_matrix            AIWorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
 	_matrix            CurrentRotationMatrix = { XMMatrixRotationQuaternion(vCurrentQuaternion) };
 	_matrix            CurrentTimesMatrix = { CurrentRotationMatrix };
-	//   CurrentTimesMatrix.r[CTransform::STATE_POSITION].m128_f32[3] = 0.f;
+	 CurrentTimesMatrix.r[CTransform::STATE_POSITION].m128_f32[3] = 0.f;
 
 	_vector            vPosition = { AIWorldMatrix.r[CTransform::STATE_POSITION] };
 	AIWorldMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
