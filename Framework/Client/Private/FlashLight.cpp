@@ -30,12 +30,12 @@ HRESULT CFlashLight::Initialize(void* pArg)
 	eDesc.bShadow = true;
 	eDesc.bRender = false;
 
-	eDesc.fRange = 6.f;
+	eDesc.fRange = 15.f;
 	eDesc.fCutOff = XMConvertToRadians(30.f);
 	eDesc.fOutCutOff = XMConvertToRadians(35.f);
 
 	eDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
-	eDesc.vDirection = _float4(0.f, 0.f, 1.f, 0.f);
+	eDesc.vDirection = _float4(0.f, 0.f, 1.f, 1.f);
 
 	eDesc.vDiffuse = _float4(.4f, .4f, .4f, 1.f);
 	eDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
@@ -58,7 +58,7 @@ HRESULT CFlashLight::Initialize(void* pArg)
 
 void CFlashLight::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
+	//__super::Tick(fTimeDelta);
 }
 
 void CFlashLight::Late_Tick(_float fTimeDelta)
@@ -82,7 +82,10 @@ void CFlashLight::Late_Tick(_float fTimeDelta)
 
 
 	if (m_bRender) {
-		eNewDesc.vDirection = XMVectorSetW(-m_WorldMatrix.Forward(), 0.f);
+
+		eNewDesc.vDirection = XMVectorSetW(XMVector3TransformNormal(m_WorldMatrix.Forward(), XMMatrixRotationZ(XMConvertToRadians(-20.0f))), 0.f);
+		//eNewDesc.vDirection = XMVectorSetW(-m_WorldMatrix.Forward(), 0.f);
+
 		eNewDesc.vPosition = XMVectorSetW(m_WorldMatrix.Translation() - m_WorldMatrix.Forward() * 10, 1.f);
 		eNewDesc.bRender = true;
 		eNewDesc.bShadow = true;
