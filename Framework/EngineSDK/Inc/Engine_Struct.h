@@ -201,6 +201,7 @@ namespace Engine
 		float decalSizeZ;
 		UINT decalIndex;
 		UINT decalMaterialIndex;
+		UINT iMeshIndex;
 	};
 
 	struct DecalInfo
@@ -211,6 +212,7 @@ namespace Engine
 		_float2 decalBias;
 		_float3 decalNormal;
 		_float4x4 decalMatrix;
+		_uint	 isHit;
 	};
 
 	struct HitResult
@@ -231,16 +233,6 @@ namespace Engine
 		UINT decalMaterialIndex;
 	};
 
-	//typedef struct
-	//{
-	//	_float3		vPosition;
-	//	_float3		vNormal;
-	//	_float3		vTangent;
-
-	//	XMUINT4		vBlendIndices;
-	//	_float4		vBlendWeights;
-	//}VERTEX_DECAL;
-
 	typedef struct
 	{
 		_float3		vPosition;
@@ -260,10 +252,28 @@ namespace Engine
 		_uint iNumVertex;
 	}SKINNING_INPUT;
 
+	typedef struct
+	{
+		ID3D11UnorderedAccessView* pUav_Info;
+		ID3D11UnorderedAccessView* pUav_Skinning;
+		ID3D11ShaderResourceView* pSRV_Indices;
+		ID3D11Buffer* pCB_Decal;
+		_uint iNumTriangle;
+	}RAYCASTING_INPUT;
+
+	typedef struct
+	{
+		ID3D11UnorderedAccessView* pUav_Info;
+		ID3D11UnorderedAccessView* pUav_Skinning;
+		ID3D11ShaderResourceView* pSRV_Indices;
+		ID3D11Buffer* pCB_Decal;
+	}CALC_DECAL_INPUT;
+#pragma endregion
+
+
 	typedef struct tagImgSize
 	{
 		_uint      iSizeX = { 0 };
 		_uint      iSizeY = { 0 };
 	}IMG_SIZE;
-#pragma endregion
 }

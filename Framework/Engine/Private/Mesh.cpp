@@ -2,6 +2,7 @@
 #include "Bone.h"
 
 #include "GameInstance.h"
+#include "Decal_Blood.h"
 
 CMesh::CMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CVIBuffer(pDevice, pContext)
@@ -143,6 +144,11 @@ HRESULT CMesh::Initialize_Prototype(CModel::MODEL_TYPE eType, const MESH_DESC& M
 	Safe_Delete_Array(pIndices);
 
 #pragma endregion
+	CDecal_Blood::DECAL_BLOOD_DESC Desc{};
+	Desc.iNumIndices = m_iNumIndices;
+	Desc.iMeshIndex = m_iMeshIndex;
+	m_pDecal_Blood = CDecal_Blood::Create(m_pDevice, m_pContext);
+	m_pDecal_Blood->Initialize(&Desc);
 
 	return S_OK;
 }
@@ -377,7 +383,7 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertic
 		memcpy_s(&pVertices[i].vTangent, sizeof(_float3), &Vertices[i].vTangent, sizeof(_float3));
 	}
 
-	_float3 vTotal_Pos = _float3(0.f,0.f,0.f);
+	_float3 vTotal_Pos = _float3(0.f, 0.f, 0.f);
 
 	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
 	{
@@ -423,6 +429,9 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 	m_pTangents = new _float3[m_iNumVertices];
 	ZeroMemory(m_pTangents, sizeof(_float3) * m_iNumVertices);
 
+	m_pTexcoords = new _float2[m_iNumVertices];
+	ZeroMemory(m_pTexcoords, sizeof(_float2) * m_iNumVertices);
+
 	m_pBlendIndices = new XMUINT4[m_iNumVertices];
 	ZeroMemory(m_pBlendIndices, sizeof(XMUINT4) * m_iNumVertices);
 
@@ -461,6 +470,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		m_pTangents[i] = pVertices[i].vTangent;
 		m_pBlendIndices[i] = pVertices[i].vBlendIndices;
 		m_pBlendWeights[i] = pVertices[i].vBlendWeights;
+		m_pTexcoords[i] = pVertices[i].vTexcoord;
 	}
 
 	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
@@ -518,7 +528,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 		uavDesc.Buffer.NumElements = sbDesc.ByteWidth / sbDesc.StructureByteStride;
 
-		hr = m_pDevice->CreateUnorderedAccessView(m_pSB_Skinning_Output, &uavDesc, &m_pUAV);
+		hr = m_pDevice->CreateUnorderedAccessView(m_pSB_Skinning_Output, &uavDesc, &m_pUAV_Skinning);
 
 		if (FAILED(hr))
 			return E_FAIL;
@@ -671,6 +681,96 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 			return E_FAIL;
 	}
 
+	//Create Structured Buffer
+	{
+		D3D11_BUFFER_DESC bufferDesc = {};
+		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		bufferDesc.ByteWidth = sizeof(_float2) * m_iNumVertices;
+		bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		bufferDesc.StructureByteStride = sizeof(_float2);
+		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+		D3D11_SUBRESOURCE_DATA initData = {};
+		initData.pSysMem = m_pTexcoords;
+
+		HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Texcoord);
+
+		if (FAILED(hr))
+			return E_FAIL;
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+		srvDesc.Buffer.ElementWidth = m_iNumVertices;
+
+		hr = m_pDevice->CreateShaderResourceView(m_pSB_Texcoord, &srvDesc, &m_pSRV_Texcoord);
+
+		if (FAILED(hr))
+			return E_FAIL;
+	}
+
+	//Create Texture2D
+	//{
+	//	HRESULT hr;
+
+	//	// ÅØ½ºÃ³ ¼³¸í¼­ ¼³Á¤
+	//	D3D11_TEXTURE2D_DESC textureDesc;
+	//	ZeroMemory(&textureDesc, sizeof(textureDesc));
+	//	textureDesc.Width = 512;
+	//	textureDesc.Height = 512;
+	//	textureDesc.MipLevels = 1;
+	//	textureDesc.ArraySize = 1;
+	//	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	//	textureDesc.SampleDesc.Count = 1;
+	//	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	//	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	//	textureDesc.CPUAccessFlags = 0;
+	//	textureDesc.MiscFlags = 0;
+
+	//	// ÅØ½ºÃ³ »ý¼º
+	//	ID3D11Texture2D* texture = nullptr;
+	//	hr = m_pDevice->CreateTexture2D(&textureDesc, nullptr, &texture);
+	//	if (FAILED(hr))
+	//	{
+	//		return hr;
+	//	}
+
+	//	// ·»´õ Å¸°Ù ºä »ý¼º
+	//	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
+	//	ZeroMemory(&rtvDesc, sizeof(rtvDesc));
+	//	rtvDesc.Format = textureDesc.Format;
+	//	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	//	rtvDesc.Texture2D.MipSlice = 0;
+
+	//	hr = m_pDevice->CreateRenderTargetView(texture, &rtvDesc, &m_pRTV_DecalMap);
+	//	if (FAILED(hr))
+	//	{
+	//		texture->Release();
+	//		return hr;
+	//	}
+
+	//	// ¼ÎÀÌ´õ ¸®¼Ò½º ºä »ý¼º
+	//	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	//	ZeroMemory(&srvDesc, sizeof(srvDesc));
+	//	srvDesc.Format = textureDesc.Format;
+	//	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	//	srvDesc.Texture2D.MostDetailedMip = 0;
+	//	srvDesc.Texture2D.MipLevels = 1;
+
+	//	hr = m_pDevice->CreateShaderResourceView(texture, &srvDesc, &m_pSRV_DecalMap);
+	//	if (FAILED(hr))
+	//	{
+	//		texture->Release();
+	//		m_pRTV_DecalMap->Release();
+	//		return hr;
+	//	}
+
+	//	// ÅØ½ºÃ³ ÇØÁ¦ (·»´õ Å¸°Ù ºä¿Í ¼ÎÀÌ´õ ¸®¼Ò½º ºä°¡ ÂüÁ¶¸¦ À¯ÁöÇÕ´Ï´Ù)
+	//	texture->Release();
+
+	//	return S_OK;
+	//}
+
 	//Create Staging Buffer
 	D3D11_BUFFER_DESC stagingDesc = {};
 	stagingDesc.Usage = D3D11_USAGE_STAGING;
@@ -689,7 +789,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 
 void CMesh::Static_Mesh_Cooking(CTransform* pTransform)
 {
-	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices,pTransform);
+	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pTransform);
 }
 
 void CMesh::Static_Mesh_Cooking_NoRotation(CTransform* pTransform)
@@ -697,19 +797,19 @@ void CMesh::Static_Mesh_Cooking_NoRotation(CTransform* pTransform)
 	m_pGameInstance->Cook_Mesh_NoRotation(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pTransform);
 }
 
-void CMesh::Dynamic_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms,CTransform* pTransform)
+void CMesh::Dynamic_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
 {
 	m_pGameInstance->Cook_Mesh_Dynamic(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pColliders, pTransforms, pTransform);
 }
 
 void CMesh::Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
 {
-	m_pGameInstance->Cook_Mesh_Convex(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices,pColliders,pTransforms, pTransform);
+	m_pGameInstance->Cook_Mesh_Convex(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pColliders, pTransforms, pTransform);
 }
 
 void CMesh::Convex_Mesh_Cooking_Convert_Root(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform, _float4 vDelta)
 {
-	m_pGameInstance->Cook_Mesh_Convex_Convert_Root(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pColliders, pTransforms, pTransform,vDelta);
+	m_pGameInstance->Cook_Mesh_Convex_Convert_Root(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pColliders, pTransforms, pTransform, vDelta);
 }
 
 void CMesh::Convex_Mesh_Cooking_Convert_Root_No_Rotate(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform, _float4 vDelta)
@@ -868,10 +968,10 @@ void CMesh::Release_Dump()
 
 void CMesh::Bind_Resource_Skinning()
 {
-	SKINNING_INPUT Input = {};
-	Input.pUav = m_pUAV;
+	SKINNING_INPUT Input;
+	Input.pUav = m_pUAV_Skinning;
 	Input.pSRV_Vertex_Position = m_pSRV_Vertex_Position;
-	Input.pSRV_Vertex_Normal =	m_pSRV_Vertex_Normal;
+	Input.pSRV_Vertex_Normal = m_pSRV_Vertex_Normal;
 	Input.pSRV_Vertex_Tangent = m_pSRV_Vertex_Tangent;
 	Input.pSRV_Vertex_BlendIndices = m_pSRV_Vertex_BlendIndices;
 	Input.pSRV_Vertex_BlendWeights = m_pSRV_Vertex_BlendWeights;
@@ -890,6 +990,44 @@ void CMesh::Staging_Skinning()
 	SKINNING_OUTPUT* pSkinningOutput = reinterpret_cast<SKINNING_OUTPUT*>(mappedResource.pData);
 
 	m_pContext->Unmap(m_pStaging_Buffer_Skinning, 0);
+}
+
+_uint CMesh::RayCasting_Decal(AddDecalInfo Info)
+{
+	RAYCASTING_INPUT Input;
+	Input.iNumTriangle = m_iNumIndices / 3;
+	Input.pSRV_Indices = m_pSRV_Indices;
+	Input.pUav_Skinning = m_pUAV_Skinning;
+	m_pDecal_Blood->Add_Skinned_Decal(Info, Input);
+
+	m_pGameInstance->Perform_RayCasting(m_iNumIndices / 3);
+
+	return m_pDecal_Blood->Staging_DecalInfo_RayCasting();
+}
+
+void CMesh::Calc_Decal_Info()
+{
+	CALC_DECAL_INPUT Input;
+	Input.pSRV_Indices = m_pSRV_Indices;
+	Input.pUav_Skinning = m_pUAV_Skinning;
+	m_pDecal_Blood->Calc_Decal_Info(Input);
+
+	m_pGameInstance->Perform_Calc_Decal_Info();
+
+	m_pDecal_Blood->Staging_Calc_Decal_Info();
+}
+
+void CMesh::Bind_Resource_DecalMap(CShader* pShader)
+{
+	pShader->Bind_Uav("positionBuffer", m_pUAV_Skinning);
+	pShader->Bind_Uav("decalInfoBuffer", m_pDecal_Blood->GetDecalInfo_Uav());
+	pShader->Bind_Structured_Buffer("decalInfoBuffer", m_pSRV_Texcoord);
+	pShader->Bind_Texture("decalLookupMap", m_pSRV_DecalMap);
+}
+
+void CMesh::Init_DecalMap(CShader* pShader)
+{
+	pShader->Begin(0);
 }
 
 CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::MODEL_TYPE eModelType, const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices, _fmatrix TransformationMatrix)
@@ -948,12 +1086,12 @@ void CMesh::Free()
 		Safe_Delete_Array(m_pTangents);
 	if (m_pTexcoords)
 		Safe_Delete_Array(m_pTexcoords);
-	if(m_pBlendIndices)
+	if (m_pBlendIndices)
 		Safe_Delete_Array(m_pBlendIndices);
-	if(m_pBlendWeights)
+	if (m_pBlendWeights)
 		Safe_Delete_Array(m_pBlendWeights);
 
-	Safe_Release(m_pUAV);
+	Safe_Release(m_pUAV_Skinning);
 	Safe_Release(m_pSB_Skinning_Output);
 	Safe_Release(m_pStaging_Buffer_Skinning);
 	Safe_Delete_Array(m_pVertices_Skinning);
@@ -962,11 +1100,18 @@ void CMesh::Free()
 	Safe_Release(m_pSB_Vertex_Normal);
 	Safe_Release(m_pSB_Vertex_BlendIndices);
 	Safe_Release(m_pSB_Vertex_BlendWeights);
+	Safe_Release(m_pSB_Indices);
 	Safe_Release(m_pSRV_Vertex_Position);
 	Safe_Release(m_pSRV_Vertex_Normal);
 	Safe_Release(m_pSRV_Vertex_Tangent);
 	Safe_Release(m_pSRV_Vertex_BlendIndices);
 	Safe_Release(m_pSRV_Vertex_BlendWeights);
+	Safe_Release(m_pSRV_Indices);
+	Safe_Release(m_pDecal_Blood);
+	Safe_Release(m_pSRV_Texcoord);
+	Safe_Release(m_pSB_Texcoord);
+	Safe_Release(m_pRTV_DecalMap);
+	Safe_Release(m_pSRV_DecalMap);
 
 	if (!m_vecFaces.empty())
 	{

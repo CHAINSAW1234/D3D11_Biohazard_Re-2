@@ -3,6 +3,13 @@
 #include "Client_Defines.h"
 #include "BlendObject.h"
 
+BEGIN(Engine)
+class CShader;
+class CTexture;
+class CVIBuffer_Rect;
+class CModel;
+END
+
 BEGIN(Client)
 
 class CEffect : public CBlendObject
@@ -23,6 +30,10 @@ public:
 	virtual void			Compute_CurrentUV();
 	void					SetPosition(_float4 Pos);
 	virtual void			Setup_Billboard() {}
+	void					SetType(_uint iType)
+	{
+		m_iType = iType;
+	}
 protected:
 	_float					m_fSizeX = { 0.f };
 	_float					m_fSizeY = { 0.f };
@@ -44,6 +55,10 @@ protected:
 	_float					m_fMaxUV_X = { 0.f };
 	_float					m_fMinUV_Y = { 0.f };
 	_float					m_fMaxUV_Y = { 0.f };
+
+	_uint					m_iType = { 0 };
+	ULONGLONG				m_FrameTime = { 0 };
+	ULONGLONG				m_FrameDelay = { 0 };
 private:
 	HRESULT Add_Components();
 	HRESULT Bind_ShaderResources();

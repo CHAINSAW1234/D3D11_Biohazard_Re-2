@@ -194,6 +194,38 @@ HRESULT CShader::Bind_RawValue(const _char * pConstantName, const void * pData, 
 	return pVariable->SetRawValue(pData, 0, iLength);	
 }
 
+
+HRESULT CShader::Bind_Constant_Buffer(const _char* pConstantName, ID3D11Buffer* pCB)
+{
+	/*ID3DX11EffectConstantBuffer* pEffectCB = m_pEffect->GetVariableByName(pConstantName)->AsConstantBuffer();
+	if (nullptr == pEffectCB)
+		return E_FAIL;*/
+
+	ID3DX11EffectConstantBuffer* pEffectCB = m_pEffect->GetConstantBufferByName(pConstantName);
+	if (nullptr == pEffectCB)
+		return E_FAIL;
+
+	return pEffectCB->SetConstantBuffer(pCB);
+}
+
+HRESULT CShader::Bind_Structured_Buffer(const _char* pConstantName, ID3D11ShaderResourceView* pSRV)
+{
+	ID3DX11EffectShaderResourceVariable* pEffectSRV = m_pEffect->GetVariableByName(pConstantName)->AsShaderResource();
+	if (nullptr == pEffectSRV)
+		return E_FAIL;
+
+	return pEffectSRV->SetResource(pSRV);
+}
+
+HRESULT CShader::Bind_Uav(const _char* pConstantName, ID3D11UnorderedAccessView* pUav)
+{
+	ID3DX11EffectUnorderedAccessViewVariable* pUAVVariable = m_pEffect->GetVariableByName(pConstantName)->AsUnorderedAccessView();
+	if (nullptr == pUAVVariable)
+		return E_FAIL;
+
+	return pUAVVariable->SetUnorderedAccessView(pUav);
+}
+
 CShader * CShader::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const wstring & strShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
 {
 	CShader*		pInstance = new CShader(pDevice, pContext);

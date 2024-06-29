@@ -5,7 +5,6 @@
 #include "PathFinder.h"
 
 #include "PartObject.h"
-#include "Decal_Blood.h"
 
 #define MODEL_SCALE 0.01f
 
@@ -290,7 +289,6 @@ void CMonster::Free()
 	Safe_Release(m_pPathFinder);
 	Safe_Release(m_pNavigationCom);
 	Safe_Release(m_pColliderCom_Bounding);
-	Safe_Release(m_pDecal_Blood);
 
 	for (auto& pPartObject : m_PartObjects)
 	{

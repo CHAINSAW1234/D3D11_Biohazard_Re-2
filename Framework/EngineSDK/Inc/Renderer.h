@@ -13,7 +13,7 @@ public:
 		RENDER_SSAO,
 		RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_NON_POSTPROCESSING,
 		RENDER_SHADOW_DIR, RENDER_SHADOW_POINT, RENDER_SHADOW_SPOT,
-		RENDER_DISTORTION, RENDER_EMISSIVE,
+		RENDER_DISTORTION, RENDER_EMISSIVE,RENDER_EFFECT_BLOOM,
 		RENDER_BLEND,
 		RENDER_UI,
 		RENDER_FONT,
@@ -63,6 +63,10 @@ private:		/* For.SetUp_RenderTarget */
 	// Àß ¸ð¸§ 
 	HRESULT						SetUp_RenderTargets_Distortion(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_Emissive(const D3D11_VIEWPORT& ViewportDesc);
+
+#pragma region Effect
+	HRESULT						SetUp_RenderTargets_Effect_Bloom(const D3D11_VIEWPORT& ViewportDesc);
+#pragma endregion
 
 
 	HRESULT						SetUp_Test();
@@ -161,6 +165,10 @@ private:
 private:
 	HRESULT						Render_PostProcessing();
 	HRESULT						Render_PostProcessing_Result();
+
+#pragma region Effect
+	HRESULT						Render_Effect_Bloom();
+#pragma endregion
 
 private:
 	void						Set_ViewPort_Size(_float fWidth, _float fHeight, _uint iArraySize = 1);

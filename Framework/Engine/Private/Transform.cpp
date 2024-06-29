@@ -229,6 +229,38 @@ void CTransform::Set_RotationMatrix_Pure(_matrix Mat)
 	m_WorldMatrix._44 = 1.f;
 }
 
+void CTransform::SetWorldMatrix_With_UpVector(_vector upVector)
+{
+	_vector Scale = Get_Scaled();
+	_vector Position = Get_State_Vector(CTransform::STATE_POSITION);
+
+	upVector = XMVector3Normalize(upVector);
+
+	_vector forwardVector = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+
+	if (XMVector3NearEqual(upVector, forwardVector, XMVectorSplatEpsilon()))
+	{
+		forwardVector = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	}
+
+	_vector rightVector = XMVector3Cross(upVector, forwardVector);
+	rightVector = XMVector3Normalize(rightVector);
+
+	forwardVector = XMVector3Cross(rightVector, upVector);
+	forwardVector = XMVector3Normalize(forwardVector);
+
+	_matrix rotationMatrix = _matrix(
+		rightVector,
+		upVector,
+		forwardVector,
+		XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)
+	);
+
+	_matrix scaleMatrix = XMMatrixScalingFromVector(Scale);
+
+	m_WorldMatrix = scaleMatrix * rotationMatrix * XMMatrixTranslationFromVector(Position);
+}
+
 HRESULT CTransform::Initialize_Prototype()
 {
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());

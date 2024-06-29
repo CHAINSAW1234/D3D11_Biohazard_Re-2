@@ -60,7 +60,7 @@ using namespace Client;
 
 #define DISPLAY_FRAME
 #define DISPLAY_NAVMESH
-//	#define FRAME_LOCK
+#define FRAME_LOCK
 
 typedef struct Tag_Prototype_Inform
 {

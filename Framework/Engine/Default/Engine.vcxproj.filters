@@ -316,6 +316,9 @@
     <Filter Include="01.Utility\98.ShaderFiles\Compute_Shader\Include">
       <UniqueIdentifier>{f594eb01-c7e4-4690-8097-f43b811b1306}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\01.GameObjects\Decal\Decal_Blood">
+      <UniqueIdentifier>{a2223c61-e9c1-49da-b96b-c5ff38228794}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -596,6 +599,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Compute_Shader_Manager.cpp">
       <Filter>01.Utility\02.Components\Shader\CS_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Decal_Blood.cpp">
+      <Filter>01.Utility\01.GameObjects\Decal\Decal_Blood</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -900,6 +906,9 @@
     <ClInclude Include="..\Public\Compute_Shader_Manager.h">
       <Filter>01.Utility\02.Components\Shader\CS_Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Decal_Blood.h">
+      <Filter>01.Utility\01.GameObjects\Decal\Decal_Blood</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
@@ -911,10 +920,13 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute.hlsl">
       <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Skinning.csh">
+    <FxCompile Include="..\Bin\ShaderFiles\RayCast.hlsl">
       <Filter>01.Utility\98.ShaderFiles\Compute_Shader</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\RayCast.csh">
+    <FxCompile Include="..\Bin\ShaderFiles\CalcDecalInfo.hlsl">
+      <Filter>01.Utility\98.ShaderFiles\Compute_Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Skinning.hlsl">
       <Filter>01.Utility\98.ShaderFiles\Compute_Shader</Filter>
     </FxCompile>
   </ItemGroup>
@@ -922,7 +934,7 @@
     <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli">
       <Filter>01.Utility\98.ShaderFiles</Filter>
     </None>
-    <None Include="..\Bin\ShaderFiles\globals.shi">
+    <None Include="..\Bin\ShaderFiles\Globals.hlsli">
       <Filter>01.Utility\98.ShaderFiles\Compute_Shader\Include</Filter>
     </None>
   </ItemGroup>

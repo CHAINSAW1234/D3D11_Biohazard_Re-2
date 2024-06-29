@@ -386,6 +386,10 @@ public:
 	void									Bind_Essential_Resource_Skinning(_float4x4 WorldMat, _float4x4* pBoneMatrices);
 	void									Bind_Resource_Skinning(SKINNING_INPUT Input);
 	void									Perform_Skinning(_uint iNumVertices);
+	void									Bind_Resource_RayCasting(RAYCASTING_INPUT Input);
+	void									Perform_RayCasting(_uint iNumTris);
+	void									Bind_Resource_Calc_Decal_Info(CALC_DECAL_INPUT Input);
+	void									Perform_Calc_Decal_Info();
 #pragma endregion
 
 private:
