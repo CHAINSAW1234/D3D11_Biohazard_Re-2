@@ -130,11 +130,13 @@ void CImgui_Manager::Window_TabWindow_Debuger()
         ImGui::EndListBox();
     }
 
+    ImGui::InputInt("##ItemCount", &m_iItemCount, 1);
+
     ImGui::Text(u8"도움말 : 만약 탬이 바로 보이지 않는다면\n인벤창을 껐다 키시면 됩니다");
 
     if (ImGui::Button(u8"Add ITEM", ImVec2(100.f, 30.f)) && TEXT("") != m_wstrCurrent_Item)
     {
-        m_pTabWindow->AddItem_ToInven(Classify_String_To_ItemNum(m_wstrCurrent_Item));
+        m_pTabWindow->AddItem_ToInven(Classify_String_To_ItemNum(m_wstrCurrent_Item), m_iItemCount);
     }
 
     ImGui::End();

@@ -49,6 +49,8 @@ private:
 	wstring								m_wstrCurrent_Item = { TEXT("") };
 	vector<wstring>						m_vecItemNums;
 
+	_int								m_iItemCount = { 1 };
+
 
 public: 
 	virtual void Free() override;

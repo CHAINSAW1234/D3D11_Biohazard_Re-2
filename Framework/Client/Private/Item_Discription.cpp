@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "Item_Discription.h"
+#include "TextBox.h"
 
 CItem_Discription::CItem_Discription(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice , pContext }
@@ -30,6 +31,9 @@ HRESULT CItem_Discription::Initialize(void* pArg)
 		if (FAILED(Load_Item_Discription()))
 			return E_FAIL;
 
+		if (FAILED(Create_TextBoxes()))
+			return E_FAIL;
+
 		m_bDead = true;
 	}
 
@@ -38,18 +42,34 @@ HRESULT CItem_Discription::Initialize(void* pArg)
 
 void CItem_Discription::Tick(_float fTimeDelta)
 {
-	if (true == m_bDead)
-		return;
+	//if (true == m_bDead)
+	//	return;
 
-	__super::Tick(fTimeDelta);
+	if (ITEM_NUMBER_END != m_eItemNumber)
+	{
+		m_pItemName->Set_Text(m_mapItemDiscription[m_eItemNumber][NAME]);
+		m_pItemClassify->Set_Text(m_mapItemDiscription[m_eItemNumber][CLASSIFY]);
+		m_pItemDiscription->Set_Text(m_mapItemDiscription[m_eItemNumber][DISCRIPTION]);
+	}
+
+	else
+	{
+		m_pItemName->Set_Text(TEXT(""));
+		m_pItemClassify->Set_Text(TEXT(""));
+		m_pItemDiscription->Set_Text(TEXT(""));
+	}
 }
 
 void CItem_Discription::Late_Tick(_float fTimeDelta)
 {
-	if (true == m_bDead)
-		return;
+	//if (true == m_bDead)
+	//	return;
 
-	__super::Late_Tick(fTimeDelta);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
+
+	m_pItemName->Late_Tick(fTimeDelta);
+	m_pItemClassify->Late_Tick(fTimeDelta);
+	m_pItemDiscription->Late_Tick(fTimeDelta);
 }
 
 HRESULT CItem_Discription::Render()
@@ -79,7 +99,6 @@ HRESULT CItem_Discription::Load_Item_Discription()
 	errno_t err = fopen_s(&fp, "../Bin/DataFiles/Item_Discription/Item_Discription.json", "r");
 	if (err != 0)
 		return E_FAIL;
-
 
 	char readBuffer[65536]{};
 	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
@@ -116,7 +135,63 @@ HRESULT CItem_Discription::Load_Item_Discription()
 	return S_OK;
 }
 
+HRESULT CItem_Discription::Create_TextBoxes()
+{
+	//1600 800     900 450
 
+	CTextBox::TextBox_DESC TextBoxDesc = {};
+	//TextBoxDesc.vPos = { 240.f, -108.f };
+	TextBoxDesc.vPos = { 1040.f, 558.f };
+	TextBoxDesc.vSize = { 0.1f, 0.1f };
+	TextBoxDesc.wstrText = { TEXT("") };
+	TextBoxDesc.wstrFontType = { TEXT("Font_CGBold") };
+	TextBoxDesc.vFontColor = { 1.f, 1.f, 1.f, 1.f };
+	TextBoxDesc.iFontSize = { 15 };
+	TextBoxDesc.isOuterLine = { false };
+	TextBoxDesc.vOutLineColor = { 0.f, 0.f, 0.f, 1.f };
+	TextBoxDesc.isUI_Render = { false };
+
+	m_pItemName = static_cast<CTextBox*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_TextBox"), &TextBoxDesc));
+	if (nullptr == m_pItemName)
+		return E_FAIL;
+	m_pItemName->Set_isTransformBase(false);
+
+	TextBoxDesc = {};
+	//TextBoxDesc.vPos = { 1140.f, -138.f };
+	TextBoxDesc.vPos = { 1040.f, 588.f };
+	TextBoxDesc.vSize = { 0.1f, 0.1f };
+	TextBoxDesc.wstrText = { TEXT("") };
+	TextBoxDesc.wstrFontType = { TEXT("Font_CGBold") };
+	TextBoxDesc.vFontColor = { 0.8f, 0.8f, 0.8f, 1.f };
+	TextBoxDesc.iFontSize = { 13 };
+	TextBoxDesc.isOuterLine = { false };
+	TextBoxDesc.vOutLineColor = { 0.f, 0.f, 0.f, 1.f };
+	TextBoxDesc.isUI_Render = { false };
+
+	m_pItemClassify = static_cast<CTextBox*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_TextBox"), &TextBoxDesc));
+	if (nullptr == m_pItemClassify)
+		return E_FAIL;
+	m_pItemClassify->Set_isTransformBase(false);
+
+	TextBoxDesc = {};
+	//TextBoxDesc.vPos = { 240.f, -174.f };
+	TextBoxDesc.vPos = { 1040.f, 624.f };
+	TextBoxDesc.vSize = { 0.1f, 0.1f };
+	TextBoxDesc.wstrText = { TEXT("") };
+	TextBoxDesc.wstrFontType = { TEXT("Font_CGBold") };
+	TextBoxDesc.vFontColor = { 1.f, 1.f, 1.f, 1.f };
+	TextBoxDesc.iFontSize = { 14};
+	TextBoxDesc.isOuterLine = { false };
+	TextBoxDesc.vOutLineColor = { 0.f, 0.f, 0.f, 1.f };
+	TextBoxDesc.isUI_Render = { false };
+
+	m_pItemDiscription = static_cast<CTextBox*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_TextBox"), &TextBoxDesc));
+	if (nullptr == m_pItemDiscription)
+		return E_FAIL;
+	m_pItemClassify->Set_isTransformBase(false);
+
+	return S_OK;
+}
 
 HRESULT CItem_Discription::Bind_ShaderResources()
 {
@@ -138,6 +213,9 @@ HRESULT CItem_Discription::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaControl", &m_isAlphaControl, sizeof(_bool))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -154,7 +232,7 @@ HRESULT CItem_Discription::Add_Components()
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Texture_Tab_Window_BackGround"),
+	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Texture_Item_Description_BG"),
 		TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
@@ -191,4 +269,9 @@ CGameObject* CItem_Discription::Clone(void* pArg)
 
 void CItem_Discription::Free()
 {
+	__super::Free();
+
+	Safe_Release(m_pItemName);
+	Safe_Release(m_pItemClassify);
+	Safe_Release(m_pItemDiscription);
 }

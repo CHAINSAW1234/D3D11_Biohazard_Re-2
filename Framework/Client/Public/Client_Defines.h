@@ -50,8 +50,8 @@ extern Client::LEVEL g_Level;
 using namespace std;
 using namespace Client;
 	
-//#define MAP_NOTHING
-#define MAP_JUSTMAP
+#define MAP_NOTHING
+//#define MAP_JUSTMAP
 //#define MAP_NONANIMOBJ
 //#define MAP_INTERACT
 
