@@ -394,6 +394,12 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Kill">
       <UniqueIdentifier>{7a4d43e5-b41b-4ce9-8d91-07ffc20ccbf4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Muzzle_Flash">
+      <UniqueIdentifier>{f75f75e3-3ac4-46fb-a428-5ac0cd54c644}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Effect_Header">
+      <UniqueIdentifier>{2f676497-0d0d-432c-8fdd-ad297219ae70}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Player\State\Player_State_Damg">
       <UniqueIdentifier>{94d3ab13-025c-408b-87af-20b5e8b80ac8}</UniqueIdentifier>
     </Filter>
@@ -798,6 +804,12 @@
     <ClInclude Include="..\Public\Player_State_Bite_Kill.h">
       <Filter>02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Kill</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Muzzle_Flash.h">
+      <Filter>02.GameObjects\Effect\Muzzle_Flash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Effect_Header.h">
+      <Filter>02.GameObjects\Player\Effect_Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1169,6 +1181,9 @@
     <ClCompile Include="..\Private\Player_State_Bite_Kill.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Kill</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Muzzle_Flash.cpp">
+      <Filter>02.GameObjects\Effect\Muzzle_Flash</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1206,6 +1221,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAlphaSortTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

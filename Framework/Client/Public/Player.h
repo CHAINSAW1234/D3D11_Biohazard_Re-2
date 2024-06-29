@@ -110,6 +110,9 @@ public:
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
 	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
 	_float4										Get_MuzzlePosition();
+	wstring										Get_BiteLayerTag() { return m_strBiteLayerTag; }
+	_int										Get_BiteAnimIndex() { return m_iBiteAnimIndex; }
+
 	// =============================== SET ===============================
 	void										Set_isBite(_bool isBite) { m_isBite = isBite; }
 	void										Set_Spotlight(_bool isSpotlight); 
@@ -126,8 +129,8 @@ public:
 	void										Change_State(STATE eState);
 	void										Change_AnimSet_Move(ANIMSET_MOVE eAnimSetMove) { m_eAnimSet_Move = eAnimSetMove; }
 	void										Change_AnimSet_Hold(ANIMSET_HOLD eAnimSetHold) { m_eAnimSet_Hold = eAnimSetHold; }
-	void										Change_Player_State_Bite(_int iAnimIndex, wstring& strBiteLayerTag, _float4x4 Interpolationmatrix, _float fTotalInterpolateTime);
-
+	void										Change_Player_State_Bite(_int iAnimIndex, const wstring& strBiteLayerTag, _float4x4 Interpolationmatrix, _float fTotalInterpolateTime);
+	void										Request_NextBiteAnimation(_int iAnimIndex);
 	// ============================ UPDATE ============================
 	void										Update_InterplationMatrix(_float fTimeDelta);
 
@@ -164,6 +167,7 @@ private:
 
 	_bool m_isBite = { false };
 	_uint m_eBiteType;
+	_int m_iBiteAnimIndex = { -1 };
 	_float4x4 m_vBiteInterpolateMatrix;
 	_float m_fTotalInterpolateTime = 0.f;
 	_float m_fCurrentInterpolateTime = 0.f;
@@ -298,6 +302,16 @@ private:
 	_float										m_fRecoil_Rotate_Amount_Y_Current = { 0.f };
 	_float										m_fRecoil_Lerp_Time = { 0.f };
 	_float										m_fRecoil_Lerp_Time_Omega = { 0.f };
+
+#pragma region Effect
+public:
+	void	Ready_Effect();
+	void	Release_Effect();
+	void	Tick_Effect(_float fTimeDelta);
+	void	Late_Tick_Effect(_float fTimeDelta);
+private:
+	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
+#pragma endregion
 private:
 	HRESULT Add_Components();
 
