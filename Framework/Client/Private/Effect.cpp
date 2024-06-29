@@ -28,21 +28,15 @@ HRESULT CEffect::Initialize(void * pArg)
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(static_cast<_float>(rand() % 10), 3.f, static_cast<_float>(rand() % 10), 1.f));
 
-
 	return S_OK;
 }
 
 void CEffect::Tick(_float fTimeDelta)
 {
-	m_fFrame += 90.0f * fTimeDelta;
-
-	if (m_fFrame >= 90.0f)
-		m_fFrame = 0.f;
 }
 
 void CEffect::Late_Tick(_float fTimeDelta)
 {
-	
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 }
 
@@ -51,7 +45,7 @@ HRESULT CEffect::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(1);
+	m_pShaderCom->Begin(2);
 
 	m_pVIBufferCom->Bind_Buffers();
 
@@ -60,46 +54,36 @@ HRESULT CEffect::Render()
 	return S_OK;
 }
 
+void CEffect::Compute_CurrentUV()
+{
+	IMG_SIZE      ImgSize = m_pTextureCom->GetImgSize();
+
+	_uint   iSizeX = { (_uint)((_float)ImgSize.iSizeX / (_float)m_iFrameX) };
+	_uint   iSizeY = { (_uint)((_float)ImgSize.iSizeY / (_float)m_iFrameY) };
+
+	_uint   iCurrentFrame = { (_uint)m_fFrame };
+
+	_uint   iCurrentX = iCurrentFrame % m_iFrameX;
+	_uint   iCurrentY = iCurrentFrame / m_iFrameX;
+
+	m_fMinUV_X = _float(iCurrentX * iSizeX) / ImgSize.iSizeX;
+	m_fMaxUV_X = _float((iCurrentX + 1) * iSizeX) / ImgSize.iSizeX;
+	m_fMinUV_Y = _float(iCurrentY * iSizeY) / ImgSize.iSizeY;
+	m_fMaxUV_Y = _float((iCurrentY + 1) * iSizeY) / ImgSize.iSizeY;
+}
+
+void CEffect::SetPosition(_float4 Pos)
+{
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, Pos);
+}
+
 HRESULT CEffect::Add_Components()
 {
-	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxPosTex"),
-		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
-		return E_FAIL;
-
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Explosion"),
-		TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
-		return E_FAIL;
-
-	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
-		TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom)))
-		return E_FAIL;
-
 	return S_OK;
 }
 
 HRESULT CEffect::Bind_ShaderResources()
 {
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", (_uint)m_fFrame)))
-		return E_FAIL;
-
-
-	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShaderCom, TEXT("Target_Depth"), "g_DepthTexture")))
-		return E_FAIL;
-
 	return S_OK;
 }
 

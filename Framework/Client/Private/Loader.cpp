@@ -615,6 +615,11 @@ HRESULT CLoader::Loading_For_Static_Component()
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Shader_VtxInstance_Point"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxInstance_Point.hlsl"), VTXINSTANCE_POINT::Elements, VTXINSTANCE_POINT::iNumElements))))
 		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_Effect */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Shader_Effect"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Effect.hlsl"), VTXINSTANCE_POINT::Elements, VTXINSTANCE_POINT::iNumElements))))
+		return E_FAIL;
 #pragma endregion
 
 	return S_OK;
@@ -1036,7 +1041,20 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/Note/ui3210_file_13_1_iam.tex_noesispreviewdata.png")))))
 		return E_FAIL;
 
-	
+#pragma endregion
+
+#pragma region Effect
+	//Muzzle Flash
+	CTexture::TEXTURE_DESC Desc{};
+	Desc.iWidth = 1024;
+	Desc.iHeight = 512;
+	Desc.iCountX = 2;
+	Desc.iCountY = 1;
+
+	/*Prototype_Component_Texture_Muzzle_Flash*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Flash"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Flash/Muzzle_Flash.dds"),1,&Desc))))
+		return E_FAIL;
 #pragma endregion
 
 	/* Prototype_Component_Texture_Sky */

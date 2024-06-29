@@ -16,6 +16,7 @@
 #include "Character_Controller.h"
 #include "Camera_Free.h"
 #include "Camera_Event.h"
+#include "Effect_Header.h"
 
 #define MODEL_SCALE 0.01f
 
@@ -74,6 +75,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	
 	m_pGameInstance->SetPlayer(this);
+
+	Ready_Effect();
 
 	return S_OK;
 }
@@ -416,6 +419,8 @@ void CPlayer::Tick(_float fTimeDelta)
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
 	Tick_PartObjects(fTimeDelta);
+
+	Tick_Effect(fTimeDelta);
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -473,6 +478,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		ResetCamera();
 	}
+
+	Late_Tick_Effect(fTimeDelta);
 #pragma endregion
 }
 
@@ -1711,6 +1718,27 @@ void CPlayer::RayCasting_Camera()
 	}
 }
 
+void CPlayer::Ready_Effect()
+{
+	m_pMuzzle_Flash = CMuzzle_Flash::Create(m_pDevice, m_pContext);
+	m_pMuzzle_Flash->SetSize(1.f, 1.f);
+}
+
+void CPlayer::Release_Effect()
+{
+	Safe_Release(m_pMuzzle_Flash);
+}
+
+void CPlayer::Tick_Effect(_float fTimeDelta)
+{
+	m_pMuzzle_Flash->Tick(fTimeDelta);
+}
+
+void CPlayer::Late_Tick_Effect(_float fTimeDelta)
+{
+	m_pMuzzle_Flash->Late_Tick(fTimeDelta);
+}
+
 HRESULT CPlayer::Add_Components()
 {
 	/* Com_Collider */
@@ -1970,4 +1998,6 @@ void CPlayer::Free()
 	m_Weapons.clear();
 
 	Safe_Release(m_pWeapon);
+	
+	Release_Effect();
 }
