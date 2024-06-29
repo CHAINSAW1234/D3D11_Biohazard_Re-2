@@ -43,7 +43,8 @@ public:
 	virtual HRESULT					Render_LightDepth_Spot()override;
 
 	RENDERLOCATION					Get_RenderLocation() { return m_eRenderLocation; }
-
+	_float4							Get_MuzzlePosition();
+	_float4							Get_BonePosition(const char* pBoneName);
 	void							Set_RenderLocation(RENDERLOCATION eRenderLocation) { m_eRenderLocation = eRenderLocation; }
 
 private:

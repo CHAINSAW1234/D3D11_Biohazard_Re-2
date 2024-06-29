@@ -252,6 +252,45 @@ HRESULT CWeapon::Render_LightDepth_Spot()
 	return S_OK;
 }
 
+_float4 CWeapon::Get_MuzzlePosition()
+{
+	if (1) {
+		return Get_BonePosition("vfx_muzzle1");			//기본 상태
+	}
+	else if (1) {
+		return Get_BonePosition("vfx_muzzle3");			// 총신 부착시
+	}
+
+	return _float4(0.f, 0.f, 0.f, 0.f);						// 쓰레기
+}
+
+_float4 CWeapon::Get_BonePosition(const char* pBoneName)
+{
+	const _float4x4* pMatrix = m_pModelCom->Get_BonePtr(pBoneName)->Get_CombinedTransformationMatrix();
+
+	if (nullptr == pMatrix)
+		return _float4(0.f, 0.f, 0.f, 0.f);
+
+	_vector vScale;
+	_vector vRoation;
+	_vector vTranspose;
+
+	XMMatrixDecompose(&vScale, &vRoation, &vTranspose, XMLoadFloat4x4(&m_WorldMatrix));
+
+	XMMatrixRotationQuaternion(vRoation);
+
+	/*
+		_float4x4			m_WorldMatrix;					// 자신의 월드 행렬
+	const _float4x4*	m_pParentMatrix = { nullptr };	// 이 파츠를 보유하고 있는 GameObject == Parent의 월드 행렬을 포인터로 보유
+	*/
+	_matrix vMatrix = XMLoadFloat4x4(pMatrix) * XMMatrixRotationQuaternion(vRoation);
+	_float4x4 fMatrix;
+	XMStoreFloat4x4(&fMatrix, vMatrix);
+	_float4 vPos = { fMatrix.Forward().x + vTranspose.m128_f32[0] ,	fMatrix.Forward().y + vTranspose.m128_f32[1],	fMatrix.Forward().z + vTranspose.m128_f32[2],	1.f };
+
+	return vPos;
+}
+
 HRESULT CWeapon::Add_Components()
 {
 	/* For.Com_Shader */

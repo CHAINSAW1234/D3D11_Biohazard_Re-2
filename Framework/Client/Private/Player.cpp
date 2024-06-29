@@ -642,6 +642,9 @@ void CPlayer::Change_Player_State_Bite(_int iAnimIndex, wstring& strLayerTag, _f
 {
 	m_strBiteLayerTag = 0.f;
 	m_fCurrentInterpolateTime = 0.f;
+
+	// bite zombie apply m
+
 }
 
 _float CPlayer::Get_CamDegree()
@@ -658,6 +661,15 @@ _float CPlayer::Get_CamDegree()
 	vPlayerLook = XMVector3Normalize(vPlayerLook);
 
 	return Cal_Degree_From_Directions_Between_Min180_To_180(vPlayerLook, vCamLook);
+}
+
+_float4 CPlayer::Get_MuzzlePosition()
+{
+	if (nullptr == m_pWeapon) {
+		return _float4(0.f, 0.f, 0.f, 0.f);			// 수정 필요함?
+	}
+
+	return m_pWeapon->Get_MuzzlePosition();
 }
 
 void CPlayer::Update_InterplationMatrix(_float fTimeDelta)
