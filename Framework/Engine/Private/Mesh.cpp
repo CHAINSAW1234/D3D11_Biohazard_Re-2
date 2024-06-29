@@ -141,6 +141,34 @@ HRESULT CMesh::Initialize_Prototype(CModel::MODEL_TYPE eType, const MESH_DESC& M
 	if (FAILED(__super::Create_Buffer(&m_pIB)))
 		return E_FAIL;
 
+	//Create Structured Buffer
+	{
+		D3D11_BUFFER_DESC bufferDesc = {};
+		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		bufferDesc.ByteWidth = sizeof(_uint) * m_iNumIndices;
+		bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		bufferDesc.StructureByteStride = sizeof(_uint);
+		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+		D3D11_SUBRESOURCE_DATA initData = {};
+		initData.pSysMem = m_pIndices_Cooking;
+
+		HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Indices);
+
+		if (FAILED(hr))
+			return E_FAIL;
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+		srvDesc.Buffer.ElementWidth = m_iNumIndices;
+
+		hr = m_pDevice->CreateShaderResourceView(m_pSB_Indices, &srvDesc, &m_pSRV_Indices);
+
+		if (FAILED(hr))
+			return E_FAIL;
+	}
+
 	Safe_Delete_Array(pIndices);
 
 #pragma endregion
@@ -992,7 +1020,7 @@ void CMesh::Staging_Skinning()
 	m_pContext->Unmap(m_pStaging_Buffer_Skinning, 0);
 }
 
-_uint CMesh::RayCasting_Decal(AddDecalInfo Info)
+_uint CMesh::RayCasting_Decal(AddDecalInfo Info, _float* pDist)
 {
 	RAYCASTING_INPUT Input;
 	Input.iNumTriangle = m_iNumIndices / 3;
@@ -1002,7 +1030,7 @@ _uint CMesh::RayCasting_Decal(AddDecalInfo Info)
 
 	m_pGameInstance->Perform_RayCasting(m_iNumIndices / 3);
 
-	return m_pDecal_Blood->Staging_DecalInfo_RayCasting();
+	return m_pDecal_Blood->Staging_DecalInfo_RayCasting(pDist);
 }
 
 void CMesh::Calc_Decal_Info()
