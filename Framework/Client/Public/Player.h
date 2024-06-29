@@ -294,6 +294,8 @@ private:
 public:
 	void	Ready_Effect();
 	void	Release_Effect();
+	void	Tick_Effect(_float fTimeDelta);
+	void	Late_Tick_Effect(_float fTimeDelta);
 private:
 	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
 #pragma endregion

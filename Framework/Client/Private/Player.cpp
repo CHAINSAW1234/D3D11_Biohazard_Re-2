@@ -418,6 +418,8 @@ void CPlayer::Tick(_float fTimeDelta)
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
 	Tick_PartObjects(fTimeDelta);
+
+	Tick_Effect(fTimeDelta);
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -475,6 +477,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		ResetCamera();
 	}
+
+	Late_Tick_Effect(fTimeDelta);
 #pragma endregion
 }
 
@@ -1700,6 +1704,16 @@ void CPlayer::Ready_Effect()
 void CPlayer::Release_Effect()
 {
 	Safe_Release(m_pMuzzle_Flash);
+}
+
+void CPlayer::Tick_Effect(_float fTimeDelta)
+{
+	m_pMuzzle_Flash->Tick(fTimeDelta);
+}
+
+void CPlayer::Late_Tick_Effect(_float fTimeDelta)
+{
+	m_pMuzzle_Flash->Late_Tick(fTimeDelta);
 }
 
 HRESULT CPlayer::Add_Components()

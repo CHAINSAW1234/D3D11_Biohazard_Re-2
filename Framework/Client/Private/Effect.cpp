@@ -72,6 +72,11 @@ void CEffect::Compute_CurrentUV()
 	m_fMaxUV_Y = _float((iCurrentY + 1) * iSizeY) / ImgSize.iSizeY;
 }
 
+void CEffect::SetPosition(_float4 Pos)
+{
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, Pos);
+}
+
 HRESULT CEffect::Add_Components()
 {
 	return S_OK;

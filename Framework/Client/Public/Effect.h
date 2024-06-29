@@ -21,6 +21,7 @@ public:
 
 public:
 	void					Compute_CurrentUV();
+	void					SetPosition(_float4 Pos);
 
 protected:
 	_float					m_fSizeX = { 0.f };
