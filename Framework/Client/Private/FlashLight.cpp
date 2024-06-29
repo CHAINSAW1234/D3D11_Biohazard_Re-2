@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "FlashLight.h"
 #include "Light.h"
+#include "Bone.h"
 
 CFlashLight::CFlashLight(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
@@ -37,7 +38,7 @@ HRESULT CFlashLight::Initialize(void* pArg)
 	eDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	eDesc.vDirection = _float4(0.f, 0.f, 1.f, 1.f);
 
-	eDesc.vDiffuse = _float4(.4f, .4f, .4f, 1.f);
+	eDesc.vDiffuse = _float4(.1f, .1f, .1f, 1.f);
 	eDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	eDesc.vSpecular = _float4(0.4f, 0.4f, 0.4f, 1.f);
 
@@ -83,10 +84,24 @@ void CFlashLight::Late_Tick(_float fTimeDelta)
 
 	if (m_bRender) {
 
-		eNewDesc.vDirection = XMVectorSetW(XMVector3TransformNormal(m_WorldMatrix.Forward(), XMMatrixRotationZ(XMConvertToRadians(-20.0f))), 0.f);
+		const _float4x4* pMatrix = m_pModelCom->Get_BonePtr(0)->Get_CombinedTransformationMatrix();
+
+		_vector vScale;
+		_vector vRoation;
+		_vector vTranspose;
+		XMMatrixDecompose(&vScale, &vRoation, &vTranspose, XMLoadFloat4x4(&m_WorldMatrix));
+
+		_matrix vMatrix = XMLoadFloat4x4(pMatrix) * XMLoadFloat4x4(&m_WorldMatrix);
+		_float4x4 fMatrix;
+		XMStoreFloat4x4(&fMatrix, vMatrix);
+		_float4 vPos = _float4(fMatrix._41, fMatrix._42, fMatrix._43, 1.f);
+
+
+		eNewDesc.vDirection = XMVectorSetW(XMVector3TransformNormal(XMVectorSet(0.f, 0.f, -1.f, 0.f), fMatrix), 0.f);
+		eNewDesc.vPosition = vPos + eNewDesc.vDirection * 10;
 		//eNewDesc.vDirection = XMVectorSetW(-m_WorldMatrix.Forward(), 0.f);
 
-		eNewDesc.vPosition = XMVectorSetW(m_WorldMatrix.Translation() - m_WorldMatrix.Forward() * 10, 1.f);
+
 		eNewDesc.bRender = true;
 		eNewDesc.bShadow = true;
 
