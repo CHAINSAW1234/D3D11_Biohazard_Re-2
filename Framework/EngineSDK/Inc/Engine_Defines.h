@@ -88,10 +88,6 @@ using namespace DirectX;
 #include <unordered_set>
 #include <random>
 
-///*CH Text*/
-//#include <locale>
-//#include <codecvt>
-///**/
 
 // SimpleMath
 #include <DirectXTK/SimpleMath.h>
@@ -102,6 +98,12 @@ using namespace DirectX;
 #include <cstdlib>
 
 #include <fstream>
+
+/*rapidjson*/
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
+//#include <rapidjson/stringbuffer.h>
+
 
 /* ImGui */
 #include "imgui.h"

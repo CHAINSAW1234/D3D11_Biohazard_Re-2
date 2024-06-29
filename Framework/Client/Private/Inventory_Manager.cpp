@@ -863,9 +863,6 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 		break;
 	}
 
-
-
-
 	return ITEM_TYPE::INVEN_ITEM_TYPE_END;
 }
 
