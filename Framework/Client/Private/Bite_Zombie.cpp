@@ -36,6 +36,7 @@ void CBite_Zombie::Enter()
 	pBodyModel->Reset_PreAnim_CurrentAnim(static_cast<_uint>(PLAYING_INDEX::INDEX_1));
 
 	m_isSendMSG_To_Player = false;
+	m_eAnimType = BITE_ANIM_TYPE::_END;
 }
 
 _bool CBite_Zombie::Execute(_float fTimeDelta)
@@ -71,7 +72,7 @@ _bool CBite_Zombie::Execute(_float fTimeDelta)
 		Set_Bite_LinearStart_HalfMatrix();
 		m_isSendMSG_To_Player = true;
 	}
-	Apply_HalfMatrix(fTimeDelta);
+	//	Apply_HalfMatrix(fTimeDelta);
 
 #ifdef _DEBUG
 
@@ -86,7 +87,7 @@ void CBite_Zombie::Exit()
 {
 }
 
-void CBite_Zombie::Change_Animation_Default(BITE_ANIM_STATE eState)
+void CBite_Zombie::Change_Animation_Default_Front(BITE_ANIM_STATE eState)
 {
 	if (nullptr == m_pBlackBoard)
 		return;
@@ -95,46 +96,19 @@ void CBite_Zombie::Change_Animation_Default(BITE_ANIM_STATE eState)
 	if (nullptr == pBodyModel)
 		return;
 
-	_uint			iPlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_0) };
 	_int			iResultAnimationIndex = { -1 };
-	wstring			strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
-	wstring			strAnimLayerTag = { TEXT("") };
-
-	_float3			vDirectionFromPlayerLocal;
-	m_pBlackBoard->Compute_Direction_From_Player_Local(&vDirectionFromPlayerLocal);
-
-	_bool			isPlayersFront = { vDirectionFromPlayerLocal.z > 0.f };
-	DIRECTION		eDirection = { isPlayersFront ? DIRECTION::_F : DIRECTION::_B };
 
 	//	Change StartAnim
 	if (BITE_ANIM_STATE::_END == eState)
 	{
-		//	플레이어로부터 전면인 경우
-		if (DIRECTION::_F == eDirection)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_START_F);
-			m_eAnimType = BITE_ANIM_TYPE::_DEFAULT_F;
-			strAnimLayerTag = m_strDefaultFrontAnimLayerTag;
-		}
-
-		//	플레이어로부터 후면인 경우 
-		else if (DIRECTION::_B == eDirection)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_BACK::_START_B);
-			m_eAnimType = BITE_ANIM_TYPE::_DEFAULT_B;
-			strAnimLayerTag = m_strDefaultBackAnimLayerTag;
-		}
+		iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_START_F);
+		m_eAnimType = BITE_ANIM_TYPE::_DEFAULT_F;
 	}
 
 	//	Change MiddleAnim
 	else if (BITE_ANIM_STATE::_START == eState)
 	{
-		if (BITE_ANIM_TYPE::_DEFAULT_F == m_eAnimType || BITE_ANIM_TYPE::_DEFAULT_B == m_eAnimType)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_DEFAULT);
-			strAnimLayerTag = m_strDefaultFrontAnimLayerTag;
-		}
-
+		iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_DEFAULT);
 #ifdef _DEBUG
 		else
 		{
@@ -155,14 +129,12 @@ void CBite_Zombie::Change_Animation_Default(BITE_ANIM_STATE eState)
 			if (true == isCanKillPlayer)
 			{
 				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_KILL_F);
-				strAnimLayerTag = m_strDefaultFrontAnimLayerTag;
 			}
 
 			else
 			{
 				_int				iRandRejectAnimIndex = { m_pGameInstance->GetRandom_Int(static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_REJECT1), static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_REJECT3)) };
 				iResultAnimationIndex = iRandRejectAnimIndex;
-				strAnimLayerTag = m_strDefaultFrontAnimLayerTag;
 			}
 		}
 
@@ -174,8 +146,62 @@ void CBite_Zombie::Change_Animation_Default(BITE_ANIM_STATE eState)
 #endif
 	}
 
-	pBodyModel->Change_Animation(iPlayingIndex, strAnimLayerTag, iResultAnimationIndex);
-	pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
+	_int			iPreAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
+	if (iPreAnimIndex != iResultAnimationIndex)
+		m_pBlackBoard->GetPlayer()->Request_NextBiteAnimation(iResultAnimationIndex);
+
+	pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strDefaultFrontAnimLayerTag, iResultAnimationIndex);
+	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
+}
+
+void CBite_Zombie::Change_Animation_Default_Back(BITE_ANIM_STATE eState)
+{
+	if (nullptr == m_pBlackBoard)
+		return;
+
+	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	if (nullptr == pBodyModel)
+		return;
+
+	_int			iResultAnimationIndex = { -1 };
+
+	//	Change StartAnim
+	if (BITE_ANIM_STATE::_END == eState)
+	{
+		iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_BACK::_START_B);
+		m_eAnimType = BITE_ANIM_TYPE::_DEFAULT_F;
+	}
+
+	//	Change MiddleAnim
+	else if (BITE_ANIM_STATE::_START == eState)
+	{
+		_float			fPlayerHP = { static_cast<_float>(m_pBlackBoard->GetPlayer()->Get_Hp()) };
+		_float			fZombieAttack = { m_pBlackBoard->GetAI()->Get_Status_Ptr()->fAttack };
+		_bool			isCanKillPlayer = { fPlayerHP <= fZombieAttack };
+
+		if (true == isCanKillPlayer)
+		{
+			iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_BACK::_KILL_B);
+	}
+
+		else
+		{
+			iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_BACK::_REJECT_B);
+		}
+#ifdef _DEBUG
+	else
+	{
+		MSG_BOX(TEXT("Calld : void CBite_Zombie::Change_Animation_Default(BITE_ANIM_STATE eState)"));
+	}
+#endif
+	}
+
+	_int			iPreAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
+	if (iPreAnimIndex != iResultAnimationIndex)
+		m_pBlackBoard->GetPlayer()->Request_NextBiteAnimation(iResultAnimationIndex);
+
+	pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strDefaultFrontAnimLayerTag, iResultAnimationIndex);
+	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
 }
 
 void CBite_Zombie::Change_Animation_Creep(BITE_ANIM_STATE eState)
@@ -335,7 +361,38 @@ void CBite_Zombie::Change_Animation(BITE_ANIM_STATE eState)
 	else
 		Change_Animation_Default();*/
 
-	Change_Animation_Default(eState);
+	DIRECTION		eDirection = { DIRECTION::_END };
+	if (m_eAnimType == BITE_ANIM_TYPE::_END)
+	{
+		_float3			vDirectionFromPlayerLocal;
+		m_pBlackBoard->Compute_Direction_From_Player_Local(&vDirectionFromPlayerLocal);
+
+		_bool			isPlayersFront = { vDirectionFromPlayerLocal.z > 0.f };
+		eDirection = { isPlayersFront ? DIRECTION::_F : DIRECTION::_B };
+	}
+
+	else
+	{
+		if (BITE_ANIM_TYPE::_DEFAULT_F == m_eAnimType)
+		{
+			eDirection = { DIRECTION::_F };
+		}
+
+		else
+		{
+			eDirection = { DIRECTION::_B };
+		}
+	}	
+
+	if (eDirection == DIRECTION::_F)
+	{
+		Change_Animation_Default_Front(eState);
+	}
+
+	else
+	{
+		Change_Animation_Default_Back(eState);
+	}
 }
 
 void CBite_Zombie::Set_Bite_LinearStart_HalfMatrix()

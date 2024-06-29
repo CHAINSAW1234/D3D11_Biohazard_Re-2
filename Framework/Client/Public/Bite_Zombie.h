@@ -26,7 +26,8 @@ public:
 private:
 	void							Change_Animation(BITE_ANIM_STATE eState);
 
-	void							Change_Animation_Default(BITE_ANIM_STATE eState);
+	void							Change_Animation_Default_Front(BITE_ANIM_STATE eState);
+	void							Change_Animation_Default_Back(BITE_ANIM_STATE eState);
 	void							Change_Animation_Creep(BITE_ANIM_STATE eState);
 	void							Change_Animation_Push_Down(BITE_ANIM_STATE eState);
 	void							Change_Animation_Lost(BITE_ANIM_STATE eState);
