@@ -23,7 +23,7 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-
+	void			SetWorldMatrix(_float4x4 WorldMatrix);
 public:
 	virtual void	Add_Skinned_Decal(AddDecalInfo Info, RAYCASTING_INPUT Input) {}
 	virtual void	Bind_Resource_DecalInfo() {}
@@ -49,7 +49,9 @@ protected:
 	ID3D11UnorderedAccessView* m_pUAV_DecalInfo = { nullptr };
 	ID3D11Buffer* m_pStaging_Buffer_Decal_Info = { nullptr };
 protected:
-	_float					m_fX, m_fY, m_fSizeX, m_fSizeY, m_fSizeZ;
+	_float					m_fSizeX;
+	_float					m_fSizeY;
+	_float					m_fSizeZ;
 
 protected:
 	virtual HRESULT			Add_Components();

@@ -47,6 +47,11 @@ HRESULT CDecal::Render()
 	return S_OK;
 }
 
+void CDecal::SetWorldMatrix(_float4x4 WorldMatrix)
+{
+	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
+}
+
 HRESULT CDecal::Add_Components()
 {
 	return S_OK;

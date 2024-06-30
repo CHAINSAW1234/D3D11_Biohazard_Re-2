@@ -189,6 +189,9 @@ public:
 	//For Render Decal To Map
 	void					Bind_Resource_DecalMap(class CShader* pShader);
 	void					Init_DecalMap(class CShader* pShader);
+
+	//Set Decal WorldMatrix
+	void					SetDecalWorldMatrix(_float4x4 WorldMatrix);
 #pragma endregion
 
 private:

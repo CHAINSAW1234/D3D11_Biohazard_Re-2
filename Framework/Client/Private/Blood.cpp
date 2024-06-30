@@ -519,6 +519,11 @@ void CBlood::SetWorldMatrix_With_HitNormal(_vector vUp)
 	m_pTransformCom->SetWorldMatrix_With_UpVector(vUp);
 }
 
+_float4x4 CBlood::GetWorldMatrix()
+{
+	return m_pTransformCom->Get_WorldFloat4x4();
+}
+
 HRESULT CBlood::Add_Components()
 {
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),

@@ -31,8 +31,8 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID)
             g_BoneMatrices[g_VertexBlendIndices[vertexIndex].z] * g_VertexBlendWeights[vertexIndex].z / fTotalWeight +
             g_BoneMatrices[g_VertexBlendIndices[vertexIndex].w] * g_VertexBlendWeights[vertexIndex].w / fTotalWeight;
 
-        float4 vPosition = mul(float4(g_VertexPositions[vertexIndex], 1.f), BoneMatrix);
-        float4 vNormal = mul(float4(g_VertexNormals[vertexIndex], 0.f), BoneMatrix);
+        float4 vPosition = mul(BoneMatrix, float4(g_VertexPositions[vertexIndex], 1.f));
+        float4 vNormal = mul(BoneMatrix, float4(g_VertexNormals[vertexIndex], 0.f));
 
         vertexPosition = mul(g_WorldMatrix, vPosition).xyz;
         vertexNormal = normalize(mul(g_WorldMatrix, vNormal));

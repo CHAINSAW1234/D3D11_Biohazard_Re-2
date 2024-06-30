@@ -201,6 +201,7 @@ CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int*
 	//Colliision Filter
 	PxFilterData filterData_Character;
 	filterData_Character.word0 = COLLISION_CATEGORY::CCT;
+	//filterData_Character.word0 = COLLISION_CATEGORY::CCT_NO_COLLISION;
 	filterData_Character.word1 = COLLISION_CATEGORY::COLLIDER | COLLISION_CATEGORY::RAGDOLL;
 	filterData_Character.word3 = m_iCharacter_Controller_Count;
 

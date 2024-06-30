@@ -48,7 +48,16 @@ static physx::PxFilterFlags MegamotionFilterShader(
 
 	return physx::PxFilterFlag::eDEFAULT;*/
 
+#pragma region CCT 面倒 公矫
+	/*if ((filterData0.word0 & COLLISION_CATEGORY::CCT_NO_COLLISION) && (filterData1.word0 & COLLISION_CATEGORY::CCT_NO_COLLISION))
+	{
+		pairFlags = physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+		return physx::PxFilterFlag::eNOTIFY;
+	}*/
+#pragma endregion
 
+
+#pragma region Default
 	//面倒 公矫 内靛
 	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
 	{
@@ -68,6 +77,7 @@ static physx::PxFilterFlags MegamotionFilterShader(
 		pairFlags = physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
 		return PxFilterFlag::eDEFAULT;
 	}
+#pragma endregion
 }
 
 class CEventCallBack : public PxSimulationEventCallback {
@@ -105,11 +115,21 @@ public:
 
 		pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
 
+#pragma region CCT 面倒 公矫
+		//if ((filterData0.word0 & COLLISION_CATEGORY::CCT_NO_COLLISION) && (filterData1.word0 & COLLISION_CATEGORY::CCT_NO_COLLISION))
+		//{
+		//	pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+		//	return physx::PxFilterFlag::eNOTIFY;
+		//}
+#pragma endregion
+
+#pragma region Default
 		if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
 		{
 			pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
 			return physx::PxFilterFlag::eNOTIFY;
 		}
+#pragma endregion
 
 		return physx::PxFilterFlag::eDEFAULT;
 
