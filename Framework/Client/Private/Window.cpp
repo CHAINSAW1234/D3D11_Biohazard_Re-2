@@ -156,7 +156,7 @@ void CWindow::Active()
 _float4 CWindow::Get_Object_Pos()
 {
 	if (!m_bBarrigateInstallable)
-		return _float4(0.f, 0.f, 0.f, 1.f);
+		return _float4(0.f, 0.f, 0.f, 1.f); // 
 	return m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION)+_float4(0.f,50.f,0.f,0.f);
 }
 

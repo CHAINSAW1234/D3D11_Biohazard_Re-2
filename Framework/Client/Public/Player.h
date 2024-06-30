@@ -169,8 +169,10 @@ public:
 	_bool										Get_Player_RegionChange() { return m_bChange; }
 	_bool*									Get_Player_Interact_Ptr() { return &m_bInteract; }
 	_bool*									Get_Player_Region_Array() { return m_bRegion; }
+	// 인벤 연동 뒤 나영이의 UI에게 플레이어가 얻은 아이템의 enum을 던져줘야함
 private:
-	_bool										m_bInteract = { false };
+
+	_bool										m_bInteract = { false }; //플레이어가 상호작용을 시도한
 	_bool										m_bChange = { true };
 	_int										m_iCurCol = { 0 };
 	_int										m_iRegion = { 0 };

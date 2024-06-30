@@ -50,6 +50,15 @@
 #include"Shutter.h"
 #include"Body_Shutter.h"
 
+#include"ItemLocker.h"
+#include"Body_ItemLocker.h"
+
+#include"Ladder.h"
+#include"Body_Ladder.h"
+
+#include"ReaderMachine.h"
+#include"Body_ReaderMachine.h"
+
 
 
 
@@ -757,11 +766,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_024_newpolicestatue01a")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_NewpoliceStatue::Create(m_pDevice, m_pContext));
 		if (!bDo &&
-			((Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_008")) != wstring::npos)
-			||(Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_002")) != wstring::npos)
-			||(Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_005")) != wstring::npos)
-			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_003")) != wstring::npos)
-			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_010")) != wstring::npos)
+			((Inform->wstrGameObjectPrototypeName.find(TEXT("sm44")) != wstring::npos)
 			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_011")) != wstring::npos))
 			&& (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Cabinet::Create(m_pDevice, m_pContext));
@@ -794,6 +799,9 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Statue"), CStatue::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EventProp"), CEventProp::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ItemProp"), CItemProp::Create(m_pDevice, m_pContext));
+
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ItemLocker"), CItemLocker::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Ladder"), CLadder::Create(m_pDevice, m_pContext));
 
 
 

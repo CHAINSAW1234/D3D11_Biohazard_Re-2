@@ -129,6 +129,7 @@ public:
 	_bool*												Selector_Rendering() { return &m_isSelector_Rendering;  }
 	/*To NY*/
 	virtual _float4									Get_Object_Pos() = 0;
+	_int												Get_PropType() { return m_tagPropDesc.iPropType; } // 프롭타입이라 쓰고 arg라 읽는다. // 문의 지역 enum을 반환한다.
 
 	_bool												Get_Interact_With_Player_Once() { return m_bInteract; }
 
@@ -141,7 +142,7 @@ private :
 
 protected:
 	_bool												m_bActivity = { true };
-	_bool												m_bInteract = { true };
+	_bool												m_bInteract = { false };// 한번 접촉하면 계속 true
 	_bool												m_bShadow = { true };
 	_bool												m_bVisible = { true };
 	_bool												m_bCol = { false }; // 충돌이 되었다
@@ -154,7 +155,6 @@ protected:
 	_bool*												m_pPlayerInteract = { nullptr };
 	CTransform*											m_pPlayerTransform = { nullptr };
 
-	_int												m_iPropsType = { 0 };
 	_float3												m_vRootTranslation = {};
 	INTERACTPROPS_DESC 									m_tagPropDesc ={};
 	vector<CPartObject*>								m_PartObjects;
@@ -165,9 +165,9 @@ protected:
 protected:
 	void												Check_Player();
 	void												Check_TabWindow();
-	void												Check_Col_Sphere_Player();
-	void												Check_Col_OBB_Player();
-	void												Check_Col_AABB_Player();
+	_bool												Check_Col_Sphere_Player();
+	_bool												Check_Col_OBB_Player();
+	_bool												Check_Col_AABB_Player();
 	_bool												Visible();
 	virtual HRESULT										Add_Components();
 	virtual HRESULT										Add_PartObjects();

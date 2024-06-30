@@ -90,7 +90,7 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 		m_bRender = false;
 	}
 
-	Check_Col_Sphere_Player();
+	m_bCol = Check_Col_Sphere_Player();
 
 	__super::Late_Tick(fTimeDelta);
 

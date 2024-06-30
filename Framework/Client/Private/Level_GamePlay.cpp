@@ -14,7 +14,6 @@
 #include "Zombie.h"
 
 /* MapObj*/
-#include"Prop_Manager.h"
 #include"InteractProps.h"
 
 
@@ -77,7 +76,7 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 	_bool bGoal = { false };
 	_float4 vGoal = { 0.f,0.f,0.f,0.f };
 	CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-	iCurIndex = pPlayer->Get_Player_ColIndex();
+	iCurIndex = pPlayer->Get_Player_Region();
 	if (iCurIndex!= iPreIndex)
 	{
 		LIGHT_DESC* plight_desc = m_pGameInstance->Get_Light_List(g_strDirectionalTag)->front();
@@ -91,7 +90,7 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 			
 			m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta);
 		}
-		else if(iCurIndex == 3)
+		else if(iCurIndex == 10)
 		{
 			light_desc.vDiffuse = _float4(0.09f, 0.09f, 0.12f, 0.09f);
 			light_desc.vAmbient = _float4(0.09f, 0.09f, 0.12f, 0.09f);
@@ -1396,5 +1395,4 @@ CLevel_GamePlay * CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceCon
 void CLevel_GamePlay::Free()
 {
 	__super::Free();
-	Safe_Release(m_pPropManager);
 }

@@ -2,7 +2,6 @@
 #include "Map_UI.h"
 #include "Tab_Window.h"
 #include "Player.h"
-#include"Prop_Manager.h"
 #define RED                     _float4(0.8, 0, 0, 0)
 #define BLUE                    _float4(0.0, 0.7569, 0.85, 0.0)
 #define ALPHA_ZERO              _float4(0, 0, 0, 0)
@@ -36,10 +35,9 @@ CMap_UI::CMap_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 }
 
 CMap_UI::CMap_UI(const CMap_UI& rhs)
-    : m_pPropManager{ CProp_Manager::Get_Instance()},
+    :
      CCustomize_UI{ rhs }
 {
-    Safe_AddRef(m_pPropManager);
 }
 
 HRESULT CMap_UI::Initialize_Prototype()
@@ -1194,7 +1192,9 @@ CGameObject* CMap_UI::Clone(void* pArg)
 void CMap_UI::Free()
 {
     __super::Free();
-    Safe_Release(m_pPropManager);
+
+
+
    // Safe_Release<CTransform*>(m_pPlayerTransform);
 
     //if (nullptr != m_pPlayerTransform)

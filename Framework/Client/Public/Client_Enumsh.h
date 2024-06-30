@@ -93,6 +93,7 @@ namespace Client
 		photofilmc01a,
 		photofilmd01a,
 		photofilme01a,
+		/*73*/
 		backdoorkey01a,
 		keycase01a,
 		extensioncord01a,
@@ -353,6 +354,65 @@ namespace Client
 		PLAYER_BEHAVIOR_COLLIDER_LADDER, //
 		PLAYER_BEHAVIOR_COLLIDER_DOOR, //
 		PLAYER_BEHAVIOR_COLLIDER_END,
+	};
+	enum DOOR_TYPE
+	{
+		/* 1 Floor */
+		ENTRANCE_DOWN_DOOR, /* 입구 아래 */
+		ENTRANCE_UP_DOOR, /* 입구 위 */
+		RECEPT_DOOR, /* 리셉션 문*/
+		WEST_OFFICE_LEFT_DOOR, /* 서쪽 사무실 문 */
+		WEST_OFFICE_RIGHT_DOOR, /* 메인홀쪽 서쪽 사무실 문 */
+		R_O_DOOR, /* 기록실과 작전실 사이 문*/
+		R_O_RIGHT_DOOR, /* 기록실과 작전실 사이 구역의 왼쪽 문*/
+		R_O_DOWN_DOOR, /* 기록실과 작전실 사이 구역의 아랫 문*/
+		RECORD_DOOR, /* 기록실 문*/
+		OPERATION_DOOR, /* 작전실 문*/
+		SAFE_DEPOSIT_BOX_DOOR, /* 안전 금고실 문*/
+		DARK_DOORK, /* 암실 문 */
+		OBSERVATION_DOOR, /* 관찰실 문*/
+		EAST_OFFICE_LEFT_DOOR, /* 동쪽 사무실 문 */
+		EAST_OFFICE_RIGHT_DOOR, /* 동쪽 사무실 문 */
+		PRESS_DOOR, /* 기자실 문 */
+		BOILER_UP_DOOR, /* 보일러실 위쪽 문*/
+		BOILER_RIGHT_DOOR, /* 보일러실 오른쪽 문 */
+		TOILET_DOOR, /* 화장실 문 */
+		REST_DOOR, /* 휴게실 문 */
+		PRESSLEFT_SIDEROOM_DOOR, /*기자실 왼쪽 작은 방 문 */
+		SECURITY_OFFICE_DOOR, /* 경비 사무실 문 */
+		EMERGENCY_ESACPE_DOWN_F1_DOOR, /* 비상탈출로 아래문 */
+		EMERGENCY_ESACPE_LEFT_F1_DOOR, /* 비상탈출로 왼쪽문 */
+
+		/* 2 Floor */
+		WASH_ROOM_LEFT_ROOR, /* 샤워실 좌하단 문*/
+		WASH_ROOM_RIGHT_ROOR, /* 샤워실 우하단 문*/
+		STARS_OFFICE_DOOR, /* 스타즈 사무실 문 */
+		ARMORY_DOOR, /* 스타즈 사무실과 무기고 연결문 */
+		LAUNDRY_DOOR, /* 세탁실 문*/
+		LIBRARY_F2_RIGHT_DOOR, /* 메인홀과 와도서관 사이 문 */
+		LIBRARY_F2_DOWN_DOOR, /* 라운지와 와도서관 사이 문 */
+		LOUNGE_DOOR, /* 라운지 왼쪽 문 */
+		WAITING_LEFT_DOOR, /* 대기실 왼쪽 문*/ //안쓰요
+		WAITING_RIGHT_DOOR, /* 대기실 오른쪽 문*/ //안쓰요
+		PRIVATE_COLLECTION_LEFT_DOOR, /* 개인컬렉션 보관실 좌상단*/ //안쓰요
+		PRIVATE_COLLECTION_RIGHT_DOOR, /* 개인컬렉션 보관실 우상단*/ //안쓰요
+		ART_STORAGE_DOOR, /* 예술품 보관실 문 */
+		CHIEF_OFFICE_DOOR, /* 서장 사무실 문 */ //안쓰요
+		ROFE_DOOR, /* 지붕 문*/
+		EMERGENCY_ESACPE_F2_DOOR, /* 비상탈출로 문*/
+
+		/* 3 Floor*/
+		WEST_STORAGE_DOOR, /* 서쪽 저장실 문*/
+		WATCH_LEFT_TOWER, /* 시계탑 왼쪽 문*/
+		WATCH_RIGHT_TOWER, /* 시계탑 오른쪽 문*/
+		LIBRARY_F3_LEFT_DOOR, /* 도서관 왼쪽 문*/
+		LIBRARY_F3_RIGHT_DOOR, /* 도서관 오른쪽 문*/
+		UPPER_LEFT_SECTION_DOOR, /* 최 좌상단 구역 문*/
+		EAST_STORAGE_LEFT_DOOR, /* 동쪽 저장실 왼쪽 문 */
+		EAST_STORAGE_RIGHT_DOOR, /* 동쪽 저장실 오른쪽 문 */
+		EAST_STORAGE_DOWN_DOOR, /* 동쪽 저장실 이동불가 문 */
+		BALCONY_DOOR, /* 발코니 문*/
+
 	};
 
 }

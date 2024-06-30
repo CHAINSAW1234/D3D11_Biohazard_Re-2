@@ -50,12 +50,15 @@ public:
 
 
 private:
+	_bool				m_bReonDesk = { false };
+	_bool				m_bItemDead = { true };
 	_bool				m_bObtain = { false };
 	_bool				m_bOpened = { false };
 	_bool				m_bLock =	{ false };
 	_bool				m_bActive = { false };
+	_bool				m_bRightCol = { false };
 
-	_ubyte  m_eState = { CABINET_CLOSED };
+	_ubyte			m_eState = { CABINET_CLOSED };
 
 
 

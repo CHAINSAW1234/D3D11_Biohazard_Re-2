@@ -27,11 +27,14 @@ public:
 private:	
 	class CGameInstance*				m_pGameInstance = { nullptr };
 	map<_int, list<class CGameObject*>*>				m_RegionProps;
+	
 	map<_int, list<class CGameObject*>*>				m_TypeProps;
+	
 private:
 	HRESULT									Initialize_List();
 	list<class CGameObject*>*			Find_List(_int iTag);
 public:
+	static void Release_Manager();
 	virtual void Free() override;
 };
 
