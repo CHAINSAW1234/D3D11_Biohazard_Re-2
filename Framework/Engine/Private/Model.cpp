@@ -192,6 +192,40 @@ _matrix CModel::Get_FirstKeyFrame_Root_TransformationMatrix(const wstring& strAn
 	return ResultMatrix;
 }
 
+_matrix CModel::Get_FirstKeyFrame_Root_CombinedMatrix(const wstring& strAnimLayerTag, _int iAnimIndex)
+{
+	_matrix				ResultMatrix = { XMMatrixIdentity()};
+	if (iAnimIndex < 0)
+		return ResultMatrix;
+
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	if (iter != m_AnimationLayers.end())
+	{
+		ResultMatrix = { XMLoadFloat4x4(&m_TransformationMatrix) };
+		list<_uint>			BoneIndices;
+		_int			iBoneIndex = { Find_RootBoneIndex() };
+		while (iBoneIndex != -1)
+		{
+			BoneIndices.emplace_front(iBoneIndex);
+			iBoneIndex = m_Bones[iBoneIndex]->Get_ParentIndex();
+		}
+
+		for (auto& iBoneIndex : BoneIndices)
+		{
+			KEYFRAME			KeyFrame = { iter->second->Get_Animation(iAnimIndex)->Get_FirstKeyFrame(iBoneIndex) };
+			_vector				vScale = { XMLoadFloat3(&KeyFrame.vScale) };
+			_vector				vQuaternion = { XMLoadFloat4(&KeyFrame.vRotation) };
+			_vector				vTranslation = { XMLoadFloat3(&KeyFrame.vTranslation) };
+
+			_matrix				TransformationMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
+
+			ResultMatrix = TransformationMatrix * ResultMatrix;
+		}
+	}	
+
+	return ResultMatrix;
+}
+
 void CModel::Reset_PreAnimation(_uint iPlayingIndex)
 {
 	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
@@ -952,7 +986,13 @@ void CModel::Apply_RootMotion_Rotation(CTransform* pTransform)
 		pPlayingInfo->Set_PreQuaternion(vCurrentRotation);
 	}
 
-	_matrix			RotationMatrix = { XMMatrixRotationQuaternion(vTotalDeltaQuaternion) };
+	_vector				vRootRotateAxis = { XMVectorSetW(vTotalDeltaQuaternion, 0.f) };
+	vRootRotateAxis = { XMVector3TransformNormal(vRootRotateAxis, XMLoadFloat4x4(&m_TransformationMatrix)) };
+	vTotalDeltaQuaternion = { XMVectorSetW(vRootRotateAxis, XMVectorGetW(vTotalDeltaQuaternion)) };
+
+	//	_vector				vScale = { XMLoadFloat3(&pTransform->Get_Scaled()) };
+
+	_matrix			RotationMatrix = { XMMatrixRotationQuaternion(XMQuaternionNormalize(vTotalDeltaQuaternion)) };
 	_matrix			WorldMatrix = { pTransform->Get_WorldMatrix() };
 	//	RotationMatrix.r[CTransform::STATE_POSITION].m128_f32[3] = 0.f;
 
@@ -963,6 +1003,7 @@ void CModel::Apply_RootMotion_Rotation(CTransform* pTransform)
 	ResultMatrix.r[CTransform::STATE_POSITION] = vPosition;
 
 	pTransform->Set_WorldMatrix(ResultMatrix);
+	//	pTransform->Set_Scaled(XMVectorGetX(vScale), XMVectorGetY(vScale), XMVectorGetZ(vScale));
 }
 
 void CModel::Apply_RootMotion_Translation(CTransform* pTransform, _float3* pMovedDirection)
@@ -1876,6 +1917,8 @@ void CModel::Change_Animation(_uint iPlayingIndex, const wstring& strAnimLayerTa
 	_uint			iNumChannel = { pAnimation->Get_NumChannel() };
 
 	pPlayingInfo->Change_Animation(strAnimLayerTag, iAnimIndex, iNumChannel);
+
+
 }
 
 void CModel::Change_Animation(_uint iPlayingIndex, const wstring& strAnimLayerTag, const string& strAnimTag)

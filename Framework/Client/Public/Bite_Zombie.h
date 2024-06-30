@@ -2,6 +2,7 @@
 
 #include "Client_Defines.h"
 #include "Task_Node.h"
+#include "Zombie.h"
 #include "Body_Zombie.h"
 
 BEGIN(Client)
@@ -32,17 +33,20 @@ private:
 	void							Change_Animation_Push_Down(BITE_ANIM_STATE eState);
 	void							Change_Animation_Lost(BITE_ANIM_STATE eState);
 
+private:
 	BITE_ANIM_STATE 				Compute_Current_AnimState_Bite();
 
 	_bool							Is_CurrentAnim_StartAnim();
 	_bool							Is_CurrentAnim_MiddleAnim();
 	_bool							Is_CurrentAnim_FinishAnim();
-
 	_bool							Is_Can_Start_Bite();
 
+private:
 	void							Set_Bite_LinearStart_HalfMatrix();
-
 	_bool							Is_StateFinished(BITE_ANIM_STATE eState);
+
+private:
+	void							Update_PoseState_FaceState();
 
 private:
 	void							Apply_HalfMatrix(_float fTimeDelta);
@@ -68,6 +72,9 @@ private:
 	unordered_map<wstring, unordered_set<_uint>>		m_StartAnims;
 	unordered_map<wstring, unordered_set<_uint>>		m_MiddleAnims;
 	unordered_map<wstring, unordered_set<_uint>>		m_FinishAnims;
+
+	CZombie::FACE_STATE				m_eStartFaceState = { CZombie::FACE_STATE::_END };
+	CZombie::POSE_STATE				m_eStartPoseState = { CZombie::POSE_STATE::_END };
 
 	_bool							m_isSendMSG_To_Player = { false };
 

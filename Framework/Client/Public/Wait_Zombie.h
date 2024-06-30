@@ -31,9 +31,6 @@ public:
 private:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 
-private:	/* For. Active FirstTime */
-	_bool							m_isWake = { false };
-
 public:
 	static CWait_Zombie* Create(void* pArg = nullptr);
 

@@ -49,7 +49,6 @@ _bool CKnock_Back_Zombie::Execute(_float fTimeDelta)
 
 	if (true == m_isEntry)
 	{
-		//	cout << "Wait" << endl;
 		Update_Current_Collider();
 		Change_Animation();
 		m_isEntry = false;

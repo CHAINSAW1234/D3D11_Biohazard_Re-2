@@ -113,10 +113,10 @@ enum class ANIM_BITE_PUSH_DOWN {
 };
 
 enum class ANIM_BITE_CREEP {
-	_FACE_DOWN_L,
-	_FACE_DOWN_R,
-	_FACE_UP_L,
-	_FACE_UP_R,
+	_FACE_DOWN_L,			//	좀비가 플레이어 왼쪽
+	_FACE_DOWN_R,			//	좀비가 플레이어 오른쪽
+	_FACE_UP_L,				//	좀비가 플레이어 왼쪽
+	_FACE_UP_R,				//	좀비가 플레이어 오른쪽
 	_CREEP_REJECT_L,
 	_CREEP_REJECT_R,
 	_CREEP_KILL_L,
@@ -339,8 +339,8 @@ enum class ANIM_DEAD_DEFAULT {
 #pragma region Lost
 
 enum class ANIM_LOST_BITE {
-	_DIRECT1,
-	_DIRECT2,
+	_DIRECT1,		//	양팔 없는채로 서서
+	_DIRECT2,		//	양팔 없는채로 누워서 < face down >
 	_END
 };
 
@@ -364,12 +364,12 @@ enum class ANIM_LOST_HOLD {
 };
 
 enum class ANIM_LOST_IDLE {
-	_LOOP1,
-	_LOOP2,
-	_LOOP3,
-	_LOOP4,
-	_ANKLE_LOOP1,
-	_ANKLE_LOOP2,
+	_LOOP1,			//	Lost Non Arm
+	_LOOP2,			//	Lost L Arm
+	_LOOP3,			//	Lost R Arm
+	_LOOP4,			//	Lost L,R Arm
+	_ANKLE_LOOP1,	//	Lost L Ankle	=> 서있음
+	_ANKLE_LOOP2,	//	Lost R Ankle	=> 서있음
 	_END
 };
 

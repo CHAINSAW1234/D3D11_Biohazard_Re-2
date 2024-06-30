@@ -59,12 +59,6 @@ _bool CHold_Zombie::Execute(_float fTimeDelta)
 
 	m_isEntry = false;
 
-#ifdef _DEBUG
-
-	cout << "is Hold " << endl;
-
-#endif;
-
 	return true;
 }
 
@@ -85,7 +79,7 @@ void CHold_Zombie::Change_Animation()
 	{
 		if (true == true == pBodyModel->isFinished(static_cast<_uint>(PLAYING_INDEX::INDEX_0)))
 		{
-			m_pBlackBoard->GetAI()->Get_Status_Ptr()->fAccRecognitionTime = 0.f;
+			m_pBlackBoard->GetAI()->Get_Status_Ptr()->fAccHoldTime = 0.f;
 		}
 		return;
 	}

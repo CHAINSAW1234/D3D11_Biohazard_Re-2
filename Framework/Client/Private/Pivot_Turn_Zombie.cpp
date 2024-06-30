@@ -42,8 +42,6 @@ _bool CPivot_Turn_Zombie::Execute(_float fTimeDelta)
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_TURN);
 
-	cout << "Turn" << endl;
-
 	Change_Animation(fTimeDelta);
 
 	return true;

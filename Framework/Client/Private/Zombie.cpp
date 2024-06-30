@@ -58,7 +58,7 @@ HRESULT CZombie::Initialize(void* pArg)
 
 		m_iIndex = pDesc->Index;
 		_float4 vPos = *(_float4*)pDesc->worldMatrix.m[3];
-		vPos.y += 1.f;
+		//	vPos.y += 1.f;
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 	}
 
@@ -125,8 +125,17 @@ void CZombie::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	if (m_pController)
-		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
+	_vector			vScale = { XMLoadFloat3(&m_pTransformCom->Get_Scaled()) };
+
+	if (0.009f >XMVectorGetX(vScale))
+	{
+		int iA = 0;
+	}
+	
+	cout << XMVectorGetX(vScale) << ", " << XMVectorGetY(vScale) << ", " << XMVectorGetZ(vScale) << endl;
+
+	/*if (m_pController)
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());*/
 
 #pragma region BehaviorTree 코드
 
@@ -139,7 +148,18 @@ void CZombie::Tick(_float fTimeDelta)
 	XMStoreFloat4(&vDirection, vRootMoveDir);
 	if (m_pController)
 	{
-		m_pController->Move(vDirection, fTimeDelta);
+		/*if (false == m_isManualMove)
+		{
+			m_pController->Move(vDirection, fTimeDelta);
+		}
+
+		else*/
+		{
+			_vector				vCurrentPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+			_vector				vResultPosition = { vCurrentPosition + vRootMoveDir };
+
+			m_pTransformCom->Set_State(CTransform::STATE_POSITION, vResultPosition);
+		}
 	}
 	XMStoreFloat3(&m_vRootTranslation, XMVectorZero());
 
@@ -440,13 +460,18 @@ void CZombie::Init_BehaviorTree_Zombie()
 	*Root Child Section ( Lightly Hold )
 	*/
 
+	//	거리내로 들어오면 시간을 누적
 	//	Add Task Node		=> Lightly Hold 
 	CLightly_Hold_Zombie*						pTask_Lightly_Hold = { CLightly_Hold_Zombie::Create() };
 	pTask_Lightly_Hold->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_Root->Insert_Child_Node(pTask_Lightly_Hold);
 
-	
+	//	Add Decorator Node	=> Lightly Hold
+	CIs_Character_In_Range_Zombie*				pDeco_Charactor_In_Range_Lightly_Hold = { CIs_Character_In_Range_Zombie::Create() };
+	pDeco_Charactor_In_Range_Lightly_Hold->SetBlackBoard(m_pBlackBoard);
+	pTask_Lightly_Hold->Insert_Decorator_Node(pDeco_Charactor_In_Range_Lightly_Hold);
 
+	
 	/*
 	*Root Child Section ( Select Move Or Turn )
 	*/
@@ -466,7 +491,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_Hold->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Hold);
 
-	CIs_Enough_Time_Zombie*						pDeco_Enough_Time_For_Hold = { CIs_Enough_Time_Zombie::Create(&m_pStatus->fAccRecognitionTime, &m_pStatus->fTryAttackRecognitionTime) };
+	CIs_Enough_Time_Zombie*						pDeco_Enough_Time_For_Hold = { CIs_Enough_Time_Zombie::Create(&m_pStatus->fAccHoldTime, &m_pStatus->fTryHoldTime) };
 	pDeco_Enough_Time_For_Hold->SetBlackBoard(m_pBlackBoard);
 	pTask_Hold->Insert_Decorator_Node(pDeco_Enough_Time_For_Hold);
 
@@ -724,11 +749,17 @@ HRESULT CZombie::Initialize_Status()
 
 	m_pStatus->fAttack = STATUS_ZOMBIE_ATTACK;
 	m_pStatus->fViewAngle = STATUS_ZOMBIE_VIEW_ANGLE;
+
 	m_pStatus->fRecognitionRange = STATUS_ZOMBIE_DEFAULT_RECOGNITION_DISTANCE;
 	m_pStatus->fMaxRecognitionTime = STATUS_ZOMBIE_MAX_RECOGNITION_TIME;
 	m_pStatus->fBiteRange = STATUS_ZOMBIE_BITE_RANGE;
-	m_pStatus->fTryAttackRecognitionTime = STATUS_ZOMBIE_TRY_ATTACK_RICOGNITION_TIME;
-	m_pStatus->fTryAttackRange = STATUS_ZOMBIE_TRY_ATTACK_DISTANCE;
+
+	m_pStatus->fTryHoldTime = STATUS_ZOMBIE_TRY_HOLD_TIME;
+	m_pStatus->fTryHoldRange = STATUS_ZOMBIE_TRY_HOLD_RANGE;
+
+	m_pStatus->fLightlyHoldRange = STATUS_ZOMBIE_LIGHTLY_HOLD_RANGE;
+	m_pStatus->fTryLightlyHoldTime = STATUS_ZOMBIE_TRY_LIGHTLY_HOLD_TIME;
+
 	m_pStatus->fHealth = STATUS_ZOMBIE_HEALTH;
 
 	return S_OK;

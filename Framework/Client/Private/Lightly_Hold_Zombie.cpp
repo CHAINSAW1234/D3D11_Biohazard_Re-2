@@ -52,12 +52,6 @@ _bool CLightly_Hold_Zombie::Execute(_float fTimeDelta)
 
 	Change_Animation();
 
-#ifdef _DEBUG
-
-	cout << "is Hold " << endl;
-
-#endif;
-
 	return true;
 }
 
@@ -78,7 +72,7 @@ void CLightly_Hold_Zombie::Change_Animation()
 	{
 		if (true == true == pBodyModel->isFinished(static_cast<_uint>(PLAYING_INDEX::INDEX_0)))
 		{
-			m_pBlackBoard->GetAI()->Get_Status_Ptr()->fAccRecognitionTime = 0.f;
+			m_pBlackBoard->GetAI()->Get_Status_Ptr()->fAccLightlyHoldTime = 0.f;
 		}
 		return;
 	}

@@ -122,10 +122,10 @@ void CPlayer::Tick(_float fTimeDelta)
 #pragma region 이동과 카메라
 	if (m_pController)
 	{
-		auto CameraPos = m_pController->GetPosition_Float4();
-		m_pTransformCom->Set_State(CTransform::STATE_POSITION, CameraPos);
-		CameraPos.y += CONTROLLER_GROUND_GAP;
-		m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, CameraPos);
+		//	auto CameraPos = m_pController->GetPosition_Float4();
+		//	m_pTransformCom->Set_State(CTransform::STATE_POSITION, CameraPos);
+		//	CameraPos.y += CONTROLLER_GROUND_GAP;
+		//	m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, CameraPos);
 	}
 
 	_vector			vMovedDirection = { XMLoadFloat3(&m_vRootTranslation) };
@@ -252,7 +252,23 @@ void CPlayer::Tick(_float fTimeDelta)
 
 		_float4			vResultMoveDirFloat4 = {};
 		XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
-		m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
+
+		/*if (false == m_isManualMove)
+		{
+			m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
+		}
+
+		else*/
+		{
+			_vector				vCurrentPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+			_vector				vResultPosition = { vCurrentPosition + vMovedDirection };
+
+			_vector				vResultCamPos = { vResultPosition };
+			vResultCamPos = XMVectorSetY(vResultCamPos, XMVectorGetY(vResultCamPos) + CONTROLLER_GROUND_GAP);
+			m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, vResultCamPos);
+
+			m_pTransformCom->Set_State(CTransform::STATE_POSITION, vResultPosition);
+		}
 		XMStoreFloat3(&m_vRootTranslation, XMVectorZero());
 	}
 
@@ -675,7 +691,7 @@ void CPlayer::Change_Player_State_Bite(_int iAnimIndex, const wstring& strLayerT
 
 void CPlayer::Request_NextBiteAnimation(_int iAnimIndex)
 {
- 	m_iBiteAnimIndex = iAnimIndex;
+	m_iBiteAnimIndex = iAnimIndex;
 }
 
 _float CPlayer::Get_CamDegree()
@@ -743,6 +759,7 @@ void CPlayer::Update_InterplationMatrix(_float fTimeDelta)
 
 	m_pTransformCom->Set_WorldMatrix(TimesCombinedMatrix);
 	m_vRootTranslation = { XMLoadFloat3(&m_vRootTranslation) + vCurrentTranslation };
+	//	m_vRootTranslation = { vCurrentTranslation };
 
 }
 

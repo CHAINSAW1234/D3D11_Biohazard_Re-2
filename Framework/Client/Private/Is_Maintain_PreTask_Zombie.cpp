@@ -21,6 +21,7 @@ HRESULT CIs_Maintain_PreTask_Zombie::Initialize(void* pArg)
 	m_MaintainStates.emplace(MONSTER_STATE::MST_DAMAGE);
 	m_MaintainStates.emplace(MONSTER_STATE::MST_TURN);
 	m_MaintainStates.emplace(MONSTER_STATE::MST_HOLD);
+	m_MaintainStates.emplace(MONSTER_STATE::MST_SLEEP);
 
 	return S_OK;
 }

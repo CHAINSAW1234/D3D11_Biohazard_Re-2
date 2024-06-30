@@ -6,12 +6,12 @@ Sequence Root ----------------------------	Deco		IsHit
 |											Task 		Additional Shake Skin ( Only Blend Anim )
 |
 |
-Selector Root-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------		Task 		Idle Wait
-|							|																											|										|
-|							|																											|										|
-|							|																											|										|
-Deco 	Is MainTain			Deco		IsHit 																							Deco		IsInRange(VeryNear)			Deco 		IsInRange ( Recognition Ragne )
-Task 	Execute Pre Task	Selector 	Child Hit	------------------------------------------------------------						Deco 		IsLinkFromMove, Idle		Selector 	Move Or Turn	---------------------------------------------------------------------------------
+Selector Root-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------		Selector Wait -------------------------------------------------------------------
+|							|																											|										|																																					|										|										|
+|							|																											|										|																																					|										|										|
+|							|																											|										|																																					|										|										|
+Deco 	Is MainTain			Deco		IsHit 																							Deco		IsInRange(VeryNear)			Deco 		IsInRange ( Recognition Ragne )																											Deco	IsSleep							Deco		Is_Creep					Task	Idle Wait
+Task 	Execute Pre Task	Selector 	Child Hit	------------------------------------------------------------						Deco 		IsLinkFromMove, Idle		Selector 	Move Or Turn	---------------------------------------------------------------------------------										Task	Sleep							Task		Idle Creep
 							|												|									|						Task		LightlyHold					|															|												|
 							|												|									|																|															|												|
 							|												|									|																|															|												|
@@ -20,6 +20,15 @@ Task 	Execute Pre Task	Selector 	Child Hit	-------------------------------------
 							Task 		Hold Stun
 							
 
+
+###		Wait Creep 추가			Face Down 상태에서만 진입가능 => 팔잃은 여부에따라 몸을 지지후 정면 바라보고 대기 => 시간값 누적해줘야함
+###		Wait Sleep 추가			아무런 업데이트 없음 => Update Timers로 슬립상태이면 벗어나기위한 시간 값을 추가해줘야함 () || 공격이 들어오면 히트 모션이후 슬립 종료
+###		Wait Idle
+
+###		Lightly Hold 상태 들어가는 조건 구체화
+###		Lightly Hold 상태에서 Bite 진입시 => PushDown 모션들로 이어져야함 => 처리 필요 
+
+###		TurnOver => 다리가 없는상태에서 Face Up인경우 기기 위해서 선행되어야하는 모션 => 다리가있으면 그냥일어나면됌
 
 
 추가해야할 상태 판단 => 각 상태 내부적으로 몬스터 자체가 Creep 상태인지 추가적으로 판단하여 상태분기를 더 해야함
@@ -36,18 +45,15 @@ Task 	Execute Pre Task	Selector 	Child Hit	-------------------------------------
 추가해야할 상태	( Big Cat )
 
 	=> Dead
-
 		1. Pose
 		2. RagDoll
 		3. DeadAnim
 
 	=> StandUp
-
 		=> Need Creep
 		=> Face Up, Down 분기
 
 	=> Start ( Undiscovered 류...)
-
 		=> 철창
 		=> 벽넘기
 		=> 벽기대기

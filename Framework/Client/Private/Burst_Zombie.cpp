@@ -40,7 +40,6 @@ _bool CBurst_Zombie::Execute(_float fTimeDelta)
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_DAMAGE);
 
-	//	cout << "Wait" << endl;
 	Change_Animation();
 
 	return true;

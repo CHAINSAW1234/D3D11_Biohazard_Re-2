@@ -18,7 +18,7 @@ HRESULT CBite_Zombie::Initialize(void* pArg)
 	if (FAILED(SetUp_AnimBranches()))
 		return E_FAIL;
 
-	m_fTotalLinearTime_HalfMatrix = 0.01f;
+	m_fTotalLinearTime_HalfMatrix = 0.2f;
 
 	return S_OK;
 }
@@ -29,14 +29,19 @@ void CBite_Zombie::Enter()
 	if (nullptr == pBodyModel)
 		return;
 
-	pBodyModel->Set_TotalLinearInterpolation(0.2f);
+	pBodyModel->Set_TotalLinearInterpolation(0.f);
 	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), false);
 
 	pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), 0.f, 0.f);
 	pBodyModel->Reset_PreAnim_CurrentAnim(static_cast<_uint>(PLAYING_INDEX::INDEX_1));
 
+	m_pBlackBoard->GetAI()->Set_ManualMove(true);
+
 	m_isSendMSG_To_Player = false;
 	m_eAnimType = BITE_ANIM_TYPE::_END;
+
+	m_eStartPoseState = m_pBlackBoard->GetAI()->Get_PoseState();
+	m_eStartFaceState = m_pBlackBoard->GetAI()->Get_FaceState();
 }
 
 _bool CBite_Zombie::Execute(_float fTimeDelta)
@@ -73,18 +78,21 @@ _bool CBite_Zombie::Execute(_float fTimeDelta)
 		m_isSendMSG_To_Player = true;
 	}
 	Apply_HalfMatrix(fTimeDelta);
-
-#ifdef _DEBUG
-
-	cout << "is Bite" << endl;
-
-#endif;
+	Update_PoseState_FaceState();
 
 	return true;
 }
 
 void CBite_Zombie::Exit()
 {
+	m_pBlackBoard->GetAI()->Set_ManualMove(false);
+
+	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	if (nullptr == pBodyModel)
+		return;
+
+	m_eStartPoseState = CZombie::POSE_STATE::_END;
+	m_eStartFaceState = CZombie::FACE_STATE::_END;
 }
 
 void CBite_Zombie::Change_Animation_Default_Front(BITE_ANIM_STATE eState)
@@ -140,6 +148,9 @@ void CBite_Zombie::Change_Animation_Default_Front(BITE_ANIM_STATE eState)
 	if (iPreAnimIndex != iResultAnimationIndex)
 		m_pBlackBoard->GetPlayer()->Request_NextBiteAnimation(iResultAnimationIndex);
 
+	//	pBodyModel->Set_TickPerSec(m_strDefaultFrontAnimLayerTag, iResultAnimationIndex, 5.f);
+	//	m_pBlackBoard->GetPlayer()->Get_Body_Model()->Set_TickPerSec(m_strDefaultFrontAnimLayerTag, iResultAnimationIndex, 5.f);
+
 	pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strDefaultFrontAnimLayerTag, iResultAnimationIndex);
 	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
 }
@@ -193,6 +204,94 @@ void CBite_Zombie::Change_Animation_Default_Back(BITE_ANIM_STATE eState)
 
 void CBite_Zombie::Change_Animation_Creep(BITE_ANIM_STATE eState)
 {
+	if (nullptr == m_pBlackBoard)
+		return;
+
+	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	if (nullptr == pBodyModel)
+		return;
+
+	_int			iResultAnimationIndex = { -1 };	
+
+	//	Change StartAnim
+	if (BITE_ANIM_STATE::_END == eState)
+	{
+		_float3			vDirectionFromPlayerLocalFloat3 = {};
+		if (false == m_pBlackBoard->Compute_Direction_From_Player_Local(&vDirectionFromPlayerLocalFloat3))
+		{
+			MSG_BOX(TEXT("Called : void CBite_Zombie::Change_Animation_Creep(BITE_ANIM_STATE eState) 좀비 담당자 호출"));
+		}
+
+		_vector			vDirectionFromPlayerLocal = { XMLoadFloat3(&vDirectionFromPlayerLocalFloat3) };
+		_bool			isRight = { XMVectorGetX(vDirectionFromPlayerLocal) > 0.f };
+
+		if (CZombie::FACE_STATE::_DOWN == m_eStartFaceState)
+		{
+			if (true == isRight)
+				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_CREEP::_FACE_DOWN_R);
+			
+			else
+				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_CREEP::_FACE_DOWN_L);
+		}
+
+		else if(CZombie::FACE_STATE::_UP == m_eStartFaceState)
+		{
+			if(true == isRight)
+				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_CREEP::_FACE_UP_R);
+			else
+				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_CREEP::_FACE_UP_L);
+		}
+		
+#ifdef _DEBUG
+		else
+		{
+			MSG_BOX(TEXT("Called : void CBite_Zombie::Change_Animation_Creep(BITE_ANIM_STATE eState) 좀비 담당자 호출"));
+		}
+#endif
+		m_eAnimType = BITE_ANIM_TYPE::_CREEP;
+	}
+
+	//	Change FinishAnim
+	else if (BITE_ANIM_STATE::_START == eState)
+	{
+		if (false == pBodyModel->isFinished(static_cast<_int>(m_ePlayingIndex)))
+			return;
+
+		_float			fPlayerHP = { static_cast<_float>(m_pBlackBoard->GetPlayer()->Get_Hp()) };
+		_float			fZombieAttack = { m_pBlackBoard->GetAI()->Get_Status_Ptr()->fAttack };
+		_bool			isCanKillPlayer = { fPlayerHP <= fZombieAttack };
+
+		_int			iAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
+
+#ifdef _DEBUG
+		if (-1 == iAnimIndex)
+			MSG_BOX(TEXT("Called : void CBite_Zombie::Change_Animation_Creep(BITE_ANIM_STATE eState) 좀비 담당자 호출"));
+#endif
+
+		_bool			isRight= { iAnimIndex == static_cast<_int>(ANIM_BITE_CREEP::_FACE_DOWN_R) || iAnimIndex == static_cast<_int>(ANIM_BITE_CREEP::_FACE_UP_R) };
+		if (true == isCanKillPlayer)
+		{
+			if(true == isRight)
+				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_CREEP::_CREEP_KILL_R);
+			else
+				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_CREEP::_CREEP_KILL_L);
+		}
+
+		else
+		{
+			if(true == isRight)
+				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_CREEP::_CREEP_REJECT_R);
+			else
+				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_CREEP::_CREEP_REJECT_L);
+		}
+	}
+
+	_int				iPreAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
+	if (iPreAnimIndex != iResultAnimationIndex)
+		m_pBlackBoard->GetPlayer()->Request_NextBiteAnimation(iResultAnimationIndex);
+
+	pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strCreepAnimLayerTag, iResultAnimationIndex);
+	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
 }
 
 void CBite_Zombie::Change_Animation_Push_Down(BITE_ANIM_STATE eState)
@@ -322,7 +421,7 @@ _bool CBite_Zombie::Is_Can_Start_Bite()
 {
 	_bool				isCanBite = { false };
 
-	_float			fDistanceToPlayer = { 0.f };
+	_float				fDistanceToPlayer = { 0.f };
 	if (false == m_pBlackBoard->Compute_Distance_To_Player(&fDistanceToPlayer))
 		return isCanBite;
 
@@ -348,38 +447,47 @@ void CBite_Zombie::Change_Animation(BITE_ANIM_STATE eState)
 	else
 		Change_Animation_Default();*/
 
-	DIRECTION		eDirection = { DIRECTION::_END };
-	if (m_eAnimType == BITE_ANIM_TYPE::_END)
+	if (CZombie::POSE_STATE::_CREEP == m_eStartPoseState)
 	{
-		_float3			vDirectionFromPlayerLocal;
-		m_pBlackBoard->Compute_Direction_From_Player_Local(&vDirectionFromPlayerLocal);
-
-		_bool			isPlayersFront = { vDirectionFromPlayerLocal.z > 0.f };
-		eDirection = { isPlayersFront ? DIRECTION::_F : DIRECTION::_B };
+		Change_Animation_Creep(eState);
 	}
 
 	else
 	{
-		if (BITE_ANIM_TYPE::_DEFAULT_F == m_eAnimType)
+		DIRECTION		eDirection = { DIRECTION::_END };
+		if (m_eAnimType == BITE_ANIM_TYPE::_END)
 		{
-			eDirection = { DIRECTION::_F };
+			_float3			vDirectionFromPlayerLocal;
+			m_pBlackBoard->Compute_Direction_From_Player_Local(&vDirectionFromPlayerLocal);
+
+			_bool			isPlayersFront = { vDirectionFromPlayerLocal.z > 0.f };
+			eDirection = { isPlayersFront ? DIRECTION::_F : DIRECTION::_B };
 		}
 
 		else
 		{
-			eDirection = { DIRECTION::_B };
+			if (BITE_ANIM_TYPE::_DEFAULT_F == m_eAnimType)
+			{
+				eDirection = { DIRECTION::_F };
+			}
+
+			else
+			{
+				eDirection = { DIRECTION::_B };
+			}
+		}
+
+		if (eDirection == DIRECTION::_F)
+		{
+			Change_Animation_Default_Front(eState);
+		}
+
+		else
+		{
+			Change_Animation_Default_Back(eState);
 		}
 	}
-
-	if (eDirection == DIRECTION::_F)
-	{
-		Change_Animation_Default_Front(eState);
-	}
-
-	else
-	{
-		Change_Animation_Default_Back(eState);
-	}
+	
 }
 
 void CBite_Zombie::Set_Bite_LinearStart_HalfMatrix()
@@ -399,13 +507,15 @@ void CBite_Zombie::Set_Bite_LinearStart_HalfMatrix()
 	if (false == m_pBlackBoard->Compute_HalfMatrix_Current_BiteAnim(strAnimLayerTag, iAnimIndex, &ResultMatrixFloat4x4))
 		return;
 
+	XMStoreFloat4x4(&ResultMatrixFloat4x4, m_pBlackBoard->GetPlayer()->Get_Transform()->Get_WorldMatrix());
+
 	_matrix					PlayerWorldMatrix = { m_pBlackBoard->GetPlayer()->Get_Transform()->Get_WorldMatrix() };
 	_matrix					ZombieWorldMatrix = { m_pBlackBoard->GetAI()->Get_Transform()->Get_WorldMatrix() };
 
 	_vector					vPlayerWorldScale, vPlayerWorldQuaternion, vPlayerWorldTranslation;
-	_vector					vZombieWorldScale, vZombieWorldQutaernion, vZombieWorldTranslation;
+	_vector					vZombieWorldScale, vZombieWorldQuaternion, vZombieWorldTranslation;
 	XMMatrixDecompose(&vPlayerWorldScale, &vPlayerWorldQuaternion, &vPlayerWorldTranslation, PlayerWorldMatrix);
-	XMMatrixDecompose(&vZombieWorldScale, &vZombieWorldQutaernion, &vZombieWorldTranslation, ZombieWorldMatrix);
+	XMMatrixDecompose(&vZombieWorldScale, &vZombieWorldQuaternion, &vZombieWorldTranslation, ZombieWorldMatrix);
 
 	//	하프 매트릭스를 분해
 	_matrix					ResultMatrix = { XMLoadFloat4x4(&ResultMatrixFloat4x4) };
@@ -419,46 +529,48 @@ void CBite_Zombie::Set_Bite_LinearStart_HalfMatrix()
 	////	루트본에 대한 해당 애니메이션의 첫 키프레임의 트랜스폼 매트릭스를 가져옴
 	_matrix					RootFirstKeyFramePlayer = { pPlayerBody_Model->Get_FirstKeyFrame_Root_TransformationMatrix(strAnimLayerTag, iAnimIndex) };
 	_matrix					RootFirstKeyFrameZombie = { pZombieBody_Model->Get_FirstKeyFrame_Root_TransformationMatrix(strAnimLayerTag, iAnimIndex) };
+	_matrix					ModelTransformPlayer = { XMLoadFloat4x4(&pPlayerBody_Model->Get_TransformationMatrix()) };
+	_matrix					ModelTransformZombie = { XMLoadFloat4x4(&pZombieBody_Model->Get_TransformationMatrix()) };
 
-	_matrix					PlayerModelTransformationMatrix = { XMLoadFloat4x4(&pPlayerBody_Model->Get_TransformationMatrix()) };
-	_matrix					ZombieModelTransformationMatrix = { XMLoadFloat4x4(&pZombieBody_Model->Get_TransformationMatrix()) };
+	_vector					vPlayerRootScale, vPlayerRootQuaternion, vPlayerRootTranslation;
+	_vector					vZombieRootScale, vZombieRootQuaternion, vZombieRootTranslation;
+
+	XMMatrixDecompose(&vPlayerRootScale, &vPlayerRootQuaternion, &vPlayerRootTranslation, RootFirstKeyFramePlayer);
+	XMMatrixDecompose(&vZombieRootScale, &vZombieRootQuaternion, &vZombieRootTranslation, RootFirstKeyFrameZombie);
+
+	vPlayerRootTranslation = XMVector3TransformNormal(vPlayerRootTranslation, ModelTransformPlayer);
+	vZombieRootTranslation = XMVector3TransformNormal(vZombieRootTranslation, ModelTransformZombie);
+
+	_vector					vRootRotateAxisPlayer = { XMVectorSetW(vPlayerRootQuaternion, 0.f) };
+	_vector					vRootRotateAxisZombie = { XMVectorSetW(vZombieRootQuaternion, 0.f) };
+
+	vRootRotateAxisPlayer = XMVector3TransformNormal(vRootRotateAxisPlayer, ModelTransformPlayer);
+	vRootRotateAxisZombie = XMVector3TransformNormal(vRootRotateAxisZombie, ModelTransformZombie);
+
+	vPlayerRootQuaternion = XMVectorSetW(vRootRotateAxisPlayer, XMVectorGetW(vPlayerRootQuaternion));
+	vZombieRootQuaternion = XMVectorSetW(vRootRotateAxisZombie, XMVectorGetW(vZombieRootQuaternion));
+
+	RootFirstKeyFramePlayer = XMMatrixAffineTransformation(vPlayerRootScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vPlayerRootQuaternion, vPlayerRootTranslation);
+	RootFirstKeyFrameZombie = XMMatrixAffineTransformation(vZombieRootScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vZombieRootQuaternion, vZombieRootTranslation);
+
+	PlayerHalfMatrix = RootFirstKeyFramePlayer * PlayerHalfMatrix;
+	ZombieHalfMatrix = RootFirstKeyFrameZombie * ZombieHalfMatrix;
+
+
+	_vector					vZombieHalfScale, vZombieHalfQuaternion, vZombieHalfTranslation;
+	XMMatrixDecompose(&vZombieHalfScale, &vZombieHalfQuaternion, &vZombieHalfTranslation, ZombieHalfMatrix);
+	_vector					vZombieResultDeltaQuaternion = { XMQuaternionMultiply(XMQuaternionInverse(vZombieWorldQuaternion), XMQuaternionNormalize(vZombieHalfQuaternion)) };
+	_vector					vZombieResultDeltaTranslation = { vZombieHalfTranslation - vZombieWorldTranslation };
+	_matrix					ZombieDeltaMatrix = { XMMatrixAffineTransformation(vZombieWorldScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vZombieResultDeltaQuaternion, vZombieResultDeltaTranslation) };
+
+	_vector					vPlayerHalfScale, vPlayerHalfQuaternion, vPlayerHalfTranslation;
+	XMMatrixDecompose(&vPlayerHalfScale, &vPlayerHalfQuaternion, &vPlayerHalfTranslation, PlayerHalfMatrix);
+	_vector					vPlayerResultDeltaQuaternion = { XMQuaternionMultiply(XMQuaternionInverse(vPlayerWorldQuaternion), XMQuaternionNormalize(vPlayerHalfQuaternion)) };
+	_vector					vPlayerResultDeltaTranslation = { vPlayerHalfTranslation - vPlayerWorldTranslation };
+	_matrix					PlayerDeltaMatrix = { XMMatrixAffineTransformation(vPlayerWorldScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vPlayerResultDeltaQuaternion, vPlayerResultDeltaTranslation) };
 	
-	///	모델의 트랜스포메이션 매트릭스 ( 루트본의 부모 )를 해당 첫키프레임에 입힘
-	_matrix					RootFirstKeyFramePlayerCombined = { RootFirstKeyFramePlayer * PlayerModelTransformationMatrix };
-	_matrix					RootFirstKeyFrameZombieCombined = { RootFirstKeyFrameZombie * ZombieModelTransformationMatrix };
-
-	
-	//	중간 상태의 월드를 기반으로 첫 키프레임의 컴바인드 매트릭스를 월드화
-	_matrix					RootFirstKeyFramePlayerWorld = { RootFirstKeyFramePlayerCombined * PlayerHalfMatrix };
-	_matrix					RootFirstKeyFrameZombieWorld = { RootFirstKeyFrameZombieCombined * ZombieHalfMatrix };
-
-	_vector					vPlayerResultScale, vPlayerResultQuaternion, vPlayerResultTranslation;
-	_vector					vZombieResultScale, vZombieResultQuaternion, vZombieResultTranslation;
-	XMMatrixDecompose(&vPlayerResultScale, &vPlayerResultQuaternion, &vPlayerResultTranslation, RootFirstKeyFramePlayerWorld);
-	XMMatrixDecompose(&vZombieResultScale, &vZombieResultQuaternion, &vZombieResultTranslation, RootFirstKeyFrameZombieWorld);
-
-
-	//	_vector					vZombieDeltaQuaternion = { XMQuaternionMultiply(XMQuaternionInverse(vZombieResultQuaternion), XMQuaternionNormalize(vZombieWorldQutaernion)) };
-	vZombieResultTranslation = XMVector3TransformCoord(vZombieResultTranslation, XMMatrixRotationQuaternion(XMQuaternionInverse(vZombieResultQuaternion)));
-	_vector					vZombieDeltaQuaternion = { XMQuaternionMultiply(XMQuaternionInverse(vZombieWorldQutaernion), XMQuaternionNormalize(vZombieResultQuaternion)) };
-	_vector					vZombieDeltaTranslation = { vZombieResultTranslation - vZombieWorldTranslation };
-
-	//	_vector					vPlayerDeltaQuaternion = { XMQuaternionMultiply(XMQuaternionInverse(vPlayerResultQuaternion), XMQuaternionNormalize(vPlayerWorldQuaternion)) };
-	vPlayerResultTranslation = XMVector3TransformCoord(vPlayerResultTranslation, XMMatrixRotationQuaternion(XMQuaternionInverse(vPlayerResultQuaternion)));
-	_vector					vPlayerDeltaQuaternion = { XMQuaternionMultiply(XMQuaternionInverse(vPlayerWorldQuaternion), XMQuaternionNormalize(vPlayerResultQuaternion)) };
-	_vector					vPlayerDeltaTranslation = { vPlayerResultTranslation - vPlayerWorldTranslation };
-
-	_matrix					PlayerDeltaMatrix = { XMMatrixAffineTransformation(vPlayerWorldScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vPlayerDeltaQuaternion, vPlayerDeltaTranslation) };
-	_matrix					ZombieDeltaMatrix = { XMMatrixAffineTransformation(vZombieWorldScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vZombieDeltaQuaternion, vZombieDeltaTranslation) };
-
-	//	XMStoreFloat4x4(&m_Delta_Matrix_To_HalfMatrix, ZombieHalfMatrix);
 	XMStoreFloat4x4(&m_Delta_Matrix_To_HalfMatrix, ZombieDeltaMatrix);
-	//	XMStoreFloat4x4(&m_Delta_Matrix_To_HalfMatrix, ZombieDeltaMatrix);
-	//	m_pBlackBoard->GetPlayer()->Change_Player_State_Bite(iAnimIndex, strAnimLayerTag, PlayerHalfMatrix, m_fTotalLinearTime_HalfMatrix);
 	m_pBlackBoard->GetPlayer()->Change_Player_State_Bite(iAnimIndex, strAnimLayerTag, PlayerDeltaMatrix, m_fTotalLinearTime_HalfMatrix);
-	//	m_pBlackBoard->GetPlayer()->Change_Player_State_Bite(iAnimIndex, strAnimLayerTag, PlayerDeltaMatrix, m_fTotalLinearTime_HalfMatrix);
-
-
 
 	m_fAccLinearTime_HalfMatrix = 0.f;
 }
@@ -477,6 +589,76 @@ _bool CBite_Zombie::Is_StateFinished(BITE_ANIM_STATE eState)
 	}
 
 	return isFinished;
+}
+
+void CBite_Zombie::Update_PoseState_FaceState()
+{
+	if (true == Is_CurrentAnim_FinishAnim())
+	{
+		if (nullptr == m_pBlackBoard)
+			return;
+
+		CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+		if (nullptr == pBody_Model)
+			return;
+
+		_int			iAnimIndex = { pBody_Model->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
+		wstring			strAnimLayerTag = { pBody_Model->Get_CurrentAnimLayerTag(static_cast<_uint>(m_ePlayingIndex)) };
+
+		if (-1 == iAnimIndex || TEXT("") == strAnimLayerTag)
+			return;
+
+		CZombie::FACE_STATE			eFaceState = { CZombie::FACE_STATE::_END };
+		CZombie::POSE_STATE			ePoseState = { CZombie::POSE_STATE::_END };
+		if (strAnimLayerTag == m_strDefaultFrontAnimLayerTag)
+		{
+			if (iAnimIndex == static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_KILL_F) ||
+				iAnimIndex == static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_REJECT1) ||
+				iAnimIndex == static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_REJECT2) ||
+				iAnimIndex == static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_REJECT3))
+			{
+				eFaceState = CZombie::FACE_STATE::_UP;
+				ePoseState = CZombie::POSE_STATE::_CREEP;
+			}
+			else
+				return;
+		}
+
+		else if (strAnimLayerTag == m_strDefaultBackAnimLayerTag)
+		{
+			if (iAnimIndex == static_cast<_int>(ANIM_BITE_DEFAULT_BACK::_KILL_B) ||
+				iAnimIndex == static_cast<_int>(ANIM_BITE_DEFAULT_BACK::_REJECT_B))
+			{
+				eFaceState = CZombie::FACE_STATE::_UP;
+				ePoseState = CZombie::POSE_STATE::_CREEP;
+			}
+			else
+				return;
+		}
+
+		else if (strAnimLayerTag == m_strCreepAnimLayerTag)
+		{
+			if (iAnimIndex == static_cast<_int>(ANIM_BITE_CREEP::_CREEP_KILL_L) ||
+				iAnimIndex == static_cast<_int>(ANIM_BITE_CREEP::_CREEP_KILL_R) ||
+				iAnimIndex == static_cast<_int>(ANIM_BITE_CREEP::_CREEP_REJECT_L) || 
+				iAnimIndex == static_cast<_int>(ANIM_BITE_CREEP::_CREEP_REJECT_R))
+			{
+				eFaceState = CZombie::FACE_STATE::_DOWN;
+				ePoseState = CZombie::POSE_STATE::_CREEP;
+			}
+		}
+
+		else if (strAnimLayerTag == m_strETCAnimLayerTag)
+		{
+			//		TODO:			ETC 애님 추가
+		}
+
+		if(CZombie::FACE_STATE::_END != eFaceState)
+			m_pBlackBoard->GetAI()->Set_FaceState(eFaceState);
+
+		if (CZombie::POSE_STATE::_END != ePoseState)
+			m_pBlackBoard->GetAI()->Set_PoseState(ePoseState);
+	}
 }
 
 void CBite_Zombie::Apply_HalfMatrix(_float fTimeDelta)

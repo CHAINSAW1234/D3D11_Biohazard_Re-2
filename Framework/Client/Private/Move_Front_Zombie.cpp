@@ -89,8 +89,6 @@ _bool CMove_Front_Zombie::Execute(_float fTimeDelta)
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_WALK);
 
-	cout << "move" << endl;
-
 	Change_Animation(fTimeDelta);
 
 	return true;
@@ -180,12 +178,12 @@ void CMove_Front_Zombie::Change_Animation(_float fTimeDelta)
 		else
 			MSG_BOX(TEXT("이럴리없어 좀비 담당자 호출 ㄱ"));
 
-		_float			fAnimDuration = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY)->Get_Animations(TEXT("Ordinary_Walk"))[iResultAnimationIndex]->Get_Duration() };
+		/*_float			fAnimDuration = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY)->Get_Animations(TEXT("Ordinary_Walk"))[iResultAnimationIndex]->Get_Duration() };
 		_float			fTickPerSec = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY)->Get_Animations(TEXT("Ordinary_Walk"))[iResultAnimationIndex]->Get_TickPerSec() };
-		m_pBlackBoard->Get_PartModel(CMonster::PART_BODY)->Set_TotalLinearInterpolation(fAnimDuration / fTickPerSec);
+		m_pBlackBoard->Get_PartModel(CMonster::PART_BODY)->Set_TotalLinearInterpolation(fAnimDuration / fTickPerSec);*/
 
 		_int			iBlendPlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_1) };
-		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f, fAnimDuration / fTickPerSec);
+		//	pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f, fAnimDuration / fTickPerSec);
 
 		isLoop = false;
 	}
@@ -360,10 +358,6 @@ void CMove_Front_Zombie::Change_Animation(_float fTimeDelta)
 		pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_1), strBlendBoneLayerTag);
 		pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), fTurnBlendWeight);
 
-		string			strBlendWeight = { to_string(fTurnBlendWeight) };
-		cout << strBlendWeight.c_str() << endl;
-		cout << "isBlend" << endl;
-
 		if (1.0f != fTurnBlendWeight)
 		{
 			_float			fBlendTrackPosition = { pBodyModel->Get_TrackPosition(static_cast<_uint>(PLAYING_INDEX::INDEX_1)) };
@@ -381,8 +375,6 @@ void CMove_Front_Zombie::Change_Animation(_float fTimeDelta)
 
 		string			strBaseTrackPos = { to_string(fBaseTrackPos) + "Base Track"};
 		string			strBlendTrackPos = { to_string(fBlendTrackPos) + "Blend Track"};
-		cout << strBaseTrackPos << endl;
-		cout << strBlendTrackPos << endl;
 
 		m_isPreBlended = true;
 	}
@@ -402,8 +394,6 @@ void CMove_Front_Zombie::Change_Animation(_float fTimeDelta)
 			if (fWeight <= 0.f)
 				pBodyModel->Reset_PreAnim_CurrentAnim(static_cast<_uint>(PLAYING_INDEX::INDEX_1));
 		}
-
-		cout << "isNonBlend" << endl;
 	}
 
 #pragma endregion

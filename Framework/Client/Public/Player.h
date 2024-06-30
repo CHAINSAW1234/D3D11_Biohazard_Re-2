@@ -238,6 +238,10 @@ public:	//For Camera
 	void										SetMoveDir();
 	void										ResetCamera();
 	void										Apply_Recoil(_float fTimeDelta);
+
+public:
+	void										Set_ManualMove(_bool isManualMove) { m_isManualMove = isManualMove; }
+
 private:
 	class CCamera_Free*							m_pCamera = { nullptr };
 	_float4										m_vCameraPosition;
@@ -302,6 +306,8 @@ private:
 	_float										m_fRecoil_Rotate_Amount_Y_Current = { 0.f };
 	_float										m_fRecoil_Lerp_Time = { 0.f };
 	_float										m_fRecoil_Lerp_Time_Omega = { 0.f };
+
+	_bool										m_isManualMove = { false };
 
 #pragma region Effect
 public:

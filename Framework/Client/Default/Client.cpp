@@ -91,6 +91,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			}
 
 			pGameInstance->Update_WHEEL(g_iMouseWheelDelta);
+			g_iMouseWheelDelta = 0;
 		}
 
 		fTimeAcc += pGameInstance->Compute_TimeDelta(TEXT("Timer_Default"));
@@ -232,6 +233,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEWHEEL:
 	{
 		g_iMouseWheelDelta += GET_WHEEL_DELTA_WPARAM(wParam);
+		break;
 	}
 	case WM_DESTROY:
 		PostQuitMessage(0);

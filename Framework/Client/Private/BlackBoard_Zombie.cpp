@@ -58,14 +58,13 @@ void CBlackBoard_Zombie::Update_Recognition_Timer(_float fTimeDelta)
 		if (pMonsterStatus->fAccRecognitionTime < 0.f)
 			pMonsterStatus->fAccRecognitionTime = 0.f;
 		return;
-	}
-		
+	}		
 
-	_float								fDistanceToPlayer = {};
+	_float							fDistanceToPlayer = {};
 	if (false == Compute_Distance_To_Player(&fDistanceToPlayer))
 		return;
 
-	_bool								isInRange = { fDistanceToPlayer <= pMonsterStatus->fRecognitionRange };
+	_bool							isInRange = { fDistanceToPlayer <= pMonsterStatus->fRecognitionRange };
 	if (true == isInRange)
 	{
 		pMonsterStatus->fAccRecognitionTime += fTimeDelta;
@@ -80,12 +79,43 @@ void CBlackBoard_Zombie::Update_Recognition_Timer(_float fTimeDelta)
 		if (pMonsterStatus->fAccRecognitionTime < 0.f)
 			pMonsterStatus->fAccRecognitionTime = 0.f;
 	}
+}
 
-#ifdef			_DEBUG
-	
-	cout << "Acc Time Recognition : " << to_string(pMonsterStatus->fAccRecognitionTime) << endl;
+void CBlackBoard_Zombie::Update_LightlyHold_Timer(_float fTimeDelta)
+{
+	if (nullptr == m_pAI)
+		return;
 
-#endif
+	MONSTER_STATE					eCurrentState = { m_pAI->Get_Current_MonsterState() };
+	CMonster::MONSTER_STATUS*		pMonsterStatus = { m_pAI->Get_Status_Ptr() };
+	if (MONSTER_STATE::MST_WALK != eCurrentState ||
+		MONSTER_STATE::MST_IDLE != eCurrentState)
+	{
+		pMonsterStatus->fAccRecognitionTime -= fTimeDelta;
+		if (pMonsterStatus->fAccRecognitionTime < 0.f)
+			pMonsterStatus->fAccRecognitionTime = 0.f;
+		return;
+	}
+
+	_float							fDistanceToPlayer = {};
+	if (false == Compute_Distance_To_Player(&fDistanceToPlayer))
+		return;
+
+	_bool							isInRange = { fDistanceToPlayer <= pMonsterStatus->fRecognitionRange };
+	if (true == isInRange)
+	{
+		pMonsterStatus->fAccRecognitionTime += fTimeDelta;
+
+		if (pMonsterStatus->fAccRecognitionTime > pMonsterStatus->fMaxRecognitionTime)
+			pMonsterStatus->fAccRecognitionTime = pMonsterStatus->fMaxRecognitionTime;
+	}
+
+	else
+	{
+		pMonsterStatus->fAccRecognitionTime -= fTimeDelta;
+		if (pMonsterStatus->fAccRecognitionTime < 0.f)
+			pMonsterStatus->fAccRecognitionTime = 0.f;
+	}
 }
 
 void CBlackBoard_Zombie::Set_Current_MotionType_Body(MOTION_TYPE eType)

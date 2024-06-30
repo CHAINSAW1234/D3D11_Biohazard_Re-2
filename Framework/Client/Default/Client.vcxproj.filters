@@ -337,15 +337,6 @@
     <Filter Include="AIController\Zombie\Decorator\Checker_Is_Down">
       <UniqueIdentifier>{fe7d57b2-dd4a-4f52-a9d3-281720a08b3d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="AIController\Zombie\Task\Down">
-      <UniqueIdentifier>{624cbdd6-57e1-45bf-832d-aa3d76d6f0d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="AIController\Zombie\Task\Down\StandUp">
-      <UniqueIdentifier>{4e2d63f6-7d59-460a-8663-77389f8750f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="AIController\Zombie\Task\Down\TurnOver">
-      <UniqueIdentifier>{251a916b-36e3-4df4-8c4e-4415fb202b35}</UniqueIdentifier>
-    </Filter>
     <Filter Include="AIController\Zombie\Task\Utility">
       <UniqueIdentifier>{1169d85d-c8da-4637-afcb-30447c83345f}</UniqueIdentifier>
     </Filter>
@@ -402,6 +393,18 @@
     </Filter>
     <Filter Include="02.GameObjects\Player\State\Player_State_Damg">
       <UniqueIdentifier>{94d3ab13-025c-408b-87af-20b5e8b80ac8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Task\Creep">
+      <UniqueIdentifier>{624cbdd6-57e1-45bf-832d-aa3d76d6f0d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Task\Creep\StandUp">
+      <UniqueIdentifier>{4e2d63f6-7d59-460a-8663-77389f8750f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Task\Creep\TurnOver">
+      <UniqueIdentifier>{251a916b-36e3-4df4-8c4e-4415fb202b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Task\Idle\Creep">
+      <UniqueIdentifier>{b2bbda7d-d9c7-4056-b6ec-853c3d869c33}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -760,10 +763,10 @@
       <Filter>AIController\Zombie\Decorator\Checker_Is_Down</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Turn_Over_Zombie.h">
-      <Filter>AIController\Zombie\Task\Down\TurnOver</Filter>
+      <Filter>AIController\Zombie\Task\Creep\TurnOver</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Stand_Up_Zombie.h">
-      <Filter>AIController\Zombie\Task\Down\StandUp</Filter>
+      <Filter>AIController\Zombie\Task\Creep\StandUp</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Decal_Blood.h">
       <Filter>02.GameObjects\Decal\Blood</Filter>
@@ -795,20 +798,14 @@
     <ClInclude Include="..\Public\Player_State_Bite.h">
       <Filter>02.GameObjects\Player\State\Player_State_Bite</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_State_Bite_Start.h">
-      <Filter>02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Start</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Player_State_Bite_Reject.h">
-      <Filter>02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Reject</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Player_State_Bite_Kill.h">
-      <Filter>02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Kill</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Muzzle_Flash.h">
       <Filter>02.GameObjects\Effect\Muzzle_Flash</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Effect_Header.h">
       <Filter>02.GameObjects\Player\Effect_Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Creep_Zombie.h">
+      <Filter>AIController\Zombie\Task\Idle\Creep</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1140,10 +1137,10 @@
       <Filter>AIController\Zombie\Decorator\Checker_Is_Down</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Turn_Over_Zombie.cpp">
-      <Filter>AIController\Zombie\Task\Down\TurnOver</Filter>
+      <Filter>AIController\Zombie\Task\Creep\TurnOver</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Stand_Up_Zombie.cpp">
-      <Filter>AIController\Zombie\Task\Down\StandUp</Filter>
+      <Filter>AIController\Zombie\Task\Creep\StandUp</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Decal_Blood.cpp">
       <Filter>02.GameObjects\Decal\Blood</Filter>
@@ -1172,17 +1169,11 @@
     <ClCompile Include="..\Private\Player_State_Bite.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Bite</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_State_Bite_Start.cpp">
-      <Filter>02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Start</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Player_State_Bite_Reject.cpp">
-      <Filter>02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Reject</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Player_State_Bite_Kill.cpp">
-      <Filter>02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Kill</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Muzzle_Flash.cpp">
       <Filter>02.GameObjects\Effect\Muzzle_Flash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Creep_Zombie.cpp">
+      <Filter>AIController\Zombie\Task\Idle\Creep</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

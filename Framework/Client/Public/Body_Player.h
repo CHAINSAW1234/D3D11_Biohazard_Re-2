@@ -52,6 +52,7 @@ private:
 	vector<CCollider*>		m_PartColliders;
 
 	class CRagdoll_Physics* m_pRagdoll = { nullptr };
+
 private:
 	HRESULT					Add_Components();
 	HRESULT					Add_Animations();

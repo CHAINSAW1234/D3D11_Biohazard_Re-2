@@ -50,7 +50,6 @@ _bool CStun_Zombie::Execute(_float fTimeDelta)
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_DAMAGE);
 
-	//	cout << "Wait" << endl;
 	if (true == m_isEntry)
 	{
 		Update_Current_Collider();

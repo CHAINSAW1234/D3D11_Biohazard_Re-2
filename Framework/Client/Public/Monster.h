@@ -24,14 +24,19 @@ public:
 	{
 		_float				fSpeed = { 0.f };
 
-		_float				fRecognitionRange = { 0.f };
-		_float				fAccRecognitionTime = { 0.f };
-		_float				fMaxRecognitionTime = { 0.f };
+		_float				fRecognitionRange = { 0.f };		//	시간 누적하기 시작하는 거리
+		_float				fAccRecognitionTime = { 0.f };		//	Hold 누적 시간 ( 시도하기 전 )
+		_float				fMaxRecognitionTime = { 0.f };		//	Hold 누적 최대 시간 ( 아직 시도하지 못할 경우 시간 누적 감소 => 미리 더 쌓기 가능하게 )
 
 		_float				fBiteRange = { 0.f };
 
-		_float				fTryAttackRange = { 0.f };
-		_float				fTryAttackRecognitionTime = { 0.f };
+		_float				fLightlyHoldRange = { 0.f };		//	시간 누적하기 시작하는 거리
+		_float				fAccLightlyHoldTime = { 0.f };		//	Lightly Hold 누적 시간 ( 시도하기 전 )
+		_float				fTryLightlyHoldTime = { 0.f };		//	Lightly Hold 충분 조건
+
+		_float				fTryHoldRange = { 0.f };			//	시간 누적하기 시작하는 거리
+		_float				fAccHoldTime = { 0.f };				//	Hold 누적 시간 ( 시도하기 전 )
+		_float				fTryHoldTime = { 0.f };				//	Hold 충분 조건
 
 		_float				fViewAngle = { 0.f };
 		_float				fAttack = { 0.f };

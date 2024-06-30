@@ -40,7 +40,6 @@ _bool CWait_Zombie::Execute(_float fTimeDelta)
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_IDLE);
 
-	//cout << "Wait" << endl;
 	Change_Animation();
 
 	return true;
@@ -73,80 +72,49 @@ void CWait_Zombie::Change_Animation()
 	//	
 	//	m_pBlackBoard->Reset_NonActive_Body(ActiveIndices);
 
-#pragma region 다시 해야함
-	m_isWake = true;
+	MOTION_TYPE		eCurrentMotionType = { static_cast<MOTION_TYPE>(m_pBlackBoard->Get_Current_MotionType_Body()) };
+	MOTION_TYPE		ePreMotionType = { static_cast<MOTION_TYPE>(m_pBlackBoard->Get_Pre_MotionType_Body()) };
 
-	//	TODO: 애니메이션 누워있는 모션 추가되면 사용하기 =>
-	//	현재는 누운 상태에서 일어나는 모션만있음
-	if (false == m_isWake)
+	if (MOTION_TYPE::MOTION_A == eCurrentMotionType)
 	{
-		/*if (false == isFaceUp)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_STANDUP_FACEDOWN_F);
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEDOWN_B);
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEDOWN_L);
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEDOWN_R);
+		iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_IDLE::_LOOP_A);
+		isLoop = true;
+	}
 
-			isLoop = false;
-		}
+	else if (MOTION_TYPE::MOTION_B == eCurrentMotionType)
+	{
+		iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_IDLE::_LOOP_B);
+		isLoop = true;
+	}
 
-		else
-		{
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEUP_F);
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEUP_B);
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEUP_L);
-			iResultAnimationIndex = static_cast<_int>(CBody_Zombie::ANIM_STANDUP_FACEUP_R);
+	else if (MOTION_TYPE::MOTION_C == eCurrentMotionType)
+	{
+		iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_IDLE::_LOOP_C);
+		isLoop = true;
+	}
 
-			isLoop = false;
-		}*/
+	else if (MOTION_TYPE::MOTION_D == eCurrentMotionType)
+	{
+		iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_IDLE::_LOOP_D);
+		isLoop = true;
+	}
+
+	else if (MOTION_TYPE::MOTION_E == eCurrentMotionType)
+	{
+		iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_IDLE::_LOOP_E);
+		isLoop = true;
+	}
+
+	else if (MOTION_TYPE::MOTION_F == eCurrentMotionType)
+	{
+		iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_IDLE::_LOOP_F);
+		isLoop = true;
 	}
 
 	else
 	{
-		MOTION_TYPE		eCurrentMotionType = { static_cast<MOTION_TYPE>(m_pBlackBoard->Get_Current_MotionType_Body()) };
-		MOTION_TYPE		ePreMotionType = { static_cast<MOTION_TYPE>(m_pBlackBoard->Get_Pre_MotionType_Body()) };
-
-		if (MOTION_TYPE::MOTION_A == eCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_IDLE::_LOOP_A);
-			isLoop = true;
-		}
-
-		else if (MOTION_TYPE::MOTION_B == eCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_IDLE::_LOOP_B);
-			isLoop = true;
-		}
-
-		else if (MOTION_TYPE::MOTION_C == eCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_IDLE::_LOOP_C);
-			isLoop = true;
-		}
-
-		else if (MOTION_TYPE::MOTION_D == eCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_IDLE::_LOOP_D);
-			isLoop = true;
-		}
-
-		else if (MOTION_TYPE::MOTION_E == eCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_IDLE::_LOOP_E);
-			isLoop = true;
-		}
-
-		else if (MOTION_TYPE::MOTION_F == eCurrentMotionType)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_IDLE::_LOOP_F);
-			isLoop = true;
-		}
-
-		else
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_IDLE::_LOOP_F);
-			isLoop = true;
-		}
+		iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_IDLE::_LOOP_F);
+		isLoop = true;
 	}
 
 	if (-1 == iResultAnimationIndex)
@@ -168,9 +136,6 @@ void CWait_Zombie::Change_Animation()
 	pBodyModel->Change_Animation(iPlayingIndex, TEXT("Ordinary_Idle"), iResultAnimationIndex);
 	pBodyModel->Set_Loop(iPlayingIndex, isLoop);
 	pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
-	pBodyModel->Set_BlendWeight(iPlayingIndex, 1.f);
-
-#pragma endregion
 }
 
 CWait_Zombie* CWait_Zombie::Create(void* pArg)
