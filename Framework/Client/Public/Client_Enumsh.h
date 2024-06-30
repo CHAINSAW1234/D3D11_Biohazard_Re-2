@@ -59,6 +59,7 @@ namespace Client
 		gunpowder01b,
 		strengtheningyellow01a,
 		HandGun,
+		ShotGun,
 		ITEM_NUMBER_END 
 	};
 

@@ -14,7 +14,8 @@ void CPlayer_State_Bite::OnStateEnter()
 	m_isLight = m_pPlayer->Get_Spotlight();
 
 	m_pPlayer->Set_Spotlight(false);
-	m_pPlayer->Set_Equip(CPlayer::NONE);
+	CPlayer::EQUIP eEquip = CPlayer::NONE;
+	m_pPlayer->Set_Equip(&eEquip);
 
 
 	m_iHp = m_pPlayer->Get_Hp();
@@ -64,7 +65,7 @@ void CPlayer_State_Bite::OnStateExit()
 	m_iHp = -1;
 	m_pPlayer->Set_isBite(false);
 	m_pPlayer->Set_Spotlight(m_isLight);
-	m_pPlayer->Set_Equip(m_eEquip);
+	m_pPlayer->Set_Equip(&m_eEquip);
 
 	m_eEquip = CPlayer::NONE;
 	m_isLight = false;

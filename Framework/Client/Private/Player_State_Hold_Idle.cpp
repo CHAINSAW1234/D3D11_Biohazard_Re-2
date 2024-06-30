@@ -136,14 +136,21 @@ void CPlayer_State_Hold_Idle::Shot()
 	if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == PRESSING && m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
 		if (!m_isShot && m_pPlayer->Get_Body_Model()->Get_BlendWeight(2) == 0.f) {
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 1, 20.f);
-			if (1) {
+			if (m_pPlayer->IsShotAble()) {
 				// 총알 있으면
+				m_pPlayer->Shot();
 				m_pPlayer->Change_Body_Animation_Hold(2, CPlayer::HOLD_SHOT);
-				// 총알 발사하는 함수 추가
 			}
 			else {
 				// 총알 없음
-				m_pPlayer->Change_Body_Animation_Hold(2, CPlayer::HOLD_SHOT_NO_AMMO);
+				if (m_pPlayer->IsReloadAble()) {
+					m_pPlayer->Reload();
+					// 인벤토리에 총알 있음
+				}
+				else {
+					// 인벤토리에 총알 없음
+					m_pPlayer->Change_Body_Animation_Hold(2, CPlayer::HOLD_SHOT_NO_AMMO);
+				}
 			}
 
 			m_pPlayer->Get_Body_Model()->Set_TrackPosition(2, 0);

@@ -225,7 +225,9 @@ wstring CImgui_Manager::Classify_ItemNum_To_String(ITEM_NUMBER eItemNum)
     case Client::HandGun:
         return TEXT("HandGun");
         break;
-
+    case Client::ShotGun:
+        return TEXT("ShotGun");
+        break;
     default:
         break;
     }
@@ -314,6 +316,8 @@ ITEM_NUMBER CImgui_Manager::Classify_String_To_ItemNum(wstring wstrItemNum)
     else if (TEXT("HandGun") == wstrItemNum)
         return HandGun;
 
+    else if (TEXT("ShotGun") == wstrItemNum)
+        return ShotGun;
 
     return ITEM_NUMBER_END;
 }

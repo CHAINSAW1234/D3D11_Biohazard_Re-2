@@ -52,8 +52,6 @@ public:
 		HOLSTERTOMOVE, MOVETOHOLSTER, HOLD_END
 	};
 	
-
-
 	enum ANIMSET_MOVE { FINE, MOVE_HG, MOVE_STG, FINE_LIGHT, CAUTION, CAUTION_LIGHT, DANGER, DANGER_LIGHT, ANIMSET_MOVE_END };
 	enum ANIMSET_HOLD { HOLD_HG, HOLD_STG, HOLD_MLE, HOLD_SUP, ANIMSET_HOLD_END };
 	enum ANIMSET_ETC { COMMON , ANIM_BITE, ANIMSET_ETC_END };
@@ -109,17 +107,18 @@ public:
 	_int										Get_Hp() { return m_iHp; }
 	CWeapon*									Get_Weapon() { return m_pWeapon; }
 	EQUIP										Get_Equip() { return m_eEquip; }
+	ITEM_NUMBER									Get_Equip_As_ITEM_NUMBER();
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
 	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
 	_float4										Get_MuzzlePosition();
 	wstring										Get_BiteLayerTag() { return m_strBiteLayerTag; }
 	_int										Get_BiteAnimIndex() { return m_iBiteAnimIndex; }
-
+	_int										Get_MaxBullet();
 	// =============================== SET ===============================
 	void										Set_isBite(_bool isBite) { m_isBite = isBite; }
 	void										Set_Spotlight(_bool isSpotlight); 
 	void										Requst_Change_Equip(EQUIP eEquip);
-	void										Set_Equip(EQUIP eEquip);
+	void										Set_Equip(EQUIP* eEquip);
 	void										Set_Hp(_int iHp);					
 	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineDefault = isTurnSpineDefault; }
 	void										Set_TurnSpineHold(_bool isTurnSpineHold) { m_isTurnSpineHold = isTurnSpineHold;}
@@ -133,6 +132,13 @@ public:
 	void										Change_AnimSet_Hold(ANIMSET_HOLD eAnimSetHold) { m_eAnimSet_Hold = eAnimSetHold; }
 	void										Change_Player_State_Bite(_int iAnimIndex, const wstring& strBiteLayerTag, _float4x4 Interpolationmatrix, _float fTotalInterpolateTime);
 	void										Request_NextBiteAnimation(_int iAnimIndex);
+	void										Shot();
+	void										Reload();
+
+	// ============================ CHECK = ISABLE ============================
+	_bool										IsShotAble();
+	_bool										IsReloadAble();
+	
 	// ============================ UPDATE ============================
 	void										Update_InterplationMatrix(_float fTimeDelta);
 
@@ -221,7 +227,7 @@ public:
 private:
 	_bool										m_isCamTurn = { false };
 	class CTab_Window*							m_pTabWindow = { nullptr };
-#pragma
+#pragma endregion
 
 	vector<CPartObject*>						m_PartObjects;
 	_ubyte										m_eState = {};

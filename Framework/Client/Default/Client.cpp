@@ -233,6 +233,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		g_iMouseWheelDelta += GET_WHEEL_DELTA_WPARAM(wParam);
 	}
+	break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

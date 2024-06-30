@@ -49,7 +49,8 @@ public:
 	//몇번 단축키에 몇번 아이템이 있는가
 	ITEM_NUMBER Get_Item_On_HotKey(_uint iHotKeyNum);
 
-	
+	void UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage);
+
 private:
 	class CButton_UI*	m_pMapButton = { nullptr };
 	class CButton_UI*	m_pInvenButton = { nullptr };

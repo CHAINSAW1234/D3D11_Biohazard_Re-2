@@ -9,6 +9,7 @@
 #include "Body_Player.h"
 #include "Head_Player.h"
 #include "Hair_Player.h"
+
 #include "Weapon.h"
 #include "FlashLight.h"
 
@@ -499,8 +500,11 @@ void CPlayer::Start()
 {
 	CGameObject* pTabWindow = m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0);
 	m_pTabWindow = dynamic_cast<CTab_Window*>(pTabWindow);
-	if (nullptr == m_pTabWindow)
+	if (nullptr == m_pTabWindow) {
+		MSG_BOX(TEXT("CPlayer::Start"));
 		assert(0);
+	}
+
 }
 
 void CPlayer::Priority_Tick_PartObjects(_float fTimeDelta)
@@ -613,10 +617,10 @@ void CPlayer::Requst_Change_Equip(EQUIP eEquip)
 	}
 }
 
-void CPlayer::Set_Equip(EQUIP eEquip)
+void CPlayer::Set_Equip(EQUIP* eEquip)
 {
-	m_eEquip = eEquip;
-	eEquip = NONE;
+	m_eEquip = *eEquip;
+	*eEquip = NONE;
 	CWeapon::RENDERLOCATION eRenderLocation = { CWeapon::MOVE };
 
 	if (nullptr != m_pWeapon) {
@@ -639,6 +643,7 @@ void CPlayer::Set_Equip(EQUIP eEquip)
 	// 무기 위치를 변경하시오
 
 	Update_AnimSet();
+	NotifyObserver();
 }
 
 void CPlayer::Set_Hp(_int iHp)
@@ -681,6 +686,75 @@ void CPlayer::Request_NextBiteAnimation(_int iAnimIndex)
 	m_iBiteAnimIndex = iAnimIndex;
 }
 
+void CPlayer::Shot()
+{
+	m_pTabWindow->UseItem(Get_Equip_As_ITEM_NUMBER(), 1);
+	
+	NotifyObserver();
+	// 카메라 조작 코드 여기에 추가
+	// 사운드등도 여기 넣어도 됨
+}
+
+void CPlayer::Reload()
+{
+	Get_Body_Model()->Set_Loop(3, false);
+	Change_Body_Animation_Hold(3, HOLD_RELOAD);
+	Get_Body_Model()->Set_TrackPosition(3, 0.f);
+	Get_Body_Model()->Set_BlendWeight(3, 10.f, 6.f);
+	//Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.2f);
+	if (nullptr != m_pWeapon) {
+		Get_Weapon_Model()->Change_Animation(0, TEXT("Default"), 2);
+		Get_Weapon_Model()->Set_TrackPosition(0, 0.f);
+	}
+}
+
+_bool CPlayer::IsShotAble()
+{
+	if (m_eEquip == NONE)
+		return false;
+
+	if (m_pTabWindow->Get_Search_Item_Quantity(Get_Equip_As_ITEM_NUMBER()) == 0)
+		return false;
+
+	return true;
+}
+
+_bool CPlayer::IsReloadAble()
+{
+	if (m_eEquip == NONE)
+		return false;
+
+	switch (Get_Equip_As_ITEM_NUMBER()) {
+	case HandGun:
+		if (m_pTabWindow->Get_Search_Item_Quantity(handgun_bullet01a) == 0)
+			return false;
+		break;
+	case ShotGun:
+		if (m_pTabWindow->Get_Search_Item_Quantity(shotgun_bullet01a) == 0)
+			return false;
+		break;
+	}
+
+	return true;
+}
+
+ITEM_NUMBER CPlayer::Get_Equip_As_ITEM_NUMBER()
+{
+	switch (m_eEquip) {
+	case CPlayer::HG:
+		return HandGun;
+		break;
+	case CPlayer::STG:
+		return ShotGun;
+		break;
+	case NONE:
+		return ITEM_NUMBER_END;
+		break;
+	}
+
+	return ITEM_NUMBER_END;
+}
+
 _float CPlayer::Get_CamDegree()
 {
 	if (nullptr == m_pCamera || nullptr == m_pTransformCom)
@@ -704,6 +778,14 @@ _float4 CPlayer::Get_MuzzlePosition()
 	}
 
 	return m_pWeapon->Get_MuzzlePosition();
+}
+
+_int CPlayer::Get_MaxBullet()
+{
+	if (m_eEquip == NONE)
+		return 0;
+
+	return Get_Weapon()->Get_MaxBullet();
 }
 
 void CPlayer::Update_InterplationMatrix(_float fTimeDelta)
@@ -765,25 +847,42 @@ void CPlayer::Update_FSM()
 void CPlayer::Update_KeyInput_Reload()
 {
 	if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
-		if (m_pGameInstance->Get_KeyState('R') == DOWN) {
-			Get_Body_Model()->Set_Loop(3, false);
-			Change_Body_Animation_Hold(3, HOLD_RELOAD);
-			Get_Body_Model()->Set_TrackPosition(3, 0.f);
-			Get_Body_Model()->Set_BlendWeight(3, 10.f, 6.f);
-			//Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.2f);
-			if (nullptr != m_pWeapon) {
-				Get_Weapon_Model()->Change_Animation(0, TEXT("Default"), 2);
-				Get_Weapon_Model()->Set_TrackPosition(0, 0.f);
-			}
+		if (m_pGameInstance->Get_KeyState('R') == DOWN
+			&& IsReloadAble()) {
+			Reload();
 		}
-
 	}
 	else if (Get_Body_Model()->isFinished(3) &&
 		Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == HOLD_RELOAD) {
 		Get_Body_Model()->Set_BlendWeight(3, 0.f, 6.f);
 
+
+
 		if (Get_Body_Model()->Get_BlendWeight(3) <= 0.01f) {
 			Get_Body_Model()->Set_Loop(3, true);
+
+			// 총알 개수 업데이트
+			ITEM_NUMBER eItem = { ITEM_NUMBER_END };
+			_int iNumBullet = { 0 };
+			switch (Get_Equip_As_ITEM_NUMBER()) {
+			case HandGun:
+				eItem = handgun_bullet01a;
+				iNumBullet = m_pTabWindow->Get_Search_Item_Quantity(eItem);
+				break;
+			case ShotGun:
+				eItem = shotgun_bullet01a;
+				iNumBullet = m_pTabWindow->Get_Search_Item_Quantity(eItem);
+				break;
+			}
+
+			if (iNumBullet >= Get_Weapon()->Get_MaxBullet()) {
+				iNumBullet = Get_Weapon()->Get_MaxBullet();
+			}
+
+			m_pTabWindow->UseItem(Get_Equip_As_ITEM_NUMBER(), -iNumBullet);
+			m_pTabWindow->UseItem(eItem, iNumBullet);
+			NotifyObserver();
+
 		}
 	}
 }
@@ -836,7 +935,7 @@ void CPlayer::Update_Equip()
 				Get_Body_Model()->Set_BlendWeight(3, 0.f, 6.f);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == MOVETOHOLSTER) {
-				Set_Equip(m_eTargetEquip);
+				Set_Equip(&m_eTargetEquip);
 				Change_Body_Animation_Hold(3, HOLSTERTOMOVE);
 			}
 		}
