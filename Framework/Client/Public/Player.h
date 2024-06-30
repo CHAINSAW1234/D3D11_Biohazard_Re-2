@@ -215,9 +215,6 @@ private:
 
 
 #pragma region 창균 추가
-private:
-	void										Check_TabWindow();//텝 윈도우 찾기
-
 public:
 	void										PickUp_Item(CGameObject* pPickedUp_Item); //TabWindow의 PickUp_Item함수 호출용
 

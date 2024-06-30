@@ -358,7 +358,7 @@ HRESULT CImgui_Manager::Refer_Player()
 
 HRESULT CImgui_Manager::Refer_Tabwindow()
 {
-    list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+    list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_TabWindow"));
 
     for (auto& iter : *pUIList)
     {

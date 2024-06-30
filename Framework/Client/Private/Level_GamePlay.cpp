@@ -221,7 +221,7 @@ HRESULT CLevel_GamePlay::Ready_TabWindow()
 	CUI::UI_DESC UIDesc = {};
 	UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.9f };
 	UIDesc.vSize = { g_iWinSizeX * 1.f, g_iWinSizeY * 1.f };
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_TabWindow"), TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
 		return E_FAIL;
 
 	return S_OK;

@@ -497,7 +497,10 @@ HRESULT CPlayer::Render()
 
 void CPlayer::Start()
 {
-	m_pTabWindow = dynamic_cast<CTab_Window*>(m_pGameInstance->Get_)
+	CGameObject* pTabWindow = m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0);
+	m_pTabWindow = dynamic_cast<CTab_Window*>(pTabWindow);
+	if (nullptr == m_pTabWindow)
+		assert(0);
 }
 
 void CPlayer::Priority_Tick_PartObjects(_float fTimeDelta)
@@ -1240,25 +1243,6 @@ void CPlayer::Apply_Recoil(_float fTimeDelta)
 
 	m_pTransformCom_Camera->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), -fTimeDelta * 10.f * m_fRecoil_Rotate_Amount_X);
 	m_pTransformCom_Camera->Turn(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT), -fTimeDelta * 10.f * m_fRecoil_Rotate_Amount_Y);
-}
-
-void CPlayer::Check_TabWindow()
-{
-	if (m_pTabWindow != nullptr)
-		return;
-
-	list<CGameObject*>* pGObjList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
-
-	for (auto& iter : *pGObjList)
-	{
-		CTab_Window* pTabWindow = dynamic_cast<CTab_Window*>(iter);
-		if (nullptr != pTabWindow)
-		{
-			m_pTabWindow = pTabWindow;
-			Safe_AddRef(m_pTabWindow);
-			break;
-		}
-	}
 }
 
 void CPlayer::PickUp_Item(CGameObject* pPickedUp_Item)
@@ -2092,8 +2076,6 @@ void CPlayer::Free()
 	m_Weapons.clear();
 
 	Safe_Release(m_pWeapon);
-
-	Safe_Release(m_pTabWindow);
 
 	Release_Effect();
 }
