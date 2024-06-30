@@ -7,6 +7,7 @@
 #include "Cursor_UI.h"
 #include "Item_Discription.h"
 
+
 CTab_Window::CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice , pContext }
 {
@@ -56,8 +57,11 @@ void CTab_Window::Tick(_float fTimeDelta)
 {
 	FirstTick_Seting();
 
-	OnOff_EventHandle();
-
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
+	{
+		OnOff_EventHandle();
+	}
+	
 	if (true == m_bDead)
 		return;
 
@@ -106,7 +110,16 @@ void CTab_Window::Tick(_float fTimeDelta)
 		}
 		break;
 	}
+
+	case Client::CTab_Window::PICK_UP_ITEM: {
+		m_pInventory_Manager->Tick(fTimeDelta);
 		
+		//m_pItem_Discription->Set_Item_Number(eSelectedItemNum);
+		m_pItem_Discription->Tick(fTimeDelta);
+
+		break;
+	}
+
 	default:
 		break;
 	}
@@ -117,7 +130,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 }
-
+  
 void CTab_Window::Late_Tick(_float fTimeDelta)
 {
 	if (true == m_bDead)
@@ -142,6 +155,13 @@ void CTab_Window::Late_Tick(_float fTimeDelta)
 	}
 
 	case Client::CTab_Window::EXAMINE: {
+		m_pItem_Mesh_Viewer->Late_Tick(fTimeDelta);
+		m_pItem_Discription->Late_Tick(fTimeDelta);
+		break;
+	}
+
+	case Client::CTab_Window::PICK_UP_ITEM: {
+		m_pInventory_Manager->Late_Tick(fTimeDelta);
 		m_pItem_Mesh_Viewer->Late_Tick(fTimeDelta);
 		m_pItem_Discription->Late_Tick(fTimeDelta);
 		break;
@@ -248,40 +268,45 @@ void CTab_Window::Button_Act(_float fTimeDelta)
 
 void CTab_Window::OnOff_EventHandle()
 {
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
+	if (false == m_bDead)
 	{
-		if (false == m_bDead)
+		m_bDead = true;
+		m_isMapRender = false;
+		m_pHintButton->Set_Dead(m_bDead);
+		m_pInvenButton->Set_Dead(m_bDead);
+		m_pMapButton->Set_Dead(m_bDead);
+		m_pInventory_Manager->Set_OnOff_Inven(m_bDead);
+
+
+		if (nullptr != m_pCursor[1])
 		{
-			m_bDead = true;
-			m_isMapRender = false;
-			m_pHintButton->Set_Dead(m_bDead);
-			m_pInvenButton->Set_Dead(m_bDead);
-			m_pMapButton->Set_Dead(m_bDead);
-			m_pInventory_Manager->Set_OnOff_Inven(m_bDead);
-
-
-			if (nullptr != m_pCursor[1])
-			{
-				m_pCursor[0]->Set_Inven_Open(false);
-				m_pCursor[1]->Set_Inven_Open(false);
-			}
-		}
-
-		else
-		{
-			m_bDead = false;
-			m_pHintButton->Set_Dead(m_bDead);
-			m_pInvenButton->Set_Dead(m_bDead);
-			m_pMapButton->Set_Dead(m_bDead);
-			m_pInventory_Manager->Set_OnOff_Inven(m_bDead);//탭창열때 인벤이 초기값임
-
-			if (nullptr != m_pCursor[1])
-			{
-				m_pCursor[0]->Set_Inven_Open(true);
-				m_pCursor[1]->Set_Inven_Open(true);
-			}
+			m_pCursor[0]->Set_Inven_Open(false);
+			m_pCursor[1]->Set_Inven_Open(false);
 		}
 	}
+
+	else
+	{
+		m_bDead = false;
+		m_pHintButton->Set_Dead(m_bDead);
+		m_pInvenButton->Set_Dead(m_bDead);
+		m_pMapButton->Set_Dead(m_bDead);
+		m_pInventory_Manager->Set_OnOff_Inven(m_bDead);//탭창열때 인벤이 초기값임
+
+		if (nullptr != m_pCursor[1])
+		{
+			m_pCursor[0]->Set_Inven_Open(true);
+			m_pCursor[1]->Set_Inven_Open(true);
+		}
+	}
+}
+
+void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
+{
+	OnOff_EventHandle();
+	m_eWindowType = PICK_UP_ITEM;
+	m_pPickedUp_Item = pPickedUp_Item;
+	Safe_AddRef(m_pPickedUp_Item);
 }
 
 void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)

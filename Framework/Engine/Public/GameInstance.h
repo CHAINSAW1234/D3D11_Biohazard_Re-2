@@ -36,6 +36,10 @@ public:
 	{
 		return m_bPause;
 	}
+	void									Set_IsPaused(_bool bPause)
+	{
+		m_bPause = bPause;
+	}
 
 	wstring StringToWstring(const std::string& strString);
 

@@ -3,19 +3,19 @@
 #include "Inventory_Manager.h"
 #include "Inventory_Item_UI.h"
 
-constexpr _float Z_POS_SLOT = 0.8f;
-constexpr _float Z_POS_HIGH_LIGHTER = 0.7f;
-constexpr _float Z_POS_ITEM_UI = 0.6f;
-constexpr _float Z_POS_CONTEXT_MENU = 0.5f;
+constexpr _float	Z_POS_SLOT = 0.8f;
+constexpr _float	Z_POS_HIGH_LIGHTER = 0.7f;
+constexpr _float	Z_POS_ITEM_UI = 0.6f;
+constexpr _float	Z_POS_CONTEXT_MENU = 0.5f;
 
-constexpr _float SLOT_INTERVAL_X = 74.f;
-constexpr _float SLOT_INTERVAL_Y = 76.f;
+constexpr _float	SLOT_INTERVAL_X = 74.f;
+constexpr _float	SLOT_INTERVAL_Y = 76.f;
 
-constexpr _int SELECTED_NUM = 0;
-constexpr _int COMBINDE_NUM = 1;
-constexpr _int RESULT_NUM = 2;
+constexpr _int		SELECTED_NUM = 0;
+constexpr _int		COMBINDE_NUM = 1;
+constexpr _int		RESULT_NUM = 2;
 
-constexpr _float PRESSING_TIME = 0.5f;
+constexpr _float	PRESSING_TIME = 0.5f;
 
 CInventory_Manager::CInventory_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -246,6 +246,21 @@ void CInventory_Manager::UNEQUIP_ITEM_Operation(_float fTimeDelta)
 
 }
 
+void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
+{
+	switch (m_eTaskSequence)
+	{
+	case Client::CInventory_Manager::SETING:
+		break;
+	case Client::CInventory_Manager::SELECT:
+		break;
+	case Client::CInventory_Manager::APPLY:
+		break;
+	default:
+		break;
+	}
+}
+
 void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 {
 	m_pSelected_ItemUI->Set_ItemVariation(-1);
@@ -307,26 +322,32 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 			HoveredPos.z = Z_POS_ITEM_UI;
 			m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos); //하이라이터 움직임
 
-			if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+			for (auto& iter : m_vecItem_UI)
 			{
-				for (auto& iter : m_vecItem_UI) //클릭된 재료 검사
+				if (true == iter->IsMouseHover() && true == iter->Get_isWorking())
 				{
-					if (true == iter->IsMouseHover() && true == iter->Get_isWorking() &&m_pSelected_ItemUI != iter) // todo : Get_isWorking말고 선택 가능한지 한 함수로 바꾸기
+					m_CombineResources[COMBINDE_NUM] = iter->Get_ItemNumber();
+					m_CombineResources[RESULT_NUM] = Find_Recipe(m_CombineResources[SELECTED_NUM], m_CombineResources[COMBINDE_NUM]);
+
+					if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 					{
-						m_CombineResources[COMBINDE_NUM] = iter->Get_ItemNumber();
 						iter->Reset_ItemUI();
 						m_eTaskSequence = APPLY;
 					}
 				}
+
+				else
+				{
+					m_CombineResources[COMBINDE_NUM] = ITEM_NUMBER_END;
+					m_CombineResources[RESULT_NUM] = ITEM_NUMBER_END;
+				}
 			}
 		}
-		 
-
 		break;
 	}
 		
 	case Client::CInventory_Manager::APPLY: {
-		m_pSelected_ItemUI->Set_ItemNumber(Find_Recipe(m_CombineResources[SELECTED_NUM], m_CombineResources[COMBINDE_NUM]));
+		m_pSelected_ItemUI->Set_ItemNumber(m_CombineResources[RESULT_NUM]);
 		m_eTaskSequence = TS_END;
 		m_eInven_Manager_State = EXAMINE_ITEM;
 		m_CombineResources[SELECTED_NUM] = { ITEM_NUMBER_END };
@@ -387,7 +408,10 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 
 void CInventory_Manager::DISCARD_ITEM_Operation(_float fTimeDelta)
 {
+	m_pSelected_ItemUI->Reset_ItemUI();
+	m_pSelected_ItemUI = nullptr;
 
+	m_eInven_Manager_State = EVENT_IDLE;
 }
 
 void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
@@ -513,6 +537,17 @@ ITEM_NUMBER CInventory_Manager::Get_Selected_ItemNum()
 	}
 	else
 		return ITEM_NUMBER_END;
+}
+
+void CInventory_Manager::PUO_Seting(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)
+{
+	_vector TempTrashCanValue = XMVectorSet(m_fSlotHighlighterResetPos.x, m_fSlotHighlighterResetPos.y, Z_POS_ITEM_UI, 1.f);
+
+	m_pDragShadow->Set_ItemUI(m_pSelected_ItemUI->Get_ItemNumber(), DRAG_SHADOW, TempTrashCanValue, m_pSelected_ItemUI->Get_ItemQuantity());
+	m_pDragShadow->Set_Dead(false);
+
+
+
 }
 
 void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)

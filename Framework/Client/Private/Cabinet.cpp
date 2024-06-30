@@ -44,7 +44,7 @@ HRESULT CCabinet::Initialize(void* pArg)
 
 void CCabinet::Tick(_float fTimeDelta)
 {
-	__super::Check_TabWindow();
+	//__super::Check_TabWindow();
 	__super::Check_Player();
 	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 	if (!m_bVisible)
@@ -149,10 +149,9 @@ HRESULT CCabinet::Add_PartObjects()
 		CPartObject* pItem = { nullptr };
 		CBody_ItemProp::BODY_ITEMPROPS_DESC ItemDesc = {};
 		ItemDesc.pParentsTransform = m_pTransformCom;
-		ItemDesc.iItemIndex = m_tagPropDesc.tagCabinet.iItemIndex;
+		m_iItemIndex = ItemDesc.iItemIndex = m_tagPropDesc.tagCabinet.iItemIndex;
 		ItemDesc.pState = &m_eState;
 		ItemDesc.pObtain = &m_bObtain;
-		ItemDesc.iItemIndex = m_tagPropDesc.tagCabinet.iItemIndex;
 		ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_") + m_tagPropDesc.tagCabinet.Name;
 		/*if(m_tagPropDesc.tagCabinet.iItemIndex==0)*/
 		pItem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_") + m_tagPropDesc.tagCabinet.Name, &ItemDesc));

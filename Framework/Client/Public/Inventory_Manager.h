@@ -30,7 +30,9 @@ private:
 	//장비 장착
 	void EQUIP_ITEM_Operation(_float fTimeDelta);			
 	//장비 해제
-	void UNEQUIP_ITEM_Operation(_float fTimeDelta);			
+	void UNEQUIP_ITEM_Operation(_float fTimeDelta);
+	//아이템 줍기
+	void PICK_UP_ITEM_Operation(_float fTimeDelta);
 	//아이템 사용
 	void USE_ITEM_Operation(_float fTimeDelta);				
 	//아이템 조합
@@ -43,6 +45,7 @@ private:
 	void DISCARD_ITEM_Operation(_float fTimeDelta);			
 	//콘텍스트 UI
 	void CONTEXTUI_SELECT_Operation(_float fTimeDelta);
+
 
 public:
 	//Set_Dead호출이라 m_bDead기준으로 변수 줄것
@@ -69,6 +72,9 @@ public:
 	_bool* Get_NoHover_InvenBox() { return &m_IsNoOneHover; }
 
 public:
+	//Pick_Up_Operation 세팅
+	void PUO_Seting(ITEM_NUMBER eAcquiredItem, _int iItemQuantity = 1);
+
 	//인벤토리 밖에서 아이템을 사용하게 되었을때 쓰는 함수(ex 총알)
 	void UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage);
 
@@ -151,7 +157,6 @@ public:
 	void Set_ItemRecipe();
 	void Add_Recipe(ITEM_NUMBER eKeyItemNum, ITEM_NUMBER eCombinableItemNum, ITEM_NUMBER eResultItemNum);
 	ITEM_NUMBER Find_Recipe(ITEM_NUMBER eKeyItemNum, ITEM_NUMBER eCombinableItemNum);
-	//static ITEM_NUMBER Get_CombinationResult(ITEM_NUMBER eFirst_Item, ITEM_NUMBER eSecond_Item);
 };
 
 END

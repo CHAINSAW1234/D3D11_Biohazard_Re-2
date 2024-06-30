@@ -9,7 +9,7 @@ BEGIN(Client)
 class CTab_Window final : public CUI
 {
 public:
-	enum WINDOW_TYPE{MINIMAP, INVENTORY, HINT, EXAMINE, WINDOW_TYPE_END };
+	enum WINDOW_TYPE{MINIMAP, INVENTORY, HINT, EXAMINE, PICK_UP_ITEM ,WINDOW_TYPE_END };
 
 protected:
 	CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -26,13 +26,16 @@ public:
 private:
 	void	ItemIven_EventHandle(_float fTimeDelta);
 	void	FirstTick_Seting();
-	void	OnOff_EventHandle();
 	void	Button_Act(_float fTimeDelta);
 
 public:
+	void	OnOff_EventHandle();
+	void	Set_WindowType(WINDOW_TYPE eWindowType) { m_eWindowType = eWindowType; };
+
 	_bool	Get_MinMapRender() const { return m_isMapRender; }
 	_bool*	Get_MainRender()	{ return m_pInvenButton->Get_Dead_Ptr(); }
 
+	void	PickUp_Item(CGameObject* pPickedUp_Item);
 
 	//아이탬 인벤토리에 넣기
 	void AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity = 1);
@@ -74,6 +77,9 @@ private:
 	CItem_Mesh_Viewer* m_pItem_Mesh_Viewer = { nullptr };
 
 	_float				m_fCurTime = { 0.f };
+
+	/*for. Picked Up Item*/
+	CGameObject*		m_pPickedUp_Item = { nullptr };
 
 private:
 	HRESULT Add_Components();

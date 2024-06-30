@@ -51,8 +51,6 @@
 #include"Body_Shutter.h"
 
 
-
-
 /* UI */
 #include "Customize_UI.h"
 #include "Inventory_Item_UI.h"

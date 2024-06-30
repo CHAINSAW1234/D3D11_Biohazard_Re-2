@@ -62,7 +62,6 @@ namespace Client
 		ITEM_NUMBER_END 
 	};
 
-
 	//인벤토리 안에서의 아이템 타입
 	enum ITEM_TYPE {
 		EQUIPABLE, // 장착 장비
@@ -71,6 +70,8 @@ namespace Client
 		CONSUMABLE, //소모 아이템
 		QUEST, // 퀘스트아이템
 		DRAG_SHADOW,//드레그 쉐도우
+		COMBINABLE_PICKED_UP, //픽업된 아이템인데 조합가능
+		UNCOMBINABLE_PICKED_UP, //픽업된 아이템인데 조합 불가
 		INVEN_ITEM_TYPE_END
 	};
 
@@ -78,13 +79,14 @@ namespace Client
 		EVENT_IDLE, 
 		EQUIP_ITEM,
 		UNEQUIP_ITEM,
+		PICK_UP_ITEM,
 		USE_ITEM,
 		EXAMINE_ITEM,
 		COMBINED_ITEM,
 		HOTKEY_ASSIGNED_ITEM,
 		REARRANGE_ITEM,
 		DISCARD_ITEM,
-		CONTEXTUI_SELECT, 
+		CONTEXTUI_SELECT,
 		INVEN_EVENT_END
 	};
 

@@ -202,8 +202,9 @@ public:
 	_int										Get_Player_Direction() { return m_iDir; }
 	_bool										Get_Player_RegionChange() { return m_bChange; }
 	_bool*										Get_Player_Interact_Ptr() { return &m_bInteract; }
+
 private:
-	_bool										m_bInteract = { false };
+	_bool										m_bInteract = { false }; // 나 소통하겠다
 	_bool										m_bChange = { true };
 	_int										m_iCurCol = { 0 };
 	_int										m_iDir = { 0 };
@@ -211,8 +212,16 @@ private:
 	_float										m_fTimeTEST = { 0.f };
 #pragma endregion
 
+
 #pragma region 창균 추가
-	_bool										m_bIsExamineItem = { false };
+private:
+	void										Check_TabWindow();//텝 윈도우 찾기
+
+public:
+	void										PickUp_Item(CGameObject* pPickedUp_Item); //TabWindow의 PickUp_Item함수 호출용
+
+private:
+	_bool										m_isCamTurn = { false };
 	class CTab_Window*							m_pTabWindow = { nullptr };
 #pragma
 

@@ -12,12 +12,14 @@
 #include "Weapon.h"
 #include "FlashLight.h"
 
-#include"CustomCollider.h"
+#include "CustomCollider.h"
 
 #include "Character_Controller.h"
 #include "Camera_Free.h"
 #include "Camera_Event.h"
 #include "Effect_Header_Player.h"
+
+#include "Tab_Window.h"
 
 #define MODEL_SCALE 0.01f
 
@@ -115,8 +117,6 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 	else
 		m_bChange = false;
-
-
 #pragma endregion 예은ColTest
 
 #pragma region 이동과 카메라
@@ -270,14 +270,9 @@ void CPlayer::Tick(_float fTimeDelta)
 #pragma region Camera
 
 	if (UP == m_pGameInstance->Get_KeyState('Z'))
-	{
-		if (true == m_bIsExamineItem)
-			m_bIsExamineItem = false;
-		else
-			m_bIsExamineItem = true;
-	}
+		m_isCamTurn = !m_isCamTurn;
 
-	if (m_pCamera && false == m_bIsExamineItem)
+	if (m_pCamera && false == m_isCamTurn)
 	{
 		Calc_Camera_LookAt_Point(fTimeDelta);
 	}
@@ -358,21 +353,21 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region TEST
 
-	if (m_pGameInstance->Get_KeyState('1') == DOWN) {
-		Set_Hp(1);
-	}
-	if (m_pGameInstance->Get_KeyState('2') == DOWN) {
-		Set_Hp(2);
-	}
-	if (m_pGameInstance->Get_KeyState('3') == DOWN) {
-		Set_Hp(3);
-	}
-	if (m_pGameInstance->Get_KeyState('4') == DOWN) {
-		Set_Hp(4);
-	}
-	if (m_pGameInstance->Get_KeyState('5') == DOWN) {
-		Set_Hp(5);
-	}
+	//if (m_pGameInstance->Get_KeyState('1') == DOWN) {
+	//	Set_Hp(1);
+	//}
+	//if (m_pGameInstance->Get_KeyState('2') == DOWN) {
+	//	Set_Hp(2);
+	//}
+	//if (m_pGameInstance->Get_KeyState('3') == DOWN) {
+	//	Set_Hp(3);
+	//}
+	//if (m_pGameInstance->Get_KeyState('4') == DOWN) {
+	//	Set_Hp(4);
+	//}
+	//if (m_pGameInstance->Get_KeyState('5') == DOWN) {
+	//	Set_Hp(5);
+	//}
 
 	if (m_pGameInstance->Get_KeyState('T') == DOWN) {
 		Change_Player_State_Bite(0, TEXT("Bite_Default"), XMMatrixIdentity(), 0.2f);
@@ -543,7 +538,6 @@ void CPlayer::Col_Section()
 
 			m_iCurCol = pColCom->Get_Col();
 			m_iDir = pColCom->Get_Dir();
-
 		}
 	}
 }
@@ -1241,6 +1235,32 @@ void CPlayer::Apply_Recoil(_float fTimeDelta)
 
 	m_pTransformCom_Camera->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), -fTimeDelta * 10.f * m_fRecoil_Rotate_Amount_X);
 	m_pTransformCom_Camera->Turn(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT), -fTimeDelta * 10.f * m_fRecoil_Rotate_Amount_Y);
+}
+
+void CPlayer::Check_TabWindow()
+{
+	if (m_pTabWindow != nullptr)
+		return;
+
+	list<CGameObject*>* pGObjList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+	for (auto& iter : *pGObjList)
+	{
+		CTab_Window* pTabWindow = dynamic_cast<CTab_Window*>(iter);
+		if (nullptr != pTabWindow)
+		{
+			m_pTabWindow = pTabWindow;
+			Safe_AddRef(m_pTabWindow);
+			break;
+		}
+	}
+}
+
+void CPlayer::PickUp_Item(CGameObject* pPickedUp_Item)
+{
+	m_pGameInstance->Set_IsPaused(true);
+
+	m_pTabWindow->PickUp_Item(pPickedUp_Item);
 }
 
 void CPlayer::RayCast_Shoot()
@@ -2067,6 +2087,8 @@ void CPlayer::Free()
 	m_Weapons.clear();
 
 	Safe_Release(m_pWeapon);
+
+	Safe_Release(m_pTabWindow);
 
 	Release_Effect();
 }
