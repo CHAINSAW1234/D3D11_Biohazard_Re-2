@@ -176,6 +176,7 @@ HRESULT CMesh::Initialize_Prototype(CModel::MODEL_TYPE eType, const MESH_DESC& M
 	Desc.iNumIndices = m_iNumIndices;
 	Desc.iMeshIndex = m_iMeshIndex;
 	m_pDecal_Blood = CDecal_Blood::Create(m_pDevice, m_pContext);
+	m_pDecal_Blood->SetNumVertices(m_iNumVertices);
 	m_pDecal_Blood->Initialize(&Desc);
 
 	return S_OK;
@@ -480,6 +481,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		memcpy_s(&pVertices[i].vTangent, sizeof(_float3), &Vertices[i].vTangent, sizeof(_float3));
 		memcpy_s(&pVertices[i].vBlendIndices, sizeof(XMUINT4), &Vertices[i].vBlendIndices, sizeof(XMUINT4));
 		memcpy_s(&pVertices[i].vBlendWeights, sizeof(_float4), &Vertices[i].vBlendWeights, sizeof(_float4));
+		pVertices[i].iIndex = i;
 
 		_float			fTotalWeights = { Vertices[i].vBlendWeights.x + Vertices[i].vBlendWeights.y + Vertices[i].vBlendWeights.z + Vertices[i].vBlendWeights.w };
 
@@ -736,68 +738,6 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		if (FAILED(hr))
 			return E_FAIL;
 	}
-
-	//Create Texture2D
-	//{
-	//	HRESULT hr;
-
-	//	// ÅØ½ºÃ³ ¼³¸í¼­ ¼³Á¤
-	//	D3D11_TEXTURE2D_DESC textureDesc;
-	//	ZeroMemory(&textureDesc, sizeof(textureDesc));
-	//	textureDesc.Width = 512;
-	//	textureDesc.Height = 512;
-	//	textureDesc.MipLevels = 1;
-	//	textureDesc.ArraySize = 1;
-	//	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	//	textureDesc.SampleDesc.Count = 1;
-	//	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	//	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	//	textureDesc.CPUAccessFlags = 0;
-	//	textureDesc.MiscFlags = 0;
-
-	//	// ÅØ½ºÃ³ »ý¼º
-	//	ID3D11Texture2D* texture = nullptr;
-	//	hr = m_pDevice->CreateTexture2D(&textureDesc, nullptr, &texture);
-	//	if (FAILED(hr))
-	//	{
-	//		return hr;
-	//	}
-
-	//	// ·»´õ Å¸°Ù ºä »ý¼º
-	//	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
-	//	ZeroMemory(&rtvDesc, sizeof(rtvDesc));
-	//	rtvDesc.Format = textureDesc.Format;
-	//	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	//	rtvDesc.Texture2D.MipSlice = 0;
-
-	//	hr = m_pDevice->CreateRenderTargetView(texture, &rtvDesc, &m_pRTV_DecalMap);
-	//	if (FAILED(hr))
-	//	{
-	//		texture->Release();
-	//		return hr;
-	//	}
-
-	//	// ¼ÎÀÌ´õ ¸®¼Ò½º ºä »ý¼º
-	//	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	//	ZeroMemory(&srvDesc, sizeof(srvDesc));
-	//	srvDesc.Format = textureDesc.Format;
-	//	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	//	srvDesc.Texture2D.MostDetailedMip = 0;
-	//	srvDesc.Texture2D.MipLevels = 1;
-
-	//	hr = m_pDevice->CreateShaderResourceView(texture, &srvDesc, &m_pSRV_DecalMap);
-	//	if (FAILED(hr))
-	//	{
-	//		texture->Release();
-	//		m_pRTV_DecalMap->Release();
-	//		return hr;
-	//	}
-
-	//	// ÅØ½ºÃ³ ÇØÁ¦ (·»´õ Å¸°Ù ºä¿Í ¼ÎÀÌ´õ ¸®¼Ò½º ºä°¡ ÂüÁ¶¸¦ À¯ÁöÇÕ´Ï´Ù)
-	//	texture->Release();
-
-	//	return S_OK;
-	//}
 
 	//Create Staging Buffer
 	D3D11_BUFFER_DESC stagingDesc = {};
@@ -1061,6 +1001,26 @@ void CMesh::Init_DecalMap(CShader* pShader)
 void CMesh::SetDecalWorldMatrix(_float4x4 WorldMatrix)
 {
 	m_pDecal_Blood->SetWorldMatrix(WorldMatrix);
+}
+
+void CMesh::Bind_Resource_CalcDecalMap()
+{
+	CALC_DECAL_MAP_INPUT Input;
+	Input.iNumVertex = m_iNumVertices;
+	Input.pSRV_Texcoords = m_pSRV_Texcoord;
+	Input.pUav_Skinning = m_pUAV_Skinning;
+	m_pDecal_Blood->Bind_Resource_DecalMap(Input);
+}
+
+void CMesh::Perform_Calc_DecalMap()
+{
+	m_pGameInstance->Perform_Calc_Decal_Map(m_iNumVertices);
+	m_pDecal_Blood->Staging_DecalMap();
+}
+
+void CMesh::Bind_Decal_Map(CShader* pShader)
+{
+	m_pDecal_Blood->Bind_DecalMap(pShader);
 }
 
 CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::MODEL_TYPE eModelType, const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices, _fmatrix TransformationMatrix)

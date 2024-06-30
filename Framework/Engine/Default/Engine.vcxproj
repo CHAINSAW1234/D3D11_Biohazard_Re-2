@@ -385,6 +385,7 @@ UpdateLib.bat</Command>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\CalcDecalInfo.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\CalcDecalMap.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\RayCast.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute.hlsl">

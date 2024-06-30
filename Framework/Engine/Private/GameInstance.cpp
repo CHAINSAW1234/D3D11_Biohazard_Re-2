@@ -1348,6 +1348,16 @@ void CGameInstance::Perform_Calc_Decal_Info()
 	m_pCS_Manager->Perform_Calc_Decal_Info();
 }
 
+void CGameInstance::Bind_Resource_Calc_Decal_Map(CALC_DECAL_MAP_INPUT Input)
+{
+	m_pCS_Manager->Bind_Resource_CalcMap(Input);
+}
+
+void CGameInstance::Perform_Calc_Decal_Map(_uint iNumVertices)
+{
+	m_pCS_Manager->Perform_Calc_Decal_Map(iNumVertices);
+}
+
 #pragma endregion
 
 #pragma region Render_Target_Debugger

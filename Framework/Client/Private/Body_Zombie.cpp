@@ -239,10 +239,9 @@ HRESULT CBody_Zombie::Render()
 				return E_FAIL;
 		}
 
-
+		m_pModelCom->Bind_DecalMap(i, m_pShaderCom);
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
-
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
 

@@ -30,11 +30,16 @@ public:
 	virtual _uint	Staging_DecalInfo_RayCasting(_float* pDist) { return 0; }
 	virtual void	Calc_Decal_Info(CALC_DECAL_INPUT Input) {}
 	virtual void	Staging_Calc_Decal_Info() {}
-
+	virtual void	Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input) {}
+	virtual void	Bind_DecalMap(class CShader* pShader) {}
 public:
 	ID3D11UnorderedAccessView* GetDecalInfo_Uav()
 	{
 		return m_pUAV_DecalInfo;
+	}
+	void						SetNumVertices(_uint iNumVertices)
+	{
+		m_iNumVertices = iNumVertices;
 	}
 protected:
 	class CModel* m_pModelCom = { nullptr };
@@ -46,8 +51,18 @@ protected:
 	class DecalInfo* m_DecalInfo = { nullptr };
 	ID3D11Buffer* m_pSB_DecalInfo = { nullptr };
 	ID3D11Buffer* m_pCB_DecalConstData = { nullptr };
-	ID3D11UnorderedAccessView* m_pUAV_DecalInfo = { nullptr };
-	ID3D11Buffer* m_pStaging_Buffer_Decal_Info = { nullptr };
+
+	ID3D11Buffer*				m_pSB_DecalMap = nullptr;
+	ID3D11UnorderedAccessView*  m_pUAV_DecalInfo = { nullptr };
+	ID3D11UnorderedAccessView*  m_pUAV_DecalMap = { nullptr };
+	ID3D11RenderTargetView*		m_pRTV_DecalMap = { nullptr };
+	ID3D11Buffer*				m_pStaging_Buffer_Decal_Info = { nullptr };
+	ID3D11Buffer*				m_pStaging_Buffer_Decal_Map = { nullptr };
+
+	_float3						m_vExtent;
+	_uint						m_iNumVertices = { 0 };
+
+	_float2*					m_pDecal_Map = { nullptr };
 protected:
 	_float					m_fSizeX;
 	_float					m_fSizeY;

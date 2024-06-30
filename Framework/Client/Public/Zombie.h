@@ -88,6 +88,7 @@ public:
 	void								Tick_Effect(_float fTimeDelta);
 	void								Late_Tick_Effect(_float fTimeDelta);
 	void								SetBlood();
+	void								Calc_Decal_Map();
 protected:
 	vector<class CBlood*>				m_vecBlood;
 

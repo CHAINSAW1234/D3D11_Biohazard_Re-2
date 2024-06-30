@@ -20,6 +20,7 @@ HRESULT CCompute_Shader_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceC
 	m_pSkinng = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Skinning.hlsl"), "CS_Skinnig");
 	m_pRayCasting = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/RayCast.hlsl"), "CS_RayCast");
 	m_pCalcDecalInfo = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/CalcDecalInfo.hlsl"), "CS_CalcDecalInfo");
+	m_pCalcDecalMap = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/CalcDecalMap.hlsl"), "CS_CalcDecalMap");
 
 	return S_OK;
 }
@@ -86,6 +87,24 @@ void CCompute_Shader_Manager::Perform_Calc_Decal_Info()
 	m_pCalcDecalInfo->Render(0, numThreadGroupsX, numThreadGroupsY, numThreadGroupsZ);
 }
 
+void CCompute_Shader_Manager::Bind_Resource_CalcMap(CALC_DECAL_MAP_INPUT Input)
+{
+	m_pCalcDecalMap->Bind_Uav("g_Skinnig_Output",Input.pUav_Skinning);
+	m_pCalcDecalMap->Bind_Structured_Buffer("g_Texcoords", Input.pSRV_Texcoords);
+	m_pCalcDecalMap->Bind_Uav("g_DecalMap", Input.pDecalMap);
+	m_pCalcDecalMap->Bind_Matrix("g_DecalMat_Inv", &Input.Decal_Matrix_Inv);
+	m_pCalcDecalMap->Bind_RawValue("g_NumVertices", &Input.iNumVertex, sizeof(_uint));
+	m_pCalcDecalMap->Bind_RawValue("g_Extent", &Input.vExtent, sizeof(_float3));
+}
+
+void CCompute_Shader_Manager::Perform_Calc_Decal_Map(_uint iNumVertices)
+{
+	_uint numThreadGroupsX = (iNumVertices + CALC_DECAL_MAP_THREAD_GROUP_SIZE - 1) / CALC_DECAL_MAP_THREAD_GROUP_SIZE;
+	_uint numThreadGroupsY = 1;
+	_uint numThreadGroupsZ = 1;
+	m_pCalcDecalMap->Render(0, numThreadGroupsX, numThreadGroupsY, numThreadGroupsZ);
+}
+
 CCompute_Shader_Manager* CCompute_Shader_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CCompute_Shader_Manager* pInstance = new CCompute_Shader_Manager();
@@ -109,4 +128,5 @@ void CCompute_Shader_Manager::Free()
 	Safe_Release(m_pSkinng);
 	Safe_Release(m_pRayCasting);
 	Safe_Release(m_pCalcDecalInfo);
+	Safe_Release(m_pCalcDecalMap);
 }

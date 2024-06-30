@@ -32,6 +32,11 @@ public:
 	void					Perform_Calc_Decal_Info();
 
 public:
+	//Calc Decal Map
+	void					Bind_Resource_CalcMap(CALC_DECAL_MAP_INPUT Input);
+	void					Perform_Calc_Decal_Map(_uint iNumVertices);
+
+public:
 
 private:
 	class CGameInstance* m_pGameInstance = { nullptr };
@@ -41,6 +46,7 @@ private:
 	class CComputeShader* m_pSkinng = { nullptr };
 	class CComputeShader* m_pRayCasting = { nullptr };
 	class CComputeShader* m_pCalcDecalInfo = { nullptr };
+	class CComputeShader* m_pCalcDecalMap = { nullptr };
 
 public:
 	static CCompute_Shader_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

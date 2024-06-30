@@ -375,6 +375,11 @@ public:/*For Calc Decal Info*/
 public:/*For Decal Map*/
 	void									Bind_Resource_DecalMap(_uint iIndex, class CShader* pShader);
 	void									Perform_Init_DecalMap(_uint iIndex, class CShader* pShader);
+
+
+public:/*For Calc Decal Map*/
+	void									Perform_Calc_DecalMap();
+	void									Bind_DecalMap(_uint iIndex,class CShader* pShader);
 public:
 	/* Create_ */
 	static CModel* Create_Temp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix);

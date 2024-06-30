@@ -776,7 +776,6 @@ void CZombie::Perform_Skinning()
 		m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldMatrix());
 		m_pBodyModel->Bind_Resource_Skinning(i);
 		m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
-		m_pBodyModel->Staging_Skinning(i);
 	}
 }
 
@@ -809,13 +808,13 @@ void CZombie::Ready_Decal()
 
 		for (int i = 0; i < m_pBodyModel->GetNumMesh(); ++i)
 		{
-			m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo,&m_fHitDistance);
+			m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
 
 			if (m_iMeshIndex_Hit != 999)
 			{
 				m_iMeshIndex_Hit = i;
 
-				_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK),m_fHitDistance);
+				_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
 				_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
 				XMStoreFloat4(&m_vHitPosition, CameraPos);
 
@@ -861,7 +860,7 @@ void CZombie::Release_Effect()
 
 void CZombie::Tick_Effect(_float fTimeDelta)
 {
-	for(size_t i = 0;i<m_vecBlood.size();++i)
+	for (size_t i = 0; i < m_vecBlood.size(); ++i)
 	{
 		m_vecBlood[i]->Tick(fTimeDelta);
 	}
@@ -869,7 +868,7 @@ void CZombie::Tick_Effect(_float fTimeDelta)
 
 void CZombie::Late_Tick_Effect(_float fTimeDelta)
 {
-	for(size_t i = 0;i<m_vecBlood.size();++i)
+	for (size_t i = 0; i < m_vecBlood.size(); ++i)
 	{
 		m_vecBlood[i]->Late_Tick(fTimeDelta);
 	}
@@ -891,9 +890,9 @@ void CZombie::SetBlood()
 		m_vecBlood[m_iBloodCount]->Set_Render(true);
 		m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
 
-		if(m_iBloodCount == 0)
+		if (m_iBloodCount == 0)
 		{
-			m_pModelCom->SetDecalWorldMatrix(m_iMeshIndex_Hit,m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+			Calc_Decal_Map();
 
 			m_iBloodType = m_pGameInstance->GetRandom_Int(0, 10);
 
@@ -931,6 +930,13 @@ void CZombie::SetBlood()
 			return;
 		}
 	}
+}
+
+void CZombie::Calc_Decal_Map()
+{
+	m_pBodyModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+
+	m_pBodyModel->Perform_Calc_DecalMap();
 }
 
 CZombie* CZombie::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

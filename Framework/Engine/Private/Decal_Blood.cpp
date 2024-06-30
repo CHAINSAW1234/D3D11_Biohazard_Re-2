@@ -111,6 +111,35 @@ void CDecal_Blood::Calc_Decal_Info(CALC_DECAL_INPUT Input)
 	m_pGameInstance->Bind_Resource_Calc_Decal_Info(Input);
 }
 
+void CDecal_Blood::Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input)
+{
+	_matrix WorldInv = XMMatrixInverse(nullptr, m_pTransformCom->Get_WorldMatrix());
+	_float4x4 WorldInv_Float4x4;
+	XMStoreFloat4x4(&WorldInv_Float4x4, WorldInv);
+	Input.Decal_Matrix_Inv = WorldInv_Float4x4;
+	Input.pDecalMap = m_pUAV_DecalMap;
+	Input.vExtent = m_vExtent;
+
+	m_pGameInstance->Bind_Resource_Calc_Decal_Map(Input);
+}
+
+void CDecal_Blood::Bind_DecalMap(CShader* pShader)
+{
+	pShader->Bind_Uav("g_DecalMap", m_pUAV_DecalMap);
+}
+
+void CDecal_Blood::Staging_DecalMap()
+{
+	m_pContext->CopyResource(m_pStaging_Buffer_Decal_Map, m_pSB_DecalMap);
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	m_pContext->Map(m_pStaging_Buffer_Decal_Map, 0, D3D11_MAP_READ, 0, &mappedResource);
+
+	_float2* pDecalMap = reinterpret_cast<_float2*>(mappedResource.pData);
+
+	m_pContext->Unmap(m_pStaging_Buffer_Decal_Map, 0);
+}
+
 HRESULT CDecal_Blood::Initialize_Prototype()
 {
 	return S_OK;
@@ -118,6 +147,8 @@ HRESULT CDecal_Blood::Initialize_Prototype()
 
 HRESULT CDecal_Blood::Initialize(void* pArg)
 {
+	__super::Initialize(nullptr);
+
 	if (pArg != nullptr)
 	{
 		DECAL_BLOOD_DESC* pDesc = (DECAL_BLOOD_DESC*)pArg;
@@ -194,6 +225,50 @@ HRESULT CDecal_Blood::Initialize(void* pArg)
 	stagingDesc.StructureByteStride = sizeof(DecalInfo);
 
 	m_pDevice->CreateBuffer(&stagingDesc, nullptr, &m_pStaging_Buffer_Decal_Info);
+
+
+	//Create Staging Buffer
+	stagingDesc.Usage = D3D11_USAGE_STAGING;
+	stagingDesc.ByteWidth = sizeof(_float2)*m_iNumVertices;
+	stagingDesc.BindFlags = 0;
+	stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+	stagingDesc.StructureByteStride = sizeof(_float2);
+
+	m_pDevice->CreateBuffer(&stagingDesc, nullptr, &m_pStaging_Buffer_Decal_Map);
+
+
+
+	m_pDecal_Map = new _float2[m_iNumVertices];
+	ZeroMemory(m_pDecal_Map, sizeof(_float2) * m_iNumVertices);
+	//Buffer for Write
+	{
+		D3D11_BUFFER_DESC sbDesc = {};
+		sbDesc.Usage = D3D11_USAGE_DEFAULT;
+		sbDesc.ByteWidth = sizeof(_float2) * m_iNumVertices;
+		sbDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+		sbDesc.StructureByteStride = sizeof(_float2);
+		sbDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED; // Ãß°¡
+
+		D3D11_SUBRESOURCE_DATA initData = {};
+		initData.pSysMem = m_pDecal_Map;
+
+		HRESULT hr = m_pDevice->CreateBuffer(&sbDesc, &initData, &m_pSB_DecalMap);
+
+		if (FAILED(hr))
+			return E_FAIL;
+
+		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+		uavDesc.Format = DXGI_FORMAT_UNKNOWN;
+		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+		uavDesc.Buffer.NumElements = sbDesc.ByteWidth / sbDesc.StructureByteStride;
+
+		hr = m_pDevice->CreateUnorderedAccessView(m_pSB_DecalMap, &uavDesc, &m_pUAV_DecalMap);
+
+		if (FAILED(hr))
+			return E_FAIL;
+	}
+
+	m_vExtent = _float3(3.5f, 3.5f, 3.5f);
 
 	return S_OK;
 }

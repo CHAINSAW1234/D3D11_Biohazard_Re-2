@@ -521,7 +521,7 @@ void CBlood::SetWorldMatrix_With_HitNormal(_vector vUp)
 
 _float4x4 CBlood::GetWorldMatrix()
 {
-	return m_pTransformCom->Get_WorldFloat4x4();
+	return m_pTransformCom->Get_WorldMatrix_Pure();
 }
 
 HRESULT CBlood::Add_Components()
@@ -589,6 +589,8 @@ HRESULT CBlood::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
+
+	return S_OK;
 }
 
 CBlood* CBlood::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
