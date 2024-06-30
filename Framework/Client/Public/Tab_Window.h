@@ -23,7 +23,13 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-public :
+private:
+	void	ItemIven_EventHandle(_float fTimeDelta);
+	void	FirstTick_Seting();
+	void	OnOff_EventHandle();
+	void	Button_Act(_float fTimeDelta);
+
+public:
 	_bool	Get_MinMapRender() const { return m_isMapRender; }
 	_bool*	Get_MainRender()	{ return m_pInvenButton->Get_Dead_Ptr(); }
 
@@ -47,6 +53,8 @@ private:
 	class CButton_UI*	m_pHintButton = { nullptr };
 
 	CInventory_Manager* m_pInventory_Manager = { nullptr };
+
+	class CItem_Discription* m_pItem_Discription = { nullptr };
 
 private : /* NY */
 	void				Find_Cursor();
@@ -75,6 +83,7 @@ private:
 	HRESULT Creat_MiniMap();
 	HRESULT Creat_Hint();
 	HRESULT Creat_Item_Mesh_Viewer();
+	HRESULT Creat_Item_Discription();
 
 public:
 	static CTab_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

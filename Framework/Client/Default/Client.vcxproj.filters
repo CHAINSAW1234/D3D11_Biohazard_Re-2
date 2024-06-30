@@ -406,6 +406,9 @@
     <Filter Include="02.GameObjects\Monster\Zombie\Effect_Header">
       <UniqueIdentifier>{99cd4cb9-bb79-4588-a5b8-8f0ccefde55d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\4. Item_Discription">
+      <UniqueIdentifier>{a4de0cca-9b51-44c7-8a1d-491fa3b44acc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -810,6 +813,9 @@
     <ClInclude Include="..\Public\Effect_Header_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\Effect_Header</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Item_Discription.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\4. Item_Discription</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1177,6 +1183,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Blood.cpp">
       <Filter>02.GameObjects\Effect\Blood</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item_Discription.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\4. Item_Discription</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

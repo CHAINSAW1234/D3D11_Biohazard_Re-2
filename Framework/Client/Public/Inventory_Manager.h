@@ -63,13 +63,8 @@ public:
 		m_eInven_Manager_State = eInvenEvent;
 	}
 
-	_int Get_Selected_ItemNum(){ 
-		if (nullptr != m_pSelected_ItemUI) {
-			return m_pSelected_ItemUI->Get_ItemNumber();
-		}
-		else
-			return -1;
-	}
+	ITEM_NUMBER Get_Selected_ItemNum();
+
 
 	_bool* Get_NoHover_InvenBox() { return &m_IsNoOneHover; }
 
@@ -96,6 +91,8 @@ private:
 	CGameInstance*					m_pGameInstance = { nullptr }; 
 
 	INVENTORY_EVENT					m_eInven_Manager_State = { EVENT_IDLE };
+
+	TASK_SEQUENCE					m_eTaskSequence = { TS_END };
 
 private:
 	/* for. InvenSlot */
@@ -131,11 +128,7 @@ private :
 	/*for. COMBINED_ITEM_Operation*/
 	unordered_map<ITEM_NUMBER, vector<ITEM_RECIPE>> m_mapItemRecipe;
 
-	TASK_SEQUENCE									m_eTaskSequence = { TS_END };
-
-	ITEM_NUMBER										m_CombineResources[2] = {ITEM_NUMBER_END, ITEM_NUMBER_END};
-
-
+	ITEM_NUMBER						m_CombineResources[3] = {ITEM_NUMBER_END, ITEM_NUMBER_END,ITEM_NUMBER_END };
 
 
 private:
@@ -147,6 +140,8 @@ private:
 
 	HRESULT Seting_SubInven();
 	HRESULT Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval);
+
+
 
 public:
 	static CInventory_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

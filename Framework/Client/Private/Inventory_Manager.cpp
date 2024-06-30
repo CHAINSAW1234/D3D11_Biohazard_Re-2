@@ -11,8 +11,9 @@ constexpr _float Z_POS_CONTEXT_MENU = 0.5f;
 constexpr _float SLOT_INTERVAL_X = 74.f;
 constexpr _float SLOT_INTERVAL_Y = 76.f;
 
-constexpr _int FIRST = 0;
-constexpr _int SECOND = 1;
+constexpr _int SELECTED_NUM = 0;
+constexpr _int COMBINDE_NUM = 1;
+constexpr _int RESULT_NUM = 2;
 
 constexpr _float PRESSING_TIME = 0.5f;
 
@@ -146,6 +147,51 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 		HoveredPos.z = Z_POS_HIGH_LIGHTER;
 		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
 
+		for (auto& iter : m_vecItem_UI)
+		{
+			if (true == iter->IsMouseHover() && true == iter->Get_isWorking())
+			{
+				m_pSelected_ItemUI = iter;
+				break;
+			}
+
+			else
+				m_pSelected_ItemUI = nullptr;
+		}
+
+		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			if (true == m_pSelected_ItemUI->IsMouseHover() && true == m_pSelected_ItemUI->Get_isWorking())
+			{
+				//이징 스타트 도착 지점 제대로 정해주기
+				_float3 TempTrashCanValue = _float3(HoveredPos.x, HoveredPos.y, Z_POS_CONTEXT_MENU);
+				m_pContextMenu->Set_Operation(m_pSelected_ItemUI->Get_ItemType(), true, TempTrashCanValue, TempTrashCanValue);
+				m_eInven_Manager_State = CONTEXTUI_SELECT;
+			}
+		}
+
+		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			if (true == m_pSelected_ItemUI->IsMouseHover() && true == m_pSelected_ItemUI->Get_isWorking())
+			{
+				m_fPressingTime += fTimeDelta;
+
+				if (m_fPressingTime >= PRESSING_TIME)
+				{
+					_vector TempTrashCanValue = XMVectorSet(HoveredPos.x, HoveredPos.y, Z_POS_ITEM_UI, 1.f);
+
+					m_pDragShadow->Set_ItemUI(m_pSelected_ItemUI->Get_ItemNumber(), DRAG_SHADOW, TempTrashCanValue, m_pSelected_ItemUI->Get_ItemQuantity());
+					m_pDragShadow->Set_Dead(false);
+
+					m_fPressingTime = 0.f;
+
+					m_pSlotHighlighter->Set_DragShadow(true);
+
+					m_eInven_Manager_State = REARRANGE_ITEM;
+				}
+			}
+		}
+		/*
 		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
 			for (auto& iter : m_vecItem_UI)
@@ -186,6 +232,7 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 				}
 			}
 		}
+		*/
 	} 
 }
 
@@ -214,8 +261,8 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 	switch (m_eTaskSequence)
 	{
 	case Client::CInventory_Manager::SETING: {
-		m_CombineResources[FIRST] = m_pSelected_ItemUI->Get_ItemNumber();
-		vector<ITEM_RECIPE> vecRecipe = m_mapItemRecipe[m_CombineResources[FIRST]];
+		m_CombineResources[SELECTED_NUM] = m_pSelected_ItemUI->Get_ItemNumber();
+		vector<ITEM_RECIPE> vecRecipe = m_mapItemRecipe[m_CombineResources[SELECTED_NUM]];
 
 		for (auto& ItemUIiter : m_vecItem_UI) //모든 아이템 순회
 		{
@@ -254,8 +301,6 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 			}
 		}
 
-		//m_pSlotHighlighter->Set_Dead(IsNoOneHover);
-
 		if (false == IsNoOneHover)
 		{
 			_float4 HoveredPos = dynamic_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
@@ -266,10 +311,9 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 			{
 				for (auto& iter : m_vecItem_UI) //클릭된 재료 검사
 				{
-					if (true == iter->IsMouseHover() && true == iter->Get_isWorking() &&
-						m_pSelected_ItemUI != iter) // todo : Get_isWorking말고 선택 가능한지 한 함수로 바꾸기
+					if (true == iter->IsMouseHover() && true == iter->Get_isWorking() &&m_pSelected_ItemUI != iter) // todo : Get_isWorking말고 선택 가능한지 한 함수로 바꾸기
 					{
-						m_CombineResources[SECOND] = iter->Get_ItemNumber();
+						m_CombineResources[COMBINDE_NUM] = iter->Get_ItemNumber();
 						iter->Reset_ItemUI();
 						m_eTaskSequence = APPLY;
 					}
@@ -282,11 +326,12 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 	}
 		
 	case Client::CInventory_Manager::APPLY: {
-		m_pSelected_ItemUI->Set_ItemNumber(Find_Recipe(m_CombineResources[FIRST], m_CombineResources[SECOND]));
+		m_pSelected_ItemUI->Set_ItemNumber(Find_Recipe(m_CombineResources[SELECTED_NUM], m_CombineResources[COMBINDE_NUM]));
 		m_eTaskSequence = TS_END;
 		m_eInven_Manager_State = EXAMINE_ITEM;
-		m_CombineResources[0] = { ITEM_NUMBER_END };
-		m_CombineResources[1] = { ITEM_NUMBER_END };
+		m_CombineResources[SELECTED_NUM] = { ITEM_NUMBER_END };
+		m_CombineResources[COMBINDE_NUM] = { ITEM_NUMBER_END };
+		m_CombineResources[RESULT_NUM] = { ITEM_NUMBER_END };
 		break;
 	}
 
@@ -454,6 +499,20 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 	m_eInven_Manager_State = EVENT_IDLE;
 
 	m_pInven_Item_UI->Reset_Call(!bInput);
+}
+
+ITEM_NUMBER CInventory_Manager::Get_Selected_ItemNum()
+{
+	if (COMBINED_ITEM == m_eInven_Manager_State)
+		return m_CombineResources[RESULT_NUM];
+
+
+	if (nullptr != m_pSelected_ItemUI)
+	{
+		return m_pSelected_ItemUI->Get_ItemNumber();
+	}
+	else
+		return ITEM_NUMBER_END;
 }
 
 void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
@@ -863,9 +922,6 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 		break;
 	}
 
-
-
-
 	return ITEM_TYPE::INVEN_ITEM_TYPE_END;
 }
 
@@ -877,6 +933,12 @@ void CInventory_Manager::Set_ItemRecipe()
 	Add_Recipe(greenherb01a, herbsgg01a,	herbsggg01a);
 	Add_Recipe(greenherb01a, herbsgr01a,	herbsgg01a);
 	Add_Recipe(greenherb01a, herbsgb01a,	herbsgg01a);
+
+
+
+
+
+
 }
 
 void CInventory_Manager::Add_Recipe(ITEM_NUMBER eKeyItemNum, ITEM_NUMBER eCombinableItemNum, ITEM_NUMBER eResultItemNum)

@@ -36,11 +36,15 @@ public:
 	{
 		return m_bPause;
 	}
+
+	wstring StringToWstring(const std::string& strString);
+
+	string WstringToString(const wstring& wstrString);
+
+	wstring ConvertToWString(const char* str, size_t len);
+
 #pragma endregion
 
-#pragma region forCH_TEST
-	//wstring									UTF8ToUTF16(const string& utf8Str);
-#pragma endregion
 
 #pragma region Input_Device
 public: /* For.Input_Device */

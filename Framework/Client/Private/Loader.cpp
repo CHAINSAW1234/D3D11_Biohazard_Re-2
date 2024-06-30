@@ -75,6 +75,7 @@
 #include "Context_Highlighter.h"
 #include "Read_Item_UI.h"
 #include "Loading_UI.h"
+#include "Item_Discription.h"
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -530,6 +531,11 @@ HRESULT CLoader::Load_Prototype()
 	/* For.Prototype_GameObject_Read_Item_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Read_Item_UI"),
 		CRead_Item_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Item_Discription */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Item_Discription"),
+		CItem_Discription::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 #pragma endregion
 
@@ -1039,6 +1045,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/*Prototype_Component_Texture_Tab_Window_BackGround*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_NoteBook_Texture2"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/Note/ui3210_file_13_1_iam.tex_noesispreviewdata.png")))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Tab_Window_BackGround*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Item_Description_BG"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Item_Discription_Background/Item_Description_BG.dds")))))
 		return E_FAIL;
 
 #pragma endregion
