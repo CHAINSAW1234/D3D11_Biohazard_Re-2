@@ -364,6 +364,7 @@ public:/*For Skinned Mesh Decal*/
 	void									Bind_Essential_Resource_Skinning(_float4x4 WorldMat);
 	void									Staging_Skinning(_uint iIndex);
 	void									Perform_Skinning(_uint iIndex);
+	void									SetDecalWorldMatrix(_uint iIndex,_float4x4 WorldMatrix);
 
 public:/*For Mesh RayCasting*/
 	_uint									Perform_RayCasting(_uint iIndex, AddDecalInfo Info,_float* pDist);

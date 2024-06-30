@@ -1058,6 +1058,11 @@ void CMesh::Init_DecalMap(CShader* pShader)
 	pShader->Begin(0);
 }
 
+void CMesh::SetDecalWorldMatrix(_float4x4 WorldMatrix)
+{
+	m_pDecal_Blood->SetWorldMatrix(WorldMatrix);
+}
+
 CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::MODEL_TYPE eModelType, const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices, _fmatrix TransformationMatrix)
 {
 	CMesh* pInstance = new CMesh(pDevice, pContext);

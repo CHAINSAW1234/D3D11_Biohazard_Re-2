@@ -57,6 +57,7 @@ namespace Engine
 		CCT = 1 << 0,
 		RAGDOLL = 1 << 1,
 		COLLIDER = 1 << 2,
+		CCT_NO_COLLISION = 1 << 3,
 	};
 
 	enum COLLIDER_TYPE {

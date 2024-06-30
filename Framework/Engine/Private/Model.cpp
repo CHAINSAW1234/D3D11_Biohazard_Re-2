@@ -3039,6 +3039,11 @@ void CModel::Perform_Skinning(_uint iIndex)
 	m_pGameInstance->Perform_Skinning(m_Meshes[iIndex]->GetNumVertices());
 }
 
+void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix)
+{
+	m_Meshes[iIndex]->SetDecalWorldMatrix(WorldMatrix);
+}
+
 _uint CModel::Perform_RayCasting(_uint iIndex, AddDecalInfo Info, _float* pDist)
 {
 	//if (m_Meshes[iIndex]->Is_Hide() == false)
