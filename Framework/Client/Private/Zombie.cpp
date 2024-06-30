@@ -559,7 +559,7 @@ HRESULT CZombie::Add_Components()
 	/* Com_Collider_Body */
 	CBounding_AABB::BOUNDING_AABB_DESC		ColliderAABBDesc{};
 
-	ColliderAABBDesc.vSize = _float3(0.8f, 2.f, 0.8f);
+	ColliderAABBDesc.vSize = _float3(1.2f, 2.3f, 1.2f);
 	ColliderAABBDesc.vCenter = _float3(0.f, ColliderAABBDesc.vSize.y * 0.5f, 0.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
@@ -769,12 +769,11 @@ HRESULT CZombie::Initialize_PartModels()
 
 void CZombie::Perform_Skinning()
 {
-	m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldMatrix());
-
 	_uint iNumMesh = m_pBodyModel->GetNumMesh();
 
 	for (_uint i = 0; i < iNumMesh; ++i)
 	{
+		m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldMatrix());
 		m_pBodyModel->Bind_Resource_Skinning(i);
 		m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
 		m_pBodyModel->Staging_Skinning(i);
@@ -808,21 +807,28 @@ void CZombie::Ready_Decal()
 		decalInfo.maxHitDistance = hitResult.maxHitDistance;
 		decalInfo.decalMaterialIndex = 0;
 
-		_int iMeshIndex = -1;
 		for (int i = 0; i < m_pBodyModel->GetNumMesh(); ++i)
 		{
-			iMeshIndex = m_pBodyModel->Perform_RayCasting(i, decalInfo,&m_fHitDistance);
+			m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo,&m_fHitDistance);
 
-			if (iMeshIndex != 999)
+			if (m_iMeshIndex_Hit != 999)
 			{
-				iMeshIndex = i;
+				m_iMeshIndex_Hit = i;
 
 				_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK),m_fHitDistance);
 				_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
 				XMStoreFloat4(&m_vHitPosition, CameraPos);
 
+				m_vHitNormal = m_pController->GetHitNormal();
+
 				break;
 			}
+		}
+
+		if (m_iMeshIndex_Hit == 999)
+		{
+			m_vHitPosition = m_pController->GetBlockPoint();
+			m_vHitNormal = m_pController->GetHitNormal();
 		}
 
 		/*if (iMeshIndex != -1 && iMeshIndex != 999)
@@ -883,16 +889,13 @@ void CZombie::SetBlood()
 	{
 		m_BloodTime = GetTickCount64();
 		m_vecBlood[m_iBloodCount]->Set_Render(true);
-		//m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
+		m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
 
 		if(m_iBloodCount == 0)
 		{
-			m_iBloodType = m_pGameInstance->GetRandom_Int(0, 10);
+			m_pModelCom->SetDecalWorldMatrix(m_iMeshIndex_Hit,m_vecBlood[m_iBloodCount]->GetWorldMatrix());
 
-			/*if (m_iBloodType == 2)
-			{
-				++m_iBloodType;
-			}*/
+			m_iBloodType = m_pGameInstance->GetRandom_Int(0, 10);
 
 			m_vecBlood[m_iBloodCount]->SetType(m_iBloodType);
 

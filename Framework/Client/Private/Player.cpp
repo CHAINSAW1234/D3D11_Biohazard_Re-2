@@ -495,6 +495,11 @@ HRESULT CPlayer::Render()
 	return S_OK;
 }
 
+void CPlayer::Start()
+{
+	m_pTabWindow = dynamic_cast<CTab_Window*>(m_pGameInstance->Get_)
+}
+
 void CPlayer::Priority_Tick_PartObjects(_float fTimeDelta)
 {
 	for (auto& pPartObject : m_PartObjects)

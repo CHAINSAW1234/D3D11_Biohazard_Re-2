@@ -22,7 +22,7 @@ public:
 public:
 	void					SetSize(_float fSizeX, _float fSizeY,_float fSizeZ);
 	void					SetWorldMatrix_With_HitNormal(_vector vUp);
-
+	_float4x4				GetWorldMatrix();
 
 private:
 	virtual HRESULT			Add_Components();
