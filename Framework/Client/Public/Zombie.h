@@ -27,6 +27,8 @@ BEGIN(Client)
 #define STATUS_ZOMBIE_LIGHTLY_HOLD_RANGE				1.f
 #define STATUS_ZOMBIE_TRY_LIGHTLY_HOLD_TIME				0.5f
 
+#define STATUS_ZOMBIE_TRY_STANDUP_TIME					10.f
+
 class CZombie final : public CMonster
 {
 public:
@@ -39,6 +41,13 @@ public:
 	enum COLLIDERTYPE { COLLIDER_HEAD, COLLIDER_BODY, COLLIDER_END };
 	enum class FACE_STATE { _UP, _DOWN, _END };
 	enum class POSE_STATE { _CREEP, _UP, _END };
+
+	enum class LOST_STATE_BIG { _HEAD, _UPPER_BODY, _LOW_BODY, _END };					//	대분류
+	enum class LOST_STATE_MIDDLE { _L_LEG, _R_LEG, _L_ARM, _R_ARM, _END };				//	중분류
+	enum class LOST_STATE_L_LEG { _END };												//	소분류
+	enum class LOST_STATE_R_LEG { _END };												//	소분류
+	enum class LOST_STATE_L_ARM { _END };												//	소분류
+	enum class LOST_STATE_R_ARM { _END };												//	소분류
 
 private:
 	CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -73,6 +82,10 @@ public:		/* For.Face State */
 public:		/* For.Pose State */
 	inline POSE_STATE					Get_PoseState() { return m_ePoseState; }
 	inline void							Set_PoseState(POSE_STATE ePoseState) { m_ePoseState = ePoseState; }
+
+public:		/* For.Sleep Controll */
+	inline _bool						Is_Sleep() { return m_isSleep; }
+	inline void							Set_Sleep(_bool isSleep) { m_isSleep = isSleep; }
 
 public:		/* Access */
 	inline MONSTER_STATE				Get_Current_MonsterState() { return m_eState; }

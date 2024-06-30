@@ -38,6 +38,10 @@ public:
 		_float				fAccHoldTime = { 0.f };				//	Hold 누적 시간 ( 시도하기 전 )
 		_float				fTryHoldTime = { 0.f };				//	Hold 충분 조건
 
+		_float				fAccCreepTime = { 0.f };
+		_float				fTryStandUpTime = { 0.f };			//	Creep에서 일어나기 위한 모션을 진행할때 필요한 시간
+																//	하체가 없을 시 => TurnOver로 대체
+
 		_float				fViewAngle = { 0.f };
 		_float				fAttack = { 0.f };
 		_float				fHealth = { 0.f };

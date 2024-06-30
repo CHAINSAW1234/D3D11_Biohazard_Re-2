@@ -42,6 +42,8 @@ void CBite_Zombie::Enter()
 
 	m_eStartPoseState = m_pBlackBoard->GetAI()->Get_PoseState();
 	m_eStartFaceState = m_pBlackBoard->GetAI()->Get_FaceState();
+
+	m_ePreState = m_pBlackBoard->GetAI()->Get_Current_MonsterState();
 }
 
 _bool CBite_Zombie::Execute(_float fTimeDelta)
@@ -296,6 +298,113 @@ void CBite_Zombie::Change_Animation_Creep(BITE_ANIM_STATE eState)
 
 void CBite_Zombie::Change_Animation_Push_Down(BITE_ANIM_STATE eState)
 {
+	if (nullptr == m_pBlackBoard)
+		return;
+
+	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	if (nullptr == pBodyModel)
+		return;
+
+	_int			iResultAnimationIndex = { -1 };
+
+	//	Change StartAnim
+	if (BITE_ANIM_STATE::_END == eState)
+	{
+		_float3			vDirectionFromPlayerLocalFloat3 = {};
+		if (false == m_pBlackBoard->Compute_Direction_From_Player_Local(&vDirectionFromPlayerLocalFloat3))
+		{
+			MSG_BOX(TEXT("Called : void CBite_Zombie::Change_Animation_Creep(BITE_ANIM_STATE eState) 좀비 담당자 호출"));
+		}
+
+		_vector			vDirectionFromPlayerLocal = { XMLoadFloat3(&vDirectionFromPlayerLocalFloat3) };
+		_bool			isRight = { XMVectorGetX(vDirectionFromPlayerLocal) > 0.f };
+		if (true == isRight)
+			iResultAnimationIndex = static_cast<_int>(ANIM_BITE_PUSH_DOWN::_DOWN_START_L);
+
+		else
+			iResultAnimationIndex = static_cast<_int>(ANIM_BITE_PUSH_DOWN::_DOWN_START_R);
+
+		m_eAnimType = BITE_ANIM_TYPE::_PUSH_DOWN;
+	}
+
+	//	Change MiddleAnim
+	else if (BITE_ANIM_STATE::_START == eState)
+	{
+		if (false == pBodyModel->isFinished(static_cast<_int>(m_ePlayingIndex)))
+			return;
+
+		_int			iAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
+		_bool			isRight = { iAnimIndex == static_cast<_int>(ANIM_BITE_PUSH_DOWN::_DOWN_START_R) };
+
+		if (true == isRight)
+		{
+			_int			iRandomType = { m_pGameInstance->GetRandom_Int(1, 2) };
+
+			if (1 == iRandomType)
+			{
+				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_PUSH_DOWN::_PUSH_DOWN_R1);
+			}
+
+			else if (2 == iRandomType)
+			{
+				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_PUSH_DOWN::_PUSH_DOWN_R2);
+			}
+		}
+
+		else
+		{
+			_int			iRandomType = { m_pGameInstance->GetRandom_Int(1, 2) };
+
+			if (1 == iRandomType)
+			{
+				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_PUSH_DOWN::_PUSH_DOWN_L1);
+			}
+
+			else if (2 == iRandomType)
+			{
+				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_PUSH_DOWN::_PUSH_DOWN_L2);
+			}
+		}
+	}
+
+	//	Change FinishAnim
+	else if (BITE_ANIM_STATE::_MIDDLE == eState)
+	{
+		if (false == pBodyModel->isFinished(static_cast<_int>(m_ePlayingIndex)))
+			return;
+
+		_float			fPlayerHP = { static_cast<_float>(m_pBlackBoard->GetPlayer()->Get_Hp()) };
+		_float			fZombieAttack = { m_pBlackBoard->GetAI()->Get_Status_Ptr()->fAttack };
+		_bool			isCanKillPlayer = { fPlayerHP <= fZombieAttack };
+
+		_int			iAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
+
+#ifdef _DEBUG
+		if (-1 == iAnimIndex)
+			MSG_BOX(TEXT("Called : void CBite_Zombie::Change_Animation_Creep(BITE_ANIM_STATE eState) 좀비 담당자 호출"));
+#endif
+
+		if (true == isCanKillPlayer)
+		{
+			iResultAnimationIndex = static_cast<_int>(ANIM_BITE_PUSH_DOWN::_DOWN_KILL_R);
+		}
+
+		else
+		{
+			_bool			isRight = { iAnimIndex == static_cast<_int>(ANIM_BITE_PUSH_DOWN::_PUSH_DOWN_R1) || iAnimIndex == static_cast<_int>(ANIM_BITE_PUSH_DOWN::_PUSH_DOWN_R2) };
+			if (true == isRight)
+				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_PUSH_DOWN::_DOWN_REJECT_R);
+			else
+				iResultAnimationIndex = static_cast<_int>(ANIM_BITE_PUSH_DOWN::_DOWN_REJECT_L);
+		}
+	}
+
+	_int				iPreAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
+	if (iPreAnimIndex != iResultAnimationIndex)
+		m_pBlackBoard->GetPlayer()->Request_NextBiteAnimation(iResultAnimationIndex);
+
+	pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strCreepAnimLayerTag, iResultAnimationIndex);
+	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
 }
 
 void CBite_Zombie::Change_Animation_Lost(BITE_ANIM_STATE eState)
@@ -435,22 +544,20 @@ _bool CBite_Zombie::Is_Can_Start_Bite()
 
 void CBite_Zombie::Change_Animation(BITE_ANIM_STATE eState)
 {
-	/*if ()
-		Change_Animation_Creep();
-
-	else if ()
-		Change_Animation_Lost();
-
-	else if ()
-		Change_Animation_Push_Down();
-
-	else
-		Change_Animation_Default();*/
-
 	if (CZombie::POSE_STATE::_CREEP == m_eStartPoseState)
 	{
 		Change_Animation_Creep(eState);
 	}
+
+	else if (MONSTER_STATE::MST_LIGHTLY_HOLD == m_ePreState)
+	{
+		Change_Animation_Push_Down(eState);
+	}
+
+	/*
+	else if ()
+		Change_Animation_Lost();
+	*/
 
 	else
 	{

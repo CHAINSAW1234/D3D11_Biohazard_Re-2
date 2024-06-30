@@ -24,8 +24,9 @@ private:
 
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }
+
 private:
-	class CBlackBoard_Zombie* m_pBlackBoard = { nullptr };
+	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 
 private:
 	_bool							m_isFaceUp = { false };

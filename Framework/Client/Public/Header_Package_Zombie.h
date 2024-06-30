@@ -19,7 +19,11 @@
 /* Move */
 #include "Move_Front_Zombie.h"
 #include "Pivot_Turn_Zombie.h"
+
+/* Idle */
 #include "Wait_Zombie.h"
+#include "Sleep_Zombie.h"
+#include "Creep_Zombie.h"
 
 /* Damage */
 #include "Stun_Zombie.h"

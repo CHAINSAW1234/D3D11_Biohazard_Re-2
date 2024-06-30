@@ -531,10 +531,26 @@ void CZombie::Init_BehaviorTree_Zombie()
 	*Root Child Section		( Idle )
 	*/
 
-	//Add RootNode Task Node
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	CComposite_Node*				pSelectorNode_RootChild_Idle = { CComposite_Node::Create(&CompositeNodeDesc) };
+	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_Idle);
+
+	
+	//	Add Task Node		( Sleep )
+	CSleep_Zombie*								pTask_Sleep = { CSleep_Zombie::Create() };
+	pTask_Sleep->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_Idle->Insert_Child_Node(pTask_Sleep);
+
+
+	//	Add Task Node		( Creep )
+	CCreep_Zombie*								pTask_Creep = { CCreep_Zombie::Create() };
+	pTask_Creep->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_Idle->Insert_Child_Node(pTask_Creep);
+
+	//	Add Task Node		( Idle )
 	CWait_Zombie*								pTask_Wait = { CWait_Zombie::Create() };
 	pTask_Wait->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_Root->Insert_Child_Node(pTask_Wait);
+	pSelectorNode_RootChild_Idle->Insert_Child_Node(pTask_Wait);
 
 	//Add Decorator Node		=>		Task Wait, Deco Can Change State
 	/*CIs_Can_Change_State_Zombie::CAN_CHANGE_STATE_ZOMBIE_DESC		CanChangeStateForWaitDesc;
@@ -759,6 +775,8 @@ HRESULT CZombie::Initialize_Status()
 
 	m_pStatus->fLightlyHoldRange = STATUS_ZOMBIE_LIGHTLY_HOLD_RANGE;
 	m_pStatus->fTryLightlyHoldTime = STATUS_ZOMBIE_TRY_LIGHTLY_HOLD_TIME;
+
+	m_pStatus->fTryStandUpTime = STATUS_ZOMBIE_TRY_STANDUP_TIME;
 
 	m_pStatus->fHealth = STATUS_ZOMBIE_HEALTH;
 

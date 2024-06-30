@@ -37,6 +37,9 @@ _bool CCreep_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
+	if (CZombie::POSE_STATE::_CREEP != m_pBlackBoard->GetAI()->Get_PoseState())
+		return false;
+
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->GetAI();
@@ -56,7 +59,7 @@ void CCreep_Zombie::Change_Animation()
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
 

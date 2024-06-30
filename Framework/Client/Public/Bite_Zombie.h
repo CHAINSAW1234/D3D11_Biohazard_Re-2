@@ -76,6 +76,8 @@ private:
 	CZombie::FACE_STATE				m_eStartFaceState = { CZombie::FACE_STATE::_END };
 	CZombie::POSE_STATE				m_eStartPoseState = { CZombie::POSE_STATE::_END };
 
+	MONSTER_STATE					m_ePreState = { MONSTER_STATE::MST_END };
+
 	_bool							m_isSendMSG_To_Player = { false };
 
 	_float							m_fAccLinearTime_HalfMatrix = { 0.f };

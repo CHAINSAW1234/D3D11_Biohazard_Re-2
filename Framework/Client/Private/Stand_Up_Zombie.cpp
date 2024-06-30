@@ -43,6 +43,12 @@ _bool CStand_Up_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
+	if (CZombie::POSE_STATE::_CREEP != m_pBlackBoard->GetAI()->Get_PoseState())
+		return false;
+
+	if (m_pBlackBoard->Get_ZombieStatus_Ptr()->fAccCreepTime < m_pBlackBoard->Get_ZombieStatus_Ptr()->fTryStandUpTime)
+		return false;
+
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->GetAI();
@@ -55,6 +61,7 @@ _bool CStand_Up_Zombie::Execute(_float fTimeDelta)
 
 void CStand_Up_Zombie::Exit()
 {
+	m_pBlackBoard->Get_ZombieStatus_Ptr()->fAccCreepTime = 0.f;
 }
 
 void CStand_Up_Zombie::Change_Animation()

@@ -34,6 +34,7 @@ private:
 	void							Update_Timers(_float fTimeDelta);
 
 	void							Update_Recognition_Timer(_float fTimeDelta);
+	void							Update_StandUp_Timer(_float fTimeDelta);
 	void							Update_LightlyHold_Timer(_float fTimeDelta);
 
 public: // Setter

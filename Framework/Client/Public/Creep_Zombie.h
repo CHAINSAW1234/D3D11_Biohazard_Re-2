@@ -2,6 +2,7 @@
 
 #include "Client_Defines.h"
 #include "Task_Node.h"
+#include "Zombie.h"
 
 
 BEGIN(Client)
@@ -32,7 +33,8 @@ private:
 	CZombie::FACE_STATE				m_eStartFaceState = { CZombie::FACE_STATE::_END };
 
 private:	/* For. Active FirstTime */
-	
+	const wstring&					m_strCreepAnimLayerTag = { TEXT("Lost_Idle") };	
+	const PLAYING_INDEX				m_ePlayingIndex = { PLAYING_INDEX::INDEX_0 };
 
 public:
 	static CCreep_Zombie* Create(void* pArg = nullptr);

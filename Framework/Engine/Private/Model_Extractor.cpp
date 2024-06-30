@@ -26,7 +26,6 @@ HRESULT CModel_Extractor::Extract_FBX(CModel::MODEL_TYPE eType, const string& st
 	//	ofs.write(reinterpret_cast<char*>(data.data()), data.size() * sizeof(int));
 	Write_File(&eType, sizeof(CModel::MODEL_TYPE));
 
-
 	//	재귀형태로 구현하여 내부에서 기존 fbx읽는방식과 동일하게 파일 작성
 	if (FAILED(Write_Bones(pAIScene->mRootNode)))
 		return E_FAIL;

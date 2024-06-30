@@ -43,6 +43,8 @@ void CBlackBoard_Zombie::Late_Tick(_float fTimeDelta)
 void CBlackBoard_Zombie::Update_Timers(_float fTimeDelta)
 {
 	Update_Recognition_Timer(fTimeDelta);
+	Update_StandUp_Timer(fTimeDelta);
+	Update_LightlyHold_Timer(fTimeDelta);
 }
 
 void CBlackBoard_Zombie::Update_Recognition_Timer(_float fTimeDelta)
@@ -79,6 +81,27 @@ void CBlackBoard_Zombie::Update_Recognition_Timer(_float fTimeDelta)
 		if (pMonsterStatus->fAccRecognitionTime < 0.f)
 			pMonsterStatus->fAccRecognitionTime = 0.f;
 	}
+}
+
+void CBlackBoard_Zombie::Update_StandUp_Timer(_float fTimeDelta)
+{
+	if (nullptr == m_pAI)
+		return;
+
+	MONSTER_STATE					eCurrentState = { m_pAI->Get_Current_MonsterState() };
+	CMonster::MONSTER_STATUS* pMonsterStatus = { m_pAI->Get_Status_Ptr() };
+	if (MONSTER_STATE::MST_IDLE != eCurrentState)
+	{
+		pMonsterStatus->fAccCreepTime -= fTimeDelta;
+		if (pMonsterStatus->fAccCreepTime < 0.f)
+			pMonsterStatus->fAccCreepTime = 0.f;
+		return;
+	}
+
+	pMonsterStatus->fAccCreepTime += fTimeDelta;
+
+	if (pMonsterStatus->fAccCreepTime > pMonsterStatus->fTryStandUpTime)
+		pMonsterStatus->fAccCreepTime = pMonsterStatus->fTryStandUpTime;
 }
 
 void CBlackBoard_Zombie::Update_LightlyHold_Timer(_float fTimeDelta)
