@@ -19,6 +19,8 @@
 #include "Camera_Event.h"
 #include "Effect_Header_Player.h"
 
+#include "Tab_Window.h"
+
 #define MODEL_SCALE 0.01f
 
 const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_HG"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT") };
@@ -498,6 +500,11 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 HRESULT CPlayer::Render()
 {
 	return S_OK;
+}
+
+void CPlayer::Start()
+{
+	m_pTabWindow = dynamic_cast<CTab_Window*>(m_pGameInstance->Get_)
 }
 
 void CPlayer::Priority_Tick_PartObjects(_float fTimeDelta)

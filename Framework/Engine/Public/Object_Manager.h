@@ -21,6 +21,7 @@ public:
 	HRESULT 											Add_Layer(_uint iLevelIndex, const wstring& strLayerTag);
 	HRESULT 											Add_Object(class CGameObject* pGameObject, _uint iLevelIndex, const wstring& strLayerTag);
 
+	class CGameObject*									Get_GameObject(_uint iLevelIndex, const wstring& strLayerTag, _uint iIndex);
 	class CGameObject*									Clone_GameObject(const wstring& strPrototypeTag, void* pArg);
 	void												Priority_Tick(_float fTimeDelta);
 	void												Tick(_float fTimeDelta);

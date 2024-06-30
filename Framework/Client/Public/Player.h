@@ -12,6 +12,7 @@ class CFSM;
 END
 
 BEGIN(Client)
+class CTab_Window;
 class CWeapon;
 
 class CPlayer final : public CGameObject, public CObserver_Handler
@@ -82,6 +83,7 @@ public:
 	virtual void								Tick(_float fTimeDelta) override;
 	virtual void								Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT								Render() override;
+	virtual void								Start() override;
 
 private:
 	void										Priority_Tick_PartObjects(_float fTimeDelta);
@@ -181,7 +183,6 @@ private:
 	vector<CWeapon*> m_Weapons;
 
 	class CCamera_Event* m_pCamera_Event = { nullptr };
-
 
 	friend class CPlayer_State_Move_Walk;
 	friend class CPlayer_State_Move_Jog;
