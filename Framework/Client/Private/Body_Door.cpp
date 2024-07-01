@@ -257,7 +257,7 @@ void CBody_Door::Get_SpecialBone_Rotation()
 			Combined = m_vecRotationBone[0]->Get_TrasformationMatrix();
 		else
 		{
-			if (*m_pDoubleState == CDoor::LSIDE_DOUBLEDOOR_OPEN || *m_pDoubleState == CDoor::RSIDE_DOUBLEDOOR_OPEN)
+			if (*m_pDoubleState == CDoor::L_DOUBLEDOOR_OPEN || *m_pDoubleState == CDoor::R_DOUBLEDOOR_OPEN)
 				Combined = m_vecRotationBone[0]->Get_TrasformationMatrix();
 			else
 				Combined = m_vecRotationBone[(_int)(*m_pDoubleState)]->Get_TrasformationMatrix();

@@ -137,7 +137,7 @@ public:
 	_int												Get_Region() { return m_tagPropDesc.iRegionNum; }
 	_int												Get_Type() { return m_tagPropDesc.iPropType; }
 	void												Set_Region(_int iRegion) { m_tagPropDesc.iRegionNum = iRegion; }
-	virtual _bool									Attack_Prop(class CTransform* pTransfromCom = nullptr) {};
+	virtual _bool									Attack_Prop(class CTransform* pTransfromCom = nullptr) { return false; };
 private :
 	_bool												m_isSelector_Rendering = { false };
 	_bool												m_isNYResult				= { false };
