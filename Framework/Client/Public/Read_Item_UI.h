@@ -6,7 +6,7 @@ BEGIN(Client)
 class CRead_Item_UI final : public CInteract_UI
 {
 public :
-	enum class ITEM_READ_TYPE { INCIDENT_LOG_NOTE, OPERATE_REPORT_NOTE, TASK_NOTE, MEDICINAL_NOTE, OFFICER_NOTE, END_NOTE };
+	enum class ITEM_READ_TYPE { INCIDENT_LOG_NOTE, TASK_NOTE, OPERATE_REPORT_NOTE, MEDICINAL_NOTE, OFFICER_NOTE, GUNPOWDER_NOTE, END_NOTE };
 	/* 사건일지 */
 private :
 	enum class READ_UI_TYPE { INTRODUCE_READ, MAIN_READ, TEXTURE_READ, TEXT_LEFT_READ, TEXT_RIGHT_READ, ARROW_READ, END_READ };
@@ -44,10 +44,14 @@ private :
 	READ_ARROW_TYPE							m_eRead_Arrow_Type	= { READ_ARROW_TYPE::END_ARROW };
 	ITEM_READ_TYPE							m_eBook_Type		= { ITEM_READ_TYPE::END_NOTE };
 
+
 private :
 	CRead_Item_UI*							m_pIntro_UI			= { nullptr };
 	_float									m_fIntro_Timer		= { 0.0f };
 	_bool									m_isRead_Start		= { false };
+
+	_bool									m_isChange			= { false };
+	_bool									m_isPrevRender		= { false };
 
 
 private :
@@ -56,9 +60,11 @@ private :
 	_int									m_iBookCnt			= { 0 };
 	_int									m_iBook_PrevCnt		= { 1 };
 
+
 private : /* Text 관련*/
 	map<ITEM_READ_TYPE, vector<wstring>>	m_BookText;
 	_float2									m_fOriginPos_text = {};
+	ITEM_READ_TYPE							eGara = { ITEM_READ_TYPE::INCIDENT_LOG_NOTE };
 
 
 public:

@@ -9,7 +9,7 @@ BEGIN(Client)
 class CTab_Window final : public CUI
 {
 public:
-	enum WINDOW_TYPE{MINIMAP, INVENTORY, HINT, EXAMINE, PICK_UP_ITEM ,WINDOW_TYPE_END };
+	enum WINDOW_TYPE{MINIMAP, INVENTORY, HINT, EXAMINE, PICK_UP_ITEM_WINDOW, WINDOW_TYPE_END };
 
 protected:
 	CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -24,9 +24,9 @@ public:
 	virtual HRESULT Render() override;
 #pragma region ³ª¿Ë
 public:
-	_bool            Get_MinMapRender() { return m_isMapRender; }
-	_bool*			Get_MainRender() { return m_pInvenButton->Get_Dead_Ptr(); }
-	WINDOW_TYPE* Get_Window_Render_Type() { return &m_eWindowType; }
+	_bool				Get_MinMapRender()			{ return m_isMapRender; }
+	_bool*				Get_MainRender()			{ return m_pInvenButton->Get_Dead_Ptr(); }
+	WINDOW_TYPE*		Get_Window_Render_Type()	{ return &m_eWindowType; }
 
 #pragma endregion
 private:

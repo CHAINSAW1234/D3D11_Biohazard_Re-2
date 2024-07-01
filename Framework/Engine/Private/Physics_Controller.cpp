@@ -785,6 +785,7 @@ void CPhysics_Controller::Start_Ragdoll(CRagdoll_Physics* pRagdoll, _uint iId)
 			m_vecCharacter_Controller[iId]->Release_Px();
 		}
 
+		pRagdoll->Set_Index_CCT(iId);
 		pRagdoll->Init_Ragdoll();
 		pRagdoll->SetSimulate(true);
 	}
@@ -1100,17 +1101,17 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 					m_vecCharacter_Controller[filterData.word2]->SetBlockPoint(*pBlockPoint);
 					m_vecCharacter_Controller[filterData.word2]->SetHitNormal(PxVec_To_Float4_Coord(hit_Obj.normal));
 
-					if (eType == COLLIDER_TYPE::HEAD)
+					//if (eType == COLLIDER_TYPE::HEAD)
 					{
 						m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count();
 					}
 
-					if(m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() == 3)
-					{
-						/*Ragdoll을 구동하려면 살려야 함.*/
-						m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
-						m_vecCharacter_Controller[filterData.word2]->SetDead(true);
-					}
+					//if(m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() == 3)
+					//{
+					//	/*Ragdoll을 구동하려면 살려야 함.*/
+					//	m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
+					//	m_vecCharacter_Controller[filterData.word2]->SetDead(true);
+					//}
 
 					return true;
 				}
@@ -1137,6 +1138,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 					dynamicActor->addForce(pxForce, PxForceMode::eIMPULSE);
 					m_vecCharacter_Controller[filterData.word2]->Set_Hit(true);
 					m_vecCharacter_Controller[filterData.word2]->SetBlockPoint(*pBlockPoint);
+					m_vecCharacter_Controller[filterData.word2]->SetHitNormal(PxVec_To_Float4_Coord(hit_Obj.normal));
 				}
 
 				return true;

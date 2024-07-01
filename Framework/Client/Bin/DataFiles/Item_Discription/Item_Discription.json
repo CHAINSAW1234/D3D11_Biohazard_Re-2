@@ -70,27 +70,27 @@
     "DESCRIPTION": "아크레이 산에서 캐낸\n파란 약초. 체력을\n약간 회복시킵니다."
   },
   {
-    "NAME": "권총 탄약 x%d",
+    "NAME": "권총 탄약",
     "CLASSIFY": "탄약",
     "DESCRIPTION": "9mm 파라블럼 권총 탄환.\n안정적 비행 탄도와 적당한\n반동으로 선호되는\n가장 일반적인 탄환입니다."
   },
   {
-    "NAME": "샷건 탄약 x%d",
+    "NAME": "샷건 탄약",
     "CLASSIFY": "탄약",
     "DESCRIPTION": "추가 안됨"
   },
   {
-    "NAME": "머신건 탄약 x%d",
+    "NAME": "머신건 탄약",
     "CLASSIFY": "탄약",
     "DESCRIPTION": "추가 안됨"
   },
   {
-    "NAME": "메그넘 탄약 x%d",
+    "NAME": "메그넘 탄약",
     "CLASSIFY": "탄약",
     "DESCRIPTION": "추가 안됨"
   },
   {
-    "NAME": "빅건 탄약 x%d",
+    "NAME": "빅건 탄약",
     "CLASSIFY": "탄약",
     "DESCRIPTION": "추가 안됨"
   },
@@ -100,7 +100,7 @@
     "DESCRIPTION": "잉크 리본. \n타자기 사용 시 필요합니다."
   },
   {
-    "NAME": "나무 판 x%d",
+    "NAME": "나무 판",
     "CLASSIFY": "열쇠 아이템",
     "DESCRIPTION": "창을 막는 데 사용할 수 있는\n견고한 나무 조각. 불청객의\n출입을 완벽하게 차단합니다."
   },
@@ -110,12 +110,12 @@
     "DESCRIPTION": "폭발은 예술이다."
   },
   {
-    "NAME": "화약 x%d",
+    "NAME": "화약",
     "CLASSIFY": "자원",
     "DESCRIPTION": "표준 등급 화약.\n이 2개를 결합해 권총\n탄약을 만듭니다."
   },
   {
-    "NAME": "화약(대) x%d",
+    "NAME": "화약(대)",
     "CLASSIFY": "자원",
     "DESCRIPTION": "대량의 화약. 일반 화약보다 탄약을 두 배 더 많이 만들 수 있습니다."
   },
@@ -125,8 +125,828 @@
     "DESCRIPTION": "정현이가 좋아합니다.\nps. 마약은 아닙니다."
   },
   {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "추가 안됨",
+    "CLASSIFY": "추가 안됨",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
     "NAME": "JMB Hp3",
     "CLASSIFY": "무기",
     "DESCRIPTION": "16발식 9mm 권총.\n다양한 국가 조식의 전문가가 사용합니다.\n높은 정확도와 안정성을\n갖추고 있습니다."
+  },
+  {
+    "NAME": "W-870",
+    "CLASSIFY": "산탄총",
+    "DESCRIPTION": "4발분 장전 12 게이지 펌프\n연사식 산탄총. 견고하고\n확실하며 간편한 조종이 가능한\n인기 모델입니다."
   }
 ]

@@ -113,7 +113,7 @@ void CTutorial_UI::First_Behaivor(_float fTimeDelta)
             m_isTutorial[(_int)UI_TUTORIAL_TYPE::TUTORIAL_AROUND] = true;
         }
 
-        else if (false == m_isTutorial[(_int)UI_TUTORIAL_TYPE::TUTORIAL_WALK])
+        /*else if (false == m_isTutorial[(_int)UI_TUTORIAL_TYPE::TUTORIAL_WALK])
         {
             if (true == (*m_pPlayer->Get_Tutorial_Notify()))
                 return;
@@ -121,7 +121,7 @@ void CTutorial_UI::First_Behaivor(_float fTimeDelta)
             *m_pPlayer->Get_Tutorial_Notify() = true;
             *m_pPlayer->Get_Tutorial_Type() = UI_TUTORIAL_TYPE::TUTORIAL_WALK;
             m_isTutorial[(_int)UI_TUTORIAL_TYPE::TUTORIAL_WALK] = true;
-        }
+        }*/
     }
 }
 
@@ -160,7 +160,7 @@ void CTutorial_UI::Player_First_Interact()
             pTutorial_TextBox[1]->Set_Text(TEXT("3"));
             break;
 
-        case UI_TUTORIAL_TYPE::TUTORIAL_AIM :
+        case UI_TUTORIAL_TYPE::TUTORIAL_AIM :   
             pTutorial_TextBox[0]->Set_Text(TEXT("겨누기"));
             pTutorial_TextBox[1]->Set_Text(TEXT("R"));
             break;
@@ -171,7 +171,7 @@ void CTutorial_UI::Player_First_Interact()
             break;
 
         case UI_TUTORIAL_TYPE::TUTORIAL_REROAD :
-            pTutorial_TextBox[0]->Set_Text(TEXT("재장전"));
+            pTutorial_TextBox[0]->Set_Text(TEXT(" 재장전"));
             pTutorial_TextBox[1]->Set_Text(TEXT("R"));
             break;
         }
@@ -206,6 +206,10 @@ void CTutorial_UI::Find_TextBox()
        pTutorial_TextBox[0] = pTutorial_TextBox[1];
        pTutorial_TextBox[1] = pTemp;
     }
+
+    _float4 fPosX = pTutorial_TextBox[1]->GetPosition();
+    fPosX.x += 3.5f;
+    pTutorial_TextBox[1]->Set_Position(fPosX);
 }
 
 void CTutorial_UI::Tutorial_Start()

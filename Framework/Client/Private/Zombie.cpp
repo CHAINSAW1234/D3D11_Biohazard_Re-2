@@ -74,8 +74,13 @@ HRESULT CZombie::Initialize(void* pArg)
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
 #pragma region AIController Setup
+
+#pragma region Create Controller
+
 	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this, 1.f, 0.35f, m_pTransformCom
 		, m_pBodyModel->GetBoneVector(), "../Bin/Resources/Models/Zombie/Body.fbx");
+
+#pragma endregion
 
 	m_pPathFinder = m_pGameInstance->Create_PathFinder();
 
@@ -232,6 +237,8 @@ void CZombie::Tick(_float fTimeDelta)
 		{
 			if (m_pController->Is_Hit())
 			{
+				m_iBloodCount = 0;
+
 				/*For Decal*/
 				Ready_Decal();
 
@@ -252,6 +259,8 @@ void CZombie::Tick(_float fTimeDelta)
 			/*For Decal*/
 			Ready_Decal();
 
+			m_iBloodCount = 0;
+
 			/*For Blood Effect*/
 			m_bSetBlood = true;
 			m_BloodTime = GetTickCount64();
@@ -265,7 +274,14 @@ void CZombie::Tick(_float fTimeDelta)
 
 			if (m_pController->GetDead())
 			{
+				CPlayer::EQUIP		eEquip = m_pBlackBoard->GetPlayer()->Get_Equip();
+
 				m_bRagdoll = true;
+
+				if (CPlayer::EQUIP::STG == eEquip)
+				{
+					vForce = vForce * 2.f;
+				}
 
 				for (auto& pPartObject : m_PartObjects)
 				{
@@ -1118,6 +1134,12 @@ void CZombie::Ready_Decal()
 			m_pBodyModel->Bind_Resource_DecalMap(iMeshIndex, m_pShader_Decal);
 			m_pBodyModel->Perform_Init_DecalMap(iMeshIndex, m_pShader_Decal);
 		}*/
+	}
+
+	if (m_bRagdoll)
+	{
+		m_vHitPosition = m_pController->GetBlockPoint();
+		m_vHitNormal = m_pController->GetHitNormal();
 	}
 }
 

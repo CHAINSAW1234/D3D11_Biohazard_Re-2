@@ -38,6 +38,7 @@ private :
 
 private :
 	CCrosshair_UI*			m_pCenterDot = { nullptr };
+	class CTab_Window*		m_pTabWindow = { nullptr };
 
 private :
 	CROSSHAIR_TYPE			m_eCrosshair_Type					= { CROSSHAIR_TYPE::CROSSHAIR_END };
