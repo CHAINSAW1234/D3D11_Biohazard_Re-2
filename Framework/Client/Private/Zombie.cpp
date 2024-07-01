@@ -1046,7 +1046,7 @@ void CZombie::Ready_Decal()
 		decalInfo.maxHitDistance = hitResult.maxHitDistance;
 		decalInfo.decalMaterialIndex = 0;
 
-		/*list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
+	/*	list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
 		for (auto& i : NonHideIndex)
 		{
 			m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
@@ -1078,6 +1078,9 @@ void CZombie::Ready_Decal()
 			m_pBodyModel->Perform_Init_DecalMap(iMeshIndex, m_pShader_Decal);
 		}*/
 	}
+
+	m_vHitPosition = m_pController->GetBlockPoint();
+	m_vHitNormal = m_pController->GetHitNormal();
 
 	if (m_bRagdoll)
 	{
@@ -1127,7 +1130,6 @@ void CZombie::SetBlood()
 	{
 		m_bSetBlood = false;
 		m_iBloodCount = 0;
-		m_vHitPosition = _float4(0.f, 0.f, 0.f, 1.f);
 		return;
 	}
 
@@ -1172,7 +1174,6 @@ void CZombie::SetBlood()
 		{
 			m_bSetBlood = false;
 			m_iBloodCount = 0;
-			m_vHitPosition = _float4(0.f, 0.f, 0.f, 1.f);
 			return;
 		}
 	}
