@@ -22,7 +22,10 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	void Set_Item_Number(ITEM_NUMBER eItem_Num) { m_eItemNumber = eItem_Num; }
+	void Set_Item_Number(ITEM_NUMBER eItem_Num, _uint iItemQuantity = 0) { 
+		m_eItemNumber = eItem_Num; 
+		m_iItemQuantity = iItemQuantity;
+	}
 
 private:
 	class CTextBox* m_pItemName = { nullptr };
@@ -32,6 +35,8 @@ private:
 private:
 	/*for.ItemDiscription*/
 	unordered_map<ITEM_NUMBER, vector<wstring>>		m_mapItemDiscription;
+
+	_uint											m_iItemQuantity = { 0 };
 
 	ITEM_NUMBER										m_eItemNumber = { ITEM_NUMBER_END };
 

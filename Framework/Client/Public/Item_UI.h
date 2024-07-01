@@ -29,6 +29,9 @@ public:
 	_bool				Get_isWorking() const { return m_isWorking; }
 	void				Set_isWorking(_bool IsWorking) { m_isWorking = IsWorking; }
 
+	_bool				Get_isActive() const { return m_isActive; }
+	void				Set_isActive(_bool IsActive) { m_isActive = IsActive; }
+
 	ITEM_NUMBER			Get_ItemNumber() const { return m_eItemNumber; };
 	void				Set_ItemNumber(ITEM_NUMBER eItmeNum) { 
 		m_eItemNumber = eItmeNum;
@@ -40,6 +43,7 @@ public:
 
 public:
 	void				Reset_ItemUI();
+	void				Set_Activ_ItemUI(_bool Active);
 	void				Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos, _int iVariation);
 
 public:
@@ -48,6 +52,7 @@ public:
 
 private:
 	_bool						m_isWorking = { false };
+	_bool						m_isActive = { true };
 
 private:
 	ITEM_NUMBER					m_eItemNumber = { ITEM_NUMBER::ITEM_NUMBER_END };

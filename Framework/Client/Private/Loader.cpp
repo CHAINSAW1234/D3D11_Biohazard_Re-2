@@ -745,7 +745,10 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, Inform->strModelPath.c_str(), Ininitmatrix));
 		}
 		else
+		{
 			m_pGameInstance->Add_Prototype(m_eNextLevelID, Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, Inform->strModelPath.c_str(), XMMatrixIdentity()));
+
+		}
 
 		_bool bDo = { false };
 
@@ -805,6 +808,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 HRESULT CLoader::Load_Items_Model(_matrix TransformMatrix)
 {
+	
 #pragma region Items Model
 	/* Prototype_Component_Model_sm70_000_emergencyspray01a */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_000_emergencyspray01a"),
@@ -958,7 +962,6 @@ HRESULT CLoader::Load_Items_Model(_matrix TransformMatrix)
 
 
 #pragma endregion
-
 
 	return S_OK;
 }

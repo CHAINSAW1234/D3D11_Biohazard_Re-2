@@ -9,7 +9,7 @@ BEGIN(Client)
 class CTab_Window final : public CUI
 {
 public:
-	enum WINDOW_TYPE{MINIMAP, INVENTORY, HINT, EXAMINE, PICK_UP_ITEM ,WINDOW_TYPE_END };
+	enum WINDOW_TYPE{MINIMAP, INVENTORY, HINT, EXAMINE, PICK_UP_ITEM_WINDOW, WINDOW_TYPE_END };
 
 protected:
 	CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
