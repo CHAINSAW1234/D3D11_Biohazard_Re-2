@@ -194,6 +194,10 @@ public:
         m_bCulling = boolean;
     }
     void                                SetBoneIndex();
+    void                                Set_Index_CCT(_uint Index)
+    {
+        m_iId = Index;
+    }
 public:
 	static CRagdoll_Physics*            Create();
 
@@ -212,7 +216,7 @@ private:
     _matrix                                         m_model_only_scale = XMMatrixIdentity();
     float                                           m_scale = 1.f;
     float                                           m_ui_scale = m_scale;
-    float                                           m_mass = 10.0f;
+    float                                           m_mass = 14.f;
 
     class SkeletalMesh*                             m_skeletal_mesh = { nullptr };
     class CRagdoll*                                 m_ragdoll = { nullptr };
@@ -274,6 +278,8 @@ private:
     PxD6Joint*                                      m_pKnee_Joint_R = { nullptr };
     PxD6Joint*                                      m_pAnkle_Joint_L = { nullptr };
     PxD6Joint*                                      m_pAnkle_Joint_R = { nullptr };
+
+    _uint                                           m_iId = { 0 };
 public:
 	virtual void Free() override;
 };
