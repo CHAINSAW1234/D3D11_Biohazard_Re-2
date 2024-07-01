@@ -6,7 +6,7 @@ BEGIN(Client)
 class CRead_Item_UI final : public CInteract_UI
 {
 public :
-	enum class ITEM_READ_TYPE { INCIDENT_LOG_NOTE, OPERATE_REPORT_NOTE, TASK_NOTE, MEDICINAL_NOTE, OFFICER_NOTE, END_NOTE };
+	enum class ITEM_READ_TYPE { INCIDENT_LOG_NOTE, TASK_NOTE, OPERATE_REPORT_NOTE, MEDICINAL_NOTE, OFFICER_NOTE, GUNPOWDER_NOTE, END_NOTE };
 	/* 사건일지 */
 private :
 	enum class READ_UI_TYPE { INTRODUCE_READ, MAIN_READ, TEXTURE_READ, TEXT_LEFT_READ, TEXT_RIGHT_READ, ARROW_READ, END_READ };
@@ -49,6 +49,8 @@ private :
 	_float									m_fIntro_Timer		= { 0.0f };
 	_bool									m_isRead_Start		= { false };
 
+	_bool									m_isChange			= { false };
+	_bool									m_isPrevRender		= { false };
 
 private :
 	CRead_Item_UI*							m_pTexture_UI		= { nullptr }; /* Arrow가 가지고 있는 Texture */

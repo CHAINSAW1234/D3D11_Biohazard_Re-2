@@ -149,23 +149,24 @@ void CRead_Item_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    /* 예시 코드 */
-    if (m_pGameInstance->Get_KeyState('I') && READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
-    {
-        m_isRender = true;
-        m_eBook_Type = eGara;
-        Reset();
-    }
-
     /* GARA */
     if (DOWN == m_pGameInstance->Get_KeyState('0') && READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
     {
         eGara = (ITEM_READ_TYPE)((_int)eGara + 1);
 
-        if (eGara >= ITEM_READ_TYPE::END_NOTE)
+        if (eGara >= ITEM_READ_TYPE::OFFICER_NOTE)
             eGara = ITEM_READ_TYPE::INCIDENT_LOG_NOTE;
     }
 
+
+    /* 예시 코드 */
+    if (m_pGameInstance->Get_KeyState('I') && READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
+    {
+        m_isRender = true;
+        m_eBook_Type = eGara;
+
+        Reset();
+    }
 
 
     Render_Condition();
@@ -191,8 +192,6 @@ void CRead_Item_UI::Late_Tick(_float fTimeDelta)
 
 HRESULT CRead_Item_UI::Render()
 {
-    if (READ_UI_TYPE::TEXT_RIGHT_READ == m_eRead_type)
-        int a = 1;
     if (FAILED(__super::Render()))
         return E_FAIL;
 
@@ -253,6 +252,11 @@ void CRead_Item_UI::Texture_Read()
     if (true == m_pIntro_UI->m_isRead_Start)
     {
         m_isRender = true;
+
+        if (m_isPrevRender == m_isRender)
+            return;
+
+        m_isPrevRender = true;
         vector<wstring> incidentLogNotes = m_pRead_Supervise->m_BookText[m_pIntro_UI->m_eBook_Type];
         Change_Texture(incidentLogNotes[0], TEXT("Com_DefaultTexture"));
     }
@@ -269,6 +273,14 @@ void CRead_Item_UI::Arrow_Read()
     /* 인트로가 읽기 시작을 알렸다면 진행*/
     if (true == m_pIntro_UI->m_isRead_Start)
     {
+        if(false == m_isChange)
+        {
+            m_pRead_Supervise->m_isChange = true;
+            m_pRead_Supervise->m_iBookCnt = 1;
+
+            m_isChange = true;
+        }
+
         if (true == IsMouseHover())
         {
             if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
@@ -279,13 +291,18 @@ void CRead_Item_UI::Arrow_Read()
                     --m_pRead_Supervise->m_iBookCnt;
 
                     if (1 >= m_pRead_Supervise->m_iBookCnt)
+                    {
                         m_pRead_Supervise->m_iBookCnt = 1;
+                        m_pRead_Supervise->m_isChange = true;
+                    }
                 }
 
                 /* 오른쪽일 때 */
                 else if (READ_ARROW_TYPE::RIGHT_ARROW == m_eRead_Arrow_Type)
                 {
                     ++m_pRead_Supervise->m_iBookCnt;
+                    m_pRead_Supervise->m_isChange = true;
+
                 }
             }
         }
@@ -297,6 +314,9 @@ void CRead_Item_UI::Arrow_Read()
 void CRead_Item_UI::Text_Read(_float fTimeDelta)
 {
     if (nullptr == m_pIntro_UI || true != m_pIntro_UI->m_isRead_Start)
+        return;
+
+    if (false == m_pRead_Supervise->m_isChange)
         return;
 
    // Render_Destory(false);
@@ -316,6 +336,8 @@ void CRead_Item_UI::Text_Read(_float fTimeDelta)
             m_pRead_Supervise->m_iBookCnt = (_int)incidentLogNotes.size() - 1;
 
         m_isRender = true;
+
+        m_pRead_Supervise->m_isChange = false;
     }
 
     else if (READ_UI_TYPE::TEXT_RIGHT_READ == m_eRead_type)
@@ -363,6 +385,8 @@ void CRead_Item_UI::Render_Condition()
     if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON) && true == m_isRender)
     {
         m_isRender = false;
+        m_isPrevRender = false;
+        m_isChange = false;
 
         if(nullptr != m_pIntro_UI)
             m_pIntro_UI->m_isRead_Start = false;
