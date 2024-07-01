@@ -42,6 +42,27 @@ _bool CKnock_Back_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
+	CModel*					pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+	if (nullptr == pBody_Model)
+		return false;
+
+	MONSTER_STATE			eState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
+	if (MONSTER_STATE::MST_DAMAGE == eState)
+	{
+		if (true == pBody_Model->isFinished(static_cast<_uint>(PLAYING_INDEX::INDEX_0)))
+		{
+			return false;
+		}
+	}
+
+	else
+	{
+		HIT_TYPE		eHitType = { m_pBlackBoard->Get_AI()->Get_Current_HitType() };
+		if (HIT_TYPE::HIT_BIG != eHitType)
+			return false;
+	}
+
+
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();

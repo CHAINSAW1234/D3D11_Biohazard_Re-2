@@ -456,12 +456,12 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_StandUp_TurnOver);
 
 	//	Add Task Node		=> Stand Up
-	CStand_Up_Zombie* pTask_StandUp = { CStand_Up_Zombie::Create() };
+	CStand_Up_Zombie*			pTask_StandUp = { CStand_Up_Zombie::Create() };
 	pTask_StandUp->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_StandUp_TurnOver->Insert_Child_Node(pTask_StandUp);
 
 	//	Add Task Node		=> Turn Over
-	CTurn_Over_Zombie* pTask_TurnOver = { CTurn_Over_Zombie::Create() };
+	CTurn_Over_Zombie*			pTask_TurnOver = { CTurn_Over_Zombie::Create() };
 	pTask_TurnOver->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_StandUp_TurnOver->Insert_Child_Node(pTask_TurnOver);
 
@@ -483,15 +483,15 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_Hold_Stun->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Hit->Insert_Child_Node(pTask_Hold_Stun);
 
-	//	Add Decorator		=> Is Can Link? ( From Hold )
-	list<MONSTER_STATE>							CanLinkMonsterStatesHoldStun;
-	CanLinkMonsterStatesHoldStun.emplace_back(MONSTER_STATE::MST_HOLD);
-	CIs_Can_Link_Pre_State_Zombie* pDeco_Is_Can_Link_Hold_Stun = { CIs_Can_Link_Pre_State_Zombie::Create(CanLinkMonsterStatesHoldStun) };
-	pDeco_Is_Can_Link_Hold_Stun->SetBlackBoard(m_pBlackBoard);
-	pTask_Hold_Stun->Insert_Decorator_Node(pDeco_Is_Can_Link_Hold_Stun);
+	////	Add Decorator		=> Is Can Link? ( From Hold )
+	//list<MONSTER_STATE>							CanLinkMonsterStatesHoldStun;
+	//CanLinkMonsterStatesHoldStun.emplace_back(MONSTER_STATE::MST_HOLD);
+	//CIs_Can_Link_Pre_State_Zombie* pDeco_Is_Can_Link_Hold_Stun = { CIs_Can_Link_Pre_State_Zombie::Create(CanLinkMonsterStatesHoldStun) };
+	//pDeco_Is_Can_Link_Hold_Stun->SetBlackBoard(m_pBlackBoard);
+	//pTask_Hold_Stun->Insert_Decorator_Node(pDeco_Is_Can_Link_Hold_Stun);
 
 	//	Add Decorator		=> Is Hit? ( All HitType, Leg Collider )
-	CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitAllType_LegCollision;
+	/*CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitAllType_LegCollision;
 	for (_uint i = 0; i < MONSTER_STATE::MST_END; ++i)
 	{
 		IsHitAllType_LegCollision.CheckHitTypes.emplace_back(static_cast<HIT_TYPE>(i));
@@ -504,7 +504,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::FOOT_R);
 	CIs_Hit_Zombie* pDeco_Is_Hit_AllType = { CIs_Hit_Zombie::Create(&IsHitAllType_LegCollision) };
 	pDeco_Is_Hit_AllType->SetBlackBoard(m_pBlackBoard);
-	pTask_Hold_Stun->Insert_Decorator_Node(pDeco_Is_Hit_AllType);
+	pTask_Hold_Stun->Insert_Decorator_Node(pDeco_Is_Hit_AllType);*/
 
 
 	//	Add Task Node		=> Damage Stun
@@ -513,7 +513,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pSelectorNode_RootChild_Hit->Insert_Child_Node(pTask_Stun);
 
 	//	Add Decorator		=> Is Hit?
-	CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitSmallDesc;
+	/*CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitSmallDesc;
 	IsHitSmallDesc.CheckHitTypes.emplace_back(HIT_TYPE::HIT_SMALL);
 
 	for (_uint i = 0; i < static_cast<_uint>(COLLIDER_TYPE::_END); ++i)
@@ -522,7 +522,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	}
 	CIs_Hit_Zombie* pDeco_Is_HitSmall = { CIs_Hit_Zombie::Create(&IsHitSmallDesc) };
 	pDeco_Is_HitSmall->SetBlackBoard(m_pBlackBoard);
-	pTask_Stun->Insert_Decorator_Node(pDeco_Is_HitSmall);
+	pTask_Stun->Insert_Decorator_Node(pDeco_Is_HitSmall);*/
 
 
 	//	Add Task Node		=> Damage Knock Back
@@ -531,7 +531,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pSelectorNode_RootChild_Hit->Insert_Child_Node(pTask_Knockback);
 
 	//	Add Decorator		=> Is Hit?
-	CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitBigDesc;
+	/*CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitBigDesc;
 	IsHitBigDesc.CheckHitTypes.emplace_back(HIT_TYPE::HIT_BIG);
 
 	for (_uint i = 0; i < static_cast<_uint>(COLLIDER_TYPE::_END); ++i)
@@ -540,7 +540,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	}
 	CIs_Hit_Zombie* pDeco_Is_HitBig = { CIs_Hit_Zombie::Create(&IsHitBigDesc) };
 	pDeco_Is_HitBig->SetBlackBoard(m_pBlackBoard);
-	pTask_Knockback->Insert_Decorator_Node(pDeco_Is_HitBig);
+	pTask_Knockback->Insert_Decorator_Node(pDeco_Is_HitBig);*/
 
 #pragma endregion
 

@@ -46,6 +46,36 @@ _bool CStun_Hold_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
+	
+
+	CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+	if (nullptr == pBody_Model)
+		return false;
+
+	MONSTER_STATE			eState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
+	if (MONSTER_STATE::MST_DAMAGE == eState)
+	{
+		if (true == pBody_Model->isFinished(static_cast<_uint>(PLAYING_INDEX::INDEX_0)))
+		{
+			return false;
+		}
+	}
+
+	else
+	{
+		if (MONSTER_STATE::MST_HOLD != eState)
+			return false;
+
+		COLLIDER_TYPE			eColliderType = { m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider() };
+		if (COLLIDER_TYPE::LEG_L != eColliderType &&
+			COLLIDER_TYPE::LEG_R != eColliderType &&
+			COLLIDER_TYPE::CALF_L != eColliderType &&
+			COLLIDER_TYPE::CALF_R != eColliderType &&
+			COLLIDER_TYPE::FOOT_L != eColliderType &&
+			COLLIDER_TYPE::FOOT_R != eColliderType)
+			return false;
+	}	
+
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();

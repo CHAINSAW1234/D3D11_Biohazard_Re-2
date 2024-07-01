@@ -45,6 +45,20 @@ _bool CStun_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
+	if (m_pBlackBoard->Get_AI()->Get_Current_MonsterState() == MONSTER_STATE::MST_DAMAGE)
+	{
+		_bool			isFinsihed = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY)->isFinished(static_cast<_uint>(m_ePlayingIndex)) };
+		if (true == isFinsihed)
+			return false;
+	}	
+
+	else
+	{
+		HIT_TYPE		eHitType = { m_pBlackBoard->Get_AI()->Get_Current_HitType() };
+		if (HIT_TYPE::HIT_SMALL != eHitType)
+			return false;
+	}
+
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();

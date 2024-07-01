@@ -2,7 +2,7 @@
 
 #include "Client_Defines.h"
 #include "Task_Node.h"
-
+#include "Body_Zombie.h"
 
 BEGIN(Client)
 
@@ -24,15 +24,20 @@ private:
 	void							Change_Animation();
 
 public:
-	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard)
-	{
-		m_pBlackBoard = pBlackBoard;
-	}
+	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }
 private:
-	class CBlackBoard_Zombie* m_pBlackBoard = { nullptr };
+	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
+	
+private:
+	const wstring&					m_strL_Leg_AnimLayerTag = { TEXT("Add_Leg_L") };
+	const wstring&					m_strR_Leg_AnimLayerTag = { TEXT("Add_Leg_R") };
+	const wstring&					m_strL_Arm_AnimLayerTag = { TEXT("Add_Arm_L") };
+	const wstring&					m_strR_Arm_AnimLayerTag = { TEXT("Add_Arm_R") };
+	const wstring&					m_strL_Shoulder_AnimLayerTag = { TEXT("Add_Shoulder_L") };
+	const wstring&					m_strR_Shoulder_AnimLayerTag = { TEXT("Add_Shoulder_R") };
 
-private:	/* For. Active FirstTime */
-	_bool							m_isWake = { false };
+	//	const PLAYING_INDEX				m_eL_Leg_PlayingIndex = { PLAYING_INDEX::IN}
+	
 
 public:
 	static CShake_Skin_Zombie* Create(void* pArg = nullptr);
