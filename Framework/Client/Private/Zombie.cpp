@@ -288,7 +288,7 @@ void CZombie::Late_Tick(_float fTimeDelta)
 		m_pController->Update_Collider();
 
 #pragma region 예은
-	if(m_bEvent)
+	if(!m_bEvent)
 		Col_EventCol();
 
 #pragma endregion 
@@ -818,7 +818,7 @@ void CZombie::Col_EventCol()
 				strLayer = TEXT("Layer_Door");
 				break;
 			}
-			m_InteractObjVec[m_eBeHavior_Col] = m_pGameInstance->Get_Object(g_Level, strLayer, m_iPropNum);
+			m_InteractObjVec[m_eBeHavior_Col] = m_pGameInstance->Get_GameObject(g_Level, strLayer, m_iPropNum);
 			m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_InteractObjVec[m_eBeHavior_Col]->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION)) ;
 			break; // 이벤트임을 알림
 		}

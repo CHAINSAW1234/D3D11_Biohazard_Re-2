@@ -165,7 +165,6 @@ protected:
 
 protected:
 	void												Check_Player();
-	void												Check_TabWindow();
 	_bool												Check_Col_Sphere_Player();
 	_bool												Check_Col_OBB_Player();
 	_bool												Check_Col_AABB_Player();
