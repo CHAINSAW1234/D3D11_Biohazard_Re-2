@@ -45,6 +45,13 @@ void CBite_Zombie::Enter()
 
 	m_ePreState = m_pBlackBoard->Get_AI()->Get_Current_MonsterState();
 
+	DIRECTION		eDirection = { DIRECTION::_END };
+	_float3			vDirectionFromPlayerLocal;
+	m_pBlackBoard->Compute_Direction_From_Player_Local(&vDirectionFromPlayerLocal);
+
+	m_isFrontFromPlayer = { vDirectionFromPlayerLocal.z > 0.f };
+
+
 #ifdef _DEBUG
 
 	cout << "Enter Bite " << endl;
@@ -586,7 +593,7 @@ void CBite_Zombie::Change_Animation(BITE_ANIM_STATE eState)
 
 	else
 	{
-		DIRECTION		eDirection = { DIRECTION::_END };
+		/*DIRECTION		eDirection = { DIRECTION::_END };
 		if (m_eAnimType == BITE_ANIM_TYPE::_END)
 		{
 			_float3			vDirectionFromPlayerLocal;
@@ -617,7 +624,16 @@ void CBite_Zombie::Change_Animation(BITE_ANIM_STATE eState)
 		else
 		{
 			Change_Animation_Default_Back(eState);
+		}*/
+
+		if (true == m_isFrontFromPlayer)
+		{
+
+			Change_Animation_Default_Front(eState);
 		}
+		else
+			Change_Animation_Default_Back(eState);
+
 	}
 	
 }

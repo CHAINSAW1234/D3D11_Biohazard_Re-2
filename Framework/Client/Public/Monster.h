@@ -141,6 +141,11 @@ protected:
 protected:	/* Initialize_PartObjects_Models */
 	virtual HRESULT 					Initialize_PartModels() = 0;
 
+	private:	/* Test*/
+
+		_int								m_iCurrentShirts = { 0 };
+
+
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;
 	virtual void Free() override;

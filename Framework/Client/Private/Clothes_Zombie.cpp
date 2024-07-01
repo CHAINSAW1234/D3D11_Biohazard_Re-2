@@ -71,10 +71,10 @@ void CClothes_Zombie::Late_Tick(_float fTimeDelta)
 	
 	if(m_bRender)
 	{
-		/*m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);*/
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	}
 }
 

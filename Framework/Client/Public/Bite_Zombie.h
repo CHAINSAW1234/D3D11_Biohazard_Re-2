@@ -85,6 +85,8 @@ private:
 
 	_float4x4						m_Delta_Matrix_To_HalfMatrix;
 
+	_bool							m_isFrontFromPlayer = { false };
+
 public:
 	static CBite_Zombie* Create(void* pArg = nullptr);
 

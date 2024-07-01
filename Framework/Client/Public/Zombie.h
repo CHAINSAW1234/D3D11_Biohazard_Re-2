@@ -31,11 +31,11 @@ BEGIN(Client)
 
 #define STATUS_ZOMBIE_STAMINA							50.f
 #define STATUS_ZOMBIE_STAMINA_MAX						150.f
-#define STATUS_ZOMBIE_STAMINA_CHARGING_PER_SEC			5.f
+#define STATUS_ZOMBIE_STAMINA_CHARGING_PER_SEC			3.f
 
 /* For.Use Stamina */
-#define ZOMBIE_NEED_STAMINA_BITE						50.f
-#define ZOMBIE_NEED_STAMINA_STANDUP						40.f
+#define ZOMBIE_NEED_STAMINA_BITE						80.f
+#define ZOMBIE_NEED_STAMINA_STANDUP						80.f
 #define ZOMBIE_NEED_STAMINA_TURN_OVER					20.f
 
 class CZombie final : public CMonster
@@ -174,9 +174,6 @@ public:
 
 private:
 	_bool								m_isManualMove = { false };
-
-private:	/* For. Test */
-	_int								m_iHeadHitCnt = { 0 };
 
 public:
 	static CZombie* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

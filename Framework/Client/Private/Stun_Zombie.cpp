@@ -296,10 +296,10 @@ void CStun_Zombie::Change_Animation_Creep()
 #endif 
 	}
 
-	else if (m_eCurrentHitCollider == COLLIDER_TYPE::CHEST || m_eCurrentHitCollider == COLLIDER_TYPE::PELVIS || m_eCurrentHitCollider == COLLIDER_TYPE::HEAD)
+	/*else if (m_eCurrentHitCollider == COLLIDER_TYPE::CHEST || m_eCurrentHitCollider == COLLIDER_TYPE::PELVIS || m_eCurrentHitCollider == COLLIDER_TYPE::HEAD)
 	{
 		iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_BODY);
-	}
+	}*/
 
 	if (-1 == iResultAnimationIndex)
 		return;
