@@ -274,6 +274,8 @@ private:
     PxD6Joint*                                      m_pKnee_Joint_R = { nullptr };
     PxD6Joint*                                      m_pAnkle_Joint_L = { nullptr };
     PxD6Joint*                                      m_pAnkle_Joint_R = { nullptr };
+
+    _uint                                           m_iId = { 0 };
 public:
 	virtual void Free() override;
 };

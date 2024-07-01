@@ -247,7 +247,7 @@ public:	//For Camera
 	void										Apply_Recoil(_float fTimeDelta);
 
 public:
-	void										Set_ManualMove(_bool isManualMove) { m_isManualMove = isManualMove; }
+	void										Set_ManualMove(_bool isManualMove);
 
 private:
 	class CCamera_Free*							m_pCamera = { nullptr };

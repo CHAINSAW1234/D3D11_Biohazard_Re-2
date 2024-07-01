@@ -82,13 +82,17 @@ _bool CBite_Zombie::Execute(_float fTimeDelta)
 	Apply_HalfMatrix(fTimeDelta);
 	Update_PoseState_FaceState();
 
+	if (BITE_ANIM_STATE::_FINISH == eAnimState)
+	{
+		m_pBlackBoard->Get_AI()->Set_ManualMove(false);
+	}
+
 	return true;
 }
 
 void CBite_Zombie::Exit()
 {
 	m_pBlackBoard->Get_AI()->Set_ManualMove(false);
-
 	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;

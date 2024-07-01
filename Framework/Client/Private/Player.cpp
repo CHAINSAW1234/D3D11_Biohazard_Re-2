@@ -1271,6 +1271,18 @@ void CPlayer::Apply_Recoil(_float fTimeDelta)
 	m_pTransformCom_Camera->Turn(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT), -fTimeDelta * 10.f * m_fRecoil_Rotate_Amount_Y);
 }
 
+void CPlayer::Set_ManualMove(_bool isManualMove)
+{
+	m_isManualMove = isManualMove;
+
+	if (false == m_isManualMove)
+	{
+		_float4				vPosition = { m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) };
+		vPosition.y += CONTROLLER_GROUND_GAP;
+		m_pController->SetPosition(vPosition);
+	}
+}
+
 void CPlayer::PickUp_Item(CGameObject* pPickedUp_Item)
 {
 	m_pGameInstance->Set_IsPaused(true);

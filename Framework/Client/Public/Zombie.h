@@ -138,7 +138,7 @@ protected:
 #pragma endregion
 
 public:
-	inline void							Set_ManualMove(_bool isManualMove) { m_isManualMove = isManualMove; }
+	void								Set_ManualMove(_bool isManualMove);
 
 private:
 	_bool								m_isManualMove = { false };

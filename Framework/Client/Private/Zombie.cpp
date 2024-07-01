@@ -1103,6 +1103,18 @@ void CZombie::Calc_Decal_Map()
 	m_pBodyModel->Perform_Calc_DecalMap();
 }
 
+void CZombie::Set_ManualMove(_bool isManualMove)
+{
+	m_isManualMove = isManualMove;
+
+	if (false == m_isManualMove)
+	{
+		_float4				vPosition = { m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) };
+		vPosition.y += CONTROLLER_GROUND_GAP_ZOMBIE;
+		m_pController->SetPosition(vPosition);
+	}
+}
+
 CZombie* CZombie::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CZombie* pInstance = new CZombie(pDevice, pContext);
