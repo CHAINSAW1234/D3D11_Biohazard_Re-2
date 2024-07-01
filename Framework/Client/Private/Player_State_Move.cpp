@@ -103,8 +103,8 @@ void CPlayer_State_Move::Update_State()
 HRESULT CPlayer_State_Move::Add_States()
 {
 	Add_State(IDLE, CPlayer_State_Move_Idle::Create(m_pPlayer));
-	Add_State(WALK, CPlayer_State_Move_Walk::Create(m_pPlayer));
-	Add_State(JOG, CPlayer_State_Move_Jog::Create(m_pPlayer));
+	Add_State(WALK, CPlayer_State_Move_Walk::Create(m_pPlayer, this));
+	Add_State(JOG, CPlayer_State_Move_Jog::Create(m_pPlayer, this));
 	//Change_State(IDLE);
 
 	return S_OK;

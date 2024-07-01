@@ -1,17 +1,14 @@
 #pragma once
 #include "Client_Defines.h"
-#include "FSM_HState.h"
-#include "Player.h"
+#include "FSM_State.h"
 
 BEGIN(Client)
-class CPlayer_State_Move final : public CFSM_HState
+class CPlayer;
+class CPlayer_State_Move_DoorStop final : public CFSM_State
 {
-public:
-	enum STATE { IDLE, WALK, JOG, STAIR, DOOR_STOP, STATE_END };
-
 private:
-	CPlayer_State_Move(CPlayer* pPlayer);
-	virtual ~CPlayer_State_Move() = default;
+	CPlayer_State_Move_DoorStop(CPlayer* pPlayer, CFSM_HState* pHState);
+	virtual ~CPlayer_State_Move_DoorStop() = default;
 
 public:
 	virtual void				OnStateEnter() override;
@@ -21,17 +18,14 @@ public:
 	virtual void				Change_State(_uint iState);
 
 private:
-	void						Update_State();
-
-private:
-	HRESULT						Add_States();
+	void						Set_Door_Lock_Anim();
 
 private:
 	CPlayer*					m_pPlayer = { nullptr };
-	STATE						m_eState = { IDLE };
+	CFSM_HState*				m_pHState = { nullptr };
 
 public:
-	static	CPlayer_State_Move* Create(CPlayer* pPlayer);
+	static	CPlayer_State_Move_DoorStop* Create(CPlayer* pPlayer, CFSM_HState* pHState);
 	virtual void Free() override;
 
 };

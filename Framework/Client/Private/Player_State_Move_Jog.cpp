@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "Player_State_Move_Jog.h"
 #include "Player.h"
+#include "Player_State_Move.h"
 #include "Camera_Free.h"
 
-CPlayer_State_Move_Jog::CPlayer_State_Move_Jog(CPlayer* pPlayer)
+CPlayer_State_Move_Jog::CPlayer_State_Move_Jog(CPlayer* pPlayer, CFSM_HState* pHState)
 {
 	m_pPlayer = pPlayer;
+	m_pHState = pHState;
 }
 
 void CPlayer_State_Move_Jog::OnStateEnter()
@@ -233,9 +235,22 @@ void CPlayer_State_Move_Jog::Update_Degree()
 
 }
 
-CPlayer_State_Move_Jog* CPlayer_State_Move_Jog::Create(CPlayer* pPlayer)
+void CPlayer_State_Move_Jog::Open_Door()
 {
-	CPlayer_State_Move_Jog* pInstance = new CPlayer_State_Move_Jog(pPlayer);
+	if (m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3) &&
+		m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
+		m_pPlayer->Get_Body_Model()->Change_Animation(4, CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), CPlayer::DOOR_PASS);
+		m_pPlayer->Get_Body_Model()->Set_Loop(4, false);
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 10.f, 6.f);
+	}
+	else {
+		m_pHState->Change_State(CPlayer_State_Move::DOOR_STOP);
+	}
+}
+
+CPlayer_State_Move_Jog* CPlayer_State_Move_Jog::Create(CPlayer* pPlayer, CFSM_HState* pHState)
+{
+	CPlayer_State_Move_Jog* pInstance = new CPlayer_State_Move_Jog(pPlayer, pHState);
 
 	return pInstance;
 }

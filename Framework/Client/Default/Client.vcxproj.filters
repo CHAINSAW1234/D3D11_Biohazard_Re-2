@@ -409,6 +409,9 @@
     <Filter Include="02.GameObjects\UI\99. Tab_Window\4. Item_Discription">
       <UniqueIdentifier>{a4de0cca-9b51-44c7-8a1d-491fa3b44acc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_DoorStop">
+      <UniqueIdentifier>{172a5b3a-512f-4cb3-8222-5f20b3fd8a48}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -816,6 +819,9 @@
     <ClInclude Include="..\Public\Item_Discription.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\4. Item_Discription</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move_DoorStop.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_DoorStop</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1186,6 +1192,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Item_Discription.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\4. Item_Discription</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_DoorStop.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_DoorStop</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
