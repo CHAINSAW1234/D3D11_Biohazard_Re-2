@@ -1009,12 +1009,13 @@ void CZombie::Perform_Skinning()
 {
 	list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
 
-	m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldMatrix());
+	m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
 
 	for (auto& i : NonHideIndex)
 	{
 		m_pBodyModel->Bind_Resource_Skinning(i);
 		m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
+		m_pBodyModel->Staging_Skinning(i);
 	}
 }
 
@@ -1135,6 +1136,7 @@ void CZombie::SetBlood()
 		m_BloodTime = GetTickCount64();
 		m_vecBlood[m_iBloodCount]->Set_Render(true);
 		m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
+		m_vecBlood[m_iBloodCount]->SetPosition(m_vHitPosition);
 
 		if (m_iBloodCount == 0)
 		{
@@ -1163,8 +1165,6 @@ void CZombie::SetBlood()
 				m_iBloodType = 0;
 			}
 		}
-
-		m_vecBlood[m_iBloodCount]->SetPosition(m_vHitPosition);
 
 		++m_iBloodCount;
 

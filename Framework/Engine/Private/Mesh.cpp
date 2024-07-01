@@ -161,7 +161,7 @@ HRESULT CMesh::Initialize_Prototype(CModel::MODEL_TYPE eType, const MESH_DESC& M
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.ElementWidth = m_iNumIndices;
+		srvDesc.Buffer.NumElements = m_iNumIndices;
 
 		hr = m_pDevice->CreateShaderResourceView(m_pSB_Indices, &srvDesc, &m_pSRV_Indices);
 
@@ -584,7 +584,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.ElementWidth = m_iNumVertices;
+		srvDesc.Buffer.NumElements = m_iNumVertices;
 
 		hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_Position, &srvDesc, &m_pSRV_Vertex_Position);
 
@@ -613,7 +613,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.ElementWidth = m_iNumVertices;
+		srvDesc.Buffer.NumElements = m_iNumVertices;
 
 		hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_Normal, &srvDesc, &m_pSRV_Vertex_Normal);
 
@@ -642,7 +642,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.ElementWidth = m_iNumVertices;
+		srvDesc.Buffer.NumElements = m_iNumVertices;
 
 		hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_Tangent, &srvDesc, &m_pSRV_Vertex_Tangent);
 
@@ -672,7 +672,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.ElementWidth = m_iNumVertices;
+		srvDesc.Buffer.NumElements = m_iNumVertices;
 
 		hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_BlendIndices, &srvDesc, &m_pSRV_Vertex_BlendIndices);
 
@@ -703,7 +703,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.ElementWidth = m_iNumVertices;
+		srvDesc.Buffer.NumElements = m_iNumVertices;
 
 		hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_BlendWeights, &srvDesc, &m_pSRV_Vertex_BlendWeights);
 
@@ -731,7 +731,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.ElementWidth = m_iNumVertices;
+		srvDesc.Buffer.NumElements = m_iNumVertices;
 
 		hr = m_pDevice->CreateShaderResourceView(m_pSB_Texcoord, &srvDesc, &m_pSRV_Texcoord);
 
@@ -936,16 +936,15 @@ void CMesh::Release_Dump()
 
 void CMesh::Bind_Resource_Skinning()
 {
-	SKINNING_INPUT Input;
-	Input.pUav = m_pUAV_Skinning;
-	Input.pSRV_Vertex_Position = m_pSRV_Vertex_Position;
-	Input.pSRV_Vertex_Normal = m_pSRV_Vertex_Normal;
-	Input.pSRV_Vertex_Tangent = m_pSRV_Vertex_Tangent;
-	Input.pSRV_Vertex_BlendIndices = m_pSRV_Vertex_BlendIndices;
-	Input.pSRV_Vertex_BlendWeights = m_pSRV_Vertex_BlendWeights;
-	Input.iNumVertex = m_iNumVertices;
+	m_Skinning_Input.pUav = m_pUAV_Skinning;
+	m_Skinning_Input.pSRV_Vertex_Position = m_pSRV_Vertex_Position;
+	m_Skinning_Input.pSRV_Vertex_Normal = m_pSRV_Vertex_Normal;
+	m_Skinning_Input.pSRV_Vertex_Tangent = m_pSRV_Vertex_Tangent;
+	m_Skinning_Input.pSRV_Vertex_BlendIndices = m_pSRV_Vertex_BlendIndices;
+	m_Skinning_Input.pSRV_Vertex_BlendWeights = m_pSRV_Vertex_BlendWeights;
+	m_Skinning_Input.iNumVertex = m_iNumVertices;
 
-	m_pGameInstance->Bind_Resource_Skinning(Input);
+	m_pGameInstance->Bind_Resource_Skinning(m_Skinning_Input);
 }
 
 void CMesh::Staging_Skinning()
@@ -1005,17 +1004,16 @@ void CMesh::SetDecalWorldMatrix(_float4x4 WorldMatrix)
 
 void CMesh::Bind_Resource_CalcDecalMap()
 {
-	CALC_DECAL_MAP_INPUT Input;
-	Input.iNumVertex = m_iNumVertices;
-	Input.pSRV_Texcoords = m_pSRV_Texcoord;
-	Input.pUav_Skinning = m_pUAV_Skinning;
-	m_pDecal_Blood->Bind_Resource_DecalMap(Input);
+	m_Calc_Decal_Map_Input.iNumVertex = m_iNumVertices;
+	m_Calc_Decal_Map_Input.pSRV_Texcoords = m_pSRV_Texcoord;
+	m_Calc_Decal_Map_Input.pUav_Skinning = m_pUAV_Skinning;
+	m_pDecal_Blood->Bind_Resource_DecalMap(m_Calc_Decal_Map_Input);
 }
 
 void CMesh::Perform_Calc_DecalMap()
 {
 	m_pGameInstance->Perform_Calc_Decal_Map(m_iNumVertices);
-	m_pDecal_Blood->Staging_DecalMap();
+	//m_pDecal_Blood->Staging_DecalMap();
 }
 
 void CMesh::Bind_Decal_Map(CShader* pShader)

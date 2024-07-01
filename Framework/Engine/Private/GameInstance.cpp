@@ -1321,9 +1321,9 @@ _vector CGameInstance::Get_Camera_Pos_Vector()
 
 #pragma region CS_Manager
 
-void CGameInstance::Bind_Essential_Resource_Skinning(_float4x4 WorldMat, _float4x4* pBoneMatrices)
+void CGameInstance::Bind_Essential_Resource_Skinning(_float4x4* pWorldMat, _float4x4* pBoneMatrices)
 {
-	m_pCS_Manager->Bind_Essential_Resource_Skinning(WorldMat, pBoneMatrices);
+	m_pCS_Manager->Bind_Essential_Resource_Skinning(pWorldMat, pBoneMatrices);
 }
 
 void CGameInstance::Bind_Resource_Skinning(SKINNING_INPUT Input)
