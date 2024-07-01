@@ -176,18 +176,18 @@ void CZombie::Tick(_float fTimeDelta)
 	XMStoreFloat3(&m_vRootTranslation, XMVectorZero());
 
 #pragma region 예은 추가 - 이벤트
-	if (m_bEvent)
-	{
-		_bool bBehavior = true;
-		if (m_InteractObjVec[m_eBeHavior_Col] != nullptr)
-			bBehavior = static_cast<CInteractProps*>(m_InteractObjVec[m_eBeHavior_Col])->Attack_Prop(m_pTransformCom);
-		// bBehavior가 true이면 창문이 깨지거나 문이 열리거나 하고 있음
-		// 
+	//if (m_bEvent)
+	//{
+	//	_bool bBehavior = true;
+	//	if (m_InteractObjVec[m_eBeHavior_Col] != nullptr)
+	//		bBehavior = static_cast<CInteractProps*>(m_InteractObjVec[m_eBeHavior_Col])->Attack_Prop(m_pTransformCom);
+	//	// bBehavior가 true이면 창문이 깨지거나 문이 열리거나 하고 있음
+	//	// 
 
-		m_fEventCoolTime += fTimeDelta;
-	}
-	if (m_fEventCoolTime > 10.f)
-		m_bEvent = false; //이벤트 쿨탐 10초가 지나면 다시 이벤트를 할 수 있는 상태(중복 방지)
+	//	m_fEventCoolTime += fTimeDelta;
+	//}
+	//if (m_fEventCoolTime > 10.f)
+	//	m_bEvent = false; //이벤트 쿨탐 10초가 지나면 다시 이벤트를 할 수 있는 상태(중복 방지)
 
 #pragma endregion
 
@@ -332,8 +332,8 @@ void CZombie::Late_Tick(_float fTimeDelta)
 		m_pController->Update_Collider();
 
 #pragma region 예은
-	if(!m_bEvent)
-		Col_EventCol();
+	//if(!m_bEvent)
+	//	Col_EventCol();
 
 #pragma endregion 
 
