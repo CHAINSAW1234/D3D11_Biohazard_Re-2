@@ -4,7 +4,6 @@
 #include "Tab_Window.h"
 #include "Player.h"
 
-#define MAX_BULLET 12
 #define MAX_BULLET_COLOR _float4(0.5, 1.0, 0.0, 0.f)
 #define MIN_BULLET_COLOR _float4(1.0, 0.0, 0.0, 0.f)
 
@@ -66,6 +65,7 @@ HRESULT CBullet_UI::Initialize(void* pArg)
                 m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Text(TEXT("0"));
                 m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].vOriginTextColor = iter->Get_FontColor();
                 m_fOrigin_TextColor = iter->Get_FontColor();
+               
                 /*임의로 내려주기*/
                 {
                     CTransform* pStoreFont_Pos = static_cast<CTransform*>(m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Get_Component(g_strTransformTag));
@@ -99,6 +99,8 @@ HRESULT CBullet_UI::Initialize(void* pArg)
     m_fMaskControl.x = 0.3f;
     m_fMaskControl.y = 0.4f;
 
+    m_iCurrentBullet = 1;
+
     return S_OK;
 }
 
@@ -108,6 +110,9 @@ void CBullet_UI::Tick(_float fTimeDelta)
 
     /* 만약 크로스헤어가 출력되었다면 유지, 크로스헤어가 유지되고 끝난 뒤로부터 BULLET_UI_LIFE(2.5f)만큼 출력한다.*/
     Render_Bullet_UI(fTimeDelta);
+
+    if (m_iCurrentBullet < 1)
+        Mission_Complete();
 
 }
 
@@ -147,13 +152,11 @@ void CBullet_UI::Start()
         return;
     }
 
-    
-    if(m_iCurrentBullet <= 0)
-        Mission_Complete();
-
     pPlayer->RegisterObserver(this);
 
     OnNotify();
+    
+ 
 }
 
 
@@ -245,22 +248,6 @@ void CBullet_UI::Change_BulletUI()
         m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].vOriginTextColor = m_fOrigin_TextColor;
         m_pTextUI[0].isFull = false;
     }
-
-    if (MAX_BULLET <= m_iStoreBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt)
-    {
-        if (nullptr != m_pTextUI[1].pText && false == m_pTextUI[1].isFull)
-        {
-            m_pTextUI[1].pText->Set_FontColor(MAX_BULLET_COLOR);
-            m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].vOriginTextColor = MAX_BULLET_COLOR;
-            m_pTextUI[1].isFull = true;
-        }
-    }
-    else
-    {
-        m_pTextUI[1].isFull = false;
-        m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].vOriginTextColor = _float4(1, 1, 1, 1);
-        m_pTextUI[1].pText->Set_FontColor(m_fOrigin_TextColor);
-    }
 }
 
 void CBullet_UI::Render_Bullet_UI(_float fTimeDelta)
@@ -294,6 +281,7 @@ void CBullet_UI::Render_Bullet_UI(_float fTimeDelta)
                     m_fBulletTimer = 0.f;
                     m_isRender = m_isKeepCross = false;
                 }
+
                 else
                     m_fBlending += fTimeDelta * 1.5f;
             }

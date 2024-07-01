@@ -2,7 +2,8 @@
 
 #include "Crosshair_UI.h"
 #include "Camera_Free.h"
-
+#include "Tab_Window.h"
+#include "Player.h"
 
 #define Deceleration 0.9f /* 감속 */
 #define Zero 0
@@ -112,6 +113,10 @@ HRESULT CCrosshair_UI::Initialize(void* pArg)
         }
     }
 
+
+    m_pTabWindow = static_cast<CTab_Window*>(m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0));
+    Find_Player();
+
     m_isRender = false;
 
     return S_OK;
@@ -121,11 +126,14 @@ void CCrosshair_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
+    /* 예시 코드 : 총이 쏘기 시작했을 때와 쏘지 않았을 때를 받아와야 한다. */
     if (PRESSING == m_pGameInstance->Get_KeyState(VK_RBUTTON))
         m_isAiming = true;
+
     else
         m_isAiming = false;
 
+    /* 예시 코드 : 8 누르면 m_eCurrentGun_Type이 어떤 총인지 바뀌게 해 놓음 */
     if (DOWN == m_pGameInstance->Get_KeyState('8'))
     {
         if (m_eCurrentGun_Type == GUN_TYPE::SHOT_GUN)
@@ -134,17 +142,28 @@ void CCrosshair_UI::Tick(_float fTimeDelta)
             m_eCurrentGun_Type = GUN_TYPE::SHOT_GUN;
     }
 
-    if(GUN_TYPE::DEFAULT_GUN == m_eCurrentGun_Type)
+    /* Inventory (Main Render)가 열리지 않을 때 or 무기를 사용하지 않을 때는 Crosshair와 Bullet UI을 없애자 .*/
+    if (true == *m_pTabWindow->Get_MainRender() && CPlayer::EQUIP::NONE != m_pPlayer->Get_Equip())
     {
-        if(GUN_TYPE::DEFAULT_GUN == m_eGun_Type)
-            Operate_DefaultGun(fTimeDelta);
+        if (GUN_TYPE::DEFAULT_GUN == m_eCurrentGun_Type)
+        {
+            if (GUN_TYPE::DEFAULT_GUN == m_eGun_Type)
+                Operate_DefaultGun(fTimeDelta);
+        }
+
+        else if (GUN_TYPE::SHOT_GUN == m_eCurrentGun_Type)
+        {
+            if (GUN_TYPE::SHOT_GUN == m_eGun_Type)
+                Operate_ShotGun(fTimeDelta);
+        }
     }
 
-    else if (GUN_TYPE::SHOT_GUN == m_eCurrentGun_Type)
+    else if (false == *m_pTabWindow->Get_MainRender())
     {
-        if (GUN_TYPE::SHOT_GUN == m_eGun_Type)
-            Operate_ShotGun(fTimeDelta);
+        m_isRender = false;
+        m_isShoot = false;
     }
+
 }
 
 void CCrosshair_UI::Late_Tick(_float fTimeDelta)
