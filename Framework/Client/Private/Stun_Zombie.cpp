@@ -205,7 +205,7 @@ void CStun_Zombie::Change_Animation_StandUp()
 
 	if (false == isSameAnim)
 	{
-		pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strAnimLayerTag, iResultAnimationIndex);
+		pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strStunAnimLayerTag, iResultAnimationIndex);
 		pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
 	}
 	else
@@ -240,7 +240,8 @@ void CStun_Zombie::Change_Animation_Creep()
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_ARM_L);
 		}
 #ifdef _DEBUG 
-		MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
+		else
+			MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
 #endif 
 	}
 
@@ -256,7 +257,8 @@ void CStun_Zombie::Change_Animation_Creep()
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_ARM_R);
 		}
 #ifdef _DEBUG 
-		MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
+		else
+			MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
 #endif 
 	}
 
@@ -272,7 +274,8 @@ void CStun_Zombie::Change_Animation_Creep()
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_LEG_L);
 		}
 #ifdef _DEBUG 
-		MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
+		else
+			MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
 #endif 
 	}
 
@@ -288,7 +291,8 @@ void CStun_Zombie::Change_Animation_Creep()
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_LEG_R);
 		}
 #ifdef _DEBUG 
-		MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
+		else
+			MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
 #endif 
 	}
 
@@ -305,7 +309,7 @@ void CStun_Zombie::Change_Animation_Creep()
 
 	if (false == isSameAnim)
 	{
-		pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strAnimLayerTag, iResultAnimationIndex);
+		pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strDefualtStunAnimLayerTag, iResultAnimationIndex);
 		pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
 	}
 	else

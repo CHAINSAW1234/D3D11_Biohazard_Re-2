@@ -69,14 +69,14 @@ _bool CBite_Zombie::Execute(_float fTimeDelta)
 		if (false == Is_Can_Start_Bite())
 			return false;
 	}
+	if (true == Is_StateFinished(eAnimState))
+		return false;
 
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->Set_State(MONSTER_STATE::MST_BITE);
 
-	if (true == Is_StateFinished(eAnimState))
-		return false;
 
 	Change_Animation(eAnimState);
 
@@ -549,16 +549,21 @@ _bool CBite_Zombie::Is_CurrentAnim_FinishAnim()
 _bool CBite_Zombie::Is_Can_Start_Bite()
 {
 	_bool				isCanBite = { false };
-
 	_float				fDistanceToPlayer = { 0.f };
 	if (false == m_pBlackBoard->Compute_Distance_To_Player(&fDistanceToPlayer))
 		return isCanBite;
 
-	CMonster::MONSTER_STATUS* pMonster_Status = { m_pBlackBoard->Get_ZombieStatus_Ptr() };
+	CMonster::MONSTER_STATUS*		pMonster_Status = { m_pBlackBoard->Get_ZombieStatus_Ptr() };
 	if (nullptr == pMonster_Status)
 		return isCanBite;
 
-	isCanBite = pMonster_Status->fBiteRange >= fDistanceToPlayer;
+	if (false == pMonster_Status->fBiteRange >= fDistanceToPlayer)
+		return isCanBite;
+
+	if (false == m_pBlackBoard->Get_AI()->Use_Stamina(CZombie::USE_STAMINA::_BITE))
+		return isCanBite;
+	
+	isCanBite = true;
 	return isCanBite;
 }
 
