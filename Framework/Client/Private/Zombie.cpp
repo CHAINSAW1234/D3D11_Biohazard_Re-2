@@ -214,6 +214,8 @@ void CZombie::Tick(_float fTimeDelta)
 		{
 			if (m_pController->Is_Hit())
 			{
+				m_iBloodCount = 0;
+
 				/*For Decal*/
 				Ready_Decal();
 
@@ -234,6 +236,8 @@ void CZombie::Tick(_float fTimeDelta)
 			/*For Decal*/
 			Ready_Decal();
 
+			m_iBloodCount = 0;
+
 			/*For Blood Effect*/
 			m_bSetBlood = true;
 			m_BloodTime = GetTickCount64();
@@ -247,7 +251,14 @@ void CZombie::Tick(_float fTimeDelta)
 
 			if (m_pController->GetDead())
 			{
+				CPlayer::EQUIP		eEquip = m_pBlackBoard->GetPlayer()->Get_Equip();
+
 				m_bRagdoll = true;
+
+				if (CPlayer::EQUIP::STG == eEquip)
+				{
+					vForce = vForce * 2.f;
+				}
 
 				for (auto& pPartObject : m_PartObjects)
 				{

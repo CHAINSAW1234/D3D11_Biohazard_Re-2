@@ -1106,12 +1106,12 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 						m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count();
 					}
 
-					if(m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() == 3)
-					{
-						/*Ragdoll을 구동하려면 살려야 함.*/
-						m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
-						m_vecCharacter_Controller[filterData.word2]->SetDead(true);
-					}
+					//if(m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() == 3)
+					//{
+					//	/*Ragdoll을 구동하려면 살려야 함.*/
+					//	m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
+					//	m_vecCharacter_Controller[filterData.word2]->SetDead(true);
+					//}
 
 					return true;
 				}
