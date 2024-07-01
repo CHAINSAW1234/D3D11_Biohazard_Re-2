@@ -514,6 +514,9 @@ void CPlayer::Col_Section()
 
 			m_iCurCol = pColCom->Get_Col();
 			m_iDir = pColCom->Get_Dir();
+			m_iRegion = pColCom->Get_Region();
+			m_iFloor = pColCom->Get_Floor();
+			m_bRegion[m_iRegion] = true;
 		}
 	}
 }
@@ -531,6 +534,11 @@ _bool* CPlayer::Col_Event_UI(CCustomCollider* pCustom)
 		m_isNYResult = false;
 
 	return &m_isNYResult;
+}
+
+void CPlayer::Player_FirstBehaivor(_int i)
+{
+	m_isPlayer_FirstBehavior[i] = true;
 }
 
 #pragma endregion

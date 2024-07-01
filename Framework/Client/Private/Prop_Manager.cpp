@@ -8,7 +8,6 @@ IMPLEMENT_SINGLETON(CProp_Manager)
 CProp_Manager::CProp_Manager()
 	: m_pGameInstance{ CGameInstance::Get_Instance() }
 {
-	//Safe_AddRef(m_pGameInstance);
 	Initialize_List();
 }
 

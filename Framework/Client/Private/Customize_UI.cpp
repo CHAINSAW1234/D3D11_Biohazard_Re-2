@@ -29,8 +29,6 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 
 		CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
 
-		m_eMap_Location = CustomUIDesc->eMapUI_Type;
-
 		m_wstrDefaultTexturPath = CustomUIDesc->wstrDefaultTexturPath;
 
 		m_wstrMaskPath = CustomUIDesc->wstrMaskPath;

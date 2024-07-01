@@ -125,9 +125,10 @@ public:
 public:
 	_bool*												Get_Activity() { return &m_bActivity; }
 
-	/* NY */
+#pragma region NY
 	_bool*												ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
 	_bool*												Selector_Rendering() { return &m_isSelector_Rendering;  }
+
 	/*To NY*/
 	virtual _float4									Get_Object_Pos() = 0;
 	_int												Get_PropType() { return m_tagPropDesc.iPropType; } // 프롭타입이라 쓰고 arg라 읽는다. // 문의 지역 enum을 반환한다.

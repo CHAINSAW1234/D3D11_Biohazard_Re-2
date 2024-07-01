@@ -31,7 +31,7 @@ private:
 	map<_int, list<class CGameObject*>*>				m_TypeProps;
 	
 private:
-	HRESULT									Initialize_List();
+	HRESULT								Initialize_List();
 	list<class CGameObject*>*			Find_List(_int iTag);
 public:
 	static void Release_Manager();

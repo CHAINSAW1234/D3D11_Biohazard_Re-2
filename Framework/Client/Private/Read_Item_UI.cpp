@@ -9,12 +9,12 @@
 #define MAX_BLENDING    0.7f
 
 CRead_Item_UI::CRead_Item_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-    : CCustomize_UI{ pDevice, pContext }
+    : CInteract_UI{ pDevice, pContext }
 {
 }
 
 CRead_Item_UI::CRead_Item_UI(const CRead_Item_UI& rhs)
-    : CCustomize_UI{ rhs }
+    : CInteract_UI{ rhs }
 {
 
 }
@@ -54,38 +54,57 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
             }
         }
 
-        else if (CustomUIDesc->wstrFileName == TEXT("UI_Item_Read")) /* 경관의 수첩*/
+        else if (CustomUIDesc->wstrFileName == TEXT("UI_Item_Read"))
         {
-            m_eRead_type = READ_UI_TYPE::MAIN_READ;
+            /* Intro 부모 */
             m_pIntro_UI = Find_ReadUI(READ_UI_TYPE::INTRODUCE_READ, false);
-            m_eBook_Type = BOOK_TYPE::OFFICER_NOTE_BOOK;
 
             if (nullptr != m_pIntro_UI)
+            {
                 Safe_AddRef<CRead_Item_UI*>(m_pIntro_UI);
+            }
 
             if(true == m_IsChild)
             {
-                m_vecBookTexture.resize(2);
-                m_vecBookTexture[0].push_back(m_wstrDefaultTexturComTag);
-                m_vecBookTexture[1].push_back(TEXT("Prototype_Component_Texture_NoteBook_Texture2"));
+                if (1 == CustomUIDesc->iWhich_Child)
+                {
+                    list<class CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+                    CRead_Item_UI* pReadItem = static_cast<CRead_Item_UI*>(pUILayer->back());
+                    
+                    if (READ_UI_TYPE::TEXTURE_READ == pReadItem->m_eRead_type)
+                        m_eRead_type = READ_UI_TYPE::TEXT_LEFT_READ;
+
+                    else
+                        m_eRead_type = READ_UI_TYPE::TEXTURE_READ;
+                }
+
+                else if(2 == CustomUIDesc->iWhich_Child)
+                    m_eRead_type = READ_UI_TYPE::TEXT_RIGHT_READ;
+
+                m_pRead_Supervise = static_cast<CRead_Item_UI*>(CustomUIDesc->pSupervisor);
             }
+
+            else
+                m_eRead_type = READ_UI_TYPE::MAIN_READ; /* Read의 BackGround*/
         }
 
         else if (CustomUIDesc->wstrFileName == TEXT("UI_Item_Read_Arrow"))
         {
             m_eRead_type = READ_UI_TYPE::ARROW_READ;
             m_pIntro_UI = Find_ReadUI(READ_UI_TYPE::INTRODUCE_READ, false);
-            m_pMain_UI = Find_ReadUI(READ_UI_TYPE::MAIN_READ, true);
+            m_pRead_Supervise = Find_ReadUI(READ_UI_TYPE::TEXT_LEFT_READ, true);
+            m_pRead_Supervise = m_pRead_Supervise->m_pRead_Supervise;
+            CRead_Item_UI* pTexture_UI = Find_ReadUI(READ_UI_TYPE::TEXTURE_READ, true);
 
            if (nullptr != m_pIntro_UI)
                 Safe_AddRef<CRead_Item_UI*>(m_pIntro_UI);
 
-            if (nullptr != m_pMain_UI)
-                Safe_AddRef<CRead_Item_UI*>(m_pMain_UI);
+            if (nullptr != m_pTexture_UI)
+                Safe_AddRef<CRead_Item_UI*>(m_pRead_Supervise);
 
-            if (nullptr != m_pMain_UI)
+            if (nullptr != pTexture_UI)
             {
-                CTransform* pMain_Trans = static_cast<CTransform*>(m_pMain_UI->Get_Component(g_strTransformTag));
+                CTransform* pMain_Trans = static_cast<CTransform*>(pTexture_UI->Get_Component(g_strTransformTag));
                 if (0.f <= m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x)
                 {
                     m_eRead_Arrow_Type = READ_ARROW_TYPE::RIGHT_ARROW;
@@ -113,6 +132,16 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
         }
     }
 
+    if (READ_UI_TYPE::MAIN_READ == m_eRead_type)
+    {
+        /* 첫 번째는 사진, 두 번째는 TEXT */
+
+        m_BookText[ITEM_READ_TYPE::INCIDENT_LOG_NOTE] = { TEXT("Prototype_Component_Texture_Document2"),  TEXT("Prototype_Component_Texture_ReadType_Incident_log1"), TEXT("Prototype_Component_Texture_ReadType_Incident_log2"), TEXT("Prototype_Component_Texture_ReadType_Incident_log3"), TEXT("Prototype_Component_Texture_ReadType_Incident_log4"), TEXT("Prototype_Component_Texture_ReadType_Incident_log5") };
+        m_BookText[ITEM_READ_TYPE::OPERATE_REPORT_NOTE] = { TEXT("Prototype_Component_Texture_Document2"), TEXT("Prototype_Component_Texture_Operate_Report2"), TEXT("Prototype_Component_Texture_Operate_Report3") };
+        m_BookText[ITEM_READ_TYPE::TASK_NOTE] = { TEXT("Prototype_Component_Texture_DocumentBlood1"), TEXT("Prototype_Component_Texture_Task1"), TEXT("Prototype_Component_Texture_Task2"), TEXT("Prototype_Component_Texture_Task3"), TEXT("Prototype_Component_Texture_Task4"), TEXT("Prototype_Component_Texture_Task5") };
+        m_BookText[ITEM_READ_TYPE::MEDICINAL_NOTE] = { TEXT("Prototype_Component_Texture_Document1"), TEXT("Prototype_Component_Texture_Medicinal1"), TEXT("Prototype_Component_Texture_Medicinal2"), TEXT("Prototype_Component_Texture_Medicinal3"), TEXT("Prototype_Component_Texture_Medicinal4") };
+    }
+
     m_isRender = false;
     return S_OK;
 }
@@ -125,6 +154,7 @@ void CRead_Item_UI::Tick(_float fTimeDelta)
     if (m_pGameInstance->Get_KeyState('I') && READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
     {
         m_isRender = true;
+        m_eBook_Type = ITEM_READ_TYPE::INCIDENT_LOG_NOTE;
         Reset();
     }
 
@@ -134,11 +164,14 @@ void CRead_Item_UI::Tick(_float fTimeDelta)
     if (READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
         Introduce_Read(fTimeDelta);
 
-    else if (READ_UI_TYPE::MAIN_READ == m_eRead_type)
-        Main_Read();
-
     else if (READ_UI_TYPE::ARROW_READ == m_eRead_type)
         Arrow_Read();
+
+    else if (READ_UI_TYPE::TEXTURE_READ == m_eRead_type)
+        Texture_Read();
+
+    else if (READ_UI_TYPE::TEXT_LEFT_READ == m_eRead_type || READ_UI_TYPE::TEXT_RIGHT_READ == m_eRead_type)
+        Text_Read(fTimeDelta);
 }
 
 void CRead_Item_UI::Late_Tick(_float fTimeDelta)
@@ -148,10 +181,30 @@ void CRead_Item_UI::Late_Tick(_float fTimeDelta)
 
 HRESULT CRead_Item_UI::Render()
 {
+    if (READ_UI_TYPE::TEXT_RIGHT_READ == m_eRead_type)
+        int a = 1;
     if (FAILED(__super::Render()))
         return E_FAIL;
 
     return S_OK;
+}
+
+void CRead_Item_UI::Render_Destory(_bool _render)
+{
+    //if (READ_UI_TYPE::TEXT_READ != m_eRead_type)
+    //    return;
+
+    /* 텍스트를 삭제한다*/
+    if (true == _render)
+    {
+        m_isRender = false;
+    }
+
+    /* 텍스트를 살린다 */
+    else if (false == _render)
+    {
+        m_isRender = true;
+    }
 }
 
 void CRead_Item_UI::Introduce_Read(_float fTimeDelta)
@@ -161,6 +214,7 @@ void CRead_Item_UI::Introduce_Read(_float fTimeDelta)
 
     m_fIntro_Timer += fTimeDelta;
     m_vCurrentColor.w = 0.f;
+
     if (INTRO_LIFE <= m_fIntro_Timer)
     {
         m_fBlending += fTimeDelta * 2.f;
@@ -181,32 +235,27 @@ void CRead_Item_UI::Introduce_Read(_float fTimeDelta)
     }
 }
 
-void CRead_Item_UI::Main_Read()
+void CRead_Item_UI::Texture_Read()
 {
     if (nullptr == m_pIntro_UI)
         return;
 
-    if(true == m_IsChild)
+    if (true == m_pIntro_UI->m_isRead_Start)
     {
-        /* 인트로가 읽기 시작을 알렸다면 진행*/
-        if (true == m_pIntro_UI->m_isRead_Start)
-            m_isRender = true;
-
-        if (m_iBookCnt != m_iBook_PrevCnt)
-        {
-            Change_Texture(m_vecBookTexture[m_iBookCnt][0], TEXT("Com_DefaultTexture"));
-            m_wstrDefaultTexturComTag = m_vecBookTexture[m_iBookCnt][0];
-
-            m_iBook_PrevCnt = m_iBookCnt;
-        }
+        m_isRender = true;
+        vector<wstring> incidentLogNotes = m_pRead_Supervise->m_BookText[m_pIntro_UI->m_eBook_Type];
+        Change_Texture(incidentLogNotes[0], TEXT("Com_DefaultTexture"));
     }
 }
 
 void CRead_Item_UI::Arrow_Read()
 {
-    if (nullptr == m_pIntro_UI || nullptr == m_pMain_UI)
+    if (nullptr == m_pRead_Supervise)
+        m_pRead_Supervise = Find_ReadUI(READ_UI_TYPE::MAIN_READ, false);
+
+    if (nullptr == m_pIntro_UI || nullptr == m_pRead_Supervise)
         return;
-        
+
     /* 인트로가 읽기 시작을 알렸다면 진행*/
     if (true == m_pIntro_UI->m_isRead_Start)
     {
@@ -217,22 +266,53 @@ void CRead_Item_UI::Arrow_Read()
                 /* 1. 왼쪽일 때 */
                 if (READ_ARROW_TYPE::LEFT_ARROW == m_eRead_Arrow_Type)
                 {
-                    --m_pMain_UI->m_iBookCnt;
+                    --m_pRead_Supervise->m_iBookCnt;
 
-                    if (0 >= m_pMain_UI->m_iBookCnt)
-                        m_pMain_UI->m_iBookCnt = 0;
+                    if (1 >= m_pRead_Supervise->m_iBookCnt)
+                        m_pRead_Supervise->m_iBookCnt = 1;
                 }
 
                 /* 오른쪽일 때 */
                 else if (READ_ARROW_TYPE::RIGHT_ARROW == m_eRead_Arrow_Type)
                 {
-                    ++m_pMain_UI->m_iBookCnt;
+                    ++m_pRead_Supervise->m_iBookCnt;
 
-                    if (m_pMain_UI->m_vecBookTexture.size() <= m_pMain_UI->m_iBookCnt)
-                        m_pMain_UI->m_iBookCnt = (_int)m_pMain_UI->m_vecBookTexture.size() - 1;
+                    if (m_pRead_Supervise->m_BookText[m_pRead_Supervise->m_eBook_Type].size() <= m_pRead_Supervise->m_iBookCnt)
+                        m_pRead_Supervise->m_iBookCnt = (_int)m_pRead_Supervise->m_BookText[m_pRead_Supervise->m_eBook_Type].size() - 1;
                 }
             }
         }
+
+        m_isRender = true;
+    }
+}
+
+void CRead_Item_UI::Text_Read(_float fTimeDelta)
+{
+    if (nullptr == m_pIntro_UI || true != m_pIntro_UI->m_isRead_Start)
+        return;
+
+   // Render_Destory(false);
+    
+    vector<wstring> incidentLogNotes = m_pRead_Supervise->m_BookText[m_pIntro_UI->m_eBook_Type];
+
+    /* 1은 Texture. Text는 그 아래 숫자로 내려갈 수 없다. */
+    if (m_pRead_Supervise->m_iBookCnt <= 0)
+        m_pRead_Supervise->m_iBookCnt = 1;
+
+    if (READ_UI_TYPE::TEXT_LEFT_READ == m_eRead_type)
+    {
+        if(0 < m_pRead_Supervise->m_iBookCnt)
+            Change_Texture(incidentLogNotes[m_pRead_Supervise->m_iBookCnt], TEXT("Com_DefaultTexture"));
+
+        m_isRender = true;
+    }
+
+    else if (READ_UI_TYPE::TEXT_RIGHT_READ == m_eRead_type)
+    {
+        if(m_pRead_Supervise->m_iBookCnt + 1 < incidentLogNotes.size())
+            Change_Texture(incidentLogNotes[m_pRead_Supervise->m_iBookCnt + 1], TEXT("Com_DefaultTexture"));
+
         m_isRender = true;
     }
 }
@@ -284,8 +364,8 @@ void CRead_Item_UI::Reset()
     m_fBlending = MAX_BLENDING;
     m_vCurrentColor = m_vOriginColor;
    
-    if(nullptr != m_pMain_UI)
-        m_pMain_UI->m_iBookCnt = 0;
+    if(nullptr != m_pRead_Supervise)
+        m_pRead_Supervise->m_iBookCnt = 0;
 
     if (nullptr != m_pIntro_UI)
         m_pIntro_UI->m_isRead_Start = false;
@@ -294,7 +374,7 @@ void CRead_Item_UI::Reset()
      //   m_vecTextBoxes.back()->Set_Position(m_vFont_Position.x - 200.f, m_vFont_Position.y, m_vFont_Position.z);
 }
 
-CCustomize_UI * CRead_Item_UI::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CInteract_UI* CRead_Item_UI::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
     CRead_Item_UI* pInstance = new CRead_Item_UI(pDevice, pContext);
 
@@ -327,8 +407,14 @@ void CRead_Item_UI::Free()
     __super::Free();
 
     if (nullptr != m_pIntro_UI)
-        Safe_Release(m_pIntro_UI);
+    {
+        Safe_Release<CRead_Item_UI*>(m_pIntro_UI);
+        m_pIntro_UI = nullptr;
+    }
 
-    if (nullptr != m_pMain_UI)
-        Safe_Release(m_pMain_UI);
+    if (nullptr != m_pTexture_UI)
+    {
+        Safe_Release<CRead_Item_UI*>(m_pRead_Supervise);
+        m_pTexture_UI = nullptr;
+    }
 }

@@ -226,6 +226,7 @@
     <ClInclude Include="..\Public\Hold_Zombie.h" />
     <ClInclude Include="..\Public\ImGui_Manager.h" />
     <ClInclude Include="..\Public\InteractProps.h" />
+    <ClInclude Include="..\Public\Interact_UI.h" />
     <ClInclude Include="..\Public\Inventory_Manager.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\Public\Client_Enumsh.h" />
@@ -398,6 +399,7 @@
     <ClCompile Include="..\Private\Hold_Zombie.cpp" />
     <ClCompile Include="..\Private\ImGui_Manager.cpp" />
     <ClCompile Include="..\Private\InteractProps.cpp" />
+    <ClCompile Include="..\Private\Interact_UI.cpp" />
     <ClCompile Include="..\Private\Inventory_Manager.cpp" />
     <ClCompile Include="..\Private\Crosshair_UI.cpp" />
     <ClCompile Include="..\Private\Cursor_UI.cpp" />

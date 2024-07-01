@@ -16,27 +16,27 @@
 #define MINMAP_Y_SCALED       743.f
 
 /* 1층 크기*/
-#define MODELMAP_X_SCALED     82.0969925
-#define MODELMAP_Y_SCALED     60.4390125   
+#define MODELMAP_X_FLOO1     82.0969925
+#define MODELMAP_Y_FLOO1     60.4390125   
 
 /* 2층 크기*/
-#define MODELMAP_X_SCALED     82.0969925
-#define MODELMAP_Y_SCALED     60.4390125  
+#define MODELMAP_X_FLOO2      82.097786
+#define MODELMAP_Y_FLOO2      53.2143555  
 
 /* 3층 크기*/
-#define MODELMAP_X_SCALED     82.0969925
-#define MODELMAP_Y_SCALED     60.4390125  
+#define MODELMAP_X_FLOO3     71.9617119
+#define MODELMAP_Y_FLOO3     42.3548012  
 
 #define FLOOR_TYPE_BLENDING   0.244f /* Floor 선택 시 블렌딩할 값*/
 
+
 CMap_UI::CMap_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-    : CCustomize_UI{ pDevice, pContext }
+    : CInteract_UI{ pDevice, pContext }
 {
 }
 
 CMap_UI::CMap_UI(const CMap_UI& rhs)
-    :
-     CCustomize_UI{ rhs }
+     : CInteract_UI{ rhs }
 {
 }
 
@@ -54,11 +54,17 @@ HRESULT CMap_UI::Initialize(void* pArg)
         
         CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
         
+        m_eMap_Location = CustomUIDesc->eMapUI_Type;
 
         m_iWhichChild = CustomUIDesc->iWhich_Child;
+
         m_wstrFile = CustomUIDesc->wstrFileName;
 
         Find_MapStateType(CustomUIDesc);
+
+        m_eItem_Type = CustomUIDesc->eItem_Number;
+
+        m_wstr_ItemName = CustomUIDesc->wstrItemName;
     }
 
     /* 부모는 렌더하지 않을 것임*/
@@ -174,8 +180,6 @@ HRESULT CMap_UI::Initialize(void* pArg)
 
     else if (MAP_UI_TYPE::TARGET_NOTIFY == m_eMapComponent_Type)
     {
-        //m_ItemStore_Vec(3, nullptr);
-
         Find_Player_Target(); /* 플레이어 타겟팅 */
         Find_Item(); /* 아이템 */
 
@@ -213,6 +217,10 @@ HRESULT CMap_UI::Initialize(void* pArg)
             m_vOriginTextColor = m_vecTextBoxes.back()->Get_FontColor();
     }
 
+    else if (MAP_UI_TYPE::ITEM_MAP == m_eMapComponent_Type)
+    {
+    }
+
     if (!m_vecTextBoxes.empty())
     {
         m_vOriginTextColor = m_vecTextBoxes.back()->Get_FontColor();
@@ -234,6 +242,9 @@ HRESULT CMap_UI::Initialize(void* pArg)
 
 void CMap_UI::Tick(_float fTimeDelta)
 {
+    /*
+    1. Map Player는 실제 Player의 객체를 들고 있을 것이다
+    */
     __super::Tick(fTimeDelta);
 
     if (nullptr == m_pInMap_Player)
@@ -245,26 +256,18 @@ void CMap_UI::Tick(_float fTimeDelta)
     }
 
     /* 1. Render */
-    Render_Condition(fTimeDelta);
+    Render_Condition(fTimeDelta);   /* Render 여부*/
+    Region_Type();                  /* 해당 지역의 상태 타입*/
 
-    /* 2. Floor Selector에 관련된 것 */
-    if (MAP_UI_TYPE::FLOOR_TYPE_MAP == m_eMapComponent_Type)
-        FloorType_Search();
+    /* Floor */
+    Change_Floor();
 
-    /* 3. Player 움직임에 관련된 것 */
-    if (MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
-        Map_Player_Control(fTimeDelta);
+    /* 3. Player */
+    Map_Player_Control(fTimeDelta);
 
-    /* 4. Map에 관련된 것 */
+    /* 4. Map BackGround*/
     if (m_eFloorType == m_pInMap_Player->m_eCurrent_Floor || MAP_FLOOR_TYPE::FLOOR_FREE == m_eFloorType)
     {
-        // EX CODE
-        if (false == m_isGara)
-        {
-            Search_Map_Type(MAP_STATE_TYPE::SEARCH_CLEAR_STATE, MAIN_HOLL);
-            Search_Map_Type(MAP_STATE_TYPE::SEARCH_STATE, ENTRANCE);
-        }
-
         /* Transform */
         Transform_Condition(fTimeDelta);
     }
@@ -287,7 +290,6 @@ void CMap_UI::Search_Map_Type(MAP_STATE_TYPE _searType, LOCATION_MAP_VISIT _mapT
 {
     if (_mapType == m_eMap_Location && (MAP_CHILD_TYPE::BACKGROUND_MAP == (MAP_CHILD_TYPE)m_iWhichChild && m_eMapComponent_Type == MAP_UI_TYPE::MAIN_MAP))
      {
-         m_isGara = true;
          Change_Search_Type(_searType);
      }
 }
@@ -333,7 +335,6 @@ void CMap_UI::Find_InMap_Player()
             }
         }
     }  
-     
 }
 
 void CMap_UI::Find_Player_Target()
@@ -446,8 +447,8 @@ void CMap_UI::Transform_Condition(_float fTimeDelta)
     }
 
     /* 마우스를 움직일 때 */
-    if (true == m_isRender)
-        Mouse_Pos(fTimeDelta);
+    /*if (true == m_isRender || MAP_UI_TYPE::ITEM_MAP == m_eMapComponent_Type)*/
+    Mouse_Pos(fTimeDelta);
 }
 
 void CMap_UI::Mouse_Pos(_float fTimeDelta)
@@ -603,8 +604,8 @@ void CMap_UI::Player_Transform(_float fTimeDelta)
     _float2 fComparison = {};
 
     // MINMAP과 MODELMAP의 크기 비율 계산
-    fComparison.x = MINMAP_X_SCALED / MODELMAP_X_SCALED;
-    fComparison.y = MINMAP_Y_SCALED / MODELMAP_Y_SCALED;
+    fComparison.x = MINMAP_X_SCALED /  m_pInMap_Player->m_fCurrent_ModelScaled.x;
+    fComparison.y = MINMAP_Y_SCALED /  m_pInMap_Player->m_fCurrent_ModelScaled.y;
 
     _float2 Moving_Value = {};
 
@@ -628,23 +629,10 @@ void CMap_UI::Player_Transform(_float fTimeDelta)
     m_pTransformCom->Set_State(CTransform::STATE_POSITION, vMiniMapPlayer);
 }
 
-void CMap_UI::EX_ColorChange()
-{
-    if (MAP_UI_TYPE::MAIN_MAP == m_eMapComponent_Type)
-    {
-        /* 예시 코드*/
-        if (DOWN == m_pGameInstance->Get_KeyState('I') && false == m_IsChild)
-        {
-            Search_Map_Type(MAP_STATE_TYPE::SEARCH_STATE, (LOCATION_MAP_VISIT)m_iCnt);
-
-            if (false == m_IsChild)
-                m_iCnt++;
-        }
-    }
-}
-
+/* Floor를 검색할 때 */
 void CMap_UI::FloorType_Search()
 {
+    /* ▶ Render 중이 아니라면 return  */
     if (false == m_isRender)
     {
         if(!m_vecTextBoxes.empty())
@@ -653,6 +641,7 @@ void CMap_UI::FloorType_Search()
         return;
     }
 
+    /* ▶ Floor Search 설정 */
     if (m_eSelect_Floor >= MAP_FLOOR_TYPE::FLOOR_FREE)
     {
         Floor_Sort();
@@ -661,32 +650,85 @@ void CMap_UI::FloorType_Search()
             MSG_BOX(TEXT("Floor 설정이 제대로 적용되지 않았습니다.")); // Floor type을 고치면 된다.
     }
 
+    /* ▶ 직접 Select 해서 이동할 Floor */
     if (MAP_UI_TYPE::FLOOR_TYPE_MAP == m_eMapComponent_Type)
     {
+        /*1. 만약 Hovering 시에 플레이어가 가지고 있는 현재 플로어에 넣어준다. */
         if (true == IsMouseHover())
         {
             if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
             {
                 m_pInMap_Player->m_eCurrent_Floor = m_eSelect_Floor;
-
-                // 지도에게도 넘겨줘야 한다.
             }
         }
+    }
+}
 
-        if (m_pInMap_Player->m_eCurrent_Floor == m_eSelect_Floor)
+void CMap_UI::Change_Floor()
+{
+    /* 1. Floor 간접 교체 */
+    if (MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
+    {
+        /* 1. 만약 Floor을 열었다면 Map Player에게 현재 Floor를 전달해줄 것임.*/
+        OpenMap();
+    }
+    /* 2. Floor 직접 교체 */
+    else if (MAP_UI_TYPE::FLOOR_TYPE_MAP == m_eMapComponent_Type)
+    {
+        FloorType_Search();
+    }
+}
+
+/* 맵을 처음열 때 선정할 Floor */
+void CMap_UI::OpenMap()
+{
+    /* ▶ 처음 맵을 열었을 때 플레이어의 위치에 Floor가 존재해야 한다. */
+    if (m_isPrevMapRender == m_pTab_Window->Get_MinMapRender())
+    {
+        /* 1. 현재 Player가 들고 있는 Floor를 Render 할 것이다. */
+        m_pInMap_Player->m_eCurrent_Floor = static_cast<MAP_FLOOR_TYPE>(m_pPlayer->Get_Player_Floor());
+        m_eCurrent_PlayerFloor = m_pInMap_Player->m_eCurrent_Floor;
+
+        /* 2. Map을 열 때마다 현재 플레이어가 존재하는 플로어의 크기를 정해줄 것 */
+        if(MAP_FLOOR_TYPE::FLOOR_1 == m_pInMap_Player->m_eCurrent_Floor)
         {
-            if (!m_vecTextBoxes.empty())
+            m_pInMap_Player->m_fCurrent_ModelScaled.x = MODELMAP_X_FLOO1;
+            m_pInMap_Player->m_fCurrent_ModelScaled.y = MODELMAP_Y_FLOO1;
+        }
+
+        else if (MAP_FLOOR_TYPE::FLOOR_2 == m_pInMap_Player->m_eCurrent_Floor)
+        {
+            m_pInMap_Player->m_fCurrent_ModelScaled.x = MODELMAP_X_FLOO2;
+            m_pInMap_Player->m_fCurrent_ModelScaled.y = MODELMAP_Y_FLOO2;
+        }
+
+        else if (MAP_FLOOR_TYPE::FLOOR_3 == m_pInMap_Player->m_eCurrent_Floor)
+        {
+            m_pInMap_Player->m_fCurrent_ModelScaled.x = MODELMAP_X_FLOO3;
+            m_pInMap_Player->m_fCurrent_ModelScaled.y = MODELMAP_Y_FLOO3;
+        }
+
+        /* 3. Player를 BackGround 중심점으로 가져다 두고 
+        그 이동 값 만큼 다른 것들도 움직여준다. */
+
+        if (m_eMapComponent_Type == MAP_UI_TYPE::BACKGROUND_MAP)
+        {
+            if (nullptr == m_pInMap_PlayerTrans)
+                MSG_BOX(TEXT(" BackGround Map에 Player를 찾을 수 없습니다."));
+
+            else
             {
-                m_vecTextBoxes.back()->Set_FontColor(_float4(1, 1, 1, 1));
-                m_vCurrentColor = _float4(1, 1, 1, 1);
-                m_fBlending = FLOOR_TYPE_BLENDING;
+                _float4 vPlayerTrans = m_pInMap_PlayerTrans->Get_State_Float4(CTransform::STATE_POSITION);
+                _float4 vBackGroundTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+                vPlayerTrans.x = vBackGroundTrans.x;
+                vPlayerTrans.y = vBackGroundTrans.y;
+
+                m_pInMap_PlayerTrans->Set_State(CTransform::STATE_POSITION, vPlayerTrans);
             }
         }
-        else
-        {
-            m_vecTextBoxes.back()->Set_FontColor(m_vOriginTextColor);
-            m_fBlending = 0.f;
-        }
+
+        m_isPrevMapRender = m_pTab_Window->Get_MinMapRender();
     }
 }
 
@@ -747,15 +789,45 @@ void CMap_UI::Render_Condition(_float fTimeDelta)
         /* 1. Map Open */
         if (true == m_pTab_Window->Get_MinMapRender())
         {
+            if (MAP_UI_TYPE::FLOOR_TYPE_MAP == m_eMapComponent_Type)
+            {
+                /* Plyaer가 가지고 있는 플로어와 Select된 플로어가 같다면 Floor Texture Render를 바꿔준다. */
+                if (m_pInMap_Player->m_eCurrent_Floor == m_eSelect_Floor)
+                {
+                    if (!m_vecTextBoxes.empty())
+                    {
+                        if (m_fBlending != FLOOR_TYPE_BLENDING)
+                        {
+                            m_vecTextBoxes.back()->Set_FontColor(_float4(1, 1, 1, 1));
+                            m_vCurrentColor = _float4(1, 1, 1, 1);
+                            m_fBlending = FLOOR_TYPE_BLENDING;
+                        }
+                    }
+                }
+                else
+                {
+                    if (m_fBlending != 0.f)
+                    {
+                        m_vecTextBoxes.back()->Set_FontColor(m_vOriginTextColor);
+                        m_fBlending = 0.f;
+                    }
+                }
+            }
+
             /* ▶ Target Notify Type */
             if (MAP_UI_TYPE::TARGET_NOTIFY == m_eMapComponent_Type)
             {
                 _float4 vMainTarget_Transform = m_pTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
                 _float3 vMainTarget_Scaled = m_pTarget_Transform->Get_Scaled();
-
+                
                 if (true == MainTarget_Hover(vMainTarget_Transform, vMainTarget_Scaled))
                 {
                     m_isRender = true;
+
+                    if (!m_vecTextBoxes.empty())
+                    {
+                        m_vecTextBoxes.back()->Set_Text(m_wstr_ItemName);
+                    }
                 }
                 else
                     m_isRender = false;
@@ -778,6 +850,32 @@ void CMap_UI::Render_Condition(_float fTimeDelta)
 
                 else
                     m_fBlending -= fTimeDelta * BLENDING_SPEED;
+
+                /* 만약 아이템이라면*/
+                if (MAP_UI_TYPE::ITEM_MAP == m_eMapComponent_Type)
+                {
+                    /*  1. 과거에 존재했던 지역이랑 현재 존재했던 지역이 다르다면 /  
+                        2. 현재 지역이 이미 온 곳인지 확인하고 / 
+                        3. 만약 온 곳이 아니라면 관련 Item을 업로드 한다 */
+
+                    /* 과거에 온 지역이랑 현재의 지역이 맞지 않는다면.*/
+                    if (m_ePrevRegion != (LOCATION_MAP_VISIT)m_pInMap_Player->m_pPlayer->Get_Player_Region())
+                    {
+                        /* 과거의 지역에 현재의 지역을 집어넣고*/
+                        m_ePrevRegion = (LOCATION_MAP_VISIT)m_pInMap_Player->m_pPlayer->Get_Player_Region();
+
+                        /* 렌더 상태가 아닐 때, 현재의 지역과 아이템대상의 지역이 맞다면, */
+                        if (false == m_isItemRender && (LOCATION_MAP_VISIT)m_pInMap_Player->m_pPlayer->Get_Player_Region() == m_eMap_Location)
+                            m_isItemRender = true;
+                    }
+
+                    if (true == m_isItemRender)
+                        m_isRender = true;
+
+                    else if (false == m_isItemRender)
+                        m_isRender = false;
+                }
+
             }
 
             else
@@ -810,7 +908,7 @@ void CMap_UI::Render_Condition(_float fTimeDelta)
         /* Close MinMap */
         else
         {
-            m_isRender = false;
+            m_isPrevMapRender = m_isRender = false;
         }
     }
 
@@ -819,6 +917,25 @@ void CMap_UI::Render_Condition(_float fTimeDelta)
     {
         Map_Target_Control(fTimeDelta);
     }
+
+}
+
+void CMap_UI::Region_Type()
+{
+   if (nullptr == m_pInMap_Player->m_pPlayer)
+       return;
+
+   /* 1. 처음 Player가 입장했을 때 */
+   if (MAP_STATE_TYPE::NONE_STATE == m_eMapState && true == m_pInMap_Player->m_pPlayer->Get_Player_Region_Array()[m_eMap_Location])
+   {
+       Search_Map_Type(MAP_STATE_TYPE::SEARCH_STATE, m_eMap_Location);
+   }
+
+   /* 2. 플레이어가 그 방의 아이템을 전부 먹었을 때 
+     */
+   /* 1. 먹은 아이템? 먹지 않은 아이템?
+      2. 방 안에 현재 몇 개의 아이템이 남아있는가/
+      3. 방 안에 아이템을 먹으면 지워지는가? */
 }
 
 /* Main Target이 ITEM을 Hovering 하는 여부*/
@@ -826,21 +943,27 @@ _bool CMap_UI::MainTarget_Hover(_float4 _mainPos, _float3 _scaled) // 타겟팅 가�
 {
     _float2 fMainPos = _float2(_mainPos.x, _mainPos.y);
 
+    if ((_int)m_pInMap_Player->m_eCurrent_Floor - 2 < 0)
+        return false ;
+
     if(!m_ItemStore_Vec[(_int)m_pInMap_Player->m_eCurrent_Floor - 2].empty())
     {
         for (auto& iter : m_ItemStore_Vec[(_int)m_pInMap_Player->m_eCurrent_Floor - 2])
         {
-            CTransform* pItem_Transform = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
-
-            _float4 vItem_Transform = pItem_Transform->Get_State_Float4(CTransform::STATE_POSITION);
-            _float3 vSize = pItem_Transform->Get_Scaled();
-
-            _float4 vPosition = { vItem_Transform.x + g_iWinSizeX * 0.5f, -vItem_Transform.y + g_iWinSizeY * 0.5f, vItem_Transform.z, 0 };
-
-            if (vItem_Transform.x - (vSize.x / 2) <= fMainPos.x && vItem_Transform.y - (vSize.y / 2) <= fMainPos.y
-                && vItem_Transform.x + (vSize.x / 2) >= fMainPos.x && vItem_Transform.y + (vSize.y / 2) >= fMainPos.y)
+            if (iter->m_isRender != false)
             {
-                return true;
+                CTransform* pItem_Transform = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+
+                _float4 vItem_Transform = pItem_Transform->Get_State_Float4(CTransform::STATE_POSITION);
+                _float3 vSize = pItem_Transform->Get_Scaled();
+
+                _float4 vPosition = { vItem_Transform.x + g_iWinSizeX * 0.5f, -vItem_Transform.y + g_iWinSizeY * 0.5f, vItem_Transform.z, 0 };
+
+                if (vItem_Transform.x - (vSize.x / 2) <= fMainPos.x && vItem_Transform.y - (vSize.y / 2) <= fMainPos.y
+                    && vItem_Transform.x + (vSize.x / 2) >= fMainPos.x && vItem_Transform.y + (vSize.y / 2) >= fMainPos.y)
+                {
+                    return true;
+                }
             }
         }
     }
@@ -851,6 +974,9 @@ _bool CMap_UI::MainTarget_Hover(_float4 _mainPos, _float3 _scaled) // 타겟팅 가�
 /* PLAYER 가 맵 상에서 움직이는 방식 */
 void CMap_UI::Map_Player_Control(_float fTimeDelta)
 {
+    if (MAP_UI_TYPE::PLAYER_MAP != m_eMapComponent_Type)
+        return;
+
     /* 지도를 켰을 땐 계산을 하지 말아야 한다. */
     if (true == m_isRender)
     {
@@ -980,6 +1106,17 @@ void CMap_UI::Map_Target_Control(_float fTimeDelta)
 
         m_isPrevRender = m_isRender;
     }
+}
+
+/* 아이템을 관리하는 공간 */
+void CMap_UI::Map_Item_Control(_float fTimeDelta)
+{
+    /* 현재 지역에 들어갔을 때 내가 그 아이템을 먹었다면 지도에서 해당 아이템이
+    사라지도록 만들어야 한다.*/
+
+    /* 1. 현재 Player가 아이템과 상호작용했는가*/
+    /* 2. 그렇다면 그 상호작용한 지역과 이름은 무엇인가? */
+ //   m_pPropManager;
 }
 
 void CMap_UI::Search_TabWindow()
@@ -1164,7 +1301,7 @@ void CMap_UI::Find_Item()
 }
 
 
-CCustomize_UI* CMap_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CInteract_UI* CMap_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
     CMap_UI* pInstance = new CMap_UI(pDevice, pContext);
 
@@ -1195,7 +1332,6 @@ CGameObject* CMap_UI::Clone(void* pArg)
 void CMap_UI::Free()
 {
     __super::Free();
-
 
 
    // Safe_Release<CTransform*>(m_pPlayerTransform);

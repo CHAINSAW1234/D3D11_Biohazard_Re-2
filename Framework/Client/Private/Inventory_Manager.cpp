@@ -948,9 +948,9 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 	case Client::strengtheningyellow01a:
 		return USEABLE;
 		break;
-	case Client::HandGun:
+	/*case Client::HandGun:
 		return EQUIPABLE;
-		break;
+		break;*/
 	case Client::ITEM_NUMBER_END:
 		break;
 	default:

@@ -6,8 +6,8 @@ BEGIN(Client)
 class CLayOut_UI final : public CCustomize_UI
 {
 private :
-	enum class LAYOUT_UI_TYPE { MINMAP_UI_TYPE, INVEN_UI_TYPE, HINT_UI_TYPE, BACKGROUND_UI_TYPE, END_UI_TYPE };
-
+	enum class LAYOUT_UI_TYPE { MINMAP_UI_TYPE, INVEN_UI_TYPE, HINT_UI_TYPE, FREE_TYPE, BACKGROUND_UI_TYPE, END_UI_TYPE };
+	enum class LAYOUT_TEXT{ CLOSE_TEXT, TEXT_END };
 private:
 	CLayOut_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CLayOut_UI(const CLayOut_UI& rhs);
@@ -33,6 +33,7 @@ private :
 
 private : /* 부모에서만 사용할 것 */
 	LAYOUT_UI_TYPE					m_eRenderLayout_Type		= { LAYOUT_UI_TYPE::END_UI_TYPE }; /* 어떤 Layout을 렌더할 것인가? */
+	LAYOUT_TEXT						m_eText_Type				= { LAYOUT_TEXT::TEXT_END };
 	_bool							m_isPrevRender				= { false };
 	_bool*							m_isMainRender				= { false };
 

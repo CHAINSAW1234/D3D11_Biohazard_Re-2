@@ -61,6 +61,9 @@
     <Filter Include="02.GameObjects\Player\Head">
       <UniqueIdentifier>{2095859b-bd47-433e-ba92-228eb4b01619}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\Hair">
+      <UniqueIdentifier>{06a26c20-e93f-491c-9f17-a6dabe0d4021}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\UI">
       <UniqueIdentifier>{9832ad11-317f-47c4-a17f-42e4a22153a3}</UniqueIdentifier>
     </Filter>
@@ -337,6 +340,12 @@
     <Filter Include="AIController\Zombie\Task\Additional\ShakeSkin">
       <UniqueIdentifier>{acf145ab-b930-419e-a81d-e6dcfeda6b4a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AIController\Zombie\Task\Additional\Hold_Zombie">
+      <UniqueIdentifier>{48c4e195-7f2d-4cad-ae99-73d3733ba54b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Decorator\Checker_MainTain_PreTask">
+      <UniqueIdentifier>{8283ac8d-e2dc-4a0a-85c4-1756898df535}</UniqueIdentifier>
+    </Filter>
     <Filter Include="AIController\Zombie\Decorator\Checker_Is_Down">
       <UniqueIdentifier>{fe7d57b2-dd4a-4f52-a9d3-281720a08b3d}</UniqueIdentifier>
     </Filter>
@@ -439,6 +448,36 @@
     </Filter>
     <Filter Include="02.GameObjects\MapObject\InteractProps\Ladder\Body_Ladder">
       <UniqueIdentifier>{ed1ba2c5-ffbd-4801-8a8e-b84f5a7cd754}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\Manager">
+      <UniqueIdentifier>{209e337a-7401-469e-a4fb-f047a44ac092}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\ItemLocker">
+      <UniqueIdentifier>{03e0a429-7fb0-47f8-806a-33f614fbb308}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine">
+      <UniqueIdentifier>{a31a38f6-d575-4a4f-a63c-df185a530a03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Ladder">
+      <UniqueIdentifier>{9ec56c20-c748-4ab2-a657-a17959e42e3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Body_Reader">
+      <UniqueIdentifier>{a186c3e0-78c8-496a-a4fd-d32dd6dae0ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Key_Reader">
+      <UniqueIdentifier>{e093220b-41a0-4455-b6bf-290318f82b82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Reader_Observer">
+      <UniqueIdentifier>{811c7063-452c-4d16-b305-11640d4ccc1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Reader_Observer\Reader_Observer_Handle">
+      <UniqueIdentifier>{0512293c-6b46-4f82-9b55-01b90a3aff6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\15. LayOut">
+      <UniqueIdentifier>{57e7ebf9-dbcd-44f9-8d5f-e0a91f6637a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\98. InteractUI">
+      <UniqueIdentifier>{dc0892af-56ab-415b-b959-8cb322e82e8f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1260,6 +1299,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Body_ItemLocker.cpp">
       <Filter>02.GameObjects\MapObject\InteractProps\ItemLocker\Body_ItemLocker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Prop_Manager.cpp">
+      <Filter>02.GameObjects\MapObject\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LayOut_UI.cpp">
+      <Filter>02.GameObjects\UI\15. LayOut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Map_UI.cpp">
+      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Interact_UI.cpp">
+      <Filter>02.GameObjects\UI\98. InteractUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
