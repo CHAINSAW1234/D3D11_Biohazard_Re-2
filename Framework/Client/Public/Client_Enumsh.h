@@ -449,4 +449,5 @@ namespace Client
 		ShotGun,
 		ITEM_NUMBER_END
 	};
+
 }

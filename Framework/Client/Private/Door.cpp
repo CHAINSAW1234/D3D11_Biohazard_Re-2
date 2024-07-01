@@ -5,6 +5,7 @@
 #include "PxCollider.h"
 
 #include"Body_Door.h"
+#include"CustomCollider.h"
 CDoor::CDoor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -26,7 +27,7 @@ HRESULT CDoor::Initialize(void* pArg)
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
+	m_bLock = m_tagPropDesc.tagDoor.bLock;
 	if ((m_tagPropDesc.strGamePrototypeName.find("007") != string::npos) || (m_tagPropDesc.strGamePrototypeName.find("038") != string::npos) || (m_tagPropDesc.strGamePrototypeName.find("113") != string::npos))
 		m_eType = DOOR_DOUBLE;
 	else
@@ -50,12 +51,30 @@ HRESULT CDoor::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CDoor::Tick(_float fTimeDelta)
+void CDoor::Start()
 {
 	__super::Check_Player();
+
+	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Jombie_Collider"));
+	if (pCollider == nullptr)
+		return;
+	for (auto& iter : *pCollider)
+	{
+		if (m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")))))
+		{
+			// 내 인덱스 넣어주기
+			_int* iNum = static_cast<CCustomCollider*>(iter)->Node_InteractProps();
+			*iNum = m_tagPropDesc.iIndex;
+		}
+	}
+}
+
+void CDoor::Tick(_float fTimeDelta)
+{
 	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 	if (m_eType == DOOR_DOUBLE)
 		m_pColDoubledoorCom->Tick(m_pTransformCom->Get_WorldMatrix());
+
 	if (!m_bVisible)
 		return;
 #ifdef _DEBUG
@@ -189,15 +208,19 @@ void CDoor::DoubleDoor_Tick(_float fTimeDelta)
 	if (m_fTime > 4.f)
 	{
 		m_fTime = 0.f;
-		m_bActive = false;
 		m_iHP = 5;
-		m_eDoubleState = DOUBLEDOOR_STATIC;
+		m_bOnce = false;
+		if (!m_bCol && !m_bDoubleCol)
+		{
+			m_bActive = false;
+			m_eDoubleState = DOUBLEDOOR_STATIC;
+		}
 	}
 
-	if ((m_bCol||m_bDoubleCol) && !m_bActive)
+	if ((m_bCol||m_bDoubleCol) && !m_bActive&&!m_bLock)
 	{
 		//UI띄우고
-		if (*m_pPlayerInteract)
+		if (*m_pPlayerInteract|| m_bOnce)
 			DoubleDoor_Active();
 		m_bCol = false;
 		m_bDoubleCol = false;
@@ -289,7 +312,27 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 
 	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColDoubledoorCom))
+	{
+		if (Check_Player_Distance(XMVectorSetW(Get_Collider_World_Pos(_float3(-70.f, 1.f, 0.f)), 1.f)) <= 1.16f && !m_bOnce)
+		{
+			m_bOnce = true;
+		}
+		m_bFirstInteract = true;
 		m_bDoubleCol = true;
+	}
+	else
+		m_bDoubleCol = false;
+
+	if ((m_bCol|| m_bDoubleCol)&& m_bOnce && !m_bBlock)
+	{
+		if (m_bLock)
+			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_LOOK, Get_PlayerLook_Degree());
+		else
+			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_OPEN);
+	}
+
+
+
 }
 
 void CDoor::DoubleDoor_Active()
@@ -374,6 +417,23 @@ _float4 CDoor::Get_Object_Pos()
 	return _float4();
 }
 
+_float CDoor::Get_PlayerLook_Degree()
+{
+	_vector vPlayerLook = XMVector4Normalize(m_pPlayerTransform->Get_State_Vector(CTransform::STATE_LOOK));
+	_vector vPlayerPos = m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION);
+	_vector vPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+	_vector vDirection = XMVector4Normalize(vPlayerPos - vPos);
+
+	_float fScala = XMVectorGetX(XMVector4Dot(vPlayerLook, vDirection));
+	if (fScala > 1.f)
+		fScala = 1.f;
+	else if (fScala < -1.f)
+		fScala = -1.f;
+
+
+	return XMConvertToDegrees(fScala);
+}
+
 void CDoor::OneDoor_Tick(_float fTimeDelta)
 {
 
@@ -383,15 +443,19 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 	if (m_fTime > 4.f)
 	{
 		m_fTime = 0.f;
-		m_bActive = false;
 		m_iHP = 5;
-		m_eOneState = ONEDOOR_STATIC;
+		m_bOnce = false;
+		if (!m_bCol)
+		{
+			m_bActive = false;
+			m_eOneState = ONEDOOR_STATIC;
+		}
 	}
 
-	if (m_bCol && !m_bActive)
+	if (m_bCol && !m_bActive && !m_bLock)
 	{
 		//UI띄우고
-		if (*m_pPlayerInteract)
+		if (*m_pPlayerInteract || m_bOnce)
 			OneDoor_Active();
 		m_bCol = false;
 	}
@@ -416,7 +480,13 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 	}
 	m_bCol = Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
 	//Check_Col_OBB_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
-
+	if (m_bCol && m_bOnce && !m_bBlock)
+	{
+		if (m_bLock)
+			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_LOOK, Get_PlayerLook_Degree());
+		else
+			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_OPEN);
+	}
 }
 
 _float CDoor::Radian_To_Player()
