@@ -304,7 +304,7 @@ PS_OUT PS_MAIN(PS_IN In)
 		Out.vMaterial.b = 1.f;
 	}
 
-	if (abs(g_DecalMap[In.iIndex].x - 2.f) < 0.01f && abs(g_DecalMap[In.iIndex].y - 2.f) < 0.01f)
+	if (abs(g_DecalMap[In.iIndex].x - 2.f) < 0.1f && abs(g_DecalMap[In.iIndex].y - 2.f) < 0.1f)
 	{
 		Out.vDiffuse = float4(1.f, 0.f, 0.f, 1.f);
 	}

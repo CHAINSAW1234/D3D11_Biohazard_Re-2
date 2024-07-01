@@ -3041,9 +3041,9 @@ void CModel::Perform_Skinning(_uint iIndex)
 
 void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix)
 {
-	//m_Meshes[iIndex]->SetDecalWorldMatrix(WorldMatrix);
+	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
 
-	for (int i = 0; i < m_Meshes.size(); ++i)
+	for (auto& i : NonHideIndex)
 	{
 		m_Meshes[i]->SetDecalWorldMatrix(WorldMatrix);
 	}
@@ -3051,9 +3051,7 @@ void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix)
 
 _uint CModel::Perform_RayCasting(_uint iIndex, AddDecalInfo Info, _float* pDist)
 {
-	//if (m_Meshes[iIndex]->Is_Hide() == false)
-		return m_Meshes[iIndex]->RayCasting_Decal(Info,pDist);
-	//return 999;
+	return m_Meshes[iIndex]->RayCasting_Decal(Info,pDist);
 }
 
 void CModel::Perform_Calc_DecalInfo(_uint iIndex)
@@ -3073,7 +3071,8 @@ void CModel::Perform_Init_DecalMap(_uint iIndex, class CShader* pShader)
 
 void CModel::Perform_Calc_DecalMap()
 {
-	for (int i = 0; i < m_Meshes.size(); ++i)
+	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
+	for(auto& i : NonHideIndex)
 	{
 		m_Meshes[i]->Bind_Resource_CalcDecalMap();
 		m_Meshes[i]->Perform_Calc_DecalMap();

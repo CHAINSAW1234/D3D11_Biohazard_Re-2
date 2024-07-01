@@ -240,6 +240,7 @@ public:
 		return m_eType;
 	}
 	void                                SetBoneIndex();
+	virtual void						SetPosition(_float4 vPos) override;
 private:
 	_bool											m_bHit = { false };
 	_float4											m_vForce;

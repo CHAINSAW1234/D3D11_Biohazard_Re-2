@@ -131,7 +131,7 @@ void CZombie::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	if (m_pController)
+	if (m_pController && m_pController->GetDead() == false)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
 
 #pragma region BehaviorTree 코드
@@ -143,7 +143,8 @@ void CZombie::Tick(_float fTimeDelta)
 	_float4			vDirection = {};
 	_vector			vRootMoveDir = { XMLoadFloat3(&m_vRootTranslation) };
 	XMStoreFloat4(&vDirection, vRootMoveDir);
-	if (m_pController)
+
+	if (m_pController && m_pController->GetDead() == false)
 	{
 		m_pController->Move(vDirection, fTimeDelta);
 	}
@@ -181,6 +182,26 @@ void CZombie::Tick(_float fTimeDelta)
 	//}
 #pragma endregion
 
+#pragma region Ragdoll 피격
+	if (m_bRagdoll)
+	{
+		if (m_pController)
+		{
+			if (m_pController->Is_Hit())
+			{
+				/*For Decal*/
+				Ready_Decal();
+
+				/*For Blood Effect*/
+				m_bSetBlood = true;
+				m_BloodTime = GetTickCount64();
+
+				m_pController->Set_Hit(false);
+			}
+		}
+	}
+#pragma endregion
+
 	if (m_pController && m_bRagdoll == false)
 	{
 		if (m_pController->Is_Hit())
@@ -191,21 +212,24 @@ void CZombie::Tick(_float fTimeDelta)
 			/*For Blood Effect*/
 			m_bSetBlood = true;
 			m_BloodTime = GetTickCount64();
-			//m_vHitPosition = m_pController->GetBlockPoint();
-			//m_vHitNormal = m_pController->GetHitNormal();
 
 			m_pController->Set_Hit(false);
 
-			//	m_bRagdoll = true;
 
 			auto vForce = m_pController->Get_Force();
 			auto eType = m_pController->Get_Hit_Collider_Type();
-			//	for (auto& pPartObject : m_PartObjects)
-			//	{
-			//		if (nullptr != pPartObject)
-			//			pPartObject->SetRagdoll(m_iIndex_CCT, vForce, eType);
-			//	}
 
+
+			if (m_pController->GetDead())
+			{
+				m_bRagdoll = true;
+
+				for (auto& pPartObject : m_PartObjects)
+				{
+					if (nullptr != pPartObject)
+						pPartObject->SetRagdoll(m_iIndex_CCT, vForce, eType);
+				}
+			}
 
 		//	For.Anim
 			m_eCurrentHitCollider = eType;
@@ -262,7 +286,7 @@ void CZombie::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	if (m_pController)
+	if (m_pController && m_pController->GetDead() == false)
 		m_pController->Update_Collider();
 
 #ifdef _DEBUG
@@ -769,11 +793,12 @@ HRESULT CZombie::Initialize_PartModels()
 
 void CZombie::Perform_Skinning()
 {
-	_uint iNumMesh = m_pBodyModel->GetNumMesh();
+	list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
 
-	for (_uint i = 0; i < iNumMesh; ++i)
+	m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldMatrix());
+
+	for (auto& i : NonHideIndex)
 	{
-		m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldMatrix());
 		m_pBodyModel->Bind_Resource_Skinning(i);
 		m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
 	}
@@ -806,7 +831,8 @@ void CZombie::Ready_Decal()
 		decalInfo.maxHitDistance = hitResult.maxHitDistance;
 		decalInfo.decalMaterialIndex = 0;
 
-		for (int i = 0; i < m_pBodyModel->GetNumMesh(); ++i)
+		list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
+		for (auto& i : NonHideIndex)
 		{
 			m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
 

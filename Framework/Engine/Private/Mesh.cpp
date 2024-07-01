@@ -1015,7 +1015,7 @@ void CMesh::Bind_Resource_CalcDecalMap()
 void CMesh::Perform_Calc_DecalMap()
 {
 	m_pGameInstance->Perform_Calc_Decal_Map(m_iNumVertices);
-	m_pDecal_Blood->Staging_DecalMap();
+	//m_pDecal_Blood->Staging_DecalMap();
 }
 
 void CMesh::Bind_Decal_Map(CShader* pShader)

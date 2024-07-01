@@ -17,7 +17,7 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID)
     if (vertexIndex < g_NumVertices)
     {
         float4 vPosition = float4(g_Skinnig_Output[vertexIndex].vPosition, 1.f);
-        vPosition = mul(g_DecalMat_Inv, vPosition);
+        vPosition = mul(vPosition, g_DecalMat_Inv);
 
         float2 DecalUV = vPosition.xy*0.5f + 0.5f;
 
