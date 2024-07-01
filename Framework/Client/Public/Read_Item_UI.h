@@ -44,6 +44,7 @@ private :
 	READ_ARROW_TYPE							m_eRead_Arrow_Type	= { READ_ARROW_TYPE::END_ARROW };
 	ITEM_READ_TYPE							m_eBook_Type		= { ITEM_READ_TYPE::END_NOTE };
 
+
 private :
 	CRead_Item_UI*							m_pIntro_UI			= { nullptr };
 	_float									m_fIntro_Timer		= { 0.0f };
@@ -52,16 +53,19 @@ private :
 	_bool									m_isChange			= { false };
 	_bool									m_isPrevRender		= { false };
 
+
 private :
 	CRead_Item_UI*							m_pTexture_UI		= { nullptr }; /* Arrow가 가지고 있는 Texture */
 	CRead_Item_UI*							m_pRead_Supervise	= { nullptr }; /* MAIN : 이 안에 부여할 TEXT와 TEXTURE를 가지고 있을 것이다. */
 	_int									m_iBookCnt			= { 0 };
 	_int									m_iBook_PrevCnt		= { 1 };
 
+
 private : /* Text 관련*/
 	map<ITEM_READ_TYPE, vector<wstring>>	m_BookText;
 	_float2									m_fOriginPos_text = {};
 	ITEM_READ_TYPE							eGara = { ITEM_READ_TYPE::INCIDENT_LOG_NOTE };
+
 
 public:
 	static CInteract_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

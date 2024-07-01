@@ -46,7 +46,7 @@ private:
 
 	_int					m_iStoreBullet = { 0 };
 	_int					m_iCurrentBullet = { 0 };
-	_int					m_iMaxBullet = { 12 };
+	_int					m_iMaxBullet = { 15 };
 	_float					m_fOrigin_Blending = {};
 
 	/* 원본 위치*/
