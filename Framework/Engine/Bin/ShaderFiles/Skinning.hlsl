@@ -26,18 +26,20 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID)
 
         float fTotalWeight = 1.f;
 
-        matrix BoneMatrix = g_BoneMatrices[g_VertexBlendIndices[vertexIndex].x] * g_VertexBlendWeights[vertexIndex].x / fTotalWeight +
-            g_BoneMatrices[g_VertexBlendIndices[vertexIndex].y] * g_VertexBlendWeights[vertexIndex].y / fTotalWeight +
-            g_BoneMatrices[g_VertexBlendIndices[vertexIndex].z] * g_VertexBlendWeights[vertexIndex].z / fTotalWeight +
-            g_BoneMatrices[g_VertexBlendIndices[vertexIndex].w] * g_VertexBlendWeights[vertexIndex].w / fTotalWeight;
+        matrix BoneMatrix = g_BoneMatrices[g_VertexBlendIndices[vertexIndex].x] * (g_VertexBlendWeights[vertexIndex].x / fTotalWeight) +
+            g_BoneMatrices[g_VertexBlendIndices[vertexIndex].y] * (g_VertexBlendWeights[vertexIndex].y / fTotalWeight) +
+            g_BoneMatrices[g_VertexBlendIndices[vertexIndex].z] * (g_VertexBlendWeights[vertexIndex].z / fTotalWeight) +
+            g_BoneMatrices[g_VertexBlendIndices[vertexIndex].w] * (g_VertexBlendWeights[vertexIndex].w / fTotalWeight);
 
-        /*float4 vPosition = mul(BoneMatrix, float4(g_VertexPositions[vertexIndex], 1.f));
-        float4 vNormal = mul(BoneMatrix, float4(g_VertexNormals[vertexIndex], 0.f));*/
+        //float4 vPosition = mul(BoneMatrix, float4(g_VertexPositions[vertexIndex], 1.f));
+        //float4 vNormal = mul(BoneMatrix, float4(g_VertexNormals[vertexIndex], 0.f));
 
-        float4 vPosition = mul(float4(g_VertexPositions[vertexIndex], 1.f), BoneMatrix);
-        float4 vNormal = mul(float4(g_VertexNormals[vertexIndex], 0.f), BoneMatrix);
+        float4 vPosition = float4(g_VertexPositions[vertexIndex].x, g_VertexPositions[vertexIndex].y, g_VertexPositions[vertexIndex].z, 1.f);
+        vPosition = mul(vPosition, BoneMatrix);
+        //float4 vPosition = mul(float4(g_VertexPositions[vertexIndex], 1.f), BoneMatrix);
+        float4 vNormal = mul(float4(g_VertexNormals[vertexIndex], 1.f), BoneMatrix);
 
-        vertexPosition = mul(g_WorldMatrix, vPosition).xyz;
+        vertexPosition = mul(g_WorldMatrix, vPosition);
         vertexNormal = normalize(mul(g_WorldMatrix, vNormal));
         vertexTangent = normalize(mul(g_WorldMatrix, g_VertexTangents[vertexIndex])).xyz;
 

@@ -3070,9 +3070,9 @@ void CModel::Bind_Resource_Skinning(_uint iIndex)
 	m_Meshes[iIndex]->Bind_Resource_Skinning();
 }
 
-void CModel::Bind_Essential_Resource_Skinning(_float4x4 WorldMat)
+void CModel::Bind_Essential_Resource_Skinning(_float4x4* pWorldMat)
 {
-	m_pGameInstance->Bind_Essential_Resource_Skinning(WorldMat, m_MeshBoneMatrices);
+	m_pGameInstance->Bind_Essential_Resource_Skinning(pWorldMat, m_MeshBoneMatrices);
 }
 
 void CModel::Staging_Skinning(_uint iIndex)

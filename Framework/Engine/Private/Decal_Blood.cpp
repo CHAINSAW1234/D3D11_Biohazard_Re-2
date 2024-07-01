@@ -117,6 +117,8 @@ void CDecal_Blood::Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input)
 	_float4x4 WorldInv_Float4x4;
 	XMStoreFloat4x4(&WorldInv_Float4x4, WorldInv);
 	Input.Decal_Matrix_Inv = WorldInv_Float4x4;
+
+
 	Input.pDecalMap = m_pUAV_DecalMap;
 	Input.vExtent = m_vExtent;
 
@@ -268,7 +270,7 @@ HRESULT CDecal_Blood::Initialize(void* pArg)
 			return E_FAIL;
 	}
 
-	m_vExtent = _float3(0.05f,0.05f, 0.05f);
+	m_vExtent = _float3(0.05f,0.05f,0.1f);
 
 	return S_OK;
 }
