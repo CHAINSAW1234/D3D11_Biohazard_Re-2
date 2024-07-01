@@ -207,16 +207,23 @@ public:
 public:
 	_int										Get_Player_ColIndex() { return m_iCurCol; }
 	_int										Get_Player_Direction() { return m_iDir; }
+	_int										Get_Player_Floor() { return m_iFloor; }
+	_int										Get_Player_Region() { return m_iRegion; }
 	_bool										Get_Player_RegionChange() { return m_bChange; }
-	_bool*										Get_Player_Interact_Ptr() { return &m_bInteract; }
-
+	_bool*									Get_Player_Interact_Ptr() { return &m_bInteract; }
+	_bool*									Get_Player_Region_Array() { return m_bRegion; }
+	// 인벤 연동 뒤 나영이의 UI에게 플레이어가 얻은 아이템의 enum을 던져줘야함
 private:
-	_bool										m_bInteract = { false }; // 나 소통하겠다
+
+	_bool										m_bInteract = { false }; //플레이어가 상호작용을 시도한
 	_bool										m_bChange = { true };
 	_int										m_iCurCol = { 0 };
+	_int										m_iRegion = { 0 };
 	_int										m_iDir = { 0 };
 	_int										m_iPreCol = { 1 };
-	_float										m_fTimeTEST = { 0.f };
+	_int										m_iFloor = { 0 };
+	_float									m_fTimeTEST = { 0.f };
+	_bool										m_bRegion[100] = { false, };
 #pragma endregion
 
 

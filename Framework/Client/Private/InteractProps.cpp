@@ -133,38 +133,52 @@ void CInteractProps::Check_Player()
 
 }
 
-void CInteractProps::Check_Col_Sphere_Player()
+_bool CInteractProps::Check_Col_Sphere_Player()
 {
 	if (m_pPlayer == nullptr)
-		return;
+		return false;
 	if (m_pColliderCom[INTERACTPROPS_COL_SPHERE] == nullptr)
-		return;
+		return false;
 	CCollider* pPlayerCol = static_cast<CCollider*>( m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_SPHERE]))
-		m_bCol = true; 
+	{
+		m_bInteract = true;
+		return true;
+	}
+	return false;
 
 }
 
-void CInteractProps::Check_Col_OBB_Player()
+_bool CInteractProps::Check_Col_OBB_Player()
 {
 	if (m_pPlayer == nullptr)
-		return;
+		return false;
 	if (m_pColliderCom[INTERACTPROPS_COL_OBB] == nullptr)
-		return;
+		return false;
 	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_OBB]))
-		m_bCol = true;
+	{
+		m_bInteract = true;
+		return true;
+	}
+	return false;
+
 }
 
-void CInteractProps::Check_Col_AABB_Player()
+_bool CInteractProps::Check_Col_AABB_Player()
 {
 	if (m_pPlayer == nullptr)
-		return;
+		return false;
 	if (m_pColliderCom[INTERACTPROPS_COL_AABB] == nullptr)
-		return;
+		return false;
 	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_AABB]))
-		m_bCol = true;
+	{
+		m_bInteract = true;
+		return true;
+	}
+	return false;
+
 }
 
 _bool CInteractProps::Visible()
@@ -374,7 +388,7 @@ void CInteractProps::Free()
 {
 	__super::Free();
 
-
+	Safe_Release(m_pTab_Window);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
 	for (size_t i = 0; i < INTERACTPROPS_COL_END; i++)

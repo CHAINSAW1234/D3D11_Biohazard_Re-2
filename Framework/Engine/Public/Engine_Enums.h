@@ -78,4 +78,7 @@ namespace Engine
 		FOOT_R = 1 << 14,
 		_END
 	};
+
+	enum class MAP_FLOOR_TYPE { BASEMENT_2, BASEMENT_1, FLOOR_1, FLOOR_2, FLOOR_3, FLOOR_FREE, FLOOR_END };
+
 }

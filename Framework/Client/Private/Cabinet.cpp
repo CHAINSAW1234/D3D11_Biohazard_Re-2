@@ -47,8 +47,15 @@ void CCabinet::Tick(_float fTimeDelta)
 	//__super::Check_TabWindow();
 	__super::Check_Player();
 	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+	if(m_bReonDesk)
+		m_pColliderCom[INTERACTPROPS_COL_AABB]->Tick(m_pTransformCom->Get_WorldMatrix());
+	
 	if (!m_bVisible)
 		return;
+	if (m_PartObjects[PART_ITEM] != nullptr)
+		if (m_PartObjects[PART_ITEM]->Get_Dead() == true)
+			Set_Region(-1);
+	
 #ifdef _DEBUG
 #ifdef UI_POS
 	Get_Object_Pos();
@@ -96,13 +103,17 @@ void CCabinet::Late_Tick(_float fTimeDelta)
 		m_bRender = false;
 	}
 
-	Check_Col_Sphere_Player(); 
+	m_bCol = Check_Col_Sphere_Player(); 
+	if(m_bReonDesk)
+		m_bRightCol = Check_Col_AABB_Player();
 
 	__super::Late_Tick(fTimeDelta);
 
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_SPHERE]);
+	if(m_bReonDesk)
+		m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_AABB]);
 #endif
 }
 
@@ -116,11 +127,25 @@ HRESULT CCabinet::Add_Components()
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
 	ColliderDesc.fRadius = _float(50.f);
-	ColliderDesc.vCenter = _float3(50.f, 1.f, 30.f);
+	ColliderDesc.vCenter = _float3(50.f, 1.f, 50.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+		TEXT("Com_Collider_Shpere"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
 		return E_FAIL;
+
+	if (m_tagPropDesc.strGamePrototypeName.find("reon") != string::npos)
+	{
+		CBounding_AABB::BOUNDING_AABB_DESC		ColliderDesc1{};
+
+		ColliderDesc1.vSize = _float3(100.f,100.f,100.f);
+		ColliderDesc1.vCenter = _float3(-50.f, 1.f, 50.f);
+		/* For.Com_Collider */
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
+			TEXT("Com_Collider_AABB"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_AABB], &ColliderDesc1)))
+			return E_FAIL;
+		m_bReonDesk = true;
+	}
+
 
 	return S_OK;
 }
@@ -158,10 +183,13 @@ HRESULT CCabinet::Add_PartObjects()
 		if (nullptr == pItem)
 			return E_FAIL;
 		m_PartObjects[CCabinet::PART_ITEM] = pItem;
-
+		m_bItemDead = false;
 	}
 	else
+	{
+		m_bItemDead = true;
 		m_PartObjects[CCabinet::PART_ITEM] = nullptr;
+	}
 
 
 	/*Part_Lock*/
@@ -210,10 +238,12 @@ void CCabinet::Active()
 	
 	m_eState = CABINET_OPEN;
 	if (m_bObtain)
-		if (nullptr != m_PartObjects[PART_ITEM])
+		if (nullptr != m_PartObjects[PART_ITEM]&&!m_bItemDead)
 		{
-			//여기서 window 불러서 아이템 죽일지 말지 결정!
-			m_PartObjects[PART_ITEM]->Set_Dead(true);
+			m_bItemDead = { false };
+			//bItemDead = m_pPlayer->Get_Inven(); //창균오빠가 만들 플레이어-인벤 함수
+			m_bItemDead = true;
+			m_PartObjects[PART_ITEM]->Set_Dead(m_bItemDead);
 		}
 }
 

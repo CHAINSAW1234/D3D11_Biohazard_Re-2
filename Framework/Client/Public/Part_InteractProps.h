@@ -58,7 +58,7 @@ public:
 		m_pPlayerTransform = pPlayerTransform;
 	}
 	virtual _float4 Get_Pos(_int iArg = 0) { return XMVectorSetW( m_WorldMatrix.Translation(),1.f); }
-	
+	virtual _int Get_PartObject_Props_ItemIndex() { return -1; };
 protected:
 	_int				m_iPropType = { 0 };
 	_bool				m_bCol = { false };

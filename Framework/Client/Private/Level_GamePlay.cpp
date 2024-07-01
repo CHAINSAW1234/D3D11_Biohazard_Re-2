@@ -78,7 +78,7 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 	_bool bGoal = { false };
 	_float4 vGoal = { 0.f,0.f,0.f,0.f };
 	CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-	iCurIndex = pPlayer->Get_Player_ColIndex();
+	iCurIndex = pPlayer->Get_Player_Region();
 	if (iCurIndex!= iPreIndex)
 	{
 		LIGHT_DESC* plight_desc = m_pGameInstance->Get_Light_List(g_strDirectionalTag)->front();
@@ -92,7 +92,7 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 			
 			m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta);
 		}
-		else if(iCurIndex == 3)
+		else if(iCurIndex == 10)
 		{
 			light_desc.vDiffuse = _float4(0.09f, 0.09f, 0.12f, 0.09f);
 			light_desc.vAmbient = _float4(0.09f, 0.09f, 0.12f, 0.09f);
@@ -241,6 +241,14 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 	return S_OK;
 }
 
+HRESULT CLevel_GamePlay::Ready_PropManager()
+{
+	//m_pPropManager = CProp_Manager::Create();
+	//if (m_pPropManager == nullptr)
+	//	return E_FAIL;
+	return S_OK;
+}
+
 HRESULT CLevel_GamePlay::Ready_Layer_Player(const wstring & strLayerTag/*, CLandObject::LANDOBJECT_DESC& LandObjectDesc*/)
 {
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Player"))))
@@ -326,15 +334,21 @@ HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_NavMesh_Debug"))))
 		return E_FAIL;
 
+
+	if (FAILED(Ready_PropManager()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
 HRESULT CLevel_GamePlay::Ready_RegionCollider()
 {
 	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_Collider"))))
+		return E_FAIL;	
+	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_Jombie_Collider"))))
 		return E_FAIL;
-	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_EventCollider"))))
-		return E_FAIL;
+	//if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_EventCollider"))))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -372,12 +386,20 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	ifstream inputFileStream;
 	wstring selectedFilePath;
 
+	///////////////////////////* ¢º  ¢º  ¢º  ¢º  ¢º  Crosshair  */////////////////////////////
 	/* 1. Crosshair */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Crosshair.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
-	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Crosshair_UI"), m_pDevice, m_pContext);
-	
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
+	/* 1. UI_ShotGun_Crosshair */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_ShotGun_Crosshair.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
+	///////////////////////////* ¢º  ¢º  ¢º  ¢º  ¢º    */////////////////////////////
 	/* 2. Cursor */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Cursor.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
@@ -417,7 +439,15 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 		CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 	}
 
+	/* 4. Inventory SelectBox */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_LayOut.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+	
 	///////////////////////////* ¢º ¢º  ¢º  ¢º  ¢º  Map */////////////////////////////
+	m_isMapType = true;
+
 	/* 9. Map_Mask */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Map_Mask.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
@@ -429,9 +459,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
-
+	
 	///////////////////////////*¢º ¢º  ¢º  ¢º  ¢º Map : Font */////////////////////////////
-
+	
 	/* 9. UI_Map_Font */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Map_Font.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
@@ -532,12 +562,19 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
-	///* 9. Map_Target */
-	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Map_Target.dat");
-	//inputFileStream.open(selectedFilePath, ios::binary);
-	//UI_Distinction(selectedFilePath);
-	//CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+	/* 9. Map_Target */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Map_Target.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 	
+	/* 9. Map_BackGround */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Map_Target_Notify.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
+	m_isMapType = false;
 	///////////////////////////* ¢º Map : END */////////////////////////////
 
 	/* 8. UI_Tutorial */
@@ -725,7 +762,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 
 	// ¢º °´Ã¼ »ý¼º
 	/* 1. Crosshair */
-	if (TEXT("UI_Crosshair") == fileName)
+	if (TEXT("UI_ShotGun_Crosshair") == fileName || TEXT("UI_Crosshair") == fileName)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Crosshair_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
@@ -804,7 +841,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 	}
 	
 	/* Map */
-	else if (TEXT("UI_Map_Item_Floor3") == fileName || TEXT("Map_Font3") == fileName || TEXT("UI_Map_Item_Floor2") == fileName || TEXT("UI_Map_Floor3") == fileName || TEXT("UI_Map_Door_Floor2") == fileName || TEXT("Map_Font2") == fileName || fileName == TEXT("UI_Map_Floor_Type") || fileName == TEXT("UI_Map_Floor2") || fileName == TEXT("Map_BackGround") || fileName == TEXT("Map_Target") || fileName == TEXT("Map_Search_Type") || fileName == TEXT("Map_Line") || fileName == TEXT("UI_Map_Player") || fileName == TEXT("UI_Map_Item") || fileName == TEXT("UI_Map_Window") || TEXT("UI_Map_Door") == fileName || TEXT("UI_Map") == fileName || TEXT("Map_Mask") == fileName || TEXT("UI_Map_Font") == fileName || fileName == TEXT("Map_Mask_Font"))
+	else if (true == m_isMapType)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Map_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
@@ -816,6 +853,13 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 		CustomizeUIDesc.wstrFileName = fileName;
 
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Read_Item_UI"), &CustomizeUIDesc)))
+			MSG_BOX(TEXT("Failed to Add Clone"));
+	}
+
+	/* 4. UI_LayOut */
+	else if (TEXT("UI_LayOut") == fileName)
+	{
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_LayOut_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
 	}
 
@@ -907,6 +951,13 @@ HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& st
 		{
 			CloseHandle(hFile);
 			return E_FAIL;
+		}		
+		
+		_int iFloor = { 0 };
+		if (!ReadFile(hFile, &iFloor, sizeof(_int), &dwByte, NULL))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
 		}
 
 
@@ -918,6 +969,7 @@ HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& st
 		collider_desc.iColNum = iNum;
 		collider_desc.iDir = iDir;
 		collider_desc.iRegionNum = iRegionNum;
+		collider_desc.iFloor = iFloor;
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strColLayerTag, TEXT("Prototype_GameObject_Collider"), &collider_desc)))
 		{
 			MSG_BOX(TEXT("Failed to Add_Clone Prototype_GameObject_Monster: CImGUI"));

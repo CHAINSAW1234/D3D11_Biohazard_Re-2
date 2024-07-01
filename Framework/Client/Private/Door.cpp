@@ -190,6 +190,7 @@ void CDoor::DoubleDoor_Tick(_float fTimeDelta)
 	{
 		m_fTime = 0.f;
 		m_bActive = false;
+		m_iHP = 5;
 		m_eDoubleState = DOUBLEDOOR_STATIC;
 	}
 
@@ -283,7 +284,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		}
 	}
 
-	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
+	m_bCol = Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
 	//Check_Col_OBB_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
 
 	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
@@ -301,7 +302,7 @@ void CDoor::DoubleDoor_Active()
 	if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
 	{
 		if (m_bCol && m_bDoubleCol)
-			m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN;
+			m_eDoubleState = L_DOUBLEDOOR_OPEN;
 		else if (m_bCol)
 			m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_L;
 		else
@@ -311,7 +312,7 @@ void CDoor::DoubleDoor_Active()
 	else
 	{
 		if (m_bCol && m_bDoubleCol)
-			m_eDoubleState = RSIDE_DOUBLEDOOR_OPEN;
+			m_eDoubleState = R_DOUBLEDOOR_OPEN;
 		else if (m_bCol)
 			m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_R;
 		else
@@ -383,6 +384,7 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 	{
 		m_fTime = 0.f;
 		m_bActive = false;
+		m_iHP = 5;
 		m_eOneState = ONEDOOR_STATIC;
 	}
 
@@ -412,7 +414,7 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 	case CDoor::ONEDOOR_STATIC:
 		break;
 	}
-	Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
+	m_bCol = Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
 	//Check_Col_OBB_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
 
 }
@@ -421,6 +423,18 @@ _float CDoor::Radian_To_Player()
 {
 	_vector vLook = XMVector4Normalize(m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK));
 	_vector vDir = XMVector4Normalize(m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION) - m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
+	_float fScala = XMVectorGetX(XMVector4Dot(vLook, vDir));
+	if (fScala > 1.f)
+		fScala = 1.f;
+	else if (fScala < -1.f)
+		fScala = -1.f;
+	return fScala;
+}
+
+_float CDoor::Radian_To_Jombie(class CTransform* pTransform)
+{	
+	_vector vLook = XMVector4Normalize(m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK));
+	_vector vDir = XMVector4Normalize(pTransform->Get_State_Vector(CTransform::STATE_POSITION) - m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
 	_float fScala = XMVectorGetX(XMVector4Dot(vLook, vDir));
 	if (fScala > 1.f)
 		fScala = 1.f;
