@@ -168,7 +168,6 @@ void CItem_UI::Reset_ItemUI()
 	m_iItemQuantity = 0;
 	for (auto& iter : m_vecChildUI)
 		static_cast<CCustomize_UI*>(iter)->Set_Dead(true);
-	
 }
 
 void CItem_UI::Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos, _int iVariation)

@@ -274,6 +274,31 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 
 		break;
 	}
+
+	case Client::COMBINABLE_PICKED_UP: {
+		m_iContextMenuCount = 2;
+
+		m_eContextType = eItemType;
+
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 2);
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("조합"));
+
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_ChildTextureNum(0, 7);
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_MyChild_Text(0, 0, TEXT("바꾸기"));
+
+		break;
+	}
+
+	case Client::UNCOMBINABLE_PICKED_UP: {
+		m_iContextMenuCount = 1;
+
+		m_eContextType = eItemType;
+
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_ChildTextureNum(0, 7);
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_MyChild_Text(0, 0, TEXT("바꾸기"));
+
+		break;
+	}
 		
 	default:
 		break;
@@ -327,6 +352,7 @@ void CContextMenu::Set_EventbyTexture(_uint iTextureNum)
 	}
 
 	case 7: {
+		/*m_eContextEvent = SWITCH_ITEM;*/
 		break;
 	}
 

@@ -9,7 +9,7 @@ BEGIN(Client)
 class CTab_Window final : public CUI
 {
 public:
-	enum WINDOW_TYPE{MINIMAP, INVENTORY, HINT, EXAMINE, WINDOW_TYPE_END };
+	enum WINDOW_TYPE{MINIMAP, INVENTORY, HINT, EXAMINE, PICK_UP_ITEM ,WINDOW_TYPE_END };
 
 protected:
 	CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -23,10 +23,19 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-public :
+private:
+	void	ItemIven_EventHandle(_float fTimeDelta);
+	void	FirstTick_Seting();
+	void	Button_Act(_float fTimeDelta);
+
+public:
+	void	OnOff_EventHandle();
+	void	Set_WindowType(WINDOW_TYPE eWindowType) { m_eWindowType = eWindowType; };
+
 	_bool	Get_MinMapRender() const { return m_isMapRender; }
 	_bool*	Get_MainRender()	{ return m_pInvenButton->Get_Dead_Ptr(); }
 
+	void	PickUp_Item(CGameObject* pPickedUp_Item);
 
 	//아이탬 인벤토리에 넣기
 	void AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity = 1);
@@ -48,6 +57,8 @@ private:
 
 	CInventory_Manager* m_pInventory_Manager = { nullptr };
 
+	class CItem_Discription* m_pItem_Discription = { nullptr };
+
 private : /* NY */
 	void				Find_Cursor();
 	void				Select_UI();
@@ -67,6 +78,9 @@ private:
 
 	_float				m_fCurTime = { 0.f };
 
+	/*for. Picked Up Item*/
+	CGameObject*		m_pPickedUp_Item = { nullptr };
+
 private:
 	HRESULT Add_Components();
 	HRESULT Bind_ShaderResources();
@@ -75,6 +89,7 @@ private:
 	HRESULT Creat_MiniMap();
 	HRESULT Creat_Hint();
 	HRESULT Creat_Item_Mesh_Viewer();
+	HRESULT Creat_Item_Discription();
 
 public:
 	static CTab_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

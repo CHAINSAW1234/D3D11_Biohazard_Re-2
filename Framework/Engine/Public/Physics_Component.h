@@ -48,6 +48,40 @@ public:
 	{
 		return m_bReleased;
 	}
+	_float4							GetBlockPoint()
+	{
+		return m_vBlockPoint;
+	}
+	void							SetBlockPoint(_float4 vPoint)
+	{
+		m_vBlockPoint = vPoint;
+	}
+	_float4							GetHitNormal()
+	{
+		return m_vHitNormal;
+	}
+	void							SetHitNormal(_float4 HitNormal)
+	{
+		m_vHitNormal = HitNormal;
+		m_vHitNormal.w = 0.f;
+	}
+	void							Increase_Hit_Count()
+	{
+		++m_iHitCount;
+	}
+	_uint							Get_Hit_Count()
+	{
+		return m_iHitCount;
+	}
+	void							SetDead(_bool boolean)
+	{
+		m_bDead = boolean;
+	}
+	_bool							GetDead()
+	{
+		return m_bDead;
+	}
+	virtual void					SetPosition(_float4 vPos) {}
 public:
 	static CPhysics_Component*		Create();
 
@@ -68,6 +102,10 @@ protected:
 
 	_bool							m_bReleased = { false };
 
+	_float4							m_vBlockPoint;
+	_float4							m_vHitNormal;
+	_uint							m_iHitCount = { 0 };
+	_bool							m_bDead = { false };
 protected:
 	_int m_iRefCnt_Px = { 0 };
 public:

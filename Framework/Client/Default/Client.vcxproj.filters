@@ -343,12 +343,6 @@
     <Filter Include="AIController\Zombie\Task\Utility\ExecutePreTask">
       <UniqueIdentifier>{f9aa79f4-30c5-47f5-8c46-5a4e0c14f097}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Decal">
-      <UniqueIdentifier>{3faddc07-8871-4e40-9c1c-1fb18c4c3945}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Decal\Blood">
-      <UniqueIdentifier>{0bc76a0b-c492-43e3-8c07-bfc815ee613f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Camera\Camera_Event">
       <UniqueIdentifier>{ee555b89-e04f-4401-b4d8-37201d791dcc}</UniqueIdentifier>
     </Filter>
@@ -390,6 +384,18 @@
     </Filter>
     <Filter Include="02.GameObjects\Player\Effect_Header">
       <UniqueIdentifier>{2f676497-0d0d-432c-8fdd-ad297219ae70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Muzzle_Flash_SG">
+      <UniqueIdentifier>{dc7b21c1-ec06-44e1-a0af-4c0e3cacdafb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Blood">
+      <UniqueIdentifier>{d2078c0f-c8a7-4383-bbad-8f76bf08e3a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Effect_Header">
+      <UniqueIdentifier>{99cd4cb9-bb79-4588-a5b8-8f0ccefde55d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\4. Item_Discription">
+      <UniqueIdentifier>{a4de0cca-9b51-44c7-8a1d-491fa3b44acc}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\Player\State\Player_State_Damg">
       <UniqueIdentifier>{94d3ab13-025c-408b-87af-20b5e8b80ac8}</UniqueIdentifier>
@@ -771,9 +777,6 @@
     <ClInclude Include="..\Public\Stand_Up_Zombie.h">
       <Filter>AIController\Zombie\Task\Creep\StandUp</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Decal_Blood.h">
-      <Filter>02.GameObjects\Decal\Blood</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Camera_Event.h">
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
     </ClInclude>
@@ -804,8 +807,20 @@
     <ClInclude Include="..\Public\Muzzle_Flash.h">
       <Filter>02.GameObjects\Effect\Muzzle_Flash</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Effect_Header.h">
+    <ClInclude Include="..\Public\Effect_Header_Player.h">
       <Filter>02.GameObjects\Player\Effect_Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Muzzle_Flash_SG.h">
+      <Filter>02.GameObjects\Effect\Muzzle_Flash_SG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Blood.h">
+      <Filter>02.GameObjects\Effect\Blood</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Effect_Header_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\Effect_Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Item_Discription.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\4. Item_Discription</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Creep_Zombie.h">
       <Filter>AIController\Zombie\Task\Idle\Creep</Filter>
@@ -1145,9 +1160,6 @@
     <ClCompile Include="..\Private\Stand_Up_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Creep\StandUp</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Decal_Blood.cpp">
-      <Filter>02.GameObjects\Decal\Blood</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Camera_Event.cpp">
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
     </ClCompile>
@@ -1174,6 +1186,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Muzzle_Flash.cpp">
       <Filter>02.GameObjects\Effect\Muzzle_Flash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Muzzle_Flash_SG.cpp">
+      <Filter>02.GameObjects\Effect\Muzzle_Flash_SG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Blood.cpp">
+      <Filter>02.GameObjects\Effect\Blood</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item_Discription.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\4. Item_Discription</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Creep_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Idle\Creep</Filter>

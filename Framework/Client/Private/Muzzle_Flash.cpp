@@ -55,7 +55,7 @@ void CMuzzle_Flash::Tick(_float fTimeDelta)
 void CMuzzle_Flash::Late_Tick(_float fTimeDelta)
 {
 	if(m_bRender == true)
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EFFECT_BLOOM, this);
 }
 
 HRESULT CMuzzle_Flash::Render()

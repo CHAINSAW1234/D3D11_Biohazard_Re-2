@@ -364,6 +364,23 @@ public:/*For Skinned Mesh Decal*/
 	void									Bind_Resource_Skinning(_uint iIndex);
 	void									Bind_Essential_Resource_Skinning(_float4x4 WorldMat);
 	void									Staging_Skinning(_uint iIndex);
+	void									Perform_Skinning(_uint iIndex);
+	void									SetDecalWorldMatrix(_uint iIndex,_float4x4 WorldMatrix);
+
+public:/*For Mesh RayCasting*/
+	_uint									Perform_RayCasting(_uint iIndex, AddDecalInfo Info,_float* pDist);
+
+public:/*For Calc Decal Info*/
+	void									Perform_Calc_DecalInfo(_uint iIndex);
+
+public:/*For Decal Map*/
+	void									Bind_Resource_DecalMap(_uint iIndex, class CShader* pShader);
+	void									Perform_Init_DecalMap(_uint iIndex, class CShader* pShader);
+
+
+public:/*For Calc Decal Map*/
+	void									Perform_Calc_DecalMap();
+	void									Bind_DecalMap(_uint iIndex,class CShader* pShader);
 public:
 	/* Create_ */
 	static CModel* Create_Temp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix);

@@ -12,6 +12,7 @@ class CFSM;
 END
 
 BEGIN(Client)
+class CTab_Window;
 class CWeapon;
 
 class CPlayer final : public CGameObject, public CObserver_Handler
@@ -82,6 +83,7 @@ public:
 	virtual void								Tick(_float fTimeDelta) override;
 	virtual void								Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT								Render() override;
+	virtual void								Start() override;
 
 private:
 	void										Priority_Tick_PartObjects(_float fTimeDelta);
@@ -182,7 +184,6 @@ private:
 
 	class CCamera_Event* m_pCamera_Event = { nullptr };
 
-
 	friend class CPlayer_State_Move_Walk;
 	friend class CPlayer_State_Move_Jog;
 	friend class CPlayer_State_Hold_Idle;
@@ -202,8 +203,9 @@ public:
 	_int										Get_Player_Direction() { return m_iDir; }
 	_bool										Get_Player_RegionChange() { return m_bChange; }
 	_bool*										Get_Player_Interact_Ptr() { return &m_bInteract; }
+
 private:
-	_bool										m_bInteract = { false };
+	_bool										m_bInteract = { false }; // 나 소통하겠다
 	_bool										m_bChange = { true };
 	_int										m_iCurCol = { 0 };
 	_int										m_iDir = { 0 };
@@ -211,8 +213,13 @@ private:
 	_float										m_fTimeTEST = { 0.f };
 #pragma endregion
 
+
 #pragma region 창균 추가
-	_bool										m_bIsExamineItem = { false };
+public:
+	void										PickUp_Item(CGameObject* pPickedUp_Item); //TabWindow의 PickUp_Item함수 호출용
+
+private:
+	_bool										m_isCamTurn = { false };
 	class CTab_Window*							m_pTabWindow = { nullptr };
 #pragma
 
@@ -317,6 +324,7 @@ public:
 	void	Late_Tick_Effect(_float fTimeDelta);
 private:
 	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
+	class CMuzzle_Flash_SG*						m_pMuzzle_Flash_SG = { nullptr };
 #pragma endregion
 private:
 	HRESULT Add_Components();

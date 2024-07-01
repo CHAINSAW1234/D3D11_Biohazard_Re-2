@@ -23,6 +23,9 @@ public:
 	HRESULT							Bind_Textures(const _char* pConstantName, ID3D11ShaderResourceView** ppSRVs, _uint iNumTextures);
 	HRESULT							Bind_Texture_Cube(const _char* pConstantName, ID3D11ShaderResourceView* pSRV);
 	HRESULT							Bind_RawValue(const _char* pConstantName, const void* pData, _uint iLength);
+	HRESULT							Bind_Uav(const _char* pConstantName, ID3D11UnorderedAccessView* pUav);
+	HRESULT							Bind_Constant_Buffer(const _char* pConstantName, ID3D11Buffer* pCB);
+	HRESULT							Bind_Structured_Buffer(const _char* pConstantName, ID3D11ShaderResourceView* pSRV);
 
 private:
 	ID3DX11Effect*					m_pEffect = { nullptr };

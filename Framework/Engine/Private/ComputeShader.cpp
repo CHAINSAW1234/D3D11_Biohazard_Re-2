@@ -9,11 +9,11 @@ CComputeShader::CComputeShader(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 HRESULT CComputeShader::Initialize(const wstring& strShaderFilePath, const string& strEntryPoint)
 {
-//	UINT iHlslFlag = D3DCOMPILE_ENABLE_STRICTNESS;
-//#ifdef _DEBUG 
-//	iHlslFlag |= D3DCOMPILE_DEBUG;
-//	iHlslFlag |= D3DCOMPILE_SKIP_OPTIMIZATION;
-//#endif
+	//	UINT iHlslFlag = D3DCOMPILE_ENABLE_STRICTNESS;
+	//#ifdef _DEBUG 
+	//	iHlslFlag |= D3DCOMPILE_DEBUG;
+	//	iHlslFlag |= D3DCOMPILE_SKIP_OPTIMIZATION;
+	//#endif
 
 	_uint		iHlslFlag = { 0 };
 #ifdef _DEBUG
@@ -50,6 +50,15 @@ HRESULT CComputeShader::Initialize(const wstring& strShaderFilePath, const strin
 
 		m_ComputeShaders.push_back(pComputeShader);
 	}
+
+#pragma region Query Init
+	D3D11_QUERY_DESC queryDesc = {};
+	queryDesc.Query = D3D11_QUERY_EVENT;
+	queryDesc.MiscFlags = 0;
+	HRESULT hr = m_pDevice->CreateQuery(&queryDesc, &m_pQuery);
+	if (FAILED(hr))
+		return hr;
+#pragma endregion
 
 	return S_OK;
 }
@@ -149,7 +158,11 @@ HRESULT CComputeShader::Bind_Uav(const _char* pConstantName, ID3D11UnorderedAcce
 
 HRESULT CComputeShader::Bind_Constant_Buffer(const _char* pConstantName, ID3D11Buffer* pCB)
 {
-	ID3DX11EffectConstantBuffer* pEffectCB = m_pEffect->GetVariableByName(pConstantName)->AsConstantBuffer();
+	/*ID3DX11EffectConstantBuffer* pEffectCB = m_pEffect->GetVariableByName(pConstantName)->AsConstantBuffer();
+	if (nullptr == pEffectCB)
+		return E_FAIL;*/
+
+	ID3DX11EffectConstantBuffer* pEffectCB = m_pEffect->GetConstantBufferByName(pConstantName);
 	if (nullptr == pEffectCB)
 		return E_FAIL;
 
@@ -186,10 +199,17 @@ HRESULT CComputeShader::Render(_uint iPassIndex, _uint iThreadNumX, _uint iThrea
 
 	pPass->Apply(0, m_pContext);
 
-	m_pContext->Dispatch(iThreadNumX, iThreadNumX, iThreadNumZ);
-	
-	ID3D11UnorderedAccessView* NullUAV = { nullptr };
-	m_pContext->CSSetUnorderedAccessViews(0, 1, &NullUAV, nullptr);
+	m_pContext->Dispatch(iThreadNumX, iThreadNumY, iThreadNumZ);
+	/*m_pContext->Flush();
+	m_pContext->End(m_pQuery);
+
+	while (m_pContext->GetData(m_pQuery, nullptr, 0, 0) == S_FALSE)
+	{
+
+	}*/
+
+	ID3D11UnorderedAccessView* NullUAVs[2] = { nullptr, nullptr };
+	m_pContext->CSSetUnorderedAccessViews(0, 2, NullUAVs, nullptr);
 
 	return S_OK;
 }
@@ -213,8 +233,9 @@ void CComputeShader::Free()
 	__super::Free();
 	Safe_Release(m_pEffect);
 
-	for(auto& pComputeShader: m_ComputeShaders)
+	for (auto& pComputeShader : m_ComputeShaders)
 		Safe_Release(pComputeShader);
 	m_ComputeShaders.clear();
-	
+
+	Safe_Release(m_pQuery);
 }

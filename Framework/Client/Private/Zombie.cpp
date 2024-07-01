@@ -14,6 +14,7 @@
 #include "Player.h"
 #include "Decal_Blood.h"
 #include "Mesh.h"
+#include "Effect_Header_Zombie.h"
 
 #define MODEL_SCALE 0.01f
 
@@ -41,7 +42,7 @@ HRESULT CZombie::Initialize(void* pArg)
 	GameObjectDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
-		return E_FAIL;	
+		return E_FAIL;
 
 	//if (FAILED(Add_Components()))
 	//	return E_FAIL;
@@ -82,9 +83,14 @@ HRESULT CZombie::Initialize(void* pArg)
 
 	CBlackBoard_Zombie::BLACKBOARD_ZOMBIE_DESC			Desc;
 	Desc.pAI = this;
-	m_pBlackBoard = CBlackBoard_Zombie::Create(&Desc);	
+	m_pBlackBoard = CBlackBoard_Zombie::Create(&Desc);
 
 	Init_BehaviorTree_Zombie();
+#pragma endregion
+
+#pragma region Effect
+	m_BloodDelay = 70;
+	Ready_Effect();
 #pragma endregion
 
 	return S_OK;
@@ -134,7 +140,7 @@ void CZombie::Tick(_float fTimeDelta)
 	
 	cout << XMVectorGetX(vScale) << ", " << XMVectorGetY(vScale) << ", " << XMVectorGetZ(vScale) << endl;
 
-	if (nullptr != m_pController && false == m_isManualMove)
+	if (nullptr != m_pController && false == m_isManualMove && m_pController->GetDead() == false)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
 
 #pragma region BehaviorTree 코드
@@ -146,7 +152,8 @@ void CZombie::Tick(_float fTimeDelta)
 	_float4			vDirection = {};
 	_vector			vRootMoveDir = { XMLoadFloat3(&m_vRootTranslation) };
 	XMStoreFloat4(&vDirection, vRootMoveDir);
-	if (m_pController)
+
+	if (m_pController && m_pController->GetDead() == false)
 	{
 		if (false == m_isManualMove)
 		{
@@ -195,27 +202,62 @@ void CZombie::Tick(_float fTimeDelta)
 	//}
 #pragma endregion
 
+#pragma region Ragdoll 피격
+	if (m_bRagdoll)
+	{
+		if (m_pController)
+		{
+			if (m_pController->Is_Hit())
+			{
+				/*For Decal*/
+				Ready_Decal();
+
+				/*For Blood Effect*/
+				m_bSetBlood = true;
+				m_BloodTime = GetTickCount64();
+
+				m_pController->Set_Hit(false);
+			}
+		}
+	}
+#pragma endregion
+
 	if (m_pController && m_bRagdoll == false)
 	{
 		if (m_pController->Is_Hit())
 		{
+			/*For Decal*/
+			Ready_Decal();
+
+			/*For Blood Effect*/
+			m_bSetBlood = true;
+			m_BloodTime = GetTickCount64();
+
 			m_pController->Set_Hit(false);
 
-			auto			vForce = m_pController->Get_Force();
-			auto			eType = m_pController->Get_Hit_Collider_Type();
-				//	for (auto& pPartObject : m_PartObjects)
-				//	{
-				//		if (nullptr != pPartObject)
-				//			pPartObject->SetRagdoll(m_iIndex_CCT, vForce, eType);
-				//	}
 
-			//	For.Anim
+			auto vForce = m_pController->Get_Force();
+			auto eType = m_pController->Get_Hit_Collider_Type();
+
+
+			if (m_pController->GetDead())
+			{
+				m_bRagdoll = true;
+
+				for (auto& pPartObject : m_PartObjects)
+				{
+					if (nullptr != pPartObject)
+						pPartObject->SetRagdoll(m_iIndex_CCT, vForce, eType);
+				}
+			}
+
+		//	For.Anim
 			m_eCurrentHitCollider = eType;
-			XMStoreFloat3(&m_vHitDirection,  XMLoadFloat4(&vForce));
+			XMStoreFloat3(&m_vHitDirection, XMLoadFloat4(&vForce));
 
 #pragma region HIT TYPE 분할 임시
 
-			
+
 			CPlayer::EQUIP		eEquip = m_pBlackBoard->GetPlayer()->Get_Equip();
 			if (CPlayer::EQUIP::HG == eEquip)
 			{
@@ -240,7 +282,14 @@ void CZombie::Tick(_float fTimeDelta)
 	//For Decal.
 	m_pColliderCom_Bounding->Tick(m_pTransformCom->Get_WorldMatrix_Pure_Mat());
 
-	//	Ready_Decal();
+#pragma region Effect
+	if (m_bSetBlood)
+	{
+		SetBlood();
+	}
+
+	Tick_Effect(fTimeDelta);
+#pragma endregion
 }
 
 void CZombie::Late_Tick(_float fTimeDelta)
@@ -257,12 +306,16 @@ void CZombie::Late_Tick(_float fTimeDelta)
 
 	__super::Late_Tick(fTimeDelta);
 
-	if (m_pController)
+	if (m_pController && m_pController->GetDead() == false)
 		m_pController->Update_Collider();
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom_Bounding);
 #endif
+
+#pragma region Effect
+	Late_Tick_Effect(fTimeDelta);
+#pragma endregion
 }
 
 HRESULT CZombie::Render()
@@ -659,14 +712,12 @@ HRESULT CZombie::Add_Components()
 	/* Com_Collider_Body */
 	CBounding_AABB::BOUNDING_AABB_DESC		ColliderAABBDesc{};
 
-	ColliderAABBDesc.vSize = _float3(0.4f, 1.6f, 0.4f);
+	ColliderAABBDesc.vSize = _float3(1.2f, 2.3f, 1.2f);
 	ColliderAABBDesc.vCenter = _float3(0.f, ColliderAABBDesc.vSize.y * 0.5f, 0.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider_Bounding"), (CComponent**)&m_pColliderCom_Bounding, &ColliderAABBDesc)))
 		return E_FAIL;
-
-	m_pDecal_Blood = CDecal_Blood::Create(m_pDevice, m_pContext);
 
 	return S_OK;
 }
@@ -880,15 +931,14 @@ HRESULT CZombie::Initialize_PartModels()
 
 void CZombie::Perform_Skinning()
 {
+	list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
+
 	m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldMatrix());
 
-	_uint iNumMesh = m_pBodyModel->GetNumMesh();
-
-	for (_uint i = 0; i < iNumMesh; ++i)
+	for (auto& i : NonHideIndex)
 	{
 		m_pBodyModel->Bind_Resource_Skinning(i);
 		m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
-		m_pBodyModel->Staging_Skinning(i);
 	}
 }
 
@@ -918,8 +968,139 @@ void CZombie::Ready_Decal()
 		decalInfo.minHitDistance = hitResult.minHitDistance;
 		decalInfo.maxHitDistance = hitResult.maxHitDistance;
 		decalInfo.decalMaterialIndex = 0;
-		m_pDecal_Blood->Add_Skinned_Decal(decalInfo);
+
+		list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
+		for (auto& i : NonHideIndex)
+		{
+			m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
+
+			if (m_iMeshIndex_Hit != 999)
+			{
+				m_iMeshIndex_Hit = i;
+
+				_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
+				_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
+				XMStoreFloat4(&m_vHitPosition, CameraPos);
+
+				m_vHitNormal = m_pController->GetHitNormal();
+
+				break;
+			}
+		}
+
+		if (m_iMeshIndex_Hit == 999)
+		{
+			m_vHitPosition = m_pController->GetBlockPoint();
+			m_vHitNormal = m_pController->GetHitNormal();
+		}
+
+		/*if (iMeshIndex != -1 && iMeshIndex != 999)
+		{
+			m_pBodyModel->Perform_Calc_DecalInfo(iMeshIndex);
+			m_pBodyModel->Bind_Resource_DecalMap(iMeshIndex, m_pShader_Decal);
+			m_pBodyModel->Perform_Init_DecalMap(iMeshIndex, m_pShader_Decal);
+		}*/
 	}
+}
+
+
+void CZombie::Ready_Effect()
+{
+	for (size_t i = 0; i < 3; ++i)
+	{
+		auto pBlood = CBlood::Create(m_pDevice, m_pContext);
+		pBlood->SetSize(3.f, 3.f, 3.f);
+		m_vecBlood.push_back(pBlood);
+	}
+}
+
+void CZombie::Release_Effect()
+{
+	for (size_t i = 0; i < m_vecBlood.size(); ++i)
+	{
+		Safe_Release(m_vecBlood[i]);
+	}
+}
+
+void CZombie::Tick_Effect(_float fTimeDelta)
+{
+	for (size_t i = 0; i < m_vecBlood.size(); ++i)
+	{
+		m_vecBlood[i]->Tick(fTimeDelta);
+	}
+}
+
+void CZombie::Late_Tick_Effect(_float fTimeDelta)
+{
+	for (size_t i = 0; i < m_vecBlood.size(); ++i)
+	{
+		m_vecBlood[i]->Late_Tick(fTimeDelta);
+	}
+}
+
+void CZombie::SetBlood()
+{
+	if (m_iBloodCount >= m_vecBlood.size())
+	{
+		m_bSetBlood = false;
+		m_iBloodCount = 0;
+		m_vHitPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		return;
+	}
+
+	if (m_BloodDelay + m_BloodTime < GetTickCount64())
+	{
+		m_BloodTime = GetTickCount64();
+		m_vecBlood[m_iBloodCount]->Set_Render(true);
+		m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
+
+		if (m_iBloodCount == 0)
+		{
+			Calc_Decal_Map();
+
+			m_iBloodType = m_pGameInstance->GetRandom_Int(0, 10);
+
+			m_vecBlood[m_iBloodCount]->SetType(m_iBloodType);
+
+			if (m_iBloodType >= 10)
+			{
+				m_iBloodType = 0;
+			}
+		}
+		else
+		{
+			if (m_iBloodType == 1)
+			{
+				++m_iBloodType;
+			}
+
+			m_vecBlood[m_iBloodCount]->SetType(++m_iBloodType);
+
+			if (m_iBloodType >= 10)
+			{
+				m_iBloodType = 0;
+			}
+		}
+
+		m_vecBlood[m_iBloodCount]->SetPosition(m_vHitPosition);
+
+		++m_iBloodCount;
+
+		if (m_iBloodCount >= m_vecBlood.size())
+		{
+			m_bSetBlood = false;
+			m_iBloodCount = 0;
+			m_vHitPosition = _float4(0.f, 0.f, 0.f, 1.f);
+			return;
+		}
+	}
+}
+
+void CZombie::Calc_Decal_Map()
+{
+	m_pBodyModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+
+	m_pBodyModel->Perform_Calc_DecalMap();
 }
 
 CZombie* CZombie::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -956,4 +1137,5 @@ void CZombie::Free()
 	__super::Free();
 
 	Safe_Release(m_pBlackBoard);
+	Release_Effect();
 }

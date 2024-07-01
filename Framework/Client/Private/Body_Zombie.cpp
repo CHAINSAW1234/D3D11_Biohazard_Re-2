@@ -213,6 +213,8 @@ HRESULT CBody_Zombie::Render()
 		//	if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
 		//		return E_FAIL;
 
+		m_pModelCom->Bind_DecalMap(i, m_pShaderCom);
+
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
 		{
 			_bool isAlphaTexture = false;
@@ -239,10 +241,8 @@ HRESULT CBody_Zombie::Render()
 				return E_FAIL;
 		}
 
-
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
-
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
 

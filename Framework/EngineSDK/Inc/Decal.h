@@ -7,7 +7,7 @@ BEGIN(Engine)
 class ENGINE_DLL CDecal : public CGameObject
 {
 public:
-	typedef struct Decal_Desc : public CGameObject::GAMEOBJECT_DESC
+	typedef struct : public CGameObject::GAMEOBJECT_DESC
 	{
 		_int iSubType;
 		_int iType;
@@ -23,18 +23,50 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-
+	void			SetWorldMatrix(_float4x4 WorldMatrix);
 public:
-	virtual void	Add_Skinned_Decal(AddDecalInfo Info) {}
+	virtual void	Add_Skinned_Decal(AddDecalInfo Info, RAYCASTING_INPUT Input) {}
+	virtual void	Bind_Resource_DecalInfo() {}
+	virtual _uint	Staging_DecalInfo_RayCasting(_float* pDist) { return 0; }
+	virtual void	Calc_Decal_Info(CALC_DECAL_INPUT Input) {}
+	virtual void	Staging_Calc_Decal_Info() {}
+	virtual void	Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input) {}
+	virtual void	Bind_DecalMap(class CShader* pShader) {}
+public:
+	ID3D11UnorderedAccessView* GetDecalInfo_Uav()
+	{
+		return m_pUAV_DecalInfo;
+	}
+	void						SetNumVertices(_uint iNumVertices)
+	{
+		m_iNumVertices = iNumVertices;
+	}
 protected:
 	class CModel* m_pModelCom = { nullptr };
 	class CShader* m_pShaderCom = { nullptr };
 	class CTexture* m_pTextureCom = { nullptr };
 	class CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 
-	struct DecalConstData decalConstData;
+	class DecalConstData m_DecalConstData;
+	class DecalInfo* m_DecalInfo = { nullptr };
+	ID3D11Buffer* m_pSB_DecalInfo = { nullptr };
+	ID3D11Buffer* m_pCB_DecalConstData = { nullptr };
+
+	ID3D11Buffer*				m_pSB_DecalMap = nullptr;
+	ID3D11UnorderedAccessView*  m_pUAV_DecalInfo = { nullptr };
+	ID3D11UnorderedAccessView*  m_pUAV_DecalMap = { nullptr };
+	ID3D11RenderTargetView*		m_pRTV_DecalMap = { nullptr };
+	ID3D11Buffer*				m_pStaging_Buffer_Decal_Info = { nullptr };
+	ID3D11Buffer*				m_pStaging_Buffer_Decal_Map = { nullptr };
+
+	_float3						m_vExtent;
+	_uint						m_iNumVertices = { 0 };
+
+	_float2*					m_pDecal_Map = { nullptr };
 protected:
-	_float					m_fX, m_fY, m_fSizeX, m_fSizeY,m_fSizeZ;
+	_float					m_fSizeX;
+	_float					m_fSizeY;
+	_float					m_fSizeZ;
 
 protected:
 	virtual HRESULT			Add_Components();

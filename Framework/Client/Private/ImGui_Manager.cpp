@@ -3,6 +3,7 @@
 #include "ImGui_Manager.h"
 #include "GameInstance.h"
 #include "Tab_Window.h"
+#include "Player.h"
 
 
 #define SL  ImGui::SameLine()
@@ -40,30 +41,12 @@ HRESULT CImgui_Manager::Initialize()
     ImGui_ImplWin32_Init(g_hWnd);
     ImGui_ImplDX11_Init(m_pDevice, m_pContext);
 
-    list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
 
-    for (auto& iter : *pUIList)
-    {
-        CTab_Window* pTabWindow = nullptr;
-
-        pTabWindow = dynamic_cast<CTab_Window*>(iter);
-
-        if (pTabWindow == nullptr)
-            continue;
-
-        m_pTabWindow = pTabWindow;
-        Safe_AddRef(m_pTabWindow);
-        break;
-    }
-
-    if (nullptr == m_pTabWindow)
+    if (FAILED(Refer_Tabwindow()))
         return E_FAIL;
 
-    for (_uint i = 0; i < static_cast<_uint>(ITEM_NUMBER_END); i++)
-    {
-        m_vecItemNums.push_back(Classify_ItemNum_To_String(static_cast<ITEM_NUMBER>(i)));
-    }
-
+    if (FAILED(Refer_Player()))
+        return E_FAIL;
 
     return S_OK;
 }
@@ -94,10 +77,14 @@ void CImgui_Manager::Tick()
     if (DOWN == m_pGameInstance->Get_KeyState('Z'))
     {
         m_bTabWindow_Debuger = !m_bTabWindow_Debuger;
+        m_bPlayer_Debuger = !m_bPlayer_Debuger;
     }
 
     if (true == m_bTabWindow_Debuger)
         Window_TabWindow_Debuger();
+
+    if (true == m_bPlayer_Debuger)
+        Window_Player_Debuger();
 
 }
 
@@ -110,7 +97,7 @@ void CImgui_Manager::Render()
 
 void CImgui_Manager::Window_TabWindow_Debuger()
 {
-    ImGui::Begin("Tab_Window");
+    ImGui::Begin("Tab_Window_Debug");
 
     if (ImGui::BeginListBox(u8"##ITEM_NUM_LIST", ImVec2(200.f, 300.f)))
     {
@@ -130,11 +117,27 @@ void CImgui_Manager::Window_TabWindow_Debuger()
         ImGui::EndListBox();
     }
 
+    ImGui::InputInt("##ItemCount", &m_iItemCount, 1);
+
     ImGui::Text(u8"도움말 : 만약 탬이 바로 보이지 않는다면\n인벤창을 껐다 키시면 됩니다");
 
     if (ImGui::Button(u8"Add ITEM", ImVec2(100.f, 30.f)) && TEXT("") != m_wstrCurrent_Item)
     {
-        m_pTabWindow->AddItem_ToInven(Classify_String_To_ItemNum(m_wstrCurrent_Item));
+        m_pTabWindow->AddItem_ToInven(Classify_String_To_ItemNum(m_wstrCurrent_Item), m_iItemCount);
+    }
+
+    ImGui::End();
+}
+
+void CImgui_Manager::Window_Player_Debuger()
+{
+    ImGui::Begin("Player_Debug");
+
+    ImGui::InputInt("##PlayerHP", &m_iPlayerHP, 1);
+
+    if (ImGui::Button(u8"SetPlayerHP", ImVec2(100.f, 30.f)))
+    {
+        m_pPlayer->Set_Hp(m_iPlayerHP);
     }
 
     ImGui::End();
@@ -329,6 +332,59 @@ string CImgui_Manager::WStringToString(const std::wstring& wstr)
     return strTo;
 }
 
+HRESULT CImgui_Manager::Refer_Player()
+{
+    list<class CGameObject*>* pPlayerList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"));
+
+    for (auto& iter : *pPlayerList)
+    {
+        CPlayer* pTabWindow = nullptr;
+
+        pTabWindow = dynamic_cast<CPlayer*>(iter);
+
+        if (pTabWindow == nullptr)
+            continue;
+
+        m_pPlayer = pTabWindow;
+        Safe_AddRef(m_pPlayer);
+        break;
+    }
+
+    if (nullptr == m_pPlayer)
+        return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CImgui_Manager::Refer_Tabwindow()
+{
+    list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_TabWindow"));
+
+    for (auto& iter : *pUIList)
+    {
+        CTab_Window* pTabWindow = nullptr;
+
+        pTabWindow = dynamic_cast<CTab_Window*>(iter);
+
+        if (pTabWindow == nullptr)
+            continue;
+
+        m_pTabWindow = pTabWindow;
+        Safe_AddRef(m_pTabWindow);
+        break;
+    }
+
+    if (nullptr == m_pTabWindow)
+        return E_FAIL;
+
+    for (_uint i = 0; i < static_cast<_uint>(ITEM_NUMBER_END); i++)
+    {
+        m_vecItemNums.push_back(Classify_ItemNum_To_String(static_cast<ITEM_NUMBER>(i)));
+    }
+
+    return S_OK;
+}
+
 void CImgui_Manager::Free()
 {
     Safe_Release(m_pDevice);
@@ -336,6 +392,7 @@ void CImgui_Manager::Free()
     Safe_Release(m_pGameInstance);
 
     Safe_Release(m_pTabWindow);
+    Safe_Release(m_pPlayer);
 
 
     ImGui_ImplDX11_Shutdown();

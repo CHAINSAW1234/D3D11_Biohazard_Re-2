@@ -51,8 +51,6 @@
 #include"Body_Shutter.h"
 
 
-
-
 /* UI */
 #include "Customize_UI.h"
 #include "Inventory_Item_UI.h"
@@ -75,6 +73,7 @@
 #include "Context_Highlighter.h"
 #include "Read_Item_UI.h"
 #include "Loading_UI.h"
+#include "Item_Discription.h"
 
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -530,6 +529,11 @@ HRESULT CLoader::Load_Prototype()
 	/* For.Prototype_GameObject_Read_Item_UI */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Read_Item_UI"),
 		CRead_Item_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Item_Discription */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Item_Discription"),
+		CItem_Discription::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 #pragma endregion
 
@@ -1041,6 +1045,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/Note/ui3210_file_13_1_iam.tex_noesispreviewdata.png")))))
 		return E_FAIL;
 
+	/*Prototype_Component_Texture_Tab_Window_BackGround*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Item_Description_BG"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Item_Discription_Background/Item_Description_BG.dds")))))
+		return E_FAIL;
+
 #pragma endregion
 
 #pragma region Effect
@@ -1054,6 +1063,16 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/*Prototype_Component_Texture_Muzzle_Flash*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Flash"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Flash/Muzzle_Flash.dds"),1,&Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 512;
+	Desc.iHeight = 256;
+	Desc.iCountX = 2;
+	Desc.iCountY = 1;
+
+	/*Prototype_Component_Texture_Muzzle_Flash_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Flash_SG"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Flash_SG/Muzzle_Flash_SG.dds"), 1, &Desc))))
 		return E_FAIL;
 #pragma endregion
 
@@ -1165,12 +1184,60 @@ HRESULT CLoader::Loading_For_GamePlay()
 			LeonTransformMatrix))))
 		return E_FAIL;
 
-#pragma endregion
+#pragma region Effect
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Blood_01"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Effect/Blood/Blood_01.fbx",
+			TransformMatrix))))
+		return E_FAIL;
 
-#pragma region Decal
-	/* For.Prototype_GameObject_Read_Item_UI */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Decal_Blood"),
-		CDecal_Blood::Create(m_pDevice, m_pContext))))
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Blood_02"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Effect/Blood/Blood_02.fbx",
+			TransformMatrix))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Blood_03"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Effect/Blood/Blood_03.fbx",
+			TransformMatrix))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Blood_04"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Effect/Blood/Blood_04.fbx",
+			TransformMatrix))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Blood_05"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Effect/Blood/Blood_05.fbx",
+			TransformMatrix))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Blood_06"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Effect/Blood/Blood_06.fbx",
+			TransformMatrix))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Blood_07"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Effect/Blood/Blood_07.fbx",
+			TransformMatrix))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Blood_08"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Effect/Blood/Blood_08.fbx",
+			TransformMatrix))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Blood_09"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Effect/Blood/Blood_09.fbx",
+			TransformMatrix))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Blood_10"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Effect/Blood/Blood_10.fbx",
+			TransformMatrix))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Blood_11"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Effect/Blood/Blood_11.fbx",
+			TransformMatrix))))
 		return E_FAIL;
 #pragma endregion
 

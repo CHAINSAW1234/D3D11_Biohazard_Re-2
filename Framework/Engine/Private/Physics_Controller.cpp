@@ -201,6 +201,7 @@ CCharacter_Controller* CPhysics_Controller::Create_Controller(_float4 Pos, _int*
 	//Colliision Filter
 	PxFilterData filterData_Character;
 	filterData_Character.word0 = COLLISION_CATEGORY::CCT;
+	//filterData_Character.word0 = COLLISION_CATEGORY::CCT_NO_COLLISION;
 	filterData_Character.word1 = COLLISION_CATEGORY::COLLIDER | COLLISION_CATEGORY::RAGDOLL;
 	filterData_Character.word3 = m_iCharacter_Controller_Count;
 
@@ -1088,7 +1089,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 				COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData.word3;
 
 				*pBlockPoint = PxVec_To_Float4_Coord(hit_Obj.position);
-
+				
 				if (m_vecCharacter_Controller[filterData.word2] && m_vecCharacter_Controller[filterData.word2]->IsReleased() == false)
 				{
 					auto vDelta = Float4_Normalize(*pBlockPoint - vOrigin);
@@ -1096,7 +1097,20 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 
 					m_vecCharacter_Controller[filterData.word2]->Set_Hit(true);
 					m_vecCharacter_Controller[filterData.word2]->Set_Force(vDelta, eType);
-					//	m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
+					m_vecCharacter_Controller[filterData.word2]->SetBlockPoint(*pBlockPoint);
+					m_vecCharacter_Controller[filterData.word2]->SetHitNormal(PxVec_To_Float4_Coord(hit_Obj.normal));
+
+					if (eType == COLLIDER_TYPE::HEAD)
+					{
+						m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count();
+					}
+
+					if(m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() == 3)
+					{
+						/*Ragdoll을 구동하려면 살려야 함.*/
+						m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
+						m_vecCharacter_Controller[filterData.word2]->SetDead(true);
+					}
 
 					return true;
 				}
@@ -1121,6 +1135,8 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 
 					PxVec3 pxForce = PxVec3(vDelta.x, vDelta.y, vDelta.z);
 					dynamicActor->addForce(pxForce, PxForceMode::eIMPULSE);
+					m_vecCharacter_Controller[filterData.word2]->Set_Hit(true);
+					m_vecCharacter_Controller[filterData.word2]->SetBlockPoint(*pBlockPoint);
 				}
 
 				return true;

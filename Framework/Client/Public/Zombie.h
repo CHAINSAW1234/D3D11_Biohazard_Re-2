@@ -115,6 +115,28 @@ private:	/* For. Hit Interact */
 	HIT_TYPE							m_eCurrentHitType = { HIT_END };
 	_float3								m_vHitDirection = {};
 
+#pragma region Effect
+public:
+	void								Ready_Effect();
+	void								Release_Effect();
+	void								Tick_Effect(_float fTimeDelta);
+	void								Late_Tick_Effect(_float fTimeDelta);
+	void								SetBlood();
+	void								Calc_Decal_Map();
+protected:
+	vector<class CBlood*>				m_vecBlood;
+
+	ULONGLONG							m_BloodTime;
+	ULONGLONG							m_BloodDelay;
+	_uint								m_iBloodCount = { 0 };
+	_bool								m_bSetBlood = { false };
+	_float4								m_vHitPosition;
+	_float4								m_vHitNormal;
+	_uint								m_iBloodType = { 0 };
+	_float								m_fHitDistance = { 0.f };
+	_uint								m_iMeshIndex_Hit = { 0 };
+#pragma endregion
+
 public:
 	inline void							Set_ManualMove(_bool isManualMove) { m_isManualMove = isManualMove; }
 

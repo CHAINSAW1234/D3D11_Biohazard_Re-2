@@ -212,7 +212,7 @@ private:
     _matrix                                         m_model_only_scale = XMMatrixIdentity();
     float                                           m_scale = 1.f;
     float                                           m_ui_scale = m_scale;
-    float                                           m_mass = 7.0f;
+    float                                           m_mass = 10.0f;
 
     class SkeletalMesh*                             m_skeletal_mesh = { nullptr };
     class CRagdoll*                                 m_ragdoll = { nullptr };

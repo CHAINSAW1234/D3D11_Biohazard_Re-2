@@ -54,7 +54,10 @@ void CPlayer_State_Hold::OnStateExit()
 {
 	m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.2f);
 	
-	m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::MOVE);
+	if (nullptr != m_pPlayer->Get_Weapon()) {
+		m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::MOVE);
+	}
+
 	m_pPlayer->Set_TurnSpineHold(false);
 	Reset_State();
 	m_eState = STATE_END;

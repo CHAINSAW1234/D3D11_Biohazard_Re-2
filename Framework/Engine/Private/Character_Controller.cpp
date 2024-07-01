@@ -12,7 +12,7 @@
 #define MODEL_SCALE 0.01f
 #define SIZE_VALUE 2.25f
 #define JOINT_GAP 0.1f
-#define RADIUS 2.5f
+#define RADIUS 3.5f
 
 CCharacter_Controller::CCharacter_Controller(PxController* Controller, class CGameObject* pCharacter, PxScene* pScene,
 	PxPhysics* pPhysics, class CTransform* pTransform, vector<class CBone*>* pBones, _int iId, const std::string& name)
@@ -64,6 +64,9 @@ CCharacter_Controller* CCharacter_Controller::Create()
 
 void CCharacter_Controller::Move(_float4 Dir, _float fTimeDelta)
 {
+	if (m_pController == nullptr)
+		return;
+
 	PxVec3 vDir = PxVec3(Dir.x, Dir.y, Dir.z);
 	QueryFilterCallback filterCallback;
 	PxControllerFilters controllerFilters;
@@ -75,6 +78,9 @@ void CCharacter_Controller::Move(_float4 Dir, _float fTimeDelta)
 
 void CCharacter_Controller::Move(PxVec3 Dir, _float fTimeDelta)
 {
+	if (m_pController == nullptr)
+		return;
+
 	QueryFilterCallback filterCallback;
 	PxControllerFilters controllerFilters;
 	controllerFilters.mFilterCallback = &filterCallback;
@@ -85,6 +91,9 @@ void CCharacter_Controller::Move(PxVec3 Dir, _float fTimeDelta)
 
 _float4 CCharacter_Controller::GetTranslation()
 {
+	if (m_pController == nullptr)
+		return _float4(0.f,0.f,0.f,1.f);
+
 	PxExtendedVec3 position = m_pController->getPosition();
 
 	_float4 Pos;
@@ -101,7 +110,7 @@ void CCharacter_Controller::Release_Px()
 	{
 		m_pController->release();
 		m_pController = nullptr;
-		m_pCharacter->Release_Controller();
+		//m_pCharacter->Release_Controller();
 
 		if (m_BodyCollider)
 		{
@@ -142,6 +151,9 @@ void CCharacter_Controller::Release_Px()
 
 _float4 CCharacter_Controller::GetPosition_Float4()
 {
+	if (m_pController == nullptr)
+		return _float4(0.f,0.f,0.f,1.f);
+
 	PxExtendedVec3 position = m_pController->getPosition();
 
 	_float4 Pos;
@@ -154,6 +166,9 @@ _float4 CCharacter_Controller::GetPosition_Float4()
 
 _float4 CCharacter_Controller::GetPosition_Float4_Zombie()
 {
+	if (m_pController == nullptr)
+		return _float4(0.f, 0.f, 0.f, 1.f);
+
 	PxExtendedVec3 position = m_pController->getPosition();
 
 	_float4 Pos;
@@ -551,6 +566,12 @@ void CCharacter_Controller::SetBoneIndex()
 			}
 		}
 	}
+}
+
+void CCharacter_Controller::SetPosition(_float4 vPos)
+{
+	PxExtendedVec3 newPosition(vPos.x, vPos.y, vPos.z);
+	m_pController->setPosition(newPosition);
 }
 
 void CCharacter_Controller::Free()

@@ -290,7 +290,7 @@ void CHPBar_UI::Change_HP(HP_TYPE _type)
 
 void CHPBar_UI::Find_Main_Inventory()
 {
-    list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+    list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_TabWindow"));
 
     for (auto& iter : *pUIList)
     {
