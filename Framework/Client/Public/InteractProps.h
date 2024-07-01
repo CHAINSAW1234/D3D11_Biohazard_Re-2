@@ -108,6 +108,7 @@ public:
 	virtual void										Priority_Tick(_float fTimeDelta) override;
 	virtual void										Tick(_float fTimeDelta) override;
 	virtual void										Late_Tick(_float fTimeDelta) override;
+	virtual void										Start() override { return; };
 	virtual HRESULT										Render() override;
 
 
@@ -136,6 +137,7 @@ public:
 	_int												Get_Region() { return m_tagPropDesc.iRegionNum; }
 	_int												Get_Type() { return m_tagPropDesc.iPropType; }
 	void												Set_Region(_int iRegion) { m_tagPropDesc.iRegionNum = iRegion; }
+	virtual _bool									Attack_Prop(class CTransform* pTransfromCom = nullptr) {};
 private :
 	_bool												m_isSelector_Rendering = { false };
 	_bool												m_isNYResult				= { false };
@@ -173,7 +175,6 @@ protected:
 	virtual HRESULT										Add_PartObjects();
 	virtual HRESULT										Initialize_PartObjects();
 	virtual HRESULT										Bind_ShaderResources();
-
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;
 	virtual void Free() override;

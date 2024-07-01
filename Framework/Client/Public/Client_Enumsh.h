@@ -334,18 +334,6 @@ namespace Client
 		JOMBIE_BEHAVIOR_COLLIDER_END,
 	};
 
-	/// <summary>
-	/// 
-	/// 좀비나 플레이어 추출은 해본적 없어서 필요할 거 같은 모션 경로
-	///<좀비 - window 모션 + 자매품 door 모션>
-	///	natives\x64\sectionroot\animation\enemy\em0000\list\gimmick\em0000_window_em.motlist.85
-	/// 
-	///  콜라이더에 들어있는 정보
-	///  1. 타입 _int값
-	///	  2. 같이 생각해봐야할 문제 : 모션들의 시작 위치를 콜라이더로 잡아줘야 하는가?
-	/// 
-	/// </summary>
-
 	enum PLAYER_BEHAVIOR_COLLIDER_TYPE
 	{
 		PLAYER_BEHAVIOR_COLLIDER_CLIMB_BOX, // 작전실 박스
@@ -355,6 +343,8 @@ namespace Client
 		PLAYER_BEHAVIOR_COLLIDER_DOOR, //
 		PLAYER_BEHAVIOR_COLLIDER_END,
 	};
+
+
 	enum DOOR_TYPE
 	{
 		/* 1 Floor */

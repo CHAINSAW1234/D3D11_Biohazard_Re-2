@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Window.h"
 #include"Player.h"
-
+#include"CustomCollider.h"
 #include"Body_Window.h"
 
 CWindow::CWindow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -32,6 +32,24 @@ HRESULT CWindow::Initialize(void* pArg)
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CWindow::Start()
+{
+	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Jombie_Collider"));
+	if (pCollider == nullptr)
+		return;
+	for (auto& iter : *pCollider)
+	{
+		if (m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")))))
+		{
+			// 내 인덱스 넣어주기
+			_int* iNum = static_cast<CCustomCollider*>(iter)->Node_InteractProps();
+			*iNum = m_tagPropDesc.iIndex;
+		}
+	}
+
+
 }
 
 void CWindow::Tick(_float fTimeDelta)
