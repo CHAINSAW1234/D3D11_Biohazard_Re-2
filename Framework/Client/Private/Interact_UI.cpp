@@ -51,5 +51,5 @@ void CInteract_UI::Free()
 {
 	__super::Free();
 
-	CProp_Manager::Destroy_Instance();
+	//CProp_Manager::Destroy_Instance();
 }
