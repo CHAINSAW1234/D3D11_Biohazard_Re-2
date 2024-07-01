@@ -35,20 +35,6 @@ void CBlackBoard::Organize_PreState(CTask_Node* pCurrentNode)
 	}
 }
 
-CBlackBoard* CBlackBoard::Create(void* pArg)
-{
-	CBlackBoard*			pInstance = new CBlackBoard();
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX(TEXT("Failed To Created : CBlackBoard"));
-
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
 void CBlackBoard::Free()
 {
 	Safe_Release(m_pGameInstance);

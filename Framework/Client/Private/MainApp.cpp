@@ -133,6 +133,39 @@ HRESULT CMainApp::Ready_Fonts()
 		return E_FAIL;
 
 
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CGBold10"), TEXT("../Bin/Resources/Fonts/ClearGothicBold10.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CGBold11"), TEXT("../Bin/Resources/Fonts/ClearGothicBold11.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CGBold12"), TEXT("../Bin/Resources/Fonts/ClearGothicBold12.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CGBold13"), TEXT("../Bin/Resources/Fonts/ClearGothicBold13.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CGBold14"), TEXT("../Bin/Resources/Fonts/ClearGothicBold14.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CGBold15"), TEXT("../Bin/Resources/Fonts/ClearGothicBold15.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CGBold16"), TEXT("../Bin/Resources/Fonts/ClearGothicBold16.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CGBold17"), TEXT("../Bin/Resources/Fonts/ClearGothicBold17.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CGBold18"), TEXT("../Bin/Resources/Fonts/ClearGothicBold18.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CGBold19"), TEXT("../Bin/Resources/Fonts/ClearGothicBold19.spriteFont"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_CGBold20"), TEXT("../Bin/Resources/Fonts/ClearGothicBold20.spriteFont"))))
+		return E_FAIL;
+
 	return S_OK;
 }
 

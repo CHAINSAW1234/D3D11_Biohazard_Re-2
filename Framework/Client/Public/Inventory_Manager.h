@@ -30,7 +30,9 @@ private:
 	//장비 장착
 	void EQUIP_ITEM_Operation(_float fTimeDelta);			
 	//장비 해제
-	void UNEQUIP_ITEM_Operation(_float fTimeDelta);			
+	void UNEQUIP_ITEM_Operation(_float fTimeDelta);
+	//아이템 줍기
+	void PICK_UP_ITEM_Operation(_float fTimeDelta);
 	//아이템 사용
 	void USE_ITEM_Operation(_float fTimeDelta);				
 	//아이템 조합
@@ -43,6 +45,7 @@ private:
 	void DISCARD_ITEM_Operation(_float fTimeDelta);			
 	//콘텍스트 UI
 	void CONTEXTUI_SELECT_Operation(_float fTimeDelta);
+
 
 public:
 	//Set_Dead호출이라 m_bDead기준으로 변수 줄것
@@ -63,17 +66,15 @@ public:
 		m_eInven_Manager_State = eInvenEvent;
 	}
 
-	_int Get_Selected_ItemNum(){ 
-		if (nullptr != m_pSelected_ItemUI) {
-			return m_pSelected_ItemUI->Get_ItemNumber();
-		}
-		else
-			return -1;
-	}
+	ITEM_NUMBER Get_Selected_ItemNum();
+
 
 	_bool* Get_NoHover_InvenBox() { return &m_IsNoOneHover; }
 
 public:
+	//Pick_Up_Operation 세팅
+	void PUO_Seting(ITEM_NUMBER eAcquiredItem, _int iItemQuantity = 1);
+
 	//인벤토리 밖에서 아이템을 사용하게 되었을때 쓰는 함수(ex 총알)
 	void UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage);
 
@@ -83,6 +84,12 @@ public:
 	//만약 아이템을 넣을수 없는 상황이라면 false를 반환함
 	_bool IsCan_AddItem_ToInven();
 
+	//원하는 아이템의 수량 or 장탄을 반환함
+	_int Get_Search_Item_Quantity(ITEM_NUMBER eItemNum);
+
+	//몇번 단축키에 몇번 아이템이 있는가
+	ITEM_NUMBER Get_Item_On_HotKey(_uint iHotKeyNum);
+
 
 private: 
 	ID3D11Device*					m_pDevice = { nullptr };
@@ -90,6 +97,8 @@ private:
 	CGameInstance*					m_pGameInstance = { nullptr }; 
 
 	INVENTORY_EVENT					m_eInven_Manager_State = { EVENT_IDLE };
+
+	TASK_SEQUENCE					m_eTaskSequence = { TS_END };
 
 private:
 	/* for. InvenSlot */
@@ -116,17 +125,17 @@ private:
 	/* for. SubInven */
 	class CInventory_Item_UI*		m_pInven_Item_UI = { nullptr };
 
-private :	/*for IDLE_Operation*/
+private :	
+	/*for IDLE_Operation*/
 	_bool							m_IsNoOneHover = { true };
 	_float							m_fPressingTime = { 0.f };
 
 
-private:	/*for. COMBINED_ITEM_Operation*/
+	/*for. COMBINED_ITEM_Operation*/
 	unordered_map<ITEM_NUMBER, vector<ITEM_RECIPE>> m_mapItemRecipe;
 
-	TASK_SEQUENCE									m_eTaskSequence = { TS_END };
+	ITEM_NUMBER						m_CombineResources[3] = {ITEM_NUMBER_END, ITEM_NUMBER_END,ITEM_NUMBER_END };
 
-	ITEM_NUMBER										m_CombineResources[2] = {ITEM_NUMBER_END, ITEM_NUMBER_END};
 
 private:
 	HRESULT Init_InvenSlot();
@@ -138,6 +147,8 @@ private:
 	HRESULT Seting_SubInven();
 	HRESULT Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval);
 
+
+
 public:
 	static CInventory_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
@@ -146,7 +157,6 @@ public:
 	void Set_ItemRecipe();
 	void Add_Recipe(ITEM_NUMBER eKeyItemNum, ITEM_NUMBER eCombinableItemNum, ITEM_NUMBER eResultItemNum);
 	ITEM_NUMBER Find_Recipe(ITEM_NUMBER eKeyItemNum, ITEM_NUMBER eCombinableItemNum);
-	//static ITEM_NUMBER Get_CombinationResult(ITEM_NUMBER eFirst_Item, ITEM_NUMBER eSecond_Item);
 };
 
 END

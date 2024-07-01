@@ -2,7 +2,6 @@
 
 #include "Client_Defines.h"
 #include "Camera.h"
-
 #include "Camera_Event_Struct.h"
 
 BEGIN(Client)

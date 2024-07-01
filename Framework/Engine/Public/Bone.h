@@ -44,6 +44,11 @@ public:
 		return &m_CombinedTransformationMatrix;
 	}
 
+	_float4x4 Get_CombinedTransformationMatrix_Var()
+	{
+		return m_CombinedTransformationMatrix;
+	}
+
 	const _float4x4* Get_PrevCombinedTransformationMatrix() const {
 		return &m_PrevCombinedTransformationMatrix;
 	}

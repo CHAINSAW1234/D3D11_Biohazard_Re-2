@@ -81,6 +81,64 @@ enum class ANIM_ADD_SHOULDER_R {
 
 #pragma region Bite Anims
 
+enum class ANIM_BITE_DEFAULT_FRONT {
+	_START_F,				//	좀비가 플레이어의 정면에서 덮치기 시작
+	_DEFAULT,				//	루프 애니메이션
+	_CREEP_START,			//	좀비가 플레이어의 정면에 덮치기 시작 => 엎드려진상태에서 시작
+	_REJECT1,				//	좀비를 플레이어의 정면으로 밀어냄
+	_REJECT2,				//	좀비를 플레이어의 좌측으로 뿌리침	( 정면에서 덮친 모션에서 이어짐 )
+	_REJECT3,				//	좀비를 플레이어의 뒤로 뿌리침	( 정면에서 덮친 모션에서 이어짐 )
+	_KILL_F,
+	_END
+};
+
+enum class ANIM_BITE_DEFAULT_BACK {
+	_START_B,				//	좀비가 플레이어의 뒤에서 덮침
+	_REJECT_B,				//	좀비를 플레이어의 뒤로 뿌리침	( 뒤에서 덮친 모션에서 이어짐 )
+	_KILL_B,
+	_END
+};
+
+enum class ANIM_BITE_PUSH_DOWN {
+	_DOWN_START_L,			//	플레이어가 왼쪽 , 좀비가 오른쪽 ( 다운 상태의 플레이어를 물어 뜯음 )
+	_DOWN_START_R,			//	플레이어가 오른쪽 , 좀비가 왼쪽 ( 다운 상태의 플레이어를 물어 뜯음 )
+	_DOWN_REJECT_L,			//	오른쪽에 있는 좀비를 플레이어 우측으로 밀쳐냄
+	_DOWN_REJECT_R,			//	왼쪽에 있는 좀비를 플레이어 좌측으로 밀쳐냄
+	_PUSH_DOWN_L1,
+	_PUSH_DOWN_R1,
+	_PUSH_DOWN_L2,
+	_PUSH_DOWN_R2,
+	_DOWN_KILL_R,
+	_END
+};
+
+enum class ANIM_BITE_CREEP {
+	_FACE_DOWN_L,
+	_FACE_DOWN_R,
+	_FACE_UP_L,
+	_FACE_UP_R,
+	_CREEP_REJECT_L,
+	_CREEP_REJECT_R,
+	_CREEP_KILL_L,
+	_CREEP_KILL_R,
+	_END
+};
+
+enum class ANIM_BITE_LIGHTLY_HOLD {
+	_LIGHTLY_HOLD_START_L,
+	_LIGHTLY_HOLD_START_R,
+	_LIGHTLY_HOLD_END_L,
+	_LIGHTLY_HOLD_END_R,
+	_END
+};
+
+enum class ANIM_BITE_ETC {
+	_BOX1M_L,
+	_BOX1M_R,
+	_DIRECT,
+	_END
+};
+
 #pragma endregion
 
 #pragma region Damage
@@ -100,7 +158,7 @@ enum class ANIM_DAMAGE_BURST {
 	_FACEDOWN_LOOP_L,
 	_FACEDOWN_END_L,
 	_FACEDOWN_LOOP_R,
-	_FACEDOWN_END_R,
+	_FACEDOWN_END_R, 
 	_FACEUP_START_F,
 	_FACEUP_START_B,
 	_FACEUP_START_L,
@@ -249,10 +307,10 @@ enum class ANIM_DAMAGE_STUN {
 	_HEAD_RIGHT_SIDE_F,
 	_BODY_F,
 	_BODY_B,
-	_SHOULDERR_L_F,
-	_SHOULDERR_L_B,
-	_SHOULDERR_R_F,
-	_SHOULDERR_R_B,
+	_SHOULDER_L_F,
+	_SHOULDER_L_B,
+	_SHOULDER_R_F,
+	_SHOULDER_R_B,
 	_LEG_L_F,
 	_LEG_L_B,
 	_LEG_R_F,
@@ -420,10 +478,12 @@ enum class ANIM_ORDINARY_ETC {
 enum class ANIM_ORDINARY_HOLD {
 	_F1,
 	_F2,
-	_TRIP_L_FOOT_UP,
-	_TRIP_R_FOOT_UP,
-	_L,
-	_R,
+	_TRIP_L_FOOT_UP,			//	홀드 중 다리 맞으면 해당 모션으로 전환하기
+	_TRIP_R_FOOT_UP,			//	홀드 중 다리 맞으면 해당 모션으로 전환하기
+	_L90,
+	_R90,
+	_L180,
+	_R180,
 	_END
 };
 

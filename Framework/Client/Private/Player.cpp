@@ -4,22 +4,27 @@
 #include "FSM.h"
 #include "Player_State_Move.h"
 #include "Player_State_Hold.h"
+#include "Player_State_Bite.h"
 
 #include "Body_Player.h"
 #include "Head_Player.h"
 #include "Hair_Player.h"
+
 #include "Weapon.h"
 #include "FlashLight.h"
 
-#include"CustomCollider.h"
+#include "CustomCollider.h"
 
 #include "Character_Controller.h"
 #include "Camera_Free.h"
 #include "Camera_Event.h"
+#include "Effect_Header_Player.h"
+
+#include "Tab_Window.h"
 
 #define MODEL_SCALE 0.01f
 
-const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_HG"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT")};
+const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_HG"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT") };
 const wstring CPlayer::strAnimSetHoldName[ANIMSET_HOLD_END] = { TEXT("HOLD_HG"), TEXT("HOLG_STG"), TEXT("HOLD_MLE"), TEXT("HOLD_SUP") };
 const wstring CPlayer::strAnimSetEtcName[ANIMSET_ETC_END] = { TEXT("COMMON"), TEXT("BITE") };
 
@@ -72,8 +77,10 @@ HRESULT CPlayer::Initialize(void* pArg)
 	Load_CameraPosition();
 	if (FAILED(Ready_Camera()))
 		return E_FAIL;
-	
+
 	m_pGameInstance->SetPlayer(this);
+
+	Ready_Effect();
 
 	return S_OK;
 }
@@ -111,8 +118,6 @@ void CPlayer::Tick(_float fTimeDelta)
 	}
 	else
 		m_bChange = false;
-
-	
 #pragma endregion 예은ColTest
 
 #pragma region 이동과 카메라
@@ -249,6 +254,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		_float4			vResultMoveDirFloat4 = {};
 		XMStoreFloat4(&vResultMoveDirFloat4, vMovedDirection);
 		m_pController->Move(vResultMoveDirFloat4, fTimeDelta);
+		XMStoreFloat3(&m_vRootTranslation, XMVectorZero());
 	}
 
 	if (m_bMove_Backward == false && m_bMove_Forward == false && m_bMove_Left == false && m_bMove_Right == false)
@@ -264,15 +270,10 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region Camera
 
-	if (UP == m_pGameInstance->Get_KeyState('C'))
-	{
-		if (true == m_bIsExamineItem)
-			m_bIsExamineItem = false;
-		else
-			m_bIsExamineItem = true;
-	}
+	if (UP == m_pGameInstance->Get_KeyState('Z'))
+		m_isCamTurn = !m_isCamTurn;
 
-	if (m_pCamera && false == m_bIsExamineItem)
+	if (m_pCamera && false == m_isCamTurn)
 	{
 		Calc_Camera_LookAt_Point(fTimeDelta);
 	}
@@ -297,36 +298,6 @@ void CPlayer::Tick(_float fTimeDelta)
 			m_fLerpTime = 0.f;
 			m_bLerp = true;
 		}
-		
-		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-		{
-			RayCast_Shoot();
-
-			m_bRecoil = true;
-
-			m_fRecoil_Lerp_Time = 0.f;
-			m_fRecoil_Lerp_Time_Omega = 0.f;
-			
-			switch (m_eEquip)
-			{
-			case EQUIP::HG:
-			{
-				auto Random_Real_X = m_pGameInstance->GetRandom_Real(0.075f, 0.1f);
-				auto Random_Real_Y = m_pGameInstance->GetRandom_Real(0.15f, 0.2f);
-				m_fRecoil_Rotate_Amount_X = Random_Real_X;
-				m_fRecoil_Rotate_Amount_Y = Random_Real_Y;
-				break;
-			}
-			case EQUIP::STG:
-			{
-				auto Random_Real_X = m_pGameInstance->GetRandom_Real(0.2f, 0.25f);
-				auto Random_Real_Y = m_pGameInstance->GetRandom_Real(0.25f, 0.3f);
-				m_fRecoil_Rotate_Amount_X = Random_Real_X;
-				m_fRecoil_Rotate_Amount_Y = Random_Real_Y;
-				break;
-			}
-			}
-		}
 	}
 	else
 	{
@@ -346,6 +317,29 @@ void CPlayer::Tick(_float fTimeDelta)
 #pragma region 현진 추가
 
 #pragma region TEST
+
+	//if (m_pGameInstance->Get_KeyState('1') == DOWN) {
+	//	Set_Hp(1);
+	//}
+	//if (m_pGameInstance->Get_KeyState('2') == DOWN) {
+	//	Set_Hp(2);
+	//}
+	//if (m_pGameInstance->Get_KeyState('3') == DOWN) {
+	//	Set_Hp(3);
+	//}
+	//if (m_pGameInstance->Get_KeyState('4') == DOWN) {
+	//	Set_Hp(4);
+	//}
+	//if (m_pGameInstance->Get_KeyState('5') == DOWN) {
+	//	Set_Hp(5);
+	//}
+
+	if (m_pGameInstance->Get_KeyState('T') == DOWN) {
+		Change_Player_State_Bite(0, TEXT("Bite_Default"), XMMatrixIdentity(), 0.2f);
+		Request_NextBiteAnimation(1);
+
+	}
+
 
 	//if (m_pGameInstance->Get_KeyState('E') == DOWN) {
 	//	Swap_Camera();
@@ -397,6 +391,8 @@ void CPlayer::Tick(_float fTimeDelta)
 	m_pColliderCom->Tick(m_pTransformCom->Get_WorldMatrix());
 
 	Tick_PartObjects(fTimeDelta);
+
+	Tick_Effect(fTimeDelta);
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)
@@ -414,7 +410,7 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		CModel* pBodyModel = { Get_Body_Model() };
 		CModel* pWeaponModel = { Get_Weapon_Model() };
-		
+
 		_matrix				LWeaponMatrix = { XMLoadFloat4x4(pBodyModel->Get_CombinedMatrix("l_weapon")) };
 		_matrix				ShotGunrHandleMatrix = {  XMLoadFloat4x4(pWeaponModel->Get_CombinedMatrix("_101"))};
 
@@ -437,8 +433,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		m_pController->Update_Collider();*/
 
 	Turn_Spine_Default(fTimeDelta);
-	Turn_Spine_Hold(fTimeDelta);		// Hold 상태에서 척추를 상하로만 돌림
 	Turn_Spine_Light(fTimeDelta);		// Light 상태에서 상체전체를 카메라를 보도록 돌림
+	Turn_Spine_Hold(fTimeDelta);		// Hold 상태에서 척추를 상하로만 돌림
 
 
 #pragma region 예은 추가
@@ -454,13 +450,25 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	{
 		ResetCamera();
 	}
+
+	Late_Tick_Effect(fTimeDelta);
 #pragma endregion
 }
 
 HRESULT CPlayer::Render()
 {
-
 	return S_OK;
+}
+
+void CPlayer::Start()
+{
+	CGameObject* pTabWindow = m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0);
+	m_pTabWindow = dynamic_cast<CTab_Window*>(pTabWindow);
+	if (nullptr == m_pTabWindow) {
+		MSG_BOX(TEXT("CPlayer::Start"));
+		assert(0);
+	}
+
 }
 
 void CPlayer::Priority_Tick_PartObjects(_float fTimeDelta)
@@ -496,9 +504,9 @@ void CPlayer::Late_Tick_PartObjects(_float fTimeDelta)
 void CPlayer::Col_Section()
 {
 	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider"));
-	if(pCollider == nullptr)
+	if (pCollider == nullptr)
 		return;
-	for (auto& iter: *pCollider)
+	for (auto& iter : *pCollider)
 	{
 		if (m_pColliderCom->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")))))
 		{
@@ -567,17 +575,24 @@ _float3* CPlayer::Get_Body_RootDir()
 void CPlayer::Set_Spotlight(_bool isSpotlight)
 {
 	m_isSpotlight = isSpotlight;
-	
+
 	m_PartObjects[PART_LIGHT]->Set_Render(m_isSpotlight);
 
 	Update_AnimSet();
 }
 
-
-void CPlayer::Set_Equip(EQUIP eEquip)
+void CPlayer::Requst_Change_Equip(EQUIP eEquip)
 {
-	m_eEquip = eEquip;
-	
+	if (!m_isRequestChangeEquip) {
+		m_isRequestChangeEquip = true;
+		m_eTargetEquip = eEquip;
+	}
+}
+
+void CPlayer::Set_Equip(EQUIP* eEquip)
+{
+	m_eEquip = *eEquip;
+	*eEquip = NONE;
 	CWeapon::RENDERLOCATION eRenderLocation = { CWeapon::MOVE };
 
 	if (nullptr != m_pWeapon) {
@@ -600,11 +615,150 @@ void CPlayer::Set_Equip(EQUIP eEquip)
 	// 무기 위치를 변경하시오
 
 	Update_AnimSet();
+	NotifyObserver();
+}
+
+void CPlayer::Set_Hp(_int iHp)
+{
+	m_iHp = iHp;
+	if (m_iHp >= m_iMaxHp)
+		m_iHp = m_iMaxHp;
+
+	if (m_iHp <= 0) {
+		;;		// 사망 처리?
+	}
+	
+	Update_AnimSet();
+	NotifyObserver();
+
 }
 
 void CPlayer::Change_State(STATE eState)
 {
 	m_pFSMCom->Change_State(eState);
+	m_eState = eState;
+}
+
+void CPlayer::Change_Player_State_Bite(_int iAnimIndex, const wstring& strLayerTag, _float4x4 Interpolationmatrix, _float fTotalInterpolateTime)
+{
+	m_fCurrentInterpolateTime = 0.f;
+	m_fTotalInterpolateTime = fTotalInterpolateTime;
+
+	m_iBiteAnimIndex = iAnimIndex;
+	m_strBiteLayerTag = strLayerTag;
+
+	Change_State(BITE);
+
+	// bite zombie apply m
+
+}
+
+void CPlayer::Request_NextBiteAnimation(_int iAnimIndex)
+{
+	m_iBiteAnimIndex = iAnimIndex;
+}
+
+void CPlayer::Shot()
+{
+	RayCast_Shoot();
+
+	m_bRecoil = true;
+
+	m_fRecoil_Lerp_Time = 0.f;
+	m_fRecoil_Lerp_Time_Omega = 0.f;
+
+	switch (m_eEquip)
+	{
+	case EQUIP::HG: {
+		auto Random_Real_X = m_pGameInstance->GetRandom_Real(0.075f, 0.1f);
+		auto Random_Real_Y = m_pGameInstance->GetRandom_Real(0.15f, 0.2f);
+		m_fRecoil_Rotate_Amount_X = Random_Real_X;
+		m_fRecoil_Rotate_Amount_Y = Random_Real_Y;
+
+		m_pMuzzle_Flash->Set_Render(true);
+		m_pMuzzle_Flash->SetPosition(Get_MuzzlePosition());
+		break;
+		}
+	case EQUIP::STG: {
+		auto Random_Real_X = m_pGameInstance->GetRandom_Real(0.2f, 0.25f);
+		auto Random_Real_Y = m_pGameInstance->GetRandom_Real(0.25f, 0.3f);
+		m_fRecoil_Rotate_Amount_X = Random_Real_X;
+		m_fRecoil_Rotate_Amount_Y = Random_Real_Y;
+
+		m_pMuzzle_Flash_SG->Set_Render(true);
+		m_pMuzzle_Flash_SG->SetPosition(Get_MuzzlePosition());
+		break;
+		}
+	}
+	
+	m_pTabWindow->UseItem(Get_Equip_As_ITEM_NUMBER(), 1);
+	
+	NotifyObserver();
+	// 카메라 조작 코드 여기에 추가
+	// 사운드등도 여기 넣어도 됨
+}
+
+void CPlayer::Reload()
+{
+	Get_Body_Model()->Set_Loop(3, false);
+	Change_Body_Animation_Hold(3, HOLD_RELOAD);
+	Get_Body_Model()->Set_TrackPosition(3, 0.f);
+	Get_Body_Model()->Set_BlendWeight(3, 10.f, 6.f);
+	//Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.2f);
+	if (nullptr != m_pWeapon) {
+		Get_Weapon_Model()->Change_Animation(0, TEXT("Default"), 2);
+		Get_Weapon_Model()->Set_TrackPosition(0, 0.f);
+	}
+}
+
+_bool CPlayer::IsShotAble()
+{
+	if (m_eEquip == NONE)
+		return false;
+
+	if (m_pTabWindow->Get_Search_Item_Quantity(Get_Equip_As_ITEM_NUMBER()) == 0)
+		return false;
+
+	return true;
+}
+
+_bool CPlayer::IsReloadAble()
+{
+	if (m_eEquip == NONE)
+		return false;
+
+	if (m_pTabWindow->Get_Search_Item_Quantity(Get_Equip_As_ITEM_NUMBER()) == Get_MaxBullet())
+		return false;
+
+	switch (Get_Equip_As_ITEM_NUMBER()) {
+	case HandGun:
+		if (m_pTabWindow->Get_Search_Item_Quantity(handgun_bullet01a) == 0)
+			return false;
+		break;
+	case ShotGun:
+		if (m_pTabWindow->Get_Search_Item_Quantity(shotgun_bullet01a) == 0)
+			return false;
+		break;
+	}
+
+	return true;
+}
+
+ITEM_NUMBER CPlayer::Get_Equip_As_ITEM_NUMBER()
+{
+	switch (m_eEquip) {
+	case CPlayer::HG:
+		return HandGun;
+		break;
+	case CPlayer::STG:
+		return ShotGun;
+		break;
+	case NONE:
+		return ITEM_NUMBER_END;
+		break;
+	}
+
+	return ITEM_NUMBER_END;
 }
 
 _float CPlayer::Get_CamDegree()
@@ -623,31 +777,85 @@ _float CPlayer::Get_CamDegree()
 	return Cal_Degree_From_Directions_Between_Min180_To_180(vPlayerLook, vCamLook);
 }
 
-void CPlayer::Update_FSM()
+_float4 CPlayer::Get_MuzzlePosition()
+{
+	if (nullptr == m_pWeapon) {
+		return _float4(0.f, 0.f, 0.f, 1.f);
+	}
+
+	return m_pWeapon->Get_MuzzlePosition();
+}
+
+_int CPlayer::Get_MaxBullet()
+{
+	if (m_eEquip == NONE)
+		return 0;
+
+	return Get_Weapon()->Get_MaxBullet();
+}
+
+void CPlayer::Update_InterplationMatrix(_float fTimeDelta)
 {
 
-	if (m_pGameInstance->Get_KeyState(VK_RBUTTON) == PRESSING) {
-		if(nullptr != m_pWeapon &&
-			Get_Body_Model()->Is_Loop_PlayingInfo(3)	)
-			Change_State(HOLD);
+
+	m_fCurrentInterpolateTime += fTimeDelta;
+	if (m_fCurrentInterpolateTime > m_fTotalInterpolateTime)
+	{
+		fTimeDelta += m_fTotalInterpolateTime - m_fCurrentInterpolateTime;
+		m_fCurrentInterpolateTime = m_fTotalInterpolateTime;
 	}
-	else
-		Change_State(MOVE);
+
+	_float				fRatio = { fTimeDelta / m_fTotalInterpolateTime };
+
+	_vector				vScale, vTranslation, vQuaternion;
+
+	XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, XMLoadFloat4x4(&m_vBiteInterpolateMatrix));
+
+	_vector				vCurrentTranslation = { vTranslation * fRatio };
+	_vector				vCurrentQuaternion = { XMQuaternionSlerp(XMQuaternionIdentity(), vQuaternion, fRatio) };
+
+	_vector				vCurrentQuaternionInv = { XMQuaternionInverse(XMQuaternionNormalize(vCurrentQuaternion)) };
+	_matrix				vCurrentRotationInverse = { XMMatrixRotationQuaternion(vCurrentQuaternionInv) };
+	vCurrentTranslation = XMVector3TransformNormal(vCurrentQuaternion, vCurrentRotationInverse);
+
+	_matrix				AIWorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
+	_matrix				CurrentRotationMatrix = { XMMatrixRotationQuaternion(vCurrentQuaternion) };
+	_matrix				CurrentTimesMatrix = { CurrentRotationMatrix };
+	CurrentTimesMatrix.r[CTransform::STATE_POSITION].m128_f32[3] = 0.f;
+
+	_matrix				TimesCombinedMatrix = { AIWorldMatrix * CurrentTimesMatrix };
+
+	m_pTransformCom->Set_WorldMatrix(TimesCombinedMatrix);
+	m_vRootTranslation = { XMLoadFloat3(&m_vRootTranslation) + vCurrentTranslation };
+
+}
+
+void CPlayer::Update_FSM()
+{
+	switch(m_eState) {
+	case MOVE:
+		if (m_pGameInstance->Get_KeyState(VK_RBUTTON) == PRESSING) {
+			if (nullptr != m_pWeapon &&
+				Get_Body_Model()->Is_Loop_PlayingInfo(3))
+				Change_State(HOLD);
+		}
+		break;
+	case HOLD:
+		if (m_pGameInstance->Get_KeyState(VK_RBUTTON) != PRESSING) {
+			Change_State(MOVE);
+		}
+		break;
+	case BITE:
+		break;
+	}
 }
 
 void CPlayer::Update_KeyInput_Reload()
 {
 	if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
-		if (m_pGameInstance->Get_KeyState('R') == DOWN) {
-			Get_Body_Model()->Set_Loop(3, false);
-			Change_Body_Animation_Hold(3, HOLD_RELOAD);
-			Get_Body_Model()->Set_TrackPosition(3, 0.f);
-			Get_Body_Model()->Set_BlendWeight(3, 10.f, 6.f);
-			//Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.2f);
-			if (nullptr != m_pWeapon) {
-				Get_Weapon_Model()->Change_Animation(0, TEXT("Default"), 2);
-				Get_Weapon_Model()->Set_TrackPosition(0, 0.f);
-			}
+		if (m_pGameInstance->Get_KeyState('R') == DOWN
+			&& IsReloadAble()) {
+			Reload();
 		}
 	}
 	else if (Get_Body_Model()->isFinished(3) &&
@@ -656,6 +864,31 @@ void CPlayer::Update_KeyInput_Reload()
 
 		if (Get_Body_Model()->Get_BlendWeight(3) <= 0.01f) {
 			Get_Body_Model()->Set_Loop(3, true);
+
+			// 총알 개수 업데이트
+			ITEM_NUMBER eItem = { ITEM_NUMBER_END };
+			_int iNumBullet = { 0 };
+			switch (Get_Equip_As_ITEM_NUMBER()) {
+			case HandGun:
+				eItem = handgun_bullet01a;
+				iNumBullet = m_pTabWindow->Get_Search_Item_Quantity(eItem);
+				break;
+			case ShotGun:
+				eItem = shotgun_bullet01a;
+				iNumBullet = m_pTabWindow->Get_Search_Item_Quantity(eItem);
+				break;
+			}
+
+			_int iNumLoadedBullet = { 0 };
+			iNumLoadedBullet = m_pTabWindow->Get_Search_Item_Quantity(Get_Equip_As_ITEM_NUMBER());
+			if (iNumBullet >= Get_Weapon()->Get_MaxBullet() - iNumLoadedBullet) {
+				iNumBullet = Get_Weapon()->Get_MaxBullet() - iNumLoadedBullet;
+			}
+
+			m_pTabWindow->UseItem(Get_Equip_As_ITEM_NUMBER(), -iNumBullet);
+			m_pTabWindow->UseItem(eItem, iNumBullet);
+			NotifyObserver();
+
 		}
 	}
 }
@@ -688,12 +921,10 @@ void CPlayer::Update_LightCondition()
 
 void CPlayer::Update_Equip()
 {
-	static _bool isChange = false;
-	static EQUIP TargetWeapon = { NONE };
 
-	if (isChange) {
+	if (m_isRequestChangeEquip) {
 		if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
-			if(nullptr != m_pWeapon)
+			if (nullptr != m_pWeapon)
 				m_pWeapon->Set_RenderLocation(CWeapon::MOVE);
 
 			Get_Body_Model()->Set_Loop(3, false);
@@ -701,16 +932,16 @@ void CPlayer::Update_Equip()
 			Change_Body_Animation_Hold(3, MOVETOHOLSTER);
 			Get_Body_Model()->Set_BlendWeight(3, 10.f, 6.f);
 		}
-		else if(Get_Body_Model()->isFinished(3)) {
+		else if (Get_Body_Model()->isFinished(3)) {
 			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.01f) {
-				isChange = false;
+				m_isRequestChangeEquip = false;
 				Get_Body_Model()->Set_Loop(3, true);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == HOLSTERTOMOVE) {
-					Get_Body_Model()->Set_BlendWeight(3, 0.f, 6.f);
+				Get_Body_Model()->Set_BlendWeight(3, 0.f, 6.f);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == MOVETOHOLSTER) {
-				Set_Equip(TargetWeapon);
+				Set_Equip(&m_eTargetEquip);
 				Change_Body_Animation_Hold(3, HOLSTERTOMOVE);
 			}
 		}
@@ -718,18 +949,15 @@ void CPlayer::Update_Equip()
 	else {
 		// test
 		if (m_pGameInstance->Get_KeyState('2') == DOWN) {
-			isChange = true;
-			TargetWeapon = HG;
+			Requst_Change_Equip(HG);
 		}
 
 		if (m_pGameInstance->Get_KeyState('4') == DOWN) {
-			isChange = true;
-			TargetWeapon = STG;
+			Requst_Change_Equip(STG);
 		}
 
-		if (m_pGameInstance->Get_KeyState('6') == TRUE) {
-			isChange = true;
-			TargetWeapon = NONE;
+		if (m_pGameInstance->Get_KeyState('6') == DOWN) {
+			Requst_Change_Equip(NONE);
 		}
 	}
 }
@@ -737,7 +965,7 @@ void CPlayer::Update_Equip()
 void CPlayer::Update_AnimSet()
 {
 #pragma region Move
-	if (m_isSpotlight) {
+		if (m_isSpotlight) {
 		if (m_iHp >= 4) {
 			m_eAnimSet_Move = FINE_LIGHT;
 		}
@@ -785,19 +1013,15 @@ void CPlayer::Update_AnimSet()
 	}
 #pragma endregion
 
-	if (m_eState == MOVE) {
-		//Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
-		//_float fTrackPosition = Get_Body_Model()->Get_TrackPosition(0);
+	switch(m_eState) {
+	case MOVE:
 		Change_Body_Animation_Move(0, Get_Body_Model()->Get_CurrentAnimIndex(0));
-		//Get_Body_Model()->Set_TrackPosition(0, fTrackPosition, false);
-
-		//fTrackPosition = Get_Body_Model()->Get_TrackPosition(1);
 		Change_Body_Animation_Move(1, Get_Body_Model()->Get_CurrentAnimIndex(1));
-		//Get_Body_Model()->Set_TrackPosition(1, fTrackPosition, false);
-	}
-	else {
+		break;
+	case HOLD:
 		Change_Body_Animation_Hold(0, Get_Body_Model()->Get_CurrentAnimIndex(0));
 		Change_Body_Animation_Hold(1, Get_Body_Model()->Get_CurrentAnimIndex(1));
+		break;
 	}
 
 
@@ -834,11 +1058,11 @@ void CPlayer::Turn_Spine_Default(_float fTimeDelta)
 		_vector				vMyLook = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
 		_float4				vHeadWorldLook = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
 		_float				fHeadMagnitude = sqrt(vHeadWorldLook.x * vHeadWorldLook.x + vHeadWorldLook.z * vHeadWorldLook.z);
-		
+
 		_matrix				CamWorldMatrix = { m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
 		_float4				vCamLook = { CamWorldMatrix.r[CTransform::STATE_LOOK] };
 		_float				fCamMagnitude = sqrt(vCamLook.x * vCamLook.x + vCamLook.z * vCamLook.z);
-		
+
 		_float				fDot = { vHeadWorldLook.x * vCamLook.x + vHeadWorldLook.z * vCamLook.z };
 		_float				fAngle = acos(fDot / (fHeadMagnitude * fCamMagnitude));
 		_vector				vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_UP) };
@@ -852,7 +1076,7 @@ void CPlayer::Turn_Spine_Default(_float fTimeDelta)
 		else {
 			fAngle = XMConvertToRadians(45.f);
 		}
-			
+
 		if (vCross.y > 0) {
 			fAngle *= -1;
 		}
@@ -950,7 +1174,6 @@ void CPlayer::Turn_Spine_Hold(_float fTimeDelta)
 		//vNewQuaternion *= -1;
 		vNewQuaternion = XMQuaternionNormalize(vNewQuaternion);
 
-
 		_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
 
 		for (auto& iJointIndex : ChildJointIndices)
@@ -982,13 +1205,10 @@ void CPlayer::Turn_Spine_Light(_float fTimeDelta)
 			fAngle *= -1;
 		}
 
-		cout << XMConvertToDegrees(fAngle) << endl;
-
-
 		static _float fCurAngle = 0.f;
 		if (!m_isTurnSpineLight) {
 			if (fabs(fCurAngle) > 0.0001) {
-				fCurAngle += fTimeDelta * -fCurAngle * 3;
+				fCurAngle += fTimeDelta * -fCurAngle * 10;
 			}
 			else {
 				fCurAngle = 0.f;
@@ -996,11 +1216,12 @@ void CPlayer::Turn_Spine_Light(_float fTimeDelta)
 			}
 		}
 		else {
-			fCurAngle += fTimeDelta * (fAngle - fCurAngle) * 3;
+			fCurAngle += fTimeDelta * (fAngle - fCurAngle) * 10;
 		}
 
 		list<_uint>			ChildJointIndices;
-		pModel->Get_Child_ZointIndices("l_arm_clavicle", "l_weapon", ChildJointIndices);
+		pModel->Get_Child_ZointIndices("l_arm_clavicle", "l_arm_wrist", ChildJointIndices);
+
 
 		_uint				iNumChildJoint = { static_cast<_uint>(ChildJointIndices.size()) };
 		_float				fDevidedAngle = { fCurAngle / iNumChildJoint };
@@ -1010,9 +1231,10 @@ void CPlayer::Turn_Spine_Light(_float fTimeDelta)
 
 		_vector				vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, fDevidedAngle) };
 
-		vNewQuaternion = XMVectorSetX(vNewQuaternion, 0.f);
+		vNewQuaternion = XMVectorSetY(vNewQuaternion, 0.f);
+		vNewQuaternion = XMVectorSetZ(vNewQuaternion, 0.f);
+		//vNewQuaternion *= -1;
 		vNewQuaternion = XMQuaternionNormalize(vNewQuaternion);
-
 		_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
 
 		for (auto& iJointIndex : ChildJointIndices)
@@ -1105,7 +1327,7 @@ void CPlayer::ResetCamera()
 void CPlayer::Apply_Recoil(_float fTimeDelta)
 {
 	//m_fRecoil_Lerp_Time += fTimeDelta*10.f;
-	m_fRecoil_Lerp_Time_Omega += fTimeDelta*20.f;
+	m_fRecoil_Lerp_Time_Omega += fTimeDelta * 20.f;
 	if (m_fRecoil_Lerp_Time_Omega >= PxPiDivTwo)
 	{
 		m_fRecoil_Lerp_Time_Omega = PxPiDivTwo;
@@ -1124,8 +1346,15 @@ void CPlayer::Apply_Recoil(_float fTimeDelta)
 		m_fRecoil_Rotate_Amount_Y_Current = 0.f;
 	}
 
-	m_pTransformCom_Camera->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), -fTimeDelta*10.f* m_fRecoil_Rotate_Amount_X);
-	m_pTransformCom_Camera->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), -fTimeDelta*10.f * m_fRecoil_Rotate_Amount_Y);
+	m_pTransformCom_Camera->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), -fTimeDelta * 10.f * m_fRecoil_Rotate_Amount_X);
+	m_pTransformCom_Camera->Turn(m_pTransformCom_Camera->Get_State_Vector(CTransform::STATE_RIGHT), -fTimeDelta * 10.f * m_fRecoil_Rotate_Amount_Y);
+}
+
+void CPlayer::PickUp_Item(CGameObject* pPickedUp_Item)
+{
+	m_pGameInstance->Set_IsPaused(true);
+
+	m_pTabWindow->PickUp_Item(pPickedUp_Item);
 }
 
 void CPlayer::RayCast_Shoot()
@@ -1573,7 +1802,8 @@ HRESULT CPlayer::Ready_Camera()
 	m_pCamera_Event->Set_SocketMatrix(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("neck_0")));
 	//m_pCamera_Event->Set_SocketMatrix(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_backVest_start")));
 
-	
+	m_pCamera->Bind_PipeLine();
+
 	return S_OK;
 }
 
@@ -1663,6 +1893,33 @@ void CPlayer::RayCasting_Camera()
 	}
 }
 
+void CPlayer::Ready_Effect()
+{
+	m_pMuzzle_Flash = CMuzzle_Flash::Create(m_pDevice, m_pContext);
+	m_pMuzzle_Flash->SetSize(0.3f, 0.3f);
+
+	m_pMuzzle_Flash_SG = CMuzzle_Flash_SG::Create(m_pDevice, m_pContext);
+	m_pMuzzle_Flash_SG->SetSize(0.6f, 0.6f);
+}
+
+void CPlayer::Release_Effect()
+{
+	Safe_Release(m_pMuzzle_Flash);
+	Safe_Release(m_pMuzzle_Flash_SG);
+}
+
+void CPlayer::Tick_Effect(_float fTimeDelta)
+{
+	m_pMuzzle_Flash->Tick(fTimeDelta);
+	m_pMuzzle_Flash_SG->Tick(fTimeDelta);
+}
+
+void CPlayer::Late_Tick_Effect(_float fTimeDelta)
+{
+	m_pMuzzle_Flash->Late_Tick(fTimeDelta);
+	m_pMuzzle_Flash_SG->Late_Tick(fTimeDelta);
+}
+
 HRESULT CPlayer::Add_Components()
 {
 	/* Com_Collider */
@@ -1678,7 +1935,7 @@ HRESULT CPlayer::Add_Components()
 
 	/* For.Com_Navigation */
 	CNavigation::NAVIGATION_DESC			NavigationDesc{};
-	
+
 	NavigationDesc.iCurrentIndex = 0;
 
 	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation"),
@@ -1700,6 +1957,8 @@ HRESULT CPlayer::Add_FSM_States()
 	m_pFSMCom->Add_State(MOVE, CPlayer_State_Move::Create(this));
 
 	m_pFSMCom->Add_State(HOLD, CPlayer_State_Hold::Create(this));
+	m_pFSMCom->Add_State(BITE, CPlayer_State_Bite::Create(this));
+
 	m_pFSMCom->Change_State(MOVE);
 
 	Change_Body_Animation_Move(0, CPlayer::ANIM_IDLE);
@@ -1775,10 +2034,10 @@ HRESULT CPlayer::Add_PartObjects()
 	WeaponDesc.eEquip = HG;
 	WeaponDesc.pSocket[CWeapon::MOVE] = WeaponDesc.pSocket[CWeapon::MOVE_LIGHT] = WeaponDesc.pSocket[CWeapon::HOLD] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
 	WeaponDesc.pSocket[CWeapon::HOLSTER] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_holster_main")) };
-	
+
 	_matrix			WeaponTransformMatrix = { XMMatrixRotationY(XMConvertToRadians(90.f)) };
 	WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-90.f));
-	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] = WeaponDesc.fTransformationMatrices[CWeapon::MOVE_LIGHT] 
+	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] = WeaponDesc.fTransformationMatrices[CWeapon::MOVE_LIGHT]
 		= WeaponDesc.fTransformationMatrices[CWeapon::HOLD] = WeaponTransformMatrix;
 
 	WeaponTransformMatrix = { XMMatrixIdentity() };
@@ -1798,8 +2057,8 @@ HRESULT CPlayer::Add_PartObjects()
 	WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-90.f));
 	WeaponTransformMatrix *= XMMatrixRotationZ(XMConvertToRadians(-25.f));
 	WeaponTransformMatrix *= XMMatrixTranslation(0.f, 0.f, -5.f);
-	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] =  WeaponDesc.fTransformationMatrices[CWeapon::HOLD] = WeaponTransformMatrix;
-	
+	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] = WeaponDesc.fTransformationMatrices[CWeapon::HOLD] = WeaponTransformMatrix;
+
 	WeaponTransformMatrix = { XMMatrixIdentity() };
 	WeaponTransformMatrix *= XMMatrixRotationZ(XMConvertToRadians(-90.f));
 	WeaponTransformMatrix *= XMMatrixTranslation(0.f, 0.f, 30.f);
@@ -1922,4 +2181,6 @@ void CPlayer::Free()
 	m_Weapons.clear();
 
 	Safe_Release(m_pWeapon);
+
+	Release_Effect();
 }

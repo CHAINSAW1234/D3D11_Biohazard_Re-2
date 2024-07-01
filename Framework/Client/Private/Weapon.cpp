@@ -42,22 +42,26 @@ HRESULT CWeapon::Initialize(void * pArg)
 
 	m_bRender = false;
 
-	if (m_eEquip == CPlayer::HG) {
+	switch(m_eEquip) {
+	case CPlayer::HG:
+		m_iMaxBullet = 12;
+
 		m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_1_Sub_1__wp0100_VP70Custom_Mat_mesh0002", true);
 		m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_2_Sub_1__wp0000_PowerUp_Mat_mesh0003", true);
 		m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_6_Sub_1__wp0000_PowerUp_Mat_mesh0004", true);
-	}
+		break;
+	case CPlayer::STG:
+		m_iMaxBullet = 7;
 
-	if (m_eEquip == CPlayer::STG) {
 		m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_3_Sub_1__wp1000_mt_mesh0004", true);
 		m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_4_Sub_1__wp1100_mt_mesh0005", true);
+		break;
 	}
 
 	m_pModelCom->Set_RootBone("root");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
-
 
 	//m_pTransformCom->Set_Scaled(0.1f, 0.1f, 0.1f);
 	//m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(90.0f));
@@ -68,7 +72,7 @@ HRESULT CWeapon::Initialize(void * pArg)
 
 void CWeapon::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
+	//__super::Tick(fTimeDelta);
 	//m_pColliderCom->Tick(XMLoadFloat4x4(&m_WorldMatrix));
 }
 
@@ -89,8 +93,6 @@ void CWeapon::Late_Tick(_float fTimeDelta)
 
 	}
 		
-
-	
 #ifdef _DEBUG
 	//m_pGameInstance->Add_DebugComponents(m_pColliderCom);
 #endif
@@ -252,6 +254,44 @@ HRESULT CWeapon::Render_LightDepth_Spot()
 	return S_OK;
 }
 
+_float4 CWeapon::Get_MuzzlePosition()
+{
+	if (1) {
+		return Get_BonePosition("vfx_muzzle1");			//기본 상태
+	}
+	else if (1) {
+		return Get_BonePosition("vfx_muzzle3");			// 총신 부착시
+	}
+
+	return _float4(0.f, 0.f, 0.f, 0.f);						// 쓰레기
+}
+
+_float4 CWeapon::Get_BonePosition(const char* pBoneName)
+{
+	_float4x4 pMatrix = m_pModelCom->Get_BonePtr(pBoneName)->Get_CombinedTransformationMatrix_Var();
+
+	_vector vScale;
+	_vector vRoation;
+	_vector vTranspose;
+
+	XMMatrixDecompose(&vScale, &vRoation, &vTranspose, XMLoadFloat4x4(&m_WorldMatrix));
+	/*
+		_float4x4			m_WorldMatrix;					// 자신의 월드 행렬
+	const _float4x4*	m_pParentMatrix = { nullptr };	// 이 파츠를 보유하고 있는 GameObject == Parent의 월드 행렬을 포인터로 보유
+	*/
+
+	//_matrix vMatrix = XMMatrixRotationQuaternion(vRoation)*XMLoadFloat4x4(&pMatrix);
+	_matrix vMatrix = XMLoadFloat4x4(&pMatrix) * XMLoadFloat4x4(&m_WorldMatrix);
+	_float4x4 fMatrix;
+	XMStoreFloat4x4(&fMatrix, vMatrix);
+	//_float4 vPos = { fMatrix.Forward().x + vTranspose.m128_f32[0] ,	fMatrix.Forward().y + vTranspose.m128_f32[1],	fMatrix.Forward().z + vTranspose.m128_f32[2],	1.f };
+	//_float4 vPos = { fMatrix._41 + vTranspose.m128_f32[0] ,	fMatrix._42 + vTranspose.m128_f32[1],	fMatrix._43 + vTranspose.m128_f32[2],	1.f };
+	_float4 vPos = _float4(fMatrix._41, fMatrix._42, fMatrix._43, 1.f);
+
+
+	return vPos;
+}
+
 HRESULT CWeapon::Add_Components()
 {
 	/* For.Com_Shader */
@@ -315,7 +355,6 @@ CWeapon * CWeapon::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext
 	}
 
 	return pInstance;
-
 }
 
 CGameObject * CWeapon::Clone(void * pArg)

@@ -23,7 +23,14 @@ public:
 	typedef struct tagMonsterStatus
 	{
 		_float				fSpeed = { 0.f };
+
 		_float				fRecognitionRange = { 0.f };
+		_float				fAccRecognitionTime = { 0.f };
+		_float				fMaxRecognitionTime = { 0.f };
+
+		_float				fTryAttackRange = { 0.f };
+		_float				fTryAttackRecognitionTime = { 0.f };
+
 		_float				fViewAngle = { 0.f };
 		_float				fAttack = { 0.f };
 		_float				fHealth = { 0.f };
@@ -52,6 +59,9 @@ public:
 	//Action
 public:
 	void								Move(_float4 vDir, _float fTimeDelta);
+
+public:
+	void								Add_Root_Translation(_fvector vAdditionalTranslation);
 
 public:		/* For.Access */
 	MONSTER_STATUS*						Get_Status_Ptr() { return m_pStatus; }
@@ -102,11 +112,10 @@ protected: // For AIController
 public://For Decal
 	virtual void						Perform_Skinning() {}
 	virtual void						Ready_Decal() {}
-public:
-	class CDecal_Blood*					m_pDecal_Blood = { nullptr };
 
 protected:
 	MONSTER_STATUS*						m_pStatus = { nullptr };
+
 
 protected:
 	virtual HRESULT						Add_Components() = 0;

@@ -64,9 +64,11 @@ HRESULT CLevel_GamePlay::Initialize()
 
 void CLevel_GamePlay::Tick(_float fTimeDelta)
 {
+	CImgui_Manager::Get_Instance()->Tick();
+
 	__super::Tick(fTimeDelta);
 
-	CImgui_Manager::Get_Instance()->Tick();
+
 
 
 	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
@@ -108,8 +110,7 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 				iPreIndex = iCurIndex;
 			
 			m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta);
-		}
-		
+		}		
 	}
 
 
@@ -121,9 +122,9 @@ HRESULT CLevel_GamePlay::Render()
 	if (FAILED(__super::Render()))
 		return E_FAIL;
 
-	CImgui_Manager::Get_Instance()->Render();
-
 	SetWindowText(g_hWnd, TEXT("Level_GamePlay."));
+
+	CImgui_Manager::Get_Instance()->Render();
 
 	return S_OK;
 }
@@ -221,7 +222,7 @@ HRESULT CLevel_GamePlay::Ready_TabWindow()
 	CUI::UI_DESC UIDesc = {};
 	UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.9f };
 	UIDesc.vSize = { g_iWinSizeX * 1.f, g_iWinSizeY * 1.f };
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_TabWindow"), TEXT("Prototype_GameObject_Tab_Window"), &UIDesc)))
 		return E_FAIL;
 
 	return S_OK;

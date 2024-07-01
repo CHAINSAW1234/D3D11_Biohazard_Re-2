@@ -94,10 +94,12 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_L180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_R180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::HOLD_SHOT, 300.f);
-																							   
+	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::HOLD_SHOT_NO_AMMO, 300.f);
+
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::WHEEL_L180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::WHEEL_R180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::HOLD_SHOT, 300.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::HOLD_SHOT_NO_AMMO, 300.f);
 
 	//m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/LeonTest/LeonBody.fbx");
 
@@ -768,10 +770,19 @@ HRESULT CBody_Player::Add_Animations()
 
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Common"), CPlayer::Get_AnimSetEtcName(CPlayer::ANIMSET_ETC::COMMON))))
 		return E_FAIL;
-	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Bite"), CPlayer::Get_AnimSetEtcName(CPlayer::ANIMSET_ETC::BITE))))
+
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Bite_Default"), TEXT("Bite_Default"))))
 		return E_FAIL;
-
-
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Bite_Default_Back"), TEXT("Bite_Default_Back"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Bite_Creep"), TEXT("Bite_Creep"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Bite_Push_Down"), TEXT("Bite_Push_Down"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Bite_Lightly_Hold"), TEXT("Bite_Lightly_Hold"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Bite_ETC"), TEXT("Bite_ETC"))))
+		return E_FAIL;
 
 	return S_OK;
 }

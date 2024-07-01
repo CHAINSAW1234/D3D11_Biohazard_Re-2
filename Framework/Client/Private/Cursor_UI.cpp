@@ -57,12 +57,20 @@ HRESULT CCursor_UI::Initialize(void* pArg)
     m_pTransformCom->Set_State(CTransform::STATE_POSITION, pTrans);
 
     m_isRender = false;
+
+    ShowCursor(m_isShowCursor);
+
     return S_OK;
 }
 
 void CCursor_UI::Tick(_float fTimeDelta)
 {
-    ShowCursor(FALSE);
+    if (UP == m_pGameInstance->Get_KeyState('Z'))
+    {
+        m_isShowCursor = !m_isShowCursor;
+        ShowCursor(m_isShowCursor);
+    }
+        
     Inven_Open(fTimeDelta);
 
     __super::Tick(fTimeDelta);

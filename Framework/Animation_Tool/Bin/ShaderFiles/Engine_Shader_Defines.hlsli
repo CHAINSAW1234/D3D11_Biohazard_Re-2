@@ -34,6 +34,13 @@ RasterizerState RS_Default
     FrontCounterClockwise = false;
 };
 
+RasterizerState RS_NoCulling
+{
+    FillMode = Solid;
+    CullMode = None;
+    FrontCounterClockwise = false;
+};
+
 RasterizerState RS_CullReverse
 {
     FillMode = Solid;

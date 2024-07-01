@@ -1,9 +1,9 @@
 #pragma once
 #include "Customize_UI.h"
-
+#include "Observer.h"
 BEGIN(Client)
 
-class CBullet_UI final : public CCustomize_UI
+class CBullet_UI final : public CCustomize_UI, public CObserver
 {
 private:
 	enum class BULLET_TEXT_TYPE { CURRENT_BULLET, STORE_BULLET, END_BULLET };
@@ -29,9 +29,10 @@ public:
 
 private :
 	void					Mission_Complete();
+	virtual void Start() override;
+	virtual void OnNotify() override;
 
 private:
-	void					Control_BulletU();
 	void					Change_BulletUI();
 	void					Render_Bullet_UI(_float fTimeDelta);
 
@@ -44,7 +45,8 @@ private:
 	Text					m_pTextUI[2] = {};
 
 	_int					m_iStoreBullet = { 0 };
-	_int					m_iCurrentBullet = { 10 };
+	_int					m_iCurrentBullet = { 0 };
+	_int					m_iMaxBullet = { 12 };
 	_float					m_fOrigin_Blending = {};
 
 	/* 원본 위치*/

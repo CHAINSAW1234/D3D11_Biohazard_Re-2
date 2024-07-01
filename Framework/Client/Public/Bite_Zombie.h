@@ -1,0 +1,76 @@
+#pragma once
+
+#include "Client_Defines.h"
+#include "Task_Node.h"
+#include "Body_Zombie.h"
+
+BEGIN(Client)
+
+class CBite_Zombie : public CTask_Node
+{
+public:
+	enum class BITE_ANIM_STATE { _START, _MIDDLE, _FINISH, _END };
+private:
+	CBite_Zombie();
+	CBite_Zombie(const CBite_Zombie& rhs);
+	virtual ~CBite_Zombie() = default;
+
+public:
+	virtual HRESULT					Initialize(void* pArg);
+
+	virtual void					Enter() override;
+	virtual _bool					Execute(_float fTimeDelta) override;
+	virtual void					Exit() override;
+
+private:
+	void							Change_Animation();
+
+	void							Change_Animation_Default(BITE_ANIM_STATE eState);
+	void							Change_Animation_Creep(BITE_ANIM_STATE eState);
+	void							Change_Animation_Push_Down(BITE_ANIM_STATE eState);
+	void							Change_Animation_Lost(BITE_ANIM_STATE eState);
+
+	BITE_ANIM_STATE 				Compute_Current_AnimState_Bite();
+
+	_bool							Is_CurrentAnim_StartAnim();
+	_bool							Is_CurrentAnim_MiddleAnim();
+	_bool							Is_CurrentAnim_FinishAnim();
+
+	void							Set_Bite_LinearStart_HalfMatrix();
+
+private:
+	void							Apply_HalfMatrix(_float fTimeDelta);
+
+private:
+	HRESULT							SetUp_AnimBranches();
+
+public:
+	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }
+private:
+	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
+
+	const wstring&					m_strDefaultFrontAnimLayerTag = { TEXT("Bite_Default_Front") };
+	const wstring&					m_strDefaultBackAnimLayerTag = { TEXT("Bite_Default_Back") };
+	const wstring&					m_strPushDownAnimLayerTag = { TEXT("Bite_Push_Down") };
+	const wstring&					m_strCreepAnimLayerTag = { TEXT("Bite_Creep") };
+	const wstring&					m_strETCAnimLayerTag = { TEXT("Bite_ETC") };
+	const wstring&					m_strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
+	const PLAYING_INDEX				m_ePlayingIndex = { PLAYING_INDEX::INDEX_0 };
+
+	unordered_map<wstring, unordered_set<_uint>>		m_StartAnims;
+	unordered_map<wstring, unordered_set<_uint>>		m_MiddleAnims;
+	unordered_map<wstring, unordered_set<_uint>>		m_FinishAnims;
+
+	_float							m_fAccLinearTime_HalfMatrix = { 0.f };
+	_float							m_fTotalLinearTime_HalfMatrix = { 0.f };
+
+	_float4x4						m_Delta_Matrix_To_HalfMatrix;
+
+public:
+	static CBite_Zombie* Create(void* pArg = nullptr);
+
+public:
+	virtual void Free() override;
+};
+
+END

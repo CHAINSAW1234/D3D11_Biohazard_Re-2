@@ -14,6 +14,7 @@
 #include "Player.h"
 #include "Decal_Blood.h"
 #include "Mesh.h"
+#include "Effect_Header_Zombie.h"
 
 #define MODEL_SCALE 0.01f
 
@@ -41,7 +42,7 @@ HRESULT CZombie::Initialize(void* pArg)
 	GameObjectDesc.fRotationPerSec = XMConvertToRadians(90.0f);
 
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
-		return E_FAIL;	
+		return E_FAIL;
 
 	//if (FAILED(Add_Components()))
 	//	return E_FAIL;
@@ -82,9 +83,14 @@ HRESULT CZombie::Initialize(void* pArg)
 
 	CBlackBoard_Zombie::BLACKBOARD_ZOMBIE_DESC			Desc;
 	Desc.pAI = this;
-	m_pBlackBoard = CBlackBoard_Zombie::Create(&Desc);	
+	m_pBlackBoard = CBlackBoard_Zombie::Create(&Desc);
 
 	Init_BehaviorTree_Zombie();
+#pragma endregion
+
+#pragma region Effect
+	m_BloodDelay = 70;
+	Ready_Effect();
 #pragma endregion
 
 	return S_OK;
@@ -93,6 +99,8 @@ HRESULT CZombie::Initialize(void* pArg)
 void CZombie::Priority_Tick(_float fTimeDelta)
 {
 	__super::Priority_Tick(fTimeDelta);
+
+	m_pBlackBoard->Priority_Tick(fTimeDelta);
 }
 
 void CZombie::Tick(_float fTimeDelta)
@@ -127,14 +135,19 @@ void CZombie::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
 
 #pragma region BehaviorTree 코드
-		m_pBehaviorTree->Initiate(fTimeDelta);
+
+	m_pBehaviorTree->Initiate(fTimeDelta);
+
 #pragma endregion
 
 	_float4			vDirection = {};
 	_vector			vRootMoveDir = { XMLoadFloat3(&m_vRootTranslation) };
 	XMStoreFloat4(&vDirection, vRootMoveDir);
 	if (m_pController)
+	{
 		m_pController->Move(vDirection, fTimeDelta);
+	}
+	XMStoreFloat3(&m_vRootTranslation, XMVectorZero());
 
 #pragma region 길찾기 임시 코드
 	//if (m_bArrived == false)
@@ -172,26 +185,35 @@ void CZombie::Tick(_float fTimeDelta)
 	{
 		if (m_pController->Is_Hit())
 		{
+			/*For Decal*/
+			Ready_Decal();
+
+			/*For Blood Effect*/
+			m_bSetBlood = true;
+			m_BloodTime = GetTickCount64();
+			//m_vHitPosition = m_pController->GetBlockPoint();
+			//m_vHitNormal = m_pController->GetHitNormal();
+
 			m_pController->Set_Hit(false);
 
 			//	m_bRagdoll = true;
 
 			auto vForce = m_pController->Get_Force();
 			auto eType = m_pController->Get_Hit_Collider_Type();
-				//	for (auto& pPartObject : m_PartObjects)
-				//	{
-				//		if (nullptr != pPartObject)
-				//			pPartObject->SetRagdoll(m_iIndex_CCT, vForce, eType);
-				//	}
+			//	for (auto& pPartObject : m_PartObjects)
+			//	{
+			//		if (nullptr != pPartObject)
+			//			pPartObject->SetRagdoll(m_iIndex_CCT, vForce, eType);
+			//	}
 
 
-			//	For.Anim
+		//	For.Anim
 			m_eCurrentHitCollider = eType;
-			XMStoreFloat3(&m_vHitDirection,  XMLoadFloat4(&vForce));
+			XMStoreFloat3(&m_vHitDirection, XMLoadFloat4(&vForce));
 
 #pragma region HIT TYPE 분할 임시
 
-			
+
 			CPlayer::EQUIP		eEquip = m_pBlackBoard->GetPlayer()->Get_Equip();
 			if (CPlayer::EQUIP::HG == eEquip)
 			{
@@ -216,11 +238,20 @@ void CZombie::Tick(_float fTimeDelta)
 	//For Decal.
 	m_pColliderCom_Bounding->Tick(m_pTransformCom->Get_WorldMatrix_Pure_Mat());
 
-	//	Ready_Decal();
+#pragma region Effect
+	if (m_bSetBlood)
+	{
+		SetBlood();
+	}
+
+	Tick_Effect(fTimeDelta);
+#pragma endregion
 }
 
 void CZombie::Late_Tick(_float fTimeDelta)
 {
+	m_pBlackBoard->Late_Tick(fTimeDelta);
+
 	if (m_pGameInstance->IsPaused())
 	{
 		fTimeDelta = 0.f;
@@ -237,6 +268,10 @@ void CZombie::Late_Tick(_float fTimeDelta)
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom_Bounding);
 #endif
+
+#pragma region Effect
+	Late_Tick_Effect(fTimeDelta);
+#pragma endregion
 }
 
 HRESULT CZombie::Render()
@@ -340,6 +375,34 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_1);
 
 
+	//	Add Task Node		=> Damage Hold Stun
+	CStun_Hold_Zombie* pTask_Hold_Stun = { CStun_Hold_Zombie::Create() };
+	pTask_Hold_Stun->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Hold_Stun);
+
+	//	Add Decorator		=> Is Can Link? ( From Hold )
+	list<MONSTER_STATE>							CanLinkMonsterStatesHoldStun;
+	CanLinkMonsterStatesHoldStun.emplace_back(MONSTER_STATE::MST_HOLD);
+	CIs_Can_Link_Pre_State_Zombie* pDeco_Is_Can_Link_Hold_Stun = { CIs_Can_Link_Pre_State_Zombie::Create(CanLinkMonsterStatesHoldStun) };
+	pDeco_Is_Can_Link_Hold_Stun->SetBlackBoard(m_pBlackBoard);
+	pTask_Hold_Stun->Insert_Decorator_Node(pDeco_Is_Can_Link_Hold_Stun);
+
+	//	Add Decorator		=> Is Hit? ( All HitType, Leg Collider )
+	CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitAllType_LegCollision;
+	for (_uint i = 0; i < MONSTER_STATE::MST_END; ++i)
+	{
+		IsHitAllType_LegCollision.CheckHitTypes.emplace_back(static_cast<HIT_TYPE>(i));
+	}
+	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::LEG_L);
+	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::LEG_R);
+	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::CALF_L);
+	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::CALF_R);
+	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::FOOT_L);
+	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::FOOT_R);
+	CIs_Hit_Zombie* pDeco_Is_Hit_AllType = { CIs_Hit_Zombie::Create(&IsHitAllType_LegCollision) };
+	pDeco_Is_Hit_AllType->SetBlackBoard(m_pBlackBoard);
+	pTask_Hold_Stun->Insert_Decorator_Node(pDeco_Is_Hit_AllType);
+
 
 	//	Add Task Node		=> Damage Stun
 	CStun_Zombie* pTask_Stun = { CStun_Zombie::Create() };
@@ -360,10 +423,10 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 
 	//	Add Task Node		=> Damage Knock Back
-	CKnock_Back_Zombie*							pTask_Knockback = { CKnock_Back_Zombie::Create() };
+	CKnock_Back_Zombie* pTask_Knockback = { CKnock_Back_Zombie::Create() };
 	pTask_Knockback->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_1->Insert_Child_Node(pTask_Knockback);
-	
+
 	//	Add Decorator		=> Is Hit?
 	CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitBigDesc;
 	IsHitBigDesc.CheckHitTypes.emplace_back(HIT_TYPE::HIT_BIG);
@@ -372,7 +435,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	{
 		IsHitBigDesc.CheckColliderTypes.emplace_back(static_cast<COLLIDER_TYPE>(i));
 	}
-	CIs_Hit_Zombie*								pDeco_Is_HitBig= { CIs_Hit_Zombie::Create(&IsHitBigDesc) };
+	CIs_Hit_Zombie* pDeco_Is_HitBig = { CIs_Hit_Zombie::Create(&IsHitBigDesc) };
 	pDeco_Is_HitBig->SetBlackBoard(m_pBlackBoard);
 	pTask_Knockback->Insert_Decorator_Node(pDeco_Is_HitBig);
 
@@ -383,25 +446,36 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 	//	Add RootNode Child Composite Node - Selector Node			(Is Move Or Turn ?)
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
-	CComposite_Node*							pSelectorNode_RootChild_2 = { CComposite_Node::Create(&CompositeNodeDesc) };
+	CComposite_Node* pSelectorNode_RootChild_2 = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_2);
 
-	//Add Decorator Node
-	CIs_Character_In_Range_Zombie*				pDeco_Charactor_In_Range = { CIs_Character_In_Range_Zombie::Create() };
-	pDeco_Charactor_In_Range->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_2->Insert_Decorator_Node(pDeco_Charactor_In_Range);
+	//	Add Decorator Node
+	CIs_Character_In_Range_Zombie* pDeco_Charactor_In_Range_Recognition = { CIs_Character_In_Range_Zombie::Create(m_pStatus->fRecognitionRange) };
+	pDeco_Charactor_In_Range_Recognition->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Root->Insert_Decorator_Node(pDeco_Charactor_In_Range_Recognition);
 
-	//Add Task Node
-	CMove_Front_Zombie*							pTask_Move = { CMove_Front_Zombie::Create() };
+	//	Add Task Node (Hold)
+	CHold_Zombie* pTask_Hold = { CHold_Zombie::Create() };
+	pTask_Hold->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_2->Insert_Child_Node(pTask_Hold);
+
+	CIs_Enough_Time_Zombie* pDeco_Enough_Time_For_Hold = { CIs_Enough_Time_Zombie::Create(&m_pStatus->fAccRecognitionTime, &m_pStatus->fTryAttackRecognitionTime) };
+	pDeco_Enough_Time_For_Hold->SetBlackBoard(m_pBlackBoard);
+	pTask_Hold->Insert_Decorator_Node(pDeco_Enough_Time_For_Hold);
+
+	//	Add Task Node (Move)
+	CMove_Front_Zombie* pTask_Move = { CMove_Front_Zombie::Create() };
 	pTask_Move->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_2->Insert_Child_Node(pTask_Move);
 
-	//Add Decorator Node		=>		Task Move, Deco In View
-	CIs_Charactor_In_ViewAngle_Zombie*			pDeco_Charactor_In_View = { CIs_Charactor_In_ViewAngle_Zombie::Create() };
+
+
+	//	Add Decorator Node		=>		Task Move, Deco In View
+	CIs_Charactor_In_ViewAngle_Zombie* pDeco_Charactor_In_View = { CIs_Charactor_In_ViewAngle_Zombie::Create() };
 	pDeco_Charactor_In_View->SetBlackBoard(m_pBlackBoard);
 	pTask_Move->Insert_Decorator_Node(pDeco_Charactor_In_View);
 
-	////Add Decorator Node		=>		Task Move, Deco Can Change State
+	//	Add Decorator Node		=>		Task Move, Deco Can Change State
 	/*CIs_Can_Change_State_Zombie::CAN_CHANGE_STATE_ZOMBIE_DESC		CanChangeStateForMoveDesc;
 	CanChangeStateForMoveDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE);
 	CanChangeStateForMoveDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_TURN);
@@ -411,7 +485,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 
 	//Add Task Node
-	CPivot_Turn_Zombie*							pTask_Pivot_Turn = { CPivot_Turn_Zombie::Create() };
+	CPivot_Turn_Zombie* pTask_Pivot_Turn = { CPivot_Turn_Zombie::Create() };
 	pTask_Pivot_Turn->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_2->Insert_Child_Node(pTask_Pivot_Turn);
 
@@ -428,7 +502,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	*/
 
 	//Add RootNode Task Node
-	CWait_Zombie*								pTask_Wait = { CWait_Zombie::Create() };
+	CWait_Zombie* pTask_Wait = { CWait_Zombie::Create() };
 	pTask_Wait->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_Root->Insert_Child_Node(pTask_Wait);
 
@@ -485,14 +559,12 @@ HRESULT CZombie::Add_Components()
 	/* Com_Collider_Body */
 	CBounding_AABB::BOUNDING_AABB_DESC		ColliderAABBDesc{};
 
-	ColliderAABBDesc.vSize = _float3(0.4f, 1.6f, 0.4f);
+	ColliderAABBDesc.vSize = _float3(1.2f, 2.3f, 1.2f);
 	ColliderAABBDesc.vCenter = _float3(0.f, ColliderAABBDesc.vSize.y * 0.5f, 0.f);
 
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider_Bounding"), (CComponent**)&m_pColliderCom_Bounding, &ColliderAABBDesc)))
 		return E_FAIL;
-
-	m_pDecal_Blood = CDecal_Blood::Create(m_pDevice, m_pContext);
 
 	return S_OK;
 }
@@ -645,7 +717,10 @@ HRESULT CZombie::Initialize_Status()
 
 	m_pStatus->fAttack = STATUS_ZOMBIE_ATTACK;
 	m_pStatus->fViewAngle = STATUS_ZOMBIE_VIEW_ANGLE;
-	m_pStatus->fRecognitionRange = STATUS_ZOMBIE_DEFAULT_RECOGNIZE_DISTANCE;
+	m_pStatus->fRecognitionRange = STATUS_ZOMBIE_DEFAULT_RECOGNITION_DISTANCE;
+	m_pStatus->fMaxRecognitionTime = STATUS_ZOMBIE_MAX_RECOGNITION_TIME;
+	m_pStatus->fTryAttackRecognitionTime = STATUS_ZOMBIE_TRY_ATTACK_RICOGNITION_TIME;
+	m_pStatus->fTryAttackRange = STATUS_ZOMBIE_TRY_ATTACK_DISTANCE;
 	m_pStatus->fHealth = STATUS_ZOMBIE_HEALTH;
 
 	return S_OK;
@@ -694,15 +769,13 @@ HRESULT CZombie::Initialize_PartModels()
 
 void CZombie::Perform_Skinning()
 {
-	m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldMatrix());
-
 	_uint iNumMesh = m_pBodyModel->GetNumMesh();
 
 	for (_uint i = 0; i < iNumMesh; ++i)
 	{
+		m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldMatrix());
 		m_pBodyModel->Bind_Resource_Skinning(i);
 		m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
-		m_pBodyModel->Staging_Skinning(i);
 	}
 }
 
@@ -732,8 +805,138 @@ void CZombie::Ready_Decal()
 		decalInfo.minHitDistance = hitResult.minHitDistance;
 		decalInfo.maxHitDistance = hitResult.maxHitDistance;
 		decalInfo.decalMaterialIndex = 0;
-		m_pDecal_Blood->Add_Skinned_Decal(decalInfo);
+
+		for (int i = 0; i < m_pBodyModel->GetNumMesh(); ++i)
+		{
+			m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
+
+			if (m_iMeshIndex_Hit != 999)
+			{
+				m_iMeshIndex_Hit = i;
+
+				_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
+				_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
+				XMStoreFloat4(&m_vHitPosition, CameraPos);
+
+				m_vHitNormal = m_pController->GetHitNormal();
+
+				break;
+			}
+		}
+
+		if (m_iMeshIndex_Hit == 999)
+		{
+			m_vHitPosition = m_pController->GetBlockPoint();
+			m_vHitNormal = m_pController->GetHitNormal();
+		}
+
+		/*if (iMeshIndex != -1 && iMeshIndex != 999)
+		{
+			m_pBodyModel->Perform_Calc_DecalInfo(iMeshIndex);
+			m_pBodyModel->Bind_Resource_DecalMap(iMeshIndex, m_pShader_Decal);
+			m_pBodyModel->Perform_Init_DecalMap(iMeshIndex, m_pShader_Decal);
+		}*/
 	}
+}
+
+
+void CZombie::Ready_Effect()
+{
+	for (size_t i = 0; i < 3; ++i)
+	{
+		auto pBlood = CBlood::Create(m_pDevice, m_pContext);
+		pBlood->SetSize(3.f, 3.f, 3.f);
+		m_vecBlood.push_back(pBlood);
+	}
+}
+
+void CZombie::Release_Effect()
+{
+	for (size_t i = 0; i < m_vecBlood.size(); ++i)
+	{
+		Safe_Release(m_vecBlood[i]);
+	}
+}
+
+void CZombie::Tick_Effect(_float fTimeDelta)
+{
+	for (size_t i = 0; i < m_vecBlood.size(); ++i)
+	{
+		m_vecBlood[i]->Tick(fTimeDelta);
+	}
+}
+
+void CZombie::Late_Tick_Effect(_float fTimeDelta)
+{
+	for (size_t i = 0; i < m_vecBlood.size(); ++i)
+	{
+		m_vecBlood[i]->Late_Tick(fTimeDelta);
+	}
+}
+
+void CZombie::SetBlood()
+{
+	if (m_iBloodCount >= m_vecBlood.size())
+	{
+		m_bSetBlood = false;
+		m_iBloodCount = 0;
+		m_vHitPosition = _float4(0.f, 0.f, 0.f, 1.f);
+		return;
+	}
+
+	if (m_BloodDelay + m_BloodTime < GetTickCount64())
+	{
+		m_BloodTime = GetTickCount64();
+		m_vecBlood[m_iBloodCount]->Set_Render(true);
+		m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
+
+		if (m_iBloodCount == 0)
+		{
+			Calc_Decal_Map();
+
+			m_iBloodType = m_pGameInstance->GetRandom_Int(0, 10);
+
+			m_vecBlood[m_iBloodCount]->SetType(m_iBloodType);
+
+			if (m_iBloodType >= 10)
+			{
+				m_iBloodType = 0;
+			}
+		}
+		else
+		{
+			if (m_iBloodType == 1)
+			{
+				++m_iBloodType;
+			}
+
+			m_vecBlood[m_iBloodCount]->SetType(++m_iBloodType);
+
+			if (m_iBloodType >= 10)
+			{
+				m_iBloodType = 0;
+			}
+		}
+
+		m_vecBlood[m_iBloodCount]->SetPosition(m_vHitPosition);
+
+		++m_iBloodCount;
+
+		if (m_iBloodCount >= m_vecBlood.size())
+		{
+			m_bSetBlood = false;
+			m_iBloodCount = 0;
+			m_vHitPosition = _float4(0.f, 0.f, 0.f, 1.f);
+			return;
+		}
+	}
+}
+
+void CZombie::Calc_Decal_Map()
+{
+	m_pBodyModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+
+	m_pBodyModel->Perform_Calc_DecalMap();
 }
 
 CZombie* CZombie::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -770,4 +973,5 @@ void CZombie::Free()
 	__super::Free();
 
 	Safe_Release(m_pBlackBoard);
+	Release_Effect();
 }

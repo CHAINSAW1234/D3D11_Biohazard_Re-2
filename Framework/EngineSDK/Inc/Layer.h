@@ -21,7 +21,9 @@ public:
 	void							Tick(_float fTimeDelta);
 	void							Late_Tick(_float fTimeDelta);
 	void							Start();
+
 public:
+	CGameObject*					Get_GameObject(_uint iIndex);
 	list<class CGameObject*>*		Get_ObjectList_Ptr();
 
 private:

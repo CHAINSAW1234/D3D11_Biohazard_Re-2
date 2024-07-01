@@ -417,6 +417,24 @@ HRESULT CLoader::Load_Animations()
 
 #pragma region Default Zombie Bite Anims
 
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Bite_Push_Down"), "../Bin/Resources/Animations/Body_Zombie/Bite/Push_Down/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Bite_Creep"), "../Bin/Resources/Animations/Body_Zombie/Bite/Creep/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Bite_Default_Front"), "../Bin/Resources/Animations/Body_Zombie/Bite/Default_Front/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Bite_Default_Back"), "../Bin/Resources/Animations/Body_Zombie/Bite/Default_Back/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Bite_Lightly_Hold"), "../Bin/Resources/Animations/Body_Zombie/Bite/Lightly_Hold/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Bite_ETC"), "../Bin/Resources/Animations/Body_Zombie/Bite/ETC/")))
+		return E_FAIL;
+
 #pragma endregion
 
 #pragma region Default Zombie Damage Anims

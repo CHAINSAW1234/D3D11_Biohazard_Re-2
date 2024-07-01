@@ -13,6 +13,7 @@ BEGIN(Client)
 
 class CFlashLight final : public CPartObject
 {
+
 private:
 	CFlashLight(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CFlashLight(const CFlashLight& rhs);
@@ -31,11 +32,12 @@ public:
 
 public:
 	void							Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
+
 private:
 	CModel*							m_pModelCom = { nullptr };
 	CShader*						m_pShaderCom = { nullptr };
 	_float4x4*						m_pSocketMatrix = { nullptr };
-	wstring							m_strLightTag = TEXT("Light_Flash");
+	wstring							m_strLightTag = { TEXT("Light_Flash") };
 
 private:
 	HRESULT							Add_Components();

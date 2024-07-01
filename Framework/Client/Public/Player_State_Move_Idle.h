@@ -16,6 +16,8 @@ public:
 	virtual void				OnStateExit() override;
 	virtual void				Start() override;
 
+private:
+	void Look_Cam(_float fTimeDelta);
 
 private:
 	CPlayer* m_pPlayer = { nullptr };

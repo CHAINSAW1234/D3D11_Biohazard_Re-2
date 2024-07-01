@@ -272,12 +272,40 @@ _float4 CGameInstance::GetPlayerPos()
 	return m_pPlayer->GetPosition();
 }
 
-//wstring CGameInstance::UTF8ToUTF16(const string& utf8Str)
-//{
-//	//wstring_convert<codecvt_utf8_utf16<wchar_t>> converter;
-//	//return converter.from_bytes(utf8Str);
-//
-//}
+wstring CGameInstance::StringToWstring(const std::string& strString)
+{
+	std::setlocale(LC_ALL, "");
+	size_t requiredSize = 0;
+	mbstowcs_s(&requiredSize, nullptr, 0, strString.c_str(), strString.size());
+	std::vector<wchar_t> buffer(requiredSize);
+	mbstowcs_s(&requiredSize, buffer.data(), buffer.size(), strString.c_str(), strString.size());
+	return std::wstring(buffer.data());
+}
+
+string CGameInstance::WstringToString(const wstring& wstrString)
+{
+	std::setlocale(LC_ALL, "");
+	size_t requiredSize = 0;
+	wcstombs_s(&requiredSize, nullptr, 0, wstrString.c_str(), wstrString.size());
+	std::vector<char> buffer(requiredSize);
+	wcstombs_s(&requiredSize, buffer.data(), buffer.size(), wstrString.c_str(), wstrString.size());
+	return std::string(buffer.data());
+}
+
+wstring CGameInstance::ConvertToWString(const char* str, size_t len)
+{
+	vector<wchar_t> buffer(len + 1);
+
+	int numChars = MultiByteToWideChar(CP_UTF8, 0, str, -1, buffer.data(), static_cast<int>(buffer.size()));
+
+	if (numChars > 0) 
+	{
+		return wstring(buffer.data());
+	}
+
+	return wstring();
+}
+
 
 #pragma region Input_Device
 _uint CGameInstance::Get_KeyState(_int iKey)
@@ -467,6 +495,14 @@ HRESULT CGameInstance::Add_Clone(_uint iLevelIndex, const wstring & strLayerTag,
 		return E_FAIL;
 
 	return m_pObject_Manager->Add_Clone(iLevelIndex, strLayerTag, strPrototypeTag, pArg);
+}
+
+CGameObject* CGameInstance::Get_GameObject(_uint iLevelIndex, const wstring& strPrototypeTag, _uint iIndex)
+{
+	if (nullptr == m_pObject_Manager)
+		return nullptr;
+
+	return m_pObject_Manager->Get_GameObject(iLevelIndex, strPrototypeTag, iIndex);
 }
 
 CGameObject * CGameInstance::Clone_GameObject(const wstring & strPrototypeTag, void * pArg)
@@ -1272,6 +1308,19 @@ list<string> CGameInstance::Get_Animation_Tags(const wstring& setrAnimLayerTag)
 
 	return m_pAnimation_Library->Get_Animation_Tags(setrAnimLayerTag);
 }
+_float4 CGameInstance::Get_Camera_Pos_Float4()
+{
+	return m_pCameraTransform->Get_State_Float4(CTransform::STATE_POSITION);
+}
+_vector CGameInstance::Get_Camera_Pos_Vector()
+{
+	return m_pCameraTransform->Get_State_Vector(CTransform::STATE_POSITION);
+}
+
+#pragma endregion
+
+#pragma region CS_Manager
+
 void CGameInstance::Bind_Essential_Resource_Skinning(_float4x4 WorldMat, _float4x4* pBoneMatrices)
 {
 	m_pCS_Manager->Bind_Essential_Resource_Skinning(WorldMat, pBoneMatrices);
@@ -1281,10 +1330,42 @@ void CGameInstance::Bind_Resource_Skinning(SKINNING_INPUT Input)
 {
 	m_pCS_Manager->Bind_Resource_Skinning(Input);
 }
+
 void CGameInstance::Perform_Skinning(_uint iNumVertices)
 {
 	m_pCS_Manager->Perform_Skinning(iNumVertices);
 }
+
+void CGameInstance::Bind_Resource_RayCasting(RAYCASTING_INPUT Input)
+{
+	m_pCS_Manager->Bind_Resource_RayCasting(Input);
+}
+
+void CGameInstance::Perform_RayCasting(_uint iNumTris)
+{
+	m_pCS_Manager->Perform_RayCasting(iNumTris);
+}
+
+void CGameInstance::Bind_Resource_Calc_Decal_Info(CALC_DECAL_INPUT Input)
+{
+	m_pCS_Manager->Bind_Resource_CalcDecalInfo(Input);
+}
+
+void CGameInstance::Perform_Calc_Decal_Info()
+{
+	m_pCS_Manager->Perform_Calc_Decal_Info();
+}
+
+void CGameInstance::Bind_Resource_Calc_Decal_Map(CALC_DECAL_MAP_INPUT Input)
+{
+	m_pCS_Manager->Bind_Resource_CalcMap(Input);
+}
+
+void CGameInstance::Perform_Calc_Decal_Map(_uint iNumVertices)
+{
+	m_pCS_Manager->Perform_Calc_Decal_Map(iNumVertices);
+}
+
 #pragma endregion
 
 #pragma region Render_Target_Debugger

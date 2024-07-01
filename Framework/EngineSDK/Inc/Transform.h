@@ -120,6 +120,13 @@ public:
 	void					Set_RotationMatrix_Pure(_matrix Mat);
 	// 현재 행렬을 이전 Tick의 행렬로써  PrevMatrix에 세팅 -> 이번 Tick의 모은 행동이 종료 된 이후에 실행 할 것
 
+
+
+
+
+#pragma region 편의성 함수
+	void SetWorldMatrix_With_UpVector(_vector upVector);
+#pragma endregion
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;

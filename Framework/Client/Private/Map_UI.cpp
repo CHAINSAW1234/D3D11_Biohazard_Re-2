@@ -1122,21 +1122,24 @@ void CMap_UI::Map_Item_Control(_float fTimeDelta)
 
 void CMap_UI::Search_TabWindow()
 {
-    list<CGameObject*>* pTab_Window_List = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+    //list<CGameObject*>* pTab_Window_List = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
 
-    if(nullptr != pTab_Window_List)
-    {   
-        for (auto& iter : *pTab_Window_List)
-        {
-            m_pTab_Window = dynamic_cast<CTab_Window*>(iter);
+    //if(nullptr != pTab_Window_List)
+    //{   
+    //    for (auto& iter : *pTab_Window_List)
+    //    {
+    //        m_pTab_Window = dynamic_cast<CTab_Window*>(iter);
 
-            if (nullptr != m_pTab_Window)
-            {
-        //        Safe_AddRef(m_pTab_Window);
-                return;
-            }
-        }
-    }
+    //        if (nullptr != m_pTab_Window)
+    //        {
+    //    //        Safe_AddRef(m_pTab_Window);
+    //            return;
+    //        }
+    //    }
+    //}
+
+    CGameObject* pTabWindow = m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0);
+    m_pTab_Window = dynamic_cast<CTab_Window*>(pTabWindow);
 }
    
 /* Type을 구분 짓는 함수 */

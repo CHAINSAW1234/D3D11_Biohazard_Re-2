@@ -13,7 +13,7 @@ private:
 	virtual ~CIs_Character_In_Range_Zombie() = default;
 
 public:
-	virtual HRESULT					Initialize(void* pArg);
+	virtual HRESULT					Initialize(_float fRange);
 
 	virtual _bool					Condition_Check();
 
@@ -24,8 +24,10 @@ public:
 	}
 protected:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
+	_float							m_fRange = { 0.f };
+
 public:
-	static CIs_Character_In_Range_Zombie* Create(void* pArg = nullptr);
+	static CIs_Character_In_Range_Zombie* Create(_float fRange = 0.f);
 
 public:
 	virtual void Free() override;

@@ -7,7 +7,7 @@
 #include"PartObject.h"
 
 #include"Part_InteractProps.h"
-#include"Tab_Window.h"
+
 CInteractProps::CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -131,29 +131,6 @@ void CInteractProps::Check_Player()
 		static_cast<CPart_InteractProps*>(iter)->Set_PlayerSetting(m_pPlayer, m_pPlayerInteract, m_pPlayerTransform);
 	}
 
-}
-
-void CInteractProps::Check_TabWindow()
-{
-	if (m_pTab_Window != nullptr)
-		return;
-
-#pragma region 창균 인벤토리 세팅
-	//레이어 리스트 순회해서 객체 검색임 이거 말고 생각이 안나는데 더 좋은방법 있으면 진짜 알려주세요...
-	list<CGameObject*>* pGObjList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
-
-	for (auto& iter : *pGObjList)
-	{
-		CTab_Window* pTabWindow = dynamic_cast<CTab_Window*>(iter);
-		if (nullptr != pTabWindow)
-		{
-			m_pTab_Window = pTabWindow;
-			Safe_AddRef(m_pTab_Window);
-			break;
-		}
-	}
-
-#pragma endregion
 }
 
 void CInteractProps::Check_Col_Sphere_Player()

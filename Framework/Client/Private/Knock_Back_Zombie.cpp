@@ -28,7 +28,6 @@ void CKnock_Back_Zombie::Enter()
 
 	pBodyModel->Set_TotalLinearInterpolation(0.2f);
 	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), false);
-	m_eCurrentHitCollider = m_pBlackBoard->GetAI()->Get_Current_IntersectCollider();
 
 	m_isEntry = true;
 }
@@ -48,14 +47,25 @@ _bool CKnock_Back_Zombie::Execute(_float fTimeDelta)
 	auto pAI = m_pBlackBoard->GetAI();
 	pAI->SetState(MONSTER_STATE::MST_DAMAGE);
 
-	//	cout << "Wait" << endl;
-	Change_Animation();
+	if (true == m_isEntry)
+	{
+		//	cout << "Wait" << endl;
+		Update_Current_Collider();
+		Change_Animation();
+		m_isEntry = false;
+	}
 
 	return true;
 }
 
 void CKnock_Back_Zombie::Exit()
 {
+	m_eCurrentHitCollider = COLLIDER_TYPE::_END;
+}
+
+void CKnock_Back_Zombie::Update_Current_Collider()
+{
+	m_eCurrentHitCollider = { m_pBlackBoard->GetAI()->Get_Current_IntersectCollider() };
 }
 
 void CKnock_Back_Zombie::Change_Animation()
@@ -63,24 +73,11 @@ void CKnock_Back_Zombie::Change_Animation()
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	if (true == m_isEntry)
-	{
-		m_isEntry = false;
-	}
-
-	else
-	{
-		return;
-	}
-
 	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
 
-	_uint			iPlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_0) };
 	_int			iResultAnimationIndex = { -1 };
-	wstring			strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
-	wstring			strAnimLayerTag = { TEXT("Damage_Knockback") };
 
 	_float3			vDirectionFromHitFloat3;
 	if (false == m_pBlackBoard->Compute_Direction_From_Hit_Local(&vDirectionFromHitFloat3))
@@ -99,28 +96,20 @@ void CKnock_Back_Zombie::Change_Animation()
 		)
 	{
 		if (true == isFromFront)
-		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_KNOCKBACK::_F_L_SLANT);
-		}
 
 		else
-		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_KNOCKBACK::_B_L_SLANT);
-		}
 	}
 
 	else if (m_eCurrentHitCollider == COLLIDER_TYPE::ARM_R || m_eCurrentHitCollider == COLLIDER_TYPE::FOREARM_R || m_eCurrentHitCollider == COLLIDER_TYPE::HAND_R ||
 		m_eCurrentHitCollider == COLLIDER_TYPE::LEG_R || m_eCurrentHitCollider == COLLIDER_TYPE::CALF_R || m_eCurrentHitCollider == COLLIDER_TYPE::FOOT_R)
 	{
 		if (true == isFromFront)
-		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_KNOCKBACK::_F_R_SLANT);
-		}
 
 		else
-		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_KNOCKBACK::_B_R_SLANT);
-		}
 	}
 
 	else if (m_eCurrentHitCollider == COLLIDER_TYPE::CHEST || m_eCurrentHitCollider == COLLIDER_TYPE::PELVIS)
@@ -128,27 +117,19 @@ void CKnock_Back_Zombie::Change_Animation()
 		if (true == isBigXAxis)
 		{
 			if (true == isFromRight)
-			{
 				iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_KNOCKBACK::_BODY_R);
-			}
 
 			else
-			{
 				iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_KNOCKBACK::_BODY_L);
-			}
 
 		}
 		else
 		{
 			if (true == isFromFront)
-			{
 				iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_KNOCKBACK::_BODY_F);
-			}
 
 			else
-			{
 				iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_KNOCKBACK::_BODY_B);
-			}
 		}		
 	}
 
@@ -162,13 +143,10 @@ void CKnock_Back_Zombie::Change_Animation()
 				{
 					_int		iRandomKnockBack = { m_pGameInstance->GetRandom_Int(1, 2) };
 					if (1 == iRandomKnockBack)
-					{
 						iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_KNOCKBACK::_HEAD_FL1);
-					}
+
 					else if (2 == iRandomKnockBack)
-					{
 						iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_KNOCKBACK::_HEAD_FL2);
-					}
 
 					iResultAnimationIndex = iRandomKnockBack;
 				}
@@ -177,13 +155,10 @@ void CKnock_Back_Zombie::Change_Animation()
 				{
 					_int		iRandomKnockBack = { m_pGameInstance->GetRandom_Int(1, 2) };
 					if (1 == iRandomKnockBack)
-					{
 						iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_KNOCKBACK::_HEAD_FR1);
-					}
+
 					else if (2 == iRandomKnockBack)
-					{
 						iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_KNOCKBACK::_HEAD_FR2);
-					}
 
 					iResultAnimationIndex = iRandomKnockBack;
 				}
@@ -192,14 +167,10 @@ void CKnock_Back_Zombie::Change_Animation()
 			else
 			{
 				if (true == isFromRight)
-				{
 					iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_KNOCKBACK::_HEAD_R);
-				}
 
 				else
-				{
 					iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_KNOCKBACK::_HEAD_L);
-				}
 			}			
 		}
 		else
@@ -220,8 +191,18 @@ void CKnock_Back_Zombie::Change_Animation()
 	if (-1 == iResultAnimationIndex)
 		return;
 
-	pBodyModel->Change_Animation(iPlayingIndex, strAnimLayerTag, iResultAnimationIndex);
-	pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
+	_int				iCurrentAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
+	_bool				isSameAnim = { iCurrentAnimIndex == iResultAnimationIndex };
+
+	if (false == isSameAnim)
+	{
+		pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strAnimLayerTag, iResultAnimationIndex);
+		pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
+	}
+	else
+	{
+		pBodyModel->Set_TrackPosition(static_cast<_uint>(m_ePlayingIndex), 0.f, true);
+	}
 }
 
 CKnock_Back_Zombie* CKnock_Back_Zombie::Create(void* pArg)

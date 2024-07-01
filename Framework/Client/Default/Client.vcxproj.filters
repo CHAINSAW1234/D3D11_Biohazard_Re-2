@@ -364,14 +364,59 @@
     <Filter Include="AIController\Zombie\Task\Utility\ExecutePreTask">
       <UniqueIdentifier>{f9aa79f4-30c5-47f5-8c46-5a4e0c14f097}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Decal">
-      <UniqueIdentifier>{3faddc07-8871-4e40-9c1c-1fb18c4c3945}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Decal\Blood">
-      <UniqueIdentifier>{0bc76a0b-c492-43e3-8c07-bfc815ee613f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Camera\Camera_Event">
       <UniqueIdentifier>{ee555b89-e04f-4401-b4d8-37201d791dcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Decorator\Checker_Is_EnoughTime">
+      <UniqueIdentifier>{8d544143-2331-44aa-b90a-ffaf7f8e9c95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Decorator\Checker_Can_Link_Pre_State">
+      <UniqueIdentifier>{6d98541e-9c4f-409c-a171-313d094d4e4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Decorator\Checker_MainTain_Pre_Task">
+      <UniqueIdentifier>{8283ac8d-e2dc-4a0a-85c4-1756898df535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Task\Damage\Stun_Hold">
+      <UniqueIdentifier>{9a24aab7-ef1e-4341-a35f-cc92ec5d9758}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Task\Hold">
+      <UniqueIdentifier>{48c4e195-7f2d-4cad-ae99-73d3733ba54b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AIController\Zombie\Task\Lightly_Hold_Zombie">
+      <UniqueIdentifier>{bd1bb944-b4f1-4ede-a608-1796bffc4e2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Bite">
+      <UniqueIdentifier>{dcef7ff1-dad3-4a5c-b033-5486bfa5ff8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Hair">
+      <UniqueIdentifier>{06a26c20-e93f-491c-9f17-a6dabe0d4021}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Start">
+      <UniqueIdentifier>{05f4945a-b9b9-4d32-a535-3119459f1f29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Reject">
+      <UniqueIdentifier>{873bfd2c-2169-4cf0-afdd-07942314c419}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Kill">
+      <UniqueIdentifier>{7a4d43e5-b41b-4ce9-8d91-07ffc20ccbf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Muzzle_Flash">
+      <UniqueIdentifier>{f75f75e3-3ac4-46fb-a428-5ac0cd54c644}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Effect_Header">
+      <UniqueIdentifier>{2f676497-0d0d-432c-8fdd-ad297219ae70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Muzzle_Flash_SG">
+      <UniqueIdentifier>{dc7b21c1-ec06-44e1-a0af-4c0e3cacdafb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Blood">
+      <UniqueIdentifier>{d2078c0f-c8a7-4383-bbad-8f76bf08e3a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Effect_Header">
+      <UniqueIdentifier>{99cd4cb9-bb79-4588-a5b8-8f0ccefde55d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\4. Item_Discription">
+      <UniqueIdentifier>{a4de0cca-9b51-44c7-8a1d-491fa3b44acc}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\MapObject\Manager">
       <UniqueIdentifier>{209e337a-7401-469e-a4fb-f047a44ac092}</UniqueIdentifier>
@@ -600,6 +645,9 @@
     <ClInclude Include="..\Public\Item_UI.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Map_UI.h">
+      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Sleep_Zombie.h">
       <Filter>AIController\Zombie\Task\Idle\Sleep</Filter>
     </ClInclude>
@@ -748,7 +796,7 @@
       <Filter>AIController\Zombie\Task\Additional\ShakeSkin</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Is_Maintain_PreTask_Zombie.h">
-      <Filter>AIController\Zombie\Decorator\Checker_MainTain_PreTask</Filter>
+      <Filter>AIController\Zombie\Decorator\Checker_MainTain_Pre_Task</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Execute_PreTask_Zombie.h">
       <Filter>AIController\Zombie\Task\Utility\ExecutePreTask</Filter>
@@ -762,15 +810,50 @@
     <ClInclude Include="..\Public\Stand_Up_Zombie.h">
       <Filter>AIController\Zombie\Task\Down\StandUp</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Damage_Zombie.h" />
-    <ClInclude Include="..\Public\Decal_Blood.h">
-      <Filter>02.GameObjects\Decal\Blood</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Camera_Event.h">
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Event_Struct.h">
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hold_Zombie.h">
+      <Filter>AIController\Zombie\Task\Hold</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Is_Enough_Time_Zombie.h">
+      <Filter>AIController\Zombie\Decorator\Checker_Is_EnoughTime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Is_Can_Link_Pre_State_Zombie.h">
+      <Filter>AIController\Zombie\Decorator\Checker_Can_Link_Pre_State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stun_Hold_Zombie.h">
+      <Filter>AIController\Zombie\Task\Damage\Stun_Hold</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Bite_Zombie.h">
+      <Filter>AIController\Zombie\Task\Bite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Lightly_Hold_Zombie.h">
+      <Filter>AIController\Zombie\Task\Lightly_Hold_Zombie</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Bite.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Bite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Muzzle_Flash.h">
+      <Filter>02.GameObjects\Effect\Muzzle_Flash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Effect_Header_Player.h">
+      <Filter>02.GameObjects\Player\Effect_Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Muzzle_Flash_SG.h">
+      <Filter>02.GameObjects\Effect\Muzzle_Flash_SG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Blood.h">
+      <Filter>02.GameObjects\Effect\Blood</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Effect_Header_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\Effect_Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Item_Discription.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\4. Item_Discription</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Prop_Manager.h">
       <Filter>02.GameObjects\MapObject\Manager</Filter>
@@ -966,6 +1049,9 @@
     <ClCompile Include="..\Private\Inventory_Slot.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Inventory_Slot</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Map_UI.cpp">
+      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Sleep_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Idle\Sleep</Filter>
     </ClCompile>
@@ -1102,7 +1188,7 @@
       <Filter>AIController\Zombie\Task\Additional\ShakeSkin</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Maintain_PreTask_Zombie.cpp">
-      <Filter>AIController\Zombie\Decorator\Checker_MainTain_PreTask</Filter>
+      <Filter>AIController\Zombie\Decorator\Checker_MainTain_Pre_Task</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Execute_PreTask_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Utility\ExecutePreTask</Filter>
@@ -1116,11 +1202,41 @@
     <ClCompile Include="..\Private\Stand_Up_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Down\StandUp</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Decal_Blood.cpp">
-      <Filter>02.GameObjects\Decal\Blood</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Camera_Event.cpp">
       <Filter>02.GameObjects\Camera\Camera_Event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hold_Zombie.cpp">
+      <Filter>AIController\Zombie\Task\Hold</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Is_Enough_Time_Zombie.cpp">
+      <Filter>AIController\Zombie\Decorator\Checker_Is_EnoughTime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Is_Can_Link_Pre_State_Zombie.cpp">
+      <Filter>AIController\Zombie\Decorator\Checker_Can_Link_Pre_State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stun_Hold_Zombie.cpp">
+      <Filter>AIController\Zombie\Task\Damage\Stun_Hold</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bite_Zombie.cpp">
+      <Filter>AIController\Zombie\Task\Bite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lightly_Hold_Zombie.cpp">
+      <Filter>AIController\Zombie\Task\Lightly_Hold_Zombie</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Bite.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Bite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Muzzle_Flash.cpp">
+      <Filter>02.GameObjects\Effect\Muzzle_Flash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Muzzle_Flash_SG.cpp">
+      <Filter>02.GameObjects\Effect\Muzzle_Flash_SG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Blood.cpp">
+      <Filter>02.GameObjects\Effect\Blood</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item_Discription.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\4. Item_Discription</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Prop_Manager.cpp">
       <Filter>02.GameObjects\MapObject\Manager</Filter>
@@ -1171,6 +1287,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAlphaSortTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

@@ -2,6 +2,7 @@
 
 #include "Client_Defines.h"
 #include "GameObject.h"
+#include "Observer_Handler.h"
 
 BEGIN(Engine)
 class CCollider;
@@ -11,12 +12,13 @@ class CFSM;
 END
 
 BEGIN(Client)
+class CTab_Window;
 class CWeapon;
 
-class CPlayer final : public CGameObject
+class CPlayer final : public CGameObject, public CObserver_Handler
 {
 public:
-	enum STATE { MOVE, HOLD, DAMAGE };
+	enum STATE { MOVE, HOLD, BITE, DAMAGE };
 	enum PART {
 		PART_BODY,
 		PART_HEAD,
@@ -49,10 +51,10 @@ public:
 		HOLD_SHOT, HOLD_SHOT_NO_AMMO, HOLD_RELOAD,
 		HOLSTERTOMOVE, MOVETOHOLSTER, HOLD_END
 	};
-
+	
 	enum ANIMSET_MOVE { FINE, MOVE_HG, MOVE_STG, FINE_LIGHT, CAUTION, CAUTION_LIGHT, DANGER, DANGER_LIGHT, ANIMSET_MOVE_END };
 	enum ANIMSET_HOLD { HOLD_HG, HOLD_STG, HOLD_MLE, HOLD_SUP, ANIMSET_HOLD_END };
-	enum ANIMSET_ETC { COMMON , BITE, ANIMSET_ETC_END };
+	enum ANIMSET_ETC { COMMON , ANIM_BITE, ANIMSET_ETC_END };
 #pragma endregion
 
 #pragma region Move Direction
@@ -79,6 +81,7 @@ public:
 	virtual void								Tick(_float fTimeDelta) override;
 	virtual void								Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT								Render() override;
+	virtual void								Start() override;
 
 private:
 	void										Priority_Tick_PartObjects(_float fTimeDelta);
@@ -89,32 +92,57 @@ private:
 	void										Col_Section();
 
 #pragma region 현진 추가
+
 public:
 	static wstring								Get_AnimSetMoveName(ANIMSET_MOVE eAnimSetMove) { return strAnimSetMoveName[eAnimSetMove]; }
 	static wstring								Get_AnimSetHoldName(ANIMSET_HOLD eAnimSetHold) { return strAnimSetHoldName[eAnimSetHold]; }
 	static wstring								Get_AnimSetEtcName(ANIMSET_ETC eAnimEtcHold) { return strAnimSetEtcName[eAnimEtcHold]; }
 
+	// =============================== GET ===============================
 	CModel*										Get_Body_Model();
-	void										Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex);
-	void										Change_Body_Animation_Hold(_uint iPlayingIndex, _uint iAnimIndex);
 	CModel*										Get_Weapon_Model();
 	_float3*									Get_Body_RootDir();
+	_bool										Get_isBite() { return m_isBite; }
 	_bool										Get_Spotlight() { return m_isSpotlight; }
+	_int										Get_Hp() { return m_iHp; }
 	CWeapon*									Get_Weapon() { return m_pWeapon; }
 	EQUIP										Get_Equip() { return m_eEquip; }
+	ITEM_NUMBER									Get_Equip_As_ITEM_NUMBER();
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
+	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
+	_float4										Get_MuzzlePosition();
+	wstring										Get_BiteLayerTag() { return m_strBiteLayerTag; }
+	_int										Get_BiteAnimIndex() { return m_iBiteAnimIndex; }
+	_int										Get_MaxBullet();
+	// =============================== SET ===============================
+	void										Set_isBite(_bool isBite) { m_isBite = isBite; }
 	void										Set_Spotlight(_bool isSpotlight); 
-	void										Set_Equip(EQUIP eEquip);
+	void										Requst_Change_Equip(EQUIP eEquip);
+	void										Set_Equip(EQUIP* eEquip);
+	void										Set_Hp(_int iHp);					
 	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineDefault = isTurnSpineDefault; }
 	void										Set_TurnSpineHold(_bool isTurnSpineHold) { m_isTurnSpineHold = isTurnSpineHold;}
 	void										Set_TurnSpineLight(_bool isTurnSpineLight) { m_isTurnSpineLight = isTurnSpineLight; }
 
+	// ============================ CHANGE == SET ============================
+	void										Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex);
+	void										Change_Body_Animation_Hold(_uint iPlayingIndex, _uint iAnimIndex);
 	void										Change_State(STATE eState);
 	void										Change_AnimSet_Move(ANIMSET_MOVE eAnimSetMove) { m_eAnimSet_Move = eAnimSetMove; }
 	void										Change_AnimSet_Hold(ANIMSET_HOLD eAnimSetHold) { m_eAnimSet_Hold = eAnimSetHold; }
-	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
+	void										Change_Player_State_Bite(_int iAnimIndex, const wstring& strBiteLayerTag, _float4x4 Interpolationmatrix, _float fTotalInterpolateTime);
+	void										Request_NextBiteAnimation(_int iAnimIndex);
+	void										Shot();
+	void										Reload();
 
-	HRESULT										Add_FSM_States();
+	// ============================ CHECK = ISABLE ============================
+	_bool										IsShotAble();
+	_bool										IsReloadAble();
+	
+	// ============================ UPDATE ============================
+	void										Update_InterplationMatrix(_float fTimeDelta);
+
+private:
 	void										Update_FSM();
 	void										Update_KeyInput_Reload();
 	void										Update_LightCondition();				// 현재 빛 상태에 따라 라이트를 키고 끔, 애니메이션 처리
@@ -125,9 +153,14 @@ public:
 	void										Turn_Spine_Hold(_float fTimeDelta);		// Hold 상태에서의 카메라 보기
 	void										Turn_Spine_Light(_float fTimeDelta);		// Light 상태일때의 카메라 보기
 
+	// ============================ INITIALIZE ============================
+	HRESULT										Add_FSM_States();
 
+public:
 	void Swap_Camera();
+
 private:
+	_int m_iMaxHp = { 5 };
 	_int m_iHp = { 5 };
 
 	_bool m_isSpotlight = { false };
@@ -140,12 +173,22 @@ private:
 	ANIMSET_MOVE m_eAnimSet_Move = { FINE };
 	ANIMSET_HOLD m_eAnimSet_Hold = { HOLD_HG };
 
+	_bool m_isBite = { false };
+	_uint m_eBiteType;
+	_int m_iBiteAnimIndex = { -1 };
+	_float4x4 m_vBiteInterpolateMatrix;
+	_float m_fTotalInterpolateTime = 0.f;
+	_float m_fCurrentInterpolateTime = 0.f;
+	wstring m_strBiteLayerTag;
+
+
 	EQUIP m_eEquip = { NONE };
+	_bool m_isRequestChangeEquip = { false };				// 무기 교체 요청 들어옴
+	EQUIP m_eTargetEquip = { NONE };
 	CWeapon* m_pWeapon = { nullptr };
 	vector<CWeapon*> m_Weapons;
 
 	class CCamera_Event* m_pCamera_Event = { nullptr };
-
 
 	friend class CPlayer_State_Move_Walk;
 	friend class CPlayer_State_Move_Jog;
@@ -189,7 +232,7 @@ public:
 
 
 private:
-	_bool										m_bInteract = { false };
+	_bool										m_bInteract = { false }; // 나 소통하겠다
 	_bool										m_bChange = { true };
 	_int										m_iCurCol = { 0 };
 	_int										m_iRegion = { 0 };
@@ -200,10 +243,15 @@ private:
 	_bool										m_bRegion[100] = { false, };
 #pragma endregion
 
+
 #pragma region 창균 추가
-	_bool										m_bIsExamineItem = { false };
+public:
+	void										PickUp_Item(CGameObject* pPickedUp_Item); //TabWindow의 PickUp_Item함수 호출용
+
+private:
+	_bool										m_isCamTurn = { false };
 	class CTab_Window*							m_pTabWindow = { nullptr };
-#pragma
+#pragma endregion
 
 	vector<CPartObject*>						m_PartObjects;
 	_ubyte										m_eState = {};
@@ -291,6 +339,17 @@ private:
 	_float										m_fRecoil_Rotate_Amount_Y_Current = { 0.f };
 	_float										m_fRecoil_Lerp_Time = { 0.f };
 	_float										m_fRecoil_Lerp_Time_Omega = { 0.f };
+
+#pragma region Effect
+public:
+	void	Ready_Effect();
+	void	Release_Effect();
+	void	Tick_Effect(_float fTimeDelta);
+	void	Late_Tick_Effect(_float fTimeDelta);
+private:
+	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
+	class CMuzzle_Flash_SG*						m_pMuzzle_Flash_SG = { nullptr };
+#pragma endregion
 private:
 	HRESULT Add_Components();
 

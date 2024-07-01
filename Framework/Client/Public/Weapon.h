@@ -43,6 +43,9 @@ public:
 	virtual HRESULT					Render_LightDepth_Spot()override;
 
 	RENDERLOCATION					Get_RenderLocation() { return m_eRenderLocation; }
+	_float4							Get_MuzzlePosition();
+	_float4							Get_BonePosition(const char* pBoneName);
+	_int							Get_MaxBullet() { return m_iMaxBullet; }
 
 	void							Set_RenderLocation(RENDERLOCATION eRenderLocation) { m_eRenderLocation = eRenderLocation; }
 
@@ -54,6 +57,7 @@ private:
 	RENDERLOCATION					m_eRenderLocation = { NONE };
 	_float4x4						m_fTransformationMatrices[NONE];
 
+	_uint							m_iMaxBullet = { 12 };
 private:
 	HRESULT							Add_Components();
 	HRESULT							Bind_ShaderResources();

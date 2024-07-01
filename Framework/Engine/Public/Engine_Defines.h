@@ -88,10 +88,6 @@ using namespace DirectX;
 #include <unordered_set>
 #include <random>
 
-///*CH Text*/
-//#include <locale>
-//#include <codecvt>
-///**/
 
 // SimpleMath
 #include <DirectXTK/SimpleMath.h>
@@ -102,6 +98,12 @@ using namespace DirectX;
 #include <cstdlib>
 
 #include <fstream>
+
+/*rapidjson*/
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
+//#include <rapidjson/stringbuffer.h>
+
 
 /* ImGui */
 #include "imgui.h"
@@ -187,5 +189,7 @@ using namespace Engine;
 #pragma region Skinned Mesh Decal
 
 #define SKINNING_THREAD_GROUP_SIZE 64
+#define RAYCAST_THREAD_GROUP_SIZE 64 
+#define CALC_DECAL_MAP_THREAD_GROUP_SIZE 64 
 
 #pragma endregion

@@ -129,7 +129,9 @@ public:
 	_bool*												Selector_Rendering() { return &m_isSelector_Rendering;  }
 
 	/*To NY*/
-	virtual _float4										Get_Object_Pos() = 0;
+	virtual _float4									Get_Object_Pos() = 0;
+
+	_int Get_iItemIndex() { return m_iItemIndex; }
 
 #pragma endregion
 	_int												Get_Region() { return m_tagPropDesc.iRegionNum; }
@@ -139,6 +141,7 @@ private :
 	_bool												m_isNYResult				= { false };
 
 protected:
+	_int												m_iItemIndex = { -1 };
 	_bool												m_bActivity = { true };
 	_bool												m_bShadow = { true };
 	_bool												m_bVisible = { true };
@@ -149,20 +152,16 @@ protected:
 	CCollider*											m_pColliderCom[INTERACTPROPS_COL_END] = { nullptr,nullptr,nullptr };
 	
 	class CPlayer*										m_pPlayer = { nullptr };
-	_bool*												m_pPlayerInteract = { nullptr };
+	_bool*												m_pPlayerInteract = { nullptr };//player의 m_bInteract 변수 포인터
 	CTransform*											m_pPlayerTransform = { nullptr };
 
-	_int												m_iPropsType = { 0 };
+	//_int												m_iPropsType = { 0 };
 	_float3												m_vRootTranslation = {};
 	INTERACTPROPS_DESC 									m_tagPropDesc ={};
 	vector<CPartObject*>								m_PartObjects;
 
-	//창균 추가
-	class CTab_Window* m_pTab_Window = { nullptr };
-
 protected:
 	void												Check_Player();
-	void												Check_TabWindow();
 	void												Check_Col_Sphere_Player();
 	void												Check_Col_OBB_Player();
 	void												Check_Col_AABB_Player();

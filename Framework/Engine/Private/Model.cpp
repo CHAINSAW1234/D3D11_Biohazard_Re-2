@@ -164,6 +164,34 @@ _float4x4 CModel::Get_TransformationMatrix()
 	return m_TransformationMatrix;
 }
 
+_matrix CModel::Get_FirstKeyFrame_Root_TransformationMatrix(const wstring& strAnimLayerTag, _int iAnimIndex)
+{
+	_matrix				ResultMatrix = { XMMatrixIdentity() };
+	if (iAnimIndex < 0)
+		return ResultMatrix;
+
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	if (iter != m_AnimationLayers.end())
+	{
+		_uint			iNumAnims = { iter->second->Get_NumAnims() };
+		if (iNumAnims <= static_cast<_uint>(iAnimIndex))
+			return ResultMatrix;
+
+		_int			iRootBoneIndex = { Find_RootBoneIndex() };
+		if (iRootBoneIndex < 0)
+			return ResultMatrix;
+
+		KEYFRAME			KeyFrame = { iter->second->Get_Animation(iAnimIndex)->Get_FirstKeyFrame(iRootBoneIndex) };
+		_vector				vScale = { XMLoadFloat3(&KeyFrame.vScale) };
+		_vector				vQuaternion = { XMLoadFloat4(&KeyFrame.vRotation) };
+		_vector				vTranslation = { XMLoadFloat3(&KeyFrame.vTranslation) };
+
+		ResultMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
+	}
+
+	return ResultMatrix;
+}
+
 void CModel::Reset_PreAnimation(_uint iPlayingIndex)
 {
 	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
@@ -981,7 +1009,9 @@ void CModel::Apply_RootMotion_Translation(CTransform* pTransform, _float3* pMove
 	vTotalDeltaTranslation = { XMVector3TransformNormal(vTotalDeltaTranslation, XMLoadFloat4x4(&m_TransformationMatrix)) };
 	vTotalDeltaTranslation = { XMVector3TransformNormal(vTotalDeltaTranslation, WorldMatrix) };
 
-	XMStoreFloat3(pMovedDirection, vTotalDeltaTranslation);
+	_vector			vMoveDirection = { XMLoadFloat3(pMovedDirection) };
+	vMoveDirection += vTotalDeltaTranslation;
+	XMStoreFloat3(pMovedDirection, vMoveDirection);
 }
 
 void CModel::Apply_Translation_Inverse_Rotation(_fvector vTranslation)
@@ -2084,8 +2114,6 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 	if (false == Is_Set_RootBone())
 		return E_FAIL;
 
-	*pMovedDirection = { 0.f, 0.f, 0.f };
-
 	fTimeDelta = Compute_NewTimeDelta_Distatnce_Optimization(fTimeDelta, pTransform);
 	if (0.f == fTimeDelta)
 		return S_OK;
@@ -2114,7 +2142,6 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 
 	//	재생할 모든 애니메이션을 일단 재생하고 각 키프레임을 저장하여 가져온다.
 	vector<vector<_float4x4>>		TransformationMatricesLayer;
-	XMStoreFloat3(pMovedDirection, XMVectorZero());
 
 	//	애니메이션들을 재생한다.
 	//	포함된 뼈들을 등록, 각 애니메이션에대한 트랜스폼 행렬들을 레이어 단위로 저장한다.
@@ -2387,27 +2414,6 @@ void CModel::Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMoved
 	for (_uint iBoneIndex = iStartBoneIndex; iBoneIndex < iNumBones; ++iBoneIndex)
 	{
 		_bool		isRootBone = { m_Bones[iBoneIndex]->Is_RootBone() };
-		/*if (true == isRootBone)
-		{
-			_float4			vTranslation = { 0.f, 0.f, 0.f, 1.f };			_float4			vQuaternion = {};
-
-			m_Bones[iBoneIndex]->Invalidate_CombinedTransformationMatrix_RootMotion(m_Bones, m_TransformationMatrix, m_isRootMotion_XZ, m_isRootMotion_Y, m_isRootMotion_Rotation, &vTranslation, &vQuaternion);
-
-			if (true == m_isRootMotion_XZ || true == m_isRootMotion_Y)
-			{
-				Apply_RootMotion_Translation(pTransform, XMLoadFloat4(&vTranslation), XMLoadFloat4(&vQuaternion), pMovedDirection);
-			}
-
-			if (true == m_isRootMotion_Rotation)
-			{
-				Apply_RootMotion_Rotation(pTransform, XMLoadFloat4(&vQuaternion));
-			}
-		}
-
-		else
-		{
-			m_Bones[iBoneIndex]->Invalidate_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix));
-		}*/
 
 		m_Bones[iBoneIndex]->Invalidate_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix));
 		if (true == isRootBone)
@@ -3012,8 +3018,7 @@ HRESULT CModel::Ready_Animations(ifstream& ifs)
 
 #pragma endregion
 
-#pragma region Create, Release
-
+#pragma region Decal
 void CModel::Bind_Resource_Skinning(_uint iIndex)
 {
 	m_Meshes[iIndex]->Bind_Resource_Skinning();
@@ -3028,6 +3033,61 @@ void CModel::Staging_Skinning(_uint iIndex)
 {
 	m_Meshes[iIndex]->Staging_Skinning();
 }
+
+void CModel::Perform_Skinning(_uint iIndex)
+{
+	m_pGameInstance->Perform_Skinning(m_Meshes[iIndex]->GetNumVertices());
+}
+
+void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix)
+{
+	//m_Meshes[iIndex]->SetDecalWorldMatrix(WorldMatrix);
+
+	for (int i = 0; i < m_Meshes.size(); ++i)
+	{
+		m_Meshes[i]->SetDecalWorldMatrix(WorldMatrix);
+	}
+}
+
+_uint CModel::Perform_RayCasting(_uint iIndex, AddDecalInfo Info, _float* pDist)
+{
+	//if (m_Meshes[iIndex]->Is_Hide() == false)
+		return m_Meshes[iIndex]->RayCasting_Decal(Info,pDist);
+	//return 999;
+}
+
+void CModel::Perform_Calc_DecalInfo(_uint iIndex)
+{
+	m_Meshes[iIndex]->Calc_Decal_Info();
+}
+
+void CModel::Bind_Resource_DecalMap(_uint iIndex, class CShader* pShader)
+{
+	m_Meshes[iIndex]->Bind_Resource_DecalMap(pShader);
+}
+
+void CModel::Perform_Init_DecalMap(_uint iIndex, class CShader* pShader)
+{
+	m_Meshes[iIndex]->Init_DecalMap(pShader);
+}
+
+void CModel::Perform_Calc_DecalMap()
+{
+	for (int i = 0; i < m_Meshes.size(); ++i)
+	{
+		m_Meshes[i]->Bind_Resource_CalcDecalMap();
+		m_Meshes[i]->Perform_Calc_DecalMap();
+	}
+}
+
+void CModel::Bind_DecalMap(_uint iIndex,CShader* pShader)
+{
+	m_Meshes[iIndex]->Bind_Decal_Map(pShader);
+}
+
+#pragma endregion
+
+#pragma region Create, Release
 
 CModel* CModel::Create_Temp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix)
 {

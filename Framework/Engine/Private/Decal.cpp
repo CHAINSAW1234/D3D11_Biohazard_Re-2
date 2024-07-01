@@ -34,17 +34,22 @@ HRESULT CDecal::Initialize(void* pArg)
 
 void CDecal::Tick(_float fTimeDelta)
 {
-	
+
 }
 
 void CDecal::Late_Tick(_float fTimeDelta)
 {
-	
+
 }
 
 HRESULT CDecal::Render()
 {
 	return S_OK;
+}
+
+void CDecal::SetWorldMatrix(_float4x4 WorldMatrix)
+{
+	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
 }
 
 HRESULT CDecal::Add_Components()
@@ -93,4 +98,14 @@ void CDecal::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
+	Safe_Delete(m_DecalInfo);
+	Safe_Release(m_pSB_DecalInfo);
+	Safe_Release(m_pUAV_DecalInfo);
+	Safe_Release(m_pCB_DecalConstData);
+	Safe_Release(m_pStaging_Buffer_Decal_Info);
+	Safe_Release(m_pStaging_Buffer_Decal_Map);
+	Safe_Release(m_pSB_DecalMap);
+	Safe_Release(m_pUAV_DecalMap);
+	Safe_Release(m_pRTV_DecalMap);
+	Safe_Delete_Array(m_pDecal_Map);
 }

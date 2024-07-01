@@ -36,11 +36,19 @@ public:
 	{
 		return m_bPause;
 	}
+	void									Set_IsPaused(_bool bPause)
+	{
+		m_bPause = bPause;
+	}
+
+	wstring StringToWstring(const std::string& strString);
+
+	string WstringToString(const wstring& wstrString);
+
+	wstring ConvertToWString(const char* str, size_t len);
+
 #pragma endregion
 
-#pragma region forCH_TEST
-	//wstring									UTF8ToUTF16(const string& utf8Str);
-#pragma endregion
 
 #pragma region Input_Device
 public: /* For.Input_Device */
@@ -82,6 +90,7 @@ public: /* For.Object_Manager */
 	HRESULT									Add_Prototype(const wstring& strPrototypeTag, class CGameObject* pPrototype);
 	CComponent*								Find_Prototype(_uint iLevelIndex, const wstring& strPrototypeTag);
 	HRESULT									Add_Clone(_uint iLevelIndex, const wstring& strLayerTag, const wstring& strPrototypeTag, void* pArg = nullptr);
+	class CGameObject*						Get_GameObject(_uint iLevelIndex, const wstring& strPrototypeTag, _uint iIndex);
 	class CGameObject*						Clone_GameObject(const wstring& strPrototypeTag, void* pArg = nullptr);
 	const CComponent*						Get_Component(_uint iLevelIndex, const wstring& strLayerTag, const wstring& strComTag, _uint iIndex = 0);
 	list<class CGameObject*>*				Find_Layer(_uint iLevelIndex, const wstring& LayerTag);
@@ -378,12 +387,20 @@ public:
 	{
 		return m_pCameraTransform;
 	}
+	_float4									Get_Camera_Pos_Float4();
+	_vector									Get_Camera_Pos_Vector();
 #pragma endregion
 
 #pragma region For Compute Shader Manager
 	void									Bind_Essential_Resource_Skinning(_float4x4 WorldMat, _float4x4* pBoneMatrices);
 	void									Bind_Resource_Skinning(SKINNING_INPUT Input);
 	void									Perform_Skinning(_uint iNumVertices);
+	void									Bind_Resource_RayCasting(RAYCASTING_INPUT Input);
+	void									Perform_RayCasting(_uint iNumTris);
+	void									Bind_Resource_Calc_Decal_Info(CALC_DECAL_INPUT Input);
+	void									Perform_Calc_Decal_Info();
+	void									Bind_Resource_Calc_Decal_Map(CALC_DECAL_MAP_INPUT Input);
+	void									Perform_Calc_Decal_Map(_uint iNumVertices);
 #pragma endregion
 
 private:
