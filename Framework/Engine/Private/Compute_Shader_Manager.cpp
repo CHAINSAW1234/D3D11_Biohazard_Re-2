@@ -36,9 +36,9 @@ void CCompute_Shader_Manager::Bind_Resource_Skinning(SKINNING_INPUT Input)
 	m_pSkinng->Bind_RawValue("g_NumVertices", &Input.iNumVertex, sizeof(_uint));
 }
 
-void CCompute_Shader_Manager::Bind_Essential_Resource_Skinning(_float4x4 WorldMat, _float4x4* pBoneMatrices)
+void CCompute_Shader_Manager::Bind_Essential_Resource_Skinning(_float4x4* pWorldMat, _float4x4* pBoneMatrices)
 {
-	m_pSkinng->Bind_RawValue("g_WorldMatrix", &WorldMat, sizeof(_float4x4));
+	m_pSkinng->Bind_RawValue("g_WorldMatrix", pWorldMat, sizeof(_float4x4));
 	m_pSkinng->Bind_Matrices("g_BoneMatrices", pBoneMatrices, 512);
 }
 
