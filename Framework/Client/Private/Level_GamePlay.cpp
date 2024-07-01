@@ -321,8 +321,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 		return E_FAIL;
 #endif
 #ifdef MAP_INTERACT
-	//if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
-	//	return E_FAIL;
+	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
+		return E_FAIL;
 #endif
 #ifdef MAP_NONANIMOBJ
 	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_NonAnim"), LEVEL_GAMEPLAY)))
