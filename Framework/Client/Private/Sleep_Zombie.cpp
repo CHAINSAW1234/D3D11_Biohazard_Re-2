@@ -27,6 +27,11 @@ HRESULT CSleep_Zombie::Initialize(void* pArg)
 
 void CSleep_Zombie::Enter()
 {
+#ifdef _DEBUG
+
+	cout << "Enter Sleep " << endl;
+
+#endif 
 }
 
 _bool CSleep_Zombie::Execute(_float fTimeDelta)
@@ -46,7 +51,7 @@ _bool CSleep_Zombie::Execute(_float fTimeDelta)
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_SLEEP);
+	pAI->Set_State(MONSTER_STATE::MST_SLEEP);
 
 	return true;
 }

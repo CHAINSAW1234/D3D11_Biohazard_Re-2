@@ -34,6 +34,12 @@ void CStun_Hold_Zombie::Enter()
 	m_eCurrentHitCollider = m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider();
 
 	m_isEntry = true;
+
+#ifdef _DEBUG
+
+	cout << "Enter Stun Hold" << endl;
+
+#endif 
 }
 
 _bool CStun_Hold_Zombie::Execute(_float fTimeDelta)
@@ -79,14 +85,23 @@ _bool CStun_Hold_Zombie::Execute(_float fTimeDelta)
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_DAMAGE);
+	pAI->Set_State(MONSTER_STATE::MST_DAMAGE);
 	Change_Animation();
+
+	_bool			isFinished = { pBody_Model->isFinished(static_cast<_uint>(m_ePlayingIndex)) };
+	if (true == isFinished)
+	{
+		m_pBlackBoard->Get_AI()->Set_State(MONSTER_STATE::MST_DOWN);
+		m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
+		m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_DOWN);
+	}	
 
 	return true;
 }
 
 void CStun_Hold_Zombie::Exit()
 {
+
 }
 
 void CStun_Hold_Zombie::Change_Animation()

@@ -22,7 +22,11 @@ HRESULT CWait_Zombie::Initialize(void* pArg)
 
 void CWait_Zombie::Enter()
 {
-	
+#ifdef _DEBUG
+
+	cout << "Enter Wait" << endl;
+
+#endif 
 }
 
 _bool CWait_Zombie::Execute(_float fTimeDelta)
@@ -38,7 +42,7 @@ _bool CWait_Zombie::Execute(_float fTimeDelta)
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_IDLE);
+	pAI->Set_State(MONSTER_STATE::MST_IDLE);
 
 	Change_Animation();
 

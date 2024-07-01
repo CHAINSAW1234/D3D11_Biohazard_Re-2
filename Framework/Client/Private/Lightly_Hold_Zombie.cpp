@@ -33,6 +33,12 @@ void CLightly_Hold_Zombie::Enter()
 	pBodyModel->Reset_PreAnim_CurrentAnim(static_cast<_uint>(PLAYING_INDEX::INDEX_1));
 
 	m_isEntry = true;
+
+#ifdef _DEBUG
+
+	cout << "Enter Lightly Hold " << endl;
+
+#endif 
 }
 
 _bool CLightly_Hold_Zombie::Execute(_float fTimeDelta)
@@ -45,10 +51,16 @@ _bool CLightly_Hold_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
+	CZombie::POSE_STATE			ePoseState = { m_pBlackBoard->Get_AI()->Get_PoseState() };
+	if (CZombie::POSE_STATE::_UP != ePoseState)
+	{
+		return false;
+	}
+
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_LIGHTLY_HOLD);
+	pAI->Set_State(MONSTER_STATE::MST_LIGHTLY_HOLD);
 
 	Change_Animation();
 

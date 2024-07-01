@@ -33,6 +33,12 @@ void CHold_Zombie::Enter()
 	pBodyModel->Reset_PreAnim_CurrentAnim(static_cast<_uint>(m_eBlendPlayingIndex));
 
 	m_isEntry = true;
+
+#ifdef _DEBUG
+
+	cout << "Enter Hold " << endl;
+
+#endif 
 }
 
 _bool CHold_Zombie::Execute(_float fTimeDelta)
@@ -47,7 +53,7 @@ _bool CHold_Zombie::Execute(_float fTimeDelta)
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_HOLD);
+	pAI->Set_State(MONSTER_STATE::MST_HOLD);
 
 	if (false == m_isEntry)
 	{

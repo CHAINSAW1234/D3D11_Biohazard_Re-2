@@ -33,6 +33,12 @@ void CStun_Zombie::Enter()
 	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), false);
 
 	m_isEntry = true;
+
+#ifdef _DEBUG
+
+	cout << "Enter Stun" << endl;
+
+#endif 
 }
 
 _bool CStun_Zombie::Execute(_float fTimeDelta)
@@ -62,7 +68,7 @@ _bool CStun_Zombie::Execute(_float fTimeDelta)
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_DAMAGE);
+	pAI->Set_State(MONSTER_STATE::MST_DAMAGE);
 
 	if (true == m_isEntry)
 	{

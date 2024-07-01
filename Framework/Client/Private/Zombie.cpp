@@ -48,6 +48,9 @@ HRESULT CZombie::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
+	if (FAILED(Initialize_States()))
+		return E_FAIL;
+
 	//if (FAILED(Add_Components()))
 	//	return E_FAIL;
 
@@ -142,8 +145,6 @@ void CZombie::Tick(_float fTimeDelta)
 	{
 		int iA = 0;
 	}
-	
-	cout << XMVectorGetX(vScale) << ", " << XMVectorGetY(vScale) << ", " << XMVectorGetZ(vScale) << endl;
 
 	if (nullptr != m_pController && false == m_isManualMove && m_pController->GetDead() == false)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
@@ -489,9 +490,9 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pSelectorNode_RootChild_StandUp_TurnOver->Insert_Child_Node(pTask_StandUp);
 
 	//	Add Task Node		=> Turn Over
-	CTurn_Over_Zombie*			pTask_TurnOver = { CTurn_Over_Zombie::Create() };
+	/*CTurn_Over_Zombie*			pTask_TurnOver = { CTurn_Over_Zombie::Create() };
 	pTask_TurnOver->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_StandUp_TurnOver->Insert_Child_Node(pTask_TurnOver);
+	pSelectorNode_RootChild_StandUp_TurnOver->Insert_Child_Node(pTask_TurnOver);*/
 
 #pragma endregion
 
@@ -604,7 +605,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//	Add Decorator Node
 	CIs_Character_In_Range_Zombie* pDeco_Charactor_In_Range_Recognition = { CIs_Character_In_Range_Zombie::Create(m_pStatus->fRecognitionRange) };
 	pDeco_Charactor_In_Range_Recognition->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_Root->Insert_Decorator_Node(pDeco_Charactor_In_Range_Recognition);
+	pSelectorNode_RootChild_Move->Insert_Decorator_Node(pDeco_Charactor_In_Range_Recognition);
 
 	//	Add Task Node (Hold)
 	CHold_Zombie* pTask_Hold = { CHold_Zombie::Create() };
@@ -634,10 +635,10 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_Move->Insert_Decorator_Node(pDeco_Can_Change_StateForMove);*/
 
 
-	//Add Task Node
-	CPivot_Turn_Zombie* pTask_Pivot_Turn = { CPivot_Turn_Zombie::Create() };
-	pTask_Pivot_Turn->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Pivot_Turn);
+	////Add Task Node
+	//CPivot_Turn_Zombie* pTask_Pivot_Turn = { CPivot_Turn_Zombie::Create() };
+	//pTask_Pivot_Turn->SetBlackBoard(m_pBlackBoard);
+	//pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Pivot_Turn);
 
 	//Add Decorator Node		=>		Task Turn, Deco Can Change State
 	/*CIs_Can_Change_State_Zombie::CAN_CHANGE_STATE_ZOMBIE_DESC		CanChangeStateForTurnDesc;
@@ -913,6 +914,19 @@ HRESULT CZombie::Initialize_Status()
 
 	m_pStatus->fHealth = STATUS_ZOMBIE_HEALTH;
 
+	m_pStatus->fStamina = STATUS_ZOMBIE_STAMINA;
+	m_pStatus->fMaxStamina = STATUS_ZOMBIE_STAMINA_MAX;
+	m_pStatus->fStaminaChargingPerSec = STATUS_ZOMBIE_STAMINA_CHARGING_PER_SEC;
+
+	return S_OK;
+}
+
+HRESULT CZombie::Initialize_States()
+{
+	m_eFaceState = FACE_STATE::_END;
+	m_ePoseState = POSE_STATE::_UP;
+	m_eState = MONSTER_STATE::MST_IDLE;
+
 	return S_OK;
 }
 
@@ -955,6 +969,50 @@ HRESULT CZombie::Initialize_PartModels()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+_bool CZombie::Is_Enough_Stamina(USE_STAMINA eAction)
+{
+	_bool		isEnough = { false };
+	if (USE_STAMINA::_BITE == eAction)
+	{
+		isEnough = m_pStatus->fStamina > ZOMBIE_NEED_STAMINA_BITE;
+	}
+
+	else if (USE_STAMINA::_STAND_UP == eAction)
+	{
+		isEnough = m_pStatus->fStamina > ZOMBIE_NEED_STAMINA_STANDUP;
+	}
+
+	else if (USE_STAMINA::_TURN_OVER == eAction)
+	{		
+		isEnough = m_pStatus->fStamina > ZOMBIE_NEED_STAMINA_TURN_OVER;
+	}
+
+	return isEnough;
+}
+
+_bool CZombie::Use_Stamina(USE_STAMINA eAction)
+{
+	if (false == Is_Enough_Stamina(eAction))
+		return false;
+
+	if (USE_STAMINA::_BITE == eAction)
+	{
+		m_pStatus->fStamina -= ZOMBIE_NEED_STAMINA_BITE;
+	}
+
+	else if (USE_STAMINA::_STAND_UP == eAction)
+	{
+		m_pStatus->fStamina -= ZOMBIE_NEED_STAMINA_STANDUP;
+	}
+
+	else if (USE_STAMINA::_TURN_OVER == eAction)
+	{
+		m_pStatus->fStamina -= ZOMBIE_NEED_STAMINA_TURN_OVER;
+	}
+
+	return true;
 }
 
 void CZombie::Col_EventCol()
@@ -1062,7 +1120,6 @@ void CZombie::Ready_Decal()
 		}*/
 	}
 }
-
 
 void CZombie::Ready_Effect()
 {

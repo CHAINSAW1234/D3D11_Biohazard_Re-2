@@ -38,7 +38,7 @@ _bool CShake_Skin_Zombie::Execute(_float fTimeDelta)
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_IDLE);
+	pAI->Set_State(MONSTER_STATE::MST_IDLE);
 	Change_Animation();
 
 	return true;

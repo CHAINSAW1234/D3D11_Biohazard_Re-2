@@ -24,7 +24,11 @@ HRESULT CPivot_Turn_Zombie::Initialize(void* pArg)
 
 void CPivot_Turn_Zombie::Enter()
 {
-	
+#ifdef _DEBUG
+
+	cout << "Enter Pivot Turn" << endl;
+
+#endif 
 }
 
 _bool CPivot_Turn_Zombie::Execute(_float fTimeDelta)
@@ -40,7 +44,7 @@ _bool CPivot_Turn_Zombie::Execute(_float fTimeDelta)
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_TURN);
+	pAI->Set_State(MONSTER_STATE::MST_TURN);
 
 	Change_Animation(fTimeDelta);
 

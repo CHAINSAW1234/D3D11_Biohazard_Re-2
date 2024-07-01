@@ -44,6 +44,12 @@ void CBite_Zombie::Enter()
 	m_eStartFaceState = m_pBlackBoard->Get_AI()->Get_FaceState();
 
 	m_ePreState = m_pBlackBoard->Get_AI()->Get_Current_MonsterState();
+
+#ifdef _DEBUG
+
+	cout << "Enter Bite " << endl;
+
+#endif 
 }
 
 _bool CBite_Zombie::Execute(_float fTimeDelta)
@@ -67,7 +73,7 @@ _bool CBite_Zombie::Execute(_float fTimeDelta)
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_BITE);
+	pAI->Set_State(MONSTER_STATE::MST_BITE);
 
 	if (true == Is_StateFinished(eAnimState))
 		return false;
@@ -84,7 +90,18 @@ _bool CBite_Zombie::Execute(_float fTimeDelta)
 
 	if (BITE_ANIM_STATE::_FINISH == eAnimState)
 	{
-		m_pBlackBoard->Get_AI()->Set_ManualMove(false);
+		CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+		if (nullptr == pBody_Model)
+			return false;
+		
+		_float			fTrackPosition = { pBody_Model->Get_Duration_From_PlayingInfo(static_cast<_uint>(m_ePlayingIndex)) };
+		_float			fDuration = { pBody_Model->Get_Duration_From_PlayingInfo(static_cast<_uint>(m_ePlayingIndex)) };
+
+		_float			fRatio = { fTrackPosition / fDuration };
+		if (fRatio > 0.9f)
+		{
+			m_pBlackBoard->Get_AI()->Set_ManualMove(false);
+		}
 	}
 
 	return true;
@@ -98,7 +115,6 @@ void CBite_Zombie::Exit()
 		return;
 
 	m_eStartPoseState = CZombie::POSE_STATE::_END;
-	m_eStartFaceState = CZombie::FACE_STATE::_END;
 }
 
 void CBite_Zombie::Change_Animation_Default_Front(BITE_ANIM_STATE eState)

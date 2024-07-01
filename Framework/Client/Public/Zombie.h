@@ -29,6 +29,15 @@ BEGIN(Client)
 
 #define STATUS_ZOMBIE_TRY_STANDUP_TIME					2.f
 
+#define STATUS_ZOMBIE_STAMINA							50.f
+#define STATUS_ZOMBIE_STAMINA_MAX						150.f
+#define STATUS_ZOMBIE_STAMINA_CHARGING_PER_SEC			5.f
+
+/* For.Use Stamina */
+#define ZOMBIE_NEED_STAMINA_BITE						50.f
+#define ZOMBIE_NEED_STAMINA_STANDUP						40.f
+#define ZOMBIE_NEED_STAMINA_TURN_OVER					20.f
+
 class CZombie final : public CMonster
 {
 public:
@@ -48,6 +57,8 @@ public:
 	enum class LOST_STATE_R_LEG { _END };												//	소분류
 	enum class LOST_STATE_L_ARM { _END };												//	소분류
 	enum class LOST_STATE_R_ARM { _END };												//	소분류
+
+	enum class USE_STAMINA { _BITE, _STAND_UP, _TURN_OVER, _END };
 
 private:
 	CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -70,6 +81,7 @@ private:
 	virtual HRESULT						Bind_ShaderResources() override;
 	virtual HRESULT						Add_PartObjects() override;
 	virtual HRESULT						Initialize_Status() override;
+	virtual HRESULT						Initialize_States();
 
 public:		/* For.Collision Part */
 	inline COLLIDER_TYPE				Get_Current_IntersectCollider() { return m_eCurrentHitCollider; }
@@ -93,7 +105,12 @@ public:		/* Access */
 
 private:	/* Initialize_PartObjects_Models */
 	virtual HRESULT 					Initialize_PartModels() override;
-	
+
+private:	/* For.Use Stamina */
+	_bool								Is_Enough_Stamina(USE_STAMINA eAction);
+
+public:		
+	_bool								Use_Stamina(USE_STAMINA eAction);
 
 
 #pragma region 예은 추가 - 창문, 문 (난간은 생각을 해봐야합니다)
