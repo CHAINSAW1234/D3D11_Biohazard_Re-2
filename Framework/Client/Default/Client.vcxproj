@@ -192,9 +192,12 @@
     <ClInclude Include="..\Public\Body_Cabinet.h" />
     <ClInclude Include="..\Public\Body_Door.h" />
     <ClInclude Include="..\Public\Body_EventProp.h" />
+    <ClInclude Include="..\Public\Body_ItemLocker.h" />
     <ClInclude Include="..\Public\Body_ItemProp.h" />
+    <ClInclude Include="..\Public\Body_Ladder.h" />
     <ClInclude Include="..\Public\Body_NewpoliceStatue.h" />
     <ClInclude Include="..\Public\Body_Player.h" />
+    <ClInclude Include="..\Public\Body_ReaderMachine.h" />
     <ClInclude Include="..\Public\Body_Shutter.h" />
     <ClInclude Include="..\Public\Body_Statue.h" />
     <ClInclude Include="..\Public\Body_Window.h" />
@@ -225,6 +228,7 @@
     <ClInclude Include="..\Public\Hold_Zombie.h" />
     <ClInclude Include="..\Public\ImGui_Manager.h" />
     <ClInclude Include="..\Public\InteractProps.h" />
+    <ClInclude Include="..\Public\Interact_UI.h" />
     <ClInclude Include="..\Public\Inventory_Manager.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\Public\Client_Enumsh.h" />
@@ -247,11 +251,14 @@
     <ClInclude Include="..\Public\Is_Enough_Time_Zombie.h" />
     <ClInclude Include="..\Public\Is_Hit_Zombie.h" />
     <ClInclude Include="..\Public\Is_Maintain_PreTask_Zombie.h" />
+    <ClInclude Include="..\Public\ItemLocker.h" />
     <ClInclude Include="..\Public\ItemProp.h" />
     <ClInclude Include="..\Public\Item_Discription.h" />
     <ClInclude Include="..\Public\Item_Mesh_Viewer.h" />
     <ClInclude Include="..\Public\Item_UI.h" />
     <ClInclude Include="..\Public\Knock_Back_Zombie.h" />
+    <ClInclude Include="..\Public\Ladder.h" />
+    <ClInclude Include="..\Public\LayOut_UI.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
@@ -280,6 +287,7 @@
     <ClInclude Include="..\Public\Player_State_Move_Jog.h" />
     <ClInclude Include="..\Public\Player_State_Move_Walk.h" />
     <ClInclude Include="..\Public\Props.h" />
+    <ClInclude Include="..\Public\ReaderMachine.h" />
     <ClInclude Include="..\Public\Read_Item_UI.h" />
     <ClInclude Include="..\Public\Selector_UI.h" />
     <ClInclude Include="..\Public\Shake_Skin_Zombie.h" />
@@ -364,9 +372,12 @@
     <ClCompile Include="..\Private\Body_Cabinet.cpp" />
     <ClCompile Include="..\Private\Body_Door.cpp" />
     <ClCompile Include="..\Private\Body_EventProp.cpp" />
+    <ClCompile Include="..\Private\Body_ItemLocker.cpp" />
     <ClCompile Include="..\Private\Body_ItemProp.cpp" />
+    <ClCompile Include="..\Private\Body_Ladder.cpp" />
     <ClCompile Include="..\Private\Body_NewpoliceStatue.cpp" />
     <ClCompile Include="..\Private\Body_Player.cpp" />
+    <ClCompile Include="..\Private\Body_ReaderMachine.cpp" />
     <ClCompile Include="..\Private\Body_Shutter.cpp" />
     <ClCompile Include="..\Private\Body_Statue.cpp" />
     <ClCompile Include="..\Private\Body_Window.cpp" />
@@ -391,6 +402,7 @@
     <ClCompile Include="..\Private\Hold_Zombie.cpp" />
     <ClCompile Include="..\Private\ImGui_Manager.cpp" />
     <ClCompile Include="..\Private\InteractProps.cpp" />
+    <ClCompile Include="..\Private\Interact_UI.cpp" />
     <ClCompile Include="..\Private\Inventory_Manager.cpp" />
     <ClCompile Include="..\Private\Crosshair_UI.cpp" />
     <ClCompile Include="..\Private\Cursor_UI.cpp" />
@@ -411,11 +423,14 @@
     <ClCompile Include="..\Private\Is_Enough_Time_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Hit_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Maintain_PreTask_Zombie.cpp" />
+    <ClCompile Include="..\Private\ItemLocker.cpp" />
     <ClCompile Include="..\Private\ItemProp.cpp" />
     <ClCompile Include="..\Private\Item_Discription.cpp" />
     <ClCompile Include="..\Private\Item_Mesh_Viewer.cpp" />
     <ClCompile Include="..\Private\Item_UI.cpp" />
     <ClCompile Include="..\Private\Knock_Back_Zombie.cpp" />
+    <ClCompile Include="..\Private\Ladder.cpp" />
+    <ClCompile Include="..\Private\LayOut_UI.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
@@ -444,6 +459,7 @@
     <ClCompile Include="..\Private\Player_State_Move_Jog.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Walk.cpp" />
     <ClCompile Include="..\Private\Props.cpp" />
+    <ClCompile Include="..\Private\ReaderMachine.cpp" />
     <ClCompile Include="..\Private\Read_Item_UI.cpp" />
     <ClCompile Include="..\Private\Selector_UI.cpp" />
     <ClCompile Include="..\Private\Shake_Skin_Zombie.cpp" />

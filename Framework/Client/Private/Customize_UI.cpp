@@ -29,8 +29,6 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 
 		CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
 
-		m_eMap_Location = CustomUIDesc->eMapUI_Type;
-
 		m_wstrDefaultTexturPath = CustomUIDesc->wstrDefaultTexturPath;
 
 		m_wstrMaskPath = CustomUIDesc->wstrMaskPath;
@@ -160,7 +158,6 @@ void CCustomize_UI::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 
 	for (auto& iter : m_vecTextBoxes)
@@ -209,7 +206,6 @@ HRESULT CCustomize_UI::Add_Components(const wstring& wstrTextureTag, const wstri
 	/* For.Com_VIBuffer */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
 		TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom)))
-
 		return E_FAIL;
 
 	return S_OK;

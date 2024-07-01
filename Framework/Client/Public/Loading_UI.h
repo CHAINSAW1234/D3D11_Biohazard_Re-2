@@ -37,7 +37,6 @@ private :
 
 private :
 	LOADING_UI_TYPE		m_eLoadingType	= { LOADING_UI_TYPE::END_LOADING_UI };
-	_int				m_iWhich_Child	= { 0 };
 
 private : 
 	_float4				m_fBody_Position			= {};

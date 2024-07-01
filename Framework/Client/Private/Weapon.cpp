@@ -42,22 +42,26 @@ HRESULT CWeapon::Initialize(void * pArg)
 
 	m_bRender = false;
 
-	if (m_eEquip == CPlayer::HG) {
+	switch(m_eEquip) {
+	case CPlayer::HG:
+		m_iMaxBullet = 12;
+
 		m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_1_Sub_1__wp0100_VP70Custom_Mat_mesh0002", true);
 		m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_2_Sub_1__wp0000_PowerUp_Mat_mesh0003", true);
 		m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_6_Sub_1__wp0000_PowerUp_Mat_mesh0004", true);
-	}
+		break;
+	case CPlayer::STG:
+		m_iMaxBullet = 7;
 
-	if (m_eEquip == CPlayer::STG) {
 		m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_3_Sub_1__wp1000_mt_mesh0004", true);
 		m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_4_Sub_1__wp1100_mt_mesh0005", true);
+		break;
 	}
 
 	m_pModelCom->Set_RootBone("root");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
-
 
 	//m_pTransformCom->Set_Scaled(0.1f, 0.1f, 0.1f);
 	//m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(90.0f));
@@ -89,8 +93,6 @@ void CWeapon::Late_Tick(_float fTimeDelta)
 
 	}
 		
-
-	
 #ifdef _DEBUG
 	//m_pGameInstance->Add_DebugComponents(m_pColliderCom);
 #endif
@@ -353,7 +355,6 @@ CWeapon * CWeapon::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext
 	}
 
 	return pInstance;
-
 }
 
 CGameObject * CWeapon::Clone(void * pArg)

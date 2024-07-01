@@ -83,6 +83,8 @@ public :
 		CGameObject*					pSupervisor;
 		CGameObject*					pImmediateSuperior;
 
+		ITEM_NUMBER						eItem_Number;
+
 		/* Client */
 		ITEM_BOX_TYPE					eBox_Type;
 		HPBAR_TYPE						eHPBar_Type;
@@ -90,6 +92,9 @@ public :
 
 		LOCATION_MAP_VISIT				eMapUI_Type;
 		wstring							wstrFileName = { TEXT("") };
+		wstring							wstrItemName = { TEXT("") };
+
+		_int							iInven_Type;
 
 	}CUSTOM_UI_DESC;
 
@@ -388,21 +393,21 @@ protected :
 
 
 protected :
-	wstring						m_wstrMaskPath = { TEXT("") }; // 텍스쳐 페스
-	wstring						m_wstrMaskComTag = { TEXT("") };
-	wstring						m_wstrDefaultTexturPath = { TEXT("") }; // 텍스쳐 페스
-	wstring						m_wstrDefaultTexturComTag = { TEXT("") };
-	_uint						m_iTextureNum = { 0 };
-	_uint						m_iShaderPassNum = { 0 };
+	wstring						m_wstrMaskPath					= { TEXT("") }; // 텍스쳐 페스
+	wstring						m_wstrMaskComTag				= { TEXT("") };
+	wstring						m_wstrDefaultTexturPath			= { TEXT("") }; // 텍스쳐 페스
+	wstring						m_wstrDefaultTexturComTag		= { TEXT("") };
+	_uint						m_iTextureNum					= { 0 };
+	_uint						m_iShaderPassNum				= { 0 };
 
 protected :
 	_uint						m_iRenderGroup = { static_cast<_uint>(CRenderer::RENDER_UI) };
 
 #pragma region NY : Shader 변수
 protected :
-	_bool						m_isMovePoint = { false };
-	Value_Color					m_vColor[10] = {};	// 현재 Edit 상에서 보여지는 컬러
-	_float4x4					m_SavePos[10] = {};
+	_bool						m_isMovePoint	= { false };
+	Value_Color					m_vColor[10]	 = {};	// 현재 Edit 상에서 보여지는 컬러
+	_float4x4					m_SavePos[10]	= {};
 
 	_float						m_fColorTimer_Limit = {};	// 컬러 change 제한 시간
 	_float						m_fCurrentColor_Timer = {};	// 컬러 현재 시간
@@ -470,9 +475,12 @@ protected :
 protected : /* Client*/
 	class CPlayer*				m_pPlayer = { nullptr };
 	
+	/* Render 관련*/
 	_bool						m_isRender = { true };
 	_float4						m_vOriginTextColor = {};
 	_float4						m_vOriginColor = {};
+
+	_int						m_iWhich_Child = { 0 }; /* 몇 번째 자식인 지를 설명할 때 사용 */
 
 	/* 1. inventory Item */
 	ITEM_BOX_TYPE				m_eBox_Type = { ITEM_BOX_TYPE::END_BOX };
@@ -493,9 +501,6 @@ protected : /* Client*/
 	_bool						m_isLight = {};
 
 	_bool						m_isKeepPlay = {};
-
-	/* Map */
-	LOCATION_MAP_VISIT			m_eMap_Location = { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
 
 public:
 	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

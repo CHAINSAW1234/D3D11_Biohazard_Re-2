@@ -366,6 +366,19 @@ void CSelector_UI::Find_InteractObj()
 
            // Safe_AddRef(iter);
         }
+    } 
+    list<CGameObject*>* pDoorObj_List = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Door"));
+
+    if (nullptr != pDoorObj_List)
+    {
+        for (auto& iter : *pDoorObj_List)
+        {
+            CInteractProps* pInteractObj = static_cast<CInteractProps*>(iter);
+
+            m_InteractPropsList.push_back(pInteractObj);
+
+           // Safe_AddRef(iter);
+        }
     }
 }
 

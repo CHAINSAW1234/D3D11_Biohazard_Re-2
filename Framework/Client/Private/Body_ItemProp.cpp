@@ -46,7 +46,10 @@ HRESULT CBody_ItemProp::Initialize(void* pArg)
 	m_pModelCom->Active_RootMotion_Rotation(true);*/
 	//m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
-	if (m_strModelComponentName.find(TEXT("_Anim")) == wstring::npos)
+
+
+
+	if (m_strModelComponentName.find(TEXT("_Anim")) == wstring::npos&&(m_strModelComponentName.find(TEXT("emergencyspray01")) == wstring::npos))
 		m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
 
 

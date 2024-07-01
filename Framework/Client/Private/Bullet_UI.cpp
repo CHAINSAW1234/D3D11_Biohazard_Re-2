@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Bullet_UI.h"
 #include "Crosshair_UI.h"
+#include "Tab_Window.h"
+#include "Player.h"
 
 #define MAX_BULLET 12
 #define MAX_BULLET_COLOR _float4(0.5, 1.0, 0.0, 0.f)
@@ -96,41 +98,17 @@ HRESULT CBullet_UI::Initialize(void* pArg)
     m_isMask = true;
     m_fMaskControl.x = 0.3f;
     m_fMaskControl.y = 0.4f;
+
     return S_OK;
 }
 
 void CBullet_UI::Tick(_float fTimeDelta)
 {
-    __super::Tick(fTimeDelta);
-
-   /* if (nullptr == m_pCrosshair)
-    {
-        Find_Crosshair();
-
-        if (nullptr == m_pCrosshair)
-            MSG_BOX(TEXT("Bullet_UI에서 참조할 Crosshair 가 없습니다."));
-    }
-    */
-    if (true == m_IsChild && true == m_isRender)
-    {
-        if(DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-            Control_BulletU();
-
-
-        //// /* 예시 코드//// */
-        if (DOWN == m_pGameInstance->Get_KeyState('R'))
-        {
-            m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Text(to_wstring(12));
-            m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt  = m_iCurrentBullet = 12;
-        }
-        ////////////
-
-        Change_BulletUI();
-    }
-    
+    __super::Tick(fTimeDelta);    
 
     /* 만약 크로스헤어가 출력되었다면 유지, 크로스헤어가 유지되고 끝난 뒤로부터 BULLET_UI_LIFE(2.5f)만큼 출력한다.*/
     Render_Bullet_UI(fTimeDelta);
+
 }
 
 void CBullet_UI::Late_Tick(_float fTimeDelta)
@@ -146,33 +124,87 @@ HRESULT CBullet_UI::Render()
     return S_OK; 
 }
 
-void CBullet_UI::Control_BulletU()
+void CBullet_UI::Mission_Complete()
 {
-    /* 나중에 Weapon이랑 연결할 것 */
-    --m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt;
+    if (true == m_isTutiorial)
+        return;
 
-    if (m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt <= ZERO)
-    {
-        m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt = 0;
-        /* 좀비가 죽으면 안 된다. */
+    CPlayer* pPlayer = dynamic_cast<CPlayer*>(m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_Player"), 0));
+
+    if (true == (*pPlayer->Get_Tutorial_Notify()))
+        return;
+
+    m_isTutiorial = true;
+    *pPlayer->Get_Tutorial_Notify() = true;
+    *pPlayer->Get_Tutorial_Type() = UI_TUTORIAL_TYPE::TUTORIAL_REROAD;
+}
+
+void CBullet_UI::Start()
+{
+    CPlayer* pPlayer = dynamic_cast<CPlayer*>(m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_Player"), 0));
+    if (nullptr == pPlayer) {
+        MSG_BOX(TEXT("CBullet_UI::Start()"));
+        return;
     }
 
+    
+    if(m_iCurrentBullet <= 0)
+        Mission_Complete();
 
-    if (m_iCurrentBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt)
-    {
-        m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Text(to_wstring(m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt));
-        m_iCurrentBullet = m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt;
+    pPlayer->RegisterObserver(this);
+
+    OnNotify();
+}
+
+
+void CBullet_UI::OnNotify()
+{
+    if (false == m_IsChild)
+        return;
+
+    CPlayer* pPlayer = dynamic_cast<CPlayer*>(m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_Player"), 0));
+    if (nullptr == pPlayer)
+        return;
+    
+    ITEM_NUMBER eItem_Number = pPlayer->Get_Equip_As_ITEM_NUMBER();
+
+    if (eItem_Number == ITEM_NUMBER_END)
+        return;
+
+    CTab_Window* pTabWindow = dynamic_cast<CTab_Window*>(m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0));
+    if (nullptr == pTabWindow)
+        return;
+
+    m_iCurrentBullet = pTabWindow->Get_Search_Item_Quantity(eItem_Number);
+    switch (eItem_Number) {
+    case HandGun:
+        m_iStoreBullet = pTabWindow->Get_Search_Item_Quantity(handgun_bullet01a);
+        break;
+    case ShotGun:
+        m_iStoreBullet = pTabWindow->Get_Search_Item_Quantity(shotgun_bullet01a);
+        break;
     }
 
-    if (m_iStoreBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt)
-    {
-        m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Text(to_wstring(m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt));
-        m_iStoreBullet = m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt;
-    }
+    m_iMaxBullet = pPlayer->Get_MaxBullet();
+
+    Change_BulletUI();
 }
 
 void CBullet_UI::Change_BulletUI()
 {
+    if (m_iCurrentBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt)
+    {
+        m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt = m_iCurrentBullet;
+        m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Text(to_wstring(m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt));
+
+    }
+
+    if (m_iStoreBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt)
+    {
+        m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt = m_iStoreBullet;
+        m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Text(to_wstring(m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt));
+    }
+
     /* 10의 자리 숫자시 살짝 위치 옮겨줌*/
     if (10 <= m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt)
     {
@@ -185,9 +217,9 @@ void CBullet_UI::Change_BulletUI()
         CTransform* pTextTrans = static_cast<CTransform*>(m_pTextUI[1].pText->Get_Component(g_strTransformTag));
         pTextTrans->Set_State(CTransform::STATE_POSITION, m_fFull_StoreBullet_Transform);
     }
-    
+
     /* 12자리 일 때 색깔 바뀌게 함*/
-    if (MAX_BULLET <= m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt)
+    if (m_iMaxBullet <= m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt)
     {
         if (nullptr != m_pTextUI[0].pText && false == m_pTextUI[0].isFull)
         {
@@ -212,7 +244,7 @@ void CBullet_UI::Change_BulletUI()
         m_pTextUI[0].pText->Set_FontColor(m_fOrigin_TextColor);
         m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].vOriginTextColor = m_fOrigin_TextColor;
         m_pTextUI[0].isFull = false;
-    }   
+    }
 
     if (MAX_BULLET <= m_iStoreBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt)
     {
@@ -244,7 +276,7 @@ void CBullet_UI::Render_Bullet_UI(_float fTimeDelta)
         m_fBulletTimer = 0.f;
     }
 
-   if (true == m_isKeepCross)
+    if (true == m_isKeepCross)
     {
         if (false == m_isRender)
             m_isRender = true;
@@ -255,7 +287,7 @@ void CBullet_UI::Render_Bullet_UI(_float fTimeDelta)
             /* 크로스는 꺼졌는데 켜졌으면, 끄자*/
             if (false == m_pCrosshair->Get_IsRender())
             {
-                /* 이미 출력을 끈 상태 */   
+                /* 이미 출력을 끈 상태 */
                 if (m_fBlending >= 1.f)
                 {
                     m_fBlending = 1.f;
@@ -282,22 +314,23 @@ void CBullet_UI::Render_Bullet_UI(_float fTimeDelta)
     }
 
     /*Font*/
-   if (!m_vecTextBoxes.empty() && false  == m_isKeepCross)
-   {
-       m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_FontColor(ALPHA_ZERO);
-       m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_FontColor(ALPHA_ZERO);
+    if (!m_vecTextBoxes.empty() && false == m_isKeepCross)
+    {
+        m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_FontColor(ALPHA_ZERO);
+        m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_FontColor(ALPHA_ZERO);
 
-       return;
-   }
-   else if (!m_vecTextBoxes.empty() && true == m_isKeepCross)
-   {
-       _float4 result_Current = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].vOriginTextColor;
-       _float4 result_Store = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].vOriginTextColor;
+        return;
+    }
+    else if (!m_vecTextBoxes.empty() && true == m_isKeepCross)
+    {
+        _float4 result_Current = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].vOriginTextColor;
+        _float4 result_Store = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].vOriginTextColor;
 
-       m_pTextUI[0].pText->Set_FontColor(result_Current);
-       m_pTextUI[1].pText->Set_FontColor(result_Store);
-   }
+        m_pTextUI[0].pText->Set_FontColor(result_Current);
+        m_pTextUI[1].pText->Set_FontColor(result_Store);
+    }
 }
+
 
 void CBullet_UI::Find_Crosshair()
 {

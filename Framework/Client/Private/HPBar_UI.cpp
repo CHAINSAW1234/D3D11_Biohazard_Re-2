@@ -60,7 +60,6 @@ HRESULT CHPBar_UI::Initialize(void* pArg)
                 m_fDistance_Font = _float2(abs(pMainBarTrans.x - vTextTrans.x), abs(pMainBarTrans.y - vTextTrans.y));
             }
         }
-
         else if (CCustomize_UI::HPBAR_TYPE::BACKGROUND_BAR == m_eHPBar)
         {
             list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
@@ -82,11 +81,6 @@ HRESULT CHPBar_UI::Initialize(void* pArg)
                 }
             }
         }
-
-        Find_Player();
-        
-        m_pPlayer->RegisterObserver(this);
-        OnNotify();
 
         m_isLightMask = true;
     }
@@ -126,6 +120,16 @@ HRESULT CHPBar_UI::Render()
         return E_FAIL;
 
     return S_OK;
+}
+
+void CHPBar_UI::Start()
+{
+    if (false == m_IsChild) {
+        Find_Player();
+
+        m_pPlayer->RegisterObserver(this);
+        OnNotify();
+    }
 }
 
 void CHPBar_UI::OnNotify()

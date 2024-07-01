@@ -37,6 +37,7 @@ public:
 	void								Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
 public:
 	virtual _float4				Get_Pos(_int iArg = 0) override;
+	virtual _int						Get_PartObject_Props_ItemIndex() { return m_iItemIndex; }
 private:
 	_int								m_iItemIndex = { 0 };
 	_bool								m_bRealDead = { false };

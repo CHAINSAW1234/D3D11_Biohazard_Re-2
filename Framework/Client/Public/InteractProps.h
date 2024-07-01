@@ -108,6 +108,7 @@ public:
 	virtual void										Priority_Tick(_float fTimeDelta) override;
 	virtual void										Tick(_float fTimeDelta) override;
 	virtual void										Late_Tick(_float fTimeDelta) override;
+	virtual void										Start() override { return; };
 	virtual HRESULT										Render() override;
 
 
@@ -124,14 +125,21 @@ public:
 public:
 	_bool*												Get_Activity() { return &m_bActivity; }
 
-	/* NY */
+#pragma region NY
 	_bool*												ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
 	_bool*												Selector_Rendering() { return &m_isSelector_Rendering;  }
+
 	/*To NY*/
 	virtual _float4									Get_Object_Pos() = 0;
+	_int												Get_PropType() { return m_tagPropDesc.iPropType; } // 프롭타입이라 쓰고 arg라 읽는다. // 문의 지역 enum을 반환한다.
 
+	_bool												Get_Interact_With_Player_Once() { return m_bInteract; }
 	_int Get_iItemIndex() { return m_iItemIndex; }
 
+	_int												Get_Region() { return m_tagPropDesc.iRegionNum; }
+	_int												Get_Type() { return m_tagPropDesc.iPropType; }
+	void												Set_Region(_int iRegion) { m_tagPropDesc.iRegionNum = iRegion; }
+	virtual _bool									Attack_Prop(class CTransform* pTransfromCom = nullptr) { return false; };
 private :
 	_bool												m_isSelector_Rendering = { false };
 	_bool												m_isNYResult				= { false };
@@ -139,6 +147,7 @@ private :
 protected:
 	_int												m_iItemIndex = { -1 };
 	_bool												m_bActivity = { true };
+	_bool												m_bInteract = { false };// 한번 접촉하면 계속 true
 	_bool												m_bShadow = { true };
 	_bool												m_bVisible = { true };
 	_bool												m_bCol = { false }; // 충돌이 되었다
@@ -151,22 +160,20 @@ protected:
 	_bool*												m_pPlayerInteract = { nullptr };//player의 m_bInteract 변수 포인터
 	CTransform*											m_pPlayerTransform = { nullptr };
 
-	//_int												m_iPropsType = { 0 };
 	_float3												m_vRootTranslation = {};
 	INTERACTPROPS_DESC 									m_tagPropDesc ={};
 	vector<CPartObject*>								m_PartObjects;
 
 protected:
 	void												Check_Player();
-	void												Check_Col_Sphere_Player();
-	void												Check_Col_OBB_Player();
-	void												Check_Col_AABB_Player();
+	_bool												Check_Col_Sphere_Player();
+	_bool												Check_Col_OBB_Player();
+	_bool												Check_Col_AABB_Player();
 	_bool												Visible();
 	virtual HRESULT										Add_Components();
 	virtual HRESULT										Add_PartObjects();
 	virtual HRESULT										Initialize_PartObjects();
 	virtual HRESULT										Bind_ShaderResources();
-
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;
 	virtual void Free() override;

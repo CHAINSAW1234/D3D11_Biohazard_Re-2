@@ -16,6 +16,10 @@
 #include "Mesh.h"
 #include "Effect_Header_Zombie.h"
 
+#include"CustomCollider.h"
+#include"Window.h"
+#include"Door.h"
+
 #define MODEL_SCALE 0.01f
 
 CZombie::CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -62,7 +66,7 @@ HRESULT CZombie::Initialize(void* pArg)
 		//	vPos.y += 1.f;
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 	}
-
+	m_InteractObjVec.reserve(JOMBIE_BEHAVIOR_COLLIDER_END);
 	//	m_pModelCom->Set_Animation(rand() % 20, true);
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
@@ -109,7 +113,8 @@ void CZombie::Tick(_float fTimeDelta)
 	{
 		fTimeDelta = 0.f;
 	}
-
+	if (m_bEvent)
+		m_eBeHavior_Col;
 	if (!Distance_Culling())
 	{
 		for (auto& it : m_PartObjects)
@@ -169,6 +174,23 @@ void CZombie::Tick(_float fTimeDelta)
 		}
 	}
 	XMStoreFloat3(&m_vRootTranslation, XMVectorZero());
+
+#pragma region 예은 추가 - 이벤트
+	if (m_bEvent)
+	{
+		_bool bBehavior = true;
+		if (m_InteractObjVec[m_eBeHavior_Col] != nullptr)
+			bBehavior = static_cast<CInteractProps*>(m_InteractObjVec[m_eBeHavior_Col])->Attack_Prop(m_pTransformCom);
+		// bBehavior가 true이면 창문이 깨지거나 문이 열리거나 하고 있음
+		// 
+
+		m_fEventCoolTime += fTimeDelta;
+	}
+	if (m_fEventCoolTime > 10.f)
+		m_bEvent = false; //이벤트 쿨탐 10초가 지나면 다시 이벤트를 할 수 있는 상태(중복 방지)
+
+#pragma endregion
+
 
 #pragma region 길찾기 임시 코드
 	//if (m_bArrived == false)
@@ -308,6 +330,12 @@ void CZombie::Late_Tick(_float fTimeDelta)
 
 	if (m_pController && m_pController->GetDead() == false)
 		m_pController->Update_Collider();
+
+#pragma region 예은
+	if(!m_bEvent)
+		Col_EventCol();
+
+#pragma endregion 
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom_Bounding);
@@ -927,6 +955,38 @@ HRESULT CZombie::Initialize_PartModels()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CZombie::Col_EventCol()
+{
+	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Jombie_Collider"));
+	if (pCollider == nullptr)
+		return;
+	for (auto& iter : *pCollider)
+	{
+		if (m_pColliderCom_Bounding->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")))))
+		{
+			CCustomCollider* pColCom = static_cast<CCustomCollider*>(iter);
+			m_bEvent = true;
+			m_eBeHavior_Col = (JOMBIE_BEHAVIOR_COLLIDER_TYPE) pColCom->Get_Region(); // 행동enum을 가지고 있음 JOMBIE_BEHAVIOR_COLLIDER_TYPE
+			m_iPropNum = pColCom->Get_InteractProps();
+			wstring strLayer = { L"" };
+			switch (m_eBeHavior_Col)
+			{
+			case JOMBIE_BEHAVIOR_COLLIDER_WINDOW:
+				strLayer = TEXT("Layer_Window");
+				break;
+			case JOMBIE_BEHAVIOR_COLLIDER_DOOR:
+				strLayer = TEXT("Layer_Door");
+				break;
+			}
+			m_InteractObjVec[m_eBeHavior_Col] = m_pGameInstance->Get_GameObject(g_Level, strLayer, m_iPropNum);
+			m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_InteractObjVec[m_eBeHavior_Col]->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION)) ;
+			break; // 이벤트임을 알림
+		}
+		else
+			m_bEvent = false;
+	}
 }
 
 void CZombie::Perform_Skinning()

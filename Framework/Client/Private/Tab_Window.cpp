@@ -329,6 +329,11 @@ ITEM_NUMBER CTab_Window::Get_Item_On_HotKey(_uint iHotKeyNum)
 	return 	m_pInventory_Manager->Get_Item_On_HotKey(iHotKeyNum);
 }
 
+void CTab_Window::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
+{
+	return 	m_pInventory_Manager->UseItem(eTargetItemNum, iUsage);
+}
+
 void CTab_Window::Find_Cursor()
 {
 	list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
@@ -354,7 +359,7 @@ void CTab_Window::Select_UI()
 	_bool isResult = { false };
 
 	if (true == m_pMapButton->IsMouseHover())
-		isResult = false;
+		isResult = true;
 
 	else if (true == m_pInvenButton->IsMouseHover())
 		isResult = true;

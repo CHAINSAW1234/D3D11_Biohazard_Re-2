@@ -22,7 +22,13 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+#pragma region 나옹
+public:
+	_bool            Get_MinMapRender() { return m_isMapRender; }
+	_bool*			Get_MainRender() { return m_pInvenButton->Get_Dead_Ptr(); }
+	WINDOW_TYPE* Get_Window_Render_Type() { return &m_eWindowType; }
 
+#pragma endregion
 private:
 	void	ItemIven_EventHandle(_float fTimeDelta);
 	void	FirstTick_Seting();
@@ -31,9 +37,6 @@ private:
 public:
 	void	OnOff_EventHandle();
 	void	Set_WindowType(WINDOW_TYPE eWindowType) { m_eWindowType = eWindowType; };
-
-	_bool	Get_MinMapRender() const { return m_isMapRender; }
-	_bool*	Get_MainRender()	{ return m_pInvenButton->Get_Dead_Ptr(); }
 
 	void	PickUp_Item(CGameObject* pPickedUp_Item);
 
@@ -49,7 +52,8 @@ public:
 	//몇번 단축키에 몇번 아이템이 있는가
 	ITEM_NUMBER Get_Item_On_HotKey(_uint iHotKeyNum);
 
-	
+	void UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage);
+
 private:
 	class CButton_UI*	m_pMapButton = { nullptr };
 	class CButton_UI*	m_pInvenButton = { nullptr };

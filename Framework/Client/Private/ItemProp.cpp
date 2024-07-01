@@ -39,7 +39,10 @@ void CItemProp::Tick(_float fTimeDelta)
 	__super::Check_Player();
 
 	if (m_bDead)
+	{
+		Set_Region(-1);
 		return;
+	}
 
 	if (!m_bVisible)
 		return;
@@ -59,7 +62,8 @@ void CItemProp::Tick(_float fTimeDelta)
 			Active();
 		m_bCol = false;
 	}
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+	
+	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(XMMatrixTranslation(0.f, -1.2f, 0.f) * m_pTransformCom->Get_WorldMatrix());
 
 	__super::Tick(fTimeDelta);
 
@@ -86,7 +90,7 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 		m_bRender = false;
 	}
 
-	Check_Col_Sphere_Player();
+	m_bCol = Check_Col_Sphere_Player();
 
 	__super::Late_Tick(fTimeDelta);
 

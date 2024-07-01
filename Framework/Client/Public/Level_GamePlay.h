@@ -24,6 +24,7 @@ private:
 
 	HRESULT Ready_TabWindow();
 	HRESULT Ready_LandObject();
+	HRESULT Ready_PropManager();
 	HRESULT Ready_Layer_Player(const wstring& strLayerTag/*, CLandObject::LANDOBJECT_DESC& LandObjectDesc*/);
 	HRESULT Ready_Layer_Monster(const wstring& strLayerTag);
 	HRESULT Ready_Layer_LandBackGround(const wstring& strLayerTag);
@@ -53,9 +54,14 @@ private:
 
 
 
+#pragma region 나옹
+private:
+	_bool m_isMapType = { false };
+#pragma endregion
 
 #pragma region 예은 추가 (임시임)
 private:
+	class CProp_Manager* m_pPropManager = { nullptr };
 	_int iCurIndex = { 0 };
 	_int iPreIndex = { 0 };
 #pragma endregion

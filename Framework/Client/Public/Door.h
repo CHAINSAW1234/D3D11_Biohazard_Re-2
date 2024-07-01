@@ -22,8 +22,8 @@ public:
 		RSIDE_DOUBLEDOOR_OPEN_L,
 		RSIDE_DOUBLEDOOR_OPEN_R,
 		DOUBLEDOOR_STATIC,
-		LSIDE_DOUBLEDOOR_OPEN,
-		RSIDE_DOUBLEDOOR_OPEN,
+		L_DOUBLEDOOR_OPEN,
+		R_DOUBLEDOOR_OPEN,
 		DOUBLEDOOR_END
 	};
 	enum TYPE_DOOR
@@ -64,17 +64,39 @@ private:
 	void OneDoor_Late_Tick(_float fTimeDelta);
 
 	_float Radian_To_Player();
+	_float Radian_To_Jombie(class CTransform* pTransform);
 
 	void OneDoor_Active();
 	void DoubleDoor_Active();
 public:
 	virtual _float4 Get_Object_Pos() override;
+	virtual _bool		Attack_Prop(class CTransform* pTransfromCom = nullptr) override
+	{
+		if (m_iHP <= 0)
+		{
+			_float fScala = Radian_To_Jombie(pTransfromCom);
+			if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
+				m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_L;
+			else
+				m_eDoubleState = RSIDE_DOUBLEDOOR_OPEN_L;
+			
+			m_bActive = true;
+			
+			return true;
+		}
+		else
+			return false;
+	}
 
 private:
+
+
 	_bool				m_bLock =	{ false };
 	_bool				m_bActive = { false };
 
 	_bool				m_bDoubleCol = { false };
+
+	_int				m_iHP = { 5 };
 
 	_float				m_fTime = { 0.f };
 	_ubyte				m_eType = {DOOR_ONE};

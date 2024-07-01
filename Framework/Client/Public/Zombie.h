@@ -94,6 +94,21 @@ public:		/* Access */
 private:	/* Initialize_PartObjects_Models */
 	virtual HRESULT 					Initialize_PartModels() override;
 	
+
+
+#pragma region 예은 추가 - 창문, 문 (난간은 생각을 해봐야합니다)
+private:
+	void								Col_EventCol();
+private:
+	_bool								m_bEvent = { false };
+	_int								m_iPropNum = { 0 };
+	_float							m_fEventCoolTime = { 0.f };
+	JOMBIE_BEHAVIOR_COLLIDER_TYPE m_eBeHavior_Col = {};
+	vector<CGameObject*> m_InteractObjVec;
+#pragma endregion
+
+
+
 public://For Decal
 	virtual void						Perform_Skinning() override;
 	virtual void						Ready_Decal() override;

@@ -50,6 +50,17 @@
 #include"Shutter.h"
 #include"Body_Shutter.h"
 
+#include"ItemLocker.h"
+#include"Body_ItemLocker.h"
+
+#include"Ladder.h"
+#include"Body_Ladder.h"
+
+#include"ReaderMachine.h"
+#include"Body_ReaderMachine.h"
+
+
+
 
 /* UI */
 #include "Customize_UI.h"
@@ -74,7 +85,7 @@
 #include "Read_Item_UI.h"
 #include "Loading_UI.h"
 #include "Item_Discription.h"
-
+#include "LayOut_UI.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -535,6 +546,13 @@ HRESULT CLoader::Load_Prototype()
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Item_Discription"),
 		CItem_Discription::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_LayOut_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LayOut_UI"),
+		CLayOut_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	
 #pragma endregion
 
 	/* For.Prototype_GameObject_Collider */
@@ -759,11 +777,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_024_newpolicestatue01a")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_NewpoliceStatue::Create(m_pDevice, m_pContext));
 		if (!bDo &&
-			((Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_008")) != wstring::npos)
-			||(Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_002")) != wstring::npos)
-			||(Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_005")) != wstring::npos)
-			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_003")) != wstring::npos)
-			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm44_010")) != wstring::npos)
+			((Inform->wstrGameObjectPrototypeName.find(TEXT("sm44")) != wstring::npos)
 			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_011")) != wstring::npos))
 			&& (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Cabinet::Create(m_pDevice, m_pContext));
@@ -796,6 +810,9 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Statue"), CStatue::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EventProp"), CEventProp::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ItemProp"), CItemProp::Create(m_pDevice, m_pContext));
+
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ItemLocker"), CItemLocker::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Ladder"), CLadder::Create(m_pDevice, m_pContext));
 
 
 
@@ -985,6 +1002,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	m_strLoadingText = TEXT("Now Loading Texture");
 
 #pragma region UI Texture
+	/*Prototype_Component_Texture_Tab_Window_BackGround*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Item_Description_BG"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Item_Discription_Background/Item_Description_BG.dds")))))
+		return E_FAIL;
+
 	/*Prototype_Component_Texture_HP_Mask*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_HP_Mask"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/HP/IMANGE_05.png")))))
@@ -1045,9 +1067,99 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/Note/ui3210_file_13_1_iam.tex_noesispreviewdata.png")))))
 		return E_FAIL;
 
-	/*Prototype_Component_Texture_Tab_Window_BackGround*/
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Item_Description_BG"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Item_Discription_Background/Item_Description_BG.dds")))))
+	/* Read Texture*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Document1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/document01a.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_SewrHintposter1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/sewerhintposter01a.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ChessHints1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/chesshints01a.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Report1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/rpdreport01b.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Memo1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/memo01a.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Report2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/report01a.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_NestLcokout1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/nestlcokout01a.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_GuidePamphlet1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/guidepamphlet01a.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Pamphlet1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/pamphlet01a.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_DocumentBlood1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/rpddocumentblood01a.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Document2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/rpddocument01a.png")))))
+		return E_FAIL;
+
+	/* TEXT TYPE */
+	/* 사건 일지 A */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ReadType_Incident_log1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/A_1.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ReadType_Incident_log2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/A_2.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ReadType_Incident_log3"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/A_3.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ReadType_Incident_log4"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/A_4.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ReadType_Incident_log5"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/A_5.png")))))
+		return E_FAIL;
+
+	/* 작전 보고서 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Operate_Report1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/B_1.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Operate_Report2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/B_2.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Operate_Report3"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/B_3.png")))))
+		return E_FAIL;
+
+	/* 신입의 첫 번째 과제 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Task1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/C_1.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Task2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/C_2.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Task3"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/C_3.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Task4"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/C_4.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Task5"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/C_5.png")))))
+		return E_FAIL;
+
+	/* 약초의 의학적 효능 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Medicinal1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/D_1.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Medicinal2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/D_2.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Medicinal3"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/D_3.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Medicinal4"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/D_4.png")))))
 		return E_FAIL;
 
 #pragma endregion
@@ -1076,12 +1188,16 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 #pragma endregion
 
-	/* Prototype_Component_Texture_Sky */
+
+
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
 		return E_FAIL;
-
+		
+		
+		
 #pragma region Model
+
 	m_strLoadingText = TEXT("Now Loading ... Model");
 
 	_matrix			TransformMatrix = { XMMatrixIdentity() };

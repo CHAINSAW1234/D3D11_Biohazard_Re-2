@@ -35,7 +35,6 @@ private:
 	_tchar					m_szFPS[MAX_PATH] = TEXT("");
 
 private:	
-	HRESULT Ready_Gara();
 	HRESULT Ready_Fonts();
 	HRESULT Open_Level(LEVEL eLevelID);
 

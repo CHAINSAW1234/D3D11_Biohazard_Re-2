@@ -52,8 +52,6 @@ public:
 		HOLSTERTOMOVE, MOVETOHOLSTER, HOLD_END
 	};
 	
-
-
 	enum ANIMSET_MOVE { FINE, MOVE_HG, MOVE_STG, FINE_LIGHT, CAUTION, CAUTION_LIGHT, DANGER, DANGER_LIGHT, ANIMSET_MOVE_END };
 	enum ANIMSET_HOLD { HOLD_HG, HOLD_STG, HOLD_MLE, HOLD_SUP, ANIMSET_HOLD_END };
 	enum ANIMSET_ETC { COMMON , ANIM_BITE, ANIMSET_ETC_END };
@@ -109,17 +107,18 @@ public:
 	_int										Get_Hp() { return m_iHp; }
 	CWeapon*									Get_Weapon() { return m_pWeapon; }
 	EQUIP										Get_Equip() { return m_eEquip; }
+	ITEM_NUMBER									Get_Equip_As_ITEM_NUMBER();
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
 	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
 	_float4										Get_MuzzlePosition();
 	wstring										Get_BiteLayerTag() { return m_strBiteLayerTag; }
 	_int										Get_BiteAnimIndex() { return m_iBiteAnimIndex; }
-
+	_int										Get_MaxBullet();
 	// =============================== SET ===============================
 	void										Set_isBite(_bool isBite) { m_isBite = isBite; }
 	void										Set_Spotlight(_bool isSpotlight); 
 	void										Requst_Change_Equip(EQUIP eEquip);
-	void										Set_Equip(EQUIP eEquip);
+	void										Set_Equip(EQUIP* eEquip);
 	void										Set_Hp(_int iHp);					
 	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineDefault = isTurnSpineDefault; }
 	void										Set_TurnSpineHold(_bool isTurnSpineHold) { m_isTurnSpineHold = isTurnSpineHold;}
@@ -133,6 +132,13 @@ public:
 	void										Change_AnimSet_Hold(ANIMSET_HOLD eAnimSetHold) { m_eAnimSet_Hold = eAnimSetHold; }
 	void										Change_Player_State_Bite(_int iAnimIndex, const wstring& strBiteLayerTag, _float4x4 Interpolationmatrix, _float fTotalInterpolateTime);
 	void										Request_NextBiteAnimation(_int iAnimIndex);
+	void										Shot();
+	void										Reload();
+
+	// ============================ CHECK = ISABLE ============================
+	_bool										IsShotAble();
+	_bool										IsReloadAble();
+	
 	// ============================ UPDATE ============================
 	void										Update_InterplationMatrix(_float fTimeDelta);
 
@@ -191,26 +197,50 @@ private:
 
 #pragma region 나옹 추가
 public:
+	/* For. Getter Inline*/
 	_bool*										Col_Event_UI(class CCustomCollider* pCustom);
 	_int*										Get_Hp_Ptr() { return &m_iHp;  }
+	void										Set_Tutorial_Start(UI_TUTORIAL_TYPE i)
+	{ 
+		m_isTutorial_Notify = true;
+		m_eTutial_Type = i;
+	}
+	
+	_bool*				Get_Tutorial_Notify()	{ return &m_isTutorial_Notify; }
+	UI_TUTORIAL_TYPE*	Get_Tutorial_Type()		{ return &m_eTutial_Type; }
+
+	/* For. Fuction */
+	void										Player_FirstBehaivor(_int i);
+
+	/* For. Variable */
+	UI_TUTORIAL_TYPE							m_eTutial_Type = { UI_TUTORIAL_TYPE::TUTORIAL_END };
 
 	_bool										m_isNYResult;
+	_bool										m_isPlayer_FirstBehavior[100];
+	_bool										m_isTutorial_Notify = { false };
 #pragma
 
 #pragma region 예은 추가 
 public:
 	_int										Get_Player_ColIndex() { return m_iCurCol; }
 	_int										Get_Player_Direction() { return m_iDir; }
+	_int										Get_Player_Floor() { return m_iFloor; } /* 현재 플레이어의 층수 */
+	_int										Get_Player_Region() { return m_iRegion; } /* 현재 존재하는 지역 */
 	_bool										Get_Player_RegionChange() { return m_bChange; }
-	_bool*										Get_Player_Interact_Ptr() { return &m_bInteract; }
-
+	_bool*									Get_Player_Interact_Ptr() { return &m_bInteract; }
+	_bool*									Get_Player_Region_Array() { return m_bRegion; }
+	// 인벤 연동 뒤 나영이의 UI에게 플레이어가 얻은 아이템의 enum을 던져줘야함
 private:
-	_bool										m_bInteract = { false }; // 나 소통하겠다
+
+	_bool										m_bInteract = { false }; //플레이어가 상호작용을 시도한
 	_bool										m_bChange = { true };
 	_int										m_iCurCol = { 0 };
+	_int										m_iRegion = { 0 };
 	_int										m_iDir = { 0 };
 	_int										m_iPreCol = { 1 };
+	_int										m_iFloor = { 2 };
 	_float										m_fTimeTEST = { 0.f };
+	_bool										m_bRegion[100] = { false, };
 #pragma endregion
 
 
@@ -221,7 +251,7 @@ public:
 private:
 	_bool										m_isCamTurn = { false };
 	class CTab_Window*							m_pTabWindow = { nullptr };
-#pragma
+#pragma endregion
 
 	vector<CPartObject*>						m_PartObjects;
 	_ubyte										m_eState = {};
