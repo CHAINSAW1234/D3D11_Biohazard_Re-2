@@ -169,6 +169,9 @@ protected:
 
 protected:
 	void												Check_Player();
+	_float												Check_Player_Distance();
+	_float												Check_Player_Distance(_float4 vPos);
+	_float3											Get_Collider_World_Pos(_float3 vPos);
 	_bool												Check_Col_Sphere_Player();
 	_bool												Check_Col_OBB_Player();
 	_bool												Check_Col_AABB_Player();

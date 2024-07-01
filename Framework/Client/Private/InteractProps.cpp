@@ -133,6 +133,28 @@ void CInteractProps::Check_Player()
 
 }
 
+_float CInteractProps::Check_Player_Distance()
+{
+	_vector vDistanceVector = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) - m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION);
+	_float fPlayer_Distance = XMVectorGetX(XMVector3Length(vDistanceVector));
+	m_fDistance = fPlayer_Distance;
+	return m_fDistance;
+}
+
+_float CInteractProps::Check_Player_Distance(_float4 vPos)
+{
+	_float4 vDistanceVector = vPos - m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION);
+	_float fPlayer_Distance = XMVectorGetX(XMVector3Length(vDistanceVector));
+	return fPlayer_Distance;
+}
+
+_float3 CInteractProps::Get_Collider_World_Pos(_float3 vPos)
+{
+	_matrix colliderLocalMatrix = XMMatrixTranslation(vPos.x,vPos.y,vPos.z);
+	_float3 vWorldPos = (colliderLocalMatrix * m_pTransformCom->Get_WorldMatrix()).r[3];
+	return vWorldPos;
+}
+
 _bool CInteractProps::Check_Col_Sphere_Player()
 {
 	if (m_pPlayer == nullptr)
@@ -142,7 +164,7 @@ _bool CInteractProps::Check_Col_Sphere_Player()
 	CCollider* pPlayerCol = static_cast<CCollider*>( m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_SPHERE]))
 	{
-		if (m_fDistance <= 1.f&& !m_bOnce)
+		if (Check_Player_Distance() <= 1.16f && !m_bOnce)
 		{
 			m_bOnce = true;
 		}
@@ -162,7 +184,7 @@ _bool CInteractProps::Check_Col_OBB_Player()
 	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_OBB]))
 	{
-		if (m_fDistance <= 1.f&& !m_bOnce)
+		if (Check_Player_Distance() <= 1.16f && !m_bOnce)
 		{
 			m_bOnce = true;
 		}
@@ -182,7 +204,7 @@ _bool CInteractProps::Check_Col_AABB_Player()
 	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_AABB]))
 	{
-		if (m_fDistance <= 1.f&& !m_bOnce)
+		if (Check_Player_Distance() <= 1.16f && !m_bOnce)
 		{
 			m_bOnce = true;
 		}
@@ -346,10 +368,8 @@ _bool* CInteractProps::ComeClose_toPlayer(_float _come)
 	m_isNYResult = false;
 
 	/* Player와의 거리 */
-	_vector vDistanceVector = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) - m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	_float fPlayer_Distance = XMVectorGetX(XMVector3Length(vDistanceVector));
-	m_fDistance = fPlayer_Distance;
-	if (fPlayer_Distance <= _come)
+
+	if (m_fDistance <= _come)
 		m_isNYResult = true;
 
 	else

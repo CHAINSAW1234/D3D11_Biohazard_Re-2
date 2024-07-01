@@ -261,7 +261,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
 	//ÈñÈ÷ ³Ñ ¹Ù»Û °ü°è·Î ÇÔ¼ö ¸øÆÍ¾î¿ä - ¿¹Àº
 
-	string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
+	/*string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
 	_tchar	szFilePath[MAX_PATH] = { L"" };
 	MultiByteToWideChar(CP_ACP, 0, strFilePath.c_str(), (_uint)strlen(strFilePath.c_str()), szFilePath, MAX_PATH);
 	_uint iMonsterNum = { 0 };
@@ -298,15 +298,15 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 			return E_FAIL;
 		}
 	}
-	CloseHandle(hFile);
+	CloseHandle(hFile);*/
 
-	//CMonster::MONSTER_DESC ObjectDesc = {};
+	CMonster::MONSTER_DESC ObjectDesc = {};
 
-	//_matrix			WorldMatrix = { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
-	//XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+	_matrix			WorldMatrix = { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
+	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
-	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }
