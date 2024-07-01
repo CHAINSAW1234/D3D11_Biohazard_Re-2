@@ -261,52 +261,52 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
 	//ÈñÈ÷ ³Ñ ¹Ù»Û °ü°è·Î ÇÔ¼ö ¸øÆÍ¾î¿ä - ¿¹Àº
 
-	//string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
-	//_tchar	szFilePath[MAX_PATH] = { L"" };
-	//MultiByteToWideChar(CP_ACP, 0, strFilePath.c_str(), (_uint)strlen(strFilePath.c_str()), szFilePath, MAX_PATH);
-	//_uint iMonsterNum = { 0 };
-	//HANDLE		hFile = CreateFile(szFilePath, GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
+	_tchar	szFilePath[MAX_PATH] = { L"" };
+	MultiByteToWideChar(CP_ACP, 0, strFilePath.c_str(), (_uint)strlen(strFilePath.c_str()), szFilePath, MAX_PATH);
+	_uint iMonsterNum = { 0 };
+	HANDLE		hFile = CreateFile(szFilePath, GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
-	//if (INVALID_HANDLE_VALUE == hFile)
-	//	return E_FAIL;
-
-	//wchar_t			szFileName[MAX_PATH] = { TEXT("") };
-	//_wsplitpath_s(szFilePath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, nullptr, 0);
-
-
-	//DWORD	dwByte(0);
-
-	//_uint iObjectNum = { 0 };
-	//if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
-	//	return E_FAIL;
-
-	//for (_uint i = 0; iObjectNum > i; ++i)
-	//{
-	//	_uint iLength = { 0 };
-
-	//	CMonster::MONSTER_DESC ObjectDesc = {};
-
-	//	if (!ReadFile(hFile, &ObjectDesc.worldMatrix, sizeof(_float4x4), &dwByte, nullptr))
-	//	{
-	//		CloseHandle(hFile);
-	//		return E_FAIL;
-	//	}
-
-	//	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"),&ObjectDesc)))
-	//	{
-	//		CloseHandle(hFile);
-	//		return E_FAIL;
-	//	}
-	//}
-	//CloseHandle(hFile);
-
-	CMonster::MONSTER_DESC ObjectDesc = {};
-
-	_matrix			WorldMatrix = { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
-	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
-
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+	if (INVALID_HANDLE_VALUE == hFile)
 		return E_FAIL;
+
+	wchar_t			szFileName[MAX_PATH] = { TEXT("") };
+	_wsplitpath_s(szFilePath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, nullptr, 0);
+
+
+	DWORD	dwByte(0);
+
+	_uint iObjectNum = { 0 };
+	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
+		return E_FAIL;
+
+	for (_uint i = 0; iObjectNum > i; ++i)
+	{
+		_uint iLength = { 0 };
+
+		CMonster::MONSTER_DESC ObjectDesc = {};
+
+		if (!ReadFile(hFile, &ObjectDesc.worldMatrix, sizeof(_float4x4), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"),&ObjectDesc)))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+	}
+	CloseHandle(hFile);
+
+	//CMonster::MONSTER_DESC ObjectDesc = {};
+
+	//_matrix			WorldMatrix = { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
+	//XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+
+	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -1041,7 +1041,7 @@ HRESULT CLevel_GamePlay::Load_Layer(const wstring& strFilePath, _uint iLevel)
 HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& strLayerName, _uint iLevel)
 {
 	wstring strLayerFile = strFilePath + TEXT("\\\\") + strLayerName + TEXT(".dat");
-	_uint iMonsterNum = { 0 };
+
 	HANDLE		hFile = CreateFile(strLayerFile.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
 	if (INVALID_HANDLE_VALUE == hFile)
@@ -1053,10 +1053,11 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
 		return E_FAIL;
 
+	_uint iMonsterNum = { 0 };
+
 	for (_uint i = 0; iObjectNum > i; ++i)
 	{
 		_uint iLength = { 0 };
-
 
 		CGameObject::GAMEOBJECT_DESC ObjectDesc = {};
 

@@ -142,7 +142,11 @@ _bool CInteractProps::Check_Col_Sphere_Player()
 	CCollider* pPlayerCol = static_cast<CCollider*>( m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_SPHERE]))
 	{
-		m_bInteract = true;
+		if (m_fDistance <= 1.f&& !m_bOnce)
+		{
+			m_bOnce = true;
+		}
+		m_bFirstInteract = true;
 		return true;
 	}
 	return false;
@@ -158,7 +162,11 @@ _bool CInteractProps::Check_Col_OBB_Player()
 	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_OBB]))
 	{
-		m_bInteract = true;
+		if (m_fDistance <= 1.f&& !m_bOnce)
+		{
+			m_bOnce = true;
+		}
+		m_bFirstInteract = true;
 		return true;
 	}
 	return false;
@@ -174,7 +182,11 @@ _bool CInteractProps::Check_Col_AABB_Player()
 	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_AABB]))
 	{
-		m_bInteract = true;
+		if (m_fDistance <= 1.f&& !m_bOnce)
+		{
+			m_bOnce = true;
+		}
+		m_bFirstInteract = true;
 		return true;
 	}
 	return false;
@@ -336,12 +348,20 @@ _bool* CInteractProps::ComeClose_toPlayer(_float _come)
 	/* Player와의 거리 */
 	_vector vDistanceVector = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) - m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION);
 	_float fPlayer_Distance = XMVectorGetX(XMVector3Length(vDistanceVector));
-
+	m_fDistance = fPlayer_Distance;
 	if (fPlayer_Distance <= _come)
 		m_isNYResult = true;
 
 	else
 		m_isNYResult = false;
+
+	if (PRESSING == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+	{
+		m_bBlock = true;
+		m_isNYResult = false;
+	}
+	else
+		m_bBlock = false;
 
 	return &m_isNYResult;
 }
