@@ -270,7 +270,7 @@ HRESULT CDecal_Blood::Initialize(void* pArg)
 			return E_FAIL;
 	}
 
-	m_vExtent = _float3(0.05f,0.05f,0.1f);
+	m_vExtent = _float3(0.1f,0.1f,0.1f);
 
 	return S_OK;
 }

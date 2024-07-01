@@ -1063,9 +1063,9 @@ void CZombie::Ready_Decal()
 
 				break;
 			}
-		}*/
+		}
 
-		//if (m_iMeshIndex_Hit == 999)
+		if (m_iMeshIndex_Hit == 999)*/
 		{
 			m_vHitPosition = m_pController->GetBlockPoint();
 			m_vHitNormal = m_pController->GetHitNormal();
