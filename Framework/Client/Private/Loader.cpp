@@ -992,6 +992,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	m_strLoadingText = TEXT("Now Loading Texture");
 
 #pragma region UI Texture
+	/*Prototype_Component_Texture_Tab_Window_BackGround*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Item_Description_BG"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Item_Discription_Background/Item_Description_BG.dds")))))
+		return E_FAIL;
+
 	/*Prototype_Component_Texture_HP_Mask*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_HP_Mask"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/HP/IMANGE_05.png")))))
@@ -1148,9 +1153,39 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 
 #pragma endregion
+
+#pragma region Effect
+	//Muzzle Flash
+	CTexture::TEXTURE_DESC Desc{};
+	Desc.iWidth = 1024;
+	Desc.iHeight = 512;
+	Desc.iCountX = 2;
+	Desc.iCountY = 1;
+
+	/*Prototype_Component_Texture_Muzzle_Flash*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Flash"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Flash/Muzzle_Flash.dds"),1,&Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 512;
+	Desc.iHeight = 256;
+	Desc.iCountX = 2;
+	Desc.iCountY = 1;
+
+	/*Prototype_Component_Texture_Muzzle_Flash_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Flash_SG"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Flash_SG/Muzzle_Flash_SG.dds"), 1, &Desc))))
+		return E_FAIL;
+#pragma endregion
+
+
+
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Sky"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/SkyBox/Sky_%d.dds"), 4))))
 		return E_FAIL;
+		
+		
+		
 #pragma region Model
 
 	m_strLoadingText = TEXT("Now Loading ... Model");

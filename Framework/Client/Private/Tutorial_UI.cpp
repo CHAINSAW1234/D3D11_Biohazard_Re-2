@@ -147,22 +147,22 @@ void CTutorial_UI::Player_First_Interact()
         {
         case UI_TUTORIAL_TYPE::TUTORIAL_WALK:
             pTutorial_TextBox[0]->Set_Text(TEXT("»¡¸®°È±â"));
-            pTutorial_TextBox[1]->Set_Text(TEXT("LS"));
+            pTutorial_TextBox[1]->Set_Text(TEXT("S"));
             break;
 
         case UI_TUTORIAL_TYPE::TUTORIAL_AROUND:
             pTutorial_TextBox[0]->Set_Text(TEXT("µÑ·¯º¸±â"));
-            pTutorial_TextBox[1]->Set_Text(TEXT("LE"));
+            pTutorial_TextBox[1]->Set_Text(TEXT("E"));
             break;
 
         case UI_TUTORIAL_TYPE::TUTORIAL_RUN :
             pTutorial_TextBox[0]->Set_Text(TEXT("¶Ù±â"));
-            pTutorial_TextBox[1]->Set_Text(TEXT("L3"));
+            pTutorial_TextBox[1]->Set_Text(TEXT("3"));
             break;
 
         case UI_TUTORIAL_TYPE::TUTORIAL_AIM :
             pTutorial_TextBox[0]->Set_Text(TEXT("°Ü´©±â"));
-            pTutorial_TextBox[1]->Set_Text(TEXT("LR"));
+            pTutorial_TextBox[1]->Set_Text(TEXT("R"));
             break;
 
         case UI_TUTORIAL_TYPE::INVENTORY_OPEN:
@@ -171,14 +171,6 @@ void CTutorial_UI::Player_First_Interact()
             break;
 
         case UI_TUTORIAL_TYPE::TUTORIAL_REROAD :
-            _float3 pTextPos0 = pTutorial_TextBox[0]->GetPosition();
-            pTextPos0.x += 20.f;
-            pTutorial_TextBox[0]->Set_Position(pTextPos0);
-
-            _float3 pTextPos1 = pTutorial_TextBox[0]->GetPosition();
-            pTextPos1.x += 10.f;
-            pTutorial_TextBox[0]->Set_Position(pTextPos1);
-
             pTutorial_TextBox[0]->Set_Text(TEXT("ÀçÀåÀü"));
             pTutorial_TextBox[1]->Set_Text(TEXT("R"));
             break;

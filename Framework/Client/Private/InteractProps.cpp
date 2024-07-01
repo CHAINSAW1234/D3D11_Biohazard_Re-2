@@ -374,7 +374,6 @@ void CInteractProps::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pTab_Window);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
 	for (size_t i = 0; i < INTERACTPROPS_COL_END; i++)

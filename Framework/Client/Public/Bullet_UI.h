@@ -28,13 +28,13 @@ public:
 	virtual HRESULT Render() override;
 
 private :
-	void					Mission_Complete();
 	virtual void Start() override;
 	virtual void OnNotify() override;
 
 private:
 	void					Change_BulletUI();
 	void					Render_Bullet_UI(_float fTimeDelta);
+	void					Mission_Complete();
 
 	void					Find_Crosshair();
 

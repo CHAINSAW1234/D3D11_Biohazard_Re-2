@@ -56,7 +56,6 @@ list<class CGameObject*>* CProp_Manager::Find_List(_int iTag)
 void CProp_Manager::Free()
 {
 	__super::Free();
-	DeClear
 	Safe_Release(m_pGameInstance);
 
 	for (auto& list: m_RegionProps)

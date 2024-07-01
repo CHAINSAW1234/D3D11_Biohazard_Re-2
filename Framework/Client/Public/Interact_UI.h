@@ -20,7 +20,7 @@ protected:
 
 
 protected :
-	class CProp_Manager*		m_pPropManager = { nullptr };
+	// class CProp_Manager*		m_pPropManager = { nullptr };
 
 
 public:

@@ -32,9 +32,6 @@ public:
 	void	OnOff_EventHandle();
 	void	Set_WindowType(WINDOW_TYPE eWindowType) { m_eWindowType = eWindowType; };
 
-	_bool	Get_MinMapRender() const { return m_isMapRender; }
-	_bool*	Get_MainRender()	{ return m_pInvenButton->Get_Dead_Ptr(); }
-
 #pragma region ³ª¿Ë
 public:
 	_bool				Get_MinMapRender()				{ return m_isMapRender; }

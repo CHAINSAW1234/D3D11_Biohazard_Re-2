@@ -8,7 +8,7 @@ CInteract_UI::CInteract_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 }
 
 CInteract_UI::CInteract_UI(const CInteract_UI& rhs)
-	: m_pPropManager{ CProp_Manager::Get_Instance() },
+	:/* m_pPropManager{ CProp_Manager::Get_Instance() },*/
 	CCustomize_UI{ rhs }
 {
 }

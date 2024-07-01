@@ -315,7 +315,10 @@ namespace Client
 		cookiescan01a,
 		woodbox01a,
 		/*end*/
+		HandGun,
+		ShotGun,
 		ITEM_NUMBER_END
+
 	};
 
 	//인벤토리 안에서의 아이템 타입

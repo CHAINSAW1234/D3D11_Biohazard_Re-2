@@ -201,7 +201,7 @@ HRESULT CLayOut_UI::Render()
 
 void CLayOut_UI::Find_TabWindow()
 {
-    list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+    list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_TabWindow"));
 
     for (auto& iter : *pUIList)
     {

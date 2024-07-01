@@ -1117,7 +1117,7 @@ void CMap_UI::Map_Item_Control(_float fTimeDelta)
 
     /* 1. 현재 Player가 아이템과 상호작용했는가*/
     /* 2. 그렇다면 그 상호작용한 지역과 이름은 무엇인가? */
-    m_pPropManager;
+ //   m_pPropManager;
 }
 
 void CMap_UI::Search_TabWindow()
