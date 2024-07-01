@@ -67,8 +67,13 @@ HRESULT CZombie::Initialize(void* pArg)
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
 #pragma region AIController Setup
+
+#pragma region Create Controller
+
 	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this, 1.f, 0.35f, m_pTransformCom
 		, m_pBodyModel->GetBoneVector(), "../Bin/Resources/Models/Zombie/Body.fbx");
+
+#pragma endregion
 
 	m_pPathFinder = m_pGameInstance->Create_PathFinder();
 
@@ -1000,6 +1005,12 @@ void CZombie::Ready_Decal()
 			m_pBodyModel->Bind_Resource_DecalMap(iMeshIndex, m_pShader_Decal);
 			m_pBodyModel->Perform_Init_DecalMap(iMeshIndex, m_pShader_Decal);
 		}*/
+	}
+
+	if (m_bRagdoll)
+	{
+		m_vHitPosition = m_pController->GetBlockPoint();
+		m_vHitNormal = m_pController->GetHitNormal();
 	}
 }
 

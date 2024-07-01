@@ -112,6 +112,7 @@ PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, uint3
 	PxFilterData filterData_Ragdoll;
 	filterData_Ragdoll.word0 = COLLISION_CATEGORY::RAGDOLL;
 	filterData_Ragdoll.word1 = COLLISION_CATEGORY::CCT | COLLISION_CATEGORY::COLLIDER;
+	filterData_Ragdoll.word2 = m_iId;
 	filterData_Ragdoll.word3 = 0;
 	shape->setSimulationFilterData(filterData_Ragdoll);
 
@@ -158,6 +159,7 @@ PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, CRagd
 	PxFilterData filterData_Ragdoll;
 	filterData_Ragdoll.word0 = COLLISION_CATEGORY::RAGDOLL;
 	filterData_Ragdoll.word1 = COLLISION_CATEGORY::CCT | COLLISION_CATEGORY::COLLIDER;
+	filterData_Ragdoll.word2 = m_iId;
 	filterData_Ragdoll.word3 = 0;
 	shape->setSimulationFilterData(filterData_Ragdoll);
 
@@ -204,6 +206,7 @@ PxRigidDynamic* CRagdoll_Physics::create_sphere_bone(uint32_t parent_idx, CRagdo
 	PxFilterData filterData_Ragdoll;
 	filterData_Ragdoll.word0 = COLLISION_CATEGORY::RAGDOLL;
 	filterData_Ragdoll.word1 = COLLISION_CATEGORY::CCT | COLLISION_CATEGORY::COLLIDER;
+	filterData_Ragdoll.word2 = m_iId;
 	filterData_Ragdoll.word3 = 0;
 	shape->setSimulationFilterData(filterData_Ragdoll);
 
