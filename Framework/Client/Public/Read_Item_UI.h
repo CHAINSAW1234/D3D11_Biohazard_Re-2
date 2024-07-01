@@ -59,7 +59,7 @@ private :
 private : /* Text ฐüทร*/
 	map<ITEM_READ_TYPE, vector<wstring>>	m_BookText;
 	_float2									m_fOriginPos_text = {};
-
+	ITEM_READ_TYPE							eGara = { ITEM_READ_TYPE::INCIDENT_LOG_NOTE };
 
 public:
 	static CInteract_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

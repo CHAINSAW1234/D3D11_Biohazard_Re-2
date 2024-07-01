@@ -92,8 +92,7 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
         {
             m_eRead_type = READ_UI_TYPE::ARROW_READ;
             m_pIntro_UI = Find_ReadUI(READ_UI_TYPE::INTRODUCE_READ, false);
-            m_pRead_Supervise = Find_ReadUI(READ_UI_TYPE::TEXT_LEFT_READ, true);
-            m_pRead_Supervise = m_pRead_Supervise->m_pRead_Supervise;
+            m_pRead_Supervise = Find_ReadUI(READ_UI_TYPE::MAIN_READ, false);
             CRead_Item_UI* pTexture_UI = Find_ReadUI(READ_UI_TYPE::TEXTURE_READ, true);
 
            if (nullptr != m_pIntro_UI)
@@ -154,9 +153,20 @@ void CRead_Item_UI::Tick(_float fTimeDelta)
     if (m_pGameInstance->Get_KeyState('I') && READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
     {
         m_isRender = true;
-        m_eBook_Type = ITEM_READ_TYPE::INCIDENT_LOG_NOTE;
+        m_eBook_Type = eGara;
         Reset();
     }
+
+    /* GARA */
+    if (DOWN == m_pGameInstance->Get_KeyState('0') && READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
+    {
+        eGara = (ITEM_READ_TYPE)((_int)eGara + 1);
+
+        if (eGara >= ITEM_READ_TYPE::END_NOTE)
+            eGara = ITEM_READ_TYPE::INCIDENT_LOG_NOTE;
+    }
+
+
 
     Render_Condition();
             
@@ -276,9 +286,6 @@ void CRead_Item_UI::Arrow_Read()
                 else if (READ_ARROW_TYPE::RIGHT_ARROW == m_eRead_Arrow_Type)
                 {
                     ++m_pRead_Supervise->m_iBookCnt;
-
-                    if (m_pRead_Supervise->m_BookText[m_pRead_Supervise->m_eBook_Type].size() <= m_pRead_Supervise->m_iBookCnt)
-                        m_pRead_Supervise->m_iBookCnt = (_int)m_pRead_Supervise->m_BookText[m_pRead_Supervise->m_eBook_Type].size() - 1;
                 }
             }
         }
@@ -302,18 +309,22 @@ void CRead_Item_UI::Text_Read(_float fTimeDelta)
 
     if (READ_UI_TYPE::TEXT_LEFT_READ == m_eRead_type)
     {
-        if(0 < m_pRead_Supervise->m_iBookCnt)
+        if(0 < m_pRead_Supervise->m_iBookCnt && incidentLogNotes.size() > m_pRead_Supervise->m_iBookCnt)
             Change_Texture(incidentLogNotes[m_pRead_Supervise->m_iBookCnt], TEXT("Com_DefaultTexture"));
+
+        if ((_int)incidentLogNotes.size() < m_pRead_Supervise->m_iBookCnt)
+            m_pRead_Supervise->m_iBookCnt = (_int)incidentLogNotes.size() - 1;
 
         m_isRender = true;
     }
 
     else if (READ_UI_TYPE::TEXT_RIGHT_READ == m_eRead_type)
     {
-        if(m_pRead_Supervise->m_iBookCnt + 1 < incidentLogNotes.size())
+       /* if(m_pRead_Supervise->m_iBookCnt+1 < incidentLogNotes.size())
             Change_Texture(incidentLogNotes[m_pRead_Supervise->m_iBookCnt + 1], TEXT("Com_DefaultTexture"));
-
-        m_isRender = true;
+        else
+            m_pRead_Supervise->m_iBookCnt
+        m_isRender = true;*/
     }
 }
 
