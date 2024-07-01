@@ -1,10 +1,12 @@
 #include "stdafx.h"
 #include "Player_State_Move_Walk.h"
 #include "Player.h"
+#include "Player_State_Move.h"
 
-CPlayer_State_Move_Walk::CPlayer_State_Move_Walk(CPlayer* pPlayer)
+CPlayer_State_Move_Walk::CPlayer_State_Move_Walk(CPlayer* pPlayer, CFSM_HState* pHState)
 {
 	m_pPlayer = pPlayer;
+	m_pHState = pHState;
 }
 
 void CPlayer_State_Move_Walk::OnStateEnter()
@@ -161,9 +163,28 @@ void CPlayer_State_Move_Walk::Look_Cam(_float fTimeDelta)
 	}
 }
 
-CPlayer_State_Move_Walk* CPlayer_State_Move_Walk::Create(CPlayer* pPlayer)
+void CPlayer_State_Move_Walk::Open_Door()
 {
-	CPlayer_State_Move_Walk* pInstance = new CPlayer_State_Move_Walk(pPlayer);
+	// 플레이어한테 받아오기
+
+	if (1)
+		return;
+
+	if (m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3) &&
+		m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
+		m_pPlayer->Get_Body_Model()->Change_Animation(4, CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), CPlayer::DOOR_PASS);
+		m_pPlayer->Get_Body_Model()->Set_Loop(4, false);
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 10.f, 6.f);
+	}
+	else {
+		m_pHState->Change_State(CPlayer_State_Move::DOOR_STOP);
+	}
+
+}
+
+CPlayer_State_Move_Walk* CPlayer_State_Move_Walk::Create(CPlayer* pPlayer, CFSM_HState* pHState)
+{
+	CPlayer_State_Move_Walk* pInstance = new CPlayer_State_Move_Walk(pPlayer, pHState);
 
 	return pInstance;
 }

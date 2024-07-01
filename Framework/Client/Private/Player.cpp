@@ -729,6 +729,22 @@ void CPlayer::Reload()
 	}
 }
 
+void CPlayer::Stop_UpperBody()
+{
+	Get_Body_Model()->Set_TrackPosition(3, 0.f);
+	Get_Body_Model()->Set_TrackPosition(4, 0.f);
+
+	Get_Body_Model()->Set_Loop(3, true);
+	Get_Body_Model()->Set_Loop(4, true);
+
+	Get_Body_Model()->Set_BlendWeight(3, 0.f, 5.f);
+	Get_Body_Model()->Set_BlendWeight(4, 0.f, 5.f);
+
+	m_isRequestChangeEquip = false;
+	m_eTargetEquip = NONE;
+
+}
+
 _bool CPlayer::IsShotAble()
 {
 	if (m_eEquip == NONE)

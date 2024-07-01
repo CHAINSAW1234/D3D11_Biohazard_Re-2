@@ -51,6 +51,11 @@ public:
 		HOLD_SHOT, HOLD_SHOT_NO_AMMO, HOLD_RELOAD,
 		HOLSTERTOMOVE, MOVETOHOLSTER, HOLD_END
 	};
+
+	enum ANIMASTION_COMMON {
+		HOLD_LEFTHAND_LIGHT, STEP_DOWM_1M, STEP_UP_1M,
+		DOOR_PASS, DOOR_OPEN_JOG, DOOR_LOCK, DOOR_LOCK_L, DOOR_LOCK_R
+	};
 	
 	enum ANIMSET_MOVE { FINE, MOVE_HG, MOVE_STG, FINE_LIGHT, CAUTION, CAUTION_LIGHT, DANGER, DANGER_LIGHT, ANIMSET_MOVE_END };
 	enum ANIMSET_HOLD { HOLD_HG, HOLD_STG, HOLD_MLE, HOLD_SUP, ANIMSET_HOLD_END };
@@ -134,6 +139,7 @@ public:
 	void										Request_NextBiteAnimation(_int iAnimIndex);
 	void										Shot();
 	void										Reload();
+	void										Stop_UpperBody();
 
 	// ============================ CHECK = ISABLE ============================
 	_bool										IsShotAble();
@@ -182,9 +188,9 @@ private:
 	wstring m_strBiteLayerTag;
 
 
-	EQUIP m_eEquip = { NONE };
 	_bool m_isRequestChangeEquip = { false };				// 무기 교체 요청 들어옴
 	EQUIP m_eTargetEquip = { NONE };
+	EQUIP m_eEquip = { NONE };
 	CWeapon* m_pWeapon = { nullptr };
 	vector<CWeapon*> m_Weapons;
 
@@ -216,7 +222,6 @@ public:
 	UI_TUTORIAL_TYPE							m_eTutial_Type = { UI_TUTORIAL_TYPE::TUTORIAL_END };
 
 	_bool										m_isNYResult;
-	_bool										m_isPlayer_FirstBehavior[100];
 	_bool										m_isTutorial_Notify = { false };
 #pragma
 

@@ -485,6 +485,9 @@
     <Filter Include="AIController\Zombie\Task\DummyFinsh">
       <UniqueIdentifier>{2dfbaeaa-f270-4b3d-b3b3-34ebd33af1ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_DoorStop">
+      <UniqueIdentifier>{172a5b3a-512f-4cb3-8222-5f20b3fd8a48}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -916,6 +919,9 @@
     <ClInclude Include="..\Public\Creep_Zombie.h">
       <Filter>AIController\Zombie\Task\Idle\Creep</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move_DoorStop.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_DoorStop</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1323,6 +1329,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Creep_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Idle\Creep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_DoorStop.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_DoorStop</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
