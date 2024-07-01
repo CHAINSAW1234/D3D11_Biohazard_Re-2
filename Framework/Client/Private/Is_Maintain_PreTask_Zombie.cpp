@@ -33,7 +33,7 @@ _bool CIs_Maintain_PreTask_Zombie::Condition_Check()
 	if (nullptr == m_pBlackBoard)
 		return isMaintain;
 
-	MONSTER_STATE			eCurrentState = { m_pBlackBoard->GetAI()->Get_Current_MonsterState() };
+	MONSTER_STATE			eCurrentState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 	//if (true == Is_Maintain_State(eCurrentState))
 	//{
 	//	if (false == Is_CanFinish(eCurrentState))
@@ -108,12 +108,12 @@ _bool CIs_Maintain_PreTask_Zombie::Is_CanFinish(MONSTER_STATE eState)
 					_bool				isFinsihed = { pBodyModel->isFinished(static_cast<_uint>(PLAYING_INDEX::INDEX_0)) };
 					isCanFinish = isFinsihed;
 
-					if (COLLIDER_TYPE::CALF_L == m_pBlackBoard->GetAI()->Get_Current_IntersectCollider() ||
-						COLLIDER_TYPE::CALF_R == m_pBlackBoard->GetAI()->Get_Current_IntersectCollider() ||
-						COLLIDER_TYPE::LEG_L == m_pBlackBoard->GetAI()->Get_Current_IntersectCollider() ||
-						COLLIDER_TYPE::LEG_R == m_pBlackBoard->GetAI()->Get_Current_IntersectCollider() ||
-						COLLIDER_TYPE::FOOT_L == m_pBlackBoard->GetAI()->Get_Current_IntersectCollider() ||
-						COLLIDER_TYPE::FOOT_R == m_pBlackBoard->GetAI()->Get_Current_IntersectCollider())
+					if (COLLIDER_TYPE::CALF_L == m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider() ||
+						COLLIDER_TYPE::CALF_R == m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider() ||
+						COLLIDER_TYPE::LEG_L == m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider() ||
+						COLLIDER_TYPE::LEG_R == m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider() ||
+						COLLIDER_TYPE::FOOT_L == m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider() ||
+						COLLIDER_TYPE::FOOT_R == m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider())
 					{
 						isCanFinish = true;
 					}

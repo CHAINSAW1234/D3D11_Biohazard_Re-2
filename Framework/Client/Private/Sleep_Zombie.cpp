@@ -39,13 +39,13 @@ _bool CSleep_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
-	_bool			isSleep = { m_pBlackBoard->GetAI()->Is_Sleep() };
+	_bool			isSleep = { m_pBlackBoard->Get_AI()->Is_Sleep() };
 	if (false == isSleep)
 		return false;
 
 	m_pBlackBoard->Organize_PreState(this);
 
-	auto pAI = m_pBlackBoard->GetAI();
+	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->SetState(MONSTER_STATE::MST_SLEEP);
 
 	return true;

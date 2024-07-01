@@ -3,7 +3,7 @@
 #include "Client_Defines.h"
 #include "Task_Node.h"
 #include "Zombie.h"
-
+#include "Body_Zombie.h"
 
 BEGIN(Client)
 

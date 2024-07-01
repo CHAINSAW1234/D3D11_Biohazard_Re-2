@@ -31,7 +31,7 @@ void CStun_Hold_Zombie::Enter()
 
 	pBodyModel->Set_TotalLinearInterpolation(0.1f);
 	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), false);
-	m_eCurrentHitCollider = m_pBlackBoard->GetAI()->Get_Current_IntersectCollider();
+	m_eCurrentHitCollider = m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider();
 
 	m_isEntry = true;
 }
@@ -48,7 +48,7 @@ _bool CStun_Hold_Zombie::Execute(_float fTimeDelta)
 
 	m_pBlackBoard->Organize_PreState(this);
 
-	auto pAI = m_pBlackBoard->GetAI();
+	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->SetState(MONSTER_STATE::MST_DAMAGE);
 	Change_Animation();
 

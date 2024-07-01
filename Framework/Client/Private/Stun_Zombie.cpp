@@ -47,7 +47,7 @@ _bool CStun_Zombie::Execute(_float fTimeDelta)
 
 	m_pBlackBoard->Organize_PreState(this);
 
-	auto pAI = m_pBlackBoard->GetAI();
+	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->SetState(MONSTER_STATE::MST_DAMAGE);
 
 	if (true == m_isEntry)
@@ -67,15 +67,30 @@ void CStun_Zombie::Exit()
 
 void CStun_Zombie::Update_Current_Collider()
 {
-	m_eCurrentHitCollider = { m_pBlackBoard->GetAI()->Get_Current_IntersectCollider() };
+	m_eCurrentHitCollider = { m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider() };
 }
 
 void CStun_Zombie::Change_Animation()
 {
+	CZombie::POSE_STATE			ePoseState = { m_pBlackBoard->Get_AI()->Get_PoseState() };
+	if (CZombie::POSE_STATE::_CREEP == ePoseState)
+	{
+		Change_Animation_Creep();
+	}
+
+	else if (CZombie::POSE_STATE::_UP == ePoseState)
+	{
+		Change_Animation_StandUp();
+	}
+
+}
+
+void CStun_Zombie::Change_Animation_StandUp()
+{
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
 
@@ -100,7 +115,7 @@ void CStun_Zombie::Change_Animation()
 		else
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDER_L_B);
 	}
-	
+
 	else if (m_eCurrentHitCollider == COLLIDER_TYPE::ARM_R || m_eCurrentHitCollider == COLLIDER_TYPE::FOREARM_R || m_eCurrentHitCollider == COLLIDER_TYPE::HAND_R)
 	{
 		if (true == isFromFront)
@@ -160,6 +175,106 @@ void CStun_Zombie::Change_Animation()
 				iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_HEAD_B);
 			}
 		}
+	}
+
+	if (-1 == iResultAnimationIndex)
+		return;
+
+	_int				iCurrentAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
+	_bool				isSameAnim = { iCurrentAnimIndex == iResultAnimationIndex };
+
+	if (false == isSameAnim)
+	{
+		pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strAnimLayerTag, iResultAnimationIndex);
+		pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
+	}
+	else
+	{
+		pBodyModel->Set_TrackPosition(static_cast<_uint>(m_ePlayingIndex), 0.f, true);
+	}
+}
+
+void CStun_Zombie::Change_Animation_Creep()
+{
+	if (nullptr == m_pBlackBoard)
+		return;
+
+	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	if (nullptr == pBodyModel)
+		return;
+
+	_int						iResultAnimationIndex = { -1 };
+	CZombie::FACE_STATE			eFaceState = { m_pBlackBoard->Get_AI()->Get_FaceState() };
+
+
+
+	if (m_eCurrentHitCollider == COLLIDER_TYPE::ARM_L || m_eCurrentHitCollider == COLLIDER_TYPE::FOREARM_L || m_eCurrentHitCollider == COLLIDER_TYPE::HAND_L)
+	{
+		if (CZombie::FACE_STATE::_UP == eFaceState)
+		{
+			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEUP_ARM_L);
+		}
+
+		else if (CZombie::FACE_STATE::_DOWN == eFaceState)
+		{
+			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_ARM_L);
+		}
+#ifdef _DEBUG 
+		MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
+#endif 
+	}
+
+	else if (m_eCurrentHitCollider == COLLIDER_TYPE::ARM_R || m_eCurrentHitCollider == COLLIDER_TYPE::FOREARM_R || m_eCurrentHitCollider == COLLIDER_TYPE::HAND_R)
+	{
+		if (CZombie::FACE_STATE::_UP == eFaceState)
+		{
+			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEUP_ARM_R);
+		}
+
+		else if (CZombie::FACE_STATE::_DOWN == eFaceState)
+		{
+			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_ARM_R);
+		}
+#ifdef _DEBUG 
+		MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
+#endif 
+	}
+
+	else if (m_eCurrentHitCollider == COLLIDER_TYPE::LEG_L || m_eCurrentHitCollider == COLLIDER_TYPE::CALF_L || m_eCurrentHitCollider == COLLIDER_TYPE::FOOT_L)
+	{
+		if (CZombie::FACE_STATE::_UP == eFaceState)
+		{
+			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEUP_LEG_L);
+		}
+
+		else if (CZombie::FACE_STATE::_DOWN == eFaceState)
+		{
+			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_LEG_L);
+		}
+#ifdef _DEBUG 
+		MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
+#endif 
+	}
+
+	else if (m_eCurrentHitCollider == COLLIDER_TYPE::LEG_R || m_eCurrentHitCollider == COLLIDER_TYPE::CALF_R || m_eCurrentHitCollider == COLLIDER_TYPE::FOOT_R)
+	{
+		if (CZombie::FACE_STATE::_UP == eFaceState)
+		{
+			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEUP_LEG_R);
+		}
+
+		else if (CZombie::FACE_STATE::_DOWN == eFaceState)
+		{
+			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_LEG_R);
+		}
+#ifdef _DEBUG 
+		MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
+#endif 
+	}
+
+	else if (m_eCurrentHitCollider == COLLIDER_TYPE::CHEST || m_eCurrentHitCollider == COLLIDER_TYPE::PELVIS || m_eCurrentHitCollider == COLLIDER_TYPE::HEAD)
+	{
+		iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_BODY);
 	}
 
 	if (-1 == iResultAnimationIndex)

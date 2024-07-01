@@ -29,21 +29,21 @@ void CBite_Zombie::Enter()
 	if (nullptr == pBodyModel)
 		return;
 
-	pBodyModel->Set_TotalLinearInterpolation(0.f);
+	pBodyModel->Set_TotalLinearInterpolation(0.3f);
 	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), false);
 
-	pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), 0.f, 0.f);
+	pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), 0.f, 0.3f);
 	pBodyModel->Reset_PreAnim_CurrentAnim(static_cast<_uint>(PLAYING_INDEX::INDEX_1));
 
-	m_pBlackBoard->GetAI()->Set_ManualMove(true);
+	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
 
 	m_isSendMSG_To_Player = false;
 	m_eAnimType = BITE_ANIM_TYPE::_END;
 
-	m_eStartPoseState = m_pBlackBoard->GetAI()->Get_PoseState();
-	m_eStartFaceState = m_pBlackBoard->GetAI()->Get_FaceState();
+	m_eStartPoseState = m_pBlackBoard->Get_AI()->Get_PoseState();
+	m_eStartFaceState = m_pBlackBoard->Get_AI()->Get_FaceState();
 
-	m_ePreState = m_pBlackBoard->GetAI()->Get_Current_MonsterState();
+	m_ePreState = m_pBlackBoard->Get_AI()->Get_Current_MonsterState();
 }
 
 _bool CBite_Zombie::Execute(_float fTimeDelta)
@@ -66,7 +66,7 @@ _bool CBite_Zombie::Execute(_float fTimeDelta)
 
 	m_pBlackBoard->Organize_PreState(this);
 
-	auto pAI = m_pBlackBoard->GetAI();
+	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->SetState(MONSTER_STATE::MST_BITE);
 
 	if (true == Is_StateFinished(eAnimState))
@@ -87,7 +87,7 @@ _bool CBite_Zombie::Execute(_float fTimeDelta)
 
 void CBite_Zombie::Exit()
 {
-	m_pBlackBoard->GetAI()->Set_ManualMove(false);
+	m_pBlackBoard->Get_AI()->Set_ManualMove(false);
 
 	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
@@ -131,7 +131,7 @@ void CBite_Zombie::Change_Animation_Default_Front(BITE_ANIM_STATE eState)
 			return;
 
 		_float			fPlayerHP = { static_cast<_float>(m_pBlackBoard->GetPlayer()->Get_Hp()) };
-		_float			fZombieAttack = { m_pBlackBoard->GetAI()->Get_Status_Ptr()->fAttack };
+		_float			fZombieAttack = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fAttack };
 		_bool			isCanKillPlayer = { fPlayerHP <= fZombieAttack };
 
 		if (true == isCanKillPlayer)
@@ -182,7 +182,7 @@ void CBite_Zombie::Change_Animation_Default_Back(BITE_ANIM_STATE eState)
 			return;
 
 		_float			fPlayerHP = { static_cast<_float>(m_pBlackBoard->GetPlayer()->Get_Hp()) };
-		_float			fZombieAttack = { m_pBlackBoard->GetAI()->Get_Status_Ptr()->fAttack };
+		_float			fZombieAttack = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fAttack };
 		_bool			isCanKillPlayer = { fPlayerHP <= fZombieAttack };
 
 		if (true == isCanKillPlayer)
@@ -260,7 +260,7 @@ void CBite_Zombie::Change_Animation_Creep(BITE_ANIM_STATE eState)
 			return;
 
 		_float			fPlayerHP = { static_cast<_float>(m_pBlackBoard->GetPlayer()->Get_Hp()) };
-		_float			fZombieAttack = { m_pBlackBoard->GetAI()->Get_Status_Ptr()->fAttack };
+		_float			fZombieAttack = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fAttack };
 		_bool			isCanKillPlayer = { fPlayerHP <= fZombieAttack };
 
 		_int			iAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
@@ -374,7 +374,7 @@ void CBite_Zombie::Change_Animation_Push_Down(BITE_ANIM_STATE eState)
 			return;
 
 		_float			fPlayerHP = { static_cast<_float>(m_pBlackBoard->GetPlayer()->Get_Hp()) };
-		_float			fZombieAttack = { m_pBlackBoard->GetAI()->Get_Status_Ptr()->fAttack };
+		_float			fZombieAttack = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fAttack };
 		_bool			isCanKillPlayer = { fPlayerHP <= fZombieAttack };
 
 		_int			iAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
@@ -617,7 +617,7 @@ void CBite_Zombie::Set_Bite_LinearStart_HalfMatrix()
 	XMStoreFloat4x4(&ResultMatrixFloat4x4, m_pBlackBoard->GetPlayer()->Get_Transform()->Get_WorldMatrix());
 
 	_matrix					PlayerWorldMatrix = { m_pBlackBoard->GetPlayer()->Get_Transform()->Get_WorldMatrix() };
-	_matrix					ZombieWorldMatrix = { m_pBlackBoard->GetAI()->Get_Transform()->Get_WorldMatrix() };
+	_matrix					ZombieWorldMatrix = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix() };
 
 	_vector					vPlayerWorldScale, vPlayerWorldQuaternion, vPlayerWorldTranslation;
 	_vector					vZombieWorldScale, vZombieWorldQuaternion, vZombieWorldTranslation;
@@ -761,10 +761,10 @@ void CBite_Zombie::Update_PoseState_FaceState()
 		}
 
 		if(CZombie::FACE_STATE::_END != eFaceState)
-			m_pBlackBoard->GetAI()->Set_FaceState(eFaceState);
+			m_pBlackBoard->Get_AI()->Set_FaceState(eFaceState);
 
 		if (CZombie::POSE_STATE::_END != ePoseState)
-			m_pBlackBoard->GetAI()->Set_PoseState(ePoseState);
+			m_pBlackBoard->Get_AI()->Set_PoseState(ePoseState);
 	}
 }
 
@@ -776,7 +776,7 @@ void CBite_Zombie::Apply_HalfMatrix(_float fTimeDelta)
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	CTransform* pAITransform = { m_pBlackBoard->GetAI()->Get_Transform() };
+	CTransform* pAITransform = { m_pBlackBoard->Get_AI()->Get_Transform() };
 	if (nullptr == pAITransform)
 		return;
 
@@ -812,7 +812,7 @@ void CBite_Zombie::Apply_HalfMatrix(_float fTimeDelta)
 		TimesCombinedMatrix.r[CTransform::STATE_POSITION] = vPosition;
 		
 		pAITransform->Set_WorldMatrix(TimesCombinedMatrix);
-		m_pBlackBoard->GetAI()->Add_Root_Translation(vCurrentTranslation);
+		m_pBlackBoard->Get_AI()->Add_Root_Translation(vCurrentTranslation);
 }
 
 HRESULT CBite_Zombie::SetUp_AnimBranches()

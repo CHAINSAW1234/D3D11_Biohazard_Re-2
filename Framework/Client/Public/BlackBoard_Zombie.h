@@ -42,7 +42,7 @@ public: // Setter
 	{
 		m_pPlayer = pPlayer;
 	}
-	class CZombie*					GetAI()
+	class CZombie*					Get_AI()
 	{
 		return m_pAI;
 	}

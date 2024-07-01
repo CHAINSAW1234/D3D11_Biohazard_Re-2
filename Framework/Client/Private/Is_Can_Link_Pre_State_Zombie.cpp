@@ -34,7 +34,7 @@ _bool CIs_Can_Link_Pre_State_Zombie::Condition_Check()
 		return false;
 
 	_bool					isCanLink = { false };
-	MONSTER_STATE			ePreState = { m_pBlackBoard->GetAI()->Get_Current_MonsterState() };
+	MONSTER_STATE			ePreState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 	unordered_set<MONSTER_STATE>::iterator			iter = { m_CanLinkStates.find(ePreState) };
 	
 	isCanLink = iter != m_CanLinkStates.end();

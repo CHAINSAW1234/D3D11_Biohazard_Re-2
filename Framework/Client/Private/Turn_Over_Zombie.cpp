@@ -43,9 +43,12 @@ _bool CTurn_Over_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
+	if (CZombie::POSE_STATE::_CREEP != m_pBlackBoard->Get_AI()->Get_PoseState())
+		return false;
+
 	m_pBlackBoard->Organize_PreState(this);
 
-	auto pAI = m_pBlackBoard->GetAI();
+	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->SetState(MONSTER_STATE::MST_DOWN);
 
 	Change_Animation();

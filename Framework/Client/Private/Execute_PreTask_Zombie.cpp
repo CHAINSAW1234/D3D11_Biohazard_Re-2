@@ -38,7 +38,7 @@ _bool CExecute_PreTask_Zombie::Execute(_float fTimeDelta)
 	//	이전 노드를 실행해야함 
 	//	m_pBlackBoard->Organize_PreState(this);
 
-	if (COLLIDER_TYPE::_END != m_pBlackBoard->GetAI()->Get_Current_IntersectCollider())
+	if (COLLIDER_TYPE::_END != m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider())
 	{
 		CStun_Zombie*			pTaskStun = { dynamic_cast<CStun_Zombie*>(m_pPreTaskNode) };
 		if (nullptr != pTaskStun)

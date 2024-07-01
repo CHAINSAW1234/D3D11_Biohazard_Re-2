@@ -4,33 +4,37 @@ Root Node ( ZOMBIE )
 |
 Sequence Root 
 |				
-|----------------------------	Deco		IsHit
-|	  							Task 		Additional Shake Skin ( Only Blend Anim )
+|------------------------------------------------------------------------------------------------------------
+|											|																|
+|											Deco		IsHit												Task		Dummy Finish
+|	  										Task 		Additional Shake Skin ( Only Blend Anim )
+|
+|
 Selector Root---------------|-----------------------------------------------------------------------------------------------------------------------Selector Wait 
-|							|			|		|										|															|																				
-|							|			|		|										|															----------------------------------------|---------------------------------------|
-|							|			|		|										|															|										|										|
-Deco 	Is MainTain			|			|		Deco		IsInRange(VeryNear)			Deco 		IsInRange ( Recognition Ragne )					Deco	IsSleep							Deco		Is_Creep					Task	Idle Wait
-Task 	Execute Pre Task	|			|		Deco 		IsLinkFromMove, Idle		Selector 	Move Or Turn									Task	Sleep							Task		Idle Creep
-							|			|		Task		LightlyHold					|																											
-							|			|												|-----------------------------------------------------------|-----------------------------------------------|
-							|			|												|															|												|
-							|			|												Deco 		Is Enough Time ( Try Attack Rec Time )			Deco		In View Angle()						Task		Pivot Turn
-							|			|												Task 		Hold											Task 		Move With TurnBlend 
-							|			|
-							|			|
-							|			|
-							|			|
-							|			|
-							|			|												
-							|			|												
-							|			|												
-							|			Selector (StandUp, Turn Over)					
-							|			|												
-							|			|												
-							|			|------------------------------|				
-							|			|							   |				
-							|			Task StandUp					Task Turn Over	
+|							|	|		|		|										|															|																				
+|							|	|		|		|										|															----------------------------------------|---------------------------------------|
+|							|	|		|		|										|															|										|										|
+Deco 	Is MainTain			|	|		|		Deco		IsInRange(VeryNear)			Deco 		IsInRange ( Recognition Ragne )					Deco	IsSleep							Deco		Is_Creep					Task	Idle Wait
+Task 	Execute Pre Task	|	|		|		Deco 		IsLinkFromMove, Idle		Selector 	Move Or Turn									Task	Sleep							Task		Idle Creep
+							|	|		|		Task		LightlyHold					|																											
+							|	|		|												|-----------------------------------------------------------|-----------------------------------------------|
+							|	|		|												|															|												|
+							|	|		|												Deco 		Is Enough Time ( Try Attack Rec Time )			Deco		In View Angle()						Task		Pivot Turn
+							|	|		|												Task 		Hold											Task 		Move With TurnBlend 
+							|	|		Selector (StandUp, Turn Over)					
+							|	|		|										
+							|	|		|												
+							|	|		|------------------------------|
+							|	|		|							   |				
+							|	|		Task StandUp					Task Turn Over												
+							|	|														
+							|	|														
+							|	|		
+							|	Deco	IsCanLink(Hold || Lightly Hold)		
+							|	Task	Bite		
+							|			
+							|			
+							|				
 							|															
 							|																											
 							|
@@ -42,6 +46,14 @@ Task 	Execute Pre Task	|			|		Deco 		IsLinkFromMove, Idle		Selector 	Move Or Tur
 							Deco		IsLinkFromHold						Deco 	IsHit(Small)				Deco		IsHit(Big)
 							Deco		IsHit(Leg, AllType)					Task		Stun					Task 		Knock_Back
 							Task 		Hold Stun
+
+
+###		죽는거								=> 정현이가 처리
+
+###		누웠을때 일어나고나서처리
+###		누운중 맞은거
+
+###		피직스 이동 끄고서 한번에 이동하기
 							
 
 

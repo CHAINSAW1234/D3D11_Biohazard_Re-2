@@ -2,6 +2,8 @@
 
 #include "Client_Defines.h"
 #include "Task_Node.h"
+#include "Zombie.h"
+#include "Body_Zombie.h"
 
 BEGIN(Client)
 
@@ -29,7 +31,7 @@ private:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 
 private:
-	_bool							m_isFaceUp = { false };
+	CZombie::FACE_STATE				m_eFaceState = { CZombie::FACE_STATE::_END };
 
 public:
 	static CStand_Up_Zombie* Create(void* pArg = nullptr);

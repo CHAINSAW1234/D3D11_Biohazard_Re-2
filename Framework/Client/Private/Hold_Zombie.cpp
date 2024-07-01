@@ -46,7 +46,7 @@ _bool CHold_Zombie::Execute(_float fTimeDelta)
 #pragma endregion
 	m_pBlackBoard->Organize_PreState(this);
 
-	auto pAI = m_pBlackBoard->GetAI();
+	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->SetState(MONSTER_STATE::MST_HOLD);
 
 	if (false == m_isEntry)
@@ -79,7 +79,7 @@ void CHold_Zombie::Change_Animation()
 	{
 		if (true == true == pBodyModel->isFinished(static_cast<_uint>(PLAYING_INDEX::INDEX_0)))
 		{
-			m_pBlackBoard->GetAI()->Get_Status_Ptr()->fAccHoldTime = 0.f;
+			m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fAccHoldTime = 0.f;
 		}
 		return;
 	}

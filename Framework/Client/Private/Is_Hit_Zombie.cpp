@@ -44,7 +44,7 @@ _bool CIs_Hit_Zombie::Condition_Check()
 	if (nullptr == m_pBlackBoard)
 		return false;
 
-	CZombie*		pZombie = { m_pBlackBoard->GetAI() };
+	CZombie*		pZombie = { m_pBlackBoard->Get_AI() };
 	if (nullptr == pZombie)
 		return false;
 

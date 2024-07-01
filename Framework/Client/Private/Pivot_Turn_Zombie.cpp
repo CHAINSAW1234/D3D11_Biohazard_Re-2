@@ -39,7 +39,7 @@ _bool CPivot_Turn_Zombie::Execute(_float fTimeDelta)
 
 	m_pBlackBoard->Organize_PreState(this);
 
-	auto pAI = m_pBlackBoard->GetAI();
+	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->SetState(MONSTER_STATE::MST_TURN);
 
 	Change_Animation(fTimeDelta);

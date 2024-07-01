@@ -69,7 +69,7 @@ void CMove_Front_Zombie::Enter()
 	if (nullptr == pBodyModel)
 		return;
 
-	m_pBlackBoard->GetAI()->Get_Status_Ptr()->fRecognitionRange = STATUS_ZOMBIE_MAX_RECOGNITION_DISTANCE;
+	m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fRecognitionRange = STATUS_ZOMBIE_MAX_RECOGNITION_DISTANCE;
 
 	m_fAccBlendTime = 0.f;
 }
@@ -86,7 +86,7 @@ _bool CMove_Front_Zombie::Execute(_float fTimeDelta)
 
 	m_pBlackBoard->Organize_PreState(this);
 
-	auto pAI = m_pBlackBoard->GetAI();
+	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->SetState(MONSTER_STATE::MST_WALK);
 
 	Change_Animation(fTimeDelta);
@@ -117,7 +117,7 @@ void CMove_Front_Zombie::Exit()
 		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f, fminf(fDelta / fTickPerSec, 0.2f));
 	}	
 
-	m_pBlackBoard->GetAI()->Get_Status_Ptr()->fRecognitionRange = STATUS_ZOMBIE_DEFAULT_RECOGNITION_DISTANCE;
+	m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fRecognitionRange = STATUS_ZOMBIE_DEFAULT_RECOGNITION_DISTANCE;
 }
 
 void CMove_Front_Zombie::Change_Animation(_float fTimeDelta)

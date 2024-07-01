@@ -44,7 +44,7 @@ _bool CKnock_Back_Zombie::Execute(_float fTimeDelta)
 
 	m_pBlackBoard->Organize_PreState(this);
 
-	auto pAI = m_pBlackBoard->GetAI();
+	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->SetState(MONSTER_STATE::MST_DAMAGE);
 
 	if (true == m_isEntry)
@@ -64,7 +64,7 @@ void CKnock_Back_Zombie::Exit()
 
 void CKnock_Back_Zombie::Update_Current_Collider()
 {
-	m_eCurrentHitCollider = { m_pBlackBoard->GetAI()->Get_Current_IntersectCollider() };
+	m_eCurrentHitCollider = { m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider() };
 }
 
 void CKnock_Back_Zombie::Change_Animation()

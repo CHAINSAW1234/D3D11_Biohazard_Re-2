@@ -27,7 +27,7 @@ BEGIN(Client)
 #define STATUS_ZOMBIE_LIGHTLY_HOLD_RANGE				1.f
 #define STATUS_ZOMBIE_TRY_LIGHTLY_HOLD_TIME				0.5f
 
-#define STATUS_ZOMBIE_TRY_STANDUP_TIME					10.f
+#define STATUS_ZOMBIE_TRY_STANDUP_TIME					2.f
 
 class CZombie final : public CMonster
 {
@@ -120,6 +120,9 @@ public:
 
 private:
 	_bool								m_isManualMove = { false };
+
+private:	/* For. Test */
+	_int								m_iHeadHitCnt = { 0 };
 
 public:
 	static CZombie* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

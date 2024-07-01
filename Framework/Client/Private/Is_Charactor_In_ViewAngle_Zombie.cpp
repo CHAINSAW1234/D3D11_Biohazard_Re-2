@@ -27,7 +27,7 @@ _bool CIs_Charactor_In_ViewAngle_Zombie::Condition_Check()
 	if (nullptr == m_pBlackBoard)
 		return false;
 
-	_float			fViewAngle = { m_pBlackBoard->GetAI()->Get_Status_Ptr()->fViewAngle };
+	_float			fViewAngle = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fViewAngle };
 
 	_float3			vLookFloat3;
 	_bool			isCompute = { m_pBlackBoard->Compute_Direction_To_Player_Local(&vLookFloat3) };

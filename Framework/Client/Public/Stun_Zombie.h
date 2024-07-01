@@ -29,12 +29,11 @@ public:
 private:
 	void							Update_Current_Collider();
 	void							Change_Animation();
+	void							Change_Animation_StandUp();
+	void							Change_Animation_Creep();
 
 public:
-	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard)
-	{
-		m_pBlackBoard = pBlackBoard;
-	}
+	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }
 private:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 

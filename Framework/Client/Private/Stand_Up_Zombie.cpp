@@ -31,6 +31,8 @@ void CStand_Up_Zombie::Enter()
 
 	pBodyModel->Set_TotalLinearInterpolation(0.2f);
 	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), false);
+
+	m_eFaceState = m_pBlackBoard->Get_AI()->Get_FaceState();
 }
 
 _bool CStand_Up_Zombie::Execute(_float fTimeDelta)
@@ -43,7 +45,7 @@ _bool CStand_Up_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
-	if (CZombie::POSE_STATE::_CREEP != m_pBlackBoard->GetAI()->Get_PoseState())
+	if (CZombie::POSE_STATE::_CREEP != m_pBlackBoard->Get_AI()->Get_PoseState())
 		return false;
 
 	if (m_pBlackBoard->Get_ZombieStatus_Ptr()->fAccCreepTime < m_pBlackBoard->Get_ZombieStatus_Ptr()->fTryStandUpTime)
@@ -51,7 +53,7 @@ _bool CStand_Up_Zombie::Execute(_float fTimeDelta)
 
 	m_pBlackBoard->Organize_PreState(this);
 
-	auto pAI = m_pBlackBoard->GetAI();
+	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->SetState(MONSTER_STATE::MST_STANDUP);
 
 	Change_Animation();
@@ -62,6 +64,9 @@ _bool CStand_Up_Zombie::Execute(_float fTimeDelta)
 void CStand_Up_Zombie::Exit()
 {
 	m_pBlackBoard->Get_ZombieStatus_Ptr()->fAccCreepTime = 0.f;
+	m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_UP);
+
+	m_eFaceState = CZombie::FACE_STATE::_END;
 }
 
 void CStand_Up_Zombie::Change_Animation()
@@ -83,70 +88,97 @@ void CStand_Up_Zombie::Change_Animation()
 	if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerFloat3))
 		return;
 
-	_vector			vDirectionToPlayerLocal = { XMLoadFloat3(&vDirectionToPlayerFloat3) };
-	_vector			vDirectionToPlayerLocalXZPlane = { XMVectorSetY(vDirectionToPlayerLocal, 0.f) };
-
-	_bool			isRight = { 0.f < XMVectorGetX(vDirectionToPlayerLocalXZPlane) };
-	_bool			isFront = { 0.f < XMVectorGetZ(vDirectionToPlayerLocalXZPlane) };
-	_bool			isBigXAxis = { fabsf(XMVectorGetX(vDirectionToPlayerLocalXZPlane)) > fabsf(XMVectorGetZ(vDirectionToPlayerLocalXZPlane)) };
-
-	if (true == m_isFaceUp)
+	_bool			isCanLookPlayer = { false };
+	_float			fDistanceToPlayer = {};
+	if (true == m_pBlackBoard->Compute_Distance_To_Player_World(&fDistanceToPlayer))
 	{
-		if (true == isBigXAxis)
+		isCanLookPlayer = STATUS_ZOMBIE_DEFAULT_RECOGNITION_DISTANCE > fDistanceToPlayer;
+	}
+
+	if (true == isCanLookPlayer)
+	{
+		_vector			vDirectionToPlayerLocal = { XMLoadFloat3(&vDirectionToPlayerFloat3) };
+		_vector			vDirectionToPlayerLocalXZPlane = { XMVectorSetY(vDirectionToPlayerLocal, 0.f) };
+
+		_bool			isRight = { 0.f < XMVectorGetX(vDirectionToPlayerLocalXZPlane) };
+		_bool			isFront = { 0.f < XMVectorGetZ(vDirectionToPlayerLocalXZPlane) };
+		_bool			isBigXAxis = { fabsf(XMVectorGetX(vDirectionToPlayerLocalXZPlane)) > fabsf(XMVectorGetZ(vDirectionToPlayerLocalXZPlane)) };
+
+		if (CZombie::FACE_STATE::_UP == m_eFaceState)
 		{
-			if (true == isRight)
+			if (true == isBigXAxis)
 			{
-				iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_UP_R);
+				if (true == isRight)
+				{
+					iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_UP_R);
+				}
+
+				else
+				{
+					iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_UP_L);
+				}
 			}
 
 			else
 			{
-				iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_UP_L);
+				if (true == isFront)
+				{
+					iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_UP_F);
+				}
+
+				else
+				{
+					iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_UP_B);
+				}
 			}
 		}
 
-		else
+		else if (CZombie::FACE_STATE::_DOWN == m_eFaceState)
 		{
-			if (true == isFront)
+			if (true == isBigXAxis)
 			{
-				iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_UP_F);
+				if (true == isRight)
+				{
+					iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_DOWN_R);
+				}
+
+				else
+				{
+					iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_DOWN_L);
+				}
 			}
 
 			else
 			{
-				iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_UP_B);
+				if (true == isFront)
+				{
+					iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_DOWN_F);
+				}
+
+				else
+				{
+					iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_DOWN_B);
+				}
 			}
 		}
+
+#ifdef _DEBUG
+		else { MSG_BOX(TEXT("Called : void CStand_Up_Zombie::Change_Animation() 좀비 담당자 호출"));	}
+#endif
 	}
 
 	else
 	{
-		if (true == isBigXAxis)
-		{
-			if (true == isRight)
-			{
-				iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_DOWN_R);
-			}
+		if (CZombie::FACE_STATE::_UP== m_eFaceState)
+			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_UP_F);
 
-			else
-			{
-				iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_DOWN_L);
-			}
-		}
+		else if (CZombie::FACE_STATE::_DOWN == m_eFaceState)
+			iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_DOWN_F);
 
-		else
-		{
-			if (true == isFront)
-			{
-				iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_DOWN_F);
-			}
-
-			else
-			{
-				iResultAnimationIndex = static_cast<_int>(ANIM_ORDINARY_STANDUP::_FACE_DOWN_B);
-			}
-		}
-	}
+#ifdef _DEBUG
+		else { MSG_BOX(TEXT("Called : void CStand_Up_Zombie::Change_Animation() 좀비 담당자 호출"));	}
+#endif
+	}	
 
 	if (-1 == iResultAnimationIndex)
 		return;

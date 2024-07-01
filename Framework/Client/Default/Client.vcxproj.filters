@@ -406,6 +406,9 @@
     <Filter Include="AIController\Zombie\Task\Idle\Creep">
       <UniqueIdentifier>{b2bbda7d-d9c7-4056-b6ec-853c3d869c33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AIController\Zombie\Task\DummyFinsh">
+      <UniqueIdentifier>{2dfbaeaa-f270-4b3d-b3b3-34ebd33af1ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
