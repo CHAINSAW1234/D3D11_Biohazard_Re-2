@@ -1,10 +1,10 @@
 #pragma once
 #include "Client_Defines.h"
-#include "Customize_UI.h"
+#include "Interact_UI.h"
 
 BEGIN(Client)
 
-class CMap_UI final : public CCustomize_UI
+class CMap_UI final : public CInteract_UI
 {
 private :
 	enum class MAP_CHILD_TYPE { PARENT_MAP, BACKGROUND_MAP, LINE_MAP, END_MAP };
@@ -34,48 +34,54 @@ public :
 	void							Search_Map_Type(MAP_STATE_TYPE _searType, LOCATION_MAP_VISIT _mapType);
 	void							Change_Search_Type(MAP_STATE_TYPE _searType);
 
-private :
+private : /* For. Find */
 	void							Find_InMap_Player();
 	void							Find_Player_Target();
 
 	void							Find_MapStateType(CUSTOM_UI_DESC* CustomUIDesc); /* Map Type 지정 */
 	void							Find_Item();
-
 	void							Floor_Sort();
 
-
-private :
+private : /* For. Floor */
+	void							Change_Floor();
+	void							OpenMap();
 	void							FloorType_Search();
-	void							Render_Condition(_float fTimeDelta);
-	void							Search_TabWindow();
-	_bool CMap_UI::MainTarget_Hover(_float4 _mainPos, _float3 _scaled); /* Target Notify에서 Item을 선택하느냐? */
 
 
 private :
+	void							Render_Condition(_float fTimeDelta); /* 렌더를 할 것인지 하지 않을 것인지 */
+	void							Region_Type();						/* 지역 타입 */
+	void							Search_TabWindow();					/* Map을 열 것인가? */
+
+
+private : /* For.Transform */
 	void							Transform_Condition(_float fTimeDelta);
 	void							Mouse_Pos(_float fTimeDelta);
 	void							Transform_Adjustment();
 	void							Player_Transform(_float fTimeDelta);
 
-private:
+private: /* For.Control*/
 	void							Map_Player_Control(_float fTimeDelta);
 	void							Map_Target_Control(_float fTimeDelta);
+	void							Map_Item_Control(_float fTimeDelta);
 
-	/* EX) */
-private:
-	void							EX_ColorChange();
+	_bool							MainTarget_Hover(_float4 _mainPos, _float3 _scaled); /* Target Notify에서 Item을 선택하느냐? */
+
+
 
 private : /* Init */
 	wstring							m_wstrFile							= { TEXT("") };
 	_uint							m_iWhichChild						= { 0 };
 	_float							m_fOrigin_Blending					= {};
 
-
 	/* EX */
 	_uint							m_iCnt								= { 0 };
-	_bool							m_isGara							= { false };
 
-private :
+
+private : /* Region*/
+	LOCATION_MAP_VISIT				m_eMap_Location						= { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
+
+private : /* Floor */
 	MAP_UI_TYPE						m_eMapComponent_Type				= { MAP_UI_TYPE::END_MAP };
 
 	/* 층수 */
@@ -85,6 +91,7 @@ private :
 	MAP_FLOOR_TYPE					m_eCurrent_PlayerFloor				= { MAP_FLOOR_TYPE::FLOOR_1 };				/* 현재 플레이어가 존재하는 곳 */
 	MAP_FLOOR_TYPE					m_eSelect_Floor						= { MAP_FLOOR_TYPE::FLOOR_FREE };			/* 현재 선택된 곳 */
 
+	_bool							m_isPrevMapRender					= { false };
 
 	/* 현재 진행 상황 */
 	MAP_STATE_TYPE					m_eMapState							= { MAP_STATE_TYPE::NONE_STATE };
@@ -99,16 +106,19 @@ private : /* Mouse Move*/
 	_float4							m_vLastPosition						= {};		/* 플레이어가 보간하며 올라갈 때 마지막 위치를 저장하면서 올라갈 것 */
 	_bool							m_isLastPosition					= { false };
 
+
 private : /* Player */
 	/* Map Player */
 	CMap_UI*						m_pInMap_Player						= { nullptr };
 	CTransform*						m_pInMap_PlayerTrans				= { nullptr };
 	class CTab_Window*				m_pTab_Window						= { nullptr };
+	_float2							m_fCurrent_ModelScaled				= { };
 
 	/* InGame Player */
 	CTransform*						m_pPlayerTransform					= { nullptr };
 	_float4							m_vPlayer_MovePos					= {};
 	_float4							m_vPlayer_InitPos					= {};
+
 
 
 private : /* Target */
@@ -126,10 +136,17 @@ private : /* Target */
 	/* 3. Target Public */
 	CTransform*						m_pTarget_Transform					= { nullptr }; // Target Notify에서 Main Target 위치를 가져오기 위해 사용
 	
-	class CProp_Manager* m_pPropManager = { nullptr };
+
+
+private : /* For. Item */
+	ITEM_NUMBER				m_eItem_Type	= { ITEM_NUMBER::ITEM_NUMBER_END }; /* 아이템 종류 */
+	LOCATION_MAP_VISIT		m_ePrevRegion	= { LOCATION_MAP_VISIT::MAIN_HOLL };
+	_bool					m_isItemRender	= { false };
+	wstring					m_wstr_ItemName = { TEXT("") };
+
 
 public:
-	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CInteract_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

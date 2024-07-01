@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Bullet_UI.h"
 #include "Crosshair_UI.h"
+#include "Player.h"
 
 #define MAX_BULLET 12
 #define MAX_BULLET_COLOR _float4(0.5, 1.0, 0.0, 0.f)
@@ -103,14 +104,6 @@ void CBullet_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-   /* if (nullptr == m_pCrosshair)
-    {
-        Find_Crosshair();
-
-        if (nullptr == m_pCrosshair)
-            MSG_BOX(TEXT("Bullet_UI에서 참조할 Crosshair 가 없습니다."));
-    }
-    */
     if (true == m_IsChild && true == m_isRender)
     {
         if(DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
@@ -128,9 +121,11 @@ void CBullet_UI::Tick(_float fTimeDelta)
         Change_BulletUI();
     }
     
-
     /* 만약 크로스헤어가 출력되었다면 유지, 크로스헤어가 유지되고 끝난 뒤로부터 BULLET_UI_LIFE(2.5f)만큼 출력한다.*/
     Render_Bullet_UI(fTimeDelta);
+
+    if(m_iCurrentBullet <= 0)
+        Mission_Complete();
 }
 
 void CBullet_UI::Late_Tick(_float fTimeDelta)
@@ -144,6 +139,19 @@ HRESULT CBullet_UI::Render()
         return E_FAIL;
 
     return S_OK; 
+}
+
+void CBullet_UI::Mission_Complete()
+{
+    if (true == m_isTutiorial)
+        return;
+
+    if (true == (*m_pPlayer->Get_Tutorial_Notify()))
+        return;
+
+    m_isTutiorial = true;
+    *m_pPlayer->Get_Tutorial_Notify() = true;
+    *m_pPlayer->Get_Tutorial_Type() = UI_TUTORIAL_TYPE::TUTORIAL_REROAD;
 }
 
 void CBullet_UI::Control_BulletU()

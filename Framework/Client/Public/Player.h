@@ -154,21 +154,40 @@ private:
 
 #pragma region 나옹 추가
 public:
+	/* For. Getter Inline*/
 	_bool*										Col_Event_UI(class CCustomCollider* pCustom);
 	_int*										Get_Hp_Ptr() { return &m_iHp;  }
+	void										Set_Tutorial_Start(UI_TUTORIAL_TYPE i)
+	{ 
+		m_isTutorial_Notify = true;
+		m_eTutial_Type = i;
+	}
+	
+	_bool*				Get_Tutorial_Notify()	{ return &m_isTutorial_Notify; }
+	UI_TUTORIAL_TYPE*	Get_Tutorial_Type()		{ return &m_eTutial_Type; }
+
+	/* For. Fuction */
+	void										Player_FirstBehaivor(_int i);
+
+	/* For. Variable */
+	UI_TUTORIAL_TYPE							m_eTutial_Type = { UI_TUTORIAL_TYPE::TUTORIAL_END };
 
 	_bool										m_isNYResult;
+	_bool										m_isPlayer_FirstBehavior[100];
+	_bool										m_isTutorial_Notify = { false };
 #pragma
 
 #pragma region 예은 추가 
 public:
 	_int										Get_Player_ColIndex() { return m_iCurCol; }
 	_int										Get_Player_Direction() { return m_iDir; }
-	_int										Get_Player_Floor() { return m_iFloor; }
-	_int										Get_Player_Region() { return m_iRegion; }
+	_int										Get_Player_Floor() { return m_iFloor; } /* 현재 플레이어의 층수 */
+	_int										Get_Player_Region() { return m_iRegion; } /* 현재 존재하는 지역 */
 	_bool										Get_Player_RegionChange() { return m_bChange; }
-	_bool*									Get_Player_Interact_Ptr() { return &m_bInteract; }
-	_bool*									Get_Player_Region_Array() { return m_bRegion; }
+	_bool*										Get_Player_Interact_Ptr() { return &m_bInteract; } /* 플레이어와 상호작용 했는가 ?*/
+	_bool*										Get_Player_Region_Array() { return m_bRegion; } /* 플레이어가 들어갔는가?*/
+
+
 private:
 	_bool										m_bInteract = { false };
 	_bool										m_bChange = { true };
@@ -176,8 +195,8 @@ private:
 	_int										m_iRegion = { 0 };
 	_int										m_iDir = { 0 };
 	_int										m_iPreCol = { 1 };
-	_int										m_iFloor = { 0 };
-	_float									m_fTimeTEST = { 0.f };
+	_int										m_iFloor = { 2 };
+	_float										m_fTimeTEST = { 0.f };
 	_bool										m_bRegion[100] = { false, };
 #pragma endregion
 

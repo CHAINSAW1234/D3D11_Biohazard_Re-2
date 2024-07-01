@@ -124,12 +124,14 @@ public:
 public:
 	_bool*												Get_Activity() { return &m_bActivity; }
 
-	/* NY */
+#pragma region NY
 	_bool*												ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
 	_bool*												Selector_Rendering() { return &m_isSelector_Rendering;  }
-	/*To NY*/
-	virtual _float4									Get_Object_Pos() = 0;
 
+	/*To NY*/
+	virtual _float4										Get_Object_Pos() = 0;
+
+#pragma endregion
 	_int												Get_Region() { return m_tagPropDesc.iRegionNum; }
 	void												Set_Region(_int iRegion) { m_tagPropDesc.iRegionNum = iRegion; }
 private :

@@ -21,13 +21,13 @@ private:
 public:
 	HRESULT									Initialize();
 public:
-	list<class CGameObject*>*		Get_Props(_int iRegion) { return m_RegionProps[iRegion]; }
+	list<class CGameObject*>*				Get_Props(_int iRegion) { return m_RegionProps[iRegion]; } /* 지역에 있는 프롭*/
 
 private:	
-	class CGameInstance*				m_pGameInstance = { nullptr };
-	map<_int, list<class CGameObject*>*>				m_RegionProps;
+	class CGameInstance*					m_pGameInstance = { nullptr };
+	map<_int, list<class CGameObject*>*>	m_RegionProps;
 private:
-	HRESULT									Initialize_List();
+	HRESULT								Initialize_List();
 	list<class CGameObject*>*			Find_List(_int iTag);
 public:
 	virtual void Free() override;

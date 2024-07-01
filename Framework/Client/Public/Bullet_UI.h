@@ -27,6 +27,8 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+private :
+	void					Mission_Complete();
 
 private:
 	void					Control_BulletU();
@@ -40,6 +42,7 @@ private:
 
 private:
 	Text					m_pTextUI[2] = {};
+
 	_int					m_iStoreBullet = { 0 };
 	_int					m_iCurrentBullet = { 10 };
 	_float					m_fOrigin_Blending = {};
@@ -53,6 +56,8 @@ private:
 	_float					m_fBulletTimer = {};
 	
 	_bool					m_isKeepCross = { false };
+	_bool					m_isTutiorial = { false };
+
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

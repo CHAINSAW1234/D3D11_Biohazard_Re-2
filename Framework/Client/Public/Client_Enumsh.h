@@ -20,7 +20,60 @@ namespace Client
 		ID_END
 	};
 
+	enum DOOR_TYPE 
+	{ 
+		/* 1 Floor */
+		ENTRANCE_DOWN_DOOR, /* 입구 아래 */
+		ENTRANCE_UP_DOOR, /* 입구 위 */
+		RECEPT_DOOR, /* 리셉션 문*/
+		WEST_OFFICE_DOOR, /* 서쪽 사무실 문 */
+		RECORD_DOOR, /* 기록실과 작전실 사이 문*/
+		OPERATION_DOOR, /* 작전실 문*/
+		SAFE_DEPOSIT_BOX_DOOR, /* 안전 금고실 문*/
+		DARK_DOORK, /* 암실 문 */
+		OBSERVATION_DOOR, /* 관찰실 문*/
+		EAST_OFFICE_DOOR, /* 동쪽 사무실 문 */
+		PRESS_DOOR, /* 기자실 문 */
+		BOILER_UP_DOOR, /* 보일러실 위쪽 문*/
+		BOILER_RIGHT_DOOR, /* 보일러실 오른쪽 문 */
+		TOILET_DOOR, /* 화장실 문 */
+		REST_DOOR, /* 휴게실 문 */
+		SECURITY_OFFICE_DOOR, /* 경비 사무실 문 */
+		EMERGENCY_ESACPE_DOWN_F1_DOOR, /* 비상탈출로 아래문 */
+		EMERGENCY_ESACPE_LEFT_F1_DOOR, /* 비상탈출로 왼쪽문 */
+
+		/* 2 Floor */
+		WASH_ROOM_LEFT_ROOR, /* 샤워실 좌하단 문*/
+		WASH_ROOM_RIGHT_ROOR, /* 샤워실 우하단 문*/
+		STARS_OFFICE_DOOR, /* 스타즈 사무실 문 */
+		ARMORY_DOOR, /* 스타즈 사무실과 무기고 연결문 */
+		LAUNDRY_DOOR, /* 세탁실 문*/
+		LIBRARY_F2_DOOR, /* 라운지와 와도서관 사이 문 */
+		LOUNGE_DOOR, /* 라운지 왼쪽 문 */
+		WAITING_LEFT_DOOR, /* 대기실 왼쪽 문*/
+		WAITING_RIGHT_DOOR, /* 대기실 오른쪽 문*/
+		PRIVATE_COLLECTION_LEFT_DOOR, /* 개인컬렉션 보관실 좌상단*/
+		PRIVATE_COLLECTION_RIGHT_DOOR, /* 개인컬렉션 보관실 우상단*/
+		ART_STORAGE_DOOR, /* 예술품 보관실 문 */
+		CHIEF_OFFICE_DOOR, /* 서장 사무실 문 */
+		ROFE_DOOR, /* 지붕 문*/
+		EMERGENCY_ESACPE_F2_DOOR, /* 비상탈출로 문*/
+
+		/* 3 Floor*/
+		WEST_STORAGE_DOOR, /* 서쪽 저장실 문*/
+		WATCH_LEFT_TOWER, /* 시계탑 왼쪽 문*/
+		WATCH_RIGHT_TOWER, /* 시계탑 오른쪽 문*/
+		LIBRARY_F3_LEFT_DOOR, /* 도서관 왼쪽 문*/
+		LIBRARY_F3_RIGHT_DOOR, /* 도서관 오른쪽 문*/
+		UPPER_LEFT_SECTION_DOOR, /* 최 좌상단 구역 문*/
+		EAST_STORAGE_LEFT_DOOR, /* 동쪽 저장실 왼쪽 문 */
+		EAST_STORAGE_RIGHT_DOOR, /* 동쪽 저장실 오른쪽 문 */
+		BALCONY_DOOR, /* 발코니 문*/
+
+	};
 	enum UI_OPERRATION{ POP_UP, UI_IDLE, HIDE, STATE_END };
+
+	enum class UI_TUTORIAL_TYPE { TUTORIAL_WALK, TUTORIAL_AROUND, TUTORIAL_RUN, TUTORIAL_REROAD, TUTORIAL_AIM, INVENTORY_OPEN, TUTORIAL_END };
 
 	enum class MAP_FLOOR_TYPE { BASEMENT_2, BASEMENT_1, FLOOR_1, FLOOR_2, FLOOR_3, FLOOR_FREE, FLOOR_END };
 
@@ -33,6 +86,37 @@ namespace Client
 
 	/* Interact Hit Types */
 	enum HIT_TYPE { HIT_SMALL, HIT_BIG, HIT_CRITICAL, HIT_EXPLOSION, HIT_END };
+
+	enum LOCATION_MAP_VISIT
+	{
+		MAIN_HOLL,						/* 0. 메인 홀*/
+		ENTRANCE,						/* 1. 입구*/
+		RECEPT_ROOM,					/* 2. 리셉션 */
+		RECORD_ROOM,					/* 3. 기록실*/
+		OPERATION_ROOM,					/* 4. 작전실*/
+		SAFE_DEPOSIT_BOX_ROOM,			/* 5. 안전 금고실*/
+		WEST_OFFICE,					/* 6. 서쪽 사무실 */
+		DARK_ROOM,						/* 7. 암실 */
+		BOILER_HALLWAY,					/* 8. 보일러실 복도 */
+		BOILER_ROOM,					/* 9. 보일러실 */
+		RECORD_HALLWAY,					/* 10. 기록실 복도 */
+		OPERATION_HALLWAY,				/* 11. 작전실 복도 */
+		DARKROOM_HALLWAY,				/* 12. 암실 복도 */
+		WEST_CNTRAL_HALLWAY,			/* 13. 서쪽 중앙 복도*/
+		/* 14. 밖 */
+		LOUNGE_HALLWAY,					/* 15. 휴게실 복도 */
+		EAST_OFFICE,					/* 16. 동쪽 사무실 */
+		LEFTSIDE_PRESSROOM_HALLWAY,		/* 17. 기자실 왼쪽 작은 방*/
+		PRESS_ROOM,						/* 18. 기자실*/
+		QUESTION_ROOM,					/* 19. 취조실 */
+		OBSERVATION_ROOM,				/* 20. 관찰실 */
+		REST_ROOM,						/* 21. 휴게실 */
+		WASHROOM,						/* 22. 화장실*/
+		SECURITY_OFFICE,				/* 23. 경비 사무실 */
+		EAST_CENTRAL_HALLWAY,			/* 24. 동쪽 중앙 복도*/
+		UP_PRESSROOM_HALLWAY,			/* 25. 기자실 위쪽 복도 */
+		LOCATION_MAP_VISIT_END
+	};
 
 	enum ITEM_NUMBER {//파일 이름 입니다 70까지만 추가 되어 있음 대문자는 임시임
 		emergencyspray01a,
@@ -60,8 +144,177 @@ namespace Client
 		gunpowder01a,
 		gunpowder01b,
 		strengtheningyellow01a,
-		HandGun,
-		ITEM_NUMBER_END 
+		/*71*/
+		vp70csparts01a,
+		laserpointer01a,
+		shotgunparts01a,
+		submgparts01a,
+		deserteaglecsparts01a,
+		lasersightparts01a,
+		ladysmithcsparts01a,
+		vp70longmagazine,
+		vp70powerup,
+		vp70stock,
+		ladysmithcsparts,
+		lasersight,
+		ladysmithpowerup,
+		browninghlongmagazine,
+		shotgunpartsstock,
+		shotgunpartsbarrel,
+		submgpartsmagazine,
+		submgpartssilencer,
+		deserteaglecspartsshight,
+		deserteaglecspartsbarrel,
+		grenadelauncherstock,
+		flamethrowerpowerup,
+		sparkshotpowerup,
+		/*72*/
+		oillighter01a,
+		keypickingtool01a,
+		photofilma01a,
+		photofilmb01a,
+		photofilmc01a,
+		photofilmd01a,
+		photofilme01a,
+		backdoorkey01a,
+		keycase01a,
+		extensioncord01a,
+		squarecrank01a,
+		unicornmedal01a,
+		spadekey01a,
+		cardkeylv101a,
+		cardkeylv201a,
+		valvehandle01a,
+		starsbadge01a,
+		kingscepter01a,
+		hourglasskey01a,
+		virginheart01a,
+		bluejewelrybox01a,
+		redjewelrybox01a,
+		bishopplug01a,
+		rookplug01a,
+		kingplug01a,
+		serpentstone01a,
+		eaglestone01a,
+		jaggerstone01a,
+		handcuffskey01a,
+		unicorndebris01a,
+		sunstone01a,
+		doorknob01a,
+		drivergrip01a,
+		driverheadplus01a,
+		driverheadsocket01a,
+		blankkey01a,
+		wetwastepaper01a,
+		statuebook01a,
+		statuehand01a,
+		floppydisk01a,
+		virginmedal01a,
+		diakey01a,
+		carkey01a,
+		condenser01a,
+		cardkeylv001a,
+		virginmedal02a,
+		pocketbook01a,
+		loveremblem01a,
+		gearsmal01a,
+		gear01a,
+		gardenkey01a,
+		knightplug01a,
+		pawnplug01a,
+		queenplug01a,
+		blisterpack01a,
+		swordofdamocles01a,
+		orphanagekey01a,
+		clubkey01a,
+		manholeopener01a,
+		plastickcontainer01a,
+		plastickcontainer02a,
+		eaglekey01a,
+		heartkey01a,
+		videotape01a,
+		eaglemedal01a,
+		brokeneaglekey01a,
+		wolfkey01a,
+		cardkeylv202a,
+		valvehandle02a,
+		listtagwatchb01a,
+		medicinebottle01a,
+		medicinebottle02a,
+		medicinebottle03a,
+		jointsnplugs01a,
+		listtagpartsmaster01a,
+		clisttagmaster01a,
+		signalmodulator01a,
+		trophy01a,
+		memorysticklock01a,
+		memorystickunlock01a,
+		liftkey01a,
+		llisttagguests01a,
+		llisttaggeneral01a,
+		llisttagadvanced01a,
+		listtagpartsgeneral01a,
+		listtagpartsadvanced01a,
+		clisttagguests01a,
+		clisttaggeneral01a,
+		clisttagadvanced01a,
+		videotape02a,
+		modisk01a,
+		samplecartridge01a,
+		samplecartridge02a,
+		antiviraldrugs01a,
+		attachecase01a,
+		leverswitches01a,
+		prismpillar01a,
+		prismpillar02a,
+		prismpillar03a,
+		laboratoryfuse01a,
+		laboratoryfuse02a,
+		pendant01a,
+		scissors01a,
+		chaincutter01a,
+		cushiondoll01a,
+		/*74*/
+		rpddocument01a,			//
+		rpddocumentblood01a,	//
+		diary01a,				//
+		document01a,			//
+		pamphlet01a,			//
+		guidepamphlet01a,		//
+		memo01a,				//
+		raccoonmonthly01a,
+		sewercopamphlet01a,
+		report01a,	//
+		nestlcokout01a,//
+		sewerhintposter01a,//
+		rpdreport01a,//
+		rpdreport01b,//
+		chesshints01a,//
+		labopc01a,
+		labopc01b,
+		labopc01c,
+		raccoonfigure01a,
+		voicerecorder01a,
+		mappolice01a,//
+		mapunderground01a,
+		mapsewer01a,
+		mapraccooncity01a,
+		maplaboratoryhigh01a,
+		maplaboratorymiddle01a,
+		mapupperpolice01a,
+		clairesbag01a,
+		/*75*/
+		oldkey01a,
+		/*76*/
+		keytag01a,
+		/*77*/
+		clairebox01a,
+		leonbox01a,
+		portablesafe01a,
+		cookiescan01a,
+		woodbox01a,
+		/*end*/
+		ITEM_NUMBER_END
 	};
 
 

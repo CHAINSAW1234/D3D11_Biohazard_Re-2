@@ -528,6 +528,11 @@ _bool* CPlayer::Col_Event_UI(CCustomCollider* pCustom)
 	return &m_isNYResult;
 }
 
+void CPlayer::Player_FirstBehaivor(_int i)
+{
+	m_isPlayer_FirstBehavior[i] = true;
+}
+
 #pragma endregion
 
 #pragma region 현진 추가
@@ -644,7 +649,6 @@ void CPlayer::Update_KeyInput_Reload()
 				Get_Weapon_Model()->Set_TrackPosition(0, 0.f);
 			}
 		}
-
 	}
 	else if (Get_Body_Model()->isFinished(3) &&
 		Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == HOLD_RELOAD) {

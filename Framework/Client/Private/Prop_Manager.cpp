@@ -8,9 +8,7 @@ IMPLEMENT_SINGLETON(CProp_Manager)
 CProp_Manager::CProp_Manager()
 	: m_pGameInstance{ CGameInstance::Get_Instance() }
 {
-	Safe_AddRef(m_pGameInstance);
 	Initialize_List();
-		
 }
 
 HRESULT CProp_Manager::Initialize()
@@ -58,6 +56,7 @@ list<class CGameObject*>* CProp_Manager::Find_List(_int iTag)
 void CProp_Manager::Free()
 {
 	__super::Free();
+	DeClear
 	Safe_Release(m_pGameInstance);
 
 	for (auto& list: m_RegionProps)

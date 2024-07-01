@@ -83,6 +83,8 @@ public :
 		CGameObject*					pSupervisor;
 		CGameObject*					pImmediateSuperior;
 
+		ITEM_NUMBER						eItem_Number;
+
 		/* Client */
 		ITEM_BOX_TYPE					eBox_Type;
 		HPBAR_TYPE						eHPBar_Type;
@@ -90,6 +92,9 @@ public :
 
 		LOCATION_MAP_VISIT				eMapUI_Type;
 		wstring							wstrFileName = { TEXT("") };
+		wstring							wstrItemName = { TEXT("") };
+
+		_int							iInven_Type;
 
 	}CUSTOM_UI_DESC;
 
@@ -496,9 +501,6 @@ protected : /* Client*/
 	_bool						m_isLight = {};
 
 	_bool						m_isKeepPlay = {};
-
-	/* Map */
-	LOCATION_MAP_VISIT			m_eMap_Location = { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
 
 public:
 	static HRESULT CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

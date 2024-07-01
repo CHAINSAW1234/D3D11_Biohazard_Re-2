@@ -396,9 +396,12 @@
     </Filter>
     <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Reader_Observer\Reader_Observer_Handle">
       <UniqueIdentifier>{0512293c-6b46-4f82-9b55-01b90a3aff6e}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="02.GameObjects\UI\15. LayOut">
       <UniqueIdentifier>{57e7ebf9-dbcd-44f9-8d5f-e0a91f6637a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\98. InteractUI">
+      <UniqueIdentifier>{dc0892af-56ab-415b-b959-8cb322e82e8f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -597,9 +600,6 @@
     <ClInclude Include="..\Public\Item_UI.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Map_UI.h">
-      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Sleep_Zombie.h">
       <Filter>AIController\Zombie\Task\Idle\Sleep</Filter>
     </ClInclude>
@@ -774,9 +774,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\Prop_Manager.h">
       <Filter>02.GameObjects\MapObject\Manager</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\LayOut_UI.h">
       <Filter>02.GameObjects\UI\15. LayOut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Map_UI.h">
+      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Interact_UI.h">
+      <Filter>02.GameObjects\UI\98. InteractUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -960,9 +966,6 @@
     <ClCompile Include="..\Private\Inventory_Slot.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Inventory_Slot</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Map_UI.cpp">
-      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Sleep_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Idle\Sleep</Filter>
     </ClCompile>
@@ -1121,9 +1124,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Prop_Manager.cpp">
       <Filter>02.GameObjects\MapObject\Manager</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\LayOut_UI.cpp">
       <Filter>02.GameObjects\UI\15. LayOut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Map_UI.cpp">
+      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Interact_UI.cpp">
+      <Filter>02.GameObjects\UI\98. InteractUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
