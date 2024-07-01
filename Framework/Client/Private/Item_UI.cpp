@@ -45,6 +45,9 @@ void CItem_UI::Tick(_float fTimeDelta)
 
 	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
 
+	if (false == m_isActive)
+		m_fFrame;
+
 	switch (m_eInvenItemType)
 	{
 	case Client::EQUIPABLE:
@@ -168,6 +171,29 @@ void CItem_UI::Reset_ItemUI()
 	m_iItemQuantity = 0;
 	for (auto& iter : m_vecChildUI)
 		static_cast<CCustomize_UI*>(iter)->Set_Dead(true);
+}
+
+void CItem_UI::Set_Activ_ItemUI(_bool Active)
+{
+	if (false == Active)
+	{
+		m_isActive = false;
+
+		Frame_Change_ValueColor(1);
+
+		for (auto& iter : m_vecChildUI)
+			static_cast<CCustomize_UI*>(iter)->Frame_Change_ValueColor(1);
+	}
+
+	else
+	{
+		m_isActive = true;
+
+		Frame_Change_ValueColor(0);
+
+		for (auto& iter : m_vecChildUI)
+			static_cast<CCustomize_UI*>(iter)->Frame_Change_ValueColor(0);
+	}
 }
 
 void CItem_UI::Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos, _int iVariation)
