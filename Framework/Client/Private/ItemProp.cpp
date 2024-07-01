@@ -135,9 +135,6 @@ HRESULT CItemProp::Add_PartObjects()
 
 	m_PartObjects[CItemProp::PART_BODY] = pBodyObj;
 
-
-
-
 	return S_OK;
 }
 

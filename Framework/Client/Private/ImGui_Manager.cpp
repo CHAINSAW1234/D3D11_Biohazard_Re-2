@@ -9,6 +9,8 @@
 #define SL  ImGui::SameLine()
 #define NL  ImGui::NewLine()
 
+#define ITEM_STRING(name) case ITEM_NUMBER::name: return L###name
+
 IMPLEMENT_SINGLETON(CImgui_Manager)
 
 CImgui_Manager::CImgui_Manager()
@@ -143,101 +145,21 @@ void CImgui_Manager::Window_Player_Debuger()
     ImGui::End();
 }
 
-wstring CImgui_Manager::Classify_ItemNum_To_String(ITEM_NUMBER eItemNum)
-{
-    switch (eItemNum)
-    {
-    case Client::emergencyspray01a:
-        return TEXT("emergencyspray01a");
-        break;
-    case Client::greenherb01a:
-        return TEXT("greenherb01a");
-        break;
-    case Client::redherb01a:
-        return TEXT("redherb01a");
-        break;
-    case Client::blueherb01a:
-        return TEXT("blueherb01a");
-        break;
-    case Client::herbsgg01a:
-        return TEXT("herbsgg01a");
-        break;
-    case Client::herbsgr01a:
-        return TEXT("herbsgr01a");
-        break;
-    case Client::herbsgb01a:
-        return TEXT("herbsgb01a");
-        break;
-    case Client::herbsggb01a:
-        return TEXT("herbsggb01a");
-        break;
-    case Client::herbsggg01a:
-        return TEXT("herbsggg01a");
-        break;
-    case Client::herbsgrb01a:
-        return TEXT("herbsgrb01a");
-        break;
-    case Client::herbsrb01a:
-        return TEXT("herbsrb01a");
-        break;
-    case Client::greenherbitem01a:
-        return TEXT("greenherbitem01a");
-        break;
-    case Client::redherbitem01a:
-        return TEXT("redherbitem01a");
-        break;
-    case Client::blueherbitem01a:
-        return TEXT("blueherbitem01a");
-        break;
-    case Client::handgun_bullet01a:
-        return TEXT("handgun_bullet01a");
-        break;
-    case Client::shotgun_bullet01a:
-        return TEXT("shotgun_bullet01a");
-        break;
-    case Client::submachinegun_bullet01a:
-        return TEXT("submachinegun_bullet01a");
-        break;
-    case Client::magnumbulleta:
-        return TEXT("magnumbulleta");
-        break;
-    case Client::biggun_bullet01a:
-        return TEXT("biggun_bullet01a");
-        break;
-    case Client::inkribbon01a:
-        return TEXT("inkribbon01a");
-        break;
-    case Client::woodbarricade01a:
-        return TEXT("woodbarricade01a");
-        break;
-    case Client::blastingfuse01a:
-        return TEXT("blastingfuse01a");
-        break;
-    case Client::gunpowder01a:
-        return TEXT("gunpowder01a");
-        break;
-    case Client::gunpowder01b:
-        return TEXT("gunpowder01b");
-        break;
-    case Client::strengtheningyellow01a:
-        return TEXT("strengtheningyellow01a");
-        break;
-    case Client::HandGun:
-        return TEXT("HandGun");
-        break;
-    case Client::ShotGun:
-        return TEXT("ShotGun");
-        break;
-    default:
-        break;
-    }
 
-
-    return TEXT("");
-}
 
 ITEM_NUMBER CImgui_Manager::Classify_String_To_ItemNum(wstring wstrItemNum)
 {
+    _uint i = 0;
+
+    for (auto& iter : m_vecItemNums)
+    {
+        if (iter == wstrItemNum)
+            return static_cast<ITEM_NUMBER>(i);
+
+        i++;
+    }
+
+    /*
     if (TEXT("emergencyspray01a") == wstrItemNum)
         return emergencyspray01a;
 
@@ -315,10 +237,7 @@ ITEM_NUMBER CImgui_Manager::Classify_String_To_ItemNum(wstring wstrItemNum)
 
     else if (TEXT("HandGun") == wstrItemNum)
         return HandGun;
-
-    else if (TEXT("ShotGun") == wstrItemNum)
-        return ShotGun;
-
+    */
     return ITEM_NUMBER_END;
 }
 
@@ -403,4 +322,395 @@ void CImgui_Manager::Free()
     ImGui_ImplWin32_Shutdown();
 
     ImGui::DestroyContext();
+}
+
+wstring CImgui_Manager::Classify_ItemNum_To_String(ITEM_NUMBER eItemNum)
+{
+    switch (eItemNum)
+    {
+        ITEM_STRING(emergencyspray01a);
+        break;
+        ITEM_STRING(greenherb01a);
+        break;
+        ITEM_STRING(redherb01a);
+        break;
+        ITEM_STRING(blueherb01a);
+        break;
+        ITEM_STRING(herbsgg01a);
+        break;
+        ITEM_STRING(herbsgr01a);
+        break;
+        ITEM_STRING(herbsgb01a);
+        break;
+        ITEM_STRING(herbsggb01a);
+        break;
+        ITEM_STRING(herbsggg01a);
+        break;
+        ITEM_STRING(herbsgrb01a);
+        break;
+        ITEM_STRING(herbsrb01a);
+        break;
+        ITEM_STRING(greenherbitem01a);
+        break;
+        ITEM_STRING(redherbitem01a);
+        break;
+        ITEM_STRING(blueherbitem01a);
+        break;
+        ITEM_STRING(handgun_bullet01a);
+        break;
+        ITEM_STRING(shotgun_bullet01a);
+        break;
+        ITEM_STRING(submachinegun_bullet01a);
+        break;
+        ITEM_STRING(magnumbulleta);
+        break;
+        ITEM_STRING(biggun_bullet01a);
+        break;
+        ITEM_STRING(inkribbon01a);
+        break;
+        ITEM_STRING(woodbarricade01a);
+        break;
+        ITEM_STRING(blastingfuse01a);
+        break;
+        ITEM_STRING(gunpowder01a);
+        break;
+        ITEM_STRING(gunpowder01b);
+        break;
+        ITEM_STRING(strengtheningyellow01a);
+        break;
+        ITEM_STRING(vp70csparts01a);
+        break;
+        ITEM_STRING(laserpointer01a);
+        break;
+        ITEM_STRING(shotgunparts01a);
+        break;
+        ITEM_STRING(submgparts01a);
+        break;
+        ITEM_STRING(deserteaglecsparts01a);
+        break;
+        ITEM_STRING(lasersightparts01a);
+        break;
+        ITEM_STRING(ladysmithcsparts01a);
+        break;
+        ITEM_STRING(vp70longmagazine);
+        break;
+        ITEM_STRING(vp70powerup);
+        break;
+        ITEM_STRING(vp70stock);
+        break;
+        ITEM_STRING(ladysmithcsparts);
+        break;
+        ITEM_STRING(lasersight);
+        break;
+        ITEM_STRING(ladysmithpowerup);
+        break;
+        ITEM_STRING(browninghlongmagazine);
+        break;
+        ITEM_STRING(shotgunpartsstock);
+        break;
+        ITEM_STRING(shotgunpartsbarrel);
+        break;
+        ITEM_STRING(submgpartsmagazine);
+        break;
+        ITEM_STRING(submgpartssilencer);
+        break;
+        ITEM_STRING(deserteaglecspartsshight);
+        break;
+        ITEM_STRING(deserteaglecspartsbarrel);
+        break;
+        ITEM_STRING(grenadelauncherstock);
+        break;
+        ITEM_STRING(flamethrowerpowerup);
+        break;
+        ITEM_STRING(sparkshotpowerup);
+        break;
+        ITEM_STRING(oillighter01a);
+        break;
+        ITEM_STRING(keypickingtool01a);
+        break;
+        ITEM_STRING(photofilma01a);
+        break;
+        ITEM_STRING(photofilmb01a);
+        break;
+        ITEM_STRING(photofilmc01a);
+        break;
+        ITEM_STRING(photofilmd01a);
+        break;
+        ITEM_STRING(photofilme01a);
+        break;
+        ITEM_STRING(backdoorkey01a);
+        break;
+        ITEM_STRING(keycase01a);
+        break;
+        ITEM_STRING(extensioncord01a);
+        break;
+        ITEM_STRING(squarecrank01a);
+        break;
+        ITEM_STRING(unicornmedal01a);
+        break;
+        ITEM_STRING(spadekey01a);
+        break;
+        ITEM_STRING(cardkeylv101a);
+        break;
+        ITEM_STRING(cardkeylv201a);
+        break;
+        ITEM_STRING(valvehandle01a);
+        break;
+        ITEM_STRING(starsbadge01a);
+        break;
+        ITEM_STRING(kingscepter01a);
+        break;
+        ITEM_STRING(hourglasskey01a);
+        break;
+        ITEM_STRING(virginheart01a);
+        break;
+        ITEM_STRING(bluejewelrybox01a);
+        break;
+        ITEM_STRING(redjewelrybox01a);
+        break;
+        ITEM_STRING(bishopplug01a);
+        break;
+        ITEM_STRING(rookplug01a);
+        break;
+        ITEM_STRING(kingplug01a);
+        break;
+        ITEM_STRING(serpentstone01a);
+        break;
+        ITEM_STRING(eaglestone01a);
+        break;
+        ITEM_STRING(jaggerstone01a);
+        break;
+        ITEM_STRING(handcuffskey01a);
+        break;
+        ITEM_STRING(unicorndebris01a);
+        break;
+        ITEM_STRING(sunstone01a);
+        break;
+        ITEM_STRING(doorknob01a);
+        break;
+        ITEM_STRING(drivergrip01a);
+        break;
+        ITEM_STRING(driverheadplus01a);
+        break;
+        ITEM_STRING(driverheadsocket01a);
+        break;
+        ITEM_STRING(blankkey01a);
+        break;
+        ITEM_STRING(wetwastepaper01a);
+        break;
+        ITEM_STRING(statuebook01a);
+        break;
+        ITEM_STRING(statuehand01a);
+        break;
+        ITEM_STRING(floppydisk01a);
+        break;
+        ITEM_STRING(virginmedal01a);
+        break;
+        ITEM_STRING(diakey01a);
+        break;
+        ITEM_STRING(carkey01a);
+        break;
+        ITEM_STRING(condenser01a);
+        break;
+        ITEM_STRING(cardkeylv001a);
+        break;
+        ITEM_STRING(virginmedal02a);
+        break;
+        ITEM_STRING(pocketbook01a);
+        break;
+        ITEM_STRING(loveremblem01a);
+        break;
+        ITEM_STRING(gearsmal01a);
+        break;
+        ITEM_STRING(gear01a);
+        break;
+        ITEM_STRING(gardenkey01a);
+        break;
+        ITEM_STRING(knightplug01a);
+        break;
+        ITEM_STRING(pawnplug01a);
+        break;
+        ITEM_STRING(queenplug01a);
+        break;
+        ITEM_STRING(blisterpack01a);
+        break;
+        ITEM_STRING(swordofdamocles01a);
+        break;
+        ITEM_STRING(orphanagekey01a);
+        break;
+        ITEM_STRING(clubkey01a);
+        break;
+        ITEM_STRING(manholeopener01a);
+        break;
+        ITEM_STRING(plastickcontainer01a);
+        break;
+        ITEM_STRING(plastickcontainer02a);
+        break;
+        ITEM_STRING(eaglekey01a);
+        break;
+        ITEM_STRING(heartkey01a);
+        break;
+        ITEM_STRING(videotape01a);
+        break;
+        ITEM_STRING(eaglemedal01a);
+        break;
+        ITEM_STRING(brokeneaglekey01a);
+        break;
+        ITEM_STRING(wolfkey01a);
+        break;
+        ITEM_STRING(cardkeylv202a);
+        break;
+        ITEM_STRING(valvehandle02a);
+        break;
+        ITEM_STRING(listtagwatchb01a);
+        break;
+        ITEM_STRING(medicinebottle01a);
+        break;
+        ITEM_STRING(medicinebottle02a);
+        break;
+        ITEM_STRING(medicinebottle03a);
+        break;
+        ITEM_STRING(jointsnplugs01a);
+        break;
+        ITEM_STRING(listtagpartsmaster01a);
+        break;
+        ITEM_STRING(clisttagmaster01a);
+        break;
+        ITEM_STRING(signalmodulator01a);
+        break;
+        ITEM_STRING(trophy01a);
+        break;
+        ITEM_STRING(memorysticklock01a);
+        break;
+        ITEM_STRING(memorystickunlock01a);
+        break;
+        ITEM_STRING(liftkey01a);
+        break;
+        ITEM_STRING(llisttagguests01a);
+        break;
+        ITEM_STRING(llisttaggeneral01a);
+        break;
+        ITEM_STRING(llisttagadvanced01a);
+        break;
+        ITEM_STRING(listtagpartsgeneral01a);
+        break;
+        ITEM_STRING(listtagpartsadvanced01a);
+        break;
+        ITEM_STRING(clisttagguests01a);
+        break;
+        ITEM_STRING(clisttaggeneral01a);
+        break;
+        ITEM_STRING(clisttagadvanced01a);
+        break;
+        ITEM_STRING(videotape02a);
+        break;
+        ITEM_STRING(modisk01a);
+        break;
+        ITEM_STRING(samplecartridge01a);
+        break;
+        ITEM_STRING(samplecartridge02a);
+        break;
+        ITEM_STRING(antiviraldrugs01a);
+        break;
+        ITEM_STRING(attachecase01a);
+        break;
+        ITEM_STRING(leverswitches01a);
+        break;
+        ITEM_STRING(prismpillar01a);
+        break;
+        ITEM_STRING(prismpillar02a);
+        break;
+        ITEM_STRING(prismpillar03a);
+        break;
+        ITEM_STRING(laboratoryfuse01a);
+        break;
+        ITEM_STRING(laboratoryfuse02a);
+        break;
+        ITEM_STRING(pendant01a);
+        break;
+        ITEM_STRING(scissors01a);
+        break;
+        ITEM_STRING(chaincutter01a);
+        break;
+        ITEM_STRING(cushiondoll01a);
+        break;
+        ITEM_STRING(rpddocument01a);
+        break;
+        ITEM_STRING(rpddocumentblood01a);
+        break;
+        ITEM_STRING(diary01a);
+        break;
+        ITEM_STRING(document01a);
+        break;
+        ITEM_STRING(pamphlet01a);
+        break;
+        ITEM_STRING(guidepamphlet01a);
+        break;
+        ITEM_STRING(memo01a);
+        break;
+        ITEM_STRING(raccoonmonthly01a);
+        break;
+        ITEM_STRING(sewercopamphlet01a);
+        break;
+        ITEM_STRING(report01a);
+        break;
+        ITEM_STRING(nestlcokout01a);
+        break;
+        ITEM_STRING(sewerhintposter01a);
+        break;
+        ITEM_STRING(rpdreport01a);
+        break;
+        ITEM_STRING(rpdreport01b);
+        break;
+        ITEM_STRING(chesshints01a);
+        break;
+        ITEM_STRING(labopc01a);
+        break;
+        ITEM_STRING(labopc01b);
+        break;
+        ITEM_STRING(labopc01c);
+        break;
+        ITEM_STRING(raccoonfigure01a);
+        break;
+        ITEM_STRING(voicerecorder01a);
+        break;
+        ITEM_STRING(mappolice01a);
+        break;
+        ITEM_STRING(mapunderground01a);
+        break;
+        ITEM_STRING(mapsewer01a);
+        break;
+        ITEM_STRING(mapraccooncity01a);
+        break;
+        ITEM_STRING(maplaboratoryhigh01a);
+        break;
+        ITEM_STRING(maplaboratorymiddle01a);
+        break;
+        ITEM_STRING(mapupperpolice01a);
+        break;
+        ITEM_STRING(clairesbag01a);
+        break;
+        ITEM_STRING(oldkey01a);
+        break;
+        ITEM_STRING(keytag01a);
+        break;
+        ITEM_STRING(clairebox01a);
+        break;
+        ITEM_STRING(leonbox01a);
+        break;
+        ITEM_STRING(portablesafe01a);
+        break;
+        ITEM_STRING(cookiescan01a);
+        break;
+        ITEM_STRING(woodbox01a);
+        break;
+        ITEM_STRING(HandGun);
+        break;
+        ITEM_STRING(ShotGun);
+        break;
+
+    default:
+        break;
+    }
+
 }

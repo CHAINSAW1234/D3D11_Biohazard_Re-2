@@ -6,6 +6,7 @@
 #include "Inventory_Item_UI.h"
 #include "Cursor_UI.h"
 #include "Item_Discription.h"
+#include "ItemProp.h"
 
 
 CTab_Window::CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -111,12 +112,10 @@ void CTab_Window::Tick(_float fTimeDelta)
 		break;
 	}
 
-	case Client::CTab_Window::PICK_UP_ITEM: {
+	case Client::CTab_Window::PICK_UP_ITEM_WINDOW: {
 		m_pInventory_Manager->Tick(fTimeDelta);
-		
-		//m_pItem_Discription->Set_Item_Number(eSelectedItemNum);
 		m_pItem_Discription->Tick(fTimeDelta);
-
+		m_pItem_Mesh_Viewer->Late_Tick(fTimeDelta);
 		break;
 	}
 
@@ -160,7 +159,7 @@ void CTab_Window::Late_Tick(_float fTimeDelta)
 		break;
 	}
 
-	case Client::CTab_Window::PICK_UP_ITEM: {
+	case Client::CTab_Window::PICK_UP_ITEM_WINDOW: {
 		m_pInventory_Manager->Late_Tick(fTimeDelta);
 		m_pItem_Mesh_Viewer->Late_Tick(fTimeDelta);
 		m_pItem_Discription->Late_Tick(fTimeDelta);
@@ -214,7 +213,6 @@ void CTab_Window::ItemIven_EventHandle(_float fTimeDelta)
 		}
 		break;
 	}
-		
 
 	default:
 		break;
@@ -304,9 +302,14 @@ void CTab_Window::OnOff_EventHandle()
 void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 {
 	OnOff_EventHandle();
-	m_eWindowType = PICK_UP_ITEM;
+	m_eWindowType = PICK_UP_ITEM_WINDOW;
 	m_pPickedUp_Item = pPickedUp_Item;
 	Safe_AddRef(m_pPickedUp_Item);
+
+	_int iPickedUpItemNum = static_cast<CItemProp*>(m_pPickedUp_Item)->Get_iItemIndex();
+	/*_int iPickedUpItemQuant = static_cast<CItemProp*>(m_pPickedUp_Item)->Get_i*/
+	m_pItem_Discription->Set_Item_Number(static_cast<ITEM_NUMBER>(iPickedUpItemNum), 10);
+	m_pInventory_Manager->Set_InventoryEvent(PICK_UP_ITEM);
 }
 
 void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)
