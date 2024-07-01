@@ -229,8 +229,14 @@ public:
 	_bool										Get_Player_RegionChange() { return m_bChange; }
 	_bool*									Get_Player_Interact_Ptr() { return &m_bInteract; }
 	_bool*									Get_Player_Region_Array() { return m_bRegion; }
+	enum PLAYER_DOOR_BEHAVE { DOOR_NOTHING, DOOR_OPEN, DOOR_LOOK};
+	void										Set_Door_Setting(_int iDoor_Setting, _float fDoorDegree = 0.f) {m_iDoor_Setting = iDoor_Setting; m_fDoor_Degree = fDoorDegree;};
+	
 	// 인벤 연동 뒤 나영이의 UI에게 플레이어가 얻은 아이템의 enum을 던져줘야함
 private:
+	_int										m_iDoor_Setting = { DOOR_NOTHING };
+	_float									m_fDoor_Degree = { 0.f };
+
 
 	_bool										m_bInteract = { false }; //플레이어가 상호작용을 시도한
 	_bool										m_bChange = { true };

@@ -66,7 +66,7 @@ HRESULT CZombie::Initialize(void* pArg)
 		//	vPos.y += 1.f;
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 	}
-	m_InteractObjVec.reserve(JOMBIE_BEHAVIOR_COLLIDER_END);
+	m_InteractObjVec.resize(JOMBIE_BEHAVIOR_COLLIDER_END);
 	//	m_pModelCom->Set_Animation(rand() % 20, true);
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
@@ -997,7 +997,7 @@ void CZombie::Col_EventCol()
 				break;
 			}
 			m_InteractObjVec[m_eBeHavior_Col] = m_pGameInstance->Get_GameObject(g_Level, strLayer, m_iPropNum);
-			m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_InteractObjVec[m_eBeHavior_Col]->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION)) ;
+			//m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_InteractObjVec[m_eBeHavior_Col]->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION)) ;
 			break; // 이벤트임을 알림
 		}
 		else
