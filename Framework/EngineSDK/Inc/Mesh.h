@@ -192,6 +192,11 @@ public:
 
 	//Set Decal WorldMatrix
 	void					SetDecalWorldMatrix(_float4x4 WorldMatrix);
+
+	//CalcDecalMap
+	void					Bind_Resource_CalcDecalMap();
+	void					Perform_Calc_DecalMap();
+	void					Bind_Decal_Map(class CShader* pShader);
 #pragma endregion
 
 private:

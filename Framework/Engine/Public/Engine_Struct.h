@@ -140,9 +140,10 @@ namespace Engine
 		/* 뼈들의 인덱스 : 이 메시에게 영향을 주는 뼈들의 인덱스를 의미한다. */
 		XMUINT4			vBlendIndices;
 		_float4		vBlendWeights;
+		_uint			iIndex;
 
-		static const unsigned int	iNumElements = { 6 };
-		static const D3D11_INPUT_ELEMENT_DESC	Elements[6];
+		static const unsigned int	iNumElements = { 7 };
+		static const D3D11_INPUT_ELEMENT_DESC	Elements[7];
 	}VTXANIMMESH;
 
 	// 3D음향을 위한 자료형의 모음 구조체
@@ -268,6 +269,16 @@ namespace Engine
 		ID3D11ShaderResourceView* pSRV_Indices;
 		ID3D11Buffer* pCB_Decal;
 	}CALC_DECAL_INPUT;
+
+	typedef struct
+	{
+		ID3D11UnorderedAccessView* pUav_Skinning;
+		ID3D11UnorderedAccessView* pDecalMap;
+		ID3D11ShaderResourceView*  pSRV_Texcoords;
+		_float4x4				   Decal_Matrix_Inv;
+		_float3					   vExtent;
+		_uint iNumVertex;
+	}CALC_DECAL_MAP_INPUT;
 #pragma endregion
 
 

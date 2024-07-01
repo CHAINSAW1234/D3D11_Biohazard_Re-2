@@ -399,6 +399,8 @@ public:
 	void									Perform_RayCasting(_uint iNumTris);
 	void									Bind_Resource_Calc_Decal_Info(CALC_DECAL_INPUT Input);
 	void									Perform_Calc_Decal_Info();
+	void									Bind_Resource_Calc_Decal_Map(CALC_DECAL_MAP_INPUT Input);
+	void									Perform_Calc_Decal_Map(_uint iNumVertices);
 #pragma endregion
 
 private:

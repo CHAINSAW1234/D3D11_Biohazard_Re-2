@@ -190,5 +190,6 @@ using namespace Engine;
 
 #define SKINNING_THREAD_GROUP_SIZE 64
 #define RAYCAST_THREAD_GROUP_SIZE 64 
+#define CALC_DECAL_MAP_THREAD_GROUP_SIZE 64 
 
 #pragma endregion

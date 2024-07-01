@@ -3041,7 +3041,12 @@ void CModel::Perform_Skinning(_uint iIndex)
 
 void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix)
 {
-	m_Meshes[iIndex]->SetDecalWorldMatrix(WorldMatrix);
+	//m_Meshes[iIndex]->SetDecalWorldMatrix(WorldMatrix);
+
+	for (int i = 0; i < m_Meshes.size(); ++i)
+	{
+		m_Meshes[i]->SetDecalWorldMatrix(WorldMatrix);
+	}
 }
 
 _uint CModel::Perform_RayCasting(_uint iIndex, AddDecalInfo Info, _float* pDist)
@@ -3064,6 +3069,20 @@ void CModel::Bind_Resource_DecalMap(_uint iIndex, class CShader* pShader)
 void CModel::Perform_Init_DecalMap(_uint iIndex, class CShader* pShader)
 {
 	m_Meshes[iIndex]->Init_DecalMap(pShader);
+}
+
+void CModel::Perform_Calc_DecalMap()
+{
+	for (int i = 0; i < m_Meshes.size(); ++i)
+	{
+		m_Meshes[i]->Bind_Resource_CalcDecalMap();
+		m_Meshes[i]->Perform_Calc_DecalMap();
+	}
+}
+
+void CModel::Bind_DecalMap(_uint iIndex,CShader* pShader)
+{
+	m_Meshes[iIndex]->Bind_Decal_Map(pShader);
 }
 
 #pragma endregion

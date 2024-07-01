@@ -929,6 +929,9 @@
     <FxCompile Include="..\Bin\ShaderFiles\Skinning.hlsl">
       <Filter>01.Utility\98.ShaderFiles\Compute_Shader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\CalcDecalMap.hlsl">
+      <Filter>01.Utility\98.ShaderFiles\Compute_Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Bin\ShaderFiles\Engine_Shader_Defines.hlsli">
