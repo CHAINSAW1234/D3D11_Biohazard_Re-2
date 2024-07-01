@@ -27,6 +27,7 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 	BODY_MONSTER_DESC*		pDesc = { static_cast<BODY_MONSTER_DESC*>(pArg) };
 
 	m_pRootTranslation = pDesc->pRootTranslation;
+
 	if (nullptr == m_pRootTranslation)
 		return E_FAIL;
 
