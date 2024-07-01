@@ -298,42 +298,6 @@ void CPlayer::Tick(_float fTimeDelta)
 			m_fLerpTime = 0.f;
 			m_bLerp = true;
 		}
-
-		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-		{
-			RayCast_Shoot();
-
-			m_bRecoil = true;
-
-			m_fRecoil_Lerp_Time = 0.f;
-			m_fRecoil_Lerp_Time_Omega = 0.f;
-
-			switch (m_eEquip)
-			{
-			case EQUIP::HG:
-			{
-				auto Random_Real_X = m_pGameInstance->GetRandom_Real(0.075f, 0.1f);
-				auto Random_Real_Y = m_pGameInstance->GetRandom_Real(0.15f, 0.2f);
-				m_fRecoil_Rotate_Amount_X = Random_Real_X;
-				m_fRecoil_Rotate_Amount_Y = Random_Real_Y;
-
-				m_pMuzzle_Flash->Set_Render(true);
-				m_pMuzzle_Flash->SetPosition(Get_MuzzlePosition());
-				break;
-			}
-			case EQUIP::STG:
-			{
-				auto Random_Real_X = m_pGameInstance->GetRandom_Real(0.2f, 0.25f);
-				auto Random_Real_Y = m_pGameInstance->GetRandom_Real(0.25f, 0.3f);
-				m_fRecoil_Rotate_Amount_X = Random_Real_X;
-				m_fRecoil_Rotate_Amount_Y = Random_Real_Y;
-
-				m_pMuzzle_Flash_SG->Set_Render(true);
-				m_pMuzzle_Flash_SG->SetPosition(Get_MuzzlePosition());
-				break;
-			}
-			}
-		}
 	}
 	else
 	{
@@ -688,6 +652,37 @@ void CPlayer::Request_NextBiteAnimation(_int iAnimIndex)
 
 void CPlayer::Shot()
 {
+	RayCast_Shoot();
+
+	m_bRecoil = true;
+
+	m_fRecoil_Lerp_Time = 0.f;
+	m_fRecoil_Lerp_Time_Omega = 0.f;
+
+	switch (m_eEquip)
+	{
+	case EQUIP::HG: {
+		auto Random_Real_X = m_pGameInstance->GetRandom_Real(0.075f, 0.1f);
+		auto Random_Real_Y = m_pGameInstance->GetRandom_Real(0.15f, 0.2f);
+		m_fRecoil_Rotate_Amount_X = Random_Real_X;
+		m_fRecoil_Rotate_Amount_Y = Random_Real_Y;
+
+		m_pMuzzle_Flash->Set_Render(true);
+		m_pMuzzle_Flash->SetPosition(Get_MuzzlePosition());
+		break;
+		}
+	case EQUIP::STG: {
+		auto Random_Real_X = m_pGameInstance->GetRandom_Real(0.2f, 0.25f);
+		auto Random_Real_Y = m_pGameInstance->GetRandom_Real(0.25f, 0.3f);
+		m_fRecoil_Rotate_Amount_X = Random_Real_X;
+		m_fRecoil_Rotate_Amount_Y = Random_Real_Y;
+
+		m_pMuzzle_Flash_SG->Set_Render(true);
+		m_pMuzzle_Flash_SG->SetPosition(Get_MuzzlePosition());
+		break;
+		}
+	}
+	
 	m_pTabWindow->UseItem(Get_Equip_As_ITEM_NUMBER(), 1);
 	
 	NotifyObserver();
@@ -722,6 +717,9 @@ _bool CPlayer::IsShotAble()
 _bool CPlayer::IsReloadAble()
 {
 	if (m_eEquip == NONE)
+		return false;
+
+	if (m_pTabWindow->Get_Search_Item_Quantity(Get_Equip_As_ITEM_NUMBER()) == Get_MaxBullet())
 		return false;
 
 	switch (Get_Equip_As_ITEM_NUMBER()) {
@@ -856,8 +854,6 @@ void CPlayer::Update_KeyInput_Reload()
 		Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == HOLD_RELOAD) {
 		Get_Body_Model()->Set_BlendWeight(3, 0.f, 6.f);
 
-
-
 		if (Get_Body_Model()->Get_BlendWeight(3) <= 0.01f) {
 			Get_Body_Model()->Set_Loop(3, true);
 
@@ -875,8 +871,10 @@ void CPlayer::Update_KeyInput_Reload()
 				break;
 			}
 
-			if (iNumBullet >= Get_Weapon()->Get_MaxBullet()) {
-				iNumBullet = Get_Weapon()->Get_MaxBullet();
+			_int iNumLoadedBullet = { 0 };
+			iNumLoadedBullet = m_pTabWindow->Get_Search_Item_Quantity(Get_Equip_As_ITEM_NUMBER());
+			if (iNumBullet >= Get_Weapon()->Get_MaxBullet() - iNumLoadedBullet) {
+				iNumBullet = Get_Weapon()->Get_MaxBullet() - iNumLoadedBullet;
 			}
 
 			m_pTabWindow->UseItem(Get_Equip_As_ITEM_NUMBER(), -iNumBullet);
