@@ -62,8 +62,72 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("UpperBody"), "spine_0");
 
-	//m_pModelCom->Add_Bone_Layer_Range(TEXT("Shot"), 61, 62);
-	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Shot"), "r_arm_humerus");
+#pragma region SHOT
+	list<string>         L_ShoulderAddBoneTags;
+	L_ShoulderAddBoneTags.emplace_back("COG");
+	L_ShoulderAddBoneTags.emplace_back("hips");
+	L_ShoulderAddBoneTags.emplace_back("l_leg_femur");
+	L_ShoulderAddBoneTags.emplace_back("l_leg_tibia");
+	L_ShoulderAddBoneTags.emplace_back("l_leg_ankle");
+	L_ShoulderAddBoneTags.emplace_back("r_leg_femur");
+	L_ShoulderAddBoneTags.emplace_back("r_leg_tibia");
+	L_ShoulderAddBoneTags.emplace_back("r_leg_ankle");
+	L_ShoulderAddBoneTags.emplace_back("spine_0");
+	L_ShoulderAddBoneTags.emplace_back("spine_1");
+	L_ShoulderAddBoneTags.emplace_back("spine_2");
+	L_ShoulderAddBoneTags.emplace_back("l_arm_clavicle");
+	L_ShoulderAddBoneTags.emplace_back("l_arm_humerus");
+	L_ShoulderAddBoneTags.emplace_back("l_arm_radius");
+	L_ShoulderAddBoneTags.emplace_back("l_arm_wrist");
+	L_ShoulderAddBoneTags.emplace_back("l_scapula_0");
+	L_ShoulderAddBoneTags.emplace_back("r_arm_clavicle");
+	L_ShoulderAddBoneTags.emplace_back("r_arm_humerus");
+	L_ShoulderAddBoneTags.emplace_back("r_arm_radius");
+	L_ShoulderAddBoneTags.emplace_back("r_arm_wrist");
+	L_ShoulderAddBoneTags.emplace_back("r_scapula_0");
+	L_ShoulderAddBoneTags.emplace_back("neck_0");
+	L_ShoulderAddBoneTags.emplace_back("neck_1");
+	L_ShoulderAddBoneTags.emplace_back("head");
+
+	/*
+	L_ShoulderAddBoneTags.emplace_back("l_kneeProtector_start");
+	L_ShoulderAddBoneTags.emplace_back("l_leg_tibia_twist_2_H");
+	L_ShoulderAddBoneTags.emplace_back("l_leg_tibia_twist_1_H");
+	L_ShoulderAddBoneTags.emplace_back("l_leg_femur_twist_2_H");
+	L_ShoulderAddBoneTags.emplace_back("l_leg_femur_twist_1_H");
+	L_ShoulderAddBoneTags.emplace_back("r_kneeProtector_start");
+	L_ShoulderAddBoneTags.emplace_back("r_leg_tibia_twist_2_H");
+	L_ShoulderAddBoneTags.emplace_back("r_leg_tibia_twist_1_H");
+	L_ShoulderAddBoneTags.emplace_back("r_leg_femur_twist_2_H");
+	L_ShoulderAddBoneTags.emplace_back("r_leg_femur_twist_1_H");
+	L_ShoulderAddBoneTags.emplace_back("l_backVest_start");
+	L_ShoulderAddBoneTags.emplace_back("r_backVest_start");
+	L_ShoulderAddBoneTags.emplace_back("l_frontVest_start");
+	L_ShoulderAddBoneTags.emplace_back("r_frontVest_start");
+
+	L_ShoulderAddBoneTags.emplace_back("r_arm_radius_twist_3_H");
+	L_ShoulderAddBoneTags.emplace_back("r_arm_radius_twist_2_H");
+	L_ShoulderAddBoneTags.emplace_back("r_arm_radius_twist_1_H");
+	L_ShoulderAddBoneTags.emplace_back("r_arm_humerus_twist_3_H");
+	L_ShoulderAddBoneTags.emplace_back("r_arm_humerus_twist_2_H");
+	L_ShoulderAddBoneTags.emplace_back("r_arm_humerus_twist_1_H");
+	*/
+
+
+
+	list<_uint>            L_ShoulderAddBoneIndices;
+	for (auto& strBoneTag : L_ShoulderAddBoneTags)
+	{
+		_int         iBoneIndex = { m_pModelCom->Get_BoneIndex(strBoneTag) };
+		if (iBoneIndex == -1)
+			MSG_BOX(TEXT("BoneIndex - 1"));
+		L_ShoulderAddBoneIndices.emplace_back(iBoneIndex);
+	}
+	m_pModelCom->Add_Bone_Layer_BoneIndices(TEXT("Shot"), L_ShoulderAddBoneIndices);
+
+
+
+#pragma endregion
 
 	m_pModelCom->Add_AnimPlayingInfo(true, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Add_AnimPlayingInfo(true, 1, TEXT("Default"), 0.f);
@@ -94,7 +158,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	 
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), CPlayer::HOLD_LEFTHAND_LIGHT, 1.f);
 
-	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_L180, 300.f);
+	/*m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_L180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_R180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::HOLD_SHOT, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::HOLD_SHOT_NO_AMMO, 300.f);
@@ -102,7 +166,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::WHEEL_L180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::WHEEL_R180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::HOLD_SHOT, 300.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::HOLD_SHOT_NO_AMMO, 300.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::HOLD_SHOT_NO_AMMO, 300.f);*/
 
 	//m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/LeonTest/LeonBody.fbx");
 
