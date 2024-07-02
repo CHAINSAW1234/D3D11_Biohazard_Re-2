@@ -29,7 +29,7 @@ public:		/* For.Access */
 	inline _bool						Is_Finished() { return m_isFinished; }
 	inline _bool						Is_FirstTick() { return m_isFirstTick; }
 	inline _bool						Is_LinearInterpolation() { return m_isLinearInterpolation; }
-	inline _bool						Is_Additional() { return m_isAdditional; }
+	inline _bool						Is_AdditionalMasking() { return m_isAdditionalMasking; }
 
 	inline _int							Get_PreAnimIndex() { return m_iPreAnimIndex; }
 	inline _int							Get_AnimIndex() { return m_iAnimIndex; }
@@ -57,6 +57,7 @@ public:		/* For.Access */
 
 	void								Reset_PreAnim_CurrentAnim();
 
+	inline void							Set_Additional_Masking(_bool isAdditionalMasking) { m_isAdditionalMasking = isAdditionalMasking; }
 	inline void							Set_PreAnimIndex(_int iAnimIndex) { m_iPreAnimIndex = iAnimIndex; }
 	inline void							Set_PreAnimLayerTag(const wstring& strPreAnimLayerTag) { m_strPreAnimLayerTag = strPreAnimLayerTag; }
 	inline void							Set_Loop(_bool isLoop) { m_isLoop = isLoop; }
@@ -130,7 +131,7 @@ private:
 	vector<KEYFRAME>					m_LastKeyFrames;
 	vector<KEYFRAME>					m_LinearStartKeyFrames;
 
-	_bool								m_isAdditional = { false };
+	_bool								m_isAdditionalMasking = { false };
 
 public:
 	static CPlayingInfo* Create(void* pArg);

@@ -276,6 +276,7 @@ void CShake_Skin_Zombie::Add_Blend_Animation(COLLIDER_TYPE eIntersectCollider, D
 		pBody_Model->Set_Loop(static_cast<_uint>(ePlayingIndex), false);
 		pBody_Model->Set_BlendWeight(static_cast<_uint>(ePlayingIndex), ZOMBIE_BLEND_MAX, ZOMBIE_SHAKE_SKIN_BLEND_ON_TIME);
 		pBody_Model->Set_BoneLayer_PlayingInfo(static_cast<_uint>(ePlayingIndex), strBoneLayerTag);
+		pBody_Model->Set_Additional_Masking(static_cast<_uint>(ePlayingIndex), true);
 
 		m_ActivePlayingIndcies.emplace(ePlayingIndex);
 	}

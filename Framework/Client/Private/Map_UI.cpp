@@ -58,6 +58,9 @@ HRESULT CMap_UI::Initialize(void* pArg)
 
         m_iWhichChild = CustomUIDesc->iWhich_Child;
 
+        if (m_eMap_Location > LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END)
+            m_eMap_Location = LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END;
+
         m_wstrFile = CustomUIDesc->wstrFileName;
 
         Find_MapStateType(CustomUIDesc);

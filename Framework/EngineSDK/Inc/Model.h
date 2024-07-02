@@ -118,11 +118,13 @@ private:
 	_int									Find_RootBoneIndex();
 
 private:
-	vector<_float4x4>						Initialize_ResultMatrices(const set<_uint>& IncludedBoneIndices);
-	_float									Compute_Current_TotalWeight(_uint iBoneIndex);
-	void									Compute_Current_TotalWeights();
+	vector<_float4x4>						Initialize_ResultMatrices_Blend(const unordered_set<_uint>& IncludedBoneIndices);
+	vector<_float4x4>						Initialize_ResultMatrices_AdditionalMasking(const unordered_set<_uint>& IncludedBoneIndices);
+	_float									Compute_Current_TotalBlendWeight(_uint iBoneIndex);
+	void									Compute_Current_TotalBlendWeights();
 	_float4x4								Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fmatrix DstMatrix, _float fAdditionalWeight);
-	set<_uint>								Compute_IncludedBoneIndices_AllBoneLayer();
+	unordered_set<_uint>					Compute_IncludedBoneIndices_AllBoneLayer_Blend();
+	unordered_set<_uint>					Compute_IncludedBoneIndices_AllBoneLayer_AdditionalMasking();
 
 public:
 	HRESULT									RagDoll();
@@ -208,6 +210,7 @@ public:		/* For. Access */
 	void									Set_Loop(_uint iPlayingIndex, _bool isLoop);
 
 	void									Set_TotalLinearInterpolation(_float fTime) { m_fTotalLinearTime = fTime; }
+	void									Set_Additional_Masking(_uint iPlayingIndex, _bool isAdditionalMasking);
 	void									Set_KeyFrameIndex_AllKeyFrame(_uint iPlayingIndex, _uint iKeyFrameIndex);
 	void									Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition, _bool isResetRootPre = false);
 	void									Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight, _float fLinearTime = 0.f);
@@ -249,8 +252,9 @@ public:
 private:
 	vector<_float4x4>						Apply_Animation(_float fTimeDelta, _uint iPlayingAnimIndex);
 	void									Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMovedDirection, _uint iStartBoneIndex = 0);
-	void									Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer);
-	vector<_float4x4>						Compute_ResultMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer);
+	void									Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& BlendTransformationMatricesLayer, const vector<vector<_float4x4>>& AdditionalTransformationMatricesLayer);
+	vector<_float4x4>						Compute_ResultMatrices_Blend(const vector<vector<_float4x4>>& TransformationMatricesLayer);
+	vector<_float4x4>						Compute_ResultMatrices_AdditionalMsking(const vector<vector<_float4x4>>& AdditionalMaskingTransformationMatricesLayer);
 
 public:		/* For.Cooking_Mesh */
 	void									Static_Mesh_Cooking(class CTransform* pTransform = nullptr);

@@ -18,7 +18,7 @@
 #define BONE_LAYER_HEAD_TWIST_TAG			TEXT("Head_Twistter")
 
 /* For. Blend Velocity */
-#define ZOMBIE_BLEND_MAX								5.f
+#define ZOMBIE_BLEND_MAX								1.f
 #define ZOMBIE_BLEND_ZERO								0.f
 
 /* For. Blend On */

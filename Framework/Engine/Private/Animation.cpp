@@ -191,23 +191,6 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _u
 			fTrackPosition = m_fDuration;
 			pPlayingInfo->Set_Finished(isFinished);
 			pPlayingInfo->Set_TrackPosition(m_fDuration);
-
-			////	루프가아닌 경우 애니메이션 종료 시 마지막 키프레임들을 그대로 반환한다. 
-			////	마지막 포즈와 혼합되어야함
-			//for(_uint iBoneIndex = 0; iBoneIndex < iNumBones; ++iBoneIndex)
-			//{
-			//	KEYFRAME		LastKeyFrame = { Get_CurrentKeyFrame(iBoneIndex, m_fDuration) };
-
-			//	_vector			vQuaternion = { XMLoadFloat4(&LastKeyFrame.vRotation) };
-			//	_vector			vTranslation = { XMVectorSetW(XMLoadFloat3(&LastKeyFrame.vTranslation), 1.f) };
-			//	_vector			vScale = { XMLoadFloat3(&LastKeyFrame.vScale) };
-
-			//	_matrix			TransformationMatrix = { XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation) };
-
-			//	TransformationMatrices[iBoneIndex] = TransformationMatrix;
-			//}
-
-			//return TransformationMatrices;
 		}
 
 		else
