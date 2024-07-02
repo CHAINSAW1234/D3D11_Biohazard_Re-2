@@ -80,11 +80,6 @@ HRESULT CAnimation_Library::Clone_Animation(const wstring& strAnimLayerTag, _uin
 	return S_OK;
 }
 
-const vector<class CAnimation*>& CAnimation_Library::Get_Animation_PrototypeLayer(const wstring& strAnimLayerTag)
-{
-	return vector<class CAnimation*>();
-}
-
 CAnimation* CAnimation_Library::Get_Animation_Prototype(const wstring& strAnimLayerTag, _uint iIndex)
 {
 	vector<CAnimation*>			AnimLayer = { Find_AnimLayer(strAnimLayerTag) };

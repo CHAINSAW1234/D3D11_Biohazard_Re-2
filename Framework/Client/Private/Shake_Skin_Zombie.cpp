@@ -175,7 +175,7 @@ void CShake_Skin_Zombie::Add_Blend_Animation(COLLIDER_TYPE eIntersectCollider, D
 		strBoneLayerTag = m_strR_Leg_Twist_BoneLayerTag;
 	}
 
-	/*else if (COLLIDER_TYPE::HEAD == eIntersectCollider || 
+	else if (COLLIDER_TYPE::HEAD == eIntersectCollider || 
 		COLLIDER_TYPE::CHEST == eIntersectCollider ||
 		COLLIDER_TYPE::PELVIS == eIntersectCollider)
 	{
@@ -254,7 +254,7 @@ void CShake_Skin_Zombie::Add_Blend_Animation(COLLIDER_TYPE eIntersectCollider, D
 			}
 #endif
 		}
-	}*/
+	}
 
 	if (TEXT("") == strAnimLayerTag)
 		return;
@@ -268,6 +268,8 @@ void CShake_Skin_Zombie::Add_Blend_Animation(COLLIDER_TYPE eIntersectCollider, D
 	if (PLAYING_INDEX::INDEX_END == ePlayingIndex)
 		return;
 
+	strBoneLayerTag = TEXT("Default");
+
 	unordered_set<PLAYING_INDEX>::iterator			iterPlayingIndex = { m_ActivePlayingIndcies.find(ePlayingIndex) };
 	if (iterPlayingIndex == m_ActivePlayingIndcies.end())
 	{
@@ -276,7 +278,7 @@ void CShake_Skin_Zombie::Add_Blend_Animation(COLLIDER_TYPE eIntersectCollider, D
 		pBody_Model->Set_Loop(static_cast<_uint>(ePlayingIndex), false);
 		pBody_Model->Set_BlendWeight(static_cast<_uint>(ePlayingIndex), ZOMBIE_BLEND_MAX, ZOMBIE_SHAKE_SKIN_BLEND_ON_TIME);
 		pBody_Model->Set_BoneLayer_PlayingInfo(static_cast<_uint>(ePlayingIndex), strBoneLayerTag);
-		pBody_Model->Set_Additional_Masking(static_cast<_uint>(ePlayingIndex), true);
+		pBody_Model->Set_Additional_Masking(static_cast<_uint>(ePlayingIndex), true, 4);
 
 		m_ActivePlayingIndcies.emplace(ePlayingIndex);
 	}

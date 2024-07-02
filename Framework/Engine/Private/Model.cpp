@@ -865,7 +865,6 @@ _float CModel::Compute_Current_TotalBlendWeight(_uint iBoneIndex)
 
 		if (true == pPlayingInfo->Is_AdditionalMasking())
 			continue;
-
 		wstring		strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
 		if (false == m_BoneLayers[strBoneLayerTag]->Is_Included(iBoneIndex))
 			continue;
@@ -947,16 +946,17 @@ unordered_set<_uint> CModel::Compute_IncludedBoneIndices_AllBoneLayer_Blend()
 unordered_set<_uint> CModel::Compute_IncludedBoneIndices_AllBoneLayer_AdditionalMasking()
 {
 	unordered_set<_uint>			ResultIncludedBoneIndices;
+	unordered_set<_uint>					EnoughKeyFrameBoneIndices;
 	for (auto& pPlayingInfo : m_PlayingAnimInfos)
 	{
 		if (nullptr == pPlayingInfo)
 			continue;
 
 		if (false == pPlayingInfo->Is_AdditionalMasking())
-			continue;
+			continue;			
 
 		wstring			strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
-		CBone_Layer* pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
+		CBone_Layer*	pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
 
 		if (nullptr == pBoneLayer)
 			continue;
@@ -966,7 +966,38 @@ unordered_set<_uint> CModel::Compute_IncludedBoneIndices_AllBoneLayer_Additional
 		{
 			ResultIncludedBoneIndices.emplace(iBoneIndex);
 		}
+
+		_int			iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
+		wstring			strAnimLayerTag = { pPlayingInfo->Get_AnimLayerTag() };
+		vector<CChannel*>			Channels = { m_AnimationLayers[strAnimLayerTag]->Get_Animations()[iAnimIndex]->Get_Channels() };
+		for (auto& pChannel : Channels)
+		{
+			_uint			iNumKeyFrame = { pChannel->Get_Num_KeyFrame() };
+			if (true == pPlayingInfo->Is_Enough_NumKeyFrame(iNumKeyFrame))
+			{
+				EnoughKeyFrameBoneIndices.emplace(pChannel->Get_BoneIndex());
+			}
+		}
 	}
+
+	for (auto& iterSrc = ResultIncludedBoneIndices.begin(); iterSrc != ResultIncludedBoneIndices.end(); )
+	{
+		unordered_set<_uint>::iterator			iterDst = { EnoughKeyFrameBoneIndices.find(*iterSrc) };
+		if (iterDst == EnoughKeyFrameBoneIndices.end())
+		{
+			iterSrc = ResultIncludedBoneIndices.erase(iterSrc);
+		}
+		else
+			++iterSrc;
+	}
+	/*for (auto& iBoneIndex : ResultIncludedBoneIndices)
+	{
+		unordered_set<_uint>::iterator			iter = { EnoughKeyFrameBoneIndices.find(iBoneIndex) };
+		if (iter == EnoughKeyFrameBoneIndices.end())
+		{
+			ResultIncludedBoneIndices.erase(ResultIncludedBoneIndices.find(iBoneIndex));
+		}
+	}	*/
 
 	return ResultIncludedBoneIndices;
 }
@@ -1775,13 +1806,13 @@ HRESULT CModel::Initialize_Prototype_TEMP(MODEL_TYPE eType, const string& strMod
 	return S_OK;
 }
 
-void CModel::Set_Additional_Masking(_uint iPlayingIndex, _bool isAdditionalMasking)
+void CModel::Set_Additional_Masking(_uint iPlayingIndex, _bool isAdditionalMasking, _uint iNumNeedKeyFrame)
 {
 	CPlayingInfo* pPLayingInfo = { Find_PlayingInfo(iPlayingIndex) };
 	if (nullptr == pPLayingInfo)
 		return;
 
-	pPLayingInfo->Set_Additional_Masking(isAdditionalMasking);
+	pPLayingInfo->Set_Additional_Masking(isAdditionalMasking, iNumNeedKeyFrame);
 }
 
 void CModel::Set_KeyFrameIndex_AllKeyFrame(_uint iPlayingIndex, _uint iKeyFrameIndex)

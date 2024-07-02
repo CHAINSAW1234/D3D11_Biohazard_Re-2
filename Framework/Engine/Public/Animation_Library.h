@@ -19,7 +19,6 @@ public:
 
 	HRESULT											Clone_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, class CAnimation** ppAnimation);
 	
-	const vector<class CAnimation*>&				Get_Animation_PrototypeLayer(const wstring& strAnimLayerTag);
 	class CAnimation*								Get_Animation_Prototype(const wstring& strAnimLayerTag, _uint iIndex);
 	_uint											Get_NumAnim_Prototypes(const wstring& strAnimLayerTag);
 

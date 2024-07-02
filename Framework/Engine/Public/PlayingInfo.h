@@ -51,13 +51,15 @@ public:		/* For.Access */
 
 	_bool								Is_Set_CurrentAnimation() { return m_iAnimIndex != -1 && m_strAnimLayerTag != TEXT(""); }
 
+	inline _bool						Is_Enough_NumKeyFrame(_uint iNumKeyFrame) { return iNumKeyFrame >= m_iNumNeedKeyFrame; }
+
 	void								Set_Root_Pre(_bool isResetRootPre) { m_isResetRootPre = isResetRootPre; }
 
 	void								Change_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, _uint iNumChannel);
 
 	void								Reset_PreAnim_CurrentAnim();
 
-	inline void							Set_Additional_Masking(_bool isAdditionalMasking) { m_isAdditionalMasking = isAdditionalMasking; }
+	inline void							Set_Additional_Masking(_bool isAdditionalMasking, _uint iNumNeedKeyFrame) { m_isAdditionalMasking = isAdditionalMasking; m_iNumNeedKeyFrame = iNumNeedKeyFrame; }
 	inline void							Set_PreAnimIndex(_int iAnimIndex) { m_iPreAnimIndex = iAnimIndex; }
 	inline void							Set_PreAnimLayerTag(const wstring& strPreAnimLayerTag) { m_strPreAnimLayerTag = strPreAnimLayerTag; }
 	inline void							Set_Loop(_bool isLoop) { m_isLoop = isLoop; }
@@ -132,6 +134,7 @@ private:
 	vector<KEYFRAME>					m_LinearStartKeyFrames;
 
 	_bool								m_isAdditionalMasking = { false };
+	_uint								m_iNumNeedKeyFrame = { 0 };
 
 public:
 	static CPlayingInfo* Create(void* pArg);

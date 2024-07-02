@@ -210,7 +210,7 @@ public:		/* For. Access */
 	void									Set_Loop(_uint iPlayingIndex, _bool isLoop);
 
 	void									Set_TotalLinearInterpolation(_float fTime) { m_fTotalLinearTime = fTime; }
-	void									Set_Additional_Masking(_uint iPlayingIndex, _bool isAdditionalMasking);
+	void									Set_Additional_Masking(_uint iPlayingIndex, _bool isAdditionalMasking, _uint iNumNeedKeyFrame);
 	void									Set_KeyFrameIndex_AllKeyFrame(_uint iPlayingIndex, _uint iKeyFrameIndex);
 	void									Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition, _bool isResetRootPre = false);
 	void									Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight, _float fLinearTime = 0.f);
