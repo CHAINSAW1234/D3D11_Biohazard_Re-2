@@ -166,6 +166,7 @@ _bool CInteractProps::Check_Col_Sphere_Player()
 	{
 		if (Check_Player_Distance() <= 1.16f && !m_bOnce)
 		{
+			m_bDoorOnce = true;
 			m_bOnce = true;
 		}
 		m_bFirstInteract = true;
@@ -186,6 +187,7 @@ _bool CInteractProps::Check_Col_OBB_Player()
 	{
 		if (Check_Player_Distance() <= 1.16f && !m_bOnce)
 		{
+			m_bDoorOnce = true;
 			m_bOnce = true;
 		}
 		m_bFirstInteract = true;
@@ -206,6 +208,7 @@ _bool CInteractProps::Check_Col_AABB_Player()
 	{
 		if (Check_Player_Distance() <= 1.16f && !m_bOnce)
 		{
+			m_bDoorOnce = true;
 			m_bOnce = true;
 		}
 		m_bFirstInteract = true;

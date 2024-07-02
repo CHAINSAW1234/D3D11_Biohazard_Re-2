@@ -4,6 +4,7 @@
 #include "Player_State_Move_Idle.h"
 #include "Player_State_Move_Walk.h"
 #include "Player_State_Move_Jog.h"
+#include "Player_State_Move_DoorStop.h"
 
 #include "Weapon.h"
 
@@ -25,6 +26,8 @@ void CPlayer_State_Move::OnStateUpdate(_float fTimeDelta)
 	__super::OnStateUpdate(fTimeDelta);
 
 	Update_State();
+
+	Open_Door();
 
 	if (m_pPlayer->Get_Spotlight()) {
 		m_pPlayer->Set_TurnSpineLight(true);
@@ -100,11 +103,60 @@ void CPlayer_State_Move::Update_State()
 	}
 }
 
+void CPlayer_State_Move::Open_Door()
+{
+	if ((m_pPlayer->Get_Body_Model()->isFinished(3) &&
+		m_pPlayer->Get_Body_Model()->Get_CurrentAnimLayerTag(3) == CPlayer::Get_AnimSetEtcName(CPlayer::COMMON) &&
+		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(3) == CPlayer::DOOR_OPEN_JOG)) {
+		m_pPlayer->Get_Body_Model()->Set_Loop(3, true);
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(3, 0.f, 10.f);
+	}
+
+	if ((m_pPlayer->Get_Body_Model()->isFinished(4) &&
+		m_pPlayer->Get_Body_Model()->Get_CurrentAnimLayerTag(4) == CPlayer::Get_AnimSetEtcName(CPlayer::COMMON) &&
+		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(4) == CPlayer::DOOR_PASS)) {
+		m_pPlayer->Get_Body_Model()->Set_Loop(4, true);
+		m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 0.f, 10.f);
+	}
+
+	// 플레이어한테 받아오기
+	CPlayer::PLAYER_DOOR_BEHAVE eDoor = m_pPlayer->Get_isDoor_Setting();
+
+	switch (eDoor) {
+	case CPlayer::DOOR_BEHAVE_NOTHING:
+		break;
+	case CPlayer::DOOR_BEHAVE_OPEN:
+	{
+			if (m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3) &&
+			m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
+
+			if (m_eState == WALK) {
+				m_pPlayer->Get_Body_Model()->Change_Animation(4, CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), CPlayer::DOOR_PASS);
+				m_pPlayer->Get_Body_Model()->Set_Loop(4, false);
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 10.f, 6.f);
+			}
+			if (m_eState == JOG) {
+				m_pPlayer->Get_Body_Model()->Change_Animation(3, CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), CPlayer::DOOR_OPEN_JOG);
+				m_pPlayer->Get_Body_Model()->Set_Loop(3, false);
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(3, 10.f, 6.f);
+			}
+		}
+		m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_NOTHING);
+	}
+		break;
+	case CPlayer::DOOR_BEHAVE_LOCK:
+		Change_State(DOOR_STOP);
+		m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_NOTHING);
+		break;
+	}
+}
+
 HRESULT CPlayer_State_Move::Add_States()
 {
 	Add_State(IDLE, CPlayer_State_Move_Idle::Create(m_pPlayer));
 	Add_State(WALK, CPlayer_State_Move_Walk::Create(m_pPlayer, this));
 	Add_State(JOG, CPlayer_State_Move_Jog::Create(m_pPlayer, this));
+	Add_State(DOOR_STOP, CPlayer_State_Move_DoorStop::Create(m_pPlayer, this));
 	//Change_State(IDLE);
 
 	return S_OK;

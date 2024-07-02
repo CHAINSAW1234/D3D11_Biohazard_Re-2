@@ -120,14 +120,12 @@ void CPlayer_State_Hold_Idle::Look_Cam(_float fTimeDelta)
 	_float fDegree = m_pPlayer->Get_CamDegree();
 
 	if (abs(fDegree) > 5) {
-		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * /*XMConvertToRadians(180 * fDegree / abs(fDegree))*/  fDegree / 20);
+		m_pPlayer->Get_Transform()->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * /*XMConvertToRadians(180 * fDegree / abs(fDegree))*/  fDegree / 20);
 	}
 }
 
 void CPlayer_State_Hold_Idle::Shot()
 {
-	cout << m_isShot << ' ' << m_pPlayer->Get_Body_Model()->isFinished(2) << ' ' << m_pPlayer->Get_Body_Model()->Get_BlendWeight(2) << endl;
-		cout << m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(2) << endl;
 	if (m_isShot) {
 		if (m_pPlayer->Get_Body_Model()->isFinished(2)) {
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 0, 20.f);

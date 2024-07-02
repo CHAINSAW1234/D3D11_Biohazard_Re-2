@@ -22,6 +22,7 @@ public:
 
 private:
 	void						Update_State();
+	void						Open_Door();
 
 private:
 	HRESULT						Add_States();

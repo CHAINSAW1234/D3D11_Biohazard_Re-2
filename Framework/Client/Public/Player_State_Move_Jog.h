@@ -22,7 +22,7 @@ private:
 	void Set_MoveAnimation(_float fTimeDelta);
 	void Look_Cam(_float fTimeDelta);
 	void Update_Degree();
-	void Open_Door();
+
 private:
 	CPlayer* m_pPlayer = { nullptr };
 	CFSM_HState* m_pHState = { nullptr };

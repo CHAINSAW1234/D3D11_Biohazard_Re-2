@@ -60,7 +60,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Add_Bone_Layer_Bone(TEXT("LowerBody"), "root");
 	m_pModelCom->Add_Bone_Layer_Bone(TEXT("LowerBody"), "spine_0");
 
-	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("UpperBody"), "spine_0");
+	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("UpperBody"), "spine_1");
 
 	//m_pModelCom->Add_Bone_Layer_Range(TEXT("Shot"), 61, 62);
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Shot"), "r_arm_humerus");
@@ -769,6 +769,8 @@ HRESULT CBody_Player::Add_Animations()
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Hg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HOLD_HG))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Stg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HOLD_STG))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Sup"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HOLD_SUP))))
 		return E_FAIL;
 
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Common"), CPlayer::Get_AnimSetEtcName(CPlayer::ANIMSET_ETC::COMMON))))

@@ -110,7 +110,6 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f - fRatio);
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, fRatio);
 		}
-
 	}
 
 #pragma endregion
@@ -231,19 +230,6 @@ void CPlayer_State_Move_Jog::Update_Degree()
 	vCamDir = XMVectorSetW(XMVector3Normalize(vCamDir), 0.f);
 	m_fDegree = Cal_Degree_From_Directions_Between_Min180_To_180(vPlayerLook, vCamDir);
 
-}
-
-void CPlayer_State_Move_Jog::Open_Door()
-{
-	if (m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3) &&
-		m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
-		m_pPlayer->Get_Body_Model()->Change_Animation(4, CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), CPlayer::DOOR_PASS);
-		m_pPlayer->Get_Body_Model()->Set_Loop(4, false);
-		m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 10.f, 6.f);
-	}
-	else {
-		m_pHState->Change_State(CPlayer_State_Move::DOOR_STOP);
-	}
 }
 
 CPlayer_State_Move_Jog* CPlayer_State_Move_Jog::Create(CPlayer* pPlayer, CFSM_HState* pHState)

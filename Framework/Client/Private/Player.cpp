@@ -4,6 +4,7 @@
 #include "FSM.h"
 #include "Player_State_Move.h"
 #include "Player_State_Hold.h"
+#include "Player_State_SubHold.h"
 #include "Player_State_Bite.h"
 
 #include "Body_Player.h"
@@ -485,6 +486,7 @@ void CPlayer::Start()
 		assert(0);
 	}
 
+	Safe_AddRef(m_pTabWindow);
 }
 
 void CPlayer::Priority_Tick_PartObjects(_float fTimeDelta)
@@ -551,12 +553,6 @@ _bool* CPlayer::Col_Event_UI(CCustomCollider* pCustom)
 
 	return &m_isNYResult;
 }
-
-void CPlayer::Player_FirstBehaivor(_int i)
-{
-	m_isPlayer_FirstBehavior[i] = true;
-}
-
 #pragma endregion
 
 #pragma region 현진 추가
@@ -599,10 +595,9 @@ void CPlayer::Set_Spotlight(_bool isSpotlight)
 
 void CPlayer::Requst_Change_Equip(EQUIP eEquip)
 {
-	if (!m_isRequestChangeEquip) {
-		m_isRequestChangeEquip = true;
-		m_eTargetEquip = eEquip;
-	}
+	m_isRequestChangeEquip = true;
+	m_eTargetEquip = eEquip;
+	
 }
 
 void CPlayer::Set_Equip(EQUIP* eEquip)
@@ -632,6 +627,26 @@ void CPlayer::Set_Equip(EQUIP* eEquip)
 
 	Update_AnimSet();
 	NotifyObserver();
+}
+
+void CPlayer::Set_Equip_Gun(EQUIP* eEquip)
+{
+	m_eEquip_Gun = *eEquip;
+
+	if (m_eEquip_State == GUN) {
+		Set_Equip(eEquip);
+	}
+
+}
+
+void CPlayer::Set_Equip_Sub(EQUIP* eEquip)
+{
+	m_eEquip_Sub = *eEquip;
+
+	if (m_eEquip_State == SUB) {
+		Set_Equip(eEquip);
+	}
+
 }
 
 void CPlayer::Set_Hp(_int iHp)
@@ -669,7 +684,24 @@ void CPlayer::Change_Player_State_Bite(_int iAnimIndex, const wstring& strLayerT
 
 	// bite zombie apply m
 
-}   
+}
+
+void CPlayer::Change_Equip_State(EQUIP_STATE eEquip_State)
+{
+	if (m_eEquip_State == eEquip_State)
+		return;
+
+	m_eEquip_State = eEquip_State;
+
+	switch (m_eEquip_State) {
+	case GUN:
+		Requst_Change_Equip(m_eEquip_Gun);
+		break;
+	case SUB:
+		Requst_Change_Equip(m_eEquip_Sub);
+		break;
+	}
+}
 
 void CPlayer::Request_NextBiteAnimation(_int iAnimIndex)
 {
@@ -881,9 +913,25 @@ void CPlayer::Update_FSM()
 				Get_Body_Model()->Is_Loop_PlayingInfo(3))
 				Change_State(HOLD);
 		}
+		if (m_pGameInstance->Get_KeyState(VK_SPACE) == PRESSING) {
+			if (NONE != m_eEquip_Sub &&
+				Get_Body_Model()->Is_Loop_PlayingInfo(3))
+				Change_State(SUBHOLD);
+		}
 		break;
 	case HOLD:
 		if (m_pGameInstance->Get_KeyState(VK_RBUTTON) != PRESSING) {
+			Change_State(MOVE);
+		}
+		if (m_pGameInstance->Get_KeyState(VK_SPACE) == PRESSING) {
+			if (NONE != m_eEquip_Sub )
+				Change_State(SUBHOLD);
+		}
+
+		break;
+	case SUBHOLD:
+		if (m_pGameInstance->Get_KeyState(VK_SPACE) != PRESSING && 
+			Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
 			Change_State(MOVE);
 		}
 		break;
@@ -972,7 +1020,7 @@ void CPlayer::Update_Equip()
 			Get_Body_Model()->Set_Loop(3, false);
 
 			Change_Body_Animation_Hold(3, MOVETOHOLSTER);
-			Get_Body_Model()->Set_BlendWeight(3, 10.f, 6.f);
+			Get_Body_Model()->Set_BlendWeight(3, 10.f, 20.f);
 		}
 		else if (Get_Body_Model()->isFinished(3)) {
 			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.01f) {
@@ -980,10 +1028,14 @@ void CPlayer::Update_Equip()
 				Get_Body_Model()->Set_Loop(3, true);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == HOLSTERTOMOVE) {
-				Get_Body_Model()->Set_BlendWeight(3, 0.f, 6.f);
+				Get_Body_Model()->Set_BlendWeight(3, 0.f, 5.f);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == MOVETOHOLSTER) {
-				Set_Equip(&m_eTargetEquip);
+				if(m_eState == SUBHOLD)
+					Set_Equip_Sub(&m_eTargetEquip);
+				else {
+					Set_Equip_Gun(&m_eTargetEquip);
+				}
 				Change_Body_Animation_Hold(3, HOLSTERTOMOVE);
 			}
 		}
@@ -1050,6 +1102,10 @@ void CPlayer::Update_AnimSet()
 	case STG:
 		m_eAnimSet_Hold = HOLD_STG;
 		break;
+	case GRENADE:
+	case FLASHBANG:
+		m_eAnimSet_Hold = HOLD_SUP;
+		break;
 	case NONE:
 		break;
 	}
@@ -1061,6 +1117,10 @@ void CPlayer::Update_AnimSet()
 		Change_Body_Animation_Move(1, Get_Body_Model()->Get_CurrentAnimIndex(1));
 		break;
 	case HOLD:
+		Change_Body_Animation_Hold(0, Get_Body_Model()->Get_CurrentAnimIndex(0));
+		Change_Body_Animation_Hold(1, Get_Body_Model()->Get_CurrentAnimIndex(1));
+		break;
+	case SUBHOLD:
 		Change_Body_Animation_Hold(0, Get_Body_Model()->Get_CurrentAnimIndex(0));
 		Change_Body_Animation_Hold(1, Get_Body_Model()->Get_CurrentAnimIndex(1));
 		break;
@@ -2011,6 +2071,7 @@ HRESULT CPlayer::Add_FSM_States()
 	m_pFSMCom->Add_State(MOVE, CPlayer_State_Move::Create(this));
 
 	m_pFSMCom->Add_State(HOLD, CPlayer_State_Hold::Create(this));
+	m_pFSMCom->Add_State(SUBHOLD, CPlayer_State_SubHold::Create(this));
 	m_pFSMCom->Add_State(BITE, CPlayer_State_Bite::Create(this));
 
 	m_pFSMCom->Change_State(MOVE);
@@ -2128,6 +2189,39 @@ HRESULT CPlayer::Add_PartObjects()
 		return E_FAIL;
 	m_Weapons[CPlayer::STG] = pWeaponObject;
 
+	WeaponDesc.eEquip = GRENADE;
+	WeaponDesc.pSocket[CWeapon::MOVE] = WeaponDesc.pSocket[CWeapon::MOVE_LIGHT] = WeaponDesc.pSocket[CWeapon::HOLD] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
+	WeaponDesc.pSocket[CWeapon::HOLSTER] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("setProp_D_00")) };
+
+	WeaponTransformMatrix = { XMMatrixIdentity() };
+	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] = WeaponDesc.fTransformationMatrices[CWeapon::HOLD] = WeaponTransformMatrix;
+
+	WeaponDesc.fTransformationMatrices[CWeapon::MOVE_LIGHT] = WeaponTransformMatrix;
+
+	WeaponDesc.fTransformationMatrices[CWeapon::HOLSTER] = WeaponTransformMatrix;
+
+	pWeaponObject = dynamic_cast<CWeapon*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Weapon"), &WeaponDesc));
+	if (nullptr == pWeaponObject)
+		return E_FAIL;
+	m_Weapons[CPlayer::GRENADE] = pWeaponObject;
+
+	WeaponDesc.eEquip = FLASHBANG;
+	WeaponDesc.pSocket[CWeapon::MOVE] = WeaponDesc.pSocket[CWeapon::MOVE_LIGHT] = WeaponDesc.pSocket[CWeapon::HOLD] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_weapon")) };
+	WeaponDesc.pSocket[CWeapon::HOLSTER] = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("setProp_D_00")) };
+
+	WeaponTransformMatrix = { XMMatrixIdentity() };
+	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] = WeaponDesc.fTransformationMatrices[CWeapon::HOLD] = WeaponTransformMatrix;
+
+	WeaponDesc.fTransformationMatrices[CWeapon::MOVE_LIGHT] = WeaponTransformMatrix;
+
+	WeaponDesc.fTransformationMatrices[CWeapon::HOLSTER] = WeaponTransformMatrix;
+
+	pWeaponObject = dynamic_cast<CWeapon*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Weapon"), &WeaponDesc));
+	if (nullptr == pWeaponObject)
+		return E_FAIL;
+	m_Weapons[CPlayer::FLASHBANG] = pWeaponObject;
+
+
 	return S_OK;
 }
 
@@ -2235,6 +2329,6 @@ void CPlayer::Free()
 	m_Weapons.clear();
 
 	Safe_Release(m_pWeapon);
-
+	Safe_Release(m_pTabWindow);
 	Release_Effect();
 }

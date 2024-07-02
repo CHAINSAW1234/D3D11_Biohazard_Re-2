@@ -347,6 +347,8 @@ HRESULT CLoader::Load_Animations()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Hold_Stg"), "../Bin/Resources/Animations/Player/Body/hold/stg_hold/")))
 		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Hold_Sup"), "../Bin/Resources/Animations/Player/Body/hold/sup_hold/")))
+		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Player_Bite"), "../Bin/Resources/Animations/Player/Body/bite/")))
 		return E_FAIL;
