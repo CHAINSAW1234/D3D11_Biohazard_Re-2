@@ -375,7 +375,7 @@ void CCharacter_Controller::Create_Collider()
 	m_ragdoll->m_body_pos_relative_to_joint.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_original_joint_rotations.resize(m_skeletal_mesh->skeleton()->num_bones());
 
-	for (int i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
+	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		m_ragdoll->m_rigid_bodies[i] = nullptr;
 
 	// ---------------------------------------------------------------------------------------------------------------
@@ -387,9 +387,9 @@ void CCharacter_Controller::Create_Collider()
 	rot = XMMatrixRotationZ(XM_PI * 0.5f);
 	_matrix I = XMMatrixIdentity();
 
-	m_HeadCollider = create_capsule_bone(j_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f, 0.0f, 1.f), 4.0f, 6.0f, rot, COLLIDER_TYPE::HEAD);
-	m_BodyCollider = create_capsule_bone(j_spine_01_idx, j_neck_01_idx, *m_ragdoll, 5.0f, rot, COLLIDER_TYPE::CHEST);
-	m_Pelvis_Collider = create_capsule_bone(j_pelvis_idx, j_spine_01_idx, *m_ragdoll, 5.0f, rot, COLLIDER_TYPE::PELVIS);
+	m_HeadCollider = create_capsule_bone(j_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f, 0.0f, 1.f), 2.0f, 3.0f, rot, COLLIDER_TYPE::HEAD);
+	m_BodyCollider = create_capsule_bone(j_spine_01_idx, j_neck_01_idx, *m_ragdoll, 7.0f, rot, COLLIDER_TYPE::CHEST);
+	m_Pelvis_Collider = create_capsule_bone(j_pelvis_idx, j_spine_01_idx, *m_ragdoll, 7.0f, rot, COLLIDER_TYPE::PELVIS);
 
 	m_Left_Leg_Collider = create_capsule_bone(j_thigh_l_idx, j_calf_l_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::LEG_L);
 	m_Right_Leg_Collider = create_capsule_bone(j_thigh_r_idx, j_calf_r_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::LEG_R);
@@ -503,7 +503,7 @@ void CCharacter_Controller::Update_Collider()
 
 	if (m_vecBone)
 	{
-		for (int i = 0; i < JointNum; ++i)
+		for (size_t i = 0; i < JointNum; ++i)
 		{
 			m_Global_transforms.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
 		}
@@ -556,7 +556,7 @@ void CCharacter_Controller::SetBoneIndex()
 
 	m_vecBoneIndex.resize(NumJoint);
 
-	for (int i = 0; i < NumJoint; ++i)
+	for (size_t i = 0; i < NumJoint; ++i)
 	{
 		for (int j = 0; j < m_vecBone->size(); ++j)
 		{

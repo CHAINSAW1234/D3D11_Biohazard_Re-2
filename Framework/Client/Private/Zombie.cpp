@@ -1046,7 +1046,7 @@ void CZombie::Ready_Decal()
 		decalInfo.maxHitDistance = hitResult.maxHitDistance;
 		decalInfo.decalMaterialIndex = 0;
 
-	/*	list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
+		list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
 		for (auto& i : NonHideIndex)
 		{
 			m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
@@ -1065,7 +1065,7 @@ void CZombie::Ready_Decal()
 			}
 		}
 
-		if (m_iMeshIndex_Hit == 999)*/
+		if (m_iMeshIndex_Hit == 999)
 		{
 			m_vHitPosition = m_pController->GetBlockPoint();
 			m_vHitNormal = m_pController->GetHitNormal();
@@ -1079,8 +1079,8 @@ void CZombie::Ready_Decal()
 		}*/
 	}
 
-	m_vHitPosition = m_pController->GetBlockPoint();
-	m_vHitNormal = m_pController->GetHitNormal();
+	//m_vHitPosition = m_pController->GetBlockPoint();
+	//m_vHitNormal = m_pController->GetHitNormal();
 
 	if (m_bRagdoll)
 	{

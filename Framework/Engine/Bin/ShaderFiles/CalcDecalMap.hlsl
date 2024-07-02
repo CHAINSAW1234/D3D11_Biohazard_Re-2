@@ -27,10 +27,6 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID)
         {
             g_DecalMap[vertexIndex] = float2(2.f,2.f);
         }
-       /* else
-        {
-            g_DecalMap[vertexIndex] = float2(1.f, 1.f);
-        }*/
     }
 }
 

@@ -240,7 +240,7 @@ PxD6Joint* CRagdoll_Physics::create_d6_joint(PxRigidDynamic* parent, PxRigidDyna
 
 	joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
 
-	config_d6_joint(3.14 / 4.f, 3.14f / 4.f, -3.14f / 8.f, 3.14f / 8.f, joint);
+	config_d6_joint(PxReal(3.14 / 4.f), PxReal(3.14f / 4.f), PxReal(-3.14f / 8.f), PxReal(3.14f / 8.f), joint);
 
 	joint->setBreakForce(FLT_MAX, FLT_MAX);
 
@@ -264,7 +264,7 @@ PxD6Joint* CRagdoll_Physics::create_d6_joint_Foot(PxRigidDynamic* parent, PxRigi
 
 	joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
 
-	config_d6_joint(3.14 / 8.f, 3.14f / 8.f, -3.14f / 16.f, 3.14f / 16.f, joint);
+	config_d6_joint(PxReal(3.14 / 8.f), PxReal(3.14f / 8.f), PxReal(-3.14f / 16.f), PxReal(3.14f / 16.f), joint);
 
 	joint->setBreakForce(FLT_MAX, FLT_MAX);
 
@@ -288,7 +288,7 @@ PxD6Joint* CRagdoll_Physics::create_d6_joint_Head(PxRigidDynamic* parent, PxRigi
 
 	joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
 
-	config_d6_joint(3.14 / 12.f, 3.14f / 12.f, -3.14f / 20.f, 3.14f / 20.f, joint);
+	config_d6_joint(PxReal(3.14 / 12.f), PxReal(3.14f / 12.f), PxReal(-3.14f / 20.f), PxReal(3.14f / 20.f), joint);
 
 	joint->setBreakForce(FLT_MAX, FLT_MAX);
 
@@ -407,7 +407,7 @@ _bool CRagdoll_Physics::Init(const string& name)
 
 	m_joint_names.push_back(" -");
 
-	for (int i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
+	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		m_joint_names.push_back(m_skeletal_mesh->skeleton()->joints()[i].name);
 
 	for (int i = 0; i < MAX_BONES; i++)
@@ -533,7 +533,7 @@ void CRagdoll_Physics::create_ragdoll()
 	m_ragdoll->m_body_pos_relative_to_joint.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_original_joint_rotations.resize(m_skeletal_mesh->skeleton()->num_bones());
 
-	for (int i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
+	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		m_ragdoll->m_rigid_bodies[i] = nullptr;
 
 	// ---------------------------------------------------------------------------------------------------------------
@@ -589,10 +589,10 @@ void CRagdoll_Physics::create_ragdoll()
 #endif
 
 #pragma endregion
-	for (int i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
+	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 	{
 		uint32_t        chosen_idx;
-		PxRigidDynamic* body = m_ragdoll->find_recent_body(i, m_skeletal_mesh->skeleton(), chosen_idx);
+		PxRigidDynamic* body = m_ragdoll->find_recent_body((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
 		if (!body)
 			continue;
@@ -659,7 +659,7 @@ void CRagdoll_Physics::Update(_float fTimeDelta)
 
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
-	for (int i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
+	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		m_pose_transforms.transforms[i] = XMMatrixInverse(nullptr, joints[i].inverse_bind_pose);
 
 	update_animations();
@@ -683,7 +683,7 @@ void CRagdoll_Physics::update_animations()
 
 	if (m_vecBone)
 	{
-		for (int i = 0; i < NumJoint; ++i)
+		for (size_t i = 0; i < NumJoint; ++i)
 		{
 			m_Global_transforms.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
 		}
@@ -742,7 +742,7 @@ void CRagdoll_Physics::update_animations()
 
 			auto WorldMat = m_RotationMatrix;
 
-			for (int i = 0; i < NumJoint; ++i)
+			for (size_t i = 0; i < NumJoint; ++i)
 			{
 				if (!IsIdentityMatrix(m_Global_transforms.transforms[i]))
 				{
@@ -1130,7 +1130,7 @@ void CRagdoll_Physics::SetBoneIndex()
 
 	m_vecBoneIndex.resize(NumJoint);
 
-	for (int i = 0; i < NumJoint; ++i)
+	for (size_t i = 0; i < NumJoint; ++i)
 	{
 		for (int j = 0; j < m_vecBone->size(); ++j)
 		{
