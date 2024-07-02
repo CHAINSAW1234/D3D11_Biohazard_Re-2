@@ -872,8 +872,6 @@ void CPlayer::Update_InterplationMatrix(_float fTimeDelta)
 			m_fCurrentInterpolateTime = m_fTotalInterpolateTime;
 		}
 
-
-
 	_float				fRatio = { fTimeDelta / m_fTotalInterpolateTime };
 
 	_vector				vScale, vTranslation, vQuaternion;

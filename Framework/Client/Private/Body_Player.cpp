@@ -60,7 +60,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Add_Bone_Layer_Bone(TEXT("LowerBody"), "root");
 	m_pModelCom->Add_Bone_Layer_Bone(TEXT("LowerBody"), "spine_0");
 
-	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("UpperBody"), "spine_1");
+	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("UpperBody"), "spine_0");
 
 	//m_pModelCom->Add_Bone_Layer_Range(TEXT("Shot"), 61, 62);
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Shot"), "r_arm_humerus");
