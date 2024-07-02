@@ -169,6 +169,7 @@ namespace Client
 		JOMBIE_BEHAVIOR_COLLIDER_STAIR, //계단 - 나중에 다른 LAYER로 빼서 줄 수 있으니 고려해보세용 (이유: 계단콜라이더와 좀비와 난간 콜라이더의 충돌 겹침 발생시 상태 처리가 귀찮을 수 있음)
 		JOMBIE_BEHAVIOR_COLLIDER_WINDOW, //윈도우는 따로 모션이 있습니다 em0000_window_em.motlist.85 
 		JOMBIE_BEHAVIOR_COLLIDER_DOOR, //문 모션은 윈도우와 같이 있습니다. em0000_door_em.motlist.85 
+		JOMBIE_BEHAVIOR_COLLIDER_NON_WINDOW, //창문은 없고 창틀만 있는(이미 깨져있는)
 		JOMBIE_BEHAVIOR_COLLIDER_END,
 	};
 
@@ -177,8 +178,6 @@ namespace Client
 		PLAYER_BEHAVIOR_COLLIDER_CLIMB_BOX, // 작전실 박스
 		PLAYER_BEHAVIOR_COLLIDER_CLIMB_WALL, // 작전실 벽
 		PLAYER_BEHAVIOR_COLLIDER_CLIMB_WINDOW, // 조사실
-		PLAYER_BEHAVIOR_COLLIDER_LADDER, //
-		PLAYER_BEHAVIOR_COLLIDER_DOOR, //
 		PLAYER_BEHAVIOR_COLLIDER_END,
 	};
 

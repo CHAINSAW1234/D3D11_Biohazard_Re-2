@@ -22,6 +22,8 @@ public:
 		_int iRegionNum = { 0 };
 		_int iPropType = { 0 };
 		_int iPartObj = { 0 };
+		_int iFloor = { 0 };
+
 		//
 	}GAMEOBJECT_DESC;
 
