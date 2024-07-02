@@ -61,7 +61,6 @@ private:
 
 	const wstring&					m_strDefaultFrontAnimLayerTag = { TEXT("Bite_Default_Front") };
 	const wstring&					m_strDefaultBackAnimLayerTag = { TEXT("Bite_Default_Back") };
-	const wstring&					m_strPushDownAnimLayerTag = { TEXT("Bite_Push_Down") };
 	const wstring&					m_strCreepAnimLayerTag = { TEXT("Bite_Creep") };
 	const wstring&					m_strETCAnimLayerTag = { TEXT("Bite_ETC") };
 	const wstring&					m_strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };

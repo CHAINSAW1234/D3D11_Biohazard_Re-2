@@ -209,6 +209,11 @@ void CStand_Up_Zombie::Change_Animation()
 	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), strBoneLayerTag);
 }
 
+_bool CStand_Up_Zombie::Condition_Check()
+{
+	return _bool();
+}
+
 CStand_Up_Zombie* CStand_Up_Zombie::Create(void* pArg)
 {
 	CStand_Up_Zombie* pInstance = { new CStand_Up_Zombie() };

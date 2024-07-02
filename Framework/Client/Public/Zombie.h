@@ -34,7 +34,7 @@ BEGIN(Client)
 #define STATUS_ZOMBIE_STAMINA_CHARGING_PER_SEC			3.f
 
 /* For.Use Stamina */
-#define ZOMBIE_NEED_STAMINA_BITE						80.f
+#define ZOMBIE_NEED_STAMINA_BITE						30.f
 #define ZOMBIE_NEED_STAMINA_STANDUP						80.f
 #define ZOMBIE_NEED_STAMINA_TURN_OVER					20.f
 

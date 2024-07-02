@@ -83,12 +83,23 @@ void CBody_Zombie::Tick(_float fTimeDelta)
 	}
 }
 
+static	_bool			isInitiate = { true };
+
 void CBody_Zombie::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if(m_bRagdoll == false)
-		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_DOWN))
+		isInitiate = !isInitiate;
+
+	if (true == isInitiate)
+	{
+		if (m_bRagdoll == false)
+			m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	}
+
+
 
 
 #pragma region TEST

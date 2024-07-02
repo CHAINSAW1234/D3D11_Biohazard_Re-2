@@ -144,13 +144,6 @@ void CZombie::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	_vector			vScale = { XMLoadFloat3(&m_pTransformCom->Get_Scaled()) };
-
-	if (0.009f >XMVectorGetX(vScale))
-	{
-		int iA = 0;
-	}
-
 	if (nullptr != m_pController && false == m_isManualMove && m_pController->GetDead() == false)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
 
@@ -522,70 +515,15 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CComposite_Node* pSelectorNode_RootChild_Hit = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_Hit);
 
-
-	//	Add Task Node		=> Damage Hold Stun
-	CStun_Hold_Zombie* pTask_Hold_Stun = { CStun_Hold_Zombie::Create() };
-	pTask_Hold_Stun->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_Hit->Insert_Child_Node(pTask_Hold_Stun);
-
-	////	Add Decorator		=> Is Can Link? ( From Hold )
-	//list<MONSTER_STATE>							CanLinkMonsterStatesHoldStun;
-	//CanLinkMonsterStatesHoldStun.emplace_back(MONSTER_STATE::MST_HOLD);
-	//CIs_Can_Link_Pre_State_Zombie* pDeco_Is_Can_Link_Hold_Stun = { CIs_Can_Link_Pre_State_Zombie::Create(CanLinkMonsterStatesHoldStun) };
-	//pDeco_Is_Can_Link_Hold_Stun->SetBlackBoard(m_pBlackBoard);
-	//pTask_Hold_Stun->Insert_Decorator_Node(pDeco_Is_Can_Link_Hold_Stun);
-
-	//	Add Decorator		=> Is Hit? ( All HitType, Leg Collider )
-	/*CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitAllType_LegCollision;
-	for (_uint i = 0; i < MONSTER_STATE::MST_END; ++i)
-	{
-		IsHitAllType_LegCollision.CheckHitTypes.emplace_back(static_cast<HIT_TYPE>(i));
-	}
-	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::LEG_L);
-	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::LEG_R);
-	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::CALF_L);
-	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::CALF_R);
-	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::FOOT_L);
-	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::FOOT_R);
-	CIs_Hit_Zombie* pDeco_Is_Hit_AllType = { CIs_Hit_Zombie::Create(&IsHitAllType_LegCollision) };
-	pDeco_Is_Hit_AllType->SetBlackBoard(m_pBlackBoard);
-	pTask_Hold_Stun->Insert_Decorator_Node(pDeco_Is_Hit_AllType);*/
-
-
 	//	Add Task Node		=> Damage Stun
 	CStun_Zombie* pTask_Stun = { CStun_Zombie::Create() };
 	pTask_Stun->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Hit->Insert_Child_Node(pTask_Stun);
 
-	//	Add Decorator		=> Is Hit?
-	/*CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitSmallDesc;
-	IsHitSmallDesc.CheckHitTypes.emplace_back(HIT_TYPE::HIT_SMALL);
-
-	for (_uint i = 0; i < static_cast<_uint>(COLLIDER_TYPE::_END); ++i)
-	{
-		IsHitSmallDesc.CheckColliderTypes.emplace_back(static_cast<COLLIDER_TYPE>(i));
-	}
-	CIs_Hit_Zombie* pDeco_Is_HitSmall = { CIs_Hit_Zombie::Create(&IsHitSmallDesc) };
-	pDeco_Is_HitSmall->SetBlackBoard(m_pBlackBoard);
-	pTask_Stun->Insert_Decorator_Node(pDeco_Is_HitSmall);*/
-
-
 	//	Add Task Node		=> Damage Knock Back
 	CKnock_Back_Zombie* pTask_Knockback = { CKnock_Back_Zombie::Create() };
 	pTask_Knockback->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Hit->Insert_Child_Node(pTask_Knockback);
-
-	//	Add Decorator		=> Is Hit?
-	/*CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitBigDesc;
-	IsHitBigDesc.CheckHitTypes.emplace_back(HIT_TYPE::HIT_BIG);
-
-	for (_uint i = 0; i < static_cast<_uint>(COLLIDER_TYPE::_END); ++i)
-	{
-		IsHitBigDesc.CheckColliderTypes.emplace_back(static_cast<COLLIDER_TYPE>(i));
-	}
-	CIs_Hit_Zombie* pDeco_Is_HitBig = { CIs_Hit_Zombie::Create(&IsHitBigDesc) };
-	pDeco_Is_HitBig->SetBlackBoard(m_pBlackBoard);
-	pTask_Knockback->Insert_Decorator_Node(pDeco_Is_HitBig);*/
 
 #pragma endregion
 
