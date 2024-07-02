@@ -52,6 +52,10 @@ _bool CKnock_Back_Zombie::Execute(_float fTimeDelta)
 	if (nullptr == pBody_Model)
 		return false;
 
+	CZombie::POSE_STATE		ePose_State = { m_pBlackBoard->Get_AI()->Get_PoseState() };
+	if (CZombie::POSE_STATE::_UP != ePose_State)
+		return false;
+
 	MONSTER_STATE			eState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 	if (MONSTER_STATE::MST_DAMAGE == eState)
 	{

@@ -643,6 +643,14 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 #pragma endregion		//	Selector Root 
 
+#pragma region		//	Task Shake Skin
+
+	CShake_Skin_Zombie*							pTask_Shake_Skin = { CShake_Skin_Zombie::Create() };
+	pTask_Shake_Skin->SetBlackBoard(m_pBlackBoard);
+	pSequenceNode_Root->Insert_Child_Node(pTask_Shake_Skin);
+
+#pragma endregion
+
 #pragma region Additional Shake Skin			//	추가해야함
 
 

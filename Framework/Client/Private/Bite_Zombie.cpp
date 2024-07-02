@@ -43,8 +43,6 @@ void CBite_Zombie::Enter()
 	m_eStartPoseState = m_pBlackBoard->Get_AI()->Get_PoseState();
 	m_eStartFaceState = m_pBlackBoard->Get_AI()->Get_FaceState();
 
-	m_ePreState = m_pBlackBoard->Get_AI()->Get_Current_MonsterState();
-
 	DIRECTION		eDirection = { DIRECTION::_END };
 	_float3			vDirectionFromPlayerLocal;
 	m_pBlackBoard->Compute_Direction_From_Player_Local(&vDirectionFromPlayerLocal);
@@ -162,6 +160,9 @@ void CBite_Zombie::Change_Animation_Default_Front(BITE_ANIM_STATE eState)
 		_float			fZombieAttack = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fAttack };
 		_bool			isCanKillPlayer = { fPlayerHP <= fZombieAttack };
 
+		if (false == m_pBlackBoard->Hit_Player())
+			return;
+
 		if (true == isCanKillPlayer)
 		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_BITE_DEFAULT_FRONT::_KILL_F);
@@ -212,6 +213,9 @@ void CBite_Zombie::Change_Animation_Default_Back(BITE_ANIM_STATE eState)
 		_float			fPlayerHP = { static_cast<_float>(m_pBlackBoard->GetPlayer()->Get_Hp()) };
 		_float			fZombieAttack = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fAttack };
 		_bool			isCanKillPlayer = { fPlayerHP <= fZombieAttack };
+
+		if (false == m_pBlackBoard->Hit_Player())
+			return;
 
 		if (true == isCanKillPlayer)
 		{
@@ -290,6 +294,9 @@ void CBite_Zombie::Change_Animation_Creep(BITE_ANIM_STATE eState)
 		_float			fPlayerHP = { static_cast<_float>(m_pBlackBoard->GetPlayer()->Get_Hp()) };
 		_float			fZombieAttack = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fAttack };
 		_bool			isCanKillPlayer = { fPlayerHP <= fZombieAttack };
+
+		if (false == m_pBlackBoard->Hit_Player())
+			return;
 
 		_int			iAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
 
@@ -404,6 +411,9 @@ void CBite_Zombie::Change_Animation_Push_Down(BITE_ANIM_STATE eState)
 		_float			fPlayerHP = { static_cast<_float>(m_pBlackBoard->GetPlayer()->Get_Hp()) };
 		_float			fZombieAttack = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fAttack };
 		_bool			isCanKillPlayer = { fPlayerHP <= fZombieAttack };
+
+		if (false == m_pBlackBoard->Hit_Player())
+			return;
 
 		_int			iAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
 
@@ -580,11 +590,6 @@ void CBite_Zombie::Change_Animation(BITE_ANIM_STATE eState)
 	if (CZombie::POSE_STATE::_CREEP == m_eStartPoseState)
 	{
 		Change_Animation_Creep(eState);
-	}
-
-	else if (MONSTER_STATE::MST_LIGHTLY_HOLD == m_ePreState)
-	{
-		Change_Animation_Push_Down(eState);
 	}
 
 	/*

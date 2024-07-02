@@ -29,6 +29,7 @@ public:		/* For.Access */
 	inline _bool						Is_Finished() { return m_isFinished; }
 	inline _bool						Is_FirstTick() { return m_isFirstTick; }
 	inline _bool						Is_LinearInterpolation() { return m_isLinearInterpolation; }
+	inline _bool						Is_Additional() { return m_isAdditional; }
 
 	inline _int							Get_PreAnimIndex() { return m_iPreAnimIndex; }
 	inline _int							Get_AnimIndex() { return m_iAnimIndex; }
@@ -128,6 +129,8 @@ private:
 	vector<_uint>						m_CurrentKeyFrameIndices;
 	vector<KEYFRAME>					m_LastKeyFrames;
 	vector<KEYFRAME>					m_LinearStartKeyFrames;
+
+	_bool								m_isAdditional = { false };
 
 public:
 	static CPlayingInfo* Create(void* pArg);
