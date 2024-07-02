@@ -41,6 +41,7 @@ public:
 	{
 		m_iNumVertices = iNumVertices;
 	}
+	virtual HRESULT				Init_Decal_Texture(_uint iLevel) { return S_OK; }
 protected:
 	class CModel* m_pModelCom = { nullptr };
 	class CShader* m_pShaderCom = { nullptr };

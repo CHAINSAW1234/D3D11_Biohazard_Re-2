@@ -366,6 +366,7 @@ public:/*For Skinned Mesh Decal*/
 	void									Staging_Skinning(_uint iIndex);
 	void									Perform_Skinning(_uint iIndex);
 	void									SetDecalWorldMatrix(_uint iIndex,_float4x4 WorldMatrix);
+	void									Init_Decal(_uint iLevel);
 
 public:/*For Mesh RayCasting*/
 	_uint									Perform_RayCasting(_uint iIndex, AddDecalInfo Info,_float* pDist);

@@ -387,7 +387,7 @@ void CCharacter_Controller::Create_Collider()
 	rot = XMMatrixRotationZ(XM_PI * 0.5f);
 	_matrix I = XMMatrixIdentity();
 
-	m_HeadCollider = create_capsule_bone(j_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f, 0.0f, 1.f), 2.0f, 3.0f, rot, COLLIDER_TYPE::HEAD);
+	m_HeadCollider = create_capsule_bone(j_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f, 0.0f, 1.f), 4.0f, 6.0f, rot, COLLIDER_TYPE::HEAD);
 	m_BodyCollider = create_capsule_bone(j_spine_01_idx, j_neck_01_idx, *m_ragdoll, 7.0f, rot, COLLIDER_TYPE::CHEST);
 	m_Pelvis_Collider = create_capsule_bone(j_pelvis_idx, j_spine_01_idx, *m_ragdoll, 7.0f, rot, COLLIDER_TYPE::PELVIS);
 

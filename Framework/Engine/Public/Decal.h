@@ -41,6 +41,7 @@ public:
 	{
 		m_iNumVertices = iNumVertices;
 	}
+	virtual HRESULT				Init_Decal_Texture(_uint iLevel) { return S_OK; }
 protected:
 	class CModel* m_pModelCom = { nullptr };
 	class CShader* m_pShaderCom = { nullptr };
@@ -53,6 +54,7 @@ protected:
 	ID3D11Buffer* m_pCB_DecalConstData = { nullptr };
 
 	ID3D11Buffer*				m_pSB_DecalMap = nullptr;
+	ID3D11ShaderResourceView*	m_pSRV_DecalMap = nullptr;
 	ID3D11UnorderedAccessView*  m_pUAV_DecalInfo = { nullptr };
 	ID3D11UnorderedAccessView*  m_pUAV_DecalMap = { nullptr };
 	ID3D11RenderTargetView*		m_pRTV_DecalMap = { nullptr };

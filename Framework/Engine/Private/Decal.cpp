@@ -105,6 +105,7 @@ void CDecal::Free()
 	Safe_Release(m_pStaging_Buffer_Decal_Info);
 	Safe_Release(m_pStaging_Buffer_Decal_Map);
 	Safe_Release(m_pSB_DecalMap);
+	Safe_Release(m_pSRV_DecalMap);
 	Safe_Release(m_pUAV_DecalMap);
 	Safe_Release(m_pRTV_DecalMap);
 	Safe_Delete_Array(m_pDecal_Map);

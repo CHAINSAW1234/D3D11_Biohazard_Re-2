@@ -43,6 +43,10 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 	m_eCurrentMotionType = MOTION_TYPE::MOTION_A;
 	m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie/Body.fbx");
 
+#pragma region Effect
+	m_pModelCom->Init_Decal(LEVEL_GAMEPLAY);
+#pragma endregion
+
 	return S_OK;
 }
 
@@ -138,8 +142,6 @@ HRESULT CBody_Zombie::Render()
 		//	if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
 		//		return E_FAIL;
 
-		m_pModelCom->Bind_DecalMap(i, m_pShaderCom);
-
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
 		{
 			_bool isAlphaTexture = false;
@@ -166,6 +168,7 @@ HRESULT CBody_Zombie::Render()
 				return E_FAIL;
 		}
 
+		m_pModelCom->Bind_DecalMap(i, m_pShaderCom);
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 		m_pModelCom->Render(static_cast<_uint>(i));
@@ -402,8 +405,8 @@ HRESULT CBody_Zombie::Initialize_Model()
 	{
 		if (strMeshTag.find("Body") != string::npos)
 		{
-			if (strMeshTag.find("Inside") != string::npos)
-				continue;
+			//if (strMeshTag.find("Inside") != string::npos)
+			//	continue;
 
 			if (strMeshTag.find("Joint") != string::npos)
 				continue;
