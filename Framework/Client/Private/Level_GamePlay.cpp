@@ -261,7 +261,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
 	//ÈñÈ÷ ³Ñ ¹Ù»Û °ü°è·Î ÇÔ¼ö ¸øÆÍ¾î¿ä - ¿¹Àº
 
-	string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
+	/*string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
 	_tchar	szFilePath[MAX_PATH] = { L"" };
 	MultiByteToWideChar(CP_ACP, 0, strFilePath.c_str(), (_uint)strlen(strFilePath.c_str()), szFilePath, MAX_PATH);
 	_uint iMonsterNum = { 0 };
@@ -280,7 +280,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
 		return E_FAIL;
 
-	for (_uint i = 0; iObjectNum - 1> i; ++i)
+	for (_uint i = 0; iObjectNum > i; ++i)
 	{
 		_uint iLength = { 0 };
 
@@ -298,7 +298,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 			return E_FAIL;
 		}
 	}
-	CloseHandle(hFile);
+	CloseHandle(hFile);*/
 
 	CMonster::MONSTER_DESC ObjectDesc = {};
 
@@ -1047,7 +1047,7 @@ HRESULT CLevel_GamePlay::Load_Layer(const wstring& strFilePath, _uint iLevel)
 HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& strLayerName, _uint iLevel)
 {
 	wstring strLayerFile = strFilePath + TEXT("\\\\") + strLayerName + TEXT(".dat");
-	_uint iMonsterNum = { 0 };
+
 	HANDLE		hFile = CreateFile(strLayerFile.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
 	if (INVALID_HANDLE_VALUE == hFile)
@@ -1059,10 +1059,11 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
 		return E_FAIL;
 
+	_uint iMonsterNum = { 0 };
+
 	for (_uint i = 0; iObjectNum > i; ++i)
 	{
 		_uint iLength = { 0 };
-
 
 		CGameObject::GAMEOBJECT_DESC ObjectDesc = {};
 

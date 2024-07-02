@@ -36,14 +36,14 @@ public:
     ~Skeleton();
     int32_t						find_joint_index(const std::string& channel_name);
 
-    inline uint32_t				num_bones() { return m_num_joints; }
+    inline size_t				num_bones() { return m_num_joints; }
     inline struct Joint*		joints() { return &m_joints[0]; }
 	void						SetNumJoint();
 private:
     void						build_bone_list(aiNode* node, const aiScene* scene, std::vector<aiBone*>& temp_bone_list, std::unordered_set<std::string>& bone_map);
     void						build_skeleton(aiNode* node, int bone_index, const aiScene* scene, std::vector<aiBone*>& temp_bone_list);
 private:
-    uint32_t					m_num_joints;
+    size_t					m_num_joints;
     std::vector<Joint>			m_joints;
 };
 

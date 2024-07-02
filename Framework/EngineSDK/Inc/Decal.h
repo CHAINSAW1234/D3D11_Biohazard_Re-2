@@ -7,7 +7,7 @@ BEGIN(Engine)
 class ENGINE_DLL CDecal : public CGameObject
 {
 public:
-	typedef struct : public CGameObject::GAMEOBJECT_DESC
+	typedef struct TEMP : public CGameObject::GAMEOBJECT_DESC
 	{
 		_int iSubType;
 		_int iType;
@@ -47,8 +47,8 @@ protected:
 	class CTexture* m_pTextureCom = { nullptr };
 	class CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 
-	class DecalConstData m_DecalConstData;
-	class DecalInfo* m_DecalInfo = { nullptr };
+	DecalConstData m_DecalConstData;
+	DecalInfo* m_DecalInfo = { nullptr };
 	ID3D11Buffer* m_pSB_DecalInfo = { nullptr };
 	ID3D11Buffer* m_pCB_DecalConstData = { nullptr };
 

@@ -57,7 +57,7 @@ Skeleton* Skeleton::create(const aiScene* scene, ofstream& ofs)
         auto& joint = skeleton->m_joints[i];
     }
 
-    _int JointSize = skeleton->m_joints.size();
+    size_t JointSize = skeleton->m_joints.size();
 
     ofs.write(reinterpret_cast<_char*>(&JointSize), sizeof(JointSize));
 
@@ -147,7 +147,7 @@ void Skeleton::build_skeleton(aiNode* node, int bone_index, const aiScene* scene
 
     int count = bone_index;
 
-    for (int i = 0; i < m_num_joints; i++)
+    for (size_t i = 0; i < m_num_joints; i++)
     {
         std::string bone_name = temp_bone_list[i]->mName.C_Str();
 
@@ -188,7 +188,7 @@ void Skeleton::build_skeleton(aiNode* node, int bone_index, const aiScene* scene
     }
 
     for (_uint i = 0; i < node->mNumChildren; i++)
-        build_skeleton(node->mChildren[i], m_num_joints, scene, temp_bone_list);
+        build_skeleton(node->mChildren[i], (int)m_num_joints, scene, temp_bone_list);
 }
 
 void Skeleton::SetNumJoint()

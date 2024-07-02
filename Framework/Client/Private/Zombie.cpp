@@ -69,7 +69,7 @@ HRESULT CZombie::Initialize(void* pArg)
 		//	vPos.y += 1.f;
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 	}
-	m_InteractObjVec.reserve(JOMBIE_BEHAVIOR_COLLIDER_END);
+	m_InteractObjVec.resize(JOMBIE_BEHAVIOR_COLLIDER_END);
 	//	m_pModelCom->Set_Animation(rand() % 20, true);
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
@@ -993,7 +993,7 @@ void CZombie::Col_EventCol()
 				break;
 			}
 			m_InteractObjVec[m_eBeHavior_Col] = m_pGameInstance->Get_GameObject(g_Level, strLayer, m_iPropNum);
-			m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_InteractObjVec[m_eBeHavior_Col]->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION)) ;
+			//m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_InteractObjVec[m_eBeHavior_Col]->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION)) ;
 			break; // 이벤트임을 알림
 		}
 		else
@@ -1042,7 +1042,7 @@ void CZombie::Ready_Decal()
 		decalInfo.maxHitDistance = hitResult.maxHitDistance;
 		decalInfo.decalMaterialIndex = 0;
 
-		/*list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
+		list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
 		for (auto& i : NonHideIndex)
 		{
 			m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
@@ -1059,9 +1059,9 @@ void CZombie::Ready_Decal()
 
 				break;
 			}
-		}*/
+		}
 
-		//if (m_iMeshIndex_Hit == 999)
+		if (m_iMeshIndex_Hit == 999)
 		{
 			m_vHitPosition = m_pController->GetBlockPoint();
 			m_vHitNormal = m_pController->GetHitNormal();
@@ -1074,6 +1074,9 @@ void CZombie::Ready_Decal()
 			m_pBodyModel->Perform_Init_DecalMap(iMeshIndex, m_pShader_Decal);
 		}*/
 	}
+
+	//m_vHitPosition = m_pController->GetBlockPoint();
+	//m_vHitNormal = m_pController->GetHitNormal();
 
 	if (m_bRagdoll)
 	{
@@ -1122,7 +1125,6 @@ void CZombie::SetBlood()
 	{
 		m_bSetBlood = false;
 		m_iBloodCount = 0;
-		m_vHitPosition = _float4(0.f, 0.f, 0.f, 1.f);
 		return;
 	}
 
@@ -1167,7 +1169,6 @@ void CZombie::SetBlood()
 		{
 			m_bSetBlood = false;
 			m_iBloodCount = 0;
-			m_vHitPosition = _float4(0.f, 0.f, 0.f, 1.f);
 			return;
 		}
 	}
