@@ -8,7 +8,6 @@ class CRead_Item_UI final : public CInteract_UI
 public :
 	enum class ITEM_READ_TYPE { INCIDENT_LOG_NOTE, TASK_NOTE, OPERATE_REPORT_NOTE, MEDICINAL_NOTE, OFFICER_NOTE, GUNPOWDER_NOTE, END_NOTE };
 	/* 사건일지 */
-private :
 	enum class READ_UI_TYPE { INTRODUCE_READ, MAIN_READ, TEXTURE_READ, TEXT_LEFT_READ, TEXT_RIGHT_READ, ARROW_READ, END_READ };
 
 private :
@@ -37,7 +36,12 @@ private :
 	CRead_Item_UI*							Find_ReadUI(READ_UI_TYPE _readType, _bool _child);
 	void									Render_Condition();
 	void									Reset();
+private:
+	virtual void Start() override;
 
+public:
+	void Set_ReadItem_Type(ITEM_READ_TYPE _readType);
+	READ_UI_TYPE Get_UI_TYPE() { return m_eRead_type; }
 private :
 	/* intro가 참조하여 Read Type을 알려줄 것임 */
 	READ_UI_TYPE							m_eRead_type		= { READ_UI_TYPE::END_READ };
@@ -59,13 +63,13 @@ private :
 	CRead_Item_UI*							m_pRead_Supervise	= { nullptr }; /* MAIN : 이 안에 부여할 TEXT와 TEXTURE를 가지고 있을 것이다. */
 	_int									m_iBookCnt			= { 0 };
 	_int									m_iBook_PrevCnt		= { 1 };
+	vector<CRead_Item_UI*>               m_ReadVec;
 
 
 private : /* Text 관련*/
 	map<ITEM_READ_TYPE, vector<wstring>>	m_BookText;
 	_float2									m_fOriginPos_text = {};
 	ITEM_READ_TYPE							eGara = { ITEM_READ_TYPE::INCIDENT_LOG_NOTE };
-
 
 public:
 	static CInteract_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
