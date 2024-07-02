@@ -6,7 +6,9 @@
 BEGIN(Client)
 class CPlayer_State_Move final : public CFSM_HState
 {
-	enum STATE { IDLE, WALK, JOG, STAIR, STATE_END };
+public:
+	enum STATE { IDLE, WALK, JOG, STAIR, DOOR_STOP, STATE_END };
+
 private:
 	CPlayer_State_Move(CPlayer* pPlayer);
 	virtual ~CPlayer_State_Move() = default;
@@ -20,6 +22,7 @@ public:
 
 private:
 	void						Update_State();
+	void						Open_Door();
 
 private:
 	HRESULT						Add_States();

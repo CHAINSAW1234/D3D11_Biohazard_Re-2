@@ -484,6 +484,21 @@
     <Filter Include="AIController\Zombie\Task\DummyFinsh">
       <UniqueIdentifier>{2dfbaeaa-f270-4b3d-b3b3-34ebd33af1ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_DoorStop">
+      <UniqueIdentifier>{172a5b3a-512f-4cb3-8222-5f20b3fd8a48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_SubHold">
+      <UniqueIdentifier>{21f366b4-4f71-4cbd-ab75-dbc26acc03a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Idle">
+      <UniqueIdentifier>{ddfe2292-e482-4ab2-82cd-f2a4c3eeddb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_End_HolstertoMove">
+      <UniqueIdentifier>{018cec94-553a-4b2d-a9f4-8d9385012dc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Start">
+      <UniqueIdentifier>{ae5b6c71-d918-40cf-a73a-4e4cabdf1137}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -916,6 +931,18 @@
       <Filter>AIController\Zombie\Task\Idle\Creep</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Interact_UI.h" />
+    <ClInclude Include="..\Public\Player_State_Move_DoorStop.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_DoorStop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_SubHold.h">
+      <Filter>02.GameObjects\Player\State\Player_State_SubHold</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_SubHold_Start.h">
+      <Filter>02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Start</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_SubHold_Idle.h">
+      <Filter>02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Idle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1319,6 +1346,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Creep_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Idle\Creep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_DoorStop.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_DoorStop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_SubHold.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_SubHold</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_SubHold_Start.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_SubHold_Idle.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Idle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

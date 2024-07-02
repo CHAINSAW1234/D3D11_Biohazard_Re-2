@@ -149,6 +149,7 @@ protected:
 	_int												m_iItemIndex = { -1 };
 	_bool												m_bActivity = { true };
 	_bool												m_bOnce = { true };
+	_bool												m_bDoorOnce = { false };
 	_bool												m_bBlock = { false };
 	_bool												m_bFirstInteract = { false };// 한번 접촉하면 계속 true
 	_bool												m_bShadow = { true };

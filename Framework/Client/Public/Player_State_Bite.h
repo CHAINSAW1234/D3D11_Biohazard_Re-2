@@ -26,7 +26,6 @@ public:
 private:
 	CPlayer*					m_pPlayer = { nullptr };
 	STATE						m_eState = { STATE_END };
-	_int						m_iHp = { -1 };
 
 	_bool m_isLight = { false };
 	CPlayer::EQUIP m_eEquip = { CPlayer::NONE };

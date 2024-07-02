@@ -62,14 +62,17 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("UpperBody"), "spine_0");
 
-	m_pModelCom->Add_Bone_Layer_Range(TEXT("Shot"), 61, 62);
-	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Shot"), "r_clavicle");
+	//m_pModelCom->Add_Bone_Layer_Range(TEXT("Shot"), 61, 62);
+	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Shot"), "r_arm_humerus");
 
 	m_pModelCom->Add_AnimPlayingInfo(true, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Add_AnimPlayingInfo(true, 1, TEXT("Default"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(false, 2, TEXT("Shot"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(true, 3, TEXT("UpperBody"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(true, 4, TEXT("Left_Arm"), 0.f);
+
+
+	// 크기 월드 위치
 
 
 	//for (int i = 0; i < CPlayer::ANIMSET_MOVE_END; ++i) {
@@ -89,7 +92,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	//		m_pModelCom->Get_Duration_From_Anim(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_R_LOOP) + 1);
 	//}
 	 
-	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), 0, 1.f);
+	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), CPlayer::HOLD_LEFTHAND_LIGHT, 1.f);
 
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_L180, 300.f);
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_R180, 300.f);
@@ -766,6 +769,8 @@ HRESULT CBody_Player::Add_Animations()
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Hg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HOLD_HG))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Stg"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HOLD_STG))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Hold_Sup"), CPlayer::Get_AnimSetHoldName(CPlayer::ANIMSET_HOLD::HOLD_SUP))))
 		return E_FAIL;
 
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Player_Common"), CPlayer::Get_AnimSetEtcName(CPlayer::ANIMSET_ETC::COMMON))))

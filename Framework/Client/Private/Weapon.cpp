@@ -307,6 +307,12 @@ HRESULT CWeapon::Add_Components()
 	case CPlayer::STG:
 		strModelTag = TEXT("Prototype_Component_Model_ShotGun");
 		break;
+	case CPlayer::GRENADE:
+		strModelTag = TEXT("Prototype_Component_Model_Grenade");
+		break;
+	case CPlayer::FLASHBANG:
+		strModelTag = TEXT("Prototype_Component_Model_FlashBang");
+		break;
 	}
 
 	/* For.Com_Model */

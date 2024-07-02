@@ -283,9 +283,13 @@
     <ClInclude Include="..\Public\Player_State_Hold_Idle.h" />
     <ClInclude Include="..\Public\Player_State_Hold_Start.h" />
     <ClInclude Include="..\Public\Player_State_Move.h" />
+    <ClInclude Include="..\Public\Player_State_Move_DoorStop.h" />
     <ClInclude Include="..\Public\Player_State_Move_Idle.h" />
     <ClInclude Include="..\Public\Player_State_Move_Jog.h" />
     <ClInclude Include="..\Public\Player_State_Move_Walk.h" />
+    <ClInclude Include="..\Public\Player_State_SubHold.h" />
+    <ClInclude Include="..\Public\Player_State_SubHold_Idle.h" />
+    <ClInclude Include="..\Public\Player_State_SubHold_Start.h" />
     <ClInclude Include="..\Public\Props.h" />
     <ClInclude Include="..\Public\ReaderMachine.h" />
     <ClInclude Include="..\Public\Read_Item_UI.h" />
@@ -455,9 +459,13 @@
     <ClCompile Include="..\Private\Player_State_Hold_Idle.cpp" />
     <ClCompile Include="..\Private\Player_State_Hold_Start.cpp" />
     <ClCompile Include="..\Private\Player_State_Move.cpp" />
+    <ClCompile Include="..\Private\Player_State_Move_DoorStop.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Idle.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Jog.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Walk.cpp" />
+    <ClCompile Include="..\Private\Player_State_SubHold.cpp" />
+    <ClCompile Include="..\Private\Player_State_SubHold_Idle.cpp" />
+    <ClCompile Include="..\Private\Player_State_SubHold_Start.cpp" />
     <ClCompile Include="..\Private\Props.cpp" />
     <ClCompile Include="..\Private\ReaderMachine.cpp" />
     <ClCompile Include="..\Private\Read_Item_UI.cpp" />

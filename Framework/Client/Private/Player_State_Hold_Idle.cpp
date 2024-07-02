@@ -120,7 +120,7 @@ void CPlayer_State_Hold_Idle::Look_Cam(_float fTimeDelta)
 	_float fDegree = m_pPlayer->Get_CamDegree();
 
 	if (abs(fDegree) > 5) {
-		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * /*XMConvertToRadians(180 * fDegree / abs(fDegree))*/  fDegree / 20);
+		m_pPlayer->Get_Transform()->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * /*XMConvertToRadians(180 * fDegree / abs(fDegree))*/  fDegree / 20);
 	}
 }
 
@@ -133,7 +133,8 @@ void CPlayer_State_Hold_Idle::Shot()
 		}
 	}
 
-	if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == PRESSING && m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
+	if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == PRESSING
+		&& m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
 		if (!m_isShot && m_pPlayer->Get_Body_Model()->Get_BlendWeight(2) == 0.f) {
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 1, 20.f);
 			if (m_pPlayer->IsShotAble()) {
