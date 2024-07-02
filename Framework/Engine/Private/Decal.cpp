@@ -96,7 +96,6 @@ void CDecal::Free()
 	__super::Free();
 
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Delete(m_DecalInfo);
 	Safe_Release(m_pSB_DecalInfo);

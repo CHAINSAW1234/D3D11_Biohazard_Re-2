@@ -296,11 +296,6 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	RayCasting_Camera();
 
-#pragma region RaySetting
-	m_pGameInstance->Set_RayOrigin_Aim(m_pCamera->GetPosition());
-	m_pGameInstance->Set_RayDir_Aim(m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK));
-#pragma endregion
-
 	if (m_bRecoil)
 	{
 		Apply_Recoil(fTimeDelta);
@@ -678,6 +673,11 @@ void CPlayer::Request_NextBiteAnimation(_int iAnimIndex)
 
 void CPlayer::Shot()
 {
+#pragma region RaySetting
+	m_pGameInstance->Set_RayOrigin_Aim(m_pCamera->GetPosition());
+	m_pGameInstance->Set_RayDir_Aim(m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK));
+#pragma endregion
+
 	RayCast_Shoot();
 
 	m_bRecoil = true;

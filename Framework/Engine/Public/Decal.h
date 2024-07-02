@@ -42,6 +42,8 @@ public:
 		m_iNumVertices = iNumVertices;
 	}
 	virtual HRESULT				Init_Decal_Texture(_uint iLevel) { return S_OK; }
+	virtual void				Bind_Resource_NonCShader_Decal(class CShader* pShader) {}
+	virtual void				Calc_NonCS_DecalMap(class CShader* pShader) {}
 protected:
 	class CModel* m_pModelCom = { nullptr };
 	class CShader* m_pShaderCom = { nullptr };
@@ -65,6 +67,8 @@ protected:
 	_uint						m_iNumVertices = { 0 };
 
 	_float2*					m_pDecal_Map = { nullptr };
+
+	_float4x4					m_WorldInv;
 protected:
 	_float					m_fSizeX;
 	_float					m_fSizeY;

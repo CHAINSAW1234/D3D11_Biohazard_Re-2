@@ -1026,6 +1026,17 @@ void CMesh::Init_Decal(_uint iLevel)
 	m_pDecal_Blood->Init_Decal_Texture(iLevel);
 }
 
+void CMesh::Bind_Resource_NonCShader_Decal(CShader* pShader)
+{
+	m_pDecal_Blood->Bind_Resource_NonCShader_Decal(pShader);
+}
+
+void CMesh::Calc_NonCS_Decal_Map(CShader* pShader)
+{
+	Bind_Buffers();
+	//Render();
+}
+
 CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::MODEL_TYPE eModelType, const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices, _fmatrix TransformationMatrix)
 {
 	CMesh* pInstance = new CMesh(pDevice, pContext);
