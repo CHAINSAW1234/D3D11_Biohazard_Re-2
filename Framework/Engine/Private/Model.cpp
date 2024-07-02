@@ -3104,6 +3104,24 @@ void CModel::Init_Decal(_uint iLevel)
 	}
 }
 
+void CModel::Bind_Resource_NonCShader_Decal(_uint iIndex, class CShader* pShader)
+{
+	m_Meshes[iIndex]->Bind_Resource_NonCShader_Decal(pShader);
+}
+
+void CModel::Calc_DecalMap_NonCS(CShader* pShader)
+{
+	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
+
+	for (auto& i : NonHideIndex)
+	{
+		pShader->Begin(6);
+		pShader->Bind_Matrices("g_BoneMatrices", m_MeshBoneMatrices, 512);
+		m_Meshes[i]->Bind_Resource_NonCShader_Decal(pShader);
+		m_Meshes[i]->Calc_NonCS_Decal_Map(pShader);
+	}
+}
+
 _uint CModel::Perform_RayCasting(_uint iIndex, AddDecalInfo Info, _float* pDist)
 {
 	return m_Meshes[iIndex]->RayCasting_Decal(Info,pDist);

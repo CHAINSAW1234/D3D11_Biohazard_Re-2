@@ -136,6 +136,8 @@ private: // For AIController
 private:
 	class CModel*						m_pBodyModel = { nullptr };
 	class CModel*						m_pHeadModel = { nullptr };
+	class CModel*						m_pHeadModel2 = { nullptr };
+	class CModel*						m_pHeadModel3 = { nullptr };
 	class CModel*						m_pShirtsModel = { nullptr };
 	class CModel*						m_pShirts2Model = { nullptr };
 	class CModel*						m_pPantsModel = { nullptr };

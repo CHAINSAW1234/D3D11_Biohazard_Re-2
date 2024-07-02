@@ -133,7 +133,7 @@ void CPlayer_State_Hold_Idle::Shot()
 		}
 	}
 
-	if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == PRESSING && m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
+	if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == DOWN && m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
 		if (!m_isShot && m_pPlayer->Get_Body_Model()->Get_BlendWeight(2) == 0.f) {
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(2, 1, 20.f);
 			if (m_pPlayer->IsShotAble()) {

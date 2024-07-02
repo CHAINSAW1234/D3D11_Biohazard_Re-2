@@ -199,6 +199,9 @@ public:
 	void					Bind_Decal_Map(class CShader* pShader);
 
 	void					Init_Decal(_uint iLevel);
+
+	void					Bind_Resource_NonCShader_Decal(class CShader* pShader);
+	void					Calc_NonCS_Decal_Map(class CShader* pShader);
 #pragma endregion
 
 private:

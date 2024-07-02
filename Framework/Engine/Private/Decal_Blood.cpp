@@ -144,10 +144,13 @@ void CDecal_Blood::Bind_DecalMap(CShader* pShader)
 
 HRESULT CDecal_Blood::Init_Decal_Texture(_uint iLevel)
 {
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(iLevel, TEXT("Prototype_Component_Texture_Decal_Blood"),
-		TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
-		return E_FAIL;
+	if(m_pTextureCom == nullptr)
+	{
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(iLevel, TEXT("Prototype_Component_Texture_Decal_Blood"),
+			TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -162,6 +165,17 @@ void CDecal_Blood::Staging_DecalMap()
 	_float2* pDecalMap = reinterpret_cast<_float2*>(mappedResource.pData);
 
 	m_pContext->Unmap(m_pStaging_Buffer_Decal_Map, 0);
+}
+
+void CDecal_Blood::Bind_Resource_NonCShader_Decal(CShader* pShader)
+{
+	_matrix DecalWorldMat = m_pTransformCom->Get_WorldMatrix();
+	_matrix WorldInv = XMMatrixInverse(nullptr, DecalWorldMat);
+	XMStoreFloat4x4(&m_WorldInv, WorldInv);
+
+	pShader->Bind_Matrix("g_DecalMat_Inv", &m_WorldInv);
+	pShader->Bind_Uav("g_DecalMap_Calc", m_pUAV_DecalMap);
+	pShader->Bind_RawValue("g_Decal_Extent", &m_vExtent, sizeof(_float3));
 }
 
 HRESULT CDecal_Blood::Initialize_Prototype()
@@ -302,7 +316,7 @@ HRESULT CDecal_Blood::Initialize(void* pArg)
 			return E_FAIL;
 	}
 
-	m_vExtent = _float3(0.05f,5.f,0.05f);
+	m_vExtent = _float3(0.15f,0.5f,0.15f);
 
 	return S_OK;
 }
@@ -364,4 +378,5 @@ CGameObject* CDecal_Blood::Clone(void* pArg)
 void CDecal_Blood::Free()
 {
 	__super::Free();
+	Safe_Release(m_pTextureCom);
 }

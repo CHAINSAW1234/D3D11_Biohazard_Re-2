@@ -925,6 +925,9 @@ void CMap_UI::Region_Type()
    if (nullptr == m_pInMap_Player->m_pPlayer)
        return;
 
+   if (abs((int)m_eMap_Location) > 100)
+       return;
+
    /* 1. 처음 Player가 입장했을 때 */
    if (MAP_STATE_TYPE::NONE_STATE == m_eMapState && true == m_pInMap_Player->m_pPlayer->Get_Player_Region_Array()[m_eMap_Location])
    {

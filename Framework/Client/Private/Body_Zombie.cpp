@@ -416,8 +416,8 @@ HRESULT CBody_Zombie::Initialize_Model()
 	{
 		if (strMeshTag.find("Body") != string::npos)
 		{
-			//if (strMeshTag.find("Inside") != string::npos)
-			//	continue;
+			if (strMeshTag.find("Inside") != string::npos)
+				continue;
 
 			if (strMeshTag.find("Joint") != string::npos)
 				continue;

@@ -368,6 +368,8 @@ public:/*For Skinned Mesh Decal*/
 	void									SetDecalWorldMatrix(_uint iIndex,_float4x4 WorldMatrix);
 	void									Init_Decal(_uint iLevel);
 
+	void									Bind_Resource_NonCShader_Decal(_uint iIndex,class CShader* pShader);
+	void									Calc_DecalMap_NonCS(class CShader* pShader);
 public:/*For Mesh RayCasting*/
 	_uint									Perform_RayCasting(_uint iIndex, AddDecalInfo Info,_float* pDist);
 
