@@ -34,6 +34,13 @@ public :
 	void							Search_Map_Type(MAP_STATE_TYPE _searType, LOCATION_MAP_VISIT _mapType);
 	void							Change_Search_Type(MAP_STATE_TYPE _searType);
 
+//
+public:
+	void                     Destory_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _locationType, ITEM_NUMBER _ItemType); CGameObject* Search_Item(MAP_FLOOR_TYPE _floorType, ITEM_NUMBER _ItemType);
+private:
+	CGameObject* Search_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _locationType, ITEM_NUMBER _ItemType);
+
+
 private : /* For. Find */
 	void							Find_InMap_Player();
 	void							Find_Player_Target();

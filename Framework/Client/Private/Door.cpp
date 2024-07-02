@@ -27,7 +27,7 @@ HRESULT CDoor::Initialize(void* pArg)
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-	m_bLock = m_tagPropDesc.tagDoor.bLock;
+	//m_bLock = m_tagPropDesc.tagDoor.bLock;
 	if ((m_tagPropDesc.strGamePrototypeName.find("007") != string::npos) || (m_tagPropDesc.strGamePrototypeName.find("038") != string::npos) || (m_tagPropDesc.strGamePrototypeName.find("113") != string::npos))
 		m_eType = DOOR_DOUBLE;
 	else
@@ -323,7 +323,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 	else
 		m_bDoubleCol = false;
 
-	if ((m_bCol|| m_bDoubleCol)&& m_bOnce && !m_bBlock)
+	if ((m_bCol|| m_bDoubleCol)&& m_bOnce && !m_bBlock )
 	{
 		if (m_bLock)
 			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_LOOK, Get_PlayerLook_Degree());
@@ -417,22 +417,7 @@ _float4 CDoor::Get_Object_Pos()
 	return _float4();
 }
 
-_float CDoor::Get_PlayerLook_Degree()
-{
-	_vector vPlayerLook = XMVector4Normalize(m_pPlayerTransform->Get_State_Vector(CTransform::STATE_LOOK));
-	_vector vPlayerPos = m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	_vector vPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
-	_vector vDirection = XMVector4Normalize(vPlayerPos - vPos);
 
-	_float fScala = XMVectorGetX(XMVector4Dot(vPlayerLook, vDirection));
-	if (fScala > 1.f)
-		fScala = 1.f;
-	else if (fScala < -1.f)
-		fScala = -1.f;
-
-
-	return XMConvertToDegrees(fScala);
-}
 
 void CDoor::OneDoor_Tick(_float fTimeDelta)
 {
