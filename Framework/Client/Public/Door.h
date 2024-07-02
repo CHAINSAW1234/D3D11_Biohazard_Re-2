@@ -88,6 +88,7 @@ public:
 		else
 			return false;
 	}
+	_float Get_PlayerLook_Degree();
 
 private:
 

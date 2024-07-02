@@ -37,7 +37,6 @@ HRESULT CInteractProps::Initialize(void* pArg)
 	m_tagPropDesc.BelongIndexs = pObj_desc->BelongIndexs;
 	m_tagPropDesc.iRegionDir = pObj_desc->iRegionDir;
 	m_tagPropDesc.iRegionNum = pObj_desc->iRegionNum;
-	m_tagPropDesc.iFloor = pObj_desc->iFloor;
 	m_tagPropDesc.iPartObj = pObj_desc->iPartObj;
 	m_tagPropDesc.iPropType = pObj_desc->iPropType;
 	m_tagPropDesc.tagDoor = pObj_desc->tagDoor;
@@ -236,23 +235,6 @@ _bool CInteractProps::Visible()
 	}
 
 	return m_bVisible;
-}
-
-_float CInteractProps::Get_PlayerLook_Degree()
-{
-	_vector vPlayerLook = XMVector4Normalize(m_pPlayerTransform->Get_State_Vector(CTransform::STATE_LOOK));
-	_vector vPlayerPos = m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	_vector vPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
-	_vector vDirection = XMVector4Normalize(vPlayerPos - vPos);
-
-	_float fScala = XMVectorGetX(XMVector4Dot(vPlayerLook, vDirection));
-	if (fScala > 1.f)
-		fScala = 1.f;
-	else if (fScala < -1.f)
-		fScala = -1.f;
-
-
-	return XMConvertToDegrees(fScala);
 }
 
 HRESULT CInteractProps::Render_LightDepth_Dir()

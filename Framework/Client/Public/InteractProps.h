@@ -125,6 +125,7 @@ public:
 public:
 	_bool*												Get_Activity() { return &m_bActivity; }
 
+#pragma region NY
 	_bool*												ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
 	_bool*												Selector_Rendering() { return &m_isSelector_Rendering;  }
 
@@ -135,7 +136,7 @@ public:
 
 	_bool												Get_Interact_With_Player_Once() { return m_bFirstInteract; }
 	_int												Get_iItemIndex() { return m_iItemIndex; }
-	_int												Get_Floor() { return m_tagPropDesc.iFloor; }
+
 	_int												Get_Region() { return m_tagPropDesc.iRegionNum; }
 	_int												Get_Type() { return m_tagPropDesc.iPropType; }
 	void												Set_Region(_int iRegion) { m_tagPropDesc.iRegionNum = iRegion; }
@@ -169,15 +170,13 @@ protected:
 
 protected:
 	void												Check_Player();
-	_float											Check_Player_Distance();
-	_float											Check_Player_Distance(_float4 vPos);
+	_float												Check_Player_Distance();
+	_float												Check_Player_Distance(_float4 vPos);
 	_float3											Get_Collider_World_Pos(_float3 vPos);
 	_bool												Check_Col_Sphere_Player();
 	_bool												Check_Col_OBB_Player();
 	_bool												Check_Col_AABB_Player();
 	_bool												Visible();
-	_float											Get_PlayerLook_Degree();
-
 	virtual HRESULT										Add_Components();
 	virtual HRESULT										Add_PartObjects();
 	virtual HRESULT										Initialize_PartObjects();

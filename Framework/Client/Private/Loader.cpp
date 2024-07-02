@@ -814,8 +814,8 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EventProp"), CEventProp::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ItemProp"), CItemProp::Create(m_pDevice, m_pContext));
 
-	//m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ItemLocker"), CItemLocker::Create(m_pDevice, m_pContext));
-	//m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Ladder"), CLadder::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ItemLocker"), CItemLocker::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Ladder"), CLadder::Create(m_pDevice, m_pContext));
 
 
 
