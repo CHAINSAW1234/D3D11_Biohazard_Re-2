@@ -25,7 +25,8 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID)
             (-g_Extent.y <= vPosition.y && vPosition.y <= g_Extent.y) &&
             (-g_Extent.z <= vPosition.z && vPosition.z <= g_Extent.z))
         {
-            g_DecalMap[vertexIndex] = float2(2.f,2.f);
+           // g_DecalMap[vertexIndex] = float2(2.f,2.f);
+            g_DecalMap[vertexIndex] = DecalUV;
         }
     }
 }

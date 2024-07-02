@@ -17,6 +17,7 @@ Texture2D g_AlphaTexture;
 Texture2D g_AOTexture;
 Texture2D g_NoiseTexture;
 Texture2D g_DissolveDiffuseTexture;
+Texture2D g_DecalTexture;
 
 /* For.Dissolve */
 float g_fDissolveRatio = { 0.f };
@@ -34,7 +35,8 @@ matrix g_LightProjMatrix;
 
 bool g_isMotionBlur;
 
-RWStructuredBuffer<float2> g_DecalMap;
+//RWStructuredBuffer<float2> g_DecalMap;
+StructuredBuffer<float2> g_DecalMap;
 
 struct VS_IN
 {
@@ -304,14 +306,27 @@ PS_OUT PS_MAIN(PS_IN In)
 		Out.vMaterial.b = 1.f;
 	}
 
-	if (abs(g_DecalMap[In.iIndex].x - 2.f) < 0.1f && abs(g_DecalMap[In.iIndex].y - 2.f) < 0.1f)
-	{
-		Out.vDiffuse = float4(1.f, 0.f, 0.f, 1.f);
-	}
+	//float2 DecalTexcoord = float2(g_DecalMap[In.iIndex].x, g_DecalMap[In.iIndex].y);
+	//vector vDecalDiffuse = g_DecalTexture.Sample(LinearSampler, DecalTexcoord);
+	//if (abs(DecalTexcoord.x - 0.f) > 0.001f && abs(DecalTexcoord.y - 0.f) > 0.001f)
+	//{
+	//	if(vDecalDiffuse.a > 0.1f)
+	//		Out.vDiffuse = vDecalDiffuse;
+	//}
 
-	if (abs(g_DecalMap[In.iIndex].x - 1.f) < 0.1f && abs(g_DecalMap[In.iIndex].y - 1.f) < 0.1f)
+	// UAV에서 decal 텍스처 좌표 로드
+	float2 DecalTexcoord;
+	DecalTexcoord.x = g_DecalMap[In.iIndex].x;
+	DecalTexcoord.y = g_DecalMap[In.iIndex].y;
+
+	if (abs(DecalTexcoord.x - 0.f) > 0.001f && abs(DecalTexcoord.y - 0.f) > 0.001f)
 	{
-		Out.vDiffuse = float4(0.f, 0.f, 1.f, 1.f);
+		vector vDecalDiffuse = g_DecalTexture.Sample(LinearSampler, DecalTexcoord);
+
+		if (vDecalDiffuse.a > 0.1f)
+		{
+			Out.vDiffuse = float4(0.5f,0.f,0.f,1.f);
+		}
 	}
 
 	return Out;

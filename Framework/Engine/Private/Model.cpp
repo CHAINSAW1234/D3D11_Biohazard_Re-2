@@ -3094,6 +3094,16 @@ void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix)
 	}
 }
 
+void CModel::Init_Decal(_uint iLevel)
+{
+	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
+
+	for (auto& i : NonHideIndex)
+	{
+		m_Meshes[i]->Init_Decal(iLevel);
+	}
+}
+
 _uint CModel::Perform_RayCasting(_uint iIndex, AddDecalInfo Info, _float* pDist)
 {
 	return m_Meshes[iIndex]->RayCasting_Decal(Info,pDist);

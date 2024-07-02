@@ -138,7 +138,18 @@ void CDecal_Blood::Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input)
 
 void CDecal_Blood::Bind_DecalMap(CShader* pShader)
 {
-	pShader->Bind_Uav("g_DecalMap", m_pUAV_DecalMap);
+	pShader->Bind_Structured_Buffer("g_DecalMap", m_pSRV_DecalMap);
+	m_pTextureCom->Bind_ShaderResource(pShader, "g_DecalTexture");
+}
+
+HRESULT CDecal_Blood::Init_Decal_Texture(_uint iLevel)
+{
+	/* For.Com_Texture */
+	if (FAILED(__super::Add_Component(iLevel, TEXT("Prototype_Component_Texture_Decal_Blood"),
+		TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 void CDecal_Blood::Staging_DecalMap()
@@ -279,9 +290,19 @@ HRESULT CDecal_Blood::Initialize(void* pArg)
 
 		if (FAILED(hr))
 			return E_FAIL;
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+		srvDesc.Buffer.NumElements = m_iNumVertices;
+
+		hr = m_pDevice->CreateShaderResourceView(m_pSB_DecalMap, &srvDesc, &m_pSRV_DecalMap);
+
+		if (FAILED(hr))
+			return E_FAIL;
 	}
 
-	m_vExtent = _float3(0.05f,0.3f,0.05f);
+	m_vExtent = _float3(0.05f,5.f,0.05f);
 
 	return S_OK;
 }
