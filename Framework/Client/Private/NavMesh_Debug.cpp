@@ -58,10 +58,7 @@ void CNavMesh_Debug::Tick(_float fTimeDelta)
 	m_fTimeDelay += fTimeDelta;
 	if (m_pPlayer == nullptr)
 		m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-	if (m_pGameInstance->Get_KeyState(VK_F9) == DOWN && m_fTimeDelay > 0.5f)
-		m_bOctotree = !m_bOctotree;
-	if (m_pGameInstance->Get_KeyState(VK_F10) == DOWN && m_fTimeDelay > 0.5f)
-		m_bShadow = !m_bShadow;
+
 }
 
 void CNavMesh_Debug::Late_Tick(_float fTimeDelta)

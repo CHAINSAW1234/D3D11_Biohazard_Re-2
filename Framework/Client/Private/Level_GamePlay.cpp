@@ -1184,6 +1184,13 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 			return E_FAIL;
 		}
 
+
+		if (!ReadFile(hFile, &ObjectDesc.iFloor, sizeof(_int), &dwByte, NULL)) {
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+
 		if (!ReadFile(hFile, &ObjectDesc.iPartObj, sizeof(_int), &dwByte, NULL)) {
 			CloseHandle(hFile);
 			return E_FAIL;
@@ -1197,6 +1204,7 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 			tagInteractprops.BelongIndexs = ObjectDesc.BelongIndexs;
 			tagInteractprops.iIndex = ObjectDesc.iIndex;
 			tagInteractprops.iPropType = ObjectDesc.iPropType;
+			tagInteractprops.iFloor = ObjectDesc.iFloor;
 			tagInteractprops.iRegionDir = ObjectDesc.iRegionDir;
 			tagInteractprops.iRegionNum = ObjectDesc.iRegionNum;
 			tagInteractprops.worldMatrix = ObjectDesc.worldMatrix;

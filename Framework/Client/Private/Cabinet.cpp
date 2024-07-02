@@ -240,10 +240,7 @@ void CCabinet::Active()
 	if (m_bObtain)
 		if (nullptr != m_PartObjects[PART_ITEM]&&!m_bItemDead)
 		{
-			m_bItemDead = { false };
-			//bItemDead = m_pPlayer->Get_Inven(); //창균오빠가 만들 플레이어-인벤 함수
-			m_bItemDead = true;
-			m_PartObjects[PART_ITEM]->Set_Dead(m_bItemDead);
+			m_pPlayer->PickUp_Item(this);
 		}
 }
 
