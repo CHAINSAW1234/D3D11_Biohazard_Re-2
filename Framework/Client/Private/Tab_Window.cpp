@@ -307,7 +307,6 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 	Safe_AddRef(m_pPickedUp_Item);
 
 	_int iPickedUpItemNum = static_cast<CItemProp*>(m_pPickedUp_Item)->Get_iItemIndex();
-	/*_int iPickedUpItemQuant = static_cast<CItemProp*>(m_pPickedUp_Item)->Get_i*/
 	m_pItem_Discription->Set_Item_Number(static_cast<ITEM_NUMBER>(iPickedUpItemNum), 10);
 	m_pInventory_Manager->Set_InventoryEvent(PICK_UP_ITEM);
 }
