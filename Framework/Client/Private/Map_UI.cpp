@@ -2,6 +2,7 @@
 #include "Map_UI.h"
 #include "Tab_Window.h"
 #include "Player.h"
+
 #define RED                     _float4(0.8, 0, 0, 0)
 #define BLUE                    _float4(0.0, 0.7569, 0.85, 0.0)
 #define ALPHA_ZERO              _float4(0, 0, 0, 0)
@@ -20,12 +21,12 @@
 #define MODELMAP_Y_FLOO1     60.4390125   
 
 /* 2층 크기*/
-#define MODELMAP_X_FLOO2      82.097786
-#define MODELMAP_Y_FLOO2      53.2143555  
+#define MODELMAP_X_FLOO2      82.0431098
+#define MODELMAP_Y_FLOO2      38.3414335  
 
 /* 3층 크기*/
-#define MODELMAP_X_FLOO3     71.9617119
-#define MODELMAP_Y_FLOO3     42.3548012  
+#define MODELMAP_X_FLOO3     70.7840423
+#define MODELMAP_Y_FLOO3     38.0877256  
 
 #define FLOOR_TYPE_BLENDING   0.244f /* Floor 선택 시 블렌딩할 값*/
 
@@ -47,6 +48,8 @@ HRESULT CMap_UI::Initialize_Prototype()
 
 HRESULT CMap_UI::Initialize(void* pArg)
 {
+    CGameObject* super = { nullptr };
+
     if (pArg != nullptr)
     {
         if (FAILED(__super::Initialize(pArg)))
@@ -55,6 +58,9 @@ HRESULT CMap_UI::Initialize(void* pArg)
         CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
         
         m_eMap_Location = CustomUIDesc->eMapUI_Type;
+
+        if (m_eMap_Location > LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END)
+            m_eMap_Location = LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END;
 
         m_iWhichChild = CustomUIDesc->iWhich_Child;
 
@@ -65,6 +71,8 @@ HRESULT CMap_UI::Initialize(void* pArg)
         m_eItem_Type = CustomUIDesc->eItem_Number;
 
         m_wstr_ItemName = CustomUIDesc->wstrItemName;
+
+        super = CustomUIDesc->pSupervisor;
     }
 
     /* 부모는 렌더하지 않을 것임*/
@@ -94,6 +102,14 @@ HRESULT CMap_UI::Initialize(void* pArg)
     else if (MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
     {
         Find_Player();
+        CGameObject* pBackGround = Find_MapType(MAP_UI_TYPE::BACKGROUND_MAP);
+
+        if (nullptr != pBackGround)
+        {
+            CTransform* pBackGroundTrans = static_cast<CTransform*>(pBackGround->Get_Component(g_strTransformTag));
+
+            m_vBackGround_Center = pBackGroundTrans->Get_State_Float4(CTransform::STATE_POSITION);
+        }
 
         if (nullptr != m_pPlayer)
         {
@@ -125,23 +141,25 @@ HRESULT CMap_UI::Initialize(void* pArg)
             if (nullptr != pMapUI_List)
             {
                 CGameObject* pMainObj = pMapUI_List->back();
-                CMap_UI* pMainTarget = static_cast<CMap_UI*>(pMainObj);
+                CMap_UI* pMainTarget = static_cast<CMap_UI*>(super);
 
                 if (nullptr != pMainObj)
                 {
                     if (pMainTarget->m_eMapComponent_Type == MAP_UI_TYPE::TARGET_MAP)
                     {
-                        if (false == pMainTarget->m_IsChild) /* 직속 상관이라면 */
-                            m_pTarget_Main = pMainTarget;
+                        //if (false == pMainTarget->m_IsChild) /* 직속 상관이라면 */
+                        //    m_pTarget_Main = pMainTarget;
 
-                        else if (true == pMainTarget->m_IsChild)
-                            m_pTarget_Main = pMainTarget->m_pTarget_Main;
+                        //else if (true == pMainTarget->m_IsChild)
+                        //    m_pTarget_Main = pMainTarget->m_pTarget_Main;
+
+                        m_pTarget_Main = static_cast<CMap_UI*>(super);
 
                         if (nullptr != m_pTarget_Main)
                         {
                             //Safe_AddRef<CMap_UI*>(m_pTarget_Main);
 
-                            CTransform* pMainTarget_Transform = static_cast<CTransform*>(m_pTarget_Main->Get_Component(g_strTransformTag));
+                            CTransform* pMainTarget_Transform = static_cast <CTransform*>(m_pTarget_Main->Get_Component(g_strTransformTag));
 
                             m_pTarget_Transform = pMainTarget_Transform;
 
@@ -157,7 +175,7 @@ HRESULT CMap_UI::Initialize(void* pArg)
                             else if (vMainTarget_Trans.x < vSubTarget_Trans.x && ZERO == vSubTarget_Trans.y)
                             {
                                 m_eSubTarget_Type = SUB_TARGET_TYPE::RIGHT_TARGET;
-                                m_fTarget_Distance = abs(vSubTarget_Trans.x - vMainTarget_Trans.x);
+                                m_fTarget_Distance = vSubTarget_Trans.x - vMainTarget_Trans.x;
                             }
 
                             else if (vMainTarget_Trans.y > vSubTarget_Trans.y)
@@ -180,7 +198,11 @@ HRESULT CMap_UI::Initialize(void* pArg)
 
     else if (MAP_UI_TYPE::TARGET_NOTIFY == m_eMapComponent_Type)
     {
-        Find_Player_Target(); /* 플레이어 타겟팅 */
+        /* 플레이어 타겟팅 */
+        CGameObject* pTarget = Find_MapType(MAP_UI_TYPE::TARGET_MAP); 
+        m_pTarget_Main = static_cast<CMap_UI*>(pTarget);
+        m_pTarget_Transform = static_cast<CTransform*>(m_pTarget_Main->Get_Component(g_strTransformTag));
+
         Find_Item(); /* 아이템 */
 
         if (m_ItemStore_Vec[0].empty() || m_ItemStore_Vec[1].empty() || m_ItemStore_Vec[2].empty())
@@ -217,10 +239,6 @@ HRESULT CMap_UI::Initialize(void* pArg)
             m_vOriginTextColor = m_vecTextBoxes.back()->Get_FontColor();
     }
 
-    else if (MAP_UI_TYPE::ITEM_MAP == m_eMapComponent_Type)
-    {
-    }
-
     if (!m_vecTextBoxes.empty())
     {
         m_vOriginTextColor = m_vecTextBoxes.back()->Get_FontColor();
@@ -242,18 +260,18 @@ HRESULT CMap_UI::Initialize(void* pArg)
 
 void CMap_UI::Tick(_float fTimeDelta)
 {
-    /*
-    1. Map Player는 실제 Player의 객체를 들고 있을 것이다
-    */
     __super::Tick(fTimeDelta);
 
     if (nullptr == m_pInMap_Player)
     {
-        Find_InMap_Player();
+        CGameObject* pMapPlayer = Find_MapType(MAP_UI_TYPE::PLAYER_MAP);
+        m_pInMap_Player = static_cast<CMap_UI*>(pMapPlayer);
+        m_pInMap_PlayerTrans = static_cast<CTransform*>(m_pInMap_Player->Get_Component(g_strTransformTag));
 
         if (nullptr == m_pInMap_Player)
             MSG_BOX(TEXT("Map UI의 Target이 InMap 안의 Player를 찾을 수 없습니다."));
     }
+
 
     /* 1. Render */
     Render_Condition(fTimeDelta);   /* Render 여부*/
@@ -275,6 +293,7 @@ void CMap_UI::Tick(_float fTimeDelta)
 
 void CMap_UI::Late_Tick(_float fTimeDelta)
 {
+    // Map_Transform();
     __super::Late_Tick(fTimeDelta);
 }
 
@@ -284,6 +303,15 @@ HRESULT CMap_UI::Render()
         return E_FAIL;
 
     return S_OK;
+}
+
+void CMap_UI::Start()
+{
+    
+}
+
+void CMap_UI::OnNotify()
+{
 }
 
 void CMap_UI::Search_Map_Type(MAP_STATE_TYPE _searType, LOCATION_MAP_VISIT _mapType)
@@ -315,29 +343,7 @@ void CMap_UI::Change_Search_Type(MAP_STATE_TYPE _searType)
     }
 }
 
-void CMap_UI::Find_InMap_Player()
-{
-    list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
-
-    if (nullptr != pUIList)
-    {
-        for (auto& iter : *pUIList)
-        {
-            m_pInMap_Player = dynamic_cast<CMap_UI*>(iter);
-
-            if (nullptr != m_pInMap_Player && MAP_UI_TYPE::PLAYER_MAP == m_pInMap_Player->m_eMapComponent_Type)
-            {
-                m_pInMap_PlayerTrans = static_cast<CTransform*>(m_pInMap_Player->Get_Component(g_strTransformTag));
-
-                //Safe_AddRef<CMap_UI*>(m_pInMap_Player);
-                //Safe_AddRef<CTransform*>(m_pInMap_PlayerTrans);
-                return;
-            }
-        }
-    }  
-}
-
-void CMap_UI::Find_Player_Target()
+CGameObject* CMap_UI::Find_MapType(MAP_UI_TYPE _mapType)
 {
     list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
 
@@ -347,18 +353,14 @@ void CMap_UI::Find_Player_Target()
         {
             CMap_UI* pTarget_UI = dynamic_cast<CMap_UI*>(iter);
 
-            if (nullptr != pTarget_UI && MAP_UI_TYPE::TARGET_MAP == pTarget_UI->m_eMapComponent_Type)
+            if (nullptr != pTarget_UI && _mapType == pTarget_UI->m_eMapComponent_Type)
             {
-                m_pTarget_Main = pTarget_UI;
-
-               // Safe_AddRef<CMap_UI*>(m_pTarget_Main);
-
-                m_pTarget_Transform = static_cast<CTransform*>(m_pTarget_Main->Get_Component(g_strTransformTag));
-
-                return;
+                return pTarget_UI;
             }
         }
     }
+
+    return nullptr;
 }
 
 /* Floor를 Sotring 해서 구분해 준다.  */
@@ -629,6 +631,51 @@ void CMap_UI::Player_Transform(_float fTimeDelta)
     m_pTransformCom->Set_State(CTransform::STATE_POSITION, vMiniMapPlayer);
 }
 
+void CMap_UI::Map_Transform()
+{
+    if (m_isPrevMapRender != m_pTab_Window->Get_MinMapRender())
+    {
+        if (MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
+        {
+            list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+            for (auto& iter : *pUIList)
+            {
+                CMap_UI* pMainMapUI = dynamic_cast<CMap_UI*>(iter);
+
+                if (nullptr != pMainMapUI)
+                {
+                    if (MAP_UI_TYPE::MAIN_MAP == pMainMapUI->m_eMapComponent_Type)
+                    {
+                        CTransform* pMainTrans = static_cast<CTransform*>(pMainMapUI->Get_Component(g_strTransformTag));
+                        _float4 vMainTrans = pMainTrans->Get_State_Float4(CTransform::STATE_POSITION);
+                        _float4 vPlayertrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+                        _vector Main = XMVectorSet(vMainTrans.x, vMainTrans.y, vMainTrans.z, vMainTrans.w);
+                        _vector Player = XMVectorSet(vPlayertrans.x, vPlayertrans.y, vPlayertrans.z, vPlayertrans.w);
+
+                        _vector difference = Main - Player;
+                        m_vMapOpen_Normalize = XMVector4Normalize(Main - Player);
+                        m_vMapOpen_Player_Distance = XMVectorGetX(XMVector4Length(difference));
+                    }
+                }
+            }
+        }
+
+        /* Open 시에 Map Position */
+        if (MAP_UI_TYPE::MAIN_MAP == m_eMapComponent_Type)
+        {
+            _float4 vPlayerTrans = m_pInMap_PlayerTrans->Get_State_Float4(CTransform::STATE_POSITION);
+            _vector Player = XMVectorSet(vPlayerTrans.x, vPlayerTrans.y, vPlayerTrans.z, vPlayerTrans.w);
+
+            _vector vCurrentMain_Pos = Player + XMVectorScale(m_vMapOpen_Normalize, m_vMapOpen_Player_Distance);
+            m_pTransformCom->Set_State(CTransform::STATE_POSITION, Player);
+        }
+
+        m_isPrevMapRender = m_pTab_Window->Get_MinMapRender();
+    }
+}
+
 /* Floor를 검색할 때 */
 void CMap_UI::FloorType_Search()
 {
@@ -672,6 +719,7 @@ void CMap_UI::Change_Floor()
         /* 1. 만약 Floor을 열었다면 Map Player에게 현재 Floor를 전달해줄 것임.*/
         OpenMap();
     }
+
     /* 2. Floor 직접 교체 */
     else if (MAP_UI_TYPE::FLOOR_TYPE_MAP == m_eMapComponent_Type)
     {
@@ -683,7 +731,7 @@ void CMap_UI::Change_Floor()
 void CMap_UI::OpenMap()
 {
     /* ▶ 처음 맵을 열었을 때 플레이어의 위치에 Floor가 존재해야 한다. */
-    if (m_isPrevMapRender == m_pTab_Window->Get_MinMapRender())
+    if (m_isPrevMapRender != m_pTab_Window->Get_MinMapRender())
     {
         /* 1. 현재 Player가 들고 있는 Floor를 Render 할 것이다. */
         m_pInMap_Player->m_eCurrent_Floor = static_cast<MAP_FLOOR_TYPE>(m_pPlayer->Get_Player_Floor());
@@ -711,21 +759,18 @@ void CMap_UI::OpenMap()
         /* 3. Player를 BackGround 중심점으로 가져다 두고 
         그 이동 값 만큼 다른 것들도 움직여준다. */
 
-        if (m_eMapComponent_Type == MAP_UI_TYPE::BACKGROUND_MAP)
+        // Player에게 BackGround 고정 값을 부여함
+        if (nullptr == m_pInMap_PlayerTrans)
+            MSG_BOX(TEXT(" BackGround Map에 Player를 찾을 수 없습니다."));
+
+        else
         {
-            if (nullptr == m_pInMap_PlayerTrans)
-                MSG_BOX(TEXT(" BackGround Map에 Player를 찾을 수 없습니다."));
+            _float4 vPlayerTrans = m_pInMap_PlayerTrans->Get_State_Float4(CTransform::STATE_POSITION);
 
-            else
-            {
-                _float4 vPlayerTrans = m_pInMap_PlayerTrans->Get_State_Float4(CTransform::STATE_POSITION);
-                _float4 vBackGroundTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+            vPlayerTrans.x = m_vBackGround_Center.x;
+            vPlayerTrans.y = m_vBackGround_Center.y;
 
-                vPlayerTrans.x = vBackGroundTrans.x;
-                vPlayerTrans.y = vBackGroundTrans.y;
-
-                m_pInMap_PlayerTrans->Set_State(CTransform::STATE_POSITION, vPlayerTrans);
-            }
+            m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPlayerTrans);
         }
 
         m_isPrevMapRender = m_pTab_Window->Get_MinMapRender();
@@ -835,12 +880,6 @@ void CMap_UI::Render_Condition(_float fTimeDelta)
 
             else if (m_eFloorType == m_pInMap_Player->m_eCurrent_Floor || MAP_FLOOR_TYPE::FLOOR_FREE == m_eFloorType)
             {
-                if(true == m_isLastPosition)
-                {
-                    //m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vLastPosition);
-                    m_isLastPosition = false;
-                }
-
                 m_isRender = true;
 
                 if (m_fBlending <= m_fOrigin_Blending)
@@ -886,6 +925,14 @@ void CMap_UI::Render_Condition(_float fTimeDelta)
                     {
                         m_fBlending = 1.f;
                         m_isRender = false;
+                        
+                        if(true == m_isLastPosition)
+                        {
+                            m_isLastPosition = false;
+
+                            m_vLastPosition.z = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).z;
+                            m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vLastPosition);
+                        }
                       
                     }
 
@@ -894,11 +941,23 @@ void CMap_UI::Render_Condition(_float fTimeDelta)
                         /* 1. 객체 마지막 위치 저장 */
                         if (false == m_isLastPosition)
                         {
-                          //  m_vLastPosition = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+                            m_vLastPosition = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
                             m_isLastPosition = true;
                         }
 
-                        /* 2. 객체 Blending 보간 */
+                        /* 변경할 때 위로 살짝 올라가게 함*/
+                        if(MAP_UI_TYPE::FONT_MAP != m_eMapComponent_Type)
+                        {
+                            _float4x4 m_fStoreRotation = m_pTransformCom->Get_RotationMatrix_Pure();
+                            _matrix RotationMatrix = XMMatrixIdentity();
+                            m_pTransformCom->Set_RotationMatrix_Pure(RotationMatrix);
+                            m_pTransformCom->Go_Up(5.f);
+                            m_pTransformCom->Set_RotationMatrix_Pure(m_fStoreRotation);
+                        }
+                        
+
+                        /* 2. 객체 Blending해서 자연스럽게 사라지기 */
+                        m_vCurrentColor.w = 0.f; /* 혹시 모르니까 알파 값은 0으로 무조건 유지해두기 */
                         m_fBlending += fTimeDelta * BLENDING_SPEED;
                     }
                 }
@@ -913,7 +972,7 @@ void CMap_UI::Render_Condition(_float fTimeDelta)
     }
 
     /* Player 를 조준하는 Player Target */
-    else if (MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
+    if (MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
     {
         Map_Target_Control(fTimeDelta);
     }
@@ -1061,7 +1120,7 @@ void CMap_UI::Map_Target_Control(_float fTimeDelta)
                 _float4 vCurrentLine = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
                 vCurrentLine.y = vMainTarget.y;
-                vCurrentLine.x = vMainTarget.x + m_fTarget_Distance;
+                vCurrentLine.x = vMainTarget.x - m_fTarget_Distance;
                 vCurrentLine.z = 0.08f;
 
                 m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCurrentLine);
@@ -1073,7 +1132,7 @@ void CMap_UI::Map_Target_Control(_float fTimeDelta)
                 _float4 vCurrentLine = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
                 vCurrentLine.y = vMainTarget.y;
-                vCurrentLine.x = vMainTarget.x - m_fTarget_Distance;
+                vCurrentLine.x = vMainTarget.x + m_fTarget_Distance;
                 vCurrentLine.z = 0.08f;
 
                 m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCurrentLine);
@@ -1085,7 +1144,7 @@ void CMap_UI::Map_Target_Control(_float fTimeDelta)
                 _float4 vCurrentLine = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
                 vCurrentLine.x = vMainTarget.x;
-                vCurrentLine.y = vMainTarget.y - m_fTarget_Distance;
+                vCurrentLine.y = vMainTarget.y + m_fTarget_Distance;
                 vCurrentLine.z = 0.08f;
 
                 m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCurrentLine);
@@ -1097,7 +1156,7 @@ void CMap_UI::Map_Target_Control(_float fTimeDelta)
                 _float4 vCurrentLine = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
                 vCurrentLine.x = vMainTarget.x;
-                vCurrentLine.y = vMainTarget.y + m_fTarget_Distance;
+                vCurrentLine.y = vMainTarget.y - m_fTarget_Distance;
                 vCurrentLine.z = 0.08f;
 
                 m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCurrentLine);

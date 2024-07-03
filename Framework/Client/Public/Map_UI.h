@@ -1,10 +1,10 @@
 #pragma once
-#include "Client_Defines.h"
 #include "Interact_UI.h"
+#include "Observer.h"
 
 BEGIN(Client)
 
-class CMap_UI final : public CInteract_UI
+class CMap_UI final : public CInteract_UI, public CObserver
 {
 private :
 	enum class MAP_CHILD_TYPE { PARENT_MAP, BACKGROUND_MAP, LINE_MAP, END_MAP };
@@ -29,14 +29,17 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+private : 
+	virtual void Start() override;
+	virtual void OnNotify() override;
+
 
 public :
 	void							Search_Map_Type(MAP_STATE_TYPE _searType, LOCATION_MAP_VISIT _mapType);
 	void							Change_Search_Type(MAP_STATE_TYPE _searType);
 
 private : /* For. Find */
-	void							Find_InMap_Player();
-	void							Find_Player_Target();
+	CGameObject*					Find_MapType(MAP_UI_TYPE _mapType);
 
 	void							Find_MapStateType(CUSTOM_UI_DESC* CustomUIDesc); /* Map Type 지정 */
 	void							Find_Item();
@@ -59,6 +62,7 @@ private : /* For.Transform */
 	void							Mouse_Pos(_float fTimeDelta);
 	void							Transform_Adjustment();
 	void							Player_Transform(_float fTimeDelta);
+	void							Map_Transform();
 
 private: /* For.Control*/
 	void							Map_Player_Control(_float fTimeDelta);
@@ -80,6 +84,8 @@ private : /* Init */
 
 private : /* Region*/
 	LOCATION_MAP_VISIT				m_eMap_Location						= { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
+	_float							m_vMapOpen_Player_Distance			= {};
+	_vector							m_vMapOpen_Normalize				= {};
 
 private : /* Floor */
 	MAP_UI_TYPE						m_eMapComponent_Type				= { MAP_UI_TYPE::END_MAP };
@@ -119,6 +125,8 @@ private : /* Player */
 	_float4							m_vPlayer_MovePos					= {};
 	_float4							m_vPlayer_InitPos					= {};
 
+	/* Player의 Default 중심점 */
+	_float4							m_vBackGround_Center				= {};
 
 
 private : /* Target */
@@ -139,10 +147,10 @@ private : /* Target */
 
 
 private : /* For. Item */
-	ITEM_NUMBER				m_eItem_Type	= { ITEM_NUMBER::ITEM_NUMBER_END }; /* 아이템 종류 */
-	LOCATION_MAP_VISIT		m_ePrevRegion	= { LOCATION_MAP_VISIT::MAIN_HOLL };
-	_bool					m_isItemRender	= { false };
-	wstring					m_wstr_ItemName = { TEXT("") };
+	ITEM_NUMBER						m_eItem_Type	= { ITEM_NUMBER::ITEM_NUMBER_END }; /* 아이템 종류 */
+	LOCATION_MAP_VISIT				m_ePrevRegion	= { LOCATION_MAP_VISIT::MAIN_HOLL };
+	_bool							m_isItemRender	= { false };
+	wstring							m_wstr_ItemName = { TEXT("") };
 
 
 public:

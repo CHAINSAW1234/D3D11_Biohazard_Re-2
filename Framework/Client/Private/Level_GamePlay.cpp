@@ -406,11 +406,20 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
+	///////////////////////////* ¢º  ¢º  ¢º  ¢º  ¢º   BULLET  */////////////////////////////
 	/* 5. Bullet_UI */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Bullet_UI.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
+	/* 5. UI_Bullet_Grenade */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Bullet_Grenade.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+	
+	///////////////////////////* ¢º  ¢º  ¢º  ¢º  ¢º   */////////////////////////////
 
 	/* 5. UI_Sub_Inventory */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Sub_Inventory.dat");
@@ -809,7 +818,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 	}
 
 	/* 4. MainHPBar_UI */
-	else if (TEXT("Bullet_UI") == fileName)
+	else if (TEXT("Bullet_UI") == fileName || TEXT("UI_Bullet_Grenade") == fileName)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Bullet_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));

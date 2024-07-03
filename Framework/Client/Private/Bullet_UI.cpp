@@ -13,6 +13,7 @@
 #define ALPHA_ZERO _float4(0, 0, 0, 0)
 
 #define BULLET_UI_LIFE 2.f
+#define BULLET_BACKGROUND 999
 
 CBullet_UI::CBullet_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CCustomize_UI{ pDevice, pContext }
@@ -36,80 +37,150 @@ HRESULT CBullet_UI::Initialize(void* pArg)
     부모 : BackGround Black
     자식 : Font 및 Line 
     */
-    if (FAILED(__super::Initialize(pArg)))
-        return E_FAIL;
-
-    if (true == m_IsChild)
+    if (pArg != nullptr)
     {
-        for (auto& iter : m_vecTextBoxes)
+        if (FAILED(__super::Initialize(pArg)))
+            return E_FAIL;
+
+        CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
+
+        m_wstrFile = CustomUIDesc->wstrFileName;
+    }
+
+    if(TEXT("Bullet_UI") == m_wstrFile)
+    {
+        m_iEqipType = (_int)CPlayer::EQUIP::HG;
+
+        if (true == m_IsChild)
         {
-            CTransform* pTextTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
-
-            if (m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x > pTextTrans->Get_State_Float4(CTransform::STATE_POSITION).x)
+            for (auto& iter : m_vecTextBoxes)
             {
-                m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText = iter;
-                m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Text(TEXT("10"));
-                m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].vOriginTextColor = iter->Get_FontColor();
-                m_fOrigin_TextColor = iter->Get_FontColor();
+                CTransform* pTextTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
 
-                m_fFull_CurrentBullet_Transform = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
-                m_fFull_CurrentBullet_Transform.x -= 7.f;
-
-                m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt = m_iCurrentBullet = 10;
-
-            }
-
-            else
-            {
-                m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText = iter;
-                m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Text(TEXT("0"));
-                m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].vOriginTextColor = iter->Get_FontColor();
-                m_fOrigin_TextColor = iter->Get_FontColor();
-               
-                /*임의로 내려주기*/
+                if (m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x > pTextTrans->Get_State_Float4(CTransform::STATE_POSITION).x)
                 {
-                    CTransform* pStoreFont_Pos = static_cast<CTransform*>(m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Get_Component(g_strTransformTag));
-                    _float4 vStoreFont_Pos = pStoreFont_Pos->Get_State_Float4(CTransform::STATE_POSITION);
-                    vStoreFont_Pos.y += 30.f;
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText = iter;
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_Text(TEXT("10"));
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].vOriginTextColor = iter->Get_FontColor();
+                    m_fOrigin_TextColor = iter->Get_FontColor();
+
+                    m_fFull_CurrentBullet_Transform = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
+                    m_fFull_CurrentBullet_Transform.x -= 7.f;
+
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt = m_iCurrentBullet = 10;
+
                 }
 
-                m_fFull_StoreBullet_Transform = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
-                m_fFull_StoreBullet_Transform.x += 7.f;
+                else
+                {
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText = iter;
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_Text(TEXT("0"));
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].vOriginTextColor = iter->Get_FontColor();
+                    m_fOrigin_TextColor = iter->Get_FontColor();
 
-                m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt = m_iStoreBullet = 0;
+                    /*임의로 내려주기*/
+                    {
+                        CTransform* pStoreFont_Pos = static_cast<CTransform*>(m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Get_Component(g_strTransformTag));
+                        _float4 vStoreFont_Pos = pStoreFont_Pos->Get_State_Float4(CTransform::STATE_POSITION);
+                        vStoreFont_Pos.y += 30.f;
+                    }
+
+                    m_fFull_StoreBullet_Transform = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
+                    m_fFull_StoreBullet_Transform.x += 7.f;
+
+                    m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].iBulletCnt = m_iStoreBullet = 0;
+                }
             }
         }
+        else
+        {
+            m_fBlending += 0.1f;
+            m_iEqipType = BULLET_BACKGROUND;
+        }
     }
-    else
-        m_fBlending += 0.1f;
 
+    else if (TEXT("UI_Bullet_Grenade") == m_wstrFile)
+    {
+        m_iEqipType = (_int)CPlayer::EQUIP::GN;
+    }
+
+    if (!m_vecTextBoxes.empty())
+    {
+        m_vOriginTextColor = m_vecTextBoxes.back()->Get_FontColor();
+
+        for (auto& iter : m_vecTextBoxes)
+        {
+            iter->Set_FontColor(ALPHA_ZERO);
+        }
+    }
+
+    /* Find 함수 */
     Find_Crosshair();
-    m_isRender = false;
-    m_isPlay = false;
+    Find_Player();
 
-    m_isBlending = true;
-    m_vColor[0].isColorChange = m_isColorChange = true;
-    m_vColor[0].vColor = m_vCurrentColor = ALPHA_ZERO;
+    /* Tool 기능 고정하기*/
+    {
+        m_isRender = false;
+        m_isPlay = false;
 
-    m_fOrigin_Blending = m_vColor[0].fBlender_Value = m_fBlending;
-    m_vColor[0].isBlender = m_isBlending = true;
+        m_isBlending = true;
+        m_vColor[0].isColorChange = m_isColorChange = true;
+        m_vColor[0].vColor = m_vCurrentColor = ALPHA_ZERO;
 
-    m_isLightMask = false;
-    m_isMask = true;
-    m_fMaskControl.x = 0.3f;
-    m_fMaskControl.y = 0.4f;
+        m_fOrigin_Blending = m_vColor[0].fBlender_Value = m_fBlending;
+        m_vColor[0].isBlender = m_isBlending = true;
 
-    m_iCurrentBullet = 1;
+        m_isLightMask = false;
+        m_isMask = true;
+        m_fMaskControl.x = 0.3f;
+        m_fMaskControl.y = 0.4f;
+
+        m_iCurrentBullet = 1;
+    }
 
     return S_OK;
 }
 
 void CBullet_UI::Tick(_float fTimeDelta)
 {
-    __super::Tick(fTimeDelta);    
+    __super::Tick(fTimeDelta);
 
-    /* 만약 크로스헤어가 출력되었다면 유지, 크로스헤어가 유지되고 끝난 뒤로부터 BULLET_UI_LIFE(2.5f)만큼 출력한다.*/
-    Render_Bullet_UI(fTimeDelta);
+    if (CPlayer::EQUIP::HG == m_pPlayer->Get_Equip())
+    {
+        if (m_iEqipType == (_int)CPlayer::EQUIP::HG || m_iEqipType == BULLET_BACKGROUND)
+            Render_Bullet_UI(fTimeDelta);
+
+        else
+        {
+            m_fBulletTimer = 0.f;
+            m_fBlending = 1.f;
+            m_isRender = m_isKeepCross = false;
+        }
+    }
+
+    else if (CPlayer::EQUIP::GN == m_pPlayer->Get_Equip())
+    {
+        if (m_iEqipType == (_int)CPlayer::EQUIP::GN || m_iEqipType == BULLET_BACKGROUND)
+            Change_Grenade(fTimeDelta);
+
+        else
+        {
+            m_fBulletTimer = 0.f;
+            m_fBlending = 1.f;
+            m_isRender = m_isKeepCross = false;
+        }
+    }
+
+    else if(CPlayer::EQUIP::NONE == m_pPlayer->Get_Equip())
+    {
+        if (m_fBlending >= 1.f)
+            m_fBlending = 1.f;
+
+        else
+            m_fBlending += fTimeDelta * 1.5f;
+    }
+
+    Bullet_Font();
 
     if (m_iCurrentBullet < 1)
         Mission_Complete();
@@ -144,6 +215,57 @@ void CBullet_UI::Mission_Complete()
     *pPlayer->Get_Tutorial_Type() = UI_TUTORIAL_TYPE::TUTORIAL_REROAD;
 }
 
+void CBullet_UI::Bullet_Font()
+{
+    /*Font*/
+    if(m_iEqipType == CPlayer::EQUIP::HG)
+    {
+        if (!m_vecTextBoxes.empty() && false == m_isKeepCross)
+        {
+            m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_FontColor(ALPHA_ZERO);
+            m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_FontColor(ALPHA_ZERO);
+
+            return;
+        }
+
+        else if (!m_vecTextBoxes.empty() && true == m_isKeepCross)
+        {
+            _float4 result_Current = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].vOriginTextColor;
+            _float4 result_Store = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].vOriginTextColor;
+
+            m_pTextUI[0].pText->Set_FontColor(result_Current);
+            m_pTextUI[1].pText->Set_FontColor(result_Store);
+        }
+    }
+
+    else if(m_iEqipType == CPlayer::EQUIP::GN)
+    {
+        if (!m_vecTextBoxes.empty())
+        {
+            _float4 result = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * _float4(1.f, 1.f, 1.f, 1.f);
+            m_vecTextBoxes.back()->Set_FontColor(result);
+        }
+    }
+}
+
+/* 수류탄 */
+void CBullet_UI::Change_Grenade(_float fTimeDelta)
+{
+    /* Font : 수류탄 개수 넣어주기 */
+    m_isRender = true;
+
+    if(!m_vecTextBoxes.empty())
+        m_vecTextBoxes.back()->Set_Text(to_wstring(m_iCurrentBullet));
+
+    /* 이미 출력을 끈 상태 */
+    if (m_fBlending <= 0.f)
+        m_fBlending = 0.f;
+
+    else
+        m_fBlending -= fTimeDelta * 1.5f;
+}
+
+
 void CBullet_UI::Start()
 {
     CPlayer* pPlayer = dynamic_cast<CPlayer*>(m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_Player"), 0));
@@ -155,8 +277,6 @@ void CBullet_UI::Start()
     pPlayer->RegisterObserver(this);
 
     OnNotify();
-    
- 
 }
 
 
@@ -299,23 +419,6 @@ void CBullet_UI::Render_Bullet_UI(_float fTimeDelta)
             else
                 m_fBlending -= fTimeDelta * 1.5f;
         }
-    }
-
-    /*Font*/
-    if (!m_vecTextBoxes.empty() && false == m_isKeepCross)
-    {
-        m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_FontColor(ALPHA_ZERO);
-        m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_FontColor(ALPHA_ZERO);
-
-        return;
-    }
-    else if (!m_vecTextBoxes.empty() && true == m_isKeepCross)
-    {
-        _float4 result_Current = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].vOriginTextColor;
-        _float4 result_Store = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].vOriginTextColor;
-
-        m_pTextUI[0].pText->Set_FontColor(result_Current);
-        m_pTextUI[1].pText->Set_FontColor(result_Store);
     }
 }
 

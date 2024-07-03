@@ -39,13 +39,13 @@ HRESULT CCrosshair_UI::Initialize(void* pArg)
         wstrFileName = CustomUIDesc->wstrFileName;
 
         if (TEXT("UI_Crosshair") == wstrFileName)
-            m_eGun_Type = GUN_TYPE::DEFAULT_GUN;
+            m_eGun_Type = (_int)CPlayer::EQUIP::HG;
 
-        else if(TEXT("UI_ShotGun_Crosshair") == wstrFileName)
-            m_eGun_Type = GUN_TYPE::SHOT_GUN;
+        else if (TEXT("UI_ShotGun_Crosshair") == wstrFileName)
+            m_eGun_Type = (_int)CPlayer::EQUIP::STG;
     }
 
-    if(GUN_TYPE::DEFAULT_GUN == m_eGun_Type)
+    if ((_int)CPlayer::EQUIP::HG == m_eGun_Type)
     {
         m_vCrosshair_OriginPos = m_fCorsshair_AimPoint = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
         m_vCrosshair_OriginScale = m_pTransformCom->Get_Scaled();
@@ -133,27 +133,18 @@ void CCrosshair_UI::Tick(_float fTimeDelta)
     else
         m_isAiming = false;
 
-    /* 예시 코드 : 8 누르면 m_eCurrentGun_Type이 어떤 총인지 바뀌게 해 놓음 */
-    if (DOWN == m_pGameInstance->Get_KeyState('8'))
-    {
-        if (m_eCurrentGun_Type == GUN_TYPE::SHOT_GUN)
-            m_eCurrentGun_Type = GUN_TYPE::DEFAULT_GUN;
-        else
-            m_eCurrentGun_Type = GUN_TYPE::SHOT_GUN;
-    }
-
     /* Inventory (Main Render)가 열리지 않을 때 or 무기를 사용하지 않을 때는 Crosshair와 Bullet UI을 없애자 .*/
     if (true == *m_pTabWindow->Get_MainRender() && CPlayer::EQUIP::NONE != m_pPlayer->Get_Equip())
     {
-        if (GUN_TYPE::DEFAULT_GUN == m_eCurrentGun_Type)
+        if (CPlayer::EQUIP::HG == m_pPlayer->Get_Equip())
         {
-            if (GUN_TYPE::DEFAULT_GUN == m_eGun_Type)
+            if ((_int)CPlayer::EQUIP::HG == m_eGun_Type)
                 Operate_DefaultGun(fTimeDelta);
         }
 
-        else if (GUN_TYPE::SHOT_GUN == m_eCurrentGun_Type)
+        else if (CPlayer::EQUIP::STG == m_pPlayer->Get_Equip())
         {
-            if (GUN_TYPE::SHOT_GUN == m_eGun_Type)
+            if ((_int)CPlayer::EQUIP::STG == m_eGun_Type)
                 Operate_ShotGun(fTimeDelta);
         }
     }
@@ -163,7 +154,6 @@ void CCrosshair_UI::Tick(_float fTimeDelta)
         m_isRender = false;
         m_isShoot = false;
     }
-
 }
 
 void CCrosshair_UI::Late_Tick(_float fTimeDelta)
