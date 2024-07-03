@@ -34,7 +34,6 @@ HRESULT CNewpoliceStatue::Initialize(void* pArg)
 
 void CNewpoliceStatue::Tick(_float fTimeDelta)
 {
-	__super::Check_Player();
 	if (!m_bVisible)
 	{
 		//m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());

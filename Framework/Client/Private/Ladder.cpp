@@ -36,7 +36,6 @@ HRESULT CLadder::Initialize(void* pArg)
 
 void CLadder::Tick(_float fTimeDelta)
 {
-	__super::Check_Player();
 	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 	m_pColliderCom[INTERACTPROPS_COL_AABB]->Tick(m_pTransformCom->Get_WorldMatrix());
 
@@ -50,7 +49,7 @@ void CLadder::Tick(_float fTimeDelta)
 	if (m_bCol || m_bDownCol)
 	{
 		//UI띄우고
-		if (*m_pPlayerInteract)
+		if (*m_pPlayerInteract||m_bOnce)
 			Active();
 		m_bCol = false;
 	}
@@ -96,8 +95,8 @@ HRESULT CLadder::Add_Components()
 {
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(100.f);
-	ColliderDesc.vCenter = _float3(0.f, 1.f, 0.f);
+	ColliderDesc.fRadius = _float(1.f);
+	ColliderDesc.vCenter = _float3(0.f, -0.5f, -0.2f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider_Shpere"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
@@ -105,8 +104,8 @@ HRESULT CLadder::Add_Components()
 	
 	CBounding_AABB::BOUNDING_AABB_DESC		ColliderDesc_aabb{};
 
-	ColliderDesc_aabb.vCenter = _float3(0.f, 1.f, 0.f);
-	ColliderDesc_aabb.vSize = _float3(100.f, 100.f, 100.f);
+	ColliderDesc_aabb.vCenter = _float3(0.1f, 5.8f, 0.f);
+	ColliderDesc_aabb.vSize = _float3(1.f, 1.f, 1.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider_AABB"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_AABB], &ColliderDesc_aabb)))
@@ -160,17 +159,15 @@ void CLadder::Active()
 	*m_pPlayerInteract = false;
 	m_bActive = true;
 	if (m_bDownCol)
-	{
-		//밑으로 가게 하기
-	}
+		m_pPlayer->Set_Ladder_Setting(CPlayer::LADDER_DOWN, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 	else
-	{
-		// 위로 가게 하기
-	}
+		m_pPlayer->Set_Ladder_Setting(CPlayer::LADDER_UP, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+
 }
 
 _float4 CLadder::Get_Object_Pos()
 {
+
 	return _float4();
 }
 

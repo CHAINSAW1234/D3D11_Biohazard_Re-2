@@ -53,8 +53,7 @@ HRESULT CDoor::Initialize(void* pArg)
 
 void CDoor::Start()
 {
-	__super::Check_Player();
-
+	__super::Start();
 	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Jombie_Collider"));
 	if (pCollider == nullptr)
 		return;

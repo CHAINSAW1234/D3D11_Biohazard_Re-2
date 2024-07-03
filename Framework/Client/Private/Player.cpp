@@ -1792,7 +1792,7 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 HRESULT CPlayer::Ready_Camera()
 {
 	if (m_pCamera == nullptr)
-		m_pCamera = dynamic_cast<CCamera_Free*>(*(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_ZZZCamera")).begin());
+		m_pCamera = dynamic_cast<CCamera_Free*>(*(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, g_strCameraLayer)).begin());
 
 	if (m_pCamera == nullptr)
 		return E_FAIL;
@@ -1830,7 +1830,7 @@ HRESULT CPlayer::Ready_Camera()
 	m_fLerpAmount_Up = m_fUp_Dist_Pos;
 
 	if (m_pCamera_Event == nullptr)
-		m_pCamera_Event = dynamic_cast<CCamera_Event*>(*++(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_ZZZCamera")).begin());
+		m_pCamera_Event = dynamic_cast<CCamera_Event*>(*++(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, g_strCameraLayer)).begin());
 
 	if (m_pCamera_Event == nullptr)
 		return E_FAIL;
