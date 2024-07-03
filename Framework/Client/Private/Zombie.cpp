@@ -233,7 +233,7 @@ void CZombie::Tick(_float fTimeDelta)
 				m_iBloodCount = 0;
 
 				/*For Blood Effect*/
-#ifdef _DEBUG
+#ifndef _DEBUG
 				m_bSetBlood = true;
 				m_BloodTime = GetTickCount64();
 #endif
@@ -250,7 +250,7 @@ void CZombie::Tick(_float fTimeDelta)
 			m_iBloodCount = 0;
 
 			/*For Blood Effect*/
-#ifdef _DEBUG
+#ifndef _DEBUG
 			m_bSetBlood = true;
 			m_BloodTime = GetTickCount64();
 #endif
@@ -350,8 +350,10 @@ void CZombie::Late_Tick(_float fTimeDelta)
 	if (m_bSetBlood)
 	{
 		/*For Decal*/
+#ifndef _DEBUG
 		Ready_Decal();
 		SetBlood();
+#endif
 	}
 
 	Late_Tick_Effect(fTimeDelta);
@@ -485,7 +487,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CanLinkMonsterStatesBite.emplace_back(MONSTER_STATE::MST_LIGHTLY_HOLD);
 	CIs_Can_Link_Pre_State_Zombie* pDeco_Is_Can_Link_Bite = { CIs_Can_Link_Pre_State_Zombie::Create(CanLinkMonsterStatesBite) };
 	pDeco_Is_Can_Link_Bite->SetBlackBoard(m_pBlackBoard);
-	pDeco_Is_Can_Link_Bite->Insert_Decorator_Node(pDeco_Is_Can_Link_Bite);
+	pSelectorNode_Root->Insert_Decorator_Node(pDeco_Is_Can_Link_Bite);
 
 #pragma endregion
 

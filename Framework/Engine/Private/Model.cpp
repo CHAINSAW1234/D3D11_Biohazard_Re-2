@@ -298,8 +298,6 @@ _float CModel::Compute_NewTimeDelta_Distatnce_Optimization(_float fTimeDelta, CT
 	return fTimeDelta;
 #endif
 
-	return fTimeDelta;
-
 	if (false == m_isOptimization)
 		return fTimeDelta;
 
