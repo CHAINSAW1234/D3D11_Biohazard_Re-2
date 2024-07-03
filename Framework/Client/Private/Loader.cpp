@@ -653,6 +653,14 @@ HRESULT CLoader::Loading_For_Static_Component()
 		return E_FAIL;
 #pragma endregion
 
+
+#pragma region ≈ÿΩ∫√ƒ
+	/*Prototype_Component_Texture_Items*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Items"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Items/Item_%d.png"), 74))))
+		return E_FAIL;
+#pragma endregion
+
 	return S_OK;
 }
 
@@ -668,6 +676,8 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	_uint iObjectNum = { 0 };
 	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
 		return E_FAIL;
+
+	vector<wstring> ItemModelTags; // √¢±’
 
 	for (_uint i = 0; iObjectNum > i; ++i)
 	{
@@ -811,7 +821,11 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 		if(!bDo)
 				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CProps::Create(m_pDevice, m_pContext));
 
-
+		
+		if (Inform->wstrGameObjectPrototypeName.find(TEXT("sm7")) != wstring::npos)
+		{
+			ItemModelTags.push_back(Inform->wstrModelPrototypeName);//√¢±’
+		}
 
 		Safe_Delete(Inform);
 
@@ -830,168 +844,9 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Ladder"), CLadder::Create(m_pDevice, m_pContext));
 
 
+	m_pGameInstance->Set_ModelTags(TEXT("ItemModel_Tags"), ItemModelTags);
 
 	CloseHandle(hFile);
-	return S_OK;
-}
-
-HRESULT CLoader::Load_Items_Model(_matrix TransformMatrix)
-{
-	
-#pragma region Items Model
-	/* Prototype_Component_Model_sm70_000_emergencyspray01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_000_emergencyspray01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_000_emergencyspray01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_001_greenherb01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_001_greenherb01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_001_greenherb01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_002_redherb01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_002_redherb01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_002_redherb01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_003_blueherb01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_003_blueherb01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_003_blueherb01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_004_herbsgg01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_004_herbsgg01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_004_herbsgg01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_005_herbsgr01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_005_herbsgr01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_005_herbsgr01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_006_herbsgb01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_006_herbsgb01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_006_herbsgb01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_007_herbsggb01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_007_herbsggb01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_007_herbsggb01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_008_herbsggg01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_008_herbsggg01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_008_herbsggg01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_009_herbsgrb01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_009_herbsgrb01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_009_herbsgrb01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_010_herbsrb01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_010_herbsrb01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_010_herbsrb01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_051_greenherbitem01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_051_greenherbitem01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_051_greenherbitem01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_052_redherbitem01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_052_redherbitem01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_052_redherbitem01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_053_blueherbitem01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_053_blueherbitem01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_053_blueherbitem01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_100_handgun_bullet01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_100_handgun_bullet01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_100_handgun_bullet01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_101_shotgun_bullet01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_101_shotgun_bullet01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_101_shotgun_bullet01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_102_submachinegun_bullet01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_102_submachinegun_bullet01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_102_submachinegun_bullet01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_103_magnumbulleta */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_103_magnumbulleta"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_103_magnumbulleta.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_111_biggun_bullet01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_111_biggun_bullet01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_111_biggun_bullet01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_201_inkribbon01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_201_inkribbon01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_201_inkribbon01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_202_woodbarricade01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_202_woodbarricade01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_202_woodbarricade01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_203_blastingfuse01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_203_blastingfuse01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_203_blastingfuse01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_205_gunpowder01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_205_gunpowder01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_205_gunpowder01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_206_gunpowder01b */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_206_gunpowder01b"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_206_gunpowder01b.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-	/* Prototype_Component_Model_sm70_207_strengtheningyellow01a */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_sm70_207_strengtheningyellow01a"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Items/sm7x_item/sm70/sm70_207_strengtheningyellow01a.fbx",
-			TransformMatrix))))
-		return E_FAIL;
-
-
-#pragma endregion
-
 	return S_OK;
 }
 
@@ -1081,6 +936,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_NoteBook_Texture2"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/Note/ui3210_file_13_1_iam.tex_noesispreviewdata.png")))))
 		return E_FAIL;
+
+
 
 	/* Read Texture*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Document1"),
@@ -1376,7 +1233,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 #pragma endregion
 
-	Load_Items_Model(TransformMatrix); // æ∆¿Ã≈€ ∏µ® ∑ŒµÂ
 
 
 	/* Prototype_Component_VIBuffer_Terrain */

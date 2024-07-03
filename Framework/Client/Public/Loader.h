@@ -31,7 +31,6 @@ private:
 
 	HRESULT Load_Field_Prototype(const wstring& filePath);
 
-	HRESULT Load_Items_Model(_matrix TransformMatrix);
 
 private:
 	HRESULT Ready_Layer_UI(const wstring& strLayerTag);

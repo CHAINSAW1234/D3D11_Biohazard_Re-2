@@ -59,8 +59,11 @@ void CItemProp::Tick(_float fTimeDelta)
 	{
 		//UI¶ç¿ì°í
 		if (*m_pPlayerInteract)
+		{
 			Active();
-		m_bCol = false;
+			m_bCol = false;
+			m_pPlayer->PickUp_Item(this);
+		}
 	}
 	
 

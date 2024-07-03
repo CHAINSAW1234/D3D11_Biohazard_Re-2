@@ -39,7 +39,7 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 
 		m_isMask = m_Mask[0].isMask;	
 
-		if (FAILED(Add_Components(CustomUIDesc->wstrDefaultTexturComTag, CustomUIDesc->wstrMaskComTag)))
+		if (FAILED(Add_Components(CustomUIDesc->wstrDefaultTexturComTag, CustomUIDesc->wstrMaskComTag, CustomUIDesc->iDefaultTexturLevel)))
 			return E_FAIL;
 
 		m_isPlay = CustomUIDesc->isPlay;
@@ -186,7 +186,7 @@ HRESULT CCustomize_UI::Render()
 	return S_OK;
 }
 
-HRESULT CCustomize_UI::Add_Components(const wstring& wstrTextureTag, const wstring& wstrMaskTag)
+HRESULT CCustomize_UI::Add_Components(const wstring& wstrTextureTag, const wstring& wstrMaskTag, _uint iDefaultTexturLevel)
 {
 	/* For.Com_Shader */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxPosTex"),
@@ -194,7 +194,7 @@ HRESULT CCustomize_UI::Add_Components(const wstring& wstrTextureTag, const wstri
 		return E_FAIL;
 
 	/* For.Com_Texture */ 
-	if (FAILED(__super::Add_Component(g_Level, wstrTextureTag,
+	if (FAILED(__super::Add_Component(static_cast<LEVEL>(iDefaultTexturLevel), wstrTextureTag,
 		TEXT("Com_DefaultTexture"), (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
