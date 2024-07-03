@@ -6,33 +6,33 @@ matrix g_CamViewMatrix, g_CamProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
 matrix g_Decal_WorldMatrix_Inv;
 
-texture2D g_Texture;
+Texture2D g_Texture;
 TextureCubeArray g_CubeTexture;
 Texture3D g_3DTexture;
 
-texture2D g_NormalTexture;
-texture2D g_DiffuseTexture;
-texture2D g_DepthTexture;
-texture2D g_MaterialTexture;
-texture2D g_OriginalTexture;
+Texture2D g_NormalTexture;
+Texture2D g_DiffuseTexture;
+Texture2D g_DepthTexture;
+Texture2D g_MaterialTexture;
+Texture2D g_OriginalTexture;
 
 
-texture2D g_SSAOTexture;
+Texture2D g_SSAOTexture;
 
-texture2D g_LightResultTexture;
+Texture2D g_LightResultTexture;
 
-texture2D g_AmbientDiffuseTexture;
-texture2D g_AmbientShadeTexture;
+Texture2D g_AmbientDiffuseTexture;
+Texture2D g_AmbientShadeTexture;
 
-texture2D g_DistortionTexture;
-texture2D g_EmissiveTexture;
+Texture2D g_DistortionTexture;
+Texture2D g_EmissiveTexture;
 
-texture2D g_AdditionalLightTexture;
+Texture2D g_AdditionalLightTexture;
 
-texture2D g_PostprocessingDiffuseTexture;
-texture2D g_PostprocessingShadeTexture;
+Texture2D g_PostprocessingDiffuseTexture;
+Texture2D g_PostprocessingShadeTexture;
 //For Decal
-texture2D g_DecalTexture;
+Texture2D g_DecalTexture;
 
 bool g_isRadialBlurActive = { false };
 float2 g_vRadialBlurUV;
@@ -45,12 +45,12 @@ float		g_fOutCutOff;
 
 // 현진 추가
 bool g_isSSAO;
-texture2D g_RandomNormalTexture;
-texture2D g_VelocityTexture;
+Texture2D g_RandomNormalTexture;
+Texture2D g_VelocityTexture;
 
 bool g_isShadowDirLight;
-texture2D g_DirLightFieldDepthTexture;
-texture2D g_DirLightDepthTexture;
+Texture2D g_DirLightFieldDepthTexture;
+Texture2D g_DirLightDepthTexture;
 matrix g_DirLightViewMatrix;
 matrix g_DirLightProjMatrix;
 float4 g_vDirLightDiffuse;
@@ -66,7 +66,7 @@ matrix g_ShadowLightViewMatrix[2][6];
 matrix g_ShadowLightProjMatrix[2];
 
 bool g_isShadowSpotLight;
-texture2D g_SpotLightDepthTexture;
+Texture2D g_SpotLightDepthTexture;
 matrix g_SpotLightViewMatrix;
 matrix g_SpotLightProjMatrix;
 float4 g_vSpotLightDiffuse;
