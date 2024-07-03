@@ -48,7 +48,7 @@ void CDamage_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    if ((_byte)CPlayer::STATE::DAMAGE == m_pPlayer->Get_Player_State())
+    if ((_byte)CPlayer::STATE::DAMAGE == m_pPlayer->Get_Player_State() || DOWN == m_pGameInstance->Get_KeyState('9'))
         m_isDamage_Start = true;
 
     Operate_Damage(fTimeDelta);

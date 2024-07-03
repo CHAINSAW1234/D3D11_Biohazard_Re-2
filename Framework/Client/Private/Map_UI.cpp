@@ -384,7 +384,7 @@ CGameObject* CMap_UI::Search_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT 
 }
 
 
-void CMap_UI::Find_InMap_Player()
+CGameObject* CMap_UI::Find_MapType(MAP_UI_TYPE _mapType)
 {
     list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
 
