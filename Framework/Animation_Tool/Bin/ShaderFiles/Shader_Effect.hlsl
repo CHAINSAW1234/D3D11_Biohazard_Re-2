@@ -90,6 +90,9 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
 	
+	if (Out.vColor.a < 0.01f)
+		discard;
+
 	return Out;
 }
 
@@ -213,7 +216,7 @@ technique11 DefaultTechnique
 	//0
 	pass Default
 	{
-		SetRasterizerState(RS_Default);
+		SetRasterizerState(RS_NoCulling);
 		SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
