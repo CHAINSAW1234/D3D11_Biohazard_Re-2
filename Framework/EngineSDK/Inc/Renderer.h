@@ -31,7 +31,10 @@ public:
 	HRESULT						Initialize();
 	HRESULT						Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pRenderObject);
 	HRESULT						Render();
-
+	class CShader*				GetDeferredShader()
+	{
+		return m_pShader;
+	}
 public:
 	void						Set_RadialBlur(_float fBlurAmount, _float2 BlurUV);
 	void						On_RadialBlur();
@@ -181,6 +184,7 @@ private:
 #pragma region Effect
 public:
 	HRESULT						Bind_DepthTarget(class CShader* pShader);
+	HRESULT						Render_Decal_Deferred();
 #pragma endregion
 
 

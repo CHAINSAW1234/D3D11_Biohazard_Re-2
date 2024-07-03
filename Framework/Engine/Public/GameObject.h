@@ -108,6 +108,8 @@ protected:
 	class COctree*								m_pOctreeNode = { nullptr };
 
 	_int										m_iPx_Collider_Id = { 0 };
+
+	_bool										m_bDecalRender = { false };
 protected:
 	map<const wstring, class CComponent*>		m_Components;
 

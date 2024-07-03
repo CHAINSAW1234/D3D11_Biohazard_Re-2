@@ -11,7 +11,6 @@ BEGIN(Client)
 
 class CBody_Zombie final : public CPartObject
 {
-
 public:
 	typedef struct tagBodyMonsterDesc : public CPartObject::PARTOBJECT_DESC
 	{
@@ -68,7 +67,6 @@ public:	/* For.Check Anim Type */
 public: /* For. Anim Branch */
 	ZOMBIE_BODY_ANIM_TYPE				Get_Current_AnimType(PLAYING_INDEX eIndex);
 	ZOMBIE_BODY_ANIM_GROUP				Get_Current_AnimGroup(PLAYING_INDEX eIndex);
-
 public:
 	virtual void						SetRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType) override;
 	virtual void						SetCulling(_bool boolean) override;

@@ -51,3 +51,7 @@ typedef struct Tag_Item_Recipe
 #pragma region ANIM_BONE
 #define ANIM_BONE_COUNT 10
 #pragma endregion
+
+#pragma region DECAL
+#define DECAL
+#pragma endregion

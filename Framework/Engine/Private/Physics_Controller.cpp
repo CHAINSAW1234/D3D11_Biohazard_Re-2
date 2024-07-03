@@ -1207,6 +1207,23 @@ _bool CPhysics_Controller::SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _floa
 	return false;
 }
 
+_bool CPhysics_Controller::RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
+{
+	PxVec3 PxvOrigin = Float4_To_PxVec(vOrigin);
+	PxVec3 PxvDir = Float4_To_PxVec(vDir);
+
+	PxRaycastBuffer hit;
+
+	bool Status = m_Scene->raycast(PxvOrigin, PxvDir.getNormalized(), fMaxDist, hit, PxHitFlag::eDEFAULT, PxQueryFilterData(PxQueryFlag::eSTATIC));
+
+	if (Status)
+	{
+		*pBlockPoint = PxVec_To_Float4_Coord(hit.block.position);
+	}
+
+	return Status;
+}
+
 _bool CPhysics_Controller::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
 {
 	PxVec3 PxvOrigin = Float4_To_PxVec(vOrigin);

@@ -88,6 +88,8 @@ public: /* For.Renderer */
 	void									Set_ShaderState(SHADER_STATE eState, _bool isState);
 	void									Set_RenderFieldShadow(_bool isRenderFieldShadow);
 	void									Bind_DepthTarget(class CShader* pShader);
+	class CShader*							GetDeferredShader();
+	HRESULT									Render_Decal_Deferred();
 #ifdef _DEBUG
 	void									On_Off_DebugRender();
 #endif
@@ -301,6 +303,7 @@ public:/*For Physics Controller*/
 	void									Create_Cloth(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 	_bool									RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
+	_bool									RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone,class CTransform* pTransform, const string& name);
