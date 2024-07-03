@@ -66,7 +66,7 @@ HRESULT CZombie::Initialize(void* pArg)
 
 		m_iIndex = pDesc->Index;
 		_float4 vPos = *(_float4*)pDesc->worldMatrix.m[3];
-		//	vPos.y += 1.f;
+			vPos.y += 1.f;
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 	}
 	m_InteractObjVec.resize(JOMBIE_BEHAVIOR_COLLIDER_END);
@@ -487,7 +487,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CanLinkMonsterStatesBite.emplace_back(MONSTER_STATE::MST_LIGHTLY_HOLD);
 	CIs_Can_Link_Pre_State_Zombie* pDeco_Is_Can_Link_Bite = { CIs_Can_Link_Pre_State_Zombie::Create(CanLinkMonsterStatesBite) };
 	pDeco_Is_Can_Link_Bite->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_Root->Insert_Decorator_Node(pDeco_Is_Can_Link_Bite);
+	pTask_Bite_Zombie->Insert_Decorator_Node(pDeco_Is_Can_Link_Bite);
 
 #pragma endregion
 
