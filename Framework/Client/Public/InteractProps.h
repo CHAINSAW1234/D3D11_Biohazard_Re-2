@@ -103,13 +103,13 @@ protected:
 	virtual ~CInteractProps() = default;
 
 public:
-	virtual HRESULT										Initialize_Prototype() override;
-	virtual HRESULT										Initialize(void* pArg) override;
-	virtual void										Priority_Tick(_float fTimeDelta) override;
-	virtual void										Tick(_float fTimeDelta) override;
-	virtual void										Late_Tick(_float fTimeDelta) override;
-	virtual void										Start() override { return; };
-	virtual HRESULT										Render() override;
+	virtual HRESULT								Initialize_Prototype() override;
+	virtual HRESULT								Initialize(void* pArg) override;
+	virtual void									Priority_Tick(_float fTimeDelta) override;
+	virtual void									Tick(_float fTimeDelta) override;
+	virtual void									Late_Tick(_float fTimeDelta) override;
+	virtual void									Start() override;
+	virtual HRESULT								Render() override;
 
 
 	void												Priority_Tick_PartObjects(_float fTimeDelta);
@@ -118,20 +118,20 @@ public:
 
 
 
-	virtual HRESULT										Render_LightDepth_Dir() override;
-	virtual	HRESULT										Render_LightDepth_Spot() override;
-	virtual HRESULT										Render_LightDepth_Point() override;
+	virtual HRESULT								Render_LightDepth_Dir() override;
+	virtual	HRESULT							Render_LightDepth_Spot() override;
+	virtual HRESULT								Render_LightDepth_Point() override;
 	
 public:
-	_bool*												Get_Activity() { return &m_bActivity; }
+	_bool*											Get_Activity() { return &m_bActivity; }
 
 #pragma region NY
-	_bool*												ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
-	_bool*												Selector_Rendering() { return &m_isSelector_Rendering;  }
+	_bool*											ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
+	_bool*											Selector_Rendering() { return &m_isSelector_Rendering;  }
 
 	/*To NY*/
-	virtual _float4									Get_Object_Pos() = 0;
-	_int													Get_PropType() { return m_tagPropDesc.iPropType; } // 프롭타입이라 쓰고 arg라 읽는다. // 문의 지역 enum을 반환한다.
+	virtual _float4								Get_Object_Pos() = 0;
+	_int												Get_PropType() { return m_tagPropDesc.iPropType; } // 프롭타입이라 쓰고 arg라 읽는다. // 문의 지역 enum을 반환한다.
 
 
 	_bool												Get_Interact_With_Player_Once() { return m_bFirstInteract; }
@@ -155,19 +155,21 @@ protected:
 	_bool												m_bShadow = { true };
 	_bool												m_bVisible = { true };
 	_bool												m_bCol = { false }; // 충돌이 되었다
-	_float												m_fTimeDelay = { 0.f };
-	_float												m_fDistance = { 0.f };
-	CModel*												m_pModelCom = { nullptr };
-	CShader*											m_pShaderCom = { nullptr };
-	CCollider*											m_pColliderCom[INTERACTPROPS_COL_END] = { nullptr,nullptr,nullptr };
+	_float											m_fTimeDelay = { 0.f };
+	_float											m_fDistance = { 0.f };
+	CModel*										m_pModelCom = { nullptr };
+	CShader*										m_pShaderCom = { nullptr };
+	CCollider*										m_pColliderCom[INTERACTPROPS_COL_END] = { nullptr,nullptr,nullptr };
 	
-	class CPlayer*										m_pPlayer = { nullptr };
-	_bool*												m_pPlayerInteract = { nullptr };//player의 m_bInteract 변수 포인터
-	CTransform*											m_pPlayerTransform = { nullptr };
+	class CPlayer*								m_pPlayer = { nullptr };
+	class CCamera_Free*						m_pCamera = { nullptr };
+	_bool*											m_pPlayerInteract = { nullptr };//player의 m_bInteract 변수 포인터
+	CTransform*									m_pPlayerTransform = { nullptr };
+	CTransform*									m_pCameraTransform = { nullptr };
 
-	_float3												m_vRootTranslation = {};
-	INTERACTPROPS_DESC 									m_tagPropDesc ={};
-	vector<CPartObject*>								m_PartObjects;
+	_float3											m_vRootTranslation = {};
+	INTERACTPROPS_DESC 					m_tagPropDesc ={};
+	vector<CPartObject*>					m_PartObjects;
 
 protected:
 	void												Check_Player();
@@ -180,10 +182,10 @@ protected:
 	_bool												Visible();
 	_float											Get_PlayerLook_Degree();
 
-	virtual HRESULT										Add_Components();
-	virtual HRESULT										Add_PartObjects();
-	virtual HRESULT										Initialize_PartObjects();
-	virtual HRESULT										Bind_ShaderResources();
+	virtual HRESULT								Add_Components();
+	virtual HRESULT								Add_PartObjects();
+	virtual HRESULT								Initialize_PartObjects();
+	virtual HRESULT								Bind_ShaderResources();
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;
 	virtual void Free() override;
