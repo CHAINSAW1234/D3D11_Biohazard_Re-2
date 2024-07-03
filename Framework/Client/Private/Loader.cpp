@@ -1263,6 +1263,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 #pragma endregion
 
 #pragma region Monsters Model
+
+#pragma region ZOMBIE_MALE
 	/* Prototype_Component_Model_ZombieBody */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieBody"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Body.fbx",
@@ -1316,6 +1318,125 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Pants.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
+
+#pragma endregion
+
+#pragma region ZOMBIE_FEMALE
+
+	_matrix				ZombieTrnasformMatrix = { XMMatrixRotationY(XMConvertToRadians(180.f)) };
+
+	//////////////////////////////////////////////////
+	//	BODY
+	//////////////////////////////////////////////////
+	/* Prototype_Component_Model_Zombie_Body_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Body_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Body_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	//////////////////////////////////////////////////
+	//	Face
+	//////////////////////////////////////////////////
+	/* Prototype_Component_Model_Zombie_Face00_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face00_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Face00_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Face01_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face01_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Face01_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Face02_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face02_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Face02_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Face03_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face03_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Face03_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Face04_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face04_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Face04_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	//////////////////////////////////////////////////
+	//	Pants
+	//////////////////////////////////////////////////
+	/* Prototype_Component_Model_Zombie_Pants00_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants00_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Pants00_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Pants01_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants01_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Pants01_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Pants02_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants02_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Pants02_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Pants04_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants04_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Pants04_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+
+	//////////////////////////////////////////////////
+	//	Shirts
+	//////////////////////////////////////////////////
+	/* Prototype_Component_Model_Zombie_Shirts00_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts00_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Shirts00_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts01_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts01_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Shirts01_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts02_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts02_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Shirts02_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts03_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts03_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Shirts03_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts04_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts04_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Shirts04_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts05_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts05_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Shirts05_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+
+
+#pragma endregion
 
 #pragma region Effect
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Blood_01"),

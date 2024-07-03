@@ -261,7 +261,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
 	//ÈñÈ÷ ³Ñ ¹Ù»Û °ü°è·Î ÇÔ¼ö ¸øÆÍ¾î¿ä - ¿¹Àº
 
-	/*string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
+	string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
 	_tchar	szFilePath[MAX_PATH] = { L"" };
 	MultiByteToWideChar(CP_ACP, 0, strFilePath.c_str(), (_uint)strlen(strFilePath.c_str()), szFilePath, MAX_PATH);
 	_uint iMonsterNum = { 0 };
@@ -284,7 +284,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	{
 		_uint iLength = { 0 };
 
-		CMonster::MONSTER_DESC ObjectDesc = {};
+		CZombie::ZOMBIE_FEMALE_DESC			ObjectDesc = {};
 
 		if (!ReadFile(hFile, &ObjectDesc.worldMatrix, sizeof(_float4x4), &dwByte, nullptr))
 		{
@@ -292,15 +292,34 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 			return E_FAIL;
 		}
 
+		ObjectDesc.eBodyModelType = ZOMBIE_BODY_TYPE::_FEMALE;
+		_int			iRandomPants = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_PANTS::_END) - 1) };
+		ObjectDesc.ePantsType = static_cast<ZOMBIE_FEMALE_PANTS>(iRandomPants);
+
+		_int			iRandomFace = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_FACE::_END) - 1) };
+		ObjectDesc.eFaceType = static_cast<ZOMBIE_FEMALE_FACE>(iRandomPants);
+
+		_int			iRandomShirts = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_SHIRTS::_END) - 1) };
+		ObjectDesc.eShirtsType = static_cast<ZOMBIE_FEMALE_SHIRTS>(iRandomPants);
+
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"),&ObjectDesc)))
 		{
 			CloseHandle(hFile);
 			return E_FAIL;
 		}
 	}
-	CloseHandle(hFile);*/
+	CloseHandle(hFile);
 
-	CMonster::MONSTER_DESC ObjectDesc = {};
+	CZombie::ZOMBIE_FEMALE_DESC				ObjectDesc = {};
+	ObjectDesc.eBodyModelType = ZOMBIE_BODY_TYPE::_FEMALE;
+	_int			iRandomPants = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_PANTS::_END) - 1) };
+	ObjectDesc.ePantsType = static_cast<ZOMBIE_FEMALE_PANTS>(iRandomPants);
+
+	_int			iRandomFace = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_FACE::_END) - 1) };
+	ObjectDesc.eFaceType = static_cast<ZOMBIE_FEMALE_FACE>(iRandomPants);
+
+	_int			iRandomShirts = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_SHIRTS::_END) - 1) };
+	ObjectDesc.eShirtsType = static_cast<ZOMBIE_FEMALE_SHIRTS>(iRandomPants);
 
 	_matrix			WorldMatrix = { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
 	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);

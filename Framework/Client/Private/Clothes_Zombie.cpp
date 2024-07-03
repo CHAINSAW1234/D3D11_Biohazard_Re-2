@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Clothes_Zombie.h"
+#include "Zombie.h"
 
 #include "Light.h"
 
@@ -24,9 +25,13 @@ HRESULT CClothes_Zombie::Initialize(void* pArg)
 		return E_FAIL;
 
 	CLOTHES_MONSTER_DESC*			pDesc = { static_cast<CLOTHES_MONSTER_DESC*>(pArg) };
-	m_eType = pDesc->eType;
+	m_eClothesType = pDesc->eClothesType;
+	m_eBodyType = pDesc->eBodyType;
+	m_iClothesModelID = pDesc->iClothesModelID;
 
-	if (CLOTHES_TYPE::TYPE_END == m_eType)
+	if (ZOMBIE_CLOTHES_TYPE::_END == m_eClothesType ||
+		ZOMBIE_BODY_TYPE::_END == m_eBodyType ||
+		-1 == m_iClothesModelID)
 		return E_FAIL;
 
 	if (FAILED(__super::Initialize(pDesc)))
@@ -130,7 +135,7 @@ HRESULT CClothes_Zombie::Render()
 		}
 
 
-		m_pModelCom->Bind_DecalMap(i, m_pShaderCom);
+		m_pModelCom->Bind_DecalMap(static_cast<_uint>(i), m_pShaderCom);
 		if (FAILED(m_pShaderCom->Begin(5)))
 			return E_FAIL;
 		m_pModelCom->Render(static_cast<_uint>(i));
@@ -340,45 +345,134 @@ HRESULT CClothes_Zombie::Add_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (CLOTHES_TYPE::TYPE_HAT == m_eType)
+	if (ZOMBIE_BODY_TYPE::_MALE == m_eBodyType)
 	{
-		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieHat"),
-			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-			return E_FAIL;
+		/*if (ZOMBIE_CLOTHES_TYPE::_HAT == m_eClothesType)
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieHat"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_CLOTHES_TYPE::_PANTS == m_eClothesType)
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombiePants"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_CLOTHES_TYPE::_SHIRTS == m_eClothesType)
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieShirts1"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}*/
 	}
 
-	else if (CLOTHES_TYPE::TYPE_PANTS == m_eType)
+	else if (ZOMBIE_BODY_TYPE::_FEMALE == m_eBodyType)
 	{
-		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombiePants"),
-			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-			return E_FAIL;
-	}
+		if (ZOMBIE_CLOTHES_TYPE::_PANTS == m_eClothesType)
+		{
+			if (ZOMBIE_FEMALE_PANTS::_00 == static_cast<ZOMBIE_FEMALE_PANTS>(m_iClothesModelID))
+			{
+				if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants00_Female"),
+					TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+					return E_FAIL;
+			}		
 
-	else if (CLOTHES_TYPE::TYPE_SHIRTS== m_eType)
-	{
-		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieShirts1"),
-			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-			return E_FAIL;
-	}
+			else if (ZOMBIE_FEMALE_PANTS::_01 == static_cast<ZOMBIE_FEMALE_PANTS>(m_iClothesModelID))
+			{
+				if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants01_Female"),
+					TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+					return E_FAIL;
+			}
 
-	else if (CLOTHES_TYPE::TYPE_SHIRTS2 == m_eType)
-	{
-		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieShirts2"),
-			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-			return E_FAIL;
-	}
+			else if (ZOMBIE_FEMALE_PANTS::_02 == static_cast<ZOMBIE_FEMALE_PANTS>(m_iClothesModelID))
+			{
+				if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants02_Female"),
+					TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+					return E_FAIL;
+			}
 
-	else if (CLOTHES_TYPE::TYPE_SHIRTS3 == m_eType)
+			else if (ZOMBIE_FEMALE_PANTS::_04 == static_cast<ZOMBIE_FEMALE_PANTS>(m_iClothesModelID))
+			{
+				if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants04_Female"),
+					TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+					return E_FAIL;
+			}
+
+			else
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_CLOTHES_TYPE::_SHIRTS == m_eClothesType)
+		{
+			if (ZOMBIE_FEMALE_SHIRTS::_00 == static_cast<ZOMBIE_FEMALE_SHIRTS>(m_iClothesModelID))
+			{
+				if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts00_Female"),
+					TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+					return E_FAIL;
+			}
+
+			else if (ZOMBIE_FEMALE_SHIRTS::_01 == static_cast<ZOMBIE_FEMALE_SHIRTS>(m_iClothesModelID))
+			{
+				if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts01_Female"),
+					TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+					return E_FAIL;
+			}
+
+			else if (ZOMBIE_FEMALE_SHIRTS::_02 == static_cast<ZOMBIE_FEMALE_SHIRTS>(m_iClothesModelID))
+			{
+				if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts02_Female"),
+					TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+					return E_FAIL;
+			}
+
+			else if (ZOMBIE_FEMALE_SHIRTS::_03 == static_cast<ZOMBIE_FEMALE_SHIRTS>(m_iClothesModelID))
+			{
+				if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts03_Female"),
+					TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+					return E_FAIL;
+			}
+
+			else if (ZOMBIE_FEMALE_SHIRTS::_04 == static_cast<ZOMBIE_FEMALE_SHIRTS>(m_iClothesModelID))
+			{
+				if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts04_Female"),
+					TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+					return E_FAIL;
+			}
+
+			else if (ZOMBIE_FEMALE_SHIRTS::_05 == static_cast<ZOMBIE_FEMALE_SHIRTS>(m_iClothesModelID))
+			{
+				if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts05_Female"),
+					TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+					return E_FAIL;
+			}
+
+			else
+				return E_FAIL;
+		}
+	}
+	
+	else if (ZOMBIE_BODY_TYPE::_MALE_BIG == m_eBodyType)
 	{
-		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieShirts3"),
-			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-			return E_FAIL;
+		/*if (ZOMBIE_CLOTHES_TYPE::_PANTS == m_eClothesType)
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombiePants"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_CLOTHES_TYPE::_SHIRTS == m_eClothesType)
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieShirts1"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}*/
 	}
 
 	else
-	{
 		return E_FAIL;
-	}
 
 
 

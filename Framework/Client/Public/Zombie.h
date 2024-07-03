@@ -12,40 +12,43 @@ END
 
 BEGIN(Client)
 
-/* For.Status */
-#define	STATUS_ZOMBIE_DEFAULT_RECOGNITION_DISTANCE		5.f
-#define	STATUS_ZOMBIE_MAX_RECOGNITION_DISTANCE			7.f
-#define STATUS_ZOMBIE_MAX_RECOGNITION_TIME				5.f
-
-#define	STATUS_ZOMBIE_TRY_HOLD_TIME						1.5f
-#define	STATUS_ZOMBIE_TRY_HOLD_RANGE					3.f
-#define	STATUS_ZOMBIE_BITE_RANGE						1.f
-
-#define	STATUS_ZOMBIE_VIEW_ANGLE						XMConvertToRadians(180.f)
-
-#define	STATUS_ZOMBIE_HEALTH							100.f
-#define	STATUS_ZOMBIE_ATTACK							1.f
-
-#define STATUS_ZOMBIE_LIGHTLY_HOLD_RANGE				1.f
-#define STATUS_ZOMBIE_TRY_LIGHTLY_HOLD_TIME				0.5f
-
-#define STATUS_ZOMBIE_TRY_STANDUP_TIME					2.f
-
-#define STATUS_ZOMBIE_STAMINA							50.f
-#define STATUS_ZOMBIE_STAMINA_MAX						150.f
-#define STATUS_ZOMBIE_STAMINA_CHARGING_PER_SEC			3.f
-
-/* For.Use Stamina */
-#define ZOMBIE_NEED_STAMINA_BITE						30.f
-#define ZOMBIE_NEED_STAMINA_STANDUP						80.f
-#define ZOMBIE_NEED_STAMINA_TURN_OVER					20.f
+#include "Zombie_Defines.h"
+#include "Zombie_Enums.h"
 
 class CZombie final : public CMonster
 {
 public:
+	typedef struct tagZombieDesc : public MONSTER_DESC
+	{
+		ZOMBIE_BODY_TYPE			eBodyModelType = { ZOMBIE_BODY_TYPE::_END };
+	}ZOMBIE_DESC;
+
+	typedef struct tagZombieMaleDesc : public ZOMBIE_DESC
+	{
+		ZOMBIE_MALE_PANTS			ePantsType = { ZOMBIE_MALE_PANTS::_END };
+		ZOMBIE_MALE_FACE			eFaceType = { ZOMBIE_MALE_FACE::_END };
+		ZOMBIE_MALE_SHIRTS			eShirtsType = { ZOMBIE_MALE_SHIRTS::_END };
+		ZOMBIE_MALE_HAT				eHatType = { ZOMBIE_MALE_HAT::_END };
+	}ZOMBIE_MALE_DESC;
+
+	typedef struct tagZombieFemaleDesc : public ZOMBIE_DESC
+	{
+		ZOMBIE_FEMALE_PANTS			ePantsType = { ZOMBIE_FEMALE_PANTS::_END };
+		ZOMBIE_FEMALE_FACE			eFaceType = { ZOMBIE_FEMALE_FACE::_END };
+		ZOMBIE_FEMALE_SHIRTS		eShirtsType = { ZOMBIE_FEMALE_SHIRTS::_END };
+	}ZOMBIE_FEMALE_DESC;
+
+	typedef struct tagZombieMaleBigDesc : public ZOMBIE_DESC
+	{
+		ZOMBIE_MALE_BIG_PANTS		ePantsType = { ZOMBIE_MALE_BIG_PANTS::_END };
+		ZOMBIE_MALE_BIG_FACE		eFaceType = { ZOMBIE_MALE_BIG_FACE::_END };
+		ZOMBIE_MALE_BIG_SHIRTS		eShirtsType = { ZOMBIE_MALE_BIG_SHIRTS::_END };
+	}ZOMBIE_MALE_BIG_DESC;
+
+public:
 	typedef struct tagZombieStatus : public MONSTER_STATUS
 	{
-
+		
 	}ZOMBIE_STATUS;
 
 public:
@@ -176,6 +179,12 @@ protected:
 	_uint								m_iBloodType = { 0 };
 	_float								m_fHitDistance = { 0.f };
 	_uint								m_iMeshIndex_Hit = { 0 };
+
+	_int								m_iHat_Type = { -1 };
+	_int								m_iFace_ID = { -1 };
+	_int								m_iShirts_ID = { -1 };
+	_int								m_iPants_ID = { -1 };
+	_int								m_iBody_ID = { -1 };
 #pragma endregion
 
 public:

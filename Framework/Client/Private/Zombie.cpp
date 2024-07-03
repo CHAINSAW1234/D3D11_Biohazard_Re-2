@@ -40,10 +40,47 @@ HRESULT CZombie::Initialize_Prototype()
 
 HRESULT CZombie::Initialize(void* pArg)
 {
-	GAMEOBJECT_DESC		GameObjectDesc{};
+	GAMEOBJECT_DESC			GameObjectDesc{};
 
 	GameObjectDesc.fSpeedPerSec = 10.f;
 	GameObjectDesc.fRotationPerSec = XMConvertToRadians(90.0f);
+
+	if (pArg == nullptr)
+		return E_FAIL;
+
+	ZOMBIE_DESC*						pDesc = (ZOMBIE_DESC*)pArg;
+	ZOMBIE_BODY_TYPE					eBodyType = { pDesc->eBodyModelType };
+
+	if (ZOMBIE_BODY_TYPE::_MALE == eBodyType)
+	{
+		ZOMBIE_MALE_DESC*				pMaleDesc = { static_cast<ZOMBIE_MALE_DESC*>(pArg) };
+		m_iFace_ID = static_cast<_int>(pMaleDesc->eFaceType);
+		m_iHat_Type = static_cast<_int>(pMaleDesc->eHatType);
+		m_iShirts_ID = static_cast<_int>(pMaleDesc->eShirtsType);
+		m_iPants_ID = static_cast<_int>(pMaleDesc->ePantsType);
+		m_iBody_ID = static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE);
+	}
+
+	else if (ZOMBIE_BODY_TYPE::_FEMALE == eBodyType)
+	{
+		ZOMBIE_FEMALE_DESC*				pFemaleDesc = { static_cast<ZOMBIE_FEMALE_DESC*>(pArg) };
+		m_iFace_ID = static_cast<_int>(pFemaleDesc->eFaceType);
+		m_iShirts_ID = static_cast<_int>(pFemaleDesc->eShirtsType);
+		m_iPants_ID = static_cast<_int>(pFemaleDesc->ePantsType);
+		m_iBody_ID = static_cast<_int>(ZOMBIE_BODY_TYPE::_FEMALE);
+	}
+
+	else if (ZOMBIE_BODY_TYPE::_MALE_BIG == eBodyType)
+	{
+		ZOMBIE_MALE_BIG_DESC*			pMaleBigDesc = { static_cast<ZOMBIE_MALE_BIG_DESC*>(pArg) };
+		m_iFace_ID = static_cast<_int>(pMaleBigDesc->eFaceType);
+		m_iShirts_ID = static_cast<_int>(pMaleBigDesc->eShirtsType);
+		m_iPants_ID = static_cast<_int>(pMaleBigDesc->ePantsType);
+		m_iBody_ID = static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE_BIG);
+	}
+
+	else
+		return E_FAIL;
 
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
@@ -60,15 +97,11 @@ HRESULT CZombie::Initialize(void* pArg)
 	//if (FAILED(Initialize_PartModels()))
 	//	return E_FAIL;
 
-	if (pArg != nullptr)
-	{
-		MONSTER_DESC* pDesc = (MONSTER_DESC*)pArg;
+	m_iIndex = pDesc->Index;
+	_float4 vPos = *(_float4*)pDesc->worldMatrix.m[3];
+		vPos.y += 1.f;
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 
-		m_iIndex = pDesc->Index;
-		_float4 vPos = *(_float4*)pDesc->worldMatrix.m[3];
-			vPos.y += 1.f;
-		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
-	}
 	m_InteractObjVec.resize(JOMBIE_BEHAVIOR_COLLIDER_END);
 	//	m_pModelCom->Set_Animation(rand() % 20, true);
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
@@ -713,6 +746,7 @@ HRESULT CZombie::Add_PartObjects()
 
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pRootTranslation = &m_vRootTranslation;
+	BodyDesc.eBodyType = static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID);
 
 	pBodyObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Body_Zombie"), &BodyDesc));
 	if (nullptr == pBodyObject)
@@ -726,7 +760,8 @@ HRESULT CZombie::Add_PartObjects()
 	CFace_Zombie::FACE_MONSTER_DESC			FaceDesc;
 
 	FaceDesc.pParentsTransform = m_pTransformCom;
-	FaceDesc.eType = CFace_Zombie::TYPE_FACE1;
+	FaceDesc.eBodyType = static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID);
+	FaceDesc.iFaceModelID = m_iFace_ID;
 
 	pFaceObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Face_Zombie"), &FaceDesc));
 	if (nullptr == pFaceObject)
@@ -735,33 +770,8 @@ HRESULT CZombie::Add_PartObjects()
 	m_PartObjects[CZombie::PART_ID::PART_FACE] = pFaceObject;
 
 
-	CPartObject* pFace2Object = { nullptr };
-	CFace_Zombie::FACE_MONSTER_DESC			Face2Desc;
-
-	Face2Desc.pParentsTransform = m_pTransformCom;
-	Face2Desc.eType = CFace_Zombie::TYPE_FACE2;
-
-	pFace2Object = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Face_Zombie"), &Face2Desc));
-	if (nullptr == pFace2Object)
-		return E_FAIL;
-
-	m_PartObjects[CZombie::PART_ID::PART_FACE2] = pFace2Object;
-
-	CPartObject* pFace3Object = { nullptr };
-	CFace_Zombie::FACE_MONSTER_DESC			Face3Desc;
-
-	Face3Desc.pParentsTransform = m_pTransformCom;
-	Face3Desc.eType = CFace_Zombie::TYPE_FACE3;
-
-	pFace3Object = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Face_Zombie"), &Face3Desc));
-	if (nullptr == pFace3Object)
-		return E_FAIL;
-
-	m_PartObjects[CZombie::PART_ID::PART_FACE3] = pFace3Object;
-
-
 	/* For.Part_Hat */
-	CPartObject* pHatObject = { nullptr };
+	/*CPartObject* pHatObject = { nullptr };
 	CClothes_Zombie::CLOTHES_MONSTER_DESC		ClothesHatDesc;
 
 	ClothesHatDesc.pParentsTransform = m_pTransformCom;
@@ -771,33 +781,22 @@ HRESULT CZombie::Add_PartObjects()
 	if (nullptr == pHatObject)
 		return E_FAIL;
 
-	m_PartObjects[CZombie::PART_ID::PART_HAT] = pHatObject;
+	m_PartObjects[CZombie::PART_ID::PART_HAT] = pHatObject;*/
 
 	/* For.Part_Shirts */
 	CPartObject* pShirtsObject = { nullptr };
 	CClothes_Zombie::CLOTHES_MONSTER_DESC		ClothesShirtsDesc;
 
 	ClothesShirtsDesc.pParentsTransform = m_pTransformCom;
-	ClothesShirtsDesc.eType = CClothes_Zombie::CLOTHES_TYPE::TYPE_SHIRTS;
+	ClothesShirtsDesc.eBodyType = static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID);
+	ClothesShirtsDesc.eClothesType = ZOMBIE_CLOTHES_TYPE::_SHIRTS;
+	ClothesShirtsDesc.iClothesModelID = m_iShirts_ID;
 
 	pShirtsObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Zombie"), &ClothesShirtsDesc));
 	if (nullptr == pShirtsObject)
 		return E_FAIL;
 
 	m_PartObjects[CZombie::PART_ID::PART_SHIRTS] = pShirtsObject;
-
-	/* For.Part_Shirts2 */
-	CPartObject* pShirtsObject2 = { nullptr };
-	CClothes_Zombie::CLOTHES_MONSTER_DESC		ClothesShirts2Desc;
-
-	ClothesShirts2Desc.pParentsTransform = m_pTransformCom;
-	ClothesShirts2Desc.eType = CClothes_Zombie::CLOTHES_TYPE::TYPE_SHIRTS2;
-
-	pShirtsObject2 = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Zombie"), &ClothesShirts2Desc));
-	if (nullptr == pShirtsObject2)
-		return E_FAIL;
-
-	m_PartObjects[CZombie::PART_ID::PART_SHIRTS2] = pShirtsObject2;
 
 	/* For.Part_Shirts3 */
 	/*CPartObject* pShirtsObject3 = { nullptr };
@@ -818,7 +817,9 @@ HRESULT CZombie::Add_PartObjects()
 	CClothes_Zombie::CLOTHES_MONSTER_DESC		ClothesPantsDesc;
 
 	ClothesPantsDesc.pParentsTransform = m_pTransformCom;
-	ClothesPantsDesc.eType = CClothes_Zombie::CLOTHES_TYPE::TYPE_PANTS;
+	ClothesPantsDesc.eBodyType = static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID);
+	ClothesPantsDesc.eClothesType = ZOMBIE_CLOTHES_TYPE::_PANTS;
+	ClothesPantsDesc.iClothesModelID = m_iPants_ID;
 
 	pPantsObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Zombie"), &ClothesPantsDesc));
 	if (nullptr == pPantsObject)
@@ -870,46 +871,32 @@ HRESULT CZombie::Initialize_PartModels()
 {
 	CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Model"))) };
 	CModel* pFaceModel = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE]->Get_Component(TEXT("Com_Model"))) };
-	CModel* pFace2Model = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE2]->Get_Component(TEXT("Com_Model"))) };
-	CModel* pFace3Model = { dynamic_cast<CModel*>(m_PartObjects[PART_FACE3]->Get_Component(TEXT("Com_Model"))) };
 	CModel* pShirtsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_SHIRTS]->Get_Component(TEXT("Com_Model"))) };
-	CModel* pShirts2Model = { dynamic_cast<CModel*>(m_PartObjects[PART_SHIRTS2]->Get_Component(TEXT("Com_Model"))) };
 	CModel* pPantsModel = { dynamic_cast<CModel*>(m_PartObjects[PART_PANTS]->Get_Component(TEXT("Com_Model"))) };
-	CModel* pHatModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAT]->Get_Component(TEXT("Com_Model"))) };
+	//	CModel* pHatModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAT]->Get_Component(TEXT("Com_Model"))) };
 
 	m_pBodyModel = pBodyModel;
 	m_pHeadModel = pFaceModel;
-	m_pHeadModel2 = pFace2Model;
-	m_pHeadModel3 = pFace3Model;
 	m_pShirtsModel = pShirtsModel;
-	m_pShirts2Model = pShirts2Model;
 	m_pPantsModel = pPantsModel;
-	m_pHatModel = pHatModel;
+	//	m_pHatModel = pHatModel;
 
 	if (nullptr == pBodyModel ||
 		nullptr == pFaceModel ||
-		nullptr == pFace2Model ||
-		nullptr == pFace3Model ||
 		nullptr == pShirtsModel ||
-		nullptr == pShirts2Model ||
-		nullptr == pPantsModel ||
-		nullptr == pHatModel)
+		nullptr == pPantsModel /*||
+		nullptr == pHatModel*/ 
+		)
 		return E_FAIL;
 
 	if (FAILED(pFaceModel->Link_Bone_Auto(pBodyModel)))
 		return E_FAIL;
-	if (FAILED(pFace2Model->Link_Bone_Auto(pBodyModel)))
-		return E_FAIL;
-	if (FAILED(pFace3Model->Link_Bone_Auto(pBodyModel)))
-		return E_FAIL;
 	if (FAILED(pShirtsModel->Link_Bone_Auto(pBodyModel)))
-		return E_FAIL;
-	if (FAILED(pShirts2Model->Link_Bone_Auto(pBodyModel)))
 		return E_FAIL;
 	if (FAILED(pPantsModel->Link_Bone_Auto(pBodyModel)))
 		return E_FAIL;
-	if (FAILED(pHatModel->Link_Bone_Auto(pBodyModel)))
-		return E_FAIL;
+	/*if (FAILED(pHatModel->Link_Bone_Auto(pBodyModel)))
+		return E_FAIL;*/
 
 	return S_OK;
 }

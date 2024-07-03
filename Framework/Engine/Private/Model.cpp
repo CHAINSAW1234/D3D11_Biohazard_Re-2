@@ -1357,6 +1357,33 @@ list<string> CModel::Get_Animation_Tags(const wstring& strAnimLayerTag)
 	return AnimationTags;
 }
 
+_int CModel::Get_Mesh_Branch(_uint iMeshIndex)
+{
+	_uint			iNumMeshes = { static_cast<_uint>(m_Meshes.size()) };
+	if (iNumMeshes <= iMeshIndex)
+		return -1;
+
+	return m_MeshBranches[iMeshIndex];
+}
+
+_int CModel::Get_Mesh_Branch(const string& strMeshTag)
+{
+	_uint			iNumMeshes = { static_cast<_uint>(m_Meshes.size()) };
+	for (_uint iMeshIndex = 0; iMeshIndex < iNumMeshes; ++iMeshIndex)
+	{
+		CMesh* pMesh = { m_Meshes[iMeshIndex] };
+		if (nullptr == pMesh)
+			continue;
+
+		if (strMeshTag == pMesh->Get_MeshName())
+		{
+			return Get_Mesh_Branch(iMeshIndex);
+		}
+	}
+
+	return -1;
+}
+
 _bool CModel::Find_AnimIndex(_int* pAnimIndex, wstring* pAnimLayerTag, CAnimation* pAnimation)
 {
 	_int		iAnimIndex = { -1 };
@@ -2033,6 +2060,32 @@ void CModel::Set_BoneLayer_PlayingInfo(_uint iPlayingIndex, const wstring& strBo
 	}
 }
 
+void CModel::Set_Mesh_Branch(const string& strMeshTag, _uint iMeshBranch)
+{
+	_uint			iNumBranch = { static_cast<_uint>(m_MeshBranches.size()) };
+	for (_uint iMeshIndex = 0; iMeshIndex < iNumBranch; ++iMeshIndex)
+	{
+		CMesh*		pMesh = { m_Meshes[iMeshIndex] };
+		if (nullptr == pMesh)
+			continue;
+
+		if (strMeshTag == pMesh->Get_MeshName())
+		{
+			Set_Mesh_Branch(iMeshIndex, iMeshBranch);
+			return;
+		}
+	}
+}
+
+void CModel::Set_Mesh_Branch(_uint iMeshIndex, _uint iMeshBranch)
+{
+	_uint			iNumBranch = { static_cast<_uint>(m_MeshBranches.size()) };
+	if (iMeshIndex >= iNumBranch)
+		return;
+
+	m_MeshBranches[iMeshIndex] = iMeshBranch;
+}
+
 #pragma endregion
 
 #pragma region Initialize
@@ -2173,6 +2226,13 @@ HRESULT CModel::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_IsHideMesh.resize(m_iNumMeshes);
+
+	m_MeshBranches.resize(m_Meshes.size());
+	
+	for (auto& iIndex : m_MeshBranches)
+	{
+		iIndex = -1;
+	}
 
 	return S_OK;
 }

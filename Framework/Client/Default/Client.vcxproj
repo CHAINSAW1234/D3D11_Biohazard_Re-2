@@ -312,6 +312,8 @@
     <ClInclude Include="..\Public\Window.h" />
     <ClInclude Include="..\Public\Zombie.h" />
     <ClInclude Include="..\Public\Pivot_Turn_Zombie.h" />
+    <ClInclude Include="..\Public\Zombie_Defines.h" />
+    <ClInclude Include="..\Public\Zombie_Enums.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />

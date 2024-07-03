@@ -177,56 +177,7 @@ void CMonster::Late_Tick_PartObjects(_float fTimeDelta)
 	for (auto& pPartObject : m_PartObjects)
 	{
 		if (nullptr != pPartObject)
-		{
-			if (m_iCurrentShirts == 0)
-			{
-				if (pPartObject == m_PartObjects[PART_SHIRTS2])
-					continue;
-
-				if (pPartObject == m_PartObjects[PART_SHIRTS3])
-					continue;
-
-
-				if (pPartObject == m_PartObjects[PART_FACE2])
-					continue;
-
-				if (pPartObject == m_PartObjects[PART_FACE3])
-					continue;
-			}
-			
-			if (m_iCurrentShirts == 1)
-			{
-				if (pPartObject == m_PartObjects[PART_SHIRTS])
-					continue;
-
-				if (pPartObject == m_PartObjects[PART_SHIRTS3])
-					continue;
-
-
-				if (pPartObject == m_PartObjects[PART_FACE])
-					continue;
-
-				if (pPartObject == m_PartObjects[PART_FACE3])
-					continue;
-			}
-
-			if (m_iCurrentShirts == 2)
-			{
-				if (pPartObject == m_PartObjects[PART_SHIRTS])
-					continue;
-
-				if (pPartObject == m_PartObjects[PART_SHIRTS2])
-					continue;
-
-				if (pPartObject == m_PartObjects[PART_FACE])
-					continue;
-
-				if (pPartObject == m_PartObjects[PART_FACE2])
-					continue;
-			}
-
 			pPartObject->Late_Tick(fTimeDelta);
-		}
 	}
 }
 

@@ -171,6 +171,8 @@ public:		/* For. Access */
 	list<wstring>							Get_BoneLayer_Tags();
 	list<wstring>							Get_AnimationLayer_Tags();
 	list<string>							Get_Animation_Tags(const wstring& strAnimLayerTag);
+	_int									Get_Mesh_Branch(_uint iMeshIndex);
+	_int									Get_Mesh_Branch(const string& strMeshTag);
 
 	_uint									Get_NumBones() { return static_cast<_uint>(m_Bones.size()); }
 	_uint									Get_NumMeshes() const { return m_iNumMeshes; }
@@ -216,6 +218,8 @@ public:		/* For. Access */
 	void									Change_Animation(_uint iPlayingIndex, const wstring& strAnimLayerTag, _uint iAnimIndex);
 	void									Change_Animation(_uint iPlayingIndex, const wstring& strAnimLayerTag, const string& strAnimTag);
 	void									Set_BoneLayer_PlayingInfo(_uint iPlayingIndex, const wstring& strBoneLayerTag);
+	void									Set_Mesh_Branch(const string& strMeshTag, _uint iMeshBranch);
+	void									Set_Mesh_Branch(_uint iMeshIndex, _uint iMeshBranch);
 
 	class CBone*							Get_BonePtr(const _char* pBoneName) const;
 	class CBone*							Get_BonePtr(_int iIndex);
@@ -280,6 +284,9 @@ private:	/* For.Linear Interpolation */
 private:	/* For.Linear Interpolation */
 	void									Update_LinearInterpolation(_float fTimeDelta, _uint iPlayingIndex);
 
+public:
+
+
 private:
 	MODEL_TYPE								m_eModelType = { TYPE_END };
 	const aiScene* m_pAIScene = { nullptr };
@@ -329,6 +336,9 @@ private:	/* Distance_Optimization */
 
 private:
 	vector<_float>							m_TotalWeights;
+
+private:
+	vector<_int>							m_MeshBranches;
 
 private:	/* For.FBX_Load */
 	HRESULT									Ready_Meshes(const map<string, _uint>& BoneIndices);

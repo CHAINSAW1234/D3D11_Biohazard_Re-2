@@ -9,17 +9,18 @@ BEGIN(Client)
 #include "Body_Zombie_Enums.h"
 #include "Body_Zombie_Defines.h"
 
+#include "Zombie_Enums.h"
+
 class CBody_Zombie final : public CPartObject
 {
-
 public:
 	typedef struct tagBodyMonsterDesc : public CPartObject::PARTOBJECT_DESC
 	{
 		_float3*			pRootTranslation = { nullptr };
+		ZOMBIE_BODY_TYPE	eBodyType = { ZOMBIE_BODY_TYPE::_END };
 	}BODY_MONSTER_DESC;
 
-													//	±¸¸Û
-	enum class MESH_TYPE{ _INNER, _OUTTER, _JOINT, _DEFICIT, _DAMAGED, _END };
+	enum class MESH_TYPE{ _INNER, _OUTTER, _JOINT, _DEFICIT, _DAMAGED, _BROKEN_HEAD, _INTERNAL_MAT, _END };
 
 private:
 	CBody_Zombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -94,7 +95,8 @@ private:		/* For Anim_Branch_AnimGroup */
 	vector<unordered_set<wstring>>		m_GroupAnimLayerTags;
 
 private:
-	vector<MESH_TYPE>					m_MeshTypes;
+	ZOMBIE_BODY_TYPE					m_eBodyModelType = { ZOMBIE_BODY_TYPE::_END };
+
 
 private:
 	HRESULT								Add_Components();

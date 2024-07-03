@@ -3,6 +3,7 @@
 
 #include "Light.h"
 #include "RagDoll_Physics.h"
+#include "Zombie.h"
 
 CBody_Zombie::CBody_Zombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
@@ -27,6 +28,7 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 	BODY_MONSTER_DESC*		pDesc = { static_cast<BODY_MONSTER_DESC*>(pArg) };
 
 	m_pRootTranslation = pDesc->pRootTranslation;
+	m_eBodyModelType = pDesc->eBodyType;
 
 	if (nullptr == m_pRootTranslation)
 		return E_FAIL;
@@ -628,26 +630,37 @@ HRESULT CBody_Zombie::Initialize_MeshTypes()
 	{
 		if (strMeshTag.find("Inside") != string::npos)
 		{
-			m_MeshTypes.emplace_back(MESH_TYPE::_INNER);
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_INNER));
 		}
 	
 		else if (strMeshTag.find("Joint") != string::npos)
 		{
-			m_MeshTypes.emplace_back(MESH_TYPE::_JOINT);
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_JOINT));
 		}
 
 		else if (strMeshTag.find("Deficit") != string::npos)
 		{
-			m_MeshTypes.emplace_back(MESH_TYPE::_DEFICIT);
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_DEFICIT));
 		}
 
 		else if (strMeshTag.find("Damage") != string::npos)
 		{
-			m_MeshTypes.emplace_back(MESH_TYPE::_DAMAGED);
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_DAMAGED));
 		}
+
+		else if (strMeshTag.find("Internal_Mat") != string::npos)
+		{
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_INTERNAL_MAT));
+		}
+
+		else if (strMeshTag.find("BrokenHead") != string::npos)
+		{
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_BROKEN_HEAD));
+		}
+
 		else
 		{
-			m_MeshTypes.emplace_back(MESH_TYPE::_OUTTER);
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_OUTTER));
 		}
 	}
 
@@ -1100,9 +1113,33 @@ HRESULT CBody_Zombie::Add_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieBody"),
-		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
-		return E_FAIL;
+	if (ZOMBIE_BODY_TYPE::_FEMALE == m_eBodyModelType)
+	{
+		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Body_Female"),
+			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+			return E_FAIL;
+	}
+	
+	else if (ZOMBIE_BODY_TYPE::_MALE == m_eBodyModelType)
+	{
+		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieBody"),
+			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+			return E_FAIL;
+	}
+
+	else if (ZOMBIE_BODY_TYPE::_MALE_BIG == m_eBodyModelType)
+	{
+		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Body_Male_Big"),
+			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+			return E_FAIL;
+	}
+
+#ifdef _DEBUG
+	else
+	{
+		MSG_BOX(TEXT("Called : HRESULT CBody_Zombie::Add_Components() 좀비 담당자 호출"));
+	}
+#endif
 
 	return S_OK;
 }

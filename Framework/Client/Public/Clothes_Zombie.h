@@ -2,17 +2,19 @@
 
 #include "Client_Defines.h"
 #include "PartObject.h"
+#include "Zombie.h"
 
 BEGIN(Client)
 
 class CClothes_Zombie final : public CPartObject
 {
 public:
-	enum CLOTHES_TYPE{ TYPE_SHIRTS, TYPE_SHIRTS2, TYPE_SHIRTS3, TYPE_HAT, TYPE_PANTS, TYPE_END };
 public:
 	typedef struct tagClothesMonsterDesc : public CPartObject::PARTOBJECT_DESC
 	{
-		CLOTHES_TYPE			eType = { TYPE_END };
+		ZOMBIE_BODY_TYPE			eBodyType = { ZOMBIE_BODY_TYPE::_END };
+		ZOMBIE_CLOTHES_TYPE			eClothesType = { ZOMBIE_CLOTHES_TYPE::_END };
+		_int						iClothesModelID = { -1 };
 	}CLOTHES_MONSTER_DESC;
 
 private:
@@ -40,7 +42,9 @@ private:
 	CShader*				m_pShaderCom = { nullptr };
 	CCollider*				m_pColliderCom = { nullptr };
 
-	CLOTHES_TYPE			m_eType = { CLOTHES_TYPE::TYPE_END };
+	ZOMBIE_BODY_TYPE		m_eBodyType = { ZOMBIE_BODY_TYPE::_END };
+	ZOMBIE_CLOTHES_TYPE		m_eClothesType = { ZOMBIE_CLOTHES_TYPE::_END };
+	_int					m_iClothesModelID = { -1 };
 
 private:
 	HRESULT					Add_Components();

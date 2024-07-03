@@ -922,6 +922,12 @@
     <ClInclude Include="..\Public\Damage_UI.h">
       <Filter>02.GameObjects\UI\16. Damage</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Zombie_Enums.h">
+      <Filter>02.GameObjects\Monster\Zombie</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Zombie_Defines.h">
+      <Filter>02.GameObjects\Monster\Zombie</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">

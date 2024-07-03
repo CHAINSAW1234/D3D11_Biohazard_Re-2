@@ -1,7 +1,5 @@
 #pragma once
 
-/* 모델의 타입 */
-enum class ZOMBIE_BODY_TYPE { BODY_MALE, BODY_FEMALE, BODY_HEAVY, BODY_END };
 /* 어떤 그룹의 애니메이션 인지 Ordinary .... */
 enum class ZOMBIE_BODY_ANIM_GROUP { _ADD, _BITE, _DAMAGE, _DEAD, _LOST, _ORDINARY, _SICK, _UNDISCOVERED, _END};
 /* 어떤 종류의 애니메이션 인지 */
