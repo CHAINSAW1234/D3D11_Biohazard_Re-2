@@ -161,8 +161,8 @@ void CTutorial_UI::Player_First_Interact()
             break;
 
         case UI_TUTORIAL_TYPE::TUTORIAL_AIM :   
-            pTutorial_TextBox[0]->Set_Text(TEXT("겨누기"));
-            pTutorial_TextBox[1]->Set_Text(TEXT("R"));
+            pTutorial_TextBox[0]->Set_Text(TEXT(" 겨누기"));
+            pTutorial_TextBox[1]->Set_Text(TEXT("L"));
             break;
 
         case UI_TUTORIAL_TYPE::INVENTORY_OPEN:
@@ -173,6 +173,11 @@ void CTutorial_UI::Player_First_Interact()
         case UI_TUTORIAL_TYPE::TUTORIAL_REROAD :
             pTutorial_TextBox[0]->Set_Text(TEXT(" 재장전"));
             pTutorial_TextBox[1]->Set_Text(TEXT("R"));
+            break;
+
+        case UI_TUTORIAL_TYPE::TUTORIAL_EQUIP :
+            pTutorial_TextBox[0]->Set_Text(TEXT("장착하기"));
+            pTutorial_TextBox[1]->Set_Text(TEXT("2"));
             break;
         }
     }

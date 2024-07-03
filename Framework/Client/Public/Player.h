@@ -27,7 +27,7 @@ public:
 		PART_END
 	};
 
-	enum EQUIP { HG, STG, NONE};
+	enum EQUIP { HG, STG, GN, NONE}; // 핸드건 샷건 수류탄
 #pragma region ANIMATION
 	enum ANIMATION_MOVE {
 		ANIM_IDLE, TURN_L180, TURN_R180,
@@ -203,21 +203,23 @@ public:
 	void										Set_Tutorial_Start(UI_TUTORIAL_TYPE i)
 	{ 
 		m_isTutorial_Notify = true;
+		m_isPlayer_FirstBehavior[(_int)i] = true;
 		m_eTutial_Type = i;
 	}
 	
-	_bool*				Get_Tutorial_Notify()	{ return &m_isTutorial_Notify; }
-	UI_TUTORIAL_TYPE*	Get_Tutorial_Type()		{ return &m_eTutial_Type; }
+	_bool*										Get_Tutorial_Notify()	{ return &m_isTutorial_Notify; }
+	UI_TUTORIAL_TYPE*							Get_Tutorial_Type()		{ return &m_eTutial_Type; }
+	_byte										Get_Player_State()		{ return m_eState; } /* Player 상태 반환 */
 
 	/* For. Fuction */
-	void										Player_FirstBehaivor(_int i);
+	void										Player_First_Behavior();
 
 	/* For. Variable */
-	UI_TUTORIAL_TYPE							m_eTutial_Type = { UI_TUTORIAL_TYPE::TUTORIAL_END };
+	UI_TUTORIAL_TYPE							m_eTutial_Type					= { UI_TUTORIAL_TYPE::TUTORIAL_END };
 
 	_bool										m_isNYResult;
-	_bool										m_isPlayer_FirstBehavior[100];
-	_bool										m_isTutorial_Notify = { false };
+	_bool										m_isPlayer_FirstBehavior[100]	= { false };
+	_bool										m_isTutorial_Notify				= { false };
 #pragma
 
 #pragma region 예은 추가 
