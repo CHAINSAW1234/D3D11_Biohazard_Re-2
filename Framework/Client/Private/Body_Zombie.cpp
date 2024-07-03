@@ -651,23 +651,6 @@ HRESULT CBody_Zombie::Initialize_MeshTypes()
 		}
 	}
 
-	vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
-
-	vector<string>			ResultMeshTags;
-	for (auto& strMeshTag : MeshTags)
-	{
-		if (strMeshTag.find("Body") != string::npos)
-		{
-			if (strMeshTag.find("Inside") != string::npos)
-				continue;
-
-			if (strMeshTag.find("Joint") != string::npos)
-				continue;
-
-			ResultMeshTags.push_back(strMeshTag);
-		}
-	}
-
 	return S_OK;
 }
 
