@@ -29,6 +29,10 @@ void CPlayer_State_SubHold_Idle::OnStateUpdate(_float fTimeDelta)
 	m_fDegree = m_pPlayer->Get_CamDegree();
 
 	if (m_isShot) {
+		if (0) {
+			Shot();
+		}
+
 		if(m_pPlayer->Get_Body_Model()->isFinished(0) && 
 			((m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::HOLD_SHOT) ||
 			m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::HOLD_SHOT_NO_AMMO)) {
@@ -41,7 +45,7 @@ void CPlayer_State_SubHold_Idle::OnStateUpdate(_float fTimeDelta)
 	else {
 		Set_MoveAnimation(fTimeDelta);
 		Look_Cam(fTimeDelta);
-		Shot();
+		Start_Shot();
 	}
 
 
@@ -121,7 +125,7 @@ void CPlayer_State_SubHold_Idle::Look_Cam(_float fTimeDelta)
 	}
 }
 
-void CPlayer_State_SubHold_Idle::Shot()
+void CPlayer_State_SubHold_Idle::Start_Shot()
 {
 	if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == DOWN) {
 		m_pPlayer->Get_Body_Model()->Set_Loop(0, false);
@@ -157,6 +161,12 @@ void CPlayer_State_SubHold_Idle::Shot()
 
 		m_isShot = true;
 	}
+}
+
+void CPlayer_State_SubHold_Idle::Shot()
+{
+	//여기서 수류탄 생성
+	// 	
 }
 
 CPlayer_State_SubHold_Idle* CPlayer_State_SubHold_Idle::Create(CPlayer* pPlayer)

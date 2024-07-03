@@ -1172,17 +1172,13 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 
 		ObjectDesc.iIndex = iMonsterNum++;
 
-
 		_uint iSize = {};
 		if (!ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, NULL)) {
 			CloseHandle(hFile);
 			return E_FAIL;
 		}
 
-
 		ObjectDesc.BelongIndexs.resize(iSize);
-
-
 
 		for (size_t i = 0; i < iSize; i++)
 		{
