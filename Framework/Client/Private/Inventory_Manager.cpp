@@ -959,36 +959,175 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 	case Client::shotgun_bullet01a:
 		return CONSUMABLE;
 		break;
-	case Client::submachinegun_bullet01a:
-		return CONSUMABLE;
-		break;
-	case Client::magnumbulleta:
-		return CONSUMABLE;
-		break;
-	case Client::biggun_bullet01a:
-		return CONSUMABLE;
-		break;
-	case Client::inkribbon01a:
-		return QUEST;
-		break;
 	case Client::woodbarricade01a:
 		return CONSUMABLE;
 		break;
 	case Client::blastingfuse01a:
 		return QUEST;
 		break;
-	case Client::gunpowder01a:
+	case Client::_9vbattery01a:
 		return QUEST;
 		break;
+	case Client::gunpowder01a:
+		return CONSUMABLE;
+		break;
 	case Client::gunpowder01b:
-		return QUEST;
+		return CONSUMABLE;
 		break;
 	case Client::strengtheningyellow01a:
 		return USEABLE;
 		break;
-	/*case Client::HandGun:
+	case Client::vp70powerup:
+		return QUEST;
+		break;
+	case Client::vp70longmagazine:
+		return QUEST;
+		break;
+	case Client::shotgunpartsstock_00:
+		return QUEST;
+		break;
+	case Client::shotgunpartsbarrel:
+		return QUEST;
+		break;
+	case Client::unicornmedal01a:
+		return QUEST;
+		break;
+	case Client::spadekey01a:
+		return QUEST;
+		break;
+	case Client::cardkeylv101a:
+		return QUEST;
+		break;
+	case Client::cardkeylv201a:
+		return QUEST;
+		break;
+	case Client::valvehandle01a:
+		return QUEST;
+		break;
+	case Client::kingscepter01a:
+		return QUEST;
+		break;
+	case Client::virginheart01a:
+		return QUEST;
+		break;
+	case Client::blankkey01a:
+		return QUEST;
+		break;
+	case Client::statuebook01a:
+		return QUEST;
+		break;
+	case Client::statuehand01a:
+		return QUEST;
+		break;
+	case Client::virginmedal01a:
+		return QUEST;
+		break;
+	case Client::diakey01a:
+		return QUEST;
+		break;
+	case Client::virginmedal02a:
+		return QUEST;
+		break;
+	case Client::chaincutter01a:
+		return QUEST;
+		break;
+	case Client::rpddocument01a:
+		return QUEST;
+		break;
+	case Client::rpddocumentblood01a:
+		return QUEST;
+		break;
+	case Client::diary01a:
+		return QUEST;
+		break;
+	case Client::document01a:
+		return QUEST;
+		break;
+	case Client::pamphlet01a:
+		return QUEST;
+		break;
+	case Client::guidepamphlet01a:
+		return QUEST;
+		break;
+	case Client::memo01a:
+		return QUEST;
+		break;
+	case Client::raccoonmonthly01a:
+		return QUEST;
+		break;
+	case Client::sewercopamphlet01a:
+		return QUEST;
+		break;
+	case Client::report01a:
+		return QUEST;
+		break;
+	case Client::nestlcokout01a:
+		return QUEST;
+		break;
+	case Client::sewerhintposter01a:
+		return QUEST;
+		break;
+	case Client::rpdreport01a:
+		return QUEST;
+		break;
+	case Client::rpdreport01b:
+		return QUEST;
+		break;
+	case Client::chesshints01a:
+		return QUEST;
+		break;
+	case Client::labopc01a:
+		return QUEST;
+		break;
+	case Client::labopc01b:
+		return QUEST;
+		break;
+	case Client::labopc01c:
+		return QUEST;
+		break;
+	case Client::raccoonfigure01a:
+		return QUEST;
+		break;
+	case Client::voicerecorder01a:
+		return QUEST;
+		break;
+	case Client::mappolice01a:
+		return QUEST;
+		break;
+	case Client::mapunderground01a:
+		return QUEST;
+		break;
+	case Client::mapsewer01a:
+		return QUEST;
+		break;
+	case Client::mapraccooncity01a:
+		return QUEST;
+		break;
+	case Client::maplaboratoryhigh01a:
+		return QUEST;
+		break;
+	case Client::maplaboratorymiddle01a:
+		return QUEST;
+		break;
+	case Client::mapupperpolice01a:
+		return QUEST;
+		break;
+	case Client::clairesbag01a:
+		return QUEST;
+		break;
+	case Client::HandGun:
 		return EQUIPABLE;
-		break;*/
+		break;
+	case Client::ShotGun:
+		return EQUIPABLE;
+		break;
+	case Client::Flash_Bomb:
+		return CONSUMABLE_EQUIPABLE;
+		break;
+	case Client::Grenade:
+		return CONSUMABLE_EQUIPABLE;
+		break;
+
 	case Client::ITEM_NUMBER_END:
 		break;
 	default:

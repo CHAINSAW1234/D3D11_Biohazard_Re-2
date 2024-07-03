@@ -23,6 +23,8 @@ HRESULT CItem_UI::Initialize(void* pArg)
 	{
 		if (FAILED(__super::Initialize(pArg)))
 			return E_FAIL;
+		
+		//Change_Component(LEVEL_STATIC, TEXT("Prototype_Component_Texture_Items"), TEXT("Com_DefaultTexture"), (CComponent**)&m_pTextureCom);
 
 		m_isLoad = false;
 

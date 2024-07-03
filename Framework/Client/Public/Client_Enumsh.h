@@ -322,6 +322,10 @@ namespace Client
 		/*end*/
 		HandGun,
 		ShotGun,
+		Flash_Bomb,
+		Grenade,
+		vp70stock,
+		portablesafe,
 		ITEM_NUMBER_END
 	};
 

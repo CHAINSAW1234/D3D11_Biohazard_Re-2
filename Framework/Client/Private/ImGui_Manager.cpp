@@ -159,85 +159,7 @@ ITEM_NUMBER CImgui_Manager::Classify_String_To_ItemNum(wstring wstrItemNum)
         i++;
     }
 
-    /*
-    if (TEXT("emergencyspray01a") == wstrItemNum)
-        return emergencyspray01a;
-
-    else if (TEXT("greenherb01a") == wstrItemNum)
-        return greenherb01a;
-
-    else if(TEXT("redherb01a") == wstrItemNum)
-        return redherb01a;
-
-    else if(TEXT("blueherb01a") == wstrItemNum)
-        return blueherb01a;
-
-    else if (TEXT("herbsgg01a") == wstrItemNum)
-        return herbsgg01a;
-
-    else if (TEXT("herbsgr01a") == wstrItemNum)
-        return herbsgr01a;
-
-    else if (TEXT("herbsgb01a") == wstrItemNum)
-        return herbsgb01a;
-
-    else if (TEXT("herbsggb01a") == wstrItemNum)
-        return herbsggb01a;
-
-    else if (TEXT("herbsggg01a") == wstrItemNum)
-        return herbsggg01a;
-
-    else if (TEXT("herbsgrb01a") == wstrItemNum)
-        return herbsgrb01a;
-
-    else if (TEXT("herbsrb01a") == wstrItemNum)
-        return herbsrb01a;
-
-    else if (TEXT("greenherbitem01a") == wstrItemNum)
-        return greenherbitem01a;
-
-    else if (TEXT("redherbitem01a") == wstrItemNum)
-        return redherbitem01a;
-
-    else if (TEXT("blueherbitem01a") == wstrItemNum)
-        return blueherbitem01a;
-
-    else if (TEXT("handgun_bullet01a") == wstrItemNum)
-        return handgun_bullet01a;
-
-    else if (TEXT("shotgun_bullet01a") == wstrItemNum)
-        return shotgun_bullet01a;
-
-    else if (TEXT("submachinegun_bullet01a") == wstrItemNum)
-        return submachinegun_bullet01a;
-
-    else if (TEXT("magnumbulleta") == wstrItemNum)
-        return magnumbulleta;
-
-    else if (TEXT("biggun_bullet01a") == wstrItemNum)
-        return biggun_bullet01a;
-
-    else if (TEXT("inkribbon01a") == wstrItemNum)
-        return inkribbon01a;
-    
-    else if (TEXT("woodbarricade01a") == wstrItemNum)
-        return woodbarricade01a;
-
-    else if (TEXT("blastingfuse01a") == wstrItemNum)
-        return blastingfuse01a;
-
-    else if (TEXT("gunpowder01a") == wstrItemNum)
-        return gunpowder01a;
-
-    else if (TEXT("gunpowder01b") == wstrItemNum)
-        return gunpowder01b;
-
-    else if (TEXT("strengtheningyellow01a") == wstrItemNum)
-        return strengtheningyellow01a;
-
-    else if (TEXT("HandGun") == wstrItemNum)
-        return HandGun;
-    */
+ 
     return ITEM_NUMBER_END;
 }
 
@@ -360,17 +282,11 @@ wstring CImgui_Manager::Classify_ItemNum_To_String(ITEM_NUMBER eItemNum)
         break;
         ITEM_STRING(shotgun_bullet01a);
         break;
-        ITEM_STRING(submachinegun_bullet01a);
-        break;
-        ITEM_STRING(magnumbulleta);
-        break;
-        ITEM_STRING(biggun_bullet01a);
-        break;
-        ITEM_STRING(inkribbon01a);
-        break;
         ITEM_STRING(woodbarricade01a);
         break;
         ITEM_STRING(blastingfuse01a);
+        break;
+        ITEM_STRING(_9vbattery01a);
         break;
         ITEM_STRING(gunpowder01a);
         break;
@@ -378,73 +294,13 @@ wstring CImgui_Manager::Classify_ItemNum_To_String(ITEM_NUMBER eItemNum)
         break;
         ITEM_STRING(strengtheningyellow01a);
         break;
-        ITEM_STRING(vp70csparts01a);
-        break;
-        ITEM_STRING(laserpointer01a);
-        break;
-        ITEM_STRING(shotgunparts01a);
-        break;
-        ITEM_STRING(submgparts01a);
-        break;
-        ITEM_STRING(deserteaglecsparts01a);
-        break;
-        ITEM_STRING(lasersightparts01a);
-        break;
-        ITEM_STRING(ladysmithcsparts01a);
+        ITEM_STRING(vp70powerup);
         break;
         ITEM_STRING(vp70longmagazine);
         break;
-        ITEM_STRING(vp70powerup);
-        break;
-        ITEM_STRING(vp70stock);
-        break;
-        ITEM_STRING(ladysmithcsparts);
-        break;
-        ITEM_STRING(lasersight);
-        break;
-        ITEM_STRING(ladysmithpowerup);
-        break;
-        ITEM_STRING(browninghlongmagazine);
-        break;
-        ITEM_STRING(shotgunpartsstock);
+        ITEM_STRING(shotgunpartsstock_00);
         break;
         ITEM_STRING(shotgunpartsbarrel);
-        break;
-        ITEM_STRING(submgpartsmagazine);
-        break;
-        ITEM_STRING(submgpartssilencer);
-        break;
-        ITEM_STRING(deserteaglecspartsshight);
-        break;
-        ITEM_STRING(deserteaglecspartsbarrel);
-        break;
-        ITEM_STRING(grenadelauncherstock);
-        break;
-        ITEM_STRING(flamethrowerpowerup);
-        break;
-        ITEM_STRING(sparkshotpowerup);
-        break;
-        ITEM_STRING(oillighter01a);
-        break;
-        ITEM_STRING(keypickingtool01a);
-        break;
-        ITEM_STRING(photofilma01a);
-        break;
-        ITEM_STRING(photofilmb01a);
-        break;
-        ITEM_STRING(photofilmc01a);
-        break;
-        ITEM_STRING(photofilmd01a);
-        break;
-        ITEM_STRING(photofilme01a);
-        break;
-        ITEM_STRING(backdoorkey01a);
-        break;
-        ITEM_STRING(keycase01a);
-        break;
-        ITEM_STRING(extensioncord01a);
-        break;
-        ITEM_STRING(squarecrank01a);
         break;
         ITEM_STRING(unicornmedal01a);
         break;
@@ -456,183 +312,23 @@ wstring CImgui_Manager::Classify_ItemNum_To_String(ITEM_NUMBER eItemNum)
         break;
         ITEM_STRING(valvehandle01a);
         break;
-        ITEM_STRING(starsbadge01a);
-        break;
         ITEM_STRING(kingscepter01a);
-        break;
-        ITEM_STRING(hourglasskey01a);
         break;
         ITEM_STRING(virginheart01a);
         break;
-        ITEM_STRING(bluejewelrybox01a);
-        break;
-        ITEM_STRING(redjewelrybox01a);
-        break;
-        ITEM_STRING(bishopplug01a);
-        break;
-        ITEM_STRING(rookplug01a);
-        break;
-        ITEM_STRING(kingplug01a);
-        break;
-        ITEM_STRING(serpentstone01a);
-        break;
-        ITEM_STRING(eaglestone01a);
-        break;
-        ITEM_STRING(jaggerstone01a);
-        break;
-        ITEM_STRING(handcuffskey01a);
-        break;
-        ITEM_STRING(unicorndebris01a);
-        break;
-        ITEM_STRING(sunstone01a);
-        break;
-        ITEM_STRING(doorknob01a);
-        break;
-        ITEM_STRING(drivergrip01a);
-        break;
-        ITEM_STRING(driverheadplus01a);
-        break;
-        ITEM_STRING(driverheadsocket01a);
-        break;
         ITEM_STRING(blankkey01a);
-        break;
-        ITEM_STRING(wetwastepaper01a);
         break;
         ITEM_STRING(statuebook01a);
         break;
         ITEM_STRING(statuehand01a);
         break;
-        ITEM_STRING(floppydisk01a);
-        break;
         ITEM_STRING(virginmedal01a);
         break;
         ITEM_STRING(diakey01a);
         break;
-        ITEM_STRING(carkey01a);
-        break;
-        ITEM_STRING(condenser01a);
-        break;
-        ITEM_STRING(cardkeylv001a);
-        break;
         ITEM_STRING(virginmedal02a);
         break;
-        ITEM_STRING(pocketbook01a);
-        break;
-        ITEM_STRING(loveremblem01a);
-        break;
-        ITEM_STRING(gearsmal01a);
-        break;
-        ITEM_STRING(gear01a);
-        break;
-        ITEM_STRING(gardenkey01a);
-        break;
-        ITEM_STRING(knightplug01a);
-        break;
-        ITEM_STRING(pawnplug01a);
-        break;
-        ITEM_STRING(queenplug01a);
-        break;
-        ITEM_STRING(blisterpack01a);
-        break;
-        ITEM_STRING(swordofdamocles01a);
-        break;
-        ITEM_STRING(orphanagekey01a);
-        break;
-        ITEM_STRING(clubkey01a);
-        break;
-        ITEM_STRING(manholeopener01a);
-        break;
-        ITEM_STRING(plastickcontainer01a);
-        break;
-        ITEM_STRING(plastickcontainer02a);
-        break;
-        ITEM_STRING(eaglekey01a);
-        break;
-        ITEM_STRING(heartkey01a);
-        break;
-        ITEM_STRING(videotape01a);
-        break;
-        ITEM_STRING(eaglemedal01a);
-        break;
-        ITEM_STRING(brokeneaglekey01a);
-        break;
-        ITEM_STRING(wolfkey01a);
-        break;
-        ITEM_STRING(cardkeylv202a);
-        break;
-        ITEM_STRING(valvehandle02a);
-        break;
-        ITEM_STRING(listtagwatchb01a);
-        break;
-        ITEM_STRING(medicinebottle01a);
-        break;
-        ITEM_STRING(medicinebottle02a);
-        break;
-        ITEM_STRING(medicinebottle03a);
-        break;
-        ITEM_STRING(jointsnplugs01a);
-        break;
-        ITEM_STRING(listtagpartsmaster01a);
-        break;
-        ITEM_STRING(clisttagmaster01a);
-        break;
-        ITEM_STRING(signalmodulator01a);
-        break;
-        ITEM_STRING(trophy01a);
-        break;
-        ITEM_STRING(memorysticklock01a);
-        break;
-        ITEM_STRING(memorystickunlock01a);
-        break;
-        ITEM_STRING(liftkey01a);
-        break;
-        ITEM_STRING(llisttagguests01a);
-        break;
-        ITEM_STRING(llisttaggeneral01a);
-        break;
-        ITEM_STRING(llisttagadvanced01a);
-        break;
-        ITEM_STRING(listtagpartsgeneral01a);
-        break;
-        ITEM_STRING(listtagpartsadvanced01a);
-        break;
-        ITEM_STRING(clisttagguests01a);
-        break;
-        ITEM_STRING(clisttaggeneral01a);
-        break;
-        ITEM_STRING(clisttagadvanced01a);
-        break;
-        ITEM_STRING(videotape02a);
-        break;
-        ITEM_STRING(modisk01a);
-        break;
-        ITEM_STRING(samplecartridge01a);
-        break;
-        ITEM_STRING(samplecartridge02a);
-        break;
-        ITEM_STRING(antiviraldrugs01a);
-        break;
-        ITEM_STRING(attachecase01a);
-        break;
-        ITEM_STRING(leverswitches01a);
-        break;
-        ITEM_STRING(prismpillar01a);
-        break;
-        ITEM_STRING(prismpillar02a);
-        break;
-        ITEM_STRING(prismpillar03a);
-        break;
-        ITEM_STRING(laboratoryfuse01a);
-        break;
-        ITEM_STRING(laboratoryfuse02a);
-        break;
-        ITEM_STRING(pendant01a);
-        break;
-        ITEM_STRING(scissors01a);
-        break;
         ITEM_STRING(chaincutter01a);
-        break;
-        ITEM_STRING(cushiondoll01a);
         break;
         ITEM_STRING(rpddocument01a);
         break;
@@ -690,27 +386,21 @@ wstring CImgui_Manager::Classify_ItemNum_To_String(ITEM_NUMBER eItemNum)
         break;
         ITEM_STRING(clairesbag01a);
         break;
-        ITEM_STRING(oldkey01a);
-        break;
-        ITEM_STRING(keytag01a);
-        break;
-        ITEM_STRING(clairebox01a);
-        break;
-        ITEM_STRING(leonbox01a);
-        break;
-        ITEM_STRING(portablesafe01a);
-        break;
-        ITEM_STRING(cookiescan01a);
-        break;
-        ITEM_STRING(woodbox01a);
-        break;
         ITEM_STRING(HandGun);
         break;
         ITEM_STRING(ShotGun);
         break;
-
+        ITEM_STRING(Flash_Bomb);
+        break;
+        ITEM_STRING(Grenade);
+        break;
+        ITEM_STRING(vp70stock);
+        break;
+        ITEM_STRING(portablesafe);
+        break;
     default:
         break;
     }
 
+    return wstring();
 }

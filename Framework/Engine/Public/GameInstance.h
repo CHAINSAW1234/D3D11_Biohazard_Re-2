@@ -41,11 +41,24 @@ public:
 		m_bPause = bPause;
 	}
 
+
+
 	wstring StringToWstring(const std::string& strString);
 
 	string WstringToString(const wstring& wstrString);
 
 	wstring ConvertToWString(const char* str, size_t len);
+
+
+#pragma region 모델테그 모음
+public:
+	void Set_ModelTags(wstring keyTags, vector<wstring> Tags) {
+		m_mapModelTags.emplace(keyTags, Tags);
+	}
+	vector<wstring> Get_ModelTags(wstring keyTags) { return m_mapModelTags[keyTags]; }
+
+private:
+	map< wstring, vector<wstring> > m_mapModelTags;
 
 #pragma endregion
 
@@ -439,6 +452,8 @@ private:
 	_float4									m_vRayOrigin_Aim;
 	_float4									m_vRayDir_Aim;
 	class CTransform*						m_pCameraTransform = { nullptr };
+
+
 public:
 	static void Release_Engine();
 	virtual void Free() override;

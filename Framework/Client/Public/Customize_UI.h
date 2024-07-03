@@ -96,6 +96,8 @@ public :
 
 		_int							iInven_Type;
 
+		_uint							iDefaultTexturLevel = { 3 };
+
 	}CUSTOM_UI_DESC;
 
 protected :
@@ -112,7 +114,7 @@ public:
 	virtual HRESULT Render() override;
 
 protected :
-	HRESULT Add_Components(const wstring& wstrTextureTag, const wstring& wstrMaskTag);
+	HRESULT Add_Components(const wstring& wstrTextureTag, const wstring& wstrMaskTag, _uint iDefaultTexturLevel);
 	HRESULT Bind_ShaderResources();
 	HRESULT Change_Texture(const wstring& strPrototypeTag, const wstring& strComponentTag);
 
