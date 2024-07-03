@@ -149,29 +149,16 @@ void CRead_Item_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    /* GARA */
-    if (DOWN == m_pGameInstance->Get_KeyState('0') && READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
-    {
-        eGara = (ITEM_READ_TYPE)((_int)eGara + 1);
-
-        if (eGara >= ITEM_READ_TYPE::OFFICER_NOTE)
-            eGara = ITEM_READ_TYPE::INCIDENT_LOG_NOTE;
-    }
-
-
     /* 예시 코드 */
-    if (m_pGameInstance->Get_KeyState('I') && READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
+    if (true == m_isRender)
     {
-        m_isRender = true;
-        m_eBook_Type = eGara;
-
         Reset();
     }
 
 
     Render_Condition();
-            
-    /* 분기점 */       
+
+    /* 분기점 */
     if (READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
         Introduce_Read(fTimeDelta);
 
@@ -311,6 +298,36 @@ void CRead_Item_UI::Arrow_Read()
     }
 }
 
+void CRead_Item_UI::Start()
+{
+    if (m_eRead_type == READ_UI_TYPE::INTRODUCE_READ)
+    {
+        list<class CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+
+        for (auto& iter : *pUILayer)
+        {
+            CRead_Item_UI* pRead = dynamic_cast<CRead_Item_UI*>(iter);
+
+            if (nullptr != pRead)
+                m_ReadVec.push_back(pRead);
+        }
+    }
+}
+
+void CRead_Item_UI::Set_ReadItem_Type(ITEM_READ_TYPE _readType)
+{
+    /* intro를 불러야 의미 있음 */
+    if (m_eRead_type == READ_UI_TYPE::INTRODUCE_READ)
+    {
+        if (!m_ReadVec.empty())
+        {
+            for (auto& iter : m_ReadVec)
+            {
+                iter->m_isRender = true;
+            }
+        }
+    }
+}
 void CRead_Item_UI::Text_Read(_float fTimeDelta)
 {
     if (nullptr == m_pIntro_UI || true != m_pIntro_UI->m_isRead_Start)

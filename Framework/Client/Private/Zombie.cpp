@@ -233,9 +233,10 @@ void CZombie::Tick(_float fTimeDelta)
 				m_iBloodCount = 0;
 
 				/*For Blood Effect*/
+#ifndef _DEBUG
 				m_bSetBlood = true;
 				m_BloodTime = GetTickCount64();
-
+#endif
 				m_pController->Set_Hit(false);
 			}
 		}
@@ -249,8 +250,10 @@ void CZombie::Tick(_float fTimeDelta)
 			m_iBloodCount = 0;
 
 			/*For Blood Effect*/
+#ifndef _DEBUG
 			m_bSetBlood = true;
 			m_BloodTime = GetTickCount64();
+#endif
 
 			m_pController->Set_Hit(false);
 
@@ -347,8 +350,10 @@ void CZombie::Late_Tick(_float fTimeDelta)
 	if (m_bSetBlood)
 	{
 		/*For Decal*/
+#ifndef _DEBUG
 		Ready_Decal();
 		SetBlood();
+#endif
 	}
 
 	Late_Tick_Effect(fTimeDelta);
@@ -482,7 +487,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CanLinkMonsterStatesBite.emplace_back(MONSTER_STATE::MST_LIGHTLY_HOLD);
 	CIs_Can_Link_Pre_State_Zombie* pDeco_Is_Can_Link_Bite = { CIs_Can_Link_Pre_State_Zombie::Create(CanLinkMonsterStatesBite) };
 	pDeco_Is_Can_Link_Bite->SetBlackBoard(m_pBlackBoard);
-	pDeco_Is_Can_Link_Bite->Insert_Decorator_Node(pDeco_Is_Can_Link_Bite);
+	pSelectorNode_Root->Insert_Decorator_Node(pDeco_Is_Can_Link_Bite);
 
 #pragma endregion
 
@@ -642,6 +647,14 @@ void CZombie::Init_BehaviorTree_Zombie()
 #pragma endregion
 
 #pragma endregion		//	Selector Root 
+
+#pragma region		//	Task Shake Skin
+
+	CShake_Skin_Zombie*							pTask_Shake_Skin = { CShake_Skin_Zombie::Create() };
+	pTask_Shake_Skin->SetBlackBoard(m_pBlackBoard);
+	pSequenceNode_Root->Insert_Child_Node(pTask_Shake_Skin);
+
+#pragma endregion
 
 #pragma region Additional Shake Skin			//	추가해야함
 

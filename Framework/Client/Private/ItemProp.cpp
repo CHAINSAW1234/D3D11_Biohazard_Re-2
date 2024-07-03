@@ -37,10 +37,10 @@ HRESULT CItemProp::Initialize(void* pArg)
 void CItemProp::Tick(_float fTimeDelta)
 {
 	__super::Check_Player();
+	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(XMMatrixTranslation(0.f, -1.2f, 0.f) * m_pTransformCom->Get_WorldMatrix());
 
 	if (m_bDead)
 	{
-		Set_Region(-1);
 		return;
 	}
 
@@ -63,7 +63,6 @@ void CItemProp::Tick(_float fTimeDelta)
 		m_bCol = false;
 	}
 	
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(XMMatrixTranslation(0.f, -1.2f, 0.f) * m_pTransformCom->Get_WorldMatrix());
 
 	__super::Tick(fTimeDelta);
 
@@ -171,8 +170,7 @@ _float4 CItemProp::Get_Object_Pos()
 void CItemProp::Active()
 {
 	*m_pPlayerInteract = false;
-	m_bDead = true;
-
+	m_pPlayer->PickUp_Item(this);
 }
 
 CItemProp* CItemProp::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

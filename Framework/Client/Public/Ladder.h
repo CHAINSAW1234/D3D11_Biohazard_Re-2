@@ -8,11 +8,6 @@ BEGIN(Client)
 class CLadder final : public CInteractProps
 {
 public:
-	enum STATUE_STATE
-	{
-		STATE_PLAY,
-		STATE_STATIC
-	};
 	enum STATUE_PART
 	{
 		PART_BODY,
@@ -48,7 +43,7 @@ private:
 	_bool				m_bActive = { false };
 	_bool				m_bDownCol = { false };
 	_float			m_fTime = { 0.f };
-	_ubyte			m_eState = { STATE_STATIC };
+	//_ubyte			m_eState = { STATE_STATIC };
 
 
 public:

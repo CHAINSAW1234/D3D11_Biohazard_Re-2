@@ -40,6 +40,7 @@ void CLightly_Hold_Zombie::Enter()
 	m_isEntry = true;
 	m_isHoldTarget = false;
 
+	m_isSendMSG_To_Player = false;
 	m_eAnimType = LIGHTLY_HOLD_ANIM_TYPE::_END;
 
 	_float3			vDirectionToPlayerLocalFloat3 = {};
@@ -83,6 +84,30 @@ _bool CLightly_Hold_Zombie::Execute(_float fTimeDelta)
 
 	Change_Animation(eAnimState);
 
+	if (false == m_isSendMSG_To_Player)
+	{
+		Set_Lightly_Hold_LinearStart_HalfMatrix();
+		m_isSendMSG_To_Player = true;
+	}
+
+	Apply_HalfMatrix(fTimeDelta);
+
+	if (LIGHTLY_HOLD_ANIM_STATE::_FINISH == eAnimState)
+	{
+		CModel*				pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+		if (nullptr == pBody_Model)
+			return false;
+
+		_float			fTrackPosition = { pBody_Model->Get_Duration_From_PlayingInfo(static_cast<_uint>(m_ePlayingIndex)) };
+		_float			fDuration = { pBody_Model->Get_Duration_From_PlayingInfo(static_cast<_uint>(m_ePlayingIndex)) };
+
+		_float			fRatio = { fTrackPosition / fDuration };
+		if (fRatio > 0.9f)
+		{
+			m_pBlackBoard->Get_AI()->Set_ManualMove(false);
+		}
+	}
+
 	return true;
 }
 
@@ -113,10 +138,18 @@ _bool CLightly_Hold_Zombie::Condition_Check()
 
 		else
 		{
-			_float				fDistanceToPlayer = {};
-			if (false == m_pBlackBoard->Compute_Distance_To_Player_World(&fDistanceToPlayer))
-				return false;
-			_bool				isCanBite = { pAI->Get_Status_Ptr()->fBiteRange >= fDistanceToPlayer};
+			if (false == m_isHoldTarget)
+			{
+				_float				fDistanceToPlayer = {};
+				if (false == m_pBlackBoard->Compute_Distance_To_Player_World(&fDistanceToPlayer))
+					return false;
+				_bool				isCanBite = { pAI->Get_Status_Ptr()->fBiteRange >= fDistanceToPlayer };
+				if (true == isCanBite)
+				{
+					m_eAnimType = LIGHTLY_HOLD_ANIM_TYPE::_PUSH_DOWN;
+					m_isHoldTarget = true;
+				}
+			}			
 		}
 	}
 
@@ -142,12 +175,11 @@ void CLightly_Hold_Zombie::Change_Animation(LIGHTLY_HOLD_ANIM_STATE eState)
 {
 	if (true == m_isHoldTarget)
 	{
-
+		Change_Animation_Bite_PushDown(eState);
 	}
-
 	else
 	{
-
+		Change_Animation_Lightly_Hold(eState);
 	}
 }
 
@@ -204,18 +236,6 @@ void CLightly_Hold_Zombie::Change_Animation_Lightly_Hold(LIGHTLY_HOLD_ANIM_STATE
 
 void CLightly_Hold_Zombie::Change_Animation_Bite_PushDown(LIGHTLY_HOLD_ANIM_STATE eState)
 {
-	//enum class ANIM_BITE_PUSH_DOWN {
-	//	_DOWN_START_L,			//	플레이어가 왼쪽 , 좀비가 오른쪽 ( 다운 상태의 플레이어를 물어 뜯음 )
-	//	_DOWN_START_R,			//	플레이어가 오른쪽 , 좀비가 왼쪽 ( 다운 상태의 플레이어를 물어 뜯음 )
-	//	_DOWN_REJECT_L,			//	오른쪽에 있는 좀비를 플레이어 우측으로 밀쳐냄
-	//	_DOWN_REJECT_R,			//	왼쪽에 있는 좀비를 플레이어 좌측으로 밀쳐냄
-	//	_PUSH_DOWN_L1,
-	//	_PUSH_DOWN_R1,
-	//	_PUSH_DOWN_L2,
-	//	_PUSH_DOWN_R2,
-	//	_DOWN_KILL_R,
-	//	_END
-	//};
 	if (nullptr == m_pBlackBoard)
 		return;
 
@@ -265,6 +285,9 @@ void CLightly_Hold_Zombie::Change_Animation_Bite_PushDown(LIGHTLY_HOLD_ANIM_STAT
 		_float			fZombieAttack = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fAttack };
 		_bool			isCanKillPlayer = { fPlayerHP <= fZombieAttack };
 
+		if (false == m_pBlackBoard->Hit_Player())
+			return;
+
 		if (true == isCanKillPlayer)
 		{
 			iResultAnimationIndex = static_cast<_int>(ANIM_BITE_PUSH_DOWN::_DOWN_KILL_R);
@@ -272,25 +295,21 @@ void CLightly_Hold_Zombie::Change_Animation_Bite_PushDown(LIGHTLY_HOLD_ANIM_STAT
 
 		else
 		{
-
-		}
-
-		if (DIRECTION::_L == m_eDirectionToPlayer)
-		{
-			iResultAnimationIndex = static_cast<_uint>(ANIM_BITE_PUSH_DOWN::_PUSH_DOWN_L1);
-			iResultAnimationIndex = static_cast<_uint>(ANIM_BITE_PUSH_DOWN::_PUSH_DOWN_L2);
-		}
-		else if (DIRECTION::_R == m_eDirectionToPlayer)
-		{
-			iResultAnimationIndex = static_cast<_uint>(ANIM_BITE_PUSH_DOWN::_PUSH_DOWN_R1);
-			iResultAnimationIndex = static_cast<_uint>(ANIM_BITE_PUSH_DOWN::_PUSH_DOWN_R2);
+			if (DIRECTION::_L == m_eDirectionToPlayer)
+			{
+				iResultAnimationIndex = static_cast<_uint>(ANIM_BITE_PUSH_DOWN::_DOWN_REJECT_L);
+			}
+			else if (DIRECTION::_R == m_eDirectionToPlayer)
+			{
+				iResultAnimationIndex = static_cast<_uint>(ANIM_BITE_PUSH_DOWN::_DOWN_REJECT_R);
+			}
 		}
 	}
 
 	if (-1 == iResultAnimationIndex)
 		return;
 
-	pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strLightlyHoldAnimLayerTag, iResultAnimationIndex);
+	pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strPushDownAnimLayerTag, iResultAnimationIndex);
 	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
 }
 

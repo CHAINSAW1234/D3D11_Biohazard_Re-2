@@ -775,6 +775,9 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("zombiewindow")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Window::Create(m_pDevice, m_pContext));
+		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm40_016")) != wstring::npos) && (bDo = true))
+			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Ladder::Create(m_pDevice, m_pContext));
+
 		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm40")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Door::Create(m_pDevice, m_pContext));
 		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_024_newpolicestatue01a")) != wstring::npos) && (bDo = true))

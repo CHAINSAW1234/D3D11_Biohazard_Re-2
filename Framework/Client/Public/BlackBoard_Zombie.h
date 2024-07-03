@@ -42,6 +42,9 @@ private:
 
 	void							Update_Status_Stamina(_float fTimeDelta);
 
+public:	//	Interact
+	_bool							Hit_Player();
+
 public: // Setter
 	void							SetPlayer(class CPlayer* pPlayer)
 	{

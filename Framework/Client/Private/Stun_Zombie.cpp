@@ -31,7 +31,6 @@ void CStun_Zombie::Enter()
 
 	pBodyModel->Set_TotalLinearInterpolation(0.2f);
 	pBodyModel->Set_Loop(static_cast<_uint>(m_ePlayingIndex), false);
-	//	pBodyModel->Set_BlendWeight(static_cast<_uint>(m_ePlayingIndex), 1.f, 0.3f);
 
 	m_isEntry = true;
 
@@ -44,6 +43,9 @@ void CStun_Zombie::Enter()
 
 _bool CStun_Zombie::Execute(_float fTimeDelta)
 {
+
+
+	return false;
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)
 		return false;
@@ -74,9 +76,6 @@ _bool CStun_Zombie::Execute(_float fTimeDelta)
 	{
 		Update_Current_Collider();
 		Change_Animation();
-		CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
-		pBodyModel->Set_Loop(static_cast<_uint>(m_ePlayingIndex), false);
-		pBodyModel->Set_BlendWeight(static_cast<_uint>(m_ePlayingIndex), 1.f, 0.3f);
 		m_isEntry = false;
 	}
 
@@ -87,9 +86,6 @@ _bool CStun_Zombie::Execute(_float fTimeDelta)
 void CStun_Zombie::Exit()
 {
 	m_eCurrentHitCollider = COLLIDER_TYPE::_END;
-
-	//	CModel* pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
-	//	pBody_Model->Set_BlendWeight(static_cast<_uint>(m_ePlayingIndex), 0.f, 0.3f);
 }
 
 void CStun_Zombie::Update_Current_Collider()
@@ -117,7 +113,7 @@ void CStun_Zombie::Change_Animation_StandUp()
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
 
