@@ -249,6 +249,24 @@ _float4x4 CChannel::Compute_TransformationMatrix_LinearInterpolation(const vecto
 	return TransformationFloat4x4;
 }
 
+void CChannel::Link_Bone(const unordered_map<string, _uint>& BoneNameIndices)
+{
+	unordered_map<string, _uint>::const_iterator				iter = { BoneNameIndices.find(m_szName) };
+	if (iter != BoneNameIndices.end())
+	{
+		m_iBoneIndex = iter->second;
+	}
+
+	else
+	{
+		m_iBoneIndex = -1;
+#ifdef _DEBUG
+		MSG_BOX(TEXT("Non Included Bone"));
+		MSG_BOX(TEXT("Called : void CChannel::Link_Bone(const unordered_map<string, _uint>& BoneNameIndices)"));
+#endif
+	}
+}
+
 CChannel* CChannel::Create(const aiNodeAnim* pAiChannel, const map<string, _uint>& BoneIndices)
 {
 	CChannel* pInstance = new CChannel();

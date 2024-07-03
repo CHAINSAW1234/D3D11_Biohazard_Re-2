@@ -35,6 +35,9 @@ public:
 	inline _uint Get_BoneIndex() { return m_iBoneIndex; }
 	inline _uint Get_Num_KeyFrame() { return m_iNumKeyFrames; }
 
+public:
+	void					Link_Bone(const unordered_map<string, _uint>& BoneNameIndices);
+
 private:
 	_char					m_szName[MAX_PATH] = { "" };
 	_int					m_iBoneIndex = { -1 };

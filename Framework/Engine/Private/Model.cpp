@@ -266,7 +266,7 @@ HRESULT CModel::Add_Animations(const wstring& strPrototypeLayerTag, const wstrin
 	_uint			iNumAnims = { m_pGameInstance->Get_NumAnim_Prototypes(strPrototypeLayerTag) };
 	for (_uint i = 0; i < iNumAnims; ++i)
 	{
-		CAnimation* pAnimation = { nullptr };
+		CAnimation*						pAnimation = { nullptr };
 		m_pGameInstance->Clone_Animation(strPrototypeLayerTag, i, &pAnimation);
 
 		if (nullptr == pAnimation)
@@ -277,6 +277,20 @@ HRESULT CModel::Add_Animations(const wstring& strPrototypeLayerTag, const wstrin
 			MSG_BOX(TEXT("Failed To Add Animation :: HRESULT CModel::Add_Animations(const wstring& strPrototypeLayerTag, const wstring& strAnimLayerTag)"));
 
 			return E_FAIL;
+		}
+
+		vector<CChannel*>					Channels = { pAnimation->Get_Channels() };
+		unordered_map<string, _uint>		BoneNameIndices;
+		_uint								iNumBones = { static_cast<_uint>(m_Bones.size()) };
+		for (_uint i = 0; i < iNumBones; ++i)
+		{
+			string			strBoneName = { m_Bones[i]->Get_Name()};
+			BoneNameIndices.emplace(strBoneName, i);
+		}
+
+		for (auto& pChannel : Channels)
+		{
+			pChannel->Link_Bone(BoneNameIndices);
 		}
 	}
 
