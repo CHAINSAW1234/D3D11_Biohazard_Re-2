@@ -71,6 +71,7 @@ private:
 	void DoubleDoor_Active();
 public:
 	virtual _float4 Get_Object_Pos() override;
+	_float			Get_PlayerLook_Degree();
 	virtual _bool		Attack_Prop(class CTransform* pTransfromCom = nullptr) override
 	{
 		if (m_iHP <= 0)

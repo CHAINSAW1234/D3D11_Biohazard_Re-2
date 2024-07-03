@@ -140,7 +140,7 @@ void CPlayer_State_Hold_Idle::Shot()
 			if (m_pPlayer->IsShotAble()) {
 				// ÃÑ¾Ë ÀÖÀ¸¸é
 				m_pPlayer->Shot();
-				m_pPlayer->Get_Body_Model()->Set_Additional_Masking(2, true);
+				m_pPlayer->Get_Body_Model()->Set_Additional_Masking(2, true, 4);
 				m_pPlayer->Change_Body_Animation_Hold(2, CPlayer::HOLD_SHOT);
 			}
 			else {

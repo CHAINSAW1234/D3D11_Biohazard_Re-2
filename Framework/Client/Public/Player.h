@@ -29,6 +29,7 @@ public:
 
 	enum EQUIP_STATE { GUN, SUB, EQUIP_STATE_NONE };
 	enum EQUIP { HG, STG, GRENADE, FLASHBANG, NONE};
+	enum SETPROPS_LOCATION { SETPROPS_A, SETPROPS_D, SETPROPS_E, SETPROPS_NONE };	//Holster상태일때의 위치
 #pragma region ANIMATION
 	enum ANIMATION_MOVE {
 		ANIM_IDLE, TURN_L180, TURN_R180,
@@ -140,6 +141,7 @@ public:
 	void										Change_AnimSet_Hold(ANIMSET_HOLD eAnimSetHold) { m_eAnimSet_Hold = eAnimSetHold; }
 	void										Change_Player_State_Bite(_int iAnimIndex, const wstring& strBiteLayerTag, _float4x4 Interpolationmatrix, _float fTotalInterpolateTime);
 	void										Change_Equip_State(EQUIP_STATE eEquip_State);
+	void										Change_WeaponLocation_To_Holster(CWeapon* pWeapon);
 	void										Request_NextBiteAnimation(_int iAnimIndex);
 	void										Shot();
 	void										Reload();
@@ -168,42 +170,42 @@ private:
 	HRESULT										Add_FSM_States();
 
 public:
-	void Swap_Camera();
+	void										Swap_Camera();
 
 private:
-	_int m_iMaxHp = { 5 };
-	_int m_iHp = { 5 };
+	_int										m_iMaxHp = { 5 };
+	_int										m_iHp = { 5 };
 
-	_bool m_isSpotlight = { false };
-	DWORD m_dwDirection = { 0 };
+	_bool										m_isSpotlight = { false };
+	DWORD										m_dwDirection = { 0 };
 
-	_bool m_isTurnSpineDefault = { false };
-	_bool m_isTurnSpineHold = { false };
-	_bool m_isTurnSpineLight = { false };
+	_bool										m_isTurnSpineDefault = { false };
+	_bool										m_isTurnSpineHold = { false };
+	_bool										m_isTurnSpineLight = { false };
 
-	ANIMSET_MOVE m_eAnimSet_Move = { FINE };
-	ANIMSET_HOLD m_eAnimSet_Hold = { HOLD_HG };
+	ANIMSET_MOVE								m_eAnimSet_Move = { FINE };
+	ANIMSET_HOLD								m_eAnimSet_Hold = { HOLD_HG };
 
-	_bool m_isBite = { false };
-	_uint m_eBiteType;
-	_int m_iBiteAnimIndex = { -1 };
-	_float4x4 m_vBiteInterpolateMatrix;
-	_float m_fTotalInterpolateTime = 0.f;
-	_float m_fCurrentInterpolateTime = 0.f;
-	wstring m_strBiteLayerTag;
+	_bool										m_isBite = { false };
+	_uint										m_eBiteType;
+	_int										m_iBiteAnimIndex = { -1 };
+	_float4x4									m_vBiteInterpolateMatrix;
+	_float										m_fTotalInterpolateTime = 0.f;
+	_float										m_fCurrentInterpolateTime = 0.f;
+	wstring										m_strBiteLayerTag;
 
+	EQUIP_STATE									m_eEquip_State = { GUN };
+	_bool										m_isRequestChangeEquip = { false };				// 무기 교체 요청 들어옴
+	EQUIP										m_eTargetEquip = { NONE };						// 플레이어 애님셋 교체에 관련된 장비
+	EQUIP										m_eEquip = { NONE };								// 플레이어 애님셋과 관련된 장비
+	EQUIP										m_eEquip_Gun = { NONE };							// 인벤토리에서 처리하는 장비된 무기
+	EQUIP										m_eEquip_Sub = { GRENADE };							// 인벤토리에서 처리하는 장비된 Sub무기
+	_int										m_SetProps[SETPROPS_NONE] = {};
 
-	EQUIP_STATE m_eEquip_State = { GUN };
-	_bool m_isRequestChangeEquip = { false };				// 무기 교체 요청 들어옴
-	EQUIP m_eTargetEquip = { NONE };						// 플레이어 애님셋 교체에 관련된 장비
-	EQUIP m_eEquip = { NONE };								// 플레이어 애님셋과 관련된 장비
-	EQUIP m_eEquip_Gun = { NONE };							// 인벤토리에서 처리하는 장비된 무기
-	EQUIP m_eEquip_Sub = { GRENADE };							// 인벤토리에서 처리하는 장비된 Sub무기
+	CWeapon*									m_pWeapon = { nullptr };
+	vector<CWeapon*>							m_Weapons;
 
-	CWeapon* m_pWeapon = { nullptr };
-	vector<CWeapon*> m_Weapons;
-
-	class CCamera_Event* m_pCamera_Event = { nullptr };
+	class CCamera_Event*						m_pCamera_Event = { nullptr };
 
 	friend class CPlayer_State_SubHold_Start;
 	friend class CPlayer_State_Move_Walk;
@@ -234,6 +236,7 @@ public:
 	UI_TUTORIAL_TYPE							m_eTutial_Type					= { UI_TUTORIAL_TYPE::TUTORIAL_END };
 
 	_bool										m_isNYResult;
+	_bool										m_isPlayer_FirstBehavior[100] = { false };
 	_bool										m_isTutorial_Notify = { false };
 #pragma
 

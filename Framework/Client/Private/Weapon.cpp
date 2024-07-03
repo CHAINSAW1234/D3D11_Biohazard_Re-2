@@ -27,6 +27,7 @@ HRESULT CWeapon::Initialize(void * pArg)
 
 	WEAPON_DESC* pDesc = (WEAPON_DESC*)pArg;
 	m_eEquip = pDesc->eEquip;
+	m_eSetPropsLocation = pDesc->eSetprops_Location;
 
 	for (size_t i = 0; i < NONE; i++)
 	{
