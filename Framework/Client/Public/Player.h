@@ -261,7 +261,7 @@ private:
 	_int										m_iDoor_Setting = { DOOR_BEHAVE_NOTHING };
 	_float										m_fDoor_Degree = { 0.f };
 
-	_int										m_iLadder_Setting = { LADDER_NOTHING };
+	_int										m_iLadder_Setting = { LADDER_BEHAVE_NOTHING };
 	_float4									m_vLadderPos = { _float4() };
 
 	_bool										m_bInteract = { false }; //플레이어가 상호작용을 시도한

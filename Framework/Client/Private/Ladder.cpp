@@ -159,9 +159,9 @@ void CLadder::Active()
 	*m_pPlayerInteract = false;
 	m_bActive = true;
 	if (m_bDownCol)
-		m_pPlayer->Set_Ladder_Setting(CPlayer::LADDER_DOWN, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+		m_pPlayer->Set_Ladder_Setting(CPlayer::LADDER_BEHAVE_DOWN, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 	else
-		m_pPlayer->Set_Ladder_Setting(CPlayer::LADDER_UP, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+		m_pPlayer->Set_Ladder_Setting(CPlayer::LADDER_BEHAVE_UP, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 
 }
 
