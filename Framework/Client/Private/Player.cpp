@@ -296,11 +296,6 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	RayCasting_Camera();
 
-#pragma region RaySetting
-	m_pGameInstance->Set_RayOrigin_Aim(m_pCamera->GetPosition());
-	m_pGameInstance->Set_RayDir_Aim(m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK));
-#pragma endregion
-
 	if (m_bRecoil)
 	{
 		Apply_Recoil(fTimeDelta);
@@ -457,6 +452,10 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	Col_Section();
 #pragma endregion 
 
+#pragma region 나옹 추가
+	Player_First_Behavior();
+#pragma endregion 
+
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
 #endif
@@ -513,8 +512,6 @@ void CPlayer::Late_Tick_PartObjects(_float fTimeDelta)
 		if (nullptr != pWeapon)
 			pWeapon->Late_Tick(fTimeDelta);
 	}
-
-
 }
 #pragma region 예은 추가
 void CPlayer::Col_Section()
@@ -552,10 +549,33 @@ _bool* CPlayer::Col_Event_UI(CCustomCollider* pCustom)
 	return &m_isNYResult;
 }
 
-void CPlayer::Player_FirstBehaivor(_int i)
+void CPlayer::Player_First_Behavior()
 {
-	m_isPlayer_FirstBehavior[i] = true;
+	/* 1. 무기 첫 착용 시 "조준" 안내 */
+	if (false == m_isPlayer_FirstBehavior[(_int)UI_TUTORIAL_TYPE::TUTORIAL_AIM])
+	{
+		if (EQUIP::NONE != m_eEquip)
+		{
+			Set_Tutorial_Start(UI_TUTORIAL_TYPE::TUTORIAL_AIM);
+
+			if (UI_TUTORIAL_TYPE::TUTORIAL_AIM == m_eTutial_Type)
+				m_isPlayer_FirstBehavior[(_int)UI_TUTORIAL_TYPE::TUTORIAL_AIM] = true;
+		}
+	}
+
+	/* 2. 아이템과 첫 상호작용 시 "인벤토리 열기" 안내 */
+	if (false == m_isPlayer_FirstBehavior[(_int)UI_TUTORIAL_TYPE::INVENTORY_OPEN])
+	{
+		if(true == m_bInteract)
+		{
+			Set_Tutorial_Start(UI_TUTORIAL_TYPE::INVENTORY_OPEN);
+
+			if (UI_TUTORIAL_TYPE::INVENTORY_OPEN == m_eTutial_Type)
+				m_isPlayer_FirstBehavior[(_int)UI_TUTORIAL_TYPE::INVENTORY_OPEN] = true;
+		}
+	}
 }
+
 
 #pragma endregion
 
@@ -678,6 +698,11 @@ void CPlayer::Request_NextBiteAnimation(_int iAnimIndex)
 
 void CPlayer::Shot()
 {
+#pragma region RaySetting
+	m_pGameInstance->Set_RayOrigin_Aim(m_pCamera->GetPosition());
+	m_pGameInstance->Set_RayDir_Aim(m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK));
+#pragma endregion
+
 	RayCast_Shoot();
 
 	m_bRecoil = true;

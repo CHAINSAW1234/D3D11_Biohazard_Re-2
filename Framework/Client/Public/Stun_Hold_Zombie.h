@@ -2,6 +2,8 @@
 
 #include "Client_Defines.h"
 #include "Task_Node.h"
+#include "Zombie.h"	
+#include "Body_Zombie.h"
 
 
 BEGIN(Client)
@@ -37,6 +39,7 @@ private:
 private:	/* For. Active FirstTime */
 	_bool							m_isEntry = { false };
 	COLLIDER_TYPE					m_eCurrentHitCollider = { COLLIDER_TYPE::_END };
+	const PLAYING_INDEX				m_ePlayingIndex = { PLAYING_INDEX::INDEX_0 };
 
 public:
 	static CStun_Hold_Zombie* Create(void* pArg = nullptr);

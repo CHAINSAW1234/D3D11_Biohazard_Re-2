@@ -6,6 +6,24 @@
 #include "Zombie.h"
 #include "Body_Zombie.h"
 
+const wstring CShake_Skin_Zombie::m_strL_Arm_AnimLayerTag = { TEXT("Add_Arm_L") };
+const wstring CShake_Skin_Zombie::m_strR_Arm_AnimLayerTag = { TEXT("Add_Arm_R") };
+const wstring CShake_Skin_Zombie::m_strL_Leg_AnimLayerTag = { TEXT("Add_Leg_L") };
+const wstring CShake_Skin_Zombie::m_strR_Leg_AnimLayerTag = { TEXT("Add_Leg_R") };
+const wstring CShake_Skin_Zombie::m_strL_Shoulder_AnimLayerTag = { TEXT("Add_Shoulder_L") };
+const wstring CShake_Skin_Zombie::m_strR_Shoulder_AnimLayerTag = { TEXT("Add_Shoulder_R") };
+const wstring CShake_Skin_Zombie::m_strBody_AnimLayerTag = { TEXT("Add_Body") };
+const wstring CShake_Skin_Zombie::m_strHead_AnimLayerTag= { TEXT("Add_Head") };
+
+const wstring CShake_Skin_Zombie::m_strL_Leg_Twist_BoneLayerTag = { BONE_LAYER_L_LEG_TWIST_TAG };
+const wstring CShake_Skin_Zombie::m_strR_Leg_Twist_BoneLayerTag = { BONE_LAYER_R_LEG_TWIST_TAG };
+const wstring CShake_Skin_Zombie::m_strL_Arm_Twist_BoneLayerTag = { BONE_LAYER_L_ARM_TWIST_TAG };
+const wstring CShake_Skin_Zombie::m_strR_Arm_Twist_BoneLayerTag = { BONE_LAYER_R_ARM_TWIST_TAG };
+const wstring CShake_Skin_Zombie::m_strL_Shoulder_Twist_BoneLayerTag = { BONE_LAYER_L_SHOULDER_TWIST_TAG };
+const wstring CShake_Skin_Zombie::m_strR_Shoulder_Twist_BoneLayerTag = { BONE_LAYER_R_SHOULDER_TWIST_TAG };
+const wstring CShake_Skin_Zombie::m_str_Body_Twist_BoneLayerTag = { BONE_LAYER_BODY_TWIST_TAG };
+const wstring CShake_Skin_Zombie::m_str_Head_Twist_BoneLayerTag = { BONE_LAYER_HEAD_TWIST_TAG };
+
 CShake_Skin_Zombie::CShake_Skin_Zombie()
 	: CTask_Node()
 {
@@ -34,12 +52,29 @@ _bool CShake_Skin_Zombie::Execute(_float fTimeDelta)
 	if (Check_Permition_To_Execute() == false)
 		return false;
 #pragma endregion
+	CZombie*			pZombie = { m_pBlackBoard->Get_AI() };
+	if (nullptr == pZombie)
+		return false;
 
-	m_pBlackBoard->Organize_PreState(this);
+	Update_BlendWeights();
 
-	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_IDLE);
-	Change_Animation();
+	HIT_TYPE			eCurrentHitType = { pZombie->Get_Current_HitType() };
+	if (HIT_TYPE::HIT_END == eCurrentHitType)
+		return false;
+
+	_float3				vHitDirectionLocalFloat3 = {};
+	if (false == m_pBlackBoard->Compute_Direction_From_Hit_Local(&vHitDirectionLocalFloat3))
+		return false;
+
+	COLLIDER_TYPE		eIntersectCollider = { pZombie->Get_Current_IntersectCollider() };
+	if (COLLIDER_TYPE::_END == eIntersectCollider ||
+		COLLIDER_TYPE::HEAD == eIntersectCollider ||
+		COLLIDER_TYPE::PELVIS == eIntersectCollider)
+		return false;
+
+	DIRECTION			eHitDirection = { vHitDirectionLocalFloat3.z > 0.f ? DIRECTION::_F : DIRECTION::_B };
+
+	Add_Blend_Animation(eIntersectCollider, eHitDirection);
 
 	return true;
 }
@@ -48,7 +83,7 @@ void CShake_Skin_Zombie::Exit()
 {
 }
 
-void CShake_Skin_Zombie::Change_Animation()
+void CShake_Skin_Zombie::Add_Blend_Animation(COLLIDER_TYPE eIntersectCollider, DIRECTION eHitDirection)
 {
 	if (nullptr == m_pBlackBoard)
 		return;
@@ -57,71 +92,220 @@ void CShake_Skin_Zombie::Change_Animation()
 	if (nullptr == pBody_Model)
 		return;
 
-#pragma region TEST Add Mask Anim
+	_int			iResultAnimationIndex = { -1 };
+	wstring			strAnimLayerTag = { TEXT("") };
+	wstring			strBoneLayerTag = { TEXT("") };
+	PLAYING_INDEX	ePlayingIndex = { PLAYING_INDEX::INDEX_END };
 
-	/*static			_uint iNum = { 3 };
-
-	for (_uint i = 3; i < 9; ++i)
+	if (COLLIDER_TYPE::FOREARM_L == eIntersectCollider ||
+		COLLIDER_TYPE::HAND_L == eIntersectCollider)
 	{
-		m_pModelCom->Set_BlendWeight(i, 0.f, 0.f);
+		if(DIRECTION::_F == eHitDirection)
+			iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_ARM_L::_FRONT);
+		else if(DIRECTION::_B == eHitDirection)
+			iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_ARM_L::_BACK);
+
+		ePlayingIndex = m_eL_Arm_PlayingIndex;
+		strAnimLayerTag = m_strL_Arm_AnimLayerTag;
+		strBoneLayerTag = m_strL_Arm_Twist_BoneLayerTag;
 	}
 
-	switch (iNum)
+	else if (COLLIDER_TYPE::ARM_L == eIntersectCollider)
 	{
-	case 3:
-	{
-		m_pModelCom->Change_Animation(3, TEXT("Add_Leg_L"), static_cast<_uint>(ANIM_ADD_LEG_L::_FRONT));
-		m_pModelCom->Set_BoneLayer_Playinnfo(3, BONE_LAYER_L_LEG_TWIST_TAG);
-		m_pModelCom->Set_BlendWeight(3, 100.f, 0.f);
-		m_pModelCom->Set_Loop(3, true);
-		break;
-	}
-	case 4:
-	{
-		m_pModelCom->Change_Animation(4, TEXT("Add_Leg_R"), static_cast<_uint>(ANIM_ADD_LEG_R::_FRONT));
-		m_pModelCom->Set_BoneLayer_PlayingInfo(4, BONE_LAYER_R_LEG_TWIST_TAG);
-		m_pModelCom->Set_BlendWeight(4, 100.f, 0.f);
-		m_pModelCom->Set_Loop(4, true);
-		break;
-	}
-	case 5:
-	{
-		m_pModelCom->Change_Animation(5, TEXT("Add_Arm_L"), static_cast<_uint>(ANIM_ADD_ARM_L::_FRONT));
-		m_pModelCom->Set_BoneLayer_PlayingInfo(5, BONE_LAYER_L_ARM_TWIST_TAG);
-		m_pModelCom->Set_BlendWeight(5, 100.f, 0.f);
-		m_pModelCom->Set_Loop(5, true);
-		break;
+		if (DIRECTION::_F == eHitDirection)
+			iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_SHOULDER_L::_FRONT);
+		else if (DIRECTION::_B == eHitDirection)
+			iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_SHOULDER_L::_BACK);
+
+		ePlayingIndex = m_eL_Shoulder_PlayingIndex;
+		strAnimLayerTag = m_strL_Shoulder_AnimLayerTag;
+		strBoneLayerTag = m_strL_Shoulder_Twist_BoneLayerTag;
 	}
 
-	case 6:
+	else if (COLLIDER_TYPE::FOREARM_R == eIntersectCollider ||
+		COLLIDER_TYPE::HAND_R == eIntersectCollider)
 	{
-		m_pModelCom->Change_Animation(6, TEXT("Add_Arm_R"), static_cast<_uint>(ANIM_ADD_ARM_R::_FRONT));
-		m_pModelCom->Set_BoneLayer_PlayingInfo(6, BONE_LAYER_R_ARM_TWIST_TAG);
-		m_pModelCom->Set_BlendWeight(6, 100.f, 0.f);
-		m_pModelCom->Set_Loop(6, true);
-		break;
+		if (DIRECTION::_F == eHitDirection)
+			iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_ARM_R::_FRONT);
+		else if (DIRECTION::_B == eHitDirection)
+			iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_ARM_R::_BACK);
+
+		ePlayingIndex = m_eR_Arm_PlayingIndex;
+		strAnimLayerTag = m_strR_Arm_AnimLayerTag;
+		strBoneLayerTag = m_strR_Arm_Twist_BoneLayerTag;
 	}
 
-	case 7:
+	else if (COLLIDER_TYPE::ARM_R == eIntersectCollider)
 	{
-		m_pModelCom->Change_Animation(7, TEXT("Add_Shoulder_L"), static_cast<_uint>(ANIM_ADD_SHOULDER_L::_FRONT));
-		m_pModelCom->Set_BoneLayer_PlayingInfo(7, BONE_LAYER_L_SHOULDER_TWIST_TAG);
-		m_pModelCom->Set_BlendWeight(7, 100.f, 0.f);
-		m_pModelCom->Set_Loop(7, true);
-		break;
+		if (DIRECTION::_F == eHitDirection)
+			iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_SHOULDER_R::_FRONT);
+		else if (DIRECTION::_B == eHitDirection)
+			iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_SHOULDER_R::_BACK);
+
+		ePlayingIndex = m_eR_Shoulder_PlayingIndex;
+		strAnimLayerTag = m_strR_Shoulder_AnimLayerTag;
+		strBoneLayerTag = m_strR_Shoulder_Twist_BoneLayerTag;
 	}
 
-	case 8:
+	else if (COLLIDER_TYPE::LEG_L == eIntersectCollider ||
+		COLLIDER_TYPE::CALF_L == eIntersectCollider ||
+		COLLIDER_TYPE::FOOT_L == eIntersectCollider)
 	{
-		m_pModelCom->Change_Animation(8, TEXT("Add_Shoulder_R"), static_cast<_uint>(ANIM_ADD_SHOULDER_R::_FRONT));
-		m_pModelCom->Set_BoneLayer_PlayingInfo(8, BONE_LAYER_R_SHOULDER_TWIST_TAG);
-		m_pModelCom->Set_BlendWeight(8, 100.f, 0.f);
-		m_pModelCom->Set_Loop(8, true);
-		break;
-	}
-	}*/
+		if (DIRECTION::_F == eHitDirection)
+			iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_LEG_L::_FRONT);
+		else if (DIRECTION::_B == eHitDirection)
+			iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_LEG_L::_BACK);
 
-#pragma endregion
+		ePlayingIndex = m_eL_Leg_PlayingIndex;
+		strAnimLayerTag = m_strL_Leg_AnimLayerTag;
+		strBoneLayerTag = m_strL_Leg_Twist_BoneLayerTag;
+	}
+
+	else if (COLLIDER_TYPE::LEG_R == eIntersectCollider ||
+		COLLIDER_TYPE::CALF_R == eIntersectCollider ||
+		COLLIDER_TYPE::FOOT_R == eIntersectCollider)
+	{
+		if (DIRECTION::_F == eHitDirection)
+			iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_LEG_R::_FRONT);
+		else if (DIRECTION::_B == eHitDirection)
+			iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_LEG_R::_BACK);
+
+		ePlayingIndex = m_eR_Leg_PlayingIndex;
+		strAnimLayerTag = m_strR_Leg_AnimLayerTag;
+		strBoneLayerTag = m_strR_Leg_Twist_BoneLayerTag;
+	}
+
+	else if (COLLIDER_TYPE::HEAD == eIntersectCollider || 
+		COLLIDER_TYPE::CHEST == eIntersectCollider ||
+		COLLIDER_TYPE::PELVIS == eIntersectCollider)
+	{
+		CZombie*			pZombie = { m_pBlackBoard->Get_AI() };
+		if (nullptr == pZombie)
+			return;
+
+		CZombie::POSE_STATE				ePoseState = { pZombie->Get_PoseState() };
+		if (CZombie::POSE_STATE::_CREEP == ePoseState)
+		{
+			CZombie::FACE_STATE			eFaceState = { pZombie->Get_FaceState() };			
+			if (COLLIDER_TYPE::HEAD == eIntersectCollider)
+			{
+				if (CZombie::FACE_STATE::_UP == eFaceState)
+					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_HEAD::_FACE_UP);
+				else if (CZombie::FACE_STATE::_DOWN == eFaceState)
+					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_HEAD::_FACE_DOWN);
+
+				ePlayingIndex = m_eHead_PlayingIndex;
+				strAnimLayerTag = m_strHead_AnimLayerTag;
+				strBoneLayerTag = m_str_Body_Twist_BoneLayerTag;
+			}
+
+			else if (COLLIDER_TYPE::CHEST == eIntersectCollider ||
+				COLLIDER_TYPE::PELVIS == eIntersectCollider)
+			{
+				if (CZombie::FACE_STATE::_UP == eFaceState)
+					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_BODY::_FACE_UP);
+				else if (CZombie::FACE_STATE::_DOWN == eFaceState)
+					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_BODY::_FACE_DOWN);
+
+				ePlayingIndex = m_eBody_PlayingIndex;
+				strAnimLayerTag = m_strHead_AnimLayerTag;
+				strBoneLayerTag = m_str_Head_Twist_BoneLayerTag;
+			}
+
+#ifdef _DEBUG
+			else
+			{
+				MSG_BOX(TEXT("Called : void CShake_Skin_Zombie::Add_Blend_Animation(COLLIDER_TYPE eIntersectCollider, DIRECTION eHitDirection) 좀비 담당자 호출 "));
+			}
+#endif
+		}
+
+		else if (CZombie::POSE_STATE::_UP == ePoseState)
+		{
+			if (COLLIDER_TYPE::HEAD == eIntersectCollider)
+			{
+				if (DIRECTION::_F == eHitDirection)
+					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_LEG_R::_FRONT);
+				else if (DIRECTION::_B == eHitDirection)
+					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_LEG_R::_BACK);
+
+				ePlayingIndex = m_eHead_PlayingIndex;
+				strAnimLayerTag = m_strHead_AnimLayerTag;
+				strBoneLayerTag = m_str_Body_Twist_BoneLayerTag;
+			}
+
+			else if (COLLIDER_TYPE::CHEST == eIntersectCollider ||
+				COLLIDER_TYPE::PELVIS == eIntersectCollider)
+			{
+				if (DIRECTION::_F == eHitDirection)
+					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_LEG_R::_FRONT);
+				else if (DIRECTION::_B == eHitDirection)
+					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_LEG_R::_BACK);
+
+				ePlayingIndex = m_eBody_PlayingIndex;
+				strAnimLayerTag = m_strHead_AnimLayerTag;
+				strBoneLayerTag = m_str_Head_Twist_BoneLayerTag;
+			}
+
+#ifdef _DEBUG
+			else
+			{
+				MSG_BOX(TEXT("Called : void CShake_Skin_Zombie::Add_Blend_Animation(COLLIDER_TYPE eIntersectCollider, DIRECTION eHitDirection) 좀비 담당자 호출 "));
+			}
+#endif
+		}
+	}
+
+	if (TEXT("") == strAnimLayerTag)
+		return;
+
+	if (TEXT("") == strBoneLayerTag)
+		return;
+
+	if (-1 == iResultAnimationIndex)
+		return;
+
+	if (PLAYING_INDEX::INDEX_END == ePlayingIndex)
+		return;
+
+	strBoneLayerTag = TEXT("Default");
+
+	unordered_set<PLAYING_INDEX>::iterator			iterPlayingIndex = { m_ActivePlayingIndcies.find(ePlayingIndex) };
+	if (iterPlayingIndex == m_ActivePlayingIndcies.end())
+	{
+		pBody_Model->Reset_PreAnim_CurrentAnim(static_cast<_uint>(ePlayingIndex));
+		pBody_Model->Change_Animation(static_cast<_uint>(ePlayingIndex), strAnimLayerTag, iResultAnimationIndex);
+		pBody_Model->Set_Loop(static_cast<_uint>(ePlayingIndex), false);
+		pBody_Model->Set_BlendWeight(static_cast<_uint>(ePlayingIndex), ZOMBIE_BLEND_MAX, ZOMBIE_SHAKE_SKIN_BLEND_ON_TIME);
+		pBody_Model->Set_BoneLayer_PlayingInfo(static_cast<_uint>(ePlayingIndex), strBoneLayerTag);
+		pBody_Model->Set_Additional_Masking(static_cast<_uint>(ePlayingIndex), true, 4);
+
+		m_ActivePlayingIndcies.emplace(ePlayingIndex);
+	}
+	else
+	{
+		pBody_Model->Set_TrackPosition(static_cast<_uint>(ePlayingIndex), 0.f, false);
+		pBody_Model->Set_BoneLayer_PlayingInfo(static_cast<_uint>(ePlayingIndex), strBoneLayerTag);
+	}
+}
+
+void CShake_Skin_Zombie::Update_BlendWeights()
+{
+	CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+	if (nullptr == pBody_Model)
+		return;
+
+	for (auto& iter = m_ActivePlayingIndcies.begin(); iter != m_ActivePlayingIndcies.end(); )
+	{
+		PLAYING_INDEX			ePlayingIndex = { *iter };
+		if (true == pBody_Model->isFinished(static_cast<_uint>(ePlayingIndex)))
+		{
+			pBody_Model->Set_BlendWeight(static_cast<_uint>(ePlayingIndex), ZOMBIE_BLEND_ZERO, ZOMBIE_SHAKE_SKIN_BLEND_OFF_TIME);
+			iter = m_ActivePlayingIndcies.erase(iter);
+		}
+		else
+			++iter;
+	}
 }
 
 CShake_Skin_Zombie* CShake_Skin_Zombie::Create(void* pArg)

@@ -24,6 +24,9 @@ public:
 private:
 	void							Change_Animation();
 
+private:
+	_bool							Condition_Check();
+
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }
 
@@ -32,6 +35,7 @@ private:
 
 private:
 	CZombie::FACE_STATE				m_eFaceState = { CZombie::FACE_STATE::_END };
+	const PLAYING_INDEX				m_ePlayingIndex = { PLAYING_INDEX::INDEX_0 };
 
 public:
 	static CStand_Up_Zombie* Create(void* pArg = nullptr);

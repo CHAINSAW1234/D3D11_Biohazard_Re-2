@@ -45,12 +45,12 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
             m_vOriginColor = m_vCurrentColor = m_vColor[0].vColor;
             m_vColor[0].fBlender_Value = m_fBlending = MAX_BLENDING;
             m_vColor[0].vColor = _float4(0, 0, 0, 0);
-            
+
             if (!m_vecTextBoxes.empty())
             {
-               m_vecTextBoxes.back()->Set_FontColor(ALPHA_ZERO);
-               // m_vFont_Position = m_vecTextBoxes.back()->GetPosition();
-               // m_vecTextBoxes.back()->Set_Position(m_vFont_Position.x - 200.f, m_vFont_Position.y, m_vFont_Position.z);
+                m_vecTextBoxes.back()->Set_FontColor(ALPHA_ZERO);
+                // m_vFont_Position = m_vecTextBoxes.back()->GetPosition();
+                // m_vecTextBoxes.back()->Set_Position(m_vFont_Position.x - 200.f, m_vFont_Position.y, m_vFont_Position.z);
             }
         }
 
@@ -64,13 +64,13 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
                 Safe_AddRef<CRead_Item_UI*>(m_pIntro_UI);
             }
 
-            if(true == m_IsChild)
+            if (true == m_IsChild)
             {
                 if (1 == CustomUIDesc->iWhich_Child)
                 {
                     list<class CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
                     CRead_Item_UI* pReadItem = static_cast<CRead_Item_UI*>(pUILayer->back());
-                    
+
                     if (READ_UI_TYPE::TEXTURE_READ == pReadItem->m_eRead_type)
                         m_eRead_type = READ_UI_TYPE::TEXT_LEFT_READ;
 
@@ -78,7 +78,7 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
                         m_eRead_type = READ_UI_TYPE::TEXTURE_READ;
                 }
 
-                else if(2 == CustomUIDesc->iWhich_Child)
+                else if (2 == CustomUIDesc->iWhich_Child)
                     m_eRead_type = READ_UI_TYPE::TEXT_RIGHT_READ;
 
                 m_pRead_Supervise = static_cast<CRead_Item_UI*>(CustomUIDesc->pSupervisor);
@@ -95,7 +95,7 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
             m_pRead_Supervise = Find_ReadUI(READ_UI_TYPE::MAIN_READ, false);
             CRead_Item_UI* pTexture_UI = Find_ReadUI(READ_UI_TYPE::TEXTURE_READ, true);
 
-           if (nullptr != m_pIntro_UI)
+            if (nullptr != m_pIntro_UI)
                 Safe_AddRef<CRead_Item_UI*>(m_pIntro_UI);
 
             if (nullptr != m_pTexture_UI)
@@ -149,29 +149,16 @@ void CRead_Item_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    /* GARA */
-    if (DOWN == m_pGameInstance->Get_KeyState('0') && READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
-    {
-        eGara = (ITEM_READ_TYPE)((_int)eGara + 1);
-
-        if (eGara >= ITEM_READ_TYPE::OFFICER_NOTE)
-            eGara = ITEM_READ_TYPE::INCIDENT_LOG_NOTE;
-    }
-
-
     /* 예시 코드 */
-    if (m_pGameInstance->Get_KeyState('I') && READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
+    if (true == m_isRender)
     {
-        m_isRender = true;
-        m_eBook_Type = eGara;
-
         Reset();
     }
 
 
     Render_Condition();
-            
-    /* 분기점 */       
+
+    /* 분기점 */
     if (READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
         Introduce_Read(fTimeDelta);
 
@@ -273,7 +260,7 @@ void CRead_Item_UI::Arrow_Read()
     /* 인트로가 읽기 시작을 알렸다면 진행*/
     if (true == m_pIntro_UI->m_isRead_Start)
     {
-        if(false == m_isChange)
+        if (false == m_isChange)
         {
             m_pRead_Supervise->m_isChange = true;
             m_pRead_Supervise->m_iBookCnt = 1;
@@ -311,6 +298,36 @@ void CRead_Item_UI::Arrow_Read()
     }
 }
 
+void CRead_Item_UI::Start()
+{
+    if (m_eRead_type == READ_UI_TYPE::INTRODUCE_READ)
+    {
+        list<class CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+
+        for (auto& iter : *pUILayer)
+        {
+            CRead_Item_UI* pRead = dynamic_cast<CRead_Item_UI*>(iter);
+
+            if (nullptr != pRead)
+                m_ReadVec.push_back(pRead);
+        }
+    }
+}
+
+void CRead_Item_UI::Set_ReadItem_Type(ITEM_READ_TYPE _readType)
+{
+    /* intro를 불러야 의미 있음 */
+    if (m_eRead_type == READ_UI_TYPE::INTRODUCE_READ)
+    {
+        if (!m_ReadVec.empty())
+        {
+            for (auto& iter : m_ReadVec)
+            {
+                iter->m_isRender = true;
+            }
+        }
+    }
+}
 void CRead_Item_UI::Text_Read(_float fTimeDelta)
 {
     if (nullptr == m_pIntro_UI || true != m_pIntro_UI->m_isRead_Start)
@@ -319,8 +336,8 @@ void CRead_Item_UI::Text_Read(_float fTimeDelta)
     if (false == m_pRead_Supervise->m_isChange)
         return;
 
-   // Render_Destory(false);
-    
+    // Render_Destory(false);
+
     vector<wstring> incidentLogNotes = m_pRead_Supervise->m_BookText[m_pIntro_UI->m_eBook_Type];
 
     /* 1은 Texture. Text는 그 아래 숫자로 내려갈 수 없다. */
@@ -329,7 +346,7 @@ void CRead_Item_UI::Text_Read(_float fTimeDelta)
 
     if (READ_UI_TYPE::TEXT_LEFT_READ == m_eRead_type)
     {
-        if(0 < m_pRead_Supervise->m_iBookCnt && incidentLogNotes.size() > m_pRead_Supervise->m_iBookCnt)
+        if (0 < m_pRead_Supervise->m_iBookCnt && incidentLogNotes.size() > m_pRead_Supervise->m_iBookCnt)
             Change_Texture(incidentLogNotes[m_pRead_Supervise->m_iBookCnt], TEXT("Com_DefaultTexture"));
 
         if ((_int)incidentLogNotes.size() < m_pRead_Supervise->m_iBookCnt)
@@ -342,11 +359,11 @@ void CRead_Item_UI::Text_Read(_float fTimeDelta)
 
     else if (READ_UI_TYPE::TEXT_RIGHT_READ == m_eRead_type)
     {
-       /* if(m_pRead_Supervise->m_iBookCnt+1 < incidentLogNotes.size())
-            Change_Texture(incidentLogNotes[m_pRead_Supervise->m_iBookCnt + 1], TEXT("Com_DefaultTexture"));
-        else
-            m_pRead_Supervise->m_iBookCnt
-        m_isRender = true;*/
+        /* if(m_pRead_Supervise->m_iBookCnt+1 < incidentLogNotes.size())
+             Change_Texture(incidentLogNotes[m_pRead_Supervise->m_iBookCnt + 1], TEXT("Com_DefaultTexture"));
+         else
+             m_pRead_Supervise->m_iBookCnt
+         m_isRender = true;*/
     }
 }
 
@@ -364,9 +381,9 @@ CRead_Item_UI* CRead_Item_UI::Find_ReadUI(READ_UI_TYPE _readType, _bool _child)
         {
             if (_readType == pIntro_ReadUI->m_eRead_type)
             {
-                if(true == _child)
+                if (true == _child)
                 {
-                    if(true == pIntro_ReadUI->m_IsChild)
+                    if (true == pIntro_ReadUI->m_IsChild)
                         return pIntro_ReadUI;
                 }
                 else
@@ -380,7 +397,7 @@ CRead_Item_UI* CRead_Item_UI::Find_ReadUI(READ_UI_TYPE _readType, _bool _child)
 void CRead_Item_UI::Render_Condition()
 {
     if (false == m_isRender)
-        return;  
+        return;
 
     if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON) && true == m_isRender)
     {
@@ -388,7 +405,7 @@ void CRead_Item_UI::Render_Condition()
         m_isPrevRender = false;
         m_isChange = false;
 
-        if(nullptr != m_pIntro_UI)
+        if (nullptr != m_pIntro_UI)
             m_pIntro_UI->m_isRead_Start = false;
     }
 }
@@ -398,8 +415,8 @@ void CRead_Item_UI::Reset()
     m_fIntro_Timer = 0.f;
     m_fBlending = MAX_BLENDING;
     m_vCurrentColor = m_vOriginColor;
-   
-    if(nullptr != m_pRead_Supervise)
+
+    if (nullptr != m_pRead_Supervise)
         m_pRead_Supervise->m_iBookCnt = 0;
 
     if (nullptr != m_pIntro_UI)
@@ -409,7 +426,7 @@ void CRead_Item_UI::Reset()
      //   m_vecTextBoxes.back()->Set_Position(m_vFont_Position.x - 200.f, m_vFont_Position.y, m_vFont_Position.z);
 }
 
-CInteract_UI* CRead_Item_UI::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CInteract_UI* CRead_Item_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
     CRead_Item_UI* pInstance = new CRead_Item_UI(pDevice, pContext);
 

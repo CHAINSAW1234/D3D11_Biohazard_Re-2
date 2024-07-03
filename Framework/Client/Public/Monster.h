@@ -42,6 +42,10 @@ public:
 		_float				fTryStandUpTime = { 0.f };			//	Creep에서 일어나기 위한 모션을 진행할때 필요한 시간
 																//	하체가 없을 시 => TurnOver로 대체
 
+		_float				fStamina = { 0.f };
+		_float				fStaminaChargingPerSec = { 0.f };
+		_float				fMaxStamina = { 0.f };
+
 		_float				fViewAngle = { 0.f };
 		_float				fAttack = { 0.f };
 		_float				fHealth = { 0.f };
@@ -88,7 +92,7 @@ public:		/* Access_PartObjects */
 
 public://For AIController
 	virtual void						Init_BehaviorTree_Zombie() {}
-	void								SetState(MONSTER_STATE eState) { m_eState = eState; }
+	void								Set_State(MONSTER_STATE eState) { m_eState = eState; }
 	MONSTER_STATE						GetState() { return m_eState; }
 protected:
 	CModel*								m_pModelCom = { nullptr };
@@ -136,6 +140,11 @@ protected:
 
 protected:	/* Initialize_PartObjects_Models */
 	virtual HRESULT 					Initialize_PartModels() = 0;
+
+	private:	/* Test*/
+
+		_int								m_iCurrentShirts = { 0 };
+
 
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;

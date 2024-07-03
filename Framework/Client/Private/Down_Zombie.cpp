@@ -34,6 +34,12 @@ void CDown_Zombie::Enter()
 	m_eCurrentHitCollider = m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider();
 
 	m_isEntry = true;
+
+#ifdef _DEBUG
+
+	cout << "Enter Down " << endl;
+
+#endif 
 }
 
 _bool CDown_Zombie::Execute(_float fTimeDelta)
@@ -49,7 +55,7 @@ _bool CDown_Zombie::Execute(_float fTimeDelta)
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_DAMAGE);
+	pAI->Set_State(MONSTER_STATE::MST_DAMAGE);
 
 	Change_Animation();
 

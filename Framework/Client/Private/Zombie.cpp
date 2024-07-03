@@ -48,6 +48,9 @@ HRESULT CZombie::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(&GameObjectDesc)))
 		return E_FAIL;
 
+	if (FAILED(Initialize_States()))
+		return E_FAIL;
+
 	//if (FAILED(Add_Components()))
 	//	return E_FAIL;
 
@@ -66,7 +69,7 @@ HRESULT CZombie::Initialize(void* pArg)
 		//	vPos.y += 1.f;
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 	}
-	m_InteractObjVec.reserve(JOMBIE_BEHAVIOR_COLLIDER_END);
+	m_InteractObjVec.resize(JOMBIE_BEHAVIOR_COLLIDER_END);
 	//	m_pModelCom->Set_Animation(rand() % 20, true);
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
 
@@ -140,15 +143,6 @@ void CZombie::Tick(_float fTimeDelta)
 	}
 
 	__super::Tick(fTimeDelta);
-
-	_vector			vScale = { XMLoadFloat3(&m_pTransformCom->Get_Scaled()) };
-
-	if (0.009f >XMVectorGetX(vScale))
-	{
-		int iA = 0;
-	}
-	
-	cout << XMVectorGetX(vScale) << ", " << XMVectorGetY(vScale) << ", " << XMVectorGetZ(vScale) << endl;
 
 	if (nullptr != m_pController && false == m_isManualMove && m_pController->GetDead() == false)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_pController->GetPosition_Float4_Zombie());
@@ -238,13 +232,11 @@ void CZombie::Tick(_float fTimeDelta)
 			{
 				m_iBloodCount = 0;
 
-				/*For Decal*/
-				Ready_Decal();
-
 				/*For Blood Effect*/
+#ifndef _DEBUG
 				m_bSetBlood = true;
 				m_BloodTime = GetTickCount64();
-
+#endif
 				m_pController->Set_Hit(false);
 			}
 		}
@@ -255,14 +247,13 @@ void CZombie::Tick(_float fTimeDelta)
 	{
 		if (m_pController->Is_Hit())
 		{
-			/*For Decal*/
-			Ready_Decal();
-
 			m_iBloodCount = 0;
 
 			/*For Blood Effect*/
+#ifndef _DEBUG
 			m_bSetBlood = true;
 			m_BloodTime = GetTickCount64();
+#endif
 
 			m_pController->Set_Hit(false);
 
@@ -321,12 +312,9 @@ void CZombie::Tick(_float fTimeDelta)
 	m_pColliderCom_Bounding->Tick(m_pTransformCom->Get_WorldMatrix_Pure_Mat());
 
 #pragma region Effect
-	if (m_bSetBlood)
-	{
-		SetBlood();
-	}
 
 	Tick_Effect(fTimeDelta);
+
 #pragma endregion
 }
 
@@ -358,7 +346,18 @@ void CZombie::Late_Tick(_float fTimeDelta)
 #endif
 
 #pragma region Effect
+
+	if (m_bSetBlood)
+	{
+		/*For Decal*/
+#ifndef _DEBUG
+		Ready_Decal();
+		SetBlood();
+#endif
+	}
+
 	Late_Tick_Effect(fTimeDelta);
+
 #pragma endregion
 }
 
@@ -488,7 +487,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CanLinkMonsterStatesBite.emplace_back(MONSTER_STATE::MST_LIGHTLY_HOLD);
 	CIs_Can_Link_Pre_State_Zombie* pDeco_Is_Can_Link_Bite = { CIs_Can_Link_Pre_State_Zombie::Create(CanLinkMonsterStatesBite) };
 	pDeco_Is_Can_Link_Bite->SetBlackBoard(m_pBlackBoard);
-	pDeco_Is_Can_Link_Bite->Insert_Decorator_Node(pDeco_Is_Can_Link_Bite);
+	pSelectorNode_Root->Insert_Decorator_Node(pDeco_Is_Can_Link_Bite);
 
 #pragma endregion
 
@@ -505,9 +504,9 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pSelectorNode_RootChild_StandUp_TurnOver->Insert_Child_Node(pTask_StandUp);
 
 	//	Add Task Node		=> Turn Over
-	CTurn_Over_Zombie*			pTask_TurnOver = { CTurn_Over_Zombie::Create() };
+	/*CTurn_Over_Zombie*			pTask_TurnOver = { CTurn_Over_Zombie::Create() };
 	pTask_TurnOver->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_StandUp_TurnOver->Insert_Child_Node(pTask_TurnOver);
+	pSelectorNode_RootChild_StandUp_TurnOver->Insert_Child_Node(pTask_TurnOver);*/
 
 #pragma endregion
 
@@ -521,70 +520,15 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CComposite_Node* pSelectorNode_RootChild_Hit = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_Hit);
 
-
-	//	Add Task Node		=> Damage Hold Stun
-	CStun_Hold_Zombie* pTask_Hold_Stun = { CStun_Hold_Zombie::Create() };
-	pTask_Hold_Stun->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_Hit->Insert_Child_Node(pTask_Hold_Stun);
-
-	////	Add Decorator		=> Is Can Link? ( From Hold )
-	//list<MONSTER_STATE>							CanLinkMonsterStatesHoldStun;
-	//CanLinkMonsterStatesHoldStun.emplace_back(MONSTER_STATE::MST_HOLD);
-	//CIs_Can_Link_Pre_State_Zombie* pDeco_Is_Can_Link_Hold_Stun = { CIs_Can_Link_Pre_State_Zombie::Create(CanLinkMonsterStatesHoldStun) };
-	//pDeco_Is_Can_Link_Hold_Stun->SetBlackBoard(m_pBlackBoard);
-	//pTask_Hold_Stun->Insert_Decorator_Node(pDeco_Is_Can_Link_Hold_Stun);
-
-	//	Add Decorator		=> Is Hit? ( All HitType, Leg Collider )
-	/*CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitAllType_LegCollision;
-	for (_uint i = 0; i < MONSTER_STATE::MST_END; ++i)
-	{
-		IsHitAllType_LegCollision.CheckHitTypes.emplace_back(static_cast<HIT_TYPE>(i));
-	}
-	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::LEG_L);
-	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::LEG_R);
-	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::CALF_L);
-	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::CALF_R);
-	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::FOOT_L);
-	IsHitAllType_LegCollision.CheckColliderTypes.emplace_back(COLLIDER_TYPE::FOOT_R);
-	CIs_Hit_Zombie* pDeco_Is_Hit_AllType = { CIs_Hit_Zombie::Create(&IsHitAllType_LegCollision) };
-	pDeco_Is_Hit_AllType->SetBlackBoard(m_pBlackBoard);
-	pTask_Hold_Stun->Insert_Decorator_Node(pDeco_Is_Hit_AllType);*/
-
-
 	//	Add Task Node		=> Damage Stun
 	CStun_Zombie* pTask_Stun = { CStun_Zombie::Create() };
 	pTask_Stun->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Hit->Insert_Child_Node(pTask_Stun);
 
-	//	Add Decorator		=> Is Hit?
-	/*CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitSmallDesc;
-	IsHitSmallDesc.CheckHitTypes.emplace_back(HIT_TYPE::HIT_SMALL);
-
-	for (_uint i = 0; i < static_cast<_uint>(COLLIDER_TYPE::_END); ++i)
-	{
-		IsHitSmallDesc.CheckColliderTypes.emplace_back(static_cast<COLLIDER_TYPE>(i));
-	}
-	CIs_Hit_Zombie* pDeco_Is_HitSmall = { CIs_Hit_Zombie::Create(&IsHitSmallDesc) };
-	pDeco_Is_HitSmall->SetBlackBoard(m_pBlackBoard);
-	pTask_Stun->Insert_Decorator_Node(pDeco_Is_HitSmall);*/
-
-
 	//	Add Task Node		=> Damage Knock Back
 	CKnock_Back_Zombie* pTask_Knockback = { CKnock_Back_Zombie::Create() };
 	pTask_Knockback->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Hit->Insert_Child_Node(pTask_Knockback);
-
-	//	Add Decorator		=> Is Hit?
-	/*CIs_Hit_Zombie::IS_HIT_ZOMBIE_DESC			IsHitBigDesc;
-	IsHitBigDesc.CheckHitTypes.emplace_back(HIT_TYPE::HIT_BIG);
-
-	for (_uint i = 0; i < static_cast<_uint>(COLLIDER_TYPE::_END); ++i)
-	{
-		IsHitBigDesc.CheckColliderTypes.emplace_back(static_cast<COLLIDER_TYPE>(i));
-	}
-	CIs_Hit_Zombie* pDeco_Is_HitBig = { CIs_Hit_Zombie::Create(&IsHitBigDesc) };
-	pDeco_Is_HitBig->SetBlackBoard(m_pBlackBoard);
-	pTask_Knockback->Insert_Decorator_Node(pDeco_Is_HitBig);*/
 
 #pragma endregion
 
@@ -620,7 +564,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//	Add Decorator Node
 	CIs_Character_In_Range_Zombie* pDeco_Charactor_In_Range_Recognition = { CIs_Character_In_Range_Zombie::Create(m_pStatus->fRecognitionRange) };
 	pDeco_Charactor_In_Range_Recognition->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_Root->Insert_Decorator_Node(pDeco_Charactor_In_Range_Recognition);
+	pSelectorNode_RootChild_Move->Insert_Decorator_Node(pDeco_Charactor_In_Range_Recognition);
 
 	//	Add Task Node (Hold)
 	CHold_Zombie* pTask_Hold = { CHold_Zombie::Create() };
@@ -650,10 +594,10 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_Move->Insert_Decorator_Node(pDeco_Can_Change_StateForMove);*/
 
 
-	//Add Task Node
-	CPivot_Turn_Zombie* pTask_Pivot_Turn = { CPivot_Turn_Zombie::Create() };
-	pTask_Pivot_Turn->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Pivot_Turn);
+	////Add Task Node
+	//CPivot_Turn_Zombie* pTask_Pivot_Turn = { CPivot_Turn_Zombie::Create() };
+	//pTask_Pivot_Turn->SetBlackBoard(m_pBlackBoard);
+	//pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Pivot_Turn);
 
 	//Add Decorator Node		=>		Task Turn, Deco Can Change State
 	/*CIs_Can_Change_State_Zombie::CAN_CHANGE_STATE_ZOMBIE_DESC		CanChangeStateForTurnDesc;
@@ -703,6 +647,14 @@ void CZombie::Init_BehaviorTree_Zombie()
 #pragma endregion
 
 #pragma endregion		//	Selector Root 
+
+#pragma region		//	Task Shake Skin
+
+	CShake_Skin_Zombie*							pTask_Shake_Skin = { CShake_Skin_Zombie::Create() };
+	pTask_Shake_Skin->SetBlackBoard(m_pBlackBoard);
+	pSequenceNode_Root->Insert_Child_Node(pTask_Shake_Skin);
+
+#pragma endregion
 
 #pragma region Additional Shake Skin			//	추가해야함
 
@@ -929,6 +881,19 @@ HRESULT CZombie::Initialize_Status()
 
 	m_pStatus->fHealth = STATUS_ZOMBIE_HEALTH;
 
+	m_pStatus->fStamina = STATUS_ZOMBIE_STAMINA;
+	m_pStatus->fMaxStamina = STATUS_ZOMBIE_STAMINA_MAX;
+	m_pStatus->fStaminaChargingPerSec = STATUS_ZOMBIE_STAMINA_CHARGING_PER_SEC;
+
+	return S_OK;
+}
+
+HRESULT CZombie::Initialize_States()
+{
+	m_eFaceState = FACE_STATE::_END;
+	m_ePoseState = POSE_STATE::_UP;
+	m_eState = MONSTER_STATE::MST_IDLE;
+
 	return S_OK;
 }
 
@@ -944,6 +909,13 @@ HRESULT CZombie::Initialize_PartModels()
 	CModel* pHatModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAT]->Get_Component(TEXT("Com_Model"))) };
 
 	m_pBodyModel = pBodyModel;
+	m_pHeadModel = pFaceModel;
+	m_pHeadModel2 = pFace2Model;
+	m_pHeadModel3 = pFace3Model;
+	m_pShirtsModel = pShirtsModel;
+	m_pShirts2Model = pShirts2Model;
+	m_pPantsModel = pPantsModel;
+	m_pHatModel = pHatModel;
 
 	if (nullptr == pBodyModel ||
 		nullptr == pFaceModel ||
@@ -973,6 +945,50 @@ HRESULT CZombie::Initialize_PartModels()
 	return S_OK;
 }
 
+_bool CZombie::Is_Enough_Stamina(USE_STAMINA eAction)
+{
+	_bool		isEnough = { false };
+	if (USE_STAMINA::_BITE == eAction)
+	{
+		isEnough = m_pStatus->fStamina > ZOMBIE_NEED_STAMINA_BITE;
+	}
+
+	else if (USE_STAMINA::_STAND_UP == eAction)
+	{
+		isEnough = m_pStatus->fStamina > ZOMBIE_NEED_STAMINA_STANDUP;
+	}
+
+	else if (USE_STAMINA::_TURN_OVER == eAction)
+	{		
+		isEnough = m_pStatus->fStamina > ZOMBIE_NEED_STAMINA_TURN_OVER;
+	}
+
+	return isEnough;
+}
+
+_bool CZombie::Use_Stamina(USE_STAMINA eAction)
+{
+	if (false == Is_Enough_Stamina(eAction))
+		return false;
+
+	if (USE_STAMINA::_BITE == eAction)
+	{
+		m_pStatus->fStamina -= ZOMBIE_NEED_STAMINA_BITE;
+	}
+
+	else if (USE_STAMINA::_STAND_UP == eAction)
+	{
+		m_pStatus->fStamina -= ZOMBIE_NEED_STAMINA_STANDUP;
+	}
+
+	else if (USE_STAMINA::_TURN_OVER == eAction)
+	{
+		m_pStatus->fStamina -= ZOMBIE_NEED_STAMINA_TURN_OVER;
+	}
+
+	return true;
+}
+
 void CZombie::Col_EventCol()
 {
 	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Jombie_Collider"));
@@ -997,7 +1013,7 @@ void CZombie::Col_EventCol()
 				break;
 			}
 			m_InteractObjVec[m_eBeHavior_Col] = m_pGameInstance->Get_GameObject(g_Level, strLayer, m_iPropNum);
-			m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_InteractObjVec[m_eBeHavior_Col]->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION)) ;
+			//m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_InteractObjVec[m_eBeHavior_Col]->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION)) ;
 			break; // 이벤트임을 알림
 		}
 		else
@@ -1007,14 +1023,108 @@ void CZombie::Col_EventCol()
 
 void CZombie::Perform_Skinning()
 {
-	list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
-
-	m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldMatrix());
-
-	for (auto& i : NonHideIndex)
+	//Body Model
 	{
-		m_pBodyModel->Bind_Resource_Skinning(i);
-		m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
+		list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pBodyModel->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
+			//m_pBodyModel->Staging_Skinning(i);
+		}
+	}
+
+	//Face Model
+	{
+		list<_uint> NonHideIndex = m_pHeadModel->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pHeadModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pHeadModel->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pHeadModel->GetMeshes())[i]->GetNumVertices());
+			//m_pHeadModel->Staging_Skinning(i);
+		}
+	}
+
+	//Head2
+	{
+		list<_uint> NonHideIndex = m_pHeadModel2->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pHeadModel2->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pHeadModel2->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pHeadModel2->GetMeshes())[i]->GetNumVertices());
+			//m_pHeadModel2->Staging_Skinning(i);
+		}
+	}
+
+	//Head3
+	{
+		list<_uint> NonHideIndex = m_pHeadModel3->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pHeadModel3->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pHeadModel3->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pHeadModel3->GetMeshes())[i]->GetNumVertices());
+			//m_pHeadModel3->Staging_Skinning(i);
+		}
+	}
+
+	//Shirts Model
+	{
+		list<_uint> NonHideIndex = m_pShirtsModel->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pShirtsModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pShirtsModel->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pShirtsModel->GetMeshes())[i]->GetNumVertices());
+			//m_pShirtsModel->Staging_Skinning(i);
+		}
+	}
+
+	//Shirts2 Model
+	{
+		list<_uint> NonHideIndex = m_pShirts2Model->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pShirts2Model->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pShirts2Model->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pShirts2Model->GetMeshes())[i]->GetNumVertices());
+			//m_pShirts2Model->Staging_Skinning(i);
+		}
+	}
+
+	//Pants Model
+	{
+		list<_uint> NonHideIndex = m_pPantsModel->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pPantsModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pPantsModel->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pPantsModel->GetMeshes())[i]->GetNumVertices());
+			//m_pPantsModel->Staging_Skinning(i);
+		}
+	}
+
+	//Hat Model
+	{
+		list<_uint> NonHideIndex = m_pHatModel->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pHatModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pHatModel->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pHatModel->GetMeshes())[i]->GetNumVertices());
+			//m_pHatModel->Staging_Skinning(i);
+		}
 	}
 }
 
@@ -1045,24 +1155,95 @@ void CZombie::Ready_Decal()
 		decalInfo.maxHitDistance = hitResult.maxHitDistance;
 		decalInfo.decalMaterialIndex = 0;
 
-		list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
-		for (auto& i : NonHideIndex)
-		{
-			m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
+		////Body Model
+		//list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
+		//for (auto& i : NonHideIndex)
+		//{
+		//	m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
 
-			if (m_iMeshIndex_Hit != 999)
-			{
-				m_iMeshIndex_Hit = i;
+		//	if (m_iMeshIndex_Hit != 999)
+		//	{
+		//		m_iMeshIndex_Hit = i;
 
-				_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
-				_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
-				XMStoreFloat4(&m_vHitPosition, CameraPos);
+		//		_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
+		//		_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
+		//		XMStoreFloat4(&m_vHitPosition, CameraPos);
 
-				m_vHitNormal = m_pController->GetHitNormal();
+		//		m_vHitNormal = m_pController->GetHitNormal();
 
-				break;
-			}
-		}
+		//		break;
+		//	}
+		//}
+
+		//if(m_iMeshIndex_Hit == 999)
+		//{
+		//	//Head Model
+		//	NonHideIndex = m_pHeadModel->Get_NonHideMeshIndices();
+		//	for (auto& i : NonHideIndex)
+		//	{
+		//		m_iMeshIndex_Hit = m_pHeadModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
+
+		//		if (m_iMeshIndex_Hit != 999)
+		//		{
+		//			m_iMeshIndex_Hit = i;
+
+		//			_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
+		//			_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
+		//			XMStoreFloat4(&m_vHitPosition, CameraPos);
+
+		//			m_vHitNormal = m_pController->GetHitNormal();
+
+		//			break;
+		//		}
+		//	}
+		//}
+
+		////Shirt Model
+		//if (m_iMeshIndex_Hit == 999)
+		//{
+		//	NonHideIndex = m_pShirtsModel->Get_NonHideMeshIndices();
+		//	for (auto& i : NonHideIndex)
+		//	{
+		//		m_iMeshIndex_Hit = m_pShirtsModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
+
+		//		if (m_iMeshIndex_Hit != 999)
+		//		{
+		//			m_iMeshIndex_Hit = i;
+
+		//			_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
+		//			_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
+		//			XMStoreFloat4(&m_vHitPosition, CameraPos);
+
+		//			m_vHitNormal = m_pController->GetHitNormal();
+
+		//			break;
+		//		}
+		//	}
+		//}
+
+		////Pants Model
+		//if (m_iMeshIndex_Hit == 999)
+		//{
+		//	NonHideIndex = m_pPantsModel->Get_NonHideMeshIndices();
+		//	for (auto& i : NonHideIndex)
+		//	{
+		//		m_iMeshIndex_Hit = m_pPantsModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
+
+		//		if (m_iMeshIndex_Hit != 999)
+		//		{
+		//			m_iMeshIndex_Hit = i;
+
+		//			_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
+		//			_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
+		//			XMStoreFloat4(&m_vHitPosition, CameraPos);
+
+		//			m_vHitNormal = m_pController->GetHitNormal();
+
+		//			break;
+		//		}
+		//	}
+		//}
+
 
 		if (m_iMeshIndex_Hit == 999)
 		{
@@ -1078,13 +1259,15 @@ void CZombie::Ready_Decal()
 		}*/
 	}
 
+	m_vHitPosition = m_pController->GetBlockPoint();
+	m_vHitNormal = m_pController->GetHitNormal();
+
 	if (m_bRagdoll)
 	{
 		m_vHitPosition = m_pController->GetBlockPoint();
 		m_vHitNormal = m_pController->GetHitNormal();
 	}
 }
-
 
 void CZombie::Ready_Effect()
 {
@@ -1126,7 +1309,6 @@ void CZombie::SetBlood()
 	{
 		m_bSetBlood = false;
 		m_iBloodCount = 0;
-		m_vHitPosition = _float4(0.f, 0.f, 0.f, 1.f);
 		return;
 	}
 
@@ -1135,6 +1317,7 @@ void CZombie::SetBlood()
 		m_BloodTime = GetTickCount64();
 		m_vecBlood[m_iBloodCount]->Set_Render(true);
 		m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
+		m_vecBlood[m_iBloodCount]->SetPosition(m_vHitPosition);
 
 		if (m_iBloodCount == 0)
 		{
@@ -1164,15 +1347,12 @@ void CZombie::SetBlood()
 			}
 		}
 
-		m_vecBlood[m_iBloodCount]->SetPosition(m_vHitPosition);
-
 		++m_iBloodCount;
 
 		if (m_iBloodCount >= m_vecBlood.size())
 		{
 			m_bSetBlood = false;
 			m_iBloodCount = 0;
-			m_vHitPosition = _float4(0.f, 0.f, 0.f, 1.f);
 			return;
 		}
 	}
@@ -1181,8 +1361,28 @@ void CZombie::SetBlood()
 void CZombie::Calc_Decal_Map()
 {
 	m_pBodyModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
-
 	m_pBodyModel->Perform_Calc_DecalMap();
+
+	m_pHeadModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+	m_pHeadModel->Perform_Calc_DecalMap();
+
+	m_pHeadModel2->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+	m_pHeadModel2->Perform_Calc_DecalMap();
+				
+	m_pHeadModel3->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+	m_pHeadModel3->Perform_Calc_DecalMap();
+
+	m_pShirtsModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+	m_pShirtsModel->Perform_Calc_DecalMap();
+
+	m_pShirts2Model->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+	m_pShirts2Model->Perform_Calc_DecalMap();
+
+	m_pPantsModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+	m_pPantsModel->Perform_Calc_DecalMap();
+
+	m_pHatModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+	m_pHatModel->Perform_Calc_DecalMap();
 }
 
 void CZombie::Set_ManualMove(_bool isManualMove)

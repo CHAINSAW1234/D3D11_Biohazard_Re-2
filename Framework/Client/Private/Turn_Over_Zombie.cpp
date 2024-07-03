@@ -31,6 +31,12 @@ void CTurn_Over_Zombie::Enter()
 
 	pBodyModel->Set_TotalLinearInterpolation(0.2f);
 	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), false);
+
+#ifdef _DEBUG
+
+	cout << "Enter TurnOver" << endl;
+
+#endif 
 }
 
 _bool CTurn_Over_Zombie::Execute(_float fTimeDelta)
@@ -42,14 +48,22 @@ _bool CTurn_Over_Zombie::Execute(_float fTimeDelta)
 	if (Check_Permition_To_Execute() == false)
 		return false;
 #pragma endregion
+	
+
+	MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
+	if (MONSTER_STATE::MST_STANDUP == eMonsterState)
+		return false;
 
 	if (CZombie::POSE_STATE::_CREEP != m_pBlackBoard->Get_AI()->Get_PoseState())
+		return false;
+
+	if (false == m_pBlackBoard->Get_AI()->Use_Stamina(CZombie::USE_STAMINA::_TURN_OVER))
 		return false;
 
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_DOWN);
+	pAI->Set_State(MONSTER_STATE::MST_DOWN);
 
 	Change_Animation();
 

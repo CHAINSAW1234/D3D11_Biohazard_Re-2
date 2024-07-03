@@ -7,7 +7,7 @@ BEGIN(Engine)
 class ENGINE_DLL CDecal : public CGameObject
 {
 public:
-	typedef struct : public CGameObject::GAMEOBJECT_DESC
+	typedef struct TEMP : public CGameObject::GAMEOBJECT_DESC
 	{
 		_int iSubType;
 		_int iType;
@@ -30,7 +30,7 @@ public:
 	virtual _uint	Staging_DecalInfo_RayCasting(_float* pDist) { return 0; }
 	virtual void	Calc_Decal_Info(CALC_DECAL_INPUT Input) {}
 	virtual void	Staging_Calc_Decal_Info() {}
-	virtual void	Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input) {}
+	virtual void	Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input, ID3D11UnorderedAccessView* pUAV) {}
 	virtual void	Bind_DecalMap(class CShader* pShader) {}
 public:
 	ID3D11UnorderedAccessView* GetDecalInfo_Uav()
@@ -41,18 +41,22 @@ public:
 	{
 		m_iNumVertices = iNumVertices;
 	}
+	virtual HRESULT				Init_Decal_Texture(_uint iLevel) { return S_OK; }
+	virtual void				Bind_Resource_NonCShader_Decal(class CShader* pShader) {}
+	virtual void				Calc_NonCS_DecalMap(class CShader* pShader) {}
 protected:
 	class CModel* m_pModelCom = { nullptr };
 	class CShader* m_pShaderCom = { nullptr };
 	class CTexture* m_pTextureCom = { nullptr };
 	class CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 
-	class DecalConstData m_DecalConstData;
-	class DecalInfo* m_DecalInfo = { nullptr };
+	DecalConstData m_DecalConstData;
+	DecalInfo* m_DecalInfo = { nullptr };
 	ID3D11Buffer* m_pSB_DecalInfo = { nullptr };
 	ID3D11Buffer* m_pCB_DecalConstData = { nullptr };
 
 	ID3D11Buffer*				m_pSB_DecalMap = nullptr;
+	ID3D11ShaderResourceView*	m_pSRV_DecalMap = nullptr;
 	ID3D11UnorderedAccessView*  m_pUAV_DecalInfo = { nullptr };
 	ID3D11UnorderedAccessView*  m_pUAV_DecalMap = { nullptr };
 	ID3D11RenderTargetView*		m_pRTV_DecalMap = { nullptr };
@@ -63,6 +67,8 @@ protected:
 	_uint						m_iNumVertices = { 0 };
 
 	_float2*					m_pDecal_Map = { nullptr };
+
+	_float4x4					m_WorldInv;
 protected:
 	_float					m_fSizeX;
 	_float					m_fSizeY;

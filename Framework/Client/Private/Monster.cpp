@@ -46,6 +46,8 @@ HRESULT CMonster::Initialize(void * pArg)
 	if (FAILED(Initialize_Status()))
 		return E_FAIL;
 
+	m_iCurrentShirts = m_pGameInstance->GetRandom_Int(0, 2);
+
 	return S_OK;
 }
 
@@ -172,22 +174,11 @@ void CMonster::Tick_PartObjects(_float fTimeDelta)
 
 void CMonster::Late_Tick_PartObjects(_float fTimeDelta)
 {
-	static _uint			iCurrentShirts = { 0 };
-
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_UP))
-	{
-		iCurrentShirts += 1;
-		if (iCurrentShirts > 2)
-		{
-			iCurrentShirts = 0;
-		}
-	}
-
 	for (auto& pPartObject : m_PartObjects)
 	{
 		if (nullptr != pPartObject)
 		{
-			if (iCurrentShirts == 0)
+			if (m_iCurrentShirts == 0)
 			{
 				if (pPartObject == m_PartObjects[PART_SHIRTS2])
 					continue;
@@ -203,7 +194,7 @@ void CMonster::Late_Tick_PartObjects(_float fTimeDelta)
 					continue;
 			}
 			
-			if (iCurrentShirts == 1)
+			if (m_iCurrentShirts == 1)
 			{
 				if (pPartObject == m_PartObjects[PART_SHIRTS])
 					continue;
@@ -219,7 +210,7 @@ void CMonster::Late_Tick_PartObjects(_float fTimeDelta)
 					continue;
 			}
 
-			if (iCurrentShirts == 2)
+			if (m_iCurrentShirts == 2)
 			{
 				if (pPartObject == m_PartObjects[PART_SHIRTS])
 					continue;

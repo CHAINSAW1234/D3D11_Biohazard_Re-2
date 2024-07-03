@@ -177,7 +177,7 @@ public:
 	void					Staging_Skinning();
 
 	//Ray Casting
-	_uint					RayCasting_Decal(class AddDecalInfo Info,_float* pDist);
+	_uint					RayCasting_Decal(AddDecalInfo Info,_float* pDist);
 
 	//Calc Decal Info
 	void					Calc_Decal_Info();
@@ -194,9 +194,14 @@ public:
 	void					SetDecalWorldMatrix(_float4x4 WorldMatrix);
 
 	//CalcDecalMap
-	void					Bind_Resource_CalcDecalMap();
+	void					Bind_Resource_CalcDecalMap(ID3D11UnorderedAccessView* pUAV);
 	void					Perform_Calc_DecalMap();
 	void					Bind_Decal_Map(class CShader* pShader);
+
+	void					Init_Decal(_uint iLevel);
+
+	void					Bind_Resource_NonCShader_Decal(class CShader* pShader);
+	void					Calc_NonCS_Decal_Map(class CShader* pShader);
 #pragma endregion
 
 private:
@@ -234,6 +239,9 @@ private:
 
 	class CDecal_Blood* m_pDecal_Blood = { nullptr };
 	_uint							m_iMeshIndex = { 0 };
+
+	SKINNING_INPUT					m_Skinning_Input;
+	CALC_DECAL_MAP_INPUT			m_Calc_Decal_Map_Input;
 #pragma endregion
 public:
 	/* For.FBXLoad*/

@@ -48,14 +48,10 @@ Task 	Execute Pre Task	|	|		|		Deco 		IsLinkFromMove, Idle		Selector 	Move Or Tu
 							Task 		Hold Stun
 
 
-###		죽는거								=> 정현이가 처리
 
-###		누웠을때 일어나고나서처리
-###		누운중 맞은거
+###		Lightly Hold => 성공과 실패로 나뉨 => 성공 ( 바이트로 넘어가기 ), 실패 ( End )
 
-###		피직스 이동 끄고서 한번에 이동하기
-							
-
+		=> Bite자체를 그냥 Lightly Hold Task 내에서 처리
 
 ###		Zombie Creep, StandUp 모션 채우기
 

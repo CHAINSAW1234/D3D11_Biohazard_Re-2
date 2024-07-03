@@ -118,11 +118,13 @@ private:
 	_int									Find_RootBoneIndex();
 
 private:
-	vector<_float4x4>						Initialize_ResultMatrices(const set<_uint>& IncludedBoneIndices);
-	_float									Compute_Current_TotalWeight(_uint iBoneIndex);
-	void									Compute_Current_TotalWeights();
+	vector<_float4x4>						Initialize_ResultMatrices_Blend(const unordered_set<_uint>& IncludedBoneIndices);
+	vector<_float4x4>						Initialize_ResultMatrices_AdditionalMasking(const unordered_set<_uint>& IncludedBoneIndices);
+	_float									Compute_Current_TotalBlendWeight(_uint iBoneIndex);
+	void									Compute_Current_TotalBlendWeights();
 	_float4x4								Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fmatrix DstMatrix, _float fAdditionalWeight);
-	set<_uint>								Compute_IncludedBoneIndices_AllBoneLayer();
+	unordered_set<_uint>					Compute_IncludedBoneIndices_AllBoneLayer_Blend();
+	unordered_set<_uint>					Compute_IncludedBoneIndices_AllBoneLayer_AdditionalMasking();
 
 public:
 	HRESULT									RagDoll();
@@ -208,6 +210,7 @@ public:		/* For. Access */
 	void									Set_Loop(_uint iPlayingIndex, _bool isLoop);
 
 	void									Set_TotalLinearInterpolation(_float fTime) { m_fTotalLinearTime = fTime; }
+	void									Set_Additional_Masking(_uint iPlayingIndex, _bool isAdditionalMasking, _uint iNumNeedKeyFrame);
 	void									Set_KeyFrameIndex_AllKeyFrame(_uint iPlayingIndex, _uint iKeyFrameIndex);
 	void									Set_TrackPosition(_uint iPlayingIndex, _float fTrackPosition, _bool isResetRootPre = false);
 	void									Set_BlendWeight(_uint iPlayingIndex, _float fBlendWeight, _float fLinearTime = 0.f);
@@ -249,8 +252,9 @@ public:
 private:
 	vector<_float4x4>						Apply_Animation(_float fTimeDelta, _uint iPlayingAnimIndex);
 	void									Apply_Bone_CombinedMatrices(CTransform* pTransform, _float3* pMovedDirection, _uint iStartBoneIndex = 0);
-	void									Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer);
-	vector<_float4x4>						Compute_ResultMatrices(const vector<vector<_float4x4>>& TransformationMatricesLayer);
+	void									Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& BlendTransformationMatricesLayer, const vector<vector<_float4x4>>& AdditionalTransformationMatricesLayer);
+	vector<_float4x4>						Compute_ResultMatrices_Blend(const vector<vector<_float4x4>>& TransformationMatricesLayer);
+	vector<_float4x4>						Compute_ResultMatrices_AdditionalMsking(const vector<vector<_float4x4>>& AdditionalMaskingTransformationMatricesLayer);
 
 public:		/* For.Cooking_Mesh */
 	void									Static_Mesh_Cooking(class CTransform* pTransform = nullptr);
@@ -362,11 +366,16 @@ private:
 
 public:/*For Skinned Mesh Decal*/
 	void									Bind_Resource_Skinning(_uint iIndex);
-	void									Bind_Essential_Resource_Skinning(_float4x4 WorldMat);
+	void									Bind_Essential_Resource_Skinning(_float4x4* pWorldMat);
 	void									Staging_Skinning(_uint iIndex);
 	void									Perform_Skinning(_uint iIndex);
 	void									SetDecalWorldMatrix(_uint iIndex,_float4x4 WorldMatrix);
+	void									Init_Decal(_uint iLevel);
 
+	void									Bind_Resource_NonCShader_Decal(_uint iIndex,class CShader* pShader);
+	void									Calc_DecalMap_NonCS(class CShader* pShader);
+
+	void									Initialize_DecalMap();
 public:/*For Mesh RayCasting*/
 	_uint									Perform_RayCasting(_uint iIndex, AddDecalInfo Info,_float* pDist);
 
@@ -381,6 +390,12 @@ public:/*For Decal Map*/
 public:/*For Calc Decal Map*/
 	void									Perform_Calc_DecalMap();
 	void									Bind_DecalMap(_uint iIndex,class CShader* pShader);
+
+private:/*For Decal Map*/
+	vector<ID3D11UnorderedAccessView*>		m_vecUAV_DecalMap;
+	vector<_float2*>						m_vecDecal_Map = { nullptr };
+	vector<ID3D11Buffer*>					m_vecSB_DecalMap;
+	vector<ID3D11ShaderResourceView*>		m_vecSRV_DecalMap;
 public:
 	/* Create_ */
 	static CModel* Create_Temp(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL_TYPE eType, const string& strModelFilePath, _fmatrix TransformMatrix);

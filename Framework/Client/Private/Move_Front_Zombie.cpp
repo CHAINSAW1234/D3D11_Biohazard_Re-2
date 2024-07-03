@@ -72,6 +72,12 @@ void CMove_Front_Zombie::Enter()
 	m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fRecognitionRange = STATUS_ZOMBIE_MAX_RECOGNITION_DISTANCE;
 
 	m_fAccBlendTime = 0.f;
+
+#ifdef _DEBUG
+
+	cout << "Enter Move Front" << endl;
+
+#endif 
 }
 
 _bool CMove_Front_Zombie::Execute(_float fTimeDelta)
@@ -84,10 +90,14 @@ _bool CMove_Front_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
+	CZombie::POSE_STATE			ePoseState = { m_pBlackBoard->Get_AI()->Get_PoseState() };
+	if (CZombie::POSE_STATE::_UP != ePoseState)
+		return false;
+
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_WALK);
+	pAI->Set_State(MONSTER_STATE::MST_WALK);
 
 	Change_Animation(fTimeDelta);
 

@@ -34,8 +34,8 @@ HRESULT CPhysics_Controller::Initialize(void* pArg)
 	m_Pvd = PxCreatePvd(*m_Foundation);
 	m_Transport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
 	m_Pvd->connect(*m_Transport, physx::PxPvdInstrumentationFlag::eALL);
-	m_ToleranceScale.length = 1.f;
-	m_ToleranceScale.speed = 9.81;
+	m_ToleranceScale.length = PxReal(1.f);
+	m_ToleranceScale.speed = PxReal(9.81);
 	m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, m_ToleranceScale, true, m_Pvd);
 	physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
@@ -1106,12 +1106,12 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 						m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count();
 					}
 
-					//if(m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() == 3)
-					//{
-					//	/*Ragdoll을 구동하려면 살려야 함.*/
-					//	m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
-					//	m_vecCharacter_Controller[filterData.word2]->SetDead(true);
-					//}
+					if(m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() == 10)
+					{
+						/*Ragdoll을 구동하려면 살려야 함.*/
+						m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
+						m_vecCharacter_Controller[filterData.word2]->SetDead(true);
+					}
 
 					return true;
 				}

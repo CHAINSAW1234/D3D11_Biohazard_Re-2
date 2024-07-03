@@ -1,12 +1,14 @@
 #pragma once
 #include "Customize_UI.h"
 #include "Observer.h"
+
 BEGIN(Client)
 
 class CBullet_UI final : public CCustomize_UI, public CObserver
 {
 private:
 	enum class BULLET_TEXT_TYPE { CURRENT_BULLET, STORE_BULLET, END_BULLET };
+
 	struct Text
 	{
 		CTextBox*	pText = {  };
@@ -31,15 +33,23 @@ private :
 	virtual void Start() override;
 	virtual void OnNotify() override;
 
-private:
+private: /* Hand Gun */
 	void					Change_BulletUI();
 	void					Render_Bullet_UI(_float fTimeDelta);
 	void					Mission_Complete();
+	void					Bullet_Font();
 
+private : /* Grenade */
+	void					Change_Grenade(_float fTimeDelta);
+
+private :
 	void					Find_Crosshair();
 
 private:
 	class CCrosshair_UI*	m_pCrosshair = { nullptr };
+
+private:
+	wstring					m_wstrFile = { TEXT("") };
 
 private:
 	Text					m_pTextUI[2] = {};
@@ -60,6 +70,7 @@ private:
 	_bool					m_isKeepCross = { false };
 	_bool					m_isTutiorial = { false };
 
+	_int					m_iEqipType = { 0 };
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

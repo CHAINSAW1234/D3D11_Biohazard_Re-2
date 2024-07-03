@@ -43,6 +43,10 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 	m_eCurrentMotionType = MOTION_TYPE::MOTION_A;
 	m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie/Body.fbx");
 
+#pragma region Effect
+	m_pModelCom->Init_Decal(LEVEL_GAMEPLAY);
+#pragma endregion
+
 	return S_OK;
 }
 
@@ -83,12 +87,23 @@ void CBody_Zombie::Tick(_float fTimeDelta)
 	}
 }
 
+static	_bool			isInitiate = { true };
+
 void CBody_Zombie::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if(m_bRagdoll == false)
-		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_DOWN))
+		isInitiate = !isInitiate;
+
+	if (true == isInitiate)
+	{
+		if (m_bRagdoll == false)
+			m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	}
+
+
 
 
 #pragma region TEST
@@ -138,8 +153,6 @@ HRESULT CBody_Zombie::Render()
 		//	if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
 		//		return E_FAIL;
 
-		m_pModelCom->Bind_DecalMap(i, m_pShaderCom);
-
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
 		{
 			_bool isAlphaTexture = false;
@@ -166,9 +179,13 @@ HRESULT CBody_Zombie::Render()
 				return E_FAIL;
 		}
 
+		m_pModelCom->Bind_DecalMap(i, m_pShaderCom);
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 		m_pModelCom->Render(static_cast<_uint>(i));
+
+		ID3D11UnorderedAccessView* NullUAV = { nullptr };
+		m_pContext->CSSetUnorderedAccessViews(0, 1, &NullUAV, nullptr);
 	}
 
 	return S_OK;
@@ -747,19 +764,72 @@ HRESULT CBody_Zombie::Register_BoneLayer_Additional_TwisterBones()
 	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_R_LEG_TWIST_TAG, "r_leg_femur", "r_leg_ball")))
 		return E_FAIL;
 
-	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_ARM_TWIST_TAG, "l_arm_humerus", "l_arm_humerus")))
+	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_ARM_TWIST_TAG, "l_arm_humerus", "l_arm_wrist")))
 		return E_FAIL;
 
-	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_R_ARM_TWIST_TAG, "r_arm_humerus", "r_arm_humerus")))
+	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_R_ARM_TWIST_TAG, "r_arm_humerus", "r_arm_wrist")))
 		return E_FAIL;
 
-	//if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_SHOULDER_TWIST_TAG, "l_arm_clavicle", "l_arm_humerus")))
-	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_SHOULDER_TWIST_TAG, "spine_1", "l_arm_humerus")))
-		return E_FAIL;
+	//if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_SHOULDER_TWIST_TAG, "l_arm_clavicle", "l_arm_wrist")))
+	////	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_SHOULDER_TWIST_TAG, "spine_1", "l_arm_wrist")))
+	//	return E_FAIL;
 
-	//	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_R_SHOULDER_TWIST_TAG, "r_arm_clavicle", "r_arm_humerus")))
-	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_R_SHOULDER_TWIST_TAG, "spine_1", "r_arm_humerus")))
-		return E_FAIL;
+	//if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_R_SHOULDER_TWIST_TAG, "r_arm_clavicle", "r_arm_wrist")))
+	////	if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_R_SHOULDER_TWIST_TAG, "spine_1", "r_arm_wrist")))
+	//	return E_FAIL;
+
+	list<string>			R_ShoulderAddBoneTags;
+	R_ShoulderAddBoneTags.emplace_back("spine_1");
+	R_ShoulderAddBoneTags.emplace_back("spine_2");
+	R_ShoulderAddBoneTags.emplace_back("r_arm_clavicle");
+	R_ShoulderAddBoneTags.emplace_back("r_arm_humerus");
+	R_ShoulderAddBoneTags.emplace_back("r_arm_radius");
+	R_ShoulderAddBoneTags.emplace_back("r_arm_wrist");
+	R_ShoulderAddBoneTags.emplace_back("r_arm_radius_twist_3_H");
+	R_ShoulderAddBoneTags.emplace_back("r_arm_radius_twist_2_H");
+	R_ShoulderAddBoneTags.emplace_back("r_arm_radius_twist_1_H");
+	R_ShoulderAddBoneTags.emplace_back("r_arm_humerus_twist_3_H");
+	R_ShoulderAddBoneTags.emplace_back("r_arm_humerus_twist_2_H");
+	R_ShoulderAddBoneTags.emplace_back("r_arm_humerus_twist_1_H");
+	R_ShoulderAddBoneTags.emplace_back("neck_0");
+	R_ShoulderAddBoneTags.emplace_back("neck_1");
+
+	list<_uint>				R_ShoulderAddBoneIndices;
+	for (auto& strBoneTag : R_ShoulderAddBoneTags)
+	{
+		_int			iBoneIndex = { m_pModelCom->Get_BoneIndex(strBoneTag) };
+		if (iBoneIndex == -1)
+			MSG_BOX(TEXT("BoneIndex - 1"));
+		R_ShoulderAddBoneIndices.emplace_back(iBoneIndex);
+	}
+	m_pModelCom->Add_Bone_Layer_BoneIndices(BONE_LAYER_R_SHOULDER_TWIST_TAG, R_ShoulderAddBoneIndices);
+
+
+	list<string>			L_ShoulderAddBoneTags;
+	L_ShoulderAddBoneTags.emplace_back("spine_1");
+	L_ShoulderAddBoneTags.emplace_back("spine_2");
+	L_ShoulderAddBoneTags.emplace_back("l_arm_clavicle");
+	L_ShoulderAddBoneTags.emplace_back("l_arm_humerus");
+	L_ShoulderAddBoneTags.emplace_back("l_arm_radius");
+	L_ShoulderAddBoneTags.emplace_back("l_arm_wrist");
+	L_ShoulderAddBoneTags.emplace_back("l_arm_radius_twist_3_H");
+	L_ShoulderAddBoneTags.emplace_back("l_arm_radius_twist_2_H");
+	L_ShoulderAddBoneTags.emplace_back("l_arm_radius_twist_1_H");
+	L_ShoulderAddBoneTags.emplace_back("l_arm_humerus_twist_3_H");
+	L_ShoulderAddBoneTags.emplace_back("l_arm_humerus_twist_2_H");
+	L_ShoulderAddBoneTags.emplace_back("l_arm_humerus_twist_1_H");
+	L_ShoulderAddBoneTags.emplace_back("neck_0");
+	L_ShoulderAddBoneTags.emplace_back("neck_1");
+
+	list<_uint>				L_ShoulderAddBoneIndices;
+	for (auto& strBoneTag : L_ShoulderAddBoneTags)
+	{
+		_int			iBoneIndex = { m_pModelCom->Get_BoneIndex(strBoneTag) };
+		if (iBoneIndex == -1)
+			MSG_BOX(TEXT("BoneIndex - 1"));
+		L_ShoulderAddBoneIndices.emplace_back(iBoneIndex);
+	}
+	m_pModelCom->Add_Bone_Layer_BoneIndices(BONE_LAYER_L_SHOULDER_TWIST_TAG, L_ShoulderAddBoneIndices);
 
 	//if (FAILED(Register_BoneLayer_Childs_NonInclude_Joint(BONE_LAYER_L_LEG_TWIST_TAG, "COG", "l_leg_ball")))
 	//	return E_FAIL;
@@ -788,7 +858,7 @@ HRESULT CBody_Zombie::Register_BoneLayer_Childs_NonInclude_Joint(const wstring& 
 		else
 			++iterSrc;
 	}
-	m_pModelCom->Add_Bone_Layer_BoneIndices(strBoneLayerTag, ChildBoneIndices);
+	m_pModelCom->Add_Bone_Layer_BoneIndices(strBoneLayerTag, ChildBoneIndices);	
 
 	return S_OK;
 }

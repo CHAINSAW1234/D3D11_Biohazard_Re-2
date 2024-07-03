@@ -25,18 +25,27 @@ void CStun_Zombie::Enter()
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
 
 	pBodyModel->Set_TotalLinearInterpolation(0.2f);
-	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), false);
+	pBodyModel->Set_Loop(static_cast<_uint>(m_ePlayingIndex), false);
 
 	m_isEntry = true;
+
+#ifdef _DEBUG
+
+	cout << "Enter Stun" << endl;
+
+#endif 
 }
 
 _bool CStun_Zombie::Execute(_float fTimeDelta)
 {
+
+
+	return false;
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)
 		return false;
@@ -50,7 +59,7 @@ _bool CStun_Zombie::Execute(_float fTimeDelta)
 		_bool			isFinsihed = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY)->isFinished(static_cast<_uint>(m_ePlayingIndex)) };
 		if (true == isFinsihed)
 			return false;
-	}	
+	}
 
 	else
 	{
@@ -58,11 +67,10 @@ _bool CStun_Zombie::Execute(_float fTimeDelta)
 		if (HIT_TYPE::HIT_SMALL != eHitType)
 			return false;
 	}
-
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_DAMAGE);
+	pAI->Set_State(MONSTER_STATE::MST_DAMAGE);
 
 	if (true == m_isEntry)
 	{
@@ -73,6 +81,7 @@ _bool CStun_Zombie::Execute(_float fTimeDelta)
 
 	return true;
 }
+
 
 void CStun_Zombie::Exit()
 {
@@ -104,7 +113,7 @@ void CStun_Zombie::Change_Animation_StandUp()
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
 
@@ -199,7 +208,7 @@ void CStun_Zombie::Change_Animation_StandUp()
 
 	if (false == isSameAnim)
 	{
-		pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strAnimLayerTag, iResultAnimationIndex);
+		pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strStunAnimLayerTag, iResultAnimationIndex);
 		pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
 	}
 	else
@@ -213,7 +222,7 @@ void CStun_Zombie::Change_Animation_Creep()
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
 
@@ -234,7 +243,8 @@ void CStun_Zombie::Change_Animation_Creep()
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_ARM_L);
 		}
 #ifdef _DEBUG 
-		MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
+		else
+			MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
 #endif 
 	}
 
@@ -250,7 +260,8 @@ void CStun_Zombie::Change_Animation_Creep()
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_ARM_R);
 		}
 #ifdef _DEBUG 
-		MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
+		else
+			MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
 #endif 
 	}
 
@@ -266,7 +277,8 @@ void CStun_Zombie::Change_Animation_Creep()
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_LEG_L);
 		}
 #ifdef _DEBUG 
-		MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
+		else
+			MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
 #endif 
 	}
 
@@ -282,14 +294,15 @@ void CStun_Zombie::Change_Animation_Creep()
 			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_LEG_R);
 		}
 #ifdef _DEBUG 
-		MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
+		else
+			MSG_BOX(TEXT("Calld : void CStun_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
 #endif 
 	}
 
-	else if (m_eCurrentHitCollider == COLLIDER_TYPE::CHEST || m_eCurrentHitCollider == COLLIDER_TYPE::PELVIS || m_eCurrentHitCollider == COLLIDER_TYPE::HEAD)
+	/*else if (m_eCurrentHitCollider == COLLIDER_TYPE::CHEST || m_eCurrentHitCollider == COLLIDER_TYPE::PELVIS || m_eCurrentHitCollider == COLLIDER_TYPE::HEAD)
 	{
 		iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_BODY);
-	}
+	}*/
 
 	if (-1 == iResultAnimationIndex)
 		return;
@@ -299,7 +312,7 @@ void CStun_Zombie::Change_Animation_Creep()
 
 	if (false == isSameAnim)
 	{
-		pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strAnimLayerTag, iResultAnimationIndex);
+		pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strDefualtStunAnimLayerTag, iResultAnimationIndex);
 		pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
 	}
 	else

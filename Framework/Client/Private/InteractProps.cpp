@@ -37,6 +37,7 @@ HRESULT CInteractProps::Initialize(void* pArg)
 	m_tagPropDesc.BelongIndexs = pObj_desc->BelongIndexs;
 	m_tagPropDesc.iRegionDir = pObj_desc->iRegionDir;
 	m_tagPropDesc.iRegionNum = pObj_desc->iRegionNum;
+	m_tagPropDesc.iFloor = pObj_desc->iFloor;
 	m_tagPropDesc.iPartObj = pObj_desc->iPartObj;
 	m_tagPropDesc.iPropType = pObj_desc->iPropType;
 	m_tagPropDesc.tagDoor = pObj_desc->tagDoor;
@@ -133,6 +134,28 @@ void CInteractProps::Check_Player()
 
 }
 
+_float CInteractProps::Check_Player_Distance()
+{
+	_vector vDistanceVector = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) - m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION);
+	_float fPlayer_Distance = XMVectorGetX(XMVector3Length(vDistanceVector));
+	m_fDistance = fPlayer_Distance;
+	return m_fDistance;
+}
+
+_float CInteractProps::Check_Player_Distance(_float4 vPos)
+{
+	_float4 vDistanceVector = vPos - m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION);
+	_float fPlayer_Distance = XMVectorGetX(XMVector3Length(vDistanceVector));
+	return fPlayer_Distance;
+}
+
+_float3 CInteractProps::Get_Collider_World_Pos(_float3 vPos)
+{
+	_matrix colliderLocalMatrix = XMMatrixTranslation(vPos.x,vPos.y,vPos.z);
+	_float3 vWorldPos = (colliderLocalMatrix * m_pTransformCom->Get_WorldMatrix()).r[3];
+	return vWorldPos;
+}
+
 _bool CInteractProps::Check_Col_Sphere_Player()
 {
 	if (m_pPlayer == nullptr)
@@ -142,7 +165,11 @@ _bool CInteractProps::Check_Col_Sphere_Player()
 	CCollider* pPlayerCol = static_cast<CCollider*>( m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_SPHERE]))
 	{
-		m_bInteract = true;
+		if (Check_Player_Distance() <= 1.16f && !m_bOnce)
+		{
+			m_bOnce = true;
+		}
+		m_bFirstInteract = true;
 		return true;
 	}
 	return false;
@@ -158,7 +185,11 @@ _bool CInteractProps::Check_Col_OBB_Player()
 	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_OBB]))
 	{
-		m_bInteract = true;
+		if (Check_Player_Distance() <= 1.16f && !m_bOnce)
+		{
+			m_bOnce = true;
+		}
+		m_bFirstInteract = true;
 		return true;
 	}
 	return false;
@@ -174,7 +205,11 @@ _bool CInteractProps::Check_Col_AABB_Player()
 	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_AABB]))
 	{
-		m_bInteract = true;
+		if (Check_Player_Distance() <= 1.16f && !m_bOnce)
+		{
+			m_bOnce = true;
+		}
+		m_bFirstInteract = true;
 		return true;
 	}
 	return false;
@@ -201,6 +236,23 @@ _bool CInteractProps::Visible()
 	}
 
 	return m_bVisible;
+}
+
+_float CInteractProps::Get_PlayerLook_Degree()
+{
+	_vector vPlayerLook = XMVector4Normalize(m_pPlayerTransform->Get_State_Vector(CTransform::STATE_LOOK));
+	_vector vPlayerPos = m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION);
+	_vector vPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+	_vector vDirection = XMVector4Normalize(vPlayerPos - vPos);
+
+	_float fScala = XMVectorGetX(XMVector4Dot(vPlayerLook, vDirection));
+	if (fScala > 1.f)
+		fScala = 1.f;
+	else if (fScala < -1.f)
+		fScala = -1.f;
+
+
+	return XMConvertToDegrees(fScala);
 }
 
 HRESULT CInteractProps::Render_LightDepth_Dir()
@@ -334,14 +386,20 @@ _bool* CInteractProps::ComeClose_toPlayer(_float _come)
 	m_isNYResult = false;
 
 	/* Player와의 거리 */
-	_vector vDistanceVector = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) - m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	_float fPlayer_Distance = XMVectorGetX(XMVector3Length(vDistanceVector));
 
-	if (fPlayer_Distance <= _come)
+	if (m_fDistance <= _come)
 		m_isNYResult = true;
 
 	else
 		m_isNYResult = false;
+
+	if (PRESSING == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+	{
+		m_bBlock = true;
+		m_isNYResult = false;
+	}
+	else
+		m_bBlock = false;
 
 	return &m_isNYResult;
 }

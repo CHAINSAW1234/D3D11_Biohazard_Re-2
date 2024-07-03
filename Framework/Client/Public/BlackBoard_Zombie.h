@@ -37,6 +37,14 @@ private:
 	void							Update_StandUp_Timer(_float fTimeDelta);
 	void							Update_LightlyHold_Timer(_float fTimeDelta);
 
+private:
+	void							Update_Status(_float fTimeDelta);
+
+	void							Update_Status_Stamina(_float fTimeDelta);
+
+public:	//	Interact
+	_bool							Hit_Player();
+
 public: // Setter
 	void							SetPlayer(class CPlayer* pPlayer)
 	{

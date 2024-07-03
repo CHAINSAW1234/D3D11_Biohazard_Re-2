@@ -15,4 +15,14 @@
 #define BONE_LAYER_L_SHOULDER_TWIST_TAG		TEXT("L_Shoulder_Twistter")
 #define BONE_LAYER_R_SHOULDER_TWIST_TAG		TEXT("R_Shoulder_Twistter")
 #define BONE_LAYER_BODY_TWIST_TAG			TEXT("Body_Twistter")
-#define BONE_LAYER_Head_TWIST_TAG			TEXT("Head_Twistter")
+#define BONE_LAYER_HEAD_TWIST_TAG			TEXT("Head_Twistter")
+
+/* For. Blend Velocity */
+#define ZOMBIE_BLEND_MAX								1.f
+#define ZOMBIE_BLEND_ZERO								0.f
+
+/* For. Blend On */
+#define ZOMBIE_SHAKE_SKIN_BLEND_ON_TIME					0.3f
+
+/* For. Blend Off */
+#define ZOMBIE_SHAKE_SKIN_BLEND_OFF_TIME				0.2f

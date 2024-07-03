@@ -46,6 +46,7 @@ void CWindow::Start()
 			// 내 인덱스 넣어주기
 			_int* iNum = static_cast<CCustomCollider*>(iter)->Node_InteractProps();
 			*iNum = m_tagPropDesc.iIndex;
+			break;
 		}
 	}
 

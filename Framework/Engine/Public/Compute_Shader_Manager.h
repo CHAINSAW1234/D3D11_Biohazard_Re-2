@@ -17,7 +17,7 @@ public:
 public:
 	//Skinning
 	void					Bind_Resource_Skinning(SKINNING_INPUT Input);
-	void					Bind_Essential_Resource_Skinning(_float4x4 WorldMat, _float4x4* pBoneMatrices);
+	void					Bind_Essential_Resource_Skinning(_float4x4* WorldMat, _float4x4* pBoneMatrices);
 	void					Perform_Skinning(_uint iNumVertices);
 
 public:

@@ -28,6 +28,10 @@ public:
 	virtual void			SetCulling(_bool boolean) {}
 	virtual void			Create_Cloth() {}
 	virtual void			Add_RenderGroup() {}
+	void					Set_Render_Decal(_bool boolean)
+	{
+		m_bRender_Decal = boolean;
+	}
 protected:
 	void					Update_WorldMatrix();
 
@@ -36,7 +40,7 @@ protected:
 	_float4x4				m_PrevWorldMatrix;
 	CTransform*				m_pParentsTransform = { nullptr };
 
-
+	_bool					m_bRender_Decal = { false };
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;
 	virtual void Free() override;

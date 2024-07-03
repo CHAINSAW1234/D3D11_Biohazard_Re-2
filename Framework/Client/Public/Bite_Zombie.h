@@ -61,7 +61,6 @@ private:
 
 	const wstring&					m_strDefaultFrontAnimLayerTag = { TEXT("Bite_Default_Front") };
 	const wstring&					m_strDefaultBackAnimLayerTag = { TEXT("Bite_Default_Back") };
-	const wstring&					m_strPushDownAnimLayerTag = { TEXT("Bite_Push_Down") };
 	const wstring&					m_strCreepAnimLayerTag = { TEXT("Bite_Creep") };
 	const wstring&					m_strETCAnimLayerTag = { TEXT("Bite_ETC") };
 	const wstring&					m_strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
@@ -76,14 +75,14 @@ private:
 	CZombie::FACE_STATE				m_eStartFaceState = { CZombie::FACE_STATE::_END };
 	CZombie::POSE_STATE				m_eStartPoseState = { CZombie::POSE_STATE::_END };
 
-	MONSTER_STATE					m_ePreState = { MONSTER_STATE::MST_END };
-
 	_bool							m_isSendMSG_To_Player = { false };
 
 	_float							m_fAccLinearTime_HalfMatrix = { 0.f };
 	_float							m_fTotalLinearTime_HalfMatrix = { 0.f };
 
 	_float4x4						m_Delta_Matrix_To_HalfMatrix;
+
+	_bool							m_isFrontFromPlayer = { false };
 
 public:
 	static CBite_Zombie* Create(void* pArg = nullptr);

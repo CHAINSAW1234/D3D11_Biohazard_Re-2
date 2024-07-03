@@ -261,44 +261,44 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
 	//ÈñÈ÷ ³Ñ ¹Ù»Û °ü°è·Î ÇÔ¼ö ¸øÆÍ¾î¿ä - ¿¹Àº
 
-	//string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
-	//_tchar	szFilePath[MAX_PATH] = { L"" };
-	//MultiByteToWideChar(CP_ACP, 0, strFilePath.c_str(), (_uint)strlen(strFilePath.c_str()), szFilePath, MAX_PATH);
-	//_uint iMonsterNum = { 0 };
-	//HANDLE		hFile = CreateFile(szFilePath, GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
+	_tchar	szFilePath[MAX_PATH] = { L"" };
+	MultiByteToWideChar(CP_ACP, 0, strFilePath.c_str(), (_uint)strlen(strFilePath.c_str()), szFilePath, MAX_PATH);
+	_uint iMonsterNum = { 0 };
+	HANDLE		hFile = CreateFile(szFilePath, GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
-	//if (INVALID_HANDLE_VALUE == hFile)
-	//	return E_FAIL;
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
 
-	//wchar_t			szFileName[MAX_PATH] = { TEXT("") };
-	//_wsplitpath_s(szFilePath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, nullptr, 0);
+	wchar_t			szFileName[MAX_PATH] = { TEXT("") };
+	_wsplitpath_s(szFilePath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, nullptr, 0);
 
 
-	//DWORD	dwByte(0);
+	DWORD	dwByte(0);
 
-	//_uint iObjectNum = { 0 };
-	//if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
-	//	return E_FAIL;
+	_uint iObjectNum = { 0 };
+	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
+		return E_FAIL;
 
-	//for (_uint i = 0; iObjectNum > i; ++i)
-	//{
-	//	_uint iLength = { 0 };
+	for (_uint i = 0; iObjectNum > i; ++i)
+	{
+		_uint iLength = { 0 };
 
-	//	CMonster::MONSTER_DESC ObjectDesc = {};
+		CMonster::MONSTER_DESC ObjectDesc = {};
 
-	//	if (!ReadFile(hFile, &ObjectDesc.worldMatrix, sizeof(_float4x4), &dwByte, nullptr))
-	//	{
-	//		CloseHandle(hFile);
-	//		return E_FAIL;
-	//	}
+		if (!ReadFile(hFile, &ObjectDesc.worldMatrix, sizeof(_float4x4), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
 
-	//	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"),&ObjectDesc)))
-	//	{
-	//		CloseHandle(hFile);
-	//		return E_FAIL;
-	//	}
-	//}
-	//CloseHandle(hFile);
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"),&ObjectDesc)))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+	}
+	CloseHandle(hFile);
 
 	CMonster::MONSTER_DESC ObjectDesc = {};
 
@@ -406,11 +406,20 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
+	///////////////////////////* ¢º  ¢º  ¢º  ¢º  ¢º   BULLET  */////////////////////////////
 	/* 5. Bullet_UI */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/Bullet_UI.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
+	/* 5. UI_Bullet_Grenade */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Bullet_Grenade.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+	
+	///////////////////////////* ¢º  ¢º  ¢º  ¢º  ¢º   */////////////////////////////
 
 	/* 5. UI_Sub_Inventory */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Sub_Inventory.dat");
@@ -602,18 +611,23 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
-	/* 9. UI_Item_Read_Write */
+	/* 10. UI_Item_Read_Write */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Item_Read.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
-	/* 9. UI_Item_Read_Arrow */
+	/* 11. UI_Item_Read_Arrow */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Item_Read_Arrow.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
+	/* 12. UI_Damage */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Damage.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 	return S_OK;
 
 }
@@ -804,12 +818,12 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 	{
 		CustomizeUIDesc.eHPBar_Type = CCustomize_UI::HPBAR_TYPE::MAIN_BAR;
 
-			if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_HPBar_UI"), &CustomizeUIDesc)))
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_HPBar_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
 	}
 
 	/* 4. MainHPBar_UI */
-	else if (TEXT("Bullet_UI") == fileName)
+	else if (TEXT("Bullet_UI") == fileName || TEXT("UI_Bullet_Grenade") == fileName)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Bullet_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
@@ -842,10 +856,10 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 	/* UI_Selecter */
 	else if (TEXT("UI_Selector") == fileName)
 	{
- 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Selector_UI"), &CustomizeUIDesc)))
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Selector_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
 	}
-	
+
 	/* Map */
 	else if (true == m_isMapType)
 	{
@@ -866,6 +880,12 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 	else if (TEXT("UI_LayOut") == fileName)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_LayOut_UI"), &CustomizeUIDesc)))
+			MSG_BOX(TEXT("Failed to Add Clone"));
+	}
+
+	else if (TEXT("UI_Damage") == fileName)
+	{
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Damage_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
 	}
 
@@ -1047,7 +1067,7 @@ HRESULT CLevel_GamePlay::Load_Layer(const wstring& strFilePath, _uint iLevel)
 HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& strLayerName, _uint iLevel)
 {
 	wstring strLayerFile = strFilePath + TEXT("\\\\") + strLayerName + TEXT(".dat");
-	_uint iMonsterNum = { 0 };
+
 	HANDLE		hFile = CreateFile(strLayerFile.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
 	if (INVALID_HANDLE_VALUE == hFile)
@@ -1059,10 +1079,11 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
 		return E_FAIL;
 
+	_uint iMonsterNum = { 0 };
+
 	for (_uint i = 0; iObjectNum > i; ++i)
 	{
 		_uint iLength = { 0 };
-
 
 		CGameObject::GAMEOBJECT_DESC ObjectDesc = {};
 
@@ -1183,6 +1204,13 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 			return E_FAIL;
 		}
 
+
+		if (!ReadFile(hFile, &ObjectDesc.iFloor, sizeof(_int), &dwByte, NULL)) {
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+
 		if (!ReadFile(hFile, &ObjectDesc.iPartObj, sizeof(_int), &dwByte, NULL)) {
 			CloseHandle(hFile);
 			return E_FAIL;
@@ -1196,6 +1224,7 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 			tagInteractprops.BelongIndexs = ObjectDesc.BelongIndexs;
 			tagInteractprops.iIndex = ObjectDesc.iIndex;
 			tagInteractprops.iPropType = ObjectDesc.iPropType;
+			tagInteractprops.iFloor = ObjectDesc.iFloor;
 			tagInteractprops.iRegionDir = ObjectDesc.iRegionDir;
 			tagInteractprops.iRegionNum = ObjectDesc.iRegionNum;
 			tagInteractprops.worldMatrix = ObjectDesc.worldMatrix;

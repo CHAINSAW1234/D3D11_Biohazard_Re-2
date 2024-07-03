@@ -34,6 +34,7 @@ HRESULT CBlackBoard_Zombie::Initialize(void* pArg)
 void CBlackBoard_Zombie::Priority_Tick(_float fTimeDelta)
 {
 	Update_Timers(fTimeDelta);
+	Update_Status(fTimeDelta);
 }
 
 void CBlackBoard_Zombie::Late_Tick(_float fTimeDelta)
@@ -91,7 +92,8 @@ void CBlackBoard_Zombie::Update_StandUp_Timer(_float fTimeDelta)
 	MONSTER_STATE					eCurrentState = { m_pAI->Get_Current_MonsterState() };
 	CMonster::MONSTER_STATUS* pMonsterStatus = { m_pAI->Get_Status_Ptr() };
 	if (MONSTER_STATE::MST_IDLE != eCurrentState &&
-		MONSTER_STATE::MST_DOWN != eCurrentState)
+		MONSTER_STATE::MST_DOWN != eCurrentState &&
+		MONSTER_STATE::MST_STANDUP != eCurrentState)
 	{
 		pMonsterStatus->fAccCreepTime -= fTimeDelta;
 		if (pMonsterStatus->fAccCreepTime < 0.f)
@@ -140,6 +142,37 @@ void CBlackBoard_Zombie::Update_LightlyHold_Timer(_float fTimeDelta)
 		if (pMonsterStatus->fAccRecognitionTime < 0.f)
 			pMonsterStatus->fAccRecognitionTime = 0.f;
 	}
+}
+
+void CBlackBoard_Zombie::Update_Status(_float fTimeDelta)
+{
+	Update_Status_Stamina(fTimeDelta);
+}
+
+void CBlackBoard_Zombie::Update_Status_Stamina(_float fTimeDelta)
+{
+	CMonster::MONSTER_STATUS*			pMonsterStatus = { m_pAI->Get_Status_Ptr() };
+	
+	pMonsterStatus->fStamina += pMonsterStatus->fStaminaChargingPerSec * fTimeDelta;
+
+	if (pMonsterStatus->fStamina > pMonsterStatus->fMaxStamina)
+		pMonsterStatus->fStamina = pMonsterStatus->fMaxStamina;
+}
+
+_bool CBlackBoard_Zombie::Hit_Player()
+{
+	if (nullptr == m_pAI || nullptr == m_pPlayer)
+		return false;
+
+	CMonster::MONSTER_STATUS*		pStatus = { m_pAI->Get_Status_Ptr() };
+	if (nullptr == pStatus)
+		return false;
+
+	_int			iPlayerHp = { m_pPlayer->Get_Hp() };
+	m_pPlayer->Set_Hp(iPlayerHp - static_cast<_int>(pStatus->fAttack));
+
+	return true;
+	
 }
 
 void CBlackBoard_Zombie::Set_Current_MotionType_Body(MOTION_TYPE eType)

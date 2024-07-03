@@ -125,9 +125,9 @@ enum class ANIM_BITE_CREEP {
 };
 
 enum class ANIM_BITE_LIGHTLY_HOLD {
-	_LIGHTLY_HOLD_START_L,
+	_LIGHTLY_HOLD_START_L,			//	시작
 	_LIGHTLY_HOLD_START_R,
-	_LIGHTLY_HOLD_END_L,
+	_LIGHTLY_HOLD_END_L,			//	실패시	Lightly 홀드 자체에도 실패가있음
 	_LIGHTLY_HOLD_END_R,
 	_END
 };

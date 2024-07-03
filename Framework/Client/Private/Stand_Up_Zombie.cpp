@@ -33,6 +33,12 @@ void CStand_Up_Zombie::Enter()
 	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), false);
 
 	m_eFaceState = m_pBlackBoard->Get_AI()->Get_FaceState();
+
+#ifdef _DEBUG
+
+	cout << "Enter StandUp " << endl;
+
+#endif 
 }
 
 _bool CStand_Up_Zombie::Execute(_float fTimeDelta)
@@ -45,16 +51,29 @@ _bool CStand_Up_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
-	if (CZombie::POSE_STATE::_CREEP != m_pBlackBoard->Get_AI()->Get_PoseState())
-		return false;
+	if (m_pBlackBoard->Get_AI()->Get_Current_MonsterState() == MONSTER_STATE::MST_STANDUP)
+	{
+		_bool			isFinsihed = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY)->isFinished(static_cast<_uint>(m_ePlayingIndex)) };
+		if (true == isFinsihed)
+			return false;
+	}
 
-	if (m_pBlackBoard->Get_ZombieStatus_Ptr()->fAccCreepTime < m_pBlackBoard->Get_ZombieStatus_Ptr()->fTryStandUpTime)
-		return false;
+	else
+	{
+		if (CZombie::POSE_STATE::_CREEP != m_pBlackBoard->Get_AI()->Get_PoseState())
+			return false;
+
+		if (m_pBlackBoard->Get_ZombieStatus_Ptr()->fAccCreepTime < m_pBlackBoard->Get_ZombieStatus_Ptr()->fTryStandUpTime)
+			return false;
+
+		if (false == m_pBlackBoard->Get_AI()->Use_Stamina(CZombie::USE_STAMINA::_STAND_UP))
+			return false;
+	}
 
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_STANDUP);
+	pAI->Set_State(MONSTER_STATE::MST_STANDUP);
 
 	Change_Animation();
 
@@ -78,7 +97,10 @@ void CStand_Up_Zombie::Change_Animation()
 	if (nullptr == pBodyModel)
 		return;
 
-	_uint			iPlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_0) };
+	wstring			strPreAnimLayerTag = { pBodyModel->Get_CurrentAnimLayerTag(static_cast<_uint>(m_ePlayingIndex)) };
+	if (strPreAnimLayerTag == TEXT("Ordinary_StandUp"))
+		return;
+
 	_int			iResultAnimationIndex = { -1 };
 	wstring			strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
 	wstring			strAnimLayerTag = { TEXT("Ordinary_StandUp") };
@@ -183,8 +205,13 @@ void CStand_Up_Zombie::Change_Animation()
 	if (-1 == iResultAnimationIndex)
 		return;
 
-	pBodyModel->Change_Animation(iPlayingIndex, strAnimLayerTag, iResultAnimationIndex);
-	pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
+	pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), strAnimLayerTag, iResultAnimationIndex);
+	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), strBoneLayerTag);
+}
+
+_bool CStand_Up_Zombie::Condition_Check()
+{
+	return _bool();
 }
 
 CStand_Up_Zombie* CStand_Up_Zombie::Create(void* pArg)

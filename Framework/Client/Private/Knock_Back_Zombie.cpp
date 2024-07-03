@@ -30,6 +30,12 @@ void CKnock_Back_Zombie::Enter()
 	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), false);
 
 	m_isEntry = true;
+
+#ifdef _DEBUG
+
+	cout << "Enter Knock Back " << endl;
+
+#endif 
 }
 
 _bool CKnock_Back_Zombie::Execute(_float fTimeDelta)
@@ -44,6 +50,10 @@ _bool CKnock_Back_Zombie::Execute(_float fTimeDelta)
 
 	CModel*					pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
 	if (nullptr == pBody_Model)
+		return false;
+
+	CZombie::POSE_STATE		ePose_State = { m_pBlackBoard->Get_AI()->Get_PoseState() };
+	if (CZombie::POSE_STATE::_UP != ePose_State)
 		return false;
 
 	MONSTER_STATE			eState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
@@ -66,7 +76,7 @@ _bool CKnock_Back_Zombie::Execute(_float fTimeDelta)
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_DAMAGE);
+	pAI->Set_State(MONSTER_STATE::MST_DAMAGE);
 
 	if (true == m_isEntry)
 	{

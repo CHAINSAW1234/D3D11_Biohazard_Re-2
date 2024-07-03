@@ -22,7 +22,11 @@ HRESULT CBurst_Zombie::Initialize(void* pArg)
 
 void CBurst_Zombie::Enter()
 {
+#ifdef _DEBUG
 
+	cout << "Enter Burst " << endl;
+
+#endif 
 }
 
 _bool CBurst_Zombie::Execute(_float fTimeDelta)
@@ -38,7 +42,7 @@ _bool CBurst_Zombie::Execute(_float fTimeDelta)
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->SetState(MONSTER_STATE::MST_DAMAGE);
+	pAI->Set_State(MONSTER_STATE::MST_DAMAGE);
 
 	Change_Animation();
 

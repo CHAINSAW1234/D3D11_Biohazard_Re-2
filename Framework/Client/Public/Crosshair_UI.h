@@ -8,9 +8,6 @@ class CCrosshair_UI final : public CCustomize_UI
 private :
 	enum class CROSSHAIR_TYPE { CROSSHAIR_LEFT, CROSSHAIR_RIGHT, CROSSHAIR_UP, CROSSHAIR_DOWN, CROSSHAIR_END };
 
-public :
-	enum class GUN_TYPE { DEFAULT_GUN, SHOT_GUN , END_GUN };
-
 private:
 	CCrosshair_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CCrosshair_UI(const CCrosshair_UI& rhs);
@@ -25,7 +22,6 @@ public:
 
 public :
 	_bool					Get_Crosshair_Animing()				{ return m_isAiming; }
-	void					Crosshair_GunType(GUN_TYPE _type)	{ m_eCurrentGun_Type = _type; }
 
 private :
 	/* Shot Gun */
@@ -42,8 +38,7 @@ private :
 
 private :
 	CROSSHAIR_TYPE			m_eCrosshair_Type					= { CROSSHAIR_TYPE::CROSSHAIR_END };
-	GUN_TYPE				m_eGun_Type							= { GUN_TYPE::END_GUN };
-	GUN_TYPE				m_eCurrentGun_Type					= { GUN_TYPE::DEFAULT_GUN };
+	_int					m_eGun_Type							= { 0 };
 
 	_float					m_fCrosshair_Timer					= { 0.0f };
 	_float					m_fCrosshair_AccTimer				= { 1.f };

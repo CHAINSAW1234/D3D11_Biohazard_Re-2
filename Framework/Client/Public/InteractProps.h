@@ -131,11 +131,12 @@ public:
 
 	/*To NY*/
 	virtual _float4									Get_Object_Pos() = 0;
-	_int												Get_PropType() { return m_tagPropDesc.iPropType; } // 프롭타입이라 쓰고 arg라 읽는다. // 문의 지역 enum을 반환한다.
+	_int													Get_PropType() { return m_tagPropDesc.iPropType; } // 프롭타입이라 쓰고 arg라 읽는다. // 문의 지역 enum을 반환한다.
 
-	_bool												Get_Interact_With_Player_Once() { return m_bInteract; }
-	_int Get_iItemIndex() { return m_iItemIndex; }
 
+	_bool												Get_Interact_With_Player_Once() { return m_bFirstInteract; }
+	_int												Get_iItemIndex() { return m_iItemIndex; }
+	_int												Get_Floor() { return m_tagPropDesc.iFloor; }
 	_int												Get_Region() { return m_tagPropDesc.iRegionNum; }
 	_int												Get_Type() { return m_tagPropDesc.iPropType; }
 	void												Set_Region(_int iRegion) { m_tagPropDesc.iRegionNum = iRegion; }
@@ -147,11 +148,14 @@ private :
 protected:
 	_int												m_iItemIndex = { -1 };
 	_bool												m_bActivity = { true };
-	_bool												m_bInteract = { false };// 한번 접촉하면 계속 true
+	_bool												m_bOnce = { true };
+	_bool												m_bBlock = { false };
+	_bool												m_bFirstInteract = { false };// 한번 접촉하면 계속 true
 	_bool												m_bShadow = { true };
 	_bool												m_bVisible = { true };
 	_bool												m_bCol = { false }; // 충돌이 되었다
 	_float												m_fTimeDelay = { 0.f };
+	_float												m_fDistance = { 0.f };
 	CModel*												m_pModelCom = { nullptr };
 	CShader*											m_pShaderCom = { nullptr };
 	CCollider*											m_pColliderCom[INTERACTPROPS_COL_END] = { nullptr,nullptr,nullptr };
@@ -166,10 +170,15 @@ protected:
 
 protected:
 	void												Check_Player();
+	_float											Check_Player_Distance();
+	_float											Check_Player_Distance(_float4 vPos);
+	_float3											Get_Collider_World_Pos(_float3 vPos);
 	_bool												Check_Col_Sphere_Player();
 	_bool												Check_Col_OBB_Player();
 	_bool												Check_Col_AABB_Player();
 	_bool												Visible();
+	_float											Get_PlayerLook_Degree();
+
 	virtual HRESULT										Add_Components();
 	virtual HRESULT										Add_PartObjects();
 	virtual HRESULT										Initialize_PartObjects();

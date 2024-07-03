@@ -16,16 +16,17 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID)
     uint vertexIndex = dispatchThreadID.x;
     if (vertexIndex < g_NumVertices)
     {
-        float4 vPosition = float4(g_Skinnig_Output[vertexIndex].vPosition, 1.f);
+        float4 vPosition = float4(g_Skinnig_Output[vertexIndex].vPosition.x, g_Skinnig_Output[vertexIndex].vPosition.y, g_Skinnig_Output[vertexIndex].vPosition.z, 1.f); 
         vPosition = mul(vPosition, g_DecalMat_Inv);
 
-        float2 DecalUV = vPosition.xy*0.5f + 0.5f;
+        float2 DecalUV = (vPosition.xz / (2.0f * float2(g_Extent.x, g_Extent.z))) + 0.5f;
 
         if ((-g_Extent.x <= vPosition.x && vPosition.x <= g_Extent.x) &&
             (-g_Extent.y <= vPosition.y && vPosition.y <= g_Extent.y) &&
             (-g_Extent.z <= vPosition.z && vPosition.z <= g_Extent.z))
         {
-            g_DecalMap[vertexIndex] = float2(2.f,2.f);
+            if(g_DecalMap[vertexIndex].x - 0.f < 0.001f && g_DecalMap[vertexIndex].y - 0.f < 0.001f)
+                g_DecalMap[vertexIndex] = DecalUV;
         }
     }
 }
