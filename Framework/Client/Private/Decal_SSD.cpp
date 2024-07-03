@@ -50,7 +50,7 @@ HRESULT CDecal_SSD::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(0);
+	m_pShaderCom->Begin(3);
 
 	m_pVIBufferCom->Bind_Buffers();
 
