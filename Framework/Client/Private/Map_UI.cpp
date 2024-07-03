@@ -318,6 +318,39 @@ void CMap_UI::Change_Search_Type(MAP_STATE_TYPE _searType)
     }
 }
 
+/* 몇 층에 어떤 지역의 어떤 아이템을 삭제할 것인가? */
+void CMap_UI::Destory_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _locationType, ITEM_NUMBER _ItemType)
+{
+    CGameObject* pItem = Search_Item(_floorType, _locationType, _ItemType);
+
+    if (nullptr == pItem)
+        MSG_BOX(TEXT("나옹이가 아직 지정하지 않은 ENUM이거나 안 되는 READ ITEM 입니당.")); // 경관의 수첩은 잠시 막아놓음
+
+    else
+    {
+        pItem->Set_Dead(true);
+    }
+}
+/* 찾고자 하는 아이템 */
+CGameObject* CMap_UI::Search_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _locationType, ITEM_NUMBER _ItemType)
+{
+    list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+    for (auto& iter : *pUIList)
+    {
+        CMap_UI* pUI = dynamic_cast<CMap_UI*>(iter);
+
+        if (nullptr != pUI)
+        {
+            if (_floorType == pUI->m_eFloorType && _ItemType == pUI->m_eItem_Type && _locationType == pUI->m_eMap_Location)
+                return pUI;
+        }
+    }
+
+    return nullptr;
+}
+
+
 void CMap_UI::Find_InMap_Player()
 {
     list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
@@ -926,6 +959,9 @@ void CMap_UI::Render_Condition(_float fTimeDelta)
 void CMap_UI::Region_Type()
 {
    if (nullptr == m_pInMap_Player->m_pPlayer)
+       return;
+
+   if (abs((int)m_eMap_Location) > 100)
        return;
 
    /* 1. 처음 Player가 입장했을 때 */

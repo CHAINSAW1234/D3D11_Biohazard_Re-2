@@ -261,7 +261,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
 	//희히 넘 바쁜 관계로 함수 못팠어요 - 예은
 
-	/*string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
+	string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
 	_tchar	szFilePath[MAX_PATH] = { L"" };
 	MultiByteToWideChar(CP_ACP, 0, strFilePath.c_str(), (_uint)strlen(strFilePath.c_str()), szFilePath, MAX_PATH);
 	_uint iMonsterNum = { 0 };
@@ -298,7 +298,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 			return E_FAIL;
 		}
 	}
-	CloseHandle(hFile);*/
+	CloseHandle(hFile);
 
 	CMonster::MONSTER_DESC ObjectDesc = {};
 
@@ -1184,6 +1184,13 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 			return E_FAIL;
 		}
 
+
+		if (!ReadFile(hFile, &ObjectDesc.iFloor, sizeof(_int), &dwByte, NULL)) {
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+
 		if (!ReadFile(hFile, &ObjectDesc.iPartObj, sizeof(_int), &dwByte, NULL)) {
 			CloseHandle(hFile);
 			return E_FAIL;
@@ -1197,6 +1204,7 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 			tagInteractprops.BelongIndexs = ObjectDesc.BelongIndexs;
 			tagInteractprops.iIndex = ObjectDesc.iIndex;
 			tagInteractprops.iPropType = ObjectDesc.iPropType;
+			tagInteractprops.iFloor = ObjectDesc.iFloor;
 			tagInteractprops.iRegionDir = ObjectDesc.iRegionDir;
 			tagInteractprops.iRegionNum = ObjectDesc.iRegionNum;
 			tagInteractprops.worldMatrix = ObjectDesc.worldMatrix;

@@ -38,6 +38,10 @@ HRESULT CFace_Zombie::Initialize(void* pArg)
 	if (FAILED(Initialize_Model()))
 		return E_FAIL;
 
+#pragma region Effect
+	m_pModelCom->Init_Decal(LEVEL_GAMEPLAY);
+#pragma endregion
+
 	return S_OK;
 }
 
@@ -126,11 +130,13 @@ HRESULT CFace_Zombie::Render()
 				return E_FAIL;
 		}
 
-
+		m_pModelCom->Bind_DecalMap(i, m_pShaderCom);
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
-
 		m_pModelCom->Render(static_cast<_uint>(i));
+
+		ID3D11UnorderedAccessView* NullUAV = { nullptr };
+		m_pContext->CSSetUnorderedAccessViews(0, 1, &NullUAV, nullptr);
 	}
 
 	return S_OK;

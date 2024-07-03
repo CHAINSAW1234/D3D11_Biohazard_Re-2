@@ -23,13 +23,15 @@ public:
 	{
 		m_pModel = pModel;
 	}
-	virtual void	Bind_Resource_DecalInfo() override;
-	virtual _uint	Staging_DecalInfo_RayCasting(_float* pDist) override;
-	virtual void	Staging_Calc_Decal_Info() override;
-	virtual void	Calc_Decal_Info(CALC_DECAL_INPUT Input) override;
-	virtual void	Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input) override;
-	virtual void	Bind_DecalMap(class CShader* pShader) override;
-	void			Staging_DecalMap();
+	virtual void		Bind_Resource_DecalInfo() override;
+	virtual _uint		Staging_DecalInfo_RayCasting(_float* pDist) override;
+	virtual void		Staging_Calc_Decal_Info() override;
+	virtual void		Calc_Decal_Info(CALC_DECAL_INPUT Input) override;
+	virtual void		Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input, ID3D11UnorderedAccessView* pUAV) override;
+	virtual void		Bind_DecalMap(class CShader* pShader) override;
+	virtual HRESULT		Init_Decal_Texture(_uint iLevel) override;
+	void				Staging_DecalMap();
+	virtual void		Bind_Resource_NonCShader_Decal(class CShader* pShader);
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;

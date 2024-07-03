@@ -194,9 +194,14 @@ public:
 	void					SetDecalWorldMatrix(_float4x4 WorldMatrix);
 
 	//CalcDecalMap
-	void					Bind_Resource_CalcDecalMap();
+	void					Bind_Resource_CalcDecalMap(ID3D11UnorderedAccessView* pUAV);
 	void					Perform_Calc_DecalMap();
 	void					Bind_Decal_Map(class CShader* pShader);
+
+	void					Init_Decal(_uint iLevel);
+
+	void					Bind_Resource_NonCShader_Decal(class CShader* pShader);
+	void					Calc_NonCS_Decal_Map(class CShader* pShader);
 #pragma endregion
 
 private:

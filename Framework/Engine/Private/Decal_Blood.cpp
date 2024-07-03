@@ -111,26 +111,26 @@ void CDecal_Blood::Calc_Decal_Info(CALC_DECAL_INPUT Input)
 	m_pGameInstance->Bind_Resource_Calc_Decal_Info(Input);
 }
 
-void CDecal_Blood::Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input)
+void CDecal_Blood::Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input, ID3D11UnorderedAccessView* pUAV)
 {
 	_matrix DecalWorldMat = m_pTransformCom->Get_WorldMatrix();
-	_matrix WorldInv = XMMatrixInverse(nullptr, DecalWorldMat);
+	//_matrix WorldInv = XMMatrixInverse(nullptr, DecalWorldMat);
+	//_float4x4 WorldInv_Float4x4;
+	//XMStoreFloat4x4(&WorldInv_Float4x4, WorldInv);
+	//Input.Decal_Matrix_Inv = WorldInv_Float4x4;
+
+	_vector Scale, Rot, Trans;
+	XMMatrixDecompose(&Scale, &Rot, &Trans, DecalWorldMat);
+	Rot = XMQuaternionNormalize(Rot);
+	_matrix RotMat, TransMat;
+	RotMat = XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(Rot));
+	TransMat = XMMatrixTranslation(-XMVectorGetX(Trans), -XMVectorGetY(Trans), -XMVectorGetZ(Trans));
+	_matrix WorldInv = TransMat * RotMat;
 	_float4x4 WorldInv_Float4x4;
 	XMStoreFloat4x4(&WorldInv_Float4x4, WorldInv);
 	Input.Decal_Matrix_Inv = WorldInv_Float4x4;
 
-	/*_vector Scale, Rot, Trans;
-	XMMatrixDecompose(&Scale, &Rot, &Trans, DecalWorldMat);
-	Rot = XMQuaternionNormalize(Rot);
-	_matrix RotMat, TransMat;
-	RotMat = XMMatrixInverse(nullptr,XMMatrixRotationQuaternion(Rot));
-	TransMat = XMMatrixTranslation(-XMVectorGetX(Trans), -XMVectorGetY(Trans), -XMVectorGetZ(Trans));
-	_matrix WorldInv = RotMat * TransMat;
-	_float4x4 WorldInv_Float4x4;
-	XMStoreFloat4x4(&WorldInv_Float4x4, WorldInv);
-	Input.Decal_Matrix_Inv = WorldInv_Float4x4;*/
-
-	Input.pDecalMap = m_pUAV_DecalMap;
+	Input.pDecalMap = pUAV;
 	Input.vExtent = m_vExtent;
 
 	m_pGameInstance->Bind_Resource_Calc_Decal_Map(Input);
@@ -138,7 +138,20 @@ void CDecal_Blood::Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input)
 
 void CDecal_Blood::Bind_DecalMap(CShader* pShader)
 {
-	pShader->Bind_Uav("g_DecalMap", m_pUAV_DecalMap);
+	m_pTextureCom->Bind_ShaderResource(pShader, "g_DecalTexture");
+}
+
+HRESULT CDecal_Blood::Init_Decal_Texture(_uint iLevel)
+{
+	if(m_pTextureCom == nullptr)
+	{
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(iLevel, TEXT("Prototype_Component_Texture_Decal_Blood"),
+			TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
+			return E_FAIL;
+	}
+
+	return S_OK;
 }
 
 void CDecal_Blood::Staging_DecalMap()
@@ -151,6 +164,17 @@ void CDecal_Blood::Staging_DecalMap()
 	_float2* pDecalMap = reinterpret_cast<_float2*>(mappedResource.pData);
 
 	m_pContext->Unmap(m_pStaging_Buffer_Decal_Map, 0);
+}
+
+void CDecal_Blood::Bind_Resource_NonCShader_Decal(CShader* pShader)
+{
+	_matrix DecalWorldMat = m_pTransformCom->Get_WorldMatrix();
+	_matrix WorldInv = XMMatrixInverse(nullptr, DecalWorldMat);
+	XMStoreFloat4x4(&m_WorldInv, WorldInv);
+
+	pShader->Bind_Matrix("g_DecalMat_Inv", &m_WorldInv);
+	pShader->Bind_Uav("g_DecalMap_Calc", m_pUAV_DecalMap);
+	pShader->Bind_RawValue("g_Decal_Extent", &m_vExtent, sizeof(_float3));
 }
 
 HRESULT CDecal_Blood::Initialize_Prototype()
@@ -251,37 +275,47 @@ HRESULT CDecal_Blood::Initialize(void* pArg)
 
 
 
-	m_pDecal_Map = new _float2[m_iNumVertices];
-	ZeroMemory(m_pDecal_Map, sizeof(_float2) * m_iNumVertices);
-	//Buffer for Write
-	{
-		D3D11_BUFFER_DESC sbDesc = {};
-		sbDesc.Usage = D3D11_USAGE_DEFAULT;
-		sbDesc.ByteWidth = sizeof(_float2) * m_iNumVertices;
-		sbDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
-		sbDesc.StructureByteStride = sizeof(_float2);
-		sbDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED; // 추가
+	//m_pDecal_Map = new _float2[m_iNumVertices];
+	//ZeroMemory(m_pDecal_Map, sizeof(_float2) * m_iNumVertices);
+	////Buffer for Write
+	//{
+	//	D3D11_BUFFER_DESC sbDesc = {};
+	//	sbDesc.Usage = D3D11_USAGE_DEFAULT;
+	//	sbDesc.ByteWidth = sizeof(_float2) * m_iNumVertices;
+	//	sbDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+	//	sbDesc.StructureByteStride = sizeof(_float2);
+	//	sbDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED; // 추가
 
-		D3D11_SUBRESOURCE_DATA initData = {};
-		initData.pSysMem = m_pDecal_Map;
+	//	D3D11_SUBRESOURCE_DATA initData = {};
+	//	initData.pSysMem = m_pDecal_Map;
 
-		HRESULT hr = m_pDevice->CreateBuffer(&sbDesc, &initData, &m_pSB_DecalMap);
+	//	HRESULT hr = m_pDevice->CreateBuffer(&sbDesc, &initData, &m_pSB_DecalMap);
 
-		if (FAILED(hr))
-			return E_FAIL;
+	//	if (FAILED(hr))
+	//		return E_FAIL;
 
-		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-		uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-		uavDesc.Buffer.NumElements = sbDesc.ByteWidth / sbDesc.StructureByteStride;
+	//	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+	//	uavDesc.Format = DXGI_FORMAT_UNKNOWN;
+	//	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+	//	uavDesc.Buffer.NumElements = sbDesc.ByteWidth / sbDesc.StructureByteStride;
 
-		hr = m_pDevice->CreateUnorderedAccessView(m_pSB_DecalMap, &uavDesc, &m_pUAV_DecalMap);
+	//	hr = m_pDevice->CreateUnorderedAccessView(m_pSB_DecalMap, &uavDesc, &m_pUAV_DecalMap);
 
-		if (FAILED(hr))
-			return E_FAIL;
-	}
+	//	if (FAILED(hr))
+	//		return E_FAIL;
 
-	m_vExtent = _float3(0.05f,0.3f,0.05f);
+	//	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	//	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	//	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	//	srvDesc.Buffer.NumElements = m_iNumVertices;
+
+	//	hr = m_pDevice->CreateShaderResourceView(m_pSB_DecalMap, &srvDesc, &m_pSRV_DecalMap);
+
+	//	if (FAILED(hr))
+	//		return E_FAIL;
+	//}
+
+	m_vExtent = _float3(0.15f,0.5f,0.15f);
 
 	return S_OK;
 }
@@ -343,4 +377,5 @@ CGameObject* CDecal_Blood::Clone(void* pArg)
 void CDecal_Blood::Free()
 {
 	__super::Free();
+	Safe_Release(m_pTextureCom);
 }

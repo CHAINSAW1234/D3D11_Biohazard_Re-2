@@ -232,13 +232,11 @@ void CZombie::Tick(_float fTimeDelta)
 			{
 				m_iBloodCount = 0;
 
-				/*For Decal*/
-				//	Ready_Decal();
-
 				/*For Blood Effect*/
-				//	m_bSetBlood = true;
+#ifdef _DEBUG
+				m_bSetBlood = true;
 				m_BloodTime = GetTickCount64();
-
+#endif
 				m_pController->Set_Hit(false);
 			}
 		}
@@ -249,14 +247,13 @@ void CZombie::Tick(_float fTimeDelta)
 	{
 		if (m_pController->Is_Hit())
 		{
-			/*For Decal*/
-			//	Ready_Decal();
-
 			m_iBloodCount = 0;
 
 			/*For Blood Effect*/
-			//	m_bSetBlood = true;
+#ifdef _DEBUG
+			m_bSetBlood = true;
 			m_BloodTime = GetTickCount64();
+#endif
 
 			m_pController->Set_Hit(false);
 
@@ -315,12 +312,9 @@ void CZombie::Tick(_float fTimeDelta)
 	m_pColliderCom_Bounding->Tick(m_pTransformCom->Get_WorldMatrix_Pure_Mat());
 
 #pragma region Effect
-	if (m_bSetBlood)
-	{
-		SetBlood();
-	}
 
 	Tick_Effect(fTimeDelta);
+
 #pragma endregion
 }
 
@@ -352,7 +346,16 @@ void CZombie::Late_Tick(_float fTimeDelta)
 #endif
 
 #pragma region Effect
+
+	if (m_bSetBlood)
+	{
+		/*For Decal*/
+		Ready_Decal();
+		SetBlood();
+	}
+
 	Late_Tick_Effect(fTimeDelta);
+
 #pragma endregion
 }
 
@@ -904,6 +907,13 @@ HRESULT CZombie::Initialize_PartModels()
 	CModel* pHatModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAT]->Get_Component(TEXT("Com_Model"))) };
 
 	m_pBodyModel = pBodyModel;
+	m_pHeadModel = pFaceModel;
+	m_pHeadModel2 = pFace2Model;
+	m_pHeadModel3 = pFace3Model;
+	m_pShirtsModel = pShirtsModel;
+	m_pShirts2Model = pShirts2Model;
+	m_pPantsModel = pPantsModel;
+	m_pHatModel = pHatModel;
 
 	if (nullptr == pBodyModel ||
 		nullptr == pFaceModel ||
@@ -1011,15 +1021,108 @@ void CZombie::Col_EventCol()
 
 void CZombie::Perform_Skinning()
 {
-	list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
-
-	m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
-
-	for (auto& i : NonHideIndex)
+	//Body Model
 	{
-		m_pBodyModel->Bind_Resource_Skinning(i);
-		m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
-		m_pBodyModel->Staging_Skinning(i);
+		list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pBodyModel->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
+			//m_pBodyModel->Staging_Skinning(i);
+		}
+	}
+
+	//Face Model
+	{
+		list<_uint> NonHideIndex = m_pHeadModel->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pHeadModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pHeadModel->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pHeadModel->GetMeshes())[i]->GetNumVertices());
+			//m_pHeadModel->Staging_Skinning(i);
+		}
+	}
+
+	//Head2
+	{
+		list<_uint> NonHideIndex = m_pHeadModel2->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pHeadModel2->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pHeadModel2->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pHeadModel2->GetMeshes())[i]->GetNumVertices());
+			//m_pHeadModel2->Staging_Skinning(i);
+		}
+	}
+
+	//Head3
+	{
+		list<_uint> NonHideIndex = m_pHeadModel3->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pHeadModel3->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pHeadModel3->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pHeadModel3->GetMeshes())[i]->GetNumVertices());
+			//m_pHeadModel3->Staging_Skinning(i);
+		}
+	}
+
+	//Shirts Model
+	{
+		list<_uint> NonHideIndex = m_pShirtsModel->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pShirtsModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pShirtsModel->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pShirtsModel->GetMeshes())[i]->GetNumVertices());
+			//m_pShirtsModel->Staging_Skinning(i);
+		}
+	}
+
+	//Shirts2 Model
+	{
+		list<_uint> NonHideIndex = m_pShirts2Model->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pShirts2Model->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pShirts2Model->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pShirts2Model->GetMeshes())[i]->GetNumVertices());
+			//m_pShirts2Model->Staging_Skinning(i);
+		}
+	}
+
+	//Pants Model
+	{
+		list<_uint> NonHideIndex = m_pPantsModel->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pPantsModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pPantsModel->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pPantsModel->GetMeshes())[i]->GetNumVertices());
+			//m_pPantsModel->Staging_Skinning(i);
+		}
+	}
+
+	//Hat Model
+	{
+		list<_uint> NonHideIndex = m_pHatModel->Get_NonHideMeshIndices();
+
+		for (auto& i : NonHideIndex)
+		{
+			m_pHatModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+			m_pHatModel->Bind_Resource_Skinning(i);
+			m_pGameInstance->Perform_Skinning((*m_pHatModel->GetMeshes())[i]->GetNumVertices());
+			//m_pHatModel->Staging_Skinning(i);
+		}
 	}
 }
 
@@ -1050,24 +1153,95 @@ void CZombie::Ready_Decal()
 		decalInfo.maxHitDistance = hitResult.maxHitDistance;
 		decalInfo.decalMaterialIndex = 0;
 
-		list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
-		for (auto& i : NonHideIndex)
-		{
-			m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
+		////Body Model
+		//list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
+		//for (auto& i : NonHideIndex)
+		//{
+		//	m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
 
-			if (m_iMeshIndex_Hit != 999)
-			{
-				m_iMeshIndex_Hit = i;
+		//	if (m_iMeshIndex_Hit != 999)
+		//	{
+		//		m_iMeshIndex_Hit = i;
 
-				_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
-				_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
-				XMStoreFloat4(&m_vHitPosition, CameraPos);
+		//		_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
+		//		_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
+		//		XMStoreFloat4(&m_vHitPosition, CameraPos);
 
-				m_vHitNormal = m_pController->GetHitNormal();
+		//		m_vHitNormal = m_pController->GetHitNormal();
 
-				break;
-			}
-		}
+		//		break;
+		//	}
+		//}
+
+		//if(m_iMeshIndex_Hit == 999)
+		//{
+		//	//Head Model
+		//	NonHideIndex = m_pHeadModel->Get_NonHideMeshIndices();
+		//	for (auto& i : NonHideIndex)
+		//	{
+		//		m_iMeshIndex_Hit = m_pHeadModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
+
+		//		if (m_iMeshIndex_Hit != 999)
+		//		{
+		//			m_iMeshIndex_Hit = i;
+
+		//			_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
+		//			_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
+		//			XMStoreFloat4(&m_vHitPosition, CameraPos);
+
+		//			m_vHitNormal = m_pController->GetHitNormal();
+
+		//			break;
+		//		}
+		//	}
+		//}
+
+		////Shirt Model
+		//if (m_iMeshIndex_Hit == 999)
+		//{
+		//	NonHideIndex = m_pShirtsModel->Get_NonHideMeshIndices();
+		//	for (auto& i : NonHideIndex)
+		//	{
+		//		m_iMeshIndex_Hit = m_pShirtsModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
+
+		//		if (m_iMeshIndex_Hit != 999)
+		//		{
+		//			m_iMeshIndex_Hit = i;
+
+		//			_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
+		//			_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
+		//			XMStoreFloat4(&m_vHitPosition, CameraPos);
+
+		//			m_vHitNormal = m_pController->GetHitNormal();
+
+		//			break;
+		//		}
+		//	}
+		//}
+
+		////Pants Model
+		//if (m_iMeshIndex_Hit == 999)
+		//{
+		//	NonHideIndex = m_pPantsModel->Get_NonHideMeshIndices();
+		//	for (auto& i : NonHideIndex)
+		//	{
+		//		m_iMeshIndex_Hit = m_pPantsModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
+
+		//		if (m_iMeshIndex_Hit != 999)
+		//		{
+		//			m_iMeshIndex_Hit = i;
+
+		//			_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
+		//			_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
+		//			XMStoreFloat4(&m_vHitPosition, CameraPos);
+
+		//			m_vHitNormal = m_pController->GetHitNormal();
+
+		//			break;
+		//		}
+		//	}
+		//}
+
 
 		if (m_iMeshIndex_Hit == 999)
 		{
@@ -1083,8 +1257,8 @@ void CZombie::Ready_Decal()
 		}*/
 	}
 
-	//m_vHitPosition = m_pController->GetBlockPoint();
-	//m_vHitNormal = m_pController->GetHitNormal();
+	m_vHitPosition = m_pController->GetBlockPoint();
+	m_vHitNormal = m_pController->GetHitNormal();
 
 	if (m_bRagdoll)
 	{
@@ -1185,8 +1359,28 @@ void CZombie::SetBlood()
 void CZombie::Calc_Decal_Map()
 {
 	m_pBodyModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
-
 	m_pBodyModel->Perform_Calc_DecalMap();
+
+	m_pHeadModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+	m_pHeadModel->Perform_Calc_DecalMap();
+
+	m_pHeadModel2->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+	m_pHeadModel2->Perform_Calc_DecalMap();
+				
+	m_pHeadModel3->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+	m_pHeadModel3->Perform_Calc_DecalMap();
+
+	m_pShirtsModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+	m_pShirtsModel->Perform_Calc_DecalMap();
+
+	m_pShirts2Model->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+	m_pShirts2Model->Perform_Calc_DecalMap();
+
+	m_pPantsModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+	m_pPantsModel->Perform_Calc_DecalMap();
+
+	m_pHatModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+	m_pHatModel->Perform_Calc_DecalMap();
 }
 
 void CZombie::Set_ManualMove(_bool isManualMove)
