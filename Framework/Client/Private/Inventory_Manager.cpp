@@ -1031,86 +1031,86 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 	case Client::chaincutter01a:
 		return QUEST;
 		break;
-	case Client::rpddocument01a:
-		return QUEST;
+	case Client::rpddocument01a: // DOCUMENTSTART
+		return DOCUMENT;
 		break;
 	case Client::rpddocumentblood01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::diary01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::document01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::pamphlet01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::guidepamphlet01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::memo01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::raccoonmonthly01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::sewercopamphlet01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::report01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::nestlcokout01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::sewerhintposter01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::rpdreport01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::rpdreport01b:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::chesshints01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::labopc01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::labopc01b:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::labopc01c:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::raccoonfigure01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::voicerecorder01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::mappolice01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::mapunderground01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::mapsewer01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::mapraccooncity01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::maplaboratoryhigh01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
 	case Client::maplaboratorymiddle01a:
-		return QUEST;
+		return DOCUMENT;
 		break;
-	case Client::mapupperpolice01a:
-		return QUEST;
+	case Client::mapupperpolice01a: //DOCUMENTEND
+		return DOCUMENT;
 		break;
 	case Client::clairesbag01a:
 		return QUEST;

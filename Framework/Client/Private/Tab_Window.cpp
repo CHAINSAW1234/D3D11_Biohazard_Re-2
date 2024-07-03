@@ -325,25 +325,40 @@ void CTab_Window::OnOff_EventHandle()
 
 void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 {
-	OnOff_EventHandle();
-	m_eWindowType = PICK_UP_ITEM_WINDOW;
-	m_pPickedUp_Item = pPickedUp_Item;
-	//Safe_AddRef(m_pPickedUp_Item);
 	CInteractProps* pProp = static_cast<CInteractProps*>(m_pPickedUp_Item);
 	_int iPickedUpItemNum = pProp->Get_iItemIndex();
+	ITEM_NUMBER ePickedItemNum = static_cast<ITEM_NUMBER>(iPickedUpItemNum);
+	ITEM_TYPE eItemType = CInventory_Manager::ItemType_Classify_ByNumber(ePickedItemNum);
 	
-	if (iPickedUpItemNum >= rpddocument01a && iPickedUpItemNum <= mapupperpolice01a)
+	if (eItemType != DOCUMENT)
 	{
-		m_pRead_Item_UI->Set_ReadItem_Type((CRead_Item_UI::ITEM_READ_TYPE)pProp->Get_PropType());
-		//인벤토리 문서 부분에 먹었다 추가=> 아직 없는 것으로 앎 나중에
+		OnOff_EventHandle();
+		m_eWindowType = PICK_UP_ITEM_WINDOW;
+		m_pPickedUp_Item = pPickedUp_Item;
+		m_pItem_Discription->Set_Item_Number(static_cast<ITEM_NUMBER>(iPickedUpItemNum), 10);
+		m_pInventory_Manager->Set_InventoryEvent(PICK_UP_ITEM);
 	}
+
 	else
 	{
-		//m_pMap_UI->Destory_Item((MAP_FLOOR_TYPE)pProp->Get_Floor(), (LOCATION_MAP_VISIT)pProp->Get_Region(), (ITEM_NUMBER)iPickedUpItemNum);
+		if (iPickedUpItemNum >= rpddocument01a && iPickedUpItemNum <= mapupperpolice01a)
+		{
+			m_pRead_Item_UI->Set_ReadItem_Type((CRead_Item_UI::ITEM_READ_TYPE)pProp->Get_PropType());
+			//인벤토리 문서 부분에 먹었다 추가=> 아직 없는 것으로 앎 나중에
+		}
+		else
+		{
+			//m_pMap_UI->Destory_Item((MAP_FLOOR_TYPE)pProp->Get_Floor(), (LOCATION_MAP_VISIT)pProp->Get_Region(), (ITEM_NUMBER)iPickedUpItemNum);
+		}
 	}
-	/*_int iPickedUpItemQuant = static_cast<CItemProp*>(m_pPickedUp_Item)->Get_i*/
-	m_pItem_Discription->Set_Item_Number(static_cast<ITEM_NUMBER>(iPickedUpItemNum), 10);
-	m_pInventory_Manager->Set_InventoryEvent(PICK_UP_ITEM);
+
+
+
+	
+
+
+
+
 }
 
 void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)

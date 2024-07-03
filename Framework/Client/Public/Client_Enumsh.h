@@ -80,6 +80,7 @@ namespace Client
 		DRAG_SHADOW,//드레그 쉐도우
 		COMBINABLE_PICKED_UP, //픽업된 아이템인데 조합가능
 		UNCOMBINABLE_PICKED_UP, //픽업된 아이템인데 조합 불가
+		DOCUMENT,
 		INVEN_ITEM_TYPE_END
 	};
 
