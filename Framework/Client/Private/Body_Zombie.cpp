@@ -141,6 +141,15 @@ HRESULT CBody_Zombie::Render()
 	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 	for (auto& i : NonHideIndices)
 	{
+		//MESH_TYPE		eMeshType = { m_MeshTypes[i] };
+		//
+		//if (eMeshType == MESH_TYPE::_INNER)
+		//{
+
+		//}
+
+		//else if()
+
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
 
@@ -369,6 +378,10 @@ HRESULT CBody_Zombie::Initialize_Model()
 
 	/* Create_Bone_Layer*/
 	m_pModelCom->Add_Bone_Layer_All_Bone(BONE_LAYER_DEFAULT_TAG);
+
+	/* Mesh Types */
+	if (FAILED(Initialize_MeshTypes()))
+		return E_FAIL;
 
 	/* Create_AnimPlaying_Info */
 	m_pModelCom->Add_AnimPlayingInfo(false, static_cast<_uint>(PLAYING_INDEX::INDEX_0), BONE_LAYER_DEFAULT_TAG, 1.f);
@@ -602,6 +615,59 @@ HRESULT CBody_Zombie::Add_Animations()
 		return E_FAIL;
 
 #pragma endregion
+	return S_OK;
+}
+
+HRESULT CBody_Zombie::Initialize_MeshTypes()
+{
+	_uint						iNumMesh = { m_pModelCom->Get_NumMeshes() };
+
+	vector<string>				MeshTags = { m_pModelCom->Get_MeshTags() };
+
+	for (auto& strMeshTag : MeshTags)
+	{
+		if (strMeshTag.find("Inside") != string::npos)
+		{
+			m_MeshTypes.emplace_back(MESH_TYPE::_INNER);
+		}
+	
+		else if (strMeshTag.find("Joint") != string::npos)
+		{
+			m_MeshTypes.emplace_back(MESH_TYPE::_JOINT);
+		}
+
+		else if (strMeshTag.find("Deficit") != string::npos)
+		{
+			m_MeshTypes.emplace_back(MESH_TYPE::_DEFICIT);
+		}
+
+		else if (strMeshTag.find("Damage") != string::npos)
+		{
+			m_MeshTypes.emplace_back(MESH_TYPE::_DAMAGED);
+		}
+		else
+		{
+			m_MeshTypes.emplace_back(MESH_TYPE::_OUTTER);
+		}
+	}
+
+	vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
+
+	vector<string>			ResultMeshTags;
+	for (auto& strMeshTag : MeshTags)
+	{
+		if (strMeshTag.find("Body") != string::npos)
+		{
+			if (strMeshTag.find("Inside") != string::npos)
+				continue;
+
+			if (strMeshTag.find("Joint") != string::npos)
+				continue;
+
+			ResultMeshTags.push_back(strMeshTag);
+		}
+	}
+
 	return S_OK;
 }
 

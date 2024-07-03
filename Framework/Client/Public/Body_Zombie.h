@@ -18,6 +18,9 @@ public:
 		_float3*			pRootTranslation = { nullptr };
 	}BODY_MONSTER_DESC;
 
+													//	备港
+	enum class MESH_TYPE{ _INNER, _OUTTER, _JOINT, _DEFICIT, _DAMAGED, _END };
+
 private:
 	CBody_Zombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBody_Zombie(const CBody_Zombie& rhs);
@@ -38,6 +41,7 @@ public:
 private:
 	HRESULT								Initialize_Model();
 	HRESULT								Add_Animations();
+	HRESULT								Initialize_MeshTypes();
 	HRESULT								Register_Animation_Branches_AnimType();
 	HRESULT								Register_Animation_Branches_AnimGroup();
 	//	乔拜矫 如甸副 焕甸
@@ -88,6 +92,9 @@ private:		/* For Anim_Branch_AnimType */
 
 private:		/* For Anim_Branch_AnimGroup */
 	vector<unordered_set<wstring>>		m_GroupAnimLayerTags;
+
+private:
+	vector<MESH_TYPE>					m_MeshTypes;
 
 private:
 	HRESULT								Add_Components();
