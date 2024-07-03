@@ -51,7 +51,6 @@ public:		/* For.Animation */
 	void									Reset_PreAnimation(_uint iPlayingIndex);
 	void									Reset_PreAnim_CurrentAnim(_uint iPlayingIndex);
 
-
 	HRESULT									Add_Animations(const wstring& strPrototypeLayerTag, const wstring& strAnimLayerTag);
 
 public:		/* Optimization Culling */
