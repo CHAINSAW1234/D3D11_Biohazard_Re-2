@@ -209,6 +209,7 @@ public:
 	
 	_bool*										Get_Tutorial_Notify()	{ return &m_isTutorial_Notify; }
 	UI_TUTORIAL_TYPE*							Get_Tutorial_Type()		{ return &m_eTutial_Type; }
+	_byte										Get_Player_State()		{ return m_eState; } /* Player 상태 반환 */
 
 	/* For. Fuction */
 	void										Player_First_Behavior();

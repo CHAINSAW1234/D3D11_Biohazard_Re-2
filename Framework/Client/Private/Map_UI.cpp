@@ -92,6 +92,11 @@ HRESULT CMap_UI::Initialize(void* pArg)
             m_vColor[0].fBlender_Value = m_fBlending = 1.f;
             m_vColor[0].isBlender = m_isBlending = true;
         }
+
+        if (m_iWhichChild == (_uint)MAP_CHILD_TYPE::LINE_MAP)
+        {
+            m_vColor[0].vColor = m_vCurrentColor = _float4(0.f, 0.f, 0.f, 0);
+        }
     }
 
     else if (MAP_UI_TYPE::MASK_MAP == m_eMapComponent_Type)
@@ -101,7 +106,6 @@ HRESULT CMap_UI::Initialize(void* pArg)
 
     else if (MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
     {
-        Find_Player();
         CGameObject* pBackGround = Find_MapType(MAP_UI_TYPE::BACKGROUND_MAP);
 
         if (nullptr != pBackGround)
@@ -111,10 +115,11 @@ HRESULT CMap_UI::Initialize(void* pArg)
             m_vBackGround_Center = pBackGroundTrans->Get_State_Float4(CTransform::STATE_POSITION);
         }
 
+        Find_Player();
+
         if (nullptr != m_pPlayer)
         {
             m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
-            // Safe_AddRef<CTransform*>(m_pPlayerTransform);
         }
 
         m_vPlayer_MovePos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
@@ -921,6 +926,13 @@ void CMap_UI::Render_Condition(_float fTimeDelta)
             {
                 if (true == m_isRender)
                 {
+                    /* 1. 객체 마지막 위치 저장 */
+                    if (false == m_isLastPosition)
+                    {
+                        m_vLastMatrix = m_pTransformCom->Get_WorldMatrix();
+                        m_isLastPosition = true;
+                    }
+
                     if (m_fBlending >= 1.f)
                     {
                         m_fBlending = 1.f;
@@ -929,32 +941,22 @@ void CMap_UI::Render_Condition(_float fTimeDelta)
                         if(true == m_isLastPosition)
                         {
                             m_isLastPosition = false;
-
-                            m_vLastPosition.z = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).z;
-                            m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vLastPosition);
+                            m_pTransformCom->Set_WorldMatrix(m_vLastMatrix);
                         }
-                      
                     }
 
                     else 
                     {
-                        /* 1. 객체 마지막 위치 저장 */
-                        if (false == m_isLastPosition)
-                        {
-                            m_vLastPosition = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-                            m_isLastPosition = true;
-                        }
-
                         /* 변경할 때 위로 살짝 올라가게 함*/
                         if(MAP_UI_TYPE::FONT_MAP != m_eMapComponent_Type)
                         {
                             _float4x4 m_fStoreRotation = m_pTransformCom->Get_RotationMatrix_Pure();
                             _matrix RotationMatrix = XMMatrixIdentity();
+
                             m_pTransformCom->Set_RotationMatrix_Pure(RotationMatrix);
                             m_pTransformCom->Go_Up(5.f);
                             m_pTransformCom->Set_RotationMatrix_Pure(m_fStoreRotation);
                         }
-                        
 
                         /* 2. 객체 Blending해서 자연스럽게 사라지기 */
                         m_vCurrentColor.w = 0.f; /* 혹시 모르니까 알파 값은 0으로 무조건 유지해두기 */

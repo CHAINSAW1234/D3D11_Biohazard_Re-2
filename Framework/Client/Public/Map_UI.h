@@ -109,7 +109,7 @@ private : /* Mouse Move*/
 	_bool							m_isPrevRender						= { false }; /* Player Target 객체에도 처음 플레이어를 찾기 위해 사용함*/
 	_bool							m_isBlurBlending					= { false };
 
-	_float4							m_vLastPosition						= {};		/* 플레이어가 보간하며 올라갈 때 마지막 위치를 저장하면서 올라갈 것 */
+	_float4x4						m_vLastMatrix						= {};		/* 플레이어가 보간하며 올라갈 때 마지막 위치를 저장하면서 올라갈 것 */
 	_bool							m_isLastPosition					= { false };
 
 
