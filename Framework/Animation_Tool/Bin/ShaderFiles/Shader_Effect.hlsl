@@ -90,6 +90,9 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
 	
+	if (Out.vColor.a < 0.01f)
+		discard;
+
 	return Out;
 }
 
@@ -196,8 +199,7 @@ PS_OUT PS_DECAL(PS_IN In)
 		float2 decalTextureUV = (vLocalPos.xy / (2.0f * float2(g_vExtent.x, g_vExtent.y))) + 0.5f;
 		float3 vDiffuseColor = g_Texture.Sample(LinearSampler, decalTextureUV).xyz;
 
-		Out.vColor = float4(vDiffuseColor,1.f);
-		Out.vColor = float4(1.f, 0.f, 0.f, 1.f);
+		Out.vColor = float4(vDiffuseColor, 1.f);
 	}
 	else
 	{
@@ -213,7 +215,7 @@ technique11 DefaultTechnique
 	//0
 	pass Default
 	{
-		SetRasterizerState(RS_Default);
+		SetRasterizerState(RS_NoCulling);
 		SetDepthStencilState(DSS_Default, 0);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 

@@ -75,6 +75,8 @@ public: /* For.Renderer */
 	void									Set_ShaderState(SHADER_STATE eState, _bool isState);
 	void									Set_RenderFieldShadow(_bool isRenderFieldShadow);
 	void									Bind_DepthTarget(class CShader* pShader);
+	class CShader*							GetDeferredShader();
+	HRESULT									Render_Decal_Deferred();
 #ifdef _DEBUG
 	void									On_Off_DebugRender();
 #endif

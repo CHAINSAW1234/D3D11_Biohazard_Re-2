@@ -450,6 +450,18 @@ void CGameInstance::Bind_DepthTarget(CShader* pShader)
 	m_pRenderer->Bind_DepthTarget(pShader);
 }
 
+CShader* CGameInstance::GetDeferredShader()
+{
+	if (m_pRenderer)
+		return m_pRenderer->GetDeferredShader();
+}
+
+HRESULT CGameInstance::Render_Decal_Deferred()
+{
+	if (m_pRenderer)
+		return m_pRenderer->Render_Decal_Deferred();
+}
+
 #ifdef _DEBUG
 void CGameInstance::On_Off_DebugRender()
 {
@@ -1167,6 +1179,11 @@ _bool CGameInstance::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBloc
 		return m_pPhysics_Controller->RayCast_Shoot(vOrigin, vDir, pBlockPoint, fMaxDist);
 
 	return false;
+}
+_bool CGameInstance::RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
+{
+	if (m_pPhysics_Controller)
+		return m_pPhysics_Controller->RayCast_Decal(vOrigin, vDir, pBlockPoint, fMaxDist);
 }
 _bool CGameInstance::SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
 {

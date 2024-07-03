@@ -52,6 +52,8 @@ HRESULT CHead_Player::Initialize(void* pArg)
 
 	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);*/
 
+	m_bDecalRender = false;
+
 	return S_OK;
 }
 
@@ -399,6 +401,8 @@ HRESULT CHead_Player::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevViewMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
 		return E_FAIL;
 
 	return S_OK;

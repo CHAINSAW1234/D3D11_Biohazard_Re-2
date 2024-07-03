@@ -30,6 +30,7 @@ namespace Engine
 		PASS_GODRAY,
 		PASS_FXAA,
 		PASS_BLOOM,
+		PASS_SSD,
 		PASS_END
 	};
 

@@ -28,9 +28,8 @@ HRESULT CDecal_SSD::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_vExtent = _float3(1.5f, 1.5f, 1.5f);
+	m_vExtent = _float3(0.75f, 0.75f, 0.75f);
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(2.f, 0.f, 3.f, 1.f));
-	m_pTransformCom->Set_Scaled(1.5f, 1.5f, 1.f);
 
 	return S_OK;
 }
@@ -50,11 +49,7 @@ HRESULT CDecal_SSD::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(3);
-
-	m_pVIBufferCom->Bind_Buffers();
-
-	m_pVIBufferCom->Render();
+	return m_pGameInstance->Render_Decal_Deferred();
 
 	return S_OK;
 }
@@ -89,25 +84,17 @@ HRESULT CDecal_SSD::Bind_ShaderResources()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	auto pDeferredShader = m_pGameInstance->GetDeferredShader();
+
+	if (FAILED(pDeferredShader->Bind_Matrix("g_Decal_WorldMatrix_Inv", &m_pTransformCom->Get_WorldFloat4x4_Inverse())))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix_Inv", &m_pTransformCom->Get_WorldFloat4x4_Inverse())))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix_Inv", &m_pGameInstance->Get_Transform_Float4x4_Inverse(CPipeLine::D3DTS_VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix_Inv", &m_pGameInstance->Get_Transform_Float4x4_Inverse(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vExtent", &m_vExtent,sizeof(_float3))))
+	if (FAILED(pDeferredShader->Bind_RawValue("g_vExtent", &m_vExtent,sizeof(_float3))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(pDeferredShader, "g_DecalTexture")))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShaderCom, TEXT("Target_Depth"), "g_DepthTexture")))
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pDeferredShader, TEXT("Target_Depth"), "g_DepthTexture")))
 		return E_FAIL;
 
 	return S_OK;
