@@ -918,7 +918,7 @@ _float4x4 CModel::Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fm
 
 unordered_set<_uint> CModel::Compute_IncludedBoneIndices_AllBoneLayer_Blend()
 {
-	unordered_set<_uint>			ResultIncludedBoneIndices;
+	unordered_set<_uint>					ResultIncludedBoneIndices;
 	for (auto& pPlayingInfo : m_PlayingAnimInfos)
 	{
 		if (nullptr == pPlayingInfo)
@@ -927,33 +927,11 @@ unordered_set<_uint> CModel::Compute_IncludedBoneIndices_AllBoneLayer_Blend()
 		if (true == pPlayingInfo->Is_AdditionalMasking())
 			continue;
 
-		wstring			strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
-		CBone_Layer* pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
-
-		if (nullptr == pBoneLayer)
-			continue;
-
-		unordered_set<_uint>		TempIncludedBoneIndices = { pBoneLayer->Get_IncludedBoneIndices() };
-		for (auto& iBoneIndex : TempIncludedBoneIndices)
-		{
-			ResultIncludedBoneIndices.emplace(iBoneIndex);
-		}
-	}
-
-	return ResultIncludedBoneIndices;
-}
-
-unordered_set<_uint> CModel::Compute_IncludedBoneIndices_AllBoneLayer_AdditionalMasking()
-{
-	unordered_set<_uint>			ResultIncludedBoneIndices;
-	unordered_set<_uint>					EnoughKeyFrameBoneIndices;
-	for (auto& pPlayingInfo : m_PlayingAnimInfos)
-	{
-		if (nullptr == pPlayingInfo)
-			continue;
-
-		if (false == pPlayingInfo->Is_AdditionalMasking())
-			continue;			
+		_int							iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
+		wstring							strAnimLayerTag = { pPlayingInfo->Get_AnimLayerTag() };
+		_float							fWeight = { pPlayingInfo->Get_BlendWeight() };
+		if (-1 == iAnimIndex || TEXT("") == strAnimLayerTag || 0.f >= fWeight)
+			continue; 
 
 		wstring			strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
 		CBone_Layer*	pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
@@ -961,14 +939,46 @@ unordered_set<_uint> CModel::Compute_IncludedBoneIndices_AllBoneLayer_Additional
 		if (nullptr == pBoneLayer)
 			continue;
 
-		unordered_set<_uint>		TempIncludedBoneIndices = { pBoneLayer->Get_IncludedBoneIndices() };
-		for (auto& iBoneIndex : TempIncludedBoneIndices)
-		{
-			ResultIncludedBoneIndices.emplace(iBoneIndex);
-		}
+		unordered_set<_uint>			TempIncludedBoneIndices = { pBoneLayer->Get_IncludedBoneIndices() };
 
-		_int			iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
-		wstring			strAnimLayerTag = { pPlayingInfo->Get_AnimLayerTag() };
+		for (auto& iIndex : TempIncludedBoneIndices)
+		{
+			ResultIncludedBoneIndices.emplace(iIndex);
+		}
+	}
+
+	
+
+	return ResultIncludedBoneIndices;
+}
+
+unordered_set<_uint> CModel::Compute_IncludedBoneIndices_AllBoneLayer_AdditionalMasking()
+{
+	unordered_set<_uint>			ResultIncludedBoneIndices;
+	for (auto& pPlayingInfo : m_PlayingAnimInfos)
+	{
+		if (nullptr == pPlayingInfo)
+			continue;
+
+		if (false == pPlayingInfo->Is_AdditionalMasking())
+			continue;
+
+		_int							iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
+		wstring							strAnimLayerTag = { pPlayingInfo->Get_AnimLayerTag() };
+		_float							fWeight = { pPlayingInfo->Get_BlendWeight() };
+		if (-1 == iAnimIndex || TEXT("") == strAnimLayerTag || 0.f >= fWeight)
+			continue;
+
+		wstring			strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
+		CBone_Layer* pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
+
+		if (nullptr == pBoneLayer)
+			continue;
+
+		unordered_set<_uint>			TempIncludedBoneIndices = { pBoneLayer->Get_IncludedBoneIndices() };
+		unordered_set<_uint>			EnoughKeyFrameBoneIndices;
+
+
 		vector<CChannel*>			Channels = { m_AnimationLayers[strAnimLayerTag]->Get_Animations()[iAnimIndex]->Get_Channels() };
 		for (auto& pChannel : Channels)
 		{
@@ -978,26 +988,23 @@ unordered_set<_uint> CModel::Compute_IncludedBoneIndices_AllBoneLayer_Additional
 				EnoughKeyFrameBoneIndices.emplace(pChannel->Get_BoneIndex());
 			}
 		}
-	}
 
-	for (auto& iterSrc = ResultIncludedBoneIndices.begin(); iterSrc != ResultIncludedBoneIndices.end(); )
-	{
-		unordered_set<_uint>::iterator			iterDst = { EnoughKeyFrameBoneIndices.find(*iterSrc) };
-		if (iterDst == EnoughKeyFrameBoneIndices.end())
+		for (auto& iterSrc = TempIncludedBoneIndices.begin(); iterSrc != TempIncludedBoneIndices.end(); )
 		{
-			iterSrc = ResultIncludedBoneIndices.erase(iterSrc);
+			unordered_set<_uint>::iterator			iterDst = { EnoughKeyFrameBoneIndices.find(*iterSrc) };
+			if (iterDst == EnoughKeyFrameBoneIndices.end())
+			{
+				iterSrc = TempIncludedBoneIndices.erase(iterSrc);
+			}
+			else
+				++iterSrc;
 		}
-		else
-			++iterSrc;
+
+		for (auto& iIndex : TempIncludedBoneIndices)
+		{
+			ResultIncludedBoneIndices.emplace(iIndex);
+		}
 	}
-	/*for (auto& iBoneIndex : ResultIncludedBoneIndices)
-	{
-		unordered_set<_uint>::iterator			iter = { EnoughKeyFrameBoneIndices.find(iBoneIndex) };
-		if (iter == EnoughKeyFrameBoneIndices.end())
-		{
-			ResultIncludedBoneIndices.erase(ResultIncludedBoneIndices.find(iBoneIndex));
-		}
-	}	*/
 
 	return ResultIncludedBoneIndices;
 }

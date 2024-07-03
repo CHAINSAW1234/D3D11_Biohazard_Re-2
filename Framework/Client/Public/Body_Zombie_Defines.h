@@ -25,4 +25,4 @@
 #define ZOMBIE_SHAKE_SKIN_BLEND_ON_TIME					0.3f
 
 /* For. Blend Off */
-#define ZOMBIE_SHAKE_SKIN_BLEND_OFF_TIME				2.f
+#define ZOMBIE_SHAKE_SKIN_BLEND_OFF_TIME				0.2f

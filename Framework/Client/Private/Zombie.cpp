@@ -233,10 +233,10 @@ void CZombie::Tick(_float fTimeDelta)
 				m_iBloodCount = 0;
 
 				/*For Decal*/
-				Ready_Decal();
+				//	Ready_Decal();
 
 				/*For Blood Effect*/
-				m_bSetBlood = true;
+				//	m_bSetBlood = true;
 				m_BloodTime = GetTickCount64();
 
 				m_pController->Set_Hit(false);
@@ -250,12 +250,12 @@ void CZombie::Tick(_float fTimeDelta)
 		if (m_pController->Is_Hit())
 		{
 			/*For Decal*/
-			Ready_Decal();
+			//	Ready_Decal();
 
 			m_iBloodCount = 0;
 
 			/*For Blood Effect*/
-			m_bSetBlood = true;
+			//	m_bSetBlood = true;
 			m_BloodTime = GetTickCount64();
 
 			m_pController->Set_Hit(false);

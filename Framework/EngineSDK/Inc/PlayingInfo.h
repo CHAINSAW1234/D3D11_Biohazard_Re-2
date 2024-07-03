@@ -134,7 +134,7 @@ private:
 	vector<KEYFRAME>					m_LinearStartKeyFrames;
 
 	_bool								m_isAdditionalMasking = { false };
-	_uint								m_iNumNeedKeyFrame = { 0 };
+	_uint								m_iNumNeedKeyFrame = { 4 };
 
 public:
 	static CPlayingInfo* Create(void* pArg);
