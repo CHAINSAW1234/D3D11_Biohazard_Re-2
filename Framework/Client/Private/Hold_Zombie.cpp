@@ -29,10 +29,8 @@ void CHold_Zombie::Enter()
 	pBodyModel->Set_TotalLinearInterpolation(0.2f);
 	pBodyModel->Set_Loop(static_cast<_uint>(m_eBasePlayingIndex), false);
 
-	pBodyModel->Set_BlendWeight(static_cast<_uint>(m_eBlendPlayingIndex), 0.f, 0.f);
+	pBodyModel->Set_BlendWeight(static_cast<_uint>(m_eBlendPlayingIndex), 0.f, 0.2f);
 	pBodyModel->Reset_PreAnim_CurrentAnim(static_cast<_uint>(m_eBlendPlayingIndex));
-
-	m_isEntry = true;
 
 #ifdef _DEBUG
 
@@ -50,20 +48,63 @@ _bool CHold_Zombie::Execute(_float fTimeDelta)
 	if (Check_Permition_To_Execute() == false)
 		return false;
 #pragma endregion
-	m_pBlackBoard->Organize_PreState(this);
 
-	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->Set_State(MONSTER_STATE::MST_HOLD);
+	MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
+	_bool					isEntry = { eMonsterState != MST_HOLD };
+	if (true == isEntry)
+	{
+		if (MONSTER_STATE::MST_STANDUP == eMonsterState ||
+			MONSTER_STATE::MST_TURNOVER == eMonsterState)
+			return false;
 
-	if (false == m_isEntry)
+		CMonster::MONSTER_STATUS*		pStatus = { m_pBlackBoard->Get_AI()->Get_Status_Ptr() };
+		if (nullptr == pStatus)
+			return false;
+
+		CZombie::POSE_STATE				ePoseState = { m_pBlackBoard->Get_AI()->Get_PoseState() };
+		if (CZombie::POSE_STATE::_CREEP == ePoseState)
+		{
+			_float3				vDirectionToPlayerLocalFloat3 = {};
+			if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3))
+				return false;
+
+			_bool				isFront = { vDirectionToPlayerLocalFloat3.z > 0.f };
+			_bool				isRight = { vDirectionToPlayerLocalFloat3.x > 0.f };
+
+			CZombie::FACE_STATE			eFaceState = { m_pBlackBoard->Get_AI()->Get_FaceState() };
+			if (CZombie::FACE_STATE::_DOWN == eFaceState)
+			{
+				if (false == isFront)
+					return false;
+			}
+
+			else if (CZombie::FACE_STATE::_UP == eFaceState)
+			{
+				if (true == isFront)
+					return false;
+			}
+		}
+
+		if (pStatus->fAccHoldTime < pStatus->fTryHoldTime)
+			return false;
+
+		else
+		{
+			Change_Animation();	
+			pStatus->fAccHoldTime = 0.f;
+		}
+	}
+
+	else
 	{
 		if (true == Is_StateFinished())
 			return false;
 	}
 
-	Change_Animation();
+	m_pBlackBoard->Organize_PreState(this);
 
-	m_isEntry = false;
+	auto pAI = m_pBlackBoard->Get_AI();
+	pAI->Set_State(MONSTER_STATE::MST_HOLD);
 
 	return true;
 }
@@ -74,6 +115,28 @@ void CHold_Zombie::Exit()
 
 void CHold_Zombie::Change_Animation()
 {
+	CZombie::POSE_STATE			ePoseState = { m_pBlackBoard->Get_AI()->Get_PoseState() };
+	if (CZombie::POSE_STATE::_UP == ePoseState)
+	{
+		Change_Animation_StandUp();
+
+	}
+
+	else if(CZombie::POSE_STATE::_CREEP == ePoseState)
+	{
+		Change_Animation_Creep();
+	}
+
+#ifdef _DEBUG
+	else
+	{
+		MSG_BOX(TEXT("Called : void CHold_Zombie::Change_Animation() 좀비 담당자 호출"));
+	}
+#endif
+}
+
+void CHold_Zombie::Change_Animation_StandUp()
+{
 	if (nullptr == m_pBlackBoard)
 		return;
 
@@ -81,30 +144,17 @@ void CHold_Zombie::Change_Animation()
 	if (nullptr == pBodyModel)
 		return;
 
-	if (false == m_isEntry)
-	{
-		if (true == true == pBodyModel->isFinished(static_cast<_uint>(PLAYING_INDEX::INDEX_0)))
-		{
-			m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fAccHoldTime = 0.f;
-		}
-		return;
-	}
-
-	m_isEntry = false; 
-
 	DIRECTION		eDirection = { DIRECTION::_END };
 	if (false == m_pBlackBoard->Compute_Direction_To_Player_4Direction_Local(&eDirection))
 		return;
 
-	_uint			iPlayingIndex = { static_cast<_uint>(PLAYING_INDEX::INDEX_0) };
 	_int			iResultAnimationIndex = { -1 };
-	wstring			strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
 	wstring			strAnimLayerTag = { TEXT("Ordinary_Hold") };
 
 	if (DIRECTION::_F == eDirection)
 	{
 		_int			iRandomAnimIndex = { m_pGameInstance->GetRandom_Int(static_cast<_int>(ANIM_ORDINARY_HOLD::_F1), static_cast<_int>(ANIM_ORDINARY_HOLD::_F2)) };
-		
+
 		iResultAnimationIndex = iRandomAnimIndex;
 	}
 
@@ -142,8 +192,59 @@ void CHold_Zombie::Change_Animation()
 	if (-1 == iResultAnimationIndex)
 		return;
 
-	pBodyModel->Change_Animation(iPlayingIndex, strAnimLayerTag, iResultAnimationIndex);
-	pBodyModel->Set_BoneLayer_PlayingInfo(iPlayingIndex, strBoneLayerTag);
+	pBodyModel->Change_Animation(static_cast<_uint>(m_eBasePlayingIndex), m_strStandUpAnimLayerTag, iResultAnimationIndex);
+	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_eBasePlayingIndex), m_strBoneLayerTag);
+}
+
+void CHold_Zombie::Change_Animation_Creep()
+{
+	if (nullptr == m_pBlackBoard)
+		return;
+
+	_float3				vDirectionToPlayerLocalFloat3 = {};
+	if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3))
+		return;
+
+	_bool				isFront = { vDirectionToPlayerLocalFloat3.z > 0.f };
+	_bool				isRight = { vDirectionToPlayerLocalFloat3.x > 0.f };
+
+	CZombie::FACE_STATE			eFaceState = { m_pBlackBoard->Get_AI()->Get_FaceState() };
+
+	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	if (nullptr == pBodyModel)
+		return;
+
+	_int			iResultAnimationIndex = { -1 };
+
+	if (CZombie::FACE_STATE::_DOWN == eFaceState)
+	{
+		if (false == isFront)
+			return;
+
+		if (true == isRight)
+			iResultAnimationIndex = static_cast<_uint>(ANIM_LOST_HOLD::_1);
+
+		else
+			iResultAnimationIndex = static_cast<_uint>(ANIM_LOST_HOLD::_0);
+	}
+
+	else if (CZombie::FACE_STATE::_UP == eFaceState)
+	{
+		if (true == isFront)
+			return;
+
+		if (true == isRight)
+			iResultAnimationIndex = static_cast<_uint>(ANIM_LOST_HOLD::_FACEUP2);
+
+		else
+			iResultAnimationIndex = static_cast<_uint>(ANIM_LOST_HOLD::_FACEUP1);
+	}
+
+	if (-1 == iResultAnimationIndex)
+		return;
+
+	pBodyModel->Change_Animation(static_cast<_uint>(m_eBasePlayingIndex), m_strCreepAnimLayerTag, iResultAnimationIndex);
+	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_eBasePlayingIndex), m_strBoneLayerTag);
 }
 
 _bool CHold_Zombie::Is_StateFinished()

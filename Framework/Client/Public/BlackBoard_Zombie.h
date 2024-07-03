@@ -36,6 +36,7 @@ private:
 	void							Update_Recognition_Timer(_float fTimeDelta);
 	void							Update_StandUp_Timer(_float fTimeDelta);
 	void							Update_LightlyHold_Timer(_float fTimeDelta);
+	void							Update_Hold_Timer(_float fTImeDelta);
 
 private:
 	void							Update_Status(_float fTimeDelta);

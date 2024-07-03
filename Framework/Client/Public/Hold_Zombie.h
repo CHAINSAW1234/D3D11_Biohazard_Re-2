@@ -3,6 +3,7 @@
 #include "Client_Defines.h"
 #include "Task_Node.h"
 #include "Body_Zombie.h"
+#include "Zombie.h"
 
 BEGIN(Client)
 
@@ -23,6 +24,9 @@ public:
 private:
 	void							Change_Animation();
 
+	void							Change_Animation_StandUp();
+	void							Change_Animation_Creep();
+
 	_bool							Is_StateFinished();
 
 public:
@@ -33,6 +37,10 @@ private:
 	_bool							m_isEntry = { false };
 	const PLAYING_INDEX				m_eBasePlayingIndex = { PLAYING_INDEX::INDEX_0 };
 	const PLAYING_INDEX				m_eBlendPlayingIndex = { PLAYING_INDEX::INDEX_1 };
+
+	const wstring					m_strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
+	const wstring					m_strStandUpAnimLayerTag = { TEXT("Ordinary_Hold") };
+	const wstring					m_strCreepAnimLayerTag = { TEXT("Lost_Hold") };
 
 public:
 	static CHold_Zombie* Create(void* pArg = nullptr);

@@ -66,7 +66,7 @@ HRESULT CZombie::Initialize(void* pArg)
 
 		m_iIndex = pDesc->Index;
 		_float4 vPos = *(_float4*)pDesc->worldMatrix.m[3];
-		//	vPos.y += 1.f;
+			vPos.y += 1.f;
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 	}
 	m_InteractObjVec.resize(JOMBIE_BEHAVIOR_COLLIDER_END);
@@ -470,24 +470,10 @@ void CZombie::Init_BehaviorTree_Zombie()
 	*Root Child Section ( Bite )
 	*/
 
-	/*CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
-	CComposite_Node*			pSelectorNode_RootChild_Bite = { CComposite_Node::Create(&CompositeNodeDesc) };
-	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_Bite);*/
-
 	//	Add Task Node		=> Bite 
 	CBite_Zombie* pTask_Bite_Zombie = { CBite_Zombie::Create() };
 	pTask_Bite_Zombie->SetBlackBoard(m_pBlackBoard);
-	//	추후 셀렉터로 변경시 셀렉터 자식으로 하기
-	//	pSelectorNode_RootChild_Bite->Insert_Child_Node(pTask_Bite_Zombie);
 	pSelectorNode_Root->Insert_Child_Node(pTask_Bite_Zombie);
-
-	//	Add Decorator		=> Is Can Link? ( From Hold )
-	list<MONSTER_STATE>					CanLinkMonsterStatesBite;
-	CanLinkMonsterStatesBite.emplace_back(MONSTER_STATE::MST_HOLD);
-	CanLinkMonsterStatesBite.emplace_back(MONSTER_STATE::MST_LIGHTLY_HOLD);
-	CIs_Can_Link_Pre_State_Zombie* pDeco_Is_Can_Link_Bite = { CIs_Can_Link_Pre_State_Zombie::Create(CanLinkMonsterStatesBite) };
-	pDeco_Is_Can_Link_Bite->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_Root->Insert_Decorator_Node(pDeco_Is_Can_Link_Bite);
 
 #pragma endregion
 
@@ -571,10 +557,6 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_Hold->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Hold);
 
-	CIs_Enough_Time_Zombie* pDeco_Enough_Time_For_Hold = { CIs_Enough_Time_Zombie::Create(&m_pStatus->fAccHoldTime, &m_pStatus->fTryHoldTime) };
-	pDeco_Enough_Time_For_Hold->SetBlackBoard(m_pBlackBoard);
-	pTask_Hold->Insert_Decorator_Node(pDeco_Enough_Time_For_Hold);
-
 	//	Add Task Node (Move)
 	CMove_Front_Zombie* pTask_Move = { CMove_Front_Zombie::Create() };
 	pTask_Move->SetBlackBoard(m_pBlackBoard);
@@ -636,30 +618,17 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_Wait->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Idle->Insert_Child_Node(pTask_Wait);
 
-	//Add Decorator Node		=>		Task Wait, Deco Can Change State
-	/*CIs_Can_Change_State_Zombie::CAN_CHANGE_STATE_ZOMBIE_DESC		CanChangeStateForWaitDesc;
-	CanChangeStateForWaitDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE);
-	CanChangeStateForWaitDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_TURN);
-	CIs_Can_Change_State_Zombie*				pDeco_Can_Change_State_ForWait = { CIs_Can_Change_State_Zombie::Create(&CanChangeStateForWaitDesc) };
-	pDeco_Can_Change_State_ForWait->SetBlackBoard(m_pBlackBoard);
-	pTask_Wait->Insert_Decorator_Node(pDeco_Can_Change_State_ForWait);*/
-
 #pragma endregion
 
 #pragma endregion		//	Selector Root 
 
-#pragma region		//	Task Shake Skin
+#pragma region		Task Shake Skin
 
 	CShake_Skin_Zombie*							pTask_Shake_Skin = { CShake_Skin_Zombie::Create() };
 	pTask_Shake_Skin->SetBlackBoard(m_pBlackBoard);
 	pSequenceNode_Root->Insert_Child_Node(pTask_Shake_Skin);
 
-#pragma endregion
-
-#pragma region Additional Shake Skin			//	추가해야함
-
-
-#pragma endregion		//	Additional Shake Skin
+#pragma endregion		//	Task Shake Skin
 
 #pragma endregion		//	Sequence Root
 

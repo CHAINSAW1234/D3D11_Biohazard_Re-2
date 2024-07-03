@@ -49,6 +49,11 @@ Task 	Execute Pre Task	|	|		|		Deco 		IsLinkFromMove, Idle		Selector 	Move Or Tu
 
 
 
+###		Turn 만들어야함
+###		Turn Over 만들어야함
+###		Move Lost 만들어야함
+###		Move Creep ( 위와같은지 확인하고 별도일시 만들어야함 )
+
 ###		Lightly Hold => 성공과 실패로 나뉨 => 성공 ( 바이트로 넘어가기 ), 실패 ( End )
 
 		=> Bite자체를 그냥 Lightly Hold Task 내에서 처리

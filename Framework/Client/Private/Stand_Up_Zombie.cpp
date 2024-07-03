@@ -60,6 +60,14 @@ _bool CStand_Up_Zombie::Execute(_float fTimeDelta)
 
 	else
 	{
+		MONSTER_STATE				eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
+		if (MONSTER_STATE::MST_HOLD == eMonsterState ||
+			MONSTER_STATE::MST_LIGHTLY_HOLD == eMonsterState ||
+			MONSTER_STATE::MST_BITE == eMonsterState ||
+			MONSTER_STATE::MST_STANDUP == eMonsterState)
+			return false;
+
+
 		if (CZombie::POSE_STATE::_CREEP != m_pBlackBoard->Get_AI()->Get_PoseState())
 			return false;
 

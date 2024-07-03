@@ -68,13 +68,15 @@ _bool CBite_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
-	BITE_ANIM_STATE			eAnimState = { Compute_Current_AnimState_Bite() };
-	_bool					isEntry = { eAnimState == BITE_ANIM_STATE::_END };
+	MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
+	_bool					isEntry = { eMonsterState != MONSTER_STATE::MST_BITE };
 	if (true == isEntry)
 	{
 		if (false == Is_Can_Start_Bite())
 			return false;
 	}
+
+	BITE_ANIM_STATE			eAnimState = { Compute_Current_AnimState_Bite() };
 	if (true == Is_StateFinished(eAnimState))
 		return false;
 
@@ -255,9 +257,15 @@ void CBite_Zombie::Change_Animation_Creep(BITE_ANIM_STATE eState)
 		{
 			MSG_BOX(TEXT("Called : void CBite_Zombie::Change_Animation_Creep(BITE_ANIM_STATE eState) 좀비 담당자 호출"));
 		}
+		wstring				strPreAnimLayerTag = { m_pBlackBoard->Get_Current_AnimLayerTag(CMonster::PART_BODY, m_ePlayingIndex) };
+		if (strPreAnimLayerTag != TEXT("Lost_Hold"))
+			return;
 
-		_vector			vDirectionFromPlayerLocal = { XMLoadFloat3(&vDirectionFromPlayerLocalFloat3) };
-		_bool			isRight = { XMVectorGetX(vDirectionFromPlayerLocal) > 0.f };
+		_int				iAnimLostHold = { m_pBlackBoard->Get_Current_AnimIndex(CMonster::PART_BODY, m_ePlayingIndex) };
+		if (-1 == iAnimLostHold)
+			return;
+
+		_bool			isRight = { ANIM_LOST_HOLD::_1 == static_cast<ANIM_LOST_HOLD>(iAnimLostHold) || ANIM_LOST_HOLD::_FACEUP2 == static_cast<ANIM_LOST_HOLD>(iAnimLostHold) };
 
 		if (CZombie::FACE_STATE::_DOWN == m_eStartFaceState)
 		{
@@ -566,23 +574,26 @@ _bool CBite_Zombie::Is_CurrentAnim_FinishAnim()
 
 _bool CBite_Zombie::Is_Can_Start_Bite()
 {
-	_bool				isCanBite = { false };
 	_float				fDistanceToPlayer = { 0.f };
 	if (false == m_pBlackBoard->Compute_Distance_To_Player(&fDistanceToPlayer))
-		return isCanBite;
+		return false;
 
+	MONSTER_STATE					eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 	CMonster::MONSTER_STATUS*		pMonster_Status = { m_pBlackBoard->Get_ZombieStatus_Ptr() };
+
+	if (MONSTER_STATE::MST_HOLD != eMonsterState)
+		return false;
+
 	if (nullptr == pMonster_Status)
-		return isCanBite;
+		return false;
 
 	if (false == pMonster_Status->fBiteRange >= fDistanceToPlayer)
-		return isCanBite;
+		return false;
 
 	if (false == m_pBlackBoard->Get_AI()->Use_Stamina(CZombie::USE_STAMINA::_BITE))
-		return isCanBite;
-	
-	isCanBite = true;
-	return isCanBite;
+		return false;
+
+	return true;
 }
 
 void CBite_Zombie::Change_Animation(BITE_ANIM_STATE eState)

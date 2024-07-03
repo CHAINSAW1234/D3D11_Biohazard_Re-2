@@ -51,7 +51,11 @@ _bool CTurn_Over_Zombie::Execute(_float fTimeDelta)
 	
 
 	MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
-	if (MONSTER_STATE::MST_STANDUP == eMonsterState)
+
+	if (MONSTER_STATE::MST_HOLD == eMonsterState ||
+		MONSTER_STATE::MST_LIGHTLY_HOLD == eMonsterState ||
+		MONSTER_STATE::MST_BITE == eMonsterState ||
+		MONSTER_STATE::MST_STANDUP == eMonsterState)
 		return false;
 
 	if (CZombie::POSE_STATE::_CREEP != m_pBlackBoard->Get_AI()->Get_PoseState())
@@ -63,7 +67,7 @@ _bool CTurn_Over_Zombie::Execute(_float fTimeDelta)
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->Set_State(MONSTER_STATE::MST_DOWN);
+	pAI->Set_State(MONSTER_STATE::MST_TURNOVER);
 
 	Change_Animation();
 

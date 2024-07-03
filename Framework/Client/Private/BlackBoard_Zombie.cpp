@@ -45,6 +45,7 @@ void CBlackBoard_Zombie::Update_Timers(_float fTimeDelta)
 {
 	Update_Recognition_Timer(fTimeDelta);
 	Update_StandUp_Timer(fTimeDelta);
+	Update_Hold_Timer(fTimeDelta);
 	Update_LightlyHold_Timer(fTimeDelta);
 }
 
@@ -141,6 +142,33 @@ void CBlackBoard_Zombie::Update_LightlyHold_Timer(_float fTimeDelta)
 		pMonsterStatus->fAccRecognitionTime -= fTimeDelta;
 		if (pMonsterStatus->fAccRecognitionTime < 0.f)
 			pMonsterStatus->fAccRecognitionTime = 0.f;
+	}
+}
+
+void CBlackBoard_Zombie::Update_Hold_Timer(_float fTImeDelta)
+{
+	if (nullptr == m_pAI)
+		return;
+
+	MONSTER_STATE					eCurrentState = { m_pAI->Get_Current_MonsterState() };
+	CMonster::MONSTER_STATUS*		pMonsterStatus = { m_pAI->Get_Status_Ptr() };
+
+	_float							fDistanceToPlayer = {};
+	if (false == Compute_Distance_To_Player_World(&fDistanceToPlayer))
+		return;
+
+	if (pMonsterStatus->fTryHoldRange < fDistanceToPlayer ||
+		eCurrentState == MONSTER_STATE::MST_BITE ||
+		eCurrentState == MONSTER_STATE::MST_HOLD)
+	{
+		pMonsterStatus->fAccHoldTime -= fTImeDelta;
+		if (0.f > pMonsterStatus->fAccHoldTime)
+			pMonsterStatus->fAccHoldTime = 0.f;
+	}
+
+	else
+	{
+		pMonsterStatus->fAccHoldTime += fTImeDelta;
 	}
 }
 

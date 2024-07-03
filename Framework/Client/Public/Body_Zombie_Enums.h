@@ -356,10 +356,10 @@ enum class ANIM_LOST_DEAD2IDLE {
 };
 
 enum class ANIM_LOST_HOLD {
-	_0,
-	_1,
-	_FACEUP1,
-	_FACEUP2,
+	_0,				//	Face Down Creep Bite L 로 이어짐		//	플레이어가 전면 우측에있을때
+	_1,				//	Face Down Creep Bite R 로 이어짐		//	플레이어가 전면 좌측에있을때
+	_FACEUP1,		//	Face Up Creep Bite L 로 이어짐		//	플레이어가 후면 좌측에있을때
+	_FACEUP2,		//	Face Up Creep Bite R 로 이어짐		//	플레이어가 후면 우측에있을때
 	_END
 };
 

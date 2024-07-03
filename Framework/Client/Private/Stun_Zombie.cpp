@@ -43,9 +43,6 @@ void CStun_Zombie::Enter()
 
 _bool CStun_Zombie::Execute(_float fTimeDelta)
 {
-
-
-	return false;
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)
 		return false;
