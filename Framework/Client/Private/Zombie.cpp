@@ -1019,7 +1019,7 @@ void CZombie::Perform_Skinning()
 			m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
 			m_pBodyModel->Bind_Resource_Skinning(i);
 			m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
-			m_pBodyModel->Staging_Skinning(i);
+			//m_pBodyModel->Staging_Skinning(i);
 		}
 	}
 
@@ -1032,7 +1032,7 @@ void CZombie::Perform_Skinning()
 			m_pHeadModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
 			m_pHeadModel->Bind_Resource_Skinning(i);
 			m_pGameInstance->Perform_Skinning((*m_pHeadModel->GetMeshes())[i]->GetNumVertices());
-			m_pHeadModel->Staging_Skinning(i);
+			//m_pHeadModel->Staging_Skinning(i);
 		}
 	}
 
@@ -1045,7 +1045,7 @@ void CZombie::Perform_Skinning()
 			m_pHeadModel2->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
 			m_pHeadModel2->Bind_Resource_Skinning(i);
 			m_pGameInstance->Perform_Skinning((*m_pHeadModel2->GetMeshes())[i]->GetNumVertices());
-			m_pHeadModel2->Staging_Skinning(i);
+			//m_pHeadModel2->Staging_Skinning(i);
 		}
 	}
 
@@ -1058,7 +1058,7 @@ void CZombie::Perform_Skinning()
 			m_pHeadModel3->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
 			m_pHeadModel3->Bind_Resource_Skinning(i);
 			m_pGameInstance->Perform_Skinning((*m_pHeadModel3->GetMeshes())[i]->GetNumVertices());
-			m_pHeadModel3->Staging_Skinning(i);
+			//m_pHeadModel3->Staging_Skinning(i);
 		}
 	}
 
@@ -1071,7 +1071,7 @@ void CZombie::Perform_Skinning()
 			m_pShirtsModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
 			m_pShirtsModel->Bind_Resource_Skinning(i);
 			m_pGameInstance->Perform_Skinning((*m_pShirtsModel->GetMeshes())[i]->GetNumVertices());
-			m_pShirtsModel->Staging_Skinning(i);
+			//m_pShirtsModel->Staging_Skinning(i);
 		}
 	}
 
@@ -1084,7 +1084,7 @@ void CZombie::Perform_Skinning()
 			m_pShirts2Model->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
 			m_pShirts2Model->Bind_Resource_Skinning(i);
 			m_pGameInstance->Perform_Skinning((*m_pShirts2Model->GetMeshes())[i]->GetNumVertices());
-			m_pShirts2Model->Staging_Skinning(i);
+			//m_pShirts2Model->Staging_Skinning(i);
 		}
 	}
 
@@ -1097,7 +1097,7 @@ void CZombie::Perform_Skinning()
 			m_pPantsModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
 			m_pPantsModel->Bind_Resource_Skinning(i);
 			m_pGameInstance->Perform_Skinning((*m_pPantsModel->GetMeshes())[i]->GetNumVertices());
-			m_pPantsModel->Staging_Skinning(i);
+			//m_pPantsModel->Staging_Skinning(i);
 		}
 	}
 
@@ -1110,7 +1110,7 @@ void CZombie::Perform_Skinning()
 			m_pHatModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
 			m_pHatModel->Bind_Resource_Skinning(i);
 			m_pGameInstance->Perform_Skinning((*m_pHatModel->GetMeshes())[i]->GetNumVertices());
-			m_pHatModel->Staging_Skinning(i);
+			//m_pHatModel->Staging_Skinning(i);
 		}
 	}
 }

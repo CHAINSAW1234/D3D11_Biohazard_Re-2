@@ -61,6 +61,8 @@ CModel::CModel(const CModel& rhs)
 	}
 
 	m_PlayingAnimInfos.resize(100);
+
+	Initialize_DecalMap();
 }
 
 #pragma region PlayInfo
@@ -3122,6 +3124,53 @@ void CModel::Calc_DecalMap_NonCS(CShader* pShader)
 	}
 }
 
+void CModel::Initialize_DecalMap()
+{
+	size_t iNumMesh = m_Meshes.size();
+
+	m_vecSRV_DecalMap.resize(iNumMesh);
+	m_vecUAV_DecalMap.resize(iNumMesh);
+	m_vecSB_DecalMap.resize(iNumMesh);
+	m_vecDecal_Map.clear();
+
+	for (size_t i = 0; i < iNumMesh; ++i)
+	{
+		auto iNumVertices = m_Meshes[i]->GetNumVertices();
+		auto pDecalMap = new _float2[iNumVertices];
+		ZeroMemory(pDecalMap, sizeof(_float2) * iNumVertices);
+		m_vecDecal_Map.push_back(pDecalMap);
+
+		//Buffer for Write
+		{
+			D3D11_BUFFER_DESC sbDesc = {};
+			sbDesc.Usage = D3D11_USAGE_DEFAULT;
+			sbDesc.ByteWidth = sizeof(_float2) * iNumVertices;
+			sbDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+			sbDesc.StructureByteStride = sizeof(_float2);
+			sbDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+			D3D11_SUBRESOURCE_DATA initData = {};
+			initData.pSysMem = m_vecDecal_Map[i];
+
+			m_pDevice->CreateBuffer(&sbDesc, &initData, &m_vecSB_DecalMap[i]);
+
+			D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+			uavDesc.Format = DXGI_FORMAT_UNKNOWN;
+			uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+			uavDesc.Buffer.NumElements = sbDesc.ByteWidth / sbDesc.StructureByteStride;
+
+			m_pDevice->CreateUnorderedAccessView(m_vecSB_DecalMap[i], &uavDesc, &m_vecUAV_DecalMap[i]);
+
+			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+			srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+			srvDesc.Buffer.NumElements = iNumVertices;
+
+			m_pDevice->CreateShaderResourceView(m_vecSB_DecalMap[i], &srvDesc, &m_vecSRV_DecalMap[i]);
+		}
+	}
+}
+
 _uint CModel::Perform_RayCasting(_uint iIndex, AddDecalInfo Info, _float* pDist)
 {
 	return m_Meshes[iIndex]->RayCasting_Decal(Info,pDist);
@@ -3147,13 +3196,14 @@ void CModel::Perform_Calc_DecalMap()
 	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
 	for(auto& i : NonHideIndex)
 	{
-		m_Meshes[i]->Bind_Resource_CalcDecalMap();
+		m_Meshes[i]->Bind_Resource_CalcDecalMap(m_vecUAV_DecalMap[i]);
 		m_Meshes[i]->Perform_Calc_DecalMap();
 	}
 }
 
 void CModel::Bind_DecalMap(_uint iIndex,CShader* pShader)
 {
+	pShader->Bind_Structured_Buffer("g_DecalMap", m_vecSRV_DecalMap[iIndex]);
 	m_Meshes[iIndex]->Bind_Decal_Map(pShader);
 }
 
@@ -3254,6 +3304,29 @@ void CModel::Free()
 	Safe_Release(m_pIK_Solver);
 
 	m_Importer.FreeScene();
+
+	
+
+
+	for (size_t i = 0; i < m_vecDecal_Map.size(); ++i)
+	{
+		Safe_Delete_Array(m_vecDecal_Map[i]);
+	}
+
+	for (size_t i = 0; i < m_vecSB_DecalMap.size(); ++i)
+	{
+		Safe_Release(m_vecSB_DecalMap[i]);
+	}
+
+	for (size_t i = 0; i < m_vecSRV_DecalMap.size(); ++i)
+	{
+		Safe_Release(m_vecSRV_DecalMap[i]);
+	}
+
+	for (size_t i = 0; i < m_vecUAV_DecalMap.size(); ++i)
+	{
+		Safe_Release(m_vecUAV_DecalMap[i]);
+	}
 }
 
 void CModel::Release_IndexBuffer(_uint iNumMesh)
