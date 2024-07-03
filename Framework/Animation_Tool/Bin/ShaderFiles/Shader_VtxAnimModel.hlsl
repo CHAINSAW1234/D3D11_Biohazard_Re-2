@@ -327,12 +327,10 @@ PS_OUT PS_MAIN(PS_IN In)
 		}
 	}*/
 
-	float2 DecalUV = In.vDecalUV;
+	/*float2 DecalUV = In.vDecalUV;
 
-	// 데칼 UV 좌표가 유효한지 확인
 	if (DecalUV.x >= 0.0f && DecalUV.x <= 1.0f && DecalUV.y >= 0.0f && DecalUV.y <= 1.0f)
 	{
-		// 데칼 텍스처에서 색상을 샘플링
 		float4 decalColor = g_DecalTexture.Sample(LinearSampler, DecalUV);
 
 		if (decalColor.a > 0.01f)
@@ -341,7 +339,33 @@ PS_OUT PS_MAIN(PS_IN In)
 
 			Out.vDiffuse = decalColor;
 		}
+	}*/
 
+	float2 DecalUV = In.vDecalUV;
+
+	if (DecalUV.x >= 0.0f && DecalUV.x <= 1.0f && DecalUV.y >= 0.0f && DecalUV.y <= 1.0f)
+	{
+		float4 decalColor = g_DecalTexture.Sample(LinearSampler, DecalUV);
+
+		if (decalColor.a > 0.01f)
+		{
+			float2 center = float2(0.5f, 0.5f);
+			float distance = length(DecalUV - center);
+
+			if(distance < 0.1f)
+			{
+				decalColor = float4(0.5f, 0.0f, 0.0f,0.f);
+				Out.vDiffuse = decalColor;
+			}
+			else
+			{
+				if (decalColor.a > 0.01f)
+				{
+					decalColor = float4(0.5f, 0.0f, 0.0f, decalColor.a);
+					Out.vDiffuse = decalColor;
+				}
+			}
+		}
 	}
 
 	return Out;

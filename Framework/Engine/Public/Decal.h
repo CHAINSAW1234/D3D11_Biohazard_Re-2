@@ -30,7 +30,7 @@ public:
 	virtual _uint	Staging_DecalInfo_RayCasting(_float* pDist) { return 0; }
 	virtual void	Calc_Decal_Info(CALC_DECAL_INPUT Input) {}
 	virtual void	Staging_Calc_Decal_Info() {}
-	virtual void	Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input) {}
+	virtual void	Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input, ID3D11UnorderedAccessView* pUAV) {}
 	virtual void	Bind_DecalMap(class CShader* pShader) {}
 public:
 	ID3D11UnorderedAccessView* GetDecalInfo_Uav()

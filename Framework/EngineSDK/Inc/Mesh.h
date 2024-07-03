@@ -194,7 +194,7 @@ public:
 	void					SetDecalWorldMatrix(_float4x4 WorldMatrix);
 
 	//CalcDecalMap
-	void					Bind_Resource_CalcDecalMap();
+	void					Bind_Resource_CalcDecalMap(ID3D11UnorderedAccessView* pUAV);
 	void					Perform_Calc_DecalMap();
 	void					Bind_Decal_Map(class CShader* pShader);
 

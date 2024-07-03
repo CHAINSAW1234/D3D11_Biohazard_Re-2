@@ -123,7 +123,6 @@ HRESULT CMesh::Initialize_Prototype(CModel::MODEL_TYPE eType, const MESH_DESC& M
 	for (_uint i = 0; i < m_iNumIndices / 3; ++i)
 	{
 		auto Face = new tFace();
-		//auto Face = tFace();
 
 		for (int j = 0; j < 3; ++j)
 		{
@@ -1002,12 +1001,12 @@ void CMesh::SetDecalWorldMatrix(_float4x4 WorldMatrix)
 	m_pDecal_Blood->SetWorldMatrix(WorldMatrix);
 }
 
-void CMesh::Bind_Resource_CalcDecalMap()
+void CMesh::Bind_Resource_CalcDecalMap(ID3D11UnorderedAccessView* pUAV)
 {
 	m_Calc_Decal_Map_Input.iNumVertex = m_iNumVertices;
 	m_Calc_Decal_Map_Input.pSRV_Texcoords = m_pSRV_Texcoord;
 	m_Calc_Decal_Map_Input.pUav_Skinning = m_pUAV_Skinning;
-	m_pDecal_Blood->Bind_Resource_DecalMap(m_Calc_Decal_Map_Input);
+	m_pDecal_Blood->Bind_Resource_DecalMap(m_Calc_Decal_Map_Input,pUAV);
 }
 
 void CMesh::Perform_Calc_DecalMap()
