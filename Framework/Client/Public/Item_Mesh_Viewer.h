@@ -13,6 +13,8 @@ BEGIN(Client)
 class CItem_Mesh_Viewer final : public CGameObject
 {
 private:
+	enum OPERATION_TYPE{EXAMIN, PICKUPITEM};
+private:
 	CItem_Mesh_Viewer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CItem_Mesh_Viewer(const CItem_Mesh_Viewer& rhs);
 	virtual ~CItem_Mesh_Viewer() = default;
@@ -40,6 +42,7 @@ private:
 private:
 	ITEM_NUMBER			m_eItem_Number = { ITEM_NUMBER_END };
 	UI_OPERRATION		m_eViewer_State = { STATE_END };
+
 
 	_float				m_fDistCam = { 0.f };
 	_float				m_fDistCam_FarLimit = { 10.f };

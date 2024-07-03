@@ -56,6 +56,16 @@ HRESULT CTab_Window::Initialize(void* pArg)
 
 void CTab_Window::Start()
 {
+	if (nullptr == m_pCursor[0] || nullptr == m_pCursor[1])
+	{
+		Find_Cursor();
+
+		if (nullptr == m_pCursor)
+			MSG_BOX(TEXT("Inventory를 위한 Cursor 생성 불가능"));
+	}
+
+	m_pInventory_Manager->FirstTick_Seting();
+
 	list<class CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
 	_bool bReadItemUI = { false };
 	_bool bMapUI = { false };
@@ -80,8 +90,6 @@ void CTab_Window::Start()
 
 void CTab_Window::Tick(_float fTimeDelta)
 {
-	FirstTick_Seting();
-
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
 	{
 		OnOff_EventHandle();
@@ -101,10 +109,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 	}
 		
 	case Client::CTab_Window::INVENTORY: {
-		m_pInventory_Manager->Tick(fTimeDelta);
-		ITEM_NUMBER eSelectedItemNum = m_pInventory_Manager->Get_Selected_ItemNum();
-		m_pItem_Discription->Set_Item_Number(eSelectedItemNum);
-		m_pItem_Discription->Tick(fTimeDelta);
+		INVENTORY_Operation(fTimeDelta);
 		break;
 	}
 		
@@ -113,33 +118,12 @@ void CTab_Window::Tick(_float fTimeDelta)
 	}
 
 	case Client::CTab_Window::EXAMINE: {
-		m_pItem_Mesh_Viewer->Tick(fTimeDelta);
-		if (m_fCurTime / 0.5f < 1.f)
-		{
-			m_fCurTime += fTimeDelta;
-			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 0.f, 1.f, m_fCurTime / 0.5f);
-		}
-
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
-		{
-			m_eWindowType = INVENTORY;
-			m_pHintButton->Set_Dead(false);
-			m_pInvenButton->Set_Dead(false);
-			m_pMapButton->Set_Dead(false);
-			m_pInventory_Manager->Set_OnOff_Inven(false);
-			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END);
-
-			m_fCurTime = 0.f;
-			m_fAlpha = 0.f;
-			m_isAlphaControl = false;
-		}
+		EXAMINE_Operation(fTimeDelta);
 		break;
 	}
 
 	case Client::CTab_Window::PICK_UP_ITEM_WINDOW: {
-		m_pInventory_Manager->Tick(fTimeDelta);
-		m_pItem_Discription->Tick(fTimeDelta);
-		m_pItem_Mesh_Viewer->Late_Tick(fTimeDelta);
+		PICK_UP_ITEM_WINDOW_Operation(fTimeDelta);
 		break;
 	}
 
@@ -213,7 +197,81 @@ HRESULT CTab_Window::Render()
 	return S_OK;
 }
 
+void CTab_Window::MINIMAP_Operation(_float fTimeDelta)
+{
+}
 
+void CTab_Window::INVENTORY_Operation(_float fTimeDelta)
+{
+	m_pInventory_Manager->Tick(fTimeDelta);
+	ITEM_NUMBER eSelectedItemNum = m_pInventory_Manager->Get_Selected_ItemNum();
+	m_pItem_Discription->Set_Item_Number(eSelectedItemNum);
+	m_pItem_Discription->Tick(fTimeDelta);
+}
+
+void CTab_Window::HINT_Operation(_float fTimeDelta)
+{
+}
+
+void CTab_Window::EXAMINE_Operation(_float fTimeDelta)
+{
+	m_pItem_Mesh_Viewer->Tick(fTimeDelta);
+	if (m_fCurTime / 0.5f < 1.f)
+	{
+		m_fCurTime += fTimeDelta;
+		m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 0.f, 1.f, m_fCurTime / 0.5f);
+	}
+
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+	{
+		m_eWindowType = INVENTORY;
+		m_pHintButton->Set_Dead(false);
+		m_pInvenButton->Set_Dead(false);
+		m_pMapButton->Set_Dead(false);
+		m_pInventory_Manager->Set_OnOff_Inven(false);
+		m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END);
+		
+		m_fCurTime = 0.f;
+		m_fAlpha = 0.f;
+		m_isAlphaControl = false;
+	}
+}
+
+void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
+{
+	switch (m_ePickUp_Sequence)
+	{
+	case Client::CTab_Window::MESHVIEW_POPUP: {
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		{
+			m_ePickUp_Sequence = INVENTORY_POPUP;
+
+		}
+		m_pItem_Mesh_Viewer->Tick(fTimeDelta);
+		break;
+	}
+		
+
+	case Client::CTab_Window::INVENTORY_POPUP: {
+		break;
+	}
+		
+
+	case Client::CTab_Window::POSITIONING: {
+		break;
+	}
+		
+
+	case Client::CTab_Window::ALL_HIDE: {
+		break;
+	}
+		
+
+	default:
+		break;
+	}
+
+}
 
 void CTab_Window::ItemIven_EventHandle(_float fTimeDelta)
 {
@@ -240,23 +298,6 @@ void CTab_Window::ItemIven_EventHandle(_float fTimeDelta)
 
 	default:
 		break;
-	}
-}
-
-void CTab_Window::FirstTick_Seting()
-{
-	if (true == m_isFristTick)
-	{
-		m_pInventory_Manager->FirstTick_Seting();
-		m_isFristTick = false;
-
-		if (nullptr == m_pCursor[0] || nullptr == m_pCursor[1])
-		{
-			Find_Cursor();
-
-			if (nullptr == m_pCursor)
-				MSG_BOX(TEXT("Inventory를 위한 Cursor 생성 불가능"));
-		}
 	}
 }
 
@@ -335,7 +376,8 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 		OnOff_EventHandle();
 		m_eWindowType = PICK_UP_ITEM_WINDOW;
 		m_pPickedUp_Item = pPickedUp_Item;
-		m_pItem_Discription->Set_Item_Number(static_cast<ITEM_NUMBER>(iPickedUpItemNum), 10);
+		m_pItem_Discription->Set_Item_Number(ePickedItemNum, 10);
+		m_pItem_Mesh_Viewer->Set_Operation(POP_UP, ePickedItemNum);
 		m_pInventory_Manager->Set_InventoryEvent(PICK_UP_ITEM);
 	}
 
@@ -345,20 +387,13 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 		{
 			m_pRead_Item_UI->Set_ReadItem_Type((CRead_Item_UI::ITEM_READ_TYPE)pProp->Get_PropType());
 			//인벤토리 문서 부분에 먹었다 추가=> 아직 없는 것으로 앎 나중에
+			pPickedUp_Item->Set_Dead(true);
 		}
 		else
 		{
 			//m_pMap_UI->Destory_Item((MAP_FLOOR_TYPE)pProp->Get_Floor(), (LOCATION_MAP_VISIT)pProp->Get_Region(), (ITEM_NUMBER)iPickedUpItemNum);
 		}
 	}
-
-
-
-	
-
-
-
-
 }
 
 void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)

@@ -10,6 +10,7 @@ class CTab_Window final : public CUI
 {
 public:
 	enum WINDOW_TYPE{MINIMAP, INVENTORY, HINT, EXAMINE, PICK_UP_ITEM_WINDOW, WINDOW_TYPE_END };
+	enum PICKUP_SEQUENCE { MESHVIEW_POPUP, INVENTORY_POPUP, POSITIONING, ALL_HIDE, PICKUP_SEQUENCE_END };
 
 protected:
 	CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -23,6 +24,16 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+
+
+private:
+	void MINIMAP_Operation(_float fTimeDelta);
+	void INVENTORY_Operation(_float fTimeDelta);
+	void HINT_Operation(_float fTimeDelta);
+	void EXAMINE_Operation(_float fTimeDelta);
+	void PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta);
+
+
 
 #pragma region ³ª¿Ë
 public:
@@ -41,7 +52,6 @@ public:
 
 private:
 	void	ItemIven_EventHandle(_float fTimeDelta);
-	void	FirstTick_Seting();
 	void	Button_Act(_float fTimeDelta);
 
 public:
@@ -83,8 +93,6 @@ private:
 	WINDOW_TYPE			m_eWindowType = { INVENTORY };
 	_bool				m_isMapRender = { false };
 
-	_bool				m_isFristTick = { true };
-
 	_bool				m_isAlphaControl = { false };
 
 	/*for. Item_Mesh_Viewer*/
@@ -94,6 +102,7 @@ private:
 
 	/*for. Picked Up Item*/
 	CGameObject*		m_pPickedUp_Item = { nullptr };
+	PICKUP_SEQUENCE		m_ePickUp_Sequence = { PICKUP_SEQUENCE_END };
 
 private:
 	HRESULT Add_Components();
