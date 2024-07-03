@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "Player_State_Move_Jog.h"
 #include "Player.h"
+#include "Player_State_Move.h"
 #include "Camera_Free.h"
 
-CPlayer_State_Move_Jog::CPlayer_State_Move_Jog(CPlayer* pPlayer)
+CPlayer_State_Move_Jog::CPlayer_State_Move_Jog(CPlayer* pPlayer, CFSM_HState* pHState)
 {
 	m_pPlayer = pPlayer;
+	m_pHState = pHState;
 }
 
 void CPlayer_State_Move_Jog::OnStateEnter()
@@ -108,7 +110,6 @@ void CPlayer_State_Move_Jog::Set_MoveAnimation(_float fTimeDelta)
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f - fRatio);
 			m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, fRatio);
 		}
-
 	}
 
 #pragma endregion
@@ -231,9 +232,9 @@ void CPlayer_State_Move_Jog::Update_Degree()
 
 }
 
-CPlayer_State_Move_Jog* CPlayer_State_Move_Jog::Create(CPlayer* pPlayer)
+CPlayer_State_Move_Jog* CPlayer_State_Move_Jog::Create(CPlayer* pPlayer, CFSM_HState* pHState)
 {
-	CPlayer_State_Move_Jog* pInstance = new CPlayer_State_Move_Jog(pPlayer);
+	CPlayer_State_Move_Jog* pInstance = new CPlayer_State_Move_Jog(pPlayer, pHState);
 
 	return pInstance;
 }
