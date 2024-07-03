@@ -16,7 +16,7 @@ void CPlayer_State_Hold_Start::OnStateEnter()
 	m_pPlayer->Get_Body_Model()->Set_Loop(0, false);
 	m_pPlayer->Get_Body_Model()->Set_Loop(1, false);
 
-	m_fDegree = m_pPlayer->Get_CamDegree();
+	
 	Set_StartAnimation();
 }
 
@@ -41,8 +41,10 @@ void CPlayer_State_Hold_Start::Start()
 
 void CPlayer_State_Hold_Start::Set_StartAnimation()
 {
-	if (abs(m_fDegree) <= 90) {
-		if (m_fDegree < 0) {
+	_float fDegree = m_pPlayer->Get_CamDegree();
+
+	if (abs(fDegree) <= 90) {
+		if (fDegree < 0) {
 			m_pPlayer->Change_Body_Animation_Hold(0, CPlayer::HOLD_START_L0);
 			m_pPlayer->Change_Body_Animation_Hold(1, CPlayer::HOLD_START_L90);
 		}
@@ -50,14 +52,14 @@ void CPlayer_State_Hold_Start::Set_StartAnimation()
 			m_pPlayer->Change_Body_Animation_Hold(0, CPlayer::HOLD_START_R0);
 			m_pPlayer->Change_Body_Animation_Hold(1, CPlayer::HOLD_START_R90);
 		}
-		_float fRatio = abs(m_fDegree) / 90;
+		_float fRatio = abs(fDegree) / 90;
 
 		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f - fRatio);
 		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, fRatio);
 
 	}
 	else {
-		if (m_fDegree < 0) {
+		if (fDegree < 0) {
 			m_pPlayer->Change_Body_Animation_Hold(0, CPlayer::HOLD_START_L90);
 			m_pPlayer->Change_Body_Animation_Hold(1, CPlayer::HOLD_START_L180);
 		}
@@ -65,7 +67,7 @@ void CPlayer_State_Hold_Start::Set_StartAnimation()
 			m_pPlayer->Change_Body_Animation_Hold(0, CPlayer::HOLD_START_R90);
 			m_pPlayer->Change_Body_Animation_Hold(1, CPlayer::HOLD_START_R180);
 		}
-		_float fRatio = (abs(m_fDegree) - 90) / 90;
+		_float fRatio = (abs(fDegree) - 90) / 90;
 
 		m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f - fRatio);
 		m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, fRatio);

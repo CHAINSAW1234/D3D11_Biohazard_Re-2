@@ -1,10 +1,12 @@
 #include "stdafx.h"
 #include "Player_State_Move_Walk.h"
 #include "Player.h"
+#include "Player_State_Move.h"
 
-CPlayer_State_Move_Walk::CPlayer_State_Move_Walk(CPlayer* pPlayer)
+CPlayer_State_Move_Walk::CPlayer_State_Move_Walk(CPlayer* pPlayer, CFSM_HState* pHState)
 {
 	m_pPlayer = pPlayer;
+	m_pHState = pHState;
 }
 
 void CPlayer_State_Move_Walk::OnStateEnter()
@@ -161,9 +163,9 @@ void CPlayer_State_Move_Walk::Look_Cam(_float fTimeDelta)
 	}
 }
 
-CPlayer_State_Move_Walk* CPlayer_State_Move_Walk::Create(CPlayer* pPlayer)
+CPlayer_State_Move_Walk* CPlayer_State_Move_Walk::Create(CPlayer* pPlayer, CFSM_HState* pHState)
 {
-	CPlayer_State_Move_Walk* pInstance = new CPlayer_State_Move_Walk(pPlayer);
+	CPlayer_State_Move_Walk* pInstance = new CPlayer_State_Move_Walk(pPlayer, pHState);
 
 	return pInstance;
 }
