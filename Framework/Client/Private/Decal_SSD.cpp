@@ -28,7 +28,7 @@ HRESULT CDecal_SSD::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	m_vExtent = _float3(0.75f, 0.75f, 0.75f);
+	m_vExtent = _float3(0.25f, 0.25f, 0.25f);
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(2.f, 0.f, 3.f, 1.f));
 
 	return S_OK;
@@ -57,6 +57,28 @@ HRESULT CDecal_SSD::Render()
 void CDecal_SSD::SetWorldMatrix(_float4x4 WorldMatrix)
 {
 	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
+}
+
+void CDecal_SSD::SetWorldMatrix_With_HitNormal(_vector vUp)
+{
+	m_pTransformCom->SetWorldMatrix_With_UpVector(vUp);
+}
+
+void CDecal_SSD::SetPosition(_float4 vPos)
+{
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
+}
+
+void CDecal_SSD::LookAt(_float4 vDir)
+{
+	_float4 vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	
+	vPos.x += vDir.x;
+	vPos.y += vDir.y;
+	vPos.z += vDir.z;
+
+	m_vNormal = vDir;
+	//m_pTransformCom->Look_At(XMLoadFloat4(&vPos));
 }
 
 HRESULT CDecal_SSD::Add_Components()
@@ -90,11 +112,15 @@ HRESULT CDecal_SSD::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(pDeferredShader->Bind_RawValue("g_vExtent", &m_vExtent,sizeof(_float3))))
 		return E_FAIL;
+	if (FAILED(pDeferredShader->Bind_RawValue("g_vDecalNormal", &m_vNormal, sizeof(_float4))))
+		return E_FAIL;
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(pDeferredShader, "g_DecalTexture")))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pDeferredShader, TEXT("Target_Depth"), "g_DepthTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pDeferredShader, TEXT("Target_Normal"), "g_NormalTexture")))
 		return E_FAIL;
 
 	return S_OK;

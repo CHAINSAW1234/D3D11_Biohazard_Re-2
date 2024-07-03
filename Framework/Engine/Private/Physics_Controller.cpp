@@ -1207,7 +1207,7 @@ _bool CPhysics_Controller::SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _floa
 	return false;
 }
 
-_bool CPhysics_Controller::RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
+_bool CPhysics_Controller::RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float4* pBlockNormal, _float fMaxDist)
 {
 	PxVec3 PxvOrigin = Float4_To_PxVec(vOrigin);
 	PxVec3 PxvDir = Float4_To_PxVec(vDir);
@@ -1219,6 +1219,7 @@ _bool CPhysics_Controller::RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4*
 	if (Status)
 	{
 		*pBlockPoint = PxVec_To_Float4_Coord(hit.block.position);
+		*pBlockNormal = PxVec_To_Float4_Dir(hit.block.normal);
 	}
 
 	return Status;

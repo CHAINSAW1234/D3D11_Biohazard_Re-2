@@ -97,6 +97,7 @@ const float PI = 3.14159265359f;
 
 //For SSD
 float3 g_vExtent;
+float4 g_vDecalNormal;
 
 struct VS_IN
 {
@@ -1496,12 +1497,45 @@ PS_OUT PS_DECAL(PS_IN In)
         (-g_vExtent.z <= vLocalPos.z && vLocalPos.z <= g_vExtent.z))
     {
         float2 decalTextureUV = (vLocalPos.xz / (2.0f * float2(g_vExtent.x, g_vExtent.z))) + 0.5f;
-        float4 vDiffuseColor = g_DecalTexture.Sample(LinearSampler, decalTextureUV);
+
+      /*  float4 vDiffuseColor = g_DecalTexture.Sample(LinearSampler, decalTextureUV);
 
         if (vDiffuseColor.a < 0.1f)
             clip(-1);
         else
-            Out.vColor = float4(0.3f,0.f,0.f,1.f);
+            Out.vColor = float4(0.3f,0.f,0.f,1.f);*/
+
+        float3 normal = normalize(g_NormalTexture.Sample(PointSampler, In.vTexcoord).xyz); // 픽셀의 노멀 벡터
+
+        // 픽셀의 노멀 벡터를 사용하여 텍스처 좌표 계산
+        if (abs(normal.z) > abs(normal.x) && abs(normal.z) > abs(normal.y))
+        {
+            // 벽면 (YZ 평면)
+            decalTextureUV = (vLocalPos.yz / (2.0f * float2(g_vExtent.y, g_vExtent.z))) + 0.5f;
+        }
+        else if (abs(normal.x) > abs(normal.y))
+        {
+            // 벽면 (XY 평면)
+            decalTextureUV = (vLocalPos.xy / (2.0f * float2(g_vExtent.x, g_vExtent.y))) + 0.5f;
+        }
+        else
+        {
+            // 바닥 (XZ 평면)
+            decalTextureUV = (vLocalPos.xz / (2.0f * float2(g_vExtent.x, g_vExtent.z))) + 0.5f;
+        }
+
+        // 텍스처 좌표가 유효한 범위 내에 있는지 확인
+        if (decalTextureUV.x < 0.0f || decalTextureUV.x > 1.0f || decalTextureUV.y < 0.0f || decalTextureUV.y > 1.0f)
+        {
+            clip(-1);
+        }
+
+        float4 vDiffuseColor = g_DecalTexture.Sample(PointSampler, decalTextureUV);
+
+        if (vDiffuseColor.a < 0.1f)
+            clip(-1);
+        else
+            Out.vColor = float4(0.2f, 0.f, 0.f, 1.f);
     }
     else
     {
@@ -1826,7 +1860,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;

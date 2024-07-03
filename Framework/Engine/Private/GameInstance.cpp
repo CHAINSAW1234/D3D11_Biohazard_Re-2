@@ -1180,10 +1180,10 @@ _bool CGameInstance::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBloc
 
 	return false;
 }
-_bool CGameInstance::RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
+_bool CGameInstance::RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float4* pBlockNormal, _float fMaxDist)
 {
 	if (m_pPhysics_Controller)
-		return m_pPhysics_Controller->RayCast_Decal(vOrigin, vDir, pBlockPoint, fMaxDist);
+		return m_pPhysics_Controller->RayCast_Decal(vOrigin, vDir, pBlockPoint,pBlockNormal, fMaxDist);
 }
 _bool CGameInstance::SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
 {
