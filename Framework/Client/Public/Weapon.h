@@ -22,6 +22,7 @@ public:
 	typedef struct tagWeaponDesc : public CPartObject::PARTOBJECT_DESC
 	{
 		CPlayer::EQUIP	eEquip;
+		CPlayer::SETPROPS_LOCATION	eSetprops_Location;
 		_float4x4		fTransformationMatrices[NONE] = { XMMatrixIdentity() };
 		_float4x4*		pSocket[NONE] = { nullptr };
 	}WEAPON_DESC;
@@ -42,7 +43,9 @@ public:
 	virtual HRESULT					Render_LightDepth_Point() override;
 	virtual HRESULT					Render_LightDepth_Spot()override;
 
+	CPlayer::EQUIP					Get_Equip() { return m_eEquip; }
 	RENDERLOCATION					Get_RenderLocation() { return m_eRenderLocation; }
+	CPlayer::SETPROPS_LOCATION		Get_SetPropsLocation() { return m_eSetPropsLocation; }
 	_float4							Get_MuzzlePosition();
 	_float4							Get_BonePosition(const char* pBoneName);
 	_int							Get_MaxBullet() { return m_iMaxBullet; }
@@ -51,10 +54,12 @@ public:
 
 private:
 	CModel*							m_pModelCom = { nullptr };
-	CShader*						m_pShaderCom = { nullptr };	
+	CShader*						m_pShaderCom = { nullptr };
 	_float4x4*						m_pSocketMatrix[NONE];
 	CPlayer::EQUIP					m_eEquip = { CPlayer::NONE };
 	RENDERLOCATION					m_eRenderLocation = { NONE };
+	CPlayer::SETPROPS_LOCATION		m_eSetPropsLocation = { CPlayer::SETPROPS_NONE };
+
 	_float4x4						m_fTransformationMatrices[NONE];
 
 	_uint							m_iMaxBullet = { 12 };

@@ -27,6 +27,7 @@ HRESULT CWeapon::Initialize(void * pArg)
 
 	WEAPON_DESC* pDesc = (WEAPON_DESC*)pArg;
 	m_eEquip = pDesc->eEquip;
+	m_eSetPropsLocation = pDesc->eSetprops_Location;
 
 	for (size_t i = 0; i < NONE; i++)
 	{
@@ -306,6 +307,12 @@ HRESULT CWeapon::Add_Components()
 		break;
 	case CPlayer::STG:
 		strModelTag = TEXT("Prototype_Component_Model_ShotGun");
+		break;
+	case CPlayer::GRENADE:
+		strModelTag = TEXT("Prototype_Component_Model_Grenade");
+		break;
+	case CPlayer::FLASHBANG:
+		strModelTag = TEXT("Prototype_Component_Model_FlashBang");
 		break;
 	}
 
