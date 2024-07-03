@@ -238,6 +238,9 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
 		return E_FAIL;
 
+	if (FAILED(Ready_Decal(TEXT("Layer_Decal"))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -261,7 +264,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
 	//ÈñÈ÷ ³Ñ ¹Ù»Û °ü°è·Î ÇÔ¼ö ¸øÆÍ¾î¿ä - ¿¹Àº
 
-	string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
+	/*string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
 	_tchar	szFilePath[MAX_PATH] = { L"" };
 	MultiByteToWideChar(CP_ACP, 0, strFilePath.c_str(), (_uint)strlen(strFilePath.c_str()), szFilePath, MAX_PATH);
 	_uint iMonsterNum = { 0 };
@@ -298,7 +301,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 			return E_FAIL;
 		}
 	}
-	CloseHandle(hFile);
+	CloseHandle(hFile);*/
 
 	CMonster::MONSTER_DESC ObjectDesc = {};
 
@@ -630,6 +633,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 	return S_OK;
 
+}
+
+HRESULT CLevel_GamePlay::Ready_Decal(const wstring& strLayerTag)
+{
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Decal_SSD"))))
+		return E_FAIL;
+	
+	return S_OK;
 }
 
 void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListName, CGameObject* pGameParentsObj, wstring fileName, _int iWhich_Child, CGameObject* pSupervisor)

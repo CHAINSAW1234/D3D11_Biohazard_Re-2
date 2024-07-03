@@ -487,6 +487,9 @@
     <Filter Include="02.GameObjects\UI\16. Damage">
       <UniqueIdentifier>{c955f047-a231-406d-8518-888dbd090b6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Decal">
+      <UniqueIdentifier>{3d681db4-d1ea-4e71-a726-f96cb1dc0d77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -922,6 +925,9 @@
     <ClInclude Include="..\Public\Damage_UI.h">
       <Filter>02.GameObjects\UI\16. Damage</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Decal_SSD.h">
+      <Filter>02.GameObjects\Effect\Decal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1328,6 +1334,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Damage_UI.cpp">
       <Filter>02.GameObjects\UI\16. Damage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Decal_SSD.cpp">
+      <Filter>02.GameObjects\Effect\Decal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

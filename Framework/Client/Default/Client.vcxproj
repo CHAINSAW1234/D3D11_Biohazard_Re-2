@@ -212,6 +212,7 @@
     <ClInclude Include="..\Public\Camera_Event_Struct.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\Public\Damage_UI.h" />
+    <ClInclude Include="..\Public\Decal_SSD.h" />
     <ClInclude Include="..\Public\Effect_Header_Zombie.h" />
     <ClInclude Include="..\Public\Creep_Zombie.h" />
     <ClInclude Include="..\Public\Is_Can_Link_Pre_State_Zombie.h" />
@@ -391,6 +392,7 @@
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\Private\Creep_Zombie.cpp" />
     <ClCompile Include="..\Private\Damage_UI.cpp" />
+    <ClCompile Include="..\Private\Decal_SSD.cpp" />
     <ClCompile Include="..\Private\Is_Can_Link_Pre_State_Zombie.cpp" />
     <ClCompile Include="..\Private\Clothes_Zombie.cpp" />
     <ClCompile Include="..\Private\ContextMenu.cpp" />
