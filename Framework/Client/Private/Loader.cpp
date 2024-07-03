@@ -28,7 +28,7 @@
 #include "NavMesh_Debug.h"
 
 /* Decal*/
-#include "Decal_Blood.h"
+#include "Decal_SSD.h"
 
 /* MapObject*/
 #include "Props.h"
@@ -426,15 +426,17 @@ HRESULT CLoader::Load_Prototype()
 
 #pragma endregion
 
-	///* For.Prototype_GameObject_Effect */
-	//if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect"),
-	//	CEffect::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
 	/* For.Prototype_GameObject_Sky */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sky"),
 		CSky::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+#pragma region SSD_DECAL
+	/* For.Prototype_GameObject_Monster */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Decal_SSD"),
+		CDecal_SSD::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+#pragma endregion
 
 #pragma region UI
 	/* UI Object */

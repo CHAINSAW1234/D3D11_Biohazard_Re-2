@@ -442,6 +442,14 @@ void CGameInstance::Set_RenderFieldShadow(_bool isRenderFieldShadow)
 
 	m_pRenderer->Set_RenderFieldShadow(isRenderFieldShadow);
 }
+void CGameInstance::Bind_DepthTarget(CShader* pShader)
+{
+	if (nullptr == m_pRenderer)
+		return;
+
+	m_pRenderer->Bind_DepthTarget(pShader);
+}
+
 #ifdef _DEBUG
 void CGameInstance::On_Off_DebugRender()
 {

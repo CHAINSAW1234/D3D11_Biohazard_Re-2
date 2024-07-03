@@ -74,6 +74,7 @@ public: /* For.Renderer */
 
 	void									Set_ShaderState(SHADER_STATE eState, _bool isState);
 	void									Set_RenderFieldShadow(_bool isRenderFieldShadow);
+	void									Bind_DepthTarget(class CShader* pShader);
 #ifdef _DEBUG
 	void									On_Off_DebugRender();
 #endif

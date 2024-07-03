@@ -32,6 +32,8 @@ private:
 
 	HRESULT Ready_Layer_Effect(const wstring& strLayerTag);
 	HRESULT Ready_Layer_UI(const wstring& strLayerTag);
+
+	HRESULT Ready_Decal(const wstring& strLayerTag);
 	
 private:
 	void UI_Distinction(wstring& selectedFilePath);

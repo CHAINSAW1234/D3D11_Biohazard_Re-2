@@ -1,4 +1,6 @@
 
+#define SCREEN_SIZE_X 1600
+#define SCREEN_SIZE_Y 900
 
 sampler LinearSampler = sampler_state
 {
