@@ -17,7 +17,6 @@ public:
 	virtual void				Start() override;
 
 private:
-	void						Set_StartAnimation();
 	void						Move(_float fTimeDelta);
 	void						Turn(_float fTimeDelta);
 

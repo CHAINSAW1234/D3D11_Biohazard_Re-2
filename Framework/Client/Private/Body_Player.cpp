@@ -43,7 +43,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 
 	m_pModelCom->Hide_Mesh("LOD_1_Group_200_Sub_1__pl0001_Gun_Mat_mesh0007", true);
 
-	m_pModelCom->Add_IK("l_arm_humerus", "l_weapon", TEXT("IK_FLASH_LIGHT"), 3, 1.f);
+	m_pModelCom->Add_IK("l_arm_radius", "l_weapon", TEXT("IK_SHOTGUN"), 3, 1.f);
 
 	m_pModelCom->Set_OptimizationCulling(false);
 
@@ -53,8 +53,11 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	_uint			iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
 
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Left_Arm"), "l_arm_clavicle");
-	//m_pModelCom->Add_Bone_Layer_Bone(TEXT("Left_Arm"), "spine_2");
-	//m_pModelCom->Add_Bone_Layer_Bone(TEXT("Left_Arm"), "spine_1");
+
+	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("Right_Arm"), "r_arm_clavicle");
+	//m_pModelCom->Add_Bone_Layer_Bone(TEXT("Right_Arm"), "spine_2");
+	//m_pModelCom->Add_Bone_Layer_Bone(TEXT("Right_Arm"), "spine_1");
+	//m_pModelCom->Add_Bone_Layer_Bone(TEXT("Right_Arm"), "spine_0");
 
 	m_pModelCom->Add_Bone_Layer_ChildIndices(TEXT("LowerBody"), "hips");
 	m_pModelCom->Add_Bone_Layer_Bone(TEXT("LowerBody"), "root");
@@ -77,19 +80,19 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	L_ShoulderAddBoneTags.emplace_back("spine_2");
 	L_ShoulderAddBoneTags.emplace_back("l_arm_clavicle");
 	L_ShoulderAddBoneTags.emplace_back("l_arm_humerus");
-	L_ShoulderAddBoneTags.emplace_back("l_arm_radius");
+	//L_ShoulderAddBoneTags.emplace_back("l_arm_radius");
 	L_ShoulderAddBoneTags.emplace_back("l_arm_wrist");
 	L_ShoulderAddBoneTags.emplace_back("l_scapula_0");
 	L_ShoulderAddBoneTags.emplace_back("r_arm_clavicle");
 	L_ShoulderAddBoneTags.emplace_back("r_arm_humerus");
 	L_ShoulderAddBoneTags.emplace_back("r_arm_radius");
-	L_ShoulderAddBoneTags.emplace_back("r_arm_wrist");
+	//L_ShoulderAddBoneTags.emplace_back("r_arm_wrist");
 	L_ShoulderAddBoneTags.emplace_back("r_scapula_0");
 	L_ShoulderAddBoneTags.emplace_back("neck_0");
 	L_ShoulderAddBoneTags.emplace_back("neck_1");
 	L_ShoulderAddBoneTags.emplace_back("head");
 
-	/*
+	
 	L_ShoulderAddBoneTags.emplace_back("l_kneeProtector_start");
 	L_ShoulderAddBoneTags.emplace_back("l_leg_tibia_twist_2_H");
 	L_ShoulderAddBoneTags.emplace_back("l_leg_tibia_twist_1_H");
@@ -111,7 +114,7 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	L_ShoulderAddBoneTags.emplace_back("r_arm_humerus_twist_3_H");
 	L_ShoulderAddBoneTags.emplace_back("r_arm_humerus_twist_2_H");
 	L_ShoulderAddBoneTags.emplace_back("r_arm_humerus_twist_1_H");
-	*/
+	
 
 
 

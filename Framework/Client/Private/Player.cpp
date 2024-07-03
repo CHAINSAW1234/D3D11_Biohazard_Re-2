@@ -22,6 +22,8 @@
 #include "Effect_Header_Player.h"
 
 #include "Tab_Window.h"
+#include "Bone.h"
+
 
 #define MODEL_SCALE 0.01f
 
@@ -423,28 +425,31 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 	Late_Tick_PartObjects(fTimeDelta);
 
-	/*if (m_eEquip == STG)
+	if (m_eEquip == STG)
 	{
 		CModel* pBodyModel = { Get_Body_Model() };
 		CModel* pWeaponModel = { Get_Weapon_Model() };
 
 		_matrix				LWeaponMatrix = { XMLoadFloat4x4(pBodyModel->Get_CombinedMatrix("l_weapon")) };
-		_matrix				ShotGunrHandleMatrix = {  XMLoadFloat4x4(pWeaponModel->Get_CombinedMatrix("_101"))};
 
 		_vector				vPositionLWeapon = { LWeaponMatrix.r[CTransform::STATE_POSITION] };
-		_vector				vPositionShotGunHandle = { ShotGunrHandleMatrix.r[CTransform::STATE_POSITION] };
-
+		
+		_vector				vPositionShotGunHandle = { XMLoadFloat4(&Get_Weapon()->Get_BonePosition("_04")) };
+		_vector				vPositionShotGunHandle2 = { XMLoadFloat4(&Get_Weapon()->Get_BonePosition("chain00_00")) };
+		
+		
 		_vector				vNeedDirection = { vPositionShotGunHandle - vPositionLWeapon };
+
 
 		_vector				vLWeaponPositionWorld = { XMVector3TransformCoord(vPositionLWeapon, m_pTransformCom->Get_WorldMatrix()) };
 		_vector				vNeedDirectionWorld = { XMVector3TransformNormal(vNeedDirection, m_pTransformCom->Get_WorldMatrix()) };
 
-		_vector				vTargetPositionWorld = { vPositionLWeapon + vNeedDirectionWorld + XMVectorSet(0.f, -0.2f,0.f,0.f) };
+		_vector				vTargetPositionWorld = { vPositionShotGunHandle2  };
 
-		pBodyModel->Set_TargetPosition_IK(TEXT("IK_FLASH_LIGHT"), vTargetPositionWorld);
+		pBodyModel->Set_TargetPosition_IK(TEXT("IK_SHOTGUN"), vTargetPositionWorld);
 
-		pBodyModel->Play_IK(m_pTransformCom, fTimeDelta);
-	}*/
+		//pBodyModel->Play_IK(m_pTransformCom, fTimeDelta);
+	}
 
 	/*if (m_pController)
 		m_pController->Update_Collider();*/
@@ -597,7 +602,6 @@ void CPlayer::Requst_Change_Equip(EQUIP eEquip)
 {
 	m_isRequestChangeEquip = true;
 	m_eTargetEquip = eEquip;
-	
 }
 
 void CPlayer::Set_Equip(EQUIP* eEquip)
@@ -632,7 +636,7 @@ void CPlayer::Set_Equip(EQUIP* eEquip)
 void CPlayer::Set_Equip_Gun(EQUIP* eEquip)
 {
 	m_eEquip_Gun = *eEquip;
-
+	Get_Body_Model()->Set_BoneLayer_PlayingInfo(3, TEXT("UpperBody"));
 	if (m_eEquip_State == GUN) {
 		Set_Equip(eEquip);
 	}
@@ -642,7 +646,7 @@ void CPlayer::Set_Equip_Gun(EQUIP* eEquip)
 void CPlayer::Set_Equip_Sub(EQUIP* eEquip)
 {
 	m_eEquip_Sub = *eEquip;
-
+	Get_Body_Model()->Set_BoneLayer_PlayingInfo(3, TEXT("Right_Arm"));
 	if (m_eEquip_State == SUB) {
 		Set_Equip(eEquip);
 	}
@@ -753,7 +757,7 @@ void CPlayer::Reload()
 	Get_Body_Model()->Set_Loop(3, false);
 	Change_Body_Animation_Hold(3, HOLD_RELOAD);
 	Get_Body_Model()->Set_TrackPosition(3, 0.f);
-	Get_Body_Model()->Set_BlendWeight(3, 10.f, 6.f);
+	Get_Body_Model()->Set_BlendWeight(3, 10.f, 20.f);
 	//Get_Body_Model()->Set_BlendWeight(4, 0.f, 0.2f);
 	if (nullptr != m_pWeapon) {
 		Get_Weapon_Model()->Change_Animation(0, TEXT("Default"), 2);

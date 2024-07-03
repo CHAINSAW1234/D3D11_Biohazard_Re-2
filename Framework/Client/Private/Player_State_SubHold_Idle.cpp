@@ -29,18 +29,21 @@ void CPlayer_State_SubHold_Idle::OnStateUpdate(_float fTimeDelta)
 	m_fDegree = m_pPlayer->Get_CamDegree();
 
 	if (m_isShot) {
-		if(m_pPlayer->Get_Body_Model()->isFinished(3) && 
-			((m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(3) == CPlayer::HOLD_SHOT) ||
-			m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(3) == CPlayer::HOLD_SHOT_NO_AMMO)) {
-			m_pPlayer->Get_Body_Model()->Set_Loop(3, true);
-			m_pPlayer->Get_Body_Model()->Set_BlendWeight(3, 0.f, 5.f);
+		if(m_pPlayer->Get_Body_Model()->isFinished(0) && 
+			((m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::HOLD_SHOT) ||
+			m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::HOLD_SHOT_NO_AMMO)) {
+			m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
+			//m_pPlayer->Get_Body_Model()->Set_BlendWeight(3, 0.f, 5.f);
 			m_pPlayer->Change_State(CPlayer::MOVE);
 			return;
 		}
 	}
-	Set_MoveAnimation(fTimeDelta);
-	Look_Cam(fTimeDelta);
-	Shot();
+	else {
+		Set_MoveAnimation(fTimeDelta);
+		Look_Cam(fTimeDelta);
+		Shot();
+	}
+
 
 }
 
@@ -145,7 +148,7 @@ void CPlayer_State_SubHold_Idle::Shot()
 		}
 
 		// 현재 상체의 꺾임 정도에 따라 다른 애니메이션 돌리기
-		if (fAngle >= 0) {
+		if (fAngle < 0) {
 			m_pPlayer->Change_Body_Animation_Hold(0, CPlayer::HOLD_SHOT);
 		}
 		else {
