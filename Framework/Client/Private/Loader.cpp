@@ -86,6 +86,7 @@
 #include "Loading_UI.h"
 #include "Item_Discription.h"
 #include "LayOut_UI.h"
+#include "Damage_UI.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -551,6 +552,12 @@ HRESULT CLoader::Load_Prototype()
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LayOut_UI"),
 		CLayOut_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_Damage_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Damage_UI"),
+		CDamage_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 
 	
 #pragma endregion

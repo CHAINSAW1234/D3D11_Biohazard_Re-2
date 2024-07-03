@@ -980,6 +980,7 @@ void CBody_Zombie::SetRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType)
 	m_pGameInstance->Start_Ragdoll(m_pRagdoll, iId);
 	m_pRagdoll->Add_Force(vForce,eType);
 	m_bRagdoll = true;
+	m_pModelCom->Set_OptimizationCulling(false);
 }
 
 void CBody_Zombie::SetCulling(_bool boolean)

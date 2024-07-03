@@ -484,6 +484,9 @@
     <Filter Include="AIController\Zombie\Task\DummyFinsh">
       <UniqueIdentifier>{2dfbaeaa-f270-4b3d-b3b3-34ebd33af1ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\16. Damage">
+      <UniqueIdentifier>{c955f047-a231-406d-8518-888dbd090b6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -916,6 +919,9 @@
       <Filter>AIController\Zombie\Task\Idle\Creep</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Interact_UI.h" />
+    <ClInclude Include="..\Public\Damage_UI.h">
+      <Filter>02.GameObjects\UI\16. Damage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1319,6 +1325,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Creep_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Idle\Creep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Damage_UI.cpp">
+      <Filter>02.GameObjects\UI\16. Damage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

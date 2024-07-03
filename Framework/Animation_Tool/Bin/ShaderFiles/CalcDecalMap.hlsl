@@ -27,6 +27,16 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID)
         {
             if(g_DecalMap[vertexIndex].x - 0.f < 0.001f && g_DecalMap[vertexIndex].y - 0.f < 0.001f)
                 g_DecalMap[vertexIndex] = DecalUV;
+            else
+            {
+                float2 center = float2(0.5f, 0.5f);
+                float distance = length(DecalUV - center);
+
+                if (distance < 0.1f)
+                {
+                    g_DecalMap[vertexIndex] = DecalUV;
+                }
+            }
         }
     }
 }

@@ -23,6 +23,7 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+
 #pragma region ³ª¿Ë
 public:
 	_bool				Get_MinMapRender()			{ return m_isMapRender; }
@@ -35,6 +36,7 @@ public:
 #pragma endregion 
 
 #pragma endregion
+
 private:
 	void	ItemIven_EventHandle(_float fTimeDelta);
 	void	FirstTick_Seting();
