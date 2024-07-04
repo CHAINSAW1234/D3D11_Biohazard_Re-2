@@ -100,9 +100,29 @@ void CCabinet::Late_Tick(_float fTimeDelta)
 	{
 		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
 			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
+		else
+			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+		
 		if(m_bReonDesk)
 			if (Check_Col_Player(INTER_COL_DOUBLE, COL_STEP0))
+			{
 				Check_Col_Player(INTER_COL_DOUBLE, COL_STEP1);
+			}
+			else
+				m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
+
+	}
+	else
+	{
+		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+		if (m_bReonDesk)
+		{
+			m_bCol[INTER_COL_DOUBLE][COL_STEP0] = false;
+			m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
+			m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
+		}
 	}
 
 	__super::Late_Tick(fTimeDelta);

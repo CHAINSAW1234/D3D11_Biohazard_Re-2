@@ -40,8 +40,7 @@ public:
 	virtual _float4				Get_Object_Pos() override;
 
 private:
-	_bool								m_bActivity = { false };
-	_float							m_fTime = { 0.f };
+	_int								m_iActive = { 2 };
 	//_ubyte			m_eState = { STATE_STATIC };
 
 

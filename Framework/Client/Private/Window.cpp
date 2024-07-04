@@ -90,8 +90,19 @@ void CWindow::Late_Tick(_float fTimeDelta)
 		m_bRender = false;
 	}
 	if (Activate_Col(Get_Collider_World_Pos(_float4(-10.f, 1.f, 0.f, 1.f))))
+	{
 		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
 			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
+		else
+			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+
+	}
+	else
+	{
+		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+
+	}
 	
 	__super::Late_Tick(fTimeDelta);
 

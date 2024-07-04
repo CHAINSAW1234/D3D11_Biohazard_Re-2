@@ -365,7 +365,15 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 			m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
 		}
 	}
-
+	else
+	{
+		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+		m_bCol[INTER_COL_DOUBLE][COL_STEP0] = false;
+		m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
+		m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
+	}
 
 	if (!m_bBlock && m_bOnce && (m_bCol[INTER_COL_NORMAL][COL_STEP2] || m_bCol[INTER_COL_DOUBLE][COL_STEP2]))
 	{
@@ -492,7 +500,12 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 
 	}
-
+	else
+	{
+		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+	}
 }
 
 void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
