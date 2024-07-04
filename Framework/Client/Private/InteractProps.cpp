@@ -7,6 +7,7 @@
 #include"PartObject.h"
 
 #include"Part_InteractProps.h"
+#include"Camera_Free.h"
 
 CInteractProps::CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -82,6 +83,20 @@ void CInteractProps::Late_Tick(_float fTimeDelta)
 	Late_Tick_PartObjects(fTimeDelta);
 }
 
+void CInteractProps::Start()
+{
+	Check_Player();
+
+	m_pCamera = static_cast<CCamera_Free*>(m_pGameInstance->Find_Layer(g_Level, g_strCameraLayer)->front());
+	m_pCameraTransform = static_cast<CTransform*>(m_pCamera->Get_Component(g_strTransformTag));
+	for (auto& iter : m_PartObjects)
+	{
+		if (iter == nullptr)
+			continue;
+		static_cast<CPart_InteractProps*>(iter)->Set_CameraSetting(m_pCamera, m_pCameraTransform);
+	}
+}
+
 HRESULT CInteractProps::Render()
 {
 	return S_OK;
@@ -120,8 +135,6 @@ void CInteractProps::Late_Tick_PartObjects(_float fTimeDelta)
 
 void CInteractProps::Check_Player()
 {
-	if (m_pPlayer != nullptr)
-		return;
 	m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
 	m_pPlayerInteract = m_pPlayer->Get_Player_Interact_Ptr();
 	m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
@@ -167,6 +180,7 @@ _bool CInteractProps::Check_Col_Sphere_Player()
 	{
 		if (Check_Player_Distance() <= 1.16f && !m_bOnce)
 		{
+			m_bDoorOnce = true;
 			m_bOnce = true;
 		}
 		m_bFirstInteract = true;
@@ -187,6 +201,7 @@ _bool CInteractProps::Check_Col_OBB_Player()
 	{
 		if (Check_Player_Distance() <= 1.16f && !m_bOnce)
 		{
+			m_bDoorOnce = true;
 			m_bOnce = true;
 		}
 		m_bFirstInteract = true;
@@ -207,6 +222,7 @@ _bool CInteractProps::Check_Col_AABB_Player()
 	{
 		if (Check_Player_Distance() <= 1.16f && !m_bOnce)
 		{
+			m_bDoorOnce = true;
 			m_bOnce = true;
 		}
 		m_bFirstInteract = true;

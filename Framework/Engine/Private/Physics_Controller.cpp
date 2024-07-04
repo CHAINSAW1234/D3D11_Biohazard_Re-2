@@ -10,6 +10,7 @@
 #include "PxCollider.h"
 #include "Model.h"
 #include "SoftBody.h"
+#include "Rigid_Static.h"
 
 CPhysics_Controller::CPhysics_Controller() : m_pGameInstance{ CGameInstance::Get_Instance() }
 {
@@ -165,7 +166,7 @@ void CPhysics_Controller::Simulate(_float fTimeDelta)
 	//Apply Gravity
 	for (int i = 0; i < m_vecCharacter_Controller.size(); ++i)
 	{
-		if (m_vecCharacter_Controller[i])
+		if (m_vecCharacter_Controller[i] && m_vecCharacter_Controller[i]->GetbGravity())
 			m_vecCharacter_Controller[i]->Move(gravity, fTimeDelta);
 	}
 
@@ -234,7 +235,7 @@ void CPhysics_Controller::Create_Rigid_Dynamic(_float4 Pos)
 
 }
 
-void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
+void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform, _int* pIndex)
 {
 	// Init Cooking Params 
 	PxCookingParams cookingParams(m_Physics->getTolerancesScale());
@@ -284,6 +285,12 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	PxTriangleMeshGeometry meshGeometry(Mesh);
 	PxShape* Shape = m_Physics->createShape(meshGeometry, *m_Physics->createMaterial(0.5f, 0.5f, 0.5f));
 
+	PxFilterData StaticMeshFilter;
+	StaticMeshFilter.word0 = COLLISION_CATEGORY::STATIC_MESH;
+	StaticMeshFilter.word3 = *pIndex;
+
+	Shape->setSimulationFilterData(StaticMeshFilter);
+
 	Actor->attachShape(*Shape);
 	Shape->release();
 
@@ -293,9 +300,6 @@ void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint V
 	++m_iMapMeshCount;
 
 	Mesh->release();
-
-	//Start Simulate
-	//	m_pGameInstance->SetSimulate(true);
 }
 
 void CPhysics_Controller::Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
@@ -809,8 +813,28 @@ void CPhysics_Controller::SetRotationMatrix_Ragdoll(_float4x4 WorldMatrix)
 		m_pRagdoll_Physics->SetRotationMatrix(WorldMatrix);*/
 }
 
-void CPhysics_Controller::Create_Rigid_Static(_float4 Pos)
+CRigid_Static* CPhysics_Controller::Create_Rigid_Static(_float4 Pos, _int* Index, class CGameObject* pStaticMesh)
 {
+	auto pRigid_Static = new CRigid_Static();
+	pRigid_Static->SetIndex(m_iRigid_Static_Count);
+	pRigid_Static->SetObject(pStaticMesh);
+	m_vecRigid_Static.push_back(pRigid_Static);
+
+	if (m_vecRigid_Static.size() >= 2)
+	{
+		std::sort(m_vecRigid_Static.begin(), m_vecRigid_Static.end(), [](CRigid_Static* a, CRigid_Static* b)
+			{
+				return a->GetIndex() < b->GetIndex();
+			});
+	}
+
+	*Index = m_iRigid_Static_Count;
+
+	Safe_AddRef(m_vecRigid_Static[m_iRigid_Static_Count]);
+	auto ReturnPtr = m_vecRigid_Static[m_iRigid_Static_Count];
+	++m_iRigid_Static_Count;
+
+	return ReturnPtr;
 }
 
 CPxCollider* CPhysics_Controller::Create_Px_Collider(CModel* pModel, CTransform* pTransform, _int* iId)
@@ -1207,6 +1231,36 @@ _bool CPhysics_Controller::SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _floa
 	return false;
 }
 
+_bool CPhysics_Controller::RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float4* pBlockNormal, _float fMaxDist)
+{
+	PxVec3 PxvOrigin = Float4_To_PxVec(vOrigin);
+	PxVec3 PxvDir = Float4_To_PxVec(vDir);
+
+	PxRaycastBuffer hit;
+
+	bool Status = m_Scene->raycast(PxvOrigin, PxvDir.getNormalized(), fMaxDist, hit, PxHitFlag::eDEFAULT, PxQueryFilterData(PxQueryFlag::eSTATIC));
+
+	if (Status)
+	{
+		PxShape* shape = hit.block.shape;
+		PxRigidActor* actor = hit.block.actor;
+
+		PxFilterData filterData = shape->getSimulationFilterData();
+
+		if (filterData.word0 & COLLISION_CATEGORY::STATIC_MESH)
+		{
+			m_vecRigid_Static[filterData.word0]->Set_Hit(true);
+			m_vecRigid_Static[filterData.word0]->SetBlockPoint(*pBlockPoint);
+			m_vecRigid_Static[filterData.word0]->SetHitNormal(*pBlockNormal);
+		}
+
+		*pBlockPoint = PxVec_To_Float4_Coord(hit.block.position);
+		*pBlockNormal = PxVec_To_Float4_Dir(hit.block.normal);
+	}
+
+	return Status;
+}
+
 _bool CPhysics_Controller::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
 {
 	PxVec3 PxvOrigin = Float4_To_PxVec(vOrigin);
@@ -1274,6 +1328,11 @@ void CPhysics_Controller::Free()
 	for (int i = 0; i < m_vecCharacter_Controller.size(); ++i)
 	{
 		Safe_Release(m_vecCharacter_Controller[i]);
+	}
+
+	for (int i = 0; i < m_vecRigid_Static.size(); ++i)
+	{
+		Safe_Release(m_vecRigid_Static[i]);
 	}
 
 	for (int i = 0; i < m_vecRigid_Dynamic.size(); ++i)

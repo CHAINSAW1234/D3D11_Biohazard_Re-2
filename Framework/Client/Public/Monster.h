@@ -123,7 +123,7 @@ protected: // For AIController
 
 	class CPlayer*						m_pPlayer = { nullptr };
 	_bool								m_bRoomCulling = { false };
-
+	_float4x4							m_WorldMat_To_Decal;
 public://For Decal
 	virtual void						Perform_Skinning() {}
 	virtual void						Ready_Decal() {}

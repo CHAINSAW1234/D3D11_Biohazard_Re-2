@@ -3,7 +3,6 @@
 matrix g_DecalMat_Inv;
 uint g_NumVertices;
 RWStructuredBuffer<float2> g_DecalMap;
-StructuredBuffer<float2> g_Texcoords;
 float3  g_Extent;
 
 RWStructuredBuffer<SKINNING_OUTPUT> g_Skinnig_Output;

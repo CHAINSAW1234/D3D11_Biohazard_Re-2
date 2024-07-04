@@ -44,8 +44,6 @@ HRESULT CCabinet::Initialize(void* pArg)
 
 void CCabinet::Tick(_float fTimeDelta)
 {
-	//__super::Check_TabWindow();
-	__super::Check_Player();
 	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 	if(m_bReonDesk)
 		m_pColliderCom[INTERACTPROPS_COL_AABB]->Tick(m_pTransformCom->Get_WorldMatrix());

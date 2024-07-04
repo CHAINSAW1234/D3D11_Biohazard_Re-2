@@ -101,7 +101,7 @@ HRESULT CBullet_UI::Initialize(void* pArg)
 
     else if (TEXT("UI_Bullet_Grenade") == m_wstrFile)
     {
-        m_iEqipType = (_int)CPlayer::EQUIP::GN;
+        m_iEqipType = (_int)CPlayer::EQUIP::GRENADE;
     }
 
     if (!m_vecTextBoxes.empty())
@@ -158,9 +158,9 @@ void CBullet_UI::Tick(_float fTimeDelta)
         }
     }
 
-    else if (CPlayer::EQUIP::GN == m_pPlayer->Get_Equip())
+    else if (CPlayer::EQUIP::GRENADE == m_pPlayer->Get_Equip())
     {
-        if (m_iEqipType == (_int)CPlayer::EQUIP::GN || m_iEqipType == BULLET_BACKGROUND)
+        if (m_iEqipType == (_int)CPlayer::EQUIP::GRENADE || m_iEqipType == BULLET_BACKGROUND)
             Change_Grenade(fTimeDelta);
 
         else
@@ -238,7 +238,7 @@ void CBullet_UI::Bullet_Font()
         }
     }
 
-    else if(m_iEqipType == CPlayer::EQUIP::GN)
+    else if(m_iEqipType == CPlayer::EQUIP::GRENADE)
     {
         if (!m_vecTextBoxes.empty())
         {
@@ -305,6 +305,12 @@ void CBullet_UI::OnNotify()
         break;
     case ShotGun:
         m_iStoreBullet = pTabWindow->Get_Search_Item_Quantity(shotgun_bullet01a);
+        break;
+    case Grenade:
+        m_iStoreBullet = pTabWindow->Get_Search_Item_Quantity(Grenade);
+        break;
+    case Flash_Bomb:
+        m_iStoreBullet = pTabWindow->Get_Search_Item_Quantity(Flash_Bomb);
         break;
     }
 

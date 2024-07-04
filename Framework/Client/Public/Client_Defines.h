@@ -8,7 +8,7 @@ namespace Client
 {
 	const unsigned int	g_iWinSizeX = 1600;
 	const unsigned int	g_iWinSizeY = 900;
-
+	const wstring g_strCameraLayer = TEXT("Layer_ZZZCamera");
 	//static _int g_i44_005Type = 0; //저희 게임 디테일을 위해 죄송합니다- 예은
 
 }
@@ -50,4 +50,8 @@ typedef struct Tag_Item_Recipe
 
 #pragma region ANIM_BONE
 #define ANIM_BONE_COUNT 10
+#pragma endregion
+
+#pragma region DECAL
+#define DECAL
 #pragma endregion

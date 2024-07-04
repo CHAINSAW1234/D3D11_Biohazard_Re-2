@@ -35,10 +35,8 @@ matrix g_LightProjMatrix;
 
 bool g_isMotionBlur;
 
-RWStructuredBuffer<float2> g_DecalMap_Calc;
 StructuredBuffer<float2> g_DecalMap;
-float3	g_Decal_Extent;
-matrix g_DecalMat_Inv;
+bool		g_DecalRender;
 
 struct VS_IN
 {
@@ -311,58 +309,35 @@ PS_OUT PS_MAIN(PS_IN In)
 		Out.vMaterial.b = 1.f;
 	}
 
-	float2 DecalTexcoord;
-	DecalTexcoord.x = g_DecalMap[In.iIndex].x;
-	DecalTexcoord.y = g_DecalMap[In.iIndex].y;
-
-
-
-	/*if (abs(DecalTexcoord.x - 0.f) > 0.001f && abs(DecalTexcoord.y - 0.f) > 0.001f)
+	if(g_DecalRender)
 	{
-		vector vDecalDiffuse = g_DecalTexture.Sample(LinearSampler, DecalTexcoord);
+		float2 DecalTexcoord;
+		DecalTexcoord.x = g_DecalMap[In.iIndex].x;
+		DecalTexcoord.y = g_DecalMap[In.iIndex].y;
 
-		if (vDecalDiffuse.a > 0.1f)
+		float2 DecalUV = In.vDecalUV;
+
+		if (DecalUV.x >= 0.0f && DecalUV.x <= 1.0f && DecalUV.y >= 0.0f && DecalUV.y <= 1.0f)
 		{
-			Out.vDiffuse = float4(0.5f,0.f,0.f,1.f);
-		}
-	}*/
+			float4 decalColor = g_DecalTexture.Sample(LinearSampler, DecalUV);
 
-	/*float2 DecalUV = In.vDecalUV;
-
-	if (DecalUV.x >= 0.0f && DecalUV.x <= 1.0f && DecalUV.y >= 0.0f && DecalUV.y <= 1.0f)
-	{
-		float4 decalColor = g_DecalTexture.Sample(LinearSampler, DecalUV);
-
-		if (decalColor.a > 0.01f)
-		{
-			decalColor = float4(0.5f, 0.f, 0.f, decalColor.a);
-
-			Out.vDiffuse = decalColor;
-		}
-	}*/
-
-	float2 DecalUV = In.vDecalUV;
-
-	if (DecalUV.x >= 0.0f && DecalUV.x <= 1.0f && DecalUV.y >= 0.0f && DecalUV.y <= 1.0f)
-	{
-		float4 decalColor = g_DecalTexture.Sample(LinearSampler, DecalUV);
-
-		if (decalColor.a > 0.01f)
-		{
-			float2 center = float2(0.5f, 0.5f);
-			float distance = length(DecalUV - center);
-
-			if(distance < 0.1f)
+			if (decalColor.a > 0.01f)
 			{
-				decalColor = float4(0.5f, 0.0f, 0.0f,0.f);
-				Out.vDiffuse = decalColor;
-			}
-			else
-			{
-				if (decalColor.a > 0.01f)
+				float2 center = float2(0.5f, 0.5f);
+				float distance = length(DecalUV - center);
+
+				if (distance < 0.1f)
 				{
-					decalColor = float4(0.5f, 0.0f, 0.0f, decalColor.a);
+					decalColor = float4(0.5f, 0.0f, 0.0f, 0.f);
 					Out.vDiffuse = decalColor;
+				}
+				else
+				{
+					if (decalColor.a > 0.01f)
+					{
+						decalColor = float4(0.5f, 0.0f, 0.0f, decalColor.a);
+						Out.vDiffuse = decalColor;
+					}
 				}
 			}
 		}

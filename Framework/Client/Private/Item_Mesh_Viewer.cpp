@@ -38,7 +38,7 @@ HRESULT CItem_Mesh_Viewer::Initialize(void* pArg)
 
 	m_eViewer_State = POP_UP;
 
-	CGameObject* pCamera = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_ZZZCamera"))->front();
+	CGameObject* pCamera = m_pGameInstance->Find_Layer(g_Level, g_strCameraLayer)->front();
 	
 	m_pCameraFree = dynamic_cast<CCamera_Free*>(pCamera);
 
@@ -84,6 +84,9 @@ void CItem_Mesh_Viewer::Late_Tick(_float fTimeDelta)
 
 HRESULT CItem_Mesh_Viewer::Render()
 {
+	if (ITEM_NUMBER_END == m_eItem_Number)
+		return E_FAIL;
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
@@ -308,264 +311,21 @@ void CItem_Mesh_Viewer::Free()
 
 HRESULT CItem_Mesh_Viewer::Load_ItemsModel()
 {
-	//todo : 좀더 좋은 방법을 생각해보자
-	CModel* pItemModel = nullptr;
-	_uint   iModelCount = 0;
 	wstring wstrModelComTag = TEXT("Com_Model");
-	wstring ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_000_emergencyspray01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
+	vector<wstring> vecModelTags = m_pGameInstance->Get_ModelTags(TEXT("ItemModel_Tags"));
+	
+	for (_uint i = 0; i < vecModelTags.size(); i++)
+	{
+		CModel* pItemModel = nullptr;
+		wstring ModelTagTrashCan = wstrModelComTag + to_wstring(i);
 
+		/* For.Com_Model */
+		if (FAILED(__super::Add_Component(g_Level, vecModelTags[i],
+			ModelTagTrashCan, (CComponent**)&pItemModel)))
+			return E_FAIL;
 
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_001_greenherb01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_002_redherb01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_003_blueherb01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_004_herbsgg01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_005_herbsgr01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_006_herbsgb01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_007_herbsggb01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_008_herbsggg01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_009_herbsgrb01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_010_herbsrb01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_051_greenherbitem01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_052_redherbitem01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_053_blueherbitem01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_100_handgun_bullet01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_101_shotgun_bullet01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_102_submachinegun_bullet01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_103_magnumbulleta"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_111_biggun_bullet01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_201_inkribbon01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_202_woodbarricade01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_203_blastingfuse01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_205_gunpowder01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_206_gunpowder01b"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_sm70_207_strengtheningyellow01a"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-	pItemModel = nullptr;
-	iModelCount++;
-	ModelTagTrashCan = wstrModelComTag + to_wstring(iModelCount);
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Model_HandGun"),
-		ModelTagTrashCan, (CComponent**)&pItemModel)))
-		return E_FAIL;
-	m_vecModelCom.push_back(pItemModel);
-
-
+		m_vecModelCom.push_back(pItemModel);
+	}
 
 	return S_OK;
 }

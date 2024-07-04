@@ -30,12 +30,14 @@ public:
 	_bool*				Get_MainRender()			{ return m_pInvenButton->Get_Dead_Ptr(); }
 	WINDOW_TYPE*		Get_Window_Render_Type()	{ return &m_eWindowType; }
 
+#pragma endregion
+
+
 #pragma region 예은 추가
 	class CRead_Item_UI* m_pRead_Item_UI = { nullptr };
 	class CMap_UI* m_pMap_UI = { nullptr };
 #pragma endregion 
 
-#pragma endregion
 
 private:
 	void	ItemIven_EventHandle(_float fTimeDelta);

@@ -36,7 +36,6 @@ HRESULT CItemLocker::Initialize(void* pArg)
 
 void CItemLocker::Tick(_float fTimeDelta)
 {
-	__super::Check_Player();
 		m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 	if (!m_bVisible)
 		return;

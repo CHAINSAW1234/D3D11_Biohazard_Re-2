@@ -49,6 +49,8 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 	m_pModelCom->Init_Decal(LEVEL_GAMEPLAY);
 #pragma endregion
 
+	m_bDecalRender = true;
+
 	return S_OK;
 }
 
@@ -143,15 +145,6 @@ HRESULT CBody_Zombie::Render()
 	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 	for (auto& i : NonHideIndices)
 	{
-		//MESH_TYPE		eMeshType = { m_MeshTypes[i] };
-		//
-		//if (eMeshType == MESH_TYPE::_INNER)
-		//{
-
-		//}
-
-		//else if()
-
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
 
@@ -1175,6 +1168,9 @@ HRESULT CBody_Zombie::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevViewMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
 		return E_FAIL;
 
 	return S_OK;

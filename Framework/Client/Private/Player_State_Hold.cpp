@@ -31,7 +31,7 @@ void CPlayer_State_Hold::OnStateUpdate(_float fTimeDelta)
 		if (m_pPlayer->Get_Spotlight()) {
 			if (m_pPlayer->Get_Equip() == CPlayer::HG) {
 				// ¿ÞÆÈ µé¾î³õ±â
-				m_pPlayer->Get_Body_Model()->Change_Animation(4, CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), 0);
+				m_pPlayer->Get_Body_Model()->Change_Animation(4, CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), CPlayer::HOLD_LEFTHAND_LIGHT);
 				m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 10, 0.2f);
 
 			}

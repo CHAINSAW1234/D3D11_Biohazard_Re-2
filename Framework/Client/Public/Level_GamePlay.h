@@ -32,6 +32,8 @@ private:
 
 	HRESULT Ready_Layer_Effect(const wstring& strLayerTag);
 	HRESULT Ready_Layer_UI(const wstring& strLayerTag);
+
+	HRESULT Ready_Decal(const wstring& strLayerTag);
 	
 private:
 	void UI_Distinction(wstring& selectedFilePath);
@@ -51,7 +53,7 @@ private:
 	HRESULT Load_Collider(const wstring& strFile, const wstring& strColLayerTag);
 	HRESULT Load_Layer(const wstring& strFilePath, _uint iLevel);
 	HRESULT Load_Object(const wstring& strFilePath, const wstring& strLayerName, _uint iLevel);
-
+	HRESULT Load_Monster(const wstring& strFilePath, const wstring& strLayerName, _uint iLevel);
 
 
 #pragma region ³ª¿Ë

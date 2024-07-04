@@ -200,7 +200,6 @@ HRESULT CComputeShader::Render(_uint iPassIndex, _uint iThreadNumX, _uint iThrea
 	pPass->Apply(0, m_pContext);
 
 	m_pContext->Dispatch(iThreadNumX, iThreadNumY, iThreadNumZ);
-	m_pContext->Flush();
 	m_pContext->End(m_pQuery);
 
 	while (m_pContext->GetData(m_pQuery, nullptr, 0, 0) == S_FALSE)

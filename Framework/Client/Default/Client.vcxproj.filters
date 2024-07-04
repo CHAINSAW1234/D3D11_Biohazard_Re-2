@@ -487,6 +487,24 @@
     <Filter Include="02.GameObjects\UI\16. Damage">
       <UniqueIdentifier>{c955f047-a231-406d-8518-888dbd090b6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Decal">
+      <UniqueIdentifier>{3d681db4-d1ea-4e71-a726-f96cb1dc0d77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_DoorStop">
+      <UniqueIdentifier>{172a5b3a-512f-4cb3-8222-5f20b3fd8a48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_SubHold">
+      <UniqueIdentifier>{21f366b4-4f71-4cbd-ab75-dbc26acc03a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Idle">
+      <UniqueIdentifier>{ddfe2292-e482-4ab2-82cd-f2a4c3eeddb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Start">
+      <UniqueIdentifier>{ae5b6c71-d918-40cf-a73a-4e4cabdf1137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Ladder">
+      <UniqueIdentifier>{0b035877-0214-4780-9c8c-017dbe391d29}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -922,6 +940,21 @@
     <ClInclude Include="..\Public\Damage_UI.h">
       <Filter>02.GameObjects\UI\16. Damage</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Decal_SSD.h">
+      <Filter>02.GameObjects\Effect\Decal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move_DoorStop.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_DoorStop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_SubHold.h">
+      <Filter>02.GameObjects\Player\State\Player_State_SubHold</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_SubHold_Start.h">
+      <Filter>02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Start</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_SubHold_Idle.h">
+      <Filter>02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Idle</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Zombie_Enums.h">
       <Filter>02.GameObjects\Monster\Zombie</Filter>
     </ClInclude>
@@ -1334,6 +1367,21 @@
     </ClCompile>
     <ClCompile Include="..\Private\Damage_UI.cpp">
       <Filter>02.GameObjects\UI\16. Damage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Decal_SSD.cpp">
+      <Filter>02.GameObjects\Effect\Decal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_DoorStop.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_DoorStop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_SubHold.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_SubHold</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_SubHold_Start.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_SubHold_Idle.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Idle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

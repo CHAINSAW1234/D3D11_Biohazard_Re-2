@@ -27,6 +27,7 @@ HRESULT CWeapon::Initialize(void * pArg)
 
 	WEAPON_DESC* pDesc = (WEAPON_DESC*)pArg;
 	m_eEquip = pDesc->eEquip;
+	m_eSetPropsLocation = pDesc->eSetprops_Location;
 
 	for (size_t i = 0; i < NONE; i++)
 	{
@@ -307,6 +308,12 @@ HRESULT CWeapon::Add_Components()
 	case CPlayer::STG:
 		strModelTag = TEXT("Prototype_Component_Model_ShotGun");
 		break;
+	case CPlayer::GRENADE:
+		strModelTag = TEXT("Prototype_Component_Model_Grenade");
+		break;
+	case CPlayer::FLASHBANG:
+		strModelTag = TEXT("Prototype_Component_Model_FlashBang");
+		break;
 	}
 
 	/* For.Com_Model */
@@ -338,7 +345,9 @@ HRESULT CWeapon::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;	
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
+		return E_FAIL;
 
 	return S_OK;
 }

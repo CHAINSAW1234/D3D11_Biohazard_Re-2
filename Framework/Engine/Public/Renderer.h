@@ -11,7 +11,7 @@ public:
 		RENDER_PRIORITY,
 		RENDER_FIELD_SHADOW_DIR, RENDER_FIELD_SHADOW_POINT,
 		RENDER_SSAO,
-		RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_NON_POSTPROCESSING,
+		RENDER_NONBLEND,RENDER_DECAL, RENDER_NONLIGHT, RENDER_NON_POSTPROCESSING,
 		RENDER_SHADOW_DIR, RENDER_SHADOW_POINT, RENDER_SHADOW_SPOT,
 		RENDER_DISTORTION, RENDER_EMISSIVE,RENDER_EFFECT_BLOOM,
 		RENDER_BLEND,
@@ -31,7 +31,10 @@ public:
 	HRESULT						Initialize();
 	HRESULT						Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pRenderObject);
 	HRESULT						Render();
-
+	class CShader*				GetDeferredShader()
+	{
+		return m_pShader;
+	}
 public:
 	void						Set_RadialBlur(_float fBlurAmount, _float2 BlurUV);
 	void						On_RadialBlur();
@@ -177,6 +180,13 @@ private:
 private:
 	HRESULT						Render_Debug();
 #endif
+
+#pragma region Effect
+public:
+	HRESULT						Bind_DepthTarget(class CShader* pShader);
+	HRESULT						Render_Decal_Deferred();
+#pragma endregion
+
 
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

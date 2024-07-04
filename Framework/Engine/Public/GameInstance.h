@@ -41,11 +41,24 @@ public:
 		m_bPause = bPause;
 	}
 
+
+
 	wstring StringToWstring(const std::string& strString);
 
 	string WstringToString(const wstring& wstrString);
 
 	wstring ConvertToWString(const char* str, size_t len);
+
+
+#pragma region 모델테그 모음
+public:
+	void Set_ModelTags(wstring keyTags, vector<wstring> Tags) {
+		m_mapModelTags.emplace(keyTags, Tags);
+	}
+	vector<wstring> Get_ModelTags(wstring keyTags) { return m_mapModelTags[keyTags]; }
+
+private:
+	map< wstring, vector<wstring> > m_mapModelTags;
 
 #pragma endregion
 
@@ -74,6 +87,9 @@ public: /* For.Renderer */
 
 	void									Set_ShaderState(SHADER_STATE eState, _bool isState);
 	void									Set_RenderFieldShadow(_bool isRenderFieldShadow);
+	void									Bind_DepthTarget(class CShader* pShader);
+	class CShader*							GetDeferredShader();
+	HRESULT									Render_Decal_Deferred();
 #ifdef _DEBUG
 	void									On_Off_DebugRender();
 #endif
@@ -275,9 +291,10 @@ public:/*For Physics Controller*/
 	void									SetWorldMatrix_Ragdoll(_float4x4 WorldMatrix);
 	void									SetRotationMatrix_Ragdoll(_float4x4 RotationMatrix);
 	class CCharacter_Controller*			Create_Controller(_float4 Pos, _int* Index, class CGameObject* pCharacter,_float fHeight,_float fRadius, class CTransform* pTransform, vector<class CBone*>* pBones, const std::string& name = "");
+	class CRigid_Static*					Create_Rigid_Static(_float4 Pos, _int* Index, class CGameObject* pStaticMesh);
 	void									Cook_Terrain();
 	void									Simulate();
-	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr);
+	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr, _int* pIndex = nullptr);
 	void									Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
@@ -287,6 +304,7 @@ public:/*For Physics Controller*/
 	void									Create_Cloth(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 	_bool									RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
+	_bool									RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint,_float4* pBlockNormal, _float fMaxDist = 1000.f);
 	_bool									SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone,class CTransform* pTransform, const string& name);
@@ -439,6 +457,8 @@ private:
 	_float4									m_vRayOrigin_Aim;
 	_float4									m_vRayDir_Aim;
 	class CTransform*						m_pCameraTransform = { nullptr };
+
+
 public:
 	static void Release_Engine();
 	virtual void Free() override;

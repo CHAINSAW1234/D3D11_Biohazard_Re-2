@@ -4,32 +4,35 @@
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_CamViewMatrix, g_CamProjMatrix;
 matrix g_ViewMatrixInv, g_ProjMatrixInv;
+matrix g_Decal_WorldMatrix_Inv;
 
-texture2D g_Texture;
+Texture2D g_Texture;
 TextureCubeArray g_CubeTexture;
 Texture3D g_3DTexture;
 
-texture2D g_NormalTexture;
-texture2D g_DiffuseTexture;
-texture2D g_DepthTexture;
-texture2D g_MaterialTexture;
-texture2D g_OriginalTexture;
+Texture2D g_NormalTexture;
+Texture2D g_DiffuseTexture;
+Texture2D g_DepthTexture;
+Texture2D g_MaterialTexture;
+Texture2D g_OriginalTexture;
 
 
-texture2D g_SSAOTexture;
+Texture2D g_SSAOTexture;
 
-texture2D g_LightResultTexture;
+Texture2D g_LightResultTexture;
 
-texture2D g_AmbientDiffuseTexture;
-texture2D g_AmbientShadeTexture;
+Texture2D g_AmbientDiffuseTexture;
+Texture2D g_AmbientShadeTexture;
 
-texture2D g_DistortionTexture;
-texture2D g_EmissiveTexture;
+Texture2D g_DistortionTexture;
+Texture2D g_EmissiveTexture;
 
-texture2D g_AdditionalLightTexture;
+Texture2D g_AdditionalLightTexture;
 
-texture2D g_PostprocessingDiffuseTexture;
-texture2D g_PostprocessingShadeTexture;
+Texture2D g_PostprocessingDiffuseTexture;
+Texture2D g_PostprocessingShadeTexture;
+//For Decal
+Texture2D g_DecalTexture;
 
 bool g_isRadialBlurActive = { false };
 float2 g_vRadialBlurUV;
@@ -42,12 +45,12 @@ float		g_fOutCutOff;
 
 // 현진 추가
 bool g_isSSAO;
-texture2D g_RandomNormalTexture;
-texture2D g_VelocityTexture;
+Texture2D g_RandomNormalTexture;
+Texture2D g_VelocityTexture;
 
 bool g_isShadowDirLight;
-texture2D g_DirLightFieldDepthTexture;
-texture2D g_DirLightDepthTexture;
+Texture2D g_DirLightFieldDepthTexture;
+Texture2D g_DirLightDepthTexture;
 matrix g_DirLightViewMatrix;
 matrix g_DirLightProjMatrix;
 float4 g_vDirLightDiffuse;
@@ -63,7 +66,7 @@ matrix g_ShadowLightViewMatrix[2][6];
 matrix g_ShadowLightProjMatrix[2];
 
 bool g_isShadowSpotLight;
-texture2D g_SpotLightDepthTexture;
+Texture2D g_SpotLightDepthTexture;
 matrix g_SpotLightViewMatrix;
 matrix g_SpotLightProjMatrix;
 float4 g_vSpotLightDiffuse;
@@ -92,6 +95,9 @@ float g_fLightDepthFar;
 
 const float PI = 3.14159265359f;
 
+//For SSD
+float3 g_vExtent;
+float4 g_vDecalNormal;
 
 struct VS_IN
 {
@@ -1451,6 +1457,94 @@ PS_OUT PS_BLOOM(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_DECAL(PS_IN In)
+{
+    PS_OUT      Out = (PS_OUT)0;
+
+    float4 vColor = (float4)0.f;
+
+    float2 vScreenUV = (float2)0.f;
+    vScreenUV.x = In.vPosition.x / SCREEN_SIZE_X;
+    vScreenUV.y = In.vPosition.y / SCREEN_SIZE_Y;
+
+    vector vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
+    float fViewZ = vDepthDesc.y * 1000.0f;
+    float4 vWorldPos;
+    float4 vViewPos;
+
+    /* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / View.z */
+    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+    vWorldPos.z = vDepthDesc.x;
+    vWorldPos.w = 1.f;
+
+    vWorldPos *= fViewZ;
+
+    matrix InverViewProj = mul(g_ProjMatrixInv, g_ViewMatrixInv);
+
+    vViewPos = mul(vWorldPos, g_ViewMatrixInv);
+    vWorldPos = mul(vWorldPos, InverViewProj);
+
+    if (vViewPos.z == 0.f)
+    {
+        clip(-1);
+    }
+
+    float4 vLocalPos = mul(vWorldPos, g_Decal_WorldMatrix_Inv);
+
+    if ((-g_vExtent.x <= vLocalPos.x && vLocalPos.x <= g_vExtent.x) &&
+        (-g_vExtent.y <= vLocalPos.y && vLocalPos.y <= g_vExtent.y) &&
+        (-g_vExtent.z <= vLocalPos.z && vLocalPos.z <= g_vExtent.z))
+    {
+        float2 decalTextureUV = (vLocalPos.xz / (2.0f * float2(g_vExtent.x, g_vExtent.z))) + 0.5f;
+
+      /*  float4 vDiffuseColor = g_DecalTexture.Sample(LinearSampler, decalTextureUV);
+
+        if (vDiffuseColor.a < 0.1f)
+            clip(-1);
+        else
+            Out.vColor = float4(0.3f,0.f,0.f,1.f);*/
+
+        float3 normal = g_NormalTexture.Sample(PointSampler, In.vTexcoord).xyz; // 픽셀의 노멀 벡터
+
+        // 픽셀의 노멀 벡터를 사용하여 텍스처 좌표 계산
+        if (abs(normal.z) > abs(normal.x) && abs(normal.z) > abs(normal.y))
+        {
+            // 벽면 (YZ 평면)
+            decalTextureUV = (vLocalPos.yz / (2.0f * float2(g_vExtent.y, g_vExtent.z))) + 0.5f;
+        }
+        else if (abs(normal.x) > abs(normal.y))
+        {
+            // 벽면 (XY 평면)
+            decalTextureUV = (vLocalPos.xy / (2.0f * float2(g_vExtent.x, g_vExtent.y))) + 0.5f;
+        }
+        else
+        {
+            // 바닥 (XZ 평면)
+            decalTextureUV = (vLocalPos.xz / (2.0f * float2(g_vExtent.x, g_vExtent.z))) + 0.5f;
+        }
+
+        // 텍스처 좌표가 유효한 범위 내에 있는지 확인
+        if (decalTextureUV.x < 0.0f || decalTextureUV.x > 1.0f || decalTextureUV.y < 0.0f || decalTextureUV.y > 1.0f)
+        {
+            clip(-1);
+        }
+
+        float4 vDiffuseColor = g_DecalTexture.Sample(PointSampler, decalTextureUV);
+
+        if (vDiffuseColor.a < 0.1f)
+            clip(-1);
+        else
+            Out.vColor = float4(0.2f, 0.f, 0.f, 1.f);
+    }
+    else
+    {
+        clip(-1);
+    }
+
+
+    return Out;
+}
 
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
@@ -1760,5 +1854,18 @@ technique11 DefaultTechnique
         HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_BLOOM();
+    }
+
+    pass SSD // 18
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_DECAL();
     }
 }

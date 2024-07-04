@@ -18,7 +18,7 @@ class CWeapon;
 class CPlayer final : public CGameObject, public CObserver_Handler
 {
 public:
-	enum STATE { MOVE, HOLD, BITE, DAMAGE };
+	enum STATE { MOVE, HOLD, SUBHOLD, BITE, DAMAGE };
 	enum PART {
 		PART_BODY,
 		PART_HEAD,
@@ -27,7 +27,9 @@ public:
 		PART_END
 	};
 
-	enum EQUIP { HG, STG, GN, NONE}; // 핸드건 샷건 수류탄
+	enum EQUIP_STATE { GUN, SUB, EQUIP_STATE_NONE };
+	enum EQUIP { HG, STG, GRENADE, FLASHBANG, NONE};
+	enum SETPROPS_LOCATION { SETPROPS_A, SETPROPS_D, SETPROPS_E, SETPROPS_NONE };	//Holster상태일때의 위치
 #pragma region ANIMATION
 	enum ANIMATION_MOVE {
 		ANIM_IDLE, TURN_L180, TURN_R180,
@@ -50,6 +52,11 @@ public:
 		HOLD_IDLE_LOOP, WHEEL_L180, WHEEL_R180,
 		HOLD_SHOT, HOLD_SHOT_NO_AMMO, HOLD_RELOAD,
 		HOLSTERTOMOVE, MOVETOHOLSTER, HOLD_END
+	};
+
+	enum ANIMASTION_COMMON {
+		HOLD_LEFTHAND_LIGHT, STEP_DOWM_1M, STEP_UP_1M,
+		DOOR_PASS, DOOR_OPEN_JOG, DOOR_LOCK, DOOR_LOCK_L, DOOR_LOCK_R
 	};
 	
 	enum ANIMSET_MOVE { FINE, MOVE_HG, MOVE_STG, FINE_LIGHT, CAUTION, CAUTION_LIGHT, DANGER, DANGER_LIGHT, ANIMSET_MOVE_END };
@@ -119,6 +126,8 @@ public:
 	void										Set_Spotlight(_bool isSpotlight); 
 	void										Requst_Change_Equip(EQUIP eEquip);
 	void										Set_Equip(EQUIP* eEquip);
+	void										Set_Equip_Gun(EQUIP* eEquip);
+	void										Set_Equip_Sub(EQUIP* eEquip);
 	void										Set_Hp(_int iHp);					
 	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineDefault = isTurnSpineDefault; }
 	void										Set_TurnSpineHold(_bool isTurnSpineHold) { m_isTurnSpineHold = isTurnSpineHold;}
@@ -131,9 +140,14 @@ public:
 	void										Change_AnimSet_Move(ANIMSET_MOVE eAnimSetMove) { m_eAnimSet_Move = eAnimSetMove; }
 	void										Change_AnimSet_Hold(ANIMSET_HOLD eAnimSetHold) { m_eAnimSet_Hold = eAnimSetHold; }
 	void										Change_Player_State_Bite(_int iAnimIndex, const wstring& strBiteLayerTag, _float4x4 Interpolationmatrix, _float fTotalInterpolateTime);
+	void										Change_Equip_State(EQUIP_STATE eEquip_State);
+	void										Change_WeaponLocation_To_Holster(CWeapon* pWeapon);
 	void										Request_NextBiteAnimation(_int iAnimIndex);
 	void										Shot();
+	void										Throw_Sub();
 	void										Reload();
+	void										Stop_UpperBody();
+
 
 	// ============================ CHECK = ISABLE ============================
 	_bool										IsShotAble();
@@ -157,39 +171,44 @@ private:
 	HRESULT										Add_FSM_States();
 
 public:
-	void Swap_Camera();
+	void										Swap_Camera();
 
 private:
-	_int m_iMaxHp = { 5 };
-	_int m_iHp = { 5 };
+	_int										m_iMaxHp = { 5 };
+	_int										m_iHp = { 5 };
 
-	_bool m_isSpotlight = { false };
-	DWORD m_dwDirection = { 0 };
+	_bool										m_isSpotlight = { false };
+	DWORD										m_dwDirection = { 0 };
 
-	_bool m_isTurnSpineDefault = { false };
-	_bool m_isTurnSpineHold = { false };
-	_bool m_isTurnSpineLight = { false };
+	_bool										m_isTurnSpineDefault = { false };
+	_bool										m_isTurnSpineHold = { false };
+	_bool										m_isTurnSpineLight = { false };
 
-	ANIMSET_MOVE m_eAnimSet_Move = { FINE };
-	ANIMSET_HOLD m_eAnimSet_Hold = { HOLD_HG };
+	ANIMSET_MOVE								m_eAnimSet_Move = { FINE };
+	ANIMSET_HOLD								m_eAnimSet_Hold = { HOLD_HG };
 
-	_bool m_isBite = { false };
-	_uint m_eBiteType;
-	_int m_iBiteAnimIndex = { -1 };
-	_float4x4 m_vBiteInterpolateMatrix;
-	_float m_fTotalInterpolateTime = 0.f;
-	_float m_fCurrentInterpolateTime = 0.f;
-	wstring m_strBiteLayerTag;
+	_bool										m_isBite = { false };
+	_uint										m_eBiteType;
+	_int										m_iBiteAnimIndex = { -1 };
+	_float4x4									m_vBiteInterpolateMatrix;
+	_float										m_fTotalInterpolateTime = 0.f;
+	_float										m_fCurrentInterpolateTime = 0.f;
+	wstring										m_strBiteLayerTag;
 
+	EQUIP_STATE									m_eEquip_State = { GUN };
+	_bool										m_isRequestChangeEquip = { false };				// 무기 교체 요청 들어옴
+	EQUIP										m_eTargetEquip = { NONE };						// 플레이어 애님셋 교체에 관련된 장비
+	EQUIP										m_eEquip = { NONE };								// 플레이어 애님셋과 관련된 장비
+	EQUIP										m_eEquip_Gun = { NONE };							// 인벤토리에서 처리하는 장비된 무기
+	EQUIP										m_eEquip_Sub = { NONE };							// 인벤토리에서 처리하는 장비된 Sub무기
+	_int										m_SetProps[SETPROPS_NONE] = {};
 
-	EQUIP m_eEquip = { NONE };
-	_bool m_isRequestChangeEquip = { false };				// 무기 교체 요청 들어옴
-	EQUIP m_eTargetEquip = { NONE };
-	CWeapon* m_pWeapon = { nullptr };
-	vector<CWeapon*> m_Weapons;
+	CWeapon*									m_pWeapon = { nullptr };
+	vector<CWeapon*>							m_Weapons;
 
-	class CCamera_Event* m_pCamera_Event = { nullptr };
+	class CCamera_Event*						m_pCamera_Event = { nullptr };
 
+	friend class CPlayer_State_SubHold_Start;
 	friend class CPlayer_State_Move_Walk;
 	friend class CPlayer_State_Move_Jog;
 	friend class CPlayer_State_Hold_Idle;
@@ -218,27 +237,33 @@ public:
 	UI_TUTORIAL_TYPE							m_eTutial_Type					= { UI_TUTORIAL_TYPE::TUTORIAL_END };
 
 	_bool										m_isNYResult;
-	_bool										m_isPlayer_FirstBehavior[100]	= { false };
-	_bool										m_isTutorial_Notify				= { false };
+	_bool										m_isPlayer_FirstBehavior[100] = { false };
+	_bool										m_isTutorial_Notify = { false };
 #pragma
 
 #pragma region 예은 추가 
 public:
+	_bool										Get_Player_RegionChange() { return m_bChange; }
 	_int										Get_Player_ColIndex() { return m_iCurCol; }
 	_int										Get_Player_Direction() { return m_iDir; }
 	_int										Get_Player_Floor() { return m_iFloor; } /* 현재 플레이어의 층수 */
 	_int										Get_Player_Region() { return m_iRegion; } /* 현재 존재하는 지역 */
-	_bool										Get_Player_RegionChange() { return m_bChange; }
 	_bool*									Get_Player_Interact_Ptr() { return &m_bInteract; }
 	_bool*									Get_Player_Region_Array() { return m_bRegion; }
-	enum PLAYER_DOOR_BEHAVE { DOOR_NOTHING, DOOR_OPEN, DOOR_LOOK};
-	void										Set_Door_Setting(_int iDoor_Setting, _float fDoorDegree = 0.f) {m_iDoor_Setting = iDoor_Setting; m_fDoor_Degree = fDoorDegree;};
-	
-	// 인벤 연동 뒤 나영이의 UI에게 플레이어가 얻은 아이템의 enum을 던져줘야함
-private:
-	_int										m_iDoor_Setting = { DOOR_NOTHING };
-	_float									m_fDoor_Degree = { 0.f };
+	enum PLAYER_LADDER_BEAVE	{LADDER_BEHAVE_NOTHING, LADDER_BEHAVE_UP, LADDER_BEHAVE_DOWN};
+	enum PLAYER_DOOR_BEHAVE		{ DOOR_BEHAVE_NOTHING, DOOR_BEHAVE_OPEN, DOOR_BEHAVE_LOCK};
+	PLAYER_DOOR_BEHAVE				Get_isDoor_Setting() { return (PLAYER_DOOR_BEHAVE)m_iDoor_Setting; }
+	_float										Get_Door_Degree() { return m_fDoor_Degree; }
+	void											Set_Door_Setting(_int iDoor_Setting, _float fDoorDegree = 0.f) {m_iDoor_Setting = iDoor_Setting; m_fDoor_Degree = fDoorDegree;};
+	void											Set_Ladder_Setting(_int iLadder_Setting, _float4 vLadderPos) { m_iLadder_Setting = iLadder_Setting; m_vLadderPos = vLadderPos; }
 
+
+private:
+	_int										m_iDoor_Setting = { DOOR_BEHAVE_NOTHING };
+	_float										m_fDoor_Degree = { 0.f };
+
+	_int										m_iLadder_Setting = { LADDER_BEHAVE_NOTHING };
+	_float4									m_vLadderPos = { _float4() };
 
 	_bool										m_bInteract = { false }; //플레이어가 상호작용을 시도한
 	_bool										m_bChange = { true };

@@ -442,6 +442,24 @@ void CGameInstance::Set_RenderFieldShadow(_bool isRenderFieldShadow)
 
 	m_pRenderer->Set_RenderFieldShadow(isRenderFieldShadow);
 }
+void CGameInstance::Bind_DepthTarget(CShader* pShader)
+{
+	if (nullptr == m_pRenderer)
+		return;
+
+	m_pRenderer->Bind_DepthTarget(pShader);
+}
+
+CShader* CGameInstance::GetDeferredShader()
+{
+	return m_pRenderer->GetDeferredShader();
+}
+
+HRESULT CGameInstance::Render_Decal_Deferred()
+{
+	return m_pRenderer->Render_Decal_Deferred();
+}
+
 #ifdef _DEBUG
 void CGameInstance::On_Off_DebugRender()
 {
@@ -1051,9 +1069,9 @@ _vector CGameInstance::Compute_WorldPos(const _float2 & vViewportPos, const wstr
 #pragma endregion
 
 #pragma region Physics_Controller
-void CGameInstance::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,CTransform* pTransform)
+void CGameInstance::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,CTransform* pTransform, _int* pIndex)
 {
-	m_pPhysics_Controller->Cook_Mesh(pVertices, pIndices, VertexNum, IndexNum, pTransform);
+	m_pPhysics_Controller->Cook_Mesh(pVertices, pIndices, VertexNum, IndexNum, pTransform,pIndex);
 }
 
 void CGameInstance::Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform)
@@ -1144,6 +1162,11 @@ CCharacter_Controller* CGameInstance::Create_Controller(_float4 Pos, _int* Index
 	return m_pPhysics_Controller->Create_Controller(Pos, Index, pCharacter,fHeight,fRadius,pTransform,pBones,name);
 }
 
+CRigid_Static* CGameInstance::Create_Rigid_Static(_float4 Pos, _int* Index, CGameObject* pStaticMesh)
+{
+	return m_pPhysics_Controller->Create_Rigid_Static(Pos, Index, pStaticMesh);
+}
+
 void CGameInstance::Cook_Terrain()
 {
 	m_pPhysics_Controller->InitTerrain();
@@ -1160,12 +1183,13 @@ _bool CGameInstance::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBloc
 
 	return false;
 }
+_bool CGameInstance::RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float4* pBlockNormal, _float fMaxDist)
+{
+	return m_pPhysics_Controller->RayCast_Decal(vOrigin, vDir, pBlockPoint,pBlockNormal, fMaxDist);
+}
 _bool CGameInstance::SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
 {
-	if (m_pPhysics_Controller)
-		return m_pPhysics_Controller->SphereCast_Shoot(vOrigin, vDir, pBlockPoint, fMaxDist);
-
-	return false;
+	return m_pPhysics_Controller->SphereCast_Shoot(vOrigin, vDir, pBlockPoint, fMaxDist);
 }
 _bool CGameInstance::SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
 {

@@ -33,7 +33,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 	
-	if (FAILED(Ready_Layer_Camera(TEXT("Layer_ZZZCamera"))))
+	if (FAILED(Ready_Layer_Camera(g_strCameraLayer)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
@@ -229,6 +229,9 @@ HRESULT CLevel_GamePlay::Ready_TabWindow()
 
 HRESULT CLevel_GamePlay::Ready_LandObject()
 {
+	if (FAILED(Ready_Decal(TEXT("Layer_Decal"))))
+		return E_FAIL;
+
 	if (FAILED(Ready_Layer_Player(TEXT("Layer_Player"))))
 		return E_FAIL;
 
@@ -261,65 +264,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
 	//ÈñÈ÷ ³Ñ ¹Ù»Û °ü°è·Î ÇÔ¼ö ¸øÆÍ¾î¿ä - ¿¹Àº
 
-	string	strFilePath = "../Bin/Data/Level_InteractObj/Layer_Monster.dat";
-	_tchar	szFilePath[MAX_PATH] = { L"" };
-	MultiByteToWideChar(CP_ACP, 0, strFilePath.c_str(), (_uint)strlen(strFilePath.c_str()), szFilePath, MAX_PATH);
-	_uint iMonsterNum = { 0 };
-	HANDLE		hFile = CreateFile(szFilePath, GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-
-	if (INVALID_HANDLE_VALUE == hFile)
-		return E_FAIL;
-
-	wchar_t			szFileName[MAX_PATH] = { TEXT("") };
-	_wsplitpath_s(szFilePath, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, nullptr, 0);
-
-
-	DWORD	dwByte(0);
-
-	_uint iObjectNum = { 0 };
-	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
-		return E_FAIL;
-
-	for (_uint i = 0; iObjectNum > i; ++i)
-	{
-		_uint iLength = { 0 };
-
-		CZombie::ZOMBIE_FEMALE_DESC			ObjectDesc = {};
-
-		if (!ReadFile(hFile, &ObjectDesc.worldMatrix, sizeof(_float4x4), &dwByte, nullptr))
-		{
-			CloseHandle(hFile);
-			return E_FAIL;
-		}
-
-		ObjectDesc.eBodyModelType = ZOMBIE_BODY_TYPE::_FEMALE;
-		_int			iRandomPants = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_PANTS::_END) - 1) };
-		ObjectDesc.ePantsType = static_cast<ZOMBIE_FEMALE_PANTS>(iRandomPants);
-
-		_int			iRandomFace = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_FACE::_END) - 1) };
-		ObjectDesc.eFaceType = static_cast<ZOMBIE_FEMALE_FACE>(iRandomPants);
-
-		_int			iRandomShirts = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_SHIRTS::_END) - 1) };
-		ObjectDesc.eShirtsType = static_cast<ZOMBIE_FEMALE_SHIRTS>(iRandomPants);
-
-		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"),&ObjectDesc)))
-		{
-			CloseHandle(hFile);
-			return E_FAIL;
-		}
-	}
-	CloseHandle(hFile);
-
-	CZombie::ZOMBIE_FEMALE_DESC				ObjectDesc = {};
-	ObjectDesc.eBodyModelType = ZOMBIE_BODY_TYPE::_FEMALE;
-	_int			iRandomPants = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_PANTS::_END) - 1) };
-	ObjectDesc.ePantsType = static_cast<ZOMBIE_FEMALE_PANTS>(iRandomPants);
-
-	_int			iRandomFace = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_FACE::_END) - 1) };
-	ObjectDesc.eFaceType = static_cast<ZOMBIE_FEMALE_FACE>(iRandomPants);
-
-	_int			iRandomShirts = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_SHIRTS::_END) - 1) };
-	ObjectDesc.eShirtsType = static_cast<ZOMBIE_FEMALE_SHIRTS>(iRandomPants);
+	//if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
+	//	return E_FAIL;
+	CMonster::MONSTER_DESC ObjectDesc = {};
 
 	_matrix			WorldMatrix = { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
 	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
@@ -649,6 +596,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 	return S_OK;
 
+}
+
+HRESULT CLevel_GamePlay::Ready_Decal(const wstring& strLayerTag)
+{
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Decal_SSD"))))
+		return E_FAIL;
+	
+	return S_OK;
 }
 
 void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListName, CGameObject* pGameParentsObj, wstring fileName, _int iWhich_Child, CGameObject* pSupervisor)
@@ -1180,17 +1135,13 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 
 		ObjectDesc.iIndex = iMonsterNum++;
 
-
-		_uint iSize;
+		_uint iSize = {};
 		if (!ReadFile(hFile, &iSize, sizeof(_uint), &dwByte, NULL)) {
 			CloseHandle(hFile);
 			return E_FAIL;
 		}
 
-
 		ObjectDesc.BelongIndexs.resize(iSize);
-
-
 
 		for (size_t i = 0; i < iSize; i++)
 		{
@@ -1419,6 +1370,45 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 			}
 
 
+	}
+	CloseHandle(hFile);
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Load_Monster(const wstring& strFilePath, const wstring& strLayerName, _uint iLevel)
+{
+	_uint iMonsterNum = { 0 };
+	HANDLE		hFile = CreateFile(strFilePath.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+	wchar_t			szFileName[MAX_PATH] = { TEXT("") };
+	_wsplitpath_s(strFilePath.c_str(), nullptr, 0, nullptr, 0, szFileName, MAX_PATH, nullptr, 0);
+
+
+	DWORD	dwByte(0);
+
+	_uint iObjectNum = { 0 };
+	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
+		return E_FAIL;
+
+	for (_uint i = 0; iObjectNum > i; ++i)
+	{
+		_uint iLength = { 0 };
+
+		CMonster::MONSTER_DESC ObjectDesc = {};
+
+		if (!ReadFile(hFile, &ObjectDesc.worldMatrix, sizeof(_float4x4), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerName, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
 	}
 	CloseHandle(hFile);
 	return S_OK;
