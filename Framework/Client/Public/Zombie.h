@@ -181,6 +181,8 @@ protected:
 	_float4								m_vDecalPoint;
 	_float4								m_vDecalNormal;
 	class CDecal_SSD*					m_pDecal_SSD = { nullptr };
+
+	list<class CGameObject*>*			m_pDecal_Layer = { nullptr };
 #pragma endregion
 
 public:

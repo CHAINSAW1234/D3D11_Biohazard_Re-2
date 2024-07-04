@@ -945,10 +945,21 @@ void CMesh::Bind_Resource_CalcDecalMap(ID3D11UnorderedAccessView* pUAV)
 	m_pDecal_Blood->Bind_Resource_DecalMap(m_Calc_Decal_Map_Input,pUAV);
 }
 
+void CMesh::Bind_Resource_CalcDecalMap_StaticModel(ID3D11UnorderedAccessView* pUAV)
+{
+	m_Calc_Decal_Map_Input_StaticModel.iNumVertex = m_iNumVertices;
+	m_Calc_Decal_Map_Input_StaticModel.pSRV_Vertices = m_pSRV_Vertex_Position;
+	m_pDecal_Blood->Bind_Resource_DecalMap_StaticModel(m_Calc_Decal_Map_Input_StaticModel, pUAV);
+}
+
 void CMesh::Perform_Calc_DecalMap()
 {
 	m_pGameInstance->Perform_Calc_Decal_Map(m_iNumVertices);
-	//m_pDecal_Blood->Staging_DecalMap();
+}
+
+void CMesh::Perform_Calc_DecalMap_StaticModel()
+{
+	m_pGameInstance->Perform_Calc_Decal_Map_StaticModel(m_iNumVertices);
 }
 
 void CMesh::Bind_Decal_Map(CShader* pShader)

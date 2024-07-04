@@ -31,6 +31,8 @@ HRESULT CDecal_SSD::Initialize(void* pArg)
 	m_vExtent = _float3(0.25f, 0.25f, 0.25f);
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(2.f, 0.f, 3.f, 1.f));
 
+	m_bRender = false;
+
 	return S_OK;
 }
 
@@ -46,12 +48,13 @@ void CDecal_SSD::Late_Tick(_float fTimeDelta)
 
 HRESULT CDecal_SSD::Render()
 {
+	if (m_bRender == false)
+		return S_OK;
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
 	return m_pGameInstance->Render_Decal_Deferred();
-
-	return S_OK;
 }
 
 void CDecal_SSD::SetWorldMatrix(_float4x4 WorldMatrix)
@@ -76,9 +79,10 @@ void CDecal_SSD::LookAt(_float4 vDir)
 	vPos.x += vDir.x;
 	vPos.y += vDir.y;
 	vPos.z += vDir.z;
+	vPos.z += 0.001f;
 
 	m_vNormal = vDir;
-	//m_pTransformCom->Look_At(XMLoadFloat4(&vPos));
+	m_pTransformCom->Look_At(XMLoadFloat4(&vPos));
 }
 
 HRESULT CDecal_SSD::Add_Components()

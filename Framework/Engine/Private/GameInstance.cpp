@@ -1385,9 +1385,19 @@ void CGameInstance::Bind_Resource_Calc_Decal_Map(CALC_DECAL_MAP_INPUT Input)
 	m_pCS_Manager->Bind_Resource_CalcMap(Input);
 }
 
+void CGameInstance::Bind_Resource_Calc_Decal_Map_StaticModel(CALC_DECAL_MAP_INPUT_STATIC_MODEL Input)
+{
+	m_pCS_Manager->Bind_Resource_CalcMap_StaticModel(Input);
+}
+
 void CGameInstance::Perform_Calc_Decal_Map(_uint iNumVertices)
 {
 	m_pCS_Manager->Perform_Calc_Decal_Map(iNumVertices);
+}
+
+void CGameInstance::Perform_Calc_Decal_Map_StaticModel(_uint iNumVertices)
+{
+	m_pCS_Manager->Perform_Calc_Decal_Map_StaticModel(iNumVertices);
 }
 
 #pragma endregion

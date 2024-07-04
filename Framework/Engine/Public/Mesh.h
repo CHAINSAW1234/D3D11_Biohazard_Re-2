@@ -195,7 +195,9 @@ public:
 
 	//CalcDecalMap
 	void					Bind_Resource_CalcDecalMap(ID3D11UnorderedAccessView* pUAV);
+	void					Bind_Resource_CalcDecalMap_StaticModel(ID3D11UnorderedAccessView* pUAV);
 	void					Perform_Calc_DecalMap();
+	void					Perform_Calc_DecalMap_StaticModel();
 	void					Bind_Decal_Map(class CShader* pShader);
 
 	void					Init_Decal(_uint iLevel);
@@ -240,8 +242,9 @@ private:
 	class CDecal_Blood* m_pDecal_Blood = { nullptr };
 	_uint							m_iMeshIndex = { 0 };
 
-	SKINNING_INPUT					m_Skinning_Input;
-	CALC_DECAL_MAP_INPUT			m_Calc_Decal_Map_Input;
+	SKINNING_INPUT								m_Skinning_Input;
+	CALC_DECAL_MAP_INPUT						m_Calc_Decal_Map_Input;
+	CALC_DECAL_MAP_INPUT_STATIC_MODEL			m_Calc_Decal_Map_Input_StaticModel;
 #pragma endregion
 public:
 	/* For.FBXLoad*/

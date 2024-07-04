@@ -136,9 +136,6 @@ HRESULT CFace_Zombie::Render()
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 		m_pModelCom->Render(static_cast<_uint>(i));
-
-		ID3D11UnorderedAccessView* NullUAV = { nullptr };
-		m_pContext->CSSetUnorderedAccessViews(0, 1, &NullUAV, nullptr);
 	}
 
 	return S_OK;

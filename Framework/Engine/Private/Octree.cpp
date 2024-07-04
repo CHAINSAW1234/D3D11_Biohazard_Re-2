@@ -1001,13 +1001,7 @@ void COctree::Render_Node(CModel* pRootWorld, CShader* pShader)
 							return;
 					}
 
-					//m_pOctreeNodes[i]->m_vecEntryNode[j]->Bind_DecalMap(i, pShader);
-					//pShader->Begin(0);
-
-					//m_pOctreeNodes[i]->m_vecEntryNode[j]->Render(static_cast<_uint>(i));
-
-					//ID3D11UnorderedAccessView* NullUAV = { nullptr };
-					//m_pContext->CSSetUnorderedAccessViews(0, 1, &NullUAV, nullptr);
+					pRootWorld->Bind_DecalMap(k, pShader);
 
 					if (FAILED(pShader->Begin(0)))
 						return;
