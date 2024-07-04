@@ -256,6 +256,7 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\private\QuadTree.cpp" />
     <ClCompile Include="..\Private\Renderer.cpp" />
     <ClCompile Include="..\private\RenderTarget.cpp" />
+    <ClCompile Include="..\Private\Rigid_Static.cpp" />
     <ClCompile Include="..\private\Shader.cpp" />
     <ClCompile Include="..\Private\Skeletal_Mesh.cpp" />
     <ClCompile Include="..\Private\Skeleton.cpp" />
@@ -360,6 +361,7 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\public\QuadTree.h" />
     <ClInclude Include="..\Public\Renderer.h" />
     <ClInclude Include="..\public\RenderTarget.h" />
+    <ClInclude Include="..\Public\Rigid_Static.h" />
     <ClInclude Include="..\public\Shader.h" />
     <ClInclude Include="..\Public\Skeletal_Mesh.h" />
     <ClInclude Include="..\Public\Skeleton.h" />

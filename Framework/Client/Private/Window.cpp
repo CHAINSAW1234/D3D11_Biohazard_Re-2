@@ -36,6 +36,7 @@ HRESULT CWindow::Initialize(void* pArg)
 
 void CWindow::Start()
 {
+	__super::Start();
 	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Jombie_Collider"));
 	if (pCollider == nullptr)
 		return;
@@ -55,7 +56,6 @@ void CWindow::Start()
 
 void CWindow::Tick(_float fTimeDelta)
 {
-	__super::Check_Player();
 	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 	
 	if (!m_bVisible)

@@ -36,7 +36,6 @@ HRESULT CItemProp::Initialize(void* pArg)
 
 void CItemProp::Tick(_float fTimeDelta)
 {
-	__super::Check_Player();
 	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(XMMatrixTranslation(0.f, -1.2f, 0.f) * m_pTransformCom->Get_WorldMatrix());
 
 	if (m_bDead)

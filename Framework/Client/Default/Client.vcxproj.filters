@@ -499,11 +499,11 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Idle">
       <UniqueIdentifier>{ddfe2292-e482-4ab2-82cd-f2a4c3eeddb1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_End_HolstertoMove">
-      <UniqueIdentifier>{018cec94-553a-4b2d-a9f4-8d9385012dc8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Start">
       <UniqueIdentifier>{ae5b6c71-d918-40cf-a73a-4e4cabdf1137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Ladder">
+      <UniqueIdentifier>{0b035877-0214-4780-9c8c-017dbe391d29}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

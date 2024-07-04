@@ -306,6 +306,12 @@ void CBullet_UI::OnNotify()
     case ShotGun:
         m_iStoreBullet = pTabWindow->Get_Search_Item_Quantity(shotgun_bullet01a);
         break;
+    case Grenade:
+        m_iStoreBullet = pTabWindow->Get_Search_Item_Quantity(Grenade);
+        break;
+    case Flash_Bomb:
+        m_iStoreBullet = pTabWindow->Get_Search_Item_Quantity(Flash_Bomb);
+        break;
     }
 
     m_iMaxBullet = pPlayer->Get_MaxBullet();

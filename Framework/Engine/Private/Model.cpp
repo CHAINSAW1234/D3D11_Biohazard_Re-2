@@ -2775,11 +2775,11 @@ void CModel::Apply_Bone_TransformMatrices(const vector<vector<_float4x4>>& Blend
 	}
 }
 
-void CModel::Static_Mesh_Cooking(CTransform* pTransform)
+void CModel::Static_Mesh_Cooking(CTransform* pTransform, _int* pIndex)
 {
 	for (int i = 0; i < m_Meshes.size(); ++i)
 	{
-		m_Meshes[i]->Static_Mesh_Cooking(pTransform);
+		m_Meshes[i]->Static_Mesh_Cooking(pTransform,pIndex);
 	}
 }
 
@@ -3257,6 +3257,47 @@ void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix)
 	}
 }
 
+void CModel::InitDecalWorldMatrix(_float4 vPos, _float4 vNormal)
+{
+	_vector Scale = XMVectorSet(1.f,1.f,1.f,0.f);
+	_vector Position = XMVectorSet(vPos.x,vPos.y,vPos.z,1.f);
+
+	_vector LookVector = XMLoadFloat4(&vNormal);
+
+	_vector UpVector = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+	if (XMVector3NearEqual(LookVector, UpVector, XMVectorSplatEpsilon()))
+	{
+		UpVector = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	}
+
+	_vector rightVector = XMVector3Cross(LookVector, UpVector);
+	rightVector = XMVector3Normalize(rightVector);
+
+	UpVector = XMVector3Cross(rightVector, LookVector);
+	UpVector = XMVector3Normalize(UpVector);
+
+	_matrix rotationMatrix = _matrix(
+		rightVector,
+		UpVector,
+		LookVector,
+		XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)
+	);
+
+	_matrix scaleMatrix = XMMatrixScalingFromVector(Scale);
+
+	_matrix WorldMat = scaleMatrix * rotationMatrix * XMMatrixTranslationFromVector(Position);
+	_float4x4 WorldMat_Decal;
+	XMStoreFloat4x4(&WorldMat_Decal, WorldMat);
+
+	auto iNumMesh = m_Meshes.size();
+	for(size_t i = 0;i< iNumMesh;++i)
+	{
+		m_Meshes[i]->SetDecalWorldMatrix(WorldMat_Decal);
+		m_Meshes[i]->SetDecalExtent(_float3(0.2f, 0.2f, 0.2f));
+	}
+}
+
 void CModel::Init_Decal(_uint iLevel)
 {
 	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
@@ -3356,6 +3397,16 @@ void CModel::Perform_Calc_DecalMap()
 {
 	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
 	for (auto& i : NonHideIndex)
+	{
+		m_Meshes[i]->Bind_Resource_CalcDecalMap(m_vecUAV_DecalMap[i]);
+		m_Meshes[i]->Perform_Calc_DecalMap();
+	}
+}
+
+void CModel::Perform_Calc_DecalMap_StaticModel()
+{
+	auto iNumMesh = m_Meshes.size();
+	for (size_t i = 0; i < iNumMesh; ++i)
 	{
 		m_Meshes[i]->Bind_Resource_CalcDecalMap(m_vecUAV_DecalMap[i]);
 		m_Meshes[i]->Perform_Calc_DecalMap();

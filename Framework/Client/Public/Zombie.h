@@ -131,6 +131,7 @@ private:
 public://For Decal
 	virtual void						Perform_Skinning() override;
 	virtual void						Ready_Decal() override;
+	void								RayCast_Decal();
 
 private: // For AIController
 	class CBlackBoard_Zombie*			m_pBlackBoard = { nullptr };
@@ -176,6 +177,10 @@ protected:
 	_uint								m_iBloodType = { 0 };
 	_float								m_fHitDistance = { 0.f };
 	_uint								m_iMeshIndex_Hit = { 0 };
+
+	_float4								m_vDecalPoint;
+	_float4								m_vDecalNormal;
+	class CDecal_SSD*					m_pDecal_SSD = { nullptr };
 #pragma endregion
 
 public:

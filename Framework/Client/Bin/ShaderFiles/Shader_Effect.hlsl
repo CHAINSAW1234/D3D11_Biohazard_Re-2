@@ -199,8 +199,7 @@ PS_OUT PS_DECAL(PS_IN In)
 		float2 decalTextureUV = (vLocalPos.xy / (2.0f * float2(g_vExtent.x, g_vExtent.y))) + 0.5f;
 		float3 vDiffuseColor = g_Texture.Sample(LinearSampler, decalTextureUV).xyz;
 
-		Out.vColor = float4(vDiffuseColor,1.f);
-		Out.vColor = float4(1.f, 0.f, 0.f, 1.f);
+		Out.vColor = float4(vDiffuseColor, 1.f);
 	}
 	else
 	{

@@ -43,7 +43,6 @@ HRESULT CShutter::Initialize(void* pArg)
 
 void CShutter::Tick(_float fTimeDelta)
 {
-	__super::Check_Player();
 	if (!m_bVisible)
 	{
 		m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());

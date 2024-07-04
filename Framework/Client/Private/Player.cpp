@@ -647,6 +647,12 @@ void CPlayer::Set_Equip(EQUIP* eEquip)
 		m_pWeapon = nullptr;
 	}
 	else {
+		if (m_Weapons[m_eEquip]->Get_RenderLocation() == CWeapon::HOLSTER) {
+			if (m_SetProps[m_Weapons[m_eEquip]->Get_SetPropsLocation()] == m_eEquip) {
+				m_SetProps[m_Weapons[m_eEquip]->Get_SetPropsLocation()] = -1;
+			}
+		}
+
 		m_pWeapon = m_Weapons[m_eEquip];
 		Safe_AddRef(m_pWeapon);
 		m_pWeapon->Set_RenderLocation(eRenderLocation);
@@ -792,6 +798,17 @@ void CPlayer::Shot()
 	// 사운드등도 여기 넣어도 됨
 }
 
+void CPlayer::Throw_Sub()
+{
+	m_pTabWindow->UseItem(Get_Equip_As_ITEM_NUMBER(), 1);
+
+	switch(m_eEquip) {
+
+	}
+
+	NotifyObserver();
+}
+
 void CPlayer::Reload()
 {
 	Get_Body_Model()->Set_Loop(3, false);
@@ -857,14 +874,19 @@ _bool CPlayer::IsReloadAble()
 ITEM_NUMBER CPlayer::Get_Equip_As_ITEM_NUMBER()
 {
 	switch (m_eEquip) {
-	case CPlayer::HG:
+	case HG:
 		return HandGun;
 		break;
-	case CPlayer::STG:
+	case STG:
 		return ShotGun;
 		break;
+	case GRENADE:
+		return Grenade;
+		break;
+	case FLASHBANG:
+		return Flash_Bomb;
+		break;
 	case NONE:
-		return ITEM_NUMBER_END;
 		break;
 	}
 
@@ -951,7 +973,7 @@ void CPlayer::Update_FSM()
 	switch(m_eState) {
 	case MOVE:
 		if (m_pGameInstance->Get_KeyState(VK_RBUTTON) == PRESSING) {
-			if (nullptr != m_pWeapon &&
+			if (NONE != m_eEquip_Gun &&
 				Get_Body_Model()->Is_Loop_PlayingInfo(3))
 				Change_State(HOLD);
 		}
@@ -973,7 +995,7 @@ void CPlayer::Update_FSM()
 		break;
 	case SUBHOLD:
 		if (m_pGameInstance->Get_KeyState(VK_SPACE) != PRESSING && 
-			Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
+			Get_Body_Model()->Is_Loop_PlayingInfo(0)) {
 			Change_State(MOVE);
 		}
 		break;
@@ -1910,7 +1932,7 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 HRESULT CPlayer::Ready_Camera()
 {
 	if (m_pCamera == nullptr)
-		m_pCamera = dynamic_cast<CCamera_Free*>(*(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_ZZZCamera")).begin());
+		m_pCamera = dynamic_cast<CCamera_Free*>(*(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, g_strCameraLayer)).begin());
 
 	if (m_pCamera == nullptr)
 		return E_FAIL;
@@ -1948,7 +1970,7 @@ HRESULT CPlayer::Ready_Camera()
 	m_fLerpAmount_Up = m_fUp_Dist_Pos;
 
 	if (m_pCamera_Event == nullptr)
-		m_pCamera_Event = dynamic_cast<CCamera_Event*>(*++(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_ZZZCamera")).begin());
+		m_pCamera_Event = dynamic_cast<CCamera_Event*>(*++(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, g_strCameraLayer)).begin());
 
 	if (m_pCamera_Event == nullptr)
 		return E_FAIL;

@@ -17,12 +17,18 @@ matrix g_LightViewMatrix[6];
 matrix g_LightProjMatrix;
 float g_fShadowFar;
 
+bool      g_DecalRender;
+StructuredBuffer<float2> g_DecalMap;
+Texture2D g_DecalTexture;
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
 	float3		vNormal : NORMAL;
 	float2		vTexcoord : TEXCOORD0;
 	float3		vTangent : TANGENT;
+
+    uint        iIndex : INDEX;
 };
 
 struct VS_OUT
@@ -36,7 +42,8 @@ struct VS_OUT
 	float3		vTangent : TANGENT;
 	float3		vBinormal : BINORMAL;
 
-
+    uint   iIndex : COLOR0;
+    float2 vDecalUV : TEXCOORD4;
 };
 
 struct VS_OUT_CUBE
@@ -63,6 +70,8 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vProjPos = Out.vPosition;
     Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_WorldMatrix)).xyz;
     Out.vBinormal = normalize(cross(Out.vNormal, Out.vTangent));
+    Out.iIndex = In.iIndex;
+    Out.vDecalUV = g_DecalMap[Out.iIndex];
 
 	return Out;
 }
@@ -125,6 +134,9 @@ struct PS_IN
 
 	float3		vTangent : TANGENT;
 	float3		vBinormal : BINORMAL;
+
+    uint   iIndex : COLOR0;
+    float2 vDecalUV : TEXCOORD4;
 };
 
 struct PS_IN_CUBE
@@ -194,6 +206,41 @@ PS_OUT PS_MAIN(PS_IN In)
         Out.vMaterial.b = 1.f;
     }
     
+
+    if (g_DecalRender)
+    {
+        float2 DecalTexcoord;
+        DecalTexcoord.x = g_DecalMap[In.iIndex].x;
+        DecalTexcoord.y = g_DecalMap[In.iIndex].y;
+
+        float2 DecalUV = In.vDecalUV;
+
+        if (DecalUV.x >= 0.0f && DecalUV.x <= 1.0f && DecalUV.y >= 0.0f && DecalUV.y <= 1.0f)
+        {
+            float4 decalColor = g_DecalTexture.Sample(LinearSampler, DecalUV);
+
+            if (decalColor.a > 0.01f)
+            {
+                float2 center = float2(0.5f, 0.5f);
+                float distance = length(DecalUV - center);
+
+                if (distance < 0.1f)
+                {
+                    decalColor = float4(0.5f, 0.0f, 0.0f, 0.f);
+                    Out.vDiffuse = decalColor;
+                }
+                else
+                {
+                    if (decalColor.a > 0.01f)
+                    {
+                        decalColor = float4(0.5f, 0.0f, 0.0f, decalColor.a);
+                        Out.vDiffuse = decalColor;
+                    }
+                }
+            }
+        }
+    }
+
 	return Out;
 }
 

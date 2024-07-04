@@ -20,6 +20,8 @@
 #include"Window.h"
 #include"Door.h"
 
+#include "Decal_SSD.h"
+
 #define MODEL_SCALE 0.01f
 
 CZombie::CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -66,7 +68,7 @@ HRESULT CZombie::Initialize(void* pArg)
 
 		m_iIndex = pDesc->Index;
 		_float4 vPos = *(_float4*)pDesc->worldMatrix.m[3];
-			vPos.y += 1.f;
+		vPos.y += 1.f;
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 	}
 	m_InteractObjVec.resize(JOMBIE_BEHAVIOR_COLLIDER_END);
@@ -103,6 +105,15 @@ HRESULT CZombie::Initialize(void* pArg)
 #pragma region Effect
 	m_BloodDelay = 70;
 	Ready_Effect();
+#pragma endregion
+
+	Perform_Skinning();
+
+#pragma region For SSD
+
+	auto pLayer_Decal_SSD = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_Decal");
+	m_pDecal_SSD = dynamic_cast<CDecal_SSD*>(*(*pLayer_Decal_SSD).begin());
+
 #pragma endregion
 
 	return S_OK;
@@ -234,7 +245,7 @@ void CZombie::Tick(_float fTimeDelta)
 				m_iBloodCount = 0;
 
 				/*For Blood Effect*/
-#ifndef _DEBUG
+#ifdef DECAL
 				m_bSetBlood = true;
 				m_BloodTime = GetTickCount64();
 #endif
@@ -251,7 +262,7 @@ void CZombie::Tick(_float fTimeDelta)
 			m_iBloodCount = 0;
 
 			/*For Blood Effect*/
-#ifndef _DEBUG
+#ifdef DECAL
 			m_bSetBlood = true;
 			m_BloodTime = GetTickCount64();
 #endif
@@ -281,7 +292,7 @@ void CZombie::Tick(_float fTimeDelta)
 				}
 			}
 
-		//	For.Anim
+			//	For.Anim
 			m_eCurrentHitCollider = eType;
 			XMStoreFloat3(&m_vHitDirection, XMLoadFloat4(&vForce));
 
@@ -351,7 +362,7 @@ void CZombie::Late_Tick(_float fTimeDelta)
 	if (m_bSetBlood)
 	{
 		/*For Decal*/
-#ifndef _DEBUG
+#ifdef DECAL
 		Ready_Decal();
 		SetBlood();
 #endif
@@ -432,7 +443,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 #pragma region Sequence Root
 
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SEQUENCE;
-	CComposite_Node*							pSequenceNode_Root = { CComposite_Node::Create(&CompositeNodeDesc) };
+	CComposite_Node* pSequenceNode_Root = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pNode_Root->Insert_Child_Node(pSequenceNode_Root);
 
 #pragma region Selector Root 
@@ -443,7 +454,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	*/
 
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
-	CComposite_Node*							pSelectorNode_Root = { CComposite_Node::Create(&CompositeNodeDesc) };
+	CComposite_Node* pSelectorNode_Root = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSequenceNode_Root->Insert_Child_Node(pSelectorNode_Root);
 
 	/*
@@ -486,7 +497,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_StandUp_TurnOver);
 
 	//	Add Task Node		=> Stand Up
-	CStand_Up_Zombie*			pTask_StandUp = { CStand_Up_Zombie::Create() };
+	CStand_Up_Zombie* pTask_StandUp = { CStand_Up_Zombie::Create() };
 	pTask_StandUp->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_StandUp_TurnOver->Insert_Child_Node(pTask_StandUp);
 
@@ -625,7 +636,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 #pragma region		Task Shake Skin
 
-	CShake_Skin_Zombie*							pTask_Shake_Skin = { CShake_Skin_Zombie::Create() };
+	CShake_Skin_Zombie* pTask_Shake_Skin = { CShake_Skin_Zombie::Create() };
 	pTask_Shake_Skin->SetBlackBoard(m_pBlackBoard);
 	pSequenceNode_Root->Insert_Child_Node(pTask_Shake_Skin);
 
@@ -929,7 +940,7 @@ _bool CZombie::Is_Enough_Stamina(USE_STAMINA eAction)
 	}
 
 	else if (USE_STAMINA::_TURN_OVER == eAction)
-	{		
+	{
 		isEnough = m_pStatus->fStamina > ZOMBIE_NEED_STAMINA_TURN_OVER;
 	}
 
@@ -970,7 +981,7 @@ void CZombie::Col_EventCol()
 		{
 			CCustomCollider* pColCom = static_cast<CCustomCollider*>(iter);
 			m_bEvent = true;
-			m_eBeHavior_Col = (JOMBIE_BEHAVIOR_COLLIDER_TYPE) pColCom->Get_Region(); // 행동enum을 가지고 있음 JOMBIE_BEHAVIOR_COLLIDER_TYPE
+			m_eBeHavior_Col = (JOMBIE_BEHAVIOR_COLLIDER_TYPE)pColCom->Get_Region(); // 행동enum을 가지고 있음 JOMBIE_BEHAVIOR_COLLIDER_TYPE
 			m_iPropNum = pColCom->Get_InteractProps();
 			wstring strLayer = { L"" };
 			switch (m_eBeHavior_Col)
@@ -993,7 +1004,7 @@ void CZombie::Col_EventCol()
 
 void CZombie::Perform_Skinning()
 {
-	if(m_bRagdoll == false)
+	if (m_bRagdoll == false)
 	{
 		//Body Model
 		{
@@ -1353,6 +1364,16 @@ void CZombie::Ready_Decal()
 	}
 }
 
+void CZombie::RayCast_Decal()
+{
+	if (m_pGameInstance->RayCast_Decal(m_vHitPosition,m_pGameInstance->Get_Camera_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &m_vDecalPoint, &m_vDecalNormal, 2.f))
+	{
+		//m_pDecal_SSD->SetWorldMatrix_With_HitNormal(m_vDecalNormal);
+		m_pDecal_SSD->SetPosition(m_vDecalPoint);
+		m_pDecal_SSD->LookAt(m_vDecalNormal);
+	}
+}
+
 void CZombie::Ready_Effect()
 {
 	for (size_t i = 0; i < 3; ++i)
@@ -1406,6 +1427,7 @@ void CZombie::SetBlood()
 		if (m_iBloodCount == 0)
 		{
 			Calc_Decal_Map();
+			RayCast_Decal();
 
 			m_iBloodType = m_pGameInstance->GetRandom_Int(0, 10);
 
@@ -1452,7 +1474,7 @@ void CZombie::Calc_Decal_Map()
 
 	m_pHeadModel2->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
 	m_pHeadModel2->Perform_Calc_DecalMap();
-				
+
 	m_pHeadModel3->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
 	m_pHeadModel3->Perform_Calc_DecalMap();
 

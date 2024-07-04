@@ -29,8 +29,6 @@ void CCompute_Shader_Manager::Bind_Resource_Skinning(SKINNING_INPUT Input)
 {
 	m_pSkinng->Bind_Uav("g_Skinnig_Output", Input.pUav);
 	m_pSkinng->Bind_Structured_Buffer("g_VertexPositions", Input.pSRV_Vertex_Position);
-	m_pSkinng->Bind_Structured_Buffer("g_VertexNormals", Input.pSRV_Vertex_Normal);
-	m_pSkinng->Bind_Structured_Buffer("g_VertexTangents", Input.pSRV_Vertex_Tangent);
 	m_pSkinng->Bind_Structured_Buffer("g_VertexBlendIndices", Input.pSRV_Vertex_BlendIndices);
 	m_pSkinng->Bind_Structured_Buffer("g_VertexBlendWeights", Input.pSRV_Vertex_BlendWeights);
 	m_pSkinng->Bind_RawValue("g_NumVertices", &Input.iNumVertex, sizeof(_uint));
@@ -90,7 +88,6 @@ void CCompute_Shader_Manager::Perform_Calc_Decal_Info()
 void CCompute_Shader_Manager::Bind_Resource_CalcMap(CALC_DECAL_MAP_INPUT Input)
 {
 	m_pCalcDecalMap->Bind_Uav("g_Skinnig_Output",Input.pUav_Skinning);
-	m_pCalcDecalMap->Bind_Structured_Buffer("g_Texcoords", Input.pSRV_Texcoords);
 	m_pCalcDecalMap->Bind_Uav("g_DecalMap", Input.pDecalMap);
 	m_pCalcDecalMap->Bind_Matrix("g_DecalMat_Inv", &Input.Decal_Matrix_Inv);
 	m_pCalcDecalMap->Bind_RawValue("g_NumVertices", &Input.iNumVertex, sizeof(_uint));

@@ -319,6 +319,9 @@
     <Filter Include="01.Utility\01.GameObjects\Decal\Decal_Blood">
       <UniqueIdentifier>{a2223c61-e9c1-49da-b96b-c5ff38228794}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\97.Physics\Physics_Component\Rigid_Static">
+      <UniqueIdentifier>{ce8c29a0-cd92-4212-9462-ab841d923a72}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -602,6 +605,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Decal_Blood.cpp">
       <Filter>01.Utility\01.GameObjects\Decal\Decal_Blood</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Rigid_Static.cpp">
+      <Filter>01.Utility\97.Physics\Physics_Component\Rigid_Static</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -908,6 +914,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Decal_Blood.h">
       <Filter>01.Utility\01.GameObjects\Decal\Decal_Blood</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Rigid_Static.h">
+      <Filter>01.Utility\97.Physics\Physics_Component\Rigid_Static</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -19,6 +19,7 @@ public:
 private:
 	void					Set_MoveAnimation(_float fTimeDelta);
 	void					Look_Cam(_float fTimeDelta);
+	void					Start_Shot();
 	void					Shot();
 
 private:

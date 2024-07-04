@@ -144,6 +144,7 @@ public:
 	void										Change_WeaponLocation_To_Holster(CWeapon* pWeapon);
 	void										Request_NextBiteAnimation(_int iAnimIndex);
 	void										Shot();
+	void										Throw_Sub();
 	void										Reload();
 	void										Stop_UpperBody();
 
@@ -199,7 +200,7 @@ private:
 	EQUIP										m_eTargetEquip = { NONE };						// 플레이어 애님셋 교체에 관련된 장비
 	EQUIP										m_eEquip = { NONE };								// 플레이어 애님셋과 관련된 장비
 	EQUIP										m_eEquip_Gun = { NONE };							// 인벤토리에서 처리하는 장비된 무기
-	EQUIP										m_eEquip_Sub = { GRENADE };							// 인벤토리에서 처리하는 장비된 Sub무기
+	EQUIP										m_eEquip_Sub = { NONE };							// 인벤토리에서 처리하는 장비된 Sub무기
 	_int										m_SetProps[SETPROPS_NONE] = {};
 
 	CWeapon*									m_pWeapon = { nullptr };
@@ -242,24 +243,27 @@ public:
 
 #pragma region 예은 추가 
 public:
+	_bool										Get_Player_RegionChange() { return m_bChange; }
 	_int										Get_Player_ColIndex() { return m_iCurCol; }
 	_int										Get_Player_Direction() { return m_iDir; }
 	_int										Get_Player_Floor() { return m_iFloor; } /* 현재 플레이어의 층수 */
 	_int										Get_Player_Region() { return m_iRegion; } /* 현재 존재하는 지역 */
-	_bool										Get_Player_RegionChange() { return m_bChange; }
-	_bool*										Get_Player_Interact_Ptr() { return &m_bInteract; }
-	_bool*										Get_Player_Region_Array() { return m_bRegion; }
-
-	enum PLAYER_DOOR_BEHAVE { DOOR_BEHAVE_NOTHING, DOOR_BEHAVE_OPEN, DOOR_BEHAVE_LOCK};
-	PLAYER_DOOR_BEHAVE							Get_isDoor_Setting() { return (PLAYER_DOOR_BEHAVE)m_iDoor_Setting; }
+	_bool*									Get_Player_Interact_Ptr() { return &m_bInteract; }
+	_bool*									Get_Player_Region_Array() { return m_bRegion; }
+	enum PLAYER_LADDER_BEAVE	{LADDER_BEHAVE_NOTHING, LADDER_BEHAVE_UP, LADDER_BEHAVE_DOWN};
+	enum PLAYER_DOOR_BEHAVE		{ DOOR_BEHAVE_NOTHING, DOOR_BEHAVE_OPEN, DOOR_BEHAVE_LOCK};
+	PLAYER_DOOR_BEHAVE				Get_isDoor_Setting() { return (PLAYER_DOOR_BEHAVE)m_iDoor_Setting; }
 	_float										Get_Door_Degree() { return m_fDoor_Degree; }
-	void										Set_Door_Setting(_int iDoor_Setting, _float fDoorDegree = 0.f) {m_iDoor_Setting = iDoor_Setting; m_fDoor_Degree = fDoorDegree;};
-	
-	// 인벤 연동 뒤 나영이의 UI에게 플레이어가 얻은 아이템의 enum을 던져줘야함
+	void											Set_Door_Setting(_int iDoor_Setting, _float fDoorDegree = 0.f) {m_iDoor_Setting = iDoor_Setting; m_fDoor_Degree = fDoorDegree;};
+	void											Set_Ladder_Setting(_int iLadder_Setting, _float4 vLadderPos) { m_iLadder_Setting = iLadder_Setting; m_vLadderPos = vLadderPos; }
+
+
 private:
 	_int										m_iDoor_Setting = { DOOR_BEHAVE_NOTHING };
 	_float										m_fDoor_Degree = { 0.f };
 
+	_int										m_iLadder_Setting = { LADDER_BEHAVE_NOTHING };
+	_float4									m_vLadderPos = { _float4() };
 
 	_bool										m_bInteract = { false }; //플레이어가 상호작용을 시도한
 	_bool										m_bChange = { true };
