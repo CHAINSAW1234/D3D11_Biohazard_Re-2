@@ -34,7 +34,9 @@ public:
 public:
 	//Calc Decal Map
 	void					Bind_Resource_CalcMap(CALC_DECAL_MAP_INPUT Input);
+	void					Bind_Resource_CalcMap_StaticModel(CALC_DECAL_MAP_INPUT_STATIC_MODEL Input);
 	void					Perform_Calc_Decal_Map(_uint iNumVertices);
+	void					Perform_Calc_Decal_Map_StaticModel(_uint iNumVertices);
 
 public:
 

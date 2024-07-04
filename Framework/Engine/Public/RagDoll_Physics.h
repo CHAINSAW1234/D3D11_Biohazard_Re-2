@@ -198,6 +198,7 @@ public:
     {
         m_iId = Index;
     }
+    _int                                Find_BoneIndex(const string& strRootTag);
 public:
 	static CRagdoll_Physics*            Create();
 
@@ -280,6 +281,61 @@ private:
     PxD6Joint*                                      m_pAnkle_Joint_R = { nullptr };
 
     _uint                                           m_iId = { 0 };
+
+    uint32_t m_head_idx = { 0 };		//neck_1
+    uint32_t m_neck_01_idx = { 0 };	//neck_0
+    uint32_t m_spine_03_idx = { 0 };		//hips
+    uint32_t m_spine_02_idx = { 0 };		//spine_2
+    uint32_t m_spine_01_idx = { 0 };		//spine_1
+    uint32_t m_pelvis_idx = { 0 };		//spine_0
+             
+    uint32_t m_thigh_l_idx = { 0 };		//l_leg_femur
+    uint32_t m_calf_l_idx = { 0 };		//l_leg_tibia
+    uint32_t m_foot_l_idx = { 0 };		//l_leg_ankle
+    uint32_t m_ball_l_idx = { 0 };		//l_leg_ball
+             
+    uint32_t m_thigh_r_idx = { 0 };		//r_leg_femur
+    uint32_t m_calf_r_idx = { 0 };		//r_leg_tibia
+    uint32_t m_foot_r_idx = { 0 };		//r_leg_ankle
+    uint32_t m_ball_r_idx = { 0 };		//r_leg_ball
+             
+    uint32_t m_upperarm_l_idx = { 0 };	//l_arm_humerus
+    uint32_t m_lowerarm_l_idx = { 0 };	//l_arm_radius
+    uint32_t m_hand_l_idx = { 0 };		//l_arm_wrist
+    uint32_t m_middle_01_l_idx = { 0 };	//l_hand_middle_0
+
+    uint32_t m_upperarm_r_idx = { 0 };	//r_arm_humerus
+    uint32_t m_lowerarm_r_idx = { 0 };	//r_arm_radius
+    uint32_t m_hand_r_idx = { 0 };		//r_arm_wrist
+    uint32_t m_middle_01_r_idx = { 0 };	//r_hand_middle_0
+
+
+    uint32_t m_head_idx_Bone = { 0 };		//neck_1
+    uint32_t m_neck_01_idx_Bone = { 0 };	//neck_0
+    uint32_t m_spine_03_idx_Bone = { 0 };		//hips
+    uint32_t m_spine_02_idx_Bone = { 0 };		//spine_2
+    uint32_t m_spine_01_idx_Bone = { 0 };		//spine_1
+    uint32_t m_pelvis_idx_Bone = { 0 };		//spine_0
+
+    uint32_t m_thigh_l_idx_Bone = { 0 };		//l_leg_femur
+    uint32_t m_calf_l_idx_Bone = { 0 };		//l_leg_tibia
+    uint32_t m_foot_l_idx_Bone = { 0 };		//l_leg_ankle
+    uint32_t m_ball_l_idx_Bone = { 0 };		//l_leg_ball
+
+    uint32_t m_thigh_r_idx_Bone = { 0 };		//r_leg_femur
+    uint32_t m_calf_r_idx_Bone = { 0 };		//r_leg_tibia
+    uint32_t m_foot_r_idx_Bone = { 0 };		//r_leg_ankle
+    uint32_t m_ball_r_idx_Bone = { 0 };		//r_leg_ball
+
+    uint32_t m_upperarm_l_idx_Bone = { 0 };	//l_arm_humerus
+    uint32_t m_lowerarm_l_idx_Bone = { 0 };	//l_arm_radius
+    uint32_t m_hand_l_idx_Bone = { 0 };		//l_arm_wrist
+    uint32_t m_middle_01_l_idx_Bone = { 0 };	//l_hand_middle_0
+
+    uint32_t m_upperarm_r_idx_Bone = { 0 };	//r_arm_humerus
+    uint32_t m_lowerarm_r_idx_Bone = { 0 };	//r_arm_radius
+    uint32_t m_hand_r_idx_Bone = { 0 };		//r_arm_wrist
+    uint32_t m_middle_01_r_idx_Bone = { 0 };	//r_hand_middle_0
 public:
 	virtual void Free() override;
 };

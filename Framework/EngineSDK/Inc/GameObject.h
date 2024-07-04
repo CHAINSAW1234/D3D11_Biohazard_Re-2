@@ -82,6 +82,10 @@ public:
 	{
 		m_pOctreeNode = pNode;
 	}
+	_bool										GetbRender()
+	{
+		return m_bRender;
+	}
 public:
 	virtual _bool								Get_Dead() { return m_bDead; }
 	_bool*										Get_Dead_Ptr() { return &m_bDead; }

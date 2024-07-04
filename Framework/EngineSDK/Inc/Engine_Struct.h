@@ -280,6 +280,15 @@ namespace Engine
 		_float3					   vExtent;
 		_uint iNumVertex;
 	}CALC_DECAL_MAP_INPUT;
+
+	typedef struct
+	{
+		ID3D11ShaderResourceView*  pSRV_Vertices;
+		ID3D11UnorderedAccessView* pDecalMap;
+		_float4x4				   Decal_Matrix_Inv;
+		_float3					   vExtent;
+		_uint iNumVertex;
+	}CALC_DECAL_MAP_INPUT_STATIC_MODEL;
 #pragma endregion
 
 

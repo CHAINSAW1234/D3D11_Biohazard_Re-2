@@ -28,6 +28,7 @@ public:
 	virtual void		Staging_Calc_Decal_Info() override;
 	virtual void		Calc_Decal_Info(CALC_DECAL_INPUT Input) override;
 	virtual void		Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input, ID3D11UnorderedAccessView* pUAV) override;
+	virtual void		Bind_Resource_DecalMap_StaticModel(CALC_DECAL_MAP_INPUT_STATIC_MODEL Input, ID3D11UnorderedAccessView* pUAV) override;
 	virtual void		Bind_DecalMap(class CShader* pShader) override;
 	virtual HRESULT		Init_Decal_Texture(_uint iLevel) override;
 	void				Staging_DecalMap();

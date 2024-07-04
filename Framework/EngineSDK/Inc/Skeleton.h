@@ -24,6 +24,10 @@ struct Joint
 
 		return result;
 	}
+	_bool						Compare_Name(const _char* pBoneName)
+	{
+		return !strcmp(name.c_str(), pBoneName);
+	}
 };
 
 class Skeleton
@@ -39,9 +43,11 @@ public:
     inline size_t				num_bones() { return m_num_joints; }
     inline struct Joint*		joints() { return &m_joints[0]; }
 	void						SetNumJoint();
-private:
+public:
     void						build_bone_list(aiNode* node, const aiScene* scene, std::vector<aiBone*>& temp_bone_list, std::unordered_set<std::string>& bone_map);
     void						build_skeleton(aiNode* node, int bone_index, const aiScene* scene, std::vector<aiBone*>& temp_bone_list);
+	_int                        Find_BoneIndex(const string& strRootTag);
+
 private:
     size_t					m_num_joints;
     std::vector<Joint>			m_joints;

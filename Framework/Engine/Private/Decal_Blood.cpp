@@ -136,6 +136,27 @@ void CDecal_Blood::Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input, ID3D11Unor
 	m_pGameInstance->Bind_Resource_Calc_Decal_Map(Input);
 }
 
+void CDecal_Blood::Bind_Resource_DecalMap_StaticModel(CALC_DECAL_MAP_INPUT_STATIC_MODEL Input, ID3D11UnorderedAccessView* pUAV)
+{
+	_matrix DecalWorldMat = m_pTransformCom->Get_WorldMatrix();
+
+	_vector Scale, Rot, Trans;
+	XMMatrixDecompose(&Scale, &Rot, &Trans, DecalWorldMat);
+	Rot = XMQuaternionNormalize(Rot);
+	_matrix RotMat, TransMat;
+	RotMat = XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(Rot));
+	TransMat = XMMatrixTranslation(-XMVectorGetX(Trans), -XMVectorGetY(Trans), -XMVectorGetZ(Trans));
+	_matrix WorldInv = TransMat * RotMat;
+	_float4x4 WorldInv_Float4x4;
+	XMStoreFloat4x4(&WorldInv_Float4x4, WorldInv);
+	Input.Decal_Matrix_Inv = WorldInv_Float4x4;
+
+	Input.pDecalMap = pUAV;
+	Input.vExtent = _float3(1.f,1.f,1.f);
+
+	m_pGameInstance->Bind_Resource_Calc_Decal_Map_StaticModel(Input);
+}
+
 void CDecal_Blood::Bind_DecalMap(CShader* pShader)
 {
 	m_pTextureCom->Bind_ShaderResource(pShader, "g_DecalTexture");
