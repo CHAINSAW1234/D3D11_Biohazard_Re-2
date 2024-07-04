@@ -394,13 +394,19 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertic
 	m_BufferDesc.StructureByteStride = m_iVertexStride;
 
 	VTXMESH* pVertices = new VTXMESH[m_iNumVertices];
+	ZeroMemory(pVertices, sizeof(VTXMESH) * m_iNumVertices);
+
+	m_pNormals = new _float3[m_iNumVertices];
+	ZeroMemory(m_pNormals, sizeof(_float3) * m_iNumVertices);
+
+	m_pTangents = new _float3[m_iNumVertices];
+	ZeroMemory(m_pTangents, sizeof(_float3) * m_iNumVertices);
+
+	m_pTexcoords = new _float2[m_iNumVertices];
+	ZeroMemory(m_pTexcoords, sizeof(_float2) * m_iNumVertices);
 
 	m_pVertices_Cooking = new _float3[m_iNumVertices];
-	m_pNormals = new _float3[m_iNumVertices];
-	m_pTexcoords = new _float2[m_iNumVertices];
-	m_pTangents = new _float3[m_iNumVertices];
-
-	ZeroMemory(pVertices, sizeof(VTXMESH) * m_iNumVertices);
+	ZeroMemory(m_pVertices_Cooking, sizeof(_float3) * m_iNumVertices);
 
 	for (size_t i = 0; i < static_cast<size_t>(m_iNumVertices); i++)
 	{
@@ -409,6 +415,7 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertic
 		memcpy_s(&pVertices[i].vNormal, sizeof(_float3), &Vertices[i].vNormal, sizeof(_float3));
 		memcpy_s(&pVertices[i].vTexcoord, sizeof(_float2), &Vertices[i].vTexcoord, sizeof(_float2));
 		memcpy_s(&pVertices[i].vTangent, sizeof(_float3), &Vertices[i].vTangent, sizeof(_float3));
+		pVertices[i].iIndex = (_uint)i;
 	}
 
 	_float3 vTotal_Pos = _float3(0.f, 0.f, 0.f);
@@ -429,6 +436,38 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertic
 
 	if (FAILED(__super::Create_Buffer(&m_pVB)))
 		return E_FAIL;
+
+#pragma region For Compute Shader
+	//Create Structured Buffer
+	{
+		D3D11_BUFFER_DESC bufferDesc = {};
+		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		bufferDesc.ByteWidth = sizeof(_float3) * m_iNumVertices;
+		bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		bufferDesc.StructureByteStride = sizeof(_float3);
+		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+		D3D11_SUBRESOURCE_DATA initData = {};
+		initData.pSysMem = m_pVertices_Cooking;
+
+		HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Vertex_Position);
+
+		if (FAILED(hr))
+			return E_FAIL;
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+		srvDesc.Buffer.NumElements = m_iNumVertices;
+
+		hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_Position, &srvDesc, &m_pSRV_Vertex_Position);
+
+		if (FAILED(hr))
+			return E_FAIL;
+	}
+
+#pragma endregion
+
 
 	Safe_Delete_Array(pVertices);
 
@@ -453,12 +492,6 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 
 	m_pNormals = new _float3[m_iNumVertices];
 	ZeroMemory(m_pNormals, sizeof(_float3) * m_iNumVertices);
-
-	m_pTangents = new _float3[m_iNumVertices];
-	ZeroMemory(m_pTangents, sizeof(_float3) * m_iNumVertices);
-
-	m_pTexcoords = new _float2[m_iNumVertices];
-	ZeroMemory(m_pTexcoords, sizeof(_float2) * m_iNumVertices);
 
 	m_pBlendIndices = new XMUINT4[m_iNumVertices];
 	ZeroMemory(m_pBlendIndices, sizeof(XMUINT4) * m_iNumVertices);
@@ -496,10 +529,8 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 		}
 
 		m_pNormals[i] = pVertices[i].vNormal;
-		m_pTangents[i] = pVertices[i].vTangent;
 		m_pBlendIndices[i] = pVertices[i].vBlendIndices;
 		m_pBlendWeights[i] = pVertices[i].vBlendWeights;
-		m_pTexcoords[i] = pVertices[i].vTexcoord;
 	}
 
 	for (int i = 0; i < static_cast<_int>(m_iNumVertices); ++i)
@@ -591,66 +622,6 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 			return E_FAIL;
 	}
 
-
-
-	//Create Structured Buffer
-	{
-		D3D11_BUFFER_DESC bufferDesc = {};
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.ByteWidth = sizeof(_float3) * m_iNumVertices;
-		bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		bufferDesc.StructureByteStride = sizeof(_float3);
-		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-
-		D3D11_SUBRESOURCE_DATA initData = {};
-		initData.pSysMem = m_pNormals;
-
-		HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Vertex_Normal);
-		if (FAILED(hr))
-			return E_FAIL;
-
-		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.NumElements = m_iNumVertices;
-
-		hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_Normal, &srvDesc, &m_pSRV_Vertex_Normal);
-
-		if (FAILED(hr))
-			return E_FAIL;
-	}
-
-
-
-	//Create Structured Buffer
-	{
-		D3D11_BUFFER_DESC bufferDesc = {};
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.ByteWidth = sizeof(_float3) * m_iNumVertices;
-		bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		bufferDesc.StructureByteStride = sizeof(_float3);
-		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-
-		D3D11_SUBRESOURCE_DATA initData = {};
-		initData.pSysMem = m_pTangents;
-
-		HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Vertex_Tangent);
-		if (FAILED(hr))
-			return E_FAIL;
-
-		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.NumElements = m_iNumVertices;
-
-		hr = m_pDevice->CreateShaderResourceView(m_pSB_Vertex_Tangent, &srvDesc, &m_pSRV_Vertex_Tangent);
-
-		if (FAILED(hr))
-			return E_FAIL;
-	}
-
-
-
 	//Create Structured Buffer
 	{
 		D3D11_BUFFER_DESC bufferDesc = {};
@@ -710,43 +681,6 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 			return E_FAIL;
 	}
 
-	//Create Structured Buffer
-	{
-		D3D11_BUFFER_DESC bufferDesc = {};
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.ByteWidth = sizeof(_float2) * m_iNumVertices;
-		bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		bufferDesc.StructureByteStride = sizeof(_float2);
-		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-
-		D3D11_SUBRESOURCE_DATA initData = {};
-		initData.pSysMem = m_pTexcoords;
-
-		HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initData, &m_pSB_Texcoord);
-
-		if (FAILED(hr))
-			return E_FAIL;
-
-		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		srvDesc.Buffer.NumElements = m_iNumVertices;
-
-		hr = m_pDevice->CreateShaderResourceView(m_pSB_Texcoord, &srvDesc, &m_pSRV_Texcoord);
-
-		if (FAILED(hr))
-			return E_FAIL;
-	}
-
-	//Create Staging Buffer
-	D3D11_BUFFER_DESC stagingDesc = {};
-	stagingDesc.Usage = D3D11_USAGE_STAGING;
-	stagingDesc.ByteWidth = sizeof(SKINNING_OUTPUT) * m_iNumVertices;
-	stagingDesc.BindFlags = 0;
-	stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-	stagingDesc.StructureByteStride = sizeof(SKINNING_OUTPUT);
-
-	m_pDevice->CreateBuffer(&stagingDesc, nullptr, &m_pStaging_Buffer_Skinning);
 #pragma endregion
 
 	Safe_Delete_Array(pVertices);
@@ -754,9 +688,9 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 	return S_OK;
 }
 
-void CMesh::Static_Mesh_Cooking(CTransform* pTransform)
+void CMesh::Static_Mesh_Cooking(CTransform* pTransform, _int* pIndex)
 {
-	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pTransform);
+	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pTransform,pIndex);
 }
 
 void CMesh::Static_Mesh_Cooking_NoRotation(CTransform* pTransform)
@@ -937,8 +871,6 @@ void CMesh::Bind_Resource_Skinning()
 {
 	m_Skinning_Input.pUav = m_pUAV_Skinning;
 	m_Skinning_Input.pSRV_Vertex_Position = m_pSRV_Vertex_Position;
-	m_Skinning_Input.pSRV_Vertex_Normal = m_pSRV_Vertex_Normal;
-	m_Skinning_Input.pSRV_Vertex_Tangent = m_pSRV_Vertex_Tangent;
 	m_Skinning_Input.pSRV_Vertex_BlendIndices = m_pSRV_Vertex_BlendIndices;
 	m_Skinning_Input.pSRV_Vertex_BlendWeights = m_pSRV_Vertex_BlendWeights;
 	m_Skinning_Input.iNumVertex = m_iNumVertices;
@@ -983,6 +915,11 @@ void CMesh::Calc_Decal_Info()
 	m_pDecal_Blood->Staging_Calc_Decal_Info();
 }
 
+void CMesh::SetDecalExtent(_float3 vSize)
+{
+	m_pDecal_Blood->SetExtent(vSize);
+}
+
 void CMesh::Bind_Resource_DecalMap(CShader* pShader)
 {
 	pShader->Bind_Uav("positionBuffer", m_pUAV_Skinning);
@@ -1004,7 +941,6 @@ void CMesh::SetDecalWorldMatrix(_float4x4 WorldMatrix)
 void CMesh::Bind_Resource_CalcDecalMap(ID3D11UnorderedAccessView* pUAV)
 {
 	m_Calc_Decal_Map_Input.iNumVertex = m_iNumVertices;
-	m_Calc_Decal_Map_Input.pSRV_Texcoords = m_pSRV_Texcoord;
 	m_Calc_Decal_Map_Input.pUav_Skinning = m_pUAV_Skinning;
 	m_pDecal_Blood->Bind_Resource_DecalMap(m_Calc_Decal_Map_Input,pUAV);
 }

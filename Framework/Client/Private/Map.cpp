@@ -4,7 +4,8 @@
 #include "GameInstance.h"
 #include "Light.h"
 #include "Octree.h"
-#include"Player.h"
+#include "Player.h"
+#include "Rigid_Static.h"
 
 CMap::CMap(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -49,7 +50,11 @@ HRESULT CMap::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
-	m_pModelCom->Static_Mesh_Cooking();
+
+#pragma region Initialize RigidBody
+	m_pRigid_Static = m_pGameInstance->Create_Rigid_Static(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_RigidBody, this);
+	m_pModelCom->Static_Mesh_Cooking(nullptr,&m_iIndex_RigidBody);
+#pragma endregion
 
 
 #pragma region Initializing Octree
@@ -66,6 +71,8 @@ HRESULT CMap::Initialize(void* pArg)
 	{
 		m_pModelCom->Release_IndexBuffer(i);
 	}
+
+	m_bDecalRender = false;
 #pragma endregion
 
 	return S_OK;
@@ -77,6 +84,14 @@ void CMap::Tick(_float fTimeDelta)
 	if (m_pPlayer == nullptr)
 		m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
 
+	if (m_pRigid_Static)
+	{
+		if (m_pRigid_Static->Is_Hit())
+		{
+			m_pModelCom->InitDecalWorldMatrix(m_pRigid_Static->GetBlockPoint(), m_pRigid_Static->GetHitNormal());
+			m_pModelCom->Perform_Calc_DecalMap_StaticModel();
+		}
+	}
 }
 
 void CMap::Late_Tick(_float fTimeDelta)
@@ -264,6 +279,9 @@ HRESULT CMap::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
 		return E_FAIL;
 
 	return S_OK;

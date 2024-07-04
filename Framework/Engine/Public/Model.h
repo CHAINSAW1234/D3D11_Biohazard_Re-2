@@ -256,7 +256,7 @@ private:
 	vector<_float4x4>						Compute_ResultMatrices_AdditionalMsking(const vector<vector<_float4x4>>& AdditionalMaskingTransformationMatricesLayer);
 
 public:		/* For.Cooking_Mesh */
-	void									Static_Mesh_Cooking(class CTransform* pTransform = nullptr);
+	void									Static_Mesh_Cooking(class CTransform* pTransform = nullptr,_int* pIndex = nullptr);
 	void									Dynamic_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void									Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms,class CTransform* pTransform = nullptr);
 	void									Convex_Mesh_Cooking_Convert_Root(vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms,class CTransform* pTransform = nullptr);
@@ -369,6 +369,7 @@ public:/*For Skinned Mesh Decal*/
 	void									Staging_Skinning(_uint iIndex);
 	void									Perform_Skinning(_uint iIndex);
 	void									SetDecalWorldMatrix(_uint iIndex,_float4x4 WorldMatrix);
+	void									InitDecalWorldMatrix(_float4 vPos,_float4 vNormal);
 	void									Init_Decal(_uint iLevel);
 
 	void									Bind_Resource_NonCShader_Decal(_uint iIndex,class CShader* pShader);
@@ -388,6 +389,7 @@ public:/*For Decal Map*/
 
 public:/*For Calc Decal Map*/
 	void									Perform_Calc_DecalMap();
+	void									Perform_Calc_DecalMap_StaticModel();
 	void									Bind_DecalMap(_uint iIndex,class CShader* pShader);
 
 private:/*For Decal Map*/

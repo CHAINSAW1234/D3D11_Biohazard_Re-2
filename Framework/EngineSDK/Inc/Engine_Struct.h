@@ -124,9 +124,10 @@ namespace Engine
 		_float3		vNormal;
 		_float2		vTexcoord;
 		_float3		vTangent;
+		_uint		iIndex;
 
-		static const unsigned int	iNumElements = { 4 };
-		static const D3D11_INPUT_ELEMENT_DESC	Elements[4];
+		static const unsigned int	iNumElements = { 5 };
+		static const D3D11_INPUT_ELEMENT_DESC	Elements[5];
 	}VTXMESH;
 
 	typedef struct ENGINE_DLL tagVtxAnimMesh

@@ -94,7 +94,8 @@ protected:
 
 	//Physics_Component
 	class CCharacter_Controller*				m_pController = { nullptr };
-	class CRigid_Dynamic*						m_pRigid_Body = { nullptr };
+	class CRigid_Dynamic*						m_pRigid_Dynamic = { nullptr };
+	class CRigid_Static*						m_pRigid_Static = { nullptr };
 	_int										m_iIndex_CCT = { 0 };
 	_int										m_iIndex_RigidBody = { 0 };
 

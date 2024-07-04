@@ -291,9 +291,10 @@ public:/*For Physics Controller*/
 	void									SetWorldMatrix_Ragdoll(_float4x4 WorldMatrix);
 	void									SetRotationMatrix_Ragdoll(_float4x4 RotationMatrix);
 	class CCharacter_Controller*			Create_Controller(_float4 Pos, _int* Index, class CGameObject* pCharacter,_float fHeight,_float fRadius, class CTransform* pTransform, vector<class CBone*>* pBones, const std::string& name = "");
+	class CRigid_Static*					Create_Rigid_Static(_float4 Pos, _int* Index, class CGameObject* pStaticMesh);
 	void									Cook_Terrain();
 	void									Simulate();
-	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr);
+	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr, _int* pIndex = nullptr);
 	void									Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);

@@ -1505,7 +1505,7 @@ PS_OUT PS_DECAL(PS_IN In)
         else
             Out.vColor = float4(0.3f,0.f,0.f,1.f);*/
 
-        float3 normal = normalize(g_NormalTexture.Sample(PointSampler, In.vTexcoord).xyz); // ÇÈ¼¿ÀÇ ³ë¸Ö º¤ÅÍ
+        float3 normal = g_NormalTexture.Sample(PointSampler, In.vTexcoord).xyz; // ÇÈ¼¿ÀÇ ³ë¸Ö º¤ÅÍ
 
         // ÇÈ¼¿ÀÇ ³ë¸Ö º¤ÅÍ¸¦ »ç¿ëÇÏ¿© ÅØ½ºÃ³ ÁÂÇ¥ °è»ê
         if (abs(normal.z) > abs(normal.x) && abs(normal.z) > abs(normal.y))

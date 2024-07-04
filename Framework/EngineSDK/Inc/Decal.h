@@ -44,16 +44,20 @@ public:
 	virtual HRESULT				Init_Decal_Texture(_uint iLevel) { return S_OK; }
 	virtual void				Bind_Resource_NonCShader_Decal(class CShader* pShader) {}
 	virtual void				Calc_NonCS_DecalMap(class CShader* pShader) {}
+	void						SetExtent(_float3 vExtent)
+	{
+		m_vExtent = vExtent;
+	}
 protected:
-	class CModel* m_pModelCom = { nullptr };
-	class CShader* m_pShaderCom = { nullptr };
-	class CTexture* m_pTextureCom = { nullptr };
-	class CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
+	class CModel*				m_pModelCom = { nullptr };
+	class CShader*				m_pShaderCom = { nullptr };
+	class CTexture*				m_pTextureCom = { nullptr };
+	class CVIBuffer_Rect*		m_pVIBufferCom = { nullptr };
 
-	DecalConstData m_DecalConstData;
-	DecalInfo* m_DecalInfo = { nullptr };
-	ID3D11Buffer* m_pSB_DecalInfo = { nullptr };
-	ID3D11Buffer* m_pCB_DecalConstData = { nullptr };
+	DecalConstData				m_DecalConstData;
+	DecalInfo*					m_DecalInfo = { nullptr };
+	ID3D11Buffer*				m_pSB_DecalInfo = { nullptr };
+	ID3D11Buffer*				m_pCB_DecalConstData = { nullptr };
 
 	ID3D11Buffer*				m_pSB_DecalMap = nullptr;
 	ID3D11ShaderResourceView*	m_pSRV_DecalMap = nullptr;
@@ -70,9 +74,9 @@ protected:
 
 	_float4x4					m_WorldInv;
 protected:
-	_float					m_fSizeX;
-	_float					m_fSizeY;
-	_float					m_fSizeZ;
+	_float						m_fSizeX;
+	_float						m_fSizeY;
+	_float						m_fSizeZ;
 
 protected:
 	virtual HRESULT			Add_Components();

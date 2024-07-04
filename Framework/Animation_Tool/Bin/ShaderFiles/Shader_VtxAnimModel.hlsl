@@ -35,11 +35,7 @@ matrix g_LightProjMatrix;
 
 bool g_isMotionBlur;
 
-RWStructuredBuffer<float2> g_DecalMap_Calc;
 StructuredBuffer<float2> g_DecalMap;
-float3	g_Decal_Extent;
-matrix g_DecalMat_Inv;
-
 bool		g_DecalRender;
 
 struct VS_IN
