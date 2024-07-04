@@ -3342,13 +3342,14 @@ void CModel::Perform_Skinning(_uint iIndex)
 	m_pGameInstance->Perform_Skinning(m_Meshes[iIndex]->GetNumVertices());
 }
 
-void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix)
+void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix,_int iMeshType)
 {
 	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
 
 	for (auto& i : NonHideIndex)
 	{
-		m_Meshes[i]->SetDecalWorldMatrix(WorldMatrix);
+		if(m_MeshBranches[i] != iMeshType)
+			m_Meshes[i]->SetDecalWorldMatrix(WorldMatrix);
 	}
 }
 
@@ -3415,16 +3416,19 @@ void CModel::Bind_Resource_NonCShader_Decal(_uint iIndex, class CShader* pShader
 	m_Meshes[iIndex]->Bind_Resource_NonCShader_Decal(pShader);
 }
 
-void CModel::Calc_DecalMap_NonCS(CShader* pShader)
+void CModel::Calc_DecalMap_NonCS(CShader* pShader,_int iMeshType)
 {
 	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
 
 	for (auto& i : NonHideIndex)
 	{
-		pShader->Begin(6);
-		pShader->Bind_Matrices("g_BoneMatrices", m_MeshBoneMatrices, 512);
-		m_Meshes[i]->Bind_Resource_NonCShader_Decal(pShader);
-		m_Meshes[i]->Calc_NonCS_Decal_Map(pShader);
+		if(m_MeshBranches[i] != iMeshType)
+		{
+			pShader->Begin(6);
+			pShader->Bind_Matrices("g_BoneMatrices", m_MeshBoneMatrices, 512);
+			m_Meshes[i]->Bind_Resource_NonCShader_Decal(pShader);
+			m_Meshes[i]->Calc_NonCS_Decal_Map(pShader);
+		}
 	}
 }
 
@@ -3495,13 +3499,16 @@ void CModel::Perform_Init_DecalMap(_uint iIndex, class CShader* pShader)
 	m_Meshes[iIndex]->Init_DecalMap(pShader);
 }
 
-void CModel::Perform_Calc_DecalMap()
+void CModel::Perform_Calc_DecalMap(_int iMeshType)
 {
 	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
 	for (auto& i : NonHideIndex)
 	{
-		m_Meshes[i]->Bind_Resource_CalcDecalMap(m_vecUAV_DecalMap[i]);
-		m_Meshes[i]->Perform_Calc_DecalMap();
+		if(m_MeshBranches[i] != iMeshType)
+		{
+			m_Meshes[i]->Bind_Resource_CalcDecalMap(m_vecUAV_DecalMap[i]);
+			m_Meshes[i]->Perform_Calc_DecalMap();
+		}
 	}
 }
 
