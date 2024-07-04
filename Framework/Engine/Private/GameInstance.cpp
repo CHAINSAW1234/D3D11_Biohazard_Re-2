@@ -193,13 +193,13 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 		m_pInput_Device->Tick(fTimeDelta);
 
 	if (m_pLevel_Manager)
+		m_pLevel_Manager->Tick(fTimeDelta);
+
+	if (m_pLevel_Manager)
 		m_pLevel_Manager->Open_Level();
 
 	if (m_pObject_Manager)
 		m_pObject_Manager->Priority_Tick(fTimeDelta);
-
-	if (m_pLevel_Manager)
-		m_pLevel_Manager->Tick(fTimeDelta);
 
 	if(m_pObject_Manager)
 		m_pObject_Manager->Tick(fTimeDelta);	

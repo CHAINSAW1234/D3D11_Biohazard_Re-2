@@ -135,6 +135,9 @@ public:
 	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineDefault = isTurnSpineDefault; }
 	void										Set_TurnSpineHold(_bool isTurnSpineHold) { m_isTurnSpineHold = isTurnSpineHold;}
 	void										Set_TurnSpineLight(_bool isTurnSpineLight) { m_isTurnSpineLight = isTurnSpineLight; }
+	void										Set_Gravity(_bool isGravity); 
+	void Set_Position(_float4 vPos);
+	void Set_Position(_fvector vPos);
 
 	// ============================ CHANGE == SET ============================
 	void										Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex);

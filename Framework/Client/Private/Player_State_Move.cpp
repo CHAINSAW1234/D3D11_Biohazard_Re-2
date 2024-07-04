@@ -42,7 +42,14 @@ void CPlayer_State_Move::OnStateUpdate(_float fTimeDelta)
 			m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::MOVE_LIGHT);
 		}
 		else {
-			m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::MOVE);
+			if (m_pPlayer->Get_Hp() >= 4 ||
+				!m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3)	) {
+				m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::MOVE);
+			}
+			else {
+				m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::MOVE_LIGHT);
+			}
+
 		}
 	}
 }

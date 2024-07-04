@@ -63,6 +63,7 @@ public:
 		m_bRender = boolean;
 	}
 	CTransform*									Get_Transform() { return m_pTransformCom; }
+	class CCharacter_Controller*				Get_Controller() { return m_pController; }
 	virtual _float4								GetPosition();
 	virtual _vector								GetPositionVector();
 	virtual _vector								GetLookDir_Vector();

@@ -19,7 +19,6 @@ matrix g_LightViewMatrix[6];
 matrix g_LightProjMatrix;
 float g_fShadowFar;
 
-bool      g_DecalRender;
 StructuredBuffer<float2> g_DecalMap;
 Texture2D g_DecalTexture;
 

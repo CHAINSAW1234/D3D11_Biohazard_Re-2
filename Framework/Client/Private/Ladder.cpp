@@ -104,7 +104,7 @@ HRESULT CLadder::Add_Components()
 	
 	CBounding_AABB::BOUNDING_AABB_DESC		ColliderDesc_aabb{};
 
-	ColliderDesc_aabb.vCenter = _float3(0.1f, 5.8f, 0.f);
+	ColliderDesc_aabb.vCenter = _float3(0.1f, 5.3f, 0.f);
 	ColliderDesc_aabb.vSize = _float3(1.f, 1.f, 1.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
