@@ -43,22 +43,19 @@ HRESULT CShutter::Initialize(void* pArg)
 
 void CShutter::Tick(_float fTimeDelta)
 {
+	__super::Tick_Col();
+
 	if (!m_bVisible)
-	{
-		m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-
 		return;
-	}
-
-	if (m_pPlayer == nullptr)
-		return;
+	
 	__super::Tick(fTimeDelta);
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 
 }
 
 void CShutter::Late_Tick(_float fTimeDelta)
 {
+	if (m_pPlayer == nullptr)
+		return;
 	if (!Visible())
 		return;
 
@@ -74,11 +71,11 @@ void CShutter::Late_Tick(_float fTimeDelta)
 
 		m_bRender = false;
 	}
-
+	
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_SPHERE]);
+	__super::Add_Col_DebugCom();
 #endif
 }
 
@@ -95,7 +92,7 @@ HRESULT CShutter::Add_Components()
 	ColliderDesc.vCenter = _float3(-10.f, 1.f, 0.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+		TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
 		return E_FAIL;
 	return S_OK;
 }
@@ -134,10 +131,8 @@ HRESULT CShutter::Initialize_PartObjects()
 
 HRESULT CShutter::Bind_ShaderResources()
 {
-
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
 		return E_FAIL;
-
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
@@ -157,9 +152,7 @@ _float4 CShutter::Get_Object_Pos()
 void CShutter::Active()
 {
 	*m_pPlayerInteract = false;
-	m_bActive = true;
-
-
+	m_bActivity = true;
 }
 
 CShutter* CShutter::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

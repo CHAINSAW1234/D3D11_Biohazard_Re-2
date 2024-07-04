@@ -29,43 +29,38 @@ HRESULT CItemProp::Initialize(void* pArg)
 
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
+
 	if (!m_tagPropDesc.bAnim)
 		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+
 	return S_OK;
 }
 
 void CItemProp::Tick(_float fTimeDelta)
 {
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(XMMatrixTranslation(0.f, -1.2f, 0.f) * m_pTransformCom->Get_WorldMatrix());
+	__super::Tick_Col();
 
 	if (m_bDead)
-	{
 		return;
-	}
 
 	if (!m_bVisible)
 		return;
+
 #ifdef _DEBUG
 #ifdef UI_POS
 	Get_Object_Pos();
 #endif
 #endif
 
-
-	if (m_pPlayer == nullptr)
-		return;
-	if (m_bCol)
+	if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
 	{
 		//UI¶ç¿ì°í
 		if (*m_pPlayerInteract)
 		{
 			Active();
-			m_bCol = false;
-			m_pPlayer->PickUp_Item(this);
 		}
 	}
 	
-
 	__super::Tick(fTimeDelta);
 
 
@@ -73,6 +68,8 @@ void CItemProp::Tick(_float fTimeDelta)
 
 void CItemProp::Late_Tick(_float fTimeDelta)
 {
+	if (m_pPlayer == nullptr)
+		return;
 	if (m_bDead)
 		return;
 
@@ -90,13 +87,23 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 
 		m_bRender = false;
 	}
-
-	m_bCol = Check_Col_Sphere_Player();
+	if(Activate_Col(Get_Collider_World_Pos(_float4(0.f, -50.f, 0.f, 1.f))))
+		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
+		{
+			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
+		}
+		else
+			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+	else
+	{
+		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+	}
 
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_SPHERE]);
+	__super::Add_Col_DebugCom();
 #endif
 }
 
@@ -109,12 +116,19 @@ HRESULT CItemProp::Add_Components()
 {
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(100.f);
+	ColliderDesc.fRadius = _float(120.f);
 	ColliderDesc.vCenter = _float3(0.f, -50.f, 0.f);
+
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+		TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
 		return E_FAIL;
+
+	ColliderDesc.fRadius = _float(100.f);
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 

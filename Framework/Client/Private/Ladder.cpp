@@ -36,24 +36,26 @@ HRESULT CLadder::Initialize(void* pArg)
 
 void CLadder::Tick(_float fTimeDelta)
 {
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-	m_pColliderCom[INTERACTPROPS_COL_AABB]->Tick(m_pTransformCom->Get_WorldMatrix());
+	__super::Tick_Col();
+	if (m_bActivity)
+		m_fTimeDelay += fTimeDelta;
+
+	if (m_fTimeDelay > 1.f)
+	{
+		m_fTimeDelay = 0.f;
+		m_bActivity = false;
+
+	}
+
+
+	
+	
+	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1])
+		if (!m_bActivity && (*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2] || m_bCol[INTER_COL_DOUBLE][COL_STEP2]))
+			Active();
 
 	if (!m_bVisible)
 		return;
-	
-
-	if (m_pPlayer == nullptr)
-		return;
-	
-	if (m_bCol || m_bDownCol)
-	{
-		//UI¶ç¿ì°í
-		if (*m_pPlayerInteract||m_bOnce)
-			Active();
-		m_bCol = false;
-	}
-	
 	
 	__super::Tick(fTimeDelta);
 
@@ -61,28 +63,71 @@ void CLadder::Tick(_float fTimeDelta)
 
 void CLadder::Late_Tick(_float fTimeDelta)
 {
-	if (!Visible())
+	if (m_pPlayer == nullptr)
 		return;
+	/*if (!Visible())
+		return;*/
 
-	if (m_bRender == false)
-		return;
-	else
+	if (Activate_Col(Get_Collider_World_Pos(_float4(0.f, -0.5f, -0.2f, 1.f))) || Activate_Col(Get_Collider_World_Pos(_float4(0.1f, 5.8f, 0.f, 1.f))))
 	{
-		for (auto& it : m_PartObjects)
+		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
 		{
-			if (it != nullptr)
-				it->Set_Render(true);
+			if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP1))
+				Check_Col_Player(INTER_COL_NORMAL, COL_STEP2);
+			else
+				m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+		}
+		else
+		{
+			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+			m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+
 		}
 
-		m_bRender = false;
+
+		if (Check_Col_Player(INTER_COL_DOUBLE, COL_STEP0))
+		{
+			if (Check_Col_Player(INTER_COL_DOUBLE, COL_STEP1))
+				Check_Col_Player(INTER_COL_DOUBLE, COL_STEP2);
+			else
+				m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
+		}
+		else
+		{
+			m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
+			m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
+
+		}
+
 	}
+	else
+	{
+		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+		m_bCol[INTER_COL_DOUBLE][COL_STEP0] = false;
+		m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
+		m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
+	}
+
+
+	//if (m_bRender == false)
+	//	return;
+	//else
+	//{
+	//	for (auto& it : m_PartObjects)
+	//	{
+	//		if (it != nullptr)
+	//			it->Set_Render(true);
+	//	}
+
+	//	m_bRender = false;
+	//}
 	__super::Late_Tick(fTimeDelta);
-	m_bCol =  Check_Col_Sphere_Player();
-	m_bDownCol = Check_Col_AABB_Player();
+
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_SPHERE]);
-	m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_AABB]);
+	__super::Add_Col_DebugCom();
 #endif
 }
 
@@ -95,21 +140,43 @@ HRESULT CLadder::Add_Components()
 {
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(1.f);
-	ColliderDesc.vCenter = _float3(0.f, -0.5f, -0.2f);
+	ColliderDesc.fRadius = _float(1.5f);
+	ColliderDesc.vCenter = _float3(0.f, -0.1f, -0.2f);
 	/* For.Com_Collider */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider_Shpere"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
-		return E_FAIL;	
-	
-	CBounding_AABB::BOUNDING_AABB_DESC		ColliderDesc_aabb{};
 
-	ColliderDesc_aabb.vCenter = _float3(0.1f, 5.8f, 0.f);
-	ColliderDesc_aabb.vSize = _float3(1.f, 1.f, 1.f);
-	/* For.Com_Collider */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
-		TEXT("Com_Collider_AABB"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_AABB], &ColliderDesc_aabb)))
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
 		return E_FAIL;
+
+	ColliderDesc.fRadius = _float(1.f);
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
+		return E_FAIL;
+
+	ColliderDesc.fRadius = _float(0.5f);
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Normal_Step2"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP2], &ColliderDesc)))
+		return E_FAIL;
+	
+
+	ColliderDesc.fRadius = _float(1.5f);
+	ColliderDesc.vCenter = _float3(-0.1f, 5.3f, 0.f);
+
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Double_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP0], &ColliderDesc)))
+		return E_FAIL;
+
+	ColliderDesc.fRadius = _float(1.f);
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Double_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP1], &ColliderDesc)))
+		return E_FAIL;
+
+	ColliderDesc.fRadius = _float(0.5f);
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Double_Step2"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP2], &ColliderDesc)))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -157,12 +224,12 @@ HRESULT CLadder::Bind_ShaderResources()
 void CLadder::Active()
 {
 	*m_pPlayerInteract = false;
-	m_bActive = true;
-	if (m_bDownCol)
-		m_pPlayer->Set_Ladder_Setting(CPlayer::LADDER_BEHAVE_DOWN, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-	else
-		m_pPlayer->Set_Ladder_Setting(CPlayer::LADDER_BEHAVE_UP, m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-
+	m_bActivity = true;
+	if (m_bCol[INTER_COL_DOUBLE][COL_STEP1])
+		m_pPlayer->Set_Ladder_Setting(CPlayer::LADDER_BEHAVE_DOWN, m_pTransformCom->Get_WorldFloat4x4());
+	else if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
+		m_pPlayer->Set_Ladder_Setting(CPlayer::LADDER_BEHAVE_UP, m_pTransformCom->Get_WorldFloat4x4());
+	//--m_iActive;
 }
 
 _float4 CLadder::Get_Object_Pos()

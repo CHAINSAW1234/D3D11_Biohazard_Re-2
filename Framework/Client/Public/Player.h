@@ -55,7 +55,10 @@ public:
 	};
 
 	enum ANIMASTION_COMMON {
-		HOLD_LEFTHAND_LIGHT, STEP_DOWM_1M, STEP_UP_1M,
+		LADDER_UP_FINE_START, LADDER_UP_FINE_R, LADDER_UP_FINE_L, LADDER_UP_FINE_R_END, LADDER_UP_FINE_L_END,
+		HOLD_LEFTHAND_LIGHT,
+		LADDER_DOWN_FINE_START, LADDER_DOWN_FINE_L, LADDER_DOWN_FINE_R, LADDER_DOWN_FINE_L_END, LADDER_DOWN_FINE_R_END,
+		STEP_DOWM_1M, STEP_UP_1M,
 		DOOR_PASS, DOOR_OPEN_JOG, DOOR_LOCK, DOOR_LOCK_L, DOOR_LOCK_R
 	};
 	
@@ -106,21 +109,21 @@ public:
 	static wstring								Get_AnimSetEtcName(ANIMSET_ETC eAnimEtcHold) { return strAnimSetEtcName[eAnimEtcHold]; }
 
 	// =============================== GET ===============================
-	CModel*										Get_Body_Model();
-	CModel*										Get_Weapon_Model();
-	_float3*									Get_Body_RootDir();
-	_bool										Get_isBite() { return m_isBite; }
-	_bool										Get_Spotlight() { return m_isSpotlight; }
-	_int										Get_Hp() { return m_iHp; }
+	CModel*									Get_Body_Model();
+	CModel*									Get_Weapon_Model();
+	_float3*										Get_Body_RootDir();
+	_bool											Get_isBite() { return m_isBite; }
+	_bool											Get_Spotlight() { return m_isSpotlight; }
+	_int											Get_Hp() { return m_iHp; }
 	CWeapon*									Get_Weapon() { return m_pWeapon; }
 	EQUIP										Get_Equip() { return m_eEquip; }
-	ITEM_NUMBER									Get_Equip_As_ITEM_NUMBER();
+	ITEM_NUMBER							Get_Equip_As_ITEM_NUMBER();
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
 	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
 	_float4										Get_MuzzlePosition();
 	wstring										Get_BiteLayerTag() { return m_strBiteLayerTag; }
-	_int										Get_BiteAnimIndex() { return m_iBiteAnimIndex; }
-	_int										Get_MaxBullet();
+	_int											Get_BiteAnimIndex() { return m_iBiteAnimIndex; }
+	_int											Get_MaxBullet();
 	// =============================== SET ===============================
 	void										Set_isBite(_bool isBite) { m_isBite = isBite; }
 	void										Set_Spotlight(_bool isSpotlight); 
@@ -132,6 +135,9 @@ public:
 	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineDefault = isTurnSpineDefault; }
 	void										Set_TurnSpineHold(_bool isTurnSpineHold) { m_isTurnSpineHold = isTurnSpineHold;}
 	void										Set_TurnSpineLight(_bool isTurnSpineLight) { m_isTurnSpineLight = isTurnSpineLight; }
+	void										Set_Gravity(_bool isGravity); 
+	void Set_Position(_float4 vPos);
+	void Set_Position(_fvector vPos);
 
 	// ============================ CHANGE == SET ============================
 	void										Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex);
@@ -248,14 +254,16 @@ public:
 	_int										Get_Player_Direction() { return m_iDir; }
 	_int										Get_Player_Floor() { return m_iFloor; } /* 현재 플레이어의 층수 */
 	_int										Get_Player_Region() { return m_iRegion; } /* 현재 존재하는 지역 */
-	_bool*									Get_Player_Interact_Ptr() { return &m_bInteract; }
-	_bool*									Get_Player_Region_Array() { return m_bRegion; }
+	_bool*										Get_Player_Interact_Ptr() { return &m_bInteract; }
+	_bool*										Get_Player_Region_Array() { return m_bRegion; }
 	enum PLAYER_LADDER_BEAVE	{LADDER_BEHAVE_NOTHING, LADDER_BEHAVE_UP, LADDER_BEHAVE_DOWN};
 	enum PLAYER_DOOR_BEHAVE		{ DOOR_BEHAVE_NOTHING, DOOR_BEHAVE_OPEN, DOOR_BEHAVE_LOCK};
-	PLAYER_DOOR_BEHAVE				Get_isDoor_Setting() { return (PLAYER_DOOR_BEHAVE)m_iDoor_Setting; }
+	PLAYER_DOOR_BEHAVE							Get_Door_Setting() { return (PLAYER_DOOR_BEHAVE)m_iDoor_Setting; }
+	PLAYER_LADDER_BEAVE							Get_Ladder_Setting() { return (PLAYER_LADDER_BEAVE)m_iLadder_Setting; }
 	_float										Get_Door_Degree() { return m_fDoor_Degree; }
-	void											Set_Door_Setting(_int iDoor_Setting, _float fDoorDegree = 0.f) {m_iDoor_Setting = iDoor_Setting; m_fDoor_Degree = fDoorDegree;};
-	void											Set_Ladder_Setting(_int iLadder_Setting, _float4 vLadderPos) { m_iLadder_Setting = iLadder_Setting; m_vLadderPos = vLadderPos; }
+	_float4x4									Get_Ladder_WorldMatrix() { return m_LadderWorldMatrix; }
+	void										Set_Door_Setting(_int iDoor_Setting, _float fDoorDegree = 0.f) {m_iDoor_Setting = iDoor_Setting; m_fDoor_Degree = fDoorDegree;};
+	void										Set_Ladder_Setting(_int iLadder_Setting, _float4x4 LadderWorldMatrix = _float4x4()) { m_iLadder_Setting = iLadder_Setting; m_LadderWorldMatrix = LadderWorldMatrix; }
 
 
 private:
@@ -263,7 +271,7 @@ private:
 	_float										m_fDoor_Degree = { 0.f };
 
 	_int										m_iLadder_Setting = { LADDER_BEHAVE_NOTHING };
-	_float4									m_vLadderPos = { _float4() };
+	_float4x4									m_LadderWorldMatrix = { _float4x4() };
 
 	_bool										m_bInteract = { false }; //플레이어가 상호작용을 시도한
 	_bool										m_bChange = { true };

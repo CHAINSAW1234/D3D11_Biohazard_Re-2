@@ -63,11 +63,6 @@ void CBody_Ladder::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_Ladder::Render()
 {
-	if (m_bRender == false)
-		return S_OK;
-	else
-		m_bRender = false;
-
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;

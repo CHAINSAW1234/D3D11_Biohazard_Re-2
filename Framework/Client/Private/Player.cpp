@@ -397,6 +397,7 @@ void CPlayer::Tick(_float fTimeDelta)
 	Update_FSM();
 	m_pFSMCom->Update(fTimeDelta);
 
+
 	Update_KeyInput_Reload();
 	Update_LightCondition();
 	Update_Equip();
@@ -591,6 +592,23 @@ void CPlayer::Player_First_Behavior()
 CModel* CPlayer::Get_Body_Model()
 {
 	return static_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(g_strModelTag));
+}
+
+void CPlayer::Set_Gravity(_bool isGravity)
+{
+	m_pController->SetGravity(isGravity);
+}
+
+void CPlayer::Set_Position(_float4 vPos)
+{
+	vPos.y += CONTROLLER_GROUND_GAP;
+	m_pController->SetPosition(vPos);
+}
+
+void CPlayer::Set_Position(_fvector vPos)
+{
+	_vector vvPos = vPos + XMVectorSet(0.f, CONTROLLER_GROUND_GAP, 0.f, 0.f);
+	m_pController->SetPosition(vvPos);
 }
 
 void CPlayer::Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex)
@@ -802,9 +820,9 @@ void CPlayer::Throw_Sub()
 {
 	m_pTabWindow->UseItem(Get_Equip_As_ITEM_NUMBER(), 1);
 
-	switch(m_eEquip) {
+	//switch(m_eEquip) {
 
-	}
+	//}
 
 	NotifyObserver();
 }
@@ -835,7 +853,6 @@ void CPlayer::Stop_UpperBody()
 
 	m_isRequestChangeEquip = false;
 	m_eTargetEquip = NONE;
-
 }
 
 _bool CPlayer::IsShotAble()
@@ -1006,6 +1023,9 @@ void CPlayer::Update_FSM()
 
 void CPlayer::Update_KeyInput_Reload()
 {
+	if (m_eState == BITE)
+		return;
+
 	if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
 		if (m_pGameInstance->Get_KeyState('R') == DOWN
 			&& IsReloadAble()) {
@@ -1049,6 +1069,9 @@ void CPlayer::Update_KeyInput_Reload()
 
 void CPlayer::Update_LightCondition()
 {
+	if (m_eState == BITE)
+		return;
+
 	//Get_Body_Model()->Set_Loop(4, false);
 	if (Get_Body_Model()->Get_CurrentAnimIndex(4) == LIGHT_ON_OFF) {
 		if (Get_Body_Model()->isFinished(4)) {
@@ -1075,6 +1098,8 @@ void CPlayer::Update_LightCondition()
 
 void CPlayer::Update_Equip()
 {
+	if (m_eState == BITE)
+		return;
 
 	if (m_isRequestChangeEquip) {
 		if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {

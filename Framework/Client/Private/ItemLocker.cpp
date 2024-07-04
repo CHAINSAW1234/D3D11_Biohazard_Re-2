@@ -36,26 +36,22 @@ HRESULT CItemLocker::Initialize(void* pArg)
 
 void CItemLocker::Tick(_float fTimeDelta)
 {
-		m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+	__super::Tick_Col();
 	if (!m_bVisible)
 		return;
 
-	if (m_bActive)
+	if (m_bActivity)
 	{
 		// 인벤띄우기 후에 인벤이 닫기를 누르면 m_bActive=false;를 켜주면 됨.
 		// 그리고 m_eState=Close로 할 것인데 이는 냅두면 예은이 처리함 false만 잘 해주세요
 		return;
 	}
 
-	if (m_pPlayer == nullptr)
-		return;
-
-	if (m_bCol)
+	if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
 	{
 		//UI띄우고
 		if (*m_pPlayerInteract)
 			Active();
-		m_bCol = false;
 	}
 
 	__super::Tick(fTimeDelta);
@@ -64,6 +60,8 @@ void CItemLocker::Tick(_float fTimeDelta)
 
 void CItemLocker::Late_Tick(_float fTimeDelta)
 {
+	if (m_pPlayer == nullptr)
+		return;
 	if (!Visible())
 		return;
 
@@ -80,9 +78,11 @@ void CItemLocker::Late_Tick(_float fTimeDelta)
 		m_bRender = false;
 	}
 	__super::Late_Tick(fTimeDelta);
-	m_bCol = Check_Col_Sphere_Player();
+	if (Activate_Col(Get_Collider_World_Pos(_float4(-50.f, 1.f, -50.f, 1.f))))
+		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
+			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_SPHERE]);
+	__super::Add_Col_DebugCom();
 #endif
 }
 
@@ -95,12 +95,19 @@ HRESULT CItemLocker::Add_Components()
 {
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(100.f);
+	ColliderDesc.fRadius = _float(120.f);
 	ColliderDesc.vCenter = _float3(-50.f, 1.f, -50.f);
+
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+		TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
 		return E_FAIL;
+
+	ColliderDesc.fRadius = _float(100.f);
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -151,7 +158,7 @@ void CItemLocker::Active()
 {
 	*m_pPlayerInteract = false;
 	m_eState = STATE_OPEN;
-	m_bActive = true;
+	m_bActivity = true;
 
 }
 

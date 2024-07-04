@@ -75,6 +75,10 @@ void CInteractProps::Priority_Tick(_float fTimeDelta)
 
 void CInteractProps::Tick(_float fTimeDelta)
 {
+	if (PRESSING == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		m_bBlock = true;
+	else
+		m_bBlock = false;
 	Tick_PartObjects(fTimeDelta);
 }
 
@@ -95,6 +99,7 @@ void CInteractProps::Start()
 			continue;
 		static_cast<CPart_InteractProps*>(iter)->Set_CameraSetting(m_pCamera, m_pCameraTransform);
 	}
+	
 }
 
 HRESULT CInteractProps::Render()
@@ -138,13 +143,13 @@ void CInteractProps::Check_Player()
 	m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
 	m_pPlayerInteract = m_pPlayer->Get_Player_Interact_Ptr();
 	m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
+	m_pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
 	for (auto& iter: m_PartObjects)
 	{
 		if (iter == nullptr)
 			continue;
 		static_cast<CPart_InteractProps*>(iter)->Set_PlayerSetting(m_pPlayer, m_pPlayerInteract, m_pPlayerTransform);
 	}
-
 }
 
 _float CInteractProps::Check_Player_Distance()
@@ -162,81 +167,37 @@ _float CInteractProps::Check_Player_Distance(_float4 vPos)
 	return fPlayer_Distance;
 }
 
-_float3 CInteractProps::Get_Collider_World_Pos(_float3 vPos)
+_float4 CInteractProps::Get_Collider_World_Pos(_float4 vPos)
 {
 	_matrix colliderLocalMatrix = XMMatrixTranslation(vPos.x,vPos.y,vPos.z);
-	_float3 vWorldPos = (colliderLocalMatrix * m_pTransformCom->Get_WorldMatrix()).r[3];
+	_float4 vWorldPos = (colliderLocalMatrix * m_pTransformCom->Get_WorldMatrix()).r[3];
 	return vWorldPos;
 }
 
-_bool CInteractProps::Check_Col_Sphere_Player()
+_bool CInteractProps::Check_Col_Player(INTERACTPROPS_COL eInterCol, INTERACTPROPS_COL_STEP eStepCol)
 {
-	if (m_pPlayer == nullptr)
-		return false;
-	if (m_pColliderCom[INTERACTPROPS_COL_SPHERE] == nullptr)
-		return false;
-	CCollider* pPlayerCol = static_cast<CCollider*>( m_pPlayer->Get_Component(TEXT("Com_Collider")));
-	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_SPHERE]))
-	{
-		if (Check_Player_Distance() <= 1.16f && !m_bOnce)
-		{
-			m_bDoorOnce = true;
-			m_bOnce = true;
-		}
-		m_bFirstInteract = true;
-		return true;
-	}
-	return false;
+	if (m_pPlayerCol->Intersect(m_pColliderCom[eInterCol][eStepCol]))
+		return m_bCol[eInterCol][eStepCol] = true;
+	else
+		return m_bCol[eInterCol][eStepCol] = false;
 
 }
 
-_bool CInteractProps::Check_Col_OBB_Player()
+void CInteractProps::Tick_Col()
 {
-	if (m_pPlayer == nullptr)
-		return false;
-	if (m_pColliderCom[INTERACTPROPS_COL_OBB] == nullptr)
-		return false;
-	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
-	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_OBB]))
+	for (size_t i = 0; i < INTER_COL_END; i++)
 	{
-		if (Check_Player_Distance() <= 1.16f && !m_bOnce)
+		for (size_t j = 0; j < COL_STEP_END; j++)
 		{
-			m_bDoorOnce = true;
-			m_bOnce = true;
+			if (m_pColliderCom[i][j] == nullptr)
+				continue;
+			m_pColliderCom[i][j]->Tick(m_pTransformCom->Get_WorldMatrix());
 		}
-		m_bFirstInteract = true;
-		return true;
 	}
-	return false;
-
-}
-
-_bool CInteractProps::Check_Col_AABB_Player()
-{
-	if (m_pPlayer == nullptr)
-		return false;
-	if (m_pColliderCom[INTERACTPROPS_COL_AABB] == nullptr)
-		return false;
-	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
-	if (pPlayerCol->Intersect(m_pColliderCom[INTERACTPROPS_COL_AABB]))
-	{
-		if (Check_Player_Distance() <= 1.16f && !m_bOnce)
-		{
-			m_bDoorOnce = true;
-			m_bOnce = true;
-		}
-		m_bFirstInteract = true;
-		return true;
-	}
-	return false;
-
 }
 
 _bool CInteractProps::Visible()
 {
-	if (m_pPlayer == nullptr)
-		return false;
-
 	if (m_pPlayer->Get_Player_RegionChange() == true)
 	{
 		if (m_tagPropDesc.iRegionDir == DIRECTION_MID)
@@ -254,19 +215,55 @@ _bool CInteractProps::Visible()
 	return m_bVisible;
 }
 
+#ifdef		_DEBUG
+void CInteractProps::Add_Col_DebugCom()
+{
+	for (size_t i = 0; i < INTER_COL_END; i++)
+	{
+		for (size_t j = 0; j < COL_STEP_END; j++)
+		{
+			if (m_pColliderCom[i][j] == nullptr)
+				continue;
+			m_pGameInstance->Add_DebugComponents(m_pColliderCom[i][j]);
+		}
+	}
+}
+#endif
+
+_bool CInteractProps::Activate_Col(_float4 vActPos)
+{
+	_vector vCameraLook = { XMVector4Normalize(XMVectorSetY(m_pCameraTransform->Get_State_Vector(CTransform::STATE_LOOK), 0.f)) };
+	_vector vPlayerPos = { m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector vPos = vActPos ;
+	_vector vDirection = { XMVector4Normalize(XMVectorSetY(vPos - vPlayerPos, 0.f)) };
+
+	_float fScala = { acos(XMVectorGetX(XMVector3Dot(vCameraLook, vDirection))) };
+
+	_float3 vCross = { XMVector3Cross(vCameraLook, vDirection) };
+
+	if (vCross.y < 0) 
+		fScala *= -1;
+	_float fDegree = XMConvertToDegrees(fScala);
+	if (-90 <= XMConvertToDegrees(fScala) && 90 >= XMConvertToDegrees(fScala))
+		return true;
+
+	return false;
+}
+
 _float CInteractProps::Get_PlayerLook_Degree()
 {
-	_vector vPlayerLook = XMVector4Normalize(m_pPlayerTransform->Get_State_Vector(CTransform::STATE_LOOK));
-	_vector vPlayerPos = m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	_vector vPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
-	_vector vDirection = XMVector4Normalize(vPlayerPos - vPos);
+	_vector vPlayerLook = { XMVector4Normalize(XMVectorSetY(m_pPlayerTransform->Get_State_Vector(CTransform::STATE_LOOK), 0.f)) };
+	_vector vPlayerPos = { m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector vPos = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector vDirection = {XMVector4Normalize(XMVectorSetY(vPos - vPlayerPos, 0.f))};
 
-	_float fScala = XMVectorGetX(XMVector4Dot(vPlayerLook, vDirection));
-	if (fScala > 1.f)
-		fScala = 1.f;
-	else if (fScala < -1.f)
-		fScala = -1.f;
+	_float fScala = { acos(XMVectorGetX(XMVector3Dot(vPlayerLook, vDirection))) };
 
+	_float3 vCross = { XMVector3Cross(vPlayerLook, vDirection) };
+
+	if (vCross.y < 0) {
+		fScala *= -1;
+	}
 
 	return XMConvertToDegrees(fScala);
 }
@@ -464,14 +461,17 @@ void CInteractProps::Free()
 
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
-	for (size_t i = 0; i < INTERACTPROPS_COL_END; i++)
+	for (size_t i = 0; i < INTER_COL_END; i++)
 	{
-		if (m_pColliderCom[i] == nullptr)
-			continue;
+		for (size_t j = 0; j < COL_STEP_END; j++)
+		{
+			if (m_pColliderCom[i][j] == nullptr)
+				continue;
 
 
-		Safe_Release(m_pColliderCom[i]);
-		m_pColliderCom[i] = nullptr;
+			Safe_Release(m_pColliderCom[i][j]);
+			m_pColliderCom[i][j] = nullptr;
+		}
 	}
 	
 	for (auto& pPartObject : m_PartObjects)
