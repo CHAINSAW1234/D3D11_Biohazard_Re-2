@@ -1115,7 +1115,7 @@ HRESULT CBody_Zombie::Add_Components()
 	
 	else if (ZOMBIE_BODY_TYPE::_MALE == m_eBodyModelType)
 	{
-		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_ZombieBody"),
+		if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Body_Male"),
 			TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 			return E_FAIL;
 	}

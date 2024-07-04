@@ -57,7 +57,7 @@ HRESULT CZombie::Initialize(void* pArg)
 	{
 		ZOMBIE_MALE_DESC*				pMaleDesc = { static_cast<ZOMBIE_MALE_DESC*>(pArg) };
 		m_iFace_ID = static_cast<_int>(pMaleDesc->eFaceType);
-		m_iHat_Type = static_cast<_int>(pMaleDesc->eHatType);
+		//	m_iHat_Type = static_cast<_int>(pMaleDesc->eHatType);
 		m_iShirts_ID = static_cast<_int>(pMaleDesc->eShirtsType);
 		m_iPants_ID = static_cast<_int>(pMaleDesc->ePantsType);
 		m_iBody_ID = static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE);

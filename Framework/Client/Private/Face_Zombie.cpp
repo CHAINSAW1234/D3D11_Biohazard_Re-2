@@ -345,7 +345,82 @@ HRESULT CFace_Zombie::Add_Components()
 
 	if (ZOMBIE_BODY_TYPE::_MALE == m_eBodyType)
 	{
+		if (ZOMBIE_MALE_FACE::_00 == static_cast<ZOMBIE_MALE_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face00_Male"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
 
+		else if (ZOMBIE_MALE_FACE::_01 == static_cast<ZOMBIE_MALE_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face01_Male"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_MALE_FACE::_02 == static_cast<ZOMBIE_MALE_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face02_Male"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_MALE_FACE::_03 == static_cast<ZOMBIE_MALE_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face03_Male"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_MALE_FACE::_04 == static_cast<ZOMBIE_MALE_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face04_Male"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_MALE_FACE::_05 == static_cast<ZOMBIE_MALE_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face05_Male"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_MALE_FACE::_06 == static_cast<ZOMBIE_MALE_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face06_Male"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_MALE_FACE::_07 == static_cast<ZOMBIE_MALE_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face07_Male"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_MALE_FACE::_08 == static_cast<ZOMBIE_MALE_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face08_Male"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_MALE_FACE::_09 == static_cast<ZOMBIE_MALE_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face09_Male"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_MALE_FACE::_10 == static_cast<ZOMBIE_MALE_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face10_Male"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
 	}
 
 	else if (ZOMBIE_BODY_TYPE::_FEMALE == m_eBodyType)
@@ -388,7 +463,40 @@ HRESULT CFace_Zombie::Add_Components()
 
 	else if (ZOMBIE_BODY_TYPE::_MALE_BIG == m_eBodyType)
 	{
+		if (ZOMBIE_MALE_BIG_FACE::_00 == static_cast<ZOMBIE_MALE_BIG_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face00_Male_Big"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
 
+		else if (ZOMBIE_MALE_BIG_FACE::_01 == static_cast<ZOMBIE_MALE_BIG_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face01_Male_Big"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_MALE_BIG_FACE::_03 == static_cast<ZOMBIE_MALE_BIG_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face03_Male_Big"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_MALE_BIG_FACE::_04 == static_cast<ZOMBIE_MALE_BIG_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face04_Male_Big"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
+
+		else if (ZOMBIE_MALE_BIG_FACE::_70 == static_cast<ZOMBIE_MALE_BIG_FACE>(m_iFaceModelID))
+		{
+			if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Face70_Male_Big"),
+				TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
+				return E_FAIL;
+		}
 	}
 	return S_OK;
 }

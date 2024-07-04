@@ -12,6 +12,6 @@ enum class ZOMBIE_FEMALE_PANTS { _00, _01, _02, _04, _END };
 enum class ZOMBIE_FEMALE_FACE { _00, _01, _02, _03, _04, _END };
 enum class ZOMBIE_FEMALE_SHIRTS { _00, _01, _02, _03, _04, _05, _END };
 
-enum class ZOMBIE_MALE_BIG_PANTS { _END };
-enum class ZOMBIE_MALE_BIG_FACE { _END };
-enum class ZOMBIE_MALE_BIG_SHIRTS { _END };
+enum class ZOMBIE_MALE_BIG_PANTS { _00, _01, _02, _70, _END };
+enum class ZOMBIE_MALE_BIG_FACE { _00, _01, _03, _04, _70, _END };
+enum class ZOMBIE_MALE_BIG_SHIRTS { _00, _01, _02, _03, _70, _END };
