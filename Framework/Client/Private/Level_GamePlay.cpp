@@ -67,53 +67,6 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 
 	__super::Tick(fTimeDelta);
 
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE))
-	{
-		wstring			strLayerName = { TEXT("Monster") };
-		_int			iRandomBody = { m_pGameInstance->GetRandom_Int(static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE_BIG), static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE_BIG)) };
-
-		if (ZOMBIE_BODY_TYPE::_MALE == static_cast<ZOMBIE_BODY_TYPE>(iRandomBody))
-		{
-			CZombie::ZOMBIE_MALE_DESC		ObjectDesc;
-			ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
-			ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
-			ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
-			ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
-
-			if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerName, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-			{
-			}
-		}
-
-		else if (ZOMBIE_BODY_TYPE::_FEMALE == static_cast<ZOMBIE_BODY_TYPE>(iRandomBody))
-		{
-			CZombie::ZOMBIE_FEMALE_DESC		ObjectDesc;
-			ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_FEMALE };
-			ObjectDesc.ePantsType = { static_cast<ZOMBIE_FEMALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_PANTS::_END) - 1)) };
-			ObjectDesc.eFaceType = { static_cast<ZOMBIE_FEMALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_FACE::_END) - 1)) };
-			ObjectDesc.eShirtsType = { static_cast<ZOMBIE_FEMALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_SHIRTS::_END) - 1)) };
-
-
-			if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerName, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-			{
-			}
-		}
-
-		else if (ZOMBIE_BODY_TYPE::_MALE_BIG == static_cast<ZOMBIE_BODY_TYPE>(iRandomBody))
-		{
-			CZombie::ZOMBIE_MALE_BIG_DESC		ObjectDesc;
-			ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE_BIG };
-			ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_BIG_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_BIG_PANTS::_END) - 1)) };
-			ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_BIG_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_BIG_FACE::_END) - 1)) };
-			ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_BIG_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_BIG_SHIRTS::_END) - 1)) };
-
-			if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerName, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-			{
-			}
-		}
-	}
-
-
 	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
 	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
 	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));	
@@ -1497,7 +1450,7 @@ HRESULT CLevel_GamePlay::Load_Monster(const wstring& strFilePath, const wstring&
 	{
 		_uint iLength = { 0 };
 
-		_int			iRandomBody = { m_pGameInstance->GetRandom_Int(static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE_BIG), static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE_BIG)) };
+		_int			iRandomBody = { m_pGameInstance->GetRandom_Int(static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE), static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE_BIG)) };
 
 		if (ZOMBIE_BODY_TYPE::_MALE == static_cast<ZOMBIE_BODY_TYPE>(iRandomBody))
 		{
