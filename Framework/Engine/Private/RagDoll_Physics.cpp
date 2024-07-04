@@ -6,41 +6,7 @@
 #include "Bone.h"
 #include "Transform.h"
 
-//#define LEON
 #define ZOMBIE
-
-#pragma region Leon Bone - Joint
-
-#ifdef LEON
-#define BONE_COUNT 173
-
-#define JOINT_COUNT 20
-#define NECK_BONE  167
-#define SPINE_01_BONE 60
-#define SPINE_02_BONE 61
-#define SPINE_03_BONE 62
-#define HEAD_BONE 169
-#define PELVIS_BONE 4
-#define L_LEG_BONE 27
-#define L_CALF_BONE 28
-#define L_ANCLE_BONE 33
-#define L_FOOT_BONE 34
-#define R_LEG_BONE 41
-#define R_CALF_BONE 42
-#define R_ANCLE_BONE 47
-#define R_FOOT_BONE 48
-#define L_ARM_BONE 84
-#define L_FOREARM_BONE 85
-#define L_WRIST_BONE 86
-#define L_HAND_BONE 87
-#define R_ARM_BONE 126
-#define R_FOREARM_BONE 127
-#define R_WRIST_BONE 128
-#define R_HAND_BONE 129
-
-#endif
-
-#pragma endregion
 
 #pragma region Zombie Bone - Joint
 
@@ -413,8 +379,8 @@ _bool CRagdoll_Physics::Init(const string& name)
 	for (int i = 0; i < MAX_BONES; i++)
 		m_pose_transforms.transforms[i] = XMMatrixIdentity();
 
-	m_index_stack.reserve(256);
-	m_joint_pos.reserve(256);
+	m_index_stack.reserve(MAX_BONES);
+	m_joint_pos.reserve(MAX_BONES);
 
 	m_joint_mat.resize(MAX_BONES);
 
@@ -464,69 +430,6 @@ void CRagdoll_Physics::create_ragdoll()
 
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
-#pragma region Leon Bone - RigidBody
-#ifdef LEON
-	uint32_t j_head_idx = 167;
-	uint32_t j_neck_01_idx = 165;
-	uint32_t j_spine_03_idx = 2;
-	uint32_t j_spine_02_idx = 59;
-	uint32_t j_spine_01_idx = 60;
-	uint32_t j_pelvis_idx = 58;
-
-	uint32_t j_thigh_l_idx = 25;
-	uint32_t j_calf_l_idx = 26;
-	uint32_t j_foot_l_idx = 31;
-	uint32_t j_ball_l_idx = 32;
-
-	uint32_t j_thigh_r_idx = 39;
-	uint32_t j_calf_r_idx = 40;
-	uint32_t j_foot_r_idx = 45;
-	uint32_t j_ball_r_idx = 46;
-
-	uint32_t j_upperarm_l_idx = 82;
-	uint32_t j_lowerarm_l_idx = 83;
-	uint32_t j_hand_l_idx = 84;
-	uint32_t j_middle_01_l_idx = 85;
-
-	uint32_t j_upperarm_r_idx = 124;
-	uint32_t j_lowerarm_r_idx = 125;
-	uint32_t j_hand_r_idx = 126;
-	uint32_t j_middle_01_r_idx = 127;
-#endif
-#pragma endregion
-
-#pragma region Zombie Bone - RigidBody
-#ifdef ZOMBIE
-
-	uint32_t j_head_idx = 142;		//neck_1
-	uint32_t j_neck_01_idx = 141;	//neck_0
-	uint32_t j_spine_03_idx = 1;		//hips
-	uint32_t j_spine_02_idx = 58;		//spine_2
-	uint32_t j_spine_01_idx = 57;		//spine_1
-	uint32_t j_pelvis_idx = 44;		//spine_0
-
-	uint32_t j_thigh_l_idx = 2;		//l_leg_femur
-	uint32_t j_calf_l_idx = 7;		//l_leg_tibia
-	uint32_t j_foot_l_idx = 12;		//l_leg_ankle
-	uint32_t j_ball_l_idx = 13;		//l_leg_ball
-
-	uint32_t j_thigh_r_idx = 18;		//r_leg_femur
-	uint32_t j_calf_r_idx = 19;		//r_leg_tibia
-	uint32_t j_foot_r_idx = 24;		//r_leg_ankle
-	uint32_t j_ball_r_idx = 25;		//r_leg_ball
-
-	uint32_t j_upperarm_l_idx = 60;	//l_arm_humerus
-	uint32_t j_lowerarm_l_idx = 65;	//l_arm_radius
-	uint32_t j_hand_l_idx = 68;		//l_arm_wrist
-	uint32_t j_middle_01_l_idx = 75;	//l_hand_middle_0
-
-	uint32_t j_upperarm_r_idx = 101;	//r_arm_humerus
-	uint32_t j_lowerarm_r_idx = 106;	//r_arm_radius
-	uint32_t j_hand_r_idx = 109;		//r_arm_wrist
-	uint32_t j_middle_01_r_idx = 116;	//r_hand_middle_0
-#endif
-#pragma endregion
-
 	m_ragdoll->m_rigid_bodies.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_relative_joint_pos.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_original_body_rotations.resize(m_skeletal_mesh->skeleton()->num_bones());
@@ -544,45 +447,34 @@ void CRagdoll_Physics::create_ragdoll()
 	_matrix rot = XMMatrixIdentity();
 	rot = XMMatrixRotationZ(XM_PI * 0.5f);
 
-#ifdef LEON
-	m_Pelvis = create_capsule_bone(j_pelvis_idx, j_neck_01_idx, *m_ragdoll, 5.0f * m_scale, rot);
+#ifdef ZOMBIE
+	m_Pelvis = create_capsule_bone(m_pelvis_idx, m_spine_02_idx, *m_ragdoll, 5.0f * m_scale, rot);
 #endif
+
+	m_Head = create_capsule_bone(m_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f * m_scale, 0.0f, 1.f), 4.0f * m_scale, 6.0f * m_scale, rot);
+	m_Leg_L = create_capsule_bone(m_thigh_l_idx, m_calf_l_idx, *m_ragdoll, r, rot);
+	m_Leg_R = create_capsule_bone(m_thigh_r_idx, m_calf_r_idx, *m_ragdoll, r, rot);
 
 #ifdef ZOMBIE
-	m_Pelvis = create_capsule_bone(j_pelvis_idx, j_spine_02_idx, *m_ragdoll, 5.0f * m_scale, rot);
+	m_Chest = create_capsule_bone(m_spine_02_idx, m_neck_01_idx, *m_ragdoll, 5.0f * m_scale, rot);
 #endif
 
-	m_Head = create_capsule_bone(j_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f * m_scale, 0.0f, 1.f), 4.0f * m_scale, 6.0f * m_scale, rot);
-	m_Leg_L = create_capsule_bone(j_thigh_l_idx, j_calf_l_idx, *m_ragdoll, r, rot);
-	m_Leg_R = create_capsule_bone(j_thigh_r_idx, j_calf_r_idx, *m_ragdoll, r, rot);
+	m_Calf_L = create_capsule_bone(m_calf_l_idx, m_foot_l_idx, *m_ragdoll, r, rot);
+	m_Calf_R = create_capsule_bone(m_calf_r_idx, m_foot_r_idx, *m_ragdoll, r, rot);
 
-#ifdef ZOMBIE
-	m_Chest = create_capsule_bone(j_spine_02_idx, j_neck_01_idx, *m_ragdoll, 5.0f * m_scale, rot);
-#endif
+	m_Arm_L = create_capsule_bone(m_upperarm_l_idx, m_lowerarm_l_idx, *m_ragdoll, r * 1.25f);
+	m_Arm_R = create_capsule_bone(m_upperarm_r_idx, m_lowerarm_r_idx, *m_ragdoll, r * 1.25f);
 
+	m_ForeArm_L = create_capsule_bone(m_lowerarm_l_idx,m_hand_l_idx, *m_ragdoll, r);
+	m_ForeArm_R = create_capsule_bone(m_lowerarm_r_idx,m_hand_r_idx, *m_ragdoll, r);
 
-#ifdef LEON
-	m_ragdoll->m_rigid_bodies[2] = m_Pelvis;
-	m_ragdoll->m_rigid_bodies[3] = m_Leg_L;
-	m_ragdoll->m_rigid_bodies[9] = m_Leg_R;
-#endif
-
-	m_Calf_L = create_capsule_bone(j_calf_l_idx, j_foot_l_idx, *m_ragdoll, r, rot);
-	m_Calf_R = create_capsule_bone(j_calf_r_idx, j_foot_r_idx, *m_ragdoll, r, rot);
-
-	m_Arm_L = create_capsule_bone(j_upperarm_l_idx, j_lowerarm_l_idx, *m_ragdoll, r * 1.25f);
-	m_Arm_R = create_capsule_bone(j_upperarm_r_idx, j_lowerarm_r_idx, *m_ragdoll, r * 1.25f);
-
-	m_ForeArm_L = create_capsule_bone(j_lowerarm_l_idx, j_hand_l_idx, *m_ragdoll, r);
-	m_ForeArm_R = create_capsule_bone(j_lowerarm_r_idx, j_hand_r_idx, *m_ragdoll, r);
-
-	m_Hand_L = create_capsule_bone(j_hand_l_idx, j_middle_01_l_idx, *m_ragdoll, r);
-	m_Hand_R = create_capsule_bone(j_hand_r_idx, j_middle_01_r_idx, *m_ragdoll, r);
+	m_Hand_L = create_capsule_bone(m_hand_l_idx, m_middle_01_l_idx, *m_ragdoll, r);
+	m_Hand_R = create_capsule_bone(m_hand_r_idx, m_middle_01_r_idx, *m_ragdoll, r);
 
 	rot = XMMatrixRotationY(PxPi * 0.5f);
 
-	m_Foot_L = create_capsule_bone(j_foot_l_idx, j_ball_l_idx, *m_ragdoll, r, rot);
-	m_Foot_R = create_capsule_bone(j_foot_r_idx, j_ball_r_idx, *m_ragdoll, r, rot);
+	m_Foot_L = create_capsule_bone(m_foot_l_idx, m_ball_l_idx, *m_ragdoll, r, rot);
+	m_Foot_R = create_capsule_bone(m_foot_r_idx, m_ball_r_idx, *m_ragdoll, r, rot);
 
 #ifdef ZOMBIE
 	m_ragdoll->m_rigid_bodies[1] = m_Pelvis;
@@ -767,124 +659,33 @@ void CRagdoll_Physics::Init_Ragdoll()
 void CRagdoll_Physics::create_joint()
 {
 
-#pragma region Leon Bone - RigidBody
-#ifdef LEON
-	uint32_t j_head_idx = 167;
-	uint32_t j_neck_01_idx = 165;
-	uint32_t j_spine_03_idx = 2;
-	uint32_t j_spine_02_idx = 59;
-	uint32_t j_spine_01_idx = 60;
-	uint32_t j_pelvis_idx = 58;
-
-	uint32_t j_thigh_l_idx = 25;
-	uint32_t j_calf_l_idx = 26;
-	uint32_t j_foot_l_idx = 31;
-	uint32_t j_ball_l_idx = 32;
-
-	uint32_t j_thigh_r_idx = 39;
-	uint32_t j_calf_r_idx = 40;
-	uint32_t j_foot_r_idx = 45;
-	uint32_t j_ball_r_idx = 46;
-
-	uint32_t j_upperarm_l_idx = 82;
-	uint32_t j_lowerarm_l_idx = 83;
-	uint32_t j_hand_l_idx = 84;
-	uint32_t j_middle_01_l_idx = 85;
-
-	uint32_t j_upperarm_r_idx = 124;
-	uint32_t j_lowerarm_r_idx = 125;
-	uint32_t j_hand_r_idx = 126;
-	uint32_t j_middle_01_r_idx = 127;
-#endif
-#pragma endregion
-
 #ifdef ZOMBIE
-	//uint32_t j_head_idx = 131;
-	uint32_t j_head_idx = 130;
-	uint32_t j_neck_01_idx = 129;
-	uint32_t j_spine_03_idx = 1;
-	uint32_t j_spine_02_idx = 57;
-	uint32_t j_spine_01_idx = 58;
-	uint32_t j_pelvis_idx = 44;
-
-	uint32_t j_thigh_l_idx = 2;
-	uint32_t j_calf_l_idx = 7;
-	uint32_t j_foot_l_idx = 12;
-	uint32_t j_ball_l_idx = 13;
-
-	uint32_t j_thigh_r_idx = 18;
-	uint32_t j_calf_r_idx = 19;
-	uint32_t j_foot_r_idx = 24;
-	uint32_t j_ball_r_idx = 25;
-
-	uint32_t j_upperarm_l_idx = 60;
-	uint32_t j_lowerarm_l_idx = 65;
-	uint32_t j_hand_l_idx = 68;
-	uint32_t j_middle_01_l_idx = 75;
-
-	uint32_t j_upperarm_r_idx = 95;
-	uint32_t j_lowerarm_r_idx = 100;
-	uint32_t j_hand_r_idx = 103;
-	uint32_t j_middle_01_r_idx = 110;
-#endif
-#pragma endregion
-
-#ifdef LEON
-	//Chest and Head
-	create_d6_joint_Head(m_Pelvis, m_Head, NECK_BONE, j_neck_01_idx);
-
-	// Chest to Thighs
-	create_d6_joint(m_Pelvis, m_Leg_L, L_LEG_BONE, j_thigh_l_idx);
-	create_d6_joint(m_Pelvis, m_Leg_R, R_LEG_BONE, j_thigh_r_idx);
-
-	// Thighs to Calf
-	create_d6_joint(m_Leg_L, m_Calf_L, L_CALF_BONE, j_calf_l_idx);
-	create_d6_joint(m_Leg_R, m_Calf_R, R_CALF_BONE, j_calf_r_idx);
-
-	// Calf to Foot
-	create_d6_joint_Foot(m_Calf_L, m_Foot_L, L_FOOT_BONE, j_foot_l_idx);
-	create_d6_joint_Foot(m_Calf_R, m_Foot_R, R_FOOT_BONE, j_foot_r_idx);
-
-	// Chest to Upperarm
-	create_d6_joint(m_Pelvis, m_Arm_L, L_ARM_BONE, j_upperarm_l_idx);
-	create_d6_joint(m_Pelvis, m_Arm_R, R_ARM_BONE, j_upperarm_r_idx);
-
-	// Upperarm to Lowerman
-	create_d6_joint(m_Arm_L, m_ForeArm_L, L_FOREARM_BONE, j_lowerarm_l_idx);
-	create_d6_joint(m_Arm_R, m_ForeArm_R, R_FOREARM_BONE, j_lowerarm_r_idx);
-
-	// Lowerarm to Hand
-	create_d6_joint(m_ForeArm_L, m_Hand_L, L_WRIST_BONE, j_hand_l_idx);
-	create_d6_joint(m_ForeArm_R, m_Hand_R, R_WRIST_BONE, j_hand_r_idx);
-#endif
-
-#ifdef ZOMBIE
-	m_pNeckJoint = create_d6_joint_Head(m_Chest, m_Head, NECK_BONE, j_neck_01_idx);
-	m_pUpSpine_Joint = create_d6_joint_Head(m_Pelvis, m_Chest, SPINE_03_BONE, j_spine_01_idx);
+	m_pNeckJoint = create_d6_joint_Head(m_Chest, m_Head, m_neck_01_idx_Bone, m_neck_01_idx);
+	m_pUpSpine_Joint = create_d6_joint_Head(m_Pelvis, m_Chest, m_spine_02_idx_Bone, m_spine_01_idx);
 
 	// Pelvis to Thighs
-	m_pHip_Joint_L = create_d6_joint(m_Pelvis, m_Leg_L, L_LEG_BONE, j_thigh_l_idx);
-	m_pHip_Joint_R = create_d6_joint(m_Pelvis, m_Leg_R, R_LEG_BONE, j_thigh_r_idx);
+	m_pHip_Joint_L = create_d6_joint(m_Pelvis, m_Leg_L, m_thigh_l_idx_Bone, m_thigh_l_idx);
+	m_pHip_Joint_R = create_d6_joint(m_Pelvis, m_Leg_R, m_thigh_r_idx_Bone, m_thigh_r_idx);
 
 	// Thighs to Calf
-	m_pKnee_Joint_L = create_d6_joint(m_Leg_L, m_Calf_L, L_CALF_BONE, j_calf_l_idx);
-	m_pKnee_Joint_R = create_d6_joint(m_Leg_R, m_Calf_R, R_CALF_BONE, j_calf_r_idx);
+	m_pKnee_Joint_L = create_d6_joint(m_Leg_L, m_Calf_L, m_calf_l_idx_Bone, m_calf_l_idx);
+	m_pKnee_Joint_R = create_d6_joint(m_Leg_R, m_Calf_R, m_calf_r_idx_Bone, m_calf_r_idx);
 
 	// Calf to Foot
-	m_pAnkle_Joint_L = create_d6_joint_Foot(m_Calf_L, m_Foot_L, L_FOOT_BONE, j_foot_l_idx);
-	m_pAnkle_Joint_R = create_d6_joint_Foot(m_Calf_R, m_Foot_R, R_FOOT_BONE, j_foot_r_idx);
+	m_pAnkle_Joint_L = create_d6_joint_Foot(m_Calf_L, m_Foot_L, m_ball_l_idx_Bone, m_foot_l_idx);
+	m_pAnkle_Joint_R = create_d6_joint_Foot(m_Calf_R, m_Foot_R, m_ball_r_idx_Bone, m_foot_r_idx);
 
 	// Chest to Upperarm
-	m_pClavicle_L_Joint = create_d6_joint(m_Chest, m_Arm_L, L_ARM_BONE, j_upperarm_l_idx);
-	m_pClavicle_R_Joint = create_d6_joint(m_Chest, m_Arm_R, R_ARM_BONE, j_upperarm_r_idx);
+	m_pClavicle_L_Joint = create_d6_joint(m_Chest, m_Arm_L, m_upperarm_l_idx_Bone,m_upperarm_l_idx);
+	m_pClavicle_R_Joint = create_d6_joint(m_Chest, m_Arm_R, m_upperarm_r_idx_Bone,m_upperarm_r_idx);
 
 	// Upperarm to Lowerman
-	m_pElbow_L_Joint = create_d6_joint(m_Arm_L, m_ForeArm_L, L_FOREARM_BONE, j_lowerarm_l_idx);
-	m_pElbow_R_Joint = create_d6_joint(m_Arm_R, m_ForeArm_R, R_FOREARM_BONE, j_lowerarm_r_idx);
+	m_pElbow_L_Joint = create_d6_joint(m_Arm_L, m_ForeArm_L, m_lowerarm_l_idx_Bone, m_lowerarm_l_idx);
+	m_pElbow_R_Joint = create_d6_joint(m_Arm_R, m_ForeArm_R, m_lowerarm_r_idx_Bone, m_lowerarm_r_idx);
 
 	// Lowerarm to Hand
-	m_pWrist_L_Joint = create_d6_joint(m_ForeArm_L, m_Hand_L, L_WRIST_BONE, j_hand_l_idx);
-	m_pWrist_R_Joint = create_d6_joint(m_ForeArm_R, m_Hand_R, R_WRIST_BONE, j_hand_r_idx);
+	m_pWrist_L_Joint = create_d6_joint(m_ForeArm_L, m_Hand_L, m_hand_l_idx_Bone, m_hand_l_idx);
+	m_pWrist_R_Joint = create_d6_joint(m_ForeArm_R, m_Hand_R, m_hand_r_idx_Bone, m_hand_r_idx);
 #endif
 }
 
@@ -1124,9 +925,11 @@ void CRagdoll_Physics::Add_Force(_float4 vForce, COLLIDER_TYPE eType)
 
 void CRagdoll_Physics::SetBoneIndex()
 {
-	auto joint = m_skeletal_mesh->skeleton()->joints();
+	auto Skeleton = m_skeletal_mesh->skeleton();
 
-	auto NumJoint = m_skeletal_mesh->skeleton()->num_bones();
+	auto joint = Skeleton->joints();
+
+	auto NumJoint = Skeleton->num_bones();
 
 	m_vecBoneIndex.resize(NumJoint);
 
@@ -1140,6 +943,78 @@ void CRagdoll_Physics::SetBoneIndex()
 			}
 		}
 	}
+	
+	m_head_idx = Skeleton->Find_BoneIndex("neck_1");
+	m_neck_01_idx = Skeleton->Find_BoneIndex("neck_0");
+	m_pelvis_idx = Skeleton->Find_BoneIndex("spine_0");
+	m_spine_01_idx = Skeleton->Find_BoneIndex("spine_1");
+	m_spine_02_idx = Skeleton->Find_BoneIndex("spine_2");
+	m_spine_03_idx = Skeleton->Find_BoneIndex("hips");
+
+	m_thigh_l_idx = Skeleton->Find_BoneIndex("l_leg_femur");
+	m_calf_l_idx = Skeleton->Find_BoneIndex("l_leg_tibia");
+	m_foot_l_idx = Skeleton->Find_BoneIndex("l_leg_ankle");
+	m_ball_l_idx = Skeleton->Find_BoneIndex("l_leg_ball");
+
+	m_thigh_r_idx = Skeleton->Find_BoneIndex("r_leg_femur");
+	m_calf_r_idx = Skeleton->Find_BoneIndex("r_leg_tibia");
+	m_foot_r_idx = Skeleton->Find_BoneIndex("r_leg_ankle");
+	m_ball_r_idx = Skeleton->Find_BoneIndex("r_leg_ball");
+
+	m_upperarm_l_idx = Skeleton->Find_BoneIndex("l_arm_humerus");
+	m_lowerarm_l_idx = Skeleton->Find_BoneIndex("l_arm_radius");
+	m_hand_l_idx = Skeleton->Find_BoneIndex("l_arm_wrist");
+	m_middle_01_l_idx = Skeleton->Find_BoneIndex("l_hand_middle_0");
+
+	m_upperarm_r_idx = Skeleton->Find_BoneIndex("r_arm_humerus");
+	m_lowerarm_r_idx = Skeleton->Find_BoneIndex("r_arm_radius");
+	m_hand_r_idx = Skeleton->Find_BoneIndex("r_arm_wrist");
+	m_middle_01_r_idx = Skeleton->Find_BoneIndex("r_hand_middle_0");
+
+
+
+
+
+	m_head_idx_Bone = Find_BoneIndex("neck_1");
+	m_neck_01_idx_Bone = Find_BoneIndex("neck_0");
+	m_pelvis_idx_Bone = Find_BoneIndex("spine_0");
+	m_spine_01_idx_Bone = Find_BoneIndex("spine_1");
+	m_spine_02_idx_Bone = Find_BoneIndex("spine_2");
+	m_spine_03_idx_Bone = Find_BoneIndex("hips");
+
+	m_thigh_l_idx_Bone =Find_BoneIndex("l_leg_femur");
+	m_calf_l_idx_Bone = Find_BoneIndex("l_leg_tibia");
+	m_foot_l_idx_Bone = Find_BoneIndex("l_leg_ankle");
+	m_ball_l_idx_Bone = Find_BoneIndex("l_leg_ball");
+
+	m_thigh_r_idx_Bone =Find_BoneIndex("r_leg_femur");
+	m_calf_r_idx_Bone = Find_BoneIndex("r_leg_tibia");
+	m_foot_r_idx_Bone = Find_BoneIndex("r_leg_ankle");
+	m_ball_r_idx_Bone = Find_BoneIndex("r_leg_ball");
+
+	m_upperarm_l_idx_Bone = Find_BoneIndex("l_arm_humerus");
+	m_lowerarm_l_idx_Bone = Find_BoneIndex("l_arm_radius");
+	m_hand_l_idx_Bone = Find_BoneIndex("l_arm_wrist");
+	m_middle_01_l_idx_Bone = Find_BoneIndex("l_hand_middle_0");
+
+	m_upperarm_r_idx_Bone = Find_BoneIndex("r_arm_humerus");
+	m_lowerarm_r_idx_Bone = Find_BoneIndex("r_arm_radius");
+	m_hand_r_idx_Bone = Find_BoneIndex("r_arm_wrist");
+	m_middle_01_r_idx_Bone = Find_BoneIndex("r_hand_middle_0");
+}
+
+_int CRagdoll_Physics::Find_BoneIndex(const string& strRootTag)
+{
+	_int		iIndex = { 0 };
+	for (auto& Bone : *m_vecBone)
+	{
+		if (true == Bone->Compare_Name(strRootTag.c_str()))
+			return iIndex;
+
+		++iIndex;
+	}
+
+	return -1;
 }
 
 CRagdoll_Physics* CRagdoll_Physics::Create()

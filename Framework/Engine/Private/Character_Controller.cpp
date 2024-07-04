@@ -32,9 +32,9 @@ CCharacter_Controller::CCharacter_Controller(PxController* Controller, class CGa
 	{
 		Build_Skeleton(name);
 
-		Create_Collider();
-
 		SetBoneIndex();
+
+		Create_Collider();
 	}
 }
 
@@ -342,33 +342,6 @@ void CCharacter_Controller::Create_Collider()
 
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
-	uint32_t j_head_idx = 142;		//neck_1
-	uint32_t j_neck_01_idx = 141;	//neck_0
-	uint32_t j_spine_03_idx = 1;		//hips
-	uint32_t j_spine_02_idx = 58;		//spine_2
-	uint32_t j_spine_01_idx = 57;		//spine_1
-	uint32_t j_pelvis_idx = 44;		//spine_0
-
-	uint32_t j_thigh_l_idx = 2;		//l_leg_femur
-	uint32_t j_calf_l_idx = 7;		//l_leg_tibia
-	uint32_t j_foot_l_idx = 12;		//l_leg_ankle
-	uint32_t j_ball_l_idx = 13;		//l_leg_ball
-
-	uint32_t j_thigh_r_idx = 18;		//r_leg_femur
-	uint32_t j_calf_r_idx = 19;		//r_leg_tibia
-	uint32_t j_foot_r_idx = 24;		//r_leg_ankle
-	uint32_t j_ball_r_idx = 25;		//r_leg_ball
-
-	uint32_t j_upperarm_l_idx = 60;	//l_arm_humerus
-	uint32_t j_lowerarm_l_idx = 65;	//l_arm_radius
-	uint32_t j_hand_l_idx = 68;		//l_arm_wrist
-	uint32_t j_middle_01_l_idx = 75;	//l_hand_middle_0
-
-	uint32_t j_upperarm_r_idx = 101;	//r_arm_humerus
-	uint32_t j_lowerarm_r_idx = 106;	//r_arm_radius
-	uint32_t j_hand_r_idx = 109;		//r_arm_wrist
-	uint32_t j_middle_01_r_idx = 116;	//r_hand_middle_0
-
 	m_ragdoll->m_rigid_bodies.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_relative_joint_pos.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_original_body_rotations.resize(m_skeletal_mesh->skeleton()->num_bones());
@@ -387,29 +360,29 @@ void CCharacter_Controller::Create_Collider()
 	rot = XMMatrixRotationZ(XM_PI * 0.5f);
 	_matrix I = XMMatrixIdentity();
 
-	m_HeadCollider = create_capsule_bone(j_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f, 0.0f, 1.f), 4.0f, 6.0f, rot, COLLIDER_TYPE::HEAD);
-	m_BodyCollider = create_capsule_bone(j_spine_01_idx, j_neck_01_idx, *m_ragdoll, 7.0f, rot, COLLIDER_TYPE::CHEST);
-	m_Pelvis_Collider = create_capsule_bone(j_pelvis_idx, j_spine_01_idx, *m_ragdoll, 7.0f, rot, COLLIDER_TYPE::PELVIS);
+	m_HeadCollider = create_capsule_bone(m_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f, 0.0f, 1.f), 4.0f, 6.0f, rot, COLLIDER_TYPE::HEAD);
+	m_BodyCollider = create_capsule_bone(m_spine_01_idx, m_neck_01_idx, *m_ragdoll, 7.0f, rot, COLLIDER_TYPE::CHEST);
+	m_Pelvis_Collider = create_capsule_bone(m_pelvis_idx, m_spine_01_idx, *m_ragdoll, 7.0f, rot, COLLIDER_TYPE::PELVIS);
 
-	m_Left_Leg_Collider = create_capsule_bone(j_thigh_l_idx, j_calf_l_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::LEG_L);
-	m_Right_Leg_Collider = create_capsule_bone(j_thigh_r_idx, j_calf_r_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::LEG_R);
+	m_Left_Leg_Collider = create_capsule_bone(m_thigh_l_idx, m_calf_l_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::LEG_L);
+	m_Right_Leg_Collider = create_capsule_bone(m_thigh_r_idx, m_calf_r_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::LEG_R);
 
-	m_Left_Shin_Collider = create_capsule_bone(j_calf_l_idx, j_foot_l_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::CALF_L);
-	m_Right_Shin_Collider = create_capsule_bone(j_calf_r_idx, j_foot_r_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::CALF_R);
+	m_Left_Shin_Collider = create_capsule_bone(m_calf_l_idx, m_foot_l_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::CALF_L);
+	m_Right_Shin_Collider = create_capsule_bone(m_calf_r_idx, m_foot_r_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::CALF_R);
 
-	m_Left_Arm_Collider = create_capsule_bone(j_upperarm_l_idx, j_lowerarm_l_idx, *m_ragdoll, r, I, COLLIDER_TYPE::ARM_L);
-	m_Right_Arm_Collider = create_capsule_bone(j_upperarm_r_idx, j_lowerarm_r_idx, *m_ragdoll, r, I, COLLIDER_TYPE::ARM_R);
+	m_Left_Arm_Collider = create_capsule_bone(m_upperarm_l_idx, m_lowerarm_l_idx, *m_ragdoll, r, I, COLLIDER_TYPE::ARM_L);
+	m_Right_Arm_Collider = create_capsule_bone(m_upperarm_r_idx, m_lowerarm_r_idx, *m_ragdoll, r, I, COLLIDER_TYPE::ARM_R);
 
-	m_Left_ForeArm_Collider = create_capsule_bone(j_lowerarm_l_idx, j_hand_l_idx, *m_ragdoll, r, I, COLLIDER_TYPE::FOREARM_L);
-	m_Right_ForeArm_Collider = create_capsule_bone(j_lowerarm_r_idx, j_hand_r_idx, *m_ragdoll, r, I, COLLIDER_TYPE::FOREARM_R);
+	m_Left_ForeArm_Collider = create_capsule_bone(m_lowerarm_l_idx, m_hand_l_idx, *m_ragdoll, r, I, COLLIDER_TYPE::FOREARM_L);
+	m_Right_ForeArm_Collider = create_capsule_bone(m_lowerarm_r_idx, m_hand_r_idx, *m_ragdoll, r, I, COLLIDER_TYPE::FOREARM_R);
 
-	m_Left_Hand_Collider = create_capsule_bone(j_hand_l_idx, j_middle_01_l_idx, *m_ragdoll, r, I, COLLIDER_TYPE::HAND_L);
-	m_Right_Hand_Collider = create_capsule_bone(j_hand_r_idx, j_middle_01_r_idx, *m_ragdoll, r, I, COLLIDER_TYPE::HAND_R);
+	m_Left_Hand_Collider = create_capsule_bone(m_hand_l_idx, m_middle_01_l_idx, *m_ragdoll, r, I, COLLIDER_TYPE::HAND_L);
+	m_Right_Hand_Collider = create_capsule_bone(m_hand_r_idx, m_middle_01_r_idx, *m_ragdoll, r, I, COLLIDER_TYPE::HAND_R);
 
 	rot = XMMatrixRotationY(PxPi * 0.5f);
 
-	m_Left_Foot_Collider = create_capsule_bone(j_foot_l_idx, j_ball_l_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::FOOT_L);
-	m_Right_Foot_Collider = create_capsule_bone(j_foot_r_idx, j_ball_r_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::FOOT_R);
+	m_Left_Foot_Collider = create_capsule_bone(m_foot_l_idx, m_ball_l_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::FOOT_L);
+	m_Right_Foot_Collider = create_capsule_bone(m_foot_r_idx, m_ball_r_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::FOOT_R);
 
 	m_ragdoll->m_rigid_bodies[1] = m_Pelvis_Collider;
 	m_ragdoll->m_rigid_bodies[3] = m_Left_Leg_Collider;
@@ -550,9 +523,11 @@ void CCharacter_Controller::load_mesh(const string& name)
 
 void CCharacter_Controller::SetBoneIndex()
 {
-	auto joint = m_skeletal_mesh->skeleton()->joints();
+	auto Skeleton = m_skeletal_mesh->skeleton();
 
-	auto NumJoint = m_skeletal_mesh->skeleton()->num_bones();
+	auto joint = Skeleton->joints();
+
+	auto NumJoint = Skeleton->num_bones();
 
 	m_vecBoneIndex.resize(NumJoint);
 
@@ -566,6 +541,33 @@ void CCharacter_Controller::SetBoneIndex()
 			}
 		}
 	}
+
+	m_head_idx = Skeleton->Find_BoneIndex("neck_1");
+	m_neck_01_idx = Skeleton->Find_BoneIndex("neck_0");
+	m_pelvis_idx = Skeleton->Find_BoneIndex("spine_0");
+	m_spine_01_idx = Skeleton->Find_BoneIndex("spine_1");
+	m_spine_02_idx = Skeleton->Find_BoneIndex("spine_2");
+	m_spine_03_idx = Skeleton->Find_BoneIndex("hips");
+
+	m_thigh_l_idx = Skeleton->Find_BoneIndex("l_leg_femur");
+	m_calf_l_idx = Skeleton->Find_BoneIndex("l_leg_tibia");
+	m_foot_l_idx = Skeleton->Find_BoneIndex("l_leg_ankle");
+	m_ball_l_idx = Skeleton->Find_BoneIndex("l_leg_ball");
+
+	m_thigh_r_idx = Skeleton->Find_BoneIndex("r_leg_femur");
+	m_calf_r_idx = Skeleton->Find_BoneIndex("r_leg_tibia");
+	m_foot_r_idx = Skeleton->Find_BoneIndex("r_leg_ankle");
+	m_ball_r_idx = Skeleton->Find_BoneIndex("r_leg_ball");
+
+	m_upperarm_l_idx = Skeleton->Find_BoneIndex("l_arm_humerus");
+	m_lowerarm_l_idx = Skeleton->Find_BoneIndex("l_arm_radius");
+	m_hand_l_idx = Skeleton->Find_BoneIndex("l_arm_wrist");
+	m_middle_01_l_idx = Skeleton->Find_BoneIndex("l_hand_middle_0");
+
+	m_upperarm_r_idx = Skeleton->Find_BoneIndex("r_arm_humerus");
+	m_lowerarm_r_idx = Skeleton->Find_BoneIndex("r_arm_radius");
+	m_hand_r_idx = Skeleton->Find_BoneIndex("r_arm_wrist");
+	m_middle_01_r_idx = Skeleton->Find_BoneIndex("r_hand_middle_0");
 }
 
 void CCharacter_Controller::SetPosition(_float4 vPos)

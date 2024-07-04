@@ -43,7 +43,12 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_eCurrentMotionType = MOTION_TYPE::MOTION_A;
-	//	m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie_Male/Body_Male.fbx");
+
+	if(m_eBodyModelType == ZOMBIE_BODY_TYPE::_MALE)
+		m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie_Male/Body_Male.fbx");
+
+	if (m_eBodyModelType == ZOMBIE_BODY_TYPE::_FEMALE)
+		m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie_Female/Body_Female.fbx");
 
 #pragma region Effect
 	m_pModelCom->Init_Decal(LEVEL_GAMEPLAY);

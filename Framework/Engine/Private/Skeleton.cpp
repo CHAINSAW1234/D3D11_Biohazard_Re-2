@@ -26,7 +26,7 @@ Skeleton* Skeleton::create(const aiScene* scene, ofstream& ofs)
 {
     Skeleton* skeleton = new Skeleton();
 
-    std::vector<aiBone*>            temp_bone_list(256);
+    std::vector<aiBone*>            temp_bone_list(512);
     std::unordered_set<std::string> bone_map;
 
     skeleton->build_bone_list(scene->mRootNode, scene, temp_bone_list, bone_map);
@@ -66,7 +66,7 @@ Skeleton* Skeleton::create(const aiScene* scene, ofstream& ofs)
         auto& joint = skeleton->m_joints[i];
 
         char buffer[MAX_PATH] = { 0 };
-        strncpy_s(buffer, joint.name.c_str(), MAX_PATH - 1);
+        strncpy_s(buffer, joint.name.c_str(), MAX_PATH);
 
         ofs.write(reinterpret_cast<const char*>(buffer), sizeof(char) * MAX_PATH);
         ofs.write((_char*)(&joint.inverse_bind_pose), sizeof(joint.inverse_bind_pose));
@@ -83,7 +83,7 @@ Skeleton* Skeleton::create(ifstream& ifs)
 {
     Skeleton* skeleton = new Skeleton();
 
-    _int JointSize = 0;
+    size_t JointSize = 0;
 
     ifs.read((_char*)(&JointSize), sizeof(JointSize));
 
@@ -189,6 +189,20 @@ void Skeleton::build_skeleton(aiNode* node, int bone_index, const aiScene* scene
 
     for (_uint i = 0; i < node->mNumChildren; i++)
         build_skeleton(node->mChildren[i], (int)m_num_joints, scene, temp_bone_list);
+}
+
+_int Skeleton::Find_BoneIndex(const string& strRootTag)
+{
+    _int		iIndex = { 0 };
+    for (auto& Bone : m_joints)
+    {
+        if (true == Bone.Compare_Name(strRootTag.c_str()))
+            return iIndex;
+
+        ++iIndex;
+    }
+
+    return -1;
 }
 
 void Skeleton::SetNumJoint()

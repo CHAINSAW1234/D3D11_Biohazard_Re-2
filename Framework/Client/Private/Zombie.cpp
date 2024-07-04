@@ -112,8 +112,23 @@ HRESULT CZombie::Initialize(void* pArg)
 
 #pragma region Create Controller
 
-	//	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this, 1.f, 0.35f, m_pTransformCom
-	//		, m_pBodyModel->GetBoneVector(), "../Bin/Resources/Models/Zombie_Male/Body_Male.fbx");
+	if(m_iBody_ID == (_int)ZOMBIE_BODY_TYPE::_FEMALE)
+	{
+		m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this, 1.f, 0.35f, m_pTransformCom
+			, m_pBodyModel->GetBoneVector(), "../Bin/Resources/Models/Zombie_Female/Body_Female.fbx");
+	}
+
+	if (m_iBody_ID == (_int)ZOMBIE_BODY_TYPE::_MALE)
+	{
+		m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this, 1.f, 0.35f, m_pTransformCom
+			, m_pBodyModel->GetBoneVector(), "../Bin/Resources/Models/Zombie_Male/Body_Male.fbx");
+	}
+
+	if (m_iBody_ID == (_int)ZOMBIE_BODY_TYPE::_MALE_BIG)
+	{
+		m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this, 1.f, 0.35f, m_pTransformCom
+			, m_pBodyModel->GetBoneVector(), "../Bin/Resources/Models/Zombie_Male_Big/Body_Male_Big.fbx");
+	}
 
 #pragma endregion
 
@@ -1416,20 +1431,35 @@ void CZombie::SetBlood()
 
 void CZombie::Calc_Decal_Map()
 {
-	m_pBodyModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
-	m_pBodyModel->Perform_Calc_DecalMap();
+	if(m_pBodyModel)
+	{
+		m_pBodyModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+		m_pBodyModel->Perform_Calc_DecalMap();
+	}
 
-	m_pHeadModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
-	m_pHeadModel->Perform_Calc_DecalMap();
+	if(m_pHeadModel)
+	{
+		m_pHeadModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+		m_pHeadModel->Perform_Calc_DecalMap();
+	}
 
-	m_pShirtsModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
-	m_pShirtsModel->Perform_Calc_DecalMap();
+	if(m_pShirtsModel)
+	{
+		m_pShirtsModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+		m_pShirtsModel->Perform_Calc_DecalMap();
+	}
 
-	m_pPantsModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
-	m_pPantsModel->Perform_Calc_DecalMap();
+	if (m_pPantsModel)
+	{
+		m_pPantsModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+		m_pPantsModel->Perform_Calc_DecalMap();
+	}
 
-	m_pHatModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
-	m_pHatModel->Perform_Calc_DecalMap();
+	if(m_pHatModel)
+	{
+		m_pHatModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
+		m_pHatModel->Perform_Calc_DecalMap();
+	}
 }
 
 void CZombie::Set_ManualMove(_bool isManualMove)
