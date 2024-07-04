@@ -502,7 +502,7 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Start">
       <UniqueIdentifier>{ae5b6c71-d918-40cf-a73a-4e4cabdf1137}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Ladder">
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Ladder">
       <UniqueIdentifier>{0b035877-0214-4780-9c8c-017dbe391d29}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -936,7 +936,6 @@
     <ClInclude Include="..\Public\Creep_Zombie.h">
       <Filter>AIController\Zombie\Task\Idle\Creep</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Interact_UI.h" />
     <ClInclude Include="..\Public\Damage_UI.h">
       <Filter>02.GameObjects\UI\16. Damage</Filter>
     </ClInclude>
@@ -954,6 +953,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Player_State_SubHold_Idle.h">
       <Filter>02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move_Ladder.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Ladder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Interact_UI.h">
+      <Filter>02.GameObjects\UI\98. InteractUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1376,6 +1381,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_State_SubHold_Idle.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_SubHold\Player_State_SubHold_Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_Ladder.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Ladder</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
