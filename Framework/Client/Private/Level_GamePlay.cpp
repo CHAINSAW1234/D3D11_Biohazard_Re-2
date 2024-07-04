@@ -314,7 +314,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 		return E_FAIL;
 
 
-	for (_uint i = 0; i < 100; ++i)
+	/*for (_uint i = 0; i < 100; ++i)
 	{
 		_matrix				TransformMatrix = { XMMatrixTranslation((i % 10) * 2.f, (i / 10) * 2.f, 0.f) };
 
@@ -357,7 +357,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 			m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc);
 	
 		}
-	}
+	}*/
 
 
 	

@@ -46,6 +46,7 @@ HRESULT CFace_Zombie::Initialize(void* pArg)
 
 	m_bDecalRender = true;
 
+
 	return S_OK;
 }
 
@@ -75,8 +76,9 @@ void CFace_Zombie::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	_float3			vTempTranslation = {};
-	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);
-	//	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+	//	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);
+	//m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
+	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 	//	m_pModelCom->Play_Pose(m_pParentsTransform, fTimeDelta);
 
 	if(m_bRender)
