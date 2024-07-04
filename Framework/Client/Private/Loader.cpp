@@ -1264,67 +1264,243 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 #pragma region Monsters Model
 
+	_matrix				ZombieTrnasformMatrix = { XMMatrixRotationY(XMConvertToRadians(180.f)) };
+
 #pragma region ZOMBIE_MALE
-	/* Prototype_Component_Model_ZombieBody */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieBody"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Body.fbx",
-			LeonTransformMatrix))))
+	//////////////////////////////////////////////////
+	//	BODY
+	//////////////////////////////////////////////////
+	/* Prototype_Component_Model_Zombie_Body_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Body_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Body_Male.fbx",
+			ZombieTrnasformMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_ZombieFace1 */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieFace1"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Face01.fbx",
-			LeonTransformMatrix))))
+	//////////////////////////////////////////////////
+	//	HAT
+	//////////////////////////////////////////////////
+	/* Prototype_Component_Model_Zombie_Hat00_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Hat00_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Hat00_Male.fbx",
+			ZombieTrnasformMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_ZombieFace2 */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieFace2"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Face02.fbx",
-			LeonTransformMatrix))))
+	/* Prototype_Component_Model_Zombie_Hat01_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Hat01_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Hat01_Male.fbx",
+			ZombieTrnasformMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_ZombieFace3 */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieFace3"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Face03.fbx",
-			LeonTransformMatrix))))
+	//////////////////////////////////////////////////
+	//	Face
+	//////////////////////////////////////////////////
+	/* Prototype_Component_Model_Zombie_Face00_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face00_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Face00_Male.fbx",
+			ZombieTrnasformMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_ZombieHat */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieHat"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Hat.fbx",
-			LeonTransformMatrix))))
+	/* Prototype_Component_Model_Zombie_Face01_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face01_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Face01_Male.fbx",
+			ZombieTrnasformMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_ZombieShirts1 */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieShirts1"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Shirts01.fbx",
-			LeonTransformMatrix))))
+	/* Prototype_Component_Model_Zombie_Face02_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face02_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Face02_Male.fbx",
+			ZombieTrnasformMatrix))))
 		return E_FAIL;
 
-	/* Prototype_Component_Model_ZombieShirts2 */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieShirts2"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Shirts02.fbx",
-			LeonTransformMatrix))))
+	/* Prototype_Component_Model_Zombie_Face03_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face03_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Face03_Male.fbx",
+			ZombieTrnasformMatrix))))
 		return E_FAIL;
 
-	///* Prototype_Component_Model_ZombieShirts3 */
-	//	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombieShirts3"),
-	//		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Shirts03.fbx",
-	//			LeonTransformMatrix))))
-	//		return E_FAIL;
+	/* Prototype_Component_Model_Zombie_Face04_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face04_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Face04_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
 
-	/* Prototype_Component_Model_ZombiePants */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_ZombiePants"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie/Pants.fbx",
-			LeonTransformMatrix))))
+	/* Prototype_Component_Model_Zombie_Face05_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face05_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Face05_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Face06_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face06_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Face06_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Face07_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face07_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Face07_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Face08_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face08_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Face08_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Face09_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face09_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Face09_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Face10_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Face10_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Face10_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	//////////////////////////////////////////////////
+	//	Pants
+	//////////////////////////////////////////////////
+	/* Prototype_Component_Model_Zombie_Pants00_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants00_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Pants00_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Pants01_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants01_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Pants01_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Pants02_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants02_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Pants02_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Pants03_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants03_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Pants03_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Pants04_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants04_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Pants04_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Pants05_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants05_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Pants05_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Pants06_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants06_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Pants06_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	//////////////////////////////////////////////////
+	//	Shirts
+	//////////////////////////////////////////////////
+	/* Prototype_Component_Model_Zombie_Shirts00_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts00_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Shirts00_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts01_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts01_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Shirts01_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts02_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts02_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Shirts02_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts03_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts03_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Shirts03_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts04_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts04_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Shirts04_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts05_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts05_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Shirts05_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts06_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts06_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Shirts06_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts08_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts08_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Shirts08_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts09_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts09_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Shirts09_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts11_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts11_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Shirts11_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts12_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts12_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Shirts12_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts70_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts70_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Shirts70_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts72_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts72_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Shirts72_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts73_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts73_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Shirts73_Male.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Shirts81_Male */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Zombie_Shirts81_Male"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male/Shirts81_Male.fbx",
+			ZombieTrnasformMatrix))))
 		return E_FAIL;
 
 #pragma endregion
 
 #pragma region ZOMBIE_FEMALE
-
-	_matrix				ZombieTrnasformMatrix = { XMMatrixRotationY(XMConvertToRadians(180.f)) };
-
 	//////////////////////////////////////////////////
 	//	BODY
 	//////////////////////////////////////////////////

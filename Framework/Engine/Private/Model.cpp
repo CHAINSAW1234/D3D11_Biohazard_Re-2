@@ -34,6 +34,9 @@ CModel::CModel(const CModel& rhs)
 	, m_iNumAnimations{ rhs.m_iNumAnimations }
 	, m_vCenterPoint{ rhs.m_vCenterPoint }
 {
+	for (auto& pPrototypeBone : rhs.m_Bones)
+		m_Bones.push_back(pPrototypeBone->Clone());
+
 	for (auto& Pair : rhs.m_AnimationLayers)
 	{
 		wstring						strLayerTag = { Pair.first };
@@ -42,14 +45,11 @@ CModel::CModel(const CModel& rhs)
 		CAnimation_Layer* pAnimLayer = { CAnimation_Layer::Create() };
 		for (auto& pAnimation : Animations)
 		{
-			CAnimation* pClonedAnimation = { pAnimation->Clone() };
+			CAnimation* pClonedAnimation = { pAnimation->Clone(m_Bones) };
 			pAnimLayer->Add_Animation(pClonedAnimation);
 		}
 		m_AnimationLayers.emplace(Pair.first, pAnimLayer);
 	}
-
-	for (auto& pPrototypeBone : rhs.m_Bones)
-		m_Bones.push_back(pPrototypeBone->Clone());
 
 	for (auto& pMesh : m_Meshes)
 		Safe_AddRef(pMesh);
@@ -266,8 +266,8 @@ HRESULT CModel::Add_Animations(const wstring& strPrototypeLayerTag, const wstrin
 	_uint			iNumAnims = { m_pGameInstance->Get_NumAnim_Prototypes(strPrototypeLayerTag) };
 	for (_uint i = 0; i < iNumAnims; ++i)
 	{
-		CAnimation*						pAnimation = { nullptr };
-		m_pGameInstance->Clone_Animation(strPrototypeLayerTag, i, &pAnimation);
+		CAnimation* pAnimation = { nullptr };
+		m_pGameInstance->Clone_Animation(strPrototypeLayerTag, i, m_Bones, &pAnimation);
 
 		if (nullptr == pAnimation)
 			return E_FAIL;
@@ -278,24 +278,36 @@ HRESULT CModel::Add_Animations(const wstring& strPrototypeLayerTag, const wstrin
 
 			return E_FAIL;
 		}
-
-		vector<CChannel*>					Channels = { pAnimation->Get_Channels() };
-		unordered_map<string, _uint>		BoneNameIndices;
-		_uint								iNumBones = { static_cast<_uint>(m_Bones.size()) };
-		for (_uint i = 0; i < iNumBones; ++i)
-		{
-			string			strBoneName = { m_Bones[i]->Get_Name()};
-			BoneNameIndices.emplace(strBoneName, i);
-		}
-
-		for (auto& pChannel : Channels)
-		{
-			pChannel->Link_Bone(BoneNameIndices);
-		}
 	}
 
 	m_AnimationLayers.emplace(strAnimLayerTag, pAnimation_Layer);
 
+	return S_OK;
+}
+
+HRESULT CModel::Add_Bones(CModel* pModel)
+{
+	for (auto& pDstBone : pModel->m_Bones)
+	{
+		_char*				pDstName = { pDstBone->Get_Name() };
+
+		_bool				isAlreadyIn = { false };
+		for (auto& pSrcBone : m_Bones)
+		{
+			_char*			pSrcName = { pSrcBone->Get_Name() };
+			if (0 == strcmp(pSrcName, pDstName))
+			{
+				isAlreadyIn = true;
+				break;
+			}
+		}
+
+		if (false == isAlreadyIn)
+		{
+			m_Bones.emplace_back(pDstBone);
+			Safe_AddRef(pDstBone);
+		}
+	}
 	return S_OK;
 }
 
@@ -2384,7 +2396,7 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 
 	_bool		isFinished = { false };
 
-	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(0) };
+	CPlayingInfo*		pPlayingInfo = { Find_PlayingInfo(0) };
 	if (nullptr == pPlayingInfo)
 	{
 		MSG_BOX(TEXT("Default Playing Info 생성 필요 HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)"));
@@ -2447,7 +2459,16 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 HRESULT CModel::Play_Pose(CTransform* pTransform, _float fTimeDelta)
 {
 	fTimeDelta = Compute_NewTimeDelta_Distatnce_Optimization(fTimeDelta, pTransform);
+	if (0.f == fTimeDelta)
+		return S_OK;
 
+	for (auto& pBone : m_Bones)
+	{
+		if (false == pBone->Is_Surbodinate())
+			continue; 
+
+		pBone->Invalidate_CombinedTransformationMatrix(m_Bones, m_TransformationMatrix);
+	}
 
 	return S_OK;
 }

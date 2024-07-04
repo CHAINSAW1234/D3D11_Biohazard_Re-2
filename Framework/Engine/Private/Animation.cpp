@@ -13,18 +13,16 @@ CAnimation::CAnimation(const CAnimation& rhs)
 	: m_fDuration{ rhs.m_fDuration }
 	, m_fTickPerSecond{ rhs.m_fTickPerSecond }
 	, m_iNumChannels{ rhs.m_iNumChannels }
-{
-
-	//  채널 복사
+{	
 	for (auto& pChannel : rhs.m_Channels)
 	{
-		m_Channels.push_back(pChannel);
+		m_Channels.emplace_back(pChannel);
 		Safe_AddRef(pChannel);
 	}
 	//  이름 복사
 	strcpy_s(m_szName, rhs.m_szName);
 }
-HRESULT CAnimation::Initialize(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices)
+HRESULT CAnimation::Initialize_Prototype(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices)
 {
 	strcpy_s(m_szName, pAIAnimation->mName.data);
 
@@ -47,7 +45,7 @@ HRESULT CAnimation::Initialize(const aiAnimation* pAIAnimation, const map<string
 	return S_OK;
 }
 
-HRESULT CAnimation::Initialize(const ANIM_DESC& AnimDesc)
+HRESULT CAnimation::Initialize_Prototype(const ANIM_DESC& AnimDesc)
 {
 	strcpy_s(m_szName, AnimDesc.strName.c_str());
 
@@ -68,7 +66,7 @@ HRESULT CAnimation::Initialize(const ANIM_DESC& AnimDesc)
 	return S_OK;
 }
 
-HRESULT CAnimation::Initialize(const string& strAnimFilePath)
+HRESULT CAnimation::Initialize_Prototype(const string& strAnimFilePath)
 {
 	filesystem::path			FullPath(strAnimFilePath);
 
@@ -106,8 +104,32 @@ HRESULT CAnimation::Initialize(const string& strAnimFilePath)
 		if (FAILED(CModel_Extractor::Extract_FBX_AnimOnly(strAnimFilePath)))
 			return E_FAIL;
 
-		if (FAILED(Initialize(strAnimFilePath)))
+		if (FAILED(Initialize_Prototype(strAnimFilePath)))
 			return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT CAnimation::Initialize(const vector<class CBone*>& Bones)
+{
+	for (auto& pChannel : m_Channels)
+	{
+		CChannel*			pClonedChannel = { pChannel->Clone(Bones) };
+		Safe_Release(pChannel);
+		pChannel = pClonedChannel;
+	}
+
+	for (auto& iter = m_Channels.begin(); iter != m_Channels.end(); )
+	{
+		if (-1 == (*iter)->Get_BoneIndex())
+		{
+			Safe_Release(*iter);
+			iter = m_Channels.erase(iter);
+			m_iNumChannels -= 1;
+		}
+		else
+			++iter;
 	}
 
 	return S_OK;
@@ -142,15 +164,17 @@ void CAnimation::Invalidate_TransformationMatrix(_float fTimeDelta, const vector
 		*pFirstTick = true;
 	}
 
-	for (_uint i = 0; i < m_iNumChannels; ++i)
+	for (_uint iChannelIndex = 0; iChannelIndex < m_iNumChannels; ++iChannelIndex)
 	{
-		_uint			iBoneIndex = { m_Channels[i]->Get_BoneIndex() };
-		_int			iKeyFrameIndex = { pPlayingInfo->Get_KeyFrameIndex(iBoneIndex) };
+		_int			iBoneIndex = { m_Channels[iChannelIndex]->Get_BoneIndex() };
+		if (-1 == iBoneIndex)
+			continue;
+		_int			iKeyFrameIndex = { pPlayingInfo->Get_KeyFrameIndex(iChannelIndex) };
 		if (-1 == iKeyFrameIndex)
 			continue;
 
 		/* 이 뼈의 상태행렬을 만들어서 CBone의 TransformationMatrix를 바꿔라. */
-		m_Channels[i]->Invalidate_TransformationMatrix(Bones, fTrackPosition, &iKeyFrameIndex);
+		m_Channels[iChannelIndex]->Invalidate_TransformationMatrix(Bones, fTrackPosition, &iKeyFrameIndex);
 
 		pPlayingInfo->Set_KeyFrameIndex(iBoneIndex, iKeyFrameIndex);
 	}
@@ -210,7 +234,9 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _u
 	for (_uint iChannelIndex = 0; iChannelIndex < m_iNumChannels; ++iChannelIndex)
 	{
 		/* 이 뼈의 상태행렬을 만들어서 CBone의 TransformationMatrix를 바꿔라. */
-		_uint			iBoneIndex = { m_Channels[iChannelIndex]->Get_BoneIndex() };
+		_int			iBoneIndex = { m_Channels[iChannelIndex]->Get_BoneIndex() };
+		if (-1 == iBoneIndex)
+			continue;
 		_int			iKeyFrameIndex = { pPlayingInfo->Get_KeyFrameIndex(iChannelIndex) };
 
 		unordered_set<_uint>::iterator		iter = { IncludedBoneIndices.find(iBoneIndex) };
@@ -237,7 +263,7 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix_LinearInterpolation(_
 {
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
-		_uint				iBoneIndex = { m_Channels[i]->Get_BoneIndex() };
+		_int				iBoneIndex = { m_Channels[i]->Get_BoneIndex() };
 		if (-1 == iBoneIndex)
 			continue;
 
@@ -262,9 +288,11 @@ _int CAnimation::Find_ChannelIndex(_uint iBoneIndex)
 	_bool			isFind = { false };
 	for (auto& pChannel : m_Channels)
 	{
-		_uint			iDstBoneIndex = { pChannel->Get_BoneIndex() };
+		_int			iDstBoneIndex = { pChannel->Get_BoneIndex() };
+		if (-1 == iDstBoneIndex)
+			continue;
 
-		if (iDstBoneIndex == iBoneIndex)
+		if (static_cast<_uint>(iDstBoneIndex) == iBoneIndex)
 		{
 			isFind = true;
 
@@ -318,7 +346,7 @@ HRESULT CAnimation::Read_Binary(ifstream& ifs)
 		AnimDesc.ChannelDescs.push_back(ChannelDesc);
 	}
 
-	if (FAILED(Initialize(AnimDesc)))
+	if (FAILED(Initialize_Prototype(AnimDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -335,9 +363,9 @@ KEYFRAME CAnimation::Get_FirstKeyFrame(_uint iBoneIndex)
 		//	return FirstKeyFrame;	
 	}
 
-	vector<KEYFRAME>		KeyFrames = m_Channels[static_cast<_uint>(iChannelIndex)]->Get_KeyFrames();
+	vector<KEYFRAME*>		KeyFrames = m_Channels[static_cast<_uint>(iChannelIndex)]->Get_KeyFrames();
 
-	FirstKeyFrame = { KeyFrames.front() };
+	FirstKeyFrame = { *(KeyFrames.front()) };
 
 	return FirstKeyFrame;
 }
@@ -351,13 +379,13 @@ KEYFRAME CAnimation::Get_CurrentKeyFrame(_uint iBoneIndex, _float fTrackPosition
 		return CurrentKeyFrame;
 	}
 
-	vector<KEYFRAME>		KeyFrames = m_Channels[static_cast<_uint>(iChannelIndex)]->Get_KeyFrames();
+	vector<KEYFRAME*>		KeyFrames = m_Channels[static_cast<_uint>(iChannelIndex)]->Get_KeyFrames();
 	_uint					iNumKeyFrame = { static_cast<_uint>(KeyFrames.size()) };
 
 	for (_uint i = 0; i < iNumKeyFrame - 1; ++i)
 	{
-		_float				fStartTime = { KeyFrames[i].fTime };
-		_float				fFinishTime = { KeyFrames[i + 1].fTime };
+		_float				fStartTime = { KeyFrames[i]->fTime };
+		_float				fFinishTime = { KeyFrames[i + 1]->fTime };
 
 		if (fStartTime > fTrackPosition || fTrackPosition > fFinishTime)
 		{
@@ -373,14 +401,14 @@ KEYFRAME CAnimation::Get_CurrentKeyFrame(_uint iBoneIndex, _float fTrackPosition
 		_float				fRatio = { (fTrackPosition - fStartTime) / fLength };
 
 		_vector				vScale, vQuaternion, vTranslation;
-		vScale = XMVectorLerp(XMLoadFloat3(&KeyFrames[i].vScale),
-			XMLoadFloat3(&KeyFrames[i + 1].vScale), fRatio);
+		vScale = XMVectorLerp(XMLoadFloat3(&KeyFrames[i]->vScale),
+			XMLoadFloat3(&KeyFrames[i + 1]->vScale), fRatio);
 
-		vQuaternion = XMQuaternionSlerp(XMLoadFloat4(&KeyFrames[i].vRotation),
-			XMLoadFloat4(&KeyFrames[i + 1].vRotation), fRatio);
+		vQuaternion = XMQuaternionSlerp(XMLoadFloat4(&KeyFrames[i]->vRotation),
+			XMLoadFloat4(&KeyFrames[i + 1]->vRotation), fRatio);
 
-		vTranslation = XMVectorLerp(XMLoadFloat3(&KeyFrames[i].vTranslation),
-			XMLoadFloat3(&KeyFrames[i + 1].vTranslation), fRatio);
+		vTranslation = XMVectorLerp(XMLoadFloat3(&KeyFrames[i]->vTranslation),
+			XMLoadFloat3(&KeyFrames[i + 1]->vTranslation), fRatio);
 
 		XMStoreFloat3(&CurrentKeyFrame.vScale, vScale);
 		XMStoreFloat4(&CurrentKeyFrame.vRotation, vQuaternion);
@@ -395,9 +423,9 @@ KEYFRAME CAnimation::Get_CurrentKeyFrame(_uint iBoneIndex, _float fTrackPosition
 
 CAnimation* CAnimation::Create(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices)
 {
-	CAnimation* pInstance = new CAnimation();
+	CAnimation*				pInstance = { new CAnimation() };
 
-	if (FAILED(pInstance->Initialize(pAIAnimation, BoneIndices)))
+	if (FAILED(pInstance->Initialize_Prototype(pAIAnimation, BoneIndices)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CAnimation"));
 
@@ -409,9 +437,9 @@ CAnimation* CAnimation::Create(const aiAnimation* pAIAnimation, const map<string
 
 CAnimation* CAnimation::Create(const ANIM_DESC& AnimDesc)
 {
-	CAnimation* pInstance = new CAnimation();
+	CAnimation*				pInstance = { new CAnimation() };
 
-	if (FAILED(pInstance->Initialize(AnimDesc)))
+	if (FAILED(pInstance->Initialize_Prototype(AnimDesc)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CAnimation"));
 
@@ -423,9 +451,9 @@ CAnimation* CAnimation::Create(const ANIM_DESC& AnimDesc)
 
 CAnimation* CAnimation::Create(const string& strAnimFilePath)
 {
-	CAnimation* pInstance = new CAnimation();
+	CAnimation*				pInstance = { new CAnimation() };
 
-	if (FAILED(pInstance->Initialize(strAnimFilePath)))
+	if (FAILED(pInstance->Initialize_Prototype(strAnimFilePath)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CAnimation"));
 
@@ -435,9 +463,18 @@ CAnimation* CAnimation::Create(const string& strAnimFilePath)
 	return pInstance;
 }
 
-CAnimation* CAnimation::Clone()
+CAnimation* CAnimation::Clone(const vector<class CBone*>& Bones)
 {
-	return new CAnimation(*this);
+	CAnimation*				pInstance = { new CAnimation(*this) };
+
+	if (FAILED(pInstance->Initialize(Bones)))
+	{
+		MSG_BOX(TEXT("Failed To Cloned : CAnimation"));
+
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
 }
 
 void CAnimation::Free()

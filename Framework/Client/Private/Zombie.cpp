@@ -110,8 +110,8 @@ HRESULT CZombie::Initialize(void* pArg)
 
 #pragma region Create Controller
 
-	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this, 1.f, 0.35f, m_pTransformCom
-		, m_pBodyModel->GetBoneVector(), "../Bin/Resources/Models/Zombie/Body.fbx");
+	//	m_pController = m_pGameInstance->Create_Controller(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_CCT, this, 1.f, 0.35f, m_pTransformCom
+	//		, m_pBodyModel->GetBoneVector(), "../Bin/Resources/Models/Zombie_Male/Body_Male.fbx");
 
 #pragma endregion
 

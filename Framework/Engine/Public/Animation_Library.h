@@ -17,7 +17,7 @@ public:
 	//	파일 패스를 프로토타입 태그로 관리하기
 	HRESULT											Add_Prototypes_Animation(const wstring& strAnimLayerTag, const string& strDirPath);
 
-	HRESULT											Clone_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, class CAnimation** ppAnimation);
+	HRESULT											Clone_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, const vector<class CBone*>& Bones, class CAnimation** ppAnimation);
 	
 	class CAnimation*								Get_Animation_Prototype(const wstring& strAnimLayerTag, _uint iIndex);
 	_uint											Get_NumAnim_Prototypes(const wstring& strAnimLayerTag);

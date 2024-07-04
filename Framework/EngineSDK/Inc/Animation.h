@@ -27,10 +27,12 @@ public:		/* For.Access */
 
 public:		/* For.Load */
 			/* For.FBX_Load*/
-	HRESULT									Initialize(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices);
+	HRESULT									Initialize_Prototype(const aiAnimation* pAIAnimation, const map<string, _uint>& BoneIndices);
 			/* For.Binary_Load*/
-	HRESULT									Initialize(const ANIM_DESC& AnimDesc);
-	HRESULT									Initialize(const string& strAnimFilePath);
+	HRESULT									Initialize_Prototype(const ANIM_DESC& AnimDesc);
+	HRESULT									Initialize_Prototype(const string& strAnimFilePath);
+
+	HRESULT									Initialize(const vector<class CBone*>& Bones);
 
 public:		/* For.PlayAnimation */
 	void									Invalidate_TransformationMatrix(_float fTimeDelta, const vector<class CBone*>& Bones, _bool isLoop, _bool* pFirsltTick, class CPlayingInfo* pPlayingInfo);
@@ -72,8 +74,8 @@ public:
 
 	/* For.Binary_Load Self */
 	static CAnimation* Create(const string& strAnimFilePath);
-	CAnimation* Clone();
-	virtual void							Free() override;
+	CAnimation* Clone(const vector<class CBone*>& Bones);
+	virtual void Free() override;
 
 #pragma endregion
 };

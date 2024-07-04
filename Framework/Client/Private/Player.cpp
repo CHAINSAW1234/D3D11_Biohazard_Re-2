@@ -2153,46 +2153,55 @@ HRESULT CPlayer::Initialize_PartModels()
 		nullptr == pHairModel)
 		return E_FAIL;
 
-	_float4x4* pNeck0CombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("neck_0")) };
-	pHeadModel->Set_Surbodinate("neck_0", true);
-	pHeadModel->Set_Parent_CombinedMatrix_Ptr("neck_0", pNeck0CombinedMatrix);
+	//	pBodyModel->Add_Bones(pHeadModel);
+	//	pBodyModel->Add_Bones(pHairModel);
 
-	_float4x4* pNeck1CombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("neck_1")) };
-	pHeadModel->Set_Surbodinate("neck_1", true);
-	pHeadModel->Set_Parent_CombinedMatrix_Ptr("neck_1", pNeck1CombinedMatrix);
+	//_float4x4* pNeck0CombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("neck_0")) };
+	//pHeadModel->Set_Surbodinate("neck_0", true);
+	//pHeadModel->Set_Parent_CombinedMatrix_Ptr("neck_0", pNeck0CombinedMatrix);
 
-	_float4x4* pHeadCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("head")) };
-	pHeadModel->Set_Surbodinate("head", true);
-	pHeadModel->Set_Parent_CombinedMatrix_Ptr("head", pHeadCombinedMatrix);
+	//_float4x4* pNeck1CombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("neck_1")) };
+	//pHeadModel->Set_Surbodinate("neck_1", true);
+	//pHeadModel->Set_Parent_CombinedMatrix_Ptr("neck_1", pNeck1CombinedMatrix);
 
-	_float4x4* pLeftArmCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("l_arm_clavicle")) };
-	pHeadModel->Set_Surbodinate("l_arm_clavicle", true);
-	pHeadModel->Set_Parent_CombinedMatrix_Ptr("l_arm_clavicle", pLeftArmCombinedMatrix);
+	//_float4x4* pHeadCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("head")) };
+	//pHeadModel->Set_Surbodinate("head", true);
+	//pHeadModel->Set_Parent_CombinedMatrix_Ptr("head", pHeadCombinedMatrix);
 
-	_float4x4* pRightArmCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("r_arm_clavicle")) };
-	pHeadModel->Set_Surbodinate("r_arm_clavicle", true);
-	pHeadModel->Set_Parent_CombinedMatrix_Ptr("r_arm_clavicle", pRightArmCombinedMatrix);
+	//_float4x4* pLeftArmCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("l_arm_clavicle")) };
+	//pHeadModel->Set_Surbodinate("l_arm_clavicle", true);
+	//pHeadModel->Set_Parent_CombinedMatrix_Ptr("l_arm_clavicle", pLeftArmCombinedMatrix);
 
-	_float4x4* pLeftTrapMuscleCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("l_trapA_muscle")) };
-	pHeadModel->Set_Surbodinate("l_trapA_muscle", true);
-	pHeadModel->Set_Parent_CombinedMatrix_Ptr("l_trapA_muscle", pLeftTrapMuscleCombinedMatrix);
+	//_float4x4* pRightArmCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("r_arm_clavicle")) };
+	//pHeadModel->Set_Surbodinate("r_arm_clavicle", true);
+	//pHeadModel->Set_Parent_CombinedMatrix_Ptr("r_arm_clavicle", pRightArmCombinedMatrix);
 
-	_float4x4* pRightTrapAMuscleCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("r_trapA_muscle")) };
-	pHeadModel->Set_Surbodinate("r_trapA_muscle", true);
-	pHeadModel->Set_Parent_CombinedMatrix_Ptr("r_trapA_muscle", pRightTrapAMuscleCombinedMatrix);
+	//_float4x4* pLeftTrapMuscleCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("l_trapA_muscle")) };
+	//pHeadModel->Set_Surbodinate("l_trapA_muscle", true);
+	//pHeadModel->Set_Parent_CombinedMatrix_Ptr("l_trapA_muscle", pLeftTrapMuscleCombinedMatrix);
 
-	//	pNeck1CombinedMatrix = { const_cast<_float4x4*>(pHeadModel->Get_CombinedMatrix("neck_1")) };
-	pHairModel->Set_Surbodinate("neck_1", true);
-	pHairModel->Set_Parent_CombinedMatrix_Ptr("neck_1", pNeck1CombinedMatrix);
+	//_float4x4* pRightTrapAMuscleCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("r_trapA_muscle")) };
+	//pHeadModel->Set_Surbodinate("r_trapA_muscle", true);
+	//pHeadModel->Set_Parent_CombinedMatrix_Ptr("r_trapA_muscle", pRightTrapAMuscleCombinedMatrix);
 
-	pHairModel->Set_Surbodinate("head", true);
-	pHairModel->Set_Parent_CombinedMatrix_Ptr("head", pHeadCombinedMatrix);
+	////	pNeck1CombinedMatrix = { const_cast<_float4x4*>(pHeadModel->Get_CombinedMatrix("neck_1")) };
+	//pHairModel->Set_Surbodinate("neck_1", true);
+	//pHairModel->Set_Parent_CombinedMatrix_Ptr("neck_1", pNeck1CombinedMatrix);
+
+	//pHairModel->Set_Surbodinate("head", true);
+	//pHairModel->Set_Parent_CombinedMatrix_Ptr("head", pHeadCombinedMatrix);
+
+	pHeadModel->Link_Bone_Auto(pBodyModel);
+	pHairModel->Link_Bone_Auto(pBodyModel);
 
 #pragma region
 	CFlashLight* pFlashLight = dynamic_cast<CFlashLight*>(m_PartObjects[PART_LIGHT]);
 	_float4x4* pLeftWeaponCombinedMatrix = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("l_weapon")) };
 	pFlashLight->Set_Socket(pLeftWeaponCombinedMatrix);
 #pragma endregion
+
+	if (FAILED(static_cast<CBody_Player*>(m_PartObjects[PART_BODY])->Add_Animations()))
+		return E_FAIL;
 
 	return S_OK;
 }

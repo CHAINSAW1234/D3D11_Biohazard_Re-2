@@ -354,7 +354,7 @@ public:
 
 	_uint									Get_NumAnim_Prototypes(const wstring& strAnimLayerTag);
 	HRESULT									Add_Prototypes_Animation(const wstring& strAnimLayerTag, const string& strDirPath);
-	HRESULT									Clone_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, CAnimation** ppAnimation);
+	HRESULT									Clone_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, const vector<class CBone*>& Bones, CAnimation** ppAnimation);
 
 	list<wstring>							Get_AnimationLayer_Tags();
 	list<string>							Get_Animation_Tags(const wstring& setrAnimLayerTag);

@@ -16,7 +16,7 @@ BEGIN(Engine)
 #define DISTANCE_FPS10				15.f
 #define DISTANCE_FPS5				20.f
 
-#define TIME_FPSMAX					(1.f / 60.f)
+#define TIME_FPSMAX					(fTimeDelta)
 #define TIME_FPS45					(1.f / 45.f)
 #define TIME_FPS30					(1.f / 30.f)
 #define TIME_FPS20					(1.f / 20.f)
@@ -52,6 +52,9 @@ public:		/* For.Animation */
 	void									Reset_PreAnim_CurrentAnim(_uint iPlayingIndex);
 
 	HRESULT									Add_Animations(const wstring& strPrototypeLayerTag, const wstring& strAnimLayerTag);
+
+
+	HRESULT									Add_Bones(CModel* pModel);
 
 public:		/* Optimization Culling */
 	void									Set_OptimizationCulling(_bool isSetOptimization) { m_isOptimization = isSetOptimization; }

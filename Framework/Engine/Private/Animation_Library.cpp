@@ -58,7 +58,7 @@ HRESULT CAnimation_Library::Add_Prototypes_Animation(const wstring& strAnimLayer
 	return S_OK;
 }
 
-HRESULT CAnimation_Library::Clone_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, CAnimation** ppAnimation)
+HRESULT CAnimation_Library::Clone_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, const vector<class CBone*>& Bones, CAnimation** ppAnimation)
 {
 	if (false == Is_Exist_AnimLayer(strAnimLayerTag))
 		return E_FAIL;
@@ -71,7 +71,7 @@ HRESULT CAnimation_Library::Clone_Animation(const wstring& strAnimLayerTag, _uin
 	if (nullptr == pAnimationPrototype)
 		return E_FAIL;
 
-	CAnimation*			pClonedAnimation = { pAnimationPrototype->Clone() };
+	CAnimation*			pClonedAnimation = { pAnimationPrototype->Clone(Bones) };
 	if (nullptr == pClonedAnimation)
 		return E_FAIL;
 

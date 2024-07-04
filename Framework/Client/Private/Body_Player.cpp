@@ -38,8 +38,8 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	if (FAILED(Add_Animations()))
-		return E_FAIL;
+	/*if (FAILED(Add_Animations()))
+		return E_FAIL;*/
 
 	m_pModelCom->Hide_Mesh("LOD_1_Group_200_Sub_1__pl0001_Gun_Mat_mesh0007", true);
 

@@ -53,9 +53,11 @@ private:
 
 	class CRagdoll_Physics* m_pRagdoll = { nullptr };
 
+public:
+	HRESULT					Add_Animations();
+
 private:
 	HRESULT					Add_Components();
-	HRESULT					Add_Animations();
 	HRESULT					Bind_ShaderResources();
 
 public:

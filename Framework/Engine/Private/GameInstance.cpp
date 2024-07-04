@@ -1287,12 +1287,12 @@ HRESULT CGameInstance::Add_Prototypes_Animation(const wstring& strAnimLayerTag, 
 
 	return m_pAnimation_Library->Add_Prototypes_Animation(strAnimLayerTag, strDirPath);
 }
-HRESULT CGameInstance::Clone_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, CAnimation** ppAnimation)
+HRESULT CGameInstance::Clone_Animation(const wstring& strAnimLayerTag, _uint iAnimIndex, const vector<class CBone*>& Bones, CAnimation** ppAnimation)
 {
 	if (nullptr == m_pAnimation_Library)
 		return E_FAIL;
 
-	return m_pAnimation_Library->Clone_Animation(strAnimLayerTag, iAnimIndex, ppAnimation);
+	return m_pAnimation_Library->Clone_Animation(strAnimLayerTag, iAnimIndex, Bones, ppAnimation);
 }
 list<wstring> CGameInstance::Get_AnimationLayer_Tags()
 {

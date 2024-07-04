@@ -77,6 +77,8 @@ void CClothes_Zombie::Late_Tick(_float fTimeDelta)
 
 	_float3			vTempTranslation = {};
 	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);
+	//	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+	//	m_pModelCom->Play_Pose(m_pParentsTransform, fTimeDelta);
 	
 	if(m_bRender)
 	{
