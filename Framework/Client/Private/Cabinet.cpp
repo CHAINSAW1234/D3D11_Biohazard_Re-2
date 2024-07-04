@@ -44,10 +44,7 @@ HRESULT CCabinet::Initialize(void* pArg)
 
 void CCabinet::Tick(_float fTimeDelta)
 {
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-	if(m_bReonDesk)
-		m_pColliderCom[INTERACTPROPS_COL_AABB]->Tick(m_pTransformCom->Get_WorldMatrix());
-	
+	__super::Tick_Col();
 	if (!m_bVisible)
 		return;
 	if (m_PartObjects[PART_ITEM] != nullptr)
@@ -59,21 +56,19 @@ void CCabinet::Tick(_float fTimeDelta)
 	Get_Object_Pos();
 #endif
 #endif
-	if (m_bActive)
+	if (m_bActivity)
 		m_fTimeDelay += fTimeDelta;
 	if (m_fTimeDelay > 1.f)
 	{
-		m_bActive = false;
+		m_bActivity = false;
 		m_fTimeDelay = 0.f;
 	}
 
 
-	if (m_bCol&&!m_bActive)
+	if ((m_bCol[INTER_COL_NORMAL][COL_STEP1]|| m_bCol[INTER_COL_DOUBLE][COL_STEP1]) && !m_bActivity)
 	{
-		//UI¶ç¿ì°í
 		if (*m_pPlayerInteract)
 			Active();
-		m_bCol = false;
 	}	
 	if (m_eState == CABINET_OPEN)
 	{
@@ -81,11 +76,12 @@ void CCabinet::Tick(_float fTimeDelta)
 		return;
 	}
 	__super::Tick(fTimeDelta);
-	//
 }
 
 void CCabinet::Late_Tick(_float fTimeDelta)
 {
+	if (m_pPlayer == nullptr)
+		return;
 	if (!Visible())
 		return;
 	if (m_bRender == false)
@@ -100,18 +96,20 @@ void CCabinet::Late_Tick(_float fTimeDelta)
 
 		m_bRender = false;
 	}
-
-	m_bCol = Check_Col_Sphere_Player(); 
-	if(m_bReonDesk)
-		m_bRightCol = Check_Col_AABB_Player();
+	if (Activate_Col(Get_Collider_World_Pos(_float4(50.f, 1.f, 50.f,1.f)))|| Activate_Col(Get_Collider_World_Pos(_float4(-50.f, 1.f, 50.f, 1.f))))
+	{
+		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
+			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
+		if(m_bReonDesk)
+			if (Check_Col_Player(INTER_COL_DOUBLE, COL_STEP0))
+				Check_Col_Player(INTER_COL_DOUBLE, COL_STEP1);
+	}
 
 	__super::Late_Tick(fTimeDelta);
 
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_SPHERE]);
-	if(m_bReonDesk)
-		m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_AABB]);
+	__super::Add_Col_DebugCom();
 #endif
 }
 
@@ -124,23 +122,32 @@ HRESULT CCabinet::Add_Components()
 {
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(50.f);
+	ColliderDesc.fRadius = _float(80.f);
 	ColliderDesc.vCenter = _float3(50.f, 1.f, 50.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider_Shpere"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+		TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
+		return E_FAIL;
+
+	ColliderDesc.fRadius = _float(50.f);
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
 		return E_FAIL;
 
 	if (m_tagPropDesc.strGamePrototypeName.find("reon") != string::npos)
 	{
-		CBounding_AABB::BOUNDING_AABB_DESC		ColliderDesc1{};
+		ColliderDesc.fRadius = _float(80.f);
+		ColliderDesc.vCenter = _float3(-50.f, 1.f, 50.f);
 
-		ColliderDesc1.vSize = _float3(100.f,100.f,100.f);
-		ColliderDesc1.vCenter = _float3(-50.f, 1.f, 50.f);
-		/* For.Com_Collider */
-		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
-			TEXT("Com_Collider_AABB"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_AABB], &ColliderDesc1)))
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+			TEXT("Com_Collider_Double_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP0], &ColliderDesc)))
 			return E_FAIL;
+
+		ColliderDesc.fRadius = _float(50.f);
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+			TEXT("Com_Collider_Double_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP1], &ColliderDesc)))
+			return E_FAIL;
+
 		m_bReonDesk = true;
 	}
 
@@ -217,29 +224,18 @@ HRESULT CCabinet::Initialize_PartObjects()
 
 HRESULT CCabinet::Bind_ShaderResources()
 {
-
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_pTransformCom->Get_WorldFloat4x4())))
-	//	return E_FAIL;
-
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
-	//	return E_FAIL;
-
 	return S_OK;
 }
 
 void CCabinet::Active()
 {
 	*m_pPlayerInteract = false;
-	m_bActive = true;
+	m_bActivity = true;
 	
 	m_eState = CABINET_OPEN;
 	if (m_bObtain)
 		if (nullptr != m_PartObjects[PART_ITEM]&&!m_bItemDead)
-		{
 			m_pPlayer->PickUp_Item(this);
-		}
 }
 
 CCabinet* CCabinet::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

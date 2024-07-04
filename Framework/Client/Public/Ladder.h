@@ -34,15 +34,14 @@ private:
 	virtual HRESULT				Bind_ShaderResources() override;
 
 private:
-	void Active();
+	void								Active();
 
 public:
-	virtual _float4 Get_Object_Pos() override;
+	virtual _float4				Get_Object_Pos() override;
 
 private:
-	_bool				m_bActive = { false };
-	_bool				m_bDownCol = { false };
-	_float			m_fTime = { 0.f };
+	_bool								m_bActivity = { false };
+	_float							m_fTime = { 0.f };
 	//_ubyte			m_eState = { STATE_STATIC };
 
 

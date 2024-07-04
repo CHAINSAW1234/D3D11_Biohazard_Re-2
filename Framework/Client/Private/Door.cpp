@@ -59,7 +59,7 @@ void CDoor::Start()
 		return;
 	for (auto& iter : *pCollider)
 	{
-		if (m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")))))
+		if (m_pColliderCom[INTER_COL_NORMAL][COL_STEP0]->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")))))
 		{
 			// 내 인덱스 넣어주기
 			_int* iNum = static_cast<CCustomCollider*>(iter)->Node_InteractProps();
@@ -70,9 +70,7 @@ void CDoor::Start()
 
 void CDoor::Tick(_float fTimeDelta)
 {
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-	if (m_eType == DOOR_DOUBLE)
-		m_pColDoubledoorCom->Tick(m_pTransformCom->Get_WorldMatrix());
+	__super::Tick_Col();
 
 	if (!m_bVisible)
 		return;
@@ -81,8 +79,6 @@ void CDoor::Tick(_float fTimeDelta)
 	Get_Object_Pos();
 #endif
 #endif
-	if (m_pPlayer == nullptr)
-		return;
 
 	m_eType == CDoor::DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
 
@@ -91,6 +87,8 @@ void CDoor::Tick(_float fTimeDelta)
 
 void CDoor::Late_Tick(_float fTimeDelta)
 {
+	if (m_pPlayer == nullptr)
+		return;
 	if (!Visible())
 		return;
 
@@ -111,9 +109,7 @@ void CDoor::Late_Tick(_float fTimeDelta)
 
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_SPHERE]);
-	if(m_eType == DOOR_DOUBLE)
-		m_pGameInstance->Add_DebugComponents(m_pColDoubledoorCom);
+	Add_Col_DebugCom();
 #endif
 }
 
@@ -129,31 +125,62 @@ HRESULT CDoor::Add_Components()
 	if (m_eType == DOOR_DOUBLE)
 	{
 		CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
-
-		ColliderDesc.fRadius = _float(100.f);
+		ColliderDesc.fRadius = _float(150.f);
 		ColliderDesc.vCenter = _float3(-30.f, 1.f, 0.f);
-		/* For.Com_Collider */
-		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-			TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
-			return E_FAIL;
-		CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc1{};
 
-		ColliderDesc1.fRadius = _float(100.f);
-		ColliderDesc1.vCenter = _float3(-150.f, 1.f, 0.f);
 		/* For.Com_Collider */
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-			TEXT("Com_Collider_Double"), (CComponent**)&m_pColDoubledoorCom, &ColliderDesc1)))
+			TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
+			return E_FAIL;
+
+		ColliderDesc.fRadius = _float(110.f);
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+			TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
+			return E_FAIL;
+
+		ColliderDesc.fRadius = _float(80.f);
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+			TEXT("Com_Collider_Normal_Step2"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP2], &ColliderDesc)))
+			return E_FAIL;
+
+
+
+		ColliderDesc.fRadius = _float(150.f);
+		ColliderDesc.vCenter = _float3(-150.f, 1.f, 0.f);
+		/* For.Com_Collider */
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+			TEXT("Com_Collider_Double_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP0], &ColliderDesc)))
+			return E_FAIL;
+		ColliderDesc.fRadius = _float(110.f);
+		/* For.Com_Collider */
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+			TEXT("Com_Collider_Double_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP1], &ColliderDesc)))
+			return E_FAIL;
+		ColliderDesc.fRadius = _float(80.f);
+		/* For.Com_Collider */
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+			TEXT("Com_Collider_Double_Step2"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP2], &ColliderDesc)))
 			return E_FAIL;
 	}
 	else
 	{
 		CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-		ColliderDesc.fRadius = _float(100.f);
-		ColliderDesc.vCenter = _float3(-70.f, 1.f, 0.f);
+		ColliderDesc.fRadius = _float(150.f);
+		ColliderDesc.vCenter = _float3(-60.f, 1.f, 0.f);
 		/* For.Com_Collider */
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-			TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+			TEXT("Com_Collider_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
+			return E_FAIL;
+
+		ColliderDesc.fRadius = _float(100.f);
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+			TEXT("Com_Collider_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
+			return E_FAIL;
+
+		ColliderDesc.fRadius = _float(60.f);
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+			TEXT("Com_Collider_Step2"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP2], &ColliderDesc)))
 			return E_FAIL;
 	}
 
@@ -200,32 +227,33 @@ HRESULT CDoor::Initialize_PartObjects()
 
 void CDoor::DoubleDoor_Tick(_float fTimeDelta)
 {
-	if (m_bActive)
+	if (m_bActivity)
 		m_fTime += fTimeDelta;
 
 	if (m_fTime > 2.f)
 	{
 		m_fTime = 0.f;
 		m_iHP = 5;
-		m_bOnce = false;
-		if (!m_bCol && !m_bDoubleCol)
+		if (!m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bCol[INTER_COL_DOUBLE][COL_STEP1])
 		{
-			m_bActive = false;
+			m_bActivity = false;
 			m_eDoubleState = DOUBLEDOOR_STATIC;
 		}
 	}
 
-	if ((m_bCol||m_bDoubleCol) && !m_bActive)
+	if (!m_bActivity && (m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1]))
 	{
-		//UI띄우고
-		if (*m_pPlayerInteract|| m_bOnce)
+		if (*m_pPlayerInteract|| m_bCol[INTER_COL_NORMAL][COL_STEP2])
 			DoubleDoor_Active();
-		m_bCol = false;
-		m_bDoubleCol = false;
+
+		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+
+
+		m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
+		m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
 	}
 
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-	m_pColDoubledoorCom->Tick(m_pTransformCom->Get_WorldMatrix());
 }
 
 void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
@@ -303,31 +331,50 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 
 		}
 	}
-
-	m_bCol = Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
-	//Check_Col_OBB_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
-
-	CCollider* pPlayerCol = static_cast<CCollider*>(m_pPlayer->Get_Component(TEXT("Com_Collider")));
-	if (pPlayerCol->Intersect(m_pColDoubledoorCom))
+	if (Activate_Col(Get_Collider_World_Pos(_float4(-90.f, 1.f, 0.f, 1.f))))
 	{
-		if (Check_Player_Distance(XMVectorSetW(Get_Collider_World_Pos(_float3(-70.f, 1.f, 0.f)), 1.f)) <= 1.16f && !m_bOnce)
+		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0)) // 인지?
 		{
-			m_bDoorOnce = true;
-			m_bOnce = true;
+			if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP1)) // 상호작용?
+			{
+				if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP2) && !m_bActivity)
+					m_bOnce = true;
+			}
+			else
+				m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 		}
-		m_bFirstInteract = true;
-		m_bDoubleCol = true;
-	}
-	else
-		m_bDoubleCol = false;
+		else
+		{
+			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+			m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+		}
 
-	if ((m_bCol|| m_bDoubleCol)&& m_bOnce && !m_bBlock&& m_bDoorOnce)
+		if (Check_Col_Player(INTER_COL_DOUBLE, COL_STEP0)) // 인지?
+		{
+			if (Check_Col_Player(INTER_COL_DOUBLE, COL_STEP1)) // 상호작용?
+			{
+				if (Check_Col_Player(INTER_COL_DOUBLE, COL_STEP2) && !m_bActivity)
+					m_bOnce = true;
+			}
+			else
+				m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
+		}
+		else
+		{
+			m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
+			m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
+		}
+	}
+
+
+	if (!m_bBlock && m_bOnce && (m_bCol[INTER_COL_NORMAL][COL_STEP2] || m_bCol[INTER_COL_DOUBLE][COL_STEP2]))
 	{
-		m_bDoorOnce = false;
+		m_bOnce = false;
 		if (m_bLock)
 			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_LOCK, Get_PlayerLook_Degree());
 		else
 			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_OPEN);
+
 	}
 
 
@@ -338,7 +385,7 @@ void CDoor::DoubleDoor_Active()
 {
 
 	*m_pPlayerInteract = false;
-	m_bActive = true;
+	m_bActivity = true;
 
 	if (m_bLock)
 		return;
@@ -347,9 +394,9 @@ void CDoor::DoubleDoor_Active()
 
 	if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
 	{
-		if (m_bCol && m_bDoubleCol)
+		if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && m_bCol[INTER_COL_DOUBLE][COL_STEP1])
 			m_eDoubleState = L_DOUBLEDOOR_OPEN;
-		else if (m_bCol)
+		else if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
 			m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_L;
 		else
 			m_eDoubleState = RSIDE_DOUBLEDOOR_OPEN_R;
@@ -357,9 +404,9 @@ void CDoor::DoubleDoor_Active()
 	}
 	else
 	{
-		if (m_bCol && m_bDoubleCol)
+		if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && m_bCol[INTER_COL_DOUBLE][COL_STEP1])
 			m_eDoubleState = R_DOUBLEDOOR_OPEN;
-		else if (m_bCol)
+		else if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
 			m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_R;
 		else
 			m_eDoubleState = RSIDE_DOUBLEDOOR_OPEN_L;
@@ -375,7 +422,8 @@ _float4 CDoor::Get_Object_Pos()
 	if (m_eType == DOOR_DOUBLE)
 	{
 		_float fScala = Radian_To_Player();
-		if ((!m_bCol && !m_bDoubleCol) || (m_bCol && m_bDoubleCol))
+		if ((!m_bCol[INTER_COL_NORMAL][COL_STEP0] && !m_bCol[INTER_COL_DOUBLE][COL_STEP0]) 
+			|| (m_bCol[INTER_COL_NORMAL][COL_STEP0] && m_bCol[INTER_COL_DOUBLE][COL_STEP0]))
 		{
 			_float4 vPosR; 
 			_float4 vPosL;
@@ -391,7 +439,7 @@ _float4 CDoor::Get_Object_Pos()
 			}
 			return XMVectorSetW( (vPosR+vPosL)/2.f,1.f);
 		}
-		else if (m_bCol)
+		else if (m_bCol[INTER_COL_NORMAL][COL_STEP0])
 		{
 			if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
 				return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(0);
@@ -407,63 +455,43 @@ _float4 CDoor::Get_Object_Pos()
 	}
 	else
 	{
-		
 		_float fScala = Radian_To_Player();
 		if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
 			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(0);
 		else
 			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos(1);
-
 	}
 
 		
 	return _float4();
 }
 
-_float CDoor::Get_PlayerLook_Degree()
-{
-	_vector vPlayerLook = XMVector4Normalize(XMVectorSetY(m_pPlayerTransform->Get_State_Vector(CTransform::STATE_LOOK), 0.f));
-	_vector vPlayerPos = m_pPlayerTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	_vector vPos = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
-	_vector vDirection = XMVector4Normalize(XMVectorSetY(vPos - vPlayerPos, 0.f));
-
-	_float fScala = acos(XMVectorGetX(XMVector3Dot(vPlayerLook, vDirection)));
-
-	_float3 vCross = XMVector3Cross(vPlayerLook, vDirection);
-
-	if (vCross.y < 0) {
-		fScala *= -1;
-	}
-
-	return XMConvertToDegrees(fScala);
-}
-
 void CDoor::OneDoor_Tick(_float fTimeDelta)
 {
 
-	if (m_bActive)
+	if (m_bActivity)
 		m_fTime += fTimeDelta;
 
 	if (m_fTime > 2.f)
 	{
 		m_fTime = 0.f;
 		m_iHP = 5;
-		m_bOnce = false;
-		if (!m_bCol)
+		if (!m_bCol[INTER_COL_NORMAL][COL_STEP1])
 		{
-			m_bActive = false;
+			m_bActivity = false;
 			m_eOneState = ONEDOOR_STATIC;
 		}
 	}
 
-	if (m_bCol && !m_bActive )
+	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity)
 	{
 		//UI띄우고
-		if (*m_pPlayerInteract || m_bOnce)
+		if (*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2])
 			OneDoor_Active();
-		m_bCol = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+
 	}
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 
 }
 
@@ -482,18 +510,34 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 	case CDoor::ONEDOOR_STATIC:
 		break;
 	}
-	m_bCol = Check_Col_Sphere_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
-	//Check_Col_OBB_Player(); // 여긴 m_bCol 을 true로만 바꿔주기 때문에 반드시 false를 해주는 부분이 있어야함
-	if (m_bCol && m_bOnce && !m_bBlock&& m_bDoorOnce)
+	if (Activate_Col(Get_Collider_World_Pos(_float4(-60.f, 1.f, 0.f, 1.f))))
 	{
-		//m_bOnce = !m_bOnce;
-		m_bDoorOnce = false;
+		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0)) // 인지?
+		{
+			if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP1)) // 상호작용?
+			{
+				if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP2) && !m_bActivity)
+					m_bOnce = true;
+			}
+			else
+				m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+		}
+		else
+		{
+			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+			m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+		}
+	}
 
+	if (!m_bBlock && m_bOnce&& m_bCol[INTER_COL_NORMAL][COL_STEP2])
+	{
+		m_bOnce = false;
 		if (m_bLock)
 			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_LOCK, Get_PlayerLook_Degree());
 		else
 			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_OPEN);
 	}
+	
 }
 
 _float CDoor::Radian_To_Player()
@@ -523,7 +567,7 @@ _float CDoor::Radian_To_Jombie(class CTransform* pTransform)
 void CDoor::OneDoor_Active()
 {
 	*m_pPlayerInteract = false;
-	m_bActive = true;
+	m_bActivity = true;
 
 	if (m_bLock)
 		return;
@@ -534,8 +578,6 @@ void CDoor::OneDoor_Active()
 		m_eOneState = ONEDOOR_OPEN_L;
 	else
 		m_eOneState = ONEDOOR_OPEN_R;
-
-	
 
 }
 
@@ -572,6 +614,4 @@ CGameObject* CDoor::Clone(void* pArg)
 void CDoor::Free()
 {
 	__super::Free();
-	if(m_eType ==  DOOR_DOUBLE)
-		Safe_Release(m_pColDoubledoorCom);
 }
