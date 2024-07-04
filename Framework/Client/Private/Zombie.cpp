@@ -995,106 +995,83 @@ void CZombie::Perform_Skinning()
 	{
 		//Body Model
 		{
-			list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
+			if (nullptr != m_pBodyModel)
 			{
-				m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
-				m_pBodyModel->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
-				//m_pBodyModel->Staging_Skinning(i);
+				list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
+
+				for (auto& i : NonHideIndex)
+				{
+					m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+					m_pBodyModel->Bind_Resource_Skinning(i);
+					m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
+					//m_pBodyModel->Staging_Skinning(i);
+				}
 			}
 		}
 
 		//Face Model
 		{
-			list<_uint> NonHideIndex = m_pHeadModel->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
+			if (nullptr != m_pHeadModel)
 			{
-				m_pHeadModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
-				m_pHeadModel->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pHeadModel->GetMeshes())[i]->GetNumVertices());
-				//m_pHeadModel->Staging_Skinning(i);
-			}
-		}
+				list<_uint> NonHideIndex = m_pHeadModel->Get_NonHideMeshIndices();
 
-		//Head2
-		{
-			list<_uint> NonHideIndex = m_pHeadModel2->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
-			{
-				m_pHeadModel2->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
-				m_pHeadModel2->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pHeadModel2->GetMeshes())[i]->GetNumVertices());
-				//m_pHeadModel2->Staging_Skinning(i);
-			}
-		}
-
-		//Head3
-		{
-			list<_uint> NonHideIndex = m_pHeadModel3->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
-			{
-				m_pHeadModel3->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
-				m_pHeadModel3->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pHeadModel3->GetMeshes())[i]->GetNumVertices());
-				//m_pHeadModel3->Staging_Skinning(i);
+				for (auto& i : NonHideIndex)
+				{
+					m_pHeadModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+					m_pHeadModel->Bind_Resource_Skinning(i);
+					m_pGameInstance->Perform_Skinning((*m_pHeadModel->GetMeshes())[i]->GetNumVertices());
+					//m_pHeadModel->Staging_Skinning(i);
+				}
 			}
 		}
 
 		//Shirts Model
 		{
-			list<_uint> NonHideIndex = m_pShirtsModel->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
+			if (nullptr != m_pShirtsModel)
 			{
-				m_pShirtsModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
-				m_pShirtsModel->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pShirtsModel->GetMeshes())[i]->GetNumVertices());
-				//m_pShirtsModel->Staging_Skinning(i);
-			}
-		}
+				list<_uint> NonHideIndex = m_pShirtsModel->Get_NonHideMeshIndices();
 
-		//Shirts2 Model
-		{
-			list<_uint> NonHideIndex = m_pShirts2Model->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
-			{
-				m_pShirts2Model->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
-				m_pShirts2Model->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pShirts2Model->GetMeshes())[i]->GetNumVertices());
-				//m_pShirts2Model->Staging_Skinning(i);
+				for (auto& i : NonHideIndex)
+				{
+					m_pShirtsModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+					m_pShirtsModel->Bind_Resource_Skinning(i);
+					m_pGameInstance->Perform_Skinning((*m_pShirtsModel->GetMeshes())[i]->GetNumVertices());
+					//m_pShirtsModel->Staging_Skinning(i);
+				}
 			}
 		}
 
 		//Pants Model
 		{
-			list<_uint> NonHideIndex = m_pPantsModel->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
+			if (nullptr != m_pPantsModel)
 			{
-				m_pPantsModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
-				m_pPantsModel->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pPantsModel->GetMeshes())[i]->GetNumVertices());
-				//m_pPantsModel->Staging_Skinning(i);
+				list<_uint> NonHideIndex = m_pPantsModel->Get_NonHideMeshIndices();
+
+				for (auto& i : NonHideIndex)
+				{
+					m_pPantsModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+					m_pPantsModel->Bind_Resource_Skinning(i);
+					m_pGameInstance->Perform_Skinning((*m_pPantsModel->GetMeshes())[i]->GetNumVertices());
+					//m_pPantsModel->Staging_Skinning(i);
+				}
 			}
 		}
 
 		//Hat Model
 		{
-			list<_uint> NonHideIndex = m_pHatModel->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
+			if (nullptr != m_pHatModel)
 			{
-				m_pHatModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
-				m_pHatModel->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pHatModel->GetMeshes())[i]->GetNumVertices());
-				//m_pHatModel->Staging_Skinning(i);
+				list<_uint> NonHideIndex = m_pHatModel->Get_NonHideMeshIndices();
+
+				for (auto& i : NonHideIndex)
+				{
+					m_pHatModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+					m_pHatModel->Bind_Resource_Skinning(i);
+					m_pGameInstance->Perform_Skinning((*m_pHatModel->GetMeshes())[i]->GetNumVertices());
+					//m_pHatModel->Staging_Skinning(i);
+				}
 			}
+	
 		}
 	}
 	else
@@ -1106,106 +1083,82 @@ void CZombie::Perform_Skinning()
 
 		//Body Model
 		{
-			list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
+			if (nullptr != m_pBodyModel)
 			{
-				m_pBodyModel->Bind_Essential_Resource_Skinning(&m_WorldMat_To_Decal);
-				m_pBodyModel->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
-				//m_pBodyModel->Staging_Skinning(i);
+				list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
+
+				for (auto& i : NonHideIndex)
+				{
+					m_pBodyModel->Bind_Essential_Resource_Skinning(&m_WorldMat_To_Decal);
+					m_pBodyModel->Bind_Resource_Skinning(i);
+					m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
+					//m_pBodyModel->Staging_Skinning(i);
+				}
 			}
 		}
 
 		//Face Model
 		{
-			list<_uint> NonHideIndex = m_pHeadModel->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
+			if (nullptr != m_pHeadModel)
 			{
-				m_pHeadModel->Bind_Essential_Resource_Skinning(&m_WorldMat_To_Decal);
-				m_pHeadModel->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pHeadModel->GetMeshes())[i]->GetNumVertices());
-				//m_pHeadModel->Staging_Skinning(i);
-			}
-		}
+				list<_uint> NonHideIndex = m_pHeadModel->Get_NonHideMeshIndices();
 
-		//Head2
-		{
-			list<_uint> NonHideIndex = m_pHeadModel2->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
-			{
-				m_pHeadModel2->Bind_Essential_Resource_Skinning(&m_WorldMat_To_Decal);
-				m_pHeadModel2->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pHeadModel2->GetMeshes())[i]->GetNumVertices());
-				//m_pHeadModel2->Staging_Skinning(i);
-			}
-		}
-
-		//Head3
-		{
-			list<_uint> NonHideIndex = m_pHeadModel3->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
-			{
-				m_pHeadModel3->Bind_Essential_Resource_Skinning(&m_WorldMat_To_Decal);
-				m_pHeadModel3->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pHeadModel3->GetMeshes())[i]->GetNumVertices());
-				//m_pHeadModel3->Staging_Skinning(i);
+				for (auto& i : NonHideIndex)
+				{
+					m_pHeadModel->Bind_Essential_Resource_Skinning(&m_WorldMat_To_Decal);
+					m_pHeadModel->Bind_Resource_Skinning(i);
+					m_pGameInstance->Perform_Skinning((*m_pHeadModel->GetMeshes())[i]->GetNumVertices());
+					//m_pHeadModel->Staging_Skinning(i);
+				}
 			}
 		}
 
 		//Shirts Model
 		{
-			list<_uint> NonHideIndex = m_pShirtsModel->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
+			if (nullptr != m_pShirtsModel)
 			{
-				m_pShirtsModel->Bind_Essential_Resource_Skinning(&m_WorldMat_To_Decal);
-				m_pShirtsModel->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pShirtsModel->GetMeshes())[i]->GetNumVertices());
-				//m_pShirtsModel->Staging_Skinning(i);
-			}
-		}
+				list<_uint> NonHideIndex = m_pShirtsModel->Get_NonHideMeshIndices();
 
-		//Shirts2 Model
-		{
-			list<_uint> NonHideIndex = m_pShirts2Model->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
-			{
-				m_pShirts2Model->Bind_Essential_Resource_Skinning(&m_WorldMat_To_Decal);
-				m_pShirts2Model->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pShirts2Model->GetMeshes())[i]->GetNumVertices());
-				//m_pShirts2Model->Staging_Skinning(i);
-			}
+				for (auto& i : NonHideIndex)
+				{
+					m_pShirtsModel->Bind_Essential_Resource_Skinning(&m_WorldMat_To_Decal);
+					m_pShirtsModel->Bind_Resource_Skinning(i);
+					m_pGameInstance->Perform_Skinning((*m_pShirtsModel->GetMeshes())[i]->GetNumVertices());
+					//m_pShirtsModel->Staging_Skinning(i);
+				}
+			}			
 		}
 
 		//Pants Model
 		{
-			list<_uint> NonHideIndex = m_pPantsModel->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
+			if (nullptr != m_pPantsModel)
 			{
-				m_pPantsModel->Bind_Essential_Resource_Skinning(&m_WorldMat_To_Decal);
-				m_pPantsModel->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pPantsModel->GetMeshes())[i]->GetNumVertices());
-				//m_pPantsModel->Staging_Skinning(i);
+				list<_uint> NonHideIndex = m_pPantsModel->Get_NonHideMeshIndices();
+
+				for (auto& i : NonHideIndex)
+				{
+					m_pPantsModel->Bind_Essential_Resource_Skinning(&m_WorldMat_To_Decal);
+					m_pPantsModel->Bind_Resource_Skinning(i);
+					m_pGameInstance->Perform_Skinning((*m_pPantsModel->GetMeshes())[i]->GetNumVertices());
+					//m_pPantsModel->Staging_Skinning(i);
+				}
 			}
 		}
 
 		//Hat Model
 		{
-			list<_uint> NonHideIndex = m_pHatModel->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
+			if (nullptr != m_pHatModel)
 			{
-				m_pHatModel->Bind_Essential_Resource_Skinning(&m_WorldMat_To_Decal);
-				m_pHatModel->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pHatModel->GetMeshes())[i]->GetNumVertices());
-				//m_pHatModel->Staging_Skinning(i);
-			}
+				list<_uint> NonHideIndex = m_pHatModel->Get_NonHideMeshIndices();
+
+				for (auto& i : NonHideIndex)
+				{
+					m_pHatModel->Bind_Essential_Resource_Skinning(&m_WorldMat_To_Decal);
+					m_pHatModel->Bind_Resource_Skinning(i);
+					m_pGameInstance->Perform_Skinning((*m_pHatModel->GetMeshes())[i]->GetNumVertices());
+					//m_pHatModel->Staging_Skinning(i);
+				}
+			}			
 		}
 	}
 }
@@ -1459,17 +1412,8 @@ void CZombie::Calc_Decal_Map()
 	m_pHeadModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
 	m_pHeadModel->Perform_Calc_DecalMap();
 
-	m_pHeadModel2->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
-	m_pHeadModel2->Perform_Calc_DecalMap();
-
-	m_pHeadModel3->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
-	m_pHeadModel3->Perform_Calc_DecalMap();
-
 	m_pShirtsModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
 	m_pShirtsModel->Perform_Calc_DecalMap();
-
-	m_pShirts2Model->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
-	m_pShirts2Model->Perform_Calc_DecalMap();
 
 	m_pPantsModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix());
 	m_pPantsModel->Perform_Calc_DecalMap();
