@@ -1366,9 +1366,11 @@ void CZombie::Ready_Decal()
 
 void CZombie::RayCast_Decal()
 {
-	if (m_pGameInstance->RayCast_Decal(m_vHitPosition, m_vHitNormal, &m_vDecalPoint))
+	if (m_pGameInstance->RayCast_Decal(m_vHitPosition,m_pGameInstance->Get_Camera_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &m_vDecalPoint, &m_vDecalNormal, 2.f))
 	{
-
+		//m_pDecal_SSD->SetWorldMatrix_With_HitNormal(m_vDecalNormal);
+		m_pDecal_SSD->SetPosition(m_vDecalPoint);
+		m_pDecal_SSD->LookAt(m_vDecalNormal);
 	}
 }
 
@@ -1425,6 +1427,7 @@ void CZombie::SetBlood()
 		if (m_iBloodCount == 0)
 		{
 			Calc_Decal_Map();
+			RayCast_Decal();
 
 			m_iBloodType = m_pGameInstance->GetRandom_Int(0, 10);
 

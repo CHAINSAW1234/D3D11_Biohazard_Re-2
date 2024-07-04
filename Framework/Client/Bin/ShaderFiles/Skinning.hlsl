@@ -5,8 +5,6 @@ matrix g_WorldMatrix;
 uint g_NumVertices;
 
 StructuredBuffer<float3> g_VertexPositions;
-StructuredBuffer<float3> g_VertexNormals;
-StructuredBuffer<float3> g_VertexTangents;
 StructuredBuffer<uint4> g_VertexBlendIndices;
 StructuredBuffer<float4> g_VertexBlendWeights;
 

@@ -82,6 +82,18 @@ public:
 		return m_bDead;
 	}
 	virtual void					SetPosition(_float4 vPos) {}
+	void							SetObject(class CGameObject* pObject)
+	{
+		m_pObject = pObject;
+	}
+	void							SetGravity(_bool boolean)
+	{
+		m_bGravity = boolean;
+	}
+	_bool							GetbGravity()
+	{
+		return m_bGravity;
+	}
 public:
 	static CPhysics_Component*		Create();
 
@@ -106,6 +118,10 @@ protected:
 	_float4							m_vHitNormal;
 	_uint							m_iHitCount = { 0 };
 	_bool							m_bDead = { false };
+
+	class CGameObject*				m_pObject = { nullptr };
+
+	_bool							m_bGravity = { false };
 protected:
 	_int m_iRefCnt_Px = { 0 };
 public:

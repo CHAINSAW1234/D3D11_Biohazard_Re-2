@@ -53,9 +53,11 @@ HRESULT CProps::Initialize(void* pArg)
 		if (FAILED(Initialize_Model()))
 			return E_FAIL;
 
-
+#pragma region Initialize RigidBody
+	m_pRigid_Static = m_pGameInstance->Create_Rigid_Static(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_RigidBody, this);
+#pragma endregion
 #ifdef PROPS_COOKING
-	m_pModelCom->Static_Mesh_Cooking(m_pTransformCom);
+	m_pModelCom->Static_Mesh_Cooking(m_pTransformCom ,&m_iIndex_RigidBody);
 #endif
 	
 	if (m_pTransformCom->IsIdentityWorldMatrix())
