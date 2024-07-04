@@ -1,13 +1,13 @@
 #pragma once
 #include "Client_Defines.h"
 #include "FSM_HState.h"
-#include "Player.h"
 
 BEGIN(Client)
+class CPlayer;
 class CPlayer_State_Move final : public CFSM_HState
 {
 public:
-	enum STATE { IDLE, WALK, JOG, STAIR, DOOR_STOP, STATE_END };
+	enum STATE { IDLE, WALK, JOG, STAIR, DOOR_STOP, LADDER, STATE_END };
 
 private:
 	CPlayer_State_Move(CPlayer* pPlayer);

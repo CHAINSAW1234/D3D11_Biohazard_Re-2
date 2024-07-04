@@ -58,7 +58,7 @@ private:
 private:
 	string			m_strDoorPart[BODY_PART_END];
 	_bool				m_bLock =	{ false };
-	_bool				m_bActive = { false };
+	_bool				m_bActivity = { false };
 
 	_bool				m_bDoubleCol = { false };
 

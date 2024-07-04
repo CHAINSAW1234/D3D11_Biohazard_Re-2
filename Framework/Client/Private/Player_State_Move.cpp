@@ -5,7 +5,7 @@
 #include "Player_State_Move_Walk.h"
 #include "Player_State_Move_Jog.h"
 #include "Player_State_Move_DoorStop.h"
-
+#include "Player_State_Move_Ladder.h"
 #include "Weapon.h"
 
 CPlayer_State_Move::CPlayer_State_Move(CPlayer* pPlayer)
@@ -42,7 +42,14 @@ void CPlayer_State_Move::OnStateUpdate(_float fTimeDelta)
 			m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::MOVE_LIGHT);
 		}
 		else {
-			m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::MOVE);
+			if (m_pPlayer->Get_Hp() >= 4 ||
+				!m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3)	) {
+				m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::MOVE);
+			}
+			else {
+				m_pPlayer->Get_Weapon()->Set_RenderLocation(CWeapon::MOVE_LIGHT);
+			}
+
 		}
 	}
 }
@@ -99,8 +106,22 @@ void CPlayer_State_Move::Update_State()
 			Change_State(IDLE);
 		break;
 	case STAIR:
+	case LADDER:
 		break;
 	}
+
+	if (m_pPlayer->Get_Door_Setting() == CPlayer::DOOR_BEHAVE_LOCK) {
+		Change_State(DOOR_STOP);
+		m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_NOTHING);
+		return;
+	}
+
+	if (m_pPlayer->Get_Ladder_Setting() != CPlayer::LADDER_BEHAVE_NOTHING) {
+		Change_State(LADDER);
+		m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_NOTHING);
+		return;
+	}
+
 }
 
 void CPlayer_State_Move::Open_Door()
@@ -119,15 +140,8 @@ void CPlayer_State_Move::Open_Door()
 		m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 0.f, 10.f);
 	}
 
-	// 플레이어한테 받아오기
-	CPlayer::PLAYER_DOOR_BEHAVE eDoor = m_pPlayer->Get_isDoor_Setting();
-
-	switch (eDoor) {
-	case CPlayer::DOOR_BEHAVE_NOTHING:
-		break;
-	case CPlayer::DOOR_BEHAVE_OPEN:
-	{
-			if (m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3) &&
+	if (m_pPlayer->Get_Door_Setting() == CPlayer::DOOR_BEHAVE_OPEN) {
+		if (m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(3) &&
 			m_pPlayer->Get_Body_Model()->Is_Loop_PlayingInfo(4)) {
 
 			if (m_eState == WALK) {
@@ -143,12 +157,6 @@ void CPlayer_State_Move::Open_Door()
 		}
 		m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_NOTHING);
 	}
-		break;
-	case CPlayer::DOOR_BEHAVE_LOCK:
-		Change_State(DOOR_STOP);
-		m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_NOTHING);
-		break;
-	}
 }
 
 HRESULT CPlayer_State_Move::Add_States()
@@ -157,6 +165,7 @@ HRESULT CPlayer_State_Move::Add_States()
 	Add_State(WALK, CPlayer_State_Move_Walk::Create(m_pPlayer, this));
 	Add_State(JOG, CPlayer_State_Move_Jog::Create(m_pPlayer, this));
 	Add_State(DOOR_STOP, CPlayer_State_Move_DoorStop::Create(m_pPlayer, this));
+	Add_State(LADDER, CPlayer_State_Move_Ladder::Create(m_pPlayer, this));
 	//Change_State(IDLE);
 
 	return S_OK;

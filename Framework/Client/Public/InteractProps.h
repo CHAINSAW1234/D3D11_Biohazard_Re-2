@@ -19,11 +19,20 @@ public:
 	const static _int iMaxNum = 50;
 	enum INTERACTPROPS_COL
 	{
-		INTERACTPROPS_COL_AABB,
-		INTERACTPROPS_COL_SPHERE,
-		INTERACTPROPS_COL_OBB,
-		INTERACTPROPS_COL_END
+		INTER_COL_NORMAL,
+		INTER_COL_DOUBLE,
+		INTER_COL_TRIPLE,
+		INTER_COL_END
 	};
+
+	enum INTERACTPROPS_COL_STEP
+	{
+		COL_STEP0, // 인지 가능 표시 UI를 띄울 범위
+		COL_STEP1, // 상호작용 가능 표시 UI를 띄울 범위
+		COL_STEP2, // 그냥 상호작용해버리는 범위
+		COL_STEP_END,
+	};
+
 	typedef struct Door_Desc
 	{
 		//lock의 여부, 엠블럼||사슬
@@ -97,6 +106,7 @@ public:
 		BIG_STATUE_DESC tagBigStatue = {};
 		ITEM_PROP_DESC tagItemDesc = {};
 	}INTERACTPROPS_DESC;
+
 protected:
 	CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CInteractProps(const CInteractProps& rhs);
@@ -125,7 +135,6 @@ public:
 public:
 	_bool*											Get_Activity() { return &m_bActivity; }
 
-#pragma region NY
 	_bool*											ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
 	_bool*											Selector_Rendering() { return &m_isSelector_Rendering;  }
 
@@ -141,30 +150,35 @@ public:
 	_int												Get_Type() { return m_tagPropDesc.iPropType; }
 	void												Set_Region(_int iRegion) { m_tagPropDesc.iRegionNum = iRegion; }
 	virtual _bool									Attack_Prop(class CTransform* pTransfromCom = nullptr) { return false; };
+
+	_float											Get_PlayerLook_Degree();
+	
+
 private :
 	_bool												m_isSelector_Rendering = { false };
 	_bool												m_isNYResult				= { false };
 
 protected:
-	_int												m_iItemIndex = { -1 };
-	_bool												m_bActivity = { true };
-	_bool												m_bOnce = { true };
-	_bool												m_bDoorOnce = { false };
+	_bool												m_bActivity = { false };
+	_bool												m_bOnce = { false };
 	_bool												m_bBlock = { false };
 	_bool												m_bFirstInteract = { false };// 한번 접촉하면 계속 true
 	_bool												m_bShadow = { true };
 	_bool												m_bVisible = { true };
-	_bool												m_bCol = { false }; // 충돌이 되었다
+	_bool												m_bCol[INTER_COL_END][COL_STEP_END] = { {false,false,false},{false,false,false} };
+	_int												m_iItemIndex = { -1 };
 	_float											m_fTimeDelay = { 0.f };
 	_float											m_fDistance = { 0.f };
 	CModel*										m_pModelCom = { nullptr };
 	CShader*										m_pShaderCom = { nullptr };
-	CCollider*										m_pColliderCom[INTERACTPROPS_COL_END] = { nullptr,nullptr,nullptr };
+	CCollider*										m_pColliderCom[INTER_COL_END][COL_STEP_END] = { {nullptr,nullptr,nullptr},{nullptr,nullptr,nullptr} };
 	
 	class CPlayer*								m_pPlayer = { nullptr };
-	class CCamera_Free*						m_pCamera = { nullptr };
 	_bool*											m_pPlayerInteract = { nullptr };//player의 m_bInteract 변수 포인터
-	CTransform*									m_pPlayerTransform = { nullptr };
+	CTransform*									m_pPlayerTransform = { nullptr }; 
+	CCollider*										m_pPlayerCol = { nullptr };
+
+	class CCamera_Free*						m_pCamera = { nullptr };
 	CTransform*									m_pCameraTransform = { nullptr };
 
 	_float3											m_vRootTranslation = {};
@@ -175,17 +189,23 @@ protected:
 	void												Check_Player();
 	_float											Check_Player_Distance();
 	_float											Check_Player_Distance(_float4 vPos);
-	_float3											Get_Collider_World_Pos(_float3 vPos);
-	_bool												Check_Col_Sphere_Player();
-	_bool												Check_Col_OBB_Player();
-	_bool												Check_Col_AABB_Player();
+	_float4											Get_Collider_World_Pos(_float4 vPos);
+	_bool												Check_Col_Player(INTERACTPROPS_COL eInterCol, INTERACTPROPS_COL_STEP eStepCol);
+	void												Tick_Col();
 	_bool												Visible();
-	_float											Get_PlayerLook_Degree();
+
+#ifdef		_DEBUG
+	void												Add_Col_DebugCom();
+
+#endif
+
+	_bool												Activate_Col(_float4 vActPos); //카메라 look에 대해 판단
 
 	virtual HRESULT								Add_Components();
 	virtual HRESULT								Add_PartObjects();
 	virtual HRESULT								Initialize_PartObjects();
 	virtual HRESULT								Bind_ShaderResources();
+
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;
 	virtual void Free() override;
