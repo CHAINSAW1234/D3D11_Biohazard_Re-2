@@ -1127,9 +1127,13 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 	case Client::Grenade:
 		return CONSUMABLE_EQUIPABLE;
 		break;
-
-	case Client::ITEM_NUMBER_END:
+	case Client::vp70stock:
+		return CONSUMABLE_EQUIPABLE;
 		break;
+	case Client::portablesafe:
+		return CONSUMABLE_EQUIPABLE;
+		break;
+
 	default:
 		break;
 	}

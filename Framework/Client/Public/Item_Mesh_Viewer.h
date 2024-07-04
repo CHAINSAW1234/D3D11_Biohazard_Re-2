@@ -36,6 +36,7 @@ public:
 	
 private:
 	vector<CModel*>		m_vecModelCom;
+	vector<wstring>		m_vecModelTag;
 	CShader*			m_pShaderCom = { nullptr };
 	class CCamera_Free*	m_pCameraFree = { nullptr };
 
@@ -61,6 +62,7 @@ private:
 	HRESULT Add_Components();
 	HRESULT Load_ItemsModel();
 	HRESULT Bind_ShaderResources();
+	HRESULT Load_ItemModelTags();
 
 public:
 	static CItem_Mesh_Viewer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

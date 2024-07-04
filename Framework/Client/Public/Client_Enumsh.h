@@ -259,7 +259,7 @@ namespace Client
 		herbsggb01a,
 		herbsggg01a,
 		herbsgrb01a,
-		herbsrb01a,
+		herbsrb01a,					//10
 		greenherbitem01a,
 		redherbitem01a,
 		blueherbitem01a,
@@ -269,7 +269,7 @@ namespace Client
 		blastingfuse01a,
 		_9vbattery01a,
 		gunpowder01a,
-		gunpowder01b,
+		gunpowder01b,				//20
 		strengtheningyellow01a,
 		/*71무기 부착물*/
 		vp70powerup,
@@ -281,7 +281,7 @@ namespace Client
 		spadekey01a,
 		cardkeylv101a,
 		cardkeylv201a,		// 둘중하나만?
-		valvehandle01a,
+		valvehandle01a,				//30
 		kingscepter01a,
 		virginheart01a,
 		blankkey01a,
@@ -292,7 +292,7 @@ namespace Client
 		virginmedal02a,
 		chaincutter01a,
 		/*74*/
-		rpddocument01a,
+		rpddocument01a,				//40
 		rpddocumentblood01a,
 		diary01a,
 		document01a,
@@ -302,7 +302,7 @@ namespace Client
 		raccoonmonthly01a,
 		sewercopamphlet01a,
 		report01a,
-		nestlcokout01a,
+		nestlcokout01a,				//50
 		sewerhintposter01a,
 		rpdreport01a,
 		rpdreport01b,
@@ -312,7 +312,7 @@ namespace Client
 		labopc01c,
 		raccoonfigure01a,
 		voicerecorder01a,
-		mappolice01a,
+		mappolice01a,				//60
 		mapunderground01a,
 		mapsewer01a,
 		mapraccooncity01a,
@@ -323,7 +323,7 @@ namespace Client
 		/*end*/
 		HandGun,
 		ShotGun,
-		Flash_Bomb,
+		Flash_Bomb,					//70
 		Grenade,
 		vp70stock,
 		portablesafe,
