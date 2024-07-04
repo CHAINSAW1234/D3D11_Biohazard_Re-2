@@ -87,7 +87,7 @@ private:
 	_bool				m_bBarrigateInstallable = { true };
 	_bool				m_bBarrigate = { false };
 	_int				m_iHP[PART_END] = {5,0};
-	_bool				m_bActive = { false };
+	_bool				m_bActivity = { false };
 	_float			m_fTime = { 0.f };
 	_ubyte			m_eState = { WINDOW_STATIC };
 

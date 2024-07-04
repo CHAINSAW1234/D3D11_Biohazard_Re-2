@@ -42,7 +42,7 @@ void CWindow::Start()
 		return;
 	for (auto& iter : *pCollider)
 	{
-		if (m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")))))
+		if (m_pColliderCom[INTER_COL_NORMAL][COL_STEP0]->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")))))
 		{
 			// 내 인덱스 넣어주기
 			_int* iNum = static_cast<CCustomCollider*>(iter)->Node_InteractProps();
@@ -56,7 +56,7 @@ void CWindow::Start()
 
 void CWindow::Tick(_float fTimeDelta)
 {
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
+	__super::Tick_Col();
 	
 	if (!m_bVisible)
 		return;
@@ -72,6 +72,8 @@ void CWindow::Tick(_float fTimeDelta)
 
 void CWindow::Late_Tick(_float fTimeDelta)
 {
+	if (m_pPlayer == nullptr)
+		return;
 	if (!Visible())
 		return;
 
@@ -87,13 +89,14 @@ void CWindow::Late_Tick(_float fTimeDelta)
 
 		m_bRender = false;
 	}
-	//if (m_iHP[PART_PANNEL] <= 0)
-	//	m_PartObjects[PART_BODY]->Set_Render(false);
+	if (Activate_Col(Get_Collider_World_Pos(_float4(-10.f, 1.f, 0.f, 1.f))))
+		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
+			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
 	
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_SPHERE]);
+	__super::Add_Col_DebugCom();
 #endif
 }
 
@@ -106,12 +109,18 @@ HRESULT CWindow::Add_Components()
 {
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(100.f);
+	ColliderDesc.fRadius = _float(150.f);
 	ColliderDesc.vCenter = _float3(-10.f, 1.f, 0.f);
-	/* For.Com_Collider */
+
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+		TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
 		return E_FAIL;
+
+	ColliderDesc.fRadius = _float(100.f);
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -162,7 +171,7 @@ HRESULT CWindow::Bind_ShaderResources()
 void CWindow::Active()
 {
 	*m_pPlayerInteract = false;
-	m_bActive = true;
+	m_bActivity = true;
 
 
 	if (m_eState == WINDOW_STATIC)
