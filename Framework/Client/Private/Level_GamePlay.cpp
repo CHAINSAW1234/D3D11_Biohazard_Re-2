@@ -605,8 +605,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_Decal(const wstring& strLayerTag)
 {
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Decal_SSD"))))
-		return E_FAIL;
+	for(size_t i = 0;i<30;++i)
+	{
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Decal_SSD"))))
+			return E_FAIL;
+	}
 	
 	return S_OK;
 }

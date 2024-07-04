@@ -3354,7 +3354,7 @@ void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix)
 
 void CModel::InitDecalWorldMatrix(_float4 vPos, _float4 vNormal)
 {
-	_vector Scale = XMVectorSet(1.f,1.f,1.f,0.f);
+	/*_vector Scale = XMVectorSet(1.f,1.f,1.f,0.f);
 	_vector Position = XMVectorSet(vPos.x,vPos.y,vPos.z,1.f);
 
 	_vector LookVector = XMLoadFloat4(&vNormal);
@@ -3383,7 +3383,14 @@ void CModel::InitDecalWorldMatrix(_float4 vPos, _float4 vNormal)
 
 	_matrix WorldMat = scaleMatrix * rotationMatrix * XMMatrixTranslationFromVector(Position);
 	_float4x4 WorldMat_Decal;
+	XMStoreFloat4x4(&WorldMat_Decal, WorldMat);*/
+
+	_matrix WorldMat = XMMatrixIdentity();
+	_float4x4 WorldMat_Decal;
 	XMStoreFloat4x4(&WorldMat_Decal, WorldMat);
+	WorldMat_Decal._41 = vPos.x;
+	WorldMat_Decal._42 = vPos.y;
+	WorldMat_Decal._43 = vPos.z;
 
 	auto iNumMesh = m_Meshes.size();
 	for(size_t i = 0;i< iNumMesh;++i)
@@ -3503,8 +3510,8 @@ void CModel::Perform_Calc_DecalMap_StaticModel()
 	auto iNumMesh = m_Meshes.size();
 	for (size_t i = 0; i < iNumMesh; ++i)
 	{
-		m_Meshes[i]->Bind_Resource_CalcDecalMap(m_vecUAV_DecalMap[i]);
-		m_Meshes[i]->Perform_Calc_DecalMap();
+		m_Meshes[i]->Bind_Resource_CalcDecalMap_StaticModel(m_vecUAV_DecalMap[i]);
+		m_Meshes[i]->Perform_Calc_DecalMap_StaticModel();
 	}
 }
 

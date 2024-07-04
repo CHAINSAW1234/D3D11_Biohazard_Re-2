@@ -1249,9 +1249,9 @@ _bool CPhysics_Controller::RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4*
 
 		if (filterData.word0 & COLLISION_CATEGORY::STATIC_MESH)
 		{
-			m_vecRigid_Static[filterData.word0]->Set_Hit(true);
-			m_vecRigid_Static[filterData.word0]->SetBlockPoint(*pBlockPoint);
-			m_vecRigid_Static[filterData.word0]->SetHitNormal(*pBlockNormal);
+			m_vecRigid_Static[filterData.word3]->Set_Hit(true);
+			m_vecRigid_Static[filterData.word3]->SetBlockPoint(*pBlockPoint);
+			m_vecRigid_Static[filterData.word3]->SetHitNormal(*pBlockNormal);
 		}
 
 		*pBlockPoint = PxVec_To_Float4_Coord(hit.block.position);

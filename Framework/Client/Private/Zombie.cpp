@@ -144,8 +144,8 @@ HRESULT CZombie::Initialize(void* pArg)
 
 #pragma region For SSD
 
-	auto pLayer_Decal_SSD = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_Decal");
-	m_pDecal_SSD = dynamic_cast<CDecal_SSD*>(*(*pLayer_Decal_SSD).begin());
+	m_pDecal_Layer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_Decal");
+	//m_pDecal_SSD = dynamic_cast<CDecal_SSD*>(*(*pLayer_Decal_SSD).begin());
 
 #pragma endregion
 
@@ -1308,9 +1308,19 @@ void CZombie::RayCast_Decal()
 {
 	if (m_pGameInstance->RayCast_Decal(m_vHitPosition,m_pGameInstance->Get_Camera_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &m_vDecalPoint, &m_vDecalNormal, 2.f))
 	{
-		//m_pDecal_SSD->SetWorldMatrix_With_HitNormal(m_vDecalNormal);
-		m_pDecal_SSD->SetPosition(m_vDecalPoint);
-		m_pDecal_SSD->LookAt(m_vDecalNormal);
+		auto iNumDecal = m_pDecal_Layer->size();
+		for(auto& it : *m_pDecal_Layer)
+		{
+			if(it->GetbRender() == false)
+			{
+				auto pDecal = static_cast<CDecal_SSD*>(it);
+				pDecal->Set_Render(true);
+				//pDecal->SetWorldMatrix_With_HitNormal(m_vDecalNormal);
+				pDecal->SetPosition(m_vDecalPoint);
+				pDecal->LookAt(m_vDecalNormal);
+				break;
+			}
+		}
 	}
 }
 

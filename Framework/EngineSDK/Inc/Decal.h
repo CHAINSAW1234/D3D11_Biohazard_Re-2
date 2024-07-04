@@ -32,6 +32,7 @@ public:
 	virtual void	Staging_Calc_Decal_Info() {}
 	virtual void	Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input, ID3D11UnorderedAccessView* pUAV) {}
 	virtual void	Bind_DecalMap(class CShader* pShader) {}
+	virtual void		Bind_Resource_DecalMap_StaticModel(CALC_DECAL_MAP_INPUT_STATIC_MODEL Input, ID3D11UnorderedAccessView* pUAV) {}
 public:
 	ID3D11UnorderedAccessView* GetDecalInfo_Uav()
 	{

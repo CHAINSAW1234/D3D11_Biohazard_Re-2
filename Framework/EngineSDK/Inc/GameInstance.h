@@ -418,7 +418,9 @@ public:
 	void									Bind_Resource_Calc_Decal_Info(CALC_DECAL_INPUT Input);
 	void									Perform_Calc_Decal_Info();
 	void									Bind_Resource_Calc_Decal_Map(CALC_DECAL_MAP_INPUT Input);
+	void									Bind_Resource_Calc_Decal_Map_StaticModel(CALC_DECAL_MAP_INPUT_STATIC_MODEL Input);
 	void									Perform_Calc_Decal_Map(_uint iNumVertices);
+	void									Perform_Calc_Decal_Map_StaticModel(_uint iNumVertices);
 #pragma endregion
 
 private:

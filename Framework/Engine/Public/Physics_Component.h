@@ -121,7 +121,7 @@ protected:
 
 	class CGameObject*				m_pObject = { nullptr };
 
-	_bool							m_bGravity = { false };
+	_bool							m_bGravity = { true };
 protected:
 	_int m_iRefCnt_Px = { 0 };
 public:

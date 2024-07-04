@@ -1487,7 +1487,7 @@ PS_OUT PS_DECAL(PS_IN In)
 
     if (vViewPos.z == 0.f)
     {
-        clip(-1);
+        discard;
     }
 
     float4 vLocalPos = mul(vWorldPos, g_Decal_WorldMatrix_Inv);
@@ -1496,8 +1496,6 @@ PS_OUT PS_DECAL(PS_IN In)
         (-g_vExtent.y <= vLocalPos.y && vLocalPos.y <= g_vExtent.y) &&
         (-g_vExtent.z <= vLocalPos.z && vLocalPos.z <= g_vExtent.z))
     {
-        float2 decalTextureUV = (vLocalPos.xz / (2.0f * float2(g_vExtent.x, g_vExtent.z))) + 0.5f;
-
       /*  float4 vDiffuseColor = g_DecalTexture.Sample(LinearSampler, decalTextureUV);
 
         if (vDiffuseColor.a < 0.1f)
@@ -1505,35 +1503,40 @@ PS_OUT PS_DECAL(PS_IN In)
         else
             Out.vColor = float4(0.3f,0.f,0.f,1.f);*/
 
-        float3 normal = g_NormalTexture.Sample(PointSampler, In.vTexcoord).xyz; // 픽셀의 노멀 벡터
+        //float3 normal = g_NormalTexture.Sample(PointSampler, In.vTexcoord).xyz; // 픽셀의 노멀 벡터
+        vector vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexcoord);
+        float3 normal = float4(vNormalDesc.xyz * 2.f - 1.f, 0.f);
+  
 
-        // 픽셀의 노멀 벡터를 사용하여 텍스처 좌표 계산
-        if (abs(normal.z) > abs(normal.x) && abs(normal.z) > abs(normal.y))
-        {
-            // 벽면 (YZ 평면)
-            decalTextureUV = (vLocalPos.yz / (2.0f * float2(g_vExtent.y, g_vExtent.z))) + 0.5f;
-        }
-        else if (abs(normal.x) > abs(normal.y))
-        {
-            // 벽면 (XY 평면)
-            decalTextureUV = (vLocalPos.xy / (2.0f * float2(g_vExtent.x, g_vExtent.y))) + 0.5f;
-        }
-        else
-        {
-            // 바닥 (XZ 평면)
-            decalTextureUV = (vLocalPos.xz / (2.0f * float2(g_vExtent.x, g_vExtent.z))) + 0.5f;
-        }
+       //// 노말 벡터 기반 텍스처 좌표 계산
+       // if (abs(normal.z) >= abs(normal.x) && abs(normal.z) >= abs(normal.y))
+       // {
+       //     // 벽면 (YZ 평면)
+       //     decalTextureUV = (vLocalPos.xy / (2.0f * float2(g_vExtent.x, g_vExtent.y))) + 0.5f;
+       // }
+       // else if (abs(normal.x) >= abs(normal.y))
+       // {
+       //     // 벽면 (XY 평면)
+       //     decalTextureUV = (vLocalPos.xy / (2.0f * float2(g_vExtent.x, g_vExtent.y))) + 0.5f;
+       // }
+       // else
+       // {
+       //     // 바닥 (XZ 평면)
+       //     decalTextureUV = (vLocalPos.xy / (2.0f * float2(g_vExtent.x, g_vExtent.y))) + 0.5f;
+       // }
+
+        float2 decalTextureUV = (vLocalPos.xy / (2.0f * float2(g_vExtent.x, g_vExtent.y))) + 0.5f;
 
         // 텍스처 좌표가 유효한 범위 내에 있는지 확인
         if (decalTextureUV.x < 0.0f || decalTextureUV.x > 1.0f || decalTextureUV.y < 0.0f || decalTextureUV.y > 1.0f)
         {
-            clip(-1);
+            discard;
         }
 
-        float4 vDiffuseColor = g_DecalTexture.Sample(PointSampler, decalTextureUV);
+        float4 vDiffuseColor = g_DecalTexture.Sample(PointSamplerClamp, decalTextureUV);
 
         if (vDiffuseColor.a < 0.1f)
-            clip(-1);
+            discard;
         else
             Out.vColor = float4(0.2f, 0.f, 0.f, 1.f);
     }

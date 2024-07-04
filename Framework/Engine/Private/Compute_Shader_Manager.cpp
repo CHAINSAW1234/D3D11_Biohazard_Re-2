@@ -94,12 +94,29 @@ void CCompute_Shader_Manager::Bind_Resource_CalcMap(CALC_DECAL_MAP_INPUT Input)
 	m_pCalcDecalMap->Bind_RawValue("g_Extent", &Input.vExtent, sizeof(_float3));
 }
 
+void CCompute_Shader_Manager::Bind_Resource_CalcMap_StaticModel(CALC_DECAL_MAP_INPUT_STATIC_MODEL Input)
+{
+	m_pCalcDecalMap->Bind_Structured_Buffer("g_VertexBuffer", Input.pSRV_Vertices);
+	m_pCalcDecalMap->Bind_Uav("g_DecalMap", Input.pDecalMap);
+	m_pCalcDecalMap->Bind_Matrix("g_DecalMat_Inv", &Input.Decal_Matrix_Inv);
+	m_pCalcDecalMap->Bind_RawValue("g_NumVertices", &Input.iNumVertex, sizeof(_uint));
+	m_pCalcDecalMap->Bind_RawValue("g_Extent", &Input.vExtent, sizeof(_float3));
+}
+
 void CCompute_Shader_Manager::Perform_Calc_Decal_Map(_uint iNumVertices)
 {
 	_uint numThreadGroupsX = (iNumVertices + CALC_DECAL_MAP_THREAD_GROUP_SIZE - 1) / CALC_DECAL_MAP_THREAD_GROUP_SIZE;
 	_uint numThreadGroupsY = 1;
 	_uint numThreadGroupsZ = 1;
 	m_pCalcDecalMap->Render(0, numThreadGroupsX, numThreadGroupsY, numThreadGroupsZ);
+}
+
+void CCompute_Shader_Manager::Perform_Calc_Decal_Map_StaticModel(_uint iNumVertices)
+{
+	_uint numThreadGroupsX = (iNumVertices + CALC_DECAL_MAP_THREAD_GROUP_SIZE - 1) / CALC_DECAL_MAP_THREAD_GROUP_SIZE;
+	_uint numThreadGroupsY = 1;
+	_uint numThreadGroupsZ = 1;
+	m_pCalcDecalMap->Render(1, numThreadGroupsX, numThreadGroupsY, numThreadGroupsZ);
 }
 
 CCompute_Shader_Manager* CCompute_Shader_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
