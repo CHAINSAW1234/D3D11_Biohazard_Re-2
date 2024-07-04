@@ -138,7 +138,7 @@ HRESULT CDoor::Add_Components()
 			TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
 			return E_FAIL;
 
-		ColliderDesc.fRadius = _float(80.f);
+		ColliderDesc.fRadius = _float(90.f);
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Normal_Step2"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP2], &ColliderDesc)))
 			return E_FAIL;
@@ -156,7 +156,7 @@ HRESULT CDoor::Add_Components()
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Double_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP1], &ColliderDesc)))
 			return E_FAIL;
-		ColliderDesc.fRadius = _float(80.f);
+		ColliderDesc.fRadius = _float(90.f);
 		/* For.Com_Collider */
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Double_Step2"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP2], &ColliderDesc)))
@@ -173,12 +173,12 @@ HRESULT CDoor::Add_Components()
 			TEXT("Com_Collider_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
 			return E_FAIL;
 
-		ColliderDesc.fRadius = _float(100.f);
+		ColliderDesc.fRadius = _float(110.f);
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
 			return E_FAIL;
 
-		ColliderDesc.fRadius = _float(60.f);
+		ColliderDesc.fRadius = _float(90.f);
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Step2"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP2], &ColliderDesc)))
 			return E_FAIL;
@@ -243,7 +243,7 @@ void CDoor::DoubleDoor_Tick(_float fTimeDelta)
 
 	if (!m_bActivity && (m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1]))
 	{
-		if (*m_pPlayerInteract|| m_bCol[INTER_COL_NORMAL][COL_STEP2])
+		if (*m_pPlayerInteract|| m_bCol[INTER_COL_NORMAL][COL_STEP2]|| m_bCol[INTER_COL_DOUBLE][COL_STEP2])
 			DoubleDoor_Active();
 
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
@@ -331,7 +331,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 
 		}
 	}
-	if (Activate_Col(Get_Collider_World_Pos(_float4(-90.f, 1.f, 0.f, 1.f))))
+	if (Activate_Col(Get_Collider_World_Pos(_float4(-90.f, 1.f, 0.f, 1.f)))|| Activate_Col(Get_Collider_World_Pos(_float4(-90.f, 1.f, 0.f, 1.f))))
 	{
 		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0)) // ¿Œ¡ˆ?
 		{
@@ -541,7 +541,12 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 			m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 		}
 	}
-
+	else
+	{
+		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+	}
 	if (!m_bBlock && m_bOnce&& m_bCol[INTER_COL_NORMAL][COL_STEP2])
 	{
 		m_bOnce = false;

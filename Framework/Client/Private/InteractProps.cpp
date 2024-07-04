@@ -243,7 +243,7 @@ _bool CInteractProps::Activate_Col(_float4 vActPos)
 
 	if (vCross.y < 0) 
 		fScala *= -1;
-
+	_float fDegree = XMConvertToDegrees(fScala);
 	if (-90 <= XMConvertToDegrees(fScala) && 90 >= XMConvertToDegrees(fScala))
 		return true;
 

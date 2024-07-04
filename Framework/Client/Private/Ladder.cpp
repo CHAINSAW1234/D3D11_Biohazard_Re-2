@@ -65,8 +65,8 @@ void CLadder::Late_Tick(_float fTimeDelta)
 {
 	if (m_pPlayer == nullptr)
 		return;
-	if (!Visible())
-		return;
+	/*if (!Visible())
+		return;*/
 
 	if (Activate_Col(Get_Collider_World_Pos(_float4(0.f, -0.5f, -0.2f, 1.f))) || Activate_Col(Get_Collider_World_Pos(_float4(0.1f, 5.8f, 0.f, 1.f))))
 	{
@@ -111,18 +111,18 @@ void CLadder::Late_Tick(_float fTimeDelta)
 	}
 
 
-	if (m_bRender == false)
-		return;
-	else
-	{
-		for (auto& it : m_PartObjects)
-		{
-			if (it != nullptr)
-				it->Set_Render(true);
-		}
+	//if (m_bRender == false)
+	//	return;
+	//else
+	//{
+	//	for (auto& it : m_PartObjects)
+	//	{
+	//		if (it != nullptr)
+	//			it->Set_Render(true);
+	//	}
 
-		m_bRender = false;
-	}
+	//	m_bRender = false;
+	//}
 	__super::Late_Tick(fTimeDelta);
 
 
