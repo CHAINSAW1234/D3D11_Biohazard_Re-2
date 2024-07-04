@@ -284,6 +284,7 @@
     <ClInclude Include="..\Public\Player_State_Hold.h" />
     <ClInclude Include="..\Public\Player_State_Hold_Idle.h" />
     <ClInclude Include="..\Public\Player_State_Hold_Start.h" />
+    <ClInclude Include="..\Public\Player_State_Move_Ladder.h" />
     <ClInclude Include="..\Public\Player_State_Move.h" />
     <ClInclude Include="..\Public\Player_State_Move_DoorStop.h" />
     <ClInclude Include="..\Public\Player_State_Move_Idle.h" />
@@ -462,6 +463,7 @@
     <ClCompile Include="..\Private\Player_State_Hold.cpp" />
     <ClCompile Include="..\Private\Player_State_Hold_Idle.cpp" />
     <ClCompile Include="..\Private\Player_State_Hold_Start.cpp" />
+    <ClCompile Include="..\Private\Player_State_Move_Ladder.cpp" />
     <ClCompile Include="..\Private\Player_State_Move.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_DoorStop.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Idle.cpp" />

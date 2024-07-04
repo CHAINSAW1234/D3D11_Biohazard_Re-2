@@ -10,6 +10,8 @@ texture2D   g_AOTexture;
 bool g_isAlphaTexture;
 bool g_isAOTexture;
 
+bool g_DecalRender;
+
 // HyeonJin Ãß°¡
 int g_LightIndex;
 

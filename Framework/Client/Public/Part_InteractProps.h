@@ -41,8 +41,8 @@ protected:
 public:
 	virtual HRESULT									Initialize_Prototype() override;
 	virtual HRESULT									Initialize(void* pArg) override;
-	virtual void										Tick(_float fTimeDelta) override;
-	virtual void										Late_Tick(_float fTimeDelta) override;
+	virtual void									Tick(_float fTimeDelta) override;
+	virtual void									Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT									Render() override;
 
 
@@ -63,41 +63,40 @@ public:
 		m_pCameraTransform = pCameraTransform;
 	}
 	virtual _float4									Get_Pos(_int iArg = 0) { return XMVectorSetW( m_WorldMatrix.Translation(),1.f); }
-	virtual _int											Get_PartObject_Props_ItemIndex() { return -1; };
+	virtual _int									Get_PartObject_Props_ItemIndex() { return -1; };
 protected:
-	_int													m_iPropType = { 0 };
-	_bool													m_bCol = { false };
-	_bool*												m_pRender;
+	_int											m_iPropType = { 0 };
+	_bool											m_bCol = { false };
+	_bool*											m_pRender;
 	const _ubyte*									m_pState;
-	_float4												m_vRotation = {};
+	_float4											m_vRotation = {};
 
 	//player
 	class CPlayer*									m_pPlayer = { nullptr };
-	_bool*												m_pPlayerInteract = {nullptr};
+	_bool*											m_pPlayerInteract = {nullptr};
 	CTransform*										m_pPlayerTransform = {nullptr};
 
 	//camera
-	class CCamera_Free*							m_pCamera= { nullptr };
+	class CCamera_Free*								m_pCamera= { nullptr };
 	CTransform*										m_pCameraTransform = {nullptr};
 
 
 	CModel*											m_pModelCom = { nullptr };
-	CShader*											m_pShaderCom = { nullptr };
-	wstring												m_strModelComponentName = { TEXT("") };
-	CCollider*											m_pColliderCom[Part_INTERACTPROPS_COL_END] = { nullptr,nullptr,nullptr };
+	CShader*										m_pShaderCom = { nullptr };
+	wstring											m_strModelComponentName = { TEXT("") };
+	CCollider*										m_pColliderCom[Part_INTERACTPROPS_COL_END] = { nullptr,nullptr,nullptr };
 
-	string												m_strMeshTag = {};
-
+	string											m_strMeshTag = {};
 
 	class CPxCollider*								m_pPx_Collider = { nullptr };
-	vector<CBone*>								m_vecRotationBone;
+	vector<CBone*>									m_vecRotationBone;
 
 protected:
-	void													Check_Col_Sphere_Player();
+	void											Check_Col_Sphere_Player();
 	HRESULT											Add_Components();
 	virtual HRESULT									Add_PartObjects();
 	virtual HRESULT									Initialize_PartObjects();
-	virtual void										Get_SpecialBone_Rotation();
+	virtual void									Get_SpecialBone_Rotation();
 protected:
 	HRESULT											Bind_ShaderResources();
 
