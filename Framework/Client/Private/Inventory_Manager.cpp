@@ -3,6 +3,8 @@
 #include "Inventory_Manager.h"
 #include "Inventory_Item_UI.h"
 
+#include "Player.h"
+
 constexpr _float	Z_POS_SLOT = 0.8f;
 constexpr _float	Z_POS_HIGH_LIGHTER = 0.7f;
 constexpr _float	Z_POS_ITEM_UI = 0.6f;
@@ -195,7 +197,7 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 						m_fPressingTime = 0.f;
 
 						m_pSlotHighlighter->Set_DragShadow(true);
-
+						 
 						m_eInven_Manager_State = REARRANGE_ITEM;
 					}
 				}
@@ -216,6 +218,8 @@ void CInventory_Manager::UNEQUIP_ITEM_Operation(_float fTimeDelta)
 
 void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 {
+	_bool isCombind = false;
+
 	switch (m_eTaskSequence)
 	{
 	case Client::CInventory_Manager::SETING: {
@@ -276,7 +280,10 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 					m_eInven_Manager_State = EVENT_IDLE;
 					m_pDragShadow->Set_Dead(true);
 					m_pSelected_ItemUI = nullptr;
-					m_eInven_Manager_State = PICK_UP_ITEM;
+					m_eInven_Manager_State = GET_ITEM;
+
+					CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+					pPlayer->Set_isCamTurn(false);
 				}
 			}
 		}
@@ -291,25 +298,41 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 		switch (eInvenEvent)
 		{
 		case Client::COMBINED_ITEM: {
-
+			m_PickResult = 0;
 			m_eTaskSequence = APPLY;
 			m_pContextMenu->Set_Dead(true);
 			break;
 		}
 
 		case Client::SWITCH_ITEM: {
-
+			m_PickResult = 1;
 			m_eTaskSequence = APPLY;
 			m_pContextMenu->Set_Dead(true);
 			break;
 		}
-
 		}
 
 		break;
 	}
 		
 	case Client::CInventory_Manager::APPLY: {
+		if (m_PickResult == 0)
+		{
+			ITEM_NUMBER eResultItem = Find_Recipe(m_pDragShadow->Get_ItemNumber(), m_pSelected_ItemUI->Get_ItemNumber());
+			if (handgun_bullet01a == m_pDragShadow->Get_ItemNumber() && handgun_bullet01a == m_pSelected_ItemUI->Get_ItemNumber() && handgun_bullet01a == eResultItem)
+			{
+				m_pSelected_ItemUI->Set_ItemVariation(m_pDragShadow->Get_ItemQuantity());
+			}
+		}
+
+		else if(m_PickResult == 1)
+		{
+			
+		}
+
+		CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+		pPlayer->Set_isCamTurn(true);
+		m_PickResult = -1;
 
 		break;
 	}
@@ -1248,6 +1271,10 @@ void CInventory_Manager::Set_ItemRecipe()
 	Add_Recipe(herbsgb01a,   redherb01a,    herbsgrb01a);
 
 	Add_Recipe(herbsrb01a,   greenherb01a,  herbsgrb01a);
+
+	Add_Recipe(handgun_bullet01a, handgun_bullet01a, handgun_bullet01a);
+
+	Add_Recipe(shotgun_bullet01a, shotgun_bullet01a, shotgun_bullet01a);
 
 }
 

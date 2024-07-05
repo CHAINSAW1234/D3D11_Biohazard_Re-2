@@ -184,7 +184,7 @@ void CImgui_Manager::Window_Player_Debuger()
 
 ITEM_NUMBER CImgui_Manager::Classify_String_To_ItemNum(wstring wstrItemNum)
 {
-    _uint i = 0;
+    _uint i = 0; 
 
     for (auto& iter : m_vecItemNums)
     {

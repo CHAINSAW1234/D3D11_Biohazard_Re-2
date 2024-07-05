@@ -29,6 +29,7 @@ public:
 
 private:
 	_bool m_isFilled = { false };
+	_bool m_PriorisFilled = { false };
 
 public:
 	static CInventory_Slot* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

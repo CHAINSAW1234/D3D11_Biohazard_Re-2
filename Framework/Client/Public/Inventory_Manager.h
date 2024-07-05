@@ -126,6 +126,9 @@ private:
 	/* for. SubInven */
 	class CInventory_Item_UI*		m_pInven_Item_UI = { nullptr };
 
+	/*for. PickUpItem*/
+	_int							m_PickResult = { -1 };//-1이면 없음 0이면 조합 1이면 자리바꾸기
+
 private :	
 	/*for IDLE_Operation*/
 	_bool							m_IsNoOneHover = { true };

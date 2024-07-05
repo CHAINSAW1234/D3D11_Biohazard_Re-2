@@ -164,11 +164,11 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 {
 	if (true == m_pGameInstance->Check_Wheel_Down())
 	{
-		m_fDistCam -= 1.f;
+		m_fDistCam -= 0.01f;
 	}
 	else if (true == m_pGameInstance->Check_Wheel_Up())
 	{
-		m_fDistCam += 1.f;
+		m_fDistCam += 0.01f;
 	}
 
 	if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))

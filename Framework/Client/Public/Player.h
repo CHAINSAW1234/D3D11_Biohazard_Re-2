@@ -288,6 +288,7 @@ private:
 #pragma region 창균 추가
 public:
 	void										PickUp_Item(CGameObject* pPickedUp_Item); //TabWindow의 PickUp_Item함수 호출용
+	void										Set_isCamTurn(_bool isCamTurn) { m_isCamTurn = isCamTurn; }
 
 private:
 	_bool										m_isCamTurn = { false };

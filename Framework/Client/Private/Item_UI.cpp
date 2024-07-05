@@ -154,6 +154,7 @@ void CItem_UI::Set_Dead(_bool bDead)
 	}
 
 	case Client::DRAG_SHADOW: {
+
 		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(true);
 		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(true);
 	}

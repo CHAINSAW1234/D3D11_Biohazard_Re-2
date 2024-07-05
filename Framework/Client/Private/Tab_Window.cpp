@@ -286,6 +286,23 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 	}	
 
 	case Client::UI_IDLE: {
+		if (GET_ITEM == m_pInventory_Manager->Get_InventoryEvent())
+		{
+			m_pPickedUp_Item->Set_Dead(true);
+			OnOff_EventHandle();
+			m_pGameInstance->Set_IsPaused(false);
+			break;
+		}
+
+		else if (DROP_ITEM == m_pInventory_Manager->Get_InventoryEvent())
+		{
+			m_pPickedUp_Item = nullptr;
+			OnOff_EventHandle();
+			m_pGameInstance->Set_IsPaused(false);
+			break;
+		}
+
+
 		m_pItem_Mesh_Viewer->Tick(fTimeDelta);
 		m_pItem_Discription->Tick(fTimeDelta);
 		m_pInventory_Manager->Tick(fTimeDelta);
@@ -293,7 +310,7 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 		if (m_fCurTime / 0.5f < 1.f)
 		{
 			m_fCurTime += fTimeDelta;
-			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 1.f, 0.5f, m_fCurTime / 0.5f);
+			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 1.f, 0.8f, m_fCurTime / 0.5f);
 		}
 		break;
 	}
