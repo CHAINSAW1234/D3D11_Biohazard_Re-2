@@ -28,7 +28,7 @@ HRESULT CBlood::Initialize(void* pArg)
 
 	m_bRender = false;
 
-	m_FrameDelay = 10;
+	m_FrameDelay =20;
 
 	return S_OK;
 }
@@ -46,9 +46,9 @@ void CBlood::Tick(_float fTimeDelta)
 
 		if(m_iType != 0)
 		{
-			m_fSizeX += 0.2f;
-			m_fSizeY += 0.2f;
-			m_fSizeZ += 0.2f;
+			m_fSizeX += 0.07f;
+			m_fSizeY += 0.07f;
+			m_fSizeZ += 0.07f;
 
 			m_pTransformCom->Set_Scaled(m_fSizeX, m_fSizeY, m_fSizeZ);
 		}
@@ -70,7 +70,7 @@ void CBlood::Tick(_float fTimeDelta)
 void CBlood::Late_Tick(_float fTimeDelta)
 {
 	if (m_bRender == true)
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 }
 
 HRESULT CBlood::Render()
@@ -111,7 +111,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(m_iFrame));
@@ -148,7 +148,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_2->Render(static_cast<_uint>(m_iFrame));
@@ -185,7 +185,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_3->Render(static_cast<_uint>(m_iFrame));
@@ -223,7 +223,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_4->Render(static_cast<_uint>(m_iFrame));
@@ -261,7 +261,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_5->Render(static_cast<_uint>(m_iFrame));
@@ -299,7 +299,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_6->Render(static_cast<_uint>(m_iFrame));
@@ -337,7 +337,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_7->Render(static_cast<_uint>(m_iFrame));
@@ -375,7 +375,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_8->Render(static_cast<_uint>(m_iFrame));
@@ -413,7 +413,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_9->Render(static_cast<_uint>(m_iFrame));
@@ -451,7 +451,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_10->Render(static_cast<_uint>(m_iFrame));
@@ -489,7 +489,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_11->Render(static_cast<_uint>(m_iFrame));
