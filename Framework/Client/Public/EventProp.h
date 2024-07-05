@@ -52,7 +52,7 @@ public:
 
 
 private:
-	_bool				m_bActive = { false };
+	_bool				m_bActivity = { false };
 	_float			m_fTime = { 0.f };
 	_ubyte			m_eState = { STATE_STATIC };
 

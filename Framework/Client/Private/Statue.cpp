@@ -36,21 +36,19 @@ HRESULT CStatue::Initialize(void* pArg)
 
 void CStatue::Tick(_float fTimeDelta)
 {
-	if (!m_bVisible)
-	{
-		m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
-		return;
-	}
+	__super::Tick_Col();
 
-	if (m_pPlayer == nullptr)
+	if (!m_bVisible)
 		return;
+
 	__super::Tick(fTimeDelta);
-	m_pColliderCom[INTERACTPROPS_COL_SPHERE]->Tick(m_pTransformCom->Get_WorldMatrix());
 
 }
 
 void CStatue::Late_Tick(_float fTimeDelta)
 {
+	if (m_pPlayer == nullptr)
+		return;
 	if (!Visible())
 		return;
 
@@ -69,7 +67,7 @@ void CStatue::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
-	m_pGameInstance->Add_DebugComponents(m_pColliderCom[INTERACTPROPS_COL_SPHERE]);
+	__super::Add_Col_DebugCom();
 #endif
 }
 
@@ -82,12 +80,18 @@ HRESULT CStatue::Add_Components()
 {
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(100.f);
+	ColliderDesc.fRadius = _float(150.f);
 	ColliderDesc.vCenter = _float3(-10.f, 1.f, 0.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom[INTERACTPROPS_COL_SPHERE], &ColliderDesc)))
+		TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
 		return E_FAIL;
+
+	ColliderDesc.fRadius = _float(100.f);
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+		TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -139,7 +143,7 @@ HRESULT CStatue::Bind_ShaderResources()
 void CStatue::Active()
 {
 	*m_pPlayerInteract = false;
-	m_bActive = true;
+	m_bActivity = true;
 
 }
 

@@ -50,6 +50,9 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 	if (m_eBodyModelType == ZOMBIE_BODY_TYPE::_FEMALE)
 		m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie_Female/Body_Female.fbx");
 
+	if (m_eBodyModelType == ZOMBIE_BODY_TYPE::_MALE_BIG)
+		m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie_Male_Big/Body_Male_Big.fbx");
+
 #pragma region Effect
 	m_pModelCom->Init_Decal(LEVEL_GAMEPLAY);
 #pragma endregion
@@ -187,10 +190,26 @@ HRESULT CBody_Zombie::Render()
 			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
 				return E_FAIL;
 		}
+		
+		if(m_pModelCom->Get_Mesh_Branch(i) != (_int)CBody_Zombie::MESH_TYPE::_INNER)
+		{
+			m_bDecalRender = true;
 
-		m_pModelCom->Bind_DecalMap(i, m_pShaderCom);
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
+				return E_FAIL;
+			m_pModelCom->Bind_DecalMap(i, m_pShaderCom);
+		}
+		else
+		{
+			m_bDecalRender = false;
+
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
+				return E_FAIL;
+		}
+
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
+
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
 
@@ -424,8 +443,7 @@ HRESULT CBody_Zombie::Initialize_Model()
 	vector<string>			ResultMeshTags;
 	for (auto& strMeshTag : MeshTags)
 	{
-		if (strMeshTag.find("Body") != string::npos ||
-			strMeshTag.find("Inside") != string::npos)
+		if (strMeshTag.find("Body") != string::npos || strMeshTag.find("Inside") != string::npos)
 		{
 			ResultMeshTags.push_back(strMeshTag);
 		}
@@ -1164,9 +1182,6 @@ HRESULT CBody_Zombie::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevViewMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
 		return E_FAIL;
 
 	return S_OK;

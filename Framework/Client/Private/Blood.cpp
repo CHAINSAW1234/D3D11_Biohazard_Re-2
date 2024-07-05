@@ -46,9 +46,9 @@ void CBlood::Tick(_float fTimeDelta)
 
 		if(m_iType != 0)
 		{
-			m_fSizeX += 0.07f;
-			m_fSizeY += 0.07f;
-			m_fSizeZ += 0.07f;
+			m_fSizeX += 0.2f;
+			m_fSizeY += 0.2f;
+			m_fSizeZ += 0.2f;
 
 			m_pTransformCom->Set_Scaled(m_fSizeX, m_fSizeY, m_fSizeZ);
 		}
@@ -70,7 +70,7 @@ void CBlood::Tick(_float fTimeDelta)
 void CBlood::Late_Tick(_float fTimeDelta)
 {
 	if (m_bRender == true)
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CBlood::Render()
