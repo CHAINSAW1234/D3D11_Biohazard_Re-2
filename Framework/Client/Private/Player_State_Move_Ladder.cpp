@@ -24,7 +24,8 @@ void CPlayer_State_Move_Ladder::OnStateEnter()
 	m_pPlayer->Get_Body_Model()->Set_TrackPosition(0, 0);
 	m_pPlayer->Get_Body_Model()->Set_TrackPosition(1, 0);
 
-	m_pPlayer->Set_Gravity(false);
+	m_pPlayer->Set_ManualMove(true);
+	//	m_pPlayer->Set_Gravity(false);
 
 
 	m_pPlayer->Stop_UpperBody();
@@ -64,7 +65,7 @@ void CPlayer_State_Move_Ladder::OnStateUpdate(_float fTimeDelta)
 void CPlayer_State_Move_Ladder::OnStateExit()
 {
 	m_pPlayer->Requst_Change_Equip(m_eEquip);
-
+	m_pPlayer->Set_ManualMove(false);
 	m_pPlayer->Set_Gravity(true);
 
 	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
@@ -197,7 +198,8 @@ void CPlayer_State_Move_Ladder::Set_StartAnimation()
 
 void CPlayer_State_Move_Ladder::Interpolate_Location(_float fTimeDelta)
 {
-	static _float fPrevLerpTimeDelta = m_fLerpTimeDelta;
+	static _float fPrevLerpTimeDelta;
+	fPrevLerpTimeDelta = m_fLerpTimeDelta;
 	m_fLerpTimeDelta += fTimeDelta;
 
 	if (m_fLerpTimeDelta >= m_fTotalLerpTime)
@@ -219,10 +221,11 @@ void CPlayer_State_Move_Ladder::Interpolate_Location(_float fTimeDelta)
 	// 2. 위치 보간
 	_float4 vCurTranslate;
 	vCurTranslate = XMVectorLerp(vTranslate, vTargetTranslate, m_fLerpTimeDelta / m_fTotalLerpTime);
-	vCurTranslate.y = XMVectorGetY(m_pPlayer->Get_Controller()->GetPosition_Float4()) + m_fInterpolateValue * (m_fLerpTimeDelta - fPrevLerpTimeDelta) / m_fTotalLerpTime;
-	m_pPlayer->Set_Position(vCurTranslate);
+	vCurTranslate.y = m_pPlayer->Get_Transform()->Get_State_Float4(CTransform::STATE_POSITION).y + m_fInterpolateValue * (m_fLerpTimeDelta - fPrevLerpTimeDelta) / m_fTotalLerpTime;
+	//vCurTranslate.y = XMVectorGetY(m_pPlayer->Get_Controller()->GetPosition_Float4())/* + m_fInterpolateValue * (m_fLerpTimeDelta - fPrevLerpTimeDelta) / m_fTotalLerpTime*/;
+	//m_pPlayer->Set_Position(vCurTranslate);
 
-	//m_pPlayer->Get_Transform()->Set_State(CTransform::STATE_POSITION, vCurTranslate);
+	m_pPlayer->Get_Transform()->Set_State(CTransform::STATE_POSITION, vCurTranslate);
 }
 
 CPlayer_State_Move_Ladder* CPlayer_State_Move_Ladder::Create(CPlayer* pPlayer, CFSM_HState* pHState)
