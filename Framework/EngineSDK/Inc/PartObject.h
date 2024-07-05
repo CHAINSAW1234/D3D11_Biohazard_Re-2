@@ -41,6 +41,7 @@ protected:
 	CTransform*				m_pParentsTransform = { nullptr };
 
 	_bool					m_bRender_Decal = { false };
+	_bool					m_bCloth = { false };
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;
 	virtual void Free() override;

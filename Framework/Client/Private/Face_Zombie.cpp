@@ -45,6 +45,7 @@ HRESULT CFace_Zombie::Initialize(void* pArg)
 #pragma endregion
 
 	m_bDecalRender = true;
+	m_bCloth = false;
 
 	return S_OK;
 }
@@ -531,6 +532,8 @@ HRESULT CFace_Zombie::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_Cloth", &m_bCloth, sizeof(_bool))))
 		return E_FAIL;
 
 	return S_OK;
