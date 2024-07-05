@@ -410,7 +410,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Tick_Effect(fTimeDelta);
 
-	cout << m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y << endl;
+	//cout << m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y << endl;
 
 }
 
