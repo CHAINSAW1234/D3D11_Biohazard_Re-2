@@ -8,13 +8,9 @@ CChannel::CChannel()
 CChannel::CChannel(const CChannel& rhs)
 	: m_iNumKeyFrames { rhs.m_iNumKeyFrames }
 	, m_iBoneIndex { rhs.m_iBoneIndex }
+	, m_pKeyFrames { rhs.m_pKeyFrames }
 {
 	strcpy_s(m_szName, rhs.m_szName);
-
-	for (auto& pKeyFrame : rhs.m_KeyFrames)
-	{
-		m_KeyFrames.emplace_back(pKeyFrame);
-	}
 
 	m_isCloned = true;
 }
@@ -26,6 +22,7 @@ HRESULT CChannel::Initialize_Prototype(const aiNodeAnim* pAIChannel, const map<s
 	m_iBoneIndex = BoneIndices.find(m_szName)->second;
 
 	m_iNumKeyFrames = max(max(pAIChannel->mNumPositionKeys, pAIChannel->mNumRotationKeys), pAIChannel->mNumScalingKeys);
+	m_pKeyFrames = new vector<KEYFRAME*>();
 
 	_float3			vScale;
 	_float4			vRotation;
@@ -65,7 +62,7 @@ HRESULT CChannel::Initialize_Prototype(const aiNodeAnim* pAIChannel, const map<s
 		pKeyFrame->vTranslation = vTranslation;
 		pKeyFrame->fTime = fTime;
 
-		m_KeyFrames.push_back(pKeyFrame);
+		m_pKeyFrames->push_back(pKeyFrame);
 	}
 
 	return S_OK;
@@ -77,12 +74,13 @@ HRESULT CChannel::Initialize_Prototype(const CHANNEL_DESC& ChannelDesc)
 
 	m_iBoneIndex = ChannelDesc.iBoneIndex;
 	m_iNumKeyFrames = ChannelDesc.iNumKeyFrames;
+	m_pKeyFrames = new vector<KEYFRAME*>();
 
 	for (auto& KeyFrame : ChannelDesc.KeyFrames)
 	{
 		KEYFRAME*					pKeyFrame = { new KEYFRAME() };
 		memcpy(pKeyFrame, &KeyFrame, sizeof(KEYFRAME));
-		m_KeyFrames.push_back(pKeyFrame);
+		m_pKeyFrames->push_back(pKeyFrame);
 	}
 
 	return S_OK;
@@ -116,7 +114,7 @@ void CChannel::Invalidate_TransformationMatrix(const vector<class CBone*>& Bones
 		(*pCurrentKeyFrameIndex) = 0;
 
 	//	마지막 키프레임을 얻어온다.
-	KEYFRAME*		pKeyFrame = m_KeyFrames.back();
+	KEYFRAME*		pKeyFrame = m_pKeyFrames->back();
 
 	_vector			vScale, vRotation, vTranslation;
 
@@ -132,10 +130,10 @@ void CChannel::Invalidate_TransformationMatrix(const vector<class CBone*>& Bones
 	else
 	{
 		//	다음 키프레임보다 현재 재생위치가 높거나 같을 경우 현재 키프레임을 다음 키프레임으로 올린다.
-		while (fTrackPosition >= m_KeyFrames[(*pCurrentKeyFrameIndex) + 1]->fTime)
+		while (fTrackPosition >= (*m_pKeyFrames)[(*pCurrentKeyFrameIndex) + 1]->fTime)
 			++(*pCurrentKeyFrameIndex);
 
-		while (fTrackPosition < m_KeyFrames[*pCurrentKeyFrameIndex]->fTime)
+		while (fTrackPosition < (*m_pKeyFrames)[*pCurrentKeyFrameIndex]->fTime)
 			--(*pCurrentKeyFrameIndex);
 
 		//	Ratio :: 비율 => 선형보간하기위한 수치
@@ -144,20 +142,20 @@ void CChannel::Invalidate_TransformationMatrix(const vector<class CBone*>& Bones
 		//	(다음 키프레임의 시작시간 - 현재 키프레임의 시작 시간) == 현재 키프레임의 구간 
 
 		//	==>>	현재 키프레임 구간의 재생 정도를 얻어낸다
-		_float		fRatio = (fTrackPosition - m_KeyFrames[(*pCurrentKeyFrameIndex)]->fTime)
-			/ (m_KeyFrames[(*pCurrentKeyFrameIndex) + 1]->fTime - m_KeyFrames[(*pCurrentKeyFrameIndex)]->fTime);
+		_float		fRatio = (fTrackPosition - (*m_pKeyFrames)[(*pCurrentKeyFrameIndex)]->fTime)
+			/ ((*m_pKeyFrames)[(*pCurrentKeyFrameIndex) + 1]->fTime - (*m_pKeyFrames)[(*pCurrentKeyFrameIndex)]->fTime);
 
 		//	현재 키프레임과 다음 키프레임 사이의 위치에서 위치의 진행 정도에 따라 다음 키프레임과 선형 보간을 한다. 
 		//	XMVectorLerp == > Result = V0 + t * (V1 - V0);
-		vScale = XMVectorLerp(XMLoadFloat3(&m_KeyFrames[(*pCurrentKeyFrameIndex)]->vScale),
-			XMLoadFloat3(&m_KeyFrames[(*pCurrentKeyFrameIndex) + 1]->vScale), fRatio);
+		vScale = XMVectorLerp(XMLoadFloat3(&(*m_pKeyFrames)[(*pCurrentKeyFrameIndex)]->vScale),
+			XMLoadFloat3(&(*m_pKeyFrames)[(*pCurrentKeyFrameIndex) + 1]->vScale), fRatio);
 
 		//	쿼터니언은 XMQuaternionSlerp 함수를 이용하여 선형보간을 진행한다.
-		vRotation = XMQuaternionSlerp(XMLoadFloat4(&m_KeyFrames[(*pCurrentKeyFrameIndex)]->vRotation),
-			XMLoadFloat4(&m_KeyFrames[(*pCurrentKeyFrameIndex) + 1]->vRotation), fRatio);
+		vRotation = XMQuaternionSlerp(XMLoadFloat4(&(*m_pKeyFrames)[(*pCurrentKeyFrameIndex)]->vRotation),
+			XMLoadFloat4(&(*m_pKeyFrames)[(*pCurrentKeyFrameIndex) + 1]->vRotation), fRatio);
 
-		vTranslation = XMVectorLerp(XMLoadFloat3(&m_KeyFrames[(*pCurrentKeyFrameIndex)]->vTranslation),
-			XMLoadFloat3(&m_KeyFrames[(*pCurrentKeyFrameIndex) + 1]->vTranslation), fRatio);
+		vTranslation = XMVectorLerp(XMLoadFloat3(&(*m_pKeyFrames)[(*pCurrentKeyFrameIndex)]->vTranslation),
+			XMLoadFloat3(&(*m_pKeyFrames)[(*pCurrentKeyFrameIndex) + 1]->vTranslation), fRatio);
 	}
 
 	_matrix			TransformationMatrix = XMMatrixAffineTransformation(
@@ -201,7 +199,7 @@ _float4x4 CChannel::Compute_TransformationMatrix(_float fTrackPosition, _int* pC
 		(*pCurrentKeyFrameIndex) = 0;
 
 	//	마지막 키프레임을 얻어온다.
-	KEYFRAME*		pKeyFrame = m_KeyFrames.back();
+	KEYFRAME*		pKeyFrame = m_pKeyFrames->back();
 	_vector			vScale, vRotation, vTranslation;
 
 	//	이미 재생 위치가 마지막 키프레임의 위치를 넘어 섰다면..
@@ -216,10 +214,10 @@ _float4x4 CChannel::Compute_TransformationMatrix(_float fTrackPosition, _int* pC
 	else
 	{
 		//	다음 키프레임보다 현재 재생위치가 높거나 같을 경우 현재 키프레임을 다음 키프레임으로 올린다.
-		while (fTrackPosition >= m_KeyFrames[(*pCurrentKeyFrameIndex) + 1]->fTime)
+		while (fTrackPosition >= (*m_pKeyFrames)[(*pCurrentKeyFrameIndex) + 1]->fTime)
 			++(*pCurrentKeyFrameIndex);
 
-		while (fTrackPosition < m_KeyFrames[*pCurrentKeyFrameIndex]->fTime)
+		while (fTrackPosition < (*m_pKeyFrames)[*pCurrentKeyFrameIndex]->fTime)
 			--(*pCurrentKeyFrameIndex);
 
 		//	Ratio :: 비율 => 선형보간하기위한 수치
@@ -228,20 +226,20 @@ _float4x4 CChannel::Compute_TransformationMatrix(_float fTrackPosition, _int* pC
 		//	(다음 키프레임의 시작시간 - 현재 키프레임의 시작 시간) == 현재 키프레임의 구간 
 
 		//	==>>	현재 키프레임 구간의 재생 정도를 얻어낸다
-		_float		fRatio = (fTrackPosition - m_KeyFrames[(*pCurrentKeyFrameIndex)]->fTime)
-			/ (m_KeyFrames[(*pCurrentKeyFrameIndex) + 1]->fTime - m_KeyFrames[(*pCurrentKeyFrameIndex)]->fTime);
+		_float		fRatio = (fTrackPosition - (*m_pKeyFrames)[(*pCurrentKeyFrameIndex)]->fTime)
+			/ ((*m_pKeyFrames)[(*pCurrentKeyFrameIndex) + 1]->fTime - (*m_pKeyFrames)[(*pCurrentKeyFrameIndex)]->fTime);
 
 		//	현재 키프레임과 다음 키프레임 사이의 위치에서 위치의 진행 정도에 따라 다음 키프레임과 선형 보간을 한다. 
 		//	XMVectorLerp == > Result = V0 + t * (V1 - V0);
-		vScale = XMVectorLerp(XMLoadFloat3(&m_KeyFrames[(*pCurrentKeyFrameIndex)]->vScale),
-			XMLoadFloat3(&m_KeyFrames[(*pCurrentKeyFrameIndex) + 1]->vScale), fRatio);
+		vScale = XMVectorLerp(XMLoadFloat3(&(*m_pKeyFrames)[(*pCurrentKeyFrameIndex)]->vScale),
+			XMLoadFloat3(&(*m_pKeyFrames)[(*pCurrentKeyFrameIndex) + 1]->vScale), fRatio);
 
 		//	쿼터니언은 XMQuaternionSlerp 함수를 이용하여 선형보간을 진행한다.
-		vRotation = XMQuaternionSlerp(XMLoadFloat4(&m_KeyFrames[(*pCurrentKeyFrameIndex)]->vRotation),
-			XMLoadFloat4(&m_KeyFrames[(*pCurrentKeyFrameIndex) + 1]->vRotation), fRatio);
+		vRotation = XMQuaternionSlerp(XMLoadFloat4(&(*m_pKeyFrames)[(*pCurrentKeyFrameIndex)]->vRotation),
+			XMLoadFloat4(&(*m_pKeyFrames)[(*pCurrentKeyFrameIndex) + 1]->vRotation), fRatio);
 
-		vTranslation = XMVectorLerp(XMLoadFloat3(&m_KeyFrames[(*pCurrentKeyFrameIndex)]->vTranslation),
-			XMLoadFloat3(&m_KeyFrames[(*pCurrentKeyFrameIndex) + 1]->vTranslation), fRatio);
+		vTranslation = XMVectorLerp(XMLoadFloat3(&(*m_pKeyFrames)[(*pCurrentKeyFrameIndex)]->vTranslation),
+			XMLoadFloat3(&(*m_pKeyFrames)[(*pCurrentKeyFrameIndex) + 1]->vTranslation), fRatio);
 	}
 
 	_matrix			TransformationMatrix = XMMatrixAffineTransformation(
@@ -351,12 +349,16 @@ void CChannel::Free()
 {
 	__super::Free();
 
-	for (auto& pKeyFrame : m_KeyFrames)
+	if (false == m_isCloned)
 	{
-		if (false == m_isCloned)
+		for (auto& pKeyFrame : *m_pKeyFrames)
+		{
 			Safe_Delete(pKeyFrame);
-
-		pKeyFrame = nullptr;
-	}	
-	m_KeyFrames.clear();
+			pKeyFrame = nullptr;
+		}
+		m_pKeyFrames->clear();
+		Safe_Delete(m_pKeyFrames);
+	}
+	else
+		m_pKeyFrames = nullptr;
 }

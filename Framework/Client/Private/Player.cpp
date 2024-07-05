@@ -305,7 +305,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		Apply_Recoil(fTimeDelta);
 	}
 
-	if (PRESSING == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+	if (m_eState == HOLD && 	PRESSING == m_pGameInstance->Get_KeyState(VK_RBUTTON))
 	{
 		if (m_bAim == false)
 		{
@@ -409,6 +409,9 @@ void CPlayer::Tick(_float fTimeDelta)
 	Tick_PartObjects(fTimeDelta);
 
 	Tick_Effect(fTimeDelta);
+
+	//cout << m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y << endl;
+
 }
 
 void CPlayer::Late_Tick(_float fTimeDelta)

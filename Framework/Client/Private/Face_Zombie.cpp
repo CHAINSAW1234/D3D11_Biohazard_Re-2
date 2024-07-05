@@ -45,6 +45,8 @@ HRESULT CFace_Zombie::Initialize(void* pArg)
 #pragma endregion
 
 	m_bDecalRender = true;
+	m_bCloth = false;
+
 
 	return S_OK;
 }
@@ -76,6 +78,7 @@ void CFace_Zombie::Late_Tick(_float fTimeDelta)
 
 	_float3			vTempTranslation = {};
 	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);
+	//	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
 	//	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 	//	m_pModelCom->Play_Pose(m_pParentsTransform, fTimeDelta);
 
@@ -94,9 +97,8 @@ HRESULT CFace_Zombie::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; i++)
+	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+	for (auto& i : NonHideIndices)
 	{
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
@@ -175,9 +177,8 @@ HRESULT CFace_Zombie::Render_LightDepth_Dir()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
 
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (size_t i = 0; i < iNumMeshes; i++)
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
 		{
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
@@ -231,8 +232,8 @@ HRESULT CFace_Zombie::Render_LightDepth_Point()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
 			return E_FAIL;
 
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-		for (size_t i = 0; i < iNumMeshes; i++)
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
 		{
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
@@ -327,6 +328,45 @@ HRESULT CFace_Zombie::Initialize_Model()
 	m_pModelCom->Active_RootMotion_XZ(false);
 	m_pModelCom->Active_RootMotion_Y(false);
 	m_pModelCom->Active_RootMotion_Rotation(false);
+
+	if (FAILED(Initialize_MeshType()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CFace_Zombie::Initialize_MeshType()
+{
+	_uint						iNumMesh = { m_pModelCom->Get_NumMeshes() };
+	vector<string>				MeshTags = { m_pModelCom->Get_MeshTags() };
+
+	for (auto& strMeshTag : MeshTags)
+	{
+		if (strMeshTag.find("Inside") != string::npos)
+		{
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_INNER));
+		}
+
+		else if (strMeshTag.find("Face") != string::npos)
+		{
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_OUTTER));
+		}
+
+		else if (strMeshTag.find("Hair") != string::npos)
+		{
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_HAIR));
+		}
+
+		else if (strMeshTag.find("Teeth") != string::npos)
+		{
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_TEETH));
+		}
+	}
+
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_INNER), false);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_OUTTER), false);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_HAIR), false);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_TEETH), false);
 
 	return S_OK;
 }
@@ -531,6 +571,8 @@ HRESULT CFace_Zombie::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_Cloth", &m_bCloth, sizeof(_bool))))
 		return E_FAIL;
 
 	return S_OK;

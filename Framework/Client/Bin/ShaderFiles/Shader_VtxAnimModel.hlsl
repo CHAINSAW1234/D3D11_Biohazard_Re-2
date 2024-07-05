@@ -37,6 +37,7 @@ bool g_isMotionBlur;
 
 StructuredBuffer<float2> g_DecalMap;
 bool		g_DecalRender;
+bool		g_Cloth;
 
 struct VS_IN
 {
@@ -326,18 +327,38 @@ PS_OUT PS_MAIN(PS_IN In)
 				float2 center = float2(0.5f, 0.5f);
 				float distance = length(DecalUV - center);
 
-				if (distance < 0.1f)
+				if(g_Cloth)
 				{
-					/*decalColor = float4(0.5f, 0.0f, 0.0f, 0.f);
-					Out.vDiffuse = decalColor;*/
-					discard;
+					if (distance < 0.1f)
+					{
+						/*decalColor = float4(0.5f, 0.0f, 0.0f, 0.f);
+						Out.vDiffuse = decalColor;*/
+						discard;
+					}
+					else
+					{
+						if (decalColor.a > 0.01f)
+						{
+							decalColor = float4(0.3f, 0.0f, 0.0f, 1.f);
+							Out.vDiffuse = decalColor;
+						}
+					}
 				}
 				else
 				{
-					if (decalColor.a > 0.01f)
+					if (distance < 0.3f)
 					{
-						decalColor = float4(0.5f, 0.0f, 0.0f, decalColor.a);
-						Out.vDiffuse = decalColor;
+						/*decalColor = float4(0.5f, 0.0f, 0.0f, 0.f);
+						Out.vDiffuse = decalColor;*/
+						discard;
+					}
+					else
+					{
+						if (decalColor.a > 0.01f)
+						{
+							decalColor = float4(0.3f, 0.0f, 0.0f, 1.f);
+							Out.vDiffuse = decalColor;
+						}
 					}
 				}
 			}

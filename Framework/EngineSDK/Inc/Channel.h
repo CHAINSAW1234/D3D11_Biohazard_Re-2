@@ -35,7 +35,7 @@ public:
 	_float4x4								Compute_TransformationMatrix_LinearInterpolation(const vector<_float4x4>& TransformationMatrices, _float fAccLinearInterpolation, _float fTotalLinearTime, const vector<KEYFRAME>& LastKeyFrames);
 
 public:
-	inline const vector<KEYFRAME*>&			Get_KeyFrames() { return m_KeyFrames; }
+	inline const vector<KEYFRAME*>&			Get_KeyFrames() { return *m_pKeyFrames; }
 	inline _int								Get_BoneIndex() { return m_iBoneIndex; }
 	inline _uint							Get_Num_KeyFrame() { return m_iNumKeyFrames; }
 
@@ -46,7 +46,7 @@ private:
 	_char									m_szName[MAX_PATH] = { "" };
 	_int									m_iBoneIndex = { -1 };
 	_uint									m_iNumKeyFrames = { 0 };
-	vector<KEYFRAME*>						m_KeyFrames;
+	vector<KEYFRAME*>*						m_pKeyFrames = { nullptr };
 
 	_bool									m_isCloned = { false };
 

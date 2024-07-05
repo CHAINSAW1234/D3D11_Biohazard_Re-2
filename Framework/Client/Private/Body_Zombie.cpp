@@ -50,6 +50,9 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 	if (m_eBodyModelType == ZOMBIE_BODY_TYPE::_FEMALE)
 		m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie_Female/Body_Female.fbx");
 
+	if (m_eBodyModelType == ZOMBIE_BODY_TYPE::_MALE_BIG)
+		m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/Zombie_Male_Big/Body_Male_Big.fbx");
+
 #pragma region Effect
 	m_pModelCom->Init_Decal(LEVEL_GAMEPLAY);
 #pragma endregion
@@ -188,7 +191,7 @@ HRESULT CBody_Zombie::Render()
 				return E_FAIL;
 		}
 		
-		if(m_pModelCom->Get_Mesh_Branch(i) != (_int)CBody_Zombie::MESH_TYPE::_INNER)
+		if(m_pModelCom->Get_Mesh_Branch(i) != (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER)
 		{
 			m_bDecalRender = true;
 
@@ -628,44 +631,43 @@ HRESULT CBody_Zombie::Add_Animations()
 HRESULT CBody_Zombie::Initialize_MeshTypes()
 {
 	_uint						iNumMesh = { m_pModelCom->Get_NumMeshes() };
-
 	vector<string>				MeshTags = { m_pModelCom->Get_MeshTags() };
 
 	for (auto& strMeshTag : MeshTags)
 	{
 		if (strMeshTag.find("Inside") != string::npos)
 		{
-			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_INNER));
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_INNER));
 		}
 	
 		else if (strMeshTag.find("Joint") != string::npos)
 		{
-			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_JOINT));
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_JOINT));
 		}
 
 		else if (strMeshTag.find("Deficit") != string::npos)
 		{
-			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_DEFICIT));
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_DEFICIT));
 		}
 
 		else if (strMeshTag.find("Damage") != string::npos)
 		{
-			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_DAMAGED));
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_DAMAGED));
 		}
 
 		else if (strMeshTag.find("Internal_Mat") != string::npos)
 		{
-			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_INTERNAL_MAT));
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_INTERNAL_MAT));
 		}
 
 		else if (strMeshTag.find("BrokenHead") != string::npos)
 		{
-			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_BROKEN_HEAD));
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_BROKEN_HEAD));
 		}
 
 		else
 		{
-			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_OUTTER));
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_OUTTER));
 		}
 	}
 
@@ -1180,6 +1182,8 @@ HRESULT CBody_Zombie::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevViewMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_Cloth", &m_bCloth, sizeof(_bool))))
 		return E_FAIL;
 
 	return S_OK;

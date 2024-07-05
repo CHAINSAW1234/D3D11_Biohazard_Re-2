@@ -15,6 +15,8 @@ public:
 		_int						iFaceModelID = { -1 };
 	}FACE_MONSTER_DESC;
 
+	enum class FACE_MESH_TYPE { _INNER, _OUTTER, _TEETH, _HAIR, _END };
+
 private:
 	CFace_Zombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CFace_Zombie(const CFace_Zombie& rhs);
@@ -33,6 +35,7 @@ public:
 	virtual void			Add_RenderGroup() override;
 private:
 	HRESULT					Initialize_Model();
+	HRESULT					Initialize_MeshType();
 
 private:
 	CModel*					m_pModelCom = { nullptr };

@@ -20,7 +20,7 @@ public:
 		ZOMBIE_BODY_TYPE	eBodyType = { ZOMBIE_BODY_TYPE::_END };
 	}BODY_MONSTER_DESC;
 
-	enum class MESH_TYPE{ _INNER, _OUTTER, _JOINT, _DEFICIT, _DAMAGED, _BROKEN_HEAD, _INTERNAL_MAT, _END };
+	enum class BODY_MESH_TYPE{ _INNER, _OUTTER, _JOINT, _DEFICIT, _DAMAGED, _BROKEN_HEAD, _INTERNAL_MAT, _END };
 
 private:
 	CBody_Zombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -23,6 +23,7 @@
 #include "Decal_SSD.h"
 
 #define MODEL_SCALE 0.01f
+#define BLOOD_COUNT 3
 
 CZombie::CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMonster{ pDevice, pContext }
@@ -151,7 +152,7 @@ HRESULT CZombie::Initialize(void* pArg)
 #pragma endregion
 
 #pragma region Effect
-	m_BloodDelay = 70;
+	m_BloodDelay = 50;
 	Ready_Effect();
 #pragma endregion
 
@@ -1016,7 +1017,7 @@ void CZombie::Perform_Skinning()
 
 				for (auto& i : NonHideIndex)
 				{
-					if(m_pBodyModel->Get_Mesh_Branch(i) != (_int)CBody_Zombie::MESH_TYPE::_INNER)
+					if(m_pBodyModel->Get_Mesh_Branch(i) != (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER)
 					{
 						m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
 						m_pBodyModel->Bind_Resource_Skinning(i);
@@ -1106,7 +1107,7 @@ void CZombie::Perform_Skinning()
 
 				for (auto& i : NonHideIndex)
 				{
-					if (m_pBodyModel->Get_Mesh_Branch(i) != (_int)CBody_Zombie::MESH_TYPE::_INNER)
+					if (m_pBodyModel->Get_Mesh_Branch(i) != (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER)
 					{
 						m_pBodyModel->Bind_Essential_Resource_Skinning(&m_WorldMat_To_Decal);
 						m_pBodyModel->Bind_Resource_Skinning(i);
@@ -1345,10 +1346,10 @@ void CZombie::RayCast_Decal()
 
 void CZombie::Ready_Effect()
 {
-	for (size_t i = 0; i < 3; ++i)
+	for (size_t i = 0; i < BLOOD_COUNT; ++i)
 	{
 		auto pBlood = CBlood::Create(m_pDevice, m_pContext);
-		pBlood->SetSize(3.f, 3.f, 3.f);
+		pBlood->SetSize(2.f, 2.f, 2.f);
 		m_vecBlood.push_back(pBlood);
 	}
 }
@@ -1437,32 +1438,32 @@ void CZombie::Calc_Decal_Map()
 {
 	if(m_pBodyModel)
 	{
-		m_pBodyModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix(), (_int)CBody_Zombie::MESH_TYPE::_INNER);
-		m_pBodyModel->Perform_Calc_DecalMap((_int)CBody_Zombie::MESH_TYPE::_INNER);
+		m_pBodyModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix(), (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER);
+		m_pBodyModel->Perform_Calc_DecalMap((_int)CBody_Zombie::BODY_MESH_TYPE::_INNER);
 	}
 
 	if(m_pHeadModel)
 	{
-		m_pHeadModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix(),(_int)CBody_Zombie::MESH_TYPE::_INNER);
-		m_pHeadModel->Perform_Calc_DecalMap((_int)CBody_Zombie::MESH_TYPE::_INNER);
+		m_pHeadModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix(),(_int)CBody_Zombie::BODY_MESH_TYPE::_INNER);
+		m_pHeadModel->Perform_Calc_DecalMap((_int)CBody_Zombie::BODY_MESH_TYPE::_INNER);
 	}
 
 	if(m_pShirtsModel)
 	{
-		m_pShirtsModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix(), (_int)CBody_Zombie::MESH_TYPE::_INNER);
-		m_pShirtsModel->Perform_Calc_DecalMap((_int)CBody_Zombie::MESH_TYPE::_INNER);
+		m_pShirtsModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix(), (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER);
+		m_pShirtsModel->Perform_Calc_DecalMap((_int)CBody_Zombie::BODY_MESH_TYPE::_INNER);
 	}
 
 	if (m_pPantsModel)
 	{
-		m_pPantsModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix(), (_int)CBody_Zombie::MESH_TYPE::_INNER);
-		m_pPantsModel->Perform_Calc_DecalMap((_int)CBody_Zombie::MESH_TYPE::_INNER);
+		m_pPantsModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix(), (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER);
+		m_pPantsModel->Perform_Calc_DecalMap((_int)CBody_Zombie::BODY_MESH_TYPE::_INNER);
 	}
 
 	if(m_pHatModel)
 	{
-		m_pHatModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix(), (_int)CBody_Zombie::MESH_TYPE::_INNER);
-		m_pHatModel->Perform_Calc_DecalMap((_int)CBody_Zombie::MESH_TYPE::_INNER);
+		m_pHatModel->SetDecalWorldMatrix(m_iMeshIndex_Hit, m_vecBlood[m_iBloodCount]->GetWorldMatrix(), (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER);
+		m_pHatModel->Perform_Calc_DecalMap((_int)CBody_Zombie::BODY_MESH_TYPE::_INNER);
 	}
 }
 
