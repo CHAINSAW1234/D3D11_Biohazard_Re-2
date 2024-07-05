@@ -53,6 +53,16 @@ _bool CHold_Zombie::Execute(_float fTimeDelta)
 	_bool					isEntry = { eMonsterState != MST_HOLD };
 	if (true == isEntry)
 	{
+		DIRECTION			eDirectionToPlayer = { DIRECTION::_END };
+		if (false == m_pBlackBoard->Compute_Direction_To_Player_8Direction_Local(&eDirectionToPlayer))
+			return false;
+
+		if (DIRECTION::_BL == eDirectionToPlayer ||
+			DIRECTION::_BR == eDirectionToPlayer ||
+			DIRECTION::_FL == eDirectionToPlayer ||
+			DIRECTION::_FR == eDirectionToPlayer)
+			return false;
+
 		if (MONSTER_STATE::MST_STANDUP == eMonsterState ||
 			MONSTER_STATE::MST_TURNOVER == eMonsterState)
 			return false;
@@ -238,6 +248,8 @@ void CHold_Zombie::Change_Animation_Creep()
 
 		else
 			iResultAnimationIndex = static_cast<_uint>(ANIM_LOST_HOLD::_FACEUP1);
+
+		m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_DOWN);
 	}
 
 	if (-1 == iResultAnimationIndex)

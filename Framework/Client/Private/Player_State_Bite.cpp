@@ -17,10 +17,8 @@ void CPlayer_State_Bite::OnStateEnter()
 	CPlayer::EQUIP eEquip = CPlayer::NONE;
 	m_pPlayer->Set_Equip(&eEquip);
 
-
 	m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f, 10.f);
-	m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 10.f);
-
+	m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 0.f);
 
 	m_pPlayer->Get_Body_Model()->Set_Loop(0, false);
 	//m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f, 10.f);

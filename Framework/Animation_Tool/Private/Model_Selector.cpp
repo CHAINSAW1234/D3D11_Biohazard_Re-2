@@ -116,7 +116,7 @@ HRESULT CModel_Selector::Add_Components()
 		//	Load. Zombie
 		pModel = { nullptr };
 
-		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieBody"))) };
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Body_Male"))) };
 		if (nullptr == pModel)
 			return E_FAIL;
 
@@ -124,67 +124,342 @@ HRESULT CModel_Selector::Add_Components()
 
 		pModel = { nullptr };
 
-		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieFace1"))) };
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Hat00_Male"))) };
 		if (nullptr == pModel)
 			return E_FAIL;
 
-		m_Models["Zombie_Face1"] = pModel;
+		m_Models["Zombie_Hat00"] = pModel;
 
 		pModel = { nullptr };
 
-		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieFace2"))) };
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Hat01_Male"))) };
 		if (nullptr == pModel)
 			return E_FAIL;
 
-		m_Models["Zombie_Face3"] = pModel;
+		m_Models["Zombie_Hat01"] = pModel;
 
 		pModel = { nullptr };
 
-		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieFace3"))) };
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Face00_Male"))) };
 		if (nullptr == pModel)
 			return E_FAIL;
 
-		m_Models["Zombie_Face2"] = pModel;
+		m_Models["Zombie_Face00"] = pModel;
 
 		pModel = { nullptr };
 
-		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieHat"))) };
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Face01_Male"))) };
 		if (nullptr == pModel)
 			return E_FAIL;
 
-		m_Models["Zombie_Hat"] = pModel;
+		m_Models["Zombie_Face01"] = pModel;
 
 		pModel = { nullptr };
 
-		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieShirts1"))) };
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Face02_Male"))) };
 		if (nullptr == pModel)
 			return E_FAIL;
 
-		m_Models["Zombie_Shirts1"] = pModel;
+		m_Models["Zombie_Face02"] = pModel;
 
 		pModel = { nullptr };
 
-		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieShirts2"))) };
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Face03_Male"))) };
 		if (nullptr == pModel)
 			return E_FAIL;
 
-		m_Models["Zombie_Shirts2"] = pModel;
-
-		/*pModel = { nullptr };
-
-		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombieShirts3"))) };
-		if (nullptr == pModel)
-			return E_FAIL;
-
-		m_Models["Zombie_Shirts3"] = pModel;*/
+		m_Models["Zombie_Face03"] = pModel;
 
 		pModel = { nullptr };
 
-		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_ZombiePants"))) };
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Face04_Male"))) };
 		if (nullptr == pModel)
 			return E_FAIL;
 
-		m_Models["Zombie_Pants"] = pModel;
+		m_Models["Zombie_Face04"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Face05_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Face05"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Face06_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Face06"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Face07_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Face07"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Face08_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Face08"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Face09_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Face09"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Face10_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Face10"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Pants00_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Pants00"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Pants00_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Pants00"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Pants00_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Pants00"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Pants01_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Pants01"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Pants02_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Pants02"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Pants03_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Pants03"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Pants04_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Pants04"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Pants05_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Pants05"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Pants06_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Pants06"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts00_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts00"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts01_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts01"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts02_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts02"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts03_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts03"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts04_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts04"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts05_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts05"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts06_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts06"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts06_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts06"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts08_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts08"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts09_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts09"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts11_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts11"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts12_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts12"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts70_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts70"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts72_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts72"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts73_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts73"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Shirts81_Male"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Shirts81"] = pModel;
+
+		
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_7800"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["PL7800"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_7850"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["PL7850"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_7870"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["PL7870"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_7880"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["PL7880"] = pModel;
+
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////........///////////////////////////////////////////////////////////////

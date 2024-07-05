@@ -30,6 +30,8 @@ private:
 	HRESULT Loading_For_Static_Component();
 
 	HRESULT Load_Field_Prototype(const wstring& filePath);
+	HRESULT Create_Prototypes_Actor();
+	HRESULT Create_Prototypes_CutScene();
 
 
 private:

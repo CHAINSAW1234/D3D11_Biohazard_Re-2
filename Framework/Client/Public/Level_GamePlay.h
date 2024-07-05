@@ -29,6 +29,7 @@ private:
 	HRESULT Ready_Layer_Monster(const wstring& strLayerTag);
 	HRESULT Ready_Layer_LandBackGround(const wstring& strLayerTag);
 	HRESULT Ready_RegionCollider();
+	HRESULT Ready_CutScene();
 
 	HRESULT Ready_Layer_Effect(const wstring& strLayerTag);
 	HRESULT Ready_Layer_UI(const wstring& strLayerTag);

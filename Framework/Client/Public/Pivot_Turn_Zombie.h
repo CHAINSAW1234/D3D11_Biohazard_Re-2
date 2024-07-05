@@ -23,6 +23,8 @@ public:
 private:
 	void							Change_Animation(_float fTimeDelta);
 
+	_bool							Is_StateFinished();
+
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard)
 	{
@@ -36,6 +38,12 @@ protected:
 
 	unordered_map<wstring, unordered_set<_uint>>			m_StartAnimIndicesLayer;
 	unordered_map<wstring, unordered_set<_uint>>			m_LoopAnimIndicesLayer;
+
+	const PLAYING_INDEX				m_eBasePlayingIndex = { PLAYING_INDEX::INDEX_0 };
+	const PLAYING_INDEX				m_eBlendPlayingIndex = { PLAYING_INDEX::INDEX_1 };
+
+	const wstring					m_strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
+	const wstring					m_strAnimLayerTag = { TEXT("Ordinary_PivotTurn") };
 
 public:
 	static CPivot_Turn_Zombie* Create(void* pArg = nullptr);

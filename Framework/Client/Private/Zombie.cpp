@@ -622,32 +622,10 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_Move->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Move);
 
-	//	Add Decorator Node		=>		Task Move, Deco In View
-	CIs_Charactor_In_ViewAngle_Zombie* pDeco_Charactor_In_View = { CIs_Charactor_In_ViewAngle_Zombie::Create() };
-	pDeco_Charactor_In_View->SetBlackBoard(m_pBlackBoard);
-	pTask_Move->Insert_Decorator_Node(pDeco_Charactor_In_View);
-
-	//	Add Decorator Node		=>		Task Move, Deco Can Change State
-	/*CIs_Can_Change_State_Zombie::CAN_CHANGE_STATE_ZOMBIE_DESC		CanChangeStateForMoveDesc;
-	CanChangeStateForMoveDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE);
-	CanChangeStateForMoveDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_TURN);
-	CIs_Can_Change_State_Zombie*				pDeco_Can_Change_StateForMove = { CIs_Can_Change_State_Zombie::Create(&CanChangeStateForMoveDesc) };
-	pDeco_Can_Change_StateForMove->SetBlackBoard(m_pBlackBoard);
-	pTask_Move->Insert_Decorator_Node(pDeco_Can_Change_StateForMove);*/
-
-
-	////Add Task Node
-	//CPivot_Turn_Zombie* pTask_Pivot_Turn = { CPivot_Turn_Zombie::Create() };
-	//pTask_Pivot_Turn->SetBlackBoard(m_pBlackBoard);
-	//pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Pivot_Turn);
-
-	//Add Decorator Node		=>		Task Turn, Deco Can Change State
-	/*CIs_Can_Change_State_Zombie::CAN_CHANGE_STATE_ZOMBIE_DESC		CanChangeStateForTurnDesc;
-	CanChangeStateForTurnDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_DAMAGE);
-	CanChangeStateForTurnDesc.NonBlockTypes.emplace_back(ZOMBIE_BODY_ANIM_TYPE::_TURN);
-	CIs_Can_Change_State_Zombie*				pDeco_Can_Change_State_ForTurn = { CIs_Can_Change_State_Zombie::Create(&CanChangeStateForTurnDesc) };
-	pDeco_Can_Change_State_ForTurn->SetBlackBoard(m_pBlackBoard);
-	pTask_Pivot_Turn->Insert_Decorator_Node(pDeco_Can_Change_State_ForTurn);*/
+	//Add Task Node
+	CPivot_Turn_Zombie* pTask_Pivot_Turn = { CPivot_Turn_Zombie::Create() };
+	pTask_Pivot_Turn->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Pivot_Turn);
 
 #pragma endregion
 
@@ -863,8 +841,10 @@ HRESULT CZombie::Initialize_Status()
 
 	m_pStatus->fAttack = STATUS_ZOMBIE_ATTACK;
 	m_pStatus->fViewAngle = STATUS_ZOMBIE_VIEW_ANGLE;
+	m_pStatus->fMaxMoveAngle = STATUS_ZOMBIE_MAX_MOVE_ANGLE;
 
 	m_pStatus->fRecognitionRange = STATUS_ZOMBIE_DEFAULT_RECOGNITION_DISTANCE;
+	m_pStatus->fRecognitionRange_LookTarget = STATUS_ZOMBIE_MAX_RECOGNITION_DISTANCE;
 	m_pStatus->fMaxRecognitionTime = STATUS_ZOMBIE_MAX_RECOGNITION_TIME;
 	m_pStatus->fBiteRange = STATUS_ZOMBIE_BITE_RANGE;
 

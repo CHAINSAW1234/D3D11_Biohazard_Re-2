@@ -24,9 +24,12 @@ public:
 	{
 		_float				fSpeed = { 0.f };
 
-		_float				fRecognitionRange = { 0.f };		//	시간 누적하기 시작하는 거리
-		_float				fAccRecognitionTime = { 0.f };		//	Hold 누적 시간 ( 시도하기 전 )
-		_float				fMaxRecognitionTime = { 0.f };		//	Hold 누적 최대 시간 ( 아직 시도하지 못할 경우 시간 누적 감소 => 미리 더 쌓기 가능하게 )
+		_float				fRecognitionRange = { 0.f };		//	인지 시간 누적하기 시작하는 거리
+		_float				fRecognitionRange_LookTarget = { 0.f };	//	이미 인지한 후에 인지 시간 누적하는거리
+		_float				fAccRecognitionTime = { 0.f };		//	인지 하기위한 누적 시간
+		_float				fMaxRecognitionTime = { 0.f };		//	인지 누적 최대 시간 ( 아직 시도하지 못할 경우 시간 누적 감소 => 미리 더 쌓기 가능하게 )
+
+		_float				fLookTrargetNeedTime = { 0.f };		//	인지 하는데 필요한 누적시간
 
 		_float				fBiteRange = { 0.f };
 
@@ -41,12 +44,12 @@ public:
 		_float				fAccCreepTime = { 0.f };
 		_float				fTryStandUpTime = { 0.f };			//	Creep에서 일어나기 위한 모션을 진행할때 필요한 시간
 																//	하체가 없을 시 => TurnOver로 대체
-
 		_float				fStamina = { 0.f };
 		_float				fStaminaChargingPerSec = { 0.f };
 		_float				fMaxStamina = { 0.f };
 
 		_float				fViewAngle = { 0.f };
+		_float				fMaxMoveAngle = { 0.f };			//	이 범위 이내면 무브 프론트 아니면 피벗 턴
 		_float				fAttack = { 0.f };
 		_float				fHealth = { 0.f };
 	}MONSTER_STATUS;

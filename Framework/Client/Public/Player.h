@@ -117,7 +117,7 @@ public:
 	_int											Get_Hp() { return m_iHp; }
 	CWeapon*									Get_Weapon() { return m_pWeapon; }
 	EQUIP										Get_Equip() { return m_eEquip; }
-	ITEM_NUMBER							Get_Equip_As_ITEM_NUMBER();
+	ITEM_NUMBER									Get_Equip_As_ITEM_NUMBER();
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
 	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
 	_float4										Get_MuzzlePosition();

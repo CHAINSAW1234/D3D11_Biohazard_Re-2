@@ -341,31 +341,35 @@ HRESULT CFace_Zombie::Initialize_MeshType()
 
 	for (auto& strMeshTag : MeshTags)
 	{
-		if (strMeshTag.find("Inside") != string::npos)
+		if (strMeshTag.find("Inside") != string::npos ||
+			strMeshTag.find("inside") != string::npos)
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_INNER));
 		}
 
-		else if (strMeshTag.find("Face") != string::npos)
+		else if (strMeshTag.find("Face") != string::npos ||
+			strMeshTag.find("face") != string::npos)
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_OUTTER));
 		}
 
-		else if (strMeshTag.find("Hair") != string::npos)
+		else if (strMeshTag.find("Hair") != string::npos ||
+			strMeshTag.find("hair") != string::npos)
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_HAIR));
 		}
 
-		else if (strMeshTag.find("Teeth") != string::npos)
+		else if (strMeshTag.find("Teeth") != string::npos ||
+			strMeshTag.find("teeth") != string::npos)
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_TEETH));
 		}
 	}
 
 	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_INNER), false);
-	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_OUTTER), false);
-	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_HAIR), false);
-	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_TEETH), false);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_OUTTER), true);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_HAIR), true);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_TEETH), true);
 
 	return S_OK;
 }

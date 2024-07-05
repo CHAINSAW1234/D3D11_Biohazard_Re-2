@@ -27,6 +27,12 @@
 #include "CustomCollider.h"
 #include "NavMesh_Debug.h"
 
+/* Actor */
+#include "Actor_PL78.h"
+
+/* CutScene */
+#include "Cut_Scene_CF93.h"
+
 /* Decal*/
 #include "Decal_SSD.h"
 
@@ -850,6 +856,24 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	return S_OK;
 }
 
+HRESULT CLoader::Create_Prototypes_Actor()
+{
+	if(FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_PL7800"),
+		CActor_PL78::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Create_Prototypes_CutScene()
+{
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CutScene_CF93"),
+		CCut_Scene_CF93::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CLoader::Loading_For_Logo()
 {
 	m_strLoadingText = TEXT("Now Loadin ... Texture");
@@ -1658,6 +1682,40 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 #pragma endregion
 
+#pragma region CutScene_Model
+	
+#pragma region PL7800 
+
+	/* Prototype_Component_Model_PL7800 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_PL7800"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/pl7800/pl7800.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+
+	/* Prototype_Component_Model_PL7850 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_PL7850"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/pl7850/pl7850.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+
+	/* Prototype_Component_Model_PL7870 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_PL7870"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/pl7870/pl7870.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+
+	/* Prototype_Component_Model_PL7880 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_PL7880"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/pl7880/pl7880.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+#pragma endregion		//	PL7800
+
+#pragma endregion		//	CutScene_Model
+
 	m_strLoadingText = TEXT("Now Loading ... Animations");
 
 #pragma region Animation Load 
@@ -1665,6 +1723,18 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	if (FAILED(Load_Animations()))
 		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Actor Object Prototypes
+
+	Create_Prototypes_Actor();
+
+#pragma endregion
+
+#pragma region CutScene Object Prototypes
+
+	Create_Prototypes_CutScene();
 
 #pragma endregion
 
@@ -1957,6 +2027,33 @@ HRESULT CLoader::Load_Animations()
 		return E_FAIL;
 
 #pragma endregion
+
+#pragma region For.CutScene Animatoin 
+
+#pragma region CF93
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL0000"), "../Bin/Resources/Animations/CutScene/CF93/pl0000/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL0050"), "../Bin/Resources/Animations/CutScene/CF93/pl0050/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_EM0000"), "../Bin/Resources/Animations/CutScene/CF93/em0000/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL7800"), "../Bin/Resources/Animations/CutScene/CF93/pl7800/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL7850"), "../Bin/Resources/Animations/CutScene/CF93/pl7850/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL7880"), "../Bin/Resources/Animations/CutScene/CF93/pl7880/")))
+		return E_FAIL;
+
+#pragma endregion // CF98
+
+
+#pragma endregion 
 
 	return S_OK;	
 }
