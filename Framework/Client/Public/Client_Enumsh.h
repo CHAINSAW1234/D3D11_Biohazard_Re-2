@@ -20,6 +20,8 @@ namespace Client
 		ID_END
 	};
 
+	enum class ITEM_READ_TYPE { INCIDENT_LOG_NOTE, OPERATE_REPORT_NOTE, TASK_NOTE, MEDICINAL_NOTE, OFFICER_NOTE, END_NOTE };
+
 	enum UI_OPERRATION{ POP_UP, UI_IDLE, HIDE, STATE_END };
 
 	enum class UI_TUTORIAL_TYPE { TUTORIAL_WALK, TUTORIAL_AROUND, TUTORIAL_RUN, TUTORIAL_REROAD, TUTORIAL_AIM, TUTORIAL_EQUIP, INVENTORY_OPEN, TUTORIAL_END };
@@ -292,8 +294,8 @@ namespace Client
 		virginmedal02a,
 		chaincutter01a,
 		/*74*/
-		rpddocument01a,
-		rpddocumentblood01a,
+		rpddocument01a, /* 40. RPD 종이 */
+		rpddocumentblood01a, /* 41. 피 묻은 메모장 */
 		diary01a,
 		document01a,
 		pamphlet01a,

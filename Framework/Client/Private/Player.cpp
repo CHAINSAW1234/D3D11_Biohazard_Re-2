@@ -22,7 +22,7 @@
 #include "Effect_Header_Player.h"
 
 #include "Tab_Window.h"
-#include "Bone.h"
+#include "Selector_UI.h"
 
 
 #define MODEL_SCALE 0.01f
@@ -495,7 +495,32 @@ void CPlayer::Start()
 		assert(0);
 	}
 
-	Safe_AddRef(m_pTabWindow);
+	list<CGameObject*>* pSelecter_UI = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+	for (auto& iter : *pSelecter_UI)
+	{
+		CSelector_UI* pSelect = dynamic_cast<CSelector_UI*>(iter);
+		
+		if (nullptr != pSelect)
+		{
+			/* 부모를 불러서 Selector를 구별한다 */
+			if (false == pSelect->Get_Child())
+			{
+				for (auto& child : *pSelecter_UI)
+				{
+					CSelector_UI* pSelectChild = dynamic_cast<CSelector_UI*>(child);
+
+					if (nullptr != pSelectChild)
+					{
+						/* 부모와 자식이 가지고 있는 Supervise가 같다면*/
+						if (pSelect == pSelectChild->Get_Supervise())
+							pSelect->Set_SelectorObj_Collection(pSelectChild);
+					}
+				}
+				m_SelectorVec.push_back(pSelect);
+			}
+		}
+	}
 }
 
 void CPlayer::Priority_Tick_PartObjects(_float fTimeDelta)
@@ -588,6 +613,21 @@ void CPlayer::Player_First_Behavior()
 	}
 }
 
+/* 쓸 Selector를 선택한다 */
+CGameObject* CPlayer::Create_Selector_UI()
+{
+	for (auto& iter : m_SelectorVec)
+	{
+		if (false == iter->Get_Using())
+		{
+			*iter->Get_Using() = true;
+
+			return iter;
+		}
+	}
+
+	return nullptr;
+}
 
 #pragma endregion
 

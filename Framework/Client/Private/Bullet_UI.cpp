@@ -159,9 +159,13 @@ void CBullet_UI::Tick(_float fTimeDelta)
     }
 
     else if (CPlayer::EQUIP::GRENADE == m_pPlayer->Get_Equip())
+    else if (CPlayer::EQUIP::GN == m_pPlayer->Get_Equip() || CPlayer::EQUIP::LN == m_pPlayer->Get_Equip())
     {
-        if (m_iEqipType == (_int)CPlayer::EQUIP::GRENADE || m_iEqipType == BULLET_BACKGROUND)
-            Change_Grenade(fTimeDelta);
+        if (m_iEqipType == (_int)CPlayer::EQUIP::GN || m_iEqipType == BULLET_BACKGROUND)
+            Change_Grenade(fTimeDelta, (_int)CPlayer::EQUIP::GN);
+
+        else  if (m_iEqipType == (_int)CPlayer::EQUIP::LN || m_iEqipType == BULLET_BACKGROUND)
+            Change_Grenade(fTimeDelta, (_int)CPlayer::EQUIP::LN);
 
         else
         {
@@ -249,10 +253,20 @@ void CBullet_UI::Bullet_Font()
 }
 
 /* 수류탄 */
-void CBullet_UI::Change_Grenade(_float fTimeDelta)
+void CBullet_UI::Change_Grenade(_float fTimeDelta, _int _grenadeType)
 {
     /* Font : 수류탄 개수 넣어주기 */
-    m_isRender = true;
+    if (static_cast<CPlayer::EQUIP>(_grenadeType) == CPlayer::EQUIP::LN)
+    {
+        if (true == m_IsChild)
+            m_isRender = true;
+    }
+
+    else if (static_cast<CPlayer::EQUIP>(_grenadeType) == CPlayer::EQUIP::GN)
+    {
+        if (false == m_IsChild)
+            m_isRender = true;
+    }
 
     if(!m_vecTextBoxes.empty())
         m_vecTextBoxes.back()->Set_Text(to_wstring(m_iCurrentBullet));
@@ -321,6 +335,9 @@ void CBullet_UI::OnNotify()
 
 void CBullet_UI::Change_BulletUI()
 {
+    if (nullptr == m_pTextUI[0].pText || nullptr == m_pTextUI[1].pText)
+        return;
+
     if (m_iCurrentBullet != m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt)
     {
         m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].iBulletCnt = m_iCurrentBullet;

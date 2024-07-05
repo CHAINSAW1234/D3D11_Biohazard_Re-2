@@ -40,13 +40,13 @@ private: /* Hand Gun */
 	void					Bullet_Font();
 
 private : /* Grenade */
-	void					Change_Grenade(_float fTimeDelta);
+	void					Change_Grenade(_float fTimeDelta, _int _grenadeType);
 
 private :
 	void					Find_Crosshair();
 
 private:
-	class CCrosshair_UI*	m_pCrosshair = { nullptr };
+	class CCrosshair_UI*	m_pCrosshair	= { nullptr };
 
 private:
 	wstring					m_wstrFile = { TEXT("") };

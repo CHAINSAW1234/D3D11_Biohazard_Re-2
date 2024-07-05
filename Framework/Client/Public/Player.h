@@ -235,16 +235,27 @@ public:
 	_bool*										Get_Tutorial_Notify()	{ return &m_isTutorial_Notify; }
 	UI_TUTORIAL_TYPE*							Get_Tutorial_Type()		{ return &m_eTutial_Type; }
 	_byte										Get_Player_State()		{ return m_eState; } /* Player 상태 반환 */
+	_bool*										Get_ZoomOff()			{ return &m_isZoomOff;  }
 
 	/* For. Fuction */
 	void										Player_First_Behavior();
+
+	/* For. Selector UI Interact : */
+	CGameObject*								Create_Selector_UI(); /* 사용할 Selector Obj를 return */
+
 
 	/* For. Variable */
 	UI_TUTORIAL_TYPE							m_eTutial_Type					= { UI_TUTORIAL_TYPE::TUTORIAL_END };
 
 	_bool										m_isNYResult;
-	_bool										m_isPlayer_FirstBehavior[100] = { false };
-	_bool										m_isTutorial_Notify = { false };
+	_bool										m_isPlayer_FirstBehavior[100]	= { false };
+	_bool										m_isTutorial_Notify				= { false };
+	_bool										m_isZoomOff						= { false }; /* 팀장 양반 줌좀 꺼주쇼 */
+	
+	vector<class CSelector_UI*>					m_SelectorVec;	/* Selector UI의 부모를 넣는 공간 */
+
+
+
 #pragma
 
 #pragma region 예은 추가 

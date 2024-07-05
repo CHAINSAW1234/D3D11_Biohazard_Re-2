@@ -25,7 +25,7 @@ public:
 	virtual HRESULT Render() override;
 
 #pragma region 나옹
-public:
+public: 
 	_bool				Get_MinMapRender()			{ return m_isMapRender; }
 	_bool*				Get_MainRender()			{ return m_pInvenButton->Get_Dead_Ptr(); }
 	WINDOW_TYPE*		Get_Window_Render_Type()	{ return &m_eWindowType; }
@@ -35,7 +35,7 @@ public:
 
 #pragma region 예은 추가
 	class CRead_Item_UI* m_pRead_Item_UI = { nullptr };
-	class CMap_UI* m_pMap_UI = { nullptr };
+	class CItem_Map_UI* m_pMap_UI = { nullptr };
 #pragma endregion 
 
 

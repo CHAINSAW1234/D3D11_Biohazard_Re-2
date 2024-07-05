@@ -250,7 +250,7 @@ wstring CImgui_Manager::Classify_ItemNum_To_String(ITEM_NUMBER eItemNum)
 {
     switch (eItemNum)
     {
-        ITEM_STRING(emergencyspray01a);
+      /*  ITEM_STRING(emergencyspray01a);
         break;
         ITEM_STRING(greenherb01a);
         break;
@@ -387,7 +387,7 @@ wstring CImgui_Manager::Classify_ItemNum_To_String(ITEM_NUMBER eItemNum)
         ITEM_STRING(clairesbag01a);
         break;
         ITEM_STRING(HandGun);
-        break;
+        break;*/
         ITEM_STRING(ShotGun);
         break;
         ITEM_STRING(Flash_Bomb);
