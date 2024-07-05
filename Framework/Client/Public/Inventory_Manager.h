@@ -80,6 +80,7 @@ public:
 
 	//아이탬 인벤토리에 넣기
 	void AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity = 1);
+	void AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity, _float3 fItemPos);
 
 	//만약 아이템을 넣을수 없는 상황이라면 false를 반환함
 	_bool IsCan_AddItem_ToInven();

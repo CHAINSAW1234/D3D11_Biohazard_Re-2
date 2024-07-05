@@ -98,6 +98,7 @@ namespace Client
 		PICK_UP_ITEM,
 		GET_ITEM,
 		DROP_ITEM,
+		SWITCH_ITEM,
 		INVEN_EVENT_END
 	};
 
@@ -330,5 +331,6 @@ namespace Client
 		portablesafe,
 		ITEM_NUMBER_END
 	};
+
 
 }

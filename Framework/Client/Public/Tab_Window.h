@@ -10,7 +10,6 @@ class CTab_Window final : public CUI
 {
 public:
 	enum WINDOW_TYPE{MINIMAP, INVENTORY, HINT, EXAMINE, PICK_UP_ITEM_WINDOW, WINDOW_TYPE_END };
-	enum PICKUP_SEQUENCE { MESHVIEW_POPUP, INVENTORY_POPUP, POSITIONING, ALL_HIDE, PICKUP_SEQUENCE_END };
 
 protected:
 	CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -102,7 +101,7 @@ private:
 
 	/*for. Picked Up Item*/
 	CGameObject*		m_pPickedUp_Item = { nullptr };
-	PICKUP_SEQUENCE		m_ePickUp_Sequence = { PICKUP_SEQUENCE_END };
+	UI_OPERRATION		m_eSequence = { STATE_END };
 
 private:
 	HRESULT Add_Components();

@@ -9,6 +9,7 @@
 #include "ItemProp.h"
 #include "Read_Item_UI.h"
 #include "Map_UI.h"
+
 CTab_Window::CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice , pContext }
 {
@@ -239,30 +240,66 @@ void CTab_Window::EXAMINE_Operation(_float fTimeDelta)
 
 void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 {
-	switch (m_ePickUp_Sequence)
+	switch (m_eSequence)
 	{
-	case Client::CTab_Window::MESHVIEW_POPUP: {
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
-		{
-			m_ePickUp_Sequence = INVENTORY_POPUP;
+	case Client::POP_UP: {
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{		
+			/*Item_Discription 세팅*/
+			m_eSequence = UI_IDLE;
 
+			/*Item_Mesh_Viewer 세팅*/
+			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END);
+
+			/*Inventory_Manager 세팅*/
+			m_pInventory_Manager->Set_OnOff_Inven(false);
+			m_pInventory_Manager->Set_InventoryEvent(PICK_UP_ITEM);
+			_int iPickedUpItemNum = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_iItemIndex();
+			ITEM_NUMBER ePickedItemNum = static_cast<ITEM_NUMBER>(iPickedUpItemNum);
+			m_pInventory_Manager->PUO_Seting(ePickedItemNum,10);
+
+			/*Cursor 세팅*/
+			if (nullptr != m_pCursor[1])
+			{
+				m_pCursor[0]->Set_Inven_Open(true);
+				m_pCursor[1]->Set_Inven_Open(true);
+			}
+
+			/*TabWindow 세팅*/
+			m_fCurTime = 0.f;
+			m_fAlpha = 0.f;
+			m_isAlphaControl = false;
+
+			break;
 		}
+
 		m_pItem_Mesh_Viewer->Tick(fTimeDelta);
+		m_pItem_Discription->Tick(fTimeDelta);
+
+		if (m_fCurTime / 0.5f < 1.f)
+		{
+			m_fCurTime += fTimeDelta;
+			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 0.f, 1.f, m_fCurTime / 0.5f);
+		}
+
+		break;
+	}	
+
+	case Client::UI_IDLE: {
+		m_pItem_Mesh_Viewer->Tick(fTimeDelta);
+		m_pItem_Discription->Tick(fTimeDelta);
+		m_pInventory_Manager->Tick(fTimeDelta);
+
+		if (m_fCurTime / 0.5f < 1.f)
+		{
+			m_fCurTime += fTimeDelta;
+			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 1.f, 0.5f, m_fCurTime / 0.5f);
+		}
 		break;
 	}
 		
 
-	case Client::CTab_Window::INVENTORY_POPUP: {
-		break;
-	}
-		
-
-	case Client::CTab_Window::POSITIONING: {
-		break;
-	}
-		
-
-	case Client::CTab_Window::ALL_HIDE: {
+	case Client::HIDE: {
 		break;
 	}
 		
@@ -354,6 +391,7 @@ void CTab_Window::OnOff_EventHandle()
 		m_pHintButton->Set_Dead(m_bDead);
 		m_pInvenButton->Set_Dead(m_bDead);
 		m_pMapButton->Set_Dead(m_bDead);
+
 		m_pInventory_Manager->Set_OnOff_Inven(m_bDead);//탭창열때 인벤이 초기값임
 
 		if (nullptr != m_pCursor[1])
@@ -366,19 +404,28 @@ void CTab_Window::OnOff_EventHandle()
 
 void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 {
-	CInteractProps* pProp = static_cast<CInteractProps*>(m_pPickedUp_Item);
+	CInteractProps* pProp = dynamic_cast<CInteractProps*>(pPickedUp_Item);
+	if (nullptr == pProp)
+		return;
+
 	_int iPickedUpItemNum = pProp->Get_iItemIndex();
 	ITEM_NUMBER ePickedItemNum = static_cast<ITEM_NUMBER>(iPickedUpItemNum);
 	ITEM_TYPE eItemType = CInventory_Manager::ItemType_Classify_ByNumber(ePickedItemNum);
 	
 	if (eItemType != DOCUMENT)
 	{
-		OnOff_EventHandle();
+		/*TabWindow 세팅*/
+		m_bDead = false;
 		m_eWindowType = PICK_UP_ITEM_WINDOW;
+		m_eSequence = POP_UP;
 		m_pPickedUp_Item = pPickedUp_Item;
+		m_isAlphaControl = true;
+
+		/*Item_Discription 세팅*/
 		m_pItem_Discription->Set_Item_Number(ePickedItemNum, 10);
+
+		/*Item_Mesh_Viewer 세팅*/
 		m_pItem_Mesh_Viewer->Set_Operation(POP_UP, ePickedItemNum);
-		m_pInventory_Manager->Set_InventoryEvent(PICK_UP_ITEM);
 	}
 
 	else

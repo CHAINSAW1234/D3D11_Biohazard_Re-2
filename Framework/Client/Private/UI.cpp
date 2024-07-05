@@ -216,6 +216,21 @@ _bool CUI::IsMouseHover(_float& fPosZ)
 	return false;
 }
 
+_bool CUI::IsPTInRect(_float2 fPoint)
+{
+	_float4 vPosition = { m_pTransformCom->Get_WorldFloat4x4()._41 + g_iWinSizeX * 0.5f, -m_pTransformCom->Get_WorldFloat4x4()._42 + g_iWinSizeY * 0.5f, 0, 0 };
+
+	_float3 vSize = m_pTransformCom->Get_Scaled();
+
+	if (vPosition.x - (vSize.x / 2) <= fPoint.x && vPosition.y - (vSize.y / 2) <= fPoint.y
+		&& vPosition.x + (vSize.x / 2) >= fPoint.x && vPosition.y + (vSize.y / 2) >= fPoint.y)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void CUI::Free()
 {
 	__super::Free();

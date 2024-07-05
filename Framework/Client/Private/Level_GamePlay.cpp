@@ -264,8 +264,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
 	//희히 넘 바쁜 관계로 함수 못팠어요 - 예은
 
-	//if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
-	//	return E_FAIL;
+	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
+		return E_FAIL;
 	CMonster::MONSTER_DESC ObjectDesc = {};
 
 	_matrix			WorldMatrix = { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
@@ -960,10 +960,6 @@ HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& st
 			return E_FAIL;
 		}
 
-
-
-
-
 		CCustomCollider::COLLIDER_DESC collider_desc = {};
 		collider_desc.worldMatrix = WorldMatrix;
 		collider_desc.iColNum = iNum;
@@ -975,9 +971,6 @@ HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& st
 			MSG_BOX(TEXT("Failed to Add_Clone Prototype_GameObject_Monster: CImGUI"));
 			return E_FAIL;
 		}
-
-
-
 
 	}
 	CloseHandle(hFile);

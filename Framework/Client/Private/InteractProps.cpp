@@ -187,7 +187,6 @@ _bool CInteractProps::Check_Col_Sphere_Player()
 		return true;
 	}
 	return false;
-
 }
 
 _bool CInteractProps::Check_Col_OBB_Player()
@@ -241,7 +240,7 @@ _bool CInteractProps::Visible()
 	{
 		if (m_tagPropDesc.iRegionDir == DIRECTION_MID)
 		{
-			;
+			
 		}
 		else if (m_pPlayer->Get_Player_Direction() != m_tagPropDesc.iRegionDir)
 		{
