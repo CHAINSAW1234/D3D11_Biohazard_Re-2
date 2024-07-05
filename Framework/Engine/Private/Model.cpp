@@ -1210,6 +1210,20 @@ _bool CModel::Is_Hide_Mesh(_uint iMeshIndex)
 	return m_IsHideMesh[iMeshIndex];
 }
 
+void CModel::Hide_Mesh_Branch(_uint iMeshBranch, _bool isHide)
+{
+	_uint			iMeshIndex = { 0 };
+	for (auto& iBranch : m_MeshBranches)
+	{
+		if (iBranch == iMeshBranch)
+		{
+			m_IsHideMesh[iMeshIndex] = isHide;
+		}
+
+		++iMeshIndex;
+	}
+}
+
 void CModel::Hide_Mesh(_uint iMeshIndex, _bool isHide)
 {
 	_uint			iNumMesh = { static_cast<_uint>(m_Meshes.size()) };

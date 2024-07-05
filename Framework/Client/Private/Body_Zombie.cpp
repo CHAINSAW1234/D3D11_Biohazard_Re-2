@@ -613,44 +613,43 @@ HRESULT CBody_Zombie::Add_Animations()
 HRESULT CBody_Zombie::Initialize_MeshTypes()
 {
 	_uint						iNumMesh = { m_pModelCom->Get_NumMeshes() };
-
 	vector<string>				MeshTags = { m_pModelCom->Get_MeshTags() };
 
 	for (auto& strMeshTag : MeshTags)
 	{
 		if (strMeshTag.find("Inside") != string::npos)
 		{
-			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_INNER));
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_INNER));
 		}
 	
 		else if (strMeshTag.find("Joint") != string::npos)
 		{
-			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_JOINT));
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_JOINT));
 		}
 
 		else if (strMeshTag.find("Deficit") != string::npos)
 		{
-			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_DEFICIT));
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_DEFICIT));
 		}
 
 		else if (strMeshTag.find("Damage") != string::npos)
 		{
-			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_DAMAGED));
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_DAMAGED));
 		}
 
 		else if (strMeshTag.find("Internal_Mat") != string::npos)
 		{
-			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_INTERNAL_MAT));
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_INTERNAL_MAT));
 		}
 
 		else if (strMeshTag.find("BrokenHead") != string::npos)
 		{
-			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_BROKEN_HEAD));
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_BROKEN_HEAD));
 		}
 
 		else
 		{
-			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(MESH_TYPE::_OUTTER));
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_OUTTER));
 		}
 	}
 

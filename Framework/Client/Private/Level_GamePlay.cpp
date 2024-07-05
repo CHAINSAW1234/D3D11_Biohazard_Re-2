@@ -310,8 +310,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
 	//희히 넘 바쁜 관계로 함수 못팠어요 - 예은
 
-	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
-		return E_FAIL;
+	/*if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
+		return E_FAIL;*/
 
 
 	/*for (_uint i = 0; i < 100; ++i)
@@ -361,7 +361,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 
 
 	
-	/*CZombie::ZOMBIE_FEMALE_DESC		ObjectDesc;
+	CZombie::ZOMBIE_FEMALE_DESC		ObjectDesc;
 	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_FEMALE };
 	ObjectDesc.ePantsType = { static_cast<ZOMBIE_FEMALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_PANTS::_END) - 1)) };
 	ObjectDesc.eFaceType = { static_cast<ZOMBIE_FEMALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_FACE::_END) - 1)) };
@@ -372,7 +372,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-		return E_FAIL;*/
+		return E_FAIL;
 
 	return S_OK;
 }

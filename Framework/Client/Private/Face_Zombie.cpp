@@ -76,9 +76,9 @@ void CFace_Zombie::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	_float3			vTempTranslation = {};
-	//	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);
-	//m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
-	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);
+	//	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
+	//	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 	//	m_pModelCom->Play_Pose(m_pParentsTransform, fTimeDelta);
 
 	if(m_bRender)
@@ -329,6 +329,45 @@ HRESULT CFace_Zombie::Initialize_Model()
 	m_pModelCom->Active_RootMotion_XZ(false);
 	m_pModelCom->Active_RootMotion_Y(false);
 	m_pModelCom->Active_RootMotion_Rotation(false);
+
+	if (FAILED(Initialize_MeshType()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CFace_Zombie::Initialize_MeshType()
+{
+	_uint						iNumMesh = { m_pModelCom->Get_NumMeshes() };
+	vector<string>				MeshTags = { m_pModelCom->Get_MeshTags() };
+
+	for (auto& strMeshTag : MeshTags)
+	{
+		if (strMeshTag.find("Inside") != string::npos)
+		{
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_INNER));
+		}
+
+		else if (strMeshTag.find("Face") != string::npos)
+		{
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_OUTTER));
+		}
+
+		else if (strMeshTag.find("Hair") != string::npos)
+		{
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_HAIR));
+		}
+
+		else if (strMeshTag.find("Teeth") != string::npos)
+		{
+			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_TEETH));
+		}
+	}
+
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_INNER), false);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_OUTTER), true);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_HAIR), false);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_TEETH), false);
 
 	return S_OK;
 }

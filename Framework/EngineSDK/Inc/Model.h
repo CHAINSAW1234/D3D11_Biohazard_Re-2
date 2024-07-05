@@ -150,6 +150,7 @@ public:		/* For. MeshControll */
 	_bool									Is_Hide_Mesh(string strMeshTag);
 	_bool									Is_Hide_Mesh(_uint iMeshIndex);
 
+	void									Hide_Mesh_Branch(_uint iMeshBranch, _bool isHide);
 	void									Hide_Mesh(_uint iMeshIndex, _bool isHide);
 	void									Hide_Mesh(string strMeshTag, _bool isHide);
 
