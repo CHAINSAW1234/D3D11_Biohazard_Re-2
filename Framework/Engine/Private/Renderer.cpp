@@ -1133,6 +1133,12 @@ HRESULT CRenderer::Render_UI()
 		Safe_Release(pRenderObject);
 	}
 	m_RenderObjects[RENDER_DECAL].clear();
+
+	
+	m_RenderObjects[RENDER_UI].sort([](CGameObject* pFirst, CGameObject* pSecond) {
+		return pFirst->GetPosition().z > pSecond->GetPosition().z;
+		});
+
 	
 	for (auto& pRenderObject : m_RenderObjects[RENDER_UI])
 	{

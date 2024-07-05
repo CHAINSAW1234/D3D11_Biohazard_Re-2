@@ -19,6 +19,8 @@ constexpr _int		RESULT_NUM = 2;
 
 constexpr _float	PRESSING_TIME = 0.5f;
 
+constexpr _float	SWITCH_SPEED_LIMIT = 10.f;
+
 CInventory_Manager::CInventory_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
 	, m_pContext{ pContext }
@@ -62,10 +64,12 @@ void CInventory_Manager::FirstTick_Seting()
 
 	m_pDragShadow->FirstTick_Seting();
 
-	AddItem_ToInven(HandGun, 15);
-	AddItem_ToInven(ShotGun, 15);
-	AddItem_ToInven(handgun_bullet01a, 20);
-	AddItem_ToInven(shotgun_bullet01a, 20);
+	//AddItem_ToInven(HandGun, 15);
+	//AddItem_ToInven(ShotGun, 15);
+	//AddItem_ToInven(handgun_bullet01a, 20);
+	//AddItem_ToInven(shotgun_bullet01a, 20);
+
+
 	
 	if (FAILED(Seting_SubInven()))
 		MSG_BOX(TEXT("Failed to Find SubInven"));
@@ -281,6 +285,7 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 					m_pDragShadow->Set_Dead(true);
 					m_pSelected_ItemUI = nullptr;
 					m_eInven_Manager_State = GET_ITEM;
+					pHoveredSlot->Set_IsFilled(true);
 
 					CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
 					pPlayer->Set_isCamTurn(false);
@@ -308,6 +313,16 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 			m_PickResult = 1;
 			m_eTaskSequence = APPLY;
 			m_pContextMenu->Set_Dead(true);
+
+			for (auto& iter : m_vecInvenSlot)
+			{
+				if (false == iter->Get_IsFilled())
+				{
+					m_fSwitchTargetPos = _float2{ iter->GetPosition().x, iter->GetPosition().y };
+					break;
+				}
+			}
+
 			break;
 		}
 		}
@@ -323,16 +338,55 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 			{
 				m_pSelected_ItemUI->Set_ItemVariation(m_pDragShadow->Get_ItemQuantity());
 			}
+
+			else if (shotgun_bullet01a == m_pDragShadow->Get_ItemNumber() && shotgun_bullet01a == m_pSelected_ItemUI->Get_ItemNumber() && shotgun_bullet01a == eResultItem)
+			{
+				m_pSelected_ItemUI->Set_ItemVariation(m_pDragShadow->Get_ItemQuantity());
+			}
+
+			else
+			{
+				m_pSelected_ItemUI->Set_ItemUI(eResultItem, ItemType_Classify_ByNumber(eResultItem), m_pSelected_ItemUI->GetPositionVector(),1);
+			}
+
+			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+			pPlayer->Set_isCamTurn(false);
+
+			m_PickResult = -1;
+
+			m_pSlotHighlighter->Set_DragShadow(false);
+			m_eInven_Manager_State = EVENT_IDLE;
+			m_pDragShadow->Set_Dead(true);
+			m_pSelected_ItemUI = nullptr;
+			m_eInven_Manager_State = GET_ITEM;
 		}
 
 		else if(m_PickResult == 1)
 		{
-			
-		}
+			if (m_fItemSwitchTime / 0.5f <= 1.f)
+			{
+				m_fItemSwitchTime += fTimeDelta;
+				_float fSpeed = m_pGameInstance->Get_Ease(Ease_OutQuart, 0.f, SWITCH_SPEED_LIMIT, m_fItemSwitchTime / 0.5f);
+				m_pSelected_ItemUI->Get_Transform()->Move_toTargetUI(_float4(m_fSwitchTargetPos.x, m_fSwitchTargetPos.y, Z_POS_ITEM_UI, 1.f), fSpeed, 5.f);
+			}
 
-		CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-		pPlayer->Set_isCamTurn(true);
-		m_PickResult = -1;
+			else
+			{
+				_float3 fNewItemPos = { m_pDragShadow->GetPositionVector() };
+
+				AddItem_ToInven(m_pDragShadow->Get_ItemNumber(), 10, _float3(fNewItemPos.x, fNewItemPos.y, Z_POS_ITEM_UI));
+
+				m_fItemSwitchTime = 0.f;
+				CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+				pPlayer->Set_isCamTurn(false);
+				m_PickResult = -1;
+				m_pSlotHighlighter->Set_DragShadow(false);
+				m_eInven_Manager_State = EVENT_IDLE;
+				m_pDragShadow->Set_Dead(true);
+				m_pSelected_ItemUI = nullptr;
+				m_eInven_Manager_State = GET_ITEM;
+			}
+		}
 
 		break;
 	}
@@ -349,7 +403,6 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 	m_eInven_Manager_State = EVENT_IDLE;
 	m_pContextMenu->Set_Dead(true);
 	m_pSelected_ItemUI = nullptr;
-
 }
 
 void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)

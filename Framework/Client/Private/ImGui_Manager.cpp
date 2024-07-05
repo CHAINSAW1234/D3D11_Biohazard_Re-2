@@ -157,11 +157,7 @@ void CImgui_Manager::Window_TabWindow_Debuger()
                 }
             }
         }
-
-
-
     }
-
 
     ImGui::End();
 }
