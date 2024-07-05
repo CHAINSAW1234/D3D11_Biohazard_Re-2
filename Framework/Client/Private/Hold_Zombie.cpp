@@ -238,6 +238,8 @@ void CHold_Zombie::Change_Animation_Creep()
 
 		else
 			iResultAnimationIndex = static_cast<_uint>(ANIM_LOST_HOLD::_FACEUP1);
+
+		m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_DOWN);
 	}
 
 	if (-1 == iResultAnimationIndex)

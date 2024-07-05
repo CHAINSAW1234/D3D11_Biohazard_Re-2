@@ -1084,7 +1084,7 @@ _bool CPhysics_Controller::RayCast(_float4 vOrigin, _float4 vDir, _float4* pBloc
 	return Status;
 }
 
-_bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
+_bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _bool bBigAttack, _bool bDecalRay, _float fMaxDist)
 {
 	PxVec3 PxvOrigin = Float4_To_PxVec(vOrigin);
 	PxVec3 PxvDir = Float4_To_PxVec(vDir);
@@ -1125,17 +1125,54 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 					m_vecCharacter_Controller[filterData.word2]->SetBlockPoint(*pBlockPoint);
 					m_vecCharacter_Controller[filterData.word2]->SetHitNormal(PxVec_To_Float4_Coord(hit_Obj.normal));
 
+					if (bDecalRay)
+					{
+						m_vecCharacter_Controller[filterData.word2]->Set_Hit_Decal_Ray(true);
+					}
+					else
+					{
+						m_vecCharacter_Controller[filterData.word2]->Set_Hit_Decal_Ray(false);
+					}
+
+					if (bBigAttack)
+					{
+						m_vecCharacter_Controller[filterData.word2]->SetBigAttack(true);
+						m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count_STG();
+						m_vecCharacter_Controller[filterData.word2]->Insert_Hit_Point_STG(*pBlockPoint);
+						m_vecCharacter_Controller[filterData.word2]->Insert_Hit_Normal_STG(PxVec_To_Float4_Coord(hit_Obj.normal));
+						m_vecCharacter_Controller[filterData.word2]->Insert_Collider_Type(eType);
+					}
+					else
+					{
+						m_vecCharacter_Controller[filterData.word2]->SetBigAttack(false);
+					}
+
 					//if (eType == COLLIDER_TYPE::HEAD)
 					{
 						m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count();
 					}
 
-					if(m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() == 10)
+					if (bBigAttack)
 					{
-						/*Ragdoll을 구동하려면 살려야 함.*/
-						m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
-						m_vecCharacter_Controller[filterData.word2]->SetDead(true);
+						if (m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() >= 15)
+						{
+							/*Ragdoll을 구동하려면 살려야 함.*/
+							m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
+							m_vecCharacter_Controller[filterData.word2]->SetDead(true);
+							m_vecCharacter_Controller[filterData.word2]->Set_Force(vDelta, eType);
+						}
 					}
+					else
+					{
+						if (m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() >= 10)
+						{
+							/*Ragdoll을 구동하려면 살려야 함.*/
+							m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
+							m_vecCharacter_Controller[filterData.word2]->SetDead(true);
+							m_vecCharacter_Controller[filterData.word2]->Set_Force(vDelta, eType);
+						}
+					}
+	
 
 					return true;
 				}
@@ -1163,6 +1200,19 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 					m_vecCharacter_Controller[filterData.word2]->Set_Hit(true);
 					m_vecCharacter_Controller[filterData.word2]->SetBlockPoint(*pBlockPoint);
 					m_vecCharacter_Controller[filterData.word2]->SetHitNormal(PxVec_To_Float4_Coord(hit_Obj.normal));
+					m_vecCharacter_Controller[filterData.word2]->Insert_Collider_Type(eType);
+
+					if (bBigAttack)
+					{
+						m_vecCharacter_Controller[filterData.word2]->SetBigAttack(true);
+						m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count_STG();
+						m_vecCharacter_Controller[filterData.word2]->Insert_Hit_Point_STG(*pBlockPoint);
+						m_vecCharacter_Controller[filterData.word2]->Insert_Hit_Normal_STG(PxVec_To_Float4_Coord(hit_Obj.normal));
+					}
+					else
+					{
+						m_vecCharacter_Controller[filterData.word2]->SetBigAttack(false);
+					}
 				}
 
 				return true;

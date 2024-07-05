@@ -4,6 +4,9 @@
 #include "GameInstance.h"
 #include "Decal_Blood.h"
 
+#define BIG_ATTACK_DECAL_EXTENT _float3(0.4f,0.6f,0.4f)
+#define NORMAL_ATTACK_DECAL_EXTENT _float3(0.2f,0.5f,0.2f)
+
 CMesh::CMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CVIBuffer(pDevice, pContext)
 {
@@ -933,9 +936,14 @@ void CMesh::Init_DecalMap(CShader* pShader)
 	pShader->Begin(0);
 }
 
-void CMesh::SetDecalWorldMatrix(_float4x4 WorldMatrix)
+void CMesh::SetDecalWorldMatrix(_float4x4 WorldMatrix, _bool bBigAttack)
 {
 	m_pDecal_Blood->SetWorldMatrix(WorldMatrix);
+
+	if(bBigAttack)
+		m_pDecal_Blood->SetExtent(BIG_ATTACK_DECAL_EXTENT);
+	else
+		m_pDecal_Blood->SetExtent(NORMAL_ATTACK_DECAL_EXTENT);
 }
 
 void CMesh::Bind_Resource_CalcDecalMap(ID3D11UnorderedAccessView* pUAV)

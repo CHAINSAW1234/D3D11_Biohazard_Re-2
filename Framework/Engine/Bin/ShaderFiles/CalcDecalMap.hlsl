@@ -56,7 +56,7 @@ void main_static(uint3 dispatchThreadID : SV_DispatchThreadID)
             (-g_Extent.y <= vPosition.y && vPosition.y <= g_Extent.y) &&
             (-g_Extent.z <= vPosition.z && vPosition.z <= g_Extent.z))
         {
-            if (g_DecalMap[vertexIndex].x - 0.f < 0.001f && g_DecalMap[vertexIndex].y - 0.f < 0.001f)
+            /*if (g_DecalMap[vertexIndex].x - 0.f < 0.001f && g_DecalMap[vertexIndex].y - 0.f < 0.001f)
                 g_DecalMap[vertexIndex] = DecalUV;
             else
             {
@@ -67,7 +67,9 @@ void main_static(uint3 dispatchThreadID : SV_DispatchThreadID)
                 {
                     g_DecalMap[vertexIndex] = DecalUV;
                 }
-            }
+            }*/
+
+            g_DecalMap[vertexIndex] = DecalUV;
         }
     }
 }

@@ -138,7 +138,23 @@ HRESULT CFace_Zombie::Render()
 				return E_FAIL;
 		}
 
-		m_pModelCom->Bind_DecalMap(static_cast<_uint>(i), m_pShaderCom);
+		if (m_pModelCom->Get_Mesh_Branch(i) != (_int)CFace_Zombie::FACE_MESH_TYPE::_INNER)
+		{
+			m_bDecalRender = true;
+
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
+				return E_FAIL;
+
+			m_pModelCom->Bind_DecalMap(static_cast<_uint>(i), m_pShaderCom);
+		}
+		else
+		{
+			m_bDecalRender = false;
+
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
+				return E_FAIL;
+		}
+		
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 		m_pModelCom->Render(static_cast<_uint>(i));
@@ -342,22 +358,26 @@ HRESULT CFace_Zombie::Initialize_MeshType()
 
 	for (auto& strMeshTag : MeshTags)
 	{
-		if (strMeshTag.find("Inside") != string::npos)
+		if (strMeshTag.find("Inside") != string::npos ||
+			strMeshTag.find("inside") != string::npos)
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_INNER));
 		}
 
-		else if (strMeshTag.find("Face") != string::npos)
+		else if (strMeshTag.find("Face") != string::npos ||
+			strMeshTag.find("face") != string::npos)
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_OUTTER));
 		}
 
-		else if (strMeshTag.find("Hair") != string::npos)
+		else if (strMeshTag.find("Hair") != string::npos ||
+			strMeshTag.find("hair") != string::npos)
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_HAIR));
 		}
 
-		else if (strMeshTag.find("Teeth") != string::npos)
+		else if (strMeshTag.find("Teeth") != string::npos ||
+			strMeshTag.find("teeth") != string::npos)
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(FACE_MESH_TYPE::_TEETH));
 		}
@@ -570,8 +590,7 @@ HRESULT CFace_Zombie::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
-		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_Cloth", &m_bCloth, sizeof(_bool))))
 		return E_FAIL;
 
