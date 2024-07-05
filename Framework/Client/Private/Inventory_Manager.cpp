@@ -64,10 +64,10 @@ void CInventory_Manager::FirstTick_Seting()
 
 	m_pDragShadow->FirstTick_Seting();
 
-	//AddItem_ToInven(HandGun, 15);
-	//AddItem_ToInven(ShotGun, 15);
-	//AddItem_ToInven(handgun_bullet01a, 20);
-	//AddItem_ToInven(shotgun_bullet01a, 20);
+	AddItem_ToInven(HandGun, 15);
+	AddItem_ToInven(ShotGun, 15);
+	AddItem_ToInven(handgun_bullet01a, 20);
+	AddItem_ToInven(shotgun_bullet01a, 20);
 
 
 	
