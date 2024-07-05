@@ -46,9 +46,6 @@ void CMovingShelf::Tick(_float fTimeDelta)
 	__super::Tick_Col();
 	if (!m_bVisible)
 		return;
-	if (m_PartObjects[PART_ITEM] != nullptr)
-		if (m_PartObjects[PART_ITEM]->Get_Dead() == true)
-			Set_Region(-1);
 	
 #ifdef _DEBUG
 #ifdef UI_POS
@@ -68,11 +65,6 @@ void CMovingShelf::Tick(_float fTimeDelta)
 	{
 		if (*m_pPlayerInteract)
 			Active();
-	}	
-	if (m_eState == CABINET_OPEN)
-	{
-		m_bObtain = true;
-		return;
 	}
 	__super::Tick(fTimeDelta);
 }
@@ -101,27 +93,12 @@ void CMovingShelf::Late_Tick(_float fTimeDelta)
 			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
 		else
 			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
-		
-		if(m_bReonDesk)
-			if (Check_Col_Player(INTER_COL_DOUBLE, COL_STEP0))
-			{
-				Check_Col_Player(INTER_COL_DOUBLE, COL_STEP1);
-			}
-			else
-				m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
-
 	}
 	else
 	{
 		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
-		if (m_bReonDesk)
-		{
-			m_bCol[INTER_COL_DOUBLE][COL_STEP0] = false;
-			m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
-			m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
-		}
 	}
 
 	__super::Late_Tick(fTimeDelta);
@@ -153,23 +130,6 @@ HRESULT CMovingShelf::Add_Components()
 		TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
 		return E_FAIL;
 
-	if (m_tagPropDesc.strGamePrototypeName.find("reon") != string::npos)
-	{
-		ColliderDesc.fRadius = _float(80.f);
-		ColliderDesc.vCenter = _float3(-50.f, 1.f, 50.f);
-
-		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-			TEXT("Com_Collider_Double_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP0], &ColliderDesc)))
-			return E_FAIL;
-
-		ColliderDesc.fRadius = _float(50.f);
-		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
-			TEXT("Com_Collider_Double_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP1], &ColliderDesc)))
-			return E_FAIL;
-
-		m_bReonDesk = true;
-	}
-
 
 	return S_OK;
 }
@@ -199,17 +159,6 @@ HRESULT CMovingShelf::Add_PartObjects()
 
 HRESULT CMovingShelf::Initialize_PartObjects()
 {
-	if (m_PartObjects[PART_ITEM] == nullptr)
-		return S_OK;
-
-	CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
-	//CModel* pItemModel = { dynamic_cast<CModel*>(m_PartObjects[PART_ITEM]->Get_Component(TEXT("Com_Body_Model"))) };
-
-	CBody_ItemProp* pItem = dynamic_cast<CBody_ItemProp*>(m_PartObjects[PART_ITEM]);
-	_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet01")) };
-	pItem->Set_Socket(pCombinedMatrix);
-
-
 
 	return S_OK;
 }
@@ -224,10 +173,8 @@ void CMovingShelf::Active()
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
 	
-	m_eState = CABINET_OPEN;
-	if (m_bObtain)
-		if (nullptr != m_PartObjects[PART_ITEM]&&!m_bItemDead)
-			m_pPlayer->PickUp_Item(this);
+	m_eState = SHELF_UPLRIGHT;
+
 }
 
 CMovingShelf* CMovingShelf::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -267,18 +214,7 @@ void CMovingShelf::Free()
 
 _float4 CMovingShelf::Get_Object_Pos()
 {
-	//m_bObtain => 아이템을 얻을 수 있는 상태
-	if (m_bObtain)
-		if (m_tagPropDesc.tagCabinet.bItem)
-			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_ITEM])->Get_Pos();
-		else if (!m_bOpened)
-			return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
-		else
-			return _float4(0.f, 0.f, 0.f, 1.f);
-
-	if(m_PartObjects[PART_LOCK] == nullptr)
-		return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
-	else
-		return static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK])->Get_Pos();
+	
+	return;
 
 }
