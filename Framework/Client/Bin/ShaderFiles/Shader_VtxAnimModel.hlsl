@@ -326,7 +326,7 @@ PS_OUT PS_MAIN(PS_IN In)
 				float2 center = float2(0.5f, 0.5f);
 				float distance = length(DecalUV - center);
 
-				if (distance < 0.1f)
+				if (distance < 0.2f)
 				{
 					/*decalColor = float4(0.5f, 0.0f, 0.0f, 0.f);
 					Out.vDiffuse = decalColor;*/
@@ -336,7 +336,7 @@ PS_OUT PS_MAIN(PS_IN In)
 				{
 					if (decalColor.a > 0.01f)
 					{
-						decalColor = float4(0.5f, 0.0f, 0.0f, decalColor.a);
+						decalColor = float4(0.3f, 0.0f, 0.0f, 1.f);
 						Out.vDiffuse = decalColor;
 					}
 				}
