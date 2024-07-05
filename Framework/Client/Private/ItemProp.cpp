@@ -55,7 +55,7 @@ void CItemProp::Tick(_float fTimeDelta)
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
 	{
 		//UI¶ç¿ì°í
-		if (*m_pPlayerInteract)
+		if (*m_pPlayerInteract && false == m_pGameInstance->IsPaused())
 		{
 			Active();
 		}

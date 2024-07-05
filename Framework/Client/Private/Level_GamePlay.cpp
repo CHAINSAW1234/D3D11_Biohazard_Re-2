@@ -1014,10 +1014,6 @@ HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& st
 			return E_FAIL;
 		}
 
-
-
-
-
 		CCustomCollider::COLLIDER_DESC collider_desc = {};
 		collider_desc.worldMatrix = WorldMatrix;
 		collider_desc.iColNum = iNum;
@@ -1029,9 +1025,6 @@ HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& st
 			MSG_BOX(TEXT("Failed to Add_Clone Prototype_GameObject_Monster: CImGUI"));
 			return E_FAIL;
 		}
-
-
-
 
 	}
 	CloseHandle(hFile);

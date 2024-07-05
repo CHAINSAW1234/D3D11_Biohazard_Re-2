@@ -5,6 +5,8 @@
 #include "Tab_Window.h"
 #include "Player.h"
 
+#include "ItemProp.h"
+
 
 #define SL  ImGui::SameLine()
 #define NL  ImGui::NewLine()
@@ -127,6 +129,39 @@ void CImgui_Manager::Window_TabWindow_Debuger()
     {
         m_pTabWindow->AddItem_ToInven(Classify_String_To_ItemNum(m_wstrCurrent_Item), m_iItemCount);
     }
+
+    if (ImGui::Button(u8"PickUp ITEM", ImVec2(100.f, 30.f)) && TEXT("") != m_wstrCurrent_Item)
+    {
+        _uint iFindNum = static_cast<_uint>(ITEM_NUMBER_END);
+        for (_uint i = 0; i < m_vecItemNums.size(); i++)
+        {
+            if (m_wstrCurrent_Item == m_vecItemNums[i])
+            {
+                iFindNum = i;
+            }
+        }
+
+        if (iFindNum == static_cast<_uint>(ITEM_NUMBER_END))
+            return;
+        
+        list<CGameObject*>* pOBJLayer = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_InteractObj"));
+        for (auto& iter : *pOBJLayer)
+        {
+            CItemProp* pItemProp = dynamic_cast<CItemProp*>(iter);
+            if (nullptr != pItemProp)
+            {
+                if (false == pItemProp->Get_Dead() && iFindNum == pItemProp->Get_iItemIndex())
+                {
+                    m_pPlayer->PickUp_Item(iter);
+                    break;
+                }
+            }
+        }
+
+
+
+    }
+
 
     ImGui::End();
 }

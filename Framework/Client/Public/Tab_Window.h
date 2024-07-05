@@ -24,6 +24,16 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+
+private:
+	void MINIMAP_Operation(_float fTimeDelta);
+	void INVENTORY_Operation(_float fTimeDelta);
+	void HINT_Operation(_float fTimeDelta);
+	void EXAMINE_Operation(_float fTimeDelta);
+	void PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta);
+
+
+
 #pragma region ³ª¿Ë
 public:
 	_bool				Get_MinMapRender()			{ return m_isMapRender; }
@@ -41,7 +51,6 @@ public:
 
 private:
 	void	ItemIven_EventHandle(_float fTimeDelta);
-	void	FirstTick_Seting();
 	void	Button_Act(_float fTimeDelta);
 
 public:
@@ -83,8 +92,6 @@ private:
 	WINDOW_TYPE			m_eWindowType = { INVENTORY };
 	_bool				m_isMapRender = { false };
 
-	_bool				m_isFristTick = { true };
-
 	_bool				m_isAlphaControl = { false };
 
 	/*for. Item_Mesh_Viewer*/
@@ -94,6 +101,7 @@ private:
 
 	/*for. Picked Up Item*/
 	CGameObject*		m_pPickedUp_Item = { nullptr };
+	UI_OPERRATION		m_eSequence = { STATE_END };
 
 private:
 	HRESULT Add_Components();

@@ -9,6 +9,7 @@
 #include "ItemProp.h"
 #include "Read_Item_UI.h"
 #include "Map_UI.h"
+
 CTab_Window::CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice , pContext }
 {
@@ -56,6 +57,16 @@ HRESULT CTab_Window::Initialize(void* pArg)
 
 void CTab_Window::Start()
 {
+	if (nullptr == m_pCursor[0] || nullptr == m_pCursor[1])
+	{
+		Find_Cursor();
+
+		if (nullptr == m_pCursor)
+			MSG_BOX(TEXT("Inventory를 위한 Cursor 생성 불가능"));
+	}
+
+	m_pInventory_Manager->FirstTick_Seting();
+
 	list<class CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
 	_bool bReadItemUI = { false };
 	_bool bMapUI = { false };
@@ -80,8 +91,6 @@ void CTab_Window::Start()
 
 void CTab_Window::Tick(_float fTimeDelta)
 {
-	FirstTick_Seting();
-
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
 	{
 		OnOff_EventHandle();
@@ -101,10 +110,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 	}
 		
 	case Client::CTab_Window::INVENTORY: {
-		m_pInventory_Manager->Tick(fTimeDelta);
-		ITEM_NUMBER eSelectedItemNum = m_pInventory_Manager->Get_Selected_ItemNum();
-		m_pItem_Discription->Set_Item_Number(eSelectedItemNum);
-		m_pItem_Discription->Tick(fTimeDelta);
+		INVENTORY_Operation(fTimeDelta);
 		break;
 	}
 		
@@ -113,33 +119,12 @@ void CTab_Window::Tick(_float fTimeDelta)
 	}
 
 	case Client::CTab_Window::EXAMINE: {
-		m_pItem_Mesh_Viewer->Tick(fTimeDelta);
-		if (m_fCurTime / 0.5f < 1.f)
-		{
-			m_fCurTime += fTimeDelta;
-			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 0.f, 1.f, m_fCurTime / 0.5f);
-		}
-
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
-		{
-			m_eWindowType = INVENTORY;
-			m_pHintButton->Set_Dead(false);
-			m_pInvenButton->Set_Dead(false);
-			m_pMapButton->Set_Dead(false);
-			m_pInventory_Manager->Set_OnOff_Inven(false);
-			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END);
-
-			m_fCurTime = 0.f;
-			m_fAlpha = 0.f;
-			m_isAlphaControl = false;
-		}
+		EXAMINE_Operation(fTimeDelta);
 		break;
 	}
 
 	case Client::CTab_Window::PICK_UP_ITEM_WINDOW: {
-		m_pInventory_Manager->Tick(fTimeDelta);
-		m_pItem_Discription->Tick(fTimeDelta);
-		m_pItem_Mesh_Viewer->Late_Tick(fTimeDelta);
+		PICK_UP_ITEM_WINDOW_Operation(fTimeDelta);
 		break;
 	}
 
@@ -213,7 +198,117 @@ HRESULT CTab_Window::Render()
 	return S_OK;
 }
 
+void CTab_Window::MINIMAP_Operation(_float fTimeDelta)
+{
+}
 
+void CTab_Window::INVENTORY_Operation(_float fTimeDelta)
+{
+	m_pInventory_Manager->Tick(fTimeDelta);
+	ITEM_NUMBER eSelectedItemNum = m_pInventory_Manager->Get_Selected_ItemNum();
+	m_pItem_Discription->Set_Item_Number(eSelectedItemNum);
+	m_pItem_Discription->Tick(fTimeDelta);
+}
+
+void CTab_Window::HINT_Operation(_float fTimeDelta)
+{
+}
+
+void CTab_Window::EXAMINE_Operation(_float fTimeDelta)
+{
+	m_pItem_Mesh_Viewer->Tick(fTimeDelta);
+	if (m_fCurTime / 0.5f < 1.f)
+	{
+		m_fCurTime += fTimeDelta;
+		m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 0.f, 1.f, m_fCurTime / 0.5f);
+	}
+
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+	{
+		m_eWindowType = INVENTORY;
+		m_pHintButton->Set_Dead(false);
+		m_pInvenButton->Set_Dead(false);
+		m_pMapButton->Set_Dead(false);
+		m_pInventory_Manager->Set_OnOff_Inven(false);
+		m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END);
+		
+		m_fCurTime = 0.f;
+		m_fAlpha = 0.f;
+		m_isAlphaControl = false;
+	}
+}
+
+void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
+{
+	switch (m_eSequence)
+	{
+	case Client::POP_UP: {
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{		
+			/*Item_Discription 세팅*/
+			m_eSequence = UI_IDLE;
+
+			/*Item_Mesh_Viewer 세팅*/
+			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END);
+
+			/*Inventory_Manager 세팅*/
+			m_pInventory_Manager->Set_OnOff_Inven(false);
+			m_pInventory_Manager->Set_InventoryEvent(PICK_UP_ITEM);
+			_int iPickedUpItemNum = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_iItemIndex();
+			ITEM_NUMBER ePickedItemNum = static_cast<ITEM_NUMBER>(iPickedUpItemNum);
+			m_pInventory_Manager->PUO_Seting(ePickedItemNum,10);
+
+			/*Cursor 세팅*/
+			if (nullptr != m_pCursor[1])
+			{
+				m_pCursor[0]->Set_Inven_Open(true);
+				m_pCursor[1]->Set_Inven_Open(true);
+			}
+
+			/*TabWindow 세팅*/
+			m_fCurTime = 0.f;
+			m_fAlpha = 0.f;
+			m_isAlphaControl = false;
+
+			break;
+		}
+
+		m_pItem_Mesh_Viewer->Tick(fTimeDelta);
+		m_pItem_Discription->Tick(fTimeDelta);
+
+		if (m_fCurTime / 0.5f < 1.f)
+		{
+			m_fCurTime += fTimeDelta;
+			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 0.f, 1.f, m_fCurTime / 0.5f);
+		}
+
+		break;
+	}	
+
+	case Client::UI_IDLE: {
+		m_pItem_Mesh_Viewer->Tick(fTimeDelta);
+		m_pItem_Discription->Tick(fTimeDelta);
+		m_pInventory_Manager->Tick(fTimeDelta);
+
+		if (m_fCurTime / 0.5f < 1.f)
+		{
+			m_fCurTime += fTimeDelta;
+			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 1.f, 0.5f, m_fCurTime / 0.5f);
+		}
+		break;
+	}
+		
+
+	case Client::HIDE: {
+		break;
+	}
+		
+
+	default:
+		break;
+	}
+
+}
 
 void CTab_Window::ItemIven_EventHandle(_float fTimeDelta)
 {
@@ -240,23 +335,6 @@ void CTab_Window::ItemIven_EventHandle(_float fTimeDelta)
 
 	default:
 		break;
-	}
-}
-
-void CTab_Window::FirstTick_Seting()
-{
-	if (true == m_isFristTick)
-	{
-		m_pInventory_Manager->FirstTick_Seting();
-		m_isFristTick = false;
-
-		if (nullptr == m_pCursor[0] || nullptr == m_pCursor[1])
-		{
-			Find_Cursor();
-
-			if (nullptr == m_pCursor)
-				MSG_BOX(TEXT("Inventory를 위한 Cursor 생성 불가능"));
-		}
 	}
 }
 
@@ -313,6 +391,7 @@ void CTab_Window::OnOff_EventHandle()
 		m_pHintButton->Set_Dead(m_bDead);
 		m_pInvenButton->Set_Dead(m_bDead);
 		m_pMapButton->Set_Dead(m_bDead);
+
 		m_pInventory_Manager->Set_OnOff_Inven(m_bDead);//탭창열때 인벤이 초기값임
 
 		if (nullptr != m_pCursor[1])
@@ -325,25 +404,43 @@ void CTab_Window::OnOff_EventHandle()
 
 void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 {
-	OnOff_EventHandle();
-	m_eWindowType = PICK_UP_ITEM_WINDOW;
-	m_pPickedUp_Item = pPickedUp_Item;
-	//Safe_AddRef(m_pPickedUp_Item);
-	CInteractProps* pProp = static_cast<CInteractProps*>(m_pPickedUp_Item);
+	CInteractProps* pProp = dynamic_cast<CInteractProps*>(pPickedUp_Item);
+	if (nullptr == pProp)
+		return;
+
 	_int iPickedUpItemNum = pProp->Get_iItemIndex();
+	ITEM_NUMBER ePickedItemNum = static_cast<ITEM_NUMBER>(iPickedUpItemNum);
+	ITEM_TYPE eItemType = CInventory_Manager::ItemType_Classify_ByNumber(ePickedItemNum);
 	
-	if (iPickedUpItemNum >= rpddocument01a && iPickedUpItemNum <= mapupperpolice01a)
+	if (eItemType != DOCUMENT)
 	{
-		m_pRead_Item_UI->Set_ReadItem_Type((CRead_Item_UI::ITEM_READ_TYPE)pProp->Get_PropType());
-		//인벤토리 문서 부분에 먹었다 추가=> 아직 없는 것으로 앎 나중에
+		/*TabWindow 세팅*/
+		m_bDead = false;
+		m_eWindowType = PICK_UP_ITEM_WINDOW;
+		m_eSequence = POP_UP;
+		m_pPickedUp_Item = pPickedUp_Item;
+		m_isAlphaControl = true;
+
+		/*Item_Discription 세팅*/
+		m_pItem_Discription->Set_Item_Number(ePickedItemNum, 10);
+
+		/*Item_Mesh_Viewer 세팅*/
+		m_pItem_Mesh_Viewer->Set_Operation(POP_UP, ePickedItemNum);
 	}
+
 	else
 	{
-		//m_pMap_UI->Destory_Item((MAP_FLOOR_TYPE)pProp->Get_Floor(), (LOCATION_MAP_VISIT)pProp->Get_Region(), (ITEM_NUMBER)iPickedUpItemNum);
+		if (iPickedUpItemNum >= rpddocument01a && iPickedUpItemNum <= mapupperpolice01a)
+		{
+			m_pRead_Item_UI->Set_ReadItem_Type((CRead_Item_UI::ITEM_READ_TYPE)pProp->Get_PropType());
+			//인벤토리 문서 부분에 먹었다 추가=> 아직 없는 것으로 앎 나중에
+			pPickedUp_Item->Set_Dead(true);
+		}
+		else
+		{
+			//m_pMap_UI->Destory_Item((MAP_FLOOR_TYPE)pProp->Get_Floor(), (LOCATION_MAP_VISIT)pProp->Get_Region(), (ITEM_NUMBER)iPickedUpItemNum);
+		}
 	}
-	/*_int iPickedUpItemQuant = static_cast<CItemProp*>(m_pPickedUp_Item)->Get_i*/
-	m_pItem_Discription->Set_Item_Number(static_cast<ITEM_NUMBER>(iPickedUpItemNum), 10);
-	m_pInventory_Manager->Set_InventoryEvent(PICK_UP_ITEM);
 }
 
 void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)

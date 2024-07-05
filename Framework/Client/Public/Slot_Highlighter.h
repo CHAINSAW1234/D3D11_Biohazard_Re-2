@@ -27,6 +27,7 @@ public:
 	void ResetPosition(_float4 fResetPos);
 
 	void Set_DragShadow(_bool IsDragShadow);
+	//void Set_DragShadow(_bool IsDragShadow, );
 
 private:
 	void Set_SH_Role(SH_ROLE eSHRoloe) {

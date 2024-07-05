@@ -33,6 +33,8 @@ HRESULT CItem_Mesh_Viewer::Initialize(void* pArg)
 
 	m_pTransformCom->Set_WorldMatrix(pMapStructureDesc->worldMatrix);
 
+	Load_ItemModelTags();
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
@@ -160,14 +162,14 @@ void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
 
 void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 {
-	/*if (true == m_pGameInstance->Check_Wheel_Down())
+	if (true == m_pGameInstance->Check_Wheel_Down())
 	{
 		m_fDistCam -= 1.f;
 	}
 	else if (true == m_pGameInstance->Check_Wheel_Up())
 	{
 		m_fDistCam += 1.f;
-	}*/
+	}
 
 	if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 	{
@@ -265,6 +267,8 @@ HRESULT CItem_Mesh_Viewer::Bind_ShaderResources()
 	return S_OK;
 }
 
+
+
 CItem_Mesh_Viewer* CItem_Mesh_Viewer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CItem_Mesh_Viewer* pInstance = new CItem_Mesh_Viewer(pDevice, pContext);
@@ -312,15 +316,15 @@ void CItem_Mesh_Viewer::Free()
 HRESULT CItem_Mesh_Viewer::Load_ItemsModel()
 {
 	wstring wstrModelComTag = TEXT("Com_Model");
-	vector<wstring> vecModelTags = m_pGameInstance->Get_ModelTags(TEXT("ItemModel_Tags"));
 	
-	for (_uint i = 0; i < vecModelTags.size(); i++)
+	for (_uint i = 0; i < m_vecModelTag.size(); i++)
 	{
 		CModel* pItemModel = nullptr;
+
 		wstring ModelTagTrashCan = wstrModelComTag + to_wstring(i);
 
 		/* For.Com_Model */
-		if (FAILED(__super::Add_Component(g_Level, vecModelTags[i],
+		if (FAILED(__super::Add_Component(g_Level, m_vecModelTag[i],
 			ModelTagTrashCan, (CComponent**)&pItemModel)))
 			return E_FAIL;
 
@@ -328,4 +332,127 @@ HRESULT CItem_Mesh_Viewer::Load_ItemsModel()
 	}
 
 	return S_OK;
+}
+
+HRESULT CItem_Mesh_Viewer::Load_ItemModelTags()
+{
+	wstring filePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat");
+
+	HANDLE		hFile = CreateFile(filePath.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	DWORD	dwByte(0);
+
+	_uint iObjectNum = { 0 };
+	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
+		return E_FAIL;
+
+	for (_uint i = 0; iObjectNum > i; ++i)
+	{
+
+		PROTOTYPE_INFORM* Inform = new PROTOTYPE_INFORM;
+
+		_uint dwLen = { 0 };
+
+		_bool bAnim = { false };
+		if (!ReadFile(hFile, &bAnim, sizeof(_uint), &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		Inform->bAnim = bAnim;
+
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		char* strModelPath = new char[dwLen / sizeof(char) + 1];
+		if (!ReadFile(hFile, strModelPath, dwLen, &dwByte, nullptr))
+		{
+			delete[] strModelPath;
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+
+			return E_FAIL;
+		}
+		strModelPath[dwLen / sizeof(char)] = '\0';
+		Inform->strModelPath = strModelPath;
+		delete[] strModelPath;
+
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wchar_t* wstrModelPrototypeName = new wchar_t[dwLen / sizeof(wchar_t) + 1];
+		if (!ReadFile(hFile, wstrModelPrototypeName, dwLen, &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			delete[] wstrModelPrototypeName;
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wstrModelPrototypeName[dwLen / sizeof(wchar_t)] = L'\0';
+		Inform->wstrModelPrototypeName = wstrModelPrototypeName;
+		delete[] wstrModelPrototypeName;
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			Safe_Delete(Inform);
+			return E_FAIL;
+		}
+		wchar_t* wstrGameObjectPrototypeName = new wchar_t[dwLen / sizeof(wchar_t) + 1];
+		if (!ReadFile(hFile, wstrGameObjectPrototypeName, dwLen, &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			delete[] wstrGameObjectPrototypeName;
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wstrGameObjectPrototypeName[dwLen / sizeof(wchar_t)] = L'\0';
+		Inform->wstrGameObjectPrototypeName = wstrGameObjectPrototypeName;
+		delete[] wstrGameObjectPrototypeName;
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			Safe_Delete(Inform);
+			return E_FAIL;
+		}
+		char* strGameObjectPrototypeName = new char[dwLen / sizeof(char) + 1];
+		if (!ReadFile(hFile, strGameObjectPrototypeName, dwLen, &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			delete[] strGameObjectPrototypeName;
+
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		strGameObjectPrototypeName[dwLen / sizeof(char)] = '\0';
+		Inform->strGameObjectPrototypeName = strGameObjectPrototypeName;
+		delete[] strGameObjectPrototypeName;
+
+		if (Inform->wstrGameObjectPrototypeName.find(TEXT("sm7")) != wstring::npos)
+		{
+			m_vecModelTag.push_back(Inform->wstrModelPrototypeName);//УЂБе
+		}
+
+		Safe_Delete(Inform);
+
+	}
+
+	CloseHandle(hFile);
+	return S_OK;
+
+
+
 }

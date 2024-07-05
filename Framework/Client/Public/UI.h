@@ -44,6 +44,8 @@ public:
 	virtual _bool IsMouseHover();
 	virtual _bool IsMouseHover(_float& fPosZ);
 
+	virtual _bool IsPTInRect(_float2 fPoint);
+
 	virtual _bool Get_IsChild() { return m_IsChild; }
 	virtual void Set_IsChild(_bool IsChild) { m_IsChild = IsChild; }
 

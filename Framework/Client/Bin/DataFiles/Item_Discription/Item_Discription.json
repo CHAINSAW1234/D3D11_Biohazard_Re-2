@@ -12,7 +12,7 @@
   {
     "NAME": "빨간 약초",
     "CLASSIFY": "회복 아이템",
-    "DESCRIPTION": "아크레이 산에서 캐낸\n녹색 약초. 체력을\n약간 회복시킵니다."
+    "DESCRIPTION": "아크레이 산에서 캐낸\n빨간 약초. 단독으로\n사용 할 수 없습니다."
   },
   {
     "NAME": "파란 약초",
@@ -80,26 +80,6 @@
     "DESCRIPTION": "추가 안됨"
   },
   {
-    "NAME": "머신건 탄약",
-    "CLASSIFY": "탄약",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "메그넘 탄약",
-    "CLASSIFY": "탄약",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "빅건 탄약",
-    "CLASSIFY": "탄약",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "잉크 리본",
-    "CLASSIFY": "잉크",
-    "DESCRIPTION": "잉크 리본. \n타자기 사용 시 필요합니다."
-  },
-  {
     "NAME": "나무 판",
     "CLASSIFY": "열쇠 아이템",
     "DESCRIPTION": "창을 막는 데 사용할 수 있는\n견고한 나무 조각. 불청객의\n출입을 완벽하게 차단합니다."
@@ -110,6 +90,11 @@
     "DESCRIPTION": "폭발은 예술이다."
   },
   {
+    "NAME": "베터리",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "표준 9볼트 배터리입니다."
+  },
+  {
     "NAME": "화약",
     "CLASSIFY": "자원",
     "DESCRIPTION": "표준 등급 화약.\n이 2개를 결합해 권총\n탄약을 만듭니다."
@@ -117,7 +102,7 @@
   {
     "NAME": "화약(대)",
     "CLASSIFY": "자원",
-    "DESCRIPTION": "대량의 화약. 일반 화약보다 탄약을 두 배 더 많이 만들 수 있습니다."
+    "DESCRIPTION": "대량의 화약. 일반 화약보다 탄약을 \n두 배 더 많이 만들 수 있습니다."
   },
   {
     "NAME": "노란 강화 물약",
@@ -125,679 +110,94 @@
     "DESCRIPTION": "정현이가 좋아합니다.\nps. 마약은 아닙니다."
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "보정기",
+    "CLASSIFY": "부착물",
+    "DESCRIPTION": "추가안됨"
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
-  },
-  {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "확장 탄창",
+    "CLASSIFY": "부착물",
+    "DESCRIPTION": "추가안됨"
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "샷건 개머리판",
+    "CLASSIFY": "부착물",
+    "DESCRIPTION": "추가안됨"
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "샷건 총열",
+    "CLASSIFY": "부착물",
+    "DESCRIPTION": "추가안됨"
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "유니콘 메달",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "신비의 동물 유니콘이\n새겨진 장식용\n대형 메달."
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "스페이드 키",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "화려해 보이는 열쇠"
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "카드키101",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "플라스틱 카드"
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "카드키201",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "플라스틱 카드"
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "둥근 손잡이",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "벨브를 잠글 수 있는 둥근 손잡이 입니다."
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "보석 박힌 지팡이",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "보석이 박힌 짧은 지팡이"
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "보석",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "붉은 보석이다."
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "예비 부품",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "일종의 작은 부품."
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "조각상의 책",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "책입니다."
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "조각상의 손",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "조각상의 손 조각입니다."
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "사자 메달",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "사자가 새겨진 장식용\n대형 메달."
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "다이아 키",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "잠긴 문을 열 수 있는 다이아 모양\n장식의 키 입니다."
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "처녀 메달",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "처녀가 새겨진 장식용\n대형 메달."
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "절단 도구",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "대형 공구"
   },
   {
     "NAME": "추가 안됨",
@@ -935,18 +335,38 @@
     "DESCRIPTION": "추가 안됨"
   },
   {
-    "NAME": "추가 안됨",
-    "CLASSIFY": "추가 안됨",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "힙 파우치",
+    "CLASSIFY": "",
+    "DESCRIPTION": "벨트가 달린 작은 파우치로, \n더 많은 물건을 휴대하기에 좋습니다"
   },
   {
-    "NAME": "JMB Hp3",
+    "NAME": "마틸다",
     "CLASSIFY": "무기",
-    "DESCRIPTION": "16발식 9mm 권총.\n다양한 국가 조식의 전문가가 사용합니다.\n높은 정확도와 안정성을\n갖추고 있습니다."
+    "DESCRIPTION": "12발 용량 9mm 폴리머 프레임 권총. \n비 제식 권총으로, 일반인의 접근성이 \n떨어지는 문제가 있습니다."
   },
   {
     "NAME": "W-870",
     "CLASSIFY": "산탄총",
     "DESCRIPTION": "4발분 장전 12 게이지 펌프\n연사식 산탄총. 견고하고\n확실하며 간편한 조종이 가능한\n인기 모델입니다."
+  },
+  {
+    "NAME": "섬광탄",
+    "CLASSIFY": "수류탄",
+    "DESCRIPTION": "수류탄. 폭파 시 강력한 불빛과 요란한 소리를 냅니다."
+  },
+  {
+    "NAME": "수류탄",
+    "CLASSIFY": "수류탄",
+    "DESCRIPTION": "수류탄. 폭파 시 치명적인 금속 파편을 터뜨리며 주위를 파괴합니다."
+  },
+  {
+    "NAME": "개머리판",
+    "CLASSIFY": "부착물",
+    "DESCRIPTION": "추가 안됨"
+  },
+  {
+    "NAME": "휴대용 금고",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "소형 휴대용 금고"
   }
 ]

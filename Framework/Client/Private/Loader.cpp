@@ -827,6 +827,11 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			ItemModelTags.push_back(Inform->wstrModelPrototypeName);//УЂБе
 		}
 
+		if (Inform->wstrGameObjectPrototypeName.find(TEXT("sm71_901")) != wstring::npos)
+		{
+			int a = 0;
+		}
+
 		Safe_Delete(Inform);
 
 	}

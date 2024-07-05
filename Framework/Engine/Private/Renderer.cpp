@@ -1133,7 +1133,7 @@ HRESULT CRenderer::Render_UI()
 		Safe_Release(pRenderObject);
 	}
 	m_RenderObjects[RENDER_DECAL].clear();
-
+	
 	for (auto& pRenderObject : m_RenderObjects[RENDER_UI])
 	{
 		if (nullptr != pRenderObject)
