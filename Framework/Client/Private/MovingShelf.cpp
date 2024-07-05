@@ -52,14 +52,6 @@ void CMovingShelf::Tick(_float fTimeDelta)
 	Get_Object_Pos();
 #endif
 #endif
-	if (m_bActivity)
-		m_fTimeDelay += fTimeDelta;
-	if (m_fTimeDelay > 1.f)
-	{
-		m_bActivity = false;
-		m_fTimeDelay = 0.f;
-	}
-
 
 	if ((m_bCol[INTER_COL_NORMAL][COL_STEP1]|| m_bCol[INTER_COL_DOUBLE][COL_STEP1]) && !m_bActivity)
 	{
@@ -87,7 +79,7 @@ void CMovingShelf::Late_Tick(_float fTimeDelta)
 
 		m_bRender = false;
 	}
-	if (Activate_Col(Get_Collider_World_Pos(_float4(50.f, 1.f, 50.f,1.f)))|| Activate_Col(Get_Collider_World_Pos(_float4(-50.f, 1.f, 50.f, 1.f))))
+	if (Activate_Col(Get_Collider_World_Pos(_float4(50.f, 1.f, 50.f,1.f))))
 	{
 		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
 			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
@@ -98,7 +90,6 @@ void CMovingShelf::Late_Tick(_float fTimeDelta)
 	{
 		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
-		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 	}
 
 	__super::Late_Tick(fTimeDelta);
@@ -173,7 +164,7 @@ void CMovingShelf::Active()
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
 	
-	m_eState = SHELF_UPLRIGHT;
+	m_eState = SHELF_UPRIGHT;
 
 }
 
@@ -214,7 +205,5 @@ void CMovingShelf::Free()
 
 _float4 CMovingShelf::Get_Object_Pos()
 {
-	
-	return;
-
+	return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
 }

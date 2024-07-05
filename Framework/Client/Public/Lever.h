@@ -10,18 +10,16 @@ BEGIN(Client)
 class CLever final : public CInteractProps
 {
 public:
-	enum CABINET_STATE
+	enum LEVER_STATE
 	{
-		CABINET_CLOSED,
-		CABINET_OPEN,
-		CABINET_OPENED,
-		CABINET_END,
+		LEVER_RESET,
+		LEVER_DOWN,
+		LEVER_STATIC,
+		LEVER_END,
 	};
-	enum CABINET_PART
+	enum LEVER_PART
 	{
 		PART_BODY,
-		PART_ITEM,
-		PART_LOCK,
 		PART_END
 	};
 private:
@@ -58,7 +56,7 @@ private:
 	_bool				m_bActivity = { false };
 	_bool				m_bRightCol = { false };
 
-	_ubyte			m_eState = { CABINET_CLOSED };
+	_ubyte			m_eState = { LEVER_STATIC };
 
 
 

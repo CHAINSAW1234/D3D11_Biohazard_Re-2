@@ -13,7 +13,7 @@ public:
 	enum SHELF_STATE
 	{
 		SHELF_DOWN,
-		SHELF_UPLRIGHT,
+		SHELF_UPRIGHT,
 		SHELF_END,
 	};
 	enum SHELF_PART
@@ -47,7 +47,7 @@ public:
 
 
 private:
-	_ubyte							m_eState = { CABINET_CLOSED };
+	_ubyte							m_eState = { SHELF_DOWN };
 
 
 
