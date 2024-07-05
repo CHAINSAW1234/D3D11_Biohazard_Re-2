@@ -7,7 +7,7 @@
 
 BEGIN(Client)
 
-class CCabinet final : public CInteractProps
+class CLever final : public CInteractProps
 {
 public:
 	enum CABINET_STATE
@@ -25,9 +25,9 @@ public:
 		PART_END
 	};
 private:
-	CCabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CCabinet(const CCabinet& rhs);
-	virtual ~CCabinet() = default;
+	CLever(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CLever(const CLever& rhs);
+	virtual ~CLever() = default;
 
 public:
 	virtual HRESULT				Initialize_Prototype() override;
@@ -56,13 +56,14 @@ private:
 	_bool				m_bOpened = { false };
 	_bool				m_bLock =	{ false };
 	_bool				m_bActivity = { false };
+	_bool				m_bRightCol = { false };
 
 	_ubyte			m_eState = { CABINET_CLOSED };
 
 
 
 public:
-	static CCabinet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CLever* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 
