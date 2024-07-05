@@ -3,6 +3,19 @@
 #include "Item_Mesh_Viewer.h"
 #include "Camera_Free.h"
 
+
+constexpr _float	DIST_CAM_FAR_LIMIIT = 10.f;
+constexpr _float	DIST_CAM_NEAR_LIMIT = 1.f;
+
+constexpr _float	POPUP_HIDE_TIME_LIMIT = 0.5f;
+
+constexpr _float	POPUP_HIDE_START_RADIAN = 0.f;
+constexpr _float	POPUP_HIDE_END_RADIAN = 360.f;
+
+constexpr _float	POPUP_HIDE_START_DIST = 10.f;
+constexpr _float	POPUP_HIDE_END_DIST = 0.4f;
+
+
 CItem_Mesh_Viewer::CItem_Mesh_Viewer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -44,7 +57,7 @@ HRESULT CItem_Mesh_Viewer::Initialize(void* pArg)
 	
 	m_pCameraFree = dynamic_cast<CCamera_Free*>(pCamera);
 
-	m_fDistCam = m_fPopupHide_StartDist;
+	m_fDistCam = POPUP_HIDE_START_DIST;
 
 	Safe_AddRef(m_pCameraFree);
 
@@ -54,6 +67,8 @@ HRESULT CItem_Mesh_Viewer::Initialize(void* pArg)
 void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 {
 	_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCam) + m_pCameraFree->Get_Position_Vector();
+
+
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
 
@@ -68,7 +83,12 @@ void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 		Idle_Operation(fTimeDelta);
 		break;
 	}
-		
+
+	case Client::UI_SECOND_IDLE: {
+		SECOND_IDLE_Operation(fTimeDelta);
+		break;
+	}
+
 	case Client::HIDE: {
 		Hide_Operation(fTimeDelta);
 		break;
@@ -140,21 +160,21 @@ void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
 {
 	m_fPopupHide_CurTime += fTimeDelta;
 
-	if (m_fPopupHide_CurTime > m_fPopupHide_TimeLimit)
+	if (m_fPopupHide_CurTime > POPUP_HIDE_TIME_LIMIT)
 	{
 		m_eViewer_State = UI_IDLE;
 		m_fPopupHide_CurTime = 0.f;
-		m_fDistCam = m_fPopupHide_EndDist;
+		m_fDistCam = POPUP_HIDE_END_DIST;
 		return;
 	}
 
-	if (1.f > m_fPopupHide_CurTime / m_fPopupHide_TimeLimit)
+	if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
 	{
-		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuart, m_fPopupHide_StartDist, m_fPopupHide_EndDist, 
-			m_fPopupHide_CurTime / m_fPopupHide_TimeLimit);
+		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuart, POPUP_HIDE_START_DIST, POPUP_HIDE_END_DIST,
+			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 
-		_float fRadian = m_pGameInstance->Get_Ease(Ease_OutBack, m_fPopupHide_StartRadian, XMConvertToRadians(m_fPopupHide_EndRadian),
-			m_fPopupHide_CurTime / m_fPopupHide_TimeLimit);
+		_float fRadian = m_pGameInstance->Get_Ease(Ease_OutBack, POPUP_HIDE_START_RADIAN, XMConvertToRadians(POPUP_HIDE_END_RADIAN),
+			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 
 		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), fRadian);
 	}
@@ -187,23 +207,42 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	}
 }
 
+void CItem_Mesh_Viewer::SECOND_IDLE_Operation(_float fTimeDelta)
+{
+	m_fPopupHide_CurTime += fTimeDelta;
+
+	if (m_fPopupHide_CurTime > POPUP_HIDE_TIME_LIMIT)
+	{
+		m_eViewer_State = UI_IDLE;
+		m_fPopupHide_CurTime = 0.f;
+		m_fDistCam = POPUP_HIDE_END_DIST;
+		return;
+	}
+
+	if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
+	{
+		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuart, POPUP_HIDE_START_DIST, POPUP_HIDE_END_DIST,
+			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+	}
+}
+
 void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
 {
 	m_fPopupHide_CurTime += fTimeDelta;
 
-	if (m_fPopupHide_CurTime > m_fPopupHide_TimeLimit)
+	if (m_fPopupHide_CurTime > POPUP_HIDE_TIME_LIMIT)
 	{
 		m_eViewer_State = POP_UP;
 		m_fPopupHide_CurTime = 0.f;
-		m_fDistCam = m_fPopupHide_StartDist;
+		m_fDistCam = POPUP_HIDE_START_DIST;
 		m_bDead = true;
 		return;
 	}
 
-	if (1.f > m_fPopupHide_CurTime / m_fPopupHide_TimeLimit)
+	if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
 	{
-		m_fDistCam = m_pGameInstance->Get_Ease(Ease_InBack, m_fPopupHide_EndDist, m_fPopupHide_StartDist,
-			m_fPopupHide_CurTime / m_fPopupHide_TimeLimit);
+		m_fDistCam = m_pGameInstance->Get_Ease(Ease_InBack, POPUP_HIDE_END_DIST, POPUP_HIDE_START_DIST,
+			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 	}
 }
 
@@ -224,6 +263,14 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 		m_eViewer_State = eOperation;
 		break;
 	}
+
+	case Client::UI_SECOND_IDLE: {
+		m_bDead = false;
+		m_eItem_Number = eCallItemType;
+		m_eViewer_State = eOperation;
+		break;
+	}
+
 		
 	case Client::HIDE: {
 		m_bDead = false;
