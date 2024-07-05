@@ -17,6 +17,9 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+public :
+	void				Set_Damage_Scene_Start(_bool _damage) { m_isDamage_Start = _damage; }
+
 private :
 	void				Damage_Reset();
 	void				Operate_Damage(_float fTimeDelta);

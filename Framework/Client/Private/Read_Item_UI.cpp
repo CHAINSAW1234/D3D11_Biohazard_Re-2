@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "Map_UI.h"
 #include "Read_Item_UI.h"
+#include "Player.h"
 
 #define ARROW_DISTANCE  30.f
 #define INTRO_LIFE      1.5f
@@ -9,12 +9,12 @@
 #define MAX_BLENDING    0.7f
 
 CRead_Item_UI::CRead_Item_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-    : CInteract_UI{ pDevice, pContext }
+    : CCustomize_UI{ pDevice, pContext }
 {
 }
 
 CRead_Item_UI::CRead_Item_UI(const CRead_Item_UI& rhs)
-    : CInteract_UI{ rhs }
+    : CCustomize_UI{ rhs }
 {
 
 }
@@ -27,7 +27,7 @@ HRESULT CRead_Item_UI::Initialize_Prototype()
 HRESULT CRead_Item_UI::Initialize(void* pArg)
 {
     /*
-     1. TEXT("UI_Item_Introduce") => 경관의 수첩 (소개글)
+     1. TEXT("UI_Item_Introduce") => (소개글)
      2. TEXT("UI_Item_Read") => 메인 / 부모 검정색 Background
      3. TEXT("UI_Item_Read_Arrow") => 화살표
     */
@@ -56,6 +56,13 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
 
         else if (CustomUIDesc->wstrFileName == TEXT("UI_Item_Read"))
         {
+            /* 조절을 위한 줌을 받아온다 .*/
+            if (false == m_IsChild)
+            {
+                CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+                m_pZoomOff = pPlayer->Get_ZoomOff();
+            }
+
             /* Intro 부모 */
             m_pIntro_UI = Find_ReadUI(READ_UI_TYPE::INTRODUCE_READ, false);
 
@@ -150,11 +157,12 @@ void CRead_Item_UI::Tick(_float fTimeDelta)
     __super::Tick(fTimeDelta);
 
     /* 예시 코드 */
-    if (true == m_isRender)
+    if (true == m_isReadCall)
     {
+        m_isRender = true;
         Reset();
+        m_isReadCall = false;
     }
-
 
     Render_Condition();
 
@@ -187,8 +195,8 @@ HRESULT CRead_Item_UI::Render()
 
 void CRead_Item_UI::Render_Destory(_bool _render)
 {
-    //if (READ_UI_TYPE::TEXT_READ != m_eRead_type)
-    //    return;
+   /* if (READ_UI_TYPE::TEXT_READ != m_eRead_type)
+        return;*/
 
     /* 텍스트를 삭제한다*/
     if (true == _render)
@@ -206,7 +214,11 @@ void CRead_Item_UI::Render_Destory(_bool _render)
 void CRead_Item_UI::Introduce_Read(_float fTimeDelta)
 {
     if (false == m_isRender || true == m_isRead_Start)
+    {
+        m_fBlending = 1.f;
+        m_vCurrentColor.w = 0.f;
         return;
+    }
 
     m_fIntro_Timer += fTimeDelta;
     m_vCurrentColor.w = 0.f;
@@ -323,11 +335,18 @@ void CRead_Item_UI::Set_ReadItem_Type(ITEM_READ_TYPE _readType)
         {
             for (auto& iter : m_ReadVec)
             {
-                iter->m_isRender = true;
+                if(READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
+                {
+                    iter->m_isReadCall = true;
+                    m_eBook_Type = _readType;   
+                    return;
+                }
             }
         }
     }
+
 }
+
 void CRead_Item_UI::Text_Read(_float fTimeDelta)
 {
     if (nullptr == m_pIntro_UI || true != m_pIntro_UI->m_isRead_Start)
@@ -364,6 +383,7 @@ void CRead_Item_UI::Text_Read(_float fTimeDelta)
          else
              m_pRead_Supervise->m_iBookCnt
          m_isRender = true;*/
+        m_isRender = false;
     }
 }
 
@@ -397,9 +417,15 @@ CRead_Item_UI* CRead_Item_UI::Find_ReadUI(READ_UI_TYPE _readType, _bool _child)
 void CRead_Item_UI::Render_Condition()
 {
     if (false == m_isRender)
-        return;
+    {
+        if (nullptr != m_pZoomOff)
+            *m_pZoomOff = false;
 
-    if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON) && true == m_isRender)
+        return;
+    }
+
+    /* R Button 시에 삭제 */
+    if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
     {
         m_isRender = false;
         m_isPrevRender = false;
@@ -407,6 +433,9 @@ void CRead_Item_UI::Render_Condition()
 
         if (nullptr != m_pIntro_UI)
             m_pIntro_UI->m_isRead_Start = false;
+
+        if (nullptr != m_pZoomOff)
+            *m_pZoomOff = true;
     }
 }
 
@@ -426,7 +455,7 @@ void CRead_Item_UI::Reset()
      //   m_vecTextBoxes.back()->Set_Position(m_vFont_Position.x - 200.f, m_vFont_Position.y, m_vFont_Position.z);
 }
 
-CInteract_UI* CRead_Item_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CCustomize_UI* CRead_Item_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
     CRead_Item_UI* pInstance = new CRead_Item_UI(pDevice, pContext);
 

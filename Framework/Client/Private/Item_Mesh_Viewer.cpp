@@ -84,7 +84,7 @@ void CItem_Mesh_Viewer::Late_Tick(_float fTimeDelta)
 
 HRESULT CItem_Mesh_Viewer::Render()
 {
-	if (FAILED(Bind_ShaderResources()))
+	/*if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
 	_uint iNumMeshes = m_vecModelCom[m_eItem_Number]->Get_NumMeshes();
@@ -126,7 +126,7 @@ HRESULT CItem_Mesh_Viewer::Render()
 			return E_FAIL;
 
 		m_vecModelCom[m_eItem_Number]->Render(static_cast<_uint>(i));
-	}
+	}*/
 
 	return S_OK;
 }

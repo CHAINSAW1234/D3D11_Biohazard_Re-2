@@ -959,7 +959,7 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 	case Client::shotgun_bullet01a:
 		return CONSUMABLE;
 		break;
-	case Client::submachinegun_bullet01a:
+	/*case Client::submachinegun_bullet01a:
 		return CONSUMABLE;
 		break;
 	case Client::magnumbulleta:
@@ -970,7 +970,7 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 		break;
 	case Client::inkribbon01a:
 		return QUEST;
-		break;
+		break;*/
 	case Client::woodbarricade01a:
 		return CONSUMABLE;
 		break;

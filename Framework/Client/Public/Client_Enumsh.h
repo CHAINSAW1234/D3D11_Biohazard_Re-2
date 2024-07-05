@@ -20,6 +20,8 @@ namespace Client
 		ID_END
 	};
 
+	enum class ITEM_READ_TYPE { INCIDENT_LOG_NOTE, OPERATE_REPORT_NOTE, TASK_NOTE, MEDICINAL_NOTE, OFFICER_NOTE, END_NOTE };
+
 	enum UI_OPERRATION{ POP_UP, UI_IDLE, HIDE, STATE_END };
 
 	enum class UI_TUTORIAL_TYPE { TUTORIAL_WALK, TUTORIAL_AROUND, TUTORIAL_RUN, TUTORIAL_REROAD, TUTORIAL_AIM, TUTORIAL_EQUIP, INVENTORY_OPEN, TUTORIAL_END };
@@ -248,165 +250,51 @@ namespace Client
 	//리소스 없더라도 enum값 넣어두겠습니다 있는데 없는 것보단 없는데 있는게 나으니깐요
 	//파일 이름 입니다 70까지만 추가 되어 있음 대문자는 임시임
 	enum ITEM_NUMBER {
-		emergencyspray01a,
-		greenherb01a,
-		redherb01a,
-		blueherb01a,
-		herbsgg01a,
-		herbsgr01a,
-		herbsgb01a,
-		herbsggb01a,
-		herbsggg01a,
-		herbsgrb01a,
-		herbsrb01a,
-		greenherbitem01a,
-		redherbitem01a,
-		blueherbitem01a,
-		handgun_bullet01a,
-		shotgun_bullet01a,
-		submachinegun_bullet01a,
-		magnumbulleta,
-		biggun_bullet01a,
-		inkribbon01a,
-		woodbarricade01a,
-		blastingfuse01a,
-		gunpowder01a,
-		gunpowder01b,
-		strengtheningyellow01a,
-		/*71*/
-		vp70csparts01a,
-		laserpointer01a,
-		shotgunparts01a,
-		submgparts01a,
-		deserteaglecsparts01a,
-		lasersightparts01a,
-		ladysmithcsparts01a,
-		vp70longmagazine,
-		vp70powerup,
-		vp70stock,
-		ladysmithcsparts,
-		lasersight,
-		ladysmithpowerup,
-		browninghlongmagazine,
-		shotgunpartsstock,
-		shotgunpartsbarrel,
-		submgpartsmagazine,
-		submgpartssilencer,
-		deserteaglecspartsshight,
-		deserteaglecspartsbarrel,
-		grenadelauncherstock,
-		flamethrowerpowerup,
-		sparkshotpowerup,
-		/*72*/
-		oillighter01a,
-		keypickingtool01a,
-		photofilma01a,
-		photofilmb01a,
-		photofilmc01a,
-		photofilmd01a,
-		photofilme01a,
+		emergencyspray01a, /* 0. 스프레이*/
+		greenherb01a, /* 1. 화분 :그린 */
+		redherb01a, /* 2. 화분 : 레드*/
+		blueherb01a, /* 3. 화분 : 블루*/
+		herbsgg01a, /* 4. 허브 : 그린 + 그린*/
+		herbsgr01a, /* 5. 허브 : 그린 + 레드 */
+		herbsgb01a, /* 6. 허브 : 그린 + 블루 */
+		herbsggb01a, /* 7. 허브 : 그린 + 그린 + 블루 */
+		herbsggg01a, /* 8. 허브 : 그린 + 그린 + 그린 */
+		herbsgrb01a, /* 9. 허브 : 그린 + 레드 + 블루 */
+		herbsrb01a, /* 10. 허브 : 레드 + 블루*/
+		greenherbitem01a, /* 11. 그린허브 묶음*/
+		redherbitem01a, /* 12. 레드 허브 묶음*/
+		blueherbitem01a, /* 13. 블루 허브 묶음*/
+		handgun_bullet01a, /* 14. 핸드 건 총알*/
+		shotgun_bullet01a, /* 15. 샷건 총알*/
+		woodbarricade01a,/* 16. 나무 바리게이트 */
+		blastingfuse01a, /* 17. 발파용 퓨즈 (라디오 같이 생긴 거 )*/
+		_9vbattery01a, /* 18. 배터리 */
+		gunpowder01a, /*19. 건 파우더 (검 + 파랑색)*/
+		gunpowder01b,  /* 20. 건 파우더 (검 + 빨강색)*/
+		strengtheningyellow01a, /* 21. 건파우더 (흰+노)*/
+		/*71무기 부착물*/
+		vp70powerup, /*22 */
+		vp70longmagazine,/*23*/
+		shotgunpartsstock_00, /* 24 */
+		shotgunpartsbarrel,/* 25 */
 		/*73*/
-		backdoorkey01a,
-		keycase01a,
-		extensioncord01a,
-		squarecrank01a,
-		unicornmedal01a,
-		spadekey01a,
-		cardkeylv101a,
-		cardkeylv201a,
-		valvehandle01a,
-		starsbadge01a,
-		kingscepter01a,
-		hourglasskey01a,
-		virginheart01a,
-		bluejewelrybox01a,
-		redjewelrybox01a,
-		bishopplug01a,
-		rookplug01a,
-		kingplug01a,
-		serpentstone01a,
-		eaglestone01a,
-		jaggerstone01a,
-		handcuffskey01a,
-		unicorndebris01a,
-		sunstone01a,
-		doorknob01a,
-		drivergrip01a,
-		driverheadplus01a,
-		driverheadsocket01a,
-		blankkey01a,
-		wetwastepaper01a,
-		statuebook01a,
-		statuehand01a,
-		floppydisk01a,
-		virginmedal01a,
-		diakey01a,
-		carkey01a,
-		condenser01a,
-		cardkeylv001a,
-		virginmedal02a,
-		pocketbook01a,
-		loveremblem01a,
-		gearsmal01a,
-		gear01a,
-		gardenkey01a,
-		knightplug01a,
-		pawnplug01a,
-		queenplug01a,
-		blisterpack01a,
-		swordofdamocles01a,
-		orphanagekey01a,
-		clubkey01a,
-		manholeopener01a,
-		plastickcontainer01a,
-		plastickcontainer02a,
-		eaglekey01a,
-		heartkey01a,
-		videotape01a,
-		eaglemedal01a,
-		brokeneaglekey01a,
-		wolfkey01a,
-		cardkeylv202a,
-		valvehandle02a,
-		listtagwatchb01a,
-		medicinebottle01a,
-		medicinebottle02a,
-		medicinebottle03a,
-		jointsnplugs01a,
-		listtagpartsmaster01a,
-		clisttagmaster01a,
-		signalmodulator01a,
-		trophy01a,
-		memorysticklock01a,
-		memorystickunlock01a,
-		liftkey01a,
-		llisttagguests01a,
-		llisttaggeneral01a,
-		llisttagadvanced01a,
-		listtagpartsgeneral01a,
-		listtagpartsadvanced01a,
-		clisttagguests01a,
-		clisttaggeneral01a,
-		clisttagadvanced01a,
-		videotape02a,
-		modisk01a,
-		samplecartridge01a,
-		samplecartridge02a,
-		antiviraldrugs01a,
-		attachecase01a,
-		leverswitches01a,
-		prismpillar01a,
-		prismpillar02a,
-		prismpillar03a,
-		laboratoryfuse01a,
-		laboratoryfuse02a,
-		pendant01a,
-		scissors01a,
-		chaincutter01a,
-		cushiondoll01a,
+		unicornmedal01a, /* 26. 말 동전*/
+		spadekey01a, /* 27. 스페이드 열쇠 */
+		cardkeylv101a, /* 28. Parking Permit 경찰 카드 키*/
+		cardkeylv201a,   /*29. Weapons Locker Key Card 경찰 카드 키 */   // 둘중하나만?
+		valvehandle01a, /* 30. 바벨 핸들 */
+		kingscepter01a, /* 31. 석상이 들고 있는 마법봉1 */
+		virginheart01a,/* 32. 석상이 들고 있는 마법봉2 */
+		blankkey01a, /* 33. 자전거 의자 뽑은 것 같이 생긴 Key */
+		statuebook01a, /* 34. 갈색 책 */
+		statuehand01a, /* 35. 석상 손*/
+		virginmedal01a, /* 36. 호랑이 동전*/
+		diakey01a, /* 37.다이아 키 */
+		virginmedal02a, /* 38. 여자 동전*/
+		chaincutter01a, /* 39. 체인 커터*/
 		/*74*/
-		rpddocument01a,
-		rpddocumentblood01a,
+		rpddocument01a, /* 40. RPD 종이 */
+		rpddocumentblood01a, /* 41. 피 묻은 메모장 */
 		diary01a,
 		document01a,
 		pamphlet01a,
@@ -433,16 +321,8 @@ namespace Client
 		maplaboratorymiddle01a,
 		mapupperpolice01a,
 		clairesbag01a,
-		/*75*/
-		oldkey01a,
-		/*76*/
-		keytag01a,
-		/*77*/
-		clairebox01a,
-		leonbox01a,
-		portablesafe01a,
-		cookiescan01a,
-		woodbox01a,
+		flashbomb,
+		Grenade,
 		/*end*/
 		HandGun,
 		ShotGun,

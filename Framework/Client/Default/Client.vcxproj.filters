@@ -220,9 +220,6 @@
     <Filter Include="02.GameObjects\UI\12. Get Item">
       <UniqueIdentifier>{4a32cba5-819b-445c-96d7-9615bb363599}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\13. Read Item%28Book%29">
-      <UniqueIdentifier>{173d3427-d0a6-4f9d-9ab4-8c6fbeaca13f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\14. Loading">
       <UniqueIdentifier>{1fab2592-4cd6-4e48-a96c-07b5219145e6}</UniqueIdentifier>
     </Filter>
@@ -463,9 +460,6 @@
     <Filter Include="02.GameObjects\UI\15. LayOut">
       <UniqueIdentifier>{57e7ebf9-dbcd-44f9-8d5f-e0a91f6637a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\98. InteractUI">
-      <UniqueIdentifier>{dc0892af-56ab-415b-b959-8cb322e82e8f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Player\State\Player_State_Damg">
       <UniqueIdentifier>{94d3ab13-025c-408b-87af-20b5e8b80ac8}</UniqueIdentifier>
     </Filter>
@@ -486,6 +480,27 @@
     </Filter>
     <Filter Include="02.GameObjects\UI\16. Damage">
       <UniqueIdentifier>{c955f047-a231-406d-8518-888dbd090b6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\13. Read Item%28Document%29">
+      <UniqueIdentifier>{173d3427-d0a6-4f9d-9ab4-8c6fbeaca13f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\11. Map_UI\2. Player Map UI">
+      <UniqueIdentifier>{f3670940-c575-43ba-8ced-161896bc44c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\11. Map_UI\1. Main Map UI">
+      <UniqueIdentifier>{b2dd69dc-f9e8-4425-b122-7ca20e6971f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\11. Map_UI\3. Targeting Map UI">
+      <UniqueIdentifier>{775b588a-bbd9-49bc-8904-bb16646d7d0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\11. Map_UI\4. Item Map UI">
+      <UniqueIdentifier>{af1c5db9-d96d-4b12-ad02-985196c5e1f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\11. Map_UI\5. Floor Map UI">
+      <UniqueIdentifier>{6ab2ab0d-e230-439d-8b0f-8a4f37d9bcd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\11. Map_UI\6. Static_Map UI">
+      <UniqueIdentifier>{a60736aa-57c6-43a7-a450-512d5d4c0465}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -684,9 +699,6 @@
     <ClInclude Include="..\Public\Item_UI.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Map_UI.h">
-      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Sleep_Zombie.h">
       <Filter>AIController\Zombie\Task\Idle\Sleep</Filter>
     </ClInclude>
@@ -697,7 +709,7 @@
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Read_Item_UI.h">
-      <Filter>02.GameObjects\UI\13. Read Item%28Book%29</Filter>
+      <Filter>02.GameObjects\UI\13. Read Item%28Document%29</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Loading_UI.h">
       <Filter>02.GameObjects\UI\14. Loading</Filter>
@@ -918,9 +930,29 @@
     <ClInclude Include="..\Public\Creep_Zombie.h">
       <Filter>AIController\Zombie\Task\Idle\Creep</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Interact_UI.h" />
     <ClInclude Include="..\Public\Damage_UI.h">
       <Filter>02.GameObjects\UI\16. Damage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Main_Map_UI.h">
+      <Filter>02.GameObjects\UI\11. Map_UI\1. Main Map UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_Map_UI.h">
+      <Filter>02.GameObjects\UI\11. Map_UI\2. Player Map UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Map_Manager.h">
+      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Targeting_Map_UI.h">
+      <Filter>02.GameObjects\UI\11. Map_UI\3. Targeting Map UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Item_Map_UI.h">
+      <Filter>02.GameObjects\UI\11. Map_UI\4. Item Map UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Floor_Map_UI.h">
+      <Filter>02.GameObjects\UI\11. Map_UI\5. Floor Map UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Static_Map_UI.h">
+      <Filter>02.GameObjects\UI\11. Map_UI\6. Static_Map UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1104,9 +1136,6 @@
     <ClCompile Include="..\Private\Inventory_Slot.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Inventory_Slot</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Map_UI.cpp">
-      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Sleep_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Idle\Sleep</Filter>
     </ClCompile>
@@ -1117,7 +1146,7 @@
       <Filter>02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\ContextMenu</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Read_Item_UI.cpp">
-      <Filter>02.GameObjects\UI\13. Read Item%28Book%29</Filter>
+      <Filter>02.GameObjects\UI\13. Read Item%28Document%29</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Loading_UI.cpp">
       <Filter>02.GameObjects\UI\14. Loading</Filter>
@@ -1320,14 +1349,32 @@
     <ClCompile Include="..\Private\Map_UI.cpp">
       <Filter>02.GameObjects\UI\11. Map_UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Interact_UI.cpp">
-      <Filter>02.GameObjects\UI\98. InteractUI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Creep_Zombie.cpp">
       <Filter>AIController\Zombie\Task\Idle\Creep</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Damage_UI.cpp">
       <Filter>02.GameObjects\UI\16. Damage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Main_Map_UI.cpp">
+      <Filter>02.GameObjects\UI\11. Map_UI\1. Main Map UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_Map_UI.cpp">
+      <Filter>02.GameObjects\UI\11. Map_UI\2. Player Map UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Map_Manager.cpp">
+      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Targeting_Map_UI.cpp">
+      <Filter>02.GameObjects\UI\11. Map_UI\3. Targeting Map UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item_Map_UI.cpp">
+      <Filter>02.GameObjects\UI\11. Map_UI\4. Item Map UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Floor_Map_UI.cpp">
+      <Filter>02.GameObjects\UI\11. Map_UI\5. Floor Map UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Static_Map_UI.cpp">
+      <Filter>02.GameObjects\UI\11. Map_UI\6. Static_Map UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
