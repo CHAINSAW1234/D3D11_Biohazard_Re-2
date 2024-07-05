@@ -191,7 +191,7 @@ HRESULT CBody_Zombie::Render()
 				return E_FAIL;
 		}
 		
-		if(m_pModelCom->Get_Mesh_Branch(i) != (_int)CBody_Zombie::MESH_TYPE::_INNER)
+		if(m_pModelCom->Get_Mesh_Branch(i) != (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER)
 		{
 			m_bDecalRender = true;
 
