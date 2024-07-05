@@ -12,7 +12,7 @@ public:
 		_int iSubType;
 		_int iType;
 	}DECAL_DESC;
-protected:
+public:
 	CDecal_SSD(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CDecal_SSD(const CDecal_SSD& rhs);
 	virtual ~CDecal_SSD() = default;

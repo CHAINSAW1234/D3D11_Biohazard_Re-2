@@ -200,12 +200,12 @@ HRESULT CComputeShader::Render(_uint iPassIndex, _uint iThreadNumX, _uint iThrea
 	pPass->Apply(0, m_pContext);
 
 	m_pContext->Dispatch(iThreadNumX, iThreadNumY, iThreadNumZ);
-	m_pContext->End(m_pQuery);
+	/*m_pContext->End(m_pQuery);
 
 	while (m_pContext->GetData(m_pQuery, nullptr, 0, 0) == S_FALSE)
 	{
 
-	}
+	}*/
 
 	ID3D11UnorderedAccessView* NullUAVs[2] = { nullptr, nullptr };
 	m_pContext->CSSetUnorderedAccessViews(0, 2, NullUAVs, nullptr);

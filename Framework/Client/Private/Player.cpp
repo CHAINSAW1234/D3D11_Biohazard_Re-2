@@ -26,6 +26,7 @@
 
 
 #define MODEL_SCALE 0.01f
+#define SHOTGUN_BULLET_COUNT 5
 
 const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_HG"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT") };
 const wstring CPlayer::strAnimSetHoldName[ANIMSET_HOLD_END] = { TEXT("HOLD_HG"), TEXT("HOLG_STG"), TEXT("HOLD_MLE"), TEXT("HOLD_SUP") };
@@ -1568,9 +1569,26 @@ void CPlayer::PickUp_Item(CGameObject* pPickedUp_Item)
 void CPlayer::RayCast_Shoot()
 {
 	_float4 vBlockPoint;
-	if (m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint))
+
+	if(m_eEquip == STG)
 	{
-		int a = 0;
+		auto vCamPos = m_pCamera->GetPosition();
+		auto vCamLook = m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK);
+
+		m_pGameInstance->RayCast_Shoot(vCamPos, vCamLook, &vBlockPoint, true,true);
+
+		for(size_t i = 0;i<SHOTGUN_BULLET_COUNT;++i)
+		{
+			auto vDelta_Random = _float4(m_pGameInstance->GetRandom_Real(-0.1f, 0.1f), m_pGameInstance->GetRandom_Real(-0.1f, 0.1f), m_pGameInstance->GetRandom_Real(-0.1f, 0.1f), 0.f);
+			auto NewCamLook = vCamLook + vDelta_Random;
+			NewCamLook = Float4_Normalize(NewCamLook);
+
+			m_pGameInstance->RayCast_Shoot(vCamPos, NewCamLook, &vBlockPoint, true,false);
+		}
+	}
+	else
+	{
+		m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, false,true);
 	}
 }
 
