@@ -23,7 +23,7 @@
 #include "Decal_SSD.h"
 
 #define MODEL_SCALE 0.01f
-#define BLOOD_COUNT 5
+#define BLOOD_COUNT 3
 
 CZombie::CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMonster{ pDevice, pContext }
@@ -152,7 +152,7 @@ HRESULT CZombie::Initialize(void* pArg)
 #pragma endregion
 
 #pragma region Effect
-	m_BloodDelay = 30;
+	m_BloodDelay = 50;
 	Ready_Effect();
 #pragma endregion
 
@@ -1349,7 +1349,7 @@ void CZombie::Ready_Effect()
 	for (size_t i = 0; i < BLOOD_COUNT; ++i)
 	{
 		auto pBlood = CBlood::Create(m_pDevice, m_pContext);
-		pBlood->SetSize(3.f, 3.f, 3.f);
+		pBlood->SetSize(2.f, 2.f, 2.f);
 		m_vecBlood.push_back(pBlood);
 	}
 }
