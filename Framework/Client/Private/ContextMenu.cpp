@@ -294,9 +294,8 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 
 		m_eContextType = eItemType;
 
-		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_ChildTextureNum(0, 7);
-		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_MyChild_Text(0, 0, TEXT("바꾸기"));
-
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 7);
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("바꾸기"));
 		break;
 	}
 		
@@ -309,8 +308,6 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 	{
 		m_vecChildUI[i]->Set_Dead(false);
 	}
-
-
 }
 
 void CContextMenu::Set_EventbyTexture(_uint iTextureNum)
@@ -352,7 +349,7 @@ void CContextMenu::Set_EventbyTexture(_uint iTextureNum)
 	}
 
 	case 7: {
-		/*m_eContextEvent = SWITCH_ITEM;*/
+		m_eContextEvent = SWITCH_ITEM;
 		break;
 	}
 

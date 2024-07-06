@@ -835,6 +835,11 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			ItemModelTags.push_back(Inform->wstrModelPrototypeName);//УЂБе
 		}
 
+		if (Inform->wstrGameObjectPrototypeName.find(TEXT("sm71_901")) != wstring::npos)
+		{
+			int a = 0;
+		}
+
 		Safe_Delete(Inform);
 
 	}
@@ -961,14 +966,19 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Inventory/TabWindow_BackGround.dds")))))
 		return E_FAIL;
 
-	/*Prototype_Component_Texture_Tab_Window_BackGround*/
+	/*Prototype_Component_Texture_Perspective_Selecter_Check*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Perspective_Selecter_Check"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Perspective_Selecter/Check.png")))))
 		return E_FAIL;
 
-	/*Prototype_Component_Texture_Tab_Window_BackGround*/
+	/*Prototype_Component_Texture_NoteBook_Texture2*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_NoteBook_Texture2"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/Note/ui3210_file_13_1_iam.tex_noesispreviewdata.png")))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Filled*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Filled"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Inventory/Box_Store.png")))))
 		return E_FAIL;
 
 

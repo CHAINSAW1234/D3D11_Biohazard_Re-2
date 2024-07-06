@@ -80,6 +80,7 @@ public:
 
 	//아이탬 인벤토리에 넣기
 	void AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity = 1);
+	void AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity, _float3 fItemPos);
 
 	//만약 아이템을 넣을수 없는 상황이라면 false를 반환함
 	_bool IsCan_AddItem_ToInven();
@@ -89,6 +90,14 @@ public:
 
 	//몇번 단축키에 몇번 아이템이 있는가
 	ITEM_NUMBER Get_Item_On_HotKey(_uint iHotKeyNum);
+
+	_float4 Get_SelectedUIPos() {
+		if (nullptr != m_pSelected_ItemUI)
+		{
+			CTransform* pTransform = static_cast<CTransform*>(m_pSelected_ItemUI->Get_Component(g_strTransformTag));
+			return pTransform->Get_State_Float4(CTransform::STATE_POSITION);
+		}
+	}
 
 
 private: 
@@ -124,6 +133,11 @@ private:
 
 	/* for. SubInven */
 	class CInventory_Item_UI*		m_pInven_Item_UI = { nullptr };
+
+	/*for. PickUpItem*/
+	_int							m_PickResult = { -1 };//-1이면 없음 0이면 조합 1이면 자리바꾸기
+	_float2							m_fSwitchTargetPos = { 0.f, 0.f };
+	_float							m_fItemSwitchTime = { 0.f };
 
 private :	
 	/*for IDLE_Operation*/

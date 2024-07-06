@@ -72,6 +72,7 @@ public: /* For. Anim Branch */
 public:
 	virtual void						SetRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType) override;
 	virtual void						SetCulling(_bool boolean) override;
+	PxRigidDynamic*						Get_Ragdoll_RigidBody(COLLIDER_TYPE eType);
 private:
 	CModel*								m_pModelCom = { nullptr };
 	CShader*							m_pShaderCom = { nullptr };

@@ -28,7 +28,7 @@ HRESULT CBlood::Initialize(void* pArg)
 
 	m_bRender = false;
 
-	m_FrameDelay = 10;
+	m_FrameDelay =20;
 
 	return S_OK;
 }
@@ -38,20 +38,22 @@ void CBlood::Tick(_float fTimeDelta)
 	if (m_bRender == false)
 		return;
 
+	if (m_pHitPart)
+	{
+		PxVec3 HitPartPos = m_pHitPart->getGlobalPose().p;
+		_float4 HitPartFloat4 = _float4(HitPartPos.x, HitPartPos.y, HitPartPos.z, 1.f);
+		_float4 vDelta = HitPartFloat4 - m_vPrev_HitPartPos;
+		_float4 vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+		vPos += vDelta;
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
+		m_vPrev_HitPartPos = HitPartFloat4;
+	}
+
 	if(m_FrameDelay + m_FrameTime < GetTickCount64())
 	{
 		++m_iFrame;
 
 		m_FrameTime = GetTickCount64();
-
-		if(m_iType != 0)
-		{
-			m_fSizeX += 0.2f;
-			m_fSizeY += 0.2f;
-			m_fSizeZ += 0.2f;
-
-			m_pTransformCom->Set_Scaled(m_fSizeX, m_fSizeY, m_fSizeZ);
-		}
 	}
 
 	_uint iNumMesh = m_pModelCom->GetNumMesh();
@@ -111,7 +113,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(m_iFrame));
@@ -148,7 +150,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_2->Render(static_cast<_uint>(m_iFrame));
@@ -185,7 +187,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_3->Render(static_cast<_uint>(m_iFrame));
@@ -223,7 +225,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_4->Render(static_cast<_uint>(m_iFrame));
@@ -261,7 +263,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_5->Render(static_cast<_uint>(m_iFrame));
@@ -299,7 +301,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_6->Render(static_cast<_uint>(m_iFrame));
@@ -337,7 +339,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_7->Render(static_cast<_uint>(m_iFrame));
@@ -375,7 +377,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_8->Render(static_cast<_uint>(m_iFrame));
@@ -413,7 +415,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_9->Render(static_cast<_uint>(m_iFrame));
@@ -451,7 +453,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_10->Render(static_cast<_uint>(m_iFrame));
@@ -489,7 +491,7 @@ HRESULT CBlood::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin(4)))
 			return E_FAIL;
 
 		m_pModelCom_11->Render(static_cast<_uint>(m_iFrame));
@@ -511,6 +513,31 @@ void CBlood::SetSize(_float fSizeX, _float fSizeY, _float fSizeZ)
 	m_fSize_Y_Default = fSizeY;
 	m_fSize_Z_Default = fSizeZ;
 
+	if (m_iType == 2)
+	{
+		fSizeX -= 1.f;
+		fSizeY -= 1.f;
+		fSizeZ -= 1.f;
+
+		m_fSizeX = fSizeX;
+		m_fSizeY = fSizeY;
+		m_fSizeZ = fSizeZ;
+
+		m_fSize_X_Default = fSizeX;
+		m_fSize_Y_Default = fSizeY;
+		m_fSize_Z_Default = fSizeZ;
+	}
+	else
+	{
+		m_fSizeX = fSizeX;
+		m_fSizeY = fSizeY;
+		m_fSizeZ = fSizeZ;
+
+		m_fSize_X_Default = fSizeX;
+		m_fSize_Y_Default = fSizeY;
+		m_fSize_Z_Default = fSizeZ;
+	}
+
 	m_pTransformCom->Set_Scaled(fSizeX, fSizeY, fSizeZ);
 }
 
@@ -522,6 +549,11 @@ void CBlood::SetWorldMatrix_With_HitNormal(_vector vUp)
 _float4x4 CBlood::GetWorldMatrix()
 {
 	return m_pTransformCom->Get_WorldMatrix_Pure();
+}
+
+_float4 CBlood::GetPosition()
+{
+	return m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 }
 
 HRESULT CBlood::Add_Components()

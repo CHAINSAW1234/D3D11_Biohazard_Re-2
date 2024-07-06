@@ -287,6 +287,55 @@ public:
 	{
 		m_vForce = vForce;
 		m_eType = eType;
+
+		switch (eType)
+		{
+		case COLLIDER_TYPE::HEAD:
+			m_pHitPart = m_HeadCollider;
+			break;
+		case COLLIDER_TYPE::CHEST:
+			m_pHitPart = m_BodyCollider;
+			break;
+		case COLLIDER_TYPE::PELVIS:
+			m_pHitPart = m_Pelvis_Collider;
+			break;
+		case COLLIDER_TYPE::ARM_L:
+			m_pHitPart = m_Left_Arm_Collider;
+			break;
+		case COLLIDER_TYPE::ARM_R:
+			m_pHitPart = m_Right_Arm_Collider;
+			break;
+		case COLLIDER_TYPE::FOREARM_L:
+			m_pHitPart = m_Left_ForeArm_Collider;
+			break;
+		case COLLIDER_TYPE::FOREARM_R:
+			m_pHitPart = m_Right_Arm_Collider;
+			break;
+		case COLLIDER_TYPE::HAND_L:
+			m_pHitPart = m_Left_Hand_Collider;
+			break;
+		case COLLIDER_TYPE::HAND_R:
+			m_pHitPart = m_Right_Hand_Collider;
+			break;
+		case COLLIDER_TYPE::CALF_L:
+			m_pHitPart = m_Left_Shin_Collider;
+			break;
+		case COLLIDER_TYPE::CALF_R:
+			m_pHitPart = m_Right_Shin_Collider;
+			break;
+		case COLLIDER_TYPE::LEG_L:
+			m_pHitPart = m_Left_Leg_Collider;
+			break;
+		case COLLIDER_TYPE::LEG_R:
+			m_pHitPart = m_Right_Leg_Collider;
+			break;
+		case COLLIDER_TYPE::FOOT_L:
+			m_pHitPart = m_Left_Foot_Collider;
+			break;
+		case COLLIDER_TYPE::FOOT_R:
+			m_pHitPart = m_Right_Foot_Collider;
+			break;
+		}
 	}
 	_float4								Get_Force()
 	{
@@ -298,12 +347,129 @@ public:
 	}
 	void                                SetBoneIndex();
 	virtual void						SetPosition(_float4 vPos) override;
+	PxRigidDynamic*						GetHitPart()
+	{
+		return m_pHitPart;
+	}
+	_bool								IsBigAttack()
+	{
+		return m_bBigAttack;
+	}
+	void								SetBigAttack(_bool boolean)
+	{
+		m_bBigAttack = boolean;
+	}
+	_uint								GetHitCount_STG()
+	{
+		return m_iHitCount_STG;
+	}
+	void								Increase_Hit_Count_STG()
+	{
+		++m_iHitCount_STG;
+	}
+	void								Insert_Hit_Point_STG(_float4 vPoint)
+	{
+		m_vecBlockPoint_STG.push_back(vPoint);
+	}
+	void								Insert_Hit_Normal_STG(_float4 vNormal)
+	{
+		m_vecBlockNormal_STG.push_back(vNormal);
+	}
+	vector<_float4>*					GetBlockPoint_STG()
+	{
+		return &m_vecBlockPoint_STG;
+	}
+	vector<_float4>*					GetNormalPoint_STG()
+	{
+		return &m_vecBlockNormal_STG;
+	}
+	vector<PxRigidDynamic*>*			GetHitPart_STG()
+	{
+		return &m_vecHitPart_STG;
+	}
+	vector<COLLIDER_TYPE>*				GetColliderType_STG()
+	{
+		return &m_vecColliderType_STG;
+	}
+	void								Insert_HitPart_STG(PxRigidDynamic* pHitPart)
+	{
+		m_vecHitPart_STG.push_back(pHitPart);
+	}
+	void								Insert_Collider_Type(COLLIDER_TYPE eType)
+	{
+		m_vecColliderType_STG.push_back(eType);
+
+		switch (eType)
+		{
+		case COLLIDER_TYPE::HEAD:
+			m_vecHitPart_STG.push_back(m_HeadCollider);
+			break;
+		case COLLIDER_TYPE::CHEST:
+			m_vecHitPart_STG.push_back(m_BodyCollider);
+			break;
+		case COLLIDER_TYPE::PELVIS:
+			m_vecHitPart_STG.push_back(m_Pelvis_Collider);
+			break;
+		case COLLIDER_TYPE::ARM_L:
+			m_vecHitPart_STG.push_back(m_Left_Arm_Collider);
+			break;
+		case COLLIDER_TYPE::ARM_R:
+			m_vecHitPart_STG.push_back(m_Right_Arm_Collider);
+			break;
+		case COLLIDER_TYPE::FOREARM_L:
+			m_vecHitPart_STG.push_back(m_Left_ForeArm_Collider);
+			break;
+		case COLLIDER_TYPE::FOREARM_R:
+			m_vecHitPart_STG.push_back(m_Right_ForeArm_Collider);
+			break;
+		case COLLIDER_TYPE::HAND_L:
+			m_vecHitPart_STG.push_back(m_Left_Hand_Collider);
+			break;
+		case COLLIDER_TYPE::HAND_R:
+			m_vecHitPart_STG.push_back(m_Right_Arm_Collider);
+			break;
+		case COLLIDER_TYPE::CALF_L:
+			m_vecHitPart_STG.push_back(m_Left_Shin_Collider);
+			break;
+		case COLLIDER_TYPE::CALF_R:
+			m_vecHitPart_STG.push_back(m_Right_Shin_Collider);
+			break;
+		case COLLIDER_TYPE::LEG_L:
+			m_vecHitPart_STG.push_back(m_Left_Leg_Collider);
+			break;
+		case COLLIDER_TYPE::LEG_R:
+			m_vecHitPart_STG.push_back(m_Right_Leg_Collider);
+			break;
+		case COLLIDER_TYPE::FOOT_L:
+			m_vecHitPart_STG.push_back(m_Left_Foot_Collider);
+			break;
+		case COLLIDER_TYPE::FOOT_R:
+			m_vecHitPart_STG.push_back(m_Right_Foot_Collider);
+			break;
+		}
+	}
+	_bool						Is_Hit_Decal_Ray()
+	{
+		return m_bHit_DecalRay;
+	}
+	void						Set_Hit_Decal_Ray(_bool boolean)
+	{
+		m_bHit_DecalRay = boolean;
+	}
 private:
 	_bool											m_bHit = { false };
 	_float4											m_vForce;
 	COLLIDER_TYPE									m_eType;
 	_int											m_iId = { 0 };
 	vector<_int>                                    m_vecBoneIndex;
+	PxRigidDynamic*									m_pHitPart = { nullptr };
+	_bool											m_bBigAttack = { false };
+	vector<_float4>									m_vecBlockPoint_STG;
+	vector<_float4>									m_vecBlockNormal_STG;
+	_uint											m_iHitCount_STG = { 0 };
+	vector<PxRigidDynamic*>							m_vecHitPart_STG;
+	vector<COLLIDER_TYPE>							m_vecColliderType_STG;
+	_bool											m_bHit_DecalRay = { false };
 #pragma endregion
 
 public:

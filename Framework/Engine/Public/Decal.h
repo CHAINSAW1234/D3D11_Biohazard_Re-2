@@ -24,6 +24,10 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 	void			SetWorldMatrix(_float4x4 WorldMatrix);
+	void			SetExtent(_float3 vExtent)
+	{
+		m_vExtent = vExtent;
+	}
 public:
 	virtual void	Add_Skinned_Decal(AddDecalInfo Info, RAYCASTING_INPUT Input) {}
 	virtual void	Bind_Resource_DecalInfo() {}
@@ -45,10 +49,6 @@ public:
 	virtual HRESULT				Init_Decal_Texture(_uint iLevel) { return S_OK; }
 	virtual void				Bind_Resource_NonCShader_Decal(class CShader* pShader) {}
 	virtual void				Calc_NonCS_DecalMap(class CShader* pShader) {}
-	void						SetExtent(_float3 vExtent)
-	{
-		m_vExtent = vExtent;
-	}
 protected:
 	class CModel*				m_pModelCom = { nullptr };
 	class CShader*				m_pShaderCom = { nullptr };

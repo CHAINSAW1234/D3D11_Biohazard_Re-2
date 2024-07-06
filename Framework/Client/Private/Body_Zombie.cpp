@@ -635,32 +635,32 @@ HRESULT CBody_Zombie::Initialize_MeshTypes()
 
 	for (auto& strMeshTag : MeshTags)
 	{
-		if (strMeshTag.find("Inside") != string::npos)
+		if (strMeshTag.find("Inside") != string::npos || strMeshTag.find("inside") != string::npos)
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_INNER));
 		}
 	
-		else if (strMeshTag.find("Joint") != string::npos)
+		else if (strMeshTag.find("Joint") != string::npos || strMeshTag.find("joint") != string::npos)
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_JOINT));
 		}
 
-		else if (strMeshTag.find("Deficit") != string::npos)
+		else if (strMeshTag.find("Deficit") != string::npos || strMeshTag.find("deficit") != string::npos)
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_DEFICIT));
 		}
 
-		else if (strMeshTag.find("Damage") != string::npos)
+		else if (strMeshTag.find("Damage") != string::npos || strMeshTag.find("damage") != string::npos)
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_DAMAGED));
 		}
 
-		else if (strMeshTag.find("Internal_Mat") != string::npos)
+		else if (strMeshTag.find("Internal_Mat") != string::npos || strMeshTag.find("internal_Mat") != string::npos)
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_INTERNAL_MAT));
 		}
 
-		else if (strMeshTag.find("BrokenHead") != string::npos)
+		else if (strMeshTag.find("BrokenHead") != string::npos || strMeshTag.find("brokenHead") != string::npos)
 		{
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_BROKEN_HEAD));
 		}
@@ -992,6 +992,11 @@ void CBody_Zombie::SetCulling(_bool boolean)
 		m_pRagdoll->SetCulling(boolean);
 }
 
+PxRigidDynamic* CBody_Zombie::Get_Ragdoll_RigidBody(COLLIDER_TYPE eType)
+{
+	return m_pRagdoll->GetRigidBody(eType);
+}
+
 void CBody_Zombie::Update_Current_MotionType()
 {
 	if (nullptr == m_pModelCom)
@@ -1182,6 +1187,8 @@ HRESULT CBody_Zombie::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevViewMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_Cloth", &m_bCloth, sizeof(_bool))))
 		return E_FAIL;
 
 	return S_OK;

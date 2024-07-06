@@ -208,6 +208,55 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_BLOOD(PS_IN In)
+{
+    PS_OUT			Out = (PS_OUT)0;
+
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    vector vNormalDesc = g_NormalTexture.Sample(LinearSampler, In.vTexcoord);
+
+    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
+
+    float3x3 WorldMatrix = float3x3(In.vTangent, In.vBinormal, In.vNormal);
+
+    float3 vWorldNormal = mul(vNormal, WorldMatrix);
+
+    Out.vDiffuse = vMtrlDiffuse;
+    Out.vNormal = vector(vWorldNormal * 0.5f + 0.5f, 0.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 1000.0f, 0.0f, 0.0f);
+
+    if (g_isAlphaTexture)
+    {
+        vector vAlphaDesc = g_AlphaTexture.Sample(LinearSampler, In.vTexcoord);
+        Out.vDiffuse.a = vAlphaDesc.r;
+        if (0.3 >= Out.vDiffuse.a)
+            discard;
+    }
+    else
+    {
+        Out.vDiffuse.a = 1.f;
+    }
+
+    Out.vMaterial.r = vMtrlDiffuse.a;
+    Out.vMaterial.g = vNormalDesc.a;
+
+    if (g_isAOTexture)
+    {
+        vector vAODesc = g_AOTexture.Sample(LinearSampler, In.vTexcoord);
+        Out.vMaterial.b = vAODesc.r;
+    }
+    else
+    {
+        Out.vMaterial.b = 1.f;
+    }
+
+    Out.vDiffuse.r -= 0.3f;
+    Out.vDiffuse.g -= 0.3f;
+    Out.vDiffuse.b -= 0.3f;
+
+    return Out;
+}
+
 PS_OUT_LIGHTDEPTH PS_MAIN_LIGHTDEPTH(PS_IN In)
 {
     PS_OUT_LIGHTDEPTH Out = (PS_OUT_LIGHTDEPTH) 0;
@@ -228,6 +277,7 @@ PS_OUT_LIGHTDEPTH PS_LIGHTDEPTH_CUBE(PS_IN_CUBE In)
 
 technique11 DefaultTechnique
 {
+    //0
 	pass Default
 	{
 		SetRasterizerState(RS_Default);
@@ -241,6 +291,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
+    //1
     pass LightDepth
     {
         SetRasterizerState(RS_Default);
@@ -254,6 +305,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_LIGHTDEPTH();
     }
 
+    //2
     pass LightDepth_Cube
     {
         SetRasterizerState(RS_Default);
@@ -267,6 +319,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_LIGHTDEPTH_CUBE();
     }
 
+    //3
     pass WireFrame
     {
         SetRasterizerState(RS_Wireframe);
@@ -279,4 +332,19 @@ technique11 DefaultTechnique
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
     }
+
+    //4
+    pass Blood
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_BLOOD();
+    }
+
 }

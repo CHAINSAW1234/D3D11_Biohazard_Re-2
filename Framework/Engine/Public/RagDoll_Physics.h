@@ -199,6 +199,57 @@ public:
         m_iId = Index;
     }
     _int                                Find_BoneIndex(const string& strRootTag);
+    FORCEINLINE PxRigidDynamic*         GetRigidBody(COLLIDER_TYPE eType)
+    {
+        switch (eType)
+        {
+        case COLLIDER_TYPE::HEAD:
+           return m_Head;
+            break;
+        case COLLIDER_TYPE::CHEST:
+            return m_Chest;
+            break;
+        case COLLIDER_TYPE::PELVIS:
+            return m_Pelvis;
+            break;
+        case COLLIDER_TYPE::ARM_L:
+            return m_Arm_L;
+            break;
+        case COLLIDER_TYPE::ARM_R:
+            return m_Arm_R;
+            break;
+        case COLLIDER_TYPE::FOREARM_L:
+            return m_ForeArm_L;
+            break;
+        case COLLIDER_TYPE::FOREARM_R:
+            return m_ForeArm_R;
+            break;
+        case COLLIDER_TYPE::HAND_L:
+            return m_Hand_L;
+            break;
+        case COLLIDER_TYPE::HAND_R:
+            return m_Hand_R;
+            break;
+        case COLLIDER_TYPE::CALF_L:
+            return m_Calf_L;
+            break;
+        case COLLIDER_TYPE::CALF_R:
+            return m_Calf_R;
+            break;
+        case COLLIDER_TYPE::LEG_L:
+            return m_Leg_L;
+            break;
+        case COLLIDER_TYPE::LEG_R:
+            return m_Leg_R;
+            break;
+        case COLLIDER_TYPE::FOOT_L:
+            return m_Foot_L;
+            break;
+        case COLLIDER_TYPE::FOOT_R:
+            return m_Foot_R;
+            break;
+        }
+    }
 public:
 	static CRagdoll_Physics*            Create();
 

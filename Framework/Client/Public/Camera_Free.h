@@ -41,6 +41,7 @@ public:
 		m_isCrosshair_Aiming = _aiming;
 	}
 	void	Set_FixedMouse(_bool _Fixed) { m_isFixedMouse = _Fixed;  }
+	virtual void	Active_Camera(_bool isActive) override;
 
 private:
 	_float						m_fMouseSensor	= { 0.0f };

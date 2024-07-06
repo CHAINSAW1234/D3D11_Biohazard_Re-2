@@ -2,6 +2,8 @@
 #include "Map_UI.h"
 #include "Read_Item_UI.h"
 
+#include "Player.h"
+
 #define ARROW_DISTANCE  30.f
 #define INTRO_LIFE      1.5f
 #define ALPHA_ZERO      _float4(0, 0, 0, 0)
@@ -404,6 +406,10 @@ void CRead_Item_UI::Render_Condition()
         m_isRender = false;
         m_isPrevRender = false;
         m_isChange = false;
+
+        CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+        pPlayer->Set_isCamTurn(false);
+        m_pGameInstance->Set_IsPaused(false);
 
         if (nullptr != m_pIntro_UI)
             m_pIntro_UI->m_isRead_Start = false;
