@@ -145,6 +145,20 @@ HRESULT CFace_Zombie::Render()
 			if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
 				return E_FAIL;
 
+			auto bHair = false;
+			if (m_pModelCom->Get_Mesh_Branch(i) == (_int)CFace_Zombie::FACE_MESH_TYPE::_HAIR)
+			{
+				bHair = true;
+
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_Hair", &bHair, sizeof(_bool))))
+					return E_FAIL;
+			}
+			else
+			{
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_Hair", &bHair, sizeof(_bool))))
+					return E_FAIL;
+			}
+
 			m_pModelCom->Bind_DecalMap(static_cast<_uint>(i), m_pShaderCom);
 		}
 		else
@@ -384,9 +398,9 @@ HRESULT CFace_Zombie::Initialize_MeshType()
 	}
 
 	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_INNER), false);
-	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_OUTTER), true);
-	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_HAIR), true);
-	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_TEETH), true);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_OUTTER), false);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_HAIR), false);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(FACE_MESH_TYPE::_TEETH), false);
 
 	return S_OK;
 }

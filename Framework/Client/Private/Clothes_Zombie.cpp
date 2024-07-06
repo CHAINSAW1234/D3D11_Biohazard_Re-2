@@ -24,7 +24,7 @@ HRESULT CClothes_Zombie::Initialize(void* pArg)
 	if (nullptr == pArg)
 		return E_FAIL;
 
-	CLOTHES_MONSTER_DESC*			pDesc = { static_cast<CLOTHES_MONSTER_DESC*>(pArg) };
+	CLOTHES_MONSTER_DESC* pDesc = { static_cast<CLOTHES_MONSTER_DESC*>(pArg) };
 	m_eClothesType = pDesc->eClothesType;
 	m_eBodyType = pDesc->eBodyType;
 	m_iClothesModelID = pDesc->iClothesModelID;
@@ -82,8 +82,8 @@ void CClothes_Zombie::Late_Tick(_float fTimeDelta)
 	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);
 	//	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 	//	m_pModelCom->Play_Pose(m_pParentsTransform, fTimeDelta);
-	
-	if(m_bRender)
+
+	if (m_bRender)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
@@ -314,7 +314,7 @@ void CClothes_Zombie::Create_Cloth()
 
 void CClothes_Zombie::Add_RenderGroup()
 {
-	if(m_bRender)
+	if (m_bRender)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
@@ -525,7 +525,7 @@ HRESULT CClothes_Zombie::Add_Components()
 				if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Zombie_Pants00_Female"),
 					TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 					return E_FAIL;
-			}		
+			}
 
 			else if (ZOMBIE_FEMALE_PANTS::_01 == static_cast<ZOMBIE_FEMALE_PANTS>(m_iClothesModelID))
 			{
@@ -600,7 +600,7 @@ HRESULT CClothes_Zombie::Add_Components()
 				return E_FAIL;
 		}
 	}
-	
+
 	else if (ZOMBIE_BODY_TYPE::_MALE_BIG == m_eBodyType)
 	{
 		if (ZOMBIE_CLOTHES_TYPE::_PANTS == m_eClothesType)
@@ -722,6 +722,10 @@ HRESULT CClothes_Zombie::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_Cloth", &m_bCloth, sizeof(_bool))))
+		return E_FAIL;
+
+	auto bHair = false;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_Hair", &bHair, sizeof(_bool))))
 		return E_FAIL;
 
 	return S_OK;
