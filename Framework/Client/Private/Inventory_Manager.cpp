@@ -556,10 +556,6 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 
 		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
-			//CTransform* pSelectedItemTransform = m_pSelected_ItemUI->Get_Transform();
-
-			//pSelectedItemTransform->Set_State(CTransform::STATE_POSITION, fPos);
-
 			_float4 fPrePos = m_pSelected_ItemUI->GetPosition();
 			_float3 fMove = { HoveredPos.x - fPrePos.x, HoveredPos.y - fPrePos.y, 0.f };
 
