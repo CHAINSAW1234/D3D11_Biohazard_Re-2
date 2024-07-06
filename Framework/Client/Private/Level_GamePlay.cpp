@@ -33,7 +33,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
 	
-	if (FAILED(Ready_Layer_Camera(g_strCameraLayer)))
+	if (FAILED(Ready_Layer_Camera(g_strCameraTag)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
@@ -289,16 +289,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 #ifdef MAP_NOTHING
 
 #endif
-#ifdef MAP_JUSTMAP
-	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_Map"), LEVEL_GAMEPLAY)))
-		return E_FAIL;
-#endif
 #ifdef MAP_INTERACT
 	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
-		return E_FAIL;
-#endif
-#ifdef MAP_NONANIMOBJ
-	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_NonAnim"), LEVEL_GAMEPLAY)))
 		return E_FAIL;
 #endif
 

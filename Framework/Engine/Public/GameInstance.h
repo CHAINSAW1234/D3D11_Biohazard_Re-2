@@ -114,6 +114,7 @@ public: /* For.Object_Manager */
 	//yeeun	
 	HRESULT									Add_Layer(_uint iLevelIndex, const wstring& strLayerTag);
 	void									Start();
+	void									Active_Camera(_uint iLevelIndex, class CCamera* pCamera);
 #pragma endregion
 
 #pragma region Component_Manager

@@ -12,7 +12,12 @@ HRESULT CBounding_OBB::Initialize(CBounding::BOUNDING_DESC* pBoundingDesc)
 	BOUNDING_OBB_DESC*		pDesc = (BOUNDING_OBB_DESC*)pBoundingDesc;
 
 	_float4 vOrientation;	
-	XMStoreFloat4(&vOrientation, XMQuaternionRotationRollPitchYaw(pDesc->vRotation.x, pDesc->vRotation.y, pDesc->vRotation.z));
+	if (false == pDesc->bQuat)
+		XMStoreFloat4(&vOrientation, XMQuaternionRotationRollPitchYaw(pDesc->vRotation.x, pDesc->vRotation.y, pDesc->vRotation.z));
+	else
+		vOrientation = pDesc->vRotation;
+
+
 
 	m_pBoundingDesc_Original = new BoundingOrientedBox(pDesc->vCenter, _float3(pDesc->vSize.x * 0.5f, pDesc->vSize.y * 0.5f, pDesc->vSize.z * 0.5f), vOrientation);
 	m_pBoundingDesc = new BoundingOrientedBox(*m_pBoundingDesc_Original);

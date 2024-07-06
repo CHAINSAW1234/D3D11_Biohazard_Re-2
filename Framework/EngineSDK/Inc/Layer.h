@@ -26,6 +26,8 @@ public:
 	CGameObject*					Get_GameObject(_uint iIndex);
 	list<class CGameObject*>*		Get_ObjectList_Ptr();
 
+	void							Active_Camera(class CCamera* pCamera);
+
 private:
 	list<class CGameObject*>		m_GameObjects;
 
