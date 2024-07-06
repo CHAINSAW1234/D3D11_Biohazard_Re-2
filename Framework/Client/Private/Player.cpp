@@ -23,10 +23,11 @@
 
 #include "Tab_Window.h"
 #include "Bone.h"
+#include "Muzzle_Smoke.h"
 
 
 #define MODEL_SCALE 0.01f
-#define SHOTGUN_BULLET_COUNT 5
+#define SHOTGUN_BULLET_COUNT 7
 
 const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_HG"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT") };
 const wstring CPlayer::strAnimSetHoldName[ANIMSET_HOLD_END] = { TEXT("HOLD_HG"), TEXT("HOLG_STG"), TEXT("HOLD_MLE"), TEXT("HOLD_SUP") };
@@ -807,6 +808,8 @@ void CPlayer::Shot()
 
 		m_pMuzzle_Flash->Set_Render(true);
 		m_pMuzzle_Flash->SetPosition(Get_MuzzlePosition());
+		m_pMuzzle_Smoke->Set_Render(true);
+		m_pMuzzle_Smoke->SetPosition(Get_MuzzlePosition());
 		break;
 		}
 	case EQUIP::STG: {
@@ -2119,22 +2122,30 @@ void CPlayer::Ready_Effect()
 
 	m_pMuzzle_Flash_SG = CMuzzle_Flash_SG::Create(m_pDevice, m_pContext);
 	m_pMuzzle_Flash_SG->SetSize(0.6f, 0.6f);
+
+	m_pMuzzle_Smoke = CMuzzle_Smoke::Create(m_pDevice, m_pContext);
+	m_pMuzzle_Smoke->SetSize(0.6f, 0.6f);
 }
 
 void CPlayer::Release_Effect()
 {
 	Safe_Release(m_pMuzzle_Flash);
 	Safe_Release(m_pMuzzle_Flash_SG);
+	Safe_Release(m_pMuzzle_Smoke);
 }
 
 void CPlayer::Tick_Effect(_float fTimeDelta)
 {
+	m_pMuzzle_Smoke->Tick(fTimeDelta);
+
 	m_pMuzzle_Flash->Tick(fTimeDelta);
 	m_pMuzzle_Flash_SG->Tick(fTimeDelta);
 }
 
 void CPlayer::Late_Tick_Effect(_float fTimeDelta)
 {
+	m_pMuzzle_Smoke->Late_Tick(fTimeDelta);
+
 	m_pMuzzle_Flash->Late_Tick(fTimeDelta);
 	m_pMuzzle_Flash_SG->Late_Tick(fTimeDelta);
 }

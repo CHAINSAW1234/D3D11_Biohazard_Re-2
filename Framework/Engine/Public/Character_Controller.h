@@ -309,7 +309,7 @@ public:
 			m_pHitPart = m_Left_ForeArm_Collider;
 			break;
 		case COLLIDER_TYPE::FOREARM_R:
-			m_pHitPart = m_Right_Arm_Collider;
+			m_pHitPart = m_Right_ForeArm_Collider;
 			break;
 		case COLLIDER_TYPE::HAND_L:
 			m_pHitPart = m_Left_Hand_Collider;

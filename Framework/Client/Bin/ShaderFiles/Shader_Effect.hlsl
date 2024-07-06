@@ -12,6 +12,7 @@ float g_fMinUV_Y;
 float g_fMaxUV_X;
 float g_fMaxUV_Y;
 float g_fAlpha;
+float g_fAlpha_Delta;
 float3 g_vExtent;
 
 struct VS_IN
@@ -151,7 +152,12 @@ PS_OUT_EFFECT PS_EFFECT(PS_IN In)
 
 	if (Out.vDiffuse.a <= 0.1f)
 		discard;
-	
+
+	Out.vDiffuse.a -= g_fAlpha_Delta;
+
+	if (Out.vDiffuse.a <= 0.1f)
+		discard;
+
 	//Out.vDiffuse.a *= g_fAlpha;
 
 	//Out.vMaterial = 0.f;

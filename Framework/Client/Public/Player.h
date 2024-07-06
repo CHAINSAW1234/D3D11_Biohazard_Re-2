@@ -404,6 +404,7 @@ public:
 private:
 	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
 	class CMuzzle_Flash_SG*						m_pMuzzle_Flash_SG = { nullptr };
+	class CMuzzle_Smoke*						m_pMuzzle_Smoke = { nullptr };
 #pragma endregion
 private:
 	HRESULT Add_Components();

@@ -170,6 +170,9 @@ private:
 	HRESULT						Render_PostProcessing();
 	HRESULT						Render_PostProcessing_Result();
 
+private:
+	HRESULT						Render_Decal();
+
 #pragma region Effect
 	HRESULT						Render_Effect_Bloom();
 #pragma endregion

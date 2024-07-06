@@ -550,6 +550,9 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_state_Move_Lever">
       <UniqueIdentifier>{bff6a259-79a2-452f-a9e7-819e06a0c52b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Muzzle_Smoke">
+      <UniqueIdentifier>{bb4b199b-bb82-4cbc-9469-651e4a8b3e6f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1053,6 +1056,9 @@
     <ClInclude Include="..\Public\Player_State_Move_Lever.h">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_state_Move_Lever</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Muzzle_Smoke.h">
+      <Filter>02.GameObjects\Effect\Muzzle_Smoke</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1519,6 +1525,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_State_Move_Lever.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_state_Move_Lever</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Muzzle_Smoke.cpp">
+      <Filter>02.GameObjects\Effect\Muzzle_Smoke</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

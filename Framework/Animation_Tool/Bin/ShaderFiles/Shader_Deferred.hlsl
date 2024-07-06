@@ -13,6 +13,7 @@ Texture3D g_3DTexture;
 Texture2D g_NormalTexture;
 Texture2D g_DiffuseTexture;
 Texture2D g_DepthTexture;
+Texture2D g_DepthTexture_Decal;
 Texture2D g_MaterialTexture;
 Texture2D g_OriginalTexture;
 
@@ -1467,7 +1468,7 @@ PS_OUT PS_DECAL(PS_IN In)
     vScreenUV.x = In.vPosition.x / SCREEN_SIZE_X;
     vScreenUV.y = In.vPosition.y / SCREEN_SIZE_Y;
 
-    vector vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
+    vector vDepthDesc = g_DepthTexture_Decal.Sample(PointSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * 1000.0f;
     float4 vWorldPos;
     float4 vViewPos;
@@ -1832,7 +1833,7 @@ technique11 DefaultTechnique
     pass SSD // 18
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();

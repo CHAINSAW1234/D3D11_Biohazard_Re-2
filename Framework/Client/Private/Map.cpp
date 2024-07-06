@@ -116,7 +116,7 @@ void CMap::Late_Tick(_float fTimeDelta)
 
 	if (/*m_bVisible && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f)*/1)
 	{
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD, this);
 
 		if (m_bShadow)
 		{
