@@ -370,6 +370,7 @@ public:		/* For Octree Culling */
 		m_iNumMeshes = NumMesh;
 	}
 	void									Release_IndexBuffer(_uint iNumMesh);
+	void									Release_Dump();
 	_float4									GetCenterPoint()
 	{
 		return m_vCenterPoint;
@@ -404,6 +405,10 @@ public:/*For Calc Decal Map*/
 	void									Perform_Calc_DecalMap(_int iMeshType);
 	void									Perform_Calc_DecalMap_StaticModel();
 	void									Bind_DecalMap(_uint iIndex,class CShader* pShader);
+
+	
+public:/*Release Dump*/
+	void									Release_Decal_Dump();
 
 private:/*For Decal Map*/
 	vector<ID3D11UnorderedAccessView*>		m_vecUAV_DecalMap;

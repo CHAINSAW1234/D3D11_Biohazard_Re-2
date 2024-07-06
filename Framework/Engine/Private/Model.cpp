@@ -3637,5 +3637,25 @@ void CModel::Release_IndexBuffer(_uint iNumMesh)
 {
 	m_Meshes[iNumMesh]->Release_IndexBuffer();
 }
+	
+void CModel::Release_Decal_Dump()
+{
+	for (size_t i = 0; i < m_Meshes.size(); ++i)
+	{
+		m_Meshes[i]->Release_Decal();
+		Safe_Delete_Array(m_vecDecal_Map[i]);
+		Safe_Release(m_vecSRV_DecalMap[i]);
+		Safe_Release(m_vecSB_DecalMap[i]);
+		Safe_Release(m_vecUAV_DecalMap[i]);
+	}
+}
+
+void CModel::Release_Dump()
+{
+	for (size_t i = 0; i < m_Meshes.size(); ++i)
+	{
+		m_Meshes[i]->Release_Dump();
+	}
+}
 
 #pragma endregion

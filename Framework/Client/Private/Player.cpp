@@ -77,6 +77,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	m_pTransformCom_Camera->SetRotationPerSec(0.75f);
 
+	m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), 3.f);
+	m_pTransformCom_Camera->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), 3.f);
 	//For Camera.
 	Load_CameraPosition();
 	if (FAILED(Ready_Camera()))
@@ -87,6 +89,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	Ready_Effect();
 
 	fill_n(m_SetProps, SETPROPS_NONE, -1);
+
 	return S_OK;
 }
 
