@@ -268,7 +268,7 @@ public:
 	_float4x4											Get_Lever_WorldMatrix() { return m_Lever_WorldMatrix; } //°¡
 	void													Set_Door_Setting(_int iDoor_Setting, _float fDoorDegree = 0.f) {m_iDoor_Setting = iDoor_Setting; m_fDoor_Degree = fDoorDegree;};
 	void													Set_Ladder_Setting(_int iLadder_Setting, _float4x4 LadderWorldMatrix = _float4x4()) { m_iLadder_Setting = iLadder_Setting; m_LadderWorldMatrix = LadderWorldMatrix; }
-	void													Set_Lever_Setting(_int iLever_Setting, _float4x4 LeverWorldMatrix = _float4x4()) { m_iLadder_Setting = iLever_Setting; m_Lever_WorldMatrix = LeverWorldMatrix; } //¿è
+	void													Set_Lever_Setting(_int iLever_Setting, _float4x4 LeverWorldMatrix = _float4x4()) { m_iLever_Setting = iLever_Setting; m_Lever_WorldMatrix = LeverWorldMatrix; } //¿è
 
 
 private:

@@ -6,6 +6,7 @@
 
 //part-obj
 #include"Body_Lever.h"
+#include"Shutter.h"
 CLever::CLever(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -36,9 +37,22 @@ HRESULT CLever::Initialize(void* pArg)
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;	
 
-
-
 	return S_OK;
+}
+
+void CLever::Start()
+{
+	__super::Start();
+	list<CGameObject*>* pShutter = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_HShutter"));
+	if (pShutter == nullptr)
+		return;
+	for (auto& iter : *pShutter)
+		if (m_pColliderCom[INTER_COL_NORMAL][COL_STEP0]->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider_Normal_Step0")))))
+		{
+			m_pShutter = static_cast<CShutter*>(iter);
+			break;
+		}
+		
 }
 
 void CLever::Tick(_float fTimeDelta)
@@ -52,6 +66,7 @@ void CLever::Tick(_float fTimeDelta)
 	Get_Object_Pos();
 #endif
 #endif
+
 	if (m_eState == LEVER_RESET)
 	{
 		__super::Tick(fTimeDelta);
@@ -122,14 +137,14 @@ HRESULT CLever::Add_Components()
 {
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(80.f);
-	ColliderDesc.vCenter = _float3(50.f, 1.f, 50.f);
+	ColliderDesc.fRadius = _float(150.f);
+	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
 		return E_FAIL;
 
-	ColliderDesc.fRadius = _float(50.f);
+	ColliderDesc.fRadius = _float(100.f);
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
 		return E_FAIL;
@@ -177,6 +192,7 @@ void CLever::Active()
 	
 	m_eState = LEVER_DOWN;
 	m_pPlayer->Set_Lever_Setting(CPlayer::LEVER_BEHAVE_DOWN, m_pTransformCom->Get_WorldFloat4x4());
+	m_pShutter->Set_Shutter_Open_State();
 }
 
 CLever* CLever::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

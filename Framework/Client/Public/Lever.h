@@ -30,6 +30,7 @@ private:
 public:
 	virtual HRESULT				Initialize_Prototype() override;
 	virtual HRESULT				Initialize(void* pArg) override;
+	virtual void					Start() override;
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
@@ -58,7 +59,7 @@ private:
 
 	_ubyte			m_eState = { LEVER_STATIC };
 
-
+	class CShutter* m_pShutter = { nullptr };
 
 public:
 	static CLever* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
