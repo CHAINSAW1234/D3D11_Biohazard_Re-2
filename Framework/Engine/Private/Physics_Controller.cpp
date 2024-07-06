@@ -1129,10 +1129,6 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 					{
 						m_vecCharacter_Controller[filterData.word2]->Set_Hit_Decal_Ray(true);
 					}
-					else
-					{
-						m_vecCharacter_Controller[filterData.word2]->Set_Hit_Decal_Ray(false);
-					}
 
 					if (bBigAttack)
 					{
@@ -1193,6 +1189,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 					vDelta.y = 0.f;
 
 					auto fPower = rand() % 100;
+
 					vDelta = vDelta * (fPower + 50.f);
 
 					PxVec3 pxForce = PxVec3(vDelta.x, vDelta.y, vDelta.z);

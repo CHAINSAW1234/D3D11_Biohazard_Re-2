@@ -12,6 +12,8 @@
 #include "Hair_Player.h"
 
 #include "Weapon.h"
+#include "Throwing_Weapon.h"
+#include "Throwing_Weapon_Pin.h"
 #include "FlashLight.h"
 
 #include "CustomCollider.h"
@@ -24,6 +26,7 @@
 #include "Tab_Window.h"
 #include "Bone.h"
 
+#include"MovingShelf.h"
 
 #define MODEL_SCALE 0.01f
 #define SHOTGUN_BULLET_COUNT 5
@@ -555,6 +558,26 @@ void CPlayer::Col_Section()
 	}
 }
 
+_float4x4 CPlayer::Get_Shelf_WorldMatrix()
+{
+	if (m_pShelf == nullptr)
+		return _float4x4();
+	return static_cast<CMovingShelf*>(m_pShelf)->Get_WorldMatrix();
+}
+
+void CPlayer::Set_Shelf_State(_int eState)
+{
+	static_cast<CMovingShelf*>(m_pShelf)->Set_Anim_State(eState);
+}
+
+_int CPlayer::Get_Shelf_Type()
+{
+	if (m_pShelf == nullptr)
+		return CMovingShelf::SHELF_TYPE_END;
+	return static_cast<CMovingShelf*>(m_pShelf)->Get_Shelf_Type();
+}
+
+
 #pragma endregion
 
 #pragma region 나옹 추가
@@ -832,9 +855,19 @@ void CPlayer::Throw_Sub()
 {
 	m_pTabWindow->UseItem(Get_Equip_As_ITEM_NUMBER(), 1);
 
-	//switch(m_eEquip) {
+	CThrowing_Weapon::THROWING_WEAPON_DESC pDesc;
+	pDesc.worldMatrix = m_pWeapon->Get_WorldMatrix();
+	pDesc.eEquip = m_eEquip;
 
-	//}
+	if (FAILED(m_pGameInstance->Add_Clone(g_Level, TEXT("Layer_Throwing_Weapon"), TEXT("Prototype_GameObject_Throwing_Weapon"), &pDesc)))
+		return;
+
+	CThrowing_Weapon_Pin::THROWING_WEAPON_PIN_DESC pDesc2;
+	pDesc2.worldMatrix = m_pWeapon->Get_WorldMatrix();
+	pDesc2.eEquip = m_eEquip;
+
+	if (FAILED(m_pGameInstance->Add_Clone(g_Level, TEXT("Layer_Throwing_Weapon"), TEXT("Prototype_GameObject_Throwing_Weapon_Pin"), &pDesc2)))
+		return;
 
 	NotifyObserver();
 }
@@ -1124,7 +1157,7 @@ void CPlayer::Update_Equip()
 			Get_Body_Model()->Set_BlendWeight(3, 10.f, 20.f);
 		}
 		else if (Get_Body_Model()->isFinished(3)) {
-			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.01f) {
+			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.1f) {
 				m_isRequestChangeEquip = false;
 				Get_Body_Model()->Set_Loop(3, true);
 			}

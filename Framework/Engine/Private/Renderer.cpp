@@ -95,6 +95,12 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_Shadow_Spot()))
 		return E_FAIL;
 
+	if (FAILED(Render_Field()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Copy_Resource(TEXT("Target_Field_Depth"), TEXT("Target_Depth"))))
+		return E_FAIL;
+
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
 
@@ -403,6 +409,9 @@ HRESULT CRenderer::SetUp_RenderTargets_GameObjects(const D3D11_VIEWPORT& Viewpor
 	/* For.Target_Origin */			//	자기 그림자 방지를 위한 렌더 타겟
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Origin"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
+	/* For.Target_Depth_Decal */   //데칼을 위한 깊이 텍스쳐
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Depth_Decal"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 1.f, 0.f, 1.f))))
+		return E_FAIL;
 
 	/* MRT_GameObjects : 객체들의 특정 정보를 받아오기위한 렌더타겟들이다. */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
@@ -416,6 +425,10 @@ HRESULT CRenderer::SetUp_RenderTargets_GameObjects(const D3D11_VIEWPORT& Viewpor
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Velocity"))))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Origin"))))
+		return E_FAIL;
+
+	/* For.Target_Depth */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Field_Depth"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 1.f, 0.f, 1.f))))
 		return E_FAIL;
 
 	return S_OK;
@@ -1045,6 +1058,25 @@ HRESULT CRenderer::Render_Priority()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_Field()
+{
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GameObjects"))))
+		return E_FAIL;
+
+	for (auto& pRenderObject : m_RenderObjects[RENDER_FIELD])
+	{
+		if (nullptr != pRenderObject)
+			pRenderObject->Render();
+		Safe_Release(pRenderObject);
+	}
+	m_RenderObjects[RENDER_FIELD].clear();
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_NonBlend()
 {
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GameObjects"))))
@@ -1060,6 +1092,14 @@ HRESULT CRenderer::Render_NonBlend()
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
+
+	for (auto& pRenderObject : m_RenderObjects[RENDER_DECAL])
+	{
+		if (nullptr != pRenderObject)
+			pRenderObject->Render();
+		Safe_Release(pRenderObject);
+	}
+	m_RenderObjects[RENDER_DECAL].clear();
 
 	return S_OK;
 }
@@ -1126,15 +1166,6 @@ HRESULT CRenderer::Render_Non_PostProcessing()
 
 HRESULT CRenderer::Render_UI()
 {
-	for (auto& pRenderObject : m_RenderObjects[RENDER_DECAL])
-	{
-		if (nullptr != pRenderObject)
-			pRenderObject->Render();
-		Safe_Release(pRenderObject);
-	}
-	m_RenderObjects[RENDER_DECAL].clear();
-
-	
 	m_RenderObjects[RENDER_UI].sort([](CGameObject* pFirst, CGameObject* pSecond) {
 		return pFirst->GetPosition().z > pSecond->GetPosition().z;
 		});

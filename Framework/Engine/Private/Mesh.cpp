@@ -4,7 +4,7 @@
 #include "GameInstance.h"
 #include "Decal_Blood.h"
 
-#define BIG_ATTACK_DECAL_EXTENT _float3(0.6f,0.6f,0.6f)
+#define BIG_ATTACK_DECAL_EXTENT _float3(0.4f,0.4f,0.4f)
 #define NORMAL_ATTACK_DECAL_EXTENT _float3(0.2f,0.5f,0.2f)
 
 CMesh::CMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

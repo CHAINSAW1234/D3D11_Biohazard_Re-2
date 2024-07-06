@@ -67,10 +67,28 @@ void CBody_MovingShlef::Late_Tick(_float fTimeDelta)
 {
 	switch (*m_pState)
 	{
-	case CMovingShelf::SHELF_MOVE:
+	case CMovingShelf::SHELF_FINISH:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		break;
-	case CMovingShelf::SHELF_FINISH:
+	case CMovingShelf::SHELF_MOVE:
+	{
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+
+		break;
+	}
+	case CMovingShelf::SHELF_START:
+	{
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+
+		break;
+	}
+	case CMovingShelf::SHELF_STOP:
+	{
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+
+		break;
+	}
+	case CMovingShelf::SHELF_STATIC:
 	{
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 
@@ -88,7 +106,7 @@ void CBody_MovingShlef::Late_Tick(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 
-	Get_SpecialBone_Rotation(); // for UI
+	//Get_SpecialBone_Rotation(); // for UI
 
 #ifdef _DEBUG
 #ifdef UI_POS

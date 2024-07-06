@@ -13,7 +13,8 @@ public:
 	enum SHELF_TYPE
 	{
 		SHELF_197_RICKER,
-		SHELF_232_MOVE
+		SHELF_232_MOVE,
+		SHELF_TYPE_END
 	};
 	enum SHELF_STATE
 	{
@@ -52,9 +53,13 @@ private:
 
 public:
 	virtual _float4				Get_Object_Pos() override;
-
+	_float4x4						Get_WorldMatrix() { return m_pTransformCom->Get_WorldFloat4x4(); }
+	_int								Get_Shelf_Type() { return m_eType; }
+	_int								Get_Anim_State() { return m_eState; }
+	void								Set_Anim_State(_int eState) { m_eState = eState; }
 
 private:
+	_ubyte							m_eType = { SHELF_232_MOVE };
 	_ubyte							m_eState = { SHELF_STATIC };
 
 
