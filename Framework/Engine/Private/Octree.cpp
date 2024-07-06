@@ -174,9 +174,9 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 		(*TempMeshes)[i]->SetNumFaces(pList[i].totalFaceCount);
 		(*TempMeshes)[i]->SetNumVertices(pObject->GetNumVertices());
 		(*TempMeshes)[i]->SetVertices(pObject->GetVertices());
-		(*TempMeshes)[i]->SetNormals(pObject->GetNormals());
-		(*TempMeshes)[i]->SetTangents(pObject->GetTangents());
-		(*TempMeshes)[i]->SetTexcoords(pObject->GetTexcoords());
+		//(*TempMeshes)[i]->SetNormals(pObject->GetNormals());
+		//(*TempMeshes)[i]->SetTangents(pObject->GetTangents());
+		//(*TempMeshes)[i]->SetTexcoords(pObject->GetTexcoords());
 		(*TempMeshes)[i]->SetVertexBuffer(pObject->GetVertexBuffer());
 
 		int index = 0;
@@ -193,9 +193,9 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 				(*TempFaces)[index]->VertexIndex[0] = (*Faces)[j]->VertexIndex[0];
 				(*TempFaces)[index]->VertexIndex[1] = (*Faces)[j]->VertexIndex[1];
 				(*TempFaces)[index]->VertexIndex[2] = (*Faces)[j]->VertexIndex[2];
-				(*TempFaces)[index]->TexCoordIndex[0] = (*Faces)[j]->TexCoordIndex[0];
+			/*	(*TempFaces)[index]->TexCoordIndex[0] = (*Faces)[j]->TexCoordIndex[0];
 				(*TempFaces)[index]->TexCoordIndex[1] = (*Faces)[j]->TexCoordIndex[1];
-				(*TempFaces)[index]->TexCoordIndex[2] = (*Faces)[j]->TexCoordIndex[2];
+				(*TempFaces)[index]->TexCoordIndex[2] = (*Faces)[j]->TexCoordIndex[2];*/
 				index++;
 			}
 		}
@@ -206,6 +206,7 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 	m_pOctreeNodes[nodeID]->m_pObjects_Anim = m_pObjects_Anim;
 	m_pOctreeNodes[nodeID]->m_pObjects_Door = m_pObjects_Door;
 	m_pOctreeNodes[nodeID]->m_pObjects_Window = m_pObjects_Window;
+	m_pOctreeNodes[nodeID]->m_pObjects_Shutter = m_pObjects_Shutter;
 	_float4 vNodeCenter = GetNewNodeCenter(vCenter, width, nodeID);
 
 	g_CurrentSubdivision++;
@@ -397,9 +398,9 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 
 		(*NewMeshes)[i]->SetNumFaces(numOfFaces);
 		(*NewMeshes)[i]->SetNumVertices(pObject->GetNumVertices());
-		(*NewMeshes)[i]->SetNormals(pObject->GetNormals());
-		(*NewMeshes)[i]->SetTangents(pObject->GetTangents());
-		(*NewMeshes)[i]->SetTexcoords(pObject->GetTexcoords());
+		//(*NewMeshes)[i]->SetNormals(pObject->GetNormals());
+		//(*NewMeshes)[i]->SetTangents(pObject->GetTangents());
+		//(*NewMeshes)[i]->SetTexcoords(pObject->GetTexcoords());
 		(*NewMeshes)[i]->Init_For_Octree();
 		(*NewMeshes)[i]->SetVertexBuffer(pObject->GetVertexBuffer());
 
@@ -477,6 +478,24 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 	if (m_pObjects_Window)
 	{
 		for (auto& it : (*m_pObjects_Window))
+		{
+			_float4 vPos;
+
+			if (it->Get_Localized() == false)
+				vPos = it->GetPosition();
+			else
+				vPos = it->GetPosition_Local_To_World();
+
+			if (IsPointInsideCube(m_vCenter, m_Width, vPos))
+			{
+				m_vecProps.push_back(it);
+			}
+		}
+	}
+	
+	if (m_pObjects_Shutter)
+	{
+		for (auto& it : (*m_pObjects_Shutter))
 		{
 			_float4 vPos;
 
@@ -1097,4 +1116,5 @@ void COctree::Set_Props_Layer(_int iLevel)
 	m_pObjects_Anim = m_pGameInstance->Find_Layer(iLevel, L"Layer_InteractObj");
 	m_pObjects_Door = m_pGameInstance->Find_Layer(iLevel, L"Layer_Door");
 	m_pObjects_Window = m_pGameInstance->Find_Layer(iLevel, L"Layer_Window");
+	m_pObjects_Shutter = m_pGameInstance->Find_Layer(iLevel, L"Layer_HShutter");
 }

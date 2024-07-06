@@ -146,6 +146,9 @@ namespace Client
 		OBJ_HALL_STATUE,
 		OBJ_EVENTPROP,
 		OBJ_ITEM,
+		OBJ_LADDER,
+		OBJ_LEVER,
+		OBJ_MOVINGSHELF,
 		OBJ_END
 	};
 
@@ -168,19 +171,19 @@ namespace Client
 		JOMBIE_BEHAVIOR_COLLIDER_RAILING_FALL, // 난간 O : em0000_0920_railing_fall
 		JOMBIE_BEHAVIOR_COLLIDER_HIGH_RAILING_FALL,  // 난간O, 기어서 떨어질 수 있는(서쪽 끝 계단 3층 참고) : em0000_0855_Crawl_fall_bridge + em0000_0920_railing_fall
 		JOMBIE_BEHAVIOR_COLLIDER_FALL, // 난간X, 그냥 떨어지거나 기어서 떨어질 수 있는 :  em0000_0920_railing_fall 불가능
-		JOMBIE_BEHAVIOR_COLLIDER_STAIR, //계단 - 나중에 다른 LAYER로 빼서 줄 수 있으니 고려해보세용 (이유: 계단콜라이더와 좀비와 난간 콜라이더의 충돌 겹침 발생시 상태 처리가 귀찮을 수 있음)
 		JOMBIE_BEHAVIOR_COLLIDER_WINDOW, //윈도우는 따로 모션이 있습니다 em0000_window_em.motlist.85 
 		JOMBIE_BEHAVIOR_COLLIDER_DOOR, //문 모션은 윈도우와 같이 있습니다. em0000_door_em.motlist.85 
 		JOMBIE_BEHAVIOR_COLLIDER_NON_WINDOW, //창문은 없고 창틀만 있는(기믹객체가 아니라 이미 깨져있는)
 		JOMBIE_BEHAVIOR_COLLIDER_END,
 	};
+	//
+
 
 	enum PLAYER_BEHAVIOR_COLLIDER_TYPE
 	{
 		PLAYER_BEHAVIOR_COLLIDER_CLIMB_BOX_UP, // 작전실 박스
 		PLAYER_BEHAVIOR_COLLIDER_CLIMB_BOX_DOWN, // 작전실 박스
 		PLAYER_BEHAVIOR_COLLIDER_CLIMB_WALL, // 작전실 벽
-		PLAYER_BEHAVIOR_COLLIDER_STAIR, // 계단
 		PLAYER_BEHAVIOR_COLLIDER_END,
 	};
 

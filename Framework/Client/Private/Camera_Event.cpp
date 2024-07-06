@@ -25,11 +25,6 @@ HRESULT CCamera_Event::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	if (FAILED(Read_CamList(TEXT("../Bin/DataFiles/mcamlist/em0000_maincam00.mcamlist.13"))))
-		return E_FAIL;
-
-	Load_CamPosition();
-
 	//m_Defaultmatrix = XMMatrixIdentity();
 
 	return S_OK;
@@ -45,15 +40,6 @@ void CCamera_Event::Tick(_float fTimeDelta)
 	}
 	else {
 		;
-		//_float3 vRight = m_Defaultmatrix.Right() * m_fRight_Dist_Pos;
-		//_float3 vUp = m_Defaultmatrix.Up() * (m_fUp_Dist_Pos + CONTROLLER_GROUND_GAP);
-		//_float3 vLook = -m_Defaultmatrix.Forward() * m_fLook_Dist_Pos;
-
-		//_matrix Default = m_Defaultmatrix;
-		//	Default.r[3] = XMVectorSetW(m_Defaultmatrix.Translation() + vRight + vUp + vLook, 1.f);
-
-		//m_pTransformCom->Set_WorldMatrix(Default);
-		//m_pTransformCom->Look_At(XMVectorSetW(m_Defaultmatrix.Translation() + _float3(0.f,CONTROLLER_GROUND_GAP, 0.f), 1.f));
 	}
 	__super::Bind_PipeLines();
 }
@@ -71,8 +57,8 @@ void CCamera_Event::Active_Camera(_bool isActive)
 {
 	__super::Active_Camera(isActive);
 	
-	if (!m_isActive)
-		Reset();
+	//if (!m_isActive)
+	//	Reset();
 }
 
 _float4 CCamera_Event::Get_Position_Float4()
@@ -85,69 +71,54 @@ _vector CCamera_Event::Get_Position_Vector()
 	return m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
 }
 
-void CCamera_Event::SetPlayer(CGameObject* pPlayer)
-{
-	auto Player = dynamic_cast<CPlayer*>(pPlayer);
-	if (Player)
-		m_pPlayer = Player;
-
-	m_pParentMatrix = m_pPlayer->Get_Transform()->Get_WorldFloat4x4_Ptr();
-}
-
 void CCamera_Event::Reset()
 {
-	m_pCurrentMCAM = nullptr;
+	m_pCurrentMCAMList = nullptr;
+	m_iCurrentMCAMIndex = 0;
 	m_isPlay = false;
 	m_fTrackPosition = 0.f;
+	m_isActive = false;
+	m_iCurrentTranslateFrame = 0;
+	m_iCurrentRotationFrame = 0;
+	m_iCurrentZoomFrame = 0;
+	m_pGameInstance->Active_Camera(g_Level,
+		(CCamera*)(m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 0)));
 }
 
-HRESULT CCamera_Event::Set_CurrentMCAM(const wstring& strCamTag)
+void CCamera_Event::Change_to_Next(_float fTimeDelta)
 {
-	MCAM* pMCAM = Find_MCAM(strCamTag);
-	if (nullptr == pMCAM)
+	++m_iCurrentMCAMIndex;
+	m_fTrackPosition = fTimeDelta;
+	m_iCurrentTranslateFrame = 0;
+	m_iCurrentRotationFrame = 0;
+	m_iCurrentZoomFrame = 0;
+}
+
+HRESULT CCamera_Event::Set_PlayCamlist(const wstring& strCamTag)
+{
+	vector<MCAM>* pMCAMList = Find_MCAMList(strCamTag);
+	if (nullptr == pMCAMList)
 		return E_FAIL;
 
-	m_pCurrentMCAM = pMCAM;
+	m_pCurrentMCAMList = pMCAMList;
+	m_iCurrentMCAMIndex = 0;
+	m_iCurrentTranslateFrame = 0;
+	m_iCurrentRotationFrame = 0;
+	m_iCurrentZoomFrame = 0;
 	m_isPlay = true;
 	m_fTrackPosition = 0.f;
-	
-	m_PrePlayerMatrix = XMLoadFloat4x4(m_pSocketMatrix);
 
-	//m_PrePlayerMatrix = m_pPlayer->Get_Transform()->Get_WorldMatrix();
-	
-
-	//m_isActive = true;	--> Player가 해줌
-
+	m_pGameInstance->Active_Camera(g_Level, this);
 	return S_OK;
 }
 
-void CCamera_Event::Load_CamPosition()
+HRESULT CCamera_Event::Add_CamList(const wstring& strCamLayerTag, const wstring& strFilePath)
 {
-	string filePath = "../Camera_Position/Camera_Position";
 
-	//File Import
-	ifstream File(filePath, std::ios::binary | std::ios::in);
+	if (nullptr != Find_MCAMList(strCamLayerTag)) {
+		return E_FAIL;
+	}
 
-	File.read((char*)&m_vCameraPosition, sizeof(_float4));
-	File.read((char*)&m_fRight_Dist_Look, sizeof(_float));
-	File.read((char*)&m_fUp_Dist_Look, sizeof(_float));
-	File.read((char*)&m_fLook_Dist_Look, sizeof(_float));
-
-	m_fRight_Dist_Look_Default = m_fRight_Dist_Look;
-	m_fUp_Dist_Look_Default = m_fUp_Dist_Look;
-	m_fLook_Dist_Look_Default = m_fLook_Dist_Look;
-
-	m_fUp_Dist_Look -= CONTROLLER_GROUND_GAP;
-
-	m_fLook_Dist_Pos = m_vCameraPosition.z;
-	m_fRight_Dist_Pos = m_vCameraPosition.x;
-	m_fUp_Dist_Pos = m_vCameraPosition.y - CONTROLLER_GROUND_GAP;
-
-	File.close();
-}
-
-HRESULT CCamera_Event::Read_CamList(const wstring& strFilePath)
-{
 	ifstream inputFileStream{ strFilePath, std::ios::binary };
 	if (!inputFileStream) {
 		return E_FAIL;
@@ -161,38 +132,91 @@ HRESULT CCamera_Event::Read_CamList(const wstring& strFilePath)
 		MSG_BOX(TEXT("Warning : Read_CamList -> magic == 1835098989"));
 		return E_FAIL;
 	}
-	
+
 	// 1. read header
 	Header header = Read_Header(inputFileStream);
+
+	vector<MCAM> vec;
 
 	for (size_t i = 0; i < header.mcamCount; i++) {
 		MCam mcam = {};
 
 		uint64_t position = header.mcamEntry[i];
 
+
 		mcam.CAMHeader = Read_CamHeader(inputFileStream, position);
 
 		// Read translation frames
+		inputFileStream.seekg(mcam.CAMHeader.TranslateHeader.FramesOffset + position, std::ios::beg);
+		mcam.TranslationFrame = vector<uint16_t>(mcam.CAMHeader.TranslateHeader.numFrames);
+		if (mcam.CAMHeader.TranslateHeader.s2 == 64) {
+			inputFileStream.read(reinterpret_cast<char*>(mcam.TranslationFrame.data()), sizeof(uint16_t) * mcam.CAMHeader.TranslateHeader.numFrames);
+		}
+		else {
+			vector<uint8_t> temp(mcam.CAMHeader.TranslateHeader.numFrames);
+			inputFileStream.read(reinterpret_cast<char*>(temp.data()), sizeof(uint8_t) * mcam.CAMHeader.TranslateHeader.numFrames);
+			for (_uint i = 0; i < mcam.CAMHeader.TranslateHeader.numFrames; ++i) {
+				mcam.TranslationFrame[i] = temp[i];
+			}
+		}
+		
 		inputFileStream.seekg(mcam.CAMHeader.TranslateHeader.DataOffset + position, std::ios::beg);
 		mcam.Translations = vector<_float3>(mcam.CAMHeader.TranslateHeader.numFrames);
 		inputFileStream.read(reinterpret_cast<char*>(mcam.Translations.data()), sizeof(_float3) * mcam.CAMHeader.TranslateHeader.numFrames);
 
+		//for (auto& vTraslation : mcam.Translations) {
+		//	vTraslation = XMVector3Transform(vTraslation, XMMatrixRotationY(XMConvertToRadians(180)));
+		//}
+
 		// Read Rotation frames
+		inputFileStream.seekg(mcam.CAMHeader.RotationHeader.FramesOffset + position, std::ios::beg);
+		mcam.RotationFrame = vector<uint16_t>(mcam.CAMHeader.RotationHeader.numFrames);
+		if (mcam.CAMHeader.RotationHeader.s2 == 64) {
+			inputFileStream.read(reinterpret_cast<char*>(mcam.RotationFrame.data()), sizeof(uint16_t) * mcam.CAMHeader.RotationHeader.numFrames);
+		}
+		else {
+			vector<uint8_t> temp(mcam.CAMHeader.RotationHeader.numFrames);
+			inputFileStream.read(reinterpret_cast<char*>(temp.data()), sizeof(uint8_t) * mcam.CAMHeader.RotationHeader.numFrames);
+			for (_uint i = 0; i < mcam.CAMHeader.RotationHeader.numFrames; ++i) {
+				mcam.RotationFrame[i] = temp[i];
+			}
+		}
+		
+		
 		inputFileStream.seekg(mcam.CAMHeader.RotationHeader.DataOffset + position, std::ios::beg);
 		mcam.Rotations = vector<_float4>(mcam.CAMHeader.RotationHeader.numFrames);
 		inputFileStream.read(reinterpret_cast<char*>(mcam.Rotations.data()), sizeof(_float4) * mcam.CAMHeader.RotationHeader.numFrames);
 
+		//for (auto& vRotation : mcam.Rotations) {
+		//	vRotation = XMLoadFloat4(&vRotation) * XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), XMConvertToRadians(180.0f)) ;
+		//}
+
 		// Read Zoom frames
+		inputFileStream.seekg(mcam.CAMHeader.ZoomHeader.FramesOffset + position, std::ios::beg);
+		mcam.ZoomFrame = vector<uint16_t>(mcam.CAMHeader.ZoomHeader.numFrames);
+		if (mcam.CAMHeader.ZoomHeader.s2 == 64) {
+			inputFileStream.read(reinterpret_cast<char*>(mcam.ZoomFrame.data()), sizeof(uint16_t) * mcam.CAMHeader.ZoomHeader.numFrames);
+		}
+		else {
+			vector<uint8_t> temp(mcam.CAMHeader.ZoomHeader.numFrames);
+			inputFileStream.read(reinterpret_cast<char*>(temp.data()), sizeof(uint8_t) * mcam.CAMHeader.ZoomHeader.numFrames);
+			for (_uint i = 0; i < mcam.CAMHeader.ZoomHeader.numFrames; ++i) {
+				mcam.ZoomFrame[i] = temp[i];
+			}
+
+
+					}
+		
+		
 		inputFileStream.seekg(mcam.CAMHeader.ZoomHeader.DataOffset + position, std::ios::beg);
 		mcam.Zooms = vector<_float3>(mcam.CAMHeader.ZoomHeader.numFrames);
 		inputFileStream.read(reinterpret_cast<char*>(mcam.Zooms.data()), sizeof(_float3) * mcam.CAMHeader.ZoomHeader.numFrames);
 
-		if (nullptr== Find_MCAM(mcam.CAMHeader.name3)) {
-			m_Camlist.emplace(mcam.CAMHeader.name3, mcam);
-		}
-
+		vec.emplace_back(mcam);
 	}
 
+	m_Camlist.emplace(strCamLayerTag, vec);
+	
 	return S_OK;
 }
 
@@ -263,20 +287,25 @@ MCAMHeader CCamera_Event::Read_CamHeader(ifstream& inputFileStream, streampos Po
 	return mcam;
 }
 
-void CCamera_Event::Reset_CamPosition()
-{
-	//m_Defaultmatrix = m_pPlayer->Get_Transform()->Get_WorldMatrix_Pure();
-
-	m_fRight_Dist_Look = m_fRight_Dist_Look_Default;
-	m_fUp_Dist_Look = m_fUp_Dist_Look_Default;
-	m_fLook_Dist_Look = m_fLook_Dist_Look_Default;
-}
-
-MCAM* CCamera_Event::Find_MCAM(const wstring& strCamTag)
+vector<MCAM>* CCamera_Event::Find_MCAMList(const wstring& strCamListTag)
 {
 	for (auto& pair : m_Camlist) {
-		if (pair.first.find(strCamTag) != wstring::npos) {
+		if (pair.first.find(strCamListTag) != wstring::npos) {
 			return &pair.second;
+		}
+	}
+
+	return nullptr;
+}
+
+MCAM* CCamera_Event::Find_MCAM(const wstring& strCamListTag, _uint iIndex)
+{
+	for (auto& pair : m_Camlist) {
+		if (pair.first.find(strCamListTag) != wstring::npos) {
+			if (iIndex >= pair.second.size())
+				return nullptr;
+
+			return &pair.second[iIndex];
 		}
 	}
 
@@ -285,59 +314,88 @@ MCAM* CCamera_Event::Find_MCAM(const wstring& strCamTag)
 
 void CCamera_Event::Play_MCAM(_float fTimeDelta)
 {
-	if (nullptr == m_pCurrentMCAM)
+	cout << m_iCurrentTranslateFrame << endl;
+	if (nullptr == m_pCurrentMCAMList)
 		return;
 
-	_float fPreTrackPosition = m_fTrackPosition;
-	m_fTrackPosition += fTimeDelta * m_pCurrentMCAM->CAMHeader.frameRate;
-	
-	if (m_fTrackPosition > m_pCurrentMCAM->CAMHeader.frameCount) {
-		m_fTrackPosition = m_pCurrentMCAM->CAMHeader.frameCount;
-		m_pPlayer->Swap_Camera();
-		Reset();
+	if (m_iCurrentMCAMIndex >= m_pCurrentMCAMList->size())
 		return;
+	
+	MCAM CurrentMCAM = (*m_pCurrentMCAMList)[m_iCurrentMCAMIndex];
+
+	m_fTrackPosition += fTimeDelta * CurrentMCAM.CAMHeader.frameRate;
+
+	if (m_fTrackPosition > CurrentMCAM.CAMHeader.frameCount) {
+		_float fNextTrackPosition = m_fTrackPosition - CurrentMCAM.CAMHeader.frameCount;
+		m_fTrackPosition = CurrentMCAM.CAMHeader.frameCount;
+		Change_to_Next(fNextTrackPosition);
+		if (m_iCurrentMCAMIndex >= m_pCurrentMCAMList->size()) {
+			Reset();
+			return;
+		}
+
+		CurrentMCAM = (*m_pCurrentMCAMList)[m_iCurrentMCAMIndex];
+
 		// 이 카메라는 이제 끝이여
 	}
 
-	_float3 vPreTranslation, vCurrentTranslation, vDeltaTranslation;
+	_float3 vTranslation;
 
-	if (m_fTrackPosition >= m_pCurrentMCAM->CAMHeader.TranslateHeader.numFrames -1) {
-		vDeltaTranslation = { 0.f,0.f,0.f };
+	while (1) {
+		if(m_iCurrentTranslateFrame >= CurrentMCAM.CAMHeader.TranslateHeader.numFrames -1 ||
+			m_fTrackPosition < CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame + 1])
+			break;
+
+		++m_iCurrentTranslateFrame;
+	}
+
+	if (m_iCurrentTranslateFrame >= CurrentMCAM.CAMHeader.TranslateHeader.numFrames - 1) {
+		vTranslation = CurrentMCAM.Translations[CurrentMCAM.CAMHeader.TranslateHeader.numFrames - 1];
 	}
 	else {
-		vPreTranslation = XMVectorLerp(m_pCurrentMCAM->Translations[int(floor(fPreTrackPosition))],
-			m_pCurrentMCAM->Translations[int(floor(fPreTrackPosition)) + 1], fPreTrackPosition - floor(fPreTrackPosition));
-		vCurrentTranslation = XMVectorLerp(m_pCurrentMCAM->Translations[int(floor(m_fTrackPosition))],
-			m_pCurrentMCAM->Translations[int(floor(m_fTrackPosition)) + 1], m_fTrackPosition - floor(m_fTrackPosition));
-		vDeltaTranslation = vCurrentTranslation - vPreTranslation;
+		vTranslation = XMVectorLerp(CurrentMCAM.Translations[m_iCurrentTranslateFrame],
+			CurrentMCAM.Translations[m_iCurrentTranslateFrame + 1],
+			(m_fTrackPosition - (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame]) / (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame + 1]);
+			
 	}
 
-	_float4 vPreRotation, vCurrentRotation, vDeltaRotation;
+	while (1) {
+		if (m_iCurrentRotationFrame >= CurrentMCAM.CAMHeader.RotationHeader.numFrames - 1 ||
+			m_fTrackPosition < CurrentMCAM.RotationFrame[m_iCurrentRotationFrame + 1])
+			break;
 
-	if (m_fTrackPosition > m_pCurrentMCAM->CAMHeader.RotationHeader.numFrames - 1) {
-		vDeltaRotation = { 0.f,0.f,0.f };
-	}
-	else {
-		vPreRotation = XMQuaternionSlerp(m_pCurrentMCAM->Rotations[int(floor(fPreTrackPosition))],
-			m_pCurrentMCAM->Rotations[int(floor(fPreTrackPosition)) + 1], fPreTrackPosition - floor(fPreTrackPosition));
-		_float4 vPreRotationInv = XMQuaternionInverse(XMQuaternionNormalize(vPreRotation));
-		vCurrentRotation = XMQuaternionSlerp(m_pCurrentMCAM->Rotations[int(floor(m_fTrackPosition))],
-			m_pCurrentMCAM->Rotations[int(floor(m_fTrackPosition)) + 1], m_fTrackPosition - floor(m_fTrackPosition));
-
-		vDeltaRotation = XMQuaternionMultiply(XMQuaternionNormalize(vPreRotationInv), XMQuaternionNormalize(vCurrentRotation));
+		++m_iCurrentRotationFrame;
 	}
 
-	_float vPreZoom, vCurrentZoom, vDeltaZoom;
+	_float4 vRotation;
 
-	if (m_fTrackPosition > m_pCurrentMCAM->CAMHeader.ZoomHeader.numFrames - 1) {
-		vDeltaZoom = 0.f;
+	if (m_iCurrentRotationFrame >= CurrentMCAM.CAMHeader.RotationHeader.numFrames - 1) {
+		vRotation = CurrentMCAM.Rotations[CurrentMCAM.CAMHeader.RotationHeader.numFrames - 1];
 	}
 	else {
-		vPreZoom = XMVectorGetX(XMVectorLerp(m_pCurrentMCAM->Zooms[int(floor(fPreTrackPosition))],
-			m_pCurrentMCAM->Zooms[int(floor(fPreTrackPosition)) + 1], fPreTrackPosition - floor(fPreTrackPosition)));
-		vCurrentZoom = XMVectorGetX(XMVectorLerp(m_pCurrentMCAM->Zooms[int(floor(m_fTrackPosition))],
-			m_pCurrentMCAM->Zooms[int(floor(m_fTrackPosition)) + 1], m_fTrackPosition - floor(m_fTrackPosition)));
-		vDeltaZoom = vCurrentZoom - vPreZoom;
+		vRotation = XMQuaternionSlerp(CurrentMCAM.Rotations[m_iCurrentRotationFrame],
+			CurrentMCAM.Rotations[m_iCurrentRotationFrame + 1], 
+			(m_fTrackPosition - (_float)CurrentMCAM.RotationFrame[m_iCurrentRotationFrame]) / (_float)CurrentMCAM.RotationFrame[m_iCurrentRotationFrame + 1]);
+	}
+
+	_float vZoom;
+
+	while (1) {
+		if (m_iCurrentZoomFrame >= CurrentMCAM.CAMHeader.ZoomHeader.numFrames - 1 ||
+			m_fTrackPosition < CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame + 1])
+			break;
+
+		++m_iCurrentZoomFrame;
+	}
+
+
+	if (m_iCurrentZoomFrame >= CurrentMCAM.CAMHeader.ZoomHeader.numFrames - 1) {
+		vZoom = CurrentMCAM.Zooms[CurrentMCAM.CAMHeader.ZoomHeader.numFrames - 1].x;
+	}
+	else {
+		vZoom = XMVectorGetX(XMVectorLerp(CurrentMCAM.Zooms[m_iCurrentZoomFrame],
+			CurrentMCAM.Zooms[m_iCurrentZoomFrame + 1], 
+			(m_fTrackPosition - (_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame]) / (_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame + 1]));
 	}
 
 	//_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
@@ -349,35 +407,11 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 	//	XMVectorSet(0.f, 0.f, 0.f, 0.f)); // translation  죽임
 
 	
-	_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
-		XMVectorSet(0.f, 0.f, 0.f, 1.f), XMQuaternionConjugate(vDeltaRotation),
-		vDeltaTranslation * 0.01f); // 둘다 
+	_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(0.01f, 0.01f, 0.01f, 0.f),
+		XMVectorSet(0.f, 0.f, 0.f, 1.f),  XMVector4Normalize(vRotation),
+		vTranslation); // 둘다 
 
-
-	_vector vPreDecomposeVector[3] = {}, vCurrentDecomposeVector[3] = {};
-
-	XMMatrixDecompose(&vPreDecomposeVector[0], &vPreDecomposeVector[1], &vPreDecomposeVector[2], m_PrePlayerMatrix);
-	XMMatrixDecompose(&vCurrentDecomposeVector[0], &vCurrentDecomposeVector[1], &vCurrentDecomposeVector[2], XMLoadFloat4x4(m_pSocketMatrix));
-
-	_vector vPlayerDeltaTranslation = vCurrentDecomposeVector[2] - vPreDecomposeVector[2];	
-	_float4 vPlayerPreRotationInv = XMQuaternionInverse(XMQuaternionNormalize(vPreDecomposeVector[1]));
-	_vector vPlayerDeltaRotation = XMQuaternionMultiply(XMQuaternionNormalize(vPlayerPreRotationInv), XMQuaternionNormalize(vCurrentDecomposeVector[1]));
-
-	m_PrePlayerMatrix = XMLoadFloat4x4(m_pSocketMatrix);
-
-	_matrix CombinedPlayerMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
-		XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 0.f),
-		vPlayerDeltaTranslation * 0.01f); // rotation 죽임 
-
-	_matrix finalMatrix;
-	
-	finalMatrix = m_pTransformCom->Get_WorldMatrix() * CombinedMatrix; //* CombinedPlayerMatrix;
-
-
-//		* m_pPlayer->Get_Transform()->Get_WorldMatrix()
-//		* XMMatrixTranslationFromVector(m_pPlayer->Get_Transform()->Get_State_Vector(CTransform::STATE_LOOK) * -100.f);
-
-	m_pTransformCom->Set_WorldMatrix(finalMatrix);
+	m_pTransformCom->Set_WorldMatrix( CombinedMatrix * XMMatrixRotationY(XMConvertToRadians(180.f)));
 }
 
 CCamera_Event* CCamera_Event::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

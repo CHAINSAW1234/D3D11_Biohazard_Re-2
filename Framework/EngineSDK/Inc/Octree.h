@@ -69,7 +69,7 @@ public:
 	int									GetSceneTriangleCount(CModel* pWorld);
 	int									GetDisplayListID() { return m_DisplayListID; }
 	void								SetDisplayListID(int displayListID) { m_DisplayListID = displayListID; }
-	_float4								GetNewNodeCenter(_float4 vCenter, float width, int nodeID);
+	_float4							GetNewNodeCenter(_float4 vCenter, float width, int nodeID);
 	void								CreateNode(CModel* pWorld, int numberOfTriangles, _float4 vCenter, float width);
 	void								CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangleCount,_float4 vCenter, float width, int nodeID);
 	void								AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles);
@@ -109,30 +109,31 @@ public:
 		return	m_bRender;
 	}
 public:
-	bool								m_bSubDivided;
-	float								m_Width;
-	int									m_TriangleCount;
-	_float4								m_vCenter;
-	CModel*								m_pWorld;
-	vector<int>							m_pObjectList;
-	int									m_DisplayListID;
-	COctree*							m_pOctreeNodes[8];
-	class CGameInstance*				m_pGameInstance = { nullptr };
-	_float4								m_vTranslation;
-	vector<class CModel*>				m_vecEntryNode;
+	bool												m_bSubDivided;
+	float												m_Width;
+	int													m_TriangleCount;
+	_float4											m_vCenter;
+	CModel*										m_pWorld;
+	vector<int>									m_pObjectList;
+	int													m_DisplayListID;
+	COctree*										m_pOctreeNodes[8];
+	class CGameInstance*					m_pGameInstance = { nullptr };
+	_float4											m_vTranslation;
+	vector<class CModel*>					m_vecEntryNode;
 	vector<vector<class CMesh*>>		m_vecMesh;
 
-	_bool								m_bRender = { false };
+	_bool												m_bRender = { false };
 	list<class CGameObject*>*			m_pObjects = { nullptr };
 	list<class CGameObject*>*			m_pObjects_Anim = { nullptr };
 	list<class CGameObject*>*			m_pObjects_Door = { nullptr };
 	list<class CGameObject*>*			m_pObjects_Window = { nullptr };
+	list<class CGameObject*>*			m_pObjects_Shutter = { nullptr };
 	vector<class CGameObject*>			m_vecProps;
 
-	CGameObject*						m_pPlayer = { nullptr };
+	CGameObject*								m_pPlayer = { nullptr };
 private:
-	ID3D11Device*						m_pDevice = { nullptr };
-	ID3D11DeviceContext*				m_pContext = { nullptr };
+	ID3D11Device*								m_pDevice = { nullptr };
+	ID3D11DeviceContext*					m_pContext = { nullptr };
 
 public:
 	virtual void Free() override;

@@ -69,8 +69,6 @@ void CMove_Front_Zombie::Enter()
 	if (nullptr == pBodyModel)
 		return;
 
-	m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fRecognitionRange = STATUS_ZOMBIE_MAX_RECOGNITION_DISTANCE;
-
 	m_fAccBlendTime = 0.f;
 
 #ifdef _DEBUG
@@ -93,6 +91,26 @@ _bool CMove_Front_Zombie::Execute(_float fTimeDelta)
 	CZombie::POSE_STATE			ePoseState = { m_pBlackBoard->Get_AI()->Get_PoseState() };
 	if (CZombie::POSE_STATE::_UP != ePoseState)
 		return false;
+
+	if (false == m_pBlackBoard->Is_LookTarget())
+		return false;
+
+	_float3			vDirectionToPlayerLocalFloat3;
+	if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3))
+		return false;
+
+	_vector			vDirectionToPlayerLocal = { XMLoadFloat3(&vDirectionToPlayerLocalFloat3) };
+	_vector			vDirectionToPlayerLocalXZPlane = { XMVector3Normalize(XMVectorSetY(vDirectionToPlayerLocal, 0.f)) };		//	회전량을 xz평면상에서만 고려하기위함
+	_vector			vAILookLocal = { XMVectorSet(0.f, 0.f, 1.f, 0.f) };
+
+	_bool			isRight = { XMVectorGetX(vDirectionToPlayerLocalXZPlane) > 0.f };
+
+	_float			fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirectionToPlayerLocal), XMVector3Normalize(vAILookLocal))) };
+	_float			fAngleToTarget = { acosf(fDot) };
+
+	_float			fMaxMoveAngle = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fMaxMoveAngle };
+	if (fMaxMoveAngle < fAngleToTarget)
+		return false;	
 
 	m_pBlackBoard->Organize_PreState(this);
 
@@ -126,8 +144,6 @@ void CMove_Front_Zombie::Exit()
 
 		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f, fminf(fDelta / fTickPerSec, 0.2f));
 	}	
-
-	m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fRecognitionRange = STATUS_ZOMBIE_DEFAULT_RECOGNITION_DISTANCE;
 }
 
 void CMove_Front_Zombie::Change_Animation(_float fTimeDelta)

@@ -51,6 +51,9 @@ void CBite_Zombie::Enter()
 	XMStoreFloat4x4(&m_Delta_Matrix_To_HalfMatrix, XMMatrixIdentity());
 
 
+	m_pBlackBoard->Get_PartModel(CMonster::PART_BODY)->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), 0.f, 0.f);
+
+
 #ifdef _DEBUG
 
 	cout << "Enter Bite " << endl;

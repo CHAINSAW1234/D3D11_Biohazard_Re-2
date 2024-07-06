@@ -56,7 +56,6 @@ private:
 	_bool				m_bOpened = { false };
 	_bool				m_bLock =	{ false };
 	_bool				m_bActivity = { false };
-	_bool				m_bRightCol = { false };
 
 	_ubyte			m_eState = { CABINET_CLOSED };
 

@@ -185,6 +185,11 @@
     <ClInclude Include="..\..\imguilib\imstb_textedit.h" />
     <ClInclude Include="..\..\imguilib\imstb_truetype.h" />
     <ClInclude Include="..\..\imguilib\ImZoomSlider.h" />
+    <ClInclude Include="..\Public\Actor.h" />
+    <ClInclude Include="..\Public\Actor_EM00.h" />
+    <ClInclude Include="..\Public\Actor_PartObject.h" />
+    <ClInclude Include="..\Public\Actor_PL00.h" />
+    <ClInclude Include="..\Public\Actor_PL78.h" />
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\Public\Bite_Zombie.h" />
     <ClInclude Include="..\Public\BlackBoard_Zombie.h" />
@@ -195,6 +200,8 @@
     <ClInclude Include="..\Public\Body_ItemLocker.h" />
     <ClInclude Include="..\Public\Body_ItemProp.h" />
     <ClInclude Include="..\Public\Body_Ladder.h" />
+    <ClInclude Include="..\Public\Body_Lever.h" />
+    <ClInclude Include="..\Public\Body_MovingShelf.h" />
     <ClInclude Include="..\Public\Body_NewpoliceStatue.h" />
     <ClInclude Include="..\Public\Body_Player.h" />
     <ClInclude Include="..\Public\Body_ReaderMachine.h" />
@@ -211,6 +218,8 @@
     <ClInclude Include="..\Public\Camera_Event.h" />
     <ClInclude Include="..\Public\Camera_Event_Struct.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
+    <ClInclude Include="..\Public\Cut_Scene.h" />
+    <ClInclude Include="..\Public\Cut_Scene_CF93.h" />
     <ClInclude Include="..\Public\Damage_UI.h" />
     <ClInclude Include="..\Public\Decal_SSD.h" />
     <ClInclude Include="..\Public\Effect_Header_Zombie.h" />
@@ -264,6 +273,7 @@
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
+    <ClInclude Include="..\Public\Lever.h" />
     <ClInclude Include="..\Public\Lightly_Hold_Zombie.h" />
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\Public\Loading_UI.h" />
@@ -274,6 +284,7 @@
     <ClInclude Include="..\Public\Monster.h" />
     <ClInclude Include="..\Public\Move_Front_Zombie.h" />
     <ClInclude Include="..\Public\Move_Include_Turn.h" />
+    <ClInclude Include="..\Public\MovingShelf.h" />
     <ClInclude Include="..\Public\Muzzle_Flash.h" />
     <ClInclude Include="..\Public\Muzzle_Flash_SG.h" />
     <ClInclude Include="..\Public\NavMesh_Debug.h" />
@@ -294,6 +305,7 @@
     <ClInclude Include="..\Public\Player_State_SubHold_Idle.h" />
     <ClInclude Include="..\Public\Player_State_SubHold_Start.h" />
     <ClInclude Include="..\Public\Props.h" />
+    <ClInclude Include="..\Public\Raise_Up_Hand.h" />
     <ClInclude Include="..\Public\ReaderMachine.h" />
     <ClInclude Include="..\Public\Read_Item_UI.h" />
     <ClInclude Include="..\Public\Selector_UI.h" />
@@ -311,6 +323,7 @@
     <ClInclude Include="..\Public\TextBox.h" />
     <ClInclude Include="..\Public\Title_UI.h" />
     <ClInclude Include="..\Public\Turn_Over_Zombie.h" />
+    <ClInclude Include="..\Public\Turn_Spine_Head_Zombie.h" />
     <ClInclude Include="..\Public\Tutorial_UI.h" />
     <ClInclude Include="..\Public\UI.h" />
     <ClInclude Include="..\Public\Wait_Zombie.h" />
@@ -374,6 +387,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Private\Actor.cpp" />
+    <ClCompile Include="..\Private\Actor_EM00.cpp" />
+    <ClCompile Include="..\Private\Actor_PartObject.cpp" />
+    <ClCompile Include="..\Private\Actor_PL00.cpp" />
+    <ClCompile Include="..\Private\Actor_PL78.cpp" />
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\Bite_Zombie.cpp" />
     <ClCompile Include="..\Private\BlackBoard_Zombie.cpp" />
@@ -384,6 +402,8 @@
     <ClCompile Include="..\Private\Body_ItemLocker.cpp" />
     <ClCompile Include="..\Private\Body_ItemProp.cpp" />
     <ClCompile Include="..\Private\Body_Ladder.cpp" />
+    <ClCompile Include="..\Private\Body_Lever.cpp" />
+    <ClCompile Include="..\Private\Body_MovingShelf.cpp" />
     <ClCompile Include="..\Private\Body_NewpoliceStatue.cpp" />
     <ClCompile Include="..\Private\Body_Player.cpp" />
     <ClCompile Include="..\Private\Body_ReaderMachine.cpp" />
@@ -398,6 +418,8 @@
     <ClCompile Include="..\Private\Camera_Event.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\Private\Creep_Zombie.cpp" />
+    <ClCompile Include="..\Private\Cut_Scene.cpp" />
+    <ClCompile Include="..\Private\Cut_Scene_CF93.cpp" />
     <ClCompile Include="..\Private\Damage_UI.cpp" />
     <ClCompile Include="..\Private\Decal_SSD.cpp" />
     <ClCompile Include="..\Private\Is_Can_Link_Pre_State_Zombie.cpp" />
@@ -445,6 +467,7 @@
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
+    <ClCompile Include="..\Private\Lever.cpp" />
     <ClCompile Include="..\Private\Lightly_Hold_Zombie.cpp" />
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\Private\Loading_UI.cpp" />
@@ -455,6 +478,7 @@
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\Private\Move_Front_Zombie.cpp" />
     <ClCompile Include="..\Private\Move_Include_Turn.cpp" />
+    <ClCompile Include="..\Private\MovingShelf.cpp" />
     <ClCompile Include="..\Private\Muzzle_Flash.cpp" />
     <ClCompile Include="..\Private\Muzzle_Flash_SG.cpp" />
     <ClCompile Include="..\Private\NavMesh_Debug.cpp" />
@@ -475,6 +499,7 @@
     <ClCompile Include="..\Private\Player_State_SubHold_Idle.cpp" />
     <ClCompile Include="..\Private\Player_State_SubHold_Start.cpp" />
     <ClCompile Include="..\Private\Props.cpp" />
+    <ClCompile Include="..\Private\Raise_Up_Hand.cpp" />
     <ClCompile Include="..\Private\ReaderMachine.cpp" />
     <ClCompile Include="..\Private\Read_Item_UI.cpp" />
     <ClCompile Include="..\Private\Selector_UI.cpp" />
@@ -492,6 +517,7 @@
     <ClCompile Include="..\Private\TextBox.cpp" />
     <ClCompile Include="..\Private\Title_UI.cpp" />
     <ClCompile Include="..\Private\Turn_Over_Zombie.cpp" />
+    <ClCompile Include="..\Private\Turn_Spine_Head_Zombie.cpp" />
     <ClCompile Include="..\Private\Tutorial_UI.cpp" />
     <ClCompile Include="..\Private\UI.cpp" />
     <ClCompile Include="..\Private\Wait_Zombie.cpp" />

@@ -43,6 +43,9 @@ private:
 
 	void							Update_Status_Stamina(_float fTimeDelta);
 
+private:
+	void							Update_Look_Target(_float fTImeDelta);
+
 public:	//	Interact
 	_bool							Hit_Player();
 
@@ -75,6 +78,8 @@ public: // Getter
 	CModel*							Get_PartModel(_uint iPartType);
 
 	_matrix							Get_FirstKeyFrame_RootTransformationMatrix(CMonster::PART_ID eID, const wstring& strAnimLayerTag, _int iAnimIndex);
+
+	inline _bool					Is_LookTarget() { return m_pAI->Is_LookTarget(); }
 
 public:		/* Anim Controll */
 	void							Reset_NonActive_Body(const list<_uint>& ActivePlayingIndices);

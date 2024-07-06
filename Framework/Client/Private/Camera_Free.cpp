@@ -97,6 +97,15 @@ void CCamera_Free::Bind_PipeLine()
 	__super::Bind_PipeLines();
 }
 
+void CCamera_Free::Active_Camera(_bool isActive)
+{
+	m_isActive = isActive;
+	if(m_pPlayer)
+		m_pPlayer->ResetCamera();
+	if (m_isActive)
+		Bind_PipeLines();
+}
+
 CCamera_Free * CCamera_Free::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	CCamera_Free*		pInstance = new CCamera_Free(pDevice, pContext);

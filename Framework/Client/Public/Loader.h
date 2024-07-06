@@ -30,6 +30,9 @@ private:
 	HRESULT Loading_For_Static_Component();
 
 	HRESULT Load_Field_Prototype(const wstring& filePath);
+	HRESULT Load_Item_Prototype(const wstring& filePath); // 이건 나중에 없애야만하는 코드입니다 -예은-
+	HRESULT Create_Prototypes_Actor();
+	HRESULT Create_Prototypes_CutScene();
 
 
 private:

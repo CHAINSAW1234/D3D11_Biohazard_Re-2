@@ -57,9 +57,9 @@ HRESULT CProps::Initialize(void* pArg)
 	m_pRigid_Static = m_pGameInstance->Create_Rigid_Static(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_RigidBody, this);
 #pragma endregion
 #ifdef PROPS_COOKING
-	m_pModelCom->Static_Mesh_Cooking(m_pTransformCom ,&m_iIndex_RigidBody);
+	m_pModelCom->Static_Mesh_Cooking(m_pTransformCom, &m_iIndex_RigidBody);
 #endif
-	
+
 	if (m_pTransformCom->IsIdentityWorldMatrix())
 	{
 		m_bLocalized = true;
@@ -118,7 +118,7 @@ HRESULT CProps::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (m_NonHideIndices.size()!=0)
+	if (m_NonHideIndices.size() != 0)
 	{
 		for (auto& i : m_NonHideIndices)
 		{
@@ -205,7 +205,7 @@ HRESULT CProps::Render()
 			m_pModelCom->Render(static_cast<_uint>(i));
 		}
 	}
-	
+
 
 	return S_OK;
 }
@@ -230,7 +230,7 @@ HRESULT CProps::Render_LightDepth_Dir()
 			return E_FAIL;
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
-		if(m_NonHideIndices.size() == 0)
+		if (m_NonHideIndices.size() == 0)
 		{
 			_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
@@ -317,7 +317,7 @@ HRESULT CProps::Render_LightDepth_Spot()
 				m_pModelCom->Render(static_cast<_uint>(i));
 			}
 		}
-		
+
 	}
 
 	return S_OK;
@@ -348,7 +348,7 @@ HRESULT CProps::Render_LightDepth_Point()
 			return E_FAIL;
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
 			return E_FAIL;
-		if (m_NonHideIndices.size()==0)
+		if (m_NonHideIndices.size() == 0)
 		{
 			_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 			for (size_t i = 0; i < iNumMeshes; i++)
@@ -383,6 +383,14 @@ HRESULT CProps::Render_LightDepth_Point()
 	}
 
 	return S_OK;
+}
+
+void CProps::Start()
+{
+#pragma region 메모리 정리
+	m_pModelCom->Release_Dump();
+	m_pModelCom->Release_Decal_Dump();
+#pragma endregion
 }
 
 HRESULT CProps::Add_Components()
@@ -421,7 +429,7 @@ HRESULT CProps::Initialize_Model()
 		string strFindTag = "10" + to_string(m_tagPropDesc.iPropType);
 		if (m_tagPropDesc.iPropType >= 10)
 			strFindTag = "20" + to_string(m_tagPropDesc.iPropType - 10);
-		if ((strMeshTag.find(strFindTag) != string::npos) || (strMeshTag.find("Group_0_") != string::npos) || (strMeshTag.find("Group_"+to_string(iRand)+"_") != string::npos))
+		if ((strMeshTag.find(strFindTag) != string::npos) || (strMeshTag.find("Group_0_") != string::npos) || (strMeshTag.find("Group_" + to_string(iRand) + "_") != string::npos))
 			ResultMeshTags.push_back(strMeshTag);
 
 	}

@@ -1,6 +1,7 @@
 #include "..\Public\Object_Manager.h"
 #include "GameObject.h"
 #include "Layer.h"
+#include "Camera.h"
 
 CObject_Manager::CObject_Manager()
 {
@@ -212,6 +213,14 @@ CLayer* CObject_Manager::Find_Layer(_uint iLevelIndex, const wstring& strLayerTa
 		return nullptr;
 
 	return iter->second;
+}
+
+void CObject_Manager::Active_Camera(_uint iLevelIndex, CCamera* pCamera)
+{
+	CLayer* pLayer = Find_Layer(iLevelIndex, g_strCameraTag);
+
+	pLayer->Active_Camera(pCamera);
+
 }
 
 

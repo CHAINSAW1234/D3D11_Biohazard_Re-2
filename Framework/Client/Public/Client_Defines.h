@@ -8,7 +8,6 @@ namespace Client
 {
 	const unsigned int	g_iWinSizeX = 1600;
 	const unsigned int	g_iWinSizeY = 900;
-	const wstring g_strCameraLayer = TEXT("Layer_ZZZCamera");
 	//static _int g_i44_005Type = 0; //저희 게임 디테일을 위해 죄송합니다- 예은
 
 }
@@ -21,16 +20,18 @@ using namespace std;
 using namespace Client;
 	
 //#define MAP_NOTHING
-//#define MAP_JUSTMAP
-//#define MAP_NONANIMOBJ
-#define MAP_INTERACT
+//#define MAP_INTERACT
+#define MAP_TEST
 
 //#define NON_COLLISION_PROP
 #define PROPS_COOKING
 
+
+#define NO_COLLISTION
+
 #define DISPLAY_FRAME
 #define DISPLAY_NAVMESH
-#define FRAME_LOCK
+//#define FRAME_LOCK
 
 typedef struct Tag_Prototype_Inform
 {

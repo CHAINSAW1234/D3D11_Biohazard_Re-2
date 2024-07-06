@@ -3356,50 +3356,19 @@ void CModel::Perform_Skinning(_uint iIndex)
 	m_pGameInstance->Perform_Skinning(m_Meshes[iIndex]->GetNumVertices());
 }
 
-void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix,_int iMeshType)
+void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix,_int iMeshType, _bool bBigAttack)
 {
 	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
 
 	for (auto& i : NonHideIndex)
 	{
 		if(m_MeshBranches[i] != iMeshType)
-			m_Meshes[i]->SetDecalWorldMatrix(WorldMatrix);
+			m_Meshes[i]->SetDecalWorldMatrix(WorldMatrix, bBigAttack);
 	}
 }
 
 void CModel::InitDecalWorldMatrix(_float4 vPos, _float4 vNormal)
 {
-	/*_vector Scale = XMVectorSet(1.f,1.f,1.f,0.f);
-	_vector Position = XMVectorSet(vPos.x,vPos.y,vPos.z,1.f);
-
-	_vector LookVector = XMLoadFloat4(&vNormal);
-
-	_vector UpVector = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-
-	if (XMVector3NearEqual(LookVector, UpVector, XMVectorSplatEpsilon()))
-	{
-		UpVector = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-	}
-
-	_vector rightVector = XMVector3Cross(LookVector, UpVector);
-	rightVector = XMVector3Normalize(rightVector);
-
-	UpVector = XMVector3Cross(rightVector, LookVector);
-	UpVector = XMVector3Normalize(UpVector);
-
-	_matrix rotationMatrix = _matrix(
-		rightVector,
-		UpVector,
-		LookVector,
-		XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)
-	);
-
-	_matrix scaleMatrix = XMMatrixScalingFromVector(Scale);
-
-	_matrix WorldMat = scaleMatrix * rotationMatrix * XMMatrixTranslationFromVector(Position);
-	_float4x4 WorldMat_Decal;
-	XMStoreFloat4x4(&WorldMat_Decal, WorldMat);*/
-
 	_matrix WorldMat = XMMatrixIdentity();
 	_float4x4 WorldMat_Decal;
 	XMStoreFloat4x4(&WorldMat_Decal, WorldMat);
@@ -3410,7 +3379,7 @@ void CModel::InitDecalWorldMatrix(_float4 vPos, _float4 vNormal)
 	auto iNumMesh = m_Meshes.size();
 	for(size_t i = 0;i< iNumMesh;++i)
 	{
-		m_Meshes[i]->SetDecalWorldMatrix(WorldMat_Decal);
+		m_Meshes[i]->SetDecalWorldMatrix(WorldMat_Decal,false);
 		m_Meshes[i]->SetDecalExtent(_float3(0.2f, 0.2f, 0.2f));
 	}
 }
@@ -3667,6 +3636,26 @@ void CModel::Free()
 void CModel::Release_IndexBuffer(_uint iNumMesh)
 {
 	m_Meshes[iNumMesh]->Release_IndexBuffer();
+}
+	
+void CModel::Release_Decal_Dump()
+{
+	for (size_t i = 0; i < m_Meshes.size(); ++i)
+	{
+		m_Meshes[i]->Release_Decal();
+		Safe_Delete_Array(m_vecDecal_Map[i]);
+		Safe_Release(m_vecSRV_DecalMap[i]);
+		Safe_Release(m_vecSB_DecalMap[i]);
+		Safe_Release(m_vecUAV_DecalMap[i]);
+	}
+}
+
+void CModel::Release_Dump()
+{
+	for (size_t i = 0; i < m_Meshes.size(); ++i)
+	{
+		m_Meshes[i]->Release_Dump();
+	}
 }
 
 #pragma endregion

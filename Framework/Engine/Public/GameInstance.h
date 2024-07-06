@@ -114,6 +114,7 @@ public: /* For.Object_Manager */
 	//yeeun	
 	HRESULT									Add_Layer(_uint iLevelIndex, const wstring& strLayerTag);
 	void									Start();
+	void									Active_Camera(_uint iLevelIndex, class CCamera* pCamera);
 #pragma endregion
 
 #pragma region Component_Manager
@@ -303,7 +304,7 @@ public:/*For Physics Controller*/
 	void									Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 	void									Create_Cloth(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 	_bool									RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
-	_bool									RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
+	_bool									RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _bool bBigAttack, _bool bDecalRay, _float fMaxDist = 1000.f);
 	_bool									RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint,_float4* pBlockNormal, _float fMaxDist = 1000.f);
 	_bool									SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);

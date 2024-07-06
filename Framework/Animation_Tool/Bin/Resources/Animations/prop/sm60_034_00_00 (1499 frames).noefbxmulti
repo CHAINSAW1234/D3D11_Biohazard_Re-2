@@ -1,0 +1,44 @@
+NOESIS_MULTIFBX_FILE_VERSION 1
+
+SequenceEntry
+{
+	name		"sm60_034_00_00 (1499 frames)"
+	filename	"sm60_034_00_00 (1499 frames).noefbxmulti - sm60_034_00_00 (1499 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"sm60_034_00_01 (114 frames)"
+	filename	"sm60_034_00_00 (1499 frames).noefbxmulti - sm60_034_00_01 (114 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"sm60_034_00_02 (289 frames)"
+	filename	"sm60_034_00_00 (1499 frames).noefbxmulti - sm60_034_00_02 (289 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"sm60_034_00_03 (179 frames)"
+	filename	"sm60_034_00_00 (1499 frames).noefbxmulti - sm60_034_00_03 (179 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"sm60_034_00_04 (299 frames)"
+	filename	"sm60_034_00_00 (1499 frames).noefbxmulti - sm60_034_00_04 (299 frames).fbx"
+	framerate	"1.000000"
+}
+
+SequenceEntry
+{
+	name		"sm60_034_00_05 (192 frames)"
+	filename	"sm60_034_00_00 (1499 frames).noefbxmulti - sm60_034_00_05 (192 frames).fbx"
+	framerate	"1.000000"
+}
+

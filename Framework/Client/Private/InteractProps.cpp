@@ -91,7 +91,7 @@ void CInteractProps::Start()
 {
 	Check_Player();
 
-	m_pCamera = static_cast<CCamera_Free*>(m_pGameInstance->Find_Layer(g_Level, g_strCameraLayer)->front());
+	m_pCamera = static_cast<CCamera_Free*>(m_pGameInstance->Find_Layer(g_Level, g_strCameraTag)->front());
 	m_pCameraTransform = static_cast<CTransform*>(m_pCamera->Get_Component(g_strTransformTag));
 	for (auto& iter : m_PartObjects)
 	{
@@ -99,7 +99,7 @@ void CInteractProps::Start()
 			continue;
 		static_cast<CPart_InteractProps*>(iter)->Set_CameraSetting(m_pCamera, m_pCameraTransform);
 	}
-	
+	Tick_Col();
 }
 
 HRESULT CInteractProps::Render()
@@ -218,6 +218,7 @@ _bool CInteractProps::Visible()
 #ifdef		_DEBUG
 void CInteractProps::Add_Col_DebugCom()
 {
+#ifndef NO_COLLISTION
 	for (size_t i = 0; i < INTER_COL_END; i++)
 	{
 		for (size_t j = 0; j < COL_STEP_END; j++)
@@ -227,6 +228,7 @@ void CInteractProps::Add_Col_DebugCom()
 			m_pGameInstance->Add_DebugComponents(m_pColliderCom[i][j]);
 		}
 	}
+#endif 
 }
 #endif
 

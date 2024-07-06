@@ -35,6 +35,7 @@ void CBlackBoard_Zombie::Priority_Tick(_float fTimeDelta)
 {
 	Update_Timers(fTimeDelta);
 	Update_Status(fTimeDelta);
+	Update_Look_Target(fTimeDelta);
 }
 
 void CBlackBoard_Zombie::Late_Tick(_float fTimeDelta)
@@ -56,7 +57,8 @@ void CBlackBoard_Zombie::Update_Recognition_Timer(_float fTimeDelta)
 
 	MONSTER_STATE					eCurrentState = { m_pAI->Get_Current_MonsterState() };
 	CMonster::MONSTER_STATUS*		pMonsterStatus = { m_pAI->Get_Status_Ptr() };
-	if (MONSTER_STATE::MST_WALK != eCurrentState)
+	if (MONSTER_STATE::MST_WALK != eCurrentState ||
+		MONSTER_STATE::MST_IDLE != eCurrentState)
 	{
 		pMonsterStatus->fAccRecognitionTime -= fTimeDelta;
 		if (pMonsterStatus->fAccRecognitionTime < 0.f)
@@ -68,7 +70,17 @@ void CBlackBoard_Zombie::Update_Recognition_Timer(_float fTimeDelta)
 	if (false == Compute_Distance_To_Player(&fDistanceToPlayer))
 		return;
 
-	_bool							isInRange = { fDistanceToPlayer <= pMonsterStatus->fRecognitionRange };
+	_bool							isLookTarget = { m_pAI->Is_LookTarget() };
+	_bool							isInRange = { false};
+	if (true == isLookTarget)
+	{
+		isInRange = fDistanceToPlayer <= pMonsterStatus->fRecognitionRange_LookTarget;
+	}
+	else
+	{
+		isInRange = fDistanceToPlayer <= pMonsterStatus->fRecognitionRange;
+	}
+
 	if (true == isInRange)
 	{
 		pMonsterStatus->fAccRecognitionTime += fTimeDelta;
@@ -110,7 +122,7 @@ void CBlackBoard_Zombie::Update_StandUp_Timer(_float fTimeDelta)
 
 void CBlackBoard_Zombie::Update_LightlyHold_Timer(_float fTimeDelta)
 {
-	if (nullptr == m_pAI)
+	/*if (nullptr == m_pAI)
 		return;
 
 	MONSTER_STATE					eCurrentState = { m_pAI->Get_Current_MonsterState() };
@@ -142,7 +154,7 @@ void CBlackBoard_Zombie::Update_LightlyHold_Timer(_float fTimeDelta)
 		pMonsterStatus->fAccRecognitionTime -= fTimeDelta;
 		if (pMonsterStatus->fAccRecognitionTime < 0.f)
 			pMonsterStatus->fAccRecognitionTime = 0.f;
-	}
+	}*/
 }
 
 void CBlackBoard_Zombie::Update_Hold_Timer(_float fTImeDelta)
@@ -185,6 +197,20 @@ void CBlackBoard_Zombie::Update_Status_Stamina(_float fTimeDelta)
 
 	if (pMonsterStatus->fStamina > pMonsterStatus->fMaxStamina)
 		pMonsterStatus->fStamina = pMonsterStatus->fMaxStamina;
+}
+
+void CBlackBoard_Zombie::Update_Look_Target(_float fTImeDelta)
+{
+	CMonster::MONSTER_STATUS*			pMonsterStatus = { m_pAI->Get_Status_Ptr() };
+
+	if (true == pMonsterStatus->fAccRecognitionTime > pMonsterStatus->fLookTrargetNeedTime)
+	{
+		m_pAI->Set_LookTarget(true);
+	}
+	else
+	{
+		m_pAI->Set_LookTarget(false);
+	}
 }
 
 _bool CBlackBoard_Zombie::Hit_Player()
@@ -481,6 +507,11 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Target_8Direction_Local(_fvector 
 {
 	_bool				isSuccess = { false };
 
+	if (nullptr == pDirection)
+		return isSuccess;
+
+	isSuccess = true;
+
 	_vector				vAIPosition = { m_pAI->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
 	_vector				vDirectionToTargetWorld = { XMVector3Normalize(vTargetPosition - vAIPosition) };
 
@@ -489,8 +520,7 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Target_8Direction_Local(_fvector 
 
 	_bool				isRight = { XMVectorGetX(vDirectionToTargetLocal) > 0.f };
 	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f), vDirectionToTargetLocal)) };
-	_float				fAngle = { acosf(fDot) };
-
+	_float				fAngle = { acosf(fDot) };	
 	
 	if (XMConvertToRadians(22.5f) > fAngle)
 	{
@@ -528,9 +558,6 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Target_8Direction_Local(_fvector 
 	{
 		*pDirection = DIRECTION::_B;
 	}
-
-	if (false == isSuccess)
-		*pDirection = DIRECTION::_END;
 
 	return isSuccess;
 }

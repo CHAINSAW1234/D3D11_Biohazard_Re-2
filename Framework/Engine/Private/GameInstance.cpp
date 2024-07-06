@@ -567,6 +567,10 @@ void CGameInstance::Start()
 {
 	return m_pObject_Manager->Start();
 }
+void CGameInstance::Active_Camera(_uint iLevelIndex, CCamera* pCamera)
+{
+	return m_pObject_Manager->Active_Camera(iLevelIndex, pCamera);
+}
 #pragma endregion
 
 #pragma region Component_Manager
@@ -1176,10 +1180,10 @@ _bool CGameInstance::RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint
 {
 	return m_pPhysics_Controller->RayCast(vOrigin, vDir, pBlockPoint, fMaxDist);
 }
-_bool CGameInstance::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
+_bool CGameInstance::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _bool bBigAttack, _bool bDecalRay, _float fMaxDist)
 {
 	if (m_pPhysics_Controller)
-		return m_pPhysics_Controller->RayCast_Shoot(vOrigin, vDir, pBlockPoint, fMaxDist);
+		return m_pPhysics_Controller->RayCast_Shoot(vOrigin, vDir, pBlockPoint,bBigAttack,bDecalRay, fMaxDist);
 
 	return false;
 }

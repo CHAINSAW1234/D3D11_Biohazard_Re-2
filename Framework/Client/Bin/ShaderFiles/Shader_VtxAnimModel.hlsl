@@ -310,22 +310,22 @@ PS_OUT PS_MAIN(PS_IN In)
 		Out.vMaterial.b = 1.f;
 	}
 
-	if(g_DecalRender)
-	{
-		float2 DecalTexcoord;
-		DecalTexcoord.x = g_DecalMap[In.iIndex].x;
-		DecalTexcoord.y = g_DecalMap[In.iIndex].y;
+    if (g_DecalRender)
+    {
+        float2 DecalTexcoord;
+        DecalTexcoord.x = g_DecalMap[In.iIndex].x;
+        DecalTexcoord.y = g_DecalMap[In.iIndex].y;
 
-		float2 DecalUV = In.vDecalUV;
+        float2 DecalUV = In.vDecalUV;
 
-		if (DecalUV.x >= 0.0f && DecalUV.x <= 1.0f && DecalUV.y >= 0.0f && DecalUV.y <= 1.0f)
-		{
-			float4 decalColor = g_DecalTexture.Sample(LinearSampler, DecalUV);
+        if (DecalUV.x >= 0.0f && DecalUV.x <= 1.0f && DecalUV.y >= 0.0f && DecalUV.y <= 1.0f)
+        {
+            float4 decalColor = g_DecalTexture.Sample(LinearSampler, DecalUV);
 
-			if (decalColor.a > 0.01f)
-			{
-				float2 center = float2(0.5f, 0.5f);
-				float distance = length(DecalUV - center);
+            if (decalColor.a > 0.01f)
+            {
+                float2 center = float2(0.5f, 0.5f);
+                float distance = length(DecalUV - center);
 
 				if(g_Cloth)
 				{

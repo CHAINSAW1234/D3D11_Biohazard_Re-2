@@ -8,6 +8,7 @@ BEGIN(Client)
 class CLadder final : public CInteractProps
 {
 public:
+#define TIMEDELAY 1.5f;
 	enum STATUE_PART
 	{
 		PART_BODY,
@@ -41,8 +42,9 @@ public:
 
 private:
 	_int								m_iActive = { 2 };
+	_float							m_fTime = { 0.f };
 	//_ubyte			m_eState = { STATE_STATIC };
-
+	_int								m_iPlayerDoAct = { 0 };
 
 public:
 	static CLadder* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

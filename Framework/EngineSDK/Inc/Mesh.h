@@ -191,7 +191,7 @@ public:
 	void					Init_DecalMap(class CShader* pShader);
 
 	//Set Decal WorldMatrix
-	void					SetDecalWorldMatrix(_float4x4 WorldMatrix);
+	void					SetDecalWorldMatrix(_float4x4 WorldMatrix,_bool bBigAttack);
 
 	//CalcDecalMap
 	void					Bind_Resource_CalcDecalMap(ID3D11UnorderedAccessView* pUAV);
@@ -204,6 +204,7 @@ public:
 
 	void					Bind_Resource_NonCShader_Decal(class CShader* pShader);
 	void					Calc_NonCS_Decal_Map(class CShader* pShader);
+	void					Release_Decal();
 #pragma endregion
 
 private:

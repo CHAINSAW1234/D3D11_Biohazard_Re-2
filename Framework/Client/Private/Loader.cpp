@@ -27,6 +27,14 @@
 #include "CustomCollider.h"
 #include "NavMesh_Debug.h"
 
+/* Actor */
+#include "Actor_PL78.h"
+#include "Actor_PL00.h"
+#include "Actor_EM00.h"
+
+/* CutScene */
+#include "Cut_Scene_CF93.h"
+
 /* Decal*/
 #include "Decal_SSD.h"
 
@@ -49,15 +57,16 @@
 #include"Body_Statue.h"
 #include"Shutter.h"
 #include"Body_Shutter.h"
-
 #include"ItemLocker.h"
 #include"Body_ItemLocker.h"
-
 #include"Ladder.h"
 #include"Body_Ladder.h"
-
 #include"ReaderMachine.h"
 #include"Body_ReaderMachine.h"
+#include"MovingShelf.h"
+#include"Body_MovingShelf.h"
+#include"Lever.h"
+#include"Body_Lever.h"
 
 
 
@@ -677,7 +686,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
 		return E_FAIL;
 
-	vector<wstring> ItemModelTags; // Ã¢±Õ
+	//vector<wstring> ItemModelTags; // Ã¢±Õ
 
 	for (_uint i = 0; iObjectNum > i; ++i)
 	{
@@ -794,11 +803,19 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("zombiewindow")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Window::Create(m_pDevice, m_pContext));
+
 		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm40_016")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Ladder::Create(m_pDevice, m_pContext));
 
 		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm40")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Door::Create(m_pDevice, m_pContext));
+		
+		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_162")) != wstring::npos) && (bDo = true))
+			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Lever::Create(m_pDevice, m_pContext));		
+
+		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_162")) != wstring::npos) && (bDo = true))
+			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Lever::Create(m_pDevice, m_pContext));
+
 		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_024_newpolicestatue01a")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_NewpoliceStatue::Create(m_pDevice, m_pContext));
 		if (!bDo &&
@@ -806,6 +823,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_011")) != wstring::npos))
 			&& (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Cabinet::Create(m_pDevice, m_pContext));
+
 		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm7")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_ItemProp::Create(m_pDevice, m_pContext));	
 		if (!bDo && (
@@ -815,17 +833,21 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			(Inform->wstrGameObjectPrototypeName.find(TEXT("sm60_033")) != wstring::npos)
 			) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Shutter::Create(m_pDevice, m_pContext));
+
+
+
+
 		if (!bDo &&Inform->bAnim&& (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_EventProp::Create(m_pDevice, m_pContext));
 
 		if(!bDo)
 				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CProps::Create(m_pDevice, m_pContext));
 
-		
-		if (Inform->wstrGameObjectPrototypeName.find(TEXT("sm7")) != wstring::npos)
-		{
-			ItemModelTags.push_back(Inform->wstrModelPrototypeName);//Ã¢±Õ
-		}
+		//
+		//if (Inform->wstrGameObjectPrototypeName.find(TEXT("sm7")) != wstring::npos)
+		//{
+		//	ItemModelTags.push_back(Inform->wstrModelPrototypeName);//Ã¢±Õ
+		//}
 
 		if (Inform->wstrGameObjectPrototypeName.find(TEXT("sm71_901")) != wstring::npos)
 		{
@@ -848,10 +870,168 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ItemLocker"), CItemLocker::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Ladder"), CLadder::Create(m_pDevice, m_pContext));
 
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Lever"), CLever::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MovingShelf"), CMovingShelf::Create(m_pDevice, m_pContext));
 
-	m_pGameInstance->Set_ModelTags(TEXT("ItemModel_Tags"), ItemModelTags);
+
+	//m_pGameInstance->Set_ModelTags(TEXT("ItemModel_Tags"), ItemModelTags);
 
 	CloseHandle(hFile);
+	return S_OK;
+}
+
+HRESULT CLoader::Load_Item_Prototype(const wstring& filePath)
+{
+	HANDLE		hFile = CreateFile(filePath.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	DWORD	dwByte(0);
+
+	_uint iObjectNum = { 0 };
+	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
+		return E_FAIL;
+
+	//vector<wstring> ItemModelTags; // Ã¢±Õ
+
+	for (_uint i = 0; iObjectNum > i; ++i)
+	{
+
+		PROTOTYPE_INFORM* Inform = new PROTOTYPE_INFORM;
+
+		_uint dwLen = { 0 };
+
+		_bool bAnim = { false };
+		if (!ReadFile(hFile, &bAnim, sizeof(_uint), &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		Inform->bAnim = bAnim;
+
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		char* strModelPath = new char[dwLen / sizeof(char) + 1];
+		if (!ReadFile(hFile, strModelPath, dwLen, &dwByte, nullptr))
+		{
+			delete[] strModelPath;
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+
+			return E_FAIL;
+		}
+		strModelPath[dwLen / sizeof(char)] = '\0';
+		Inform->strModelPath = strModelPath;
+		delete[] strModelPath;
+
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wchar_t* wstrModelPrototypeName = new wchar_t[dwLen / sizeof(wchar_t) + 1];
+		if (!ReadFile(hFile, wstrModelPrototypeName, dwLen, &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			delete[] wstrModelPrototypeName;
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wstrModelPrototypeName[dwLen / sizeof(wchar_t)] = L'\0';
+		Inform->wstrModelPrototypeName = wstrModelPrototypeName;
+		delete[] wstrModelPrototypeName;
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			Safe_Delete(Inform);
+			return E_FAIL;
+		}
+		wchar_t* wstrGameObjectPrototypeName = new wchar_t[dwLen / sizeof(wchar_t) + 1];
+		if (!ReadFile(hFile, wstrGameObjectPrototypeName, dwLen, &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			delete[] wstrGameObjectPrototypeName;
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wstrGameObjectPrototypeName[dwLen / sizeof(wchar_t)] = L'\0';
+		Inform->wstrGameObjectPrototypeName = wstrGameObjectPrototypeName;
+		delete[] wstrGameObjectPrototypeName;
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			Safe_Delete(Inform);
+			return E_FAIL;
+		}
+		char* strGameObjectPrototypeName = new char[dwLen / sizeof(char) + 1];
+		if (!ReadFile(hFile, strGameObjectPrototypeName, dwLen, &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			delete[] strGameObjectPrototypeName;
+
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		strGameObjectPrototypeName[dwLen / sizeof(char)] = '\0';
+		Inform->strGameObjectPrototypeName = strGameObjectPrototypeName;
+		delete[] strGameObjectPrototypeName;
+
+
+
+		if (Inform->strGameObjectPrototypeName.find("_Anim") != string::npos)
+		{
+			Inform->bAnim = true;
+
+			_matrix Ininitmatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+
+			m_pGameInstance->Add_Prototype(m_eNextLevelID, Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, Inform->strModelPath.c_str(), Ininitmatrix));
+		}
+		else
+		{
+			m_pGameInstance->Add_Prototype(m_eNextLevelID, Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, Inform->strModelPath.c_str(), XMMatrixIdentity()));
+
+		}
+		Safe_Delete(Inform);
+
+	}
+	CloseHandle(hFile);
+	return S_OK;
+}
+
+HRESULT CLoader::Create_Prototypes_Actor()
+{
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_EM0000"),
+		CActor_EM00::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_PL0000"),
+		CActor_PL00::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_PL7800"),
+		CActor_PL78::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Create_Prototypes_CutScene()
+{
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CutScene_CF93"),
+		CCut_Scene_CF93::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -1668,6 +1848,40 @@ HRESULT CLoader::Loading_For_GamePlay()
 		return E_FAIL;
 #pragma endregion
 
+#pragma region CutScene_Model
+	
+#pragma region PL7800 
+
+	/* Prototype_Component_Model_PL7800 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_PL7800"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/pl7800/pl7800.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+
+	/* Prototype_Component_Model_PL7850 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_PL7850"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/pl7850/pl7850.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+
+	/* Prototype_Component_Model_PL7870 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_PL7870"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/pl7870/pl7870.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+
+	/* Prototype_Component_Model_PL7880 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_PL7880"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/pl7880/pl7880.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+#pragma endregion		//	PL7800
+
+#pragma endregion		//	CutScene_Model
+
 	m_strLoadingText = TEXT("Now Loading ... Animations");
 
 #pragma region Animation Load 
@@ -1675,6 +1889,18 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	if (FAILED(Load_Animations()))
 		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Actor Object Prototypes
+
+	Create_Prototypes_Actor();
+
+#pragma endregion
+
+#pragma region CutScene Object Prototypes
+
+	Create_Prototypes_CutScene();
 
 #pragma endregion
 
@@ -1692,20 +1918,20 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	m_strLoadingText = TEXT("Now Loading ... Object");
 
+
 #pragma region YeEun Add
 #ifdef MAP_NOTHING
-
-#endif
-#ifdef MAP_JUSTMAP
-	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_Map/Make_Prototype.dat"))))
+	if (FAILED(Load_Item_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
 		return E_FAIL;
 #endif
 #ifdef MAP_INTERACT
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_InteractObj/Make_Prototype.dat"))))
 		return E_FAIL;
 #endif 
-#ifdef MAP_NONANIMOBJ
-	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_NonAnim/Make_Prototype.dat"))))
+#ifdef MAP_TEST
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_Test/Make_Prototype.dat"))))
+		return E_FAIL;
+	if (FAILED(Load_Item_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
 		return E_FAIL;
 #endif 
 #pragma endregion
@@ -1967,6 +2193,33 @@ HRESULT CLoader::Load_Animations()
 		return E_FAIL;
 
 #pragma endregion
+
+#pragma region For.CutScene Animatoin 
+
+#pragma region CF93
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL0000"), "../Bin/Resources/Animations/CutScene/CF93/pl0000/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL0050"), "../Bin/Resources/Animations/CutScene/CF93/pl0050/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_EM0000"), "../Bin/Resources/Animations/CutScene/CF93/em0000/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL7800"), "../Bin/Resources/Animations/CutScene/CF93/pl7800/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL7850"), "../Bin/Resources/Animations/CutScene/CF93/pl7850/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL7880"), "../Bin/Resources/Animations/CutScene/CF93/pl7880/")))
+		return E_FAIL;
+
+#pragma endregion // CF98
+
+
+#pragma endregion 
 
 	return S_OK;	
 }

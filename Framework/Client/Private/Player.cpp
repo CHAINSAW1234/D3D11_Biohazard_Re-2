@@ -26,6 +26,7 @@
 
 
 #define MODEL_SCALE 0.01f
+#define SHOTGUN_BULLET_COUNT 5
 
 const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_HG"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT") };
 const wstring CPlayer::strAnimSetHoldName[ANIMSET_HOLD_END] = { TEXT("HOLD_HG"), TEXT("HOLG_STG"), TEXT("HOLD_MLE"), TEXT("HOLD_SUP") };
@@ -76,6 +77,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 		return E_FAIL;
 	m_pTransformCom_Camera->SetRotationPerSec(0.75f);
 
+	m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), 3.f);
+	m_pTransformCom_Camera->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), 3.f);
 	//For Camera.
 	Load_CameraPosition();
 	if (FAILED(Ready_Camera()))
@@ -86,6 +89,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	Ready_Effect();
 
 	fill_n(m_SetProps, SETPROPS_NONE, -1);
+
 	return S_OK;
 }
 
@@ -110,6 +114,11 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
+	if (m_pGameInstance->Get_KeyState('T') == DOWN) {
+		m_pEventCamera->Set_PlayCamlist(TEXT("cf093"));	
+	}
+
+
 	if (m_pGameInstance->IsPaused())
 	{
 		fTimeDelta = 0.f;
@@ -1438,12 +1447,6 @@ void CPlayer::Turn_Spine_Light(_float fTimeDelta)
 	}
 }
 
-void CPlayer::Swap_Camera()
-{
-	m_pCamera->Active_Camera(!m_pCamera->Get_IsActive());
-	m_pCamera_Event->Active_Camera(!m_pCamera_Event->Get_IsActive());
-}
-
 void CPlayer::SetMoveDir()
 {
 	//F
@@ -1568,9 +1571,26 @@ void CPlayer::PickUp_Item(CGameObject* pPickedUp_Item)
 void CPlayer::RayCast_Shoot()
 {
 	_float4 vBlockPoint;
-	if (m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint))
+
+	if(m_eEquip == STG)
 	{
-		int a = 0;
+		auto vCamPos = m_pCamera->GetPosition();
+		auto vCamLook = m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK);
+
+		m_pGameInstance->RayCast_Shoot(vCamPos, vCamLook, &vBlockPoint, true,true);
+
+		for(size_t i = 0;i<SHOTGUN_BULLET_COUNT;++i)
+		{
+			auto vDelta_Random = _float4(m_pGameInstance->GetRandom_Real(-0.1f, 0.1f), m_pGameInstance->GetRandom_Real(-0.1f, 0.1f), m_pGameInstance->GetRandom_Real(-0.1f, 0.1f), 0.f);
+			auto NewCamLook = vCamLook + vDelta_Random;
+			NewCamLook = Float4_Normalize(NewCamLook);
+
+			m_pGameInstance->RayCast_Shoot(vCamPos, NewCamLook, &vBlockPoint, true,false);
+		}
+	}
+	else
+	{
+		m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, false,true);
 	}
 }
 
@@ -1962,7 +1982,7 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 HRESULT CPlayer::Ready_Camera()
 {
 	if (m_pCamera == nullptr)
-		m_pCamera = dynamic_cast<CCamera_Free*>(*(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, g_strCameraLayer)).begin());
+		m_pCamera = dynamic_cast<CCamera_Free*>(*(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, g_strCameraTag)).begin());
 
 	if (m_pCamera == nullptr)
 		return E_FAIL;
@@ -1999,19 +2019,10 @@ HRESULT CPlayer::Ready_Camera()
 	m_fLerpAmount_Right = m_fRight_Dist_Pos;
 	m_fLerpAmount_Up = m_fUp_Dist_Pos;
 
-	if (m_pCamera_Event == nullptr)
-		m_pCamera_Event = dynamic_cast<CCamera_Event*>(*++(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, g_strCameraLayer)).begin());
-
-	if (m_pCamera_Event == nullptr)
-		return E_FAIL;
-
-	m_pCamera_Event->SetPlayer(this);
-	//m_pCamera_Event->Set_DefaultMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
-	m_pCamera_Event->Set_SocketMatrix(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("neck_0")));
-	//m_pCamera_Event->Set_SocketMatrix(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_backVest_start")));
-
 	m_pCamera->Bind_PipeLine();
 
+	m_pEventCamera = (CCamera_Event*)m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 1);
+	m_pEventCamera->Add_CamList(TEXT("cf093"), TEXT("../Bin/DataFiles/mcamlist/cf093.mcamlist.13"));
 	return S_OK;
 }
 

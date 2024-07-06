@@ -9,8 +9,9 @@ class CBounding_OBB final : public CBounding
 public:
 	typedef struct tagBoundingOBBDesc: CBounding::BOUNDING_DESC
 	{
+		_bool			bQuat = { false };
 		_float3		vSize;
-		_float3		vRotation;
+		_float4		vRotation;
 	}BOUNDING_OBB_DESC;
 
 	typedef struct

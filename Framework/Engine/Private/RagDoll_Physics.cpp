@@ -7,6 +7,8 @@
 #include "Transform.h"
 
 #define ZOMBIE
+#define CHEST_SIZE 7.f
+#define SIZE_MAG 1.5f
 
 #pragma region Zombie Bone - Joint
 
@@ -448,7 +450,7 @@ void CRagdoll_Physics::create_ragdoll()
 	rot = XMMatrixRotationZ(XM_PI * 0.5f);
 
 #ifdef ZOMBIE
-	m_Pelvis = create_capsule_bone(m_pelvis_idx, m_spine_02_idx, *m_ragdoll, 5.0f * m_scale, rot);
+	m_Pelvis = create_capsule_bone(m_pelvis_idx, m_spine_02_idx, *m_ragdoll, CHEST_SIZE * m_scale, rot);
 #endif
 
 	m_Head = create_capsule_bone(m_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f * m_scale, 0.0f, 1.f), 4.0f * m_scale, 6.0f * m_scale, rot);
@@ -456,20 +458,20 @@ void CRagdoll_Physics::create_ragdoll()
 	m_Leg_R = create_capsule_bone(m_thigh_r_idx, m_calf_r_idx, *m_ragdoll, r, rot);
 
 #ifdef ZOMBIE
-	m_Chest = create_capsule_bone(m_spine_02_idx, m_neck_01_idx, *m_ragdoll, 5.0f * m_scale, rot);
+	m_Chest = create_capsule_bone(m_spine_02_idx, m_neck_01_idx, *m_ragdoll, CHEST_SIZE * m_scale, rot);
 #endif
 
 	m_Calf_L = create_capsule_bone(m_calf_l_idx, m_foot_l_idx, *m_ragdoll, r, rot);
 	m_Calf_R = create_capsule_bone(m_calf_r_idx, m_foot_r_idx, *m_ragdoll, r, rot);
 
-	m_Arm_L = create_capsule_bone(m_upperarm_l_idx, m_lowerarm_l_idx, *m_ragdoll, r * 1.25f);
-	m_Arm_R = create_capsule_bone(m_upperarm_r_idx, m_lowerarm_r_idx, *m_ragdoll, r * 1.25f);
+	m_Arm_L = create_capsule_bone(m_upperarm_l_idx, m_lowerarm_l_idx, *m_ragdoll, r * SIZE_MAG);
+	m_Arm_R = create_capsule_bone(m_upperarm_r_idx, m_lowerarm_r_idx, *m_ragdoll, r * SIZE_MAG);
 
-	m_ForeArm_L = create_capsule_bone(m_lowerarm_l_idx,m_hand_l_idx, *m_ragdoll, r);
-	m_ForeArm_R = create_capsule_bone(m_lowerarm_r_idx,m_hand_r_idx, *m_ragdoll, r);
+	m_ForeArm_L = create_capsule_bone(m_lowerarm_l_idx,m_hand_l_idx, *m_ragdoll, r* SIZE_MAG);
+	m_ForeArm_R = create_capsule_bone(m_lowerarm_r_idx,m_hand_r_idx, *m_ragdoll, r* SIZE_MAG);
 
-	m_Hand_L = create_capsule_bone(m_hand_l_idx, m_middle_01_l_idx, *m_ragdoll, r);
-	m_Hand_R = create_capsule_bone(m_hand_r_idx, m_middle_01_r_idx, *m_ragdoll, r);
+	m_Hand_L = create_capsule_bone(m_hand_l_idx, m_middle_01_l_idx, *m_ragdoll, r* SIZE_MAG);
+	m_Hand_R = create_capsule_bone(m_hand_r_idx, m_middle_01_r_idx, *m_ragdoll, r* SIZE_MAG);
 
 	rot = XMMatrixRotationY(PxPi * 0.5f);
 

@@ -38,20 +38,22 @@ void CBlood::Tick(_float fTimeDelta)
 	if (m_bRender == false)
 		return;
 
+	if (m_pHitPart)
+	{
+		PxVec3 HitPartPos = m_pHitPart->getGlobalPose().p;
+		_float4 HitPartFloat4 = _float4(HitPartPos.x, HitPartPos.y, HitPartPos.z, 1.f);
+		_float4 vDelta = HitPartFloat4 - m_vPrev_HitPartPos;
+		_float4 vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+		vPos += vDelta;
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
+		m_vPrev_HitPartPos = HitPartFloat4;
+	}
+
 	if(m_FrameDelay + m_FrameTime < GetTickCount64())
 	{
 		++m_iFrame;
 
 		m_FrameTime = GetTickCount64();
-
-		if(m_iType != 0)
-		{
-			m_fSizeX += 0.07f;
-			m_fSizeY += 0.07f;
-			m_fSizeZ += 0.07f;
-
-			m_pTransformCom->Set_Scaled(m_fSizeX, m_fSizeY, m_fSizeZ);
-		}
 	}
 
 	_uint iNumMesh = m_pModelCom->GetNumMesh();
@@ -70,7 +72,7 @@ void CBlood::Tick(_float fTimeDelta)
 void CBlood::Late_Tick(_float fTimeDelta)
 {
 	if (m_bRender == true)
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CBlood::Render()
@@ -511,6 +513,31 @@ void CBlood::SetSize(_float fSizeX, _float fSizeY, _float fSizeZ)
 	m_fSize_Y_Default = fSizeY;
 	m_fSize_Z_Default = fSizeZ;
 
+	if (m_iType == 2)
+	{
+		fSizeX -= 1.f;
+		fSizeY -= 1.f;
+		fSizeZ -= 1.f;
+
+		m_fSizeX = fSizeX;
+		m_fSizeY = fSizeY;
+		m_fSizeZ = fSizeZ;
+
+		m_fSize_X_Default = fSizeX;
+		m_fSize_Y_Default = fSizeY;
+		m_fSize_Z_Default = fSizeZ;
+	}
+	else
+	{
+		m_fSizeX = fSizeX;
+		m_fSizeY = fSizeY;
+		m_fSizeZ = fSizeZ;
+
+		m_fSize_X_Default = fSizeX;
+		m_fSize_Y_Default = fSizeY;
+		m_fSize_Z_Default = fSizeZ;
+	}
+
 	m_pTransformCom->Set_Scaled(fSizeX, fSizeY, fSizeZ);
 }
 
@@ -522,6 +549,11 @@ void CBlood::SetWorldMatrix_With_HitNormal(_vector vUp)
 _float4x4 CBlood::GetWorldMatrix()
 {
 	return m_pTransformCom->Get_WorldMatrix_Pure();
+}
+
+_float4 CBlood::GetPosition()
+{
+	return m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 }
 
 HRESULT CBlood::Add_Components()

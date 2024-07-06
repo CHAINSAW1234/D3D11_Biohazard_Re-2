@@ -104,6 +104,10 @@ public:		/* For.Sleep Controll */
 	inline _bool						Is_Sleep() { return m_isSleep; }
 	inline void							Set_Sleep(_bool isSleep) { m_isSleep = isSleep; }
 
+public:		/* For.Look Target Controll */
+	inline _bool						Is_LookTarget() { return m_isLookTarget; }
+	inline void							Set_LookTarget(_bool isLookTarget) { m_isLookTarget = true; }
+
 public:		/* Access */
 	inline MONSTER_STATE				Get_Current_MonsterState() { return m_eState; }
 	inline _float3						Get_Current_HitDirection() { return m_vHitDirection; }
@@ -124,8 +128,8 @@ private:
 private:
 	_bool								m_bEvent = { false };
 	_int								m_iPropNum = { 0 };
-	_float							m_fEventCoolTime = { 0.f };
-	JOMBIE_BEHAVIOR_COLLIDER_TYPE m_eBeHavior_Col = {};
+	_float								m_fEventCoolTime = { 0.f };
+	JOMBIE_BEHAVIOR_COLLIDER_TYPE		m_eBeHavior_Col = {};
 	vector<CGameObject*> m_InteractObjVec;
 #pragma endregion
 
@@ -151,6 +155,7 @@ private:
 	POSE_STATE							m_ePoseState = { POSE_STATE::_END };
 
 	_bool								m_isSleep = { false };
+	_bool								m_isLookTarget = { false };
 
 private:	/* For. Hit Interact */
 	COLLIDER_TYPE						m_eCurrentHitCollider = { _END };
@@ -165,8 +170,10 @@ public:
 	void								Late_Tick_Effect(_float fTimeDelta);
 	void								SetBlood();
 	void								Calc_Decal_Map();
+	void								SetBlood_STG();
 protected:
 	vector<class CBlood*>				m_vecBlood;
+	vector<class CBlood*>				m_vecBlood_STG;
 
 	ULONGLONG							m_BloodTime;
 	ULONGLONG							m_BloodDelay;
@@ -188,7 +195,10 @@ protected:
 	_float4								m_vDecalNormal;
 	class CDecal_SSD*					m_pDecal_SSD = { nullptr };
 
-	list<class CGameObject*>*			m_pDecal_Layer = { nullptr };
+	//list<class CGameObject*>*			m_pDecal_Layer = { nullptr };
+	vector<CDecal_SSD*>					m_vecDecal_SSD;
+	_uint								m_iDecal_Index = { 0 };
+	_bool								m_bBigAttack = { false };
 #pragma endregion
 
 public:
