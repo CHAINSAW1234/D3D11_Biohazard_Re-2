@@ -1266,10 +1266,26 @@ HRESULT CLoader::Loading_For_GamePlay()
 	_matrix			LeonTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 #pragma region Players Model 
 	/* Prototype_Component_Model_LeonBody */
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_LeonBody"),
+	/*if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_LeonBody"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonBody.fbx",
 			LeonTransformMatrix))))
+		return E_FAIL;*/
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_LeonBody"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/TEST/Body_Leon/Body_Leon.fbx",
+			LeonTransformMatrix))))
 		return E_FAIL;
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/* Prototype_Component_Model_LeonFace */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_LeonFace"),
@@ -2190,6 +2206,16 @@ HRESULT CLoader::Load_Animations()
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Railing_Stund"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Stund/")))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region Default Zombie Gimmick Anims
+
+		if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Gimmick_Window"), "../Bin/Resources/Animations/Body_Zombie/Gimmick/Window/")))
+			return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Gimmick_Door"), "../Bin/Resources/Animations/Body_Zombie/Gimmick/Door/")))
 		return E_FAIL;
 
 #pragma endregion

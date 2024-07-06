@@ -28,7 +28,7 @@ HRESULT CBlood::Initialize(void* pArg)
 
 	m_bRender = false;
 
-	m_FrameDelay =20;
+	m_FrameDelay =10;
 
 	return S_OK;
 }

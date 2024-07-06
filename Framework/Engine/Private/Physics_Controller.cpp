@@ -1149,7 +1149,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 
 					//if (eType == COLLIDER_TYPE::HEAD)
 					{
-						//	m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count();
+						m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count();
 					}
 
 					if (bBigAttack)
@@ -1201,6 +1201,11 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 					m_vecCharacter_Controller[filterData.word2]->SetBlockPoint(*pBlockPoint);
 					m_vecCharacter_Controller[filterData.word2]->SetHitNormal(PxVec_To_Float4_Coord(hit_Obj.normal));
 					m_vecCharacter_Controller[filterData.word2]->Insert_Collider_Type(eType);
+
+					if (bDecalRay)
+					{
+						m_vecCharacter_Controller[filterData.word2]->Set_Hit_Decal_Ray(true);
+					}
 
 					if (bBigAttack)
 					{

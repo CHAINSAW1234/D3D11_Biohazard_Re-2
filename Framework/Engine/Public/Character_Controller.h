@@ -426,7 +426,7 @@ public:
 			m_vecHitPart_STG.push_back(m_Left_Hand_Collider);
 			break;
 		case COLLIDER_TYPE::HAND_R:
-			m_vecHitPart_STG.push_back(m_Right_Arm_Collider);
+			m_vecHitPart_STG.push_back(m_Right_Hand_Collider);
 			break;
 		case COLLIDER_TYPE::CALF_L:
 			m_vecHitPart_STG.push_back(m_Left_Shin_Collider);
@@ -448,6 +448,12 @@ public:
 			break;
 		}
 	}
+
+	void						Insert_Collider_Type_Ragdoll(COLLIDER_TYPE eType)
+	{
+		m_vecColliderType_STG.push_back(eType);
+	}
+
 	_bool						Is_Hit_Decal_Ray()
 	{
 		return m_bHit_DecalRay;
