@@ -12,8 +12,8 @@ class CLever final : public CInteractProps
 public:
 	enum LEVER_STATE
 	{
-		LEVER_DOWN,
 		LEVER_RESET,
+		LEVER_DOWN,
 		LEVER_STATIC,
 		LEVER_END,
 	};
@@ -57,7 +57,7 @@ private:
 	_bool				m_bActivity = { false };
 	_bool				m_bRightCol = { false };
 
-	_ubyte			m_eState = { LEVER_STATIC };
+	_ubyte			m_eState = { LEVER_RESET };
 
 	class CShutter* m_pShutter = { nullptr };
 
