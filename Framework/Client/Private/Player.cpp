@@ -1581,7 +1581,7 @@ void CPlayer::RayCast_Shoot()
 
 		for(size_t i = 0;i<SHOTGUN_BULLET_COUNT;++i)
 		{
-			auto vDelta_Random = _float4(m_pGameInstance->GetRandom_Real(-0.1f, 0.1f), m_pGameInstance->GetRandom_Real(-0.1f, 0.1f), m_pGameInstance->GetRandom_Real(-0.1f, 0.1f), 0.f);
+			auto vDelta_Random = _float4(m_pGameInstance->GetRandom_Real(-0.07f, 0.07f), m_pGameInstance->GetRandom_Real(-0.07f, 0.07f), m_pGameInstance->GetRandom_Real(-0.07f, 0.07f), 0.f);
 			auto NewCamLook = vCamLook + vDelta_Random;
 			NewCamLook = Float4_Normalize(NewCamLook);
 
