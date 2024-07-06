@@ -13,6 +13,7 @@
 
 #include "Weapon.h"
 #include "Throwing_Weapon.h"
+#include "Throwing_Weapon_Pin.h"
 #include "FlashLight.h"
 
 #include "CustomCollider.h"
@@ -838,6 +839,13 @@ void CPlayer::Throw_Sub()
 	pDesc.eEquip = m_eEquip;
 
 	if (FAILED(m_pGameInstance->Add_Clone(g_Level, TEXT("Layer_Throwing_Weapon"), TEXT("Prototype_GameObject_Throwing_Weapon"), &pDesc)))
+		return;
+
+	CThrowing_Weapon_Pin::THROWING_WEAPON_PIN_DESC pDesc2;
+	pDesc2.worldMatrix = m_pWeapon->Get_WorldMatrix();
+	pDesc2.eEquip = m_eEquip;
+
+	if (FAILED(m_pGameInstance->Add_Clone(g_Level, TEXT("Layer_Throwing_Weapon"), TEXT("Prototype_GameObject_Throwing_Weapon_Pin"), &pDesc2)))
 		return;
 
 	NotifyObserver();

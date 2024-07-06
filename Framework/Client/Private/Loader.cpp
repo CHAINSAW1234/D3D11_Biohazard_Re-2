@@ -14,6 +14,7 @@
 #include "Weapon.h"
 #include "FlashLight.h"
 #include "Throwing_Weapon.h"
+#include "Throwing_Weapon_Pin.h"
 
 /* Monster */
 #include "Body_Zombie.h"
@@ -404,9 +405,14 @@ HRESULT CLoader::Load_Prototype()
 		CWeapon::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_GameObject_Part_Throwing_Weapon */
+	/* For.Prototype_GameObject_Throwing_Weapon */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Throwing_Weapon"),
 		CThrowing_Weapon::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Throwing_Weapon_Pin */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Throwing_Weapon_Pin"),
+		CThrowing_Weapon_Pin::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Part_FlashLight */

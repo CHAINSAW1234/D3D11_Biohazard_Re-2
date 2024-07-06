@@ -553,6 +553,9 @@
     <Filter Include="02.GameObjects\Player\Throwing_Weapon">
       <UniqueIdentifier>{7932d5c4-c561-44d0-bbc7-8ac5c40fa85c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\Throwing_Weapon\Throwing_Weapon_Pin">
+      <UniqueIdentifier>{a0751512-f55f-46fe-8537-8ab61e2cb592}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1059,6 +1062,9 @@
     <ClInclude Include="..\Public\Throwing_Weapon.h">
       <Filter>02.GameObjects\Player\Throwing_Weapon</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Throwing_Weapon_Pin.h">
+      <Filter>02.GameObjects\Player\Throwing_Weapon\Throwing_Weapon_Pin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1528,6 +1534,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Throwing_Weapon.cpp">
       <Filter>02.GameObjects\Player\Throwing_Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Throwing_Weapon_Pin.cpp">
+      <Filter>02.GameObjects\Player\Throwing_Weapon\Throwing_Weapon_Pin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

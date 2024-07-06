@@ -34,6 +34,18 @@ HRESULT CThrowing_Weapon::Initialize(void* pArg)
 
 	m_pTransformCom->Set_WorldMatrix(pDesc->worldMatrix);
 
+	switch (m_eEquip) {
+	case CPlayer::GRENADE:
+		m_pModelCom->Hide_Mesh("LOD_1_Group_1_Sub_1__wp6200_Grenade_Mat_mesh0001", true);
+		break;
+	case CPlayer::FLASHBANG:
+		m_pModelCom->Hide_Mesh("LOD_1_Group_1_Sub_1__WP6300_Flash_Mat_mesh0001", true);
+		break;
+	default:
+		return E_FAIL;
+	}
+
+
 	m_pModelCom->Set_RootBone("root");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
