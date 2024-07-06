@@ -813,8 +813,8 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_162")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Lever::Create(m_pDevice, m_pContext));		
 
-		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_162")) != wstring::npos) && (bDo = true))
-			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Lever::Create(m_pDevice, m_pContext));
+		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_197")) != wstring::npos|| Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_232")) != wstring::npos) && (bDo = true))
+			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_MovingShlef::Create(m_pDevice, m_pContext));
 
 		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_024_newpolicestatue01a")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_NewpoliceStatue::Create(m_pDevice, m_pContext));

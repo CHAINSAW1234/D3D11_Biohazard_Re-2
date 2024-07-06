@@ -24,6 +24,7 @@
 #include "Tab_Window.h"
 #include "Bone.h"
 
+#include"MovingShelf.h"
 
 #define MODEL_SCALE 0.01f
 #define SHOTGUN_BULLET_COUNT 5
@@ -554,6 +555,26 @@ void CPlayer::Col_Section()
 		}
 	}
 }
+
+_float4x4 CPlayer::Get_Shelf_WorldMatrix()
+{
+	if (m_pShelf == nullptr)
+		return _float4x4();
+	return static_cast<CMovingShelf*>(m_pShelf)->Get_WorldMatrix();
+}
+
+void CPlayer::Set_Shelf_State(_int eState)
+{
+	static_cast<CMovingShelf*>(m_pShelf)->Set_Anim_State(eState);
+}
+
+_int CPlayer::Get_Shelf_Type()
+{
+	if (m_pShelf == nullptr)
+		return CMovingShelf::SHELF_TYPE_END;
+	return static_cast<CMovingShelf*>(m_pShelf)->Get_Shelf_Type();
+}
+
 
 #pragma endregion
 
