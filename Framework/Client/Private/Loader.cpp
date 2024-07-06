@@ -1804,11 +1804,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 #ifdef MAP_INTERACT
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_InteractObj/Make_Prototype.dat"))))
 		return E_FAIL;
-	if (FAILED(Load_Field_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
-		return E_FAIL;
 #endif 
 #ifdef MAP_NONANIMOBJ
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_NonAnim/Make_Prototype.dat"))))
+		return E_FAIL;
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
 		return E_FAIL;
 #endif 
 #pragma endregion
