@@ -312,10 +312,17 @@ HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_RegionCollider()
 {
+
+#ifdef MAP_INTERACT
 	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_Collider"))))
-		return E_FAIL;	
+		return E_FAIL;
 	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_Jombie_Collider"))))
 		return E_FAIL;
+#endif
+#ifdef MAP_TEST
+	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_Test"), TEXT("Layer_Jombie_Collider"))))
+		return E_FAIL;
+#endif
 	//if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_EventCollider"))))
 	//	return E_FAIL;
 
