@@ -17,8 +17,11 @@ public:
 	};
 	enum SHELF_STATE
 	{
-		SHELF_DOWN,
-		SHELF_UPRIGHT,
+		SHELF_FINISH, // 다 넘어뜨린 상태 ()
+		SHELF_MOVE, // 움직인 상태(플레이어가 홀드하고 있는 상태)
+		SHELF_START, // 움직이려 하는 상태(플레이어가 선반을 잡음)
+		SHELF_STOP, // 내려 놓은 상태 (홀드하지 않고 내려놓음)
+		SHELF_STATIC, // 정적인 상태
 		SHELF_END,
 	};
 	enum SHELF_PART
@@ -52,7 +55,7 @@ public:
 
 
 private:
-	_ubyte							m_eState = { SHELF_DOWN };
+	_ubyte							m_eState = { SHELF_STATIC };
 
 
 

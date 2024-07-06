@@ -144,7 +144,7 @@ HRESULT CMesh::Initialize_Prototype(CModel::MODEL_TYPE eType, const MESH_DESC& M
 		return E_FAIL;
 
 	//Create Structured Buffer
-	{
+	/*{
 		D3D11_BUFFER_DESC bufferDesc = {};
 		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		bufferDesc.ByteWidth = sizeof(_uint) * m_iNumIndices;
@@ -169,7 +169,7 @@ HRESULT CMesh::Initialize_Prototype(CModel::MODEL_TYPE eType, const MESH_DESC& M
 
 		if (FAILED(hr))
 			return E_FAIL;
-	}
+	}*/
 
 	Safe_Delete_Array(pIndices);
 
@@ -405,8 +405,8 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertic
 	m_pTangents = new _float3[m_iNumVertices];
 	ZeroMemory(m_pTangents, sizeof(_float3) * m_iNumVertices);
 
-	m_pTexcoords = new _float2[m_iNumVertices];
-	ZeroMemory(m_pTexcoords, sizeof(_float2) * m_iNumVertices);
+	/*m_pTexcoords = new _float2[m_iNumVertices];
+	ZeroMemory(m_pTexcoords, sizeof(_float2) * m_iNumVertices);*/
 
 	m_pVertices_Cooking = new _float3[m_iNumVertices];
 	ZeroMemory(m_pVertices_Cooking, sizeof(_float3) * m_iNumVertices);
@@ -428,7 +428,7 @@ HRESULT CMesh::Ready_Vertices_For_NonAnimModel(const vector<VTXANIMMESH>& Vertic
 		vTotal_Pos += pVertices[i].vPosition;
 		m_pVertices_Cooking[i] = pVertices[i].vPosition;
 		m_pNormals[i] = pVertices[i].vNormal;
-		m_pTexcoords[i] = pVertices[i].vTexcoord;
+		//m_pTexcoords[i] = pVertices[i].vTexcoord;
 		m_pTangents[i] = pVertices[i].vTangent;
 	}
 
@@ -493,8 +493,8 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 	VTXANIMMESH* pVertices = new VTXANIMMESH[m_iNumVertices];
 	ZeroMemory(pVertices, sizeof(VTXANIMMESH) * m_iNumVertices);
 
-	m_pNormals = new _float3[m_iNumVertices];
-	ZeroMemory(m_pNormals, sizeof(_float3) * m_iNumVertices);
+	//m_pNormals = new _float3[m_iNumVertices];
+	//ZeroMemory(m_pNormals, sizeof(_float3) * m_iNumVertices);
 
 	m_pBlendIndices = new XMUINT4[m_iNumVertices];
 	ZeroMemory(m_pBlendIndices, sizeof(XMUINT4) * m_iNumVertices);
@@ -506,6 +506,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 	ZeroMemory(m_pVertices_Skinning, sizeof(SKINNING_OUTPUT) * m_iNumVertices);
 
 	m_pVertices_Cooking = new _float3[m_iNumVertices];
+	ZeroMemory(m_pVertices_Cooking, sizeof(_float3) * m_iNumVertices);
 
 	for (_uint i = 0; i < m_iNumVertices; i++)
 	{
@@ -531,7 +532,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 			}
 		}
 
-		m_pNormals[i] = pVertices[i].vNormal;
+		//m_pNormals[i] = pVertices[i].vNormal;
 		m_pBlendIndices[i] = pVertices[i].vBlendIndices;
 		m_pBlendWeights[i] = pVertices[i].vBlendWeights;
 	}
@@ -758,34 +759,6 @@ void CMesh::Ready_Buffer_For_Octree(_float4 vTranslation)
 
 	m_iVertexStride = sizeof(VTXMESH);
 
-	//VTXMESH* pVertices = new VTXMESH[m_iNumVertices];
-
-	//ZeroMemory(pVertices, sizeof(VTXMESH) * m_iNumVertices);
-
-	//for (size_t i = 0; i < static_cast<size_t>(m_iNumVertices); i++)
-	//{
-	//	pVertices[i].vPosition = m_pVertices_Cooking[i]/* + Convert_Float4_To_Float3(vTranslation)*/;
-	//	pVertices[i].vNormal = m_pNormals[i];
-	//	pVertices[i].vTexcoord = m_pTexcoords[i];
-	//	pVertices[i].vTangent = m_pTangents[i];
-	//}
-
-	//ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
-
-	//m_BufferDesc.ByteWidth = m_iVertexStride * m_iNumVertices;
-	//m_BufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	//m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	//m_BufferDesc.CPUAccessFlags = 0;
-	//m_BufferDesc.MiscFlags = 0;
-	//m_BufferDesc.StructureByteStride = m_iVertexStride;
-
-	//ZeroMemory(&m_InitialData, sizeof m_InitialData);
-	//m_InitialData.pSysMem = pVertices;
-
-	//__super::Create_Buffer(&m_pVB);
-
-	//Safe_Delete_Array(pVertices);
-
 	ZeroMemory(&m_BufferDesc, sizeof m_BufferDesc);
 
 	m_iIndexStride = sizeof(_uint);
@@ -839,15 +812,33 @@ void CMesh::SetTexcoords(_float2* pTexcoords)
 
 void CMesh::Release_IndexBuffer()
 {
-	Safe_Release(m_pIB);
+	/*Safe_Release(m_pIB);
 	Safe_Delete_Array(m_pIndices_Cooking);
 	Safe_Delete_Array(m_pVertices_Cooking);
 	Safe_Delete_Array(m_pVerticesPos);
-	Safe_Delete_Array(m_pIndices);
+	Safe_Delete_Array(m_pIndices);*/
+
+	if (m_pVertices_Cooking)
+		Safe_Delete_Array(m_pVertices_Cooking);
+	if (m_pIndices_Cooking)
+		Safe_Delete_Array(m_pIndices_Cooking);
+	if (m_pNormals)
+		Safe_Delete_Array(m_pNormals);
+	if (m_pTangents)
+		Safe_Delete_Array(m_pTangents);
+	if (m_pTexcoords)
+		Safe_Delete_Array(m_pTexcoords);
+	if (m_pIndices)
+		Safe_Delete_Array(m_pIndices);
+	Safe_Release(m_pIB);
 }
 
 void CMesh::Release_Dump()
 {
+	if (m_pIndices)
+		Safe_Delete_Array(m_pIndices);
+	if (m_pVerticesPos)
+		Safe_Delete_Array(m_pVerticesPos);
 	if (m_pVertices_Cooking)
 		Safe_Delete_Array(m_pVertices_Cooking);
 	if (m_pIndices_Cooking)
@@ -989,6 +980,11 @@ void CMesh::Calc_NonCS_Decal_Map(CShader* pShader)
 {
 	Bind_Buffers();
 	//Render();
+}
+
+void CMesh::Release_Decal()
+{
+	Safe_Release(m_pDecal_Blood);
 }
 
 CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CModel::MODEL_TYPE eModelType, const aiMesh* pAIMesh, const map<string, _uint>& BoneIndices, _fmatrix TransformationMatrix)
