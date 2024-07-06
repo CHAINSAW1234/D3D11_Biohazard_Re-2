@@ -204,6 +204,7 @@ public:
 
 	void					Bind_Resource_NonCShader_Decal(class CShader* pShader);
 	void					Calc_NonCS_Decal_Map(class CShader* pShader);
+	void					Release_Decal();
 #pragma endregion
 
 private:

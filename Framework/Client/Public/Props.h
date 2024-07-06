@@ -35,7 +35,7 @@ public:
 	virtual HRESULT				Render_LightDepth_Dir() override;
 	virtual	HRESULT				Render_LightDepth_Spot() override;
 	virtual HRESULT				Render_LightDepth_Point() override;
-
+	virtual void				Start() override;
 private:
 	_bool						m_bOctotree = { false };
 	_bool						m_bShadow = { true };

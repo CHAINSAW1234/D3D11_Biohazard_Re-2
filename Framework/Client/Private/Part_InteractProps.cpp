@@ -53,6 +53,14 @@ HRESULT CPart_InteractProps::Render()
 	return S_OK;
 }
 
+void CPart_InteractProps::Start()
+{
+#pragma region 메모리 정리
+	m_pModelCom->Release_Dump();
+	m_pModelCom->Release_Decal_Dump();
+#pragma endregion
+}
+
 void CPart_InteractProps::Check_Col_Sphere_Player()
 {
 	if (m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE] == nullptr)

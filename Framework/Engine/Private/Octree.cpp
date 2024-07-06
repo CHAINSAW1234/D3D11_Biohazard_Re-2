@@ -174,9 +174,9 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 		(*TempMeshes)[i]->SetNumFaces(pList[i].totalFaceCount);
 		(*TempMeshes)[i]->SetNumVertices(pObject->GetNumVertices());
 		(*TempMeshes)[i]->SetVertices(pObject->GetVertices());
-		(*TempMeshes)[i]->SetNormals(pObject->GetNormals());
-		(*TempMeshes)[i]->SetTangents(pObject->GetTangents());
-		(*TempMeshes)[i]->SetTexcoords(pObject->GetTexcoords());
+		//(*TempMeshes)[i]->SetNormals(pObject->GetNormals());
+		//(*TempMeshes)[i]->SetTangents(pObject->GetTangents());
+		//(*TempMeshes)[i]->SetTexcoords(pObject->GetTexcoords());
 		(*TempMeshes)[i]->SetVertexBuffer(pObject->GetVertexBuffer());
 
 		int index = 0;
@@ -193,9 +193,9 @@ void COctree::CreateNewNode(CModel* pWorld, vector<tFaceList> pList, int triangl
 				(*TempFaces)[index]->VertexIndex[0] = (*Faces)[j]->VertexIndex[0];
 				(*TempFaces)[index]->VertexIndex[1] = (*Faces)[j]->VertexIndex[1];
 				(*TempFaces)[index]->VertexIndex[2] = (*Faces)[j]->VertexIndex[2];
-				(*TempFaces)[index]->TexCoordIndex[0] = (*Faces)[j]->TexCoordIndex[0];
+			/*	(*TempFaces)[index]->TexCoordIndex[0] = (*Faces)[j]->TexCoordIndex[0];
 				(*TempFaces)[index]->TexCoordIndex[1] = (*Faces)[j]->TexCoordIndex[1];
-				(*TempFaces)[index]->TexCoordIndex[2] = (*Faces)[j]->TexCoordIndex[2];
+				(*TempFaces)[index]->TexCoordIndex[2] = (*Faces)[j]->TexCoordIndex[2];*/
 				index++;
 			}
 		}
@@ -398,9 +398,9 @@ void COctree::AssignTrianglesToNode(CModel* pWorld, int numberOfTriangles)
 
 		(*NewMeshes)[i]->SetNumFaces(numOfFaces);
 		(*NewMeshes)[i]->SetNumVertices(pObject->GetNumVertices());
-		(*NewMeshes)[i]->SetNormals(pObject->GetNormals());
-		(*NewMeshes)[i]->SetTangents(pObject->GetTangents());
-		(*NewMeshes)[i]->SetTexcoords(pObject->GetTexcoords());
+		//(*NewMeshes)[i]->SetNormals(pObject->GetNormals());
+		//(*NewMeshes)[i]->SetTangents(pObject->GetTangents());
+		//(*NewMeshes)[i]->SetTexcoords(pObject->GetTexcoords());
 		(*NewMeshes)[i]->Init_For_Octree();
 		(*NewMeshes)[i]->SetVertexBuffer(pObject->GetVertexBuffer());
 
