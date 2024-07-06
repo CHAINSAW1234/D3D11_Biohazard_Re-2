@@ -95,6 +95,12 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_Shadow_Spot()))
 		return E_FAIL;
 
+	if (FAILED(Render_Field()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Copy_Resource(TEXT("Target_Field_Depth"), TEXT("Target_Depth"))))
+		return E_FAIL;
+
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
 
@@ -416,6 +422,10 @@ HRESULT CRenderer::SetUp_RenderTargets_GameObjects(const D3D11_VIEWPORT& Viewpor
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Velocity"))))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Origin"))))
+		return E_FAIL;
+
+	/* For.Target_Depth */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Field_Depth"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 1.f, 0.f, 1.f))))
 		return E_FAIL;
 
 	return S_OK;
@@ -1041,6 +1051,25 @@ HRESULT CRenderer::Render_Priority()
 		if (FAILED(m_pGameInstance->End_MRT()))
 			return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_Field()
+{
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GameObjects"))))
+		return E_FAIL;
+
+	for (auto& pRenderObject : m_RenderObjects[RENDER_FIELD])
+	{
+		if (nullptr != pRenderObject)
+			pRenderObject->Render();
+		Safe_Release(pRenderObject);
+	}
+	m_RenderObjects[RENDER_FIELD].clear();
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
 
 	return S_OK;
 }

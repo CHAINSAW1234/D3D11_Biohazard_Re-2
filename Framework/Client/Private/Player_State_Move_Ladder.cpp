@@ -25,8 +25,6 @@ void CPlayer_State_Move_Ladder::OnStateEnter()
 	m_pPlayer->Get_Body_Model()->Set_TrackPosition(1, 0);
 
 	m_pPlayer->Set_ManualMove(true);
-	//	m_pPlayer->Set_Gravity(false);
-
 
 	m_pPlayer->Stop_UpperBody();
 
@@ -64,9 +62,10 @@ void CPlayer_State_Move_Ladder::OnStateUpdate(_float fTimeDelta)
 
 void CPlayer_State_Move_Ladder::OnStateExit()
 {
-	m_pPlayer->Requst_Change_Equip(m_eEquip);
+	if(CPlayer::NONE != m_eEquip)
+		m_pPlayer->Requst_Change_Equip(m_eEquip);
+
 	m_pPlayer->Set_ManualMove(false);
-	m_pPlayer->Set_Gravity(true);
 
 	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
 	m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
@@ -212,11 +211,8 @@ void CPlayer_State_Move_Ladder::Interpolate_Location(_float fTimeDelta)
 
 	XMMatrixDecompose(&vTartetScale, &vTargetRotation, &vTargetTranslate, m_LadderTransform);
 	
-	
-
-	m_pPlayer->Get_Transform()->Set_RotationMatrix_Pure(XMMatrixRotationQuaternion(XMQuaternionSlerp(vRotation, vTargetRotation, m_fLerpTimeDelta / m_fTotalLerpTime)));
-
 	// 1. 회전 보간
+	m_pPlayer->Get_Transform()->Set_RotationMatrix_Pure(XMMatrixRotationQuaternion(XMQuaternionSlerp(vRotation, vTargetRotation, m_fLerpTimeDelta / m_fTotalLerpTime)));
 
 	// 2. 위치 보간
 	_float4 vCurTranslate;

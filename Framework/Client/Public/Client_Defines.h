@@ -12,7 +12,6 @@ namespace Client
 
 }
 
-
 extern HWND g_hWnd;
 extern HINSTANCE g_hInst;
 extern Client::LEVEL g_Level;
@@ -26,7 +25,7 @@ using namespace Client;
 #define PROPS_COOKING
 
 
-#define NO_COLLISTION
+//#define NO_COLLISTION
 
 #define DISPLAY_FRAME
 #define DISPLAY_NAVMESH

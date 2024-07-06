@@ -29,7 +29,7 @@ void CPlayer_State_Move_DoorStop::OnStateUpdate(_float fTimeDelta)
 		m_pPlayer->Get_Body_Model()->isFinished(1)) {
 		m_pHState->Change_State(CPlayer_State_Move::IDLE);
 	}
-	}
+}
 
 void CPlayer_State_Move_DoorStop::OnStateExit()
 {
