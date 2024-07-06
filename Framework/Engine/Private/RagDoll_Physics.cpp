@@ -50,7 +50,7 @@
 #define JOINT_GAP 0.1f
 #define RADIUS 2.5f
 
-PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, uint32_t child_idx, CRagdoll& ragdoll, float r, XMMATRIX rotation)
+PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, uint32_t child_idx, CRagdoll& ragdoll, float r, XMMATRIX rotation, COLLIDER_TYPE eType)
 {
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 	XMVECTOR parent_pos = XMLoadFloat3(&joints[parent_idx].bind_pos_ws(m_model));
@@ -81,7 +81,7 @@ PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, uint3
 	filterData_Ragdoll.word0 = COLLISION_CATEGORY::RAGDOLL;
 	filterData_Ragdoll.word1 = COLLISION_CATEGORY::CCT | COLLISION_CATEGORY::COLLIDER;
 	filterData_Ragdoll.word2 = m_iId;
-	filterData_Ragdoll.word3 = 0;
+	filterData_Ragdoll.word3 = eType;
 	shape->setSimulationFilterData(filterData_Ragdoll);
 
 	XMVECTOR rot_quat = XMQuaternionRotationMatrix(rotation);
@@ -109,7 +109,7 @@ PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, uint3
 	return body;
 }
 
-PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, CRagdoll& ragdoll, XMVECTOR offset, float l, float r, XMMATRIX rotation)
+PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, CRagdoll& ragdoll, XMVECTOR offset, float l, float r, XMMATRIX rotation, COLLIDER_TYPE eType)
 {
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
@@ -128,7 +128,7 @@ PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, CRagd
 	filterData_Ragdoll.word0 = COLLISION_CATEGORY::RAGDOLL;
 	filterData_Ragdoll.word1 = COLLISION_CATEGORY::CCT | COLLISION_CATEGORY::COLLIDER;
 	filterData_Ragdoll.word2 = m_iId;
-	filterData_Ragdoll.word3 = 0;
+	filterData_Ragdoll.word3 = eType;
 	shape->setSimulationFilterData(filterData_Ragdoll);
 
 	PxTransform local(to_quat(XMQuaternionRotationMatrix(rotation)));
@@ -159,7 +159,7 @@ PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, CRagd
 	return body;
 }
 
-PxRigidDynamic* CRagdoll_Physics::create_sphere_bone(uint32_t parent_idx, CRagdoll& ragdoll, float r)
+PxRigidDynamic* CRagdoll_Physics::create_sphere_bone(uint32_t parent_idx, CRagdoll& ragdoll, float r, COLLIDER_TYPE eType)
 {
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 	XMVECTOR parent_pos = XMLoadFloat3(&joints[parent_idx].bind_pos_ws(m_model));
@@ -175,7 +175,7 @@ PxRigidDynamic* CRagdoll_Physics::create_sphere_bone(uint32_t parent_idx, CRagdo
 	filterData_Ragdoll.word0 = COLLISION_CATEGORY::RAGDOLL;
 	filterData_Ragdoll.word1 = COLLISION_CATEGORY::CCT | COLLISION_CATEGORY::COLLIDER;
 	filterData_Ragdoll.word2 = m_iId;
-	filterData_Ragdoll.word3 = 0;
+	filterData_Ragdoll.word3 = eType;
 	shape->setSimulationFilterData(filterData_Ragdoll);
 
 	PxRigidDynamic* body = m_Physics->createRigidDynamic(PxTransform(to_vec3(parent_pos)));
@@ -450,33 +450,33 @@ void CRagdoll_Physics::create_ragdoll()
 	rot = XMMatrixRotationZ(XM_PI * 0.5f);
 
 #ifdef ZOMBIE
-	m_Pelvis = create_capsule_bone(m_pelvis_idx, m_spine_02_idx, *m_ragdoll, CHEST_SIZE * m_scale, rot);
+	m_Pelvis = create_capsule_bone(m_pelvis_idx, m_spine_02_idx, *m_ragdoll, CHEST_SIZE * m_scale, rot,COLLIDER_TYPE::PELVIS);
 #endif
 
-	m_Head = create_capsule_bone(m_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f * m_scale, 0.0f, 1.f), 4.0f * m_scale, 6.0f * m_scale, rot);
-	m_Leg_L = create_capsule_bone(m_thigh_l_idx, m_calf_l_idx, *m_ragdoll, r, rot);
-	m_Leg_R = create_capsule_bone(m_thigh_r_idx, m_calf_r_idx, *m_ragdoll, r, rot);
+	m_Head = create_capsule_bone(m_head_idx, *m_ragdoll, XMVectorSet(0.0f, 3.0f * m_scale, 0.0f, 1.f), 4.0f * m_scale, 6.0f * m_scale, rot, COLLIDER_TYPE::HEAD);
+	m_Leg_L = create_capsule_bone(m_thigh_l_idx, m_calf_l_idx, *m_ragdoll, r, rot,COLLIDER_TYPE::LEG_L);
+	m_Leg_R = create_capsule_bone(m_thigh_r_idx, m_calf_r_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::LEG_R);
 
 #ifdef ZOMBIE
-	m_Chest = create_capsule_bone(m_spine_02_idx, m_neck_01_idx, *m_ragdoll, CHEST_SIZE * m_scale, rot);
+	m_Chest = create_capsule_bone(m_spine_02_idx, m_neck_01_idx, *m_ragdoll, CHEST_SIZE * m_scale, rot, COLLIDER_TYPE::CHEST);
 #endif
 
-	m_Calf_L = create_capsule_bone(m_calf_l_idx, m_foot_l_idx, *m_ragdoll, r, rot);
-	m_Calf_R = create_capsule_bone(m_calf_r_idx, m_foot_r_idx, *m_ragdoll, r, rot);
+	m_Calf_L = create_capsule_bone(m_calf_l_idx, m_foot_l_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::CALF_L);
+	m_Calf_R = create_capsule_bone(m_calf_r_idx, m_foot_r_idx, *m_ragdoll, r, rot, COLLIDER_TYPE::CALF_R);
 
-	m_Arm_L = create_capsule_bone(m_upperarm_l_idx, m_lowerarm_l_idx, *m_ragdoll, r * SIZE_MAG);
-	m_Arm_R = create_capsule_bone(m_upperarm_r_idx, m_lowerarm_r_idx, *m_ragdoll, r * SIZE_MAG);
+	m_Arm_L = create_capsule_bone(m_upperarm_l_idx, m_lowerarm_l_idx, *m_ragdoll, r * SIZE_MAG,XMMatrixIdentity(), COLLIDER_TYPE::ARM_L);
+	m_Arm_R = create_capsule_bone(m_upperarm_r_idx, m_lowerarm_r_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_R);
 
-	m_ForeArm_L = create_capsule_bone(m_lowerarm_l_idx,m_hand_l_idx, *m_ragdoll, r* SIZE_MAG);
-	m_ForeArm_R = create_capsule_bone(m_lowerarm_r_idx,m_hand_r_idx, *m_ragdoll, r* SIZE_MAG);
+	m_ForeArm_L = create_capsule_bone(m_lowerarm_l_idx,m_hand_l_idx, *m_ragdoll, r* SIZE_MAG,XMMatrixIdentity(),COLLIDER_TYPE::FOREARM_L);
+	m_ForeArm_R = create_capsule_bone(m_lowerarm_r_idx,m_hand_r_idx, *m_ragdoll, r* SIZE_MAG,XMMatrixIdentity(),COLLIDER_TYPE::FOREARM_R);
 
-	m_Hand_L = create_capsule_bone(m_hand_l_idx, m_middle_01_l_idx, *m_ragdoll, r* SIZE_MAG);
-	m_Hand_R = create_capsule_bone(m_hand_r_idx, m_middle_01_r_idx, *m_ragdoll, r* SIZE_MAG);
+	m_Hand_L = create_capsule_bone(m_hand_l_idx, m_middle_01_l_idx, *m_ragdoll, r* SIZE_MAG,XMMatrixIdentity(),COLLIDER_TYPE::HAND_L);
+	m_Hand_R = create_capsule_bone(m_hand_r_idx, m_middle_01_r_idx, *m_ragdoll, r* SIZE_MAG,XMMatrixIdentity(),COLLIDER_TYPE::HAND_R);
 
 	rot = XMMatrixRotationY(PxPi * 0.5f);
 
-	m_Foot_L = create_capsule_bone(m_foot_l_idx, m_ball_l_idx, *m_ragdoll, r, rot);
-	m_Foot_R = create_capsule_bone(m_foot_r_idx, m_ball_r_idx, *m_ragdoll, r, rot);
+	m_Foot_L = create_capsule_bone(m_foot_l_idx, m_ball_l_idx, *m_ragdoll, r, rot,COLLIDER_TYPE::FOOT_L);
+	m_Foot_R = create_capsule_bone(m_foot_r_idx, m_ball_r_idx, *m_ragdoll, r, rot,COLLIDER_TYPE::FOOT_R);
 
 #ifdef ZOMBIE
 	m_ragdoll->m_rigid_bodies[1] = m_Pelvis;
