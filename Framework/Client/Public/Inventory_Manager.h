@@ -46,6 +46,10 @@ private:
 	//콘텍스트 UI
 	void CONTEXTUI_SELECT_Operation(_float fTimeDelta);
 
+private:
+	void Switch_ItemPos(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI);
+	void Combind_Item(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI);
+	CInventory_Slot* Find_Slot(_float2 FindPos);
 
 public:
 	//Set_Dead호출이라 m_bDead기준으로 변수 줄것
@@ -122,11 +126,11 @@ private:
 	/* for. Item_UI */
 	vector<CItem_UI*>				m_vecItem_UI;
 	CItem_UI*						m_pSelected_ItemUI = { nullptr };
+	CItem_UI*						m_pTemp_ItemUI = { nullptr };
 	
 	/*for. Drag_Shadow*/
 	CItem_UI*						m_pDragShadow = { nullptr };
 	CTransform*						m_pDragShadowTransform = { nullptr };
-
 	/* for. ContextMenu */
 	CContextMenu*					m_pContextMenu = { nullptr };
 

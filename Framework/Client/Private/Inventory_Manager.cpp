@@ -469,6 +469,7 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 
 	m_eInven_Manager_State = EVENT_IDLE;
 	m_pContextMenu->Set_Dead(true);
+	Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y));
 	m_pSelected_ItemUI->Reset_ItemUI();
 	m_pSelected_ItemUI = nullptr;
 }
@@ -616,6 +617,7 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 		{
 			_float4 HoveredPos = static_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
 			HoveredPos.z = Z_POS_HIGH_LIGHTER;
+
 			m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
 
 			if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
@@ -625,23 +627,24 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 
 			if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 			{
-				_bool isSomeone = false;
+				CItem_UI* pOverLapItem = nullptr;
 
 				for (auto& iter : m_vecItem_UI)
 				{
 					if (true == iter->Get_isWorking() && iter != m_pSelected_ItemUI && true == iter->IsMouseHover())
 					{
-						isSomeone = true;
+						pOverLapItem = iter;
 					}
 				}
 
-				if (false == isSomeone)
+				if (nullptr == pOverLapItem)
 				{
 					_float4 fPrePos = m_pSelected_ItemUI->GetPosition();
 					_float3 fMove = { HoveredPos.x - fPrePos.x, HoveredPos.y - fPrePos.y, 0.f };
 
 					m_pSelected_ItemUI->Move(fMove);
-
+					Find_Slot(_float2(fPrePos.x, fPrePos.y))->Set_IsFilled(false);
+					Find_Slot(_float2( m_pDragShadow->GetPosition().x, m_pDragShadow->GetPosition().y ))->Set_IsFilled(true);
 					m_pSlotHighlighter->Set_DragShadow(false);
 					m_eInven_Manager_State = EVENT_IDLE;
 					m_eTaskSequence = TS_END;
@@ -651,6 +654,26 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 
 				else
 				{
+					ITEM_NUMBER eResult = Find_Recipe(m_pSelected_ItemUI->Get_ItemNumber(), pOverLapItem->Get_ItemNumber());
+					if (ITEM_NUMBER_END == eResult)
+					{
+						Switch_ItemPos(m_pSelected_ItemUI, pOverLapItem);
+
+						m_pSlotHighlighter->Set_DragShadow(false);
+						m_eInven_Manager_State = EVENT_IDLE;
+						m_eTaskSequence = TS_END;
+						m_pDragShadow->Set_Dead(true);
+						m_pSelected_ItemUI = nullptr;
+					}
+
+					else
+					{
+						_float3 TempTrashCanValue = _float3(HoveredPos.x, HoveredPos.y, Z_POS_CONTEXT_MENU);
+						m_pContextMenu->Set_Operation(COMBINABLE_PICKED_UP, false, TempTrashCanValue, TempTrashCanValue);
+						m_pTemp_ItemUI = pOverLapItem;
+						m_eTaskSequence = SELECT;
+					}
+
 
 				}
 			}
@@ -659,19 +682,44 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 	}
 
 	case Client::CInventory_Manager::SELECT: {
-		break;
-	}
-		
-	case Client::CInventory_Manager::APPLY: {
+		m_pContextMenu->Tick(fTimeDelta);
+
+		INVENTORY_EVENT eInvenEvent = m_pContextMenu->Get_InventoryEvent();
+
+		switch (eInvenEvent)
+		{
+		case Client::COMBINED_ITEM: {
+			Combind_Item(m_pSelected_ItemUI, m_pTemp_ItemUI);
+			m_pSlotHighlighter->Set_DragShadow(false);
+			m_eInven_Manager_State = EVENT_IDLE;
+			m_eTaskSequence = TS_END;
+			m_pDragShadow->Set_Dead(true);
+			m_pSelected_ItemUI = nullptr;
+			m_pTemp_ItemUI = nullptr;
+			m_pContextMenu->Set_Dead(true);
+			break;
+		}
+			
+		case Client::SWITCH_ITEM: {
+			Switch_ItemPos(m_pSelected_ItemUI, m_pTemp_ItemUI);
+			m_pSlotHighlighter->Set_DragShadow(false);
+			m_eInven_Manager_State = EVENT_IDLE;
+			m_eTaskSequence = TS_END;
+			m_pDragShadow->Set_Dead(true);
+			m_pSelected_ItemUI = nullptr;
+			m_pContextMenu->Set_Dead(true);
+			break;
+		}
+
+		default:
+			break;
+		}
 		break;
 	}
 
 	default:
 		break;
 	}
-
-
-
 }
 
 void CInventory_Manager::DISCARD_ITEM_Operation(_float fTimeDelta)
@@ -761,6 +809,54 @@ void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 	}
 }
 
+void CInventory_Manager::Switch_ItemPos(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI)
+{
+	_float4 fFirstPos = FirstItemUI->GetPosition();
+	_float4 fSecondPos = SecondItemUI->GetPosition();
+
+	_float3 fFirstMove = { fSecondPos.x - fFirstPos.x, fSecondPos.y - fFirstPos.y , 0.f};
+	_float3 fSecondMove = { fFirstPos.x - fSecondPos.x, fFirstPos.y - fSecondPos.y , 0.f };
+
+	FirstItemUI->Move(fFirstMove);
+	SecondItemUI->Move(fSecondMove);
+}
+
+void CInventory_Manager::Combind_Item(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI)
+{
+	ITEM_NUMBER eFirstNum = FirstItemUI->Get_ItemNumber();
+	ITEM_NUMBER eSecondNum = SecondItemUI->Get_ItemNumber();
+	ITEM_NUMBER eItemResult = Find_Recipe(eFirstNum, eSecondNum);
+
+	if (handgun_bullet01a == eFirstNum && handgun_bullet01a == eSecondNum && handgun_bullet01a == eItemResult)
+		FirstItemUI->Set_ItemVariation(SecondItemUI->Get_ItemQuantity());
+	else if (shotgun_bullet01a == eFirstNum && shotgun_bullet01a == eSecondNum && shotgun_bullet01a == eItemResult)
+		FirstItemUI->Set_ItemVariation(SecondItemUI->Get_ItemQuantity());
+	else
+		FirstItemUI->Set_ItemNumber(eItemResult);
+
+	_float2 fFindPos = { FirstItemUI->GetPosition().x , FirstItemUI->GetPosition().y };
+
+	Find_Slot(fFindPos)->Set_IsFilled(false);
+
+	Switch_ItemPos(FirstItemUI, SecondItemUI);
+
+	SecondItemUI->Reset_ItemUI();
+}
+
+CInventory_Slot* CInventory_Manager::Find_Slot(_float2 FindPos)
+{
+	for (auto& Slotiter : m_vecInvenSlot)
+	{
+		if (true == Slotiter->IsPTInRect(_float2(FindPos.x, FindPos.y)))
+		{
+			Slotiter->Set_IsFilled(true);
+			return Slotiter;
+		}
+	}
+
+	return nullptr;
+}
+
 void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 {
 	for (_uint i = 0; i < m_iInvenCount; i++)
@@ -773,7 +869,7 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 	for (auto& iter : m_vecItem_UI)
 	{
 		//탭창킬때 일하고 있는놈만 켜줘야함
-		if (false == bInput)
+		if (false == bInput) 
 		{
 			if (true == iter->Get_isWorking())
 				iter->Set_Dead(bInput);
@@ -841,6 +937,8 @@ void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
 		if (eTargetItemNum == iter->Get_ItemNumber() && true == iter->Get_isWorking())
 		{
 			iter->Set_ItemVariation(-iUsage);
+
+			
 
 			//todo 재귀하게 만들어보면 좋을듯 남은 수량 다 써버리게
 			//if (iter->Get_ItemQuantity() >= iUsage)
