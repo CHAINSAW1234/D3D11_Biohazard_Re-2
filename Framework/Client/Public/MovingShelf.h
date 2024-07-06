@@ -12,9 +12,8 @@ class CMovingShelf final : public CInteractProps
 public:
 	enum SHELF_TYPE
 	{
-		SHELF_,
-		SHELF_UPRIGHT,
-		SHELF_END,
+		SHELF_197_RICKER,
+		SHELF_232_MOVE
 	};
 	enum SHELF_STATE
 	{

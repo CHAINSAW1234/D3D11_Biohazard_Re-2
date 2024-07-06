@@ -1709,16 +1709,22 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	m_strLoadingText = TEXT("Now Loading ... Object");
 
+
 #pragma region YeEun Add
 #ifdef MAP_NOTHING
-
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
+		return E_FAIL;
 #endif
 #ifdef MAP_JUSTMAP
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_Map/Make_Prototype.dat"))))
 		return E_FAIL;
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
+		return E_FAIL;
 #endif
 #ifdef MAP_INTERACT
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_InteractObj/Make_Prototype.dat"))))
+		return E_FAIL;
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
 		return E_FAIL;
 #endif 
 #ifdef MAP_NONANIMOBJ
