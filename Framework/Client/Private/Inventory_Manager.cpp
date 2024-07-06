@@ -178,6 +178,8 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 			{
 				if (true == m_pSelected_ItemUI->IsMouseHover() && true == m_pSelected_ItemUI->Get_isWorking())
 				{
+					ITEM_NUMBER eSelectedItemNum = m_pSelected_ItemUI->Get_ItemNumber();
+
 					//이징 스타트 도착 지점 제대로 정해주기
 					_float3 TempTrashCanValue = _float3(HoveredPos.x, HoveredPos.y, Z_POS_CONTEXT_MENU);
 					m_pContextMenu->Set_Operation(m_pSelected_ItemUI->Get_ItemType(), true, TempTrashCanValue, TempTrashCanValue);
@@ -267,7 +269,7 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 					if (ITEM_NUMBER_END == eResultItem)
 					{
 						_float3 TempTrashCanValue = _float3(HoveredPos.x, HoveredPos.y, Z_POS_CONTEXT_MENU);
-						m_pContextMenu->Set_Operation(UNCOMBINABLE_PICKED_UP, true, TempTrashCanValue, TempTrashCanValue);
+						m_pContextMenu->Set_Operation(UNCOMBINABLE_PICKED_UP, false, TempTrashCanValue, TempTrashCanValue);
 					}
 
 					else
@@ -554,9 +556,16 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 
 		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
-			CTransform* pSelectedItemTransform = m_pSelected_ItemUI->Get_Transform();
-			_float4 fPos = { HoveredPos.x, HoveredPos.y, Z_POS_ITEM_UI, 1.f };
-			pSelectedItemTransform->Set_State(CTransform::STATE_POSITION, fPos);
+			//CTransform* pSelectedItemTransform = m_pSelected_ItemUI->Get_Transform();
+
+			//pSelectedItemTransform->Set_State(CTransform::STATE_POSITION, fPos);
+
+			_float4 fPrePos = m_pSelected_ItemUI->GetPosition();
+			_float3 fMove = { HoveredPos.x - fPrePos.x, HoveredPos.y - fPrePos.y, Z_POS_ITEM_UI };
+
+			m_pSelected_ItemUI->Move(fMove);
+			
+		
 			m_pSlotHighlighter->Set_DragShadow(false);
 			m_eInven_Manager_State = EVENT_IDLE;
 			m_pDragShadow->Set_Dead(true);
