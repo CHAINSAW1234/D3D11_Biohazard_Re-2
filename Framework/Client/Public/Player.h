@@ -258,15 +258,22 @@ public:
 	enum PLAYER_DOOR_BEHAVE				{ DOOR_BEHAVE_NOTHING, DOOR_BEHAVE_OPEN, DOOR_BEHAVE_LOCK};
 	enum PLAYER_LEVER_BEHAVE				{LEVER_BEHAVE_NOTHING, LEVER_BEHAVE_DOWN};
 
-	PLAYER_DOOR_BEHAVE							Get_Door_Setting() { return (PLAYER_DOOR_BEHAVE)m_iDoor_Setting; }
-	PLAYER_LADDER_BEAVE							Get_Ladder_Setting() { return (PLAYER_LADDER_BEAVE)m_iLadder_Setting; }
-	PLAYER_LEVER_BEHAVE							Get_Lever_Setting() { return (PLAYER_LEVER_BEHAVE)m_iLever_Setting; } //추
-	_float										Get_Door_Degree() { return m_fDoor_Degree; }
-	_float4x4									Get_Ladder_WorldMatrix() { return m_LadderWorldMatrix; }
-	_float4x4									Get_Lever_WorldMatrix() { return m_Lever_WorldMatrix; } //가
-	void										Set_Door_Setting(_int iDoor_Setting, _float fDoorDegree = 0.f) {m_iDoor_Setting = iDoor_Setting; m_fDoor_Degree = fDoorDegree;};
-	void										Set_Ladder_Setting(_int iLadder_Setting, _float4x4 LadderWorldMatrix = _float4x4()) { m_iLadder_Setting = iLadder_Setting; m_LadderWorldMatrix = LadderWorldMatrix; }
-	void										Set_Lever_Setting(_int iLever_Setting, _float4x4 LeverWorldMatrix = _float4x4()) { m_iLever_Setting = iLever_Setting; m_Lever_WorldMatrix = LeverWorldMatrix; } //욤
+	PLAYER_DOOR_BEHAVE						Get_Door_Setting() { return (PLAYER_DOOR_BEHAVE)m_iDoor_Setting; }
+	PLAYER_LADDER_BEAVE						Get_Ladder_Setting() { return (PLAYER_LADDER_BEAVE)m_iLadder_Setting; }
+	PLAYER_LEVER_BEHAVE						Get_Lever_Setting() { return (PLAYER_LEVER_BEHAVE)m_iLever_Setting; } 
+
+	_float												Get_Door_Degree() { return m_fDoor_Degree; }
+	_float4x4											Get_Ladder_WorldMatrix() { return m_LadderWorldMatrix; }
+	_float4x4											Get_Lever_WorldMatrix() const { return m_Lever_WorldMatrix; }
+
+	_float4x4											Get_Shelf_WorldMatrix();
+	_int													Get_Shelf_Type();
+	void													Set_Shelf_State(_int eState);
+
+	void													Set_Door_Setting(_int iDoor_Setting, _float fDoorDegree = 0.f) {m_iDoor_Setting = iDoor_Setting; m_fDoor_Degree = fDoorDegree;};
+	void													Set_Ladder_Setting(_int iLadder_Setting, _float4x4 LadderWorldMatrix = _float4x4()) { m_iLadder_Setting = iLadder_Setting; m_LadderWorldMatrix = LadderWorldMatrix; }
+	void													Set_Lever_Setting(_int iLever_Setting, _float4x4 LeverWorldMatrix = _float4x4()) { m_iLever_Setting = iLever_Setting; m_Lever_WorldMatrix = LeverWorldMatrix; } 
+	void													Set_Shelf_Setting(CGameObject* pShelf) { m_pShelf = pShelf; } //욤
 
 
 private:
@@ -278,6 +285,8 @@ private:
 
 	_int										m_iLever_Setting = { LEVER_BEHAVE_NOTHING };
 	_float4x4									m_Lever_WorldMatrix = { _float4x4() };
+	
+	CGameObject*							m_pShelf = { nullptr };
 
 
 	_bool										m_bInteract = { false }; //플레이어가 상호작용을 시도한

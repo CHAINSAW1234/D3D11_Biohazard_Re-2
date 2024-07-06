@@ -35,8 +35,10 @@ HRESULT CMovingShelf::Initialize(void* pArg)
 	
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;	
-
-
+	if (m_tagPropDesc.strGamePrototypeName.find("232") != string::npos)
+		m_eType = SHELF_232_MOVE;
+	else
+		m_eType = SHELF_197_RICKER;
 
 	return S_OK;
 }
@@ -52,8 +54,9 @@ void CMovingShelf::Tick(_float fTimeDelta)
 	Get_Object_Pos();
 #endif
 #endif
-
-	if ((m_bCol[INTER_COL_NORMAL][COL_STEP1]|| m_bCol[INTER_COL_DOUBLE][COL_STEP1]) && !m_bActivity)
+	if (m_eState == SHELF_FINISH)
+		return;
+	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity)
 	{
 		if (*m_pPlayerInteract)
 			Active();
@@ -109,14 +112,14 @@ HRESULT CMovingShelf::Add_Components()
 {
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(80.f);
+	ColliderDesc.fRadius = _float(350.f);
 	ColliderDesc.vCenter = _float3(50.f, 1.f, 50.f);
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
 		return E_FAIL;
 
-	ColliderDesc.fRadius = _float(50.f);
+	ColliderDesc.fRadius = _float(250.f);
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
 		return E_FAIL;
@@ -163,7 +166,7 @@ void CMovingShelf::Active()
 {
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
-	
+	m_pPlayer->Set_Shelf_Setting(this);
 
 }
 
