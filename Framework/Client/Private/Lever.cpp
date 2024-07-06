@@ -144,7 +144,7 @@ HRESULT CLever::Add_Components()
 		TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
 		return E_FAIL;
 
-	ColliderDesc.fRadius = _float(100.f);
+	ColliderDesc.fRadius = _float(120.f);
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
 		return E_FAIL;
