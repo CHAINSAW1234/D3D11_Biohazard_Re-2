@@ -19,32 +19,29 @@ public:
 	enum SHUTTER_NORMAL_ANIM
 	{
 		SHUTTER_OPEN,
-		SHUTTER_OPEN_STATIC,
 		SHUTTER_STATIC,
-
 	};
 	enum SHUTTER_033_ANIM
 	{
-		SHTTER_033_CLOSED,
-		SHTTER_033_FULL_CLOSED,
-		SHTTER_033_FULL_OPEN,
-		SHTTER_033_FULL_OPENED,
-		SHTTER_033_HALF_CLOSED,
-		SHTTER_033_HALF_OPEN,
-		SHTTER_033_HALF_OPENED,
+		SHUTTER_033_CLOSED,
+		SHUTTER_033_FULL_CLOSED,
+		SHUTTER_033_FULL_OPEN,
+		SHUTTER_033_FULL_OPENED,
+		SHUTTER_033_HALF_CLOSED,
+		SHUTTER_033_HALF_OPEN,
+		SHUTTER_033_HALF_OPENED,
 	};
 	enum SHUTTER_034_ANIM
 	{
-		SHTTER_034_CLOSED,
-		SHTTER_034_END,
-		SHTTER_034_OPEN,
-		SHTTER_034_OPENED,
-		SHTTER_034_START,
+		SHUTTER_034_CLOSED,
+		SHUTTER_034_END,
+		SHUTTER_034_OPEN,
+		SHUTTER_034_OPENED,
+		SHUTTER_034_START,
 	};
 	enum SHUTTER_PART
 	{
 		PART_BODY,
-		PART_LEVER,
 		PART_END,
 	};
 private:
@@ -55,6 +52,7 @@ private:
 public:
 	virtual HRESULT				Initialize_Prototype() override;
 	virtual HRESULT				Initialize(void* pArg) override;
+	virtual void					Start() override;
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
@@ -66,6 +64,9 @@ private:
 	virtual HRESULT				Bind_ShaderResources() override;
 public:
 	virtual _float4 Get_Object_Pos() override;
+	void								Set_Shutter_Open_State();
+
+
 private:
 	void Active();
 
@@ -76,8 +77,8 @@ private:
 	_float			m_fTime = { 0.f };
 	_ubyte			m_eType = { SHUTTER_NORMAL };
 	_ubyte			m_eNormalState = { SHUTTER_STATIC };
-	_ubyte			m_e033State = { SHTTER_033_FULL_OPENED };
-	_ubyte			m_e034State = { SHTTER_034_OPEN };
+	_ubyte			m_e033State = { SHUTTER_033_FULL_CLOSED };
+	_ubyte			m_e034State = { SHUTTER_034_CLOSED };
 
 
 public:

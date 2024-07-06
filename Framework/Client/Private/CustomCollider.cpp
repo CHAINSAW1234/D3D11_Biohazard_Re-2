@@ -58,7 +58,9 @@ void CCustomCollider::Late_Tick(_float fTimeDelta)
 	if (m_bDead)
 		return;
 #ifdef _DEBUG
+#ifndef NO_COLLISTION
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
+#endif
 #endif
 
 }
@@ -76,12 +78,10 @@ HRESULT CCustomCollider::Add_Components(COLLIDER_DESC* pCol)
 
 	XMMatrixDecompose(&vScaleVector, &vRotationQuat, &vTranslationVector, pCol->worldMatrix);
 
-	// 쿼터니언을 오일러 각도로 변환
-	_vector rotationAngles = XMQuaternionRotationRollPitchYawFromVector(vRotationQuat);
-
+	
 	/* Com_Collider */
 	CBounding_OBB::BOUNDING_OBB_DESC		ColliderDesc{};
-
+	ColliderDesc.bQuat = true;
 	ColliderDesc.vCenter = vTranslationVector;
 	ColliderDesc.vRotation = vRotationQuat;
 	ColliderDesc.vSize = vScaleVector * _vector{ 1.7f,1.f,1.7f,1.f };

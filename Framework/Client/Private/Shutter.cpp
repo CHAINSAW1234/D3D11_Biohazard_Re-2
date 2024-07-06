@@ -41,6 +41,11 @@ HRESULT CShutter::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CShutter::Start()
+{
+	__super::Start();
+}
+
 void CShutter::Tick(_float fTimeDelta)
 {
 	__super::Tick_Col();
@@ -86,12 +91,23 @@ HRESULT CShutter::Render()
 
 HRESULT CShutter::Add_Components()
 {
-	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
 
-	ColliderDesc.fRadius = _float(100.f);
-	ColliderDesc.vCenter = _float3(-10.f, 1.f, 0.f);
+	_vector vScaleVector;
+	_vector vRotationQuat;
+	_vector vTranslationVector;
+
+	XMMatrixDecompose(&vScaleVector, &vRotationQuat, &vTranslationVector, m_pTransformCom->Get_WorldMatrix());
+
+	_vector vRotationAngles = XMQuaternionRotationRollPitchYawFromVector(vRotationQuat);
+
+	CBounding_OBB::BOUNDING_OBB_DESC		ColliderDesc{};
+
+	ColliderDesc.vRotation = vRotationQuat;
+	ColliderDesc.bQuat = true;
+	ColliderDesc.vCenter = _float3(0.f, 0.f, 0.f);
+	ColliderDesc.vSize = _float3(200.f, 100.f, 500.f);
 	/* For.Com_Collider */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
 		return E_FAIL;
 	return S_OK;
@@ -117,8 +133,6 @@ HRESULT CShutter::Add_PartObjects()
 
 	m_PartObjects[CShutter::PART_BODY] = pBodyObj;
 
-	/*PART_LEVER*/
-	m_PartObjects[CShutter::PART_LEVER] = nullptr;
 
 	return S_OK;
 }
@@ -144,9 +158,23 @@ HRESULT CShutter::Bind_ShaderResources()
 
 _float4 CShutter::Get_Object_Pos()
 {
+	return _float4();
+}
 
-	return static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Get_Pos();
-
+void CShutter::Set_Shutter_Open_State()
+{
+	switch (m_eType)
+	{
+	case SHUTTER_NORMAL:
+		m_eNormalState = SHUTTER_OPEN;
+		break;
+	case SHUTTER_033:
+		m_e033State = SHUTTER_033_HALF_OPEN;
+		break;
+	case SHUTTER_034:
+		m_e034State = SHUTTER_034_OPEN;
+		break;
+	}
 }
 
 void CShutter::Active()

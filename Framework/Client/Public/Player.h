@@ -246,39 +246,48 @@ public:
 
 #pragma region 예은 추가 
 public:
-	_bool										Get_Player_RegionChange() { return m_bChange; }
-	_int										Get_Player_ColIndex() { return m_iCurCol; }
-	_int										Get_Player_Direction() { return m_iDir; }
-	_int										Get_Player_Floor() { return m_iFloor; } /* 현재 플레이어의 층수 */
-	_int										Get_Player_Region() { return m_iRegion; } /* 현재 존재하는 지역 */
-	_bool*										Get_Player_Interact_Ptr() { return &m_bInteract; }
-	_bool*										Get_Player_Region_Array() { return m_bRegion; }
-	enum PLAYER_LADDER_BEAVE	{LADDER_BEHAVE_NOTHING, LADDER_BEHAVE_UP, LADDER_BEHAVE_DOWN};
-	enum PLAYER_DOOR_BEHAVE		{ DOOR_BEHAVE_NOTHING, DOOR_BEHAVE_OPEN, DOOR_BEHAVE_LOCK};
-	PLAYER_DOOR_BEHAVE							Get_Door_Setting() { return (PLAYER_DOOR_BEHAVE)m_iDoor_Setting; }
-	PLAYER_LADDER_BEAVE							Get_Ladder_Setting() { return (PLAYER_LADDER_BEAVE)m_iLadder_Setting; }
-	_float										Get_Door_Degree() { return m_fDoor_Degree; }
-	_float4x4									Get_Ladder_WorldMatrix() { return m_LadderWorldMatrix; }
-	void										Set_Door_Setting(_int iDoor_Setting, _float fDoorDegree = 0.f) {m_iDoor_Setting = iDoor_Setting; m_fDoor_Degree = fDoorDegree;};
-	void										Set_Ladder_Setting(_int iLadder_Setting, _float4x4 LadderWorldMatrix = _float4x4()) { m_iLadder_Setting = iLadder_Setting; m_LadderWorldMatrix = LadderWorldMatrix; }
+	_bool													Get_Player_RegionChange() { return m_bChange; }
+	_int													Get_Player_ColIndex() { return m_iCurCol; }
+	_int													Get_Player_Direction() { return m_iDir; }
+	_int													Get_Player_Floor() { return m_iFloor; } /* 현재 플레이어의 층수 */
+	_int													Get_Player_Region() { return m_iRegion; } /* 현재 존재하는 지역 */
+	_bool*												Get_Player_Interact_Ptr() { return &m_bInteract; }
+	_bool*												Get_Player_Region_Array() { return m_bRegion; }
+	enum PLAYER_LADDER_BEAVE			{LADDER_BEHAVE_NOTHING, LADDER_BEHAVE_UP, LADDER_BEHAVE_DOWN};
+	enum PLAYER_DOOR_BEHAVE				{ DOOR_BEHAVE_NOTHING, DOOR_BEHAVE_OPEN, DOOR_BEHAVE_LOCK};
+	enum PLAYER_LEVER_BEHAVE				{LEVER_BEHAVE_NOTHING, LEVER_BEHAVE_DOWN};
+
+	PLAYER_DOOR_BEHAVE						Get_Door_Setting() { return (PLAYER_DOOR_BEHAVE)m_iDoor_Setting; }
+	PLAYER_LADDER_BEAVE						Get_Ladder_Setting() { return (PLAYER_LADDER_BEAVE)m_iLadder_Setting; }
+	PLAYER_LEVER_BEHAVE						Get_Lever_Setting() { return (PLAYER_LEVER_BEHAVE)m_iLever_Setting; } //추
+	_float												Get_Door_Degree() { return m_fDoor_Degree; }
+	_float4x4											Get_Ladder_WorldMatrix() { return m_LadderWorldMatrix; }
+	_float4x4											Get_Lever_WorldMatrix() { return m_Lever_WorldMatrix; } //가
+	void													Set_Door_Setting(_int iDoor_Setting, _float fDoorDegree = 0.f) {m_iDoor_Setting = iDoor_Setting; m_fDoor_Degree = fDoorDegree;};
+	void													Set_Ladder_Setting(_int iLadder_Setting, _float4x4 LadderWorldMatrix = _float4x4()) { m_iLadder_Setting = iLadder_Setting; m_LadderWorldMatrix = LadderWorldMatrix; }
+	void													Set_Lever_Setting(_int iLever_Setting, _float4x4 LeverWorldMatrix = _float4x4()) { m_iLever_Setting = iLever_Setting; m_Lever_WorldMatrix = LeverWorldMatrix; } //욤
 
 
 private:
-	_int										m_iDoor_Setting = { DOOR_BEHAVE_NOTHING };
+	_int											m_iDoor_Setting = { DOOR_BEHAVE_NOTHING };
 	_float										m_fDoor_Degree = { 0.f };
 
-	_int										m_iLadder_Setting = { LADDER_BEHAVE_NOTHING };
+	_int											m_iLadder_Setting = { LADDER_BEHAVE_NOTHING };
 	_float4x4									m_LadderWorldMatrix = { _float4x4() };
 
-	_bool										m_bInteract = { false }; //플레이어가 상호작용을 시도한
-	_bool										m_bChange = { true };
-	_int										m_iCurCol = { 0 };
-	_int										m_iRegion = { 0 };
-	_int										m_iDir = { 0 };
-	_int										m_iPreCol = { 1 };
-	_int										m_iFloor = { 2 };
+	_int											m_iLever_Setting = { LEVER_BEHAVE_NOTHING };
+	_float4x4									m_Lever_WorldMatrix = { _float4x4() };
+
+
+	_bool											m_bInteract = { false }; //플레이어가 상호작용을 시도한
+	_bool											m_bChange = { true };
+	_int											m_iCurCol = { 0 };
+	_int											m_iRegion = { 0 };
+	_int											m_iDir = { 0 };
+	_int											m_iPreCol = { 1 };
+	_int											m_iFloor = { 2 };
 	_float										m_fTimeTEST = { 0.f };
-	_bool										m_bRegion[100] = { false, };
+	_bool											m_bRegion[100] = { false, };
 #pragma endregion
 
 
@@ -289,7 +298,7 @@ public:
 
 private:
 	_bool										m_isCamTurn = { false };
-	class CTab_Window*							m_pTabWindow = { nullptr };
+	class CTab_Window*				m_pTabWindow = { nullptr };
 #pragma endregion
 
 	vector<CPartObject*>						m_PartObjects;
