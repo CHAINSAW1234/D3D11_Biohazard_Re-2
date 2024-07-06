@@ -65,9 +65,9 @@ void CInventory_Manager::FirstTick_Seting()
 	m_pDragShadow->FirstTick_Seting();
 
 	AddItem_ToInven(HandGun, 15);
-	//AddItem_ToInven(ShotGun, 15);
-	//AddItem_ToInven(handgun_bullet01a, 20);
-	//AddItem_ToInven(shotgun_bullet01a, 20);
+	AddItem_ToInven(ShotGun, 15);
+	AddItem_ToInven(handgun_bullet01a, 20);
+	AddItem_ToInven(shotgun_bullet01a, 20);
 
 
 	
@@ -131,7 +131,6 @@ void CInventory_Manager::Tick(_float fTimeDelta)
 	default:
 		break;
 	}
-
 }
 
 void CInventory_Manager::Late_Tick(_float fTimeDelta)
@@ -203,7 +202,7 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 						m_fPressingTime = 0.f;
 
 						m_pSlotHighlighter->Set_DragShadow(true);
-						 
+						m_eTaskSequence = SETING;
 						m_eInven_Manager_State = REARRANGE_ITEM;
 					}
 				}
@@ -402,8 +401,75 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 {
 	m_pSelected_ItemUI->Set_ItemVariation(-1);
 
+	ITEM_NUMBER eUseItemNum = m_pSelected_ItemUI->Get_ItemNumber();
+
+	switch (eUseItemNum)
+	{
+	case Client::emergencyspray01a: {
+		//CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front()); //플레이어 찾고
+		//pPlayer->Set_isCamTurn(false); // 플레이어 함수 호출
+		break;
+	}
+		
+	case Client::greenherb01a: {
+		break;
+	}
+		
+	case Client::redherb01a: { //내기억으론 이게 단독사용불가
+		break;
+	}
+		
+	case Client::blueherb01a: {
+		break;
+	}
+		
+	case Client::herbsgg01a: {
+		break;
+	}
+		
+	case Client::herbsgr01a: {
+		break;
+	}
+		
+	case Client::herbsgb01a: {
+		break;
+	}
+		
+	case Client::herbsggb01a: {
+		break;
+	}
+		
+	case Client::herbsggg01a: {
+		break;
+	}
+		
+	case Client::herbsgrb01a: {
+		break;
+	}
+		
+	case Client::herbsrb01a: {
+		break;
+	}
+		
+	case Client::greenherbitem01a: {
+		break;
+	}
+		
+	case Client::redherbitem01a: {
+		break;
+	}
+		
+	case Client::blueherbitem01a: {
+		break;
+	}
+
+	default:
+		break;
+	}
+
 	m_eInven_Manager_State = EVENT_IDLE;
 	m_pContextMenu->Set_Dead(true);
+	m_pSelected_ItemUI->Reset_ItemUI();
 	m_pSelected_ItemUI = nullptr;
 }
 
@@ -531,42 +597,81 @@ void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 
 void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 {
-	m_IsNoOneHover = true;
-	CInventory_Slot* pHoveredSlot = nullptr;
-
-	for (_uint i = 0; i < m_iInvenCount; i++)
+	switch (m_eTaskSequence)
 	{
-		if (true == m_vecInvenSlot[i]->IsMouseHover())
+	case Client::CInventory_Manager::SETING: {
+		m_IsNoOneHover = true;
+		CInventory_Slot* pHoveredSlot = nullptr;
+
+		for (_uint i = 0; i < m_iInvenCount; i++)
 		{
-			m_IsNoOneHover = false;
-			pHoveredSlot = m_vecInvenSlot[i];
+			if (true == m_vecInvenSlot[i]->IsMouseHover())
+			{
+				m_IsNoOneHover = false;
+				pHoveredSlot = m_vecInvenSlot[i];
+			}
 		}
+
+		if (false == m_IsNoOneHover)
+		{
+			_float4 HoveredPos = static_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
+			HoveredPos.z = Z_POS_HIGH_LIGHTER;
+			m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
+
+			if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+			{
+				m_pDragShadowTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
+			}
+
+			if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+			{
+				_bool isSomeone = false;
+
+				for (auto& iter : m_vecItem_UI)
+				{
+					if (true == iter->Get_isWorking() && iter != m_pSelected_ItemUI && true == iter->IsMouseHover())
+					{
+						isSomeone = true;
+					}
+				}
+
+				if (false == isSomeone)
+				{
+					_float4 fPrePos = m_pSelected_ItemUI->GetPosition();
+					_float3 fMove = { HoveredPos.x - fPrePos.x, HoveredPos.y - fPrePos.y, 0.f };
+
+					m_pSelected_ItemUI->Move(fMove);
+
+					m_pSlotHighlighter->Set_DragShadow(false);
+					m_eInven_Manager_State = EVENT_IDLE;
+					m_eTaskSequence = TS_END;
+					m_pDragShadow->Set_Dead(true);
+					m_pSelected_ItemUI = nullptr;
+				}
+
+				else
+				{
+
+				}
+			}
+		}
+		break;
 	}
 
-	if (false == m_IsNoOneHover)
-	{
-		_float4 HoveredPos = static_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
-		HoveredPos.z = Z_POS_HIGH_LIGHTER;
-		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
-
-		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-		{
-			m_pDragShadowTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
-		}
-
-		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-		{
-			_float4 fPrePos = m_pSelected_ItemUI->GetPosition();
-			_float3 fMove = { HoveredPos.x - fPrePos.x, HoveredPos.y - fPrePos.y, 0.f };
-
-			m_pSelected_ItemUI->Move(fMove);
-			
-			m_pSlotHighlighter->Set_DragShadow(false);
-			m_eInven_Manager_State = EVENT_IDLE;
-			m_pDragShadow->Set_Dead(true);
-			m_pSelected_ItemUI = nullptr;
-		}
+	case Client::CInventory_Manager::SELECT: {
+		break;
 	}
+		
+	case Client::CInventory_Manager::APPLY: {
+		break;
+	}
+
+	default:
+		break;
+	}
+
+
+
 }
 
 void CInventory_Manager::DISCARD_ITEM_Operation(_float fTimeDelta)

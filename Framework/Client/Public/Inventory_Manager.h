@@ -68,7 +68,6 @@ public:
 
 	ITEM_NUMBER Get_Selected_ItemNum();
 
-
 	_bool* Get_NoHover_InvenBox() { return &m_IsNoOneHover; }
 
 public:

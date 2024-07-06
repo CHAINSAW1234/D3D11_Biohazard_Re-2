@@ -131,7 +131,7 @@ public:
 	void										Set_Equip(EQUIP* eEquip);
 	void										Set_Equip_Gun(EQUIP* eEquip);
 	void										Set_Equip_Sub(EQUIP* eEquip);
-	void										Set_Hp(_int iHp);					
+	void										Set_Hp(_int iHp);				
 	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineDefault = isTurnSpineDefault; }
 	void										Set_TurnSpineHold(_bool isTurnSpineHold) { m_isTurnSpineHold = isTurnSpineHold;}
 	void										Set_TurnSpineLight(_bool isTurnSpineLight) { m_isTurnSpineLight = isTurnSpineLight; }
