@@ -505,6 +505,18 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Ladder">
       <UniqueIdentifier>{0b035877-0214-4780-9c8c-017dbe391d29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Lever">
+      <UniqueIdentifier>{29b9e065-5481-4d9e-8ddb-05deb030bc6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Lever\Body_Lever">
+      <UniqueIdentifier>{af738f89-c7a6-46d3-86fc-dce27c77d00d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\MovingShelf">
+      <UniqueIdentifier>{de541b30-ca3f-412d-add1-46e757f1ba8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\MovingShelf\Body_MovingShelf">
+      <UniqueIdentifier>{223faafc-e46e-494a-881c-687474a6940c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -966,6 +978,18 @@
     <ClInclude Include="..\Public\Zombie_Defines.h">
       <Filter>02.GameObjects\Monster\Zombie</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Lever.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Lever</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Lever.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Lever\Body_Lever</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MovingShelf.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\MovingShelf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_MovingShelf.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\MovingShelf\Body_MovingShelf</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1390,6 +1414,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_State_Move_Ladder.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Ladder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lever.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Lever</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Lever.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Lever\Body_Lever</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MovingShelf.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\MovingShelf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_MovingShelf.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\MovingShelf\Body_MovingShelf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

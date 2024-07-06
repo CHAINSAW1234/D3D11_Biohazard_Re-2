@@ -125,7 +125,7 @@ HRESULT CDoor::Add_Components()
 	if (m_eType == DOOR_DOUBLE)
 	{
 		CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
-		ColliderDesc.fRadius = _float(150.f);
+		ColliderDesc.fRadius = _float(180.f);
 		ColliderDesc.vCenter = _float3(-30.f, 1.f, 0.f);
 
 		/* For.Com_Collider */
@@ -133,30 +133,30 @@ HRESULT CDoor::Add_Components()
 			TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
 			return E_FAIL;
 
-		ColliderDesc.fRadius = _float(110.f);
+		ColliderDesc.fRadius = _float(150.f);
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
 			return E_FAIL;
 
-		ColliderDesc.fRadius = _float(90.f);
+		ColliderDesc.fRadius = _float(100.f);
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Normal_Step2"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP2], &ColliderDesc)))
 			return E_FAIL;
 
 
 
-		ColliderDesc.fRadius = _float(150.f);
+		ColliderDesc.fRadius = _float(180.f);
 		ColliderDesc.vCenter = _float3(-150.f, 1.f, 0.f);
 		/* For.Com_Collider */
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Double_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP0], &ColliderDesc)))
 			return E_FAIL;
-		ColliderDesc.fRadius = _float(110.f);
+		ColliderDesc.fRadius = _float(150.f);
 		/* For.Com_Collider */
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Double_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP1], &ColliderDesc)))
 			return E_FAIL;
-		ColliderDesc.fRadius = _float(90.f);
+		ColliderDesc.fRadius = _float(100.f);
 		/* For.Com_Collider */
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Double_Step2"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP2], &ColliderDesc)))
@@ -523,6 +523,8 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 	case CDoor::ONEDOOR_STATIC:
 		break;
 	}
+
+
 	if (Activate_Col(Get_Collider_World_Pos(_float4(-60.f, 1.f, 0.f, 1.f))))
 	{
 		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0)) // ¿Œ¡ˆ?

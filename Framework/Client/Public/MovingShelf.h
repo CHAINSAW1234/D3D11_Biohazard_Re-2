@@ -7,27 +7,24 @@
 
 BEGIN(Client)
 
-class CCabinet final : public CInteractProps
+class CMovingShelf final : public CInteractProps
 {
 public:
-	enum CABINET_STATE
+	enum SHELF_STATE
 	{
-		CABINET_CLOSED,
-		CABINET_OPEN,
-		CABINET_OPENED,
-		CABINET_END,
+		SHELF_DOWN,
+		SHELF_UPRIGHT,
+		SHELF_END,
 	};
-	enum CABINET_PART
+	enum SHELF_PART
 	{
 		PART_BODY,
-		PART_ITEM,
-		PART_LOCK,
 		PART_END
 	};
 private:
-	CCabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CCabinet(const CCabinet& rhs);
-	virtual ~CCabinet() = default;
+	CMovingShelf(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CMovingShelf(const CMovingShelf& rhs);
+	virtual ~CMovingShelf() = default;
 
 public:
 	virtual HRESULT				Initialize_Prototype() override;
@@ -43,26 +40,19 @@ private:
 	virtual HRESULT				Bind_ShaderResources() override;
 
 private:
-	void Active();
+	void								Active();
 
 public:
-	virtual _float4 Get_Object_Pos() override;
+	virtual _float4				Get_Object_Pos() override;
 
 
 private:
-	_bool				m_bReonDesk = { false };
-	_bool				m_bItemDead = { true };
-	_bool				m_bObtain = { false };
-	_bool				m_bOpened = { false };
-	_bool				m_bLock =	{ false };
-	_bool				m_bActivity = { false };
-
-	_ubyte			m_eState = { CABINET_CLOSED };
+	_ubyte							m_eState = { SHELF_DOWN };
 
 
 
 public:
-	static CCabinet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CMovingShelf* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 
