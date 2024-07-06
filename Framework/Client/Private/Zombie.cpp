@@ -716,7 +716,7 @@ HRESULT CZombie::Add_Components()
 	/* Com_Collider_Body */
 	CBounding_OBB::BOUNDING_OBB_DESC		ColliderOBBDesc{};
 
-	ColliderOBBDesc.vRotation = _float3(0.f, XMConvertToRadians(45.0f), 0.f);
+	ColliderOBBDesc.vRotation = _float4(0.f, XMConvertToRadians(45.0f), 0.f,0.f);
 	ColliderOBBDesc.vSize = _float3(0.8f, 0.6f, 0.8f);
 	ColliderOBBDesc.vCenter = _float3(0.f, ColliderOBBDesc.vSize.y * 0.5f, 0.f);
 

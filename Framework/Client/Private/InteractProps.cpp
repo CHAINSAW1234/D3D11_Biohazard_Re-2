@@ -99,7 +99,7 @@ void CInteractProps::Start()
 			continue;
 		static_cast<CPart_InteractProps*>(iter)->Set_CameraSetting(m_pCamera, m_pCameraTransform);
 	}
-	
+	Tick_Col();
 }
 
 HRESULT CInteractProps::Render()

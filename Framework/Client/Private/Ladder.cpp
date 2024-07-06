@@ -37,21 +37,41 @@ HRESULT CLadder::Initialize(void* pArg)
 void CLadder::Tick(_float fTimeDelta)
 {
 	__super::Tick_Col();
+
 	if (m_bActivity)
-		m_fTimeDelay += fTimeDelta;
+		m_fTime += fTimeDelta;
 
-	if (m_fTimeDelay > 1.f)
+	if (m_fTime > 1.f)
 	{
-		m_fTimeDelay = 0.f;
 		m_bActivity = false;
-
+		switch (m_iPlayerDoAct)
+		{
+		case CPlayer::LADDER_BEHAVE_DOWN:
+			if (m_bCol[INTER_COL_NORMAL][COL_STEP2] || m_bCol[INTER_COL_DOUBLE][COL_STEP2])
+				m_fTimeDelay = TIMEDELAY;
+			break;
+		case CPlayer::LADDER_BEHAVE_UP:
+			if (m_bCol[INTER_COL_NORMAL][COL_STEP2] || m_bCol[INTER_COL_DOUBLE][COL_STEP2])
+				m_fTimeDelay = TIMEDELAY;
+			break;
+		case CPlayer::LADDER_BEHAVE_NOTHING:
+			m_fTime = 0.f;
+			break;
+		}
 	}
 
-
+	if (m_fTimeDelay > 0.f)
+		m_fTimeDelay -= fTimeDelta;
+	
+	if (m_fTimeDelay < 0.f)
+	{
+		m_fTimeDelay = 0.f;
+		m_iPlayerDoAct = CPlayer::LADDER_BEHAVE_NOTHING;
+	}
 	
 	
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1])
-		if (!m_bActivity && (*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2] || m_bCol[INTER_COL_DOUBLE][COL_STEP2]))
+		if (m_iPlayerDoAct == CPlayer::LADDER_BEHAVE_NOTHING && (*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2] || m_bCol[INTER_COL_DOUBLE][COL_STEP2]))
 			Active();
 
 	if (!m_bVisible)
@@ -81,7 +101,6 @@ void CLadder::Late_Tick(_float fTimeDelta)
 		{
 			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 			m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
-
 		}
 
 
@@ -226,10 +245,15 @@ void CLadder::Active()
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
 	if (m_bCol[INTER_COL_DOUBLE][COL_STEP1])
+	{
+		m_iPlayerDoAct = CPlayer::LADDER_BEHAVE_DOWN;
 		m_pPlayer->Set_Ladder_Setting(CPlayer::LADDER_BEHAVE_DOWN, m_pTransformCom->Get_WorldFloat4x4());
+	}
 	else if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
+	{
+		m_iPlayerDoAct = CPlayer::LADDER_BEHAVE_UP;
 		m_pPlayer->Set_Ladder_Setting(CPlayer::LADDER_BEHAVE_UP, m_pTransformCom->Get_WorldFloat4x4());
-	//--m_iActive;
+	}
 }
 
 _float4 CLadder::Get_Object_Pos()

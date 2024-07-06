@@ -1023,6 +1023,18 @@
     <ClInclude Include="..\Public\Actor_EM00.h">
       <Filter>02.GameObjects\Cut_Scene\Actor\Actor_EM00</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Lever.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Lever</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_Lever.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Lever\Body_Lever</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MovingShelf.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\MovingShelf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_MovingShelf.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\MovingShelf\Body_MovingShelf</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1474,6 +1486,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Actor_EM00.cpp">
       <Filter>02.GameObjects\Cut_Scene\Actor\Actor_EM00</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lever.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Lever</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_Lever.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Lever\Body_Lever</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MovingShelf.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\MovingShelf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_MovingShelf.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\MovingShelf\Body_MovingShelf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
