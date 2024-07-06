@@ -686,7 +686,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
 		return E_FAIL;
 
-	vector<wstring> ItemModelTags; // Ã¢±Õ
+	//vector<wstring> ItemModelTags; // Ã¢±Õ
 
 	for (_uint i = 0; iObjectNum > i; ++i)
 	{
@@ -843,11 +843,11 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 		if(!bDo)
 				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CProps::Create(m_pDevice, m_pContext));
 
-		
-		if (Inform->wstrGameObjectPrototypeName.find(TEXT("sm7")) != wstring::npos)
-		{
-			ItemModelTags.push_back(Inform->wstrModelPrototypeName);//Ã¢±Õ
-		}
+		//
+		//if (Inform->wstrGameObjectPrototypeName.find(TEXT("sm7")) != wstring::npos)
+		//{
+		//	ItemModelTags.push_back(Inform->wstrModelPrototypeName);//Ã¢±Õ
+		//}
 
 		if (Inform->wstrGameObjectPrototypeName.find(TEXT("sm71_901")) != wstring::npos)
 		{
@@ -874,8 +874,137 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MovingShelf"), CMovingShelf::Create(m_pDevice, m_pContext));
 
 
-	m_pGameInstance->Set_ModelTags(TEXT("ItemModel_Tags"), ItemModelTags);
+	//m_pGameInstance->Set_ModelTags(TEXT("ItemModel_Tags"), ItemModelTags);
 
+	CloseHandle(hFile);
+	return S_OK;
+}
+
+HRESULT CLoader::Load_Item_Prototype(const wstring& filePath)
+{
+	HANDLE		hFile = CreateFile(filePath.c_str(), GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	DWORD	dwByte(0);
+
+	_uint iObjectNum = { 0 };
+	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
+		return E_FAIL;
+
+	//vector<wstring> ItemModelTags; // Ã¢±Õ
+
+	for (_uint i = 0; iObjectNum > i; ++i)
+	{
+
+		PROTOTYPE_INFORM* Inform = new PROTOTYPE_INFORM;
+
+		_uint dwLen = { 0 };
+
+		_bool bAnim = { false };
+		if (!ReadFile(hFile, &bAnim, sizeof(_uint), &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		Inform->bAnim = bAnim;
+
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		char* strModelPath = new char[dwLen / sizeof(char) + 1];
+		if (!ReadFile(hFile, strModelPath, dwLen, &dwByte, nullptr))
+		{
+			delete[] strModelPath;
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+
+			return E_FAIL;
+		}
+		strModelPath[dwLen / sizeof(char)] = '\0';
+		Inform->strModelPath = strModelPath;
+		delete[] strModelPath;
+
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wchar_t* wstrModelPrototypeName = new wchar_t[dwLen / sizeof(wchar_t) + 1];
+		if (!ReadFile(hFile, wstrModelPrototypeName, dwLen, &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			delete[] wstrModelPrototypeName;
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wstrModelPrototypeName[dwLen / sizeof(wchar_t)] = L'\0';
+		Inform->wstrModelPrototypeName = wstrModelPrototypeName;
+		delete[] wstrModelPrototypeName;
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			Safe_Delete(Inform);
+			return E_FAIL;
+		}
+		wchar_t* wstrGameObjectPrototypeName = new wchar_t[dwLen / sizeof(wchar_t) + 1];
+		if (!ReadFile(hFile, wstrGameObjectPrototypeName, dwLen, &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			delete[] wstrGameObjectPrototypeName;
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		wstrGameObjectPrototypeName[dwLen / sizeof(wchar_t)] = L'\0';
+		Inform->wstrGameObjectPrototypeName = wstrGameObjectPrototypeName;
+		delete[] wstrGameObjectPrototypeName;
+
+		if (!ReadFile(hFile, &dwLen, sizeof(_uint), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			Safe_Delete(Inform);
+			return E_FAIL;
+		}
+		char* strGameObjectPrototypeName = new char[dwLen / sizeof(char) + 1];
+		if (!ReadFile(hFile, strGameObjectPrototypeName, dwLen, &dwByte, nullptr))
+		{
+			Safe_Delete(Inform);
+			delete[] strGameObjectPrototypeName;
+
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		strGameObjectPrototypeName[dwLen / sizeof(char)] = '\0';
+		Inform->strGameObjectPrototypeName = strGameObjectPrototypeName;
+		delete[] strGameObjectPrototypeName;
+
+
+
+		if (Inform->strGameObjectPrototypeName.find("_Anim") != string::npos)
+		{
+			Inform->bAnim = true;
+
+			_matrix Ininitmatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+
+			m_pGameInstance->Add_Prototype(m_eNextLevelID, Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, Inform->strModelPath.c_str(), Ininitmatrix));
+		}
+		else
+		{
+			m_pGameInstance->Add_Prototype(m_eNextLevelID, Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, Inform->strModelPath.c_str(), XMMatrixIdentity()));
+
+		}
+		Safe_Delete(Inform);
+
+	}
 	CloseHandle(hFile);
 	return S_OK;
 }
@@ -1792,11 +1921,17 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 #pragma region YeEun Add
 #ifdef MAP_NOTHING
-	if (FAILED(Load_Field_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
+	if (FAILED(Load_Item_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
 		return E_FAIL;
 #endif
 #ifdef MAP_INTERACT
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_InteractObj/Make_Prototype.dat"))))
+		return E_FAIL;
+#endif 
+#ifdef MAP_TEST
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_Test/Make_Prototype.dat"))))
+		return E_FAIL;
+	if (FAILED(Load_Item_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
 		return E_FAIL;
 #endif 
 #pragma endregion
