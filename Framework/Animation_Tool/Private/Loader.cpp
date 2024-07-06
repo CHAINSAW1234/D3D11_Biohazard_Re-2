@@ -763,23 +763,15 @@ HRESULT CLoader::Load_Animations()
 
 #pragma endregion
 
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL0000"), "../Bin/Resources/Animations/pl0000/")))
+#pragma region Default Zombie Gimmick Anims
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Gimmick_Window"), "../Bin/Resources/Animations/Body_Zombie/Gimmick/Window/")))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL0050"), "../Bin/Resources/Animations/pl0050/")))
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Gimmick_Door"), "../Bin/Resources/Animations/Body_Zombie/Gimmick/Door/")))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_EM0000"), "../Bin/Resources/Animations/em0000/")))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL7800"), "../Bin/Resources/Animations/pl7800/")))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL7850"), "../Bin/Resources/Animations/pl7850/")))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL7880"), "../Bin/Resources/Animations/pl7880/")))
-		return E_FAIL;
+#pragma endregion
 
 	return S_OK;
 }

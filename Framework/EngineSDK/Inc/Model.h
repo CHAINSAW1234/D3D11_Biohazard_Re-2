@@ -420,6 +420,10 @@ public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const string& strModelFilePath, _fmatrix TransformMatrix);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
+
+
+private:
+	static unordered_map<wstring, class CTexture*>			m_LoadedTextures;
 };
 
 END

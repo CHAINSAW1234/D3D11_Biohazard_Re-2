@@ -18,6 +18,10 @@
 #include "RagDoll_Physics.h"
 #include "PlayingInfo.h"
 
+#include "Texture.h"
+
+unordered_map<wstring, class CTexture*>	CModel::m_LoadedTextures;
+
 CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent{ pDevice, pContext }
 {
@@ -3239,9 +3243,26 @@ HRESULT CModel::Ready_Materials(ifstream& ifs)
 				continue;
 			}
 
-			MeshMaterial.MaterialTextures[i] = CTexture::Create(m_pDevice, m_pContext, szPath);
-			if (nullptr == MeshMaterial.MaterialTextures[i])
-				return E_FAIL;
+			wstring				strPath = { szPath };
+			_uint				iIndex = { static_cast<_uint>(strPath.rfind(TEXT("/"))) };
+			wstring				strFileName = { strPath.substr(iIndex + 1) };
+
+			unordered_map<wstring, CTexture*>::iterator			iter = { m_LoadedTextures.find(strFileName) };
+			if (iter == m_LoadedTextures.end())
+			{
+				CTexture*			pTexture = { CTexture::Create(m_pDevice, m_pContext, szPath) };
+				MeshMaterial.MaterialTextures[i] = pTexture;
+				if (nullptr == MeshMaterial.MaterialTextures[i])
+					return E_FAIL;
+
+				m_LoadedTextures.emplace(strFileName, pTexture);
+			}
+			else
+			{
+				MeshMaterial.MaterialTextures[i] = static_cast<CTexture*>(iter->second->Clone(nullptr));
+				if (nullptr == MeshMaterial.MaterialTextures[i])
+					return E_FAIL;
+			}
 		}
 
 		m_Materials.push_back(MeshMaterial);

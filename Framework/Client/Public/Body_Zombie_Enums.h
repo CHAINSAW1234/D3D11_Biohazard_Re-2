@@ -768,6 +768,50 @@ enum class ANIM_UNDISCOVERED_STUND {
 
 #pragma endregion
 
+#pragma region Gimmick
+
+enum class ANIM_GIMMICK_WINDOW {
+	_KNOCK_FROM_F_START,			//	창문 두드리기 ( 닫혔을때 ) => 진입 방향에 따라 창문으로 부터.....
+	_KNOCK_FROM_F_LOOP,
+	_KNOCK_FROM_L_START,
+	_KNOCK_FROM_L_LOOP,
+	_KNOCK_FROM_R_START,
+	_KNOCK_FROM_R_LOOP,
+	_IN1,							//	이미 깨진 창문넘기
+	_IN2,
+	_BREAK_IN1,						//	창문 깨면서 넘기
+	_BREAK_IN2,
+	_BREAK,							//	창문 깨기만 하기
+	_HOLD_OUT_HAND_START1,			//	바리게이트가 쳐진경우 손만 뻗기
+	_HOLD_OUT_HAND_LOOP1,
+	_HOLD_OUT_HAND_END1,
+	_HOLD_OUT_HAND_START2,
+	_HOLD_OUT_HAND_LOOP2,
+	_HOLD_OUT_HAND_END2,
+	_END
+};
+
+enum class ANIM_GIMMICK_DOOR {
+	_KNOCK_FROM_B_START,			//	룩방향의 반대 => 일단 안써도될듯 B타입들
+	_KNOCK_FROM_B_LOOP,
+	_KNOCK_FROM_B_END,				//	치다가 포기
+	_KNOCK_FROM_A_START,
+	_KNOCK_FROM_A_LOOP,
+	_KNOCK_FROM_A_END,
+	_OPEN_FROM_B,
+	_OPEN_FROM_A,					//	치다가 열림
+	_WINDOW_TO_RUB_FROM_B_START,	//	벽에 문대는 애니메이션? 
+	_WINDOW_TO_RUB_FROM_B_LOOP,
+	_WINDOW_TO_RUB_FROM_B_END,
+	_WINDOW_TO_RUB_FROM_A_START,
+	_WINDOW_TO_RUB_FROM_A_LOOP,
+	_WINDOW_TO_RUB_FROM_A_END,
+	_END
+};
+
+
+#pragma endregion 
+
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////

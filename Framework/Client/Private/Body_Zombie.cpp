@@ -625,6 +625,16 @@ HRESULT CBody_Zombie::Add_Animations()
 		return E_FAIL;
 
 #pragma endregion
+
+#pragma region Gimmick Anims
+
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Gimmick_Window"), TEXT("Gimmick_Window"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Gimmick_Door"), TEXT("Gimmick_Door"))))
+		return E_FAIL;
+
+#pragma endregion
+
 	return S_OK;
 }
 
