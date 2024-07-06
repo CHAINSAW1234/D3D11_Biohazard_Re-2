@@ -32,7 +32,7 @@ HRESULT CLever::Initialize(void* pArg)
 		return E_FAIL;
 
 	if (FAILED(Add_PartObjects()))
-		return E_FAIL;	
+		return E_FAIL;
 	
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;	
@@ -73,13 +73,13 @@ void CLever::Tick(_float fTimeDelta)
 		return;
 	}
 
-	if (m_bActivity)
-		m_fTimeDelay += fTimeDelta;
-	if (m_fTimeDelay > 2.f)
+	if (m_eState == LEVER_DOWN)
 	{
-		m_bActivity = false;
 		m_eState = LEVER_RESET;
+		m_pShutter->Set_Shutter_Open_State();
+		return;
 	}
+
 
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity)
 	{
@@ -192,7 +192,7 @@ void CLever::Active()
 	
 	m_eState = LEVER_DOWN;
 	m_pPlayer->Set_Lever_Setting(CPlayer::LEVER_BEHAVE_DOWN, m_pTransformCom->Get_WorldFloat4x4());
-	m_pShutter->Set_Shutter_Open_State();
+	
 }
 
 CLever* CLever::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

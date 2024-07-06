@@ -25,11 +25,10 @@ private:
 	virtual HRESULT				Add_Components();
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
-	HRESULT						Initialize_Model_i44();
 	HRESULT						Initialize_Model();
 public:
 	virtual _float4				Get_Pos(_int iArg = 0) override;
-	virtual void					Get_SpecialBone_Rotation() override;
+	//virtual void					Get_SpecialBone_Rotation() override;
 private:
 	list<_uint>					m_NonHideIndices;
 public:
