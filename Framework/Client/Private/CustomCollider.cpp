@@ -58,7 +58,9 @@ void CCustomCollider::Late_Tick(_float fTimeDelta)
 	if (m_bDead)
 		return;
 #ifdef _DEBUG
+#ifndef NO_COLLISTION
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);
+#endif
 #endif
 
 }

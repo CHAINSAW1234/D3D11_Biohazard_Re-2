@@ -218,6 +218,7 @@ _bool CInteractProps::Visible()
 #ifdef		_DEBUG
 void CInteractProps::Add_Col_DebugCom()
 {
+#ifndef NO_COLLISTION
 	for (size_t i = 0; i < INTER_COL_END; i++)
 	{
 		for (size_t j = 0; j < COL_STEP_END; j++)
@@ -227,6 +228,7 @@ void CInteractProps::Add_Col_DebugCom()
 			m_pGameInstance->Add_DebugComponents(m_pColliderCom[i][j]);
 		}
 	}
+#endif 
 }
 #endif
 
