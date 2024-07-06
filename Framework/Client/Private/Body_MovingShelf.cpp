@@ -59,7 +59,7 @@ HRESULT CBody_MovingShlef::Initialize(void* pArg)
 void CBody_MovingShlef::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-	if (*m_pState == CMovingShelf::SHELF_UPRIGHT && m_pModelCom->isFinished(0))
+	if (*m_pState == CMovingShelf::SHELF_FINISH && m_pModelCom->isFinished(0))
 		return;
 }
 
@@ -67,10 +67,10 @@ void CBody_MovingShlef::Late_Tick(_float fTimeDelta)
 {
 	switch (*m_pState)
 	{
-	case CMovingShelf::SHELF_DOWN:
+	case CMovingShelf::SHELF_MOVE:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		break;
-	case CMovingShelf::SHELF_UPRIGHT:
+	case CMovingShelf::SHELF_FINISH:
 	{
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 

@@ -164,7 +164,6 @@ void CMovingShelf::Active()
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
 	
-	m_eState = SHELF_UPRIGHT;
 
 }
 
