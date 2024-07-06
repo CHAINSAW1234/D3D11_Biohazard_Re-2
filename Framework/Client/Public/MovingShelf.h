@@ -10,6 +10,12 @@ BEGIN(Client)
 class CMovingShelf final : public CInteractProps
 {
 public:
+	enum SHELF_TYPE
+	{
+		SHELF_,
+		SHELF_UPRIGHT,
+		SHELF_END,
+	};
 	enum SHELF_STATE
 	{
 		SHELF_DOWN,
