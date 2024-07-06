@@ -547,6 +547,9 @@
     <Filter Include="02.GameObjects\MapObject\InteractProps\MovingShelf\Body_MovingShelf">
       <UniqueIdentifier>{dbecbce8-dd75-44a7-bb60-112ccd863c83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_state_Move_Lever">
+      <UniqueIdentifier>{bff6a259-79a2-452f-a9e7-819e06a0c52b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1047,6 +1050,9 @@
     <ClInclude Include="..\Public\Body_MovingShelf.h">
       <Filter>02.GameObjects\MapObject\InteractProps\MovingShelf\Body_MovingShelf</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move_Lever.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_state_Move_Lever</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1510,6 +1516,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Body_Lever.cpp">
       <Filter>02.GameObjects\MapObject\InteractProps\Lever\Body_Lever</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_Lever.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_state_Move_Lever</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

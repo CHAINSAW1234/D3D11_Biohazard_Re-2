@@ -400,8 +400,74 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 {
 	m_pSelected_ItemUI->Set_ItemVariation(-1);
 
+	ITEM_NUMBER eUseItemNum = m_pSelected_ItemUI->Get_ItemNumber();
+
+	CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Get_GameObject(LEVEL_GAMEPLAY, TEXT("Layer_Player"), 0));
+
+	switch (eUseItemNum)
+	{
+	case Client::emergencyspray01a: {
+		pPlayer->Set_Hp(5);
+		break;
+	}
+
+	case Client::greenherb01a: {
+		pPlayer->Set_Hp(pPlayer->Get_Hp() + 1);
+		break;
+	}
+
+	case Client::redherb01a: { //내기억으론 이게 단독사용불가
+		break;
+	}
+
+	case Client::blueherb01a: {
+		break;
+	}
+
+	case Client::herbsgg01a: {
+		pPlayer->Set_Hp(pPlayer->Get_Hp() + 3);
+		break;
+	}
+
+	case Client::herbsgr01a: {
+		pPlayer->Set_Hp(pPlayer->Get_Hp() + 3);
+		break;
+	}
+
+	case Client::herbsgb01a: {
+		pPlayer->Set_Hp(pPlayer->Get_Hp() + 1);
+		break;
+	}
+
+	case Client::herbsggb01a: {
+		pPlayer->Set_Hp(pPlayer->Get_Hp() + 3);
+		break;
+	}
+
+	case Client::herbsggg01a: {
+		pPlayer->Set_Hp(5);
+		break;
+	}
+
+	case Client::herbsgrb01a: {
+		pPlayer->Set_Hp(5);
+		break;
+	}
+
+	case Client::herbsrb01a: {
+		break;
+	}
+	case Client::greenherbitem01a:
+	case Client::redherbitem01a:
+	case Client::blueherbitem01a:
+		break;
+	default:
+		break;
+	}
+
 	m_eInven_Manager_State = EVENT_IDLE;
 	m_pContextMenu->Set_Dead(true);
+	m_pSelected_ItemUI->Reset_ItemUI();
 	m_pSelected_ItemUI = nullptr;
 }
 

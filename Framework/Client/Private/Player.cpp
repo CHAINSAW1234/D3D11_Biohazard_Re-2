@@ -1121,7 +1121,7 @@ void CPlayer::Update_Equip()
 			Get_Body_Model()->Set_BlendWeight(3, 10.f, 20.f);
 		}
 		else if (Get_Body_Model()->isFinished(3)) {
-			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.01f) {
+			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.1f) {
 				m_isRequestChangeEquip = false;
 				Get_Body_Model()->Set_Loop(3, true);
 			}
