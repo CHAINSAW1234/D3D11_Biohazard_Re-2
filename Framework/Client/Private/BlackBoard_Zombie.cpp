@@ -229,6 +229,12 @@ CGameObject* CBlackBoard_Zombie::Find_NearestObejct_In_Layer(const wstring& strL
 	return pNearObject;
 }
 
+void CBlackBoard_Zombie::Release_Nearest_Window()
+{
+	Safe_Release(m_pNearest_Window); 
+	m_pNearest_Window = nullptr;
+}
+
 CCustomCollider* CBlackBoard_Zombie::Get_Nearest_Window_CustomCollider()
 {
 	if (nullptr == m_pNearest_Window)
@@ -572,7 +578,7 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Target_8Direction_Local(_fvector 
 	_vector				vDirectionToTargetLocal = { XMVector3TransformNormal(vDirectionToTargetWorld, AIWorldMatrixInv) };
 
 	_bool				isRight = { XMVectorGetX(vDirectionToTargetLocal) > 0.f };
-	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f), vDirectionToTargetLocal)) };
+	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMVector3Normalize(vDirectionToTargetLocal))) };
 	_float				fAngle = { acosf(fDot) };	
 	
 	if (XMConvertToRadians(22.5f) > fAngle)

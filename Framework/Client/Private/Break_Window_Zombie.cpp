@@ -50,7 +50,7 @@ _bool CBreak_Window_Zombie::Execute(_float fTimeDelta)
 
 	//	필요 조건 => 위치 도달, 창문 안깨졌으나 체력 0되는 순간에 Knock에서 이어지게끔, 바리게이트 상관 없음, 
 	MONSTER_STATE		eCurrentMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
-	if (MONSTER_STATE::MST_KNOCK != eCurrentMonsterState)
+	if (MONSTER_STATE::MST_KNOCK_WINDOW != eCurrentMonsterState)
 		return false;
 
 	CWindow*			pWindow = { m_pBlackBoard->Get_Nearest_Window() };

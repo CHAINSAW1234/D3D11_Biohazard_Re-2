@@ -773,9 +773,9 @@ enum class ANIM_UNDISCOVERED_STUND {
 enum class ANIM_GIMMICK_WINDOW {
 	_KNOCK_FROM_F_START,			//	창문 두드리기 ( 닫혔을때 ) => 진입 방향에 따라 창문으로 부터.....
 	_KNOCK_FROM_F_LOOP,
-	_KNOCK_FROM_L_START,
+	_KNOCK_FROM_L_START,			//	창문이 좀비 왼쪽
 	_KNOCK_FROM_L_LOOP,
-	_KNOCK_FROM_R_START,
+	_KNOCK_FROM_R_START,			//	창문이 좀비 오른쪽
 	_KNOCK_FROM_R_LOOP,
 	_IN1,							//	이미 깨진 창문넘기
 	_IN2,

@@ -564,17 +564,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pDeco_Is_Out_Door_Zombie->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_OutDoorCheck->Insert_Decorator_Node(pDeco_Is_Out_Door_Zombie);
 
-	//	TODO:	순서 제어해야함
-
-	//	창문에 미 도달 
-#pragma region Move To Window
-
-	//	 필요조건 => 위치 미 도달
-	CMove_To_Target_Zombie*						pTask_Move_To_Window = { CMove_To_Target_Zombie::Create() };
-	pTask_Move_To_Window->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_OutDoorCheck->Insert_Child_Node(pTask_Move_To_Window);
-
-#pragma endregion		//	Selector Out Door Chekc Child
+	//	TODO:	순서 제어해야함	
 
 #pragma region Selector Is Collision Window Trigger
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
@@ -588,6 +578,10 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//	창문에 도달
 #pragma region BREAK_WINDOW || BREAK_IN_WINDOW || HOLD_OUT_HAND_WINDOW || IN_WINDOW || KNOCK_WINDOW
 
+
+	//	Set_ManualMove true , Release Window	=> Knock Enter
+	//	Set_ManualMove false, Release Window	=> In || Break IN Exit 
+	
 	//	필요 조건 => 위치 도달, 창문 깨짐, 바리게이트 쳐짐
 	CHold_Out_Hand_Window_Zombie*				pTask_Hold_Out_Hand_Window = { CHold_Out_Hand_Window_Zombie::Create() };
 	pTask_Hold_Out_Hand_Window->SetBlackBoard(m_pBlackBoard);
@@ -617,6 +611,16 @@ void CZombie::Init_BehaviorTree_Zombie()
 #pragma endregion		//	Selector Is Collision Window Trigger
 
 #pragma endregion		//	Selector Out Door Check Child
+
+	//	창문에 미 도달 
+#pragma region Move To Window
+
+	//	 필요조건 => 위치 미 도달
+	CMove_To_Target_Zombie* pTask_Move_To_Window = { CMove_To_Target_Zombie::Create() };
+	pTask_Move_To_Window->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_OutDoorCheck->Insert_Child_Node(pTask_Move_To_Window);
+
+#pragma endregion		//	Selector Out Door Chekc Child
 
 #pragma endregion		//	Selector Default Child
 

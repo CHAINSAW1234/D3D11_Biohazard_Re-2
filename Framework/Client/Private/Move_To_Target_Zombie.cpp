@@ -139,7 +139,10 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 	if (true == m_isIncludeRotation)
 		Change_Animation_Include_Rotation(fTimeDelta);
 	else
+	{
 		Change_Animation_Front_Only(fTimeDelta);
+		Turn_To_Window(fTimeDelta);
+	}
 
 	return true;
 }
@@ -546,6 +549,41 @@ void CMove_To_Target_Zombie::Change_Animation_Include_Rotation(_float fTimeDelta
 	}
 
 #pragma endregion
+}
+
+void CMove_To_Target_Zombie::Turn_To_Window(_float fTimeDelta)
+{
+	CWindow*			pWindow = { m_pBlackBoard->Get_Nearest_Window() };
+	if (nullptr == pWindow)
+		return;
+
+	_vector				vWindowPosition = { pWindow->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector				vZombiePosition = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+
+	_vector				vDirectionToWindow = { vWindowPosition - vZombiePosition };
+	_vector				vDirectionToWindowXZPlane = { vDirectionToWindow.m128_f32[1] = 0.f };
+	
+	_matrix				ZombieWorldMatrixInv = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix_Inverse() };
+	_vector				vDirectionToWindowLocalXZPlane = { XMVector3TransformNormal(vDirectionToWindowXZPlane, ZombieWorldMatrixInv) };
+	
+	_bool				isRight = { XMVectorGetX(vDirectionToWindowLocalXZPlane) > 0.f };
+	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f),XMVector3Normalize(vDirectionToWindowLocalXZPlane))) };
+	_float				fAngle = { acosf(fDot) };
+
+	if (fAngle > XMConvertToRadians(5.f))
+	{
+		if (false == isRight)
+			fAngle *= -1.f;
+
+		_matrix			ZombieWorldMatrix = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix() };
+		_vector			vPosition = { ZombieWorldMatrix.r[CTransform::STATE_POSITION] };
+		ZombieWorldMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+		
+		_matrix			RotaionMatrix = { XMMatrixRotationY(XMConvertToRadians(50.f) * fTimeDelta) };
+		ZombieWorldMatrix = ZombieWorldMatrix * RotaionMatrix;
+		ZombieWorldMatrix.r[CTransform::STATE_POSITION] = vPosition;
+		m_pBlackBoard->Get_AI()->Get_Transform()->Set_WorldMatrix(ZombieWorldMatrix);
+	}
 }
 
 _bool CMove_To_Target_Zombie::Is_CurrentAnim_StartAnim(PLAYING_INDEX eIndex)

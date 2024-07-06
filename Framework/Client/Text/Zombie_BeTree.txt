@@ -48,8 +48,9 @@ Task 	Execute Pre Task										|	|		|		Deco 		IsLinkFromMove, Idle		Selector 	M
 																Deco		IsHit(Leg, AllType)					Task		Stun					Task 		Knock_Back
 																Task 		Hold Stun
 
-###		Move To 이용해 문 또는 창문을 향해 가게끔 타겟을 설정하여 무브 태스크를 해결가능하게 개조 필요
-###		Wait등 대기만 Root Selector 에 남기고 나머지는 하위 분기로 하여 Out Door 체크이후 가능하게끔 => 바이트, 무브등 전부 옮기기
+
+###		창문과 상호 작용을 위해 이동부터... 최초 셀렉터에 진입하기위한 트리거 혹은플레이어와의 거리 필요 
+
 
 ###		Turn 만들어야함
 ###		Turn Over 만들어야함

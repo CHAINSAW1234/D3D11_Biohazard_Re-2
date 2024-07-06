@@ -49,7 +49,7 @@ _bool CBreak_In_Window_Zombie::Execute(_float fTimeDelta)
 #pragma endregion
 
 	MONSTER_STATE		eCurrentMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
-	if (MONSTER_STATE::MST_KNOCK != eCurrentMonsterState)
+	if (MONSTER_STATE::MST_KNOCK_WINDOW != eCurrentMonsterState)
 		return false;
 
 	CWindow* pWindow = { m_pBlackBoard->Get_Nearest_Window() };
@@ -80,6 +80,7 @@ void CBreak_In_Window_Zombie::Exit()
 	if (nullptr == m_pBlackBoard)
 		return;
 
+	m_pBlackBoard->Get_AI()->Set_ManualMove(false);
 	m_pBlackBoard->Release_Nearest_Window();
 }
 

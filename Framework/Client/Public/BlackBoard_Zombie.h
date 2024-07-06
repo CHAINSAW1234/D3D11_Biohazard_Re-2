@@ -46,7 +46,7 @@ private:
 
 public:
 	inline class CWindow*			Get_Nearest_Window() { return m_pNearest_Window; }
-	inline void						Release_Nearest_Window() { Safe_Release(m_pNearest_Window); m_pNearest_Window = nullptr; }
+	void							Release_Nearest_Window();
 	class CCustomCollider*			Get_Nearest_Window_CustomCollider();
 
 private:

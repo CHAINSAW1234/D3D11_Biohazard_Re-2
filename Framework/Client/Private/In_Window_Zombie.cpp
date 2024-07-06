@@ -76,6 +76,7 @@ void CIn_Window_Zombie::Exit()
 	if (nullptr == m_pBlackBoard)
 		return;
 
+	m_pBlackBoard->Get_AI()->Set_ManualMove(false);
 	m_pBlackBoard->Release_Nearest_Window();
 }
 

@@ -71,7 +71,7 @@ void CKnock_Door_Zombie::Change_Animation(_float fTimeDelta)
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
 
