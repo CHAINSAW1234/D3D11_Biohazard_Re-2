@@ -57,7 +57,7 @@ private:
 	_bool				m_bActivity = { false };
 	_bool				m_bRightCol = { false };
 
-	_ubyte			m_eState = { LEVER_STATIC };
+	_ubyte			m_eState = { LEVER_RESET };
 
 	class CShutter* m_pShutter = { nullptr };
 
