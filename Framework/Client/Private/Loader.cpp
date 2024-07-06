@@ -7,9 +7,13 @@
 #include "Camera_Event.h"
 
 /* Player */
+#include "Player.h"
 #include "Body_Player.h"
 #include "Head_Player.h"
 #include "Hair_Player.h"
+#include "Weapon.h"
+#include "FlashLight.h"
+#include "Throwing_Weapon.h"
 
 /* Monster */
 #include "Body_Zombie.h"
@@ -19,9 +23,8 @@
 #include "BackGround.h"
 #include "Terrain.h"
 #include "Zombie.h"
-#include "Weapon.h"
-#include "FlashLight.h"
-#include "Player.h"
+
+
 #include "Effect.h"
 #include "Sky.h"
 #include "CustomCollider.h"
@@ -67,9 +70,6 @@
 #include"Body_MovingShelf.h"
 #include"Lever.h"
 #include"Body_Lever.h"
-
-
-
 
 /* UI */
 #include "Customize_UI.h"
@@ -402,6 +402,11 @@ HRESULT CLoader::Load_Prototype()
 	/* For.Prototype_GameObject_Part_Weapon */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Weapon"),
 		CWeapon::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Part_Throwing_Weapon */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Throwing_Weapon"),
+		CThrowing_Weapon::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Part_FlashLight */

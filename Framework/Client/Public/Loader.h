@@ -34,7 +34,6 @@ private:
 	HRESULT Create_Prototypes_Actor();
 	HRESULT Create_Prototypes_CutScene();
 
-
 private:
 	HRESULT Ready_Layer_UI(const wstring& strLayerTag);
 	void UI_Distinction(wstring& selectedFilePath);

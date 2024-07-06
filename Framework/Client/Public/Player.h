@@ -206,7 +206,7 @@ private:
 	EQUIP										m_eTargetEquip = { NONE };						// 플레이어 애님셋 교체에 관련된 장비
 	EQUIP										m_eEquip = { NONE };								// 플레이어 애님셋과 관련된 장비
 	EQUIP										m_eEquip_Gun = { NONE };							// 인벤토리에서 처리하는 장비된 무기
-	EQUIP										m_eEquip_Sub = { NONE };							// 인벤토리에서 처리하는 장비된 Sub무기
+	EQUIP										m_eEquip_Sub = { GRENADE };							// 인벤토리에서 처리하는 장비된 Sub무기
 	_int										m_SetProps[SETPROPS_NONE] = {};
 
 	CWeapon*									m_pWeapon = { nullptr };

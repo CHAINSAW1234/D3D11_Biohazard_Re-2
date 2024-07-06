@@ -26,7 +26,9 @@ private:
 	CPlayer*	m_pPlayer = { nullptr };
 	_float		m_fDegree = { 0.f };
 
+	_bool		m_isStartAnimShot = { false };
 	_bool		m_isShot = { false };
+
 public:
 	static	CPlayer_State_SubHold_Idle* Create(CPlayer* pPlayer);
 	virtual void Free() override;

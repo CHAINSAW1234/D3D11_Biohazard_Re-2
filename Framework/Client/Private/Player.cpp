@@ -12,6 +12,7 @@
 #include "Hair_Player.h"
 
 #include "Weapon.h"
+#include "Throwing_Weapon.h"
 #include "FlashLight.h"
 
 #include "CustomCollider.h"
@@ -832,9 +833,12 @@ void CPlayer::Throw_Sub()
 {
 	m_pTabWindow->UseItem(Get_Equip_As_ITEM_NUMBER(), 1);
 
-	//switch(m_eEquip) {
+	CThrowing_Weapon::THROWING_WEAPON_DESC pDesc;
+	pDesc.worldMatrix = m_pWeapon->Get_WorldMatrix();
+	pDesc.eEquip = m_eEquip;
 
-	//}
+	if (FAILED(m_pGameInstance->Add_Clone(g_Level, TEXT("Layer_Throwing_Weapon"), TEXT("Prototype_GameObject_Throwing_Weapon"), &pDesc)))
+		return;
 
 	NotifyObserver();
 }
