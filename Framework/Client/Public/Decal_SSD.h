@@ -34,12 +34,12 @@ protected:
 	class CVIBuffer_Rect*	m_pVIBufferCom = { nullptr };
 
 protected:
-	_float					m_fSizeX;
-	_float					m_fSizeY;
-	_float					m_fSizeZ;
+	_float					m_fSizeX = { 0.f };
+	_float					m_fSizeY = { 0.f };
+	_float					m_fSizeZ = { 0.f };
 	_float3					m_vExtent;
 	_float4					m_vNormal;
-
+	_int					m_iFrame = { 0 };
 protected:
 	virtual HRESULT			Add_Components();
 	virtual HRESULT			Bind_ShaderResources();

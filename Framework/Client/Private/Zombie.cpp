@@ -358,7 +358,7 @@ void CZombie::Tick(_float fTimeDelta)
 
 				if (CPlayer::EQUIP::STG == eEquip)
 				{
-					vForce = vForce * 2.f;
+					vForce = vForce * 4.f;
 				}
 
 				for (auto& pPartObject : m_PartObjects)
@@ -1386,7 +1386,7 @@ void CZombie::Ready_Effect()
 	for (size_t i = 0; i < SHOTGUN_BLOOD_COUNT; ++i)
 	{
 		auto pBlood = CBlood::Create(m_pDevice, m_pContext);
-		pBlood->SetSize(4.f, 4.f, 4.f);
+		pBlood->SetSize(BIG_ATTACK_BLOOD_SIZE, BIG_ATTACK_BLOOD_SIZE, BIG_ATTACK_BLOOD_SIZE);
 		m_vecBlood_STG.push_back(pBlood);
 	}
 }
@@ -1642,8 +1642,6 @@ void CZombie::SetBlood_STG()
 		pHitNormals->clear();
 		pColliderTypes->clear();
 		pHitParts->clear();
-
-		m_bBigAttack = false;
 	}
 }
 

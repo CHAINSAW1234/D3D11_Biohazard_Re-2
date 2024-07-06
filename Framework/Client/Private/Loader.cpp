@@ -1232,6 +1232,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Decal/Blood_Decal.dds")))))
 		return E_FAIL;
 
+	/*Prototype_Component_Texture_Muzzle_Flash_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Decal_Blood_SSD"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Decal/Blood_%d.png"),11))))
+		return E_FAIL;
+
 	//Muzzle Flash
 	CTexture::TEXTURE_DESC Desc{};
 	Desc.iWidth = 1024;

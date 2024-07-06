@@ -38,6 +38,7 @@ bool g_isMotionBlur;
 StructuredBuffer<float2> g_DecalMap;
 bool		g_DecalRender;
 bool		g_Cloth;
+bool		g_Hair;
 
 struct VS_IN
 {
@@ -333,7 +334,8 @@ PS_OUT PS_MAIN(PS_IN In)
 					{
 						/*decalColor = float4(0.5f, 0.0f, 0.0f, 0.f);
 						Out.vDiffuse = decalColor;*/
-						discard;
+						if(g_Hair == false)
+							discard;
 					}
 					else
 					{
