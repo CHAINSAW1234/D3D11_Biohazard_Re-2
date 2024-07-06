@@ -3,7 +3,7 @@
 /* 어떤 그룹의 애니메이션 인지 Ordinary .... */
 enum class ZOMBIE_BODY_ANIM_GROUP { _ADD, _BITE, _DAMAGE, _DEAD, _LOST, _ORDINARY, _SICK, _UNDISCOVERED, _END};
 /* 어떤 종류의 애니메이션 인지 */
-enum class ZOMBIE_BODY_ANIM_TYPE { _IDLE, _MOVE, _TURN, _BLEND_MASK, _DAMAGE, _DEAD, _BITE, _STAND_UP, _END };	
+enum class ZOMBIE_BODY_ANIM_TYPE { _IDLE, _MOVE, _TURN, _BLEND_MASK, _DAMAGE, _DEAD, _KNOCK, _BITE, _STAND_UP, _END };	
 /* Playing Info Index */
 enum class PLAYING_INDEX { 
 	INDEX_0,	INDEX_1,	INDEX_2,	INDEX_3,	INDEX_4,	INDEX_5,	INDEX_6,	INDEX_7,	INDEX_8,	INDEX_9, 

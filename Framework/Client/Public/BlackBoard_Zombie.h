@@ -26,6 +26,9 @@ private:
 public:
 	virtual HRESULT					Initialize(void* pArg);
 
+private:
+	HRESULT							SetUp_Nearest_Window();
+
 public:
 	virtual void					Priority_Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
@@ -37,6 +40,14 @@ private:
 	void							Update_StandUp_Timer(_float fTimeDelta);
 	void							Update_LightlyHold_Timer(_float fTimeDelta);
 	void							Update_Hold_Timer(_float fTImeDelta);
+
+private:
+	CGameObject*					Find_NearestObejct_In_Layer(const wstring& strLayerTag);
+
+public:
+	inline class CWindow*			Get_Nearest_Window() { return m_pNearest_Window; }
+	inline void						Release_Nearest_Window() { Safe_Release(m_pNearest_Window); m_pNearest_Window = nullptr; }
+	class CCustomCollider*			Get_Nearest_Window_CustomCollider();
 
 private:
 	void							Update_Status(_float fTimeDelta);
@@ -60,7 +71,7 @@ public: // Setter
 	}
 
 public: // Getter
-	class CPlayer*					GetPlayer()
+	class CPlayer*					Get_Player()
 	{
 		return m_pPlayer;
 	}
@@ -104,6 +115,7 @@ public:		/* Public Utility */
 	_bool							Compute_Direction_To_Target_8Direction_Local(_fvector vTargetPosition, DIRECTION* pDirection);
 	_bool							Compute_Direction_To_Target_4Direction_Local(_fvector vTargetPosition, DIRECTION* pDirection);
 
+	_bool							Compute_Distance_To_Target(CGameObject* pTargetObject, _float* pDistance);
 	_bool							Compute_Distance_To_Player(_float* pDistance);
 
 	CTransform*						Get_Transform(CGameObject* pObject);
@@ -130,6 +142,9 @@ protected:
 	class CPathFinder*				m_pPathFinder = { nullptr };
 	class CPlayer*					m_pPlayer = { nullptr };
 	class CZombie*					m_pAI = { nullptr };
+
+private:
+	class CWindow*					m_pNearest_Window = { nullptr };
 
 public:
 	static CBlackBoard_Zombie* Create(void* pArg);

@@ -13,11 +13,13 @@
 #include "Is_Down_Zombie.h"
 #include "Is_Enough_Time_Zombie.h"
 #include "Is_Can_Link_Pre_State_Zombie.h"
+#include "Is_Out_Door_Zombie.h"
+#include "Is_Collision_Prop_Zombie.h"
 
 ///////////////////////////////////////////////////////////////
 //	For. Task
 /* Move */
-#include "Move_Front_Zombie.h"
+#include "Move_To_Target_Zombie.h"
 #include "Pivot_Turn_Zombie.h"
 
 /* Idle */
@@ -42,6 +44,13 @@
 
 /* Bite */
 #include "Bite_Zombie.h"	
+
+/* Interact */
+#include "Break_Window_Zombie.h"
+#include "Break_In_Window_Zombie.h"
+#include "Hold_Out_Hand_Window_Zombie.h"
+#include "In_Window_Zombie.h"
+#include "Knock_Window_Zombie.h"
 
 /* Additional */
 #include "Shake_Skin_Zombie.h"
