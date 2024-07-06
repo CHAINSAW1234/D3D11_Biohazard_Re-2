@@ -109,21 +109,21 @@ public:
 	static wstring								Get_AnimSetEtcName(ANIMSET_ETC eAnimEtcHold) { return strAnimSetEtcName[eAnimEtcHold]; }
 
 	// =============================== GET ===============================
-	CModel*									Get_Body_Model();
-	CModel*									Get_Weapon_Model();
-	_float3*										Get_Body_RootDir();
-	_bool											Get_isBite() { return m_isBite; }
-	_bool											Get_Spotlight() { return m_isSpotlight; }
-	_int											Get_Hp() { return m_iHp; }
+	CModel*										Get_Body_Model();
+	CModel*										Get_Weapon_Model();
+	_float3*									Get_Body_RootDir();
+	_bool										Get_isBite() { return m_isBite; }
+	_bool										Get_Spotlight() { return m_isSpotlight; }
+	_int										Get_Hp() { return m_iHp; }
 	CWeapon*									Get_Weapon() { return m_pWeapon; }
 	EQUIP										Get_Equip() { return m_eEquip; }
-	ITEM_NUMBER							Get_Equip_As_ITEM_NUMBER();
+	ITEM_NUMBER									Get_Equip_As_ITEM_NUMBER();
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
 	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
 	_float4										Get_MuzzlePosition();
 	wstring										Get_BiteLayerTag() { return m_strBiteLayerTag; }
-	_int											Get_BiteAnimIndex() { return m_iBiteAnimIndex; }
-	_int											Get_MaxBullet();
+	_int										Get_BiteAnimIndex() { return m_iBiteAnimIndex; }
+	_int										Get_MaxBullet();
 	// =============================== SET ===============================
 	void										Set_isBite(_bool isBite) { m_isBite = isBite; }
 	void										Set_Spotlight(_bool isSpotlight); 
@@ -136,8 +136,8 @@ public:
 	void										Set_TurnSpineHold(_bool isTurnSpineHold) { m_isTurnSpineHold = isTurnSpineHold;}
 	void										Set_TurnSpineLight(_bool isTurnSpineLight) { m_isTurnSpineLight = isTurnSpineLight; }
 	void										Set_Gravity(_bool isGravity); 
-	void Set_Position(_float4 vPos);
-	void Set_Position(_fvector vPos);
+	void										Set_Position(_float4 vPos);
+	void										Set_Position(_fvector vPos);
 
 	// ============================ CHANGE == SET ============================
 	void										Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex);
@@ -176,8 +176,7 @@ private:
 	// ============================ INITIALIZE ============================
 	HRESULT										Add_FSM_States();
 
-public:
-	void										Swap_Camera();
+	class CCamera_Event* m_pEventCamera;
 
 private:
 	_int										m_iMaxHp = { 5 };
@@ -211,8 +210,6 @@ private:
 
 	CWeapon*									m_pWeapon = { nullptr };
 	vector<CWeapon*>							m_Weapons;
-
-	class CCamera_Event*						m_pCamera_Event = { nullptr };
 
 	friend class CPlayer_State_SubHold_Start;
 	friend class CPlayer_State_Move_Walk;

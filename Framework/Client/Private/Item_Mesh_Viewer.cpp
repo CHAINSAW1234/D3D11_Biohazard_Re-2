@@ -38,7 +38,7 @@ HRESULT CItem_Mesh_Viewer::Initialize(void* pArg)
 
 	m_eViewer_State = POP_UP;
 
-	CGameObject* pCamera = m_pGameInstance->Find_Layer(g_Level, g_strCameraLayer)->front();
+	CGameObject* pCamera = m_pGameInstance->Find_Layer(g_Level, g_strCameraTag)->front();
 	
 	m_pCameraFree = dynamic_cast<CCamera_Free*>(pCamera);
 

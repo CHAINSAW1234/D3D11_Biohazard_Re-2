@@ -37,8 +37,13 @@ struct MCAMIndex {
 
 typedef struct MCAM {
     MCAMHeader CAMHeader;
+    vector<uint16_t> TranslationFrame;
     vector<_float3> Translations;
+
+    vector<uint16_t> RotationFrame;
     vector<_float4> Rotations;
+
+    vector<uint16_t> ZoomFrame;
     vector<_float3> Zooms;
 } MCam;
 

@@ -344,21 +344,21 @@ PS_OUT PS_MAIN(PS_IN In)
 						}
 					}
 				}
-			}
-			else
-			{
-				if (distance < 0.2f)
-				{
-					/*decalColor = float4(0.5f, 0.0f, 0.0f, 0.f);
-					Out.vDiffuse = decalColor;*/
-					discard;
-				}
 				else
 				{
-					if (decalColor.a > 0.01f)
+					if (distance < 0.3f)
 					{
-						decalColor = float4(0.3f, 0.0f, 0.0f, 1.f);
-						Out.vDiffuse = decalColor;
+						/*decalColor = float4(0.5f, 0.0f, 0.0f, 0.f);
+						Out.vDiffuse = decalColor;*/
+						discard;
+					}
+					else
+					{
+						if (decalColor.a > 0.01f)
+						{
+							decalColor = float4(0.3f, 0.0f, 0.0f, 1.f);
+							Out.vDiffuse = decalColor;
+						}
 					}
 				}
 			}
