@@ -550,6 +550,12 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_state_Move_Lever">
       <UniqueIdentifier>{bff6a259-79a2-452f-a9e7-819e06a0c52b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Player\Throwing_Weapon">
+      <UniqueIdentifier>{7932d5c4-c561-44d0-bbc7-8ac5c40fa85c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Throwing_Weapon\Throwing_Weapon_Pin">
+      <UniqueIdentifier>{a0751512-f55f-46fe-8537-8ab61e2cb592}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1053,6 +1059,12 @@
     <ClInclude Include="..\Public\Player_State_Move_Lever.h">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_state_Move_Lever</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Throwing_Weapon.h">
+      <Filter>02.GameObjects\Player\Throwing_Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Throwing_Weapon_Pin.h">
+      <Filter>02.GameObjects\Player\Throwing_Weapon\Throwing_Weapon_Pin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1519,6 +1531,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_State_Move_Lever.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_state_Move_Lever</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Throwing_Weapon.cpp">
+      <Filter>02.GameObjects\Player\Throwing_Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Throwing_Weapon_Pin.cpp">
+      <Filter>02.GameObjects\Player\Throwing_Weapon\Throwing_Weapon_Pin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

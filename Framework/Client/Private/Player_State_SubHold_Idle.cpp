@@ -22,20 +22,29 @@ void CPlayer_State_SubHold_Idle::OnStateEnter()
 	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
 
 	m_isShot = false;
+	m_isStartAnimShot = false;
 }
 
 void CPlayer_State_SubHold_Idle::OnStateUpdate(_float fTimeDelta)
 {
 	m_fDegree = m_pPlayer->Get_CamDegree();
 
-	if (m_isShot) {
-		if (0) {
-			Shot();
+	if (m_isStartAnimShot) {
+		if (!m_isShot) {
+			// 특정 타이밍에 던짐
+			if ((m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::HOLD_SHOT &&
+				m_pPlayer->Get_Body_Model()->Get_TrackPosition(0) >= 25.f) ||
+				(m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::HOLD_SHOT_NO_AMMO &&
+					m_pPlayer->Get_Body_Model()->Get_TrackPosition(0) >= 30.f)) {
+				m_isShot = true;
+				Shot();
+			}
 		}
 
-		if(m_pPlayer->Get_Body_Model()->isFinished(0) && 
+		// 특정 애니메이션 종료 체크
+		if (m_pPlayer->Get_Body_Model()->isFinished(0) &&
 			((m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::HOLD_SHOT) ||
-			m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::HOLD_SHOT_NO_AMMO)) {
+				m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0) == CPlayer::HOLD_SHOT_NO_AMMO)) {
 			m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
 			//m_pPlayer->Get_Body_Model()->Set_BlendWeight(3, 0.f, 5.f);
 			m_pPlayer->Change_State(CPlayer::MOVE);
@@ -158,13 +167,13 @@ void CPlayer_State_SubHold_Idle::Start_Shot()
 		else {
 			m_pPlayer->Change_Body_Animation_Hold(0, CPlayer::HOLD_SHOT_NO_AMMO);
 		}
-
-		m_isShot = true;
+		m_isStartAnimShot = true;
 	}
 }
 
 void CPlayer_State_SubHold_Idle::Shot()
 {
+	m_pPlayer->Throw_Sub();
 	//여기서 수류탄 생성
 	// 	
 }

@@ -224,6 +224,7 @@
     <ClInclude Include="..\Public\Decal_SSD.h" />
     <ClInclude Include="..\Public\Effect_Header_Zombie.h" />
     <ClInclude Include="..\Public\Creep_Zombie.h" />
+    <ClInclude Include="..\Public\Throwing_Weapon.h" />
     <ClInclude Include="..\Public\Is_Can_Link_Pre_State_Zombie.h" />
     <ClInclude Include="..\Public\Clothes_Zombie.h" />
     <ClInclude Include="..\Public\ContextMenu.h" />
@@ -322,6 +323,7 @@
     <ClInclude Include="..\Public\Tab_Window.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\Public\TextBox.h" />
+    <ClInclude Include="..\Public\Throwing_Weapon_Pin.h" />
     <ClInclude Include="..\Public\Title_UI.h" />
     <ClInclude Include="..\Public\Turn_Over_Zombie.h" />
     <ClInclude Include="..\Public\Turn_Spine_Head_Zombie.h" />
@@ -423,6 +425,7 @@
     <ClCompile Include="..\Private\Cut_Scene_CF93.cpp" />
     <ClCompile Include="..\Private\Damage_UI.cpp" />
     <ClCompile Include="..\Private\Decal_SSD.cpp" />
+    <ClCompile Include="..\Private\Throwing_Weapon.cpp" />
     <ClCompile Include="..\Private\Is_Can_Link_Pre_State_Zombie.cpp" />
     <ClCompile Include="..\Private\Clothes_Zombie.cpp" />
     <ClCompile Include="..\Private\ContextMenu.cpp" />
@@ -517,6 +520,7 @@
     <ClCompile Include="..\Private\Tab_Window.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\Private\TextBox.cpp" />
+    <ClCompile Include="..\Private\Throwing_Weapon_Pin.cpp" />
     <ClCompile Include="..\Private\Title_UI.cpp" />
     <ClCompile Include="..\Private\Turn_Over_Zombie.cpp" />
     <ClCompile Include="..\Private\Turn_Spine_Head_Zombie.cpp" />
