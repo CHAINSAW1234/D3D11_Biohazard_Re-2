@@ -507,6 +507,11 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Target_8Direction_Local(_fvector 
 {
 	_bool				isSuccess = { false };
 
+	if (nullptr == pDirection)
+		return isSuccess;
+
+	isSuccess = true;
+
 	_vector				vAIPosition = { m_pAI->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
 	_vector				vDirectionToTargetWorld = { XMVector3Normalize(vTargetPosition - vAIPosition) };
 
@@ -515,8 +520,7 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Target_8Direction_Local(_fvector 
 
 	_bool				isRight = { XMVectorGetX(vDirectionToTargetLocal) > 0.f };
 	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f), vDirectionToTargetLocal)) };
-	_float				fAngle = { acosf(fDot) };
-
+	_float				fAngle = { acosf(fDot) };	
 	
 	if (XMConvertToRadians(22.5f) > fAngle)
 	{
@@ -554,9 +558,6 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Target_8Direction_Local(_fvector 
 	{
 		*pDirection = DIRECTION::_B;
 	}
-
-	if (false == isSuccess)
-		*pDirection = DIRECTION::_END;
 
 	return isSuccess;
 }

@@ -21,6 +21,8 @@ HRESULT CActor_PartObject::Initialize(void* pArg)
 	ACTOR_PART_DESC*				pDesc = { static_cast<ACTOR_PART_DESC*>(pArg) };
 	m_pRootTranslation = pDesc->pRootTranslation;
 	m_isBaseObject = pDesc->isBaseObject;
+	if(false == pDesc->AnimPrototypeLayerTags.empty())
+		m_strAnimLayerTag = pDesc->AnimPrototypeLayerTags.front();
 
 	if (FAILED(__super::Initialize(pDesc)))
 		return E_FAIL;
@@ -36,12 +38,7 @@ HRESULT CActor_PartObject::Initialize(void* pArg)
 	m_pModelCom->Add_AnimPlayingInfo(true, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Set_OptimizationCulling(false);
 	m_pModelCom->Set_Loop(0, false);
-
-	if (false == m_pModelCom->Get_AnimationLayer_Tags().empty())
-	{
-		wstring				strAnimLayerTag = { m_pModelCom->Get_AnimationLayer_Tags().front() };
-		m_pModelCom->Change_Animation(0, strAnimLayerTag, 0);
-	}
+	m_pModelCom->Change_Animation(0, m_strAnimLayerTag, 0);
 
 	return S_OK;
 }
@@ -63,11 +60,16 @@ void CActor_PartObject::Late_Tick(_float fTimeDelta)
 	if (true == m_isBaseObject)
 	{
 		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+		//	if (m_strAnimLayerTag != TEXT(""))
+		//		m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 	}
 	else
 	{
 		_float3				vTempDirection = {};
 		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempDirection);
+
+		//if(m_strAnimLayerTag != TEXT(""))
+		//	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 	}
 	
 

@@ -25,6 +25,8 @@ HRESULT CActor::Initialize(void* pArg)
         return E_FAIL;
 
     ACTOR_DESC*             pDesc = { static_cast<ACTOR_DESC*>(pArg) };
+    m_iNumParts = pDesc->iNumParts;
+    m_iBasePartIndex = pDesc->iBasePartIndex;
 
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
@@ -33,6 +35,9 @@ HRESULT CActor::Initialize(void* pArg)
         return E_FAIL;
 
     if (FAILED(Add_Components()))
+        return E_FAIL;
+
+    if (FAILED(Initialize_PartObjects()))
         return E_FAIL;
 
     m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);

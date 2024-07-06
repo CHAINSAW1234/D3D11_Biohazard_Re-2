@@ -1017,6 +1017,12 @@
     <ClInclude Include="..\Public\Cut_Scene_CF93.h">
       <Filter>02.GameObjects\Cut_Scene\Cut_Scene_CF93</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Actor_PL00.h">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_PL00</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Actor_EM00.h">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_EM00</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1462,6 +1468,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Cut_Scene_CF93.cpp">
       <Filter>02.GameObjects\Cut_Scene\Cut_Scene_CF93</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Actor_PL00.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_PL00</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Actor_EM00.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_EM00</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

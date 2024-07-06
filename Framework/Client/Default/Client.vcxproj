@@ -186,7 +186,9 @@
     <ClInclude Include="..\..\imguilib\imstb_truetype.h" />
     <ClInclude Include="..\..\imguilib\ImZoomSlider.h" />
     <ClInclude Include="..\Public\Actor.h" />
+    <ClInclude Include="..\Public\Actor_EM00.h" />
     <ClInclude Include="..\Public\Actor_PartObject.h" />
+    <ClInclude Include="..\Public\Actor_PL00.h" />
     <ClInclude Include="..\Public\Actor_PL78.h" />
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\Public\Bite_Zombie.h" />
@@ -382,7 +384,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Private\Actor.cpp" />
+    <ClCompile Include="..\Private\Actor_EM00.cpp" />
     <ClCompile Include="..\Private\Actor_PartObject.cpp" />
+    <ClCompile Include="..\Private\Actor_PL00.cpp" />
     <ClCompile Include="..\Private\Actor_PL78.cpp" />
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\Bite_Zombie.cpp" />

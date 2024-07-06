@@ -5,6 +5,8 @@
 #include "Cut_Scene_CF93.h"
 
 #include "Actor_PL78.h"
+#include "Actor_PL00.h"
+#include "Actor_EM00.h"
 
 CCut_Scene_CF93::CCut_Scene_CF93(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCut_Scene{ pDevice, pContext }
@@ -36,12 +38,28 @@ HRESULT CCut_Scene_CF93::Add_Actors()
 {
 	m_Actors.resize(static_cast<size_t>(CF93_ACTOR_TYPE::_END));
 
-	CActor::ACTOR_DESC			ActorDesc;
-	XMStoreFloat4x4(&ActorDesc.worldMatrix, XMMatrixScaling(0.01f, 0.01f, 0.01f));
-	ActorDesc.iBasePartIndex = static_cast<_uint>(CActor_PL78::ACTOR_PL78_PART::_BODY);
-	ActorDesc.iNumParts = static_cast<_uint>(CActor_PL78::ACTOR_PL78_PART::_END);
+	CActor::ACTOR_DESC			Actor_PL7800_Desc;
+	XMStoreFloat4x4(&Actor_PL7800_Desc.worldMatrix, XMMatrixScaling(0.01f, 0.01f, 0.01f));
+	Actor_PL7800_Desc.iBasePartIndex = static_cast<_uint>(CActor_PL78::ACTOR_PL78_PART::_BODY);
+	Actor_PL7800_Desc.iNumParts = static_cast<_uint>(CActor_PL78::ACTOR_PL78_PART::_END);
 	
-	if (FAILED(Add_Actor(TEXT("Prototype_GameObject_Actor_PL7800"), static_cast<_uint>(CF93_ACTOR_TYPE::_PL_7800), &ActorDesc)))
+	if (FAILED(Add_Actor(TEXT("Prototype_GameObject_Actor_PL7800"), static_cast<_uint>(CF93_ACTOR_TYPE::_PL_7800), &Actor_PL7800_Desc)))
+		return E_FAIL;
+
+	CActor::ACTOR_DESC			Actor_PL0000_Desc;
+	XMStoreFloat4x4(&Actor_PL0000_Desc.worldMatrix, XMMatrixScaling(0.01f, 0.01f, 0.01f));
+	Actor_PL0000_Desc.iBasePartIndex = static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY);
+	Actor_PL0000_Desc.iNumParts = static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_END);
+
+	if (FAILED(Add_Actor(TEXT("Prototype_GameObject_Actor_PL0000"), static_cast<_uint>(CF93_ACTOR_TYPE::_PL_0000), &Actor_PL0000_Desc)))
+		return E_FAIL;
+
+	CActor::ACTOR_DESC			Actor_EM0000_Desc;
+	XMStoreFloat4x4(&Actor_EM0000_Desc.worldMatrix, XMMatrixScaling(0.01f, 0.01f, 0.01f));
+	Actor_EM0000_Desc.iBasePartIndex = static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY);
+	Actor_EM0000_Desc.iNumParts = static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_END);
+
+	if (FAILED(Add_Actor(TEXT("Prototype_GameObject_Actor_EM0000"), static_cast<_uint>(CF93_ACTOR_TYPE::_EM_0000), &Actor_EM0000_Desc)))
 		return E_FAIL;
 
 	return S_OK;

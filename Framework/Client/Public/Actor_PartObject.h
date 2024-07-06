@@ -46,6 +46,7 @@ private:
 	CShader*				m_pShaderCom = { nullptr };
 	_bool					m_isBaseObject = { false };
 	_bool					m_isPause_Anim = { false };
+	wstring					m_strAnimLayerTag = { TEXT("") };
 
 private:
 	HRESULT					Add_Components(const wstring& strModelPrototypeTag);

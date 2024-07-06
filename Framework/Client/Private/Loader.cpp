@@ -29,6 +29,8 @@
 
 /* Actor */
 #include "Actor_PL78.h"
+#include "Actor_PL00.h"
+#include "Actor_EM00.h"
 
 /* CutScene */
 #include "Cut_Scene_CF93.h"
@@ -858,7 +860,15 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 HRESULT CLoader::Create_Prototypes_Actor()
 {
-	if(FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_PL7800"),
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_EM0000"),
+		CActor_EM00::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_PL0000"),
+		CActor_PL00::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_PL7800"),
 		CActor_PL78::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 

@@ -8,7 +8,7 @@ BEGIN(Client)
 class CCut_Scene_CF93 final : public CCut_Scene
 {
 public:
-	enum class CF93_ACTOR_TYPE{ _PL_7800, _END };
+	enum class CF93_ACTOR_TYPE{ _PL_0000, _PL_7800, _EM_0000, _END };
 
 private:
 	CCut_Scene_CF93(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
