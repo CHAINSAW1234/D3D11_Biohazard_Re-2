@@ -171,19 +171,17 @@ HRESULT CBody_Shutter::Initialize_PartObjects()
 void CBody_Shutter::Shutter_Normal_Late_Tick(_float fTimeDelta)
 {
 
-	//switch (*m_eNormalState)
-	//{
-	//case CShutter::SHUTTER_OPEN:
-	//	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_eNormalState);
-	//	break;
-	//case CShutter::SHUTTER_OPEN_STATIC:
-	//	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_eNormalState);
-	//	break;
-	//case CShutter::SHUTTER_STATIC:
-	//	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_eNormalState);
-	//	break;
-	//}
-	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
+	switch (*m_eNormalState)
+	{
+	case CShutter::SHUTTER_OPEN:
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_eNormalState);
+		break;
+	case CShutter::SHUTTER_STATIC:
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_eNormalState);
+		break;
+	}
+
+
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
@@ -197,26 +195,25 @@ void CBody_Shutter::Shutter_033_Late_Tick(_float fTimeDelta)
 {
 	switch (*m_e033State)
 	{
-	case CShutter::SHTTER_033_CLOSED:
-		//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // Àß¾Ë¾Æ°©´Ï´Ù ²¨¾ï
+	case CShutter::SHUTTER_033_CLOSED:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
 		break;
-	case CShutter::SHTTER_033_FULL_CLOSED:
+	case CShutter::SHUTTER_033_FULL_CLOSED:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
 		break;
-	case CShutter::SHTTER_033_FULL_OPEN:
+	case CShutter::SHUTTER_033_FULL_OPEN:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
 		break;
-	case CShutter::SHTTER_033_FULL_OPENED:
+	case CShutter::SHUTTER_033_FULL_OPENED:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
 		break;
-	case CShutter::SHTTER_033_HALF_CLOSED:
+	case CShutter::SHUTTER_033_HALF_CLOSED:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
 		break;
-	case CShutter::SHTTER_033_HALF_OPEN:
+	case CShutter::SHUTTER_033_HALF_OPEN:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
 		break;
-	case CShutter::SHTTER_033_HALF_OPENED:
+	case CShutter::SHUTTER_033_HALF_OPENED:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e033State);
 		break;
 	}
@@ -230,20 +227,19 @@ void CBody_Shutter::Shutter_034_Late_Tick(_float fTimeDelta)
 {
 	switch (*m_e034State)
 	{
-	case CShutter::SHTTER_034_CLOSED:
-		//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // Àß¾Ë¾Æ°©´Ï´Ù ²¨¾ï
+	case CShutter::SHUTTER_034_CLOSED:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e034State);
 		break;
-	case CShutter::SHTTER_034_END:
+	case CShutter::SHUTTER_034_END:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e034State);
 		break;
-	case CShutter::SHTTER_034_OPEN:
+	case CShutter::SHUTTER_034_OPEN:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e034State);
 		break;
-	case CShutter::SHTTER_034_OPENED:
+	case CShutter::SHUTTER_034_OPENED:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e034State);
 		break;
-	case CShutter::SHTTER_034_START:
+	case CShutter::SHUTTER_034_START:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_e034State);
 		break;
 	}

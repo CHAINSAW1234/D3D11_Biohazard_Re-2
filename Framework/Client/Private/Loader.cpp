@@ -57,15 +57,16 @@
 #include"Body_Statue.h"
 #include"Shutter.h"
 #include"Body_Shutter.h"
-
 #include"ItemLocker.h"
 #include"Body_ItemLocker.h"
-
 #include"Ladder.h"
 #include"Body_Ladder.h"
-
 #include"ReaderMachine.h"
 #include"Body_ReaderMachine.h"
+#include"MovingShelf.h"
+#include"Body_MovingShelf.h"
+#include"Lever.h"
+#include"Body_Lever.h"
 
 
 
@@ -802,11 +803,19 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("zombiewindow")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Window::Create(m_pDevice, m_pContext));
+
 		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm40_016")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Ladder::Create(m_pDevice, m_pContext));
 
 		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm40")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Door::Create(m_pDevice, m_pContext));
+		
+		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_162")) != wstring::npos) && (bDo = true))
+			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Lever::Create(m_pDevice, m_pContext));		
+
+		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_162")) != wstring::npos) && (bDo = true))
+			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Lever::Create(m_pDevice, m_pContext));
+
 		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_024_newpolicestatue01a")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_NewpoliceStatue::Create(m_pDevice, m_pContext));
 		if (!bDo &&
@@ -814,6 +823,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_011")) != wstring::npos))
 			&& (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Cabinet::Create(m_pDevice, m_pContext));
+
 		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm7")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_ItemProp::Create(m_pDevice, m_pContext));	
 		if (!bDo && (
@@ -823,6 +833,10 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			(Inform->wstrGameObjectPrototypeName.find(TEXT("sm60_033")) != wstring::npos)
 			) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Shutter::Create(m_pDevice, m_pContext));
+
+
+
+
 		if (!bDo &&Inform->bAnim&& (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_EventProp::Create(m_pDevice, m_pContext));
 
@@ -855,6 +869,9 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ItemLocker"), CItemLocker::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Ladder"), CLadder::Create(m_pDevice, m_pContext));
+
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Lever"), CLever::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MovingShelf"), CMovingShelf::Create(m_pDevice, m_pContext));
 
 
 	m_pGameInstance->Set_ModelTags(TEXT("ItemModel_Tags"), ItemModelTags);
@@ -1772,12 +1789,16 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	m_strLoadingText = TEXT("Now Loading ... Object");
 
+
 #pragma region YeEun Add
 #ifdef MAP_NOTHING
-
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
+		return E_FAIL;
 #endif
 #ifdef MAP_JUSTMAP
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_Map/Make_Prototype.dat"))))
+		return E_FAIL;
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
 		return E_FAIL;
 #endif
 #ifdef MAP_INTERACT
@@ -1786,6 +1807,8 @@ HRESULT CLoader::Loading_For_GamePlay()
 #endif 
 #ifdef MAP_NONANIMOBJ
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_NonAnim/Make_Prototype.dat"))))
+		return E_FAIL;
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
 		return E_FAIL;
 #endif 
 #pragma endregion
