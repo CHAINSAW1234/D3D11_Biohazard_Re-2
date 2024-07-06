@@ -1,5 +1,6 @@
 #include "..\Public\Layer.h"
 #include "GameObject.h"
+#include "Camera.h"
 
 CLayer::CLayer()
 {
@@ -97,6 +98,21 @@ CGameObject* CLayer::Get_GameObject(_uint iIndex)
 list<class CGameObject*>* CLayer::Get_ObjectList_Ptr()
 {
 	return &m_GameObjects;
+}
+
+void CLayer::Active_Camera(CCamera* pCamera)
+{
+	for (auto& pGameObject : m_GameObjects)
+	{
+		CCamera* pCurCamera = static_cast<CCamera*>(pGameObject);
+		if (pCurCamera == pCamera) {
+			pCurCamera->Active_Camera(true);
+		}
+		else
+		{
+			pCurCamera->Active_Camera(false);
+		}
+	}
 }
 
 CLayer * CLayer::Create()

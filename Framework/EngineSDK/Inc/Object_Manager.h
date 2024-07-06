@@ -30,6 +30,9 @@ public:
 	void												Clear(_uint iLevelIndex);
 	void												Release_Layer(_uint iLevelIndex, const wstring& LayerTag);
 	class CLayer*										Find_Layer(_uint iLevelIndex, const wstring& strLayerTag);
+
+	void												Active_Camera(_uint iLevelIndex, class CCamera* pCamera);
+
 private:	
 	map<const wstring, class CGameObject*>				m_Prototypes;
 

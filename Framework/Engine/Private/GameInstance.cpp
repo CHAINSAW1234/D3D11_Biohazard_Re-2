@@ -567,6 +567,10 @@ void CGameInstance::Start()
 {
 	return m_pObject_Manager->Start();
 }
+void CGameInstance::Active_Camera(_uint iLevelIndex, CCamera* pCamera)
+{
+	return m_pObject_Manager->Active_Camera(iLevelIndex, pCamera);
+}
 #pragma endregion
 
 #pragma region Component_Manager

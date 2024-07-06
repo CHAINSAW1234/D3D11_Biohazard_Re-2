@@ -111,6 +111,11 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
+	if (m_pGameInstance->Get_KeyState('T') == DOWN) {
+		m_pEventCamera->Set_PlayCamlist(TEXT("cf093"));	
+	}
+
+
 	if (m_pGameInstance->IsPaused())
 	{
 		fTimeDelta = 0.f;
@@ -1439,12 +1444,6 @@ void CPlayer::Turn_Spine_Light(_float fTimeDelta)
 	}
 }
 
-void CPlayer::Swap_Camera()
-{
-	m_pCamera->Active_Camera(!m_pCamera->Get_IsActive());
-	m_pCamera_Event->Active_Camera(!m_pCamera_Event->Get_IsActive());
-}
-
 void CPlayer::SetMoveDir()
 {
 	//F
@@ -1980,7 +1979,7 @@ void CPlayer::Calc_Camera_LookAt_Point(_float fTimeDelta)
 HRESULT CPlayer::Ready_Camera()
 {
 	if (m_pCamera == nullptr)
-		m_pCamera = dynamic_cast<CCamera_Free*>(*(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, g_strCameraLayer)).begin());
+		m_pCamera = dynamic_cast<CCamera_Free*>(*(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, g_strCameraTag)).begin());
 
 	if (m_pCamera == nullptr)
 		return E_FAIL;
@@ -2017,19 +2016,10 @@ HRESULT CPlayer::Ready_Camera()
 	m_fLerpAmount_Right = m_fRight_Dist_Pos;
 	m_fLerpAmount_Up = m_fUp_Dist_Pos;
 
-	if (m_pCamera_Event == nullptr)
-		m_pCamera_Event = dynamic_cast<CCamera_Event*>(*++(*m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, g_strCameraLayer)).begin());
-
-	if (m_pCamera_Event == nullptr)
-		return E_FAIL;
-
-	m_pCamera_Event->SetPlayer(this);
-	//m_pCamera_Event->Set_DefaultMatrix(m_pCamera->Get_Transform()->Get_WorldFloat4x4());
-	m_pCamera_Event->Set_SocketMatrix(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("neck_0")));
-	//m_pCamera_Event->Set_SocketMatrix(const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("r_backVest_start")));
-
 	m_pCamera->Bind_PipeLine();
 
+	m_pEventCamera = (CCamera_Event*)m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 1);
+	m_pEventCamera->Add_CamList(TEXT("cf093"), TEXT("../Bin/DataFiles/mcamlist/cf093.mcamlist.13"));
 	return S_OK;
 }
 

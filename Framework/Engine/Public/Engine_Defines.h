@@ -116,6 +116,7 @@ namespace Engine
 {
 	const wstring g_strTransformTag = TEXT("Com_Transform");
 	const wstring g_strModelTag = TEXT("Com_Model");
+	const wstring g_strCameraTag = TEXT("Layer_ZZZCamera");
 	const wstring g_strDirectionalTag = TEXT("LIGHT_SUN");
 	const wstring g_strFontTag = TEXT("Font_Default");
 }
