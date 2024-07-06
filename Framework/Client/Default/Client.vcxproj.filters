@@ -268,15 +268,6 @@
     <Filter Include="02.GameObjects\Player\Hair">
       <UniqueIdentifier>{06a26c20-e93f-491c-9f17-a6dabe0d4021}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Start">
-      <UniqueIdentifier>{05f4945a-b9b9-4d32-a535-3119459f1f29}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Reject">
-      <UniqueIdentifier>{873bfd2c-2169-4cf0-afdd-07942314c419}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Kill">
-      <UniqueIdentifier>{7a4d43e5-b41b-4ce9-8d91-07ffc20ccbf4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Effect\Muzzle_Flash">
       <UniqueIdentifier>{f75f75e3-3ac4-46fb-a428-5ac0cd54c644}</UniqueIdentifier>
     </Filter>
@@ -555,6 +546,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Player\Throwing_Weapon\Throwing_Weapon_Pin">
       <UniqueIdentifier>{a0751512-f55f-46fe-8537-8ab61e2cb592}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Shelf">
+      <UniqueIdentifier>{79cc0506-18e0-4ff7-89e7-bebc8eb8436c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1065,6 +1059,9 @@
     <ClInclude Include="..\Public\Throwing_Weapon_Pin.h">
       <Filter>02.GameObjects\Player\Throwing_Weapon\Throwing_Weapon_Pin</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move_Shelf.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Shelf</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1537,6 +1534,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Throwing_Weapon_Pin.cpp">
       <Filter>02.GameObjects\Player\Throwing_Weapon\Throwing_Weapon_Pin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_Shelf.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Shelf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

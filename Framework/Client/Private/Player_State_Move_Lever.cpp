@@ -43,7 +43,6 @@ void CPlayer_State_Move_Lever::OnStateEnter()
 	_vector vLeverLook = XMVector3Normalize(m_LeverTransform.Forward());
 	m_LeverTransform._41 += XMVectorGetX(vLeverLook) * 0.5f;
 	m_LeverTransform._43 += XMVectorGetZ(vLeverLook) * 0.5f;
-
 }
 
 void CPlayer_State_Move_Lever::OnStateUpdate(_float fTimeDelta)

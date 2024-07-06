@@ -126,7 +126,7 @@ void CPlayer_State_Move_Ladder::Idle()
 			return;
 		}
 
-		CPlayer::ANIMASTION_COMMON iCurrentAnimIndex = (CPlayer::ANIMASTION_COMMON)m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0);
+		CPlayer::ANIMATION_COMMON iCurrentAnimIndex = (CPlayer::ANIMATION_COMMON)m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0);
 
 		switch (iCurrentAnimIndex) {
 		case CPlayer::LADDER_UP_FINE_L:

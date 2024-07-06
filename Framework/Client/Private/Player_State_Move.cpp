@@ -123,7 +123,7 @@ void CPlayer_State_Move::Update_State()
 	}
 
 	if (m_pPlayer->Get_Lever_Setting() != CPlayer::LEVER_BEHAVE_NOTHING) {
-		if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == DOWN) {
+		if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == PRESSING) {
 			Change_State(LEVER);
 			return;
 		}
