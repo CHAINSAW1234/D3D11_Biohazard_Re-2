@@ -798,7 +798,6 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			Inform->bAnim = true;
 
 			_matrix Ininitmatrix  = XMMatrixRotationY(XMConvertToRadians(180.f));
-
 			m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, Inform->strModelPath.c_str(), Ininitmatrix));
 		}
 		else

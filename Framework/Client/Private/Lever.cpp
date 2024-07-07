@@ -67,25 +67,31 @@ void CLever::Tick(_float fTimeDelta)
 #endif
 #endif
 
-	//if (m_eState == LEVER_RESET)
-	//{
-	//	__super::Tick(fTimeDelta);
-	//	return;
-	//}
+	if (m_eState == LEVER_RESET)
+	{
+		__super::Tick(fTimeDelta);
+		return;
+	}
 	_bool bTrue = { false };
 	if (m_bActivity)
 		m_fTimeDelay += fTimeDelta;
-	if (m_fTimeDelay > 1.5f)
+	if (m_fTimeDelay > 3.5f)
 	{
 		m_fTimeDelay = 0.f;
 		bTrue = true;
 	}
-	if (m_eState == LEVER_DOWN&& bTrue)
+	if (m_eState == LEVER_DOWN && bTrue)
 	{
 		m_eState = LEVER_RESET;
+		return;
+	}
+	if (m_fTimeDelay > 2.f)
+	{
 		m_pShutter->Set_Shutter_Open_State();
 		return;
 	}
+
+	
 
 
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity)
