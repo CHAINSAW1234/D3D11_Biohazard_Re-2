@@ -24,7 +24,6 @@ public:
 
 private:
 	void							Change_Animation(_float fTimeDelta);
-	void							Set_TargetInterpolate_Matrix();
 
 public:
 	inline void						SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }

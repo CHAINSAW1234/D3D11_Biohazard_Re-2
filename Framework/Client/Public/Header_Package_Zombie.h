@@ -16,6 +16,7 @@
 #include "Is_In_Door_Zombie.h"
 #include "Is_Out_Door_Zombie.h"
 #include "Is_Collision_Prop_Zombie.h"
+#include "Is_Start_Zombie.h"
 
 ///////////////////////////////////////////////////////////////
 //	For. Task
@@ -53,8 +54,13 @@
 #include "In_Window_Zombie.h"
 #include "Knock_Window_Zombie.h"
 
+#include "Open_Door_Zombie.h"
+#include "Knock_Door_Zombie.h"
+#include "Rub_Door_Zombie.h"
+
 /* Additional */
 #include "Shake_Skin_Zombie.h"
 
 /* Utility */
 #include "Execute_PreTask_Zombie.h"
+#include "Start_Zombie.h"

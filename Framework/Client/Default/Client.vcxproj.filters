@@ -595,6 +595,12 @@
     <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_In_Door">
       <UniqueIdentifier>{4ee562f4-75b3-493a-872b-72a7e802463e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Start">
+      <UniqueIdentifier>{2508d06a-d437-42e1-929b-9ba1e2f04ee9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Start">
+      <UniqueIdentifier>{058c9192-1076-44bf-9d92-1e678b756b23}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1143,6 +1149,12 @@
     <ClInclude Include="..\Public\Is_In_Door_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_In_Door</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Is_Start_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Start</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Start_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Start</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1654,6 +1666,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Is_In_Door_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_In_Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Is_Start_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Start_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Start</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

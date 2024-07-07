@@ -3,6 +3,7 @@
 #include "Open_Door_Zombie.h"
 #include "BlackBoard_Zombie.h"
 
+#include "Door.h"
 #include "Player.h"
 #include "Zombie.h"
 #include "Body_Zombie.h"
@@ -26,14 +27,41 @@ void COpen_Door_Zombie::Enter()
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	CModel*				pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
 
+	CDoor*				pDoor = { m_pBlackBoard->Get_Nearest_Door() };
+	if (nullptr == pDoor)
+		return;
+
+	_float3				vDirectionFromDoorLocalFloat3 = {};
+	if (false == m_pBlackBoard->Compute_Direction_From_Target_Local(pDoor, &vDirectionFromDoorLocalFloat3))
+		return;
+
+	_bool				isDoorsFront = { vDirectionFromDoorLocalFloat3.z > 0.f };
+	if (true == isDoorsFront)
+	{
+		m_iAnimIndex = static_cast<_int>(ANIM_GIMMICK_DOOR::_OPEN_FROM_A);
+	}
+
+	else
+	{
+		m_iAnimIndex = static_cast<_int>(ANIM_GIMMICK_DOOR::_OPEN_FROM_B);
+	}
+
+	if (false == m_pBlackBoard->Compute_DeltaMatrix_AnimFirstKeyFrame_From_Target(pDoor->Get_Transform(), static_cast<_uint>(m_eBasePlayingIndex), m_iAnimIndex, m_strAnimLayerTag, &m_InterpolateDeltaMatrix))
+	{
+#ifdef _DEBUG 
+		MSG_BOX(TEXT("Called void COpen_Door_Zombie::Enter() Failed Compute Delta Matrix"));
+#endif 
+		return;
+	}
+
+	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
+
 #ifdef _DEBUG
-
-	cout << "Enter Knock Door" << endl;
-
+	cout << "Enter Open Door" << endl;
 #endif 
 }
 
@@ -47,13 +75,70 @@ _bool COpen_Door_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
-	if (false == m_pBlackBoard->Is_LookTarget())
+	CDoor* pDoor = { m_pBlackBoard->Get_Nearest_Door() };
+	if (nullptr == pDoor)
 		return false;
+
+	MONSTER_STATE			ePreMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
+	if (MONSTER_STATE::MST_OPEN_DOOR == ePreMonsterState)
+	{
+		CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+		if (nullptr == pBody_Model)
+			return false;
+
+		_int			iAnimIndex = { pBody_Model->Get_CurrentAnimIndex(static_cast<_uint>(m_eBasePlayingIndex)) };
+		wstring			strAnimLayerTag = { pBody_Model->Get_CurrentAnimLayerTag(static_cast<_uint>(m_eBasePlayingIndex)) };
+
+		_bool			isSameAnimLayer = { strAnimLayerTag == m_strAnimLayerTag };
+		_bool			isSameAnimIndex = { iAnimIndex == m_iAnimIndex };
+
+		if (isSameAnimIndex && isSameAnimLayer)
+		{
+			if (true == pBody_Model->isFinished(static_cast<_uint>(m_eBasePlayingIndex)))
+				return false;			
+		}
+	}
+
+	else
+	{
+		//	필요 조건 => 문 닫힘 ( 체력 1 => 1대치면 열림), 문잠기지않음		
+		_int				iDoorHP = { pDoor->Get_HP() };
+		_bool				isDoorCanOpen = { 1 == iDoorHP };
+		if (false == isDoorCanOpen)
+			return false;
+
+		if (true == pDoor->Is_Lock())
+			return false;
+	}	
 
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->Set_State(MONSTER_STATE::MST_WALK);
+	pAI->Set_State(MONSTER_STATE::MST_OPEN_DOOR);
+
+	pDoor->Attack_Prop();
+
+	if (m_fAccLinearInterpolateTime < ZOMBIE_DOOR_OPEN_TOTAL_INTERPOLATE_TO_WINDOW_TIME)
+	{
+		_bool				isComplete = { m_fAccLinearInterpolateTime >= ZOMBIE_DOOR_OPEN_TOTAL_INTERPOLATE_TO_WINDOW_TIME };
+		if (false == isComplete)
+		{
+			_float				fTime = fTimeDelta;
+			m_fAccLinearInterpolateTime += fTime;
+
+			if (m_fAccLinearInterpolateTime >= ZOMBIE_DOOR_OPEN_TOTAL_INTERPOLATE_TO_WINDOW_TIME)
+			{
+				fTime -= m_fAccLinearInterpolateTime - ZOMBIE_DOOR_OPEN_TOTAL_INTERPOLATE_TO_WINDOW_TIME;
+			}
+			_float				fRatio = { fTime / ZOMBIE_DOOR_OPEN_TOTAL_INTERPOLATE_TO_WINDOW_TIME };
+
+			if (false == isComplete)
+			{
+				if (false == m_pBlackBoard->Apply_Devide_Delta_Matrix(fRatio, XMLoadFloat4x4(&m_InterpolateDeltaMatrix)))
+					return false;
+			}
+		}
+	}
 
 	Change_Animation(fTimeDelta);
 
@@ -64,6 +149,9 @@ void COpen_Door_Zombie::Exit()
 {
 	if (nullptr == m_pBlackBoard)
 		return;
+
+	m_pBlackBoard->Get_AI()->Set_ManualMove(false);
+	m_pBlackBoard->Release_Nearest_Door();
 }
 
 void COpen_Door_Zombie::Change_Animation(_float fTimeDelta)
@@ -71,11 +159,12 @@ void COpen_Door_Zombie::Change_Animation(_float fTimeDelta)
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
-	if (nullptr == pBodyModel)
+	CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	if (nullptr == pBody_Model)
 		return;
 
-	_int			iResultAnimationIndex = { -1 };
+	pBody_Model->Change_Animation(static_cast<_uint>(m_eBasePlayingIndex), m_strAnimLayerTag, m_iAnimIndex);
+	pBody_Model->Set_Loop(static_cast<_uint>(m_eBasePlayingIndex), false);
 
 #pragma endregion
 }
@@ -98,3 +187,4 @@ void COpen_Door_Zombie::Free()
 {
 	__super::Free();
 }
+

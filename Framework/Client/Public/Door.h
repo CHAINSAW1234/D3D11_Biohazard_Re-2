@@ -89,6 +89,11 @@ public:
 			return false;
 	}
 
+public:
+	inline _int							Get_HP() { return m_iHP; }
+	inline _bool						Is_Lock() { return m_bLock; }
+	inline class CCustomCollider*		Get_CustomCollider_Ptr() { return m_pMyCustomCollider; }
+
 private:
 	_bool					m_bLock =	{ false };
 
@@ -103,6 +108,10 @@ private:
 	_ubyte   			m_eDoubleState = { DOUBLEDOOR_STATIC };
 	_ubyte   			m_eDoubleState_Prev = { DOUBLEDOOR_STATIC };
 	_ubyte				m_eDoubleDoorType;
+
+	class CCustomCollider*				m_pMyCustomCollider = { nullptr };
+
+
 public:
 	static CDoor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

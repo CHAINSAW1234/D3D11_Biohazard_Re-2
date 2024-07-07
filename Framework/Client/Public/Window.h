@@ -50,7 +50,7 @@ private:
 
 public:
 	inline _int					Get_HP_Body() { return m_iHP[PART_BODY]; }
-	inline _bool				Is_Set_Barrigate() { return /*m_bBarrigate;*/ true; }
+	inline _bool				Is_Set_Barrigate() { return m_bBarrigate; }
 	inline class CCustomCollider*		Get_CustomCollider_Ptr() { return m_pMyCustomCollider; }
 
 private:

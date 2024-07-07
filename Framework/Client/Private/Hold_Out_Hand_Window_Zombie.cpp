@@ -42,8 +42,25 @@ void CHold_Out_Hand_Window_Zombie::Enter()
 		m_eAnimType = ANIM_TYPE::_2;
 	}
 
+	CWindow*			pWindow = { m_pBlackBoard->Get_Nearest_Window() };
+	if (nullptr == pWindow)
+		return;
+
+	_int			iAnimIndex = { -1 };
+	if (m_eAnimType == ANIM_TYPE::_1)
+	{
+		iAnimIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_HOLD_OUT_HAND_START1);
+	}
+
+	else if (m_eAnimType == ANIM_TYPE::_2)
+	{
+		iAnimIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_HOLD_OUT_HAND_START2);
+	}
+
+	if (false == m_pBlackBoard->Compute_DeltaMatrix_AnimFirstKeyFrame_From_Target(pWindow->Get_Transform(), static_cast<_uint>(m_eBasePlayingIndex), iAnimIndex, m_strAnimLayerTag, &m_DeltaInterpolateMatrix))
+		return;
+
 	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
-	Set_TargetInterpolate_Matrix();
 
 #ifdef _DEBUG
 
@@ -165,24 +182,8 @@ _bool CHold_Out_Hand_Window_Zombie::Execute(_float fTimeDelta)
 
 			if (false == isComplete)
 			{
-				_matrix				InterpolationMatrix = { XMLoadFloat4x4(&m_DeltaInterpolateMatrix) };
-
-				_vector				vScale, vQuaternion, vTranslation;
-				XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, InterpolationMatrix);
-
-				_vector				vDevideQuaternion = { XMQuaternionSlerp(XMQuaternionIdentity(), XMQuaternionNormalize(vQuaternion), fRatio) };
-				_vector				vDevideTranslation = { XMVectorSetW(vTranslation * fRatio, 0.f) };
-
-
-				_matrix				WorldMatrix = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix() };
-				_vector				vWorldScale, vWorldQuaternion, vWorldTranslation;
-				XMMatrixDecompose(&vWorldScale, &vWorldQuaternion, &vWorldTranslation, WorldMatrix);
-
-				_vector				vResultQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(vWorldQuaternion), XMQuaternionNormalize(vDevideQuaternion)) };
-				_vector				vResultTranslation = { XMVectorSetW(vWorldTranslation + vDevideTranslation, 1.f) };
-
-				_matrix				AplliedMatrix = { XMMatrixAffineTransformation(vWorldScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vResultQuaternion, vResultTranslation) };
-				m_pBlackBoard->Get_AI()->Get_Transform()->Set_WorldMatrix(AplliedMatrix);
+				if (false == m_pBlackBoard->Apply_Devide_Delta_Matrix(fRatio, XMLoadFloat4x4(&m_DeltaInterpolateMatrix)))
+					return false;
 			}
 		}
 	}
@@ -265,64 +266,6 @@ void CHold_Out_Hand_Window_Zombie::Change_Animation(_float fTimeDelta)
 	pBodyModel->Set_Loop(static_cast<_uint>(m_eBasePlayingIndex), isLoop);
 
 #pragma endregion
-}
-
-void CHold_Out_Hand_Window_Zombie::Set_TargetInterpolate_Matrix()
-{
-	CWindow* pWindow = { m_pBlackBoard->Get_Nearest_Window() };
-	if (nullptr == pWindow)
-		return;
-
-	_matrix			WindowWorldMatrix = { pWindow->Get_Transform()->Get_WorldMatrix() };
-	_matrix			Zombie_WorldMatrix = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix() };
-
-	_vector			vZombieScale, vZombieQuaternion, vZombieTranslation;
-	_vector			vWindowScale, vWindowQuaternion, vWindowTranslation;
-
-	XMMatrixDecompose(&vZombieScale, &vZombieQuaternion, &vZombieTranslation, Zombie_WorldMatrix);
-	XMMatrixDecompose(&vWindowScale, &vWindowQuaternion, &vWindowTranslation, WindowWorldMatrix);
-
-	_matrix			TargetWorldMatrix = { XMMatrixAffineTransformation(vZombieScale, XMVectorSet(0.f, 0.f, 0.f ,1.f), vWindowQuaternion, vWindowTranslation) };
-
-	CModel* pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
-
-	vector<CAnimation*>		Animations = { pBody_Model->Get_Animations(m_strAnimLayerTag) };
-
-	_int			iAnimIndex = { -1 };
-	if (m_eAnimType == ANIM_TYPE::_1)
-	{
-		iAnimIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_HOLD_OUT_HAND_START1);
-	}
-
-	else if(m_eAnimType == ANIM_TYPE::_2)
-	{
-		iAnimIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_HOLD_OUT_HAND_START2);
-	}
-
-	_matrix			RootFirstKeyFrameMatrix = { pBody_Model->Get_FirstKeyFrame_Root_TransformationMatrix(m_strAnimLayerTag, iAnimIndex) };
-	_matrix			ModelTransformMatrix = { XMLoadFloat4x4(&pBody_Model->Get_TransformationMatrix()) };
-
-	_vector					vRootScale, vRootQuaternion, vRootTranslation;
-	XMMatrixDecompose(&vRootScale, &vRootQuaternion, &vRootTranslation, RootFirstKeyFrameMatrix);
-
-	vRootTranslation = XMVector3TransformNormal(vRootTranslation, ModelTransformMatrix);
-
-	_vector			vRootRotateAxis = { XMVectorSetW(vRootQuaternion, 0.f) };
-	vRootRotateAxis = XMVector3TransformNormal(vRootRotateAxis, ModelTransformMatrix);
-	vRootQuaternion = XMVectorSetW(vRootRotateAxis, XMVectorGetW(vRootQuaternion));
-	RootFirstKeyFrameMatrix = XMMatrixAffineTransformation(vRootScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRootQuaternion, vRootTranslation);
-
-	_matrix			InterpolateTargetMatrix = { RootFirstKeyFrameMatrix * TargetWorldMatrix };
-
-	_vector			vInterpolateScale, vInterpolateQuaternion, vInterpolateTranslation;
-	XMMatrixDecompose(&vInterpolateScale, &vInterpolateQuaternion, &vInterpolateTranslation, InterpolateTargetMatrix);
-
-	_vector			vDeltaQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(XMQuaternionInverse(vZombieQuaternion)), XMQuaternionNormalize(vInterpolateQuaternion)) };
-	_vector			vDeltaTranslation = { vInterpolateTranslation - vZombieTranslation };
-
-	_matrix			DeltaMatrix = { XMMatrixAffineTransformation(vZombieScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vDeltaQuaternion, vDeltaTranslation) };
-
-	XMStoreFloat4x4(&m_DeltaInterpolateMatrix, DeltaMatrix);
 }
 
 CHold_Out_Hand_Window_Zombie* CHold_Out_Hand_Window_Zombie::Create(void* pArg)

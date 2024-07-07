@@ -51,7 +51,7 @@ protected:
 
 	_bool							m_isIncludeRotation = { false };
 
-	CGameObject*					m_pTargetObejct = { nullptr };
+	CGameObject*					m_pTargetObject = { nullptr };
 
 	unordered_map<wstring, unordered_set<_uint>>			m_StartAnimIndicesLayer;
 	unordered_map<wstring, unordered_set<_uint>>			m_LoopAnimIndicesLayer;

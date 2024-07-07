@@ -26,7 +26,6 @@ HRESULT CMove_To_Target_Zombie::Initialize(void* pArg)
 	//	Tooter 局丛 贸府 鞘夸 
 	//	Turning 局丛 贸府 鞘夸
 
-
 	/* For.Brach Start */
 	unordered_set<_uint>			OrdinaryStairWalkStartIndices;
 	OrdinaryStairWalkStartIndices.emplace(static_cast<_uint>(ANIM_ORDINARY_STAIRS_WALK::_START));
@@ -117,7 +116,10 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 		if (fMaxMoveAngle < fAngleToTarget)
 			return false;
 
-		m_pTargetObejct = m_pBlackBoard->Get_Player();
+		Safe_Release(m_pTargetObject);
+
+		m_pTargetObject = m_pBlackBoard->Get_Player();
+		Safe_AddRef(m_pTargetObject);
 		m_isIncludeRotation = true;
 	}
 
@@ -127,7 +129,10 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 		if (nullptr == pNearestWindow)
 			return false;		
 
-		m_pTargetObejct = pNearestWindow;
+		Safe_Release(m_pTargetObject);
+
+		m_pTargetObject = pNearestWindow;
+		Safe_AddRef(m_pTargetObject);
 		m_isIncludeRotation = false;
 	}	
 
@@ -674,5 +679,5 @@ void CMove_To_Target_Zombie::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pTargetObejct);
+	Safe_Release(m_pTargetObject);
 }

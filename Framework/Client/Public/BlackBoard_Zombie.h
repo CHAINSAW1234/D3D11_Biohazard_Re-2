@@ -28,6 +28,7 @@ public:
 
 private:
 	HRESULT							SetUp_Nearest_Window();
+	HRESULT							SetUp_Nearest_Door();
 
 public:
 	virtual void					Priority_Tick(_float fTimeDelta) override;
@@ -42,12 +43,18 @@ private:
 	void							Update_Hold_Timer(_float fTImeDelta);
 
 private:
-	CGameObject*					Find_NearestObejct_In_Layer(const wstring& strLayerTag);
+	CGameObject*					Find_NearestObejct_In_Layer_SameFloor(const wstring& strLayerTag);
 
 public:
 	inline class CWindow*			Get_Nearest_Window() { return m_pNearest_Window; }
 	void							Release_Nearest_Window();
 	class CCustomCollider*			Get_Nearest_Window_CustomCollider();
+
+public:
+	void							Research_NearestDoor();
+	inline class CDoor*				Get_Nearest_Door() { return m_pNearest_Door; }
+	void							Release_Nearest_Door();
+	class CCustomCollider*			Get_Nearest_Door_CustomCollider();
 
 private:
 	void							Update_Status(_float fTimeDelta);
@@ -101,8 +108,14 @@ public:		/* Public Utility */
 	_bool							Compute_Direction_To_Player_World(_float3* pDirection);
 	_bool							Compute_Direction_To_Player_Local(_float3* pDirection);
 
+	_bool							Compute_Direction_To_Target_World(CGameObject* pTargetObject, _float3* pDirection);
+	_bool							Compute_Direction_To_Target_Local(CGameObject* pTargetObject, _float3* pDirection);
+
 	_bool							Compute_Direction_From_Player_World(_float3* pDirection);
 	_bool							Compute_Direction_From_Player_Local(_float3* pDirection);
+
+	_bool							Compute_Direction_From_Target_World(CGameObject* pTargetObject, _float3* pDirection);
+	_bool							Compute_Direction_From_Target_Local(CGameObject* pTargetObject, _float3* pDirection);
 
 	_bool							Compute_Direction_From_Hit_World(_float3* pDirection);
 	_bool							Compute_Direction_From_Hit_Local(_float3* pDirection);
@@ -117,6 +130,10 @@ public:		/* Public Utility */
 
 	_bool							Compute_Distance_To_Target(CGameObject* pTargetObject, _float* pDistance);
 	_bool							Compute_Distance_To_Player(_float* pDistance);
+
+
+	_bool							Compute_DeltaMatrix_AnimFirstKeyFrame_From_Target(CTransform* pTargetTransform, _uint iPlayingIndex, _int iAnimIndex, const wstring& strAnimLayerTag, _float4x4* pDeltaMatrix);
+	_bool							Apply_Devide_Delta_Matrix(_float fRatio, _fmatrix DeltaMatrx);
 
 	CTransform*						Get_Transform(CGameObject* pObject);
 	CTransform*						Get_Transform_AI();
@@ -145,6 +162,7 @@ protected:
 
 private:
 	class CWindow*					m_pNearest_Window = { nullptr };
+	class CDoor*					m_pNearest_Door = { nullptr };
 
 public:
 	static CBlackBoard_Zombie* Create(void* pArg);

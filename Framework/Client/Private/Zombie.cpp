@@ -57,7 +57,16 @@ HRESULT CZombie::Initialize(void* pArg)
 
 	ZOMBIE_DESC*						pDesc = (ZOMBIE_DESC*)pArg;
 
-	m_isOutDoor = pDesc->isOutDoor;
+	m_isOutDoor = pDesc->isOutDoor = false;
+	m_eStartType = pDesc->eStart_Type = ZOMBIE_START_TYPE::_DOOR_RUB;
+
+	if (ZOMBIE_START_TYPE::_END == m_eStartType)
+	{
+#ifdef _DEBUG
+		MSG_BOX(TEXT("Called : HRESULT CZombie::Initialize(void* pArg)  Zombie Start Type 미설정 "));
+#endif
+		return E_FAIL;
+	}
 
 	ZOMBIE_BODY_TYPE					eBodyType = { pDesc->eBodyModelType };
 
@@ -555,6 +564,26 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 #pragma endregion		//	Selector Root Child
 
+#pragma region		Selector Start Set Up
+
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	CComposite_Node* pSelectorNode_Start_SetUp = { CComposite_Node::Create(&CompositeNodeDesc) };
+	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_Start_SetUp);
+
+	CIs_Start_Zombie* pDeco_Is_Start = { CIs_Start_Zombie::Create() };
+	pDeco_Is_Start->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Start_SetUp->Insert_Decorator_Node(pDeco_Is_Start);
+
+#pragma region		//	Task Start
+
+	CStart_Zombie* pTask_Start = { CStart_Zombie::Create() };
+	pTask_Start->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Start_SetUp->Insert_Child_Node(pTask_Start);	
+	
+#pragma endregion	//	Selector Start Set Up Child
+
+#pragma endregion
+
 #pragma region Selector Default 
 
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
@@ -651,6 +680,40 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CIs_In_Door_Zombie* pDeco_Is_In_Door_Zombie = { CIs_In_Door_Zombie::Create() };
 	pDeco_Is_In_Door_Zombie->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_InDoorCheck->Insert_Decorator_Node(pDeco_Is_In_Door_Zombie);
+
+#pragma region Selector Interact Door 
+
+	//	문과 충돌중인지...
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	CComposite_Node* pSelectorNode_Interact_Door = { CComposite_Node::Create(&CompositeNodeDesc) };
+	pSelectorNode_Default->Insert_Child_Node(pSelectorNode_Interact_Door);
+
+	CIs_Collision_Prop_Zombie* pDeco_Is_Collision_Door_Trigger = { CIs_Collision_Prop_Zombie::Create(CIs_Collision_Prop_Zombie::COLL_PROP_TYPE::_DOOR, CIs_Collision_Prop_Zombie::RETURN_TYPE::_STARARIGHT) };
+	pDeco_Is_Collision_Door_Trigger->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Interact_Door->Insert_Decorator_Node(pDeco_Is_Collision_Door_Trigger);
+
+#pragma region Door Interact OPEN || KNOCK || RUB
+
+	//	문이 잠겨있어야함
+	CRub_Door_Zombie* pTask_Rub_Door = { CRub_Door_Zombie::Create() };
+	pTask_Rub_Door->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Interact_Door->Insert_Child_Node(pTask_Rub_Door);
+
+	//	필요 조건 => 문 닫힘 ( 체력 1 => 1대치면 열림), 문잠기지않음		
+	COpen_Door_Zombie* pTask_Open_Door = { COpen_Door_Zombie::Create() };
+	pTask_Open_Door->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Interact_Door->Insert_Child_Node(pTask_Open_Door);
+
+	//	필요 조건 => 문 안열리고 막타이상이어야함 ( HP1 초과... ), 문이 잠기지않음
+	CKnock_Door_Zombie* pTask_Knock_Door = { CKnock_Door_Zombie::Create() };
+	pTask_Knock_Door->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Interact_Door->Insert_Child_Node(pTask_Knock_Door);	
+
+#pragma endregion		//	Selector Interact Door Child
+
+#pragma endregion
+
+#pragma region		//	Selector Check InDoor Child
 
 #pragma region BITE
 

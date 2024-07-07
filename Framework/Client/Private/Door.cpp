@@ -64,6 +64,18 @@ void CDoor::Start()
 			// 내 인덱스 넣어주기
 			_int* iNum = static_cast<CCustomCollider*>(iter)->Node_InteractProps();
 			*iNum = m_tagPropDesc.iIndex;
+
+			//	 ++ 참조
+			m_pMyCustomCollider = static_cast<CCustomCollider*>(iter);
+			Safe_AddRef(m_pMyCustomCollider);
+
+#ifdef _DEBUG
+			if (nullptr == m_pMyCustomCollider)
+			{
+				MSG_BOX(TEXT("Called : void CWindow::Start() Custom Collider 못 찾 음"));
+			}
+#endif
+			break;
 		}
 	}
 }
@@ -634,4 +646,6 @@ CGameObject* CDoor::Clone(void* pArg)
 void CDoor::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pMyCustomCollider);
 }

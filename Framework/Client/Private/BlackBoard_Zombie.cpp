@@ -5,6 +5,7 @@
 #include "Zombie.h"
 
 #include "Window.h"
+#include "Door.h"
 
 CBlackBoard_Zombie::CBlackBoard_Zombie()
 	: CBlackBoard()
@@ -38,15 +39,30 @@ HRESULT CBlackBoard_Zombie::Initialize(void* pArg)
 
 HRESULT CBlackBoard_Zombie::SetUp_Nearest_Window()
 {
-	if (false == m_pAI->Is_OutDoor())
+	if (ZOMBIE_START_TYPE::_OUT_DOOR != m_pAI->Get_StartType())
 		return S_OK;
 
-	CWindow*		pWindow = { dynamic_cast<CWindow*>(Find_NearestObejct_In_Layer(TEXT("Layer_Window"))) };
+	CWindow*		pWindow = { dynamic_cast<CWindow*>(Find_NearestObejct_In_Layer_SameFloor(TEXT("Layer_Window"))) };
 	if (nullptr == pWindow)
 		return E_FAIL;
 
 	m_pNearest_Window = pWindow;
 	Safe_AddRef(pWindow);
+
+	return S_OK;
+}
+
+HRESULT CBlackBoard_Zombie::SetUp_Nearest_Door()
+{
+	if (ZOMBIE_START_TYPE::_DOOR_RUB != m_pAI->Get_StartType())
+		return S_OK;
+
+	CDoor*		pDoor = { dynamic_cast<CDoor*>(Find_NearestObejct_In_Layer_SameFloor(TEXT("Layer_Door"))) };
+	if (nullptr == pDoor)
+		return E_FAIL;
+
+	m_pNearest_Door = pDoor;
+	Safe_AddRef(pDoor);
 
 	return S_OK;
 }
@@ -204,7 +220,7 @@ void CBlackBoard_Zombie::Update_Hold_Timer(_float fTImeDelta)
 	}
 }
 
-CGameObject* CBlackBoard_Zombie::Find_NearestObejct_In_Layer(const wstring& strLayerTag)
+CGameObject* CBlackBoard_Zombie::Find_NearestObejct_In_Layer_SameFloor(const wstring& strLayerTag)
 {
 	if (nullptr == m_pAI)
 		return nullptr;
@@ -212,11 +228,46 @@ CGameObject* CBlackBoard_Zombie::Find_NearestObejct_In_Layer(const wstring& strL
 	_float			fNearestDistance = { 100000.f };
 	CGameObject*	pNearObject = { nullptr };
 
+	MAP_FLOOR_TYPE			eZombieFloor = { MAP_FLOOR_TYPE::FLOOR_END };
+
+	_matrix			WorldMatrix = { m_pAI->Get_Transform()->Get_WorldMatrix() };
+	_float			fWorldPositionY = { WorldMatrix.r[CTransform::STATE_POSITION].m128_f32[1] };
+	if (fWorldPositionY >= -1.f && fWorldPositionY < 3.2f)
+		eZombieFloor = MAP_FLOOR_TYPE::FLOOR_1;
+
+	else if (fWorldPositionY < 8.5f)
+		eZombieFloor = MAP_FLOOR_TYPE::FLOOR_2;
+
+	else if (fWorldPositionY < 11.5f)
+		eZombieFloor = MAP_FLOOR_TYPE::FLOOR_3;
+
+	else
+		eZombieFloor = MAP_FLOOR_TYPE::FLOOR_FREE;
+
 	list<CGameObject*>* pTargetLayer = { m_pGameInstance->Find_Layer(g_Level, strLayerTag) };
 	for (auto& pGameObject : *pTargetLayer)
 	{
 		_float			fDistance = {};
 		if (false == Compute_Distance_To_Target(pGameObject, &fDistance))
+			continue;
+
+		MAP_FLOOR_TYPE			eTargetFloor = { MAP_FLOOR_TYPE::FLOOR_END };
+
+		_matrix			TargetWorldMatrix = { pGameObject->Get_Transform()->Get_WorldMatrix() };
+		_float			fTargetWorldPositionY = { TargetWorldMatrix.r[CTransform::STATE_POSITION].m128_f32[1] };
+		if (fTargetWorldPositionY >= -1.f && fTargetWorldPositionY < 3.2f)
+			eTargetFloor = MAP_FLOOR_TYPE::FLOOR_1;
+
+		else if (fTargetWorldPositionY < 8.5f)
+			eTargetFloor = MAP_FLOOR_TYPE::FLOOR_2;
+
+		else if (fTargetWorldPositionY < 11.5f)
+			eTargetFloor = MAP_FLOOR_TYPE::FLOOR_3;
+
+		else
+			eTargetFloor = MAP_FLOOR_TYPE::FLOOR_FREE;
+
+		if (eTargetFloor != eZombieFloor)
 			continue;
 
 		if (fDistance < fNearestDistance)
@@ -241,6 +292,28 @@ CCustomCollider* CBlackBoard_Zombie::Get_Nearest_Window_CustomCollider()
 		return nullptr;
 
 	return m_pNearest_Window->Get_CustomCollider_Ptr();
+}
+
+void CBlackBoard_Zombie::Research_NearestDoor()
+{
+	Safe_Release(m_pNearest_Door);
+
+	m_pNearest_Door = static_cast<CDoor*>(Find_NearestObejct_In_Layer_SameFloor(TEXT("Layer_Door")));
+	Safe_AddRef(m_pNearest_Door);
+}
+
+void CBlackBoard_Zombie::Release_Nearest_Door()
+{
+	Safe_Release(m_pNearest_Door);
+	m_pNearest_Door = nullptr;
+}
+
+CCustomCollider* CBlackBoard_Zombie::Get_Nearest_Door_CustomCollider()
+{
+	if (nullptr == m_pNearest_Door)
+		return nullptr;
+
+	return m_pNearest_Door->Get_CustomCollider_Ptr();
 }
 
 void CBlackBoard_Zombie::Update_Status(_float fTimeDelta)
@@ -318,11 +391,11 @@ _uint CBlackBoard_Zombie::Get_Pre_MotionType_Body()
 	if (nullptr == m_pAI)
 		return static_cast<_uint>(MOTION_TYPE::MOTION_END);
 
-	CPartObject* pPartObject = { m_pAI->Get_PartObject(CMonster::PART_BODY) };
+	CPartObject*		pPartObject = { m_pAI->Get_PartObject(CMonster::PART_BODY) };
 	if (nullptr == pPartObject)
 		return static_cast<_uint>(MOTION_TYPE::MOTION_END);
 
-	CBody_Zombie* pBodyObject = { dynamic_cast<CBody_Zombie*>(pPartObject) };
+	CBody_Zombie*		pBodyObject = { dynamic_cast<CBody_Zombie*>(pPartObject) };
 	if (nullptr == pBodyObject)
 		return static_cast<_uint>(MOTION_TYPE::MOTION_END);
 
@@ -443,6 +516,37 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Player_Local(_float3* pDirection)
 	return true;
 }
 
+_bool CBlackBoard_Zombie::Compute_Direction_To_Target_World(CGameObject* pTargetObject, _float3* pDirection)
+{
+	if (nullptr == pTargetObject || nullptr == pDirection)
+		return false;
+
+	_vector				vTargetPosition = { pTargetObject->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector				vZombiePosition = { m_pAI->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+
+	_vector				vDirectionToTarget = { vTargetPosition - vZombiePosition };
+
+	XMStoreFloat3(pDirection, vDirectionToTarget);
+
+	return true;
+}
+
+_bool CBlackBoard_Zombie::Compute_Direction_To_Target_Local(CGameObject* pTargetObject, _float3* pDirection)
+{
+	if (nullptr == pTargetObject || nullptr == pDirection)
+		return false;
+
+	if (false == Compute_Direction_To_Target_World(pTargetObject, pDirection))
+		return false;
+
+	_matrix				ZombieWorldMatrixInverse = { m_pAI->Get_Transform()->Get_WorldMatrix_Inverse() };
+	_vector				vDirectionToTargetLocal = { XMVector3TransformNormal(XMLoadFloat3(pDirection), ZombieWorldMatrixInverse) };
+	
+	XMStoreFloat3(pDirection, vDirectionToTargetLocal);
+	
+	return true;
+}
+
 _bool CBlackBoard_Zombie::Compute_Direction_From_Player_World(_float3* pDirection)
 {
 	_bool				isSuccess = { false };
@@ -479,6 +583,37 @@ _bool CBlackBoard_Zombie::Compute_Direction_From_Player_Local(_float3* pDirectio
 	_matrix				WorldMatrixInv = { pPlayerTransform->Get_WorldMatrix_Inverse() };
 	_vector				vLocalDirection = { XMVector3TransformNormal(vWorldDirection, WorldMatrixInv) };
 	XMStoreFloat3(pDirection, vLocalDirection);
+
+	return true;
+}
+
+_bool CBlackBoard_Zombie::Compute_Direction_From_Target_World(CGameObject* pTargetObject, _float3* pDirection)
+{
+	if (nullptr == pTargetObject || nullptr == pDirection)
+		return false;
+
+	_vector				vTargetPosition = { pTargetObject->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector				vZombiePosition = { m_pAI->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+
+	_vector				vDirectionFromTarget = { vZombiePosition - vTargetPosition };
+
+	XMStoreFloat3(pDirection, vDirectionFromTarget);
+
+	return true;
+}
+
+_bool CBlackBoard_Zombie::Compute_Direction_From_Target_Local(CGameObject* pTargetObject, _float3* pDirection)
+{
+	if (nullptr == pTargetObject || nullptr == pDirection)
+		return false;
+
+	if (false == Compute_Direction_From_Target_World(pTargetObject, pDirection))
+		return false;
+
+	_matrix				TargetWorldMatrixInverse = { pTargetObject->Get_Transform()->Get_WorldMatrix_Inverse() };
+	_vector				vDirectionFromTargetLocal = { XMVector3TransformNormal(XMLoadFloat3(pDirection), TargetWorldMatrixInverse) };
+
+	XMStoreFloat3(pDirection, vDirectionFromTargetLocal);
 
 	return true;
 }
@@ -690,6 +825,87 @@ _bool CBlackBoard_Zombie::Compute_Distance_To_Player(_float* pDistance)
 	return isSuccess;
 }
 
+_bool CBlackBoard_Zombie::Compute_DeltaMatrix_AnimFirstKeyFrame_From_Target(CTransform* pTargetTransform, _uint iPlayingIndex, _int iAnimIndex, const wstring& strAnimLayerTag, _float4x4* pDeltaMatrix)
+{
+	if (nullptr == pDeltaMatrix || nullptr == pTargetTransform)
+		return false;
+
+	if (-1 == iAnimIndex)
+		return false;
+
+	if (TEXT("") == strAnimLayerTag)
+		return false;
+
+	CModel*			pBody_Model = { Get_PartModel(CMonster::PART_BODY) };
+	if (nullptr == pBody_Model)
+		return false;
+
+	_uint			iNumAnims = { static_cast<_uint>(pBody_Model->Get_Animation_Tags(strAnimLayerTag).size()) };
+	if (static_cast<_int>(iNumAnims) <= iAnimIndex)
+		return false;
+
+	_matrix			TargetWorldMatrix = { pTargetTransform->Get_WorldMatrix() };
+	_matrix			Zombie_WorldMatrix = { m_pAI->Get_Transform()->Get_WorldMatrix() };
+
+	_vector			vZombieScale, vZombieQuaternion, vZombieTranslation;
+	_vector			vTargetScale, vTargetQuaternion, vTargetTranslation;
+
+	XMMatrixDecompose(&vZombieScale, &vZombieQuaternion, &vZombieTranslation, Zombie_WorldMatrix);
+	XMMatrixDecompose(&vTargetScale, &vTargetQuaternion, &vTargetTranslation, TargetWorldMatrix);
+
+	TargetWorldMatrix = { XMMatrixAffineTransformation(vZombieScale, XMVectorSet(0.f, 0.f, 0.f ,1.f), vTargetQuaternion, vTargetTranslation) };
+
+	vector<CAnimation*>		Animations = { pBody_Model->Get_Animations(strAnimLayerTag) };
+
+	_matrix			RootFirstKeyFrameMatrix = { pBody_Model->Get_FirstKeyFrame_Root_TransformationMatrix(strAnimLayerTag, iAnimIndex) };
+	_matrix			ModelTransformMatrix = { XMLoadFloat4x4(&pBody_Model->Get_TransformationMatrix()) };
+
+	_vector					vRootScale, vRootQuaternion, vRootTranslation;
+	XMMatrixDecompose(&vRootScale, &vRootQuaternion, &vRootTranslation, RootFirstKeyFrameMatrix);
+
+	vRootTranslation = XMVector3TransformNormal(vRootTranslation, ModelTransformMatrix);
+
+	_vector			vRootRotateAxis = { XMVectorSetW(vRootQuaternion, 0.f) };
+	vRootRotateAxis = XMVector3TransformNormal(vRootRotateAxis, ModelTransformMatrix);
+	vRootQuaternion = XMVectorSetW(vRootRotateAxis, XMVectorGetW(vRootQuaternion));
+	RootFirstKeyFrameMatrix = XMMatrixAffineTransformation(vRootScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRootQuaternion, vRootTranslation);
+
+	_matrix			InterpolateTargetMatrix = { RootFirstKeyFrameMatrix * TargetWorldMatrix };
+
+	_vector			vInterpolateScale, vInterpolateQuaternion, vInterpolateTranslation;
+	XMMatrixDecompose(&vInterpolateScale, &vInterpolateQuaternion, &vInterpolateTranslation, InterpolateTargetMatrix);
+
+	_vector			vDeltaQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(XMQuaternionInverse(vZombieQuaternion)), XMQuaternionNormalize(vInterpolateQuaternion)) };
+	_vector			vDeltaTranslation = { vInterpolateTranslation - vZombieTranslation };
+
+	_matrix			DeltaMatrix = { XMMatrixAffineTransformation(vZombieScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vDeltaQuaternion, vDeltaTranslation) };
+
+	XMStoreFloat4x4(pDeltaMatrix, DeltaMatrix);
+	
+	return true;
+}
+
+_bool CBlackBoard_Zombie::Apply_Devide_Delta_Matrix(_float fRatio, _fmatrix DeltaMatrx)
+{
+	_vector				vScale, vQuaternion, vTranslation;
+	XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, DeltaMatrx);
+
+	_vector				vDevideQuaternion = { XMQuaternionSlerp(XMQuaternionIdentity(), XMQuaternionNormalize(vQuaternion), fRatio) };
+	_vector				vDevideTranslation = { XMVectorSetW(vTranslation * fRatio, 0.f) };
+
+	_matrix				WorldMatrix = { m_pAI->Get_Transform()->Get_WorldMatrix() };
+	_vector				vWorldScale, vWorldQuaternion, vWorldTranslation;
+	XMMatrixDecompose(&vWorldScale, &vWorldQuaternion, &vWorldTranslation, WorldMatrix);
+
+	_vector				vResultQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(vWorldQuaternion), XMQuaternionNormalize(vDevideQuaternion)) };
+	_vector				vResultTranslation = { XMVectorSetW(vWorldTranslation + vDevideTranslation, 1.f) };
+
+	_matrix				AplliedMatrix = { XMMatrixAffineTransformation(vWorldScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vResultQuaternion, vResultTranslation) };
+	m_pAI->Get_Transform()->Set_WorldMatrix(AplliedMatrix);
+
+	return true;
+}
+
 CTransform* CBlackBoard_Zombie::Get_Transform(CGameObject* pObject)
 {
 	if (nullptr == pObject)
@@ -821,5 +1037,6 @@ void CBlackBoard_Zombie::Free()
 	__super::Free();
 
 	Safe_Release(m_pNearest_Window);
+	Safe_Release(m_pNearest_Door);
 }
 

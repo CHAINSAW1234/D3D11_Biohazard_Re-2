@@ -1,5 +1,9 @@
 #pragma once
 
+enum class ZOMBIE_START_TYPE { _OUT_DOOR, _DOOR_RUB, _CREEP, _IDLE, _END };
+
+
+
 enum class ZOMBIE_BODY_TYPE { _MALE, _FEMALE, _MALE_BIG, _END };
 enum class ZOMBIE_CLOTHES_TYPE { _SHIRTS, _HAT, _PANTS, _END };
 

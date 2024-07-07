@@ -21,6 +21,7 @@ public:
 	typedef struct tagZombieDesc : public MONSTER_DESC
 	{
 		//	_bool						isOutDoor = { false };
+		ZOMBIE_START_TYPE			eStart_Type = { ZOMBIE_START_TYPE::_IDLE };
 		_bool						isOutDoor = { true };
 		ZOMBIE_BODY_TYPE			eBodyModelType = { ZOMBIE_BODY_TYPE::_END };
 	}ZOMBIE_DESC;
@@ -127,6 +128,9 @@ private:	/* For.Use Stamina */
 public:		
 	_bool								Use_Stamina(USE_STAMINA eAction);
 
+public:		/* For.Start Type */
+	inline ZOMBIE_START_TYPE			Get_StartType() { return m_eStartType; }
+
 
 #pragma region 예은 추가 - 창문, 문 (난간은 생각을 해봐야합니다)
 private:
@@ -168,6 +172,10 @@ private:	/* For. Hit Interact */
 	COLLIDER_TYPE						m_eCurrentHitCollider = { _END };
 	HIT_TYPE							m_eCurrentHitType = { HIT_END };
 	_float3								m_vHitDirection = {};
+
+private:	/* For. Start Type */
+	ZOMBIE_START_TYPE					m_eStartType = { ZOMBIE_START_TYPE::_END };
+
 
 #pragma region Effect
 public:

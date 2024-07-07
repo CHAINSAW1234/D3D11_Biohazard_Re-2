@@ -37,32 +37,35 @@ _bool CIs_Collision_Prop_Zombie::Condition_Check()
 	CZombie*		pZombie = { m_pBlackBoard->Get_AI() };
 	if (nullptr == pZombie)
 		return false;
+	CCustomCollider*				pCustomCollider = { nullptr };
 
 	if (COLL_PROP_TYPE::_WINDOW == m_eTargetCollPropType)
 	{
-		CCustomCollider*			pCustomCollider = { m_pBlackBoard->Get_Nearest_Window_CustomCollider() };
-		if (nullptr == pCustomCollider)
-			return false;
-
-		CCollider*					pMyCollider = { static_cast<CCollider*>(m_pBlackBoard->Get_AI()->Get_Component(TEXT("Com_Collider_Bounding"))) };
-		CCollider*					pWindowCollider = { static_cast<CCollider*>(pCustomCollider->Get_Component(TEXT("Com_Collider"))) };
-
-		if (nullptr == pMyCollider || nullptr == pWindowCollider)
-			return false;
-
-		_bool						isCollision = { pMyCollider->Intersect(pWindowCollider) };
-
-		if (RETURN_TYPE::_STARARIGHT == m_eReturnType)
-			return isCollision;
-
-		else if (RETURN_TYPE::_REVERSE == m_eReturnType)
-			return !isCollision;
+		pCustomCollider = { m_pBlackBoard->Get_Nearest_Window_CustomCollider() };
 	}
 
 	else if (COLL_PROP_TYPE::_DOOR == m_eTargetCollPropType)
 	{
-
+		m_pBlackBoard->Research_NearestDoor();
+		pCustomCollider = { m_pBlackBoard->Get_Nearest_Door_CustomCollider() };		
 	}
+
+	if (nullptr == pCustomCollider)
+		return false;
+
+	CCollider* pMyCollider = { static_cast<CCollider*>(m_pBlackBoard->Get_AI()->Get_Component(TEXT("Com_Collider_Bounding"))) };
+	CCollider* pPropsCollider = { static_cast<CCollider*>(pCustomCollider->Get_Component(TEXT("Com_Collider"))) };
+
+	if (nullptr == pMyCollider || nullptr == pPropsCollider)
+		return false;
+
+	_bool						isCollision = { pMyCollider->Intersect(pPropsCollider) };
+
+	if (RETURN_TYPE::_STARARIGHT == m_eReturnType)
+		return isCollision;
+
+	else if (RETURN_TYPE::_REVERSE == m_eReturnType)
+		return !isCollision;
 
 	return false;
 }

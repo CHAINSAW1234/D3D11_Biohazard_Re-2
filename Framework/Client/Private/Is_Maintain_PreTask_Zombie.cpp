@@ -27,27 +27,21 @@ HRESULT CIs_Maintain_PreTask_Zombie::Initialize(void* pArg)
 	m_MaintainStates.emplace(MONSTER_STATE::MST_IN_WINDOW);
 	m_MaintainStates.emplace(MONSTER_STATE::MST_BREAK_IN_WINDOW);
 	m_MaintainStates.emplace(MONSTER_STATE::MST_HOLD_WINDOW);
+	m_MaintainStates.emplace(MONSTER_STATE::MST_KNOCK_WINDOW);
+
+	m_MaintainStates.emplace(MONSTER_STATE::MST_KNOCK_DOOR);
+	m_MaintainStates.emplace(MONSTER_STATE::MST_RUB_DOOR);
+	m_MaintainStates.emplace(MONSTER_STATE::MST_OPEN_DOOR);
 
 	return S_OK;
 }
 
 _bool CIs_Maintain_PreTask_Zombie::Condition_Check()
 {
-	_bool				isMaintain = { false };
-
 	if (nullptr == m_pBlackBoard)
-		return isMaintain;
+		return false;
 
 	MONSTER_STATE			eCurrentState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
-	//if (true == Is_Maintain_State(eCurrentState))
-	//{
-	//	if (false == Is_CanFinish(eCurrentState))
-	//	{
-	//		isMaintain = true;
-	//	}
-	//}
-
-	//return isMaintain;
 
 	return Is_Maintain_State(eCurrentState);
 }
