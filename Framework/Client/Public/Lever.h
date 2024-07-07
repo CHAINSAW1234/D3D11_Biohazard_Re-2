@@ -12,8 +12,8 @@ class CLever final : public CInteractProps
 public:
 	enum LEVER_STATE
 	{
-		LEVER_RESET,
 		LEVER_DOWN,
+		LEVER_RESET,
 		LEVER_STATIC,
 		LEVER_END,
 	};

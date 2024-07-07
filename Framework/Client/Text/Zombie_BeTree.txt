@@ -10,43 +10,46 @@ Sequence Root
 |	  										Task 		Additional Shake Skin ( Only Blend Anim )
 |
 |
-Selector Root---------------|-----------------------------------------------------------------------------------------------------------------------Selector Wait 
-|							|	|		|		|										|															|																				
-|							|	|		|		|										|															----------------------------------------|---------------------------------------|
-|							|	|		|		|										|															|										|										|
-Deco 	Is MainTain			|	|		|		Deco		IsInRange(VeryNear)			Deco 		IsInRange ( Recognition Ragne )					Deco	IsSleep							Deco		Is_Creep					Task	Idle Wait
-Task 	Execute Pre Task	|	|		|		Deco 		IsLinkFromMove, Idle		Selector 	Move Or Turn									Task	Sleep							Task		Idle Creep
-							|	|		|		Task		LightlyHold					|																											
-							|	|		|												|-----------------------------------------------------------|-----------------------------------------------|
-							|	|		|												|															|												|
-							|	|		|												Deco 		Is Enough Time ( Try Attack Rec Time )			Deco		In View Angle()						Task		Pivot Turn
-							|	|		|												Task 		Hold											Task 		Move With TurnBlend 
-							|	|		Selector (StandUp, Turn Over)					
-							|	|		|										
-							|	|		|												
-							|	|		|------------------------------|
-							|	|		|							   |				
-							|	|		Task StandUp					Task Turn Over												
-							|	|														
-							|	|														
-							|	|		
-							|	Deco	IsCanLink(Hold || Lightly Hold)		
-							|	Task	Bite		
-							|			
-							|			
-							|				
-							|															
-							|																											
-							|
-							Deco		IsHit 																							
-							Selector 	Child Hit																						
-							|																											
-							|-----------------------------------------------|-----------------------------------|						
-							|												|									|						
-							Deco		IsLinkFromHold						Deco 	IsHit(Small)				Deco		IsHit(Big)
-							Deco		IsHit(Leg, AllType)					Task		Stun					Task 		Knock_Back
-							Task 		Hold Stun
+|							
+Selector Root---------------Selector OutDoorCheck---------------------------------------------------------------------------------------------------------------------------------------Selector Wait 
+|							Deco	IsOutDoor					|	|		|		|										|															|																				
+|							|									|	|		|		|										|															----------------------------------------|---------------------------------------|
+|							|									|	|		|		|										|															|										|										|
+Deco 	Is MainTain												|	|		|		Deco		IsInRange(VeryNear)			Deco 		IsInRange ( Recognition Ragne )					Deco	IsSleep							Deco		Is_Creep					Task	Idle Wait
+Task 	Execute Pre Task										|	|		|		Deco 		IsLinkFromMove, Idle		Selector 	Move Or Turn									Task	Sleep							Task		Idle Creep
+																|	|		|		Task		LightlyHold					|																											
+																|	|		|												|-----------------------------------------------------------|-----------------------------------------------|
+																|	|		|												|															|												|
+																|	|		|												Deco 		Is Enough Time ( Try Attack Rec Time )			Deco		In View Angle()						Task		Pivot Turn
+																|	|		|												Task 		Hold											Task 		Move With TurnBlend 
+																|	|		Selector (StandUp, Turn Over)					
+																|	|		|										
+																|	|		|												
+																|	|		|------------------------------|
+																|	|		|							   |				
+																|	|		Task StandUp					Task Turn Over												
+																|	|														
+																|	|														
+																|	|		
+																|	Deco	IsCanLink(Hold || Lightly Hold)		
+																|	Task	Bite		
+																|			
+																|			
+																|				
+																|															
+																|																											
+																|
+																Deco		IsHit 																							
+																Selector 	Child Hit																						
+																|																											
+																|-----------------------------------------------|-----------------------------------|						
+																|												|									|						
+																Deco		IsLinkFromHold						Deco 	IsHit(Small)				Deco		IsHit(Big)
+																Deco		IsHit(Leg, AllType)					Task		Stun					Task 		Knock_Back
+																Task 		Hold Stun
 
+
+###		창문과 상호 작용을 위해 이동부터... 최초 셀렉터에 진입하기위한 트리거 혹은플레이어와의 거리 필요 
 
 
 ###		Turn 만들어야함

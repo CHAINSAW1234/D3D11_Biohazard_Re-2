@@ -27,7 +27,7 @@ _bool CIs_Character_In_Range_Zombie::Condition_Check()
 	if (nullptr == m_pBlackBoard)
 		return false;
 
-	auto vPos_Player = m_pBlackBoard->GetPlayer()->GetPosition();
+	auto vPos_Player = m_pBlackBoard->Get_Player()->GetPosition();
 	auto vPos_AI = m_pBlackBoard->Get_AI()->GetPosition();
 
 	auto vDelta = vPos_Player - vPos_AI;

@@ -48,6 +48,11 @@ private:
 	virtual HRESULT				Initialize_PartObjects() override;
 	virtual HRESULT				Bind_ShaderResources() override;
 
+public:
+	inline _int					Get_HP_Body() { return m_iHP[PART_BODY]; }
+	inline _bool				Is_Set_Barrigate() { return m_bBarrigate; }
+	inline class CCustomCollider*		Get_CustomCollider_Ptr() { return m_pMyCustomCollider; }
+
 private:
 	void Active();
 
@@ -91,6 +96,7 @@ private:
 	_float			m_fTime = { 0.f };
 	_ubyte			m_eState = { WINDOW_STATIC };
 
+	class CCustomCollider*		m_pMyCustomCollider = { nullptr };
 
 
 public:

@@ -4,6 +4,8 @@
 #include "Player.h"
 #include "Zombie.h"
 
+#include "Window.h"
+
 CBlackBoard_Zombie::CBlackBoard_Zombie()
 	: CBlackBoard()
 {
@@ -26,8 +28,26 @@ HRESULT CBlackBoard_Zombie::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(nullptr)))
 		return E_FAIL;
 
+	if (FAILED(SetUp_Nearest_Window()))
+		return E_FAIL;
+
 	auto pPlayerLayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, L"Layer_Player");
 	m_pPlayer = dynamic_cast<CPlayer*>(*(*pPlayerLayer).begin());
+	return S_OK;
+}
+
+HRESULT CBlackBoard_Zombie::SetUp_Nearest_Window()
+{
+	if (false == m_pAI->Is_OutDoor())
+		return S_OK;
+
+	CWindow*		pWindow = { dynamic_cast<CWindow*>(Find_NearestObejct_In_Layer(TEXT("Layer_Window"))) };
+	if (nullptr == pWindow)
+		return E_FAIL;
+
+	m_pNearest_Window = pWindow;
+	Safe_AddRef(pWindow);
+
 	return S_OK;
 }
 
@@ -182,6 +202,45 @@ void CBlackBoard_Zombie::Update_Hold_Timer(_float fTImeDelta)
 	{
 		pMonsterStatus->fAccHoldTime += fTImeDelta;
 	}
+}
+
+CGameObject* CBlackBoard_Zombie::Find_NearestObejct_In_Layer(const wstring& strLayerTag)
+{
+	if (nullptr == m_pAI)
+		return nullptr;
+
+	_float			fNearestDistance = { 100000.f };
+	CGameObject*	pNearObject = { nullptr };
+
+	list<CGameObject*>* pTargetLayer = { m_pGameInstance->Find_Layer(g_Level, strLayerTag) };
+	for (auto& pGameObject : *pTargetLayer)
+	{
+		_float			fDistance = {};
+		if (false == Compute_Distance_To_Target(pGameObject, &fDistance))
+			continue;
+
+		if (fDistance < fNearestDistance)
+		{
+			fNearestDistance = fDistance;
+			pNearObject = pGameObject;
+		}
+	}
+
+	return pNearObject;
+}
+
+void CBlackBoard_Zombie::Release_Nearest_Window()
+{
+	Safe_Release(m_pNearest_Window); 
+	m_pNearest_Window = nullptr;
+}
+
+CCustomCollider* CBlackBoard_Zombie::Get_Nearest_Window_CustomCollider()
+{
+	if (nullptr == m_pNearest_Window)
+		return nullptr;
+
+	return m_pNearest_Window->Get_CustomCollider_Ptr();
 }
 
 void CBlackBoard_Zombie::Update_Status(_float fTimeDelta)
@@ -519,7 +578,7 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Target_8Direction_Local(_fvector 
 	_vector				vDirectionToTargetLocal = { XMVector3TransformNormal(vDirectionToTargetWorld, AIWorldMatrixInv) };
 
 	_bool				isRight = { XMVectorGetX(vDirectionToTargetLocal) > 0.f };
-	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f), vDirectionToTargetLocal)) };
+	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMVector3Normalize(vDirectionToTargetLocal))) };
 	_float				fAngle = { acosf(fDot) };	
 	
 	if (XMConvertToRadians(22.5f) > fAngle)
@@ -594,6 +653,20 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Target_4Direction_Local(_fvector 
 	{
 		*pDirection = DIRECTION::_B;
 	}
+
+	return true;
+}
+
+_bool CBlackBoard_Zombie::Compute_Distance_To_Target(CGameObject* pTargetObject, _float* pDistance)
+{
+	if (nullptr == pTargetObject || nullptr == pDistance)
+		return false;
+
+	_vector				vTargetPosition = { pTargetObject->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector				vMyPosition = { m_pAI->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+
+	_vector				vDirectionToTarget = { vTargetPosition - vMyPosition };
+	*pDistance = XMVectorGetX(XMVector3Length(vDirectionToTarget));
 
 	return true;
 }
@@ -746,5 +819,7 @@ CBlackBoard_Zombie* CBlackBoard_Zombie::Create(void* pArg)
 void CBlackBoard_Zombie::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pNearest_Window);
 }
 

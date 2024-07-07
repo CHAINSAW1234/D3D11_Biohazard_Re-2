@@ -1197,7 +1197,6 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 					m_vecCharacter_Controller[filterData.word2]->Set_Hit(true);
 					m_vecCharacter_Controller[filterData.word2]->SetBlockPoint(*pBlockPoint);
 					m_vecCharacter_Controller[filterData.word2]->SetHitNormal(PxVec_To_Float4_Coord(hit_Obj.normal));
-					m_vecCharacter_Controller[filterData.word2]->Insert_Collider_Type(eType);
 
 					if (bDecalRay)
 					{
@@ -1210,6 +1209,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 						m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count_STG();
 						m_vecCharacter_Controller[filterData.word2]->Insert_Hit_Point_STG(*pBlockPoint);
 						m_vecCharacter_Controller[filterData.word2]->Insert_Hit_Normal_STG(PxVec_To_Float4_Coord(hit_Obj.normal));
+						m_vecCharacter_Controller[filterData.word2]->Insert_Collider_Type(eType);
 					}
 					else
 					{

@@ -20,6 +20,8 @@ class CZombie final : public CMonster
 public:
 	typedef struct tagZombieDesc : public MONSTER_DESC
 	{
+		//	_bool						isOutDoor = { false };
+		_bool						isOutDoor = { true };
 		ZOMBIE_BODY_TYPE			eBodyModelType = { ZOMBIE_BODY_TYPE::_END };
 	}ZOMBIE_DESC;
 
@@ -108,6 +110,10 @@ public:		/* For.Look Target Controll */
 	inline _bool						Is_LookTarget() { return m_isLookTarget; }
 	inline void							Set_LookTarget(_bool isLookTarget) { m_isLookTarget = true; }
 
+public:		/* For.Outdoor */
+	inline _bool						Is_OutDoor() { return m_isOutDoor; }
+	inline void							Set_OutDoor(_bool isOutDoor) { m_isOutDoor = isOutDoor; }
+
 public:		/* Access */
 	inline MONSTER_STATE				Get_Current_MonsterState() { return m_eState; }
 	inline _float3						Get_Current_HitDirection() { return m_vHitDirection; }
@@ -156,6 +162,7 @@ private:
 
 	_bool								m_isSleep = { false };
 	_bool								m_isLookTarget = { false };
+	_bool								m_isOutDoor = { false };
 
 private:	/* For. Hit Interact */
 	COLLIDER_TYPE						m_eCurrentHitCollider = { _END };

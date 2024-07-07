@@ -1082,6 +1082,9 @@ HRESULT CRenderer::Render_NonBlend()
 	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_GameObjects"))))
 		return E_FAIL;
 
+	if (FAILED(Render_Decal()))
+		return E_FAIL;
+
 	for (auto& pRenderObject : m_RenderObjects[RENDER_NONBLEND])
 	{
 		if (nullptr != pRenderObject)
@@ -1092,14 +1095,6 @@ HRESULT CRenderer::Render_NonBlend()
 
 	if (FAILED(m_pGameInstance->End_MRT()))
 		return E_FAIL;
-
-	for (auto& pRenderObject : m_RenderObjects[RENDER_DECAL])
-	{
-		if (nullptr != pRenderObject)
-			pRenderObject->Render();
-		Safe_Release(pRenderObject);
-	}
-	m_RenderObjects[RENDER_DECAL].clear();
 
 	return S_OK;
 }
@@ -2093,6 +2088,19 @@ HRESULT CRenderer::Render_PostProcessing_Result()
 
 	if (FAILED(m_pVIBuffer->Render()))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_Decal()
+{
+	for (auto& pRenderObject : m_RenderObjects[RENDER_DECAL])
+	{
+		if (nullptr != pRenderObject)
+			pRenderObject->Render();
+		Safe_Release(pRenderObject);
+	}
+	m_RenderObjects[RENDER_DECAL].clear();
 
 	return S_OK;
 }

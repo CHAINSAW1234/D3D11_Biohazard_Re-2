@@ -3,7 +3,7 @@
 /* 어떤 그룹의 애니메이션 인지 Ordinary .... */
 enum class ZOMBIE_BODY_ANIM_GROUP { _ADD, _BITE, _DAMAGE, _DEAD, _LOST, _ORDINARY, _SICK, _UNDISCOVERED, _END};
 /* 어떤 종류의 애니메이션 인지 */
-enum class ZOMBIE_BODY_ANIM_TYPE { _IDLE, _MOVE, _TURN, _BLEND_MASK, _DAMAGE, _DEAD, _BITE, _STAND_UP, _END };	
+enum class ZOMBIE_BODY_ANIM_TYPE { _IDLE, _MOVE, _TURN, _BLEND_MASK, _DAMAGE, _DEAD, _KNOCK, _BITE, _STAND_UP, _END };	
 /* Playing Info Index */
 enum class PLAYING_INDEX { 
 	INDEX_0,	INDEX_1,	INDEX_2,	INDEX_3,	INDEX_4,	INDEX_5,	INDEX_6,	INDEX_7,	INDEX_8,	INDEX_9, 
@@ -773,9 +773,9 @@ enum class ANIM_UNDISCOVERED_STUND {
 enum class ANIM_GIMMICK_WINDOW {
 	_KNOCK_FROM_F_START,			//	창문 두드리기 ( 닫혔을때 ) => 진입 방향에 따라 창문으로 부터.....
 	_KNOCK_FROM_F_LOOP,
-	_KNOCK_FROM_L_START,
+	_KNOCK_FROM_L_START,			//	창문이 좀비 왼쪽
 	_KNOCK_FROM_L_LOOP,
-	_KNOCK_FROM_R_START,
+	_KNOCK_FROM_R_START,			//	창문이 좀비 오른쪽
 	_KNOCK_FROM_R_LOOP,
 	_IN1,							//	이미 깨진 창문넘기
 	_IN2,

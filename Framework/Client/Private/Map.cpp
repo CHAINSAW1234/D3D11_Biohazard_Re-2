@@ -53,7 +53,10 @@ HRESULT CMap::Initialize(void* pArg)
 
 #pragma region Initialize RigidBody
 	m_pRigid_Static = m_pGameInstance->Create_Rigid_Static(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_RigidBody, this);
+
+#ifndef MAP_TEST
 	m_pModelCom->Static_Mesh_Cooking(nullptr,&m_iIndex_RigidBody);
+#endif 
 #pragma endregion
 
 #pragma region Effect
@@ -116,7 +119,7 @@ void CMap::Late_Tick(_float fTimeDelta)
 
 	if (/*m_bVisible && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f)*/1)
 	{
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD, this);
 
 		if (m_bShadow)
 		{

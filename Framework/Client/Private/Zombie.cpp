@@ -25,9 +25,9 @@
 #define MODEL_SCALE 0.01f
 #define BLOOD_COUNT 10
 #define DECAL_COUNT 20
-#define BIG_ATTACK_BLOOD_SIZE 5.f
+#define BIG_ATTACK_BLOOD_SIZE 4.f
 #define NORMAL_ATTACK_BLOOD_SIZE 3.f
-#define SHOTGUN_BLOOD_COUNT 6
+#define SHOTGUN_BLOOD_COUNT 8
 
 CZombie::CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMonster{ pDevice, pContext }
@@ -56,6 +56,9 @@ HRESULT CZombie::Initialize(void* pArg)
 		return E_FAIL;
 
 	ZOMBIE_DESC*						pDesc = (ZOMBIE_DESC*)pArg;
+
+	m_isOutDoor = pDesc->isOutDoor;
+
 	ZOMBIE_BODY_TYPE					eBodyType = { pDesc->eBodyModelType };
 
 	if (ZOMBIE_BODY_TYPE::_MALE == eBodyType)
@@ -341,18 +344,13 @@ void CZombie::Tick(_float fTimeDelta)
 			m_pController->Set_Hit(false);
 			m_bBigAttack = m_pController->IsBigAttack();
 
-			if (m_bBigAttack)
-			{
-				SetBlood_STG();
-			}
-
 			auto vForce = m_pController->Get_Force();
 			auto eType = m_pController->Get_Hit_Collider_Type();
 
 
 			if (m_pController->GetDead())
 			{
-				CPlayer::EQUIP		eEquip = m_pBlackBoard->GetPlayer()->Get_Equip();
+				CPlayer::EQUIP		eEquip = m_pBlackBoard->Get_Player()->Get_Equip();
 
 				m_bRagdoll = true;
 
@@ -368,6 +366,11 @@ void CZombie::Tick(_float fTimeDelta)
 				}
 			}
 
+			if (m_bBigAttack)
+			{
+				SetBlood_STG();
+			}
+
 			//	For.Anim
 			m_eCurrentHitCollider = eType;
 			XMStoreFloat3(&m_vHitDirection, XMLoadFloat4(&vForce));
@@ -375,7 +378,7 @@ void CZombie::Tick(_float fTimeDelta)
 #pragma region HIT TYPE 분할 임시
 
 
-			CPlayer::EQUIP		eEquip = m_pBlackBoard->GetPlayer()->Get_Equip();
+			CPlayer::EQUIP		eEquip = m_pBlackBoard->Get_Player()->Get_Equip();
 			if (CPlayer::EQUIP::HG == eEquip)
 			{
 				m_eCurrentHitType = HIT_TYPE::HIT_SMALL;
@@ -525,6 +528,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 #pragma region Selector Root 
 	//		Selector => 성공을 반환 받을 떄 까지
 	//		Sequence => 실패를 반환 받을 떄 까지
+
 	/*
 	*Root Selector Section
 	*/
@@ -533,12 +537,11 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CComposite_Node*							pSelectorNode_Root = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSequenceNode_Root->Insert_Child_Node(pSelectorNode_Root);
 
+#pragma region TASK PRE TASK
+
 	/*
 	* Root CHild_Maintain Section ( Maintain_Check )
 	*/
-
-
-#pragma region TASK PRE TASK
 
 	//	Add Task Node		=> Execute Pre Task
 	CExecute_PreTask_Zombie* pTask_ExecutePreTask = { CExecute_PreTask_Zombie::Create() };
@@ -550,7 +553,81 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pDeco_Maintain_PreTask->SetBlackBoard(m_pBlackBoard);
 	pTask_ExecutePreTask->Insert_Decorator_Node(pDeco_Maintain_PreTask);
 
-#pragma endregion
+#pragma endregion		//	Selector Root Child
+
+#pragma region Selector Default 
+
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	CComposite_Node*							pSelectorNode_Default = { CComposite_Node::Create(&CompositeNodeDesc) };
+	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_Default);
+
+#pragma region Selector Out Door Check
+
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	CComposite_Node* pSelectorNode_OutDoorCheck = { CComposite_Node::Create(&CompositeNodeDesc) };
+	pSelectorNode_Default->Insert_Child_Node(pSelectorNode_OutDoorCheck);
+
+	CIs_Out_Door_Zombie*						pDeco_Is_Out_Door_Zombie = { CIs_Out_Door_Zombie::Create() };
+	pDeco_Is_Out_Door_Zombie->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_OutDoorCheck->Insert_Decorator_Node(pDeco_Is_Out_Door_Zombie);
+
+#pragma region Selector Is Collision Window Trigger
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	CComposite_Node* pSelectorNode_Interact_Window = { CComposite_Node::Create(&CompositeNodeDesc) };
+	pSelectorNode_OutDoorCheck->Insert_Child_Node(pSelectorNode_Interact_Window);
+
+	CIs_Collision_Prop_Zombie*					pDeco_Is_Collision_WindowTrigger = { CIs_Collision_Prop_Zombie::Create(CIs_Collision_Prop_Zombie::COLL_PROP_TYPE::_WINDOW) };
+	pDeco_Is_Collision_WindowTrigger->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Interact_Window->Insert_Decorator_Node(pDeco_Is_Collision_WindowTrigger);
+
+	//	창문에 도달
+#pragma region BREAK_WINDOW || BREAK_IN_WINDOW || HOLD_OUT_HAND_WINDOW || IN_WINDOW || KNOCK_WINDOW
+
+
+	//	Set_ManualMove true , Release Window	=> Knock Enter
+	//	Set_ManualMove false, Release Window	=> In || Break IN Exit 
+	
+	//	필요 조건 => 위치 도달, 창문 깨짐, 바리게이트 쳐짐
+	CHold_Out_Hand_Window_Zombie*				pTask_Hold_Out_Hand_Window = { CHold_Out_Hand_Window_Zombie::Create() };
+	pTask_Hold_Out_Hand_Window->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Interact_Window->Insert_Child_Node(pTask_Hold_Out_Hand_Window);
+
+	//	필요 조건 => 위치 도달, 창문 깨짐, 바리게이트 안쳐짐
+	CIn_Window_Zombie*							pTask_In_Window = { CIn_Window_Zombie::Create() };
+	pTask_In_Window->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Interact_Window->Insert_Child_Node(pTask_In_Window);
+
+	//	Break와 Break_In은 Break_In 난수 처리후 실패시 Break로 ? 아니면 스테미너여부
+	//	필요 조건 => 위치 도달, 창문 안깨졌으나 체력 0되는 순간에 Knock에서 이어지게끔, 바리게이트 안쳐짐
+	CBreak_In_Window_Zombie*					pTask_Break_In_Window = { CBreak_In_Window_Zombie::Create() };
+	pTask_Break_In_Window->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Interact_Window->Insert_Child_Node(pTask_Break_In_Window);
+
+	//	필요 조건 => 위치 도달, 창문 안깨졌으나 체력 0되는 순간에 Knock에서 이어지게끔, 바리게이트 상관 없음, 
+	CBreak_Window_Zombie*						pTask_Break_Window = { CBreak_Window_Zombie::Create() };
+	pTask_Break_Window->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Interact_Window->Insert_Child_Node(pTask_Break_Window);
+
+	//	필요 조건 => 위치 도달, 창문 안깨짐, 바리게이트 여부(상관없음)
+	CKnock_Window_Zombie*						pTask_Knock_Window = { CKnock_Window_Zombie::Create() };
+	pTask_Knock_Window->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Interact_Window->Insert_Child_Node(pTask_Knock_Window);
+
+#pragma endregion		//	Selector Is Collision Window Trigger
+
+#pragma endregion		//	Selector Out Door Check Child
+
+	//	창문에 미 도달 
+#pragma region Move To Window
+
+	//	 필요조건 => 위치 미 도달
+	CMove_To_Target_Zombie* pTask_Move_To_Window = { CMove_To_Target_Zombie::Create() };
+	pTask_Move_To_Window->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_OutDoorCheck->Insert_Child_Node(pTask_Move_To_Window);
+
+#pragma endregion		//	Selector Out Door Chekc Child
+
+#pragma endregion		//	Selector Default Child
 
 #pragma region BITE
 
@@ -561,16 +638,16 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//	Add Task Node		=> Bite 
 	CBite_Zombie* pTask_Bite_Zombie = { CBite_Zombie::Create() };
 	pTask_Bite_Zombie->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_Root->Insert_Child_Node(pTask_Bite_Zombie);
+	pSelectorNode_Default->Insert_Child_Node(pTask_Bite_Zombie);
 
-#pragma endregion
+#pragma endregion		//	Selector Default Child
 
 #pragma region STAND_UP || TRUN_OVER
 
 	//	Add RootNode Child Composite Node - Selector Node			(Is Hit?)
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
 	CComposite_Node* pSelectorNode_RootChild_StandUp_TurnOver = { CComposite_Node::Create(&CompositeNodeDesc) };
-	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_StandUp_TurnOver);
+	pSelectorNode_Default->Insert_Child_Node(pSelectorNode_RootChild_StandUp_TurnOver);
 
 	//	Add Task Node		=> Stand Up
 	CStand_Up_Zombie*			pTask_StandUp = { CStand_Up_Zombie::Create() };
@@ -582,7 +659,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_TurnOver->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_StandUp_TurnOver->Insert_Child_Node(pTask_TurnOver);*/
 
-#pragma endregion
+#pragma endregion		//	Selector Default Child
 
 #pragma region SELECTOR HIT
 	/*
@@ -592,7 +669,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//	Add RootNode Child Composite Node - Selector Node			(Is Hit?)
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
 	CComposite_Node* pSelectorNode_RootChild_Hit = { CComposite_Node::Create(&CompositeNodeDesc) };
-	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_Hit);
+	pSelectorNode_Default->Insert_Child_Node(pSelectorNode_RootChild_Hit);
 
 	//	Add Task Node		=> Damage Stun
 	CStun_Zombie* pTask_Stun = { CStun_Zombie::Create() };
@@ -604,7 +681,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_Knockback->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Hit->Insert_Child_Node(pTask_Knockback);
 
-#pragma endregion
+#pragma endregion		//	Selector Default Child
 
 #pragma region LIGHTLY HOLD
 	/*
@@ -615,14 +692,14 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//	Add Task Node		=> Lightly Hold 
 	CLightly_Hold_Zombie* pTask_Lightly_Hold = { CLightly_Hold_Zombie::Create() };
 	pTask_Lightly_Hold->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_Root->Insert_Child_Node(pTask_Lightly_Hold);
+	pSelectorNode_Default->Insert_Child_Node(pTask_Lightly_Hold);
 
 	//	Add Decorator Node	=> Lightly Hold
-	CIs_Character_In_Range_Zombie* pDeco_Charactor_In_Range_Lightly_Hold = { CIs_Character_In_Range_Zombie::Create() };
+	CIs_Out_Door_Zombie* pDeco_Charactor_In_Range_Lightly_Hold = { CIs_Out_Door_Zombie::Create() };
 	pDeco_Charactor_In_Range_Lightly_Hold->SetBlackBoard(m_pBlackBoard);
 	pTask_Lightly_Hold->Insert_Decorator_Node(pDeco_Charactor_In_Range_Lightly_Hold);
 
-#pragma endregion
+#pragma endregion		//	Selector Default Child
 
 #pragma region MOVE || TURN || HOLD
 
@@ -633,10 +710,10 @@ void CZombie::Init_BehaviorTree_Zombie()
 	//	Add RootNode Child Composite Node - Selector Node			(Is Move Or Turn ?)
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
 	CComposite_Node* pSelectorNode_RootChild_Move = { CComposite_Node::Create(&CompositeNodeDesc) };
-	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_Move);
+	pSelectorNode_Default->Insert_Child_Node(pSelectorNode_RootChild_Move);
 
 	//	Add Decorator Node
-	CIs_Character_In_Range_Zombie* pDeco_Charactor_In_Range_Recognition = { CIs_Character_In_Range_Zombie::Create(m_pStatus->fRecognitionRange) };
+	CIs_Character_In_Range_Zombie*				pDeco_Charactor_In_Range_Recognition = { CIs_Character_In_Range_Zombie::Create(m_pStatus->fRecognitionRange) };
 	pDeco_Charactor_In_Range_Recognition->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Move->Insert_Decorator_Node(pDeco_Charactor_In_Range_Recognition);
 
@@ -646,7 +723,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Hold);
 
 	//	Add Task Node (Move)
-	CMove_Front_Zombie* pTask_Move = { CMove_Front_Zombie::Create() };
+	CMove_To_Target_Zombie* pTask_Move = { CMove_To_Target_Zombie::Create() };
 	pTask_Move->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Move);
 
@@ -655,7 +732,9 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_Pivot_Turn->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Pivot_Turn);
 
-#pragma endregion
+#pragma endregion		//	Selector Default Child
+
+#pragma endregion		//	Selector Root Child
 
 #pragma region IDLE
 
@@ -684,7 +763,8 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_Wait->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Idle->Insert_Child_Node(pTask_Wait);
 
-#pragma endregion
+#pragma endregion		//	Selector Root Child
+
 
 #pragma endregion		//	Selector Root 
 
@@ -1622,7 +1702,7 @@ void CZombie::SetBlood_STG()
 			auto vBlockPoint = (*pHitPoints)[i];
 			auto vBlockNormal = (*pHitNormals)[i];
 
-			if (m_bRagdoll == false)
+			if (m_pController->GetDead() == false)
 			{
 				m_vecBlood_STG[i]->SetHitPart((*pHitParts)[i]);
 			}
