@@ -21,6 +21,9 @@ float g_fShadowFar;
 
 StructuredBuffer<float2> g_DecalMap;
 Texture2D g_DecalTexture;
+Texture2D g_Texture_Dissolve;
+float      g_fDissolveAmount;
+bool        g_bDissolve;
 
 struct VS_IN
 {
@@ -250,9 +253,21 @@ PS_OUT PS_BLOOD(PS_IN In)
         Out.vMaterial.b = 1.f;
     }
 
-    Out.vDiffuse.r -= 0.3f;
-    Out.vDiffuse.g -= 0.3f;
-    Out.vDiffuse.b -= 0.3f;
+   /* Out.vDiffuse.r -= 0.1f;
+    Out.vDiffuse.g -= 0.1f;
+    Out.vDiffuse.b -= 0.1f;*/
+
+    if (g_bDissolve)
+    {
+        vector vMtrlDissolve = g_Texture_Dissolve.Sample(LinearSampler, In.vTexcoord);
+
+        float dissolve = vMtrlDissolve.r;
+        dissolve *= 0.999;
+        float isVisible = dissolve - g_fDissolveAmount;
+        clip(isVisible);
+        isVisible = saturate(isVisible);
+        Out.vDiffuse.a *= isVisible;
+    }
 
     return Out;
 }

@@ -28,11 +28,15 @@ public:
 
 public:
 	virtual void			Compute_CurrentUV();
-	void					SetPosition(_float4 Pos);
+	virtual void			SetPosition(_float4 Pos);
 	virtual void			Setup_Billboard() {}
-	void					SetType(_uint iType)
+	virtual void			SetType(_uint iType)
 	{
 		m_iType = iType;
+	}
+	virtual void			SetFrameRate(ULONGLONG Rate)
+	{
+		m_FrameDelay = Rate;
 	}
 protected:
 	_float					m_fSizeX = { 0.f };
@@ -42,6 +46,7 @@ protected:
 protected:
 	CShader*				m_pShaderCom = { nullptr };
 	CTexture*				m_pTextureCom = { nullptr };
+	CTexture*				m_pTextureCom_Dissolve = { nullptr };
 	CVIBuffer_Rect*			m_pVIBufferCom = { nullptr };
 
 protected:
@@ -63,6 +68,11 @@ protected:
 	_float					m_fAlpha = { 1.f };
 	_float					m_fAlpha_Delta = { 0.f };
 	_float					m_fAlpha_Delta_Sum = { 0.f };
+
+	_bool					m_bAlpha_Direction = { false };
+	_float					m_fDissolveAmount = { 0.f };
+	_bool					m_bDissolving = { false };
+	_float					m_fDissolveSpeed = { 0.f };
 private:
 	HRESULT Add_Components();
 	HRESULT Bind_ShaderResources();

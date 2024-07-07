@@ -553,6 +553,9 @@
     <Filter Include="02.GameObjects\Effect\Muzzle_Smoke">
       <UniqueIdentifier>{bb4b199b-bb82-4cbc-9469-651e4a8b3e6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Blood_Drop">
+      <UniqueIdentifier>{cff06b52-a101-4afb-bf3a-7cd6dd47d9ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1068,6 +1071,9 @@
     <ClInclude Include="..\Public\Muzzle_Smoke.h">
       <Filter>02.GameObjects\Effect\Muzzle_Smoke</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Blood_Drop.h">
+      <Filter>02.GameObjects\Effect\Blood_Drop</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1546,6 +1552,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Muzzle_Smoke.cpp">
       <Filter>02.GameObjects\Effect\Muzzle_Smoke</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Blood_Drop.cpp">
+      <Filter>02.GameObjects\Effect\Blood_Drop</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

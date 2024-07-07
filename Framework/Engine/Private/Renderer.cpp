@@ -144,6 +144,9 @@ HRESULT CRenderer::Render()
 
 	if (FAILED(Render_PostProcessing_Result()))
 		return E_FAIL;
+
+	if (FAILED(Render_Effect()))
+		return E_FAIL;
 	
 	if (FAILED(Render_Effect_Bloom()))
 		return E_FAIL;
@@ -2171,6 +2174,19 @@ HRESULT CRenderer::Render_Effect_Bloom()
 	if (FAILED(m_pVIBuffer->Render()))
 		return E_FAIL;
 #pragma endregion
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_Effect()
+{
+	for (auto& pRenderObject : m_RenderObjects[RENDER_EFFECT])
+	{
+		if (nullptr != pRenderObject)
+			pRenderObject->Render();
+		Safe_Release(pRenderObject);
+	}
+	m_RenderObjects[RENDER_EFFECT].clear();
 
 	return S_OK;
 }

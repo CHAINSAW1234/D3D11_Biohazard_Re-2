@@ -31,6 +31,7 @@
 
 #define MODEL_SCALE 0.01f
 #define SHOTGUN_BULLET_COUNT 7
+#define SHOTGUN_SPREAD_AMOUNT 0.14f
 
 const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_HG"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT") };
 const wstring CPlayer::strAnimSetHoldName[ANIMSET_HOLD_END] = { TEXT("HOLD_HG"), TEXT("HOLG_STG"), TEXT("HOLD_MLE"), TEXT("HOLD_SUP") };
@@ -93,6 +94,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	Ready_Effect();
 
 	fill_n(m_SetProps, SETPROPS_NONE, -1);
+
+	m_MuzzleSmoke_Delay = 50;
 
 	return S_OK;
 }
@@ -421,7 +424,9 @@ void CPlayer::Tick(_float fTimeDelta)
 
 	Tick_PartObjects(fTimeDelta);
 
+#pragma region Effect
 	Tick_Effect(fTimeDelta);
+#pragma endregion
 
 	//cout << m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y << endl;
 
@@ -831,8 +836,11 @@ void CPlayer::Shot()
 
 		m_pMuzzle_Flash->Set_Render(true);
 		m_pMuzzle_Flash->SetPosition(Get_MuzzlePosition());
-		m_pMuzzle_Smoke->Set_Render(true);
-		m_pMuzzle_Smoke->SetPosition(Get_MuzzlePosition());
+
+		m_bMuzzleSmoke = true;
+		m_vMuzzle_Smoke_Pos = Get_MuzzlePosition();
+		m_MuzzleSmoke_Time = GetTickCount64();
+
 		break;
 		}
 	case EQUIP::STG: {
@@ -1595,6 +1603,19 @@ void CPlayer::Set_ManualMove(_bool isManualMove)
 	}
 }
 
+void CPlayer::Set_Muzzle_Smoke()
+{
+	if (m_bMuzzleSmoke)
+	{
+		if (m_MuzzleSmoke_Delay + m_MuzzleSmoke_Time < GetTickCount64())
+		{
+			m_pMuzzle_Smoke->Set_Render(true);
+			m_pMuzzle_Smoke->SetPosition(m_vMuzzle_Smoke_Pos);
+			m_bMuzzleSmoke = false;
+		}
+	}
+}
+
 void CPlayer::PickUp_Item(CGameObject* pPickedUp_Item)
 {
 	m_pGameInstance->Set_IsPaused(true);
@@ -1617,7 +1638,7 @@ void CPlayer::RayCast_Shoot()
 
 		for(size_t i = 0;i<SHOTGUN_BULLET_COUNT;++i)
 		{
-			auto vDelta_Random = _float4(m_pGameInstance->GetRandom_Real(-0.07f, 0.07f), m_pGameInstance->GetRandom_Real(-0.07f, 0.07f), m_pGameInstance->GetRandom_Real(-0.07f, 0.07f), 0.f);
+			auto vDelta_Random = _float4(m_pGameInstance->GetRandom_Real(-SHOTGUN_SPREAD_AMOUNT, SHOTGUN_SPREAD_AMOUNT), m_pGameInstance->GetRandom_Real(-SHOTGUN_SPREAD_AMOUNT, SHOTGUN_SPREAD_AMOUNT), m_pGameInstance->GetRandom_Real(-SHOTGUN_SPREAD_AMOUNT, SHOTGUN_SPREAD_AMOUNT), 0.f);
 			auto NewCamLook = vCamLook + vDelta_Random;
 			NewCamLook = Float4_Normalize(NewCamLook);
 
@@ -2157,7 +2178,7 @@ void CPlayer::Ready_Effect()
 	m_pMuzzle_Flash_SG->SetSize(0.6f, 0.6f);
 
 	m_pMuzzle_Smoke = CMuzzle_Smoke::Create(m_pDevice, m_pContext);
-	m_pMuzzle_Smoke->SetSize(0.6f, 0.6f);
+	m_pMuzzle_Smoke->SetSize(0.15f, 0.15f);
 }
 
 void CPlayer::Release_Effect()
@@ -2173,6 +2194,8 @@ void CPlayer::Tick_Effect(_float fTimeDelta)
 
 	m_pMuzzle_Flash->Tick(fTimeDelta);
 	m_pMuzzle_Flash_SG->Tick(fTimeDelta);
+
+	Set_Muzzle_Smoke();
 }
 
 void CPlayer::Late_Tick_Effect(_float fTimeDelta)

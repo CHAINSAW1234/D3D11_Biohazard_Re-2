@@ -174,6 +174,9 @@ public:
 protected:
 	vector<class CBlood*>				m_vecBlood;
 	vector<class CBlood*>				m_vecBlood_STG;
+	vector<class CBlood_Drop*>			m_vecBlood_Drop;
+	vector<class CBlood_Drop*>			m_vecBlood_Drop_STG;
+	vector<class CBlood_Drop*>			m_vecBlood_Drop_STG_NoRay;
 
 	ULONGLONG							m_BloodTime;
 	ULONGLONG							m_BloodDelay;
