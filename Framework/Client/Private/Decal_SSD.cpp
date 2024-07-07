@@ -121,10 +121,10 @@ HRESULT CDecal_SSD::Bind_ShaderResources()
 	if (FAILED(pDeferredShader->Bind_RawValue("g_vDecalNormal", &m_vNormal, sizeof(_float4))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(pDeferredShader, "g_DecalTexture"),m_iFrame))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(pDeferredShader, "g_DecalTexture",m_iFrame)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pDeferredShader, TEXT("Target_Depth"), "g_DepthTexture")))
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pDeferredShader, TEXT("Target_Field_Depth"), "g_DepthTexture_Decal")))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pDeferredShader, TEXT("Target_Normal"), "g_NormalTexture")))
 		return E_FAIL;

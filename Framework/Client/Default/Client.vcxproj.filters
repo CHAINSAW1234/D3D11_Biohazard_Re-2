@@ -550,6 +550,9 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Shelf">
       <UniqueIdentifier>{79cc0506-18e0-4ff7-89e7-bebc8eb8436c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Muzzle_Smoke">
+      <UniqueIdentifier>{bb4b199b-bb82-4cbc-9469-651e4a8b3e6f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1062,6 +1065,9 @@
     <ClInclude Include="..\Public\Player_State_Move_Shelf.h">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Shelf</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Muzzle_Smoke.h">
+      <Filter>02.GameObjects\Effect\Muzzle_Smoke</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1537,6 +1543,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_State_Move_Shelf.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Shelf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Muzzle_Smoke.cpp">
+      <Filter>02.GameObjects\Effect\Muzzle_Smoke</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

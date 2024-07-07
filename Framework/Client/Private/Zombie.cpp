@@ -25,9 +25,9 @@
 #define MODEL_SCALE 0.01f
 #define BLOOD_COUNT 10
 #define DECAL_COUNT 20
-#define BIG_ATTACK_BLOOD_SIZE 5.f
+#define BIG_ATTACK_BLOOD_SIZE 4.f
 #define NORMAL_ATTACK_BLOOD_SIZE 3.f
-#define SHOTGUN_BLOOD_COUNT 6
+#define SHOTGUN_BLOOD_COUNT 8
 
 CZombie::CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMonster{ pDevice, pContext }
@@ -341,11 +341,6 @@ void CZombie::Tick(_float fTimeDelta)
 			m_pController->Set_Hit(false);
 			m_bBigAttack = m_pController->IsBigAttack();
 
-			if (m_bBigAttack)
-			{
-				SetBlood_STG();
-			}
-
 			auto vForce = m_pController->Get_Force();
 			auto eType = m_pController->Get_Hit_Collider_Type();
 
@@ -366,6 +361,11 @@ void CZombie::Tick(_float fTimeDelta)
 					if (nullptr != pPartObject)
 						pPartObject->SetRagdoll(m_iIndex_CCT, vForce, eType);
 				}
+			}
+
+			if (m_bBigAttack)
+			{
+				SetBlood_STG();
 			}
 
 			//	For.Anim
@@ -1622,7 +1622,7 @@ void CZombie::SetBlood_STG()
 			auto vBlockPoint = (*pHitPoints)[i];
 			auto vBlockNormal = (*pHitNormals)[i];
 
-			if (m_bRagdoll == false)
+			if (m_pController->GetDead() == false)
 			{
 				m_vecBlood_STG[i]->SetHitPart((*pHitParts)[i]);
 			}
