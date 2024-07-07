@@ -3,7 +3,6 @@
 #include "Tab_Window.h"
 #include "Customize_UI.h"
 #include "Button_UI.h"
-#include "Inventory_Item_UI.h"
 #include "Cursor_UI.h"
 #include "Item_Discription.h"
 #include "ItemProp.h"
@@ -86,6 +85,12 @@ void CTab_Window::Start()
 			bMapUI = true;
 		}
 
+		CHotKey* pHotkey = dynamic_cast<CHotKey*>(iter);
+		if (nullptr != pHotkey)
+		{
+			m_pHotKey = pHotkey;
+			Safe_AddRef(m_pHotKey);
+		}
 	}
 }
 
@@ -393,7 +398,7 @@ void CTab_Window::OnOff_EventHandle()
 		m_pInvenButton->Set_Dead(m_bDead);
 		m_pMapButton->Set_Dead(m_bDead);
 		m_pInventory_Manager->Set_OnOff_Inven(m_bDead);
-
+		m_pHotKey->Set_Dead(m_bDead);
 
 		if (nullptr != m_pCursor[1])
 		{
@@ -410,6 +415,7 @@ void CTab_Window::OnOff_EventHandle()
 		m_pMapButton->Set_Dead(m_bDead);
 
 		m_pInventory_Manager->Set_OnOff_Inven(m_bDead);//탭창열때 인벤이 초기값임
+		m_pHotKey->Set_Dead(m_bDead);
 
 		if (nullptr != m_pCursor[1])
 		{
@@ -699,4 +705,5 @@ void CTab_Window::Free()
 	Safe_Release(m_pInventory_Manager);
 	Safe_Release(m_pItem_Mesh_Viewer);
 	Safe_Release(m_pItem_Discription);
+	Safe_Release(m_pHotKey);
 }

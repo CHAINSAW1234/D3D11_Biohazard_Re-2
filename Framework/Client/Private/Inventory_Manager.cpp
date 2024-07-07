@@ -1,8 +1,6 @@
 #include "stdafx.h"
 
 #include "Inventory_Manager.h"
-#include "Inventory_Item_UI.h"
-
 #include "Player.h"
 
 constexpr _float	Z_POS_SLOT = 0.8f;
@@ -59,20 +57,13 @@ void CInventory_Manager::FirstTick_Seting()
 	
 	m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
 
-	for (auto& iter : m_vecItem_UI)
-		iter->FirstTick_Seting();
-
-	m_pDragShadow->FirstTick_Seting();
-
 	AddItem_ToInven(HandGun, 15);
 	AddItem_ToInven(ShotGun, 15);
 	AddItem_ToInven(handgun_bullet01a, 20);
 	AddItem_ToInven(shotgun_bullet01a, 20);
 
-
-	
-	if (FAILED(Seting_SubInven()))
-		MSG_BOX(TEXT("Failed to Find SubInven"));
+	//if (FAILED(Seting_SubInven()))
+	//	MSG_BOX(TEXT("Failed to Find SubInven"));
 }
 
 void CInventory_Manager::Tick(_float fTimeDelta)
@@ -885,7 +876,7 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 
 	m_eInven_Manager_State = EVENT_IDLE;
 
-	m_pInven_Item_UI->Reset_Call(!bInput);
+	//m_pInven_Item_UI->Reset_Call(!bInput);
 }
 
 ITEM_NUMBER CInventory_Manager::Get_Selected_ItemNum()
@@ -1161,20 +1152,21 @@ HRESULT CInventory_Manager::Init_ContextMenu()
 
 HRESULT CInventory_Manager::Seting_SubInven()
 {
-	list<CGameObject*>* pGameObjList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+	//list<CGameObject*>* pGameObjList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
 
-	for (auto& iter : *pGameObjList)
-	{
-		CInventory_Item_UI* pInven_item_UI = dynamic_cast<CInventory_Item_UI*>(iter);
+	//for (auto& iter : *pGameObjList)
+	//{
+	//	CInventory_Item_UI* pInven_item_UI = dynamic_cast<CInventory_Item_UI*>(iter);
 
-		if (nullptr != pInven_item_UI)
-		{
-			m_pInven_Item_UI = pInven_item_UI;
-			return S_OK;
-		}
-	}
+	//	if (nullptr != pInven_item_UI)
+	//	{
+	//		m_pInven_Item_UI = pInven_item_UI;
+	//		return S_OK;
+	//	}
+	//}
 
-	return E_FAIL;
+	//return E_FAIL;
+	return S_OK;
 }
 
 HRESULT CInventory_Manager::Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval)

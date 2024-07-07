@@ -81,6 +81,7 @@ namespace Client
 		COMBINABLE_PICKED_UP, //픽업된 아이템인데 조합가능
 		UNCOMBINABLE_PICKED_UP, //픽업된 아이템인데 조합 불가
 		DOCUMENT,
+		HOTKEY,
 		INVEN_ITEM_TYPE_END
 	};
 

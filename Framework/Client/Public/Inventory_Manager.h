@@ -135,9 +135,6 @@ private:
 	/* for. ContextMenu */
 	CContextMenu*					m_pContextMenu = { nullptr };
 
-	/* for. SubInven */
-	class CInventory_Item_UI*		m_pInven_Item_UI = { nullptr };
-
 	/*for. PickUpItem*/
 	_int							m_PickResult = { -1 };//-1이면 없음 0이면 조합 1이면 자리바꾸기
 	_float2							m_fSwitchTargetPos = { 0.f, 0.f };
@@ -163,8 +160,6 @@ private:
 	HRESULT Init_ContextMenu();
 	HRESULT Seting_SubInven();
 	HRESULT Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval);
-
-
 
 public:
 	static CInventory_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -79,6 +79,10 @@ private:
 
 	class CItem_Discription*	m_pItem_Discription = { nullptr };
 
+	CItem_Mesh_Viewer*			m_pItem_Mesh_Viewer = { nullptr };
+
+	CHotKey*					m_pHotKey = { nullptr };
+
 private : /* NY */
 	void				Find_Cursor();
 	void				Select_UI();
@@ -90,16 +94,11 @@ private:
 	_bool				m_isMapRender = { false };
 
 	/*for. Item_Mesh_Viewer*/
-	CItem_Mesh_Viewer* m_pItem_Mesh_Viewer = { nullptr };
-
 	_float				m_fCurTime = { 0.f };
 
 	/*for. Picked Up Item*/
 	CGameObject*		m_pPickedUp_Item = { nullptr };
 	UI_OPERRATION		m_eSequence = { STATE_END };
-
-	/*for. HotKey*/
-	CHotKey*			m_pHotKey = { nullptr };
 
 private:
 	HRESULT Add_Components();
