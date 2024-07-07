@@ -80,8 +80,6 @@ void CPlayer_State_Move_Ladder::Start(_float fTimeDelta)
 	Interpolate_Location(fTimeDelta);
 
 	if (m_pPlayer->Get_Body_Model()->isFinished(0)) {
-		cout << m_pPlayer->Get_Transform()->Get_State_Float4(CTransform::STATE_POSITION).y << endl;
-
 
 		m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.1f);
 		m_eState = IDLE;
@@ -176,9 +174,6 @@ void CPlayer_State_Move_Ladder::Finish()
 
 void CPlayer_State_Move_Ladder::Set_StartAnimation()
 {
-	cout << m_pPlayer->Get_Transform()->Get_State_Float4(CTransform::STATE_POSITION).y << endl;
-
-
 	// 내가 올라가라
 	if (m_pPlayer->Get_Ladder_Setting() == CPlayer::LADDER_BEHAVE_UP) {
 		m_iLadderCnt = 4;

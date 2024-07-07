@@ -19,12 +19,12 @@ public:
 private:
 	void						Interpolate_Location(_float fTimeDelta);
 
-	void						Start();
+	void						Start(_float fTimeDelta);
 	void						Idle();
 	void						Finish();
 	void						Stop();
 
-	void Change_Animation(_uint iAnimIndex);
+	void						Change_Animation(_uint iAnimIndex);
 
 private:
 	CPlayer* m_pPlayer = { nullptr };
