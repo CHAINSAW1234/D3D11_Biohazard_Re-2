@@ -56,11 +56,10 @@ void CMovingShelf::Tick(_float fTimeDelta)
 #endif
 	if (m_eState == SHELF_FINISH)
 		return;
-	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity)
-	{
+	if ((m_eState == SHELF_STOP|| m_eState == SHELF_STATIC)&&m_bCol[INTER_COL_NORMAL][COL_STEP1])
 		if (*m_pPlayerInteract)
 			Active();
-	}
+	
 	__super::Tick(fTimeDelta);
 }
 
@@ -165,7 +164,7 @@ HRESULT CMovingShelf::Bind_ShaderResources()
 void CMovingShelf::Active()
 {
 	*m_pPlayerInteract = false;
-	m_bActivity = true;
+
 	m_pPlayer->Set_Shelf_Setting(this);
 
 }
