@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "GameInstance.h"
-#include "Execute_PreTask_Zombie.h"
+#include "Start_Zombie.h"
 #include "Player.h"
 #include "BlackBoard_Zombie.h"
 #include "Zombie.h"
@@ -31,38 +31,7 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 	if (nullptr == m_pBlackBoard)
 		return false;
 
-	if (Check_Permition_To_Execute() == false)
-		return false;
-#pragma endregion
-
-	//	이전 노드를 실행해야함 
-	//	m_pBlackBoard->Organize_PreState(this);
-
-	if (COLLIDER_TYPE::_END != m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider())
-	{
-		CStun_Zombie* pTaskStun = { dynamic_cast<CStun_Zombie*>(m_pPreTaskNode) };
-		if (nullptr != pTaskStun)
-		{
-			pTaskStun->Reset_Entry();
-		}
-	}
-
-	m_pPreTaskNode = { m_pBlackBoard->Get_PreTaskNode() };
-	if (nullptr != m_pPreTaskNode)
-	{
-		return m_pPreTaskNode->Execute(fTimeDelta);
-	}
-
-#ifdef _DEBUG
-
-	else
-	{
-		MSG_BOX(TEXT("Called : _bool CStart_Zombie::Execute(_float fTimeDelta)"));
-	}
-
-#endif
-
-	return false;
+	return true;
 }
 
 void CStart_Zombie::Exit()
@@ -71,7 +40,7 @@ void CStart_Zombie::Exit()
 
 CStart_Zombie* CStart_Zombie::Create(void* pArg)
 {
-	CStart_Zombie* pInstance = { new CStart_Zombie() };
+	CStart_Zombie*			pInstance = { new CStart_Zombie() };
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{

@@ -46,7 +46,7 @@ _bool CIs_Collision_Prop_Zombie::Condition_Check()
 
 	else if (COLL_PROP_TYPE::_DOOR == m_eTargetCollPropType)
 	{
-		m_pBlackBoard->Research_NearestDoor();
+		//	m_pBlackBoard->Research_NearestDoor();
 		pCustomCollider = { m_pBlackBoard->Get_Nearest_Door_CustomCollider() };		
 	}
 

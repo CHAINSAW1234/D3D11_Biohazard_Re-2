@@ -21,16 +21,11 @@ public:
 	virtual void					Exit() override;
 
 public:
-	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard)
-	{
-		m_pBlackBoard = pBlackBoard;
-	}
+	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }
 private:
-	class CBlackBoard_Zombie* m_pBlackBoard = { nullptr };
+	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 
-private:	/* For. Active FirstTime */
-	_bool							m_isWake = { false };
-	CTask_Node* m_pPreTaskNode = { nullptr };
+private:
 
 public:
 	static CStart_Zombie* Create(void* pArg = nullptr);
