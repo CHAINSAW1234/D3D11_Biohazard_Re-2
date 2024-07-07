@@ -13,6 +13,7 @@
 #include "Is_Down_Zombie.h"
 #include "Is_Enough_Time_Zombie.h"
 #include "Is_Can_Link_Pre_State_Zombie.h"
+#include "Is_In_Door_Zombie.h"
 #include "Is_Out_Door_Zombie.h"
 #include "Is_Collision_Prop_Zombie.h"
 

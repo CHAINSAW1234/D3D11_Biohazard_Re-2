@@ -9,13 +9,15 @@ class CIs_Collision_Prop_Zombie : public CDecorator_Node
 {
 public:
 	enum class COLL_PROP_TYPE { _WINDOW, _DOOR, _END };
+	enum class RETURN_TYPE { _STARARIGHT, _REVERSE, _END };
+
 private:
 	CIs_Collision_Prop_Zombie();
 	CIs_Collision_Prop_Zombie(const CIs_Collision_Prop_Zombie& rhs);
 	virtual ~CIs_Collision_Prop_Zombie() = default;
 
 public:
-	virtual HRESULT					Initialize(COLL_PROP_TYPE ePropType);
+	virtual HRESULT					Initialize(COLL_PROP_TYPE ePropType, RETURN_TYPE eReturnType);
 
 	virtual _bool					Condition_Check();
 
@@ -24,9 +26,10 @@ public:
 protected:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 	COLL_PROP_TYPE					m_eTargetCollPropType = { COLL_PROP_TYPE::_END };
+	RETURN_TYPE						m_eReturnType = { RETURN_TYPE::_END };
 
 public:
-	static CIs_Collision_Prop_Zombie* Create(COLL_PROP_TYPE ePropType);
+	static CIs_Collision_Prop_Zombie* Create(COLL_PROP_TYPE ePropType, RETURN_TYPE eReturnType);
 
 public:
 	virtual void Free() override;

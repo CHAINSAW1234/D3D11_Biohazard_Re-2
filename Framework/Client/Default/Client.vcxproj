@@ -226,6 +226,7 @@
     <ClInclude Include="..\Public\Decal_SSD.h" />
     <ClInclude Include="..\Public\Effect_Header_Zombie.h" />
     <ClInclude Include="..\Public\Creep_Zombie.h" />
+    <ClInclude Include="..\Public\Is_In_Door_Zombie.h" />
     <ClInclude Include="..\Public\Player_State_Move_Shelf.h" />
     <ClInclude Include="..\Public\Throwing_Weapon.h" />
     <ClInclude Include="..\Public\Hold_Out_Hand_Window_Zombie.h" />
@@ -439,6 +440,7 @@
     <ClCompile Include="..\Private\Cut_Scene_CF93.cpp" />
     <ClCompile Include="..\Private\Damage_UI.cpp" />
     <ClCompile Include="..\Private\Decal_SSD.cpp" />
+    <ClCompile Include="..\Private\Is_In_Door_Zombie.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Shelf.cpp" />
     <ClCompile Include="..\Private\Throwing_Weapon.cpp" />
     <ClCompile Include="..\Private\Hold_Out_Hand_Window_Zombie.cpp" />

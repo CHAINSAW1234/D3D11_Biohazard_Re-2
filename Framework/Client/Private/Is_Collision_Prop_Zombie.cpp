@@ -16,10 +16,14 @@ CIs_Collision_Prop_Zombie::CIs_Collision_Prop_Zombie(const CIs_Collision_Prop_Zo
 {
 }
 
-HRESULT CIs_Collision_Prop_Zombie::Initialize(COLL_PROP_TYPE ePropType)
+HRESULT CIs_Collision_Prop_Zombie::Initialize(COLL_PROP_TYPE ePropType, RETURN_TYPE eReturnType)
 {
 	m_eTargetCollPropType = ePropType;
 	if (COLL_PROP_TYPE::_END == m_eTargetCollPropType)
+		return E_FAIL;
+
+	m_eReturnType = eReturnType;
+	if (RETURN_TYPE::_END == m_eReturnType)
 		return E_FAIL;
 
 	return S_OK;
@@ -47,7 +51,12 @@ _bool CIs_Collision_Prop_Zombie::Condition_Check()
 			return false;
 
 		_bool						isCollision = { pMyCollider->Intersect(pWindowCollider) };
-		return isCollision;
+
+		if (RETURN_TYPE::_STARARIGHT == m_eReturnType)
+			return isCollision;
+
+		else if (RETURN_TYPE::_REVERSE == m_eReturnType)
+			return !isCollision;
 	}
 
 	else if (COLL_PROP_TYPE::_DOOR == m_eTargetCollPropType)
@@ -55,14 +64,14 @@ _bool CIs_Collision_Prop_Zombie::Condition_Check()
 
 	}
 
-	return m_pBlackBoard->Get_AI()->Is_OutDoor();
+	return false;
 }
 
-CIs_Collision_Prop_Zombie* CIs_Collision_Prop_Zombie::Create(COLL_PROP_TYPE ePropType)
+CIs_Collision_Prop_Zombie* CIs_Collision_Prop_Zombie::Create(COLL_PROP_TYPE ePropType, RETURN_TYPE eReturnType)
 {
 	CIs_Collision_Prop_Zombie* pInstance = { new CIs_Collision_Prop_Zombie() };
 
-	if (FAILED(pInstance->Initialize(ePropType)))
+	if (FAILED(pInstance->Initialize(ePropType, eReturnType)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CIs_Collision_Prop_Zombie"));
 

@@ -76,7 +76,7 @@ void CMove_To_Target_Zombie::Enter()
 
 #ifdef _DEBUG
 
-	cout << "Enter Move Front" << endl;
+	cout << "Enter Move To Tareget" << endl;
 
 #endif 
 }

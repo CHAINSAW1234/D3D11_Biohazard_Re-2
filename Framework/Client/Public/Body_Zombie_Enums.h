@@ -792,7 +792,7 @@ enum class ANIM_GIMMICK_WINDOW {
 };
 
 enum class ANIM_GIMMICK_DOOR {
-	_KNOCK_FROM_B_START,			//	룩방향의 반대 => 일단 안써도될듯 B타입들
+	_KNOCK_FROM_B_START,			//	룩방향의 반대 => 일단 안써도될듯 B타입들		=> 문의 뒷편에 있을때 사용
 	_KNOCK_FROM_B_LOOP,
 	_KNOCK_FROM_B_END,				//	치다가 포기
 	_KNOCK_FROM_A_START,

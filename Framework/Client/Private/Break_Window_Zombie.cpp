@@ -31,11 +31,11 @@ void CBreak_Window_Zombie::Enter()
 	if (nullptr == pBodyModel)
 		return;
 
-	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
+	//	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
 
 #ifdef _DEBUG
 
-	cout << "Enter Knock Door" << endl;
+	cout << "Enter Hold Out Hand Window" << endl;
 
 #endif 
 }
@@ -54,6 +54,16 @@ _bool CBreak_Window_Zombie::Execute(_float fTimeDelta)
 	MONSTER_STATE		eCurrentMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 	if (MONSTER_STATE::MST_KNOCK_WINDOW != eCurrentMonsterState)
 		return false;
+
+	else if (MONSTER_STATE::MST_BREAK_WINDOW == eCurrentMonsterState)
+	{
+		CModel*				pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+		if (nullptr == pBody_Model)
+			return false;
+
+		if (true == pBody_Model->isFinished(static_cast<_uint>(m_eBasePlayingIndex)))
+			return false;
+	}
 
 	CWindow*			pWindow = { m_pBlackBoard->Get_Nearest_Window() };
 	if (nullptr == pWindow)
@@ -80,7 +90,7 @@ void CBreak_Window_Zombie::Exit()
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
+	//	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
 }
 
 void CBreak_Window_Zombie::Change_Animation(_float fTimeDelta)

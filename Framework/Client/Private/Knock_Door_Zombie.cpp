@@ -32,7 +32,7 @@ void CKnock_Door_Zombie::Enter()
 
 #ifdef _DEBUG
 
-	cout << "Enter Knock Door" << endl;
+	cout << "Enter Knock Window" << endl;
 
 #endif 
 }

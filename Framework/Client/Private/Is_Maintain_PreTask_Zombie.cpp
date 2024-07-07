@@ -25,6 +25,9 @@ HRESULT CIs_Maintain_PreTask_Zombie::Initialize(void* pArg)
 
 	m_MaintainStates.emplace(MONSTER_STATE::MST_BREAK_WINDOW);
 	m_MaintainStates.emplace(MONSTER_STATE::MST_IN_WINDOW);
+	m_MaintainStates.emplace(MONSTER_STATE::MST_BREAK_IN_WINDOW);
+	m_MaintainStates.emplace(MONSTER_STATE::MST_HOLD_WINDOW);
+
 	return S_OK;
 }
 

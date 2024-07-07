@@ -150,7 +150,7 @@ void CKnock_Window_Zombie::Exit()
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	m_pBlackBoard->Get_AI()->Set_ManualMove(false);
+	//	m_pBlackBoard->Get_AI()->Set_ManualMove(false);
 }
 
 void CKnock_Window_Zombie::Change_Animation(_float fTimeDelta)

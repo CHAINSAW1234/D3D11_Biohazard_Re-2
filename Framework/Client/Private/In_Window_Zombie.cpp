@@ -31,17 +31,6 @@ void CIn_Window_Zombie::Enter()
 	if (nullptr == pBodyModel)
 		return;
 
-	MONSTER_STATE		ePreMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
-	if (MONSTER_STATE::MST_BREAK_WINDOW != ePreMonsterState)
-	{
-		m_isNeedInterpolation = true;
-		Set_TargetInterpolate_Matrix();
-	}
-	else
-	{
-		m_isNeedInterpolation = false;
-	}
-
 	_int				iRandom = { m_pGameInstance->GetRandom_Int(1, 2) };
 	if (1 == iRandom)
 		m_iAnimIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_IN1);
@@ -49,11 +38,10 @@ void CIn_Window_Zombie::Enter()
 		m_iAnimIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_IN2);
 
 	Set_TargetInterpolate_Matrix();
-	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
 
 #ifdef _DEBUG
 
-	cout << "Enter Knock Door" << endl;
+	cout << "Enter In Window" << endl;
 
 #endif 
 }
@@ -80,6 +68,20 @@ _bool CIn_Window_Zombie::Execute(_float fTimeDelta)
 	_bool				isSetBarrigate = { pWindow->Is_Set_Barrigate() };
 	if (true == isSetBarrigate)
 		return false;
+
+	if (MONSTER_STATE::MST_IN_WINDOW == m_pBlackBoard->Get_AI()->Get_Current_MonsterState())
+	{
+		CModel* pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+		if (nullptr == pBody_Model)
+			return false;
+
+		if (true == pBody_Model->isFinished(static_cast<_uint>(m_eBasePlayingIndex)))
+		{
+			m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
+			m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_UP);
+			return false;
+		}
+	}
 
 	m_pBlackBoard->Organize_PreState(this);
 
@@ -136,7 +138,8 @@ void CIn_Window_Zombie::Exit()
 		return;
 
 	m_pBlackBoard->Get_AI()->Set_ManualMove(false);
-	m_pBlackBoard->Release_Nearest_Window();
+	m_pBlackBoard->Get_AI()->Set_OutDoor(false);
+	m_pBlackBoard->Release_Nearest_Window();	
 }
 
 void CIn_Window_Zombie::Change_Animation(_float fTimeDelta)
@@ -147,7 +150,6 @@ void CIn_Window_Zombie::Change_Animation(_float fTimeDelta)
 	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
-
 
 	pBodyModel->Change_Animation(static_cast<_uint>(m_eBasePlayingIndex), m_strAnimLayerTag, m_iAnimIndex);
 	pBodyModel->Set_Loop(static_cast<_uint>(m_eBasePlayingIndex), false);
