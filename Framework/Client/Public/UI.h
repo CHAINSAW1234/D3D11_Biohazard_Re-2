@@ -64,6 +64,7 @@ protected:
 	_float						m_fSizeY = { 0.f };
 	_float4x4					m_WorldMatrix = {}, m_ViewMatrix = {}, m_ProjMatrix = {};
 	_float						m_fAlpha = { 0.f };
+	_bool						m_isAlphaControl = { false };
 
 	_vector						m_vPrePos = {};
 	_vector						m_vPreScale = {};

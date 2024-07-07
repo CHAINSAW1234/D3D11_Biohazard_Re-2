@@ -550,6 +550,12 @@
     <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Shelf">
       <UniqueIdentifier>{79cc0506-18e0-4ff7-89e7-bebc8eb8436c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\1. HotKey">
+      <UniqueIdentifier>{27eeca60-3060-4f2b-8eb1-a74f4571ff4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\2. Hint">
+      <UniqueIdentifier>{3f7a778a-4eaf-44b5-b855-bbdeff5a7fe4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1062,6 +1068,9 @@
     <ClInclude Include="..\Public\Player_State_Move_Shelf.h">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Shelf</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\HotKey.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. HotKey</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1537,6 +1546,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Player_State_Move_Shelf.cpp">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Shelf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HotKey.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\1. HotKey</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

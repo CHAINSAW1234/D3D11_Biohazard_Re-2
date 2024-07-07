@@ -3,7 +3,7 @@
 
 #include "Camera_Free.h"
 #include "Zombie.h"
-#include"CustomCollider.h"
+#include "CustomCollider.h"
 
 /* UI */
 #include "Customize_UI.h"
@@ -217,6 +217,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const wstring & strLayerTag)
 
 HRESULT CLevel_GamePlay::Ready_TabWindow()
 {
+	/*HotKey*/
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_HotKey"))))
+		return E_FAIL;
+
 	/* 7. Tab_Widow */
 	CUI::UI_DESC UIDesc = {};
 	UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.9f };

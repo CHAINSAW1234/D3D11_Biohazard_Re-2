@@ -39,10 +39,7 @@ private:
 	_uint											m_iItemQuantity = { 0 };
 
 	ITEM_NUMBER										m_eItemNumber = { ITEM_NUMBER_END };
-
-
-private:
-	_bool m_isAlphaControl = { false };
+		
 
 private:
 	HRESULT Add_Components();
@@ -51,6 +48,7 @@ private:
 	HRESULT Load_Item_Discription();
 
 	HRESULT Create_TextBoxes();
+
 
 public:
 	static CItem_Discription* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

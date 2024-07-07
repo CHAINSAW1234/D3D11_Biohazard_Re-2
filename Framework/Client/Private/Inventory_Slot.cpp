@@ -23,6 +23,14 @@ HRESULT CInventory_Slot::Initialize(void* pArg)
 	{
 		if (FAILED(__super::Initialize(pArg)))
 			return E_FAIL;
+
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Texture_Filled"),
+			TEXT("Com_FilledTexture"), (CComponent**)&m_pFilledTexture)))
+			return E_FAIL;
+
+		m_pEmptyTexture = m_pTextureCom;
+
 	}
 
 	return S_OK;
@@ -32,6 +40,21 @@ void CInventory_Slot::Tick(_float fTimeDelta)
 {
 	if (true == m_bDead)
 		return;
+
+	if (m_PriorisFilled != m_isFilled)
+	{
+		m_PriorisFilled = m_isFilled;
+
+		if (false == m_isFilled)
+		{
+			m_pTextureCom = m_pEmptyTexture;
+		}
+
+		else
+		{
+			m_pTextureCom = m_pFilledTexture;
+		}
+	}
 
 	__super::Tick(fTimeDelta);
 }
@@ -81,5 +104,8 @@ CGameObject* CInventory_Slot::Clone(void* pArg)
 
 void CInventory_Slot::Free()
 {
+	m_pTextureCom = m_pEmptyTexture;
 	__super::Free();
+
+	Safe_Release(m_pFilledTexture);
 }

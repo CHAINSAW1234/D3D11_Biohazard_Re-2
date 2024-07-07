@@ -46,7 +46,7 @@ HRESULT CTab_Window::Initialize(void* pArg)
 
 		if (FAILED(Creat_Item_Discription()))
 			return E_FAIL;
-		
+
 		m_bDead = true;
 	}
 
@@ -268,7 +268,7 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 			/*TabWindow ¼¼ÆÃ*/
 			m_fCurTime = 0.f;
 			m_fAlpha = 0.f;
-			m_isAlphaControl = false;
+			//m_isAlphaControl = false;
 
 			break;
 		}
@@ -289,6 +289,7 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 		if (GET_ITEM == m_pInventory_Manager->Get_InventoryEvent())
 		{
 			m_pPickedUp_Item->Set_Dead(true);
+			m_pPickedUp_Item = nullptr;
 			OnOff_EventHandle();
 			m_pGameInstance->Set_IsPaused(false);
 			break;
@@ -301,7 +302,6 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 			m_pGameInstance->Set_IsPaused(false);
 			break;
 		}
-
 
 		m_pItem_Mesh_Viewer->Tick(fTimeDelta);
 		m_pItem_Discription->Tick(fTimeDelta);

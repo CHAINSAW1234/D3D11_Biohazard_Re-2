@@ -3,6 +3,7 @@
 #include "UI.h"
 #include "Inventory_Manager.h"
 #include "Item_Mesh_Viewer.h"
+#include "HotKey.h"
 
 BEGIN(Client)
 
@@ -24,7 +25,6 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-
 private:
 	void MINIMAP_Operation(_float fTimeDelta);
 	void INVENTORY_Operation(_float fTimeDelta);
@@ -32,55 +32,52 @@ private:
 	void EXAMINE_Operation(_float fTimeDelta);
 	void PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta);
 
-
-
 #pragma region 나옹
 public:
 	_bool				Get_MinMapRender()			{ return m_isMapRender; }
 	_bool*				Get_MainRender()			{ return m_pInvenButton->Get_Dead_Ptr(); }
 	WINDOW_TYPE*		Get_Window_Render_Type()	{ return &m_eWindowType; }
-
 #pragma endregion
 
 
 #pragma region 예은 추가
-	class CRead_Item_UI* m_pRead_Item_UI = { nullptr };
-	class CMap_UI* m_pMap_UI = { nullptr };
+	class CRead_Item_UI*	m_pRead_Item_UI = { nullptr };
+	class CMap_UI*			m_pMap_UI = { nullptr };
 #pragma endregion 
 
 
 private:
-	void	ItemIven_EventHandle(_float fTimeDelta);
-	void	Button_Act(_float fTimeDelta);
+	void			ItemIven_EventHandle(_float fTimeDelta);
+	void			Button_Act(_float fTimeDelta);
 
 public:
-	void	OnOff_EventHandle();
-	void	Set_WindowType(WINDOW_TYPE eWindowType) { m_eWindowType = eWindowType; };
+	void			OnOff_EventHandle();
+	void			Set_WindowType(WINDOW_TYPE eWindowType) { m_eWindowType = eWindowType; };
 
-	void	PickUp_Item(CGameObject* pPickedUp_Item);
+	void			PickUp_Item(CGameObject* pPickedUp_Item);
 
 	//아이탬 인벤토리에 넣기
-	void AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity = 1);
+	void			AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity = 1);
 
 	//만약 아이템을 넣을수 없는 상황이라면 false를 반환함
-	_bool IsCan_AddItem_ToInven();
+	_bool			IsCan_AddItem_ToInven();
 
 	//원하는 아이템의 수량 or 장탄을 반환함
-	_int Get_Search_Item_Quantity(ITEM_NUMBER eItemNum);
+	_int			Get_Search_Item_Quantity(ITEM_NUMBER eItemNum);
 
 	//몇번 단축키에 몇번 아이템이 있는가
-	ITEM_NUMBER Get_Item_On_HotKey(_uint iHotKeyNum);
+	ITEM_NUMBER		Get_Item_On_HotKey(_uint iHotKeyNum);
 
-	void UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage);
+	void			UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage);
 
 private:
-	class CButton_UI*	m_pMapButton = { nullptr };
-	class CButton_UI*	m_pInvenButton = { nullptr };
-	class CButton_UI*	m_pHintButton = { nullptr };
+	class CButton_UI*			m_pMapButton = { nullptr };
+	class CButton_UI*			m_pInvenButton = { nullptr };
+	class CButton_UI*			m_pHintButton = { nullptr };
 
-	CInventory_Manager* m_pInventory_Manager = { nullptr };
+	CInventory_Manager*			m_pInventory_Manager = { nullptr };
 
-	class CItem_Discription* m_pItem_Discription = { nullptr };
+	class CItem_Discription*	m_pItem_Discription = { nullptr };
 
 private : /* NY */
 	void				Find_Cursor();
@@ -92,8 +89,6 @@ private:
 	WINDOW_TYPE			m_eWindowType = { INVENTORY };
 	_bool				m_isMapRender = { false };
 
-	_bool				m_isAlphaControl = { false };
-
 	/*for. Item_Mesh_Viewer*/
 	CItem_Mesh_Viewer* m_pItem_Mesh_Viewer = { nullptr };
 
@@ -102,6 +97,9 @@ private:
 	/*for. Picked Up Item*/
 	CGameObject*		m_pPickedUp_Item = { nullptr };
 	UI_OPERRATION		m_eSequence = { STATE_END };
+
+	/*for. HotKey*/
+	CHotKey*			m_pHotKey = { nullptr };
 
 private:
 	HRESULT Add_Components();

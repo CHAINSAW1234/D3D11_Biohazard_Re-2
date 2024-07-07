@@ -1073,7 +1073,6 @@ HRESULT CInventory_Manager::Init_InvenSlot()
 		}
 	}
 #pragma endregion
-
 	return S_OK;
 }
 
@@ -1156,8 +1155,6 @@ HRESULT CInventory_Manager::Init_ContextMenu()
 
 	Safe_AddRef(m_pContextMenu);
 	m_pContextMenu->Set_Dead(true);
-
-
 
 	return S_OK;
 }

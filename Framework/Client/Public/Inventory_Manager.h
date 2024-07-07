@@ -131,6 +131,7 @@ private:
 	/*for. Drag_Shadow*/
 	CItem_UI*						m_pDragShadow = { nullptr };
 	CTransform*						m_pDragShadowTransform = { nullptr };
+
 	/* for. ContextMenu */
 	CContextMenu*					m_pContextMenu = { nullptr };
 
@@ -160,7 +161,6 @@ private:
 	HRESULT Init_ItemUI();
 	HRESULT Init_DragShdow();
 	HRESULT Init_ContextMenu();
-
 	HRESULT Seting_SubInven();
 	HRESULT Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval);
 

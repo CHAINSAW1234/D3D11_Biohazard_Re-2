@@ -97,6 +97,7 @@
 #include "Item_Discription.h"
 #include "LayOut_UI.h"
 #include "Damage_UI.h"
+#include "HotKey.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -580,7 +581,10 @@ HRESULT CLoader::Load_Prototype()
 		CDamage_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-
+	/* For.Prototype_GameObject_HotKey */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HotKey"),
+		CHotKey::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 	
 #pragma endregion
 
@@ -678,6 +682,16 @@ HRESULT CLoader::Loading_For_Static_Component()
 	/*Prototype_Component_Texture_Items*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Items"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Items/Item_%d.png"), 74))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Filled*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Filled"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Inventory/Box_Store.png")))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Filled*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_WholeMouse"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Inventory/WholeMouse.png")))))
 		return E_FAIL;
 #pragma endregion
 
@@ -1132,12 +1146,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_NoteBook_Texture2"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/Note/ui3210_file_13_1_iam.tex_noesispreviewdata.png")))))
 		return E_FAIL;
-
-	/*Prototype_Component_Texture_Filled*/
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Filled"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Inventory/Box_Store.png")))))
-		return E_FAIL;
-
 
 
 	/* Read Texture*/
