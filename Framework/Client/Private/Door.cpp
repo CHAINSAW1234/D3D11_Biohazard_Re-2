@@ -331,7 +331,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 
 		}
 	}
-	if (Activate_Col(Get_Collider_World_Pos(_float4(-90.f, 1.f, 0.f, 1.f)))|| Activate_Col(Get_Collider_World_Pos(_float4(-90.f, 1.f, 0.f, 1.f))))
+	if (Activate_Col(Get_Collider_World_Pos(_float4(-90.f, 1.f, 0.f, 1.f)))|| Activate_Col(Get_Collider_World_Pos(_float4(-30.f, 1.f, 0.f, 1.f)))|| Activate_Col(Get_Collider_World_Pos(_float4(-150.f, 1.f, 0.f, 1.f))))
 	{
 		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0)) // ¿Œ¡ˆ?
 		{
@@ -403,7 +403,7 @@ void CDoor::DoubleDoor_Active()
 	if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
 	{
 		if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && m_bCol[INTER_COL_DOUBLE][COL_STEP1])
-			m_eDoubleState = L_DOUBLEDOOR_OPEN;
+			m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_L;//m_eDoubleState = L_DOUBLEDOOR_OPEN;
 		else if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
 			m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_L;
 		else
@@ -413,7 +413,7 @@ void CDoor::DoubleDoor_Active()
 	else
 	{
 		if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && m_bCol[INTER_COL_DOUBLE][COL_STEP1])
-			m_eDoubleState = R_DOUBLEDOOR_OPEN;
+			m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_R;			//m_eDoubleState = R_DOUBLEDOOR_OPEN;
 		else if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
 			m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_R;
 		else

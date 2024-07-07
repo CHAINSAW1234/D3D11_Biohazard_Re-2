@@ -27,10 +27,12 @@ public:
 		const _ubyte* pDoubleDoorState_Prev;
 
 	}BODY_DOOR_DESC;
+
 private:
 	CBody_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBody_Door(const CBody_Door& rhs);
 	virtual ~CBody_Door() = default;
+
 public:
 	virtual HRESULT				Initialize_Prototype() override;
 	virtual HRESULT				Initialize(void* pArg) override;
@@ -45,30 +47,31 @@ private:
 	virtual HRESULT				Initialize_PartObjects() override;
 	 HRESULT						Initialize_Model() ;
 	virtual void					Get_SpecialBone_Rotation() override;
+
 public:
 	virtual _float4				Get_Pos(_int iArg = 0) override;
 
 private:
-	void DoubleDoor_Tick(_float fTimeDelta);
-	void DoubleDoor_Late_Tick(_float fTimeDelta);
-	void OneDoor_Tick(_float fTimeDelta);
-	void OneDoor_Late_Tick(_float fTimeDelta);
+	void								DoubleDoor_Tick(_float fTimeDelta);
+	void								DoubleDoor_Late_Tick(_float fTimeDelta);
+	void								OneDoor_Tick(_float fTimeDelta);
+	void								OneDoor_Late_Tick(_float fTimeDelta);
 
 
 private:
-	string			m_strDoorPart[BODY_PART_END];
-	_bool				m_bLock =	{ false };
-	_bool				m_bActivity = { false };
+	string							m_strDoorPart[BODY_PART_END];
+	_bool								m_bLock								= { false };
+	_bool								m_bActivity							= { false };
 
-	_bool				m_bDoubleCol = { false };
+	_bool								m_bDoubleCol						= { false };
 
-	const _ubyte*			m_pDoubleDoorType = {};
-	const _ubyte*			m_pOneState = {};
-	const _ubyte*			m_pOneState_Prev = {};
-	const _ubyte*			m_pDoubleState = {};
-	const _ubyte*			m_pDoubleState_Prev = {};
+	const _ubyte*				m_pDoubleDoorType				= {};
+	const _ubyte*				m_pOneState							= {};
+	const _ubyte*				m_pOneState_Prev					= {};
+	const _ubyte*				m_pDoubleState						= {};
+	const _ubyte*				m_pDoubleState_Prev			= {};
 
-	_float			m_fTime = { 0.f };
+	_float							m_fTime								= { 0.f };
 public:
 	static CBody_Door* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
