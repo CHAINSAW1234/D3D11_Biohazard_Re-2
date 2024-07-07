@@ -33,6 +33,9 @@ private :
 	virtual void Start() override;
 	virtual void OnNotify() override;
 
+public :
+	_int					Get_EquipType() { return m_iEqipType;  }
+
 private: /* Hand Gun */
 	void					Change_BulletUI();
 	void					Render_Bullet_UI(_float fTimeDelta);

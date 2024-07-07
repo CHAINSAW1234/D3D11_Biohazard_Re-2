@@ -224,14 +224,14 @@ private:
 public:
 	/* For. Getter Inline*/
 	_bool*										Col_Event_UI(class CCustomCollider* pCustom);
-	_int*										Get_Hp_Ptr() { return &m_iHp;  }
 	void										Set_Tutorial_Start(UI_TUTORIAL_TYPE i)
 	{ 
 		m_isTutorial_Notify = true;
 		m_isPlayer_FirstBehavior[(_int)i] = true;
 		m_eTutial_Type = i;
 	}
-	
+	_int*										Get_Hp_Ptr()			{ return &m_iHp; }
+
 	_bool*										Get_Tutorial_Notify()	{ return &m_isTutorial_Notify; }
 	UI_TUTORIAL_TYPE*							Get_Tutorial_Type()		{ return &m_eTutial_Type; }
 	_byte										Get_Player_State()		{ return m_eState; } /* Player 상태 반환 */

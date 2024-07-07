@@ -35,6 +35,7 @@ void CStatic_Map_UI::Tick(_float fTimeDelta)
     __super::Tick(fTimeDelta);
 }
 
+
 void CStatic_Map_UI::Late_Tick(_float fTimeDelta)
 {
     __super::Late_Tick(fTimeDelta);

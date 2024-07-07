@@ -429,6 +429,17 @@ _float CCustomize_UI::Distance_Player(CGameObject* _obj)
 	return fPlayer_Distance;
 }
 
+_float CCustomize_UI::Distance_Player(_float4 _pos)
+{
+	CTransform* pPlayerTrans = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
+
+	_vector vDistanceVector = XMVectorSet(_pos.x, _pos.y, _pos.z, _pos.w) - pPlayerTrans->Get_State_Vector(CTransform::STATE_POSITION);
+	_float fPlayer_Distance = XMVectorGetX(XMVector3Length(vDistanceVector));
+
+	return fPlayer_Distance;
+}
+
+
 void CCustomize_UI::Find_Player()
 {
 	/* Player Ã£±â */

@@ -170,6 +170,7 @@ public :
 	_bool				Select_UI();
 	virtual void		Set_Dead(_bool bDead) override;
 	_float				Distance_Player(CGameObject* _obj);
+	_float				Distance_Player(_float4 _pos);
 	void				Find_Player();
 
 

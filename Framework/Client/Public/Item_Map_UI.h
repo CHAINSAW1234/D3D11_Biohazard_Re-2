@@ -20,14 +20,17 @@ public:
 	
 public :
 	wstring*		Item_Name() { return &m_wstrItemNumber;  }
-
+	_bool*			Distance_ItemEnd() { return &m_isItemEnd;  }
 	void			Destory_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _locationType, ITEM_NUMBER _ItemType);
+	_vector*		Player_Between_Item_Distance() { return &m_vMapOpen_Player_Distance; }
 
 
 private :
 	CGameObject*	Search_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _locationType, ITEM_NUMBER _ItemType);
-	void			Rendering();
 	void			Item_Name_Selection(); /* 아이템 Type에 따른 이름 선정 */
+
+	void			Rendering();
+	void			Player_BetweenDistance();
 
 
 private :
@@ -36,7 +39,11 @@ private :
 	LOCATION_MAP_VISIT				m_ePrevRegion	= { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
 
 	_bool							m_isItemRender	= { false };
+	_bool							m_isItemEnd		= { false };
+	_vector							m_vMapOpen_Player_Distance = {};
 
+private:
+	MAP_FLOOR_TYPE		m_ePrevViewFloor = { MAP_FLOOR_TYPE::FLOOR_1 };
 
 public:
 	static CMap_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

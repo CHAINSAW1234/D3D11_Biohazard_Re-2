@@ -29,7 +29,7 @@ public :
 
 private :
 	STATIC_MAP_TYPE		m_eStatic_Type = { STATIC_MAP_TYPE::END_MAP_TYPE };
-
+	
 public:
 	static CMap_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

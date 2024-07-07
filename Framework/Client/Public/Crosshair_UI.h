@@ -22,6 +22,8 @@ public:
 
 public :
 	_bool					Get_Crosshair_Animing()				{ return m_isAiming; }
+	_bool					Get_Crosshair_RenderType(_int _type);
+	_bool					Render_Type();
 
 private :
 	/* Shot Gun */
@@ -31,6 +33,7 @@ private :
 	void					Operate_DefaultGun(_float fTimeDelta);
 	void					Aiming(_float fTimeDelta);
 	void					Aiming_Return(_float fTimeDelta);
+
 
 private :
 	CCrosshair_UI*			m_pCenterDot = { nullptr };
@@ -52,6 +55,8 @@ private :
 	_float4					m_fCorsshair_AimPoint				= {}; /* 조준 목표점 */
 
 	_float3					m_fFixed_MinScaled						= {}; /* 최소 스케일 고정*/
+
+	_bool					m_isCrosshair_Render				= { false };
 
 
 public:

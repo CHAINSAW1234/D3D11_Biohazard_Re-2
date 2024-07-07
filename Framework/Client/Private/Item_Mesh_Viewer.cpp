@@ -129,7 +129,7 @@ HRESULT CItem_Mesh_Viewer::Render()
 			return E_FAIL;
 
 		m_vecModelCom[m_eItem_Number]->Render(static_cast<_uint>(i));
-	}*/
+	}
 
 	return S_OK;
 }

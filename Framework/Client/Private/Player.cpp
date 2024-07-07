@@ -504,7 +504,7 @@ void CPlayer::Start()
 		if (nullptr != pSelect)
 		{
 			/* 부모를 불러서 Selector를 구별한다 */
-			if (false == pSelect->Get_Child())
+			if (false == pSelect->Get_IsChild())
 			{
 				for (auto& child : *pSelecter_UI)
 				{
@@ -618,9 +618,14 @@ CGameObject* CPlayer::Create_Selector_UI()
 {
 	for (auto& iter : m_SelectorVec)
 	{
-		if (false == iter->Get_Using())
+		if (false == *iter->Get_Using())
 		{
 			*iter->Get_Using() = true;
+
+			for (auto& iter1 : *iter->Get_Collection())
+			{
+				*iter1->Get_Using() = true;
+			}
 
 			return iter;
 		}

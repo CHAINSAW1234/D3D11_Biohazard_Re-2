@@ -262,7 +262,7 @@ void CTargeting_Map_UI::Targeting_Control()
     if (MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
     {
         /* 처음 출력될 땐 부모는 Player를 잡고 있어야 하며, 자식은 부모를 따라다녀야 한다. */
-        if (m_isPrevRender != m_isRender)
+        if (m_pMapPlayer->Get_Player_Open() == true && m_isPrevRender != m_isRender)
         {
             if (false == m_IsChild)
             {

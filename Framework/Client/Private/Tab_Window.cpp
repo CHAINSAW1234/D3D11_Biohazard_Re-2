@@ -332,7 +332,7 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 	CInteractProps* pProp = static_cast<CInteractProps*>(m_pPickedUp_Item);
 	_int iPickedUpItemNum = pProp->Get_iItemIndex();
 	
-	if (iPickedUpItemNum >= 50 && iPickedUpItemNum <= 200) // 임시
+	if (iPickedUpItemNum >= rpddocument01a && iPickedUpItemNum <= mapupperpolice01a) // 임시
 	{
 		m_pRead_Item_UI->Set_ReadItem_Type((ITEM_READ_TYPE)pProp->Get_PropType());
 		//인벤토리 문서 부분에 먹었다 추가=> 아직 없는 것으로 앎 나중에

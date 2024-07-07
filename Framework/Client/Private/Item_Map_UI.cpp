@@ -2,6 +2,7 @@
 #include "Item_Map_UI.h"
 #include "Player.h"
 #include "Tab_Window.h"
+#include "Player_Map_UI.h"
 
 #define INCIDENCE   997
 #define STORE_BOX   998
@@ -47,6 +48,7 @@ void CItem_Map_UI::Tick(_float fTimeDelta)
     __super::Tick(fTimeDelta);
 
     Rendering();
+    Player_BetweenDistance();
 }
 
 void CItem_Map_UI::Late_Tick(_float fTimeDelta)
@@ -107,6 +109,37 @@ void CItem_Map_UI::Rendering()
 
     else if (false == m_isItemRender)
         m_isRender = false;
+}
+
+void CItem_Map_UI::Player_BetweenDistance()
+{
+    /* Map Inventory를 오픈할 때만 사용할 것이다.  */
+    if (false == m_pTab_Window->Get_MinMapRender())
+        m_isPrevRender = m_pTab_Window->Get_MinMapRender();
+
+    /* ▶ Map Player와 Main의 모듣 객체와의 거리를 구하는 함수  */
+    /* 1. Player가 몇 층에 있는 지 확인했다면,  */
+    if (true == *m_pMapPlayer->Get_PlayerFloorSetting())
+    {
+        /* 2. Map을 켰는 지 확인했다면, 내가 존재했던 view와 과거 view가 같지 않다면*/
+        if (m_isPrevRender != m_pTab_Window->Get_MinMapRender() || *m_pMapPlayer->Get_ViewFloor_Type() != m_ePrevViewFloor)
+        {
+            m_ePrevViewFloor = *m_pMapPlayer->Get_ViewFloor_Type();
+
+            /* 3. 플레이어와 객체의 거리를 구한다  */
+            _float4 vMainTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+            _float4 vPlayertrans = m_pMapPlayer_Transform->Get_State_Float4(CTransform::STATE_POSITION);
+
+            _vector Main = XMVectorSet(vMainTrans.x, vMainTrans.y, vMainTrans.z, vMainTrans.w);
+            _vector Player = XMVectorSet(vPlayertrans.x, vPlayertrans.y, vPlayertrans.z, vPlayertrans.w);
+
+            /* 거리를 구할 때 player는 해당 위치에서부터 자유자재로 이동 */
+            m_vMapOpen_Player_Distance = Main - Player;
+
+            /* 모든 객체와의 거리를 구0한0 것을0 확인하기 위해 사용할 것이다. */
+            m_isItemEnd = true;
+        }
+    }
 }
 
 void CItem_Map_UI::Item_Name_Selection()

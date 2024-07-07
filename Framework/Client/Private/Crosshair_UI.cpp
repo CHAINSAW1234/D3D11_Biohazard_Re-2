@@ -168,6 +168,24 @@ HRESULT CCrosshair_UI::Render()
     return S_OK;
 }
 
+_bool CCrosshair_UI::Get_Crosshair_RenderType(_int _type)
+{
+    list<class CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+
+    for (auto& iter : *pUILayer)
+    {
+        CCrosshair_UI* pCross = dynamic_cast<CCrosshair_UI*>(iter);
+
+        if (pCross != nullptr)
+        {
+            if(pCross->m_eGun_Type == _type)
+                return m_isRender;
+        }
+    }
+
+    return false;
+}
+
 
 void CCrosshair_UI::Operate_ShotGun(_float fTimeDelta)
 {
@@ -390,6 +408,34 @@ void CCrosshair_UI::Aiming_Return(_float fTimeDelta)
             }
         }
     }
+}
+
+_bool CCrosshair_UI::Render_Type()
+{
+    list<class CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+
+    for (auto& iter : *pUILayer)
+    {
+        CCrosshair_UI* pCross = dynamic_cast<CCrosshair_UI*>(iter);
+
+        if(nullptr != pCross)
+        {
+            if ((_int)CPlayer::EQUIP::HG == pCross->m_eGun_Type)
+            {
+                if (true == pCross->m_isRender)
+                    return true;
+            }
+
+            if ((_int)CPlayer::EQUIP::STG == pCross->m_eGun_Type)
+            {
+                if (true == pCross->m_isRender)
+                    return true;
+            }
+        }
+    }
+
+    return false;
+   
 }
 
 CCustomize_UI* CCrosshair_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

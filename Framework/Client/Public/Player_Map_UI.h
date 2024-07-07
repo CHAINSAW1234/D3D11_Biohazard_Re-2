@@ -19,7 +19,7 @@ public:
 
 public :
 	_bool*					Get_PlayerFloorSetting() { return &m_isPlayer_FloorSetting; }
-
+	_bool					Get_Player_Open() { return m_isPlayer_Open; }
 
 
 private:
@@ -33,6 +33,8 @@ private:
 
 
 private:
+	CTransform*				m_pPlayerTransform		= { nullptr };
+	_bool					m_isPlayer_Open			= { false };
 	MAP_FLOOR_TYPE			m_ePlayer_Floor			= { MAP_FLOOR_TYPE::FLOOR_1 };
 
 	_bool					m_isBlurBlending		= { false };
@@ -47,7 +49,7 @@ private :
 
 private :
 	_bool					m_isPlayer_FloorSetting = { false };
-
+	_float4					m_fOriginPos = {};
 
 public:
 	static CMap_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

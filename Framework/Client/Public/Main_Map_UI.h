@@ -35,8 +35,14 @@ private :
 
 private :
 	_int				m_iWhichChild = { 0 };
+	_float4				m_vOriginPos	= {};
 	_vector				m_vMapOpen_Player_Distance = {};
 	_bool				m_isMainEnd = { false };
+
+
+private :
+	MAP_FLOOR_TYPE		m_ePrevViewFloor = { MAP_FLOOR_TYPE::FLOOR_1 };
+
 
 public:
 	static CMap_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

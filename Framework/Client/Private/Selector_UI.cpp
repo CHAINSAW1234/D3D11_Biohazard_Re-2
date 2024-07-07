@@ -114,6 +114,7 @@ void CSelector_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
+    m_vTargetPos = _float4(0, 0, 0, 1);
     Exception_Handle();
     Operate_Selector(fTimeDelta);
 }
@@ -131,35 +132,45 @@ HRESULT CSelector_UI::Render()
     return S_OK;
 }
 
-void CSelector_UI::Destroy_Selector()
+CGameObject* CSelector_UI::Destroy_Selector()
+{
+    if (m_SelectorObj_Vec.empty())
+        return nullptr;
+
+    for (auto& iter : m_SelectorObj_Vec)
+    {
+        iter->m_isOutDistance = true;
+    }
+     
+    return nullptr;
+}
+
+void CSelector_UI::Select_Type(_bool _Interact, _float4 _objPos)
 {
     for (auto& iter : m_SelectorObj_Vec)
     {
-        iter->m_isUsing = false;
+        iter->m_isInteractive = _Interact;
+        iter->m_vTargetPos = _objPos;
     }
 }
 
-/* true => 상호작용 가능 false => */
-void CSelector_UI::Select_Type(_bool _Interact)
+
+void CSelector_UI::NonInteractive_Rendering(_float fTimeDelta)
 {
-    for (auto& iter : m_SelectorObj_Vec)
-        iter->m_isInteractive = _Interact;
-}
+    _float fDistance = Distance_Player(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 
-
-void CSelector_UI::Render_Selector_UI(CGameObject* _obj, _float fTimeDelta)
-{
-    _float fDistance = Distance_Player(_obj);
-
-    if (fDistance >= OUT_DISTANCE)
+    /* Destory()를 통해 끝냄을 알릴 때*/
+    if (true == m_isOutDistance)
     {
         if (m_fBlending >= 1.f)
         {
             m_fBlending = 1.f;
             m_isRender = false;
+            m_isUsing = false;
         }
         else
             m_fBlending += fTimeDelta;
+
         return;
     }
 
@@ -167,6 +178,7 @@ void CSelector_UI::Render_Selector_UI(CGameObject* _obj, _float fTimeDelta)
     {
         /* 1. 만약 Render가 false 라면 fBlending를 점점 내린다. */
         m_isRender = true;
+
         if (m_fBlending <= 0.f)
         {
             m_fBlending = 0.f;
@@ -175,10 +187,9 @@ void CSelector_UI::Render_Selector_UI(CGameObject* _obj, _float fTimeDelta)
             m_fBlending -= fTimeDelta;
 
         /* 2. 뷰에 따라 위치 조정 */
-        CTransform* pObjTrans = static_cast<CTransform*>(_obj->Get_Component(g_strTransformTag));
         _float3 fCurrentSize = {};
 
-        _float4 vTargetPosition = pObjTrans->Get_State_Float4(CTransform::STATE_POSITION);
+        _float4 vTargetPosition = m_vTargetPos;
         _vector vViewPos = XMVector3TransformCoord(vTargetPosition, m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_VIEW));
         _vector vProjPos = XMVector3TransformCoord(vViewPos, m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_PROJ));
 
@@ -186,16 +197,9 @@ void CSelector_UI::Render_Selector_UI(CGameObject* _obj, _float fTimeDelta)
 
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, _vector{ g_iWinSizeX * -0.5f + vProjPosition.x, g_iWinSizeY * 0.5f - vProjPosition.y, 0.8f, 1.f });
 
-        /* 3. 거리에서 멀어질 수록 Size가 커진다. */
-        if (fDistance <= INTERACTIVE_DISTANCE)
-        {
-            /*4. 상호작용이 가능하면 이 함수를 멈추고 다른 함수로 간다*/
-            fCurrentSize = m_fOriginSize;
-            m_isInteractive = true;
-        }
-
-        else
-            fCurrentSize *= fDistance;
+        //fCurrentSize *= fDistance;
+        fCurrentSize = _float3(30.f, 30.f, 0.f);
+        m_pTransformCom->Set_Scaled(fCurrentSize.x, fCurrentSize.y, fCurrentSize.z);
     }
 
     /* y 축 조정*/
@@ -221,7 +225,8 @@ void CSelector_UI::Operate_Selector(_float fTimeDelta)
     /* 상호작용이 불가능할 때 : Check */
     if (false == m_isInteractive)
     {
-        Render_Selector_UI(m_pInteractObj, fTimeDelta);
+        m_isRender = true;
+        NonInteractive_Rendering(fTimeDelta);
 
          /* Texture 변경 */
         if (m_wstrDefaultTexturComTag != m_wstrNonInteractive_Tag && true == m_IsChild && false == m_isArrow)
@@ -237,6 +242,8 @@ void CSelector_UI::Operate_Selector(_float fTimeDelta)
     /* 상호작용이 가능할 때 : X */
     else if (true == m_isInteractive)
     {
+         m_pTransformCom->Set_Scaled(m_fOriginSize.x, m_fOriginSize.y, m_fOriginSize.z);
+
          /* Texture 변경 */
         if (m_wstrDefaultTexturComTag != m_wstrInteractive_Tag && true == m_IsChild && false == m_isArrow)
         {
@@ -284,6 +291,7 @@ void CSelector_UI::Reset()
 {
     m_isRender = false;
     m_isInteractive = false;
+    m_isOutDistance = false;
 }
 
 CCustomize_UI* CSelector_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

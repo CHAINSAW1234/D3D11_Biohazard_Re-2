@@ -145,9 +145,9 @@ void CBullet_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    if (CPlayer::EQUIP::HG == m_pPlayer->Get_Equip())
+    if (m_pPlayer->Get_Equip() == (_int)CPlayer::EQUIP::STG || CPlayer::EQUIP::HG == m_pPlayer->Get_Equip())
     {
-        if (m_iEqipType == (_int)CPlayer::EQUIP::HG || m_iEqipType == BULLET_BACKGROUND)
+        if (m_iEqipType == (_int)CPlayer::EQUIP::STG || m_iEqipType == (_int)CPlayer::EQUIP::HG || m_iEqipType == BULLET_BACKGROUND)
             Render_Bullet_UI(fTimeDelta);
 
         else
@@ -158,14 +158,13 @@ void CBullet_UI::Tick(_float fTimeDelta)
         }
     }
 
-    else if (CPlayer::EQUIP::GRENADE == m_pPlayer->Get_Equip())
-    else if (CPlayer::EQUIP::GN == m_pPlayer->Get_Equip() || CPlayer::EQUIP::LN == m_pPlayer->Get_Equip())
+    else if (CPlayer::EQUIP::GRENADE == m_pPlayer->Get_Equip() || CPlayer::EQUIP::FLASHBANG == m_pPlayer->Get_Equip())
     {
-        if (m_iEqipType == (_int)CPlayer::EQUIP::GN || m_iEqipType == BULLET_BACKGROUND)
-            Change_Grenade(fTimeDelta, (_int)CPlayer::EQUIP::GN);
+        if (m_iEqipType == (_int)CPlayer::EQUIP::GRENADE || m_iEqipType == BULLET_BACKGROUND)
+            Change_Grenade(fTimeDelta, (_int)CPlayer::EQUIP::GRENADE);
 
-        else  if (m_iEqipType == (_int)CPlayer::EQUIP::LN || m_iEqipType == BULLET_BACKGROUND)
-            Change_Grenade(fTimeDelta, (_int)CPlayer::EQUIP::LN);
+        else  if (m_iEqipType == (_int)CPlayer::EQUIP::FLASHBANG || m_iEqipType == BULLET_BACKGROUND)
+            Change_Grenade(fTimeDelta, (_int)CPlayer::EQUIP::FLASHBANG);
 
         else
         {
@@ -256,13 +255,13 @@ void CBullet_UI::Bullet_Font()
 void CBullet_UI::Change_Grenade(_float fTimeDelta, _int _grenadeType)
 {
     /* Font : 수류탄 개수 넣어주기 */
-    if (static_cast<CPlayer::EQUIP>(_grenadeType) == CPlayer::EQUIP::LN)
+    if (static_cast<CPlayer::EQUIP>(_grenadeType) == CPlayer::EQUIP::FLASHBANG)
     {
         if (true == m_IsChild)
             m_isRender = true;
     }
 
-    else if (static_cast<CPlayer::EQUIP>(_grenadeType) == CPlayer::EQUIP::GN)
+    else if (static_cast<CPlayer::EQUIP>(_grenadeType) == CPlayer::EQUIP::GRENADE)
     {
         if (false == m_IsChild)
             m_isRender = true;
@@ -399,7 +398,7 @@ void CBullet_UI::Render_Bullet_UI(_float fTimeDelta)
         return;
 
     /* Texture*/
-    if (true == m_pCrosshair->Get_IsRender())
+    if (true == m_pCrosshair->Render_Type())
     {
         m_isKeepCross = true;
         m_isRender = true;

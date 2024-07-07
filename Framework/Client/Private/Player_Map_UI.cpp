@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Player_Map_UI.h"
 #include "Static_Map_UI.h"
+#include "Item_Map_UI.h"
 #include "Main_Map_UI.h"
 #include "Tab_Window.h"
 #include "Player.h"
@@ -10,7 +11,7 @@
 
 /* 1층 크기*/
 #define MODELMAP_X_FLOO1     82.0969925f
-#define MODELMAP_Y_FLOO1     60.4390125f 
+#define MODELMAP_Y_FLOO1     60.4390125f
 
 /* 2층 크기*/
 #define MODELMAP_X_FLOO2      82.0431098f
@@ -60,12 +61,21 @@ HRESULT CPlayer_Map_UI::Initialize(void* pArg)
     m_fCurrent_ModelScaled.x = MODELMAP_X_FLOO1;
     m_fCurrent_ModelScaled.y = MODELMAP_Y_FLOO1;
 
+    
     m_vPlayer_MovePos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
     m_vPlayer_InitPos.x = 0.f + m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x;
     m_vPlayer_InitPos.y = 0.f + m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y;
 
     m_isMouse_Control = true;
+
+    // 잠깐 추가
+    Find_Player();
+
+    if (nullptr != m_pPlayer)
+    {
+        m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
+    }
 
     return S_OK;
 }
@@ -120,10 +130,11 @@ _bool CPlayer_Map_UI::IsDistanceMeasured_Completely(_bool _find)
     for (auto& iter : *pUIList)
     {
         CMain_Map_UI* pMapMain = dynamic_cast<CMain_Map_UI*>(iter);
+        CItem_Map_UI* pMapItem = dynamic_cast<CItem_Map_UI*>(iter);
 
         if (nullptr != pMapMain)
         {
-            if (true == _find)
+            if (true == _find) /* 거리 재기 끝 */
             {
                 if (*pMapMain->Distance_End() == false)
                     return false;
@@ -131,6 +142,19 @@ _bool CPlayer_Map_UI::IsDistanceMeasured_Completely(_bool _find)
             else
             {
                 *pMapMain->Distance_End() = false;
+            }
+        }
+
+        else if (nullptr != pMapItem)
+        {
+            if (true == _find) /* 거리 재기 끝 */
+            {
+                if (*pMapItem->Distance_ItemEnd() == false)
+                    return false;
+            }
+            else
+            {
+                *pMapItem->Distance_ItemEnd() = false;
             }
         }
     }
@@ -143,7 +167,12 @@ void CPlayer_Map_UI::Open_Map()
 {
     /* ▶ 처음 맵을 열었을 때 플레이어의 위치에 Floor가 존재해야 한다. */
     if (m_isPrevRender != m_pTab_Window->Get_MinMapRender())
-    { 
+    {
+        if (false == m_isPrevRender)
+        {
+            m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_fOriginPos);
+        }
+
         /* 1. 현재 Player가 들고 있는 Floor를 Render 할 것이다. */
         m_pMapPlayer->m_eCurrent_ViewFloor = static_cast<MAP_FLOOR_TYPE>(m_pPlayer->Get_Player_Floor());
         m_ePlayer_Floor = m_pMapPlayer->m_eCurrent_ViewFloor;
@@ -170,6 +199,11 @@ void CPlayer_Map_UI::Open_Map()
         m_isPlayer_FloorSetting = true;
         m_isPrevRender = m_pTab_Window->Get_MinMapRender();
     }
+
+    if (false == m_pTab_Window->Get_MinMapRender())
+    {
+        m_fOriginPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+    }
 }
 
 void CPlayer_Map_UI::Map_Player_Control(_float fTimeDelta)
@@ -192,12 +226,26 @@ void CPlayer_Map_UI::Map_Player_Control(_float fTimeDelta)
                 m_fBlending += fTimeDelta * 1.5f;
         }
 
+        if (true == m_IsChild)
+        {
+            _float4 mapPlayer = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+            _float4 vPlayerPos = m_pMapPlayer_Transform->Get_State_Float4(CTransform::STATE_POSITION);
+            mapPlayer.x = vPlayerPos.x;
+            mapPlayer.y = vPlayerPos.y;
+            mapPlayer.z = vPlayerPos.z;
+            mapPlayer.w = vPlayerPos.w;
+
+            m_pTransformCom->Set_State(CTransform::STATE_POSITION, mapPlayer);
+        }
+      
         return;
     }
 
-    else if (false == m_isRender && m_eCurrent_ViewFloor == m_ePlayer_Floor)
+    else if (false == m_isRender)
     {
-        _matrix playerMatrix = m_pTransformCom->Get_WorldMatrix();
+        m_isPlayer_Open = false;
+
+        _matrix playerMatrix = m_pPlayerTransform->Get_WorldMatrix();
 
         ///////////  :   회전 
         _vector col0 = XMVector4Normalize(playerMatrix.r[0]);
@@ -206,19 +254,14 @@ void CPlayer_Map_UI::Map_Player_Control(_float fTimeDelta)
         _vector col3 = XMVector4Normalize(playerMatrix.r[3]);
 
         _float4x4 mapPlayer = m_pTransformCom->Get_WorldFloat4x4();
-        mapPlayer = XMMatrixIdentity();
+         mapPlayer = XMMatrixIdentity();
+    
         mapPlayer._11 = XMVectorGetX(col0);
         mapPlayer._12 = XMVectorGetZ(col0);
         mapPlayer._21 = XMVectorGetX(col2);
         mapPlayer._22 = XMVectorGetZ(col2);
 
-     /*   _float4 vPlayerPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-        mapPlayer._41 = vPlayerPos.x;
-        mapPlayer._42 = vPlayerPos.y;
-        mapPlayer._43 = vPlayerPos.z;
-        mapPlayer._44 = vPlayerPos.w;*/
-
-        ///////////  :   설정 값
+           ///////////  :   설정 값
         m_pTransformCom->Set_WorldMatrix(mapPlayer);
 
         if (false == m_IsChild)
@@ -229,24 +272,53 @@ void CPlayer_Map_UI::Map_Player_Control(_float fTimeDelta)
 
         ///////////  :   이동
         Map_Player_Moving(fTimeDelta);
+
+        if (true == m_IsChild)
+        {
+            _float4 mapPlayer = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+            _float4 vPlayerPos = m_pMapPlayer_Transform->Get_State_Float4(CTransform::STATE_POSITION);
+            mapPlayer.x = vPlayerPos.x;
+            mapPlayer.y = vPlayerPos.y;
+            mapPlayer.z = vPlayerPos.z;
+            mapPlayer.w = vPlayerPos.w;
+
+            m_pTransformCom->Set_State(CTransform::STATE_POSITION, mapPlayer);
+        }
     }
 }
 
 void CPlayer_Map_UI::Map_Player_Moving(_float fTimeDelta)
 {
     _float2 fComparison = {};
+    _float2 Moving_Value = {};
 
     // MINMAP과 MODELMAP의 크기 비율 계산
-    fComparison.x = MINMAP_X_SCALED / m_fCurrent_ModelScaled.x;
-    fComparison.y = MINMAP_Y_SCALED / m_fCurrent_ModelScaled.y;
+
+    if(MODELMAP_X_FLOO1 == m_fCurrent_ModelScaled.x && MODELMAP_Y_FLOO1 == m_fCurrent_ModelScaled.y)
+    {
+        fComparison.x = (MINMAP_X_SCALED) / m_fCurrent_ModelScaled.x;
+        fComparison.y = (MINMAP_Y_SCALED) / m_fCurrent_ModelScaled.y;
+
+        m_vPlayer_MovePos = m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION);
+        Moving_Value.x = -(m_vPlayer_MovePos.x + 2.f);
+        Moving_Value.y = -(m_vPlayer_MovePos.z + 14.f); // 플레이어의 초기 위치와 현재 위치의 차이 계산
+    }
+    else if (MODELMAP_X_FLOO2 == m_fCurrent_ModelScaled.x && MODELMAP_Y_FLOO2 == m_fCurrent_ModelScaled.y)
+    {
+        fComparison.x = (MINMAP_X_SCALED) / m_fCurrent_ModelScaled.x;
+        fComparison.y = (MINMAP_Y_SCALED) / m_fCurrent_ModelScaled.y;
+
+        m_vPlayer_MovePos = m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION);
+        Moving_Value.x = -(m_vPlayer_MovePos.x + 2.f);
+        Moving_Value.y = -(m_vPlayer_MovePos.z + 14.f); // 플레이어의 초기 위치와 현재 위치의 차이 계산
+    }
 
     //offset.x /= fComparison.x;
     //offset.y /= fComparison.y;
 
-    _float2 Moving_Value = {};
+    //Moving_Value.x = 0.f - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x;
+    //Moving_Value.y = 0.f - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).z; // 플레이어의 초기 위치와 현재 위치의 차이 계산
 
-    Moving_Value.x = 0.f - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x;
-    Moving_Value.y = 0.f - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).z; // 플레이어의 초기 위치와 현재 위치의 차이 계산
 
     // MINMAP 비율에 맞춰 이동 값을 조정
     Moving_Value.x *= fComparison.x;
@@ -260,7 +332,7 @@ void CPlayer_Map_UI::Map_Player_Moving(_float fTimeDelta)
         vMiniMapPlayer.z = 0.1f;
 
     else if (true == m_IsChild)
-         vMiniMapPlayer.z = 0.09f;
+        vMiniMapPlayer.z = 0.09f;
 
     m_pTransformCom->Set_State(CTransform::STATE_POSITION, vMiniMapPlayer);
 }
@@ -287,10 +359,12 @@ void CPlayer_Map_UI::Map_Player_Setting()
         vPlayertrans.x = m_vBackGround_Center.x;
         vPlayertrans.y = m_vBackGround_Center.y;
 
+        m_isPlayer_Open = true;
+
         for (auto& iter : *pUIList)
         {
             CPlayer_Map_UI* pPlayer = dynamic_cast<CPlayer_Map_UI*>(iter);
-
+            
             if (nullptr != pPlayer)
             {
                 if (pPlayer->m_eMapComponent_Type == MAP_UI_TYPE::PLAYER_MAP)
@@ -307,6 +381,7 @@ void CPlayer_Map_UI::Map_Player_Setting()
         for (auto& iter : *pUIList)
         {
             CMain_Map_UI* pMapMain = dynamic_cast<CMain_Map_UI*>(iter);
+            CItem_Map_UI* pMapItem = dynamic_cast<CItem_Map_UI*>(iter);
 
             if (nullptr != pMapMain)
             {
@@ -319,7 +394,19 @@ void CPlayer_Map_UI::Map_Player_Setting()
                 vMain_Result.z = pMapTrans->Get_State_Float4(CTransform::STATE_POSITION).z;
 
                 pMapTrans->Set_State(CTransform::STATE_POSITION, vMain_Result);
+            }
 
+            if (nullptr != pMapItem)
+            {
+                CTransform* pItemTrans = static_cast<CTransform*>(pMapItem->Get_Component(g_strTransformTag));
+
+                /* Player에서 각자 잰 거리 까지의 위치를 해당 Main 객체에 넣어준다. */
+                _float4 vMain_Result = (Player + *pMapItem->Player_Between_Item_Distance());
+
+                /* Z 값이 흐트러지지 않도록 정리 */
+                vMain_Result.z = pItemTrans->Get_State_Float4(CTransform::STATE_POSITION).z;
+
+                pItemTrans->Set_State(CTransform::STATE_POSITION, vMain_Result);
             }
         }
 
