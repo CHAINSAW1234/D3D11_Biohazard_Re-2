@@ -7,6 +7,7 @@
 #include "Player_State_Move_DoorStop.h"
 #include "Player_State_Move_Ladder.h"
 #include "Player_State_Move_Lever.h"
+#include "Player_State_Move_Shelf.h"
 #include "Weapon.h"
 
 CPlayer_State_Move::CPlayer_State_Move(CPlayer* pPlayer)
@@ -127,7 +128,13 @@ void CPlayer_State_Move::Update_State()
 			Change_State(LEVER);
 			return;
 		}
+	}
 
+	if (m_pPlayer->Get_isShelf()) {
+		if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == PRESSING) {
+			Change_State(SHELF);
+			return;
+		}
 	}
 
 }
@@ -175,6 +182,7 @@ HRESULT CPlayer_State_Move::Add_States()
 	Add_State(DOOR_STOP, CPlayer_State_Move_DoorStop::Create(m_pPlayer, this));
 	Add_State(LADDER, CPlayer_State_Move_Ladder::Create(m_pPlayer, this));
 	Add_State(LEVER, CPlayer_State_Move_Lever::Create(m_pPlayer, this));
+	Add_State(SHELF, CPlayer_State_Move_Shelf::Create(m_pPlayer, this));
 	//Change_State(IDLE);
 
 	return S_OK;
