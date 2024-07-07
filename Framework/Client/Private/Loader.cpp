@@ -1312,7 +1312,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_LeonBody"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/TEST/Body_Leon/Body_Leon.fbx",
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonBody.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 

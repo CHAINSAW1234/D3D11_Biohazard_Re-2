@@ -1151,13 +1151,26 @@ void CPlayer::Update_Equip()
 
 	if (m_isRequestChangeEquip) {
 		if (Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
-			if (nullptr != m_pWeapon)
-				m_pWeapon->Set_RenderLocation(CWeapon::MOVE);
-
 			Get_Body_Model()->Set_Loop(3, false);
 
-			Change_Body_Animation_Hold(3, MOVETOHOLSTER);
 			Get_Body_Model()->Set_BlendWeight(3, 10.f, 20.f);
+
+			if (nullptr != m_pWeapon) {
+				m_pWeapon->Set_RenderLocation(CWeapon::MOVE);
+				Change_Body_Animation_Hold(3, MOVETOHOLSTER);
+
+			}
+			else {
+				if (m_eState == SUBHOLD) {
+					Set_Equip_Sub(&m_eTargetEquip);
+				}
+				else {
+					Set_Equip_Gun(&m_eTargetEquip);
+				}
+				Change_Body_Animation_Hold(3, HOLSTERTOMOVE);
+			}
+
+
 		}
 		else if (Get_Body_Model()->isFinished(3)) {
 			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.1f) {
@@ -1168,12 +1181,18 @@ void CPlayer::Update_Equip()
 				Get_Body_Model()->Set_BlendWeight(3, 0.f, 5.f);
 			}
 			else if (Get_Body_Model()->Get_AnimIndex_PlayingInfo(3) == MOVETOHOLSTER) {
-				if(m_eState == SUBHOLD)
+				if (m_eState == SUBHOLD) {
 					Set_Equip_Sub(&m_eTargetEquip);
+				}
 				else {
 					Set_Equip_Gun(&m_eTargetEquip);
 				}
-				Change_Body_Animation_Hold(3, HOLSTERTOMOVE);
+				if (NONE == m_eEquip) {
+					Get_Body_Model()->Set_BlendWeight(3, 0.f, 5.f);
+				}
+				else {
+					Change_Body_Animation_Hold(3, HOLSTERTOMOVE);
+				}
 			}
 		}
 	}

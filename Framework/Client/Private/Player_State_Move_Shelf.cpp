@@ -13,19 +13,14 @@ CPlayer_State_Move_Shelf::CPlayer_State_Move_Shelf(CPlayer* pPlayer, CFSM_HState
 
 void CPlayer_State_Move_Shelf::OnStateEnter()
 {
-	//m_pPlayer->Get_Body_Model()->Active_RootMotion_XZ(false);
-	//m_pPlayer->Get_Body_Model()->Active_RootMotion_Rotation(false);
 	m_pPlayer->Stop_UpperBody();
 
-	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.f);
+	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
 	m_pPlayer->Get_Body_Model()->Set_Loop(0, false);
 	m_pPlayer->Get_Body_Model()->Set_Loop(1, false);
 
 	m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
 	m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
-
-	m_pPlayer->Get_Body_Model()->Set_TrackPosition(0, 0);
-	m_pPlayer->Get_Body_Model()->Set_TrackPosition(1, 0);
 
 	m_pPlayer->Set_ManualMove(true);
 
@@ -42,13 +37,6 @@ void CPlayer_State_Move_Shelf::OnStateEnter()
 	m_fLerpTimeDelta = 0.f;
 	m_PlayerTransform = m_pPlayer->Get_Transform()->Get_WorldFloat4x4();
 	Set_InterpolateMatrix();
-	//m_ShelfTransform = m_pPlayer->Get_Shelf_WorldMatrix();
-	//m_ShelfTransform = XMMatrixRotationY(XMConvertToRadians(90.f)) * XMLoadFloat4x4(&m_ShelfTransform) ;
-	//m_ShelfTransform._41 -= -0.413361f * 2;
-	//m_ShelfTransform._43 -= 0.970557f / 2;
-	//_vector vLeverLook = XMVector3Normalize(m_ShelfTransform.Forward());
-	//m_ShelfTransform._41 += XMVectorGetX(vLeverLook) * 1.f;
-	//m_ShelfTransform._43 += XMVectorGetZ(vLeverLook) * 1.f;
 }
 
 void CPlayer_State_Move_Shelf::OnStateUpdate(_float fTimeDelta)
@@ -71,33 +59,29 @@ void CPlayer_State_Move_Shelf::OnStateUpdate(_float fTimeDelta)
 
 void CPlayer_State_Move_Shelf::OnStateExit()
 {
-	//m_pPlayer->Get_Body_Model()->Active_RootMotion_XZ(true);
-	//m_pPlayer->Get_Body_Model()->Active_RootMotion_Rotation(true);
-
 	if (CPlayer::NONE != m_eEquip)
 		m_pPlayer->Requst_Change_Equip(m_eEquip);
 
 	m_pPlayer->Set_Shelf_Setting(nullptr);
 	m_pPlayer->Set_ManualMove(false);
+	m_pPlayer->Change_Body_Animation_Move(0,CPlayer::ANIM_IDLE);
+	m_pPlayer->Get_Body_Model()->Reset_PreAnimation(0);
 
-	m_pPlayer->Get_Body_Model()->Set_TotalLinearInterpolation(0.2f);
-	m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
-	//m_pPlayer->Get_Body_Model()->Set_Loop(0, true);
 }
 
 void CPlayer_State_Move_Shelf::Interpolate_Location(_float fTimeDelta)
 {
-	if (m_fLerpTimeDelta >= 0.1f)
+	if (m_fLerpTimeDelta >= 0.2f)
 		return;
 
 	_float				fTime = fTimeDelta;
 	m_fLerpTimeDelta += fTime;
-	if (m_fLerpTimeDelta >= 0.1f)
+	if (m_fLerpTimeDelta >= 0.2f)
 	{
-		fTime -= m_fLerpTimeDelta - 0.1f;
+		fTime -= m_fLerpTimeDelta - 0.2f;
 	}
 	
-	_float				fRatio = { fTime / 0.1f };
+	_float				fRatio = { fTime / 0.2f };
 
 	_matrix				InterpolationMatrix = { XMLoadFloat4x4(&m_ShelfTransform) };
 

@@ -21,9 +21,6 @@ void CPlayer_State_Move_Lever::OnStateEnter()
 	m_pPlayer->Get_Body_Model()->Set_BlendWeight(0, 1.f);
 	m_pPlayer->Get_Body_Model()->Set_BlendWeight(1, 0.f);
 
-	m_pPlayer->Get_Body_Model()->Set_TrackPosition(0, 0);
-	m_pPlayer->Get_Body_Model()->Set_TrackPosition(1, 0);
-
 	m_pPlayer->Set_ManualMove(true);
 
 	m_eEquip = m_pPlayer->Get_Equip();
@@ -63,17 +60,17 @@ void CPlayer_State_Move_Lever::OnStateExit()
 
 void CPlayer_State_Move_Lever::Interpolate_Location(_float fTimeDelta)
 {
-	if (m_fLerpTimeDelta >= 0.1f)
+	if (m_fLerpTimeDelta >= 0.2f)
 		return;
 
 	_float				fTime = fTimeDelta;
 	m_fLerpTimeDelta += fTime;
-	if (m_fLerpTimeDelta >= 0.1f)
+	if (m_fLerpTimeDelta >= 0.2f)
 	{
-		fTime -= m_fLerpTimeDelta - 0.1f;
+		fTime -= m_fLerpTimeDelta - 0.2f;
 	}
 
-	_float				fRatio = { fTime / 0.1f };
+	_float				fRatio = { fTime / 0.2f };
 
 	_matrix				InterpolationMatrix = { XMLoadFloat4x4(&m_LeverTransform) };
 
@@ -97,7 +94,7 @@ void CPlayer_State_Move_Lever::Interpolate_Location(_float fTimeDelta)
 
 void CPlayer_State_Move_Lever::Set_InterpolateMatrix()
 {
-	_matrix			WindowWorldMatrix = { XMLoadFloat4x4(&m_pPlayer->Get_Lever_WorldMatrix()) };
+	_matrix			WindowWorldMatrix = { XMMatrixRotationY(XMConvertToRadians(180.f)) * XMLoadFloat4x4(&m_pPlayer->Get_Lever_WorldMatrix()) };
 	_matrix			Player_WorldMatrix = { m_pPlayer->Get_Transform()->Get_WorldMatrix() };
 
 	_vector			vPlayerScale, vPlayerQuaternion, vPlayerTranslation;
