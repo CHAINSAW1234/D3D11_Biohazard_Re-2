@@ -24,6 +24,7 @@ private:
 	void						Finish();
 	void						Stop();
 
+	void						Set_InterpolateMatrix();
 	void						Change_Animation(_uint iAnimIndex);
 
 private:

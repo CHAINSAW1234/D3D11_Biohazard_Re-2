@@ -36,13 +36,7 @@ void CPlayer_State_Move_Lever::OnStateEnter()
 
 	m_fLerpTimeDelta = 0.f;
 	m_PlayerTransform = m_pPlayer->Get_Transform()->Get_WorldFloat4x4();
-
-	m_LeverTransform = m_pPlayer->Get_Lever_WorldMatrix();
-	m_LeverTransform = XMMatrixRotationY(XMConvertToRadians(180.f)) * XMLoadFloat4x4(&m_LeverTransform);
-
-	_vector vLeverLook = XMVector3Normalize(m_LeverTransform.Forward());
-	m_LeverTransform._41 += XMVectorGetX(vLeverLook) * 0.5f;
-	m_LeverTransform._43 += XMVectorGetZ(vLeverLook) * 0.5f;
+	Set_InterpolateMatrix();
 }
 
 void CPlayer_State_Move_Lever::OnStateUpdate(_float fTimeDelta)
@@ -69,27 +63,74 @@ void CPlayer_State_Move_Lever::OnStateExit()
 
 void CPlayer_State_Move_Lever::Interpolate_Location(_float fTimeDelta)
 {
-	m_fLerpTimeDelta += fTimeDelta;
+	if (m_fLerpTimeDelta >= 0.1f)
+		return;
 
-	if (m_fLerpTimeDelta >= m_fTotalLerpTime)
-		m_fLerpTimeDelta = m_fTotalLerpTime;
+	_float				fTime = fTimeDelta;
+	m_fLerpTimeDelta += fTime;
+	if (m_fLerpTimeDelta >= 0.1f)
+	{
+		fTime -= m_fLerpTimeDelta - 0.1f;
+	}
 
-	_vector vScale, vRotation, vTranslate;
-	XMMatrixDecompose(&vScale, &vRotation, &vTranslate, m_PlayerTransform);
+	_float				fRatio = { fTime / 0.1f };
 
-	_vector vTartetScale, vTargetRotation, vTargetTranslate;
+	_matrix				InterpolationMatrix = { XMLoadFloat4x4(&m_LeverTransform) };
 
-	XMMatrixDecompose(&vTartetScale, &vTargetRotation, &vTargetTranslate, m_LeverTransform);
+	_vector				vScale, vQuaternion, vTranslation;
+	XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, InterpolationMatrix);
 
-	// 1. 회전 보간
-	m_pPlayer->Get_Transform()->Set_RotationMatrix_Pure(XMMatrixRotationQuaternion(XMQuaternionSlerp(vRotation, vTargetRotation, m_fLerpTimeDelta / m_fTotalLerpTime)));
+	_vector				vDevideQuaternion = { XMQuaternionSlerp(XMQuaternionIdentity(), XMQuaternionNormalize(vQuaternion), fRatio) };
+	_vector				vDevideTranslation = { XMVectorSetW(vTranslation * fRatio, 0.f) };
 
-	// 2. 위치 보간
-	_float4 vCurTranslate;
-	vCurTranslate = XMVectorLerp(vTranslate, vTargetTranslate, m_fLerpTimeDelta / m_fTotalLerpTime);
-	vCurTranslate.y = m_pPlayer->Get_Transform()->Get_State_Float4(CTransform::STATE_POSITION).y;
 
-	m_pPlayer->Get_Transform()->Set_State(CTransform::STATE_POSITION, vCurTranslate);
+	_matrix				WorldMatrix = { m_pPlayer->Get_Transform()->Get_WorldMatrix() };
+	_vector				vWorldScale, vWorldQuaternion, vWorldTranslation;
+	XMMatrixDecompose(&vWorldScale, &vWorldQuaternion, &vWorldTranslation, WorldMatrix);
+
+	_vector				vResultQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(vWorldQuaternion), XMQuaternionNormalize(vDevideQuaternion)) };
+	_vector				vResultTranslation = { XMVectorSetW(vWorldTranslation + vDevideTranslation, 1.f) };
+
+	_matrix				AplliedMatrix = { XMMatrixAffineTransformation(vWorldScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vResultQuaternion, vResultTranslation) };
+	m_pPlayer->Get_Transform()->Set_WorldMatrix(AplliedMatrix);
+}
+
+void CPlayer_State_Move_Lever::Set_InterpolateMatrix()
+{
+	_matrix			WindowWorldMatrix = { XMLoadFloat4x4(&m_pPlayer->Get_Lever_WorldMatrix()) };
+	_matrix			Player_WorldMatrix = { m_pPlayer->Get_Transform()->Get_WorldMatrix() };
+
+	_vector			vPlayerScale, vPlayerQuaternion, vPlayerTranslation;
+	_vector			vWindowScale, vWindowQuaternion, vWindowTranslation;
+
+	XMMatrixDecompose(&vPlayerScale, &vPlayerQuaternion, &vPlayerTranslation, Player_WorldMatrix);
+	XMMatrixDecompose(&vWindowScale, &vWindowQuaternion, &vWindowTranslation, WindowWorldMatrix);
+
+	_matrix			TargetWorldMatrix = { XMMatrixAffineTransformation(vPlayerScale, XMVectorSet(0.f, 0.f, 0.f ,1.f), vWindowQuaternion, vWindowTranslation) };
+
+	_matrix			RootFirstKeyFrameMatrix = { m_pPlayer->Get_Body_Model()->Get_FirstKeyFrame_Root_TransformationMatrix(m_pPlayer->Get_Body_Model()->Get_CurrentAnimLayerTag(0), m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(0)) };
+	_matrix			ModelTransformMatrix = { XMLoadFloat4x4(&m_pPlayer->Get_Body_Model()->Get_TransformationMatrix()) };
+
+	_vector					vRootScale, vRootQuaternion, vRootTranslation;
+	XMMatrixDecompose(&vRootScale, &vRootQuaternion, &vRootTranslation, RootFirstKeyFrameMatrix);
+
+	vRootTranslation = XMVector3TransformNormal(vRootTranslation, ModelTransformMatrix);
+
+	_vector			vRootRotateAxis = { XMVectorSetW(vRootQuaternion, 0.f) };
+	vRootRotateAxis = XMVector3TransformNormal(vRootRotateAxis, ModelTransformMatrix);
+	vRootQuaternion = XMVectorSetW(vRootRotateAxis, XMVectorGetW(vRootQuaternion));
+	RootFirstKeyFrameMatrix = XMMatrixAffineTransformation(vRootScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRootQuaternion, vRootTranslation);
+
+	_matrix			InterpolateTargetMatrix = { RootFirstKeyFrameMatrix * TargetWorldMatrix };
+
+	_vector			vInterpolateScale, vInterpolateQuaternion, vInterpolateTranslation;
+	XMMatrixDecompose(&vInterpolateScale, &vInterpolateQuaternion, &vInterpolateTranslation, InterpolateTargetMatrix);
+
+	_vector			vDeltaQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(XMQuaternionInverse(vPlayerQuaternion)), XMQuaternionNormalize(vInterpolateQuaternion)) };
+	_vector			vDeltaTranslation = { vInterpolateTranslation - vPlayerTranslation };
+
+	_matrix			DeltaMatrix = { XMMatrixAffineTransformation(vPlayerScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vDeltaQuaternion, vDeltaTranslation) };
+	XMStoreFloat4x4(&m_LeverTransform, DeltaMatrix);
 }
 
 CPlayer_State_Move_Lever* CPlayer_State_Move_Lever::Create(CPlayer* pPlayer, CFSM_HState* pHState)
