@@ -31,6 +31,8 @@ void CBreak_Window_Zombie::Enter()
 	if (nullptr == pBodyModel)
 		return;
 
+	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
+
 #ifdef _DEBUG
 
 	cout << "Enter Knock Door" << endl;
@@ -61,13 +63,12 @@ _bool CBreak_Window_Zombie::Execute(_float fTimeDelta)
 	if (false == isCanBreakWindow)
 		return false;
 
-	if (false == m_pBlackBoard->Is_LookTarget())
-		return false;
-
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->Set_State(MONSTER_STATE::MST_WALK);
+	pAI->Set_State(MONSTER_STATE::MST_BREAK_WINDOW);
+
+	pWindow->Attack_Prop();
 
 	Change_Animation(fTimeDelta);
 
@@ -78,6 +79,8 @@ void CBreak_Window_Zombie::Exit()
 {
 	if (nullptr == m_pBlackBoard)
 		return;
+
+	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
 }
 
 void CBreak_Window_Zombie::Change_Animation(_float fTimeDelta)
@@ -89,7 +92,12 @@ void CBreak_Window_Zombie::Change_Animation(_float fTimeDelta)
 	if (nullptr == pBodyModel)
 		return;
 
-	_int			iResultAnimationIndex = { -1 };
+	_int			iResultAnimationIndex = { static_cast<_int>(ANIM_GIMMICK_WINDOW::_BREAK) };
+	_bool			isLoop = { false };
+
+	pBodyModel->Change_Animation(static_cast<_uint>(m_eBasePlayingIndex), m_strAnimLayerTag, iResultAnimationIndex);
+	pBodyModel->Set_Loop(static_cast<_uint>(m_eBasePlayingIndex), isLoop);
+
 
 #pragma endregion
 }

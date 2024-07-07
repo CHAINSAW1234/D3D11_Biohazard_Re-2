@@ -103,16 +103,44 @@ _bool CKnock_Window_Zombie::Execute(_float fTimeDelta)
 		pWindow->Attack_Prop();
 	}
 
-	if (m_fAccLinearInterpolateTime < ZOMBIE_TOTAL_INTERPOLATE_TO_WINDOW_TIME)
+	if (m_fAccLinearInterpolateTime < ZOMBIE_KNOCK_TOTAL_INTERPOLATE_TO_WINDOW_TIME)
 	{
-		m_fAccLinearInterpolateTime += fTimeDelta;
-		_float			fRatio = { fminf((m_fAccLinearInterpolateTime / ZOMBIE_TOTAL_INTERPOLATE_TO_WINDOW_TIME), 1.f) };
+		_bool				isComplete = { m_fAccLinearInterpolateTime >= ZOMBIE_KNOCK_TOTAL_INTERPOLATE_TO_WINDOW_TIME };
+		if (false == isComplete)
+		{
+			_float				fTime = fTimeDelta;
+			m_fAccLinearInterpolateTime += fTime;
 
-		
+			if (m_fAccLinearInterpolateTime >= ZOMBIE_KNOCK_TOTAL_INTERPOLATE_TO_WINDOW_TIME)
+			{
+				fTime -= m_fAccLinearInterpolateTime - ZOMBIE_KNOCK_TOTAL_INTERPOLATE_TO_WINDOW_TIME;
+			}
+			_float				fRatio = { fTime / ZOMBIE_KNOCK_TOTAL_INTERPOLATE_TO_WINDOW_TIME };
+
+			if (false == isComplete)
+			{
+				_matrix				InterpolationMatrix = { XMLoadFloat4x4(&m_DeltaInterpolateMatrix) };
+
+				_vector				vScale, vQuaternion, vTranslation;
+				XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, InterpolationMatrix);
+				
+				_vector				vDevideQuaternion = { XMQuaternionSlerp(XMQuaternionIdentity(), XMQuaternionNormalize(vQuaternion), fRatio) };
+				_vector				vDevideTranslation = { XMVectorSetW(vTranslation * fRatio, 0.f) };
+
+
+				_matrix				WorldMatrix = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix() };
+				_vector				vWorldScale, vWorldQuaternion, vWorldTranslation;
+				XMMatrixDecompose(&vWorldScale, &vWorldQuaternion, &vWorldTranslation, WorldMatrix);
+				
+				_vector				vResultQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(vWorldQuaternion), XMQuaternionNormalize(vDevideQuaternion)) };
+				_vector				vResultTranslation = { XMVectorSetW(vWorldTranslation + vDevideTranslation, 1.f) };
+				
+				_matrix				AplliedMatrix = { XMMatrixAffineTransformation(vWorldScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vResultQuaternion, vResultTranslation) };
+				m_pBlackBoard->Get_AI()->Get_Transform()->Set_WorldMatrix(AplliedMatrix);
+			}
+		}
 	}
-
 	Change_Animation(fTimeDelta);
-
 
 	return true;
 }
@@ -121,6 +149,8 @@ void CKnock_Window_Zombie::Exit()
 {
 	if (nullptr == m_pBlackBoard)
 		return;
+
+	m_pBlackBoard->Get_AI()->Set_ManualMove(false);
 }
 
 void CKnock_Window_Zombie::Change_Animation(_float fTimeDelta)
@@ -135,50 +165,65 @@ void CKnock_Window_Zombie::Change_Animation(_float fTimeDelta)
 	_int			iResultAnimationIndex = { -1 };
 	_bool			isLoop = { false };
 
-	_int			iCurrentAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_iBasePlayingIndex)) };
-	//	루프 모션 진행 중
-	if (iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_F_LOOP) ||
+	wstring			strCurrentAnimLayerTag = { pBodyModel->Get_CurrentAnimLayerTag(static_cast<_uint>(m_eBasePlayingIndex)) };
+	_int			iCurrentAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_eBasePlayingIndex)) };
+
+	_bool			isSameAnimLayer = { strCurrentAnimLayerTag == m_strAnimLayerTag };
+	_bool			isKnockAnimIndex = {
+		iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_F_LOOP) ||
 		iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_L_LOOP) ||
-		iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_R_LOOP))
-	{
-		return;
-	}
-
-		//	시작모션이 끝난경우 혹은 진행 중
-	if (iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_F_START) ||
+		iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_R_LOOP) ||
 		iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_F_START) ||
-		iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_F_START))
+		iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_L_START) ||
+		iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_R_START)
+	};
+
+	if (isSameAnimLayer && isKnockAnimIndex)
 	{
-		if (true == pBodyModel->isFinished(static_cast<_uint>(m_iBasePlayingIndex)))
-		{
-			if (DIRECTION::_F == m_eStartDirectionToWindow)
-			{
-				iResultAnimationIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_F_LOOP);
-			}
-
-			else if (DIRECTION::_FL == m_eStartDirectionToWindow ||
-				DIRECTION::_L == m_eStartDirectionToWindow ||
-				DIRECTION::_BL == m_eStartDirectionToWindow)
-			{
-				iResultAnimationIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_L_LOOP);
-			}
-
-			else if (DIRECTION::_FR == m_eStartDirectionToWindow ||
-				DIRECTION::_R == m_eStartDirectionToWindow ||
-				DIRECTION::_BR == m_eStartDirectionToWindow)
-			{
-				iResultAnimationIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_R_LOOP);
-			}
-
-			isLoop = true;
-		}
-		
-		//	시작 모션 진행 중 ( 안 끝 남 )
-		else
+		//	루프 모션 진행 중
+		if (iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_F_LOOP) ||
+			iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_L_LOOP) ||
+			iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_R_LOOP))
 		{
 			return;
 		}
-	}
+
+		//	시작모션이 끝난경우 혹은 진행 중
+		if (iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_F_START) ||
+			iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_L_START) ||
+			iCurrentAnimIndex == static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_R_START))
+		{
+			if (true == pBodyModel->isFinished(static_cast<_uint>(m_eBasePlayingIndex)))
+			{
+				if (DIRECTION::_F == m_eStartDirectionToWindow)
+				{
+					iResultAnimationIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_F_LOOP);
+				}
+
+				else if (DIRECTION::_FL == m_eStartDirectionToWindow ||
+					DIRECTION::_L == m_eStartDirectionToWindow ||
+					DIRECTION::_BL == m_eStartDirectionToWindow)
+				{
+					iResultAnimationIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_L_LOOP);
+				}
+
+				else if (DIRECTION::_FR == m_eStartDirectionToWindow ||
+					DIRECTION::_R == m_eStartDirectionToWindow ||
+					DIRECTION::_BR == m_eStartDirectionToWindow)
+				{
+					iResultAnimationIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_KNOCK_FROM_R_LOOP);
+				}
+
+				isLoop = true;
+			}
+
+			//	시작 모션 진행 중 ( 안 끝 남 )
+			else
+			{
+				return;
+			}
+		}
+	}	
 
 	//	아직 관련 모션이아니었던 경우
 	else
@@ -208,28 +253,28 @@ void CKnock_Window_Zombie::Change_Animation(_float fTimeDelta)
 	if (-1 == iResultAnimationIndex)
 		return;
 
-	pBodyModel->Change_Animation(static_cast<_uint>(m_iBasePlayingIndex), m_strAnimLayerTag, iResultAnimationIndex);
-	pBodyModel->Set_Loop(static_cast<_uint>(m_iBasePlayingIndex), isLoop);
+	pBodyModel->Change_Animation(static_cast<_uint>(m_eBasePlayingIndex), m_strAnimLayerTag, iResultAnimationIndex);
+	pBodyModel->Set_Loop(static_cast<_uint>(m_eBasePlayingIndex), isLoop);
 
 #pragma endregion
 }
 
 void CKnock_Window_Zombie::Set_TargetInterpolate_Matrix()
 {
-	CWindow*		pWindow = { m_pBlackBoard->Get_Nearest_Window() };
+	CWindow* pWindow = { m_pBlackBoard->Get_Nearest_Window() };
 	if (nullptr == pWindow)
 		return;
 
 	_matrix			WindowWorldMatrix = { pWindow->Get_Transform()->Get_WorldMatrix() };
-	_matrix			StartMatrix = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix() };
+	_matrix			Zombie_WorldMatrix = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix() };
 
-	_vector			vStartScale, vStartQuaternion, vStartTranslation;
+	_vector			vZombieScale, vZombieQuaternion, vZombieTranslation;
 	_vector			vWindowScale, vWindowQuaternion, vWindowTranslation;
 
-	XMMatrixDecompose(&vStartScale, &vStartQuaternion, &vStartTranslation, StartMatrix);
+	XMMatrixDecompose(&vZombieScale, &vZombieQuaternion, &vZombieTranslation, Zombie_WorldMatrix);
 	XMMatrixDecompose(&vWindowScale, &vWindowQuaternion, &vWindowTranslation, WindowWorldMatrix);
 
-	_matrix			TargetWorldMatrix = { XMMatrixAffineTransformation(vStartScale, XMVectorSet(0.f, 0.f, 0.f ,1.f), vWindowQuaternion, vWindowTranslation) };
+	_matrix			TargetWorldMatrix = { XMMatrixAffineTransformation(vZombieScale, XMVectorSet(0.f, 0.f, 0.f ,1.f), vWindowQuaternion, vWindowTranslation) };
 
 	CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
 
@@ -268,7 +313,16 @@ void CKnock_Window_Zombie::Set_TargetInterpolate_Matrix()
 	RootFirstKeyFrameMatrix = XMMatrixAffineTransformation(vRootScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRootQuaternion, vRootTranslation);
 
 	_matrix			InterpolateTargetMatrix = { RootFirstKeyFrameMatrix * TargetWorldMatrix };
-	XMStoreFloat4x4(&m_StartTargetWorldMatrix, InterpolateTargetMatrix);	
+
+	_vector			vInterpolateScale, vInterpolateQuaternion, vInterpolateTranslation;
+	XMMatrixDecompose(&vInterpolateScale, &vInterpolateQuaternion, &vInterpolateTranslation, InterpolateTargetMatrix);
+
+	_vector			vDeltaQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(XMQuaternionInverse(vZombieQuaternion)), XMQuaternionNormalize(vInterpolateQuaternion)) };
+	_vector			vDeltaTranslation = { vInterpolateTranslation - vZombieTranslation };
+	
+	_matrix			DeltaMatrix = { XMMatrixAffineTransformation(vZombieScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vDeltaQuaternion, vDeltaTranslation) };
+
+	XMStoreFloat4x4(&m_DeltaInterpolateMatrix, DeltaMatrix);
 }
 
 CKnock_Window_Zombie* CKnock_Window_Zombie::Create(void* pArg)

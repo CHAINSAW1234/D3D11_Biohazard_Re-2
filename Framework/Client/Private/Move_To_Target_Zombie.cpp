@@ -561,7 +561,7 @@ void CMove_To_Target_Zombie::Turn_To_Window(_float fTimeDelta)
 	_vector				vZombiePosition = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
 
 	_vector				vDirectionToWindow = { vWindowPosition - vZombiePosition };
-	_vector				vDirectionToWindowXZPlane = { vDirectionToWindow.m128_f32[1] = 0.f };
+	_vector				vDirectionToWindowXZPlane = { XMVectorSetY(vDirectionToWindow, 0.f) };
 	
 	_matrix				ZombieWorldMatrixInv = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix_Inverse() };
 	_vector				vDirectionToWindowLocalXZPlane = { XMVector3TransformNormal(vDirectionToWindowXZPlane, ZombieWorldMatrixInv) };
@@ -579,7 +579,7 @@ void CMove_To_Target_Zombie::Turn_To_Window(_float fTimeDelta)
 		_vector			vPosition = { ZombieWorldMatrix.r[CTransform::STATE_POSITION] };
 		ZombieWorldMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 		
-		_matrix			RotaionMatrix = { XMMatrixRotationY(XMConvertToRadians(50.f) * fTimeDelta) };
+		_matrix			RotaionMatrix = { XMMatrixRotationY(XMConvertToRadians(180.f) * fTimeDelta) };
 		ZombieWorldMatrix = ZombieWorldMatrix * RotaionMatrix;
 		ZombieWorldMatrix.r[CTransform::STATE_POSITION] = vPosition;
 		m_pBlackBoard->Get_AI()->Get_Transform()->Set_WorldMatrix(ZombieWorldMatrix);

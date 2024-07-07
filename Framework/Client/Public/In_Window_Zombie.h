@@ -4,6 +4,8 @@
 #include "Task_Node.h"
 #include "Body_Zombie.h"
 
+#define ZOMBIE_IN_TOTAL_INTERPOLATE_TO_WINDOW_TIME		0.5f
+
 BEGIN(Client)
 
 class CIn_Window_Zombie : public CTask_Node
@@ -22,6 +24,7 @@ public:
 
 private:
 	void							Change_Animation(_float fTimeDelta);
+	void							Set_TargetInterpolate_Matrix();
 
 public:
 	inline void						SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }
@@ -29,8 +32,13 @@ public:
 protected:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 
-	_int							m_iBasePlayingIndex = { -1 };
-	const wstring					m_strAnimLayerTag = { TEXT("Body_Zombie_Gimmick_Door") };
+	PLAYING_INDEX					m_eBasePlayingIndex = { PLAYING_INDEX::INDEX_0 };
+	const wstring					m_strAnimLayerTag = { TEXT("Gimmick_Window") };
+	_int							m_iAnimIndex = { static_cast<_int>(ANIM_GIMMICK_WINDOW::_END) };
+
+	_bool							m_isNeedInterpolation = { false };
+	_float							m_fAccLinearInterpolateTime = { 0.f };
+	_float4x4						m_DeltaInterpolateMatrix = {};
 
 public:
 	static CIn_Window_Zombie* Create(void* pArg = nullptr);

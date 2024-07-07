@@ -30,7 +30,7 @@ protected:
 	class CBlackBoard_Zombie* m_pBlackBoard = { nullptr };
 
 	_int							m_iBasePlayingIndex = { -1 };
-	const wstring					m_strAnimLayerTag = { TEXT("Body_Zombie_Gimmick_Door") };
+	const wstring					m_strAnimLayerTag = { TEXT("Gimmick_Window") };
 
 public:
 	static CHold_Out_Hand_Window_Zombie* Create(void* pArg = nullptr);

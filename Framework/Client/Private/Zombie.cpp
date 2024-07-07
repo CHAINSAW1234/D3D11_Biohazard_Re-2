@@ -564,8 +564,6 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pDeco_Is_Out_Door_Zombie->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_OutDoorCheck->Insert_Decorator_Node(pDeco_Is_Out_Door_Zombie);
 
-	//	TODO:	순서 제어해야함	
-
 #pragma region Selector Is Collision Window Trigger
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
 	CComposite_Node* pSelectorNode_Interact_Window = { CComposite_Node::Create(&CompositeNodeDesc) };

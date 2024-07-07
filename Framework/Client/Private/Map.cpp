@@ -53,7 +53,10 @@ HRESULT CMap::Initialize(void* pArg)
 
 #pragma region Initialize RigidBody
 	m_pRigid_Static = m_pGameInstance->Create_Rigid_Static(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), &m_iIndex_RigidBody, this);
+
+#ifndef MAP_TEST
 	m_pModelCom->Static_Mesh_Cooking(nullptr,&m_iIndex_RigidBody);
+#endif 
 #pragma endregion
 
 #pragma region Effect

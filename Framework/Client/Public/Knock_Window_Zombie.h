@@ -4,8 +4,8 @@
 #include "Task_Node.h"
 #include "Body_Zombie.h"
 
-#define ZOMBIE_ATTACK_WINDOW_NEED_TIME				2.f
-#define ZOMBIE_TOTAL_INTERPOLATE_TO_WINDOW_TIME				0.5f
+#define ZOMBIE_ATTACK_WINDOW_NEED_TIME						2.f
+#define ZOMBIE_KNOCK_TOTAL_INTERPOLATE_TO_WINDOW_TIME		0.5f
 
 BEGIN(Client)
 
@@ -33,14 +33,14 @@ public:
 protected:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 
-	_int							m_iBasePlayingIndex = { -1 };
-	const wstring					m_strAnimLayerTag = { TEXT("Body_Zombie_Gimmick_Door") };
+	PLAYING_INDEX					m_eBasePlayingIndex = { PLAYING_INDEX::INDEX_0 };
+	const wstring					m_strAnimLayerTag = { TEXT("Gimmick_Window") };
 
 	_float							m_fAccKnockTime = { 0.f };
 	DIRECTION						m_eStartDirectionToWindow = { DIRECTION::_END };
 
 	_float							m_fAccLinearInterpolateTime = { 0.f };
-	_float4x4						m_StartTargetWorldMatrix = {};
+	_float4x4						m_DeltaInterpolateMatrix = {};
 
 public:
 	static CKnock_Window_Zombie* Create(void* pArg = nullptr);

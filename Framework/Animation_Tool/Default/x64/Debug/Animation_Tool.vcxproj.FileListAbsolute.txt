@@ -3,3 +3,4 @@ C:\3D_TEAM\Framework\Animation_Tool\Default\x64\Debug\Animatio.BB23CCED.Up2Date
 C:\Users\stgo5015\Documents\GitHub\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Default\x64\Debug\Animatio.BB23CCED.Up2Date
 C:\Users\lg\Documents\GitHub\D3D11_Biohazard_Re-2\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Default\x64\Debug\Animatio.BB23CCED.Up2Date
 C:\Game_Project\Team\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Default\x64\Debug\Animatio.BB23CCED.Up2Date
+C:\Users\HJYeom\Desktop\TeamPortpolio\D3D11_Biohazard_Re-2\Framework\Animation_Tool\Default\x64\Debug\Animatio.BB23CCED.Up2Date

@@ -27,9 +27,29 @@ void CIn_Window_Zombie::Enter()
 	if (nullptr == m_pBlackBoard)
 		return;
 
-	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+	CModel*				pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
+
+	MONSTER_STATE		ePreMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
+	if (MONSTER_STATE::MST_BREAK_WINDOW != ePreMonsterState)
+	{
+		m_isNeedInterpolation = true;
+		Set_TargetInterpolate_Matrix();
+	}
+	else
+	{
+		m_isNeedInterpolation = false;
+	}
+
+	_int				iRandom = { m_pGameInstance->GetRandom_Int(1, 2) };
+	if (1 == iRandom)
+		m_iAnimIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_IN1);
+	else if (2 == iRandom)
+		m_iAnimIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_IN2);
+
+	Set_TargetInterpolate_Matrix();
+	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
 
 #ifdef _DEBUG
 
@@ -64,7 +84,46 @@ _bool CIn_Window_Zombie::Execute(_float fTimeDelta)
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->Set_State(MONSTER_STATE::MST_WALK);
+	pAI->Set_State(MONSTER_STATE::MST_IN_WINDOW);
+
+	if (m_fAccLinearInterpolateTime < ZOMBIE_IN_TOTAL_INTERPOLATE_TO_WINDOW_TIME &&
+		true == m_isNeedInterpolation)
+	{
+		_bool				isComplete = { m_fAccLinearInterpolateTime >= ZOMBIE_IN_TOTAL_INTERPOLATE_TO_WINDOW_TIME };
+		if (false == isComplete)
+		{
+			_float				fTime = fTimeDelta;
+			m_fAccLinearInterpolateTime += fTime;
+
+			if (m_fAccLinearInterpolateTime >= ZOMBIE_IN_TOTAL_INTERPOLATE_TO_WINDOW_TIME)
+			{
+				fTime -= m_fAccLinearInterpolateTime - ZOMBIE_IN_TOTAL_INTERPOLATE_TO_WINDOW_TIME;
+			}
+			_float				fRatio = { fTime / ZOMBIE_IN_TOTAL_INTERPOLATE_TO_WINDOW_TIME };
+
+			if (false == isComplete)
+			{
+				_matrix				InterpolationMatrix = { XMLoadFloat4x4(&m_DeltaInterpolateMatrix) };
+
+				_vector				vScale, vQuaternion, vTranslation;
+				XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, InterpolationMatrix);
+
+				_vector				vDevideQuaternion = { XMQuaternionSlerp(XMQuaternionIdentity(), XMQuaternionNormalize(vQuaternion), fRatio) };
+				_vector				vDevideTranslation = { XMVectorSetW(vTranslation * fRatio, 0.f) };
+
+
+				_matrix				WorldMatrix = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix() };
+				_vector				vWorldScale, vWorldQuaternion, vWorldTranslation;
+				XMMatrixDecompose(&vWorldScale, &vWorldQuaternion, &vWorldTranslation, WorldMatrix);
+
+				_vector				vResultQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(vWorldQuaternion), XMQuaternionNormalize(vDevideQuaternion)) };
+				_vector				vResultTranslation = { XMVectorSetW(vWorldTranslation + vDevideTranslation, 1.f) };
+
+				_matrix				AplliedMatrix = { XMMatrixAffineTransformation(vWorldScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vResultQuaternion, vResultTranslation) };
+				m_pBlackBoard->Get_AI()->Get_Transform()->Set_WorldMatrix(AplliedMatrix);
+			}
+		}
+	}
 
 	Change_Animation(fTimeDelta);
 
@@ -89,9 +148,58 @@ void CIn_Window_Zombie::Change_Animation(_float fTimeDelta)
 	if (nullptr == pBodyModel)
 		return;
 
-	_int			iResultAnimationIndex = { -1 };
+
+	pBodyModel->Change_Animation(static_cast<_uint>(m_eBasePlayingIndex), m_strAnimLayerTag, m_iAnimIndex);
+	pBodyModel->Set_Loop(static_cast<_uint>(m_eBasePlayingIndex), false);
 
 #pragma endregion
+}
+
+void CIn_Window_Zombie::Set_TargetInterpolate_Matrix()
+{
+	CWindow* pWindow = { m_pBlackBoard->Get_Nearest_Window() };
+	if (nullptr == pWindow)
+		return;
+
+	_matrix			WindowWorldMatrix = { pWindow->Get_Transform()->Get_WorldMatrix() };
+	_matrix			Zombie_WorldMatrix = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix() };
+
+	_vector			vZombieScale, vZombieQuaternion, vZombieTranslation;
+	_vector			vWindowScale, vWindowQuaternion, vWindowTranslation;
+
+	XMMatrixDecompose(&vZombieScale, &vZombieQuaternion, &vZombieTranslation, Zombie_WorldMatrix);
+	XMMatrixDecompose(&vWindowScale, &vWindowQuaternion, &vWindowTranslation, WindowWorldMatrix);
+
+	_matrix			TargetWorldMatrix = { XMMatrixAffineTransformation(vZombieScale, XMVectorSet(0.f, 0.f, 0.f ,1.f), vWindowQuaternion, vWindowTranslation) };
+
+	CModel* pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+
+	vector<CAnimation*>		Animations = { pBody_Model->Get_Animations(m_strAnimLayerTag) };
+
+	_matrix			RootFirstKeyFrameMatrix = { pBody_Model->Get_FirstKeyFrame_Root_TransformationMatrix(m_strAnimLayerTag, m_iAnimIndex) };
+	_matrix			ModelTransformMatrix = { XMLoadFloat4x4(&pBody_Model->Get_TransformationMatrix()) };
+
+	_vector					vRootScale, vRootQuaternion, vRootTranslation;
+	XMMatrixDecompose(&vRootScale, &vRootQuaternion, &vRootTranslation, RootFirstKeyFrameMatrix);
+
+	vRootTranslation = XMVector3TransformNormal(vRootTranslation, ModelTransformMatrix);
+
+	_vector			vRootRotateAxis = { XMVectorSetW(vRootQuaternion, 0.f) };
+	vRootRotateAxis = XMVector3TransformNormal(vRootRotateAxis, ModelTransformMatrix);
+	vRootQuaternion = XMVectorSetW(vRootRotateAxis, XMVectorGetW(vRootQuaternion));
+	RootFirstKeyFrameMatrix = XMMatrixAffineTransformation(vRootScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRootQuaternion, vRootTranslation);
+
+	_matrix			InterpolateTargetMatrix = { RootFirstKeyFrameMatrix * TargetWorldMatrix };
+
+	_vector			vInterpolateScale, vInterpolateQuaternion, vInterpolateTranslation;
+	XMMatrixDecompose(&vInterpolateScale, &vInterpolateQuaternion, &vInterpolateTranslation, InterpolateTargetMatrix);
+
+	_vector			vDeltaQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(XMQuaternionInverse(vZombieQuaternion)), XMQuaternionNormalize(vInterpolateQuaternion)) };
+	_vector			vDeltaTranslation = { vInterpolateTranslation - vZombieTranslation };
+
+	_matrix			DeltaMatrix = { XMMatrixAffineTransformation(vZombieScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vDeltaQuaternion, vDeltaTranslation) };
+
+	XMStoreFloat4x4(&m_DeltaInterpolateMatrix, DeltaMatrix);
 }
 
 CIn_Window_Zombie* CIn_Window_Zombie::Create(void* pArg)
