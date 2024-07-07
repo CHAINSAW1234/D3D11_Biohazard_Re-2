@@ -15,6 +15,7 @@ public:
 		ONEDOOR_STATIC,
 		ONEDOOR_END
 	};
+
 	enum DOUBLEDOOR_STATE
 	{
 		LSIDE_DOUBLEDOOR_OPEN_L,
@@ -26,17 +27,18 @@ public:
 		R_DOUBLEDOOR_OPEN,
 		DOUBLEDOOR_END
 	};
+
 	enum TYPE_DOOR
 	{
 		DOOR_ONE,
 		DOOR_DOUBLE,
 	};
+
 	enum PART_DOOR
 	{
 		PART_BODY,
 		PART_LOCK,
 		PART_END
-
 	};
 
 
@@ -69,6 +71,7 @@ private:
 
 	void								OneDoor_Active();
 	void								DoubleDoor_Active();
+
 public:
 	virtual _float4				Get_Object_Pos() override;
 	virtual _bool					Attack_Prop(class CTransform* pTransfromCom = nullptr) override
@@ -90,19 +93,20 @@ public:
 	}
 
 private:
-	_bool					m_bLock =	{ false };
+	_bool								m_bLock						=	{ false };
 
-	_int					m_iHP = { 5 };
+	_int								m_iHP							= { 5 };
 
-	_float				m_fTime = { 0.f };
-	_ubyte				m_eType = {DOOR_ONE};
+	_float							m_fTime						= { 0.f };
+	_ubyte							m_eType						= {DOOR_ONE};
 
-	_ubyte  				m_eOneState = { ONEDOOR_STATIC };
-	_ubyte  				m_eOneState_Prev = { ONEDOOR_STATIC };
+	_ubyte  							m_eOneState					= { ONEDOOR_STATIC };
+	_ubyte  							m_eOneState_Prev			= { ONEDOOR_STATIC };
 
-	_ubyte   			m_eDoubleState = { DOUBLEDOOR_STATIC };
-	_ubyte   			m_eDoubleState_Prev = { DOUBLEDOOR_STATIC };
-	_ubyte				m_eDoubleDoorType;
+	_ubyte   						m_eDoubleState				= { DOUBLEDOOR_STATIC };
+	_ubyte   						m_eDoubleState_Prev		= { DOUBLEDOOR_STATIC };
+	_ubyte							m_eDoubleDoorType;
+
 public:
 	static CDoor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
