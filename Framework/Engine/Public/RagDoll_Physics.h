@@ -127,9 +127,9 @@ class ENGINE_DLL CRagdoll_Physics : public CBase
 {
 public:
 
-    PxRigidDynamic*                     create_capsule_bone(uint32_t parent_idx, uint32_t child_idx,class CRagdoll& ragdoll, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity());
-    PxRigidDynamic*                     create_capsule_bone(uint32_t parent_idx, class CRagdoll& ragdoll, XMVECTOR offset, float l, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity());
-    PxRigidDynamic*                     create_sphere_bone(uint32_t parent_idx, class CRagdoll& ragdoll, float r);
+    PxRigidDynamic*                     create_capsule_bone(uint32_t parent_idx, uint32_t child_idx,class CRagdoll& ragdoll, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity(),COLLIDER_TYPE eType = COLLIDER_TYPE::_END);
+    PxRigidDynamic*                     create_capsule_bone(uint32_t parent_idx, class CRagdoll& ragdoll, XMVECTOR offset, float l, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity(), COLLIDER_TYPE eType = COLLIDER_TYPE::_END);
+    PxRigidDynamic*                     create_sphere_bone(uint32_t parent_idx, class CRagdoll& ragdoll, float r, COLLIDER_TYPE eType = COLLIDER_TYPE::_END);
     PxD6Joint*                          create_d6_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
     PxD6Joint*                          create_d6_joint_Foot(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
     PxD6Joint*                          create_d6_joint_Head(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
@@ -247,6 +247,61 @@ public:
             break;
         case COLLIDER_TYPE::FOOT_R:
             return m_Foot_R;
+            break;
+        }
+
+        return nullptr;         // 현진 수정임 : warning 잡음 
+    }
+    FORCEINLINE void Insert_Rigid_Body(vector<PxRigidDynamic*>* pRigidBodies, vector<COLLIDER_TYPE>* pColliders,COLLIDER_TYPE eType)
+    {
+        pColliders->push_back(eType);
+
+        switch (eType)
+        {
+        case COLLIDER_TYPE::HEAD:
+            pRigidBodies->push_back(m_Head);
+            break;
+        case COLLIDER_TYPE::CHEST:
+            pRigidBodies->push_back(m_Chest);
+            break;
+        case COLLIDER_TYPE::PELVIS:
+            pRigidBodies->push_back(m_Pelvis);
+            break;
+        case COLLIDER_TYPE::ARM_L:
+            pRigidBodies->push_back(m_Arm_L);
+            break;
+        case COLLIDER_TYPE::ARM_R:
+            pRigidBodies->push_back(m_Arm_R);
+            break;
+        case COLLIDER_TYPE::FOREARM_L:
+            pRigidBodies->push_back(m_ForeArm_L);
+            break;
+        case COLLIDER_TYPE::FOREARM_R:
+            pRigidBodies->push_back(m_ForeArm_R);
+            break;
+        case COLLIDER_TYPE::HAND_L:
+            pRigidBodies->push_back(m_Hand_L);
+            break;
+        case COLLIDER_TYPE::HAND_R:
+            pRigidBodies->push_back(m_Hand_R);
+            break;
+        case COLLIDER_TYPE::CALF_L:
+            pRigidBodies->push_back(m_Calf_L);
+            break;
+        case COLLIDER_TYPE::CALF_R:
+            pRigidBodies->push_back(m_Calf_R);
+            break;
+        case COLLIDER_TYPE::LEG_L:
+            pRigidBodies->push_back(m_Leg_L);
+            break;
+        case COLLIDER_TYPE::LEG_R:
+            pRigidBodies->push_back(m_Leg_R);
+            break;
+        case COLLIDER_TYPE::FOOT_L:
+            pRigidBodies->push_back(m_Foot_L);
+            break;
+        case COLLIDER_TYPE::FOOT_R:
+            pRigidBodies->push_back(m_Foot_R);
             break;
         }
     }

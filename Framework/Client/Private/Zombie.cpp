@@ -27,7 +27,7 @@
 #define DECAL_COUNT 20
 #define BIG_ATTACK_BLOOD_SIZE 4.f
 #define NORMAL_ATTACK_BLOOD_SIZE 3.f
-#define SHOTGUN_BLOOD_COUNT 5
+#define SHOTGUN_BLOOD_COUNT 8
 
 CZombie::CZombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CMonster{ pDevice, pContext }
@@ -159,7 +159,7 @@ HRESULT CZombie::Initialize(void* pArg)
 #pragma endregion
 
 #pragma region Effect
-	m_BloodDelay = 30;
+	m_BloodDelay = 20;
 	Ready_Effect();
 #pragma endregion
 
@@ -306,6 +306,13 @@ void CZombie::Tick(_float fTimeDelta)
 			{
 				m_iBloodCount = 0;
 
+				m_bBigAttack = m_pController->IsBigAttack();
+
+				if (m_bBigAttack)
+				{
+					SetBlood_STG();
+				}
+
 				/*For Blood Effect*/
 #ifdef DECAL
 				if (m_pController->Is_Hit_Decal_Ray())
@@ -337,11 +344,6 @@ void CZombie::Tick(_float fTimeDelta)
 			m_pController->Set_Hit(false);
 			m_bBigAttack = m_pController->IsBigAttack();
 
-			if (m_bBigAttack)
-			{
-				SetBlood_STG();
-			}
-
 			auto vForce = m_pController->Get_Force();
 			auto eType = m_pController->Get_Hit_Collider_Type();
 
@@ -354,7 +356,7 @@ void CZombie::Tick(_float fTimeDelta)
 
 				if (CPlayer::EQUIP::STG == eEquip)
 				{
-					vForce = vForce * 2.f;
+					vForce = vForce * 4.f;
 				}
 
 				for (auto& pPartObject : m_PartObjects)
@@ -362,6 +364,11 @@ void CZombie::Tick(_float fTimeDelta)
 					if (nullptr != pPartObject)
 						pPartObject->SetRagdoll(m_iIndex_CCT, vForce, eType);
 				}
+			}
+
+			if (m_bBigAttack)
+			{
+				SetBlood_STG();
 			}
 
 			//	For.Anim
@@ -1285,124 +1292,126 @@ void CZombie::Ready_Decal()
 	auto vRayDir = m_pGameInstance->Get_RayDir_Aim();
 	_float	fMinDist = 0.f;
 	_float	fMaxDist = 0.f;
-	if (m_pColliderCom_Bounding->IntersectRayAABB(XMLoadFloat4(&vRayOrigin), XMLoadFloat4(&vRayDir), fMinDist, fMaxDist))
-	{
-		Perform_Skinning();
+//	if (m_pColliderCom_Bounding->IntersectRayAABB(XMLoadFloat4(&vRayOrigin), XMLoadFloat4(&vRayDir), fMinDist, fMaxDist))
+//	{
+//		Perform_Skinning();
+//
+//		HitResult hitResult;
+//		hitResult.hitModel = this;
+//		hitResult.minHitDistance = fMinDist;
+//		hitResult.maxHitDistance = fMaxDist;
+//
+//		_matrix rotMatrix = XMMatrixIdentity();
+//		//rotMatrix.SetRotation(mainCamera->GetDirection(), decalAngle);
+//
+//		AddDecalInfo decalInfo;
+//		decalInfo.rayOrigin = vRayOrigin;
+//		decalInfo.rayDir = vRayDir;
+//		XMStoreFloat4(&decalInfo.decalTangent, XMVector4Transform(m_pGameInstance->Get_Camera_Transform()->Get_State_Float4(CTransform::STATE_RIGHT), rotMatrix));
+//		decalInfo.decalSize = _float3(5.f, 5.f, 5.0f);
+//		decalInfo.minHitDistance = hitResult.minHitDistance;
+//		decalInfo.maxHitDistance = hitResult.maxHitDistance;
+//		decalInfo.decalMaterialIndex = 0;
+//
+//#pragma region RayCasting
+//		////Body Model
+//		//list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
+//		//for (auto& i : NonHideIndex)
+//		//{
+//		//	m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
+//
+//		//	if (m_iMeshIndex_Hit != 999)
+//		//	{
+//		//		m_iMeshIndex_Hit = i;
+//
+//		//		_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
+//		//		_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
+//		//		XMStoreFloat4(&m_vHitPosition, CameraPos);
+//
+//		//		m_vHitNormal = m_pController->GetHitNormal();
+//
+//		//		break;
+//		//	}
+//		//}
+//
+//		//if(m_iMeshIndex_Hit == 999)
+//		//{
+//		//	//Head Model
+//		//	NonHideIndex = m_pHeadModel->Get_NonHideMeshIndices();
+//		//	for (auto& i : NonHideIndex)
+//		//	{
+//		//		m_iMeshIndex_Hit = m_pHeadModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
+//
+//		//		if (m_iMeshIndex_Hit != 999)
+//		//		{
+//		//			m_iMeshIndex_Hit = i;
+//
+//		//			_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
+//		//			_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
+//		//			XMStoreFloat4(&m_vHitPosition, CameraPos);
+//
+//		//			m_vHitNormal = m_pController->GetHitNormal();
+//
+//		//			break;
+//		//		}
+//		//	}
+//		//}
+//
+//		////Shirt Model
+//		//if (m_iMeshIndex_Hit == 999)
+//		//{
+//		//	NonHideIndex = m_pShirtsModel->Get_NonHideMeshIndices();
+//		//	for (auto& i : NonHideIndex)
+//		//	{
+//		//		m_iMeshIndex_Hit = m_pShirtsModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
+//
+//		//		if (m_iMeshIndex_Hit != 999)
+//		//		{
+//		//			m_iMeshIndex_Hit = i;
+//
+//		//			_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
+//		//			_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
+//		//			XMStoreFloat4(&m_vHitPosition, CameraPos);
+//
+//		//			m_vHitNormal = m_pController->GetHitNormal();
+//
+//		//			break;
+//		//		}
+//		//	}
+//		//}
+//
+//		////Pants Model
+//		//if (m_iMeshIndex_Hit == 999)
+//		//{
+//		//	NonHideIndex = m_pPantsModel->Get_NonHideMeshIndices();
+//		//	for (auto& i : NonHideIndex)
+//		//	{
+//		//		m_iMeshIndex_Hit = m_pPantsModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
+//
+//		//		if (m_iMeshIndex_Hit != 999)
+//		//		{
+//		//			m_iMeshIndex_Hit = i;
+//
+//		//			_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
+//		//			_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
+//		//			XMStoreFloat4(&m_vHitPosition, CameraPos);
+//
+//		//			m_vHitNormal = m_pController->GetHitNormal();
+//
+//		//			break;
+//		//		}
+//		//	}
+//		//}
+//#pragma endregion
+//
+//		if (m_iMeshIndex_Hit == 999)
+//		{
+//			m_vHitPosition = m_pController->GetBlockPoint();
+//			m_vHitNormal = m_pController->GetHitNormal();
+//		}
+//	}
 
-		HitResult hitResult;
-		hitResult.hitModel = this;
-		hitResult.minHitDistance = fMinDist;
-		hitResult.maxHitDistance = fMaxDist;
-
-		_matrix rotMatrix = XMMatrixIdentity();
-		//rotMatrix.SetRotation(mainCamera->GetDirection(), decalAngle);
-
-		AddDecalInfo decalInfo;
-		decalInfo.rayOrigin = vRayOrigin;
-		decalInfo.rayDir = vRayDir;
-		XMStoreFloat4(&decalInfo.decalTangent, XMVector4Transform(m_pGameInstance->Get_Camera_Transform()->Get_State_Float4(CTransform::STATE_RIGHT), rotMatrix));
-		decalInfo.decalSize = _float3(5.f, 5.f, 5.0f);
-		decalInfo.minHitDistance = hitResult.minHitDistance;
-		decalInfo.maxHitDistance = hitResult.maxHitDistance;
-		decalInfo.decalMaterialIndex = 0;
-
-#pragma region RayCasting
-		////Body Model
-		//list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
-		//for (auto& i : NonHideIndex)
-		//{
-		//	m_iMeshIndex_Hit = m_pBodyModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
-
-		//	if (m_iMeshIndex_Hit != 999)
-		//	{
-		//		m_iMeshIndex_Hit = i;
-
-		//		_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
-		//		_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
-		//		XMStoreFloat4(&m_vHitPosition, CameraPos);
-
-		//		m_vHitNormal = m_pController->GetHitNormal();
-
-		//		break;
-		//	}
-		//}
-
-		//if(m_iMeshIndex_Hit == 999)
-		//{
-		//	//Head Model
-		//	NonHideIndex = m_pHeadModel->Get_NonHideMeshIndices();
-		//	for (auto& i : NonHideIndex)
-		//	{
-		//		m_iMeshIndex_Hit = m_pHeadModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
-
-		//		if (m_iMeshIndex_Hit != 999)
-		//		{
-		//			m_iMeshIndex_Hit = i;
-
-		//			_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
-		//			_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
-		//			XMStoreFloat4(&m_vHitPosition, CameraPos);
-
-		//			m_vHitNormal = m_pController->GetHitNormal();
-
-		//			break;
-		//		}
-		//	}
-		//}
-
-		////Shirt Model
-		//if (m_iMeshIndex_Hit == 999)
-		//{
-		//	NonHideIndex = m_pShirtsModel->Get_NonHideMeshIndices();
-		//	for (auto& i : NonHideIndex)
-		//	{
-		//		m_iMeshIndex_Hit = m_pShirtsModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
-
-		//		if (m_iMeshIndex_Hit != 999)
-		//		{
-		//			m_iMeshIndex_Hit = i;
-
-		//			_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
-		//			_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
-		//			XMStoreFloat4(&m_vHitPosition, CameraPos);
-
-		//			m_vHitNormal = m_pController->GetHitNormal();
-
-		//			break;
-		//		}
-		//	}
-		//}
-
-		////Pants Model
-		//if (m_iMeshIndex_Hit == 999)
-		//{
-		//	NonHideIndex = m_pPantsModel->Get_NonHideMeshIndices();
-		//	for (auto& i : NonHideIndex)
-		//	{
-		//		m_iMeshIndex_Hit = m_pPantsModel->Perform_RayCasting(i, decalInfo, &m_fHitDistance);
-
-		//		if (m_iMeshIndex_Hit != 999)
-		//		{
-		//			m_iMeshIndex_Hit = i;
-
-		//			_vector CameraLook = XMVectorScale(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_LOOK), m_fHitDistance);
-		//			_vector CameraPos = m_pGameInstance->Get_Camera_Pos_Vector() + CameraLook;
-		//			XMStoreFloat4(&m_vHitPosition, CameraPos);
-
-		//			m_vHitNormal = m_pController->GetHitNormal();
-
-		//			break;
-		//		}
-		//	}
-		//}
-#pragma endregion
-
-		if (m_iMeshIndex_Hit == 999)
-		{
-			m_vHitPosition = m_pController->GetBlockPoint();
-			m_vHitNormal = m_pController->GetHitNormal();
-		}
-	}
+	Perform_Skinning();
 
 	m_vHitPosition = m_pController->GetBlockPoint();
 	m_vHitNormal = m_pController->GetHitNormal();
@@ -1457,7 +1466,7 @@ void CZombie::Ready_Effect()
 	for (size_t i = 0; i < SHOTGUN_BLOOD_COUNT; ++i)
 	{
 		auto pBlood = CBlood::Create(m_pDevice, m_pContext);
-		pBlood->SetSize(4.f, 4.f, 4.f);
+		pBlood->SetSize(BIG_ATTACK_BLOOD_SIZE, BIG_ATTACK_BLOOD_SIZE, BIG_ATTACK_BLOOD_SIZE);
 		m_vecBlood_STG.push_back(pBlood);
 	}
 }
@@ -1688,18 +1697,18 @@ void CZombie::SetBlood_STG()
 		auto pColliderTypes = m_pController->GetColliderType_STG();
 		auto pHitParts = m_pController->GetHitPart_STG();
 
-		for (size_t i = 0; i < (*pHitPoints).size()-1; ++i)
+		for (size_t i = 0; i < (*pHitPoints).size(); ++i)
 		{
 			auto vBlockPoint = (*pHitPoints)[i];
 			auto vBlockNormal = (*pHitNormals)[i];
 
-			if (m_bRagdoll == false)
+			if (m_pController->GetDead() == false)
 			{
 				m_vecBlood_STG[i]->SetHitPart((*pHitParts)[i]);
 			}
 			else
 			{
-				//m_vecBlood_STG[i]->SetHitPart(pBody->Get_Ragdoll_RigidBody(m_pController->Get_Hit_Collider_Type()));
+				m_vecBlood_STG[i]->SetHitPart(pBody->Get_Ragdoll_RigidBody((*pColliderTypes)[i]));
 			}
 
 			m_vecBlood_STG[i]->Set_Render(true);

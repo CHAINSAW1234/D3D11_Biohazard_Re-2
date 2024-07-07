@@ -43,6 +43,7 @@ public:
 	virtual HRESULT					Render_LightDepth_Point() override;
 	virtual HRESULT					Render_LightDepth_Spot()override;
 
+	_float4x4						Get_WorldMatrix() { return m_WorldMatrix; }
 	CPlayer::EQUIP					Get_Equip() { return m_eEquip; }
 	RENDERLOCATION					Get_RenderLocation() { return m_eRenderLocation; }
 	CPlayer::SETPROPS_LOCATION		Get_SetPropsLocation() { return m_eSetPropsLocation; }

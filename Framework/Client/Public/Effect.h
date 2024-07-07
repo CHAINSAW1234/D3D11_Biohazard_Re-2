@@ -47,6 +47,7 @@ protected:
 protected:
 	_float					m_fFrame = { 0.f };
 	_uint					m_iFrame = { 0 };
+	_uint					m_iFrame_Total = { 0 };
 	IMG_SIZE				m_ImgSize;
 	pair<_uint, _uint>		m_DivideCount;
 	_uint					m_iFrameX = { 0 };
@@ -59,6 +60,9 @@ protected:
 	_uint					m_iType = { 0 };
 	ULONGLONG				m_FrameTime = { 0 };
 	ULONGLONG				m_FrameDelay = { 0 };
+	_float					m_fAlpha = { 1.f };
+	_float					m_fAlpha_Delta = { 0.f };
+	_float					m_fAlpha_Delta_Sum = { 0.f };
 private:
 	HRESULT Add_Components();
 	HRESULT Bind_ShaderResources();

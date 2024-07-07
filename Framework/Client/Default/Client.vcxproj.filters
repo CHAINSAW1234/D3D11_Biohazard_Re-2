@@ -268,15 +268,6 @@
     <Filter Include="02.GameObjects\Player\Hair">
       <UniqueIdentifier>{06a26c20-e93f-491c-9f17-a6dabe0d4021}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Start">
-      <UniqueIdentifier>{05f4945a-b9b9-4d32-a535-3119459f1f29}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Reject">
-      <UniqueIdentifier>{873bfd2c-2169-4cf0-afdd-07942314c419}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Player\State\Player_State_Bite\Player_State_Bite_Kill">
-      <UniqueIdentifier>{7a4d43e5-b41b-4ce9-8d91-07ffc20ccbf4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Effect\Muzzle_Flash">
       <UniqueIdentifier>{f75f75e3-3ac4-46fb-a428-5ac0cd54c644}</UniqueIdentifier>
     </Filter>
@@ -585,6 +576,21 @@
     </Filter>
     <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Collision_Prop">
       <UniqueIdentifier>{d1f22d52-1de6-4789-b7af-eaf6e46d330c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_state_Move_Lever">
+      <UniqueIdentifier>{bff6a259-79a2-452f-a9e7-819e06a0c52b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Throwing_Weapon">
+      <UniqueIdentifier>{7932d5c4-c561-44d0-bbc7-8ac5c40fa85c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\Throwing_Weapon\Throwing_Weapon_Pin">
+      <UniqueIdentifier>{a0751512-f55f-46fe-8537-8ab61e2cb592}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Shelf">
+      <UniqueIdentifier>{79cc0506-18e0-4ff7-89e7-bebc8eb8436c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Muzzle_Smoke">
+      <UniqueIdentifier>{bb4b199b-bb82-4cbc-9469-651e4a8b3e6f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1116,6 +1122,21 @@
     <ClInclude Include="..\Public\Is_Collision_Prop_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Collision_Prop</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move_Lever.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_state_Move_Lever</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Throwing_Weapon.h">
+      <Filter>02.GameObjects\Player\Throwing_Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Throwing_Weapon_Pin.h">
+      <Filter>02.GameObjects\Player\Throwing_Weapon\Throwing_Weapon_Pin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Player_State_Move_Shelf.h">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Shelf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Muzzle_Smoke.h">
+      <Filter>02.GameObjects\Effect\Muzzle_Smoke</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1609,6 +1630,21 @@
     </ClCompile>
     <ClCompile Include="..\Private\Is_Collision_Prop_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Collision_Prop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_Lever.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_state_Move_Lever</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Throwing_Weapon.cpp">
+      <Filter>02.GameObjects\Player\Throwing_Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Throwing_Weapon_Pin.cpp">
+      <Filter>02.GameObjects\Player\Throwing_Weapon\Throwing_Weapon_Pin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Player_State_Move_Shelf.cpp">
+      <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Shelf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Muzzle_Smoke.cpp">
+      <Filter>02.GameObjects\Effect\Muzzle_Smoke</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

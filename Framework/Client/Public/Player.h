@@ -54,17 +54,20 @@ public:
 		HOLSTERTOMOVE, MOVETOHOLSTER, HOLD_END
 	};
 
-	enum ANIMASTION_COMMON {
+	enum ANIMATION_COMMON {
+		LEVER_DOWN, 
 		LADDER_UP_FINE_START, LADDER_UP_FINE_R, LADDER_UP_FINE_L, LADDER_UP_FINE_R_END, LADDER_UP_FINE_L_END,
 		HOLD_LEFTHAND_LIGHT,
 		LADDER_DOWN_FINE_START, LADDER_DOWN_FINE_L, LADDER_DOWN_FINE_R, LADDER_DOWN_FINE_L_END, LADDER_DOWN_FINE_R_END,
 		STEP_DOWM_1M, STEP_UP_1M,
-		DOOR_PASS, DOOR_OPEN_JOG, DOOR_LOCK, DOOR_LOCK_L, DOOR_LOCK_R
+		DOOR_PASS, DOOR_OPEN_JOG, DOOR_LOCK, DOOR_LOCK_L, DOOR_LOCK_R,
+		RICKERSHELF_END, RICKERSHELF_MOVE, RICKERSHELF_START, RICKERSHELF_STOP,
+		MOVESHELF_END, MOVESHELF_MOVE, MOVESHELF_START, MOVESHELF_STOP
 	};
-	
+
 	enum ANIMSET_MOVE { FINE, MOVE_HG, MOVE_STG, FINE_LIGHT, CAUTION, CAUTION_LIGHT, DANGER, DANGER_LIGHT, ANIMSET_MOVE_END };
 	enum ANIMSET_HOLD { HOLD_HG, HOLD_STG, HOLD_MLE, HOLD_SUP, ANIMSET_HOLD_END };
-	enum ANIMSET_ETC { COMMON , ANIM_BITE, ANIMSET_ETC_END };
+	enum ANIMSET_ETC { COMMON, INTERACT, ANIM_BITE, ANIMSET_ETC_END };
 #pragma endregion
 
 #pragma region Move Direction
@@ -131,7 +134,7 @@ public:
 	void										Set_Equip(EQUIP* eEquip);
 	void										Set_Equip_Gun(EQUIP* eEquip);
 	void										Set_Equip_Sub(EQUIP* eEquip);
-	void										Set_Hp(_int iHp);					
+	void										Set_Hp(_int iHp);				
 	void										Set_TurnSpineDefualt(_bool isTurnSpineDefault) { m_isTurnSpineDefault = isTurnSpineDefault; }
 	void										Set_TurnSpineHold(_bool isTurnSpineHold) { m_isTurnSpineHold = isTurnSpineHold;}
 	void										Set_TurnSpineLight(_bool isTurnSpineLight) { m_isTurnSpineLight = isTurnSpineLight; }
@@ -205,7 +208,7 @@ private:
 	EQUIP										m_eTargetEquip = { NONE };						// 플레이어 애님셋 교체에 관련된 장비
 	EQUIP										m_eEquip = { NONE };								// 플레이어 애님셋과 관련된 장비
 	EQUIP										m_eEquip_Gun = { NONE };							// 인벤토리에서 처리하는 장비된 무기
-	EQUIP										m_eEquip_Sub = { NONE };							// 인벤토리에서 처리하는 장비된 Sub무기
+	EQUIP										m_eEquip_Sub = { GRENADE };							// 인벤토리에서 처리하는 장비된 Sub무기
 	_int										m_SetProps[SETPROPS_NONE] = {};
 
 	CWeapon*									m_pWeapon = { nullptr };
@@ -246,48 +249,57 @@ public:
 
 #pragma region 예은 추가 
 public:
-	_bool													Get_Player_RegionChange() { return m_bChange; }
-	_int													Get_Player_ColIndex() { return m_iCurCol; }
-	_int													Get_Player_Direction() { return m_iDir; }
-	_int													Get_Player_Floor() { return m_iFloor; } /* 현재 플레이어의 층수 */
-	_int													Get_Player_Region() { return m_iRegion; } /* 현재 존재하는 지역 */
-	_bool*												Get_Player_Interact_Ptr() { return &m_bInteract; }
-	_bool*												Get_Player_Region_Array() { return m_bRegion; }
-	enum PLAYER_LADDER_BEAVE			{LADDER_BEHAVE_NOTHING, LADDER_BEHAVE_UP, LADDER_BEHAVE_DOWN};
-	enum PLAYER_DOOR_BEHAVE				{ DOOR_BEHAVE_NOTHING, DOOR_BEHAVE_OPEN, DOOR_BEHAVE_LOCK};
-	enum PLAYER_LEVER_BEHAVE				{LEVER_BEHAVE_NOTHING, LEVER_BEHAVE_DOWN};
+	_bool										Get_Player_RegionChange() { return m_bChange; }
+	_int										Get_Player_ColIndex() { return m_iCurCol; }
+	_int										Get_Player_Direction() { return m_iDir; }
+	_int										Get_Player_Floor() { return m_iFloor; } /* 현재 플레이어의 층수 */
+	_int										Get_Player_Region() { return m_iRegion; } /* 현재 존재하는 지역 */
+	_bool*										Get_Player_Interact_Ptr() { return &m_bInteract; }
+	_bool*										Get_Player_Region_Array() { return m_bRegion; }
+	enum PLAYER_LADDER_BEAVE					{LADDER_BEHAVE_NOTHING, LADDER_BEHAVE_UP, LADDER_BEHAVE_DOWN};
+	enum PLAYER_DOOR_BEHAVE						{DOOR_BEHAVE_NOTHING, DOOR_BEHAVE_OPEN, DOOR_BEHAVE_LOCK};
+	enum PLAYER_LEVER_BEHAVE					{LEVER_BEHAVE_NOTHING, LEVER_BEHAVE_DOWN};
 
-	PLAYER_DOOR_BEHAVE						Get_Door_Setting() { return (PLAYER_DOOR_BEHAVE)m_iDoor_Setting; }
-	PLAYER_LADDER_BEAVE						Get_Ladder_Setting() { return (PLAYER_LADDER_BEAVE)m_iLadder_Setting; }
-	PLAYER_LEVER_BEHAVE						Get_Lever_Setting() { return (PLAYER_LEVER_BEHAVE)m_iLever_Setting; } //추
-	_float												Get_Door_Degree() { return m_fDoor_Degree; }
-	_float4x4											Get_Ladder_WorldMatrix() { return m_LadderWorldMatrix; }
-	_float4x4											Get_Lever_WorldMatrix() { return m_Lever_WorldMatrix; } //가
-	void													Set_Door_Setting(_int iDoor_Setting, _float fDoorDegree = 0.f) {m_iDoor_Setting = iDoor_Setting; m_fDoor_Degree = fDoorDegree;};
-	void													Set_Ladder_Setting(_int iLadder_Setting, _float4x4 LadderWorldMatrix = _float4x4()) { m_iLadder_Setting = iLadder_Setting; m_LadderWorldMatrix = LadderWorldMatrix; }
-	void													Set_Lever_Setting(_int iLever_Setting, _float4x4 LeverWorldMatrix = _float4x4()) { m_iLever_Setting = iLever_Setting; m_Lever_WorldMatrix = LeverWorldMatrix; } //욤
+	PLAYER_DOOR_BEHAVE							Get_Door_Setting() { return (PLAYER_DOOR_BEHAVE)m_iDoor_Setting; }
+	PLAYER_LADDER_BEAVE							Get_Ladder_Setting() { return (PLAYER_LADDER_BEAVE)m_iLadder_Setting; }
+	PLAYER_LEVER_BEHAVE							Get_Lever_Setting() { return (PLAYER_LEVER_BEHAVE)m_iLever_Setting; } 
+
+	_float										Get_Door_Degree() { return m_fDoor_Degree; }
+	_float4x4									Get_Ladder_WorldMatrix() { return m_LadderWorldMatrix; }
+	_float4x4									Get_Lever_WorldMatrix() const { return m_Lever_WorldMatrix; }
+
+	_float4x4									Get_Shelf_WorldMatrix();
+	_int										Get_Shelf_Type();
+	void										Set_Shelf_State(_int eState);
+
+	void										Set_Door_Setting(_int iDoor_Setting, _float fDoorDegree = 0.f) {m_iDoor_Setting = iDoor_Setting; m_fDoor_Degree = fDoorDegree;};
+	void										Set_Ladder_Setting(_int iLadder_Setting, _float4x4 LadderWorldMatrix = _float4x4()) { m_iLadder_Setting = iLadder_Setting; m_LadderWorldMatrix = LadderWorldMatrix; }
+	void										Set_Lever_Setting(_int iLever_Setting, _float4x4 LeverWorldMatrix = _float4x4()) { m_iLever_Setting = iLever_Setting; m_Lever_WorldMatrix = LeverWorldMatrix; } 
+	void										Set_Shelf_Setting(CGameObject* pShelf) { m_pShelf = pShelf; } //욤
 
 
 private:
-	_int											m_iDoor_Setting = { DOOR_BEHAVE_NOTHING };
+	_int										m_iDoor_Setting = { DOOR_BEHAVE_NOTHING };
 	_float										m_fDoor_Degree = { 0.f };
 
-	_int											m_iLadder_Setting = { LADDER_BEHAVE_NOTHING };
+	_int										m_iLadder_Setting = { LADDER_BEHAVE_NOTHING };
 	_float4x4									m_LadderWorldMatrix = { _float4x4() };
 
-	_int											m_iLever_Setting = { LEVER_BEHAVE_NOTHING };
+	_int										m_iLever_Setting = { LEVER_BEHAVE_NOTHING };
 	_float4x4									m_Lever_WorldMatrix = { _float4x4() };
+	
+	CGameObject*								m_pShelf = { nullptr };
 
 
-	_bool											m_bInteract = { false }; //플레이어가 상호작용을 시도한
-	_bool											m_bChange = { true };
-	_int											m_iCurCol = { 0 };
-	_int											m_iRegion = { 0 };
-	_int											m_iDir = { 0 };
-	_int											m_iPreCol = { 1 };
-	_int											m_iFloor = { 2 };
+	_bool										m_bInteract = { false }; //플레이어가 상호작용을 시도한
+	_bool										m_bChange = { true };
+	_int										m_iCurCol = { 0 };
+	_int										m_iRegion = { 0 };
+	_int										m_iDir = { 0 };
+	_int										m_iPreCol = { 1 };
+	_int										m_iFloor = { 2 };
 	_float										m_fTimeTEST = { 0.f };
-	_bool											m_bRegion[100] = { false, };
+	_bool										m_bRegion[100] = { false, };
 #pragma endregion
 
 
@@ -298,7 +310,7 @@ public:
 
 private:
 	_bool										m_isCamTurn = { false };
-	class CTab_Window*				m_pTabWindow = { nullptr };
+	class CTab_Window*							m_pTabWindow = { nullptr };
 #pragma endregion
 
 	vector<CPartObject*>						m_PartObjects;
@@ -403,6 +415,7 @@ public:
 private:
 	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
 	class CMuzzle_Flash_SG*						m_pMuzzle_Flash_SG = { nullptr };
+	class CMuzzle_Smoke*						m_pMuzzle_Smoke = { nullptr };
 #pragma endregion
 private:
 	HRESULT Add_Components();

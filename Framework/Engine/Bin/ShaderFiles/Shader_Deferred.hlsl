@@ -13,6 +13,7 @@ Texture3D g_3DTexture;
 Texture2D g_NormalTexture;
 Texture2D g_DiffuseTexture;
 Texture2D g_DepthTexture;
+Texture2D g_DepthTexture_Decal;
 Texture2D g_MaterialTexture;
 Texture2D g_OriginalTexture;
 
@@ -1467,7 +1468,7 @@ PS_OUT PS_DECAL(PS_IN In)
     vScreenUV.x = In.vPosition.x / SCREEN_SIZE_X;
     vScreenUV.y = In.vPosition.y / SCREEN_SIZE_Y;
 
-    vector vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
+    vector vDepthDesc = g_DepthTexture_Decal.Sample(PointSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * 1000.0f;
     float4 vWorldPos;
     float4 vViewPos;
@@ -1496,38 +1497,8 @@ PS_OUT PS_DECAL(PS_IN In)
         (-g_vExtent.y <= vLocalPos.y && vLocalPos.y <= g_vExtent.y) &&
         (-g_vExtent.z <= vLocalPos.z && vLocalPos.z <= g_vExtent.z))
     {
-      /*  float4 vDiffuseColor = g_DecalTexture.Sample(LinearSampler, decalTextureUV);
-
-        if (vDiffuseColor.a < 0.1f)
-            clip(-1);
-        else
-            Out.vColor = float4(0.3f,0.f,0.f,1.f);*/
-
-        //float3 normal = g_NormalTexture.Sample(PointSampler, In.vTexcoord).xyz; // 픽셀의 노멀 벡터
-        vector vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexcoord);
-        float3 normal = float4(vNormalDesc.xyz * 2.f - 1.f, 0.f);
-  
-
-       //// 노말 벡터 기반 텍스처 좌표 계산
-       // if (abs(normal.z) >= abs(normal.x) && abs(normal.z) >= abs(normal.y))
-       // {
-       //     // 벽면 (YZ 평면)
-       //     decalTextureUV = (vLocalPos.xy / (2.0f * float2(g_vExtent.x, g_vExtent.y))) + 0.5f;
-       // }
-       // else if (abs(normal.x) >= abs(normal.y))
-       // {
-       //     // 벽면 (XY 평면)
-       //     decalTextureUV = (vLocalPos.xy / (2.0f * float2(g_vExtent.x, g_vExtent.y))) + 0.5f;
-       // }
-       // else
-       // {
-       //     // 바닥 (XZ 평면)
-       //     decalTextureUV = (vLocalPos.xy / (2.0f * float2(g_vExtent.x, g_vExtent.y))) + 0.5f;
-       // }
-
         float2 decalTextureUV = (vLocalPos.xy / (2.0f * float2(g_vExtent.x, g_vExtent.y))) + 0.5f;
 
-        // 텍스처 좌표가 유효한 범위 내에 있는지 확인
         if (decalTextureUV.x < 0.0f || decalTextureUV.x > 1.0f || decalTextureUV.y < 0.0f || decalTextureUV.y > 1.0f)
         {
             discard;
@@ -1862,7 +1833,7 @@ technique11 DefaultTechnique
     pass SSD // 18
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();

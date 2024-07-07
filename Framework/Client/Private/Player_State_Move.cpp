@@ -6,6 +6,7 @@
 #include "Player_State_Move_Jog.h"
 #include "Player_State_Move_DoorStop.h"
 #include "Player_State_Move_Ladder.h"
+#include "Player_State_Move_Lever.h"
 #include "Weapon.h"
 
 CPlayer_State_Move::CPlayer_State_Move(CPlayer* pPlayer)
@@ -26,7 +27,6 @@ void CPlayer_State_Move::OnStateUpdate(_float fTimeDelta)
 	__super::OnStateUpdate(fTimeDelta);
 
 	Update_State();
-
 	Open_Door();
 
 	if (m_pPlayer->Get_Spotlight()) {
@@ -107,6 +107,7 @@ void CPlayer_State_Move::Update_State()
 		break;
 	case STAIR:
 	case LADDER:
+	case LEVER:
 		break;
 	}
 
@@ -118,8 +119,15 @@ void CPlayer_State_Move::Update_State()
 
 	if (m_pPlayer->Get_Ladder_Setting() != CPlayer::LADDER_BEHAVE_NOTHING) {
 		Change_State(LADDER);
-		m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_NOTHING);
 		return;
+	}
+
+	if (m_pPlayer->Get_Lever_Setting() != CPlayer::LEVER_BEHAVE_NOTHING) {
+		if (m_pGameInstance->Get_KeyState(VK_LBUTTON) == PRESSING) {
+			Change_State(LEVER);
+			return;
+		}
+
 	}
 
 }
@@ -166,6 +174,7 @@ HRESULT CPlayer_State_Move::Add_States()
 	Add_State(JOG, CPlayer_State_Move_Jog::Create(m_pPlayer, this));
 	Add_State(DOOR_STOP, CPlayer_State_Move_DoorStop::Create(m_pPlayer, this));
 	Add_State(LADDER, CPlayer_State_Move_Ladder::Create(m_pPlayer, this));
+	Add_State(LEVER, CPlayer_State_Move_Lever::Create(m_pPlayer, this));
 	//Change_State(IDLE);
 
 	return S_OK;

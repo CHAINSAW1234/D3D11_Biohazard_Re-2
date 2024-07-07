@@ -7,9 +7,14 @@
 #include "Camera_Event.h"
 
 /* Player */
+#include "Player.h"
 #include "Body_Player.h"
 #include "Head_Player.h"
 #include "Hair_Player.h"
+#include "Weapon.h"
+#include "FlashLight.h"
+#include "Throwing_Weapon.h"
+#include "Throwing_Weapon_Pin.h"
 
 /* Monster */
 #include "Body_Zombie.h"
@@ -19,9 +24,8 @@
 #include "BackGround.h"
 #include "Terrain.h"
 #include "Zombie.h"
-#include "Weapon.h"
-#include "FlashLight.h"
-#include "Player.h"
+
+
 #include "Effect.h"
 #include "Sky.h"
 #include "CustomCollider.h"
@@ -67,9 +71,6 @@
 #include"Body_MovingShelf.h"
 #include"Lever.h"
 #include"Body_Lever.h"
-
-
-
 
 /* UI */
 #include "Customize_UI.h"
@@ -402,6 +403,16 @@ HRESULT CLoader::Load_Prototype()
 	/* For.Prototype_GameObject_Part_Weapon */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Part_Weapon"),
 		CWeapon::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Throwing_Weapon */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Throwing_Weapon"),
+		CThrowing_Weapon::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Throwing_Weapon_Pin */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Throwing_Weapon_Pin"),
+		CThrowing_Weapon_Pin::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Part_FlashLight */
@@ -813,8 +824,8 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_162")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Lever::Create(m_pDevice, m_pContext));		
 
-		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_162")) != wstring::npos) && (bDo = true))
-			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Lever::Create(m_pDevice, m_pContext));
+		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_197")) != wstring::npos|| Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_232")) != wstring::npos) && (bDo = true))
+			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_MovingShlef::Create(m_pDevice, m_pContext));
 
 		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_024_newpolicestatue01a")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_NewpoliceStatue::Create(m_pDevice, m_pContext));
@@ -1232,6 +1243,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Decal/Blood_Decal.dds")))))
 		return E_FAIL;
 
+	/*Prototype_Component_Texture_Muzzle_Flash_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Decal_Blood_SSD"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Decal/Blood_%d.png"),11))))
+		return E_FAIL;
+
 	//Muzzle Flash
 	CTexture::TEXTURE_DESC Desc{};
 	Desc.iWidth = 1024;
@@ -1252,6 +1268,26 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/*Prototype_Component_Texture_Muzzle_Flash_SG*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Flash_SG"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Flash_SG/Muzzle_Flash_SG.dds"), 1, &Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 1024;
+	Desc.iHeight = 1024;
+	Desc.iCountX = 8;
+	Desc.iCountY = 8;
+
+	/*Prototype_Component_Texture_Muzzle_Flash_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Smoke"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Smoke/Muzzle_Smoke.dds"), 1, &Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 1024;
+	Desc.iHeight = 1024;
+	Desc.iCountX = 8;
+	Desc.iCountY = 8;
+
+	/*Prototype_Component_Texture_Muzzle_Flash_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Smoke_SG"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Smoke_SG/Muzzle_Smoke_SG.dds"), 1, &Desc))))
 		return E_FAIL;
 #pragma endregion
 

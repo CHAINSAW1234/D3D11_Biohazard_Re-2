@@ -70,6 +70,8 @@ void CDecal_SSD::SetWorldMatrix_With_HitNormal(_vector vUp)
 void CDecal_SSD::SetPosition(_float4 vPos)
 {
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
+
+	m_iFrame = m_pGameInstance->GetRandom_Int(0, 10);
 }
 
 void CDecal_SSD::LookAt(_float4 vDir)
@@ -93,7 +95,7 @@ HRESULT CDecal_SSD::Add_Components()
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Decal_Blood"),
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Decal_Blood_SSD"),
 		TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
@@ -119,10 +121,10 @@ HRESULT CDecal_SSD::Bind_ShaderResources()
 	if (FAILED(pDeferredShader->Bind_RawValue("g_vDecalNormal", &m_vNormal, sizeof(_float4))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(pDeferredShader, "g_DecalTexture")))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(pDeferredShader, "g_DecalTexture",m_iFrame)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pDeferredShader, TEXT("Target_Depth"), "g_DepthTexture")))
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pDeferredShader, TEXT("Target_Field_Depth"), "g_DepthTexture_Decal")))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(pDeferredShader, TEXT("Target_Normal"), "g_NormalTexture")))
 		return E_FAIL;

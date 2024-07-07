@@ -12,6 +12,8 @@
 #include "Hair_Player.h"
 
 #include "Weapon.h"
+#include "Throwing_Weapon.h"
+#include "Throwing_Weapon_Pin.h"
 #include "FlashLight.h"
 
 #include "CustomCollider.h"
@@ -23,10 +25,12 @@
 
 #include "Tab_Window.h"
 #include "Bone.h"
+#include "Muzzle_Smoke.h"
 
+#include"MovingShelf.h"
 
 #define MODEL_SCALE 0.01f
-#define SHOTGUN_BULLET_COUNT 5
+#define SHOTGUN_BULLET_COUNT 7
 
 const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_HG"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT") };
 const wstring CPlayer::strAnimSetHoldName[ANIMSET_HOLD_END] = { TEXT("HOLD_HG"), TEXT("HOLG_STG"), TEXT("HOLD_MLE"), TEXT("HOLD_SUP") };
@@ -555,6 +559,26 @@ void CPlayer::Col_Section()
 	}
 }
 
+_float4x4 CPlayer::Get_Shelf_WorldMatrix()
+{
+	if (m_pShelf == nullptr)
+		return _float4x4();
+	return static_cast<CMovingShelf*>(m_pShelf)->Get_WorldMatrix();
+}
+
+void CPlayer::Set_Shelf_State(_int eState)
+{
+	static_cast<CMovingShelf*>(m_pShelf)->Set_Anim_State(eState);
+}
+
+_int CPlayer::Get_Shelf_Type()
+{
+	if (m_pShelf == nullptr)
+		return CMovingShelf::SHELF_TYPE_END;
+	return static_cast<CMovingShelf*>(m_pShelf)->Get_Shelf_Type();
+}
+
+
 #pragma endregion
 
 #pragma region 나옹 추가
@@ -807,6 +831,8 @@ void CPlayer::Shot()
 
 		m_pMuzzle_Flash->Set_Render(true);
 		m_pMuzzle_Flash->SetPosition(Get_MuzzlePosition());
+		m_pMuzzle_Smoke->Set_Render(true);
+		m_pMuzzle_Smoke->SetPosition(Get_MuzzlePosition());
 		break;
 		}
 	case EQUIP::STG: {
@@ -832,9 +858,19 @@ void CPlayer::Throw_Sub()
 {
 	m_pTabWindow->UseItem(Get_Equip_As_ITEM_NUMBER(), 1);
 
-	//switch(m_eEquip) {
+	CThrowing_Weapon::THROWING_WEAPON_DESC pDesc;
+	pDesc.worldMatrix = m_pWeapon->Get_WorldMatrix();
+	pDesc.eEquip = m_eEquip;
 
-	//}
+	if (FAILED(m_pGameInstance->Add_Clone(g_Level, TEXT("Layer_Throwing_Weapon"), TEXT("Prototype_GameObject_Throwing_Weapon"), &pDesc)))
+		return;
+
+	CThrowing_Weapon_Pin::THROWING_WEAPON_PIN_DESC pDesc2;
+	pDesc2.worldMatrix = m_pWeapon->Get_WorldMatrix();
+	pDesc2.eEquip = m_eEquip;
+
+	if (FAILED(m_pGameInstance->Add_Clone(g_Level, TEXT("Layer_Throwing_Weapon"), TEXT("Prototype_GameObject_Throwing_Weapon_Pin"), &pDesc2)))
+		return;
 
 	NotifyObserver();
 }
@@ -1124,7 +1160,7 @@ void CPlayer::Update_Equip()
 			Get_Body_Model()->Set_BlendWeight(3, 10.f, 20.f);
 		}
 		else if (Get_Body_Model()->isFinished(3)) {
-			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.01f) {
+			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.1f) {
 				m_isRequestChangeEquip = false;
 				Get_Body_Model()->Set_Loop(3, true);
 			}
@@ -1581,7 +1617,7 @@ void CPlayer::RayCast_Shoot()
 
 		for(size_t i = 0;i<SHOTGUN_BULLET_COUNT;++i)
 		{
-			auto vDelta_Random = _float4(m_pGameInstance->GetRandom_Real(-0.1f, 0.1f), m_pGameInstance->GetRandom_Real(-0.1f, 0.1f), m_pGameInstance->GetRandom_Real(-0.1f, 0.1f), 0.f);
+			auto vDelta_Random = _float4(m_pGameInstance->GetRandom_Real(-0.07f, 0.07f), m_pGameInstance->GetRandom_Real(-0.07f, 0.07f), m_pGameInstance->GetRandom_Real(-0.07f, 0.07f), 0.f);
 			auto NewCamLook = vCamLook + vDelta_Random;
 			NewCamLook = Float4_Normalize(NewCamLook);
 
@@ -2119,22 +2155,30 @@ void CPlayer::Ready_Effect()
 
 	m_pMuzzle_Flash_SG = CMuzzle_Flash_SG::Create(m_pDevice, m_pContext);
 	m_pMuzzle_Flash_SG->SetSize(0.6f, 0.6f);
+
+	m_pMuzzle_Smoke = CMuzzle_Smoke::Create(m_pDevice, m_pContext);
+	m_pMuzzle_Smoke->SetSize(0.6f, 0.6f);
 }
 
 void CPlayer::Release_Effect()
 {
 	Safe_Release(m_pMuzzle_Flash);
 	Safe_Release(m_pMuzzle_Flash_SG);
+	Safe_Release(m_pMuzzle_Smoke);
 }
 
 void CPlayer::Tick_Effect(_float fTimeDelta)
 {
+	m_pMuzzle_Smoke->Tick(fTimeDelta);
+
 	m_pMuzzle_Flash->Tick(fTimeDelta);
 	m_pMuzzle_Flash_SG->Tick(fTimeDelta);
 }
 
 void CPlayer::Late_Tick_Effect(_float fTimeDelta)
 {
+	m_pMuzzle_Smoke->Late_Tick(fTimeDelta);
+
 	m_pMuzzle_Flash->Late_Tick(fTimeDelta);
 	m_pMuzzle_Flash_SG->Late_Tick(fTimeDelta);
 }
