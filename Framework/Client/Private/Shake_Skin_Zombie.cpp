@@ -60,17 +60,17 @@ _bool CShake_Skin_Zombie::Execute(_float fTimeDelta)
 
 	HIT_TYPE			eCurrentHitType = { pZombie->Get_Current_HitType() };
 	if (HIT_TYPE::HIT_END == eCurrentHitType)
-		return false;
+		return true;
 
 	_float3				vHitDirectionLocalFloat3 = {};
 	if (false == m_pBlackBoard->Compute_Direction_From_Hit_Local(&vHitDirectionLocalFloat3))
-		return false;
+		return true;
 
 	COLLIDER_TYPE		eIntersectCollider = { pZombie->Get_Current_IntersectCollider() };
 	if (COLLIDER_TYPE::_END == eIntersectCollider ||
 		COLLIDER_TYPE::HEAD == eIntersectCollider ||
 		COLLIDER_TYPE::PELVIS == eIntersectCollider)
-		return false;
+		return true;
 
 	DIRECTION			eHitDirection = { vHitDirectionLocalFloat3.z > 0.f ? DIRECTION::_F : DIRECTION::_B };
 

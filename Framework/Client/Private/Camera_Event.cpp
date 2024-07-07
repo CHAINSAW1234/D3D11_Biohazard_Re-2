@@ -34,7 +34,6 @@ void CCamera_Event::Tick(_float fTimeDelta)
 {
 	//Reset_CamPosition();
 
-
 	if (m_isPlay) {
 		Play_MCAM(fTimeDelta);
 	}
@@ -356,7 +355,9 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 		vTranslation = XMVectorLerp(CurrentMCAM.Translations[m_iCurrentTranslateFrame],
 			CurrentMCAM.Translations[m_iCurrentTranslateFrame + 1],
 			(m_fTrackPosition - (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame]) / (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame + 1]);
-			
+#pragma region 위에 기존방식 트랙포지션 비율 계산하는거 잘못된듯? Frame 전체길이가아니라 해당구간으로 나눠야하는 주석내방식이 적합해보임
+		//	(m_fTrackPosition - (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame]) / (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame + 1] - (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame]);
+#pragma endregion
 	}
 
 	while (1) {
@@ -376,6 +377,9 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 		vRotation = XMQuaternionSlerp(CurrentMCAM.Rotations[m_iCurrentRotationFrame],
 			CurrentMCAM.Rotations[m_iCurrentRotationFrame + 1], 
 			(m_fTrackPosition - (_float)CurrentMCAM.RotationFrame[m_iCurrentRotationFrame]) / (_float)CurrentMCAM.RotationFrame[m_iCurrentRotationFrame + 1]);
+#pragma region 위에 기존방식 트랙포지션 비율 계산하는거 잘못된듯? Frame 전체길이가아니라 해당구간으로 나눠야하는 주석내방식이 적합해보임
+			//	(m_fTrackPosition - (_float)CurrentMCAM.RotationFrame[m_iCurrentRotationFrame]) / (_float)CurrentMCAM.RotationFrame[m_iCurrentRotationFrame + 1] - (_float)CurrentMCAM.RotationFrame[m_iCurrentRotationFrame]);
+#pragma endregion
 	}
 
 	_float vZoom;
@@ -398,6 +402,22 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 			(m_fTrackPosition - (_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame]) / (_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame + 1]));
 	}
 
+#pragma region 축회전 해봣는데 안댐
+	//_matrix				TransformationMatrix = { XMMatrixRotationY(XMConvertToRadians(180.f)) };
+	//_vector				vTransaltionWorld = { XMVectorSetW(XMVector3TransformNormal(vTranslation, TransformationMatrix), 1.f) };
+	//
+	//_vector				vQuaternion = { XMLoadFloat4(&vRotation) };
+	//_vector				vAxis = { XMVectorSetW(vQuaternion, 0.f) };
+	//_vector				vRotatedAxis = { XMVector3TransformNormal(vAxis, TransformationMatrix) };
+	//_vector				vRotatedQuaternion = { XMQuaternionNormalize(XMVectorSetW(vRotatedAxis, XMVectorGetW(vQuaternion))) };
+
+	//_matrix				TranslationMatrix = { XMMatrixTranslation(XMVectorGetX(vTransaltionWorld), XMVectorGetY(vTransaltionWorld), XMVectorGetZ(vTransaltionWorld)) };
+	//_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vRotatedQuaternion) };
+
+	//_matrix				ResultMatrix = { RotationMatrix * TranslationMatrix };
+	////	_matrix				ResultMatrix = { XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotatedQuaternion, vTransaltionWorld) };
+
+#pragma endregion
 	//_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
 	//	XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 0.f),
 	//	vDeltaTranslation); // rotation 죽임 
@@ -412,6 +432,9 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 		vTranslation); // 둘다 
 
 	m_pTransformCom->Set_WorldMatrix( CombinedMatrix * XMMatrixRotationY(XMConvertToRadians(180.f)));
+
+	//	m_pTransformCom->Set_WorldMatrix(ResultMatrix);
+	//	m_fFovy = XMConvertToRadians(90.f);
 }
 
 CCamera_Event* CCamera_Event::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

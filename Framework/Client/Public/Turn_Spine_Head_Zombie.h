@@ -22,6 +22,7 @@ public:
 	virtual void					Exit() override;
 
 private:
+	void							Set_Hand_AdditionalMatrices();
 
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }

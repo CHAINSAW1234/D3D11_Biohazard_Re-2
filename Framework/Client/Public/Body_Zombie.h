@@ -45,8 +45,12 @@ private:
 	HRESULT								Initialize_MeshTypes();
 	HRESULT								Register_Animation_Branches_AnimType();
 	HRESULT								Register_Animation_Branches_AnimGroup();
+	HRESULT								SetUp_IK();
 	//	ÇÇ°Ý½Ã Èçµé¸± »Àµé
 	HRESULT								Register_BoneLayer_Additional_TwisterBones();
+
+public:
+	inline void							Active_IK(_bool isActive) { m_isActiveIK = isActive; }
 
 private:		/* For. Register BoneLayer */
 	HRESULT								Register_BoneLayer_Childs_NonInclude_Joint(const wstring& strBoneLayerTag, const string& strTopParentTag, const string& strEndEffectorTag);
@@ -96,6 +100,9 @@ private:		/* For Anim_Branch_AnimGroup */
 
 private:
 	ZOMBIE_BODY_TYPE					m_eBodyModelType = { ZOMBIE_BODY_TYPE::_END };
+
+private:
+	_bool								m_isActiveIK = { false };
 
 
 private:

@@ -28,7 +28,7 @@ HRESULT CCut_Scene::Initialize(void* pArg)
 
 void CCut_Scene::Priority_Tick(_float fTimeDelta)
 {
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_RIGHT))
+	if (DOWN == m_pGameInstance->Get_KeyState('T'))
 	{
 		m_isPlaying = true;
 	}

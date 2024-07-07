@@ -321,7 +321,7 @@
     <ClInclude Include="..\Public\Player_State_SubHold_Idle.h" />
     <ClInclude Include="..\Public\Player_State_SubHold_Start.h" />
     <ClInclude Include="..\Public\Props.h" />
-    <ClInclude Include="..\Public\Raise_Up_Hand.h" />
+    <ClInclude Include="..\Public\Raise_Up_Hand_Zombie.h" />
     <ClInclude Include="..\Public\ReaderMachine.h" />
     <ClInclude Include="..\Public\Read_Item_UI.h" />
     <ClInclude Include="..\Public\Rub_Door_Zombie.h" />
@@ -533,7 +533,7 @@
     <ClCompile Include="..\Private\Player_State_SubHold_Idle.cpp" />
     <ClCompile Include="..\Private\Player_State_SubHold_Start.cpp" />
     <ClCompile Include="..\Private\Props.cpp" />
-    <ClCompile Include="..\Private\Raise_Up_Hand.cpp" />
+    <ClCompile Include="..\Private\Raise_Up_Hand_Zombie.cpp" />
     <ClCompile Include="..\Private\ReaderMachine.cpp" />
     <ClCompile Include="..\Private\Read_Item_UI.cpp" />
     <ClCompile Include="..\Private\Rub_Door_Zombie.cpp" />

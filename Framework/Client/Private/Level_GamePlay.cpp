@@ -51,8 +51,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_RegionCollider()))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_CutScene()))
-		return E_FAIL;*/
+	if (FAILED(Ready_CutScene()))
+		return E_FAIL;
 
 	m_pGameInstance->SetSimulate(true);
 

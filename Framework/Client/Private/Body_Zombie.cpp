@@ -112,7 +112,14 @@ void CBody_Zombie::Late_Tick(_float fTimeDelta)
 	if (true == isInitiate)
 	{
 		if (m_bRagdoll == false)
+		{
 			m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+
+			if (true == m_isActiveIK)
+			{
+				m_pModelCom->Play_IK(m_pParentsTransform, fTimeDelta);
+			}
+		}
 	}
 
 
@@ -390,7 +397,7 @@ HRESULT CBody_Zombie::Initialize_Model()
 		return E_FAIL;
 
 	/* Set_Bone */
-	m_pModelCom->Set_RootBone(ROOT_BONE_TAG);
+	m_pModelCom->Set_RootBone(ZOMBIE_ROOT_BONE_TAG);
 
 	/* Create_Bone_Layer*/
 	m_pModelCom->Add_Bone_Layer_All_Bone(BONE_LAYER_DEFAULT_TAG);
@@ -469,6 +476,9 @@ HRESULT CBody_Zombie::Initialize_Model()
 		return E_FAIL;
 
 	if (FAILED(Register_BoneLayer_Additional_TwisterBones()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_IK()))
 		return E_FAIL;
 
 	return S_OK;
@@ -831,6 +841,14 @@ HRESULT CBody_Zombie::Register_Animation_Branches_AnimGroup()
 	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Prison"));
 	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Railing_Fall"));
 	m_GroupAnimLayerTags[static_cast<_uint>(ZOMBIE_BODY_ANIM_GROUP::_UNDISCOVERED)].emplace(TEXT("Undiscovered_Railing_Stund"));
+
+	return S_OK;
+}
+
+HRESULT CBody_Zombie::SetUp_IK()
+{
+	m_pModelCom->Add_IK(ZOMBIE_LEFT_HUMEROUS_BONE_TAG, ZOMBIE_LEFT_ARM_WRIST_BONE_TAG, ZOMBIE_IK_L_HUMEROUS_WRIST_TAG, 3, 0.f);
+	m_pModelCom->Add_IK(ZOMBIE_RIGHT_HUMEROUS_BONE_TAG, ZOMBIE_RIGHT_ARM_WRIST_BONE_TAG, ZOMBIE_IK_R_HUMEROUS_WRIST_TAG, 3, 0.f);
 
 	return S_OK;
 }

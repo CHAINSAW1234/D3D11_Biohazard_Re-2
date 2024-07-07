@@ -91,6 +91,9 @@ private:
 	virtual HRESULT						Initialize_Status() override;
 	virtual HRESULT						Initialize_States();
 
+public:		/* For.IK Controll */
+	void								Active_IK_Body(_bool isActive);
+
 public:		/* For.Collision Part */
 	inline COLLIDER_TYPE				Get_Current_IntersectCollider() { return m_eCurrentHitCollider; }
 	inline HIT_TYPE						Get_Current_HitType() { return m_eCurrentHitType; }

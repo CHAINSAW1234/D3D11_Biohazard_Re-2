@@ -862,7 +862,23 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_Shake_Skin->SetBlackBoard(m_pBlackBoard);
 	pSequenceNode_Root->Insert_Child_Node(pTask_Shake_Skin);
 
-#pragma endregion		//	Task Shake Skin
+#pragma endregion		//	Child Sequence Root
+
+#pragma region		Task Turn Spine
+
+	CTurn_Spine_Head_Zombie* pTask_Turn_Spine_Head = { CTurn_Spine_Head_Zombie::Create() };
+	pTask_Turn_Spine_Head->SetBlackBoard(m_pBlackBoard);
+	pSequenceNode_Root->Insert_Child_Node(pTask_Turn_Spine_Head);
+
+#pragma endregion		//	Child Sequence Root
+
+#pragma region		Task Raise Up Hand
+
+	CRaise_Up_Hand_Zombie* pTask_Raise_Up_Hand = { CRaise_Up_Hand_Zombie::Create() };
+	pTask_Raise_Up_Hand->SetBlackBoard(m_pBlackBoard);
+	pSequenceNode_Root->Insert_Child_Node(pTask_Raise_Up_Hand);
+
+#pragma endregion		//	Child Sequence Root
 
 #pragma endregion		//	Sequence Root
 
@@ -1068,6 +1084,11 @@ HRESULT CZombie::Initialize_States()
 	m_eState = MONSTER_STATE::MST_IDLE;
 
 	return S_OK;
+}
+
+void CZombie::Active_IK_Body(_bool isActive)
+{
+	static_cast<CBody_Zombie*>(m_PartObjects[PART_BODY])->Active_IK(isActive);
 }
 
 HRESULT CZombie::Initialize_PartModels()

@@ -34,35 +34,56 @@ _bool CTurn_Spine_Head_Zombie::Execute(_float fTimeDelta)
 	if (Check_Permition_To_Execute() == false)
 		return false;
 #pragma endregion
-	/*CZombie* pZombie = { m_pBlackBoard->Get_AI() };
-	if (nullptr == pZombie)
-		return false;
 
-	Update_BlendWeights();
-
-	HIT_TYPE			eCurrentHitType = { pZombie->Get_Current_HitType() };
-	if (HIT_TYPE::HIT_END == eCurrentHitType)
-		return false;
-
-	_float3				vHitDirectionLocalFloat3 = {};
-	if (false == m_pBlackBoard->Compute_Direction_From_Hit_Local(&vHitDirectionLocalFloat3))
-		return false;
-
-	COLLIDER_TYPE		eIntersectCollider = { pZombie->Get_Current_IntersectCollider() };
-	if (COLLIDER_TYPE::_END == eIntersectCollider ||
-		COLLIDER_TYPE::HEAD == eIntersectCollider ||
-		COLLIDER_TYPE::PELVIS == eIntersectCollider)
-		return false;
-
-	DIRECTION			eHitDirection = { vHitDirectionLocalFloat3.z > 0.f ? DIRECTION::_F : DIRECTION::_B };
-
-	Add_Blend_Animation(eIntersectCollider, eHitDirection);*/
+	Set_Hand_AdditionalMatrices();
 
 	return true;
 }
 
 void CTurn_Spine_Head_Zombie::Exit()
 {
+}
+
+void CTurn_Spine_Head_Zombie::Set_Hand_AdditionalMatrices()
+{
+	CTransform*			pZombie_Transform = { m_pBlackBoard->Get_AI()->Get_Transform() };
+	CTransform*			pPlayer_Transform = { m_pBlackBoard->Get_Player()->Get_Transform() };
+	CModel*				pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+
+	if (nullptr == pZombie_Transform || nullptr == pPlayer_Transform || nullptr == pBody_Model)
+		return;
+
+	_vector				vZombiePosition = { pZombie_Transform->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector				vPlayerPosition = { pPlayer_Transform->Get_State_Vector(CTransform::STATE_POSITION) };
+
+	_vector				vZombieLook = { XMVector3Normalize(pZombie_Transform->Get_State_Vector(CTransform::STATE_LOOK)) };
+	_vector				vDirectionToPlayer = { XMVector3Normalize(vPlayerPosition - vZombiePosition) };
+
+	_vector				vCross = { XMVector3Cross(vZombieLook, vDirectionToPlayer) };
+	_float				fDot = { XMVectorGetX(XMVector3Dot(vZombieLook, vDirectionToPlayer)) };
+	_float				fAngle = { fminf(acosf(fDot), XMConvertToRadians(50.f)) };
+
+	_matrix				ZombieWorldMatrixInv = { pZombie_Transform->Get_WorldMatrix_Inverse() };
+	
+	_vector				vAxis = { XMVector3TransformNormal(vCross, ZombieWorldMatrixInv) };	
+	_vector				vTotalRotateQuaternionLocal = { XMQuaternionRotationAxis(XMVector3Normalize(vAxis), fAngle) };
+
+	list<_uint>			ChildJointIndices;
+	pBody_Model->Get_Child_ZointIndices(m_strSpineBoneTag, m_strHeadBoneTag, ChildJointIndices);
+
+	ChildJointIndices.pop_back();
+
+	_uint				iNumChildJoint = { static_cast<_uint>(ChildJointIndices.size()) };
+	vector<string>		BoneNames = { pBody_Model->Get_BoneNames() };
+
+	_vector				vDevideQuaternionLocal = { XMQuaternionSlerp(XMQuaternionIdentity(), vTotalRotateQuaternionLocal, 1.f / static_cast<_float>(iNumChildJoint)) };
+
+	_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vDevideQuaternionLocal) };
+
+	for (auto& iJointIndex : ChildJointIndices)
+	{
+		pBody_Model->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
+	}
 }
 
 CTurn_Spine_Head_Zombie* CTurn_Spine_Head_Zombie::Create(void* pArg)

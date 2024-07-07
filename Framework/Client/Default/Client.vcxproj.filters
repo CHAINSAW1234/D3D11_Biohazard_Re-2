@@ -1065,7 +1065,7 @@
     <ClInclude Include="..\Public\Turn_Spine_Head_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Turn_Spine_Head</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Raise_Up_Hand.h">
+    <ClInclude Include="..\Public\Raise_Up_Hand_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Raise_Up_Hand</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Cut_Scene.h">
@@ -1583,7 +1583,7 @@
     <ClCompile Include="..\Private\Turn_Spine_Head_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Turn_Spine_Head</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Raise_Up_Hand.cpp">
+    <ClCompile Include="..\Private\Raise_Up_Hand_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Raise_Up_Hand</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Cut_Scene.cpp">
