@@ -17,7 +17,7 @@ public:
 
 private:
 	void						Interpolate_Location(_float fTimeDelta);
-
+	void						Set_InterpolateMatrix();
 private:
 	CPlayer*					m_pPlayer = { nullptr };
 	CFSM_HState*				m_pHState = { nullptr };

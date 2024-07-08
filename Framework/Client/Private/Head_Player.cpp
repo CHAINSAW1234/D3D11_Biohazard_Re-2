@@ -39,6 +39,7 @@ HRESULT CHead_Player::Initialize(void* pArg)
 
 	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
 
+
 	/*CModel::ANIM_PLAYING_DESC		AnimDesc;
 	AnimDesc.iAnimIndex = 0;
 	AnimDesc.isLoop = true;
@@ -64,7 +65,7 @@ void CHead_Player::Priority_Tick(_float fTimeDelta)
 
 void CHead_Player::Tick(_float fTimeDelta)
 {
-	__super::Tick(fTimeDelta);
+		__super::Tick(fTimeDelta);
 
 	m_pColliderCom->Tick(XMLoadFloat4x4(&m_WorldMatrix));
 
