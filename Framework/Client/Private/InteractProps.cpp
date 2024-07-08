@@ -177,7 +177,10 @@ _float4 CInteractProps::Get_Collider_World_Pos(_float4 vPos)
 _bool CInteractProps::Check_Col_Player(INTERACTPROPS_COL eInterCol, INTERACTPROPS_COL_STEP eStepCol)
 {
 	if (m_pPlayerCol->Intersect(m_pColliderCom[eInterCol][eStepCol]))
+	{
+		m_bFirstInteract = true;
 		return m_bCol[eInterCol][eStepCol] = true;
+	}
 	else
 		return m_bCol[eInterCol][eStepCol] = false;
 

@@ -89,20 +89,26 @@ public:
 			return false;
 	}
 
+public :
+	_bool					Get_Door_Lock()		{ return m_bLock; }				// 잠겼는지 아닌지(문이 잠김이 true)
+	_bool					Get_FirstInteract()	{ return m_bFirstInteract; } // 접촉만 함 (탐색 - 빨간색)
+	_bool					Get_Interact()		{ return m_bInteract; }			// 열었는지 아닌지(파란색)
+
 private:
 	_bool					m_bLock =	{ false };
-
+	_bool					m_bInteract = { false }; // 문을 열었는지(탐색 완료)
 	_int					m_iHP = { 5 };
 
-	_float				m_fTime = { 0.f };
-	_ubyte				m_eType = {DOOR_ONE};
+	_float					m_fTime = { 0.f };
+	_ubyte					m_eType = {DOOR_ONE};
 
 	_ubyte  				m_eOneState = { ONEDOOR_STATIC };
 	_ubyte  				m_eOneState_Prev = { ONEDOOR_STATIC };
 
-	_ubyte   			m_eDoubleState = { DOUBLEDOOR_STATIC };
-	_ubyte   			m_eDoubleState_Prev = { DOUBLEDOOR_STATIC };
-	_ubyte				m_eDoubleDoorType;
+	_ubyte   				m_eDoubleState = { DOUBLEDOOR_STATIC };
+	_ubyte   				m_eDoubleState_Prev = { DOUBLEDOOR_STATIC };
+	_ubyte					m_eDoubleDoorType;
+
 public:
 	static CDoor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

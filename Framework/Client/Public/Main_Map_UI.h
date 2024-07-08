@@ -21,17 +21,25 @@ public:
 	virtual HRESULT Render() override;
 
 public :
-	_bool*		Distance_End()				{ return &m_isMainEnd;  }
-	_vector*	Player_Between_Distance()	{ return &m_vMapOpen_Player_Distance; }
+	_bool*				Distance_End_Ptr()				{ return &m_isMainEnd;  }
+	_vector*			Player_Between_Distance_Ptr()	{ return &m_vMapOpen_Player_Distance; }
+
+private :
+	void				Find_DoorObj();
 
 private :	
 	void				Change_Search_Type(MAP_STATE_TYPE _searType);
 	void				Region_Type();
-
 	void				Search_Map_Type(MAP_STATE_TYPE _searType, LOCATION_MAP_VISIT _mapType);
 
 	void				Rendering();
 	void				Player_BetweenDistance();
+
+	void				Door_State();
+	void				Search_Door_Type(MAP_STATE_TYPE _searType, DOOR_TYPE _searchDoor);
+
+private :
+	list<class CDoor*>	m_DoorList;
 
 private :
 	_int				m_iWhichChild = { 0 };

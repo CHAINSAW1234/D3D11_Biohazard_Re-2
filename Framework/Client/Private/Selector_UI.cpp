@@ -281,7 +281,7 @@ void CSelector_UI::Find_Selector_Obj()
             {
                m_SelectorObj_Vec.push_back(pSelectorObj);
 
-                Safe_AddRef(m_SelectorObj_Vec.back());
+              //  Safe_AddRef(m_SelectorObj_Vec.back());
             }
         }
     }
@@ -326,9 +326,9 @@ void CSelector_UI::Free()
 {
     __super::Free();
 
-    for (auto& iter : m_SelectorObj_Vec)
-    {
-        Safe_Release(iter);
-    }
-    m_SelectorObj_Vec.clear();
+ //   for (auto& iter : m_SelectorObj_Vec)
+    //{
+ //       Safe_Release(iter);
+  //  }
+ //   m_SelectorObj_Vec.clear();
 }

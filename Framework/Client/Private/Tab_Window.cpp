@@ -325,10 +325,8 @@ void CTab_Window::OnOff_EventHandle()
 
 void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 {
-//	OnOff_EventHandle();
-//	m_eWindowType = PICK_UP_ITEM_WINDOW;
 	m_pPickedUp_Item = pPickedUp_Item;
-	//Safe_AddRef(m_pPickedUp_Item);
+
 	CInteractProps* pProp = static_cast<CInteractProps*>(m_pPickedUp_Item);
 	_int iPickedUpItemNum = pProp->Get_iItemIndex();
 	
@@ -342,9 +340,6 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 		// 먹을 지 말지 결정, 이거 터지는 이유 => enum 부닐 
 		m_pMap_UI->Destory_Item((MAP_FLOOR_TYPE)pProp->Get_Floor(), (LOCATION_MAP_VISIT)pProp->Get_Region(), (ITEM_NUMBER)iPickedUpItemNum);
 	}
-	/*_int iPickedUpItemQuant = static_cast<CItemProp*>(m_pPickedUp_Item)->Get_i*/
-	//m_pItem_Discription->Set_Item_Number(static_cast<ITEM_NUMBER>(iPickedUpItemNum), 10);
-	// m_pInventory_Manager->Set_InventoryEvent(PICK_UP_ITEM);
 }
 
 void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)

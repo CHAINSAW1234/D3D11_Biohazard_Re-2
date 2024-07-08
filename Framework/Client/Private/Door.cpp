@@ -232,6 +232,7 @@ void CDoor::DoubleDoor_Tick(_float fTimeDelta)
 	if (m_bActivity)
 		m_fTime += fTimeDelta;
 
+
 	if (m_fTime > 2.f)
 	{
 		m_fTime = 0.f;
@@ -411,6 +412,8 @@ void CDoor::DoubleDoor_Active()
 
 	if (m_bLock)
 		return;
+
+	m_bInteract = true;
 
 	_float fScala = Radian_To_Player();
 
@@ -599,9 +602,9 @@ void CDoor::OneDoor_Active()
 {
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
-
 	if (m_bLock)
 		return;
+	m_bInteract = true;
 
 	_float fScala = Radian_To_Player();
 
@@ -609,7 +612,6 @@ void CDoor::OneDoor_Active()
 		m_eOneState = ONEDOOR_OPEN_L;
 	else
 		m_eOneState = ONEDOOR_OPEN_R;
-
 }
 
 

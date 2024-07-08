@@ -69,9 +69,6 @@ HRESULT CPlayer_Map_UI::Initialize(void* pArg)
 
     m_isMouse_Control = true;
 
-    // 잠깐 추가
-    Find_Player();
-
     if (nullptr != m_pPlayer)
     {
         m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
@@ -136,12 +133,12 @@ _bool CPlayer_Map_UI::IsDistanceMeasured_Completely(_bool _find)
         {
             if (true == _find) /* 거리 재기 끝 */
             {
-                if (*pMapMain->Distance_End() == false)
+                if (*pMapMain->Distance_End_Ptr() == false)
                     return false;
             }
             else
             {
-                *pMapMain->Distance_End() = false;
+                *pMapMain->Distance_End_Ptr() = false;
             }
         }
 
@@ -303,14 +300,15 @@ void CPlayer_Map_UI::Map_Player_Moving(_float fTimeDelta)
         Moving_Value.x = -(m_vPlayer_MovePos.x + 2.f);
         Moving_Value.y = -(m_vPlayer_MovePos.z + 14.f); // 플레이어의 초기 위치와 현재 위치의 차이 계산
     }
+
     else if (MODELMAP_X_FLOO2 == m_fCurrent_ModelScaled.x && MODELMAP_Y_FLOO2 == m_fCurrent_ModelScaled.y)
     {
         fComparison.x = (MINMAP_X_SCALED) / m_fCurrent_ModelScaled.x;
         fComparison.y = (MINMAP_Y_SCALED) / m_fCurrent_ModelScaled.y;
 
         m_vPlayer_MovePos = m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION);
-        Moving_Value.x = -(m_vPlayer_MovePos.x + 2.f);
-        Moving_Value.y = -(m_vPlayer_MovePos.z + 14.f); // 플레이어의 초기 위치와 현재 위치의 차이 계산
+        Moving_Value.x = -(m_vPlayer_MovePos.x + 1.f);
+        Moving_Value.y = -(m_vPlayer_MovePos.z + 14.7f); // 플레이어의 초기 위치와 현재 위치의 차이 계산
     }
 
     //offset.x /= fComparison.x;
@@ -388,7 +386,7 @@ void CPlayer_Map_UI::Map_Player_Setting()
                 CTransform* pMapTrans = static_cast<CTransform*>(pMapMain->Get_Component(g_strTransformTag));
 
                 /* Player에서 각자 잰 거리 까지의 위치를 해당 Main 객체에 넣어준다. */
-                _float4 vMain_Result = (Player + *pMapMain->Player_Between_Distance());
+                _float4 vMain_Result = (Player + *pMapMain->Player_Between_Distance_Ptr());
 
                 /* Z 값이 흐트러지지 않도록 정리 */
                 vMain_Result.z = pMapTrans->Get_State_Float4(CTransform::STATE_POSITION).z;

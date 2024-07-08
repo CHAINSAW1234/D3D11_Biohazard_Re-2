@@ -417,12 +417,6 @@ void CMap_Manager::Find_MapStateType()
 		m_eFloorType = MAP_FLOOR_TYPE::FLOOR_1;
 	}
 
-	else if (TEXT("UI_Map_Door") == m_wstrFile)
-	{
-		m_eMapComponent_Type = MAP_UI_TYPE::DOOR_MAP;
-		m_eFloorType = MAP_FLOOR_TYPE::FLOOR_1;
-	}
-
 	else if (TEXT("UI_Map_Window") == m_wstrFile)
 	{
 		m_eMapComponent_Type = MAP_UI_TYPE::WINDOW_MAP;
@@ -503,11 +497,23 @@ void CMap_Manager::Find_MapStateType()
 
 	}
 
+	else if (TEXT("UI_Map_Door") == m_wstrFile)
+	{
+		m_eMapComponent_Type = MAP_UI_TYPE::DOOR_MAP;
+		m_eFloorType = MAP_FLOOR_TYPE::FLOOR_1;
+	}
+
 	else if (TEXT("UI_Map_Door_Floor2") == m_wstrFile)
 	{
 		m_eMapComponent_Type = MAP_UI_TYPE::DOOR_MAP;
 		m_eFloorType = MAP_FLOOR_TYPE::FLOOR_2;
 
+	}
+
+	else if (TEXT("UI_Map_Door_Floor3") == m_wstrFile)
+	{
+		m_eMapComponent_Type = MAP_UI_TYPE::DOOR_MAP;
+		m_eFloorType = MAP_FLOOR_TYPE::FLOOR_3;
 	}
 
 	else if (TEXT("Map_Font2") == m_wstrFile)

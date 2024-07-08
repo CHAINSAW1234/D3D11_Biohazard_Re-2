@@ -713,17 +713,20 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 {
 	CCustomize_UI::CUSTOM_UI_DESC CustomizeUIDesc;
 	
-	if(fileName == TEXT("UI_Map_Floor3") || fileName == TEXT("UI_Map_Door_Floor2") || fileName == TEXT("UI_Map_Font2") || fileName == TEXT("UI_Map_Floor2") || fileName == TEXT("UI_Map_Item") || fileName == TEXT("UI_Map_Window") || fileName == TEXT("UI_Map_Door") || fileName == TEXT("UI_Map") ||  fileName == TEXT("Map_Mask_Font"))
+	if(fileName == TEXT("UI_Map_Floor3")|| fileName == TEXT("UI_Map_Font2") || fileName == TEXT("UI_Map_Floor2")|| fileName == TEXT("UI_Map_Window") || fileName == TEXT("UI_Map") ||  fileName == TEXT("Map_Mask_Font"))
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eMapUI_Type), sizeof(LOCATION_MAP_VISIT));
 
 	if (fileName == TEXT("UI_Item_Introduce")|| fileName == TEXT("UI_Item_Read_Arrow"))
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eMapUI_Type), sizeof(LOCATION_MAP_VISIT));
 
-	if(fileName == TEXT("UI_Map_Item"))
-	{
+	if (fileName == TEXT("UI_Map_Item") || fileName == TEXT("UI_Map_Item_Floor2") || fileName == TEXT("UI_Map_Item_Floor3"))
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eMapUI_Type), sizeof(LOCATION_MAP_VISIT));
+
+	if(fileName == TEXT("UI_Map_Item") || fileName == TEXT("UI_Map_Item_Floor2") || fileName == TEXT("UI_Map_Item_Floor3"))
 		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eItem_Number), sizeof(ITEM_NUMBER));
-		//inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.wstrItemName), sizeof(wstring));
-	}
+
+	if ( fileName == TEXT("UI_Map_Door") || fileName == TEXT("UI_Map_Door_Floor2") || fileName == TEXT("UI_Map_Door_Floor3"))
+		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eDoor_Type), sizeof(DOOR_TYPE));
 
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoad), sizeof(_bool));
 

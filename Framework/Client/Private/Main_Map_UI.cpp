@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "Player_Map_UI.h"
 #include "Main_Map_UI.h"
+#include "Tab_Window.h"
+
 #include "CustomCollider.h"
 #include "Player.h"
-#include "Tab_Window.h"
+#include "Door.h"
 
 #define ALPHA_ZERO              _float4(0.0f, 0.0f, 0.0f, 0.0f)
 #define RED                     _float4(0.8f, 0.f, 0.f, 0.f)
@@ -36,6 +38,11 @@ HRESULT CMain_Map_UI::Initialize(void* pArg)
         CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
 
         m_iWhichChild = CustomUIDesc->iWhich_Child;
+
+        if (m_eDoor_Type > DOOR_TYPE::END_DOOR)
+            m_eDoor_Type = DOOR_TYPE::END_DOOR;
+
+        m_eDoor_Type = CustomUIDesc->eDoor_Type;
     }
 
     /* 1. 부모일 경우 : 필요 없는 뒷 배경, 렌더하지 않을 것이다. */
@@ -59,6 +66,11 @@ HRESULT CMain_Map_UI::Initialize(void* pArg)
         m_vColor[0].vColor = m_vCurrentColor = _float4(0.f, 0.f, 0.f, 0);
     }
 
+    if (MAP_UI_TYPE::DOOR_MAP == m_eMapComponent_Type)
+    {
+        Find_DoorObj();
+    }
+
     m_isMouse_Control = true;
     m_vOriginPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
@@ -69,8 +81,14 @@ void CMain_Map_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
+    if (m_DoorList.empty())
+        Find_DoorObj();
+
     Rendering();
     Player_BetweenDistance();
+
+    /* Door */
+   // Door_State();
 }
 
 void CMain_Map_UI::Late_Tick(_float fTimeDelta)
@@ -140,6 +158,9 @@ void CMain_Map_UI::Rendering()
             m_isMainEnd = true;
         }
     }
+
+    /* 지역 색 맞추기 */
+    Region_Type();
 }
 
 void CMain_Map_UI::Player_BetweenDistance()
@@ -171,6 +192,67 @@ void CMain_Map_UI::Player_BetweenDistance()
            m_isMainEnd = true;
        }
    }
+}
+
+void CMain_Map_UI::Door_State()
+{
+    if (MAP_UI_TYPE::DOOR_MAP == m_eMapComponent_Type)
+    {
+        if (m_DoorList.empty())
+        {
+            MSG_BOX(TEXT("Main Map UI() : Door Map이 List를 찾을 수 없습니다."));
+            return;
+        }
+
+        /* Player가 어떤 무언가에 접촉했을 때만 돌길 원함 */
+        for (auto& iter : m_DoorList)
+        {
+            if(m_eDoor_Type == (DOOR_TYPE)iter->Get_PropType())
+            {
+                /* 접촉만 했을 때 */
+                if (true == iter->Get_FirstInteract())
+                {
+                    if (true == iter->Get_Interact())/* 문을 열었는가*/
+                    {
+                        Search_Door_Type(MAP_STATE_TYPE::SEARCH_STATE, (DOOR_TYPE)iter->Get_PropType());
+                    }
+
+                    else if (false == iter->Get_Interact()) /* 열지 않았는가*/
+                    {
+                        Search_Door_Type(MAP_STATE_TYPE::SEARCH_CLEAR_STATE, (DOOR_TYPE)iter->Get_PropType());
+                    }
+
+                    m_isBackColor_Change = true; /* Black에 관련된 color만 변경 */
+                }
+
+                /* 접촉하지 않았을 때 */
+                else if (false == iter->Get_FirstInteract())
+                {
+                    Search_Door_Type(MAP_STATE_TYPE::NONE_STATE, (DOOR_TYPE)iter->Get_PropType());
+                }
+            }
+        }
+    }
+}
+
+void CMain_Map_UI::Search_Door_Type(MAP_STATE_TYPE _searType, DOOR_TYPE _searchDoor)
+{
+    Change_Search_Type(_searType);
+}
+
+void CMain_Map_UI::Find_DoorObj()
+{
+    list<CGameObject*>* pDoorList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_Door"));
+
+    if (nullptr == pDoorList)
+        return;
+
+    for (auto& iter : *pDoorList)
+    {
+        CDoor* pDoor = static_cast<CDoor*>(iter);
+
+        m_DoorList.push_back(pDoor);
+    }
 }
 
 void CMain_Map_UI::Change_Search_Type(MAP_STATE_TYPE _searType)

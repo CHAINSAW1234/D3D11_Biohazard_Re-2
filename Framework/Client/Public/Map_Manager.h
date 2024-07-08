@@ -78,7 +78,8 @@ protected : /* Variable */
 	/*3. Floor */
 	MAP_FLOOR_TYPE			m_eFloorType				= { MAP_FLOOR_TYPE::FLOOR_FREE }; /* 기본 타입 */
 	MAP_FLOOR_TYPE			m_eCurrent_ViewFloor		= { MAP_FLOOR_TYPE::FLOOR_1 }; /* 현재 가리키고 있는 맵 : Player 가 가지고 있을 예정 */
-	
+	MAP_FLOOR_TYPE			m_ePrevCurrent_ViewFloor	= { MAP_FLOOR_TYPE::FLOOR_1 };
+
 	/* 4. Control */
 	_bool					m_isMouse_Control			= { false }; /* 마우스로 당길 수 있는 객체 */
 

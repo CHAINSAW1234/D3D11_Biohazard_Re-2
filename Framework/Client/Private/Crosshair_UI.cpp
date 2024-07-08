@@ -66,7 +66,6 @@ HRESULT CCrosshair_UI::Initialize(void* pArg)
                     CTransform* pPointTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
                     vPoint = pPointTrans->Get_State_Float4(CTransform::STATE_POSITION);
 
-                    //Safe_AddRef<CCrosshair_UI*>(m_pCenterDot);
                     break;
                 }
             }
@@ -468,11 +467,5 @@ CGameObject* CCrosshair_UI::Clone(void* pArg)
 
 void CCrosshair_UI::Free()
 {
-    /* if (nullptr != m_pCenterDot)
-     {
-         Safe_Release<CCrosshair_UI*>(m_pCenterDot);
-         m_pCenterDot = nullptr;
-     }*/
-
     __super::Free();
 }

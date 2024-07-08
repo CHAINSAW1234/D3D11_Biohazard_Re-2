@@ -46,6 +46,7 @@ private :
 	_float4					m_vPlayer_InitPos		= {}; 
 	_float4					m_vBackGround_Center	= {};
 
+	class CFloor_Map_UI*	m_FloorSearch_Obj		= { nullptr };
 
 private :
 	_bool					m_isPlayer_FloorSetting = { false };

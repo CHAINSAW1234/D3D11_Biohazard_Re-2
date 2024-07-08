@@ -6,7 +6,8 @@
 
 #define INCIDENCE   997
 #define STORE_BOX   998
-#define TYPEWRITE   999
+#define OTHER       999
+#define LADDER      995
 
 CItem_Map_UI::CItem_Map_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CMap_Manager{ pDevice, pContext }
@@ -82,9 +83,6 @@ void CItem_Map_UI::Destory_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _l
 
 void CItem_Map_UI::Rendering()
 {
-    if (false == m_pTab_Window->Get_MinMapRender())
-        return;
-
     /* 과거에 온 지역이랑 현재의 지역이 맞지 않는다면.*/
     if (m_ePrevRegion != (LOCATION_MAP_VISIT)m_pPlayer->Get_Player_Region())
     {
@@ -95,15 +93,38 @@ void CItem_Map_UI::Rendering()
         if (false == m_isItemRender && (LOCATION_MAP_VISIT)m_pPlayer->Get_Player_Region() == m_eMap_Location)
             m_isItemRender = true;
 
-        if (INCIDENCE == m_eItem_Type || STORE_BOX == m_eItem_Type || TYPEWRITE == m_eItem_Type)
+        if (INCIDENCE == m_eItem_Type || STORE_BOX == m_eItem_Type || OTHER == m_eItem_Type)
             m_isItemRender = true;
     }
+
+    if (true == *m_pMapPlayer->Get_PlayerFloorSetting())
+    {
+        /* 2. Map을 켰는 지 확인했다면,  */
+        if (m_isPrevRender != m_pTab_Window->Get_MinMapRender())
+        {
+            /* 3. 플레이어와 객체의 거리를 구한다  */
+            _float4 vMainTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+            _float4 vPlayertrans = m_pMapPlayer_Transform->Get_State_Float4(CTransform::STATE_POSITION);
+
+            _vector Main = XMVectorSet(vMainTrans.x, vMainTrans.y, vMainTrans.z, vMainTrans.w);
+            _vector Player = XMVectorSet(vPlayertrans.x, vPlayertrans.y, vPlayertrans.z, vPlayertrans.w);
+
+            /* 거리를 구할 때 player는 해당 위치에서부터 자유자재로 이동 */
+            m_vMapOpen_Player_Distance = Main - Player;
+
+            /* 모든 객체와의 거리를 구한 것을 확인하기 위해 사용할 것이다. */
+            m_isItemEnd = true;
+        }
+    }
+
+    if (false == m_pTab_Window->Get_MinMapRender())
+        return;
 
     if (true == m_isItemRender)
     {
         if (true != m_bDead)
             m_isRender = true;
-        else
+       else
             m_isRender = false;
     }
 
@@ -194,6 +215,10 @@ void CItem_Map_UI::Item_Name_Selection()
         m_wstrItemNumber = TEXT("화약");
         break;
 
+    case LADDER :
+        m_wstrItemNumber = TEXT("사다리");
+        break;
+
     case INCIDENCE:
     {
         m_wstrItemNumber = TEXT("사건");
@@ -206,8 +231,8 @@ void CItem_Map_UI::Item_Name_Selection()
         m_wstrItemNumber = TEXT("저장고");
         break;
 
-    case TYPEWRITE:
-        m_wstrItemNumber = TEXT("저장 및 로드");
+    case OTHER:
+        m_wstrItemNumber = TEXT("힌트");
         break;
     }
 

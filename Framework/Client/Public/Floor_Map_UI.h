@@ -17,6 +17,9 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+public :
+	MAP_FLOOR_TYPE			Get_SelectFloor() { return m_eSelect_Floor; }
+
 
 private :
 	void					Rendering();
