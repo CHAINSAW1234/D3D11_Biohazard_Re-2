@@ -9,7 +9,6 @@
 #include "ItemProp.h"
 #include "Read_Item_UI.h"
 #include "Item_Map_UI.h"
-#include "Map_UI.h"
 
 CTab_Window::CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice , pContext }
@@ -450,7 +449,7 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 	{
 		if (iPickedUpItemNum >= rpddocument01a && iPickedUpItemNum <= mapupperpolice01a)
 		{
-			m_pRead_Item_UI->Set_ReadItem_Type((CRead_Item_UI::ITEM_READ_TYPE)pProp->Get_PropType());
+			m_pRead_Item_UI->Set_ReadItem_Type((ITEM_READ_TYPE)pProp->Get_PropType());
 			//인벤토리 문서 부분에 먹었다 추가=> 아직 없는 것으로 앎 나중에
 			pPickedUp_Item->Set_Dead(true);
 		}

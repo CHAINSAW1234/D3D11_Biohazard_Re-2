@@ -453,7 +453,7 @@ void CCustomize_UI::Find_Player()
 
 	m_pPlayer = pPlayer;
 
-	Safe_AddRef(m_pPlayer);
+	//Safe_AddRef(m_pPlayer);
 }
 
 void CCustomize_UI::Set_IsLoad(_bool IsLoad)
@@ -928,11 +928,7 @@ void CCustomize_UI::Free()
 		Safe_Release(pChildUI);
 	m_vecChildUI.clear();
 
-	if(nullptr != m_pPlayer)
-	{
-		Safe_Release(m_pPlayer);
-		m_pPlayer = nullptr;
-	}
+	//Safe_Release(m_pPlayer);
 
 }
 
