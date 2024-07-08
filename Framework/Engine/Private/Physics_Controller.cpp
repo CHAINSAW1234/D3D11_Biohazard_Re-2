@@ -1121,12 +1121,12 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 					vDelta.y = 0.f;
 
 					m_vecCharacter_Controller[filterData.word2]->Set_Hit(true);
-					m_vecCharacter_Controller[filterData.word2]->Set_Force(vDelta, eType);
-					m_vecCharacter_Controller[filterData.word2]->SetBlockPoint(*pBlockPoint);
-					m_vecCharacter_Controller[filterData.word2]->SetHitNormal(PxVec_To_Float4_Coord(hit_Obj.normal));
 
 					if (bDecalRay)
 					{
+						m_vecCharacter_Controller[filterData.word2]->Set_Force(vDelta, eType);
+						m_vecCharacter_Controller[filterData.word2]->SetBlockPoint(*pBlockPoint);
+						m_vecCharacter_Controller[filterData.word2]->SetHitNormal(PxVec_To_Float4_Coord(hit_Obj.normal));
 						m_vecCharacter_Controller[filterData.word2]->Set_Hit_Decal_Ray(true);
 					}
 
@@ -1145,7 +1145,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 
 					//if (eType == COLLIDER_TYPE::HEAD)
 					{
-						//m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count();
+						m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count();
 					}
 
 					if (bBigAttack)
@@ -1195,11 +1195,11 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 					PxVec3 pxForce = PxVec3(vDelta.x, vDelta.y, vDelta.z);
 					dynamicActor->addForce(pxForce, PxForceMode::eIMPULSE);
 					m_vecCharacter_Controller[filterData.word2]->Set_Hit(true);
-					m_vecCharacter_Controller[filterData.word2]->SetBlockPoint(*pBlockPoint);
-					m_vecCharacter_Controller[filterData.word2]->SetHitNormal(PxVec_To_Float4_Coord(hit_Obj.normal));
 
 					if (bDecalRay)
 					{
+						m_vecCharacter_Controller[filterData.word2]->SetBlockPoint(*pBlockPoint);
+						m_vecCharacter_Controller[filterData.word2]->SetHitNormal(PxVec_To_Float4_Coord(hit_Obj.normal));
 						m_vecCharacter_Controller[filterData.word2]->Set_Hit_Decal_Ray(true);
 					}
 

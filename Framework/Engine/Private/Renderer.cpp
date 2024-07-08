@@ -2134,7 +2134,7 @@ HRESULT CRenderer::Render_Effect_Bloom()
 	if (FAILED(m_pVIBuffer->Bind_Buffers()))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_BLURX))))
+	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_BLURX_EFFECT))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBuffer->Render()))
@@ -2154,7 +2154,7 @@ HRESULT CRenderer::Render_Effect_Bloom()
 	if (FAILED(m_pVIBuffer->Bind_Buffers()))
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_BLURY))))
+	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_BLURY_EFFECT))))
 		return E_FAIL;
 
 	if (FAILED(m_pVIBuffer->Render()))
@@ -2165,7 +2165,16 @@ HRESULT CRenderer::Render_Effect_Bloom()
 #pragma endregion
 
 #pragma region Result
+	if (FAILED(m_pVIBuffer->Bind_Buffers()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_SubResult"), "g_DiffuseTexture")))
+		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Bloom_Blur_Y"), "g_Texture")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Bloom"), "g_BlackTexture")))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Begin(static_cast<_uint>(SHADER_PASS_DEFERRED::PASS_BLOOM))))

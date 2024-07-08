@@ -25,6 +25,8 @@ public:
 	virtual void			Tick(_float fTimeDelta);
 	virtual void			Late_Tick(_float fTimeDelta);
 	virtual HRESULT			Render();
+	virtual void			Tick_SubEffect(_float fTimeDelta) {}
+	virtual void			Late_Tick_SubEffect(_float fTimeDelta) {}
 
 public:
 	virtual void			Compute_CurrentUV();

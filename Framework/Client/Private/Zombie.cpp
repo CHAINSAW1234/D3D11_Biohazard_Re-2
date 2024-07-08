@@ -1756,9 +1756,9 @@ void CZombie::SetBlood_STG()
 			m_vecBlood_STG[i]->SetType(iType);
 
 			//m_vecBlood_Drop_STG_NoRay[i]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
-			/*m_vecBlood_Drop_STG_NoRay[i]->Set_Render(true);
+			m_vecBlood_Drop_STG_NoRay[i]->Set_Render(true);
 			m_vecBlood_Drop_STG_NoRay[i]->SetPosition(vBlockPoint);
-			m_vecBlood_Drop_STG_NoRay[i]->SetType(m_pGameInstance->GetRandom_Int(1, 7));*/
+			m_vecBlood_Drop_STG_NoRay[i]->SetType(m_pGameInstance->GetRandom_Int(1, 7));
 		}
 
 		pHitPoints->clear();

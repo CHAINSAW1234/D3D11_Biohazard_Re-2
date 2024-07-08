@@ -2,8 +2,11 @@
 #include "..\Public\Blood_Drop.h"
 
 #include "GameInstance.h"
+#include "Decal_SSD.h"
 
 #define DIR_AMOUNT 0.3f
+#define DECAL_PROB 30.f
+#define DECAL_COUNT 5
 
 CBlood_Drop::CBlood_Drop(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEffect{ pDevice, pContext }
@@ -36,11 +39,23 @@ HRESULT CBlood_Drop::Initialize(void* pArg)
 
 	m_fDissolveSpeed = 0.05f;
 
+	for (size_t i = 0; i < DECAL_COUNT; ++i)
+	{
+		auto pDecal = new CDecal_SSD(m_pDevice, m_pContext);
+		pDecal->Initialize(nullptr);
+		m_vecDecal.push_back(pDecal);
+	}
+
 	return S_OK;
 }
 
 void CBlood_Drop::Tick(_float fTimeDelta)
 {
+	if (m_bDecal)
+	{
+		Tick_SubEffect(fTimeDelta);
+	}
+
 	if (m_bRender == false)
 		return;
 
@@ -65,6 +80,8 @@ void CBlood_Drop::Tick(_float fTimeDelta)
 			m_pTransformCom->Set_Scaled(m_fSize_X_Default, m_fSize_Y_Default, m_fSize_Z_Default);
 			m_fDissolveAmount = 0.f;
 			m_bRender = false;
+
+			RayCast_Decal();
 		}
 
 		return;
@@ -93,8 +110,13 @@ void CBlood_Drop::Tick(_float fTimeDelta)
 
 void CBlood_Drop::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDecal)
+	{
+		Late_Tick_SubEffect(fTimeDelta);
+	}
+
 	if (m_bRender == true)
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CBlood_Drop::Render()
@@ -665,6 +687,29 @@ void CBlood_Drop::SetPosition(_float4 Pos)
 	m_fDissolveAmount = 0.f;
 }
 
+void CBlood_Drop::RayCast_Decal()
+{
+	if(m_pGameInstance->GetRandom_Real(0.f,100.f) <= DECAL_PROB)
+	{
+		_float4 vBlockPoint;
+		_float4 vBlockNormal;
+
+		if (m_pGameInstance->RayCast_Decal(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), _float4(0.f, -1.f, 0.f, 0.f), &vBlockPoint, &vBlockNormal))
+		{
+			m_vecDecal[m_iDecalCount]->Set_Render(true);
+			m_vecDecal[m_iDecalCount]->SetPosition(vBlockPoint);
+			m_vecDecal[m_iDecalCount]->LookAt(vBlockNormal);
+			m_bDecal = true;
+			++m_iDecalCount;
+
+			if (m_iDecalCount >= DECAL_COUNT)
+			{
+				m_iDecalCount = 0;
+			}
+		}
+	}
+}
+
 HRESULT CBlood_Drop::Add_Components()
 {
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
@@ -743,6 +788,22 @@ HRESULT CBlood_Drop::Bind_ShaderResources()
 	return S_OK;
 }
 
+void CBlood_Drop::Tick_SubEffect(_float fTimeDelta)
+{
+	for (size_t i = 0; i < m_vecDecal.size(); ++i)
+	{
+		m_vecDecal[i]->Tick(fTimeDelta);
+	}
+}
+
+void CBlood_Drop::Late_Tick_SubEffect(_float fTimeDelta)
+{
+	for (size_t i = 0; i < m_vecDecal.size(); ++i)
+	{
+		m_vecDecal[i]->Late_Tick(fTimeDelta);
+	}
+}
+
 CBlood_Drop* CBlood_Drop::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CBlood_Drop* pInstance = new CBlood_Drop(pDevice, pContext);
@@ -792,4 +853,9 @@ void CBlood_Drop::Free()
 	Safe_Release(m_pModelCom_11);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
+
+	for(size_t i = 0;i<m_vecDecal.size();++i)
+	{
+		Safe_Release(m_vecDecal[i]);
+	}
 }

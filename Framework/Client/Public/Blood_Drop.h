@@ -31,10 +31,12 @@ public:
 	}
 	_float4					GetPosition();
 	virtual void			SetPosition(_float4 Pos) override;
+	void					RayCast_Decal();
 private:
 	virtual HRESULT			Add_Components();
 	virtual HRESULT			Bind_ShaderResources();
-
+	virtual void			Tick_SubEffect(_float fTimeDelta);
+	virtual void			Late_Tick_SubEffect(_float fTimeDelta);
 private:
 	CModel*					m_pModelCom = { nullptr };
 	CModel*					m_pModelCom_2 = { nullptr };
@@ -58,7 +60,10 @@ private:
 	_float4					m_vDropDir;
 	_float					m_fDropSpeed = { 0.f };
 
-	class CDecal_SSD*		m_pDecal_SSD = { nullptr };
+	vector<class CDecal_SSD*>		m_vecDecal;
+
+	_bool					m_bDecal = { false };
+	_int					m_iDecalCount = { 0 };
 public:
 	static CBlood_Drop* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

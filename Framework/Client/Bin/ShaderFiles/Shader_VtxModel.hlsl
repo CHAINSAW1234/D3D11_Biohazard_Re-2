@@ -253,9 +253,9 @@ PS_OUT PS_BLOOD(PS_IN In)
         Out.vMaterial.b = 1.f;
     }
 
-   /* Out.vDiffuse.r -= 0.1f;
-    Out.vDiffuse.g -= 0.1f;
-    Out.vDiffuse.b -= 0.1f;*/
+    Out.vDiffuse.r -= 0.3f;
+    Out.vDiffuse.g -= 0.3f;
+    Out.vDiffuse.b -= 0.3f;
 
     if (g_bDissolve)
     {

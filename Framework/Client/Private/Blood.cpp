@@ -94,7 +94,7 @@ void CBlood::Tick(_float fTimeDelta)
 void CBlood::Late_Tick(_float fTimeDelta)
 {
 	if (m_bRender == true)
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
 HRESULT CBlood::Render()

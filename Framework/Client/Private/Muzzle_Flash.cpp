@@ -39,7 +39,7 @@ void CMuzzle_Flash::Tick(_float fTimeDelta)
 	if (m_bRender == false)
 		return;
 
-	++m_iFrame;
+	//++m_iFrame;
 
 	if (m_iFrame >= 2)
 	{

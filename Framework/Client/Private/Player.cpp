@@ -1634,7 +1634,7 @@ void CPlayer::RayCast_Shoot()
 		auto vCamPos = m_pCamera->GetPosition();
 		auto vCamLook = m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK);
 
-		m_pGameInstance->RayCast_Shoot(vCamPos, vCamLook, &vBlockPoint, true,true);
+		m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, true,true);
 
 		for(size_t i = 0;i<SHOTGUN_BULLET_COUNT;++i)
 		{
