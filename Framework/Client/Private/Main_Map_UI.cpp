@@ -200,7 +200,7 @@ void CMain_Map_UI::Door_State()
     {
         if (m_DoorList.empty())
         {
-            MSG_BOX(TEXT("Main Map UI() : Door Map이 List를 찾을 수 없습니다."));
+            // MSG_BOX(TEXT("Main Map UI() : Door Map이 List를 찾을 수 없습니다."));
             return;
         }
 

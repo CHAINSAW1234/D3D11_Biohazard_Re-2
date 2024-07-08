@@ -35,8 +35,6 @@ HRESULT CDamage_UI::Initialize(void* pArg)
         CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
     }
 
-    Find_Player();
-
     m_Mask[0].fMaskControl  = _float2(1.248f, 0.299f);
     m_vColor[0].vColor      = _float4(0.572f, 0.09f, 0.09f, 0.f);
     m_isRender              = false;
@@ -46,6 +44,13 @@ HRESULT CDamage_UI::Initialize(void* pArg)
 
 void CDamage_UI::Tick(_float fTimeDelta)
 {
+    if (nullptr == m_pPlayer)
+    {
+        Find_Player();
+
+        if (nullptr == m_pPlayer)
+            MSG_BOX(TEXT("CDamage_UI(): Player를 찾을 수 없습니다. "));
+    }
     __super::Tick(fTimeDelta);
 
     Operate_Damage(fTimeDelta);

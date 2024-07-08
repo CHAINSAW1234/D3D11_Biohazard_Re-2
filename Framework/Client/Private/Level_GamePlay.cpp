@@ -271,18 +271,18 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
 		return E_FAIL;
 	
-	CZombie::ZOMBIE_MALE_DESC		ObjectDesc;
-	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
-	ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
-	ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
-	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
+	//CZombie::ZOMBIE_MALE_DESC		ObjectDesc;
+	//ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
+	//ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
+	//ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
+	//ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
 
 
-	_matrix			WorldMatrix = { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
-	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+	//_matrix			WorldMatrix = { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
+	//XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -373,7 +373,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	ifstream inputFileStream;
 	wstring selectedFilePath;
 
-	///////////////////////////* ¢º  ¢º  ¢º  ¢º  ¢º  Crosshair  */////////////////////////////
+	/////////////////////////* ¢º  ¢º  ¢º  ¢º  ¢º  Crosshair  */////////////////////////////
 	/* 1. Crosshair */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Crosshair.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
@@ -615,6 +615,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
 	return S_OK;
 
 }
