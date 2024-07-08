@@ -1092,9 +1092,6 @@
     <ClInclude Include="..\Public\Player_State_Move_Ladder.h">
       <Filter>02.GameObjects\Player\State\Player_State_Move\Player_State_Move_Ladder</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Interact_UI.h">
-      <Filter>02.GameObjects\UI\98. InteractUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Zombie_Enums.h">
       <Filter>02.GameObjects\Monster\Zombie</Filter>
     </ClInclude>
@@ -1233,11 +1230,11 @@
     <ClInclude Include="..\Public\HotKey.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\1. HotKey</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Muzzle_Spark_SG.h">
-      <Filter>02.GameObjects\Effect\Muzzle_Spark_SG</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Muzzle_Light_SG.h">
       <Filter>02.GameObjects\Effect\Muzzle_Light_SG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Muzzle_Spark_SG.h">
+      <Filter>02.GameObjects\Effect\Muzzle_Spark_SG</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1631,9 +1628,6 @@
     <ClCompile Include="..\Private\LayOut_UI.cpp">
       <Filter>02.GameObjects\UI\15. LayOut</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Map_UI.cpp">
-      <Filter>02.GameObjects\UI\11. Map_UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Creep_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Idle\Creep</Filter>
     </ClCompile>
@@ -1790,11 +1784,11 @@
     <ClCompile Include="..\Private\HotKey.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\1. HotKey</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Muzzle_Spark_SG.cpp">
-      <Filter>02.GameObjects\Effect\Muzzle_Spark_SG</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Muzzle_Light_SG.cpp">
       <Filter>02.GameObjects\Effect\Muzzle_Light_SG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Muzzle_Spark_SG.cpp">
+      <Filter>02.GameObjects\Effect\Muzzle_Spark_SG</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

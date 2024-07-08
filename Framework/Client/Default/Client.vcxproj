@@ -230,6 +230,8 @@
     <ClInclude Include="..\Public\Is_In_Door_Zombie.h" />
     <ClInclude Include="..\Public\Is_Same_Region_To_Player_Zombie.h" />
     <ClInclude Include="..\Public\Is_Start_Zombie.h" />
+    <ClInclude Include="..\Public\Muzzle_Light_SG.h" />
+    <ClInclude Include="..\Public\Muzzle_Spark_SG.h" />
     <ClInclude Include="..\Public\Part_Breaker_Zombie.h" />
     <ClInclude Include="..\Public\HotKey.h" />
     <ClInclude Include="..\Public\Player_State_Move_Shelf.h" />
@@ -457,6 +459,8 @@
     <ClCompile Include="..\Private\Is_In_Door_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Same_Region_To_Player_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Start_Zombie.cpp" />
+    <ClCompile Include="..\Private\Muzzle_Light_SG.cpp" />
+    <ClCompile Include="..\Private\Muzzle_Spark_SG.cpp" />
     <ClCompile Include="..\Private\Part_Breaker_Zombie.cpp" />
     <ClCompile Include="..\Private\HotKey.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Shelf.cpp" />

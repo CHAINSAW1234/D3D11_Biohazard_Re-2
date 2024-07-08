@@ -182,6 +182,28 @@ PS_OUT_EFFECT PS_EFFECT_NORMAL(PS_IN In)
 	return Out;
 }
 
+PS_OUT_EFFECT PS_MUZZLE_LIGHT(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
+
+	if (Out.vColor.a < 0.01f)
+		discard;
+
+	Out.vColor.a = 0.4f;
+
+	float2 center = float2(0.5, 0.5);
+
+	float distance = length(In.vTexcoord - center);
+
+	float alpha = saturate(1.0 - distance);
+
+	Out.vColor.a *= alpha*0.75f;
+
+	return Out;
+}
+
 VS_OUT VS_DECAL(VS_IN In)
 {
 	VS_OUT output = (VS_OUT)0.f;
@@ -332,5 +354,19 @@ technique11 DefaultTechnique
 		HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
 		DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
 		PixelShader = compile ps_5_0 PS_EFFECT_NORMAL();
+	}
+
+	//6
+	pass Muzzle_Light
+	{
+		SetRasterizerState(RS_NoCulling);
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+		HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+		DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+		PixelShader = compile ps_5_0 PS_MUZZLE_LIGHT();
 	}
 }
