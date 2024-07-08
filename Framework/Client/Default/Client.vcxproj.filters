@@ -592,6 +592,9 @@
     <Filter Include="02.GameObjects\Effect\Muzzle_Smoke">
       <UniqueIdentifier>{bb4b199b-bb82-4cbc-9469-651e4a8b3e6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Window\Pannel_Window">
+      <UniqueIdentifier>{bba54d7f-846e-45fb-aba4-94e0e31e1dc0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1137,6 +1140,9 @@
     <ClInclude Include="..\Public\Muzzle_Smoke.h">
       <Filter>02.GameObjects\Effect\Muzzle_Smoke</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Pannel_Window.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Window\Pannel_Window</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1645,6 +1651,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Muzzle_Smoke.cpp">
       <Filter>02.GameObjects\Effect\Muzzle_Smoke</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pannel_Window.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Window\Pannel_Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

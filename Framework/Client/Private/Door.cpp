@@ -258,57 +258,57 @@ void CDoor::DoubleDoor_Tick(_float fTimeDelta)
 
 void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 {
-	if (m_eDoubleDoorType == DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR)
-	{
-		switch (m_eDoubleState)
-		{
-		case CDoor::LSIDE_DOUBLEDOOR_OPEN_L:
-		{
-			m_eDoubleState_Prev = m_eDoubleState;
+	//if (m_eDoubleDoorType == DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR)
+	//{
+	//	switch (m_eDoubleState)
+	//	{
+	//	case CDoor::LSIDE_DOUBLEDOOR_OPEN_L:
+	//	{
+	//		m_eDoubleState_Prev = m_eDoubleState;
 
-			break;
+	//		break;
 
-		}
-		case CDoor::LSIDE_DOUBLEDOOR_OPEN_R:
-		{
-			m_eDoubleState_Prev = m_eDoubleState;
+	//	}
+	//	case CDoor::LSIDE_DOUBLEDOOR_OPEN_R:
+	//	{
+	//		m_eDoubleState_Prev = m_eDoubleState;
 
-			break;
+	//		break;
 
-		}
-		case CDoor::RSIDE_DOUBLEDOOR_OPEN_L:
-		{
-			m_eDoubleState_Prev = m_eDoubleState;
+	//	}
+	//	case CDoor::RSIDE_DOUBLEDOOR_OPEN_L:
+	//	{
+	//		m_eDoubleState_Prev = m_eDoubleState;
 
-			break;
+	//		break;
 
-		}
-		case CDoor::RSIDE_DOUBLEDOOR_OPEN_R:
-		{
-			m_eDoubleState_Prev = m_eDoubleState;
+	//	}
+	//	case CDoor::RSIDE_DOUBLEDOOR_OPEN_R:
+	//	{
+	//		m_eDoubleState_Prev = m_eDoubleState;
 
-			break;
+	//		break;
 
-		}
-		case CDoor::DOUBLEDOOR_STATIC:
-		{
-			break;
-		}
-		case CDoor::L_DOUBLEDOOR_OPEN:
-		{
-			m_eDoubleState_Prev = m_eDoubleState;
-			break;
-		}
-		case CDoor::R_DOUBLEDOOR_OPEN:
-		{
-			m_eDoubleState_Prev = m_eDoubleState;
+	//	}
+	//	case CDoor::DOUBLEDOOR_STATIC:
+	//	{
+	//		break;
+	//	}
+	//	/*case CDoor::L_DOUBLEDOOR_OPEN:
+	//	{
+	//		m_eDoubleState_Prev = m_eDoubleState;
+	//		break;
+	//	}
+	//	case CDoor::R_DOUBLEDOOR_OPEN:
+	//	{
+	//		m_eDoubleState_Prev = m_eDoubleState;
 
-			break;
-		}
-		}
+	//		break;
+	//	}*/
+	//	}
 
-	}
-	else
+	//}
+	//else
 	{
 		switch (m_eDoubleState)
 		{
