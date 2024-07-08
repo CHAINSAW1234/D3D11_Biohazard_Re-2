@@ -103,6 +103,17 @@ CInventory_Slot* CHotKey::Get_Hoverd_Slot()
 	return nullptr;
 }
 
+CInventory_Slot* CHotKey::Get_Empty_Slot()
+{
+	for (_uint i = 0; i < SLOT_COUNT; i++)
+	{
+		if (false == m_pInven_Slots[i]->Get_IsFilled())
+			return m_pInven_Slots[i];
+	}
+
+	return nullptr;
+}
+
 HRESULT CHotKey::Bind_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
@@ -263,7 +274,7 @@ HRESULT CHotKey::Init_ItemUI()
 		m_pItemUI[i] = pItemUI;
 
 		Safe_AddRef(m_pItemUI[i]);
-		m_pItemUI[i]->Set_ItemUI(HandGun, HOTKEY, XMVectorSet(m_fPositions[i].x, m_fPositions[i].y, 0.6f, 1.f), 0);
+		m_pItemUI[i]->Set_ItemUI(ITEM_NUMBER_END, HOTKEY, XMVectorSet(m_fPositions[i].x, m_fPositions[i].y, 0.6f, 1.f), 0);
 	}
 
 	return S_OK;

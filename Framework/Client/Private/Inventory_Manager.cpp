@@ -49,8 +49,6 @@ HRESULT CInventory_Manager::Initialize()
 	if (FAILED(Seting_Hotkey()))
 		return E_FAIL;
 
-	
-
 	Set_ItemRecipe();
 
 	return S_OK;
@@ -589,6 +587,9 @@ void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 	{
 	case Client::CInventory_Manager::SETING: {
 		m_pDragShadow->Set_Dead(false);
+		_float4 HighligeterSetingPos = { m_pHotkey->Get_Empty_Slot()->GetPosition().x, m_pHotkey->Get_Empty_Slot()->GetPosition().y, Z_POS_HIGH_LIGHTER, 1.f };
+		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HighligeterSetingPos);
+		m_eTaskSequence = SELECT;
 		break;
 	}
 		
@@ -602,6 +603,7 @@ void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 	}
 		
 	case Client::CInventory_Manager::APPLY: {
+
 		break;
 	}
 		
