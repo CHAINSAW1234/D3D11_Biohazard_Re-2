@@ -20,6 +20,9 @@ HRESULT CCustomCollider::Initialize_Prototype()
 
 HRESULT CCustomCollider::Initialize(void* pArg)
 {
+	COLLIDER_DESC* pDesc = { static_cast<COLLIDER_DESC*>(pArg) };
+	m_vColor = pDesc->vColor;
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -31,7 +34,6 @@ HRESULT CCustomCollider::Initialize(void* pArg)
 		COLLIDER_DESC* pColDesc = (COLLIDER_DESC*)pArg;
 		m_pTransformCom->Set_WorldMatrix((pColDesc->worldMatrix));
 		m_iColNum = pColDesc->iColNum;
-		m_iDir =pColDesc->iDir;
 		m_iRegionNum =pColDesc->iRegionNum;
 		m_iFloor =pColDesc->iFloor;
 
@@ -88,6 +90,9 @@ HRESULT CCustomCollider::Add_Components(COLLIDER_DESC* pCol)
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_OBB"),
 		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom, &ColliderDesc)))
 		return E_FAIL;
+
+	m_pColliderCom->Set_Color(m_vColor);
+	m_pColliderCom->Active_Color(true);
 
 
 	return S_OK;

@@ -5,6 +5,8 @@
 #include "Body_Zombie.h"
 #include "Zombie.h"
 
+#define ZOMBIE_RAISE_UP_HAND_MAX_TIME			3.f
+
 BEGIN(Client)
 
 class CRaise_Up_Hand_Zombie : public CTask_Node
@@ -29,6 +31,8 @@ public:
 
 private:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
+
+	_float							m_fAccActiveTime = { 0.f };
 
 private:
 

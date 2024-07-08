@@ -44,7 +44,11 @@ HRESULT CBlackBoard_Zombie::SetUp_Nearest_Window()
 
 	CWindow*		pWindow = { dynamic_cast<CWindow*>(Find_NearestObejct_In_Layer_SameFloor(TEXT("Layer_Window"))) };
 	if (nullptr == pWindow)
+#ifdef MAP_NOTHING
+		return S_OK;
+#else
 		return E_FAIL;
+#endif
 
 	m_pNearest_Window = pWindow;
 	Safe_AddRef(pWindow);
@@ -59,7 +63,11 @@ HRESULT CBlackBoard_Zombie::SetUp_Nearest_Door()
 
 	CDoor*		pDoor = { dynamic_cast<CDoor*>(Find_NearestObejct_In_Layer_SameFloor(TEXT("Layer_Door"))) };
 	if (nullptr == pDoor)
+#ifdef MAP_NOTHING
+		return S_OK;
+#else
 		return E_FAIL;
+#endif
 
 	m_pNearest_Door = pDoor;
 	Safe_AddRef(pDoor);
@@ -93,7 +101,7 @@ void CBlackBoard_Zombie::Update_Recognition_Timer(_float fTimeDelta)
 
 	MONSTER_STATE					eCurrentState = { m_pAI->Get_Current_MonsterState() };
 	CMonster::MONSTER_STATUS*		pMonsterStatus = { m_pAI->Get_Status_Ptr() };
-	if (MONSTER_STATE::MST_WALK != eCurrentState ||
+	if (MONSTER_STATE::MST_WALK != eCurrentState &&
 		MONSTER_STATE::MST_IDLE != eCurrentState)
 	{
 		pMonsterStatus->fAccRecognitionTime -= fTimeDelta;

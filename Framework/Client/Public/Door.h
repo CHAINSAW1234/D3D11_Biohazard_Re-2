@@ -46,32 +46,38 @@ private:
 	virtual ~CDoor() = default;
 
 public:
-	virtual HRESULT				Initialize_Prototype() override;
-	virtual HRESULT				Initialize(void* pArg) override;
-	virtual void					Start() override;
-	virtual void					Tick(_float fTimeDelta) override;
-	virtual void					Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT				Render() override;
+	virtual HRESULT								Initialize_Prototype() override;
+	virtual HRESULT								Initialize(void* pArg) override;
+	virtual void								Start() override;
+	virtual void								Tick(_float fTimeDelta) override;
+	virtual void								Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT								Render() override;
 
 private:
-	virtual HRESULT				Add_Components();
-	virtual HRESULT				Add_PartObjects() override;
-	virtual HRESULT				Initialize_PartObjects() override;
+	virtual HRESULT								Add_Components();
+	virtual HRESULT								Add_PartObjects() override;
+	virtual HRESULT								Initialize_PartObjects() override;
 
 private:
-	void								DoubleDoor_Tick(_float fTimeDelta);
-	void								DoubleDoor_Late_Tick(_float fTimeDelta);
-	void								OneDoor_Tick(_float fTimeDelta);
-	void								OneDoor_Late_Tick(_float fTimeDelta);
+	HRESULT										Add_Locations();
 
-	_float							Radian_To_Player();
-	_float							Radian_To_Jombie(class CTransform* pTransform);
-
-	void								OneDoor_Active();
-	void								DoubleDoor_Active();
 public:
-	virtual _float4				Get_Object_Pos() override;
-	virtual _bool					Attack_Prop(class CTransform* pTransfromCom = nullptr) override
+	inline const list<LOCATION_MAP_VISIT>&		Get_LinkedLocations() { return m_Linked_Locations; }
+
+private:
+	void										DoubleDoor_Tick(_float fTimeDelta);
+	void										DoubleDoor_Late_Tick(_float fTimeDelta);
+	void										OneDoor_Tick(_float fTimeDelta);
+	void										OneDoor_Late_Tick(_float fTimeDelta);
+
+	_float										Radian_To_Player();
+	_float										Radian_To_Jombie(class CTransform* pTransform);
+
+	void										OneDoor_Active();
+	void										DoubleDoor_Active();
+public:
+	virtual _float4								Get_Object_Pos() override;
+	virtual _bool								Attack_Prop(class CTransform* pTransfromCom = nullptr) override
 	{
 		if (m_iHP <= 0)
 		{
@@ -90,27 +96,28 @@ public:
 	}
 
 public:
-	inline _int							Get_HP() { return m_iHP; }
-	inline _bool						Is_Lock() { return m_bLock; }
-	inline class CCustomCollider*		Get_CustomCollider_Ptr() { return m_pMyCustomCollider; }
+	inline _int									Get_HP() { return m_iHP; }
+	inline _bool								Is_Lock() { return m_bLock; }
+	inline class CCustomCollider*				Get_CustomCollider_Ptr() { return m_pMyCustomCollider; }
 
 private:
-	_bool					m_bLock =	{ false };
+	_bool										m_bLock =	{ false };
 
-	_int					m_iHP = { 5 };
+	_int										m_iHP = { 5 };
 
-	_float				m_fTime = { 0.f };
-	_ubyte				m_eType = {DOOR_ONE};
+	_float										m_fTime = { 0.f };
+	_ubyte										m_eType = {DOOR_ONE};
 
-	_ubyte  				m_eOneState = { ONEDOOR_STATIC };
-	_ubyte  				m_eOneState_Prev = { ONEDOOR_STATIC };
+	_ubyte  									m_eOneState = { ONEDOOR_STATIC };
+	_ubyte  									m_eOneState_Prev = { ONEDOOR_STATIC };
 
-	_ubyte   			m_eDoubleState = { DOUBLEDOOR_STATIC };
-	_ubyte   			m_eDoubleState_Prev = { DOUBLEDOOR_STATIC };
-	_ubyte				m_eDoubleDoorType;
+	_ubyte   									m_eDoubleState = { DOUBLEDOOR_STATIC };
+	_ubyte   									m_eDoubleState_Prev = { DOUBLEDOOR_STATIC };
+	_ubyte										m_eDoubleDoorType;
 
-	class CCustomCollider*				m_pMyCustomCollider = { nullptr };
+	class CCustomCollider*						m_pMyCustomCollider = { nullptr };
 
+	list<LOCATION_MAP_VISIT>					m_Linked_Locations;
 
 public:
 	static CDoor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

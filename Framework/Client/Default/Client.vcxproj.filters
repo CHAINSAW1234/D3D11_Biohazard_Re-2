@@ -601,6 +601,18 @@
     <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Start">
       <UniqueIdentifier>{058c9192-1076-44bf-9d92-1e678b756b23}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Region_Update">
+      <UniqueIdentifier>{35b87477-27f9-4beb-8e58-83929275a9db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Chekcer_Is_Same_Region_Player">
+      <UniqueIdentifier>{c02ab057-eac1-40ee-98c0-a04fd5a629c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Part_Breaker">
+      <UniqueIdentifier>{b1bd9785-09af-4360-a1b2-b6edb587c506}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\Room_Manager">
+      <UniqueIdentifier>{fed6f7b1-2d58-429f-8dcb-9213a6e9ed85}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1155,6 +1167,18 @@
     <ClInclude Include="..\Public\Start_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Start</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Region_Update_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Region_Update</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Is_Same_Region_To_Player_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Chekcer_Is_Same_Region_Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Part_Breaker_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\Part_Breaker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Room_Finder.h">
+      <Filter>02.GameObjects\MapObject\Room_Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1672,6 +1696,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Start_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Region_Update_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Region_Update</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Is_Same_Region_To_Player_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Chekcer_Is_Same_Region_Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Part_Breaker_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\Part_Breaker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Room_Finder.cpp">
+      <Filter>02.GameObjects\MapObject\Room_Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

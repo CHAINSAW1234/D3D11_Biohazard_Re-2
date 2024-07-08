@@ -38,6 +38,9 @@ public:
 	virtual HRESULT				Render_LightDepth_Point() override;
 
 private:
+	HRESULT						Initialize_Room_Finder();
+
+private:
 	_bool						m_bOctotree = { false };
 	_bool						m_bShadow = { true };
 	_float						m_fTimeDelay = { 0.f };
@@ -50,8 +53,7 @@ private:
 
 
 
-
-
+	class CRoom_Finder*			m_pRoom_Finder = { nullptr };
 	COctree*					m_pOctree = { nullptr };
 private:
 	HRESULT						Add_Components();

@@ -316,7 +316,7 @@ HRESULT CLevel_GamePlay::Ready_RegionCollider()
 #ifdef MAP_INTERACT
 	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_Collider"))))
 		return E_FAIL;
-	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_Jombie_Collider"))))
+	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_Jombie_Collider"), _float4(1.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 #endif
 #ifdef MAP_TEST
@@ -920,7 +920,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 	}
 }
 
-HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& strColLayerTag)
+HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& strColLayerTag, _float4 vColliderColor)
 {
 	wstring	strFilePath = strFile + L"\\\\" + strColLayerTag + L".dat";
 
@@ -987,6 +987,7 @@ HRESULT CLevel_GamePlay::Load_Collider(const wstring& strFile, const wstring& st
 		collider_desc.iDir = iDir;
 		collider_desc.iRegionNum = iRegionNum;
 		collider_desc.iFloor = iFloor;
+		collider_desc.vColor = vColliderColor;
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strColLayerTag, TEXT("Prototype_GameObject_Collider"), &collider_desc)))
 		{
 			MSG_BOX(TEXT("Failed to Add_Clone Prototype_GameObject_Monster: CImGUI"));

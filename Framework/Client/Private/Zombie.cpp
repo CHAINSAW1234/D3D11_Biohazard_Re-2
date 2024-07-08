@@ -232,7 +232,8 @@ void CZombie::Tick(_float fTimeDelta)
 
 #pragma region BehaviorTree ÄÚµå
 
-	m_pBehaviorTree->Initiate(fTimeDelta);
+	if(false == m_bRagdoll)
+		m_pBehaviorTree->Initiate(fTimeDelta);
 
 #pragma endregion
 
@@ -1058,6 +1059,7 @@ HRESULT CZombie::Initialize_Status()
 	m_pStatus->fRecognitionRange = STATUS_ZOMBIE_DEFAULT_RECOGNITION_DISTANCE;
 	m_pStatus->fRecognitionRange_LookTarget = STATUS_ZOMBIE_MAX_RECOGNITION_DISTANCE;
 	m_pStatus->fMaxRecognitionTime = STATUS_ZOMBIE_MAX_RECOGNITION_TIME;
+	m_pStatus->fLookTrargetNeedTime = STATUS_ZOMBIE_NEED_RECOGNITION_TIME;
 	m_pStatus->fBiteRange = STATUS_ZOMBIE_BITE_RANGE;
 
 	m_pStatus->fTryHoldTime = STATUS_ZOMBIE_TRY_HOLD_TIME;
@@ -1198,6 +1200,29 @@ void CZombie::Col_EventCol()
 		}
 		else
 			m_bEvent = false;
+	}
+}
+
+void CZombie::Update_Region_Datas()
+{
+	list<CGameObject*>* pColliderObjects = { m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider")) };
+	if (nullptr == pColliderObjects)
+		return;
+
+	for (auto& pColliderObject : *pColliderObjects)
+	{
+		if (nullptr == pColliderObject)
+			continue;
+
+		if (m_pColliderCom_Bounding->Intersect(static_cast<CCollider*>(pColliderObject->Get_Component(TEXT("Com_Collider")))))
+		{
+			CCustomCollider* pCustomCollider = { static_cast<CCustomCollider*>(pColliderObject) };
+
+			m_iCurrent_Region = pCustomCollider->Get_Region();
+			m_eCurrent_Floor = static_cast<MAP_FLOOR_TYPE>(pCustomCollider->Get_Floor());
+
+			break;
+		}
 	}
 }
 

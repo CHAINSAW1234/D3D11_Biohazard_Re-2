@@ -22,7 +22,7 @@ HRESULT CRaise_Up_Hand_Zombie::Initialize(void* pArg)
 
 void CRaise_Up_Hand_Zombie::Enter()
 {
-
+	
 }
 
 _bool CRaise_Up_Hand_Zombie::Execute(_float fTimeDelta)
@@ -34,6 +34,23 @@ _bool CRaise_Up_Hand_Zombie::Execute(_float fTimeDelta)
 	if (Check_Permition_To_Execute() == false)
 		return false;
 #pragma endregion
+
+	if (false == m_pBlackBoard->Is_LookTarget())
+	{
+		m_fAccActiveTime -= fTimeDelta;
+		if (0.f > m_fAccActiveTime)
+		{
+			m_fAccActiveTime = 0.f;
+			return true;
+		}
+	}
+
+	else
+	{
+		m_fAccActiveTime += fTimeDelta;
+		if (m_fAccActiveTime > ZOMBIE_RAISE_UP_HAND_MAX_TIME)
+			m_fAccActiveTime = ZOMBIE_RAISE_UP_HAND_MAX_TIME;
+	}	
 
 	Set_Hand_AdditionalMatrices();
 
@@ -62,10 +79,12 @@ void CRaise_Up_Hand_Zombie::Set_Hand_AdditionalMatrices()
 
 	_vector				vPlayerHeadWorldPosition = { PlayerHeadWorldMatrix.r[CTransform::STATE_POSITION] };
 
+	_float				fRatio = { m_fAccActiveTime / ZOMBIE_RAISE_UP_HAND_MAX_TIME };
+
 	pBody_Model->Set_TargetPosition_IK(ZOMBIE_IK_L_HUMEROUS_WRIST_TAG, vPlayerHeadWorldPosition);
-	pBody_Model->Set_Blend_IK(ZOMBIE_IK_L_HUMEROUS_WRIST_TAG, 1.f);
+	pBody_Model->Set_Blend_IK(ZOMBIE_IK_L_HUMEROUS_WRIST_TAG, fRatio);
 	pBody_Model->Set_TargetPosition_IK(ZOMBIE_IK_R_HUMEROUS_WRIST_TAG, vPlayerHeadWorldPosition);
-	pBody_Model->Set_Blend_IK(ZOMBIE_IK_R_HUMEROUS_WRIST_TAG, 1.f);
+	pBody_Model->Set_Blend_IK(ZOMBIE_IK_R_HUMEROUS_WRIST_TAG, fRatio);
 
 }
 

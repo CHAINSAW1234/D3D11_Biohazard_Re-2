@@ -111,8 +111,8 @@ public:		/* For.Sleep Controll */
 	inline void							Set_Sleep(_bool isSleep) { m_isSleep = isSleep; }
 
 public:		/* For.Look Target Controll */
-	inline _bool						Is_LookTarget() { return m_isLookTarget; }
-	inline void							Set_LookTarget(_bool isLookTarget) { m_isLookTarget = true; }
+	inline _bool						Is_LookTarget() { return m_isLook_Target; }
+	inline void							Set_LookTarget(_bool isLookTarget) { m_isLook_Target = isLookTarget; }
 
 public:		/* For.Outdoor */
 	inline _bool						Is_OutDoor() { return m_isOutDoor; }
@@ -146,7 +146,12 @@ private:
 	vector<CGameObject*> m_InteractObjVec;
 #pragma endregion
 
+public:
+	inline _int							Get_Current_Region() { return m_iCurrent_Region; }
+	inline MAP_FLOOR_TYPE				Get_Current_Floor() { return m_eCurrent_Floor; }
 
+private:
+	void								Update_Region_Datas();
 
 public://For Decal
 	virtual void						Perform_Skinning() override;
@@ -168,7 +173,7 @@ private:
 	POSE_STATE							m_ePoseState = { POSE_STATE::_END };
 
 	_bool								m_isSleep = { false };
-	_bool								m_isLookTarget = { false };
+	_bool								m_isLook_Target = { false };
 	_bool								m_isOutDoor = { false };
 
 private:	/* For. Hit Interact */
@@ -178,6 +183,10 @@ private:	/* For. Hit Interact */
 
 private:	/* For. Start Type */
 	ZOMBIE_START_TYPE					m_eStartType = { ZOMBIE_START_TYPE::_END };
+
+private:	/* For. Region Controller */
+	_int								m_iCurrent_Region = { -1 };
+	MAP_FLOOR_TYPE						m_eCurrent_Floor = { MAP_FLOOR_TYPE::FLOOR_END };
 
 
 #pragma region Effect

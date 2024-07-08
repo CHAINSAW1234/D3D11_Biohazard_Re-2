@@ -27,8 +27,8 @@
 #define BONE_LAYER_HEAD_TWIST_TAG						TEXT("Head_Twistter")
 
 /* For. IK Tag */
-#define ZOMBIE_IK_L_HUMEROUS_WRIST_TAG					TEXT("L_Humerous")			//	상완 => 손목
-#define ZOMBIE_IK_R_HUMEROUS_WRIST_TAG					TEXT("R_Humerous")			//	상완 => 손목
+#define ZOMBIE_IK_L_HUMEROUS_WRIST_TAG					TEXT("L_Humerous_To_Wrist")			//	상완 => 손목
+#define ZOMBIE_IK_R_HUMEROUS_WRIST_TAG					TEXT("R_Humerous_To_Wrist")			//	상완 => 손목
 
 /* For. Blend Velocity */
 #define ZOMBIE_BLEND_MAX								1.f

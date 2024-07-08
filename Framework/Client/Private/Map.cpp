@@ -7,6 +7,8 @@
 #include "Player.h"
 #include "Rigid_Static.h"
 
+#include "Room_Finder.h"
+
 CMap::CMap(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -49,6 +51,10 @@ HRESULT CMap::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+
+	if (FAILED(Initialize_Room_Finder()))
+		return E_FAIL;
+
 	m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
 #pragma region Initialize RigidBody
@@ -251,6 +257,16 @@ HRESULT CMap::Render_LightDepth_Point()
 	return S_OK;
 }
 
+HRESULT CMap::Initialize_Room_Finder()
+{
+	m_pRoom_Finder = CRoom_Finder::Get_Instance();
+
+	if (FAILED(m_pRoom_Finder->Initialize()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CMap::Add_Components()
 {
 	if (m_tagPropDesc.bAnim)
@@ -326,4 +342,5 @@ void CMap::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pOctree);
+	Safe_Release(m_pRoom_Finder);
 }

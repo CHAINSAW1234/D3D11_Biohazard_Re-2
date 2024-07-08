@@ -19,6 +19,8 @@ public:
 		_int				iRegionNum = { 0 };
 		_int				iFloor = { 0 };
 
+		_float4				vColor = {1.f, 1.f, 1.f, 1.f };
+
 		_float4x4		worldMatrix = { };
 	}COLLIDER_DESC;
 
@@ -59,6 +61,8 @@ private:
 
 	_int									m_iIndex = { 0 };
 	CCollider*							m_pColliderCom = {nullptr};
+
+	_float4									m_vColor = { 1.f ,1.f, 1.f, 1.f };
 
 public:
 	static CCustomCollider*					Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

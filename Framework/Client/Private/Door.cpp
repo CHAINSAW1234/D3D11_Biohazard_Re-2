@@ -6,6 +6,8 @@
 
 #include"Body_Door.h"
 #include"CustomCollider.h"
+#include "Room_Finder.h"
+
 CDoor::CDoor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -38,7 +40,6 @@ HRESULT CDoor::Initialize(void* pArg)
 			m_eDoubleDoorType = DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR;
 		else
 			m_eDoubleDoorType = DOUBLE_DOOR_MODEL_TYPE::NORMAL_DOOR;
-
 	}
 
 	if (FAILED(Add_Components()))
@@ -46,7 +47,6 @@ HRESULT CDoor::Initialize(void* pArg)
 
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
-
 
 	return S_OK;
 }
@@ -69,14 +69,21 @@ void CDoor::Start()
 			m_pMyCustomCollider = static_cast<CCustomCollider*>(iter);
 			Safe_AddRef(m_pMyCustomCollider);
 
-#ifdef _DEBUG
-			if (nullptr == m_pMyCustomCollider)
-			{
-				MSG_BOX(TEXT("Called : void CWindow::Start() Custom Collider 못 찾 음"));
-			}
-#endif
 			break;
 		}
+	}
+
+#ifdef _DEBUG
+	if (nullptr == m_pMyCustomCollider)
+	{
+		//	MSG_BOX(TEXT("Called : void CDoor::Start() Custom Collider 못 찾 음"));
+		return;
+	}
+#endif
+
+	if (FAILED(Add_Locations()))
+	{
+		return;
 	}
 }
 
@@ -137,7 +144,8 @@ HRESULT CDoor::Add_Components()
 	if (m_eType == DOOR_DOUBLE)
 	{
 		CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
-		ColliderDesc.fRadius = _float(180.f);
+		//	ColliderDesc.fRadius = _float(180.f);
+		ColliderDesc.fRadius = _float(300.f);
 		ColliderDesc.vCenter = _float3(-30.f, 1.f, 0.f);
 
 		/* For.Com_Collider */
@@ -233,6 +241,50 @@ HRESULT CDoor::Add_PartObjects()
 
 HRESULT CDoor::Initialize_PartObjects()
 {
+
+	return S_OK;
+}
+
+HRESULT CDoor::Add_Locations()
+{
+	list<CGameObject*>*				pColliders = { m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Collider")) };
+	if (nullptr == pColliders)
+		return E_FAIL;
+
+	CCollider*						pMyCollider = { m_pColliderCom[INTER_COL_NORMAL][COL_STEP0] };
+	if (nullptr == pMyCollider)
+		return E_FAIL;
+
+	for (auto& pCollider : *pColliders)
+	{
+		if (nullptr == pCollider)
+			continue;
+
+		if (true == pMyCollider->Intersect(static_cast<CCollider*>(pCollider->Get_Component(TEXT("Com_Collider")))))
+		{
+			LOCATION_MAP_VISIT				eLocation = { static_cast<LOCATION_MAP_VISIT>(static_cast<CCustomCollider*>(pCollider)->Get_Region()) };
+			m_Linked_Locations.emplace_back(eLocation);
+		}
+	}
+
+	for (auto& eLocation : m_Linked_Locations)
+	{
+		if (FAILED(CRoom_Finder::Get_Instance()->Add_Door(eLocation, this)))
+		{
+			//	MSG_BOX(TEXT("Called : HRESULT CDoor::Add_Locations() Add_Door Failed"));
+		}
+	}
+
+#ifdef _DEBUG
+	_uint			iNumLocation = { static_cast<_uint>(m_Linked_Locations.size()) };
+	if(2 != iNumLocation)
+	{
+		_int iA = 0;
+
+		//_int			iFloor = { m_pMyCustomCollider->Get_Floor() };
+		//_int			iRegion = { m_pMyCustomCollider->Get_Region() };
+	}	
+#endif
 
 	return S_OK;
 }

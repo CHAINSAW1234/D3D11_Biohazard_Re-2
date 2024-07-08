@@ -296,7 +296,7 @@ void CIK_Solver::Solve_IK_Forward(IK_INFO& IkInfo)
 			//	쎄타, 첫 위치, 관절타입, 오리엔테이션 기록됨...
 			//	자식뼈, 쎄타, 첫 위치 ( length로 저장 constranints 측에서 ), 제한 조건 ( 관절 타입 자식뼈의 인덱스상... ), 오리엔테이션 ( 회전량 자식뼈 ...)
 			//	자식뼈 인덱스( IkInfo 상에서 ... ),
-			Rotational_Constranit(IkInfo, i + 1, i);
+			//	Rotational_Constranit(IkInfo, i + 1, i);
 		}
 	}
 }

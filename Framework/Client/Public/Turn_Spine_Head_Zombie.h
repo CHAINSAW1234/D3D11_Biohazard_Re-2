@@ -22,7 +22,7 @@ public:
 	virtual void					Exit() override;
 
 private:
-	void							Set_Hand_AdditionalMatrices();
+	void							Set_Hand_AdditionalMatrices(_float fTimeDelta);
 
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }
@@ -33,7 +33,11 @@ private:
 	const string					m_strSpineBoneTag = { "spine_0" };
 	const string					m_strHeadBoneTag = { "head" };
 
+	_float3							m_vPreLookDirection = {};
+
 	list<_uint>						m_Child_JointIndices;
+
+	_bool							m_isStart = { false };
 
 public:
 	static CTurn_Spine_Head_Zombie* Create(void* pArg = nullptr);

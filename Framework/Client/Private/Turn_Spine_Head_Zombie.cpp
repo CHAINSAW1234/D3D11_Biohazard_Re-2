@@ -17,6 +17,8 @@ CTurn_Spine_Head_Zombie::CTurn_Spine_Head_Zombie(const CTurn_Spine_Head_Zombie& 
 
 HRESULT CTurn_Spine_Head_Zombie::Initialize(void* pArg)
 {
+	m_isStart = true;
+
 	return S_OK;
 }
 
@@ -35,7 +37,16 @@ _bool CTurn_Spine_Head_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
-	Set_Hand_AdditionalMatrices();
+	if (true == m_isStart)
+	{
+		_vector			vLook = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_State_Vector(CTransform::STATE_LOOK) };
+
+		XMStoreFloat3(&m_vPreLookDirection, vLook);
+		m_isStart = false;
+	}
+
+
+	Set_Hand_AdditionalMatrices(fTimeDelta);
 
 	return true;
 }
@@ -44,7 +55,7 @@ void CTurn_Spine_Head_Zombie::Exit()
 {
 }
 
-void CTurn_Spine_Head_Zombie::Set_Hand_AdditionalMatrices()
+void CTurn_Spine_Head_Zombie::Set_Hand_AdditionalMatrices(_float fTimeDelta)
 {
 	CTransform*			pZombie_Transform = { m_pBlackBoard->Get_AI()->Get_Transform() };
 	CTransform*			pPlayer_Transform = { m_pBlackBoard->Get_Player()->Get_Transform() };
@@ -56,12 +67,18 @@ void CTurn_Spine_Head_Zombie::Set_Hand_AdditionalMatrices()
 	_vector				vZombiePosition = { pZombie_Transform->Get_State_Vector(CTransform::STATE_POSITION) };
 	_vector				vPlayerPosition = { pPlayer_Transform->Get_State_Vector(CTransform::STATE_POSITION) };
 
-	_vector				vZombieLook = { XMVector3Normalize(pZombie_Transform->Get_State_Vector(CTransform::STATE_LOOK)) };
+	//	_vector				vZombieLook = { XMVector3Normalize(pZombie_Transform->Get_State_Vector(CTransform::STATE_LOOK)) };
 	_vector				vDirectionToPlayer = { XMVector3Normalize(vPlayerPosition - vZombiePosition) };
+	_vector				vPreLookDirection = { XMLoadFloat3(&m_vPreLookDirection) };
 
-	_vector				vCross = { XMVector3Cross(vZombieLook, vDirectionToPlayer) };
-	_float				fDot = { XMVectorGetX(XMVector3Dot(vZombieLook, vDirectionToPlayer)) };
-	_float				fAngle = { fminf(acosf(fDot), XMConvertToRadians(50.f)) };
+
+	XMStoreFloat3(&m_vPreLookDirection, vDirectionToPlayer);
+
+	//	_vector				vCross = { XMVector3Cross(vZombieLook, vDirectionToPlayer) };
+	_vector				vCross = { XMVector3Cross(vPreLookDirection, vDirectionToPlayer) };
+	//	_float				fDot = { XMVectorGetX(XMVector3Dot(vZombieLook, vDirectionToPlayer)) };
+	_float				fDot = { XMVectorGetX(XMVector3Dot(vPreLookDirection, vDirectionToPlayer)) };
+	_float				fAngle = { fminf(acosf(fDot), XMConvertToRadians(50.f) * fTimeDelta) };
 
 	_matrix				ZombieWorldMatrixInv = { pZombie_Transform->Get_WorldMatrix_Inverse() };
 	

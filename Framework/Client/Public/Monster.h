@@ -28,7 +28,6 @@ public:
 		_float				fRecognitionRange_LookTarget = { 0.f };	//	이미 인지한 후에 인지 시간 누적하는거리
 		_float				fAccRecognitionTime = { 0.f };		//	인지 하기위한 누적 시간
 		_float				fMaxRecognitionTime = { 0.f };		//	인지 누적 최대 시간 ( 아직 시도하지 못할 경우 시간 누적 감소 => 미리 더 쌓기 가능하게 )
-
 		_float				fLookTrargetNeedTime = { 0.f };		//	인지 하는데 필요한 누적시간
 
 		_float				fBiteRange = { 0.f };

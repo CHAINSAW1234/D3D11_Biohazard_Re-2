@@ -155,10 +155,13 @@ public:		/* Anim Branch Check */
 public:		/* Motion Blend Controll */
 	vector<_float>					Get_BlendWeights(_uint iPartID);
 	
-protected:
+private:
 	class CPathFinder*				m_pPathFinder = { nullptr };
 	class CPlayer*					m_pPlayer = { nullptr };
 	class CZombie*					m_pAI = { nullptr };
+
+private:
+	_int							m_iRegion = { -1 };
 
 private:
 	class CWindow*					m_pNearest_Window = { nullptr };

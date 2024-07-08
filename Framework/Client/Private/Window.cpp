@@ -51,18 +51,16 @@ void CWindow::Start()
 			//	 ++ 참조
 			m_pMyCustomCollider = static_cast<CCustomCollider*>(iter);
 			Safe_AddRef(m_pMyCustomCollider);
-
-#ifdef _DEBUG
-			if (nullptr == m_pMyCustomCollider)
-			{
-				MSG_BOX(TEXT("Called : void CWindow::Start() Custom Collider 못 찾 음"));
-			}
-#endif
 			break;
 		}
 	}
 
-
+#ifdef _DEBUG
+	if (nullptr == m_pMyCustomCollider)
+	{
+		MSG_BOX(TEXT("Called : void CWindow::Start() Custom Collider 못 찾 음"));
+	}
+#endif
 }
 
 void CWindow::Tick(_float fTimeDelta)
