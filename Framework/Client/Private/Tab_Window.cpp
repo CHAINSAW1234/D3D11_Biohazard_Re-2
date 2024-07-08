@@ -8,6 +8,7 @@
 #include "Item_Discription.h"
 #include "ItemProp.h"
 #include "Read_Item_UI.h"
+#include "Item_Map_UI.h"
 #include "Map_UI.h"
 
 CTab_Window::CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -73,7 +74,7 @@ void CTab_Window::Start()
 	for (auto& iter : *pUILayer)
 	{
 		CRead_Item_UI* pRead = dynamic_cast<CRead_Item_UI*>(iter);
-		CMap_UI* pMap = dynamic_cast<CMap_UI*>(iter);
+		CItem_Map_UI* pMap = dynamic_cast<CItem_Map_UI*>(iter);
 		if(pRead!=nullptr &&!bReadItemUI)
 			if (pRead->Get_UI_TYPE() == CRead_Item_UI::READ_UI_TYPE::INTRODUCE_READ)
 			{

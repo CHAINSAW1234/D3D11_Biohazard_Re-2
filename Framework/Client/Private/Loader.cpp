@@ -88,7 +88,12 @@
 #include "Selector_UI.h"
 #include "Slot_Highlighter.h"
 #include "Item_UI.h"
-#include "Map_UI.h"
+#include "Player_Map_UI.h"
+#include "Main_Map_UI.h"
+#include "Targeting_Map_UI.h"
+#include "Static_Map_UI.h"
+#include "Item_Map_UI.h"
+#include "Floor_Map_UI.h"
 #include "Item_Mesh_Viewer.h"
 #include "ContextMenu.h"
 #include "Context_Highlighter.h"
@@ -540,9 +545,34 @@ HRESULT CLoader::Load_Prototype()
 		CItem_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
-	/* For.Prototype_GameObject_Map_UI */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Map_UI"),
-		CMap_UI::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_Main_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Main_Map_UI"),
+		CMain_Map_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Player_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Player_Map_UI"),
+		CPlayer_Map_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Targeting_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Targeting_Map_UI"),
+		CTargeting_Map_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Targeting_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Static_Map_UI"),
+		CStatic_Map_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Item_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Item_Map_UI"),
+		CItem_Map_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Floor_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Floor_Map_UI"),
+		CFloor_Map_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Item_Mesh_Viewer */

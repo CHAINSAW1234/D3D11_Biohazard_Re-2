@@ -28,7 +28,7 @@ HRESULT CCustomize_UI::Initialize(void* pArg)
 			return E_FAIL;
 
 		CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
-
+		
 		m_wstrDefaultTexturPath = CustomUIDesc->wstrDefaultTexturPath;
 
 		m_wstrMaskPath = CustomUIDesc->wstrMaskPath;
@@ -296,6 +296,10 @@ HRESULT CCustomize_UI::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_LightSize", &m_fLightSize, sizeof(_float))))
 		return E_FAIL;
 
+	/* Black Change */
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_isBlackChange", &m_isBackColor_Change, sizeof(_bool))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -428,6 +432,17 @@ _float CCustomize_UI::Distance_Player(CGameObject* _obj)
 
 	return fPlayer_Distance;
 }
+
+_float CCustomize_UI::Distance_Player(_float4 _pos)
+{
+	CTransform* pPlayerTrans = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
+
+	_vector vDistanceVector = XMVectorSet(_pos.x, _pos.y, _pos.z, _pos.w) - pPlayerTrans->Get_State_Vector(CTransform::STATE_POSITION);
+	_float fPlayer_Distance = XMVectorGetX(XMVector3Length(vDistanceVector));
+
+	return fPlayer_Distance;
+}
+
 
 void CCustomize_UI::Find_Player()
 {
@@ -913,7 +928,11 @@ void CCustomize_UI::Free()
 		Safe_Release(pChildUI);
 	m_vecChildUI.clear();
 
-	Safe_Release(m_pPlayer);
+	if(nullptr != m_pPlayer)
+	{
+		Safe_Release(m_pPlayer);
+		m_pPlayer = nullptr;
+	}
 
 }
 

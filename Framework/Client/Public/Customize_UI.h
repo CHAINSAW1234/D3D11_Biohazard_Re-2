@@ -89,7 +89,7 @@ public :
 		ITEM_BOX_TYPE					eBox_Type;
 		HPBAR_TYPE						eHPBar_Type;
 		INVENTORY_TYPE					eInventory_Type;
-
+		DOOR_TYPE						eDoor_Type = { DOOR_TYPE::END_DOOR };
 		LOCATION_MAP_VISIT				eMapUI_Type;
 		wstring							wstrFileName = { TEXT("") };
 		wstring							wstrItemName = { TEXT("") };
@@ -170,6 +170,7 @@ public :
 	_bool				Select_UI();
 	virtual void		Set_Dead(_bool bDead) override;
 	_float				Distance_Player(CGameObject* _obj);
+	_float				Distance_Player(_float4 _pos);
 	void				Find_Player();
 
 
@@ -483,11 +484,12 @@ protected : /* Client*/
 	_float4						m_vOriginColor = {};
 
 	_int						m_iWhich_Child = { 0 }; /* 몇 번째 자식인 지를 설명할 때 사용 */
+	_bool						m_isBackColor_Change = { false }; /* Black에 관련된 컬러만 변경 */
 
 	/* 1. inventory Item */
 	ITEM_BOX_TYPE				m_eBox_Type = { ITEM_BOX_TYPE::END_BOX };
 	INVENTORY_TYPE				m_eInventory_Type = { INVENTORY_TYPE::END_INVEN };
-
+	DOOR_TYPE					m_eDoor_Type = { DOOR_TYPE::END_DOOR };
 	/* 2. HP Bar*/
 	_bool						m_isTimerControl = { false };
 	_float						m_fShiftMaskUV_X = {};

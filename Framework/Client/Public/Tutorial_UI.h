@@ -1,9 +1,9 @@
 #pragma once
-#include "Interact_UI.h"
+#include "Customize_UI.h"
 
 BEGIN(Client)
 
-class CTutorial_UI final : public CInteract_UI
+class CTutorial_UI final : public CCustomize_UI
 {
 private:
 	CTutorial_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -48,7 +48,7 @@ private :
 	_float				m_fPlayTimer = {};
 
 public:
-	static CInteract_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
 };

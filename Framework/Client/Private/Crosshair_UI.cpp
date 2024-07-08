@@ -66,7 +66,6 @@ HRESULT CCrosshair_UI::Initialize(void* pArg)
                     CTransform* pPointTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
                     vPoint = pPointTrans->Get_State_Float4(CTransform::STATE_POSITION);
 
-                    //Safe_AddRef<CCrosshair_UI*>(m_pCenterDot);
                     break;
                 }
             }
@@ -136,16 +135,15 @@ void CCrosshair_UI::Tick(_float fTimeDelta)
     /* Inventory (Main Render)가 열리지 않을 때 or 무기를 사용하지 않을 때는 Crosshair와 Bullet UI을 없애자 .*/
     if (true == *m_pTabWindow->Get_MainRender() && CPlayer::EQUIP::NONE != m_pPlayer->Get_Equip())
     {
-        if (CPlayer::EQUIP::HG == m_pPlayer->Get_Equip())
-        {
-            if ((_int)CPlayer::EQUIP::HG == m_eGun_Type)
-                Operate_DefaultGun(fTimeDelta);
-        }
+        if (CPlayer::EQUIP::HG == m_pPlayer->Get_Equip() && (_int)CPlayer::EQUIP::HG == m_eGun_Type)
+            Operate_DefaultGun(fTimeDelta);
 
-        else if (CPlayer::EQUIP::STG == m_pPlayer->Get_Equip())
+        else if (CPlayer::EQUIP::STG == m_pPlayer->Get_Equip() && (_int)CPlayer::EQUIP::STG == m_eGun_Type)
+            Operate_ShotGun(fTimeDelta);
+
+        else
         {
-            if ((_int)CPlayer::EQUIP::STG == m_eGun_Type)
-                Operate_ShotGun(fTimeDelta);
+            m_isRender = false;
         }
     }
 
@@ -167,6 +165,24 @@ HRESULT CCrosshair_UI::Render()
         return E_FAIL;
 
     return S_OK;
+}
+
+_bool CCrosshair_UI::Get_Crosshair_RenderType(_int _type)
+{
+    list<class CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+
+    for (auto& iter : *pUILayer)
+    {
+        CCrosshair_UI* pCross = dynamic_cast<CCrosshair_UI*>(iter);
+
+        if (pCross != nullptr)
+        {
+            if(pCross->m_eGun_Type == _type)
+                return m_isRender;
+        }
+    }
+
+    return false;
 }
 
 
@@ -393,6 +409,34 @@ void CCrosshair_UI::Aiming_Return(_float fTimeDelta)
     }
 }
 
+_bool CCrosshair_UI::Render_Type()
+{
+    list<class CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+
+    for (auto& iter : *pUILayer)
+    {
+        CCrosshair_UI* pCross = dynamic_cast<CCrosshair_UI*>(iter);
+
+        if(nullptr != pCross)
+        {
+            if ((_int)CPlayer::EQUIP::HG == pCross->m_eGun_Type)
+            {
+                if (true == pCross->m_isRender)
+                    return true;
+            }
+
+            if ((_int)CPlayer::EQUIP::STG == pCross->m_eGun_Type)
+            {
+                if (true == pCross->m_isRender)
+                    return true;
+            }
+        }
+    }
+
+    return false;
+   
+}
+
 CCustomize_UI* CCrosshair_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
     CCrosshair_UI* pInstance = new CCrosshair_UI(pDevice, pContext);
@@ -423,11 +467,5 @@ CGameObject* CCrosshair_UI::Clone(void* pArg)
 
 void CCrosshair_UI::Free()
 {
-    /* if (nullptr != m_pCenterDot)
-     {
-         Safe_Release<CCrosshair_UI*>(m_pCenterDot);
-         m_pCenterDot = nullptr;
-     }*/
-
     __super::Free();
 }

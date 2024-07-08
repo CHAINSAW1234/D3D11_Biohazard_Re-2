@@ -6,6 +6,8 @@
 
 #include"Body_Door.h"
 #include"CustomCollider.h"
+#include "Selector_UI.h"
+
 CDoor::CDoor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -230,6 +232,7 @@ void CDoor::DoubleDoor_Tick(_float fTimeDelta)
 	if (m_bActivity)
 		m_fTime += fTimeDelta;
 
+
 	if (m_fTime > 2.f)
 	{
 		m_fTime = 0.f;
@@ -339,14 +342,26 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 			{
 				if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP2) && !m_bActivity)
 					m_bOnce = true;
+
+				Opreate_Selector_UI(true, Get_Object_Pos());
 			}
 			else
+			{
 				m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+				Opreate_Selector_UI(false, Get_Object_Pos());
+			}
+			
 		}
 		else
 		{
 			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 			m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+
+			if(nullptr != m_pSelector)
+				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+				
+			// Destory : 점점 사라진 후에 null 
+			// m_pSelector = nullptr;
 		}
 
 		if (Check_Col_Player(INTER_COL_DOUBLE, COL_STEP0)) // 인지?
@@ -397,6 +412,8 @@ void CDoor::DoubleDoor_Active()
 
 	if (m_bLock)
 		return;
+
+	m_bInteract = true;
 
 	_float fScala = Radian_To_Player();
 
@@ -476,7 +493,6 @@ _float4 CDoor::Get_Object_Pos()
 
 void CDoor::OneDoor_Tick(_float fTimeDelta)
 {
-
 	if (m_bActivity)
 		m_fTime += fTimeDelta;
 
@@ -588,9 +604,9 @@ void CDoor::OneDoor_Active()
 {
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
-
 	if (m_bLock)
 		return;
+	m_bInteract = true;
 
 	_float fScala = Radian_To_Player();
 
@@ -598,7 +614,6 @@ void CDoor::OneDoor_Active()
 		m_eOneState = ONEDOOR_OPEN_L;
 	else
 		m_eOneState = ONEDOOR_OPEN_R;
-
 }
 
 

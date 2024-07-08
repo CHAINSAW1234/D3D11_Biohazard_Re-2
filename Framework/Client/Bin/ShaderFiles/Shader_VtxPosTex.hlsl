@@ -47,6 +47,8 @@ bool g_isLight;
 float2 g_LightPosition;
 float g_LightSize;
 
+bool g_isBlackChange;
+
 // 거리 계산 함수
 float calculateDistance(float4 A, float4 target)
 {
@@ -217,16 +219,30 @@ PS_OUT PS_MAIN(PS_IN In)
     
     else if (g_ColorChange)
     {
-        if (g_Blending)
+        if (true == g_isBlackChange) /* Black 만 바꾸고 싶다면 */ 
         {
-            if (Out.vColor.a <= 0.0f)
-                discard;
+            float4 BlackColor = float4(0, 0, 0, 1);
             
-            Out.vColor = lerp(Out.vColor, g_ColorValu, g_BlendingStrength);
-            Out.vColor.a = lerp(Out.vColor.a, g_ColorValu.a, 0);
+            if (!(distance(Out.vColor, BlackColor) < 0.2f))
+            {
+                Out.vColor = lerp(Out.vColor, g_ColorValu, g_BlendingStrength);
+                Out.vColor.a = lerp(Out.vColor.a, g_ColorValu.a, 0);
+            }
         }
-        else
-            Out.vColor = g_ColorValu;
+        
+        else if (false == g_isBlackChange) 
+        {
+             if (g_Blending)
+             {
+                 if (Out.vColor.a <= 0.0f)
+                     discard;
+                 
+                 Out.vColor = lerp(Out.vColor, g_ColorValu, g_BlendingStrength);
+                 Out.vColor.a = lerp(Out.vColor.a, g_ColorValu.a, 0);
+             }
+             else
+                 Out.vColor = g_ColorValu;
+        }
     }
          
     if (g_isLight)

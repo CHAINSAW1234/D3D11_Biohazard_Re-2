@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "HPBar_UI.h"
 #include "Tab_Window.h"
+#include "Damage_UI.h"
 #include "Player.h"
 
 #define INVEN_POSITION _float2(-600.f, -244.f)
@@ -130,11 +131,22 @@ void CHPBar_UI::Start()
         m_pPlayer->RegisterObserver(this);
         OnNotify();
     }
+
+    if (nullptr == m_pDamage_Scene)
+    {
+        Find_DamageUI();
+
+        if (nullptr == m_pDamage_Scene)
+            MSG_BOX(TEXT("HPBar_UI() : Damage UI를 찾을 수 없습니다. "));
+        // 생성 자체를 안 해줬을 가능성이 큼
+    }
 }
 
 void CHPBar_UI::OnNotify()
 {
     _int iPlayerHp = m_pPlayer->Get_Hp();
+    
+    Call_DamageUI(iPlayerHp);
 
     HP_TYPE eCurrentHP_TYPE = (HP_TYPE)(iPlayerHp / 2);      //       0 ~ 5 ->  0 ~ 2
 
@@ -149,6 +161,31 @@ void CHPBar_UI::OnNotify()
         if (!m_vecTextBoxes.empty())
             m_vecTextBoxes.back()->Set_FontColor(m_vCurrentColor);
     }
+
+}
+
+void CHPBar_UI::Find_DamageUI()
+{
+    list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+    for (auto& iter : *pUIList)
+    {
+        CDamage_UI* pDamage = dynamic_cast<CDamage_UI*>(iter);
+
+        if (nullptr != pDamage)
+        {
+            m_pDamage_Scene = pDamage;
+            return;
+        }
+    }
+}
+
+void CHPBar_UI::Call_DamageUI(_int iPlayerHp)
+{
+    if (m_iPrevHP_Type > iPlayerHp)
+        m_pDamage_Scene->Set_Damage_Scene_Start(true);
+
+    m_iPrevHP_Type = iPlayerHp;
 }
 
 void CHPBar_UI::Operation_HPBar(_float fTimeDelta)
@@ -426,5 +463,4 @@ CGameObject* CHPBar_UI::Clone(void* pArg)
 void CHPBar_UI::Free()
 {
     __super::Free();
-
 }

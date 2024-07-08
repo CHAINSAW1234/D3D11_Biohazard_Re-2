@@ -59,7 +59,6 @@ private:
 private: /* UI */
 	_bool			m_isCrosshair_Aiming = { false };
 
-
 public:
 	static CCamera_Free* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
