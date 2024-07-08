@@ -34,7 +34,7 @@ private:
 	void INTERACT_PROPS_Operation(_float fTimeDelta);
 
 #pragma region ³ª¿Ë
-public:
+public: 
 	_bool				Get_MinMapRender()			{ return m_isMapRender; }
 	_bool*				Get_MainRender()			{ return m_pInvenButton->Get_Dead_Ptr(); }
 	WINDOW_TYPE*		Get_Window_Render_Type()	{ return &m_eWindowType; }

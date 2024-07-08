@@ -49,6 +49,8 @@ void CEffect::Compute_CurrentUV()
 void CEffect::SetPosition(_float4 Pos)
 {
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, Pos);
+	m_iFrame = 0;
+	m_fAlpha_Delta_Sum = 0.f;
 }
 
 HRESULT CEffect::Add_Components()
@@ -95,6 +97,7 @@ void CEffect::Free()
 	__super::Free();
 
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pTextureCom_Dissolve);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 }

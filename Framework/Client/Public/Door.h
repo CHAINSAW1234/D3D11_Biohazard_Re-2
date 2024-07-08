@@ -92,10 +92,15 @@ public:
 			return false;
 	}
 
-private:
-	_bool								m_bLock						=	{ false };
+public :
+	_bool					Get_Door_Lock()		{ return m_bLock; }				// 잠겼는지 아닌지(문이 잠김이 true)
+	_bool					Get_FirstInteract()	{ return m_bFirstInteract; } // 접촉만 함 (탐색 - 빨간색)
+	_bool					Get_Interact()		{ return m_bInteract; }			// 열었는지 아닌지(파란색)
 
-	_int								m_iHP							= { 5 };
+private:
+	_bool					m_bLock =	{ false };
+	_bool					m_bInteract = { false }; // 문을 열었는지(탐색 완료)
+	_int					m_iHP = { 5 };
 
 	_float							m_fTime						= { 0.f };
 	_ubyte							m_eType						= {DOOR_ONE};

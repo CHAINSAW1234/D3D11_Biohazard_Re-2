@@ -20,7 +20,9 @@ namespace Client
 		ID_END
 	};
 
-	enum UI_OPERRATION{ POP_UP, UI_IDLE, UI_SECOND_IDLE, HIDE, STATE_END };
+	enum class ITEM_READ_TYPE { INCIDENT_LOG_NOTE, OPERATE_REPORT_NOTE, TASK_NOTE, MEDICINAL_NOTE, OFFICER_NOTE, END_NOTE };
+
+	enum UI_OPERRATION{ POP_UP, UI_IDLE, HIDE, UI_SECOND_IDLE, STATE_END };
 
 	enum class UI_TUTORIAL_TYPE { TUTORIAL_WALK, TUTORIAL_AROUND, TUTORIAL_RUN, TUTORIAL_REROAD, TUTORIAL_AIM, TUTORIAL_EQUIP, INVENTORY_OPEN, TUTORIAL_END };
 
@@ -39,6 +41,7 @@ namespace Client
 
 	enum LOCATION_MAP_VISIT
 	{
+		/* 1 Floor */
 		MAIN_HOLL,						/* 0. 메인 홀*/
 		ENTRANCE,						/* 1. 입구*/
 		RECEPT_ROOM,					/* 2. 리셉션 */
@@ -65,6 +68,33 @@ namespace Client
 		SECURITY_OFFICE,				/* 23. 경비 사무실 */
 		EAST_CENTRAL_HALLWAY,			/* 24. 동쪽 중앙 복도*/
 		UP_PRESSROOM_HALLWAY,			/* 25. 기자실 위쪽 복도 */
+
+		/* 2 Floor */
+		LEFT_WESH_ROOM,					/* 26. 왼쪽 샤워실 */
+		RIGHT_WESH_ROOM,				/* 27. 오른쪽 샤워실 */
+		STARS_OFFICE,					/* 28. STARS 사무실 */
+		LOUNGE,							/* 29. 라운지 */
+		LIBARAY,						/* 30. 도서관 */
+		LAUNDRY_ROOM,					/* 31. 세탁실 */
+		STAIRS_UP_2F,					/* 32. 2층 계단 */
+		STARTS_OFFICE_LEFT_HALLWAY,		/* 33. STARS 사무실 왼쪽 복도 */
+		WAITING_ROOM,					/* 34. 대기실 */
+		EAST_HALLWAY_2F,				/* 35. 2층 동쪽 복도 */
+		ART_STORAGE,					/* 36. 예술품 보관실*/
+		NONE_SPACE1,					/* 37. */
+		NONE_SPACE2,					/* 38. */
+		NONE_SPACE3,					/* 39. */
+		ROOF,							/* 40. 지붕 */
+		EMERGENCY_ESCAPE_ROUTE,			/* 41. 비상탈출로 */
+
+		/* 3 Floor */
+		CLOCK_TOP,						/* 42. 시계탑 */
+		LEFT_TOP_HALLWAY,				/* 43. 최왼쪽 상단 복도 */
+		WEST_STORE,						/* 44. 서쪽 저장실 */
+		BALCONY,						/* 45. 발코니 */
+		EAST_STORE,						/* 46. 동쪽 저장실 */
+		LET_TOP_LIBARAY_HALLWAY,		/* 47. 도서관 위쪽 복도 */
+		BALCONY_UP_HALLWAY,				/* 48. 동쪽 저장실 오른쪽 복도*/
 		LOCATION_MAP_VISIT_END
 	};
 
@@ -246,6 +276,8 @@ namespace Client
 		EAST_STORAGE_RIGHT_DOOR, /* 동쪽 저장실 오른쪽 문 */
 		EAST_STORAGE_DOWN_DOOR, /* 동쪽 저장실 이동불가 문 */
 		BALCONY_DOOR, /* 발코니 문*/
+
+		END_DOOR
 
 	};
 

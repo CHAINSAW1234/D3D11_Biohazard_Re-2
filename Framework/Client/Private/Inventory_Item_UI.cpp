@@ -25,7 +25,6 @@ HRESULT CInventory_Item_UI::Initialize_Prototype()
 
 HRESULT CInventory_Item_UI::Initialize(void* pArg)
 {
-
     if (nullptr != pArg)
     {
         CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
@@ -41,50 +40,6 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
 
     list<class CGameObject*>* pBoxList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
     m_fOrigin_Blending = m_fBlending;
-
-    /* ▶ Main Inventory */
-    for (auto& iter : *pBoxList)
-    {
-        CInventory_Item_UI* pBox = dynamic_cast<CInventory_Item_UI*>(iter);
-
-        if (nullptr != pBox)
-        {
-            if (CCustomize_UI::ITEM_BOX_TYPE::SELECT_BOX == m_eBox_Type)
-            {
-                /* 1. Select Cursor일 때 : Select box 간 distance 찾기*/
-                if (true == m_IsChild)
-                {
-                    if (CCustomize_UI::ITEM_BOX_TYPE::SELECT_BOX == pBox->m_eBox_Type &&
-                        false == pBox->Get_IsChild())
-                    {
-                        m_pSelectBox = pBox;
-
-                     //   Safe_AddRef<CInventory_Item_UI*>(m_pSelectBox);
-
-                        CTransform* pSelectBox_Trans = dynamic_cast<CTransform*>(pBox->Get_Component(g_strTransformTag));
-                        _float4 fSelectBox_Trans = pSelectBox_Trans->Get_State_Float4(CTransform::STATE_POSITION);
-                        _float4 fCursor_Trans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-
-                        m_fDistance_BetweenCursor = _float2(abs(fSelectBox_Trans.x - fCursor_Trans.x), abs(fSelectBox_Trans.y - fCursor_Trans.y));
-                    }
-                }
-
-                /* 2. Default(Void) Box 일 때 .*/
-                else
-                {
-                    if (CCustomize_UI::ITEM_BOX_TYPE::DEFAULT_BOX == pBox->m_eBox_Type)
-                    {
-                        /* Box은 Select Box을 가지고 있는다 */
-                        pBox->m_pSelectBox = this;
-                    }
-
-                }
-            }
-        }
-
-        // ▶ 툴 수기 수정
-        m_vColor[0].vColor.w = m_vCurrentColor.w = 0.f;
-    }
 
     /* ▶ Sub Inventory */
     if (CCustomize_UI::INVENTORY_TYPE::SUB_INVEN == m_eInventory_Type)
@@ -102,7 +57,10 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
             pCenter_UI = dynamic_cast<CInventory_Item_UI*>(iter);
 
             if (nullptr != pCenter_UI && CCustomize_UI::INVENTORY_TYPE::SUB_INVEN == pCenter_UI->m_eInventory_Type && false == pCenter_UI->m_IsChild)
+            {
+                Find_SelectBox();
                 break;
+            }
 
         }
 
@@ -130,9 +88,11 @@ HRESULT CInventory_Item_UI::Initialize(void* pArg)
                 m_eSubInven_Type = SUB_INVEN_BOX_POSITION::LEFT_INVEN;
 
             /* Select 변수를 가지고 있는다. */
-            Find_SelectBox();
         }
     }
+
+    if(false == m_IsChild)
+        Find_SelectBox();
 
     return S_OK;
 }
@@ -142,7 +102,12 @@ void CInventory_Item_UI::Tick(_float fTimeDelta)
     __super::Tick(fTimeDelta);
 
     if(nullptr == m_pSelectBox && m_eSubInven_Child == SUB_INVEN_WHICH_CHILD::DEFULAT_BOX_CHILD)
+    {
         Find_SelectBox();
+
+        if (nullptr == m_pSelectBox)
+            MSG_BOX(TEXT("Inventory_Item_UI() : Select Box를 찾지 못했습니다."));
+    }
 
     /* ▶ Box 별 동작 방식*/
     Box_Operater(fTimeDelta);
@@ -214,29 +179,12 @@ void CInventory_Item_UI::VoidBox()
 /* 선택 박스 동작 방식  */
 void CInventory_Item_UI::SelectBox(_float fTimeDelta)
 {
+    if (true == m_isMainRender)
+        return;
+
     /* ▶ Select Box*/
     if (false == m_IsChild)
     {
-        //if (nullptr == m_isMainRender || nullptr == m_isSubRender)
-        //    return;
-        //if (true == *m_isMainRender)
-        //{
-        //    m_isRender = true;
-        //    if (false == m_IsChild)
-        //    {
-        //        /* Mouse를 클릭 했을 때와 그렇지 않을 때의 alpha 값이 다르다. */
-        //        if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-        //        {
-        //            Change_BoxType(true);
-        //        }
-        //        if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-        //        {
-        //            /* 나중에 다른 경우로 캔슬 시킬 예정*/
-        //            Change_BoxType(false);
-        //        }
-        //    }
-        //}
-
         if (true == *m_isSubRender)
             m_isRender = true;
 
@@ -407,6 +355,23 @@ void CInventory_Item_UI::Reset_Call(_bool bInput)
 {
     Set_IsRender(bInput);
     Set_InvenOpen(bInput);
+
+    if(true == bInput)
+        m_isMainInven_Open = true;
+
+    else if(false == bInput)
+        m_isMainInven_Open = false;
+
+    if (nullptr == m_pSelectBox)
+    {
+        Find_SelectBox();
+        
+        if(nullptr == m_pSelectBox)
+            MSG_BOX(TEXT("Inventory_Item_UI() : Main Inven과 연결 중에 문제가 생겼습니다.")); /* Select Box를 없애지 못함 */
+    }
+
+    if (nullptr != m_pSelectBox)
+        m_pSelectBox->m_isMainRender = bInput;
 
     //Sub_SelectBox(SUB_INVEN_BOX_POSITION::LEFT_INVEN);
     //Sub_SelectBox(SUB_INVEN_BOX_POSITION::UP_INVEN);

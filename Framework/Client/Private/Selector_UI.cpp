@@ -81,8 +81,7 @@ HRESULT CSelector_UI::Initialize(void* pArg)
 
     /* Find Player / Object */
     Find_Player();
-    Find_InteractObj();
-    
+
     /* Y축 얻어오기 */
     if (false == m_isArrow)
     {
@@ -106,7 +105,7 @@ HRESULT CSelector_UI::Initialize(void* pArg)
 
     /* 1. Texture*/
     m_wstrInteractive_Tag = m_wstrDefaultTexturComTag;
-    m_wstrNonInteractive_Tag = TEXT("Prototype_Component_Texture_Perspective_Selecter_Check");
+    m_wstrNonInteractive_Tag = TEXT("Prototype_Component_Texture_Perspective_Selecter_Check"); 
 
     return S_OK;
 }
@@ -115,28 +114,9 @@ void CSelector_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    /* ▶ 조건 충족하기 */
-    if(nullptr == m_pPlayer)
-        Find_Player();
-
-    if (SELECTOR_TYPE::BACKGROUND_SELECTOR == m_eSelectorType)
-    {
-        if (m_SelectorObj_Vec.empty())
-            Find_Selector_Obj();
-
-        if (m_InteractPropsList.empty())
-            Find_InteractObj();
-    }
-
-    /* ▶ 사용 여부에 따른 조건 */
-    if (false == m_isUsing)
-    {
-        if (SELECTOR_TYPE::BACKGROUND_SELECTOR == m_eSelectorType)
-            Attach_InteractObj();
-    }
-
-    else if (true == m_isUsing)
-        Operate_Selector(fTimeDelta);
+    m_vTargetPos = _float4(0, 0, 0, 1);
+    Exception_Handle();
+    Operate_Selector(fTimeDelta);
 }
 
 void CSelector_UI::Late_Tick(_float fTimeDelta)
@@ -152,19 +132,45 @@ HRESULT CSelector_UI::Render()
     return S_OK;
 }
 
-void CSelector_UI::Render_Selector_UI(CGameObject* _obj, _float fTimeDelta)
+CGameObject* CSelector_UI::Destroy_Selector()
 {
-    _float fDistance = Distance_Player(_obj);
+    if (m_SelectorObj_Vec.empty())
+        return nullptr;
 
-    if (fDistance >= OUT_DISTANCE)
+    for (auto& iter : m_SelectorObj_Vec)
+    {
+        iter->m_isOutDistance = true;
+    }
+     
+    return nullptr;
+}
+
+void CSelector_UI::Select_Type(_bool _Interact, _float4 _objPos)
+{
+    for (auto& iter : m_SelectorObj_Vec)
+    {
+        iter->m_isInteractive = _Interact;
+        iter->m_vTargetPos = _objPos;
+    }
+}
+
+
+void CSelector_UI::NonInteractive_Rendering(_float fTimeDelta)
+{
+    _float fDistance = Distance_Player(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+
+    /* Destory()를 통해 끝냄을 알릴 때*/
+    if (true == m_isOutDistance)
     {
         if (m_fBlending >= 1.f)
         {
             m_fBlending = 1.f;
             m_isRender = false;
+            m_isUsing = false;
         }
         else
             m_fBlending += fTimeDelta;
+
         return;
     }
 
@@ -172,6 +178,7 @@ void CSelector_UI::Render_Selector_UI(CGameObject* _obj, _float fTimeDelta)
     {
         /* 1. 만약 Render가 false 라면 fBlending를 점점 내린다. */
         m_isRender = true;
+
         if (m_fBlending <= 0.f)
         {
             m_fBlending = 0.f;
@@ -180,10 +187,9 @@ void CSelector_UI::Render_Selector_UI(CGameObject* _obj, _float fTimeDelta)
             m_fBlending -= fTimeDelta;
 
         /* 2. 뷰에 따라 위치 조정 */
-        CTransform* pObjTrans = static_cast<CTransform*>(_obj->Get_Component(g_strTransformTag));
         _float3 fCurrentSize = {};
 
-        _float4 vTargetPosition = pObjTrans->Get_State_Float4(CTransform::STATE_POSITION);
+        _float4 vTargetPosition = m_vTargetPos;
         _vector vViewPos = XMVector3TransformCoord(vTargetPosition, m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_VIEW));
         _vector vProjPos = XMVector3TransformCoord(vViewPos, m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_PROJ));
 
@@ -191,16 +197,9 @@ void CSelector_UI::Render_Selector_UI(CGameObject* _obj, _float fTimeDelta)
 
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, _vector{ g_iWinSizeX * -0.5f + vProjPosition.x, g_iWinSizeY * 0.5f - vProjPosition.y, 0.8f, 1.f });
 
-        /* 3. 거리에서 멀어질 수록 Size가 커진다. */
-        if (fDistance <= INTERACTIVE_DISTANCE)
-        {
-            /*4. 상호작용이 가능하면 이 함수를 멈추고 다른 함수로 간다*/
-            fCurrentSize = m_fOriginSize;
-            m_isInteractive = true;
-        }
-
-        else
-            fCurrentSize *= fDistance;
+        //fCurrentSize *= fDistance;
+        fCurrentSize = _float3(30.f, 30.f, 0.f);
+        m_pTransformCom->Set_Scaled(fCurrentSize.x, fCurrentSize.y, fCurrentSize.z);
     }
 
     /* y 축 조정*/
@@ -215,42 +214,19 @@ void CSelector_UI::Render_Selector_UI(CGameObject* _obj, _float fTimeDelta)
     }
 }
 
-void CSelector_UI::Interactive_Selector_UI(CGameObject* _obj, _float fTimeDelta)
-{
-    _float fDistance = Distance_Player(_obj);
-
-    if (fDistance >= INTERACTIVE_DISTANCE)
-        m_isInteractive = false;
-
-    /* y 축 조정*/
-    if (false == m_isArrow)
-    {
-        if (m_vXTransform.y < m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y)
-        {
-            _float4 vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-            vPos.y = m_vXTransform.y;
-            m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
-        }
-    }
-    else
-    {
-        CTransform* pParentTrans = static_cast<CTransform*>(m_pParent->Get_Component(g_strTransformTag));
-        _float4 vParentTrans = pParentTrans->Get_State_Float4(CTransform::STATE_POSITION);
-
-        vParentTrans.y -= X_TYPEY;
-        m_pTransformCom->Set_State(CTransform::STATE_POSITION, vParentTrans);
-    }
-}
-
 void CSelector_UI::Operate_Selector(_float fTimeDelta)
 {
-    if (nullptr == m_pInteractObj)
+    if (true != m_isUsing)
+    {
+        Reset();
         return;
+    }
 
     /* 상호작용이 불가능할 때 : Check */
     if (false == m_isInteractive)
     {
-        Render_Selector_UI(m_pInteractObj, fTimeDelta);
+        m_isRender = true;
+        NonInteractive_Rendering(fTimeDelta);
 
          /* Texture 변경 */
         if (m_wstrDefaultTexturComTag != m_wstrNonInteractive_Tag && true == m_IsChild && false == m_isArrow)
@@ -266,8 +242,7 @@ void CSelector_UI::Operate_Selector(_float fTimeDelta)
     /* 상호작용이 가능할 때 : X */
     else if (true == m_isInteractive)
     {
-        Interactive_Selector_UI(m_pInteractObj, fTimeDelta);
-        // m_pTransformCom->Set_Scaled(m_fOriginSize.x, m_fOriginSize.y, m_fOriginSize.z);
+         m_pTransformCom->Set_Scaled(m_fOriginSize.x, m_fOriginSize.y, m_fOriginSize.z);
 
          /* Texture 변경 */
         if (m_wstrDefaultTexturComTag != m_wstrInteractive_Tag && true == m_IsChild && false == m_isArrow)
@@ -279,106 +254,13 @@ void CSelector_UI::Operate_Selector(_float fTimeDelta)
         if (true == m_isArrow)
             m_isRender = true;
     }
-
-    /* 상호작용을 하지 않는 범위까지 나갔는 지를 확인 */
-    if (false == m_pInteractObj->ComeClose_toPlayer(OUT_DISTANCE))
-    {
-        /* 다른 객체도 오픈 */
-        if (!m_SelectorObj_Vec.empty())
-        {
-            for (auto& iter_1 : m_SelectorObj_Vec)
-            {
-                if (nullptr != iter_1)
-                {
-                    iter_1->m_isUsing = false;
-                    iter_1->m_pInteractObj = nullptr;
-                }
-            }
-        }
-
-        m_isUsing = false;
-        m_pInteractObj = nullptr;
-
-        /* Player 에게도 Selector가 출력됨을 알림*/
-        _bool* pSelectorRendering = m_pInteractObj->Selector_Rendering();
-        *pSelectorRendering = m_isUsing;
-    }
 }
 
-void CSelector_UI::Attach_InteractObj()
+void CSelector_UI::Exception_Handle()
 {
-    /* Prop 먼저 생성 그 후에 Select */
-    /* 그래서 Selector가 Obj 관리 중인데 
-    그렇게 되면 obj를 for문을 돌아서 Player에게 가까이 왔는 지 오지 않았는 지를 인지해서 집어 넣어줘야 한다, */
-
-    /* 반대로 Manager를 파게 되면 한 vec만 생성하고 Object도 따로 모아서 생성한다음에
-    만약 Object가 Player에 인접하면 Using을 켜서 넘겨준다.*/
-
-    for (auto& iter : m_InteractPropsList)
+    if (nullptr == m_pPlayer)
     {
-        if(nullptr != iter)
-        {
-            _bool* isCome = iter->ComeClose_toPlayer(OUT_DISTANCE);
-
-            if (nullptr == isCome)
-                return;
-
-            if (true == *isCome)
-            {
-               if (false == *(iter->Selector_Rendering()) && false == m_isUsing)
-               {
-                   /* 다른 객체도 오픈 */
-                   if (m_SelectorObj_Vec.size() >= 2)
-                   {
-                       for (auto& iter_1 : m_SelectorObj_Vec)
-                       {
-                           if(nullptr != iter_1)
-                           {
-                               iter_1->m_isUsing = true;
-                               iter_1->m_pInteractObj = iter;
-                           }
-                       }
-                   }
-
-                   m_isUsing = true;
-                   m_pInteractObj = iter;
-
-                   /* Player 에게도 Selector가 출력됨을 알림*/
-                   _bool* pSelectorRendering = iter->Selector_Rendering();
-                   *pSelectorRendering = m_isUsing;
-               }
-            }
-        }
-    }
-}
-
-void CSelector_UI::Find_InteractObj()
-{
-    list<CGameObject*>* pInteractObj_List = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_InteractObj"));
-
-    if (nullptr != pInteractObj_List)
-    {
-        for (auto& iter : *pInteractObj_List)
-        {
-            CInteractProps* pInteractObj = static_cast<CInteractProps*>(iter);
-
-            m_InteractPropsList.push_back(pInteractObj);
-
-           // Safe_AddRef(iter);
-        }
-    } 
-    list<CGameObject*>* pDoorObj_List = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Door"));
-
-    if (nullptr != pDoorObj_List)
-    {
-        for (auto& iter : *pDoorObj_List)
-        {
-            CInteractProps* pInteractObj = static_cast<CInteractProps*>(iter);
-
-            m_InteractPropsList.push_back(pInteractObj);
-
-           // Safe_AddRef(iter);
-        }
+        Find_Player();
     }
 }
 
@@ -399,10 +281,17 @@ void CSelector_UI::Find_Selector_Obj()
             {
                m_SelectorObj_Vec.push_back(pSelectorObj);
 
-                Safe_AddRef(m_SelectorObj_Vec.back());
+              //  Safe_AddRef(m_SelectorObj_Vec.back());
             }
         }
     }
+}
+
+void CSelector_UI::Reset()
+{
+    m_isRender = false;
+    m_isInteractive = false;
+    m_isOutDistance = false;
 }
 
 CCustomize_UI* CSelector_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -437,17 +326,9 @@ void CSelector_UI::Free()
 {
     __super::Free();
 
-    for (auto& iter : m_SelectorObj_Vec)
-    {
-        Safe_Release(iter);
-    }
-    m_SelectorObj_Vec.clear();
-
-  /*for (auto& iter : m_InteractPropsList)
-    {
-        Safe_Release(iter);
-    }
-    m_InteractPropsList.clear();*/
-
-   // Safe_Release(m_pInteractObj);
+ //   for (auto& iter : m_SelectorObj_Vec)
+    //{
+ //       Safe_Release(iter);
+  //  }
+ //   m_SelectorObj_Vec.clear();
 }

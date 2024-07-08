@@ -193,12 +193,11 @@ HRESULT CTarget_Manager::Copy_Resource(const wstring& strDestRenderTargetTag, co
 
 HRESULT CTarget_Manager::Ready_Debug(const wstring & strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
 {
-	/*CRenderTarget*		pRenderTarget = Find_RenderTarget(strRenderTargetTag);
+	CRenderTarget*		pRenderTarget = Find_RenderTarget(strRenderTargetTag);
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
 
-	return pRenderTarget->Ready_Debug(fX, fY, fSizeX, fSizeY);	*/
-	return S_OK;
+	return pRenderTarget->Ready_Debug(fX, fY, fSizeX, fSizeY);	
 }
 
 HRESULT CTarget_Manager::Render_Debug(const wstring & strMRTTag, CShader * pShader, CVIBuffer_Rect * pVIBuffer)

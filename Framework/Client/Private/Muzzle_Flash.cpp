@@ -39,7 +39,7 @@ void CMuzzle_Flash::Tick(_float fTimeDelta)
 	if (m_bRender == false)
 		return;
 
-	++m_iFrame;
+	//++m_iFrame;
 
 	if (m_iFrame >= 2)
 	{
@@ -103,6 +103,13 @@ void CMuzzle_Flash::SetSize(_float fSizeX, _float fSizeY)
 	m_pTransformCom->Set_Scaled(fSizeX, fSizeY,1.f);
 }
 
+void CMuzzle_Flash::SetPosition(_float4 Pos)
+{
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, Pos);
+	m_iFrame = 0;
+	m_fAlpha_Delta_Sum = 0.f;
+}
+
 HRESULT CMuzzle_Flash::Add_Components()
 {
 	/* For.Com_Shader */
@@ -146,6 +153,9 @@ HRESULT CMuzzle_Flash::Bind_ShaderResources()
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", (_uint)m_fFrame)))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fAlpha_Delta", &m_fAlpha_Delta_Sum, sizeof(m_fAlpha_Delta_Sum))))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShaderCom, TEXT("Target_Depth"), "g_DepthTexture")))

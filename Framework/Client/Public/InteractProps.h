@@ -113,13 +113,13 @@ protected:
 	virtual ~CInteractProps() = default;
 
 public:
-	virtual HRESULT								Initialize_Prototype() override;
-	virtual HRESULT								Initialize(void* pArg) override;
-	virtual void									Priority_Tick(_float fTimeDelta) override;
-	virtual void									Tick(_float fTimeDelta) override;
-	virtual void									Late_Tick(_float fTimeDelta) override;
-	virtual void									Start() override;
-	virtual HRESULT								Render() override;
+	virtual HRESULT										Initialize_Prototype() override;
+	virtual HRESULT										Initialize(void* pArg) override;
+	virtual void										Priority_Tick(_float fTimeDelta) override;
+	virtual void										Tick(_float fTimeDelta) override;
+	virtual void										Late_Tick(_float fTimeDelta) override;
+	virtual void										Start() override;
+	virtual HRESULT										Render() override;
 
 
 	void												Priority_Tick_PartObjects(_float fTimeDelta);
@@ -128,18 +128,18 @@ public:
 
 
 
-	virtual HRESULT								Render_LightDepth_Dir() override;
-	virtual	HRESULT							Render_LightDepth_Spot() override;
-	virtual HRESULT								Render_LightDepth_Point() override;
+	virtual HRESULT										Render_LightDepth_Dir() override;
+	virtual	HRESULT										Render_LightDepth_Spot() override;
+	virtual HRESULT										Render_LightDepth_Point() override;
 	
 public:
-	_bool*											Get_Activity() { return &m_bActivity; }
+	_bool*												Get_Activity() { return &m_bActivity; }
 
-	_bool*											ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
-	_bool*											Selector_Rendering() { return &m_isSelector_Rendering;  }
+	_bool*												ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
+	_bool*												Selector_Rendering() { return &m_isSelector_Rendering;  }
 
 	/*To NY*/
-	virtual _float4								Get_Object_Pos() = 0;
+	virtual _float4										Get_Object_Pos() = 0;
 	_int												Get_PropType() { return m_tagPropDesc.iPropType; } // 프롭타입이라 쓰고 arg라 읽는다. // 문의 지역 enum을 반환한다.
 
 
@@ -149,10 +149,20 @@ public:
 	_int												Get_Region() { return m_tagPropDesc.iRegionNum; }
 	_int												Get_Type() { return m_tagPropDesc.iPropType; }
 	void												Set_Region(_int iRegion) { m_tagPropDesc.iRegionNum = iRegion; }
-	virtual _bool									Attack_Prop(class CTransform* pTransfromCom = nullptr) { return false; };
+	virtual _bool										Attack_Prop(class CTransform* pTransfromCom = nullptr) { return false; };
 
-	_float											Get_PlayerLook_Degree();
+	_float												Get_PlayerLook_Degree();
 	
+#pragma region 나옹
+	/* Function */
+	_bool												Create_Selector_UI();
+	void												Opreate_Selector_UI(_bool _Interact, _float4 _pos);
+	
+	/* Variable */
+	class CSelector_UI*									m_pSelector = { nullptr }; /* 사용 중인 Selector Obj */
+
+#pragma endregion
+
 
 private :
 	_bool												m_isSelector_Rendering = { false };
@@ -167,29 +177,29 @@ protected:
 	_bool												m_bVisible = { true };
 	_bool												m_bCol[INTER_COL_END][COL_STEP_END] = { {false,false,false},{false,false,false} };
 	_int												m_iItemIndex = { -1 };
-	_float											m_fTimeDelay = { 0.f };
-	_float											m_fDistance = { 0.f };
-	CModel*										m_pModelCom = { nullptr };
-	CShader*										m_pShaderCom = { nullptr };
-	CCollider*										m_pColliderCom[INTER_COL_END][COL_STEP_END] = { {nullptr,nullptr,nullptr},{nullptr,nullptr,nullptr} };
+	_float												m_fTimeDelay = { 0.f };
+	_float												m_fDistance = { 0.f };
+	CModel*												m_pModelCom = { nullptr };
+	CShader*											m_pShaderCom = { nullptr };
+	CCollider*											m_pColliderCom[INTER_COL_END][COL_STEP_END] = { {nullptr,nullptr,nullptr},{nullptr,nullptr,nullptr} };
 	
-	class CPlayer*								m_pPlayer = { nullptr };
-	_bool*											m_pPlayerInteract = { nullptr };//player의 m_bInteract 변수 포인터
-	CTransform*									m_pPlayerTransform = { nullptr }; 
-	CCollider*										m_pPlayerCol = { nullptr };
+	class CPlayer*										m_pPlayer = { nullptr };
+	_bool*												m_pPlayerInteract = { nullptr };//player의 m_bInteract 변수 포인터
+	CTransform*											m_pPlayerTransform = { nullptr }; 
+	CCollider*											m_pPlayerCol = { nullptr };
 
-	class CCamera_Free*						m_pCamera = { nullptr };
-	CTransform*									m_pCameraTransform = { nullptr };
+	class CCamera_Free*									m_pCamera = { nullptr };
+	CTransform*											m_pCameraTransform = { nullptr };
 
-	_float3											m_vRootTranslation = {};
-	INTERACTPROPS_DESC 					m_tagPropDesc ={};
-	vector<CPartObject*>					m_PartObjects;
+	_float3												m_vRootTranslation = {};
+	INTERACTPROPS_DESC 									m_tagPropDesc ={};
+	vector<CPartObject*>								m_PartObjects;
 
 protected:
 	void												Check_Player();
-	_float											Check_Player_Distance();
-	_float											Check_Player_Distance(_float4 vPos);
-	_float4											Get_Collider_World_Pos(_float4 vPos);
+	_float												Check_Player_Distance();
+	_float												Check_Player_Distance(_float4 vPos);
+	_float4												Get_Collider_World_Pos(_float4 vPos);
 	_bool												Check_Col_Player(INTERACTPROPS_COL eInterCol, INTERACTPROPS_COL_STEP eStepCol);
 	void												Tick_Col();
 	_bool												Visible();
@@ -201,10 +211,10 @@ protected:
 
 	_bool												Activate_Col(_float4 vActPos); //카메라 look에 대해 판단
 
-	virtual HRESULT								Add_Components();
-	virtual HRESULT								Add_PartObjects();
-	virtual HRESULT								Initialize_PartObjects();
-	virtual HRESULT								Bind_ShaderResources();
+	virtual HRESULT										Add_Components();
+	virtual HRESULT										Add_PartObjects();
+	virtual HRESULT										Initialize_PartObjects();
+	virtual HRESULT										Bind_ShaderResources();
 
 public:
 	virtual CGameObject* Clone(void* pArg) = 0;

@@ -28,6 +28,7 @@ public:
 		m_pHitPart = pHitPart;
 		PxVec3 HitPartPos = m_pHitPart->getGlobalPose().p;
 		m_vPrev_HitPartPos = _float4(HitPartPos.x, HitPartPos.y, HitPartPos.z, 1.f);
+		m_bDissolving = false;
 	}
 	_float4					GetPosition();
 private:
