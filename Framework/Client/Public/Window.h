@@ -24,9 +24,10 @@ public:
 	};
 	enum BARRIGATE_STATE
 	{
-		BARRIGATE_NO,
 		BARRIGATE_BREAK,
 		BARRIGATE_STATIC,
+		BARRIGATE_NO,
+		BARRIGATE_NEW,
 		BARRIGATE_END
 	};
 private:
@@ -60,7 +61,7 @@ public:
 
 	virtual _bool		Attack_Prop(class CTransform* pTransfromCom = nullptr) override
 	{
-		if (m_bBarrigate)
+		if (m_bBarrigate &&  BARRIGATE_STATIC == m_eBarrigateState )
 		{
 			if (m_iHP[PART_PANNEL] <= 0)
 				return true; // 좀비가 들어올 수 있는
@@ -91,10 +92,12 @@ public:
 private:
 	_bool				m_bBarrigateInstallable = { true };
 	_bool				m_bBarrigate = { false };
+	_float			m_fBarrigateOldTime = { 0.f };
 	_int				m_iHP[PART_END] = {5,0};
 	_bool				m_bActivity = { false };
 	_float			m_fTime = { 0.f };
 	_ubyte			m_eState = { WINDOW_STATIC };
+	_ubyte			m_eBarrigateState = { BARRIGATE_NO };
 
 	class CCustomCollider*		m_pMyCustomCollider = { nullptr };
 

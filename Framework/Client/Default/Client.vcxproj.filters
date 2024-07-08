@@ -643,6 +643,9 @@
     <Filter Include="02.GameObjects\Effect\Muzzle_Light_SG">
       <UniqueIdentifier>{d266a5b0-0ad6-4523-971a-4fcdf37c8b12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Window\Pannel_Window">
+      <UniqueIdentifier>{bba54d7f-846e-45fb-aba4-94e0e31e1dc0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1236,6 +1239,9 @@
     <ClInclude Include="..\Public\Muzzle_Spark_SG.h">
       <Filter>02.GameObjects\Effect\Muzzle_Spark_SG</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Pannel_Window.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Window\Pannel_Window</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1789,6 +1795,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Muzzle_Spark_SG.cpp">
       <Filter>02.GameObjects\Effect\Muzzle_Spark_SG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Pannel_Window.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Window\Pannel_Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -2221,9 +2221,6 @@ void CRenderer::Set_ViewPort_Size(_float fWidth, _float fHeight, _uint iArraySiz
 
 HRESULT CRenderer::Render_Debug()
 {
-	if (false == m_isRenderDebug)
-		return S_OK;
-
 	for (auto& pDebugCom : m_DebugComponents)
 	{
 		if (nullptr != pDebugCom)
@@ -2232,6 +2229,9 @@ HRESULT CRenderer::Render_Debug()
 		Safe_Release(pDebugCom);
 	}
 	m_DebugComponents.clear();
+
+	if (false == m_isRenderDebug)
+		return S_OK;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
