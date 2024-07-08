@@ -70,7 +70,7 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
 
             if (nullptr != m_pIntro_UI)
             {
-                Safe_AddRef<CRead_Item_UI*>(m_pIntro_UI);
+                //Safe_AddRef<CRead_Item_UI*>(m_pIntro_UI);
             }
 
             if (true == m_IsChild)

@@ -88,7 +88,7 @@ void CMain_Map_UI::Tick(_float fTimeDelta)
     Player_BetweenDistance();
 
     /* Door : Object가 없을 시 터질 수 있음, Noting 하려면 이거 주석하셈*/
-   // Door_State();
+    Door_State();
 }
 
 void CMain_Map_UI::Late_Tick(_float fTimeDelta)
@@ -200,7 +200,7 @@ void CMain_Map_UI::Door_State()
     {
         if (m_DoorList.empty())
         {
-            MSG_BOX(TEXT("Main Map UI() : Door Map이 List를 찾을 수 없습니다."));
+            // MSG_BOX(TEXT("Main Map UI() : Door Map이 List를 찾을 수 없습니다."));
             return;
         }
 
