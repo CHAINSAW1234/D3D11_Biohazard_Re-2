@@ -181,10 +181,13 @@ PS_OUT PS_MAIN_CUBE(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
-    float3 vTex = normalize(float3(1.0, In.vTexcoord.y * -2 + 1.f, In.vTexcoord.x * -2.f + 1.f));
-    //float3 vTex = normalize(float3(In.vTexcoord.x * 2 - 1.f, In.vTexcoord.y * -2.f + 1.f, 1.f));
-    //float3 vTex = normalize(float3(-1.0, In.vTexcoord.y * -2 + 1.f, In.vTexcoord.x * -2.f + 1.f));
     
+    //float3 vTex = float3(1.0, In.vTexcoord.y, -In.vTexcoord.x);
+    float3 vTex = float3(-1.0, In.vTexcoord.y, In.vTexcoord.x);
+    //float3 vTex = float3(In.vTexcoord.x, 1.0, -In.vTexcoord.y);
+    //float3 vTex = float3(In.vTexcoord.x, -1.0, In.vTexcoord.y);
+    //float3 vTex = float3(In.vTexcoord.x, In.vTexcoord.y, 1.0);
+    //float3 vTex = float3(-In.vTexcoord.x, In.vTexcoord.y, -1.0);
     Out.vColor = g_CubeTexture.Sample(PointSamplerClamp, float4(vTex, 0));
 
     return Out;

@@ -8,6 +8,7 @@ class CTexture;
 class CShader;
 class CComputeShader;
 class CRenderTarget;
+class CGameInstance;
 
 class CPipeLine final : public CBase
 {
@@ -124,16 +125,21 @@ public:
 	HRESULT				Render();
 	void				Reset();		// 렌더 이후에 그림자 연산에 사용한 빛을 리스트에서 제거
 
+#ifdef _DEBUG
+	class CVIBuffer_Rect* m_pVIBuffer = { nullptr };
+
+	void				Render_Debug();
+#endif // _DEBUG
+
+
 private:
+	HRESULT				Set_Components();
 	HRESULT				Create_IrradianceTexture();
 
-	// cascade를 위한 절두체 분리 및 투영행렬 계산
-	void				Update_CascadeFrustum();
-	void				Update_CascadeProjMatrices();
-
 private:
-	ID3D11Device* m_pDevice = { nullptr };
-	ID3D11DeviceContext* m_pContext = { nullptr };
+	CGameInstance*			m_pGameInstance = { nullptr };
+	ID3D11Device*			m_pDevice = { nullptr };
+	ID3D11DeviceContext*	m_pContext = { nullptr };
 
 
 	_float4x4			m_TransformMatrices[D3DTS_END];
@@ -154,16 +160,10 @@ private:
 	CLight*				m_pDirectionLight = { nullptr };
 	CLight*				m_pSpotLight = { nullptr };
 
-	_bool m_isRender = { false };
+	_bool					m_isRender = { false };
 	CComputeShader*			m_pShaderCom = { nullptr };
 	CTexture*				m_pCubeMapTexture = { nullptr };
 	CRenderTarget*			m_pIrradialTexture = { nullptr };
-
-	// CasCade용 변수 -> 안씀
-	//_float3				m_vOriginalPoints[8];
-	//_float				m_fCascadeSplitZ[CASCADE_END + 1];
-	//_float3				m_vCascadePoints[CASCADE_END][8];
-	//_float4x4			m_CascadeProjectMatrices[CASCADE_END];
 
 public:
 	static CPipeLine* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

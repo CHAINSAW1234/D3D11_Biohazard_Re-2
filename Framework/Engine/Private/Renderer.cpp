@@ -2253,12 +2253,12 @@ HRESULT CRenderer::Render_Debug()
 	if (FAILED(m_pVIBuffer->Bind_Buffers()))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Bloom"), m_pShader, m_pVIBuffer)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Bloom_Blur_Y"), m_pShader, m_pVIBuffer)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Bloom"), m_pShader, m_pVIBuffer)))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Bloom_Blur_Y"), m_pShader, m_pVIBuffer)))
+	//	return E_FAIL;
 
-	return S_OK;
+	//return S_OK;
 
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
