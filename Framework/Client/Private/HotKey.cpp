@@ -92,6 +92,17 @@ void CHotKey::Set_Dead(_bool bDead)
 	}
 }
 
+CInventory_Slot* CHotKey::Get_Hoverd_Slot()
+{
+	for (_uint i = 0; i < SLOT_COUNT; i++)
+	{
+		if (true == m_pInven_Slots[i]->IsMouseHover())
+			return m_pInven_Slots[i];
+	}
+
+	return nullptr;
+}
+
 HRESULT CHotKey::Bind_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)

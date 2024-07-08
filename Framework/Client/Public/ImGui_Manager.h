@@ -25,6 +25,7 @@ public:
 private:
 	void				Window_TabWindow_Debuger();
 	void				Window_Player_Debuger();
+	void				Window_Shader_Debuger();
 
 private:
 	wstring				Classify_ItemNum_To_String(ITEM_NUMBER eItemNum);
@@ -43,9 +44,10 @@ private:
 	class CTab_Window*					m_pTabWindow = { nullptr };
 	class CPlayer*						m_pPlayer = { nullptr };
 
-private:
+private:/*for WindowControl*/
 	_bool								m_bTabWindow_Debuger = { false };
 	_bool								m_bPlayer_Debuger = { false };
+	_bool								m_bShader_Debuger = { false };
 
 private:/*for. Tab_Window*/
 	_int								m_icurrent_Item = { 0 };
@@ -54,9 +56,12 @@ private:/*for. Tab_Window*/
 
 	_int								m_iItemCount = { 1 };
 
-private:
+private:/*for. Player*/
 	_int								m_iPlayerHP = { 5 };
 
+private:/*for. Shader*/
+	_bool								m_bShaderOnOff[Engine::SHADER_STATE_END] = { false };
+	_bool								m_bDebugRender = { false };
 
 private:
 	HRESULT Refer_Player();

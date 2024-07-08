@@ -59,18 +59,18 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pRende
 HRESULT CRenderer::Render()
 {
 	// for test
-	if (m_pGameInstance->Get_KeyState('1') == DOWN)
-		m_ShaderOptions[SSAO] = !m_ShaderOptions[SSAO];
+	//if (m_pGameInstance->Get_KeyState('1') == DOWN)
+	//	m_ShaderOptions[SSAO] = !m_ShaderOptions[SSAO];
 	//if (m_pGameInstance->Get_KeyState('2') == DOWN)
 	//	m_ShaderOptions[MOTION_BLUR] = !m_ShaderOptions[MOTION_BLUR];
-	if (m_pGameInstance->Get_KeyState('3') == DOWN)
-		m_ShaderOptions[SSR] = !m_ShaderOptions[SSR];
-	if (m_pGameInstance->Get_KeyState('4') == DOWN)
-		m_ShaderOptions[DOF] = !m_ShaderOptions[DOF];
-	if (m_pGameInstance->Get_KeyState('5') == DOWN)
-		m_ShaderOptions[VOLUMETRIC] = !m_ShaderOptions[VOLUMETRIC];
-	if (m_pGameInstance->Get_KeyState('6') == DOWN)
-		m_ShaderOptions[FXAA] = !m_ShaderOptions[FXAA];
+	//if (m_pGameInstance->Get_KeyState('3') == DOWN)
+	//	m_ShaderOptions[SSR] = !m_ShaderOptions[SSR];
+	//if (m_pGameInstance->Get_KeyState('4') == DOWN)
+	//	m_ShaderOptions[DOF] = !m_ShaderOptions[DOF];
+	//if (m_pGameInstance->Get_KeyState('5') == DOWN)
+	//	m_ShaderOptions[VOLUMETRIC] = !m_ShaderOptions[VOLUMETRIC];
+	//if (m_pGameInstance->Get_KeyState('6') == DOWN)
+	//	m_ShaderOptions[FXAA] = !m_ShaderOptions[FXAA];
 	if (m_pGameInstance->Get_KeyState('2') == DOWN)
 		Set_RenderFieldShadow(true);
 

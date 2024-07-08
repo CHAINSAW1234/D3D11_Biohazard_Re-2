@@ -41,10 +41,10 @@ void CItem_UI::Start()
 		if (nullptr == m_vecChildUI[0] || nullptr == m_vecChildUI[1])
 			return;
 
-		m_mapPartUI.emplace(TEXT("EquipDisplay"), static_cast<CCustomize_UI*>(m_vecChildUI[0]));
-		m_mapPartUI.emplace(TEXT("CountDisplay"), static_cast<CCustomize_UI*>(m_vecChildUI[1]));
+		m_mapPartUI.emplace(TEXT("EquipDisplay"), static_cast<CCustomize_UI*>(m_vecChildUI[0]));//E써져있는거
+		m_mapPartUI.emplace(TEXT("CountDisplay"), static_cast<CCustomize_UI*>(m_vecChildUI[1]));//오른쪽아래 아이템 수량
 		CGameObject* pHotkeyDisplay = static_cast<CCustomize_UI*>(m_vecChildUI[0])->Get_Child(0);
-		m_mapPartUI.emplace(TEXT("HotkeyDisplay"), static_cast<CCustomize_UI*>(pHotkeyDisplay));
+		m_mapPartUI.emplace(TEXT("HotkeyDisplay"), static_cast<CCustomize_UI*>(pHotkeyDisplay));//단축키 표시
 
 		for (auto& iter : *(static_cast<CItem_UI*>(m_vecChildUI[0])->Get_vecTextBoxes()))
 		{
@@ -80,23 +80,34 @@ void CItem_UI::Tick(_float fTimeDelta)
 
 		switch (m_eInvenItemType)
 		{
-		case Client::EQUIPABLE:
+		case Client::EQUIPABLE: {
+			static_cast<CCustomize_UI*>(m_mapPartUI[TEXT("CountDisplay")])->Set_Text(0, to_wstring(m_iItemQuantity));
 			break;
-		case Client::CONSUMABLE_EQUIPABLE:
+		}
+			
+		case Client::CONSUMABLE_EQUIPABLE: {
+			static_cast<CCustomize_UI*>(m_mapPartUI[TEXT("CountDisplay")])->Set_Text(0, to_wstring(m_iItemQuantity));
 			break;
-		case Client::USEABLE:
+		}
+			
+		case Client::USEABLE: {
 			break;
+		}
+			
 		case Client::CONSUMABLE: {
 			static_cast<CCustomize_UI*>(m_mapPartUI[TEXT("CountDisplay")])->Set_Text(0, to_wstring(m_iItemQuantity));
 			break;
 		}
 
-		case Client::QUEST:
+		case Client::QUEST: {
+			static_cast<CCustomize_UI*>(m_mapPartUI[TEXT("CountDisplay")])->Set_Text(0, to_wstring(m_iItemQuantity));
 			break;
-
-		case Client::INVEN_ITEM_TYPE_END:
+		}
+			
+		case Client::INVEN_ITEM_TYPE_END: {
 			break;
-
+		}
+			
 		default:
 			break;
 		}
