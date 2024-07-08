@@ -27,7 +27,6 @@
 #include "Selector_UI.h"
 #include "Bone.h"
 #include "Muzzle_Smoke.h"
-#include "Muzzle_Spark_SG.h"
 
 #include"MovingShelf.h"
 
@@ -98,6 +97,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	fill_n(m_SetProps, SETPROPS_NONE, -1);
 
 	m_MuzzleSmoke_Delay = 50;
+	m_MuzzleSmoke_Delay = 150;
 
 	return S_OK;
 }
@@ -899,8 +899,10 @@ void CPlayer::Shot()
 
 		m_pMuzzle_Flash_SG->Set_Render(true);
 		m_pMuzzle_Flash_SG->SetPosition(Get_MuzzlePosition());
-		m_pMuzzle_Spark_SG->Set_Render(true);
-		m_pMuzzle_Spark_SG->SetPosition(Get_MuzzlePosition());
+
+		m_bMuzzleSmoke = true;
+		m_vMuzzle_Smoke_Pos = Get_MuzzlePosition();
+		m_MuzzleSmoke_Time = GetTickCount64();
 		break;
 		}
 	}
@@ -1674,13 +1676,28 @@ void CPlayer::Set_ManualMove(_bool isManualMove)
 
 void CPlayer::Set_Muzzle_Smoke()
 {
-	if (m_bMuzzleSmoke)
+	if(m_eEquip == HG)
 	{
-		if (m_MuzzleSmoke_Delay + m_MuzzleSmoke_Time < GetTickCount64())
+		if (m_bMuzzleSmoke)
 		{
-			m_pMuzzle_Smoke->Set_Render(true);
-			m_pMuzzle_Smoke->SetPosition(m_vMuzzle_Smoke_Pos);
-			m_bMuzzleSmoke = false;
+			if (m_MuzzleSmoke_Delay + m_MuzzleSmoke_Time < GetTickCount64())
+			{
+				m_pMuzzle_Smoke->Set_Render(true);
+				m_pMuzzle_Smoke->SetPosition(m_vMuzzle_Smoke_Pos);
+				m_bMuzzleSmoke = false;
+			}
+		}
+	}
+	else
+	{
+		if (m_bMuzzleSmoke)
+		{
+			if (m_MuzzleSmoke_SG_Delay + m_MuzzleSmoke_Time < GetTickCount64())
+			{
+				m_pMuzzle_Smoke_SG->Set_Render(true);
+				m_pMuzzle_Smoke_SG->SetPosition(m_vMuzzle_Smoke_Pos);
+				m_bMuzzleSmoke = false;
+			}
 		}
 	}
 }
@@ -2247,10 +2264,13 @@ void CPlayer::Ready_Effect()
 	m_pMuzzle_Flash_SG->SetSize(0.6f, 0.6f);
 
 	m_pMuzzle_Smoke = CMuzzle_Smoke::Create(m_pDevice, m_pContext);
+	m_pMuzzle_Smoke->Initialize(nullptr);
 	m_pMuzzle_Smoke->SetSize(0.2f, 0.2f);
 
-	m_pMuzzle_Spark_SG = CMuzzle_Spark_SG::Create(m_pDevice, m_pContext);
-	m_pMuzzle_Spark_SG->SetSize(0.6f, 0.6f);
+	m_pMuzzle_Smoke_SG = CMuzzle_Smoke::Create(m_pDevice, m_pContext);
+	m_pMuzzle_Flash_SG->SetType(1);
+	m_pMuzzle_Smoke_SG->Initialize(nullptr);
+	m_pMuzzle_Smoke_SG->SetSize(0.4f, 0.4f);
 }
 
 void CPlayer::Release_Effect()
@@ -2258,19 +2278,19 @@ void CPlayer::Release_Effect()
 	Safe_Release(m_pMuzzle_Flash);
 	Safe_Release(m_pMuzzle_Flash_SG);
 	Safe_Release(m_pMuzzle_Smoke);
-	Safe_Release(m_pMuzzle_Spark_SG);
+	Safe_Release(m_pMuzzle_Smoke_SG);
 }
 
 void CPlayer::Tick_Effect(_float fTimeDelta)
 {
 	m_pMuzzle_Smoke->Tick(fTimeDelta);
-	m_pMuzzle_Spark_SG->Tick(fTimeDelta);
+	m_pMuzzle_Smoke_SG->Tick(fTimeDelta);
 	m_pMuzzle_Flash->Tick(fTimeDelta);
-	m_pMuzzle_Flash_SG->Tick(fTimeDelta);
 
 	if(m_eEquip == STG)
 	{
 		m_pMuzzle_Flash_SG->SetPosition(Get_MuzzlePosition());
+		m_pMuzzle_Flash_SG->Tick(fTimeDelta);
 	}
 
 	Set_Muzzle_Smoke();
@@ -2278,8 +2298,8 @@ void CPlayer::Tick_Effect(_float fTimeDelta)
 
 void CPlayer::Late_Tick_Effect(_float fTimeDelta)
 {
-	m_pMuzzle_Spark_SG->Late_Tick(fTimeDelta);
 	m_pMuzzle_Smoke->Late_Tick(fTimeDelta);
+	m_pMuzzle_Smoke_SG->Late_Tick(fTimeDelta);
 	m_pMuzzle_Flash->Late_Tick(fTimeDelta);
 	m_pMuzzle_Flash_SG->Late_Tick(fTimeDelta);
 }
