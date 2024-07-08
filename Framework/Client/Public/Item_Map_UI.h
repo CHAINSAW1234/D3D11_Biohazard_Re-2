@@ -42,6 +42,8 @@ private :
 	_bool							m_isItemEnd		= { false };
 	_vector							m_vMapOpen_Player_Distance = {};
 
+	_float4							m_vOriginPos = {};
+
 private:
 	MAP_FLOOR_TYPE		m_ePrevViewFloor = { MAP_FLOOR_TYPE::FLOOR_1 };
 

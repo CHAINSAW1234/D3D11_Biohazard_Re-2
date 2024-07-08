@@ -338,8 +338,9 @@ void CPlayer_Map_UI::Map_Player_Moving(_float fTimeDelta)
 void CPlayer_Map_UI::Map_Player_Setting()
 {
     /* ▶ Map Player <-> Main Map 거리 재기 완료 시에  */
-    if (true == IsDistanceMeasured_Completely(true))
+    if (true == IsDistanceMeasured_Completely(true) || m_eCurrent_ViewFloor != m_ePrevCurrent_ViewFloor)
     {
+        m_ePrevCurrent_ViewFloor = m_eCurrent_ViewFloor;
         /* 1. Prev Render 에 현재 렌더를 넣어준다 */
         m_isPrevRender = m_pTab_Window->Get_MinMapRender();
 
