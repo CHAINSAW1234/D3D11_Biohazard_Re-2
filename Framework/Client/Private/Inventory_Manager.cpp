@@ -585,7 +585,31 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 
 void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 {
+	switch (m_eTaskSequence)
+	{
+	case Client::CInventory_Manager::SETING: {
+		CInventory_Slot* pHoverdSlot = m_pHotkey->Get_Hoverd_Slot();
+		if (nullptr == pHoverdSlot)
+		{
 
+		}
+
+
+		break;
+	}
+		
+	case Client::CInventory_Manager::SELECT: {
+		break;
+	}
+		
+	case Client::CInventory_Manager::APPLY: {
+		break;
+	}
+		
+
+	default:
+		break;
+	}
 }
 
 void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
@@ -774,6 +798,7 @@ void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 		
 	case Client::HOTKEY_ASSIGNED_ITEM: {
 		m_eInven_Manager_State = HOTKEY_ASSIGNED_ITEM;
+		m_eTaskSequence = SETING;
 		m_pContextMenu->Set_Dead(true);
 		break;
 	}

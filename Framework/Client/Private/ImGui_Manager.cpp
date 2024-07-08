@@ -82,6 +82,7 @@ void CImgui_Manager::Tick()
     {
         m_bTabWindow_Debuger = !m_bTabWindow_Debuger;
         m_bPlayer_Debuger = !m_bPlayer_Debuger;
+        m_bShader_Debuger = !m_bShader_Debuger;
     }
 
     if (true == m_bTabWindow_Debuger)
@@ -89,6 +90,9 @@ void CImgui_Manager::Tick()
 
     if (true == m_bPlayer_Debuger)
         Window_Player_Debuger();
+
+    if (true == m_bShader_Debuger)
+        Window_Shader_Debuger();
 
 }
 
@@ -171,6 +175,53 @@ void CImgui_Manager::Window_Player_Debuger()
     if (ImGui::Button(u8"SetPlayerHP", ImVec2(100.f, 30.f)))
     {
         m_pPlayer->Set_Hp(m_iPlayerHP);
+    }
+
+    ImGui::End();
+}
+
+void CImgui_Manager::Window_Shader_Debuger()
+{
+    ImGui::Begin("Shader_Debug");
+
+    if (ImGui::Checkbox("Debug_Render", &m_bDebugRender))
+    {
+        m_pGameInstance->On_Off_DebugRender();
+    }
+
+    NL;
+
+    if (ImGui::Checkbox("SSAO", &m_bShaderOnOff[SSAO]))
+    {
+        m_pGameInstance->Set_ShaderState(SSAO, m_bShaderOnOff[SSAO]);
+    }
+
+    SL;
+
+    if (ImGui::Checkbox("SSR", &m_bShaderOnOff[SSR]))
+    {
+        m_pGameInstance->Set_ShaderState(SSR, m_bShaderOnOff[SSR]);
+    }
+
+    SL;
+
+    if (ImGui::Checkbox("DOF", &m_bShaderOnOff[DOF]))
+    {
+        m_pGameInstance->Set_ShaderState(DOF, m_bShaderOnOff[DOF]);
+    }
+
+    NL;
+
+    if (ImGui::Checkbox("VOLUMETRIC", &m_bShaderOnOff[VOLUMETRIC]))
+    {
+        m_pGameInstance->Set_ShaderState(VOLUMETRIC, m_bShaderOnOff[VOLUMETRIC]);
+    }
+
+    SL;
+
+    if (ImGui::Checkbox("FXAA", &m_bShaderOnOff[FXAA]))
+    {
+        m_pGameInstance->Set_ShaderState(FXAA, m_bShaderOnOff[FXAA]);
     }
 
     ImGui::End();
