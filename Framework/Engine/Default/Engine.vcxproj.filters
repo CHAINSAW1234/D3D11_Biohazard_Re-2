@@ -926,9 +926,6 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl">
       <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Compute.hlsl">
-      <Filter>01.Utility\98.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\RayCast.hlsl">
       <Filter>01.Utility\98.ShaderFiles\Compute_Shader</Filter>
     </FxCompile>
@@ -940,6 +937,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Skinning.hlsl">
       <Filter>01.Utility\98.ShaderFiles\Compute_Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_IrradianceMap.hlsl">
+      <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
