@@ -588,17 +588,16 @@ void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 	switch (m_eTaskSequence)
 	{
 	case Client::CInventory_Manager::SETING: {
-		CInventory_Slot* pHoverdSlot = m_pHotkey->Get_Hoverd_Slot();
-		if (nullptr == pHoverdSlot)
-		{
-
-		}
-
-
+		m_pDragShadow->Set_Dead(false);
 		break;
 	}
 		
 	case Client::CInventory_Manager::SELECT: {
+		CInventory_Slot* pHoverdSlot = m_pHotkey->Get_Hoverd_Slot();
+		if (nullptr != pHoverdSlot)
+		{
+			pHoverdSlot->GetPosition();
+		}
 		break;
 	}
 		
@@ -661,6 +660,7 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 					m_pSelected_ItemUI->Move(fMove);
 					Find_Slot(_float2(fPrePos.x, fPrePos.y))->Set_IsFilled(false);
 					Find_Slot(_float2( m_pDragShadow->GetPosition().x, m_pDragShadow->GetPosition().y ))->Set_IsFilled(true);
+					
 					m_pSlotHighlighter->Set_DragShadow(false);
 					m_eInven_Manager_State = EVENT_IDLE;
 					m_eTaskSequence = TS_END;
@@ -689,8 +689,6 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 						m_pTemp_ItemUI = pOverLapItem;
 						m_eTaskSequence = SELECT;
 					}
-
-
 				}
 			}
 		}
@@ -872,6 +870,11 @@ CInventory_Slot* CInventory_Manager::Find_Slot(_float2 FindPos)
 	}
 
 	return nullptr;
+}
+
+void CInventory_Manager::Deactivation(CItem_UI* pExcludeObj)
+{
+	
 }
 
 void CInventory_Manager::Set_OnOff_Inven(_bool bInput)

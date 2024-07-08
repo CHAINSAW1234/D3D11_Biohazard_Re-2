@@ -51,6 +51,7 @@ private:
 	void Switch_ItemPos(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI);
 	void Combind_Item(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI);
 	CInventory_Slot* Find_Slot(_float2 FindPos);
+	void Deactivation(CItem_UI* pExcludeObj);
 
 public:
 	//Set_Dead호출이라 m_bDead기준으로 변수 줄것
