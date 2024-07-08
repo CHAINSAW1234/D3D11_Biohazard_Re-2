@@ -39,7 +39,7 @@ void CMuzzle_Flash::Tick(_float fTimeDelta)
 	if (m_bRender == false)
 		return;
 
-	//++m_iFrame;
+	++m_iFrame;
 
 	if (m_iFrame >= 2)
 	{
@@ -152,7 +152,7 @@ HRESULT CMuzzle_Flash::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaxUV_Y", &m_fMaxUV_Y, sizeof(m_fMaxUV_Y))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", (_uint)m_fFrame)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fAlpha_Delta", &m_fAlpha_Delta_Sum, sizeof(m_fAlpha_Delta_Sum))))

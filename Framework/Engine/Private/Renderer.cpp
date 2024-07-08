@@ -144,11 +144,11 @@ HRESULT CRenderer::Render()
 
 	if (FAILED(Render_PostProcessing_Result()))
 		return E_FAIL;
-
-	if (FAILED(Render_Effect()))
-		return E_FAIL;
 	
 	if (FAILED(Render_Effect_Bloom()))
+		return E_FAIL;
+
+	if (FAILED(Render_Effect()))
 		return E_FAIL;
 
 	if (FAILED(Render_UI()))
@@ -2221,9 +2221,6 @@ void CRenderer::Set_ViewPort_Size(_float fWidth, _float fHeight, _uint iArraySiz
 
 HRESULT CRenderer::Render_Debug()
 {
-	if (false == m_isRenderDebug)
-		return S_OK;
-
 	for (auto& pDebugCom : m_DebugComponents)
 	{
 		if (nullptr != pDebugCom)
@@ -2232,6 +2229,9 @@ HRESULT CRenderer::Render_Debug()
 		Safe_Release(pDebugCom);
 	}
 	m_DebugComponents.clear();
+
+	if (false == m_isRenderDebug)
+		return S_OK;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
@@ -2283,8 +2283,8 @@ HRESULT CRenderer::Render_Debug()
 		return E_FAIL;
 
 
-	//if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Test"), m_pShader, m_pVIBuffer)))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Test"), m_pShader, m_pVIBuffer)))
+		return E_FAIL;
 
 	return S_OK;
 }

@@ -51,26 +51,27 @@
 #include "Body_Cabinet.h"
 #include "Window.h"
 #include "Body_Window.h"
-#include"NewpoliceStatue.h"
-#include"Body_NewpoliceStatue.h"
-#include"ItemProp.h"
-#include"Body_ItemProp.h"
-#include"EventProp.h"
-#include"Body_EventProp.h"
-#include"Statue.h"
-#include"Body_Statue.h"
-#include"Shutter.h"
-#include"Body_Shutter.h"
-#include"ItemLocker.h"
-#include"Body_ItemLocker.h"
-#include"Ladder.h"
-#include"Body_Ladder.h"
-#include"ReaderMachine.h"
-#include"Body_ReaderMachine.h"
-#include"MovingShelf.h"
-#include"Body_MovingShelf.h"
-#include"Lever.h"
-#include"Body_Lever.h"
+#include "Pannel_Window.h"
+#include "NewpoliceStatue.h"
+#include "Body_NewpoliceStatue.h"
+#include "ItemProp.h"
+#include "Body_ItemProp.h"
+#include "EventProp.h"
+#include "Body_EventProp.h"
+#include "Statue.h"
+#include "Body_Statue.h"
+#include "Shutter.h"
+#include "Body_Shutter.h"
+#include "ItemLocker.h"
+#include "Body_ItemLocker.h"
+#include "Ladder.h"
+#include "Body_Ladder.h"
+#include "ReaderMachine.h"
+#include "Body_ReaderMachine.h"
+#include "MovingShelf.h"
+#include "Body_MovingShelf.h"
+#include "Lever.h"
+#include "Body_Lever.h"
 
 /* UI */
 #include "Customize_UI.h"
@@ -842,6 +843,9 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			Inform->bAnim = true;
 
 			_matrix Ininitmatrix  = XMMatrixRotationY(XMConvertToRadians(180.f));
+			/*if(Inform->wstrGameObjectPrototypeName.find(TEXT("sm40_007")) != wstring::npos)
+				m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, Inform->strModelPath.c_str(), Ininitmatrix));
+			else*/
 			m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, Inform->strModelPath.c_str(), Ininitmatrix));
 		}
 		else
@@ -926,6 +930,12 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Lever"), CLever::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MovingShelf"), CMovingShelf::Create(m_pDevice, m_pContext));
+
+
+	_matrix Ininitmatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_034_windowbarricade01a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM,"..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_034_windowbarricade01a.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_035_windowoldbarricade01a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_035_windowoldbarricade01a.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PannelWindow"), CPannel_Window::Create(m_pDevice, m_pContext));
 
 
 	//m_pGameInstance->Set_ModelTags(TEXT("ItemModel_Tags"), ItemModelTags);
@@ -1290,6 +1300,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Dissolve/Dissolve.png")))))
 		return E_FAIL;
 
+	/*Prototype_Component_Texture_Dissolve*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Light_SG"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Light_SG/Muzzle_Light_SG.dds")))))
+		return E_FAIL;
+
 	//Muzzle Flash
 	CTexture::TEXTURE_DESC Desc{};
 	Desc.iWidth = 1024;
@@ -1330,6 +1345,16 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/*Prototype_Component_Texture_Muzzle_Flash_SG*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Smoke_SG_Trail"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Smoke_SG/Muzzle_Smoke_SG_Trail.dds"), 1, &Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 512;
+	Desc.iHeight = 128;
+	Desc.iCountX = 4;
+	Desc.iCountY = 1;
+
+	/*Prototype_Component_Texture_Muzzle_Flash_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Spark_SG/Muzzle_Spark_SG.dds"), 1, &Desc))))
 		return E_FAIL;
 #pragma endregion
 

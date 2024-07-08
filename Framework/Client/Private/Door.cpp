@@ -160,7 +160,7 @@ HRESULT CDoor::Add_Components()
 			TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
 			return E_FAIL;
 
-		ColliderDesc.fRadius = _float(100.f);
+		ColliderDesc.fRadius = _float(120.f);
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Normal_Step2"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP2], &ColliderDesc)))
 			return E_FAIL;
@@ -178,7 +178,7 @@ HRESULT CDoor::Add_Components()
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Double_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP1], &ColliderDesc)))
 			return E_FAIL;
-		ColliderDesc.fRadius = _float(100.f);
+		ColliderDesc.fRadius = _float(120.f);
 		/* For.Com_Collider */
 		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 			TEXT("Com_Collider_Double_Step2"), (CComponent**)&m_pColliderCom[INTER_COL_DOUBLE][COL_STEP2], &ColliderDesc)))
@@ -325,52 +325,63 @@ void CDoor::DoubleDoor_Tick(_float fTimeDelta)
 
 void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 {
-	if (m_eDoubleDoorType == DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR)
+	//if (m_eDoubleDoorType == DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR)
+	//{
+	//	switch (m_eDoubleState)
+	//	{
+	//	case CDoor::LSIDE_DOUBLEDOOR_OPEN_L:
+	//	{
+	//		m_eDoubleState_Prev = m_eDoubleState;
+
+	//		break;
+
+	//	}
+	//	case CDoor::LSIDE_DOUBLEDOOR_OPEN_R:
+	//	{
+	//		m_eDoubleState_Prev = m_eDoubleState;
+
+	//		break;
+
+	//	}
+	//	case CDoor::RSIDE_DOUBLEDOOR_OPEN_L:
+	//	{
+	//		m_eDoubleState_Prev = m_eDoubleState;
+
+	//		break;
+
+	//	}
+	//	case CDoor::RSIDE_DOUBLEDOOR_OPEN_R:
+	//	{
+	//		m_eDoubleState_Prev = m_eDoubleState;
+
+	//		break;
+
+	//	}
+	//	case CDoor::DOUBLEDOOR_STATIC:
+	//	{
+	//		break;
+	//	}
+	//	/*case CDoor::L_DOUBLEDOOR_OPEN:
+	//	{
+	//		m_eDoubleState_Prev = m_eDoubleState;
+	//		break;
+	//	}
+	//	case CDoor::R_DOUBLEDOOR_OPEN:
+	//	{
+	//		m_eDoubleState_Prev = m_eDoubleState;
+
+	//		break;
+	//	}*/
+	//	}
+
+	//}
+	//else
 	{
 		switch (m_eDoubleState)
 		{
 		case CDoor::LSIDE_DOUBLEDOOR_OPEN_L:
 		{
 			m_eDoubleState_Prev = m_eDoubleState;
-
-			break;
-
-		}
-		case CDoor::LSIDE_DOUBLEDOOR_OPEN_R:
-		{
-			m_eDoubleState_Prev = m_eDoubleState;
-
-			break;
-
-		}
-		case CDoor::RSIDE_DOUBLEDOOR_OPEN_L:
-		{
-			m_eDoubleState_Prev = m_eDoubleState;
-
-			break;
-
-		}
-		case CDoor::RSIDE_DOUBLEDOOR_OPEN_R:
-		{
-			m_eDoubleState_Prev = m_eDoubleState;
-
-			break;
-
-		}
-		case CDoor::DOUBLEDOOR_STATIC:
-		{
-			break;
-		}
-		}
-
-	}
-	else
-	{
-		switch (m_eDoubleState)
-		{
-		case CDoor::LSIDE_DOUBLEDOOR_OPEN_L:
-		{
-			m_eDoubleState_Prev = m_eDoubleState;
 			break;
 		}
 		case CDoor::LSIDE_DOUBLEDOOR_OPEN_R:
@@ -395,7 +406,17 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		{
 			break;
 		}
+		case CDoor::L_DOUBLEDOOR_OPEN:
+		{
+			m_eDoubleState_Prev = m_eDoubleState;
+			break;
+		}
+		case CDoor::R_DOUBLEDOOR_OPEN:
+		{
+			m_eDoubleState_Prev = m_eDoubleState;
 
+			break;
+		}
 		}
 	}
 	if (Activate_Col(Get_Collider_World_Pos(_float4(-90.f, 1.f, 0.f, 1.f)))|| Activate_Col(Get_Collider_World_Pos(_float4(-30.f, 1.f, 0.f, 1.f)))|| Activate_Col(Get_Collider_World_Pos(_float4(-150.f, 1.f, 0.f, 1.f))))
@@ -484,7 +505,7 @@ void CDoor::DoubleDoor_Active()
 	if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
 	{
 		if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && m_bCol[INTER_COL_DOUBLE][COL_STEP1])
-			m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_L;//m_eDoubleState = L_DOUBLEDOOR_OPEN;
+			m_eDoubleState = L_DOUBLEDOOR_OPEN;
 		else if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
 			m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_L;
 		else
@@ -494,7 +515,7 @@ void CDoor::DoubleDoor_Active()
 	else
 	{
 		if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && m_bCol[INTER_COL_DOUBLE][COL_STEP1])
-			m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_R;			//m_eDoubleState = R_DOUBLEDOOR_OPEN;
+			m_eDoubleState = R_DOUBLEDOOR_OPEN;
 		else if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
 			m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_R;
 		else

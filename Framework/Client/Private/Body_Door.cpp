@@ -49,7 +49,7 @@ HRESULT CBody_Door::Initialize(void* pArg)
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
-	m_pModelCom->Set_TotalLinearInterpolation(0.2f);
+	m_pModelCom->Set_TotalLinearInterpolation(0.5f);
 
 	/*
 	if (m_eType == DOOR_DOUBLE)
@@ -65,7 +65,7 @@ HRESULT CBody_Door::Initialize(void* pArg)
 
 	if (*m_pState == CDoor::DOOR_DOUBLE)
 	{
-		if (*m_pDoubleDoorType == DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR)
+		/*if (*m_pDoubleDoorType == DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR)
 		{
 			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root_Double_Door(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
@@ -75,7 +75,7 @@ HRESULT CBody_Door::Initialize(void* pArg)
 			m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L] = m_pModelCom->Get_BonePtr("_04");
 			m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R] = m_pModelCom->Get_BonePtr("_02");
 		}
-		else
+		else*/
 		{
 			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
@@ -352,7 +352,7 @@ void CBody_Door::DoubleDoor_Tick(_float fTimeDelta)
 
 void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 {
-	if (*m_pDoubleDoorType == DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR)
+	/*if (*m_pDoubleDoorType == DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR)
 	{
 		switch (*m_pDoubleState)
 		{
@@ -363,7 +363,7 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
-			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
+			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
 			break;
 		}
 		case CDoor::LSIDE_DOUBLEDOOR_OPEN_R:
@@ -373,7 +373,7 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R]->Get_TrasformationMatrix();
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
-			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
+			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
 
 			break;
 		}
@@ -409,7 +409,7 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 				auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L]->Get_TrasformationMatrix();
 				_float4x4 ResultMat;
 				XMStoreFloat4x4(&ResultMat, Combined);
-				m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
+				m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
 				break;
 			}
 			case CDoor::LSIDE_DOUBLEDOOR_OPEN_R:
@@ -417,7 +417,7 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 				auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R]->Get_TrasformationMatrix();
 				_float4x4 ResultMat;
 				XMStoreFloat4x4(&ResultMat, Combined);
-				m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
+				m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
 				break;
 			}
 			case CDoor::RSIDE_DOUBLEDOOR_OPEN_L:
@@ -442,7 +442,7 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 		}
 		}
 	}
-	else
+	else*/
 	{
 		switch (*m_pDoubleState)
 		{
@@ -528,9 +528,70 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 
 				break;
 			}
+			case CDoor::L_DOUBLEDOOR_OPEN:
+			{
+				auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L]->Get_TrasformationMatrix();
+				_float4x4 ResultMat;
+				XMStoreFloat4x4(&ResultMat, Combined);
+				m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
+				m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
+
+				Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R]->Get_TrasformationMatrix();
+				XMStoreFloat4x4(&ResultMat, Combined);
+				m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
+
+				break;
+			}
+			case CDoor::R_DOUBLEDOOR_OPEN:
+			{
+				auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R]->Get_TrasformationMatrix();
+				_float4x4 ResultMat;
+				XMStoreFloat4x4(&ResultMat, Combined);
+				m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
+				m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
+
+				Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L]->Get_TrasformationMatrix();
+				XMStoreFloat4x4(&ResultMat, Combined);
+				m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
+
+				break;
+			}
+
 			}
 			break;
 		}
+		case CDoor::L_DOUBLEDOOR_OPEN:
+		{
+			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
+
+			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L]->Get_TrasformationMatrix();
+			_float4x4 ResultMat;
+			XMStoreFloat4x4(&ResultMat, Combined);
+			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
+			 Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R]->Get_TrasformationMatrix();
+			XMStoreFloat4x4(&ResultMat, Combined);
+			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
+
+			break;
+		}
+		case CDoor::R_DOUBLEDOOR_OPEN:
+		{
+			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
+
+			auto Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R]->Get_TrasformationMatrix();
+			_float4x4 ResultMat;
+			XMStoreFloat4x4(&ResultMat, Combined);
+			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_L);
+			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
+
+			Combined = m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L]->Get_TrasformationMatrix();
+			XMStoreFloat4x4(&ResultMat, Combined);
+			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
+
+			break;
+		}
+
 		}
 	}
 

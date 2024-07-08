@@ -32,6 +32,7 @@ public:
 	_float4					GetPosition();
 	virtual void			SetPosition(_float4 Pos) override;
 	void					RayCast_Decal();
+	virtual void			Start() override;
 private:
 	virtual HRESULT			Add_Components();
 	virtual HRESULT			Bind_ShaderResources();

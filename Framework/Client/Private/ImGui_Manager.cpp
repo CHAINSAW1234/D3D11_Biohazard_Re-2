@@ -184,10 +184,12 @@ void CImgui_Manager::Window_Shader_Debuger()
 {
     ImGui::Begin("Shader_Debug");
 
+#ifdef _DEBUG
     if (ImGui::Checkbox("Debug_Render", &m_bDebugRender))
     {
         m_pGameInstance->On_Off_DebugRender();
     }
+#endif
 
     NL;
 

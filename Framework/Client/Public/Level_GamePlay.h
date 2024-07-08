@@ -63,7 +63,7 @@ private:
 
 #pragma region 예은 추가 (임시임)
 private:
-	class CProp_Manager* m_pPropManager = { nullptr };
+	//class CProp_Manager* m_pPropManager = { nullptr };
 	_int iCurIndex = { 0 };
 	_int iPreIndex = { 0 };
 #pragma endregion
