@@ -43,7 +43,7 @@ public:
 
 #pragma region 예은 추가
 	class CRead_Item_UI*	m_pRead_Item_UI = { nullptr };
-	class CMap_UI*			m_pMap_UI = { nullptr };
+	class CItem_Map_UI*			m_pMap_UI = { nullptr };
 #pragma endregion 
 
 
