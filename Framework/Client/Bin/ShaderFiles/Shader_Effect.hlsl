@@ -199,7 +199,7 @@ PS_OUT_EFFECT PS_MUZZLE_LIGHT(PS_IN In)
 
 	float alpha = saturate(1.0 - distance);
 
-	Out.vColor.a *= alpha;
+	Out.vColor.a *= alpha*0.75f;
 
 	return Out;
 }
