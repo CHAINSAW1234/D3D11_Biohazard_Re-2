@@ -58,19 +58,7 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pRende
 
 HRESULT CRenderer::Render()
 {
-	// for test
-	//if (m_pGameInstance->Get_KeyState('1') == DOWN)
-	//	m_ShaderOptions[SSAO] = !m_ShaderOptions[SSAO];
-	//if (m_pGameInstance->Get_KeyState('2') == DOWN)
-	//	m_ShaderOptions[MOTION_BLUR] = !m_ShaderOptions[MOTION_BLUR];
-	//if (m_pGameInstance->Get_KeyState('3') == DOWN)
-	//	m_ShaderOptions[SSR] = !m_ShaderOptions[SSR];
-	//if (m_pGameInstance->Get_KeyState('4') == DOWN)
-	//	m_ShaderOptions[DOF] = !m_ShaderOptions[DOF];
-	//if (m_pGameInstance->Get_KeyState('5') == DOWN)
-	//	m_ShaderOptions[VOLUMETRIC] = !m_ShaderOptions[VOLUMETRIC];
-	//if (m_pGameInstance->Get_KeyState('6') == DOWN)
-	//	m_ShaderOptions[FXAA] = !m_ShaderOptions[FXAA];
+
 	if (m_pGameInstance->Get_KeyState('2') == DOWN)
 		Set_RenderFieldShadow(true);
 
@@ -880,12 +868,12 @@ HRESULT CRenderer::Render_Test()
 
 HRESULT CRenderer::SetUp_Debug()
 {
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Bloom"), 100.0f, 100.0f, 200.f, 200.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Bloom_Blur_Y"), 100.0f, 300.0f, 200.f, 200.f)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Bloom"), 100.0f, 100.0f, 200.f, 200.f)))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Bloom_Blur_Y"), 100.0f, 300.0f, 200.f, 200.f)))
+	//	return E_FAIL;
 
-	return S_OK;
+	//return S_OK;
 
 	_float fSize = 150.f;
 
@@ -2242,10 +2230,13 @@ void CRenderer::Set_ViewPort_Size(_float fWidth, _float fHeight, _uint iArraySiz
 
 HRESULT CRenderer::Render_Debug()
 {
+
 	for (auto& pDebugCom : m_DebugComponents)
 	{
-		if (nullptr != pDebugCom)
-			pDebugCom->Render();
+		if (true == m_isRenderDebug) {
+			if (nullptr != pDebugCom)
+				pDebugCom->Render();
+		}
 
 		Safe_Release(pDebugCom);
 	}

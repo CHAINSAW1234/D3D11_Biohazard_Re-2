@@ -197,7 +197,7 @@ PS_OUT_EFFECT PS_MUZZLE_LIGHT(PS_IN In)
 
 	float distance = length(In.vTexcoord - center);
 
-	float alpha = saturate(1.0 - distance*1.25f);
+	float alpha = saturate(1.0 - distance*2.f);
 
 	Out.vColor.a *= alpha;
 
