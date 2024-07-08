@@ -144,11 +144,11 @@ HRESULT CRenderer::Render()
 
 	if (FAILED(Render_PostProcessing_Result()))
 		return E_FAIL;
-
-	if (FAILED(Render_Effect()))
-		return E_FAIL;
 	
 	if (FAILED(Render_Effect_Bloom()))
+		return E_FAIL;
+
+	if (FAILED(Render_Effect()))
 		return E_FAIL;
 
 	if (FAILED(Render_UI()))
@@ -1168,7 +1168,6 @@ HRESULT CRenderer::Render_UI()
 		return pFirst->GetPosition().z > pSecond->GetPosition().z;
 		});
 
-	
 	for (auto& pRenderObject : m_RenderObjects[RENDER_UI])
 	{
 		if (nullptr != pRenderObject)
@@ -2284,8 +2283,8 @@ HRESULT CRenderer::Render_Debug()
 		return E_FAIL;
 
 
-	//if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Test"), m_pShader, m_pVIBuffer)))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Test"), m_pShader, m_pVIBuffer)))
+		return E_FAIL;
 
 	return S_OK;
 }

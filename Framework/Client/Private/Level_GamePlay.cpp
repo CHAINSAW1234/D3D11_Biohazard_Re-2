@@ -111,9 +111,6 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 			m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta);
 		}		
 	}
-
-
-
 }
 
 HRESULT CLevel_GamePlay::Render()
@@ -264,10 +261,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
 	//희히 넘 바쁜 관계로 함수 못팠어요 - 예은
 
-	/*if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
-		return E_FAIL;*/
+	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
+		return E_FAIL;
 
-	
 	CZombie::ZOMBIE_MALE_DESC		ObjectDesc;
 	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
 	ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };

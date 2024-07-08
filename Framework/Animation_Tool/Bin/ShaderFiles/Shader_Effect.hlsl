@@ -166,6 +166,22 @@ PS_OUT_EFFECT PS_EFFECT(PS_IN In)
 	return Out;
 }
 
+PS_OUT_EFFECT PS_EFFECT_NORMAL(PS_IN In)
+{
+	PS_OUT_EFFECT      Out = (PS_OUT_EFFECT)0;
+
+	float       fTexcoordLinearX = g_fMinUV_X + (In.vTexcoord.x * (g_fMaxUV_X - g_fMinUV_X));
+	float       fTexcoordLinearY = g_fMinUV_Y + (In.vTexcoord.y * (g_fMaxUV_Y - g_fMinUV_Y));
+	float2      vTexcoordLinear = float2(fTexcoordLinearX, fTexcoordLinearY);
+
+	Out.vDiffuse = g_Texture.Sample(LinearSampler, vTexcoordLinear);
+
+	if (Out.vDiffuse.a < 0.3f)
+		discard;
+
+	return Out;
+}
+
 VS_OUT VS_DECAL(VS_IN In)
 {
 	VS_OUT output = (VS_OUT)0.f;
@@ -302,5 +318,19 @@ technique11 DefaultTechnique
 		HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
 		DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
 		PixelShader = compile ps_5_0 PS_BLOOD();
+	}
+
+	//5
+	pass Normal
+	{
+		SetRasterizerState(RS_NoCulling);
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+		HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+		DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+		PixelShader = compile ps_5_0 PS_EFFECT_NORMAL();
 	}
 }

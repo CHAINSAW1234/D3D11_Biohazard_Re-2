@@ -19,7 +19,7 @@ HRESULT CBlackBoard_Zombie::Initialize(void* pArg)
 	if (nullptr == pArg)
 		return E_FAIL;
 
-	BLACKBOARD_ZOMBIE_DESC*			pDesc = { static_cast<BLACKBOARD_ZOMBIE_DESC*>(pArg) };
+	BLACKBOARD_ZOMBIE_DESC* pDesc = { static_cast<BLACKBOARD_ZOMBIE_DESC*>(pArg) };
 
 	m_pAI = pDesc->pAI;
 	if (nullptr == m_pAI)
@@ -41,9 +41,12 @@ HRESULT CBlackBoard_Zombie::SetUp_Nearest_Window()
 	if (false == m_pAI->Is_OutDoor())
 		return S_OK;
 
-	CWindow*		pWindow = { dynamic_cast<CWindow*>(Find_NearestObejct_In_Layer(TEXT("Layer_Window"))) };
+	CWindow* pWindow = { dynamic_cast<CWindow*>(Find_NearestObejct_In_Layer(TEXT("Layer_Window"))) };
+	//if (nullptr == pWindow)
+	//	return E_FAIL;
+
 	if (nullptr == pWindow)
-		return E_FAIL;
+		return S_OK;
 
 	m_pNearest_Window = pWindow;
 	Safe_AddRef(pWindow);
@@ -76,7 +79,7 @@ void CBlackBoard_Zombie::Update_Recognition_Timer(_float fTimeDelta)
 		return;
 
 	MONSTER_STATE					eCurrentState = { m_pAI->Get_Current_MonsterState() };
-	CMonster::MONSTER_STATUS*		pMonsterStatus = { m_pAI->Get_Status_Ptr() };
+	CMonster::MONSTER_STATUS* pMonsterStatus = { m_pAI->Get_Status_Ptr() };
 	if (MONSTER_STATE::MST_WALK != eCurrentState ||
 		MONSTER_STATE::MST_IDLE != eCurrentState)
 	{
@@ -84,14 +87,14 @@ void CBlackBoard_Zombie::Update_Recognition_Timer(_float fTimeDelta)
 		if (pMonsterStatus->fAccRecognitionTime < 0.f)
 			pMonsterStatus->fAccRecognitionTime = 0.f;
 		return;
-	}		
+	}
 
 	_float							fDistanceToPlayer = {};
 	if (false == Compute_Distance_To_Player(&fDistanceToPlayer))
 		return;
 
 	_bool							isLookTarget = { m_pAI->Is_LookTarget() };
-	_bool							isInRange = { false};
+	_bool							isInRange = { false };
 	if (true == isLookTarget)
 	{
 		isInRange = fDistanceToPlayer <= pMonsterStatus->fRecognitionRange_LookTarget;
@@ -183,7 +186,7 @@ void CBlackBoard_Zombie::Update_Hold_Timer(_float fTImeDelta)
 		return;
 
 	MONSTER_STATE					eCurrentState = { m_pAI->Get_Current_MonsterState() };
-	CMonster::MONSTER_STATUS*		pMonsterStatus = { m_pAI->Get_Status_Ptr() };
+	CMonster::MONSTER_STATUS* pMonsterStatus = { m_pAI->Get_Status_Ptr() };
 
 	_float							fDistanceToPlayer = {};
 	if (false == Compute_Distance_To_Player_World(&fDistanceToPlayer))
@@ -210,20 +213,28 @@ CGameObject* CBlackBoard_Zombie::Find_NearestObejct_In_Layer(const wstring& strL
 		return nullptr;
 
 	_float			fNearestDistance = { 100000.f };
-	CGameObject*	pNearObject = { nullptr };
+	CGameObject* pNearObject = { nullptr };
 
 	list<CGameObject*>* pTargetLayer = { m_pGameInstance->Find_Layer(g_Level, strLayerTag) };
-	for (auto& pGameObject : *pTargetLayer)
-	{
-		_float			fDistance = {};
-		if (false == Compute_Distance_To_Target(pGameObject, &fDistance))
-			continue;
 
-		if (fDistance < fNearestDistance)
+	if (pTargetLayer)
+	{
+		for (auto& pGameObject : *pTargetLayer)
 		{
-			fNearestDistance = fDistance;
-			pNearObject = pGameObject;
+			_float			fDistance = {};
+			if (false == Compute_Distance_To_Target(pGameObject, &fDistance))
+				continue;
+
+			if (fDistance < fNearestDistance)
+			{
+				fNearestDistance = fDistance;
+				pNearObject = pGameObject;
+			}
 		}
+	}
+	else
+	{
+		return nullptr;
 	}
 
 	return pNearObject;
@@ -231,7 +242,7 @@ CGameObject* CBlackBoard_Zombie::Find_NearestObejct_In_Layer(const wstring& strL
 
 void CBlackBoard_Zombie::Release_Nearest_Window()
 {
-	Safe_Release(m_pNearest_Window); 
+	Safe_Release(m_pNearest_Window);
 	m_pNearest_Window = nullptr;
 }
 
@@ -250,8 +261,8 @@ void CBlackBoard_Zombie::Update_Status(_float fTimeDelta)
 
 void CBlackBoard_Zombie::Update_Status_Stamina(_float fTimeDelta)
 {
-	CMonster::MONSTER_STATUS*			pMonsterStatus = { m_pAI->Get_Status_Ptr() };
-	
+	CMonster::MONSTER_STATUS* pMonsterStatus = { m_pAI->Get_Status_Ptr() };
+
 	pMonsterStatus->fStamina += pMonsterStatus->fStaminaChargingPerSec * fTimeDelta;
 
 	if (pMonsterStatus->fStamina > pMonsterStatus->fMaxStamina)
@@ -260,7 +271,7 @@ void CBlackBoard_Zombie::Update_Status_Stamina(_float fTimeDelta)
 
 void CBlackBoard_Zombie::Update_Look_Target(_float fTImeDelta)
 {
-	CMonster::MONSTER_STATUS*			pMonsterStatus = { m_pAI->Get_Status_Ptr() };
+	CMonster::MONSTER_STATUS* pMonsterStatus = { m_pAI->Get_Status_Ptr() };
 
 	if (true == pMonsterStatus->fAccRecognitionTime > pMonsterStatus->fLookTrargetNeedTime)
 	{
@@ -277,7 +288,7 @@ _bool CBlackBoard_Zombie::Hit_Player()
 	if (nullptr == m_pAI || nullptr == m_pPlayer)
 		return false;
 
-	CMonster::MONSTER_STATUS*		pStatus = { m_pAI->Get_Status_Ptr() };
+	CMonster::MONSTER_STATUS* pStatus = { m_pAI->Get_Status_Ptr() };
 	if (nullptr == pStatus)
 		return false;
 
@@ -285,13 +296,13 @@ _bool CBlackBoard_Zombie::Hit_Player()
 	m_pPlayer->Set_Hp(iPlayerHp - static_cast<_int>(pStatus->fAttack));
 
 	return true;
-	
+
 }
 
 void CBlackBoard_Zombie::Set_Current_MotionType_Body(MOTION_TYPE eType)
 {
-	CBody_Zombie*		pBodyZombie = { Get_PartObject_Body() };
-	if(nullptr == pBodyZombie)
+	CBody_Zombie* pBodyZombie = { Get_PartObject_Body() };
+	if (nullptr == pBodyZombie)
 		return;
 
 	pBodyZombie->Set_MotionType(eType);
@@ -302,11 +313,11 @@ _uint CBlackBoard_Zombie::Get_Current_MotionType_Body()
 	if (nullptr == m_pAI)
 		return static_cast<_uint>(MOTION_TYPE::MOTION_END);
 
-	CPartObject*		pPartObject = { m_pAI->Get_PartObject(CMonster::PART_BODY) };
+	CPartObject* pPartObject = { m_pAI->Get_PartObject(CMonster::PART_BODY) };
 	if (nullptr == pPartObject)
 		return static_cast<_uint>(MOTION_TYPE::MOTION_END);
 
-	CBody_Zombie*		pBodyObject = { dynamic_cast<CBody_Zombie*>(pPartObject) };
+	CBody_Zombie* pBodyObject = { dynamic_cast<CBody_Zombie*>(pPartObject) };
 	if (nullptr == pBodyObject)
 		return static_cast<_uint>(MOTION_TYPE::MOTION_END);
 
@@ -331,14 +342,14 @@ _uint CBlackBoard_Zombie::Get_Pre_MotionType_Body()
 
 CZombie::ZOMBIE_STATUS* CBlackBoard_Zombie::Get_ZombieStatus_Ptr()
 {
-	CZombie::ZOMBIE_STATUS*		pStatus = { static_cast<CZombie::ZOMBIE_STATUS*>(m_pAI->Get_Status_Ptr()) };
+	CZombie::ZOMBIE_STATUS* pStatus = { static_cast<CZombie::ZOMBIE_STATUS*>(m_pAI->Get_Status_Ptr()) };
 
 	return pStatus;
 }
 
 _int CBlackBoard_Zombie::Get_Current_AnimIndex(CMonster::PART_ID ePartID, PLAYING_INDEX eIndex)
 {
-	CModel*			pModel = { Get_PartModel(ePartID) };
+	CModel* pModel = { Get_PartModel(ePartID) };
 	if (nullptr == pModel)
 		return -1;
 
@@ -364,7 +375,7 @@ CModel* CBlackBoard_Zombie::Get_PartModel(_uint iPartType)
 
 _matrix CBlackBoard_Zombie::Get_FirstKeyFrame_RootTransformationMatrix(CMonster::PART_ID eID, const wstring& strAnimLayerTag, _int iAnimIndex)
 {
-	CModel*			pModel = { Get_PartModel(eID) };
+	CModel* pModel = { Get_PartModel(eID) };
 	if (nullptr == pModel)
 		return XMMatrixIdentity();
 
@@ -373,7 +384,7 @@ _matrix CBlackBoard_Zombie::Get_FirstKeyFrame_RootTransformationMatrix(CMonster:
 
 void CBlackBoard_Zombie::Reset_NonActive_Body(const list<_uint>& ActivePlayingIndices)
 {
-	CModel*			pBodyModel = { Get_PartModel(CZombie::PART_BODY) };
+	CModel* pBodyModel = { Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
 
@@ -409,8 +420,8 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Player_World(_float3* pDirection)
 	if (nullptr == m_pAI || nullptr == m_pPlayer || nullptr == pDirection)
 		return isSuccess;
 
-	CTransform*			pAITransform = { Get_Transform(m_pAI) };
-	CTransform*			pPlayerTransform = { Get_Transform(m_pPlayer) };
+	CTransform* pAITransform = { Get_Transform(m_pAI) };
+	CTransform* pPlayerTransform = { Get_Transform(m_pPlayer) };
 	if (nullptr == pAITransform || nullptr == pPlayerTransform)
 		return isSuccess;
 
@@ -431,8 +442,8 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Player_Local(_float3* pDirection)
 		return false;
 
 	_vector				vWorldDirection = { XMLoadFloat3(pDirection) };
-	
-	CTransform*			pAITransform = { Get_Transform(m_pAI) };
+
+	CTransform* pAITransform = { Get_Transform(m_pAI) };
 	if (nullptr == pAITransform)
 		return false;
 
@@ -449,8 +460,8 @@ _bool CBlackBoard_Zombie::Compute_Direction_From_Player_World(_float3* pDirectio
 	if (nullptr == m_pAI || nullptr == m_pPlayer || nullptr == pDirection)
 		return isSuccess;
 
-	CTransform*			pAITransform = { Get_Transform(m_pAI) };
-	CTransform*			pPlayerTransform = { Get_Transform(m_pPlayer) };
+	CTransform* pAITransform = { Get_Transform(m_pAI) };
+	CTransform* pPlayerTransform = { Get_Transform(m_pPlayer) };
 	if (nullptr == pAITransform || nullptr == pPlayerTransform)
 		return isSuccess;
 
@@ -472,7 +483,7 @@ _bool CBlackBoard_Zombie::Compute_Direction_From_Player_Local(_float3* pDirectio
 
 	_vector				vWorldDirection = { XMLoadFloat3(pDirection) };
 
-	CTransform*			pPlayerTransform = { Get_Transform(m_pPlayer) };
+	CTransform* pPlayerTransform = { Get_Transform(m_pPlayer) };
 	if (nullptr == pPlayerTransform)
 		return false;
 
@@ -503,7 +514,7 @@ _bool CBlackBoard_Zombie::Compute_Direction_From_Hit_Local(_float3* pDirection)
 	if (nullptr == m_pAI || false == isSuccess)
 		return isSuccess;
 
-	CTransform*			pAITransform = { Get_Transform(m_pAI) };
+	CTransform* pAITransform = { Get_Transform(m_pAI) };
 	if (nullptr == pAITransform)
 		return isSuccess;
 
@@ -579,8 +590,8 @@ _bool CBlackBoard_Zombie::Compute_Direction_To_Target_8Direction_Local(_fvector 
 
 	_bool				isRight = { XMVectorGetX(vDirectionToTargetLocal) > 0.f };
 	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMVector3Normalize(vDirectionToTargetLocal))) };
-	_float				fAngle = { acosf(fDot) };	
-	
+	_float				fAngle = { acosf(fDot) };
+
 	if (XMConvertToRadians(22.5f) > fAngle)
 	{
 		*pDirection = DIRECTION::_F;
@@ -686,7 +697,7 @@ _bool CBlackBoard_Zombie::Compute_Distance_To_Player(_float* pDistance)
 
 	*pDistance = fDistance;
 	isSuccess = true;
-	
+
 	return isSuccess;
 }
 
@@ -695,8 +706,8 @@ CTransform* CBlackBoard_Zombie::Get_Transform(CGameObject* pObject)
 	if (nullptr == pObject)
 		return nullptr;
 
-	CTransform*			pTransform = { dynamic_cast<CTransform*>(pObject->Get_Component(TEXT("Com_Transform"))) };
-	
+	CTransform* pTransform = { dynamic_cast<CTransform*>(pObject->Get_Component(TEXT("Com_Transform"))) };
+
 	return pTransform;
 }
 
@@ -710,8 +721,8 @@ _bool CBlackBoard_Zombie::Compute_HalfMatrix_Current_BiteAnim(const wstring& str
 	if (nullptr == m_pAI || nullptr == m_pPlayer || nullptr == pResultMatrix)
 		return false;
 
-	CTransform*			pPlayerTransform = { m_pPlayer->Get_Transform() };
-	CTransform*			pAITransform = { m_pAI->Get_Transform() };
+	CTransform* pPlayerTransform = { m_pPlayer->Get_Transform() };
+	CTransform* pAITransform = { m_pAI->Get_Transform() };
 
 	if (nullptr == pPlayerTransform || nullptr == pAITransform)
 		return false;
@@ -741,12 +752,12 @@ CModel* CBlackBoard_Zombie::Find_PartModel(_uint iPartID)
 	if (nullptr == m_pAI)
 		return nullptr;
 
-	CPartObject*		pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
+	CPartObject* pPartObject = { m_pAI->Get_PartObject(static_cast<CMonster::PART_ID>(iPartID)) };
 	if (nullptr == pPartObject)
 		return nullptr;
 
-	CModel*				pModel = { dynamic_cast<CModel*>(pPartObject->Get_Component(TEXT("Com_Model"))) };
-	
+	CModel* pModel = { dynamic_cast<CModel*>(pPartObject->Get_Component(TEXT("Com_Model"))) };
+
 	return pModel;
 }
 
@@ -768,7 +779,7 @@ CBody_Zombie* CBlackBoard_Zombie::Get_PartObject_Body()
 
 ZOMBIE_BODY_ANIM_GROUP CBlackBoard_Zombie::Get_Current_AnimGroup(PLAYING_INDEX eIndex)
 {
-	CBody_Zombie*			pPartBody = { Get_PartObject_Body() };
+	CBody_Zombie* pPartBody = { Get_PartObject_Body() };
 	if (nullptr == pPartBody)
 		return ZOMBIE_BODY_ANIM_GROUP::_END;
 
@@ -787,7 +798,7 @@ ZOMBIE_BODY_ANIM_TYPE CBlackBoard_Zombie::Get_Current_AnimType(PLAYING_INDEX eIn
 vector<_float> CBlackBoard_Zombie::Get_BlendWeights(_uint iPartID)
 {
 	vector<_float>			BlendWeights;
-	CModel*			pModel = { Find_PartModel(iPartID) };
+	CModel* pModel = { Find_PartModel(iPartID) };
 	if (nullptr == pModel)
 		return BlendWeights;
 
@@ -796,7 +807,7 @@ vector<_float> CBlackBoard_Zombie::Get_BlendWeights(_uint iPartID)
 
 	for (_uint i = 0; i < iNumPlayingInfo; ++i)
 	{
-		BlendWeights[i] = pModel->Get_BlendWeight(i);		
+		BlendWeights[i] = pModel->Get_BlendWeight(i);
 	}
 
 	return BlendWeights;

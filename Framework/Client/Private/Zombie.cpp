@@ -1471,6 +1471,7 @@ void CZombie::Ready_Effect()
 		auto pBlood = CBlood::Create(m_pDevice, m_pContext);
 		pBlood->SetSize(NORMAL_ATTACK_BLOOD_SIZE, NORMAL_ATTACK_BLOOD_SIZE, NORMAL_ATTACK_BLOOD_SIZE);
 		m_vecBlood.push_back(pBlood);
+		pBlood->Start();
 	}
 
 	for (size_t i = 0; i < SHOTGUN_BLOOD_COUNT; ++i)
@@ -1478,6 +1479,7 @@ void CZombie::Ready_Effect()
 		auto pBlood = CBlood::Create(m_pDevice, m_pContext);
 		pBlood->SetSize(BIG_ATTACK_BLOOD_SIZE, BIG_ATTACK_BLOOD_SIZE, BIG_ATTACK_BLOOD_SIZE);
 		m_vecBlood_STG.push_back(pBlood);
+		pBlood->Start();
 	}
 
 	for (size_t i = 0; i < BLOOD_DROP_COUNT; ++i)
@@ -1485,6 +1487,7 @@ void CZombie::Ready_Effect()
 		auto pBlood_Drop = CBlood_Drop::Create(m_pDevice, m_pContext);
 		pBlood_Drop->SetSize(NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP, NORMAL_ATTACK_BLOOD_SIZE_DROP);
 		m_vecBlood_Drop.push_back(pBlood_Drop);
+		pBlood_Drop->Start();
 	}
 
 	for (size_t i = 0; i < BLOOD_DROP_COUNT_STG; ++i)
@@ -1492,6 +1495,7 @@ void CZombie::Ready_Effect()
 		auto pBlood_Drop = CBlood_Drop::Create(m_pDevice, m_pContext);
 		pBlood_Drop->SetSize(BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP);
 		m_vecBlood_Drop_STG.push_back(pBlood_Drop);
+		pBlood_Drop->Start();
 	}
 
 	for (size_t i = 0; i < SHOTGUN_BLOOD_COUNT; ++i)
@@ -1499,6 +1503,7 @@ void CZombie::Ready_Effect()
 		auto pBlood_Drop = CBlood_Drop::Create(m_pDevice, m_pContext);
 		pBlood_Drop->SetSize(BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP, BIG_ATTACK_BLOOD_SIZE_DROP);
 		m_vecBlood_Drop_STG_NoRay.push_back(pBlood_Drop);
+		pBlood_Drop->Start();
 	}
 }
 

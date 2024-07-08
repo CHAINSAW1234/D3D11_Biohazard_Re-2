@@ -26,6 +26,7 @@
 #include "Tab_Window.h"
 #include "Bone.h"
 #include "Muzzle_Smoke.h"
+#include "Muzzle_Spark_SG.h"
 
 #include"MovingShelf.h"
 
@@ -851,6 +852,8 @@ void CPlayer::Shot()
 
 		m_pMuzzle_Flash_SG->Set_Render(true);
 		m_pMuzzle_Flash_SG->SetPosition(Get_MuzzlePosition());
+		m_pMuzzle_Spark_SG->Set_Render(true);
+		m_pMuzzle_Spark_SG->SetPosition(Get_MuzzlePosition());
 		break;
 		}
 	}
@@ -2197,7 +2200,10 @@ void CPlayer::Ready_Effect()
 	m_pMuzzle_Flash_SG->SetSize(0.6f, 0.6f);
 
 	m_pMuzzle_Smoke = CMuzzle_Smoke::Create(m_pDevice, m_pContext);
-	m_pMuzzle_Smoke->SetSize(0.15f, 0.15f);
+	m_pMuzzle_Smoke->SetSize(0.2f, 0.2f);
+
+	m_pMuzzle_Spark_SG = CMuzzle_Spark_SG::Create(m_pDevice, m_pContext);
+	m_pMuzzle_Spark_SG->SetSize(0.6f, 0.6f);
 }
 
 void CPlayer::Release_Effect()
@@ -2205,22 +2211,28 @@ void CPlayer::Release_Effect()
 	Safe_Release(m_pMuzzle_Flash);
 	Safe_Release(m_pMuzzle_Flash_SG);
 	Safe_Release(m_pMuzzle_Smoke);
+	Safe_Release(m_pMuzzle_Spark_SG);
 }
 
 void CPlayer::Tick_Effect(_float fTimeDelta)
 {
 	m_pMuzzle_Smoke->Tick(fTimeDelta);
-
+	m_pMuzzle_Spark_SG->Tick(fTimeDelta);
 	m_pMuzzle_Flash->Tick(fTimeDelta);
 	m_pMuzzle_Flash_SG->Tick(fTimeDelta);
+
+	if(m_eEquip == STG)
+	{
+		m_pMuzzle_Flash_SG->SetPosition(Get_MuzzlePosition());
+	}
 
 	Set_Muzzle_Smoke();
 }
 
 void CPlayer::Late_Tick_Effect(_float fTimeDelta)
 {
+	m_pMuzzle_Spark_SG->Late_Tick(fTimeDelta);
 	m_pMuzzle_Smoke->Late_Tick(fTimeDelta);
-
 	m_pMuzzle_Flash->Late_Tick(fTimeDelta);
 	m_pMuzzle_Flash_SG->Late_Tick(fTimeDelta);
 }

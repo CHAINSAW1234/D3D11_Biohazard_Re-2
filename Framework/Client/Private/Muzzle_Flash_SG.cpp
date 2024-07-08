@@ -2,6 +2,7 @@
 #include "..\Public\Muzzle_Flash_SG.h"
 
 #include "GameInstance.h"
+#include "Muzzle_Light_SG.h"
 
 CMuzzle_Flash_SG::CMuzzle_Flash_SG(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect{ pDevice, pContext }
@@ -31,6 +32,15 @@ HRESULT CMuzzle_Flash_SG::Initialize(void * pArg)
 
 	m_bRender = false;
 
+	m_FrameDelay = 20;
+
+	m_vFirstFrame_Size = _float2(0.45f, 0.45f);
+	m_vSecondFrame_Size = _float2(0.8f, 0.8f);
+	m_vThirdFrame_Size = _float2(0.55f, 0.55f);
+
+	m_pMuzzle_Light = CMuzzle_Light_SG::Create(m_pDevice, m_pContext);
+	m_pMuzzle_Light->SetSize(2.f, 2.f);
+
 	return S_OK;
 }
 
@@ -39,12 +49,39 @@ void CMuzzle_Flash_SG::Tick(_float fTimeDelta)
 	if (m_bRender == false)
 		return;
 
-	//++m_iFrame;
+	if (m_pMuzzle_Light)
+		m_pMuzzle_Light->Tick(fTimeDelta);
 
-	if (m_iFrame >= 2)
+	if (m_FrameDelay + m_FrameTime < GetTickCount64())
+	{
+		m_FrameTime = GetTickCount64();
+		++m_iMainFrame;
+	}
+
+	switch (m_iMainFrame)
+	{
+	case 0:
+		m_pTransformCom->Set_Scaled(m_vFirstFrame_Size.x, m_vFirstFrame_Size.y,1.f);
+		m_iFrame = 0;
+		break;
+	case 1:
+		m_pTransformCom->Set_Scaled(m_vSecondFrame_Size.x, m_vSecondFrame_Size.y, 1.f);
+		m_iFrame = 1;
+		m_pMuzzle_Light->Set_Render(true);
+		m_pMuzzle_Light->SetPosition(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+		break;
+	case 2:
+		m_pTransformCom->Set_Scaled(m_vThirdFrame_Size.x, m_vThirdFrame_Size.y, 1.f);
+		m_iFrame = 0;
+		//m_pMuzzle_Light->Set_Render(false);
+		break;
+	}
+
+	if (m_iMainFrame >= 3)
 	{
 		m_bRender = false;
 		m_iFrame = 0;
+		m_iMainFrame = 0;
 	}
 
 	Compute_CurrentUV();
@@ -56,6 +93,9 @@ void CMuzzle_Flash_SG::Late_Tick(_float fTimeDelta)
 {
 	if(m_bRender == true)
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EFFECT_BLOOM, this);
+
+	if(m_pMuzzle_Light)
+		m_pMuzzle_Light->Late_Tick(fTimeDelta);
 }
 
 HRESULT CMuzzle_Flash_SG::Render()
@@ -106,8 +146,6 @@ void CMuzzle_Flash_SG::SetSize(_float fSizeX, _float fSizeY)
 void CMuzzle_Flash_SG::SetPosition(_float4 Pos)
 {
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, Pos);
-	m_iFrame = 0;
-	m_fAlpha_Delta_Sum = 0.f;
 }
 
 HRESULT CMuzzle_Flash_SG::Add_Components()
@@ -152,7 +190,7 @@ HRESULT CMuzzle_Flash_SG::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaxUV_Y", &m_fMaxUV_Y, sizeof(m_fMaxUV_Y))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", (_uint)m_fFrame)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fAlpha_Delta", &m_fAlpha_Delta_Sum, sizeof(m_fAlpha_Delta_Sum))))
@@ -202,4 +240,5 @@ void CMuzzle_Flash_SG::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pMuzzle_Light);
 }

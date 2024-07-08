@@ -595,6 +595,12 @@
     <Filter Include="02.GameObjects\Effect\Blood_Drop">
       <UniqueIdentifier>{cff06b52-a101-4afb-bf3a-7cd6dd47d9ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Muzzle_Spark_SG">
+      <UniqueIdentifier>{6a9d0ca2-2e0e-4baa-b006-3132067b60d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Muzzle_Light_SG">
+      <UniqueIdentifier>{d266a5b0-0ad6-4523-971a-4fcdf37c8b12}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1143,6 +1149,12 @@
     <ClInclude Include="..\Public\Blood_Drop.h">
       <Filter>02.GameObjects\Effect\Blood_Drop</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Muzzle_Spark_SG.h">
+      <Filter>02.GameObjects\Effect\Muzzle_Spark_SG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Muzzle_Light_SG.h">
+      <Filter>02.GameObjects\Effect\Muzzle_Light_SG</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1654,6 +1666,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Blood_Drop.cpp">
       <Filter>02.GameObjects\Effect\Blood_Drop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Muzzle_Spark_SG.cpp">
+      <Filter>02.GameObjects\Effect\Muzzle_Spark_SG</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Muzzle_Light_SG.cpp">
+      <Filter>02.GameObjects\Effect\Muzzle_Light_SG</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
