@@ -856,50 +856,56 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 		_bool bDo = { false };
 
-		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("Merge")) != wstring::npos) && (bDo = true))
-			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CMap::Create(m_pDevice, m_pContext));
-
-		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("zombiewindow")) != wstring::npos) && (bDo = true))
-			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Window::Create(m_pDevice, m_pContext));
-
 		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm40_016")) != wstring::npos) && (bDo = true))
 			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Ladder::Create(m_pDevice, m_pContext));
 
-		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm40")) != wstring::npos) && (bDo = true))
-			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Door::Create(m_pDevice, m_pContext));
-		
-		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_162")) != wstring::npos) && (bDo = true))
-			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Lever::Create(m_pDevice, m_pContext));		
+		if (!bDo && Inform->bAnim)
+		{
+			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("zombiewindow")) != wstring::npos) && (bDo = true))
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Window::Create(m_pDevice, m_pContext));
 
-		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_197")) != wstring::npos|| Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_232")) != wstring::npos) && (bDo = true))
-			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_MovingShlef::Create(m_pDevice, m_pContext));
+			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm40")) != wstring::npos) && (bDo = true))
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Door::Create(m_pDevice, m_pContext));
 
-		if (!bDo &&(Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_024_newpolicestatue01a")) != wstring::npos) && (bDo = true))
-			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_NewpoliceStatue::Create(m_pDevice, m_pContext));
-		if (!bDo &&
-			((Inform->wstrGameObjectPrototypeName.find(TEXT("sm44")) != wstring::npos)
-			|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_011")) != wstring::npos))
-			&& (bDo = true))
-			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Cabinet::Create(m_pDevice, m_pContext));
+			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_162")) != wstring::npos) && (bDo = true))
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Lever::Create(m_pDevice, m_pContext));
 
-		if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm7")) != wstring::npos) && (bDo = true))
-			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_ItemProp::Create(m_pDevice, m_pContext));	
-		if (!bDo && (
-			(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_003")) != wstring::npos)||
-			(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_010")) != wstring::npos)||
-			(Inform->wstrGameObjectPrototypeName.find(TEXT("sm60_034")) != wstring::npos)||
-			(Inform->wstrGameObjectPrototypeName.find(TEXT("sm60_033")) != wstring::npos)
-			) && (bDo = true))
-			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Shutter::Create(m_pDevice, m_pContext));
+			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_197")) != wstring::npos || Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_232")) != wstring::npos) && (bDo = true))
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_MovingShlef::Create(m_pDevice, m_pContext));
 
+			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_024_newpolicestatue01a")) != wstring::npos) && (bDo = true))
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_NewpoliceStatue::Create(m_pDevice, m_pContext));
+			if (!bDo &&
+				((Inform->wstrGameObjectPrototypeName.find(TEXT("sm44")) != wstring::npos)
+					|| (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_011")) != wstring::npos))
+				&& (bDo = true))
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Cabinet::Create(m_pDevice, m_pContext));
 
+			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm7")) != wstring::npos) && (bDo = true))
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_ItemProp::Create(m_pDevice, m_pContext));
+			if (!bDo && (
+				(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_003")) != wstring::npos) ||
+				(Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_010")) != wstring::npos) ||
+				(Inform->wstrGameObjectPrototypeName.find(TEXT("sm60_034")) != wstring::npos) ||
+				(Inform->wstrGameObjectPrototypeName.find(TEXT("sm60_033")) != wstring::npos)
+				) && (bDo = true))
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Shutter::Create(m_pDevice, m_pContext));
+			if(!bDo && (bDo = true))
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_EventProp::Create(m_pDevice, m_pContext));
+		}
+		else
+		{
 
+			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm7")) != wstring::npos) && (bDo = true))
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_ItemProp::Create(m_pDevice, m_pContext));
 
-		if (!bDo &&Inform->bAnim&& (bDo = true))
-			m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_EventProp::Create(m_pDevice, m_pContext));
+			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("Merge")) != wstring::npos) && (bDo = true))
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CMap::Create(m_pDevice, m_pContext));
 
-		if(!bDo)
+			if (!bDo)
 				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CProps::Create(m_pDevice, m_pContext));
+		}
+		
 
 		//
 		//if (Inform->wstrGameObjectPrototypeName.find(TEXT("sm7")) != wstring::npos)
@@ -907,10 +913,10 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 		//	ItemModelTags.push_back(Inform->wstrModelPrototypeName);//УЂБе
 		//}
 
-		if (Inform->wstrGameObjectPrototypeName.find(TEXT("sm71_901")) != wstring::npos)
-		{
-			int a = 0;
-		}
+		//if (Inform->wstrGameObjectPrototypeName.find(TEXT("sm71_901")) != wstring::npos)
+		//{
+		//	int a = 0;
+		//}
 
 		Safe_Delete(Inform);
 

@@ -59,7 +59,7 @@ namespace Client
 		OPERATION_HALLWAY,				/* 11. 작전실 복도 */
 		DARKROOM_HALLWAY,				/* 12. 암실 복도 */
 		WEST_CNTRAL_HALLWAY,			/* 13. 서쪽 중앙 복도*/
-		/* 14. 밖 */
+		OUT_PARK,								/* 14. 밖 */
 		LOUNGE_HALLWAY,					/* 15. 휴게실 복도 */
 		EAST_OFFICE,					/* 16. 동쪽 사무실 */
 		LEFTSIDE_PRESSROOM_HALLWAY,		/* 17. 기자실 왼쪽 작은 방*/
@@ -98,6 +98,11 @@ namespace Client
 		EAST_STORE,						/* 46. 동쪽 저장실 */
 		LET_TOP_LIBARAY_HALLWAY,		/* 47. 도서관 위쪽 복도 */
 		BALCONY_UP_HALLWAY,				/* 48. 동쪽 저장실 오른쪽 복도*/
+
+		// 추가 방
+		OPERATION_RECORD_ROOM,					/* 49. 기록실 작전실 사이방*/
+		WEAPON_ROOM,					/* 50. 기록실 작전실 사이방*/
+
 		LOCATION_MAP_VISIT_END
 	};
 
