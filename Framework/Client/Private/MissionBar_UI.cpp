@@ -187,7 +187,7 @@ void CMissionBar_UI::Find_EventCollider()
         m_pMission_ColliderQueue.push(pCollider);
         m_pMissionCollVec.push_back(pCollider);
 
-        Safe_AddRef(iter);
+      //  Safe_AddRef(iter);
     }
 }
 
@@ -373,8 +373,8 @@ void CMissionBar_UI::Free()
   /*  if (nullptr != m_pMissionBar)
         Safe_Release<CMissionBar_UI*>(m_pMissionBar);*/
 
-    for(auto& iter : m_pMissionCollVec)
+  /*  for(auto& iter : m_pMissionCollVec)
         Safe_Release(iter);
-    m_pMissionCollVec.clear();
+    m_pMissionCollVec.clear();*/
  
 }

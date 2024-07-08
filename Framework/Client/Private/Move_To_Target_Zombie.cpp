@@ -117,7 +117,9 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 		if (fMaxMoveAngle < fAngleToTarget)
 			return false;
 
+		Safe_Release(m_pTargetObejct);
 		m_pTargetObejct = m_pBlackBoard->Get_Player();
+		Safe_AddRef(m_pTargetObejct);
 		m_isIncludeRotation = true;
 	}
 
@@ -127,7 +129,9 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 		if (nullptr == pNearestWindow)
 			return false;		
 
+		Safe_Release(m_pTargetObejct);
 		m_pTargetObejct = pNearestWindow;
+		Safe_AddRef(m_pTargetObejct);
 		m_isIncludeRotation = false;
 	}	
 

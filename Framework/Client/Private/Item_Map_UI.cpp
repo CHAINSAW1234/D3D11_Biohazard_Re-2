@@ -37,9 +37,10 @@ HRESULT CItem_Map_UI::Initialize(void* pArg)
         m_eItem_Type = CustomUIDesc->eItem_Number;
     }
 
-    m_isMouse_Control = true;
-
     Item_Name_Selection(); /* 아이템 및 사건 파일 모음 */
+
+    m_isMouse_Control = true;
+    m_vOriginPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
     return S_OK;
 }
@@ -83,6 +84,13 @@ void CItem_Map_UI::Destory_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _l
 
 void CItem_Map_UI::Rendering()
 {
+    if (false == m_pTab_Window->Get_MinMapRender())
+    {
+        m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vOriginPos);
+        m_isPrevRender = m_pTab_Window->Get_MinMapRender();
+    }
+
+
     /* 과거에 온 지역이랑 현재의 지역이 맞지 않는다면.*/
     if (m_ePrevRegion != (LOCATION_MAP_VISIT)m_pPlayer->Get_Player_Region())
     {
