@@ -1020,6 +1020,7 @@ PS_OUT PS_MAIN_BLURX_EFFECT(PS_IN In)
         vOut += weight * g_Texture.Sample(LinearSamplerClamp, uv);
         TotalWeight += weight;
     }
+    //TotalWeight *= 0.6f;
     vOut /= TotalWeight;
     Out.vColor = vOut;
 
@@ -1043,10 +1044,10 @@ PS_OUT PS_MAIN_BLURY_EFFECT(PS_IN In)
         vOut += weight * g_Texture.Sample(LinearSamplerClamp, uv);
         TotalWeight += weight;
     }
-
+    //TotalWeight *= 0.6f;
     vOut /= TotalWeight;
-
     Out.vColor = vOut;
+
     return Out;
 }
 

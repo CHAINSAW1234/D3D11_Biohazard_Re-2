@@ -880,6 +880,13 @@ HRESULT CRenderer::Render_Test()
 
 HRESULT CRenderer::SetUp_Debug()
 {
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Bloom"), 100.0f, 100.0f, 200.f, 200.f)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Bloom_Blur_Y"), 100.0f, 300.0f, 200.f, 200.f)))
+		return E_FAIL;
+
+	return S_OK;
+
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Diffuse"), 100.0f, 100.0f, 200.f, 200.f)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Normal"), 100.0f, 300.0f, 200.f, 200.f)))
@@ -2240,6 +2247,13 @@ HRESULT CRenderer::Render_Debug()
 
 	if (FAILED(m_pVIBuffer->Bind_Buffers()))
 		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Bloom"), m_pShader, m_pVIBuffer)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Bloom_Blur_Y"), m_pShader, m_pVIBuffer)))
+		return E_FAIL;
+
+	return S_OK;
 
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
