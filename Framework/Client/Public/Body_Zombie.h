@@ -39,6 +39,7 @@ public:
 	HRESULT								Render_LightDepth_Point() override;
 	HRESULT								Render_LightDepth_Spot()override;
 	virtual void						Add_RenderGroup() override;
+
 private:
 	HRESULT								Initialize_Model();
 	HRESULT								Add_Animations();
@@ -48,6 +49,9 @@ private:
 	HRESULT								SetUp_IK();
 	//	ÇÇ°Ý½Ã Èçµé¸± »Àµé
 	HRESULT								Register_BoneLayer_Additional_TwisterBones();
+
+public:
+	void								Play_Animations(_float fTimeDelta);
 
 public:
 	inline void							Active_IK(_bool isActive) { m_isActiveIK = isActive; }

@@ -1098,6 +1098,11 @@ HRESULT CZombie::Initialize_States()
 	return S_OK;
 }
 
+void CZombie::Play_Animations_Body(_float fTimeDelta)
+{
+	static_cast<CBody_Zombie*>(m_PartObjects[CMonster::PART_BODY])->Play_Animations(fTimeDelta);
+}
+
 void CZombie::Active_IK_Body(_bool isActive)
 {
 	static_cast<CBody_Zombie*>(m_PartObjects[PART_BODY])->Active_IK(isActive);

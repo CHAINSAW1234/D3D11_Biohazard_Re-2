@@ -2345,7 +2345,7 @@ HRESULT CModel::Play_Animations(CTransform* pTransform, _float fTimeDelta, _floa
 
 	fTimeDelta = Compute_NewTimeDelta_Distatnce_Optimization(fTimeDelta, pTransform);
 	if (0.f == fTimeDelta)
-		return S_OK;
+		return E_FAIL;
 
 	for (auto& pPlayingInfo : m_PlayingAnimInfos)
 	{

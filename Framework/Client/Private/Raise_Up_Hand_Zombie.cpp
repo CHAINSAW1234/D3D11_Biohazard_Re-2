@@ -67,25 +67,43 @@ void CRaise_Up_Hand_Zombie::Set_Hand_AdditionalMatrices()
 {
 	CTransform*			pZombie_Transform = { m_pBlackBoard->Get_AI()->Get_Transform() };
 	CTransform*			pPlayer_Transform = { m_pBlackBoard->Get_Player()->Get_Transform() };
-	CModel* pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+	CModel*				pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
 
 	if (nullptr == pZombie_Transform || nullptr == pPlayer_Transform || nullptr == pBody_Model)
 		return;
 
-	_matrix				PlayerWorldMatrix = { pPlayer_Transform->Get_WorldMatrix() };
-	_matrix				PlayerHeadCombinedMatrix = { XMLoadFloat4x4(m_pBlackBoard->Get_Player()->Get_Body_Model()->Get_CombinedMatrix("head")) };
+	_matrix				ZombieCombiend_L_Humerous_Matrix = { XMLoadFloat4x4(pBody_Model->Get_CombinedMatrix(ZOMBIE_LEFT_HUMEROUS_BONE_TAG)) };
+	_matrix				ZombieCombiend_R_Humerous_Matrix = { XMLoadFloat4x4(pBody_Model->Get_CombinedMatrix(ZOMBIE_RIGHT_HUMEROUS_BONE_TAG)) };
+
+	_matrix				ZombieWorldMatrix = { pZombie_Transform->Get_WorldMatrix() };
+	_matrix				L_Hurmerous_WorldMatrix = { ZombieCombiend_L_Humerous_Matrix * ZombieWorldMatrix };
+	_matrix				R_Hurmerous_WorldMatrix = { ZombieCombiend_R_Humerous_Matrix * ZombieWorldMatrix };
+
+	_vector				vL_Humerous_WorldPosition = { L_Hurmerous_WorldMatrix.r[CTransform::STATE_POSITION] };
+	_vector				vR_Humerous_WorldPosition = { R_Hurmerous_WorldMatrix.r[CTransform::STATE_POSITION] };
+	_vector				vZombie_WorldPosition = { ZombieWorldMatrix.r[CTransform::STATE_POSITION] };
+
+	_vector				vDirection_To_L_Humerous = { vL_Humerous_WorldPosition - vZombie_WorldPosition };
+	_vector				vDirection_To_R_Humerous = { vR_Humerous_WorldPosition - vZombie_WorldPosition };
+
+	_matrix				ZombieHeadCombinedMatrix = { XMLoadFloat4x4(pBody_Model->Get_CombinedMatrix("head")) };
 	
-	_matrix				PlayerHeadWorldMatrix = { PlayerHeadCombinedMatrix * PlayerWorldMatrix };
+	_matrix				ZombieHeadWorldMatrix = { ZombieHeadCombinedMatrix * ZombieWorldMatrix };
 
-	_vector				vPlayerHeadWorldPosition = { PlayerHeadWorldMatrix.r[CTransform::STATE_POSITION] };
+	_vector				vZombieHeadWorldPosition = { ZombieHeadWorldMatrix.r[CTransform::STATE_POSITION] };
+	_vector				vZombieLookDirection = { XMVector3Normalize(ZombieWorldMatrix.r[CTransform::STATE_LOOK]) };
 
-	_float				fRatio = { m_fAccActiveTime / ZOMBIE_RAISE_UP_HAND_MAX_TIME };
+	_float				fDistance = { 3.f };
+	_vector				vTargetPosition = { vZombieHeadWorldPosition + vZombieLookDirection * fDistance };
 
-	pBody_Model->Set_TargetPosition_IK(ZOMBIE_IK_L_HUMEROUS_WRIST_TAG, vPlayerHeadWorldPosition);
+	vTargetPosition = pPlayer_Transform->Get_State_Vector(CTransform::STATE_POSITION);
+
+	_float				fRatio = { fminf(m_fAccActiveTime / ZOMBIE_RAISE_UP_HAND_MAX_TIME, ZOMBIE_RAISE_UP_HAND_MAX_RATIO) };
+
+	pBody_Model->Set_TargetPosition_IK(ZOMBIE_IK_L_HUMEROUS_WRIST_TAG, vTargetPosition + vDirection_To_L_Humerous);
 	pBody_Model->Set_Blend_IK(ZOMBIE_IK_L_HUMEROUS_WRIST_TAG, fRatio);
-	pBody_Model->Set_TargetPosition_IK(ZOMBIE_IK_R_HUMEROUS_WRIST_TAG, vPlayerHeadWorldPosition);
+	pBody_Model->Set_TargetPosition_IK(ZOMBIE_IK_R_HUMEROUS_WRIST_TAG, vTargetPosition + vDirection_To_R_Humerous);
 	pBody_Model->Set_Blend_IK(ZOMBIE_IK_R_HUMEROUS_WRIST_TAG, fRatio);
-
 }
 
 CRaise_Up_Hand_Zombie* CRaise_Up_Hand_Zombie::Create(void* pArg)

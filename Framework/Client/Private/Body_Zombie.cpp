@@ -99,46 +99,21 @@ void CBody_Zombie::Tick(_float fTimeDelta)
 	}
 }
 
-static	_bool			isInitiate = { true };
-
 void CBody_Zombie::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_DOWN))
-		isInitiate = !isInitiate;
-
-	if (true == isInitiate)
+	if (m_bRagdoll == false)
 	{
-		if (m_bRagdoll == false)
-		{
-			m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+		_bool			isCulled = { false };
+		if (FAILED(m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation)))
+			isCulled = true;
 
-			if (true == m_isActiveIK)
-			{
-				m_pModelCom->Play_IK(m_pParentsTransform, fTimeDelta);
-			}
+		if (true == m_isActiveIK && false == isCulled)
+		{
+			m_pModelCom->Play_IK(m_pParentsTransform, fTimeDelta);
 		}
 	}
-
-
-
-
-#pragma region TEST
-
-	for (_uint i = static_cast<_uint>(PLAYING_INDEX::INDEX_10); i < static_cast<_uint>(PLAYING_INDEX::INDEX_20); ++i)
-	{
-		_bool			isFinished = { m_pModelCom->isFinished(i) };
-		if (true == isFinished)
-		{
-			_float			fCurrentBlendWeight = { m_pModelCom->Get_BlendWeight(i) };
-			if(fCurrentBlendWeight > 0.f)
-				m_pModelCom->Set_BlendWeight(i, fCurrentBlendWeight - (fTimeDelta * 3.f));
-		}
-	}
-
-#pragma endregion
 
 	//	현재 모션이 A ~ F 타입인지 판단하고 저장 => 다음 틱에 태스크 노드에서 참조하여 모션을 결정할것이다.
 	Update_Current_MotionType();
@@ -847,8 +822,8 @@ HRESULT CBody_Zombie::Register_Animation_Branches_AnimGroup()
 
 HRESULT CBody_Zombie::SetUp_IK()
 {
-	m_pModelCom->Add_IK(ZOMBIE_LEFT_HUMEROUS_BONE_TAG, ZOMBIE_LEFT_ARM_WRIST_BONE_TAG, ZOMBIE_IK_L_HUMEROUS_WRIST_TAG, 3, 0.f);
-	m_pModelCom->Add_IK(ZOMBIE_RIGHT_HUMEROUS_BONE_TAG, ZOMBIE_RIGHT_ARM_WRIST_BONE_TAG, ZOMBIE_IK_R_HUMEROUS_WRIST_TAG, 3, 0.f);
+	m_pModelCom->Add_IK(ZOMBIE_LEFT_HUMEROUS_BONE_TAG, ZOMBIE_LEFT_RADIUS_BONE_TAG, ZOMBIE_IK_L_HUMEROUS_WRIST_TAG, 3, 0.f);
+	m_pModelCom->Add_IK(ZOMBIE_RIGHT_HUMEROUS_BONE_TAG, ZOMBIE_RIGHT_RADIUS_BONE_TAG, ZOMBIE_IK_R_HUMEROUS_WRIST_TAG, 3, 0.f);
 
 	return S_OK;
 }
@@ -935,6 +910,14 @@ HRESULT CBody_Zombie::Register_BoneLayer_Additional_TwisterBones()
 	//	return E_FAIL;
 
 	return S_OK;
+}
+
+void CBody_Zombie::Play_Animations(_float fTimeDelta)
+{
+	if (m_bRagdoll == false)
+	{
+		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation);
+	}
 }
 
 HRESULT CBody_Zombie::Register_BoneLayer_Childs_NonInclude_Joint(const wstring& strBoneLayerTag, const string& strTopParentTag, const string& strEndEffectorTag)

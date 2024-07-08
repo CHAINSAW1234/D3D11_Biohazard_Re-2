@@ -46,7 +46,7 @@ _bool CTurn_Spine_Head_Zombie::Execute(_float fTimeDelta)
 	}
 
 
-	//	Set_Hand_AdditionalMatrices(fTimeDelta);
+	Set_Hand_AdditionalMatrices(fTimeDelta);
 
 	return true;
 }
@@ -64,26 +64,26 @@ void CTurn_Spine_Head_Zombie::Set_Hand_AdditionalMatrices(_float fTimeDelta)
 	if (nullptr == pZombie_Transform || nullptr == pPlayer_Transform || nullptr == pBody_Model)
 		return;
 
+	_vector				vZombieLook = { pZombie_Transform->Get_State_Vector(CTransform::STATE_LOOK) };
 	_vector				vZombiePosition = { pZombie_Transform->Get_State_Vector(CTransform::STATE_POSITION) };
 	_vector				vPlayerPosition = { pPlayer_Transform->Get_State_Vector(CTransform::STATE_POSITION) };
 
-	//	_vector				vZombieLook = { XMVector3Normalize(pZombie_Transform->Get_State_Vector(CTransform::STATE_LOOK)) };
-	_vector				vDirectionToPlayer = { XMVector3Normalize(vPlayerPosition - vZombiePosition) };
-	_vector				vPreLookDirection = { XMLoadFloat3(&m_vPreLookDirection) };
-
-
-	XMStoreFloat3(&m_vPreLookDirection, vDirectionToPlayer);
-
-	//	_vector				vCross = { XMVector3Cross(vZombieLook, vDirectionToPlayer) };
-	_vector				vCross = { XMVector3Cross(vPreLookDirection, vDirectionToPlayer) };
-	//	_float				fDot = { XMVectorGetX(XMVector3Dot(vZombieLook, vDirectionToPlayer)) };
-	_float				fDot = { XMVectorGetX(XMVector3Dot(vPreLookDirection, vDirectionToPlayer)) };
-	_float				fAngle = { fminf(acosf(fDot), XMConvertToRadians(50.f) * fTimeDelta) };
-
+	_matrix				ZombieWorldMatrix = { pZombie_Transform->Get_WorldMatrix() };
 	_matrix				ZombieWorldMatrixInv = { pZombie_Transform->Get_WorldMatrix_Inverse() };
-	
-	_vector				vAxis = { XMVector3TransformNormal(vCross, ZombieWorldMatrixInv) };	
-	_vector				vTotalRotateQuaternionLocal = { XMQuaternionRotationAxis(XMVector3Normalize(vAxis), fAngle) };
+
+	_vector				vDirectionToPlayer = { XMVector3Normalize(vPlayerPosition - vZombiePosition) };
+	_vector				vDirectionToPlayerLocal = { XMVector3TransformNormal(vDirectionToPlayer, ZombieWorldMatrixInv) };
+
+	_vector				vCross = { XMVector3Cross(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMVector3Normalize(vDirectionToPlayerLocal)) };
+	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f), XMVector3Normalize(vDirectionToPlayerLocal)))};
+
+	if (fDot >= 0.999f)
+		return;
+
+	//	_float				fAngle = { fminf(acosf(fDot), XMConvertToRadians(50.f) * fTimeDelta) };
+	_float				fAngle = { fminf(acosf(fDot), XMConvertToRadians(100.f)) };
+
+	_vector				vTotalRotateQuaternionLocal = { XMQuaternionRotationAxis(XMVector3Normalize(vCross), fAngle) };
 
 	list<_uint>			ChildJointIndices;
 	pBody_Model->Get_Child_ZointIndices(m_strSpineBoneTag, m_strHeadBoneTag, ChildJointIndices);
@@ -95,11 +95,15 @@ void CTurn_Spine_Head_Zombie::Set_Hand_AdditionalMatrices(_float fTimeDelta)
 
 	_vector				vDevideQuaternionLocal = { XMQuaternionSlerp(XMQuaternionIdentity(), vTotalRotateQuaternionLocal, 1.f / static_cast<_float>(iNumChildJoint)) };
 
-	_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vDevideQuaternionLocal) };
+	_matrix				DevideRotationMatrix = { XMMatrixRotationQuaternion(vDevideQuaternionLocal) };
+	/*_matrix				TotalRotationMatrix = { XMMatrixRotationQuaternion(vTotalRotateQuaternionLocal) };
+
+	_vector				vResultZombieLook = { XMVector3TransformNormal(vDirectionToPlayer, TotalRotationMatrix * ZombieWorldMatrix) };
+	XMStoreFloat3(&m_vPreLookDirection, vResultZombieLook);*/
 
 	for (auto& iJointIndex : ChildJointIndices)
 	{
-		pBody_Model->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
+		pBody_Model->Add_Additional_Transformation_World(BoneNames[iJointIndex], DevideRotationMatrix);
 	}
 }
 

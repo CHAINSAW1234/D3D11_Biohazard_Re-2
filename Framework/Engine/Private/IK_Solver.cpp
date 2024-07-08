@@ -288,7 +288,7 @@ void CIK_Solver::Solve_IK_Forward(IK_INFO& IkInfo)
 		_bool		isLastParent = { i == iNumIKIndices - 2 };
 
 		Solve_For_Distance_IK(IkInfo, i + 1, i);
-		Solve_For_Orientation_IK(IkInfo, i + 1, i);
+		//	Solve_For_Orientation_IK(IkInfo, i + 1, i);
 
 		//			최소 iNumIKIndeces - 3 => 내부에서 자식 계산이 가능한... 
 		if (false == isLastParent)
