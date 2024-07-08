@@ -227,9 +227,11 @@
     <ClInclude Include="..\Public\Decal_SSD.h" />
     <ClInclude Include="..\Public\Effect_Header_Zombie.h" />
     <ClInclude Include="..\Public\Creep_Zombie.h" />
+    <ClInclude Include="..\Public\Find_Door_To_Target_Zombie.h" />
+    <ClInclude Include="..\Public\Is_Different_Location_To_Player_Zombie.h" />
     <ClInclude Include="..\Public\Pannel_Window.h" />
     <ClInclude Include="..\Public\Is_In_Door_Zombie.h" />
-    <ClInclude Include="..\Public\Is_Same_Region_To_Player_Zombie.h" />
+    <ClInclude Include="..\Public\Is_Same_Location_To_Player_Zombie.h" />
     <ClInclude Include="..\Public\Is_Start_Zombie.h" />
     <ClInclude Include="..\Public\Muzzle_Light_SG.h" />
     <ClInclude Include="..\Public\Muzzle_Spark_SG.h" />
@@ -457,8 +459,10 @@
     <ClCompile Include="..\Private\Cut_Scene_CF93.cpp" />
     <ClCompile Include="..\Private\Damage_UI.cpp" />
     <ClCompile Include="..\Private\Decal_SSD.cpp" />
+    <ClCompile Include="..\Private\Find_Door_To_Target_Zombie.cpp" />
+    <ClCompile Include="..\Private\Is_Different_Location_To_Player_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_In_Door_Zombie.cpp" />
-    <ClCompile Include="..\Private\Is_Same_Region_To_Player_Zombie.cpp" />
+    <ClCompile Include="..\Private\Is_Same_Location_To_Player_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Start_Zombie.cpp" />
     <ClCompile Include="..\Private\Muzzle_Light_SG.cpp" />
     <ClCompile Include="..\Private\Muzzle_Spark_SG.cpp" />

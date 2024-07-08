@@ -76,6 +76,7 @@ public: // Setter
 	{
 		return m_pAI;
 	}
+	void							Set_TargetDoor(class CDoor* pTargetDoor);
 
 public: // Getter
 	class CPlayer*					Get_Player()
@@ -161,11 +162,9 @@ private:
 	class CZombie*					m_pAI = { nullptr };
 
 private:
-	_int							m_iRegion = { -1 };
-
-private:
 	class CWindow*					m_pNearest_Window = { nullptr };
 	class CDoor*					m_pNearest_Door = { nullptr };
+	class CDoor*					m_pTarget_Door = { nullptr };
 
 public:
 	static CBlackBoard_Zombie* Create(void* pArg);
