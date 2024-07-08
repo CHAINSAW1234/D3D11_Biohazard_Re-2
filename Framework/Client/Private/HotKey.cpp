@@ -114,6 +114,28 @@ CInventory_Slot* CHotKey::Get_Empty_Slot()
 	return nullptr;
 }
 
+void CHotKey::RegisterHoykey(_float2 RegisterPos, ITEM_NUMBER eItemNum, _int iItemQuantity)
+{
+	for (_uint i = 0; i < SLOT_COUNT; i++)
+	{
+		if (true == m_pInven_Slots[i]->IsPTInRect(RegisterPos))
+		{
+			m_pInven_Slots[i]->Set_IsFilled(true);
+			break;
+		}
+	}
+	
+	for (_uint i = 0; i < SLOT_COUNT; i++)
+	{
+		if (true == m_pItemUI[i]->IsPTInRect(RegisterPos))
+		{
+			m_pItemUI[i]->Set_ItemNumber(eItemNum);
+			m_pItemUI[i]->Set_ItemQuantity(iItemQuantity);
+			break;
+		}
+	}
+}
+
 HRESULT CHotKey::Bind_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)

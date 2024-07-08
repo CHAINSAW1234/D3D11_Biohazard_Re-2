@@ -597,7 +597,14 @@ void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 		CInventory_Slot* pHoverdSlot = m_pHotkey->Get_Hoverd_Slot();
 		if (nullptr != pHoverdSlot)
 		{
-			pHoverdSlot->GetPosition();
+			_float4 HighligeterSetingPos = { pHoverdSlot->GetPosition().x, pHoverdSlot->GetPosition().y, Z_POS_HIGH_LIGHTER, 1.f };
+			m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HighligeterSetingPos);
+			
+			if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+			{
+				m_pHotkey->RegisterHoykey(_float2(HighligeterSetingPos.x, HighligeterSetingPos.y), 
+					m_pSelected_ItemUI->Get_ItemNumber(), m_pSelected_ItemUI->Get_ItemQuantity());
+			}
 		}
 		break;
 	}

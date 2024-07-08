@@ -49,11 +49,13 @@ public:
 
 public:
 	_int				Get_ItemQuantity() const { return m_iItemQuantity; }
+	void				Set_ItemQuantity(_int iItemQuantity){m_iItemQuantity = iItemQuantity; }
 	void				Set_ItemVariation(_int iVariation) { m_iItemQuantity += iVariation; }
 
 private:
 	_bool						m_isWorking = { false };
 	_bool						m_isActive = { true };
+	_bool						m_isHotKeyRegisted = { false };
 
 private:
 	ITEM_NUMBER					m_eItemNumber = { ITEM_NUMBER::ITEM_NUMBER_END };

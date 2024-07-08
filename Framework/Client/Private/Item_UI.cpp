@@ -147,11 +147,14 @@ void CItem_UI::Set_Dead(_bool bDead)
 
 			if (0 == m_iItemQuantity)
 				m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(true);
-
 			else
 				m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			
+			if( false== m_isHotKeyRegisted)
+				m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(true);
+			else
+				m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(bDead);
 
-			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(bDead);
 			break;
 		}
 
@@ -192,7 +195,12 @@ void CItem_UI::Set_Dead(_bool bDead)
 
 		case Client::HOTKEY: {
 			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(bDead);
-			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
+
+			if (false == m_isWorking)
+				m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(true);
+			else
+				m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			
 			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(bDead);
 			break;
 		}
