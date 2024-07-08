@@ -66,7 +66,7 @@ HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMA
 	TextureDesc.SampleDesc.Count = 1;
 
 	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
-	TextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	TextureDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	TextureDesc.CPUAccessFlags = 0;
 	TextureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pTexture2D)))
@@ -92,6 +92,17 @@ HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMA
 
 	if (FAILED(m_pDevice->CreateShaderResourceView(m_pTexture2D, &ResourceViewDesc, &m_pSRV)))
 		return E_FAIL;
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC   UnorderedAccessDesc = {};
+	UnorderedAccessDesc.Format = TextureDesc.Format;
+	UnorderedAccessDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
+	UnorderedAccessDesc.Texture2DArray.ArraySize = iArraySize;
+	UnorderedAccessDesc.Texture2DArray.FirstArraySlice = 0;
+	UnorderedAccessDesc.Texture2DArray.MipSlice = 0;
+
+	if (FAILED(m_pDevice->CreateUnorderedAccessView(m_pTexture2D, &UnorderedAccessDesc, &m_pUAV)))
+		return E_FAIL;
+
 
 	m_vClearColor = vClearColor;
 	m_isTickClear = isTickClear;

@@ -51,8 +51,8 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_RegionCollider()))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_CutScene()))
-		return E_FAIL;*/
+	if (FAILED(Ready_CutScene()))
+		return E_FAIL;
 
 	m_pGameInstance->SetSimulate(true);
 
@@ -60,6 +60,9 @@ HRESULT CLevel_GamePlay::Initialize()
 	CImgui_Manager::Get_Instance()->Initialize();
 	CImgui_Manager::Get_Instance()->Tick();
 	CImgui_Manager::Get_Instance()->Render();
+
+
+	m_pTexture = (CTexture*)m_pGameInstance->Clone_Component(g_Level, TEXT("Prototype_Component_Texture_CubeMap"));
 
 	return S_OK;
 }
@@ -73,7 +76,9 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
 	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
 	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));	
-	
+
+	m_pGameInstance->Set_CubeMap(m_pTexture);
+	 
 	/*(임시) 이벤트 처리 구간*/
 	_bool bGoal = { false };
 	_float4 vGoal = { 0.f,0.f,0.f,0.f };
@@ -268,21 +273,21 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
 	//희히 넘 바쁜 관계로 함수 못팠어요 - 예은
 
-	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
+	/*if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
 		return E_FAIL;
-	
-	//CZombie::ZOMBIE_MALE_DESC		ObjectDesc;
-	//ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
-	//ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
-	//ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
-	//ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
+	*/
+	CZombie::ZOMBIE_MALE_DESC		ObjectDesc;
+	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
+	ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
+	ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
+	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
 
 
-	//_matrix			WorldMatrix = { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
-	//XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+	_matrix			WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
+	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
-	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -1552,4 +1557,5 @@ CLevel_GamePlay * CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceCon
 void CLevel_GamePlay::Free()
 {
 	__super::Free();
+	Safe_Release(m_pTexture);
 }

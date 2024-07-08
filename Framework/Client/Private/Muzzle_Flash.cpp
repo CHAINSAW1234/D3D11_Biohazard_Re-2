@@ -2,6 +2,7 @@
 #include "..\Public\Muzzle_Flash.h"
 
 #include "GameInstance.h"
+#include "Muzzle_Light_SG.h"
 
 CMuzzle_Flash::CMuzzle_Flash(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect{ pDevice, pContext }
@@ -31,6 +32,9 @@ HRESULT CMuzzle_Flash::Initialize(void * pArg)
 
 	m_bRender = false;
 
+	m_pMuzzle_Light = CMuzzle_Light_SG::Create(m_pDevice, m_pContext);
+	m_pMuzzle_Light->SetSize(2.f, 2.f);
+
 	return S_OK;
 }
 
@@ -39,13 +43,26 @@ void CMuzzle_Flash::Tick(_float fTimeDelta)
 	if (m_bRender == false)
 		return;
 
-	++m_iFrame;
-
 	if (m_iFrame >= 2)
 	{
+		m_pMuzzle_Light->Set_Render(false);
 		m_bRender = false;
 		m_iFrame = 0;
+
+		return;
 	}
+
+	if (m_iFrame == 1)
+	{
+		m_pMuzzle_Light->SetPosition(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+		m_pMuzzle_Light->Set_Render(true);
+	}
+
+
+	if (m_pMuzzle_Light)
+		m_pMuzzle_Light->Tick(fTimeDelta);
+
+	++m_iFrame;
 
 	Compute_CurrentUV();
 
@@ -54,8 +71,12 @@ void CMuzzle_Flash::Tick(_float fTimeDelta)
 
 void CMuzzle_Flash::Late_Tick(_float fTimeDelta)
 {
+	m_pMuzzle_Light->Late_Tick(fTimeDelta);
+
 	if(m_bRender == true)
+	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EFFECT_BLOOM, this);
+	}
 }
 
 HRESULT CMuzzle_Flash::Render()
@@ -202,4 +223,5 @@ void CMuzzle_Flash::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pMuzzle_Light);
 }

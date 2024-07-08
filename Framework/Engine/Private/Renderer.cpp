@@ -58,19 +58,7 @@ HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pRende
 
 HRESULT CRenderer::Render()
 {
-	// for test
-	//if (m_pGameInstance->Get_KeyState('1') == DOWN)
-	//	m_ShaderOptions[SSAO] = !m_ShaderOptions[SSAO];
-	//if (m_pGameInstance->Get_KeyState('2') == DOWN)
-	//	m_ShaderOptions[MOTION_BLUR] = !m_ShaderOptions[MOTION_BLUR];
-	//if (m_pGameInstance->Get_KeyState('3') == DOWN)
-	//	m_ShaderOptions[SSR] = !m_ShaderOptions[SSR];
-	//if (m_pGameInstance->Get_KeyState('4') == DOWN)
-	//	m_ShaderOptions[DOF] = !m_ShaderOptions[DOF];
-	//if (m_pGameInstance->Get_KeyState('5') == DOWN)
-	//	m_ShaderOptions[VOLUMETRIC] = !m_ShaderOptions[VOLUMETRIC];
-	//if (m_pGameInstance->Get_KeyState('6') == DOWN)
-	//	m_ShaderOptions[FXAA] = !m_ShaderOptions[FXAA];
+
 	if (m_pGameInstance->Get_KeyState('2') == DOWN)
 		Set_RenderFieldShadow(true);
 
@@ -880,69 +868,84 @@ HRESULT CRenderer::Render_Test()
 
 HRESULT CRenderer::SetUp_Debug()
 {
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Diffuse"), 100.0f, 100.0f, 200.f, 200.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Normal"), 100.0f, 300.0f, 200.f, 200.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Depth"), 100.0f, 500.0f, 200.f, 200.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Material"), 100.0f, 700.0f, 200.f, 200.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Velocity"), 100.0f, 900.0f, 200.f, 200.f)))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_PBR"), 300.0f, 100.0f, 200.f, 200.f)))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSAO"), 300.0f, 300.0f, 200.f, 200.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSAO_Blur_Fin"), 300.0f, 500.0f, 200.f, 200.f)))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Field_Dir"), 700.0f, 100.0f, 200.f, 200.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Field_Point"), 700.0f, 300.0f, 200.f, 200.f)))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Dir"), 500.0f, 100.0f, 200.f, 200.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Point"), 500.0f, 300.0f, 200.f, 200.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Spot"), 500.0f, 500.0f, 200.f, 200.f)))
-		return E_FAIL;
-
-	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_PostProcessing_Diffuse"), 1420.0f, 100.f, 200.f, 200.f)))
+	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Bloom"), 100.0f, 100.0f, 200.f, 200.f)))
 	//	return E_FAIL;
-	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_PostProcessing_Shade"), 1420.0f, 300.f, 200.f, 200.f)))
+	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Bloom_Blur_Y"), 100.0f, 300.0f, 200.f, 200.f)))
+	//	return E_FAIL;
+
+	//return S_OK;
+
+	_float fSize = 150.f;
+
+	_float WinSizeX = 1600.f + fSize / 2.f;
+	_float WinSizeY = 900.f;
+
+
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Diffuse"), -fSize / 2 + fSize, -fSize / 2 + fSize, fSize, fSize)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Normal"), -fSize / 2 + fSize, -fSize / 2 + fSize * 2, fSize, fSize)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Depth"), -fSize / 2 + fSize, -fSize / 2 + fSize * 3, fSize, fSize)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Material"), -fSize / 2 + fSize, -fSize / 2 + fSize * 4, fSize, fSize)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Velocity"), -fSize / 2 + fSize, -fSize / 2 + fSize * 5, fSize, fSize)))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_PBR"), -fSize / 2 + fSize * 2, -fSize / 2 + fSize, fSize, fSize)))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSAO"), -fSize / 2 + fSize * 2, -fSize / 2 + fSize * 2, fSize, fSize)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSAO_Blur_Fin"), -fSize / 2 + fSize * 2, -fSize / 2 + fSize * 3, fSize, fSize)))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Field_Dir"), -fSize / 2 + fSize * 4, -fSize / 2 + fSize, fSize, fSize)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Field_Point"), -fSize / 2 + fSize * 4, -fSize / 2 + fSize * 2, fSize, fSize)))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Dir"), -fSize / 2 + fSize * 3, -fSize / 2 + fSize, fSize, fSize)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Point"), -fSize / 2 + fSize * 3, -fSize / 2 + fSize * 2, fSize, fSize)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Spot"), -fSize / 2 + fSize * 3, -fSize / 2 + fSize * 3, fSize, fSize)))
+		return E_FAIL;
+
+	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_PostProcessing_Diffuse"), 1420.0f, fSize, fSize, fSize)))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_PostProcessing_Shade"), 1420.0f, 300.f, fSize, fSize)))
 	//	return E_FAIL;
 	// 
-	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Distortion"), 1820.0f, 500.0f, 200.f, 200.f)))
+	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Distortion"), 1820.0f, 500.0f, fSize, fSize)))
 	//	return E_FAIL;
-	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Emissive"), 1820.0f, 700.0f, 200.f, 200.f)))
+	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Emissive"), 1820.0f, 700.0f, fSize, fSize)))
 	//	return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_FXAA"), 1420.f, 100.f, 200.f, 200.f)))
+
+
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_FXAA"), WinSizeX - fSize * 3, -fSize / 2 + fSize, fSize, fSize)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_MotionBlur"), 1620.f, 100.f, 200.f, 200.f)))
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_MotionBlur"), WinSizeX - fSize * 2, -fSize / 2 + fSize, fSize, fSize)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSR"), 1620.f, 300.f, 200.f, 200.f)))
-		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_DOF"), 1620.f, 500.f, 200.f, 200.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_DOF_Blur_Fin"), 1620.f, 700.f, 200.f, 200.f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_GODRAY"), 1620.f, 900.f, 200.f, 200.f)))
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSR"), WinSizeX - fSize * 2, -fSize / 2 + fSize * 2, fSize, fSize)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Diffuse"), 1820.f, 100.0f, 200.f, 200.f)))
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_DOF"), WinSizeX - fSize * 2, -fSize / 2 + fSize * 3, fSize, fSize)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Normal"), 1820.f, 300.0f, 200.f, 200.f)))
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_DOF_Blur_Fin"), WinSizeX - fSize * 2, -fSize / 2 + fSize * 4, fSize, fSize)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Depth"), 1820.f, 500.0f, 200.f, 200.f)))
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_GODRAY"), WinSizeX - fSize * 2, -fSize / 2 + fSize * 5, fSize, fSize)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Material"), 1820.f, 700.0f, 200.f, 200.f)))
+
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Diffuse"), WinSizeX - fSize, -fSize / 2 + fSize, fSize, fSize)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Normal"), WinSizeX - fSize, -fSize / 2 + fSize * 2, fSize, fSize)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Depth"), WinSizeX - fSize, -fSize / 2 + fSize * 3, fSize, fSize)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Material"), WinSizeX - fSize, -fSize / 2 + fSize * 4, fSize, fSize)))
 		return E_FAIL;
 
 	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Test"), 500.0f, 900.f, 200.f, 200.f)))
@@ -1546,6 +1549,12 @@ HRESULT CRenderer::Render_Lights()
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_RawValue("g_vCamPosition", &m_pGameInstance->Get_CamPosition_Float4(), sizeof(_float4))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_CubeMapTexture(m_pShader, "g_EnvironmentTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_IrradianceTexture(m_pShader, "g_IrradianceTexture")))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Diffuse"), "g_DiffuseTexture")))
@@ -2221,10 +2230,13 @@ void CRenderer::Set_ViewPort_Size(_float fWidth, _float fHeight, _uint iArraySiz
 
 HRESULT CRenderer::Render_Debug()
 {
+
 	for (auto& pDebugCom : m_DebugComponents)
 	{
-		if (nullptr != pDebugCom)
-			pDebugCom->Render();
+		if (true == m_isRenderDebug) {
+			if (nullptr != pDebugCom)
+				pDebugCom->Render();
+		}
 
 		Safe_Release(pDebugCom);
 	}
@@ -2240,6 +2252,13 @@ HRESULT CRenderer::Render_Debug()
 
 	if (FAILED(m_pVIBuffer->Bind_Buffers()))
 		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Bloom"), m_pShader, m_pVIBuffer)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Bloom_Blur_Y"), m_pShader, m_pVIBuffer)))
+		return E_FAIL;
+
+	return S_OK;
 
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;

@@ -356,7 +356,7 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 			CurrentMCAM.Translations[m_iCurrentTranslateFrame + 1],
 			(m_fTrackPosition - (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame]) / (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame + 1]);
 #pragma region 위에 기존방식 트랙포지션 비율 계산하는거 잘못된듯? Frame 전체길이가아니라 해당구간으로 나눠야하는 주석내방식이 적합해보임
-		//	(m_fTrackPosition - (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame]) / (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame + 1] - (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame]);
+			//	(m_fTrackPosition - (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame]) / (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame + 1] - (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame]);
 #pragma endregion
 	}
 
@@ -414,8 +414,8 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 	//_matrix				TranslationMatrix = { XMMatrixTranslation(XMVectorGetX(vTransaltionWorld), XMVectorGetY(vTransaltionWorld), XMVectorGetZ(vTransaltionWorld)) };
 	//_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vRotatedQuaternion) };
 
-	//_matrix				ResultMatrix = { RotationMatrix * TranslationMatrix };
-	////	_matrix				ResultMatrix = { XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotatedQuaternion, vTransaltionWorld) };
+	////	_matrix				ResultMatrix = { RotationMatrix * TranslationMatrix };
+	//	_matrix				ResultMatrix = { XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotatedQuaternion, vTransaltionWorld) };
 
 #pragma endregion
 	//_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
@@ -431,10 +431,9 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 		XMVectorSet(0.f, 0.f, 0.f, 1.f),  XMVector4Normalize(vRotation),
 		vTranslation); // 둘다 
 
-	m_pTransformCom->Set_WorldMatrix( CombinedMatrix * XMMatrixRotationY(XMConvertToRadians(180.f)));
+	//	m_pTransformCom->Set_WorldMatrix( CombinedMatrix * XMMatrixRotationY(XMConvertToRadians(180.f)));
 
 	//	m_pTransformCom->Set_WorldMatrix(ResultMatrix);
-	//	m_fFovy = XMConvertToRadians(90.f);
 }
 
 CCamera_Event* CCamera_Event::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

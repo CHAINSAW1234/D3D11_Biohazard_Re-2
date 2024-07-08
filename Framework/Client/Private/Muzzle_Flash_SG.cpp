@@ -34,12 +34,12 @@ HRESULT CMuzzle_Flash_SG::Initialize(void * pArg)
 
 	m_FrameDelay = 20;
 
-	m_vFirstFrame_Size = _float2(0.45f, 0.45f);
-	m_vSecondFrame_Size = _float2(0.8f, 0.8f);
-	m_vThirdFrame_Size = _float2(0.55f, 0.55f);
+	m_vFirstFrame_Size = _float2(0.35f, 0.35f);
+	m_vSecondFrame_Size = _float2(0.7f, 0.7f);
+	m_vThirdFrame_Size = _float2(0.4f, 0.4f);
 
 	m_pMuzzle_Light = CMuzzle_Light_SG::Create(m_pDevice, m_pContext);
-	m_pMuzzle_Light->SetSize(2.f, 2.f);
+	m_pMuzzle_Light->SetSize(3.f,3.f);
 
 	return S_OK;
 }
@@ -67,18 +67,18 @@ void CMuzzle_Flash_SG::Tick(_float fTimeDelta)
 	case 1:
 		m_pTransformCom->Set_Scaled(m_vSecondFrame_Size.x, m_vSecondFrame_Size.y, 1.f);
 		m_iFrame = 1;
-		m_pMuzzle_Light->Set_Render(true);
 		m_pMuzzle_Light->SetPosition(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 		break;
 	case 2:
 		m_pTransformCom->Set_Scaled(m_vThirdFrame_Size.x, m_vThirdFrame_Size.y, 1.f);
 		m_iFrame = 0;
-		//m_pMuzzle_Light->Set_Render(false);
+		m_pMuzzle_Light->Set_Render(true);
 		break;
 	}
 
 	if (m_iMainFrame >= 3)
 	{
+		m_pMuzzle_Light->Set_Render(false);
 		m_bRender = false;
 		m_iFrame = 0;
 		m_iMainFrame = 0;

@@ -56,6 +56,8 @@ public:		/* For.IK Public*/
 
 	void									Play_IK(vector<CBone*>& Bones, class CTransform* pTransform);
 
+	_bool									Is_Active();
+
 private:	/* For.IK Private */
 	void									Apply_IK(vector<CBone*>& Bones, class CTransform* pTransform, IK_INFO& IkInfo);
 	void									Update_Distances_Translations_IK(vector<CBone*>& Bones, IK_INFO& IkInfo);

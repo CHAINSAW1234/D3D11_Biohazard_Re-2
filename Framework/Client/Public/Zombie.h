@@ -91,6 +91,9 @@ private:
 	virtual HRESULT						Initialize_Status() override;
 	virtual HRESULT						Initialize_States();
 
+public:
+	void								Play_Animations_Body(_float fTimeDelta);
+
 public:		/* For.IK Controll */
 	void								Active_IK_Body(_bool isActive);
 
