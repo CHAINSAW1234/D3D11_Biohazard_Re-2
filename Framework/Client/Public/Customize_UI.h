@@ -330,6 +330,13 @@ public:/* for.Get Inline */
 
 	vector<CGameObject*>* Get_Child() { return &m_vecChildUI; }
 
+	CGameObject* Get_Child(_uint iChildNum) { 
+		if (nullptr != m_vecChildUI[iChildNum])
+			return m_vecChildUI[iChildNum];
+		else
+			return nullptr;
+	}
+
 	_bool Get_IsChild() const { return m_IsChild; }
 
 	vector<class CTextBox*>* Get_vecTextBoxes() { return &m_vecTextBoxes; }

@@ -1161,11 +1161,10 @@ HRESULT CRenderer::Render_Non_PostProcessing()
 
 HRESULT CRenderer::Render_UI()
 {
-	m_RenderObjects[RENDER_UI].sort([](CGameObject* pFirst, CGameObject* pSecond) {
-		return pFirst->GetPosition().z > pSecond->GetPosition().z;
-		});
+	//m_RenderObjects[RENDER_UI].sort([](CGameObject* pFirst, CGameObject* pSecond) {
+	//	return pFirst->GetPosition().z > pSecond->GetPosition().z;
+	//	});
 
-	
 	for (auto& pRenderObject : m_RenderObjects[RENDER_UI])
 	{
 		if (nullptr != pRenderObject)

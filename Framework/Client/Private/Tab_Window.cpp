@@ -133,6 +133,12 @@ void CTab_Window::Tick(_float fTimeDelta)
 		break;
 	}
 
+	case Client::CTab_Window::INTERACT_PROPS: {
+		PICK_UP_ITEM_WINDOW_Operation(fTimeDelta);
+		break;
+	}
+
+
 	default:
 		break;
 	}
@@ -174,6 +180,13 @@ void CTab_Window::Late_Tick(_float fTimeDelta)
 	}
 
 	case Client::CTab_Window::PICK_UP_ITEM_WINDOW: {
+		m_pInventory_Manager->Late_Tick(fTimeDelta);
+		m_pItem_Mesh_Viewer->Late_Tick(fTimeDelta);
+		m_pItem_Discription->Late_Tick(fTimeDelta);
+		break;
+	}
+
+	case Client::CTab_Window::INTERACT_PROPS: {
 		m_pInventory_Manager->Late_Tick(fTimeDelta);
 		m_pItem_Mesh_Viewer->Late_Tick(fTimeDelta);
 		m_pItem_Discription->Late_Tick(fTimeDelta);
@@ -332,6 +345,16 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 
 }
 
+void CTab_Window::INTERACT_PROPS_Operation(_float fTimeDelta)
+{
+
+
+	m_pInventory_Manager->Tick(fTimeDelta);
+	ITEM_NUMBER eSelectedItemNum = m_pInventory_Manager->Get_Selected_ItemNum();
+	m_pItem_Discription->Set_Item_Number(eSelectedItemNum);
+	m_pItem_Discription->Tick(fTimeDelta);
+}
+
 void CTab_Window::ItemIven_EventHandle(_float fTimeDelta)
 {
 	INVENTORY_EVENT eEvent = m_pInventory_Manager->Get_InventoryEvent();
@@ -464,6 +487,15 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 			//m_pMap_UI->Destory_Item((MAP_FLOOR_TYPE)pProp->Get_Floor(), (LOCATION_MAP_VISIT)pProp->Get_Region(), (ITEM_NUMBER)iPickedUpItemNum);
 		}
 	}
+}
+
+void CTab_Window::interact_Props(CGameObject* pPickedUp_Item)
+{
+	CInteractProps* pProp = dynamic_cast<CInteractProps*>(pPickedUp_Item);
+	if (nullptr == pProp)
+		return;
+
+	int a = 0;
 }
 
 void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)

@@ -10,7 +10,7 @@ BEGIN(Client)
 class CTab_Window final : public CUI
 {
 public:
-	enum WINDOW_TYPE{MINIMAP, INVENTORY, HINT, EXAMINE, PICK_UP_ITEM_WINDOW, WINDOW_TYPE_END };
+	enum WINDOW_TYPE{MINIMAP, INVENTORY, HINT, EXAMINE, PICK_UP_ITEM_WINDOW, INTERACT_PROPS, WINDOW_TYPE_END };
 
 protected:
 	CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -31,6 +31,7 @@ private:
 	void HINT_Operation(_float fTimeDelta);
 	void EXAMINE_Operation(_float fTimeDelta);
 	void PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta);
+	void INTERACT_PROPS_Operation(_float fTimeDelta);
 
 #pragma region ³ª¿Ë
 public:
@@ -54,7 +55,11 @@ public:
 	void			OnOff_EventHandle();
 	void			Set_WindowType(WINDOW_TYPE eWindowType) { m_eWindowType = eWindowType; };
 
+	//ÇÃ·¹ÀÌ¾î°¡ ¾ÆÀÌÅÛÀ» Áý¾úÀ»¶§ È£ÃâÇØÁÖ´Â ÇÔ¼ö
 	void			PickUp_Item(CGameObject* pPickedUp_Item);
+
+	//ÇÃ·¹ÀÌ¾î°¡ »óÈ£ÀÛ¿ë °¡´ÉÇÑ Prop°ú Á¢ÃËÇßÀ»¶§ È£­„ÇÏ´Â ÇÔ¼ö
+	void			interact_Props(CGameObject* pPickedUp_Item);
 
 	//¾ÆÀÌÅÆ ÀÎº¥Åä¸®¿¡ ³Ö±â
 	void			AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity = 1);

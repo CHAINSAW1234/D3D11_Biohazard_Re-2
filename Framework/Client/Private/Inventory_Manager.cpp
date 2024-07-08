@@ -46,6 +46,11 @@ HRESULT CInventory_Manager::Initialize()
 	if (FAILED(Init_ContextMenu()))
 		return E_FAIL;
 
+	if (FAILED(Seting_Hotkey()))
+		return E_FAIL;
+
+	
+
 	Set_ItemRecipe();
 
 	return S_OK;
@@ -58,12 +63,9 @@ void CInventory_Manager::FirstTick_Seting()
 	m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
 
 	AddItem_ToInven(HandGun, 15);
-	AddItem_ToInven(ShotGun, 15);
+	AddItem_ToInven(ShotGun, 7);
 	AddItem_ToInven(handgun_bullet01a, 20);
 	AddItem_ToInven(shotgun_bullet01a, 20);
-
-	//if (FAILED(Seting_SubInven()))
-	//	MSG_BOX(TEXT("Failed to Find SubInven"));
 }
 
 void CInventory_Manager::Tick(_float fTimeDelta)
@@ -1150,23 +1152,24 @@ HRESULT CInventory_Manager::Init_ContextMenu()
 	return S_OK;
 }
 
-HRESULT CInventory_Manager::Seting_SubInven()
+HRESULT CInventory_Manager::Seting_Hotkey()
 {
-	//list<CGameObject*>* pGameObjList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+	list<CGameObject*>* pListObj = 	m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
 
-	//for (auto& iter : *pGameObjList)
-	//{
-	//	CInventory_Item_UI* pInven_item_UI = dynamic_cast<CInventory_Item_UI*>(iter);
+	for (auto& iter : *pListObj)
+	{
+		CHotKey* pHotkey = nullptr;
 
-	//	if (nullptr != pInven_item_UI)
-	//	{
-	//		m_pInven_Item_UI = pInven_item_UI;
-	//		return S_OK;
-	//	}
-	//}
+		pHotkey = dynamic_cast<CHotKey*>(iter);
 
-	//return E_FAIL;
-	return S_OK;
+		if (nullptr != pHotkey)
+		{
+			m_pHotkey = pHotkey;
+			return S_OK;
+		}
+	}
+
+	return E_FAIL;
 }
 
 HRESULT CInventory_Manager::Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval)

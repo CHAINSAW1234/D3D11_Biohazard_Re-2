@@ -27,6 +27,7 @@ public:
 
 public:
 	virtual void Set_Dead(_bool bDead) override;
+	
 
 private:
 	CInventory_Slot*	m_pInven_Slots[4] = { nullptr,nullptr, nullptr, nullptr };

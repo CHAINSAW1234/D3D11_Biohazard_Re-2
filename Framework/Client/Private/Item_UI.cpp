@@ -43,7 +43,8 @@ void CItem_UI::Start()
 
 		m_mapPartUI.emplace(TEXT("EquipDisplay"), static_cast<CCustomize_UI*>(m_vecChildUI[0]));
 		m_mapPartUI.emplace(TEXT("CountDisplay"), static_cast<CCustomize_UI*>(m_vecChildUI[1]));
-
+		CGameObject* pHotkeyDisplay = static_cast<CCustomize_UI*>(m_vecChildUI[0])->Get_Child(0);
+		m_mapPartUI.emplace(TEXT("HotkeyDisplay"), static_cast<CCustomize_UI*>(pHotkeyDisplay));
 
 		for (auto& iter : *(static_cast<CItem_UI*>(m_vecChildUI[0])->Get_vecTextBoxes()))
 		{
@@ -132,42 +133,57 @@ void CItem_UI::Set_Dead(_bool bDead)
 		{
 		case Client::EQUIPABLE: {
 			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(bDead);
-			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
+
+			if (0 == m_iItemQuantity)
+				m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(true);
+
+			else
+				m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
+
+			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(bDead);
 			break;
 		}
 
 		case Client::CONSUMABLE_EQUIPABLE: {
 			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(bDead);
 			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(bDead);
 			break;
 		}
 
 		case Client::USEABLE: {
 			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(true);
 			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(true);
 			break;
 		}
 
 		case Client::CONSUMABLE: {
 			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(true);
 			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(true);
 			break;
 		}
 
 		case Client::QUEST: {
 			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(true);
 			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(true);
 			break;
 		}
 
 		case Client::DRAG_SHADOW: {
 			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(true);
 			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(true);
+			break;
 		}
 
 		case Client::HOTKEY: {
 			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(bDead);
-			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(m_isActive);
+			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			break;
 		}
 
 		default:
