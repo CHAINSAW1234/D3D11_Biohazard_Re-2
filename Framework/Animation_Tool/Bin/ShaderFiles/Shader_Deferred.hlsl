@@ -7,6 +7,7 @@ matrix g_ViewMatrixInv, g_ProjMatrixInv;
 matrix g_Decal_WorldMatrix_Inv;
 
 Texture2D g_Texture;
+Texture2D g_BlackTexture;
 TextureCubeArray g_CubeTexture;
 Texture3D g_3DTexture;
 
@@ -985,6 +986,52 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_MAIN_BLURX_EFFECT(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT)0;
+    float fWidth, fHeight;
+    g_Texture.GetDimensions(fWidth, fHeight);
+
+    float4 vResult = float4(0, 0, 0, 0);
+    float2 vTexOffset = 1.0 / float2(fWidth, fHeight);
+    float fRadius = 10.f;
+
+    for (int iX = (int)fRadius * -1.f; iX <= (int)fRadius; iX++)
+    {
+        float fDistance = sqrt(float(iX * iX));
+        float fWeight = Compute_Gaussian(fDistance, 1.f) * 2.f;
+        vResult += fWeight * g_Texture.Sample(PointSamplerClamp, In.vTexcoord + float2(iX, 0) * vTexOffset);
+    }
+
+    Out.vColor = vResult;
+
+    return Out;
+}
+
+PS_OUT PS_MAIN_BLURY_EFFECT(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT)0;
+    float fWidth, fHeight;
+    g_Texture.GetDimensions(fWidth, fHeight);
+
+    float4 vResult = float4(0, 0, 0, 0);
+    float2 vTexOffset = 1.0 / float2(fWidth, fHeight); // 텍스처 각 요소에 대한 오프셋 계산 
+    float fRadius = 10.f;
+
+    // 주변 픽셀들을 반복하여 블러 처리
+    for (int iY = (int)fRadius * -1.f; iY <= (int)fRadius; iY++)
+    {
+        float fDistance = sqrt(float(iY * iY));
+        float fWeight = Compute_Gaussian(fDistance, 1.f)*2.f; // 가우시안 함수를 이용해 가중치 계산
+        // 가중치가 적용된 색상을 결과에 더함
+        vResult += fWeight * g_Texture.Sample(PointSamplerClamp, In.vTexcoord + float2(0, iY) * vTexOffset);
+    }
+
+    Out.vColor = vResult;
+
+    return Out;
+}
+
 static const int SSR_MAX_STEPS = 16;
 static const int SSR_BINARY_SEARCH_STEPS = 16;
 static const float RayStep = 1.f;                   // 1 ~ 3
@@ -1450,10 +1497,23 @@ PS_OUT PS_BLOOM(PS_IN In)
 {
     PS_OUT Out = (PS_OUT)0;
 
-    Out.vColor = g_Texture.Sample(PointSamplerClamp, In.vTexcoord);
+    float4 vDiffMrt = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
 
-    if (Out.vColor.a <= 0.1f)
+    if (0.0f == vDiffMrt.a)
         discard;
+
+    float4 vBloomMrt = g_Texture.Sample(LinearSampler, In.vTexcoord);
+    float4 vBlackMrt = g_BlackTexture.Sample(LinearSampler, In.vTexcoord);
+
+    float4 vBloom = pow(pow(abs(vBloomMrt), 2.2f) + pow(abs(vBlackMrt), 2.2f), 1.f / 2.2f);
+
+    float4 vOut = vDiffMrt;
+    vOut = pow(abs(vOut), 2.2f);
+    vBloom = pow(abs(vBloom), 2.2f);
+
+    vOut += vBloom;
+
+    Out.vColor = pow(abs(vOut), 1.f / 2.2f);
 
     return Out;
 }
@@ -1820,8 +1880,8 @@ technique11 DefaultTechnique
     pass Bloom // 17
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        //SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
@@ -1841,5 +1901,31 @@ technique11 DefaultTechnique
         HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_DECAL();
+    }
+
+    pass BlurX_Effect //  19
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_BLURX_EFFECT();
+    }
+
+    pass BlurY_Effect //  20
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_BLURY_EFFECT();
     }
 }

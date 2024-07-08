@@ -326,7 +326,7 @@ private:
 
 public: //For Shot
 	void										RayCast_Shoot();
-
+	void										Set_Muzzle_Smoke();
 public:	//For Camera
 	void										Calc_Camera_LookAt_Point(_float fTimeDelta);
 	HRESULT										Ready_Camera();
@@ -418,6 +418,11 @@ private:
 	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
 	class CMuzzle_Flash_SG*						m_pMuzzle_Flash_SG = { nullptr };
 	class CMuzzle_Smoke*						m_pMuzzle_Smoke = { nullptr };
+
+	_float4										m_vMuzzle_Smoke_Pos;
+	ULONGLONG									m_MuzzleSmoke_Time;
+	ULONGLONG									m_MuzzleSmoke_Delay;
+	_bool										m_bMuzzleSmoke = { false };
 #pragma endregion
 private:
 	HRESULT Add_Components();

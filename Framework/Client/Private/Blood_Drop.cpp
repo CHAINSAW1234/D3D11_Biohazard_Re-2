@@ -1,24 +1,29 @@
 #include "stdafx.h"
-#include "..\Public\Blood.h"
+#include "..\Public\Blood_Drop.h"
 
 #include "GameInstance.h"
+#include "Decal_SSD.h"
 
-CBlood::CBlood(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+#define DIR_AMOUNT 0.3f
+#define DECAL_PROB 30.f
+#define DECAL_COUNT 5
+
+CBlood_Drop::CBlood_Drop(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEffect{ pDevice, pContext }
 {
 }
 
-CBlood::CBlood(const CBlood& rhs)
+CBlood_Drop::CBlood_Drop(const CBlood_Drop& rhs)
 	: CEffect{ rhs }
 {
 }
 
-HRESULT CBlood::Initialize_Prototype()
+HRESULT CBlood_Drop::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CBlood::Initialize(void* pArg)
+HRESULT CBlood_Drop::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -28,28 +33,39 @@ HRESULT CBlood::Initialize(void* pArg)
 
 	m_bRender = false;
 
-	m_FrameDelay = 30;
+	m_FrameDelay = 40;
+
+	m_fDropSpeed = m_pGameInstance->GetRandom_Real(4.f, 5.f);
 
 	m_fDissolveSpeed = 0.05f;
+
+	for (size_t i = 0; i < DECAL_COUNT; ++i)
+	{
+		auto pDecal = new CDecal_SSD(m_pDevice, m_pContext);
+		pDecal->Initialize(nullptr);
+		m_vecDecal.push_back(pDecal);
+	}
 
 	return S_OK;
 }
 
-void CBlood::Tick(_float fTimeDelta)
+void CBlood_Drop::Tick(_float fTimeDelta)
 {
+	if (m_bDecal)
+	{
+		Tick_SubEffect(fTimeDelta);
+	}
+
 	if (m_bRender == false)
 		return;
 
-	if (m_pHitPart)
-	{
-		PxVec3 HitPartPos = m_pHitPart->getGlobalPose().p;
-		_float4 HitPartFloat4 = _float4(HitPartPos.x, HitPartPos.y, HitPartPos.z, 1.f);
-		_float4 vDelta = HitPartFloat4 - m_vPrev_HitPartPos;
-		_float4 vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-		vPos += vDelta;
-		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
-		m_vPrev_HitPartPos = HitPartFloat4;
-	}
+	auto vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+	if(m_vDropDir.y > -0.7f )
+		m_vDropDir.y -= fTimeDelta*m_fDropSpeed;
+
+	vPos += m_vDropDir*fTimeDelta;
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
 
 	if (m_bDissolving)
 	{
@@ -62,14 +78,16 @@ void CBlood::Tick(_float fTimeDelta)
 			m_fSizeY = m_fSize_Y_Default;
 			m_fSizeZ = m_fSize_Z_Default;
 			m_pTransformCom->Set_Scaled(m_fSize_X_Default, m_fSize_Y_Default, m_fSize_Z_Default);
-			m_bRender = false;
 			m_fDissolveAmount = 0.f;
+			m_bRender = false;
+
+			RayCast_Decal();
 		}
 
 		return;
 	}
 
-	if (m_FrameDelay + m_FrameTime < GetTickCount64())
+	if(m_FrameDelay + m_FrameTime < GetTickCount64())
 	{
 		++m_iFrame;
 
@@ -80,24 +98,28 @@ void CBlood::Tick(_float fTimeDelta)
 
 	if (m_iFrame >= iNumMesh)
 	{
-	/*	m_iFrame = 0;
+		m_bDissolving = true;
+		/*m_bRender = false;
+		m_iFrame = 0;
 		m_fSizeX = m_fSize_X_Default;
 		m_fSizeY = m_fSize_Y_Default;
 		m_fSizeZ = m_fSize_Z_Default;
-		m_pTransformCom->Set_Scaled(m_fSize_X_Default, m_fSize_Y_Default, m_fSize_Z_Default);
-		m_bRender = false;*/
-
-		m_bDissolving = true;
+		m_pTransformCom->Set_Scaled(m_fSize_X_Default, m_fSize_Y_Default, m_fSize_Z_Default);*/
 	}
 }
 
-void CBlood::Late_Tick(_float fTimeDelta)
+void CBlood_Drop::Late_Tick(_float fTimeDelta)
 {
+	if (m_bDecal)
+	{
+		Late_Tick_SubEffect(fTimeDelta);
+	}
+
 	if (m_bRender == true)
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 }
 
-HRESULT CBlood::Render()
+HRESULT CBlood_Drop::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -525,14 +547,14 @@ HRESULT CBlood::Render()
 	return S_OK;
 }
 
-void CBlood::SetSize(_float fSizeX, _float fSizeY, _float fSizeZ)
+void CBlood_Drop::SetSize(_float fSizeX, _float fSizeY, _float fSizeZ)
 {
 	switch (m_iType)
 	{
 	case 0:
-		fSizeX -= 2.5f;
-		fSizeY -= 2.5f;
-		fSizeZ -= 2.5f;
+		fSizeX -= 1.5f;
+		fSizeY -= 1.5f;
+		fSizeZ -= 1.5f;
 		m_fSizeX = fSizeX;
 		m_fSizeY = fSizeY;
 		m_fSizeZ = fSizeZ;
@@ -631,34 +653,67 @@ void CBlood::SetSize(_float fSizeX, _float fSizeY, _float fSizeZ)
 		break;
 	}
 
-	m_bDissolving = false;
-	m_fDissolveAmount = 0.f;
 	m_pTransformCom->Set_Scaled(fSizeX, fSizeY, fSizeZ);
 }
 
-void CBlood::SetWorldMatrix_With_HitNormal(_vector vUp)
+void CBlood_Drop::SetWorldMatrix_With_HitNormal(_vector vUp)
 {
 	m_pTransformCom->SetWorldMatrix_With_UpVector(vUp);
 }
 
-_float4x4 CBlood::GetWorldMatrix()
+_float4x4 CBlood_Drop::GetWorldMatrix()
 {
 	return m_pTransformCom->Get_WorldMatrix_Pure();
 }
 
-_float4 CBlood::GetPosition()
+_float4 CBlood_Drop::GetPosition()
 {
 	return m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 }
 
-HRESULT CBlood::Add_Components()
+void CBlood_Drop::SetPosition(_float4 Pos)
+{
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, Pos);
+	m_iFrame = 0;
+	m_fAlpha_Delta_Sum = 0.f;
+
+	m_vDropDir = _float4(m_pGameInstance->GetRandom_Real(-DIR_AMOUNT, DIR_AMOUNT),
+		m_pGameInstance->GetRandom_Real(0.1f, 1.f),
+		m_pGameInstance->GetRandom_Real(-DIR_AMOUNT, DIR_AMOUNT), 0.f);
+
+	//m_vDropDir = Float4_Normalize(m_vDropDir);
+
+	m_bDissolving = false;
+	m_fDissolveAmount = 0.f;
+}
+
+void CBlood_Drop::RayCast_Decal()
+{
+	if(m_pGameInstance->GetRandom_Real(0.f,100.f) <= DECAL_PROB)
+	{
+		_float4 vBlockPoint;
+		_float4 vBlockNormal;
+
+		if (m_pGameInstance->RayCast_Decal(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), _float4(0.f, -1.f, 0.f, 0.f), &vBlockPoint, &vBlockNormal))
+		{
+			m_vecDecal[m_iDecalCount]->Set_Render(true);
+			m_vecDecal[m_iDecalCount]->SetPosition(vBlockPoint);
+			m_vecDecal[m_iDecalCount]->LookAt(vBlockNormal);
+			m_bDecal = true;
+			++m_iDecalCount;
+
+			if (m_iDecalCount >= DECAL_COUNT)
+			{
+				m_iDecalCount = 0;
+			}
+		}
+	}
+}
+
+HRESULT CBlood_Drop::Add_Components()
 {
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
-		return E_FAIL;
-
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Dissolve"),
-		TEXT("Com_Texture_Dissolve"), (CComponent**)&m_pTextureCom_Dissolve)))
 		return E_FAIL;
 
 	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_01"),
@@ -708,7 +763,7 @@ HRESULT CBlood::Add_Components()
 	return S_OK;
 }
 
-HRESULT CBlood::Bind_ShaderResources()
+HRESULT CBlood_Drop::Bind_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -721,13 +776,10 @@ HRESULT CBlood::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom_Dissolve->Bind_ShaderResource(m_pShaderCom, "g_Texture_Dissolve")))
-		return E_FAIL;
-
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bDissolve", &m_bDissolving, sizeof(_bool))))
 		return E_FAIL;
 
-	if(m_bDissolving)
+	if (m_bDissolving)
 	{
 		if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveAmount", &m_fDissolveAmount, sizeof(_float))))
 			return E_FAIL;
@@ -736,13 +788,29 @@ HRESULT CBlood::Bind_ShaderResources()
 	return S_OK;
 }
 
-CBlood* CBlood::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+void CBlood_Drop::Tick_SubEffect(_float fTimeDelta)
 {
-	CBlood* pInstance = new CBlood(pDevice, pContext);
+	for (size_t i = 0; i < m_vecDecal.size(); ++i)
+	{
+		m_vecDecal[i]->Tick(fTimeDelta);
+	}
+}
+
+void CBlood_Drop::Late_Tick_SubEffect(_float fTimeDelta)
+{
+	for (size_t i = 0; i < m_vecDecal.size(); ++i)
+	{
+		m_vecDecal[i]->Late_Tick(fTimeDelta);
+	}
+}
+
+CBlood_Drop* CBlood_Drop::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CBlood_Drop* pInstance = new CBlood_Drop(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX(TEXT("Failed To Created : CBlood"));
+		MSG_BOX(TEXT("Failed To Created : CBlood_Drop"));
 
 		Safe_Release(pInstance);
 	}
@@ -753,13 +821,13 @@ CBlood* CBlood::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 }
 
-CGameObject* CBlood::Clone(void* pArg)
+CGameObject* CBlood_Drop::Clone(void* pArg)
 {
-	CBlood* pInstance = new CBlood(*this);
+	CBlood_Drop* pInstance = new CBlood_Drop(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX(TEXT("Failed To Created : CBlood"));
+		MSG_BOX(TEXT("Failed To Created : CBlood_Drop"));
 
 		Safe_Release(pInstance);
 	}
@@ -767,7 +835,7 @@ CGameObject* CBlood::Clone(void* pArg)
 	return pInstance;
 }
 
-void CBlood::Free()
+void CBlood_Drop::Free()
 {
 	__super::Free();
 
@@ -785,4 +853,9 @@ void CBlood::Free()
 	Safe_Release(m_pModelCom_11);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
+
+	for(size_t i = 0;i<m_vecDecal.size();++i)
+	{
+		Safe_Release(m_vecDecal[i]);
+	}
 }

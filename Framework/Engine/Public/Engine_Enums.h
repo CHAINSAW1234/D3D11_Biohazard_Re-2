@@ -31,6 +31,8 @@ namespace Engine
 		PASS_FXAA,
 		PASS_BLOOM,
 		PASS_SSD,
+		PASS_BLURX_EFFECT,
+		PASS_BLURY_EFFECT,
 		PASS_END
 	};
 
