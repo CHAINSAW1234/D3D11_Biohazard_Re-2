@@ -494,8 +494,8 @@ void CTab_Window::interact_Props(CGameObject* pPickedUp_Item)
 	CInteractProps* pProp = dynamic_cast<CInteractProps*>(pPickedUp_Item);
 	if (nullptr == pProp)
 		return;
+	_int iItemIndex = pProp->Get_NeedItem_Index(); // 필요한 아이템 인덱스 get tto da ze -
 
-	int a = 0;
 }
 
 void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)

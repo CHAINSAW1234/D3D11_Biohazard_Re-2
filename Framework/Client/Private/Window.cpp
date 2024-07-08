@@ -30,7 +30,7 @@ HRESULT CWindow::Initialize(void* pArg)
 
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
-
+	m_iNeedItem = woodbarricade01a;
 	return S_OK;
 }
 
