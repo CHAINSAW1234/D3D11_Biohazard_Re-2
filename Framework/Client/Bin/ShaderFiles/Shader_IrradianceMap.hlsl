@@ -4,7 +4,7 @@ static const float PI = 3.141592;
 static const float TwoPI = 2 * PI;
 static const float Epsilon = 0.00001;
 
-static const uint NumSamples = 64 * 1024;
+static const uint NumSamples = 256;
 static const float InvNumSamples = 1.0 / float(NumSamples);
 
 TextureCube g_CubeTexture;
@@ -107,7 +107,7 @@ void CS_Irradiance(uint3 ThreadID : SV_DispatchThreadID)
         float cosTheta = max(0.0, dot(Li, N));
 
 		// PIs here cancel out because of division by pdf.
-        irradiance += 2.0 * g_CubeTexture.SampleLevel(LinearSampler, Li, 0).rgb * cosTheta;
+        irradiance += 2.0 * g_CubeTexture.SampleLevel(PointSamplerClamp, Li, 0).rgb * cosTheta;
     }
     irradiance /= float(NumSamples);
 

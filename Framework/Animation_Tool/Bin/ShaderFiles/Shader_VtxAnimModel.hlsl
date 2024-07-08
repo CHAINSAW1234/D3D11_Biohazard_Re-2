@@ -104,44 +104,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vBinormal = normalize(cross(Out.vNormal, Out.vTangent));
 	Out.iIndex = In.iIndex;
 	Out.vDecalUV = g_DecalMap[Out.iIndex];
-	//  if (g_isMotionBlur)
-	//  {
-	//      matrix PrevBoneMatrix = g_PrevBoneMatrices[In.vBlendIndices.x] * In.vBlendWeights.x / fTotalWeight +
-		  //g_PrevBoneMatrices[In.vBlendIndices.y] * In.vBlendWeights.y / fTotalWeight +
-		  //g_PrevBoneMatrices[In.vBlendIndices.z] * In.vBlendWeights.z / fTotalWeight +
-		  //g_PrevBoneMatrices[In.vBlendIndices.w] * In.vBlendWeights.w / fTotalWeight;
 
-	//      matrix matPrevWV, matPrevWVP;
-
-	//      matPrevWV = mul(g_PrevWorldMatrix, g_PrevViewMatrix);
-	//      matPrevWVP = mul(matPrevWV, g_PrevProjMatrix);
-
-	//  // Velocity °è»ê
-	//      float4 vNewPosition = Out.vPosition;
-	//      vector vOldPosition = mul(vector(In.vPosition, 1.f), PrevBoneMatrix);
-	//      vOldPosition = mul(vOldPosition, matPrevWVP);
-
-	//      float3 vDir = vNewPosition.xyz - vOldPosition.xyz;
-
-	//      float a = dot(normalize(vDir), normalize(Out.vNormal));
-	//      if (a < 0.f)
-	//          Out.vPosition = vOldPosition;
-	//      else
-	//      {
-	//          Out.vPosition = vNewPosition;
-	//          Out.vNormal = normalize(mul(mul(vector(In.vNormal, 0.f), PrevBoneMatrix), g_PrevWorldMatrix));
-	//          Out.vWorldPos = mul(vOldPosition, g_PrevWorldMatrix);
-	//          Out.vProjPos = Out.vPosition;
-	//          Out.vTangent = normalize(mul(float4(In.vTangent, 0.f), g_PrevWorldMatrix)).xyz;
-	//          Out.vBinormal = normalize(cross(Out.vNormal, Out.vTangent));
-	//      }
-
-
-	//      float2 vVelocity = (vNewPosition.xy / vNewPosition.w) - (vOldPosition.xy / vOldPosition.w);
-	//      Out.vVelocity.xy = vVelocity * 0.5f;
-	//      Out.vVelocity.z = Out.vPosition.z;
-	//      Out.vVelocity.w = Out.vPosition.w;
-	//  }
 	return Out;
 }
 
@@ -151,8 +114,8 @@ VS_OUT VS_LIGHT(VS_IN In)
 	VS_OUT Out = (VS_OUT)0;
 
 	//  float fWeightW = 1.f - (In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z);
-	//  float fTotalWeight = In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z + In.vBlendWeights.w;
-	float fTotalWeight = 1.f;
+	  float fTotalWeight = In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z + In.vBlendWeights.w;
+	//float fTotalWeight = 1.f;
 
 	matrix BoneMatrix = g_BoneMatrices[In.vBlendIndices.x] * In.vBlendWeights.x / fTotalWeight +
 		g_BoneMatrices[In.vBlendIndices.y] * In.vBlendWeights.y / fTotalWeight +
@@ -177,12 +140,12 @@ VS_OUT_CUBE VS_CUBE(VS_IN In)
 {
 	VS_OUT_CUBE Out = (VS_OUT_CUBE)0;
 
-	float fWeightW = 1.f - (In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z);
-
-	matrix BoneMatrix = g_BoneMatrices[In.vBlendIndices.x] * In.vBlendWeights.x +
-		g_BoneMatrices[In.vBlendIndices.y] * In.vBlendWeights.y +
-		g_BoneMatrices[In.vBlendIndices.z] * In.vBlendWeights.z +
-		g_BoneMatrices[In.vBlendIndices.w] * fWeightW;
+    float fTotalWeight = In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z + In.vBlendWeights.w;
+	
+    matrix BoneMatrix = g_BoneMatrices[In.vBlendIndices.x] * In.vBlendWeights.x / fTotalWeight +
+		g_BoneMatrices[In.vBlendIndices.y] * In.vBlendWeights.y / fTotalWeight +
+		g_BoneMatrices[In.vBlendIndices.z] * In.vBlendWeights.z / fTotalWeight +
+		g_BoneMatrices[In.vBlendIndices.w] * In.vBlendWeights.w / fTotalWeight;
 
 	vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);
 
