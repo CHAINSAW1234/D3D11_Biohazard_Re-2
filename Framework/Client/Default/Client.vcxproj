@@ -227,6 +227,7 @@
     <ClInclude Include="..\Public\Decal_SSD.h" />
     <ClInclude Include="..\Public\Effect_Header_Zombie.h" />
     <ClInclude Include="..\Public\Creep_Zombie.h" />
+    <ClInclude Include="..\Public\Pannel_Window.h" />
     <ClInclude Include="..\Public\Is_In_Door_Zombie.h" />
     <ClInclude Include="..\Public\Is_Same_Region_To_Player_Zombie.h" />
     <ClInclude Include="..\Public\Is_Start_Zombie.h" />
@@ -459,6 +460,7 @@
     <ClCompile Include="..\Private\Is_Start_Zombie.cpp" />
     <ClCompile Include="..\Private\Part_Breaker_Zombie.cpp" />
     <ClCompile Include="..\Private\HotKey.cpp" />
+    <ClCompile Include="..\Private\Pannel_Window.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Shelf.cpp" />
     <ClCompile Include="..\Private\Region_Update_Zombie.cpp" />
     <ClCompile Include="..\Private\Room_Finder.cpp" />

@@ -75,7 +75,26 @@ void CWindow::Tick(_float fTimeDelta)
 	
 	if (m_iHP[PART_BODY] <= 0)
 		m_eState = WINDOW_BREAK;
-	
+
+	if (BARRIGATE_STATIC == m_eBarrigateState && m_iHP[PART_PANNEL] <= 0)
+		m_eBarrigateState = BARRIGATE_BREAK;
+
+	if (BARRIGATE_BREAK == m_eBarrigateState)
+	{
+		m_bBarrigateInstallable = true;
+		m_bBarrigate = false;
+	}
+
+	if (m_bBarrigate)
+		m_fBarrigateOldTime += fTimeDelta;
+	if (m_fBarrigateOldTime > 5.f&& m_iHP[PART_PANNEL] != 0)
+		m_eBarrigateState = BARRIGATE_STATIC;
+
+	if (true == m_bBarrigateInstallable &&( m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1]))
+		if ((*m_pPlayerInteract))
+			Active();
+
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -162,7 +181,22 @@ HRESULT CWindow::Add_PartObjects()
 	m_PartObjects[CWindow::PART_BODY] = pBodyObj;
 
 	/*PART_PANNEL*/
-	m_PartObjects[CWindow::PART_PANNEL] = nullptr;
+
+	CPartObject* pPannel = { nullptr };
+	CBody_Window::PART_INTERACTPROPS_DESC PannelDesc = {};
+	PannelDesc.pParentsTransform = m_pTransformCom;
+	PannelDesc.pState = &m_eBarrigateState;
+	pPannel = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_PannelWindow"), &PannelDesc));
+	if (nullptr == pPannel)
+		return E_FAIL;
+
+	m_PartObjects[CWindow::PART_PANNEL] = pPannel;
+
+
+
+
+
+
 
 	return S_OK;
 }
@@ -193,12 +227,10 @@ void CWindow::Active()
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
 
-
-	if (m_eState == WINDOW_STATIC)
-		m_eState = WINDOW_BREAK;
-	else
-		m_eState = WINDOW_STATIC;
-
+	m_bBarrigate = true;
+	m_bBarrigateInstallable = false;
+	m_eBarrigateState = BARRIGATE_NEW;
+	m_iHP[PART_PANNEL] = 5;
 }
 
 _float4 CWindow::Get_Object_Pos()

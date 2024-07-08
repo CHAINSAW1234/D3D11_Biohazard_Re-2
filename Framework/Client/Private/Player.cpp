@@ -109,7 +109,7 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 	m_fTimeTEST += fTimeDelta;
 
 
-	if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON) && m_fTimeTEST > 0.5f)
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON) && m_fTimeTEST > 0.5f)
 	{
 		m_fTimeTEST = 0.f;
 		m_bInteract = true;
