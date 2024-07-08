@@ -30,7 +30,7 @@ HRESULT CWindow::Initialize(void* pArg)
 
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
-
+	m_iNeedItem = woodbarricade01a;
 	return S_OK;
 }
 
@@ -87,7 +87,7 @@ void CWindow::Tick(_float fTimeDelta)
 
 	if (m_bBarrigate)
 		m_fBarrigateOldTime += fTimeDelta;
-	if (m_fBarrigateOldTime > 5.f&& m_iHP[PART_PANNEL] != 0)
+	if (m_fBarrigateOldTime > 360.f&& m_iHP[PART_PANNEL] != 0)
 		m_eBarrigateState = BARRIGATE_STATIC;
 
 	if (true == m_bBarrigateInstallable &&( m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1]))
