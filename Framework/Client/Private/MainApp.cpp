@@ -34,6 +34,10 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Open_Level(LEVEL_GAMEPLAY)))
 		return E_FAIL;
 
+#ifdef _DEBUG
+	m_pGameInstance->On_Off_DebugRender();
+#endif
+
 	
 	return S_OK;
 }
