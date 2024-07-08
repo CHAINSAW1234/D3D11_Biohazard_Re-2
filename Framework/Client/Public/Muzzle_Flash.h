@@ -30,6 +30,9 @@ private:
 	virtual HRESULT			Add_Components();
 	virtual HRESULT			Bind_ShaderResources();
 
+private:
+	class CMuzzle_Light_SG* m_pMuzzle_Light = { nullptr };
+
 public:
 	static CMuzzle_Flash* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
