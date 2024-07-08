@@ -108,6 +108,45 @@ void CBlood_Drop::Tick(_float fTimeDelta)
 	}
 }
 
+void CBlood_Drop::Start()
+{
+#pragma region 메모리 정리
+	m_pModelCom->Release_Dump();
+	m_pModelCom->Release_Decal_Dump();
+
+	m_pModelCom_2->Release_Dump();
+	m_pModelCom_2->Release_Decal_Dump();
+
+	m_pModelCom_3->Release_Dump();
+	m_pModelCom_3->Release_Decal_Dump();
+
+	m_pModelCom_4->Release_Dump();
+	m_pModelCom_4->Release_Decal_Dump();
+
+	m_pModelCom_5->Release_Dump();
+	m_pModelCom_5->Release_Decal_Dump();
+
+	m_pModelCom_6->Release_Dump();
+	m_pModelCom_6->Release_Decal_Dump();
+
+	m_pModelCom_7->Release_Dump();
+	m_pModelCom_7->Release_Decal_Dump();
+
+	m_pModelCom_8->Release_Dump();
+	m_pModelCom_8->Release_Decal_Dump();
+
+	m_pModelCom_9->Release_Dump();
+	m_pModelCom_9->Release_Decal_Dump();
+
+	m_pModelCom_10->Release_Dump();
+	m_pModelCom_10->Release_Decal_Dump();
+
+	m_pModelCom_11->Release_Dump();
+	m_pModelCom_11->Release_Decal_Dump();
+
+#pragma endregion
+}
+
 void CBlood_Drop::Late_Tick(_float fTimeDelta)
 {
 	if (m_bDecal)

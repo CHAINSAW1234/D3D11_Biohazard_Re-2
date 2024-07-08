@@ -429,6 +429,7 @@ private:
 	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
 	class CMuzzle_Flash_SG*						m_pMuzzle_Flash_SG = { nullptr };
 	class CMuzzle_Smoke*						m_pMuzzle_Smoke = { nullptr };
+	class CMuzzle_Spark_SG*						m_pMuzzle_Spark_SG = { nullptr };
 
 	_float4										m_vMuzzle_Smoke_Pos;
 	ULONGLONG									m_MuzzleSmoke_Time;

@@ -986,24 +986,42 @@ PS_OUT PS_MAIN_BLURY(PS_IN In)
     return Out;
 }
 
+static const float Weight[13] =
+{
+    0.0561, 0.1353, 0.278, 0.4868, 0.7261, 0.9231, 1, 0.9231, 0.7261, 0.4868, 0.278, 0.1353, 0.0561
+};
+
+#define KERNEL_SIZE 32
+#define KERNEL_SIZE_EMISSIVE 13
+#define SIGMA 100.0
+#define SIGMA_EMISSIVE 200.0
+#define RADIUS 2.0 // 커널의 반지름
+float Gaussian(float x, float sigma)
+{
+    return exp(-0.5 * (x * x) / (sigma * sigma));
+}
+//static const float Total = 6.2108;
+static const float Total = 1.2108;
+
 PS_OUT PS_MAIN_BLURX_EFFECT(PS_IN In)
 {
     PS_OUT Out = (PS_OUT)0;
-    float fWidth, fHeight;
-    g_Texture.GetDimensions(fWidth, fHeight);
 
-    float4 vResult = float4(0, 0, 0, 0);
-    float2 vTexOffset = 1.0 / float2(fWidth, fHeight);
-    float fRadius = 10.f;
+    float4 vOut = 0;
+    float2 t = In.vTexcoord;
+    float2 uv = 0;
+    float TotalWeight = 0;
+    float tu = 1.f / 640.f;
 
-    for (int iX = (int)fRadius * -1.f; iX <= (int)fRadius; iX++)
+    for (int i = -35; i <= 35; ++i)
     {
-        float fDistance = sqrt(float(iX * iX));
-        float fWeight = Compute_Gaussian(fDistance, 1.f) * 2.f;
-        vResult += fWeight * g_Texture.Sample(PointSamplerClamp, In.vTexcoord + float2(iX, 0) * vTexOffset);
+        uv = t + float2(tu * i, 0);
+        float weight = Gaussian(float(i), 400);
+        vOut += weight * g_Texture.Sample(LinearSamplerClamp, uv);
+        TotalWeight += weight;
     }
-
-    Out.vColor = vResult;
+    vOut /= TotalWeight;
+    Out.vColor = vOut;
 
     return Out;
 }
@@ -1011,24 +1029,24 @@ PS_OUT PS_MAIN_BLURX_EFFECT(PS_IN In)
 PS_OUT PS_MAIN_BLURY_EFFECT(PS_IN In)
 {
     PS_OUT Out = (PS_OUT)0;
-    float fWidth, fHeight;
-    g_Texture.GetDimensions(fWidth, fHeight);
 
-    float4 vResult = float4(0, 0, 0, 0);
-    float2 vTexOffset = 1.0 / float2(fWidth, fHeight); // 텍스처 각 요소에 대한 오프셋 계산 
-    float fRadius = 10.f;
+    float4 vOut = 0;
+    float2 t = In.vTexcoord;
+    float2 uv = 0;
+    float TotalWeight = 0;
+    float tu = 1.f / (640.f * 0.7f);
 
-    // 주변 픽셀들을 반복하여 블러 처리
-    for (int iY = (int)fRadius * -1.f; iY <= (int)fRadius; iY++)
+    for (int i = -35; i <= 35; ++i)
     {
-        float fDistance = sqrt(float(iY * iY));
-        float fWeight = Compute_Gaussian(fDistance, 1.f)*2.f; // 가우시안 함수를 이용해 가중치 계산
-        // 가중치가 적용된 색상을 결과에 더함
-        vResult += fWeight * g_Texture.Sample(PointSamplerClamp, In.vTexcoord + float2(0, iY) * vTexOffset);
+        uv = t + float2(0, tu * i);
+        float weight = Gaussian(float(i), 400);
+        vOut += weight * g_Texture.Sample(LinearSamplerClamp, uv);
+        TotalWeight += weight;
     }
 
-    Out.vColor = vResult;
+    vOut /= TotalWeight;
 
+    Out.vColor = vOut;
     return Out;
 }
 
@@ -1497,23 +1515,27 @@ PS_OUT PS_BLOOM(PS_IN In)
 {
     PS_OUT Out = (PS_OUT)0;
 
-    float4 vDiffMrt = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
-
-    if (0.0f == vDiffMrt.a)
-        discard;
+    //float4 vDiffMrt = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
 
     float4 vBloomMrt = g_Texture.Sample(LinearSampler, In.vTexcoord);
     float4 vBlackMrt = g_BlackTexture.Sample(LinearSampler, In.vTexcoord);
 
     float4 vBloom = pow(pow(abs(vBloomMrt), 2.2f) + pow(abs(vBlackMrt), 2.2f), 1.f / 2.2f);
+    
+    if (vBloom.a != 0)
+    {
+        vBloom = pow(abs(vBloom), 2.2f);
 
-    float4 vOut = vDiffMrt;
-    vOut = pow(abs(vOut), 2.2f);
-    vBloom = pow(abs(vBloom), 2.2f);
+        Out.vColor = vBloom;
+    }
+
+    //float4 vOut = vDiffMrt;
+    //vOut = pow(abs(vOut), 2.2f);
+  /*  vBloom = pow(abs(vBloom), 2.2f);
 
     vOut += vBloom;
-
-    Out.vColor = pow(abs(vOut), 1.f / 2.2f);
+    Out.vColor = vOut;
+    Out.vColor = pow(abs(vOut), 1.f / 2.2f);*/
 
     return Out;
 }
@@ -1881,7 +1903,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
-        //SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;

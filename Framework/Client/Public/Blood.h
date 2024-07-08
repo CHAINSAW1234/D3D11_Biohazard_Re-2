@@ -31,6 +31,7 @@ public:
 		m_bDissolving = false;
 	}
 	_float4					GetPosition();
+	virtual void			Start() override;
 private:
 	virtual HRESULT			Add_Components();
 	virtual HRESULT			Bind_ShaderResources();

@@ -1,25 +1,24 @@
 #include "stdafx.h"
-#include "..\Public\Muzzle_Flash_SG.h"
+#include "..\Public\Muzzle_Spark_SG.h"
 
 #include "GameInstance.h"
-#include "Muzzle_Light_SG.h"
 
-CMuzzle_Flash_SG::CMuzzle_Flash_SG(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CMuzzle_Spark_SG::CMuzzle_Spark_SG(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect{ pDevice, pContext }
 {
 }
 
-CMuzzle_Flash_SG::CMuzzle_Flash_SG(const CMuzzle_Flash_SG & rhs)
+CMuzzle_Spark_SG::CMuzzle_Spark_SG(const CMuzzle_Spark_SG & rhs)
 	: CEffect{ rhs }
 {
 }
 
-HRESULT CMuzzle_Flash_SG::Initialize_Prototype()
+HRESULT CMuzzle_Spark_SG::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CMuzzle_Flash_SG::Initialize(void * pArg)
+HRESULT CMuzzle_Spark_SG::Initialize(void * pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -32,56 +31,26 @@ HRESULT CMuzzle_Flash_SG::Initialize(void * pArg)
 
 	m_bRender = false;
 
-	m_FrameDelay = 20;
-
-	m_vFirstFrame_Size = _float2(0.45f, 0.45f);
-	m_vSecondFrame_Size = _float2(0.8f, 0.8f);
-	m_vThirdFrame_Size = _float2(0.55f, 0.55f);
-
-	m_pMuzzle_Light = CMuzzle_Light_SG::Create(m_pDevice, m_pContext);
-	m_pMuzzle_Light->SetSize(2.f, 2.f);
+	m_FrameDelay = 400;
 
 	return S_OK;
 }
 
-void CMuzzle_Flash_SG::Tick(_float fTimeDelta)
+void CMuzzle_Spark_SG::Tick(_float fTimeDelta)
 {
 	if (m_bRender == false)
 		return;
 
-	if (m_pMuzzle_Light)
-		m_pMuzzle_Light->Tick(fTimeDelta);
-
 	if (m_FrameDelay + m_FrameTime < GetTickCount64())
 	{
+		++m_iFrame;
 		m_FrameTime = GetTickCount64();
-		++m_iMainFrame;
 	}
 
-	switch (m_iMainFrame)
-	{
-	case 0:
-		m_pTransformCom->Set_Scaled(m_vFirstFrame_Size.x, m_vFirstFrame_Size.y,1.f);
-		m_iFrame = 0;
-		break;
-	case 1:
-		m_pTransformCom->Set_Scaled(m_vSecondFrame_Size.x, m_vSecondFrame_Size.y, 1.f);
-		m_iFrame = 1;
-		m_pMuzzle_Light->Set_Render(true);
-		m_pMuzzle_Light->SetPosition(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-		break;
-	case 2:
-		m_pTransformCom->Set_Scaled(m_vThirdFrame_Size.x, m_vThirdFrame_Size.y, 1.f);
-		m_iFrame = 0;
-		//m_pMuzzle_Light->Set_Render(false);
-		break;
-	}
-
-	if (m_iMainFrame >= 3)
+	if (m_iFrame >= 4)
 	{
 		m_bRender = false;
 		m_iFrame = 0;
-		m_iMainFrame = 0;
 	}
 
 	Compute_CurrentUV();
@@ -89,21 +58,18 @@ void CMuzzle_Flash_SG::Tick(_float fTimeDelta)
 	Setup_Billboard();
 }
 
-void CMuzzle_Flash_SG::Late_Tick(_float fTimeDelta)
+void CMuzzle_Spark_SG::Late_Tick(_float fTimeDelta)
 {
-	if(m_bRender == true)
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EFFECT_BLOOM, this);
-
-	if(m_pMuzzle_Light)
-		m_pMuzzle_Light->Late_Tick(fTimeDelta);
+	/*if(m_bRender == true)
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EFFECT_BLOOM, this);*/
 }
 
-HRESULT CMuzzle_Flash_SG::Render()
+HRESULT CMuzzle_Spark_SG::Render()
 {
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(2);
+	m_pShaderCom->Begin(5);
 
 	m_pVIBufferCom->Bind_Buffers();
 
@@ -112,7 +78,7 @@ HRESULT CMuzzle_Flash_SG::Render()
 	return S_OK;
 }
 
-void CMuzzle_Flash_SG::Compute_CurrentUV()
+void CMuzzle_Spark_SG::Compute_CurrentUV()
 {
 	IMG_SIZE      ImgSize = m_pTextureCom->GetImgSize();
 
@@ -130,25 +96,30 @@ void CMuzzle_Flash_SG::Compute_CurrentUV()
 	m_fMaxUV_Y = _float((iCurrentY + 1) * iSizeY) / ImgSize.iSizeY;
 }
 
-void CMuzzle_Flash_SG::Setup_Billboard()
+void CMuzzle_Spark_SG::Setup_Billboard()
 {
 	m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Float4());
 }
 
-void CMuzzle_Flash_SG::SetSize(_float fSizeX, _float fSizeY)
+void CMuzzle_Spark_SG::SetSize(_float fSizeX, _float fSizeY)
 {
 	m_fSizeX = fSizeX;
 	m_fSizeY = fSizeY;
 
+	m_fDefaultSize_X = fSizeX;
+	m_fDefaultSize_Y = fSizeY;
+
 	m_pTransformCom->Set_Scaled(fSizeX, fSizeY,1.f);
 }
 
-void CMuzzle_Flash_SG::SetPosition(_float4 Pos)
+void CMuzzle_Spark_SG::SetPosition(_float4 Pos)
 {
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, Pos);
+	m_iFrame = 0;
+	m_fAlpha_Delta_Sum = 0.f;
 }
 
-HRESULT CMuzzle_Flash_SG::Add_Components()
+HRESULT CMuzzle_Spark_SG::Add_Components()
 {
 	/* For.Com_Shader */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_Effect"),
@@ -156,7 +127,7 @@ HRESULT CMuzzle_Flash_SG::Add_Components()
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Muzzle_Flash_SG"),
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG"),
 		TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
@@ -168,7 +139,7 @@ HRESULT CMuzzle_Flash_SG::Add_Components()
 	return S_OK;
 }
 
-HRESULT CMuzzle_Flash_SG::Bind_ShaderResources()
+HRESULT CMuzzle_Spark_SG::Bind_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -202,13 +173,13 @@ HRESULT CMuzzle_Flash_SG::Bind_ShaderResources()
 	return S_OK;
 }
 
-CMuzzle_Flash_SG * CMuzzle_Flash_SG::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CMuzzle_Spark_SG * CMuzzle_Spark_SG::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
-	CMuzzle_Flash_SG*		pInstance = new CMuzzle_Flash_SG(pDevice, pContext);
+	CMuzzle_Spark_SG*		pInstance = new CMuzzle_Spark_SG(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX(TEXT("Failed To Created : CMuzzle_Flash_SG"));
+		MSG_BOX(TEXT("Failed To Created : CMuzzle_Spark_SG"));
 
 		Safe_Release(pInstance);
 	}
@@ -219,13 +190,13 @@ CMuzzle_Flash_SG * CMuzzle_Flash_SG::Create(ID3D11Device * pDevice, ID3D11Device
 
 }
 
-CGameObject * CMuzzle_Flash_SG::Clone(void * pArg)
+CGameObject * CMuzzle_Spark_SG::Clone(void * pArg)
 {
-	CMuzzle_Flash_SG*		pInstance = new CMuzzle_Flash_SG(*this);
+	CMuzzle_Spark_SG*		pInstance = new CMuzzle_Spark_SG(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX(TEXT("Failed To Created : CMuzzle_Flash_SG"));
+		MSG_BOX(TEXT("Failed To Created : CMuzzle_Spark_SG"));
 
 		Safe_Release(pInstance);
 	}
@@ -233,12 +204,11 @@ CGameObject * CMuzzle_Flash_SG::Clone(void * pArg)
 	return pInstance;
 }
 
-void CMuzzle_Flash_SG::Free()
+void CMuzzle_Spark_SG::Free()
 {
 	__super::Free();
 
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pMuzzle_Light);
 }

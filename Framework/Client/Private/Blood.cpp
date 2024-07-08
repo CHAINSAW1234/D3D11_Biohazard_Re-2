@@ -651,6 +651,45 @@ _float4 CBlood::GetPosition()
 	return m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 }
 
+void CBlood::Start()
+{
+#pragma region 메모리 정리
+	m_pModelCom->Release_Dump();
+	m_pModelCom->Release_Decal_Dump();
+
+	m_pModelCom_2->Release_Dump();
+	m_pModelCom_2->Release_Decal_Dump();
+
+	m_pModelCom_3->Release_Dump();
+	m_pModelCom_3->Release_Decal_Dump();
+
+	m_pModelCom_4->Release_Dump();
+	m_pModelCom_4->Release_Decal_Dump();
+
+	m_pModelCom_5->Release_Dump();
+	m_pModelCom_5->Release_Decal_Dump();
+
+	m_pModelCom_6->Release_Dump();
+	m_pModelCom_6->Release_Decal_Dump();
+
+	m_pModelCom_7->Release_Dump();
+	m_pModelCom_7->Release_Decal_Dump();
+
+	m_pModelCom_8->Release_Dump();
+	m_pModelCom_8->Release_Decal_Dump();
+
+	m_pModelCom_9->Release_Dump();
+	m_pModelCom_9->Release_Decal_Dump();
+
+	m_pModelCom_10->Release_Dump();
+	m_pModelCom_10->Release_Decal_Dump();
+
+	m_pModelCom_11->Release_Dump();
+	m_pModelCom_11->Release_Decal_Dump();
+
+#pragma endregion
+}
+
 HRESULT CBlood::Add_Components()
 {
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
