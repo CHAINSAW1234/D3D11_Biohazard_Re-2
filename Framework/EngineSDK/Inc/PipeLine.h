@@ -4,6 +4,11 @@
 
 BEGIN(Engine)
 class CLight;
+class CTexture;
+class CShader;
+class CComputeShader;
+class CRenderTarget;
+
 class CPipeLine final : public CBase
 {
 public:
@@ -21,38 +26,39 @@ public:
 	}FRUSTUM_DESC;
 
 private:
-	CPipeLine();
+	CPipeLine(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CPipeLine() = default;
 
 public:
-	void				Set_Transform(TRANSFORMSTATE eState, _fmatrix TransformMatrix) 
+	void				Set_Transform(TRANSFORMSTATE eState, _fmatrix TransformMatrix)
 	{
 		XMStoreFloat4x4(&m_TransformMatrices[eState], TransformMatrix);
 	}
 	void				Add_ShadowLight(SHADOWLIGHT eShadowLight, CLight* pLight);
+	void				Set_CubeMap(CTexture* m_pTexture);
 
 public:
-	_matrix				Get_Transform_Matrix(TRANSFORMSTATE eState) const 
+	_matrix				Get_Transform_Matrix(TRANSFORMSTATE eState) const
 	{
 		return XMLoadFloat4x4(&m_TransformMatrices[eState]);
 	}
-	_float4x4			Get_Transform_Float4x4(TRANSFORMSTATE eState) const 
+	_float4x4			Get_Transform_Float4x4(TRANSFORMSTATE eState) const
 	{
 		return m_TransformMatrices[eState];
 	}
-	_matrix				Get_Transform_Matrix_Inverse(TRANSFORMSTATE eState) const 
+	_matrix				Get_Transform_Matrix_Inverse(TRANSFORMSTATE eState) const
 	{
 		return XMLoadFloat4x4(&m_TransformInverseMatrices[eState]);
 	}
-	_float4x4			Get_Transform_Float4x4_Inverse(TRANSFORMSTATE eState) const 
+	_float4x4			Get_Transform_Float4x4_Inverse(TRANSFORMSTATE eState) const
 	{
 		return m_TransformInverseMatrices[eState];
 	}
-	_vector				Get_CamPosition_Vector() const 
+	_vector				Get_CamPosition_Vector() const
 	{
 		return XMLoadFloat4(&m_vCamPosition);
 	}
-	_float4				Get_CamPosition_Float4() const 
+	_float4				Get_CamPosition_Float4() const
 	{
 		return m_vCamPosition;
 	}
@@ -82,7 +88,7 @@ public:
 		return m_vPrevCamPosition;
 	}
 
-	_uint				Get_NumShadowLight() 
+	_uint				Get_NumShadowLight()
 	{
 		return m_iNumLight;
 	}
@@ -99,7 +105,7 @@ public:
 			advance(iter, iLightIndex);
 			return *iter;
 		}
-			break;
+				  break;
 		case SPOT:
 			return m_pSpotLight;
 			break;
@@ -109,17 +115,27 @@ public:
 	}
 	list<LIGHT_DESC*>	Get_ShadowPointLightDesc_List();
 
+	HRESULT				Bind_IrradianceTexture(CShader* pShader, const _char* pConstantName);
+	HRESULT				Bind_CubeMapTexture(CShader* pShader, const _char* pConstantName);
+
 public:
 	HRESULT				Initialize();
 	void				Tick();
+	HRESULT				Render();
 	void				Reset();		// 렌더 이후에 그림자 연산에 사용한 빛을 리스트에서 제거
 
 private:
+	HRESULT				Create_IrradianceTexture();
+
 	// cascade를 위한 절두체 분리 및 투영행렬 계산
 	void				Update_CascadeFrustum();
 	void				Update_CascadeProjMatrices();
 
 private:
+	ID3D11Device* m_pDevice = { nullptr };
+	ID3D11DeviceContext* m_pContext = { nullptr };
+
+
 	_float4x4			m_TransformMatrices[D3DTS_END];
 	_float4x4			m_TransformInverseMatrices[D3DTS_END];
 	_float4				m_vCamPosition;
@@ -138,6 +154,11 @@ private:
 	CLight*				m_pDirectionLight = { nullptr };
 	CLight*				m_pSpotLight = { nullptr };
 
+	_bool m_isRender = { false };
+	CComputeShader*			m_pShaderCom = { nullptr };
+	CTexture*				m_pCubeMapTexture = { nullptr };
+	CRenderTarget*			m_pIrradialTexture = { nullptr };
+
 	// CasCade용 변수 -> 안씀
 	//_float3				m_vOriginalPoints[8];
 	//_float				m_fCascadeSplitZ[CASCADE_END + 1];
@@ -145,7 +166,7 @@ private:
 	//_float4x4			m_CascadeProjectMatrices[CASCADE_END];
 
 public:
-	static CPipeLine* Create();
+	static CPipeLine* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;	
 };
 

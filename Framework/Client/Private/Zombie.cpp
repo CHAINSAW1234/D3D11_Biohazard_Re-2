@@ -57,7 +57,7 @@ HRESULT CZombie::Initialize(void* pArg)
 
 	ZOMBIE_DESC*						pDesc = (ZOMBIE_DESC*)pArg;
 
-	m_isOutDoor = pDesc->isOutDoor;
+	m_isOutDoor = pDesc->isOutDoor = false;
 
 	ZOMBIE_BODY_TYPE					eBodyType = { pDesc->eBodyModelType };
 
