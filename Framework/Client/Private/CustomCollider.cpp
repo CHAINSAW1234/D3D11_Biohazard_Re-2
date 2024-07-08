@@ -34,6 +34,7 @@ HRESULT CCustomCollider::Initialize(void* pArg)
 		COLLIDER_DESC* pColDesc = (COLLIDER_DESC*)pArg;
 		m_pTransformCom->Set_WorldMatrix((pColDesc->worldMatrix));
 		m_iColNum = pColDesc->iColNum;
+		m_iDir = pColDesc->iDir;
 		m_iRegionNum =pColDesc->iRegionNum;
 		m_iFloor =pColDesc->iFloor;
 
