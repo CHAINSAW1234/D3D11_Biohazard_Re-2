@@ -39,6 +39,8 @@ HRESULT CMainApp::Initialize()
 
 	if (FAILED(Open_Level(LEVEL_TOOL)))
 		return E_FAIL;
+
+	m_pGameInstance->On_Off_DebugRender();
 	
 	return S_OK;
 }

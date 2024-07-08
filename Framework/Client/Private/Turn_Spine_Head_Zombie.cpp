@@ -46,7 +46,7 @@ _bool CTurn_Spine_Head_Zombie::Execute(_float fTimeDelta)
 	}
 
 
-	Set_Hand_AdditionalMatrices(fTimeDelta);
+	//	Set_Hand_AdditionalMatrices(fTimeDelta);
 
 	return true;
 }
