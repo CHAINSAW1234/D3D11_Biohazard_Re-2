@@ -120,6 +120,9 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 
 		m_pTargetObject = m_pBlackBoard->Get_Player();
 		Safe_AddRef(m_pTargetObject);
+		Safe_Release(m_pTargetObejct);
+		m_pTargetObejct = m_pBlackBoard->Get_Player();
+		Safe_AddRef(m_pTargetObejct);
 		m_isIncludeRotation = true;
 	}
 
@@ -133,6 +136,9 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 
 		m_pTargetObject = pNearestWindow;
 		Safe_AddRef(m_pTargetObject);
+		Safe_Release(m_pTargetObejct);
+		m_pTargetObejct = pNearestWindow;
+		Safe_AddRef(m_pTargetObejct);
 		m_isIncludeRotation = false;
 	}	
 

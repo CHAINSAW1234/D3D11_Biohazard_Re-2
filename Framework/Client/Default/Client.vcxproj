@@ -194,6 +194,7 @@
     <ClInclude Include="..\Public\Bite_Zombie.h" />
     <ClInclude Include="..\Public\BlackBoard_Zombie.h" />
     <ClInclude Include="..\Public\Blood.h" />
+    <ClInclude Include="..\Public\Blood_Drop.h" />
     <ClInclude Include="..\Public\Body_Cabinet.h" />
     <ClInclude Include="..\Public\Body_Door.h" />
     <ClInclude Include="..\Public\Body_EventProp.h" />
@@ -230,6 +231,7 @@
     <ClInclude Include="..\Public\Is_Same_Region_To_Player_Zombie.h" />
     <ClInclude Include="..\Public\Is_Start_Zombie.h" />
     <ClInclude Include="..\Public\Part_Breaker_Zombie.h" />
+    <ClInclude Include="..\Public\HotKey.h" />
     <ClInclude Include="..\Public\Player_State_Move_Shelf.h" />
     <ClInclude Include="..\Public\Region_Update_Zombie.h" />
     <ClInclude Include="..\Public\Room_Finder.h" />
@@ -237,6 +239,7 @@
     <ClInclude Include="..\Public\Throwing_Weapon.h" />
     <ClInclude Include="..\Public\Hold_Out_Hand_Window_Zombie.h" />
     <ClInclude Include="..\Public\In_Window_Zombie.h" />
+    <ClInclude Include="..\Public\Floor_Map_UI.h" />
     <ClInclude Include="..\Public\Is_Can_Link_Pre_State_Zombie.h" />
     <ClInclude Include="..\Public\Clothes_Zombie.h" />
     <ClInclude Include="..\Public\ContextMenu.h" />
@@ -252,7 +255,6 @@
     <ClInclude Include="..\Public\Hold_Zombie.h" />
     <ClInclude Include="..\Public\ImGui_Manager.h" />
     <ClInclude Include="..\Public\InteractProps.h" />
-    <ClInclude Include="..\Public\Interact_UI.h" />
     <ClInclude Include="..\Public\Inventory_Manager.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\Public\Client_Enumsh.h" />
@@ -280,6 +282,7 @@
     <ClInclude Include="..\Public\ItemLocker.h" />
     <ClInclude Include="..\Public\ItemProp.h" />
     <ClInclude Include="..\Public\Item_Discription.h" />
+    <ClInclude Include="..\Public\Item_Map_UI.h" />
     <ClInclude Include="..\Public\Item_Mesh_Viewer.h" />
     <ClInclude Include="..\Public\Item_UI.h" />
     <ClInclude Include="..\Public\Knock_Back_Zombie.h" />
@@ -295,8 +298,9 @@
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\Public\Loading_UI.h" />
     <ClInclude Include="..\public\MainApp.h" />
+    <ClInclude Include="..\Public\Main_Map_UI.h" />
     <ClInclude Include="..\Public\Map.h" />
-    <ClInclude Include="..\Public\Map_UI.h" />
+    <ClInclude Include="..\Public\Map_Manager.h" />
     <ClInclude Include="..\Public\MissionBar_UI.h" />
     <ClInclude Include="..\Public\Monster.h" />
     <ClInclude Include="..\Public\Move_To_Target_Zombie.h" />
@@ -310,6 +314,7 @@
     <ClInclude Include="..\Public\Open_Door_Zombie.h" />
     <ClInclude Include="..\Public\Part_InteractProps.h" />
     <ClInclude Include="..\public\Player.h" />
+    <ClInclude Include="..\Public\Player_Map_UI.h" />
     <ClInclude Include="..\Public\Player_State_Bite.h" />
     <ClInclude Include="..\Public\Player_State_Hold.h" />
     <ClInclude Include="..\Public\Player_State_Hold_Idle.h" />
@@ -336,10 +341,12 @@
     <ClInclude Include="..\Public\Sleep_Zombie.h" />
     <ClInclude Include="..\Public\Slot_Highlighter.h" />
     <ClInclude Include="..\Public\Stand_Up_Zombie.h" />
+    <ClInclude Include="..\Public\Static_Map_UI.h" />
     <ClInclude Include="..\Public\Statue.h" />
     <ClInclude Include="..\Public\Stun_Hold_Zombie.h" />
     <ClInclude Include="..\Public\Stun_Zombie.h" />
     <ClInclude Include="..\Public\Tab_Window.h" />
+    <ClInclude Include="..\Public\Targeting_Map_UI.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\Public\TextBox.h" />
     <ClInclude Include="..\Public\Throwing_Weapon_Pin.h" />
@@ -418,6 +425,7 @@
     <ClCompile Include="..\Private\Bite_Zombie.cpp" />
     <ClCompile Include="..\Private\BlackBoard_Zombie.cpp" />
     <ClCompile Include="..\Private\Blood.cpp" />
+    <ClCompile Include="..\Private\Blood_Drop.cpp" />
     <ClCompile Include="..\Private\Body_Cabinet.cpp" />
     <ClCompile Include="..\Private\Body_Door.cpp" />
     <ClCompile Include="..\Private\Body_EventProp.cpp" />
@@ -450,6 +458,7 @@
     <ClCompile Include="..\Private\Is_Same_Region_To_Player_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Start_Zombie.cpp" />
     <ClCompile Include="..\Private\Part_Breaker_Zombie.cpp" />
+    <ClCompile Include="..\Private\HotKey.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Shelf.cpp" />
     <ClCompile Include="..\Private\Region_Update_Zombie.cpp" />
     <ClCompile Include="..\Private\Room_Finder.cpp" />
@@ -457,6 +466,7 @@
     <ClCompile Include="..\Private\Throwing_Weapon.cpp" />
     <ClCompile Include="..\Private\Hold_Out_Hand_Window_Zombie.cpp" />
     <ClCompile Include="..\Private\In_Window_Zombie.cpp" />
+    <ClCompile Include="..\Private\Floor_Map_UI.cpp" />
     <ClCompile Include="..\Private\Is_Can_Link_Pre_State_Zombie.cpp" />
     <ClCompile Include="..\Private\Clothes_Zombie.cpp" />
     <ClCompile Include="..\Private\ContextMenu.cpp" />
@@ -470,7 +480,6 @@
     <ClCompile Include="..\Private\Hold_Zombie.cpp" />
     <ClCompile Include="..\Private\ImGui_Manager.cpp" />
     <ClCompile Include="..\Private\InteractProps.cpp" />
-    <ClCompile Include="..\Private\Interact_UI.cpp" />
     <ClCompile Include="..\Private\Inventory_Manager.cpp" />
     <ClCompile Include="..\Private\Crosshair_UI.cpp" />
     <ClCompile Include="..\Private\Cursor_UI.cpp" />
@@ -496,6 +505,7 @@
     <ClCompile Include="..\Private\ItemLocker.cpp" />
     <ClCompile Include="..\Private\ItemProp.cpp" />
     <ClCompile Include="..\Private\Item_Discription.cpp" />
+    <ClCompile Include="..\Private\Item_Map_UI.cpp" />
     <ClCompile Include="..\Private\Item_Mesh_Viewer.cpp" />
     <ClCompile Include="..\Private\Item_UI.cpp" />
     <ClCompile Include="..\Private\Knock_Back_Zombie.cpp" />
@@ -511,8 +521,9 @@
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\Private\Loading_UI.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
+    <ClCompile Include="..\Private\Main_Map_UI.cpp" />
     <ClCompile Include="..\Private\Map.cpp" />
-    <ClCompile Include="..\Private\Map_UI.cpp" />
+    <ClCompile Include="..\Private\Map_Manager.cpp" />
     <ClCompile Include="..\Private\MissionBar_UI.cpp" />
     <ClCompile Include="..\private\Monster.cpp" />
     <ClCompile Include="..\Private\Move_To_Target_Zombie.cpp" />
@@ -526,6 +537,7 @@
     <ClCompile Include="..\Private\Open_Door_Zombie.cpp" />
     <ClCompile Include="..\Private\Part_InteractProps.cpp" />
     <ClCompile Include="..\private\Player.cpp" />
+    <ClCompile Include="..\Private\Player_Map_UI.cpp" />
     <ClCompile Include="..\Private\Player_State_Bite.cpp" />
     <ClCompile Include="..\Private\Player_State_Hold.cpp" />
     <ClCompile Include="..\Private\Player_State_Hold_Idle.cpp" />
@@ -552,10 +564,12 @@
     <ClCompile Include="..\Private\Sleep_Zombie.cpp" />
     <ClCompile Include="..\Private\Slot_Highlighter.cpp" />
     <ClCompile Include="..\Private\Stand_Up_Zombie.cpp" />
+    <ClCompile Include="..\Private\Static_Map_UI.cpp" />
     <ClCompile Include="..\Private\Statue.cpp" />
     <ClCompile Include="..\Private\Stun_Hold_Zombie.cpp" />
     <ClCompile Include="..\Private\Stun_Zombie.cpp" />
     <ClCompile Include="..\Private\Tab_Window.cpp" />
+    <ClCompile Include="..\Private\Targeting_Map_UI.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\Private\TextBox.cpp" />
     <ClCompile Include="..\Private\Throwing_Weapon_Pin.cpp" />

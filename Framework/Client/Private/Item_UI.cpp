@@ -26,7 +26,7 @@ HRESULT CItem_UI::Initialize(void* pArg)
 		
 		//Change_Component(LEVEL_STATIC, TEXT("Prototype_Component_Texture_Items"), TEXT("Com_DefaultTexture"), (CComponent**)&m_pTextureCom);
 
-		m_isLoad = false;
+		Set_IsLoad(false);
 
 		m_bDead = true;
 	}
@@ -34,44 +34,75 @@ HRESULT CItem_UI::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CItem_UI::Start()
+{
+	if (false == m_IsChild)
+	{
+		if (nullptr == m_vecChildUI[0] || nullptr == m_vecChildUI[1])
+			return;
+
+		m_mapPartUI.emplace(TEXT("EquipDisplay"), static_cast<CCustomize_UI*>(m_vecChildUI[0]));
+		m_mapPartUI.emplace(TEXT("CountDisplay"), static_cast<CCustomize_UI*>(m_vecChildUI[1]));
+		CGameObject* pHotkeyDisplay = static_cast<CCustomize_UI*>(m_vecChildUI[0])->Get_Child(0);
+		m_mapPartUI.emplace(TEXT("HotkeyDisplay"), static_cast<CCustomize_UI*>(pHotkeyDisplay));
+
+		for (auto& iter : *(static_cast<CItem_UI*>(m_vecChildUI[0])->Get_vecTextBoxes()))
+		{
+			iter->Set_isTransformBase(false);
+			iter->Set_isUIRender(true);
+		}
+
+		for (auto& iter : *(static_cast<CItem_UI*>(m_vecChildUI[1])->Get_vecTextBoxes()))
+		{
+			iter->Set_isTransformBase(false);
+			iter->Set_isUIRender(true);
+		}
+	}
+}
+
 void CItem_UI::Tick(_float fTimeDelta)
 {
 	if (true == m_bDead)
 		return;
 
-	if (m_iItemQuantity <= 0 && CONSUMABLE == m_eInvenItemType)
+	if (false == m_IsChild)
 	{
-		Reset_ItemUI();
-		return;
+		if (m_iItemQuantity <= 0 && CONSUMABLE == m_eInvenItemType)
+		{
+			Reset_ItemUI();
+			return;
+		}
+
+		m_iTextureNum = static_cast<_uint>(m_eItemNumber);
+
+		if (false == m_isActive)
+			m_fFrame;
+
+		switch (m_eInvenItemType)
+		{
+		case Client::EQUIPABLE:
+			break;
+		case Client::CONSUMABLE_EQUIPABLE:
+			break;
+		case Client::USEABLE:
+			break;
+		case Client::CONSUMABLE: {
+			static_cast<CCustomize_UI*>(m_mapPartUI[TEXT("CountDisplay")])->Set_Text(0, to_wstring(m_iItemQuantity));
+			break;
+		}
+
+		case Client::QUEST:
+			break;
+
+		case Client::INVEN_ITEM_TYPE_END:
+			break;
+
+		default:
+			break;
+		}
 	}
 
-	m_iTextureNum = static_cast<_uint>(m_eItemNumber);
-
-	if (false == m_isActive)
-		m_fFrame;
-
-	switch (m_eInvenItemType)
-	{
-	case Client::EQUIPABLE:
-		break;
-	case Client::CONSUMABLE_EQUIPABLE:
-		break;
-	case Client::USEABLE:
-		break;
-	case Client::CONSUMABLE: {
-		static_cast<CCustomize_UI*>(m_mapPartUI[TEXT("CountDisplay")])->Set_Text(0, to_wstring(m_iItemQuantity));
-		break;
-	}
-
-	case Client::QUEST:
-		break;
-
-	case Client::INVEN_ITEM_TYPE_END:
-		break;
-
-	default:
-		break;
-	}
+	
 
 	__super::Tick(fTimeDelta);
 }
@@ -92,75 +123,81 @@ HRESULT CItem_UI::Render()
 	return S_OK;
 }
 
-void CItem_UI::FirstTick_Seting()
-{
-	if (false == m_IsChild)
-	{
-		if (nullptr == m_vecChildUI[0] || nullptr == m_vecChildUI[1])
-			return;
-
-		m_mapPartUI.emplace(TEXT("EquipDisplay"), m_vecChildUI[0]);
-		m_mapPartUI.emplace(TEXT("CountDisplay"), m_vecChildUI[1]);
-
-
-		for (auto& iter : *(static_cast<CItem_UI*>(m_vecChildUI[0])->Get_vecTextBoxes()))
-		{
-			iter->Set_isTransformBase(false);
-			iter->Set_isUIRender(true);
-		}
-
-		for (auto& iter : *(static_cast<CItem_UI*>(m_vecChildUI[1])->Get_vecTextBoxes()))
-		{
-			iter->Set_isTransformBase(false);
-			iter->Set_isUIRender(true);
-		}
-	}
-}
-
 void CItem_UI::Set_Dead(_bool bDead)
 {
 	m_bDead = bDead;
 
-	switch (m_eInvenItemType)
+	if (false == m_IsChild)
 	{
-	case Client::EQUIPABLE: {
-		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(bDead);
-		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(bDead);
-		break;
-	}
+		switch (m_eInvenItemType)
+		{
+		case Client::EQUIPABLE: {
+			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(bDead);
 
-	case Client::CONSUMABLE_EQUIPABLE: {
-		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(bDead);
-		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(bDead);
-		break;
-	}
-				
-	case Client::USEABLE: {
-		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(true);
-		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(true);
-		break;
-	}
-		
-	case Client::CONSUMABLE: {
-		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(true);
-		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(bDead);
-		break;
-	}
-		
-	case Client::QUEST: {
-		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(true);
-		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(true);
-		break;
-	}
+			if (0 == m_iItemQuantity)
+				m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(true);
 
-	case Client::DRAG_SHADOW: {
+			else
+				m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
 
-		m_mapPartUI[TEXT("EquipDisplay")]->Set_Dead(true);
-		m_mapPartUI[TEXT("CountDisplay")]->Set_Dead(true);
+			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			break;
+		}
+
+		case Client::CONSUMABLE_EQUIPABLE: {
+			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			break;
+		}
+
+		case Client::USEABLE: {
+			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(true);
+			break;
+		}
+
+		case Client::CONSUMABLE: {
+			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(true);
+			break;
+		}
+
+		case Client::QUEST: {
+			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(true);
+			break;
+		}
+
+		case Client::DRAG_SHADOW: {
+			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(true);
+			break;
+		}
+
+		case Client::HOTKEY: {
+			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			break;
+		}
+
+		default:
+			break;
+		}
 	}
-		
-	default:
-		break;
+	
+}
+
+void CItem_UI::Set_Text(wstring Target, wstring strSetText)
+{
+	if (false == m_IsChild)
+	{
+		m_mapPartUI[Target]->Set_Text(0, strSetText);
 	}
 }
 

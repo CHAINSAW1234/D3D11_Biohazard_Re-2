@@ -1,8 +1,6 @@
 #include "stdafx.h"
 
 #include "Inventory_Manager.h"
-#include "Inventory_Item_UI.h"
-
 #include "Player.h"
 
 constexpr _float	Z_POS_SLOT = 0.8f;
@@ -48,6 +46,11 @@ HRESULT CInventory_Manager::Initialize()
 	if (FAILED(Init_ContextMenu()))
 		return E_FAIL;
 
+	if (FAILED(Seting_Hotkey()))
+		return E_FAIL;
+
+	
+
 	Set_ItemRecipe();
 
 	return S_OK;
@@ -59,20 +62,10 @@ void CInventory_Manager::FirstTick_Seting()
 	
 	m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
 
-	for (auto& iter : m_vecItem_UI)
-		iter->FirstTick_Seting();
-
-	m_pDragShadow->FirstTick_Seting();
-
 	AddItem_ToInven(HandGun, 15);
-	AddItem_ToInven(ShotGun, 15);
+	AddItem_ToInven(ShotGun, 7);
 	AddItem_ToInven(handgun_bullet01a, 20);
 	AddItem_ToInven(shotgun_bullet01a, 20);
-
-
-	
-	if (FAILED(Seting_SubInven()))
-		MSG_BOX(TEXT("Failed to Find SubInven"));
 }
 
 void CInventory_Manager::Tick(_float fTimeDelta)
@@ -885,7 +878,7 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 
 	m_eInven_Manager_State = EVENT_IDLE;
 
-	m_pInven_Item_UI->Reset_Call(!bInput);
+	//m_pInven_Item_UI->Reset_Call(!bInput);
 }
 
 ITEM_NUMBER CInventory_Manager::Get_Selected_ItemNum()
@@ -1073,7 +1066,6 @@ HRESULT CInventory_Manager::Init_InvenSlot()
 		}
 	}
 #pragma endregion
-
 	return S_OK;
 }
 
@@ -1157,22 +1149,22 @@ HRESULT CInventory_Manager::Init_ContextMenu()
 	Safe_AddRef(m_pContextMenu);
 	m_pContextMenu->Set_Dead(true);
 
-
-
 	return S_OK;
 }
 
-HRESULT CInventory_Manager::Seting_SubInven()
+HRESULT CInventory_Manager::Seting_Hotkey()
 {
-	list<CGameObject*>* pGameObjList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+	list<CGameObject*>* pListObj = 	m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
 
-	for (auto& iter : *pGameObjList)
+	for (auto& iter : *pListObj)
 	{
-		CInventory_Item_UI* pInven_item_UI = dynamic_cast<CInventory_Item_UI*>(iter);
+		CHotKey* pHotkey = nullptr;
 
-		if (nullptr != pInven_item_UI)
+		pHotkey = dynamic_cast<CHotKey*>(iter);
+
+		if (nullptr != pHotkey)
 		{
-			m_pInven_Item_UI = pInven_item_UI;
+			m_pHotkey = pHotkey;
 			return S_OK;
 		}
 	}

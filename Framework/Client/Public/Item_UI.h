@@ -16,11 +16,10 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual void Start() override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-
-	void FirstTick_Seting();
 
 public:
 	virtual void		Set_Dead(_bool bDead) override;
@@ -40,6 +39,8 @@ public:
 
 	ITEM_TYPE			Get_ItemType() const { return m_eInvenItemType; };
 	void				Set_ItemType(ITEM_TYPE eItmeType) { m_eInvenItemType = eItmeType; }
+
+	void				Set_Text(wstring Target, wstring strSetText);
 
 public:
 	void				Reset_ItemUI();
@@ -61,7 +62,7 @@ private:
 	_bool						m_bCountable = { false };
 	_int						m_iItemQuantity = { 0 };
 
-	map<wstring, CGameObject*>	m_mapPartUI;
+	map<wstring, CCustomize_UI*>	m_mapPartUI;
 
 public:
 	static CItem_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

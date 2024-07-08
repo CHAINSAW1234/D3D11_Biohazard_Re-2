@@ -6,12 +6,12 @@
 #define LIFE_TIME 2.f
 
 CTutorial_UI::CTutorial_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-    : CInteract_UI{ pDevice, pContext }
+    : CCustomize_UI{ pDevice, pContext }
 {
 }
 
 CTutorial_UI::CTutorial_UI(const CTutorial_UI& rhs)
-    : CInteract_UI{ rhs }
+    : CCustomize_UI{ rhs }
 {
 
 }
@@ -277,7 +277,7 @@ void CTutorial_UI::Operation_Tutorial(_float fTimeDelta)
         Play_Font(fTimeDelta);
 }
 
-CInteract_UI* CTutorial_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CCustomize_UI* CTutorial_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
     CTutorial_UI* pInstance = new CTutorial_UI(pDevice, pContext);
 

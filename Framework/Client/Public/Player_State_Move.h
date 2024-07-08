@@ -7,7 +7,7 @@ class CPlayer;
 class CPlayer_State_Move final : public CFSM_HState
 {
 public:
-	enum STATE { IDLE, WALK, JOG, STAIR, DOOR_STOP, LADDER, LEVER, STATE_END };
+	enum STATE { IDLE, WALK, JOG, STAIR, DOOR_STOP, LADDER, LEVER, SHELF, STATE_END };
 
 private:
 	CPlayer_State_Move(CPlayer* pPlayer);

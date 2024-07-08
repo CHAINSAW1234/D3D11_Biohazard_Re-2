@@ -224,27 +224,38 @@ private:
 public:
 	/* For. Getter Inline*/
 	_bool*										Col_Event_UI(class CCustomCollider* pCustom);
-	_int*										Get_Hp_Ptr() { return &m_iHp;  }
 	void										Set_Tutorial_Start(UI_TUTORIAL_TYPE i)
 	{ 
 		m_isTutorial_Notify = true;
 		m_isPlayer_FirstBehavior[(_int)i] = true;
 		m_eTutial_Type = i;
 	}
-	
+	_int*										Get_Hp_Ptr()			{ return &m_iHp; }
+
 	_bool*										Get_Tutorial_Notify()	{ return &m_isTutorial_Notify; }
 	UI_TUTORIAL_TYPE*							Get_Tutorial_Type()		{ return &m_eTutial_Type; }
 	_byte										Get_Player_State()		{ return m_eState; } /* Player 상태 반환 */
+	_bool*										Get_ZoomOff()			{ return &m_isZoomOff;  }
 
 	/* For. Fuction */
 	void										Player_First_Behavior();
+
+	/* For. Selector UI Interact : */
+	CGameObject*								Create_Selector_UI(); /* 사용할 Selector Obj를 return */
+
 
 	/* For. Variable */
 	UI_TUTORIAL_TYPE							m_eTutial_Type					= { UI_TUTORIAL_TYPE::TUTORIAL_END };
 
 	_bool										m_isNYResult;
-	_bool										m_isPlayer_FirstBehavior[100] = { false };
-	_bool										m_isTutorial_Notify = { false };
+	_bool										m_isPlayer_FirstBehavior[100]	= { false };
+	_bool										m_isTutorial_Notify				= { false };
+	_bool										m_isZoomOff						= { false }; /* 팀장 양반 줌좀 꺼주쇼 */
+	
+	vector<class CSelector_UI*>					m_SelectorVec;	/* Selector UI의 부모를 넣는 공간 */
+
+
+
 #pragma
 
 #pragma region 예은 추가 
@@ -270,12 +281,14 @@ public:
 
 	_float4x4									Get_Shelf_WorldMatrix();
 	_int										Get_Shelf_Type();
+	_bool										Get_isShelf() { return m_pShelf != nullptr; }
+	
 	void										Set_Shelf_State(_int eState);
 
 	void										Set_Door_Setting(_int iDoor_Setting, _float fDoorDegree = 0.f) {m_iDoor_Setting = iDoor_Setting; m_fDoor_Degree = fDoorDegree;};
 	void										Set_Ladder_Setting(_int iLadder_Setting, _float4x4 LadderWorldMatrix = _float4x4()) { m_iLadder_Setting = iLadder_Setting; m_LadderWorldMatrix = LadderWorldMatrix; }
 	void										Set_Lever_Setting(_int iLever_Setting, _float4x4 LeverWorldMatrix = _float4x4()) { m_iLever_Setting = iLever_Setting; m_Lever_WorldMatrix = LeverWorldMatrix; } 
-	void										Set_Shelf_Setting(CGameObject* pShelf) { m_pShelf = pShelf; } //욤
+	void										Set_Shelf_Setting(CGameObject* pShelf) { m_pShelf = pShelf; } //추가욤
 
 
 private:
@@ -324,7 +337,7 @@ private:
 
 public: //For Shot
 	void										RayCast_Shoot();
-
+	void										Set_Muzzle_Smoke();
 public:	//For Camera
 	void										Calc_Camera_LookAt_Point(_float fTimeDelta);
 	HRESULT										Ready_Camera();
@@ -416,6 +429,11 @@ private:
 	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
 	class CMuzzle_Flash_SG*						m_pMuzzle_Flash_SG = { nullptr };
 	class CMuzzle_Smoke*						m_pMuzzle_Smoke = { nullptr };
+
+	_float4										m_vMuzzle_Smoke_Pos;
+	ULONGLONG									m_MuzzleSmoke_Time;
+	ULONGLONG									m_MuzzleSmoke_Delay;
+	_bool										m_bMuzzleSmoke = { false };
 #pragma endregion
 private:
 	HRESULT Add_Components();

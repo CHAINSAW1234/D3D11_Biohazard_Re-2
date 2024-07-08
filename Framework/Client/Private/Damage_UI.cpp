@@ -6,7 +6,7 @@
 #define WHITE_COLOR     _float4(1, 1, 1, 1)
 #define ALPHA_ZERO      _float4(0, 0, 0, 0)
 
-#define DAMAGE_LIFE     2.f
+#define DAMAGE_LIFE     3.f
 #define DAMAGE_SPEED    1.5f
 
 CDamage_UI::CDamage_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -47,9 +47,6 @@ HRESULT CDamage_UI::Initialize(void* pArg)
 void CDamage_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
-
-    if ((_byte)CPlayer::STATE::DAMAGE == m_pPlayer->Get_Player_State() || DOWN == m_pGameInstance->Get_KeyState('9'))
-        m_isDamage_Start = true;
 
     Operate_Damage(fTimeDelta);
 }   
@@ -100,8 +97,8 @@ void CDamage_UI::Operate_Damage(_float fTimeDelta)
             m_vCurrentColor.w += fTimeDelta * DAMAGE_SPEED;
 
             /* 알파는 0.8f 로 제한한다.*/
-            if (m_vCurrentColor.w >= 0.8f)
-                m_vCurrentColor.w = 0.8f;
+            if (m_vCurrentColor.w >= 1.f)
+                m_vCurrentColor.w = 1.f;
         }
     }
 

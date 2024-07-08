@@ -88,7 +88,12 @@
 #include "Selector_UI.h"
 #include "Slot_Highlighter.h"
 #include "Item_UI.h"
-#include "Map_UI.h"
+#include "Player_Map_UI.h"
+#include "Main_Map_UI.h"
+#include "Targeting_Map_UI.h"
+#include "Static_Map_UI.h"
+#include "Item_Map_UI.h"
+#include "Floor_Map_UI.h"
 #include "Item_Mesh_Viewer.h"
 #include "ContextMenu.h"
 #include "Context_Highlighter.h"
@@ -97,6 +102,7 @@
 #include "Item_Discription.h"
 #include "LayOut_UI.h"
 #include "Damage_UI.h"
+#include "HotKey.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -540,9 +546,34 @@ HRESULT CLoader::Load_Prototype()
 		CItem_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 	
-	/* For.Prototype_GameObject_Map_UI */
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Map_UI"),
-		CMap_UI::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_Main_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Main_Map_UI"),
+		CMain_Map_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Player_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Player_Map_UI"),
+		CPlayer_Map_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Targeting_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Targeting_Map_UI"),
+		CTargeting_Map_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Targeting_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Static_Map_UI"),
+		CStatic_Map_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Item_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Item_Map_UI"),
+		CItem_Map_UI::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Floor_Map_UI */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Floor_Map_UI"),
+		CFloor_Map_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Item_Mesh_Viewer */
@@ -580,7 +611,10 @@ HRESULT CLoader::Load_Prototype()
 		CDamage_UI::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-
+	/* For.Prototype_GameObject_HotKey */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HotKey"),
+		CHotKey::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 	
 #pragma endregion
 
@@ -678,6 +712,16 @@ HRESULT CLoader::Loading_For_Static_Component()
 	/*Prototype_Component_Texture_Items*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Items"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Items/Item_%d.png"), 74))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Filled*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Filled"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Inventory/Box_Store.png")))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Filled*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_WholeMouse"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Inventory/WholeMouse.png")))))
 		return E_FAIL;
 #pragma endregion
 
@@ -798,7 +842,6 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			Inform->bAnim = true;
 
 			_matrix Ininitmatrix  = XMMatrixRotationY(XMConvertToRadians(180.f));
-
 			m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, Inform->strModelPath.c_str(), Ininitmatrix));
 		}
 		else
@@ -1133,12 +1176,6 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/Note/ui3210_file_13_1_iam.tex_noesispreviewdata.png")))))
 		return E_FAIL;
 
-	/*Prototype_Component_Texture_Filled*/
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Filled"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Inventory/Box_Store.png")))))
-		return E_FAIL;
-
-
 
 	/* Read Texture*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Document1"),
@@ -1248,6 +1285,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Decal/Blood_%d.png"),11))))
 		return E_FAIL;
 
+	/*Prototype_Component_Texture_Dissolve*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Dissolve"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Dissolve/Dissolve.png")))))
+		return E_FAIL;
+
 	//Muzzle Flash
 	CTexture::TEXTURE_DESC Desc{};
 	Desc.iWidth = 1024;
@@ -1270,24 +1312,24 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Flash_SG/Muzzle_Flash_SG.dds"), 1, &Desc))))
 		return E_FAIL;
 
-	Desc.iWidth = 1024;
-	Desc.iHeight = 1024;
-	Desc.iCountX = 8;
+	Desc.iWidth = 512;
+	Desc.iHeight = 256;
+	Desc.iCountX = 16;
 	Desc.iCountY = 8;
 
-	/*Prototype_Component_Texture_Muzzle_Flash_SG*/
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Smoke"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Smoke/Muzzle_Smoke.dds"), 1, &Desc))))
+	/*Prototype_Component_Texture_Muzzle_Smoke_Trail*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Smoke_Trail"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Smoke/Muzzle_Smoke_Trail.dds"), 1, &Desc))))
 		return E_FAIL;
 
-	Desc.iWidth = 1024;
-	Desc.iHeight = 1024;
-	Desc.iCountX = 8;
-	Desc.iCountY = 8;
+	Desc.iWidth = 512;
+	Desc.iHeight = 256;
+	Desc.iCountX = 16;
+	Desc.iCountY = 4;
 
 	/*Prototype_Component_Texture_Muzzle_Flash_SG*/
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Smoke_SG"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Smoke_SG/Muzzle_Smoke_SG.dds"), 1, &Desc))))
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Smoke_SG_Trail"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Smoke_SG/Muzzle_Smoke_SG_Trail.dds"), 1, &Desc))))
 		return E_FAIL;
 #pragma endregion
 
@@ -1313,7 +1355,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_LeonBody"),
-		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/TEST/Body_Leon/Body_Leon.fbx",
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/LeonTest/LeonBody.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
 

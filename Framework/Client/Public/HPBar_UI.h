@@ -24,6 +24,8 @@ public:
 	virtual void OnNotify() override;
 
 private :
+	void						Find_DamageUI();
+	void						Call_DamageUI(_int iPlayerHp); /* Damage를 입었을 때 Damage UI를 불러온다. */
 	void						Operation_HPBar(_float fTimeDelta);
 
 
@@ -51,6 +53,7 @@ private : /* Mask 관련*/
 
 private : /* HP BAR */
 	CHPBar_UI*					m_pMainBar				= { nullptr };
+	class CDamage_UI*			m_pDamage_Scene			= { nullptr }; /* Damage UI : Damage 입을 때 호출 */
 	_bool*						m_pMain_Inven_Render	= { nullptr };
 	
 	_bool						m_isInGame_HPBar_Render = { false };
@@ -59,6 +62,9 @@ private : /* HP BAR */
 
 private : /* FONT */
 	_float2						m_fDistance_Font		= {};
+
+private : /* HP Calc */
+	_int						m_iPrevHP_Type			= { 2 };
 
 private :
 	CCustomize_UI::HPBAR_TYPE	m_eHPBar		= { HPBAR_TYPE::END_BAR };

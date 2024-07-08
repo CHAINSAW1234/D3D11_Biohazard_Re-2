@@ -3,12 +3,11 @@
 #include "Tab_Window.h"
 #include "Customize_UI.h"
 #include "Button_UI.h"
-#include "Inventory_Item_UI.h"
 #include "Cursor_UI.h"
 #include "Item_Discription.h"
 #include "ItemProp.h"
 #include "Read_Item_UI.h"
-#include "Map_UI.h"
+#include "Item_Map_UI.h"
 
 CTab_Window::CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice , pContext }
@@ -46,7 +45,7 @@ HRESULT CTab_Window::Initialize(void* pArg)
 
 		if (FAILED(Creat_Item_Discription()))
 			return E_FAIL;
-		
+
 		m_bDead = true;
 	}
 
@@ -73,7 +72,7 @@ void CTab_Window::Start()
 	for (auto& iter : *pUILayer)
 	{
 		CRead_Item_UI* pRead = dynamic_cast<CRead_Item_UI*>(iter);
-		CMap_UI* pMap = dynamic_cast<CMap_UI*>(iter);
+		CItem_Map_UI* pMap = dynamic_cast<CItem_Map_UI*>(iter);
 		if(pRead!=nullptr &&!bReadItemUI)
 			if (pRead->Get_UI_TYPE() == CRead_Item_UI::READ_UI_TYPE::INTRODUCE_READ)
 			{
@@ -86,6 +85,12 @@ void CTab_Window::Start()
 			bMapUI = true;
 		}
 
+		CHotKey* pHotkey = dynamic_cast<CHotKey*>(iter);
+		if (nullptr != pHotkey)
+		{
+			m_pHotKey = pHotkey;
+			Safe_AddRef(m_pHotKey);
+		}
 	}
 }
 
@@ -128,6 +133,12 @@ void CTab_Window::Tick(_float fTimeDelta)
 		break;
 	}
 
+	case Client::CTab_Window::INTERACT_PROPS: {
+		PICK_UP_ITEM_WINDOW_Operation(fTimeDelta);
+		break;
+	}
+
+
 	default:
 		break;
 	}
@@ -169,6 +180,13 @@ void CTab_Window::Late_Tick(_float fTimeDelta)
 	}
 
 	case Client::CTab_Window::PICK_UP_ITEM_WINDOW: {
+		m_pInventory_Manager->Late_Tick(fTimeDelta);
+		m_pItem_Mesh_Viewer->Late_Tick(fTimeDelta);
+		m_pItem_Discription->Late_Tick(fTimeDelta);
+		break;
+	}
+
+	case Client::CTab_Window::INTERACT_PROPS: {
 		m_pInventory_Manager->Late_Tick(fTimeDelta);
 		m_pItem_Mesh_Viewer->Late_Tick(fTimeDelta);
 		m_pItem_Discription->Late_Tick(fTimeDelta);
@@ -268,7 +286,7 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 			/*TabWindow 세팅*/
 			m_fCurTime = 0.f;
 			m_fAlpha = 0.f;
-			m_isAlphaControl = false;
+			//m_isAlphaControl = false;
 
 			break;
 		}
@@ -289,6 +307,7 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 		if (GET_ITEM == m_pInventory_Manager->Get_InventoryEvent())
 		{
 			m_pPickedUp_Item->Set_Dead(true);
+			m_pPickedUp_Item = nullptr;
 			OnOff_EventHandle();
 			m_pGameInstance->Set_IsPaused(false);
 			break;
@@ -301,7 +320,6 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 			m_pGameInstance->Set_IsPaused(false);
 			break;
 		}
-
 
 		m_pItem_Mesh_Viewer->Tick(fTimeDelta);
 		m_pItem_Discription->Tick(fTimeDelta);
@@ -325,6 +343,16 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 		break;
 	}
 
+}
+
+void CTab_Window::INTERACT_PROPS_Operation(_float fTimeDelta)
+{
+
+
+	m_pInventory_Manager->Tick(fTimeDelta);
+	ITEM_NUMBER eSelectedItemNum = m_pInventory_Manager->Get_Selected_ItemNum();
+	m_pItem_Discription->Set_Item_Number(eSelectedItemNum);
+	m_pItem_Discription->Tick(fTimeDelta);
 }
 
 void CTab_Window::ItemIven_EventHandle(_float fTimeDelta)
@@ -393,7 +421,7 @@ void CTab_Window::OnOff_EventHandle()
 		m_pInvenButton->Set_Dead(m_bDead);
 		m_pMapButton->Set_Dead(m_bDead);
 		m_pInventory_Manager->Set_OnOff_Inven(m_bDead);
-
+		m_pHotKey->Set_Dead(m_bDead);
 
 		if (nullptr != m_pCursor[1])
 		{
@@ -410,6 +438,7 @@ void CTab_Window::OnOff_EventHandle()
 		m_pMapButton->Set_Dead(m_bDead);
 
 		m_pInventory_Manager->Set_OnOff_Inven(m_bDead);//탭창열때 인벤이 초기값임
+		m_pHotKey->Set_Dead(m_bDead);
 
 		if (nullptr != m_pCursor[1])
 		{
@@ -449,7 +478,7 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 	{
 		if (iPickedUpItemNum >= rpddocument01a && iPickedUpItemNum <= mapupperpolice01a)
 		{
-			m_pRead_Item_UI->Set_ReadItem_Type((CRead_Item_UI::ITEM_READ_TYPE)pProp->Get_PropType());
+			m_pRead_Item_UI->Set_ReadItem_Type((ITEM_READ_TYPE)pProp->Get_PropType());
 			//인벤토리 문서 부분에 먹었다 추가=> 아직 없는 것으로 앎 나중에
 			pPickedUp_Item->Set_Dead(true);
 		}
@@ -458,6 +487,15 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 			//m_pMap_UI->Destory_Item((MAP_FLOOR_TYPE)pProp->Get_Floor(), (LOCATION_MAP_VISIT)pProp->Get_Region(), (ITEM_NUMBER)iPickedUpItemNum);
 		}
 	}
+}
+
+void CTab_Window::interact_Props(CGameObject* pPickedUp_Item)
+{
+	CInteractProps* pProp = dynamic_cast<CInteractProps*>(pPickedUp_Item);
+	if (nullptr == pProp)
+		return;
+
+	int a = 0;
 }
 
 void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)
@@ -699,4 +737,5 @@ void CTab_Window::Free()
 	Safe_Release(m_pInventory_Manager);
 	Safe_Release(m_pItem_Mesh_Viewer);
 	Safe_Release(m_pItem_Discription);
+	Safe_Release(m_pHotKey);
 }

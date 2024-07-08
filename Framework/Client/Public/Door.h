@@ -15,6 +15,7 @@ public:
 		ONEDOOR_STATIC,
 		ONEDOOR_END
 	};
+
 	enum DOUBLEDOOR_STATE
 	{
 		LSIDE_DOUBLEDOOR_OPEN_L,
@@ -26,17 +27,18 @@ public:
 		R_DOUBLEDOOR_OPEN,
 		DOUBLEDOOR_END
 	};
+
 	enum TYPE_DOOR
 	{
 		DOOR_ONE,
 		DOOR_DOUBLE,
 	};
+
 	enum PART_DOOR
 	{
 		PART_BODY,
 		PART_LOCK,
 		PART_END
-
 	};
 
 
@@ -75,6 +77,9 @@ private:
 
 	void										OneDoor_Active();
 	void										DoubleDoor_Active();
+	void								OneDoor_Active();
+	void								DoubleDoor_Active();
+
 public:
 	virtual _float4								Get_Object_Pos() override;
 	virtual _bool								Attack_Prop(class CTransform* pTransfromCom = nullptr) override
@@ -100,6 +105,11 @@ public:
 	inline _bool								Is_Lock() { return m_bLock; }
 	inline class CCustomCollider*				Get_CustomCollider_Ptr() { return m_pMyCustomCollider; }
 
+public :
+	_bool					Get_Door_Lock()		{ return m_bLock; }				// 잠겼는지 아닌지(문이 잠김이 true)
+	_bool					Get_FirstInteract()	{ return m_bFirstInteract; } // 접촉만 함 (탐색 - 빨간색)
+	_bool					Get_Interact()		{ return m_bInteract; }			// 열었는지 아닌지(파란색)
+
 private:
 	_bool										m_bLock =	{ false };
 
@@ -110,13 +120,18 @@ private:
 
 	_ubyte  									m_eOneState = { ONEDOOR_STATIC };
 	_ubyte  									m_eOneState_Prev = { ONEDOOR_STATIC };
+	_bool					m_bInteract = { false }; // 문을 열었는지(탐색 완료)
 
-	_ubyte   									m_eDoubleState = { DOUBLEDOOR_STATIC };
-	_ubyte   									m_eDoubleState_Prev = { DOUBLEDOOR_STATIC };
-	_ubyte										m_eDoubleDoorType;
+	_float							m_fTime						= { 0.f };
+	_ubyte							m_eType						= {DOOR_ONE};
 
 	class CCustomCollider*						m_pMyCustomCollider = { nullptr };
+	_ubyte  							m_eOneState					= { ONEDOOR_STATIC };
+	_ubyte  							m_eOneState_Prev			= { ONEDOOR_STATIC };
 
+	_ubyte   						m_eDoubleState				= { DOUBLEDOOR_STATIC };
+	_ubyte   						m_eDoubleState_Prev		= { DOUBLEDOOR_STATIC };
+	_ubyte							m_eDoubleDoorType;
 	list<LOCATION_MAP_VISIT>					m_Linked_Locations;
 
 public:

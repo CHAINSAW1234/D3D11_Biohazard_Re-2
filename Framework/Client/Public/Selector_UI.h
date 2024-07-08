@@ -20,17 +20,34 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-private :
-	void								Find_InteractObj();
-	void								Find_Selector_Obj();
-
-	void								Operate_Selector(_float fTimeDelta);
-	void								Attach_InteractObj();
-
-public :
-	void								Render_Selector_UI(CGameObject* _obj, _float fTimeDelta);
-	void								Interactive_Selector_UI(CGameObject* _obj, _float fTimeDelta);
 	
+public :/* For. 옌*/
+	CGameObject*						Destroy_Selector(); /* 해당 객체를 사용하지 않을 것이다. */
+	void								Select_Type(_bool _Interact, _float4 _objPos);  /* 해당 객체의 어떤 상태를 사용하고자 하는가? */
+	
+	/* For. Player Call */
+	void								Set_SelectorObj_Collection(CSelector_UI* pSelect)
+	{
+		m_SelectorObj_Vec.push_back(pSelect);
+	} 
+	_bool*								Get_Using() { return &m_isUsing; }
+	CGameObject*						Get_Supervise() { return m_pSupervise;  } 
+	vector<CSelector_UI*>*				Get_Collection() { return &m_SelectorObj_Vec;  }
+private :
+	void								Exception_Handle();
+	void								Find_Selector_Obj();
+	void								Reset();
+	void								Operate_Selector(_float fTimeDelta);
+
+
+public:
+	void								NonInteractive_Rendering(_float fTimeDelta);
+
+	
+private : /* 연동 관련 */
+	_bool								m_isOutDistance				= { false }; /* 논외인가? */
+	_float4								m_vTargetPos				= {}; /* 타겟의 위치 */
+
 private :
 	class CInteractProps*				m_pInteractObj				= { nullptr }; /* 목표물 */
 	CSelector_UI*						m_pParent					= { nullptr };	/* 부모 */
@@ -41,8 +58,8 @@ private :
 	_bool								m_isInteractive				= { false };
 
 private :
-	wstring								m_wstrInteractive_Tag		= { TEXT("") };
-	wstring								m_wstrNonInteractive_Tag	= { TEXT("") };
+	wstring								m_wstrInteractive_Tag		= { TEXT("") }; /* Interactive 할 때 */
+	wstring								m_wstrNonInteractive_Tag	= { TEXT("") }; /* Interactive 하지 않을 때 */
 
 private : // X 표시
 	_float3								m_fXSize					= {};
@@ -50,7 +67,6 @@ private : // X 표시
 	_float4								m_vXTransform				= {};
 	
 private :
-	list<class CInteractProps*>			m_InteractPropsList; /* 목표물 모음*/
 	vector<CSelector_UI*>				m_SelectorObj_Vec;
 
 	_bool								m_isUsing					= { false };

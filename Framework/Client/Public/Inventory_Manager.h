@@ -7,6 +7,7 @@
 #include "Slot_Highlighter.h"
 #include "Item_UI.h"
 #include "ContextMenu.h"
+#include "HotKey.h"
 
 BEGIN(Client)
 
@@ -131,27 +132,26 @@ private:
 	/*for. Drag_Shadow*/
 	CItem_UI*						m_pDragShadow = { nullptr };
 	CTransform*						m_pDragShadowTransform = { nullptr };
+
 	/* for. ContextMenu */
 	CContextMenu*					m_pContextMenu = { nullptr };
-
-	/* for. SubInven */
-	class CInventory_Item_UI*		m_pInven_Item_UI = { nullptr };
 
 	/*for. PickUpItem*/
 	_int							m_PickResult = { -1 };//-1이면 없음 0이면 조합 1이면 자리바꾸기
 	_float2							m_fSwitchTargetPos = { 0.f, 0.f };
 	_float							m_fItemSwitchTime = { 0.f };
 
-private :	
 	/*for IDLE_Operation*/
 	_bool							m_IsNoOneHover = { true };
 	_float							m_fPressingTime = { 0.f };
-
 
 	/*for. COMBINED_ITEM_Operation*/
 	unordered_map<ITEM_NUMBER, vector<ITEM_RECIPE>> m_mapItemRecipe;
 
 	ITEM_NUMBER						m_CombineResources[3] = {ITEM_NUMBER_END, ITEM_NUMBER_END,ITEM_NUMBER_END };
+
+	/*for. Hotkey*/
+	CHotKey*						m_pHotkey = { nullptr };
 
 
 private:
@@ -160,11 +160,8 @@ private:
 	HRESULT Init_ItemUI();
 	HRESULT Init_DragShdow();
 	HRESULT Init_ContextMenu();
-
-	HRESULT Seting_SubInven();
+	HRESULT Seting_Hotkey();
 	HRESULT Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float3 fInterval);
-
-
 
 public:
 	static CInventory_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

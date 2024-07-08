@@ -28,7 +28,9 @@ HRESULT CBlood::Initialize(void* pArg)
 
 	m_bRender = false;
 
-	m_FrameDelay =10;
+	m_FrameDelay = 30;
+
+	m_fDissolveSpeed = 0.05f;
 
 	return S_OK;
 }
@@ -49,7 +51,25 @@ void CBlood::Tick(_float fTimeDelta)
 		m_vPrev_HitPartPos = HitPartFloat4;
 	}
 
-	if(m_FrameDelay + m_FrameTime < GetTickCount64())
+	if (m_bDissolving)
+	{
+		m_fDissolveAmount += m_fDissolveSpeed;
+
+		if (m_fDissolveAmount >= 1.f)
+		{
+			m_iFrame = 0;
+			m_fSizeX = m_fSize_X_Default;
+			m_fSizeY = m_fSize_Y_Default;
+			m_fSizeZ = m_fSize_Z_Default;
+			m_pTransformCom->Set_Scaled(m_fSize_X_Default, m_fSize_Y_Default, m_fSize_Z_Default);
+			m_bRender = false;
+			m_fDissolveAmount = 0.f;
+		}
+
+		return;
+	}
+
+	if (m_FrameDelay + m_FrameTime < GetTickCount64())
 	{
 		++m_iFrame;
 
@@ -60,12 +80,14 @@ void CBlood::Tick(_float fTimeDelta)
 
 	if (m_iFrame >= iNumMesh)
 	{
-		m_bRender = false;
-		m_iFrame = 0;
+	/*	m_iFrame = 0;
 		m_fSizeX = m_fSize_X_Default;
 		m_fSizeY = m_fSize_Y_Default;
 		m_fSizeZ = m_fSize_Z_Default;
 		m_pTransformCom->Set_Scaled(m_fSize_X_Default, m_fSize_Y_Default, m_fSize_Z_Default);
+		m_bRender = false;*/
+
+		m_bDissolving = true;
 	}
 }
 
@@ -505,39 +527,112 @@ HRESULT CBlood::Render()
 
 void CBlood::SetSize(_float fSizeX, _float fSizeY, _float fSizeZ)
 {
-	m_fSizeX = fSizeX;
-	m_fSizeY = fSizeY;
-	m_fSizeZ = fSizeZ;
-
-	m_fSize_X_Default = fSizeX;
-	m_fSize_Y_Default = fSizeY;
-	m_fSize_Z_Default = fSizeZ;
-
-	if (m_iType == 2)
+	switch (m_iType)
 	{
+	case 0:
+		fSizeX -= 2.5f;
+		fSizeY -= 2.5f;
+		fSizeZ -= 2.5f;
+		m_fSizeX = fSizeX;
+		m_fSizeY = fSizeY;
+		m_fSizeZ = fSizeZ;
+		m_fSize_X_Default = fSizeX;
+		m_fSize_Y_Default = fSizeY;
+		m_fSize_Z_Default = fSizeZ;
+		break;
+	case 1:
 		fSizeX -= 1.f;
 		fSizeY -= 1.f;
 		fSizeZ -= 1.f;
-
 		m_fSizeX = fSizeX;
 		m_fSizeY = fSizeY;
 		m_fSizeZ = fSizeZ;
-
 		m_fSize_X_Default = fSizeX;
 		m_fSize_Y_Default = fSizeY;
 		m_fSize_Z_Default = fSizeZ;
-	}
-	else
-	{
+		break;
+	case 2:
 		m_fSizeX = fSizeX;
 		m_fSizeY = fSizeY;
 		m_fSizeZ = fSizeZ;
-
 		m_fSize_X_Default = fSizeX;
 		m_fSize_Y_Default = fSizeY;
 		m_fSize_Z_Default = fSizeZ;
+		break;
+	case 3:
+		m_fSizeX = fSizeX;
+		m_fSizeY = fSizeY;
+		m_fSizeZ = fSizeZ;
+		m_fSize_X_Default = fSizeX;
+		m_fSize_Y_Default = fSizeY;
+		m_fSize_Z_Default = fSizeZ;
+		break;
+	case 4:
+		m_fSizeX = fSizeX;
+		m_fSizeY = fSizeY;
+		m_fSizeZ = fSizeZ;
+		m_fSize_X_Default = fSizeX;
+		m_fSize_Y_Default = fSizeY;
+		m_fSize_Z_Default = fSizeZ;
+		break;
+	case 5:
+		m_fSizeX = fSizeX;
+		m_fSizeY = fSizeY;
+		m_fSizeZ = fSizeZ;
+		m_fSize_X_Default = fSizeX;
+		m_fSize_Y_Default = fSizeY;
+		m_fSize_Z_Default = fSizeZ;
+		break;
+	case 6:
+		m_fSizeX = fSizeX;
+		m_fSizeY = fSizeY;
+		m_fSizeZ = fSizeZ;
+		m_fSize_X_Default = fSizeX;
+		m_fSize_Y_Default = fSizeY;
+		m_fSize_Z_Default = fSizeZ;
+		break;
+	case 7:
+		m_fSizeX = fSizeX;
+		m_fSizeY = fSizeY;
+		m_fSizeZ = fSizeZ;
+		m_fSize_X_Default = fSizeX;
+		m_fSize_Y_Default = fSizeY;
+		m_fSize_Z_Default = fSizeZ;
+		break;
+	case 8:
+		m_fSizeX = fSizeX;
+		m_fSizeY = fSizeY;
+		m_fSizeZ = fSizeZ;
+		m_fSize_X_Default = fSizeX;
+		m_fSize_Y_Default = fSizeY;
+		m_fSize_Z_Default = fSizeZ;
+		break;
+	case 9:
+		fSizeX -= 2.f;
+		fSizeY -= 2.f;
+		fSizeZ -= 2.f;
+		m_fSizeX = fSizeX;
+		m_fSizeY = fSizeY;
+		m_fSizeZ = fSizeZ;
+		m_fSize_X_Default = fSizeX;
+		m_fSize_Y_Default = fSizeY;
+		m_fSize_Z_Default = fSizeZ;
+		break;
+	case 10:
+		fSizeX -= 2.f;
+		fSizeY -= 2.f;
+		fSizeZ -= 2.f;
+		m_fSizeX = fSizeX;
+		m_fSizeY = fSizeY;
+		m_fSizeZ = fSizeZ;
+		m_fSize_X_Default = fSizeX;
+		m_fSize_Y_Default = fSizeY;
+		m_fSize_Z_Default = fSizeZ;
+		break;
 	}
 
+	m_bDissolving = false;
+	m_fDissolveAmount = 0.f;
 	m_pTransformCom->Set_Scaled(fSizeX, fSizeY, fSizeZ);
 }
 
@@ -562,6 +657,10 @@ HRESULT CBlood::Add_Components()
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Dissolve"),
+		TEXT("Com_Texture_Dissolve"), (CComponent**)&m_pTextureCom_Dissolve)))
+		return E_FAIL;
+
 	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_01"),
 		TEXT("Com_Model"), (CComponent**)&m_pModelCom)))
 		return E_FAIL;
@@ -570,39 +669,39 @@ HRESULT CBlood::Add_Components()
 		TEXT("Com_Model_2"), (CComponent**)&m_pModelCom_2)))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_03"),
+	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_04"),
 		TEXT("Com_Model_3"), (CComponent**)&m_pModelCom_3)))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_04"),
+	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_05"),
 		TEXT("Com_Model_4"), (CComponent**)&m_pModelCom_4)))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_05"),
+	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_06"),
 		TEXT("Com_Model_5"), (CComponent**)&m_pModelCom_5)))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_06"),
+	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_07"),
 		TEXT("Com_Model_6"), (CComponent**)&m_pModelCom_6)))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_07"),
+	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_09"),
 		TEXT("Com_Model_7"), (CComponent**)&m_pModelCom_7)))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_08"),
+	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_10"),
 		TEXT("Com_Model_8"), (CComponent**)&m_pModelCom_8)))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_09"),
+	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_11"),
 		TEXT("Com_Model_9"), (CComponent**)&m_pModelCom_9)))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_10"),
+	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_08"),
 		TEXT("Com_Model_10"), (CComponent**)&m_pModelCom_10)))
 		return E_FAIL;
 
-	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_11"),
+	if (FAILED(__super::Add_Component(g_Level, TEXT("Prototype_Component_Model_Blood_03"),
 		TEXT("Com_Model_11"), (CComponent**)&m_pModelCom_11)))
 		return E_FAIL;
 
@@ -621,6 +720,18 @@ HRESULT CBlood::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
+
+	if (FAILED(m_pTextureCom_Dissolve->Bind_ShaderResource(m_pShaderCom, "g_Texture_Dissolve")))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bDissolve", &m_bDissolving, sizeof(_bool))))
+		return E_FAIL;
+
+	if(m_bDissolving)
+	{
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_fDissolveAmount", &m_fDissolveAmount, sizeof(_float))))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }

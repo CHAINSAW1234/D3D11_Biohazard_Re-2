@@ -3,11 +3,11 @@
 #include "Model.h"
 #include "GameInstance.h"
 #include "Light.h"
-#include"Player.h"
-#include"PartObject.h"
-
-#include"Part_InteractProps.h"
-#include"Camera_Free.h"
+#include "Player.h"
+#include "PartObject.h"
+#include "Selector_UI.h"
+#include "Part_InteractProps.h"
+#include "Camera_Free.h"
 
 CInteractProps::CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -177,7 +177,10 @@ _float4 CInteractProps::Get_Collider_World_Pos(_float4 vPos)
 _bool CInteractProps::Check_Col_Player(INTERACTPROPS_COL eInterCol, INTERACTPROPS_COL_STEP eStepCol)
 {
 	if (m_pPlayerCol->Intersect(m_pColliderCom[eInterCol][eStepCol]))
+	{
+		m_bFirstInteract = true;
 		return m_bCol[eInterCol][eStepCol] = true;
+	}
 	else
 		return m_bCol[eInterCol][eStepCol] = false;
 
@@ -268,6 +271,31 @@ _float CInteractProps::Get_PlayerLook_Degree()
 	}
 
 	return XMConvertToDegrees(fScala);
+}
+
+_bool CInteractProps::Create_Selector_UI()
+{
+	CGameObject* pSelector = m_pPlayer->Create_Selector_UI();
+
+	if (nullptr == pSelector)
+		return false;
+
+	m_pSelector = static_cast<CSelector_UI*>(pSelector);
+
+	return true;
+}
+
+void CInteractProps::Opreate_Selector_UI(_bool _Interact, _float4 _pos)
+{
+	if (nullptr == m_pSelector)
+	{
+		Create_Selector_UI();
+	}
+
+	else if (nullptr != m_pSelector)
+	{
+		m_pSelector->Select_Type(_Interact, _pos);
+	}
 }
 
 HRESULT CInteractProps::Render_LightDepth_Dir()

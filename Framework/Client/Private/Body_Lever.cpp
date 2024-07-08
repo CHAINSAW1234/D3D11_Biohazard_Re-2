@@ -31,8 +31,8 @@ HRESULT CBody_Lever::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	if (FAILED(Initialize_Model()))
-		return E_FAIL;
+	//if (FAILED(Initialize_Model()))
+	//	return E_FAIL;
 
 
 
@@ -102,7 +102,7 @@ HRESULT CBody_Lever::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+	//list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 
 	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
 
@@ -228,14 +228,14 @@ _float4 CBody_Lever::Get_Pos(_int iArg)
 	return vPos;
 }
 
-void CBody_Lever::Get_SpecialBone_Rotation()
-{
-	_matrix Combined = m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR]->Get_TrasformationMatrix();
-
-	_vector scale, rotation, translation;
-	XMMatrixDecompose(&scale, &rotation, &translation, Combined);
-	m_vRotation = rotation;
-}
+//void CBody_Lever::Get_SpecialBone_Rotation()
+//{
+//	_matrix Combined = m_vecRotationBone[FIRE_WALL_ROTATE_BONE_TYPE::DOOR]->Get_TrasformationMatrix();
+//
+//	_vector scale, rotation, translation;
+//	XMMatrixDecompose(&scale, &rotation, &translation, Combined);
+//	m_vRotation = rotation;
+//}
 
 
 CBody_Lever* CBody_Lever::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

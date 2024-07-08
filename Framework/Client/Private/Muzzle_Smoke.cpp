@@ -26,16 +26,22 @@ HRESULT CMuzzle_Smoke::Initialize(void * pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	m_pTransformCom->Set_Scaled(0.5f, 0.5f, 1.f);
+
 	m_ImgSize = m_pTextureCom->GetImgSize();
 	m_DivideCount = m_pTextureCom->GetDivideCount();
 
 	m_bRender = false;
 
-	m_FrameDelay = 20;
+	m_FrameDelay = 10;
 
 	m_fAlpha_Delta = 1.f / (_float)(m_DivideCount.first * m_DivideCount.second);
 
 	m_iFrame_Total = m_DivideCount.first * m_DivideCount.second;
+
+	m_fAlpha_Delta_Sum = 1.f;
+
+	m_bAlpha_Direction = false;
 
 	return S_OK;
 }
@@ -51,18 +57,33 @@ void CMuzzle_Smoke::Tick(_float fTimeDelta)
 
 		m_FrameTime = GetTickCount64();
 
-		m_fAlpha_Delta_Sum += m_fAlpha_Delta;
+		if (m_bAlpha_Direction == false)
+			m_fAlpha_Delta_Sum -= m_fAlpha_Delta*6.f;
+		else
+			m_fAlpha_Delta_Sum += m_fAlpha_Delta;
 
-		if (m_fAlpha_Delta_Sum >= 1.f)
+		if (m_bAlpha_Direction == false)
 		{
-			m_fAlpha_Delta_Sum = 0.f;
+			if (m_fAlpha_Delta_Sum < 0.f)
+			{
+				m_bAlpha_Direction = true;
+				m_fAlpha_Delta_Sum = 0.f;
+			}
+		}
+		else
+		{
+			if (m_fAlpha_Delta_Sum >= 1.f)
+			{
+				m_fAlpha_Delta_Sum = 1.f;
+			}
 		}
 
 		if (m_iFrame >= m_iFrame_Total)
 		{
 			if (m_fAlpha_Delta_Sum >= 1.f)
 			{
-				m_fAlpha_Delta_Sum = 0.f;
+				m_bAlpha_Direction = false;
+				m_fAlpha_Delta_Sum = 1.f;
 			}
 
 			m_bRender = false;
@@ -126,6 +147,14 @@ void CMuzzle_Smoke::SetSize(_float fSizeX, _float fSizeY)
 	m_pTransformCom->Set_Scaled(fSizeX, fSizeY,1.f);
 }
 
+void CMuzzle_Smoke::SetPosition(_float4 Pos)
+{
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, Pos);
+	m_iFrame = 0;
+	m_fAlpha_Delta_Sum = 1.f;
+	m_bAlpha_Direction = false;
+}
+
 HRESULT CMuzzle_Smoke::Add_Components()
 {
 	/* For.Com_Shader */
@@ -134,7 +163,7 @@ HRESULT CMuzzle_Smoke::Add_Components()
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Muzzle_Smoke"),
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Muzzle_Smoke_Trail"),
 		TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 

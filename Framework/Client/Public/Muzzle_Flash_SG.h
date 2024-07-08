@@ -24,7 +24,7 @@ public:
 	virtual void			Setup_Billboard() override;
 public:
 	void					SetSize(_float fSizeX, _float fSizeY);
-
+	virtual void			SetPosition(_float4 Pos) override;
 
 private:
 	virtual HRESULT			Add_Components();

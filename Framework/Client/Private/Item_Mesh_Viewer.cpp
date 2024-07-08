@@ -68,8 +68,6 @@ void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 {
 	_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCam) + m_pCameraFree->Get_Position_Vector();
 
-
-
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
 
 	switch (m_eViewer_State)

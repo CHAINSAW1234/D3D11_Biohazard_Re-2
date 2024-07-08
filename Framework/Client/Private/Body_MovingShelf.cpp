@@ -37,14 +37,14 @@ HRESULT CBody_MovingShlef::Initialize(void* pArg)
 		return E_FAIL;
 
 
-
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
+	
+	m_pModelCom->Active_RootMotion_Rotation(false);
 
-
-	m_pModelCom->Active_RootMotion_Rotation(true);
+	//m_pModelCom->Active_RootMotion_Rotation(true);
 	
 #ifndef NON_COLLISION_PROP
 
@@ -98,7 +98,8 @@ void CBody_MovingShlef::Late_Tick(_float fTimeDelta)
 
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+	_float3 fTemp = {};
+	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &fTemp);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
