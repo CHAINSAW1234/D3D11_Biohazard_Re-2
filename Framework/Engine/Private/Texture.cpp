@@ -1,5 +1,6 @@
 #include "..\Public\Texture.h"
 #include "Shader.h"
+#include "ComputeShader.h"
 
 CTexture::CTexture(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -134,6 +135,11 @@ HRESULT CTexture::Bind_ShaderResource(CShader * pShader, const _char * pConstant
 HRESULT CTexture::Bind_ShaderResources(CShader * pShader, const _char * pConstantName)
 {
 	return pShader->Bind_Textures(pConstantName, &m_Textures.front(), m_iNumTextures);
+}
+
+HRESULT CTexture::Bind_ShaderResource(CComputeShader* pShader, const _char* pConstantName, _uint iTextureIndex)
+{
+	return pShader->Bind_Texture_Cube(pConstantName, m_Textures[iTextureIndex]);
 }
 
 CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const wstring & strTextureFilePath, _uint iNumTexture, TEXTURE_DESC* pDesc)

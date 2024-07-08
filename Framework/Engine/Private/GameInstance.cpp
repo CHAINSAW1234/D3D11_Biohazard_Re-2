@@ -44,7 +44,7 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 		return E_FAIL;
 	}
 
-	m_pPipeLine = CPipeLine::Create();
+	m_pPipeLine = CPipeLine::Create(*ppDevice, *ppContext);
 	if (nullptr == m_pPipeLine)
 	{
 		MSG_BOX(TEXT("Error: CPipeLine::Create -> nullptr"));
@@ -246,6 +246,8 @@ HRESULT CGameInstance::Draw()
 	if (nullptr == m_pGraphic_Device || 
 		nullptr == m_pLevel_Manager)
 		return E_FAIL;
+	
+	m_pPipeLine->Render();
 
 	m_pRenderer->Render();
 
@@ -655,6 +657,14 @@ HRESULT CGameInstance::Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, cons
 	return S_OK;
 }
 
+void CGameInstance::Set_CubeMap(CTexture* pTexture)
+{
+	if (nullptr == m_pPipeLine)
+		return;
+
+	return m_pPipeLine->Set_CubeMap(pTexture);
+}
+
 _matrix CGameInstance::Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState) const
 {
 	if (nullptr == m_pPipeLine)
@@ -766,6 +776,22 @@ list<LIGHT_DESC*> CGameInstance::Get_ShadowPointLightDesc_List()
 		return list<LIGHT_DESC*>();
 
 	return m_pPipeLine->Get_ShadowPointLightDesc_List();
+}
+
+HRESULT CGameInstance::Bind_IrradianceTexture(CShader* pShader, const _char* pConstantName)
+{
+	if (nullptr == m_pPipeLine)
+		return E_FAIL;
+
+	return m_pPipeLine->Bind_IrradianceTexture(pShader, pConstantName);
+}
+
+HRESULT CGameInstance::Bind_CubeMapTexture(CShader* pShader, const _char* pConstantName)
+{
+	if (nullptr == m_pPipeLine)
+		return E_FAIL;
+
+	return m_pPipeLine->Bind_CubeMapTexture(pShader, pConstantName);
 }
 #pragma endregion
 

@@ -1,8 +1,17 @@
 #include "..\Public\PipeLine.h"
+#include "GameInstance.h"
 #include "Light.h"
 
-CPipeLine::CPipeLine()
+#include "Texture.h"
+#include "ComputeShader.h"
+#include "RenderTarget.h"
+
+CPipeLine::CPipeLine(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+	: m_pDevice{ pDevice }
+	, m_pContext{ pContext }
 {
+	Safe_AddRef(m_pDevice);
+	Safe_AddRef(m_pContext);
 }
 
 void CPipeLine::Add_ShadowLight(SHADOWLIGHT eShadowLight, CLight* pLight)
@@ -30,6 +39,19 @@ void CPipeLine::Add_ShadowLight(SHADOWLIGHT eShadowLight, CLight* pLight)
 	}
 }
 
+void CPipeLine::Set_CubeMap(CTexture* pTexture)
+{
+	if (m_pCubeMapTexture == pTexture)
+		return;
+
+	if (nullptr != m_pCubeMapTexture)
+		Safe_Release(m_pCubeMapTexture);
+
+	m_isRender = true;
+	m_pCubeMapTexture = pTexture;
+	Safe_AddRef(m_pCubeMapTexture);
+}
+
 list<LIGHT_DESC*> CPipeLine::Get_ShadowPointLightDesc_List()
 {
 	list<LIGHT_DESC*> ShadowLightDesc;
@@ -47,6 +69,19 @@ list<LIGHT_DESC*> CPipeLine::Get_ShadowPointLightDesc_List()
 	return ShadowLightDesc;
 }
 
+HRESULT CPipeLine::Bind_IrradianceTexture(CShader* pShader, const _char* pConstantName)
+{
+	return m_pIrradialTexture->Bind_ShaderResource(pShader, pConstantName);
+}
+
+HRESULT CPipeLine::Bind_CubeMapTexture(CShader* pShader, const _char* pConstantName)
+{
+	if (nullptr == m_pCubeMapTexture)
+		return E_FAIL;
+
+	return m_pCubeMapTexture->Bind_ShaderResource(pShader, pConstantName);
+}
+
 HRESULT CPipeLine::Initialize()
 {
 	for (size_t j = 0; j < D3DTS_END; j++)
@@ -56,17 +91,12 @@ HRESULT CPipeLine::Initialize()
 	}
 	m_vCamPosition = _float4(0.f, 0.f, 0.f, 1.f);
 
-	
-	// 절두체 계산을 위한 OriginalPoints 그대로 가져옴 
-	//m_vOriginalPoints[0] = _float3(-1.f, 1.f, 0.f);
-	//m_vOriginalPoints[1] = _float3(1.f, 1.f, 0.f);
-	//m_vOriginalPoints[2] = _float3(1.f, -1.f, 0.f);
-	//m_vOriginalPoints[3] = _float3(-1.f, -1.f, 0.f);
-	//
-	//m_vOriginalPoints[4] = _float3(-1.f, 1.f, 1.f);
-	//m_vOriginalPoints[5] = _float3(1.f, 1.f, 1.f);
-	//m_vOriginalPoints[6] = _float3(1.f, -1.f, 1.f);
-	//m_vOriginalPoints[7] = _float3(-1.f, -1.f, 1.f);
+	if (FAILED(Create_IrradianceTexture()))
+		return E_FAIL;
+
+	m_pShaderCom = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_IrradianceMap.hlsl"), "CS_Irradiance");
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -83,6 +113,27 @@ void CPipeLine::Tick()
 	//// For. Cascade
 	//Update_CascadeFrustum();
 	//Update_CascadeProjMatrices();
+}
+
+HRESULT CPipeLine::Render()
+{
+	if (m_pCubeMapTexture == nullptr)
+		return S_OK;
+
+	if (!m_isRender)
+		return S_OK;
+	m_isRender = false;
+
+	if (FAILED(m_pCubeMapTexture->Bind_ShaderResource(m_pShaderCom, "g_CubeTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pIrradialTexture->Bind_OutputShaderResource(m_pShaderCom, "OutputTexture")))
+		return E_FAIL;
+
+	if(FAILED(m_pShaderCom->Render(0, 8, 8, 6)))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 void CPipeLine::Reset()
@@ -104,6 +155,20 @@ void CPipeLine::Reset()
 
 	Safe_Release(m_pSpotLight);
 	m_pSpotLight = nullptr;
+
+}
+
+HRESULT CPipeLine::Create_IrradianceTexture()
+{
+	CRenderTarget* pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, 256, 6, DXGI_FORMAT_R8G8B8A8_UNORM,
+		TEXT("Target_Irradiance"), _float4(0.f,0.f,0.f,0.f), false);
+
+	if (nullptr == pRenderTarget)
+		return E_FAIL;
+
+	m_pIrradialTexture = pRenderTarget;
+
+	return S_OK;
 }
 
 void CPipeLine::Update_CascadeFrustum()
@@ -174,9 +239,9 @@ void CPipeLine::Update_CascadeProjMatrices()
 	//XMMatrixOrthographicOffCenterLH();
 }
 
-CPipeLine * CPipeLine::Create()
+CPipeLine * CPipeLine::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CPipeLine*		pInstance = new CPipeLine();
+	CPipeLine*		pInstance = new CPipeLine(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize()))
 	{
@@ -202,4 +267,8 @@ void CPipeLine::Free()
 
 	Safe_Release(m_pSpotLight);
 	m_pSpotLight = nullptr;
+
+	Safe_Release(m_pCubeMapTexture);
+	Safe_Release(m_pIrradialTexture);
+	Safe_Release(m_pShaderCom);
 }
