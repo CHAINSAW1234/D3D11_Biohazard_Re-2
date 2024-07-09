@@ -36,6 +36,9 @@ HRESULT CRenderer::Initialize()
 	if (FAILED(SetUp_LightDSV_Point()))
 		return E_FAIL;
 
+	if (FAILED(Render_LUT()))
+		return E_FAIL;
+
 #ifdef _DEBUG
 	if (FAILED(SetUp_Debug()))
 		return E_FAIL;
@@ -352,6 +355,11 @@ HRESULT CRenderer::SetUp_Components()
 	if (nullptr == m_pShader)
 		return E_FAIL;
 
+	m_pComputeShader = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_LUT.hlsl"), "CS_LUT");
+	if (nullptr == m_pComputeShader)
+		return E_FAIL;
+
+
 	m_pRandomTexture = CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/RandomNormal.png"));
 	if (nullptr == m_pShader)
 		return E_FAIL;
@@ -431,8 +439,14 @@ HRESULT CRenderer::SetUp_RenderTargets_LightAcc(const D3D11_VIEWPORT& ViewportDe
 	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_PBR"), static_cast<_uint>(ViewportDesc.Width), static_cast<_uint>(ViewportDesc.Height), DXGI_FORMAT_R8G8B8A8_UNORM, _float4(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
+	/* For.Target_Shade */
+	if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_LUT"), static_cast<_uint>(256), static_cast<_uint>(256), DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.f, 0.f, 0.f, 0.f), false)))
+		return E_FAIL;
+	
 	/* MRT_LightAcc : 빛들의 연산결과 정보를 받아오기위한 렌더타겟들이다. */
 	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_PBR"), TEXT("Target_PBR"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_LUT"), TEXT("Target_LUT"))))
 		return E_FAIL;
 
 
@@ -894,6 +908,8 @@ HRESULT CRenderer::SetUp_Debug()
 
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_PBR"), -fSize / 2 + fSize * 2, -fSize / 2 + fSize, fSize, fSize)))
 		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LUT"), -fSize / 2 + fSize * 2, -fSize / 2 + fSize * 4, fSize, fSize)))
+		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSAO"), -fSize / 2 + fSize * 2, -fSize / 2 + fSize * 2, fSize, fSize)))
 		return E_FAIL;
@@ -1038,6 +1054,16 @@ void CRenderer::Copy_Depth(ID3D11DepthStencilView* pDestStencilView, ID3D11Depth
 	Safe_Release(DestTexture);
 
 
+}
+
+HRESULT CRenderer::Render_LUT()
+{
+	if (FAILED(m_pGameInstance->Bind_OutputShaderResource(m_pComputeShader, TEXT("Target_LUT"), "LUT")))
+		return E_FAIL;
+
+	if (FAILED(m_pComputeShader->Render(0, 8, 8, 1)))
+		return E_FAIL;
+	return S_OK;
 }
 
 HRESULT CRenderer::Render_Priority()
@@ -1555,6 +1581,9 @@ HRESULT CRenderer::Render_Lights()
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Bind_IrradianceTexture(m_pShader, "g_IrradianceTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_LUT"), "g_SpecularLUTTexture")))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShader, TEXT("Target_Diffuse"), "g_DiffuseTexture")))
@@ -2268,6 +2297,8 @@ HRESULT CRenderer::Render_Debug()
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_PBR"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
+	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_LUT"), m_pShader, m_pVIBuffer)))
+		return E_FAIL;
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_SSR"), m_pShader, m_pVIBuffer)))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Draw_RTVDebug(TEXT("MRT_Pre_PostProcessing"), m_pShader, m_pVIBuffer)))
@@ -2336,6 +2367,7 @@ void CRenderer::Free()
 	}
 
 	Safe_Release(m_pShader);
+	Safe_Release(m_pComputeShader);
 	Safe_Release(m_pVIBuffer);
 	Safe_Release(m_pRandomTexture);
 

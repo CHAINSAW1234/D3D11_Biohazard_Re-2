@@ -253,9 +253,9 @@ HRESULT CGameInstance::Draw()
 
 	m_pLevel_Manager->Render();	
 
-//#ifdef _DEBUG
-//	m_pPipeLine->Render_Debug();
-//#endif
+#ifdef _DEBUG
+	m_pPipeLine->Render_Debug();
+#endif
 
 	return S_OK;
 }

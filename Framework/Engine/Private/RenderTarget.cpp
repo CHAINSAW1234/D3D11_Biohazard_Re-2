@@ -30,7 +30,7 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixel
 	TextureDesc.SampleDesc.Count = 1;
 
 	TextureDesc.Usage = D3D11_USAGE_DEFAULT;
-	TextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;		
+	TextureDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	TextureDesc.CPUAccessFlags = 0;
 	TextureDesc.MiscFlags = 0;
 
@@ -41,6 +41,9 @@ HRESULT CRenderTarget::Initialize(_uint iSizeX, _uint iSizeY, DXGI_FORMAT ePixel
 		return E_FAIL;
 
 	if (FAILED(m_pDevice->CreateShaderResourceView(m_pTexture2D, nullptr, &m_pSRV)))
+		return E_FAIL;
+
+	if (FAILED(m_pDevice->CreateUnorderedAccessView(m_pTexture2D, nullptr, &m_pUAV)))
 		return E_FAIL;
 
 	m_vClearColor = vClearColor;
@@ -96,7 +99,7 @@ HRESULT CRenderTarget::Initialize_Cube(_uint iSize, _uint iArraySize, DXGI_FORMA
 	D3D11_UNORDERED_ACCESS_VIEW_DESC   UnorderedAccessDesc = {};
 	UnorderedAccessDesc.Format = TextureDesc.Format;
 	UnorderedAccessDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
-	UnorderedAccessDesc.Texture2DArray.ArraySize = iArraySize;
+	UnorderedAccessDesc.Texture2DArray.ArraySize = 6 * iArraySize;
 	UnorderedAccessDesc.Texture2DArray.FirstArraySlice = 0;
 	UnorderedAccessDesc.Texture2DArray.MipSlice = 0;
 
@@ -312,10 +315,10 @@ void CRenderTarget::Free()
 {
 	Safe_Release(m_pSRV);
 	Safe_Release(m_pRTV);
-	Safe_Release(m_pTexture2D);
-
-	Safe_Release(m_pTexture3D);
 	Safe_Release(m_pUAV);
+
+	Safe_Release(m_pTexture2D);
+	Safe_Release(m_pTexture3D);
 
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pDevice);
