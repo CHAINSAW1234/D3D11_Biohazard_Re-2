@@ -19,8 +19,8 @@ using namespace std;
 using namespace Client;
 	
 //	#define MAP_NOTHING
-#define MAP_INTERACT
-//	#define MAP_TEST
+//#define MAP_INTERACT
+	#define MAP_TEST
 
 //#define NON_COLLISION_PROP
 #define PROPS_COOKING
@@ -34,10 +34,10 @@ using namespace Client;
 typedef struct Tag_Prototype_Inform
 {
 	_bool		bAnim = { false };
-	string		strModelPath = { ("") }; //모델.bin 파일의 위치
-	wstring		wstrModelPrototypeName = { TEXT("") }; // Prototype_Component_Model_
-	wstring		wstrGameObjectPrototypeName = { TEXT("") }; //Prototype_GameObject_
-	string		strGameObjectPrototypeName = { ("") }; // 이것은 IMGUI가 멍청해서 있는 것
+	string		strModelPath = { ("") }; 
+	wstring		wstrModelPrototypeName = { TEXT("") }; 
+	wstring		wstrGameObjectPrototypeName = { TEXT("") }; 
+	string		strGameObjectPrototypeName = { ("") };
 
 }PROTOTYPE_INFORM;
 

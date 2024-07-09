@@ -272,22 +272,22 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const wstring & strLayerTag/*, CLand
 HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 {
 	//희히 넘 바쁜 관계로 함수 못팠어요 - 예은
-
-	/*if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
+#ifdef MAP_TEST - map
+	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_Test/Layer_Monster.dat"), strLayerTag, g_Level)))
 		return E_FAIL;
-	*/
-	CZombie::ZOMBIE_MALE_DESC		ObjectDesc;
-	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
-	ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
-	ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
-	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
+#endif
+	//CZombie::ZOMBIE_MALE_DESC		ObjectDesc;
+	//ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
+	//ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
+	//ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
+	//ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
 
 
-	_matrix			WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
-	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+	//_matrix			WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
+	//XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
-	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-		return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -328,7 +328,9 @@ HRESULT CLevel_GamePlay::Ready_RegionCollider()
 		return E_FAIL;
 #endif
 #ifdef MAP_TEST
-	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_Test"), TEXT("Layer_Jombie_Collider"))))
+	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_Test"), TEXT("Layer_Jombie_Collider"), _float4(1.f, 0.f, 0.f, 1.f))))
+		return E_FAIL;
+	if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_Test"), TEXT("Layer_Collider"))))
 		return E_FAIL;
 #endif
 	//if (FAILED(Load_Collider(TEXT("../Bin/Data/Level_InteractObj"), TEXT("Layer_EventCollider"))))
@@ -1457,12 +1459,13 @@ HRESULT CLevel_GamePlay::Load_Monster(const wstring& strFilePath, const wstring&
 	for (_uint i = 0; iObjectNum > i; ++i)
 	{
 		_uint iLength = { 0 };
+		CZombie::ZOMBIE_MALE_DESC		ObjectDesc;
 
-		_int			iRandomBody = { m_pGameInstance->GetRandom_Int(static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE), static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE_BIG)) };
+#pragma region 와우 랜덤!
+		/*_int			iRandomBody = { m_pGameInstance->GetRandom_Int(static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE), static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE_BIG)) };
 
 		if (ZOMBIE_BODY_TYPE::_MALE == static_cast<ZOMBIE_BODY_TYPE>(iRandomBody))
 		{
-			CZombie::ZOMBIE_MALE_DESC		ObjectDesc;
 			ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
 			ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
 			ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
@@ -1512,17 +1515,65 @@ HRESULT CLevel_GamePlay::Load_Monster(const wstring& strFilePath, const wstring&
 			ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_BIG_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_BIG_SHIRTS::_END) - 1)) };
 
 
-			if (!ReadFile(hFile, &ObjectDesc.worldMatrix, sizeof(_float4x4), &dwByte, nullptr))
-			{
-				CloseHandle(hFile);
-				return E_FAIL;
-			}
+			
+		}*/
+#pragma endregion 
 
-			if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerName, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-			{
-				CloseHandle(hFile);
-				return E_FAIL;
-			}
+		if (!ReadFile(hFile, &ObjectDesc.worldMatrix, sizeof(_float4x4), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+#pragma region kim예은의 로드 방식
+		if (!ReadFile(hFile, &ObjectDesc.eLocation, sizeof(_int), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		if (!ReadFile(hFile, &ObjectDesc.eStart_Type, sizeof(_int), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		if (!ReadFile(hFile, &ObjectDesc.eBodyModelType, sizeof(_int), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		_int aArg = {};
+		if (!ReadFile(hFile, &aArg, sizeof(_int), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		if (!ReadFile(hFile, &ObjectDesc.ePantsType, sizeof(_int), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		if (!ReadFile(hFile, &ObjectDesc.eFaceType, sizeof(_int), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		if (!ReadFile(hFile, &ObjectDesc.eShirtsType, sizeof(_int), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+		if (!ReadFile(hFile, &ObjectDesc.eHatType, sizeof(_int), &dwByte, nullptr))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
+		}
+
+#pragma endregion 
+
+
+		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerName, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+		{
+			CloseHandle(hFile);
+			return E_FAIL;
 		}
 	}
 	CloseHandle(hFile);
