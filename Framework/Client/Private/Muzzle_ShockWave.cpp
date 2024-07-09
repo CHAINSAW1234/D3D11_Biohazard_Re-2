@@ -51,6 +51,10 @@ void CMuzzle_ShockWave::Tick(_float fTimeDelta)
 	if (m_bRender == false)
 		return;
 
+	m_fSizeX += 0.05f;
+	m_fSizeY += 0.05f;
+	m_pTransformCom->Set_Scaled(m_fSizeX, m_fSizeY, 1.f);
+
 	if (m_FrameDelay + m_FrameTime < GetTickCount64())
 	{
 		++m_iFrame;
@@ -88,6 +92,10 @@ void CMuzzle_ShockWave::Tick(_float fTimeDelta)
 
 			m_bRender = false;
 			m_iFrame = 0;
+
+			m_fSizeX = m_fDefaultSize_X;
+			m_fSizeY = m_fDefaultSize_Y;
+			m_pTransformCom->Set_Scaled(m_fSizeX, m_fSizeY, 1.f);
 		}
 	}
 
@@ -99,7 +107,7 @@ void CMuzzle_ShockWave::Tick(_float fTimeDelta)
 void CMuzzle_ShockWave::Late_Tick(_float fTimeDelta)
 {
 	if(m_bRender == true)
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EFFECT_BLOOM, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 }
 
 HRESULT CMuzzle_ShockWave::Render()
@@ -143,6 +151,8 @@ void CMuzzle_ShockWave::SetSize(_float fSizeX, _float fSizeY)
 {
 	m_fSizeX = fSizeX;
 	m_fSizeY = fSizeY;
+	m_fDefaultSize_X = fSizeX;
+	m_fDefaultSize_Y = fSizeY;
 
 	m_pTransformCom->Set_Scaled(fSizeX, fSizeY,1.f);
 }

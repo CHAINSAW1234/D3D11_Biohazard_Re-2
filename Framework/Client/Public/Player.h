@@ -124,6 +124,7 @@ public:
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
 	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
 	_float4										Get_MuzzlePosition();
+	_float4										Get_MuzzlePosition_Forward();
 	wstring										Get_BiteLayerTag() { return m_strBiteLayerTag; }
 	_int										Get_BiteAnimIndex() { return m_iBiteAnimIndex; }
 	_int										Get_MaxBullet();
@@ -429,13 +430,14 @@ private:
 	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
 	class CMuzzle_Flash_SG*						m_pMuzzle_Flash_SG = { nullptr };
 	class CMuzzle_Smoke*						m_pMuzzle_Smoke = { nullptr };
-	class CMuzzle_Smoke*						m_pMuzzle_Smoke_SG = { nullptr };
 
 	_float4										m_vMuzzle_Smoke_Pos;
 	ULONGLONG									m_MuzzleSmoke_Time;
 	ULONGLONG									m_MuzzleSmoke_Delay;
-	ULONGLONG									m_MuzzleSmoke_SG_Delay;
 	_bool										m_bMuzzleSmoke = { false };
+
+	vector<class CMuzzle_ShockWave*>			m_vecShockWave;
+	_int										m_iShockWaveIndex = { 0 };
 #pragma endregion
 private:
 	HRESULT Add_Components();

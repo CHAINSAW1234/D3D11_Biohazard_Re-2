@@ -31,7 +31,9 @@ _bool CRegion_Update_Zombie::Execute(_float fTimeDelta)
 	if (nullptr == m_pBlackBoard)
 		return false;
 
-	return true;
+	if (Check_Permition_To_Execute() == false)
+		return false;
+#pragma endregion
 }
 
 void CRegion_Update_Zombie::Exit()

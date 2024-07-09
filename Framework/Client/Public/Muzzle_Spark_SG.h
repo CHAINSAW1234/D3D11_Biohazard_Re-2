@@ -39,9 +39,6 @@ private:
 private:
 	_float					m_fDefaultSize_X = { 0.f };
 	_float					m_fDefaultSize_Y = { 0.f };
-
-	vector<class CMuzzle_ShockWave*>	m_vecShockWave;
-	_int								m_iShockWaveIndex = { 0 };
 public:
 	static CMuzzle_Spark_SG* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

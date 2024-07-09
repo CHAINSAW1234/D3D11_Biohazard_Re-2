@@ -598,9 +598,6 @@
     <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Region_Update">
       <UniqueIdentifier>{35b87477-27f9-4beb-8e58-83929275a9db}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Chekcer_Is_Same_Region_Player">
-      <UniqueIdentifier>{c02ab057-eac1-40ee-98c0-a04fd5a629c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Monster\Zombie\Part_Breaker">
       <UniqueIdentifier>{b1bd9785-09af-4360-a1b2-b6edb587c506}</UniqueIdentifier>
     </Filter>
@@ -646,8 +643,20 @@
     <Filter Include="02.GameObjects\MapObject\InteractProps\Window\Pannel_Window">
       <UniqueIdentifier>{bba54d7f-846e-45fb-aba4-94e0e31e1dc0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Find_Door_To_Target">
+      <UniqueIdentifier>{97c7d72a-bdfb-4b5f-88ca-00deef3d7a89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Chekcer_Is_Same_Location_Player">
+      <UniqueIdentifier>{c02ab057-eac1-40ee-98c0-a04fd5a629c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Different_Location_Player">
+      <UniqueIdentifier>{278eb919-6324-45cc-bfad-411a9e47cab3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Effect\Muzzle_ShockWave">
       <UniqueIdentifier>{4a5436b6-385d-438a-8382-2212eb5558e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Impact">
+      <UniqueIdentifier>{4e950f49-0ee1-481c-86c6-54d63c564243}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1200,8 +1209,8 @@
     <ClInclude Include="..\Public\Region_Update_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Region_Update</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Is_Same_Region_To_Player_Zombie.h">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Chekcer_Is_Same_Region_Player</Filter>
+    <ClInclude Include="..\Public\Is_Same_Location_To_Player_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Chekcer_Is_Same_Location_Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Part_Breaker_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\Part_Breaker</Filter>
@@ -1245,8 +1254,17 @@
     <ClInclude Include="..\Public\Pannel_Window.h">
       <Filter>02.GameObjects\MapObject\InteractProps\Window\Pannel_Window</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Find_Door_To_Target_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Find_Door_To_Target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Is_Different_Location_To_Player_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Different_Location_Player</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Muzzle_ShockWave.h">
       <Filter>02.GameObjects\Effect\Muzzle_ShockWave</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Impact.h">
+      <Filter>02.GameObjects\Effect\Impact</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1760,8 +1778,8 @@
     <ClCompile Include="..\Private\Region_Update_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Region_Update</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Is_Same_Region_To_Player_Zombie.cpp">
-      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Chekcer_Is_Same_Region_Player</Filter>
+    <ClCompile Include="..\Private\Is_Same_Location_To_Player_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Chekcer_Is_Same_Location_Player</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Part_Breaker_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\Part_Breaker</Filter>
@@ -1805,8 +1823,17 @@
     <ClCompile Include="..\Private\Pannel_Window.cpp">
       <Filter>02.GameObjects\MapObject\InteractProps\Window\Pannel_Window</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Find_Door_To_Target_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility\Find_Door_To_Target</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Is_Different_Location_To_Player_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Different_Location_Player</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Muzzle_ShockWave.cpp">
       <Filter>02.GameObjects\Effect\Muzzle_ShockWave</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Impact.cpp">
+      <Filter>02.GameObjects\Effect\Impact</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

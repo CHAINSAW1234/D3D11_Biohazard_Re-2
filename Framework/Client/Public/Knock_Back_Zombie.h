@@ -36,8 +36,8 @@ private:	/* For. Active FirstTime */
 	_bool							m_isEntry = { false };
 	COLLIDER_TYPE					m_eCurrentHitCollider = { COLLIDER_TYPE::_END };
 
-	const wstring&					m_strAnimLayerTag = { TEXT("Damage_Knockback") };
-	const wstring&					m_strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
+	const wstring					m_strAnimLayerTag = { TEXT("Damage_Knockback") };
+	const wstring					m_strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
 	const PLAYING_INDEX				m_ePlayingIndex = { PLAYING_INDEX::INDEX_0 };
 
 public:

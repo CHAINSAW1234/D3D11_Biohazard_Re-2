@@ -20,9 +20,8 @@ class CZombie final : public CMonster
 public:
 	typedef struct tagZombieDesc : public MONSTER_DESC
 	{
-		//	_bool						isOutDoor = { false };
+		LOCATION_MAP_VISIT			eLocation = { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
 		ZOMBIE_START_TYPE			eStart_Type = { ZOMBIE_START_TYPE::_IDLE };
-		_bool						isOutDoor = { true };
 		ZOMBIE_BODY_TYPE			eBodyModelType = { ZOMBIE_BODY_TYPE::_END };
 	}ZOMBIE_DESC;
 
@@ -120,6 +119,11 @@ public:		/* For.Look Target Controll */
 public:		/* For.Outdoor */
 	inline _bool						Is_OutDoor() { return m_isOutDoor; }
 	inline void							Set_OutDoor(_bool isOutDoor) { m_isOutDoor = isOutDoor; }
+
+public:		/* For.Location Controll */
+	inline _bool						Is_In_Location(LOCATION_MAP_VISIT eLocation) { return eLocation == m_eLocation; }
+	inline LOCATION_MAP_VISIT			Get_Location() { return m_eLocation; }
+	inline void							Set_Location(LOCATION_MAP_VISIT eLocation) { m_eLocation = eLocation; }
 
 public:		/* Access */
 	inline MONSTER_STATE				Get_Current_MonsterState() { return m_eState; }
@@ -232,6 +236,10 @@ protected:
 	vector<CDecal_SSD*>					m_vecDecal_SSD;
 	_uint								m_iDecal_Index = { 0 };
 	_bool								m_bBigAttack = { false };
+
+
+	/*Impact*/
+	class CImpact*						m_pImpact = { nullptr };
 #pragma endregion
 
 public:
@@ -239,6 +247,10 @@ public:
 
 private:
 	_bool								m_isManualMove = { false };
+
+private:
+	LOCATION_MAP_VISIT					m_eLocation = { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
+
 
 public:
 	static CZombie* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

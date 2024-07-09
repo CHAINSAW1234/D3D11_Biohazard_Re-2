@@ -369,6 +369,13 @@ _bool CBlackBoard_Zombie::Hit_Player()
 	
 }
 
+void CBlackBoard_Zombie::Set_TargetDoor(CDoor* pTargetDoor)
+{
+	Safe_Release(m_pTarget_Door);
+	m_pTarget_Door = pTargetDoor;
+	Safe_AddRef(m_pTarget_Door);
+}
+
 void CBlackBoard_Zombie::Set_Current_MotionType_Body(MOTION_TYPE eType)
 {
 	CBody_Zombie*		pBodyZombie = { Get_PartObject_Body() };
@@ -1046,5 +1053,6 @@ void CBlackBoard_Zombie::Free()
 
 	Safe_Release(m_pNearest_Window);
 	Safe_Release(m_pNearest_Door);
+	Safe_Release(m_pTarget_Door);
 }
 

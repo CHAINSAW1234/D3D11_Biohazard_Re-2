@@ -5,6 +5,8 @@
 #include "Body_Zombie.h"
 #include "Zombie.h"
 
+#define ZOMBIE_HOLD_ADDITIONAL_ROTATE_PER_SEC			XMConvertToRadians(120.f)
+
 BEGIN(Client)
 
 class CHold_Zombie : public CTask_Node
@@ -31,6 +33,8 @@ private:
 
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard;	}
+	void							Additional_Turn(_float fTimeDelta);
+
 private:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 
