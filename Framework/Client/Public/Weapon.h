@@ -48,7 +48,9 @@ public:
 	RENDERLOCATION					Get_RenderLocation() { return m_eRenderLocation; }
 	CPlayer::SETPROPS_LOCATION		Get_SetPropsLocation() { return m_eSetPropsLocation; }
 	_float4							Get_MuzzlePosition();
+	_float4							Get_MuzzlePosition_Forward();
 	_float4							Get_BonePosition(const char* pBoneName);
+	_float4							Get_BonePosition_Forward(const char* pBoneName);
 	_int							Get_MaxBullet() { return m_iMaxBullet; }
 
 	void							Set_RenderLocation(RENDERLOCATION eRenderLocation) { m_eRenderLocation = eRenderLocation; }
