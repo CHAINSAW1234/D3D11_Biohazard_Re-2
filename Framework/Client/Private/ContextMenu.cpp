@@ -511,4 +511,11 @@ void CContextMenu::Free()
 
 	Safe_Release(m_pContext_Highlighter);
 	Safe_Release(m_pContext_HighlighterTransform);
+
+	if(nullptr != m_pLayOut)
+	{
+		Safe_Release<CLayOut_UI*>(m_pLayOut);
+		m_pLayOut = nullptr;
+	}
+
 }

@@ -443,11 +443,11 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	}
 
 	/* 4. Inventory SelectBox */
-	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_LayOut.dat");
-	//inputFileStream.open(selectedFilePath, ios::binary);
-	//UI_Distinction(selectedFilePath);
-	//CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
-	///////////////////////////* ¢º ¢º  ¢º  ¢º  ¢º  Map */////////////////////////////
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_LayOut.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+	/////////////////////////* ¢º ¢º  ¢º  ¢º  ¢º  Map */////////////////////////////
 	m_isMapType = true;
 
 	/* 9. Map_Mask */
