@@ -6,6 +6,10 @@
 
 BEGIN(Client)
 
+const wstring EQUIP_DISPLAY = TEXT("EquipDisplay");
+const wstring COUNT_DISPLAY = TEXT("CountDisplay");
+const wstring HOTKEY_DISPLAY = TEXT("HotkeyDisplay");
+
 class CItem_UI final : public CCustomize_UI
 {
 protected:
@@ -24,7 +28,7 @@ public:
 public:
 	virtual void		Set_Dead(_bool bDead) override;
 
-public:
+public:/*정보 Get,Set*/
 	_bool				Get_isWorking() const { return m_isWorking; }
 	void				Set_isWorking(_bool IsWorking) { m_isWorking = IsWorking; }
 
@@ -40,20 +44,24 @@ public:
 	ITEM_TYPE			Get_ItemType() const { return m_eInvenItemType; };
 	void				Set_ItemType(ITEM_TYPE eItmeType) { m_eInvenItemType = eItmeType; }
 
-	void				Set_Text(wstring Target, wstring strSetText);
+	_int				Get_ItemQuantity() const { return m_iItemQuantity; }
+	void				Set_ItemQuantity(_int iItemQuantity) { m_iItemQuantity = iItemQuantity; }
+	void				Set_ItemVariation(_int iVariation) { m_iItemQuantity += iVariation; }
 
-public:
+	_bool				Get_isHotKeyRegisted() const { return m_isHotKeyRegisted; }
+	void				Set_isHotKeyRegisted(_bool isHotKeyRegisted) { m_isHotKeyRegisted = isHotKeyRegisted; }
+
+public:/*기능성*/
 	void				Reset_ItemUI();
 	void				Set_Activ_ItemUI(_bool Active);
 	void				Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSetPos, _int iVariation);
-
-public:
-	_int				Get_ItemQuantity() const { return m_iItemQuantity; }
-	void				Set_ItemVariation(_int iVariation) { m_iItemQuantity += iVariation; }
+	void				Set_PartUI_TextColor(wstring Target, _vector vTextColor);
+	void				Set_Text(wstring Target, wstring strSetText);
 
 private:
 	_bool						m_isWorking = { false };
 	_bool						m_isActive = { true };
+	_bool						m_isHotKeyRegisted = { false };
 
 private:
 	ITEM_NUMBER					m_eItemNumber = { ITEM_NUMBER::ITEM_NUMBER_END };
@@ -61,6 +69,7 @@ private:
 
 	_bool						m_bCountable = { false };
 	_int						m_iItemQuantity = { 0 };
+	_int						m_iItemMaxQuantity = { 0 };
 
 	map<wstring, CCustomize_UI*>	m_mapPartUI;
 

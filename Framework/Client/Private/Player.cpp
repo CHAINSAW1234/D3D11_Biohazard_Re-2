@@ -1272,18 +1272,55 @@ void CPlayer::Update_Equip()
 		}
 	}
 	else {
-		// test
-		if (m_pGameInstance->Get_KeyState('2') == DOWN) {
-			Requst_Change_Equip(HG);
+		//무기 스왑 1~4번 검색하고 
+		for (_uint i = 49; i < 53; i++)
+		{
+			if (m_pGameInstance->Get_KeyState(i) == DOWN)
+			{
+				if (ITEM_NUMBER_END != m_pTabWindow->Get_Item_On_HotKey(i - 49))
+				{
+					ITEM_NUMBER eHotkeyNum = m_pTabWindow->Get_Item_On_HotKey(i - 49);
+					switch (eHotkeyNum)
+					{
+					case Client::HandGun: {
+						Requst_Change_Equip(HG);
+						break;
+					}
+						
+					case Client::ShotGun: {
+						Requst_Change_Equip(STG);
+						break;
+					}
+						
+					case Client::Flash_Bomb: {
+						Requst_Change_Equip(FLASHBANG);
+						break;
+					}
+						
+					case Client::Grenade: {
+						Requst_Change_Equip(GRENADE);
+						break;
+					}
+
+					default:
+						break;
+					}
+				}
+			}
 		}
 
-		if (m_pGameInstance->Get_KeyState('4') == DOWN) {
-			Requst_Change_Equip(STG);
-		}
+		//// test
+		//if (m_pGameInstance->Get_KeyState('2') == DOWN) {
+		//	Requst_Change_Equip(HG);
+		//}
 
-		if (m_pGameInstance->Get_KeyState('6') == DOWN) {
-			Requst_Change_Equip(NONE);
-		}
+		//if (m_pGameInstance->Get_KeyState('4') == DOWN) {
+		//	Requst_Change_Equip(STG);
+		//}
+
+		//if (m_pGameInstance->Get_KeyState('6') == DOWN) {
+		//	Requst_Change_Equip(NONE);
+		//}
 	}
 }
 
