@@ -30,6 +30,10 @@ private:
 	virtual HRESULT			Add_Components();
 	virtual HRESULT			Bind_ShaderResources();
 
+private:
+	_float					m_fDefaultSize_X = { 0.f };
+	_float					m_fDefaultSize_Y = { 0.f };
+
 public:
 	static CMuzzle_ShockWave* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

@@ -2,9 +2,6 @@
 #include "..\Public\Muzzle_Spark_SG.h"
 
 #include "GameInstance.h"
-#include "Muzzle_ShockWave.h"
-
-#define SHOCKWAVE_COUNT 2
 
 CMuzzle_Spark_SG::CMuzzle_Spark_SG(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect{ pDevice, pContext }
@@ -37,25 +34,11 @@ HRESULT CMuzzle_Spark_SG::Initialize(void * pArg)
 
 	m_FrameDelay = 5;
 
-	for (size_t i = 0; i < 2; ++i)
-	{
-		auto pShockWave = CMuzzle_ShockWave::Create(m_pDevice, m_pContext);
-		pShockWave->SetType(i);
-		pShockWave->Initialize(nullptr);
-		pShockWave->SetSize(1.f, 1.f);
-		m_vecShockWave.push_back(pShockWave);
-	}
-
 	return S_OK;
 }
 
 void CMuzzle_Spark_SG::Tick(_float fTimeDelta)
 {
-	for (size_t i = 0; i < m_vecShockWave.size(); ++i)
-	{
-		m_vecShockWave[i]->Tick(fTimeDelta);
-	}
-
 	if (m_bRender == false)
 		return;
 
@@ -77,11 +60,6 @@ void CMuzzle_Spark_SG::Tick(_float fTimeDelta)
 
 		m_bRender = false;
 		m_iFrame = 0;
-
-		m_iShockWaveIndex = m_pGameInstance->GetRandom_Int(0, 1);
-
-		m_vecShockWave[m_iShockWaveIndex]->SetPosition(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-		m_vecShockWave[m_iShockWaveIndex]->Set_Render(true);
 	}
 
 	Compute_CurrentUV();
@@ -91,11 +69,6 @@ void CMuzzle_Spark_SG::Tick(_float fTimeDelta)
 
 void CMuzzle_Spark_SG::Late_Tick(_float fTimeDelta)
 {
-	for (size_t i = 0; i < m_vecShockWave.size(); ++i)
-	{
-		m_vecShockWave[i]->Late_Tick(fTimeDelta);
-	}
-
 	if(m_bRender == true)
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EFFECT_BLOOM, this);
 }
@@ -279,9 +252,4 @@ void CMuzzle_Spark_SG::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
-
-	for (size_t i = 0; i < m_vecShockWave.size(); ++i)
-	{
-		Safe_Release(m_vecShockWave[i]);
-	}
 }

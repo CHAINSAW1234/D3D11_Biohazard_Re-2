@@ -25,7 +25,7 @@ using namespace Client;
 //#define NON_COLLISION_PROP
 #define PROPS_COOKING
 
-//#define NO_COLLISTION
+#define NO_COLLISTION
 
 #define DISPLAY_FRAME
 #define DISPLAY_NAVMESH

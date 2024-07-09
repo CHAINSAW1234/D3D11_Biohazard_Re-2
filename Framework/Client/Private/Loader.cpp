@@ -1305,6 +1305,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Light_SG/Muzzle_Light_SG.dds")))))
 		return E_FAIL;
 
+	/*Prototype_Component_Texture_Impact*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Impact"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Impact/Impact_%d.dds"), 3))))
+		return E_FAIL;
+
 	//Muzzle Flash
 	CTexture::TEXTURE_DESC Desc{};
 	Desc.iWidth = 1024;

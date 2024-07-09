@@ -236,6 +236,10 @@ protected:
 	vector<CDecal_SSD*>					m_vecDecal_SSD;
 	_uint								m_iDecal_Index = { 0 };
 	_bool								m_bBigAttack = { false };
+
+
+	/*Impact*/
+	class CImpact*						m_pImpact = { nullptr };
 #pragma endregion
 
 public:
