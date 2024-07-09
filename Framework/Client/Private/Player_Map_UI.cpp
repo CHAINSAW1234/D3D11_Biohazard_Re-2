@@ -68,6 +68,7 @@ HRESULT CPlayer_Map_UI::Initialize(void* pArg)
     m_vPlayer_InitPos.y = 0.f + m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y;
 
     m_isMouse_Control = true;
+    m_isPrevRender = true;
 
     if (nullptr != m_pPlayer)
     {
@@ -81,8 +82,8 @@ void CPlayer_Map_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    Rendering();
     Open_Map();
+    Rendering();
     Map_Player_Control(fTimeDelta);
 }
 
@@ -163,9 +164,9 @@ _bool CPlayer_Map_UI::IsDistanceMeasured_Completely(_bool _find)
 void CPlayer_Map_UI::Open_Map()
 {
     /* ▶ 처음 맵을 열었을 때 플레이어의 위치에 Floor가 존재해야 한다. */
-    if (m_isPrevRender != m_pTab_Window->Get_MinMapRender())
+    if (m_isPrevRender != m_pTab_Window->Get_Dead() || false == m_pTab_Window->Get_MinMapRender())
     {
-        if (false == m_isPrevRender)
+        if (true == m_isPrevRender)
         {
             m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_fOriginPos);
         }
@@ -194,10 +195,10 @@ void CPlayer_Map_UI::Open_Map()
         }
 
         m_isPlayer_FloorSetting = true;
-        m_isPrevRender = m_pTab_Window->Get_MinMapRender();
+        m_isPrevRender = m_pTab_Window->Get_Dead();
     }
 
-    if (false == m_pTab_Window->Get_MinMapRender())
+    if (true == m_pTab_Window->Get_Dead())
     {
         m_fOriginPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
     }
@@ -240,8 +241,6 @@ void CPlayer_Map_UI::Map_Player_Control(_float fTimeDelta)
 
     else if (false == m_isRender)
     {
-        m_isPlayer_Open = false;
-
         _matrix playerMatrix = m_pPlayerTransform->Get_WorldMatrix();
 
         ///////////  :   회전 
@@ -342,7 +341,7 @@ void CPlayer_Map_UI::Map_Player_Setting()
     {
         m_ePrevCurrent_ViewFloor = m_eCurrent_ViewFloor;
         /* 1. Prev Render 에 현재 렌더를 넣어준다 */
-        m_isPrevRender = m_pTab_Window->Get_MinMapRender();
+        m_isPrevRender = m_pTab_Window->Get_Dead();
 
         list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
         _float4 vPlayertrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
@@ -350,15 +349,9 @@ void CPlayer_Map_UI::Map_Player_Setting()
         /* 2. Player Pos : 몇 층에 있는 지 확인 했는 가에 대한 변수 : false 시킨다.*/
         m_pMapPlayer->m_isPlayer_FloorSetting = false;
 
-        /* 3. Map Player와 BackGround Center와의 거리를 구한다. */
-       // offset.x = m_vBackGround_Center.x - vPlayertrans.x;
-       // offset.y = m_vBackGround_Center.y - vPlayertrans.y;
-
         /* 4. 플레이어를 backGround 중심으로 옮김 */
         vPlayertrans.x = m_vBackGround_Center.x;
         vPlayertrans.y = m_vBackGround_Center.y;
-
-        m_isPlayer_Open = true;
 
         for (auto& iter : *pUIList)
         {

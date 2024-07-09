@@ -35,7 +35,8 @@ HRESULT CDamage_UI::Initialize(void* pArg)
         CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
     }
 
-    m_Mask[0].fMaskControl  = _float2(1.248f, 0.299f);
+    // m_Mask[0].fMaskControl  = _float2(1.248f, 0.299f);
+    m_Mask[0].fMaskControl  = _float2(0.3f, 0.8f);
     m_vColor[0].vColor      = _float4(0.572f, 0.09f, 0.09f, 0.f);
     m_isRender              = false;
 

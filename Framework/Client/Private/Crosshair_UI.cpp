@@ -133,7 +133,7 @@ void CCrosshair_UI::Tick(_float fTimeDelta)
         m_isAiming = false;
 
     /* Inventory (Main Render)가 열리지 않을 때 or 무기를 사용하지 않을 때는 Crosshair와 Bullet UI을 없애자 .*/
-    if (true == *m_pTabWindow->Get_MainRender() && CPlayer::EQUIP::NONE != m_pPlayer->Get_Equip())
+    if (true == *m_pTabWindow->Get_MainRender_Ptr() && CPlayer::EQUIP::NONE != m_pPlayer->Get_Equip())
     {
         if (CPlayer::EQUIP::HG == m_pPlayer->Get_Equip() && (_int)CPlayer::EQUIP::HG == m_eGun_Type)
             Operate_DefaultGun(fTimeDelta);
@@ -147,7 +147,7 @@ void CCrosshair_UI::Tick(_float fTimeDelta)
         }
     }
 
-    else if (false == *m_pTabWindow->Get_MainRender())
+    else if (false == *m_pTabWindow->Get_MainRender_Ptr())
     {
         m_isRender = false;
         m_isShoot = false;

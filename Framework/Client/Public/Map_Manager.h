@@ -52,19 +52,18 @@ protected :
 	void					Open_Map();
 	void					Find_MapStateType();
 
-	_bool					m_isTargetLimit = { false };
 protected :
-	MAP_UI_TYPE				m_eMapComponent_Type		= { MAP_UI_TYPE::END_MAP };
-	_float					m_fOrigin_Blending			= {};
-	_bool					m_isTransfrom_Setting		= { false }; /* z 값 세팅 */
-	wstring					m_wstrFile					= { TEXT("") };
+	_float					m_fOrigin_Blending			= {};			/* Init Blending 값 */
+	wstring					m_wstrFile					= { TEXT("") }; /* File 이름 구분*/
+	_bool					m_isTransfrom_Setting		= { false };	/* Init Z 값 세팅 */
 
 
 protected : /* Render 관련*/
 	MAP_STATE_TYPE			m_eMapState					= { MAP_STATE_TYPE::NONE_STATE }; /* 현재 이 지역의 상태는 무엇인가?*/
 	LOCATION_MAP_VISIT		m_eMap_Location				= { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END }; /* 이 지역은 어떤 지역인가? */
+	MAP_UI_TYPE				m_eMapComponent_Type		= { MAP_UI_TYPE::END_MAP };
 
-	_bool					m_isPrevRender				= { false };
+	_bool					m_isPrevRender				= { false }; /* 이전 Render Type */
 
 
 protected : /* Variable */
@@ -83,12 +82,10 @@ protected : /* Variable */
 	/* 4. Control */
 	_bool					m_isMouse_Control			= { false }; /* 마우스로 당길 수 있는 객체 */
 
-
-
-	_bool					m_isLastPosition = { false };
+	_bool					m_isLastPosition			= { false };
 	_float4x4				m_vLastMatrix;
-	_float					m_fMouseSensor = { 10.f };
-	_float2					m_vPlayer_MovePos = {};
+	_float					m_fMouseSensor				= { 10.f };
+	_float2					m_vPlayer_MovePos			= {};
 
 public:
 	virtual CGameObject* Clone(void* pArg) override = 0;

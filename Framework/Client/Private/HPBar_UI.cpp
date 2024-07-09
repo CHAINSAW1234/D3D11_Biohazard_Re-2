@@ -339,7 +339,7 @@ void CHPBar_UI::Find_Main_Inventory()
 
         if (nullptr != pUI)
         {
-            m_pMain_Inven_Render = pUI->Get_MainRender();
+            m_pMain_Inven_Render = pUI->Get_MainRender_Ptr();
             break;
         }
     }

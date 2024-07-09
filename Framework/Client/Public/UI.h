@@ -38,6 +38,7 @@ public:
 	virtual void Move(_float3 fMoveMent);
 
 	virtual void Move_State(_float3 fMoveMent, _int iState);
+	virtual void State(_float3 fTrans);
 
 	virtual _float3 ComputeMovement(_uint iSTATE);
 

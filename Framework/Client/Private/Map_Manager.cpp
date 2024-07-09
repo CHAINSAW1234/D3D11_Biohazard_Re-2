@@ -109,12 +109,12 @@ void CMap_Manager::Mouse_Pos(_float fTimeDelta)
 				if (MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
 					pos.x -= (fTimeDelta * (_float)ptDeltaPos.x * TARGET_SPEED);
 				else
-					pos.x += fTimeDelta * (_float)ptDeltaPos.x * m_fMouseSensor;
+					pos.x += fTimeDelta * (_float)ptDeltaPos.x * m_fMouseSensor * 3.f;
 
 				m_pTransformCom->Set_State(CTransform::STATE_POSITION, pos);
 
 				if (MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
-					m_vPlayer_MovePos.x += fTimeDelta * (_float)ptDeltaPos.x * m_fMouseSensor;
+					m_vPlayer_MovePos.x += fTimeDelta * (_float)ptDeltaPos.x * m_fMouseSensor * 3.f;
 
 			}
 
@@ -127,12 +127,12 @@ void CMap_Manager::Mouse_Pos(_float fTimeDelta)
 				if (MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
 					pos.y += (fTimeDelta * (_float)ptDeltaPos.y * TARGET_SPEED);
 				else
-					pos.y -= fTimeDelta * (_float)ptDeltaPos.y * m_fMouseSensor;
+					pos.y -= fTimeDelta * (_float)ptDeltaPos.y * m_fMouseSensor * 3.f;
 
 				m_pTransformCom->Set_State(CTransform::STATE_POSITION, pos);
 
 				if (MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
-					m_vPlayer_MovePos.y -= fTimeDelta * (_float)ptDeltaPos.y * m_fMouseSensor;
+					m_vPlayer_MovePos.y -= fTimeDelta * (_float)ptDeltaPos.y * m_fMouseSensor * 3.f;
 			}
 		}
 	}
@@ -196,7 +196,6 @@ void CMap_Manager::Exception_Handle()
 		if (false == m_isTransfrom_Setting)
 			MSG_BOX(TEXT("CMap_UI에서 무언가가 Transform Setting이 설정되지 않았습니다."));
 	}
-
 }
 void CMap_Manager::Transform_Adjustment()
 {
@@ -378,7 +377,7 @@ void CMap_Manager::Open_Map()
 
         /* 2. Map Close*/
         else
-            m_isPrevRender = m_isRender = false;
+            m_isRender = false;
     }
 }
 

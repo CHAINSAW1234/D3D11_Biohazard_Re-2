@@ -50,6 +50,22 @@ private:
 
 	_float3						m_fArrivalPos = {};
 
+#pragma region ³ª¿Ë
+private:
+	/* Fuction */
+	HRESULT						Find_LayOut();
+	void						HoveringFor_LayOut(_int _hoverType);
+
+	/* variable */
+	class CLayOut_UI*			m_pLayOut = { nullptr };
+
+	_int						m_iHoverMenu_Type = { 0 };
+	_int						m_iPrev_HoverMenu_Type{ 0 };
+
+	UI_OPERRATION				m_ePrevContext_State = { STATE_END };
+
+
+#pragma endregion
 
 private:
 	HRESULT Init_Context_Highlighter();

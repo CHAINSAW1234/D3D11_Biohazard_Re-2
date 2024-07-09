@@ -35,9 +35,9 @@ private:
 
 #pragma region ³ª¿Ë
 public: 
-	_bool				Get_MinMapRender()			{ return m_isMapRender; }
-	_bool*				Get_MainRender()			{ return m_pInvenButton->Get_Dead_Ptr(); }
-	WINDOW_TYPE*		Get_Window_Render_Type()	{ return &m_eWindowType; }
+	_bool				Get_MinMapRender()				{ return m_isMapRender; }
+	_bool*				Get_MainRender_Ptr()			{ return m_pInvenButton->Get_Dead_Ptr(); }
+	WINDOW_TYPE*		Get_Window_RenderType_Ptr()		{ return &m_eWindowType; }
 #pragma endregion
 
 
