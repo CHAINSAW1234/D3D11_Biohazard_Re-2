@@ -186,32 +186,61 @@ void CSelector_UI::NonInteractive_Rendering(_float fTimeDelta)
         else
             m_fBlending -= fTimeDelta;
 
-        /* 2. 뷰에 따라 위치 조정 */
+        ///* 2. 뷰에 따라 위치 조정 */
         _float3 fCurrentSize = {};
 
-        _float4 vTargetPosition = m_vTargetPos;
-        _vector vViewPos = XMVector3TransformCoord(vTargetPosition, m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_VIEW));
-        _vector vProjPos = XMVector3TransformCoord(vViewPos, m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_PROJ));
+        _vector                         vTargetPos = { XMLoadFloat4(&m_vTargetPos) };
+        _matrix							ViewMatrix = { m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_VIEW) };
+        _matrix							ProjMatrix = { m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_PROJ) };
+        _matrix							VPMatrix = { ViewMatrix * ProjMatrix };
 
-        _float2 vProjPosition = { (XMVectorGetX(vProjPos) + 1.f) * 0.5f * g_iWinSizeX, (1.f - XMVectorGetY(vProjPos)) * 0.5f * g_iWinSizeY };
+        _vector                         vViewPos = { XMVector3TransformCoord(vTargetPos, ViewMatrix) };
+        _bool                           isCull = { XMVectorGetZ(vViewPos) < 0.f };
 
-        m_pTransformCom->Set_State(CTransform::STATE_POSITION, _vector{ g_iWinSizeX * -0.5f + vProjPosition.x, g_iWinSizeY * 0.5f - vProjPosition.y, 0.8f, 1.f });
 
-        //fCurrentSize *= fDistance;
-        fCurrentSize = _float3(30.f, 30.f, 0.f);
-        m_pTransformCom->Set_Scaled(fCurrentSize.x, fCurrentSize.y, fCurrentSize.z);
+        _vector			                vProjSpacePosition = { XMVector3TransformCoord(vTargetPos, VPMatrix) };
+
+       _matrix                          OrthoProjMatrix = { XMLoadFloat4x4(&m_ProjMatrix) };
+        _matrix                         OrthoProjMatrixInv = { XMMatrixInverse(nullptr, OrthoProjMatrix) };
+        _vector                         vOrthoWorldPosition = { XMVector3TransformCoord(vProjSpacePosition, OrthoProjMatrixInv) };
+
+        m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(XMVectorGetX(vOrthoWorldPosition), XMVectorGetY(vOrthoWorldPosition), 0.5f, 1.f));
+
+       /* fCurrentSize *= fDistance;
+        fCurrentSize = _float3(30.f, 30.f, 0.f);*/
+        if (false == isCull)
+        {
+            m_pTransformCom->Set_Scaled(30.f, 30.f, 1.f);
+        }
+
+        else
+        {
+            m_pTransformCom->Set_Scaled(0.0001f, 0.0001f, 1.f);
+        }
+
+        //_float4 vTargetPosition = m_vTargetPos;
+        //_vector vViewPos = XMVector3TransformCoord(vTargetPosition, m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_VIEW));
+        //_vector vProjPos = XMVector3TransformCoord(vViewPos, m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_PROJ));
+
+        //_float2 vProjPosition = { (XMVectorGetX(vProjPos) + 1.f) * 0.5f * g_iWinSizeX, (1.f - XMVectorGetY(vProjPos)) * 0.5f * g_iWinSizeY };
+
+        //m_pTransformCom->Set_State(CTransform::STATE_POSITION, _vector{ g_iWinSizeX * -0.5f + vProjPosition.x, g_iWinSizeY * 0.5f - vProjPosition.y, 0.8f, 1.f });
+
+        ////fCurrentSize *= fDistance;
+        //fCurrentSize = _float3(30.f, 30.f, 0.f);
+        //m_pTransformCom->Set_Scaled(fCurrentSize.x, fCurrentSize.y, fCurrentSize.z);
     }
 
     /* y 축 조정*/
-    if (false == m_isArrow)
-    {
-        if (m_vXTransform.y - X_TYPEY > m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y)
-        {
-            _float4 vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-            vPos.y = m_vXTransform.y - X_TYPEY;
-            m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
-        }
-    }
+    //if (false == m_isArrow)
+    //{
+    //    if (m_vXTransform.y - X_TYPEY > m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y)
+    //    {
+    //        _float4 vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+    //        vPos.y = m_vXTransform.y - X_TYPEY;
+    //        m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
+    //    }
+    //}
 }
 
 void CSelector_UI::Operate_Selector(_float fTimeDelta)
