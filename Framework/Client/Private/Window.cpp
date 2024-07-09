@@ -30,7 +30,7 @@ HRESULT CWindow::Initialize(void* pArg)
 
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
-
+	m_iNeedItem = woodbarricade01a;
 	return S_OK;
 }
 
@@ -87,7 +87,10 @@ void CWindow::Tick(_float fTimeDelta)
 
 	if (m_bBarrigate)
 		m_fBarrigateOldTime += fTimeDelta;
-	if (m_fBarrigateOldTime > 5.f&& m_iHP[PART_PANNEL] != 0)
+	else
+		m_fBarrigateOldTime = 0.f;
+
+	if (BARRIGATE_NEW == m_eBarrigateState && m_fBarrigateOldTime > 360.f && m_iHP[PART_PANNEL] != 0)
 		m_eBarrigateState = BARRIGATE_STATIC;
 
 	if (true == m_bBarrigateInstallable &&( m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1]))
@@ -238,6 +241,11 @@ _float4 CWindow::Get_Object_Pos()
 	if (!m_bBarrigateInstallable)
 		return _float4(0.f, 0.f, 0.f, 1.f); // 
 	return m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION)+_float4(0.f,50.f,0.f,0.f);
+}
+
+void CWindow::Do_Interact_Props()
+{
+	Set_Barrigate();
 }
 
 CWindow* CWindow::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

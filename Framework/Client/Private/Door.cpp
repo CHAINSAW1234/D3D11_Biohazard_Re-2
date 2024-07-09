@@ -78,7 +78,7 @@ void CDoor::Start()
 #ifdef _DEBUG
 	if (nullptr == m_pMyCustomCollider)
 	{
-		//	MSG_BOX(TEXT("Called : void CDoor::Start() Custom Collider 못 찾 음"));
+		MSG_BOX(TEXT("Called : void CDoor::Start() Custom Collider 못 찾 음"));
 		return;
 	}
 #endif
@@ -273,7 +273,7 @@ HRESULT CDoor::Add_Locations()
 	{
 		if (FAILED(CRoom_Finder::Get_Instance()->Add_Door(eLocation, this)))
 		{
-			//	MSG_BOX(TEXT("Called : HRESULT CDoor::Add_Locations() Add_Door Failed"));
+			MSG_BOX(TEXT("Called : HRESULT CDoor::Add_Locations() Add_Door Failed"));
 		}
 	}
 

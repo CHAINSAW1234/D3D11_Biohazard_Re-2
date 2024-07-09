@@ -494,8 +494,8 @@ void CTab_Window::interact_Props(CGameObject* pPickedUp_Item)
 	CInteractProps* pProp = dynamic_cast<CInteractProps*>(pPickedUp_Item);
 	if (nullptr == pProp)
 		return;
-
-	int a = 0;
+	_int iItemIndex = pProp->Get_NeedItem_Index(); // 필요한 아이템 인덱스 get tto da ze -
+	pProp->Do_Interact_Props(); // 프롭의 동작 함수 (올바른 아이템을 사용했을시 이 함수 호출- 일단 창문만 해놨어요)
 }
 
 void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)

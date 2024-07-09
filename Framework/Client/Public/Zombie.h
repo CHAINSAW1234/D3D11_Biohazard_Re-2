@@ -21,8 +21,8 @@ public:
 	typedef struct tagZombieDesc : public MONSTER_DESC
 	{
 		LOCATION_MAP_VISIT			eLocation = { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
-		ZOMBIE_START_TYPE			eStart_Type = { ZOMBIE_START_TYPE::_IDLE };
-		ZOMBIE_BODY_TYPE			eBodyModelType = { ZOMBIE_BODY_TYPE::_END };
+		ZOMBIE_START_TYPE				eStart_Type = { ZOMBIE_START_TYPE::_IDLE };
+		ZOMBIE_BODY_TYPE				eBodyModelType = { ZOMBIE_BODY_TYPE::_END };
 	}ZOMBIE_DESC;
 
 	typedef struct tagZombieMaleDesc : public ZOMBIE_DESC
