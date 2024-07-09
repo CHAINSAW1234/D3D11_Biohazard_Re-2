@@ -63,7 +63,7 @@ HRESULT CZombie::Initialize(void* pArg)
 
 	ZOMBIE_DESC*						pDesc = (ZOMBIE_DESC*)pArg;
 
-	m_eStartType = pDesc->eStart_Type = ZOMBIE_START_TYPE::_DOOR_RUB;
+	m_eStartType = pDesc->eStart_Type ;
 	m_eLocation = pDesc->eLocation;
 
 	if (ZOMBIE_START_TYPE::_OUT_DOOR == m_eStartType)
