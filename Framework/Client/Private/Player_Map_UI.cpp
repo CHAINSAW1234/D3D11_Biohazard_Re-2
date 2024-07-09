@@ -6,8 +6,23 @@
 #include "Tab_Window.h"
 #include "Player.h"
 
-#define MINMAP_X_SCALED       1011.f
-#define MINMAP_Y_SCALED       743.f
+#define MINMAP_X_FLOOR1     1111.f
+#define MINMAP_Y_FLOOR1     761.f
+
+#define MINMAP_X_FLOOR2     1079.713f
+#define MINMAP_Y_FLOOR2     585.407f
+
+#define MINMAP_X_FLOOR3     925.068f
+#define MINMAP_Y_FLOOR3     556.878
+
+
+/* 2층 크기*/
+#define MODELMAP_X_FLOO2     82.0431098f
+#define MODELMAP_Y_FLOO2     38.3414335f
+
+/* 3층 크기*/
+#define MODELMAP_X_FLOO3     70.7840423f
+#define MODELMAP_Y_FLOO3     38.0877256f
 
 /* 1층 크기*/
 #define MODELMAP_X_FLOO1     82.0969925f
@@ -292,24 +307,33 @@ void CPlayer_Map_UI::Map_Player_Moving(_float fTimeDelta)
 
     if(MODELMAP_X_FLOO1 == m_fCurrent_ModelScaled.x && MODELMAP_Y_FLOO1 == m_fCurrent_ModelScaled.y)
     {
-        fComparison.x = (MINMAP_X_SCALED) / m_fCurrent_ModelScaled.x;
-        fComparison.y = (MINMAP_Y_SCALED) / m_fCurrent_ModelScaled.y;
+        fComparison.x = (MINMAP_X_FLOOR1) / m_fCurrent_ModelScaled.x;
+        fComparison.y = (MINMAP_Y_FLOOR1) / m_fCurrent_ModelScaled.y;
 
         m_vPlayer_MovePos = m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION);
         Moving_Value.x = -(m_vPlayer_MovePos.x + 2.f);
-        Moving_Value.y = -(m_vPlayer_MovePos.z + 14.f); // 플레이어의 초기 위치와 현재 위치의 차이 계산
+        Moving_Value.y = -(m_vPlayer_MovePos.z + 13.f); // 플레이어의 초기 위치와 현재 위치의 차이 계산
     }
 
     else if (MODELMAP_X_FLOO2 == m_fCurrent_ModelScaled.x && MODELMAP_Y_FLOO2 == m_fCurrent_ModelScaled.y)
     {
-        fComparison.x = (MINMAP_X_SCALED) / m_fCurrent_ModelScaled.x;
-        fComparison.y = (MINMAP_Y_SCALED) / m_fCurrent_ModelScaled.y;
+        fComparison.x = (MINMAP_X_FLOOR2) / m_fCurrent_ModelScaled.x;
+        fComparison.y = (MINMAP_Y_FLOOR2) / m_fCurrent_ModelScaled.y;
 
         m_vPlayer_MovePos = m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION);
-        Moving_Value.x = -(m_vPlayer_MovePos.x + 1.f);
-        Moving_Value.y = -(m_vPlayer_MovePos.z + 14.7f); // 플레이어의 초기 위치와 현재 위치의 차이 계산
+        Moving_Value.x = -(m_vPlayer_MovePos.x + 1.15f);
+        Moving_Value.y = -(m_vPlayer_MovePos.z + 15.5f); // 플레이어의 초기 위치와 현재 위치의 차이 계산
     }
 
+    else if (MODELMAP_X_FLOO3 == m_fCurrent_ModelScaled.x && MODELMAP_Y_FLOO3 == m_fCurrent_ModelScaled.y)
+    {
+        fComparison.x = (MINMAP_X_FLOOR3) / m_fCurrent_ModelScaled.x;
+        fComparison.y = (MINMAP_Y_FLOOR3) / m_fCurrent_ModelScaled.y;
+
+        m_vPlayer_MovePos = m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION);
+        Moving_Value.x = -(m_vPlayer_MovePos.x + 2.f);
+        Moving_Value.y = -(m_vPlayer_MovePos.z + 16.f); // 플레이어의 초기 위치와 현재 위치의 차이 계산
+    }
     //offset.x /= fComparison.x;
     //offset.y /= fComparison.y;
 

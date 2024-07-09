@@ -88,6 +88,7 @@ void CMain_Map_UI::Tick(_float fTimeDelta)
     Player_BetweenDistance();
 
     /* Door : Object가 없을 시 터질 수 있음, Noting 하려면 이거 주석하셈*/
+    Region_State();
     Door_State();
 }
 
@@ -105,7 +106,7 @@ HRESULT CMain_Map_UI::Render()
 }
 
 /* 지역 타입을 확인해서 색깔을 정한다. */
-void CMain_Map_UI::Region_Type()
+void CMain_Map_UI::Region_State()
 {
     if (nullptr == m_pPlayer)
         return;
@@ -158,9 +159,6 @@ void CMain_Map_UI::Rendering()
             m_isMainEnd = true;
         }
     }
-
-    /* 지역 색 맞추기 */
-    Region_Type();
 }
 
 void CMain_Map_UI::Player_BetweenDistance()
