@@ -951,7 +951,6 @@ void CInventory_Manager::PUO_Seting(ITEM_NUMBER eAcquiredItem, _int iItemQuantit
 	EmptyPos.z = Z_POS_HIGH_LIGHTER;
 	m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, EmptyPos);
 
-
 	_vector TempTrashCanValue = XMVectorSet(EmptyPos.x, EmptyPos.y, Z_POS_ITEM_UI, 1.f);
 	m_pDragShadow->Set_ItemUI(eAcquiredItem, DRAG_SHADOW, TempTrashCanValue, iItemQuantity);
 	m_pDragShadow->Set_Dead(false);

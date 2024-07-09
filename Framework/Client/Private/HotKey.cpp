@@ -54,6 +54,9 @@ void CHotKey::Tick(_float fTimeDelta)
 	if (true == m_bDead)
 		return;
 
+	
+	m_pItemUI[0]->Set_Position(XMVectorSet(0.f, 0.f, 0.f, 0.f));
+
 }
 
 void CHotKey::Late_Tick(_float fTimeDelta)
