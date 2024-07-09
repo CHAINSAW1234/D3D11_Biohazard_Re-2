@@ -51,6 +51,7 @@ Texture2D g_RandomNormalTexture;
 Texture2D g_VelocityTexture;
 TextureCubeArray g_EnvironmentTexture;
 TextureCubeArray g_IrradianceTexture;
+Texture2D g_SpecularLUTTexture;
 
 bool g_isShadowDirLight;
 Texture2D g_DirLightFieldDepthTexture;
@@ -181,14 +182,16 @@ PS_OUT PS_MAIN_CUBE(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 
+    float2 vTexcoord = 2.f * float2(In.vTexcoord.x, 1.f -In.vTexcoord.y) -1.f;
     
-    //float3 vTex = float3(1.0, In.vTexcoord.y, -In.vTexcoord.x);
-    float3 vTex = float3(-1.0, In.vTexcoord.y, In.vTexcoord.x);
-    //float3 vTex = float3(In.vTexcoord.x, 1.0, -In.vTexcoord.y);
-    //float3 vTex = float3(In.vTexcoord.x, -1.0, In.vTexcoord.y);
-    //float3 vTex = float3(In.vTexcoord.x, In.vTexcoord.y, 1.0);
-    //float3 vTex = float3(-In.vTexcoord.x, In.vTexcoord.y, -1.0);
-    Out.vColor = g_CubeTexture.Sample(PointSamplerClamp, float4(vTex, 0));
+    //float3 vTex = float3(1.0, vTexcoord.y, -vTexcoord.x);     // +x
+    //float3 vTex = float3(-1.0, vTexcoord.y, vTexcoord.x);     // -x
+    //float3 vTex = float3(vTexcoord.x, 1.0, -vTexcoord.y);     // +y
+    //float3 vTex = float3(vTexcoord.x, -1.0, vTexcoord.y);       // -y
+    float3 vTex = float3(vTexcoord.x, vTexcoord.y, 1.0);      // +z
+    //float3 vTex = float3(-vTexcoord.x, vTexcoord.y, -1.0);    // -z
+    
+    Out.vColor = g_CubeTexture.Sample(PointSamplerClamp, float4(normalize(vTex), 0));
 
     return Out;
 }
@@ -226,7 +229,7 @@ float4 ConvertoTexcoordToWorldPosition(in float2 uv)
 	/* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 / View.z */
     vWorldPos.x = uv.x * 2.f - 1.f;
     vWorldPos.y = uv.y * -2.f + 1.f;
-    vWorldPos.z = vDepthDesc.x;
+    vWorldPos.z = vDepthDesc.x + 0.3f;
     vWorldPos.w = 1.f;
     
     vWorldPos *= fViewZ;
@@ -239,7 +242,7 @@ float4 ConvertoTexcoordToWorldPosition(in float2 uv)
 }
 float doAmbientOcclusion(in float2 tcoord, in float2 uv, in float3 p, in float3 cnorm)
 {
-    float3 diff = ConvertoTexcoordToWorldPosition(tcoord + uv);
+    float3 diff = ConvertoTexcoordToWorldPosition(tcoord + uv).xyz;
     diff = mul(float4(diff, 1.f), g_CamViewMatrix).xyz - p;
     const float3 v = normalize(diff);
     const float d = length(diff) * 0.5; //g_scale
@@ -263,10 +266,10 @@ float CalcAmbientOcclusion(float2 Texcoord)
         float2 coord1 = reflect(vec[j], rand) * rad;
         //float2 coord2 = float2(coord1.x * 0.707 - coord1.y * 0.707, coord1.x * 0.707 + coord1.y * 0.707);
         
-        ao += doAmbientOcclusion(Texcoord, coord1 * 0.25, p, n.xyz);
-        ao += doAmbientOcclusion(Texcoord, coord1 * 0.5, p, n.xyz);
-        ao += doAmbientOcclusion(Texcoord, coord1 * 0.75, p, n.xyz);
-        ao += doAmbientOcclusion(Texcoord, coord1, p, n.xyz);
+        ao += doAmbientOcclusion(Texcoord, coord1 * 0.25, p.xyz, n.xyz);
+        ao += doAmbientOcclusion(Texcoord, coord1 * 0.5, p.xyz, n.xyz);
+        ao += doAmbientOcclusion(Texcoord, coord1 * 0.75, p.xyz, n.xyz);
+        ao += doAmbientOcclusion(Texcoord, coord1, p.xyz, n.xyz);
         
         //ao += doAmbientOcclusion(Texcoord, coord2 * 0.25, p, n.xyz);
         //ao += doAmbientOcclusion(Texcoord, coord2 * 0.5, p, n.xyz);
@@ -425,10 +428,10 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 Lo = normalize(g_vCamPosition.xyz - vWorldPos.xyz);
     float cosLo = max(0.0f, dot(vNormal.xyz, Lo));
     float3 Lr = 2.0f * cosLo * vNormal.xyz - Lo;
-    float3 F0 = lerp(0.04, vAlbedo, fMaterialMetalic);
+    float3 F0 = lerp(0.01, vAlbedo, fMaterialMetalic).xyz;
     
     // 여기부터 for문이였음
-    float3 Li = -g_vLightDir;    
+    float3 Li = -g_vLightDir.xyz;    
     float3 Lh = normalize(Li + Lo);
     
     float cosLi = max(0.0, dot(vNormal.xyz, Li));
@@ -465,10 +468,10 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
         float3 specularIrradiance = g_EnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels).rgb;
 
 		//// Split-sum approximation factors for Cook-Torrance specular BRDF.
-  //      float2 specularBRDF = specularBRDF_LUT.Sample(spBRDF_Sampler, float2(cosLo, roughness)).rg;
+        float2 specularBRDF = g_SpecularLUTTexture.Sample(LinearSamplerClamp, float2(cosLo, fMaterialRoughness)).rg;
 
 		// Total specular IBL contribution.
-        float3 specularIBL = (F0 * specularBRDF.x) * specularIrradiance;
+        float3 specularIBL = (F0 * specularBRDF.x + specularBRDF.y) * specularIrradiance;
 
 		// Total ambient lighting contribution.
         ambientLighting = diffuseIBL + specularIBL;
@@ -532,12 +535,12 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
     float3 L0 = 0;
     
     // per-light radiance
-    float3 vLookLight = normalize(g_vLightPos - vWorldPos); // 빛을 바라보는 방향벡터
+    float3 vLookLight = normalize(g_vLightPos - vWorldPos).xyz; // 빛을 바라보는 방향벡터
     float3 vLookHalf = normalize(vLookCam.xyz + vLookLight); // 두 방향 벡터의 중간에 위치한 하프 벡터
     
     float fDistance = length(g_vLightPos - vWorldPos);
     float fAttenuation = max(0.f, 1.f - (fDistance * fDistance) / (g_fLightRange * g_fLightRange)); // 감마 보정을 위한 감쇠값
-    float3 vRadiance = g_vLightDiffuse * fAttenuation; // 빛의 색에 감쇠를 적용
+    float3 vRadiance = g_vLightDiffuse.xyz * fAttenuation; // 빛의 색에 감쇠를 적용
     
     // cook-torrance BRDF
     float NDF = DistributeGGX(vNormal.xyz, vLookHalf, fMaterialRoughness); // NDF : Normal Distribution Function
@@ -621,14 +624,14 @@ PS_OUT PS_MAIN_SPOT(PS_IN In)
         float3 L0 = 0;
     
     // per-light radiance
-        float3 vLookLight = normalize(g_vLightPos - vWorldPos); // 빛을 바라보는 방향벡터
-        float3 vLookHalf = normalize(vLookCam.xyz + vLookLight); // 두 방향 벡터의 중간에 위치한 하프 벡터
+        float3 vLookLight = normalize(g_vLightPos - vWorldPos).xyz; // 빛을 바라보는 방향벡터
+        float3 vLookHalf = normalize(vLookCam.xyz + vLookLight).xyz; // 두 방향 벡터의 중간에 위치한 하프 벡터
     
         float fDistance = length(g_vLightPos - vWorldPos);
         float fIntensity = (fResult - g_fCutOff) / (g_fCutOff - g_fOutCutOff);
         float fAtt = saturate((g_fSpotLightRange - fDistance) / g_fSpotLightRange) * fIntensity; //범위 줘서 끝 범위에서는 연해지게 
 
-        float3 vRadiance = g_vLightDiffuse * fAtt; // 빛의 색에 감쇠를 적용
+        float3 vRadiance = g_vLightDiffuse.xyz * fAtt; // 빛의 색에 감쇠를 적용
     
     // cook-torrance BRDF
         float NDF = DistributeGGX(vNormal.xyz, vLookHalf, fMaterialRoughness); // NDF : Normal Distribution Function
@@ -686,7 +689,7 @@ float2 poissonDisk[16] =
     float2(0.14383161, -0.14100790)
 };
 
-float ShadowPCF(texture2D ShadowTexture, texture2D ShadowTexture2, float SampleRadius, float fOriginDepth, float2 vTexcoord)
+float ShadowPCF(Texture2D ShadowTexture, Texture2D ShadowTexture2, float SampleRadius, float fOriginDepth, float2 vTexcoord)
 {
     float Shadow = 0.f;
     if (ShadowTexture.Sample(PointSamplerClamp, vTexcoord).r < ShadowTexture2.Sample(PointSamplerClamp, vTexcoord).r)
@@ -789,7 +792,7 @@ float Cal_Shadow(float2 vTexcoord)
     // 2. PointLight
     for (int i = 0; i < g_iNumShadowPointLight; ++i)
     {
-        float3 vLightDir = vWorldPos - g_vShadowPointLightPos[i];
+        float3 vLightDir = (vWorldPos - g_vShadowPointLightPos[i]).xyz;
         float fDistance = length(vLightDir);
         vLightDir = normalize(vLightDir);
     
@@ -1226,7 +1229,7 @@ PS_OUT PS_SSR(PS_IN In)
 
 float g_fTargetDepth = 3.f;
 const float g_fDOFParam = 5.f;  // 블러 적용 여부에 대한 반경 
-texture2D g_DOFTexture;
+Texture2D g_DOFTexture;
 // 뷰 공간에서의 깊이 : z  = fNear ~ fFar
 // 투영 공간에서의 깊이 : z = 0 ~ 1
 // w 나누기 수행시z = 1

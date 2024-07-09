@@ -117,7 +117,7 @@ HRESULT CShader::Begin(_uint iPassIndex)
 	//pCommandList->Release();
 	//pDeferredContext->Release();	
 
-		return S_OK;
+	return S_OK;
 }
 
 HRESULT CShader::Bind_Matrix(const _char* pConstantName, const _float4x4* pMatrix)

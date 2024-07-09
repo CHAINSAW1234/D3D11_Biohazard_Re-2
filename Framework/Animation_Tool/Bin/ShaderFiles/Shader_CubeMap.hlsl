@@ -4,7 +4,8 @@ static const float PI = 3.141592;
 static const float TwoPI = 2 * PI;
 static const float Epsilon = 0.00001;
 
-static const uint NumSamples = 256;
+static const uint NumSamples = 1024;
+//static const uint NumSamples = 4;
 static const float InvNumSamples = 1.0 / float(NumSamples);
 
 TextureCube g_CubeTexture;
@@ -89,9 +90,27 @@ float3 tangentToWorld(const float3 v, const float3 N, const float3 S, const floa
 }
 
 [numthreads(32, 32, 1)]
+void CS_HDR(uint3 ThreadID : SV_DispatchThreadID)
+{
+    float3 N = getSamplingVector(ThreadID); // ThreadID -> Normal
+
+    float3 vColor = { 0.f, 0.f, 0.f };
+    vColor = g_CubeTexture.SampleLevel(LinearSampler, N, 0).rgb;
+    
+     //  HDR -> LDR(Tone map)
+    vColor = vColor / (vColor + float3(1.0f, 1.0f, 1.0f));
+    //  Gamma Correction
+    vColor = pow(vColor, 1.0f / 2.2f);
+
+
+    OutputTexture[ThreadID] = float4(vColor, 1.0f);
+    
+}
+
+[numthreads(32, 32, 1)]
 void CS_Irradiance(uint3 ThreadID : SV_DispatchThreadID)
 {
-    float3 N = getSamplingVector(ThreadID);
+    float3 N = getSamplingVector(ThreadID); // ThreadID -> Normal
 	
     float3 S, T;
     computeBasisVectors(N, S, T);
@@ -107,16 +126,22 @@ void CS_Irradiance(uint3 ThreadID : SV_DispatchThreadID)
         float cosTheta = max(0.0, dot(Li, N));
 
 		// PIs here cancel out because of division by pdf.
-        irradiance += 2.0 * g_CubeTexture.SampleLevel(PointSamplerClamp, Li, 0).rgb * cosTheta;
+        irradiance += 2.0 * g_CubeTexture.SampleLevel(LinearSampler, Li, 0).rgb * cosTheta;
     }
     irradiance /= float(NumSamples);
 
     OutputTexture[ThreadID] = float4(irradiance, 1.0);
+    
 }
 
 technique11 DefaultTechnique
 {
-    pass Default
+    pass HDR
+    {
+        SetComputeShader(CompileShader(cs_5_0, CS_HDR()));
+    }
+
+    pass Irradiance
     {
         SetComputeShader(CompileShader(cs_5_0, CS_Irradiance()));
     }

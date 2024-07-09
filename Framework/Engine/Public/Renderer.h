@@ -71,7 +71,6 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT						SetUp_RenderTargets_Effect_Bloom(const D3D11_VIEWPORT& ViewportDesc);
 #pragma endregion
 
-
 	HRESULT						SetUp_Test();
 	HRESULT						Render_Test();
 
@@ -95,6 +94,7 @@ private:
 private:
 	class CVIBuffer_Rect*		m_pVIBuffer = { nullptr };
 	class CShader*				m_pShader = { nullptr };
+	class CComputeShader*		m_pComputeShader = { nullptr };
 	class CTexture*				m_pRandomTexture = { nullptr };
 	_float4x4					m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
 
@@ -129,6 +129,7 @@ private:
 	void						Set_Shadow_Resolution(SHADOW_RESOLUTION eResolution);
 	void						Copy_Depth(ID3D11DepthStencilView* pDestStencilView, ID3D11DepthStencilView* pSrcStencilView);
 private:
+	HRESULT						Render_LUT();
 	HRESULT						Render_Priority();
 	HRESULT						Render_Field();
 	HRESULT						Render_NonBlend();
