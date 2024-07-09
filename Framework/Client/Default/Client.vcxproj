@@ -227,6 +227,7 @@
     <ClInclude Include="..\Public\Decal_SSD.h" />
     <ClInclude Include="..\Public\Effect_Header_Zombie.h" />
     <ClInclude Include="..\Public\Creep_Zombie.h" />
+    <ClInclude Include="..\Public\Impact.h" />
     <ClInclude Include="..\Public\Muzzle_ShockWave.h" />
     <ClInclude Include="..\Public\Pannel_Window.h" />
     <ClInclude Include="..\Public\Is_In_Door_Zombie.h" />
@@ -458,6 +459,7 @@
     <ClCompile Include="..\Private\Cut_Scene_CF93.cpp" />
     <ClCompile Include="..\Private\Damage_UI.cpp" />
     <ClCompile Include="..\Private\Decal_SSD.cpp" />
+    <ClCompile Include="..\Private\Impact.cpp" />
     <ClCompile Include="..\Private\Is_In_Door_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Same_Region_To_Player_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Start_Zombie.cpp" />

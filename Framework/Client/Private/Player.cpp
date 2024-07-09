@@ -28,7 +28,8 @@
 #include "Bone.h"
 #include "Muzzle_Smoke.h"
 
-#include"MovingShelf.h"
+#include "MovingShelf.h"
+#include "Muzzle_ShockWave.h"
 
 #define MODEL_SCALE 0.01f
 #define SHOTGUN_BULLET_COUNT 7
@@ -97,7 +98,6 @@ HRESULT CPlayer::Initialize(void* pArg)
 	fill_n(m_SetProps, SETPROPS_NONE, -1);
 
 	m_MuzzleSmoke_Delay = 50;
-	m_MuzzleSmoke_Delay = 150;
 
 	return S_OK;
 }
@@ -900,6 +900,11 @@ void CPlayer::Shot()
 		m_pMuzzle_Flash_SG->Set_Render(true);
 		m_pMuzzle_Flash_SG->SetPosition(Get_MuzzlePosition());
 
+		m_iShockWaveIndex = m_pGameInstance->GetRandom_Int(0, 1);
+
+		m_vecShockWave[m_iShockWaveIndex]->SetPosition(Get_MuzzlePosition_Forward());
+		m_vecShockWave[m_iShockWaveIndex]->Set_Render(true);
+
 		m_bMuzzleSmoke = true;
 		m_vMuzzle_Smoke_Pos = Get_MuzzlePosition();
 		m_MuzzleSmoke_Time = GetTickCount64();
@@ -1041,6 +1046,15 @@ _float4 CPlayer::Get_MuzzlePosition()
 	}
 
 	return m_pWeapon->Get_MuzzlePosition();
+}
+
+_float4 CPlayer::Get_MuzzlePosition_Forward()
+{
+	if (nullptr == m_pWeapon) {
+		return _float4(0.f, 0.f, 0.f, 1.f);
+	}
+
+	return m_pWeapon->Get_MuzzlePosition_Forward();
 }
 
 _int CPlayer::Get_MaxBullet()
@@ -1688,18 +1702,6 @@ void CPlayer::Set_Muzzle_Smoke()
 			}
 		}
 	}
-	else
-	{
-		if (m_bMuzzleSmoke)
-		{
-			if (m_MuzzleSmoke_SG_Delay + m_MuzzleSmoke_Time < GetTickCount64())
-			{
-				m_pMuzzle_Smoke_SG->Set_Render(true);
-				m_pMuzzle_Smoke_SG->SetPosition(m_vMuzzle_Smoke_Pos);
-				m_bMuzzleSmoke = false;
-			}
-		}
-	}
 }
 
 void CPlayer::PickUp_Item(CGameObject* pPickedUp_Item)
@@ -2267,10 +2269,14 @@ void CPlayer::Ready_Effect()
 	m_pMuzzle_Smoke->Initialize(nullptr);
 	m_pMuzzle_Smoke->SetSize(0.2f, 0.2f);
 
-	m_pMuzzle_Smoke_SG = CMuzzle_Smoke::Create(m_pDevice, m_pContext);
-	m_pMuzzle_Flash_SG->SetType(1);
-	m_pMuzzle_Smoke_SG->Initialize(nullptr);
-	m_pMuzzle_Smoke_SG->SetSize(0.4f, 0.4f);
+	for (size_t i = 0; i < 2; ++i)
+	{
+		auto pShockWave = CMuzzle_ShockWave::Create(m_pDevice, m_pContext);
+		pShockWave->SetType((_uint)i);
+		pShockWave->Initialize(nullptr);
+		pShockWave->SetSize(0.3f, 0.3f);
+		m_vecShockWave.push_back(pShockWave);
+	}
 }
 
 void CPlayer::Release_Effect()
@@ -2278,13 +2284,16 @@ void CPlayer::Release_Effect()
 	Safe_Release(m_pMuzzle_Flash);
 	Safe_Release(m_pMuzzle_Flash_SG);
 	Safe_Release(m_pMuzzle_Smoke);
-	Safe_Release(m_pMuzzle_Smoke_SG);
+
+	for (size_t i = 0; i < m_vecShockWave.size(); ++i)
+	{
+		Safe_Release(m_vecShockWave[i]);
+	}
 }
 
 void CPlayer::Tick_Effect(_float fTimeDelta)
 {
 	m_pMuzzle_Smoke->Tick(fTimeDelta);
-	m_pMuzzle_Smoke_SG->Tick(fTimeDelta);
 	m_pMuzzle_Flash->Tick(fTimeDelta);
 
 	if(m_eEquip == STG)
@@ -2293,15 +2302,24 @@ void CPlayer::Tick_Effect(_float fTimeDelta)
 		m_pMuzzle_Flash_SG->Tick(fTimeDelta);
 	}
 
+	for (size_t i = 0; i < m_vecShockWave.size(); ++i)
+	{
+		m_vecShockWave[i]->Tick(fTimeDelta);
+	}
+
 	Set_Muzzle_Smoke();
 }
 
 void CPlayer::Late_Tick_Effect(_float fTimeDelta)
 {
 	m_pMuzzle_Smoke->Late_Tick(fTimeDelta);
-	m_pMuzzle_Smoke_SG->Late_Tick(fTimeDelta);
 	m_pMuzzle_Flash->Late_Tick(fTimeDelta);
 	m_pMuzzle_Flash_SG->Late_Tick(fTimeDelta);
+
+	for (size_t i = 0; i < m_vecShockWave.size(); ++i)
+	{
+		m_vecShockWave[i]->Late_Tick(fTimeDelta);
+	}
 }
 
 HRESULT CPlayer::Add_Components()

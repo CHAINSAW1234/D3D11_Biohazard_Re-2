@@ -649,6 +649,9 @@
     <Filter Include="02.GameObjects\Effect\Muzzle_ShockWave">
       <UniqueIdentifier>{4a5436b6-385d-438a-8382-2212eb5558e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Impact">
+      <UniqueIdentifier>{4e950f49-0ee1-481c-86c6-54d63c564243}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1248,6 +1251,9 @@
     <ClInclude Include="..\Public\Muzzle_ShockWave.h">
       <Filter>02.GameObjects\Effect\Muzzle_ShockWave</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Impact.h">
+      <Filter>02.GameObjects\Effect\Impact</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1807,6 +1813,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Muzzle_ShockWave.cpp">
       <Filter>02.GameObjects\Effect\Muzzle_ShockWave</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Impact.cpp">
+      <Filter>02.GameObjects\Effect\Impact</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
