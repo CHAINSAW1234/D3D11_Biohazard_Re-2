@@ -401,7 +401,7 @@ PS_OUT_LIGHTDEPTH PS_LIGHTDEPTH_CUBE(PS_IN_CUBE In)
 
 technique11 DefaultTechnique
 {
-	pass Default
+	pass Default	// 0
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_Default, 0);
@@ -414,7 +414,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass Dissolve
+	pass Dissolve		// 1
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_Default, 0);
@@ -427,7 +427,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_DISSOLVE();
 	}
 
-	pass LightDepth
+	pass LightDepth		// 2
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_Default, 0);
@@ -440,7 +440,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_LIGHTDEPTH();
 	}
 
-	pass Emissive
+	pass Emissive		// 3
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -453,7 +453,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_EMISSIVE();
 	}
 
-	pass LightDepth_Cube
+	pass LightDepth_Cube	// 4
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_Default, 0);
