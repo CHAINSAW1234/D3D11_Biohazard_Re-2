@@ -586,7 +586,6 @@ void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 	switch (m_eTaskSequence)
 	{
 	case Client::CInventory_Manager::SETING: {
-		m_pDragShadow->Set_Dead(false);
 		_float4 HighligeterSetingPos = { m_pHotkey->Get_Empty_Slot()->GetPosition().x, m_pHotkey->Get_Empty_Slot()->GetPosition().y, Z_POS_HIGH_LIGHTER, 1.f };
 		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HighligeterSetingPos);
 		m_eTaskSequence = SELECT;
@@ -604,17 +603,17 @@ void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 			{
 				m_pHotkey->RegisterHoykey(_float2(HighligeterSetingPos.x, HighligeterSetingPos.y), 
 					m_pSelected_ItemUI->Get_ItemNumber(), m_pSelected_ItemUI->Get_ItemQuantity());
+				_float4 HighligeterSetingPos = { m_vecInvenSlot[0]->GetPosition().x, m_vecInvenSlot[0]->GetPosition().y, Z_POS_HIGH_LIGHTER, 1.0 };
+				m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HighligeterSetingPos);
+				
+				m_eTaskSequence = TS_END;
+				m_eInven_Manager_State = EVENT_IDLE;
+				m_pSelected_ItemUI = nullptr;
 			}
 		}
 		break;
 	}
 		
-	case Client::CInventory_Manager::APPLY: {
-
-		break;
-	}
-		
-
 	default:
 		break;
 	}
