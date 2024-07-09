@@ -35,6 +35,19 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
+	ZOMBIE_START_TYPE			eStartType = { m_pBlackBoard->Get_AI()->Get_StartType() };
+	if (eStartType == ZOMBIE_START_TYPE::_OUT_DOOR)
+	{
+		_float		fDistanceToPlayer = { 0.f };
+		if (false == m_pBlackBoard->Compute_Distance_To_Player_World(&fDistanceToPlayer))
+			return false;
+
+		if (3.f > fDistanceToPlayer)
+		{
+			m_pBlackBoard->Get_AI()->Set_Start(false);
+		}
+	}
+
 	return true;
 }
 

@@ -90,7 +90,7 @@ void CWindow::Tick(_float fTimeDelta)
 	else
 		m_fBarrigateOldTime = 0.f;
 
-	if (BARRIGATE_NEW == m_eBarrigateState && m_fBarrigateOldTime > 360.f && m_iHP[PART_PANNEL] != 0)
+	if (BARRIGATE_NEW == m_eBarrigateState && m_fBarrigateOldTime > 1000000.f && m_iHP[PART_PANNEL] != 0)
 		m_eBarrigateState = BARRIGATE_STATIC;
 
 	if (true == m_bBarrigateInstallable &&( m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1]))

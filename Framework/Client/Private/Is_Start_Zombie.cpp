@@ -27,12 +27,7 @@ _bool CIs_Start_Zombie::Condition_Check()
 	if (nullptr == m_pBlackBoard)
 		return false;
 
-	if (false == m_isStart)
-		return false;
-
-	m_isStart = false;
-
-	return true;
+	return m_pBlackBoard->Get_AI()->Is_Start();
 }
 
 CIs_Start_Zombie* CIs_Start_Zombie::Create()

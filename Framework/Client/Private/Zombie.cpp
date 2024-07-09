@@ -210,6 +210,12 @@ HRESULT CZombie::Initialize(void* pArg)
 
 #pragma endregion
 
+
+#pragma region DEFAULT SETUP
+
+	m_isStart = true;
+
+#pragma endregion
 	return S_OK;
 }
 

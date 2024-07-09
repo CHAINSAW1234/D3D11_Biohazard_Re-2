@@ -31,6 +31,8 @@ void CIn_Window_Zombie::Enter()
 	if (nullptr == pBodyModel)
 		return;
 
+	m_fAccLinearInterpolateTime = 0.f;
+
 	_int				iRandom = { m_pGameInstance->GetRandom_Int(1, 2) };
 	if (1 == iRandom)
 		m_iAnimIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_IN1);
@@ -93,8 +95,7 @@ _bool CIn_Window_Zombie::Execute(_float fTimeDelta)
 	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->Set_State(MONSTER_STATE::MST_IN_WINDOW);
 
-	if (m_fAccLinearInterpolateTime < ZOMBIE_IN_TOTAL_INTERPOLATE_TO_WINDOW_TIME &&
-		true == m_isNeedInterpolation)
+	if (m_fAccLinearInterpolateTime < ZOMBIE_IN_TOTAL_INTERPOLATE_TO_WINDOW_TIME)
 	{
 		_bool				isComplete = { m_fAccLinearInterpolateTime >= ZOMBIE_IN_TOTAL_INTERPOLATE_TO_WINDOW_TIME };
 		if (false == isComplete)

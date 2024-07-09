@@ -120,6 +120,10 @@ public:		/* For.Outdoor */
 	inline _bool						Is_OutDoor() { return m_isOutDoor; }
 	inline void							Set_OutDoor(_bool isOutDoor) { m_isOutDoor = isOutDoor; }
 
+public:		/* For.Start_Trigger */
+	inline _bool						Is_Start() { return m_isStart; }
+	inline void							Set_Start(_bool isStart) { m_isStart = isStart; }
+
 public:		/* For.Location Controll */
 	inline _bool						Is_In_Location(LOCATION_MAP_VISIT eLocation) { return eLocation == m_eLocation; }
 	inline LOCATION_MAP_VISIT			Get_Location() { return m_eLocation; }
@@ -181,6 +185,7 @@ private:
 
 	_bool								m_isSleep = { false };
 	_bool								m_isLook_Target = { false };
+	_bool								m_isStart = { false };
 	_bool								m_isOutDoor = { false };
 
 private:	/* For. Hit Interact */

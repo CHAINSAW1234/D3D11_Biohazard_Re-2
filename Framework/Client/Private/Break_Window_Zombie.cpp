@@ -33,7 +33,7 @@ void CBreak_Window_Zombie::Enter()
 
 #ifdef _DEBUG
 
-	cout << "Enter Hold Out Hand Window" << endl;
+	cout << "Enter Break Window" << endl;
 
 #endif 
 }
@@ -48,28 +48,28 @@ _bool CBreak_Window_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
-	//	필요 조건 => 위치 도달, 창문 안깨졌으나 체력 0되는 순간에 Knock에서 이어지게끔, 바리게이트 상관 없음, 
-	MONSTER_STATE		eCurrentMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
-	if (MONSTER_STATE::MST_KNOCK_WINDOW != eCurrentMonsterState)
+	CWindow* pWindow = { m_pBlackBoard->Get_Nearest_Window() };
+	if (nullptr == pWindow)
 		return false;
 
-	else if (MONSTER_STATE::MST_BREAK_WINDOW == eCurrentMonsterState)
+	//	필요 조건 => 위치 도달, 창문 안깨졌으나 체력 0되는 순간에 Knock에서 이어지게끔, 바리게이트 상관 없음, 
+	MONSTER_STATE		eCurrentMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
+	if (MONSTER_STATE::MST_BREAK_WINDOW == eCurrentMonsterState)
 	{
-		CModel*				pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+		CModel* pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
 		if (nullptr == pBody_Model)
 			return false;
 
 		if (true == pBody_Model->isFinished(static_cast<_uint>(m_eBasePlayingIndex)))
 			return false;
 	}
-
-	CWindow*			pWindow = { m_pBlackBoard->Get_Nearest_Window() };
-	if (nullptr == pWindow)
-		return false;
-	_int				iWindowHP = { pWindow->Get_HP_Body() };
-	_bool				isCanBreakWindow = { 1 == iWindowHP };
-	if (false == isCanBreakWindow)
-		return false;
+	else
+	{		
+		_int				iWindowHP = { pWindow->Get_HP_Body() };
+		_bool				isCanBreakWindow = { 1 == iWindowHP };
+		if (false == isCanBreakWindow)
+			return false;
+	}	
 
 	m_pBlackBoard->Organize_PreState(this);
 

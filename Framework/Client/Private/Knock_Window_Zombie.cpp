@@ -63,9 +63,11 @@ void CKnock_Window_Zombie::Enter()
 	if (false == m_pBlackBoard->Compute_DeltaMatrix_AnimFirstKeyFrame_From_Target(pWindow->Get_Transform(), static_cast<_uint>(m_eBasePlayingIndex), iStartAnimIndex, m_strAnimLayerTag, &m_DeltaInterpolateMatrix))
 		return;
 
+	m_fAccLinearInterpolateTime = 0.f;
+
 #ifdef _DEBUG
 
-	cout << "Enter Knock Door" << endl;
+	cout << "Enter Knock Window" << endl;
 
 #endif 
 }
@@ -81,18 +83,18 @@ _bool CKnock_Window_Zombie::Execute(_float fTimeDelta)
 #pragma endregion
 
 	//	필요 조건 => 위치 도달, 창문 안깨짐, 바리게이트 여부(상관없음)
-	CWindow* pWindow = { m_pBlackBoard->Get_Nearest_Window() };
+	CWindow*			pWindow = { m_pBlackBoard->Get_Nearest_Window() };
 	if (nullptr == pWindow)
 		return false;
 	_int				iWindowHP = { pWindow->Get_HP_Body() };
-	_bool				isWindowBroken = { 0 >= iWindowHP };
-	if (true == isWindowBroken)
+	_bool				isWindowCanBroken = { 1 >= iWindowHP };
+	if (true == isWindowCanBroken)
 		return false;
 
 	MONSTER_STATE		eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 	if (MONSTER_STATE::MST_KNOCK_WINDOW != eMonsterState)
 	{
-		CWindow* pWindow = { m_pBlackBoard->Get_Nearest_Window() };
+		CWindow*		pWindow = { m_pBlackBoard->Get_Nearest_Window() };
 		if (nullptr == pWindow)
 			return false;
 

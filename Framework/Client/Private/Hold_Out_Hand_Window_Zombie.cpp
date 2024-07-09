@@ -62,6 +62,8 @@ void CHold_Out_Hand_Window_Zombie::Enter()
 
 	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
 
+	m_fAccLinearInterpolateTime = 0.f;
+
 #ifdef _DEBUG
 
 	cout << "Enter Hold Window" << endl;

@@ -32,6 +32,7 @@ void CBreak_In_Window_Zombie::Enter()
 		return;
 
 	_int				iRandom = { m_pGameInstance->GetRandom_Int(1, 2) };
+
 	if (1 == iRandom)
 		m_iAnimIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_BREAK_IN1);
 	else if (2 == iRandom)
@@ -44,6 +45,8 @@ void CBreak_In_Window_Zombie::Enter()
 	if (false == m_pBlackBoard->Compute_DeltaMatrix_AnimFirstKeyFrame_From_Target(pWindow->Get_Transform(), static_cast<_uint>(m_eBasePlayingIndex), m_iAnimIndex, m_strAnimLayerTag, &m_DeltaInterpolateMatrix))
 		return;
 
+	m_fAccLinearInterpolateTime = 0.f;
+
 #ifdef _DEBUG
 
 	cout << "Enter Break In Window" << endl;
@@ -53,8 +56,6 @@ void CBreak_In_Window_Zombie::Enter()
 
 _bool CBreak_In_Window_Zombie::Execute(_float fTimeDelta)
 {
-	return false;
-
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)
 		return false;
@@ -93,8 +94,12 @@ _bool CBreak_In_Window_Zombie::Execute(_float fTimeDelta)
 		if (false == isCanBreakWindow)
 			return false;
 
-		//	_int				iRandom = { m_pGameInstance->GetRandom_Int(0, 2) };	
-		_int				iRandom = { m_pGameInstance->GetRandom_Int(0, 1) };
+		if (true == pWindow->Is_Set_Barrigate())
+			return false;
+
+		pWindow->Attack_Prop();
+
+		_int				iRandom = { m_pGameInstance->GetRandom_Int(0, 2) };
 		_bool				isSuccess = { iRandom == 0 };
 		if (false == isSuccess)
 			return false;
@@ -105,7 +110,6 @@ _bool CBreak_In_Window_Zombie::Execute(_float fTimeDelta)
 	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->Set_State(MONSTER_STATE::MST_BREAK_IN_WINDOW);
 
-	pWindow->Attack_Prop();
 
 	if (m_fAccLinearInterpolateTime < ZOMBIE_BREAK_IN_TOTAL_INTERPOLATE_TO_WINDOW_TIME &&
 		true == m_isNeedInterpolation)

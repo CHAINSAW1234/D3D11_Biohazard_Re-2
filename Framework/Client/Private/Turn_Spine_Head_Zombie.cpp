@@ -29,6 +29,8 @@ void CTurn_Spine_Head_Zombie::Enter()
 
 _bool CTurn_Spine_Head_Zombie::Execute(_float fTimeDelta)
 {
+	return true;
+
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)
 		return false;

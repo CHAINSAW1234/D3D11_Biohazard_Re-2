@@ -27,6 +27,8 @@ void CRaise_Up_Hand_Zombie::Enter()
 
 _bool CRaise_Up_Hand_Zombie::Execute(_float fTimeDelta)
 {
+	return true;
+
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)
 		return false;
