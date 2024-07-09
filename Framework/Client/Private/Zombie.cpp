@@ -62,10 +62,17 @@ HRESULT CZombie::Initialize(void* pArg)
 
 	ZOMBIE_DESC*						pDesc = (ZOMBIE_DESC*)pArg;
 
-	m_isOutDoor = pDesc->isOutDoor = false;
 	m_eStartType = pDesc->eStart_Type = ZOMBIE_START_TYPE::_DOOR_RUB;
 	m_eLocation = pDesc->eLocation;
 
+	if (ZOMBIE_START_TYPE::_OUT_DOOR == m_eStartType)
+	{
+		m_isOutDoor = true;
+	}
+	else
+	{
+		m_isOutDoor = false;
+	}
 	
 	if (m_eLocation == LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END)
 	{
