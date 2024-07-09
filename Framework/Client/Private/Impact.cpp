@@ -33,7 +33,7 @@ HRESULT CImpact::Initialize(void * pArg)
 
 	m_FrameDelay = 25;
 
-	m_fAlpha_Delta = 0.6f;
+	m_fAlpha_Delta = 0.4f;
 
 	return S_OK;
 }
@@ -45,8 +45,8 @@ void CImpact::Tick(_float fTimeDelta)
 		return;
 	}
 
-	m_fSizeX += 0.08f;
-	m_fSizeY += 0.08f;
+	m_fSizeX += 0.1f;
+	m_fSizeY += 0.1f;
 	m_pTransformCom->Set_Scaled(m_fSizeX, m_fSizeY, 1.f);
 
 	if (m_FrameDelay + m_FrameTime < GetTickCount64())
@@ -151,6 +151,8 @@ HRESULT CImpact::Bind_ShaderResources()
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture",m_iFrame)))
 		return E_FAIL;
+
+	return S_OK;
 }
 
 CImpact * CImpact::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)

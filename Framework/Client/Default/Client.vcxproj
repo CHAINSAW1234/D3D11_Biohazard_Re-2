@@ -228,6 +228,7 @@
     <ClInclude Include="..\Public\Effect_Header_Zombie.h" />
     <ClInclude Include="..\Public\Creep_Zombie.h" />
     <ClInclude Include="..\Public\Find_Door_To_Target_Zombie.h" />
+    <ClInclude Include="..\Public\Hit.h" />
     <ClInclude Include="..\Public\Impact.h" />
     <ClInclude Include="..\Public\Is_Different_Location_To_Player_Zombie.h" />
     <ClInclude Include="..\Public\Muzzle_ShockWave.h" />
@@ -462,6 +463,7 @@
     <ClCompile Include="..\Private\Damage_UI.cpp" />
     <ClCompile Include="..\Private\Decal_SSD.cpp" />
     <ClCompile Include="..\Private\Find_Door_To_Target_Zombie.cpp" />
+    <ClCompile Include="..\Private\Hit.cpp" />
     <ClCompile Include="..\Private\Impact.cpp" />
     <ClCompile Include="..\Private\Is_Different_Location_To_Player_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_In_Door_Zombie.cpp" />

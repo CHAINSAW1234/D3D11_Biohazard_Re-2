@@ -240,6 +240,7 @@ protected:
 
 	/*Impact*/
 	class CImpact*						m_pImpact = { nullptr };
+	vector<class CHit*>					m_vecHit = { nullptr };
 #pragma endregion
 
 public:

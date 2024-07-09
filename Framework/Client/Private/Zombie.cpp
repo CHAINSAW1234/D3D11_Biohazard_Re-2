@@ -23,6 +23,7 @@
 #include "Decal_SSD.h"
 #include "Blood_Drop.h"
 #include "Impact.h"
+#include "Hit.h"
 
 #define MODEL_SCALE 0.01f
 #define BLOOD_COUNT 10
@@ -1695,6 +1696,14 @@ void CZombie::Ready_Effect()
 
 	m_pImpact = CImpact::Create(m_pDevice, m_pContext);
 	m_pImpact->SetSize(1.f,1.f);
+
+	m_vecHit.clear();
+	for (size_t i = 0; i < SHOTGUN_BLOOD_COUNT; ++i)
+	{
+		auto pHit = CHit::Create(m_pDevice, m_pContext);
+		pHit->SetSize(1.5f, 1.5f);
+		m_vecHit.push_back(pHit);
+	}
 }
 
 void CZombie::Release_Effect()
@@ -1730,6 +1739,11 @@ void CZombie::Release_Effect()
 	}
 
 	Safe_Release(m_pImpact);
+
+	for (size_t i = 0; i < m_vecHit.size(); ++i)
+	{
+		Safe_Release(m_vecHit[i]);
+	}
 }
 
 void CZombie::Tick_Effect(_float fTimeDelta)
@@ -1762,6 +1776,11 @@ void CZombie::Tick_Effect(_float fTimeDelta)
 	for (size_t i = 0; i < m_vecBlood_Drop_STG.size(); ++i)
 	{
 		m_vecBlood_Drop_STG[i]->Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecHit.size(); ++i)
+	{
+		m_vecHit[i]->Tick(fTimeDelta);
 	}
 
 	m_pImpact->Tick(fTimeDelta);
@@ -1797,6 +1816,11 @@ void CZombie::Late_Tick_Effect(_float fTimeDelta)
 	for (size_t i = 0; i < m_vecBlood_Drop.size(); ++i)
 	{
 		m_vecBlood_Drop[i]->Late_Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecHit.size(); ++i)
+	{
+		m_vecHit[i]->Late_Tick(fTimeDelta);
 	}
 
 	m_pImpact->Late_Tick(fTimeDelta);
@@ -2039,6 +2063,9 @@ void CZombie::SetBlood_STG()
 			m_vecBlood_Drop_STG_NoRay[i]->Set_Render(true);
 			m_vecBlood_Drop_STG_NoRay[i]->SetPosition(vBlockPoint);
 			m_vecBlood_Drop_STG_NoRay[i]->SetType(m_pGameInstance->GetRandom_Int(1, 7));
+
+			m_vecHit[i]->Set_Render(true);
+			m_vecHit[i]->SetPosition(vBlockPoint);
 		}
 
 		pHitPoints->clear();
