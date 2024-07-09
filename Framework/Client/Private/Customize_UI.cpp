@@ -453,7 +453,7 @@ void CCustomize_UI::Find_Player()
 
 	m_pPlayer = pPlayer;
 
-	Safe_AddRef<CPlayer*>(m_pPlayer);
+	//Safe_AddRef<CPlayer*>(m_pPlayer);
 }
 
 void CCustomize_UI::Set_IsLoad(_bool IsLoad)
@@ -928,12 +928,11 @@ void CCustomize_UI::Free()
 		Safe_Release(pChildUI);
 	m_vecChildUI.clear();
 
-	if(nullptr != m_pPlayer)
+	/*if(nullptr != m_pPlayer)
 	{
 		Safe_Release<CPlayer*>(m_pPlayer);
 		m_pPlayer = nullptr;
-	}
-
+	}*/
 }
 
 HRESULT CCustomize_UI::CreatUI_FromDat(ifstream& inputFileStream, CGameObject* pGameParentsObj, wstring PrototypeTag, ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
