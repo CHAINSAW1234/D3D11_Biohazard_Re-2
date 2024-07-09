@@ -274,6 +274,31 @@ _bool CHold_Zombie::Is_StateFinished()
 	return isFinished;
 }
 
+void CHold_Zombie::Additional_Turn(_float fTimeDelta)
+{
+	CTransform*				pZombieTransform = { m_pBlackBoard->Get_AI()->Get_Transform() };
+	if (nullptr == pZombieTransform)
+		return;
+
+	_matrix					ZobmieWorldMatrix = { pZombieTransform->Get_WorldMatrix() };
+	_float3					vDirectionToPlayerLocalFloat3 = {};
+	if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3))
+		return;
+
+	_vector					vDirectionToPlayerLocal = { XMVector3Normalize(XMLoadFloat3(&vDirectionToPlayerLocalFloat3)) };
+	_vector					vAbsoluteLookDir = { XMVectorSet(0.f, 0.f, 1.f, 0.f) };
+
+	_float					fDot = { XMVectorGetX(XMVector3Dot(vDirectionToPlayerLocal, vAbsoluteLookDir)) };
+	_float					fDeltaAngle = { acosf(fDot) };
+	_float					fMaxAngle = { fTimeDelta * ZOMBIE_HOLD_ADDITIONAL_ROTATE_PER_SEC };
+
+	_float					fResultAngle = { fminf(fDeltaAngle, fMaxAngle) };
+
+	_vector					vZombieUpDir = { pZombieTransform->Get_State_Vector(CTransform::STATE_UP) };
+	_matrix					RotaitonMatrix = { XMMatrixRotationAxis(XMVector3Normalize(vZombieUpDir), fResultAngle) };
+	
+}
+
 CHold_Zombie* CHold_Zombie::Create(void* pArg)
 {
 	CHold_Zombie* pInstance = { new CHold_Zombie() };

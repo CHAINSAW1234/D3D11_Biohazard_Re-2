@@ -31,6 +31,10 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 	if (nullptr == m_pBlackBoard)
 		return false;
 
+	if (Check_Permition_To_Execute() == false)
+		return false;
+#pragma endregion
+
 	return true;
 }
 

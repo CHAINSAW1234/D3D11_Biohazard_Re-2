@@ -17,6 +17,8 @@
 #include "Is_Out_Door_Zombie.h"
 #include "Is_Collision_Prop_Zombie.h"
 #include "Is_Start_Zombie.h"
+#include "Is_Same_Location_To_Player_Zombie.h"
+#include "Is_Different_Location_To_Player_Zombie.h"
 
 ///////////////////////////////////////////////////////////////
 //	For. Task
@@ -66,3 +68,4 @@
 /* Utility */
 #include "Execute_PreTask_Zombie.h"
 #include "Start_Zombie.h"
+#include "Find_Door_To_Target_Zombie.h"
