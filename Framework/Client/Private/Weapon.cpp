@@ -267,6 +267,18 @@ _float4 CWeapon::Get_MuzzlePosition()
 	return _float4(0.f, 0.f, 0.f, 0.f);						// 쓰레기
 }
 
+_float4 CWeapon::Get_MuzzlePosition_Forward()
+{
+	if (1) {
+		return Get_BonePosition_Forward("vfx_muzzle1");			//기본 상태
+	}
+	else if (1) {
+		return Get_BonePosition_Forward("vfx_muzzle3");			// 총신 부착시
+	}
+
+	return _float4(0.f, 0.f, 0.f, 0.f);						// 쓰레기
+}
+
 _float4 CWeapon::Get_BonePosition(const char* pBoneName)
 {
 	_float4x4 pMatrix = m_pModelCom->Get_BonePtr(pBoneName)->Get_CombinedTransformationMatrix_Var();
@@ -287,6 +299,26 @@ _float4 CWeapon::Get_BonePosition(const char* pBoneName)
 	XMStoreFloat4x4(&fMatrix, vMatrix);
 	//_float4 vPos = { fMatrix.Forward().x + vTranspose.m128_f32[0] ,	fMatrix.Forward().y + vTranspose.m128_f32[1],	fMatrix.Forward().z + vTranspose.m128_f32[2],	1.f };
 	//_float4 vPos = { fMatrix._41 + vTranspose.m128_f32[0] ,	fMatrix._42 + vTranspose.m128_f32[1],	fMatrix._43 + vTranspose.m128_f32[2],	1.f };
+	_float4 vPos = _float4(fMatrix._41, fMatrix._42, fMatrix._43, 1.f);
+
+
+	return vPos;
+}
+
+_float4 CWeapon::Get_BonePosition_Forward(const char* pBoneName)
+{
+	_float4x4 pMatrix = m_pModelCom->Get_BonePtr(pBoneName)->Get_CombinedTransformationMatrix_Var();
+
+	_vector vScale;
+	_vector vRoation;
+	_vector vTranspose;
+
+	XMMatrixDecompose(&vScale, &vRoation, &vTranspose, XMLoadFloat4x4(&m_WorldMatrix));
+
+	_matrix vMatrix = XMLoadFloat4x4(&pMatrix) * XMLoadFloat4x4(&m_WorldMatrix);
+	_float4x4 fMatrix;
+	XMStoreFloat4x4(&fMatrix, vMatrix);
+	
 	_float4 vPos = _float4(fMatrix._41, fMatrix._42, fMatrix._43, 1.f);
 
 

@@ -646,6 +646,9 @@
     <Filter Include="02.GameObjects\MapObject\InteractProps\Window\Pannel_Window">
       <UniqueIdentifier>{bba54d7f-846e-45fb-aba4-94e0e31e1dc0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Muzzle_ShockWave">
+      <UniqueIdentifier>{4a5436b6-385d-438a-8382-2212eb5558e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1242,6 +1245,9 @@
     <ClInclude Include="..\Public\Pannel_Window.h">
       <Filter>02.GameObjects\MapObject\InteractProps\Window\Pannel_Window</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Muzzle_ShockWave.h">
+      <Filter>02.GameObjects\Effect\Muzzle_ShockWave</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1798,6 +1804,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Pannel_Window.cpp">
       <Filter>02.GameObjects\MapObject\InteractProps\Window\Pannel_Window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Muzzle_ShockWave.cpp">
+      <Filter>02.GameObjects\Effect\Muzzle_ShockWave</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
