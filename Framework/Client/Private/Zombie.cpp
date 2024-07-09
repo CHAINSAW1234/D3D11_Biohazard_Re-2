@@ -22,6 +22,7 @@
 
 #include "Decal_SSD.h"
 #include "Blood_Drop.h"
+#include "Impact.h"
 
 #define MODEL_SCALE 0.01f
 #define BLOOD_COUNT 10
@@ -62,7 +63,7 @@ HRESULT CZombie::Initialize(void* pArg)
 
 	ZOMBIE_DESC*						pDesc = (ZOMBIE_DESC*)pArg;
 
-	m_eStartType = pDesc->eStart_Type = ZOMBIE_START_TYPE::_DOOR_RUB;
+	m_eStartType = pDesc->eStart_Type ;
 	m_eLocation = pDesc->eLocation;
 
 	if (ZOMBIE_START_TYPE::_OUT_DOOR == m_eStartType)
@@ -350,6 +351,10 @@ void CZombie::Tick(_float fTimeDelta)
 				if (m_pController->Is_Hit_Decal_Ray())
 				{
 					m_bSetBlood = true;
+
+					m_pImpact->Set_Render(true);
+					m_pImpact->SetPosition(m_pController->GetBlockPoint());
+
 					m_pController->Set_Hit_Decal_Ray(false);
 				}
 
@@ -372,6 +377,10 @@ void CZombie::Tick(_float fTimeDelta)
 			if (m_pController->Is_Hit_Decal_Ray())
 			{
 				m_bSetBlood = true;
+
+				m_pImpact->Set_Render(true);
+				m_pImpact->SetPosition(m_pController->GetBlockPoint());
+
 				m_pController->Set_Hit_Decal_Ray(false);
 			}
 
@@ -1683,6 +1692,9 @@ void CZombie::Ready_Effect()
 		m_vecBlood_Drop_STG_NoRay.push_back(pBlood_Drop);
 		pBlood_Drop->Start();
 	}
+
+	m_pImpact = CImpact::Create(m_pDevice, m_pContext);
+	m_pImpact->SetSize(1.f,1.f);
 }
 
 void CZombie::Release_Effect()
@@ -1716,6 +1728,8 @@ void CZombie::Release_Effect()
 	{
 		Safe_Release(m_vecBlood_Drop_STG_NoRay[i]);
 	}
+
+	Safe_Release(m_pImpact);
 }
 
 void CZombie::Tick_Effect(_float fTimeDelta)
@@ -1749,6 +1763,8 @@ void CZombie::Tick_Effect(_float fTimeDelta)
 	{
 		m_vecBlood_Drop_STG[i]->Tick(fTimeDelta);
 	}
+
+	m_pImpact->Tick(fTimeDelta);
 }
 
 void CZombie::Late_Tick_Effect(_float fTimeDelta)
@@ -1783,6 +1799,7 @@ void CZombie::Late_Tick_Effect(_float fTimeDelta)
 		m_vecBlood_Drop[i]->Late_Tick(fTimeDelta);
 	}
 
+	m_pImpact->Late_Tick(fTimeDelta);
 }
 
 void CZombie::SetBlood()

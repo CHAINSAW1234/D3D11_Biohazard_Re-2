@@ -54,9 +54,12 @@ void CPannel_Window::Late_Tick(_float fTimeDelta)
 	if (*m_pState == CWindow::BARRIGATE_NEW|| *m_pState == CWindow::BARRIGATE_NO)
 	{
 		;
+		m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
 	}
 	else
 	{
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+
 		switch (*m_pState)
 		{
 		case CWindow::BARRIGATE_BREAK:

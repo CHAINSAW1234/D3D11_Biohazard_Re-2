@@ -162,7 +162,14 @@ public:
 	class CSelector_UI*									m_pSelector = { nullptr }; /* 사용 중인 Selector Obj */
 
 #pragma endregion
+#pragma region	For 창균오빠 - interact_Props()
+public:
+	_int												Get_NeedItem_Index() { return m_iNeedItem; }
+	virtual void									Do_Interact_Props() { return ; }
 
+protected:
+	_int												m_iNeedItem = {-1};// 필요 없으면 -1 => 이건 문제가 안되는게 어차피 interact_props함수를 interactprops에서 부를 것이기 때문이다.
+#pragma endregion
 
 private :
 	_bool												m_isSelector_Rendering = { false };

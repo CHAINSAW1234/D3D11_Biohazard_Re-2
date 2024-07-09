@@ -319,7 +319,10 @@ _float4 CWeapon::Get_BonePosition_Forward(const char* pBoneName)
 	_float4x4 fMatrix;
 	XMStoreFloat4x4(&fMatrix, vMatrix);
 	
-	_float4 vPos = _float4(fMatrix._41, fMatrix._42, fMatrix._43, 1.f);
+	_float4 vLook = Float4_Normalize(_float4(fMatrix._21, fMatrix._22, fMatrix._23, 0.f));
+	XMStoreFloat4(&vLook, XMVectorScale(XMLoadFloat4(&vLook), 0.3f));
+	vLook.y *= 0.1f;
+	_float4 vPos = _float4(fMatrix._41 + vLook.x, fMatrix._42 + vLook.y, fMatrix._43 + vLook.z, 1.f);
 
 
 	return vPos;

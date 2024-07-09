@@ -99,8 +99,10 @@ namespace Client
 		LET_TOP_LIBARAY_HALLWAY,		/* 47. 도서관 위쪽 복도 */
 		BALCONY_UP_HALLWAY,				/* 48. 동쪽 저장실 오른쪽 복도*/
 
-		//추가
-		PLUS_LOCATION,					//작전실,기록실 중간 49
+		// 추가 방
+		OPERATION_RECORD_ROOM,					/* 49. 기록실 작전실 사이방*/
+		WEAPON_ROOM,					/* 50. 기록실 작전실 사이방*/
+
 		LOCATION_MAP_VISIT_END
 	};
 

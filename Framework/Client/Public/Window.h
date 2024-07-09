@@ -89,6 +89,11 @@ public:
 
 	_bool		Get_Installable_Barrigate() { return m_bBarrigateInstallable; } // 설치 가능?
 	void		Set_Barrigate() { m_bBarrigate = true; m_bBarrigateInstallable = false; m_iHP[PART_PANNEL] = 10; } // 설치할때 호출
+
+
+	virtual void Do_Interact_Props() override;
+
+
 private:
 	_bool				m_bBarrigateInstallable = { true };
 	_bool				m_bBarrigate = { false };

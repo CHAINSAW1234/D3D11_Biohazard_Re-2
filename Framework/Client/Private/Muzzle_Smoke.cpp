@@ -99,7 +99,7 @@ void CMuzzle_Smoke::Tick(_float fTimeDelta)
 void CMuzzle_Smoke::Late_Tick(_float fTimeDelta)
 {
 	if(m_bRender == true)
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EFFECT_BLOOM, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 }
 
 HRESULT CMuzzle_Smoke::Render()

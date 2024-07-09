@@ -97,6 +97,20 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_NORMAL(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
+
+	if (Out.vColor.a < 0.01f)
+		discard;
+
+	Out.vColor.a -= g_fAlpha_Delta;
+
+	return Out;
+}
+
 PS_OUT PS_BLOOD(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -368,5 +382,19 @@ technique11 DefaultTechnique
 		HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
 		DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
 		PixelShader = compile ps_5_0 PS_MUZZLE_LIGHT();
+	}
+
+	//7
+	pass Normal_AlphaBlend
+	{
+		SetRasterizerState(RS_NoCulling);
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+	
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+		HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+		DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+		PixelShader = compile ps_5_0 PS_NORMAL();
 	}
 }
