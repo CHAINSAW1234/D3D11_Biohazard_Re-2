@@ -30,6 +30,9 @@ public:
 	CInventory_Slot* Get_Hoverd_Slot();
 	CInventory_Slot* Get_Empty_Slot();
 	void RegisterHoykey(_float2 RegisterPos, ITEM_NUMBER eItemNum, _int iItemQuantity);
+	void Update_Registed_Item(ITEM_NUMBER eItemNum, _int iItemQuantity);
+	//몇번 단축키에 몇번 아이템이 있는가
+	ITEM_NUMBER Get_Item_On_HotKey(_uint iHotKeyNum);
 
 private:
 	CInventory_Slot*	m_pInven_Slots[4] = { nullptr,nullptr, nullptr, nullptr };

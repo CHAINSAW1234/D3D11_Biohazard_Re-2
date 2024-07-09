@@ -316,6 +316,12 @@ public:// for. Set inline
 		m_vecTextBoxes[iTextNum]->Set_Text(wstrSetText);
 	}
 
+	void Set_Text_Color(_uint iTextNum, _vector vTextColor) {
+		m_vecTextBoxes[iTextNum]->Set_FontColor(vTextColor);
+	}
+
+	CTextBox* Get_TexBox(_uint iTextNum) { return m_vecTextBoxes[iTextNum]; }
+
 	void Set_MyChild_Text(_uint iChildNum, _uint iTextNum, wstring wstrSetText) {
 		static_cast<CCustomize_UI*>(m_vecChildUI[iChildNum])->Set_Text(iTextNum, wstrSetText);
 	}

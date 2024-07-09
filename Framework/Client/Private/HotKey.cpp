@@ -3,7 +3,8 @@
 #include "Item_Discription.h"
 #include "HotKey.h"
 
-constexpr _uint	SLOT_COUNT = 4;
+constexpr _uint		SLOT_COUNT = 4;
+constexpr _float	Z_POS_ITEM_UI = 0.7f;
 
 CHotKey::CHotKey(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice , pContext }
@@ -45,7 +46,9 @@ void CHotKey::Start()
 {
 	for (_uint i = 0; i < SLOT_COUNT; i++)
 	{
-		m_pItemUI[i]->Set_Text(TEXT("EquipDisplay"), to_wstring(i));
+		m_pItemUI[i]->Set_Text(HOTKEY_DISPLAY, to_wstring(i+1));
+		m_pItemUI[i]->Set_PartUI_TextColor(HOTKEY_DISPLAY, XMVectorSet(1.f, 1.f, 1.f, 1.f));
+		m_pItemUI[i]->Set_ItemUI(ITEM_NUMBER_END, HOTKEY, XMVectorSet(m_fPositions[i].x, m_fPositions[i].y, Z_POS_ITEM_UI, 1.f), 0);
 	}
 }
 
@@ -53,10 +56,6 @@ void CHotKey::Tick(_float fTimeDelta)
 {
 	if (true == m_bDead)
 		return;
-
-	
-	m_pItemUI[0]->Set_Position(XMVectorSet(0.f, 0.f, 0.f, 0.f));
-
 }
 
 void CHotKey::Late_Tick(_float fTimeDelta)
@@ -119,6 +118,31 @@ CInventory_Slot* CHotKey::Get_Empty_Slot()
 
 void CHotKey::RegisterHoykey(_float2 RegisterPos, ITEM_NUMBER eItemNum, _int iItemQuantity)
 {
+	//아무것도 없을대 상관없음
+	//case1 a를 다른 단축키로 옮기는경우
+	//case2 a를 다른 단축키로 옮겼는데 다른 아이템이 있는경우 switch
+
+	for (_uint i = 0; i < SLOT_COUNT; i++)
+	{
+		if (eItemNum == m_pItemUI[i]->Get_ItemNumber())
+		{
+			m_pItemUI[i]->Set_ItemNumber(ITEM_NUMBER_END);
+			m_pItemUI[i]->Set_ItemQuantity(0);
+			m_pItemUI[i]->Set_isHotKeyRegisted(false);
+			m_pItemUI[i]->Set_Dead(false);
+
+			m_pInven_Slots[i]->Set_IsFilled(false);
+		}
+
+		if (true == m_pItemUI[i]->IsPTInRect(RegisterPos))
+		{
+			m_pItemUI[i]->Set_ItemNumber(eItemNum);
+			m_pItemUI[i]->Set_ItemQuantity(iItemQuantity);
+			m_pItemUI[i]->Set_isHotKeyRegisted(true);
+			m_pItemUI[i]->Set_Dead(false);
+		}
+	}
+
 	for (_uint i = 0; i < SLOT_COUNT; i++)
 	{
 		if (true == m_pInven_Slots[i]->IsPTInRect(RegisterPos))
@@ -127,16 +151,22 @@ void CHotKey::RegisterHoykey(_float2 RegisterPos, ITEM_NUMBER eItemNum, _int iIt
 			break;
 		}
 	}
-	
+}
+
+void CHotKey::Update_Registed_Item(ITEM_NUMBER eItemNum, _int iItemQuantity)
+{
 	for (_uint i = 0; i < SLOT_COUNT; i++)
 	{
-		if (true == m_pItemUI[i]->IsPTInRect(RegisterPos))
+		if (eItemNum == m_pItemUI[i]->Get_ItemNumber())
 		{
-			m_pItemUI[i]->Set_ItemNumber(eItemNum);
 			m_pItemUI[i]->Set_ItemQuantity(iItemQuantity);
-			break;
 		}
 	}
+}
+
+ITEM_NUMBER CHotKey::Get_Item_On_HotKey(_uint iHotKeyNum)
+{
+	return m_pItemUI[iHotKeyNum]->Get_ItemNumber();
 }
 
 HRESULT CHotKey::Bind_ShaderResources()
@@ -299,7 +329,7 @@ HRESULT CHotKey::Init_ItemUI()
 		m_pItemUI[i] = pItemUI;
 
 		Safe_AddRef(m_pItemUI[i]);
-		m_pItemUI[i]->Set_ItemUI(ITEM_NUMBER_END, HOTKEY, XMVectorSet(m_fPositions[i].x, m_fPositions[i].y, 0.6f, 1.f), 0);
+		
 	}
 
 	return S_OK;
@@ -324,7 +354,6 @@ HRESULT CHotKey::Add_Components()
 
 	return S_OK;
 }
-
 
 CHotKey* CHotKey::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

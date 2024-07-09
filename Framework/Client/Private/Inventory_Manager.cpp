@@ -4,8 +4,8 @@
 #include "Player.h"
 
 constexpr _float	Z_POS_SLOT = 0.8f;
-constexpr _float	Z_POS_HIGH_LIGHTER = 0.7f;
-constexpr _float	Z_POS_ITEM_UI = 0.6f;
+constexpr _float	Z_POS_ITEM_UI = 0.7f;
+constexpr _float	Z_POS_HIGH_LIGHTER = 0.6f;
 constexpr _float	Z_POS_CONTEXT_MENU = 0.5f;
 
 constexpr _float	SLOT_INTERVAL_X = 74.f;
@@ -34,13 +34,13 @@ HRESULT CInventory_Manager::Initialize()
 	if (FAILED(Init_InvenSlot()))
 		return E_FAIL;
 
-	if (FAILED(Init_SlotHighlighter()))
+	if (FAILED(Init_ItemUI()))
 		return E_FAIL;
 
 	if (FAILED(Init_DragShdow()))
 		return E_FAIL;
 
-	if (FAILED(Init_ItemUI()))
+	if (FAILED(Init_SlotHighlighter()))
 		return E_FAIL;
 
 	if (FAILED(Init_ContextMenu()))
@@ -1049,13 +1049,6 @@ _int CInventory_Manager::Get_Search_Item_Quantity(ITEM_NUMBER eItemNum)
 	}
 
 	return iItemQuantity;
-}
-
-ITEM_NUMBER CInventory_Manager::Get_Item_On_HotKey(_uint iHotKeyNum)
-{
-
-	
-	return ITEM_NUMBER();
 }
 
 CInventory_Manager* CInventory_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

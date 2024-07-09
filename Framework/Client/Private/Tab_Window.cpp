@@ -261,36 +261,6 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 	switch (m_eSequence)
 	{
 	case Client::POP_UP: {
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-		{		
-			/*Item_Discription 技泼*/
-			m_eSequence = UI_IDLE;
-
-			/*Item_Mesh_Viewer 技泼*/
-			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END);
-
-			/*Inventory_Manager 技泼*/
-			m_pInventory_Manager->Set_OnOff_Inven(false);
-			m_pInventory_Manager->Set_InventoryEvent(PICK_UP_ITEM);
-			_int iPickedUpItemNum = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_iItemIndex();
-			ITEM_NUMBER ePickedItemNum = static_cast<ITEM_NUMBER>(iPickedUpItemNum);
-			m_pInventory_Manager->PUO_Seting(ePickedItemNum,10);
-
-			/*Cursor 技泼*/
-			if (nullptr != m_pCursor[1])
-			{
-				m_pCursor[0]->Set_Inven_Open(true);
-				m_pCursor[1]->Set_Inven_Open(true);
-			}
-
-			/*TabWindow 技泼*/
-			m_fCurTime = 0.f;
-			m_fAlpha = 0.f;
-			//m_isAlphaControl = false;
-
-			break;
-		}
-
 		m_pItem_Mesh_Viewer->Tick(fTimeDelta);
 		m_pItem_Discription->Tick(fTimeDelta);
 
@@ -300,6 +270,38 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 0.f, 1.f, m_fCurTime / 0.5f);
 		}
 
+		else
+		{
+			if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+			{
+				/*Item_Discription 技泼*/
+				m_eSequence = UI_IDLE;
+
+				/*Item_Mesh_Viewer 技泼*/
+				m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END);
+
+				/*Inventory_Manager 技泼*/
+				m_pInventory_Manager->Set_OnOff_Inven(false);
+				m_pInventory_Manager->Set_InventoryEvent(PICK_UP_ITEM);
+				_int iPickedUpItemNum = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_iItemIndex();
+				ITEM_NUMBER ePickedItemNum = static_cast<ITEM_NUMBER>(iPickedUpItemNum);
+				m_pInventory_Manager->PUO_Seting(ePickedItemNum, 10);
+
+				/*Cursor 技泼*/
+				if (nullptr != m_pCursor[1])
+				{
+					m_pCursor[0]->Set_Inven_Open(true);
+					m_pCursor[1]->Set_Inven_Open(true);
+				}
+
+				/*TabWindow 技泼*/
+				m_fCurTime = 0.f;
+				m_fAlpha = 0.f;
+				//m_isAlphaControl = false;
+
+				break;
+			}
+		}
 		break;
 	}	
 
@@ -515,7 +517,7 @@ _int CTab_Window::Get_Search_Item_Quantity(ITEM_NUMBER eItemNum)
 
 ITEM_NUMBER CTab_Window::Get_Item_On_HotKey(_uint iHotKeyNum)
 {
-	return 	m_pInventory_Manager->Get_Item_On_HotKey(iHotKeyNum);
+	return 	m_pHotKey->Get_Item_On_HotKey(iHotKeyNum);
 }
 
 void CTab_Window::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
