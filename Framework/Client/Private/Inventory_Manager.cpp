@@ -4,8 +4,8 @@
 #include "Player.h"
 
 constexpr _float	Z_POS_SLOT = 0.8f;
-constexpr _float	Z_POS_HIGH_LIGHTER = 0.7f;
-constexpr _float	Z_POS_ITEM_UI = 0.6f;
+constexpr _float	Z_POS_ITEM_UI = 0.7f;
+constexpr _float	Z_POS_HIGH_LIGHTER = 0.6f;
 constexpr _float	Z_POS_CONTEXT_MENU = 0.5f;
 
 constexpr _float	SLOT_INTERVAL_X = 74.f;
@@ -34,13 +34,13 @@ HRESULT CInventory_Manager::Initialize()
 	if (FAILED(Init_InvenSlot()))
 		return E_FAIL;
 
-	if (FAILED(Init_SlotHighlighter()))
+	if (FAILED(Init_ItemUI()))
 		return E_FAIL;
 
 	if (FAILED(Init_DragShdow()))
 		return E_FAIL;
 
-	if (FAILED(Init_ItemUI()))
+	if (FAILED(Init_SlotHighlighter()))
 		return E_FAIL;
 
 	if (FAILED(Init_ContextMenu()))
@@ -48,8 +48,6 @@ HRESULT CInventory_Manager::Initialize()
 
 	if (FAILED(Seting_Hotkey()))
 		return E_FAIL;
-
-	
 
 	Set_ItemRecipe();
 
@@ -588,25 +586,34 @@ void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 	switch (m_eTaskSequence)
 	{
 	case Client::CInventory_Manager::SETING: {
-		CInventory_Slot* pHoverdSlot = m_pHotkey->Get_Hoverd_Slot();
-		if (nullptr == pHoverdSlot)
-		{
-
-		}
-
-
+		_float4 HighligeterSetingPos = { m_pHotkey->Get_Empty_Slot()->GetPosition().x, m_pHotkey->Get_Empty_Slot()->GetPosition().y, Z_POS_HIGH_LIGHTER, 1.f };
+		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HighligeterSetingPos);
+		m_eTaskSequence = SELECT;
 		break;
 	}
 		
 	case Client::CInventory_Manager::SELECT: {
+		CInventory_Slot* pHoverdSlot = m_pHotkey->Get_Hoverd_Slot();
+		if (nullptr != pHoverdSlot)
+		{
+			_float4 HighligeterSetingPos = { pHoverdSlot->GetPosition().x, pHoverdSlot->GetPosition().y, Z_POS_HIGH_LIGHTER, 1.f };
+			m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HighligeterSetingPos);
+			
+			if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+			{
+				m_pHotkey->RegisterHoykey(_float2(HighligeterSetingPos.x, HighligeterSetingPos.y), 
+					m_pSelected_ItemUI->Get_ItemNumber(), m_pSelected_ItemUI->Get_ItemQuantity());
+				_float4 HighligeterSetingPos = { m_vecInvenSlot[0]->GetPosition().x, m_vecInvenSlot[0]->GetPosition().y, Z_POS_HIGH_LIGHTER, 1.0 };
+				m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HighligeterSetingPos);
+				
+				m_eTaskSequence = TS_END;
+				m_eInven_Manager_State = EVENT_IDLE;
+				m_pSelected_ItemUI = nullptr;
+			}
+		}
 		break;
 	}
 		
-	case Client::CInventory_Manager::APPLY: {
-		break;
-	}
-		
-
 	default:
 		break;
 	}
@@ -661,6 +668,7 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 					m_pSelected_ItemUI->Move(fMove);
 					Find_Slot(_float2(fPrePos.x, fPrePos.y))->Set_IsFilled(false);
 					Find_Slot(_float2( m_pDragShadow->GetPosition().x, m_pDragShadow->GetPosition().y ))->Set_IsFilled(true);
+					
 					m_pSlotHighlighter->Set_DragShadow(false);
 					m_eInven_Manager_State = EVENT_IDLE;
 					m_eTaskSequence = TS_END;
@@ -689,8 +697,6 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 						m_pTemp_ItemUI = pOverLapItem;
 						m_eTaskSequence = SELECT;
 					}
-
-
 				}
 			}
 		}
@@ -874,6 +880,11 @@ CInventory_Slot* CInventory_Manager::Find_Slot(_float2 FindPos)
 	return nullptr;
 }
 
+void CInventory_Manager::Deactivation(CItem_UI* pExcludeObj)
+{
+	
+}
+
 void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 {
 	for (_uint i = 0; i < m_iInvenCount; i++)
@@ -939,7 +950,6 @@ void CInventory_Manager::PUO_Seting(ITEM_NUMBER eAcquiredItem, _int iItemQuantit
 	_float4 EmptyPos = static_cast<CTransform*>(pEmptydSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
 	EmptyPos.z = Z_POS_HIGH_LIGHTER;
 	m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, EmptyPos);
-
 
 	_vector TempTrashCanValue = XMVectorSet(EmptyPos.x, EmptyPos.y, Z_POS_ITEM_UI, 1.f);
 	m_pDragShadow->Set_ItemUI(eAcquiredItem, DRAG_SHADOW, TempTrashCanValue, iItemQuantity);
@@ -1039,13 +1049,6 @@ _int CInventory_Manager::Get_Search_Item_Quantity(ITEM_NUMBER eItemNum)
 	}
 
 	return iItemQuantity;
-}
-
-ITEM_NUMBER CInventory_Manager::Get_Item_On_HotKey(_uint iHotKeyNum)
-{
-
-	
-	return ITEM_NUMBER();
 }
 
 CInventory_Manager* CInventory_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

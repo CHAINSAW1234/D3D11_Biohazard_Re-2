@@ -41,10 +41,10 @@ void CItem_UI::Start()
 		if (nullptr == m_vecChildUI[0] || nullptr == m_vecChildUI[1])
 			return;
 
-		m_mapPartUI.emplace(TEXT("EquipDisplay"), static_cast<CCustomize_UI*>(m_vecChildUI[0]));//E써져있는거
-		m_mapPartUI.emplace(TEXT("CountDisplay"), static_cast<CCustomize_UI*>(m_vecChildUI[1]));//오른쪽아래 아이템 수량
+		m_mapPartUI.emplace(EQUIP_DISPLAY, static_cast<CCustomize_UI*>(m_vecChildUI[0]));//E써져있는거
+		m_mapPartUI.emplace(COUNT_DISPLAY, static_cast<CCustomize_UI*>(m_vecChildUI[1]));//오른쪽아래 아이템 수량
 		CGameObject* pHotkeyDisplay = static_cast<CCustomize_UI*>(m_vecChildUI[0])->Get_Child(0);
-		m_mapPartUI.emplace(TEXT("HotkeyDisplay"), static_cast<CCustomize_UI*>(pHotkeyDisplay));//단축키 표시
+		m_mapPartUI.emplace(HOTKEY_DISPLAY, static_cast<CCustomize_UI*>(pHotkeyDisplay));//단축키 표시
 
 		for (auto& iter : *(static_cast<CItem_UI*>(m_vecChildUI[0])->Get_vecTextBoxes()))
 		{
@@ -57,6 +57,8 @@ void CItem_UI::Start()
 			iter->Set_isTransformBase(false);
 			iter->Set_isUIRender(true);
 		}
+
+		m_mapPartUI[HOTKEY_DISPLAY]->Get_TexBox(0)->Set_isTransformBase(false);
 	}
 }
 
@@ -81,12 +83,24 @@ void CItem_UI::Tick(_float fTimeDelta)
 		switch (m_eInvenItemType)
 		{
 		case Client::EQUIPABLE: {
-			static_cast<CCustomize_UI*>(m_mapPartUI[TEXT("CountDisplay")])->Set_Text(0, to_wstring(m_iItemQuantity));
+			if (m_iItemQuantity < 10)
+			{
+				wstring Text = TEXT(" ") + to_wstring(m_iItemQuantity);
+				static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text(0, Text);
+			}
+			else
+				static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text(0, to_wstring(m_iItemQuantity));
 			break;
 		}
 			
 		case Client::CONSUMABLE_EQUIPABLE: {
-			static_cast<CCustomize_UI*>(m_mapPartUI[TEXT("CountDisplay")])->Set_Text(0, to_wstring(m_iItemQuantity));
+			if (m_iItemQuantity < 10)
+			{
+				wstring Text = TEXT(" ") + to_wstring(m_iItemQuantity);
+				static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text(0, Text);
+			}
+			else
+				static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text(0, to_wstring(m_iItemQuantity));
 			break;
 		}
 			
@@ -95,25 +109,43 @@ void CItem_UI::Tick(_float fTimeDelta)
 		}
 			
 		case Client::CONSUMABLE: {
-			static_cast<CCustomize_UI*>(m_mapPartUI[TEXT("CountDisplay")])->Set_Text(0, to_wstring(m_iItemQuantity));
+			if (m_iItemQuantity < 10)
+			{
+				wstring Text = TEXT(" ") + to_wstring(m_iItemQuantity);
+				static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text(0, Text);
+			}
+			else
+				static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text(0, to_wstring(m_iItemQuantity));
 			break;
 		}
 
 		case Client::QUEST: {
-			static_cast<CCustomize_UI*>(m_mapPartUI[TEXT("CountDisplay")])->Set_Text(0, to_wstring(m_iItemQuantity));
+			if (m_iItemQuantity < 10)
+			{
+				wstring Text = TEXT(" ") + to_wstring(m_iItemQuantity);
+				static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text(0, Text);
+			}
+			else
+				static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text(0, to_wstring(m_iItemQuantity));
 			break;
 		}
-			
-		case Client::INVEN_ITEM_TYPE_END: {
+						  
+		case Client::HOTKEY: {
+			if (m_iItemQuantity < 10)
+			{
+				wstring Text = TEXT(" ") + to_wstring(m_iItemQuantity);
+				static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text(0, Text);
+			}
+			else
+				static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text(0, to_wstring(m_iItemQuantity));
 			break;
 		}
+
 			
 		default:
 			break;
 		}
 	}
-
-	
 
 	__super::Tick(fTimeDelta);
 }
@@ -143,57 +175,65 @@ void CItem_UI::Set_Dead(_bool bDead)
 		switch (m_eInvenItemType)
 		{
 		case Client::EQUIPABLE: {
-			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(bDead);
-
+			m_mapPartUI[EQUIP_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
+			
 			if (0 == m_iItemQuantity)
-				m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(true);
-
+				m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(true);
 			else
-				m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
+				m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
 
-			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			if (false == m_isHotKeyRegisted)
+				m_mapPartUI[HOTKEY_DISPLAY]->CCustomize_UI::Set_Dead(true);
+			else
+				m_mapPartUI[HOTKEY_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
+
 			break;
 		}
 
 		case Client::CONSUMABLE_EQUIPABLE: {
-			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(bDead);
-			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
-			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			m_mapPartUI[EQUIP_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
+			m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
+			m_mapPartUI[HOTKEY_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
 			break;
 		}
 
 		case Client::USEABLE: {
-			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(true);
-			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(true);
-			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[EQUIP_DISPLAY]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[HOTKEY_DISPLAY]->CCustomize_UI::Set_Dead(true);
 			break;
 		}
 
 		case Client::CONSUMABLE: {
-			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(true);
-			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
-			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[EQUIP_DISPLAY]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
+			m_mapPartUI[HOTKEY_DISPLAY]->CCustomize_UI::Set_Dead(true);
 			break;
 		}
 
 		case Client::QUEST: {
-			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(true);
-			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(true);
-			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[EQUIP_DISPLAY]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[HOTKEY_DISPLAY]->CCustomize_UI::Set_Dead(true);
 			break;
 		}
 
 		case Client::DRAG_SHADOW: {
-			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(true);
-			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(true);
-			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[EQUIP_DISPLAY]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(true);
+			m_mapPartUI[HOTKEY_DISPLAY]->CCustomize_UI::Set_Dead(true);
 			break;
 		}
 
 		case Client::HOTKEY: {
-			m_mapPartUI[TEXT("EquipDisplay")]->CCustomize_UI::Set_Dead(bDead);
-			m_mapPartUI[TEXT("CountDisplay")]->CCustomize_UI::Set_Dead(bDead);
-			m_mapPartUI[TEXT("HotkeyDisplay")]->CCustomize_UI::Set_Dead(bDead);
+			m_mapPartUI[EQUIP_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
+
+			if (false == m_isHotKeyRegisted)
+				m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(true);
+			else
+				m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
+
+			m_mapPartUI[HOTKEY_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
 			break;
 		}
 
@@ -261,6 +301,11 @@ void CItem_UI::Set_ItemUI(ITEM_NUMBER eItmeNum, ITEM_TYPE eItmeType, _vector vSe
 
 	if (DRAG_SHADOW == m_eInvenItemType)
 		Set_Value_Color(&m_vColor[1]);
+}
+
+void CItem_UI::Set_PartUI_TextColor(wstring Target, _vector vTextColor)
+{
+	m_mapPartUI[Target]->Set_Text_Color(0, vTextColor);
 }
 
 CItem_UI* CItem_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
