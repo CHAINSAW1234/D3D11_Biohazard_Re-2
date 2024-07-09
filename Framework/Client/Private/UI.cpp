@@ -147,6 +147,13 @@ void CUI::Move_State(_float3 fMoveMent, _int iState)
 	}
 }
 
+void CUI::State(_float3 fTrans)
+{
+	m_fX = fTrans.x + g_iWinSizeX * 0.5f;
+	m_fY = -fTrans.y + g_iWinSizeY * 0.5f;
+	m_fZ = fTrans.z;
+}
+
 _float3 CUI::ComputeMovement(_uint iSTATE)
 {
 	switch (iSTATE)

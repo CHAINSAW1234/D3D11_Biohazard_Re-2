@@ -6,8 +6,23 @@
 #include "Tab_Window.h"
 #include "Player.h"
 
-#define MINMAP_X_SCALED       1011.f
-#define MINMAP_Y_SCALED       743.f
+#define MINMAP_X_FLOOR1     1111.f
+#define MINMAP_Y_FLOOR1     761.f
+
+#define MINMAP_X_FLOOR2     1079.713f
+#define MINMAP_Y_FLOOR2     585.407f
+
+#define MINMAP_X_FLOOR3     925.068f
+#define MINMAP_Y_FLOOR3     556.878
+
+
+/* 2층 크기*/
+#define MODELMAP_X_FLOO2     82.0431098f
+#define MODELMAP_Y_FLOO2     38.3414335f
+
+/* 3층 크기*/
+#define MODELMAP_X_FLOO3     70.7840423f
+#define MODELMAP_Y_FLOO3     38.0877256f
 
 /* 1층 크기*/
 #define MODELMAP_X_FLOO1     82.0969925f
@@ -68,6 +83,7 @@ HRESULT CPlayer_Map_UI::Initialize(void* pArg)
     m_vPlayer_InitPos.y = 0.f + m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y;
 
     m_isMouse_Control = true;
+    m_isPrevRender = true;
 
     if (nullptr != m_pPlayer)
     {
@@ -81,8 +97,8 @@ void CPlayer_Map_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    Rendering();
     Open_Map();
+    Rendering();
     Map_Player_Control(fTimeDelta);
 }
 
@@ -163,9 +179,9 @@ _bool CPlayer_Map_UI::IsDistanceMeasured_Completely(_bool _find)
 void CPlayer_Map_UI::Open_Map()
 {
     /* ▶ 처음 맵을 열었을 때 플레이어의 위치에 Floor가 존재해야 한다. */
-    if (m_isPrevRender != m_pTab_Window->Get_MinMapRender())
+    if (m_isPrevRender != m_pTab_Window->Get_Dead() || false == m_pTab_Window->Get_MinMapRender())
     {
-        if (false == m_isPrevRender)
+        if (true == m_isPrevRender)
         {
             m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_fOriginPos);
         }
@@ -194,10 +210,10 @@ void CPlayer_Map_UI::Open_Map()
         }
 
         m_isPlayer_FloorSetting = true;
-        m_isPrevRender = m_pTab_Window->Get_MinMapRender();
+        m_isPrevRender = m_pTab_Window->Get_Dead();
     }
 
-    if (false == m_pTab_Window->Get_MinMapRender())
+    if (true == m_pTab_Window->Get_Dead())
     {
         m_fOriginPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
     }
@@ -240,8 +256,6 @@ void CPlayer_Map_UI::Map_Player_Control(_float fTimeDelta)
 
     else if (false == m_isRender)
     {
-        m_isPlayer_Open = false;
-
         _matrix playerMatrix = m_pPlayerTransform->Get_WorldMatrix();
 
         ///////////  :   회전 
@@ -293,24 +307,33 @@ void CPlayer_Map_UI::Map_Player_Moving(_float fTimeDelta)
 
     if(MODELMAP_X_FLOO1 == m_fCurrent_ModelScaled.x && MODELMAP_Y_FLOO1 == m_fCurrent_ModelScaled.y)
     {
-        fComparison.x = (MINMAP_X_SCALED) / m_fCurrent_ModelScaled.x;
-        fComparison.y = (MINMAP_Y_SCALED) / m_fCurrent_ModelScaled.y;
+        fComparison.x = (MINMAP_X_FLOOR1) / m_fCurrent_ModelScaled.x;
+        fComparison.y = (MINMAP_Y_FLOOR1) / m_fCurrent_ModelScaled.y;
 
         m_vPlayer_MovePos = m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION);
         Moving_Value.x = -(m_vPlayer_MovePos.x + 2.f);
-        Moving_Value.y = -(m_vPlayer_MovePos.z + 14.f); // 플레이어의 초기 위치와 현재 위치의 차이 계산
+        Moving_Value.y = -(m_vPlayer_MovePos.z + 13.f); // 플레이어의 초기 위치와 현재 위치의 차이 계산
     }
 
     else if (MODELMAP_X_FLOO2 == m_fCurrent_ModelScaled.x && MODELMAP_Y_FLOO2 == m_fCurrent_ModelScaled.y)
     {
-        fComparison.x = (MINMAP_X_SCALED) / m_fCurrent_ModelScaled.x;
-        fComparison.y = (MINMAP_Y_SCALED) / m_fCurrent_ModelScaled.y;
+        fComparison.x = (MINMAP_X_FLOOR2) / m_fCurrent_ModelScaled.x;
+        fComparison.y = (MINMAP_Y_FLOOR2) / m_fCurrent_ModelScaled.y;
 
         m_vPlayer_MovePos = m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION);
-        Moving_Value.x = -(m_vPlayer_MovePos.x + 1.f);
-        Moving_Value.y = -(m_vPlayer_MovePos.z + 14.7f); // 플레이어의 초기 위치와 현재 위치의 차이 계산
+        Moving_Value.x = -(m_vPlayer_MovePos.x + 1.15f);
+        Moving_Value.y = -(m_vPlayer_MovePos.z + 15.5f); // 플레이어의 초기 위치와 현재 위치의 차이 계산
     }
 
+    else if (MODELMAP_X_FLOO3 == m_fCurrent_ModelScaled.x && MODELMAP_Y_FLOO3 == m_fCurrent_ModelScaled.y)
+    {
+        fComparison.x = (MINMAP_X_FLOOR3) / m_fCurrent_ModelScaled.x;
+        fComparison.y = (MINMAP_Y_FLOOR3) / m_fCurrent_ModelScaled.y;
+
+        m_vPlayer_MovePos = m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION);
+        Moving_Value.x = -(m_vPlayer_MovePos.x + 2.f);
+        Moving_Value.y = -(m_vPlayer_MovePos.z + 16.f); // 플레이어의 초기 위치와 현재 위치의 차이 계산
+    }
     //offset.x /= fComparison.x;
     //offset.y /= fComparison.y;
 
@@ -342,7 +365,7 @@ void CPlayer_Map_UI::Map_Player_Setting()
     {
         m_ePrevCurrent_ViewFloor = m_eCurrent_ViewFloor;
         /* 1. Prev Render 에 현재 렌더를 넣어준다 */
-        m_isPrevRender = m_pTab_Window->Get_MinMapRender();
+        m_isPrevRender = m_pTab_Window->Get_Dead();
 
         list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
         _float4 vPlayertrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
@@ -350,15 +373,9 @@ void CPlayer_Map_UI::Map_Player_Setting()
         /* 2. Player Pos : 몇 층에 있는 지 확인 했는 가에 대한 변수 : false 시킨다.*/
         m_pMapPlayer->m_isPlayer_FloorSetting = false;
 
-        /* 3. Map Player와 BackGround Center와의 거리를 구한다. */
-       // offset.x = m_vBackGround_Center.x - vPlayertrans.x;
-       // offset.y = m_vBackGround_Center.y - vPlayertrans.y;
-
         /* 4. 플레이어를 backGround 중심으로 옮김 */
         vPlayertrans.x = m_vBackGround_Center.x;
         vPlayertrans.y = m_vBackGround_Center.y;
-
-        m_isPlayer_Open = true;
 
         for (auto& iter : *pUIList)
         {

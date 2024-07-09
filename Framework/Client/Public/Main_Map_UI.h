@@ -29,7 +29,7 @@ private :
 
 private :	
 	void				Change_Search_Type(MAP_STATE_TYPE _searType);
-	void				Region_Type();
+	void				Region_State();
 	void				Search_Map_Type(MAP_STATE_TYPE _searType, LOCATION_MAP_VISIT _mapType);
 
 	void				Rendering();
@@ -40,16 +40,15 @@ private :
 
 private :
 	list<class CDoor*>	m_DoorList;
+	MAP_FLOOR_TYPE		m_ePrevViewFloor				= { MAP_FLOOR_TYPE::FLOOR_1 };
 
 private :
-	_int				m_iWhichChild = { 0 };
-	_float4				m_vOriginPos	= {};
-	_vector				m_vMapOpen_Player_Distance = {};
-	_bool				m_isMainEnd = { false };
+	_int				m_iWhichChild					= { 0 };		/* Init에서 객체를 구분할 변수 */
 
-
-private :
-	MAP_FLOOR_TYPE		m_ePrevViewFloor = { MAP_FLOOR_TYPE::FLOOR_1 };
+private : 
+	_float4				m_vOriginPos					= {};			/* 원래 플레이어가 가야 할 Position */
+	_vector				m_vMapOpen_Player_Distance		= {};			/* Player간 사이 Distance */
+	_bool				m_isMainEnd						= { false };	/* Player와의 Distance를 전부 계산했는가? */
 
 
 public:

@@ -5,7 +5,7 @@ BEGIN(Client)
 
 class CTargeting_Map_UI final : public CMap_Manager
 {
-private:
+private: 
 	enum class CROSSHAIR_TARGET_TYPE { LEFT_TARGET, RIGHT_TARGET, UP_TARGET, DOWN_TARGET, END_TARGET };
 
 private:
@@ -23,8 +23,9 @@ public:
 private : /* Find Fuction*/
 	void										Find_Item();
 
+
 private :
-	void										Targeting_Render();
+	void										Targeting_Render(_float fTimeDelta);
 	void										Targeting_Control();
 	_bool										Item_Hovering(_float4 _mainPos, _float3 _scaled);
 
@@ -34,16 +35,16 @@ private :
 	CTransform*									m_pMainTarget_Transform = { nullptr };
 
 
-private : /*  ///// Crosshair Targeting //// */
-	CROSSHAIR_TARGET_TYPE						m_eCrosshair_Type			= { CROSSHAIR_TARGET_TYPE::END_TARGET };
-	_float										m_fTarget_Distance			= { 0.f };
+private : /* Crosshair Targeting */
+	CROSSHAIR_TARGET_TYPE						m_eCrosshair_Type					= { CROSSHAIR_TARGET_TYPE::END_TARGET };
+	_float										m_fTarget_Distance					= { 0.f };
 
 
-private : /*  ///// Notify Targeting //// */
+private : /* Notify Targeting */
 	vector<vector<class CItem_Map_UI*>>			m_ItemStore_Vec;
-	_float2										m_fTargetNotify_Distance	= {};
-	_float2										m_fTargetNotify_TextBox_Distance = {};
-	wstring										m_wstrItem_Name				= { TEXT("") };
+	_float2										m_fTargetNotify_Distance			= {};
+	_float2										m_fTargetNotify_TextBox_Distance	= {};
+	wstring										m_wstrItem_Name						= { TEXT("") };
 
 public:	
 	static CMap_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

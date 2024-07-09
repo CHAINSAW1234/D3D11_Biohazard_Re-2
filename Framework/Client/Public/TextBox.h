@@ -54,6 +54,7 @@ public:
 public:
 	TextBox_DESC Get_TextBoxDesc() const;
 	virtual void Move(_float3 fMove) override;
+	void Set_Position_UI(_float3 fMove);
 
 private:
 	wstring m_wstrText = { TEXT("") };

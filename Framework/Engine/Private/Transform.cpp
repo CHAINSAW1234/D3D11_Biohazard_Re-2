@@ -391,20 +391,25 @@ void CTransform::Move_toTarget(_fvector vTargetPos, _float fTimeDelta, _float fM
 		vPosition += XMVector3Normalize(vLook) * m_fSpeedPerSec * fTimeDelta;
 }
 
-void CTransform::Move_toTargetUI(_float4 vTargetPos, _float fTimeDelta, _float fMinDistance)
+_bool CTransform::Move_toTargetUI(_float4 vTargetPos, _float fTimeDelta, _float fMinDistance)
 {
 	_float4		vPosition = Get_State_Float4(STATE_POSITION);
 	_float		fZ = vPosition.z;
 
 	_float4		vLook = vTargetPos - vPosition;
 
-	if (fMinDistance <= XMVector3Length(vLook).m128_f32[0])
+	if (fMinDistance < XMVector3Length(vLook).m128_f32[0])
 	{
 		vPosition += XMVector3Normalize(vLook) * m_fSpeedPerSec * fTimeDelta;
 		vPosition.z = fZ;
+		Set_State(STATE_POSITION, vPosition);
+
+		return false;
 	}
 
-	Set_State(STATE_POSITION, vPosition);
+	Set_State(STATE_POSITION, vTargetPos);
+
+	return true;
 }
 
 void CTransform::Turn(_fvector vAxis, _float fTimeDelta)

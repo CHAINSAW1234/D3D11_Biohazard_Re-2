@@ -108,6 +108,12 @@ void CTextBox::Move(_float3 fMove)
 	m_fZ += fMove.z;
 }
 
+void CTextBox::Set_Position_UI(_float3 fMove)
+{
+	m_fX = fMove.x;
+	m_fY = -fMove.y;
+	m_fZ = fMove.z;
+}
 
 CTextBox* CTextBox::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
