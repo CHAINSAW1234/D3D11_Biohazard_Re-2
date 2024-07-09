@@ -172,7 +172,7 @@ void CMove_To_Target_Zombie::Exit()
 
 		_float			fDelta = { fDuration - fTrackPosition };
 
-		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f, fminf(fDelta / fTickPerSec, 0.2f));
+		pBodyModel->Set_BlendWeight(iBlendPlayingIndex, 0.f, fminf(fDelta / fTickPerSec, 10.f));
 	}	
 }
 
@@ -272,7 +272,7 @@ void CMove_To_Target_Zombie::Change_Animation_Front_Only(_float fTimeDelta)
 	pBodyModel->Change_Animation(static_cast<_uint>(PLAYING_INDEX::INDEX_0), TEXT("Ordinary_Walk"), iResultAnimationIndex);
 	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), isLoop);
 	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_0), strBaseBoneLayerTag);
-	pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_0), 1.f);
+	pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_0), 1.f, 0.f);
 
 #pragma endregion
 }
@@ -506,14 +506,14 @@ void CMove_To_Target_Zombie::Change_Animation_Include_Rotation(_float fTimeDelta
 	pBodyModel->Change_Animation(static_cast<_uint>(PLAYING_INDEX::INDEX_0), TEXT("Ordinary_Walk"), iResultAnimationIndex);
 	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), isLoop);
 	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_0), strBaseBoneLayerTag);
-	pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_0), 1.f - fTurnBlendWeight);
+	pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_0), 1.f - fTurnBlendWeight, 0.f);
 
 	if (true == isNeedBlend)
 	{
 		pBodyModel->Change_Animation(static_cast<_uint>(PLAYING_INDEX::INDEX_1), TEXT("Ordinary_Walk"), iBlendAnimIndex);
 		pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_1), true);
 		pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(PLAYING_INDEX::INDEX_1), strBlendBoneLayerTag);
-		pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), fTurnBlendWeight);
+		pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), fTurnBlendWeight, 0.f);
 
 		if (1.0f != fTurnBlendWeight)
 		{
@@ -540,7 +540,7 @@ void CMove_To_Target_Zombie::Change_Animation_Include_Rotation(_float fTimeDelta
 	{
 		if (true == m_isPreBlended)
 		{
-			pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), 0.f, 0.3f);
+			pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), 0.f, 10.f);
 
 			m_isPreBlended = false;
 		}		

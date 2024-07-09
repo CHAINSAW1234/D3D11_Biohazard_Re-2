@@ -27,6 +27,11 @@ HRESULT CLevel_Tool::Initialize()
 	if (FAILED(Ready_LandObject()))
 		return E_FAIL;
 
+	CTexture*	pTexture = (CTexture*)m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Texture_CubeMap"));
+	m_pGameInstance->Set_CubeMap(pTexture);
+
+	Safe_Release(pTexture);
+
 	return S_OK;
 }
 

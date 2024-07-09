@@ -82,6 +82,7 @@ HRESULT CLoader::Loading_For_Logo()
 	//	return E_FAIL;
 
 
+
 	m_strLoadingText = TEXT("모델를(을) 로딩 중 입니다.");
 
 	m_strLoadingText = TEXT("셰이더를(을) 로딩 중 입니다.");
@@ -112,6 +113,13 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_Brush"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Brush.png"), 1))))
 		return E_FAIL;
+
+#pragma region CubeMap
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Texture_CubeMap"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/CubeMap/st4_101_0_00.dds")))))
+		return E_FAIL;
+
+#pragma endregion
 
 #pragma region Model
 	m_strLoadingText = TEXT("Now Loading ... Model");

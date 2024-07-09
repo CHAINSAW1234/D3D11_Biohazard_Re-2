@@ -931,7 +931,7 @@ _float4x4 CModel::Compute_BlendTransformation_Additional(_fmatrix SrcMatrix, _fm
 	_vector			vDstScale, vDstQuaternion, vDstTranslation;
 	XMMatrixDecompose(&vDstScale, &vDstQuaternion, &vDstTranslation, DstMatrix);
 
-	vDstQuaternion = XMQuaternionSlerp(XMQuaternionIdentity(), vDstQuaternion, fAdditionalWeight);
+	vDstQuaternion = XMQuaternionSlerp(XMQuaternionIdentity(), XMQuaternionNormalize(vDstQuaternion), fAdditionalWeight);
 	vDstTranslation *= fAdditionalWeight;
 
 	_vector			vResultScale = { vDstScale };
@@ -2272,6 +2272,13 @@ HRESULT CModel::Initialize(void* pArg)
 	m_IsHideMesh.resize(m_iNumMeshes);
 
 	m_MeshBranches.resize(m_Meshes.size());
+
+	_uint iBoneIndex = { 0 };
+	m_T_Pose_Matrices.resize(m_Bones.size());
+	for (auto& pBone : m_Bones)
+	{
+		XMStoreFloat4x4(&m_T_Pose_Matrices[iBoneIndex++], pBone->Get_TrasformationMatrix());
+	}
 	
 	for (auto& iIndex : m_MeshBranches)
 	{
@@ -2853,6 +2860,7 @@ vector<_float4x4> CModel::Compute_ResultMatrices_AdditionalMsking(const vector<v
 
 			_matrix			ResultMatrix = { XMLoadFloat4x4(&ResultTransformationMatrices[iBoneIndex]) };
 			_matrix			TransformationMatrix = { XMLoadFloat4x4(&AdditionalMaskingTransformationMatricesLayer[iPlayingInfoIndex][iBoneIndex]) };
+
 			_float4x4		ResultFloat4x4 = { Compute_BlendTransformation_Additional(ResultMatrix, TransformationMatrix, fBlendWeight) };
 			XMStoreFloat4x4(&ResultTransformationMatrices[iBoneIndex], XMLoadFloat4x4(&ResultFloat4x4));
 		}

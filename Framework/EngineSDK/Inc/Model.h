@@ -311,6 +311,7 @@ private:
 	vector<MESH_MATERIAL>					m_Materials;
 
 	_float4x4								m_TransformationMatrix;
+	vector<_float4x4>						m_T_Pose_Matrices;
 
 	vector<class CBone*>					m_Bones;
 	map<wstring, class CBone_Layer*>		m_BoneLayers;			//	레이어로 분리할 뼈들의 태그별로 인덱스들을 저장한다.

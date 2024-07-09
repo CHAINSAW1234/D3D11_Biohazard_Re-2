@@ -80,6 +80,9 @@ void CBlackBoard_Zombie::Priority_Tick(_float fTimeDelta)
 	Update_Timers(fTimeDelta);
 	Update_Status(fTimeDelta);
 	Update_Look_Target(fTimeDelta);
+
+
+	m_pAI->Set_Location(static_cast<LOCATION_MAP_VISIT>(m_pPlayer->Get_Player_Region()));
 }
 
 void CBlackBoard_Zombie::Late_Tick(_float fTimeDelta)

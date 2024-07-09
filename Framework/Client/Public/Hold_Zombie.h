@@ -33,7 +33,7 @@ private:
 
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard;	}
-	void							Additional_Turn(_float fTimeDelta);
+	void							Apply_Additional_Turn(_float fTimeDelta);
 
 private:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };

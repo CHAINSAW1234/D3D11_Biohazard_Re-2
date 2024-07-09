@@ -30,12 +30,15 @@
 #define ZOMBIE_IK_L_HUMEROUS_WRIST_TAG					TEXT("L_Humerous_To_Wrist")			//	상완 => 손목
 #define ZOMBIE_IK_R_HUMEROUS_WRIST_TAG					TEXT("R_Humerous_To_Wrist")			//	상완 => 손목
 
+#define ZOMBIE_IK_L_HUMEROUS_RADIUS_TAG					TEXT("L_Humerous_To_Radius")			//	상완 => 전완
+#define ZOMBIE_IK_R_HUMEROUS_RADIUS_TAG					TEXT("R_Humerous_To_Radius")			//	상완 => 전완
+
 /* For. Blend Velocity */
-#define ZOMBIE_BLEND_MAX								1.f
+#define ZOMBIE_BLEND_MAX								0.8f
 #define ZOMBIE_BLEND_ZERO								0.f
 
 /* For. Blend On */
-#define ZOMBIE_SHAKE_SKIN_BLEND_ON_TIME					0.3f
+#define ZOMBIE_SHAKE_SKIN_BLEND_ON_TIME					10.f
 
 /* For. Blend Off */
-#define ZOMBIE_SHAKE_SKIN_BLEND_OFF_TIME				0.2f
+#define ZOMBIE_SHAKE_SKIN_BLEND_OFF_TIME				20.f

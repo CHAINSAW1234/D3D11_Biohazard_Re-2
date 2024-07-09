@@ -862,7 +862,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_Move->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Move);
 
-	//Add Task Node
+	//	Add Task Node
 	CPivot_Turn_Zombie* pTask_Pivot_Turn = { CPivot_Turn_Zombie::Create() };
 	pTask_Pivot_Turn->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Pivot_Turn);

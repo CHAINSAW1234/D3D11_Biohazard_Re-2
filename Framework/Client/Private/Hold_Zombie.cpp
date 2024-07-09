@@ -118,6 +118,8 @@ _bool CHold_Zombie::Execute(_float fTimeDelta)
 	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->Set_State(MONSTER_STATE::MST_HOLD);
 
+	Apply_Additional_Turn(fTimeDelta);
+
 	return true;
 }
 
@@ -274,12 +276,22 @@ _bool CHold_Zombie::Is_StateFinished()
 	return isFinished;
 }
 
-void CHold_Zombie::Additional_Turn(_float fTimeDelta)
+void CHold_Zombie::Apply_Additional_Turn(_float fTimeDelta)
 {
 	CTransform*				pZombieTransform = { m_pBlackBoard->Get_AI()->Get_Transform() };
 	if (nullptr == pZombieTransform)
 		return;
 
+	CModel*					pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+	if (nullptr == pBody_Model)
+		return;
+
+	_float					fCurrentAnimDuration = { pBody_Model->Get_Duration_From_PlayingInfo(static_cast<_uint>(m_eBasePlayingIndex)) };
+	_float					fCurrentTrackPosition = { pBody_Model->Get_TrackPosition(static_cast<_uint>(m_eBasePlayingIndex)) };
+	
+	if (fCurrentAnimDuration * 0.5f < fCurrentTrackPosition)
+		return;
+	
 	_matrix					ZobmieWorldMatrix = { pZombieTransform->Get_WorldMatrix() };
 	_float3					vDirectionToPlayerLocalFloat3 = {};
 	if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3))
@@ -294,9 +306,20 @@ void CHold_Zombie::Additional_Turn(_float fTimeDelta)
 
 	_float					fResultAngle = { fminf(fDeltaAngle, fMaxAngle) };
 
+	if (XMVectorGetX(vDirectionToPlayerLocal) < 0.f)
+	{
+		fResultAngle *= -1.f;
+	}
+
 	_vector					vZombieUpDir = { pZombieTransform->Get_State_Vector(CTransform::STATE_UP) };
-	_matrix					RotaitonMatrix = { XMMatrixRotationAxis(XMVector3Normalize(vZombieUpDir), fResultAngle) };
+	_matrix					RotitonMatrix = { XMMatrixRotationAxis(XMVector3Normalize(vZombieUpDir), fResultAngle) };
+
+	_vector					vZombiePosition = { ZobmieWorldMatrix.r[CTransform::STATE_POSITION] };
+	ZobmieWorldMatrix.r[CTransform::STATE_POSITION] = { XMVectorZero() };
+	_matrix					ResultWorldMatrix = { ZobmieWorldMatrix * RotitonMatrix };
+	ResultWorldMatrix.r[CTransform::STATE_POSITION] = vZombiePosition;
 	
+	pZombieTransform->Set_WorldMatrix(ResultWorldMatrix);
 }
 
 CHold_Zombie* CHold_Zombie::Create(void* pArg)

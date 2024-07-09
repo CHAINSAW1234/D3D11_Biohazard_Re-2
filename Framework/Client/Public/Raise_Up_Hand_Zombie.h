@@ -6,7 +6,7 @@
 #include "Zombie.h"
 
 #define ZOMBIE_RAISE_UP_HAND_MAX_TIME			3.f
-#define ZOMBIE_RAISE_UP_HAND_MAX_RATIO			0.8f
+#define ZOMBIE_RAISE_UP_HAND_MAX_RATIO			0.6f
 
 BEGIN(Client)
 

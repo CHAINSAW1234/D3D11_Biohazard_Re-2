@@ -67,12 +67,10 @@ _bool CShake_Skin_Zombie::Execute(_float fTimeDelta)
 		return true;
 
 	COLLIDER_TYPE		eIntersectCollider = { pZombie->Get_Current_IntersectCollider() };
-	if (COLLIDER_TYPE::_END == eIntersectCollider ||
-		COLLIDER_TYPE::HEAD == eIntersectCollider ||
-		COLLIDER_TYPE::PELVIS == eIntersectCollider)
+	if (COLLIDER_TYPE::_END == eIntersectCollider)
 		return true;
 
-	DIRECTION			eHitDirection = { vHitDirectionLocalFloat3.z > 0.f ? DIRECTION::_F : DIRECTION::_B };
+	DIRECTION			eHitDirection = { vHitDirectionLocalFloat3.z < 0.f ? DIRECTION::_F : DIRECTION::_B };
 
 	Add_Blend_Animation(eIntersectCollider, eHitDirection);
 
@@ -196,7 +194,7 @@ void CShake_Skin_Zombie::Add_Blend_Animation(COLLIDER_TYPE eIntersectCollider, D
 
 				ePlayingIndex = m_eHead_PlayingIndex;
 				strAnimLayerTag = m_strHead_AnimLayerTag;
-				strBoneLayerTag = m_str_Body_Twist_BoneLayerTag;
+				strBoneLayerTag = m_str_Head_Twist_BoneLayerTag;
 			}
 
 			else if (COLLIDER_TYPE::CHEST == eIntersectCollider ||
@@ -225,26 +223,26 @@ void CShake_Skin_Zombie::Add_Blend_Animation(COLLIDER_TYPE eIntersectCollider, D
 			if (COLLIDER_TYPE::HEAD == eIntersectCollider)
 			{
 				if (DIRECTION::_F == eHitDirection)
-					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_LEG_R::_FRONT);
+					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_HEAD::_FRONT);
 				else if (DIRECTION::_B == eHitDirection)
-					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_LEG_R::_BACK);
+					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_HEAD::_BACK);
 
 				ePlayingIndex = m_eHead_PlayingIndex;
 				strAnimLayerTag = m_strHead_AnimLayerTag;
-				strBoneLayerTag = m_str_Body_Twist_BoneLayerTag;
+				strBoneLayerTag = m_str_Head_Twist_BoneLayerTag;
 			}
 
 			else if (COLLIDER_TYPE::CHEST == eIntersectCollider ||
 				COLLIDER_TYPE::PELVIS == eIntersectCollider)
 			{
 				if (DIRECTION::_F == eHitDirection)
-					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_LEG_R::_FRONT);
+					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_BODY::_FRONT);
 				else if (DIRECTION::_B == eHitDirection)
-					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_LEG_R::_BACK);
+					iResultAnimationIndex = static_cast<_uint>(ANIM_ADD_BODY::_BACK);
 
 				ePlayingIndex = m_eBody_PlayingIndex;
-				strAnimLayerTag = m_strHead_AnimLayerTag;
-				strBoneLayerTag = m_str_Head_Twist_BoneLayerTag;
+				strAnimLayerTag = m_strBody_AnimLayerTag;
+				strBoneLayerTag = m_str_Body_Twist_BoneLayerTag;
 			}
 
 #ifdef _DEBUG
@@ -276,7 +274,7 @@ void CShake_Skin_Zombie::Add_Blend_Animation(COLLIDER_TYPE eIntersectCollider, D
 		pBody_Model->Reset_PreAnim_CurrentAnim(static_cast<_uint>(ePlayingIndex));
 		pBody_Model->Change_Animation(static_cast<_uint>(ePlayingIndex), strAnimLayerTag, iResultAnimationIndex);
 		pBody_Model->Set_Loop(static_cast<_uint>(ePlayingIndex), false);
-		pBody_Model->Set_BlendWeight(static_cast<_uint>(ePlayingIndex), ZOMBIE_BLEND_MAX * 0.5f, ZOMBIE_SHAKE_SKIN_BLEND_ON_TIME);
+		pBody_Model->Set_BlendWeight(static_cast<_uint>(ePlayingIndex), ZOMBIE_BLEND_MAX, ZOMBIE_SHAKE_SKIN_BLEND_ON_TIME);
 		pBody_Model->Set_BoneLayer_PlayingInfo(static_cast<_uint>(ePlayingIndex), strBoneLayerTag);
 		pBody_Model->Set_Additional_Masking(static_cast<_uint>(ePlayingIndex), true, 4);
 

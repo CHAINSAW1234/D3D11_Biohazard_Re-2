@@ -457,9 +457,6 @@
     <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\ShakeSkin">
       <UniqueIdentifier>{acf145ab-b930-419e-a81d-e6dcfeda6b4a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Hold_Zombie">
-      <UniqueIdentifier>{48c4e195-7f2d-4cad-ae99-73d3733ba54b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Utility">
       <UniqueIdentifier>{1169d85d-c8da-4637-afcb-30447c83345f}</UniqueIdentifier>
     </Filter>
