@@ -514,6 +514,7 @@ void CPlayer::Start()
 		MSG_BOX(TEXT("CPlayer::Start"));
 		assert(0);
 	}
+
 	Safe_AddRef(m_pTabWindow);
 
 	list<CGameObject*>* pSelecter_UI = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));

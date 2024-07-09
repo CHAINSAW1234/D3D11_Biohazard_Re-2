@@ -19,7 +19,6 @@ public:
 
 public :
 	_bool*					Get_PlayerFloorSetting() { return &m_isPlayer_FloorSetting; }
-	_bool					Get_Player_Open() { return m_isPlayer_Open; }
 
 
 private:
@@ -34,7 +33,6 @@ private:
 
 private:
 	CTransform*				m_pPlayerTransform		= { nullptr };
-	_bool					m_isPlayer_Open			= { false };
 	MAP_FLOOR_TYPE			m_ePlayer_Floor			= { MAP_FLOOR_TYPE::FLOOR_1 };
 
 	_bool					m_isBlurBlending		= { false };

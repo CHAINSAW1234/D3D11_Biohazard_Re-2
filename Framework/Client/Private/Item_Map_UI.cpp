@@ -84,10 +84,10 @@ void CItem_Map_UI::Destory_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _l
 
 void CItem_Map_UI::Rendering()
 {
-    if (false == m_pTab_Window->Get_MinMapRender())
+    if (true == m_pTab_Window->Get_Dead())
     {
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vOriginPos);
-        m_isPrevRender = m_pTab_Window->Get_MinMapRender();
+        m_isPrevRender = m_pTab_Window->Get_Dead();
     }
 
 
@@ -108,7 +108,7 @@ void CItem_Map_UI::Rendering()
     if (true == *m_pMapPlayer->Get_PlayerFloorSetting())
     {
         /* 2. Map을 켰는 지 확인했다면,  */
-        if (m_isPrevRender != m_pTab_Window->Get_MinMapRender())
+        if (m_isPrevRender != m_pTab_Window->Get_Dead())
         {
             /* 3. 플레이어와 객체의 거리를 구한다  */
             _float4 vMainTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);

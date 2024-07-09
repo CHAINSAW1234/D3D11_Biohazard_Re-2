@@ -2,6 +2,7 @@
 #include "Targeting_Map_UI.h"
 #include "Item_Map_UI.h"
 #include "Player_Map_UI.h"
+#include "Tab_Window.h"
 
 #define ZERO 0
 #define ALPHA_ZERO _float4(0.f, 0.f, 0.f, 0.f)
@@ -94,7 +95,7 @@ HRESULT CTargeting_Map_UI::Initialize(void* pArg)
 
     else if (MAP_UI_TYPE::TARGET_NOTIFY == m_eMapComponent_Type)
     {
-        /* 플레이어 타겟팅 */
+        /* 1. Player Targeting */
         list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
 
         if (nullptr != pUIList)
@@ -114,13 +115,7 @@ HRESULT CTargeting_Map_UI::Initialize(void* pArg)
 
         m_pMainTarget_Transform = static_cast<CTransform*>(m_pMain_Target->Get_Component(g_strTransformTag));
 
-        Find_Item(); /* 아이템 */
-
-        if (m_ItemStore_Vec[0].empty() || m_ItemStore_Vec[1].empty() || m_ItemStore_Vec[2].empty())
-        {
-            MSG_BOX(TEXT("다차원 벡터에 아이템이 정상적으로 보관되지 않았습니다."));
-        }
-
+        /* 2. Between Object Distance */
         if (nullptr != m_pMain_Target)
         {
             CTransform* pMainTarget_Transform = static_cast<CTransform*>(m_pMain_Target->Get_Component(g_strTransformTag));
@@ -140,18 +135,12 @@ HRESULT CTargeting_Map_UI::Initialize(void* pArg)
             m_fTargetNotify_TextBox_Distance.x = vTextBox_Texture.x - vText.x;
             m_fTargetNotify_TextBox_Distance.y = vTextBox_Texture.y - vText.y;
         }
+
+        /* 3. Store Items */
+        Find_Item(); /* 아이템 */
     }
 
-    if (!m_vecTextBoxes.empty())
-    {
-        _float4 vTextBox_Texture = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-
-        _float4 vText = m_vecTextBoxes.back()->GetPosition();
-
-        m_fTargetNotify_TextBox_Distance.x = vTextBox_Texture.x - vText.x;
-        m_fTargetNotify_TextBox_Distance.y = vTextBox_Texture.y - vText.y;
-    }
-
+    /* Tool */
     m_isMouse_Control = true;
     m_isRender = false;
 
@@ -165,8 +154,7 @@ void CTargeting_Map_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    Find_Item();
-    Targeting_Render();
+    Targeting_Render(fTimeDelta);
 }
 
 void CTargeting_Map_UI::Late_Tick(_float fTimeDelta)
@@ -211,10 +199,15 @@ void CTargeting_Map_UI::Find_Item()
             }
         }
     }
+
+    if (m_ItemStore_Vec[0].empty() || m_ItemStore_Vec[1].empty() || m_ItemStore_Vec[2].empty())
+    {
+        MSG_BOX(TEXT("다차원 벡터에 아이템이 정상적으로 보관되지 않았습니다."));
+    }
 }
 
 
-void CTargeting_Map_UI::Targeting_Render()
+void CTargeting_Map_UI::Targeting_Render(_float fTimeDelta)
 {
     /* ▶ Target Notify Type */
     if (MAP_UI_TYPE::TARGET_NOTIFY == m_eMapComponent_Type)
@@ -262,8 +255,11 @@ void CTargeting_Map_UI::Targeting_Control()
     if (MAP_UI_TYPE::TARGET_MAP == m_eMapComponent_Type)
     {
         /* 처음 출력될 땐 부모는 Player를 잡고 있어야 하며, 자식은 부모를 따라다녀야 한다. */
-        if (m_pMapPlayer->Get_Player_Open() == true && m_isPrevRender != m_isRender)
+
+        if (m_isPrevRender != m_pTab_Window->Get_MinMapRender())
         {
+            m_isPrevRender = m_pTab_Window->Get_MinMapRender();
+
             if (false == m_IsChild)
             {
                 _float4 vTarget = m_pMapPlayer_Transform->Get_State_Float4(CTransform::STATE_POSITION);
@@ -304,7 +300,7 @@ void CTargeting_Map_UI::Targeting_Control()
 
                     m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCurrentLine);
                 }
-
+                
                 else if (m_eCrosshair_Type == CROSSHAIR_TARGET_TYPE::UP_TARGET)
                 {
                     _float4 vMainTarget = m_pMainTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
@@ -329,11 +325,8 @@ void CTargeting_Map_UI::Targeting_Control()
                     m_pTransformCom->Set_State(CTransform::STATE_POSITION, vCurrentLine);
                 }
             }
-
-            m_isPrevRender = m_isRender;
         }
     }
-
 
     else if (MAP_UI_TYPE::TARGET_NOTIFY == m_eMapComponent_Type)
     {

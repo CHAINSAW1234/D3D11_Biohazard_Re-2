@@ -88,6 +88,7 @@ void CMain_Map_UI::Tick(_float fTimeDelta)
     Player_BetweenDistance();
 
     /* Door : Object가 없을 시 터질 수 있음, Noting 하려면 이거 주석하셈*/
+    Region_State();
     Door_State();
 }
 
@@ -105,7 +106,7 @@ HRESULT CMain_Map_UI::Render()
 }
 
 /* 지역 타입을 확인해서 색깔을 정한다. */
-void CMain_Map_UI::Region_Type()
+void CMain_Map_UI::Region_State()
 {
     if (nullptr == m_pPlayer)
         return;
@@ -130,7 +131,7 @@ void CMain_Map_UI::Search_Map_Type(MAP_STATE_TYPE _searType, LOCATION_MAP_VISIT 
 
 void CMain_Map_UI::Rendering()
 {	
-    /* Map Inventory를 오픈할 때만 사용할 것이다.  */
+    /* Inventory를 오픈할 때만 사용할 것이다.  */
     if (false == m_pTab_Window->Get_MinMapRender())
     {
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vOriginPos);
@@ -158,23 +159,20 @@ void CMain_Map_UI::Rendering()
             m_isMainEnd = true;
         }
     }
-
-    /* 지역 색 맞추기 */
-    Region_Type();
 }
 
 void CMain_Map_UI::Player_BetweenDistance()
 {
    /* Map Inventory를 오픈할 때만 사용할 것이다.  */
-   if (false == m_pTab_Window->Get_MinMapRender())
-       m_isPrevRender = m_pTab_Window->Get_MinMapRender();
+   if (true == m_pTab_Window->Get_Dead())
+       m_isPrevRender = m_pTab_Window->Get_Dead();
 
    /* ▶ Map Player와 Main의 모듣 객체와의 거리를 구하는 함수  */
    /* 1. Player가 몇 층에 있는 지 확인했다면,  */
    if (true == *m_pMapPlayer->Get_PlayerFloorSetting())
    {
        /* 2. Map을 켰는 지 확인했다면, 내가 존재했던 view와 과거 view가 같지 않다면*/
-       if (m_isPrevRender != m_pTab_Window->Get_MinMapRender() || *m_pMapPlayer->Get_ViewFloor_Type() != m_ePrevViewFloor)
+       if (m_isPrevRender != m_pTab_Window->Get_Dead() || *m_pMapPlayer->Get_ViewFloor_Type() != m_ePrevViewFloor)
        {
            m_ePrevViewFloor = *m_pMapPlayer->Get_ViewFloor_Type();
 

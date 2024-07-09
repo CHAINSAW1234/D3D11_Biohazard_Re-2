@@ -2,7 +2,7 @@
 
 #include "ContextMenu.h"
 #include "Context_Highlighter.h"
-
+#include "LayOut_UI.h"
 
 constexpr _float CONTEXT_HIGHLIGHTER_POSZ = 0.51f;
 
@@ -31,6 +31,8 @@ HRESULT CContextMenu::Initialize(void* pArg)
 		if (FAILED(__super::Initialize(pArg)))
 			return E_FAIL;
 
+		if (FAILED(Find_LayOut()))
+			return E_FAIL;
 	}
 
 	m_eContext_State = UI_IDLE;
@@ -42,8 +44,21 @@ HRESULT CContextMenu::Initialize(void* pArg)
 
 void CContextMenu::Tick(_float fTimeDelta)
 {
+#pragma region 나영
+	if (nullptr == m_pLayOut)
+	{
+		Find_LayOut();
+
+		if (nullptr == m_pLayOut)
+			MSG_BOX(TEXT("CContextMenu() : Inventory가 사용할 수 있는 Layout이 없습니다. "));
+	}
+
+#pragma endregion
+
 	if (true == m_bDead)
 	{
+		HoveringFor_LayOut((_int)CLayOut_UI::MENU_HOVER_TYPE::END_MENU);
+
 		for (auto& iter : m_vecChildUI)
 			iter->Set_Dead(true);
 
@@ -72,8 +87,6 @@ void CContextMenu::Tick(_float fTimeDelta)
 	default:
 		break;
 	}
-
-
 
 }
 
@@ -119,6 +132,7 @@ void CContextMenu::Idle_Operation(_float fTimeDelta)
 		{
 			IsNoOneHover = false;
 			pHoveredMenu = static_cast<CContextMenu*>(m_vecChildUI[i]);
+			m_iHoverMenu_Type = i;
 		}
 	}
 
@@ -134,8 +148,16 @@ void CContextMenu::Idle_Operation(_float fTimeDelta)
 		{
 			Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
 		}
-	}
 
+#pragma region 나옹
+		if (m_iPrev_HoverMenu_Type != m_iHoverMenu_Type)
+		{
+			HoveringFor_LayOut(m_iHoverMenu_Type);
+			m_iPrev_HoverMenu_Type = m_iHoverMenu_Type;
+		}
+#pragma endregion
+
+	}
 }
 
 void CContextMenu::Hide_Operation(_float fTimeDelta)
@@ -386,6 +408,46 @@ void CContextMenu::Set_EventbyTexture(_uint iTextureNum)
 
 	default:
 		break;
+	}
+}
+
+HRESULT CContextMenu::Find_LayOut()
+{
+	list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+	for (auto& iter : *pUIList)
+	{
+		CLayOut_UI* pLayOut = dynamic_cast<CLayOut_UI*>(iter);
+
+		if (nullptr != pLayOut)
+		{
+			if (true == pLayOut->Get_IsCheckTyping_Type())
+			{
+				m_pLayOut = pLayOut;
+
+				Safe_AddRef<CLayOut_UI*>(m_pLayOut);
+
+				break;
+			}
+		}
+	}
+
+	return S_OK;
+}
+
+void CContextMenu::HoveringFor_LayOut(_int _hoverType)
+{
+	if (nullptr == m_pLayOut)
+		return;
+
+	if((_int)CLayOut_UI::MENU_HOVER_TYPE::END_MENU == _hoverType)
+	{
+		m_pLayOut->Set_Typing_LayOut(false, _hoverType);
+	}
+
+	else
+	{
+		m_pLayOut->Set_Typing_LayOut(true, _hoverType);
 	}
 }
 

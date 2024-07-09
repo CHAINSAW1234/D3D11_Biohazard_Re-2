@@ -118,7 +118,7 @@ HRESULT CBullet_UI::Initialize(void* pArg)
     Find_Crosshair();
     Find_Player();
 
-    /* Tool 기능 고정하기*/
+    /* Tool */
     {
         m_isRender = false;
         m_isPlay = false;

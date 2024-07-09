@@ -97,7 +97,7 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
         m_vColor[0].vColor.w = 0.8f;
 
         Find_TabWindow();
-        m_isMainRender = m_pTab_Window->Get_MainRender();
+        m_isMainRender = m_pTab_Window->Get_MainRender_Ptr();
 
     }
 
@@ -106,6 +106,26 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
         for (auto& iter : m_vecTextBoxes)
         {
             iter->Set_FontColor(ALPHA_ZERO);
+        }
+    }
+
+    if (m_eLayout_Type == LAYOUT_UI_TYPE::INVEN_UI_TYPE)
+    {
+        if (!m_vecTextBoxes.empty())
+        {
+            for (auto& iter : m_vecTextBoxes)
+            {
+                if (iter->Get_Text() == TEXT("아이템을 검사합니다"))
+                {
+                    CTransform* pTextTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+                    
+                    m_vOriginTextPos = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
+
+                    m_isInvenCheck_Typing = true;
+
+                    break;
+                }
+            }
         }
     }
 
@@ -136,7 +156,7 @@ void CLayOut_UI::Tick(_float fTimeDelta)
             if (false == (*m_isMainRender))
             {
                 m_isRender = true;
-                m_eRenderLayout_Type = (LAYOUT_UI_TYPE) *(m_pTab_Window->Get_Window_Render_Type());
+                m_eRenderLayout_Type = (LAYOUT_UI_TYPE) *(m_pTab_Window->Get_Window_RenderType_Ptr());
             }
 
             else
@@ -184,6 +204,11 @@ void CLayOut_UI::Tick(_float fTimeDelta)
 
         m_isPrevRender = m_isRender;
     }
+
+    if (true == m_isInvenCheck_Typing)
+    {
+        Typing_Menu_LayOut();
+    }
 }   
 
 void CLayOut_UI::Late_Tick(_float fTimeDelta)
@@ -211,7 +236,48 @@ void CLayOut_UI::Find_TabWindow()
         {
             m_pTab_Window = pTabWin;
 
-            //Safe_AddRef<CTab_Window*>(m_pTab_Window);
+          //  Safe_AddRef<CTab_Window*>(m_pTab_Window);
+        }
+    }
+}
+
+void CLayOut_UI::Typing_Menu_LayOut()
+{
+    if (!m_vecTextBoxes.empty())
+    {
+
+        for (auto& iter : m_vecTextBoxes)
+        {
+            _float4 originPos = m_vOriginTextPos;
+
+            switch ((MENU_HOVER_TYPE)m_iMenu_HoverType)
+            {
+            case MENU_HOVER_TYPE::UNMOUNTED_MENU :
+                iter->Set_Text(TEXT("장착된 무기를 해제합니다."));
+                originPos.x -= 20.f;
+                iter->Set_Position(originPos);
+                break;
+
+            case MENU_HOVER_TYPE::INSPECTION_MENU:
+                iter->Set_Position(originPos);
+                iter->Set_Text(TEXT("아이템을 검사합니다."));
+                break;
+
+            case MENU_HOVER_TYPE::COMBINATION_MENU:
+                iter->Set_Position(originPos);
+                iter->Set_Text(TEXT("아이템을 조합합니다."));
+                break;
+
+            case MENU_HOVER_TYPE::SHORTCUTS_MENU:
+                iter->Set_Position(originPos);
+                iter->Set_Text(TEXT("단축키를 등록합니다."));
+                break;
+
+            case MENU_HOVER_TYPE::END_MENU:
+                iter->Set_Text(TEXT(""));
+                break;
+
+            }
         }
     }
 }
@@ -248,6 +314,9 @@ void CLayOut_UI::Free()
 {
     __super::Free();
 
-    //Safe_Release<CTab_Window*>(m_pTab_Window);
-
+    //if(nullptr != m_pTab_Window)
+    //{
+    //    Safe_Release<CTab_Window*>(m_pTab_Window);
+    //    m_pTab_Window = nullptr;
+    //}
 }

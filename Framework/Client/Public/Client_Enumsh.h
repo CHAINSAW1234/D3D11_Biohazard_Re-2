@@ -59,7 +59,7 @@ namespace Client
 		OPERATION_HALLWAY,				/* 11. 작전실 복도 */
 		DARKROOM_HALLWAY,				/* 12. 암실 복도 */
 		WEST_CNTRAL_HALLWAY,			/* 13. 서쪽 중앙 복도*/
-		OUT_LOCATION,/* 14. 밖 */
+		OUT_LOCATION,					/* 14. 밖 */
 		LOUNGE_HALLWAY,					/* 15. 휴게실 복도 */
 		EAST_OFFICE,					/* 16. 동쪽 사무실 */
 		LEFTSIDE_PRESSROOM_HALLWAY,		/* 17. 기자실 왼쪽 작은 방*/
