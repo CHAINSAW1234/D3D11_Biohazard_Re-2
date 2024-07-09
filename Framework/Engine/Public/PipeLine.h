@@ -134,7 +134,7 @@ public:
 
 private:
 	HRESULT				Set_Components();
-	HRESULT				Create_IrradianceTexture();
+	HRESULT				Create_Texture();
 
 private:
 	CGameInstance*			m_pGameInstance = { nullptr };
@@ -163,6 +163,7 @@ private:
 	_bool					m_isRender = { false };
 	CComputeShader*			m_pShaderCom = { nullptr };
 	CTexture*				m_pCubeMapTexture = { nullptr };
+	CRenderTarget*			m_pHDRTexture = { nullptr };
 	CRenderTarget*			m_pIrradialTexture = { nullptr };
 
 public:

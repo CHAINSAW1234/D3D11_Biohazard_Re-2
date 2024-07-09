@@ -93,7 +93,7 @@ HRESULT CPipeLine::Initialize()
 	}
 	m_vCamPosition = _float4(0.f, 0.f, 0.f, 1.f);
 
-	if (FAILED(Create_IrradianceTexture()))
+	if (FAILED(Create_Texture()))
 		return E_FAIL;
 
 	if (FAILED(Set_Components()))
@@ -121,20 +121,30 @@ HRESULT CPipeLine::Render()
 	if (m_pCubeMapTexture == nullptr)
 		return S_OK;
 
-
 	if (!m_isRender)
 		return S_OK;
 	m_isRender = false;
 
+	m_pHDRTexture->Clear();
 	m_pIrradialTexture->Clear();
 
+	//1. HDR
 	if (FAILED(m_pCubeMapTexture->Bind_ShaderResource(m_pShaderCom, "g_CubeTexture")))
 		return E_FAIL;
+	if (FAILED(m_pHDRTexture->Bind_OutputShaderResource(m_pShaderCom, "OutputTexture")))
+		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Render(0, 8, 8, 6)))
+		return E_FAIL;
+
+
+	// 2. Irradiance
+	if (FAILED(m_pHDRTexture->Bind_ShaderResource(m_pShaderCom, "g_CubeTexture")))
+		return E_FAIL;
 	if (FAILED(m_pIrradialTexture->Bind_OutputShaderResource(m_pShaderCom, "OutputTexture")))
 		return E_FAIL;
 
-	if(FAILED(m_pShaderCom->Render(0, 8, 8, 6)))
+	if(FAILED(m_pShaderCom->Render(1, 8,8, 6)))
 		return E_FAIL;
 
 	return S_OK;
@@ -190,7 +200,7 @@ void CPipeLine::Render_Debug()
 
 HRESULT CPipeLine::Set_Components()
 {
-	m_pShaderCom = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_IrradianceMap.hlsl"), "CS_Irradiance");
+	m_pShaderCom = CComputeShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_CubeMap.hlsl"), "CS_Irradiance");
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
@@ -202,21 +212,30 @@ HRESULT CPipeLine::Set_Components()
 	return S_OK;
 }
 
-HRESULT CPipeLine::Create_IrradianceTexture()
+HRESULT CPipeLine::Create_Texture()
 {
-	CRenderTarget* pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, 256, 6, DXGI_FORMAT_R8G8B8A8_UNORM,
-		TEXT("Target_Irradiance"), _float4(1.f,1.f,1.f,1.f), false);
-
+	CRenderTarget* pRenderTarget;
+		
+	pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, 256, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, TEXT("Target_HDR"), _float4(1.f, 1.f, 1.f, 1.f), false);
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
+
+	m_pHDRTexture = pRenderTarget;
+	m_pHDRTexture->Clear();
+
+	pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, 256, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, TEXT("Target_Irradiance"), _float4(1.f,1.f,1.f,1.f), false);
+	if (nullptr == pRenderTarget)
+		return E_FAIL;
+
+	m_pIrradialTexture = pRenderTarget;
+	m_pIrradialTexture->Clear();
 
 #ifdef _DEBUG
 	_float fSize = 150;
 	pRenderTarget->Ready_Debug(-fSize / 2 + fSize, -fSize / 2 + fSize * 5, fSize, fSize);
 #endif 
 
-	m_pIrradialTexture = pRenderTarget;
-	m_pIrradialTexture->Clear();
+
 
 	return S_OK;
 }
@@ -251,6 +270,7 @@ void CPipeLine::Free()
 	m_pSpotLight = nullptr;
 
 	Safe_Release(m_pCubeMapTexture);
+	Safe_Release(m_pHDRTexture);
 	Safe_Release(m_pIrradialTexture);
 	Safe_Release(m_pShaderCom);
 

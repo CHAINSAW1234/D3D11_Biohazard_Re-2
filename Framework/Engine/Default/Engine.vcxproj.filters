@@ -938,7 +938,10 @@
     <FxCompile Include="..\Bin\ShaderFiles\Skinning.hlsl">
       <Filter>01.Utility\98.ShaderFiles\Compute_Shader</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_IrradianceMap.hlsl">
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_CubeMap.hlsl">
+      <Filter>01.Utility\98.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_LUT.hlsl">
       <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>
