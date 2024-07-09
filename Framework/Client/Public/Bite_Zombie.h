@@ -59,11 +59,11 @@ public:
 private:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 
-	const wstring&					m_strDefaultFrontAnimLayerTag = { TEXT("Bite_Default_Front") };
-	const wstring&					m_strDefaultBackAnimLayerTag = { TEXT("Bite_Default_Back") };
-	const wstring&					m_strCreepAnimLayerTag = { TEXT("Bite_Creep") };
-	const wstring&					m_strETCAnimLayerTag = { TEXT("Bite_ETC") };
-	const wstring&					m_strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
+	const wstring					m_strDefaultFrontAnimLayerTag = { TEXT("Bite_Default_Front") };
+	const wstring					m_strDefaultBackAnimLayerTag = { TEXT("Bite_Default_Back") };
+	const wstring					m_strCreepAnimLayerTag = { TEXT("Bite_Creep") };
+	const wstring					m_strETCAnimLayerTag = { TEXT("Bite_ETC") };
+	const wstring					m_strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
 	const PLAYING_INDEX				m_ePlayingIndex = { PLAYING_INDEX::INDEX_0 };
 
 	BITE_ANIM_TYPE					m_eAnimType = { BITE_ANIM_TYPE::_END };
