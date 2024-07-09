@@ -3,13 +3,16 @@
 
 #include "GameInstance.h"
 #include "Muzzle_Light_SG.h"
+#include "Muzzle_Spark_SG.h"
 
-CMuzzle_Flash_SG::CMuzzle_Flash_SG(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+#define MUZZLE_SPARK_COUNT 6
+
+CMuzzle_Flash_SG::CMuzzle_Flash_SG(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEffect{ pDevice, pContext }
 {
 }
 
-CMuzzle_Flash_SG::CMuzzle_Flash_SG(const CMuzzle_Flash_SG & rhs)
+CMuzzle_Flash_SG::CMuzzle_Flash_SG(const CMuzzle_Flash_SG& rhs)
 	: CEffect{ rhs }
 {
 }
@@ -19,7 +22,7 @@ HRESULT CMuzzle_Flash_SG::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CMuzzle_Flash_SG::Initialize(void * pArg)
+HRESULT CMuzzle_Flash_SG::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -39,15 +42,34 @@ HRESULT CMuzzle_Flash_SG::Initialize(void * pArg)
 	m_vThirdFrame_Size = _float2(0.4f, 0.4f);
 
 	m_pMuzzle_Light = CMuzzle_Light_SG::Create(m_pDevice, m_pContext);
-	m_pMuzzle_Light->SetSize(3.f,3.f);
+	m_pMuzzle_Light->SetSize(3.f, 3.f);
+
+	m_vecMuzzle_Spark_SG.clear();
+
+	for (size_t i = 0; i < MUZZLE_SPARK_COUNT; ++i)
+	{
+		auto pSpark = CMuzzle_Spark_SG::Create(m_pDevice, m_pContext);
+		pSpark->SetType(i);
+		pSpark->Initialize(nullptr);
+		pSpark->SetSize(1.f, 1.f);
+		m_vecMuzzle_Spark_SG.push_back(pSpark);
+	}
 
 	return S_OK;
 }
 
 void CMuzzle_Flash_SG::Tick(_float fTimeDelta)
 {
+	for(size_t i = 0;i<m_vecMuzzle_Spark_SG.size();++i)
+	{
+		m_vecMuzzle_Spark_SG[i]->SetPosition(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+		m_vecMuzzle_Spark_SG[i]->Tick(fTimeDelta);
+	}
+
 	if (m_bRender == false)
+	{
 		return;
+	}
 
 	if (m_pMuzzle_Light)
 		m_pMuzzle_Light->Tick(fTimeDelta);
@@ -61,7 +83,7 @@ void CMuzzle_Flash_SG::Tick(_float fTimeDelta)
 	switch (m_iMainFrame)
 	{
 	case 0:
-		m_pTransformCom->Set_Scaled(m_vFirstFrame_Size.x, m_vFirstFrame_Size.y,1.f);
+		m_pTransformCom->Set_Scaled(m_vFirstFrame_Size.x, m_vFirstFrame_Size.y, 1.f);
 		m_iFrame = 0;
 		break;
 	case 1:
@@ -78,7 +100,10 @@ void CMuzzle_Flash_SG::Tick(_float fTimeDelta)
 
 	if (m_iMainFrame >= 3)
 	{
+		m_iSparkIndex = m_pGameInstance->GetRandom_Int(0, 5);
+
 		m_pMuzzle_Light->Set_Render(false);
+		m_vecMuzzle_Spark_SG[m_iSparkIndex]->Set_Render(true);
 		m_bRender = false;
 		m_iFrame = 0;
 		m_iMainFrame = 0;
@@ -91,10 +116,13 @@ void CMuzzle_Flash_SG::Tick(_float fTimeDelta)
 
 void CMuzzle_Flash_SG::Late_Tick(_float fTimeDelta)
 {
-	if(m_bRender == true)
+	if (m_vecMuzzle_Spark_SG[m_iSparkIndex])
+		m_vecMuzzle_Spark_SG[m_iSparkIndex]->Late_Tick(fTimeDelta);
+
+	if (m_bRender == true)
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EFFECT_BLOOM, this);
 
-	if(m_pMuzzle_Light)
+	if (m_pMuzzle_Light)
 		m_pMuzzle_Light->Late_Tick(fTimeDelta);
 }
 
@@ -119,7 +147,7 @@ void CMuzzle_Flash_SG::Compute_CurrentUV()
 	_uint   iSizeX = { (_uint)((_float)ImgSize.iSizeX / (_float)m_DivideCount.first) };
 	_uint   iSizeY = { (_uint)((_float)ImgSize.iSizeY / (_float)m_DivideCount.second) };
 
-	_uint   iCurrentFrame =	m_iFrame;
+	_uint   iCurrentFrame = m_iFrame;
 
 	_uint   iCurrentX = iCurrentFrame % m_DivideCount.first;
 	_uint   iCurrentY = iCurrentFrame / m_DivideCount.first;
@@ -140,7 +168,7 @@ void CMuzzle_Flash_SG::SetSize(_float fSizeX, _float fSizeY)
 	m_fSizeX = fSizeX;
 	m_fSizeY = fSizeY;
 
-	m_pTransformCom->Set_Scaled(fSizeX, fSizeY,1.f);
+	m_pTransformCom->Set_Scaled(fSizeX, fSizeY, 1.f);
 }
 
 void CMuzzle_Flash_SG::SetPosition(_float4 Pos)
@@ -181,11 +209,11 @@ HRESULT CMuzzle_Flash_SG::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMinUV_X", &m_fMinUV_X,sizeof(m_fMinUV_X))))
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMinUV_X", &m_fMinUV_X, sizeof(m_fMinUV_X))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMinUV_Y", &m_fMinUV_Y,sizeof(m_fMinUV_Y))))
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMinUV_Y", &m_fMinUV_Y, sizeof(m_fMinUV_Y))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaxUV_X", &m_fMaxUV_X,sizeof(m_fMaxUV_X))))
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaxUV_X", &m_fMaxUV_X, sizeof(m_fMaxUV_X))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_fMaxUV_Y", &m_fMaxUV_Y, sizeof(m_fMaxUV_Y))))
 		return E_FAIL;
@@ -202,9 +230,9 @@ HRESULT CMuzzle_Flash_SG::Bind_ShaderResources()
 	return S_OK;
 }
 
-CMuzzle_Flash_SG * CMuzzle_Flash_SG::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CMuzzle_Flash_SG* CMuzzle_Flash_SG::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CMuzzle_Flash_SG*		pInstance = new CMuzzle_Flash_SG(pDevice, pContext);
+	CMuzzle_Flash_SG* pInstance = new CMuzzle_Flash_SG(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -219,9 +247,9 @@ CMuzzle_Flash_SG * CMuzzle_Flash_SG::Create(ID3D11Device * pDevice, ID3D11Device
 
 }
 
-CGameObject * CMuzzle_Flash_SG::Clone(void * pArg)
+CGameObject* CMuzzle_Flash_SG::Clone(void* pArg)
 {
-	CMuzzle_Flash_SG*		pInstance = new CMuzzle_Flash_SG(*this);
+	CMuzzle_Flash_SG* pInstance = new CMuzzle_Flash_SG(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -241,4 +269,9 @@ void CMuzzle_Flash_SG::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pMuzzle_Light);
+
+	for(size_t i = 0;i<m_vecMuzzle_Spark_SG.size();++i)
+	{
+		Safe_Release(m_vecMuzzle_Spark_SG[i]);
+	}
 }

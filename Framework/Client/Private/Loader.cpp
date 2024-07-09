@@ -1337,6 +1337,26 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Smoke/Muzzle_Smoke_Trail.dds"), 1, &Desc))))
 		return E_FAIL;
 
+	Desc.iWidth = 1024;
+	Desc.iHeight = 1024;
+	Desc.iCountX = 8;
+	Desc.iCountY = 8;
+
+	/*Prototype_Component_Texture_Muzzle_Smoke_Trail*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_ShckWave_SG"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Smoke_SG/Muzzle_Smoke_SG.dds"), 1, &Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 1024;
+	Desc.iHeight = 1024;
+	Desc.iCountX = 8;
+	Desc.iCountY = 8;
+
+	/*Prototype_Component_Texture_Muzzle_Smoke_Trail*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_ShckWave_SG_01"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Smoke_SG/Muzzle_Smoke_SG_01.dds"), 1, &Desc))))
+		return E_FAIL;
+
 	Desc.iWidth = 512;
 	Desc.iHeight = 256;
 	Desc.iCountX = 16;
@@ -1352,9 +1372,59 @@ HRESULT CLoader::Loading_For_GamePlay()
 	Desc.iCountX = 4;
 	Desc.iCountY = 1;
 
-	/*Prototype_Component_Texture_Muzzle_Flash_SG*/
+	/*Prototype_Component_Texture_Muzzle_Spark_SG*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Spark_SG/Muzzle_Spark_SG.dds"), 1, &Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 512;
+	Desc.iHeight = 128;
+	Desc.iCountX = 4;
+	Desc.iCountY = 1;
+
+	/*Prototype_Component_Texture_Muzzle_Spark_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG_01"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Spark_SG/Muzzle_Spark_SG_01.dds"), 1, &Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 1024;
+	Desc.iHeight = 512;
+	Desc.iCountX = 4;
+	Desc.iCountY = 2;
+
+	/*Prototype_Component_Texture_Muzzle_Spark_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG_02"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Spark_SG/Muzzle_Spark_SG_02.dds"), 1, &Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 1024;
+	Desc.iHeight = 256;
+	Desc.iCountX = 4;
+	Desc.iCountY = 1;
+
+	/*Prototype_Component_Texture_Muzzle_Spark_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG_03"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Spark_SG/Muzzle_Spark_SG_03.dds"), 1, &Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 1024;
+	Desc.iHeight = 256;
+	Desc.iCountX = 4;
+	Desc.iCountY = 1;
+
+	/*Prototype_Component_Texture_Muzzle_Spark_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG_04"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Spark_SG/Muzzle_Spark_SG_04.dds"), 1, &Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 1024;
+	Desc.iHeight = 256;
+	Desc.iCountX = 4;
+	Desc.iCountY = 1;
+
+	/*Prototype_Component_Texture_Muzzle_Spark_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG_05"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Spark_SG/Muzzle_Spark_SG_05.dds"), 1, &Desc))))
 		return E_FAIL;
 #pragma endregion
 

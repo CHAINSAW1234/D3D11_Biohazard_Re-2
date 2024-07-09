@@ -2,6 +2,9 @@
 #include "..\Public\Muzzle_Spark_SG.h"
 
 #include "GameInstance.h"
+#include "Muzzle_ShockWave.h"
+
+#define SHOCKWAVE_COUNT 2
 
 CMuzzle_Spark_SG::CMuzzle_Spark_SG(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CEffect{ pDevice, pContext }
@@ -28,16 +31,31 @@ HRESULT CMuzzle_Spark_SG::Initialize(void * pArg)
 
 	m_ImgSize = m_pTextureCom->GetImgSize();
 	m_DivideCount = m_pTextureCom->GetDivideCount();
+	m_iFrame_Total = m_DivideCount.first * m_DivideCount.second;
 
 	m_bRender = false;
 
-	m_FrameDelay = 400;
+	m_FrameDelay = 5;
+
+	for (size_t i = 0; i < 2; ++i)
+	{
+		auto pShockWave = CMuzzle_ShockWave::Create(m_pDevice, m_pContext);
+		pShockWave->SetType(i);
+		pShockWave->Initialize(nullptr);
+		pShockWave->SetSize(1.f, 1.f);
+		m_vecShockWave.push_back(pShockWave);
+	}
 
 	return S_OK;
 }
 
 void CMuzzle_Spark_SG::Tick(_float fTimeDelta)
 {
+	for (size_t i = 0; i < m_vecShockWave.size(); ++i)
+	{
+		m_vecShockWave[i]->Tick(fTimeDelta);
+	}
+
 	if (m_bRender == false)
 		return;
 
@@ -47,10 +65,23 @@ void CMuzzle_Spark_SG::Tick(_float fTimeDelta)
 		m_FrameTime = GetTickCount64();
 	}
 
-	if (m_iFrame >= 4)
+	m_fSizeX += 0.05f;
+	m_fSizeY += 0.05f;
+	m_pTransformCom->Set_Scaled(m_fSizeX, m_fSizeY, 1.f);
+
+	if (m_iFrame >= m_iFrame_Total)
 	{
+		m_fSizeX = m_fDefaultSize_X;
+		m_fSizeY = m_fDefaultSize_Y;
+		m_pTransformCom->Set_Scaled(m_fSizeX, m_fSizeY, 1.f);
+
 		m_bRender = false;
 		m_iFrame = 0;
+
+		m_iShockWaveIndex = m_pGameInstance->GetRandom_Int(0, 1);
+
+		m_vecShockWave[m_iShockWaveIndex]->SetPosition(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+		m_vecShockWave[m_iShockWaveIndex]->Set_Render(true);
 	}
 
 	Compute_CurrentUV();
@@ -60,8 +91,13 @@ void CMuzzle_Spark_SG::Tick(_float fTimeDelta)
 
 void CMuzzle_Spark_SG::Late_Tick(_float fTimeDelta)
 {
-	/*if(m_bRender == true)
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EFFECT_BLOOM, this);*/
+	for (size_t i = 0; i < m_vecShockWave.size(); ++i)
+	{
+		m_vecShockWave[i]->Late_Tick(fTimeDelta);
+	}
+
+	if(m_bRender == true)
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EFFECT_BLOOM, this);
 }
 
 HRESULT CMuzzle_Spark_SG::Render()
@@ -69,7 +105,7 @@ HRESULT CMuzzle_Spark_SG::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(5);
+	m_pShaderCom->Begin(2);
 
 	m_pVIBufferCom->Bind_Buffers();
 
@@ -115,7 +151,6 @@ void CMuzzle_Spark_SG::SetSize(_float fSizeX, _float fSizeY)
 void CMuzzle_Spark_SG::SetPosition(_float4 Pos)
 {
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, Pos);
-	m_iFrame = 0;
 	m_fAlpha_Delta_Sum = 0.f;
 }
 
@@ -126,10 +161,45 @@ HRESULT CMuzzle_Spark_SG::Add_Components()
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG"),
-		TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
-		return E_FAIL;
+	switch (m_iType)
+	{
+	case 0:
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG_01"),
+			TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
+			return E_FAIL;
+		break;
+	case 1:
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG_01"),
+			TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
+			return E_FAIL;
+		break;
+	case 2:
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG_02"),
+			TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
+			return E_FAIL;
+		break;
+	case 3:
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG_03"),
+			TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
+			return E_FAIL;
+		break;
+	case 4:
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG_04"),
+			TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
+			return E_FAIL;
+		break;
+	case 5:
+		/* For.Com_Texture */
+		if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG_05"),
+			TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
+			return E_FAIL;
+		break;
+	}
 
 	/* For.Com_VIBuffer */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
@@ -184,8 +254,6 @@ CMuzzle_Spark_SG * CMuzzle_Spark_SG::Create(ID3D11Device * pDevice, ID3D11Device
 		Safe_Release(pInstance);
 	}
 
-	pInstance->Initialize(nullptr);
-
 	return pInstance;
 
 }
@@ -211,4 +279,9 @@ void CMuzzle_Spark_SG::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
+
+	for (size_t i = 0; i < m_vecShockWave.size(); ++i)
+	{
+		Safe_Release(m_vecShockWave[i]);
+	}
 }

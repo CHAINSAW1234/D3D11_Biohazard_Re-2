@@ -43,24 +43,18 @@ void CMuzzle_Flash::Tick(_float fTimeDelta)
 	if (m_bRender == false)
 		return;
 
+	if (m_pMuzzle_Light)
+		m_pMuzzle_Light->Tick(fTimeDelta);
+
 	if (m_iFrame >= 2)
 	{
 		m_pMuzzle_Light->Set_Render(false);
 		m_bRender = false;
 		m_iFrame = 0;
-
-		return;
-	}
-
-	if (m_iFrame == 1)
-	{
 		m_pMuzzle_Light->SetPosition(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 		m_pMuzzle_Light->Set_Render(true);
+		return;
 	}
-
-
-	if (m_pMuzzle_Light)
-		m_pMuzzle_Light->Tick(fTimeDelta);
 
 	++m_iFrame;
 

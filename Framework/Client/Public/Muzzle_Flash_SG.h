@@ -38,11 +38,13 @@ private:
 	virtual HRESULT			Bind_ShaderResources();
 
 private:
-	_float2					m_vFirstFrame_Size;
-	_float2					m_vSecondFrame_Size;
-	_float2					m_vThirdFrame_Size;
-	_int					m_iMainFrame = { 0 };
-	class CMuzzle_Light_SG* m_pMuzzle_Light = { nullptr };
+	_float2									m_vFirstFrame_Size;
+	_float2									m_vSecondFrame_Size;
+	_float2									m_vThirdFrame_Size;
+	_int									m_iMainFrame = { 0 };
+	class CMuzzle_Light_SG*					m_pMuzzle_Light = { nullptr };
+	vector<class CMuzzle_Spark_SG*>			m_vecMuzzle_Spark_SG = { nullptr };
+	_int									m_iSparkIndex = { 0 };
 public:
 	static CMuzzle_Flash_SG* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
