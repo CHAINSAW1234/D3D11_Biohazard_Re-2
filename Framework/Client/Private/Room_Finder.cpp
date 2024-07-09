@@ -22,9 +22,9 @@ list<CDoor*> CRoom_Finder::Find_Linked_Doors_From_Location(LOCATION_MAP_VISIT eL
 	list<CDoor*>							Linked_Doors;
 
 	_uint				iNumLocations = { static_cast<_uint>(m_Doors_In_Locations.size()) };
-	if (iNumLocations > eLocation)
+	if (iNumLocations > static_cast<_uint>(eLocation))
 	{
-		Linked_Doors = m_Doors_In_Locations[eLocation];
+		Linked_Doors = m_Doors_In_Locations[static_cast<_uint>(eLocation)];
 	}
 
 	return Linked_Doors;
@@ -54,10 +54,10 @@ HRESULT CRoom_Finder::Add_Door(LOCATION_MAP_VISIT eLocation, CDoor* pDoor)
 		return E_FAIL;
 
 	_uint				iNumLocations = { static_cast<_uint>(m_Doors_In_Locations.size()) };
-	if (iNumLocations <= eLocation)
+	if (iNumLocations <= static_cast<_uint>(eLocation))
 		return E_FAIL;
 
-	m_Doors_In_Locations[eLocation].emplace_back(pDoor);
+	m_Doors_In_Locations[static_cast<_uint>(eLocation)].emplace_back(pDoor);
 	Safe_AddRef(pDoor);
 
 	return S_OK;
@@ -66,10 +66,10 @@ HRESULT CRoom_Finder::Add_Door(LOCATION_MAP_VISIT eLocation, CDoor* pDoor)
 _bool CRoom_Finder::Is_Exist_Door_Already(LOCATION_MAP_VISIT eLocation, CDoor* pDoor)
 {
 	_uint				iNumLocations = { static_cast<_uint>(m_Doors_In_Locations.size()) };
-	if (iNumLocations <= eLocation)
+	if (iNumLocations <= static_cast<_uint>(eLocation))
 		return false;
 
-	list<CDoor*>&		LinkedDoors = { m_Doors_In_Locations[eLocation] };
+	list<CDoor*>&		LinkedDoors = { m_Doors_In_Locations[static_cast<_uint>(eLocation)] };
 	list<CDoor*>::iterator			iterDoor = { find(LinkedDoors.begin(), LinkedDoors.end(), pDoor) };
 
 	if (iterDoor == LinkedDoors.end())

@@ -33,6 +33,8 @@ _bool CRegion_Update_Zombie::Execute(_float fTimeDelta)
 
 	if (Check_Permition_To_Execute() == false)
 		return false;
+
+	return true;
 #pragma endregion
 }
 

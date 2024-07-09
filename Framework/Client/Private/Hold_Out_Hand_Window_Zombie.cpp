@@ -167,8 +167,7 @@ _bool CHold_Out_Hand_Window_Zombie::Execute(_float fTimeDelta)
 	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->Set_State(MONSTER_STATE::MST_HOLD_WINDOW);
 
-	if (m_fAccLinearInterpolateTime < ZOMBIE_HOLD_TOTAL_INTERPOLATE_TO_WINDOW_TIME &&
-		true == ZOMBIE_HOLD_TOTAL_INTERPOLATE_TO_WINDOW_TIME)
+	if (m_fAccLinearInterpolateTime < ZOMBIE_HOLD_TOTAL_INTERPOLATE_TO_WINDOW_TIME)
 	{
 		_bool				isComplete = { m_fAccLinearInterpolateTime >= ZOMBIE_HOLD_TOTAL_INTERPOLATE_TO_WINDOW_TIME };
 		if (false == isComplete)

@@ -151,6 +151,8 @@ HRESULT CImpact::Bind_ShaderResources()
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture",m_iFrame)))
 		return E_FAIL;
+
+	return S_OK;
 }
 
 CImpact * CImpact::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
