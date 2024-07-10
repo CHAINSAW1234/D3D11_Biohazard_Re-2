@@ -589,9 +589,6 @@
     <Filter Include="02.GameObjects\Monster\Zombie\Part_Breaker">
       <UniqueIdentifier>{b1bd9785-09af-4360-a1b2-b6edb587c506}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\MapObject\Room_Manager">
-      <UniqueIdentifier>{fed6f7b1-2d58-429f-8dcb-9213a6e9ed85}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Effect\Blood_Drop">
       <UniqueIdentifier>{cff06b52-a101-4afb-bf3a-7cd6dd47d9ce}</UniqueIdentifier>
     </Filter>
@@ -663,6 +660,9 @@
     </Filter>
     <Filter Include="02.GameObjects\Effect\Cartridge\SG_Cartridge">
       <UniqueIdentifier>{3ceb3dd1-ad99-4dda-98d1-6a65c2c36522}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\Room_Finder">
+      <UniqueIdentifier>{fed6f7b1-2d58-429f-8dcb-9213a6e9ed85}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1222,7 +1222,7 @@
       <Filter>02.GameObjects\Monster\Zombie\Part_Breaker</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Room_Finder.h">
-      <Filter>02.GameObjects\MapObject\Room_Manager</Filter>
+      <Filter>02.GameObjects\MapObject\Room_Finder</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Blood_Drop.h">
       <Filter>02.GameObjects\Effect\Blood_Drop</Filter>
@@ -1806,7 +1806,7 @@
       <Filter>02.GameObjects\Monster\Zombie\Part_Breaker</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Room_Finder.cpp">
-      <Filter>02.GameObjects\MapObject\Room_Manager</Filter>
+      <Filter>02.GameObjects\MapObject\Room_Finder</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Blood_Drop.cpp">
       <Filter>02.GameObjects\Effect\Blood_Drop</Filter>
