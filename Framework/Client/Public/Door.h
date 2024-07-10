@@ -73,8 +73,8 @@ private:
 	void										OneDoor_Late_Tick(_float fTimeDelta);
 
 	_float										Radian_To_Player();
-	_float										Radian_To_Jombie(class CTransform* pTransform);
-
+	_float										Radian_To_Zombie(class CTransform* pTransform);
+	_float									Distance_Zombie(class CTransform* pTransform);
 	void										OneDoor_Active();
 	void										DoubleDoor_Active();
 
@@ -84,12 +84,24 @@ public:
 	{
 		if (m_iHP <= 0)
 		{
-			_float fScala = Radian_To_Jombie(pTransfromCom);
-			if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
-				m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_L;
+			m_bAttack = true;
+			_float fScala = Radian_To_Zombie(pTransfromCom);
+			if (m_eType == DOOR_DOUBLE)
+			{
+				if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
+					m_eDoubleState = L_DOUBLEDOOR_OPEN;
+				else
+					m_eDoubleState = R_DOUBLEDOOR_OPEN;
+			}
 			else
-				m_eDoubleState = RSIDE_DOUBLEDOOR_OPEN_L;
+			{
+				if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
+					m_eOneState = ONEDOOR_OPEN_L;
+				else
+					m_eOneState = ONEDOOR_OPEN_R;
+			}
 			
+			m_pZombieTransform = pTransfromCom;
 			m_bActivity = true;
 			
 			return true;
@@ -110,7 +122,7 @@ public :
 
 private:
 	_bool										m_bLock =	{ false };
-
+	_bool										m_bAttack = { false };
 	_int										m_iHP = { 5 };
 
 	_float										m_fTime = { 0.f };
@@ -126,7 +138,7 @@ private:
 	_ubyte   									m_eDoubleState_Prev		= { DOUBLEDOOR_STATIC };
 	_ubyte										m_eDoubleDoorType;
 	list<LOCATION_MAP_VISIT>					m_Linked_Locations;
-
+	CTransform* m_pZombieTransform = { nullptr };
 public:
 	static CDoor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
