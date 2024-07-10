@@ -80,9 +80,6 @@ void CBlackBoard_Zombie::Priority_Tick(_float fTimeDelta)
 	Update_Timers(fTimeDelta);
 	Update_Status(fTimeDelta);
 	Update_Look_Target(fTimeDelta);
-
-
-	m_pAI->Set_Location(static_cast<LOCATION_MAP_VISIT>(m_pPlayer->Get_Player_Region()));
 }
 
 void CBlackBoard_Zombie::Late_Tick(_float fTimeDelta)
@@ -305,6 +302,14 @@ CCustomCollider* CBlackBoard_Zombie::Get_Nearest_Window_CustomCollider()
 	return m_pNearest_Window->Get_CustomCollider_Ptr();
 }
 
+CCustomCollider* CBlackBoard_Zombie::Get_Target_Door_CustomCollider()
+{
+	if (nullptr == m_pTarget_Door)
+		return nullptr;
+
+	return m_pTarget_Door->Get_CustomCollider_Ptr();
+}
+
 void CBlackBoard_Zombie::Research_NearestDoor()
 {
 	Safe_Release(m_pNearest_Door);
@@ -317,6 +322,12 @@ void CBlackBoard_Zombie::Release_Nearest_Door()
 {
 	Safe_Release(m_pNearest_Door);
 	m_pNearest_Door = nullptr;
+}
+
+void CBlackBoard_Zombie::Release_Target_Door()
+{
+	Safe_Release(m_pTarget_Door);
+	m_pTarget_Door = nullptr;
 }
 
 CCustomCollider* CBlackBoard_Zombie::Get_Nearest_Door_CustomCollider()

@@ -27,7 +27,7 @@ private:
 	void							Change_Animation_Front_Only(_float fTimeDelta);
 	void							Change_Animation_Include_Rotation(_float fTimeDelta);
 
-	void							Turn_To_Window(_float fTimeDelta);
+	void							Turn_To_TargetObject_Manual(_float fTimeDelta);
 
 	_bool							Is_CurrentAnim_StartAnim(PLAYING_INDEX eIndex);
 	_bool							Is_CurrentAnim_LoopAnim(PLAYING_INDEX eIndex);

@@ -123,6 +123,9 @@ void CMap::Late_Tick(_float fTimeDelta)
 		m_bVisible = m_tagPropDesc.BelongIndexs2[m_pPlayer->Get_Player_ColIndex()];
 	}
 
+#ifndef  MAP_TEST
+
+
 	if (/*m_bVisible && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f)*/1)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD, this);
@@ -134,6 +137,8 @@ void CMap::Late_Tick(_float fTimeDelta)
 			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 		}
 	}
+
+#endif
 
 	function<void()> job1 = bind(&COctree::DrawOctree_1, m_pOctree);
 	m_pGameInstance->Insert_Job(job1);

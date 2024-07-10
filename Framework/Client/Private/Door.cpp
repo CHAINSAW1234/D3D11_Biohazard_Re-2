@@ -102,7 +102,7 @@ void CDoor::Tick(_float fTimeDelta)
 #endif
 
 	m_eType == CDoor::DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
-
+	
 	__super::Tick(fTimeDelta);
 }
 

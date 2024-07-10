@@ -1455,7 +1455,7 @@ HRESULT CLevel_GamePlay::Load_Monster(const wstring& strFilePath, const wstring&
 	if (!ReadFile(hFile, &iObjectNum, sizeof(_uint), &dwByte, nullptr))
 		return E_FAIL;
 
-	for (_uint i = 0; iObjectNum > i; ++i)
+	for (_uint i = 0; 1 > i; ++i)
 	{
 		_uint iLength = { 0 };
 		CZombie::ZOMBIE_MALE_DESC		ObjectDesc;

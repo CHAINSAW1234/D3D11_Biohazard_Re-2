@@ -22,7 +22,7 @@ public:
 	virtual void					Exit() override;
 
 private:
-	void							Set_Hand_AdditionalMatrices(_float fTimeDelta);
+	void							Set_Spine_To_Head_AdditionalMatrices(_float fTimeDelta);
 
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }
@@ -38,6 +38,8 @@ private:
 	list<_uint>						m_Child_JointIndices;
 
 	_bool							m_isStart = { false };
+
+	_float							m_fMaxAngle = { 0.f };
 
 public:
 	static CTurn_Spine_Head_Zombie* Create(void* pArg = nullptr);

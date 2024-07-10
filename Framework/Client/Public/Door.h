@@ -95,7 +95,11 @@ public:
 			return true;
 		}
 		else
+		{
+			m_iHP -= 1;
+
 			return false;
+		}
 	}
 
 public:

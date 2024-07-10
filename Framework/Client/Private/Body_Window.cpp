@@ -65,6 +65,7 @@ void CBody_Window::Late_Tick(_float fTimeDelta)
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+	//	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &fTransform3);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 

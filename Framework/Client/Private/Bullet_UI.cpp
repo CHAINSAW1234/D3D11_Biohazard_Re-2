@@ -183,7 +183,7 @@ void CBullet_UI::Tick(_float fTimeDelta)
             m_fBlending += fTimeDelta * 1.5f;
     }
 
-    Bullet_Font();
+    //  Bullet_Font();
 
     if (m_iCurrentBullet < 1)
         Mission_Complete();

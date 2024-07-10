@@ -31,7 +31,7 @@ void CKnock_Door_Zombie::Enter()
 	if (nullptr == pBodyModel)
 		return;
 
-	CDoor*				pDoor = { m_pBlackBoard->Get_Nearest_Door() };
+	CDoor*				pDoor = { m_pBlackBoard->Get_Target_Door() };
 	if (nullptr == pDoor)
 		return;
 
@@ -40,7 +40,7 @@ void CKnock_Door_Zombie::Enter()
 		return;
 
 	_bool				isDoorsFront = { vDirectionFromDoorLocalFloat3.z > 0.f };
-	if (true == isDoorsFront)
+	if (false == isDoorsFront)
 	{
 		m_eAnimType = ANIM_TYPE::_A;
 	}
@@ -64,8 +64,23 @@ void CKnock_Door_Zombie::Enter()
 	if (false == m_pBlackBoard->Compute_DeltaMatrix_AnimFirstKeyFrame_From_Target(pDoor->Get_Transform(), static_cast<_uint>(m_eBasePlayingIndex), iAnimIndex, m_strAnimLayerTag, &m_InterpolateDeltaMatrix))
 		return;
 
-	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
+	/*_matrix				TargetDoorWorldMatrix = { pDoor->Get_Transform()->Get_WorldMatrix() };
+	_matrix				Zombie_WorldMatrix = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix() };
+	
+	_vector				vTargetScale, vTargetQuaternion, vTargetTranslation;
+	_vector				vZombieScale, vZombieQuaternion, vZombieTranslation;
+	
+	XMMatrixDecompose(&vTargetScale, &vTargetQuaternion, &vTargetTranslation, TargetDoorWorldMatrix);
+	XMMatrixDecompose(&vZombieScale, &vZombieQuaternion, &vZombieTranslation, Zombie_WorldMatrix);
 
+	_matrix				NewWorldMatrix = { XMMatrixAffineTransformation(vZombieScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vTargetQuaternion, vTargetTranslation) };
+	m_pBlackBoard->Get_AI()->Get_Transform()->Set_WorldMatrix(NewWorldMatrix);*/
+
+	pBodyModel->Set_TotalLinearInterpolation(0.3f);
+
+	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
+	m_fAccLinearInterpolateTime = 0.f;
+	m_eAnimState = ANIM_STATE::_START;
 
 #ifdef _DEBUG
 
@@ -84,8 +99,14 @@ _bool CKnock_Door_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
-	CDoor*				pDoor = { m_pBlackBoard->Get_Nearest_Door() };
+	CDoor*				pDoor = { m_pBlackBoard->Get_Target_Door() };
 	if (nullptr == pDoor)
+		return false;
+
+	//	필요 조건 => 문 안열리고 막타이상이어야함 ( HP1 초과... ), 문이 잠기지않음
+	_int				iHpDoor = { pDoor->Get_HP() };
+	_bool				isDoorCanKnock = { 0 < iHpDoor };
+	if (false == isDoorCanKnock)
 		return false;
 
 	MONSTER_STATE		ePreMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
@@ -101,16 +122,16 @@ _bool CKnock_Door_Zombie::Execute(_float fTimeDelta)
 		_bool			isAnimFinished = { pBody_Model->isFinished(static_cast<_uint>(m_eBasePlayingIndex)) };
 		_bool			isSameLayer = { strCurrentAnimLayerTag == m_strAnimLayerTag };
 		_bool			isStartAnimINdex = {
-		static_cast<_int>(ANIM_GIMMICK_WINDOW::_HOLD_OUT_HAND_START1) == iCurrentAnimIndex ||
-		static_cast<_int>(ANIM_GIMMICK_WINDOW::_HOLD_OUT_HAND_START2) == iCurrentAnimIndex
-		};
-		_bool			isFInishAnimInex = {
-			static_cast<_int>(ANIM_GIMMICK_WINDOW::_HOLD_OUT_HAND_END1) == iCurrentAnimIndex ||
-			static_cast<_int>(ANIM_GIMMICK_WINDOW::_HOLD_OUT_HAND_END2) == iCurrentAnimIndex
+		static_cast<_int>(ANIM_GIMMICK_DOOR::_KNOCK_FROM_A_START) == iCurrentAnimIndex ||
+		static_cast<_int>(ANIM_GIMMICK_DOOR::_KNOCK_FROM_B_START) == iCurrentAnimIndex
 		};
 		_bool			isLoopAnimINdex = {
-		static_cast<_int>(ANIM_GIMMICK_WINDOW::_HOLD_OUT_HAND_LOOP1) == iCurrentAnimIndex ||
-		static_cast<_int>(ANIM_GIMMICK_WINDOW::_HOLD_OUT_HAND_LOOP2) == iCurrentAnimIndex
+			static_cast<_int>(ANIM_GIMMICK_DOOR::_KNOCK_FROM_A_LOOP) == iCurrentAnimIndex ||
+			static_cast<_int>(ANIM_GIMMICK_DOOR::_KNOCK_FROM_B_LOOP) == iCurrentAnimIndex
+		};
+		_bool			isFInishAnimInex = {
+		static_cast<_int>(ANIM_GIMMICK_DOOR::_KNOCK_FROM_A_END) == iCurrentAnimIndex ||
+		static_cast<_int>(ANIM_GIMMICK_DOOR::_KNOCK_FROM_B_END) == iCurrentAnimIndex
 		};
 
 		if (isSameLayer && isStartAnimINdex)
@@ -118,12 +139,16 @@ _bool CKnock_Door_Zombie::Execute(_float fTimeDelta)
 			if (true == isAnimFinished)
 			{
 				m_eAnimState = ANIM_STATE::_LOOP;				
+
+				pBody_Model->Set_TotalLinearInterpolation(0.f);
 			}
 		}
 
 		else if (isSameLayer && isLoopAnimINdex)
 		{
-			_int			iDoorHP = { pDoor->Get_HP() };
+
+			//	해당처리로하면 마지막에 제자리 돌아가는 모션임 지쳤을때로 표현해야할듯?
+			/*_int			iDoorHP = { pDoor->Get_HP() };
 			if (2 == iDoorHP)
 			{
 				m_eAnimState = ANIM_STATE::_FINISH;
@@ -137,6 +162,13 @@ _bool CKnock_Door_Zombie::Execute(_float fTimeDelta)
 					m_fAccKnockTime -= ZOMBIE_ATTACK_DOOR_NEED_TIME;
 					pDoor->Attack_Prop();
 				}
+			}*/
+
+			m_fAccKnockTime += fTimeDelta;
+			if (m_fAccKnockTime >= ZOMBIE_ATTACK_DOOR_NEED_TIME)
+			{
+				m_fAccKnockTime -= ZOMBIE_ATTACK_DOOR_NEED_TIME;
+				pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
 			}
 		}
 
@@ -145,7 +177,7 @@ _bool CKnock_Door_Zombie::Execute(_float fTimeDelta)
 			if (true == isAnimFinished)
 			{
 				m_eAnimState = ANIM_STATE::_END;
-				pDoor->Attack_Prop();
+				pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
 				return false;
 			}
 		}
@@ -153,16 +185,8 @@ _bool CKnock_Door_Zombie::Execute(_float fTimeDelta)
 
 	else
 	{
-		//	필요 조건 => 문 안열리고 막타이상이어야함 ( HP1 초과... ), 문이 잠기지않음
-		_int				iHpDoor = { pDoor->Get_HP() };
-		_bool				isDoorCanKnock = { 1 < iHpDoor };
-		if (false == isDoorCanKnock)
-			return false;
-
 		if (true == pDoor->Is_Lock())
 			return false;
-
-		m_eAnimState = ANIM_STATE::_START;
 	}
 
 	m_pBlackBoard->Organize_PreState(this);
@@ -201,6 +225,12 @@ void CKnock_Door_Zombie::Exit()
 {
 	if (nullptr == m_pBlackBoard)
 		return;
+
+	CModel*				pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+	if (nullptr != pBody_Model)
+	{
+		pBody_Model->Set_TotalLinearInterpolation(0.3f);
+	}
 }
 
 void CKnock_Door_Zombie::Change_Animation(_float fTimeDelta)

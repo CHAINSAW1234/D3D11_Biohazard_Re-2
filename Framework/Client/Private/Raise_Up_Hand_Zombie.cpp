@@ -27,8 +27,6 @@ void CRaise_Up_Hand_Zombie::Enter()
 
 _bool CRaise_Up_Hand_Zombie::Execute(_float fTimeDelta)
 {
-	return true;
-
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)
 		return false;
@@ -56,7 +54,7 @@ _bool CRaise_Up_Hand_Zombie::Execute(_float fTimeDelta)
 			m_fAccActiveTime = ZOMBIE_RAISE_UP_HAND_MAX_TIME;
 	}	
 
-	Set_Hand_AdditionalMatrices();
+	Set_Spine_To_Head_AdditionalMatrices();
 
 	m_pBlackBoard->Get_AI()->Active_IK_Body(true);
 
@@ -82,7 +80,7 @@ void CRaise_Up_Hand_Zombie::Exit()
 {
 }
 
-void CRaise_Up_Hand_Zombie::Set_Hand_AdditionalMatrices()
+void CRaise_Up_Hand_Zombie::Set_Spine_To_Head_AdditionalMatrices()
 {
 	CTransform*			pZombie_Transform = { m_pBlackBoard->Get_AI()->Get_Transform() };
 	CTransform*			pPlayer_Transform = { m_pBlackBoard->Get_Player()->Get_Transform() };

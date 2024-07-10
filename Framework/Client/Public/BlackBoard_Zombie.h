@@ -49,11 +49,12 @@ public:
 	inline class CWindow*			Get_Nearest_Window() { return m_pNearest_Window; }
 	void							Release_Nearest_Window();
 	class CCustomCollider*			Get_Nearest_Window_CustomCollider();
+	class CCustomCollider*			Get_Target_Door_CustomCollider();
 
 public:
 	void							Research_NearestDoor();
-	inline class CDoor*				Get_Nearest_Door() { return m_pNearest_Door; }
 	void							Release_Nearest_Door();
+	void							Release_Target_Door();
 	class CCustomCollider*			Get_Nearest_Door_CustomCollider();
 
 private:
@@ -85,6 +86,7 @@ public: // Getter
 	}
 
 	inline CTask_Node*				Get_PreTaskNode() { return m_pPreTaskNode; }
+	inline class CDoor*				Get_Target_Door() { return m_pTarget_Door; }
 
 	void							Set_Current_MotionType_Body(MOTION_TYPE eType);
 	_uint							Get_Current_MotionType_Body();

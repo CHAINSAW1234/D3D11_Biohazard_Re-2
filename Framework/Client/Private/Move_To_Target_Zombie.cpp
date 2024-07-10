@@ -8,6 +8,7 @@
 
 #include "Player.h"
 #include "Window.h"
+#include "Door.h"
 
 
 CMove_To_Target_Zombie::CMove_To_Target_Zombie()
@@ -96,31 +97,47 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 
 	if (false == m_pBlackBoard->Get_AI()->Is_OutDoor())
 	{
-		if (false == m_pBlackBoard->Is_LookTarget())
-			return false;
+		LOCATION_MAP_VISIT			ePlayerLocation = { static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region()) };
+		_bool			isSameLocation_To_Target = { m_pBlackBoard->Get_AI()->Is_In_Location(ePlayerLocation) };
+		if (false == isSameLocation_To_Target)
+		{
+			CDoor*			pTarget_Door = { m_pBlackBoard->Get_Target_Door() };
+			if (nullptr == pTarget_Door)
+				return false;
 
-		_float3			vDirectionToPlayerLocalFloat3;
-		if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3))
-			return false;
+			Safe_Release(m_pTargetObject);
+			m_pTargetObject = pTarget_Door;
+			Safe_AddRef(m_pTargetObject);
+		}
 
-		_vector			vDirectionToPlayerLocal = { XMLoadFloat3(&vDirectionToPlayerLocalFloat3) };
-		_vector			vDirectionToPlayerLocalXZPlane = { XMVector3Normalize(XMVectorSetY(vDirectionToPlayerLocal, 0.f)) };		//	회전량을 xz평면상에서만 고려하기위함
-		_vector			vAILookLocal = { XMVectorSet(0.f, 0.f, 1.f, 0.f) };
+		else
+		{
+			if (false == m_pBlackBoard->Is_LookTarget())
+				return false;
 
-		_bool			isRight = { XMVectorGetX(vDirectionToPlayerLocalXZPlane) > 0.f };
+			_float3			vDirectionToPlayerLocalFloat3;
+			if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3))
+				return false;
 
-		_float			fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirectionToPlayerLocal), XMVector3Normalize(vAILookLocal))) };
-		_float			fAngleToTarget = { acosf(fDot) };
+			_vector			vDirectionToPlayerLocal = { XMLoadFloat3(&vDirectionToPlayerLocalFloat3) };
+			_vector			vDirectionToPlayerLocalXZPlane = { XMVector3Normalize(XMVectorSetY(vDirectionToPlayerLocal, 0.f)) };		//	회전량을 xz평면상에서만 고려하기위함
+			_vector			vAILookLocal = { XMVectorSet(0.f, 0.f, 1.f, 0.f) };
 
-		_float			fMaxMoveAngle = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fMaxMoveAngle };
-		if (fMaxMoveAngle < fAngleToTarget)
-			return false;
+			_bool			isRight = { XMVectorGetX(vDirectionToPlayerLocalXZPlane) > 0.f };
 
-		Safe_Release(m_pTargetObject);
+			_float			fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirectionToPlayerLocal), XMVector3Normalize(vAILookLocal))) };
+			_float			fAngleToTarget = { acosf(fDot) };
 
-		m_pTargetObject = m_pBlackBoard->Get_Player();
-		Safe_AddRef(m_pTargetObject);
-		m_isIncludeRotation = true;
+			_float			fMaxMoveAngle = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fMaxMoveAngle };
+			if (fMaxMoveAngle < fAngleToTarget)
+				return false;
+
+			Safe_Release(m_pTargetObject);
+
+			m_pTargetObject = m_pBlackBoard->Get_Player();
+			Safe_AddRef(m_pTargetObject);
+			m_isIncludeRotation = true;
+		}		
 	}
 
 	else
@@ -146,7 +163,7 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 	else
 	{
 		Change_Animation_Front_Only(fTimeDelta);
-		Turn_To_Window(fTimeDelta);
+		Turn_To_TargetObject_Manual(fTimeDelta);
 	}
 
 	return true;
@@ -556,20 +573,19 @@ void CMove_To_Target_Zombie::Change_Animation_Include_Rotation(_float fTimeDelta
 #pragma endregion
 }
 
-void CMove_To_Target_Zombie::Turn_To_Window(_float fTimeDelta)
+void CMove_To_Target_Zombie::Turn_To_TargetObject_Manual(_float fTimeDelta)
 {
-	CWindow*			pWindow = { m_pBlackBoard->Get_Nearest_Window() };
-	if (nullptr == pWindow)
+	if (nullptr == m_pTargetObject)
 		return;
 
-	_vector				vWindowPosition = { pWindow->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector				vTargetPosition = { m_pTargetObject->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
 	_vector				vZombiePosition = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION) };
 
-	_vector				vDirectionToWindow = { vWindowPosition - vZombiePosition };
-	_vector				vDirectionToWindowXZPlane = { XMVectorSetY(vDirectionToWindow, 0.f) };
+	_vector				vDirectionToTarget = { vTargetPosition - vZombiePosition };
+	_vector				vDirectionToTargetXZPlane = { XMVectorSetY(vDirectionToTarget, 0.f) };
 	
 	_matrix				ZombieWorldMatrixInv = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix_Inverse() };
-	_vector				vDirectionToWindowLocalXZPlane = { XMVector3TransformNormal(vDirectionToWindowXZPlane, ZombieWorldMatrixInv) };
+	_vector				vDirectionToWindowLocalXZPlane = { XMVector3TransformNormal(vDirectionToTargetXZPlane, ZombieWorldMatrixInv) };
 	
 	_bool				isRight = { XMVectorGetX(vDirectionToWindowLocalXZPlane) > 0.f };
 	_float				fDot = { XMVectorGetX(XMVector3Dot(XMVectorSet(0.f, 0.f, 1.f, 0.f),XMVector3Normalize(vDirectionToWindowLocalXZPlane))) };

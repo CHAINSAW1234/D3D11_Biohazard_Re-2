@@ -56,7 +56,7 @@ _bool CBreak_Window_Zombie::Execute(_float fTimeDelta)
 	MONSTER_STATE		eCurrentMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 	if (MONSTER_STATE::MST_BREAK_WINDOW == eCurrentMonsterState)
 	{
-		CModel* pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+		CModel*				pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
 		if (nullptr == pBody_Model)
 			return false;
 

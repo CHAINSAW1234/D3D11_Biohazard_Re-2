@@ -87,7 +87,7 @@ _bool CKnock_Window_Zombie::Execute(_float fTimeDelta)
 	if (nullptr == pWindow)
 		return false;
 	_int				iWindowHP = { pWindow->Get_HP_Body() };
-	_bool				isWindowCanBroken = { 1 >= iWindowHP };
+	_bool				isWindowCanBroken = { 2 > iWindowHP };
 	if (true == isWindowCanBroken)
 		return false;
 

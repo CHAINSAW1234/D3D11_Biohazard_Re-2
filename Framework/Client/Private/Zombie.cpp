@@ -625,7 +625,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 #pragma endregion	//	Selector Start Set Up Child
 
-#pragma endregion
+#pragma endregion	//	Selector Root Child
 
 #pragma region Selector Default
 
@@ -725,22 +725,50 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pSelectorNode_InDoorCheck->Insert_Decorator_Node(pDeco_Is_In_Door_Zombie);
 
 
-#pragma region Selector Different Location Player
+#pragma region Sequence Different Location Player
+	//	문을 찾는다 => 연결된 방이아닐시 다른 행동으로 넘아가서 Idle상태가됨
 
-	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
-	CComposite_Node* pSelectorNode_Different_Region_Player = { CComposite_Node::Create(&CompositeNodeDesc) };
-	pSelectorNode_InDoorCheck->Insert_Child_Node(pSelectorNode_Different_Region_Player);
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SEQUENCE;
+	CComposite_Node* pSequecne_Different_Region_Player = { CComposite_Node::Create(&CompositeNodeDesc) };
+	pSelectorNode_InDoorCheck->Insert_Child_Node(pSequecne_Different_Region_Player);
 
 	CIs_Different_Location_To_Player_Zombie* pDeco_Is_Different_Location_To_Player = { CIs_Different_Location_To_Player_Zombie::Create() };
 	pDeco_Is_Different_Location_To_Player->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_Different_Region_Player->Insert_Decorator_Node(pDeco_Is_Different_Location_To_Player);
+	pSequecne_Different_Region_Player->Insert_Decorator_Node(pDeco_Is_Different_Location_To_Player);
+
+#pragma region Find_Door_To_Player
+
+	CFind_Door_To_Target_Zombie* pTask_Find_Door_To_Target = { CFind_Door_To_Target_Zombie::Create() };
+	pTask_Find_Door_To_Target->SetBlackBoard(m_pBlackBoard);
+	pSequecne_Different_Region_Player->Insert_Child_Node(pTask_Find_Door_To_Target);	
+
+#pragma endregion		//	Sequence Different Location Player Child
+
+#pragma region Selector Move To Door || InteractDoor 
+
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	CComposite_Node* pSelector_Move_To_Door_Interact_Door = { CComposite_Node::Create(&CompositeNodeDesc) };
+	pSequecne_Different_Region_Player->Insert_Child_Node(pSelector_Move_To_Door_Interact_Door);
+
+#pragma region Move_To_Target_Door		Deco Non Colllision Door 
+
+	CMove_To_Target_Zombie* pTask_Move_To_Door = { CMove_To_Target_Zombie::Create() };
+	pTask_Move_To_Door->SetBlackBoard(m_pBlackBoard);
+	pSelector_Move_To_Door_Interact_Door->Insert_Child_Node(pTask_Move_To_Door);
+
+	//	문과 충돌하지않앗는지
+	CIs_Collision_Prop_Zombie* pDeco_Is_Collision_Door_Inverse_Trigger = { CIs_Collision_Prop_Zombie::Create(CIs_Collision_Prop_Zombie::COLL_PROP_TYPE::_DOOR, CIs_Collision_Prop_Zombie::RETURN_TYPE::_REVERSE) };
+	pDeco_Is_Collision_Door_Inverse_Trigger->SetBlackBoard(m_pBlackBoard);
+	pTask_Move_To_Door->Insert_Decorator_Node(pDeco_Is_Collision_Door_Inverse_Trigger);
+
+#pragma endregion		//	Selector Move To Door || InteractDoor  Child
 
 #pragma region Selector Interact Door 
 
 	//	문과 충돌중인지...
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
 	CComposite_Node* pSelectorNode_Interact_Door = { CComposite_Node::Create(&CompositeNodeDesc) };
-	pSelectorNode_Different_Region_Player->Insert_Child_Node(pSelectorNode_Interact_Door);
+	pSelector_Move_To_Door_Interact_Door->Insert_Child_Node(pSelectorNode_Interact_Door);
 
 	CIs_Collision_Prop_Zombie* pDeco_Is_Collision_Door_Trigger = { CIs_Collision_Prop_Zombie::Create(CIs_Collision_Prop_Zombie::COLL_PROP_TYPE::_DOOR, CIs_Collision_Prop_Zombie::RETURN_TYPE::_STARARIGHT) };
 	pDeco_Is_Collision_Door_Trigger->SetBlackBoard(m_pBlackBoard);
@@ -765,7 +793,9 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 #pragma endregion		//	Selector Interact Door Childs
 
-#pragma endregion		//	Selector Different Location Player Child
+#pragma endregion		//	Selector Move To Door || InteractDoor  Child
+
+#pragma endregion		//	Sequence Different Location Player Child
 
 #pragma endregion		//	Selector In Door Check Child
 
@@ -919,31 +949,39 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 #pragma endregion		//	Selector Root Child
 
-#pragma endregion		//	Selector Root Child
+#pragma endregion		//	Sequence Root Child
+
+#pragma region Additional Blend Anim Sequence
+
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SEQUENCE;
+	CComposite_Node* pSequenceNode_Additional_Blend_Anim = { CComposite_Node::Create(&CompositeNodeDesc) };
+	pSequenceNode_Root->Insert_Child_Node(pSequenceNode_Additional_Blend_Anim);
 
 #pragma region		Task Shake Skin
 
 	CShake_Skin_Zombie*							pTask_Shake_Skin = { CShake_Skin_Zombie::Create() };
 	pTask_Shake_Skin->SetBlackBoard(m_pBlackBoard);
-	pSequenceNode_Root->Insert_Child_Node(pTask_Shake_Skin);
+	pSequenceNode_Additional_Blend_Anim->Insert_Child_Node(pTask_Shake_Skin);
 
-#pragma endregion		//	Child Sequence Root
+#pragma endregion		//	Child Sequence Additional Blend Anim
 
 #pragma region		Task Turn Spine
 
 	CTurn_Spine_Head_Zombie* pTask_Turn_Spine_Head = { CTurn_Spine_Head_Zombie::Create() };
 	pTask_Turn_Spine_Head->SetBlackBoard(m_pBlackBoard);
-	pSequenceNode_Root->Insert_Child_Node(pTask_Turn_Spine_Head);
+	pSequenceNode_Additional_Blend_Anim->Insert_Child_Node(pTask_Turn_Spine_Head);
 
-#pragma endregion		//	Child Sequence Root
+#pragma endregion		//	Child Sequence Additional Blend Anim
 
 #pragma region		Task Raise Up Hand
 
 	CRaise_Up_Hand_Zombie* pTask_Raise_Up_Hand = { CRaise_Up_Hand_Zombie::Create() };
 	pTask_Raise_Up_Hand->SetBlackBoard(m_pBlackBoard);
-	pSequenceNode_Root->Insert_Child_Node(pTask_Raise_Up_Hand);
+	pSequenceNode_Additional_Blend_Anim->Insert_Child_Node(pTask_Raise_Up_Hand);
 
-#pragma endregion		//	Child Sequence Root
+#pragma endregion		//	Sequence Root Child 
+
+#pragma endregion	//	Sequence Root Child
 
 #pragma endregion		//	Sequence Root
 

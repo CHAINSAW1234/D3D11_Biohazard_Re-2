@@ -31,7 +31,7 @@ void CRub_Door_Zombie::Enter()
 	if (nullptr == pBodyModel)
 		return;
 
-	CDoor*				pDoor = { m_pBlackBoard->Get_Nearest_Door() };
+	CDoor*				pDoor = { m_pBlackBoard->Get_Target_Door() };
 	if (nullptr == pDoor)
 		return;
 
@@ -41,7 +41,7 @@ void CRub_Door_Zombie::Enter()
 
 	_bool				isDoorsFront = { vDirectionFromDoorLocalFloat3.z > 0.f };
 	_int				iAnimIndex = { -1 };
-	if (true == isDoorsFront)
+	if (false == isDoorsFront)
 	{
 		iAnimIndex = static_cast<_int>(ANIM_GIMMICK_DOOR::_WINDOW_TO_RUB_FROM_A_START);
 	}
@@ -60,6 +60,8 @@ void CRub_Door_Zombie::Enter()
 	}
 
 	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
+	m_fAccLinearInterpolateTime = 0.f;
+	m_eAnimState = ANIM_STATE::_START;
 
 #ifdef _DEBUG
 
@@ -79,7 +81,7 @@ _bool CRub_Door_Zombie::Execute(_float fTimeDelta)
 #pragma endregion
 
 	//	문이 잠겨있어야함
-	CDoor*			pDoor = { m_pBlackBoard->Get_Nearest_Door() };
+	CDoor*			pDoor = { m_pBlackBoard->Get_Target_Door() };
 	if (nullptr == pDoor)
 		return false;
 
@@ -159,8 +161,6 @@ _bool CRub_Door_Zombie::Execute(_float fTimeDelta)
 
 		if (false == pDoor->Is_Lock())
 			return false;
-
-		m_eAnimState = ANIM_STATE::_START;
 	}
 
 	m_pBlackBoard->Organize_PreState(this);

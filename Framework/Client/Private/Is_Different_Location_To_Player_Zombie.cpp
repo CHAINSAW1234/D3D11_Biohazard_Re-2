@@ -25,7 +25,7 @@ _bool CIs_Different_Location_To_Player_Zombie::Condition_Check()
 	if (nullptr == m_pBlackBoard)
 		return false;
 
-	return m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region()));
+	return !(m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())));
 }
 
 CIs_Different_Location_To_Player_Zombie* CIs_Different_Location_To_Player_Zombie::Create(_float fRange)

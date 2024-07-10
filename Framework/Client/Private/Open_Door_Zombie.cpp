@@ -8,6 +8,8 @@
 #include "Zombie.h"
 #include "Body_Zombie.h"
 
+#include "Room_Finder.h"
+
 COpen_Door_Zombie::COpen_Door_Zombie()
 	: CTask_Node()
 {
@@ -31,7 +33,7 @@ void COpen_Door_Zombie::Enter()
 	if (nullptr == pBodyModel)
 		return;
 
-	CDoor*				pDoor = { m_pBlackBoard->Get_Nearest_Door() };
+	CDoor*				pDoor = { m_pBlackBoard->Get_Target_Door() };
 	if (nullptr == pDoor)
 		return;
 
@@ -40,7 +42,7 @@ void COpen_Door_Zombie::Enter()
 		return;
 
 	_bool				isDoorsFront = { vDirectionFromDoorLocalFloat3.z > 0.f };
-	if (true == isDoorsFront)
+	if (false == isDoorsFront)
 	{
 		m_iAnimIndex = static_cast<_int>(ANIM_GIMMICK_DOOR::_OPEN_FROM_A);
 	}
@@ -59,6 +61,7 @@ void COpen_Door_Zombie::Enter()
 	}
 
 	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
+	//	m_fAccLinearInterpolateTime = 0.f;
 
 #ifdef _DEBUG
 	cout << "Enter Open Door" << endl;
@@ -75,7 +78,7 @@ _bool COpen_Door_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
-	CDoor* pDoor = { m_pBlackBoard->Get_Nearest_Door() };
+	CDoor* pDoor = { m_pBlackBoard->Get_Target_Door() };
 	if (nullptr == pDoor)
 		return false;
 
@@ -103,22 +106,23 @@ _bool COpen_Door_Zombie::Execute(_float fTimeDelta)
 	{
 		//	필요 조건 => 문 닫힘 ( 체력 1 => 1대치면 열림), 문잠기지않음		
 		_int				iDoorHP = { pDoor->Get_HP() };
-		_bool				isDoorCanOpen = { 1 == iDoorHP };
+		_bool				isDoorCanOpen = { 0 == iDoorHP };
 		if (false == isDoorCanOpen)
 			return false;
 
 		if (true == pDoor->Is_Lock())
 			return false;
-	}	
+
+		pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
+	}
 
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->Set_State(MONSTER_STATE::MST_OPEN_DOOR);
 
-	pDoor->Attack_Prop();
 
-	if (m_fAccLinearInterpolateTime < ZOMBIE_DOOR_OPEN_TOTAL_INTERPOLATE_TO_WINDOW_TIME)
+	/*if (m_fAccLinearInterpolateTime < ZOMBIE_DOOR_OPEN_TOTAL_INTERPOLATE_TO_WINDOW_TIME)
 	{
 		_bool				isComplete = { m_fAccLinearInterpolateTime >= ZOMBIE_DOOR_OPEN_TOTAL_INTERPOLATE_TO_WINDOW_TIME };
 		if (false == isComplete)
@@ -138,7 +142,7 @@ _bool COpen_Door_Zombie::Execute(_float fTimeDelta)
 					return false;
 			}
 		}
-	}
+	}*/
 
 	Change_Animation(fTimeDelta);
 
@@ -151,7 +155,47 @@ void COpen_Door_Zombie::Exit()
 		return;
 
 	m_pBlackBoard->Get_AI()->Set_ManualMove(false);
-	m_pBlackBoard->Release_Nearest_Door();
+	CDoor*		pTarget_Door = { m_pBlackBoard->Get_Target_Door() };
+
+	if (nullptr == pTarget_Door)
+		return;
+
+	LOCATION_MAP_VISIT					eCurrentLocation = { m_pBlackBoard->Get_AI()->Get_Location() };
+	LOCATION_MAP_VISIT					eNewLocation = { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
+	list<LOCATION_MAP_VISIT>			LinkedLocation = { CRoom_Finder::Get_Instance()->Find_Linked_Loctaion_From_Door(pTarget_Door) };
+	
+	for (auto& eLocation : LinkedLocation)
+	{
+		if (eCurrentLocation != eLocation)
+		{
+			eNewLocation = eLocation;
+
+#ifdef _DEBUG
+
+			cout << "Zombie New Location : " << eNewLocation << endl;
+
+#endif
+			break;
+		}
+	}
+
+	if (eNewLocation != LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END)
+	{
+		m_pBlackBoard->Get_AI()->Set_Location(eNewLocation);
+	}
+
+#ifdef _DEBUG
+
+	else
+	{
+		MSG_BOX(TEXT("Called : void COpen_Door_Zombie::Exit() 문과 연결된 방을 못찾음"));
+	}
+
+#endif // _DEBUG
+
+
+	m_pBlackBoard->Release_Target_Door();
+
 }
 
 void COpen_Door_Zombie::Change_Animation(_float fTimeDelta)

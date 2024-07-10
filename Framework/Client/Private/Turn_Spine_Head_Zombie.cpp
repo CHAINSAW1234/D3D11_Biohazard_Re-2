@@ -29,8 +29,6 @@ void CTurn_Spine_Head_Zombie::Enter()
 
 _bool CTurn_Spine_Head_Zombie::Execute(_float fTimeDelta)
 {
-	return true;
-
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)
 		return false;
@@ -38,6 +36,26 @@ _bool CTurn_Spine_Head_Zombie::Execute(_float fTimeDelta)
 	if (Check_Permition_To_Execute() == false)
 		return false;
 #pragma endregion
+
+	MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
+	_bool					isLookTarget = { m_pBlackBoard->Is_LookTarget() };
+
+	if (MONSTER_STATE::MST_IDLE != eMonsterState &&
+		MONSTER_STATE::MST_WALK != eMonsterState &&
+		MONSTER_STATE::MST_TURN != eMonsterState &&
+		true == isLookTarget)
+	{
+		m_fMaxAngle += XMConvertToRadians(90.f) * fTimeDelta;
+		if (m_fMaxAngle > XMConvertToRadians(100.f))
+			m_fMaxAngle = XMConvertToRadians(100.f);
+	}
+
+	else
+	{
+		m_fMaxAngle -= XMConvertToRadians(30.f) * fTimeDelta;
+		if (m_fMaxAngle < 0.f)
+			m_fMaxAngle = 0.f;
+	}
 
 	if (true == m_isStart)
 	{
@@ -48,7 +66,8 @@ _bool CTurn_Spine_Head_Zombie::Execute(_float fTimeDelta)
 	}
 
 
-	Set_Hand_AdditionalMatrices(fTimeDelta);
+	if(m_fMaxAngle > 0.f)
+		Set_Spine_To_Head_AdditionalMatrices(fTimeDelta);
 
 	return true;
 }
@@ -57,7 +76,7 @@ void CTurn_Spine_Head_Zombie::Exit()
 {
 }
 
-void CTurn_Spine_Head_Zombie::Set_Hand_AdditionalMatrices(_float fTimeDelta)
+void CTurn_Spine_Head_Zombie::Set_Spine_To_Head_AdditionalMatrices(_float fTimeDelta)
 {
 	CTransform*			pZombie_Transform = { m_pBlackBoard->Get_AI()->Get_Transform() };
 	CTransform*			pPlayer_Transform = { m_pBlackBoard->Get_Player()->Get_Transform() };
@@ -83,7 +102,7 @@ void CTurn_Spine_Head_Zombie::Set_Hand_AdditionalMatrices(_float fTimeDelta)
 		return;
 
 	//	_float				fAngle = { fminf(acosf(fDot), XMConvertToRadians(50.f) * fTimeDelta) };
-	_float				fAngle = { fminf(acosf(fDot), XMConvertToRadians(100.f)) };
+	_float				fAngle = { fminf(acosf(fDot), m_fMaxAngle) };
 
 	_vector				vTotalRotateQuaternionLocal = { XMQuaternionRotationAxis(XMVector3Normalize(vCross), fAngle) };
 
