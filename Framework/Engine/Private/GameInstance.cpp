@@ -1258,6 +1258,12 @@ void CGameInstance::Start_Ragdoll(CRagdoll_Physics* pRagdoll, _uint iId)
 	if (m_pPhysics_Controller)
 		m_pPhysics_Controller->Start_Ragdoll(pRagdoll, iId);
 }
+void CGameInstance::Start_PartialRagdoll(CRagdoll_Physics* pRagdoll, _uint iId, COLLIDER_TYPE eType)
+{
+	if (m_pPhysics_Controller)
+		m_pPhysics_Controller->Start_PartialRagdoll(pRagdoll, iId,eType);
+}
+
 CPxCollider* CGameInstance::Create_Px_Collider(CModel* pModel, CTransform* pTransform, _int* iId)
 {
 	if (m_pPhysics_Controller)

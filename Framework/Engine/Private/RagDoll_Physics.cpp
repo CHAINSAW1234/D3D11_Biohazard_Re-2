@@ -392,6 +392,15 @@ _bool CRagdoll_Physics::Init(const string& name)
 
 	SetBoneIndex();
 
+	m_ragdoll->m_rigid_bodies.resize(m_skeletal_mesh->skeleton()->num_bones());
+	m_ragdoll->m_relative_joint_pos.resize(m_skeletal_mesh->skeleton()->num_bones());
+	m_ragdoll->m_original_body_rotations.resize(m_skeletal_mesh->skeleton()->num_bones());
+	m_ragdoll->m_body_pos_relative_to_joint.resize(m_skeletal_mesh->skeleton()->num_bones());
+	m_ragdoll->m_original_joint_rotations.resize(m_skeletal_mesh->skeleton()->num_bones());
+
+	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
+		m_ragdoll->m_rigid_bodies[i] = nullptr;
+
 	return true;
 }
 
@@ -431,15 +440,6 @@ void CRagdoll_Physics::create_ragdoll()
 		return;
 
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
-
-	m_ragdoll->m_rigid_bodies.resize(m_skeletal_mesh->skeleton()->num_bones());
-	m_ragdoll->m_relative_joint_pos.resize(m_skeletal_mesh->skeleton()->num_bones());
-	m_ragdoll->m_original_body_rotations.resize(m_skeletal_mesh->skeleton()->num_bones());
-	m_ragdoll->m_body_pos_relative_to_joint.resize(m_skeletal_mesh->skeleton()->num_bones());
-	m_ragdoll->m_original_joint_rotations.resize(m_skeletal_mesh->skeleton()->num_bones());
-
-	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
-		m_ragdoll->m_rigid_bodies[i] = nullptr;
 
 	// ---------------------------------------------------------------------------------------------------------------
 	// Create rigid bodies for limbs
@@ -546,6 +546,77 @@ void CRagdoll_Physics::create_ragdoll()
 #pragma endregion
 }
 
+void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
+{
+	if (!m_vecBone)
+		return;
+
+	Joint* joints = m_skeletal_mesh->skeleton()->joints();
+
+	switch (eType)
+	{
+	case COLLIDER_TYPE::FOREARM_L:
+	/*	m_ForeArm_L = create_capsule_bone(m_lowerarm_l_idx, m_hand_l_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::FOREARM_L);
+		m_Hand_L = create_capsule_bone(m_hand_l_idx, m_middle_01_l_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::HAND_L);
+		m_Scene->addActor(*m_ForeArm_L);
+		m_Scene->addActor(*m_Hand_L);*/
+		break;
+	case COLLIDER_TYPE::FOREARM_R:
+
+		break;
+	case COLLIDER_TYPE::ARM_L:
+
+		break;
+	case COLLIDER_TYPE::ARM_R:
+
+		break;
+	case COLLIDER_TYPE::PELVIS:
+
+		break;
+	case COLLIDER_TYPE::CALF_L:
+
+		break;
+	case COLLIDER_TYPE::CALF_R:
+
+		break;
+	case COLLIDER_TYPE::LEG_L:
+
+		break;
+	case COLLIDER_TYPE::LEG_R:
+
+		break;
+	}
+
+	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
+	{
+		uint32_t        chosen_idx;
+		PxRigidDynamic* body = m_ragdoll->find_recent_body((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
+
+		if (!body)
+			continue;
+
+		_matrix body_global_transform = to_mat4(body->getGlobalPose());
+		_matrix inv_body_global_transform = XMMatrixInverse(nullptr, body_global_transform);
+		_matrix bind_pose_ws = XMMatrixMultiply(m_model_without_scale, XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
+		_vector joint_pos_ws = XMLoadFloat3(&joints[i].bind_pos_ws(m_model));
+		joint_pos_ws = XMVectorSetW(joint_pos_ws, 1.f);
+
+		_vector p = XMVector4Transform(joint_pos_ws, inv_body_global_transform);
+		m_ragdoll->m_relative_joint_pos[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
+		m_ragdoll->m_original_body_rotations[i] = XMQuaternionRotationMatrix(body_global_transform);
+
+		if (m_ragdoll->m_rigid_bodies[i])
+		{
+			// Rigid body position relative to the joint
+			_matrix m = XMMatrixInverse(nullptr, m_model * XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
+			p = XMVector4Transform(XMVectorSetW(to_vec3(m_ragdoll->m_rigid_bodies[i]->getGlobalPose().p), 1.0f), m);
+
+			m_ragdoll->m_body_pos_relative_to_joint[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
+			m_ragdoll->m_original_joint_rotations[i] = XMQuaternionRotationMatrix(bind_pose_ws);
+		}
+	}
+}
+
 void CRagdoll_Physics::Update(_float fTimeDelta)
 {
 	if (m_bCulling)
@@ -561,7 +632,7 @@ void CRagdoll_Physics::Update(_float fTimeDelta)
 
 void CRagdoll_Physics::update_animations()
 {
-	if (m_bRagdoll == false)
+	if (m_bRagdoll == false && m_bPartialRagdoll == false)
 		return;
 
 	m_RotationMatrix = m_pTransform->Get_RotationMatrix_Pure();
@@ -660,7 +731,6 @@ void CRagdoll_Physics::Init_Ragdoll()
 
 void CRagdoll_Physics::create_joint()
 {
-
 #ifdef ZOMBIE
 	m_pNeckJoint = create_d6_joint_Head(m_Chest, m_Head, m_neck_01_idx_Bone, m_neck_01_idx);
 	m_pUpSpine_Joint = create_d6_joint_Head(m_Pelvis, m_Chest, m_spine_02_idx_Bone, m_spine_01_idx);
@@ -1035,6 +1105,46 @@ _float4 CRagdoll_Physics::GetBodyPosition()
 CRagdoll_Physics* CRagdoll_Physics::Create()
 {
 	return nullptr;
+}
+
+void CRagdoll_Physics::Init_PartialRagdoll(COLLIDER_TYPE eType)
+{
+	switch (eType)
+	{
+	case COLLIDER_TYPE::FOREARM_L:
+		m_iRagdollType |= RAGDOLL_TYPE::LEFT_FOREARM;
+		break;
+	case COLLIDER_TYPE::FOREARM_R:
+		m_iRagdollType |= RAGDOLL_TYPE::RIGHT_FOREARM;
+		break;
+	case COLLIDER_TYPE::ARM_L:
+		m_iRagdollType |= RAGDOLL_TYPE::LEFT_ARM;
+		break;
+	case COLLIDER_TYPE::ARM_R:
+		m_iRagdollType |= RAGDOLL_TYPE::RIGHT_ARM;
+		break;
+	case COLLIDER_TYPE::PELVIS:
+		m_iRagdollType |= RAGDOLL_TYPE::BODY_DIVIDE;
+		break;
+	case COLLIDER_TYPE::CALF_L:
+		m_iRagdollType |= RAGDOLL_TYPE::LEFT_CALF;
+		break;
+	case COLLIDER_TYPE::CALF_R:
+		m_iRagdollType |= RAGDOLL_TYPE::RIGHT_CALF;
+		break;
+	case COLLIDER_TYPE::LEG_L:
+		m_iRagdollType |= RAGDOLL_TYPE::LEFT_LEG;
+		break;
+	case COLLIDER_TYPE::LEG_R:
+		m_iRagdollType |= RAGDOLL_TYPE::RIGHT_LEG;
+		break;
+	}
+
+	create_partial_ragdoll(eType);
+
+	m_ragdoll->set_kinematic(true);
+
+	m_bPartialRagdoll = true;
 }
 
 void CRagdoll_Physics::Free()

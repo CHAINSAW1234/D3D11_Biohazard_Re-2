@@ -316,6 +316,7 @@ public:/*For Physics Controller*/
 	_bool									SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone,class CTransform* pTransform, const string& name);
 	void									Start_Ragdoll(class CRagdoll_Physics* pRagdoll, _uint iId);
+	void									Start_PartialRagdoll(class CRagdoll_Physics* pRagdoll, _uint iId, COLLIDER_TYPE eType);
 	class CPxCollider*						Create_Px_Collider(class CModel* pModel, class CTransform* pTransform, _int* iId);
 	class CPxCollider*						Create_Px_Collider_Convert_Root(class CModel* pModel, class CTransform* pTransform, _int* iId);
 	class CPxCollider*						Create_Px_Collider_Convert_Root_Double_Door(class CModel* pModel, class CTransform* pTransform, _int* iId);

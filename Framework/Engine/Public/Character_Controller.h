@@ -462,6 +462,12 @@ public:
 	{
 		m_bHit_DecalRay = boolean;
 	}
+
+#pragma region Partial Ragdoll
+public:
+	void						Release_PartialCollider(COLLIDER_TYPE eType);
+#pragma endregion
+
 private:
 	_bool											m_bHit = { false };
 	_float4											m_vForce;

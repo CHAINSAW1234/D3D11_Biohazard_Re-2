@@ -147,6 +147,7 @@ public:
 public:
     _bool                               Init(const string& name);
     void                                create_ragdoll();
+    void                                create_partial_ragdoll(COLLIDER_TYPE eType);
     void                                Update(_float fTimeDelta);
     _bool                               load_mesh(const string& name);
     void                                update_transforms();
@@ -250,7 +251,7 @@ public:
             break;
         }
 
-        return nullptr;         // 현진 수정임 : warning 잡음 
+        return nullptr;
     }
     FORCEINLINE void Insert_Rigid_Body(vector<PxRigidDynamic*>* pRigidBodies, vector<COLLIDER_TYPE>* pColliders,COLLIDER_TYPE eType)
     {
@@ -308,6 +309,11 @@ public:
     _float4     GetBodyPosition();
 public:
 	static CRagdoll_Physics*            Create();
+
+#pragma region Partial Ragdoll
+public:
+    void                                Init_PartialRagdoll(COLLIDER_TYPE eType);
+#pragma endregion
 
 private:
     PxScene*                                        m_Scene = { nullptr };
@@ -388,6 +394,8 @@ private:
     PxD6Joint*                                      m_pAnkle_Joint_R = { nullptr };
 
     _uint                                           m_iId = { 0 };
+    _uint                                           m_iRagdollType = { RAGDOLL_TYPE::TYPE_NONE };
+    _bool                                           m_bPartialRagdoll = { false };
 
     uint32_t m_head_idx = { 0 };		//neck_1
     uint32_t m_neck_01_idx = { 0 };	//neck_0

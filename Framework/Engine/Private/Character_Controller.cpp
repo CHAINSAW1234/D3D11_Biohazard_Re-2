@@ -576,6 +576,93 @@ void CCharacter_Controller::SetPosition(_float4 vPos)
 	m_pController->setPosition(newPosition);
 }
 
+void CCharacter_Controller::Release_PartialCollider(COLLIDER_TYPE eType)
+{
+	switch (eType)
+	{
+	case COLLIDER_TYPE::PELVIS:
+		m_Pelvis_Collider->release();
+		m_Pelvis_Collider = nullptr;
+
+		m_Left_Leg_Collider->release();
+		m_Left_Leg_Collider = nullptr;
+
+		m_Right_Leg_Collider->release();
+		m_Right_Leg_Collider = nullptr;
+
+		m_Left_Shin_Collider->release();
+		m_Left_Shin_Collider = nullptr;
+
+		m_Right_Shin_Collider->release();
+		m_Right_Shin_Collider = nullptr;
+
+		m_Left_Foot_Collider->release();
+		m_Left_Foot_Collider = nullptr;
+
+		m_Right_Foot_Collider->release();
+		m_Right_Foot_Collider = nullptr;
+		break;
+	case COLLIDER_TYPE::ARM_L:
+		m_Left_Arm_Collider->release();
+		m_Left_Arm_Collider = nullptr;
+
+		m_Left_ForeArm_Collider->release();
+		m_Left_ForeArm_Collider = nullptr;
+
+		m_Left_Hand_Collider->release();
+		m_Left_Hand_Collider = nullptr;
+
+		break;
+	case COLLIDER_TYPE::ARM_R:
+		m_Right_Arm_Collider->release();
+		m_Right_Arm_Collider = nullptr;
+
+		m_Right_ForeArm_Collider->release();
+		m_Right_ForeArm_Collider = nullptr;
+
+		m_Right_Hand_Collider->release();
+		m_Right_Hand_Collider = nullptr;
+		break;
+	case COLLIDER_TYPE::FOREARM_L:
+		m_Left_ForeArm_Collider->release();
+		m_Left_ForeArm_Collider = nullptr;
+
+		m_Left_Hand_Collider->release();
+		m_Left_Hand_Collider = nullptr;
+		break;
+	case COLLIDER_TYPE::FOREARM_R:
+		m_Right_ForeArm_Collider->release();
+		m_Right_ForeArm_Collider = nullptr;
+
+		m_Right_Hand_Collider->release();
+		m_Right_Hand_Collider = nullptr;
+
+		break;
+	case COLLIDER_TYPE::CALF_L:
+		m_Left_ForeArm_Collider->release();
+		m_Left_ForeArm_Collider = nullptr;
+
+		m_Left_Hand_Collider->release();
+		m_Left_Hand_Collider = nullptr;
+		break;
+	case COLLIDER_TYPE::CALF_R:
+		m_vecHitPart_STG.push_back(m_Right_Shin_Collider);
+		break;
+	case COLLIDER_TYPE::LEG_L:
+		m_vecHitPart_STG.push_back(m_Left_Leg_Collider);
+		break;
+	case COLLIDER_TYPE::LEG_R:
+		m_vecHitPart_STG.push_back(m_Right_Leg_Collider);
+		break;
+	case COLLIDER_TYPE::FOOT_L:
+		m_vecHitPart_STG.push_back(m_Left_Foot_Collider);
+		break;
+	case COLLIDER_TYPE::FOOT_R:
+		m_vecHitPart_STG.push_back(m_Right_Foot_Collider);
+		break;
+	}
+}
+
 void CCharacter_Controller::Free()
 {
 	if (m_iRefCnt_Px != 0)
@@ -585,19 +672,45 @@ void CCharacter_Controller::Free()
 		if (m_BodyCollider)
 		{
 			m_BodyCollider->release();
-			m_HeadCollider->release();
-			m_Left_Arm_Collider->release();
-			m_Right_Arm_Collider->release();
-			m_Left_Leg_Collider->release();
-			m_Right_Leg_Collider->release();
-			m_Left_ForeArm_Collider->release();
-			m_Right_ForeArm_Collider->release();
-			m_Left_Shin_Collider->release();
-			m_Right_Shin_Collider->release();
-			m_Left_Hand_Collider->release();
-			m_Right_Hand_Collider->release();
-			m_Left_Foot_Collider->release();
-			m_Right_Foot_Collider->release();
+
+			if (m_HeadCollider)
+				m_HeadCollider->release();
+
+			if (m_Left_Arm_Collider)
+				m_Left_Arm_Collider->release();
+
+			if (m_Right_Arm_Collider)
+				m_Right_Arm_Collider->release();
+
+			if (m_Left_Leg_Collider)
+				m_Left_Leg_Collider->release();
+
+			if (m_Right_Leg_Collider)
+				m_Right_Leg_Collider->release();
+
+			if (m_Left_ForeArm_Collider)
+				m_Left_ForeArm_Collider->release();
+
+			if (m_Right_ForeArm_Collider)
+				m_Right_ForeArm_Collider->release();
+
+			if (m_Left_Shin_Collider)
+				m_Left_Shin_Collider->release();
+
+			if (m_Right_Shin_Collider)
+				m_Right_Shin_Collider->release();
+
+			if (m_Left_Hand_Collider)
+				m_Left_Hand_Collider->release();
+
+			if (m_Right_Hand_Collider)
+				m_Right_Hand_Collider->release();
+
+			if (m_Left_Foot_Collider)
+				m_Left_Foot_Collider->release();
+
+			if (m_Right_Hand_Collider)
+				m_Right_Hand_Collider->release();
 
 			m_Right_ForeArm_Collider = nullptr;
 			m_BodyCollider = nullptr;
@@ -636,19 +749,45 @@ void CCharacter_Controller::Free()
 		if (m_BodyCollider)
 		{
 			m_BodyCollider->release();
-			m_HeadCollider->release();
-			m_Left_Arm_Collider->release();
-			m_Right_Arm_Collider->release();
-			m_Left_Leg_Collider->release();
-			m_Right_Leg_Collider->release();
-			m_Left_ForeArm_Collider->release();
-			m_Right_ForeArm_Collider->release();
-			m_Left_Shin_Collider->release();
-			m_Right_Shin_Collider->release();
-			m_Left_Hand_Collider->release();
-			m_Right_Hand_Collider->release();
-			m_Left_Foot_Collider->release();
-			m_Right_Hand_Collider->release();
+
+			if(m_HeadCollider)
+				m_HeadCollider->release();
+
+			if(m_Left_Arm_Collider)
+				m_Left_Arm_Collider->release();
+
+			if(m_Right_Arm_Collider)
+				m_Right_Arm_Collider->release();
+
+			if(m_Left_Leg_Collider)
+				m_Left_Leg_Collider->release();
+
+			if(m_Right_Leg_Collider)
+				m_Right_Leg_Collider->release();
+
+			if(m_Left_ForeArm_Collider)
+				m_Left_ForeArm_Collider->release();
+
+			if(m_Right_ForeArm_Collider)
+				m_Right_ForeArm_Collider->release();
+
+			if(m_Left_Shin_Collider)
+				m_Left_Shin_Collider->release();
+
+			if(m_Right_Shin_Collider)
+				m_Right_Shin_Collider->release();
+
+			if(m_Left_Hand_Collider)
+				m_Left_Hand_Collider->release();
+
+			if(m_Right_Hand_Collider)
+				m_Right_Hand_Collider->release();
+
+			if(m_Left_Foot_Collider)
+				m_Left_Foot_Collider->release();
+
+			if(m_Right_Foot_Collider)
+				m_Right_Foot_Collider->release();
 		}
 
 		if (m_ragdoll)

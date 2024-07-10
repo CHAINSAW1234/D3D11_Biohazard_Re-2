@@ -56,14 +56,16 @@ namespace Engine
 	enum COMPOSITE_NODE_TYPE {CNT_SELECTOR,CNT_SEQUENCE,CNT_DEFAULT, CNT_END};
 
 	//For Physics_Controller
-	enum COLLISION_CATEGORY {
+	enum COLLISION_CATEGORY 
+	{
 		CCT = 1 << 0,
 		RAGDOLL = 1 << 1,
 		COLLIDER = 1 << 2,
 		STATIC_MESH = 1 << 3,
 	};
 
-	enum COLLIDER_TYPE {
+	enum COLLIDER_TYPE 
+	{
 		HEAD = 1 << 0,
 		CHEST = 1 << 1,
 		PELVIS = 1 << 2,
@@ -80,6 +82,21 @@ namespace Engine
 		FOOT_L = 1 << 13,
 		FOOT_R = 1 << 14,
 		_END
+	};
+
+	enum RAGDOLL_TYPE
+	{
+		FULL = 1 << 0,
+		LEFT_FOREARM = 1 << 1,
+		LEFT_ARM = 1 << 2,
+		RIGHT_FOREARM = 1 << 3,
+		RIGHT_ARM = 1 << 4,
+		LEFT_CALF = 1 << 5,
+		LEFT_LEG = 1 << 6,
+		RIGHT_CALF = 1 << 7,
+		RIGHT_LEG = 1 << 8,
+		BODY_DIVIDE = 1 << 9,
+		TYPE_NONE = 1<<10
 	};
 
 	enum class MAP_FLOOR_TYPE { BASEMENT_2, BASEMENT_1, FLOOR_1, FLOOR_2, FLOOR_3, FLOOR_FREE, FLOOR_END };
