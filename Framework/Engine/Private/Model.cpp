@@ -1065,6 +1065,9 @@ void CModel::Apply_RootMotion_Rotation(CTransform* pTransform)
 	_uint			iRootIndex = { static_cast<_uint>(Find_RootBoneIndex()) };
 	_float			fTotalWeight = { Compute_Current_TotalBlendWeight(iRootIndex) };
 
+	if (	0.f <= fTotalWeight)
+		return;
+
 	for (auto& pPlayingInfo : m_PlayingAnimInfos)
 	{
 		if (nullptr == pPlayingInfo)

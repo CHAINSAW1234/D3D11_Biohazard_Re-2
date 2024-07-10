@@ -49,7 +49,7 @@ private:
 	_bool						m_isFinished = { false };
 
 	CGameInstance*				m_pGameInstance = { nullptr };
-
+	
 private:
 	HRESULT Loading_For_Logo();
 	HRESULT Loading_For_GamePlay();

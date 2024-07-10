@@ -253,7 +253,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	{
 		vector vAlphaDesc = g_AlphaTexture.Sample(LinearSampler, In.vTexcoord);
 		Out.vDiffuse.a = vAlphaDesc.r;
-		if (0.01 >= Out.vDiffuse.a)
+		if (0.01f >= Out.vDiffuse.a)
 			discard;
 	}
 	else
@@ -405,7 +405,7 @@ technique11 DefaultTechnique
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_Default, 0);
-		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;

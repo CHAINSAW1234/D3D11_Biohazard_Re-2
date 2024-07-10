@@ -1143,7 +1143,7 @@ void CPlayer::Update_FSM()
 	switch (m_eState) {
 	case MOVE:
 		if (m_pGameInstance->Get_KeyState(VK_RBUTTON) == PRESSING) {
-			if (NONE != m_eEquip_Gun &&
+			if (nullptr != m_pWeapon && NONE != m_eEquip_Gun &&
 				Get_Body_Model()->Is_Loop_PlayingInfo(3))
 				Change_State(HOLD);
 		}
@@ -1164,8 +1164,9 @@ void CPlayer::Update_FSM()
 
 		break;
 	case SUBHOLD:
-		if (m_pGameInstance->Get_KeyState(VK_SPACE) != PRESSING &&
-			Get_Body_Model()->Is_Loop_PlayingInfo(0)) {
+		if (m_pGameInstance->Get_KeyState(VK_SPACE) != PRESSING && 
+			Get_Body_Model()->Is_Loop_PlayingInfo(0) &&
+			Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
 			Change_State(MOVE);
 		}
 		break;
@@ -1413,6 +1414,8 @@ void CPlayer::Update_AnimSet()
 	case MOVE:
 		Change_Body_Animation_Move(0, Get_Body_Model()->Get_CurrentAnimIndex(0));
 		Change_Body_Animation_Move(1, Get_Body_Model()->Get_CurrentAnimIndex(1));
+		//Get_Body_Model()->Reset_PreAnim_CurrentAnim(0);
+		Get_Body_Model()->Reset_PreAnim_CurrentAnim(1);
 		break;
 	case HOLD:
 		Change_Body_Animation_Hold(0, Get_Body_Model()->Get_CurrentAnimIndex(0));
@@ -1423,7 +1426,6 @@ void CPlayer::Update_AnimSet()
 		Change_Body_Animation_Hold(1, Get_Body_Model()->Get_CurrentAnimIndex(1));
 		break;
 	}
-
 
 }
 

@@ -79,8 +79,8 @@ void CBody_NewpoliceStatue::Late_Tick(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 }
 
@@ -142,10 +142,6 @@ HRESULT CBody_NewpoliceStatue::Render()
 
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
-
-
-
-
 
 	return S_OK;
 }
