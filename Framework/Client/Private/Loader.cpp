@@ -1306,7 +1306,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Dissolve/Dissolve.png")))))
 		return E_FAIL;
 
-	/*Prototype_Component_Texture_Dissolve*/
+	/*Prototype_Component_Texture_Muzzle_Light*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Light_SG"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Light_SG/Muzzle_Light_SG.dds")))))
 		return E_FAIL;
@@ -1314,6 +1314,11 @@ HRESULT CLoader::Loading_For_GamePlay()
 	/*Prototype_Component_Texture_Impact*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Impact"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Impact/Impact_%d.dds"), 3))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_BulletHole*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Decal_BulletHole"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/BulletHole/BulletHole.dds")))))
 		return E_FAIL;
 
 	//Muzzle Flash
@@ -1448,6 +1453,65 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Hit/Hit.dds"), 1, &Desc))))
 		return E_FAIL;
 
+	Desc.iWidth = 512;
+	Desc.iHeight = 128;
+	Desc.iCountX = 4;
+	Desc.iCountY = 1;
+
+	/*Prototype_Component_Texture_Muzzle_Spark_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Hit_Props"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Hit_Props/Hit_Props.dds"), 1, &Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 512;
+	Desc.iHeight = 128;
+	Desc.iCountX = 4;
+	Desc.iCountY = 1;
+
+	/*Prototype_Component_Texture_Muzzle_Spark_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Hit_Props_1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Hit_Props/Hit_Props_1.dds"), 1, &Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 1024;
+	Desc.iHeight = 256;
+	Desc.iCountX = 4;
+	Desc.iCountY = 1;
+
+	/*Prototype_Component_Texture_Muzzle_Spark_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Hit_Props_2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Hit_Props/Hit_Props_2.dds"), 1, &Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 1024;
+	Desc.iHeight = 256;
+	Desc.iCountX = 4;
+	Desc.iCountY = 1;
+
+	/*Prototype_Component_Texture_Muzzle_Spark_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Hit_Props_3"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Hit_Props/Hit_Props_3.dds"), 1, &Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 1024;
+	Desc.iHeight = 256;
+	Desc.iCountX = 4;
+	Desc.iCountY = 1;
+
+	/*Prototype_Component_Texture_Muzzle_Spark_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Hit_Props_4"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Hit_Props/Hit_Props_4.dds"), 1, &Desc))))
+		return E_FAIL;
+
+	Desc.iWidth = 512;
+	Desc.iHeight = 128;
+	Desc.iCountX = 4;
+	Desc.iCountY = 1;
+
+	/*Prototype_Component_Texture_Muzzle_Spark_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Hit_Props_5"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Hit_Props/Hit_Props_5.dds"), 1, &Desc))))
+		return E_FAIL;
 #pragma endregion
 
 #pragma region CubeMap
@@ -2048,6 +2112,16 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_Blood_11"),
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Effect/Blood/Blood_11.fbx",
+			TransformMatrix))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_HG_Cartridge"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Effect/HG_Cartridge/HG_Cartridge.fbx",
+			TransformMatrix))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_SG_Cartridge"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Effect/SG_Cartridge/SG_Cartridge.fbx",
 			TransformMatrix))))
 		return E_FAIL;
 #pragma endregion

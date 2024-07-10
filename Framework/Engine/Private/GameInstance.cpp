@@ -1123,6 +1123,11 @@ void CGameInstance::Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint 
 	m_pPhysics_Controller->Cook_Mesh_Convex(pVertices, pIndices, VertexNum, IndexNum,pColliders,pTransforms, pTransform);
 }
 
+void CGameInstance::Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, PxRigidDynamic** pCollider, CTransform* pTransform)
+{
+	m_pPhysics_Controller->Cook_Mesh_Convex_RigidDynamic(pVertices, pIndices, VertexNum, IndexNum, pCollider, pTransform);
+}
+
 void CGameInstance::Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform, _float4 vDelta)
 {
 	m_pPhysics_Controller->Cook_Mesh_Convex_Convert_Root(pVertices, pIndices, VertexNum, IndexNum, pColliders, pTransforms, pTransform, vDelta);
@@ -1201,6 +1206,11 @@ CRigid_Static* CGameInstance::Create_Rigid_Static(_float4 Pos, _int* Index, CGam
 	return m_pPhysics_Controller->Create_Rigid_Static(Pos, Index, pStaticMesh);
 }
 
+CRigid_Dynamic* CGameInstance::Create_Rigid_Dynamic(CModel* pModel, CTransform* pTransform, _int* iId, CGameObject* pObj)
+{
+	return m_pPhysics_Controller->Create_Rigid_Dynamic(pModel, pTransform, iId, pObj);
+}
+
 void CGameInstance::Cook_Terrain()
 {
 	m_pPhysics_Controller->InitTerrain();
@@ -1210,16 +1220,20 @@ _bool CGameInstance::RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint
 {
 	return m_pPhysics_Controller->RayCast(vOrigin, vDir, pBlockPoint, fMaxDist);
 }
-_bool CGameInstance::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _bool bBigAttack, _bool bDecalRay, _float fMaxDist)
+_bool CGameInstance::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint,_float4* pBlockNormal, _bool bBigAttack, _bool bDecalRay, _bool* IsHit_Props , _float fMaxDist)
 {
 	if (m_pPhysics_Controller)
-		return m_pPhysics_Controller->RayCast_Shoot(vOrigin, vDir, pBlockPoint,bBigAttack,bDecalRay, fMaxDist);
+		return m_pPhysics_Controller->RayCast_Shoot(vOrigin, vDir, pBlockPoint,pBlockNormal,bBigAttack,bDecalRay,IsHit_Props, fMaxDist);
 
 	return false;
 }
 _bool CGameInstance::RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float4* pBlockNormal, _float fMaxDist)
 {
 	return m_pPhysics_Controller->RayCast_Decal(vOrigin, vDir, pBlockPoint,pBlockNormal, fMaxDist);
+}
+_bool CGameInstance::RayCast_Effect(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float4* pBlockNormal,_bool bBigAttack, _bool* pDynamic, _float fMaxDist)
+{
+	return m_pPhysics_Controller->RayCast_Effect(vOrigin, vDir, pBlockPoint, pBlockNormal,bBigAttack,pDynamic, fMaxDist);
 }
 _bool CGameInstance::SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist)
 {
@@ -1280,6 +1294,16 @@ CPxCollider* CGameInstance::Create_Px_Collider_Toilet(CModel* pModel, CTransform
 		return m_pPhysics_Controller->Create_Px_Collider_Toilet(pModel, pTransform, iId);
 
 	return nullptr;
+}
+
+vector<_float4>* CGameInstance::GetBlockPoints_Props()
+{
+	return m_pPhysics_Controller->GetBlockPoints_Props();
+}
+
+vector<_float4>* CGameInstance::GetBlockNormals_Props()
+{
+	return m_pPhysics_Controller->GetBlockNormals_Props();
 }
 
 #pragma endregion

@@ -73,8 +73,7 @@ void CBody_Zombie::Tick(_float fTimeDelta)
 
 	if(m_bRagdoll)
 	{
-		auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
-		vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
+		auto vPos = m_pRagdoll->GetBodyPosition();
 		if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f))
 		{
 			m_pRagdoll->SetCulling(true);

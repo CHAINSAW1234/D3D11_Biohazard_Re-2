@@ -658,6 +658,21 @@
     <Filter Include="02.GameObjects\Effect\Hit">
       <UniqueIdentifier>{8b1fb927-ed1b-4df2-86d3-43411b329dd7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Hit_Props">
+      <UniqueIdentifier>{6c472641-4c57-4488-aa5a-e65e81a4f0c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Decal\Decal_BulletHole">
+      <UniqueIdentifier>{110a1efe-381b-4bab-adea-9d6ca0ad8679}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Cartridge">
+      <UniqueIdentifier>{f8f50db5-c51a-4e82-9fc0-f1763b83734b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Cartridge\HG_Cartridge">
+      <UniqueIdentifier>{e876fcb3-f80f-4984-9295-486b9937eb25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Cartridge\SG_Cartridge">
+      <UniqueIdentifier>{3ceb3dd1-ad99-4dda-98d1-6a65c2c36522}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1269,6 +1284,18 @@
     <ClInclude Include="..\Public\Hit.h">
       <Filter>02.GameObjects\Effect\Hit</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Hit_Props.h">
+      <Filter>02.GameObjects\Effect\Hit_Props</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Decal_BulletHole.h">
+      <Filter>02.GameObjects\Effect\Decal\Decal_BulletHole</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\HG_Cartridge.h">
+      <Filter>02.GameObjects\Effect\Cartridge\HG_Cartridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SG_Cartridge.h">
+      <Filter>02.GameObjects\Effect\Cartridge\SG_Cartridge</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1840,6 +1867,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Hit.cpp">
       <Filter>02.GameObjects\Effect\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hit_Props.cpp">
+      <Filter>02.GameObjects\Effect\Hit_Props</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Decal_BulletHole.cpp">
+      <Filter>02.GameObjects\Effect\Decal\Decal_BulletHole</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HG_Cartridge.cpp">
+      <Filter>02.GameObjects\Effect\Cartridge\HG_Cartridge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SG_Cartridge.cpp">
+      <Filter>02.GameObjects\Effect\Cartridge\SG_Cartridge</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
