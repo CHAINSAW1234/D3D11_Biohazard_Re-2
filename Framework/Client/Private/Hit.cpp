@@ -32,6 +32,10 @@ HRESULT CHit::Initialize(void * pArg)
 
 	m_bRender = false;
 
+	_float fRotation = m_pGameInstance->GetRandom_Real(0, 10.f);
+
+	m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK), fRotation);
+
 	return S_OK;
 }
 

@@ -88,6 +88,7 @@ public:/*For Cooking*/
 	void					Static_Mesh_Cooking_NoRotation(class CTransform* pTransform = nullptr);
 	void					Dynamic_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void					Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
+	void					Convex_Mesh_Cooking_RigidDynamic(PxRigidDynamic** pCollider, class CTransform* pTransform = nullptr);
 	void					Convex_Mesh_Cooking_Convert_Root(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform,_float4 vDelta);
 	void					Convex_Mesh_Cooking_Convert_Root_No_Rotate(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform,_float4 vDelta);
 	void					Create_SoftBody();

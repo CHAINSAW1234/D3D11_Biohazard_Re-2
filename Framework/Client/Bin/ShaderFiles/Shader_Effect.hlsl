@@ -25,7 +25,7 @@ struct VS_OUT
 {
 	float4		vPosition : SV_POSITION;
 	float2		vTexcoord : TEXCOORD0;
-	
+	float4		vProjPos : TEXCOORD1;
 };
 
 /* ¡§¡° Ω¶¿Ã¥ı */
@@ -40,6 +40,7 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
 	Out.vTexcoord = In.vTexcoord;
+	Out.vProjPos = Out.vPosition;
 
 	return Out;
 }
@@ -73,6 +74,7 @@ struct PS_IN
 {
 	float4		vPosition : SV_POSITION;
 	float2		vTexcoord : TEXCOORD0;
+	float4		vProjPos : TEXCOORD1;
 };
 
 struct PS_OUT
@@ -171,11 +173,6 @@ PS_OUT_EFFECT PS_EFFECT(PS_IN In)
 
 	if (Out.vDiffuse.a <= 0.1f)
 		discard;
-
-	//Out.vDiffuse.a *= g_fAlpha;
-
-	//Out.vMaterial = 0.f;
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fFar, 0.0f, 0.0f);
 
 	return Out;
 }
@@ -280,6 +277,32 @@ PS_OUT PS_DECAL(PS_IN In)
 		clip(-1);
 	}
 
+
+	return Out;
+}
+
+PS_OUT_EFFECT PS_EFFECT_SOFT(PS_IN In)
+{
+	PS_OUT_EFFECT      Out = (PS_OUT_EFFECT)0;
+
+	float       fTexcoordLinearX = g_fMinUV_X + (In.vTexcoord.x * (g_fMaxUV_X - g_fMinUV_X));
+	float       fTexcoordLinearY = g_fMinUV_Y + (In.vTexcoord.y * (g_fMaxUV_Y - g_fMinUV_Y));
+	float2      vTexcoordLinear = float2(fTexcoordLinearX, fTexcoordLinearY);
+
+	Out.vDiffuse = g_Texture.Sample(LinearSampler, vTexcoordLinear);
+
+	if (Out.vDiffuse.a <= 0.1f)
+		discard;
+
+	/*float2 vTexcoord = (float2)0.f;
+
+	vTexcoord.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexcoord.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+	float4 vDepthDesc = g_DepthTexture.Sample(PointSampler, vTexcoord);
+	float fOldViewZ = vDepthDesc.y * 1000.f;
+
+	Out.vDiffuse.a = Out.vDiffuse.a * saturate(fOldViewZ - In.vProjPos.w);*/
 
 	return Out;
 }
@@ -396,5 +419,19 @@ technique11 DefaultTechnique
 		HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
 		DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
 		PixelShader = compile ps_5_0 PS_NORMAL();
+	}
+
+	//8
+	pass SingleSprite_Soft
+	{
+		SetRasterizerState(RS_NoCulling);
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+		HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+		DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+		PixelShader = compile ps_5_0 PS_EFFECT_SOFT();
 	}
 }

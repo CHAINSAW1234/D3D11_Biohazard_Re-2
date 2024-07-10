@@ -124,6 +124,8 @@ public:
 	DWORD										Get_Direction() { return m_dwDirection; }	// 플레이어 이동 상하좌우 계산
 	_float										Get_CamDegree(); //카메라와 플레이어 간의 각도 계산
 	_float4										Get_MuzzlePosition();
+	_float4										Get_CartridgePosition();
+	_float4										Get_CartridgeDir();
 	_float4										Get_MuzzlePosition_Forward();
 	wstring										Get_BiteLayerTag() { return m_strBiteLayerTag; }
 	_int										Get_BiteAnimIndex() { return m_iBiteAnimIndex; }
@@ -426,6 +428,7 @@ public:
 	void	Release_Effect();
 	void	Tick_Effect(_float fTimeDelta);
 	void	Late_Tick_Effect(_float fTimeDelta);
+	void	Initiate_Cartridge();
 private:
 	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
 	class CMuzzle_Flash_SG*						m_pMuzzle_Flash_SG = { nullptr };
@@ -438,6 +441,18 @@ private:
 
 	vector<class CMuzzle_ShockWave*>			m_vecShockWave;
 	_int										m_iShockWaveIndex = { 0 };
+
+	vector<class CHit_Props*>					m_vecHit_Props_HG = { nullptr };
+	vector<class CHit_Props*>					m_vecHit_Props_SG;
+	vector<class CDecal_BulletHole*>			m_vecDecal_BulletHole;
+	_uint										m_iDecal_Index = { 0 };
+	vector<_bool>								m_vecHit_Dynamic;
+
+	vector<class CHG_Cartridge*>				m_vecHG_Cartridges;
+	_uint										m_iHG_Cartridge_Index = { 0 };
+
+	vector<class CSG_Cartridge*>				m_vecSG_Cartridges;
+	_uint										m_iSG_Cartridge_Index = { 0 };
 #pragma endregion
 private:
 	HRESULT Add_Components();

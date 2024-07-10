@@ -305,6 +305,7 @@ public:
             break;
         }
     }
+    _float4     GetBodyPosition();
 public:
 	static CRagdoll_Physics*            Create();
 

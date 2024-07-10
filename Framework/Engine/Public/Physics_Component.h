@@ -94,6 +94,14 @@ public:
 	{
 		return m_bGravity;
 	}
+	PxRigidDynamic**				GetRigidDynamic_DoublePtr()
+	{
+		return &m_pRigid_Dynamic;
+	}
+	PxRigidDynamic* GetRigidDynamic_Ptr()
+	{
+		return m_pRigid_Dynamic;
+	}
 public:
 	static CPhysics_Component*		Create();
 

@@ -30,10 +30,18 @@
 
 #include "MovingShelf.h"
 #include "Muzzle_ShockWave.h"
+#include "Hit_Props.h"
+#include "Decal_BulletHole.h"
+#include "HG_Cartridge.h"
+#include "SG_Cartridge.h"
 
 #define MODEL_SCALE 0.01f
 #define SHOTGUN_BULLET_COUNT 7
 #define SHOTGUN_SPREAD_AMOUNT 0.14f
+#define HIT_PROPS_EFFECT_TYPE_COUNT 6
+#define BULLET_HOLE_COUNT SHOTGUN_BULLET_COUNT*5.f
+#define HG_CARTRIDGE_COUNT 10
+#define SG_CARTRIDGE_COUNT 10
 
 const wstring CPlayer::strAnimSetMoveName[ANIMSET_MOVE_END] = { TEXT("FINE"), TEXT("MOVE_HG"), TEXT("MOVE_STG"), TEXT("FINE_LIGHT"), TEXT("CAUTION"), TEXT("CAUTION_LIGHT"), TEXT("DNAGER"), TEXT("DANGER_LIGHT") };
 const wstring CPlayer::strAnimSetHoldName[ANIMSET_HOLD_END] = { TEXT("HOLD_HG"), TEXT("HOLG_STG"), TEXT("HOLD_MLE"), TEXT("HOLD_SUP") };
@@ -124,7 +132,7 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 void CPlayer::Tick(_float fTimeDelta)
 {
 	if (m_pGameInstance->Get_KeyState('T') == DOWN) {
-		m_pEventCamera->Set_PlayCamlist(TEXT("cf093"));	
+		m_pEventCamera->Set_PlayCamlist(TEXT("cf093"));
 	}
 
 
@@ -323,7 +331,7 @@ void CPlayer::Tick(_float fTimeDelta)
 		Apply_Recoil(fTimeDelta);
 	}
 
-	if (m_eState == HOLD && 	PRESSING == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+	if (m_eState == HOLD && PRESSING == m_pGameInstance->Get_KeyState(VK_RBUTTON))
 	{
 		if (m_bAim == false)
 		{
@@ -453,18 +461,18 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 		_matrix				LWeaponMatrix = { XMLoadFloat4x4(pBodyModel->Get_CombinedMatrix("l_weapon")) };
 
 		_vector				vPositionLWeapon = { LWeaponMatrix.r[CTransform::STATE_POSITION] };
-		
+
 		_vector				vPositionShotGunHandle = { XMLoadFloat4(&Get_Weapon()->Get_BonePosition("_04")) };
 		_vector				vPositionShotGunHandle2 = { XMLoadFloat4(&Get_Weapon()->Get_BonePosition("chain00_00")) };
-		
-		
+
+
 		_vector				vNeedDirection = { vPositionShotGunHandle - vPositionLWeapon };
 
 
 		_vector				vLWeaponPositionWorld = { XMVector3TransformCoord(vPositionLWeapon, m_pTransformCom->Get_WorldMatrix()) };
 		_vector				vNeedDirectionWorld = { XMVector3TransformNormal(vNeedDirection, m_pTransformCom->Get_WorldMatrix()) };
 
-		_vector				vTargetPositionWorld = { vPositionShotGunHandle2  };
+		_vector				vTargetPositionWorld = { vPositionShotGunHandle2 };
 
 		pBodyModel->Set_TargetPosition_IK(TEXT("IK_SHOTGUN"), vTargetPositionWorld);
 
@@ -522,7 +530,7 @@ void CPlayer::Start()
 	for (auto& iter : *pSelecter_UI)
 	{
 		CSelector_UI* pSelect = dynamic_cast<CSelector_UI*>(iter);
-		
+
 		if (nullptr != pSelect)
 		{
 			/* 부모를 불러서 Selector를 구별한다 */
@@ -645,7 +653,7 @@ void CPlayer::Player_First_Behavior()
 	/* 2. 아이템과 첫 상호작용 시 "인벤토리 열기" 안내 */
 	if (false == m_isPlayer_FirstBehavior[(_int)UI_TUTORIAL_TYPE::INVENTORY_OPEN])
 	{
-		if(true == m_bInteract)
+		if (true == m_bInteract)
 		{
 			Set_Tutorial_Start(UI_TUTORIAL_TYPE::INVENTORY_OPEN);
 
@@ -801,7 +809,7 @@ void CPlayer::Set_Hp(_int iHp)
 	if (m_iHp <= 0) {
 		;;		// 사망 처리?
 	}
-	
+
 	Update_AnimSet();
 	NotifyObserver();
 }
@@ -870,6 +878,10 @@ void CPlayer::Shot()
 
 	RayCast_Shoot();
 
+#pragma region Cartridge
+	Initiate_Cartridge();
+#pragma endregion
+
 	m_bRecoil = true;
 
 	m_fRecoil_Lerp_Time = 0.f;
@@ -891,7 +903,7 @@ void CPlayer::Shot()
 		m_MuzzleSmoke_Time = GetTickCount64();
 
 		break;
-		}
+	}
 	case EQUIP::STG: {
 		auto Random_Real_X = m_pGameInstance->GetRandom_Real(0.2f, 0.25f);
 		auto Random_Real_Y = m_pGameInstance->GetRandom_Real(0.25f, 0.3f);
@@ -910,11 +922,11 @@ void CPlayer::Shot()
 		m_vMuzzle_Smoke_Pos = Get_MuzzlePosition();
 		m_MuzzleSmoke_Time = GetTickCount64();
 		break;
-		}
 	}
-	
+	}
+
 	m_pTabWindow->UseItem(Get_Equip_As_ITEM_NUMBER(), 1);
-	
+
 	NotifyObserver();
 	// 카메라 조작 코드 여기에 추가
 	// 사운드등도 여기 넣어도 됨
@@ -1049,6 +1061,24 @@ _float4 CPlayer::Get_MuzzlePosition()
 	return m_pWeapon->Get_MuzzlePosition();
 }
 
+_float4 CPlayer::Get_CartridgePosition()
+{
+	if (nullptr == m_pWeapon) {
+		return _float4(0.f, 0.f, 0.f, 1.f);
+	}
+
+	return m_pWeapon->Get_CartridgePosition();
+}
+
+_float4 CPlayer::Get_CartridgeDir()
+{
+	if (nullptr == m_pWeapon) {
+		return _float4(0.f, 0.f, 0.f, 1.f);
+	}
+
+	return m_pWeapon->Get_CartridgeDir();
+}
+
 _float4 CPlayer::Get_MuzzlePosition_Forward()
 {
 	if (nullptr == m_pWeapon) {
@@ -1071,12 +1101,12 @@ void CPlayer::Update_InterplationMatrix(_float fTimeDelta)
 	if (m_fCurrentInterpolateTime >= m_fTotalInterpolateTime)
 		return;
 
-		m_fCurrentInterpolateTime += fTimeDelta;
-		if (m_fCurrentInterpolateTime > m_fTotalInterpolateTime)
-		{
-			fTimeDelta += m_fTotalInterpolateTime - m_fCurrentInterpolateTime;
-			m_fCurrentInterpolateTime = m_fTotalInterpolateTime;
-		}
+	m_fCurrentInterpolateTime += fTimeDelta;
+	if (m_fCurrentInterpolateTime > m_fTotalInterpolateTime)
+	{
+		fTimeDelta += m_fTotalInterpolateTime - m_fCurrentInterpolateTime;
+		m_fCurrentInterpolateTime = m_fTotalInterpolateTime;
+	}
 
 	_float				fRatio = { fTimeDelta / m_fTotalInterpolateTime };
 
@@ -1094,7 +1124,7 @@ void CPlayer::Update_InterplationMatrix(_float fTimeDelta)
 	_matrix            AIWorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
 	_matrix            CurrentRotationMatrix = { XMMatrixRotationQuaternion(vCurrentQuaternion) };
 	_matrix            CurrentTimesMatrix = { CurrentRotationMatrix };
-	 CurrentTimesMatrix.r[CTransform::STATE_POSITION].m128_f32[3] = 0.f;
+	CurrentTimesMatrix.r[CTransform::STATE_POSITION].m128_f32[3] = 0.f;
 
 	_vector            vPosition = { AIWorldMatrix.r[CTransform::STATE_POSITION] };
 	AIWorldMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
@@ -1110,7 +1140,7 @@ void CPlayer::Update_InterplationMatrix(_float fTimeDelta)
 
 void CPlayer::Update_FSM()
 {
-	switch(m_eState) {
+	switch (m_eState) {
 	case MOVE:
 		if (m_pGameInstance->Get_KeyState(VK_RBUTTON) == PRESSING) {
 			if (NONE != m_eEquip_Gun &&
@@ -1128,13 +1158,13 @@ void CPlayer::Update_FSM()
 			Change_State(MOVE);
 		}
 		if (m_pGameInstance->Get_KeyState(VK_SPACE) == PRESSING) {
-			if (NONE != m_eEquip_Sub )
+			if (NONE != m_eEquip_Sub)
 				Change_State(SUBHOLD);
 		}
 
 		break;
 	case SUBHOLD:
-		if (m_pGameInstance->Get_KeyState(VK_SPACE) != PRESSING && 
+		if (m_pGameInstance->Get_KeyState(VK_SPACE) != PRESSING &&
 			Get_Body_Model()->Is_Loop_PlayingInfo(0)) {
 			Change_State(MOVE);
 		}
@@ -1286,17 +1316,17 @@ void CPlayer::Update_Equip()
 						Requst_Change_Equip(HG);
 						break;
 					}
-						
+
 					case Client::ShotGun: {
 						Requst_Change_Equip(STG);
 						break;
 					}
-						
+
 					case Client::Flash_Bomb: {
 						Requst_Change_Equip(FLASHBANG);
 						break;
 					}
-						
+
 					case Client::Grenade: {
 						Requst_Change_Equip(GRENADE);
 						break;
@@ -1327,7 +1357,7 @@ void CPlayer::Update_Equip()
 void CPlayer::Update_AnimSet()
 {
 #pragma region Move
-		if (m_isSpotlight) {
+	if (m_isSpotlight) {
 		if (m_iHp >= 4) {
 			m_eAnimSet_Move = FINE_LIGHT;
 		}
@@ -1379,7 +1409,7 @@ void CPlayer::Update_AnimSet()
 	}
 #pragma endregion
 
-	switch(m_eState) {
+	switch (m_eState) {
 	case MOVE:
 		Change_Body_Animation_Move(0, Get_Body_Model()->Get_CurrentAnimIndex(0));
 		Change_Body_Animation_Move(1, Get_Body_Model()->Get_CurrentAnimIndex(1));
@@ -1728,7 +1758,7 @@ void CPlayer::Set_ManualMove(_bool isManualMove)
 
 void CPlayer::Set_Muzzle_Smoke()
 {
-	if(m_eEquip == HG)
+	if (m_eEquip == HG)
 	{
 		if (m_bMuzzleSmoke)
 		{
@@ -1754,26 +1784,110 @@ void CPlayer::PickUp_Item(CGameObject* pPickedUp_Item)
 void CPlayer::RayCast_Shoot()
 {
 	_float4 vBlockPoint;
+	_float4 vBlockNormal;
+	_bool	bHit_Props = false;
 
-	if(m_eEquip == STG)
+	if (m_eEquip == STG)
 	{
 		auto vCamPos = m_pCamera->GetPosition();
 		auto vCamLook = m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK);
 
-		m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, true,true);
+		_bool bDynamic = false;
 
-		for(size_t i = 0;i<SHOTGUN_BULLET_COUNT;++i)
+		if (m_pGameInstance->RayCast_Effect(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, false,&bDynamic))
+		{
+			auto iIndex = m_pGameInstance->GetRandom_Int(0, HIT_PROPS_EFFECT_TYPE_COUNT - 1);
+			m_vecHit_Props_HG[iIndex]->Set_Render(true);
+			m_vecHit_Props_HG[iIndex]->SetPosition(vBlockPoint);
+
+			if(bDynamic == false)
+			{
+				m_vecDecal_BulletHole[m_iDecal_Index]->Set_Render(true);
+				m_vecDecal_BulletHole[m_iDecal_Index]->SetPosition(vBlockPoint);
+				m_vecDecal_BulletHole[m_iDecal_Index]->LookAt(vBlockNormal);
+				++m_iDecal_Index;
+
+				if (m_iDecal_Index >= m_vecDecal_BulletHole.size())
+				{
+					m_iDecal_Index = 0;
+				}
+			}
+		}
+		else
+		{
+			m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, true, true, &bHit_Props);
+		}
+
+		for (size_t i = 0; i < SHOTGUN_BULLET_COUNT; ++i)
 		{
 			auto vDelta_Random = _float4(m_pGameInstance->GetRandom_Real(-SHOTGUN_SPREAD_AMOUNT, SHOTGUN_SPREAD_AMOUNT), m_pGameInstance->GetRandom_Real(-SHOTGUN_SPREAD_AMOUNT, SHOTGUN_SPREAD_AMOUNT), m_pGameInstance->GetRandom_Real(-SHOTGUN_SPREAD_AMOUNT, SHOTGUN_SPREAD_AMOUNT), 0.f);
 			auto NewCamLook = vCamLook + vDelta_Random;
 			NewCamLook = Float4_Normalize(NewCamLook);
 
-			m_pGameInstance->RayCast_Shoot(vCamPos, NewCamLook, &vBlockPoint, true,false);
+			_bool bDynamic = false;
+			if (m_pGameInstance->RayCast_Effect(vCamPos, NewCamLook, &vBlockPoint, &vBlockNormal, true,&bDynamic))
+			{
+				m_vecHit_Dynamic[i] = bDynamic;
+				continue;
+			}
+
+			m_pGameInstance->RayCast_Shoot(vCamPos, NewCamLook, &vBlockPoint, &vBlockNormal, true, false, &bHit_Props);
 		}
+
+		auto BlockPoints = m_pGameInstance->GetBlockPoints_Props();
+		auto BlockNormals = m_pGameInstance->GetBlockNormals_Props();
+
+		for (size_t i = 0; i < BlockPoints->size(); ++i)
+		{
+			m_vecHit_Props_SG[i]->Set_Render(true);
+			m_vecHit_Props_SG[i]->SetPosition((*BlockPoints)[i]);
+
+			if(m_vecHit_Dynamic[i] == false)
+			{
+				m_vecDecal_BulletHole[m_iDecal_Index]->Set_Render(true);
+				m_vecDecal_BulletHole[m_iDecal_Index]->SetPosition((*BlockPoints)[i]);
+				m_vecDecal_BulletHole[m_iDecal_Index]->LookAt((*BlockNormals)[i]);
+				++m_iDecal_Index;
+
+				if (m_iDecal_Index >= m_vecDecal_BulletHole.size())
+				{
+					m_iDecal_Index = 0;
+				}
+			}
+		}
+
+		BlockPoints->clear();
+		BlockNormals->clear();
 	}
 	else
 	{
-		m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, false,true);
+		_bool bDynamic = false;
+
+		if (m_pGameInstance->RayCast_Effect(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, false,&bDynamic))
+		{
+			auto iIndex = m_pGameInstance->GetRandom_Int(0, HIT_PROPS_EFFECT_TYPE_COUNT - 1);
+			m_vecHit_Props_HG[iIndex]->Set_Render(true);
+			m_vecHit_Props_HG[iIndex]->SetPosition(vBlockPoint);
+
+			if(bDynamic == false)
+			{
+				m_vecDecal_BulletHole[m_iDecal_Index]->Set_Render(true);
+				m_vecDecal_BulletHole[m_iDecal_Index]->SetPosition(vBlockPoint);
+				m_vecDecal_BulletHole[m_iDecal_Index]->LookAt(vBlockNormal);
+				++m_iDecal_Index;
+
+				if (m_iDecal_Index >= m_vecDecal_BulletHole.size())
+				{
+					m_iDecal_Index = 0;
+				}
+			}
+
+			return;
+		}
+
+		if (m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, false, true, &bHit_Props));
+		{
+		}
 	}
 }
 
@@ -2315,6 +2429,53 @@ void CPlayer::Ready_Effect()
 		pShockWave->SetSize(0.3f, 0.3f);
 		m_vecShockWave.push_back(pShockWave);
 	}
+
+	m_vecHit_Props_HG.clear();
+	for (size_t i = 0; i < HIT_PROPS_EFFECT_TYPE_COUNT; ++i)
+	{
+		auto pHit_Props = CHit_Props::Create(m_pDevice, m_pContext);
+		pHit_Props->SetType(i);
+		pHit_Props->Initialize(nullptr);
+		pHit_Props->SetSize(0.6f, 0.6f);
+		m_vecHit_Props_HG.push_back(pHit_Props);
+	}
+
+	m_vecHit_Props_SG.clear();
+	for (size_t i = 0; i < SHOTGUN_BULLET_COUNT; ++i)
+	{
+		auto pHit_Props = CHit_Props::Create(m_pDevice, m_pContext);
+		pHit_Props->SetType(i % 6);
+		pHit_Props->Initialize(nullptr);
+		pHit_Props->SetSize(0.6f, 0.6f);
+		m_vecHit_Props_SG.push_back(pHit_Props);
+	}
+
+	m_vecDecal_BulletHole.clear();
+	for (size_t i = 0; i < BULLET_HOLE_COUNT; ++i)
+	{
+		auto pDecal = CDecal_BulletHole::Create(m_pDevice, m_pContext);
+		pDecal->Initialize(nullptr);
+		m_vecDecal_BulletHole.push_back(pDecal);
+	}
+
+	m_vecHit_Dynamic.clear();
+	m_vecHit_Dynamic.resize(SHOTGUN_BULLET_COUNT);
+
+	m_vecHG_Cartridges.clear();
+	for (size_t i = 0; i < HG_CARTRIDGE_COUNT; ++i)
+	{
+		auto pCartridge = CHG_Cartridge::Create(m_pDevice, m_pContext);
+		m_vecHG_Cartridges.push_back(pCartridge);
+	}
+	m_vecHG_Cartridges[0]->Start();
+
+	m_vecSG_Cartridges.clear();
+	for (size_t i = 0; i < SG_CARTRIDGE_COUNT; ++i)
+	{
+		auto pCartridge = CSG_Cartridge::Create(m_pDevice, m_pContext);
+		m_vecSG_Cartridges.push_back(pCartridge);
+	}
+	m_vecSG_Cartridges[0]->Start();
 }
 
 void CPlayer::Release_Effect()
@@ -2323,9 +2484,34 @@ void CPlayer::Release_Effect()
 	Safe_Release(m_pMuzzle_Flash_SG);
 	Safe_Release(m_pMuzzle_Smoke);
 
+	for (size_t i = 0; i < m_vecHit_Props_HG.size(); ++i)
+	{
+		Safe_Release(m_vecHit_Props_HG[i]);
+	}
+
 	for (size_t i = 0; i < m_vecShockWave.size(); ++i)
 	{
 		Safe_Release(m_vecShockWave[i]);
+	}
+
+	for (size_t i = 0; i < m_vecHit_Props_SG.size(); ++i)
+	{
+		Safe_Release(m_vecHit_Props_SG[i]);
+	}
+
+	for (size_t i = 0; i < m_vecDecal_BulletHole.size(); ++i)
+	{
+		Safe_Release(m_vecDecal_BulletHole[i]);
+	}
+
+	for (size_t i = 0; i < m_vecHG_Cartridges.size(); ++i)
+	{
+		Safe_Release(m_vecHG_Cartridges[i]);
+	}
+
+	for (size_t i = 0; i < m_vecSG_Cartridges.size(); ++i)
+	{
+		Safe_Release(m_vecSG_Cartridges[i]);
 	}
 }
 
@@ -2334,7 +2520,7 @@ void CPlayer::Tick_Effect(_float fTimeDelta)
 	m_pMuzzle_Smoke->Tick(fTimeDelta);
 	m_pMuzzle_Flash->Tick(fTimeDelta);
 
-	if(m_eEquip == STG)
+	if (m_eEquip == STG)
 	{
 		m_pMuzzle_Flash_SG->SetPosition(Get_MuzzlePosition());
 		m_pMuzzle_Flash_SG->Tick(fTimeDelta);
@@ -2343,6 +2529,31 @@ void CPlayer::Tick_Effect(_float fTimeDelta)
 	for (size_t i = 0; i < m_vecShockWave.size(); ++i)
 	{
 		m_vecShockWave[i]->Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecHit_Props_SG.size(); ++i)
+	{
+		m_vecHit_Props_SG[i]->Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecHit_Props_HG.size(); ++i)
+	{
+		m_vecHit_Props_HG[i]->Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecDecal_BulletHole.size(); ++i)
+	{
+		m_vecDecal_BulletHole[i]->Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecHG_Cartridges.size(); ++i)
+	{
+		m_vecHG_Cartridges[i]->Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecSG_Cartridges.size(); ++i)
+	{
+		m_vecSG_Cartridges[i]->Tick(fTimeDelta);
 	}
 
 	Set_Muzzle_Smoke();
@@ -2357,6 +2568,64 @@ void CPlayer::Late_Tick_Effect(_float fTimeDelta)
 	for (size_t i = 0; i < m_vecShockWave.size(); ++i)
 	{
 		m_vecShockWave[i]->Late_Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecHit_Props_SG.size(); ++i)
+	{
+		m_vecHit_Props_SG[i]->Late_Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecHit_Props_HG.size(); ++i)
+	{
+		m_vecHit_Props_HG[i]->Late_Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecDecal_BulletHole.size(); ++i)
+	{
+		m_vecDecal_BulletHole[i]->Late_Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecHG_Cartridges.size(); ++i)
+	{
+		m_vecHG_Cartridges[i]->Late_Tick(fTimeDelta);
+	}
+
+	for (size_t i = 0; i < m_vecSG_Cartridges.size(); ++i)
+	{
+		m_vecSG_Cartridges[i]->Late_Tick(fTimeDelta);
+	}
+
+}
+
+void CPlayer::Initiate_Cartridge()
+{
+	if (m_eEquip == HG)
+	{
+		_float4 vDir = Get_CartridgeDir();
+		_float4 vPos = Get_CartridgePosition();
+		_float4 vLook = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
+		m_vecHG_Cartridges[m_iHG_Cartridge_Index]->Initiate(vPos, vDir,Float4_Normalize(vLook));
+
+		++m_iHG_Cartridge_Index;
+
+		if (m_iHG_Cartridge_Index >= HG_CARTRIDGE_COUNT)
+		{
+			m_iHG_Cartridge_Index = 0;
+		}
+	}
+	else
+	{
+		_float4 vDir = Get_CartridgeDir();
+		_float4 vPos = Get_CartridgePosition();
+		_float4 vLook = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
+		m_vecSG_Cartridges[m_iSG_Cartridge_Index]->Initiate(vPos, vDir, Float4_Normalize(vLook));
+
+		++m_iSG_Cartridge_Index;
+
+		if (m_iSG_Cartridge_Index >= SG_CARTRIDGE_COUNT)
+		{
+			m_iSG_Cartridge_Index = 0;
+		}
 	}
 }
 
@@ -2525,7 +2794,7 @@ HRESULT CPlayer::Add_PartObjects()
 
 	WeaponTransformMatrix = { XMMatrixIdentity() };
 	WeaponTransformMatrix *= XMMatrixRotationX(XMConvertToRadians(-90.f));
-	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] = WeaponDesc.fTransformationMatrices[CWeapon::HOLD] = 
+	WeaponDesc.fTransformationMatrices[CWeapon::MOVE] = WeaponDesc.fTransformationMatrices[CWeapon::HOLD] =
 		WeaponDesc.fTransformationMatrices[CWeapon::MOVE_LIGHT] = WeaponTransformMatrix;
 
 

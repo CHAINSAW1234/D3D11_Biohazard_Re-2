@@ -45,7 +45,7 @@ private:
 #pragma region Physics_Component 
 public:
 	class CCharacter_Controller*						Create_Controller(_float4 Pos, _int* Index,class CGameObject* pCharacter,_float fHeight,_float fRadius, class CTransform* pTransform, vector<class CBone*>* pBones, const std::string& name = "");
-	void												Create_Rigid_Dynamic(_float4 Pos);
+	class CRigid_Dynamic*								Create_Rigid_Dynamic(class CModel* pModel, class CTransform* pTransform, _int* iId,class CGameObject* pObj);
 	class CRigid_Static*								Create_Rigid_Static(_float4 Pos, _int* Index, class CGameObject* pStaticMesh);
 	class CPxCollider*									Create_Px_Collider(class CModel* pModel,class CTransform* pTransform,_int* iId);
 	class CPxCollider*									Create_Px_Collider_Convert_Root(class CModel* pModel,class CTransform* pTransform,_int* iId);
@@ -75,9 +75,10 @@ private:
 #pragma region Ray Cast
 public:
 	_bool												RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
-	_bool												RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _bool bBigAttack,_bool bDecalRay, _float fMaxDist = 1000.f);
+	_bool												RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint,_float4* pBlockNormal, _bool bBigAttack,_bool bDecalRay, _bool* IsHit_Props = nullptr, _float fMaxDist = 1000.f);
 	_bool												SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool												RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float4* pBlockNormal, _float fMaxDist = 1000.f);
+	_bool												RayCast_Effect(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float4* pBlockNormal,_bool bBigAttack, _bool* pDynamic, _float fMaxDist = 1000.f);
 #pragma endregion
 
 #pragma region Sphere Cast
@@ -91,6 +92,7 @@ public://For Mesh Cooking
 	void												Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,class CTransform* pTransform = nullptr);
 	void												Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void												Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
+	void												Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,PxRigidDynamic** pCollider, class CTransform* pTransform = nullptr);
 	void												Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms, class CTransform* pTransform,_float4 vDelta);
 	void												Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms, class CTransform* pTransform,_float4 vDelta);
 	void												Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,_bool bHasCollider);
@@ -263,6 +265,21 @@ public:
 
 		return vDst;
 	}
+#pragma endregion
+
+#pragma region Effect
+public:
+	vector<_float4>* GetBlockPoints_Props()
+	{
+		return &m_vecBlockPoints_Props;
+	}
+	vector<_float4>* GetBlockNormals_Props()
+	{
+		return &m_vecBlockNormals_Props;
+	}
+private:
+	vector<_float4>		m_vecBlockPoints_Props;
+	vector<_float4>		m_vecBlockNormals_Props;
 #pragma endregion
 };
 
