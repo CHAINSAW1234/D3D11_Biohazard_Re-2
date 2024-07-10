@@ -80,27 +80,8 @@ private:
 
 public:
 	virtual _float4								Get_Object_Pos() override;
-	virtual _bool								Attack_Prop(class CTransform* pTransfromCom = nullptr) override
-	{
-		if (m_iHP <= 0)
-		{
-			_float fScala = Radian_To_Jombie(pTransfromCom);
-			if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
-				m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_L;
-			else
-				m_eDoubleState = RSIDE_DOUBLEDOOR_OPEN_L;
-			
-			m_bActivity = true;
-			
-			return true;
-		}
-		else
-		{
-			m_iHP -= 1;
-
-			return false;
-		}
-	}
+	virtual _bool								Attack_Prop(class CTransform* pTransfromCom = nullptr) override;
+	
 
 public:
 	inline _int									Get_HP() { return m_iHP; }

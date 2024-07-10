@@ -164,11 +164,35 @@ _bool CKnock_Door_Zombie::Execute(_float fTimeDelta)
 				}
 			}*/
 
-			m_fAccKnockTime += fTimeDelta;
+			/*m_fAccKnockTime += fTimeDelta;
 			if (m_fAccKnockTime >= ZOMBIE_ATTACK_DOOR_NEED_TIME)
 			{
 				m_fAccKnockTime -= ZOMBIE_ATTACK_DOOR_NEED_TIME;
 				pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
+			}*/
+
+			_float			fTrackPosition = { pBody_Model->Get_TrackPosition(static_cast<_uint>(m_eBasePlayingIndex)) };
+			if (ZOMBIE_DOOR_HIT_TRACK_POSITION_1 > fTrackPosition)
+			{
+				m_LoopTrack_Event_Level = LOOP_TRACK_EV_LEVEL::_END;
+			}
+
+			else if (LOOP_TRACK_EV_LEVEL::_END == m_LoopTrack_Event_Level)
+			{
+				if (fTrackPosition >= ZOMBIE_DOOR_HIT_TRACK_POSITION_1)
+				{
+					m_LoopTrack_Event_Level = LOOP_TRACK_EV_LEVEL::_HIT_1;
+					pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
+				}
+			}
+
+			else if (LOOP_TRACK_EV_LEVEL::_HIT_1 == m_LoopTrack_Event_Level)
+			{
+				if (fTrackPosition >= ZOMBIE_DOOR_HIT_TRACK_POSITION_2)
+				{
+					m_LoopTrack_Event_Level = LOOP_TRACK_EV_LEVEL::_HIT_2;
+					pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
+				}
 			}
 		}
 

@@ -3,6 +3,8 @@
 #include "Client_Defines.h"
 #include "Part_InteractProps.h"
 
+#define DOOR_HIT_REACTION_TIME			0.08f
+
 BEGIN(Client)
 
 class CBody_Door final : public CPart_InteractProps
@@ -57,6 +59,13 @@ private:
 	void								OneDoor_Tick(_float fTimeDelta);
 	void								OneDoor_Late_Tick(_float fTimeDelta);
 
+private:
+	void						Update_Hit_Reaction(_float fTimeDelta);
+
+public:
+	void						Hit(CTransform* pTransform);
+
+
 
 private:
 	string							m_strDoorPart[BODY_PART_END];
@@ -70,6 +79,11 @@ private:
 	const _ubyte*				m_pOneState_Prev					= {};
 	const _ubyte*				m_pDoubleState						= {};
 	const _ubyte*				m_pDoubleState_Prev			= {};
+
+	_bool								m_isHit = { false };
+	_bool								m_isInverseRotate_HitRecation = { false };
+	_float								m_fAccHitTime = { 0.f };
+	_bool								m_isHitFromFront = { false };
 
 	_float							m_fTime								= { 0.f };
 public:

@@ -56,7 +56,7 @@ void CTool_MeshController::Show_MeshTags_HideMesh()
 			{
 				Show_Mesh_All(strModelTag);
 			}
-
+			/*
 			_uint						iMode = { 0 };
 			static MODE					eMode = { MODE_END };
 
@@ -74,7 +74,7 @@ void CTool_MeshController::Show_MeshTags_HideMesh()
 			if (ImGui::RadioButton(string(string("Show ##CTool_MeshController::Show_MeshTags_HideMesh()") + strModelTag).c_str(), &isShowMode))
 			{
 				eMode = MODE_SHOW;
-			}
+			}*/
 
 			static _float2				vSize = { 200.f, 100.f };
 			
@@ -86,15 +86,13 @@ void CTool_MeshController::Show_MeshTags_HideMesh()
 				{
 					if (ImGui::Selectable(strMeshTag.c_str()))
 					{
-						if (MODE_SHOW == eMode)
-						{
-							Show_Mesh(strModelTag, strMeshTag);
-						}
+						_bool			isHideMesh = { Find_Model(strModelTag)->Is_Hide_Mesh(strMeshTag) };
 
-						else if (MODE_HIDE == eMode)
-						{
+						if(true == isHideMesh)
+							Show_Mesh(strModelTag, strMeshTag);
+
+						else
 							Hide_Mesh(strModelTag, strMeshTag);
-						}
 					}
 				}
 

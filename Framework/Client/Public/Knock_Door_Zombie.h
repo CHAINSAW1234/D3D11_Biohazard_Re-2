@@ -7,6 +7,10 @@
 #define ZOMBIE_ATTACK_DOOR_NEED_TIME							2.f
 #define ZOMBIE_DOOR_KNOCK_TOTAL_INTERPOLATE_TO_WINDOW_TIME		0.5f
 
+#define ZOMBIE_DOOR_HIT_TRACK_POSITION_1						48.f
+#define ZOMBIE_DOOR_HIT_TRACK_POSITION_2						360.f
+
+
 BEGIN(Client)
 
 class CKnock_Door_Zombie : public CTask_Node
@@ -14,6 +18,8 @@ class CKnock_Door_Zombie : public CTask_Node
 public:
 	enum class ANIM_STATE { _START, _LOOP, _FINISH, _END };
 	enum class ANIM_TYPE { _A, _B, _END };
+
+	enum class LOOP_TRACK_EV_LEVEL { _HIT_1, _HIT_2, _END };
 
 private:
 	CKnock_Door_Zombie();
@@ -46,6 +52,8 @@ protected:
 
 	_float							m_fAccLinearInterpolateTime = { 0.f };
 	_float4x4						m_InterpolateDeltaMatrix = {};
+
+	LOOP_TRACK_EV_LEVEL				m_LoopTrack_Event_Level = { LOOP_TRACK_EV_LEVEL::_END };
 
 public:
 	static CKnock_Door_Zombie* Create(void* pArg = nullptr);

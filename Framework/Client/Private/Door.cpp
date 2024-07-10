@@ -576,6 +576,30 @@ _float4 CDoor::Get_Object_Pos()
 	return _float4();
 }
 
+_bool CDoor::Attack_Prop(CTransform* pTransform)
+{
+	if (m_iHP <= 0)
+	{
+		_float fScala = Radian_To_Jombie(pTransform);
+		if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
+			m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_L;
+		else
+			m_eDoubleState = RSIDE_DOUBLEDOOR_OPEN_L;
+
+		m_bActivity = true;
+
+
+		return true;
+	}
+	else
+	{
+		m_iHP -= 1;
+		static_cast<CBody_Door*>(m_PartObjects[PART_BODY])->Hit(pTransform);
+
+		return false;
+	}
+}
+
 void CDoor::OneDoor_Tick(_float fTimeDelta)
 {
 	if (m_bActivity)

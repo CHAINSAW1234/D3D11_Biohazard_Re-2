@@ -63,7 +63,6 @@ void CBite_Zombie::Enter()
 
 _bool CBite_Zombie::Execute(_float fTimeDelta)
 {
-	return false;
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)
 		return false;

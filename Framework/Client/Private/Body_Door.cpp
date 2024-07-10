@@ -59,7 +59,7 @@ HRESULT CBody_Door::Initialize(void* pArg)
 	}
 	*/
 
-	m_pModelCom->Active_RootMotion_Rotation(true);
+	m_pModelCom->Active_RootMotion_Rotation(false);
 
 #ifndef NON_COLLISION_PROP
 
@@ -658,9 +658,13 @@ void CBody_Door::OneDoor_Late_Tick(_float fTimeDelta)
 		break;
 	}
 
+	if (true == m_isHit)
+		Update_Hit_Reaction(fTimeDelta);
+
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+	if(false == m_isHit)
+		m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 
 
 
@@ -670,6 +674,82 @@ void CBody_Door::OneDoor_Late_Tick(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 
+}
+
+void CBody_Door::Update_Hit_Reaction(_float fTimeDelta)
+{
+	if (false == m_isHit)
+		return;
+
+	if (false == m_isInverseRotate_HitRecation)
+	{
+		m_fAccHitTime += fTimeDelta;
+
+		if (DOOR_HIT_REACTION_TIME < m_fAccHitTime)
+		{
+			m_isInverseRotate_HitRecation = true;
+			m_fAccHitTime = DOOR_HIT_REACTION_TIME;
+		}
+	}
+
+	else
+	{
+		m_fAccHitTime -= fTimeDelta;
+
+		if (0.f > m_fAccHitTime)
+		{
+			m_isInverseRotate_HitRecation = false;
+			m_isHit = false;
+			m_fAccHitTime = 0.f;
+		}
+	}
+
+	_float			fDuration;
+	if (true == m_isHitFromFront)
+	{
+		m_pModelCom->Change_Animation(0, TEXT("Default"), CDoor::ONEDOOR_STATE::ONEDOOR_OPEN_L);
+		fDuration = { m_pModelCom->Get_Duration_From_Anim(TEXT("Default"), CDoor::ONEDOOR_STATE::ONEDOOR_OPEN_L) };
+	}
+
+	else
+	{
+		m_pModelCom->Change_Animation(0, TEXT("Default"), CDoor::ONEDOOR_STATE::ONEDOOR_OPEN_R);
+		fDuration = { m_pModelCom->Get_Duration_From_Anim(TEXT("Default"), CDoor::ONEDOOR_STATE::ONEDOOR_OPEN_R) };
+	}
+
+	_float			fMaxTrackPositionRatio = { 0.05f };
+	_float			fMaxTrackPosition = { fDuration * fMaxTrackPositionRatio };
+
+	_float			fRatio = { m_fAccHitTime / DOOR_HIT_REACTION_TIME };
+
+	_float			fCurrentTrackPosition = { fMaxTrackPosition * fRatio };
+
+	m_pModelCom->Set_TrackPosition(0, fCurrentTrackPosition, true);
+
+	m_pModelCom->Play_Animation_Light(m_pParentsTransform, 0.0001f);
+}
+
+void CBody_Door::Hit(CTransform* pTransform)
+{
+	if (nullptr == pTransform)
+		return;
+
+	m_isHit = true;
+	m_fAccHitTime = 0.f;
+	m_isInverseRotate_HitRecation = false;
+
+	_vector				vTargetPosition = { pTransform->Get_State_Vector(CTransform::STATE_POSITION) };
+	_vector				vMyPosition = { m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) };
+
+	_vector				vDirectionToTarget = { vTargetPosition - vMyPosition };
+	_matrix				WorldMatrixInv = { m_pTransformCom->Get_WorldMatrix_Inverse() };
+
+	_vector				vDirectionToTargetLocal = { XMVector3TransformNormal(vDirectionToTarget, WorldMatrixInv) };
+	_vector				vDirectionToTargetLocalXZPlane = { XMVector3Normalize(XMVectorSetY(vDirectionToTargetLocal, 0.f)) };
+
+	//	SingleDoor = { Front -> Open -> R }
+	_bool				isFront = { XMVectorGetZ(vDirectionToTargetLocalXZPlane) > 0.f };
+	m_isHitFromFront = true;
 }
 
 CBody_Door* CBody_Door::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

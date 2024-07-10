@@ -41,8 +41,6 @@ void CHold_Zombie::Enter()
 
 _bool CHold_Zombie::Execute(_float fTimeDelta)
 {
-	return false;
-
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)
 		return false;

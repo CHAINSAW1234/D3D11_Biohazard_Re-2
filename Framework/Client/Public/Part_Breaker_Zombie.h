@@ -16,6 +16,7 @@ public:
 	
 private:
 
+
 public:
 	static CPart_Breaker_Zombie* Create(void* pArg);
 	virtual void Free() override;
