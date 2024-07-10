@@ -48,12 +48,12 @@ void CMovingShelf::Tick(_float fTimeDelta)
 	__super::Tick_Col();
 	if (!m_bVisible)
 		return;
-	
-#ifdef _DEBUG
-#ifdef UI_POS
-	Get_Object_Pos();
-#endif
-#endif
+//	
+//#ifdef _DEBUG
+//#ifdef UI_POS
+//	Get_Object_Pos();
+//#endif
+//#endif
 	if (m_eState == SHELF_FINISH)
 		return;
 	if ((m_eState == SHELF_STOP|| m_eState == SHELF_STATIC)&&m_bCol[INTER_COL_NORMAL][COL_STEP1])

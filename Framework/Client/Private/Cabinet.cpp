@@ -51,11 +51,11 @@ void CCabinet::Tick(_float fTimeDelta)
 		if (m_PartObjects[PART_ITEM]->Get_Dead() == true)
 			Set_Region(-1);
 	
-#ifdef _DEBUG
-#ifdef UI_POS
-	Get_Object_Pos();
-#endif
-#endif
+//#ifdef _DEBUG
+//#ifdef UI_POS
+//	Get_Object_Pos();
+//#endif
+//#endif
 	if (m_bActivity)
 		m_fTimeDelay += fTimeDelta;
 	if (m_fTimeDelay > 1.f)

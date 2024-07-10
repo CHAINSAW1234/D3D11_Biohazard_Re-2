@@ -95,11 +95,11 @@ void CDoor::Tick(_float fTimeDelta)
 
 	if (!m_bVisible)
 		return;
-#ifdef _DEBUG
-#ifdef UI_POS
-	Get_Object_Pos();
-#endif
-#endif
+//#ifdef _DEBUG
+//#ifdef UI_POS
+//	Get_Object_Pos();
+//#endif
+//#endif
 
 	m_eType == CDoor::DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
 
@@ -444,7 +444,9 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 
 			if(nullptr != m_pSelector)
 				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-				
+
+			Opreate_Selector_UI(false, Get_Object_Pos());
+
 			// Destory : 점점 사라진 후에 null 
 			// m_pSelector = nullptr;
 		}
@@ -455,14 +457,22 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 			{
 				if (Check_Col_Player(INTER_COL_DOUBLE, COL_STEP2) && !m_bActivity)
 					m_bOnce = true;
+				Opreate_Selector_UI(true, Get_Object_Pos());
+
 			}
 			else
+			{
 				m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
+				Opreate_Selector_UI(false, Get_Object_Pos());
+
+			}
 		}
 		else
 		{
 			m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
 			m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
+			Opreate_Selector_UI(false, Get_Object_Pos());
+
 		}
 	}
 	else
@@ -473,6 +483,8 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_DOUBLE][COL_STEP0] = false;
 		m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
 		m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
+		Opreate_Selector_UI(false, Get_Object_Pos());
+
 	}
 
 	if (!m_bBlock && m_bOnce && (m_bCol[INTER_COL_NORMAL][COL_STEP2] || m_bCol[INTER_COL_DOUBLE][COL_STEP2]))

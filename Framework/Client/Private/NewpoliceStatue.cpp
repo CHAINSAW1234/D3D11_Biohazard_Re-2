@@ -37,11 +37,11 @@ void CNewpoliceStatue::Tick(_float fTimeDelta)
 	__super::Tick_Col();
 	if (!m_bVisible)
 		return;
-#ifdef _DEBUG
-#ifdef UI_POS
-		Get_Object_Pos();
-#endif
-#endif
+//#ifdef _DEBUG
+//#ifdef UI_POS
+//		Get_Object_Pos();
+//#endif
+//#endif
 
 	if (m_pGameInstance->Get_KeyState('U') == DOWN)
 		m_eState = POLICEHALLSTATUE_0;
