@@ -1115,21 +1115,19 @@ void CPlayer::Update_InterplationMatrix(_float fTimeDelta)
 	XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, XMLoadFloat4x4(&m_vBiteInterpolateMatrix));
 
 	_vector				vCurrentTranslation = { vTranslation * fRatio };
-	_vector				vCurrentQuaternion = { XMQuaternionSlerp(XMQuaternionIdentity(), vQuaternion, fRatio) };
+	_vector				vCurrentQuaternion = { XMQuaternionSlerp(XMQuaternionIdentity(), XMQuaternionNormalize(vQuaternion), fRatio) };
 
 	//	_vector				vCurrentQuaternionInv = { XMQuaternionInverse(XMQuaternionNormalize(vCurrentQuaternion)) };
 	//	_matrix				vCurrentRotationInverse = { XMMatrixRotationQuaternion(vCurrentQuaternionInv) };
 	//	vCurrentTranslation = XMVector3TransformNormal(vCurrentTranslation, vCurrentRotationInverse);
 
 	_matrix            AIWorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
-	_matrix            CurrentRotationMatrix = { XMMatrixRotationQuaternion(vCurrentQuaternion) };
-	_matrix            CurrentTimesMatrix = { CurrentRotationMatrix };
-	CurrentTimesMatrix.r[CTransform::STATE_POSITION].m128_f32[3] = 0.f;
+	_matrix            CurrentRotationMatrix = { XMMatrixRotationQuaternion(XMQuaternionNormalize(vCurrentQuaternion)) };
 
 	_vector            vPosition = { AIWorldMatrix.r[CTransform::STATE_POSITION] };
 	AIWorldMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 
-	_matrix            TimesCombinedMatrix = { AIWorldMatrix * CurrentTimesMatrix };
+	_matrix            TimesCombinedMatrix = { AIWorldMatrix * CurrentRotationMatrix };
 	TimesCombinedMatrix.r[CTransform::STATE_POSITION] = vPosition;
 
 	m_pTransformCom->Set_WorldMatrix(TimesCombinedMatrix);

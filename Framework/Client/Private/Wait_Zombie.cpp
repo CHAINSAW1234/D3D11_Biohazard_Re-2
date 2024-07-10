@@ -39,6 +39,10 @@ _bool CWait_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
+	CZombie::POSE_STATE			ePose_State = { m_pBlackBoard->Get_AI()->Get_PoseState() };
+	if (CZombie::POSE_STATE::_UP != ePose_State)
+		return false;
+
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();

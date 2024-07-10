@@ -97,12 +97,13 @@ _bool CBreak_In_Window_Zombie::Execute(_float fTimeDelta)
 		if (true == pWindow->Is_Set_Barrigate())
 			return false;
 
-		pWindow->Attack_Prop();
-
 		_int				iRandom = { m_pGameInstance->GetRandom_Int(0, 2) };
 		_bool				isSuccess = { iRandom == 0 };
 		if (false == isSuccess)
 			return false;
+
+		pWindow->Attack_Prop();
+		Change_Animation(fTimeDelta);
 	}
 
 	m_pBlackBoard->Organize_PreState(this);
@@ -133,9 +134,6 @@ _bool CBreak_In_Window_Zombie::Execute(_float fTimeDelta)
 			}
 		}
 	}
-
-
-	Change_Animation(fTimeDelta);
 
 	return true;
 }

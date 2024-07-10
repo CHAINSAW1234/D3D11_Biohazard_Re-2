@@ -41,6 +41,7 @@ void CHold_Zombie::Enter()
 
 _bool CHold_Zombie::Execute(_float fTimeDelta)
 {
+	return false;
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)
 		return false;
@@ -51,6 +52,7 @@ _bool CHold_Zombie::Execute(_float fTimeDelta)
 
 	MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 	_bool					isEntry = { eMonsterState != MST_HOLD };
+
 	if (true == isEntry)
 	{
 		DIRECTION			eDirectionToPlayer = { DIRECTION::_END };
@@ -78,8 +80,12 @@ _bool CHold_Zombie::Execute(_float fTimeDelta)
 			if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3))
 				return false;
 
+			_float				fAngleToTarget = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(XMLoadFloat3(&vDirectionToPlayerLocalFloat3)), XMVectorSet(0.f, 0.f, 1.f, 0.f))) };
+			if (ZOMBIE_CREEP_HOLD_MAX_ANGLE < fAngleToTarget)
+				return false;
+
 			_bool				isFront = { vDirectionToPlayerLocalFloat3.z > 0.f };
-			_bool				isRight = { vDirectionToPlayerLocalFloat3.x > 0.f };
+			_bool				isRight = { vDirectionToPlayerLocalFloat3.x > 0.f };			
 
 			CZombie::FACE_STATE			eFaceState = { m_pBlackBoard->Get_AI()->Get_FaceState() };
 			if (CZombie::FACE_STATE::_DOWN == eFaceState)

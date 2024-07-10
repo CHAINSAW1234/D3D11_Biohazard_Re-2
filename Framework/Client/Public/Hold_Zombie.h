@@ -6,6 +6,7 @@
 #include "Zombie.h"
 
 #define ZOMBIE_HOLD_ADDITIONAL_ROTATE_PER_SEC			XMConvertToRadians(120.f)
+#define ZOMBIE_CREEP_HOLD_MAX_ANGLE						XMConvertToRadians(22.5f)
 
 BEGIN(Client)
 

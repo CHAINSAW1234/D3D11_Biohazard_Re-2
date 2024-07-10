@@ -605,6 +605,8 @@ _bool CDoor::Attack_Prop(CTransform* pTransform)
 	if (m_iHP <= 0)
 	{
 		m_bAttack = true;
+
+		_float fScala = Radian_To_Zombie(pTransform);
 		if (m_eType == DOOR_DOUBLE)
 		{
 			if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
@@ -619,12 +621,7 @@ _bool CDoor::Attack_Prop(CTransform* pTransform)
 			else
 				m_eOneState = ONEDOOR_OPEN_R;
 		}
-		_float fScala = Radian_To_Jombie(pTransform);
-		if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
-			m_eDoubleState = LSIDE_DOUBLEDOOR_OPEN_L;
-		else
-			m_eDoubleState = RSIDE_DOUBLEDOOR_OPEN_L;
-
+		m_pZombieTransform = pTransform;
 		m_bActivity = true;
 
 

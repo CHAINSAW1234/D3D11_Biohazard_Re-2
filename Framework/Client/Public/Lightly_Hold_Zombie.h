@@ -29,10 +29,10 @@ private:
 	_bool							Condition_Check();
 
 private:
-	void							Change_Animation(LIGHTLY_HOLD_ANIM_STATE eState);
+	void							Change_Animation();
 
-	void							Change_Animation_Lightly_Hold(LIGHTLY_HOLD_ANIM_STATE eState);
-	void							Change_Animation_Bite_PushDown(LIGHTLY_HOLD_ANIM_STATE eState);
+	void							Change_Animation_Lightly_Hold();
+	void							Change_Animation_Bite_PushDown();
 
 private:
 	LIGHTLY_HOLD_ANIM_STATE			Compute_Current_AnimState_Lightly_Hold();
@@ -59,6 +59,7 @@ public:
 private:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 	LIGHTLY_HOLD_ANIM_TYPE			m_eAnimType = { LIGHTLY_HOLD_ANIM_TYPE::_END };
+	LIGHTLY_HOLD_ANIM_STATE			m_eAnimState = { LIGHTLY_HOLD_ANIM_STATE::_END };
 
 	_bool							m_isEntry = { false };
 	_bool							m_isHoldTarget = { false };

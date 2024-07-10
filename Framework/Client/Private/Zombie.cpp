@@ -823,7 +823,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 #pragma endregion		//	Selector Same Region Child
 
-#pragma region STAND_UP || TRUN_OVER
+#pragma region		STAND_UP || TRUN_OVER
 
 	//	Add RootNode Child Composite Node - Selector Node			(Is Hit?)
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
@@ -842,7 +842,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 #pragma endregion		//	Selector Same Region Child
 
-#pragma region SELECTOR HIT
+#pragma region		SELECTOR HIT
 	/*
 	*Root Child Section ( Hit )
 	*/
@@ -864,7 +864,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 #pragma endregion		//	Selector Same Region Child
 
-#pragma region LIGHTLY HOLD
+#pragma region		LIGHTLY HOLD
 	/*
 	*Root Child Section ( Lightly Hold )
 	*/
@@ -875,14 +875,9 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pTask_Lightly_Hold->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_Same_Region_Player->Insert_Child_Node(pTask_Lightly_Hold);
 
-	//	Add Decorator Node	=> Lightly Hold
-	CIs_Out_Door_Zombie* pDeco_Charactor_In_Range_Lightly_Hold = { CIs_Out_Door_Zombie::Create() };
-	pDeco_Charactor_In_Range_Lightly_Hold->SetBlackBoard(m_pBlackBoard);
-	pTask_Lightly_Hold->Insert_Decorator_Node(pDeco_Charactor_In_Range_Lightly_Hold);
-
 #pragma endregion		//	Selector Same Region Child
 
-#pragma region MOVE || TURN || HOLD
+#pragma region		Selector Move 
 
 	/*
 	*Root Child Section ( Select Move Or Turn )
@@ -898,20 +893,24 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pDeco_Charactor_In_Range_Recognition->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Move->Insert_Decorator_Node(pDeco_Charactor_In_Range_Recognition);
 
+#pragma region		MOVE || TURN |HOLD
+
 	//	Add Task Node (Hold)
 	CHold_Zombie* pTask_Hold = { CHold_Zombie::Create() };
 	pTask_Hold->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Hold);
+	pSelectorNode_Same_Region_Player->Insert_Child_Node(pTask_Hold);
 
 	//	Add Task Node (Move)
 	CMove_To_Target_Zombie* pTask_Move = { CMove_To_Target_Zombie::Create() };
 	pTask_Move->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Move);
+	pSelectorNode_Same_Region_Player->Insert_Child_Node(pTask_Move);
 
-	//	Add Task Node
+	//	Add Task Node (Pivot Turn)
 	CPivot_Turn_Zombie* pTask_Pivot_Turn = { CPivot_Turn_Zombie::Create() };
 	pTask_Pivot_Turn->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_Move->Insert_Child_Node(pTask_Pivot_Turn);
+	pSelectorNode_Same_Region_Player->Insert_Child_Node(pTask_Pivot_Turn);
+
+#pragma endregion		//	Selector Move Childs
 
 #pragma endregion		//	Selector Same Region Child
 
@@ -929,22 +928,23 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CComposite_Node* pSelectorNode_RootChild_Idle = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_Idle);
 
-
-	//	Add Task Node		( Sleep )
-	CSleep_Zombie* pTask_Sleep = { CSleep_Zombie::Create() };
-	pTask_Sleep->SetBlackBoard(m_pBlackBoard);
-	pSelectorNode_RootChild_Idle->Insert_Child_Node(pTask_Sleep);
-
-
+	//	Need Creep Pose
 	//	Add Task Node		( Creep )
 	CCreep_Zombie* pTask_Creep = { CCreep_Zombie::Create() };
 	pTask_Creep->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Idle->Insert_Child_Node(pTask_Creep);
 
+	//	Need Up Pose`
 	//	Add Task Node		( Idle )
 	CWait_Zombie* pTask_Wait = { CWait_Zombie::Create() };
 	pTask_Wait->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Idle->Insert_Child_Node(pTask_Wait);
+
+	//	Else...
+	//	Add Task Node		( Sleep )
+	CSleep_Zombie* pTask_Sleep = { CSleep_Zombie::Create() };
+	pTask_Sleep->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_Idle->Insert_Child_Node(pTask_Sleep);
 
 #pragma endregion		//	Selector Default Child
 

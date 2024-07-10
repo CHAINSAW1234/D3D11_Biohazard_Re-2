@@ -69,16 +69,17 @@ _bool CBreak_Window_Zombie::Execute(_float fTimeDelta)
 		_bool				isCanBreakWindow = { 1 == iWindowHP };
 		if (false == isCanBreakWindow)
 			return false;
-	}	
+
+		pWindow->Attack_Prop();
+		Change_Animation(fTimeDelta);
+	}
 
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->Set_State(MONSTER_STATE::MST_BREAK_WINDOW);
 
-	pWindow->Attack_Prop();
 
-	Change_Animation(fTimeDelta);
 
 	return true;
 }

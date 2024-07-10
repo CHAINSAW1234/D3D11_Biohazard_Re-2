@@ -72,7 +72,6 @@ _bool CKnock_Back_Zombie::Execute(_float fTimeDelta)
 			return false;
 	}
 
-
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();

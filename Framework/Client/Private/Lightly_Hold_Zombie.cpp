@@ -71,8 +71,8 @@ _bool CLightly_Hold_Zombie::Execute(_float fTimeDelta)
 	if (false == Condition_Check())
 		return false;
 
-	LIGHTLY_HOLD_ANIM_STATE			eAnimState = { Compute_Current_AnimState_Lightly_Hold() };
-	_bool							isEntry = { eAnimState == LIGHTLY_HOLD_ANIM_STATE::_END };
+	m_eAnimState = { Compute_Current_AnimState_Lightly_Hold() };
+	_bool							isEntry = { m_eAnimState == LIGHTLY_HOLD_ANIM_STATE::_END };
 
 	m_pBlackBoard->Organize_PreState(this);
 
@@ -82,7 +82,7 @@ _bool CLightly_Hold_Zombie::Execute(_float fTimeDelta)
 	else
 		pAI->Set_State(MONSTER_STATE::MST_BITE);
 
-	Change_Animation(eAnimState);
+	Change_Animation();
 
 	if (false == m_isSendMSG_To_Player)
 	{
@@ -92,11 +92,14 @@ _bool CLightly_Hold_Zombie::Execute(_float fTimeDelta)
 
 	Apply_HalfMatrix(fTimeDelta);
 
-	if (LIGHTLY_HOLD_ANIM_STATE::_FINISH == eAnimState)
+	CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+	if (nullptr == pBody_Model)
+		return false;
+
+	if (LIGHTLY_HOLD_ANIM_STATE::_FINISH == m_eAnimState)
 	{
-		CModel*				pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
-		if (nullptr == pBody_Model)
-			return false;
+		MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
+		_bool					isEndAnimState = { false };
 
 		_float			fTrackPosition = { pBody_Model->Get_Duration_From_PlayingInfo(static_cast<_uint>(m_ePlayingIndex)) };
 		_float			fDuration = { pBody_Model->Get_Duration_From_PlayingInfo(static_cast<_uint>(m_ePlayingIndex)) };
@@ -132,11 +135,12 @@ _bool CLightly_Hold_Zombie::Condition_Check()
 			if (nullptr == pBody_Model)
 				return false;
 
-			if (true == pBody_Model->isFinished(static_cast<_uint>(m_ePlayingIndex)))
+			if (true == pBody_Model->isFinished(static_cast<_uint>(m_ePlayingIndex) &&
+				LIGHTLY_HOLD_ANIM_STATE::_FINISH == m_eAnimState))
 				return false;
 		}
 
-		else
+		else if(MONSTER_STATE::MST_LIGHTLY_HOLD == eMonster_State)
 		{
 			if (false == m_isHoldTarget)
 			{
@@ -150,6 +154,14 @@ _bool CLightly_Hold_Zombie::Condition_Check()
 					m_isHoldTarget = true;
 				}
 			}			
+
+			CModel* pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+			if (nullptr == pBody_Model)
+				return false;
+
+			if (true == pBody_Model->isFinished(static_cast<_uint>(m_ePlayingIndex) &&
+				LIGHTLY_HOLD_ANIM_STATE::_FINISH == m_eAnimState))
+				return false;
 		}
 	}
 
@@ -171,19 +183,19 @@ _bool CLightly_Hold_Zombie::Condition_Check()
 	return true;
 }
 
-void CLightly_Hold_Zombie::Change_Animation(LIGHTLY_HOLD_ANIM_STATE eState)
+void CLightly_Hold_Zombie::Change_Animation()
 {
 	if (true == m_isHoldTarget)
 	{
-		Change_Animation_Bite_PushDown(eState);
+		Change_Animation_Bite_PushDown();
 	}
 	else
 	{
-		Change_Animation_Lightly_Hold(eState);
+		Change_Animation_Lightly_Hold();
 	}
 }
 
-void CLightly_Hold_Zombie::Change_Animation_Lightly_Hold(LIGHTLY_HOLD_ANIM_STATE eState)
+void CLightly_Hold_Zombie::Change_Animation_Lightly_Hold()
 {
 	if (nullptr == m_pBlackBoard)
 		return;
@@ -194,7 +206,7 @@ void CLightly_Hold_Zombie::Change_Animation_Lightly_Hold(LIGHTLY_HOLD_ANIM_STATE
 
 	_int			iResultAnimationIndex = { -1 };
 	//	Enter Start Anim
-	if (LIGHTLY_HOLD_ANIM_STATE::_END == eState)
+	if (LIGHTLY_HOLD_ANIM_STATE::_END == m_eAnimState)
 	{
 		if (DIRECTION::_L == m_eDirectionToPlayer)
 		{
@@ -208,10 +220,10 @@ void CLightly_Hold_Zombie::Change_Animation_Lightly_Hold(LIGHTLY_HOLD_ANIM_STATE
 		else
 			MSG_BOX(TEXT("Called : void CLightly_Hold_Zombie::Change_Animation_Lightly_Hold(LIGHTLY_HOLD_ANIM_STATE eState) 좀비 담당자 호출 "));
 #endif
-
+		m_eAnimState = LIGHTLY_HOLD_ANIM_STATE::_FINISH;
 	}
 
-	else if (LIGHTLY_HOLD_ANIM_STATE::_START == eState)
+	else if (LIGHTLY_HOLD_ANIM_STATE::_START == m_eAnimState)
 	{
 		if (DIRECTION::_L == m_eDirectionToPlayer)
 		{
@@ -225,6 +237,7 @@ void CLightly_Hold_Zombie::Change_Animation_Lightly_Hold(LIGHTLY_HOLD_ANIM_STATE
 		else
 			MSG_BOX(TEXT("Called : void CLightly_Hold_Zombie::Change_Animation_Lightly_Hold(LIGHTLY_HOLD_ANIM_STATE eState) 좀비 담당자 호출 "));
 #endif
+		m_eAnimState = LIGHTLY_HOLD_ANIM_STATE::_END;
 	}	
 
 	if (-1 == iResultAnimationIndex)
@@ -234,7 +247,7 @@ void CLightly_Hold_Zombie::Change_Animation_Lightly_Hold(LIGHTLY_HOLD_ANIM_STATE
 	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
 }
 
-void CLightly_Hold_Zombie::Change_Animation_Bite_PushDown(LIGHTLY_HOLD_ANIM_STATE eState)
+void CLightly_Hold_Zombie::Change_Animation_Bite_PushDown()
 {
 	if (nullptr == m_pBlackBoard)
 		return;
@@ -245,7 +258,7 @@ void CLightly_Hold_Zombie::Change_Animation_Bite_PushDown(LIGHTLY_HOLD_ANIM_STAT
 
 	_int			iResultAnimationIndex = { -1 };
 	//	Enter Start Anim
-	if (LIGHTLY_HOLD_ANIM_STATE::_END == eState)
+	if (LIGHTLY_HOLD_ANIM_STATE::_END == m_eAnimState)
 	{
 		if (DIRECTION::_L == m_eDirectionToPlayer)
 		{
@@ -259,9 +272,10 @@ void CLightly_Hold_Zombie::Change_Animation_Bite_PushDown(LIGHTLY_HOLD_ANIM_STAT
 		else
 			MSG_BOX(TEXT("Called : void CLightly_Hold_Zombie::Change_Animation_Lightly_Hold(LIGHTLY_HOLD_ANIM_STATE eState) 좀비 담당자 호출 "));
 #endif
+		m_eAnimState = LIGHTLY_HOLD_ANIM_STATE::_MIDDLE;
 	}
 
-	else if (LIGHTLY_HOLD_ANIM_STATE::_START == eState)
+	else if (LIGHTLY_HOLD_ANIM_STATE::_START == m_eAnimState)
 	{
 		if (DIRECTION::_L == m_eDirectionToPlayer)
 		{
@@ -277,9 +291,10 @@ void CLightly_Hold_Zombie::Change_Animation_Bite_PushDown(LIGHTLY_HOLD_ANIM_STAT
 		else
 			MSG_BOX(TEXT("Called : void CLightly_Hold_Zombie::Change_Animation_Lightly_Hold(LIGHTLY_HOLD_ANIM_STATE eState) 좀비 담당자 호출 "));
 #endif
+		m_eAnimState = LIGHTLY_HOLD_ANIM_STATE::_FINISH;
 	}
 
-	else if (LIGHTLY_HOLD_ANIM_STATE::_MIDDLE == eState)
+	else if (LIGHTLY_HOLD_ANIM_STATE::_MIDDLE == m_eAnimState)
 	{
 		_float			fPlayerHP = { static_cast<_float>(m_pBlackBoard->Get_Player()->Get_Hp()) };
 		_float			fZombieAttack = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fAttack };
@@ -304,6 +319,7 @@ void CLightly_Hold_Zombie::Change_Animation_Bite_PushDown(LIGHTLY_HOLD_ANIM_STAT
 				iResultAnimationIndex = static_cast<_uint>(ANIM_BITE_PUSH_DOWN::_DOWN_REJECT_R);
 			}
 		}
+		m_eAnimState = LIGHTLY_HOLD_ANIM_STATE::_END;
 	}
 
 	if (-1 == iResultAnimationIndex)
@@ -532,6 +548,9 @@ HRESULT CLightly_Hold_Zombie::SetUp_AnimBranches()
 	m_StartAnims[m_strPushDownAnimLayerTag].emplace(static_cast<_uint>(ANIM_BITE_PUSH_DOWN::_DOWN_START_L));
 	m_StartAnims[m_strPushDownAnimLayerTag].emplace(static_cast<_uint>(ANIM_BITE_PUSH_DOWN::_DOWN_START_R));
 
+	m_StartAnims[m_strLightlyHoldAnimLayerTag].emplace(static_cast<_uint>(ANIM_BITE_LIGHTLY_HOLD::_LIGHTLY_HOLD_START_L));
+	m_StartAnims[m_strLightlyHoldAnimLayerTag].emplace(static_cast<_uint>(ANIM_BITE_LIGHTLY_HOLD::_LIGHTLY_HOLD_START_R));
+
 	/* For.Middle Anims */
 	m_MiddleAnims[m_strPushDownAnimLayerTag].emplace(static_cast<_uint>(ANIM_BITE_PUSH_DOWN::_PUSH_DOWN_L1));
 	m_MiddleAnims[m_strPushDownAnimLayerTag].emplace(static_cast<_uint>(ANIM_BITE_PUSH_DOWN::_PUSH_DOWN_R1));
@@ -542,6 +561,9 @@ HRESULT CLightly_Hold_Zombie::SetUp_AnimBranches()
 	m_FinishAnims[m_strPushDownAnimLayerTag].emplace(static_cast<_uint>(ANIM_BITE_PUSH_DOWN::_DOWN_REJECT_L));
 	m_FinishAnims[m_strPushDownAnimLayerTag].emplace(static_cast<_uint>(ANIM_BITE_PUSH_DOWN::_DOWN_REJECT_R));
 	m_FinishAnims[m_strPushDownAnimLayerTag].emplace(static_cast<_uint>(ANIM_BITE_PUSH_DOWN::_DOWN_KILL_R));
+
+	m_StartAnims[m_strLightlyHoldAnimLayerTag].emplace(static_cast<_uint>(ANIM_BITE_LIGHTLY_HOLD::_LIGHTLY_HOLD_END_L));
+	m_StartAnims[m_strLightlyHoldAnimLayerTag].emplace(static_cast<_uint>(ANIM_BITE_LIGHTLY_HOLD::_LIGHTLY_HOLD_END_R));
 
 	return S_OK;
 }

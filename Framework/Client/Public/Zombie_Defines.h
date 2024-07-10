@@ -11,7 +11,7 @@
 #define	STATUS_ZOMBIE_BITE_RANGE						1.f
 
 #define	STATUS_ZOMBIE_VIEW_ANGLE						XMConvertToRadians(60.f)
-#define STATUS_ZOMBIE_MAX_MOVE_ANGLE					XMConvertToRadians(90.f)
+#define STATUS_ZOMBIE_MAX_MOVE_ANGLE					XMConvertToRadians(120.f)
 
 #define	STATUS_ZOMBIE_HEALTH							100.f
 #define	STATUS_ZOMBIE_ATTACK							1.f

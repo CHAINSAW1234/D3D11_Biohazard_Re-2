@@ -52,6 +52,7 @@ void CBite_Zombie::Enter()
 
 
 	m_pBlackBoard->Get_PartModel(CMonster::PART_BODY)->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), 0.f, 0.f);
+	m_fAccLinearTime_HalfMatrix = 0.f;
 
 
 #ifdef _DEBUG
@@ -672,10 +673,10 @@ void CBite_Zombie::Set_Bite_LinearStart_HalfMatrix()
 	wstring					strAnimLayerTag = { pZombieBody_Model->Get_CurrentAnimLayerTag(static_cast<_uint>(m_ePlayingIndex)) };
 
 	_float4x4				ResultMatrixFloat4x4;
-	if (false == m_pBlackBoard->Compute_HalfMatrix_Current_BiteAnim(strAnimLayerTag, iAnimIndex, &ResultMatrixFloat4x4))
-		return;
+	//	if (false == m_pBlackBoard->Compute_HalfMatrix_Current_BiteAnim(strAnimLayerTag, iAnimIndex, &ResultMatrixFloat4x4))
+	//		return;
 
-	//	XMStoreFloat4x4(&ResultMatrixFloat4x4, m_pBlackBoard->GetPlayer()->Get_Transform()->Get_WorldMatrix());
+	XMStoreFloat4x4(&ResultMatrixFloat4x4, m_pBlackBoard->Get_Player()->Get_Transform()->Get_WorldMatrix());
 
 	_matrix					PlayerWorldMatrix = { m_pBlackBoard->Get_Player()->Get_Transform()->Get_WorldMatrix() };
 	_matrix					ZombieWorldMatrix = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix() };
@@ -739,8 +740,6 @@ void CBite_Zombie::Set_Bite_LinearStart_HalfMatrix()
 
 	XMStoreFloat4x4(&m_Delta_Matrix_To_HalfMatrix, ZombieDeltaMatrix);
 	m_pBlackBoard->Get_Player()->Change_Player_State_Bite(iAnimIndex, strAnimLayerTag, PlayerDeltaMatrix, m_fTotalLinearTime_HalfMatrix);
-
-	m_fAccLinearTime_HalfMatrix = 0.f;	
 }
 
 _bool CBite_Zombie::Is_StateFinished(BITE_ANIM_STATE eState)
@@ -855,21 +854,19 @@ void CBite_Zombie::Apply_HalfMatrix(_float fTimeDelta)
 		XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, XMLoadFloat4x4(&m_Delta_Matrix_To_HalfMatrix));
 		
 		_vector				vCurrentTranslation = { vTranslation * fRatio };
-		_vector				vCurrentQuaternion = { XMQuaternionSlerp(XMQuaternionIdentity(), vQuaternion, fRatio) };
+		_vector				vCurrentQuaternion = { XMQuaternionSlerp(XMQuaternionIdentity(), XMQuaternionNormalize(vQuaternion), fRatio) };
 		
 		//	_vector				vCurrentQuaternionInv = { XMQuaternionInverse(XMQuaternionNormalize(vCurrentQuaternion)) };
 		//	_matrix				vCurrentRotationInverse = { XMMatrixRotationQuaternion(vCurrentQuaternionInv) };
 		//	vCurrentTranslation = XMVector3TransformNormal(vCurrentTranslation, vCurrentRotationInverse);
 		
 		_matrix				AIWorldMatrix = { pAITransform->Get_WorldMatrix() };
-		_matrix				CurrentRotationMatrix = { XMMatrixRotationQuaternion(vCurrentQuaternion) };
-		_matrix				CurrentTimesMatrix = { CurrentRotationMatrix };
-		CurrentTimesMatrix.r[CTransform::STATE_POSITION].m128_f32[3] = 0.f;
+		_matrix				CurrentRotationMatrix = { XMMatrixRotationQuaternion(XMQuaternionNormalize(vCurrentQuaternion)) };
 		
 		_vector				vPosition = { AIWorldMatrix.r[CTransform::STATE_POSITION] };
 		AIWorldMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 		
-		_matrix				TimesCombinedMatrix = { AIWorldMatrix * CurrentTimesMatrix };
+		_matrix				TimesCombinedMatrix = { AIWorldMatrix * CurrentRotationMatrix };
 		TimesCombinedMatrix.r[CTransform::STATE_POSITION] = vPosition;
 		
 		pAITransform->Set_WorldMatrix(TimesCombinedMatrix);
