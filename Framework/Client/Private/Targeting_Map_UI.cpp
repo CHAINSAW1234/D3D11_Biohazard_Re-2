@@ -317,6 +317,11 @@ void CTargeting_Map_UI::Targeting_Render(_float fTimeDelta)
                 for (auto& iter : m_vecTextBoxes)
                     iter->Set_FontColor(ALPHA_ZERO);
             }
+            else
+            {
+                for (auto& iter : m_vecTextBoxes)
+                    iter->Set_FontColor(m_vOriginTextColor);
+            }
         }
     }
 }
@@ -436,9 +441,8 @@ void CTargeting_Map_UI::Notify_Font_Position()
             for (auto& iter : m_vecTextBoxes)
             {
                 CTransform* pTransText = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+                
                 iter->State(fTextBox);
-
-                iter->Set_FontColor(m_vOriginTextColor);
             }
         }
     }
