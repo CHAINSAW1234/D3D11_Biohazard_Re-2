@@ -61,11 +61,11 @@ void CLever::Tick(_float fTimeDelta)
 	if (!m_bVisible)
 		return;
 	
-#ifdef _DEBUG
-#ifdef UI_POS
-	Get_Object_Pos();
-#endif
-#endif
+//#ifdef _DEBUG
+//#ifdef UI_POS
+//	Get_Object_Pos();
+//#endif
+//#endif
 
 	if (m_eState == LEVER_RESET)
 	{
