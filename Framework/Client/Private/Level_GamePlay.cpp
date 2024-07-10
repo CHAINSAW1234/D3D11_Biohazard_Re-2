@@ -72,7 +72,7 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 	CImgui_Manager::Get_Instance()->Tick();
 
 	__super::Tick(fTimeDelta);
-	
+
 	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
 	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
 	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));	
@@ -139,13 +139,13 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	LightDesc.eType = LIGHT_DESC::TYPE_DIRECTIONAL;
 	LightDesc.bShadow = true;
-	XMStoreFloat4(&LightDesc.vDirection, XMVectorSetW(XMVector3Normalize(XMVectorSet(-3.f, -7.f, 0.f, 0.f)), 0.f));
+	XMStoreFloat4(&LightDesc.vDirection, XMVectorSetW(XMVector3Normalize(XMVectorSet(-3.f, -7.f, 0.F, 0.f)), 0.f));
 	LightDesc.vPosition = _float4(-LightDesc.vDirection.x * 50, -LightDesc.vDirection.y * 50, -LightDesc.vDirection.z * 50, 1.f);
 
 	//LightDesc.fRange = 1000000.f;
 
-	LightDesc.vDiffuse = _float4(.4f, .4f, .4f, 1.f);
-	LightDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
+	LightDesc.vDiffuse = _float4(.4f, .4f, 1.f, 1.f);
+	LightDesc.vAmbient = _float4(.0f, .0f, .0f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 0.4f, 0.4f, 1.f);
 
 	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))

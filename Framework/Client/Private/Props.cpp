@@ -212,9 +212,6 @@ HRESULT CProps::Render()
 
 HRESULT CProps::Render_LightDepth_Dir()
 {
-	if (m_bRender == false)
-		return S_OK;
-
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 

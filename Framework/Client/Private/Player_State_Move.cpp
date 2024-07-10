@@ -144,15 +144,25 @@ void CPlayer_State_Move::Open_Door()
 	if ((m_pPlayer->Get_Body_Model()->isFinished(3) &&
 		m_pPlayer->Get_Body_Model()->Get_CurrentAnimLayerTag(3) == CPlayer::Get_AnimSetEtcName(CPlayer::COMMON) &&
 		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(3) == CPlayer::DOOR_OPEN_JOG)) {
-		m_pPlayer->Get_Body_Model()->Set_Loop(3, true);
-		m_pPlayer->Get_Body_Model()->Set_BlendWeight(3, 0.f, 10.f);
+		if (m_pPlayer->Get_Body_Model()->Get_BlendWeight(3) <= 0.1f) {
+			m_pPlayer->Get_Body_Model()->Set_Loop(3, true);
+		}
+		else {
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(3, 0.f, 10.f);
+		}
 	}
 
 	if ((m_pPlayer->Get_Body_Model()->isFinished(4) &&
 		m_pPlayer->Get_Body_Model()->Get_CurrentAnimLayerTag(4) == CPlayer::Get_AnimSetEtcName(CPlayer::COMMON) &&
 		m_pPlayer->Get_Body_Model()->Get_CurrentAnimIndex(4) == CPlayer::DOOR_PASS)) {
-		m_pPlayer->Get_Body_Model()->Set_Loop(4, true);
-		m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 0.f, 10.f);
+		if (m_pPlayer->Get_Body_Model()->Get_BlendWeight(4) <= 0.1f) {
+			m_pPlayer->Get_Body_Model()->Set_Loop(4, true);
+		}
+		else {
+			m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 0.f, 10.f);
+		}
+
+
 	}
 
 	if (m_pPlayer->Get_Door_Setting() == CPlayer::DOOR_BEHAVE_OPEN) {
@@ -162,12 +172,12 @@ void CPlayer_State_Move::Open_Door()
 			if (m_eState == WALK) {
 				m_pPlayer->Get_Body_Model()->Change_Animation(4, CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), CPlayer::DOOR_PASS);
 				m_pPlayer->Get_Body_Model()->Set_Loop(4, false);
-				m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 10.f, 6.f);
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(4, 10.f, 10.f);
 			}
 			if (m_eState == JOG) {
 				m_pPlayer->Get_Body_Model()->Change_Animation(3, CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), CPlayer::DOOR_OPEN_JOG);
 				m_pPlayer->Get_Body_Model()->Set_Loop(3, false);
-				m_pPlayer->Get_Body_Model()->Set_BlendWeight(3, 10.f, 6.f);
+				m_pPlayer->Get_Body_Model()->Set_BlendWeight(3, 10.f, 10.f);
 			}
 		}
 		m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_NOTHING);

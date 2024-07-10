@@ -2,10 +2,10 @@
 
 /* 전역변수 : 쉐이더 외부에 있는 데이터를 쉐이더 안으로 받아온다. */
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-texture2D	g_DiffuseTexture;
-texture2D	g_NormalTexture;
-texture2D   g_AlphaTexture;
-texture2D   g_AOTexture;
+Texture2D	g_DiffuseTexture;
+Texture2D	g_NormalTexture;
+Texture2D   g_AlphaTexture;
+Texture2D   g_AOTexture;
 
 bool g_isAlphaTexture;
 bool g_isAOTexture;

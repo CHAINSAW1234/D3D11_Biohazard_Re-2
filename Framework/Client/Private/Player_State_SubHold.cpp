@@ -11,6 +11,9 @@ CPlayer_State_SubHold::CPlayer_State_SubHold(CPlayer* pPlayer)
 
 void CPlayer_State_SubHold::OnStateEnter()
 {
+	m_pPlayer->Get_Body_Model()->Set_BoneLayer_PlayingInfo(3, TEXT("Right_Arm"));
+	m_pPlayer->Get_Body_Model()->Reset_PreAnim_CurrentAnim(3);
+
 	Change_State(START);
 	m_pPlayer->Change_Equip_State(CPlayer::SUB);
 }
@@ -24,6 +27,11 @@ void CPlayer_State_SubHold::OnStateExit()
 {
 	Reset_State();
 	m_eState = STATE_END;
+
+
+	m_pPlayer->Get_Body_Model()->Set_BoneLayer_PlayingInfo(3, TEXT("UpperBody"));
+	m_pPlayer->Get_Body_Model()->Reset_PreAnim_CurrentAnim(3);
+
 	m_pPlayer->Change_Equip_State(CPlayer::GUN);
 }
 

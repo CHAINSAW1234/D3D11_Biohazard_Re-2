@@ -79,10 +79,10 @@ HRESULT CMap::Initialize(void* pArg)
 	m_pOctree->GetSceneDimensions(m_pModelCom);
 	int TotalTriangleCount = m_pOctree->GetSceneTriangleCount(m_pModelCom);
 	m_pOctree->CreateNode(m_pModelCom, TotalTriangleCount, m_pOctree->GetCenter(), m_pOctree->GetWidth());
-	for (_uint i = 0; i < m_pModelCom->GetNumMesh(); ++i)
-	{
-		m_pModelCom->Release_IndexBuffer(i);
-	}
+	//for (_uint i = 0; i < m_pModelCom->GetNumMesh(); ++i)
+	//{
+	//	m_pModelCom->Release_IndexBuffer(i);
+	//}
 
 #pragma endregion
 
@@ -195,7 +195,28 @@ HRESULT CMap::Render_LightDepth_Dir()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
 
-		m_pOctree->Render_Node_LightDepth_Dir(m_pModelCom, m_pShaderCom);
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
+		{
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+				return E_FAIL;
+
+			if (m_tagPropDesc.bAnim) {
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+					return E_FAIL;
+
+				if (FAILED(m_pShaderCom->Begin(2)))
+					return E_FAIL;
+			}
+			else {
+				if (FAILED(m_pShaderCom->Begin(1)))
+					return E_FAIL;
+			}
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+
+		//m_pOctree->Render_Node_LightDepth_Dir(m_pModelCom, m_pShaderCom);
 	}
 
 	return S_OK;
@@ -249,7 +270,30 @@ HRESULT CMap::Render_LightDepth_Point()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
 			return E_FAIL;
 
-		m_pOctree->Render_Node_LightDepth_Point(m_pModelCom,m_pShaderCom);
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
+		{
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+				return E_FAIL;
+
+			if (m_tagPropDesc.bAnim) {
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+					return E_FAIL;
+
+				if (FAILED(m_pShaderCom->Begin(4)))
+					return E_FAIL;
+			}
+			else {
+				if (FAILED(m_pShaderCom->Begin(2)))
+					return E_FAIL;
+			}
+
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+
+
+		//m_pOctree->Render_Node_LightDepth_Point(m_pModelCom,m_pShaderCom);
 
 		++iIndex;
 	}
