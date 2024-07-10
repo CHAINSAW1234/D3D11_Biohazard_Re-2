@@ -42,7 +42,8 @@ private :
 
 public:
 	void								NonInteractive_Rendering(_float fTimeDelta);
-
+	void								Calc_Position();
+	void								Rendering(_float fTimeDelta);
 	
 private : /* 연동 관련 */
 	_bool								m_isOutDistance				= { false }; /* 논외인가? */
@@ -56,6 +57,7 @@ private :
 
 	_float3								m_fOriginSize				= {};
 	_bool								m_isInteractive				= { false };
+	_bool								m_isCull					= { false };
 
 private :
 	wstring								m_wstrInteractive_Tag		= { TEXT("") }; /* Interactive 할 때 */

@@ -290,7 +290,7 @@ void CMap_Manager::Transform_Control(_float fTimeDelta)
 
 	if (*m_pMapPlayer->Get_ViewFloor_Type() == m_eFloorType || MAP_FLOOR_TYPE::FLOOR_FREE == m_eFloorType)
 	{
-		m_isRender = true;
+		// m_isRender = true;
 
 		if (m_fBlending <= m_fOrigin_Blending)
 		{
@@ -304,7 +304,8 @@ void CMap_Manager::Transform_Control(_float fTimeDelta)
 
 void CMap_Manager::Rendering(_float fTimeDelta)
 {
-	Open_Map();
+	if(m_eMapComponent_Type != MAP_UI_TYPE::TARGET_NOTIFY)
+		Open_Map();
 
 	/* ¢º Font Rendering */
 	if (!m_vecTextBoxes.empty())
