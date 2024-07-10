@@ -298,12 +298,6 @@
     <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Body_Reader">
       <UniqueIdentifier>{a186c3e0-78c8-496a-a4fd-d32dd6dae0ee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Reader_Observer">
-      <UniqueIdentifier>{811c7063-452c-4d16-b305-11640d4ccc1d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Reader_Observer\Reader_Observer_Handle">
-      <UniqueIdentifier>{0512293c-6b46-4f82-9b55-01b90a3aff6e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\15. LayOut">
       <UniqueIdentifier>{57e7ebf9-dbcd-44f9-8d5f-e0a91f6637a3}</UniqueIdentifier>
     </Filter>
@@ -327,9 +321,6 @@
     </Filter>
     <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Body_Reader">
       <UniqueIdentifier>{a186c3e0-78c8-496a-a4fd-d32dd6dae0ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Key_Reader">
-      <UniqueIdentifier>{e093220b-41a0-4455-b6bf-290318f82b82}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Reader_Observer">
       <UniqueIdentifier>{811c7063-452c-4d16-b305-11640d4ccc1d}</UniqueIdentifier>

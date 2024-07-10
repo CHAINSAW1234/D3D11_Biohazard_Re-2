@@ -130,7 +130,7 @@ HRESULT CPart_InteractProps::Render_LightDepth_Dir()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 
 	if (m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) != nullptr) {
@@ -169,7 +169,7 @@ HRESULT CPart_InteractProps::Render_LightDepth_Spot()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 
 	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
@@ -208,7 +208,7 @@ HRESULT CPart_InteractProps::Render_LightDepth_Point()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 
 	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
