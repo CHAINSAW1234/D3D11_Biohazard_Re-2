@@ -134,6 +134,11 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
     return S_OK;
 }
 
+void CLayOut_UI::Start()
+{
+   
+}
+
 void CLayOut_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);

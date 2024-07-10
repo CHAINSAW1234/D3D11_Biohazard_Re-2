@@ -4,6 +4,7 @@
 #include "Inventory_Manager.h"
 #include "Item_Mesh_Viewer.h"
 #include "HotKey.h"
+#include "Hint.h"
 
 BEGIN(Client)
 
@@ -87,6 +88,8 @@ private:
 	CItem_Mesh_Viewer*			m_pItem_Mesh_Viewer = { nullptr };
 
 	CHotKey*					m_pHotKey = { nullptr };
+
+	CHint*						m_pHint = { nullptr };
 
 private : /* NY */
 	void				Find_Cursor();

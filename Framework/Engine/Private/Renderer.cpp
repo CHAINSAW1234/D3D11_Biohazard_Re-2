@@ -145,10 +145,10 @@ HRESULT CRenderer::Render()
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
-	if (FAILED(Render_Font()))
+	if (FAILED(Render_Examine()))
 		return E_FAIL;
 
-	if (FAILED(Render_Examine()))
+	if (FAILED(Render_Font()))
 		return E_FAIL;
 
 	//if (FAILED(Render_Non_PostProcessing()))

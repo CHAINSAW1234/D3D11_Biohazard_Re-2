@@ -459,7 +459,7 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 
 	m_eInven_Manager_State = EVENT_IDLE;
 	m_pContextMenu->Set_Dead(true);
-	Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y));
+	Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
 	m_pSelected_ItemUI->Reset_ItemUI();
 	m_pSelected_ItemUI = nullptr;
 }
@@ -746,10 +746,11 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 
 void CInventory_Manager::DISCARD_ITEM_Operation(_float fTimeDelta)
 {
+	m_eInven_Manager_State = EVENT_IDLE;
+	m_pContextMenu->Set_Dead(true);
+	Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
 	m_pSelected_ItemUI->Reset_ItemUI();
 	m_pSelected_ItemUI = nullptr;
-
-	m_eInven_Manager_State = EVENT_IDLE;
 }
 
 void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
@@ -911,6 +912,7 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 	}
 
 	m_pContextMenu->Set_Dead(true);
+	m_pDragShadow->Set_Dead(true);
 
 	m_eInven_Manager_State = EVENT_IDLE;
 

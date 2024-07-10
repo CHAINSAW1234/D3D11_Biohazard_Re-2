@@ -104,6 +104,8 @@
 #include "LayOut_UI.h"
 #include "Damage_UI.h"
 #include "HotKey.h"
+#include "Hint.h"
+#include "Hint_Highliter.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -616,6 +618,16 @@ HRESULT CLoader::Load_Prototype()
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HotKey"),
 		CHotKey::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_Hint */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hint"),
+		CHint::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Hint */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hint_Highliter"),
+		CHint_Highliter::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 	
 #pragma endregion
 
@@ -723,6 +735,16 @@ HRESULT CLoader::Loading_For_Static_Component()
 	/*Prototype_Component_Texture_Filled*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_WholeMouse"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Inventory/WholeMouse.png")))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Hint_BackGround*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Hint_BackGround"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Hint/Hint_BackGround.dds")))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Long_Box_Select_Click*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Long_Box_Select_Click"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Inventory/Long_Box_Select_Click.png")))))
 		return E_FAIL;
 #pragma endregion
 
