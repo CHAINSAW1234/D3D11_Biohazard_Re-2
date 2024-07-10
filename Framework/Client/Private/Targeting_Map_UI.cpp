@@ -152,9 +152,13 @@ HRESULT CTargeting_Map_UI::Initialize(void* pArg)
 
 void CTargeting_Map_UI::Tick(_float fTimeDelta)
 {
-    __super::Tick(fTimeDelta);
+    Find_NotifyText_RenderState();
+
+    Notify_Font_Position();
 
     Targeting_Render(fTimeDelta);
+
+    __super::Tick(fTimeDelta);
 }
 
 void CTargeting_Map_UI::Late_Tick(_float fTimeDelta)
@@ -206,6 +210,37 @@ void CTargeting_Map_UI::Find_Item()
     }
 }
 
+void CTargeting_Map_UI::Find_NotifyText_RenderState()
+{
+    /* Render 찾아주기 */
+    if (m_vecTextBoxes.empty())
+    {
+        if (nullptr == m_isNotifyRender_Ptr)
+        {
+            list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+            for (auto& iter : *pUIList)
+            {
+                CTargeting_Map_UI* pTarget = dynamic_cast<CTargeting_Map_UI*>(iter);
+
+                if (nullptr != pTarget)
+                {
+                    if (pTarget->m_eMapComponent_Type == MAP_UI_TYPE::TARGET_NOTIFY)
+                    {
+                        /* Text 박스를 가지고 있는 객체라면, */
+                        if (!pTarget->m_vecTextBoxes.empty())
+                        {
+                            m_isNotifyRender_Ptr = (&pTarget->m_isNotifyRender);
+                            break;
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}
+
 
 void CTargeting_Map_UI::Targeting_Render(_float fTimeDelta)
 {
@@ -215,18 +250,16 @@ void CTargeting_Map_UI::Targeting_Render(_float fTimeDelta)
         if (nullptr == m_pMainTarget_Transform)
             return;
 
+        if (m_ItemStore_Vec.empty())
+            return;
+
         _float4 vMainTarget_Transform = m_pMainTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
         _float3 vMainTarget_Scaled = m_pMainTarget_Transform->Get_Scaled();
 
+        /* Render 확인 */
         if (true == Item_Hovering(vMainTarget_Transform, vMainTarget_Scaled))
-            m_isRender = true;
-
-        else
-            m_isRender = false;
-
-        if (!m_vecTextBoxes.empty())
         {
-            if (true == m_isRender)
+            if (!m_vecTextBoxes.empty())
             {
                 _float4 vTextBoxTexture = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
                 _float3 fTextBox = m_vecTextBoxes.back()->GetPosition();
@@ -236,12 +269,50 @@ void CTargeting_Map_UI::Targeting_Render(_float fTimeDelta)
 
                 for (auto& iter : m_vecTextBoxes)
                 {
-                    iter->Set_Position(fTextBox.x, fTextBox.y, fTextBox.z);
-                    iter->Set_FontColor(m_vOriginTextColor);
-                }
-            }
+                    iter->Set_Text(m_wstrItem_Name);
 
-            else if(false == m_isRender)
+                    CTransform* pTransText = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+
+                    iter->State(fTextBox);
+
+                    iter->Set_FontColor(m_vOriginTextColor);
+
+                }
+
+                m_isNotifyRender = true;
+            }
+        }
+
+        else
+        {
+            m_isNotifyRender = false;
+        }
+
+        /* Render 결과 */
+        if (MAP_UI_TYPE::TARGET_NOTIFY == m_eMapComponent_Type)
+        {
+            if(!m_vecTextBoxes.empty())
+            {
+                if (true == m_isNotifyRender)
+                    m_isRender = true;
+
+                else if (false == m_isNotifyRender)
+                    m_isRender = false;
+            }
+            else
+            {
+                if (true == *m_isNotifyRender_Ptr)
+                    m_isRender = true;
+
+                else if (false == *m_isNotifyRender_Ptr)
+                    m_isRender = false;
+            }
+        }
+
+        /* Font Color */
+        if (!m_vecTextBoxes.empty())
+        {
+            if (false == m_isRender)
             {
                 for (auto& iter : m_vecTextBoxes)
                     iter->Set_FontColor(ALPHA_ZERO);
@@ -343,11 +414,44 @@ void CTargeting_Map_UI::Targeting_Control()
     }
 }
 
+void CTargeting_Map_UI::Notify_Font_Position()
+{
+    if (MAP_UI_TYPE::TARGET_NOTIFY == m_eMapComponent_Type)
+    {
+        /* Text Render UI로 바꿔주기 */
+        for (auto& iter : m_vecTextBoxes)
+        {
+            iter->Set_isTransformBase(false);
+            iter->Set_isUIRender(true);
+        }
+
+        if (!m_vecTextBoxes.empty())
+        {
+            _float4 vTextBoxTexture = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+            _float3 fTextBox = m_vecTextBoxes.back()->GetPosition();
+
+            fTextBox.x = vTextBoxTexture.x - m_fTargetNotify_TextBox_Distance.x;
+            fTextBox.y = vTextBoxTexture.y - m_fTargetNotify_TextBox_Distance.y;
+
+            for (auto& iter : m_vecTextBoxes)
+            {
+                CTransform* pTransText = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+                iter->State(fTextBox);
+
+                iter->Set_FontColor(m_vOriginTextColor);
+            }
+        }
+    }
+}
+
 
 /* Main Target이 ITEM을 Hovering 하는 여부*/
 _bool CTargeting_Map_UI::Item_Hovering(_float4 _mainPos, _float3 _scaled) // 타겟팅 가운데 중점이 item 사각형에 들어간다면
 {
     _float2 fMainPos = _float2(_mainPos.x, _mainPos.y);
+
+    if (nullptr == m_pMapPlayer)
+        return false;
 
     if ((_int)*m_pMapPlayer->Get_ViewFloor_Type() - 2 < 0)
         return false;
@@ -373,7 +477,9 @@ _bool CTargeting_Map_UI::Item_Hovering(_float4 _mainPos, _float3 _scaled) // 타�
                     if (!m_vecTextBoxes.empty())
                     {
                         for(auto& iter : m_vecTextBoxes)
+                        {
                             iter->Set_Text(m_wstrItem_Name);
+                        }
                     }
 
                     return true;

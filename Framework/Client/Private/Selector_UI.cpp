@@ -114,7 +114,7 @@ void CSelector_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    m_vTargetPos = _float4(0, 0, 0, 1);
+    //m_vTargetPos = _float4(0, 0, 0, 1);
     Exception_Handle();
     Operate_Selector(fTimeDelta);
 }
@@ -137,6 +137,8 @@ CGameObject* CSelector_UI::Destroy_Selector()
     if (m_SelectorObj_Vec.empty())
         return nullptr;
 
+    m_isOutDistance = true;
+
     for (auto& iter : m_SelectorObj_Vec)
     {
         iter->m_isOutDistance = true;
@@ -147,6 +149,9 @@ CGameObject* CSelector_UI::Destroy_Selector()
 
 void CSelector_UI::Select_Type(_bool _Interact, _float4 _objPos)
 {
+    m_isInteractive = _Interact;
+    m_vTargetPos = _objPos;
+
     for (auto& iter : m_SelectorObj_Vec)
     {
         iter->m_isInteractive = _Interact;
@@ -157,14 +162,92 @@ void CSelector_UI::Select_Type(_bool _Interact, _float4 _objPos)
 
 void CSelector_UI::NonInteractive_Rendering(_float fTimeDelta)
 {
-    _float fDistance = Distance_Player(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+     /* 1. 만약 Render가 false 라면 fBlending를 점점 내린다. */
+     m_isRender = true;
+
+     if (m_fBlending <= 0.f)
+     {
+         m_fBlending = 0.f;
+     }
+     else
+         m_fBlending -= fTimeDelta;
+
+     Calc_Position();
+
+    /* y 축 조정*/
+     if (true == m_isArrow)
+    {
+        if (m_vXTransform.y - X_TYPEY > m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y)
+        {
+            _float4 vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+            vPos.y = m_vXTransform.y - X_TYPEY;
+            m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
+        }
+    }
+}
+
+void CSelector_UI::Calc_Position()
+{
+    _float fDistance = Distance_Player(m_vTargetPos);
+
+    _vector                         vTargetPos 
+        = { XMLoadFloat4(&m_vTargetPos) };
+
+    _matrix							ViewMatrix 
+        = { m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_VIEW) };
+
+    _matrix							ProjMatrix 
+        = { m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_PROJ) };
+
+    _matrix							VPMatrix 
+        = { ViewMatrix * ProjMatrix };
+
+    _vector                         vViewPos 
+        = { XMVector3TransformCoord(vTargetPos, ViewMatrix) };
+
+    m_isCull                                   
+        = { XMVectorGetZ(vViewPos) < 0.f };
+
+
+    _vector			                vProjSpacePosition 
+        = { XMVector3TransformCoord(vTargetPos, VPMatrix) };
+
+    _matrix                          OrthoProjMatrix 
+        = { XMLoadFloat4x4(&m_ProjMatrix) };
+
+    _matrix                         OrthoProjMatrixInv 
+        = { XMMatrixInverse(nullptr, OrthoProjMatrix) };
+
+    _vector                         vOrthoWorldPosition 
+        = { XMVector3TransformCoord(vProjSpacePosition, OrthoProjMatrixInv) };
+
+
+    m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(XMVectorGetX(vOrthoWorldPosition), XMVectorGetY(vOrthoWorldPosition), 0.5f, 1.f));
+
+    if (false == m_isCull)
+        m_pTransformCom->Set_Scaled(45.f, 45.f, 1.f);
+}
+
+void CSelector_UI::Rendering(_float fTimeDelta)
+{
+    if (true != m_isUsing)
+    {
+        Reset();
+        return;
+    }
+
+    if (m_vTargetPos == _float4(0.f, 0.f, 0.f, 0.f) || m_vTargetPos == _float4(0.f, 0.f, 0.f, 1.f))
+    {
+        m_fBlending = 1.f;
+        m_isRender = false;
+        return;
+    }
 
     /* Destory()를 통해 끝냄을 알릴 때*/
     if (true == m_isOutDistance)
     {
         if (m_fBlending >= 1.f)
         {
-            m_fBlending = 1.f;
             m_isRender = false;
             m_isUsing = false;
         }
@@ -174,87 +257,27 @@ void CSelector_UI::NonInteractive_Rendering(_float fTimeDelta)
         return;
     }
 
-    else
+    else  if (false == m_isOutDistance)
     {
-        /* 1. 만약 Render가 false 라면 fBlending를 점점 내린다. */
-        m_isRender = true;
-
-        if (m_fBlending <= 0.f)
+        if (true == m_isCull)
         {
+            m_isRender = false;
+            m_fBlending = 1.f;
+        }
+
+        else if (false == m_isCull)
+        {
+            m_isRender = true;
             m_fBlending = 0.f;
         }
-        else
-            m_fBlending -= fTimeDelta;
-
-        ///* 2. 뷰에 따라 위치 조정 */
-        _float3 fCurrentSize = {};
-
-        _vector                         vTargetPos = { XMLoadFloat4(&m_vTargetPos) };
-        _matrix							ViewMatrix = { m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_VIEW) };
-        _matrix							ProjMatrix = { m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_PROJ) };
-        _matrix							VPMatrix = { ViewMatrix * ProjMatrix };
-
-        _vector                         vViewPos = { XMVector3TransformCoord(vTargetPos, ViewMatrix) };
-        _bool                           isCull = { XMVectorGetZ(vViewPos) < 0.f };
-
-
-        _vector			                vProjSpacePosition = { XMVector3TransformCoord(vTargetPos, VPMatrix) };
-
-       _matrix                          OrthoProjMatrix = { XMLoadFloat4x4(&m_ProjMatrix) };
-        _matrix                         OrthoProjMatrixInv = { XMMatrixInverse(nullptr, OrthoProjMatrix) };
-        _vector                         vOrthoWorldPosition = { XMVector3TransformCoord(vProjSpacePosition, OrthoProjMatrixInv) };
-
-        m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(XMVectorGetX(vOrthoWorldPosition), XMVectorGetY(vOrthoWorldPosition), 0.5f, 1.f));
-
-       /* fCurrentSize *= fDistance;
-        fCurrentSize = _float3(30.f, 30.f, 0.f);*/
-        if (false == isCull)
-        {
-            m_pTransformCom->Set_Scaled(30.f, 30.f, 1.f);
-        }
-
-        else
-        {
-            m_pTransformCom->Set_Scaled(0.0001f, 0.0001f, 1.f);
-        }
-
-        //_float4 vTargetPosition = m_vTargetPos;
-        //_vector vViewPos = XMVector3TransformCoord(vTargetPosition, m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_VIEW));
-        //_vector vProjPos = XMVector3TransformCoord(vViewPos, m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_PROJ));
-
-        //_float2 vProjPosition = { (XMVectorGetX(vProjPos) + 1.f) * 0.5f * g_iWinSizeX, (1.f - XMVectorGetY(vProjPos)) * 0.5f * g_iWinSizeY };
-
-        //m_pTransformCom->Set_State(CTransform::STATE_POSITION, _vector{ g_iWinSizeX * -0.5f + vProjPosition.x, g_iWinSizeY * 0.5f - vProjPosition.y, 0.8f, 1.f });
-
-        ////fCurrentSize *= fDistance;
-        //fCurrentSize = _float3(30.f, 30.f, 0.f);
-        //m_pTransformCom->Set_Scaled(fCurrentSize.x, fCurrentSize.y, fCurrentSize.z);
     }
-
-    /* y 축 조정*/
-    //if (false == m_isArrow)
-    //{
-    //    if (m_vXTransform.y - X_TYPEY > m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y)
-    //    {
-    //        _float4 vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-    //        vPos.y = m_vXTransform.y - X_TYPEY;
-    //        m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPos);
-    //    }
-    //}
 }
 
 void CSelector_UI::Operate_Selector(_float fTimeDelta)
 {
-    if (true != m_isUsing)
-    {
-        Reset();
-        return;
-    }
-
     /* 상호작용이 불가능할 때 : Check */
     if (false == m_isInteractive)
     {
-        m_isRender = true;
         NonInteractive_Rendering(fTimeDelta);
 
          /* Texture 변경 */
@@ -271,8 +294,8 @@ void CSelector_UI::Operate_Selector(_float fTimeDelta)
     /* 상호작용이 가능할 때 : X */
     else if (true == m_isInteractive)
     {
-         m_pTransformCom->Set_Scaled(m_fOriginSize.x, m_fOriginSize.y, m_fOriginSize.z);
-
+        Calc_Position();
+   
          /* Texture 변경 */
         if (m_wstrDefaultTexturComTag != m_wstrInteractive_Tag && true == m_IsChild && false == m_isArrow)
         {
@@ -283,6 +306,9 @@ void CSelector_UI::Operate_Selector(_float fTimeDelta)
         if (true == m_isArrow)
             m_isRender = true;
     }
+
+    Rendering(fTimeDelta);
+
 }
 
 void CSelector_UI::Exception_Handle()
@@ -318,6 +344,7 @@ void CSelector_UI::Find_Selector_Obj()
 
 void CSelector_UI::Reset()
 {
+    m_fBlending = 1.f;
     m_isRender = false;
     m_isInteractive = false;
     m_isOutDistance = false;
