@@ -21,6 +21,7 @@ public:
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
 
+
 private:
 	virtual HRESULT				Add_Components();
 	virtual HRESULT				Add_PartObjects() override;

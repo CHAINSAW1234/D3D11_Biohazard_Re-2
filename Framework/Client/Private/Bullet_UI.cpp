@@ -223,6 +223,9 @@ void CBullet_UI::Bullet_Font()
     /*Font*/
     if(m_iEqipType == CPlayer::EQUIP::HG)
     {
+        if (nullptr == m_pTextUI[0].pText || nullptr == m_pTextUI[1].pText)
+            return;
+
         if (!m_vecTextBoxes.empty() && false == m_isKeepCross)
         {
             m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_FontColor(ALPHA_ZERO);
@@ -430,6 +433,7 @@ void CBullet_UI::Render_Bullet_UI(_float fTimeDelta)
         }
         else
         {
+
             if (m_fBlending <= m_fOrigin_Blending)
             {
                 if (false == m_pCrosshair->Get_IsRender())

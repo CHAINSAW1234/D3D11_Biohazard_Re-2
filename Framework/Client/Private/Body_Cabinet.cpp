@@ -5,7 +5,7 @@
 #include "Bone.h"
 
 #include"Cabinet.h"
-
+#include"Light.h"
 
 CBody_Cabinet::CBody_Cabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPart_InteractProps{ pDevice, pContext }
@@ -105,8 +105,8 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 
 	Get_SpecialBone_Rotation(); // for UI
@@ -225,15 +225,120 @@ HRESULT CBody_Cabinet::Render()
 		}
 	}
 
+	return S_OK;
+}
 
+HRESULT CBody_Cabinet::Render_LightDepth_Dir()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+
+	if (m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) != nullptr) {
+
+		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION);
+		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
+			return E_FAIL;
+
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
+		{
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Begin(2)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CBody_Cabinet::Render_LightDepth_Point()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+
+	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
+	_int iIndex = 0;
+	for (auto& pLightDesc : LightDescList) {
+		const _float4x4* pLightViewMatrices;
+		_float4x4 LightProjMatrix;
+		pLightViewMatrices = pLightDesc->ViewMatrix;
+		LightProjMatrix = pLightDesc->ProjMatrix;
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_LightIndex", &iIndex, sizeof(_int))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrices("g_LightViewMatrix", pLightViewMatrices, 6)))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
+			return E_FAIL;
+
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
+		{
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Begin(4)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+
+		++iIndex;
+	}
+
+	return S_OK;
+}
+
+HRESULT CBody_Cabinet::Render_LightDepth_Spot()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+
+	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
+
+		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT);
+		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
+			return E_FAIL;
+
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
+		{
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Begin(2)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+	}
 
 	return S_OK;
 }
 
 HRESULT CBody_Cabinet::Add_Components()
 {
-
 	/* For.Com_Body_Shader */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
 		TEXT("Com_Body_Shader"), (CComponent**)&m_pShaderCom)))

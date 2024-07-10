@@ -296,19 +296,22 @@ public:/*For Physics Controller*/
 	void									SetRotationMatrix_Ragdoll(_float4x4 RotationMatrix);
 	class CCharacter_Controller*			Create_Controller(_float4 Pos, _int* Index, class CGameObject* pCharacter,_float fHeight,_float fRadius, class CTransform* pTransform, vector<class CBone*>* pBones, const std::string& name = "");
 	class CRigid_Static*					Create_Rigid_Static(_float4 Pos, _int* Index, class CGameObject* pStaticMesh);
+	class CRigid_Dynamic*					Create_Rigid_Dynamic(class CModel* pModel, class CTransform* pTransform, _int* iId, class CGameObject* pObj);
 	void									Cook_Terrain();
 	void									Simulate();
 	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr, _int* pIndex = nullptr);
 	void									Cook_Mesh_NoRotation(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Dynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Convex(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
+	void									Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum,PxRigidDynamic** pCollider, class CTransform* pTransform = nullptr);
 	void									Cook_Mesh_Convex_Convert_Root(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform ,_float4 vDelta);
 	void									Cook_Mesh_Convex_Convert_Root_No_Rotate(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform ,_float4 vDelta);
 	void									Create_SoftBody(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 	void									Create_Cloth(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum);
 	_bool									RayCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
-	_bool									RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _bool bBigAttack, _bool bDecalRay, _float fMaxDist = 1000.f);
+	_bool									RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint,_float4* pBlockNormal, _bool bBigAttack, _bool bDecalRay,_bool* IsHit_Props = nullptr, _float fMaxDist = 1000.f);
 	_bool									RayCast_Decal(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint,_float4* pBlockNormal, _float fMaxDist = 1000.f);
+	_bool									RayCast_Effect(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint,_float4* pBlockNormal,_bool bBigAttack,_bool* pDynamic, _float fMaxDist = 1000.f);
 	_bool									SphereCast_Shoot(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	_bool									SphereCast(_float4 vOrigin, _float4 vDir, _float4* pBlockPoint, _float fMaxDist = 1000.f);
 	class CRagdoll_Physics*					Create_Ragdoll(vector<class CBone*>* vecBone,class CTransform* pTransform, const string& name);
@@ -322,6 +325,8 @@ public:/*For Physics Controller*/
 	{
 		return m_pGraphic_Device;
 	}
+	vector<_float4>*						GetBlockPoints_Props();
+	vector<_float4>*						GetBlockNormals_Props();
 
 private:/*For Physics_Controller*/
 	_uint*									m_pIndices = { nullptr };

@@ -248,6 +248,9 @@ HRESULT CWeapon::Render_LightDepth_Spot()
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
 
+			if (FAILED(m_pShaderCom->Begin(2)))
+				return E_FAIL;
+
 			m_pModelCom->Render(static_cast<_uint>(i));
 		}
 	}
@@ -265,6 +268,19 @@ _float4 CWeapon::Get_MuzzlePosition()
 	}
 
 	return _float4(0.f, 0.f, 0.f, 0.f);						// ¾²·¹±â
+}
+
+_float4 CWeapon::Get_CartridgePosition()
+{
+	return Get_BonePosition("vfx_muzzle2");
+}
+
+_float4 CWeapon::Get_CartridgeDir()
+{
+	_matrix WorldMat = XMLoadFloat4x4(&m_WorldMatrix);
+	_float4 vRight;
+	XMStoreFloat4(&vRight, WorldMat.r[2]);
+	return Float4_Normalize(vRight);
 }
 
 _float4 CWeapon::Get_MuzzlePosition_Forward()

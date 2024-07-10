@@ -218,6 +218,9 @@ HRESULT CThrowing_Weapon::Render_LightDepth_Spot()
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
 
+			if (FAILED(m_pShaderCom->Begin(2)))
+				return E_FAIL;
+
 			m_pModelCom->Render(static_cast<_uint>(i));
 		}
 	}

@@ -27,25 +27,29 @@ private :
 	void	Operation_Tutorial(_float fTimeDelta);
 
 private :
-	CTextBox*			pTutorial_TextBox[2] = { nullptr }; /* 0이 아래쪽 1이 위쪽*/
+	CTextBox*			pTutorial_TextBox[2]		= { nullptr }; /* 0이 아래쪽 1이 위쪽*/
 
-	_float				m_fTutorialFont_Timer	= {};
-	_float				m_fTutorial_Life_Tiemr	= {};
+	_float				m_fTutorialFont_Timer		= {};
+	_float				m_fTutorial_Life_Tiemr		= {};
 
-private :
-	CTutorial_UI*		m_pTutorial_Supervise	= { nullptr };
-
-	/* Player 쪽에서 전달하고 있는 변수 */
-	UI_TUTORIAL_TYPE*	m_eTutorial_Type		= { nullptr };
-	_bool*				m_pisTutorial_Notify	= { nullptr };
-
-	_bool				m_isTutorial_Start		= { false };
-	_float2				m_Origin_TextPosition	= {};
 
 private :
-	_bool				m_isTutorial[100] = {false};
-	_bool				m_isStart = { false };
-	_float				m_fPlayTimer = {};
+	CTutorial_UI*		m_pTutorial_Supervise		= { nullptr };
+
+
+private : /* Player 쪽에서 전달하고 있는 변수 */	
+	UI_TUTORIAL_TYPE*	m_eTutorial_Type			= { nullptr };
+	_bool*				m_pisTutorial_Notify		= { nullptr };
+	_bool				m_isTutorial_Start			= { false };
+	_float2				m_Origin_TextPosition		= {};
+
+
+private :
+	_bool				m_isTutorial[100]			= { false };
+	_bool				m_isStart					= { false };
+	_float				m_fPlayTimer				= {};
+
+
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

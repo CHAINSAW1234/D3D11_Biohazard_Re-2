@@ -253,7 +253,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	{
 		vector vAlphaDesc = g_AlphaTexture.Sample(LinearSampler, In.vTexcoord);
 		Out.vDiffuse.a = vAlphaDesc.r;
-		if (0.01 >= Out.vDiffuse.a)
+		if (0.01f >= Out.vDiffuse.a)
 			discard;
 	}
 	else
@@ -401,11 +401,11 @@ PS_OUT_LIGHTDEPTH PS_LIGHTDEPTH_CUBE(PS_IN_CUBE In)
 
 technique11 DefaultTechnique
 {
-	pass Default
+	pass Default	// 0
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_Default, 0);
-		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
@@ -414,7 +414,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass Dissolve
+	pass Dissolve		// 1
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_Default, 0);
@@ -427,7 +427,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_DISSOLVE();
 	}
 
-	pass LightDepth
+	pass LightDepth		// 2
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_Default, 0);
@@ -440,7 +440,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN_LIGHTDEPTH();
 	}
 
-	pass Emissive
+	pass Emissive		// 3
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
@@ -453,7 +453,7 @@ technique11 DefaultTechnique
 		PixelShader = compile ps_5_0 PS_EMISSIVE();
 	}
 
-	pass LightDepth_Cube
+	pass LightDepth_Cube	// 4
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_Default, 0);

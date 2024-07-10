@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Pannel_Window.h"
 #include"Player.h"
-
+#include"Light.h"
 #include"Window.h"
 CPannel_Window::CPannel_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPart_InteractProps{ pDevice, pContext }
@@ -80,9 +80,19 @@ void CPannel_Window::Late_Tick(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	if (*m_pState == CWindow::BARRIGATE_NEW)
+	{
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	}
+	else
+	{
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	}
+	
 
 }
 
@@ -208,6 +218,265 @@ HRESULT CPannel_Window::Render()
 	}
 	
 
+	return S_OK;
+}
+
+HRESULT CPannel_Window::Render_LightDepth_Dir()
+{
+	if (m_bRender)
+		return S_OK;
+	if (*m_pState == CWindow::BARRIGATE_NO)
+		return S_OK;
+
+	if (*m_pState == CWindow::BARRIGATE_NEW )
+	{
+		//nonAnim
+
+		if (nullptr == m_pShaderNonAnimCom)
+			return E_FAIL;
+
+		if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderNonAnimCom, "g_WorldMatrix")))
+			return E_FAIL;
+
+		list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
+		_int iIndex = 0;
+		for (auto& pLightDesc : LightDescList) {
+			const _float4x4* pLightViewMatrices;
+			_float4x4 LightProjMatrix;
+			pLightViewMatrices = pLightDesc->ViewMatrix;
+			LightProjMatrix = pLightDesc->ProjMatrix;
+
+			if (FAILED(m_pShaderNonAnimCom->Bind_RawValue("g_LightIndex", &iIndex, sizeof(_int))))
+				return E_FAIL;
+			if (FAILED(m_pShaderNonAnimCom->Bind_Matrices("g_LightViewMatrix", pLightViewMatrices, 6)))
+				return E_FAIL;
+			if (FAILED(m_pShaderNonAnimCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
+				return E_FAIL;
+
+			_uint iNumMeshes = m_pModelNonAnimCom->Get_NumMeshes();
+			for (size_t i = 0; i < iNumMeshes; i++)
+			{
+				if (FAILED(m_pModelNonAnimCom->Bind_ShaderResource_Texture(m_pShaderNonAnimCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+					return E_FAIL;
+
+				/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
+				if (FAILED(m_pShaderNonAnimCom->Begin(1)))
+					return E_FAIL;
+
+				m_pModelNonAnimCom->Render(static_cast<_uint>(i));
+			}
+
+			++iIndex;
+		}
+
+
+	}
+	else
+	{
+		//Anim
+		if (nullptr == m_pShaderCom)
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+			return E_FAIL;
+
+		if (m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) != nullptr) {
+
+			const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION);
+			const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
+
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
+				return E_FAIL;
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
+				return E_FAIL;
+
+			list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+			for (auto& i : NonHideIndices)
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+					return E_FAIL;
+
+				if (FAILED(m_pShaderCom->Begin(2)))
+					return E_FAIL;
+
+				m_pModelCom->Render(static_cast<_uint>(i));
+			}
+		}
+	}
+	
+
+	return S_OK;
+}
+
+HRESULT CPannel_Window::Render_LightDepth_Point()
+{
+	if (m_bRender)
+		return S_OK;
+	if (*m_pState == CWindow::BARRIGATE_NO)
+		return S_OK;
+
+	if (*m_pState == CWindow::BARRIGATE_NEW)
+	{
+		//nonAnim
+		if (nullptr == m_pShaderNonAnimCom)
+			return E_FAIL;
+
+		if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderNonAnimCom, "g_WorldMatrix")))
+			return E_FAIL;
+
+		list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
+		_int iIndex = 0;
+		for (auto& pLightDesc : LightDescList) {
+			const _float4x4* pLightViewMatrices;
+			_float4x4 LightProjMatrix;
+			pLightViewMatrices = pLightDesc->ViewMatrix;
+			LightProjMatrix = pLightDesc->ProjMatrix;
+
+			if (FAILED(m_pShaderNonAnimCom->Bind_RawValue("g_LightIndex", &iIndex, sizeof(_int))))
+				return E_FAIL;
+			if (FAILED(m_pShaderNonAnimCom->Bind_Matrices("g_LightViewMatrix", pLightViewMatrices, 6)))
+				return E_FAIL;
+			if (FAILED(m_pShaderNonAnimCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
+				return E_FAIL;
+
+			_uint iNumMeshes = m_pModelNonAnimCom->Get_NumMeshes();
+			for (size_t i = 0; i < iNumMeshes; i++)
+			{
+				if (FAILED(m_pModelNonAnimCom->Bind_ShaderResource_Texture(m_pShaderNonAnimCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+					return E_FAIL;
+
+				/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
+				if (FAILED(m_pShaderNonAnimCom->Begin(2)))
+					return E_FAIL;
+
+				m_pModelNonAnimCom->Render(static_cast<_uint>(i));
+			}
+
+			++iIndex;
+		}
+	}
+	else
+	{
+		//Anim
+		if (nullptr == m_pShaderCom)
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+			return E_FAIL;
+
+		list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
+		_int iIndex = 0;
+		for (auto& pLightDesc : LightDescList) {
+			const _float4x4* pLightViewMatrices;
+			_float4x4 LightProjMatrix;
+			pLightViewMatrices = pLightDesc->ViewMatrix;
+			LightProjMatrix = pLightDesc->ProjMatrix;
+
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_LightIndex", &iIndex, sizeof(_int))))
+				return E_FAIL;
+			if (FAILED(m_pShaderCom->Bind_Matrices("g_LightViewMatrix", pLightViewMatrices, 6)))
+				return E_FAIL;
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
+				return E_FAIL;
+
+			list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+			for (auto& i : NonHideIndices)
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+					return E_FAIL;
+
+				if (FAILED(m_pShaderCom->Begin(4)))
+					return E_FAIL;
+
+				m_pModelCom->Render(static_cast<_uint>(i));
+			}
+
+			++iIndex;
+		}
+	}
+	return S_OK;
+}
+
+HRESULT CPannel_Window::Render_LightDepth_Spot()
+{
+
+	if (m_bRender)
+		return S_OK;
+	if (*m_pState == CWindow::BARRIGATE_NO)
+		return S_OK;
+
+	if (*m_pState == CWindow::BARRIGATE_NEW)
+	{
+		//nonAnim
+		if (nullptr == m_pShaderNonAnimCom)
+			return E_FAIL;
+
+		if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderNonAnimCom, "g_WorldMatrix")))
+			return E_FAIL;
+
+		list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
+		_int iIndex = 0;
+		for (auto& pLightDesc : LightDescList) {
+			const _float4x4* pLightViewMatrices;
+			_float4x4 LightProjMatrix;
+			pLightViewMatrices = pLightDesc->ViewMatrix;
+			LightProjMatrix = pLightDesc->ProjMatrix;
+
+			if (FAILED(m_pShaderNonAnimCom->Bind_RawValue("g_LightIndex", &iIndex, sizeof(_int))))
+				return E_FAIL;
+			if (FAILED(m_pShaderNonAnimCom->Bind_Matrices("g_LightViewMatrix", pLightViewMatrices, 6)))
+				return E_FAIL;
+			if (FAILED(m_pShaderNonAnimCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
+				return E_FAIL;
+
+			_uint iNumMeshes = m_pModelNonAnimCom->Get_NumMeshes();
+			for (size_t i = 0; i < iNumMeshes; i++)
+			{
+				if (FAILED(m_pModelNonAnimCom->Bind_ShaderResource_Texture(m_pShaderNonAnimCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+					return E_FAIL;
+
+				/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
+				if (FAILED(m_pShaderNonAnimCom->Begin(1)))
+					return E_FAIL;
+
+				m_pModelNonAnimCom->Render(static_cast<_uint>(i));
+			}
+
+			++iIndex;
+		}
+	}
+	else
+	{
+		//Anim
+		if (nullptr == m_pShaderCom)
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+			return E_FAIL;
+
+		if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
+
+			const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT);
+			const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
+
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
+				return E_FAIL;
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
+				return E_FAIL;
+
+			list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+			for (auto& i : NonHideIndices)
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+					return E_FAIL;
+
+				if (FAILED(m_pShaderCom->Begin(2)))
+					return E_FAIL;
+
+				m_pModelCom->Render(static_cast<_uint>(i));
+			}
+		}
+	}
 	return S_OK;
 }
 

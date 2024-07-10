@@ -22,11 +22,12 @@ public:
 
 private : /* Find Fuction*/
 	void										Find_Item();
-
+	void										Find_NotifyText_RenderState();
 
 private :
 	void										Targeting_Render(_float fTimeDelta);
 	void										Targeting_Control();
+	void										Notify_Font_Position();
 	_bool										Item_Hovering(_float4 _mainPos, _float3 _scaled);
 
 
@@ -45,6 +46,10 @@ private : /* Notify Targeting */
 	_float2										m_fTargetNotify_Distance			= {};
 	_float2										m_fTargetNotify_TextBox_Distance	= {};
 	wstring										m_wstrItem_Name						= { TEXT("") };
+
+	/* Font Tick이 한 번 밀리기 때문에 다른 다른 Render 변수로 관리할 것이다. */
+	_bool										m_isNotifyRender = { false };
+	_bool*										m_isNotifyRender_Ptr = { nullptr };
 
 public:	
 	static CMap_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

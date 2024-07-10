@@ -49,7 +49,7 @@ HRESULT CMuzzle_Flash_SG::Initialize(void* pArg)
 	for (size_t i = 0; i < MUZZLE_SPARK_COUNT; ++i)
 	{
 		auto pSpark = CMuzzle_Spark_SG::Create(m_pDevice, m_pContext);
-		pSpark->SetType(i);
+		pSpark->SetType((_uint)i);
 		pSpark->Initialize(nullptr);
 		pSpark->SetSize(1.f, 1.f);
 		m_vecMuzzle_Spark_SG.push_back(pSpark);

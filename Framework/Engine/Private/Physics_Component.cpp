@@ -1,7 +1,9 @@
 #include "Physics_Component.h"
+#include "GameInstance.h"
 
 CPhysics_Component::CPhysics_Component()
 {
+	m_pGameInstance = CGameInstance::Get_Instance();
 }
 
 CPhysics_Component::CPhysics_Component(const CPhysics_Component& rhs)

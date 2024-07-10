@@ -212,9 +212,6 @@ HRESULT CProps::Render()
 
 HRESULT CProps::Render_LightDepth_Dir()
 {
-	if (m_bRender == false)
-		return S_OK;
-
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
@@ -372,7 +369,7 @@ HRESULT CProps::Render_LightDepth_Point()
 					return E_FAIL;
 
 				/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
-				if (FAILED(m_pShaderCom->Begin(1)))
+				if (FAILED(m_pShaderCom->Begin(2)))
 					return E_FAIL;
 
 				m_pModelCom->Render(static_cast<_uint>(i));
@@ -395,18 +392,9 @@ void CProps::Start()
 
 HRESULT CProps::Add_Components()
 {
-	if (m_tagPropDesc.bAnim)
-	{
-		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
-			TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
-			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
-			TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
-			return E_FAIL;
-	}
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
+		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
+		return E_FAIL;
 
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(g_Level, m_tagPropDesc.strModelComponent,

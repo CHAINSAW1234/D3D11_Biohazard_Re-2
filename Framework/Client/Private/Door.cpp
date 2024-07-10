@@ -95,11 +95,11 @@ void CDoor::Tick(_float fTimeDelta)
 
 	if (!m_bVisible)
 		return;
-#ifdef _DEBUG
-#ifdef UI_POS
-	Get_Object_Pos();
-#endif
-#endif
+//#ifdef _DEBUG
+//#ifdef UI_POS
+//	Get_Object_Pos();
+//#endif
+//#endif
 
 	m_eType == CDoor::DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
 	
@@ -293,18 +293,29 @@ HRESULT CDoor::Add_Locations()
 
 void CDoor::DoubleDoor_Tick(_float fTimeDelta)
 {
+	if (m_bAttack && m_eDoubleState != DOUBLEDOOR_STATIC && static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Is_Finishied_Anim())
+		m_iHP = 5;
 	if (m_bActivity)
 		m_fTime += fTimeDelta;
 
 
 	if (m_fTime > 2.f)
-	{
-		m_fTime = 0.f;
-		m_iHP = 5;
-		if (!m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bCol[INTER_COL_DOUBLE][COL_STEP1])
+	{		
+		if (!m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bCol[INTER_COL_DOUBLE][COL_STEP1]&&!m_bAttack)
 		{
+			m_fTime = 0.f;
 			m_bActivity = false;
 			m_eDoubleState = DOUBLEDOOR_STATIC;
+		}
+		else if(m_bAttack && m_pZombieTransform != nullptr)
+		{
+			if (Distance_Zombie(m_pZombieTransform) > 2.f)
+			{
+				m_bAttack = false;
+				m_fTime = 0.f;
+				m_bActivity = false;
+				m_eDoubleState = DOUBLEDOOR_STATIC;
+			}
 		}
 	}
 
@@ -444,7 +455,9 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 
 			if(nullptr != m_pSelector)
 				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-				
+
+			Opreate_Selector_UI(false, Get_Object_Pos());
+
 			// Destory : 점점 사라진 후에 null 
 			// m_pSelector = nullptr;
 		}
@@ -455,14 +468,22 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 			{
 				if (Check_Col_Player(INTER_COL_DOUBLE, COL_STEP2) && !m_bActivity)
 					m_bOnce = true;
+				Opreate_Selector_UI(true, Get_Object_Pos());
+
 			}
 			else
+			{
 				m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
+				Opreate_Selector_UI(false, Get_Object_Pos());
+
+			}
 		}
 		else
 		{
 			m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
 			m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
+			Opreate_Selector_UI(false, Get_Object_Pos());
+
 		}
 	}
 	else
@@ -473,6 +494,8 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_DOUBLE][COL_STEP0] = false;
 		m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
 		m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
+		Opreate_Selector_UI(false, Get_Object_Pos());
+
 	}
 
 	if (!m_bBlock && m_bOnce && (m_bCol[INTER_COL_NORMAL][COL_STEP2] || m_bCol[INTER_COL_DOUBLE][COL_STEP2]))
@@ -527,6 +550,7 @@ void CDoor::DoubleDoor_Active()
 
 _float4 CDoor::Get_Object_Pos()
 {
+
 	if (m_fTime > 0.3f)
 		return _float4();
 	if (m_eType == DOOR_DOUBLE)
@@ -602,17 +626,29 @@ _bool CDoor::Attack_Prop(CTransform* pTransform)
 
 void CDoor::OneDoor_Tick(_float fTimeDelta)
 {
+	if (m_bAttack && m_eOneState != ONEDOOR_STATIC && static_cast<CPart_InteractProps*>(m_PartObjects[PART_BODY])->Is_Finishied_Anim())
+		m_iHP = 5;
+	
 	if (m_bActivity)
 		m_fTime += fTimeDelta;
 
 	if (m_fTime > 2.f)
 	{
-		m_fTime = 0.f;
-		m_iHP = 5;
-		if (!m_bCol[INTER_COL_NORMAL][COL_STEP1])
-		{
+		if (!m_bCol[INTER_COL_NORMAL][COL_STEP1]&& !m_bAttack)
+		{		
+			m_fTime = 0.f;
 			m_bActivity = false;
 			m_eOneState = ONEDOOR_STATIC;
+		}
+		else if (m_bAttack&& m_pZombieTransform!= nullptr)
+		{
+			if (Distance_Zombie(m_pZombieTransform) > 2.f)
+			{
+				m_bAttack = false;
+				m_fTime = 0.f;
+				m_bActivity = false;
+				m_eDoubleState = DOUBLEDOOR_STATIC;
+			}
 		}
 	}
 
@@ -697,7 +733,7 @@ _float CDoor::Radian_To_Player()
 	return fScala;
 }
 
-_float CDoor::Radian_To_Jombie(class CTransform* pTransform)
+_float CDoor::Radian_To_Zombie(class CTransform* pTransform)
 {	
 	_vector vLook = XMVector4Normalize(m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK));
 	_vector vDir = XMVector4Normalize(pTransform->Get_State_Vector(CTransform::STATE_POSITION) - m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
@@ -707,6 +743,13 @@ _float CDoor::Radian_To_Jombie(class CTransform* pTransform)
 	else if (fScala < -1.f)
 		fScala = -1.f;
 	return fScala;
+}
+
+_float CDoor::Distance_Zombie(class CTransform* pTransform)
+{
+	_vector vDist = m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION) - m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION);
+	_float fDistance = XMVectorGetX( XMVector4Length(vDist));
+	return fDistance;
 }
 
 void CDoor::OneDoor_Active()

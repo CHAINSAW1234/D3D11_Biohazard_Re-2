@@ -224,10 +224,14 @@
     <ClInclude Include="..\Public\Cut_Scene.h" />
     <ClInclude Include="..\Public\Cut_Scene_CF93.h" />
     <ClInclude Include="..\Public\Damage_UI.h" />
+    <ClInclude Include="..\Public\Decal_BulletHole.h" />
     <ClInclude Include="..\Public\Decal_SSD.h" />
     <ClInclude Include="..\Public\Effect_Header_Zombie.h" />
     <ClInclude Include="..\Public\Creep_Zombie.h" />
     <ClInclude Include="..\Public\Find_Door_To_Target_Zombie.h" />
+    <ClInclude Include="..\Public\HG_Cartridge.h" />
+    <ClInclude Include="..\Public\Hit.h" />
+    <ClInclude Include="..\Public\Hit_Props.h" />
     <ClInclude Include="..\Public\Impact.h" />
     <ClInclude Include="..\Public\Is_Different_Location_To_Player_Zombie.h" />
     <ClInclude Include="..\Public\Muzzle_ShockWave.h" />
@@ -242,6 +246,7 @@
     <ClInclude Include="..\Public\Player_State_Move_Shelf.h" />
     <ClInclude Include="..\Public\Region_Update_Zombie.h" />
     <ClInclude Include="..\Public\Room_Finder.h" />
+    <ClInclude Include="..\Public\SG_Cartridge.h" />
     <ClInclude Include="..\Public\Start_Zombie.h" />
     <ClInclude Include="..\Public\Throwing_Weapon.h" />
     <ClInclude Include="..\Public\Hold_Out_Hand_Window_Zombie.h" />
@@ -460,8 +465,12 @@
     <ClCompile Include="..\Private\Cut_Scene.cpp" />
     <ClCompile Include="..\Private\Cut_Scene_CF93.cpp" />
     <ClCompile Include="..\Private\Damage_UI.cpp" />
+    <ClCompile Include="..\Private\Decal_BulletHole.cpp" />
     <ClCompile Include="..\Private\Decal_SSD.cpp" />
     <ClCompile Include="..\Private\Find_Door_To_Target_Zombie.cpp" />
+    <ClCompile Include="..\Private\HG_Cartridge.cpp" />
+    <ClCompile Include="..\Private\Hit.cpp" />
+    <ClCompile Include="..\Private\Hit_Props.cpp" />
     <ClCompile Include="..\Private\Impact.cpp" />
     <ClCompile Include="..\Private\Is_Different_Location_To_Player_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_In_Door_Zombie.cpp" />
@@ -476,6 +485,7 @@
     <ClCompile Include="..\Private\Player_State_Move_Shelf.cpp" />
     <ClCompile Include="..\Private\Region_Update_Zombie.cpp" />
     <ClCompile Include="..\Private\Room_Finder.cpp" />
+    <ClCompile Include="..\Private\SG_Cartridge.cpp" />
     <ClCompile Include="..\Private\Start_Zombie.cpp" />
     <ClCompile Include="..\Private\Throwing_Weapon.cpp" />
     <ClCompile Include="..\Private\Hold_Out_Hand_Window_Zombie.cpp" />

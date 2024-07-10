@@ -17,7 +17,10 @@ public:
 	virtual HRESULT				Initialize(void* pArg) override;
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT				Render() override;
+	virtual HRESULT					Render() override;
+	virtual HRESULT					Render_LightDepth_Dir()override;
+	virtual HRESULT					Render_LightDepth_Point() override;
+	virtual HRESULT					Render_LightDepth_Spot()override;
 
 private:
 

@@ -1019,6 +1019,19 @@ _int CRagdoll_Physics::Find_BoneIndex(const string& strRootTag)
 	return -1;
 }
 
+_float4 CRagdoll_Physics::GetBodyPosition()
+{
+	_float4 vPos = _float4(0.f,0.f,0.f,1.f);
+
+	if (m_Chest)
+	{
+		auto ChestPos = m_Chest->getGlobalPose().p;
+		vPos = _float4(ChestPos.x, ChestPos.y, ChestPos.z, 1.f);
+	}
+
+	return vPos;
+}
+
 CRagdoll_Physics* CRagdoll_Physics::Create()
 {
 	return nullptr;

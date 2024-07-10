@@ -48,6 +48,8 @@ using namespace Client;
 //#define NON_COLLISION_PROP
 #define PROPS_COOKING
 
+//#define UI_POS
+
 #define NO_COLLISTION
 
 #define DISPLAY_FRAME
