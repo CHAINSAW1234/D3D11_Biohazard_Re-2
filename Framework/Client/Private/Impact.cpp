@@ -33,7 +33,7 @@ HRESULT CImpact::Initialize(void * pArg)
 
 	m_FrameDelay = 25;
 
-	m_fAlpha_Delta = 0.6f;
+	m_fAlpha_Delta = 0.4f;
 
 	return S_OK;
 }
@@ -45,8 +45,8 @@ void CImpact::Tick(_float fTimeDelta)
 		return;
 	}
 
-	m_fSizeX += 0.08f;
-	m_fSizeY += 0.08f;
+	m_fSizeX += 0.1f;
+	m_fSizeY += 0.1f;
 	m_pTransformCom->Set_Scaled(m_fSizeX, m_fSizeY, 1.f);
 
 	if (m_FrameDelay + m_FrameTime < GetTickCount64())

@@ -1437,6 +1437,17 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Muzzle_Spark_SG_05"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Muzzle_Spark_SG/Muzzle_Spark_SG_05.dds"), 1, &Desc))))
 		return E_FAIL;
+
+	Desc.iWidth = 2048;
+	Desc.iHeight = 1024;
+	Desc.iCountX = 8;
+	Desc.iCountY = 4;
+
+	/*Prototype_Component_Texture_Muzzle_Spark_SG*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Hit"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Hit/Hit.dds"), 1, &Desc))))
+		return E_FAIL;
+
 #pragma endregion
 
 #pragma region CubeMap

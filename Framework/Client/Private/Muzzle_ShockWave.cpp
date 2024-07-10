@@ -163,6 +163,10 @@ void CMuzzle_ShockWave::SetPosition(_float4 Pos)
 	m_iFrame = 0;
 	m_fAlpha_Delta_Sum = 1.f;
 	m_bAlpha_Direction = false;
+
+	m_fSizeX = m_fDefaultSize_X;
+	m_fSizeY = m_fDefaultSize_Y;
+	m_pTransformCom->Set_Scaled(m_fSizeX, m_fSizeY, 1.f);
 }
 
 HRESULT CMuzzle_ShockWave::Add_Components()

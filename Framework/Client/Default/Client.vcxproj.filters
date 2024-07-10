@@ -655,6 +655,9 @@
     <Filter Include="02.GameObjects\Effect\Impact">
       <UniqueIdentifier>{4e950f49-0ee1-481c-86c6-54d63c564243}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Hit">
+      <UniqueIdentifier>{8b1fb927-ed1b-4df2-86d3-43411b329dd7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1263,6 +1266,9 @@
     <ClInclude Include="..\Public\Impact.h">
       <Filter>02.GameObjects\Effect\Impact</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Hit.h">
+      <Filter>02.GameObjects\Effect\Hit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1831,6 +1837,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Impact.cpp">
       <Filter>02.GameObjects\Effect\Impact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hit.cpp">
+      <Filter>02.GameObjects\Effect\Hit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
