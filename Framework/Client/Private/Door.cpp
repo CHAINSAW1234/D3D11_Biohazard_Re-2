@@ -34,6 +34,8 @@ HRESULT CDoor::Initialize(void* pArg)
 	//m_bLock = m_tagPropDesc.tagDoor.bLock;
 	if ((m_tagPropDesc.strGamePrototypeName.find("007") != string::npos) || (m_tagPropDesc.strGamePrototypeName.find("038") != string::npos) || (m_tagPropDesc.strGamePrototypeName.find("113") != string::npos))
 		m_eType = DOOR_DOUBLE;
+	else if (m_tagPropDesc.strGamePrototypeName.find("056") != string::npos)
+		m_eType = DOOR_DUMMY;
 	else
 		m_eType = DOOR_ONE;
 	if (m_eType == DOOR_DOUBLE)
@@ -61,6 +63,8 @@ void CDoor::Start()
 		return;
 	for (auto& iter : *pCollider)
 	{
+		if (m_eType == CDoor::DOOR_DUMMY)
+			int a = 0;
 		if (m_pColliderCom[INTER_COL_NORMAL][COL_STEP0]->Intersect(static_cast<CCollider*>(iter->Get_Component(TEXT("Com_Collider")))))
 		{
 			// 내 인덱스 넣어주기
@@ -79,6 +83,7 @@ void CDoor::Start()
 	if (nullptr == m_pMyCustomCollider)
 	{
 		MSG_BOX(TEXT("Called : void CDoor::Start() Custom Collider 못 찾 음"));
+
 		return;
 	}
 #endif
@@ -86,6 +91,10 @@ void CDoor::Start()
 	if (FAILED(Add_Locations()))
 	{
 		return;
+	}
+	if (m_eType == CDoor::DOOR_DUMMY)
+	{
+		m_iHP = 0;
 	}
 }
 
@@ -100,6 +109,12 @@ void CDoor::Tick(_float fTimeDelta)
 //	Get_Object_Pos();
 //#endif
 //#endif
+	if (m_eType == CDoor::DOOR_DUMMY)
+	{
+		m_iHP = 0;
+		return;
+	}
+
 
 	m_eType == CDoor::DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
 	
@@ -111,6 +126,9 @@ void CDoor::Late_Tick(_float fTimeDelta)
 	if (m_pPlayer == nullptr)
 		return;
 	if (!Visible())
+		return;
+
+	if (m_eType == CDoor::DOOR_DUMMY)
 		return;
 
 	if (m_bRender == false)
@@ -550,7 +568,8 @@ void CDoor::DoubleDoor_Active()
 
 _float4 CDoor::Get_Object_Pos()
 {
-
+	if (m_eType == DOOR_DUMMY)
+		return _float4();
 	if (m_fTime > 0.3f)
 		return _float4();
 	if (m_eType == DOOR_DOUBLE)
@@ -614,12 +633,16 @@ _bool CDoor::Attack_Prop(CTransform* pTransform)
 			else
 				m_eDoubleState = R_DOUBLEDOOR_OPEN;
 		}
-		else
+		else if(m_eType == DOOR_ONE)
 		{
 			if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
 				m_eOneState = ONEDOOR_OPEN_L;
 			else
 				m_eOneState = ONEDOOR_OPEN_R;
+		}
+		else
+		{
+
 		}
 		m_pZombieTransform = pTransform;
 		m_bActivity = true;

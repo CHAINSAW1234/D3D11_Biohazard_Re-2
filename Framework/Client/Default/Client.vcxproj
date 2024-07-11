@@ -228,6 +228,7 @@
     <ClInclude Include="..\Public\Decal_SSD.h" />
     <ClInclude Include="..\Public\Effect_Header_Zombie.h" />
     <ClInclude Include="..\Public\Creep_Zombie.h" />
+    <ClInclude Include="..\Public\Event_Base.h" />
     <ClInclude Include="..\Public\Find_Door_To_Target_Zombie.h" />
     <ClInclude Include="..\Public\HG_Cartridge.h" />
     <ClInclude Include="..\Public\Hint.h" />
@@ -471,6 +472,7 @@
     <ClCompile Include="..\Private\Damage_UI.cpp" />
     <ClCompile Include="..\Private\Decal_BulletHole.cpp" />
     <ClCompile Include="..\Private\Decal_SSD.cpp" />
+    <ClCompile Include="..\Private\Event_Base.cpp" />
     <ClCompile Include="..\Private\Find_Door_To_Target_Zombie.cpp" />
     <ClCompile Include="..\Private\HG_Cartridge.cpp" />
     <ClCompile Include="..\Private\Hint.cpp" />

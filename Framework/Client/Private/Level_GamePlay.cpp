@@ -1544,6 +1544,8 @@ HRESULT CLevel_GamePlay::Load_Monster(const wstring& strFilePath, const wstring&
 			CloseHandle(hFile);
 			return E_FAIL;
 		}
+		if (ObjectDesc.eStart_Type == ZOMBIE_START_TYPE::_END)
+			ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_CREEP;
 		if (!ReadFile(hFile, &ObjectDesc.eBodyModelType, sizeof(_int), &dwByte, nullptr))
 		{
 			CloseHandle(hFile);
