@@ -25,7 +25,7 @@ public:
 private:
 	class CHint_Highliter* m_pHint_Highlighter = { nullptr };
 
-	unordered_map<wstring, vector<CTexture*>> m_mapDocuments;
+	//unordered_map<wstring, vector<CTexture*>> m_mapDocuments;
 
 	//vector<>;
 

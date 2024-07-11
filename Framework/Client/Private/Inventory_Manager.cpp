@@ -1206,6 +1206,7 @@ HRESULT CInventory_Manager::Seting_Hotkey()
 		if (nullptr != pHotkey)
 		{
 			m_pHotkey = pHotkey;
+			Safe_AddRef(m_pHotkey);
 			return S_OK;
 		}
 	}
@@ -1300,9 +1301,9 @@ void CInventory_Manager::Free()
 	m_vecItem_UI.clear();
 
 	Safe_Release(m_pContextMenu);
-
 	Safe_Release(m_pDragShadow);
 	Safe_Release(m_pDragShadowTransform);
+	Safe_Release(m_pHotkey);
 }
 
 ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)

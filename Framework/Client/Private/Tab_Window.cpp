@@ -795,4 +795,6 @@ void CTab_Window::Free()
 	Safe_Release(m_pItem_Mesh_Viewer);
 	Safe_Release(m_pItem_Discription);
 	Safe_Release(m_pHotKey);
+	Safe_Release(m_pHint);
+	
 }

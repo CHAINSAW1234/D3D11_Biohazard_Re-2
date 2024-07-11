@@ -1299,11 +1299,11 @@
     <ClInclude Include="..\Public\Hint.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Hint_Highliter.h">
-      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Highliter</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Hint_Display.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hint_Highliter.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Highliter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1892,11 +1892,11 @@
     <ClCompile Include="..\Private\Hint.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Hint_Highliter.cpp">
-      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Highliter</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Hint_Display.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hint_Highliter.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Highliter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
