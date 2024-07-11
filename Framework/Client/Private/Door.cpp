@@ -568,7 +568,8 @@ void CDoor::DoubleDoor_Active()
 
 _float4 CDoor::Get_Object_Pos()
 {
-
+	if (m_eType == DOOR_DUMMY)
+		return _float4();
 	if (m_fTime > 0.3f)
 		return _float4();
 	if (m_eType == DOOR_DOUBLE)
@@ -632,12 +633,16 @@ _bool CDoor::Attack_Prop(CTransform* pTransform)
 			else
 				m_eDoubleState = R_DOUBLEDOOR_OPEN;
 		}
-		else
+		else if(m_eType == DOOR_ONE)
 		{
 			if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
 				m_eOneState = ONEDOOR_OPEN_L;
 			else
 				m_eOneState = ONEDOOR_OPEN_R;
+		}
+		else
+		{
+
 		}
 		m_pZombieTransform = pTransform;
 		m_bActivity = true;
