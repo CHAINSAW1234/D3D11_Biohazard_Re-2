@@ -20,7 +20,7 @@
 #include "Easing.h"
 #include "Animation_Library.h"
 #include "Compute_Shader_Manager.h"
-
+#include"Event_Manager.h"
 IMPLEMENT_SINGLETON(CGameInstance)
 
 CGameInstance::CGameInstance()	
@@ -178,6 +178,13 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 		return E_FAIL;
 	}
 
+	m_pEvent_Manager = CEvent_Manager::Create();
+	if (nullptr == m_pEvent_Manager)
+	{
+		MSG_BOX(TEXT("Error: m_pEvent_Manager::Create -> nullptr"));
+		return E_FAIL;
+	}
+
 	//Random Generator
 	m_RandomNumber = mt19937_64(m_RandomDevice());
 
@@ -218,6 +225,9 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 
 	if (m_pPhysics_Controller)
 		m_pPhysics_Controller->Simulate(fTimeDelta);
+
+	if (m_pEvent_Manager)
+		m_pEvent_Manager->Tick(fTimeDelta); // 모든 처리가 끝나는 후에
 
 	if (DOWN == Get_KeyState(VK_TAB))
 	{
@@ -1464,6 +1474,23 @@ void CGameInstance::Perform_Calc_Decal_Map_StaticModel(_uint iNumVertices)
 	m_pCS_Manager->Perform_Calc_Decal_Map_StaticModel(iNumVertices);
 }
 
+
+#pragma endregion
+
+#pragma region Event_Mananger
+HRESULT CGameInstance::Add_Event(CEvent* pNewEvent, const wstring& strEventTag)
+{
+	if (m_pEvent_Manager == nullptr)
+		return E_FAIL;
+	return m_pEvent_Manager->Add_Event(pNewEvent, strEventTag);
+}
+
+CEvent* CGameInstance::Get_Event(const wstring& strEventTag)
+{
+	if (m_pEvent_Manager == nullptr)
+		return nullptr;
+	return m_pEvent_Manager->Get_Event(strEventTag);
+}
 #pragma endregion
 
 #pragma region Render_Target_Debugger
@@ -1612,4 +1639,6 @@ void CGameInstance::Free()
 	Safe_Release(m_pEasing);
 	Safe_Release(m_pAnimation_Library);
 	Safe_Release(m_pCS_Manager);
+	Safe_Release(m_pEvent_Manager);
+
 }
