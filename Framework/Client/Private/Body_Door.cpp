@@ -29,8 +29,8 @@ HRESULT CBody_Door::Initialize(void* pArg)
 		return E_FAIL;
 
 	if (FAILED(Add_Components()))
-
 		return E_FAIL;
+
 	if (*m_pState == CDoor::DOOR_ONE)
 		if (FAILED(Initialize_Model()))
 			return E_FAIL;
@@ -39,10 +39,10 @@ HRESULT CBody_Door::Initialize(void* pArg)
 	{
 		BODY_DOOR_DESC* pbody_door_desc = (BODY_DOOR_DESC*)pArg;
 		m_pDoubleDoorType = pbody_door_desc->pDoubleDoorType;
-		m_pDoubleState = pbody_door_desc->pDoubleDoorState; 
-		m_pDoubleState_Prev =pbody_door_desc->pDoubleDoorState_Prev;
-		m_pOneState =pbody_door_desc->pOneDoorState;
-		m_pOneState_Prev =pbody_door_desc->pOneDoorState_Prev;
+		m_pDoubleState = pbody_door_desc->pDoubleDoorState;
+		m_pDoubleState_Prev = pbody_door_desc->pDoubleDoorState_Prev;
+		m_pOneState = pbody_door_desc->pOneDoorState;
+		m_pOneState_Prev = pbody_door_desc->pOneDoorState_Prev;
 
 
 	}
@@ -61,56 +61,55 @@ HRESULT CBody_Door::Initialize(void* pArg)
 			m_pModelCom->Add_AnimPlayingInfo(1, false, 1, TEXT("Default"), 0.5f);
 		}
 		*/
-
-	m_pModelCom->Active_RootMotion_Rotation(false);
+	}
+		m_pModelCom->Active_RootMotion_Rotation(false);
 
 #ifndef NON_COLLISION_PROP
 
-	if (*m_pState == CDoor::DOOR_DOUBLE)
-	{
-		/*if (*m_pDoubleDoorType == DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR)
+		if (*m_pState == CDoor::DOOR_DOUBLE)
 		{
-			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root_Double_Door(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
-
-			m_vecRotationBone[ATC_ROOT] = m_pModelCom->Get_BonePtr("_00");
-			m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L] = m_pModelCom->Get_BonePtr("_01");
-			m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R] = m_pModelCom->Get_BonePtr("_03");
-			m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L] = m_pModelCom->Get_BonePtr("_04");
-			m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R] = m_pModelCom->Get_BonePtr("_02");
-		}
-		else*/
-		{
-			m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
-
-			switch (*m_pState)
+			/*if (*m_pDoubleDoorType == DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR)
 			{
-			case CDoor::DOOR_DOUBLE:
+				m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root_Double_Door(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
+
 				m_vecRotationBone[ATC_ROOT] = m_pModelCom->Get_BonePtr("_00");
 				m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L] = m_pModelCom->Get_BonePtr("_01");
 				m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R] = m_pModelCom->Get_BonePtr("_03");
 				m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L] = m_pModelCom->Get_BonePtr("_04");
 				m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R] = m_pModelCom->Get_BonePtr("_02");
-				break;
-			case CDoor::DOOR_ONE:
-				m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L] = m_pModelCom->Get_BonePtr("_01");
-				m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R] = m_pModelCom->Get_BonePtr("_00");
-				break;
+			}
+			else*/
+			{
+				m_pPx_Collider = m_pGameInstance->Create_Px_Collider_Convert_Root(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
+
+				switch (*m_pState)
+				{
+				case CDoor::DOOR_DOUBLE:
+					m_vecRotationBone[ATC_ROOT] = m_pModelCom->Get_BonePtr("_00");
+					m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_L] = m_pModelCom->Get_BonePtr("_01");
+					m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_L_SIDE_R] = m_pModelCom->Get_BonePtr("_03");
+					m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_L] = m_pModelCom->Get_BonePtr("_04");
+					m_vecRotationBone[ATC_DOUBLE_DOOR_OPEN_R_SIDE_R] = m_pModelCom->Get_BonePtr("_02");
+					break;
+				case CDoor::DOOR_ONE:
+					m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L] = m_pModelCom->Get_BonePtr("_01");
+					m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R] = m_pModelCom->Get_BonePtr("_00");
+					break;
+				}
 			}
 		}
-	}
-	else if(*m_pState == CDoor::DOOR_ONE)
-	{
-		m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
+		else if (*m_pState == CDoor::DOOR_ONE)
+		{
+			m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
-		m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L] = m_pModelCom->Get_BonePtr("_01");
-		m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R] = m_pModelCom->Get_BonePtr("_00");
-	}
+			m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_L] = m_pModelCom->Get_BonePtr("_01");
+			m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R] = m_pModelCom->Get_BonePtr("_00");
+		}
 
 #endif
 
-	return S_OK;
+		return S_OK;
 }
-
 void CBody_Door::Tick(_float fTimeDelta)
 {
 	if (*m_pState == CDoor::DOOR_DUMMY)
