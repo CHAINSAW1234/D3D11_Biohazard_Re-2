@@ -37,6 +37,7 @@ HRESULT CBlackBoard_Zombie::Initialize(void* pArg)
 
 HRESULT CBlackBoard_Zombie::SetUp_Nearest_Window()
 {
+
 	if (ZOMBIE_START_TYPE::_OUT_DOOR != m_pAI->Get_StartType())
 		return S_OK;
 
@@ -48,6 +49,7 @@ HRESULT CBlackBoard_Zombie::SetUp_Nearest_Window()
 		return E_FAIL;
 #endif
 
+	Release_Nearest_Window();
 	m_pNearest_Window = pWindow;
 	Safe_AddRef(pWindow);
 
@@ -56,6 +58,8 @@ HRESULT CBlackBoard_Zombie::SetUp_Nearest_Window()
 
 HRESULT CBlackBoard_Zombie::SetUp_Nearest_Door()
 {
+
+
 	if (ZOMBIE_START_TYPE::_DOOR_RUB != m_pAI->Get_StartType())
 		return S_OK;
 
@@ -67,6 +71,7 @@ HRESULT CBlackBoard_Zombie::SetUp_Nearest_Door()
 		return E_FAIL;
 #endif
 
+	Release_Nearest_Door();
 	m_pNearest_Door = pDoor;
 	Safe_AddRef(pDoor);
 
