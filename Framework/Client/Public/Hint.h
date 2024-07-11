@@ -27,7 +27,7 @@ private:
 
 	unordered_map<wstring, vector<CTexture*>> m_mapDocuments;
 
-	vector<>;
+	//vector<>;
 
 
 

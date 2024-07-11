@@ -449,10 +449,16 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 	case Client::herbsrb01a: {
 		break;
 	}
-	case Client::greenherbitem01a:
-	case Client::redherbitem01a:
-	case Client::blueherbitem01a:
+	//case Client::greenherbitem01a:
+	//case Client::redherbitem01a:
+	//case Client::blueherbitem01a:
+	//	break;
+
+	case Client::clairesbag01a: {
+		m_iInvenCount++;
+		m_vecInvenSlot[m_iInvenCount]->Set_Dead(false);
 		break;
+	}
 	default:
 		break;
 	}
@@ -944,6 +950,11 @@ void CInventory_Manager::PUO_Seting(ITEM_NUMBER eAcquiredItem, _int iItemQuantit
 			pEmptydSlot = m_vecInvenSlot[i];
 			break;
 		}
+	}
+
+	if (nullptr == pEmptydSlot)
+	{
+		pEmptydSlot = m_vecInvenSlot[0];
 	}
 
 	m_pSlotHighlighter->Set_Dead(false);
@@ -1500,7 +1511,7 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 		return DOCUMENT;
 		break;
 	case Client::clairesbag01a:
-		return QUEST;
+		return USEABLE;
 		break;
 	case Client::HandGun:
 		return EQUIPABLE;

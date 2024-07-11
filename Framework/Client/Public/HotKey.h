@@ -9,8 +9,8 @@ BEGIN(Client)
 
 class CHotKey final : public CUI
 {
-private:
-	enum ITEM_DISCRIPTION{NAME, CLASSIFY, DISCRIPTION};
+public:
+	enum WEAPON_CLASSIFY{EQUIPPED, THROWN, WC_END};
 
 protected:
 	CHotKey(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -35,8 +35,12 @@ public:
 	ITEM_NUMBER Get_Item_On_HotKey(_uint iHotKeyNum);
 
 private:
-	CInventory_Slot*	m_pInven_Slots[4] = { nullptr,nullptr, nullptr, nullptr };
-	CItem_UI*			m_pItemUI[4] = { nullptr, nullptr, nullptr, nullptr };
+	CInventory_Slot*	m_pEQInven_Slots[4] = { nullptr, nullptr, nullptr, nullptr };
+	CItem_UI*			m_pEQItemUI[4] = { nullptr, nullptr, nullptr, nullptr };
+
+	CInventory_Slot*	m_pTHInven_Slots[3] = { nullptr, nullptr, nullptr };
+	CItem_UI*			m_pTHItemUI[3] = { nullptr, nullptr, nullptr };
+	
 	_float2				m_fPositions[4] = {};
 
 private:
@@ -46,7 +50,7 @@ private:
 	CUI::UI_DESC Read_HotKeyDat();
 
 	HRESULT Init_InvenSlot();
-	HRESULT Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float2 fSetPos, _uint iCount);
+	HRESULT Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float2 fSetPos, _uint iCount, WEAPON_CLASSIFY eWC);
 	HRESULT Init_ItemUI();
 
 public:

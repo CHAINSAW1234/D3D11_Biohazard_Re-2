@@ -177,4 +177,5 @@ void CHint::Free()
 {
 	__super::Free();
 
+	Safe_Release(m_pHint_Highlighter);
 }
