@@ -42,8 +42,10 @@ using namespace std;
 using namespace Client;
 	
 //	#define MAP_NOTHING
-//	#define MAP_INTERACT
-#define MAP_TEST
+#define MAP_INTERACT
+//	#define MAP_TEST
+
+//	#define TEST_ZOMBIE_MAINHALL
 
 //#define NON_COLLISION_PROP
 #define PROPS_COOKING
@@ -54,7 +56,7 @@ using namespace Client;
 
 #define DISPLAY_FRAME
 //	#define DISPLAY_NAVMESH
-#define FRAME_LOCK
+//	#define FRAME_LOCK
 
 typedef struct Tag_Prototype_Inform
 {

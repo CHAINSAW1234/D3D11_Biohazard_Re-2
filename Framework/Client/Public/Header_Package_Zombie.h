@@ -19,6 +19,7 @@
 #include "Is_Start_Zombie.h"
 #include "Is_Same_Location_To_Player_Zombie.h"
 #include "Is_Different_Location_To_Player_Zombie.h"
+#include "Is_Start_Rub_Door_Zombie.h"
 
 ///////////////////////////////////////////////////////////////
 //	For. Task

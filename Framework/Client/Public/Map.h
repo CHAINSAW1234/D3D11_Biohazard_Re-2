@@ -32,6 +32,7 @@ public:
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
+	virtual void				Start() override;
 
 	virtual HRESULT				Render_LightDepth_Dir() override;
 	virtual	HRESULT				Render_LightDepth_Spot() override;
@@ -51,7 +52,7 @@ private:
 	_bool						m_bVisible = { false };
 	PROPS_DESC 					m_tagPropDesc ={};
 
-
+	_bool						m_isSetUp_LinkRoom = { false };
 
 	class CRoom_Finder*			m_pRoom_Finder = { nullptr };
 	COctree*					m_pOctree = { nullptr };

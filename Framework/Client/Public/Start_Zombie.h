@@ -26,6 +26,7 @@ private:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 
 private:
+	_bool							m_isStart = { false };
 
 public:
 	static CStart_Zombie* Create(void* pArg = nullptr);

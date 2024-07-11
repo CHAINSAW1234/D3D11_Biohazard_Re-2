@@ -1,6 +1,6 @@
 #pragma once
 
-enum class ZOMBIE_START_TYPE { _OUT_DOOR, _DOOR_RUB, _CREEP, _IDLE, _END };
+enum class ZOMBIE_START_TYPE { _OUT_DOOR, _DOOR_RUB, _CREEP, _IDLE, _RAG_DOLL, _END };
 
 
 

@@ -12,6 +12,7 @@ public:
 public:
 	typedef struct tagClothesMonsterDesc : public CPartObject::PARTOBJECT_DESC
 	{
+		_bool*						pRender = { nullptr };
 		ZOMBIE_BODY_TYPE			eBodyType = { ZOMBIE_BODY_TYPE::_END };
 		ZOMBIE_CLOTHES_TYPE			eClothesType = { ZOMBIE_CLOTHES_TYPE::_END };
 		_int						iClothesModelID = { -1 };
@@ -45,6 +46,9 @@ private:
 	ZOMBIE_BODY_TYPE		m_eBodyType = { ZOMBIE_BODY_TYPE::_END };
 	ZOMBIE_CLOTHES_TYPE		m_eClothesType = { ZOMBIE_CLOTHES_TYPE::_END };
 	_int					m_iClothesModelID = { -1 };
+
+private:
+	_bool*					m_pRender = { nullptr };
 
 private:
 	HRESULT					Add_Components();

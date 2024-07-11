@@ -32,7 +32,7 @@ void CBite_Zombie::Enter()
 	pBodyModel->Set_TotalLinearInterpolation(0.3f);
 	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), false);
 
-	pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), 0.f, 0.3f);
+	pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), 0.f, 0.f);
 	pBodyModel->Reset_PreAnim_CurrentAnim(static_cast<_uint>(PLAYING_INDEX::INDEX_1));
 
 	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
@@ -51,7 +51,6 @@ void CBite_Zombie::Enter()
 	XMStoreFloat4x4(&m_Delta_Matrix_To_HalfMatrix, XMMatrixIdentity());
 
 
-	m_pBlackBoard->Get_PartModel(CMonster::PART_BODY)->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), 0.f, 0.f);
 	m_fAccLinearTime_HalfMatrix = 0.f;
 
 
@@ -184,9 +183,6 @@ void CBite_Zombie::Change_Animation_Default_Front(BITE_ANIM_STATE eState)
 	_int			iPreAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
 	if (iPreAnimIndex != iResultAnimationIndex)
 		m_pBlackBoard->Get_Player()->Request_NextBiteAnimation(iResultAnimationIndex);
-
-	//	pBodyModel->Set_TickPerSec(m_strDefaultFrontAnimLayerTag, iResultAnimationIndex, 5.f);
-	//	m_pBlackBoard->GetPlayer()->Get_Body_Model()->Set_TickPerSec(m_strDefaultFrontAnimLayerTag, iResultAnimationIndex, 5.f);
 
 	pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strDefaultFrontAnimLayerTag, iResultAnimationIndex);
 	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
@@ -861,16 +857,15 @@ void CBite_Zombie::Apply_HalfMatrix(_float fTimeDelta)
 		//	vCurrentTranslation = XMVector3TransformNormal(vCurrentTranslation, vCurrentRotationInverse);
 		
 		_matrix				AIWorldMatrix = { pAITransform->Get_WorldMatrix() };
-		_matrix				CurrentRotationMatrix = { XMMatrixRotationQuaternion(XMQuaternionNormalize(vCurrentQuaternion)) };
-		
-		_vector				vPosition = { AIWorldMatrix.r[CTransform::STATE_POSITION] };
-		AIWorldMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-		
-		_matrix				TimesCombinedMatrix = { AIWorldMatrix * CurrentRotationMatrix };
-		TimesCombinedMatrix.r[CTransform::STATE_POSITION] = vPosition;
-		
-		pAITransform->Set_WorldMatrix(TimesCombinedMatrix);
-		m_pBlackBoard->Get_AI()->Add_Root_Translation(vCurrentTranslation);
+
+		_vector				vWorldScale, vWorldQuaternion, vWorldTranslation;
+		XMMatrixDecompose(&vWorldScale, &vWorldQuaternion, &vWorldTranslation, AIWorldMatrix);
+
+		_vector				vResultQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(vWorldQuaternion), XMQuaternionNormalize(vCurrentQuaternion)) };
+		_vector				vResultTranslation = { XMVectorSetW(vWorldTranslation + vCurrentTranslation, 1.f) };
+
+		_matrix				AplliedMatrix = { XMMatrixAffineTransformation(vWorldScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vResultQuaternion, vResultTranslation) };
+		m_pBlackBoard->Get_AI()->Get_Transform()->Set_WorldMatrix(AplliedMatrix);
 }
 
 HRESULT CBite_Zombie::SetUp_AnimBranches()

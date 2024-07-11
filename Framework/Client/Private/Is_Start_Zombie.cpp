@@ -36,7 +36,7 @@ CIs_Start_Zombie* CIs_Start_Zombie::Create()
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_BOX(TEXT("Failed To Created : CIs_Start_Zombie"));
+		MSG_BOX(TEXT("Failed To Created : CIs_Start_Rub_Door_Zombie"));
 
 		Safe_Release(pInstance);
 	}

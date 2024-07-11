@@ -27,6 +27,7 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 
 	BODY_MONSTER_DESC*		pDesc = { static_cast<BODY_MONSTER_DESC*>(pArg) };
 
+	m_pRender = pDesc->pRender;
 	m_pRootTranslation = pDesc->pRootTranslation;
 	m_eBodyModelType = pDesc->eBodyType;
 
@@ -102,7 +103,8 @@ void CBody_Zombie::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
-	if (m_bRagdoll == false)
+	if (m_bRagdoll == false && 
+		true == *m_pRender)
 	{
 		_bool			isCulled = { false };
 		if (FAILED(m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, m_pRootTranslation)))
@@ -117,7 +119,8 @@ void CBody_Zombie::Late_Tick(_float fTimeDelta)
 	//	현재 모션이 A ~ F 타입인지 판단하고 저장 => 다음 틱에 태스크 노드에서 참조하여 모션을 결정할것이다.
 	Update_Current_MotionType();
 
-	if(m_bRender)
+	if (true == *m_pRender && 
+		true == m_bRender)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);

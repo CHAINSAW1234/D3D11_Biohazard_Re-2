@@ -24,6 +24,7 @@ HRESULT CFace_Zombie::Initialize(void* pArg)
 		return E_FAIL;
 
 	FACE_MONSTER_DESC*			pDesc = { static_cast<FACE_MONSTER_DESC*>(pArg) };
+	m_pRender = pDesc->pRender;
 	m_eBodyType = pDesc->eBodyType;
 	m_iFaceModelID = pDesc->iFaceModelID;
 
@@ -77,12 +78,14 @@ void CFace_Zombie::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	_float3			vTempTranslation = {};
-	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);
+	if(true == *m_pRender)
+		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);
 	//	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
 	//	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 	//	m_pModelCom->Play_Pose(m_pParentsTransform, fTimeDelta);
 
-	if(m_bRender)
+	if (true == *m_pRender &&
+		true == m_bRender)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);

@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Player_State_Bite.h"
 
+#include "Body_Zombie.h"
+
 CPlayer_State_Bite::CPlayer_State_Bite(CPlayer* pPlayer)
 {
 	m_pPlayer = pPlayer;
@@ -45,13 +47,41 @@ void CPlayer_State_Bite::OnStateUpdate(_float fTimeDelta)
 
 	if (m_pPlayer->Get_Body_Model()->isFinished(0)) 
 	{
-		if ((m_pPlayer->Get_BiteAnimIndex() == -1)) 
+		CModel* pBody_Model = { m_pPlayer->Get_Body_Model() };
+		if (nullptr == pBody_Model)
+			return;
+
+		if (TEXT("Bite_Lightly_Hold") == pBody_Model->Get_CurrentAnimLayerTag(0))
 		{
-			m_pPlayer->Change_State(CPlayer::MOVE);
+			_int			iAnimIndex = { pBody_Model->Get_CurrentAnimIndex(0) };
+			if (ANIM_BITE_LIGHTLY_HOLD::_LIGHTLY_HOLD_END_L == static_cast<ANIM_BITE_LIGHTLY_HOLD>(iAnimIndex) ||
+				ANIM_BITE_LIGHTLY_HOLD::_LIGHTLY_HOLD_END_R == static_cast<ANIM_BITE_LIGHTLY_HOLD>(iAnimIndex))
+			{
+				if (true == pBody_Model->isFinished(0))
+				{
+					m_pPlayer->Change_State(CPlayer::MOVE);
+				}
+			}
+
+			else
+			{
+				m_pPlayer->Get_Body_Model()->Change_Animation(0, m_pPlayer->Get_BiteLayerTag(), m_pPlayer->Get_BiteAnimIndex());
+
+				////////////////////TEST///////////////
+				pBody_Model->Set_TickPerSec(m_pPlayer->Get_BiteLayerTag(), m_pPlayer->Get_BiteAnimIndex(), 10.f);
+			}
 		}
-		else {
-			m_pPlayer->Get_Body_Model()->Change_Animation(0, m_pPlayer->Get_BiteLayerTag(), m_pPlayer->Get_BiteAnimIndex());
-		}
+
+		else
+		{
+			if ((m_pPlayer->Get_BiteAnimIndex() == -1))
+			{
+				m_pPlayer->Change_State(CPlayer::MOVE);
+			}
+			else {
+				m_pPlayer->Get_Body_Model()->Change_Animation(0, m_pPlayer->Get_BiteLayerTag(), m_pPlayer->Get_BiteAnimIndex());
+			}
+		}		
 	}
 
 

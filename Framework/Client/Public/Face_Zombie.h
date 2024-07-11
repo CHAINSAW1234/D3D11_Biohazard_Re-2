@@ -11,6 +11,7 @@ class CFace_Zombie final : public CPartObject
 public:
 	typedef struct tagFaceMonsterDesc : public CPartObject::PARTOBJECT_DESC
 	{
+		_bool*						pRender = { nullptr };
 		ZOMBIE_BODY_TYPE			eBodyType = { ZOMBIE_BODY_TYPE::_END };
 		_int						iFaceModelID = { -1 };
 	}FACE_MONSTER_DESC;
@@ -44,6 +45,9 @@ private:
 
 	ZOMBIE_BODY_TYPE		m_eBodyType = { ZOMBIE_BODY_TYPE::_END };
 	_int					m_iFaceModelID= { -1 };
+
+private:
+	_bool*					m_pRender = { nullptr };
 
 private:
 	HRESULT					Add_Components();

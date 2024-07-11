@@ -20,7 +20,7 @@ HRESULT CLightly_Hold_Zombie::Initialize(void* pArg)
 	if (FAILED(SetUp_AnimBranches()))
 		return E_FAIL;
 
-	m_fTotalLinearTime_HalfMatrix = 0.2f;
+	m_fTotalLinearTime_HalfMatrix = 1.f;
 
 	return S_OK;
 }
@@ -37,6 +37,8 @@ void CLightly_Hold_Zombie::Enter()
 	pBodyModel->Set_BlendWeight(static_cast<_uint>(PLAYING_INDEX::INDEX_1), 0.f, 0.f);
 	pBodyModel->Reset_PreAnim_CurrentAnim(static_cast<_uint>(PLAYING_INDEX::INDEX_1));
 
+	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
+
 	m_isEntry = true;
 	m_isHoldTarget = false;
 
@@ -49,7 +51,9 @@ void CLightly_Hold_Zombie::Enter()
 
 	//	좀비의 오른쪽일떄 => 왼쪽으로 덮침
 	m_eDirectionToPlayer = vDirectionToPlayerLocalFloat3.x > 0.f ? DIRECTION::_L : DIRECTION::_R;
-	XMStoreFloat4x4(&m_Delta_Matrix_To_HalfMatrix, XMMatrixIdentity());
+	m_fAccLinearTime_HalfMatrix = 0.f;
+
+
 
 #ifdef _DEBUG
 
@@ -60,6 +64,8 @@ void CLightly_Hold_Zombie::Enter()
 
 _bool CLightly_Hold_Zombie::Execute(_float fTimeDelta)
 {
+	return false;
+
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)
 		return false;
@@ -69,7 +75,10 @@ _bool CLightly_Hold_Zombie::Execute(_float fTimeDelta)
 #pragma endregion
 
 	if (false == Condition_Check())
+	{
+		m_pBlackBoard->Get_Player()->Request_NextBiteAnimation(-1);
 		return false;
+	}
 
 	m_eAnimState = { Compute_Current_AnimState_Lightly_Hold() };
 	_bool							isEntry = { m_eAnimState == LIGHTLY_HOLD_ANIM_STATE::_END };
@@ -135,7 +144,7 @@ _bool CLightly_Hold_Zombie::Condition_Check()
 			if (nullptr == pBody_Model)
 				return false;
 
-			if (true == pBody_Model->isFinished(static_cast<_uint>(m_ePlayingIndex) &&
+			if (true == pBody_Model->isFinished(static_cast<_uint>(m_ePlayingIndex) &
 				LIGHTLY_HOLD_ANIM_STATE::_FINISH == m_eAnimState))
 				return false;
 		}
@@ -150,8 +159,9 @@ _bool CLightly_Hold_Zombie::Condition_Check()
 				_bool				isCanBite = { pAI->Get_Status_Ptr()->fBiteRange >= fDistanceToPlayer };
 				if (true == isCanBite)
 				{
-					m_eAnimType = LIGHTLY_HOLD_ANIM_TYPE::_PUSH_DOWN;
-					m_isHoldTarget = true;
+					//	m_eAnimType = LIGHTLY_HOLD_ANIM_TYPE::_PUSH_DOWN;
+					//	m_isHoldTarget = true;
+					//	m_eAnimState = LIGHTLY_HOLD_ANIM_STATE::_START;
 				}
 			}			
 
@@ -159,7 +169,7 @@ _bool CLightly_Hold_Zombie::Condition_Check()
 			if (nullptr == pBody_Model)
 				return false;
 
-			if (true == pBody_Model->isFinished(static_cast<_uint>(m_ePlayingIndex) &&
+			if (true == pBody_Model->isFinished(static_cast<_uint>(m_ePlayingIndex) &
 				LIGHTLY_HOLD_ANIM_STATE::_FINISH == m_eAnimState))
 				return false;
 		}
@@ -178,6 +188,16 @@ _bool CLightly_Hold_Zombie::Condition_Check()
 		if (MONSTER_STATE::MST_IDLE != eMonsterState &&
 			MONSTER_STATE::MST_WALK != eMonsterState)
 			return false;
+
+		_float				fDistanceToPlayer = { 0.f };
+		if (false == m_pBlackBoard->Compute_Distance_To_Player(&fDistanceToPlayer))
+		{
+			return false;
+		}
+
+		if (1.5f < fDistanceToPlayer)
+			return false;
+
 	}	
 
 	return true;
@@ -220,7 +240,7 @@ void CLightly_Hold_Zombie::Change_Animation_Lightly_Hold()
 		else
 			MSG_BOX(TEXT("Called : void CLightly_Hold_Zombie::Change_Animation_Lightly_Hold(LIGHTLY_HOLD_ANIM_STATE eState) 좀비 담당자 호출 "));
 #endif
-		m_eAnimState = LIGHTLY_HOLD_ANIM_STATE::_FINISH;
+		m_eAnimState = LIGHTLY_HOLD_ANIM_STATE::_START;
 	}
 
 	else if (LIGHTLY_HOLD_ANIM_STATE::_START == m_eAnimState)
@@ -237,14 +257,21 @@ void CLightly_Hold_Zombie::Change_Animation_Lightly_Hold()
 		else
 			MSG_BOX(TEXT("Called : void CLightly_Hold_Zombie::Change_Animation_Lightly_Hold(LIGHTLY_HOLD_ANIM_STATE eState) 좀비 담당자 호출 "));
 #endif
-		m_eAnimState = LIGHTLY_HOLD_ANIM_STATE::_END;
+		m_eAnimState = LIGHTLY_HOLD_ANIM_STATE::_FINISH;
 	}	
+
+	_int				iPreAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
+	if (iPreAnimIndex != iResultAnimationIndex)
+		m_pBlackBoard->Get_Player()->Request_NextBiteAnimation(iResultAnimationIndex);
 
 	if (-1 == iResultAnimationIndex)
 		return;
 
 	pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strLightlyHoldAnimLayerTag, iResultAnimationIndex);
 	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
+
+	////////////////////TEST///////////////
+	pBodyModel->Set_TickPerSec(m_strLightlyHoldAnimLayerTag, iResultAnimationIndex, 10.f);
 }
 
 void CLightly_Hold_Zombie::Change_Animation_Bite_PushDown()
@@ -461,7 +488,7 @@ void CLightly_Hold_Zombie::Set_Lightly_Hold_LinearStart_HalfMatrix()
 	if (false == m_pBlackBoard->Compute_HalfMatrix_Current_BiteAnim(strAnimLayerTag, iAnimIndex, &ResultMatrixFloat4x4))
 		return;
 
-	//	XMStoreFloat4x4(&ResultMatrixFloat4x4, m_pBlackBoard->GetPlayer()->Get_Transform()->Get_WorldMatrix());
+	//	XMStoreFloat4x4(&ResultMatrixFloat4x4, m_pBlackBoard->Get_Player()->Get_Transform()->Get_WorldMatrix());
 
 	_matrix					PlayerWorldMatrix = { m_pBlackBoard->Get_Player()->Get_Transform()->Get_WorldMatrix() };
 	_matrix					ZombieWorldMatrix = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix() };
@@ -483,6 +510,10 @@ void CLightly_Hold_Zombie::Set_Lightly_Hold_LinearStart_HalfMatrix()
 	////	루트본에 대한 해당 애니메이션의 첫 키프레임의 트랜스폼 매트릭스를 가져옴
 	_matrix					RootFirstKeyFramePlayer = { pPlayerBody_Model->Get_FirstKeyFrame_Root_TransformationMatrix(strAnimLayerTag, iAnimIndex) };
 	_matrix					RootFirstKeyFrameZombie = { pZombieBody_Model->Get_FirstKeyFrame_Root_TransformationMatrix(strAnimLayerTag, iAnimIndex) };
+
+	list<string>			PlayerAnimTags = pPlayerBody_Model->Get_Animation_Tags(strAnimLayerTag);
+	list<string>			ZombieAnimTags = pZombieBody_Model->Get_Animation_Tags(strAnimLayerTag);
+
 	_matrix					ModelTransformPlayer = { XMLoadFloat4x4(&pPlayerBody_Model->Get_TransformationMatrix()) };
 	_matrix					ModelTransformZombie = { XMLoadFloat4x4(&pZombieBody_Model->Get_TransformationMatrix()) };
 
@@ -525,8 +556,6 @@ void CLightly_Hold_Zombie::Set_Lightly_Hold_LinearStart_HalfMatrix()
 
 	XMStoreFloat4x4(&m_Delta_Matrix_To_HalfMatrix, ZombieDeltaMatrix);
 	m_pBlackBoard->Get_Player()->Change_Player_State_Bite(iAnimIndex, strAnimLayerTag, PlayerDeltaMatrix, m_fTotalLinearTime_HalfMatrix);
-
-	m_fAccLinearTime_HalfMatrix = 0.f;
 }
 
 _bool CLightly_Hold_Zombie::Is_StateFinished(LIGHTLY_HOLD_ANIM_STATE eState)
@@ -540,6 +569,46 @@ void CLightly_Hold_Zombie::Update_PoseState_FaceState()
 
 void CLightly_Hold_Zombie::Apply_HalfMatrix(_float fTimeDelta)
 {
+	if (m_fAccLinearTime_HalfMatrix >= m_fTotalLinearTime_HalfMatrix)
+		return;
+
+	if (nullptr == m_pBlackBoard)
+		return;
+
+	CTransform* pAITransform = { m_pBlackBoard->Get_AI()->Get_Transform() };
+	if (nullptr == pAITransform)
+		return;
+
+	m_fAccLinearTime_HalfMatrix += fTimeDelta;
+	if (m_fAccLinearTime_HalfMatrix > m_fTotalLinearTime_HalfMatrix)
+	{
+		fTimeDelta += m_fTotalLinearTime_HalfMatrix - m_fAccLinearTime_HalfMatrix;
+		m_fAccLinearTime_HalfMatrix = m_fTotalLinearTime_HalfMatrix;
+	}
+
+	_float				fRatio = { fTimeDelta / m_fTotalLinearTime_HalfMatrix };
+
+	_vector				vScale, vTranslation, vQuaternion;
+
+	XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, XMLoadFloat4x4(&m_Delta_Matrix_To_HalfMatrix));
+
+	_vector				vCurrentTranslation = { XMVectorSetW(vTranslation * fRatio, 0.f) };
+	_vector				vCurrentQuaternion = { XMQuaternionSlerp(XMQuaternionIdentity(), XMQuaternionNormalize(vQuaternion), fRatio) };
+
+	//	_vector				vCurrentQuaternionInv = { XMQuaternionInverse(XMQuaternionNormalize(vCurrentQuaternion)) };
+	//	_matrix				vCurrentRotationInverse = { XMMatrixRotationQuaternion(vCurrentQuaternionInv) };
+	//	vCurrentTranslation = XMVector3TransformNormal(vCurrentTranslation, vCurrentRotationInverse);
+
+	_matrix				AIWorldMatrix = { pAITransform->Get_WorldMatrix() };
+
+	_vector				vWorldScale, vWorldQuaternion, vWorldTranslation;
+	XMMatrixDecompose(&vWorldScale, &vWorldQuaternion, &vWorldTranslation, AIWorldMatrix);
+
+	_vector				vResultQuaternion = { XMQuaternionMultiply(XMQuaternionNormalize(vWorldQuaternion), XMQuaternionNormalize(vCurrentQuaternion)) };
+	_vector				vResultTranslation = { XMVectorSetW(vWorldTranslation + vCurrentTranslation, 1.f) };
+
+	_matrix				AplliedMatrix = { XMMatrixAffineTransformation(vWorldScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vResultQuaternion, vResultTranslation) };
+	m_pBlackBoard->Get_AI()->Get_Transform()->Set_WorldMatrix(AplliedMatrix);
 }
 
 HRESULT CLightly_Hold_Zombie::SetUp_AnimBranches()

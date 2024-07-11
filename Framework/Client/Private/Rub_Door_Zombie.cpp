@@ -159,8 +159,8 @@ _bool CRub_Door_Zombie::Execute(_float fTimeDelta)
 		if (true == isInRange)
 			return false;
 
-		if (false == pDoor->Is_Lock())
-			return false;
+		/*if (false == pDoor->Is_Lock())
+			return false;*/
 	}
 
 	m_pBlackBoard->Organize_PreState(this);

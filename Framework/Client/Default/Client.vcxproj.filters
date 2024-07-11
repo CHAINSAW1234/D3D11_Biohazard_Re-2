@@ -379,9 +379,6 @@
     <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Hit">
       <UniqueIdentifier>{01c6a90a-aa7c-4607-9519-62cb132e54d0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_MainTain_PreTask">
-      <UniqueIdentifier>{8283ac8d-e2dc-4a0a-85c4-1756898df535}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Down">
       <UniqueIdentifier>{fe7d57b2-dd4a-4f52-a9d3-281720a08b3d}</UniqueIdentifier>
     </Filter>
@@ -663,6 +660,9 @@
     </Filter>
     <Filter Include="02.GameObjects\MapObject\Room_Finder">
       <UniqueIdentifier>{fed6f7b1-2d58-429f-8dcb-9213a6e9ed85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Start_Rub_Door">
+      <UniqueIdentifier>{99c78821-66c2-45e9-bc26-eaa7bf3ae28c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1287,6 +1287,9 @@
     <ClInclude Include="..\Public\SG_Cartridge.h">
       <Filter>02.GameObjects\Effect\Cartridge\SG_Cartridge</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Is_Start_Rub_Door_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Start_Rub_Door</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1870,6 +1873,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\SG_Cartridge.cpp">
       <Filter>02.GameObjects\Effect\Cartridge\SG_Cartridge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Is_Start_Rub_Door_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Start_Rub_Door</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

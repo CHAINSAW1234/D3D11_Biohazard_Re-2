@@ -26,7 +26,7 @@ private:
 public:
 	virtual HRESULT					Initialize(void* pArg);
 
-private:
+public:
 	HRESULT							SetUp_Nearest_Window();
 	HRESULT							SetUp_Nearest_Door();
 

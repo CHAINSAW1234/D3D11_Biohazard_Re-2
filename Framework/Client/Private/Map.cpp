@@ -91,6 +91,13 @@ HRESULT CMap::Initialize(void* pArg)
 
 void CMap::Tick(_float fTimeDelta)
 {
+	if (false == m_isSetUp_LinkRoom)
+	{
+		m_pRoom_Finder->Start();
+
+		m_isSetUp_LinkRoom = true;
+	}
+
 	m_fTimeDelay += fTimeDelta;
 	if (m_pPlayer == nullptr)
 		m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
@@ -180,6 +187,10 @@ HRESULT CMap::Render()
 	m_pOctree->Render_Node(m_pModelCom, m_pShaderCom);
 
 	return S_OK;
+}
+
+void CMap::Start()
+{
 }
 
 HRESULT CMap::Render_LightDepth_Dir()

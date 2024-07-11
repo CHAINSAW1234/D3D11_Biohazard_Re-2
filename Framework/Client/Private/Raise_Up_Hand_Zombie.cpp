@@ -71,6 +71,8 @@ _bool CRaise_Up_Hand_Zombie::Execute(_float fTimeDelta)
 		CModel* pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
 		pBody_Model->Set_Blend_IK(ZOMBIE_IK_L_HUMEROUS_RADIUS_TAG, 0.f);
 		pBody_Model->Set_Blend_IK(ZOMBIE_IK_R_HUMEROUS_RADIUS_TAG, 0.f);
+
+		m_fAccActiveTime = 0.f;
 	}
 
 	return true;

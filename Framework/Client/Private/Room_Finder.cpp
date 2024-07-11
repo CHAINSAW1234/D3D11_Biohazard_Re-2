@@ -17,6 +17,29 @@ HRESULT CRoom_Finder::Initialize()
 	return S_OK;
 }
 
+void CRoom_Finder::Start()
+{
+	m_LinkedLocations.resize(m_Doors_In_Locations.size());
+
+	for (auto& Doors : m_Doors_In_Locations)
+	{
+		for (auto& pDoor : Doors)
+		{
+			list<LOCATION_MAP_VISIT>				LinkedLocations = { pDoor->Get_LinkedLocations() };
+			for (auto& eSrcLocation : LinkedLocations)
+			{
+				for (auto& eDstLocation : LinkedLocations)
+				{
+					if (eSrcLocation == eDstLocation)
+						continue;
+
+					m_LinkedLocations[static_cast<_uint>(eSrcLocation)].emplace(eDstLocation);
+				}
+			}
+		}
+	}
+}
+
 list<CDoor*> CRoom_Finder::Find_Linked_Doors_From_Location(LOCATION_MAP_VISIT eLocation)
 {
 	list<CDoor*>							Linked_Doors;
@@ -34,7 +57,9 @@ list<LOCATION_MAP_VISIT> CRoom_Finder::Find_Linked_Loctaion_From_Door(CDoor* pDo
 {
 	list<LOCATION_MAP_VISIT>				Linked_Locations;
 
-	for (_uint i = 0; i < LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END; ++i)
+	_uint			iNumLocation = { static_cast<_uint>(m_LinkedLocations.size()) };
+
+	for (_uint i = 0; i < iNumLocation; ++i)
 	{
 		list<CDoor*>::iterator			iter = { find(m_Doors_In_Locations[i].begin(), m_Doors_In_Locations[i].end(), pDoor) };
 
@@ -46,6 +71,17 @@ list<LOCATION_MAP_VISIT> CRoom_Finder::Find_Linked_Loctaion_From_Door(CDoor* pDo
 	}
 
 	return Linked_Locations;
+}
+
+_bool CRoom_Finder::Is_Linked_Location_From_Location(LOCATION_MAP_VISIT eMyLocation, LOCATION_MAP_VISIT eTargetLocation)
+{
+	if (static_cast<size_t>(eMyLocation) >= m_LinkedLocations.size())
+		return false;
+
+	unordered_set<LOCATION_MAP_VISIT>::iterator		iter = { m_LinkedLocations[eMyLocation].find(eTargetLocation) };
+	_bool			isLink = { iter != m_LinkedLocations[eMyLocation].end()};
+
+	return isLink;
 }
 
 HRESULT CRoom_Finder::Add_Door(LOCATION_MAP_VISIT eLocation, CDoor* pDoor)

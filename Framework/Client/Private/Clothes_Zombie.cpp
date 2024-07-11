@@ -25,6 +25,7 @@ HRESULT CClothes_Zombie::Initialize(void* pArg)
 		return E_FAIL;
 
 	CLOTHES_MONSTER_DESC* pDesc = { static_cast<CLOTHES_MONSTER_DESC*>(pArg) };
+	m_pRender = pDesc->pRender;
 	m_eClothesType = pDesc->eClothesType;
 	m_eBodyType = pDesc->eBodyType;
 	m_iClothesModelID = pDesc->iClothesModelID;
@@ -79,11 +80,13 @@ void CClothes_Zombie::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 
 	_float3			vTempTranslation = {};
-	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);
+	if(true == *m_pRender)
+		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);
 	//	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 	//	m_pModelCom->Play_Pose(m_pParentsTransform, fTimeDelta);
 
-	if (m_bRender)
+	if (true == *m_pRender &&
+		true == m_bRender)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);

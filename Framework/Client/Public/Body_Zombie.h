@@ -16,6 +16,7 @@ class CBody_Zombie final : public CPartObject
 public:
 	typedef struct tagBodyMonsterDesc : public CPartObject::PARTOBJECT_DESC
 	{
+		_bool*				pRender = { nullptr };
 		_float3*			pRootTranslation = { nullptr };
 		ZOMBIE_BODY_TYPE	eBodyType = { ZOMBIE_BODY_TYPE::_END };
 	}BODY_MONSTER_DESC;
@@ -107,6 +108,9 @@ private:
 
 private:
 	_bool								m_isActiveIK = { false };
+
+private:
+	_bool*								m_pRender = { nullptr };
 
 
 private:

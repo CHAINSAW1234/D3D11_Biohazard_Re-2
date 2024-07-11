@@ -145,6 +145,10 @@ public:
 public:		/* For.Start Type */
 	inline ZOMBIE_START_TYPE			Get_StartType() { return m_eStartType; }
 
+public:		/* For.Room Culling */
+	void								Set_Render_RoomCulling(_bool isRender) { m_isRender = isRender; }
+
+
 
 #pragma region 예은 추가 - 창문, 문 (난간은 생각을 해봐야합니다)
 private:
@@ -247,6 +251,9 @@ protected:
 	class CImpact*						m_pImpact = { nullptr };
 	vector<class CHit*>					m_vecHit = { nullptr };
 #pragma endregion
+
+private:
+	_bool								m_isRender = { false };
 
 public:
 	void								Set_ManualMove(_bool isManualMove);
