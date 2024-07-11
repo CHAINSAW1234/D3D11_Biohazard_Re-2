@@ -614,6 +614,7 @@ void CCharacter_Controller::Release_PartialCollider(COLLIDER_TYPE eType)
 	switch (eType)
 	{
 	case COLLIDER_TYPE::PELVIS:
+		break;///////////////////////////TEMP/////////////////////////////
 		if(m_Pelvis_Collider)
 		{
 			m_Pelvis_Collider->release();

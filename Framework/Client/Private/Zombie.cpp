@@ -419,7 +419,7 @@ void CZombie::Tick(_float fTimeDelta)
 						pPartObject->SetRagdoll(m_iIndex_CCT, vForce, eType);
 				}
 			}
-			/*else
+			else
 			{
 				for (auto& pPartObject : m_PartObjects)
 				{
@@ -431,7 +431,7 @@ void CZombie::Tick(_float fTimeDelta)
 
 				auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
 				m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(m_pController->Get_Hit_Collider_Type()));
-			}*/
+			}
 
 			if (m_bBigAttack)
 			{

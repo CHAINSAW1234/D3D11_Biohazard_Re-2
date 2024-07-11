@@ -842,7 +842,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		break;
 	case COLLIDER_TYPE::PELVIS:
-
+		break; ////////////////////////////////////TEMP//////////////////////////////
 		if(!m_Leg_L)
 		{
 			m_Leg_L = create_capsule_bone(m_thigh_l_idx, m_calf_l_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::LEG_L);
@@ -1833,6 +1833,7 @@ void CRagdoll_Physics::Init_PartialRagdoll(COLLIDER_TYPE eType)
 		m_iRagdollType |= RAGDOLL_TYPE::RIGHT_ARM;
 		break;
 	case COLLIDER_TYPE::PELVIS:
+		break;////////////////////////////////TEMP///////////////////////////////////////
 		m_iRagdollType |= RAGDOLL_TYPE::BODY_DIVIDE;
 		break;
 	case COLLIDER_TYPE::CALF_L:
