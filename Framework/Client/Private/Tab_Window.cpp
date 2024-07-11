@@ -366,6 +366,7 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 			m_pPickedUp_Item = nullptr;
 			OnOff_EventHandle();
 			m_pGameInstance->Set_IsPaused(false);
+			m_fCurTime = 0.f;
 			break;
 		}
 
@@ -374,6 +375,7 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 			m_pPickedUp_Item = nullptr;
 			OnOff_EventHandle();
 			m_pGameInstance->Set_IsPaused(false);
+			m_fCurTime = 0.f;
 			break;
 		}
 
@@ -484,8 +486,6 @@ void CTab_Window::OnOff_EventHandle()
 		m_eWindowType = WINDOW_TYPE_END;
 		m_pInventory_Manager->Set_OnOff_Inven(m_bDead);
 		m_pHotKey->Set_Dead(m_bDead);
-
-
 
 		if (nullptr != m_pCursor[1])
 		{

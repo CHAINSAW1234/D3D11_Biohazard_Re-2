@@ -56,13 +56,10 @@ HRESULT CInventory_Manager::Initialize()
 
 void CInventory_Manager::FirstTick_Seting()
 {
-	AddItem_ToInven(HandGun, 15);
-	AddItem_ToInven(ShotGun, 7);
-	AddItem_ToInven(handgun_bullet01a, 20);
-	AddItem_ToInven(shotgun_bullet01a, 20);
-
-
-
+	//AddItem_ToInven(HandGun, 15);
+	//AddItem_ToInven(ShotGun, 7);
+	//AddItem_ToInven(handgun_bullet01a, 20);
+	//AddItem_ToInven(shotgun_bullet01a, 20);
 }
 
 void CInventory_Manager::Tick(_float fTimeDelta)
@@ -564,25 +561,20 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 					{
 						if (iter != m_pSelected_ItemUI)
 						{
-							iter->Reset_ItemUI();
-							pHoveredSlot->Set_IsFilled(false);
+							Combind_Item(m_pSelected_ItemUI, iter);
+							//iter->Reset_ItemUI();
+							//pHoveredSlot->Set_IsFilled(false);
 							m_eTaskSequence = APPLY;
 						}
 					}
 				}
-
-				//else
-				//{
-				//	m_CombineResources[COMBINDE_NUM] = ITEM_NUMBER_END;
-				//	m_CombineResources[RESULT_NUM] = ITEM_NUMBER_END;
-				//}
 			}
 		}
 		break;
 	}
 		
 	case Client::CInventory_Manager::APPLY: {
-		m_pSelected_ItemUI->Set_ItemNumber(m_CombineResources[RESULT_NUM]);
+		//m_pSelected_ItemUI->Set_ItemNumber(m_CombineResources[RESULT_NUM]);
 		m_eTaskSequence = TS_END;
 		m_eInven_Manager_State = EXAMINE_ITEM;
 		m_CombineResources[SELECTED_NUM] = { ITEM_NUMBER_END };
@@ -948,6 +940,7 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 	}
 
 	m_pSlotHighlighter->Set_Dead(bInput);
+	m_pSlotHighlighter->Set_DragShadow(false);
 
 	for (auto& iter : m_vecItem_UI)
 	{
@@ -1611,10 +1604,10 @@ _uint CInventory_Manager::PickUpItem_Quantity_Classify(ITEM_NUMBER eItemNum)
 		break;
 
 	case Client::handgun_bullet01a:
-		CGameInstance::Get_Instance()->GetRandom_Int(1, 10);
+		return CGameInstance::Get_Instance()->GetRandom_Int(1, 10);
 		break;
 	case Client::shotgun_bullet01a:
-		CGameInstance::Get_Instance()->GetRandom_Int(1, 10);
+		return CGameInstance::Get_Instance()->GetRandom_Int(1, 10);
 		break;
 
 	case Client::woodbarricade01a:
