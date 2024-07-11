@@ -482,6 +482,8 @@ private:
 	vector<PxRigidDynamic*>							m_vecHitPart_STG;
 	vector<COLLIDER_TYPE>							m_vecColliderType_STG;
 	_bool											m_bHit_DecalRay = { false };
+
+	vector<_bool>									m_vecBreakPartFilter;
 #pragma endregion
 
 public:

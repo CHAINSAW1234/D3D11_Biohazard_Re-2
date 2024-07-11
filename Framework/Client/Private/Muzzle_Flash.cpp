@@ -55,6 +55,7 @@ void CMuzzle_Flash::Tick(_float fTimeDelta)
 		m_iFrame = 0;
 		m_pMuzzle_Light->SetPosition(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
 		m_pMuzzle_Light->Set_Render(true);
+		m_pMuzzle_Light->Setup_Billboard();
 		return;
 	}
 

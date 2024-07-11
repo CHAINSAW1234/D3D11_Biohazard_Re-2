@@ -912,6 +912,11 @@ void CPhysics_Controller::Start_PartialRagdoll(CRagdoll_Physics* pRagdoll, _uint
 {
 	if (nullptr != pRagdoll)
 	{
+		if (m_vecCharacter_Controller[iId])
+		{
+			m_vecCharacter_Controller[iId]->Release_PartialCollider(eType);
+		}
+
 		pRagdoll->Set_Index_CCT(iId);
 		pRagdoll->Init_PartialRagdoll(eType);
 		pRagdoll->SetSimulate(true);

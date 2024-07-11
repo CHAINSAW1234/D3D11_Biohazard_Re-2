@@ -60,16 +60,18 @@ void CFace_Zombie::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
-	auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
-	vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
-	if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f))
-	{
-		m_bRender = false;
-	}
-	else
-	{
-		m_bRender = true;
-	}
+	//auto vPos = m_pParentsTransform->Get_State_Vector(CTransform::STATE_POSITION);
+	//vPos = XMVectorSetY(vPos, XMVectorGetY(vPos) + CONTROLLER_GROUND_GAP_ZOMBIE);
+	//if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f))
+	//{
+	//	m_bRender = false;
+	//}
+	//else
+	//{
+	//	m_bRender = true;
+	//}
+
+	m_bRender = true;
 }
 
 void CFace_Zombie::Late_Tick(_float fTimeDelta)

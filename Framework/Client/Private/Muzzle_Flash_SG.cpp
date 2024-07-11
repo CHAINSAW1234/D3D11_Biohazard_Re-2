@@ -95,6 +95,7 @@ void CMuzzle_Flash_SG::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_Scaled(m_vThirdFrame_Size.x, m_vThirdFrame_Size.y, 1.f);
 		m_iFrame = 0;
 		m_pMuzzle_Light->Set_Render(true);
+		m_pMuzzle_Light->Setup_Billboard();
 		break;
 	}
 

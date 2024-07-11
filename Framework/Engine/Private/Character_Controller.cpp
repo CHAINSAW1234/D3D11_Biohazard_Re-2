@@ -342,6 +342,8 @@ void CCharacter_Controller::Create_Collider()
 
 	Joint* joints = m_skeletal_mesh->skeleton()->joints();
 
+	m_vecBreakPartFilter.resize(m_skeletal_mesh->skeleton()->num_bones());
+
 	m_ragdoll->m_rigid_bodies.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_relative_joint_pos.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_original_body_rotations.resize(m_skeletal_mesh->skeleton()->num_bones());
@@ -349,7 +351,10 @@ void CCharacter_Controller::Create_Collider()
 	m_ragdoll->m_original_joint_rotations.resize(m_skeletal_mesh->skeleton()->num_bones());
 
 	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
+	{
 		m_ragdoll->m_rigid_bodies[i] = nullptr;
+		m_vecBreakPartFilter[i] = false;
+	}
 
 	// ---------------------------------------------------------------------------------------------------------------
 	// Create rigid bodies for limbs
@@ -486,7 +491,7 @@ void CCharacter_Controller::Update_Collider()
 	{
 		for (int i = 0; i < m_ragdoll->m_rigid_bodies.size(); i++)
 		{
-			if (m_ragdoll->m_rigid_bodies[i])
+			if (m_ragdoll->m_rigid_bodies[i] && m_vecBreakPartFilter[i] == false)
 			{
 				XMMATRIX global_transform = m_Global_transforms.transforms[i];
 				XMVECTOR body_pos_relative_to_joint = XMVectorSetW(m_ragdoll->m_body_pos_relative_to_joint[i], 1.f);
@@ -629,6 +634,10 @@ void CCharacter_Controller::Release_PartialCollider(COLLIDER_TYPE eType)
 
 		m_Left_Hand_Collider->release();
 		m_Left_Hand_Collider = nullptr;
+
+		m_vecBreakPartFilter[m_lowerarm_l_idx] = true;
+		m_vecBreakPartFilter[m_hand_l_idx] = true;
+
 		break;
 	case COLLIDER_TYPE::FOREARM_R:
 		m_Right_ForeArm_Collider->release();
@@ -636,6 +645,9 @@ void CCharacter_Controller::Release_PartialCollider(COLLIDER_TYPE eType)
 
 		m_Right_Hand_Collider->release();
 		m_Right_Hand_Collider = nullptr;
+
+		m_vecBreakPartFilter[m_lowerarm_r_idx] = true;
+		m_vecBreakPartFilter[m_hand_r_idx] = true;
 
 		break;
 	case COLLIDER_TYPE::CALF_L:
@@ -709,8 +721,8 @@ void CCharacter_Controller::Free()
 			if (m_Left_Foot_Collider)
 				m_Left_Foot_Collider->release();
 
-			if (m_Right_Hand_Collider)
-				m_Right_Hand_Collider->release();
+			if (m_Right_Foot_Collider)
+				m_Right_Foot_Collider->release();
 
 			m_Right_ForeArm_Collider = nullptr;
 			m_BodyCollider = nullptr;

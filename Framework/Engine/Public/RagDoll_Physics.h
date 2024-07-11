@@ -149,10 +149,12 @@ public:
     void                                create_ragdoll();
     void                                create_partial_ragdoll(COLLIDER_TYPE eType);
     void                                Update(_float fTimeDelta);
+    void                                Update_Partial(_float fTimeDelta);
     _bool                               load_mesh(const string& name);
     void                                update_transforms();
     void                                Set_Kinematic(_bool boolean);
     void                                update_animations();
+    void                                update_animations_partial();
     void                                Init_Ragdoll();
     void                                create_joint();
     void			                    SetBone_Ragdoll(vector<class CBone*>* vecBone)
