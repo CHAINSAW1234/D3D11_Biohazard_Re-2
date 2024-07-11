@@ -344,6 +344,8 @@ public:/* for.Get Inline */
 			return nullptr;
 	}
 
+	void Set_Blending_Value(_float _Blending) { m_fBlending = _Blending; }
+
 	_bool Get_IsChild() const { return m_IsChild; }
 
 	vector<class CTextBox*>* Get_vecTextBoxes() { return &m_vecTextBoxes; }

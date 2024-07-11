@@ -120,6 +120,8 @@ void CLoading_UI::Tick(_float fTimeDelta)
 void CLoading_UI::Late_Tick(_float fTimeDelta)
 {
     __super::Late_Tick(fTimeDelta);
+
+    Render();
 }
 
 HRESULT CLoading_UI::Render()
@@ -259,7 +261,6 @@ void CLoading_UI::Ending_Notification()
         CLoading_UI* pLoadingList = static_cast<CLoading_UI*>(iter);
 
         pLoadingList->m_isLoadingEnd = true;
-
     }
 
     m_isLoading_Notification = false;

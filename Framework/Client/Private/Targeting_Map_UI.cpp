@@ -2,7 +2,9 @@
 #include "Targeting_Map_UI.h"
 #include "Item_Map_UI.h"
 #include "Player_Map_UI.h"
+#include "Main_Map_UI.h"
 #include "Tab_Window.h"
+#include "Player.h"
 
 #define ZERO 0
 #define ALPHA_ZERO _float4(0.f, 0.f, 0.f, 0.f)
@@ -158,6 +160,7 @@ void CTargeting_Map_UI::Tick(_float fTimeDelta)
 
     Targeting_Render(fTimeDelta);
 
+
     __super::Tick(fTimeDelta);
 }
 
@@ -182,6 +185,7 @@ void CTargeting_Map_UI::Find_Item()
         return;
 
     list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+    
     m_ItemStore_Vec.resize(3);
 
     if (nullptr != pUIList)
@@ -241,6 +245,48 @@ void CTargeting_Map_UI::Find_NotifyText_RenderState()
     }
 }
 
+/* 아이템을 먹음으로써 Map 상태가 어떻게 변화하였는가? */
+void CTargeting_Map_UI::Verification_MapType()
+{
+    /* 아이템을 먹었는 지 확인 */
+    if (true == m_isSearchForVerification)
+    {
+        /* 1. 아이템을 먹었을 때 맵 안의 모든 아이템을 먹었는가? */
+        for (auto& iter : m_ItemStore_Vec[m_eFloorVerification])
+        {
+            if (m_eLocationVerification == iter->Get_Map_Location_Type())
+            {
+                if (false == iter->Get_Dead())
+                {
+                    m_isSearchForVerification = false;
+
+                    return;
+                }
+            }
+        }
+        
+        /* 2. 아이템을 전부 먹었다면 맵에 나 먹었어요 전달해야 한다. */
+        list<CGameObject*>* pMapUI_List = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+        for (auto& iter : *pMapUI_List)
+        {
+            CMain_Map_UI* pMain = dynamic_cast<CMain_Map_UI*>(iter);
+
+            if (nullptr != pMain)
+            {
+                if (m_eLocationVerification == pMain->Get_Map_Location_Type())
+                {
+                    *(pMain->Map_Clear_Ptr()) = true;
+
+                    break;
+                }
+            }
+        }
+
+        m_isSearchForVerification = false;
+    }
+}
+
 
 void CTargeting_Map_UI::Targeting_Render(_float fTimeDelta)
 {
@@ -269,14 +315,8 @@ void CTargeting_Map_UI::Targeting_Render(_float fTimeDelta)
 
                 for (auto& iter : m_vecTextBoxes)
                 {
-                    iter->Set_Text(m_wstrItem_Name);
-
                     CTransform* pTransText = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
-
                     iter->State(fTextBox);
-
-                    iter->Set_FontColor(m_vOriginTextColor);
-
                 }
 
                 m_isNotifyRender = true;
@@ -312,15 +352,20 @@ void CTargeting_Map_UI::Targeting_Render(_float fTimeDelta)
         /* Font Color */
         if (!m_vecTextBoxes.empty())
         {
-            if (false == m_isRender)
+            if (false == m_isFont_Render)
             {
                 for (auto& iter : m_vecTextBoxes)
+                {
                     iter->Set_FontColor(ALPHA_ZERO);
+                }
             }
-            else
+
+            else if(true == m_isFont_Render)
             {
                 for (auto& iter : m_vecTextBoxes)
+                {
                     iter->Set_FontColor(m_vOriginTextColor);
+                }
             }
         }
     }
@@ -406,16 +451,13 @@ void CTargeting_Map_UI::Targeting_Control()
 
     else if (MAP_UI_TYPE::TARGET_NOTIFY == m_eMapComponent_Type)
     {
-        if (true == m_isRender)
-        {
-            _float4 vTarget_Transform = m_pMainTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
-            _float4 vTargetNotify_Transform = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+        _float4 vTarget_Transform = m_pMainTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
+        _float4 vTargetNotify_Transform = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
-            vTargetNotify_Transform.x = vTarget_Transform.x + m_fTargetNotify_Distance.x;
-            vTargetNotify_Transform.y = vTarget_Transform.y + m_fTargetNotify_Distance.y;
+        vTargetNotify_Transform.x = vTarget_Transform.x + m_fTargetNotify_Distance.x;
+        vTargetNotify_Transform.y = vTarget_Transform.y + m_fTargetNotify_Distance.y;
 
-            m_pTransformCom->Set_State(CTransform::STATE_POSITION, vTargetNotify_Transform);
-        }
+        m_pTransformCom->Set_State(CTransform::STATE_POSITION, vTargetNotify_Transform);
     }
 }
 
@@ -441,8 +483,10 @@ void CTargeting_Map_UI::Notify_Font_Position()
             for (auto& iter : m_vecTextBoxes)
             {
                 CTransform* pTransText = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
-                
+
                 iter->State(fTextBox);
+
+                m_isFont_Render = m_isRender;
             }
         }
     }

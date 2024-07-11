@@ -143,7 +143,6 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
     if (READ_UI_TYPE::MAIN_READ == m_eRead_type)
     {
         /* 첫 번째는 사진, 두 번째는 TEXT */
-
         m_BookText[ITEM_READ_TYPE::INCIDENT_LOG_NOTE] = { TEXT("Prototype_Component_Texture_Document2"),  TEXT("Prototype_Component_Texture_ReadType_Incident_log1"), TEXT("Prototype_Component_Texture_ReadType_Incident_log2"), TEXT("Prototype_Component_Texture_ReadType_Incident_log3"), TEXT("Prototype_Component_Texture_ReadType_Incident_log4"), TEXT("Prototype_Component_Texture_ReadType_Incident_log5") };
         m_BookText[ITEM_READ_TYPE::OPERATE_REPORT_NOTE] = { TEXT("Prototype_Component_Texture_Document2"), TEXT("Prototype_Component_Texture_Operate_Report2"), TEXT("Prototype_Component_Texture_Operate_Report3") };
         m_BookText[ITEM_READ_TYPE::TASK_NOTE] = { TEXT("Prototype_Component_Texture_DocumentBlood1"), TEXT("Prototype_Component_Texture_Task1"), TEXT("Prototype_Component_Texture_Task2"), TEXT("Prototype_Component_Texture_Task3"), TEXT("Prototype_Component_Texture_Task4"), TEXT("Prototype_Component_Texture_Task5") };
@@ -250,7 +249,7 @@ void CRead_Item_UI::Texture_Read()
     if (nullptr == m_pIntro_UI)
         return;
 
-    if (true == m_pIntro_UI->m_isRead_Start)
+    if (true == m_pIntro_UI->m_isRender)
     {
         m_isRender = true;
 

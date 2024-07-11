@@ -108,14 +108,26 @@ HRESULT CMain_Map_UI::Render()
 /* 지역 타입을 확인해서 색깔을 정한다. */
 void CMain_Map_UI::Region_State()
 {
+    if (true == m_isEnd_OnesRole)
+        return;
+
     if (nullptr == m_pPlayer)
         return;
 
     if (abs((int)m_eMap_Location) > 100)
         return;
 
+    /* 2. 아이템을 전부 먹었을 때  */
+    /* 맵이 수색 중이고 아이템을 전부 먹었을 때 */
+    if (true == m_isMapSearch_Clear && MAP_STATE_TYPE::SEARCH_STATE == m_eMapState)
+    {
+        Search_Map_Type(MAP_STATE_TYPE::SEARCH_CLEAR_STATE, m_eMap_Location);
+
+        m_isEnd_OnesRole = true;
+    }
+
     /* 1. 처음 Player가 입장했을 때 */
-    if (MAP_STATE_TYPE::NONE_STATE == m_eMapState && true == m_pPlayer->Get_Player_Region_Array()[m_eMap_Location])
+    else if (MAP_STATE_TYPE::NONE_STATE == m_eMapState && true == m_pPlayer->Get_Player_Region_Array()[m_eMap_Location])
     {
         Search_Map_Type(MAP_STATE_TYPE::SEARCH_STATE, m_eMap_Location);
     }
@@ -259,6 +271,7 @@ void CMain_Map_UI::Change_Search_Type(MAP_STATE_TYPE _searType)
     {
         m_vCurrentColor = ALPHA_ZERO;
         m_fOrigin_Blending = 0.f;
+
     }
 
     else if (MAP_STATE_TYPE::SEARCH_STATE == _searType) // 수색 중
@@ -272,6 +285,9 @@ void CMain_Map_UI::Change_Search_Type(MAP_STATE_TYPE _searType)
         m_vCurrentColor = BLUE;
         m_fOrigin_Blending = BLENDING;
     }
+
+    m_eMapState = _searType;
+
 }
 
 

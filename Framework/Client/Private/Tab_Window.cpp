@@ -8,6 +8,7 @@
 #include "ItemProp.h"
 #include "Read_Item_UI.h"
 #include "Item_Map_UI.h"
+#include "Targeting_Map_UI.h"
 
 CTab_Window::CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice , pContext }
@@ -69,20 +70,32 @@ void CTab_Window::Start()
 	list<class CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
 	_bool bReadItemUI = { false };
 	_bool bMapUI = { false };
+
 	for (auto& iter : *pUILayer)
 	{
+
+		// if(&&!bReadItemUI)
+
 		CRead_Item_UI* pRead = dynamic_cast<CRead_Item_UI*>(iter);
-		CItem_Map_UI* pMap = dynamic_cast<CItem_Map_UI*>(iter);
-		if(pRead!=nullptr &&!bReadItemUI)
-			if (pRead->Get_UI_TYPE() == CRead_Item_UI::READ_UI_TYPE::INTRODUCE_READ)
-			{
-				m_pRead_Item_UI = pRead;
-				bReadItemUI = true;
-			}
-		if (pMap != nullptr && !bMapUI)
+		if (pRead != nullptr && pRead->Get_UI_TYPE() == CRead_Item_UI::READ_UI_TYPE::INTRODUCE_READ)
 		{
-			m_pMap_UI = pMap;
+			m_pRead_Item_UI = pRead;
+			bReadItemUI = true;
+		}
+
+		CItem_Map_UI* pItem = dynamic_cast<CItem_Map_UI*>(iter);
+		if (pItem != nullptr && !bMapUI)
+		{
+			m_pMapItem_UI = pItem;
 			bMapUI = true;
+		}
+
+		CTargeting_Map_UI* pTarget = dynamic_cast<CTargeting_Map_UI*>(iter);
+		if (nullptr != pTarget 
+			&& nullptr == m_pTargetNotify_UI 
+			&& CMap_Manager::MAP_UI_TYPE::TARGET_NOTIFY == pTarget->Get_MapComponent_Type())
+		{
+			m_pTargetNotify_UI = pTarget;
 		}
 
 		CHotKey* pHotkey = dynamic_cast<CHotKey*>(iter);
@@ -484,9 +497,18 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 			//인벤토리 문서 부분에 먹었다 추가=> 아직 없는 것으로 앎 나중에
 			pPickedUp_Item->Set_Dead(true);
 		}
+
 		else
 		{
-			//m_pMap_UI->Destory_Item((MAP_FLOOR_TYPE)pProp->Get_Floor(), (LOCATION_MAP_VISIT)pProp->Get_Region(), (ITEM_NUMBER)iPickedUpItemNum);
+			/* 아이템 삭제 */
+			m_pMapItem_UI->Destory_Item((MAP_FLOOR_TYPE)pProp->Get_Floor(), (LOCATION_MAP_VISIT)pProp->Get_Region(), (ITEM_NUMBER)iPickedUpItemNum);
+			
+			/* 아이템으로 인한 맵 확인 */
+			if (nullptr != m_pTargetNotify_UI)
+			{
+				/* Tab Window -> Target Notify -> Main Map*/
+				m_pTargetNotify_UI->Set_SearchFor_Verification_MapType(pProp->Get_Floor(), pProp->Get_Region());
+			}
 		}
 	}
 }

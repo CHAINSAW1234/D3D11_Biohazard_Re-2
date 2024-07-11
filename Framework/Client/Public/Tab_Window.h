@@ -35,15 +35,19 @@ private:
 
 #pragma region 나옹
 public: 
-	_bool				Get_MinMapRender()				{ return m_isMapRender; }
-	_bool*				Get_MainRender_Ptr()			{ return m_pInvenButton->Get_Dead_Ptr(); }
-	WINDOW_TYPE*		Get_Window_RenderType_Ptr()		{ return &m_eWindowType; }
+	_bool							Get_MinMapRender()				{ return m_isMapRender; }
+	_bool*							Get_MainRender_Ptr()			{ return m_pInvenButton->Get_Dead_Ptr(); }
+	WINDOW_TYPE*					Get_Window_RenderType_Ptr()		{ return &m_eWindowType; }
+
+private :
+	class CTargeting_Map_UI*		m_pTargetNotify_UI = { nullptr };
 #pragma endregion
 
 
 #pragma region 예은 추가
-	class CRead_Item_UI*	m_pRead_Item_UI = { nullptr };
-	class CItem_Map_UI*			m_pMap_UI = { nullptr };
+private :
+	class CRead_Item_UI*		m_pRead_Item_UI = { nullptr };
+	class CItem_Map_UI*			m_pMapItem_UI	= { nullptr };
 #pragma endregion 
 
 

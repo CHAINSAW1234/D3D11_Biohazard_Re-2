@@ -34,18 +34,18 @@ private :
 
 
 private :
-	ITEM_NUMBER						m_eItem_Type	= { ITEM_NUMBER::ITEM_NUMBER_END }; /* 아이템 종류 */
-	wstring							m_wstrItemNumber = { TEXT("") };
-	LOCATION_MAP_VISIT				m_ePrevRegion	= { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
+	ITEM_NUMBER						m_eItem_Type					= { ITEM_NUMBER::ITEM_NUMBER_END }; /* 아이템 종류 */
+	wstring							m_wstrItemNumber				= { TEXT("") };
+	LOCATION_MAP_VISIT				m_ePrevRegion					= { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
 
-	_bool							m_isItemRender	= { false };
-	_bool							m_isItemEnd		= { false };
-	_vector							m_vMapOpen_Player_Distance = {};
+	_bool							m_isItemRender					= { false };
+	_bool							m_isItemEnd						= { false };
+	_vector							m_vMapOpen_Player_Distance		= {};
 
-	_float4							m_vOriginPos = {};
+	_float4							m_vOriginPos					= {};
 
 private:
-	MAP_FLOOR_TYPE		m_ePrevViewFloor = { MAP_FLOOR_TYPE::FLOOR_1 };
+	MAP_FLOOR_TYPE					m_ePrevViewFloor				= { MAP_FLOOR_TYPE::FLOOR_1 };
 
 public:
 	static CMap_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

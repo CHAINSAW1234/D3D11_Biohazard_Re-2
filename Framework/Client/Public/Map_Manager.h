@@ -34,7 +34,8 @@ public : /* Getter */
 	MAP_FLOOR_TYPE			Get_Floor_Type()		{ return m_eFloorType;  } /* 배치 되어야 할 Floor Type 반환 */
 	MAP_FLOOR_TYPE*			Get_ViewFloor_Type()	{ return &m_eCurrent_ViewFloor; } /* 배치 되어야 할 Floor Type 반환 */
 
-
+	MAP_UI_TYPE				Get_MapComponent_Type()	{ return m_eMapComponent_Type;  }
+	LOCATION_MAP_VISIT		Get_Map_Location_Type() { return m_eMap_Location;  }
 
 protected :
 	/* Fuction */

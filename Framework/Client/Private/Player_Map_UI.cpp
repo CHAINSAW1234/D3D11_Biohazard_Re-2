@@ -98,7 +98,9 @@ void CPlayer_Map_UI::Tick(_float fTimeDelta)
     __super::Tick(fTimeDelta);
 
     Open_Map();
+
     Rendering();
+
     Map_Player_Control(fTimeDelta);
 }
 
@@ -126,10 +128,20 @@ void CPlayer_Map_UI::Rendering()
                 m_isRender = true;
 
             else
+            {
                 m_isRender = false;
+            }
         }
         else
+        {
+            /* Min Map을 껐을 때 다른 층과 Blending 되는 것을 막아줘야 한다.*/
             m_isRender = false;
+
+            m_fBlending = 0.f;
+
+            m_pMapPlayer->m_eCurrent_ViewFloor = m_ePlayer_Floor;
+
+        }
     }
 
     Map_Player_Setting();
