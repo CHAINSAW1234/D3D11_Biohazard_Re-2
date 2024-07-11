@@ -919,7 +919,7 @@ void CPhysics_Controller::Start_PartialRagdoll(CRagdoll_Physics* pRagdoll, _uint
 
 		pRagdoll->Set_Index_CCT(iId);
 		pRagdoll->Init_PartialRagdoll(eType);
-		pRagdoll->SetSimulate(true);
+		pRagdoll->SetSimulate_Partial(true);
 	}
 }
 
@@ -1306,7 +1306,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 					}
 					else
 					{
-						if (m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() >= 10)
+						if (m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() >= 5)
 						{
 							/*Ragdoll을 구동하려면 살려야 함.*/
 							m_vecCharacter_Controller[filterData.word2]->SetReleased(true);

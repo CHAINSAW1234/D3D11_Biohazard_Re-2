@@ -150,11 +150,13 @@ public:
     void                                create_partial_ragdoll(COLLIDER_TYPE eType);
     void                                Update(_float fTimeDelta);
     void                                Update_Partial(_float fTimeDelta);
+    void                                Update_Partial_After(_float fTimeDelta);
     _bool                               load_mesh(const string& name);
     void                                update_transforms();
     void                                Set_Kinematic(_bool boolean);
     void                                update_animations();
     void                                update_animations_partial();
+    void                                update_animations_partial_after();
     void                                Init_Ragdoll();
     void                                create_joint();
     void			                    SetBone_Ragdoll(vector<class CBone*>* vecBone)
@@ -190,6 +192,7 @@ public:
     }
     void                                SetTransform(class CTransform* pTransform);
     void                                SetSimulate(_bool boolean);
+    void                                SetSimulate_Partial(_bool boolean);
     void                                ResetForce();
     void                                Add_Force(_float4 vForce,COLLIDER_TYPE eType);
     void                                SetCulling(_bool boolean)
@@ -398,6 +401,7 @@ private:
     _uint                                           m_iId = { 0 };
     _uint                                           m_iRagdollType = { RAGDOLL_TYPE::TYPE_NONE };
     _bool                                           m_bPartialRagdoll = { false };
+    vector<_bool>									m_vecBreakPartFilter;
 
     uint32_t m_head_idx = { 0 };		//neck_1
     uint32_t m_neck_01_idx = { 0 };	//neck_0
