@@ -3,7 +3,8 @@
 #include "Item_Discription.h"
 #include "HotKey.h"
 
-constexpr _uint		SLOT_COUNT = 4;
+constexpr _uint		EQ_SLOT_COUNT = 4;
+constexpr _uint		TH_SLOT_COUNT = 3;
 constexpr _float	Z_POS_ITEM_UI = 0.7f;
 
 CHotKey::CHotKey(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -44,11 +45,11 @@ HRESULT CHotKey::Initialize(void* pArg)
 
 void CHotKey::Start()
 {
-	for (_uint i = 0; i < SLOT_COUNT; i++)
+	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)
 	{
-		m_pItemUI[i]->Set_Text(HOTKEY_DISPLAY, to_wstring(i+1));
-		m_pItemUI[i]->Set_PartUI_TextColor(HOTKEY_DISPLAY, XMVectorSet(1.f, 1.f, 1.f, 1.f));
-		m_pItemUI[i]->Set_ItemUI(ITEM_NUMBER_END, HOTKEY, XMVectorSet(m_fPositions[i].x, m_fPositions[i].y, Z_POS_ITEM_UI, 1.f), 0);
+		m_pEQItemUI[i]->Set_Text(HOTKEY_DISPLAY, to_wstring(i + 1));
+		m_pEQItemUI[i]->Set_PartUI_TextColor(HOTKEY_DISPLAY, XMVectorSet(1.f, 1.f, 1.f, 1.f));
+		m_pEQItemUI[i]->Set_ItemUI(ITEM_NUMBER_END, HOTKEY, XMVectorSet(m_fPositions[i].x, m_fPositions[i].y, Z_POS_ITEM_UI, 1.f), 0);
 	}
 }
 
@@ -87,19 +88,21 @@ void CHotKey::Set_Dead(_bool bDead)
 {
 	m_bDead = bDead;
 
-	for (_uint i = 0; i < SLOT_COUNT; i++)
+
+
+	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)
 	{
-		m_pInven_Slots[i]->Set_Dead(bDead);
-		m_pItemUI[i]->Set_Dead(bDead);
+		m_pEQInven_Slots[i]->Set_Dead(bDead);
+		m_pEQItemUI[i]->Set_Dead(bDead);
 	}
 }
 
 CInventory_Slot* CHotKey::Get_Hoverd_Slot()
 {
-	for (_uint i = 0; i < SLOT_COUNT; i++)
+	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)
 	{
-		if (true == m_pInven_Slots[i]->IsMouseHover())
-			return m_pInven_Slots[i];
+		if (true == m_pEQInven_Slots[i]->IsMouseHover())
+			return m_pEQInven_Slots[i];
 	}
 
 	return nullptr;
@@ -107,10 +110,10 @@ CInventory_Slot* CHotKey::Get_Hoverd_Slot()
 
 CInventory_Slot* CHotKey::Get_Empty_Slot()
 {
-	for (_uint i = 0; i < SLOT_COUNT; i++)
+	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)
 	{
-		if (false == m_pInven_Slots[i]->Get_IsFilled())
-			return m_pInven_Slots[i];
+		if (false == m_pEQInven_Slots[i]->Get_IsFilled())
+			return m_pEQInven_Slots[i];
 	}
 
 	return nullptr;
@@ -122,32 +125,32 @@ void CHotKey::RegisterHoykey(_float2 RegisterPos, ITEM_NUMBER eItemNum, _int iIt
 	//case1 a를 다른 단축키로 옮기는경우
 	//case2 a를 다른 단축키로 옮겼는데 다른 아이템이 있는경우 switch
 
-	for (_uint i = 0; i < SLOT_COUNT; i++)
+	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)
 	{
-		if (eItemNum == m_pItemUI[i]->Get_ItemNumber())
+		if (eItemNum == m_pEQItemUI[i]->Get_ItemNumber())
 		{
-			m_pItemUI[i]->Set_ItemNumber(ITEM_NUMBER_END);
-			m_pItemUI[i]->Set_ItemQuantity(0);
-			m_pItemUI[i]->Set_isHotKeyRegisted(false);
-			m_pItemUI[i]->Set_Dead(false);
+			m_pEQItemUI[i]->Set_ItemNumber(ITEM_NUMBER_END);
+			m_pEQItemUI[i]->Set_ItemQuantity(0);
+			m_pEQItemUI[i]->Set_isHotKeyRegisted(false);
+			m_pEQItemUI[i]->Set_Dead(false);
 
-			m_pInven_Slots[i]->Set_IsFilled(false);
+			m_pEQInven_Slots[i]->Set_IsFilled(false);
 		}
 
-		if (true == m_pItemUI[i]->IsPTInRect(RegisterPos))
+		if (true == m_pEQItemUI[i]->IsPTInRect(RegisterPos))
 		{
-			m_pItemUI[i]->Set_ItemNumber(eItemNum);
-			m_pItemUI[i]->Set_ItemQuantity(iItemQuantity);
-			m_pItemUI[i]->Set_isHotKeyRegisted(true);
-			m_pItemUI[i]->Set_Dead(false);
+			m_pEQItemUI[i]->Set_ItemNumber(eItemNum);
+			m_pEQItemUI[i]->Set_ItemQuantity(iItemQuantity);
+			m_pEQItemUI[i]->Set_isHotKeyRegisted(true);
+			m_pEQItemUI[i]->Set_Dead(false);
 		}
 	}
 
-	for (_uint i = 0; i < SLOT_COUNT; i++)
+	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)
 	{
-		if (true == m_pInven_Slots[i]->IsPTInRect(RegisterPos))
+		if (true == m_pEQInven_Slots[i]->IsPTInRect(RegisterPos))
 		{
-			m_pInven_Slots[i]->Set_IsFilled(true);
+			m_pEQInven_Slots[i]->Set_IsFilled(true);
 			break;
 		}
 	}
@@ -155,18 +158,18 @@ void CHotKey::RegisterHoykey(_float2 RegisterPos, ITEM_NUMBER eItemNum, _int iIt
 
 void CHotKey::Update_Registed_Item(ITEM_NUMBER eItemNum, _int iItemQuantity)
 {
-	for (_uint i = 0; i < SLOT_COUNT; i++)
+	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)
 	{
-		if (eItemNum == m_pItemUI[i]->Get_ItemNumber())
+		if (eItemNum == m_pEQItemUI[i]->Get_ItemNumber())
 		{
-			m_pItemUI[i]->Set_ItemQuantity(iItemQuantity);
+			m_pEQItemUI[i]->Set_ItemQuantity(iItemQuantity);
 		}
 	}
 }
 
 ITEM_NUMBER CHotKey::Get_Item_On_HotKey(_uint iHotKeyNum)
 {
-	return m_pItemUI[iHotKeyNum]->Get_ItemNumber();
+	return m_pEQItemUI[iHotKeyNum]->Get_ItemNumber();
 }
 
 HRESULT CHotKey::Bind_ShaderResources()
@@ -219,7 +222,7 @@ CUI::UI_DESC CHotKey::Read_HotKeyDat()
 
 	for (_uint i = 1; i < 5; i++)
 	{
-		m_fPositions[i-1] = { vecCustomInvenUIDesc[i].worldMatrix._41, vecCustomInvenUIDesc[i].worldMatrix._42, vecCustomInvenUIDesc[i].worldMatrix._43};
+		m_fPositions[i - 1] = { vecCustomInvenUIDesc[i].worldMatrix._41, vecCustomInvenUIDesc[i].worldMatrix._42, vecCustomInvenUIDesc[i].worldMatrix._43 };
 	}
 
 	return UIDesc;
@@ -234,21 +237,32 @@ HRESULT CHotKey::Init_InvenSlot()
 	vector<CCustomize_UI::CUSTOM_UI_DESC> vecCustomInvenUIDesc;
 	CCustomize_UI::ExtractData_FromDat(inputFileStream, &vecCustomInvenUIDesc, true);
 
-	for (_uint i = 0; i < SLOT_COUNT; i++)
+	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)
 	{
-		if (FAILED(Create_InvenSlot(&vecCustomInvenUIDesc, m_fPositions[i], i)))
+		if (FAILED(Create_InvenSlot(&vecCustomInvenUIDesc, m_fPositions[i], i, EQUIPPED)))
 			return E_FAIL;
 	}
 
-	for (_uint i = 0; i < SLOT_COUNT; i++)
+	for (_uint i = 0; i < TH_SLOT_COUNT; i++)
 	{
-		Safe_AddRef(m_pInven_Slots[i]);
+		if (FAILED(Create_InvenSlot(&vecCustomInvenUIDesc, m_fPositions[i], i, THROWN)))
+			return E_FAIL;
+	}
+
+	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)
+	{
+		Safe_AddRef(m_pEQInven_Slots[i]);
+	}
+
+	for (_uint i = 0; i < TH_SLOT_COUNT; i++)
+	{
+		Safe_AddRef(m_pTHInven_Slots[i]);
 	}
 
 	return S_OK;
 }
 
-HRESULT CHotKey::Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float2 fSetPos, _uint iCount)
+HRESULT CHotKey::Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInvenUI, _float2 fSetPos, _uint iCount, WEAPON_CLASSIFY eWC)
 {
 	CInventory_Slot* pParentInvenUI = { nullptr };
 
@@ -304,20 +318,30 @@ HRESULT CHotKey::Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInve
 
 		else
 		{
-			m_pInven_Slots[iCount] = pInvenUI;
+			switch (eWC)
+			{
+			case Client::CHotKey::EQUIPPED:
+				m_pEQInven_Slots[iCount] = pInvenUI;
+				break;
+			case Client::CHotKey::THROWN:
+				m_pTHInven_Slots[iCount] = pInvenUI;
+				break;
+
+			default:
+				break;
+			}
+
 		}
 
 		pParentInvenUI = pInvenUI;
 	}
-
-
 
 	return S_OK;
 }
 
 HRESULT CHotKey::Init_ItemUI()
 {
-	for (_uint i = 0; i < SLOT_COUNT; i++)
+	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)
 	{
 		ifstream inputFileStream;
 		wstring selectedFilePath;
@@ -326,10 +350,23 @@ HRESULT CHotKey::Init_ItemUI()
 		CItem_UI* pItemUI = { nullptr };
 		CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_ItemUI"),
 			(CGameObject**)&pItemUI, m_pDevice, m_pContext);
-		m_pItemUI[i] = pItemUI;
+		m_pEQItemUI[i] = pItemUI;
 
-		Safe_AddRef(m_pItemUI[i]);
-		
+		Safe_AddRef(m_pEQItemUI[i]);
+	}
+
+	for (_uint i = 0; i < TH_SLOT_COUNT; i++)
+	{
+		ifstream inputFileStream;
+		wstring selectedFilePath;
+		selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_UI.dat");
+		inputFileStream.open(selectedFilePath, ios::binary);
+		CItem_UI* pItemUI = { nullptr };
+		CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_ItemUI"),
+			(CGameObject**)&pItemUI, m_pDevice, m_pContext);
+		m_pTHItemUI[i] = pItemUI;
+
+		Safe_AddRef(m_pTHItemUI[i]);
 	}
 
 	return S_OK;
@@ -386,9 +423,16 @@ void CHotKey::Free()
 {
 	__super::Free();
 
-	for (_uint i = 0; i < SLOT_COUNT; i++)
+	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)
 	{
-		Safe_Release(m_pInven_Slots[i]);
-		Safe_Release(m_pItemUI[i]);
+		Safe_Release(m_pEQInven_Slots[i]);
+		Safe_Release(m_pEQItemUI[i]);
 	}
+
+	for (_uint i = 0; i < TH_SLOT_COUNT; i++)
+	{
+		Safe_Release(m_pTHInven_Slots[i]);
+		Safe_Release(m_pTHItemUI[i]);
+	}
+
 }

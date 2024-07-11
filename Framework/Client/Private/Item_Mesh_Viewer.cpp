@@ -168,10 +168,10 @@ void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
 
 	if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
 	{
-		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuart, POPUP_HIDE_START_DIST, POPUP_HIDE_END_DIST,
+		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, POPUP_HIDE_END_DIST,
 			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 
-		_float fRadian = m_pGameInstance->Get_Ease(Ease_OutBack, POPUP_HIDE_START_RADIAN, XMConvertToRadians(POPUP_HIDE_END_RADIAN),
+		_float fRadian = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_RADIAN, XMConvertToRadians(POPUP_HIDE_END_RADIAN),
 			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 
 		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), fRadian);
@@ -219,7 +219,7 @@ void CItem_Mesh_Viewer::SECOND_IDLE_Operation(_float fTimeDelta)
 
 	if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
 	{
-		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuart, POPUP_HIDE_START_DIST, POPUP_HIDE_END_DIST,
+		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, POPUP_HIDE_END_DIST,
 			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 	}
 }
@@ -234,12 +234,13 @@ void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
 		m_fPopupHide_CurTime = 0.f;
 		m_fDistCam = POPUP_HIDE_START_DIST;
 		m_bDead = true;
+		m_eItem_Number = ITEM_NUMBER_END;
 		return;
 	}
 
 	if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
 	{
-		m_fDistCam = m_pGameInstance->Get_Ease(Ease_InBack, POPUP_HIDE_END_DIST, POPUP_HIDE_START_DIST,
+		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_END_DIST, POPUP_HIDE_START_DIST,
 			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 	}
 }
@@ -272,7 +273,7 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 		
 	case Client::HIDE: {
 		m_bDead = false;
-		m_eItem_Number = eCallItemType;
+		//m_eItem_Number = eCallItemType;
 		m_eViewer_State = eOperation;
 		break;
 	}

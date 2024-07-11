@@ -59,17 +59,18 @@ public:/*±â´É¼º*/
 	void				Set_Text(wstring Target, wstring strSetText);
 
 private:
-	_bool						m_isWorking = { false };
-	_bool						m_isActive = { true };
-	_bool						m_isHotKeyRegisted = { false };
+	_bool				m_isWorking = { false };
+	_bool				m_isActive = { true };
+	_bool				m_isHotKeyRegisted = { false };
+	_bool				m_isEquiped = { false };
 
 private:
-	ITEM_NUMBER					m_eItemNumber = { ITEM_NUMBER::ITEM_NUMBER_END };
-	ITEM_TYPE					m_eInvenItemType = { ITEM_TYPE::INVEN_ITEM_TYPE_END };
+	ITEM_NUMBER			m_eItemNumber = { ITEM_NUMBER::ITEM_NUMBER_END };
+	ITEM_TYPE			m_eInvenItemType = { ITEM_TYPE::INVEN_ITEM_TYPE_END };
 
-	_bool						m_bCountable = { false };
-	_int						m_iItemQuantity = { 0 };
-	_int						m_iItemMaxQuantity = { 0 };
+	_bool				m_bCountable = { false };
+	_int				m_iItemQuantity = { 0 };
+	_int				m_iItemMaxQuantity = { 0 };
 
 	map<wstring, CCustomize_UI*>	m_mapPartUI;
 
