@@ -125,7 +125,7 @@ public:		/* For.Start_Trigger */
 	inline void							Set_Start(_bool isStart) { m_isStart = isStart; }
 
 public:		/* For.Location Controll */
-	inline _bool						Is_In_Location(LOCATION_MAP_VISIT eLocation) { return eLocation == m_eLocation; }
+	_bool								Is_In_Location(LOCATION_MAP_VISIT eLocation);
 	inline LOCATION_MAP_VISIT			Get_Location() { return m_eLocation; }
 	inline void							Set_Location(LOCATION_MAP_VISIT eLocation) { m_eLocation = eLocation; }
 

@@ -52,14 +52,6 @@ void COpen_Door_Zombie::Enter()
 		m_iAnimIndex = static_cast<_int>(ANIM_GIMMICK_DOOR::_OPEN_FROM_B);
 	}
 
-	if (false == m_pBlackBoard->Compute_DeltaMatrix_AnimFirstKeyFrame_From_Target(pDoor->Get_Transform(), static_cast<_uint>(m_eBasePlayingIndex), m_iAnimIndex, m_strAnimLayerTag, &m_InterpolateDeltaMatrix))
-	{
-#ifdef _DEBUG 
-		MSG_BOX(TEXT("Called void COpen_Door_Zombie::Enter() Failed Compute Delta Matrix"));
-#endif 
-		return;
-	}
-
 	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
 	//	m_fAccLinearInterpolateTime = 0.f;
 
@@ -78,7 +70,7 @@ _bool COpen_Door_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
-	CDoor* pDoor = { m_pBlackBoard->Get_Target_Door() };
+	CDoor*			pDoor = { m_pBlackBoard->Get_Target_Door() };
 	if (nullptr == pDoor)
 		return false;
 
@@ -114,6 +106,8 @@ _bool COpen_Door_Zombie::Execute(_float fTimeDelta)
 			return false;
 
 		pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
+		Change_Animation(fTimeDelta);
+		m_isDummyDoor = false;
 	}
 
 	m_pBlackBoard->Organize_PreState(this);
@@ -121,30 +115,6 @@ _bool COpen_Door_Zombie::Execute(_float fTimeDelta)
 	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->Set_State(MONSTER_STATE::MST_OPEN_DOOR);
 
-
-	/*if (m_fAccLinearInterpolateTime < ZOMBIE_DOOR_OPEN_TOTAL_INTERPOLATE_TO_WINDOW_TIME)
-	{
-		_bool				isComplete = { m_fAccLinearInterpolateTime >= ZOMBIE_DOOR_OPEN_TOTAL_INTERPOLATE_TO_WINDOW_TIME };
-		if (false == isComplete)
-		{
-			_float				fTime = fTimeDelta;
-			m_fAccLinearInterpolateTime += fTime;
-
-			if (m_fAccLinearInterpolateTime >= ZOMBIE_DOOR_OPEN_TOTAL_INTERPOLATE_TO_WINDOW_TIME)
-			{
-				fTime -= m_fAccLinearInterpolateTime - ZOMBIE_DOOR_OPEN_TOTAL_INTERPOLATE_TO_WINDOW_TIME;
-			}
-			_float				fRatio = { fTime / ZOMBIE_DOOR_OPEN_TOTAL_INTERPOLATE_TO_WINDOW_TIME };
-
-			if (false == isComplete)
-			{
-				if (false == m_pBlackBoard->Apply_Devide_Delta_Matrix(fRatio, XMLoadFloat4x4(&m_InterpolateDeltaMatrix)))
-					return false;
-			}
-		}
-	}*/
-
-	Change_Animation(fTimeDelta);
 
 	return true;
 }

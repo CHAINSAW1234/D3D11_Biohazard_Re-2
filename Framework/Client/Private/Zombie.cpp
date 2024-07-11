@@ -25,6 +25,8 @@
 #include "Impact.h"
 #include "Hit.h"
 
+#include "Room_Finder.h"
+
 #define MODEL_SCALE 0.01f
 #define BLOOD_COUNT 10
 #define DECAL_COUNT 20
@@ -1249,6 +1251,11 @@ void CZombie::Play_Animations_Body(_float fTimeDelta)
 void CZombie::Active_IK_Body(_bool isActive)
 {
 	static_cast<CBody_Zombie*>(m_PartObjects[PART_BODY])->Active_IK(isActive);
+}
+
+_bool CZombie::Is_In_Location(LOCATION_MAP_VISIT eLocation)
+{
+	CRoom_Finder::Get_Instance()->Find_Linked_Doors_From_Location(eLocation);
 }
 
 HRESULT CZombie::Initialize_PartModels()

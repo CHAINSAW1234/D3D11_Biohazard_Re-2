@@ -69,6 +69,7 @@ private:
 
 public:
 	inline const list<LOCATION_MAP_VISIT>&		Get_LinkedLocations() { return m_Linked_Locations; }
+	inline TYPE_DOOR							Get_DoorType() { return static_cast<TYPE_DOOR>(m_eType); }
 
 private:
 	void										DoubleDoor_Tick(_float fTimeDelta);

@@ -37,6 +37,7 @@ protected:
 
 	_float							m_fAccLinearInterpolateTime = { 0.f };
 	_float4x4						m_InterpolateDeltaMatrix = {};
+	_bool							m_isDummyDoor = { false };
 
 public:
 	static COpen_Door_Zombie* Create(void* pArg = nullptr);
