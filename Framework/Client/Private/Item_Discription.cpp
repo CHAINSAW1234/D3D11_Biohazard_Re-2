@@ -40,6 +40,13 @@ HRESULT CItem_Discription::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CItem_Discription::Start()
+{
+	m_pItemName->Set_isUIRender(false);
+	m_pItemClassify->Set_isUIRender(false);
+	m_pItemDiscription->Set_isUIRender(false);
+}
+
 void CItem_Discription::Tick(_float fTimeDelta)
 {
 	//if (true == m_bDead)
@@ -65,7 +72,7 @@ void CItem_Discription::Late_Tick(_float fTimeDelta)
 	//if (true == m_bDead)
 	//	return;
 
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FONT, this);
 
 	m_pItemName->Late_Tick(fTimeDelta);
 	m_pItemClassify->Late_Tick(fTimeDelta);

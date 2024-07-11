@@ -658,6 +658,15 @@
     <Filter Include="02.GameObjects\Effect\Cartridge\SG_Cartridge">
       <UniqueIdentifier>{3ceb3dd1-ad99-4dda-98d1-6a65c2c36522}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Highliter">
+      <UniqueIdentifier>{812a8f7e-7868-498b-80b8-1a6450929360}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display">
+      <UniqueIdentifier>{dd72697b-7354-438b-bda0-9356587ec9fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Directory">
+      <UniqueIdentifier>{856669b4-5a02-43ee-a744-2293808ba146}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\MapObject\Room_Finder">
       <UniqueIdentifier>{fed6f7b1-2d58-429f-8dcb-9213a6e9ed85}</UniqueIdentifier>
     </Filter>
@@ -1287,6 +1296,15 @@
     <ClInclude Include="..\Public\SG_Cartridge.h">
       <Filter>02.GameObjects\Effect\Cartridge\SG_Cartridge</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Hint.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hint_Display.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hint_Highliter.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Highliter</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Is_Start_Rub_Door_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Start_Rub_Door</Filter>
     </ClInclude>
@@ -1873,6 +1891,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\SG_Cartridge.cpp">
       <Filter>02.GameObjects\Effect\Cartridge\SG_Cartridge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hint.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hint_Display.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hint_Highliter.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Highliter</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Is_Start_Rub_Door_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Decorator\Checker_Is_Start_Rub_Door</Filter>

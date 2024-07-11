@@ -449,17 +449,23 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 	case Client::herbsrb01a: {
 		break;
 	}
-	case Client::greenherbitem01a:
-	case Client::redherbitem01a:
-	case Client::blueherbitem01a:
+	//case Client::greenherbitem01a:
+	//case Client::redherbitem01a:
+	//case Client::blueherbitem01a:
+	//	break;
+
+	case Client::clairesbag01a: {
+		m_iInvenCount++;
+		m_vecInvenSlot[m_iInvenCount]->Set_Dead(false);
 		break;
+	}
 	default:
 		break;
 	}
 
 	m_eInven_Manager_State = EVENT_IDLE;
 	m_pContextMenu->Set_Dead(true);
-	Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y));
+	Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
 	m_pSelected_ItemUI->Reset_ItemUI();
 	m_pSelected_ItemUI = nullptr;
 }
@@ -746,10 +752,11 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 
 void CInventory_Manager::DISCARD_ITEM_Operation(_float fTimeDelta)
 {
+	m_eInven_Manager_State = EVENT_IDLE;
+	m_pContextMenu->Set_Dead(true);
+	Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
 	m_pSelected_ItemUI->Reset_ItemUI();
 	m_pSelected_ItemUI = nullptr;
-
-	m_eInven_Manager_State = EVENT_IDLE;
 }
 
 void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
@@ -911,6 +918,7 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 	}
 
 	m_pContextMenu->Set_Dead(true);
+	m_pDragShadow->Set_Dead(true);
 
 	m_eInven_Manager_State = EVENT_IDLE;
 
@@ -942,6 +950,11 @@ void CInventory_Manager::PUO_Seting(ITEM_NUMBER eAcquiredItem, _int iItemQuantit
 			pEmptydSlot = m_vecInvenSlot[i];
 			break;
 		}
+	}
+
+	if (nullptr == pEmptydSlot)
+	{
+		pEmptydSlot = m_vecInvenSlot[0];
 	}
 
 	m_pSlotHighlighter->Set_Dead(false);
@@ -1193,6 +1206,7 @@ HRESULT CInventory_Manager::Seting_Hotkey()
 		if (nullptr != pHotkey)
 		{
 			m_pHotkey = pHotkey;
+			Safe_AddRef(m_pHotkey);
 			return S_OK;
 		}
 	}
@@ -1287,9 +1301,9 @@ void CInventory_Manager::Free()
 	m_vecItem_UI.clear();
 
 	Safe_Release(m_pContextMenu);
-
 	Safe_Release(m_pDragShadow);
 	Safe_Release(m_pDragShadowTransform);
+	Safe_Release(m_pHotkey);
 }
 
 ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
@@ -1498,7 +1512,7 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 		return DOCUMENT;
 		break;
 	case Client::clairesbag01a:
-		return QUEST;
+		return USEABLE;
 		break;
 	case Client::HandGun:
 		return EQUIPABLE;

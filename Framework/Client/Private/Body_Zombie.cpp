@@ -1003,6 +1003,15 @@ void CBody_Zombie::SetRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType)
 	m_pModelCom->Set_OptimizationCulling(false);
 }
 
+void CBody_Zombie::SetPartialRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType)
+{
+	m_pGameInstance->Start_PartialRagdoll(m_pRagdoll, iId,eType);
+
+	//m_pRagdoll->Add_Force(vForce, eType);
+	m_bPartial_Ragdoll = true;
+	m_pModelCom->Set_OptimizationCulling(false);
+}
+
 void CBody_Zombie::SetCulling(_bool boolean)
 {
 	if(m_pRagdoll)

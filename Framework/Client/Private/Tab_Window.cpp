@@ -8,6 +8,11 @@
 #include "ItemProp.h"
 #include "Read_Item_UI.h"
 #include "Item_Map_UI.h"
+#include "Targeting_Map_UI.h"
+
+
+constexpr _float BACKGROUND_MIN_ALPHA = 0.8f;
+
 
 CTab_Window::CTab_Window(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice , pContext }
@@ -46,7 +51,14 @@ HRESULT CTab_Window::Initialize(void* pArg)
 		if (FAILED(Creat_Item_Discription()))
 			return E_FAIL;
 
+		if (FAILED(Creat_Hint()))
+			return E_FAIL;
+
 		m_bDead = true;
+
+		m_isAlphaControl = true;
+
+		m_fAlpha = 0.8f;
 	}
 
 	Find_Cursor();
@@ -69,20 +81,32 @@ void CTab_Window::Start()
 	list<class CGameObject*>* pUILayer = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
 	_bool bReadItemUI = { false };
 	_bool bMapUI = { false };
+
 	for (auto& iter : *pUILayer)
 	{
+
+		// if(&&!bReadItemUI)
+
 		CRead_Item_UI* pRead = dynamic_cast<CRead_Item_UI*>(iter);
-		CItem_Map_UI* pMap = dynamic_cast<CItem_Map_UI*>(iter);
-		if(pRead!=nullptr &&!bReadItemUI)
-			if (pRead->Get_UI_TYPE() == CRead_Item_UI::READ_UI_TYPE::INTRODUCE_READ)
-			{
-				m_pRead_Item_UI = pRead;
-				bReadItemUI = true;
-			}
-		if (pMap != nullptr && !bMapUI)
+		if (pRead != nullptr && pRead->Get_UI_TYPE() == CRead_Item_UI::READ_UI_TYPE::INTRODUCE_READ)
 		{
-			m_pMap_UI = pMap;
+			m_pRead_Item_UI = pRead;
+			bReadItemUI = true;
+		}
+
+		CItem_Map_UI* pItem = dynamic_cast<CItem_Map_UI*>(iter);
+		if (pItem != nullptr && !bMapUI)
+		{
+			m_pMapItem_UI = pItem;
 			bMapUI = true;
+		}
+
+		CTargeting_Map_UI* pTarget = dynamic_cast<CTargeting_Map_UI*>(iter);
+		if (nullptr != pTarget 
+			&& nullptr == m_pTargetNotify_UI 
+			&& CMap_Manager::MAP_UI_TYPE::TARGET_NOTIFY == pTarget->Get_MapComponent_Type())
+		{
+			m_pTargetNotify_UI = pTarget;
 		}
 
 		CHotKey* pHotkey = dynamic_cast<CHotKey*>(iter);
@@ -120,6 +144,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 	}
 		
 	case Client::CTab_Window::HINT: { 
+		HINT_Operation(fTimeDelta);
 		break;
 	}
 
@@ -134,7 +159,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 	}
 
 	case Client::CTab_Window::INTERACT_PROPS: {
-		PICK_UP_ITEM_WINDOW_Operation(fTimeDelta);
+		INTERACT_PROPS_Operation(fTimeDelta);
 		break;
 	}
 
@@ -170,6 +195,7 @@ void CTab_Window::Late_Tick(_float fTimeDelta)
 	}
 
 	case Client::CTab_Window::HINT: {
+		m_pHint->Late_Tick(fTimeDelta);
 		break;
 	}
 
@@ -230,29 +256,59 @@ void CTab_Window::INVENTORY_Operation(_float fTimeDelta)
 
 void CTab_Window::HINT_Operation(_float fTimeDelta)
 {
+	m_pHint->Tick(fTimeDelta);
 }
 
 void CTab_Window::EXAMINE_Operation(_float fTimeDelta)
 {
 	m_pItem_Mesh_Viewer->Tick(fTimeDelta);
-	if (m_fCurTime / 0.5f < 1.f)
-	{
-		m_fCurTime += fTimeDelta;
-		m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 0.f, 1.f, m_fCurTime / 0.5f);
-	}
 
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+	switch (m_eSequence)
 	{
-		m_eWindowType = INVENTORY;
-		m_pHintButton->Set_Dead(false);
-		m_pInvenButton->Set_Dead(false);
-		m_pMapButton->Set_Dead(false);
-		m_pInventory_Manager->Set_OnOff_Inven(false);
-		m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END);
+	case Client::POP_UP: {
+		if (m_fCurTime / 0.5f < 1.f)
+		{
+			m_fCurTime += fTimeDelta;
+			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, BACKGROUND_MIN_ALPHA, 1.f, m_fCurTime / 0.5f);
+		}
+
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		{
+			m_fCurTime = 0.f;
+			m_eSequence = HIDE;
+			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END);
+
+			m_pHintButton->Set_Dead(false);
+			m_pInvenButton->Set_Dead(false);
+			m_pMapButton->Set_Dead(false);
+			m_pInventory_Manager->Set_OnOff_Inven(false);
+			m_pHotKey->Set_Dead(false);
+		}
+		break;
+	}
 		
-		m_fCurTime = 0.f;
-		m_fAlpha = 0.f;
-		m_isAlphaControl = false;
+
+	case Client::HIDE: {
+		if (m_fCurTime / 0.5f < 1.f)
+		{
+			m_fCurTime += fTimeDelta;
+			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 1.f, BACKGROUND_MIN_ALPHA, m_fCurTime / 0.5f);
+		}
+
+		else
+		{
+			m_eWindowType = INVENTORY;
+
+			m_pItem_Mesh_Viewer->Set_Dead(true);
+
+			m_fCurTime = 0.f;
+		}
+
+		break;
+	}
+		
+	default:
+		break;
 	}
 }
 
@@ -267,7 +323,7 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 		if (m_fCurTime / 0.5f < 1.f)
 		{
 			m_fCurTime += fTimeDelta;
-			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 0.f, 1.f, m_fCurTime / 0.5f);
+			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, BACKGROUND_MIN_ALPHA, 1.f, m_fCurTime / 0.5f);
 		}
 
 		else
@@ -296,9 +352,6 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 
 				/*TabWindow 세팅*/
 				m_fCurTime = 0.f;
-				m_fAlpha = 0.f;
-				//m_isAlphaControl = false;
-
 				break;
 			}
 		}
@@ -330,7 +383,7 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 		if (m_fCurTime / 0.5f < 1.f)
 		{
 			m_fCurTime += fTimeDelta;
-			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 1.f, 0.8f, m_fCurTime / 0.5f);
+			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 1.f, BACKGROUND_MIN_ALPHA, m_fCurTime / 0.5f);
 		}
 		break;
 	}
@@ -349,8 +402,6 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 
 void CTab_Window::INTERACT_PROPS_Operation(_float fTimeDelta)
 {
-
-
 	m_pInventory_Manager->Tick(fTimeDelta);
 	ITEM_NUMBER eSelectedItemNum = m_pInventory_Manager->Get_Selected_ItemNum();
 	m_pItem_Discription->Set_Item_Number(eSelectedItemNum);
@@ -367,11 +418,13 @@ void CTab_Window::ItemIven_EventHandle(_float fTimeDelta)
 		if (ITEM_NUMBER_END != m_pInventory_Manager->Get_Selected_ItemNum())
 		{
 			m_eWindowType = EXAMINE;
+			m_eSequence = POP_UP;
 			m_isMapRender = false;
 			m_pHintButton->Set_Dead(true);
 			m_pInvenButton->Set_Dead(true);
 			m_pMapButton->Set_Dead(true);
 			m_pInventory_Manager->Set_OnOff_Inven(true);
+			m_pHotKey->Set_Dead(true);
 			m_isAlphaControl = true;
 			ITEM_NUMBER eItem_Num = m_pInventory_Manager->Get_Selected_ItemNum();
 			m_pItem_Mesh_Viewer->Set_Operation(POP_UP, eItem_Num);
@@ -394,6 +447,8 @@ void CTab_Window::Button_Act(_float fTimeDelta)
 			m_eWindowType = MINIMAP;
 			m_isMapRender = true;
 			m_pInventory_Manager->Set_OnOff_Inven(true);
+			m_pHotKey->Set_Dead(true);
+			m_pHint->Set_Dead(true);
 		}
 
 		else if (true == m_pInvenButton->IsMouseHover())
@@ -401,7 +456,8 @@ void CTab_Window::Button_Act(_float fTimeDelta)
 			m_eWindowType = INVENTORY;
 			m_isMapRender = false;
 			m_pInventory_Manager->Set_OnOff_Inven(false);
-
+			m_pHotKey->Set_Dead(false);
+			m_pHint->Set_Dead(true);
 		}
 
 		else if (true == m_pHintButton->IsMouseHover())
@@ -409,6 +465,8 @@ void CTab_Window::Button_Act(_float fTimeDelta)
 			m_eWindowType = HINT;
 			m_isMapRender = false;
 			m_pInventory_Manager->Set_OnOff_Inven(true);
+			m_pHotKey->Set_Dead(true);
+			m_pHint->Set_Dead(false);
 		}
 	}
 }
@@ -484,9 +542,18 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 			//인벤토리 문서 부분에 먹었다 추가=> 아직 없는 것으로 앎 나중에
 			pPickedUp_Item->Set_Dead(true);
 		}
+
 		else
 		{
-			//m_pMap_UI->Destory_Item((MAP_FLOOR_TYPE)pProp->Get_Floor(), (LOCATION_MAP_VISIT)pProp->Get_Region(), (ITEM_NUMBER)iPickedUpItemNum);
+			/* 아이템 삭제 */
+			m_pMapItem_UI->Destory_Item((MAP_FLOOR_TYPE)pProp->Get_Floor(), (LOCATION_MAP_VISIT)pProp->Get_Region(), (ITEM_NUMBER)iPickedUpItemNum);
+			
+			/* 아이템으로 인한 맵 확인 */
+			if (nullptr != m_pTargetNotify_UI)
+			{
+				/* Tab Window -> Target Notify -> Main Map*/
+				m_pTargetNotify_UI->Set_SearchFor_Verification_MapType(pProp->Get_Floor(), pProp->Get_Region());
+			}
 		}
 	}
 }
@@ -661,6 +728,16 @@ HRESULT CTab_Window::Creat_MiniMap()
 
 HRESULT CTab_Window::Creat_Hint()
 {
+	//CUI::UI_DESC UIDesc = {};
+	//UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.f };
+	//UIDesc.vSize = { g_iWinSizeX, g_iWinSizeY };
+
+	CGameObject* pGameOBJ = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Hint"));
+	m_pHint = dynamic_cast<CHint*>(pGameOBJ);
+
+	if (nullptr == m_pHint)
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -740,4 +817,6 @@ void CTab_Window::Free()
 	Safe_Release(m_pItem_Mesh_Viewer);
 	Safe_Release(m_pItem_Discription);
 	Safe_Release(m_pHotKey);
+	Safe_Release(m_pHint);
+	
 }

@@ -104,6 +104,8 @@
 #include "LayOut_UI.h"
 #include "Damage_UI.h"
 #include "HotKey.h"
+#include "Hint.h"
+#include "Hint_Highliter.h"
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -166,8 +168,8 @@ HRESULT CLoader::Start()
 	case LEVEL_GAMEPLAY:
 		g_Level = LEVEL_GAMEPLAY;
 
-		//if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-		//	return E_FAIL;
+		if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+			return E_FAIL;
 
 		hr = Loading_For_GamePlay();
 		break;
@@ -349,6 +351,9 @@ void CLoader::CreatFromDat(ifstream& inputFileStream, wstring strListName, CGame
 		MSG_BOX(TEXT("Failed to Add Clone"));
 
 	CGameObject* pGameObj = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"))->back();
+	CLoading_UI* pLoading = static_cast<CLoading_UI*>(pGameObj);
+
+	m_eLoadingList.push_back(pLoading);
 
 	if (nullptr != pGameParentsObj)
 	{
@@ -616,6 +621,16 @@ HRESULT CLoader::Load_Prototype()
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HotKey"),
 		CHotKey::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	/* For.Prototype_GameObject_Hint */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hint"),
+		CHint::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Hint */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hint_Highliter"),
+		CHint_Highliter::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 	
 #pragma endregion
 
@@ -723,6 +738,16 @@ HRESULT CLoader::Loading_For_Static_Component()
 	/*Prototype_Component_Texture_Filled*/
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_WholeMouse"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Inventory/WholeMouse.png")))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Hint_BackGround*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Hint_BackGround"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Hint/Hint_BackGround.dds")))))
+		return E_FAIL;
+
+	/*Prototype_Component_Texture_Long_Box_Select_Click*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Long_Box_Select_Click"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Inventory/Long_Box_Select_Click.png")))))
 		return E_FAIL;
 #pragma endregion
 
@@ -2231,6 +2256,12 @@ HRESULT CLoader::Loading_For_GamePlay()
 	m_strLoadingText = TEXT("Loading Complete.");
 
 	m_isFinished = true;
+
+	if (true == m_isFinished)
+	{
+		for (auto& iter : m_eLoadingList)
+			iter->Set_IsRender(false);
+	}
 
 	//if (true == m_isFinished)
 	//{

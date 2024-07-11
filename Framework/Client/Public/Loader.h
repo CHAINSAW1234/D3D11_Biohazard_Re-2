@@ -49,13 +49,18 @@ private:
 	_bool						m_isFinished = { false };
 
 	CGameInstance*				m_pGameInstance = { nullptr };
-	
+
 private:
 	HRESULT Loading_For_Logo();
 	HRESULT Loading_For_GamePlay();
 
+
 private:
 	HRESULT	Load_Animations();
+
+
+private :
+	list<class CLoading_UI*>				m_eLoadingList;
 
 
 public:

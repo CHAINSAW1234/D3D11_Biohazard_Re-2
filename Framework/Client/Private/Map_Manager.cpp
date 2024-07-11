@@ -325,6 +325,12 @@ void CMap_Manager::Rendering(_float fTimeDelta)
 
 	else if (m_eFloorType != *m_pMapPlayer->Get_ViewFloor_Type() && MAP_FLOOR_TYPE::FLOOR_FREE != m_eFloorType)
 	{
+		if (m_isPrevRender != m_pTab_Window->Get_MinMapRender())
+		{
+			m_fBlending = 1.f;
+			m_isRender = false;
+		}
+
 		/* Floor Search »©°í */
 		if (true == m_isRender)
 		{
@@ -362,7 +368,6 @@ void CMap_Manager::Rendering(_float fTimeDelta)
 				m_fBlending += fTimeDelta * BLENDING_SPEED;
 			}
 		}
-
 	}
 }
 

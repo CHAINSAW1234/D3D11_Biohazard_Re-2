@@ -462,6 +462,12 @@ public:
 	{
 		m_bHit_DecalRay = boolean;
 	}
+
+#pragma region Partial Ragdoll
+public:
+	void						Release_PartialCollider(COLLIDER_TYPE eType);
+#pragma endregion
+
 private:
 	_bool											m_bHit = { false };
 	_float4											m_vForce;
@@ -476,6 +482,8 @@ private:
 	vector<PxRigidDynamic*>							m_vecHitPart_STG;
 	vector<COLLIDER_TYPE>							m_vecColliderType_STG;
 	_bool											m_bHit_DecalRay = { false };
+
+	vector<_bool>									m_vecBreakPartFilter;
 #pragma endregion
 
 public:

@@ -420,6 +420,14 @@ void CZombie::Tick(_float fTimeDelta)
 				}
 			}
 
+			for (auto& pPartObject : m_PartObjects)
+			{
+				if (nullptr != pPartObject)
+					pPartObject->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
+
+				m_bPartial_Ragdoll = true;
+			}
+
 			if (m_bBigAttack)
 			{
 				SetBlood_STG();

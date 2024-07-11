@@ -230,6 +230,9 @@
     <ClInclude Include="..\Public\Creep_Zombie.h" />
     <ClInclude Include="..\Public\Find_Door_To_Target_Zombie.h" />
     <ClInclude Include="..\Public\HG_Cartridge.h" />
+    <ClInclude Include="..\Public\Hint.h" />
+    <ClInclude Include="..\Public\Hint_Display.h" />
+    <ClInclude Include="..\Public\Hint_Highliter.h" />
     <ClInclude Include="..\Public\Hit.h" />
     <ClInclude Include="..\Public\Hit_Props.h" />
     <ClInclude Include="..\Public\Impact.h" />
@@ -470,6 +473,9 @@
     <ClCompile Include="..\Private\Decal_SSD.cpp" />
     <ClCompile Include="..\Private\Find_Door_To_Target_Zombie.cpp" />
     <ClCompile Include="..\Private\HG_Cartridge.cpp" />
+    <ClCompile Include="..\Private\Hint.cpp" />
+    <ClCompile Include="..\Private\Hint_Display.cpp" />
+    <ClCompile Include="..\Private\Hint_Highliter.cpp" />
     <ClCompile Include="..\Private\Hit.cpp" />
     <ClCompile Include="..\Private\Hit_Props.cpp" />
     <ClCompile Include="..\Private\Impact.cpp" />
