@@ -734,7 +734,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pDeco_Is_In_Door_Zombie->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_InDoorCheck->Insert_Decorator_Node(pDeco_Is_In_Door_Zombie);
 
-//#pragma region Selector Start SetUp
+#pragma region Selector Start SetUp
 //
 //	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
 //	CComposite_Node* pSelectorNode_StartSetUp = { CComposite_Node::Create(&CompositeNodeDesc) };
@@ -744,7 +744,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 //	pDeco_Is_Start_Rub_Door->SetBlackBoard(m_pBlackBoard);
 //	pSelectorNode_StartSetUp->Insert_Child_Node(pDeco_Is_Start_Rub_Door);
 //
-//#pragma region Rub Door
+#pragma region Rub Door
 //
 //	CRub_Door_Zombie* pTask_Rub_Door = { CRub_Door_Zombie::Create() };
 //	pTask_Rub_Door->SetBlackBoard(m_pBlackBoard);
@@ -754,9 +754,9 @@ void CZombie::Init_BehaviorTree_Zombie()
 //	pDeco_Is_Collision_Door_Trigger->SetBlackBoard(m_pBlackBoard);
 //	pTask_Rub_Door->Insert_Decorator_Node(pDeco_Is_Collision_Door_Trigger);
 //
-//#pragma endregion	Child Selector Start SetUp 
+#pragma endregion	Child Selector Start SetUp 
 //
-//#pragma region Move To Door
+#pragma region Move To Door
 //
 //	CMove_To_Target_Zombie* pTask_Move_To_Door = { CMove_To_Target_Zombie::Create() };
 //	pTask_Move_To_Door->SetBlackBoard(m_pBlackBoard);
@@ -767,8 +767,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 //	pDeco_Is_Collision_Door_Inverse_Trigger->SetBlackBoard(m_pBlackBoard);
 //	pTask_Move_To_Door->Insert_Decorator_Node(pDeco_Is_Collision_Door_Inverse_Trigger);
 //
-//#pragma endregion	Child Selector Start SetUp 
-	
+#pragma endregion	Child Selector Start SetUp 	
 #pragma endregion Selector In Door Check Child
 
 #pragma region Sequence Different Location Player

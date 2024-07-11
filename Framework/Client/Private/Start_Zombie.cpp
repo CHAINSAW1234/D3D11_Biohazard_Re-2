@@ -79,7 +79,24 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 			m_pBlackBoard->Get_AI()->Set_Start(false);
 			m_pBlackBoard->Get_AI()->Set_State(MONSTER_STATE::MST_IDLE);
 			m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
-			m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_UP);
+
+			CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+			
+			wstring			strAnimLayerTag = { TEXT("Undiscovered_Dead_Pose")};
+
+			_int			iRandom = { m_pGameInstance->GetRandom_Int(static_cast<_int>(ANIM_UNDISCOVERED_DEAD_POSE::_FACEDOWN1), static_cast<_int>(ANIM_UNDISCOVERED_DEAD_POSE::_FACEUP4)) };
+
+			if (iRandom < static_cast<_int>(ANIM_UNDISCOVERED_DEAD_POSE::_FACEUP1))
+			{
+				m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_DOWN);
+			}
+
+			else
+			{
+				m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_UP);
+			}
+
+			pBody_Model->Change_Animation(static_cast<_uint>(PLAYING_INDEX::INDEX_0), strAnimLayerTag, static_cast<_uint>(iRandom));
 
 #ifdef _DEBUG
 			MSG_BOX(TEXT("Start! Creep"));
