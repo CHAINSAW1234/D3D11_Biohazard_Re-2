@@ -27,11 +27,15 @@ public:
 		R_DOUBLEDOOR_OPEN,
 		DOUBLEDOOR_END
 	};
-
+	enum DUMMYDOOR_STATE
+	{
+		DUMMY_OPEN //더미,,, 오픈한다
+	};
 	enum TYPE_DOOR
 	{
 		DOOR_ONE,
 		DOOR_DOUBLE,
+		DOOR_DUMMY
 	};
 
 	enum PART_DOOR
@@ -93,12 +97,16 @@ public:
 				else
 					m_eDoubleState = R_DOUBLEDOOR_OPEN;
 			}
-			else
+			else if(m_eType==DOOR_ONE)
 			{
 				if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
 					m_eOneState = ONEDOOR_OPEN_L;
 				else
 					m_eOneState = ONEDOOR_OPEN_R;
+			}
+			else if (m_eType == DOOR_DUMMY)
+			{
+
 			}
 			
 			m_pZombieTransform = pTransfromCom;

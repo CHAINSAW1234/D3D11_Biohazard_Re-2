@@ -31,7 +31,7 @@ HRESULT CBody_Door::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 
 		return E_FAIL;
-	if (*m_pState != CDoor::DOOR_DOUBLE)
+	if (*m_pState == CDoor::DOOR_ONE)
 		if (FAILED(Initialize_Model()))
 			return E_FAIL;
 
@@ -46,21 +46,25 @@ HRESULT CBody_Door::Initialize(void* pArg)
 
 
 	}
-	m_pModelCom->Set_RootBone("RootNode");
-	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
-
-	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
-	m_pModelCom->Set_TotalLinearInterpolation(0.5f);
-
-	/*
-	if (m_eType == DOOR_DOUBLE)
+	if (*m_pState != CDoor::DOOR_DUMMY)
 	{
-		m_pModelCom->Add_AnimPlayingInfo(1, false, 0, TEXT("Default"), 0.5f);
-		m_pModelCom->Add_AnimPlayingInfo(1, false, 1, TEXT("Default"), 0.5f);
-	}
-	*/
+		m_pModelCom->Set_RootBone("RootNode");
+		m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
-	m_pModelCom->Active_RootMotion_Rotation(true);
+		m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
+		m_pModelCom->Set_TotalLinearInterpolation(0.5f);
+
+		/*
+		if (m_eType == DOOR_DOUBLE)
+		{
+			m_pModelCom->Add_AnimPlayingInfo(1, false, 0, TEXT("Default"), 0.5f);
+			m_pModelCom->Add_AnimPlayingInfo(1, false, 1, TEXT("Default"), 0.5f);
+		}
+		*/
+
+		m_pModelCom->Active_RootMotion_Rotation(true);
+	}
+	
 
 #ifndef NON_COLLISION_PROP
 
@@ -96,7 +100,7 @@ HRESULT CBody_Door::Initialize(void* pArg)
 			}
 		}
 	}
-	else
+	else if(*m_pState == CDoor::DOOR_ONE)
 	{
 		m_pPx_Collider = m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
@@ -111,13 +115,19 @@ HRESULT CBody_Door::Initialize(void* pArg)
 
 void CBody_Door::Tick(_float fTimeDelta)
 {
+	if (*m_pState == CDoor::DOOR_DUMMY)
+		return;
 	__super::Tick(fTimeDelta);
+
+
 	*m_pState == CDoor::DOOR_ONE ? OneDoor_Tick(fTimeDelta) : DoubleDoor_Tick(fTimeDelta);
 
 }
 
 void CBody_Door::Late_Tick(_float fTimeDelta)
 {
+	if (*m_pState == CDoor::DOOR_DUMMY)
+		return;
 
 	*m_pState == CDoor::DOOR_ONE ? OneDoor_Late_Tick(fTimeDelta) : DoubleDoor_Late_Tick(fTimeDelta);
 	Get_SpecialBone_Rotation();
@@ -130,6 +140,7 @@ void CBody_Door::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_Door::Render()
 {
+
 	if (m_bRender == false)
 		return S_OK;
 	else
