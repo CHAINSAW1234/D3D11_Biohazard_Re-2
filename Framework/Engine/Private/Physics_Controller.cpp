@@ -908,6 +908,21 @@ void CPhysics_Controller::Start_Ragdoll(CRagdoll_Physics* pRagdoll, _uint iId)
 	}
 }
 
+void CPhysics_Controller::Start_PartialRagdoll(CRagdoll_Physics* pRagdoll, _uint iId, COLLIDER_TYPE eType)
+{
+	if (nullptr != pRagdoll)
+	{
+		if (m_vecCharacter_Controller[iId])
+		{
+			m_vecCharacter_Controller[iId]->Release_PartialCollider(eType);
+		}
+
+		pRagdoll->Set_Index_CCT(iId);
+		pRagdoll->Init_PartialRagdoll(eType);
+		pRagdoll->SetSimulate(true);
+	}
+}
+
 void CPhysics_Controller::SetBone_Ragdoll(vector<class CBone*>* vecBone)
 {
 	//if(nullptr != m_pRagdoll_Physics)

@@ -79,6 +79,10 @@ public:
 	{
 		m_bRagdoll = true;
 	}
+	virtual void								SetPartialRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType)
+	{
+		m_bPartial_Ragdoll = true;
+	}
 	void										SetOctreeNode(class COctree* pNode)
 	{
 		m_pOctreeNode = pNode;
@@ -111,6 +115,7 @@ protected:
 
 	_bool										m_bRagdoll = { false };
 	_bool										m_bRagdoll_Ready = { false };
+	_bool										m_bPartial_Ragdoll = { false };
 	class COctree*								m_pOctreeNode = { nullptr };
 
 	_int										m_iPx_Collider_Id = { 0 };
