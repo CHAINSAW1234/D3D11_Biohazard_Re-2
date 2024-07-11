@@ -190,9 +190,6 @@
     <Filter Include="02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Item_UI">
       <UniqueIdentifier>{3b6a69ad-2251-4b94-aaa0-95402954d590}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Slot_Highlighter">
-      <UniqueIdentifier>{d3a9314f-e0fe-4296-944a-752b05519c2e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\99. Tab_Window\3. Item_Mesh_Viewer">
       <UniqueIdentifier>{8fc62147-6bd9-4032-995f-a57db115d6ed}</UniqueIdentifier>
     </Filter>
@@ -678,6 +675,9 @@
     </Filter>
     <Filter Include="03. Event\Event_0">
       <UniqueIdentifier>{3a054203-ee6d-403f-93e1-bc7be3f571da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Slot_Highlighter">
+      <UniqueIdentifier>{d3a9314f-e0fe-4296-944a-752b05519c2e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -56,14 +56,13 @@ HRESULT CInventory_Manager::Initialize()
 
 void CInventory_Manager::FirstTick_Seting()
 {
-	m_pSlotHighlighter->FirstTick_Seting();
-	
-	m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
-
 	AddItem_ToInven(HandGun, 15);
 	AddItem_ToInven(ShotGun, 7);
 	AddItem_ToInven(handgun_bullet01a, 20);
 	AddItem_ToInven(shotgun_bullet01a, 20);
+
+
+
 }
 
 void CInventory_Manager::Tick(_float fTimeDelta)
@@ -168,12 +167,8 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 			{
 				if (true == m_pSelected_ItemUI->IsMouseHover() && true == m_pSelected_ItemUI->Get_isWorking())
 				{
-					ITEM_NUMBER eSelectedItemNum = m_pSelected_ItemUI->Get_ItemNumber();
-
-					//이징 스타트 도착 지점 제대로 정해주기
-					_float3 TempTrashCanValue = _float3(HoveredPos.x, HoveredPos.y, Z_POS_CONTEXT_MENU);
-					m_pContextMenu->Set_Operation(m_pSelected_ItemUI->Get_ItemType(), true, TempTrashCanValue, TempTrashCanValue);
 					m_eInven_Manager_State = CONTEXTUI_SELECT;
+					m_eTaskSequence = SETING;
 				}
 			}
 
@@ -182,7 +177,6 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 				if (true == m_pSelected_ItemUI->IsMouseHover() && true == m_pSelected_ItemUI->Get_isWorking())
 				{
 					m_fPressingTime += fTimeDelta;
-
 					if (m_fPressingTime >= PRESSING_TIME)
 					{
 						_vector TempTrashCanValue = XMVectorSet(HoveredPos.x, HoveredPos.y, Z_POS_ITEM_UI, 1.f);
@@ -204,12 +198,36 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 
 void CInventory_Manager::EQUIP_ITEM_Operation(_float fTimeDelta)
 {
+	m_pSelected_ItemUI->Set_isEquiped(true);
 
+	for (_uint i = 0; i < 5; i++)
+	{
+		if (ITEM_NUMBER_END == m_eEquipedItem[i]) {
+			m_eEquipedItem[i] = m_pSelected_ItemUI->Get_ItemNumber();
+			break;
+		}
+	}
+
+	m_pSelected_ItemUI->Set_Dead(false);
+	m_pSelected_ItemUI = nullptr;
+	m_eInven_Manager_State = EVENT_IDLE;
 }
 
 void CInventory_Manager::UNEQUIP_ITEM_Operation(_float fTimeDelta)
 {
+	m_pSelected_ItemUI->Set_isEquiped(false);
 
+	for (_uint i = 0; i < 5; i++)
+	{
+		if (m_eEquipedItem[i] == m_pSelected_ItemUI->Get_ItemNumber())
+		{
+			m_eEquipedItem[i] = ITEM_NUMBER_END;
+			break;
+		}
+	}
+	m_pSelected_ItemUI->Set_Dead(false);
+	m_pSelected_ItemUI = nullptr;
+	m_eInven_Manager_State = EVENT_IDLE;
 }
 
 void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
@@ -580,7 +598,6 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 		break;
 	}
 
-
 	default:
 		break;
 	}
@@ -607,10 +624,11 @@ void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 			
 			if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 			{
-				m_pHotkey->RegisterHoykey(_float2(HighligeterSetingPos.x, HighligeterSetingPos.y), 
+				_uint iHotKeyNum = m_pHotkey->RegisterHoykey(_float2(HighligeterSetingPos.x, HighligeterSetingPos.y), 
 					m_pSelected_ItemUI->Get_ItemNumber(), m_pSelected_ItemUI->Get_ItemQuantity());
 				_float4 HighligeterSetingPos = { m_vecInvenSlot[0]->GetPosition().x, m_vecInvenSlot[0]->GetPosition().y, Z_POS_HIGH_LIGHTER, 1.0 };
 				m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HighligeterSetingPos);
+				m_pSelected_ItemUI->Set_Text(HOTKEY_DISPLAY, to_wstring(iHotKeyNum));
 				
 				m_eTaskSequence = TS_END;
 				m_eInven_Manager_State = EVENT_IDLE;
@@ -761,6 +779,103 @@ void CInventory_Manager::DISCARD_ITEM_Operation(_float fTimeDelta)
 
 void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 {
+	m_pContextMenu->Tick(fTimeDelta);
+
+	switch (m_eTaskSequence)
+	{
+	case Client::CInventory_Manager::SETING: {
+		ITEM_NUMBER eSelectedItemNum = m_pSelected_ItemUI->Get_ItemNumber();
+		//이징 스타트 도착 지점 제대로 정해주기
+		_float3 TempTrashCanValue = _float3(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y, Z_POS_CONTEXT_MENU);
+
+		m_pContextMenu->Set_Operation(m_pSelected_ItemUI->Get_ItemType(), m_pSelected_ItemUI->Get_isEquiped(), TempTrashCanValue, TempTrashCanValue);
+		m_eTaskSequence = SELECT;
+		break;
+	}
+
+	case Client::CInventory_Manager::SELECT: {
+		INVENTORY_EVENT eInvenEvent = m_pContextMenu->Get_InventoryEvent();
+
+		switch (eInvenEvent)
+		{
+		case Client::EVENT_IDLE:
+			break;
+
+		case Client::EQUIP_ITEM: {
+			m_eInven_Manager_State = EQUIP_ITEM;
+			m_pContextMenu->Set_Dead(true);
+			m_eTaskSequence = SETING;
+			break;
+		}
+
+		case Client::UNEQUIP_ITEM: {
+			m_eInven_Manager_State = UNEQUIP_ITEM;
+			m_pContextMenu->Set_Dead(true);
+			m_eTaskSequence = SETING;
+			break;
+		}
+
+		case Client::USE_ITEM: {
+			m_eInven_Manager_State = USE_ITEM;
+			m_pContextMenu->Set_Dead(true);
+			m_eTaskSequence = SETING;
+			break;
+		}
+
+		case Client::EXAMINE_ITEM: {
+			m_eInven_Manager_State = EXAMINE_ITEM;
+			m_pContextMenu->Set_Dead(true);
+			m_eTaskSequence = SETING;
+			break;
+		}
+
+		case Client::COMBINED_ITEM: {
+			m_eInven_Manager_State = COMBINED_ITEM;
+			m_eTaskSequence = SETING;
+			m_pContextMenu->Set_Dead(true);
+			break;
+		}
+
+		case Client::HOTKEY_ASSIGNED_ITEM: {
+			m_eInven_Manager_State = HOTKEY_ASSIGNED_ITEM;
+			m_eTaskSequence = SETING;
+			m_pContextMenu->Set_Dead(true);
+			break;
+		}
+
+		case Client::REARRANGE_ITEM: {
+			m_eInven_Manager_State = REARRANGE_ITEM;
+			m_pContextMenu->Set_Dead(true);
+			m_eTaskSequence = SETING;
+			break;
+		}
+
+		case Client::DISCARD_ITEM: {
+			m_eInven_Manager_State = DISCARD_ITEM;
+			m_pContextMenu->Set_Dead(true);
+			m_eTaskSequence = SETING;
+			break;
+		}
+
+		case Client::CONTEXTUI_SELECT: {
+			m_eInven_Manager_State = CONTEXTUI_SELECT;
+			m_pContextMenu->Set_Dead(true);
+			m_eTaskSequence = SETING;
+			break;
+		}
+
+		default:
+			break;
+		}
+		break;
+	}
+		
+	default:
+		break;
+	}
+
+
+
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
 	{
 		m_eInven_Manager_State = EVENT_IDLE;
@@ -769,74 +884,7 @@ void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 		return;
 	}
 
-	m_pContextMenu->Tick(fTimeDelta);
 
-	INVENTORY_EVENT eInvenEvent = m_pContextMenu->Get_InventoryEvent();
-
-	switch (eInvenEvent)
-	{
-	case Client::EVENT_IDLE:
-		break;
-
-	case Client::EQUIP_ITEM: {
-		m_eInven_Manager_State = EQUIP_ITEM;
-		m_pContextMenu->Set_Dead(true);
-		break;
-	}
-		
-	case Client::UNEQUIP_ITEM: {
-		m_eInven_Manager_State = UNEQUIP_ITEM;
-		m_pContextMenu->Set_Dead(true);
-		break;
-	}
-		
-	case Client::USE_ITEM: {
-		m_eInven_Manager_State = USE_ITEM;
-		m_pContextMenu->Set_Dead(true);
-		break;
-	}
-		
-	case Client::EXAMINE_ITEM: {
-		m_eInven_Manager_State = EXAMINE_ITEM;
-		m_pContextMenu->Set_Dead(true);
-		break;
-	}
-		
-	case Client::COMBINED_ITEM: {
-		m_eInven_Manager_State = COMBINED_ITEM;
-		m_eTaskSequence = SETING;
-		m_pContextMenu->Set_Dead(true);
-		break;
-	}
-		
-	case Client::HOTKEY_ASSIGNED_ITEM: {
-		m_eInven_Manager_State = HOTKEY_ASSIGNED_ITEM;
-		m_eTaskSequence = SETING;
-		m_pContextMenu->Set_Dead(true);
-		break;
-	}
-		
-	case Client::REARRANGE_ITEM: {
-		m_eInven_Manager_State = REARRANGE_ITEM;
-		m_pContextMenu->Set_Dead(true);
-		break;
-	}
-		
-	case Client::DISCARD_ITEM: {
-		m_eInven_Manager_State = DISCARD_ITEM;
-		m_pContextMenu->Set_Dead(true);
-		break;
-	}
-		
-	case Client::CONTEXTUI_SELECT: {
-		m_eInven_Manager_State = CONTEXTUI_SELECT;
-		m_pContextMenu->Set_Dead(true);
-		break;
-	}
-	
-	default:
-		break;
-	}
 }
 
 void CInventory_Manager::Switch_ItemPos(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI)
@@ -914,6 +962,7 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 		else
 		{
 			iter->Set_Dead(bInput);
+			m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
 		}
 	}
 
@@ -977,9 +1026,7 @@ void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
 		if (eTargetItemNum == iter->Get_ItemNumber() && true == iter->Get_isWorking())
 		{
 			iter->Set_ItemVariation(-iUsage);
-
-			
-
+			m_pHotkey->Update_Registed_Item(eTargetItemNum, iter->Get_ItemQuantity());
 			//todo 재귀하게 만들어보면 좋을듯 남은 수량 다 써버리게
 			//if (iter->Get_ItemQuantity() >= iUsage)
 			//	iter->Set_ItemVariation(-iUsage);
@@ -989,6 +1036,8 @@ void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
 			//}
 		}
 	}
+
+	
 }
 
 void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)
@@ -1538,6 +1587,86 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 	}
 
 	return ITEM_TYPE::INVEN_ITEM_TYPE_END;
+}
+
+_uint CInventory_Manager::PickUpItem_Quantity_Classify(ITEM_NUMBER eItemNum)
+{
+	switch (eItemNum)
+	{
+	case Client::emergencyspray01a:
+	case Client::greenherb01a:
+	case Client::redherb01a:
+	case Client::blueherb01a:
+	case Client::herbsgg01a:
+	case Client::herbsgr01a:
+	case Client::herbsgb01a:
+	case Client::herbsggb01a:
+	case Client::herbsggg01a:
+	case Client::herbsgrb01a:
+	case Client::herbsrb01a:
+	case Client::greenherbitem01a:
+	case Client::redherbitem01a:
+	case Client::blueherbitem01a:
+		return 1;
+		break;
+
+	case Client::handgun_bullet01a:
+		CGameInstance::Get_Instance()->GetRandom_Int(1, 10);
+		break;
+	case Client::shotgun_bullet01a:
+		CGameInstance::Get_Instance()->GetRandom_Int(1, 10);
+		break;
+
+	case Client::woodbarricade01a:
+	case Client::blastingfuse01a:
+	case Client::_9vbattery01a:
+	case Client::gunpowder01a:
+	case Client::gunpowder01b:
+	case Client::strengtheningyellow01a:
+	case Client::vp70powerup:
+	case Client::vp70longmagazine:
+	case Client::shotgunpartsstock_00:
+	case Client::shotgunpartsbarrel:
+	case Client::unicornmedal01a:
+	case Client::spadekey01a:
+	case Client::cardkeylv101a:
+	case Client::cardkeylv201a:
+	case Client::valvehandle01a:
+	case Client::kingscepter01a:
+	case Client::virginheart01a:
+	case Client::blankkey01a:
+	case Client::statuebook01a:
+	case Client::statuehand01a:
+	case Client::virginmedal01a:
+	case Client::diakey01a:
+	case Client::virginmedal02a:
+	case Client::chaincutter01a:
+	case Client::clairesbag01a:
+		return 1;
+		break;
+
+
+	case Client::HandGun:
+		return 15;
+		break;
+	case Client::ShotGun:
+		return 7;
+		break;
+
+	case Client::Flash_Bomb:
+	case Client::Grenade:
+	case Client::vp70stock:
+	case Client::portablesafe:
+		return 1;
+		break;
+
+	default:
+		break;
+	}
+
+
+
+	return _uint();
 }
 
 void CInventory_Manager::Set_ItemRecipe()

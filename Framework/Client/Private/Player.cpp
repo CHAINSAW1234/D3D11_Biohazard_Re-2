@@ -1306,6 +1306,8 @@ void CPlayer::Update_Equip()
 		{
 			if (m_pGameInstance->Get_KeyState(i) == DOWN)
 			{
+				m_pTabWindow->Hotkey_PopUp();
+
 				if (ITEM_NUMBER_END != m_pTabWindow->Get_Item_On_HotKey(i - 49))
 				{
 					ITEM_NUMBER eHotkeyNum = m_pTabWindow->Get_Item_On_HotKey(i - 49);
@@ -1336,6 +1338,8 @@ void CPlayer::Update_Equip()
 					}
 				}
 			}
+
+
 		}
 
 		//// test

@@ -27,9 +27,11 @@ public:
 
 public:
 	virtual void Set_Dead(_bool bDead) override;
+	void PopUp_Call();
+
 	CInventory_Slot* Get_Hoverd_Slot();
 	CInventory_Slot* Get_Empty_Slot();
-	void RegisterHoykey(_float2 RegisterPos, ITEM_NUMBER eItemNum, _int iItemQuantity);
+	_uint RegisterHoykey(_float2 RegisterPos, ITEM_NUMBER eItemNum, _int iItemQuantity);
 	void Update_Registed_Item(ITEM_NUMBER eItemNum, _int iItemQuantity);
 	//몇번 단축키에 몇번 아이템이 있는가
 	ITEM_NUMBER Get_Item_On_HotKey(_uint iHotKeyNum);
@@ -42,6 +44,11 @@ private:
 	CItem_UI*			m_pTHItemUI[3] = { nullptr, nullptr, nullptr };
 	
 	_float2				m_fPositions[4] = {};
+	_float2				m_fPopUp_Pos[4] = {};
+
+	_bool				m_isPopUp = { false };
+
+	_float				m_fLifeTime = { 0.f };
 
 private:
 	HRESULT Add_Components();
