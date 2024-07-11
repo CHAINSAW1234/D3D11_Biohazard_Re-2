@@ -322,6 +322,12 @@
     <Filter Include="01.Utility\97.Physics\Physics_Component\Rigid_Static">
       <UniqueIdentifier>{ce8c29a0-cd92-4212-9462-ab841d923a72}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\15. Event">
+      <UniqueIdentifier>{095beef8-245c-4e3b-a934-c7f24e656fc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\15. Event\Manager">
+      <UniqueIdentifier>{e50e6cca-74bc-4082-94e7-c01a796393b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -608,6 +614,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Rigid_Static.cpp">
       <Filter>01.Utility\97.Physics\Physics_Component\Rigid_Static</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event.cpp">
+      <Filter>01.Utility\15. Event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Manager.cpp">
+      <Filter>01.Utility\15. Event\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -917,6 +929,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Rigid_Static.h">
       <Filter>01.Utility\97.Physics\Physics_Component\Rigid_Static</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event.h">
+      <Filter>01.Utility\15. Event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Manager.h">
+      <Filter>01.Utility\15. Event\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

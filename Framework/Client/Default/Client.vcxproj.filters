@@ -649,6 +649,12 @@
     <Filter Include="02.GameObjects\Effect\Hit">
       <UniqueIdentifier>{8b1fb927-ed1b-4df2-86d3-43411b329dd7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Event">
+      <UniqueIdentifier>{2f54833f-1ff4-4e31-8f62-d86fa06ebe6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Event\Event_0">
+      <UniqueIdentifier>{3a054203-ee6d-403f-93e1-bc7be3f571da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1260,6 +1266,9 @@
     <ClInclude Include="..\Public\Hit.h">
       <Filter>02.GameObjects\Effect\Hit</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Event_Base.h">
+      <Filter>03. Event</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1831,6 +1840,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Hit.cpp">
       <Filter>02.GameObjects\Effect\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Event_Base.cpp">
+      <Filter>03. Event</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

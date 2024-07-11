@@ -276,6 +276,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_Test/Layer_Monster.dat"), strLayerTag, g_Level)))
 		return E_FAIL;
 #endif
+#ifdef MAP_INTERACT //- map
+	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
+		return E_FAIL;
+#endif
 	//CZombie::ZOMBIE_MALE_DESC		ObjectDesc;
 	//ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
 	//ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
@@ -1534,6 +1538,8 @@ HRESULT CLevel_GamePlay::Load_Monster(const wstring& strFilePath, const wstring&
 			CloseHandle(hFile);
 			return E_FAIL;
 		}
+		if (ObjectDesc.eStart_Type == ZOMBIE_START_TYPE::_END)
+			ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_CREEP;
 		if (!ReadFile(hFile, &ObjectDesc.eBodyModelType, sizeof(_int), &dwByte, nullptr))
 		{
 			CloseHandle(hFile);

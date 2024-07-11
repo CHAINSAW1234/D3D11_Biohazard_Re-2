@@ -211,7 +211,9 @@ UpdateLib.bat</Command>
     <ClCompile Include="..\Private\Decorator_Node.cpp" />
     <ClCompile Include="..\Private\Easing.cpp" />
     <ClCompile Include="..\Private\Decal.cpp" />
+    <ClCompile Include="..\Private\Event.cpp" />
     <ClCompile Include="..\Private\Event_Call_Back.cpp" />
+    <ClCompile Include="..\Private\Event_Manager.cpp" />
     <ClCompile Include="..\Private\FSM.cpp" />
     <ClCompile Include="..\Private\ComputeShader.cpp" />
     <ClCompile Include="..\Private\FSM_HState.cpp" />
@@ -310,6 +312,8 @@ UpdateLib.bat</Command>
     <ClInclude Include="..\Public\Easing.h" />
     <ClInclude Include="..\Public\Decal.h" />
     <ClInclude Include="..\Public\Engine_Enums.h" />
+    <ClInclude Include="..\Public\Event.h" />
+    <ClInclude Include="..\Public\Event_Manager.h" />
     <ClInclude Include="..\Public\FSM.h" />
     <ClInclude Include="..\Public\FSM_HState.h" />
     <ClInclude Include="..\Public\IK_Solver.h" />
