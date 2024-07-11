@@ -123,7 +123,7 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 		if (true == m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())))
 		{
 			m_pBlackBoard->Get_AI()->Set_Start(false);
-			m_pBlackBoard->Get_AI()->SetRagdoll(0, _float4(), COLLIDER_TYPE(0));
+			m_pBlackBoard->Get_AI()->SetRagdoll_StartPose();
 
 #ifdef _DEBUG
 			MSG_BOX(TEXT("Start! Rad Doll"));
