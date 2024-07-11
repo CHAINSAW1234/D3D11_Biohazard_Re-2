@@ -462,6 +462,10 @@ public:
 	{
 		m_bHit_DecalRay = boolean;
 	}
+	void						SetHitPart(PxRigidDynamic* pHitPart)
+	{
+		m_pHitPart = pHitPart;
+	}
 
 #pragma region Partial Ragdoll
 public:
