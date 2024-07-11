@@ -6,6 +6,8 @@
 constexpr _uint		EQ_SLOT_COUNT = 4;
 constexpr _uint		TH_SLOT_COUNT = 3;
 constexpr _float	Z_POS_ITEM_UI = 0.7f;
+constexpr _float	Y_DEF = 154.f;
+constexpr _float	LIFE_TIME_LIMIT = 0.5f;
 
 CHotKey::CHotKey(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice , pContext }
@@ -45,8 +47,11 @@ HRESULT CHotKey::Initialize(void* pArg)
 
 void CHotKey::Start()
 {
+
 	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)
 	{
+		m_fPopUp_Pos[i] = _float2(m_fPositions[i].x, m_fPositions[i].y - Y_DEF);
+
 		m_pEQItemUI[i]->Set_Text(HOTKEY_DISPLAY, to_wstring(i + 1));
 		m_pEQItemUI[i]->Set_PartUI_TextColor(HOTKEY_DISPLAY, XMVectorSet(1.f, 1.f, 1.f, 1.f));
 		m_pEQItemUI[i]->Set_ItemUI(ITEM_NUMBER_END, HOTKEY, XMVectorSet(m_fPositions[i].x, m_fPositions[i].y, Z_POS_ITEM_UI, 1.f), 0);
@@ -57,6 +62,25 @@ void CHotKey::Tick(_float fTimeDelta)
 {
 	if (true == m_bDead)
 		return;
+
+	if (true == m_isPopUp)
+	{
+		m_isAlphaControl = true;
+		m_fLifeTime += fTimeDelta;
+		if (m_fLifeTime > LIFE_TIME_LIMIT)
+		{
+			m_fAlpha -= 0.2f;
+			if (m_fAlpha < 0.f)
+			{
+				Set_Dead(true);
+				m_fAlpha = 1.f;
+				m_fLifeTime = 0.f;
+				m_isAlphaControl = false;
+			}
+		}
+	}
+
+
 }
 
 void CHotKey::Late_Tick(_float fTimeDelta)
@@ -88,13 +112,19 @@ void CHotKey::Set_Dead(_bool bDead)
 {
 	m_bDead = bDead;
 
-
-
 	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)
 	{
 		m_pEQInven_Slots[i]->Set_Dead(bDead);
 		m_pEQItemUI[i]->Set_Dead(bDead);
 	}
+
+	m_isPopUp = false;
+}
+
+void CHotKey::PopUp_Call()
+{
+	Set_Dead(false);
+	m_isPopUp = true;
 }
 
 CInventory_Slot* CHotKey::Get_Hoverd_Slot()
@@ -119,12 +149,8 @@ CInventory_Slot* CHotKey::Get_Empty_Slot()
 	return nullptr;
 }
 
-void CHotKey::RegisterHoykey(_float2 RegisterPos, ITEM_NUMBER eItemNum, _int iItemQuantity)
+_uint CHotKey::RegisterHoykey(_float2 RegisterPos, ITEM_NUMBER eItemNum, _int iItemQuantity)
 {
-	//아무것도 없을대 상관없음
-	//case1 a를 다른 단축키로 옮기는경우
-	//case2 a를 다른 단축키로 옮겼는데 다른 아이템이 있는경우 switch
-
 	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)
 	{
 		if (eItemNum == m_pEQItemUI[i]->Get_ItemNumber())
@@ -151,7 +177,7 @@ void CHotKey::RegisterHoykey(_float2 RegisterPos, ITEM_NUMBER eItemNum, _int iIt
 		if (true == m_pEQInven_Slots[i]->IsPTInRect(RegisterPos))
 		{
 			m_pEQInven_Slots[i]->Set_IsFilled(true);
-			break;
+			return i+1;
 		}
 	}
 }

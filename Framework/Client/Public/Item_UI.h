@@ -51,6 +51,9 @@ public:/*정보 Get,Set*/
 	_bool				Get_isHotKeyRegisted() const { return m_isHotKeyRegisted; }
 	void				Set_isHotKeyRegisted(_bool isHotKeyRegisted) { m_isHotKeyRegisted = isHotKeyRegisted; }
 
+	_bool				Get_isEquiped() const { return m_isEquiped; }
+	void				Set_isEquiped(_bool isEquiped) { m_isEquiped = isEquiped; }
+
 public:/*기능성*/
 	void				Reset_ItemUI();
 	void				Set_Activ_ItemUI(_bool Active);
@@ -64,11 +67,9 @@ private:
 	_bool				m_isHotKeyRegisted = { false };
 	_bool				m_isEquiped = { false };
 
-private:
 	ITEM_NUMBER			m_eItemNumber = { ITEM_NUMBER::ITEM_NUMBER_END };
 	ITEM_TYPE			m_eInvenItemType = { ITEM_TYPE::INVEN_ITEM_TYPE_END };
 
-	_bool				m_bCountable = { false };
 	_int				m_iItemQuantity = { 0 };
 	_int				m_iItemMaxQuantity = { 0 };
 

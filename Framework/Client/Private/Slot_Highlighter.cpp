@@ -28,9 +28,9 @@ HRESULT CSlot_Highlighter::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CSlot_Highlighter::FirstTick_Seting()
+void CSlot_Highlighter::Start()
 {
-	if(false == m_IsChild)
+	if (false == m_IsChild)
 	{
 		static_cast<CSlot_Highlighter*>(m_vecChildUI[CURSOR_SH])->Set_SH_Role(CURSOR_SH);
 		static_cast<CSlot_Highlighter*>(m_vecChildUI[GLITTER_SH])->Set_SH_Role(GLITTER_SH);

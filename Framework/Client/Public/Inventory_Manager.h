@@ -150,6 +150,8 @@ private:
 	/*for. Hotkey*/
 	CHotKey*						m_pHotkey = { nullptr };
 
+	/*for. Equiped Item*/
+	ITEM_NUMBER						m_eEquipedItem[4] = { ITEM_NUMBER_END, ITEM_NUMBER_END, ITEM_NUMBER_END, ITEM_NUMBER_END};
 
 private:
 	HRESULT Init_InvenSlot();
@@ -164,6 +166,7 @@ public:
 	static CInventory_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
 	static ITEM_TYPE ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum);
+	static _uint PickUpItem_Quantity_Classify(ITEM_NUMBER eItemNum);
 
 	void Set_ItemRecipe();
 	void Add_Recipe(ITEM_NUMBER eKeyItemNum, ITEM_NUMBER eCombinableItemNum, ITEM_NUMBER eResultItemNum);

@@ -328,7 +328,8 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 				m_pInventory_Manager->Set_InventoryEvent(PICK_UP_ITEM);
 				_int iPickedUpItemNum = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_iItemIndex();
 				ITEM_NUMBER ePickedItemNum = static_cast<ITEM_NUMBER>(iPickedUpItemNum);
-				m_pInventory_Manager->PUO_Seting(ePickedItemNum, 10);
+
+				m_pInventory_Manager->PUO_Seting(ePickedItemNum, CInventory_Manager::PickUpItem_Quantity_Classify(ePickedItemNum));
 
 				/*Cursor 세팅*/
 				if (nullptr != m_pCursor[1])
@@ -467,8 +468,11 @@ void CTab_Window::OnOff_EventHandle()
 		m_pHintButton->Set_Dead(m_bDead);
 		m_pInvenButton->Set_Dead(m_bDead);
 		m_pMapButton->Set_Dead(m_bDead);
+		m_eWindowType = WINDOW_TYPE_END;
 		m_pInventory_Manager->Set_OnOff_Inven(m_bDead);
 		m_pHotKey->Set_Dead(m_bDead);
+
+
 
 		if (nullptr != m_pCursor[1])
 		{
@@ -483,7 +487,7 @@ void CTab_Window::OnOff_EventHandle()
 		m_pHintButton->Set_Dead(m_bDead);
 		m_pInvenButton->Set_Dead(m_bDead);
 		m_pMapButton->Set_Dead(m_bDead);
-
+		m_eWindowType = INVENTORY;
 		m_pInventory_Manager->Set_OnOff_Inven(m_bDead);//탭창열때 인벤이 초기값임
 		m_pHotKey->Set_Dead(m_bDead);
 
@@ -568,6 +572,11 @@ ITEM_NUMBER CTab_Window::Get_Item_On_HotKey(_uint iHotKeyNum)
 void CTab_Window::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
 {
 	return 	m_pInventory_Manager->UseItem(eTargetItemNum, iUsage);
+}
+
+void CTab_Window::Hotkey_PopUp()
+{
+	m_pHotKey->PopUp_Call();
 }
 
 void CTab_Window::Find_Cursor()
