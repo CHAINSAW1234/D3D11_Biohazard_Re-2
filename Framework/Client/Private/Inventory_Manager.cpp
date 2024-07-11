@@ -286,7 +286,7 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 
 				else
 				{
-					AddItem_ToInven(m_pDragShadow->Get_ItemNumber(), 10, _float3(HoveredPos.x, HoveredPos.y, Z_POS_ITEM_UI));
+					AddItem_ToInven(m_pDragShadow->Get_ItemNumber(), m_pDragShadow->Get_ItemQuantity(), _float3(HoveredPos.x, HoveredPos.y, Z_POS_ITEM_UI));
 					m_pSlotHighlighter->Set_DragShadow(false);
 					m_eInven_Manager_State = EVENT_IDLE;
 					m_pDragShadow->Set_Dead(true);
@@ -983,6 +983,9 @@ ITEM_NUMBER CInventory_Manager::Get_Selected_ItemNum()
 
 void CInventory_Manager::PUO_Seting(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)
 {
+	Set_OnOff_Inven(false);
+	Set_InventoryEvent(PICK_UP_ITEM);
+
 	CInventory_Slot* pEmptydSlot = nullptr;
 
 	for (_uint i = 0; i < m_iInvenCount; i++)

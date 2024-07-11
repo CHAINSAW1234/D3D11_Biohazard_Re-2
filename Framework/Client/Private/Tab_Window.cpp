@@ -337,11 +337,8 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 				m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END);
 
 				/*Inventory_Manager 세팅*/
-				m_pInventory_Manager->Set_OnOff_Inven(false);
-				m_pInventory_Manager->Set_InventoryEvent(PICK_UP_ITEM);
 				_int iPickedUpItemNum = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_iItemIndex();
 				ITEM_NUMBER ePickedItemNum = static_cast<ITEM_NUMBER>(iPickedUpItemNum);
-
 				m_pInventory_Manager->PUO_Seting(ePickedItemNum, CInventory_Manager::PickUpItem_Quantity_Classify(ePickedItemNum));
 
 				/*Cursor 세팅*/
