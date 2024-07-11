@@ -20,9 +20,21 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+	/* Getter Setter Inline*/
+public :
+	void										Set_SearchFor_Verification_MapType(_byte _eFloor, _byte _eLocation)
+	{ 
+		m_eLocationVerification = _eLocation;
+		m_eFloorVerification = _eFloor;
+		m_isSearchForVerification = true; 
+	}
+
+
 private : /* Find Fuction*/
 	void										Find_Item();
 	void										Find_NotifyText_RenderState();
+	void										Verification_MapType();
+
 
 private :
 	void										Targeting_Render(_float fTimeDelta);
@@ -32,9 +44,9 @@ private :
 
 
 private :
-	CTargeting_Map_UI*							m_pMain_Target = { nullptr };
+	CTargeting_Map_UI*							m_pMain_Target			= { nullptr };
 	CTransform*									m_pMainTarget_Transform = { nullptr };
-
+	_bool										m_isFont_Render			= { false };
 
 private : /* Crosshair Targeting */
 	CROSSHAIR_TARGET_TYPE						m_eCrosshair_Type					= { CROSSHAIR_TARGET_TYPE::END_TARGET };
@@ -50,6 +62,11 @@ private : /* Notify Targeting */
 	/* Font Tick이 한 번 밀리기 때문에 다른 다른 Render 변수로 관리할 것이다. */
 	_bool										m_isNotifyRender = { false };
 	_bool*										m_isNotifyRender_Ptr = { nullptr };
+
+private :
+	_bool										m_isSearchForVerification = { false }; /* 아이템으로 인한 맵 상태 확인 탐색용 */
+	_byte										m_eLocationVerification = {};
+	_byte										m_eFloorVerification = {};
 
 public:	
 	static CMap_Manager* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

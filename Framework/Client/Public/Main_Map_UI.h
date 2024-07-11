@@ -23,6 +23,8 @@ public:
 public :
 	_bool*				Distance_End_Ptr()				{ return &m_isMainEnd;  }
 	_vector*			Player_Between_Distance_Ptr()	{ return &m_vMapOpen_Player_Distance; }
+	_bool*				Map_Clear_Ptr()					{ return &m_isMapSearch_Clear; }
+
 
 private :
 	void				Find_DoorObj();
@@ -41,6 +43,9 @@ private :
 private :
 	list<class CDoor*>	m_DoorList;
 	MAP_FLOOR_TYPE		m_ePrevViewFloor				= { MAP_FLOOR_TYPE::FLOOR_1 };
+
+	_bool				m_isMapSearch_Clear				= { false };
+	_bool				m_isEnd_OnesRole				= { false };
 
 private :
 	_int				m_iWhichChild					= { 0 };		/* Init에서 객체를 구분할 변수 */

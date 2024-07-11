@@ -40,6 +40,7 @@ HRESULT CItem_Map_UI::Initialize(void* pArg)
     Item_Name_Selection(); /* 아이템 및 사건 파일 모음 */
 
     m_isMouse_Control = true;
+
     m_vOriginPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
     return S_OK;

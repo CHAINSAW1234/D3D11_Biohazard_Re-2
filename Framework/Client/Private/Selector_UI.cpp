@@ -278,7 +278,8 @@ void CSelector_UI::Operate_Selector(_float fTimeDelta)
     /* 상호작용이 불가능할 때 : Check */
     if (false == m_isInteractive)
     {
-        NonInteractive_Rendering(fTimeDelta);
+        if(false == m_isOutDistance)
+            NonInteractive_Rendering(fTimeDelta);
 
          /* Texture 변경 */
         if (m_wstrDefaultTexturComTag != m_wstrNonInteractive_Tag && true == m_IsChild && false == m_isArrow)
