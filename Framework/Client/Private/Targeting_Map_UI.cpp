@@ -427,7 +427,7 @@ void CTargeting_Map_UI::Targeting_Control()
                     _float4 vMainTarget = m_pMainTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
                     _float4 vCurrentLine = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
-                    vCurrentLine.x = vMainTarget.x;
+                    vCurrentLine.x = vMainTarget.x + 3.f;
                     vCurrentLine.y = vMainTarget.y + m_fTarget_Distance;
                     vCurrentLine.z = 0.08f;
 
@@ -439,7 +439,7 @@ void CTargeting_Map_UI::Targeting_Control()
                     _float4 vMainTarget = m_pMainTarget_Transform->Get_State_Float4(CTransform::STATE_POSITION);
                     _float4 vCurrentLine = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
-                    vCurrentLine.x = vMainTarget.x;
+                    vCurrentLine.x = vMainTarget.x + 3.f;
                     vCurrentLine.y = vMainTarget.y - m_fTarget_Distance;
                     vCurrentLine.z = 0.08f;
 
