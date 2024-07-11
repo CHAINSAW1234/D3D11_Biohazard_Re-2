@@ -168,6 +168,8 @@ public:
 private:
 	void								Update_Region_Datas();
 
+public: // For Ragdoll
+	void								SetRagdoll_StartPose();
 public://For Decal
 	virtual void						Perform_Skinning() override;
 	virtual void						Ready_Decal() override;

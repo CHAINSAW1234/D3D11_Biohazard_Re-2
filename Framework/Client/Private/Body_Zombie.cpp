@@ -78,10 +78,12 @@ void CBody_Zombie::Tick(_float fTimeDelta)
 		if (!m_pGameInstance->isInFrustum_WorldSpace(vPos, 1.f))
 		{
 			m_pRagdoll->SetCulling(true);
+			m_bRender = false;
 		}
 		else
 		{
 			m_pRagdoll->SetCulling(false);
+			m_bRender = true;
 		}
 	}
 	else

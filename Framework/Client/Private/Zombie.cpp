@@ -1385,6 +1385,21 @@ void CZombie::Update_Region_Datas()
 	}
 }
 
+void CZombie::SetRagdoll_StartPose()
+{
+	m_pController->SetReleased(true);
+	m_pController->SetDead(true);
+	m_pController->Set_Force(_float4(0.f, 0.f, 0.f, 0.f), COLLIDER_TYPE::CHEST);
+
+	m_bRagdoll = true;
+
+	for (auto& pPartObject : m_PartObjects)
+	{
+		if (nullptr != pPartObject)
+			pPartObject->SetRagdoll(m_iIndex_CCT, _float4(0.f,0.f,0.f,0.f), COLLIDER_TYPE::CHEST);
+	}
+}
+
 void CZombie::Perform_Skinning()
 {
 	if (m_bRagdoll == false)
