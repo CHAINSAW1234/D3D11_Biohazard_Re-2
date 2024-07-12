@@ -96,7 +96,7 @@ HRESULT CHG_Cartridge::Render()
 			return E_FAIL;
 	}
 
-	if (FAILED(m_pShaderCom->Begin(4)))
+	if (FAILED(m_pShaderCom->Begin(0)))
 		return E_FAIL;
 
 	m_pModelCom->Render(static_cast<_uint>(m_iFrame));

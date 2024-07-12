@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Throwing_Weapon.h"
 #include "Light.h"
+#include "Rigid_Dynamic.h"
 
 CThrowing_Weapon::CThrowing_Weapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     :CGameObject { pDevice, pContext }
@@ -51,12 +52,27 @@ HRESULT CThrowing_Weapon::Initialize(void* pArg)
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
 
+	m_pRigid_Dynamic = m_pGameInstance->Create_Rigid_Dynamic(m_pModelCom, m_pTransformCom, &m_iIndex_RigidBody, this);
+	m_pRigid_Dynamic->SetKinematic(true);
+
+	m_pModelCom->Release_Decal_Dump();
+
+	Initiate(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), 
+		m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK), 
+		m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK));
+
+
     return S_OK;
 }
 
 void CThrowing_Weapon::Tick(_float fTimeDelta)
 {
-    ;
+	if (m_pRigid_Dynamic)
+	{
+		m_pTransformCom->Set_WorldMatrix(m_pRigid_Dynamic->GetWorldMatrix_Rigid_Dynamic(m_pTransformCom->Get_Scaled()));
+
+		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+	}
 }
 
 void CThrowing_Weapon::Late_Tick(_float fTimeDelta)
@@ -226,6 +242,23 @@ HRESULT CThrowing_Weapon::Render_LightDepth_Spot()
 	}
 
 	return S_OK;
+}
+
+void CThrowing_Weapon::Initiate(_float4 vPos, _float4 vDir, _float4 vLook)
+{
+	m_bRender = true;
+
+	m_pRigid_Dynamic->SetPosition(vPos);
+
+	m_vDir = _float4(vDir.x /*+ m_pGameInstance->GetRandom_Real(-0.03f, 0.03f)*/,
+		vDir.y + m_pGameInstance->GetRandom_Real(0.05f, 0.1f),
+		vDir.z/* + m_pGameInstance->GetRandom_Real(-0.03f, 0.03f)*/,
+		0.f);
+
+	m_vDir = Float4_Normalize(m_vDir);
+
+	m_pRigid_Dynamic->SetKinematic(false);
+	m_pRigid_Dynamic->AddForce(m_vDir);
 }
 
 HRESULT CThrowing_Weapon::Add_Components()

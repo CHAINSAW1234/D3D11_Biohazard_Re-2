@@ -32,12 +32,15 @@ public:
 	HRESULT					Render_LightDepth_Point() override;
 	HRESULT					Render_LightDepth_Spot()override;
 
+public:
+	void					Initiate(_float4 vPos, _float4 vDir, _float4 vLook);
 private:
 	CPlayer::EQUIP m_eEquip = { CPlayer::NONE };
 
 	CShader* m_pShaderCom = { nullptr };
 	CModel* m_pModelCom = { nullptr };
 
+	_float4 m_vDir;
 private:
 	HRESULT Add_Components();
 	HRESULT Bind_ShaderResources();
