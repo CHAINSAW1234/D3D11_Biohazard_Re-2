@@ -64,7 +64,6 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT						SetUp_RenderTarget_SubResult(const D3D11_VIEWPORT& ViewportDesc);
 	// Àß ¸ð¸§ 
 	HRESULT						SetUp_RenderTargets_Distortion(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT						SetUp_RenderTargets_Emissive(const D3D11_VIEWPORT& ViewportDesc);
 #pragma region Effect
 	HRESULT						SetUp_RenderTargets_Effect_Bloom(const D3D11_VIEWPORT& ViewportDesc);
 #pragma endregion
@@ -174,7 +173,6 @@ private:
 #pragma region Effect
 	HRESULT						Render_Effect_Bloom();
 	HRESULT						Render_Effect();
-	HRESULT						Render_Emissive();
 #pragma endregion
 
 private:

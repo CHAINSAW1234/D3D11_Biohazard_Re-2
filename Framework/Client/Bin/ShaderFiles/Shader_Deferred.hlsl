@@ -48,9 +48,12 @@ float		g_fOutCutOff;
 // 현진 추가
 bool g_isSSAO;
 Texture2D g_RandomNormalTexture;
-Texture2D g_VelocityTexture;
-TextureCubeArray g_EnvironmentTexture;
-TextureCubeArray g_IrradianceTexture;
+
+float g_PBRLerpTime;
+TextureCubeArray g_PrevEnvironmentTexture;
+TextureCubeArray g_CurEnvironmentTexture;
+TextureCubeArray g_PrevIrradianceTexture;
+TextureCubeArray g_CurIrradianceTexture;
 Texture2D g_SpecularLUTTexture;
 
 bool g_isShadowDirLight;
@@ -151,10 +154,6 @@ struct PS_OUT
     float4 vColor : SV_TARGET0;
 };
 
-struct PS_OUT_EMISSIVE
-{
-    float4 vEmissive : SV_TARGET0;
-};
 
 struct PS_OUT_PRE_POST
 {
@@ -338,7 +337,7 @@ float3 FresnelSchlick(float cos_theta, float3 F0)
 uint querySpecularTextureLevels()
 {
     uint width, height, elements, levels;
-    g_EnvironmentTexture.GetDimensions(0, width, height, elements, levels);
+    g_CurEnvironmentTexture.GetDimensions(0, width, height, elements, levels);
     return levels;
 }
 
@@ -406,8 +405,11 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 ambientLighting;
     {
         // Sample diffuse irradiance at normal direction.
-        float3 irradiance = g_IrradianceTexture.Sample(LinearSampler, vNormal).rgb;
+        float3 Previrradiance = g_PrevIrradianceTexture.Sample(LinearSampler, vNormal).rgb;
+        float3 Curirradiance = g_CurIrradianceTexture.Sample(LinearSampler, vNormal).rgb;
 
+        float3 irradiance = lerp(Previrradiance, Curirradiance, g_PBRLerpTime);
+        
         // Calculate Fresnel term for ambient lighting.
         float3 F = FresnelSchlick(cosLo, F0);
         // Get diffuse contribution factor (as with direct lighting).
@@ -418,7 +420,10 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
         // Sample pre-filtered specular reflection environment at correct mipmap level.
         uint specularTextureLevels = querySpecularTextureLevels();
-        float3 specularIrradiance = pow(g_EnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
+        float3 PrevspecularIrradiance = pow(g_PrevEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
+        float3 CurspecularIrradiance = pow(g_CurEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
+        
+        float3 specularIrradiance = lerp(PrevspecularIrradiance, CurspecularIrradiance, g_PBRLerpTime);
         
         //// Split-sum approximation factors for Cook-Torrance specular BRDF.
         float2 specularBRDF = g_SpecularLUTTexture.Sample(LinearSamplerClamp, float2(cosLo, fMaterialRoughness)).rg;
@@ -837,50 +842,6 @@ PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
     return Out;
 }
 
-PS_OUT PS_MOTIONBLUR(PS_IN In)
-{
-    PS_OUT Out = (PS_OUT) 0;
-    
-    int iNumBlurSample = 5;
-    
-    float4 vVelocity = g_VelocityTexture.Sample(LinearSamplerClamp, In.vTexcoord);
-    vVelocity.xy /= (float) iNumBlurSample;
-    
-    
-    Out.vColor = g_DiffuseTexture.Sample(PointSamplerClamp, In.vTexcoord);g_DiffuseTexture.Sample(PointSamplerClamp, In.vTexcoord);
-    int iCnt = 1;
-    
-    float4 vColor;
-    
-    for (int i = iCnt; i < iNumBlurSample; ++i)
-    {
-        vColor = g_DiffuseTexture.Sample(PointSamplerClamp, In.vTexcoord + vVelocity.xy * (float) i);
-        
-        if (vVelocity.a != 0)
-        {
-            iCnt++;
-            Out.vColor += vColor;
-        }
-
-    }
-    
-    Out.vColor /= (float)iCnt;
-    
-    return Out;
-}
-
-PS_OUT_EMISSIVE PS_MAIN_EMISSIVE(PS_IN In)
-{
-    PS_OUT_EMISSIVE Out = (PS_OUT_EMISSIVE) 0;
-    
-    vector MaterialDesc = g_MaterialTexture.Sample(PointSampler, In.vTexcoord);
-    vector DiffuseDesc = g_DiffuseTexture.Sample(PointSampler, In.vTexcoord);
-    
-    Out.vEmissive = DiffuseDesc * MaterialDesc.a;
-    
-    return Out;
-}
-
 PS_OUT_POST_PROCESSING PS_MAIN_POSTPROCESSING(PS_IN In)
 {
     PS_OUT_POST_PROCESSING Out = (PS_OUT_POST_PROCESSING) 0;
@@ -1058,7 +1019,7 @@ PS_OUT PS_MAIN_BLURX_EFFECT(PS_IN In)
         TotalWeight += weight;
     }
     //TotalWeight *= 0.6f;
-    //vOut /= TotalWeight;
+    vOut /= TotalWeight;
     Out.vColor = vOut;
 
     return Out;
@@ -1082,7 +1043,7 @@ PS_OUT PS_MAIN_BLURY_EFFECT(PS_IN In)
         TotalWeight += weight;
     }
     //TotalWeight *= 0.6f;
-    //vOut /= TotalWeight;
+    vOut /= TotalWeight;
     Out.vColor = vOut;
 
     return Out;
@@ -1200,6 +1161,7 @@ PS_OUT PS_DOF(PS_IN In)
     Out.vColor.a = 1.f;
     return Out;
 }
+
 PS_OUT PS_DOF_BLURX(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -1766,32 +1728,6 @@ technique11 DefaultTechnique
         HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_MAIN_LIGHT_RESULT();
-    }
-
-    pass Emissive       // 7
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
-        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
-        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_EMISSIVE();
-    }
-
-    pass Motion_Blur // 7
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
-        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
-        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
-        PixelShader = compile ps_5_0 PS_MOTIONBLUR(); // 고치시오
     }
 
     pass BlurX          //  8
