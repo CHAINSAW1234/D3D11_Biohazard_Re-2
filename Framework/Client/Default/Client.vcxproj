@@ -249,6 +249,7 @@
     <ClInclude Include="..\Public\Muzzle_Spark_SG.h" />
     <ClInclude Include="..\Public\Part_Breaker_Zombie.h" />
     <ClInclude Include="..\Public\HotKey.h" />
+    <ClInclude Include="..\Public\Part_Mesh_Info_Zombie.h" />
     <ClInclude Include="..\Public\Player_State_Move_Shelf.h" />
     <ClInclude Include="..\Public\Region_Update_Zombie.h" />
     <ClInclude Include="..\Public\Room_Finder.h" />
@@ -494,6 +495,7 @@
     <ClCompile Include="..\Private\Part_Breaker_Zombie.cpp" />
     <ClCompile Include="..\Private\HotKey.cpp" />
     <ClCompile Include="..\Private\Pannel_Window.cpp" />
+    <ClCompile Include="..\Private\Part_Mesh_Info_Zombie.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Shelf.cpp" />
     <ClCompile Include="..\Private\Region_Update_Zombie.cpp" />
     <ClCompile Include="..\Private\Room_Finder.cpp" />
