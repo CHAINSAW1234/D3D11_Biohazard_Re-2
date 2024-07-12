@@ -160,7 +160,7 @@ HRESULT CPannel_Window::Render()
 			}
 
 
-			if (FAILED(m_pShaderNonAnimCom->Begin(0)))
+			if (FAILED(m_pShaderNonAnimCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_DEFAULT)))
 				return E_FAIL;
 
 			m_pModelNonAnimCom->Render(static_cast<_uint>(i));
@@ -210,7 +210,7 @@ HRESULT CPannel_Window::Render()
 			}
 
 
-			if (FAILED(m_pShaderCom->Begin(0)))
+			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_DEFAULT)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
@@ -260,7 +260,7 @@ HRESULT CPannel_Window::Render_LightDepth_Dir()
 					return E_FAIL;
 
 				/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
-				if (FAILED(m_pShaderNonAnimCom->Begin(1)))
+				if (FAILED(m_pShaderNonAnimCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_LIGHTDEPTH)))
 					return E_FAIL;
 
 				m_pModelNonAnimCom->Render(static_cast<_uint>(i));
@@ -296,7 +296,7 @@ HRESULT CPannel_Window::Render_LightDepth_Dir()
 				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 					return E_FAIL;
 
-				if (FAILED(m_pShaderCom->Begin(2)))
+				if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
 					return E_FAIL;
 
 				m_pModelCom->Render(static_cast<_uint>(i));
@@ -346,7 +346,7 @@ HRESULT CPannel_Window::Render_LightDepth_Point()
 					return E_FAIL;
 
 				/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
-				if (FAILED(m_pShaderNonAnimCom->Begin(2)))
+				if (FAILED(m_pShaderNonAnimCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_LIGHTDEPTH_CUBE)))
 					return E_FAIL;
 
 				m_pModelNonAnimCom->Render(static_cast<_uint>(i));
@@ -385,7 +385,7 @@ HRESULT CPannel_Window::Render_LightDepth_Point()
 				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 					return E_FAIL;
 
-				if (FAILED(m_pShaderCom->Begin(4)))
+				if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH_CUBE)))
 					return E_FAIL;
 
 				m_pModelCom->Render(static_cast<_uint>(i));
@@ -436,7 +436,7 @@ HRESULT CPannel_Window::Render_LightDepth_Spot()
 					return E_FAIL;
 
 				/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
-				if (FAILED(m_pShaderNonAnimCom->Begin(1)))
+				if (FAILED(m_pShaderNonAnimCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_LIGHTDEPTH)))
 					return E_FAIL;
 
 				m_pModelNonAnimCom->Render(static_cast<_uint>(i));
@@ -470,7 +470,7 @@ HRESULT CPannel_Window::Render_LightDepth_Spot()
 				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 					return E_FAIL;
 
-				if (FAILED(m_pShaderCom->Begin(2)))
+				if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
 					return E_FAIL;
 
 				m_pModelCom->Render(static_cast<_uint>(i));

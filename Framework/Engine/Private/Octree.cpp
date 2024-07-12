@@ -1050,7 +1050,7 @@ void COctree::Render_Node_LightDepth_Dir(CModel* pRootWorld, CShader* pShader)
 					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 						return;
 
-					if (FAILED(pShader->Begin(1)))
+					if (FAILED(pShader->Begin(2)))
 						return;
 
 					m_pOctreeNodes[i]->m_vecEntryNode[j]->Render(k);
@@ -1075,7 +1075,7 @@ void COctree::Render_Node_LightDepth_Spot(CModel* pRootWorld, CShader* pShader)
 					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 						return;
 
-					if (FAILED(pShader->Begin(1)))
+					if (FAILED(pShader->Begin(2)))
 						return;
 
 					m_pOctreeNodes[i]->m_vecEntryNode[j]->Render(k);
@@ -1100,7 +1100,7 @@ void COctree::Render_Node_LightDepth_Point(CModel* pRootWorld, CShader* pShader)
 					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 						return;
 
-					if (FAILED(pShader->Begin(2)))
+					if (FAILED(pShader->Begin(3)))
 						return;
 
 					m_pOctreeNodes[i]->m_vecEntryNode[j]->Render(k);

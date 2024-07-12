@@ -44,6 +44,22 @@ void CEnvCube::Tick(_float fTimeDelta)
 {
 	Set_CubeRegion(m_pPlayer->Get_Player_Region());
 
+	_vector vPlayerPosition = m_pPlayer->Get_Transform()->Get_State_Vector(CTransform::STATE_POSITION);
+	_uint iIndex = 0;
+	_float fMinDist = INFINITY;
+	
+	for (_uint i = 0; i < m_CubeList[m_iCurRegion].size(); ++i) {
+		_float fDist = XMVectorGetX(XMVector3Length(vPlayerPosition - XMLoadFloat3(&m_CubeList[m_iCurRegion][i].Translation())));
+
+		if (fDist < fMinDist) {
+			fMinDist = fDist;
+			iIndex = i;
+		}
+
+	}
+
+	m_pGameInstance->Set_CubeMap(m_TextureComMap[m_iCurRegion], iIndex);
+
 
 	return;
 }
@@ -88,15 +104,15 @@ HRESULT CEnvCube::Add_Components()
 
 		return E_FAIL;
 	}
-	_int iEntireTextures;
+	_int iEntireTextures = {};
 	ifs.read(reinterpret_cast<_char*>(&iEntireTextures), sizeof(_int));
 	
 	/* For.Com_Texture */
 	for (_int i = 0; i < iEntireTextures; i++)
 	{
-		_tchar szPrototypeComName[MAX_PATH];
-		_tchar szPath[MAX_PATH];
-		_int iTextureNum;
+		_tchar szPrototypeComName[MAX_PATH] = {};
+		_tchar szPath[MAX_PATH] = {};
+		_int iTextureNum = {};
 		ifs.read(reinterpret_cast<_char*>(&szPrototypeComName), sizeof(_tchar) * MAX_PATH);
 		ifs.read(reinterpret_cast<_char*>(&szPath), sizeof(_tchar) * MAX_PATH);
 		ifs.read(reinterpret_cast<_char*>(&iTextureNum), sizeof(_int));
@@ -126,7 +142,7 @@ HRESULT CEnvCube::Add_Components()
 
 		return E_FAIL;
 	}
-	_int iEntires;
+	_int iEntires = {};
 	ifst.read(reinterpret_cast<_char*>(&iEntires), sizeof(_int));
 
 	/* For.Com_Texture */
@@ -134,7 +150,7 @@ HRESULT CEnvCube::Add_Components()
 	for (_int i = 0; i < iEntires; i++)
 	{
 		Set_CubeRegion(i);
-		_int iMaxNum;
+		_int iMaxNum = {};
 		ifst.read(reinterpret_cast<_char*>(&iMaxNum), sizeof(_int));
 
 		for (_int j = 0; j < iMaxNum; j++)

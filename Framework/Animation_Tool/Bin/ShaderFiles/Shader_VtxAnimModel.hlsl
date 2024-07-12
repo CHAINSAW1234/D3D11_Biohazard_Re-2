@@ -6,15 +6,16 @@ matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_PrevWorldMatrix, g_PrevViewMatrix, g_PrevProjMatrix;
 
 matrix g_BoneMatrices[512];
-//  matrix g_PrevBoneMatrices[512];
 
 bool g_isAlphaTexture;
 bool g_isAOTexture;
+bool g_isEmissiveTexture;
 
 Texture2D g_DiffuseTexture;
 Texture2D g_NormalTexture;
 Texture2D g_AlphaTexture;
 Texture2D g_AOTexture;
+Texture2D g_EmissiveTexture;
 Texture2D g_NoiseTexture;
 Texture2D g_DissolveDiffuseTexture;
 Texture2D g_DecalTexture;
@@ -32,8 +33,6 @@ int g_LightIndex;
 
 matrix g_LightViewMatrix[6];
 matrix g_LightProjMatrix;
-
-bool g_isMotionBlur;
 
 StructuredBuffer<float2> g_DecalMap;
 bool		g_DecalRender;
@@ -59,7 +58,6 @@ struct VS_OUT
 	float2 vTexcoord : TEXCOORD0;
 	float4 vWorldPos : TEXCOORD1;
 	float4 vProjPos : TEXCOORD2;
-	float4 vVelocity : TEXCOORD3;
 
 	float3 vTangent : TANGENT;
 	float3 vBinormal : BINORMAL;
@@ -198,7 +196,6 @@ struct PS_IN
 	float2 vTexcoord : TEXCOORD0;
 	float4 vWorldPos : TEXCOORD1;
 	float4 vProjPos : TEXCOORD2;
-	float4 vVelocity : TEXCOORD3;
 
 	float3 vTangent : TANGENT;
 	float3 vBinormal : BINORMAL;
@@ -221,7 +218,7 @@ struct PS_OUT
 	float4 vNormal : SV_TARGET1;
 	float4 vDepth : SV_TARGET2;
 	float4 vMaterial : SV_TARGET3;
-	float4 vVelocity : SV_TARGET4;
+	float4 vEmissive : SV_TARGET4;
 	float4 vOrigin : SV_TARGET5;
 };
 
@@ -247,13 +244,13 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vNormal = vector(vWorldNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 1000.0f, 0.0f, 0.0f);
 	Out.vOrigin = vector(1.f, 0.f, 0.f, 1.f);
-	Out.vVelocity = vector(In.vVelocity.xy, 1, In.vVelocity.z / In.vVelocity.w);
+
 
 	if (g_isAlphaTexture)
 	{
 		vector vAlphaDesc = g_AlphaTexture.Sample(LinearSampler, In.vTexcoord);
 		Out.vDiffuse.a = vAlphaDesc.r;
-		if (0.01f >= Out.vDiffuse.a)
+		if (0.1f >= Out.vDiffuse.a)
 			discard;
 	}
 	else
@@ -267,13 +264,24 @@ PS_OUT PS_MAIN(PS_IN In)
 	if (g_isAOTexture)
 	{
 		vector vAODesc = g_AOTexture.Sample(LinearSampler, In.vTexcoord);
-		Out.vMaterial.b = vAODesc.r;
+		Out.vMaterial.b = vAODesc.b;
 	}
 	else
 	{
 		Out.vMaterial.b = 1.f;
 	}
 
+    if (g_isEmissiveTexture)
+    {
+        vector vEmissive = g_EmissiveTexture.Sample(LinearSampler, In.vTexcoord);
+        if (vEmissive.r != 0 || vEmissive.g != 0 || vEmissive.b != 0)
+        {
+            Out.vEmissive = vEmissive;
+        }
+
+    }
+	
+	
     if (g_DecalRender)
     {
         float2 DecalTexcoord;
@@ -405,7 +413,7 @@ technique11 DefaultTechnique
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
@@ -413,6 +421,20 @@ technique11 DefaultTechnique
 		DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
+
+    pass AlphaBlend // 1
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
 
 	pass Dissolve		// 1
 	{

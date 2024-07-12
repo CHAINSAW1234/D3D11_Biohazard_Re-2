@@ -4,8 +4,8 @@
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 matrix g_WorldMatrix_Inv, g_ViewMatrix_Inv, g_ProjMatrix_Inv;
 
-texture2D	g_Texture;
-texture2D	g_DepthTexture;
+Texture2D	g_Texture;
+Texture2D	g_DepthTexture;
 
 float g_fMinUV_X;
 float g_fMinUV_Y;
@@ -314,7 +314,7 @@ technique11 DefaultTechnique
 	{
 		SetRasterizerState(RS_NoCulling);
 		SetDepthStencilState(DSS_Default, 0);
-		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
 		VertexShader = compile vs_5_0 VS_MAIN();
 		GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;

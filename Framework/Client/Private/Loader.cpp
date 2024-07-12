@@ -930,7 +930,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 		}
 		else
 		{
-
+				
 			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm7")) != wstring::npos) && (bDo = true))
 				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_ItemProp::Create(m_pDevice, m_pContext));
 

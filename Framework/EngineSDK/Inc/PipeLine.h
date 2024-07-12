@@ -36,7 +36,7 @@ public:
 		XMStoreFloat4x4(&m_TransformMatrices[eState], TransformMatrix);
 	}
 	void				Add_ShadowLight(SHADOWLIGHT eShadowLight, CLight* pLight);
-	void				Set_CubeMap(CTexture* m_pTexture);
+	void				Set_CubeMap(CTexture* m_pTexture, _uint iIndex);
 
 public:
 	_matrix				Get_Transform_Matrix(TRANSFORMSTATE eState) const
@@ -116,12 +116,16 @@ public:
 	}
 	list<LIGHT_DESC*>	Get_ShadowPointLightDesc_List();
 
-	HRESULT				Bind_IrradianceTexture(CShader* pShader, const _char* pConstantName);
-	HRESULT				Bind_CubeMapTexture(CShader* pShader, const _char* pConstantName);
+	HRESULT				Bind_PrevIrradianceTexture(CShader* pShader, const _char* pConstantName);
+	HRESULT				Bind_CurIrradianceTexture(CShader* pShader, const _char* pConstantName);
+	HRESULT				Bind_PrevCubeMapTexture(CShader* pShader, const _char* pConstantName);
+	HRESULT				Bind_CurCubeMapTexture(CShader* pShader, const _char* pConstantName);
+
+	_float*				Get_PBRLerpTime() { return &m_fLerpTimeDelta; }
 
 public:
 	HRESULT				Initialize();
-	void				Tick();
+	void				Tick(_float fTimeDelta);
 	HRESULT				Render();
 	void				Reset();		// 렌더 이후에 그림자 연산에 사용한 빛을 리스트에서 제거
 
@@ -162,9 +166,16 @@ private:
 
 	_bool					m_isRender = { false };
 	CComputeShader*			m_pShaderCom = { nullptr };
-	CTexture*				m_pCubeMapTexture = { nullptr };
+
+	_float					m_fLerpTimeDelta = { 0.f };
+	_uint					m_iPrevCubeMapIndex = { 0 };
+	_uint					m_iCurCubeMapIndex = { 0 };
+	CTexture*				m_pPrevCubeMapTexture = { nullptr };
+	CTexture*				m_pCurCubeMapTexture = { nullptr };
+
+	CRenderTarget*			m_pPrevIrradialTexture = { nullptr };
 	CRenderTarget*			m_pHDRTexture = { nullptr };
-	CRenderTarget*			m_pIrradialTexture = { nullptr };
+	CRenderTarget*			m_pCurIrradialTexture = { nullptr };
 
 public:
 	static CPipeLine* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
