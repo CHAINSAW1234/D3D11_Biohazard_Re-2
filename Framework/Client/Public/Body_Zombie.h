@@ -16,7 +16,7 @@ class CBody_Zombie final : public CPartObject
 public:
 	typedef struct tagBodyMonsterDesc : public CPartObject::PARTOBJECT_DESC
 	{
-		class CPart_Breaker_Zombie* pPart_Breaker = { nullptr };
+		class CPart_Breaker_Zombie** ppPart_Breaker = { nullptr };
 		_bool*						pRender = { nullptr };
 		_float3*					pRootTranslation = { nullptr };
 		ZOMBIE_BODY_TYPE			eBodyType = { ZOMBIE_BODY_TYPE::_END };
@@ -115,7 +115,7 @@ private:
 	_bool*								m_pRender = { nullptr };
 
 private:
-	class CPart_Breaker_Zombie*			m_pPart_Breaker = { nullptr };
+	class CPart_Breaker_Zombie**			m_ppPart_Breaker = { nullptr };
 
 
 private:

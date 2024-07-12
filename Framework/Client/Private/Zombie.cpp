@@ -1132,7 +1132,7 @@ HRESULT CZombie::Add_PartObjects()
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pRootTranslation = &m_vRootTranslation;
 	BodyDesc.eBodyType = static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID);
-	BodyDesc.pPart_Breaker = m_pPart_Breaker;
+	BodyDesc.ppPart_Breaker = &m_pPart_Breaker;
 
 	pBodyObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Body_Zombie"), &BodyDesc));
 	if (nullptr == pBodyObject)

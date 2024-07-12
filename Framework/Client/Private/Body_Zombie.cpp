@@ -30,12 +30,12 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 	BODY_MONSTER_DESC*		pDesc = { static_cast<BODY_MONSTER_DESC*>(pArg) };
 
 
-	m_pPart_Breaker = pDesc->pPart_Breaker;
+	m_ppPart_Breaker = pDesc->ppPart_Breaker;
 	m_pRender = pDesc->pRender;
 	m_pRootTranslation = pDesc->pRootTranslation;
 	m_eBodyModelType = pDesc->eBodyType;
 
-	if (nullptr == m_pPart_Breaker)
+	if (nullptr == m_ppPart_Breaker)
 		return E_FAIL;
 
 	if (nullptr == m_pRootTranslation)
@@ -1267,5 +1267,4 @@ void CBody_Zombie::Free()
 
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
-	Safe_Release(m_pPart_Breaker);
 }
