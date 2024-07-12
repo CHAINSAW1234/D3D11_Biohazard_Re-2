@@ -56,10 +56,10 @@ HRESULT CInventory_Manager::Initialize()
 
 void CInventory_Manager::FirstTick_Seting()
 {
-	AddItem_ToInven(HandGun, 15);
-	AddItem_ToInven(ShotGun, 7);
-	AddItem_ToInven(handgun_bullet01a, 20);
-	AddItem_ToInven(shotgun_bullet01a, 20);
+	//AddItem_ToInven(HandGun, 15);
+	//AddItem_ToInven(ShotGun, 7);
+	//AddItem_ToInven(handgun_bullet01a, 20);
+	//AddItem_ToInven(shotgun_bullet01a, 20);
 }
 
 void CInventory_Manager::Tick(_float fTimeDelta)
@@ -366,7 +366,6 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 	}
 		
 	case Client::CInventory_Manager::APPLY: {
-
 		if (m_PickResult == -1)
 		{
 			m_eInven_Manager_State = DROP_ITEM;
@@ -395,8 +394,6 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 			m_pDragShadow->Set_Dead(true);
 			m_pSelected_ItemUI = nullptr;
 			m_eInven_Manager_State = GET_ITEM;
-			//CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-			//pPlayer->Set_isCamTurn(false);
 		}
 
 		else if(m_PickResult == 1)
@@ -420,13 +417,8 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 				m_pDragShadow->Set_Dead(true);
 				m_pSelected_ItemUI = nullptr;
 				m_eInven_Manager_State = GET_ITEM;
-				//CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-				//pPlayer->Set_isCamTurn(false);
 			}
 		}
-
-
-
 		break;
 	}
 		
@@ -503,7 +495,7 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 
 	case Client::clairesbag01a: {
 		m_iInvenCount++;
-		m_vecInvenSlot[m_iInvenCount]->Set_Dead(false);
+		m_vecInvenSlot[m_iInvenCount-1]->Set_Dead(false);
 		break;
 	}
 	default:

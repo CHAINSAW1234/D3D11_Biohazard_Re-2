@@ -3052,6 +3052,15 @@ void CModel::Update_LinearInterpolation(_float fTimeDelta, _uint iPlayingIndex)
 	}
 }
 
+#pragma region ·ÎÄÃ Æ®·»½ºÆû Á¦¾î
+void CModel::Set_Local_Scaled(_float fScaleX, _float fScaleY, _float fScaleZ)
+{
+	Set_Local_State(STATE_LOCAL_RIGHT, XMVector3Normalize(Get_Local_State_Vector(STATE_LOCAL_RIGHT)) * fScaleX);
+	Set_Local_State(STATE_LOCAL_UP, XMVector3Normalize(Get_Local_State_Vector(STATE_LOCAL_UP)) * fScaleY);
+	Set_Local_State(STATE_LOCAL_LOOK, XMVector3Normalize(Get_Local_State_Vector(STATE_LOCAL_LOOK)) * fScaleZ);
+}
+#pragma endregion
+
 #pragma region Ready_Object
 
 HRESULT CModel::Ready_Meshes(const map<string, _uint>& BoneIndices)

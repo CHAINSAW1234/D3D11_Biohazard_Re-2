@@ -13,7 +13,7 @@ BEGIN(Client)
 class CItem_Mesh_Viewer final : public CGameObject
 {
 private:
-	enum OPERATION_TYPE{EXAMIN, PICKUPITEM};
+	enum OPERATION_TYPE{EXAMIN, PICKUPITEM, OPER_TYPE_END};
 private:
 	CItem_Mesh_Viewer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CItem_Mesh_Viewer(const CItem_Mesh_Viewer& rhs);
@@ -29,11 +29,11 @@ public:
 private:
 	void PopUp_Operation(_float fTimeDelta);
 	void Idle_Operation(_float fTimeDelta);
-	void SECOND_IDLE_Operation(_float fTimeDelta);
 	void Hide_Operation(_float fTimeDelta);
 
 public:
-	void Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType);
+	void Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType, _uint iOperateType);
+	void Set_ScaleByItemNum(ITEM_NUMBER eCallItemType);
 	
 private:
 	vector<CModel*>		m_vecModelCom;
@@ -44,23 +44,25 @@ private:
 private:
 	ITEM_NUMBER			m_eItem_Number = { ITEM_NUMBER_END };
 	UI_OPERRATION		m_eViewer_State = { STATE_END };
+	OPERATION_TYPE		m_eOperType = { OPER_TYPE_END };
 
 
 	_float				m_fDistCam = { 0.f };
-	//_float				m_fDistCam_FarLimit = { 10.f };
+	//_float			m_fDistCam_FarLimit = { 10.f };
 	//_float				m_fDistCam_NearLimit = { 1.f };
 
 	_float				m_fPopupHide_CurTime = { 0.f };
-	//_float				m_fPopupHide_TimeLimit = { 0.5f };
+	//_float			m_fPopupHide_TimeLimit = { 0.5f };
 
-	//_float				m_fPopupHide_StartRadian = { 0.f };
-	//_float				m_fPopupHide_EndRadian = { 360.f };
+	//_float			m_fPopupHide_StartRadian = { 0.f };
+	//_float			m_fPopupHide_EndRadian = { 360.f };
 
-	//_float				m_fPopupHide_StartDist = { 10.f };
-	//_float				m_fPopupHide_EndDist = { 0.4f };
+	//_float			m_fPopupHide_StartDist = { 10.f };
+	_float				m_fPopupHide_EndDist = { 0.4f };
 
+	_bool				m_bStop = { true };
 
-	_bool				m_bStop = { false };
+	_float4x4			m_matMoveCenter = {};
 
 private:
 	HRESULT Add_Components();

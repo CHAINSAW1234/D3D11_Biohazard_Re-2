@@ -7,13 +7,14 @@
 constexpr _float	DIST_CAM_FAR_LIMIIT = 10.f;
 constexpr _float	DIST_CAM_NEAR_LIMIT = 1.f;
 
-constexpr _float	POPUP_HIDE_TIME_LIMIT = 0.5f;
+constexpr _float	POPUP_HIDE_TIME_LIMIT = 0.4f;
 
 constexpr _float	POPUP_HIDE_START_RADIAN = 0.f;
 constexpr _float	POPUP_HIDE_END_RADIAN = 360.f;
 
 constexpr _float	POPUP_HIDE_START_DIST = 10.f;
-constexpr _float	POPUP_HIDE_END_DIST = 0.4f;
+//constexpr _float	POPUP_HIDE_END_DIST = 0.4f;
+constexpr _float	PICK_UP_IDLE_DIST = 3.f;
 
 
 CItem_Mesh_Viewer::CItem_Mesh_Viewer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -26,7 +27,7 @@ CItem_Mesh_Viewer::CItem_Mesh_Viewer(const CItem_Mesh_Viewer& rhs)
 {
 
 }
- 
+
 HRESULT CItem_Mesh_Viewer::Initialize_Prototype()
 {
 	return S_OK;
@@ -54,12 +55,14 @@ HRESULT CItem_Mesh_Viewer::Initialize(void* pArg)
 	m_eViewer_State = POP_UP;
 
 	CGameObject* pCamera = m_pGameInstance->Find_Layer(g_Level, g_strCameraTag)->front();
-	
+
 	m_pCameraFree = dynamic_cast<CCamera_Free*>(pCamera);
 
 	m_fDistCam = POPUP_HIDE_START_DIST;
 
 	Safe_AddRef(m_pCameraFree);
+
+	//m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f); //테스트 코드
 
 	return S_OK;
 }
@@ -76,14 +79,9 @@ void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 		PopUp_Operation(fTimeDelta);
 		break;
 	}
-		
+
 	case Client::UI_IDLE: {
 		Idle_Operation(fTimeDelta);
-		break;
-	}
-
-	case Client::UI_SECOND_IDLE: {
-		SECOND_IDLE_Operation(fTimeDelta);
 		break;
 	}
 
@@ -91,7 +89,7 @@ void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 		Hide_Operation(fTimeDelta);
 		break;
 	}
-		
+
 	default:
 		break;
 	}
@@ -162,13 +160,13 @@ void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
 	{
 		m_eViewer_State = UI_IDLE;
 		m_fPopupHide_CurTime = 0.f;
-		m_fDistCam = POPUP_HIDE_END_DIST;
+		m_fDistCam = m_fPopupHide_EndDist;
 		return;
 	}
 
 	if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
 	{
-		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, POPUP_HIDE_END_DIST,
+		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, m_fPopupHide_EndDist,
 			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 
 		_float fRadian = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_RADIAN, XMConvertToRadians(POPUP_HIDE_END_RADIAN),
@@ -180,47 +178,58 @@ void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
 
 void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 {
-	if (true == m_pGameInstance->Check_Wheel_Down())
+	switch (m_eOperType)
 	{
-		m_fDistCam -= 0.01f;
-	}
-	else if (true == m_pGameInstance->Check_Wheel_Up())
-	{
-		m_fDistCam += 0.01f;
-	}
-
-	if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-	{
-		_long	MouseMove = { 0 };
-
-		if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().x)
+	case Client::CItem_Mesh_Viewer::EXAMIN: {
+		if (true == m_pGameInstance->Check_Wheel_Down())
 		{
-			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * 0.1f);
+			m_fDistCam -= 0.001f;
 		}
-		if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().y)
+		else if (true == m_pGameInstance->Check_Wheel_Up())
 		{
-			//m_pTransformCom->Turn(m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * 0.1f);
-			m_pTransformCom->Turn(XMVectorSet(1.f, 0.f, 0.f, 0.f), fTimeDelta * MouseMove * 0.1f);
+			m_fDistCam += 0.001f;
 		}
+
+		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+		{
+			_long	MouseMove = { 0 };
+			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().x)
+			{
+				m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * -0.1f);
+			}
+			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().y)
+			{
+				m_pTransformCom->Turn(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * 0.1f);
+			}
+		}
+		break;
 	}
-}
+		
+	case Client::CItem_Mesh_Viewer::PICKUPITEM: {
+		if (false == m_bStop)
+		{
+			m_fPopupHide_CurTime += fTimeDelta;
 
-void CItem_Mesh_Viewer::SECOND_IDLE_Operation(_float fTimeDelta)
-{
-	m_fPopupHide_CurTime += fTimeDelta;
+			if (m_fPopupHide_CurTime > POPUP_HIDE_TIME_LIMIT)
+			{
+				m_bStop = true;
+				m_fPopupHide_CurTime = 0.f;
+				m_fDistCam = m_fPopupHide_EndDist;
+				return;
+			}
 
-	if (m_fPopupHide_CurTime > POPUP_HIDE_TIME_LIMIT)
-	{
-		m_eViewer_State = UI_IDLE;
-		m_fPopupHide_CurTime = 0.f;
-		m_fDistCam = POPUP_HIDE_END_DIST;
-		return;
+			if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
+			{
+				m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fPopupHide_EndDist, PICK_UP_IDLE_DIST,
+					m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+			}
+		}
+		
+		break;
 	}
-
-	if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
-	{
-		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, POPUP_HIDE_END_DIST,
-			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+		
+	default:
+		break;
 	}
 }
 
@@ -235,17 +244,18 @@ void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
 		m_fDistCam = POPUP_HIDE_START_DIST;
 		m_bDead = true;
 		m_eItem_Number = ITEM_NUMBER_END;
+		m_matMoveCenter = XMMatrixIdentity();
 		return;
 	}
 
 	if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
 	{
-		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_END_DIST, POPUP_HIDE_START_DIST,
+		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fPopupHide_EndDist, POPUP_HIDE_START_DIST,
 			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 	}
 }
 
-void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType)
+void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType, _uint iOperateType)
 {
 	switch (eOperation)
 	{
@@ -253,27 +263,28 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 		m_bDead = false;
 		m_eItem_Number = eCallItemType;
 		m_eViewer_State = eOperation;
+		m_fDistCam = DIST_CAM_FAR_LIMIIT;
+		Set_ScaleByItemNum(eCallItemType);
+		m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
+		m_eOperType = static_cast<OPERATION_TYPE>(iOperateType);
+		_float4 fCenter = m_vecModelCom[m_eItem_Number]->GetCenterPoint();
+		m_matMoveCenter += XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, -fCenter.z);
 		break;
 	}
 		
 	case Client::UI_IDLE: {
 		m_bDead = false;
-		m_eItem_Number = eCallItemType;
 		m_eViewer_State = eOperation;
-		break;
-	}
-
-	case Client::UI_SECOND_IDLE: {
-		m_bDead = false;
-		m_eItem_Number = eCallItemType;
-		m_eViewer_State = eOperation;
+		if (PICKUPITEM == iOperateType)
+		{
+			m_bStop = false;
+		}
 		break;
 	}
 
 		
 	case Client::HIDE: {
 		m_bDead = false;
-		//m_eItem_Number = eCallItemType;
 		m_eViewer_State = eOperation;
 		break;
 	}
@@ -301,10 +312,8 @@ HRESULT CItem_Mesh_Viewer::Bind_ShaderResources()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
-
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix", m_matMoveCenter)))
 		return E_FAIL;
-
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
@@ -498,7 +507,194 @@ HRESULT CItem_Mesh_Viewer::Load_ItemModelTags()
 
 	CloseHandle(hFile);
 	return S_OK;
+}
 
 
+void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
+{
+	switch (eCallItemType)
+	{
+	case Client::emergencyspray01a://조금 아래로
+		m_fPopupHide_EndDist = 0.5f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::greenherb01a://조금 아래로
+		m_fPopupHide_EndDist = 1.f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::redherb01a://조금 아래로
+		m_fPopupHide_EndDist = 1.f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::blueherb01a://조금 아래로
+		m_fPopupHide_EndDist = 1.f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::herbsgg01a:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::herbsgr01a:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::herbsgb01a:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::herbsggb01a:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::herbsggg01a:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::herbsgrb01a:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::herbsrb01a:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::handgun_bullet01a:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::shotgun_bullet01a:
+		m_fPopupHide_EndDist = 0.6f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::woodbarricade01a:
+		m_fPopupHide_EndDist = 2.f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::blastingfuse01a:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_matMoveCenter = XMMatrixTranslation(-0.05f, -0.01f, 0.f);
+		break;
+	case Client::_9vbattery01a:
+		m_fPopupHide_EndDist = 0.2f;
+		m_pTransformCom->Set_Scaled(1.5f, 1.5f, 1.5f);
+		m_matMoveCenter = XMMatrixTranslation(0.f, 0.02f, 0.f);
+		break;
+	case Client::gunpowder01a:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::gunpowder01b:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::strengtheningyellow01a:
+		m_fPopupHide_EndDist = 0.1f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::vp70powerup:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::vp70longmagazine:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::shotgunpartsstock_00:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::shotgunpartsbarrel:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::unicornmedal01a:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		break;
+	case Client::spadekey01a:
+		m_fPopupHide_EndDist = 0.14f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::cardkeylv101a:
+		m_fPopupHide_EndDist = 0.13f;
+		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		break;
+	case Client::cardkeylv201a:
+		m_fPopupHide_EndDist = 0.13f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::valvehandle01a:
+		m_fPopupHide_EndDist = 0.21f;
+		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		break;
+	case Client::kingscepter01a:
+		m_fPopupHide_EndDist = 0.22f;
+		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		break;
+	case Client::virginheart01a:
+		m_fPopupHide_EndDist = 0.2f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::blankkey01a:
+		m_fPopupHide_EndDist = 0.15f;
+		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		break;
+	case Client::statuebook01a:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::statuehand01a:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		break;
+	case Client::virginmedal01a:
+		m_fPopupHide_EndDist = 0.2f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::diakey01a:
+		m_fPopupHide_EndDist = 0.2f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::virginmedal02a:
+		m_fPopupHide_EndDist = 0.2f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::chaincutter01a:
+		m_fPopupHide_EndDist = 0.2f;
+		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		break;
+	case Client::clairesbag01a:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::HandGun:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::ShotGun:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::Flash_Bomb:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::Grenade:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::vp70stock:
+		m_fPopupHide_EndDist = 0.4f;
+		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		break;
+	case Client::portablesafe:
+		m_fPopupHide_EndDist = 0.15f;
+		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		m_matMoveCenter = XMMatrixTranslation(0.f, -0.04f, 0.f);
+		break;
 
+	default:
+		break;
+	}
 }

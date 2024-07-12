@@ -289,7 +289,46 @@ private:	/* For.Linear Interpolation */
 private:	/* For.Linear Interpolation */
 	void									Update_LinearInterpolation(_float fTimeDelta, _uint iPlayingIndex);
 
-public:
+#pragma region ·ÎÄÃ Æ®·»½ºÆû Á¦¾î
+public:		/*For. Local_Control*/
+	void									Set_Local_State(LOCAL_STATE eState, const _float4& vState) {
+		memcpy(&m_TransformationMatrix.m[eState], &vState, sizeof(_float4));
+
+	}
+
+	void									Set_Local_State(LOCAL_STATE eState, _fvector vState) {
+		_float4		vTemp;
+		XMStoreFloat4(&vTemp, vState);
+		memcpy(&m_TransformationMatrix.m[eState], &vTemp, sizeof(_float4));
+	}
+
+	void									Set_Local_Scaled(_float fScaleX, _float fScaleY, _float fScaleZ);
+
+	inline void								Set_LocalMatrix(_float4x4 WorldMatrix) {
+		m_TransformationMatrix = WorldMatrix;
+	}
+
+	inline void								Set_LocaldMatrix(_matrix WorldMatrix) {
+		XMStoreFloat4x4(&m_TransformationMatrix, WorldMatrix);
+	}
+
+	_vector									Get_Local_State_Vector(LOCAL_STATE eState) {
+		return XMLoadFloat4x4(&m_TransformationMatrix).r[eState];
+	}
+
+	_float4									Get_Local_State_Float4(LOCAL_STATE eState) {
+		_float4		vTemp;
+		XMStoreFloat4(&vTemp, XMLoadFloat4x4(&m_TransformationMatrix).r[eState]);
+		return vTemp;
+	}
+
+	_float3					Get_Local_Scaled() const {
+		_matrix		WorldMatrix = XMLoadFloat4x4(&m_TransformationMatrix);
+		return _float3(XMVectorGetX(XMVector3Length(WorldMatrix.r[STATE_LOCAL_RIGHT])),
+			XMVectorGetX(XMVector3Length(WorldMatrix.r[STATE_LOCAL_UP])),
+			XMVectorGetX(XMVector3Length(WorldMatrix.r[STATE_LOCAL_LOOK])));
+	}
+#pragma endregion
 
 
 private:
