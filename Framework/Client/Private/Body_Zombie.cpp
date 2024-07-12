@@ -5,6 +5,8 @@
 #include "RagDoll_Physics.h"
 #include "Zombie.h"
 
+#include "Part_Breaker_Zombie.h"
+
 CBody_Zombie::CBody_Zombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
 {
@@ -27,9 +29,14 @@ HRESULT CBody_Zombie::Initialize(void* pArg)
 
 	BODY_MONSTER_DESC*		pDesc = { static_cast<BODY_MONSTER_DESC*>(pArg) };
 
+
+	m_pPart_Breaker = pDesc->pPart_Breaker;
 	m_pRender = pDesc->pRender;
 	m_pRootTranslation = pDesc->pRootTranslation;
 	m_eBodyModelType = pDesc->eBodyType;
+
+	if (nullptr == m_pPart_Breaker)
+		return E_FAIL;
 
 	if (nullptr == m_pRootTranslation)
 		return E_FAIL;
@@ -1260,4 +1267,5 @@ void CBody_Zombie::Free()
 
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
+	Safe_Release(m_pPart_Breaker);
 }

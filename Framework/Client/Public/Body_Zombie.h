@@ -16,9 +16,10 @@ class CBody_Zombie final : public CPartObject
 public:
 	typedef struct tagBodyMonsterDesc : public CPartObject::PARTOBJECT_DESC
 	{
-		_bool*				pRender = { nullptr };
-		_float3*			pRootTranslation = { nullptr };
-		ZOMBIE_BODY_TYPE	eBodyType = { ZOMBIE_BODY_TYPE::_END };
+		class CPart_Breaker_Zombie* pPart_Breaker = { nullptr };
+		_bool*						pRender = { nullptr };
+		_float3*					pRootTranslation = { nullptr };
+		ZOMBIE_BODY_TYPE			eBodyType = { ZOMBIE_BODY_TYPE::_END };
 	}BODY_MONSTER_DESC;
 
 	enum class BODY_MESH_TYPE{ _INNER, _OUTTER, _JOINT, _DEFICIT, _DAMAGED, _BROKEN_HEAD, _INTERNAL_MAT, _END };
@@ -112,6 +113,9 @@ private:
 
 private:
 	_bool*								m_pRender = { nullptr };
+
+private:
+	class CPart_Breaker_Zombie*			m_pPart_Breaker = { nullptr };
 
 
 private:
