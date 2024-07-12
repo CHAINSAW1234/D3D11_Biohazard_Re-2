@@ -234,7 +234,15 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 	switch (m_eTaskSequence)
 	{
 	case Client::CInventory_Manager::SETING: {
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		{
+			m_eTaskSequence = APPLY;
+			m_pContextMenu->Set_Dead(true);
+			m_PickResult = -1;
+		}
+
 		m_IsNoOneHover = true;
+		_bool isFullSlot = true;
 		CInventory_Slot* pHoveredSlot = nullptr;
 
 		for (_uint i = 0; i < m_iInvenCount; i++)
@@ -243,6 +251,10 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 			{
 				m_IsNoOneHover = false;
 				pHoveredSlot = m_vecInvenSlot[i];
+			}
+			if (false == m_vecInvenSlot[i]->Get_IsFilled())
+			{
+				isFullSlot = false;
 			}
 		}
 
@@ -255,47 +267,55 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 
 			if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 			{
-				_bool IsClicked = false;
+				m_pSelected_ItemUI = nullptr;
 				for (auto& iter : m_vecItem_UI)
 				{
 					if (true == iter->IsMouseHover() && true == iter->Get_isWorking())
 					{
-						IsClicked = true;
 						m_pSelected_ItemUI = iter;
 					}
 				}
 
-				if (true == IsClicked)
+				if (nullptr != m_pSelected_ItemUI && true == pHoveredSlot->Get_IsFilled())
 				{
-					m_eTaskSequence = SELECT;
-
 					ITEM_NUMBER eResultItem = Find_Recipe(m_pDragShadow->Get_ItemNumber(), m_pSelected_ItemUI->Get_ItemNumber());
 
-					if (ITEM_NUMBER_END == eResultItem)
+					if (false == isFullSlot)
 					{
-						_float3 TempTrashCanValue = _float3(HoveredPos.x, HoveredPos.y, Z_POS_CONTEXT_MENU);
-						m_pContextMenu->Set_Operation(UNCOMBINABLE_PICKED_UP, false, TempTrashCanValue, TempTrashCanValue);
-					}
+						if (ITEM_NUMBER_END == eResultItem)
+						{
+							m_eTaskSequence = SELECT;
+							_float3 TempTrashCanValue = _float3(HoveredPos.x, HoveredPos.y, Z_POS_CONTEXT_MENU);
+							m_pContextMenu->Set_Operation(UNCOMBINABLE_PICKED_UP, false, TempTrashCanValue, TempTrashCanValue);
+						}
 
+						else
+						{
+							m_eTaskSequence = SELECT;
+							_float3 TempTrashCanValue = _float3(HoveredPos.x, HoveredPos.y, Z_POS_CONTEXT_MENU);
+							m_pContextMenu->Set_Operation(COMBINABLE_PICKED_UP, true, TempTrashCanValue, TempTrashCanValue);
+						}
+					}
 					else
 					{
-						_float3 TempTrashCanValue = _float3(HoveredPos.x, HoveredPos.y, Z_POS_CONTEXT_MENU);
-						m_pContextMenu->Set_Operation(COMBINABLE_PICKED_UP, true, TempTrashCanValue, TempTrashCanValue);
+						if (ITEM_NUMBER_END != eResultItem)
+						{
+							m_eTaskSequence = SELECT;
+							_float3 TempTrashCanValue = _float3(HoveredPos.x, HoveredPos.y, Z_POS_CONTEXT_MENU);
+							m_pContextMenu->Set_Operation(FULL_SLOT_COMBINABLE_PICKED_UP, true, TempTrashCanValue, TempTrashCanValue);
+						}
 					}
+						
 				}
 
-				else
+				else if(nullptr == m_pSelected_ItemUI && false == pHoveredSlot->Get_IsFilled())
 				{
 					AddItem_ToInven(m_pDragShadow->Get_ItemNumber(), m_pDragShadow->Get_ItemQuantity(), _float3(HoveredPos.x, HoveredPos.y, Z_POS_ITEM_UI));
 					m_pSlotHighlighter->Set_DragShadow(false);
-					m_eInven_Manager_State = EVENT_IDLE;
 					m_pDragShadow->Set_Dead(true);
 					m_pSelected_ItemUI = nullptr;
 					m_eInven_Manager_State = GET_ITEM;
 					pHoveredSlot->Set_IsFilled(true);
-
-					CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-					pPlayer->Set_isCamTurn(false);
 				}
 			}
 		}
@@ -306,6 +326,12 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 		m_pContextMenu->Tick(fTimeDelta);
 
 		INVENTORY_EVENT eInvenEvent = m_pContextMenu->Get_InventoryEvent();
+
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		{
+			m_eTaskSequence = SETING;
+			m_pContextMenu->Set_Dead(true);
+		}
 
 		switch (eInvenEvent)
 		{
@@ -338,7 +364,13 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 	}
 		
 	case Client::CInventory_Manager::APPLY: {
-		if (m_PickResult == 0)
+
+		if (m_PickResult == -1)
+		{
+			m_eInven_Manager_State = DROP_ITEM;
+		}
+
+		else if (m_PickResult == 0)
 		{
 			ITEM_NUMBER eResultItem = Find_Recipe(m_pDragShadow->Get_ItemNumber(), m_pSelected_ItemUI->Get_ItemNumber());
 			if (handgun_bullet01a == m_pDragShadow->Get_ItemNumber() && handgun_bullet01a == m_pSelected_ItemUI->Get_ItemNumber() && handgun_bullet01a == eResultItem)
@@ -356,16 +388,13 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 				m_pSelected_ItemUI->Set_ItemUI(eResultItem, ItemType_Classify_ByNumber(eResultItem), m_pSelected_ItemUI->GetPositionVector(),1);
 			}
 
-			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-			pPlayer->Set_isCamTurn(false);
-
 			m_PickResult = -1;
-
 			m_pSlotHighlighter->Set_DragShadow(false);
-			m_eInven_Manager_State = EVENT_IDLE;
 			m_pDragShadow->Set_Dead(true);
 			m_pSelected_ItemUI = nullptr;
 			m_eInven_Manager_State = GET_ITEM;
+			//CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+			//pPlayer->Set_isCamTurn(false);
 		}
 
 		else if(m_PickResult == 1)
@@ -379,21 +408,22 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 
 			else
 			{
+				Find_Slot(_float2(m_fSwitchTargetPos.x, m_fSwitchTargetPos.y))->Set_IsFilled(true);
+				m_fSwitchTargetPos = _float2();
 				_float3 fNewItemPos = { m_pDragShadow->GetPositionVector() };
-
 				AddItem_ToInven(m_pDragShadow->Get_ItemNumber(), 10, _float3(fNewItemPos.x, fNewItemPos.y, Z_POS_ITEM_UI));
-
 				m_fItemSwitchTime = 0.f;
-				CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-				pPlayer->Set_isCamTurn(false);
 				m_PickResult = -1;
 				m_pSlotHighlighter->Set_DragShadow(false);
-				m_eInven_Manager_State = EVENT_IDLE;
 				m_pDragShadow->Set_Dead(true);
 				m_pSelected_ItemUI = nullptr;
 				m_eInven_Manager_State = GET_ITEM;
+				//CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+				//pPlayer->Set_isCamTurn(false);
 			}
 		}
+
+
 
 		break;
 	}
@@ -1032,8 +1062,6 @@ void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
 			//}
 		}
 	}
-
-	
 }
 
 void CInventory_Manager::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)

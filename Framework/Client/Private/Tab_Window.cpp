@@ -9,6 +9,7 @@
 #include "Read_Item_UI.h"
 #include "Item_Map_UI.h"
 #include "Targeting_Map_UI.h"
+#include "Player.h"
 
 
 constexpr _float BACKGROUND_MIN_ALPHA = 0.8f;
@@ -120,7 +121,7 @@ void CTab_Window::Start()
 
 void CTab_Window::Tick(_float fTimeDelta)
 {
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB) && PICK_UP_ITEM_WINDOW != m_eWindowType)
 	{
 		OnOff_EventHandle();
 	}
@@ -364,6 +365,9 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 			OnOff_EventHandle();
 			m_pGameInstance->Set_IsPaused(false);
 			m_fCurTime = 0.f;
+
+			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+			pPlayer->Set_isCamTurn(false);
 			break;
 		}
 
@@ -373,6 +377,9 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 			OnOff_EventHandle();
 			m_pGameInstance->Set_IsPaused(false);
 			m_fCurTime = 0.f;
+
+			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+			pPlayer->Set_isCamTurn(false);
 			break;
 		}
 
@@ -529,7 +536,7 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 		m_isAlphaControl = true;
 
 		/*Item_Discription 세팅*/
-		m_pItem_Discription->Set_Item_Number(ePickedItemNum, 10);
+		m_pItem_Discription->Set_Item_Number(ePickedItemNum, CInventory_Manager::PickUpItem_Quantity_Classify(ePickedItemNum));
 
 		/*Item_Mesh_Viewer 세팅*/
 		m_pItem_Mesh_Viewer->Set_Operation(POP_UP, ePickedItemNum);

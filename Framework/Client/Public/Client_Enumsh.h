@@ -120,6 +120,7 @@ namespace Client
 		UNCOMBINABLE_PICKED_UP, //픽업된 아이템인데 조합 불가
 		DOCUMENT,
 		HOTKEY,
+		FULL_SLOT_COMBINABLE_PICKED_UP,// 자리가 꽉찼을때 픽업된 조합가능 아이템
 		INVEN_ITEM_TYPE_END
 	};
 

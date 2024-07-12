@@ -320,6 +320,18 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("바꾸기"));
 		break;
 	}
+
+	case Client::FULL_SLOT_COMBINABLE_PICKED_UP: {
+		m_iContextMenuCount = 1;
+
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 2);
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("조합"));
+
+		m_eContextType = eItemType;
+		break;
+	}
+
+
 		
 	default:
 		break;
