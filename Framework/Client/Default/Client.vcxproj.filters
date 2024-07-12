@@ -679,6 +679,9 @@
     <Filter Include="02.GameObjects\UI\99. Tab_Window\0. Inventory_Manager\Slot_Highlighter">
       <UniqueIdentifier>{d3a9314f-e0fe-4296-944a-752b05519c2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\EnvMap">
+      <UniqueIdentifier>{cd409281-eb3c-47c4-b38e-652c35092d07}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1317,6 +1320,9 @@
     <ClInclude Include="..\Public\Event_Base.h">
       <Filter>03. Event</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\EnvCube.h">
+      <Filter>02.GameObjects\EnvMap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1915,6 +1921,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Event_Base.cpp">
       <Filter>03. Event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EnvCube.cpp">
+      <Filter>02.GameObjects\EnvMap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
