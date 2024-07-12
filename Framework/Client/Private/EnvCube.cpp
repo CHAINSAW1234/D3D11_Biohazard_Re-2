@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "..\Public\EnvCube.h"
-
+#include "EnvCube.h"
+#include"Player.h"
 CEnvCube::CEnvCube(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -33,8 +33,18 @@ HRESULT CEnvCube::Initialize(void * pArg)
 	return S_OK;
 }
 
+void CEnvCube::Start()
+{
+	m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Get_GameObject(LEVEL_GAMEPLAY, TEXT("Layer_Player"), 0));
+	Set_CubeRegion(m_pPlayer->Get_Player_Region());
+
+}
+
 void CEnvCube::Tick(_float fTimeDelta)
 {
+	Set_CubeRegion(m_pPlayer->Get_Player_Region());
+
+
 	return;
 }
 
@@ -47,14 +57,14 @@ void CEnvCube::Late_Tick(_float fTimeDelta)
 
 HRESULT CEnvCube::Render()
 {
-	//if (FAILED(Bind_ShaderResources()))
-	//	return E_FAIL;
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
 
-	//m_pShaderCom->Begin(0);
+	m_pShaderCom->Begin(0);
 
-	//m_pVIBufferCom->Bind_Buffers();
+	m_pVIBufferCom->Bind_Buffers();
 
-	//m_pVIBufferCom->Render();
+	m_pVIBufferCom->Render();
 
 	return S_OK;
 }
@@ -139,6 +149,7 @@ HRESULT CEnvCube::Add_Components()
 
 	ifst.close();
 	/* For.Com_VIBuffer */
+
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Cube"),
 		TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom)))
 		return E_FAIL;

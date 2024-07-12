@@ -69,8 +69,8 @@ private:
 	_int iPreIndex = { 0 };
 #pragma endregion
 
-	CTexture* m_pTexture = { nullptr };
-
+	//CTexture* m_pTexture = { nullptr };
+	class CEnvCube* m_pCubeMap = { nullptr };
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

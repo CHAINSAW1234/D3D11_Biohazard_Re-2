@@ -22,6 +22,7 @@ private:
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
+	virtual void				Start() override;
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT			Render() override;
@@ -36,6 +37,7 @@ public:
 	_float4x4									Get_WorldFloat4x4() {return m_CubeList[m_iCurRegion][m_iCubTextureNum];	}
 	_int											Get_EntireRegion() { return m_iEntireTexture; }
 	_int											Get_MaxNum() { return m_TextureNumMap[m_iCurRegion]; }
+	CTexture*									Get_Texture() { return m_TextureComMap[m_iCurRegion]; }
 private:
 	_int											m_iEntireTexture = {0};
 
@@ -48,7 +50,7 @@ private:
 	map<_int, CTexture*>				m_TextureComMap = {}; // 맵enum값과 거기에 필요한 텍스쳐 => 얜 정해져있음 파싱 x
 	CVIBuffer_Cube*						m_pVIBufferCom = { nullptr };
 	CShader*									m_pShaderCom = { nullptr };	
-	
+	class CPlayer*							m_pPlayer = { nullptr };
 private:
 	HRESULT					Add_Components();
 	HRESULT					Bind_ShaderResources();
