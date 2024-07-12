@@ -78,7 +78,10 @@ public:
 	//몇번 단축키에 몇번 아이템이 있는가
 	ITEM_NUMBER		Get_Item_On_HotKey(_uint iHotKeyNum);
 
+	//인벤토리 밖에서 아이템을 사용하게 되었을때 쓰는 함수(ex 총알)
 	void			UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage);
+
+	void			Hotkey_PopUp();
 
 private:
 	class CButton_UI*			m_pMapButton = { nullptr };

@@ -16,6 +16,8 @@
 /* MapObj*/
 #include"InteractProps.h"
 
+/*CubeMap*/
+#include"EnvCube.h"
 
 #include "ImGui_Manager.h"
 
@@ -54,6 +56,9 @@ HRESULT CLevel_GamePlay::Initialize()
 	/*if (FAILED(Ready_CutScene()))
 		return E_FAIL;*/
 
+	if (FAILED(Ready_EnvCube()))
+		return E_FAIL;
+
 	m_pGameInstance->SetSimulate(true);
 
 	CImgui_Manager::Get_Instance()->Set_GraphicDevice(m_pDevice, m_pContext);
@@ -62,7 +67,7 @@ HRESULT CLevel_GamePlay::Initialize()
 	CImgui_Manager::Get_Instance()->Render();
 
 
-	m_pTexture = (CTexture*)m_pGameInstance->Clone_Component(g_Level, TEXT("Prototype_Component_Texture_CubeMap"));
+	//m_pTexture = (CTexture*)m_pGameInstance->Clone_Component(g_Level, TEXT("Prototype_Component_Texture_CubeMap"));
 
 	return S_OK;
 }
@@ -77,7 +82,7 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
 	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));	
 
-	m_pGameInstance->Set_CubeMap(m_pTexture);
+	m_pGameInstance->Set_CubeMap(m_pCubeMap->Get_Texture());
 	 
 	/*(임시) 이벤트 처리 구간*/
 	_bool bGoal = { false };
@@ -369,6 +374,16 @@ HRESULT CLevel_GamePlay::Ready_CutScene()
 	return S_OK;
 }
 
+HRESULT CLevel_GamePlay::Ready_EnvCube()
+{
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_EnvCubeMap"), TEXT("Prototype_GameObject_EnvCube"))))
+		return E_FAIL;
+	
+	m_pCubeMap = static_cast<CEnvCube*>(m_pGameInstance->Get_GameObject(LEVEL_GAMEPLAY,TEXT("Layer_EnvCubeMap"), 0));
+
+	return S_OK;
+}
+
 HRESULT CLevel_GamePlay::Ready_Layer_Effect(const wstring & strLayerTag)
 {	
 	for (size_t i = 0; i < 20; i++)
@@ -437,20 +452,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	
 	///////////////////////////* ▶  ▶  ▶  ▶  ▶   */////////////////////////////
 
-	/* 5. UI_Sub_Inventory */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Sub_Inventory.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+	///* 5. UI_Sub_Inventory */
+	//selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Sub_Inventory.dat");
+	//inputFileStream.open(selectedFilePath, ios::binary);
+	//UI_Distinction(selectedFilePath);
+	//CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
 	/* 5. UI_MissionBar */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_MissionBar.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
-
-	/* 4. Inventory SelectBox */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Inventory_SelectBox.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
@@ -463,8 +472,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 		UI_Distinction(selectedFilePath);
 		CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 	}
-
-	/* 4. Inventory SelectBox */
+	
+	/* 4. UI_LayOut */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_LayOut.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
@@ -1631,5 +1640,5 @@ CLevel_GamePlay * CLevel_GamePlay::Create(ID3D11Device* pDevice, ID3D11DeviceCon
 void CLevel_GamePlay::Free()
 {
 	__super::Free();
-	Safe_Release(m_pTexture);
+	//Safe_Release(m_pTexture);
 }

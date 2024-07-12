@@ -107,6 +107,9 @@
 #include "Hint.h"
 #include "Hint_Highliter.h"
 
+// EnvMap 큐브맵이라는뜻
+#include"EnvCube.h"
+
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
 	, m_pContext{ pContext }
@@ -168,8 +171,8 @@ HRESULT CLoader::Start()
 	case LEVEL_GAMEPLAY:
 		g_Level = LEVEL_GAMEPLAY;
 
-		if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
-			return E_FAIL;
+	/*	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+			return E_FAIL;*/
 
 		hr = Loading_For_GamePlay();
 		break;
@@ -634,6 +637,12 @@ HRESULT CLoader::Load_Prototype()
 	
 #pragma endregion
 
+#pragma region CubeMap
+	/* For.Prototype_GameObject_EnvCube */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnvCube"),
+		CEnvCube::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+#pragma endregion
 	/* For.Prototype_GameObject_Collider */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Collider"),
 		CCustomCollider::Create(m_pDevice, m_pContext))))
@@ -749,6 +758,7 @@ HRESULT CLoader::Loading_For_Static_Component()
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Long_Box_Select_Click"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Inventory/Long_Box_Select_Click.png")))))
 		return E_FAIL;
+
 #pragma endregion
 
 	return S_OK;
@@ -1253,6 +1263,7 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/rpddocument01a.png")))))
 		return E_FAIL;
 
+
 	/* TEXT TYPE */
 	/* 사건 일지 A */
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ReadType_Incident_log1"),
@@ -1313,6 +1324,79 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/D_4.png")))))
 		return E_FAIL;
 
+	/* 화약 설명서*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Gunpowder_Note1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/E_1.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Gunpowder_Note2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/E_2.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Gunpowder_Note3"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/E_3.png")))))
+		return E_FAIL;
+
+	/* 금고 자판 고쳐놔 관련 노트*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Fix_Lock_Note1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/G_1.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Fix_Lock_Note2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/G_2.png")))))
+		return E_FAIL;
+
+	/* 휴대용 금고 지침 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Portable_Safe1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/H_1.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Portable_Safe2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/H_2.png")))))
+		return E_FAIL;
+
+	/* 금고 자판 고쳐놔 관련 노트*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Safe_PassWard_Note1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/I_1.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Safe_PassWard_Note2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/I_2.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Safe_PassWard_Note3"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/I_3.png")))))
+		return E_FAIL;
+
+	/* 릭커에 대한 이야기*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ReadType_Ricker1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/J_1.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ReadType_Ricker2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/J_2.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ReadType_Ricker3"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/J_3.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ReadType_Ricker4"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/J_4.png")))))
+		return E_FAIL;
+
+	/* 팜플렛*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_PamphletNote1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/F_1.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_PamphletNote2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/F_2.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_PamphletNote3"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/F_3.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_PamphletNote4"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/F_4.png")))))
+		return E_FAIL;
+
+	/* 경관의 수첩 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ReadType_Police_Note1"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/Note/PoliceNote1.png")))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ReadType_Police_Note2"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/Note/PoliceNote2.png")))))
+		return E_FAIL;
 #pragma endregion
 
 #pragma region Effect
@@ -1540,9 +1624,38 @@ HRESULT CLoader::Loading_For_GamePlay()
 #pragma endregion
 
 #pragma region CubeMap
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_CubeMap"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/CubeMap/st4_101_0_00.dds")))))
+
+	filesystem::path FullPath(TEXT("../Bin/Data/EnvCubeSetting.dat"));
+
+
+
+	ifstream ifs(FullPath.c_str(), ios::binary);
+
+	if (true == ifs.fail())
+	{
+		MSG_BOX(TEXT("Failed To OpenFile"));
+
 		return E_FAIL;
+	}
+	_int iEntireTextures;
+	ifs.read(reinterpret_cast<_char*>(&iEntireTextures), sizeof(_int));
+
+	/* For.Com_Texture */
+	for (_int i = 0; i < iEntireTextures; i++)
+	{
+		_tchar szPrototypeComName[MAX_PATH];
+		_tchar szPath[MAX_PATH];
+		_int iTextureNum;
+		ifs.read(reinterpret_cast<_char*>(&szPrototypeComName), sizeof(_tchar) * MAX_PATH);
+		ifs.read(reinterpret_cast<_char*>(&szPath), sizeof(_tchar) * MAX_PATH);
+		ifs.read(reinterpret_cast<_char*>(&iTextureNum), sizeof(_int));
+		if (FAILED(m_pGameInstance->Add_Prototype(g_Level, szPrototypeComName,
+			CTexture::Create(m_pDevice, m_pContext, szPath, iTextureNum))))
+			return E_FAIL;
+	}
+
+	ifs.close();
+
 
 #pragma endregion
 

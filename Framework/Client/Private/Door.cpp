@@ -40,7 +40,7 @@ HRESULT CDoor::Initialize(void* pArg)
 		m_eType = DOOR_ONE;
 	if (m_eType == DOOR_DOUBLE)
 	{
-		if ((m_tagPropDesc.strGamePrototypeName.find("038") != string::npos))
+		if ((m_tagPropDesc.strGamePrototypeName.find("007") != string::npos))
 			m_eDoubleDoorType = DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR;
 		else
 			m_eDoubleDoorType = DOUBLE_DOOR_MODEL_TYPE::NORMAL_DOOR;
@@ -472,12 +472,12 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 			m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 
 			if(nullptr != m_pSelector)
+			{
 				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
-
-			Opreate_Selector_UI(false, Get_Object_Pos());
+				m_pSelector = nullptr;
+			}
 
 			// Destory : 점점 사라진 후에 null 
-			// m_pSelector = nullptr;
 		}
 
 		if (Check_Col_Player(INTER_COL_DOUBLE, COL_STEP0)) // 인지?

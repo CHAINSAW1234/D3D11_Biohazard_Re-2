@@ -114,7 +114,6 @@ void CSelector_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    //m_vTargetPos = _float4(0, 0, 0, 1);
     Exception_Handle();
     Operate_Selector(fTimeDelta);
 }
@@ -136,8 +135,6 @@ CGameObject* CSelector_UI::Destroy_Selector()
 {
     if (m_SelectorObj_Vec.empty())
         return nullptr;
-
-    m_isOutDistance = true;
 
     for (auto& iter : m_SelectorObj_Vec)
     {
@@ -275,6 +272,14 @@ void CSelector_UI::Rendering(_float fTimeDelta)
 
 void CSelector_UI::Operate_Selector(_float fTimeDelta)
 {
+    if (true != m_isUsing)
+    {
+        Reset();
+        return;
+    }
+
+    Rendering(fTimeDelta);
+
     /* 상호작용이 불가능할 때 : Check */
     if (false == m_isInteractive)
     {
@@ -307,9 +312,6 @@ void CSelector_UI::Operate_Selector(_float fTimeDelta)
         if (true == m_isArrow)
             m_isRender = true;
     }
-
-    Rendering(fTimeDelta);
-
 }
 
 void CSelector_UI::Exception_Handle()

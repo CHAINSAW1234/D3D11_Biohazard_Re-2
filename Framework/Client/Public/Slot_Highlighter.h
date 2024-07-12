@@ -7,7 +7,7 @@ BEGIN(Client)
 class CSlot_Highlighter final : public CCustomize_UI
 {
 private:
-	enum SH_ROLE { CURSOR_SH, GLITTER_SH, SH_NONE };
+	enum SH_ROLE { CURSOR_SH, GLITTER_SH, HOTKEY, SH_NONE };
 
 protected:
 	CSlot_Highlighter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -17,7 +17,7 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
-	void FirstTick_Seting();
+	virtual void Start() override;
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;

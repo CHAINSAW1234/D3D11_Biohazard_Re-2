@@ -63,7 +63,7 @@ HRESULT CMissionBar_UI::Initialize(void* pArg)
             m_vecTextBoxes.back()->Set_FontColor(ALHPE_ZERO_VEC);
         }
 
-        list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"));
+        list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
 
         for (auto& iter : *pUIList)
         {
@@ -321,6 +321,8 @@ void CMissionBar_UI::Mission_Start()
 {
     if (!m_pMission_ColliderQueue.empty())
         m_pMission_ColliderQueue.pop();
+
+    m_pGameInstance->Play_Sound(TEXT("ui_ingame_media.bnk.2_46.mp3"), CHANNELID::CH30);
 
     /*Client */
     m_isFontStart = true;

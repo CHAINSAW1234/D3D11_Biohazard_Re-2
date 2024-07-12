@@ -24,7 +24,7 @@ private:
 	void Hide_Operation(_float fTimeDelta);
 
 public:
-	void Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAppearPos, _float3 fArrivalPos );
+	void Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 isEquiped, _float3 fArrivalPos );
 
 	INVENTORY_EVENT Get_InventoryEvent() const {
 		return m_eContextEvent;

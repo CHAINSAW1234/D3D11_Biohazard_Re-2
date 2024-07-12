@@ -59,6 +59,7 @@ void CItem_UI::Start()
 		}
 
 		m_mapPartUI[HOTKEY_DISPLAY]->Get_TexBox(0)->Set_isTransformBase(false);
+		m_mapPartUI[HOTKEY_DISPLAY]->Get_TexBox(0)->Set_FontColor(XMVectorSet(1.f, 1.f, 1.f, 1.f));
 	}
 }
 
@@ -176,19 +177,12 @@ void CItem_UI::Set_Dead(_bool bDead)
 		{
 		case Client::EQUIPABLE: {
 			m_mapPartUI[EQUIP_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
-			
-			if (0 == m_iItemQuantity)
-				m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(true);
-			else
-				m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
-
-			if (false == m_isHotKeyRegisted)
+			m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
+			if(m_isEquiped == true)
 				m_mapPartUI[HOTKEY_DISPLAY]->CCustomize_UI::Set_Dead(true);
 			else
 				m_mapPartUI[HOTKEY_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
-
-			break;
-		}
+			break;}
 
 		case Client::CONSUMABLE_EQUIPABLE: {
 			m_mapPartUI[EQUIP_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
@@ -201,41 +195,34 @@ void CItem_UI::Set_Dead(_bool bDead)
 			m_mapPartUI[EQUIP_DISPLAY]->CCustomize_UI::Set_Dead(true);
 			m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(true);
 			m_mapPartUI[HOTKEY_DISPLAY]->CCustomize_UI::Set_Dead(true);
-			break;
-		}
+			break;}
 
 		case Client::CONSUMABLE: {
 			m_mapPartUI[EQUIP_DISPLAY]->CCustomize_UI::Set_Dead(true);
 			m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
 			m_mapPartUI[HOTKEY_DISPLAY]->CCustomize_UI::Set_Dead(true);
-			break;
-		}
+			break;}
 
 		case Client::QUEST: {
 			m_mapPartUI[EQUIP_DISPLAY]->CCustomize_UI::Set_Dead(true);
 			m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(true);
 			m_mapPartUI[HOTKEY_DISPLAY]->CCustomize_UI::Set_Dead(true);
-			break;
-		}
+			break;}
 
 		case Client::DRAG_SHADOW: {
 			m_mapPartUI[EQUIP_DISPLAY]->CCustomize_UI::Set_Dead(true);
 			m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(true);
 			m_mapPartUI[HOTKEY_DISPLAY]->CCustomize_UI::Set_Dead(true);
-			break;
-		}
+			break;}
 
 		case Client::HOTKEY: {
 			m_mapPartUI[EQUIP_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
-
 			if (false == m_isHotKeyRegisted)
 				m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(true);
 			else
 				m_mapPartUI[COUNT_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
-
 			m_mapPartUI[HOTKEY_DISPLAY]->CCustomize_UI::Set_Dead(bDead);
-			break;
-		}
+			break;}
 
 		default:
 			break;
