@@ -252,11 +252,12 @@ void CThrowing_Weapon::Initiate(_float4 vPos, _float4 vDir, _float4 vLook)
 	m_pRigid_Dynamic->SetPosition(vPos);
 
 	m_vDir = _float4(vDir.x /*+ m_pGameInstance->GetRandom_Real(-0.03f, 0.03f)*/,
-		vDir.y + m_pGameInstance->GetRandom_Real(0.05f, 0.1f),
+		vDir.y,
 		vDir.z/* + m_pGameInstance->GetRandom_Real(-0.03f, 0.03f)*/,
 		0.f);
 
 	m_vDir = Float4_Normalize(m_vDir);
+	m_vDir.y += m_pGameInstance->GetRandom_Real(0.05f, 0.1f);
 
 	m_pRigid_Dynamic->SetKinematic(false);
 	m_pRigid_Dynamic->AddForce(m_vDir);

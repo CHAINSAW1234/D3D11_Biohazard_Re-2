@@ -568,7 +568,9 @@ void CRagdoll_Physics::create_ragdoll()
 		PxRigidDynamic* body = m_ragdoll->find_recent_body((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
 		if (!body || m_vecBreakPartFilter[chosen_idx] == true)
-			continue;
+		{
+				continue;
+		}
 
 		_matrix body_global_transform = to_mat4(body->getGlobalPose());
 		_matrix inv_body_global_transform = XMMatrixInverse(nullptr, body_global_transform);
@@ -856,7 +858,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		break;
 	case COLLIDER_TYPE::PELVIS:
-		break; ////////////////////////////////////TEMP//////////////////////////////
+		//break; ////////////////////////////////////TEMP//////////////////////////////
 		if(!m_Leg_L)
 		{
 			m_Leg_L = create_capsule_bone(m_thigh_l_idx, m_calf_l_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::LEG_L);
@@ -896,6 +898,8 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			m_Foot_R = create_capsule_bone(m_foot_r_idx, m_ball_r_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::FOOT_R);
 			m_Scene->addActor(*m_Foot_R);
 		}
+
+		m_ragdoll->m_rigid_bodies[1] = m_Pelvis;
 
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
@@ -949,6 +953,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		Update_Partial_After(1 / 60.f);
 
 		m_vecBreakPartFilter[m_thigh_l_idx] = true;
+		m_vecBreakPartFilter[1] = true;
 		m_vecBreakPartFilter[m_thigh_r_idx] = true;
 		m_vecBreakPartFilter[m_pelvis_idx] = true;
 		m_vecBreakPartFilter[m_calf_l_idx] = true;
@@ -1299,19 +1304,39 @@ void CRagdoll_Physics::update_animations()
 
 		auto joint = m_skeletal_mesh->skeleton()->joints();
 
-		if (m_vecBone)
+		/*if(m_bPartialRagdoll)
 		{
-			m_RotationMatrix = m_pTransform->Get_RotationMatrix_Pure();
-
-			auto WorldMat = m_RotationMatrix;
-
-			for (size_t i = 0; i < NumJoint; ++i)
+			if (m_vecBone)
 			{
-				if (!IsIdentityMatrix(m_Global_transforms.transforms[i]))
+				auto WorldMat = m_pTransform->Get_WorldMatrix_Pure();
+
+				for (size_t i = 0; i < NumJoint; ++i)
 				{
-					auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
-					auto Result = m_Global_transforms.transforms[i] * Inverse;
-					(*m_vecBone)[m_vecBoneIndex[i]]->Set_Combined_Matrix(Result);
+					if (!IsIdentityMatrix(m_Global_transforms.transforms[i]))
+					{
+						auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
+						auto Result = m_Global_transforms.transforms[i] * Inverse;
+						(*m_vecBone)[m_vecBoneIndex[i]]->Set_Combined_Matrix(Result);
+					}
+				}
+			}
+		}
+		else*/
+		{
+			if (m_vecBone)
+			{
+				m_RotationMatrix = m_pTransform->Get_RotationMatrix_Pure();
+
+				auto WorldMat = m_RotationMatrix;
+
+				for (size_t i = 0; i < NumJoint; ++i)
+				{
+					if (!IsIdentityMatrix(m_Global_transforms.transforms[i]))
+					{
+						auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
+						auto Result = m_Global_transforms.transforms[i] * Inverse;
+						(*m_vecBone)[m_vecBoneIndex[i]]->Set_Combined_Matrix(Result);
+					}
 				}
 			}
 		}
