@@ -63,7 +63,16 @@ HRESULT CLock_Cabinet::Initialize(void* pArg)
 
 void CLock_Cabinet::Tick(_float fTimeDelta)
 {
+	/*_float4 player = m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION);
+	player.y += 1.f;
+	player.z += 1.f;
+
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, player);
+	m_pTransformCom->Set_Scaled(2, 2, 2);
+*/
+
 	//__super::Tick(fTimeDelta);
+  	_int a = 1;
 }
 
 void CLock_Cabinet::Late_Tick(_float fTimeDelta)
@@ -83,6 +92,7 @@ HRESULT CLock_Cabinet::Render()
 		return S_OK;
 	else
 		m_bRender = false;*/
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
@@ -187,6 +197,18 @@ HRESULT CLock_Cabinet::Initialize_Model()
 
 void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 {
+	if (DOWN == m_pGameInstance->Get_KeyState('D'))
+	{
+		m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta);
+
+
+	}
+
+	else if (DOWN == m_pGameInstance->Get_KeyState('A'))
+	{
+		m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), -fTimeDelta);
+	}
+
 	switch (*m_pLockState)
 	{
 	case CCabinet::STATIC_LOCK:
@@ -197,17 +219,20 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 		_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 		m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 	}
-		break;
+	break;
+
 	case CCabinet::LIVE_LOCK:
+	{
 		
-		break;
+	}
+	break;
+
 	case CCabinet::WRONG_LOCK:
 		break;
+
 	case CCabinet::CLEAR_LOCK:
-		
 		break;
 	}
-
 
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
@@ -217,16 +242,6 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 
 	Get_SpecialBone_Rotation(); // for UI
-
-
-
-
-
-
-
-
-
-
 
 }
 

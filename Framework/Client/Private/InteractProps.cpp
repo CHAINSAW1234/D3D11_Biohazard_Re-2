@@ -102,7 +102,7 @@ void CInteractProps::Start()
 	}
 
 	m_pCameraGimmick = static_cast<CCamera_Gimmick*>(m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 2));
-	m_pCameraTransform = static_cast<CTransform*>(m_pCameraGimmick->Get_Component(g_strTransformTag));
+	m_pCameraGimmickTransform = static_cast<CTransform*>(m_pCameraGimmick->Get_Component(g_strTransformTag));
 	for (auto& iter : m_PartObjects)
 	{
 		if (iter == nullptr)
