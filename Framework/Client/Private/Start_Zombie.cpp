@@ -7,6 +7,8 @@
 #include "Body_Zombie.h"
 #include "Stun_Zombie.h"
 
+#include "Room_Finder.h"
+
 CStart_Zombie::CStart_Zombie()
 	: CTask_Node()
 {
@@ -47,7 +49,9 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 		if (false == m_pBlackBoard->Compute_Distance_To_Player_World(&fDistanceToPlayer))
 			return false;
 
-		if (3.f > fDistanceToPlayer)
+
+		if (true == m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())) &&
+			5.f > fDistanceToPlayer)
 		{
 			m_pBlackBoard->Get_AI()->Set_Start(false);
 
@@ -62,7 +66,8 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 		if (false == m_isStart)
 			m_pBlackBoard->SetUp_Nearest_Door();
 
-		if (true == m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())))
+		if (true == m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())) ||
+			true == m_pBlackBoard->Get_AI()->Is_In_Linked_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())))
 		{
 			m_pBlackBoard->Get_AI()->Set_Start(false);
 
@@ -74,10 +79,11 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 
 	else if (eStartType == ZOMBIE_START_TYPE::_CREEP)
 	{
-		if (true == m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())))
+		if (true == m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())) ||
+			true == m_pBlackBoard->Get_AI()->Is_In_Linked_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())))
 		{
 			m_pBlackBoard->Get_AI()->Set_Start(false);
-			m_pBlackBoard->Get_AI()->Set_State(MONSTER_STATE::MST_IDLE);
+			m_pBlackBoard->Get_AI()->Set_State(MONSTER_STATE::MST_CREEP);
 			m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
 
 			CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
@@ -97,6 +103,9 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 			}
 
 			pBody_Model->Change_Animation(static_cast<_uint>(PLAYING_INDEX::INDEX_0), strAnimLayerTag, static_cast<_uint>(iRandom));
+
+			pBody_Model->Play_Pose(static_cast<_uint>(PLAYING_INDEX::INDEX_0));			
+			//	pBody_Model->Play_Animations(m_pBlackBoard->Get_AI()->Get_Transform(), 0.f, &_float3());
 
 #ifdef _DEBUG
 			MSG_BOX(TEXT("Start! Creep"));
@@ -120,9 +129,19 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 
 	else if(eStartType == ZOMBIE_START_TYPE::_RAG_DOLL)
 	{
-		if (true == m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())))
+		if (true == m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())) ||
+			true == m_pBlackBoard->Get_AI()->Is_In_Linked_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())))
 		{
 			m_pBlackBoard->Get_AI()->Set_Start(false);
+
+			CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+			wstring			strAnimLayerTag = { TEXT("Undiscovered_Dead_Pose") };
+			_int			iRandom = { m_pGameInstance->GetRandom_Int(static_cast<_int>(ANIM_UNDISCOVERED_DEAD_POSE::_FACEDOWN1), static_cast<_int>(ANIM_UNDISCOVERED_DEAD_POSE::_FACEUP4)) };
+
+			pBody_Model->Change_Animation(static_cast<_uint>(PLAYING_INDEX::INDEX_0), strAnimLayerTag, static_cast<_uint>(iRandom));
+			//	pBody_Model->Play_Animations(m_pBlackBoard->Get_AI()->Get_Transform(), 0.1f, &_float3());
+			pBody_Model->Play_Pose(static_cast<_uint>(PLAYING_INDEX::INDEX_0));
+
 			m_pBlackBoard->Get_AI()->SetRagdoll_StartPose();
 
 #ifdef _DEBUG

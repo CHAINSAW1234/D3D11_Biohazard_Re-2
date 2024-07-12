@@ -252,7 +252,7 @@ public:
 
 	HRESULT									Play_Animations(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
 	HRESULT									Play_Animation_Light(class CTransform* pTransform, _float fTimeDelta);
-	HRESULT									Play_Pose(class CTransform* pTransform, _float fTimeDelta);
+	HRESULT									Play_Pose(_uint iPlayingIndex);
 	HRESULT									Play_IK(class CTransform* pTransform, _float fTimeDelta);
 	HRESULT									Render(_uint iMeshIndex);
 

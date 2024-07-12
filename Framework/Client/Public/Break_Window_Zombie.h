@@ -21,7 +21,7 @@ public:
 	virtual void					Exit() override;
 
 private:
-	void							Change_Animation(_float fTimeDelta);
+	void							Change_Animation();
 
 public:
 	inline void						SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }

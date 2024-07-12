@@ -29,10 +29,9 @@ void CStand_Up_Zombie::Enter()
 	if (nullptr == pBodyModel)
 		return;
 
-	pBodyModel->Set_TotalLinearInterpolation(0.2f);
+	pBodyModel->Set_TotalLinearInterpolation(0.4f);
 	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), false);
 
-	m_eFaceState = m_pBlackBoard->Get_AI()->Get_FaceState();
 
 #ifdef _DEBUG
 
@@ -73,14 +72,18 @@ _bool CStand_Up_Zombie::Execute(_float fTimeDelta)
 
 		if (false == m_pBlackBoard->Get_AI()->Use_Stamina(CZombie::USE_STAMINA::_STAND_UP))
 			return false;
+
+		if (false == m_pBlackBoard->Is_LookTarget())
+			return false;
+
+		m_eFaceState = m_pBlackBoard->Get_AI()->Get_FaceState();
+		Change_Animation();
 	}
 
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->Set_State(MONSTER_STATE::MST_STANDUP);
-
-	Change_Animation();
 
 	return true;
 }

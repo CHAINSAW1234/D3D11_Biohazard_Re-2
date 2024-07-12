@@ -52,6 +52,11 @@ void COpen_Door_Zombie::Enter()
 		m_iAnimIndex = static_cast<_int>(ANIM_GIMMICK_DOOR::_OPEN_FROM_B);
 	}
 
+
+
+	pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
+	Change_Animation();
+	m_isDummyDoor = false;
 	m_pBlackBoard->Get_AI()->Set_ManualMove(true);
 	//	m_fAccLinearInterpolateTime = 0.f;
 
@@ -104,10 +109,6 @@ _bool COpen_Door_Zombie::Execute(_float fTimeDelta)
 
 		if (true == pDoor->Is_Lock())
 			return false;
-
-		pDoor->Attack_Prop(m_pBlackBoard->Get_AI()->Get_Transform());
-		Change_Animation(fTimeDelta);
-		m_isDummyDoor = false;
 	}
 
 	m_pBlackBoard->Organize_PreState(this);
@@ -168,7 +169,7 @@ void COpen_Door_Zombie::Exit()
 
 }
 
-void COpen_Door_Zombie::Change_Animation(_float fTimeDelta)
+void COpen_Door_Zombie::Change_Animation()
 {
 	if (nullptr == m_pBlackBoard)
 		return;

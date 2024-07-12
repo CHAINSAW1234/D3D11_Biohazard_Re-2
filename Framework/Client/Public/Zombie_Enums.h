@@ -2,7 +2,7 @@
 
 enum class ZOMBIE_START_TYPE { _OUT_DOOR, _DOOR_RUB, _CREEP, _IDLE, _RAG_DOLL, _END };
 
-
+enum class BREAK_PART { _L_ARM, _R_ARM, _L_LEG, _R_LEG, _HEAD, _END };
 
 enum class ZOMBIE_BODY_TYPE { _MALE, _FEMALE, _MALE_BIG, _END };
 enum class ZOMBIE_CLOTHES_TYPE { _SHIRTS, _HAT, _PANTS, _END };

@@ -25,6 +25,8 @@
 #include "Impact.h"
 #include "Hit.h"
 
+#include "Part_Breaker_Zombie.h"
+
 #include "Room_Finder.h"
 
 #define MODEL_SCALE 0.01f
@@ -131,6 +133,9 @@ HRESULT CZombie::Initialize(void* pArg)
 		return E_FAIL;
 
 	if (FAILED(Initialize_States()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_PartBreaker()))
 		return E_FAIL;
 
 	//if (FAILED(Add_Components()))
@@ -800,7 +805,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
 	CComposite_Node* pSelector_Move_To_Door_Interact_Door = { CComposite_Node::Create(&CompositeNodeDesc) };
-	pSelectorNode_InDoorCheck->Insert_Child_Node(pSelector_Move_To_Door_Interact_Door);
+	pSequecne_Different_Region_Player->Insert_Child_Node(pSelector_Move_To_Door_Interact_Door);
 
 #pragma region Move_To_Target_Door		Deco Non Colllision Door 
 
@@ -819,7 +824,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
 	CComposite_Node* pSelectorNode_Interact_Door = { CComposite_Node::Create(&CompositeNodeDesc) };
-	pSelectorNode_InDoorCheck->Insert_Child_Node(pSelectorNode_Interact_Door);
+	pSelector_Move_To_Door_Interact_Door->Insert_Child_Node(pSelectorNode_Interact_Door);
 
 	CIs_Collision_Prop_Zombie* pDeco_Is_Collision_Door_Trigger = { CIs_Collision_Prop_Zombie::Create(CIs_Collision_Prop_Zombie::COLL_PROP_TYPE::_DOOR, CIs_Collision_Prop_Zombie::RETURN_TYPE::_STARARIGHT) };
 	pDeco_Is_Collision_Door_Trigger->SetBlackBoard(m_pBlackBoard);
@@ -1243,6 +1248,22 @@ HRESULT CZombie::Initialize_States()
 	return S_OK;
 }
 
+HRESULT CZombie::Initialize_PartBreaker()
+{
+	CPart_Breaker_Zombie::PART_BREAKER_DESC			PartBreakerDesc;
+	PartBreakerDesc.pBodyModel = static_cast<CModel*>(m_PartObjects[CMonster::PART_BODY]->Get_Component(TEXT("Com_Model")));
+
+	CPart_Breaker_Zombie*			pPart_Breaker = { CPart_Breaker_Zombie::Create(&PartBreakerDesc) };
+	m_pPart_Breaker = pPart_Breaker;
+
+	if (nullptr == m_pPart_Breaker)
+		return E_FAIL;
+
+	Safe_AddRef(m_pPart_Breaker);
+
+	return S_OK;
+}
+
 void CZombie::Play_Animations_Body(_float fTimeDelta)
 {
 	static_cast<CBody_Zombie*>(m_PartObjects[CMonster::PART_BODY])->Play_Animations(fTimeDelta);
@@ -1255,7 +1276,12 @@ void CZombie::Active_IK_Body(_bool isActive)
 
 _bool CZombie::Is_In_Location(LOCATION_MAP_VISIT eLocation)
 {
-	CRoom_Finder::Get_Instance()->Find_Linked_Doors_From_Location(eLocation);
+	return eLocation == m_eLocation;
+}
+
+_bool CZombie::Is_In_Linked_Location(LOCATION_MAP_VISIT eLocation)
+{
+	return CRoom_Finder::Get_Instance()->Is_Linked_Location_From_Location(m_eLocation, eLocation);
 }
 
 HRESULT CZombie::Initialize_PartModels()
@@ -1295,7 +1321,7 @@ HRESULT CZombie::Initialize_PartModels()
 _bool CZombie::Is_Enough_Stamina(USE_STAMINA eAction)
 {
 	_bool		isEnough = { false };
-	if (USE_STAMINA::_BITE == eAction)
+	if (USE_STAMINA::_BITE == eAction)	
 	{
 		isEnough = m_pStatus->fStamina > ZOMBIE_NEED_STAMINA_BITE;
 	}
@@ -2237,5 +2263,6 @@ void CZombie::Free()
 	__super::Free();
 
 	Safe_Release(m_pBlackBoard);
+	Safe_Release(m_pPart_Breaker);
 	Release_Effect();
 }

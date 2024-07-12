@@ -30,20 +30,21 @@ void CBreak_In_Window_Zombie::Enter()
 	CModel*			pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
 	if (nullptr == pBodyModel)
 		return;
+	CWindow*			pWindow = { m_pBlackBoard->Get_Nearest_Window() };
+	if (nullptr == pWindow)
+		return;
 
 	_int				iRandom = { m_pGameInstance->GetRandom_Int(1, 2) };
-
 	if (1 == iRandom)
 		m_iAnimIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_BREAK_IN1);
 	else if (2 == iRandom)
 		m_iAnimIndex = static_cast<_int>(ANIM_GIMMICK_WINDOW::_BREAK_IN2);
 
-	CWindow*			pWindow = { m_pBlackBoard->Get_Nearest_Window() };
-	if (nullptr == pWindow)
-		return;
-
 	if (false == m_pBlackBoard->Compute_DeltaMatrix_AnimFirstKeyFrame_From_Target(pWindow->Get_Transform(), static_cast<_uint>(m_eBasePlayingIndex), m_iAnimIndex, m_strAnimLayerTag, &m_DeltaInterpolateMatrix))
 		return;
+
+	pWindow->Attack_Prop();
+	Change_Animation();
 
 	m_fAccLinearInterpolateTime = 0.f;
 
@@ -99,11 +100,8 @@ _bool CBreak_In_Window_Zombie::Execute(_float fTimeDelta)
 
 		_int				iRandom = { m_pGameInstance->GetRandom_Int(0, 2) };
 		_bool				isSuccess = { iRandom == 0 };
-		if (false == isSuccess)
-			return false;
-
-		pWindow->Attack_Prop();
-		Change_Animation(fTimeDelta);
+		//if (false == isSuccess)
+		//	return false;
 	}
 
 	m_pBlackBoard->Organize_PreState(this);
@@ -148,7 +146,7 @@ void CBreak_In_Window_Zombie::Exit()
 	m_pBlackBoard->Release_Nearest_Window();
 }
 
-void CBreak_In_Window_Zombie::Change_Animation(_float fTimeDelta)
+void CBreak_In_Window_Zombie::Change_Animation()
 {
 	if (nullptr == m_pBlackBoard)
 		return;
