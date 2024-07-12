@@ -66,9 +66,6 @@ HRESULT CLevel_GamePlay::Initialize()
 	CImgui_Manager::Get_Instance()->Tick();
 	CImgui_Manager::Get_Instance()->Render();
 
-
-	//m_pTexture = (CTexture*)m_pGameInstance->Clone_Component(g_Level, TEXT("Prototype_Component_Texture_CubeMap"));
-
 	return S_OK;
 }
 
@@ -80,9 +77,7 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 
 	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
 	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
-	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));	
-
-
+	
 	 
 	/*(임시) 이벤트 처리 구간*/
 	_bool bGoal = { false };

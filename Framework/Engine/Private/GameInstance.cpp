@@ -208,8 +208,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	if (m_pObject_Manager)
 		m_pObject_Manager->Priority_Tick(fTimeDelta);
 
-	//if(m_pObject_Manager)
-	//	m_pObject_Manager->Tick(fTimeDelta);	
+	if(m_pObject_Manager)
+		m_pObject_Manager->Tick(fTimeDelta);	
 
 	if(m_pPicking)
 		m_pPicking->Update();
@@ -220,8 +220,8 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	if (m_pFrustum)
 		m_pFrustum->Tick();
 
-	//if(m_pObject_Manager)
-	//	m_pObject_Manager->Late_Tick(fTimeDelta);
+	if(m_pObject_Manager)
+		m_pObject_Manager->Late_Tick(fTimeDelta);
 
 	if (m_pPhysics_Controller)
 		m_pPhysics_Controller->Simulate(fTimeDelta);
