@@ -82,7 +82,7 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
 	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));	
 
-	m_pGameInstance->Set_CubeMap(m_pCubeMap->Get_Texture());
+
 	 
 	/*(임시) 이벤트 처리 구간*/
 	_bool bGoal = { false };
@@ -380,6 +380,8 @@ HRESULT CLevel_GamePlay::Ready_EnvCube()
 		return E_FAIL;
 	
 	m_pCubeMap = static_cast<CEnvCube*>(m_pGameInstance->Get_GameObject(LEVEL_GAMEPLAY,TEXT("Layer_EnvCubeMap"), 0));
+
+	m_pGameInstance->Set_CubeMap(m_pCubeMap->Get_Texture());
 
 	return S_OK;
 }

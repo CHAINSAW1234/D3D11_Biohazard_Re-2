@@ -359,22 +359,6 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region TEST
 
-	//if (m_pGameInstance->Get_KeyState('1') == DOWN) {
-	//	Set_Hp(1);
-	//}
-	//if (m_pGameInstance->Get_KeyState('2') == DOWN) {
-	//	Set_Hp(2);
-	//}
-	//if (m_pGameInstance->Get_KeyState('3') == DOWN) {
-	//	Set_Hp(3);
-	//}
-	//if (m_pGameInstance->Get_KeyState('4') == DOWN) {
-	//	Set_Hp(4);
-	//}
-	//if (m_pGameInstance->Get_KeyState('5') == DOWN) {
-	//	Set_Hp(5);
-	//}
-
 	if (m_pGameInstance->Get_KeyState('T') == DOWN) {
 		Change_Player_State_Bite(0, TEXT("Bite_Default"), XMMatrixIdentity(), 0.2f);
 		Request_NextBiteAnimation(1);
