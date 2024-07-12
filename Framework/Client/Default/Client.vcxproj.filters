@@ -682,6 +682,12 @@
     <Filter Include="02.GameObjects\EnvMap">
       <UniqueIdentifier>{cd409281-eb3c-47c4-b38e-652c35092d07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Cabinet\Lock_Cabinet">
+      <UniqueIdentifier>{35f24066-49e4-4651-95a1-c599c32550b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Camera\Camera_Gimmick">
+      <UniqueIdentifier>{005d1390-e7e6-4c60-8855-58a335d5c781}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1323,6 +1329,12 @@
     <ClInclude Include="..\Public\EnvCube.h">
       <Filter>02.GameObjects\EnvMap</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Lock_Cabinet.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Cabinet\Lock_Cabinet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Gimmick.h">
+      <Filter>02.GameObjects\Camera\Camera_Gimmick</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1924,6 +1936,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\EnvCube.cpp">
       <Filter>02.GameObjects\EnvMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lock_Cabinet.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Cabinet\Lock_Cabinet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Gimmick.cpp">
+      <Filter>02.GameObjects\Camera\Camera_Gimmick</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

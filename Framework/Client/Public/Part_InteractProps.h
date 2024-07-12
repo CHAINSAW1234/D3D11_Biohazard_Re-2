@@ -62,6 +62,11 @@ public:
 		m_pCamera = pCamera;
 		m_pCameraTransform = pCameraTransform;
 	}
+	void Set_CameraGimmickSetting(class CCamera_Gimmick* pCameraGimmick, CTransform* pCameraGimmickTransform)
+	{
+		m_pCameraGimmick = pCameraGimmick;
+		m_pCameraGimmickTransform = pCameraGimmickTransform;
+	}
 	virtual _float4									Get_Pos(_int iArg = 0) { return XMVectorSetW( m_WorldMatrix.Translation(),1.f); }
 	virtual _int											Get_PartObject_Props_ItemIndex() { return -1; };
 	_bool													Is_Finishied_Anim() { return m_pModelCom->isFinished(0); }
@@ -81,6 +86,10 @@ protected:
 	//camera
 	class CCamera_Free*							m_pCamera= { nullptr };
 	CTransform*										m_pCameraTransform = {nullptr};
+	
+	//camera
+	class CCamera_Gimmick*					m_pCameraGimmick= { nullptr };
+	CTransform*										m_pCameraGimmickTransform = {nullptr};
 
 
 	CModel*											m_pModelCom = { nullptr };

@@ -12,10 +12,18 @@ class CCabinet final : public CInteractProps
 public:
 	enum CABINET_STATE
 	{
+		//캐비넷_바디 애님
 		CABINET_CLOSED,
 		CABINET_OPEN,
 		CABINET_OPENED,
 		CABINET_END,
+	};
+	enum LOCK_STATE
+	{
+		STATIC_LOCK, // 그냥 정지상태
+		LIVE_LOCK, //락을 푸는 행동을 할때 => 뼈를 돌릴때임
+		WRONG_LOCK, // 락이 틀렸을 때
+		CLEAR_LOCK // 락이 풀렸을때 
 	};
 	enum CABINET_PART
 	{
@@ -56,9 +64,10 @@ private:
 	_bool				m_bOpened = { false };
 	_bool				m_bLock =	{ false };
 	_bool				m_bActivity = { false };
+	_bool				m_bCamera = { false };
 
 	_ubyte			m_eState = { CABINET_CLOSED };
-
+	_ubyte			m_eLockState = { STATIC_LOCK };
 
 
 public:

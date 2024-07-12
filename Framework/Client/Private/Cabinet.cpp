@@ -4,9 +4,13 @@
 #include "PxCollider.h"
 #include "Bone.h"
 
+#include"Camera_Gimmick.h"
+
 //part-obj
 #include"Body_Cabinet.h"
 #include"Body_ItemProp.h"
+#include"Lock_Cabinet.h"
+
 CCabinet::CCabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -28,6 +32,9 @@ HRESULT CCabinet::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	INTERACTPROPS_DESC* pObj_desc = (INTERACTPROPS_DESC*)pArg;
+	m_bLock = pObj_desc->tagCabinet.bLock;
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
@@ -44,6 +51,19 @@ HRESULT CCabinet::Initialize(void* pArg)
 
 void CCabinet::Tick(_float fTimeDelta)
 {
+
+	if (DOWN == m_pGameInstance->Get_KeyState('J'))
+	{
+		m_pCameraGimmick->Active_Camera(false);
+		m_bCamera = false;
+		m_pPlayer->ResetCamera();
+	}
+	if (m_bCamera)
+	{
+		m_pCameraGimmick->LookAt(static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK])->Get_Pos());
+		//m_pCameraGimmick->SetPosition(m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION)+_float4(0.f,1.f,0.f,0.f));
+		m_pCameraGimmick->SetPosition(static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK])->Get_Pos() + _float4(0.f, 1.f, 0.f, 0.f));
+	}
 	__super::Tick_Col();
 	if (!m_bVisible)
 		return;
@@ -217,8 +237,29 @@ HRESULT CCabinet::Add_PartObjects()
 	}
 
 
+
 	/*Part_Lock*/
-	m_PartObjects[CCabinet::PART_LOCK] = nullptr;
+	if (m_bLock)
+	{
+		if (m_tagPropDesc.strGamePrototypeName.find("sm44_003") != string::npos)
+		{
+			CPartObject* pItem = { nullptr };
+			CLock_Cabinet::BODY_LOCK_CABINET_DESC LockDesc = {};
+			LockDesc.pParentsTransform = m_pTransformCom;
+			LockDesc.pState = &m_eState; //현재 캐비넷 본체의 상황을 받는거야
+			LockDesc.pLockState = &m_eLockState; //제어당할 스테이트
+			LockDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_019_safeboxdial01a_Anim");
+			LockDesc.iLockType = CLock_Cabinet::SAFEBOX_DIAL;
+			/*if(m_tagPropDesc.tagCabinet.iItemIndex==0)*/
+			pItem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Lock_Cabinet"), &LockDesc));
+			if (nullptr == pItem)
+				return E_FAIL;
+			m_PartObjects[CCabinet::PART_LOCK] = pItem;
+			m_bItemDead = false;
+		}
+	}
+	else
+		m_PartObjects[CCabinet::PART_LOCK] = nullptr;
 
 
 
@@ -227,15 +268,26 @@ HRESULT CCabinet::Add_PartObjects()
 
 HRESULT CCabinet::Initialize_PartObjects()
 {
-	if (m_PartObjects[PART_ITEM] == nullptr)
-		return S_OK;
+	if (m_PartObjects[PART_ITEM] != nullptr)
+	{
 
-	CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
-	//CModel* pItemModel = { dynamic_cast<CModel*>(m_PartObjects[PART_ITEM]->Get_Component(TEXT("Com_Body_Model"))) };
+		CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
 
-	CBody_ItemProp* pItem = dynamic_cast<CBody_ItemProp*>(m_PartObjects[PART_ITEM]);
-	_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet01")) };
-	pItem->Set_Socket(pCombinedMatrix);
+		CBody_ItemProp* pItem = dynamic_cast<CBody_ItemProp*>(m_PartObjects[PART_ITEM]);
+		_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet01")) };
+		pItem->Set_Socket(pCombinedMatrix);
+
+	}
+
+	if (m_bLock&& m_tagPropDesc.strGamePrototypeName.find("sm44_003") != string::npos)
+	{
+		CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
+		
+		CLock_Cabinet* pLock = dynamic_cast<CLock_Cabinet*>(m_PartObjects[PART_LOCK]);
+		_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("GimmickSet")) };
+		pLock->Set_Socket(pCombinedMatrix);
+	}
+
 
 
 
@@ -251,11 +303,22 @@ void CCabinet::Active()
 {
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
-	
-	m_eState = CABINET_OPEN;
-	if (m_bObtain)
-		if (nullptr != m_PartObjects[PART_ITEM]&&!m_bItemDead)
-			m_pPlayer->PickUp_Item(this);
+	if (!m_bLock)
+	{
+		m_eState = CABINET_OPEN;
+		if (m_bObtain)
+			if (nullptr != m_PartObjects[PART_ITEM]&&!m_bItemDead)
+				m_pPlayer->PickUp_Item(this);
+	}
+	else
+	{
+		m_eLockState = LIVE_LOCK;
+
+		m_pCameraGimmick->Active_Camera(true);
+		//tabwindow의 힘을 빌려야 할 차례입니다
+		m_bCamera = true;
+
+	}
 }
 
 CCabinet* CCabinet::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -125,6 +125,9 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 	}
 	else
 		m_bInteract = false;
+
+
+
 #pragma endregion 
 
 }

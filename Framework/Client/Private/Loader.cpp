@@ -5,6 +5,7 @@
 #include "GameInstance.h"
 #include "Camera_Free.h"
 #include "Camera_Event.h"
+#include "Camera_Gimmick.h"
 
 /* Player */
 #include "Player.h"
@@ -49,6 +50,7 @@
 #include "Body_Door.h"
 #include "Cabinet.h"
 #include "Body_Cabinet.h"
+#include"Lock_Cabinet.h"
 #include "Window.h"
 #include "Body_Window.h"
 #include "Pannel_Window.h"
@@ -72,6 +74,7 @@
 #include "Body_MovingShelf.h"
 #include "Lever.h"
 #include "Body_Lever.h"
+
 
 /* UI */
 #include "Customize_UI.h"
@@ -391,6 +394,11 @@ HRESULT CLoader::Load_Prototype()
 	/* For.Prototype_GameObject_Camera_Free */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Event"),
 		CCamera_Event::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	
+	/* For.Prototype_GameObject_Camera_Gimmick */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Gimmick"),
+		CCamera_Gimmick::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 
@@ -977,6 +985,10 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_034_windowbarricade01a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM,"..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_034_windowbarricade01a.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_035_windowoldbarricade01a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_035_windowoldbarricade01a.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PannelWindow"), CPannel_Window::Create(m_pDevice, m_pContext));
+	
+	Ininitmatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_019_safeboxdial01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_019_safeboxdial01a_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Lock_Cabinet"), CLock_Cabinet::Create(m_pDevice, m_pContext));
 
 
 	//m_pGameInstance->Set_ModelTags(TEXT("ItemModel_Tags"), ItemModelTags);

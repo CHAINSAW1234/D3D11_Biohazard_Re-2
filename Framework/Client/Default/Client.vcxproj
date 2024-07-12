@@ -221,6 +221,7 @@
     <ClInclude Include="..\Public\Camera_Event.h" />
     <ClInclude Include="..\Public\Camera_Event_Struct.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
+    <ClInclude Include="..\Public\Camera_Gimmick.h" />
     <ClInclude Include="..\Public\Cut_Scene.h" />
     <ClInclude Include="..\Public\Cut_Scene_CF93.h" />
     <ClInclude Include="..\Public\Damage_UI.h" />
@@ -240,6 +241,7 @@
     <ClInclude Include="..\Public\Impact.h" />
     <ClInclude Include="..\Public\Is_Different_Location_To_Player_Zombie.h" />
     <ClInclude Include="..\Public\Is_Start_Rub_Door_Zombie.h" />
+    <ClInclude Include="..\Public\Lock_Cabinet.h" />
     <ClInclude Include="..\Public\Muzzle_ShockWave.h" />
     <ClInclude Include="..\Public\Pannel_Window.h" />
     <ClInclude Include="..\Public\Is_In_Door_Zombie.h" />
@@ -467,6 +469,7 @@
     <ClCompile Include="..\Private\Cabinet.cpp" />
     <ClCompile Include="..\Private\Camera_Event.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
+    <ClCompile Include="..\Private\Camera_Gimmick.cpp" />
     <ClCompile Include="..\Private\Creep_Zombie.cpp" />
     <ClCompile Include="..\Private\Cut_Scene.cpp" />
     <ClCompile Include="..\Private\Cut_Scene_CF93.cpp" />
@@ -488,6 +491,7 @@
     <ClCompile Include="..\Private\Is_Same_Location_To_Player_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Start_Rub_Door_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Start_Zombie.cpp" />
+    <ClCompile Include="..\Private\Lock_Cabinet.cpp" />
     <ClCompile Include="..\Private\Muzzle_Light_SG.cpp" />
     <ClCompile Include="..\Private\Muzzle_ShockWave.cpp" />
     <ClCompile Include="..\Private\Muzzle_Spark_SG.cpp" />
