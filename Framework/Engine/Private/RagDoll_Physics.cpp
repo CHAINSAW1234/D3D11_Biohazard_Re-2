@@ -548,12 +548,26 @@ void CRagdoll_Physics::create_ragdoll()
 #endif
 
 #pragma endregion
+
+	auto iNumBone = m_skeletal_mesh->skeleton()->num_bones();
+
+	/*m_ragdoll->m_relative_joint_pos.clear();
+	m_ragdoll->m_original_body_rotations.clear();
+	m_ragdoll->m_body_pos_relative_to_joint.clear();
+	m_ragdoll->m_original_joint_rotations.clear();
+
+	m_ragdoll->m_relative_joint_pos.resize(iNumBone);
+	m_ragdoll->m_original_body_rotations.resize(iNumBone);
+	m_ragdoll->m_body_pos_relative_to_joint.resize(iNumBone);
+	m_ragdoll->m_original_joint_rotations.resize(iNumBone);*/
+
+
 	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 	{
 		uint32_t        chosen_idx;
 		PxRigidDynamic* body = m_ragdoll->find_recent_body((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
-		if (!body)
+		if (!body || m_vecBreakPartFilter[chosen_idx] == true)
 			continue;
 
 		_matrix body_global_transform = to_mat4(body->getGlobalPose());
@@ -638,7 +652,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			uint32_t        chosen_idx;
 			PxRigidDynamic* body = m_ragdoll->find_recent_body((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
-			if (!body)
+			if (!body || m_vecBreakPartFilter[chosen_idx] == true)
 				continue;
 
 			_matrix body_global_transform = to_mat4(body->getGlobalPose());
@@ -685,7 +699,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			uint32_t        chosen_idx;
 			PxRigidDynamic* body = m_ragdoll->find_recent_body((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
-			if (!body)
+			if (!body || m_vecBreakPartFilter[chosen_idx] == true)
 				continue;
 
 			_matrix body_global_transform = to_mat4(body->getGlobalPose());
@@ -743,7 +757,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			uint32_t        chosen_idx;
 			PxRigidDynamic* body = m_ragdoll->find_recent_body((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
-			if (!body)
+			if (!body || m_vecBreakPartFilter[chosen_idx] == true)
 				continue;
 
 			_matrix body_global_transform = to_mat4(body->getGlobalPose());
@@ -803,7 +817,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			uint32_t        chosen_idx;
 			PxRigidDynamic* body = m_ragdoll->find_recent_body((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
-			if (!body)
+			if (!body || m_vecBreakPartFilter[chosen_idx] == true)
 				continue;
 
 			_matrix body_global_transform = to_mat4(body->getGlobalPose());
@@ -842,7 +856,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		break;
 	case COLLIDER_TYPE::PELVIS:
-
+		break; ////////////////////////////////////TEMP//////////////////////////////
 		if(!m_Leg_L)
 		{
 			m_Leg_L = create_capsule_bone(m_thigh_l_idx, m_calf_l_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::LEG_L);
@@ -888,7 +902,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			uint32_t        chosen_idx;
 			PxRigidDynamic* body = m_ragdoll->find_recent_body((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
-			if (!body)
+			if (!body || m_vecBreakPartFilter[chosen_idx] == true)
 				continue;
 
 			_matrix body_global_transform = to_mat4(body->getGlobalPose());
@@ -956,7 +970,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			uint32_t        chosen_idx;
 			PxRigidDynamic* body = m_ragdoll->find_recent_body((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
-			if (!body)
+			if (!body || m_vecBreakPartFilter[chosen_idx] == true)
 				continue;
 
 			_matrix body_global_transform = to_mat4(body->getGlobalPose());
@@ -1004,7 +1018,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			uint32_t        chosen_idx;
 			PxRigidDynamic* body = m_ragdoll->find_recent_body((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
-			if (!body)
+			if (!body || m_vecBreakPartFilter[chosen_idx] == true)
 				continue;
 
 			_matrix body_global_transform = to_mat4(body->getGlobalPose());
@@ -1065,7 +1079,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			uint32_t        chosen_idx;
 			PxRigidDynamic* body = m_ragdoll->find_recent_body((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
-			if (!body)
+			if (!body || m_vecBreakPartFilter[chosen_idx] == true)
 				continue;
 
 			_matrix body_global_transform = to_mat4(body->getGlobalPose());
@@ -1131,7 +1145,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			uint32_t        chosen_idx;
 			PxRigidDynamic* body = m_ragdoll->find_recent_body((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
-			if (!body)
+			if (!body || m_vecBreakPartFilter[chosen_idx] == true)
 				continue;
 
 			_matrix body_global_transform = to_mat4(body->getGlobalPose());
@@ -1833,6 +1847,7 @@ void CRagdoll_Physics::Init_PartialRagdoll(COLLIDER_TYPE eType)
 		m_iRagdollType |= RAGDOLL_TYPE::RIGHT_ARM;
 		break;
 	case COLLIDER_TYPE::PELVIS:
+		break;////////////////////////////////TEMP///////////////////////////////////////
 		m_iRagdollType |= RAGDOLL_TYPE::BODY_DIVIDE;
 		break;
 	case COLLIDER_TYPE::CALF_L:
