@@ -442,6 +442,25 @@ void CZombie::Tick(_float fTimeDelta)
 								pPartObject->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
 
 							m_bPartial_Ragdoll = true;
+
+							BREAK_PART eBreakType;
+							switch (eType)
+							{
+							case COLLIDER_TYPE::CALF_L:
+								eBreakType = BREAK_PART::_L_LEG;
+								break;
+							case COLLIDER_TYPE::CALF_R:
+								eBreakType = BREAK_PART::_R_LEG;
+								break;
+							case COLLIDER_TYPE::FOREARM_L:
+								eBreakType = BREAK_PART::_L_ARM;
+								break;
+							case COLLIDER_TYPE::FOREARM_R:
+								eBreakType = BREAK_PART::_R_ARM;
+								break;
+							}
+
+							m_pPart_Breaker->Break(eBreakType);
 						}
 
 						auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);

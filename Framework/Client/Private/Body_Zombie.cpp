@@ -1186,7 +1186,7 @@ HRESULT CBody_Zombie::Add_Components()
 
 HRESULT CBody_Zombie::Bind_ShaderResources()
 {
-	if (m_bRagdoll)
+	/*if (m_bRagdoll)
 	{
 		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
 		WorldMat._41 = 0.f;
@@ -1199,7 +1199,7 @@ HRESULT CBody_Zombie::Bind_ShaderResources()
 	{
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 			return E_FAIL;
-	}
+	}*/
 
 	_bool isMotionBlur = m_pGameInstance->Get_ShaderState(MOTION_BLUR);
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_isMotionBlur", &isMotionBlur, sizeof(_bool))))
@@ -1223,6 +1223,12 @@ HRESULT CBody_Zombie::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_Hair", &bHair, sizeof(_bool))))
 		return E_FAIL;
 
+	return S_OK;
+}
+
+HRESULT CBody_Zombie::Bind_WorldMatrix(_uint iIndex)
+{
+	//if(m_pModelCom->Is_Ragdoll_Mesh)
 	return S_OK;
 }
 
