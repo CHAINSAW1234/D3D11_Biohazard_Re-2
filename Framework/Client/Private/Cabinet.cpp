@@ -62,7 +62,7 @@ void CCabinet::Tick(_float fTimeDelta)
 	{
 		m_pCameraGimmick->LookAt(static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK])->Get_Pos());
 		//m_pCameraGimmick->SetPosition(m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION)+_float4(0.f,1.f,0.f,0.f));
-		m_pCameraGimmick->SetPosition(static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK])->Get_Pos() + _float4(0.f, 1.f, 0.f, 0.f));
+		m_pCameraGimmick->SetPosition(static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK])->Get_Pos() + _float4(-1.f, 1.f, 0.f, 0.f));
 	}
 	__super::Tick_Col();
 	if (!m_bVisible)

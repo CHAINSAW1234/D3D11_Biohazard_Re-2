@@ -71,7 +71,7 @@ void CLock_Cabinet::Late_Tick(_float fTimeDelta)
 	if (m_bDead)
 		return;
 
-	_matrix			WorldMatrix = { (m_pTransformCom->Get_WorldMatrix() * m_pParentsTransform->Get_WorldMatrix()) };
+	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
 	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 	m_eLockType == SAFEBOX_DIAL ? Safebox_Late_Tick(fTimeDelta) : OpenLocker_Late_Tick(fTimeDelta);
 

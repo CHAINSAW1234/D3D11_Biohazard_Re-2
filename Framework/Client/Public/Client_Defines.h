@@ -52,7 +52,7 @@ using namespace Client;
 
 //#define UI_POS
 
-#define NO_COLLISTION
+//#define NO_COLLISTION
 
 #define DISPLAY_FRAME
 //	#define DISPLAY_NAVMESH
