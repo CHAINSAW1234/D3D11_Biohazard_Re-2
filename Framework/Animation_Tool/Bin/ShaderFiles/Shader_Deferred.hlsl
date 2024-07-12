@@ -1565,7 +1565,7 @@ PS_OUT PS_BLOOM(PS_IN In)
     
     if (vBloom.a != 0)
     {
-        vBloom = pow(abs(vBloom), 2.2f);
+        //vBloom = pow(abs(vBloom), 2.2f);
 
         Out.vColor = vBloom;
     }
