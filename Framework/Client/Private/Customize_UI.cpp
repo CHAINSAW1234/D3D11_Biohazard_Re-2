@@ -196,14 +196,17 @@ HRESULT CCustomize_UI::Add_Components(const wstring& wstrTextureTag, const wstri
 		return E_FAIL;
 
 	/* For.Com_Texture */ 
-	if (FAILED(__super::Add_Component(static_cast<LEVEL>(iDefaultTexturLevel), wstrTextureTag,
+	if (FAILED(__super::Add_Component(g_Level, wstrTextureTag,
 		TEXT("Com_DefaultTexture"), (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(g_Level, wstrMaskTag,
-		TEXT("Com_MaskTexture"), (CComponent**)&m_pMaskTextureCom)))
-		return E_FAIL;
+	if(g_Level != LEVEL_LOGO)
+	{
+		if (FAILED(__super::Add_Component(static_cast<LEVEL>(iDefaultTexturLevel), wstrMaskTag,
+			TEXT("Com_MaskTexture"), (CComponent**)&m_pMaskTextureCom)))
+			return E_FAIL;
+	}
 	
 	/* For.Com_VIBuffer */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),

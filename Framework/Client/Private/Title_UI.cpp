@@ -157,6 +157,8 @@ HRESULT CTitle_UI::Render()
 void CTitle_UI::TitleGame_Start()
 {
     /* 만약 로고의 플레이가 완료 되었다면, */
+    m_pGameInstance->Play_Sound(TEXT("ui_title_media.bnk.2_30.mp3"), CHANNELID::CH30);
+
     if (nullptr != m_pLogo && true == m_pLogo->m_isPlay)
     {
         if (ALPHA_ZERO == m_pLogo->m_vCurrentColor)
@@ -223,10 +225,16 @@ void CTitle_UI::Option_Click(_float fTimeDelta)
         if(TEXT("스토리") == m_vecTextBoxes.back()->Get_Text())
         {
             if(m_pGameInstance->Get_KeyState(VK_LBUTTON))
+            {
+                m_pGameInstance->Play_Sound(TEXT("ui_title_media.bnk.2_21.mp3"), CHANNELID::CH30);
+
                 m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_GAMEPLAY));
+            }
         }
 
         m_vecTextBoxes.back()->Set_FontColor(FONT_LIGHT_COLOR);
+
+        m_pGameInstance->Play_Sound(TEXT("ui_ingame_media.bnk.2_18.mp3"), CHANNELID::CH30);
 
         /* 오른쪽으로 밀기 */
         if (fOptionTextTrans.x < m_vOriginOption_Pos.x + OPTION_MOVE_DISTANCE)
@@ -243,6 +251,7 @@ void CTitle_UI::Option_Click(_float fTimeDelta)
     else
     {
         m_vecTextBoxes.back()->Set_FontColor(m_vOriginTextColor);
+
 
         /* 왼쪽 밀기 */
         if (fOptionTextTrans.x > m_vOriginOption_Pos.x)

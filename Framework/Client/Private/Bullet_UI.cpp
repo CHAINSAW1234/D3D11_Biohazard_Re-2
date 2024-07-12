@@ -145,6 +145,7 @@ void CBullet_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
+  
     if (m_pPlayer->Get_Equip() == (_int)CPlayer::EQUIP::STG || CPlayer::EQUIP::HG == m_pPlayer->Get_Equip())
     {
         if (m_iEqipType == (_int)CPlayer::EQUIP::STG || m_iEqipType == (_int)CPlayer::EQUIP::HG || m_iEqipType == BULLET_BACKGROUND)
@@ -189,6 +190,12 @@ void CBullet_UI::Tick(_float fTimeDelta)
         _float4 result = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * _float4(1.f, 1.f, 1.f, 1.f);
         m_vecTextBoxes.back()->Set_FontColor(result);
     }
+
+ /*   if (!m_vecTextBoxes.empty())
+    {
+        _float4 result = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * _float4(1.f, 1.f, 1.f, 1.f);
+        m_vecTextBoxes.back()->Set_FontColor(result);
+    }*/
 
     if (m_iCurrentBullet < 1)
         Mission_Complete();

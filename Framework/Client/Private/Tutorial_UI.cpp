@@ -166,7 +166,7 @@ void CTutorial_UI::Player_First_Interact()
             break;
 
         case UI_TUTORIAL_TYPE::INVENTORY_OPEN:
-            pTutorial_TextBox[0]->Set_Text(TEXT("인벤토리 열기"));
+            pTutorial_TextBox[0]->Set_Text(TEXT("인벤토리"));
             pTutorial_TextBox[1]->Set_Text(TEXT("T"));
             break;
 

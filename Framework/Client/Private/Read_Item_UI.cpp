@@ -143,12 +143,20 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
     if (READ_UI_TYPE::MAIN_READ == m_eRead_type)
     {
         /* 첫 번째는 사진, 두 번째는 TEXT */
-        m_BookText[ITEM_READ_TYPE::INCIDENT_LOG_NOTE] = { TEXT("Prototype_Component_Texture_Document2"),  TEXT("Prototype_Component_Texture_ReadType_Incident_log1"), TEXT("Prototype_Component_Texture_ReadType_Incident_log2"), TEXT("Prototype_Component_Texture_ReadType_Incident_log3"), TEXT("Prototype_Component_Texture_ReadType_Incident_log4"), TEXT("Prototype_Component_Texture_ReadType_Incident_log5") };
+        m_BookText[ITEM_READ_TYPE::INCIDENT_LOG_NOTE]   = { TEXT("Prototype_Component_Texture_Document2"),  TEXT("Prototype_Component_Texture_ReadType_Incident_log1"), TEXT("Prototype_Component_Texture_ReadType_Incident_log2"), TEXT("Prototype_Component_Texture_ReadType_Incident_log3"), TEXT("Prototype_Component_Texture_ReadType_Incident_log4"), TEXT("Prototype_Component_Texture_ReadType_Incident_log5") };
         m_BookText[ITEM_READ_TYPE::OPERATE_REPORT_NOTE] = { TEXT("Prototype_Component_Texture_Document2"), TEXT("Prototype_Component_Texture_Operate_Report2"), TEXT("Prototype_Component_Texture_Operate_Report3") };
-        m_BookText[ITEM_READ_TYPE::TASK_NOTE] = { TEXT("Prototype_Component_Texture_DocumentBlood1"), TEXT("Prototype_Component_Texture_Task1"), TEXT("Prototype_Component_Texture_Task2"), TEXT("Prototype_Component_Texture_Task3"), TEXT("Prototype_Component_Texture_Task4"), TEXT("Prototype_Component_Texture_Task5") };
-        m_BookText[ITEM_READ_TYPE::MEDICINAL_NOTE] = { TEXT("Prototype_Component_Texture_Document1"), TEXT("Prototype_Component_Texture_Medicinal1"), TEXT("Prototype_Component_Texture_Medicinal2"), TEXT("Prototype_Component_Texture_Medicinal3"), TEXT("Prototype_Component_Texture_Medicinal4") };
+        m_BookText[ITEM_READ_TYPE::TASK_NOTE]           = { TEXT("Prototype_Component_Texture_DocumentBlood1"), TEXT("Prototype_Component_Texture_Task1"), TEXT("Prototype_Component_Texture_Task2"), TEXT("Prototype_Component_Texture_Task3"), TEXT("Prototype_Component_Texture_Task4"), TEXT("Prototype_Component_Texture_Task5") };
+        m_BookText[ITEM_READ_TYPE::MEDICINAL_NOTE]      = { TEXT("Prototype_Component_Texture_Document1"), TEXT("Prototype_Component_Texture_Medicinal1"), TEXT("Prototype_Component_Texture_Medicinal2"), TEXT("Prototype_Component_Texture_Medicinal3"), TEXT("Prototype_Component_Texture_Medicinal4") };
+        m_BookText[ITEM_READ_TYPE::GUNPOWDER_NOTE]      = { TEXT("Prototype_Component_Texture_Memo1"), TEXT("Prototype_Component_Texture_Gunpowder_Note1"), TEXT("Prototype_Component_Texture_Gunpowder_Note2"), TEXT("Prototype_Component_Texture_Gunpowder_Note3") };
+        m_BookText[ITEM_READ_TYPE::FIX_LOCKER_NOTE]     = { TEXT("Prototype_Component_Texture_GuidePamphlet1"), TEXT("Prototype_Component_Texture_Fix_Lock_Note1") , TEXT("Prototype_Component_Texture_Fix_Lock_Note2") };
+        m_BookText[ITEM_READ_TYPE::HAND_HELD_SAFE_NOTE] = { TEXT("Prototype_Component_Texture_Document1"), TEXT("Prototype_Component_Texture_Portable_Safe1") , TEXT("Prototype_Component_Texture_Portable_Safe2") };
+        m_BookText[ITEM_READ_TYPE::RICKER_NOTE]         = { TEXT("Prototype_Component_Texture_DocumentBlood1"), TEXT("Prototype_Component_Texture_ReadType_Ricker1") , TEXT("Prototype_Component_Texture_ReadType_Ricker2") , TEXT("Prototype_Component_Texture_ReadType_Ricker3") , TEXT("Prototype_Component_Texture_ReadType_Ricker4") };
+        m_BookText[ITEM_READ_TYPE::SAFE_PASSWARD_NOTE]  = { TEXT("Prototype_Component_Texture_Document1"), TEXT("Prototype_Component_Texture_Safe_PassWard_Note1") , TEXT("Prototype_Component_Texture_Safe_PassWard_Note2") , TEXT("Prototype_Component_Texture_Safe_PassWard_Note3")};
+        m_BookText[ITEM_READ_TYPE::PAMPHLET]            = { TEXT("Prototype_Component_Texture_GuidePamphlet1"), TEXT("Prototype_Component_Texture_PamphletNote1"), TEXT("Prototype_Component_Texture_PamphletNote2"), TEXT("Prototype_Component_Texture_PamphletNote3"), TEXT("Prototype_Component_Texture_PamphletNote4") };
+       
+        m_BookText[ITEM_READ_TYPE::OFFICER_NOTE]        = { TEXT("Prototype_Component_Texture_GuidePamphlet1"), TEXT("Prototype_Component_Texture_ReadType_Police_Note1"), TEXT("Prototype_Component_Texture_ReadType_Police_Note2") };
     }
-
+    
     m_isRender = false;
     return S_OK;
 }
@@ -375,15 +383,14 @@ void CRead_Item_UI::Text_Read(_float fTimeDelta)
         m_isRender = true;
 
         m_pRead_Supervise->m_isChange = false;
+        m_pGameInstance->Play_Sound(TEXT("ui_ingame_media.bnk.2_35.mp3"), CHANNELID::CH30);
+
     }
 
     else if (READ_UI_TYPE::TEXT_RIGHT_READ == m_eRead_type)
     {
-        /* if(m_pRead_Supervise->m_iBookCnt+1 < incidentLogNotes.size())
-             Change_Texture(incidentLogNotes[m_pRead_Supervise->m_iBookCnt + 1], TEXT("Com_DefaultTexture"));
-         else
-             m_pRead_Supervise->m_iBookCnt
-         m_isRender = true;*/
+        m_pGameInstance->Play_Sound(TEXT("ui_ingame_media.bnk.2_35.mp3"), CHANNELID::CH30);
+
         m_isRender = false;
     }
 }

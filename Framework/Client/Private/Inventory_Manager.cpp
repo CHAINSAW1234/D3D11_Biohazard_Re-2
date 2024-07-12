@@ -149,6 +149,7 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 		HoveredPos.z = Z_POS_HIGH_LIGHTER;
 		m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
 
+
 		for (auto& iter : m_vecItem_UI)
 		{
 			if (true == iter->IsMouseHover() && true == iter->Get_isWorking())
@@ -194,6 +195,7 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 			}
 		}
 	} 
+
 }
 
 void CInventory_Manager::EQUIP_ITEM_Operation(_float fTimeDelta)

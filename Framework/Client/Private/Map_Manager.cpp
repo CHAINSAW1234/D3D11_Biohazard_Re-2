@@ -58,6 +58,10 @@ HRESULT CMap_Manager::Initialize(void* pArg)
 	Find_Player();
 	
 	/* Tool */
+	_float4 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+	pos.z = 0.01f;
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, pos);
+
 	m_fOrigin_Blending = m_vColor[0].fBlender_Value;
 	m_vColor[0].vColor.w = 0.f;
 	m_isRender = false;

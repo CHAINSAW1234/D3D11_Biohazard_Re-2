@@ -129,12 +129,6 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
         }
     }
 
-    _float4 vObjPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-
-    vObjPos.z = 0.01f;
-
-    m_pTransformCom->Set_State(CTransform::STATE_POSITION, vObjPos);
-
     m_isPrevRender = m_isRender = false;
 
     return S_OK;
@@ -148,6 +142,11 @@ void CLayOut_UI::Start()
 void CLayOut_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
+
+
+    _float4 vObjPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+    vObjPos.z = 0.1f;
+    m_pTransformCom->Set_State(CTransform::STATE_POSITION, vObjPos);
 
     if (LAYOUT_UI_TYPE::BACKGROUND_UI_TYPE == m_eLayout_Type)
     {
