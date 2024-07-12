@@ -146,6 +146,9 @@ HRESULT CBody_Zombie::Render()
 	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 	for (auto& i : NonHideIndices)
 	{
+		if (FAILED(Bind_WorldMatrix(i)))
+			return E_FAIL;
+
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
 
@@ -214,21 +217,6 @@ HRESULT CBody_Zombie::Render_LightDepth_Dir()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (m_bRagdoll)
-	{
-		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
-		WorldMat._41 = 0.f;
-		WorldMat._42 = 0.f;
-		WorldMat._43 = 0.f;
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
-			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-			return E_FAIL;
-	}
-
 	if (m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) != nullptr) {
 
 		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION);
@@ -242,6 +230,9 @@ HRESULT CBody_Zombie::Render_LightDepth_Dir()
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{
+			if (FAILED(Bind_WorldMatrix(i)))
+				return E_FAIL;
+
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
 
@@ -264,21 +255,6 @@ HRESULT CBody_Zombie::Render_LightDepth_Point()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (m_bRagdoll)
-	{
-		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
-		WorldMat._41 = 0.f;
-		WorldMat._42 = 0.f;
-		WorldMat._43 = 0.f;
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
-			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-			return E_FAIL;
-	}
-
 	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
 	_int iIndex = 0;
 	for (auto& pLightDesc : LightDescList) {
@@ -297,6 +273,9 @@ HRESULT CBody_Zombie::Render_LightDepth_Point()
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{
+			if (FAILED(Bind_WorldMatrix(i)))
+				return E_FAIL;
+
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
 
@@ -320,21 +299,6 @@ HRESULT CBody_Zombie::Render_LightDepth_Spot()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (m_bRagdoll)
-	{
-		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
-		WorldMat._41 = 0.f;
-		WorldMat._42 = 0.f;
-		WorldMat._43 = 0.f;
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
-			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-			return E_FAIL;
-	}
-
 	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
 
 		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT);
@@ -348,6 +312,9 @@ HRESULT CBody_Zombie::Render_LightDepth_Spot()
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{
+			if (FAILED(Bind_WorldMatrix(i)))
+				return E_FAIL;
+
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
 
@@ -1235,7 +1202,33 @@ HRESULT CBody_Zombie::Bind_ShaderResources()
 
 HRESULT CBody_Zombie::Bind_WorldMatrix(_uint iIndex)
 {
-	//if(m_pModelCom->Is_Ragdoll_Mesh)
+	if (m_bRagdoll)
+	{
+		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+		WorldMat._41 = 0.f;
+		WorldMat._42 = 0.f;
+		WorldMat._43 = 0.f;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (m_pPart_Breaker->Is_RagDoll_Mesh(iIndex))
+		{
+			auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+			WorldMat._41 = 0.f;
+			WorldMat._42 = 0.f;
+			WorldMat._43 = 0.f;
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+				return E_FAIL;
+		}
+		else
+		{
+			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+				return E_FAIL;
+		}
+	}
+
 	return S_OK;
 }
 
