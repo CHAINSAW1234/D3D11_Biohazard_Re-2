@@ -348,9 +348,9 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     
     float4 vAlbedo = pow(g_DiffuseTexture.Sample(PointSampler, In.vTexcoord), 2.2f);
-    //float4 vAlbedo = g_DiffuseTexture.Sample(PointSampler, In.vTexcoord);
+
     
-    if (vAlbedo.a ==0)
+    if (vAlbedo.a == 0)
         discard;
     
     vector vNormalDesc = g_NormalTexture.Sample(PointSampler, In.vTexcoord);
@@ -409,9 +409,6 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
         float3 irradiance = g_IrradianceTexture.Sample(LinearSampler, vNormal).rgb;
 
         // Calculate Fresnel term for ambient lighting.
-        // Since we use pre-filtered cubemap(s) and irradiance is coming from many directions
-        // use cosLo instead of angle with light's half-vector (cosLh above).
-        // See: https://seblagarde.wordpress.com/2011/08/17/hello-world/
         float3 F = FresnelSchlick(cosLo, F0);
         // Get diffuse contribution factor (as with direct lighting).
         float3 kd = lerp(1.0 - F, 0.0, fMaterialMetalic);
@@ -1061,7 +1058,7 @@ PS_OUT PS_MAIN_BLURX_EFFECT(PS_IN In)
         TotalWeight += weight;
     }
     //TotalWeight *= 0.6f;
-    vOut /= TotalWeight;
+    //vOut /= TotalWeight;
     Out.vColor = vOut;
 
     return Out;
@@ -1085,7 +1082,7 @@ PS_OUT PS_MAIN_BLURY_EFFECT(PS_IN In)
         TotalWeight += weight;
     }
     //TotalWeight *= 0.6f;
-    vOut /= TotalWeight;
+    //vOut /= TotalWeight;
     Out.vColor = vOut;
 
     return Out;
@@ -1203,7 +1200,6 @@ PS_OUT PS_DOF(PS_IN In)
     Out.vColor.a = 1.f;
     return Out;
 }
-
 PS_OUT PS_DOF_BLURX(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;

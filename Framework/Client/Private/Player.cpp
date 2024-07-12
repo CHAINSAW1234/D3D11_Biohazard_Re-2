@@ -2438,7 +2438,7 @@ void CPlayer::Ready_Effect()
 	for (size_t i = 0; i < HIT_PROPS_EFFECT_TYPE_COUNT; ++i)
 	{
 		auto pHit_Props = CHit_Props::Create(m_pDevice, m_pContext);
-		pHit_Props->SetType(i);
+		pHit_Props->SetType((_uint)i);
 		pHit_Props->Initialize(nullptr);
 		pHit_Props->SetSize(0.6f, 0.6f);
 		m_vecHit_Props_HG.push_back(pHit_Props);

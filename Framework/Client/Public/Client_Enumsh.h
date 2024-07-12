@@ -14,12 +14,24 @@ namespace Client
 
 	enum class SHADER_PASS_VTXANIMMODEL {
 		PASS_DEFAULT,
-		PASS_DEFAULT_ATOS,
+		PASS_ALPHABLEND,
 		PASS_DISSOLVE,
 		PASS_LIGHTDEPTH,
 		PASS_EMISSIVE,
+		PASS_LIGHTDEPTH_CUBE,
+		PASS_NONCULL,
 		PASS_END
 	};	
+
+	enum class SHADER_PASS_VTXMODEL {
+		PASS_DEFAULT,
+		PASS_ALPHABLEND,
+		PASS_LIGHTDEPTH,
+		PASS_LIGHTDEPTH_CUBE,
+		PASS_WIREFRAME,
+		PASS_BLOOD,
+		PASS_END
+	};
 
 	enum UI_ID {
 		ORTHOGONAL_UI,
@@ -122,7 +134,6 @@ namespace Client
 	};
 
 
-
 	//인벤토리 안에서의 아이템 타입
 	enum ITEM_TYPE {
 		EQUIPABLE, // 장착 장비
@@ -217,7 +228,6 @@ namespace Client
 		CABINET_DOOR = 2
 	};
 
-
 	// 나중에 좀비 초기 생성 셋팅은 UNDISCOVERED의 것을 반영하겠습니다
 	enum JOMBIE_BEHAVIOR_COLLIDER_TYPE
 	{
@@ -233,7 +243,6 @@ namespace Client
 	};
 	//
 
-
 	enum PLAYER_BEHAVIOR_COLLIDER_TYPE
 	{
 		PLAYER_BEHAVIOR_COLLIDER_CLIMB_BOX_UP, // 작전실 박스
@@ -241,7 +250,6 @@ namespace Client
 		PLAYER_BEHAVIOR_COLLIDER_CLIMB_WALL, // 작전실 벽
 		PLAYER_BEHAVIOR_COLLIDER_END,
 	};
-
 
 	enum DOOR_TYPE
 	{
@@ -388,6 +396,5 @@ namespace Client
 		portablesafe,
 		ITEM_NUMBER_END
 	};
-
 
 }
