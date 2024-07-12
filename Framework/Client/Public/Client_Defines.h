@@ -42,9 +42,9 @@ using namespace std;
 using namespace Client;
 	
 //#define MAP_NOTHING
-#define MAP_INTERACT
+//#define MAP_INTERACT
 //#define MAP_TEST
-
+#define Map_J
 //	#define TEST_ZOMBIE_MAINHALL
 
 //#define NON_COLLISION_PROP

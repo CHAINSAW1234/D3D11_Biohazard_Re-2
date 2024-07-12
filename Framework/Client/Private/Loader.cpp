@@ -2370,6 +2370,13 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_InteractObj/Make_Prototype.dat"))))
 		return E_FAIL;
 #endif 
+#ifdef Map_J
+	if (FAILED(Load_Item_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
+		return E_FAIL;
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_J/Make_Prototype.dat"))))
+		return E_FAIL;
+#endif 
+
 #ifdef MAP_TEST
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_Test/Make_Prototype.dat"))))
 		return E_FAIL;

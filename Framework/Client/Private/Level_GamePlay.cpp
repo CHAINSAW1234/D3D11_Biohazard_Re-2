@@ -323,6 +323,10 @@ HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_Test"), LEVEL_GAMEPLAY)))
 		return E_FAIL;
 #endif
+#ifdef Map_J
+	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_J"), LEVEL_GAMEPLAY)))
+		return E_FAIL;
+#endif
 
 	
 
