@@ -33,6 +33,8 @@ HRESULT CThrowing_Weapon::Initialize(void* pArg)
     if (FAILED(Add_Components()))
         return E_FAIL;
 
+	m_pTransformCom->Set_Scaled(3.f, 3.f, 3.f);
+
 	m_pTransformCom->Set_WorldMatrix(pDesc->worldMatrix);
 
 	switch (m_eEquip) {
