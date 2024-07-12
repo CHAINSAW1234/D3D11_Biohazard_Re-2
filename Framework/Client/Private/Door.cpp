@@ -40,7 +40,7 @@ HRESULT CDoor::Initialize(void* pArg)
 		m_eType = DOOR_ONE;
 	if (m_eType == DOOR_DOUBLE)
 	{
-		if ((m_tagPropDesc.strGamePrototypeName.find("038") != string::npos))
+		if ((m_tagPropDesc.strGamePrototypeName.find("007") != string::npos))
 			m_eDoubleDoorType = DOUBLE_DOOR_MODEL_TYPE::FRONT_DOOR;
 		else
 			m_eDoubleDoorType = DOUBLE_DOOR_MODEL_TYPE::NORMAL_DOOR;

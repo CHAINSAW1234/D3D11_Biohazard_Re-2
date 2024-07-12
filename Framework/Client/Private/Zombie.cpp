@@ -382,7 +382,9 @@ void CZombie::Tick(_float fTimeDelta)
 
 			/*For Blood Effect*/
 #ifdef DECAL
-			if (m_pController->Is_Hit_Decal_Ray())
+			_bool bDecalRay = false;
+			bDecalRay = m_pController->Is_Hit_Decal_Ray();
+			if (bDecalRay)
 			{
 				m_bSetBlood = true;
 
@@ -421,16 +423,24 @@ void CZombie::Tick(_float fTimeDelta)
 			}
 			else
 			{
-				for (auto& pPartObject : m_PartObjects)
+				if(bDecalRay)
 				{
-					if (nullptr != pPartObject)
-						pPartObject->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
+					auto Type = m_pController->Get_Hit_Collider_Type();
 
-					m_bPartial_Ragdoll = true;
+					if(Type != COLLIDER_TYPE::CHEST && Type != COLLIDER_TYPE::PELVIS && Type != COLLIDER_TYPE::HEAD)
+					{
+						for (auto& pPartObject : m_PartObjects)
+						{
+							if (nullptr != pPartObject)
+								pPartObject->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
+
+							m_bPartial_Ragdoll = true;
+						}
+
+						auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+						m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
+					}
 				}
-
-				auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
-				m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(m_pController->Get_Hit_Collider_Type()));
 			}
 
 			if (m_bBigAttack)
