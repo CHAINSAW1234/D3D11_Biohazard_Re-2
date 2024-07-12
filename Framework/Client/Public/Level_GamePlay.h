@@ -29,6 +29,7 @@ private:
 	HRESULT Ready_Layer_LandBackGround(const wstring& strLayerTag);
 	HRESULT Ready_RegionCollider();
 	HRESULT Ready_CutScene();
+	HRESULT Ready_EnvCube();
 
 	HRESULT Ready_Layer_Effect(const wstring& strLayerTag);
 	HRESULT Ready_Layer_UI(const wstring& strLayerTag);
@@ -68,8 +69,8 @@ private:
 	_int iPreIndex = { 0 };
 #pragma endregion
 
-	CTexture* m_pTexture = { nullptr };
-
+	//CTexture* m_pTexture = { nullptr };
+	class CEnvCube* m_pCubeMap = { nullptr };
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
