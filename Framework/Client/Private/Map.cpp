@@ -205,11 +205,11 @@ HRESULT CMap::Render_LightDepth_Dir()
 				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 					return E_FAIL;
 
-				if (FAILED(m_pShaderCom->Begin(2)))
+				if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
 					return E_FAIL;
 			}
 			else {
-				if (FAILED(m_pShaderCom->Begin(1)))
+				if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_LIGHTDEPTH)))
 					return E_FAIL;
 			}
 
@@ -280,11 +280,11 @@ HRESULT CMap::Render_LightDepth_Point()
 				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 					return E_FAIL;
 
-				if (FAILED(m_pShaderCom->Begin(4)))
+				if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH_CUBE)))
 					return E_FAIL;
 			}
 			else {
-				if (FAILED(m_pShaderCom->Begin(2)))
+				if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_LIGHTDEPTH)))
 					return E_FAIL;
 			}
 
