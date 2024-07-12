@@ -25,6 +25,8 @@ HRESULT CPart_Breaker_Zombie::Initialize(void* pArg)
 	m_isBreakParts.resize(static_cast<_uint>(BREAK_PART::_END));
 	m_RagDollMeshIndices.resize(static_cast<_uint>(BREAK_PART::_END));
 	m_AnimMeshIndices.resize(static_cast<_uint>(BREAK_PART::_END));
+	m_HideMeshIndices.resize(static_cast<_uint>(BREAK_PART::_END));
+	m_AppearMeshIndices.resize(static_cast<_uint>(BREAK_PART::_END));
 
 	for (auto& isBreak : m_isBreakParts)
 	{

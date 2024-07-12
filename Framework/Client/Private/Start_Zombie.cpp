@@ -56,7 +56,7 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 			m_pBlackBoard->Get_AI()->Set_Start(false);
 
 #ifdef _DEBUG
-			MSG_BOX(TEXT("Start! Out Door"));
+			//	MSG_BOX(TEXT("Start! Out Door"));
 #endif
 		}
 	}
@@ -72,7 +72,7 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 			m_pBlackBoard->Get_AI()->Set_Start(false);
 
 #ifdef _DEBUG
-			MSG_BOX(TEXT("Start! Door Rub"));
+			//	MSG_BOX(TEXT("Start! Door Rub"));
 #endif
 		}
 	}
@@ -108,7 +108,7 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 			//	pBody_Model->Play_Animations(m_pBlackBoard->Get_AI()->Get_Transform(), 0.f, &_float3());
 
 #ifdef _DEBUG
-			MSG_BOX(TEXT("Start! Creep"));
+			//	MSG_BOX(TEXT("Start! Creep"));
 #endif
 		}
 	}
@@ -122,7 +122,7 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 			m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_UP);
 
 #ifdef _DEBUG
-			MSG_BOX(TEXT("Start! Idle"));
+			//	MSG_BOX(TEXT("Start! Idle"));
 #endif
 		}
 	}
@@ -145,7 +145,7 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 			m_pBlackBoard->Get_AI()->SetRagdoll_StartPose();
 
 #ifdef _DEBUG
-			MSG_BOX(TEXT("Start! Rad Doll"));
+			//	MSG_BOX(TEXT("Start! Rad Doll"));
 #endif
 		}
 	}	
