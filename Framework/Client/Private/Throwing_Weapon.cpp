@@ -33,9 +33,8 @@ HRESULT CThrowing_Weapon::Initialize(void* pArg)
     if (FAILED(Add_Components()))
         return E_FAIL;
 
-	m_pTransformCom->Set_Scaled(3.f, 3.f, 3.f);
-
 	m_pTransformCom->Set_WorldMatrix(pDesc->worldMatrix);
+	m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
 
 	switch (m_eEquip) {
 	case CPlayer::GRENADE:
