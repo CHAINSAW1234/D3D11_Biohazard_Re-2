@@ -187,6 +187,19 @@ HRESULT CBody_Zombie::Render()
 				return E_FAIL;
 		}
 		
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_EmissiveTexture", static_cast<_uint>(i), aiTextureType_EMISSIVE)))
+		{
+			_bool isEmissive = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isEmissive = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+				return E_FAIL;
+		}
+
 		auto iBranch = m_pModelCom->Get_Mesh_Branch(i);
 		if(iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER && iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_DAMAGED && iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_DEFICIT)
 		{

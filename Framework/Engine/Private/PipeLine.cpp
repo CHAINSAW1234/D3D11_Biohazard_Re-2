@@ -60,6 +60,7 @@ void CPipeLine::Set_CubeMap(CTexture* pTexture, _uint iIndex)
 	m_iCurCubeMapIndex = iIndex;
 	m_pCurCubeMapTexture = pTexture;
 	Safe_AddRef(m_pCurCubeMapTexture);
+
 }
 
 list<LIGHT_DESC*> CPipeLine::Get_ShadowPointLightDesc_List()

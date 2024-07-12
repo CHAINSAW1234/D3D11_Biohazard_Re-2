@@ -408,7 +408,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
         float3 Previrradiance = g_PrevIrradianceTexture.Sample(LinearSampler, vNormal).rgb;
         float3 Curirradiance = g_CurIrradianceTexture.Sample(LinearSampler, vNormal).rgb;
 
-        float3 irradiance = lerp(Previrradiance, Curirradiance, g_PBRLerpTime);
+        float3 irradiance = lerp(Curirradiance, Previrradiance, g_PBRLerpTime);             // ???????????????????????????
         
         // Calculate Fresnel term for ambient lighting.
         float3 F = FresnelSchlick(cosLo, F0);
@@ -423,7 +423,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
         float3 PrevspecularIrradiance = pow(g_PrevEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
         float3 CurspecularIrradiance = pow(g_CurEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
         
-        float3 specularIrradiance = lerp(PrevspecularIrradiance, CurspecularIrradiance, g_PBRLerpTime);
+        float3 specularIrradiance = lerp(CurspecularIrradiance, PrevspecularIrradiance, g_PBRLerpTime); // ???????????????????????????
         
         //// Split-sum approximation factors for Cook-Torrance specular BRDF.
         float2 specularBRDF = g_SpecularLUTTexture.Sample(LinearSamplerClamp, float2(cosLo, fMaterialRoughness)).rg;

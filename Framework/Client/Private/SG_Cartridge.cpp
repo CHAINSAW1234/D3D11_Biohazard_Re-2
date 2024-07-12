@@ -94,6 +94,19 @@ HRESULT CSG_Cartridge::Render()
 			return E_FAIL;
 	}
 
+	if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_EmissiveTexture", static_cast<_uint>(m_iFrame), aiTextureType_EMISSIVE)))
+	{
+		_bool isEmissive = false;
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+			return E_FAIL;
+	}
+	else
+	{
+		_bool isEmissive = true;
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+			return E_FAIL;
+	}
+
 	if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_DEFAULT)))
 		return E_FAIL;
 

@@ -1020,6 +1020,19 @@ void COctree::Render_Node(CModel* pRootWorld, CShader* pShader)
 							return;
 					}
 
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_EmissiveTexture", static_cast<_uint>(k), aiTextureType_EMISSIVE)))
+					{
+						_bool isEmissive = false;
+						if (FAILED(pShader->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+							return ;
+					}
+					else
+					{
+						_bool isEmissive = true;
+						if (FAILED(pShader->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+							return ;
+					}
+
 					pRootWorld->Bind_DecalMap(k, pShader);
 
 					if (FAILED(pShader->Begin(0)))
