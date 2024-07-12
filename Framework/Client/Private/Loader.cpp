@@ -107,6 +107,9 @@
 #include "Hint.h"
 #include "Hint_Highliter.h"
 
+// EnvMap 큐브맵이라는뜻
+#include"EnvCube.h"
+
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
 	, m_pContext{ pContext }
@@ -634,6 +637,12 @@ HRESULT CLoader::Load_Prototype()
 	
 #pragma endregion
 
+#pragma region CubeMap
+	/* For.Prototype_GameObject_EnvCube */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EnvCube"),
+		CEnvCube::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+#pragma endregion
 	/* For.Prototype_GameObject_Collider */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Collider"),
 		CCustomCollider::Create(m_pDevice, m_pContext))))
@@ -1540,9 +1549,38 @@ HRESULT CLoader::Loading_For_GamePlay()
 #pragma endregion
 
 #pragma region CubeMap
-	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_CubeMap"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/CubeMap/st4_101_0_00.dds")))))
+
+	filesystem::path FullPath(TEXT("../Bin/Data/EnvCubeSetting.dat"));
+
+
+
+	ifstream ifs(FullPath.c_str(), ios::binary);
+
+	if (true == ifs.fail())
+	{
+		MSG_BOX(TEXT("Failed To OpenFile"));
+
 		return E_FAIL;
+	}
+	_int iEntireTextures;
+	ifs.read(reinterpret_cast<_char*>(&iEntireTextures), sizeof(_int));
+
+	/* For.Com_Texture */
+	for (_int i = 0; i < iEntireTextures; i++)
+	{
+		_tchar szPrototypeComName[MAX_PATH];
+		_tchar szPath[MAX_PATH];
+		_int iTextureNum;
+		ifs.read(reinterpret_cast<_char*>(&szPrototypeComName), sizeof(_tchar) * MAX_PATH);
+		ifs.read(reinterpret_cast<_char*>(&szPath), sizeof(_tchar) * MAX_PATH);
+		ifs.read(reinterpret_cast<_char*>(&iTextureNum), sizeof(_int));
+		if (FAILED(m_pGameInstance->Add_Prototype(g_Level, szPrototypeComName,
+			CTexture::Create(m_pDevice, m_pContext, szPath, iTextureNum))))
+			return E_FAIL;
+	}
+
+	ifs.close();
+
 
 #pragma endregion
 
