@@ -1060,8 +1060,9 @@ HRESULT CRenderer::Render_Priority()
 	{
 		if (nullptr != pRenderObject)
 			pRenderObject->Render();
-
+		Safe_Release(pRenderObject);
 	}
+	m_RenderObjects[RENDER_PRIORITY].clear();
 
 	if (m_ShaderOptions[FXAA]) {
 		if (FAILED(m_pGameInstance->End_MRT()))

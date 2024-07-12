@@ -1246,6 +1246,11 @@ CRigid_Dynamic* CGameInstance::Create_Rigid_Dynamic(CModel* pModel, CTransform* 
 	return m_pPhysics_Controller->Create_Rigid_Dynamic(pModel, pTransform, iId, pObj);
 }
 
+CRigid_Dynamic* CGameInstance::Create_Rigid_Dynamic_NoConvex(_float fRadius,_int* iId, CGameObject* pObj)
+{
+	return m_pPhysics_Controller->Create_Rigid_Dynamic_NoConvex(fRadius,iId, pObj);
+}
+
 void CGameInstance::Cook_Terrain()
 {
 	m_pPhysics_Controller->InitTerrain();

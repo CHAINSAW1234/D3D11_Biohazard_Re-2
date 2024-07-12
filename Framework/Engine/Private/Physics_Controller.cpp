@@ -258,6 +258,46 @@ CRigid_Dynamic* CPhysics_Controller::Create_Rigid_Dynamic(CModel* pModel, CTrans
 	return ReturnPtr;
 }
 
+CRigid_Dynamic* CPhysics_Controller::Create_Rigid_Dynamic_NoConvex(_float fRadius,_int* iId, CGameObject* pObj)
+{
+	auto pRigid_Dynamic = new CRigid_Dynamic();
+	pRigid_Dynamic->SetIndex(m_iRigid_Dynamic_Count);
+	pRigid_Dynamic->SetObject(pObj);
+	m_vecRigid_Dynamic.push_back(pRigid_Dynamic);
+
+	PxShape* shape = m_Physics->createShape(PxSphereGeometry(fRadius), *m_Physics->createMaterial(0.05f, 0.05f, 0.05f));
+
+	PxTransform local(PxVec3(0.f,0.f,0.f));
+	shape->setLocalPose(local);
+
+	PxRigidDynamic* dynamicSphere = m_Physics->createRigidDynamic(local);
+	dynamicSphere->setMass(1.f);
+
+	dynamicSphere->attachShape(*shape);
+
+	if (dynamicSphere) {
+		// 구체를 물리 씬에 추가
+		m_Scene->addActor(*dynamicSphere);
+	}
+	*pRigid_Dynamic->GetRigidDynamic_DoublePtr() = dynamicSphere;
+
+	if (m_vecRigid_Dynamic.size() >= 2)
+	{
+		std::sort(m_vecRigid_Dynamic.begin(), m_vecRigid_Dynamic.end(), [](CRigid_Dynamic* a, CRigid_Dynamic* b)
+			{
+				return a->GetIndex() < b->GetIndex();
+			});
+	}
+
+	*iId = m_iRigid_Dynamic_Count;
+
+	Safe_AddRef(m_vecRigid_Dynamic[m_iRigid_Dynamic_Count]);
+	auto ReturnPtr = m_vecRigid_Dynamic[m_iRigid_Dynamic_Count];
+	++m_iRigid_Dynamic_Count;
+
+	return ReturnPtr;
+}
+
 void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform, _int* pIndex)
 {
 	// Init Cooking Params 
@@ -584,7 +624,7 @@ void CPhysics_Controller::Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uin
 	PxTransform transform(PxVec3(vPos.x, vPos.y, vPos.z));
 
 	PxConvexMeshGeometry geometry(convexMesh);
-	PxMaterial* material = m_Physics->createMaterial(0.5f, 0.5f, 0.1f);
+	PxMaterial* material = m_Physics->createMaterial(0.05f, 0.05f, 0.01f);
 	PxRigidDynamic* body = m_Physics->createRigidDynamic(transform);
 	PxShape* shape = m_Physics->createShape(geometry, *material);
 
