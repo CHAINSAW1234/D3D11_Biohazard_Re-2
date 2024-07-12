@@ -434,7 +434,7 @@ void CZombie::Tick(_float fTimeDelta)
 				{
 					auto Type = m_pController->Get_Hit_Collider_Type();
 
-					if(Type != COLLIDER_TYPE::CHEST && Type != COLLIDER_TYPE::PELVIS && Type != COLLIDER_TYPE::HEAD)
+					if(Type != COLLIDER_TYPE::CHEST /*&& Type != COLLIDER_TYPE::PELVIS*/ && Type != COLLIDER_TYPE::HEAD)
 					{
 						for (auto& pPartObject : m_PartObjects)
 						{
@@ -443,7 +443,7 @@ void CZombie::Tick(_float fTimeDelta)
 
 							m_bPartial_Ragdoll = true;
 
-							BREAK_PART eBreakType;
+							BREAK_PART eBreakType = BREAK_PART::_END;
 							switch (eType)
 							{
 							case COLLIDER_TYPE::CALF_L:

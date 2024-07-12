@@ -187,7 +187,8 @@ HRESULT CBody_Zombie::Render()
 				return E_FAIL;
 		}
 		
-		if(m_pModelCom->Get_Mesh_Branch(i) != (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER)
+		auto iBranch = m_pModelCom->Get_Mesh_Branch(i);
+		if(iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER && iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_DAMAGED && iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_DEFICIT)
 		{
 			m_bDecalRender = true;
 
@@ -1213,7 +1214,7 @@ HRESULT CBody_Zombie::Bind_WorldMatrix(_uint iIndex)
 	}
 	else
 	{
-		if (m_pPart_Breaker->Is_RagDoll_Mesh(iIndex))
+		if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh(iIndex))
 		{
 			auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
 			WorldMat._41 = 0.f;
