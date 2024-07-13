@@ -114,14 +114,6 @@ void CBlackBoard_Zombie::Update_Recognition_Timer(_float fTimeDelta)
 
 	MONSTER_STATE					eCurrentState = { m_pAI->Get_Current_MonsterState() };
 	CMonster::MONSTER_STATUS*		pMonsterStatus = { m_pAI->Get_Status_Ptr() };
-	if (MONSTER_STATE::MST_WALK != eCurrentState &&
-		MONSTER_STATE::MST_IDLE != eCurrentState)
-	{
-		pMonsterStatus->fAccRecognitionTime -= fTimeDelta;
-		if (pMonsterStatus->fAccRecognitionTime < 0.f)
-			pMonsterStatus->fAccRecognitionTime = 0.f;
-		return;
-	}		
 
 	_float							fDistanceToPlayer = {};
 	if (false == Compute_Distance_To_Player(&fDistanceToPlayer))

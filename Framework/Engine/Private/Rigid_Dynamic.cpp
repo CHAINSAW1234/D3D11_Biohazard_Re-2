@@ -94,7 +94,10 @@ void CRigid_Dynamic::AddForce(_float4 vDir)
 	vDir = vDir * (fMag);
 	PxVec3 pxForce(vDir.x, vDir.y+0.5f, vDir.z);
 
+	PxVec3 pxTorque(m_pGameInstance->GetRandom_Real(-3.f, 3.f), m_pGameInstance->GetRandom_Real(-3.f, 3.f), m_pGameInstance->GetRandom_Real(-3.f, 3.f));
+
 	m_pRigid_Dynamic->addForce(pxForce, PxForceMode::eIMPULSE);
+	m_pRigid_Dynamic->addTorque(pxTorque, PxForceMode::eIMPULSE);
 }
 
 void CRigid_Dynamic::ClearForce()

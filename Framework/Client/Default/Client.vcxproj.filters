@@ -34,9 +34,6 @@
     <Filter Include="97.ShaderFiles">
       <UniqueIdentifier>{6c97f181-1c24-4522-bedb-7c3ed51e738e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Terrain">
-      <UniqueIdentifier>{2d974beb-fe5f-4430-bca0-fe15325e50c4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Camera">
       <UniqueIdentifier>{75e45318-a739-4941-9854-12d78de671fe}</UniqueIdentifier>
     </Filter>
@@ -682,6 +679,9 @@
     <Filter Include="02.GameObjects\EnvMap">
       <UniqueIdentifier>{cd409281-eb3c-47c4-b38e-652c35092d07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\Part_Breaker\Part_Mesh_Info">
+      <UniqueIdentifier>{06889494-4e23-49fa-8a90-12b96f7ef2e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -713,9 +713,6 @@
     </ClInclude>
     <ClInclude Include="..\public\BackGround.h">
       <Filter>02.GameObjects\BackGround</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Terrain.h">
-      <Filter>02.GameObjects\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Camera_Free.h">
       <Filter>02.GameObjects\Camera</Filter>
@@ -1323,6 +1320,9 @@
     <ClInclude Include="..\Public\EnvCube.h">
       <Filter>02.GameObjects\EnvMap</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Part_Mesh_Info_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\Part_Breaker\Part_Mesh_Info</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1348,9 +1348,6 @@
     </ClCompile>
     <ClCompile Include="..\private\BackGround.cpp">
       <Filter>02.GameObjects\BackGround</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Terrain.cpp">
-      <Filter>02.GameObjects\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Camera_Free.cpp">
       <Filter>02.GameObjects\Camera</Filter>
@@ -1924,6 +1921,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\EnvCube.cpp">
       <Filter>02.GameObjects\EnvMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Part_Mesh_Info_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\Part_Breaker\Part_Mesh_Info</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

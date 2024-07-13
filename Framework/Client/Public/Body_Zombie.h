@@ -16,9 +16,10 @@ class CBody_Zombie final : public CPartObject
 public:
 	typedef struct tagBodyMonsterDesc : public CPartObject::PARTOBJECT_DESC
 	{
-		_bool*				pRender = { nullptr };
-		_float3*			pRootTranslation = { nullptr };
-		ZOMBIE_BODY_TYPE	eBodyType = { ZOMBIE_BODY_TYPE::_END };
+		class CPart_Breaker_Zombie** ppPart_Breaker = { nullptr };
+		_bool*						pRender = { nullptr };
+		_float3*					pRootTranslation = { nullptr };
+		ZOMBIE_BODY_TYPE			eBodyType = { ZOMBIE_BODY_TYPE::_END };
 	}BODY_MONSTER_DESC;
 
 	enum class BODY_MESH_TYPE{ _INNER, _OUTTER, _JOINT, _DEFICIT, _DAMAGED, _BROKEN_HEAD, _INTERNAL_MAT, _END };
@@ -113,11 +114,14 @@ private:
 private:
 	_bool*								m_pRender = { nullptr };
 
+private:
+	class CPart_Breaker_Zombie**			m_ppPart_Breaker = { nullptr };
+
 
 private:
 	HRESULT								Add_Components();
 	HRESULT								Bind_ShaderResources();
-
+	HRESULT								Bind_WorldMatrix(_uint iIndex);
 public:
 	static CBody_Zombie* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

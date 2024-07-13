@@ -2454,7 +2454,7 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
 	CAnimation* pAnimation = { iter->second->Get_Animation(iAnimIndex) };
 
-	vector<_float4x4>				TransformationMatrices = { pAnimation->Compute_TransfromationMatrix(fTimeDelta, iNumBones, IncludeBoneIndices, pPlayingInfo) };
+	vector<_float4x4>				TransformationMatrices = { pAnimation->Compute_TransfromationMatrix(fTimeDelta, iNumBones, IncludeBoneIndices, m_T_Pose_Matrices, pPlayingInfo) };
 
 	Update_LinearInterpolation(fTimeDelta, 0);
 	if (true == pPlayingInfo->Is_LinearInterpolation())
@@ -2484,18 +2484,47 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 	return S_OK;
 }
 
-HRESULT CModel::Play_Pose(CTransform* pTransform, _float fTimeDelta)
+HRESULT CModel::Play_Pose(_uint iPlayingIndex)
 {
-	fTimeDelta = Compute_NewTimeDelta_Distatnce_Optimization(fTimeDelta, pTransform);
-	if (0.f == fTimeDelta)
-		return S_OK;
+	CPlayingInfo*		pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+	if (nullptr == pPlayingInfo)
+		return E_FAIL;
 
-	for (auto& pBone : m_Bones)
+	_int				iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
+	if (false == pPlayingInfo->Is_Set_CurrentAnimation())
 	{
-		if (false == pBone->Is_Surbodinate())
-			continue; 
+		MSG_BOX(TEXT("false == pPlayingInfo->Is_Set_CurrentAnimation(),  HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)"));
 
-		pBone->Invalidate_CombinedTransformationMatrix(m_Bones, m_TransformationMatrix);
+		return E_FAIL;
+	}
+
+	CBone_Layer*		pBoneLayer = { Find_BoneLayer(pPlayingInfo->Get_BoneLayerTag()) };
+	if (nullptr == pBoneLayer)
+	{
+		MSG_BOX(TEXT("Bone Layer 설정 하시오, HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)"));
+
+		return E_FAIL;
+	}
+
+	_uint				iNumBones = { static_cast<_uint>(m_Bones.size()) };
+	unordered_set<_uint>			IncludeBoneIndices = { pBoneLayer->Get_IncludedBoneIndices() };
+
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
+	CAnimation* pAnimation = { iter->second->Get_Animation(iAnimIndex) };
+
+	vector<_float4x4>				TransformationMatrices = { pAnimation->Compute_TransfromationMatrix(0.f, iNumBones, IncludeBoneIndices, m_T_Pose_Matrices, pPlayingInfo) };
+
+	for (_uint i = 0; i < iNumBones; ++i)
+	{
+		m_Bones[i]->Set_TransformationMatrix(TransformationMatrices[i]);
+	}
+
+	pPlayingInfo->Update_LastKeyFrames(TransformationMatrices, iNumBones, m_fTotalLinearTime);
+	pPlayingInfo->Set_FirstTick(false);
+
+	for (_uint i = 0; i < iNumBones; ++i)
+	{
+		m_Bones[i]->Invalidate_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_TransformationMatrix));
 	}
 
 	return S_OK;
@@ -2566,7 +2595,7 @@ vector<_float4x4> CModel::Apply_Animation(_float fTimeDelta, _uint iPlayingIndex
 	}
 
 	unordered_set<_uint>						TempIncludedBoneIndices = pBoneLayer->Get_IncludedBoneIndices();
-	TransformationMatrices = pAnimation->Compute_TransfromationMatrix(fTimeDelta, iNumBones, TempIncludedBoneIndices, pPlayingInfo);
+	TransformationMatrices = pAnimation->Compute_TransfromationMatrix(fTimeDelta, iNumBones, TempIncludedBoneIndices, m_T_Pose_Matrices, pPlayingInfo);
 
 	const _bool						isFirstTick = { pPlayingInfo->Is_FirstTick() };
 	const _bool						isFinished = { pPlayingInfo->Is_Finished() };
@@ -2929,6 +2958,11 @@ void CModel::Convex_Mesh_Cooking_RigidDynamic(PxRigidDynamic** pCollider, CTrans
 	{
 		m_Meshes[i]->Convex_Mesh_Cooking_RigidDynamic(pCollider, pTransform);
 	}
+}
+
+void CModel::Convex_Mesh_Cooking_RigidDynamic_Grenade(PxRigidDynamic** pCollider, CTransform* pTransform)
+{
+	m_Meshes[0]->Convex_Mesh_Cooking_RigidDynamic(pCollider, pTransform);
 }
 
 void CModel::Convex_Mesh_Cooking_Convert_Root(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)

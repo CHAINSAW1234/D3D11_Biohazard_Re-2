@@ -23,7 +23,7 @@ public:
 	virtual void					Exit() override;
 
 private:
-	void							Change_Animation(_float fTimeDelta);
+	void							Change_Animation();
 
 public:
 	inline void						SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }
@@ -37,6 +37,7 @@ protected:
 
 	_float							m_fAccLinearInterpolateTime = { 0.f };
 	_float4x4						m_InterpolateDeltaMatrix = {};
+	_bool							m_isDummyDoor = { false };
 
 public:
 	static COpen_Door_Zombie* Create(void* pArg = nullptr);

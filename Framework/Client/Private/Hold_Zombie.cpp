@@ -54,6 +54,9 @@ _bool CHold_Zombie::Execute(_float fTimeDelta)
 
 	if (true == isEntry)
 	{
+		if (false == m_pBlackBoard->Is_LookTarget())
+			return false;
+
 		DIRECTION			eDirectionToPlayer = { DIRECTION::_END };
 		if (false == m_pBlackBoard->Compute_Direction_To_Player_8Direction_Local(&eDirectionToPlayer))
 			return false;

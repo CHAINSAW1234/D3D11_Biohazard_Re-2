@@ -31,6 +31,13 @@ void CBreak_Window_Zombie::Enter()
 	if (nullptr == pBodyModel)
 		return;
 
+	CWindow* pWindow = { m_pBlackBoard->Get_Nearest_Window() };
+	if (nullptr == pWindow)
+		return;
+
+	pWindow->Attack_Prop();
+	Change_Animation();
+
 #ifdef _DEBUG
 
 	cout << "Enter Break Window" << endl;
@@ -69,9 +76,6 @@ _bool CBreak_Window_Zombie::Execute(_float fTimeDelta)
 		_bool				isCanBreakWindow = { 1 == iWindowHP };
 		if (false == isCanBreakWindow)
 			return false;
-
-		pWindow->Attack_Prop();
-		Change_Animation(fTimeDelta);
 	}
 
 	m_pBlackBoard->Organize_PreState(this);
@@ -90,7 +94,7 @@ void CBreak_Window_Zombie::Exit()
 		return;
 }
 
-void CBreak_Window_Zombie::Change_Animation(_float fTimeDelta)
+void CBreak_Window_Zombie::Change_Animation()
 {
 	if (nullptr == m_pBlackBoard)
 		return;

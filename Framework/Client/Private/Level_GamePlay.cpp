@@ -66,9 +66,6 @@ HRESULT CLevel_GamePlay::Initialize()
 	CImgui_Manager::Get_Instance()->Tick();
 	CImgui_Manager::Get_Instance()->Render();
 
-
-	//m_pTexture = (CTexture*)m_pGameInstance->Clone_Component(g_Level, TEXT("Prototype_Component_Texture_CubeMap"));
-
 	return S_OK;
 }
 
@@ -80,9 +77,7 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 
 	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
 	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
-	m_pGameInstance->Add_ShadowLight(CPipeLine::SPOT, TEXT("LIGHT_TEST_SPOT"));	
-
-	m_pGameInstance->Set_CubeMap(m_pCubeMap->Get_Texture());
+	
 	 
 	/*(임시) 이벤트 처리 구간*/
 	_bool bGoal = { false };
@@ -149,7 +144,7 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	//LightDesc.fRange = 1000000.f;
 
-	LightDesc.vDiffuse = _float4(.4f, .4f, 1.f, 1.f);
+	LightDesc.vDiffuse = _float4(.4f, .4f, .4f, 1.f);
 	LightDesc.vAmbient = _float4(.0f, .0f, .0f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 0.4f, 0.4f, 1.f);
 
@@ -293,10 +288,22 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
 	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
 
-	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
+	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_CREEP;
 	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
 
 	_matrix			WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
+	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+		return E_FAIL;
+
+	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 4.f) };
+	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+		return E_FAIL;
+
+	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(5.f, 0.f, 5.f) };
 	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
@@ -368,6 +375,8 @@ HRESULT CLevel_GamePlay::Ready_EnvCube()
 		return E_FAIL;
 	
 	m_pCubeMap = static_cast<CEnvCube*>(m_pGameInstance->Get_GameObject(LEVEL_GAMEPLAY,TEXT("Layer_EnvCubeMap"), 0));
+
+	m_pGameInstance->Set_CubeMap(m_pCubeMap->Get_Texture());
 
 	return S_OK;
 }

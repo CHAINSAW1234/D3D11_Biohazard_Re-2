@@ -6,9 +6,11 @@ Texture2D	g_DiffuseTexture;
 Texture2D	g_NormalTexture;
 Texture2D   g_AlphaTexture;
 Texture2D   g_AOTexture;
+Texture2D   g_EmissiveTexture;
 
 bool g_isAlphaTexture;
 bool g_isAOTexture;
+bool g_isEmissiveTexture;
 
 bool g_DecalRender;
 
@@ -156,7 +158,7 @@ struct PS_OUT
     float4 vNormal : SV_TARGET1;
     float4 vDepth : SV_TARGET2;
     float4 vMaterial : SV_TARGET3;
-    float4 vVelocity : SV_TARGET4;
+    float4 vEmissive : SV_TARGET4;
     float4 vOrigin : SV_TARGET5;
 };
 
@@ -187,7 +189,7 @@ PS_OUT PS_MAIN(PS_IN In)
     {
         vector vAlphaDesc = g_AlphaTexture.Sample(LinearSampler, In.vTexcoord);
         Out.vDiffuse.a = vAlphaDesc.r;
-        if (0.3 >= Out.vDiffuse.a)
+        if (0.1 >= Out.vDiffuse.a)
             discard;
     }
     else
@@ -208,7 +210,16 @@ PS_OUT PS_MAIN(PS_IN In)
         Out.vMaterial.b = 1.f;
     }
 
-	return Out;
+    if (g_isEmissiveTexture)
+    {
+        vector vEmissive = g_EmissiveTexture.Sample(LinearSampler, In.vTexcoord);
+        if (vEmissive.r != 0 || vEmissive.g != 0 || vEmissive.b != 0)
+        {
+            Out.vEmissive = vEmissive;
+        }
+    }
+    
+    return Out;
 }
 
 PS_OUT PS_BLOOD(PS_IN In)
@@ -253,6 +264,12 @@ PS_OUT PS_BLOOD(PS_IN In)
         Out.vMaterial.b = 1.f;
     }
 
+    if (g_isEmissiveTexture)
+    {
+        vector vEmissive = g_EmissiveTexture.Sample(LinearSampler, In.vTexcoord);
+        Out.vEmissive = vEmissive;
+    }
+    
     Out.vDiffuse.r -= 0.3f;
     Out.vDiffuse.g -= 0.3f;
     Out.vDiffuse.b -= 0.3f;
@@ -305,6 +322,19 @@ technique11 DefaultTechnique
 		DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
+
+    pass AlphaBlend
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
 
     //1
     pass LightDepth

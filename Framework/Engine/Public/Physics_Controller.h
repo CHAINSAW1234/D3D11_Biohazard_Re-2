@@ -46,6 +46,8 @@ private:
 public:
 	class CCharacter_Controller*						Create_Controller(_float4 Pos, _int* Index,class CGameObject* pCharacter,_float fHeight,_float fRadius, class CTransform* pTransform, vector<class CBone*>* pBones, const std::string& name = "");
 	class CRigid_Dynamic*								Create_Rigid_Dynamic(class CModel* pModel, class CTransform* pTransform, _int* iId,class CGameObject* pObj);
+	class CRigid_Dynamic*								Create_Rigid_Dynamic_NoConvex(_float fRadius,_int* iId,class CGameObject* pObj);
+	class CRigid_Dynamic*								Create_Rigid_Dynamic_Grenade(class CModel* pModel, class CTransform* pTransform, _int* iId, class CGameObject* pObj);
 	class CRigid_Static*								Create_Rigid_Static(_float4 Pos, _int* Index, class CGameObject* pStaticMesh);
 	class CPxCollider*									Create_Px_Collider(class CModel* pModel,class CTransform* pTransform,_int* iId);
 	class CPxCollider*									Create_Px_Collider_Convert_Root(class CModel* pModel,class CTransform* pTransform,_int* iId);

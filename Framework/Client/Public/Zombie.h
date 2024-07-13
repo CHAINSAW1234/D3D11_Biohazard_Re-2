@@ -89,6 +89,7 @@ private:
 	virtual HRESULT						Add_PartObjects() override;
 	virtual HRESULT						Initialize_Status() override;
 	virtual HRESULT						Initialize_States();
+	virtual HRESULT						Initialize_PartBreaker();
 
 public:
 	void								Play_Animations_Body(_float fTimeDelta);
@@ -125,7 +126,8 @@ public:		/* For.Start_Trigger */
 	inline void							Set_Start(_bool isStart) { m_isStart = isStart; }
 
 public:		/* For.Location Controll */
-	inline _bool						Is_In_Location(LOCATION_MAP_VISIT eLocation) { return eLocation == m_eLocation; }
+	_bool								Is_In_Location(LOCATION_MAP_VISIT eLocation);
+	_bool								Is_In_Linked_Location(LOCATION_MAP_VISIT eLocation);
 	inline LOCATION_MAP_VISIT			Get_Location() { return m_eLocation; }
 	inline void							Set_Location(LOCATION_MAP_VISIT eLocation) { m_eLocation = eLocation; }
 
@@ -206,6 +208,8 @@ private:	/* For. Region Controller */
 	_int								m_iCurrent_Region = { -1 };
 	MAP_FLOOR_TYPE						m_eCurrent_Floor = { MAP_FLOOR_TYPE::FLOOR_END };
 
+private:	/* For. Part Breaker */
+	class CPart_Breaker_Zombie*			m_pPart_Breaker = { nullptr };
 
 #pragma region Effect
 public:

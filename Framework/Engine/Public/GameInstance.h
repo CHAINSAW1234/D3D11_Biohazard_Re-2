@@ -134,7 +134,7 @@ public: /* For.PipeLine */
 	void									Set_Transform(CPipeLine::TRANSFORMSTATE eState, _fmatrix TransformMatrix);
 	HRESULT									Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, CLight* pLight);
 	HRESULT									Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, const wstring& strLightTag);
-	void									Set_CubeMap(CTexture* pTexture);
+	void									Set_CubeMap(CTexture* pTexture, _uint iIndex = 0);
 	_matrix									Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState) const;
 	_float4x4								Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE eState) const;
 	_matrix									Get_Transform_Matrix_Inverse(CPipeLine::TRANSFORMSTATE eState) const;
@@ -149,8 +149,11 @@ public: /* For.PipeLine */
 	_float4									Get_PrevCamPosition_Float4() const;
 	const CLight*							Get_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, _uint iLightIndex = 0); // spotlight는 Light내부의 list에 LIGHT_DESC가 하나만 들어있도록 처리할 것 	
 	list<LIGHT_DESC*>						Get_ShadowPointLightDesc_List();
-	HRESULT									Bind_IrradianceTexture(CShader* pShader, const _char* pConstantName);
-	HRESULT									Bind_CubeMapTexture(CShader* pShader, const _char* pConstantName);
+	HRESULT									Bind_PrevIrradianceTexture(CShader* pShader, const _char* pConstantName);
+	HRESULT									Bind_CurIrradianceTexture(CShader* pShader, const _char* pConstantName);
+	HRESULT									Bind_PrevCubeMapTexture(CShader* pShader, const _char* pConstantName);
+	HRESULT									Bind_CurCubeMapTexture(CShader* pShader, const _char* pConstantName);
+	_float*									Get_PBRLerpTime();
 #pragma endregion
 
 #pragma region Light_Manager
@@ -297,6 +300,8 @@ public:/*For Physics Controller*/
 	class CCharacter_Controller*			Create_Controller(_float4 Pos, _int* Index, class CGameObject* pCharacter,_float fHeight,_float fRadius, class CTransform* pTransform, vector<class CBone*>* pBones, const std::string& name = "");
 	class CRigid_Static*					Create_Rigid_Static(_float4 Pos, _int* Index, class CGameObject* pStaticMesh);
 	class CRigid_Dynamic*					Create_Rigid_Dynamic(class CModel* pModel, class CTransform* pTransform, _int* iId, class CGameObject* pObj);
+	class CRigid_Dynamic*					Create_Rigid_Dynamic_NoConvex(_float fRadius,_int* iId, class CGameObject* pObj);
+	class CRigid_Dynamic*					Create_Rigid_Dynamic_Grenade(class CModel* pModel, class CTransform* pTransform, _int* iId, class CGameObject* pObj);
 	void									Cook_Terrain();
 	void									Simulate();
 	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr, _int* pIndex = nullptr);

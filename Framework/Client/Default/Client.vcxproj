@@ -249,6 +249,7 @@
     <ClInclude Include="..\Public\Muzzle_Spark_SG.h" />
     <ClInclude Include="..\Public\Part_Breaker_Zombie.h" />
     <ClInclude Include="..\Public\HotKey.h" />
+    <ClInclude Include="..\Public\Part_Mesh_Info_Zombie.h" />
     <ClInclude Include="..\Public\Player_State_Move_Shelf.h" />
     <ClInclude Include="..\Public\Region_Update_Zombie.h" />
     <ClInclude Include="..\Public\Room_Finder.h" />
@@ -365,7 +366,6 @@
     <ClInclude Include="..\Public\Stun_Zombie.h" />
     <ClInclude Include="..\Public\Tab_Window.h" />
     <ClInclude Include="..\Public\Targeting_Map_UI.h" />
-    <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\Public\TextBox.h" />
     <ClInclude Include="..\Public\Throwing_Weapon_Pin.h" />
     <ClInclude Include="..\Public\Title_UI.h" />
@@ -494,6 +494,7 @@
     <ClCompile Include="..\Private\Part_Breaker_Zombie.cpp" />
     <ClCompile Include="..\Private\HotKey.cpp" />
     <ClCompile Include="..\Private\Pannel_Window.cpp" />
+    <ClCompile Include="..\Private\Part_Mesh_Info_Zombie.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Shelf.cpp" />
     <ClCompile Include="..\Private\Region_Update_Zombie.cpp" />
     <ClCompile Include="..\Private\Room_Finder.cpp" />
@@ -606,7 +607,6 @@
     <ClCompile Include="..\Private\Stun_Zombie.cpp" />
     <ClCompile Include="..\Private\Tab_Window.cpp" />
     <ClCompile Include="..\Private\Targeting_Map_UI.cpp" />
-    <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\Private\TextBox.cpp" />
     <ClCompile Include="..\Private\Throwing_Weapon_Pin.cpp" />
     <ClCompile Include="..\Private\Title_UI.cpp" />

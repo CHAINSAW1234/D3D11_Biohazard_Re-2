@@ -252,7 +252,7 @@ public:
 
 	HRESULT									Play_Animations(class CTransform* pTransform, _float fTimeDelta, _float3* pMovedDirection);
 	HRESULT									Play_Animation_Light(class CTransform* pTransform, _float fTimeDelta);
-	HRESULT									Play_Pose(class CTransform* pTransform, _float fTimeDelta);
+	HRESULT									Play_Pose(_uint iPlayingIndex);
 	HRESULT									Play_IK(class CTransform* pTransform, _float fTimeDelta);
 	HRESULT									Render(_uint iMeshIndex);
 
@@ -268,6 +268,7 @@ public:		/* For.Cooking_Mesh */
 	void									Dynamic_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, class CTransform* pTransform = nullptr);
 	void									Convex_Mesh_Cooking(vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms,class CTransform* pTransform = nullptr);
 	void									Convex_Mesh_Cooking_RigidDynamic(PxRigidDynamic** pCollider,class CTransform* pTransform = nullptr);
+	void									Convex_Mesh_Cooking_RigidDynamic_Grenade(PxRigidDynamic** pCollider,class CTransform* pTransform = nullptr);
 	void									Convex_Mesh_Cooking_Convert_Root(vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms,class CTransform* pTransform = nullptr);
 	void									Convex_Mesh_Cooking_Convert_Root_Double_Door(vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms,class CTransform* pTransform = nullptr);
 	void									Convex_Mesh_Cooking_Convert_Root_Double_Door_No_Rotate(vector<PxRigidDynamic*>* pColliders,vector<PxTransform>* pTransforms,class CTransform* pTransform = nullptr);

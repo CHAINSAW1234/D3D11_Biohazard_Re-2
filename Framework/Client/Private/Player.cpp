@@ -359,22 +359,6 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region TEST
 
-	//if (m_pGameInstance->Get_KeyState('1') == DOWN) {
-	//	Set_Hp(1);
-	//}
-	//if (m_pGameInstance->Get_KeyState('2') == DOWN) {
-	//	Set_Hp(2);
-	//}
-	//if (m_pGameInstance->Get_KeyState('3') == DOWN) {
-	//	Set_Hp(3);
-	//}
-	//if (m_pGameInstance->Get_KeyState('4') == DOWN) {
-	//	Set_Hp(4);
-	//}
-	//if (m_pGameInstance->Get_KeyState('5') == DOWN) {
-	//	Set_Hp(5);
-	//}
-
 	if (m_pGameInstance->Get_KeyState('T') == DOWN) {
 		Change_Player_State_Bite(0, TEXT("Bite_Default"), XMMatrixIdentity(), 0.2f);
 		Request_NextBiteAnimation(1);
@@ -939,6 +923,7 @@ void CPlayer::Throw_Sub()
 	CThrowing_Weapon::THROWING_WEAPON_DESC pDesc;
 	pDesc.worldMatrix = m_pWeapon->Get_WorldMatrix();
 	pDesc.eEquip = m_eEquip;
+	pDesc.pParentsTransform = m_pTransformCom;
 
 	if (FAILED(m_pGameInstance->Add_Clone(g_Level, TEXT("Layer_Throwing_Weapon"), TEXT("Prototype_GameObject_Throwing_Weapon"), &pDesc)))
 		return;
@@ -946,6 +931,7 @@ void CPlayer::Throw_Sub()
 	CThrowing_Weapon_Pin::THROWING_WEAPON_PIN_DESC pDesc2;
 	pDesc2.worldMatrix = m_pWeapon->Get_WorldMatrix();
 	pDesc2.eEquip = m_eEquip;
+	pDesc2.pParentsTransform = m_pTransformCom;
 
 	if (FAILED(m_pGameInstance->Add_Clone(g_Level, TEXT("Layer_Throwing_Weapon"), TEXT("Prototype_GameObject_Throwing_Weapon_Pin"), &pDesc2)))
 		return;
@@ -2438,7 +2424,7 @@ void CPlayer::Ready_Effect()
 	for (size_t i = 0; i < HIT_PROPS_EFFECT_TYPE_COUNT; ++i)
 	{
 		auto pHit_Props = CHit_Props::Create(m_pDevice, m_pContext);
-		pHit_Props->SetType(i);
+		pHit_Props->SetType((_uint)i);
 		pHit_Props->Initialize(nullptr);
 		pHit_Props->SetSize(0.6f, 0.6f);
 		m_vecHit_Props_HG.push_back(pHit_Props);

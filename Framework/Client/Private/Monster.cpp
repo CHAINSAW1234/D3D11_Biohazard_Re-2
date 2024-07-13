@@ -120,7 +120,7 @@ HRESULT CMonster::Render()
 		}
 
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_DEFAULT)))
 			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(i));

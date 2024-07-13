@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Throwing_Weapon_Pin.h"
 #include "Light.h"
+#include "Rigid_Dynamic.h"
 
 CThrowing_Weapon_Pin::CThrowing_Weapon_Pin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CGameObject{ pDevice, pContext }
@@ -24,7 +25,7 @@ HRESULT CThrowing_Weapon_Pin::Initialize(void* pArg)
 
 	THROWING_WEAPON_PIN_DESC* pDesc = (THROWING_WEAPON_PIN_DESC*)pArg;
 	m_eEquip = pDesc->eEquip;
-
+	m_pParentsTransform = pDesc->pParentsTransform;
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -34,7 +35,7 @@ HRESULT CThrowing_Weapon_Pin::Initialize(void* pArg)
 
 	switch (m_eEquip) {
 	case CPlayer::GRENADE:
-		m_pModelCom->Hide_Mesh("LOD_1_Group_1_Sub_1__wp6200_Grenade_Mat_mesh0000", true);
+		m_pModelCom->Hide_Mesh("LOD_1_Group_0_Sub_1__wp6200_Grenade_Mat_mesh0000", true);
 		break;
 	case CPlayer::FLASHBANG:
 		m_pModelCom->Hide_Mesh("LOD_1_Group_0_Sub_1__WP6300_Flash_Mat_mesh0000", true);
@@ -51,12 +52,26 @@ HRESULT CThrowing_Weapon_Pin::Initialize(void* pArg)
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
 
+	m_pRigid_Dynamic = m_pGameInstance->Create_Rigid_Dynamic_NoConvex(0.015f, &m_iIndex_RigidBody, this);
+	m_pRigid_Dynamic->SetKinematic(true);
+
+	m_pModelCom->Release_Decal_Dump();
+
+	Initiate(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION),
+		m_pParentsTransform->Get_State_Float4(CTransform::STATE_UP),
+		m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK));
+
 	return S_OK;
 }
 
 void CThrowing_Weapon_Pin::Tick(_float fTimeDelta)
 {
-	;
+	if (m_pRigid_Dynamic)
+	{
+		m_pTransformCom->Set_WorldMatrix(m_pRigid_Dynamic->GetWorldMatrix_Rigid_Dynamic(m_pTransformCom->Get_Scaled()));
+
+		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+	}
 }
 
 void CThrowing_Weapon_Pin::Late_Tick(_float fTimeDelta)
@@ -111,7 +126,7 @@ HRESULT CThrowing_Weapon_Pin::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_DEFAULT)))
 			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(i));
@@ -144,7 +159,7 @@ HRESULT CThrowing_Weapon_Pin::Render_LightDepth_Dir()
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Begin(2)))
+			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
@@ -182,7 +197,7 @@ HRESULT CThrowing_Weapon_Pin::Render_LightDepth_Point()
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Begin(4)))
+			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH_CUBE)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
@@ -218,7 +233,7 @@ HRESULT CThrowing_Weapon_Pin::Render_LightDepth_Spot()
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
 
-			if (FAILED(m_pShaderCom->Begin(2)))
+			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
 				return E_FAIL;
 
 			m_pModelCom->Render(static_cast<_uint>(i));
@@ -226,6 +241,26 @@ HRESULT CThrowing_Weapon_Pin::Render_LightDepth_Spot()
 	}
 
 	return S_OK;
+}
+
+void CThrowing_Weapon_Pin::Initiate(_float4 vPos, _float4 vDir, _float4 vLook)
+{
+	m_bRender = true;
+
+	m_pRigid_Dynamic->SetPosition(vPos);
+
+	m_vDir = _float4(vDir.x + m_pGameInstance->GetRandom_Real(-0.03f, 0.03f),
+		vDir.y,
+		vDir.z + m_pGameInstance->GetRandom_Real(-0.03f, 0.03f),
+		0.f);
+
+	m_vDir = Float4_Normalize(m_vDir);
+	m_vDir.y += m_pGameInstance->GetRandom_Real(0.025f, 0.035f);
+
+	m_vDir *= 0.25f;
+
+	m_pRigid_Dynamic->SetKinematic(false);
+	m_pRigid_Dynamic->AddForce(m_vDir);
 }
 
 HRESULT CThrowing_Weapon_Pin::Add_Components()

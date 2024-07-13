@@ -191,7 +191,7 @@ void CAnimation::Invalidate_TransformationMatrix_LinearInterpolation(_float fAcc
 	}
 }
 
-vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _uint iNumBones, const unordered_set<_uint>& IncludedBoneIndices, CPlayingInfo* pPlayingInfo)
+vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _uint iNumBones, const unordered_set<_uint>& IncludedBoneIndices, const vector<_float4x4>& T_Pose_Matrices, CPlayingInfo* pPlayingInfo)
 {
 	vector<_float4x4>			TransformationMatrices;
 	_bool						isFinished = false;
@@ -226,10 +226,7 @@ vector<_float4x4> CAnimation::Compute_TransfromationMatrix(_float fTimeDelta, _u
 		}
 	}
 
-	for (auto& TransformationMatrix : TransformationMatrices)
-	{
-		XMStoreFloat4x4(&TransformationMatrix, XMMatrixIdentity());
-	}
+	memcpy(&TransformationMatrices[0], &T_Pose_Matrices[0], sizeof(_float4x4) * iNumBones);
 
 	for (_uint iChannelIndex = 0; iChannelIndex < m_iNumChannels; ++iChannelIndex)
 	{
