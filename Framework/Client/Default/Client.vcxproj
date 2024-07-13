@@ -223,6 +223,7 @@
     <ClInclude Include="..\public\Camera_Free.h" />
     <ClInclude Include="..\Public\Cut_Scene.h" />
     <ClInclude Include="..\Public\Cut_Scene_CF93.h" />
+    <ClInclude Include="..\Public\Damage_Lost_Zombie.h" />
     <ClInclude Include="..\Public\Damage_UI.h" />
     <ClInclude Include="..\Public\Decal_BulletHole.h" />
     <ClInclude Include="..\Public\Decal_SSD.h" />
@@ -240,6 +241,7 @@
     <ClInclude Include="..\Public\Impact.h" />
     <ClInclude Include="..\Public\Is_Different_Location_To_Player_Zombie.h" />
     <ClInclude Include="..\Public\Is_Start_Rub_Door_Zombie.h" />
+    <ClInclude Include="..\Public\Move_To_Target_Lost_Zombie.h" />
     <ClInclude Include="..\Public\Muzzle_ShockWave.h" />
     <ClInclude Include="..\Public\Pannel_Window.h" />
     <ClInclude Include="..\Public\Is_In_Door_Zombie.h" />
@@ -373,6 +375,7 @@
     <ClInclude Include="..\Public\Turn_Spine_Head_Zombie.h" />
     <ClInclude Include="..\Public\Tutorial_UI.h" />
     <ClInclude Include="..\Public\UI.h" />
+    <ClInclude Include="..\Public\Wait_Lost_Zombie.h" />
     <ClInclude Include="..\Public\Wait_Zombie.h" />
     <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="..\Public\Window.h" />
@@ -470,6 +473,7 @@
     <ClCompile Include="..\Private\Creep_Zombie.cpp" />
     <ClCompile Include="..\Private\Cut_Scene.cpp" />
     <ClCompile Include="..\Private\Cut_Scene_CF93.cpp" />
+    <ClCompile Include="..\Private\Damage_Lost_Zombie.cpp" />
     <ClCompile Include="..\Private\Damage_UI.cpp" />
     <ClCompile Include="..\Private\Decal_BulletHole.cpp" />
     <ClCompile Include="..\Private\Decal_SSD.cpp" />
@@ -488,6 +492,7 @@
     <ClCompile Include="..\Private\Is_Same_Location_To_Player_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Start_Rub_Door_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Start_Zombie.cpp" />
+    <ClCompile Include="..\Private\Move_To_Target_Lost_Zombie.cpp" />
     <ClCompile Include="..\Private\Muzzle_Light_SG.cpp" />
     <ClCompile Include="..\Private\Muzzle_ShockWave.cpp" />
     <ClCompile Include="..\Private\Muzzle_Spark_SG.cpp" />
@@ -614,6 +619,7 @@
     <ClCompile Include="..\Private\Turn_Spine_Head_Zombie.cpp" />
     <ClCompile Include="..\Private\Tutorial_UI.cpp" />
     <ClCompile Include="..\Private\UI.cpp" />
+    <ClCompile Include="..\Private\Wait_Lost_Zombie.cpp" />
     <ClCompile Include="..\Private\Wait_Zombie.cpp" />
     <ClCompile Include="..\Private\Weapon.cpp" />
     <ClCompile Include="..\Private\Window.cpp" />

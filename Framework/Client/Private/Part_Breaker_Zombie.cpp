@@ -1590,6 +1590,46 @@ void CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 	if (true == Is_BreaKPart(ePart))
 		return;
 
+	if (static_cast<_int>(ePart) >= static_cast<_int>(BREAK_PART::_R_UPPER_HUMEROUS) &&
+		static_cast<_int>(ePart) <= static_cast<_int>(BREAK_PART::_R_UPPER_RADIUS))
+	{
+		for (_uint i = static_cast<_uint>(BREAK_PART::_R_UPPER_HUMEROUS); i < static_cast<_uint>(BREAK_PART::_R_UPPER_RADIUS); ++i)
+		{
+			if (true == Is_BreaKPart(static_cast<BREAK_PART>(i)))
+				return;
+		}
+	}
+
+	else if (static_cast<_int>(ePart) >= static_cast<_int>(BREAK_PART::_L_UPPER_HUMEROUS) &&
+		static_cast<_int>(ePart) <= static_cast<_int>(BREAK_PART::_L_UPPER_RADIUS))
+	{
+		for (_uint i = static_cast<_uint>(BREAK_PART::_L_UPPER_HUMEROUS); i < static_cast<_uint>(BREAK_PART::_L_UPPER_RADIUS); ++i)
+		{
+			if (true == Is_BreaKPart(static_cast<BREAK_PART>(i)))
+				return;
+		}
+	}
+
+	else if (static_cast<_int>(ePart) >= static_cast<_int>(BREAK_PART::_R_UPPER_FEMUR) &&
+		static_cast<_int>(ePart) <= static_cast<_int>(BREAK_PART::_R_LOWER_TABIA))
+	{
+		for (_uint i = static_cast<_uint>(BREAK_PART::_R_UPPER_FEMUR); i < static_cast<_uint>(BREAK_PART::_R_LOWER_TABIA); ++i)
+		{
+			if (true == Is_BreaKPart(static_cast<BREAK_PART>(i)))
+				return;
+		}
+	}
+
+	else if (static_cast<_int>(ePart) >= static_cast<_int>(BREAK_PART::_L_UPPER_FEMUR) &&
+		static_cast<_int>(ePart) <= static_cast<_int>(BREAK_PART::_L_LOWER_TABIA))
+	{
+		for (_uint i = static_cast<_uint>(BREAK_PART::_L_UPPER_FEMUR); i < static_cast<_uint>(BREAK_PART::_L_LOWER_TABIA); ++i)
+		{
+			if (true == Is_BreaKPart(static_cast<BREAK_PART>(i)))
+				return;
+		}
+	}
+
 	m_isBreakParts[static_cast<_uint>(ePart)] = true;
 	m_PartMeshInfos[static_cast<_uint>(ePart)]->Break(m_pBody_Model);
 

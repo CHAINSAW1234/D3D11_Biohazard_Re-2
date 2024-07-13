@@ -40,7 +40,7 @@ _bool CTurn_Spine_Head_Zombie::Execute(_float fTimeDelta)
 	MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 	_bool					isLookTarget = { m_pBlackBoard->Is_LookTarget() };
 
-	if ((MONSTER_STATE::MST_IDLE == eMonsterState || MONSTER_STATE::MST_WALK == eMonsterState || MONSTER_STATE::MST_TURN == eMonsterState) &&
+	if ((MONSTER_STATE::MST_IDLE == eMonsterState || MONSTER_STATE::MST_WALK == eMonsterState || MONSTER_STATE::MST_TURN == eMonsterState || MONSTER_STATE::MST_IDLE == eMonsterState) &&
 		true == isLookTarget)
 	{
 		m_fMaxAngle += XMConvertToRadians(90.f) * fTimeDelta;

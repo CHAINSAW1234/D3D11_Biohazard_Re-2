@@ -398,28 +398,6 @@ HRESULT CBody_Zombie::Initialize_Model()
 	m_pModelCom->Active_RootMotion_Y(true);
 	m_pModelCom->Active_RootMotion_Rotation(true);
 
-	/* Set_Hide_Mesh */
-	vector<string>			MeshTags  = { m_pModelCom->Get_MeshTags() };
-
-	vector<string>			ResultMeshTags;
-	for (auto& strMeshTag : MeshTags)
-	{
-		if (strMeshTag.find("Body") != string::npos || strMeshTag.find("Inside") != string::npos)
-		{
-			ResultMeshTags.push_back(strMeshTag);
-		}
-	}
-
-	for (auto& strMeshTag : MeshTags)
-	{
-		m_pModelCom->Hide_Mesh(strMeshTag, true);
-	}
-
-	for (auto& strMeshTag : ResultMeshTags)
-	{
-		m_pModelCom->Hide_Mesh(strMeshTag, false);
-	}
-
 	if (FAILED(Add_Animations()))
 		return E_FAIL;
 
@@ -644,6 +622,15 @@ HRESULT CBody_Zombie::Initialize_MeshTypes()
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_OUTTER));
 		}
 	}
+
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(BODY_MESH_TYPE::_INNER), false);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(BODY_MESH_TYPE::_OUTTER), false);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(BODY_MESH_TYPE::_JOINT), true);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(BODY_MESH_TYPE::_DEFICIT), true);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(BODY_MESH_TYPE::_DAMAGED), true);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(BODY_MESH_TYPE::_BROKEN_HEAD), true);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(BODY_MESH_TYPE::_INTERNAL_MAT), true);
+
 
 	return S_OK;
 }

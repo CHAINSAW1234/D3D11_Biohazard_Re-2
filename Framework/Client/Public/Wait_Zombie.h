@@ -24,10 +24,8 @@ private:
 	void							Change_Animation();
 
 public:
-	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard)
-	{
-		m_pBlackBoard = pBlackBoard;
-	}
+	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }
+
 private:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 

@@ -540,7 +540,7 @@ void CMove_To_Target_Zombie::Change_Animation_Include_Rotation(_float fTimeDelta
 			if (fBlendTrackPosition != fBaseTrackPosition)
 			{
 				fBlendTrackPosition = fBaseTrackPosition;
-				pBodyModel->Set_TrackPosition(static_cast<_uint>(PLAYING_INDEX::INDEX_1), fBlendTrackPosition, true);
+				pBodyModel->Set_TrackPosition(static_cast<_uint>(PLAYING_INDEX::INDEX_1), fBlendTrackPosition, false);
 			}
 		}		
 			

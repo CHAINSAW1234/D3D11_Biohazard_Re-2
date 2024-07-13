@@ -192,6 +192,7 @@ HRESULT CZombie::Initialize(void* pArg)
 	m_vDir.w = 0.f;
 
 	CBlackBoard_Zombie::BLACKBOARD_ZOMBIE_DESC			Desc;
+	Desc.pPart_Breaker = m_pPart_Breaker;
 	Desc.pAI = this;
 	m_pBlackBoard = CBlackBoard_Zombie::Create(&Desc);
 
@@ -381,6 +382,9 @@ void CZombie::Tick(_float fTimeDelta)
 	}
 #pragma endregion
 
+	//	현재 부러진 파트 타입 -1로 초기화
+	m_iNew_Break_PartType = -1;
+
 	if (m_pController && m_bRagdoll == false)
 	{
 		if (m_pController->Is_Hit())
@@ -434,6 +438,7 @@ void CZombie::Tick(_float fTimeDelta)
 				{
 					auto Type = m_pController->Get_Hit_Collider_Type();
 
+
 					if(Type != COLLIDER_TYPE::CHEST /*&& Type != COLLIDER_TYPE::PELVIS*/ && Type != COLLIDER_TYPE::HEAD)
 					{
 						for (auto& pPartObject : m_PartObjects)
@@ -451,7 +456,7 @@ void CZombie::Tick(_float fTimeDelta)
 								break;
 							case COLLIDER_TYPE::ARM_L:
 								eBreakType = BREAK_PART::_L_UPPER_HUMEROUS;
-								break;	
+								break;
 
 
 							case COLLIDER_TYPE::FOREARM_R:
@@ -486,6 +491,9 @@ void CZombie::Tick(_float fTimeDelta)
 							}
 
 							m_pPart_Breaker->Break(eBreakType);
+
+							if(BREAK_PART::_END != eBreakType)
+								m_iNew_Break_PartType = static_cast<_int>(eBreakType);
 						}
 
 						auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
@@ -1029,9 +1037,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 	/*
 	*Root Child Section		( Idle )
-	*/
-
-	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	*/	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
 	CComposite_Node* pSelectorNode_RootChild_Idle = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_RootChild_Idle);
 
@@ -1040,6 +1046,10 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CCreep_Zombie* pTask_Creep = { CCreep_Zombie::Create() };
 	pTask_Creep->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_RootChild_Idle->Insert_Child_Node(pTask_Creep);
+
+	CWait_Lost_Zombie* pTask_Wait_Lost = { CWait_Lost_Zombie::Create() };
+	pTask_Wait_Lost->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_Idle->Insert_Child_Node(pTask_Wait_Lost);
 
 	//	Need Up Pose`
 	//	Add Task Node		( Idle )

@@ -8,6 +8,8 @@
 #include "Door.h"
 #include "Room_Finder.h"
 
+#include "Part_Breaker_Zombie.h"
+
 CBlackBoard_Zombie::CBlackBoard_Zombie()
 	: CBlackBoard()
 {
@@ -23,6 +25,12 @@ HRESULT CBlackBoard_Zombie::Initialize(void* pArg)
 
 	BLACKBOARD_ZOMBIE_DESC*			pDesc = { static_cast<BLACKBOARD_ZOMBIE_DESC*>(pArg) };
 
+	m_pPart_Breaker = pDesc->pPart_Breaker;
+	Safe_AddRef(m_pPart_Breaker);
+
+	if (nullptr == m_pPart_Breaker)
+		return E_FAIL;
+	
 	m_pAI = pDesc->pAI;
 	if (nullptr == m_pAI)
 		return E_FAIL;
@@ -83,6 +91,7 @@ void CBlackBoard_Zombie::Priority_Tick(_float fTimeDelta)
 	Update_Timers(fTimeDelta);
 	Update_Status(fTimeDelta);
 	Update_Look_Target(fTimeDelta);
+	Update_New_Part_Break();
 
 	_bool			isSameLocation = { m_pAI->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pPlayer->Get_Player_Region())) };
 	if (true == isSameLocation)
@@ -357,6 +366,16 @@ void CBlackBoard_Zombie::Update_Status_Stamina(_float fTimeDelta)
 		pMonsterStatus->fStamina = pMonsterStatus->fMaxStamina;
 }
 
+void CBlackBoard_Zombie::Update_New_Part_Break()
+{
+	m_iNewBreakPartType = { m_pAI->Get_New_BreakPartType() };
+	if (-1 == m_iNewBreakPartType)
+		m_isNewPartBreak = false;
+
+	else
+		m_isNewPartBreak = true;
+}
+
 void CBlackBoard_Zombie::Update_Look_Target(_float fTImeDelta)
 {
 	CMonster::MONSTER_STATUS*			pMonsterStatus = { m_pAI->Get_Status_Ptr() };
@@ -493,6 +512,118 @@ void CBlackBoard_Zombie::Reset_NonActive_Body(const list<_uint>& ActivePlayingIn
 			pBodyModel->Set_BlendWeight(i, 0.f, 0.3f);
 		}
 	}
+}
+
+_bool CBlackBoard_Zombie::Is_BreaKPart(BREAK_PART ePart)
+{
+	if (nullptr == m_pPart_Breaker)
+		return false;
+
+	m_pPart_Breaker->Is_BreaKPart(ePart);
+}
+
+_bool CBlackBoard_Zombie::Is_Break_L_Arm()
+{
+	if (true == Is_BreaKPart(BREAK_PART::_L_UPPER_HUMEROUS))
+		return true;
+	if (true == Is_BreaKPart(BREAK_PART::_L_LOWER_HUMEROUS))
+		return true;
+	if (true == Is_BreaKPart(BREAK_PART::_L_UPPER_RADIUS))
+		return true;
+
+	return false;
+}
+
+_bool CBlackBoard_Zombie::Is_Break_R_Arm()
+{
+	if (true == Is_BreaKPart(BREAK_PART::_R_UPPER_HUMEROUS))
+		return true;
+	if (true == Is_BreaKPart(BREAK_PART::_R_LOWER_HUMEROUS))
+		return true;
+	if (true == Is_BreaKPart(BREAK_PART::_R_UPPER_RADIUS))
+		return true;
+
+	return false;
+}
+
+_bool CBlackBoard_Zombie::Is_Break_L_Leg()
+{
+	if (true == Is_BreaKPart(BREAK_PART::_L_UPPER_FEMUR))
+		return true;
+	if (true == Is_BreaKPart(BREAK_PART::_L_LOWER_FEMUR))
+		return true;
+	if (true == Is_BreaKPart(BREAK_PART::_L_UPPER_TABIA))
+		return true;
+	if (true == Is_BreaKPart(BREAK_PART::_L_LOWER_TABIA))
+		return true;
+
+	return false;
+}
+
+_bool CBlackBoard_Zombie::Is_Break_R_Leg()
+{
+	if (true == Is_BreaKPart(BREAK_PART::_R_UPPER_FEMUR))
+		return true;
+	if (true == Is_BreaKPart(BREAK_PART::_R_LOWER_FEMUR))
+		return true;
+	if (true == Is_BreaKPart(BREAK_PART::_R_UPPER_TABIA))
+		return true;
+	if (true == Is_BreaKPart(BREAK_PART::_R_LOWER_TABIA))
+		return true;
+
+	return false;
+}
+
+_bool CBlackBoard_Zombie::Is_Break_L_Foot()
+{
+	if (true == Is_BreaKPart(BREAK_PART::_L_LOWER_TABIA))
+		return true;
+
+	return false;
+}
+
+_bool CBlackBoard_Zombie::Is_Break_R_Foot()
+{
+	if (true == Is_BreaKPart(BREAK_PART::_R_LOWER_TABIA))
+		return true;
+
+	return false;
+}
+
+_bool CBlackBoard_Zombie::Is_Break_L_Tabia()
+{
+	if (true == Is_BreaKPart(BREAK_PART::_L_UPPER_TABIA))
+		return true;
+
+	return false;
+}
+
+_bool CBlackBoard_Zombie::Is_Break_R_Tabia()
+{
+	if (true == Is_BreaKPart(BREAK_PART::_R_UPPER_TABIA))
+		return true;
+
+	return false;
+}
+
+_bool CBlackBoard_Zombie::Is_Break_L_Femur()
+{
+	if (true == Is_BreaKPart(BREAK_PART::_L_UPPER_FEMUR))
+		return true;
+	if (true == Is_BreaKPart(BREAK_PART::_L_LOWER_FEMUR))
+		return true;
+
+	return false;
+}
+
+_bool CBlackBoard_Zombie::Is_Break_R_Femur()
+{
+	if (true == Is_BreaKPart(BREAK_PART::_R_UPPER_FEMUR))
+		return true;
+	if (true == Is_BreaKPart(BREAK_PART::_R_LOWER_FEMUR))
+		return true;
+
+	return false;
 }
 
 _bool CBlackBoard_Zombie::Compute_Distance_To_Player_World(_float* pDistance)
@@ -1072,5 +1203,6 @@ void CBlackBoard_Zombie::Free()
 	Safe_Release(m_pNearest_Window);
 	Safe_Release(m_pNearest_Door);
 	Safe_Release(m_pTarget_Door);
+	Safe_Release(m_pPart_Breaker);
 }
 

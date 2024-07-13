@@ -25,10 +25,12 @@
 //	For. Task
 /* Move */
 #include "Move_To_Target_Zombie.h"
+#include "Move_To_Target_Lost_Zombie.h"
 #include "Pivot_Turn_Zombie.h"
 
 /* Idle */
 #include "Wait_Zombie.h"
+#include "Wait_Lost_Zombie.h"
 #include "Sleep_Zombie.h"
 #include "Creep_Zombie.h"
 
@@ -38,6 +40,7 @@
 #include "Burst_Zombie.h"
 #include "Knock_Back_Zombie.h"
 #include "Down_Zombie.h"
+#include "Damage_Lost_Zombie.h"
 
 /* Down */
 #include "Turn_Over_Zombie.h"

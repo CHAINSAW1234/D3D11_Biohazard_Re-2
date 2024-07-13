@@ -21,8 +21,8 @@ public:
 	typedef struct tagZombieDesc : public MONSTER_DESC
 	{
 		LOCATION_MAP_VISIT			eLocation = { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
-		ZOMBIE_START_TYPE				eStart_Type = { ZOMBIE_START_TYPE::_IDLE };
-		ZOMBIE_BODY_TYPE				eBodyModelType = { ZOMBIE_BODY_TYPE::_END };
+		ZOMBIE_START_TYPE			eStart_Type = { ZOMBIE_START_TYPE::_IDLE };
+		ZOMBIE_BODY_TYPE			eBodyModelType = { ZOMBIE_BODY_TYPE::_END };
 	}ZOMBIE_DESC;
 
 	typedef struct tagZombieMaleDesc : public ZOMBIE_DESC
@@ -177,6 +177,9 @@ public://For Decal
 	virtual void						Ready_Decal() override;
 	void								RayCast_Decal();
 
+public:	 /* For.Part Breaker */
+	inline _int							Get_New_BreakPartType() { return m_iNew_Break_PartType; }
+
 private: // For AIController
 	class CBlackBoard_Zombie*			m_pBlackBoard = { nullptr };
 
@@ -210,6 +213,7 @@ private:	/* For. Region Controller */
 
 private:	/* For. Part Breaker */
 	class CPart_Breaker_Zombie*			m_pPart_Breaker = { nullptr };
+	_int								m_iNew_Break_PartType = { -1 };
 
 #pragma region Effect
 public:

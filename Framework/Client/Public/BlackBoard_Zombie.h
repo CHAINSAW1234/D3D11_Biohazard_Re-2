@@ -17,6 +17,7 @@ public:
 	typedef struct tagBlackBoardZombieDesc
 	{
 		class CZombie*				pAI = { nullptr };
+		class CPart_Breaker_Zombie* pPart_Breaker = { nullptr };
 	}BLACKBOARD_ZOMBIE_DESC;
 private:
 	CBlackBoard_Zombie();
@@ -62,6 +63,8 @@ private:
 
 	void							Update_Status_Stamina(_float fTimeDelta);
 
+	void							Update_New_Part_Break();
+
 private:
 	void							Update_Look_Target(_float fTImeDelta);
 
@@ -104,6 +107,25 @@ public: // Getter
 
 public:		/* Anim Controll */
 	void							Reset_NonActive_Body(const list<_uint>& ActivePlayingIndices);
+
+public:		/* Part Breaker */
+	inline _bool					Is_New_Part_Break() { return m_isNewPartBreak; }
+	inline _int						Get_New_Break_PartType() { return m_iNewBreakPartType; }
+
+
+	_bool							Is_BreaKPart(BREAK_PART ePart);
+	_bool							Is_Break_L_Arm();
+	_bool							Is_Break_R_Arm();
+
+	_bool							Is_Break_L_Leg();
+	_bool							Is_Break_R_Leg();
+
+	_bool							Is_Break_L_Foot();
+	_bool							Is_Break_R_Foot();
+	_bool							Is_Break_L_Tabia();
+	_bool							Is_Break_R_Tabia();
+	_bool							Is_Break_L_Femur();
+	_bool							Is_Break_R_Femur();
 
 public:		/* Public Utility */
 	_bool							Compute_Distance_To_Player_World(_float* pDistance);
@@ -167,6 +189,12 @@ private:
 	class CWindow*					m_pNearest_Window = { nullptr };
 	class CDoor*					m_pNearest_Door = { nullptr };
 	class CDoor*					m_pTarget_Door = { nullptr };
+
+	_bool							m_isNewPartBreak = { false };
+	_int							m_iNewBreakPartType = { -1 };
+
+private:	/* For.Part Breaker */
+	class CPart_Breaker_Zombie*		m_pPart_Breaker = { nullptr };
 
 public:
 	static CBlackBoard_Zombie* Create(void* pArg);

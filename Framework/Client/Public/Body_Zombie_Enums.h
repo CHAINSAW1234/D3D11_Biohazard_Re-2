@@ -247,11 +247,11 @@ enum class ANIM_DAMAGE_KNOCKBACK{
 
 //	부위를 잃게되는 모션들? => 애니메이션 재생이후 부위 파괴상태 바꿔줘야하는 기점이될듯
 enum class ANIM_DAMAGE_LOST {
-	_A_F_L,
+	_A_F_L,					//	A 타입 => 발목 절단 Lost_Ankle
 	_A_F_R,
-	_B_F_L,
+	_B_F_L,					//	B 타입 => 정강이 끊어짐 Lost Tabia
 	_B_F_R,
-	_C_F_L,
+	_C_F_L,					//	C 타입 => 허벅지 끊어짐 Lost Femur
 	_C_F_R,
 	_A2_F_L,
 	_A2_F_R,
@@ -362,10 +362,10 @@ enum class ANIM_LOST_HOLD {
 };
 
 enum class ANIM_LOST_IDLE {
-	_LOOP1,			//	Lost Non Arm
-	_LOOP2,			//	Lost L Arm
-	_LOOP3,			//	Lost R Arm
-	_LOOP4,			//	Lost L,R Arm
+	_LOOP1,			//	Lost Non Arm	Lost L, R Leg	누움
+	_LOOP2,			//	Lost L Arm		Lost L, R Leg	누움
+	_LOOP3,			//	Lost R Arm		Lost L, R Leg	누움
+	_LOOP4,			//	Lost L,R Arm	Lost L, R Leg	누움
 	_ANKLE_LOOP1,	//	Lost L Ankle	=> 서있음
 	_ANKLE_LOOP2,	//	Lost R Ankle	=> 서있음
 	_END
@@ -413,35 +413,35 @@ enum class ANIM_LOST_TURN {
 enum class ANIM_LOST_TURN_OVER {
 	_0,
 	_1,
-	_2,
-	_L,
-	_R,
+	_2,						//	Lost L_Arm, R_Arm
+	_L,						//	Lost L_Arm
+	_R,						//	Lost R_Arm
 	_END
 };
 
 enum class ANIM_LOST_WALK {
 	_LOOP_A,
-	_LOOP_B,
-	_LOOP_B_SYM,
-	_LOOP_C,
-	_LOOP_C_SYM,
-	_START_D,
-	_START_D_SYM,
+	_LOOP_B,				//	Lost R_Tabia
+	_LOOP_B_SYM,			//	Lost L_Tabia
+	_LOOP_C,				//	Lost R_Femur
+	_LOOP_C_SYM,			//	Lost L_Femur
+	_START_D,				//	Lost L_Arm, L_Leg
+	_START_D_SYM,			//	Lost R_arm, R_Leg
 	_LOOP_D,
 	_LOOP_D_SYM,
-	_START_E,
+	_START_E,				//	Lost R_Arm, L_Leg
 	_START_E_SYM,
 	_LOOP_E,
 	_LOOP_E_SYM,
-	_START_F,
-	_START_F_SYM,
+	_START_F,				//	Lost L_Arm, L_Leg, R_Leg
+	_START_F_SYM,			//	Lost R_Arm, L_Leg, R_Leg
 	_LOOP_F,
 	_LOOP_F_SYM,
-	_LOOP_G,
-	_LOOP_G_SYM,
-	_LOOP_H,
-	_LOOP_I,
-	_START_J,
+	_LOOP_G,				//	Lost L_Arm, R_Arm , L_Leg
+	_LOOP_G_SYM,			//	Lost L_Arm, R_Arm , R_Leg
+	_LOOP_H,				//	Lost L_Arm, R_Arm
+	_LOOP_I,				//	Lost L_Leg, R_Leg
+	_START_J,				//	Lost L_Arm, R_Arm, L_Leg, R_Reg
 	_LOOP_J,
 	_L_ANKLE_LOOP,
 	_L_ANKLE_TURNING_LOOP_L,
