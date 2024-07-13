@@ -988,6 +988,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	
 	Ininitmatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_019_safeboxdial01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_019_safeboxdial01a_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_014_diallock01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_014_diallock01a_Anim.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Lock_Cabinet"), CLock_Cabinet::Create(m_pDevice, m_pContext));
 
 
@@ -2374,6 +2375,12 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(Load_Item_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
 		return E_FAIL;
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_J/Make_Prototype.dat"))))
+		return E_FAIL;
+#endif 
+#ifdef Map_Ye
+	if (FAILED(Load_Item_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
+		return E_FAIL;
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_Ye/Make_Prototype.dat"))))
 		return E_FAIL;
 #endif 
 

@@ -10,6 +10,13 @@ BEGIN(Client)
 class CCabinet final : public CInteractProps
 {
 public:
+	enum CABINET_TYPE
+	{
+		TYPE_NORMAL,
+		TYPE_SAFEBOX,
+		TYPE_ELECTRIC,
+		TYPE_LEON,
+	};
 	enum CABINET_STATE
 	{
 		//Ä³ºñ³Ý_¹Ùµð ¾Ö´Ô
@@ -30,6 +37,7 @@ public:
 		PART_BODY,
 		PART_ITEM,
 		PART_LOCK,
+		PART_LOCK1, //·¹¿Â²¨
 		PART_END
 	};
 private:
@@ -68,7 +76,7 @@ private:
 
 	_ubyte			m_eState = { CABINET_CLOSED };
 	_ubyte			m_eLockState = { STATIC_LOCK };
-
+	_int				m_eCabinetType = { TYPE_NORMAL };
 
 public:
 	static CCabinet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

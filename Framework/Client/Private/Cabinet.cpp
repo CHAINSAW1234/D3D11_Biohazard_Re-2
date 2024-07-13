@@ -34,6 +34,14 @@ HRESULT CCabinet::Initialize(void* pArg)
 
 	INTERACTPROPS_DESC* pObj_desc = (INTERACTPROPS_DESC*)pArg;
 	m_bLock = pObj_desc->tagCabinet.bLock;
+	if (m_tagPropDesc.strGamePrototypeName.find("006") != string::npos)
+		m_eCabinetType = TYPE_LEON;
+	else if (m_tagPropDesc.strGamePrototypeName.find("003") != string::npos)
+		m_eCabinetType = TYPE_SAFEBOX;
+	else if (m_tagPropDesc.strGamePrototypeName.find("005") != string::npos)
+		m_eCabinetType = TYPE_ELECTRIC;
+	else
+		m_eCabinetType = TYPE_NORMAL;
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -60,9 +68,10 @@ void CCabinet::Tick(_float fTimeDelta)
 	}
 	if (m_bCamera)
 	{
-		m_pCameraGimmick->LookAt(static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK])->Get_Pos());
+		CPart_InteractProps* pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK]);
+		m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + pPartLock->GetLookDir_Vector() * 0.15f + _vector{ 0.05f,0.1f,0.f,0.f });
+		m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
 		//m_pCameraGimmick->SetPosition(m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION)+_float4(0.f,1.f,0.f,0.f));
-		m_pCameraGimmick->SetPosition(static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK])->Get_Pos() + _float4(-1.f, 1.f, 0.f, 0.f));
 	}
 	__super::Tick_Col();
 	if (!m_bVisible)
@@ -174,7 +183,7 @@ HRESULT CCabinet::Add_Components()
 		TEXT("Com_Collider_Normal_Step1"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP1], &ColliderDesc)))
 		return E_FAIL;
 
-	if (m_tagPropDesc.strGamePrototypeName.find("reon") != string::npos)
+	if (m_tagPropDesc.strGamePrototypeName.find("006") != string::npos)
 	{
 		ColliderDesc.fRadius = _float(80.f);
 		ColliderDesc.vCenter = _float3(-50.f, 1.f, 50.f);
@@ -241,9 +250,27 @@ HRESULT CCabinet::Add_PartObjects()
 	/*Part_Lock*/
 	if (m_bLock)
 	{
-		if (m_tagPropDesc.strGamePrototypeName.find("sm44_003") != string::npos)
+		switch (m_eCabinetType)
 		{
-			CPartObject* pItem = { nullptr };
+		case TYPE_NORMAL:
+		{
+			CPartObject* pLock = { nullptr };
+			CLock_Cabinet::BODY_LOCK_CABINET_DESC LockDesc = {};
+			LockDesc.pParentsTransform = m_pTransformCom;
+			LockDesc.pState = &m_eState; //현재 캐비넷 본체의 상황을 받는거야
+			LockDesc.pLockState = &m_eLockState; //제어당할 스테이트
+			LockDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_014_diallock01a_Anim");
+			LockDesc.iLockType = CLock_Cabinet::OPENLOCKER_DIAL;
+			/*if(m_tagPropDesc.tagCabinet.iItemIndex==0)*/
+			pLock = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Lock_Cabinet"), &LockDesc));
+			if (nullptr == pLock)
+				return E_FAIL;
+			m_PartObjects[CCabinet::PART_LOCK] = pLock;
+		}
+			break;
+		case TYPE_SAFEBOX:
+		{
+			CPartObject* pLock = { nullptr };
 			CLock_Cabinet::BODY_LOCK_CABINET_DESC LockDesc = {};
 			LockDesc.pParentsTransform = m_pTransformCom;
 			LockDesc.pState = &m_eState; //현재 캐비넷 본체의 상황을 받는거야
@@ -251,11 +278,17 @@ HRESULT CCabinet::Add_PartObjects()
 			LockDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_019_safeboxdial01a_Anim");
 			LockDesc.iLockType = CLock_Cabinet::SAFEBOX_DIAL;
 			/*if(m_tagPropDesc.tagCabinet.iItemIndex==0)*/
-			pItem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Lock_Cabinet"), &LockDesc));
-			if (nullptr == pItem)
+			pLock = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Lock_Cabinet"), &LockDesc));
+			if (nullptr == pLock)
 				return E_FAIL;
-			m_PartObjects[CCabinet::PART_LOCK] = pItem;
-			m_bItemDead = false;
+			m_PartObjects[CCabinet::PART_LOCK] = pLock;
+		}
+			break;
+		case TYPE_ELECTRIC:
+			break;
+		case TYPE_LEON:
+
+			break;
 		}
 	}
 	else
@@ -279,7 +312,7 @@ HRESULT CCabinet::Initialize_PartObjects()
 
 	}
 
-	if (m_bLock&& m_tagPropDesc.strGamePrototypeName.find("sm44_003") != string::npos)
+	if (m_bLock&&m_eCabinetType!= TYPE_ELECTRIC&& m_eCabinetType != TYPE_LEON)
 	{
 		CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
 		

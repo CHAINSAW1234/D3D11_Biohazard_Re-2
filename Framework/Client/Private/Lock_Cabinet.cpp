@@ -45,14 +45,12 @@ HRESULT CLock_Cabinet::Initialize(void* pArg)
 
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 
-
+	
 	m_pModelCom->Active_RootMotion_Rotation(true);
 
 
 
 #ifndef NON_COLLISION_PROP
-
-	//m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 
 #endif
 
@@ -63,16 +61,7 @@ HRESULT CLock_Cabinet::Initialize(void* pArg)
 
 void CLock_Cabinet::Tick(_float fTimeDelta)
 {
-	/*_float4 player = m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION);
-	player.y += 1.f;
-	player.z += 1.f;
 
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, player);
-	m_pTransformCom->Set_Scaled(2, 2, 2);
-*/
-
-	//__super::Tick(fTimeDelta);
-  	_int a = 1;
 }
 
 void CLock_Cabinet::Late_Tick(_float fTimeDelta)
@@ -88,21 +77,24 @@ void CLock_Cabinet::Late_Tick(_float fTimeDelta)
 
 HRESULT CLock_Cabinet::Render()
 {
-	/*if (m_bRender == false)
+	if (m_bRender == false)
 		return S_OK;
 	else
-		m_bRender = false;*/
-
+		m_bRender = false;
+	
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
+	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (size_t i = 0; i < iNumMeshes; i++)
+	for (auto& i : NonHideIndices)
 	{
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
+
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
@@ -131,19 +123,21 @@ HRESULT CLock_Cabinet::Render()
 				return E_FAIL;
 		}
 
+
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
+
+
 	return S_OK;
 }
 
 HRESULT CLock_Cabinet::Add_Components()
 {
 	/* For.Com_Body_Shader */
-	//와 이거 나중에 골때려지겠네 Anim 아이템은 어떻게 가져오냐ㅠ
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxModel"),
+	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
 		TEXT("Com_Body_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 	
@@ -190,6 +184,12 @@ HRESULT CLock_Cabinet::Initialize_Model()
 	{
 		if ((strMeshTag.find("Group_0_") != string::npos)|| (strMeshTag.find("Group_1_") != string::npos))
 			m_strMeshTag = strMeshTag;
+	}
+
+	if (m_eLockType == OPENLOCKER_DIAL)
+	{
+
+
 	}
 
 	return S_OK;
@@ -247,6 +247,40 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 
 void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 {
+	switch (*m_pLockState)
+	{
+	case CCabinet::STATIC_LOCK:
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pLockState);
+		break;
+
+	case CCabinet::LIVE_LOCK:
+	{
+
+	}
+	break;
+
+	case CCabinet::WRONG_LOCK:
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pLockState);
+
+		break;
+
+	case CCabinet::CLEAR_LOCK:
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pLockState);
+
+		break;
+	}
+	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
+	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
+	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+
+	Get_SpecialBone_Rotation(); // for UI
+
 }
 
 
