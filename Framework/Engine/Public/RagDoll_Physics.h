@@ -3,6 +3,8 @@
 #include "Engine_Defines.h"
 #include "Base.h"
 
+#define MAX_COUNT_BONE				512
+
 BEGIN(Engine)
 
 inline PxQuat               to_quat(const _fvector& q)
@@ -318,6 +320,10 @@ public:
 #pragma region Partial Ragdoll
 public:
     void                                Init_PartialRagdoll(COLLIDER_TYPE eType);
+    _float4x4*                          GetBoneMatrices_Ragdoll()
+    {
+        return m_BoneMatrices;
+    }
 #pragma endregion
 
 private:
@@ -461,6 +467,7 @@ private:
 #pragma region Additional Joint
 
     uint32_t m_upperarm_high_l_idx = { 0 };	    //l_arm_high_joint_lower
+    uint32_t m_upperarm_high_upper_l_idx = { 0 };	    //l_arm_high_joint_upper
     uint32_t m_upperarm_Middle_l_idx = { 0 };	//l_arm_middle_joint_upper
 
 #pragma endregion
@@ -468,6 +475,7 @@ private:
 #pragma region Additional Bone
 
     uint32_t m_upperarm_high_l_idx_Bone = { 0 };	    //l_arm_humerus
+    uint32_t m_upperarm_high_upper_l_idx_Bone = { 0 };	    //l_arm_humerus
     uint32_t m_upperarm_Middle_l_idx_Bone = { 0 };	    //l_arm_humerus
 
 #pragma endregion
@@ -481,6 +489,8 @@ private:
 #pragma region Additional Joint
     PxD6Joint* m_Clavicle_L_Upper_Joint = { nullptr };
 #pragma endregion
+
+    _float4x4           m_BoneMatrices[MAX_COUNT_BONE];
 
 public:
 	virtual void Free() override;

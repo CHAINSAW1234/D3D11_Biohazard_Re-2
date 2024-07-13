@@ -155,8 +155,16 @@ HRESULT CBody_Zombie::Render()
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-			return E_FAIL;
+		if((*m_ppPart_Breaker)->Is_RagDoll_Mesh(i))
+		{
+			if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i),m_pRagdoll->GetBoneMatrices_Ragdoll())))
+				return E_FAIL;
+		}
+		else
+		{
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+		}
 
 		//	if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
 		//		return E_FAIL;
@@ -398,28 +406,6 @@ HRESULT CBody_Zombie::Initialize_Model()
 	m_pModelCom->Active_RootMotion_Y(true);
 	m_pModelCom->Active_RootMotion_Rotation(true);
 
-	/* Set_Hide_Mesh */
-	vector<string>			MeshTags  = { m_pModelCom->Get_MeshTags() };
-
-	vector<string>			ResultMeshTags;
-	for (auto& strMeshTag : MeshTags)
-	{
-		if (strMeshTag.find("Body") != string::npos || strMeshTag.find("Inside") != string::npos)
-		{
-			ResultMeshTags.push_back(strMeshTag);
-		}
-	}
-
-	for (auto& strMeshTag : MeshTags)
-	{
-		m_pModelCom->Hide_Mesh(strMeshTag, true);
-	}
-
-	for (auto& strMeshTag : ResultMeshTags)
-	{
-		m_pModelCom->Hide_Mesh(strMeshTag, false);
-	}
-
 	if (FAILED(Add_Animations()))
 		return E_FAIL;
 
@@ -644,6 +630,14 @@ HRESULT CBody_Zombie::Initialize_MeshTypes()
 			m_pModelCom->Set_Mesh_Branch(strMeshTag, static_cast<_uint>(BODY_MESH_TYPE::_OUTTER));
 		}
 	}
+
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(BODY_MESH_TYPE::_INNER), false);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(BODY_MESH_TYPE::_OUTTER), false);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(BODY_MESH_TYPE::_JOINT), true);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(BODY_MESH_TYPE::_DEFICIT), true);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(BODY_MESH_TYPE::_DAMAGED), true);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(BODY_MESH_TYPE::_BROKEN_HEAD), true);
+	m_pModelCom->Hide_Mesh_Branch(static_cast<_uint>(BODY_MESH_TYPE::_INTERNAL_MAT), true);
 
 	return S_OK;
 }
@@ -1210,7 +1204,7 @@ HRESULT CBody_Zombie::Bind_WorldMatrix(_uint iIndex)
 	}
 	else
 	{
-		if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh(iIndex))
+	/*	if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh(iIndex))
 		{
 			auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
 			WorldMat._41 = 0.f;
@@ -1219,7 +1213,7 @@ HRESULT CBody_Zombie::Bind_WorldMatrix(_uint iIndex)
 			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
 				return E_FAIL;
 		}
-		else
+		else*/
 		{
 			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 				return E_FAIL;

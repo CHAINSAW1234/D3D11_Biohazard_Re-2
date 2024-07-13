@@ -497,24 +497,11 @@ void CRagdoll_Physics::create_ragdoll()
 		m_Scene->addActor(*m_Calf_R);
 	}
 
-	/*if (m_Arm_L == nullptr)
+	if (m_Arm_L == nullptr)
 	{
 		m_Arm_L = create_capsule_bone(m_upperarm_l_idx, m_lowerarm_l_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_L);
 		m_Scene->addActor(*m_Arm_L);
-	}*/
-
-	//TEMP
-	if (m_Arm_L == nullptr)
-	{
-		m_Arm_L = create_capsule_bone(m_upperarm_l_idx, m_upperarm_high_l_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_L);
-		m_Scene->addActor(*m_Arm_L);
 	}
-	if (m_Arm_L_High == nullptr)
-	{
-		m_Arm_L_High = create_capsule_bone(m_upperarm_high_l_idx, m_lowerarm_l_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_L);
-		m_Scene->addActor(*m_Arm_L_High);
-	}
-
 
 	if (m_Arm_R == nullptr)
 	{
@@ -576,7 +563,7 @@ void CRagdoll_Physics::create_ragdoll()
 	m_ragdoll->m_original_joint_rotations.resize(iNumBone);*/
 
 	//TEMP
-	joints[m_lowerarm_l_idx].parent_index = m_upperarm_high_l_idx;
+	//joints[m_lowerarm_l_idx].parent_index = m_upperarm_high_l_idx;
 
 	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 	{
@@ -585,7 +572,7 @@ void CRagdoll_Physics::create_ragdoll()
 
 		if (!body || m_vecBreakPartFilter[chosen_idx] == true)
 		{
-				continue;
+			continue;
 		}
 
 		_matrix body_global_transform = to_mat4(body->getGlobalPose());
@@ -696,7 +683,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		Update_Partial(1 / 60.f);
 
-		if(m_ForeArm_L && m_Hand_L)
+		if (m_ForeArm_L && m_Hand_L)
 			m_pWrist_L_Joint = create_d6_joint(m_ForeArm_L, m_Hand_L, m_hand_l_idx_Bone, m_hand_l_idx);
 
 		Update_Partial_After(1 / 60.f);
@@ -743,7 +730,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		Update_Partial(1 / 60.f);
 
-		if(m_ForeArm_R && m_Hand_R)
+		if (m_ForeArm_R && m_Hand_R)
 			m_pWrist_R_Joint = create_d6_joint(m_ForeArm_R, m_Hand_R, m_hand_r_idx_Bone, m_hand_r_idx);
 
 		Update_Partial_After(1 / 60.f);
@@ -754,21 +741,62 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		break;
 	case COLLIDER_TYPE::ARM_L:
 
-		if(!m_Arm_L)
+		/*if(!m_Arm_L)
 		{
 			m_Arm_L = create_capsule_bone(m_upperarm_l_idx, m_lowerarm_l_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_L);
 			m_Scene->addActor(*m_Arm_L);
+		}*/
+
+		//TEMP
+	/*	if (m_Arm_L == nullptr)
+		{
+			m_Arm_L = create_capsule_bone(m_upperarm_l_idx, m_upperarm_high_l_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_L);
+			m_Scene->addActor(*m_Arm_L);
+		}*/
+		if (m_Arm_L_High == nullptr)
+		{
+			m_Arm_L_High = create_capsule_bone(m_upperarm_high_l_idx, m_lowerarm_l_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_L);
+			m_Scene->addActor(*m_Arm_L_High);
 		}
+
 		if (!m_ForeArm_L)
 		{
 			m_ForeArm_L = create_capsule_bone(m_lowerarm_l_idx, m_hand_l_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::FOREARM_L);
 			m_Scene->addActor(*m_ForeArm_L);
 		}
-		if(!m_Hand_L)
+		if (!m_Hand_L)
 		{
 			m_Hand_L = create_capsule_bone(m_hand_l_idx, m_middle_01_l_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::HAND_L);
 			m_Scene->addActor(*m_Hand_L);
 		}
+
+		//TEMP
+		//joints[m_lowerarm_l_idx].parent_index = m_upperarm_high_l_idx;
+		//joints[m_upperarm_high_l_idx - 1].parent_index = m_upperarm_high_l_idx;
+		m_ragdoll->m_rigid_bodies[90] = m_Arm_L_High;
+		m_ragdoll->m_rigid_bodies[91] = m_Arm_L_High;
+		m_ragdoll->m_rigid_bodies[92] = m_Arm_L_High;
+		m_ragdoll->m_rigid_bodies[93] = m_Arm_L_High;
+		joints[92].parent_index = m_upperarm_high_l_idx;
+		joints[93].parent_index = m_upperarm_high_l_idx;
+		joints[90].parent_index = m_upperarm_high_l_idx;
+		joints[91].parent_index = m_upperarm_high_l_idx;
+
+		/*for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); ++i)
+		{
+			if(i == m_upperarm_high_l_idx)
+			{
+				if (joints[i].parent_index == m_upperarm_l_idx)
+				{
+					joints[i].parent_index = -1;
+					m_ragdoll->m_rigid_bodies[i] = m_Arm_L_High;
+				}
+			}
+			else
+			{
+				int a = 0;
+			}
+		}*/
 
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
@@ -801,9 +829,15 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		Update_Partial(1 / 60.f);
 
-		if(m_Arm_L && m_ForeArm_L)
-			m_pElbow_L_Joint = create_d6_joint(m_Arm_L, m_ForeArm_L, m_lowerarm_l_idx_Bone, m_lowerarm_l_idx);
-		if(m_ForeArm_L && m_Hand_L)
+		/*	if(m_Arm_L && m_ForeArm_L)
+				m_pElbow_L_Joint = create_d6_joint(m_Arm_L, m_ForeArm_L, m_lowerarm_l_idx_Bone, m_lowerarm_l_idx);*/
+
+
+				//TEMP
+		if (!m_pElbow_L_Joint)
+			m_pElbow_L_Joint = create_d6_joint(m_Arm_L_High, m_ForeArm_L, m_lowerarm_l_idx_Bone, m_lowerarm_l_idx);
+
+		if (m_ForeArm_L && m_Hand_L)
 			m_pWrist_L_Joint = create_d6_joint(m_ForeArm_L, m_Hand_L, m_hand_l_idx_Bone, m_hand_l_idx);
 
 		Update_Partial_After(1 / 60.f);
@@ -814,17 +848,17 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		break;
 	case COLLIDER_TYPE::ARM_R:
-		if(!m_Arm_R)
+		if (!m_Arm_R)
 		{
 			m_Arm_R = create_capsule_bone(m_upperarm_r_idx, m_lowerarm_r_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_R);
 			m_Scene->addActor(*m_Arm_R);
 		}
-		if(!m_ForeArm_R)
+		if (!m_ForeArm_R)
 		{
 			m_ForeArm_R = create_capsule_bone(m_lowerarm_r_idx, m_hand_r_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::FOREARM_R);
 			m_Scene->addActor(*m_ForeArm_R);
 		}
-		if(!m_Hand_R)
+		if (!m_Hand_R)
 		{
 			m_Hand_R = create_capsule_bone(m_hand_r_idx, m_middle_01_r_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::HAND_R);
 			m_Scene->addActor(*m_Hand_R);
@@ -861,9 +895,9 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		Update_Partial(1 / 60.f);
 
-		if(m_Arm_R && m_ForeArm_R)
+		if (m_Arm_R && m_ForeArm_R)
 			m_pElbow_R_Joint = create_d6_joint(m_Arm_R, m_ForeArm_R, m_lowerarm_r_idx_Bone, m_lowerarm_r_idx);
-		if(m_ForeArm_R && m_Hand_R)
+		if (m_ForeArm_R && m_Hand_R)
 			m_pWrist_R_Joint = create_d6_joint(m_ForeArm_R, m_Hand_R, m_hand_r_idx_Bone, m_hand_r_idx);
 
 		Update_Partial_After(1 / 60.f);
@@ -875,27 +909,27 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		break;
 	case COLLIDER_TYPE::PELVIS:
 		//break; ////////////////////////////////////TEMP//////////////////////////////
-		if(!m_Leg_L)
+		if (!m_Leg_L)
 		{
 			m_Leg_L = create_capsule_bone(m_thigh_l_idx, m_calf_l_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::LEG_L);
 			m_Scene->addActor(*m_Leg_L);
 		}
-		if(!m_Leg_R)
+		if (!m_Leg_R)
 		{
 			m_Leg_R = create_capsule_bone(m_thigh_r_idx, m_calf_r_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::LEG_R);
 			m_Scene->addActor(*m_Leg_R);
 		}
-		if(!m_Pelvis)
+		if (!m_Pelvis)
 		{
 			m_Pelvis = create_capsule_bone(m_pelvis_idx, m_spine_02_idx, *m_ragdoll, CHEST_SIZE * m_scale, rot, COLLIDER_TYPE::PELVIS);
 			m_Scene->addActor(*m_Pelvis);
 		}
-		if(!m_Calf_L)
+		if (!m_Calf_L)
 		{
 			m_Calf_L = create_capsule_bone(m_calf_l_idx, m_foot_l_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::CALF_L);
 			m_Scene->addActor(*m_Calf_L);
 		}
-		if(!m_Calf_R)
+		if (!m_Calf_R)
 		{
 			m_Calf_R = create_capsule_bone(m_calf_r_idx, m_foot_r_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::CALF_R);
 			m_Scene->addActor(*m_Calf_R);
@@ -903,13 +937,13 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		rot = XMMatrixRotationY(PxPi * 0.5f);
 
-		if(!m_Foot_L)
+		if (!m_Foot_L)
 		{
 			m_Foot_L = create_capsule_bone(m_foot_l_idx, m_ball_l_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::FOOT_L);
 			m_Scene->addActor(*m_Foot_L);
 		}
 
-		if(!m_Foot_R)
+		if (!m_Foot_R)
 		{
 			m_Foot_R = create_capsule_bone(m_foot_r_idx, m_ball_r_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::FOOT_R);
 			m_Scene->addActor(*m_Foot_R);
@@ -949,21 +983,21 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		Update_Partial(1 / 60.f);
 
 		// Pelvis to Thighs
-		if(m_Pelvis && m_Leg_L)
+		if (m_Pelvis && m_Leg_L)
 			m_pHip_Joint_L = create_d6_joint(m_Pelvis, m_Leg_L, m_thigh_l_idx_Bone, m_thigh_l_idx);
-		if(m_Pelvis && m_Leg_R)
+		if (m_Pelvis && m_Leg_R)
 			m_pHip_Joint_R = create_d6_joint(m_Pelvis, m_Leg_R, m_thigh_r_idx_Bone, m_thigh_r_idx);
 
 		// Thighs to Calf
-		if(m_Leg_L && m_Calf_L)
+		if (m_Leg_L && m_Calf_L)
 			m_pKnee_Joint_L = create_d6_joint(m_Leg_L, m_Calf_L, m_calf_l_idx_Bone, m_calf_l_idx);
-		if(m_Leg_R && m_Calf_R)
+		if (m_Leg_R && m_Calf_R)
 			m_pKnee_Joint_R = create_d6_joint(m_Leg_R, m_Calf_R, m_calf_r_idx_Bone, m_calf_r_idx);
 
 		// Calf to Foot
-		if(m_Calf_L && m_Foot_L)
+		if (m_Calf_L && m_Foot_L)
 			m_pAnkle_Joint_L = create_d6_joint_Foot(m_Calf_L, m_Foot_L, m_ball_l_idx_Bone, m_foot_l_idx);
-		if(m_Calf_R && m_Foot_R)
+		if (m_Calf_R && m_Foot_R)
 			m_pAnkle_Joint_R = create_d6_joint_Foot(m_Calf_R, m_Foot_R, m_ball_r_idx_Bone, m_foot_r_idx);
 
 		Update_Partial_After(1 / 60.f);
@@ -1017,7 +1051,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		Update_Partial(1 / 60.f);
 
-		if(m_Calf_L && m_Foot_L)
+		if (m_Calf_L && m_Foot_L)
 			m_pAnkle_Joint_L = create_d6_joint_Foot(m_Calf_L, m_Foot_L, m_ball_l_idx_Bone, m_foot_l_idx);
 
 		Update_Partial_After(1 / 60.f);
@@ -1065,7 +1099,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		Update_Partial(1 / 60.f);
 
-		if(m_Calf_R && m_Foot_R)
+		if (m_Calf_R && m_Foot_R)
 			m_pAnkle_Joint_R = create_d6_joint_Foot(m_Calf_R, m_Foot_R, m_ball_r_idx_Bone, m_foot_r_idx);
 
 		Update_Partial_After(1 / 60.f);
@@ -1075,13 +1109,13 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		break;
 	case COLLIDER_TYPE::LEG_L:
 
-		if(!m_Leg_L)
+		if (!m_Leg_L)
 		{
 			m_Leg_L = create_capsule_bone(m_thigh_l_idx, m_calf_l_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::LEG_L);
 			m_Scene->addActor(*m_Leg_L);
 		}
 
-		if(!m_Calf_L)
+		if (!m_Calf_L)
 		{
 			m_Calf_L = create_capsule_bone(m_calf_l_idx, m_foot_l_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::CALF_L);
 			m_Scene->addActor(*m_Calf_L);
@@ -1089,7 +1123,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		rot = XMMatrixRotationY(PxPi * 0.5f);
 
-		if(!m_Foot_L)
+		if (!m_Foot_L)
 		{
 			m_Foot_L = create_capsule_bone(m_foot_l_idx, m_ball_l_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::FOOT_L);
 			m_Scene->addActor(*m_Foot_L);
@@ -1126,10 +1160,10 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		Update_Partial(1 / 60.f);
 
-		if(m_Leg_L && m_Calf_L)
+		if (m_Leg_L && m_Calf_L)
 			m_pKnee_Joint_L = create_d6_joint(m_Leg_L, m_Calf_L, m_calf_l_idx_Bone, m_calf_l_idx);
 
-		if(m_Calf_L && m_Foot_L)
+		if (m_Calf_L && m_Foot_L)
 			m_pAnkle_Joint_L = create_d6_joint_Foot(m_Calf_L, m_Foot_L, m_ball_l_idx_Bone, m_foot_l_idx);
 
 		Update_Partial_After(1 / 60.f);
@@ -1141,13 +1175,13 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		break;
 	case COLLIDER_TYPE::LEG_R:
 
-		if(!m_Leg_R)
+		if (!m_Leg_R)
 		{
 			m_Leg_R = create_capsule_bone(m_thigh_r_idx, m_calf_r_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::LEG_R);
 			m_Scene->addActor(*m_Leg_R);
 		}
 
-		if(!m_Calf_R)
+		if (!m_Calf_R)
 		{
 			m_Calf_R = create_capsule_bone(m_calf_r_idx, m_foot_r_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::CALF_R);
 			m_Scene->addActor(*m_Calf_R);
@@ -1155,7 +1189,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		rot = XMMatrixRotationY(PxPi * 0.5f);
 
-		if(!m_Foot_R)
+		if (!m_Foot_R)
 		{
 			m_Foot_R = create_capsule_bone(m_foot_r_idx, m_ball_r_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::FOOT_R);
 			m_Scene->addActor(*m_Foot_R);
@@ -1192,10 +1226,10 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		Update_Partial(1 / 60.f);
 
-		if(m_Leg_R && m_Calf_R)
+		if (m_Leg_R && m_Calf_R)
 			m_pKnee_Joint_R = create_d6_joint(m_Leg_R, m_Calf_R, m_calf_r_idx_Bone, m_calf_r_idx);
 
-		if(m_Calf_R && m_Foot_R)
+		if (m_Calf_R && m_Foot_R)
 			m_pAnkle_Joint_R = create_d6_joint_Foot(m_Calf_R, m_Foot_R, m_ball_r_idx_Bone, m_foot_r_idx);
 
 		Update_Partial_After(1 / 60.f);
@@ -1320,7 +1354,7 @@ void CRagdoll_Physics::update_animations()
 
 		auto joint = m_skeletal_mesh->skeleton()->joints();
 
-		/*if(m_bPartialRagdoll)
+		if (m_bPartialRagdoll)
 		{
 			if (m_vecBone)
 			{
@@ -1328,16 +1362,36 @@ void CRagdoll_Physics::update_animations()
 
 				for (size_t i = 0; i < NumJoint; ++i)
 				{
-					if (!IsIdentityMatrix(m_Global_transforms.transforms[i]))
+					if (m_vecBoneIndex[i] != m_upperarm_l_idx_Bone)
 					{
-						auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
-						auto Result = m_Global_transforms.transforms[i] * Inverse;
-						(*m_vecBone)[m_vecBoneIndex[i]]->Set_Combined_Matrix(Result);
+						if (joint[i].parent_index != m_upperarm_l_idx)
+						{
+							if (!IsIdentityMatrix(m_Global_transforms.transforms[i]))
+							{
+								auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
+								auto Result = m_Global_transforms.transforms[i] * Inverse;
+								//(*m_vecBone)[m_vecBoneIndex[i]]->Set_Combined_Matrix(Result);
+								m_BoneMatrices[m_vecBoneIndex[i]] = Result;
+							}
+						}
+						else
+						{
+							//if(/*i > 62 &&*/ i > 92)
+							{
+								if (!IsIdentityMatrix(m_Global_transforms.transforms[i]))
+								{
+									auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
+									auto Result = m_Global_transforms.transforms[i] * Inverse;
+									(*m_vecBone)[m_vecBoneIndex[i]]->Set_Combined_Matrix(Result);
+									m_BoneMatrices[m_vecBoneIndex[i]] = Result;
+								}
+							}
+						}
 					}
 				}
 			}
 		}
-		else*/
+		else
 		{
 			if (m_vecBone)
 			{
@@ -1457,6 +1511,8 @@ void CRagdoll_Physics::update_animations_partial_after()
 
 void CRagdoll_Physics::Init_Ragdoll()
 {
+	ZeroMemory(m_BoneMatrices, sizeof(_float4x4) * MAX_COUNT_BONE);
+
 	m_simulate = false;
 
 	create_ragdoll();
@@ -1501,17 +1557,8 @@ void CRagdoll_Physics::create_joint()
 		m_pClavicle_R_Joint = create_d6_joint(m_Chest, m_Arm_R, m_upperarm_r_idx_Bone, m_upperarm_r_idx);
 
 	// Upperarm to Lowerman
-	/*if (!m_pElbow_L_Joint && m_vecBreakPartFilter[m_lowerarm_l_idx] == false)
-		m_pElbow_L_Joint = create_d6_joint(m_Arm_L, m_ForeArm_L, m_lowerarm_l_idx_Bone, m_lowerarm_l_idx);*/
-
-
-	//TEMP
-	if (!m_Clavicle_L_Upper_Joint)
-		m_Clavicle_L_Upper_Joint = create_d6_joint(m_Arm_L, m_Arm_L_High, m_upperarm_high_l_idx, m_upperarm_high_l_idx_Bone);
 	if (!m_pElbow_L_Joint && m_vecBreakPartFilter[m_lowerarm_l_idx] == false)
-		m_pElbow_L_Joint = create_d6_joint(m_Arm_L_High, m_ForeArm_L, m_lowerarm_l_idx_Bone, m_lowerarm_l_idx);
-
-
+		m_pElbow_L_Joint = create_d6_joint(m_Arm_L, m_ForeArm_L, m_lowerarm_l_idx_Bone, m_lowerarm_l_idx);
 	if (!m_pElbow_R_Joint && m_vecBreakPartFilter[m_lowerarm_r_idx] == false)
 		m_pElbow_R_Joint = create_d6_joint(m_Arm_R, m_ForeArm_R, m_lowerarm_r_idx_Bone, m_lowerarm_r_idx);
 
@@ -1818,6 +1865,7 @@ void CRagdoll_Physics::SetBoneIndex()
 
 	//TEMP
 	m_upperarm_high_l_idx = Skeleton->Find_BoneIndex("l_arm_high_joint_lower");
+	m_upperarm_high_upper_l_idx = Skeleton->Find_BoneIndex("l_arm_high_joint_upper");
 
 
 
@@ -1852,6 +1900,7 @@ void CRagdoll_Physics::SetBoneIndex()
 
 	//TEMP
 	m_upperarm_high_l_idx_Bone = Find_BoneIndex("l_arm_high_joint_lower");
+	m_upperarm_high_upper_l_idx_Bone = Find_BoneIndex("l_arm_high_joint_upper");
 }
 
 _int CRagdoll_Physics::Find_BoneIndex(const string& strRootTag)
