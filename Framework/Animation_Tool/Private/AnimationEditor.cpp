@@ -438,6 +438,9 @@ void CAnimationEditor::Render_BoneTags()
 		_matrix			CombinedMatrix = { XMLoadFloat4x4(&Pair.second) };
 		_matrix			ProjSpaceCombinedMatrix = { CombinedMatrix * WVPMatrix };
 
+		if (strBoneTag.find("twist") != string::npos)
+			continue;
+
 		_vector			vProjSpacePosition = { ProjSpaceCombinedMatrix.r[CTransform::STATE_POSITION] };
 		vProjSpacePosition = { vProjSpacePosition / XMVectorGetW(vProjSpacePosition) };
 

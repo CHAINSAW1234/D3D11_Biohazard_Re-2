@@ -1307,9 +1307,11 @@ HRESULT CZombie::Initialize_PartBreaker()
 {
 	CPart_Breaker_Zombie::PART_BREAKER_DESC			PartBreakerDesc;
 	PartBreakerDesc.pBodyModel = static_cast<CModel*>(m_PartObjects[CMonster::PART_BODY]->Get_Component(TEXT("Com_Model")));
+	PartBreakerDesc.iBodyType = m_iBody_ID;
 
 	CPart_Breaker_Zombie*			pPart_Breaker = { CPart_Breaker_Zombie::Create(&PartBreakerDesc) };
 	m_pPart_Breaker = pPart_Breaker;
+	
 
 	if (nullptr == m_pPart_Breaker)
 		return E_FAIL;

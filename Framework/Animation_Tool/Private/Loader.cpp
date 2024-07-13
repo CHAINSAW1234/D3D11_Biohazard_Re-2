@@ -207,6 +207,18 @@ HRESULT CLoader::Loading_For_GamePlay()
 			ZombieTrnasformMatrix))))
 		return E_FAIL;
 
+	/* Prototype_Component_Model_Zombie_Body_Female */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Body_Female"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Female/Body_Female.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_Zombie_Body_Male_Big */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Body_Male_Big"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Zombie_Male_Big/Body_Male_Big.fbx",
+			ZombieTrnasformMatrix))))
+		return E_FAIL;
+
 	//////////////////////////////////////////////////
 	//	HAT
 	//////////////////////////////////////////////////

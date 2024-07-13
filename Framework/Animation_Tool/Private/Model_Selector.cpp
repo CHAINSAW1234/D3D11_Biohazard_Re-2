@@ -120,7 +120,23 @@ HRESULT CModel_Selector::Add_Components()
 		if (nullptr == pModel)
 			return E_FAIL;
 
-		m_Models["Zombie_Body"] = pModel;
+		m_Models["Zombie_Body_Male"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Body_Female"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Body_Female"] = pModel;
+
+		pModel = { nullptr };
+
+		pModel = { dynamic_cast<CModel*>(m_pGameInstance->Clone_Component(LEVEL_TOOL, TEXT("Prototype_Component_Model_Zombie_Body_Male_Big"))) };
+		if (nullptr == pModel)
+			return E_FAIL;
+
+		m_Models["Zombie_Body_Male_Big"] = pModel;
 
 		pModel = { nullptr };
 
