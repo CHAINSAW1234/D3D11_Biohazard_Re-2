@@ -48,16 +48,7 @@ private:
 
 
 	_float				m_fDistCam = { 0.f };
-	//_float			m_fDistCam_FarLimit = { 10.f };
-	//_float				m_fDistCam_NearLimit = { 1.f };
-
 	_float				m_fPopupHide_CurTime = { 0.f };
-	//_float			m_fPopupHide_TimeLimit = { 0.5f };
-
-	//_float			m_fPopupHide_StartRadian = { 0.f };
-	//_float			m_fPopupHide_EndRadian = { 360.f };
-
-	//_float			m_fPopupHide_StartDist = { 10.f };
 	_float				m_fPopupHide_EndDist = { 0.4f };
 
 	_bool				m_bStop = { true };

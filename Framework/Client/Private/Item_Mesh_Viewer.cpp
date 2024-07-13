@@ -214,7 +214,7 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			{
 				m_bStop = true;
 				m_fPopupHide_CurTime = 0.f;
-				m_fDistCam = m_fPopupHide_EndDist;
+				//m_fDistCam = m_fPopupHide_EndDist;
 				return;
 			}
 
@@ -517,58 +517,72 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 	case Client::emergencyspray01a://조금 아래로
 		m_fPopupHide_EndDist = 0.5f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::greenherb01a://조금 아래로
-		m_fPopupHide_EndDist = 1.f;
+		m_fPopupHide_EndDist = 0.5f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::redherb01a://조금 아래로
-		m_fPopupHide_EndDist = 1.f;
+		m_fPopupHide_EndDist = 0.5f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::blueherb01a://조금 아래로
-		m_fPopupHide_EndDist = 1.f;
+		m_fPopupHide_EndDist = 0.5f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::herbsgg01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::herbsgr01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::herbsgb01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::herbsggb01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::herbsggg01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::herbsgrb01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::herbsrb01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::handgun_bullet01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::shotgun_bullet01a:
 		m_fPopupHide_EndDist = 0.6f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::woodbarricade01a:
 		m_fPopupHide_EndDist = 2.f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::blastingfuse01a:
 		m_fPopupHide_EndDist = 0.4f;
