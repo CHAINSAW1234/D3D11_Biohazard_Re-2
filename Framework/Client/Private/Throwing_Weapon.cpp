@@ -53,14 +53,17 @@ HRESULT CThrowing_Weapon::Initialize(void* pArg)
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
 
-	m_pRigid_Dynamic = m_pGameInstance->Create_Rigid_Dynamic(m_pModelCom, m_pTransformCom, &m_iIndex_RigidBody, this);
+	/*m_pRigid_Dynamic = m_pGameInstance->Create_Rigid_Dynamic(m_pModelCom, m_pTransformCom, &m_iIndex_RigidBody, this);
+	m_pRigid_Dynamic->SetKinematic(true);*/
+
+	m_pRigid_Dynamic = m_pGameInstance->Create_Rigid_Dynamic_NoConvex(0.05f, &m_iIndex_RigidBody, this);
 	m_pRigid_Dynamic->SetKinematic(true);
 
 	m_pModelCom->Release_Decal_Dump();
 
 	Initiate(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), 
-		m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK), 
-		m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK));
+		m_pTransformCom->Get_State_Float4(CTransform::STATE_UP), 
+		m_pTransformCom->Get_State_Float4(CTransform::STATE_UP));
 
 
     return S_OK;
