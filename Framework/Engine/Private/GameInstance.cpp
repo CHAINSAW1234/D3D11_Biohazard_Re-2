@@ -215,7 +215,7 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 		m_pPicking->Update();
 
 	if(m_pPipeLine)
-		m_pPipeLine->Tick();
+		m_pPipeLine->Tick(fTimeDelta);
 
 	if (m_pFrustum)
 		m_pFrustum->Tick();
@@ -264,7 +264,7 @@ HRESULT CGameInstance::Draw()
 	m_pLevel_Manager->Render();	
 
 #ifdef _DEBUG
-	m_pPipeLine->Render_Debug();
+	//m_pPipeLine->Render_Debug();
 #endif
 
 	return S_OK;
@@ -671,12 +671,12 @@ HRESULT CGameInstance::Add_ShadowLight(CPipeLine::SHADOWLIGHT eShadowLight, cons
 	return S_OK;
 }
 
-void CGameInstance::Set_CubeMap(CTexture* pTexture)
+void CGameInstance::Set_CubeMap(CTexture* pTexture, _uint iIndex)
 {
 	if (nullptr == m_pPipeLine)
 		return;
 
-	return m_pPipeLine->Set_CubeMap(pTexture);
+	return m_pPipeLine->Set_CubeMap(pTexture, iIndex);
 }
 
 _matrix CGameInstance::Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE eState) const
@@ -792,21 +792,46 @@ list<LIGHT_DESC*> CGameInstance::Get_ShadowPointLightDesc_List()
 	return m_pPipeLine->Get_ShadowPointLightDesc_List();
 }
 
-HRESULT CGameInstance::Bind_IrradianceTexture(CShader* pShader, const _char* pConstantName)
+HRESULT CGameInstance::Bind_PrevIrradianceTexture(CShader* pShader, const _char* pConstantName)
 {
 	if (nullptr == m_pPipeLine)
 		return E_FAIL;
 
-	return m_pPipeLine->Bind_IrradianceTexture(pShader, pConstantName);
+	return m_pPipeLine->Bind_PrevIrradianceTexture(pShader, pConstantName);
 }
 
-HRESULT CGameInstance::Bind_CubeMapTexture(CShader* pShader, const _char* pConstantName)
+HRESULT CGameInstance::Bind_CurIrradianceTexture(CShader* pShader, const _char* pConstantName)
 {
 	if (nullptr == m_pPipeLine)
 		return E_FAIL;
 
-	return m_pPipeLine->Bind_CubeMapTexture(pShader, pConstantName);
+	return m_pPipeLine->Bind_CurIrradianceTexture(pShader, pConstantName);
 }
+
+HRESULT CGameInstance::Bind_PrevCubeMapTexture(CShader* pShader, const _char* pConstantName)
+{
+	if (nullptr == m_pPipeLine)
+		return E_FAIL;
+
+	return m_pPipeLine->Bind_PrevCubeMapTexture(pShader, pConstantName);
+}
+
+HRESULT CGameInstance::Bind_CurCubeMapTexture(CShader* pShader, const _char* pConstantName)
+{
+	if (nullptr == m_pPipeLine)
+		return E_FAIL;
+
+	return m_pPipeLine->Bind_CurCubeMapTexture(pShader, pConstantName);
+}
+
+_float* CGameInstance::Get_PBRLerpTime()
+{
+	if (nullptr == m_pPipeLine)
+		return nullptr;
+
+	return m_pPipeLine->Get_PBRLerpTime();
+}
+
 #pragma endregion
 
 #pragma region Light_Manager
@@ -1219,6 +1244,11 @@ CRigid_Static* CGameInstance::Create_Rigid_Static(_float4 Pos, _int* Index, CGam
 CRigid_Dynamic* CGameInstance::Create_Rigid_Dynamic(CModel* pModel, CTransform* pTransform, _int* iId, CGameObject* pObj)
 {
 	return m_pPhysics_Controller->Create_Rigid_Dynamic(pModel, pTransform, iId, pObj);
+}
+
+CRigid_Dynamic* CGameInstance::Create_Rigid_Dynamic_NoConvex(_float fRadius,_int* iId, CGameObject* pObj)
+{
+	return m_pPhysics_Controller->Create_Rigid_Dynamic_NoConvex(fRadius,iId, pObj);
 }
 
 void CGameInstance::Cook_Terrain()

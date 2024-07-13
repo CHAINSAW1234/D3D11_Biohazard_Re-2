@@ -41,17 +41,25 @@ void CPipeLine::Add_ShadowLight(SHADOWLIGHT eShadowLight, CLight* pLight)
 	}
 }
 
-void CPipeLine::Set_CubeMap(CTexture* pTexture)
+void CPipeLine::Set_CubeMap(CTexture* pTexture, _uint iIndex)
 {
-	if (m_pCubeMapTexture == pTexture)
+	if (m_pCurCubeMapTexture == pTexture &&
+		m_iCurCubeMapIndex == iIndex)
 		return;
 
-	if (nullptr != m_pCubeMapTexture)
-		Safe_Release(m_pCubeMapTexture);
+	if (nullptr != m_pPrevCubeMapTexture)
+		Safe_Release(m_pPrevCubeMapTexture);
 
 	m_isRender = true;
-	m_pCubeMapTexture = pTexture;
-	Safe_AddRef(m_pCubeMapTexture);
+	m_fLerpTimeDelta = 0.f;
+	m_iPrevCubeMapIndex = m_iCurCubeMapIndex;
+	m_pPrevCubeMapTexture = m_pCurCubeMapTexture;
+
+	m_pPrevIrradialTexture->Copy_Resource(m_pCurIrradialTexture->Get_Texture2D());
+
+	m_iCurCubeMapIndex = iIndex;
+	m_pCurCubeMapTexture = pTexture;
+	Safe_AddRef(m_pCurCubeMapTexture);
 }
 
 list<LIGHT_DESC*> CPipeLine::Get_ShadowPointLightDesc_List()
@@ -71,17 +79,35 @@ list<LIGHT_DESC*> CPipeLine::Get_ShadowPointLightDesc_List()
 	return ShadowLightDesc;
 }
 
-HRESULT CPipeLine::Bind_IrradianceTexture(CShader* pShader, const _char* pConstantName)
+HRESULT CPipeLine::Bind_PrevIrradianceTexture(CShader* pShader, const _char* pConstantName)
 {
-	return m_pIrradialTexture->Bind_ShaderResource(pShader, pConstantName);
+	return m_pCurIrradialTexture->Bind_ShaderResource(pShader, pConstantName);
 }
 
-HRESULT CPipeLine::Bind_CubeMapTexture(CShader* pShader, const _char* pConstantName)
+HRESULT CPipeLine::Bind_CurIrradianceTexture(CShader* pShader, const _char* pConstantName)
 {
-	if (nullptr == m_pCubeMapTexture)
+	return m_pPrevIrradialTexture->Bind_ShaderResource(pShader, pConstantName);
+}
+
+HRESULT CPipeLine::Bind_PrevCubeMapTexture(CShader* pShader, const _char* pConstantName)
+{
+	if (nullptr == m_pPrevCubeMapTexture) {
+		if (nullptr == m_pCurCubeMapTexture)
+			return E_FAIL;
+
+		return m_pCurCubeMapTexture->Bind_ShaderResource(pShader, pConstantName, m_iCurCubeMapIndex);
+	}
+		
+
+	return m_pPrevCubeMapTexture->Bind_ShaderResource(pShader, pConstantName, m_iPrevCubeMapIndex);
+}
+
+HRESULT CPipeLine::Bind_CurCubeMapTexture(CShader* pShader, const _char* pConstantName)
+{
+	if (nullptr == m_pCurCubeMapTexture)
 		return E_FAIL;
 
-	return m_pCubeMapTexture->Bind_ShaderResource(pShader, pConstantName);
+	return m_pCurCubeMapTexture->Bind_ShaderResource(pShader, pConstantName, m_iCurCubeMapIndex);
 }
 
 HRESULT CPipeLine::Initialize()
@@ -102,7 +128,7 @@ HRESULT CPipeLine::Initialize()
 	return S_OK;
 }
 
-void CPipeLine::Tick()
+void CPipeLine::Tick(_float fTimeDelta)
 {
 	for (size_t i = 0; i < D3DTS_END; i++)
 	{
@@ -111,6 +137,9 @@ void CPipeLine::Tick()
 
 	memcpy(&m_vCamPosition, &m_TransformInverseMatrices[D3DTS_VIEW].m[3][0], sizeof(_float4));
 
+	m_fLerpTimeDelta += fTimeDelta;
+	m_fLerpTimeDelta = min(1.f, m_fLerpTimeDelta);
+
 	//// For. Cascade
 	//Update_CascadeFrustum();
 	//Update_CascadeProjMatrices();
@@ -118,7 +147,7 @@ void CPipeLine::Tick()
 
 HRESULT CPipeLine::Render()
 {
-	if (m_pCubeMapTexture == nullptr)
+	if (m_pCurCubeMapTexture == nullptr)
 		return S_OK;
 
 	if (!m_isRender)
@@ -126,10 +155,10 @@ HRESULT CPipeLine::Render()
 	m_isRender = false;
 
 	m_pHDRTexture->Clear();
-	m_pIrradialTexture->Clear();
+	m_pCurIrradialTexture->Clear();
 
 	//1. HDR
-	if (FAILED(m_pCubeMapTexture->Bind_ShaderResource(m_pShaderCom, "g_CubeTexture")))
+	if (FAILED(m_pCurCubeMapTexture->Bind_ShaderResource(m_pShaderCom, "g_CubeTexture", m_iCurCubeMapIndex)))
 		return E_FAIL;
 	if (FAILED(m_pHDRTexture->Bind_OutputShaderResource(m_pShaderCom, "OutputTexture")))
 		return E_FAIL;
@@ -141,7 +170,7 @@ HRESULT CPipeLine::Render()
 	// 2. Irradiance
 	if (FAILED(m_pHDRTexture->Bind_ShaderResource(m_pShaderCom, "g_CubeTexture")))
 		return E_FAIL;
-	if (FAILED(m_pIrradialTexture->Bind_OutputShaderResource(m_pShaderCom, "OutputTexture")))
+	if (FAILED(m_pCurIrradialTexture->Bind_OutputShaderResource(m_pShaderCom, "OutputTexture")))
 		return E_FAIL;
 
 	if(FAILED(m_pShaderCom->Render(1, 8,8, 6)))
@@ -193,7 +222,7 @@ void CPipeLine::Render_Debug()
 	m_pVIBuffer->Bind_Buffers();
 	m_pGameInstance->GetDeferredShader()->Bind_Matrix("g_ViewMatrix", &ViewMatrix);
 	m_pGameInstance->GetDeferredShader()->Bind_Matrix("g_ProjMatrix", &ProjMatrix);
-	m_pIrradialTexture->Render_Debug(m_pGameInstance->GetDeferredShader(), m_pVIBuffer);
+	m_pCurIrradialTexture->Render_Debug(m_pGameInstance->GetDeferredShader(), m_pVIBuffer);
 }
 
 #endif
@@ -227,8 +256,16 @@ HRESULT CPipeLine::Create_Texture()
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
 
-	m_pIrradialTexture = pRenderTarget;
-	m_pIrradialTexture->Clear();
+	m_pCurIrradialTexture = pRenderTarget;
+	m_pCurIrradialTexture->Clear();
+
+	pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, 256, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, TEXT("Target_Irradiance"), _float4(1.f, 1.f, 1.f, 1.f), false);
+	if (nullptr == pRenderTarget)
+		return E_FAIL;
+
+	m_pPrevIrradialTexture = pRenderTarget;
+	m_pPrevIrradialTexture->Clear();
+
 
 #ifdef _DEBUG
 	_float fSize = 150;
@@ -269,9 +306,13 @@ void CPipeLine::Free()
 	Safe_Release(m_pSpotLight);
 	m_pSpotLight = nullptr;
 
-	Safe_Release(m_pCubeMapTexture);
+	Safe_Release(m_pCurCubeMapTexture);
 	Safe_Release(m_pHDRTexture);
-	Safe_Release(m_pIrradialTexture);
+	Safe_Release(m_pCurIrradialTexture);
+
+	Safe_Release(m_pPrevCubeMapTexture);
+	Safe_Release(m_pPrevIrradialTexture);
+
 	Safe_Release(m_pShaderCom);
 
 	Safe_Release(m_pGameInstance);

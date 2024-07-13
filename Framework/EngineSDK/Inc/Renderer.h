@@ -57,7 +57,6 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT						SetUp_RenderTargets_Pre_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_PostProcessing_Result(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT						SetUp_RenderTargets_MotionBlur(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_SSR(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_DOF(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_GODRAY(const D3D11_VIEWPORT& ViewportDesc);
@@ -65,8 +64,6 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT						SetUp_RenderTarget_SubResult(const D3D11_VIEWPORT& ViewportDesc);
 	// 잘 모름 
 	HRESULT						SetUp_RenderTargets_Distortion(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT						SetUp_RenderTargets_Emissive(const D3D11_VIEWPORT& ViewportDesc);
-
 #pragma region Effect
 	HRESULT						SetUp_RenderTargets_Effect_Bloom(const D3D11_VIEWPORT& ViewportDesc);
 #pragma endregion
@@ -155,14 +152,13 @@ private:
 private:
 	// 잘 모름
 	HRESULT						Render_Distortion();
-	HRESULT						Render_Emissive();
+
 
 private:
 	HRESULT						Render_Lights();
 	HRESULT						Render_Light_Result();
 
 private:
-	HRESULT						Render_MotionBlur();
 	HRESULT						Render_SSR();
 	HRESULT						Render_DOF();
 	HRESULT						Render_Volumetric();

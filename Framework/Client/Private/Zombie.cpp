@@ -434,7 +434,7 @@ void CZombie::Tick(_float fTimeDelta)
 				{
 					auto Type = m_pController->Get_Hit_Collider_Type();
 
-					if(Type != COLLIDER_TYPE::CHEST && Type != COLLIDER_TYPE::PELVIS && Type != COLLIDER_TYPE::HEAD)
+					if(Type != COLLIDER_TYPE::CHEST /*&& Type != COLLIDER_TYPE::PELVIS*/ && Type != COLLIDER_TYPE::HEAD)
 					{
 						for (auto& pPartObject : m_PartObjects)
 						{
@@ -442,6 +442,25 @@ void CZombie::Tick(_float fTimeDelta)
 								pPartObject->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
 
 							m_bPartial_Ragdoll = true;
+
+							BREAK_PART eBreakType = BREAK_PART::_END;
+							switch (eType)
+							{
+							case COLLIDER_TYPE::CALF_L:
+								eBreakType = BREAK_PART::_L_LEG;
+								break;
+							case COLLIDER_TYPE::CALF_R:
+								eBreakType = BREAK_PART::_R_LEG;
+								break;
+							case COLLIDER_TYPE::FOREARM_L:
+								eBreakType = BREAK_PART::_L_ARM;
+								break;
+							case COLLIDER_TYPE::FOREARM_R:
+								eBreakType = BREAK_PART::_R_ARM;
+								break;
+							}
+
+							m_pPart_Breaker->Break(eBreakType);
 						}
 
 						auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
@@ -584,7 +603,7 @@ HRESULT CZombie::Render()
 		}
 
 
-		if (FAILED(m_pShaderCom->Begin(0)))
+		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_DEFAULT)))
 			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(i));
