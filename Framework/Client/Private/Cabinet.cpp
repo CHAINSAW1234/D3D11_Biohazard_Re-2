@@ -34,6 +34,9 @@ HRESULT CCabinet::Initialize(void* pArg)
 
 	INTERACTPROPS_DESC* pObj_desc = (INTERACTPROPS_DESC*)pArg;
 	m_bLock = pObj_desc->tagCabinet.bLock;
+	for (size_t i = 0; i < 10; i++)
+		m_iPassWord[i] = pObj_desc->tagCabinet.iLockNum[i];
+
 	if (m_tagPropDesc.strGamePrototypeName.find("006") != string::npos)
 		m_eCabinetType = TYPE_LEON;
 	else if (m_tagPropDesc.strGamePrototypeName.find("003") != string::npos)
@@ -259,6 +262,7 @@ HRESULT CCabinet::Add_PartObjects()
 			LockDesc.pParentsTransform = m_pTransformCom;
 			LockDesc.pState = &m_eState; //현재 캐비넷 본체의 상황을 받는거야
 			LockDesc.pLockState = &m_eLockState; //제어당할 스테이트
+			LockDesc.pPassword = (_int*)m_iPassWord;
 			LockDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_014_diallock01a_Anim");
 			LockDesc.iLockType = CLock_Cabinet::OPENLOCKER_DIAL;
 			/*if(m_tagPropDesc.tagCabinet.iItemIndex==0)*/

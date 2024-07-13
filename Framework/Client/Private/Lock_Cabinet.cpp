@@ -31,6 +31,7 @@ HRESULT CLock_Cabinet::Initialize(void* pArg)
 		BODY_LOCK_CABINET_DESC* desc = (BODY_LOCK_CABINET_DESC*)pArg;
 		m_eLockType = (LOCK_TYPE)desc->iLockType;
 		m_pLockState = desc->pLockState;
+		m_pPassword = desc->pPassword;
 	}
 
 	if (FAILED(Add_Components()))
@@ -188,6 +189,31 @@ HRESULT CLock_Cabinet::Initialize_Model()
 
 	if (m_eLockType == OPENLOCKER_DIAL)
 	{
+		vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
+
+		vector<string>			ResultMeshTags;			
+		_int iFirst = m_pPassword[0] / 5;
+		string strFirstTag = "11" + to_string(iFirst+1);
+		_int iSecond = m_pPassword[1] / 5;	
+		string strSecondtTag = "12" + to_string(iSecond+1);
+		_int iThird = m_pPassword[2] / 5;
+		string strThirdTag = "13" + to_string(iThird + 1);
+		for (auto& strMeshTag : MeshTags)
+		{
+			if ((strMeshTag.find(strFirstTag) != string::npos) ||(strMeshTag.find(strSecondtTag) != string::npos) || (strMeshTag.find(strThirdTag) != string::npos) || (strMeshTag.find("Group_0_") != string::npos) || (strMeshTag.find("Group_1_") != string::npos))
+				ResultMeshTags.push_back(strMeshTag);
+			
+		}
+
+		for (auto& strMeshTag : MeshTags)
+		{
+			m_pModelCom->Hide_Mesh(strMeshTag, true);
+		}
+
+		for (auto& strMeshTag : ResultMeshTags)
+		{
+			m_pModelCom->Hide_Mesh(strMeshTag, false);
+		}
 
 
 	}

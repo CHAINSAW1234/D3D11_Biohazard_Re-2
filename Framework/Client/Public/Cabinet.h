@@ -73,7 +73,7 @@ private:
 	_bool				m_bLock =	{ false };
 	_bool				m_bActivity = { false };
 	_bool				m_bCamera = { false };
-
+	_int				m_iPassWord[10] = {1,};
 	_ubyte			m_eState = { CABINET_CLOSED };
 	_ubyte			m_eLockState = { STATIC_LOCK };
 	_int				m_eCabinetType = { TYPE_NORMAL };
