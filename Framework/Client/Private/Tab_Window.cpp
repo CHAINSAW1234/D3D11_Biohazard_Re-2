@@ -421,10 +421,30 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 
 void CTab_Window::INTERACT_PROPS_Operation(_float fTimeDelta)
 {
-	m_pInventory_Manager->Tick(fTimeDelta);
-	ITEM_NUMBER eSelectedItemNum = m_pInventory_Manager->Get_Selected_ItemNum();
-	m_pItem_Discription->Set_Item_Number(eSelectedItemNum);
-	m_pItem_Discription->Tick(fTimeDelta);
+	switch (m_eSequence)
+	{
+	case Client::POP_UP: {
+		m_pInventory_Manager->Tick(fTimeDelta);
+		ITEM_NUMBER eSelectedItemNum = m_pInventory_Manager->Get_Selected_ItemNum();
+		m_pItem_Discription->Set_Item_Number(eSelectedItemNum);
+		m_pItem_Discription->Tick(fTimeDelta);
+		break;
+	}
+		
+	case Client::UI_IDLE: {
+		break;
+	}
+		
+	case Client::HIDE: {
+		break;
+	}
+	
+	default:
+		break;
+	}
+
+
+
 }
 
 void CTab_Window::ItemIven_EventHandle(_float fTimeDelta)
@@ -586,12 +606,19 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 	}
 }
 
-void CTab_Window::interact_Props(CGameObject* pPickedUp_Item)
+void CTab_Window::Interact_Props(CGameObject* pPickedUp_Item)
 {
 	CInteractProps* pProp = dynamic_cast<CInteractProps*>(pPickedUp_Item);
 	if (nullptr == pProp)
 		return;
-	_int iItemIndex = pProp->Get_NeedItem_Index(); // 필요한 아이템 인덱스 get tto da ze -
+
+	m_bDead = false;
+	m_eWindowType = INTERACT_PROPS;
+	m_eSequence = POP_UP;
+	m_pPickedUp_Item = pPickedUp_Item;
+	m_isAlphaControl = true;
+
+	_int iRequiredItem = pProp->Get_NeedItem_Index(); // 필요한 아이템 인덱스 get tto da ze -
 	pProp->Do_Interact_Props(); // 프롭의 동작 함수 (올바른 아이템을 사용했을시 이 함수 호출- 일단 창문만 해놨어요)
 }
 

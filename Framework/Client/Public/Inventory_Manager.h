@@ -46,6 +46,8 @@ private:
 	void DISCARD_ITEM_Operation(_float fTimeDelta);			
 	//콘텍스트 UI
 	void CONTEXTUI_SELECT_Operation(_float fTimeDelta);
+	//인터렉트 아이템
+	void INTERACT_ITEM_Operation(_float fTimeDelta);
 
 private:
 	void Switch_ItemPos(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI);
@@ -77,8 +79,11 @@ public:
 	_bool* Get_NoHover_InvenBox() { return &m_IsNoOneHover; }
 
 public:
-	//Pick_Up_Operation 세팅
+	//PICK_UP_ITEM_Operation 세팅
 	void PUO_Seting(ITEM_NUMBER eAcquiredItem, _int iItemQuantity = 1);
+
+	//INTERACT_ITEM_Operation 세팅
+	void IIO_Seting(ITEM_NUMBER eRequested_Item);
 
 	//인벤토리 밖에서 아이템을 사용하게 되었을때 쓰는 함수(ex 총알)
 	void UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage);
@@ -152,6 +157,9 @@ private:
 
 	/*for. Equiped Item*/
 	ITEM_NUMBER						m_eEquipedItem[4] = { ITEM_NUMBER_END, ITEM_NUMBER_END, ITEM_NUMBER_END, ITEM_NUMBER_END};
+
+	/*for. Interact Item*/
+	ITEM_NUMBER						m_eRequested_Item = { ITEM_NUMBER_END };
 
 private:
 	HRESULT Init_InvenSlot();

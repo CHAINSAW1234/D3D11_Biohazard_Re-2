@@ -64,7 +64,7 @@ public:
 	void			PickUp_Item(CGameObject* pPickedUp_Item);
 
 	//«√∑π¿ÃæÓ∞° ªÛ»£¿€øÎ ∞°¥…«— Prop∞˙ ¡¢√À«ﬂ¿ª∂ß »£≠Ñ«œ¥¬ «‘ºˆ
-	void			interact_Props(CGameObject* pPickedUp_Item);
+	void			Interact_Props(CGameObject* pPickedUp_Item);
 
 	//æ∆¿Ã≈∆ ¿Œ∫•≈‰∏Æø° ≥÷±‚
 	void			AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity = 1);
@@ -112,7 +112,7 @@ private:
 	_float				m_fCurTime = { 0.f };
 
 	/*for. Picked Up Item*/
-	CGameObject*		m_pPickedUp_Item = { nullptr };
+	CGameObject*		m_pPickedUp_Item = { nullptr };//PickUp∂ß¥¬ ¡÷¿∫ æ∆¿Ã≈€ Interact∂ß¥¬ º“≈Î«— æ∆¿Ã≈€
 	UI_OPERRATION		m_eSequence = { STATE_END };
 
 	vector<ITEM_NUMBER> m_vecCollect_ITEM;

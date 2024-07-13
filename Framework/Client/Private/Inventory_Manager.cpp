@@ -114,6 +114,12 @@ void CInventory_Manager::Tick(_float fTimeDelta)
 		PICK_UP_ITEM_Operation(fTimeDelta);
 		break;
 	}
+	case Client::INTERACT_ITEM: {
+		INTERACT_ITEM_Operation(fTimeDelta);
+		break;
+	}
+
+
 								 
 	default:
 		break;
@@ -892,8 +898,6 @@ void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 		break;
 	}
 
-
-
 	if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
 	{
 		m_eInven_Manager_State = EVENT_IDLE;
@@ -901,8 +905,75 @@ void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 		m_pSelected_ItemUI = nullptr;
 		return;
 	}
+}
 
+void CInventory_Manager::INTERACT_ITEM_Operation(_float fTimeDelta)
+{
+	switch (m_eTaskSequence)
+	{
+	case Client::CInventory_Manager::SETING: {
+		//_bool IsNoOneHover = true;
+		m_IsNoOneHover = true;
+		CInventory_Slot* pHoveredSlot = nullptr;
 
+		for (_uint i = 0; i < m_iInvenCount; i++)
+		{
+			if (true == m_vecInvenSlot[i]->IsMouseHover())
+			{
+				m_IsNoOneHover = false;
+				pHoveredSlot = m_vecInvenSlot[i];
+			}
+		}
+
+		if (false == m_IsNoOneHover)
+		{
+			_float4 HoveredPos = static_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
+			HoveredPos.z = Z_POS_HIGH_LIGHTER;
+			m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
+
+			for (auto& iter : m_vecItem_UI)
+			{
+				if (true == iter->IsMouseHover() && true == iter->Get_isWorking())
+				{
+					m_pSelected_ItemUI = iter;
+					break;
+				}
+
+				else
+					m_pSelected_ItemUI = nullptr;
+			}
+
+			if (nullptr != m_pSelected_ItemUI)
+			{
+				if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+				{
+					if (true == m_pSelected_ItemUI->IsMouseHover() && true == m_pSelected_ItemUI->Get_isWorking())
+					{
+						m_eTaskSequence = SELECT;
+						_float3 TempTrashCanValue = _float3(HoveredPos.x, HoveredPos.y, Z_POS_CONTEXT_MENU);
+						m_pContextMenu->Set_Operation(UNCOMBINABLE_PICKED_UP, false, TempTrashCanValue, TempTrashCanValue);
+					}
+				}
+			}
+		}
+		break;
+	}
+		
+		
+	case Client::CInventory_Manager::SELECT: {
+		break;
+	}
+		
+	case Client::CInventory_Manager::APPLY: {
+		break;
+	}
+		
+
+	default:
+		break;
+	}
+
+	
 }
 
 void CInventory_Manager::Switch_ItemPos(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI)
@@ -1038,6 +1109,14 @@ void CInventory_Manager::PUO_Seting(ITEM_NUMBER eAcquiredItem, _int iItemQuantit
 	_vector TempTrashCanValue = XMVectorSet(EmptyPos.x, EmptyPos.y, Z_POS_ITEM_UI, 1.f);
 	m_pDragShadow->Set_ItemUI(eAcquiredItem, DRAG_SHADOW, TempTrashCanValue, iItemQuantity);
 	m_pDragShadow->Set_Dead(false);
+	m_eTaskSequence = SETING;
+}
+
+void CInventory_Manager::IIO_Seting(ITEM_NUMBER eRequiredItem)
+{
+	Set_OnOff_Inven(false);
+	Set_InventoryEvent(INTERACT_ITEM);
+	m_eRequested_Item = eRequiredItem;
 	m_eTaskSequence = SETING;
 }
 

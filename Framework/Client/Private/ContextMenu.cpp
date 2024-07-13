@@ -183,7 +183,7 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 		m_iContextMenuCount = 4;
 		
 		m_eContextType = eItemType;
-
+		
 		if (false == bActive)
 		{
 			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 0);
@@ -247,12 +247,12 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 
 		if (false == bActive)
 		{
-			//static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Frame_Change_ValueColor(0, 0);
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Frame_Change_ValueColor(0, 0);
 		}
 
 		else
 		{
-			//static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Frame_Change_ValueColor(0, 1);
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Frame_Change_ValueColor(0, 1);
 		}
 
 		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_ChildTextureNum(0, 3);
@@ -326,6 +326,32 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 
 		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 2);
 		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("조합"));
+
+		m_eContextType = eItemType;
+		break;
+	}
+
+	case Client::INTERACT: {
+		m_iContextMenuCount = 3;
+
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 4);
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("사용"));
+
+		if (false == bActive)
+		{
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Frame_Change_ValueColor(0, 0);
+		}
+
+		else
+		{
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Frame_Change_ValueColor(0, 1);
+		}
+
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_ChildTextureNum(0, 3);
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_MyChild_Text(0, 0, TEXT("검사"));
+
+		static_cast<CContextMenu*>(m_vecChildUI[2])->Set_ChildTextureNum(0, 2);
+		static_cast<CContextMenu*>(m_vecChildUI[2])->Set_MyChild_Text(0, 0, TEXT("조합"));
 
 		m_eContextType = eItemType;
 		break;

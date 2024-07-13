@@ -1771,6 +1771,15 @@ void CPlayer::PickUp_Item(CGameObject* pPickedUp_Item)
 	m_isCamTurn = true;
 }
 
+void CPlayer::Interact_Props(CGameObject* pPickedUp_Item)
+{
+	m_pGameInstance->Set_IsPaused(true);
+
+	m_pTabWindow->Interact_Props(pPickedUp_Item);
+
+	m_isCamTurn = true;
+}
+
 void CPlayer::RayCast_Shoot()
 {
 	_float4 vBlockPoint;

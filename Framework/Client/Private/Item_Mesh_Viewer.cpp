@@ -674,129 +674,249 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 	case Client::woodbarricade01a:
 		m_fPopupHide_EndDist = 2.f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::blastingfuse01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
 		m_matMoveCenter = XMMatrixTranslation(-0.05f, -0.01f, 0.f);
 		break;
 	case Client::_9vbattery01a:
 		m_fPopupHide_EndDist = 0.2f;
 		m_pTransformCom->Set_Scaled(1.5f, 1.5f, 1.5f);
+		m_fCurSize = 1.5f;
+		m_fStartSize = 1.5f;
+		m_fEndSize = 1.f;
 		m_matMoveCenter = XMMatrixTranslation(0.f, 0.02f, 0.f);
 		break;
 	case Client::gunpowder01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::gunpowder01b:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::strengtheningyellow01a:
 		m_fPopupHide_EndDist = 0.1f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::vp70powerup:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::vp70longmagazine:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::shotgunpartsstock_00:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::shotgunpartsbarrel:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::unicornmedal01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::spadekey01a:
 		m_fPopupHide_EndDist = 0.14f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::cardkeylv101a:
 		m_fPopupHide_EndDist = 0.13f;
 		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::cardkeylv201a:
 		m_fPopupHide_EndDist = 0.13f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::valvehandle01a:
 		m_fPopupHide_EndDist = 0.21f;
 		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		m_fCurSize = 0.01f;
+		m_fStartSize = 0.01f;
+		m_fEndSize = 0.007f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::kingscepter01a:
 		m_fPopupHide_EndDist = 0.22f;
 		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		m_fCurSize = 0.01f;
+		m_fStartSize = 0.01f;
+		m_fEndSize = 0.007f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::virginheart01a:
 		m_fPopupHide_EndDist = 0.2f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::blankkey01a:
 		m_fPopupHide_EndDist = 0.15f;
 		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		m_fCurSize = 0.01f;
+		m_fStartSize = 0.01f;
+		m_fEndSize = 0.007f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::statuebook01a:
-		m_fPopupHide_EndDist = 0.4f;
+		m_fPopupHide_EndDist = 1.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::statuehand01a:
-		m_fPopupHide_EndDist = 0.4f;
+		m_fPopupHide_EndDist = 1.4f;
 		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		m_fCurSize = 0.01f;
+		m_fStartSize = 0.01f;
+		m_fEndSize = 0.007f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::virginmedal01a:
 		m_fPopupHide_EndDist = 0.2f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::diakey01a:
 		m_fPopupHide_EndDist = 0.2f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::virginmedal02a:
 		m_fPopupHide_EndDist = 0.2f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::chaincutter01a:
 		m_fPopupHide_EndDist = 0.2f;
 		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		m_fCurSize = 0.01f;
+		m_fStartSize = 0.01f;
+		m_fEndSize = 0.007f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::clairesbag01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::HandGun:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::ShotGun:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::Flash_Bomb:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::Grenade:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::vp70stock:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::portablesafe:
 		m_fPopupHide_EndDist = 0.15f;
 		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		m_fCurSize = 0.01f;
+		m_fStartSize = 0.01f;
+		m_fEndSize = 0.007f;
 		m_matMoveCenter = XMMatrixTranslation(0.f, -0.04f, 0.f);
 		break;
 
