@@ -1816,7 +1816,6 @@ void CModel::Get_Child_ZointIndices(string strStartBoneTag, const string& strEnd
 			break;
 		}
 
-
 		ChildZointIndices.push_front(iCurrentBoneIndex);
 		iCurrentBoneIndex = iParentIndex;
 	}

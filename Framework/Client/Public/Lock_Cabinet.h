@@ -53,7 +53,8 @@ private:
 	_ubyte*							m_pLockState = { nullptr };
 
 	_float4x4*						m_pSocketMatrix = { nullptr };
-
+	_float m_fRotationAngle = { 0 };
+	_bool m_isRoation = { false };
 
 public:
 	static CLock_Cabinet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

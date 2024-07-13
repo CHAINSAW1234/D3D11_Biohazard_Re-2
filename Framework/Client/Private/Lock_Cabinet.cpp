@@ -69,10 +69,10 @@ void CLock_Cabinet::Late_Tick(_float fTimeDelta)
 	if (m_bDead)
 		return;
 
-	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
-	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 	m_eLockType == SAFEBOX_DIAL ? Safebox_Late_Tick(fTimeDelta) : OpenLocker_Late_Tick(fTimeDelta);
 
+	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
+	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 }
 
 HRESULT CLock_Cabinet::Render()
@@ -197,33 +197,43 @@ HRESULT CLock_Cabinet::Initialize_Model()
 
 void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 {
-	if (DOWN == m_pGameInstance->Get_KeyState('D'))
-	{
-		m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta);
-
-
-	}
-
-	else if (DOWN == m_pGameInstance->Get_KeyState('A'))
-	{
-		m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), -fTimeDelta);
-	}
-
 	switch (*m_pLockState)
 	{
 	case CCabinet::STATIC_LOCK:
 	{
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pLockState);
-
-		_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
-		_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-		m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 	}
 	break;
 
 	case CCabinet::LIVE_LOCK:
 	{
-		
+		// 회전 각도가 360도를 넘지 않도록 조정
+		if (m_fRotationAngle > XM_2PI)
+			m_isRoation = true;
+
+		else if (m_fRotationAngle <= 0)
+			m_isRoation = false;
+
+		if(m_fRotationAngle)
+			m_fRotationAngle -= fTimeDelta;
+
+		else
+			m_fRotationAngle += fTimeDelta;
+
+		// 회전 행렬 생성
+		_vector vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
+		_vector vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, m_fRotationAngle) };
+		_matrix RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
+	
+		// 뼈 회전 적용
+		vector<string> BoneNames = { m_pModelCom->Get_BoneNames() };
+		list<_uint> ChildJointIndices;
+		m_pModelCom->Get_Child_ZointIndices("RootNode", "_01_end_end", ChildJointIndices);
+
+		for (auto& iJointIndex : ChildJointIndices)
+		{
+			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
+		}
 	}
 	break;
 
@@ -237,10 +247,16 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 
+	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
+	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
+
+	_float3				vDirection = { };
+	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vDirection);
+	
 	Get_SpecialBone_Rotation(); // for UI
 
 }

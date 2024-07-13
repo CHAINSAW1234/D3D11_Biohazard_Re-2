@@ -68,6 +68,7 @@ void CCabinet::Tick(_float fTimeDelta)
 	}
 	if (m_bCamera)
 	{
+		m_bCamera = false;
 		CPart_InteractProps* pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK]);
 		m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + pPartLock->GetLookDir_Vector() * 0.15f + _vector{ 0.05f,0.1f,0.f,0.f });
 		m_pCameraGimmick->LookAt(pPartLock->Get_Pos());

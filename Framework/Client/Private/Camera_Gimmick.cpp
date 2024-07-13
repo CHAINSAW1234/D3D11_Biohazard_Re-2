@@ -37,6 +37,57 @@ HRESULT CCamera_Gimmick::Initialize(void * pArg)
 
 void CCamera_Gimmick::Tick(_float fTimeDelta)
 {
+	if (PRESSING == m_pGameInstance->Get_KeyState(VK_MBUTTON))
+	{
+		if (PRESSING == m_pGameInstance->Get_KeyState('A'))
+		{
+			m_pTransformCom->Go_Left(fTimeDelta / 1.5f);
+		}
+		if (PRESSING == m_pGameInstance->Get_KeyState('D'))
+		{
+			m_pTransformCom->Go_Right(fTimeDelta / 1.5f);
+		}
+		if (PRESSING == m_pGameInstance->Get_KeyState('W'))
+		{
+			m_pTransformCom->Go_Straight(fTimeDelta / 1.5f);
+		}
+		if (PRESSING == m_pGameInstance->Get_KeyState('S'))
+		{
+			m_pTransformCom->Go_Backward(fTimeDelta / 1.5f);
+		}
+
+		POINT		ptDeltaPos = { m_pGameInstance->Get_MouseDeltaPos() };
+		_vector		vUp = { XMVectorSet(0.f, 1.f, 0.f, 0.f) };
+
+		if ((_long)0 != ptDeltaPos.x)
+		{
+			m_pTransformCom->Turn(vUp, fTimeDelta * (_float)ptDeltaPos.x * m_fMouseSensor);
+		}
+
+		_vector		vRight = { m_pTransformCom->Get_State_Vector(CTransform::STATE_RIGHT) };
+
+		if ((_long)0 != ptDeltaPos.y)
+		{
+			m_pTransformCom->Turn(vRight, fTimeDelta * (_float)ptDeltaPos.y * m_fMouseSensor);
+		}
+
+		POINT ptPos = {};
+
+		GetCursorPos(&ptPos);
+		ScreenToClient(g_hWnd, &ptPos);
+
+		RECT rc = {};
+		GetClientRect(g_hWnd, &rc);
+
+		ptPos.x = _long(_float(rc.right - rc.left) * 0.5f);
+		ptPos.y = _long(_float(rc.bottom - rc.top) * 0.5f);
+
+		m_pGameInstance->Set_MouseCurPos(ptPos);
+
+		ClientToScreen(g_hWnd, &ptPos);
+		SetCursorPos(ptPos.x, ptPos.y);
+	}
+
 	__super::Bind_PipeLines();
 }
 
