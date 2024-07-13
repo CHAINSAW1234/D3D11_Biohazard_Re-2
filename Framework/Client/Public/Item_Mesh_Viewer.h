@@ -47,9 +47,17 @@ private:
 	OPERATION_TYPE		m_eOperType = { OPER_TYPE_END };
 
 
-	_float				m_fDistCam = { 0.f };
+	_float				m_fDistCamZ = { 0.f };
+	_float				m_fDistCamX = { 0.f };
+	
+	_float				m_fCurSize = { 0.f };
+	_float				m_fStartSize = { 0.f };
+	_float				m_fEndSize = { 0.f };
+
 	_float				m_fPopupHide_CurTime = { 0.f };
 	_float				m_fPopupHide_EndDist = { 0.4f };
+	_float				m_fPickupIdle_StartDist = { 0.f };
+	_float				m_fPickupHide_StartDist = { 0.f };
 
 	_bool				m_bStop = { true };
 

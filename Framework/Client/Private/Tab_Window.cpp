@@ -363,25 +363,17 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 			_int iCollectNum = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_iItemIndex();
 			m_vecCollect_ITEM.push_back(static_cast<ITEM_NUMBER>(iCollectNum));
 			m_pPickedUp_Item->Set_Dead(true);
-			m_pPickedUp_Item = nullptr;
-			OnOff_EventHandle();
-			m_pGameInstance->Set_IsPaused(false);
 			m_fCurTime = 0.f;
-
-			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-			pPlayer->Set_isCamTurn(false);
+			m_eSequence = HIDE;
+			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END, 1);
 			break;
 		}
 
 		else if (DROP_ITEM == m_pInventory_Manager->Get_InventoryEvent())
 		{
-			m_pPickedUp_Item = nullptr;
-			OnOff_EventHandle();
-			m_pGameInstance->Set_IsPaused(false);
 			m_fCurTime = 0.f;
-
-			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-			pPlayer->Set_isCamTurn(false);
+			m_eSequence = HIDE;
+			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END, 1);
 			break;
 		}
 
@@ -399,6 +391,24 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 		
 
 	case Client::HIDE: {
+		if (m_fCurTime / 0.5f <1.f)
+		{
+			m_fCurTime += fTimeDelta;
+			m_pItem_Mesh_Viewer->Tick(fTimeDelta);
+			m_pItem_Discription->Tick(fTimeDelta);
+			m_pInventory_Manager->Tick(fTimeDelta);
+		}
+
+		else
+		{
+			m_fCurTime = 0.f;
+			m_eSequence = STATE_END;
+			m_pPickedUp_Item = nullptr;
+			m_pGameInstance->Set_IsPaused(false);
+			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+			pPlayer->Set_isCamTurn(false);
+			OnOff_EventHandle();
+		}
 		break;
 	}
 		

@@ -56,10 +56,10 @@ HRESULT CInventory_Manager::Initialize()
 
 void CInventory_Manager::FirstTick_Seting()
 {
-	//AddItem_ToInven(HandGun, 15);
-	//AddItem_ToInven(ShotGun, 7);
-	//AddItem_ToInven(handgun_bullet01a, 20);
-	//AddItem_ToInven(shotgun_bullet01a, 20);
+	AddItem_ToInven(HandGun, 15);
+	AddItem_ToInven(ShotGun, 7);
+	AddItem_ToInven(handgun_bullet01a, 20);
+	AddItem_ToInven(shotgun_bullet01a, 20);
 }
 
 void CInventory_Manager::Tick(_float fTimeDelta)
@@ -495,7 +495,9 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 
 	case Client::clairesbag01a: {
 		m_iInvenCount++;
-		m_vecInvenSlot[m_iInvenCount-1]->Set_Dead(false);
+		m_vecInvenSlot[m_iInvenCount - 1]->Set_Dead(false);
+		m_iInvenCount++;
+		m_vecInvenSlot[m_iInvenCount - 1]->Set_Dead(false);
 		break;
 	}
 	default:

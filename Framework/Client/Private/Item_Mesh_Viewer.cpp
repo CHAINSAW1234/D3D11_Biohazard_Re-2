@@ -13,9 +13,13 @@ constexpr _float	POPUP_HIDE_START_RADIAN = 0.f;
 constexpr _float	POPUP_HIDE_END_RADIAN = 360.f;
 
 constexpr _float	POPUP_HIDE_START_DIST = 10.f;
-//constexpr _float	POPUP_HIDE_END_DIST = 0.4f;
-constexpr _float	PICK_UP_IDLE_DIST = 3.f;
+constexpr _float	PICKUP_HIDE_TIME_LIMIT = 0.2f;
 
+constexpr _float	PICK_UP_IDLE_X_DIST = -0.2f;
+
+constexpr _float	ZERO = 0.f;
+
+//constexpr _float	POPUP_HIDE_END_DIST = 0.4f;
 
 CItem_Mesh_Viewer::CItem_Mesh_Viewer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -58,7 +62,7 @@ HRESULT CItem_Mesh_Viewer::Initialize(void* pArg)
 
 	m_pCameraFree = dynamic_cast<CCamera_Free*>(pCamera);
 
-	m_fDistCam = POPUP_HIDE_START_DIST;
+	m_fDistCamZ = POPUP_HIDE_START_DIST;
 
 	Safe_AddRef(m_pCameraFree);
 
@@ -69,7 +73,13 @@ HRESULT CItem_Mesh_Viewer::Initialize(void* pArg)
 
 void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
 {
-	_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCam) + m_pCameraFree->Get_Position_Vector();
+	if(PICKUPITEM == m_eOperType)
+		m_pTransformCom->Set_Scaled(m_fCurSize, m_fCurSize, m_fCurSize);
+
+	_vector vFrontCamPos = (XMVector4Normalize(m_pCameraFree->GetLookDir_Vector()) * m_fDistCamZ) + m_pCameraFree->Get_Position_Vector();
+	_vector vCamRight = m_pCameraFree->Get_Transform()->Get_State_Vector(CTransform::STATE_RIGHT);
+	vCamRight *= m_fDistCamX;
+	vFrontCamPos += vCamRight;
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vFrontCamPos);
 
@@ -160,19 +170,21 @@ void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
 	{
 		m_eViewer_State = UI_IDLE;
 		m_fPopupHide_CurTime = 0.f;
-		m_fDistCam = m_fPopupHide_EndDist;
+		m_fDistCamZ = m_fPopupHide_EndDist;
+		m_bStop = true;
 		return;
-	}
+	}	
 
 	if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
 	{
-		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, m_fPopupHide_EndDist,
+		m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_DIST, m_fPopupHide_EndDist,
 			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 
-		_float fRadian = m_pGameInstance->Get_Ease(Ease_OutQuint, POPUP_HIDE_START_RADIAN, XMConvertToRadians(POPUP_HIDE_END_RADIAN),
+		_float fRadian = m_pGameInstance->Get_Ease(Ease_InSine, POPUP_HIDE_START_RADIAN, XMConvertToRadians(POPUP_HIDE_END_RADIAN),
 			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 
 		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), fRadian);
+		//m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fRadian);
 	}
 }
 
@@ -183,11 +195,11 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 	case Client::CItem_Mesh_Viewer::EXAMIN: {
 		if (true == m_pGameInstance->Check_Wheel_Down())
 		{
-			m_fDistCam -= 0.001f;
+			m_fDistCamZ -= 0.001f;
 		}
 		else if (true == m_pGameInstance->Check_Wheel_Up())
 		{
-			m_fDistCam += 0.001f;
+			m_fDistCamZ += 0.001f;
 		}
 
 		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
@@ -204,7 +216,7 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 		}
 		break;
 	}
-		
+
 	case Client::CItem_Mesh_Viewer::PICKUPITEM: {
 		if (false == m_bStop)
 		{
@@ -214,20 +226,23 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			{
 				m_bStop = true;
 				m_fPopupHide_CurTime = 0.f;
-				//m_fDistCam = m_fPopupHide_EndDist;
+				//m_fDistCamZ = m_fPopupHide_EndDist;
 				return;
 			}
 
 			if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
 			{
-				m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fPopupHide_EndDist, PICK_UP_IDLE_DIST,
+				m_fCurSize = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fStartSize, m_fEndSize,
+					m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+
+				m_fDistCamX = m_pGameInstance->Get_Ease(Ease_OutQuint, ZERO, PICK_UP_IDLE_X_DIST,
 					m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
 			}
 		}
-		
+
 		break;
 	}
-		
+
 	default:
 		break;
 	}
@@ -239,20 +254,48 @@ void CItem_Mesh_Viewer::Hide_Operation(_float fTimeDelta)
 
 	if (m_fPopupHide_CurTime > POPUP_HIDE_TIME_LIMIT)
 	{
-		m_eViewer_State = POP_UP;
+		m_eViewer_State = STATE_END;
 		m_fPopupHide_CurTime = 0.f;
-		m_fDistCam = POPUP_HIDE_START_DIST;
+		m_fDistCamZ = POPUP_HIDE_START_DIST;
+		m_fDistCamX = ZERO;
 		m_bDead = true;
 		m_eItem_Number = ITEM_NUMBER_END;
 		m_matMoveCenter = XMMatrixIdentity();
+		m_fPickupHide_StartDist = DIST_CAM_FAR_LIMIIT;
 		return;
 	}
 
-	if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
+	switch (m_eOperType)
 	{
-		m_fDistCam = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fPopupHide_EndDist, POPUP_HIDE_START_DIST,
-			m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+	case Client::CItem_Mesh_Viewer::EXAMIN: {
+		if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
+		{
+			m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fPopupHide_EndDist, POPUP_HIDE_START_DIST,
+				m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+		}
+		break;
 	}
+		
+	case Client::CItem_Mesh_Viewer::PICKUPITEM: {
+		if (1.f > m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT)
+		{
+			m_fDistCamZ = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fPopupHide_EndDist, POPUP_HIDE_START_DIST,
+				m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+
+			m_fDistCamX = m_pGameInstance->Get_Ease(Ease_OutQuint, PICK_UP_IDLE_X_DIST, ZERO,
+				m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+
+			m_fCurSize = m_pGameInstance->Get_Ease(Ease_OutQuint, m_fEndSize, m_fStartSize,
+				m_fPopupHide_CurTime / POPUP_HIDE_TIME_LIMIT);
+		}
+		break;
+	}
+		
+	default:
+		break;
+	}
+
+
 }
 
 void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCallItemType, _uint iOperateType)
@@ -263,21 +306,25 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 		m_bDead = false;
 		m_eItem_Number = eCallItemType;
 		m_eViewer_State = eOperation;
-		m_fDistCam = DIST_CAM_FAR_LIMIIT;
+		m_fDistCamZ = DIST_CAM_FAR_LIMIIT;
+		m_fPopupHide_CurTime = 0.f;
 		Set_ScaleByItemNum(eCallItemType);
-		m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
 		m_eOperType = static_cast<OPERATION_TYPE>(iOperateType);
 		_float4 fCenter = m_vecModelCom[m_eItem_Number]->GetCenterPoint();
-		m_matMoveCenter += XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, -fCenter.z);
+		_matrix TempMat = XMMatrixTranslation(-fCenter.x, -fCenter.y * 0.5f, -fCenter.z);
+		m_matMoveCenter *= TempMat;
+		m_pTransformCom->Look_At(m_pCameraFree->Get_Position_Vector());
 		break;
 	}
-		
+
 	case Client::UI_IDLE: {
 		m_bDead = false;
 		m_eViewer_State = eOperation;
+		m_fPopupHide_CurTime = 0.f;
 		if (PICKUPITEM == iOperateType)
 		{
 			m_bStop = false;
+			m_fPickupIdle_StartDist = m_fDistCamZ;
 		}
 		break;
 	}
@@ -286,6 +333,12 @@ void CItem_Mesh_Viewer::Set_Operation(UI_OPERRATION eOperation, ITEM_NUMBER eCal
 	case Client::HIDE: {
 		m_bDead = false;
 		m_eViewer_State = eOperation;
+		m_fPopupHide_CurTime = 0.f;
+		if (PICKUPITEM == iOperateType)
+		{
+			m_bStop = false;
+			m_fPickupHide_StartDist = m_fDistCamZ;
+		}
 		break;
 	}
 		
@@ -517,66 +570,105 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 	case Client::emergencyspray01a://조금 아래로
 		m_fPopupHide_EndDist = 0.5f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::greenherb01a://조금 아래로
-		m_fPopupHide_EndDist = 0.5f;
+		m_fPopupHide_EndDist = 1.f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::redherb01a://조금 아래로
 		m_fPopupHide_EndDist = 0.5f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::blueherb01a://조금 아래로
 		m_fPopupHide_EndDist = 0.5f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::herbsgg01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::herbsgr01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::herbsgb01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::herbsggb01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::herbsggg01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::herbsgrb01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::herbsrb01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::handgun_bullet01a:
 		m_fPopupHide_EndDist = 0.4f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::shotgun_bullet01a:
 		m_fPopupHide_EndDist = 0.6f;
 		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_fCurSize = 1.f;
+		m_fStartSize = 1.f;
+		m_fEndSize = 0.7f;
 		m_matMoveCenter = XMMatrixIdentity();
 		break;
 	case Client::woodbarricade01a:
