@@ -265,7 +265,7 @@ CRigid_Dynamic* CPhysics_Controller::Create_Rigid_Dynamic_NoConvex(_float fRadiu
 	pRigid_Dynamic->SetObject(pObj);
 	m_vecRigid_Dynamic.push_back(pRigid_Dynamic);
 
-	PxShape* shape = m_Physics->createShape(PxSphereGeometry(fRadius), *m_Physics->createMaterial(0.05f, 0.05f, 0.05f));
+	PxShape* shape = m_Physics->createShape(PxBoxGeometry(fRadius, fRadius, fRadius), *m_Physics->createMaterial(0.5f, 0.5f, 0.1f));
 
 	PxTransform local(PxVec3(0.f,0.f,0.f));
 	shape->setLocalPose(local);
@@ -624,7 +624,7 @@ void CPhysics_Controller::Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uin
 	PxTransform transform(PxVec3(vPos.x, vPos.y, vPos.z));
 
 	PxConvexMeshGeometry geometry(convexMesh);
-	PxMaterial* material = m_Physics->createMaterial(0.05f, 0.05f, 0.01f);
+	PxMaterial* material = m_Physics->createMaterial(0.5f, 0.5f, 0.01f);
 	PxRigidDynamic* body = m_Physics->createRigidDynamic(transform);
 	PxShape* shape = m_Physics->createShape(geometry, *material);
 
