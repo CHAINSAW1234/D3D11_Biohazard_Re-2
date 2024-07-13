@@ -21,6 +21,7 @@ public:
 	{
 		_int iLockType = { SAFEBOX_DIAL };
 		_ubyte* pLockState = { nullptr };
+		_int*		pPassword = {nullptr};
 	}BODY_LOCK_CABINET_DESC;
 private:
 	CLock_Cabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -51,7 +52,7 @@ public:
 private:
 	LOCK_TYPE					m_eLockType = { SAFEBOX_DIAL };
 	_ubyte*							m_pLockState = { nullptr };
-
+	_int*								m_pPassword = { nullptr };
 	_float4x4*						m_pSocketMatrix = { nullptr };
 	_float m_fRotationAngle = { 0 };
 	_bool m_isRoation = { false };
