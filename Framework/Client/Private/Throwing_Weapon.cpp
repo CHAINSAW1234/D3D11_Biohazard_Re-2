@@ -3,6 +3,7 @@
 #include "Light.h"
 #include "Rigid_Dynamic.h"
 #include "Transform.h"
+#include "Impact_Grenade.h"
 
 CThrowing_Weapon::CThrowing_Weapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     :CGameObject { pDevice, pContext }
@@ -67,21 +68,54 @@ HRESULT CThrowing_Weapon::Initialize(void* pArg)
 		m_pParentsTransform->Get_State_Float4(CTransform::STATE_LOOK),
 		m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK));
 
+	m_pImpact_Grenade = CImpact_Grenade::Create(m_pDevice, m_pContext);
+	m_pImpact_Grenade->SetSize(30.f, 30.f);
+
+	m_Explode_Time = GetTickCount64();
+	m_Explode_Delay = 3000;
+
+	m_bRender = true;
+
     return S_OK;
 }
 
 void CThrowing_Weapon::Tick(_float fTimeDelta)
 {
+	if (m_pImpact_Grenade)
+	{
+		m_pImpact_Grenade->Tick(fTimeDelta);
+	}
+
+	if (m_bRender == false)
+		return;
+
 	if (m_pRigid_Dynamic)
 	{
 		m_pTransformCom->Set_WorldMatrix(m_pRigid_Dynamic->GetWorldMatrix_Rigid_Dynamic(m_pTransformCom->Get_Scaled()));
 
 		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
 	}
+
+	if (m_Explode_Time + m_Explode_Delay < GetTickCount64())
+	{
+		m_bRender = false;
+		m_pImpact_Grenade->Set_Render(true);
+		m_pImpact_Grenade->SetPosition(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+
+		m_pRigid_Dynamic->Release_Body();
+	}
 }
 
 void CThrowing_Weapon::Late_Tick(_float fTimeDelta)
 {
+	if (m_pImpact_Grenade)
+	{
+		m_pImpact_Grenade->Late_Tick(fTimeDelta);
+	}
+
+	if (m_bRender == false)
+		return;
+
 	_float3				vDirection = { };
 	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &vDirection);
 
@@ -262,9 +296,10 @@ void CThrowing_Weapon::Initiate(_float4 vPos, _float4 vDir, _float4 vLook)
 
 	m_vDir = Float4_Normalize(m_vDir);
 	_vector vForce = XMLoadFloat4(&m_vDir);
+	vForce = XMVector3Normalize(vForce);
 	vForce = XMVectorScale(vForce, 1.5f);
 	XMStoreFloat4(&m_vDir, vForce);
-	m_vDir.y += m_pGameInstance->GetRandom_Real(0.05f, 0.1f);
+	m_vDir.y += m_pGameInstance->GetRandom_Real(0.15f, 0.3f);
 
 	m_pRigid_Dynamic->SetKinematic(false);
 	m_pRigid_Dynamic->AddForce(m_vDir);
@@ -348,4 +383,5 @@ void CThrowing_Weapon::Free()
 
     Safe_Release(m_pShaderCom);
     Safe_Release(m_pModelCom);
+	Safe_Release(m_pImpact_Grenade);
 }

@@ -26,6 +26,7 @@ public:
 
 	void								AddForce(_float4 vDir);
 	void								ClearForce();
+	void								Release_Body();
 public:
 	static CRigid_Dynamic*				Create();
 
