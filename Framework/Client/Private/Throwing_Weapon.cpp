@@ -2,6 +2,7 @@
 #include "Throwing_Weapon.h"
 #include "Light.h"
 #include "Rigid_Dynamic.h"
+#include "Transform.h"
 
 CThrowing_Weapon::CThrowing_Weapon(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     :CGameObject { pDevice, pContext }
@@ -35,6 +36,7 @@ HRESULT CThrowing_Weapon::Initialize(void* pArg)
 
 	m_pTransformCom->Set_WorldMatrix(pDesc->worldMatrix);
 	m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+	m_pParentsTransform = pDesc->pParentsTransform;
 
 	switch (m_eEquip) {
 	case CPlayer::GRENADE:
@@ -53,8 +55,8 @@ HRESULT CThrowing_Weapon::Initialize(void* pArg)
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
 	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
 
-	/*m_pRigid_Dynamic = m_pGameInstance->Create_Rigid_Dynamic(m_pModelCom, m_pTransformCom, &m_iIndex_RigidBody, this);
-	m_pRigid_Dynamic->SetKinematic(true);*/
+	//m_pRigid_Dynamic = m_pGameInstance->Create_Rigid_Dynamic_Grenade(m_pModelCom, m_pTransformCom, &m_iIndex_RigidBody, this);
+	//m_pRigid_Dynamic->SetKinematic(true);
 
 	m_pRigid_Dynamic = m_pGameInstance->Create_Rigid_Dynamic_NoConvex(0.05f, &m_iIndex_RigidBody, this);
 	m_pRigid_Dynamic->SetKinematic(true);
@@ -62,9 +64,8 @@ HRESULT CThrowing_Weapon::Initialize(void* pArg)
 	m_pModelCom->Release_Decal_Dump();
 
 	Initiate(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION), 
-		m_pTransformCom->Get_State_Float4(CTransform::STATE_UP), 
-		m_pTransformCom->Get_State_Float4(CTransform::STATE_UP));
-
+		m_pParentsTransform->Get_State_Float4(CTransform::STATE_LOOK),
+		m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK));
 
     return S_OK;
 }
@@ -260,6 +261,9 @@ void CThrowing_Weapon::Initiate(_float4 vPos, _float4 vDir, _float4 vLook)
 		0.f);
 
 	m_vDir = Float4_Normalize(m_vDir);
+	_vector vForce = XMLoadFloat4(&m_vDir);
+	vForce = XMVectorScale(vForce, 1.5f);
+	XMStoreFloat4(&m_vDir, vForce);
 	m_vDir.y += m_pGameInstance->GetRandom_Real(0.05f, 0.1f);
 
 	m_pRigid_Dynamic->SetKinematic(false);
