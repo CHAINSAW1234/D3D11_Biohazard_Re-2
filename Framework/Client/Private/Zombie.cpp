@@ -446,17 +446,42 @@ void CZombie::Tick(_float fTimeDelta)
 							BREAK_PART eBreakType = BREAK_PART::_END;
 							switch (eType)
 							{
-							case COLLIDER_TYPE::CALF_L:
-								eBreakType = BREAK_PART::_L_LEG;
+							case COLLIDER_TYPE::ARM_R:
+								eBreakType = BREAK_PART::_R_UPPER_HUMEROUS;
 								break;
-							case COLLIDER_TYPE::CALF_R:
-								eBreakType = BREAK_PART::_R_LEG;
+							case COLLIDER_TYPE::ARM_L:
+								eBreakType = BREAK_PART::_L_UPPER_HUMEROUS;
+								break;	
+
+
+							case COLLIDER_TYPE::FOREARM_R:
+								eBreakType = BREAK_PART::_R_UPPER_RADIUS;
 								break;
 							case COLLIDER_TYPE::FOREARM_L:
-								eBreakType = BREAK_PART::_L_ARM;
+								eBreakType = BREAK_PART::_L_UPPER_RADIUS;
 								break;
-							case COLLIDER_TYPE::FOREARM_R:
-								eBreakType = BREAK_PART::_R_ARM;
+
+
+							case COLLIDER_TYPE::LEG_R:
+								eBreakType = BREAK_PART::_R_UPPER_FEMUR;
+								break;
+							case COLLIDER_TYPE::CALF_R:
+								eBreakType = BREAK_PART::_R_UPPER_TABIA;
+								break;
+
+
+							case COLLIDER_TYPE::LEG_L:
+								eBreakType = BREAK_PART::_L_UPPER_FEMUR;
+								break;
+							case COLLIDER_TYPE::CALF_L:
+								eBreakType = BREAK_PART::_L_UPPER_TABIA;
+								break;
+
+							case COLLIDER_TYPE::FOOT_R:
+								eBreakType = BREAK_PART::_R_LOWER_TABIA;
+								break;
+							case COLLIDER_TYPE::FOOT_L:
+								eBreakType = BREAK_PART::_L_LOWER_TABIA;
 								break;
 							}
 
@@ -1288,8 +1313,6 @@ HRESULT CZombie::Initialize_PartBreaker()
 
 	if (nullptr == m_pPart_Breaker)
 		return E_FAIL;
-
-	Safe_AddRef(m_pPart_Breaker);
 
 	return S_OK;
 }

@@ -1224,9 +1224,9 @@ HRESULT CBody_Zombie::Bind_WorldMatrix(_uint iIndex)
 			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 				return E_FAIL;
 		}
-	}
 
-	return S_OK;
+		return S_OK;
+	}
 }
 
 CBody_Zombie* CBody_Zombie::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

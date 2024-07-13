@@ -70,7 +70,7 @@ list<_int> CPart_Mesh_Info_Zombie::Get_Child_MeshIndices()
     
     _int            iMeshIndex = { -1 };
 
-    iMeshIndex = { m_MeshTypeIndices[static_cast<_uint>(PART_MESH_TYPE::_FROM_PARENT_DEFICIT)] };
+    iMeshIndex = { m_MeshTypeIndices[static_cast<_uint>(PART_MESH_TYPE::_FROM_CHILD_DEFICIT)] };
     if (-1 != iMeshIndex)
         ChildMeshIndices.emplace_back(iMeshIndex);
 

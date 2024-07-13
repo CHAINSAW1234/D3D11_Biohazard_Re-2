@@ -870,7 +870,7 @@ void CPart_Breaker_Zombie::Free()
 		Safe_Release(pMeshInfo);
 		pMeshInfo = nullptr;
 	}
-
+	
 	m_PartMeshInfos.clear();
 
 	Safe_Release(m_pBody_Model);
