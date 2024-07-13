@@ -2960,6 +2960,11 @@ void CModel::Convex_Mesh_Cooking_RigidDynamic(PxRigidDynamic** pCollider, CTrans
 	}
 }
 
+void CModel::Convex_Mesh_Cooking_RigidDynamic_Grenade(PxRigidDynamic** pCollider, CTransform* pTransform)
+{
+	m_Meshes[0]->Convex_Mesh_Cooking_RigidDynamic(pCollider, pTransform);
+}
+
 void CModel::Convex_Mesh_Cooking_Convert_Root(vector<PxRigidDynamic*>* pColliders, vector<PxTransform>* pTransforms, CTransform* pTransform)
 {
 	for (int i = 0; i < m_Meshes.size(); ++i)

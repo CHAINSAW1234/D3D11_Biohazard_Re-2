@@ -923,6 +923,7 @@ void CPlayer::Throw_Sub()
 	CThrowing_Weapon::THROWING_WEAPON_DESC pDesc;
 	pDesc.worldMatrix = m_pWeapon->Get_WorldMatrix();
 	pDesc.eEquip = m_eEquip;
+	pDesc.pParentsTransform = m_pTransformCom;
 
 	if (FAILED(m_pGameInstance->Add_Clone(g_Level, TEXT("Layer_Throwing_Weapon"), TEXT("Prototype_GameObject_Throwing_Weapon"), &pDesc)))
 		return;
@@ -930,6 +931,7 @@ void CPlayer::Throw_Sub()
 	CThrowing_Weapon_Pin::THROWING_WEAPON_PIN_DESC pDesc2;
 	pDesc2.worldMatrix = m_pWeapon->Get_WorldMatrix();
 	pDesc2.eEquip = m_eEquip;
+	pDesc2.pParentsTransform = m_pTransformCom;
 
 	if (FAILED(m_pGameInstance->Add_Clone(g_Level, TEXT("Layer_Throwing_Weapon"), TEXT("Prototype_GameObject_Throwing_Weapon_Pin"), &pDesc2)))
 		return;

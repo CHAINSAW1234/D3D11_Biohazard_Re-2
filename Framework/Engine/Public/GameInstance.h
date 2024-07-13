@@ -301,6 +301,7 @@ public:/*For Physics Controller*/
 	class CRigid_Static*					Create_Rigid_Static(_float4 Pos, _int* Index, class CGameObject* pStaticMesh);
 	class CRigid_Dynamic*					Create_Rigid_Dynamic(class CModel* pModel, class CTransform* pTransform, _int* iId, class CGameObject* pObj);
 	class CRigid_Dynamic*					Create_Rigid_Dynamic_NoConvex(_float fRadius,_int* iId, class CGameObject* pObj);
+	class CRigid_Dynamic*					Create_Rigid_Dynamic_Grenade(class CModel* pModel, class CTransform* pTransform, _int* iId, class CGameObject* pObj);
 	void									Cook_Terrain();
 	void									Simulate();
 	void									Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, class CTransform* pTransform = nullptr, _int* pIndex = nullptr);

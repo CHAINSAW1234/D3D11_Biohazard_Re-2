@@ -15,6 +15,7 @@ public:
 	typedef struct Throwing_Weapon_Desc : public CGameObject::GAMEOBJECT_DESC
 	{
 		CPlayer::EQUIP eEquip;
+		class CTransform*	   pParentsTransform;
 	} THROWING_WEAPON_DESC;
 
 private:
@@ -41,6 +42,7 @@ private:
 	CModel* m_pModelCom = { nullptr };
 
 	_float4 m_vDir;
+	class CTransform* m_pParentsTransform;
 private:
 	HRESULT Add_Components();
 	HRESULT Bind_ShaderResources();

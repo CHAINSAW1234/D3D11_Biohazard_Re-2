@@ -298,6 +298,31 @@ CRigid_Dynamic* CPhysics_Controller::Create_Rigid_Dynamic_NoConvex(_float fRadiu
 	return ReturnPtr;
 }
 
+CRigid_Dynamic* CPhysics_Controller::Create_Rigid_Dynamic_Grenade(CModel* pModel, CTransform* pTransform, _int* iId, CGameObject* pObj)
+{
+	auto pRigid_Dynamic = new CRigid_Dynamic();
+	pRigid_Dynamic->SetIndex(m_iRigid_Dynamic_Count);
+	pRigid_Dynamic->SetObject(pObj);
+	m_vecRigid_Dynamic.push_back(pRigid_Dynamic);
+  	pModel->Convex_Mesh_Cooking_RigidDynamic_Grenade(pRigid_Dynamic->GetRigidDynamic_DoublePtr(), pTransform);
+
+	if (m_vecRigid_Dynamic.size() >= 2)
+	{
+		std::sort(m_vecRigid_Dynamic.begin(), m_vecRigid_Dynamic.end(), [](CRigid_Dynamic* a, CRigid_Dynamic* b)
+			{
+				return a->GetIndex() < b->GetIndex();
+			});
+	}
+
+	*iId = m_iRigid_Dynamic_Count;
+
+	Safe_AddRef(m_vecRigid_Dynamic[m_iRigid_Dynamic_Count]);
+	auto ReturnPtr = m_vecRigid_Dynamic[m_iRigid_Dynamic_Count];
+	++m_iRigid_Dynamic_Count;
+
+	return ReturnPtr;
+}
+
 void CPhysics_Controller::Cook_Mesh(_float3* pVertices, _uint* pIndices, _uint VertexNum, _uint IndexNum, CTransform* pTransform, _int* pIndex)
 {
 	// Init Cooking Params 
@@ -624,7 +649,7 @@ void CPhysics_Controller::Cook_Mesh_Convex_RigidDynamic(_float3* pVertices, _uin
 	PxTransform transform(PxVec3(vPos.x, vPos.y, vPos.z));
 
 	PxConvexMeshGeometry geometry(convexMesh);
-	PxMaterial* material = m_Physics->createMaterial(0.5f, 0.5f, 0.01f);
+	PxMaterial* material = m_Physics->createMaterial(1.5f, 1.5f, 0.1f);
 	PxRigidDynamic* body = m_Physics->createRigidDynamic(transform);
 	PxShape* shape = m_Physics->createShape(geometry, *material);
 
