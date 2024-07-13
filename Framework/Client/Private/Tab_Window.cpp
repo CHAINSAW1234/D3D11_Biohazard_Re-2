@@ -277,7 +277,7 @@ void CTab_Window::EXAMINE_Operation(_float fTimeDelta)
 		{
 			m_fCurTime = 0.f;
 			m_eSequence = HIDE;
-			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END);
+			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END, 0);
 
 			m_pHintButton->Set_Dead(false);
 			m_pInvenButton->Set_Dead(false);
@@ -335,7 +335,7 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 				m_eSequence = UI_IDLE;
 
 				/*Item_Mesh_Viewer 세팅*/
-				m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END);
+				m_pItem_Mesh_Viewer->Set_Operation(UI_IDLE, ITEM_NUMBER_END, 1);
 
 				/*Inventory_Manager 세팅*/
 				_int iPickedUpItemNum = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_iItemIndex();
@@ -360,26 +360,20 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 	case Client::UI_IDLE: {
 		if (GET_ITEM == m_pInventory_Manager->Get_InventoryEvent())
 		{
+			_int iCollectNum = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_iItemIndex();
+			m_vecCollect_ITEM.push_back(static_cast<ITEM_NUMBER>(iCollectNum));
 			m_pPickedUp_Item->Set_Dead(true);
-			m_pPickedUp_Item = nullptr;
-			OnOff_EventHandle();
-			m_pGameInstance->Set_IsPaused(false);
 			m_fCurTime = 0.f;
-
-			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-			pPlayer->Set_isCamTurn(false);
+			m_eSequence = HIDE;
+			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END, 1);
 			break;
 		}
 
 		else if (DROP_ITEM == m_pInventory_Manager->Get_InventoryEvent())
 		{
-			m_pPickedUp_Item = nullptr;
-			OnOff_EventHandle();
-			m_pGameInstance->Set_IsPaused(false);
 			m_fCurTime = 0.f;
-
-			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-			pPlayer->Set_isCamTurn(false);
+			m_eSequence = HIDE;
+			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END, 1);
 			break;
 		}
 
@@ -397,6 +391,24 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 		
 
 	case Client::HIDE: {
+		if (m_fCurTime / 0.5f <1.f)
+		{
+			m_fCurTime += fTimeDelta;
+			m_pItem_Mesh_Viewer->Tick(fTimeDelta);
+			m_pItem_Discription->Tick(fTimeDelta);
+			m_pInventory_Manager->Tick(fTimeDelta);
+		}
+
+		else
+		{
+			m_fCurTime = 0.f;
+			m_eSequence = STATE_END;
+			m_pPickedUp_Item = nullptr;
+			m_pGameInstance->Set_IsPaused(false);
+			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+			pPlayer->Set_isCamTurn(false);
+			OnOff_EventHandle();
+		}
 		break;
 	}
 		
@@ -434,7 +446,7 @@ void CTab_Window::ItemIven_EventHandle(_float fTimeDelta)
 			m_pHotKey->Set_Dead(true);
 			m_isAlphaControl = true;
 			ITEM_NUMBER eItem_Num = m_pInventory_Manager->Get_Selected_ItemNum();
-			m_pItem_Mesh_Viewer->Set_Operation(POP_UP, eItem_Num);
+			m_pItem_Mesh_Viewer->Set_Operation(POP_UP, eItem_Num, 0);
 			m_pItem_Discription->Set_Item_Number(eItem_Num);
 		}
 		break;
@@ -547,7 +559,7 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 		m_pItem_Discription->Set_Item_Number(ePickedItemNum, CInventory_Manager::PickUpItem_Quantity_Classify(ePickedItemNum));
 
 		/*Item_Mesh_Viewer 세팅*/
-		m_pItem_Mesh_Viewer->Set_Operation(POP_UP, ePickedItemNum);
+		m_pItem_Mesh_Viewer->Set_Operation(POP_UP, ePickedItemNum, 1);
 	}
 
 	else
@@ -839,5 +851,4 @@ void CTab_Window::Free()
 	Safe_Release(m_pItem_Discription);
 	Safe_Release(m_pHotKey);
 	Safe_Release(m_pHint);
-	
 }

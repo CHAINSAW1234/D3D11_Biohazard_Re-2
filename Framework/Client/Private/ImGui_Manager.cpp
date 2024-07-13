@@ -68,8 +68,20 @@ void CImgui_Manager::ResetVariable()
 
 }
 
+void CImgui_Manager::Start()
+{
+    m_pMeshViewer = m_pTabWindow->GetMeshViewer();
+    Safe_AddRef(m_pMeshViewer);
+}
+
 void CImgui_Manager::Tick()
 {
+    if (true == m_isStart)
+    {
+        m_isStart = false;
+        Start();
+    }
+
     ResetVariable();//벨류 리셋
 
     // Start the Dear ImGui frame
@@ -93,6 +105,9 @@ void CImgui_Manager::Tick()
 
     if (true == m_bShader_Debuger)
         Window_Shader_Debuger();
+
+    if (false == m_pMeshViewer->Get_Dead() && true == m_bTabWindow_Debuger)
+        Gizmo(m_pMeshViewer->Get_Transform());
 
 }
 
@@ -229,8 +244,6 @@ void CImgui_Manager::Window_Shader_Debuger()
     ImGui::End();
 }
 
-
-
 ITEM_NUMBER CImgui_Manager::Classify_String_To_ItemNum(wstring wstrItemNum)
 {
     _uint i = 0; 
@@ -259,6 +272,100 @@ string CImgui_Manager::WStringToString(const std::wstring& wstr)
     WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
 
     return strTo;
+}
+
+void CImgui_Manager::EditTransform(CTransform* pTransformCom)
+{
+#ifndef _DEBUG
+    return;
+#endif
+    ImGuizmo::BeginFrame();
+
+    _float4x4 matrix = pTransformCom->Get_WorldFloat4x4();
+
+    static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+
+    if (ImGui::RadioButton("Translate", m_eGizmoState == ImGuizmo::TRANSLATE))
+        m_eGizmoState = ImGuizmo::TRANSLATE;
+    ImGui::SameLine();
+
+    if (ImGui::RadioButton("Rotate", m_eGizmoState == ImGuizmo::ROTATE))
+        m_eGizmoState = ImGuizmo::ROTATE;
+    ImGui::SameLine();
+
+    if (ImGui::RadioButton("Scale", m_eGizmoState == ImGuizmo::SCALE))
+        m_eGizmoState = ImGuizmo::SCALE;
+
+    float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+    ImGuizmo::DecomposeMatrixToComponents(matrix.m[0], matrixTranslation, matrixRotation, matrixScale);
+    ImGui::InputFloat3("Tr", matrixTranslation);
+    ImGui::InputFloat3("Rt", matrixRotation);
+    ImGui::InputFloat3("Sc", matrixScale);
+    ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix.m[0]);
+
+    if (m_eGizmoState != ImGuizmo::SCALE)
+    {
+        if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
+            mCurrentGizmoMode = ImGuizmo::LOCAL;
+
+        ImGui::SameLine();
+
+        if (ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
+            mCurrentGizmoMode = ImGuizmo::WORLD;
+    }
+
+    static bool useSnap(false);
+    ImGui::Checkbox("##UseSnap", &useSnap);
+    ImGui::SameLine();
+
+    static _float snap[3] = { 1.f, 1.f, 1.f };
+    switch (m_eGizmoState)
+    {
+    case ImGuizmo::TRANSLATE:
+        ImGui::InputFloat3("Snap", &snap[0]);
+        break;
+    case ImGuizmo::ROTATE:
+        ImGui::InputFloat("Angle Snap", &snap[0]);
+        break;
+    case ImGuizmo::SCALE:
+        ImGui::InputFloat("Scale Snap", &snap[0]);
+        break;
+    }
+
+    ImGuiIO& io = ImGui::GetIO();
+    ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+
+    _float4x4 ViewMatrix, ProjMatrix;
+    ViewMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW);
+    ProjMatrix = m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ);
+    ImGuizmo::Manipulate(ViewMatrix.m[0], ProjMatrix.m[0], m_eGizmoState, mCurrentGizmoMode, matrix.m[0], NULL, useSnap ? &snap[0] : NULL);
+    pTransformCom->Set_WorldMatrix(matrix);
+}
+
+void CImgui_Manager::Gizmo(CTransform* pTransform)
+{
+    ImGui::Begin("Editor");
+
+    if (ImGuizmo::IsUsing())
+    {
+        ImGui::Text("Using gizmo");
+    }
+    else
+    {
+        ImGui::Text(ImGuizmo::IsOver() ? "Over gizmo" : "");
+        ImGui::SameLine();
+        ImGui::Text(ImGuizmo::IsOver(ImGuizmo::TRANSLATE) ? "Over translate gizmo" : "");
+        ImGui::SameLine();
+        ImGui::Text(ImGuizmo::IsOver(ImGuizmo::ROTATE) ? "Over rotate gizmo" : "");
+        ImGui::SameLine();
+        ImGui::Text(ImGuizmo::IsOver(ImGuizmo::SCALE) ? "Over scale gizmo" : "");
+    }
+
+    ImGui::Separator();
+
+    EditTransform(pTransform);
+
+    ImGui::End();
 }
 
 HRESULT CImgui_Manager::Refer_Player()
@@ -323,6 +430,7 @@ void CImgui_Manager::Free()
     Safe_Release(m_pTabWindow);
     Safe_Release(m_pPlayer);
 
+    Safe_Release(m_pMeshViewer);
 
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();

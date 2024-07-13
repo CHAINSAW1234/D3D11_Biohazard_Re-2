@@ -180,6 +180,8 @@ _uint CHotKey::RegisterHoykey(_float2 RegisterPos, ITEM_NUMBER eItemNum, _int iI
 			return i+1;
 		}
 	}
+
+	return 0;
 }
 
 void CHotKey::Update_Registed_Item(ITEM_NUMBER eItemNum, _int iItemQuantity)

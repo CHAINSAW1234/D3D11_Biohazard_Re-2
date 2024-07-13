@@ -88,9 +88,9 @@ private:
 	class CButton_UI*			m_pInvenButton = { nullptr };
 	class CButton_UI*			m_pHintButton = { nullptr };
 
-	CInventory_Manager*			m_pInventory_Manager = { nullptr };
+	class CItem_Discription* m_pItem_Discription = { nullptr };
 
-	class CItem_Discription*	m_pItem_Discription = { nullptr };
+	CInventory_Manager*			m_pInventory_Manager = { nullptr };
 
 	CItem_Mesh_Viewer*			m_pItem_Mesh_Viewer = { nullptr };
 
@@ -115,6 +115,8 @@ private:
 	CGameObject*		m_pPickedUp_Item = { nullptr };
 	UI_OPERRATION		m_eSequence = { STATE_END };
 
+	vector<ITEM_NUMBER> m_vecCollect_ITEM;
+
 private:
 	HRESULT Add_Components();
 	HRESULT Bind_ShaderResources();
@@ -129,6 +131,9 @@ public:
 	static CTab_Window* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
+
+	//나중에 지울것
+	CItem_Mesh_Viewer* GetMeshViewer() { return m_pItem_Mesh_Viewer; }
 };
 
 END
