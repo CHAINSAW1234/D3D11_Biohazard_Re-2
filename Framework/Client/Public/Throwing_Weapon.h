@@ -43,6 +43,11 @@ private:
 
 	_float4 m_vDir;
 	class CTransform* m_pParentsTransform;
+
+	class CImpact_Grenade* m_pImpact_Grenade = { nullptr };
+
+	ULONGLONG				m_Explode_Time;
+	ULONGLONG				m_Explode_Delay;
 private:
 	HRESULT Add_Components();
 	HRESULT Bind_ShaderResources();

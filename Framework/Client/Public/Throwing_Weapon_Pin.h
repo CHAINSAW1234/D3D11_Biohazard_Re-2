@@ -43,6 +43,8 @@ private:
 	CModel* m_pModelCom = { nullptr };
 	_float4 m_vDir;
 
+	ULONGLONG				m_Explode_Time;
+	ULONGLONG				m_Explode_Delay;
 private:
 	HRESULT Add_Components();
 	HRESULT Bind_ShaderResources();

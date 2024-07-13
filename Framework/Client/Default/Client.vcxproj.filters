@@ -682,6 +682,9 @@
     <Filter Include="02.GameObjects\Monster\Zombie\Part_Breaker\Part_Mesh_Info">
       <UniqueIdentifier>{06889494-4e23-49fa-8a90-12b96f7ef2e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Impact_Grenade">
+      <UniqueIdentifier>{b0dfbe9f-435a-4ba2-bf40-4a69fa774dbb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1323,6 +1326,9 @@
     <ClInclude Include="..\Public\Part_Mesh_Info_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\Part_Breaker\Part_Mesh_Info</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Impact_Grenade.h">
+      <Filter>02.GameObjects\Effect\Impact_Grenade</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1924,6 +1930,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Part_Mesh_Info_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\Part_Breaker\Part_Mesh_Info</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Impact_Grenade.cpp">
+      <Filter>02.GameObjects\Effect\Impact_Grenade</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

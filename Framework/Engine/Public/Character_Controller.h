@@ -215,6 +215,11 @@ private:
 	PxMaterial*					m_material = {nullptr};
 	float                       m_mass = 1.0f;
 
+//#pragma region Additional Body
+//	PxRigidDynamic*				m_Left_Arm_Upper_Collider = { nullptr };
+//	PxRigidDynamic*				m_Left_Arm_Upper_Collider = { nullptr };
+//#pragma endregion
+
 
 
 	uint32_t m_head_idx = { 0 };		//neck_1
