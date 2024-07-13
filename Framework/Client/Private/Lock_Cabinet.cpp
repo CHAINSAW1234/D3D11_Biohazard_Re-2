@@ -193,27 +193,32 @@ HRESULT CLock_Cabinet::Initialize_Model()
 
 		vector<string>			ResultMeshTags;			
 		_int iFirst = m_pPassword[0] / 5;
+		_int iFirstmod = m_pPassword[0] % 5;
+		iFirstmod == 0? ( iFirst % 10 == 0 ? iFirst : iFirst -= 1): iFirst;
 		string strFirstTag = "11" + to_string(iFirst+1);
+
 		_int iSecond = m_pPassword[1] / 5;	
+		_int iSecondmod = m_pPassword[1] % 5;	
+		iSecondmod == 0 ?(iSecond % 10 == 0? iSecond: iSecond-=1): iSecond;
 		string strSecondtTag = "12" + to_string(iSecond+1);
+
 		_int iThird = m_pPassword[2] / 5;
+		_int iThirdmod = m_pPassword[2] % 5;
+		iThirdmod == 0 ? (iThird % 10 == 0 ? iThird : iThird -= 1) : iThird;
 		string strThirdTag = "13" + to_string(iThird + 1);
+
 		for (auto& strMeshTag : MeshTags)
-		{
 			if ((strMeshTag.find(strFirstTag) != string::npos) ||(strMeshTag.find(strSecondtTag) != string::npos) || (strMeshTag.find(strThirdTag) != string::npos) || (strMeshTag.find("Group_0_") != string::npos) || (strMeshTag.find("Group_1_") != string::npos))
 				ResultMeshTags.push_back(strMeshTag);
 			
-		}
 
 		for (auto& strMeshTag : MeshTags)
-		{
 			m_pModelCom->Hide_Mesh(strMeshTag, true);
-		}
+		
 
 		for (auto& strMeshTag : ResultMeshTags)
-		{
 			m_pModelCom->Hide_Mesh(strMeshTag, false);
-		}
+		
 
 
 	}
