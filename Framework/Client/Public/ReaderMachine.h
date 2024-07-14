@@ -51,7 +51,7 @@ private:
 	_bool				m_bActivity = { false };
 	_float			m_fTime = { 0.f };
 	_ubyte			m_eState = { STATE_STATIC };
-	map<string, CGameObject*> m_Cabinet;
+	map<_int, class CCabinet*> m_Cabinets;
 
 public:
 	static CReaderMachine* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

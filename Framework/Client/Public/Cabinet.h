@@ -79,7 +79,8 @@ private:
 
 public:
 	virtual _float4 Get_Object_Pos() override;
-
+	void		Set_Lock_False() { m_bLock = false; }
+	_int		Get_Cabinet_Type() {return m_eCabinetType; }
 
 private:
 	_bool				m_bLeonDesk = { false };

@@ -2,8 +2,8 @@
 #include "ReaderMachine.h"
 #include"Player.h"
 
-#include"Body_Statue.h"
-
+#include"Body_ReaderMachine.h"
+#include"Cabinet.h"
 CReaderMachine::CReaderMachine(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -36,6 +36,21 @@ HRESULT CReaderMachine::Initialize(void* pArg)
 
 void CReaderMachine::Start()
 {
+	__super::Start();
+	_int iCabinetIndex = 0;
+	list<CGameObject*>* pInteractObjList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_InteractObj"));
+	for (auto iter: *pInteractObjList)
+	{
+		if (static_cast<CInteractProps*>(iter)->Get_DESC()->iPartObj == OBJ_CABINET)
+		{
+			if (static_cast<CCabinet*>(iter)->Get_Cabinet_Type() == CCabinet::TYPE_ELECTRIC)
+			{
+				m_Cabinets.insert({ iCabinetIndex, static_cast<CCabinet*>(iter) });
+				iCabinetIndex++;
+			}
+			
+		}
+	}
 }
 
 void CReaderMachine::Tick(_float fTimeDelta)
@@ -104,7 +119,7 @@ HRESULT CReaderMachine::Add_PartObjects()
 
 	/*Part_Body*/
 	CPartObject* pBodyObj = { nullptr };
-	CBody_Statue::PART_INTERACTPROPS_DESC BodyDesc = {};
+	CBody_ReaderMachine::PART_INTERACTPROPS_DESC BodyDesc = {};
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pState = &m_eState;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
