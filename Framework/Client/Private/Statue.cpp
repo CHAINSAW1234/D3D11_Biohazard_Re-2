@@ -2,7 +2,8 @@
 #include "Statue.h"
 #include"Player.h"
 
-#include"Body_Statue.h"
+#include "Body_Statue.h"
+#include "Item_Statue.h"
 
 CStatue::CStatue(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
@@ -24,11 +25,20 @@ HRESULT CStatue::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-	
+
+	if (m_tagPropDesc.strGamePrototypeName.find("109") != string::npos)
+		m_eStatue_ItemType = (_ubyte)CItem_Statue::STATUE_ITEM::KINGSCEPTER_ITEM;
+
+	else if (m_tagPropDesc.strGamePrototypeName.find("136") != string::npos)
+		m_eStatue_ItemType = (_ubyte)CItem_Statue::STATUE_ITEM::STATUEHAND_ITEM;
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
 	if (FAILED(Add_PartObjects()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;
 
 	return S_OK;
@@ -112,15 +122,52 @@ HRESULT CStatue::Add_PartObjects()
 
 	m_PartObjects[CStatue::PART_BODY] = pBodyObj;
 
-	/*PART_PART*/
-	m_PartObjects[CStatue::PART_PART] = nullptr;
+	/* 1. Statue */
+	CItem_Statue::BODY_ITEM_STATUE ItemDesc = {};
+	CPartObject* pItemScepter = { nullptr };
 
+	ItemDesc.pParentsTransform = m_pTransformCom;
+	ItemDesc.pState = &m_eState;
+	ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_109_kingscepter01a_Anim");
+	ItemDesc.eItemType = static_cast<_ubyte>(CItem_Statue::STATUE_ITEM::KINGSCEPTER_ITEM);
+	pItemScepter = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_Body_ItemStatue"), &ItemDesc));
+
+	if (nullptr == pItemScepter)
+		return E_FAIL;
+	else
+		m_PartObjects[PART_ITEM_SCEPTER] = pItemScepter;
+
+	/* 2. Hand */
+	CPartObject* pItemHand = { nullptr };
+
+	ItemDesc.pParentsTransform = m_pTransformCom;
+	ItemDesc.pState = &m_eState;
+	ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_136_statuehand01a_Anim");
+	ItemDesc.eItemType = static_cast<_ubyte>(CItem_Statue::STATUE_ITEM::STATUEHAND_ITEM);
+	pItemHand = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_Body_ItemStatue"), &ItemDesc));
+
+	if (nullptr == pItemHand)
+		return E_FAIL;
+	else
+		m_PartObjects[PART_ITEM_HAND] = pItemHand;
 
 	return S_OK;
 }
 
 HRESULT CStatue::Initialize_PartObjects()
 {
+	if (m_PartObjects[PART_BODY] != nullptr)
+	{
+		CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
+
+		CItem_Statue* pItem1 = dynamic_cast<CItem_Statue*>(m_PartObjects[PART_ITEM_SCEPTER]);
+		_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet02")) };
+		pItem1->Set_Socket(pCombinedMatrix);
+
+		CItem_Statue* pItem2 = dynamic_cast<CItem_Statue*>(m_PartObjects[PART_ITEM_HAND]);
+		pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet01")) };
+		pItem2->Set_Socket(pCombinedMatrix);
+	}
 
 	return S_OK;
 }

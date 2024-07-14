@@ -18,7 +18,8 @@ public:
 	enum STATUE_PART
 	{
 		PART_BODY,
-		PART_PART,
+		PART_ITEM_SCEPTER,
+		PART_ITEM_HAND,
 		PART_END,
 	};
 
@@ -30,8 +31,8 @@ private:
 public:
 	virtual HRESULT				Initialize_Prototype() override;
 	virtual HRESULT				Initialize(void* pArg) override;
-	virtual void					Tick(_float fTimeDelta) override;
-	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual void				Tick(_float fTimeDelta) override;
+	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
 
 private:
@@ -48,9 +49,11 @@ public:
 
 private:
 	_bool				m_bActivity = { false };
-	_float			m_fTime = { 0.f };
-	_ubyte			m_eState = { STATE_STATIC };
+	_float				m_fTime = { 0.f };
+	_ubyte				m_eState = { STATE_STATIC };
 
+private :
+	_ubyte				m_eStatue_ItemType = { 0 };
 
 public:
 	static CStatue* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -688,6 +688,12 @@
     <Filter Include="02.GameObjects\Camera\Camera_Gimmick">
       <UniqueIdentifier>{005d1390-e7e6-4c60-8855-58a335d5c781}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\NewpoliceStatue\Medal_NewpoliceStatue">
+      <UniqueIdentifier>{b049cd71-bb2b-4dcb-80da-1b9c39106b29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Statue\Body_ItemStatue">
+      <UniqueIdentifier>{97714436-89b2-426b-82c4-9f96f4324d5c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1335,6 +1341,12 @@
     <ClInclude Include="..\Public\Camera_Gimmick.h">
       <Filter>02.GameObjects\Camera\Camera_Gimmick</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Medal_NewpoliceStatue.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\NewpoliceStatue\Medal_NewpoliceStatue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Item_Statue.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Statue\Body_ItemStatue</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1942,6 +1954,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Gimmick.cpp">
       <Filter>02.GameObjects\Camera\Camera_Gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Medal_NewpoliceStatue.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\NewpoliceStatue\Medal_NewpoliceStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item_Statue.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Statue\Body_ItemStatue</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

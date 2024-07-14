@@ -200,6 +200,7 @@
     <ClInclude Include="..\Public\Body_EventProp.h" />
     <ClInclude Include="..\Public\Body_ItemLocker.h" />
     <ClInclude Include="..\Public\Body_ItemProp.h" />
+    <ClInclude Include="..\Public\Item_Statue.h" />
     <ClInclude Include="..\Public\Body_Ladder.h" />
     <ClInclude Include="..\Public\Body_Lever.h" />
     <ClInclude Include="..\Public\Body_MovingShelf.h" />
@@ -242,6 +243,7 @@
     <ClInclude Include="..\Public\Is_Different_Location_To_Player_Zombie.h" />
     <ClInclude Include="..\Public\Is_Start_Rub_Door_Zombie.h" />
     <ClInclude Include="..\Public\Lock_Cabinet.h" />
+    <ClInclude Include="..\Public\Medal_NewpoliceStatue.h" />
     <ClInclude Include="..\Public\Muzzle_ShockWave.h" />
     <ClInclude Include="..\Public\Pannel_Window.h" />
     <ClInclude Include="..\Public\Is_In_Door_Zombie.h" />
@@ -492,6 +494,7 @@
     <ClCompile Include="..\Private\Is_Start_Rub_Door_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Start_Zombie.cpp" />
     <ClCompile Include="..\Private\Lock_Cabinet.cpp" />
+    <ClCompile Include="..\Private\Medal_NewpoliceStatue.cpp" />
     <ClCompile Include="..\Private\Muzzle_Light_SG.cpp" />
     <ClCompile Include="..\Private\Muzzle_ShockWave.cpp" />
     <ClCompile Include="..\Private\Muzzle_Spark_SG.cpp" />
@@ -503,6 +506,7 @@
     <ClCompile Include="..\Private\Room_Finder.cpp" />
     <ClCompile Include="..\Private\SG_Cartridge.cpp" />
     <ClCompile Include="..\Private\Start_Zombie.cpp" />
+    <ClCompile Include="..\Private\Item_Statue.cpp" />
     <ClCompile Include="..\Private\Throwing_Weapon.cpp" />
     <ClCompile Include="..\Private\Hold_Out_Hand_Window_Zombie.cpp" />
     <ClCompile Include="..\Private\In_Window_Zombie.cpp" />

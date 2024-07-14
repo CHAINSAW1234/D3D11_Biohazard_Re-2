@@ -19,12 +19,13 @@ class CPart_InteractProps abstract : public CPartObject
 public:
 	typedef struct tagPart_InteractProps_Desc : public CPartObject::PARTOBJECT_DESC
 	{
-		const _bool* pRender;
-		const _ubyte*	pState;
-		_float3*				pRootTranslation = { nullptr };
+		const _bool*		pRender;
+		const _ubyte*		pState;
+		_float3*			pRootTranslation = { nullptr };
 		wstring				strModelComponentName = { TEXT("") };
 		_int				iPropType = {0};
 	}PART_INTERACTPROPS_DESC;
+
 	enum Part_INTERACTPROPS_COL
 	{
 		Part_INTERACTPROPS_COL_AABB,
@@ -67,48 +68,52 @@ public:
 		m_pCameraGimmick = pCameraGimmick;
 		m_pCameraGimmickTransform = pCameraGimmickTransform;
 	}
+
+public :
 	virtual _float4									Get_Pos(_int iArg = 0) { return XMVectorSetW( m_WorldMatrix.Translation(),1.f); }
 	virtual _vector									Get_Pos_vector(_int iArg = 0) { return XMVectorSetW( m_WorldMatrix.Translation(),1.f); }
-	virtual _int											Get_PartObject_Props_ItemIndex() { return -1; };
-	_bool													Is_Finishied_Anim() { return m_pModelCom->isFinished(0); }
-	void													Change_Anim(){m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);}
+	virtual _int									Get_PartObject_Props_ItemIndex() { return -1; };
+	_bool											Is_Finishied_Anim() { return m_pModelCom->isFinished(0); }
+	void											Change_Anim(){m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);}
+
 protected:
-	_int													m_iPropType = { 0 };
-	_bool													m_bCol = { false };
-	_bool*												m_pRender;
+	_int											m_iPropType = { 0 };
+	_bool											m_bCol = { false };
+	_bool*											m_pRender;
 	const _ubyte*									m_pState;
-	_float4												m_vRotation = {};
+	_float4											m_vRotation = {};
 
 	//player
 	class CPlayer*									m_pPlayer = { nullptr };
-	_bool*												m_pPlayerInteract = {nullptr};
+	_bool*											m_pPlayerInteract = {nullptr};
 	CTransform*										m_pPlayerTransform = {nullptr};
 
 	//camera
-	class CCamera_Free*							m_pCamera= { nullptr };
+	class CCamera_Free*								m_pCamera= { nullptr };
 	CTransform*										m_pCameraTransform = {nullptr};
 	
 	//camera
-	class CCamera_Gimmick*					m_pCameraGimmick= { nullptr };
+	class CCamera_Gimmick*							m_pCameraGimmick= { nullptr };
 	CTransform*										m_pCameraGimmickTransform = {nullptr};
 
 
 	CModel*											m_pModelCom = { nullptr };
-	CShader*											m_pShaderCom = { nullptr };
-	wstring												m_strModelComponentName = { TEXT("") };
-	CCollider*											m_pColliderCom[Part_INTERACTPROPS_COL_END] = { nullptr,nullptr,nullptr };
+	CShader*										m_pShaderCom = { nullptr };
+	wstring											m_strModelComponentName = { TEXT("") };
+	CCollider*										m_pColliderCom[Part_INTERACTPROPS_COL_END] = { nullptr,nullptr,nullptr };
 
-	string												m_strMeshTag = {};
+	string											m_strMeshTag = {};
 
 	class CPxCollider*								m_pPx_Collider = { nullptr };
-	vector<CBone*>								m_vecRotationBone;
+	vector<CBone*>									m_vecRotationBone;
 
 protected:
-	void													Check_Col_Sphere_Player();
+	void											Check_Col_Sphere_Player();
 	HRESULT											Add_Components();
 	virtual HRESULT									Add_PartObjects();
 	virtual HRESULT									Initialize_PartObjects();
-	virtual void										Get_SpecialBone_Rotation();
+	virtual void									Get_SpecialBone_Rotation();
+
 protected:
 	HRESULT											Bind_ShaderResources();
 

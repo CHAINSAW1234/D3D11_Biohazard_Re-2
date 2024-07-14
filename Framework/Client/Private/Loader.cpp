@@ -55,6 +55,7 @@
 #include "Body_Window.h"
 #include "Pannel_Window.h"
 #include "NewpoliceStatue.h"
+#include "Medal_NewpoliceStatue.h"
 #include "Body_NewpoliceStatue.h"
 #include "ItemProp.h"
 #include "Body_ItemProp.h"
@@ -74,7 +75,7 @@
 #include "Body_MovingShelf.h"
 #include "Lever.h"
 #include "Body_Lever.h"
-
+#include "Item_Statue.h"
 
 /* UI */
 #include "Customize_UI.h"
@@ -986,13 +987,18 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_035_windowoldbarricade01a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_035_windowoldbarricade01a.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PannelWindow"), CPannel_Window::Create(m_pDevice, m_pContext));
 	
-	Ininitmatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_019_safeboxdial01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_019_safeboxdial01a_Anim.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_014_diallock01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_014_diallock01a_Anim.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Lock_Cabinet"), CLock_Cabinet::Create(m_pDevice, m_pContext));
 
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_102_unicornmedal01a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_102_unicornmedal01a.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_139_virginmedal01a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_139_virginmedal01a.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_145_virginmedal02a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_145_virginmedal02a.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medal_NewpoliceStatue"), CMedal_NewpoliceStatue::Create(m_pDevice, m_pContext));
 
-	//m_pGameInstance->Set_ModelTags(TEXT("ItemModel_Tags"), ItemModelTags);
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_109_kingscepter01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_109_kingscepter01a_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_136_statuehand01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_136_statuehand01a_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medal_Body_ItemStatue"), CItem_Statue::Create(m_pDevice, m_pContext));
 
 	CloseHandle(hFile);
 	return S_OK;

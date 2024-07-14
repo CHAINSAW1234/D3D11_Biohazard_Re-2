@@ -62,13 +62,14 @@ HRESULT CCabinet::Initialize(void* pArg)
 
 void CCabinet::Tick(_float fTimeDelta)
 {
-
-	if (DOWN == m_pGameInstance->Get_KeyState('J'))
+	if (DOWN == m_pGameInstance->Get_KeyState('J') || true == m_isCamera_Reset)
 	{
-		m_pCameraGimmick->Active_Camera(false);
+		m_isCamera_Reset = false;
 		m_bCamera = false;
+		m_pCameraGimmick->Active_Camera(false);
 		m_pPlayer->ResetCamera();
 	}
+
 	if (m_bCamera)
 	{
 		m_bCamera = false;
@@ -279,6 +280,8 @@ HRESULT CCabinet::Add_PartObjects()
 			CLock_Cabinet::BODY_LOCK_CABINET_DESC LockDesc = {};
 			LockDesc.pParentsTransform = m_pTransformCom;
 			LockDesc.pState = &m_eState; //현재 캐비넷 본체의 상황을 받는거야
+			LockDesc.pPassword = (_int*)m_iPassWord; // 123 
+			LockDesc.pCameraControl = &m_isCamera_Reset;
 			LockDesc.pLockState = &m_eLockState; //제어당할 스테이트
 			LockDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_019_safeboxdial01a_Anim");
 			LockDesc.iLockType = CLock_Cabinet::SAFEBOX_DIAL;

@@ -74,10 +74,12 @@ private:
 	_bool				m_bActivity = { false };
 	_bool				m_bCamera = { false };
 	_int				m_iPassWord[10] = {1,};
-	_ubyte			m_eState = { CABINET_CLOSED };
-	_ubyte			m_eLockState = { STATIC_LOCK };
+	_ubyte				m_eState = { CABINET_CLOSED };
+	_ubyte				m_eLockState = { STATIC_LOCK };
 	_int				m_eCabinetType = { TYPE_NORMAL };
-
+	
+	/* Camera 예시 코드 */
+	_bool				m_isCamera_Reset = { false };
 public:
 	static CCabinet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

@@ -21,9 +21,6 @@ HRESULT CBody_ItemLocker::Initialize_Prototype()
 
 HRESULT CBody_ItemLocker::Initialize(void* pArg)
 {
-	/*문자식 파트오브젝트 붙혀야하는데 뼈가 문고리에 없어서 직접 찍어야 하는데
-	프로토타입 끝나고 뼈 붙혀보겠나이다*/
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 

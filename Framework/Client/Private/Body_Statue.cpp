@@ -23,9 +23,6 @@ HRESULT CBody_Statue::Initialize_Prototype()
 
 HRESULT CBody_Statue::Initialize(void* pArg)
 {
-	/*문자식 파트오브젝트 붙혀야하는데 뼈가 문고리에 없어서 직접 찍어야 하는데
-	프로토타입 끝나고 뼈 붙혀보겠나이다*/
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 	
@@ -34,12 +31,8 @@ HRESULT CBody_Statue::Initialize(void* pArg)
 
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
-
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
-
-
 	m_pModelCom->Active_RootMotion_Rotation(true);
-	//m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
 #ifndef NON_COLLISION_PROP
 
@@ -75,7 +68,6 @@ void CBody_Statue::Late_Tick(_float fTimeDelta)
 		m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(m_pParentsTransform->Get_WorldMatrix());
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
