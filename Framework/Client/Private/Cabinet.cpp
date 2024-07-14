@@ -62,9 +62,32 @@ HRESULT CCabinet::Initialize(void* pArg)
 
 void CCabinet::Tick(_float fTimeDelta)
 {
-
-	if (DOWN == m_pGameInstance->Get_KeyState('J'))
+	_bool bCam = false;
+	
+	if (m_eLockState == CCabinet::LIVE_LOCK)
 	{
+		if (DOWN == m_pGameInstance->Get_KeyState('D'))
+			m_eKeyInput = KEY_D;
+		else if (DOWN == m_pGameInstance->Get_KeyState('A'))
+			m_eKeyInput = KEY_A;
+		else if (DOWN == m_pGameInstance->Get_KeyState('W'))
+			m_eKeyInput = KEY_W;
+		else if (DOWN == m_pGameInstance->Get_KeyState('S'))
+			m_eKeyInput = KEY_S;
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		{
+			m_eLockState = CCabinet::STATIC_LOCK;
+			bCam = true;
+		}
+
+	}
+	else
+		m_eKeyInput = KEY_NOTHING;
+
+	if (bCam||(m_bLock && m_eLockState == CCabinet::CLEAR_LOCK && static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK])->Is_Finishied_Anim()))
+	{
+		if(!bCam)
+			m_bLock = false;
 		m_pCameraGimmick->Active_Camera(false);
 		m_bCamera = false;
 		m_pPlayer->ResetCamera();
@@ -72,7 +95,7 @@ void CCabinet::Tick(_float fTimeDelta)
 	if (m_bCamera)
 	{
 		CPart_InteractProps* pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK]);
-		m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + pPartLock->GetLookDir_Vector() * 0.15f + _vector{ 0.05f,0.1f,0.f,0.f });
+		m_pCameraGimmick->SetPosition(XMVectorSetW( pPartLock->Get_Pos_vector() + pPartLock->GetLookDir_Vector() * _vector{ 0.15f, 0.3f, 0.15f, 0.f },1.f));
 		m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
 		//m_pCameraGimmick->SetPosition(m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION)+_float4(0.f,1.f,0.f,0.f));
 	}
@@ -83,6 +106,7 @@ void CCabinet::Tick(_float fTimeDelta)
 		if (m_PartObjects[PART_ITEM]->Get_Dead() == true)
 			Set_Region(-1);
 	
+
 //#ifdef _DEBUG
 //#ifdef UI_POS
 //	Get_Object_Pos();
@@ -260,8 +284,9 @@ HRESULT CCabinet::Add_PartObjects()
 			CPartObject* pLock = { nullptr };
 			CLock_Cabinet::BODY_LOCK_CABINET_DESC LockDesc = {};
 			LockDesc.pParentsTransform = m_pTransformCom;
-			LockDesc.pState = &m_eState; //현재 캐비넷 본체의 상황을 받는거야
-			LockDesc.pLockState = &m_eLockState; //제어당할 스테이트
+			LockDesc.pState = &m_eState;
+			LockDesc.pKeyInput = &m_eKeyInput; 
+			LockDesc.pLockState = &m_eLockState; 
 			LockDesc.pPassword = (_int*)m_iPassWord;
 			LockDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_014_diallock01a_Anim");
 			LockDesc.iLockType = CLock_Cabinet::OPENLOCKER_DIAL;
@@ -277,8 +302,9 @@ HRESULT CCabinet::Add_PartObjects()
 			CPartObject* pLock = { nullptr };
 			CLock_Cabinet::BODY_LOCK_CABINET_DESC LockDesc = {};
 			LockDesc.pParentsTransform = m_pTransformCom;
-			LockDesc.pState = &m_eState; //현재 캐비넷 본체의 상황을 받는거야
-			LockDesc.pLockState = &m_eLockState; //제어당할 스테이트
+			LockDesc.pState = &m_eState; 
+			LockDesc.pKeyInput = &m_eKeyInput; //키 input
+			LockDesc.pLockState = &m_eLockState;
 			LockDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_019_safeboxdial01a_Anim");
 			LockDesc.iLockType = CLock_Cabinet::SAFEBOX_DIAL;
 			/*if(m_tagPropDesc.tagCabinet.iItemIndex==0)*/

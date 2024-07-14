@@ -27,10 +27,10 @@ public:
 	};
 	enum LOCK_STATE
 	{
-		STATIC_LOCK, // 그냥 정지상태
-		LIVE_LOCK, //락을 푸는 행동을 할때 => 뼈를 돌릴때임
-		WRONG_LOCK, // 락이 틀렸을 때
-		CLEAR_LOCK // 락이 풀렸을때 
+		STATIC_LOCK, // 그냥 정지상태0 0
+		LIVE_LOCK, //락을 푸는 행동을 할때 => 뼈를 돌릴때임1
+		WRONG_LOCK, // 락이 틀렸을 때2 1
+		CLEAR_LOCK // 락이 풀렸을때 3 2
 	};
 	enum CABINET_PART
 	{
@@ -39,6 +39,15 @@ public:
 		PART_LOCK,
 		PART_LOCK1, //레온꺼
 		PART_END
+	};
+
+	enum LOCK_KEY_INPUT
+	{
+		KEY_NOTHING,
+		KEY_W,
+		KEY_A,
+		KEY_S,
+		KEY_D,
 	};
 private:
 	CCabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -77,6 +86,7 @@ private:
 	_ubyte			m_eState = { CABINET_CLOSED };
 	_ubyte			m_eLockState = { STATIC_LOCK };
 	_int				m_eCabinetType = { TYPE_NORMAL };
+	_ubyte			m_eKeyInput = { KEY_NOTHING }; // 직접 nothing인 타이밍을 알아서 key_nothing으로 세팅 해줘야함
 
 public:
 	static CCabinet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
