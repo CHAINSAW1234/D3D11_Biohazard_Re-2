@@ -189,7 +189,7 @@ PS_OUT PS_MAIN(PS_IN In)
     {
         vector vAlphaDesc = g_AlphaTexture.Sample(LinearSampler, In.vTexcoord);
         Out.vDiffuse.a = vAlphaDesc.r;
-        if (0.1 >= Out.vDiffuse.a)
+        if (0.01f >= Out.vDiffuse.a)
             discard;
     }
     else

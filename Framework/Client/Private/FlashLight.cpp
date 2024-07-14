@@ -31,14 +31,14 @@ HRESULT CFlashLight::Initialize(void* pArg)
 	eDesc.bShadow = true;
 	eDesc.bRender = false;
 
-	eDesc.fRange = 15.f;
-	eDesc.fCutOff = XMConvertToRadians(30.f);
-	eDesc.fOutCutOff = XMConvertToRadians(35.f);
+	eDesc.fRange = 7.f;
+	eDesc.fCutOff = XMConvertToRadians(20.f);
+	eDesc.fOutCutOff = XMConvertToRadians(50.f);
 
 	eDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	eDesc.vDirection = _float4(0.f, 0.f, 1.f, 1.f);
 
-	eDesc.vDiffuse = _float4(.1f, .1f, .1f, 1.f);
+	eDesc.vDiffuse = _float4(.3f, .3f, .3f, 1.f);
 	eDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	eDesc.vSpecular = _float4(0.4f, 0.4f, 0.4f, 1.f);
 

@@ -85,6 +85,7 @@ public:
 	void								DrawOctree_7();
 	void								DrawOctree_8();
 	void								Render_Node(CModel* pRootWorld, CShader* pShader);
+	void								Render_Node_Blend(CModel* pRootWorld, CShader* pShader);
 	void								Render_Node_LightDepth_Dir(CModel* pRootWorld, CShader* pShader);
 	void								Render_Node_LightDepth_Spot(CModel* pRootWorld, CShader* pShader);
 	void								Render_Node_LightDepth_Point(CModel* pRootWorld, CShader* pShader);

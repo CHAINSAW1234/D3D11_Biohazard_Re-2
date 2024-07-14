@@ -132,19 +132,16 @@ void CMap::Late_Tick(_float fTimeDelta)
 
 //#ifndef  MAP_TEST
 
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 
-	if (/*m_bVisible && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f)*/1)
+	if (m_bShadow)
 	{
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD, this);
-
-		if (m_bShadow)
-		{
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
-		}
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_POINT, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD_SHADOW_DIR, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	}
-
+	
 //#endif
 
 	function<void()> job1 = bind(&COctree::DrawOctree_1, m_pOctree);
@@ -184,7 +181,23 @@ HRESULT CMap::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
+	// 1. RENDER_FIELD
+	// 2. RENDER_BLEND
+
 	m_pOctree->Render_Node(m_pModelCom, m_pShaderCom);
+
+	return S_OK;
+}
+
+HRESULT CMap::Render_Blend()
+{
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
+
+	// 1. RENDER_FIELD
+	// 2. RENDER_BLEND
+
+	m_pOctree->Render_Node_Blend(m_pModelCom, m_pShaderCom);
 
 	return S_OK;
 }

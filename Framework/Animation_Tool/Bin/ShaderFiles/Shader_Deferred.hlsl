@@ -303,8 +303,9 @@ float DistributeGGX(float3 N, float3 H, float a)
     float NdotH = max(dot(N, H), 0.f);
     float NdotH_square = NdotH * NdotH;
 
-    float nom = a_square_square;
-    float denom = (NdotH_square * NdotH_square * (a_square_square - 1.f) + 1.f);
+    float nom = a_square;
+    float denom = (NdotH * a_square - NdotH) * NdotH + 1;
+    //float denom = (NdotH * NdotH * (a_square - 1.f) + 1.f);
     denom = PI * denom * denom;
     
     return nom / denom;
@@ -331,7 +332,7 @@ float GeometrySmith(float3 N, float3 V, float3 L, float k)
 float3 FresnelSchlick(float cos_theta, float3 F0)
 {
     // cos_theta : dot(N. V)
-    return F0 + (1.f - F0) * pow(1.f - cos_theta, 5.f);
+    return F0 + (1.f - F0) * pow(clamp(1.0 - cos_theta, 0.0, 1.0), 5.f);
 }
 
 uint querySpecularTextureLevels()
@@ -386,7 +387,8 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 F0 = lerp(0.04, vAlbedo, fMaterialMetalic).xyz;
     
     // 여기부터 for문이였음
-    float3 Li = -g_vLightDir.xyz;    
+   // float3 Li = -g_vLightDir.xyz;
+    float3 Li = -float3(0.f,-1.f,0.f);
     float3 Lh = normalize(Li + Lo);
     
     float cosLi = max(0.0, dot(vNormal.xyz, Li));
@@ -397,7 +399,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
     float G = GeometrySmith(vNormal.xyz, Lo, Li, fMaterialRoughness);
     float3 kd = lerp(float3(1, 1, 1) - F, float3(0, 0, 0), fMaterialMetalic);
     
-    float3 diffuseBRDF = kd * vAlbedo.xyz;
+    float3 diffuseBRDF = kd * vAlbedo.xyz * 0.1f;
     float3 specularBRDF = (F * D * G) / max(0.00001f, 4.0 * cosLi * cosLo);
   
     float3 directLighting = (diffuseBRDF + specularBRDF) * Lradiance * cosLi;
@@ -537,6 +539,7 @@ PS_OUT PS_MAIN_SPOT(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     
     float4 vAlbedo = pow(g_DiffuseTexture.Sample(PointSampler, In.vTexcoord), 2.2f);
+
     if (vAlbedo.a == 0)
         discard;
     
@@ -549,6 +552,7 @@ PS_OUT PS_MAIN_SPOT(PS_IN In)
     vector vMaterialDesc = g_MaterialTexture.Sample(PointSampler, In.vTexcoord);
     float fMaterialMetalic = vMaterialDesc.r;
     float fMaterialRoughness = vMaterialDesc.g + 0.3f;
+    fMaterialRoughness = min(1.f, fMaterialRoughness);
     float fMaterialAO = vMaterialDesc.b;
     
     // for specular
@@ -566,63 +570,83 @@ PS_OUT PS_MAIN_SPOT(PS_IN In)
 
     vector vLightDir = vWorldPos - g_vLightPos;
     vector vSpotDir = g_vLightDir;
+    
     float fResult = acos(dot(normalize(vLightDir), normalize(vSpotDir)));
+    float fDistance = length(g_vLightPos - vWorldPos);
+    float fIntensity = (fResult - g_fCutOff) / (g_fCutOff - g_fOutCutOff);
+    float fAtt = saturate((g_fSpotLightRange - fDistance) / g_fSpotLightRange) * fIntensity; //범위 줘서 끝 범위에서는 연해지게 
     
-    if (g_fOutCutOff > fResult)
-    {
-        float3 vLookCam = normalize(g_vCamPosition.xyz - vWorldPos.xyz); //카메라를 바라보는 방향벡터
-    //float4 vReflect = reflect(normalize(g_vLightDir), vNormal);
-    //float fSpecular = pow(max(dot(normalize(vLook), normalize(vReflect)), 0.f), 3.f);
-
-        float3 F0 = 0.04f;
-        F0 = lerp(F0, 1, fMaterialMetalic); // F0 = lerp(F0, vAlbedo, fMaterialMetalic);
-    
-    // 1. reflectance equation
-        float3 L0 = 0;
-    
-    // per-light radiance
-        float3 vLookLight = normalize(g_vLightPos - vWorldPos).xyz; // 빛을 바라보는 방향벡터
-        float3 vLookHalf = normalize(vLookCam.xyz + vLookLight).xyz; // 두 방향 벡터의 중간에 위치한 하프 벡터
-    
-        float fDistance = length(g_vLightPos - vWorldPos);
-        float fIntensity = (fResult - g_fCutOff) / (g_fCutOff - g_fOutCutOff);
-        float fAtt = saturate((g_fSpotLightRange - fDistance) / g_fSpotLightRange) * fIntensity; //범위 줘서 끝 범위에서는 연해지게 
-
-        float3 vRadiance = g_vLightDiffuse.xyz * fAtt; // 빛의 색에 감쇠를 적용
-    
-    // cook-torrance BRDF
-        float NDF = DistributeGGX(vNormal.xyz, vLookHalf, fMaterialRoughness); // NDF : Normal Distribution Function
-        float G = GeometrySmith(vNormal.xyz, vLookCam.xyz, vLookLight, fMaterialRoughness); // G : Geometry function
-        float3 F = FresnelSchlick(max(dot(vLookHalf.xyz, vLookCam.xyz), 0.f), F0); // F : Fresnel-Schlick approximation
-    
-        float3 K_Specular = F;
-        float3 K_Diffuse = 1.f - K_Specular.xyz;
-        K_Diffuse *= 1 - fMaterialMetalic;
-    
-        float3 vNumerator = F * NDF * G;
-        float fDenominator = 4.f * max(dot(vNormal.xyz, vLookCam), 0.f) * max(dot(vNormal.xyz, vLookLight), 0.f);
-        float3 vSpecular = vNumerator / max(fDenominator, 0.001f);
-    
-        float fDot_Normal_LookLight = max(dot(vNormal.xyz, vLookLight), 0.f);
-        L0 = (K_Diffuse * vAlbedo.xyz / PI + vSpecular) * vRadiance * fDot_Normal_LookLight;
-    
-        vector vColor = float4(L0, 1);
-        vColor = vColor / (vColor + 1.f);
-        vColor = pow(vColor, 1.f / 2.2f);
-        if (g_isSSAO)
-        {
-            vColor *= g_SSAOTexture.Sample(PointSamplerClamp, In.vTexcoord);
-        }
-        vColor.a = 1;
-    
-        Out.vColor = vColor;
-
-    }
-    else
-    {
+    if (fAtt <= 0)
         discard;
-    }
+    
+    float3 Lo = normalize(g_vCamPosition.xyz - vWorldPos.xyz);
+    float cosLo = max(0.0f, dot(vNormal.xyz, Lo));
+    float3 Lradiance = g_vLightDiffuse.xyz * fAtt;
+    
+    float3 Lr = 2.0f * cosLo * vNormal.xyz - Lo;
+    float3 F0 = lerp(0.04, vAlbedo, fMaterialMetalic).xyz;
+    
+    // 여기부터 for문이였음
+    float3 Li = -vLightDir.xyz;
+    float3 Lh = normalize(Li + Lo);
+    
+    float cosLi = max(0.0, dot(vNormal.xyz, Li));
+    float cosLh = max(0.0, dot(vNormal.xyz, Lh));
+    
+    float3 F = FresnelSchlick(max(dot(Lh.xyz, Lo.xyz), 0.f), F0);
+    float D = DistributeGGX(vNormal.xyz, Lh, fMaterialRoughness);
+    float G = GeometrySmith(vNormal.xyz, Lo, Li, fMaterialRoughness);
+    float3 kd = lerp(float3(1, 1, 1) - F, float3(0, 0, 0), fMaterialMetalic);
+    
+    float3 diffuseBRDF = kd * vAlbedo.xyz;
+    float3 specularBRDF = (F * D * G) / max(0.00001f, 4.0 * cosLi * cosLo);
+  
+    float3 directLighting = (diffuseBRDF + specularBRDF) * Lradiance * cosLi;
+    
+    float3 ambientLighting;
+    {
+        // Sample diffuse irradiance at normal direction.
+        float3 Previrradiance = g_PrevIrradianceTexture.Sample(LinearSampler, vNormal).rgb;
+        float3 Curirradiance = g_CurIrradianceTexture.Sample(LinearSampler, vNormal).rgb;
 
+        float3 irradiance = lerp(Curirradiance, Previrradiance, g_PBRLerpTime) * fAtt; // ???????????????????????????
+        
+        // Calculate Fresnel term for ambient lighting.
+        float3 F = FresnelSchlick(cosLo, F0);
+        // Get diffuse contribution factor (as with direct lighting).
+        float3 kd = lerp(1.0 - F, 0.0, fMaterialMetalic);
+
+        // Irradiance map contains exitant radiance assuming Lambertian BRDF, no need to scale by 1/PI here either.
+        float3 diffuseIBL = kd * vAlbedo.xyz * irradiance;
+
+        // Sample pre-filtered specular reflection environment at correct mipmap level.
+        uint specularTextureLevels = querySpecularTextureLevels();
+        float3 PrevspecularIrradiance = pow(g_PrevEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
+        float3 CurspecularIrradiance = pow(g_CurEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
+        
+        float3 specularIrradiance = lerp(CurspecularIrradiance, PrevspecularIrradiance, g_PBRLerpTime); // ???????????????????????????
+        
+        //// Split-sum approximation factors for Cook-Torrance specular BRDF.
+        float2 specularBRDF = g_SpecularLUTTexture.Sample(LinearSamplerClamp, float2(cosLo, fMaterialRoughness)).rg;
+
+        // Total specular IBL contribution.
+        float3 specularIBL = (F0 * specularBRDF.x + specularBRDF.y) * specularIrradiance;
+
+        // Total ambient lighting contribution.
+        ambientLighting = (diffuseIBL + specularIBL) * fMaterialAO;
+    }
+    
+    vector vColor = float4(directLighting + ambientLighting, 1);
+    if (g_isSSAO)
+    {
+        vColor *= g_SSAOTexture.Sample(PointSamplerClamp, In.vTexcoord);
+
+    }
+    vColor = vColor / (vColor + 1.f);
+    vColor = pow(vColor, 1.f / 2.2f);
+    vColor.a = 1;
+    
+    Out.vColor = vColor;
     return Out;
 }
 
@@ -1475,13 +1499,15 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
             vector vLightDir = mul(vViewPosition, g_ViewMatrixInv) -g_vSpotLightPosition;
             vector vSpotDir = g_vSpotLightDirection;
             float fResult = acos(dot(normalize(vLightDir), normalize(vSpotDir)));
-            float fDistance = length(vLightDir);
-            float fIntensity = (fResult - g_fSpotLightOutCutOff) / (g_fSpotLightCutOff - g_fSpotLightOutCutOff);
-            float fAtt = saturate((g_fSpotLightRange - fDistance) / g_fSpotLightRange) * fIntensity; //범위 줘서 끝 범위에서는 연해지게 
-            
-            
+           
             if (g_fSpotLightOutCutOff >= fResult) // 빛이 번질 범위 안에 있을 때
             {
+                float fDistance = length(vLightDir);
+                float fIntensity = (fResult - g_fSpotLightOutCutOff) / (g_fSpotLightCutOff - g_fSpotLightOutCutOff);
+                float fAtt = saturate(1.f - ((fDistance * fDistance) / (g_fSpotLightRange * g_fSpotLightRange))); //범위 줘서 끝 범위에서는 연해지게 
+                fAtt *= fAtt;
+                fAtt *= (fIntensity * fIntensity);
+                               
                 float4 ShadowMapCoord = mul(vViewPosition, g_ViewMatrixInv); // WorldPosition
                 ShadowMapCoord = mul(ShadowMapCoord, g_SpotLightViewMatrix);
                 ShadowMapCoord = mul(ShadowMapCoord, g_SpotLightProjMatrix);

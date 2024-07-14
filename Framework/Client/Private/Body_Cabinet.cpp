@@ -252,6 +252,7 @@ HRESULT CBody_Cabinet::Render()
 	return S_OK;
 }
 
+
 HRESULT CBody_Cabinet::Render_LightDepth_Dir()
 {
 	if (nullptr == m_pShaderCom)
