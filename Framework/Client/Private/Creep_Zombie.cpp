@@ -27,9 +27,7 @@ void CCreep_Zombie::Enter()
 	m_eStartFaceState = m_pBlackBoard->Get_AI()->Get_FaceState() ;
 
 #ifdef _DEBUG
-
 	cout << "Enter Creep" << endl;
-
 #endif 
 }
 

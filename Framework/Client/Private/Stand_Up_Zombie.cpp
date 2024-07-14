@@ -67,6 +67,14 @@ _bool CStand_Up_Zombie::Execute(_float fTimeDelta)
 		if (CZombie::POSE_STATE::_CREEP != m_pBlackBoard->Get_AI()->Get_PoseState())
 			return false;
 
+		if (true == m_pBlackBoard->Is_Break_L_Leg() ||
+			true == m_pBlackBoard->Is_Break_R_Leg())
+			return false;
+
+		if (true == m_pBlackBoard->Is_Break_L_Humerous() &&
+			true == m_pBlackBoard->Is_Break_R_Humerous())
+			return false;
+
 		if (m_pBlackBoard->Get_ZombieStatus_Ptr()->fAccCreepTime < m_pBlackBoard->Get_ZombieStatus_Ptr()->fTryStandUpTime)
 			return false;
 

@@ -41,6 +41,8 @@ void CHold_Zombie::Enter()
 
 _bool CHold_Zombie::Execute(_float fTimeDelta)
 {
+	return false;
+
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)
 		return false;
@@ -214,6 +216,8 @@ void CHold_Zombie::Change_Animation_StandUp()
 
 	pBodyModel->Change_Animation(static_cast<_uint>(m_eBasePlayingIndex), m_strStandUpAnimLayerTag, iResultAnimationIndex);
 	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_eBasePlayingIndex), m_strBoneLayerTag);
+
+	pBodyModel->Set_TickPerSec(m_strStandUpAnimLayerTag, iResultAnimationIndex, 5.f);
 }
 
 void CHold_Zombie::Change_Animation_Creep()

@@ -372,34 +372,37 @@ enum class ANIM_LOST_IDLE {
 };
 
 enum class ANIM_LOST_TURN {
-	_LOOP_L_A,
-	_LOOP_R_A_SYM,
-	_LOOP_L_C,
-	_LOOP_R_C_SYM,
-	_LOOP_R_C,
-	_LOOP_L_C_SYM,
-	_LOOP_L_D,
-	_LOOP_R_D_SYM,
-	_LOOP_R_D,
-	_LOOP_L_D_SYM,
-	_LOOP_L_E,
-	_LOOP_R_E_SYM,
-	_LOOP_R_E,
-	_LOOP_L_E_SYM,
-	_LOOP_L_F,
-	_LOOP_R_F_SYM,
-	_LOOP_R_F,
-	_LOOP_L_F_SYM,
-	_LOOP_L_G,
-	_LOOP_R_G_SYM,
-	_LOOP_R_G,
-	_LOOP_L_G_SYM,
-	_LOOP_L_H,
-	_LOOP_R_H,
-	_LOOP_L_I,
-	_LOOP_R_I,
-	_LOOP_L_J,
-	_LOOP_R_J,
+	//	Creep
+	_LOOP_L_A,		//	Non Lost							Check
+	_LOOP_R_A_SYM,	//	Non Lost							
+	_LOOP_L_C,		//	Lost L Leg				CCW			Check
+	_LOOP_R_C_SYM,	//	Lost R Leg				CW			Check
+	_LOOP_R_C,		//	Lost L Leg				CW			Check
+	_LOOP_L_C_SYM,	//	Lost R Leg				CCW			Check
+	_LOOP_L_D,		//	Lost L Leg, L Arm		CCW			Check
+	_LOOP_R_D_SYM,	//	Lost R Leg, R Arm		CW			Check
+	_LOOP_R_D,		//	Lost L Leg, L Arm		CW			Check
+	_LOOP_L_D_SYM,	//	Lost R Leg, R Arm		CCW			Check
+	_LOOP_L_E,		//	Lost L Leg, R Arm		CCW			Check
+	_LOOP_R_E_SYM,	//	Lost R Leg, L Arm		CW			Check
+	_LOOP_R_E,		//	Lost L Leg, R Arm		CW			Check
+	_LOOP_L_E_SYM,	//	Lost R Leg, L Arm		CCW			Check
+	_LOOP_L_F,		//	Lost L,R Leg, L Arm		CCW			Check
+	_LOOP_R_F_SYM,	//	Lost L,R Leg, R Arm		CW			Check
+	_LOOP_R_F,		//	LOST L,R Leg, L Arm		CW			Check
+	_LOOP_L_F_SYM,	//	Lost L,R Leg, R Arm		CCW			Check
+	_LOOP_L_G,		//	Lost L Leg, L,R Arm		CCW			Check
+	_LOOP_R_G_SYM,	//	Lost R Leg, L,R Arm		CW			Check
+	_LOOP_R_G,		//	Lost L Leg, L,R Arm		CW			Check
+	_LOOP_L_G_SYM,	//	Lost R Leg, L,R Arm		CCW			Check
+	_LOOP_L_H,		//	Lost L,R Arm			CCW			Check
+	_LOOP_R_H,		//	Lost L,R Arm			CW			Check
+	_LOOP_L_I,		//	Lost L,R Leg			CCW			Check
+	_LOOP_R_I,		//	Lost L,R Leg			CW			Check
+	_LOOP_L_J,		//	Lost L,R Leg L,R Arm	CCW			Check
+	_LOOP_R_J,		//	Lost L,R Leg,L,R Arm	CW			Check
+
+	//	부위파괴는 아니고 발목이 그냥 부러진 상태 Stand UP
 	_L_ANKLE_PIVOTTURN_L90,
 	_L_ANKLE_PIVOTTURN_R90,
 	_R_ANKLE_PIVOTTURN_L90,
@@ -420,17 +423,20 @@ enum class ANIM_LOST_TURN_OVER {
 };
 
 enum class ANIM_LOST_WALK {
-	_LOOP_A,
+	//	전부다 크립 동작
+	_LOOP_A,				//	Non Lost Creep Only
+
 	_LOOP_B,				//	Lost R_Tabia
 	_LOOP_B_SYM,			//	Lost L_Tabia
 	_LOOP_C,				//	Lost R_Femur
 	_LOOP_C_SYM,			//	Lost L_Femur
+
 	_START_D,				//	Lost L_Arm, L_Leg
 	_START_D_SYM,			//	Lost R_arm, R_Leg
 	_LOOP_D,
 	_LOOP_D_SYM,
 	_START_E,				//	Lost R_Arm, L_Leg
-	_START_E_SYM,
+	_START_E_SYM,			//	Lost L_Arm, R_Leg
 	_LOOP_E,
 	_LOOP_E_SYM,
 	_START_F,				//	Lost L_Arm, L_Leg, R_Leg
@@ -443,6 +449,8 @@ enum class ANIM_LOST_WALK {
 	_LOOP_I,				//	Lost L_Leg, R_Leg
 	_START_J,				//	Lost L_Arm, R_Arm, L_Leg, R_Reg
 	_LOOP_J,
+
+	//	스탠드 업
 	_L_ANKLE_LOOP,
 	_L_ANKLE_TURNING_LOOP_L,
 	_L_ANKLE_TURNING_LOOP_R,

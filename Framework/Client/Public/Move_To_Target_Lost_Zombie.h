@@ -11,9 +11,6 @@ class CMove_To_Target_Lost_Zombie : public CTask_Node
 public:
 	enum class ZOMBIE_MOVE_LOST_TYPE { _A, _B, _B_SYM, _C, _C_SYM, _D, _D_SYM, _E, _E_SYM, _F, _F_SYM, _G, _G_SYM, _H, _I, _J, _L_ANKLE, _R_ANKLE, _END};
 
-public:
-	enum TURN_DIR { DIR_LEFT, DIR_RIGHT, DIR_END };
-
 private:
 	CMove_To_Target_Lost_Zombie();
 	CMove_To_Target_Lost_Zombie(const CMove_To_Target_Lost_Zombie& rhs);
@@ -39,6 +36,8 @@ protected:
 	wstring							m_strAnimLayerTag = { TEXT("Lost_Walk") };
 
 	ZOMBIE_MOVE_LOST_TYPE			m_eMoveLostAnimType = { ZOMBIE_MOVE_LOST_TYPE::_END };	
+	_bool							m_isHaveStartAnim = { false };
+	_bool							m_isFinishedStartAnim = { false };
 
 public:
 	static CMove_To_Target_Lost_Zombie* Create(void* pArg = nullptr);

@@ -50,9 +50,7 @@ _bool CStun_Hold_Zombie::Execute(_float fTimeDelta)
 
 	if (Check_Permition_To_Execute() == false)
 		return false;
-#pragma endregion
-
-	
+#pragma endregion	
 
 	CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
 	if (nullptr == pBody_Model)
@@ -63,12 +61,18 @@ _bool CStun_Hold_Zombie::Execute(_float fTimeDelta)
 	{
 		if (true == pBody_Model->isFinished(static_cast<_uint>(PLAYING_INDEX::INDEX_0)))
 		{
+			m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
+			m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_DOWN);
+
 			return false;
 		}
 	}
 
 	else
 	{
+		if (CZombie::POSE_STATE::_UP != m_pBlackBoard->Get_AI()->Get_PoseState())
+			return false;
+
 		if (MONSTER_STATE::MST_HOLD != eState)
 			return false;
 

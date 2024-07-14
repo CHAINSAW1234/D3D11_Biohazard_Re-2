@@ -445,7 +445,7 @@ void CZombie::Tick(_float fTimeDelta)
 						{
 							if (nullptr != pPartObject)
 								pPartObject->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
-
+							
 							m_bPartial_Ragdoll = true;
 
 							BREAK_PART eBreakType = BREAK_PART::_END;
@@ -490,10 +490,11 @@ void CZombie::Tick(_float fTimeDelta)
 								break;
 							}
 
-							m_pPart_Breaker->Break(eBreakType);
-
-							if(BREAK_PART::_END != eBreakType)
-								m_iNew_Break_PartType = static_cast<_int>(eBreakType);
+							if (true == m_pPart_Breaker->Break(eBreakType))
+							{
+								if (BREAK_PART::_END != eBreakType)
+									m_iNew_Break_PartType = static_cast<_int>(eBreakType);
+							}
 						}
 
 						auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
@@ -967,6 +968,16 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CComposite_Node* pSelectorNode_RootChild_Hit = { CComposite_Node::Create(&CompositeNodeDesc) };
 	pSelectorNode_Same_Region_Player->Insert_Child_Node(pSelectorNode_RootChild_Hit);
 
+	//	Add Task Node		=> Damage Stun Hold
+	CStun_Hold_Zombie* pTask_Stun_Hold = { CStun_Hold_Zombie::Create() };
+	pTask_Stun_Hold->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_Hit->Insert_Child_Node(pTask_Stun_Hold);
+
+	//	Add Task Node		=> Damage Lost
+	CDamage_Lost_Zombie* pTask_Damage_Lost = { CDamage_Lost_Zombie::Create() };
+	pTask_Damage_Lost->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_RootChild_Hit->Insert_Child_Node(pTask_Damage_Lost);
+
 	//	Add Task Node		=> Damage Stun
 	CStun_Zombie* pTask_Stun = { CStun_Zombie::Create() };
 	pTask_Stun->SetBlackBoard(m_pBlackBoard);
@@ -1014,6 +1025,16 @@ void CZombie::Init_BehaviorTree_Zombie()
 	CHold_Zombie* pTask_Hold = { CHold_Zombie::Create() };
 	pTask_Hold->SetBlackBoard(m_pBlackBoard);
 	pSelectorNode_Same_Region_Player->Insert_Child_Node(pTask_Hold);
+
+	//	Add_Task Node (Turn Lost)
+	CTurn_Lost_Zombie* pTask_Turn_Lost = { CTurn_Lost_Zombie::Create() };
+	pTask_Turn_Lost->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Same_Region_Player->Insert_Child_Node(pTask_Turn_Lost);
+
+	//	Add Task Node (Move Lost)
+	CMove_To_Target_Lost_Zombie* pTask_Move_Lost = { CMove_To_Target_Lost_Zombie::Create() };
+	pTask_Move_Lost->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Same_Region_Player->Insert_Child_Node(pTask_Move_Lost);
 
 	//	Add Task Node (Move)
 	CMove_To_Target_Zombie* pTask_Move = { CMove_To_Target_Zombie::Create() };

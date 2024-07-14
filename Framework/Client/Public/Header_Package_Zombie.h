@@ -26,6 +26,7 @@
 /* Move */
 #include "Move_To_Target_Zombie.h"
 #include "Move_To_Target_Lost_Zombie.h"
+#include "Turn_Lost_Zombie.h"
 #include "Pivot_Turn_Zombie.h"
 
 /* Idle */

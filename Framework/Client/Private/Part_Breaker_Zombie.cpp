@@ -1582,13 +1582,13 @@ _bool CPart_Breaker_Zombie::Is_RagDoll_Mesh(_uint iMeshIndex)
 	return isRagDollMesh;
 }
 
-void CPart_Breaker_Zombie::Break(BREAK_PART ePart)
+_bool CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 {
 	if (ePart >= BREAK_PART::_END)
-		return;
+		return false;
 
 	if (true == Is_BreaKPart(ePart))
-		return;
+		return false;
 
 	if (static_cast<_int>(ePart) >= static_cast<_int>(BREAK_PART::_R_UPPER_HUMEROUS) &&
 		static_cast<_int>(ePart) <= static_cast<_int>(BREAK_PART::_R_UPPER_RADIUS))
@@ -1596,7 +1596,7 @@ void CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 		for (_uint i = static_cast<_uint>(BREAK_PART::_R_UPPER_HUMEROUS); i < static_cast<_uint>(BREAK_PART::_R_UPPER_RADIUS); ++i)
 		{
 			if (true == Is_BreaKPart(static_cast<BREAK_PART>(i)))
-				return;
+				return false;
 		}
 	}
 
@@ -1606,7 +1606,7 @@ void CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 		for (_uint i = static_cast<_uint>(BREAK_PART::_L_UPPER_HUMEROUS); i < static_cast<_uint>(BREAK_PART::_L_UPPER_RADIUS); ++i)
 		{
 			if (true == Is_BreaKPart(static_cast<BREAK_PART>(i)))
-				return;
+				return false;
 		}
 	}
 
@@ -1616,7 +1616,7 @@ void CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 		for (_uint i = static_cast<_uint>(BREAK_PART::_R_UPPER_FEMUR); i < static_cast<_uint>(BREAK_PART::_R_LOWER_TABIA); ++i)
 		{
 			if (true == Is_BreaKPart(static_cast<BREAK_PART>(i)))
-				return;
+				return false;
 		}
 	}
 
@@ -1626,7 +1626,7 @@ void CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 		for (_uint i = static_cast<_uint>(BREAK_PART::_L_UPPER_FEMUR); i < static_cast<_uint>(BREAK_PART::_L_LOWER_TABIA); ++i)
 		{
 			if (true == Is_BreaKPart(static_cast<BREAK_PART>(i)))
-				return;
+				return false;
 		}
 	}
 
@@ -1649,6 +1649,8 @@ void CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 			m_AnimMeshIndices.erase(iterAnim);
 		}
 	}
+
+	return true;
 }
 
 CPart_Breaker_Zombie* CPart_Breaker_Zombie::Create(void* pArg)

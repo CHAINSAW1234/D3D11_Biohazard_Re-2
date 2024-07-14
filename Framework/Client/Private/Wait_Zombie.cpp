@@ -22,10 +22,12 @@ HRESULT CWait_Zombie::Initialize(void* pArg)
 
 void CWait_Zombie::Enter()
 {
+	_int			iRandomMotion = { m_pGameInstance->GetRandom_Int(static_cast<_int>(MOTION_TYPE::MOTION_A), static_cast<_int>(MOTION_TYPE::MOTION_F)) };
+
+	m_pBlackBoard->Set_Current_MotionType_Body(static_cast<MOTION_TYPE>(iRandomMotion));
+
 #ifdef _DEBUG
-
 	cout << "Enter Wait" << endl;
-
 #endif 
 }
 

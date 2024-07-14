@@ -35,7 +35,7 @@ void CMove_To_Target_Lost_Zombie::Enter()
 		return;
 
 #ifdef _DEBUG
-	cout << "Enter Move To Tareget" << endl;
+	cout << "Enter Move To Tareget Lost" << endl;
 #endif 
 }
 
@@ -49,35 +49,132 @@ _bool CMove_To_Target_Lost_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
-	CZombie::POSE_STATE			ePoseState = { m_pBlackBoard->Get_AI()->Get_PoseState() };
-	if (CZombie::POSE_STATE::_UP != ePoseState)
-		return false;
+	MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 
-	if (false == m_pBlackBoard->Is_LookTarget())
-		return false;
+	if (MONSTER_STATE::MST_WALK != eMonsterState)
+	{
+		if (false == m_pBlackBoard->Is_LookTarget())
+			return false;
 
-	_float3			vDirectionToPlayerLocalFloat3;
-	if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3))
-		return false;
+		CZombie::POSE_STATE			ePoseState = { m_pBlackBoard->Get_AI()->Get_PoseState() };
+		CZombie::FACE_STATE			eFaceState = { m_pBlackBoard->Get_AI()->Get_FaceState() };
+		if (CZombie::POSE_STATE::_CREEP != ePoseState)
+			return false;
 
-	_vector			vDirectionToPlayerLocal = { XMLoadFloat3(&vDirectionToPlayerLocalFloat3) };
-	_vector			vDirectionToPlayerLocalXZPlane = { XMVector3Normalize(XMVectorSetY(vDirectionToPlayerLocal, 0.f)) };		//	회전량을 xz평면상에서만 고려하기위함
-	_vector			vAILookLocal = { XMVectorSet(0.f, 0.f, 1.f, 0.f) };
+		if (CZombie::FACE_STATE::_DOWN != eFaceState)
+			return false;
 
-	_bool			isRight = { XMVectorGetX(vDirectionToPlayerLocalXZPlane) > 0.f };
+		m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_END;
+		m_isFinishedStartAnim = false;
+		m_isHaveStartAnim = false;
 
-	_float			fDot = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(vDirectionToPlayerLocal), XMVector3Normalize(vAILookLocal))) };
-	_float			fAngleToTarget = { acosf(fDot) };
+		_bool				isBreak_L_Humerous = { m_pBlackBoard->Is_Break_L_Humerous() };
+		_bool				isBreak_R_Humerous = { m_pBlackBoard->Is_Break_R_Humerous() };
+		_bool				isBreak_L_Tabia = { m_pBlackBoard->Is_Break_L_Tabia() };
+		_bool				isBreak_R_Tabia = { m_pBlackBoard->Is_Break_R_Tabia() };
+		_bool				isBreak_L_Femur = { m_pBlackBoard->Is_Break_L_Femur() };
+		_bool				isBreak_R_Femur = { m_pBlackBoard->Is_Break_R_Femur() };
 
-	_float			fMaxMoveAngle = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fMaxMoveAngle };
-	if (fMaxMoveAngle < fAngleToTarget)
-		return false;
+		_bool				isNonBreakArms = { !(isBreak_L_Humerous || isBreak_R_Humerous) };
+		_bool				isNonBreakLegs = { !(isBreak_L_Femur || isBreak_R_Femur) };
+
+		if (true == isBreak_L_Humerous && true == isBreak_R_Humerous &&
+			true == isBreak_L_Femur && true == isBreak_R_Femur)
+		{
+			m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_J;
+		}
+
+		else if (true == isNonBreakArms)
+		{
+			if(true == isBreak_L_Femur && true == isBreak_R_Femur)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_I;
+			else if (true == isBreak_R_Tabia)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_B;
+			else if (true == isBreak_L_Tabia)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_B_SYM;
+			else if (true == isBreak_R_Femur)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_C;
+			else if (true == isBreak_L_Femur)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_C_SYM;
+			else
+				return false;
+		}
+
+		else if (true == isNonBreakLegs)
+		{
+			if (true == isBreak_L_Humerous && true == isBreak_R_Humerous)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_H;
+			else
+				return false;
+		}
+
+		else if (true == isBreak_L_Femur && true == isBreak_R_Femur)
+		{
+			if (true == isBreak_L_Humerous)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_F;
+			else if (true == isBreak_R_Humerous)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_F_SYM;
+		}
+
+		else if (true == isBreak_L_Femur)
+		{
+			if (true == isBreak_L_Humerous && true == isBreak_R_Humerous)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_G;
+			else if (true == isBreak_L_Humerous)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_D;
+			else if (true == isBreak_R_Humerous)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_E;
+			else
+				return false;
+		}
+
+		else if (true == isBreak_R_Femur)
+		{
+			if (true == isBreak_L_Humerous && true == isBreak_R_Humerous)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_G_SYM;
+			else if (true == isBreak_R_Humerous)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_D_SYM;
+			else if (true == isBreak_L_Humerous)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_E_SYM;
+			else
+				return false;
+		}
+
+		if (ZOMBIE_MOVE_LOST_TYPE::_END == m_eMoveLostAnimType)
+			return false;
+
+		if (ZOMBIE_MOVE_LOST_TYPE::_D == m_eMoveLostAnimType || ZOMBIE_MOVE_LOST_TYPE::_D_SYM == m_eMoveLostAnimType ||
+			ZOMBIE_MOVE_LOST_TYPE::_E == m_eMoveLostAnimType || ZOMBIE_MOVE_LOST_TYPE::_E_SYM == m_eMoveLostAnimType ||
+			ZOMBIE_MOVE_LOST_TYPE::_F == m_eMoveLostAnimType || ZOMBIE_MOVE_LOST_TYPE::_F_SYM == m_eMoveLostAnimType ||
+			ZOMBIE_MOVE_LOST_TYPE::_J == m_eMoveLostAnimType)
+		{
+			m_isHaveStartAnim = true;
+		}
+
+		Change_Animation();
+	}
+
+	else
+	{
+		if (true == m_isHaveStartAnim && false == m_isFinishedStartAnim)
+		{
+			CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+			if (nullptr == pBody_Model)
+				return false;
+
+			if (true == pBody_Model->isFinished(static_cast<_uint>(m_eBase_PlayingIndex)))
+			{
+				m_isFinishedStartAnim = true;
+				Change_Animation();
+			}
+		}
+	}	
 
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->Set_State(MONSTER_STATE::MST_WALK);
-
+		
 	return true;
 }
 
@@ -87,6 +184,183 @@ void CMove_To_Target_Lost_Zombie::Exit()
 		return;
 
 	m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_END;
+}
+
+void CMove_To_Target_Lost_Zombie::Change_Animation()
+{
+	if (nullptr == m_pBlackBoard)
+		return;
+
+	CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+	if (nullptr == pBody_Model)
+		return;
+
+	_int			iResultAnimIndex = { -1 };
+	_bool			isLoop = { false };
+
+	if (ZOMBIE_MOVE_LOST_TYPE::_A == m_eMoveLostAnimType)
+	{
+		iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_A) };
+		isLoop = true;
+	}
+
+	else if (ZOMBIE_MOVE_LOST_TYPE::_B == m_eMoveLostAnimType)
+	{
+		iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_B) };
+		isLoop = true;
+	}
+
+	else if (ZOMBIE_MOVE_LOST_TYPE::_B_SYM == m_eMoveLostAnimType)
+	{
+		iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_B_SYM) };
+		isLoop = true;
+	}
+
+	else if (ZOMBIE_MOVE_LOST_TYPE::_C == m_eMoveLostAnimType)
+	{
+		iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_C) };
+		isLoop = true;
+	}
+
+	else if (ZOMBIE_MOVE_LOST_TYPE::_C_SYM == m_eMoveLostAnimType)
+	{
+		iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_C_SYM) };
+		isLoop = true;
+	}
+
+
+	else if (ZOMBIE_MOVE_LOST_TYPE::_D == m_eMoveLostAnimType)
+	{
+		if (false == m_isFinishedStartAnim)
+		{
+			iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_START_D) };
+			isLoop = false;
+		}
+		else
+		{
+			iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_D) };
+			isLoop = true;
+		}
+	}
+
+	else if (ZOMBIE_MOVE_LOST_TYPE::_D_SYM == m_eMoveLostAnimType)
+	{
+		if (false == m_isFinishedStartAnim)
+		{
+			iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_START_D_SYM) };
+			isLoop = false;
+		}
+		else
+		{
+			iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_D_SYM) };
+			isLoop = true;
+		}
+	}
+
+
+	else if (ZOMBIE_MOVE_LOST_TYPE::_E == m_eMoveLostAnimType)
+	{
+		if (false == m_isFinishedStartAnim)
+		{
+			iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_START_E) };
+			isLoop = false;
+		}
+		else
+		{
+			iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_E) };
+			isLoop = true;
+		}
+	}
+
+	else if (ZOMBIE_MOVE_LOST_TYPE::_E_SYM == m_eMoveLostAnimType)
+	{
+		if (false == m_isFinishedStartAnim)
+		{
+			iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_START_E_SYM) };
+			isLoop = false;
+		}
+		else
+		{
+			iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_E_SYM) };
+			isLoop = true;
+		}
+	}
+
+
+	else if (ZOMBIE_MOVE_LOST_TYPE::_F == m_eMoveLostAnimType)
+	{
+		if (false == m_isFinishedStartAnim)
+		{
+			iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_START_F) };
+			isLoop = false;
+		}
+		else
+		{
+			iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_F) };
+			isLoop = true;
+		}
+	}
+
+	else if (ZOMBIE_MOVE_LOST_TYPE::_F_SYM == m_eMoveLostAnimType)
+	{
+		if (false == m_isFinishedStartAnim)
+		{
+			iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_START_F_SYM) };
+			isLoop = false;
+		}
+		else
+		{
+			iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_F_SYM) };
+			isLoop = true;
+		}
+	}
+
+	else if (ZOMBIE_MOVE_LOST_TYPE::_G == m_eMoveLostAnimType)
+	{
+		iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_G) };
+		isLoop = true;
+	}
+
+	else if (ZOMBIE_MOVE_LOST_TYPE::_G_SYM == m_eMoveLostAnimType)
+	{
+		iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_G_SYM) };
+		isLoop = true;
+	}
+
+	else if (ZOMBIE_MOVE_LOST_TYPE::_H == m_eMoveLostAnimType)
+	{
+		iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_H) };
+		isLoop = true;
+	}
+
+	else if (ZOMBIE_MOVE_LOST_TYPE::_I == m_eMoveLostAnimType)
+	{
+		iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_I) };
+		isLoop = true;
+	}
+
+
+	else if (ZOMBIE_MOVE_LOST_TYPE::_J == m_eMoveLostAnimType)
+	{
+		if (false == m_isFinishedStartAnim)
+		{
+			iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_START_J) };
+			isLoop = false;
+		}
+		else
+		{
+			iResultAnimIndex = { static_cast<_int>(ANIM_LOST_WALK::_LOOP_J) };
+			isLoop = true;
+		}
+	}
+
+
+	if (-1 == iResultAnimIndex)
+		return;
+
+
+	pBody_Model->Change_Animation(static_cast<_uint>(m_eBase_PlayingIndex), m_strAnimLayerTag, iResultAnimIndex);
+	pBody_Model->Set_Loop(static_cast<_uint>(m_eBase_PlayingIndex), isLoop);
 }
 
 CMove_To_Target_Lost_Zombie* CMove_To_Target_Lost_Zombie::Create(void* pArg)

@@ -38,7 +38,11 @@ _bool CTurn_Spine_Head_Zombie::Execute(_float fTimeDelta)
 #pragma endregion
 
 	MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
+	CZombie::POSE_STATE		ePoseState = { m_pBlackBoard->Get_AI()->Get_PoseState() };
 	_bool					isLookTarget = { m_pBlackBoard->Is_LookTarget() };
+
+	if (CZombie::POSE_STATE::_UP != ePoseState)
+		return true;
 
 	if ((MONSTER_STATE::MST_IDLE == eMonsterState || MONSTER_STATE::MST_WALK == eMonsterState || MONSTER_STATE::MST_TURN == eMonsterState || MONSTER_STATE::MST_IDLE == eMonsterState) &&
 		true == isLookTarget)

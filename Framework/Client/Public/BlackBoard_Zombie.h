@@ -117,6 +117,9 @@ public:		/* Part Breaker */
 	_bool							Is_Break_L_Arm();
 	_bool							Is_Break_R_Arm();
 
+	_bool							Is_Break_L_Humerous();
+	_bool							Is_Break_R_Humerous();
+
 	_bool							Is_Break_L_Leg();
 	_bool							Is_Break_R_Leg();
 

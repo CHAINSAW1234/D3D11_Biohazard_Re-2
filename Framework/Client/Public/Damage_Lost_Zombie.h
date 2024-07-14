@@ -9,7 +9,15 @@ BEGIN(Client)
 class CDamage_Lost_Zombie : public CTask_Node
 {
 public:
-	enum class ZOMBIE_DAMAGE_LOST_TYPE { _A_L, _A_R, _B_L, _B_R, _C_L, _C_R, _END };
+	//	Stand UP 
+	enum class ZOMBIE_DAMAGE_LOST_TYPE { 
+		_A_F_L,			//	Lost Ankle
+		_A_F_R,	
+		_B_F_L,			//	Lost Tabia
+		_B_F_R, 
+		_C_F_L,			//	Lost Femur
+		_C_F_R, 
+		_END };
 
 private:
 	CDamage_Lost_Zombie();
@@ -23,14 +31,8 @@ public:
 	virtual _bool					Execute(_float fTimeDelta) override;
 	virtual void					Exit() override;
 
-public:
-	inline void						Reset_Entry() { m_isEntry = true; }
-
 private:
-	void							Update_Current_Collider();
 	void							Change_Animation();
-	void							Change_Animation_StandUp();
-	void							Change_Animation_Creep();
 
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }
@@ -38,13 +40,9 @@ private:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 
 private:	/* For. Active FirstTime */
-	_bool							m_isEntry = { false };
-	COLLIDER_TYPE					m_eCurrentHitCollider = { COLLIDER_TYPE::_END };
-
-	const wstring					m_strStunAnimLayerTag = { TEXT("Damage_Stun") };
-	const wstring					m_strDefualtStunAnimLayerTag = { TEXT("Damage_Default") };
-	const wstring					m_strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
-	const PLAYING_INDEX				m_ePlayingIndex = { PLAYING_INDEX::INDEX_0 };
+	ZOMBIE_DAMAGE_LOST_TYPE			m_eLostType = { ZOMBIE_DAMAGE_LOST_TYPE::_END };
+	wstring							m_strAnimLayerTag = { TEXT("Damage_Lost") };
+	PLAYING_INDEX					m_eBasePlayingIndex = { PLAYING_INDEX::INDEX_0 };
 
 public:
 	static CDamage_Lost_Zombie* Create(void* pArg = nullptr);

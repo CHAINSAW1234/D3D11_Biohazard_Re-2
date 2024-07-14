@@ -201,7 +201,8 @@ void CStun_Zombie::Change_Animation_StandUp()
 		return;
 
 	_int				iCurrentAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
-	_bool				isSameAnim = { iCurrentAnimIndex == iResultAnimationIndex };
+	wstring				strAnimLayerTag = { pBodyModel->Get_CurrentAnimLayerTag(static_cast<_uint>(m_ePlayingIndex)) };
+	_bool				isSameAnim = { iCurrentAnimIndex == iResultAnimationIndex && strAnimLayerTag == m_strStunAnimLayerTag };
 
 	if (false == isSameAnim)
 	{
@@ -305,7 +306,8 @@ void CStun_Zombie::Change_Animation_Creep()
 		return;
 
 	_int				iCurrentAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
-	_bool				isSameAnim = { iCurrentAnimIndex == iResultAnimationIndex };
+	wstring				strAnimLayerTag = { pBodyModel->Get_CurrentAnimLayerTag(static_cast<_uint>(m_ePlayingIndex)) };
+	_bool				isSameAnim = { iCurrentAnimIndex == iResultAnimationIndex && strAnimLayerTag == m_strDefualtStunAnimLayerTag };
 
 	if (false == isSameAnim)
 	{

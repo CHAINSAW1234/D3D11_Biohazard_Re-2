@@ -46,30 +46,65 @@ _bool CDamage_Lost_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
-	if (m_pBlackBoard->Get_AI()->Get_Current_MonsterState() == MONSTER_STATE::MST_DAMAGE)
+	MONSTER_STATE					eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
+	if (MONSTER_STATE::MST_DAMAGE_LOST == eMonsterState)
 	{
-		_bool			isFinsihed = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY)->isFinished(static_cast<_uint>(m_ePlayingIndex)) };
+		_bool			isFinsihed = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY)->isFinished(static_cast<_uint>(m_eBasePlayingIndex)) };
 		if (true == isFinsihed)
+		{
+			m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
+			m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_DOWN);
+
 			return false;
+		}
 	}
 
 	else
 	{
-		HIT_TYPE		eHitType = { m_pBlackBoard->Get_AI()->Get_Current_HitType() };
-		if (HIT_TYPE::HIT_SMALL != eHitType)
+		CZombie::POSE_STATE			ePoseState = { m_pBlackBoard->Get_AI()->Get_PoseState() };
+		if (CZombie::POSE_STATE::_UP != ePoseState)
 			return false;
+
+		if (false == m_pBlackBoard->Is_New_Part_Break())
+			return false;
+
+		_int			iBrokenPartType = { m_pBlackBoard->Get_New_Break_PartType() };
+		if (BREAK_PART::_L_LOWER_TABIA == static_cast<BREAK_PART>(iBrokenPartType) ||
+			BREAK_PART::_L_UPPER_TABIA == static_cast<BREAK_PART>(iBrokenPartType))
+		{
+			m_eLostType = ZOMBIE_DAMAGE_LOST_TYPE::_B_F_L;
+		}
+
+		else if (BREAK_PART::_R_LOWER_TABIA == static_cast<BREAK_PART>(iBrokenPartType) || 
+			BREAK_PART::_R_UPPER_TABIA == static_cast<BREAK_PART>(iBrokenPartType))
+		{
+			m_eLostType = ZOMBIE_DAMAGE_LOST_TYPE::_B_F_R;
+		}
+
+		else if (BREAK_PART::_L_LOWER_FEMUR == static_cast<BREAK_PART>(iBrokenPartType) ||
+			BREAK_PART::_L_UPPER_FEMUR == static_cast<BREAK_PART>(iBrokenPartType))
+		{
+			m_eLostType = ZOMBIE_DAMAGE_LOST_TYPE::_C_F_L;
+		}
+
+		else if (BREAK_PART::_R_LOWER_FEMUR == static_cast<BREAK_PART>(iBrokenPartType) ||
+			BREAK_PART::_R_UPPER_FEMUR == static_cast<BREAK_PART>(iBrokenPartType))
+		{
+			m_eLostType = ZOMBIE_DAMAGE_LOST_TYPE::_C_F_R;
+		}
+
+		else
+		{
+			return false;
+		}
+
+		Change_Animation();
 	}
+
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->Set_State(MONSTER_STATE::MST_DAMAGE);
-
-	if (true == m_isEntry)
-	{
-		Update_Current_Collider();
-		Change_Animation();
-		m_isEntry = false;
-	}
+	pAI->Set_State(MONSTER_STATE::MST_DAMAGE_LOST);
 
 	return true;
 }
@@ -77,240 +112,52 @@ _bool CDamage_Lost_Zombie::Execute(_float fTimeDelta)
 
 void CDamage_Lost_Zombie::Exit()
 {
-	m_eCurrentHitCollider = COLLIDER_TYPE::_END;
-}
-
-void CDamage_Lost_Zombie::Update_Current_Collider()
-{
-	m_eCurrentHitCollider = { m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider() };
+	
 }
 
 void CDamage_Lost_Zombie::Change_Animation()
 {
-	CZombie::POSE_STATE			ePoseState = { m_pBlackBoard->Get_AI()->Get_PoseState() };
-	if (CZombie::POSE_STATE::_CREEP == ePoseState)
-	{
-		Change_Animation_Creep();
-	}
+	_int			iResultAnimIndex = { -1 };
 
-	else if (CZombie::POSE_STATE::_UP == ePoseState)
-	{
-		Change_Animation_StandUp();
-	}
-
-}
-
-void CDamage_Lost_Zombie::Change_Animation_StandUp()
-{
-	if (nullptr == m_pBlackBoard)
+	CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+	if (nullptr == pBody_Model)
 		return;
 
-	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
-	if (nullptr == pBodyModel)
-		return;
-
-	_int			iResultAnimationIndex = { -1 };
-
-	_float3			vDirectionFromHitFloat3;
-	if (false == m_pBlackBoard->Compute_Direction_From_Hit_Local(&vDirectionFromHitFloat3))
-		return;
-
-	_vector			vDirectionFromHit = { XMLoadFloat3(&vDirectionFromHitFloat3) };
-	_vector			vDirectionFromHitXZPlane = XMVectorSetY(vDirectionFromHit, 0.f);
-
-	_bool			isFromRight = { 0.f > XMVectorGetX(vDirectionFromHitXZPlane) };
-	_bool			isFromFront = { 0.f > XMVectorGetZ(vDirectionFromHitXZPlane) };
-	_bool			isBigXAxis = { fabsf(XMVectorGetX(vDirectionFromHitXZPlane)) > fabsf(XMVectorGetZ(vDirectionFromHitXZPlane)) };
-
-	if (m_eCurrentHitCollider == COLLIDER_TYPE::ARM_L || m_eCurrentHitCollider == COLLIDER_TYPE::FOREARM_L || m_eCurrentHitCollider == COLLIDER_TYPE::HAND_L)
+	/*if (ZOMBIE_DAMAGE_LOST_TYPE::_A_F_L == m_eLostType)
 	{
-		if (true == isFromFront)
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDER_L_F);
-
-		else
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDER_L_B);
+		iResultAnimIndex = static_cast<_int>(ANIM_DAMAGE_LOST::_A_F_L);
 	}
 
-	else if (m_eCurrentHitCollider == COLLIDER_TYPE::ARM_R || m_eCurrentHitCollider == COLLIDER_TYPE::FOREARM_R || m_eCurrentHitCollider == COLLIDER_TYPE::HAND_R)
+	else if (ZOMBIE_DAMAGE_LOST_TYPE::_A_F_R == m_eLostType)
 	{
-		if (true == isFromFront)
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDER_R_F);
-
-		else
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_SHOULDER_R_B);
+		iResultAnimIndex = static_cast<_int>(ANIM_DAMAGE_LOST::_A_F_R);
 	}
 
-	else if (m_eCurrentHitCollider == COLLIDER_TYPE::LEG_L || m_eCurrentHitCollider == COLLIDER_TYPE::CALF_L || m_eCurrentHitCollider == COLLIDER_TYPE::FOOT_L)
+	else */if (ZOMBIE_DAMAGE_LOST_TYPE::_B_F_L == m_eLostType)
 	{
-		if (true == isFromFront)
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_LEG_L_F);
+		iResultAnimIndex = static_cast<_int>(ANIM_DAMAGE_LOST::_B_F_L);
 
-		else
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_LEG_L_B);
 	}
 
-	else if (m_eCurrentHitCollider == COLLIDER_TYPE::LEG_R || m_eCurrentHitCollider == COLLIDER_TYPE::CALF_R || m_eCurrentHitCollider == COLLIDER_TYPE::FOOT_R)
+	else if (ZOMBIE_DAMAGE_LOST_TYPE::_B_F_R == m_eLostType)
 	{
-		if (true == isFromFront)
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_LEG_R_F);
+		iResultAnimIndex = static_cast<_int>(ANIM_DAMAGE_LOST::_B_F_R);
 
-		else
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_LEG_R_B);
 	}
 
-	else if (m_eCurrentHitCollider == COLLIDER_TYPE::CHEST || m_eCurrentHitCollider == COLLIDER_TYPE::PELVIS)
+	else if (ZOMBIE_DAMAGE_LOST_TYPE::_C_F_L == m_eLostType)
 	{
-		if (true == isFromFront)
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_BODY_F);
-
-		else
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_BODY_B);
+		iResultAnimIndex = static_cast<_int>(ANIM_DAMAGE_LOST::_C_F_L);
 	}
 
-	else if (m_eCurrentHitCollider == COLLIDER_TYPE::HEAD)
+	else if (ZOMBIE_DAMAGE_LOST_TYPE::_C_F_R == m_eLostType)
 	{
-		if (true == isBigXAxis)
-		{
-			if (true == isFromRight)
-				iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_HEAD_LEFT_SIDE_F);
-
-			else
-				iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_HEAD_RIGHT_SIDE_F);
-		}
-		else
-		{
-			if (true == isFromFront)
-			{
-				_int		iRandomStun = { m_pGameInstance->GetRandom_Int(static_cast<_int>(ANIM_DAMAGE_STUN::_HEAD_F1), static_cast<_int>(ANIM_DAMAGE_STUN::_HEAD_F4)) };
-				iResultAnimationIndex = iRandomStun;
-			}
-
-			else
-			{
-				iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_STUN::_HEAD_B);
-			}
-		}
+		iResultAnimIndex = static_cast<_int>(ANIM_DAMAGE_LOST::_C_F_R);
 	}
 
-	if (-1 == iResultAnimationIndex)
-		return;
-
-	_int				iCurrentAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
-	_bool				isSameAnim = { iCurrentAnimIndex == iResultAnimationIndex };
-
-	if (false == isSameAnim)
-	{
-		pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strStunAnimLayerTag, iResultAnimationIndex);
-		pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
-	}
-	else
-	{
-		pBodyModel->Set_TrackPosition(static_cast<_uint>(m_ePlayingIndex), 0.f, true);
-	}
-}
-
-void CDamage_Lost_Zombie::Change_Animation_Creep()
-{
-	if (nullptr == m_pBlackBoard)
-		return;
-
-	CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
-	if (nullptr == pBodyModel)
-		return;
-
-	_int						iResultAnimationIndex = { -1 };
-	CZombie::FACE_STATE			eFaceState = { m_pBlackBoard->Get_AI()->Get_FaceState() };
-
-
-
-	if (m_eCurrentHitCollider == COLLIDER_TYPE::ARM_L || m_eCurrentHitCollider == COLLIDER_TYPE::FOREARM_L || m_eCurrentHitCollider == COLLIDER_TYPE::HAND_L)
-	{
-		if (CZombie::FACE_STATE::_UP == eFaceState)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEUP_ARM_L);
-		}
-
-		else if (CZombie::FACE_STATE::_DOWN == eFaceState)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_ARM_L);
-		}
-#ifdef _DEBUG 
-		else
-			MSG_BOX(TEXT("Calld : void CDamage_Lost_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
-#endif 
-	}
-
-	else if (m_eCurrentHitCollider == COLLIDER_TYPE::ARM_R || m_eCurrentHitCollider == COLLIDER_TYPE::FOREARM_R || m_eCurrentHitCollider == COLLIDER_TYPE::HAND_R)
-	{
-		if (CZombie::FACE_STATE::_UP == eFaceState)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEUP_ARM_R);
-		}
-
-		else if (CZombie::FACE_STATE::_DOWN == eFaceState)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_ARM_R);
-		}
-#ifdef _DEBUG 
-		else
-			MSG_BOX(TEXT("Calld : void CDamage_Lost_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
-#endif 
-	}
-
-	else if (m_eCurrentHitCollider == COLLIDER_TYPE::LEG_L || m_eCurrentHitCollider == COLLIDER_TYPE::CALF_L || m_eCurrentHitCollider == COLLIDER_TYPE::FOOT_L)
-	{
-		if (CZombie::FACE_STATE::_UP == eFaceState)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEUP_LEG_L);
-		}
-
-		else if (CZombie::FACE_STATE::_DOWN == eFaceState)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_LEG_L);
-		}
-#ifdef _DEBUG 
-		else
-			MSG_BOX(TEXT("Calld : void CDamage_Lost_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
-#endif 
-	}
-
-	else if (m_eCurrentHitCollider == COLLIDER_TYPE::LEG_R || m_eCurrentHitCollider == COLLIDER_TYPE::CALF_R || m_eCurrentHitCollider == COLLIDER_TYPE::FOOT_R)
-	{
-		if (CZombie::FACE_STATE::_UP == eFaceState)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEUP_LEG_R);
-		}
-
-		else if (CZombie::FACE_STATE::_DOWN == eFaceState)
-		{
-			iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_LEG_R);
-		}
-#ifdef _DEBUG 
-		else
-			MSG_BOX(TEXT("Calld : void CDamage_Lost_Zombie::Change_Animation_Creep() 좀비 담당자 호출 "));
-#endif 
-	}
-
-	/*else if (m_eCurrentHitCollider == COLLIDER_TYPE::CHEST || m_eCurrentHitCollider == COLLIDER_TYPE::PELVIS || m_eCurrentHitCollider == COLLIDER_TYPE::HEAD)
-	{
-		iResultAnimationIndex = static_cast<_int>(ANIM_DAMAGE_DEFAULT::_FACEDOWN_BODY);
-	}*/
-
-	if (-1 == iResultAnimationIndex)
-		return;
-
-	_int				iCurrentAnimIndex = { pBodyModel->Get_CurrentAnimIndex(static_cast<_uint>(m_ePlayingIndex)) };
-	_bool				isSameAnim = { iCurrentAnimIndex == iResultAnimationIndex };
-
-	if (false == isSameAnim)
-	{
-		pBodyModel->Change_Animation(static_cast<_uint>(m_ePlayingIndex), m_strDefualtStunAnimLayerTag, iResultAnimationIndex);
-		pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_ePlayingIndex), m_strBoneLayerTag);
-	}
-	else
-	{
-		pBodyModel->Set_TrackPosition(static_cast<_uint>(m_ePlayingIndex), 0.f, true);
-	}
+	pBody_Model->Change_Animation(static_cast<_uint>(m_eBasePlayingIndex), m_strAnimLayerTag, iResultAnimIndex);
+	pBody_Model->Set_Loop(static_cast<_uint>(m_eBasePlayingIndex), false);
+	pBody_Model->Set_TotalLinearInterpolation(0.2f);
 }
 
 CDamage_Lost_Zombie* CDamage_Lost_Zombie::Create(void* pArg)

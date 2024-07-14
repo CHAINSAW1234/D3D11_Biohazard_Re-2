@@ -546,6 +546,26 @@ _bool CBlackBoard_Zombie::Is_Break_R_Arm()
 	return false;
 }
 
+_bool CBlackBoard_Zombie::Is_Break_L_Humerous()
+{
+	if (true == Is_BreaKPart(BREAK_PART::_L_UPPER_HUMEROUS))
+		return true;
+	if (true == Is_BreaKPart(BREAK_PART::_L_LOWER_HUMEROUS))
+		return true;
+
+	return false;
+}
+
+_bool CBlackBoard_Zombie::Is_Break_R_Humerous()
+{
+	if (true == Is_BreaKPart(BREAK_PART::_R_UPPER_HUMEROUS))
+		return true;
+	if (true == Is_BreaKPart(BREAK_PART::_R_LOWER_HUMEROUS))
+		return true;
+
+	return false;
+}
+
 _bool CBlackBoard_Zombie::Is_Break_L_Leg()
 {
 	if (true == Is_BreaKPart(BREAK_PART::_L_UPPER_FEMUR))

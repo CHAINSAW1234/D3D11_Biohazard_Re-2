@@ -66,7 +66,7 @@ public:
 	_bool						Is_RagDoll_Mesh(_uint iMeshIndex);
 
 public:
-	void						Break(BREAK_PART ePart);
+	_bool						Break(BREAK_PART ePart);
 	
 private:
 	_uint									m_iBodyType = { 0 };
