@@ -59,6 +59,9 @@ _bool CKnock_Back_Zombie::Execute(_float fTimeDelta)
 	MONSTER_STATE			eState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 	if (MONSTER_STATE::MST_DAMAGE == eState)
 	{
+		if (true == m_pBlackBoard->Is_New_Part_Break())
+			return false;
+
 		if (true == pBody_Model->isFinished(static_cast<_uint>(PLAYING_INDEX::INDEX_0)))
 		{
 			return false;

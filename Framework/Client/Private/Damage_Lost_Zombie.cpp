@@ -29,8 +29,6 @@ void CDamage_Lost_Zombie::Enter()
 	if (nullptr == pBodyModel)
 		return;
 
-
-
 #ifdef _DEBUG
 	cout << "Enter Damage Lost" << endl;
 #endif 
@@ -54,7 +52,6 @@ _bool CDamage_Lost_Zombie::Execute(_float fTimeDelta)
 		{
 			m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
 			m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_DOWN);
-
 			return false;
 		}
 	}
@@ -112,7 +109,8 @@ _bool CDamage_Lost_Zombie::Execute(_float fTimeDelta)
 
 void CDamage_Lost_Zombie::Exit()
 {
-	
+	m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
+	m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_DOWN);
 }
 
 void CDamage_Lost_Zombie::Change_Animation()

@@ -438,19 +438,18 @@ void CZombie::Tick(_float fTimeDelta)
 				{
 					auto Type = m_pController->Get_Hit_Collider_Type();
 
-
-					if(Type != COLLIDER_TYPE::CHEST /*&& Type != COLLIDER_TYPE::PELVIS*/ && Type != COLLIDER_TYPE::HEAD)
+					if(Type != COLLIDER_TYPE::CHEST /*&& Type != COLLIDER_TYPE::PELVIS*/)
 					{
 						for (auto& pPartObject : m_PartObjects)
 						{
-							if (nullptr != pPartObject)
-								pPartObject->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
-							
-							m_bPartial_Ragdoll = true;
+							BREAK_PART eBreakType = BREAK_PART::_END;							
 
-							BREAK_PART eBreakType = BREAK_PART::_END;
 							switch (eType)
 							{
+							case COLLIDER_TYPE::HEAD:
+								eBreakType = BREAK_PART::_HEAD;
+								break;
+
 							case COLLIDER_TYPE::ARM_R:
 								eBreakType = BREAK_PART::_R_UPPER_HUMEROUS;
 								break;
@@ -490,10 +489,16 @@ void CZombie::Tick(_float fTimeDelta)
 								break;
 							}
 
-							if (true == m_pPart_Breaker->Break(eBreakType))
+							if (true == m_pPart_Breaker->Attack(eBreakType))
 							{
 								if (BREAK_PART::_END != eBreakType)
+								{
 									m_iNew_Break_PartType = static_cast<_int>(eBreakType);
+									if (nullptr != pPartObject)
+										pPartObject->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
+
+									m_bPartial_Ragdoll = true;
+								}
 							}
 						}
 
@@ -1338,6 +1343,9 @@ HRESULT CZombie::Initialize_PartBreaker()
 {
 	CPart_Breaker_Zombie::PART_BREAKER_DESC			PartBreakerDesc;
 	PartBreakerDesc.pBodyModel = static_cast<CModel*>(m_PartObjects[CMonster::PART_BODY]->Get_Component(TEXT("Com_Model")));
+	PartBreakerDesc.pFaceModel = static_cast<CModel*>(m_PartObjects[CMonster::PART_FACE]->Get_Component(TEXT("Com_Model")));
+	PartBreakerDesc.pPants_Model = static_cast<CModel*>(m_PartObjects[CMonster::PART_PANTS]->Get_Component(TEXT("Com_Model")));
+	PartBreakerDesc.pShirts_Model = static_cast<CModel*>(m_PartObjects[CMonster::PART_SHIRTS]->Get_Component(TEXT("Com_Model")));
 	PartBreakerDesc.iBodyType = m_iBody_ID;
 
 	CPart_Breaker_Zombie*			pPart_Breaker = { CPart_Breaker_Zombie::Create(&PartBreakerDesc) };

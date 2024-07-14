@@ -160,10 +160,10 @@ void CBlackBoard_Zombie::Update_StandUp_Timer(_float fTimeDelta)
 	if (nullptr == m_pAI)
 		return;
 
-	MONSTER_STATE					eCurrentState = { m_pAI->Get_Current_MonsterState() };
-	CMonster::MONSTER_STATUS* pMonsterStatus = { m_pAI->Get_Status_Ptr() };
-	if (MONSTER_STATE::MST_CREEP != eCurrentState &&
-		MONSTER_STATE::MST_DOWN != eCurrentState)
+	CZombie::POSE_STATE				ePoseState = { m_pAI->Get_PoseState() };
+	CMonster::MONSTER_STATUS*		pMonsterStatus = { m_pAI->Get_Status_Ptr() };
+
+	if(CZombie::POSE_STATE::_CREEP != ePoseState)
 	{
 		pMonsterStatus->fAccCreepTime -= fTimeDelta;
 		if (pMonsterStatus->fAccCreepTime < 0.f)

@@ -23,11 +23,21 @@ HRESULT CPart_Breaker_Zombie::Initialize(void* pArg)
 
 	m_iBodyType = { static_cast<_uint>(pDesc->iBodyType) };
 	m_pBody_Model = { pDesc->pBodyModel };
+	m_pFace_Model = { pDesc->pFaceModel };
+	m_pShirts_Model = { pDesc->pShirts_Model };
+	m_pPants_Model = { pDesc->pPants_Model };
 
-	if (nullptr == m_pBody_Model)
+	if (nullptr == m_pBody_Model || nullptr == m_pFace_Model)
 		return E_FAIL;
 
 	Safe_AddRef(m_pBody_Model);
+	Safe_AddRef(m_pFace_Model);
+	Safe_AddRef(m_pShirts_Model);
+	Safe_AddRef(m_pPants_Model);
+
+	m_HPs.resize(static_cast<_uint>(BREAK_PART::_END));
+	for (auto& iHP : m_HPs)
+		iHP = 20;
 
 	m_isBreakParts.resize(static_cast<_uint>(BREAK_PART::_END));
 
@@ -65,7 +75,7 @@ HRESULT CPart_Breaker_Zombie::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_PartMeshInfos.resize(static_cast<_uint>(MESH_PART::_END));
-	for (_int i = static_cast<_int>(MESH_PART::_END) - 1; 0 <= i; --i)
+	for (_int i = static_cast<_int>(MESH_PART::_END) - 2; 0 <= i; --i)
 	{
 		MESH_PART			ePart = { static_cast<MESH_PART>(i) };
 		CPart_Mesh_Info_Zombie::PART_MESH_INFO_DESC		PartMeshInfoDsec;		
@@ -1582,6 +1592,25 @@ _bool CPart_Breaker_Zombie::Is_RagDoll_Mesh(_uint iMeshIndex)
 	return isRagDollMesh;
 }
 
+_bool CPart_Breaker_Zombie::Attack(BREAK_PART ePart)
+{
+	if (ePart >= BREAK_PART::_END)
+		return false;
+
+	if (1 == m_HPs[static_cast<_uint>(ePart)])
+	{
+		m_HPs[static_cast<_uint>(ePart)] -= 1;
+		return Break(ePart);
+	}
+
+	else if (1 < m_HPs[static_cast<_uint>(ePart)])
+	{
+		m_HPs[static_cast<_uint>(ePart)] -= 1;
+	}
+
+	return false;
+}
+
 _bool CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 {
 	if (ePart >= BREAK_PART::_END)
@@ -1631,22 +1660,55 @@ _bool CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 	}
 
 	m_isBreakParts[static_cast<_uint>(ePart)] = true;
-	m_PartMeshInfos[static_cast<_uint>(ePart)]->Break(m_pBody_Model);
 
-
-	list<_int>			RagDollMeshIndices = { m_PartMeshInfos[static_cast<_uint>(ePart)]->Get_Child_MeshIndices() };
-	for (auto& iRagDollMeshIndex : RagDollMeshIndices)
+	if (BREAK_PART::_HEAD == ePart)
 	{
-		unordered_set<_uint>::iterator			iterRagDoll = { m_RagDollMeshIndices.find(iRagDollMeshIndex) };
-		if (m_RagDollMeshIndices.end() == iterRagDoll)
+		vector<string>				FaceMeshTags = { m_pFace_Model->Get_MeshTags() };
+		for (auto& strMeshTag : FaceMeshTags)
 		{
-			m_RagDollMeshIndices.emplace(static_cast<_uint>(iRagDollMeshIndex));
+			m_pFace_Model->Hide_Mesh(strMeshTag, true);
 		}
 
-		unordered_set<_uint>::iterator			iterAnim = { m_AnimMeshIndices.find(iRagDollMeshIndex) };
-		if (m_AnimMeshIndices.end() != iterAnim)
+		vector<string>				BodyMeshTags = { m_pBody_Model->Get_MeshTags() };
+		vector<_int>				BrokenHeadMeshIndices; 
+
+		_int						iIndex = { 0 };
+		for (auto& strMeshTag : BodyMeshTags)
 		{
-			m_AnimMeshIndices.erase(iterAnim);
+			if (strMeshTag.find("Broken") != string::npos)
+			{
+				BrokenHeadMeshIndices.push_back(iIndex);
+			}
+			++iIndex;
+		}
+
+		_int			iRandomHeadIndex = { CGameInstance::Get_Instance()->GetRandom_Int(0, static_cast<_int>(BrokenHeadMeshIndices.size() - 1)) };
+		for (auto& iIndex : BrokenHeadMeshIndices)
+		{
+			if(BrokenHeadMeshIndices[iRandomHeadIndex] == iIndex)
+				m_pBody_Model->Hide_Mesh(iIndex, false);
+			else
+				m_pBody_Model->Hide_Mesh(iIndex, true);
+		}
+	}
+
+	else
+	{
+		m_PartMeshInfos[static_cast<_uint>(ePart)]->Break(m_pBody_Model);
+		list<_int>			RagDollMeshIndices = { m_PartMeshInfos[static_cast<_uint>(ePart)]->Get_Child_MeshIndices() };
+		for (auto& iRagDollMeshIndex : RagDollMeshIndices)
+		{
+			unordered_set<_uint>::iterator			iterRagDoll = { m_RagDollMeshIndices.find(iRagDollMeshIndex) };
+			if (m_RagDollMeshIndices.end() == iterRagDoll)
+			{
+				m_RagDollMeshIndices.emplace(static_cast<_uint>(iRagDollMeshIndex));
+			}
+
+			unordered_set<_uint>::iterator			iterAnim = { m_AnimMeshIndices.find(iRagDollMeshIndex) };
+			if (m_AnimMeshIndices.end() != iterAnim)
+			{
+				m_AnimMeshIndices.erase(iterAnim);
+			}
 		}
 	}
 
@@ -1678,6 +1740,9 @@ void CPart_Breaker_Zombie::Free()
 	m_PartMeshInfos.clear();
 
 	Safe_Release(m_pBody_Model);
+	Safe_Release(m_pFace_Model);
+	Safe_Release(m_pPants_Model);
+	Safe_Release(m_pShirts_Model);
 }
 
 

@@ -51,7 +51,7 @@ _bool CMove_To_Target_Lost_Zombie::Execute(_float fTimeDelta)
 
 	MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 
-	if (MONSTER_STATE::MST_WALK != eMonsterState)
+	if (MONSTER_STATE::MST_WALK_LOST != eMonsterState)
 	{
 		if (false == m_pBlackBoard->Is_LookTarget())
 			return false;
@@ -84,41 +84,24 @@ _bool CMove_To_Target_Lost_Zombie::Execute(_float fTimeDelta)
 			m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_J;
 		}
 
-		else if (true == isNonBreakArms)
+		if (true == isBreak_L_Femur && true == isBreak_R_Femur)
 		{
-			if(true == isBreak_L_Femur && true == isBreak_R_Femur)
+			if (true == isNonBreakArms)
 				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_I;
-			else if (true == isBreak_R_Tabia)
-				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_B;
-			else if (true == isBreak_L_Tabia)
-				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_B_SYM;
-			else if (true == isBreak_R_Femur)
-				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_C;
-			else if (true == isBreak_L_Femur)
-				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_C_SYM;
-			else
-				return false;
-		}
 
-		else if (true == isNonBreakLegs)
-		{
-			if (true == isBreak_L_Humerous && true == isBreak_R_Humerous)
-				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_H;
-			else
-				return false;
-		}
-
-		else if (true == isBreak_L_Femur && true == isBreak_R_Femur)
-		{
-			if (true == isBreak_L_Humerous)
+			else if (true == isBreak_L_Humerous)
 				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_F;
 			else if (true == isBreak_R_Humerous)
 				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_F_SYM;
+			else
+				return false;
 		}
 
 		else if (true == isBreak_L_Femur)
 		{
-			if (true == isBreak_L_Humerous && true == isBreak_R_Humerous)
+			if(true == isNonBreakArms)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_C_SYM;
+			else if (true == isBreak_L_Humerous && true == isBreak_R_Humerous)
 				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_G;
 			else if (true == isBreak_L_Humerous)
 				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_D;
@@ -130,7 +113,9 @@ _bool CMove_To_Target_Lost_Zombie::Execute(_float fTimeDelta)
 
 		else if (true == isBreak_R_Femur)
 		{
-			if (true == isBreak_L_Humerous && true == isBreak_R_Humerous)
+			if (true == isNonBreakArms)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_C;
+			else if (true == isBreak_L_Humerous && true == isBreak_R_Humerous)
 				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_G_SYM;
 			else if (true == isBreak_R_Humerous)
 				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_D_SYM;
@@ -139,6 +124,31 @@ _bool CMove_To_Target_Lost_Zombie::Execute(_float fTimeDelta)
 			else
 				return false;
 		}
+
+		else if (true == isNonBreakLegs)
+		{
+			if (true == isBreak_R_Tabia)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_B;
+			else if (true == isBreak_L_Tabia)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_B_SYM;
+			else if (true == isBreak_L_Humerous && true == isBreak_R_Humerous)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_H;
+			else
+				return false;
+		}
+
+		else if (true == isNonBreakArms)
+		{
+			if (true == isBreak_R_Tabia)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_B;
+			else if (true == isBreak_L_Tabia)
+				m_eMoveLostAnimType = ZOMBIE_MOVE_LOST_TYPE::_B_SYM;
+			else
+				return false;
+		}
+
+
+
 
 		if (ZOMBIE_MOVE_LOST_TYPE::_END == m_eMoveLostAnimType)
 			return false;
@@ -168,12 +178,15 @@ _bool CMove_To_Target_Lost_Zombie::Execute(_float fTimeDelta)
 				Change_Animation();
 			}
 		}
+
+		if (false == m_pBlackBoard->Is_LookTarget())
+			return false;
 	}	
 
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->Set_State(MONSTER_STATE::MST_WALK);
+	pAI->Set_State(MONSTER_STATE::MST_WALK_LOST);
 		
 	return true;
 }

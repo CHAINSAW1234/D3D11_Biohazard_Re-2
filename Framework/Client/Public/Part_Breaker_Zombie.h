@@ -46,6 +46,9 @@ public:
 	typedef struct tagPartBreakDesc
 	{
 		CModel*					pBodyModel = { nullptr };
+		CModel*					pFaceModel = { nullptr };
+		CModel*					pPants_Model = { nullptr };
+		CModel*					pShirts_Model = { nullptr };
 		_int					iBodyType = { -1 };
 	}PART_BREAKER_DESC;
 	
@@ -55,29 +58,34 @@ private:
 	virtual ~CPart_Breaker_Zombie() = default;
 
 public:
-	virtual HRESULT				Initialize(void* pArg);
+	virtual HRESULT									Initialize(void* pArg);
 
 public:
-	HRESULT						Compute_MeshParts_Types_Indices_Male(vector<vector<_int>>& MeshPartsTypesIndices, const vector<string>& MeshTags);
-	HRESULT						Compute_MeshParts_Types_Indices_Female_Male_Big(vector<vector<_int>>& MeshPartsTypesIndices, const vector<string>& MeshTags);
+	HRESULT											Compute_MeshParts_Types_Indices_Male(vector<vector<_int>>& MeshPartsTypesIndices, const vector<string>& MeshTags);
+	HRESULT											Compute_MeshParts_Types_Indices_Female_Male_Big(vector<vector<_int>>& MeshPartsTypesIndices, const vector<string>& MeshTags);
 
 public:
-	_bool						Is_BreaKPart(BREAK_PART ePart);
-	_bool						Is_RagDoll_Mesh(_uint iMeshIndex);
+	_bool											Is_BreaKPart(BREAK_PART ePart);
+	_bool											Is_RagDoll_Mesh(_uint iMeshIndex);
 
 public:
-	_bool						Break(BREAK_PART ePart);
+	_bool											Attack(BREAK_PART ePart);
+	_bool											Break(BREAK_PART ePart);
 	
 private:
-	_uint									m_iBodyType = { 0 };
+	_uint											m_iBodyType = { 0 };
 
-	vector<_bool>							m_isBreakParts;			//	Part_Index
-	unordered_set<_uint>					m_RagDollMeshIndices;	//	Part_Index
-	unordered_set<_uint>					m_AnimMeshIndices;		//	Part_Index
+	vector<_bool>									m_isBreakParts;			//	Part_Index
+	vector<_uint>									m_HPs;
+	unordered_set<_uint>							m_RagDollMeshIndices;	//	Part_Index
+	unordered_set<_uint>							m_AnimMeshIndices;		//	Part_Index
 
-	vector<class CPart_Mesh_Info_Zombie*>	m_PartMeshInfos;
+	vector<class CPart_Mesh_Info_Zombie*>			m_PartMeshInfos;
 
-	CModel*									m_pBody_Model = { nullptr };
+	CModel*											m_pBody_Model = { nullptr };
+	CModel*											m_pFace_Model = { nullptr };
+	CModel*											m_pPants_Model = { nullptr };
+	CModel*											m_pShirts_Model = { nullptr };
 
 public:
 	static CPart_Breaker_Zombie* Create(void* pArg);

@@ -57,23 +57,19 @@ _bool CStun_Hold_Zombie::Execute(_float fTimeDelta)
 		return false;
 
 	MONSTER_STATE			eState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
-	if (MONSTER_STATE::MST_DAMAGE == eState)
+	if (MONSTER_STATE::MST_DAMAGE_HOLD == eState)
 	{
 		if (true == pBody_Model->isFinished(static_cast<_uint>(PLAYING_INDEX::INDEX_0)))
 		{
 			m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
 			m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_DOWN);
-
 			return false;
 		}
 	}
 
-	else
+	else if (MONSTER_STATE::MST_HOLD == eState)
 	{
 		if (CZombie::POSE_STATE::_UP != m_pBlackBoard->Get_AI()->Get_PoseState())
-			return false;
-
-		if (MONSTER_STATE::MST_HOLD != eState)
 			return false;
 
 		COLLIDER_TYPE			eColliderType = { m_pBlackBoard->Get_AI()->Get_Current_IntersectCollider() };
@@ -84,28 +80,26 @@ _bool CStun_Hold_Zombie::Execute(_float fTimeDelta)
 			COLLIDER_TYPE::FOOT_L != eColliderType &&
 			COLLIDER_TYPE::FOOT_R != eColliderType)
 			return false;
+	}
+
+	else
+	{
+			return false;	
 	}	
 
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->Set_State(MONSTER_STATE::MST_DAMAGE);
+	pAI->Set_State(MONSTER_STATE::MST_DAMAGE_HOLD);
 	Change_Animation();
-
-	_bool			isFinished = { pBody_Model->isFinished(static_cast<_uint>(m_ePlayingIndex)) };
-	if (true == isFinished)
-	{
-		m_pBlackBoard->Get_AI()->Set_State(MONSTER_STATE::MST_DOWN);
-		m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
-		m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_DOWN);
-	}	
 
 	return true;
 }
 
 void CStun_Hold_Zombie::Exit()
 {
-
+	m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
+	m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_DOWN);
 }
 
 void CStun_Hold_Zombie::Change_Animation()

@@ -1356,7 +1356,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 
 					//if (eType == COLLIDER_TYPE::HEAD)
 					{
-						m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count();
+						//	m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count();
 					}
 
 					if (bBigAttack)

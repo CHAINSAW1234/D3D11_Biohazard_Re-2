@@ -54,16 +54,16 @@ _bool CStand_Up_Zombie::Execute(_float fTimeDelta)
 	{
 		_bool			isFinsihed = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY)->isFinished(static_cast<_uint>(m_ePlayingIndex)) };
 		if (true == isFinsihed)
+		{
+			m_pBlackBoard->Get_ZombieStatus_Ptr()->fAccCreepTime = 0.f;
+			m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_UP);
+			m_eFaceState = CZombie::FACE_STATE::_END;
 			return false;
+		}
 	}
 
 	else
 	{
-		MONSTER_STATE				eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
-		if (MONSTER_STATE::MST_CREEP != eMonsterState &&
-			MONSTER_STATE::MST_TURNOVER != eMonsterState)
-			return false;
-
 		if (CZombie::POSE_STATE::_CREEP != m_pBlackBoard->Get_AI()->Get_PoseState())
 			return false;
 
@@ -98,10 +98,7 @@ _bool CStand_Up_Zombie::Execute(_float fTimeDelta)
 
 void CStand_Up_Zombie::Exit()
 {
-	m_pBlackBoard->Get_ZombieStatus_Ptr()->fAccCreepTime = 0.f;
-	m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_UP);
 
-	m_eFaceState = CZombie::FACE_STATE::_END;
 }
 
 void CStand_Up_Zombie::Change_Animation()

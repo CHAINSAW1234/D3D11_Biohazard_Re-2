@@ -100,8 +100,8 @@ _bool CBreak_In_Window_Zombie::Execute(_float fTimeDelta)
 
 		_int				iRandom = { m_pGameInstance->GetRandom_Int(0, 2) };
 		_bool				isSuccess = { iRandom == 0 };
-		//if (false == isSuccess)
-		//	return false;
+		if (false == isSuccess)
+			return false;
 	}
 
 	m_pBlackBoard->Organize_PreState(this);

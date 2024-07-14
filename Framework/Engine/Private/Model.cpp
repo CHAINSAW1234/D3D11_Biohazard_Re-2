@@ -3469,12 +3469,8 @@ void CModel::InitDecalWorldMatrix(_float4 vPos, _float4 vNormal)
 
 void CModel::Init_Decal(_uint iLevel)
 {
-	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
-
-	for (auto& i : NonHideIndex)
-	{
-		m_Meshes[i]->Init_Decal(iLevel);
-	}
+	for(auto& pMesh : m_Meshes)
+		pMesh->Init_Decal(iLevel);
 }
 
 void CModel::Bind_Resource_NonCShader_Decal(_uint iIndex, class CShader* pShader)

@@ -47,10 +47,14 @@ _bool CTurn_Lost_Zombie::Execute(_float fTimeDelta)
 
 	MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 
-	if (MONSTER_STATE::MST_TURN != eMonsterState)
+	if (MONSTER_STATE::MST_TURN_LOST != eMonsterState)
 	{
 		CZombie::POSE_STATE			ePoseState = { m_pBlackBoard->Get_AI()->Get_PoseState() };
+		CZombie::FACE_STATE			eFaceState = { m_pBlackBoard->Get_AI()->Get_FaceState() };
 		if (CZombie::POSE_STATE::_CREEP != ePoseState)
+			return false;
+
+		if (CZombie::FACE_STATE::_DOWN != eFaceState)
 			return false;
 
 		if (false == m_pBlackBoard->Is_LookTarget())
@@ -147,6 +151,9 @@ _bool CTurn_Lost_Zombie::Execute(_float fTimeDelta)
 
 	else
 	{
+		if (false == m_pBlackBoard->Is_LookTarget())
+			return false;
+
 		_float3			vDirectionToPlayerLocalFloat3 = {};
 		if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3))
 			return false;
@@ -164,7 +171,7 @@ _bool CTurn_Lost_Zombie::Execute(_float fTimeDelta)
 	m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->Set_State(MONSTER_STATE::MST_TURN);
+	pAI->Set_State(MONSTER_STATE::MST_TURN_LOST);
 
 	return true;
 }

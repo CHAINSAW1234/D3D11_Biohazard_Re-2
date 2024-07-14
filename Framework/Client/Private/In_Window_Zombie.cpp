@@ -86,6 +86,7 @@ _bool CIn_Window_Zombie::Execute(_float fTimeDelta)
 		{
 			m_pBlackBoard->Get_AI()->Set_PoseState(CZombie::POSE_STATE::_CREEP);
 			m_pBlackBoard->Get_AI()->Set_FaceState(CZombie::FACE_STATE::_UP);
+			m_pBlackBoard->Get_AI()->Set_OutDoor(false);
 			return false;
 		}
 	}
