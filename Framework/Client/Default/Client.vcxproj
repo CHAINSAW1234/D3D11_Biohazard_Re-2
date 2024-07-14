@@ -239,6 +239,7 @@
     <ClInclude Include="..\Public\Hit.h" />
     <ClInclude Include="..\Public\Hit_Props.h" />
     <ClInclude Include="..\Public\Impact.h" />
+    <ClInclude Include="..\Public\Impact_Grenade.h" />
     <ClInclude Include="..\Public\Is_Different_Location_To_Player_Zombie.h" />
     <ClInclude Include="..\Public\Is_Start_Rub_Door_Zombie.h" />
     <ClInclude Include="..\Public\Move_To_Target_Lost_Zombie.h" />
@@ -488,6 +489,7 @@
     <ClCompile Include="..\Private\Hit.cpp" />
     <ClCompile Include="..\Private\Hit_Props.cpp" />
     <ClCompile Include="..\Private\Impact.cpp" />
+    <ClCompile Include="..\Private\Impact_Grenade.cpp" />
     <ClCompile Include="..\Private\Is_Different_Location_To_Player_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_In_Door_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Same_Location_To_Player_Zombie.cpp" />

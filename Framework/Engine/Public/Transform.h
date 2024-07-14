@@ -136,6 +136,7 @@ public:
 
 public:
 	HRESULT					Bind_ShaderResource(class CShader* pShader, const _char* pConstantName);
+	HRESULT					Bind_ShaderResource(class CShader* pShader, const _char* pConstantName, _float4x4 MoveMatrix);
 
 public:
 	void					Go_Straight(_float fTimeDelta, class CNavigation* pNavigation = nullptr);

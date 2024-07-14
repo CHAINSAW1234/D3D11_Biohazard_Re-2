@@ -61,21 +61,40 @@ HRESULT CThrowing_Weapon_Pin::Initialize(void* pArg)
 		m_pParentsTransform->Get_State_Float4(CTransform::STATE_UP),
 		m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK));
 
+	m_Explode_Time = GetTickCount64();
+	m_Explode_Delay = 3000;
+
+	m_bRender = true;
+
 	return S_OK;
 }
 
 void CThrowing_Weapon_Pin::Tick(_float fTimeDelta)
 {
+	if (m_bRender == false)
+		return;
+
 	if (m_pRigid_Dynamic)
 	{
 		m_pTransformCom->Set_WorldMatrix(m_pRigid_Dynamic->GetWorldMatrix_Rigid_Dynamic(m_pTransformCom->Get_Scaled()));
 
 		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
 	}
+
+	if (m_Explode_Time + m_Explode_Delay < GetTickCount64())
+	{
+		m_bRender = false;
+		m_pRigid_Dynamic->Release_Body();
+
+		return;
+	}
 }
 
 void CThrowing_Weapon_Pin::Late_Tick(_float fTimeDelta)
 {
+	if (m_bRender == false)
+		return;
+
 	_float3				vDirection = { };
 	m_pModelCom->Play_Animations(m_pTransformCom, fTimeDelta, &vDirection);
 

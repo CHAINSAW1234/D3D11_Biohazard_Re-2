@@ -21,7 +21,6 @@ void CTransform::Set_Scaled(_float fScaleX, _float fScaleY, _float fScaleZ)
 	Set_State(STATE_RIGHT, XMVector3Normalize(Get_State_Vector(STATE_RIGHT)) * fScaleX);
 	Set_State(STATE_UP, XMVector3Normalize(Get_State_Vector(STATE_UP)) * fScaleY);
 	Set_State(STATE_LOOK, XMVector3Normalize(Get_State_Vector(STATE_LOOK)) * fScaleZ);
-		
 }
 
 _float4x4 CTransform::Get_WorldMatrix_Pure()
@@ -283,8 +282,44 @@ HRESULT CTransform::Initialize(void * pArg)
 
 HRESULT CTransform::Bind_ShaderResource(CShader * pShader, const _char * pConstantName)
 {
+
 	return pShader->Bind_Matrix(pConstantName, &m_WorldMatrix);
-	
+}
+
+HRESULT CTransform::Bind_ShaderResource(CShader* pShader, const _char* pConstantName, _float4x4 MoveMatrix)
+{
+	//Lo x word
+	//이게 만약에 m_WorldMatrix 에 스케일이 있으면 (1이아니면) 
+	_float3 vScale = Get_Scaled();
+	if (1.f != vScale.x || 1.f != vScale.y || 1.f != vScale.z)
+	{
+		_float4x4 wordpure = Get_WorldMatrix_Pure();
+
+		_float4x4 TempMatrix = MoveMatrix * m_WorldMatrix;
+
+		_matrix Resultmat = XMLoadFloat4x4(&TempMatrix);
+
+		_vector vRight = Resultmat.r[0];
+		vRight = XMVectorScale(XMVector3Normalize(vRight), vScale.x);
+		_vector vUp = Resultmat.r[1];
+		vUp = XMVectorScale(XMVector3Normalize(vUp), vScale.y);
+		_vector vLook = Resultmat.r[2];
+		vLook = XMVectorScale(XMVector3Normalize(vLook), vScale.z);
+
+		Resultmat.r[0] = vRight;
+		Resultmat.r[1] = vUp;
+		Resultmat.r[2] = vLook;
+
+		XMStoreFloat4x4(&TempMatrix, Resultmat);
+
+		return pShader->Bind_Matrix(pConstantName, &TempMatrix);
+	}
+
+	else
+	{
+		_float4x4 TempMatrix = MoveMatrix * m_WorldMatrix;
+		return pShader->Bind_Matrix(pConstantName, &TempMatrix);
+	}
 }
 
 void CTransform::Go_Straight(_float fTimeDelta, CNavigation* pNavigation)

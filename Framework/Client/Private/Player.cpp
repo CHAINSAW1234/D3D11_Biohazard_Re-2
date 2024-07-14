@@ -1875,7 +1875,7 @@ void CPlayer::RayCast_Shoot()
 			return;
 		}
 
-		if (m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, false, true, &bHit_Props));
+		if (m_pGameInstance->RayCast_Shoot(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, false, true, &bHit_Props))
 		{
 		}
 	}

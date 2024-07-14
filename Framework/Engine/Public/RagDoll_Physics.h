@@ -457,6 +457,31 @@ private:
     uint32_t m_lowerarm_r_idx_Bone = { 0 };	//r_arm_radius
     uint32_t m_hand_r_idx_Bone = { 0 };		//r_arm_wrist
     uint32_t m_middle_01_r_idx_Bone = { 0 };	//r_hand_middle_0
+
+#pragma region Additional Joint
+
+    uint32_t m_upperarm_high_l_idx = { 0 };	    //l_arm_high_joint_lower
+    uint32_t m_upperarm_Middle_l_idx = { 0 };	//l_arm_middle_joint_upper
+
+#pragma endregion
+
+#pragma region Additional Bone
+
+    uint32_t m_upperarm_high_l_idx_Bone = { 0 };	    //l_arm_humerus
+    uint32_t m_upperarm_Middle_l_idx_Bone = { 0 };	    //l_arm_humerus
+
+#pragma endregion
+
+#pragma region Additional Body
+    PxRigidDynamic* m_Arm_L_High = { nullptr };
+    PxRigidDynamic* m_Arm_L_Middle = { nullptr };
+    PxRigidDynamic* m_Arm_L_Low = { nullptr };
+#pragma endregion
+
+#pragma region Additional Joint
+    PxD6Joint* m_Clavicle_L_Upper_Joint = { nullptr };
+#pragma endregion
+
 public:
 	virtual void Free() override;
 };

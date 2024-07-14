@@ -41,8 +41,8 @@ extern Client::LEVEL g_Level;
 using namespace std;
 using namespace Client;
 	
-#define MAP_NOTHING
-//#define MAP_INTERACT
+//#define MAP_NOTHING
+#define MAP_INTERACT
 //#define MAP_TEST
 
 #define TEST_ZOMBIE_MAINHALL

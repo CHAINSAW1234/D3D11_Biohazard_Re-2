@@ -2,7 +2,7 @@
 
 #include "Client_Defines.h"
 #include "Base.h"
-
+#include "ImGuizmo.h"
 
 BEGIN(Client)
 
@@ -19,6 +19,7 @@ public:
 	HRESULT				Initialize();
 	void				Set_GraphicDevice(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	void				ResetVariable();
+	void				Start();
 	void				Tick();
 	void				Render();
 
@@ -35,6 +36,11 @@ private:
 	string				WStringToString(const std::wstring& wstr);
 
 private:
+	void	Gizmo(CTransform* pTransform);
+	void	EditTransform(class CTransform* pTransformCom);
+
+
+private:
 	ImGuiIO								m_ImGuiIO;
 	ID3D11Device*						m_pDevice = { nullptr };
 	ID3D11DeviceContext*				m_pContext = { nullptr };
@@ -43,6 +49,11 @@ private:
 private:
 	class CTab_Window*					m_pTabWindow = { nullptr };
 	class CPlayer*						m_pPlayer = { nullptr };
+	class CItem_Mesh_Viewer*					m_pMeshViewer = { nullptr };
+
+private:
+	_bool								m_isStart = { true };
+
 
 private:/*for WindowControl*/
 	_bool								m_bTabWindow_Debuger = { false };
@@ -62,6 +73,9 @@ private:/*for. Player*/
 private:/*for. Shader*/
 	_bool								m_bShaderOnOff[Engine::SHADER_STATE_END] = { false };
 	_bool								m_bDebugRender = { false };
+
+private:/*for. Gizmo*/
+	ImGuizmo::OPERATION					m_eGizmoState = { ImGuizmo::TRANSLATE };
 
 private:
 	HRESULT Refer_Player();

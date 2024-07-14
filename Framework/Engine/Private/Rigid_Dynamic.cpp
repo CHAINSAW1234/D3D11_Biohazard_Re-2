@@ -116,6 +116,12 @@ void CRigid_Dynamic::ClearForce()
 	m_pRigid_Dynamic->setAngularVelocity(PxVec3(0.0f, 0.0f, 0.0f));
 }
 
+void CRigid_Dynamic::Release_Body()
+{
+	m_pRigid_Dynamic->release();
+	m_pRigid_Dynamic = nullptr;
+}
+
 CRigid_Dynamic* CRigid_Dynamic::Create()
 {
 	return nullptr;

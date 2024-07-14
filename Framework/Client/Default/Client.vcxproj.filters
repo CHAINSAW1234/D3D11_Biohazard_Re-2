@@ -697,6 +697,9 @@
     <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Bite\Bite_Lost">
       <UniqueIdentifier>{760e2f79-5e12-4875-a06b-34522073a6f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Impact_Grenade">
+      <UniqueIdentifier>{b0dfbe9f-435a-4ba2-bf40-4a69fa774dbb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1350,6 +1353,9 @@
     <ClInclude Include="..\Public\Turn_Lost_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\Turn_Lost</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Impact_Grenade.h">
+      <Filter>02.GameObjects\Effect\Impact_Grenade</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1963,6 +1969,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Turn_Lost_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Move\Turn_Lost</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Impact_Grenade.cpp">
+      <Filter>02.GameObjects\Effect\Impact_Grenade</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

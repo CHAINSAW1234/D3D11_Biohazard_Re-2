@@ -497,11 +497,25 @@ void CRagdoll_Physics::create_ragdoll()
 		m_Scene->addActor(*m_Calf_R);
 	}
 
-	if (m_Arm_L == nullptr)
+	/*if (m_Arm_L == nullptr)
 	{
 		m_Arm_L = create_capsule_bone(m_upperarm_l_idx, m_lowerarm_l_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_L);
 		m_Scene->addActor(*m_Arm_L);
+	}*/
+
+	//TEMP
+	if (m_Arm_L == nullptr)
+	{
+		m_Arm_L = create_capsule_bone(m_upperarm_l_idx, m_upperarm_high_l_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_L);
+		m_Scene->addActor(*m_Arm_L);
 	}
+	if (m_Arm_L_High == nullptr)
+	{
+		m_Arm_L_High = create_capsule_bone(m_upperarm_high_l_idx, m_lowerarm_l_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_L);
+		m_Scene->addActor(*m_Arm_L_High);
+	}
+
+
 	if (m_Arm_R == nullptr)
 	{
 		m_Arm_R = create_capsule_bone(m_upperarm_r_idx, m_lowerarm_r_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_R);
@@ -561,6 +575,8 @@ void CRagdoll_Physics::create_ragdoll()
 	m_ragdoll->m_body_pos_relative_to_joint.resize(iNumBone);
 	m_ragdoll->m_original_joint_rotations.resize(iNumBone);*/
 
+	//TEMP
+	joints[m_lowerarm_l_idx].parent_index = m_upperarm_high_l_idx;
 
 	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 	{
@@ -1485,8 +1501,17 @@ void CRagdoll_Physics::create_joint()
 		m_pClavicle_R_Joint = create_d6_joint(m_Chest, m_Arm_R, m_upperarm_r_idx_Bone, m_upperarm_r_idx);
 
 	// Upperarm to Lowerman
+	/*if (!m_pElbow_L_Joint && m_vecBreakPartFilter[m_lowerarm_l_idx] == false)
+		m_pElbow_L_Joint = create_d6_joint(m_Arm_L, m_ForeArm_L, m_lowerarm_l_idx_Bone, m_lowerarm_l_idx);*/
+
+
+	//TEMP
+	if (!m_Clavicle_L_Upper_Joint)
+		m_Clavicle_L_Upper_Joint = create_d6_joint(m_Arm_L, m_Arm_L_High, m_upperarm_high_l_idx, m_upperarm_high_l_idx_Bone);
 	if (!m_pElbow_L_Joint && m_vecBreakPartFilter[m_lowerarm_l_idx] == false)
-		m_pElbow_L_Joint = create_d6_joint(m_Arm_L, m_ForeArm_L, m_lowerarm_l_idx_Bone, m_lowerarm_l_idx);
+		m_pElbow_L_Joint = create_d6_joint(m_Arm_L_High, m_ForeArm_L, m_lowerarm_l_idx_Bone, m_lowerarm_l_idx);
+
+
 	if (!m_pElbow_R_Joint && m_vecBreakPartFilter[m_lowerarm_r_idx] == false)
 		m_pElbow_R_Joint = create_d6_joint(m_Arm_R, m_ForeArm_R, m_lowerarm_r_idx_Bone, m_lowerarm_r_idx);
 
@@ -1791,6 +1816,9 @@ void CRagdoll_Physics::SetBoneIndex()
 	m_hand_r_idx = Skeleton->Find_BoneIndex("r_arm_wrist");
 	m_middle_01_r_idx = Skeleton->Find_BoneIndex("r_hand_middle_0");
 
+	//TEMP
+	m_upperarm_high_l_idx = Skeleton->Find_BoneIndex("l_arm_high_joint_lower");
+
 
 
 
@@ -1821,6 +1849,9 @@ void CRagdoll_Physics::SetBoneIndex()
 	m_lowerarm_r_idx_Bone = Find_BoneIndex("r_arm_radius");
 	m_hand_r_idx_Bone = Find_BoneIndex("r_arm_wrist");
 	m_middle_01_r_idx_Bone = Find_BoneIndex("r_hand_middle_0");
+
+	//TEMP
+	m_upperarm_high_l_idx_Bone = Find_BoneIndex("l_arm_high_joint_lower");
 }
 
 _int CRagdoll_Physics::Find_BoneIndex(const string& strRootTag)
