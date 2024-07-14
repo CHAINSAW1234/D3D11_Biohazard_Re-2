@@ -128,18 +128,19 @@ public:
 
 
 
-	virtual HRESULT										Render_LightDepth_Dir() override;
-	virtual	HRESULT										Render_LightDepth_Spot() override;
-	virtual HRESULT										Render_LightDepth_Point() override;
+	virtual HRESULT								Render_LightDepth_Dir() override;
+	virtual	HRESULT							Render_LightDepth_Spot() override;
+	virtual HRESULT								Render_LightDepth_Point() override;
 	
 public:
-	_bool*												Get_Activity() { return &m_bActivity; }
+	INTERACTPROPS_DESC*					Get_DESC() { return &m_tagPropDesc; }
+	_bool*											Get_Activity() { return &m_bActivity; }
 
-	_bool*												ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
-	_bool*												Selector_Rendering() { return &m_isSelector_Rendering;  }
+	_bool*											ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
+	_bool*											Selector_Rendering() { return &m_isSelector_Rendering;  }
 
 	/*To NY*/
-	virtual _float4										Get_Object_Pos() = 0;
+	virtual _float4								Get_Object_Pos() = 0;
 	_int												Get_PropType() { return m_tagPropDesc.iPropType; } // 프롭타입이라 쓰고 arg라 읽는다. // 문의 지역 enum을 반환한다.
 
 
@@ -149,9 +150,9 @@ public:
 	_int												Get_Region() { return m_tagPropDesc.iRegionNum; }
 	_int												Get_Type() { return m_tagPropDesc.iPropType; }
 	void												Set_Region(_int iRegion) { m_tagPropDesc.iRegionNum = iRegion; }
-	virtual _bool										Attack_Prop(class CTransform* pTransfromCom = nullptr) { return false; };
+	virtual _bool									Attack_Prop(class CTransform* pTransfromCom = nullptr) { return false; };
 
-	_float												Get_PlayerLook_Degree();
+	_float											Get_PlayerLook_Degree();
 	
 #pragma region 나옹
 	/* Function */

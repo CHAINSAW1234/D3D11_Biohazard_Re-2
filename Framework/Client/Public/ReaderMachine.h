@@ -30,6 +30,7 @@ private:
 public:
 	virtual HRESULT				Initialize_Prototype() override;
 	virtual HRESULT				Initialize(void* pArg) override;
+	virtual void					Start() override;
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
@@ -50,7 +51,7 @@ private:
 	_bool				m_bActivity = { false };
 	_float			m_fTime = { 0.f };
 	_ubyte			m_eState = { STATE_STATIC };
-
+	map<_int, class CCabinet*> m_Cabinets;
 
 public:
 	static CReaderMachine* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

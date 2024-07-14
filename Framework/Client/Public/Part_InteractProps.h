@@ -72,10 +72,10 @@ public:
 public :
 	virtual _float4									Get_Pos(_int iArg = 0) { return XMVectorSetW( m_WorldMatrix.Translation(),1.f); }
 	virtual _vector									Get_Pos_vector(_int iArg = 0) { return XMVectorSetW( m_WorldMatrix.Translation(),1.f); }
-	virtual _int									Get_PartObject_Props_ItemIndex() { return -1; };
-	_bool											Is_Finishied_Anim() { return m_pModelCom->isFinished(0); }
-	void											Change_Anim(){m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);}
-
+	virtual _int											Get_PartObject_Props_ItemIndex() { return -1; };
+	_vector												Get_World_Look_Dir() { return XMVectorSetW(m_WorldMatrix.Forward(), 0.f); }
+	_bool													Is_Finishied_Anim() { return m_pModelCom->isFinished(0); }
+	void													Change_Anim(){m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);}
 protected:
 	_int											m_iPropType = { 0 };
 	_bool											m_bCol = { false };
