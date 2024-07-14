@@ -989,11 +989,6 @@ void COctree::Render_Node(CModel* pRootWorld, CShader* pShader)
 			{
 				if ((*Meshes)[k]->GetNumIndices() != 0)
 				{
-					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(k), aiTextureType_DIFFUSE)))
-						return;
-					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_NormalTexture", static_cast<_uint>(k), aiTextureType_NORMALS)))
-						return;
-
 					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_AlphaTexture", static_cast<_uint>(k), aiTextureType_METALNESS)))
 					{
 						_bool isAlphaTexture = false;
@@ -1002,9 +997,7 @@ void COctree::Render_Node(CModel* pRootWorld, CShader* pShader)
 					}
 					else
 					{
-						_bool isAlphaTexture = true;
-						if (FAILED(pShader->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
-							return;
+						continue;
 					}
 
 					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_AOTexture", static_cast<_uint>(k), aiTextureType_SHININESS)))
@@ -1015,14 +1008,94 @@ void COctree::Render_Node(CModel* pRootWorld, CShader* pShader)
 					}
 					else
 					{
-						_bool isAOTexture = true;
-						if (FAILED(pShader->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+						continue;
+					}
+
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(k), aiTextureType_DIFFUSE)))
+						return;
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_NormalTexture", static_cast<_uint>(k), aiTextureType_NORMALS)))
+						return;
+
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_EmissiveTexture", static_cast<_uint>(k), aiTextureType_EMISSIVE)))
+					{
+						_bool isEmissive = false;
+						if (FAILED(pShader->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+							return;
+					}
+					else
+					{
+						_bool isEmissive = true;
+						if (FAILED(pShader->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
 							return;
 					}
 
 					pRootWorld->Bind_DecalMap(k, pShader);
 
 					if (FAILED(pShader->Begin(0)))
+						return;
+
+					m_pOctreeNodes[i]->m_vecEntryNode[j]->Render(k);
+				}
+			}
+		}
+	}
+}
+
+void COctree::Render_Node_Blend(CModel* pRootWorld, CShader* pShader)
+{
+	for (int i = 0; i < 8; ++i)
+	{
+		for (int j = 0; j < m_pOctreeNodes[i]->m_vecEntryNode.size(); ++j)
+		{
+			auto Meshes = m_pOctreeNodes[i]->m_vecEntryNode[j]->GetMeshes();
+
+			for (_uint k = 0; k < m_pOctreeNodes[i]->m_vecEntryNode[j]->GetNumMesh(); ++k)
+			{
+				if ((*Meshes)[k]->GetNumIndices() != 0)
+				{
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_AlphaTexture", static_cast<_uint>(k), aiTextureType_METALNESS)))
+					{
+						continue;
+					}
+					else
+					{
+						_bool isAlphaTexture = true;
+						if (FAILED(pShader->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+							return;
+					}
+
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_AOTexture", static_cast<_uint>(k), aiTextureType_SHININESS)))
+					{
+						continue;
+					}
+					else
+					{
+						_bool isAOTexture = true;
+						if (FAILED(pShader->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+							return;
+					}
+
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_DiffuseTexture", static_cast<_uint>(k), aiTextureType_DIFFUSE)))
+						return;
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_NormalTexture", static_cast<_uint>(k), aiTextureType_NORMALS)))
+						return;
+
+					if (FAILED(pRootWorld->Bind_ShaderResource_Texture(pShader, "g_EmissiveTexture", static_cast<_uint>(k), aiTextureType_EMISSIVE)))
+					{
+						_bool isEmissive = false;
+						if (FAILED(pShader->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+							return;
+					}
+					else
+					{
+						_bool isEmissive = true;
+						if (FAILED(pShader->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
+							return;
+					}
+
+					pRootWorld->Bind_DecalMap(k, pShader);
+
+					if (FAILED(pShader->Begin(1)))
 						return;
 
 					m_pOctreeNodes[i]->m_vecEntryNode[j]->Render(k);

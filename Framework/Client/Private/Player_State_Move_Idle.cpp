@@ -19,9 +19,9 @@ void CPlayer_State_Move_Idle::OnStateEnter()
 void CPlayer_State_Move_Idle::OnStateUpdate(_float fTimeDelta)
 {
 	// 1. spotlight인 경우 wheel 돌리게 처리
-	//if (m_pPlayer->Get_Spotlight()) {
-	//	Look_Cam(fTimeDelta);
-	//}
+	if (m_pPlayer->Get_Spotlight()) {
+		Look_Cam(fTimeDelta);
+	}
 
 	// 카메라 위치에 맞춰서 대가리 돌리기 : main에서 처리해야함
 

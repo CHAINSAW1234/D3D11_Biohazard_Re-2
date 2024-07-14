@@ -1033,6 +1033,20 @@ HRESULT CRenderer::Render_LUT()
 
 HRESULT CRenderer::Render_Priority()
 {
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Skybox"))))
+		return E_FAIL;
+
+	for (auto& pRenderObject : m_RenderObjects[RENDER_PRIORITY])
+	{
+		if (nullptr != pRenderObject)
+			pRenderObject->Render();
+
+	}
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
+	
+
 	if (m_ShaderOptions[FXAA]) {
 		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_FXAA"))))
 			return E_FAIL;
@@ -1120,7 +1134,7 @@ HRESULT CRenderer::Render_Blend()
 	for (auto& pRenderObject : m_RenderObjects[RENDER_BLEND])
 	{
 		if (nullptr != pRenderObject)
-			pRenderObject->Render();
+			pRenderObject->Render_Blend();
 		Safe_Release(pRenderObject);
 	}
 	m_RenderObjects[RENDER_BLEND].clear();

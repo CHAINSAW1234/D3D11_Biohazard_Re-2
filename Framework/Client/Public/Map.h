@@ -32,6 +32,7 @@ public:
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
+	virtual HRESULT				Render_Blend() override;
 	virtual void				Start() override;
 
 	virtual HRESULT				Render_LightDepth_Dir() override;
@@ -42,6 +43,9 @@ private:
 	HRESULT						Initialize_Room_Finder();
 
 private:
+	_bool						m_isBlend = { false };
+
+
 	_bool						m_bOctotree = { false };
 	_bool						m_bShadow = { true };
 	_float						m_fTimeDelay = { 0.f };

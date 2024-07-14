@@ -38,19 +38,19 @@ private:
 public:
 	virtual HRESULT				Initialize_Prototype() override;
 	virtual HRESULT				Initialize(void* pArg) override;
-	virtual void					Tick(_float fTimeDelta) override;
-	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual void				Tick(_float fTimeDelta) override;
+	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
-	virtual HRESULT					Render_LightDepth_Dir()override;
-	virtual HRESULT					Render_LightDepth_Point() override;
-	virtual HRESULT					Render_LightDepth_Spot()override;
+	virtual HRESULT				Render_LightDepth_Dir()override;
+	virtual HRESULT				Render_LightDepth_Point() override;
+	virtual HRESULT				Render_LightDepth_Spot()override;
 
 private:
 	virtual HRESULT				Add_Components();
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
-	 HRESULT						Initialize_Model() ;
-	virtual void					Get_SpecialBone_Rotation() override;
+	 HRESULT					Initialize_Model() ;
+	virtual void				Get_SpecialBone_Rotation() override;
 
 public:
 	virtual _float4				Get_Pos(_int iArg = 0) override;
