@@ -229,11 +229,12 @@ void CWindow::Active()
 {
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
-
-	m_bBarrigate = true;
-	m_bBarrigateInstallable = false;
-	m_eBarrigateState = BARRIGATE_NEW;
-	m_iHP[PART_PANNEL] = 5;
+	if(false == m_pGameInstance->IsPaused())
+		m_pPlayer->Interact_Props(this);
+	//m_bBarrigate = true;
+	//m_bBarrigateInstallable = false;
+	//m_eBarrigateState = BARRIGATE_NEW;
+	//m_iHP[PART_PANNEL] = 5;
 }
 
 _float4 CWindow::Get_Object_Pos()

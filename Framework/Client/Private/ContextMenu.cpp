@@ -177,13 +177,16 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 
 	Set_Position(XMLoadFloat3(&fAppearPos));
 
+	static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Set_Value_Color(0, 0);
+	static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_TextColor(0, 0, XMVectorSet(1.f, 1.f, 1.f, 1.));
+
 	switch (eItemType)
 	{
 	case Client::EQUIPABLE: { //bActive가 장착 여부임
 		m_iContextMenuCount = 4;
 		
 		m_eContextType = eItemType;
-
+		
 		if (false == bActive)
 		{
 			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 0);
@@ -245,14 +248,16 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 4);
 		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("사용"));
 
-		if (false == bActive)
+		if (true == bActive)
 		{
-			//static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Frame_Change_ValueColor(0, 0);
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Set_Value_Color(0, 0);
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_TextColor(0, 0, XMVectorSet(1.f, 1.f, 1.f, 1.));
 		}
 
 		else
 		{
-			//static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Frame_Change_ValueColor(0, 1);
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Set_Value_Color(0, 1);
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_TextColor(0, 0, XMVectorSet(0.41f, 0.41f, 0.41f, 0.41f));
 		}
 
 		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_ChildTextureNum(0, 3);
@@ -326,6 +331,34 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 
 		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 2);
 		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("조합"));
+
+		m_eContextType = eItemType;
+		break;
+	}
+
+	case Client::INTERACT: { // 사용 가능한 아이템이면 0
+		m_iContextMenuCount = 3;
+
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 4);
+		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("사용"));
+
+		if (true == bActive)
+		{
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Set_Value_Color(0, 0);
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_TextColor(0, 0, XMVectorSet(1.f, 1.f, 1.f, 1.));
+		}
+
+		else
+		{
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Set_Value_Color(0, 1);
+			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_TextColor(0, 0, XMVectorSet(0.41f, 0.41f, 0.41f, 0.41f));
+		}
+
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_ChildTextureNum(0, 3);
+		static_cast<CContextMenu*>(m_vecChildUI[1])->Set_MyChild_Text(0, 0, TEXT("검사"));
+
+		static_cast<CContextMenu*>(m_vecChildUI[2])->Set_ChildTextureNum(0, 2);
+		static_cast<CContextMenu*>(m_vecChildUI[2])->Set_MyChild_Text(0, 0, TEXT("조합"));
 
 		m_eContextType = eItemType;
 		break;

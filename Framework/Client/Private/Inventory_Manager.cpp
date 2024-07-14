@@ -60,6 +60,28 @@ void CInventory_Manager::FirstTick_Seting()
 	AddItem_ToInven(ShotGun, 7);
 	AddItem_ToInven(handgun_bullet01a, 20);
 	AddItem_ToInven(shotgun_bullet01a, 20);
+
+
+}
+
+void CInventory_Manager::SecondTivk_Seting()
+{
+	for (auto& iter : m_vecItem_UI)
+	{
+		if (HandGun == iter->Get_ItemNumber())
+		{
+			_uint iHotKeyNum = m_pHotkey->RegisterHoykey(0, iter->Get_ItemNumber(), iter->Get_ItemQuantity());
+			iter->Set_Text(HOTKEY_DISPLAY, to_wstring(iHotKeyNum));
+		}
+
+		else if (ShotGun == iter->Get_ItemNumber())
+		{
+			_uint iHotKeyNum = m_pHotkey->RegisterHoykey(1, iter->Get_ItemNumber(), iter->Get_ItemQuantity());
+			iter->Set_Text(HOTKEY_DISPLAY, to_wstring(iHotKeyNum));
+		}
+	}
+
+	m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
 }
 
 void CInventory_Manager::Tick(_float fTimeDelta)
@@ -114,6 +136,12 @@ void CInventory_Manager::Tick(_float fTimeDelta)
 		PICK_UP_ITEM_Operation(fTimeDelta);
 		break;
 	}
+	case Client::INTERACT_PROPS: {
+		INTERACT_ITEM_Operation(fTimeDelta);
+		break;
+	}
+
+
 								 
 	default:
 		break;
@@ -236,7 +264,7 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 	switch (m_eTaskSequence)
 	{
 	case Client::CInventory_Manager::SETING: {
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON) || UP == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 		{
 			m_eTaskSequence = APPLY;
 			m_pContextMenu->Set_Dead(true);
@@ -329,7 +357,7 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 
 		INVENTORY_EVENT eInvenEvent = m_pContextMenu->Get_InventoryEvent();
 
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON) || UP == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 		{
 			m_eTaskSequence = SETING;
 			m_pContextMenu->Set_Dead(true);
@@ -368,7 +396,7 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 	case Client::CInventory_Manager::APPLY: {
 		if (m_PickResult == -1)
 		{
-			m_eInven_Manager_State = DROP_ITEM;
+			m_eInven_Manager_State = EVENT_CANCLE;
 		}
 
 		else if (m_PickResult == 0)
@@ -545,9 +573,16 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 
 	case Client::CInventory_Manager::SELECT: {
 		
-		if (UP == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		if (UP == m_pGameInstance->Get_KeyState(VK_RBUTTON) || UP == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 		{
-			m_eInven_Manager_State = EVENT_IDLE;
+			if (INTERACT_PROPS == m_ePre_Inven_Manager_State) {
+				m_eInven_Manager_State = INTERACT_PROPS;
+				m_eTaskSequence = SETING;
+			}
+				
+			else
+				m_eInven_Manager_State = EVENT_IDLE;
+
 			for (auto& iter : m_vecItem_UI)
 			{
 				if (false == iter->Get_isActive() && true == iter->Get_isWorking())
@@ -601,7 +636,10 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 		
 	case Client::CInventory_Manager::APPLY: {
 		//m_pSelected_ItemUI->Set_ItemNumber(m_CombineResources[RESULT_NUM]);
-		m_eTaskSequence = TS_END;
+		if(INTERACT_PROPS == m_ePre_Inven_Manager_State)
+			m_eTaskSequence = SETING;
+		else
+			m_eTaskSequence = TS_END;
 		m_eInven_Manager_State = EXAMINE_ITEM;
 		m_CombineResources[SELECTED_NUM] = { ITEM_NUMBER_END };
 		m_CombineResources[COMBINDE_NUM] = { ITEM_NUMBER_END };
@@ -806,7 +844,7 @@ void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 		//이징 스타트 도착 지점 제대로 정해주기
 		_float3 TempTrashCanValue = _float3(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y, Z_POS_CONTEXT_MENU);
 
-		m_pContextMenu->Set_Operation(m_pSelected_ItemUI->Get_ItemType(), m_pSelected_ItemUI->Get_isEquiped(), TempTrashCanValue, TempTrashCanValue);
+		m_pContextMenu->Set_Operation(m_pSelected_ItemUI->Get_ItemType(), true, TempTrashCanValue, TempTrashCanValue);
 		m_eTaskSequence = SELECT;
 		break;
 	}
@@ -892,17 +930,141 @@ void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 		break;
 	}
 
-
-
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON) || UP == m_pGameInstance->Get_KeyState(VK_ESCAPE))
 	{
 		m_eInven_Manager_State = EVENT_IDLE;
 		m_pContextMenu->Set_Dead(true);
 		m_pSelected_ItemUI = nullptr;
 		return;
 	}
+}
+
+void CInventory_Manager::INTERACT_ITEM_Operation(_float fTimeDelta)
+{
+	switch (m_eTaskSequence)
+	{
+	case Client::CInventory_Manager::SETING: {
+		if (UP == m_pGameInstance->Get_KeyState(VK_RBUTTON) || UP == m_pGameInstance->Get_KeyState(VK_ESCAPE))
+		{
+			m_eInven_Manager_State = EVENT_CANCLE;
+			m_ePre_Inven_Manager_State = INVEN_EVENT_END;
+			m_pSelected_ItemUI = nullptr;
+			break;
+		}
+		
+		m_IsNoOneHover = true;
+		CInventory_Slot* pHoveredSlot = nullptr;
+
+		for (_uint i = 0; i < m_iInvenCount; i++)
+		{
+			if (true == m_vecInvenSlot[i]->IsMouseHover())
+			{
+				m_IsNoOneHover = false;
+				pHoveredSlot = m_vecInvenSlot[i];
+			}
+		}
+
+		if (false == m_IsNoOneHover)
+		{
+			_float4 HoveredPos = static_cast<CTransform*>(pHoveredSlot->Get_Component(g_strTransformTag))->Get_State_Float4(CTransform::STATE_POSITION);
+			HoveredPos.z = Z_POS_HIGH_LIGHTER;
+			m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HoveredPos);
+
+			for (auto& iter : m_vecItem_UI)
+			{
+				if (true == iter->IsMouseHover() && true == iter->Get_isWorking())
+				{
+					m_pSelected_ItemUI = iter;
+					break;
+				}
+
+				else
+					m_pSelected_ItemUI = nullptr;
+			}
+
+			if (nullptr != m_pSelected_ItemUI)
+			{
+				if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+				{
+					if (true == m_pSelected_ItemUI->IsMouseHover() && true == m_pSelected_ItemUI->Get_isWorking())
+					{
+						m_eTaskSequence = SELECT;
+						_float3 TempTrashCanValue = _float3(HoveredPos.x, HoveredPos.y, Z_POS_CONTEXT_MENU);
+						if (m_eRequested_Item == m_pSelected_ItemUI->Get_ItemNumber())
+							m_pContextMenu->Set_Operation(INTERACT, true, TempTrashCanValue, TempTrashCanValue);
+						else
+							m_pContextMenu->Set_Operation(INTERACT, false, TempTrashCanValue, TempTrashCanValue);
+					}
+				}
+			}
+		}
+		break;
+	}
+		
+		
+	case Client::CInventory_Manager::SELECT: {
+		if (UP == m_pGameInstance->Get_KeyState(VK_RBUTTON) || UP == m_pGameInstance->Get_KeyState(VK_ESCAPE))
+		{
+			m_eTaskSequence = SETING;
+			m_pContextMenu->Set_Dead(true);
+			break;
+		}
+
+		m_pContextMenu->Tick(fTimeDelta);
+
+		INVENTORY_EVENT eInvenEvent = m_pContextMenu->Get_InventoryEvent();
+
+		switch (eInvenEvent)
+		{
+		case Client::USE_ITEM: {
+			m_ePre_Inven_Manager_State = INVEN_EVENT_END;
+			m_eInven_Manager_State = USE_INTERACT_ITEM;
+			m_eTaskSequence = SETING;
+			m_pSelected_ItemUI->Set_ItemVariation(-1);
+			m_pContextMenu->Set_Dead(true);
+			if (0 == m_pSelected_ItemUI->Get_ItemQuantity())
+			{
+				Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
+			}
+			m_pSelected_ItemUI = nullptr;
+			break;
+		}
+
+		case Client::COMBINED_ITEM: {
+			m_ePre_Inven_Manager_State = m_eInven_Manager_State;
+			m_eInven_Manager_State = COMBINED_ITEM;
+			m_eTaskSequence = SETING; 
+			m_pContextMenu->Set_Dead(true);
+			break;
+		}
+
+		case Client::EXAMINE_ITEM: {
+			m_ePre_Inven_Manager_State = m_eInven_Manager_State;
+			m_eInven_Manager_State = EXAMINE_ITEM;
+			m_eTaskSequence = SETING;
+			m_pContextMenu->Set_Dead(true);
+			break;
+		}
+
+		default:
+			break;
+		}
+		break;
 
 
+		break;
+	}
+		
+	case Client::CInventory_Manager::APPLY: {
+		break;
+	}
+		
+
+	default:
+		break;
+	}
+
+	
 }
 
 void CInventory_Manager::Switch_ItemPos(CItem_UI* FirstItemUI, CItem_UI* SecondItemUI)
@@ -988,7 +1150,11 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 	m_pContextMenu->Set_Dead(true);
 	m_pDragShadow->Set_Dead(true);
 
-	m_eInven_Manager_State = EVENT_IDLE;
+	if(INTERACT_PROPS == m_ePre_Inven_Manager_State)
+		m_eInven_Manager_State = INTERACT_PROPS;
+
+	else
+		m_eInven_Manager_State = EVENT_IDLE;
 
 	//m_pInven_Item_UI->Reset_Call(!bInput);
 }
@@ -1038,6 +1204,14 @@ void CInventory_Manager::PUO_Seting(ITEM_NUMBER eAcquiredItem, _int iItemQuantit
 	_vector TempTrashCanValue = XMVectorSet(EmptyPos.x, EmptyPos.y, Z_POS_ITEM_UI, 1.f);
 	m_pDragShadow->Set_ItemUI(eAcquiredItem, DRAG_SHADOW, TempTrashCanValue, iItemQuantity);
 	m_pDragShadow->Set_Dead(false);
+	m_eTaskSequence = SETING;
+}
+
+void CInventory_Manager::IIO_Seting(ITEM_NUMBER eRequiredItem)
+{
+	Set_OnOff_Inven(false);
+	Set_InventoryEvent(INTERACT_PROPS);
+	m_eRequested_Item = eRequiredItem;
 	m_eTaskSequence = SETING;
 }
 
@@ -1190,8 +1364,9 @@ HRESULT CInventory_Manager::Init_SlotHighlighter()
 
 	m_pSlotHighlighter->CCustomize_UI::Set_Dead(true);
 	m_pSlotHighlighterTransform = dynamic_cast<CTransform*>(m_pSlotHighlighter->Get_Component(g_strTransformTag));
+
 	m_fSlotHighlighterResetPos = m_vecInvenSlot[0]->GetPosition();
-	m_fSlotHighlighterResetPos.z = 0.7f;
+	m_fSlotHighlighterResetPos.z = Z_POS_HIGH_LIGHTER;
 
 	Safe_AddRef(m_pSlotHighlighter);
 	Safe_AddRef(m_pSlotHighlighterTransform);
@@ -1380,47 +1555,22 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 	switch (eItemNum)
 	{
 	case Client::emergencyspray01a:
-		return USEABLE;
-		break;
 	case Client::greenherb01a:
-		return USEABLE;
-		break;
 	case Client::redherb01a:
-		return USEABLE;
-		break;
 	case Client::blueherb01a:
-		return USEABLE;
-		break;
 	case Client::herbsgg01a:
-		return USEABLE;
-		break;
 	case Client::herbsgr01a:
-		return USEABLE;
-		break;
 	case Client::herbsgb01a:
-		return USEABLE;
-		break;
 	case Client::herbsggb01a:
-		return USEABLE;
-		break;
 	case Client::herbsggg01a:
-		return USEABLE;
-		break;
 	case Client::herbsgrb01a:
-		return USEABLE;
-		break;
 	case Client::herbsrb01a:
-		return USEABLE;
-		break;
 	case Client::greenherbitem01a:
-		return USEABLE;
-		break;
 	case Client::redherbitem01a:
-		return USEABLE;
-		break;
 	case Client::blueherbitem01a:
 		return USEABLE;
 		break;
+
 	case Client::handgun_bullet01a:
 		return CONSUMABLE;
 		break;
@@ -1443,143 +1593,60 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 		return CONSUMABLE;
 		break;
 	case Client::strengtheningyellow01a:
-		return USEABLE;
+		return CONSUMABLE;
 		break;
+
 	case Client::vp70powerup:
-		return QUEST;
-		break;
 	case Client::vp70longmagazine:
-		return QUEST;
-		break;
 	case Client::shotgunpartsstock_00:
-		return QUEST;
-		break;
 	case Client::shotgunpartsbarrel:
-		return QUEST;
-		break;
 	case Client::unicornmedal01a:
-		return QUEST;
-		break;
 	case Client::spadekey01a:
-		return QUEST;
-		break;
 	case Client::cardkeylv101a:
-		return QUEST;
-		break;
 	case Client::cardkeylv201a:
-		return QUEST;
-		break;
 	case Client::valvehandle01a:
-		return QUEST;
-		break;
 	case Client::kingscepter01a:
-		return QUEST;
-		break;
 	case Client::virginheart01a:
-		return QUEST;
-		break;
 	case Client::blankkey01a:
-		return QUEST;
-		break;
 	case Client::statuebook01a:
-		return QUEST;
-		break;
 	case Client::statuehand01a:
-		return QUEST;
-		break;
 	case Client::virginmedal01a:
-		return QUEST;
-		break;
 	case Client::diakey01a:
-		return QUEST;
-		break;
 	case Client::virginmedal02a:
-		return QUEST;
-		break;
 	case Client::chaincutter01a:
 		return QUEST;
 		break;
+
 	case Client::rpddocument01a: // DOCUMENTSTART
-		return DOCUMENT;
-		break;
 	case Client::rpddocumentblood01a:
-		return DOCUMENT;
-		break;
 	case Client::diary01a:
-		return DOCUMENT;
-		break;
 	case Client::document01a:
-		return DOCUMENT;
-		break;
 	case Client::pamphlet01a:
-		return DOCUMENT;
-		break;
 	case Client::guidepamphlet01a:
-		return DOCUMENT;
-		break;
 	case Client::memo01a:
-		return DOCUMENT;
-		break;
 	case Client::raccoonmonthly01a:
-		return DOCUMENT;
-		break;
 	case Client::sewercopamphlet01a:
-		return DOCUMENT;
-		break;
 	case Client::report01a:
-		return DOCUMENT;
-		break;
 	case Client::nestlcokout01a:
-		return DOCUMENT;
-		break;
 	case Client::sewerhintposter01a:
-		return DOCUMENT;
-		break;
 	case Client::rpdreport01a:
-		return DOCUMENT;
-		break;
 	case Client::rpdreport01b:
-		return DOCUMENT;
-		break;
 	case Client::chesshints01a:
-		return DOCUMENT;
-		break;
 	case Client::labopc01a:
-		return DOCUMENT;
-		break;
 	case Client::labopc01b:
-		return DOCUMENT;
-		break;
 	case Client::labopc01c:
-		return DOCUMENT;
-		break;
 	case Client::raccoonfigure01a:
-		return DOCUMENT;
-		break;
 	case Client::voicerecorder01a:
-		return DOCUMENT;
-		break;
 	case Client::mappolice01a:
-		return DOCUMENT;
-		break;
 	case Client::mapunderground01a:
-		return DOCUMENT;
-		break;
 	case Client::mapsewer01a:
-		return DOCUMENT;
-		break;
 	case Client::mapraccooncity01a:
-		return DOCUMENT;
-		break;
 	case Client::maplaboratoryhigh01a:
-		return DOCUMENT;
-		break;
 	case Client::maplaboratorymiddle01a:
-		return DOCUMENT;
-		break;
 	case Client::mapupperpolice01a: //DOCUMENTEND
 		return DOCUMENT;
 		break;
+
 	case Client::clairesbag01a:
 		return USEABLE;
 		break;

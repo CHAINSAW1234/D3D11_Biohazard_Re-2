@@ -91,10 +91,15 @@ void CImgui_Manager::Tick()
 
 
     if (DOWN == m_pGameInstance->Get_KeyState('Z'))
-    {
+    { 
         m_bTabWindow_Debuger = !m_bTabWindow_Debuger;
         m_bPlayer_Debuger = !m_bPlayer_Debuger;
         m_bShader_Debuger = !m_bShader_Debuger;
+        m_pPlayer->Set_isCamTurn(m_bTabWindow_Debuger);
+    }
+    if (DOWN == m_pGameInstance->Get_KeyState('X'))
+    {
+        m_bPlayer_Debuger = !m_bPlayer_Debuger;
     }
 
     if (true == m_bTabWindow_Debuger)
@@ -185,12 +190,21 @@ void CImgui_Manager::Window_Player_Debuger()
 {
     ImGui::Begin("Player_Debug");
 
+    ImGui::Text(u8"도움말 : 플레이어 디버그만 키고 싶다면 \nX를 눌러 조의를 표하시면 됩니다");
+
     ImGui::InputInt("##PlayerHP", &m_iPlayerHP, 1);
 
     if (ImGui::Button(u8"SetPlayerHP", ImVec2(100.f, 30.f)))
     {
         m_pPlayer->Set_Hp(m_iPlayerHP);
     }
+
+
+    ImGui::SeparatorText("Player Matrix");
+
+    //_float4x4 matrix = ->Get_WorldFloat4x4();
+
+    EditTransform(m_pPlayer->Get_Transform());
 
     ImGui::End();
 }
