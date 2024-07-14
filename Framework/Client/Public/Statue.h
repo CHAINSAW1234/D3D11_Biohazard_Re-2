@@ -15,6 +15,7 @@ public:
 		STATE_PLAY,
 		STATE_STATIC
 	};
+
 	enum STATUE_PART
 	{
 		PART_BODY,
@@ -54,6 +55,7 @@ private:
 
 private :
 	_ubyte				m_eStatue_ItemType = { 0 };
+	_bool				m_isPut_HandItem = { false };
 
 public:
 	static CStatue* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

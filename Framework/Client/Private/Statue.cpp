@@ -4,6 +4,7 @@
 
 #include "Body_Statue.h"
 #include "Item_Statue.h"
+#include "Camera_Gimmick.h"
 
 CStatue::CStatue(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
@@ -50,6 +51,22 @@ void CStatue::Tick(_float fTimeDelta)
 
 	if (!m_bVisible)
 		return;
+
+	if (DOWN == m_pGameInstance->Get_KeyState('K'))
+	{
+		CPart_InteractProps* pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_ITEM_SCEPTER]);
+		m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + pPartLock->GetLookDir_Vector() * 0.15f + _vector{ 0.05f,0.1f,0.f,0.f });
+		m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
+
+		m_pCameraGimmick->Active_Camera(true);
+	}
+
+	/* 예시 코드 아이템 먹었을 때 연결할 거임 */
+	/* 예시 코드 아이템 먹었을 때 연결할 거임 */
+	if (true == m_isPut_HandItem)
+	{
+		m_eState = static_cast<_ubyte>(CStatue::STATE_PLAY);
+	}
 
 	__super::Tick(fTimeDelta);
 
@@ -128,6 +145,7 @@ HRESULT CStatue::Add_PartObjects()
 
 	ItemDesc.pParentsTransform = m_pTransformCom;
 	ItemDesc.pState = &m_eState;
+	ItemDesc.isPut_HandItem = &m_isPut_HandItem;
 	ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_109_kingscepter01a_Anim");
 	ItemDesc.eItemType = static_cast<_ubyte>(CItem_Statue::STATUE_ITEM::KINGSCEPTER_ITEM);
 	pItemScepter = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_Body_ItemStatue"), &ItemDesc));
@@ -142,6 +160,7 @@ HRESULT CStatue::Add_PartObjects()
 
 	ItemDesc.pParentsTransform = m_pTransformCom;
 	ItemDesc.pState = &m_eState;
+	ItemDesc.isPut_HandItem = &m_isPut_HandItem;
 	ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_136_statuehand01a_Anim");
 	ItemDesc.eItemType = static_cast<_ubyte>(CItem_Statue::STATUE_ITEM::STATUEHAND_ITEM);
 	pItemHand = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_Body_ItemStatue"), &ItemDesc));

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Item_Statue.h"
-#include"Player.h"
-#include "Camera_Gimmick.h"
+#include "Player.h"
+#include "Statue.h"
 
 CItem_Statue::CItem_Statue(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPart_InteractProps{ pDevice, pContext }
@@ -29,6 +29,10 @@ HRESULT CItem_Statue::Initialize(void* pArg)
 		BODY_ITEM_STATUE* desc = (BODY_ITEM_STATUE*)pArg;
 
 		m_Item_Type = static_cast<STATUE_ITEM>(desc->eItemType);
+
+		m_pState = desc->pState;
+
+		m_isPut_HandItem = desc->isPut_HandItem;
 	}
 
 	if (FAILED(Add_Components()))
@@ -37,22 +41,22 @@ HRESULT CItem_Statue::Initialize(void* pArg)
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
-	m_pModelCom->Active_RootMotion_Rotation(true);
+	m_pModelCom->Active_RootMotion_Rotation(false);
 
 #ifndef NON_COLLISION_PROP
 	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 #endif
 
+	if (STATUE_ITEM::STATUEHAND_ITEM == m_Item_Type)
+	{
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+	}
 
 	return S_OK;
 }
 
 void CItem_Statue::Tick(_float fTimeDelta)
 {
-	if (DOWN == m_pGameInstance->Get_KeyState('J') )
-	{
-		m_pCameraGimmick->Active_Camera(true);
-	}
 }
 
 void CItem_Statue::Late_Tick(_float fTimeDelta)
@@ -60,15 +64,16 @@ void CItem_Statue::Late_Tick(_float fTimeDelta)
 	if (m_bDead)
 		return;
 
+	StatueHand_Item(fTimeDelta);
+
+	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
+	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+
 	_float3	vDirection = { };
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 
-	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vDirection);
-
-	// 
-	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
-	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, 0);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
@@ -82,6 +87,10 @@ HRESULT CItem_Statue::Render()
 		return S_OK;
 	else
 		m_bRender = false;
+
+	if (STATUE_ITEM::STATUEHAND_ITEM == m_Item_Type)
+		if (false == m_isHandRender)
+			return E_FAIL;
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -172,6 +181,20 @@ HRESULT CItem_Statue::Initialize_PartObjects()
 {
 	return S_OK;
 }
+
+void CItem_Statue::StatueHand_Item(_float fTimeDelta)
+{
+	if (STATUE_ITEM::STATUEHAND_ITEM == m_Item_Type)
+	{
+		if (*m_isPut_HandItem == true)
+		{
+			m_isHandRender = true;
+		}
+
+		if (DOWN == m_pGameInstance->Get_KeyState('H'))
+			*m_isPut_HandItem = true;
+	}
+} 
 
 
 CItem_Statue* CItem_Statue::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

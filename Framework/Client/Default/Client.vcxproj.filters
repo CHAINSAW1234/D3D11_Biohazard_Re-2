@@ -694,6 +694,9 @@
     <Filter Include="02.GameObjects\MapObject\InteractProps\Statue\Body_ItemStatue">
       <UniqueIdentifier>{97714436-89b2-426b-82c4-9f96f4324d5c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Door\Emblem_Door">
+      <UniqueIdentifier>{3af115dc-fb9f-4b8b-96af-2c18aa0bedb0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1347,6 +1350,9 @@
     <ClInclude Include="..\Public\Item_Statue.h">
       <Filter>02.GameObjects\MapObject\InteractProps\Statue\Body_ItemStatue</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Emblem_Door.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Door\Emblem_Door</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1960,6 +1966,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Item_Statue.cpp">
       <Filter>02.GameObjects\MapObject\InteractProps\Statue\Body_ItemStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Emblem_Door.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Door\Emblem_Door</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
