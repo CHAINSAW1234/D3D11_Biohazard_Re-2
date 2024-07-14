@@ -202,18 +202,50 @@ void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 			m_fDistCamZ += 0.001f;
 		}
 
+		static		_float2			vSpeed = { 0.f, 0.f };
 		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
 			_long	MouseMove = { 0 };
 			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().x)
 			{
-				m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTimeDelta * MouseMove * -0.1f);
+				vSpeed.x += fTimeDelta * MouseMove * 0.01f;
 			}
+				
+
 			if (MouseMove = m_pGameInstance->Get_MouseDeltaPos().y)
 			{
-				m_pTransformCom->Turn(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), fTimeDelta * MouseMove * 0.1f);
+				vSpeed.y += fTimeDelta * MouseMove * 0.01f;
 			}
 		}
+		if (vSpeed.x > 0.f)
+		{
+			vSpeed.x -= fTimeDelta * 0.1f;
+			if (vSpeed.x < 0.f)
+				vSpeed.x = 0.f;
+		}
+		else
+		{
+			vSpeed.x += fTimeDelta * 0.1f;
+			if (vSpeed.x > 0.f)
+				vSpeed.x = 0.f;
+		}
+		if (vSpeed.y > 0.f)
+		{
+			vSpeed.y -= fTimeDelta * 0.1f;
+			if (vSpeed.y < 0.f)
+				vSpeed.y = 0.f;
+		}
+		else
+		{
+			vSpeed.y += fTimeDelta * 0.1f;
+			if (vSpeed.y > 0.f)
+				vSpeed.y = 0.f;
+		}
+
+		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), vSpeed.x * -1.f);
+		m_pTransformCom->Turn(m_pGameInstance->Get_Camera_Transform()->Get_State_Vector(CTransform::STATE_RIGHT), vSpeed.y * -1.f);
+
+
 		break;
 	}
 
