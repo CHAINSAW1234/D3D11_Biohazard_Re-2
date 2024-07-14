@@ -316,8 +316,8 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region Camera
 
-	if (UP == m_pGameInstance->Get_KeyState('Z'))
-		m_isCamTurn = !m_isCamTurn;
+	//if (UP == m_pGameInstance->Get_KeyState('Z'))
+	//	m_isCamTurn = !m_isCamTurn;
 
 	if (m_pCamera && false == m_isCamTurn)
 	{

@@ -55,6 +55,7 @@ private :
 private:
 	void			ItemIven_EventHandle(_float fTimeDelta);
 	void			Button_Act(_float fTimeDelta);
+	_bool			IsInputTab();
 
 public:
 	void			OnOff_EventHandle();
@@ -64,7 +65,7 @@ public:
 	void			PickUp_Item(CGameObject* pPickedUp_Item);
 
 	//«√∑π¿ÃæÓ∞° ªÛ»£¿€øÎ ∞°¥…«— Prop∞˙ ¡¢√À«ﬂ¿ª∂ß »£≠Ñ«œ¥¬ «‘ºˆ
-	void			Interact_Props(CGameObject* pPickedUp_Item);
+	void			Interact_Props(CGameObject* pInteractedProps);
 
 	//æ∆¿Ã≈∆ ¿Œ∫•≈‰∏Æø° ≥÷±‚
 	void			AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity = 1);
@@ -106,13 +107,16 @@ private : /* NY */
 
 private:
 	WINDOW_TYPE			m_eWindowType = { INVENTORY };
+	WINDOW_TYPE			m_ePreWindowType = { WINDOW_TYPE_END };
 	_bool				m_isMapRender = { false };
+
+	_bool				m_isSecondTick = { false };
 
 	/*for. Item_Mesh_Viewer*/
 	_float				m_fCurTime = { 0.f };
 
 	/*for. Picked Up Item*/
-	CGameObject*		m_pPickedUp_Item = { nullptr };//PickUp∂ß¥¬ ¡÷¿∫ æ∆¿Ã≈€ Interact∂ß¥¬ º“≈Î«— æ∆¿Ã≈€
+	CGameObject*		m_pPickedUp_Item = { nullptr };//PickUp∂ß¥¬ ¡÷øÓ æ∆¿Ã≈€ Interact∂ß¥¬ º“≈Î«— æ∆¿Ã≈€
 	UI_OPERRATION		m_eSequence = { STATE_END };
 
 	vector<ITEM_NUMBER> m_vecCollect_ITEM;

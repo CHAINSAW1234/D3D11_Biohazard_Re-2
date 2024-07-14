@@ -184,6 +184,17 @@ _uint CHotKey::RegisterHoykey(_float2 RegisterPos, ITEM_NUMBER eItemNum, _int iI
 	return 0;
 }
 
+_uint CHotKey::RegisterHoykey(_uint iHotkeyNum, ITEM_NUMBER eItemNum, _int iItemQuantity)
+{
+	m_pEQItemUI[iHotkeyNum]->Set_ItemNumber(eItemNum);
+	m_pEQItemUI[iHotkeyNum]->Set_ItemQuantity(iItemQuantity);
+	m_pEQItemUI[iHotkeyNum]->Set_isHotKeyRegisted(true);
+	m_pEQInven_Slots[iHotkeyNum]->Set_IsFilled(true);
+
+	return iHotkeyNum + 1;
+}
+
+
 void CHotKey::Update_Registed_Item(ITEM_NUMBER eItemNum, _int iItemQuantity)
 {
 	for (_uint i = 0; i < EQ_SLOT_COUNT; i++)

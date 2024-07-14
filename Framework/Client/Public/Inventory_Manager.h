@@ -22,6 +22,7 @@ private:
 public:
 	HRESULT Initialize();
 	void FirstTick_Seting();
+	void SecondTivk_Seting();
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
 
@@ -112,8 +113,10 @@ private:
 	CGameInstance*					m_pGameInstance = { nullptr }; 
 
 	INVENTORY_EVENT					m_eInven_Manager_State = { EVENT_IDLE };
+	INVENTORY_EVENT					m_ePre_Inven_Manager_State = { INVEN_EVENT_END };
 
 	TASK_SEQUENCE					m_eTaskSequence = { TS_END };
+	//TASK_SEQUENCE					m_ePreTaskSequence = { TS_END };
 
 private:
 	/* for. InvenSlot */

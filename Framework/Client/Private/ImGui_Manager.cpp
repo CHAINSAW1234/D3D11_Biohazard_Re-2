@@ -91,10 +91,11 @@ void CImgui_Manager::Tick()
 
 
     if (DOWN == m_pGameInstance->Get_KeyState('Z'))
-    {
+    { 
         m_bTabWindow_Debuger = !m_bTabWindow_Debuger;
         m_bPlayer_Debuger = !m_bPlayer_Debuger;
         m_bShader_Debuger = !m_bShader_Debuger;
+        m_pPlayer->Set_isCamTurn(m_bTabWindow_Debuger);
     }
     if (DOWN == m_pGameInstance->Get_KeyState('X'))
     {
