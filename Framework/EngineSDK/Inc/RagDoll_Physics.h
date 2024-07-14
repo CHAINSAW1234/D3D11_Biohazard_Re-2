@@ -380,6 +380,8 @@ private:
     _float4x4*                                      m_pWorldMatrix;
     _float4x4                                       m_RotationMatrix;
     PoseTransforms                                  m_Global_transforms;
+    PoseTransforms                                  m_Global_transforms_BreakPart;
+    std::vector<_bool>                              m_vecBreak_Parent_Flag;
 
     PxFilterData                                    m_FilterData;
     class CTransform*                               m_pTransform = { nullptr };
@@ -466,28 +468,102 @@ private:
 
 #pragma region Additional Joint
 
-    uint32_t m_upperarm_high_l_idx = { 0 };	    //l_arm_high_joint_lower
-    uint32_t m_upperarm_high_upper_l_idx = { 0 };	    //l_arm_high_joint_upper
-    uint32_t m_upperarm_Middle_l_idx = { 0 };	//l_arm_middle_joint_upper
+    uint32_t m_upperarm_high_l_idx = { 0 };	  
+    uint32_t m_lowerarm_high_l_idx = { 0 };   
+
+    uint32_t m_upperarm_high_r_idx = { 0 };	  
+    uint32_t m_lowerarm_high_r_idx = { 0 };   
+
+    uint32_t m_leg_high_l_idx = { 0 };	    
+    uint32_t m_calf_high_l_idx = { 0 };     
+
+    uint32_t m_leg_high_r_idx = { 0 };	    
+    uint32_t m_calf_high_r_idx = { 0 };     
 
 #pragma endregion
 
 #pragma region Additional Bone
 
-    uint32_t m_upperarm_high_l_idx_Bone = { 0 };	    //l_arm_humerus
-    uint32_t m_upperarm_high_upper_l_idx_Bone = { 0 };	    //l_arm_humerus
-    uint32_t m_upperarm_Middle_l_idx_Bone = { 0 };	    //l_arm_humerus
+    uint32_t m_upperarm_high_l_idx_Bone = { 0 };	
+    uint32_t m_lowerarm_high_l_idx_Bone = { 0 };	
 
+    uint32_t m_upperarm_high_r_idx_Bone = { 0 };
+    uint32_t m_lowerarm_high_r_idx_Bone = { 0 };
+
+    uint32_t m_leg_high_l_idx_Bone = { 0 };	   
+    uint32_t m_calf_high_l_idx_Bone = { 0 };    
+
+    uint32_t m_leg_high_r_idx_Bone = { 0 };	   
+    uint32_t m_calf_high_r_idx_Bone = { 0 };    
+
+
+#pragma endregion
+
+#pragma region Twist Bone Index
+    uint32_t m_Arm_L_Twist_0 = { 0 };    
+    uint32_t m_Arm_L_Twist_1 = { 0 };    
+    uint32_t m_Arm_L_Twist_2 = { 0 };    
+    uint32_t m_Arm_L_Twist_3 = { 0 };    
+
+    uint32_t m_Arm_R_Twist_0 = { 0 };
+    uint32_t m_Arm_R_Twist_1 = { 0 };
+    uint32_t m_Arm_R_Twist_2 = { 0 };
+    uint32_t m_Arm_R_Twist_3 = { 0 };
+
+    uint32_t m_ForeArm_L_Twist_0 = { 0 };
+    uint32_t m_ForeArm_L_Twist_1 = { 0 };
+    uint32_t m_ForeArm_L_Twist_2 = { 0 };
+    uint32_t m_ForeArm_L_Twist_3 = { 0 };
+
+    uint32_t m_ForeArm_R_Twist_0 = { 0 };
+    uint32_t m_ForeArm_R_Twist_1 = { 0 };
+    uint32_t m_ForeArm_R_Twist_2 = { 0 };
+    uint32_t m_ForeArm_R_Twist_3 = { 0 };
+
+
+
+    uint32_t m_Leg_L_Twist_0 = { 0 };
+    uint32_t m_Leg_L_Twist_1 = { 0 };
+    uint32_t m_Leg_L_Twist_2 = { 0 };
+
+    uint32_t m_Leg_R_Twist_0 = { 0 };
+    uint32_t m_Leg_R_Twist_1 = { 0 };
+    uint32_t m_Leg_R_Twist_2 = { 0 };
+
+
+    uint32_t m_Calf_L_Twist_0 = { 0 };
+    uint32_t m_Calf_L_Twist_1 = { 0 };
+
+    uint32_t m_Calf_R_Twist_0 = { 0 };
+    uint32_t m_Calf_R_Twist_1 = { 0 };
 #pragma endregion
 
 #pragma region Additional Body
     PxRigidDynamic* m_Arm_L_High = { nullptr };
-    PxRigidDynamic* m_Arm_L_Middle = { nullptr };
-    PxRigidDynamic* m_Arm_L_Low = { nullptr };
+    PxRigidDynamic* m_ForeArm_L_High = { nullptr };
+
+    PxRigidDynamic* m_Arm_R_High = { nullptr };
+    PxRigidDynamic* m_ForeArm_R_High = { nullptr };
+
+    PxRigidDynamic* m_Leg_L_High = { nullptr };
+    PxRigidDynamic* m_Calf_L_High = { nullptr };
+
+    PxRigidDynamic* m_Leg_R_High = { nullptr };
+    PxRigidDynamic* m_Calf_R_High = { nullptr };
 #pragma endregion
 
 #pragma region Additional Joint
     PxD6Joint* m_Clavicle_L_Upper_Joint = { nullptr };
+    PxD6Joint* m_Radius_L_Upper_Joint = { nullptr };
+
+    PxD6Joint* m_Clavicle_R_Upper_Joint = { nullptr };
+    PxD6Joint* m_Radius_R_Upper_Joint = { nullptr };
+
+    PxD6Joint* m_Knee_L_Upper_Joint = { nullptr };
+    PxD6Joint* m_Ankle_Upper_Joint = { nullptr };
+
+    PxD6Joint* m_Knee_R_Upper_Joint = { nullptr };
+    PxD6Joint* m_Ankle_R_Upper_Joint = { nullptr };
 #pragma endregion
 
     _float4x4           m_BoneMatrices[MAX_COUNT_BONE];

@@ -434,7 +434,8 @@ void CZombie::Tick(_float fTimeDelta)
 				{
 					auto Type = m_pController->Get_Hit_Collider_Type();
 
-					if(Type != COLLIDER_TYPE::CHEST /*&& Type != COLLIDER_TYPE::PELVIS*/ && Type != COLLIDER_TYPE::HEAD)
+					if(Type != COLLIDER_TYPE::CHEST && Type != COLLIDER_TYPE::PELVIS && Type != COLLIDER_TYPE::HEAD
+						&& Type != COLLIDER_TYPE::HAND_L && Type != COLLIDER_TYPE::HAND_R)
 					{
 						for (auto& pPartObject : m_PartObjects)
 						{

@@ -223,7 +223,7 @@ HRESULT CMesh::Stock_Matrices_Ragdoll(const vector<CBone*>& Bones, _float4x4* pM
 		//	메쉬의 뼈 메트릭스를 전부 순회하며 담아준다.
 		//	해당 뼈의 오프셋 매트릭스 * 전체뼈에서의 해당 뼈의 컴바인드 매트릭스를 곱한다.
 		_matrix OffsetMatrix = XMLoadFloat4x4(&m_OffsetMatrices[i]);
-		_matrix CombinedMatrix = XMLoadFloat4x4(&pCombinedMatrices[i]);
+		_matrix CombinedMatrix = XMLoadFloat4x4(&pCombinedMatrices[m_Bones[i]]);
 
 		_matrix BoneMatrix = OffsetMatrix * CombinedMatrix;
 

@@ -712,46 +712,60 @@ void CCharacter_Controller::Release_PartialCollider(COLLIDER_TYPE eType)
 
 		break;
 	case COLLIDER_TYPE::FOREARM_L:
-		m_Left_ForeArm_Collider->release();
-		m_Left_ForeArm_Collider = nullptr;
 
-		m_Left_Hand_Collider->release();
-		m_Left_Hand_Collider = nullptr;
+		if(m_Left_ForeArm_Collider)
+		{
+			m_Left_ForeArm_Collider->release();
+			m_Left_ForeArm_Collider = nullptr;
 
-		m_vecBreakPartFilter[m_lowerarm_l_idx] = true;
-		m_vecBreakPartFilter[m_hand_l_idx] = true;
+			m_Left_Hand_Collider->release();
+			m_Left_Hand_Collider = nullptr;
+
+			m_vecBreakPartFilter[m_lowerarm_l_idx] = true;
+			m_vecBreakPartFilter[m_hand_l_idx] = true;
+		}
 
 		break;
 	case COLLIDER_TYPE::FOREARM_R:
-		m_Right_ForeArm_Collider->release();
-		m_Right_ForeArm_Collider = nullptr;
 
-		m_Right_Hand_Collider->release();
-		m_Right_Hand_Collider = nullptr;
+		if(m_Right_ForeArm_Collider)
+		{
+			m_Right_ForeArm_Collider->release();
+			m_Right_ForeArm_Collider = nullptr;
 
-		m_vecBreakPartFilter[m_lowerarm_r_idx] = true;
-		m_vecBreakPartFilter[m_hand_r_idx] = true;
+			m_Right_Hand_Collider->release();
+			m_Right_Hand_Collider = nullptr;
+
+			m_vecBreakPartFilter[m_lowerarm_r_idx] = true;
+			m_vecBreakPartFilter[m_hand_r_idx] = true;
+		}
 
 		break;
 	case COLLIDER_TYPE::CALF_L:
-		m_Left_Shin_Collider->release();
-		m_Left_Shin_Collider = nullptr;
+		if(m_Left_Shin_Collider)
+		{
+			m_Left_Shin_Collider->release();
+			m_Left_Shin_Collider = nullptr;
 
-		m_Left_Foot_Collider->release();
-		m_Left_Foot_Collider = nullptr;
+			m_Left_Foot_Collider->release();
+			m_Left_Foot_Collider = nullptr;
 
-		m_vecBreakPartFilter[m_calf_l_idx] = true;
-		m_vecBreakPartFilter[m_foot_l_idx] = true;
+			m_vecBreakPartFilter[m_calf_l_idx] = true;
+			m_vecBreakPartFilter[m_foot_l_idx] = true;
+		}
 		break;
 	case COLLIDER_TYPE::CALF_R:
-		m_Right_Shin_Collider->release();
-		m_Right_Shin_Collider = nullptr;
+		if(m_Right_Shin_Collider)
+		{
+			m_Right_Shin_Collider->release();
+			m_Right_Shin_Collider = nullptr;
 
-		m_Right_Foot_Collider->release();
-		m_Right_Foot_Collider = nullptr;
+			m_Right_Foot_Collider->release();
+			m_Right_Foot_Collider = nullptr;
 
-		m_vecBreakPartFilter[m_calf_r_idx] = true;
-		m_vecBreakPartFilter[m_foot_r_idx] = true;
+			m_vecBreakPartFilter[m_calf_r_idx] = true;
+			m_vecBreakPartFilter[m_foot_r_idx] = true;
+		}
 		break;
 	case COLLIDER_TYPE::LEG_L:
 		if(m_Left_Leg_Collider)
