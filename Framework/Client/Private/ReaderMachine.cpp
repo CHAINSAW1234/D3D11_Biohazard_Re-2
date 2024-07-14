@@ -34,6 +34,10 @@ HRESULT CReaderMachine::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CReaderMachine::Start()
+{
+}
+
 void CReaderMachine::Tick(_float fTimeDelta)
 {
 	__super::Tick_Col();

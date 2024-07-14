@@ -68,14 +68,21 @@ private:
 	virtual HRESULT				Bind_ShaderResources() override;
 
 private:
-	void Active();
+	void						Safe_Normal_Tick(_float fTimeDelta);
+	void						LeonDesk_Tick(_float fTimeDelta);
+	void						Electric_Tick(_float fTimeDelta);
+
+private:
+	void						Safe_Normal_Active();
+	void						LeonDesk_Active();
+	void						Electric_Active();
 
 public:
 	virtual _float4 Get_Object_Pos() override;
 
 
 private:
-	_bool				m_bReonDesk = { false };
+	_bool				m_bLeonDesk = { false };
 	_bool				m_bItemDead = { true };
 	_bool				m_bObtain = { false };
 	_bool				m_bOpened = { false };
@@ -87,6 +94,12 @@ private:
 	_ubyte			m_eLockState = { STATIC_LOCK };
 	_int				m_eCabinetType = { TYPE_NORMAL };
 	_ubyte			m_eKeyInput = { KEY_NOTHING }; // 직접 nothing인 타이밍을 알아서 key_nothing으로 세팅 해줘야함
+
+
+
+	_int				m_iPassWordLeon[10] = {1,};
+	_bool				m_bLockLeon = { false };
+	_ubyte			m_eLockLeonState = { STATIC_LOCK };
 
 public:
 	static CCabinet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

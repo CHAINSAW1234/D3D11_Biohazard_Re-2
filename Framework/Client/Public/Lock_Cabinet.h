@@ -54,11 +54,10 @@ private:
 	void								OpenLocker_Late_Tick(_float fTimeDelta);
 public:
 	void								Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
-
-public:
-	
+	_bool								Get_Clear() { return m_bClear; }
 private:
 	_bool								m_bCheckAnswer = { false };
+	_bool								m_bClear = { false };
 	LOCK_TYPE					m_eLockType = { SAFEBOX_DIAL };
 	_ubyte*							m_pLockState = { nullptr };
 	_ubyte*							m_pPressKeyState = { nullptr };

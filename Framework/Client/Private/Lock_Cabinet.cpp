@@ -80,7 +80,9 @@ void CLock_Cabinet::Tick(_float fTimeDelta)
 			}
 
 			if (bOpen)
+			{
 				*m_pLockState = CCabinet::CLEAR_LOCK;
+			}
 			else
  				*m_pLockState = CCabinet::WRONG_LOCK;
 			break;
@@ -102,6 +104,8 @@ void CLock_Cabinet::Late_Tick(_float fTimeDelta)
 
 HRESULT CLock_Cabinet::Render()
 {
+	if (m_bClear)
+		return S_OK;
 	if (m_bRender == false)
 		return S_OK;
 	else
@@ -367,12 +371,14 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 		m_pModelCom->Change_Animation(0, TEXT("Default"), (_int)(*m_pLockState) );
 		if (m_pModelCom->isFinished(0))
 			*m_pLockState = CCabinet::LIVE_LOCK;
+		
 		break;
 
 	case CCabinet::CLEAR_LOCK:
 
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pLockState );
-		
+		if (m_pModelCom->isFinished(0))
+			m_bClear = true;
 		break;
 	}
 	for (_int i = 0; i < BONE_DIAL_END; i++)
