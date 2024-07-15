@@ -55,7 +55,10 @@ private:
 	HRESULT Load_Collider(const wstring& strFile, const wstring& strColLayerTag, _float4 vColliderColor = { 1.f, 1.f, 1.f, 1.f });
 	HRESULT Load_Layer(const wstring& strFilePath, _uint iLevel);
 	HRESULT Load_Object(const wstring& strFilePath, const wstring& strLayerName, _uint iLevel);
-	HRESULT Load_Monster(const wstring& strFilePath, const wstring& strLayerName, _uint iLevel);
+	HRESULT Load_Monster(const wstring& strFilePath, const wstring& strLayerName, _uint iLevel);\
+
+private:
+	HRESULT SetUp_DeadMonsters();
 
 
 #pragma region ³ª¿Ë

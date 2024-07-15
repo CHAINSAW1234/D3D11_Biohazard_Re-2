@@ -110,7 +110,7 @@ void CMuzzle_Flash::Compute_CurrentUV()
 
 void CMuzzle_Flash::Setup_Billboard()
 {
-	m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Float4());
+	m_pTransformCom->Look_At(m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW).r[CTransform::STATE_POSITION]);
 }
 
 void CMuzzle_Flash::SetSize(_float fSizeX, _float fSizeY)

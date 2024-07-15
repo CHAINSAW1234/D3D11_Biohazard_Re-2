@@ -2315,7 +2315,7 @@ void CZombie::Set_ManualMove(_bool isManualMove)
 {
 	m_isManualMove = isManualMove;
 
-	if (false == m_isManualMove)
+	if (false == m_isManualMove && false == m_bRagdoll)
 	{
 		_float4				vPosition = { m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) };
 		vPosition.y += CONTROLLER_GROUND_GAP_ZOMBIE;

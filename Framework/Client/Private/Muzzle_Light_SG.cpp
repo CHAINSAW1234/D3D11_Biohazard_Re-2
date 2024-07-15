@@ -61,7 +61,8 @@ HRESULT CMuzzle_Light_SG::Render()
 
 void CMuzzle_Light_SG::Setup_Billboard()
 {
-	m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Float4());
+	m_pTransformCom->Look_At(m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW).r[CTransform::STATE_POSITION]);
+	//	m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Float4());
 }
 
 void CMuzzle_Light_SG::SetSize(_float fSizeX, _float fSizeY)
