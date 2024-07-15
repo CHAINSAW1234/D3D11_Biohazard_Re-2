@@ -56,6 +56,7 @@ public:
 
 public:
 	HRESULT Stock_Matrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneMatrices);
+	HRESULT Stock_Matrices_Ragdoll(const vector<CBone*>& Bones, _float4x4* pMeshBoneMatrices,_float4x4* pCombinedMatrices);
 	HRESULT Stock_PrevMatrices(const vector<CBone*>& Bones, _float4x4* pMeshBoneMatrices);
 
 

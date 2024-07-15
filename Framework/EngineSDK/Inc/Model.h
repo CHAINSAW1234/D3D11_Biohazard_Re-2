@@ -246,6 +246,7 @@ public:		/* For.Binary */
 
 public:
 	HRESULT									Bind_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
+	HRESULT									Bind_BoneMatrices_Ragdoll(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex,_float4x4* pBoneMatrices);
 	HRESULT									Bind_PrevBoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 	HRESULT									Bind_ShaderResource_Texture(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eTextureType);
 	HRESULT									Bind_ShaderResource_MaterialDesc(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);

@@ -2304,6 +2304,15 @@ HRESULT CModel::Bind_BoneMatrices(CShader* pShader, const _char* pConstantName, 
 	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, MAX_COUNT_BONE);
 }
 
+HRESULT CModel::Bind_BoneMatrices_Ragdoll(CShader* pShader, const _char* pConstantName, _uint iMeshIndex, _float4x4* pBoneMatrices)
+{
+	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * MAX_COUNT_BONE);
+
+	m_Meshes[iMeshIndex]->Stock_Matrices_Ragdoll(m_Bones, m_MeshBoneMatrices,pBoneMatrices);
+
+	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, MAX_COUNT_BONE);
+}
+
 HRESULT CModel::Bind_PrevBoneMatrices(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
 {
 	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * 256);
