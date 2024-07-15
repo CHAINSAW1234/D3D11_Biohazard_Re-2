@@ -697,6 +697,26 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 #pragma endregion	//	Selector Root Child
 
+#pragma region		Selector Start Action
+
+	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	CComposite_Node* pSelectorNode_Start_Action = { CComposite_Node::Create(&CompositeNodeDesc) };
+	pSelectorNode_Root->Insert_Child_Node(pSelectorNode_Start_Action);
+
+#pragma region		Start Tasks
+
+	CHide_Locker_Zombie* pTask_Hide_Locker = { CHide_Locker_Zombie::Create() };
+	pTask_Hide_Locker->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Start_Action->Insert_Child_Node(pTask_Hide_Locker);
+
+	CDead_Zombie* pTask_Dead_Zombie = { CDead_Zombie::Create() };
+	pTask_Dead_Zombie->SetBlackBoard(m_pBlackBoard);
+	pSelectorNode_Start_Action->Insert_Child_Node(pTask_Dead_Zombie);
+
+#pragma endregion
+
+#pragma endregion	//	Selector Root Child
+
 #pragma region Selector Default
 
 	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;

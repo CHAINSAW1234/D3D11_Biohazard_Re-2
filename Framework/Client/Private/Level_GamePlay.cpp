@@ -22,6 +22,10 @@
 #include "ImGui_Manager.h"
 
 
+/* Manager */
+#include "Call_Center.h"
+
+
 CLevel_GamePlay::CLevel_GamePlay(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel{ pDevice, pContext }
 {
@@ -215,6 +219,15 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const wstring & strLayerTag)
 		return E_FAIL;
 	
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Camera_Event"), &CameraDesc)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::Ready_Managers()
+{
+	m_pCall_Center = CCall_Center::Get_Instance();
+	if (nullptr == m_pCall_Center)
 		return E_FAIL;
 
 	return S_OK;
@@ -1637,4 +1650,6 @@ void CLevel_GamePlay::Free()
 {
 	__super::Free();
 	//Safe_Release(m_pTexture);
+
+	Safe_Release(m_pCall_Center);
 }

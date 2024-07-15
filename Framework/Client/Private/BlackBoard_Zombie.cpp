@@ -86,6 +86,13 @@ HRESULT CBlackBoard_Zombie::SetUp_Nearest_Door()
 	return S_OK;
 }
 
+void CBlackBoard_Zombie::Set_Target_Object(CGameObject* pTargetObject)
+{
+	Safe_Release(m_pTarget_Object);
+	m_pTarget_Object = pTargetObject;
+	Safe_AddRef(m_pTarget_Object);
+}
+
 void CBlackBoard_Zombie::Priority_Tick(_float fTimeDelta)
 {
 	Update_Timers(fTimeDelta);
@@ -123,6 +130,12 @@ void CBlackBoard_Zombie::Update_Recognition_Timer(_float fTimeDelta)
 
 	MONSTER_STATE					eCurrentState = { m_pAI->Get_Current_MonsterState() };
 	CMonster::MONSTER_STATUS*		pMonsterStatus = { m_pAI->Get_Status_Ptr() };
+
+	HIT_TYPE						eHitType = { m_pAI->Get_Current_HitType() };
+	if (HIT_TYPE::HIT_END != eHitType)
+	{
+		pMonsterStatus->fAccRecognitionTime = pMonsterStatus->fMaxRecognitionTime;		
+	}
 
 	_float							fDistanceToPlayer = {};
 	if (false == Compute_Distance_To_Player(&fDistanceToPlayer))
@@ -519,7 +532,7 @@ _bool CBlackBoard_Zombie::Is_BreaKPart(BREAK_PART ePart)
 	if (nullptr == m_pPart_Breaker)
 		return false;
 
-	m_pPart_Breaker->Is_BreaKPart(ePart);
+	return m_pPart_Breaker->Is_BreaKPart(ePart);
 }
 
 _bool CBlackBoard_Zombie::Is_Break_L_Arm()
@@ -1224,5 +1237,6 @@ void CBlackBoard_Zombie::Free()
 	Safe_Release(m_pNearest_Door);
 	Safe_Release(m_pTarget_Door);
 	Safe_Release(m_pPart_Breaker);
+	Safe_Release(m_pTarget_Object);
 }
 

@@ -529,6 +529,10 @@ HRESULT CBody_Zombie::Add_Animations()
 
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Dead_Default"), TEXT("Dead_Default"))))
 		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Dead_Bench"), TEXT("Dead_Bench"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Dead_Hide_Locker"), TEXT("Dead_Hide_Locker"))))
+		return E_FAIL;
 
 #pragma endregion
 
@@ -585,6 +589,8 @@ HRESULT CBody_Zombie::Add_Animations()
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Undiscovered_Railing_Fall"), TEXT("Undiscovered_Railing_Fall"))))
 		return E_FAIL;
 	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Undiscovered_Railing_Stund"), TEXT("Undiscovered_Railing_Stund"))))
+		return E_FAIL;
+	if (FAILED(m_pModelCom->Add_Animations(TEXT("Body_Zombie_Undiscovered_Wall"), TEXT("Undiscovered_Wall"))))
 		return E_FAIL;
 
 #pragma endregion
@@ -1232,9 +1238,8 @@ HRESULT CBody_Zombie::Bind_WorldMatrix(_uint iIndex)
 			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 				return E_FAIL;
 		}
-
-		return S_OK;
 	}
+	return S_OK;
 }
 
 CBody_Zombie* CBody_Zombie::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -323,12 +323,51 @@ enum class ANIM_DAMAGE_STUN {
 #pragma region Dead
 
 enum class ANIM_DEAD_DEFAULT {
-	_B,
-	_LOWSTATNCE_F1,
-	_LOWSTATNCE_F2,
-	_LOWSTATNCE_B,
-	_FACEUP1,
-	_FACEUP2,
+	_F1,						//	양무릎 꿇으며 페이스다운 크립 (선채로 시작)
+	_F2,						//	왼무릎 꿇으며 페이스다운 크립 (선채로 시작)
+	_F3,						//	오른무릎 꿇으며 페이스다운 크립 (선채로 시작)
+	_B1,						//	무게 중심 가운데 페이스업 크립 (선채로 시작)
+	_B2,						//	무게 중심 오른쪽으로 쏠리며 페이스 업 크립 (선채로 시작)
+	_B3,						//	무게 중심 왼쪽으로 쏠리며 페이스 업 크립 (선채로 시작)
+	_B4,						//	무게 중심 가운데 페이스업 크립 (선채로 시작)
+	_LOWSTATNCE_F1,				//	Stand Up 중에 기절		왼쪽 무릎이 뒤로 밀림				페이스 다운
+	_LOWSTATNCE_F2,				//	Stand Up 중에 기절		오른쪽 무릎이 뒤로 밀림			페이스 다운
+	_LOWSTATNCE_F3,				
+	_LOWSTATNCE_F4,				
+	_LOWSTATNCE_B1,				//															페이스 업
+	_LOWSTATNCE_B2,				//															페이스 업
+	_LOWSTATNCE_B3,				//															페이스 업
+	_LOWSTATNCE_B4,				//															페이스 업
+	_FACEDOWN1,
+	_FACEDOWN2,
+	_FACEDOWN3,
+	_FACEUP1,					//	페이스업에서 기절치 쌓이면
+	_FACEUP2,					//	페이스업에서 기절치 쌓이면
+	_FACEUP3,					
+	_FACEUP4,					
+	_INTERIA1,					//	걸어가는중 (선체로) 죽음
+	_INTERIA2,					//	아이들 (선체로) 죽음
+	_INTERIA_HIT,				
+	_INTERIA_HIT_FAR,			
+	_LOST_L1,
+	_LOST_R1,
+	_LOST_L2,
+	_LOST_R2,
+	_STOMP_FACEDOWN,
+	_STOMP_FACEUP,
+	_FLASH_GRANADE,
+	_END
+};
+
+enum class ANIM_DEAD_BENCH {
+	_LOOP,					//	가만히 포즈			
+	_FINISH,				
+	_END
+};
+
+enum class ANIM_DEAD_HIDE_LOCKER {
+	_LOOP,					//	가만히 포즈			
+	_FINISH,				//	문열리면 시간 누적후 딜레이하여 시작
 	_END
 };
 
@@ -337,8 +376,8 @@ enum class ANIM_DEAD_DEFAULT {
 #pragma region Lost
 
 enum class ANIM_LOST_BITE {
-	_DIRECT1,		//	양팔 없는채로 서서
-	_DIRECT2,		//	양팔 없는채로 누워서 < face down >
+	_DIRECT1,				//	양팔 없는채로 서서
+	_DIRECT2,				//	양팔 없는채로 누워서 < face down >
 	_END
 };
 
@@ -658,6 +697,7 @@ enum class ANIM_SICK_KNIFE {
 #pragma region Undiscovered
 
 enum class ANIM_UNDISCOVERED_CAGE {
+	//	미사용	사용시 Enum재정리
 	_LOOP_00,
 	_END_00,
 	_START_01,
@@ -668,6 +708,7 @@ enum class ANIM_UNDISCOVERED_CAGE {
 };
 
 enum class ANIM_UNDISCOVERED_CAPTURE {
+	//	미사용	사용시 Enum재정리
 	_LOOP,
 	_BUS_00_LOOP,
 	_BUS_00_START,
@@ -677,6 +718,7 @@ enum class ANIM_UNDISCOVERED_CAPTURE {
 };
 
 enum class ANIM_UNDISCOVERED_CELLING_FALL {
+	//	미사용	사용시 Enum재정리
 	_WAIT_LOOP,
 	_START,
 	_HIDE_LOOP,
@@ -684,19 +726,28 @@ enum class ANIM_UNDISCOVERED_CELLING_FALL {
 };
 
 enum class ANIM_UNDISCOVERED_DEAD {
-	_LOOP1,
-	_START1,
-	_START2,
-	_LOOP2,
-	_START3,
-	_LOOP3,
-	_START4,
-	_LOOP4,
-	_START5,
+	_LOOP1,		//	벽에 기대 앉아있음
+	_START1_1,	//	일어남				=> 업
+	_START1_2,	//	오른쪽으로 쓰러짐		=> 크립, 페이스 다운
+	_LOOP2,		//	벽에 기대 앉아있음
+	_START2_1,	//	일어남				=>업
+	_START2_2,	//	오른쪽으로 쓰러짐		=> 크립, 페이스 다운
+
+	_LOOP3,		//	벽에 기대 앉아있음
+	_START3_1,	//	일어남				=>업
+	_START3_2,	//	오른쪽으로 쓰러짐		=> 크립, 페이스 다운
+
+	_LOOP4,		//	책상에 누움
+	_START4_1,	//	일어남
+	_START4_2,	//	오른쪽으로 쓰러짐		=> 크립, 페이스 다운
+
 	_LOOP5,
+	_START5_1,
+	_START5_2,
+
 	_LOOP6,
-	_START6,
-	_START7,
+	_START6_1,
+	_START7_1,
 	_END
 };
 
@@ -719,6 +770,7 @@ enum class ANIM_UNDISCOVERED_DEAD_POSE {
 };
 
 enum class ANIM_UNDISCOVERED_EAT {
+	//	미사용	사용시 Enum재정리
 	_FACEDOWN_LOOP1,
 	_FACEDOWN_LOOP2,
 	_FACEDOWN_LOOP3,
@@ -732,23 +784,32 @@ enum class ANIM_UNDISCOVERED_EAT {
 };
 
 enum class ANIM_UNDISCOVERED_FANCE {
-	_LOOP_01,
-	_END_01,
-	_START_02,
-	_LOOP_02,
-	_END_02,
-	_START_03,
-	_LOOP_03,
-	_END_03,
+	_START_00,			//	선채로 다가와서 팬스잡음
+	_LOOP_00,			//	잡고 흔듦
+	_END_00,			//	멀어지면 포기하고 다시 아이들로
+
+	_START_01,			//	기어서
+	_LOOP_01,			//	무릎꿇고 팬스 잡는모션
+	_END_01,			//	멀어지면 포기하고 땅짚음			=> 다음넘어갈 모션이 애매함 그냥루프만 돌리기
+
+	_START_02,			//	선채로 다가와서 팬스잡음
+	_LOOP_02,			//	잡고 흔듦
+	_END_02,			//	멀어지면 포기하고 다시 아이들로
+
+	//	좀더 몸이 사선으로 기욺
+	_START_03,			//	선체로 다가와서 팬스잡음
+	_LOOP_03,			//	잡고흔듦
+	_END_03,			//	멀어지면 포기하고 다시 아이들로
 	_END
 };
 
 enum class ANIM_UNDISCOVERED_HEADBANG {
-	_LOOP,
+	_LOOP,				//	벽에 머리 쿵쿵 박음 루프
 	_END
 };
 
 enum class ANIM_UNDISCOVERED_LOUNGE {
+	//	미사용	사용시 Enum재정리
 	_LOOP_02,
 	_END_02,
 	_LOOP_03,
@@ -757,6 +818,7 @@ enum class ANIM_UNDISCOVERED_LOUNGE {
 };
 
 enum class ANIM_UNDISCOVERED_PRISON {
+	//	미사용	사용시 Enum재정리
 	_LOOP_00,
 	_END_00,
 	_LOOP_01,
@@ -764,11 +826,13 @@ enum class ANIM_UNDISCOVERED_PRISON {
 };
 
 enum class ANIM_UNDISCOVERED_RAILING_FALL {
+	//	미사용	사용시 Enum재정리
 	_WAIT_LOOP,
 	_END
 };
 
 enum class ANIM_UNDISCOVERED_STUND {
+	//	미사용	사용시 Enum재정리
 	_LOOP1,
 	_LOOP2,
 	_END

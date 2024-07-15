@@ -8,6 +8,7 @@
 #include "Stun_Zombie.h"
 
 #include "Room_Finder.h"
+#include "Call_Center.h"
 
 CStart_Zombie::CStart_Zombie()
 	: CTask_Node()
@@ -150,6 +151,46 @@ _bool CStart_Zombie::Execute(_float fTimeDelta)
 		}
 	}	
 
+	else if (eStartType == ZOMBIE_START_TYPE::_HIDE_LOCKER)
+	{
+		if (true == m_pBlackBoard->Get_AI()->Is_In_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())) ||
+			true == m_pBlackBoard->Get_AI()->Is_In_Linked_Location(static_cast<LOCATION_MAP_VISIT>(m_pBlackBoard->Get_Player()->Get_Player_Region())))
+		{
+			CGameObject*	pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_ZOMBIE_HIDE_LOCKER) };
+			if (nullptr == pGameObject)
+				return false;
+
+			m_pBlackBoard->Set_Target_Object(pGameObject);
+
+			CTransform*		pZombieTransform = { m_pBlackBoard->Get_AI()->Get_Transform() };
+			CTransform*		pTargetTransform = { pGameObject->Get_Transform() };
+
+			if (nullptr == pZombieTransform || nullptr == pTargetTransform)
+				return false;
+
+			_vector			vZombieScale = { XMLoadFloat3(&pZombieTransform->Get_Scaled()) };
+			_matrix			TargetWorldMatrix = { pTargetTransform->Get_WorldMatrix() };
+			_vector			vTargetScale, vTargetQuaternion, vTargetTranslation;
+			XMMatrixDecompose(&vTargetScale, &vTargetQuaternion, &vTargetTranslation, TargetWorldMatrix);
+
+			_matrix			ZombieNewWorldMatrix = { XMMatrixAffineTransformation(vZombieScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vTargetQuaternion, vTargetTranslation) };
+			pZombieTransform->Set_WorldMatrix(ZombieNewWorldMatrix);
+
+			m_pBlackBoard->Get_AI()->Set_Start(false);
+			m_pBlackBoard->Get_AI()->Set_ManualMove(true);
+
+			CModel*			pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
+			wstring			strAnimLayerTag = { TEXT("Dead_Hide_Locker") };
+			_int			iAnimIndex = { static_cast<_int>(ANIM_DEAD_HIDE_LOCKER::_LOOP) };
+
+			pBody_Model->Change_Animation(static_cast<_uint>(PLAYING_INDEX::INDEX_0), strAnimLayerTag, iAnimIndex);
+			pBody_Model->Play_Pose(static_cast<_uint>(PLAYING_INDEX::INDEX_0));
+
+#ifdef _DEBUG
+			//	MSG_BOX(TEXT("Start! Rad Doll"));
+#endif
+		}
+	}
 
 	m_isStart = false;
 

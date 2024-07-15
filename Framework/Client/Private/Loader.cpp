@@ -2553,6 +2553,12 @@ HRESULT CLoader::Load_Animations()
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Dead_Default"), "../Bin/Resources/Animations/Body_Zombie/Dead/Default/")))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Dead_Bench"), "../Bin/Resources/Animations/Body_Zombie/Dead/Bench/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Dead_Hide_Locker"), "../Bin/Resources/Animations/Body_Zombie/Dead/Hide_Locker/")))
+		return E_FAIL;
+
 #pragma endregion
 
 #pragma region Default Zombie Lost Anims
@@ -2626,6 +2632,9 @@ HRESULT CLoader::Load_Animations()
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Railing_Stund"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Stund/")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("Body_Zombie_Undiscovered_Wall"), "../Bin/Resources/Animations/Body_Zombie/Undiscovered/Wall/")))
 		return E_FAIL;
 
 #pragma endregion

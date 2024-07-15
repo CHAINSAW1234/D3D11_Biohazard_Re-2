@@ -1,6 +1,9 @@
 #pragma once
 
-enum class ZOMBIE_START_TYPE { _OUT_DOOR, _DOOR_RUB, _CREEP, _IDLE, _RAG_DOLL, _END };
+enum class ZOMBIE_START_TYPE { 
+	_OUT_DOOR, _DOOR_RUB, _CREEP, _IDLE, _RAG_DOLL, _HIDE_LOCKER, 
+	_DEAD_FAKE1 /* 벽에 기대 앉은 모션 */, _DEAD_FAKE2 /* 벽에 기대 앉은 모션 */, _DEAD_FAKE3 /* 벽에 기대 앉은 모션 */, _DEAD_FAKE4 /* 책상에 누움*/,
+	_END };
 
 enum class BREAK_PART { 
 	_R_UPPER_HUMEROUS = 0, _R_LOWER_HUMEROUS, _R_UPPER_RADIUS,	//	Non Lower Radius

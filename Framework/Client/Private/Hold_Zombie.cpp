@@ -82,7 +82,7 @@ _bool CHold_Zombie::Execute(_float fTimeDelta)
 			if (false == m_pBlackBoard->Compute_Direction_To_Player_Local(&vDirectionToPlayerLocalFloat3))
 				return false;
 
-			_float				fAngleToTarget = { XMVectorGetX(XMVector3Dot(XMVector3Normalize(XMLoadFloat3(&vDirectionToPlayerLocalFloat3)), XMVectorSet(0.f, 0.f, 1.f, 0.f))) };
+			_float				fAngleToTarget = { acosf(XMVectorGetX(XMVector3Dot(XMVector3Normalize(XMLoadFloat3(&vDirectionToPlayerLocalFloat3)), XMVectorSet(0.f, 0.f, 1.f, 0.f)))) };
 			if (ZOMBIE_CREEP_HOLD_MAX_ANGLE < fAngleToTarget)
 				return false;
 
@@ -215,7 +215,7 @@ void CHold_Zombie::Change_Animation_StandUp()
 	pBodyModel->Change_Animation(static_cast<_uint>(m_eBasePlayingIndex), m_strStandUpAnimLayerTag, iResultAnimationIndex);
 	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_eBasePlayingIndex), m_strBoneLayerTag);
 
-	pBodyModel->Set_TickPerSec(m_strStandUpAnimLayerTag, iResultAnimationIndex, 5.f);
+	//	pBodyModel->Set_TickPerSec(m_strStandUpAnimLayerTag, iResultAnimationIndex, 5.f);
 }
 
 void CHold_Zombie::Change_Animation_Creep()
