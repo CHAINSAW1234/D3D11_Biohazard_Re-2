@@ -12,6 +12,8 @@
 #include"Lock_Cabinet.h"
 #include"Card_Cabinet.h"
 
+#include "Call_Center.h"
+
 CCabinet::CCabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -50,7 +52,12 @@ HRESULT CCabinet::Initialize(void* pArg)
 	else if (m_tagPropDesc.strGamePrototypeName.find("020") != string::npos)
 		m_eCabinetType = TYPE_WEAPON;
 	else if (m_tagPropDesc.strGamePrototypeName.find("024") != string::npos)
+	{
+		if (FAILED(CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_ZOMBIE_HIDE_LOCKER)))
+			return E_FAIL;
+
 		m_eCabinetType = TYPE_ZOMBIE;
+	}
 	else
 		m_eCabinetType = TYPE_NORMAL;
 

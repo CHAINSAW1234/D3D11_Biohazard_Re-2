@@ -25,7 +25,7 @@ HRESULT CHint_Directory::Initialize(void* pArg)
 			return E_FAIL;
 	}
 
-	m_isLoad = false;
+	//	m_isLoad = false;
 
 	return S_OK;
 }
