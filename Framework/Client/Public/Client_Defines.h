@@ -45,7 +45,7 @@ using namespace Client;
 //#define MAP_INTERACT
 //#define MAP_TEST
 
-//#define TEST_ZOMBIE_MAINHALL
+#define TEST_ZOMBIE_MAINHALL
 
 //#define NON_COLLISION_PROP
 //#define PROPS_COOKING
