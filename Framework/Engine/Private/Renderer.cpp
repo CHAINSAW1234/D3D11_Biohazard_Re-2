@@ -213,7 +213,6 @@ HRESULT CRenderer::SetUp_RenderTargets()
 		return E_FAIL;
 	if (FAILED(SetUp_RenderTargets_Distortion(ViewportDesc)))
 		return E_FAIL;
-
 	if (FAILED(SetUp_RenderTargets_PostProcessing_Result(ViewportDesc)))
 		return E_FAIL;
 	if (FAILED(SetUp_RenderTarget_SubResult(ViewportDesc)))
@@ -819,20 +818,9 @@ HRESULT CRenderer::SetUp_Debug()
 
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_PBR"), -fSize / 2 + fSize * 2, -fSize / 2 + fSize, fSize, fSize)))
 		return E_FAIL;
-	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LUT"), -fSize / 2 + fSize * 2, -fSize / 2 + fSize * 4, fSize, fSize)))
-	//	return E_FAIL;
-
-	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Emissive_Blur_Fin"), -fSize / 2 + fSize * 2, -fSize / 2 + fSize * 2, fSize, fSize)))
-	//	return E_FAIL;
-
-	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSAO"), -fSize / 2 + fSize * 2, -fSize / 2 + fSize * 2, fSize, fSize)))
-	//	return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSAO_Blur_Fin"), -fSize / 2 + fSize * 2, -fSize / 2 + fSize * 3, fSize, fSize)))
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSAO_Blur_Fin"), -fSize / 2 + fSize * 2, -fSize / 2 + fSize * 2, fSize, fSize)))
 		return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Field_Dir"), -fSize / 2 + fSize * 4, -fSize / 2 + fSize, fSize, fSize)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Field_Point"), -fSize / 2 + fSize * 4, -fSize / 2 + fSize * 2, fSize, fSize)))
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LUT"), -fSize / 2 + fSize * 2, -fSize / 2 + fSize * 3, fSize, fSize)))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Dir"), -fSize / 2 + fSize * 3, -fSize / 2 + fSize, fSize, fSize)))
@@ -843,23 +831,26 @@ HRESULT CRenderer::SetUp_Debug()
 		return E_FAIL;
 
 
-	//if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Distortion"), 1820.0f, 500.0f, fSize, fSize)))
-	//	return E_FAIL;
-
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_FXAA"), WinSizeX - fSize * 3, -fSize / 2 + fSize, fSize, fSize)))
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Field_Dir"), -fSize / 2 + fSize * 4, -fSize / 2 + fSize, fSize, fSize)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_LightDepth_Field_Point"), -fSize / 2 + fSize * 4, -fSize / 2 + fSize * 2, fSize, fSize)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSR"), WinSizeX - fSize * 2, -fSize / 2 + fSize * 2, fSize, fSize)))
-		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_DOF"), WinSizeX - fSize * 2, -fSize / 2 + fSize * 3, fSize, fSize)))
+
+
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_DOF"), WinSizeX - fSize * 2, -fSize / 2 + fSize * 2, fSize, fSize)))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_DOF_Blur_Fin"), WinSizeX - fSize * 2, -fSize / 2 + fSize * 4, fSize, fSize)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_GODRAY"), WinSizeX - fSize * 2, -fSize / 2 + fSize * 5, fSize, fSize)))
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_DOF_Blur_Fin"), WinSizeX - fSize * 2, -fSize / 2 + fSize * 2, fSize, fSize)))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_Pre_Post_Diffuse"), WinSizeX - fSize, -fSize / 2 + fSize, fSize, fSize)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_SSR"), WinSizeX - fSize, -fSize / 2 + fSize * 2, fSize, fSize)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_GODRAY"), WinSizeX - fSize, -fSize / 2 + fSize * 3, fSize, fSize)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RTVDebug(TEXT("Target_FXAA"), WinSizeX - fSize, -fSize / 2 + fSize * 4, fSize, fSize)))
 		return E_FAIL;
 
 	return S_OK;
