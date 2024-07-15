@@ -8,6 +8,7 @@
 #include "Selector_UI.h"
 #include "Part_InteractProps.h"
 #include "Camera_Free.h"
+#include "Camera_Gimmick.h"
 
 CInteractProps::CInteractProps(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
@@ -99,6 +100,16 @@ void CInteractProps::Start()
 			continue;
 		static_cast<CPart_InteractProps*>(iter)->Set_CameraSetting(m_pCamera, m_pCameraTransform);
 	}
+
+	m_pCameraGimmick = static_cast<CCamera_Gimmick*>(m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 2));
+	m_pCameraGimmickTransform = static_cast<CTransform*>(m_pCameraGimmick->Get_Component(g_strTransformTag));
+	for (auto& iter : m_PartObjects)
+	{
+		if (iter == nullptr)
+			continue;
+		static_cast<CPart_InteractProps*>(iter)->Set_CameraGimmickSetting(m_pCameraGimmick, m_pCameraGimmickTransform);
+	}
+
 	Tick_Col();
 }
 

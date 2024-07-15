@@ -49,7 +49,7 @@ void CContextMenu::Tick(_float fTimeDelta)
 	{
 		Find_LayOut();
 
-		if (nullptr == m_pLayOut)
+		if (nullptr == m_pLayOut)   
 			MSG_BOX(TEXT("CContextMenu() : Inventory가 사용할 수 있는 Layout이 없습니다. "));
 	}
 

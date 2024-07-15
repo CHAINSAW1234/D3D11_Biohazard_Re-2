@@ -201,6 +201,10 @@
     <ClInclude Include="..\Public\Body_EventProp.h" />
     <ClInclude Include="..\Public\Body_ItemLocker.h" />
     <ClInclude Include="..\Public\Body_ItemProp.h" />
+    <ClInclude Include="..\Public\Key_Door.h" />
+    <ClInclude Include="..\Public\Emblem_Door.h" />
+    <ClInclude Include="..\Public\Card_Cabinet.h" />
+    <ClInclude Include="..\Public\Item_Statue.h" />
     <ClInclude Include="..\Public\Body_Ladder.h" />
     <ClInclude Include="..\Public\Body_Lever.h" />
     <ClInclude Include="..\Public\Body_MovingShelf.h" />
@@ -223,6 +227,7 @@
     <ClInclude Include="..\Public\Camera_Event.h" />
     <ClInclude Include="..\Public\Camera_Event_Struct.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
+    <ClInclude Include="..\Public\Camera_Gimmick.h" />
     <ClInclude Include="..\Public\Cut_Scene.h" />
     <ClInclude Include="..\Public\Cut_Scene_CF93.h" />
     <ClInclude Include="..\Public\Damage_Lost_Zombie.h" />
@@ -246,6 +251,9 @@
     <ClInclude Include="..\Public\Impact_Grenade.h" />
     <ClInclude Include="..\Public\Is_Different_Location_To_Player_Zombie.h" />
     <ClInclude Include="..\Public\Is_Start_Rub_Door_Zombie.h" />
+    <ClInclude Include="..\Public\Key_ReaderMachine.h" />
+    <ClInclude Include="..\Public\Lock_Cabinet.h" />
+    <ClInclude Include="..\Public\Medal_NewpoliceStatue.h" />
     <ClInclude Include="..\Public\Move_To_Target_Lost_Zombie.h" />
     <ClInclude Include="..\Public\Muzzle_ShockWave.h" />
     <ClInclude Include="..\Public\Pannel_Window.h" />
@@ -478,6 +486,8 @@
     <ClCompile Include="..\Private\Call_Center.cpp" />
     <ClCompile Include="..\Private\Camera_Event.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
+    <ClCompile Include="..\Private\Camera_Gimmick.cpp" />
+    <ClCompile Include="..\Private\Card_Cabinet.cpp" />
     <ClCompile Include="..\Private\Creep_Zombie.cpp" />
     <ClCompile Include="..\Private\Cut_Scene.cpp" />
     <ClCompile Include="..\Private\Cut_Scene_CF93.cpp" />
@@ -486,6 +496,8 @@
     <ClCompile Include="..\Private\Dead_Zombie.cpp" />
     <ClCompile Include="..\Private\Decal_BulletHole.cpp" />
     <ClCompile Include="..\Private\Decal_SSD.cpp" />
+    <ClCompile Include="..\Private\Key_Door.cpp" />
+    <ClCompile Include="..\Private\Emblem_Door.cpp" />
     <ClCompile Include="..\Private\EnvCube.cpp" />
     <ClCompile Include="..\Private\Event_Base.cpp" />
     <ClCompile Include="..\Private\Find_Door_To_Target_Zombie.cpp" />
@@ -503,6 +515,9 @@
     <ClCompile Include="..\Private\Is_Same_Location_To_Player_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Start_Rub_Door_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Start_Zombie.cpp" />
+    <ClCompile Include="..\Private\Key_ReaderMachine.cpp" />
+    <ClCompile Include="..\Private\Lock_Cabinet.cpp" />
+    <ClCompile Include="..\Private\Medal_NewpoliceStatue.cpp" />
     <ClCompile Include="..\Private\Move_To_Target_Lost_Zombie.cpp" />
     <ClCompile Include="..\Private\Muzzle_Light_SG.cpp" />
     <ClCompile Include="..\Private\Muzzle_ShockWave.cpp" />
@@ -517,6 +532,7 @@
     <ClCompile Include="..\Private\Room_Finder.cpp" />
     <ClCompile Include="..\Private\SG_Cartridge.cpp" />
     <ClCompile Include="..\Private\Start_Zombie.cpp" />
+    <ClCompile Include="..\Private\Item_Statue.cpp" />
     <ClCompile Include="..\Private\Throwing_Weapon.cpp" />
     <ClCompile Include="..\Private\Hold_Out_Hand_Window_Zombie.cpp" />
     <ClCompile Include="..\Private\In_Window_Zombie.cpp" />
