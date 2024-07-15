@@ -700,6 +700,9 @@
     <Filter Include="02.GameObjects\Effect\Impact_Grenade">
       <UniqueIdentifier>{b0dfbe9f-435a-4ba2-bf40-4a69fa774dbb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Blind">
+      <UniqueIdentifier>{ad194551-109d-42c1-82b8-25a406ea6cbc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1356,6 +1359,12 @@
     <ClInclude Include="..\Public\Impact_Grenade.h">
       <Filter>02.GameObjects\Effect\Impact_Grenade</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Hint_Directory.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Directory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Hint_Blind.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Blind</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1972,6 +1981,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Impact_Grenade.cpp">
       <Filter>02.GameObjects\Effect\Impact_Grenade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hint_Directory.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Directory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hint_Blind.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Blind</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

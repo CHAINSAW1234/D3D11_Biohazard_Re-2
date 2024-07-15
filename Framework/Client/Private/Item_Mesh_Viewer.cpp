@@ -203,6 +203,7 @@ void CItem_Mesh_Viewer::PopUp_Operation(_float fTimeDelta)
 
 void CItem_Mesh_Viewer::Idle_Operation(_float fTimeDelta)
 {
+	//Add_Additional_Transformation_World
 	switch (m_eOperType)
 	{
 	case Client::CItem_Mesh_Viewer::EXAMIN: {
@@ -604,7 +605,12 @@ HRESULT CItem_Mesh_Viewer::Load_ItemModelTags()
 	}
 
 	CloseHandle(hFile);
-	return S_OK;
+
+	if (ITEM_NUMBER_END != m_vecModelTag.size())
+		return E_FAIL;
+
+	else
+		return S_OK;
 }
 
 
@@ -926,7 +932,7 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		break;
 	case Client::ShotGun:
 		m_fPopupHide_EndDist = 0.4f;
-		m_pTransformCom->Set_Scaled(1.f, 1.f, 1.f);
+		m_pTransformCom->Set_Scaled(0.5f, 0.5f, 0.5f);
 		m_fCurSize = 1.f;
 		m_fStartSize = 1.f;
 		m_fEndSize = 0.7f;

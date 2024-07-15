@@ -234,6 +234,8 @@
     <ClInclude Include="..\Public\Find_Door_To_Target_Zombie.h" />
     <ClInclude Include="..\Public\HG_Cartridge.h" />
     <ClInclude Include="..\Public\Hint.h" />
+    <ClInclude Include="..\Public\Hint_Blind.h" />
+    <ClInclude Include="..\Public\Hint_Directory.h" />
     <ClInclude Include="..\Public\Hint_Display.h" />
     <ClInclude Include="..\Public\Hint_Highliter.h" />
     <ClInclude Include="..\Public\Hit.h" />
@@ -484,6 +486,8 @@
     <ClCompile Include="..\Private\Find_Door_To_Target_Zombie.cpp" />
     <ClCompile Include="..\Private\HG_Cartridge.cpp" />
     <ClCompile Include="..\Private\Hint.cpp" />
+    <ClCompile Include="..\Private\Hint_Blind.cpp" />
+    <ClCompile Include="..\Private\Hint_Directory.cpp" />
     <ClCompile Include="..\Private\Hint_Display.cpp" />
     <ClCompile Include="..\Private\Hint_Highliter.cpp" />
     <ClCompile Include="..\Private\Hit.cpp" />

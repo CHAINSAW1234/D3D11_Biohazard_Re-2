@@ -22,7 +22,7 @@ private:
 public:
 	HRESULT Initialize();
 	void FirstTick_Seting();
-	void SecondTivk_Seting();
+	void SecondTick_Seting();
 	void Tick(_float fTimeDelta);
 	void Late_Tick(_float fTimeDelta);
 

@@ -25,6 +25,10 @@ HRESULT CContext_Highlighter::Initialize(void* pArg)
 			return E_FAIL;
 	}
 
+	_float4 fMyPos = GetPosition();
+	fMyPos.z = 0.f;
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, fMyPos);
+
 	return S_OK;
 }
 

@@ -1,8 +1,9 @@
 #include "stdafx.h"
 
 #include "Hint.h"
-#include "TextBox.h"
-#include "Hint_Highliter.h"
+
+
+
 
 CHint::CHint(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI{ pDevice , pContext }
@@ -21,17 +22,8 @@ HRESULT CHint::Initialize_Prototype()
 
 HRESULT CHint::Initialize(void* pArg)
 {
-	//if (nullptr != pArg)
-	//{
-	//	if (FAILED(__super::Initialize(&pArg)))
-	//		return E_FAIL;
-	//	if (FAILED(Add_Components()))
-	//		return E_FAIL;
-	//	m_bDead = true;
-	//}
-
 	CUI::UI_DESC UIDesc = {};
-	UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.f };
+	UIDesc.vPos = { g_iWinSizeX * 0.5f, g_iWinSizeY * 0.5f, 0.008f };
 	UIDesc.vSize = { g_iWinSizeX, g_iWinSizeY };
 
 	if (FAILED(__super::Initialize(&UIDesc)))
@@ -39,6 +31,19 @@ HRESULT CHint::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+
+	if (FAILED(Create_Display_Blinde()))
+		return E_FAIL;
+
+	if (FAILED(Create_Display()))
+		return E_FAIL;
+
+	if (FAILED(Create_Directory()))
+		return E_FAIL;
+
+	if (FAILED(Create_Directory_Highlighter()))
+		return E_FAIL;
+
 
 	m_bDead = true;
 
@@ -48,7 +53,12 @@ HRESULT CHint::Initialize(void* pArg)
 
 void CHint::Start()
 {
-
+	_float3 fMove = {};
+	for (auto& iter : m_vecDirectory)
+	{
+		iter->Move(fMove);
+		fMove += _float3{ 0.f, -23.5f, 0.f };
+	}
 }
 
 void CHint::Tick(_float fTimeDelta)
@@ -87,6 +97,21 @@ void CHint::Set_Dead(_bool bDead)
 {
 	m_bDead = bDead;
 
+	m_pHighlighter->Set_Dead(bDead);
+
+	for (_uint i = 0; i < 8; i++)
+	{
+		m_vecDirectory[i]->Set_Dead(bDead);
+	}
+
+	//m_pDisplay->Set_Dead(bDead);
+
+	m_pDisplay_Blinde->Set_Dead(bDead);
+}
+
+void CHint::Acquire_Document(ITEM_NUMBER eAcquire_Document)
+{
+
 }
 
 HRESULT CHint::Bind_ShaderResources()
@@ -115,12 +140,68 @@ HRESULT CHint::Bind_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CHint::Create_Hint_Highlighter()
+HRESULT CHint::Create_Display_Blinde()
+{
+	ifstream inputFileStream;
+	wstring selectedFilePath;
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Hint/Hint_DisplayBlind.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+
+	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Hint_Blind"),
+		(CGameObject**)&m_pDisplay_Blinde, m_pDevice, m_pContext);
+
+	if (nullptr == m_pDisplay_Blinde)
+		return E_FAIL;
+
+	Safe_AddRef(m_pDisplay_Blinde);
+	m_pDisplay_Blinde->Set_Dead(true);
+
+	return S_OK;
+}
+
+HRESULT CHint::Create_Display()
+{
+
+
+	return S_OK;
+}
+
+HRESULT CHint::Create_Directory()
+{
+	for (_uint i = 0; i < static_cast<_uint>(ITEM_READ_TYPE::END_NOTE); i++)
+	{
+		ifstream inputFileStream;
+		wstring selectedFilePath;
+		selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Hint/Hint_Directory.dat");
+		inputFileStream.open(selectedFilePath, ios::binary);
+		CHint_Directory* pDirectory = { nullptr };
+		CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Hint_Directory"),
+			(CGameObject**)&pDirectory, m_pDevice, m_pContext);
+
+		if (nullptr == pDirectory)
+			return E_FAIL;
+
+		m_vecDirectory.push_back(pDirectory);
+	}
+
+	for (auto& iter : m_vecDirectory)
+	{
+		if (nullptr != iter)
+		{
+			Safe_AddRef(iter);
+			iter->Set_Dead(true);
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CHint::Create_Directory_Highlighter()
 {
 	CGameObject* pGameOBJ = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Hint_Highliter"));
-	m_pHint_Highlighter = dynamic_cast<CHint_Highliter*>(pGameOBJ);
+	m_pHighlighter = dynamic_cast<CHint_Highliter*>(pGameOBJ);
 
-	if (nullptr == m_pHint_Highlighter)
+	if (nullptr == m_pHighlighter)
 		return E_FAIL;
 
 	return S_OK;
@@ -176,6 +257,11 @@ CGameObject* CHint::Clone(void* pArg)
 void CHint::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pHint_Highlighter);
+	Safe_Release(m_pDisplay_Blinde);
+	//Safe_Release(m_pDisplay);
+	for (auto& iter : m_vecDirectory)
+	{
+		Safe_Release(iter);
+	}
+	Safe_Release(m_pHighlighter);
 }

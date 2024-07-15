@@ -3,10 +3,10 @@
 #include "Inventory_Manager.h"
 #include "Player.h"
 
-constexpr _float	Z_POS_SLOT = 0.8f;
-constexpr _float	Z_POS_ITEM_UI = 0.7f;
-constexpr _float	Z_POS_HIGH_LIGHTER = 0.6f;
-constexpr _float	Z_POS_CONTEXT_MENU = 0.5f;
+constexpr _float	Z_POS_SLOT = 0.008f;
+constexpr _float	Z_POS_ITEM_UI = 0.007f;
+constexpr _float	Z_POS_HIGH_LIGHTER = 0.006f;
+constexpr _float	Z_POS_CONTEXT_MENU = 0.005f;
 
 constexpr _float	SLOT_INTERVAL_X = 74.f;
 constexpr _float	SLOT_INTERVAL_Y = 76.f;
@@ -60,11 +60,9 @@ void CInventory_Manager::FirstTick_Seting()
 	AddItem_ToInven(ShotGun, 7);
 	AddItem_ToInven(handgun_bullet01a, 20);
 	AddItem_ToInven(shotgun_bullet01a, 20);
-
-
 }
 
-void CInventory_Manager::SecondTivk_Seting()
+void CInventory_Manager::SecondTick_Seting()
 {
 	for (auto& iter : m_vecItem_UI)
 	{
@@ -79,9 +77,12 @@ void CInventory_Manager::SecondTivk_Seting()
 			_uint iHotKeyNum = m_pHotkey->RegisterHoykey(1, iter->Get_ItemNumber(), iter->Get_ItemQuantity());
 			iter->Set_Text(HOTKEY_DISPLAY, to_wstring(iHotKeyNum));
 		}
+		
+
 	}
 
 	m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
+
 }
 
 void CInventory_Manager::Tick(_float fTimeDelta)

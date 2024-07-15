@@ -5,7 +5,8 @@
 
 constexpr _uint		EQ_SLOT_COUNT = 4;
 constexpr _uint		TH_SLOT_COUNT = 3;
-constexpr _float	Z_POS_ITEM_UI = 0.7f;
+constexpr _float	Z_POS_ITEM_UI = 0.007f;
+constexpr _float	Z_POS_SLOT = 0.008f;
 constexpr _float	Y_DEF = 154.f;
 constexpr _float	LIFE_TIME_LIMIT = 0.5f;
 
@@ -261,7 +262,7 @@ CUI::UI_DESC CHotKey::Read_HotKeyDat()
 
 	for (_uint i = 1; i < 5; i++)
 	{
-		m_fPositions[i - 1] = { vecCustomInvenUIDesc[i].worldMatrix._41, vecCustomInvenUIDesc[i].worldMatrix._42, vecCustomInvenUIDesc[i].worldMatrix._43 };
+		m_fPositions[i - 1] = { vecCustomInvenUIDesc[i].worldMatrix._41, vecCustomInvenUIDesc[i].worldMatrix._42, Z_POS_ITEM_UI };
 	}
 
 	return UIDesc;
@@ -345,7 +346,7 @@ HRESULT CHotKey::Create_InvenSlot(vector<CCustomize_UI::CUSTOM_UI_DESC>* vecInve
 
 		CInventory_Slot* pInvenUI = dynamic_cast<CInventory_Slot*>(pGameObj);
 
-		pInvenUI->Set_Position(XMVectorSet(fSetPos.x, fSetPos.y, 0.8f, 1.f));
+		pInvenUI->Set_Position(XMVectorSet(fSetPos.x, fSetPos.y, Z_POS_SLOT, 1.f));
 		pInvenUI->Set_IsLoad(false);
 		pInvenUI->Set_Dead(true);
 
