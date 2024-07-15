@@ -219,7 +219,6 @@ struct PS_OUT
 	float4 vDepth : SV_TARGET2;
 	float4 vMaterial : SV_TARGET3;
 	float4 vEmissive : SV_TARGET4;
-	float4 vOrigin : SV_TARGET5;
 };
 
 struct PS_OUT_EMISSIVE
@@ -243,8 +242,6 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vDiffuse = vMtrlDiffuse;
 	Out.vNormal = vector(vWorldNormal * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 1000.0f, 0.0f, 0.0f);
-	Out.vOrigin = vector(1.f, 0.f, 0.f, 1.f);
-
 
 	if (g_isAlphaTexture)
 	{

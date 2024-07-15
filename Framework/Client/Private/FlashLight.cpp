@@ -38,7 +38,7 @@ HRESULT CFlashLight::Initialize(void* pArg)
 	eDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	eDesc.vDirection = _float4(0.f, 0.f, 1.f, 1.f);
 
-	eDesc.vDiffuse = _float4(.3f, .3f, .3f, 1.f);
+	eDesc.vDiffuse = _float4(.2f, .2f, .2f, 1.f);
 	eDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	eDesc.vSpecular = _float4(0.4f, 0.4f, 0.4f, 1.f);
 

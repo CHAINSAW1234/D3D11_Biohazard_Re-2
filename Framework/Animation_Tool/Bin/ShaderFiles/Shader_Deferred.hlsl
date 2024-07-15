@@ -154,21 +154,6 @@ struct PS_OUT
     float4 vColor : SV_TARGET0;
 };
 
-
-struct PS_OUT_PRE_POST
-{
-    float4 vDiffuse : SV_TARGET0;
-    float4 vNormal : SV_TARGET1;
-    float4 vDepth : SV_TARGET2;
-    float4 vMaterial : SV_TARGET3;
-};
-
-struct PS_OUT_POST_PROCESSING
-{
-    float4 vDiffuse : SV_TARGET0;
-    float4 vShade : SV_TARGET1;
-};
-
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -349,7 +334,6 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
     
     float4 vAlbedo = pow(g_DiffuseTexture.Sample(PointSampler, In.vTexcoord), 2.2f);
 
-    
     if (vAlbedo.a == 0)
         discard;
     
@@ -399,18 +383,18 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
     float G = GeometrySmith(vNormal.xyz, Lo, Li, fMaterialRoughness);
     float3 kd = lerp(float3(1, 1, 1) - F, float3(0, 0, 0), fMaterialMetalic);
     
-    float3 diffuseBRDF = kd * vAlbedo.xyz * 0.1f;
+    float3 diffuseBRDF = kd * vAlbedo.xyz;
     float3 specularBRDF = (F * D * G) / max(0.00001f, 4.0 * cosLi * cosLo);
   
-    float3 directLighting = (diffuseBRDF + specularBRDF) * Lradiance * cosLi;
+    float3 directLighting = (/*diffuseBRDF +*/ specularBRDF) * Lradiance * cosLi;
     
     float3 ambientLighting;
     {
         // Sample diffuse irradiance at normal direction.
-        float3 Previrradiance = g_PrevIrradianceTexture.Sample(LinearSampler, vNormal).rgb;
-        float3 Curirradiance = g_CurIrradianceTexture.Sample(LinearSampler, vNormal).rgb;
+        float3 Previrradiance = pow(g_PrevIrradianceTexture.Sample(LinearSampler, vNormal).rgb, 2.2f);
+        float3 Curirradiance = pow(g_CurIrradianceTexture.Sample(LinearSampler, vNormal).rgb, 2.2f);
 
-        float3 irradiance = lerp(Curirradiance, Previrradiance, g_PBRLerpTime);             // ???????????????????????????
+        float3 irradiance = lerp(Curirradiance, Previrradiance, g_PBRLerpTime); // ???????????????????????????
         
         // Calculate Fresnel term for ambient lighting.
         float3 F = FresnelSchlick(cosLo, F0);
@@ -425,7 +409,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
         float3 PrevspecularIrradiance = pow(g_PrevEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
         float3 CurspecularIrradiance = pow(g_CurEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
         
-        float3 specularIrradiance = lerp(CurspecularIrradiance, PrevspecularIrradiance, g_PBRLerpTime); // ???????????????????????????
+        float3 specularIrradiance = lerp(PrevspecularIrradiance, CurspecularIrradiance, g_PBRLerpTime); // ???????????????????????????
         
         //// Split-sum approximation factors for Cook-Torrance specular BRDF.
         float2 specularBRDF = g_SpecularLUTTexture.Sample(LinearSamplerClamp, float2(cosLo, fMaterialRoughness)).rg;
@@ -434,20 +418,13 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
         float3 specularIBL = (F0 * specularBRDF.x + specularBRDF.y) * specularIrradiance;
 
         // Total ambient lighting contribution.
-        ambientLighting = (diffuseIBL + specularIBL) * fMaterialAO;
+        ambientLighting = (diffuseIBL + specularIBL);
     }
     
     vector vColor = float4(directLighting + ambientLighting, 1);
-    if (g_isSSAO)
-    {
-        vColor *= g_SSAOTexture.Sample(PointSamplerClamp, In.vTexcoord);
-
-    }
-    vColor = vColor / (vColor + 1.f);
-    vColor = pow(vColor, 1.f / 2.2f);
-    vColor.a = 1;
     
     Out.vColor = vColor;
+
     return Out;
 }
 
@@ -456,7 +433,7 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     
     float4 vAlbedo = pow(g_DiffuseTexture.Sample(PointSampler, In.vTexcoord), 2.2f);
-    
+
     if (vAlbedo.a == 0)
         discard;
     
@@ -469,6 +446,7 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
     vector vMaterialDesc = g_MaterialTexture.Sample(PointSampler, In.vTexcoord);
     float fMaterialMetalic = vMaterialDesc.r;
     float fMaterialRoughness = vMaterialDesc.g + 0.3f;
+    fMaterialRoughness = min(1.f, fMaterialRoughness);
     float fMaterialAO = vMaterialDesc.b;
     
     // for specular
@@ -484,53 +462,76 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
     vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
     vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
 
-    float3 vLookCam = normalize(g_vCamPosition.xyz - vWorldPos.xyz); //카메라를 바라보는 방향벡터
-    //float4 vReflect = reflect(normalize(g_vLightDir), vNormal);
-    //float fSpecular = pow(max(dot(normalize(vLook), normalize(vReflect)), 0.f), 3.f);
-
-    float3 F0 = 0.04f;
-    F0 = lerp(F0, 1, fMaterialMetalic); // F0 = lerp(F0, vAlbedo, fMaterialMetalic);
-    
-    // 1. reflectance equation
-    float3 L0 = 0;
-    
-    // per-light radiance
-    float3 vLookLight = normalize(g_vLightPos - vWorldPos).xyz; // 빛을 바라보는 방향벡터
-    float3 vLookHalf = normalize(vLookCam.xyz + vLookLight); // 두 방향 벡터의 중간에 위치한 하프 벡터
     
     float fDistance = length(g_vLightPos - vWorldPos);
     float fAttenuation = max(0.f, 1.f - (fDistance * fDistance) / (g_fLightRange * g_fLightRange)); // 감마 보정을 위한 감쇠값
-    float3 vRadiance = g_vLightDiffuse.xyz * fAttenuation; // 빛의 색에 감쇠를 적용
     
-    // cook-torrance BRDF
-    float NDF = DistributeGGX(vNormal.xyz, vLookHalf, fMaterialRoughness); // NDF : Normal Distribution Function
-    float G = GeometrySmith(vNormal.xyz, vLookCam.xyz, vLookLight, fMaterialRoughness); // G : Geometry function
-    float3 F = FresnelSchlick(max(dot(vLookHalf.xyz, vLookCam.xyz), 0.f), F0); // F : Fresnel-Schlick approximation
+    if (fAttenuation <= 0)
+        discard;
     
-    float3 K_Specular = F;
-    float3 K_Diffuse = 1.f - K_Specular.xyz;
-    K_Diffuse *= 1 - fMaterialMetalic;
+    float3 Lo = normalize(g_vCamPosition.xyz - vWorldPos.xyz);
+    float cosLo = max(0.0f, dot(vNormal.xyz, Lo));
+    float3 Lradiance = g_vLightDiffuse.xyz;
     
-    float3 vNumerator = F * NDF * G;
-    float fDenominator = 4.f * max(dot(vNormal.xyz, vLookCam), 0.f) * max(dot(vNormal.xyz, vLookLight), 0.f);
-    float3 vSpecular = vNumerator / max(fDenominator, 0.001f);
     
-    float fDot_Normal_LookLight = max(dot(vNormal.xyz, vLookLight), 0.f);
-    L0 = (K_Diffuse * vAlbedo.xyz / PI + vSpecular) * vRadiance * fDot_Normal_LookLight;
+    float3 Lr = 2.0f * cosLo * vNormal.xyz - Lo;
+    float3 F0 = lerp(0.04, vAlbedo, fMaterialMetalic).xyz;
     
-    if (g_isSSAO)
+    // 여기부터 for문이였음
+   // float3 Li = -g_vLightDir.xyz;
+    float3 Li = -normalize(g_vLightPos.xyz - vWorldPos.xyz);
+    float3 Lh = normalize(Li + Lo);
+    
+    float cosLi = max(0.0, dot(vNormal.xyz, Li));
+    float cosLh = max(0.0, dot(vNormal.xyz, Lh));
+    
+    float3 F = FresnelSchlick(max(dot(Lh.xyz, Lo.xyz), 0.f), F0);
+    float D = DistributeGGX(vNormal.xyz, Lh, fMaterialRoughness);
+    float G = GeometrySmith(vNormal.xyz, Lo, Li, fMaterialRoughness);
+    float3 kd = lerp(float3(1, 1, 1) - F, float3(0, 0, 0), fMaterialMetalic);
+    
+    float3 diffuseBRDF = kd * vAlbedo.xyz;
+    float3 specularBRDF = (F * D * G) / max(0.00001f, 4.0 * cosLi * cosLo);
+  
+    float3 directLighting = (diffuseBRDF + specularBRDF) * Lradiance * cosLi;
+    
+    float3 ambientLighting;
     {
-        L0 *= g_SSAOTexture.Sample(PointSamplerClamp, In.vTexcoord).xyz;
-    }
+        // Sample diffuse irradiance at normal direction.
+        float3 Previrradiance = pow(g_PrevIrradianceTexture.Sample(LinearSampler, vNormal).rgb, 2.2f);
+        float3 Curirradiance = pow(g_CurIrradianceTexture.Sample(LinearSampler, vNormal).rgb, 2.2f);
 
-    vector vColor = float4(L0, 1);
+        float3 irradiance = lerp(Curirradiance, Previrradiance, g_PBRLerpTime); // ???????????????????????????
+        
+        // Calculate Fresnel term for ambient lighting.
+        float3 F = FresnelSchlick(cosLo, F0);
+        // Get diffuse contribution factor (as with direct lighting).
+        float3 kd = lerp(1.0 - F, 0.0, fMaterialMetalic);
+
+        // Irradiance map contains exitant radiance assuming Lambertian BRDF, no need to scale by 1/PI here either.
+        float3 diffuseIBL = kd * vAlbedo.xyz * irradiance;
+
+        // Sample pre-filtered specular reflection environment at correct mipmap level.
+        uint specularTextureLevels = querySpecularTextureLevels();
+        float3 PrevspecularIrradiance = pow(g_PrevEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
+        float3 CurspecularIrradiance = pow(g_CurEnvironmentTexture.SampleLevel(LinearSampler, float4(Lr, 0), fMaterialRoughness * specularTextureLevels), 2.2f).rgb;
+        
+        float3 specularIrradiance = lerp(PrevspecularIrradiance, CurspecularIrradiance, g_PBRLerpTime); // ???????????????????????????
+        
+        //// Split-sum approximation factors for Cook-Torrance specular BRDF.
+        float2 specularBRDF = g_SpecularLUTTexture.Sample(LinearSamplerClamp, float2(cosLo, fMaterialRoughness)).rg;
+
+        // Total specular IBL contribution.
+        float3 specularIBL = (F0 * specularBRDF.x + specularBRDF.y) * specularIrradiance;
+
+        // Total ambient lighting contribution.
+        ambientLighting = (diffuseIBL + specularIBL);
+    }
     
-    vColor = vColor / (vColor + 1.f);
-    vColor = pow(vColor, 1.f / 2.2f);
-    vColor.a = 1;
+    vector vColor = float4((directLighting + ambientLighting) * fAttenuation, 1);
     
     Out.vColor = vColor;
-    
+
     return Out;
 }
 
@@ -637,14 +638,6 @@ PS_OUT PS_MAIN_SPOT(PS_IN In)
     }
     
     vector vColor = float4(directLighting + ambientLighting, 1);
-    if (g_isSSAO)
-    {
-        vColor *= g_SSAOTexture.Sample(PointSamplerClamp, In.vTexcoord);
-
-    }
-    vColor = vColor / (vColor + 1.f);
-    vColor = pow(vColor, 1.f / 2.2f);
-    vColor.a = 1;
     
     Out.vColor = vColor;
     return Out;
@@ -819,62 +812,28 @@ float ConvertDepthToNdcZ(float depth)
     return pow(saturate((depth - nearPlaneDist) / (farPlaneDist - nearPlaneDist)), 1 / depthPackExponent);
 }
 
-float3 HDR(float3 l)
-{
-    float Exposure = 1.f;
-    l = l * Exposure;
-    l.r = l.r < 1.413f ? pow(abs(l.r * 0.38317f), 1.f / 2.2f) : 1.f - exp(-l.r);
-    l.g = l.g < 1.413f ? pow(abs(l.g * 0.38317f), 1.f / 2.2f) : 1.f - exp(-l.g);
-    l.b = l.b < 1.413f ? pow(abs(l.b * 0.38317f), 1.f / 2.2f) : 1.f - exp(-l.b);
-    return l;
-}
-
 /* 최종적으로 480000 수행되는 쉐이더. */
-PS_OUT_PRE_POST PS_MAIN_LIGHT_RESULT(PS_IN In)
+PS_OUT PS_MAIN_LIGHT_RESULT(PS_IN In)
 {
-    PS_OUT_PRE_POST Out = (PS_OUT_PRE_POST) 0;
+    PS_OUT Out = (PS_OUT) 0;
 
-    vector vDiffuse = g_DiffuseTexture.Sample(PointSamplerClamp, In.vTexcoord);
-    if (0.0f == vDiffuse.a)
+    vector vColor = g_DiffuseTexture.Sample(LinearSamplerClamp, In.vTexcoord);
+    if (0.0f == vColor.a)
         discard;
     
-    vector vDepth = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
-    vector vNormal = g_NormalTexture.Sample(PointSampler, In.vTexcoord);
-    Out.vDiffuse = vDiffuse;
-    Out.vDiffuse.a = 1.f;
-    Out.vNormal = vNormal;
-    Out.vDepth = vDepth;
+    Out.vColor = vColor;
+    Out.vColor.a = 1.f;
 
     // 그림자 연산
-    vector vOrigin = g_OriginalTexture.Sample(PointSampler, In.vTexcoord);
-    if (vOrigin.r == 0)
+    if (g_isSSAO)
     {
-        ;
+        Out.vColor *= g_SSAOTexture.Sample(LinearSamplerClamp, In.vTexcoord);
     }
+    
+    
     float fShadow = Cal_Shadow(In.vTexcoord);
-    Out.vDiffuse *= (1 - fShadow);
-    Out.vDiffuse.a = 1;
-    
-    
-    //float3 uv = float3(In.vTexcoord, vDepth.r);
-
-    //float4 scatteringColorAndTransmittance = g_3DTexture.Sample(PointSampler, uv);
-    //float3 scatteringColor = HDR(scatteringColorAndTransmittance.rgb);
-
-    //Out.vDiffuse = Out.vDiffuse * float4(scatteringColor, scatteringColorAndTransmittance.a);
-    
-    return Out;
-}
-
-PS_OUT_POST_PROCESSING PS_MAIN_POSTPROCESSING(PS_IN In)
-{
-    PS_OUT_POST_PROCESSING Out = (PS_OUT_POST_PROCESSING) 0;
-    
-    vector vAmbientDiffuseDesc = g_AmbientDiffuseTexture.Sample(PointSampler, In.vTexcoord);
-    vector vAmbientShadeDesc = g_AmbientShadeTexture.Sample(PointSampler, In.vTexcoord);
-    
-    Out.vDiffuse = vAmbientDiffuseDesc;
-    Out.vShade = vAmbientShadeDesc;
+    Out.vColor *= (1 - fShadow);
+    Out.vColor.a = 1;
     
     return Out;
 }
@@ -883,37 +842,17 @@ PS_OUT PS_POST_PROCESSING_RESULT(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
     
-    vector DistortionDesc = g_DistortionTexture.Sample(PointSampler, In.vTexcoord);
-    DistortionDesc.xyz *= 2.f;
-    DistortionDesc.xyz -= 1.f;
-    
-    DistortionDesc.xy = normalize(DistortionDesc.xy);
-    float2 vTexcoord = float2(In.vTexcoord.x + (DistortionDesc.x * DistortionDesc.w), In.vTexcoord.y + (DistortionDesc.y * DistortionDesc.w));
+    vector DiffuseDesc = g_DiffuseTexture.Sample(PointSamplerClamp, In.vTexcoord);
 
-    vector DepthDescSrc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
-    vector DepthDescDst = g_DepthTexture.Sample(PointSampler, vTexcoord);
+    if (DiffuseDesc.a == 0)
+        discard;
     
-    //  현재 깊이가 원본위치에서의 깊이가 디스토션이적용된 깊이보다 멀다면
-    if (DepthDescSrc.y >= DepthDescDst.y)
-        vTexcoord = In.vTexcoord;
-    
-    vector AdditionalLightDesc = g_AdditionalLightTexture.Sample(PointSampler, In.vTexcoord);
-    vector DiffuseDesc = g_DiffuseTexture.Sample(PointSamplerClamp, vTexcoord);
-    vector PostprocessingDiffuseDesc = g_PostprocessingDiffuseTexture.Sample(PointSamplerClamp, vTexcoord);
-    vector PostprocessingShadeDesc = g_PostprocessingShadeTexture.Sample(PointSamplerClamp, vTexcoord);
-    
-    float fSrcAlpha = PostprocessingDiffuseDesc.a;
-    float fDstAlpha = 1.f - fSrcAlpha;
-   
-   
-    //Out.vColor = DiffuseDesc * fDstAlpha + PostprocessingDiffuseDesc * fSrcAlpha;
-    //Out.vColor *= PostprocessingShadeDesc;
     Out.vColor = DiffuseDesc;
     
-    Out.vColor += AdditionalLightDesc;
-    
-    //  Out.vColor.xyz = pow(Out.vColor.xyz, 1.f / 2.2f);
-    
+    Out.vColor = Out.vColor / (Out.vColor + 1.f);
+    Out.vColor = pow(Out.vColor, 1.f / 2.2f);
+    Out.vColor.a = 1;
+
     return Out;
 }
 
@@ -1453,7 +1392,6 @@ PS_OUT PS_FXAA(PS_IN In)
     return Out;
 }
 
-
 PS_OUT PS_VOLUMETRIC(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -1465,7 +1403,7 @@ PS_OUT PS_VOLUMETRIC(PS_IN In)
     float fCameraDistance = length(vViewPosition.xyz);
     vDir /= fCameraDistance;
     
-    const uint SAMPLE_COUNT = 64;
+    const uint SAMPLE_COUNT = 100;
     
     float3 rayEnd = float3(0.0f, 0.0f, 0.0f);
     float stepSize = length(vViewPosition.xyz - rayEnd) / SAMPLE_COUNT;
@@ -1540,27 +1478,14 @@ PS_OUT PS_BLOOM(PS_IN In)
 {
     PS_OUT Out = (PS_OUT)0;
 
-    //float4 vDiffMrt = g_DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
-
     float4 vBloomMrt = g_Texture.Sample(LinearSampler, In.vTexcoord);
     float4 vBlackMrt = g_BlackTexture.Sample(LinearSampler, In.vTexcoord);
-
     float4 vBloom = pow(pow(abs(vBloomMrt), 2.2f) + pow(abs(vBlackMrt), 2.2f), 1.f / 2.2f);
     
     if (vBloom.a != 0)
     {
-        //vBloom = pow(abs(vBloom), 2.2f);
-
         Out.vColor = vBloom;
     }
-
-    //float4 vOut = vDiffMrt;
-    //vOut = pow(abs(vOut), 2.2f);
-  /*  vBloom = pow(abs(vBloom), 2.2f);
-
-    vOut += vBloom;
-    Out.vColor = vOut;
-    Out.vColor = pow(abs(vOut), 1.f / 2.2f);*/
 
     return Out;
 }
@@ -1708,7 +1633,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
@@ -1780,19 +1705,6 @@ technique11 DefaultTechnique
         HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BLURY();
-    }
-
-    pass Post_Processing //  10
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
-        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
-        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_POSTPROCESSING();
     }
 
     pass Post_Processing_Result //  11
