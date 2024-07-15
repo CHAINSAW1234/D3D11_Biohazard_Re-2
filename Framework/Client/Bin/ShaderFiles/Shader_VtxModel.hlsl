@@ -159,7 +159,6 @@ struct PS_OUT
     float4 vDepth : SV_TARGET2;
     float4 vMaterial : SV_TARGET3;
     float4 vEmissive : SV_TARGET4;
-    float4 vOrigin : SV_TARGET5;
 };
 
 
