@@ -117,6 +117,8 @@ void CTab_Window::Start()
 			Safe_AddRef(m_pHotKey);
 		}
 	}
+
+	m_pHint->Start();
 }
 
 void CTab_Window::Tick(_float fTimeDelta)
@@ -129,7 +131,7 @@ void CTab_Window::Tick(_float fTimeDelta)
 	if (false == m_isSecondTick)
 	{
 		m_isSecondTick = true;
-		m_pInventory_Manager->SecondTivk_Seting();
+		m_pInventory_Manager->SecondTick_Seting();
 	}
 	
 	if (true == m_bDead)
@@ -604,6 +606,7 @@ void CTab_Window::OnOff_EventHandle()
 		m_eWindowType = WINDOW_TYPE_END;
 		m_pInventory_Manager->Set_OnOff_Inven(m_bDead);
 		m_pHotKey->Set_Dead(m_bDead);
+		m_pHint->Set_Dead(m_bDead);
 
 		if (nullptr != m_pCursor[1])
 		{

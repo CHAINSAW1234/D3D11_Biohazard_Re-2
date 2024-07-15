@@ -111,8 +111,12 @@
 #include "LayOut_UI.h"
 #include "Damage_UI.h"
 #include "HotKey.h"
+
 #include "Hint.h"
+#include "Hint_Directory.h"
+#include "Hint_Display.h"
 #include "Hint_Highliter.h"
+#include "Hint_Blind.h"
 
 // EnvMap 큐브맵이라는뜻
 #include"EnvCube.h"
@@ -637,16 +641,32 @@ HRESULT CLoader::Load_Prototype()
 		CHotKey::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+
 	/* For.Prototype_GameObject_Hint */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hint"),
 		CHint::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	
+	/* For.Prototype_GameObject_Hint_Directory */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hint_Directory"),
+		CHint_Directory::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
-	/* For.Prototype_GameObject_Hint */
+	/* For.Prototype_GameObject_Hint_Display */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hint_Display"),
+		CHint_Display::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Hint_Highliter */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hint_Highliter"),
 		CHint_Highliter::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	
+
+	/* For.Prototype_GameObject_Hint_Blind */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hint_Blind"),
+		CHint_Blind::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 #pragma endregion
 
 #pragma region CubeMap
