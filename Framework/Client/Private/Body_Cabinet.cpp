@@ -91,7 +91,8 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Cabinet(&ResultMat);
 		}
-
+		if (m_pModelCom->isFinished(0))
+			*m_pState = CCabinet::CABINET_OPENED;
 		break;
 	}
 	case CCabinet::CABINET_OPENED:
@@ -132,7 +133,7 @@ HRESULT CBody_Cabinet::Render()
 
 	if (m_strModelComponentName.find(L"44_005") != wstring::npos)
 	{
-		for (auto& i : m_NonHideIndices)
+		for (auto& i : NonHideIndices)
 		{
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
@@ -270,7 +271,7 @@ HRESULT CBody_Cabinet::Render_LightDepth_Dir()
 			return E_FAIL;
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
-
+		
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{
@@ -413,8 +414,16 @@ HRESULT CBody_Cabinet::Initialize_Model_i44()
 		string strFindTag = "10" + to_string(m_iPropType);
 		if (m_iPropType >= 10)
 			strFindTag = "20" + to_string(m_iPropType - 10);
-		if ((strMeshTag.find(strFindTag) != string::npos) || (strMeshTag.find("Group_0_") != string::npos) || (strMeshTag.find("Group_1_") != string::npos))
+		if (strMeshTag.find(strFindTag) != string::npos)
+		{
+			m_strTag = strFindTag;
 			ResultMeshTags.push_back(strMeshTag);
+		}
+		if ((strMeshTag.find(strFindTag) != string::npos)  || (strMeshTag.find("Group_0_") != string::npos) || (strMeshTag.find("Group_1_") != string::npos))
+		{
+			ResultMeshTags.push_back(strMeshTag);
+
+		}
 	}
 
 	for (auto& strMeshTag : MeshTags)
@@ -427,7 +436,7 @@ HRESULT CBody_Cabinet::Initialize_Model_i44()
 		m_pModelCom->Hide_Mesh(strMeshTag, false);
 	}
 
-	m_NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+	//m_NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 
 	return S_OK;
 }

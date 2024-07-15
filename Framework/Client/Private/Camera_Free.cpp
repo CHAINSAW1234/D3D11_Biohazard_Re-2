@@ -75,6 +75,7 @@ _vector CCamera_Free::Get_Position_Vector()
 void CCamera_Free::SetPlayer(CGameObject* pPlayer)
 {
 	auto Player = dynamic_cast<CPlayer*>(pPlayer);
+
 	if (Player)
 		m_pPlayer = Player;
 }

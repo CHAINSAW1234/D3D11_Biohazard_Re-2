@@ -2,6 +2,12 @@
 #include "NewpoliceStatue.h"
 
 #include"Body_NewpoliceStatue.h"
+#include "Medal_NewpoliceStatue.h"
+
+#include "Body_ItemProp.h"
+#include "Camera_Gimmick.h"
+#include "Player.h"
+
 CNewpoliceStatue::CNewpoliceStatue(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -22,13 +28,17 @@ HRESULT CNewpoliceStatue::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-	
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_PartObjects()))
+		return E_FAIL;
+	
+	
 	return S_OK;
 }
 
@@ -43,15 +53,35 @@ void CNewpoliceStatue::Tick(_float fTimeDelta)
 //#endif
 //#endif
 
-	if (m_pGameInstance->Get_KeyState('U') == DOWN)
-		m_eState = POLICEHALLSTATUE_0;
-	if (m_pGameInstance->Get_KeyState('I') == DOWN)
-		m_eState = POLICEHALLSTATUE_1;
+	/* 예비 카메라 */
+	if (DOWN == m_pGameInstance->Get_KeyState('J'))
+	{
+		m_bCamera = false;
+		m_pCameraGimmick->Active_Camera(false);
+		m_pPlayer->ResetCamera();
+	}
 
-	if (m_pGameInstance->Get_KeyState('O') == DOWN)
-		m_eState = POLICEHALLSTATUE_3;
-	if (m_pGameInstance->Get_KeyState('P') == DOWN)
-		m_eState = POLICEHALLSTATUE_2;
+	if (DOWN == m_pGameInstance->Get_KeyState('Y'))
+	{
+		m_bCamera = false;
+		CPart_InteractProps* pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_PART1]);
+		m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + pPartLock->GetLookDir_Vector() * 0.15f + _vector{ 0.05f,0.1f,0.f,0.f });
+		m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
+
+		m_pCameraGimmick->Active_Camera(true);
+	}
+
+	if (DOWN== m_pGameInstance->Get_KeyState('L'))
+	{
+		m_isGiveMedal = true;
+		if (m_iEXCode > 3)
+			m_iEXCode = 3;
+		m_eMedalRender[m_iEXCode] = true;
+		m_iEXCode++;
+	}
+
+	Animation_BaseOn_MedalType();
+
 	__super::Tick(fTimeDelta);
 }
 
@@ -59,6 +89,7 @@ void CNewpoliceStatue::Late_Tick(_float fTimeDelta)
 {
 	if (m_pPlayer == nullptr)
 		return;
+
 	if (!Visible())
 		return;
 
@@ -118,6 +149,7 @@ HRESULT CNewpoliceStatue::Add_PartObjects()
 	/*Part_Body*/
 	CPartObject* pBodyObj = { nullptr };
 	CBody_NewpoliceStatue::PART_INTERACTPROPS_DESC BodyDesc = {};
+
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pState = &m_eState;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
@@ -127,17 +159,92 @@ HRESULT CNewpoliceStatue::Add_PartObjects()
 
 	m_PartObjects[CNewpoliceStatue::PART_BODY] = pBodyObj;
 
-	/*Part_Item*/
-	m_PartObjects[CNewpoliceStatue::PART_PART] = nullptr;
+	/* Item Medal */
+	CMedal_NewpoliceStatue::BODY_MEDAL_POLICESTATUS		MedalDesc = {};
+	MedalDesc.eMedalRenderType = m_eMedalRender;
+	
+	/* 1. Unicorn Medal */
+	CPartObject* pMedal1 = { nullptr };
+
+	MedalDesc.pParentsTransform = m_pTransformCom;
+	MedalDesc.pState = &m_eState; 
+	MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_102_unicornmedal01a");
+	MedalDesc.eMedelType = CMedal_NewpoliceStatue::MEDAL_TYPE::MEDAL_UNICORN;
+	memcpy(MedalDesc.eMedalRenderType, m_eMedalRender, sizeof(MedalDesc.eMedalRenderType));
+
+	pMedal1 = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_NewpoliceStatue"), &MedalDesc));
+
+	if (nullptr == pMedal1)
+		return E_FAIL;
+
+	else
+	{
+		m_PartObjects[CNewpoliceStatue::PART_PART1] = pMedal1;
+	}
+
+
+	/* 2 */
+	CPartObject* pMedal2 = { nullptr };
+
+	MedalDesc.pParentsTransform = m_pTransformCom;
+	MedalDesc.pState = &m_eState;
+	MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_145_virginmedal02a");
+	MedalDesc.eMedelType = CMedal_NewpoliceStatue::MEDAL_TYPE::MEDAL_VIRGIN01;
+	memcpy(MedalDesc.eMedalRenderType, m_eMedalRender, sizeof(MedalDesc.eMedalRenderType));
+
+	pMedal2 = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_NewpoliceStatue"), &MedalDesc));
+
+	if (nullptr == pMedal2)
+		return E_FAIL;
+
+	else
+	{
+		m_PartObjects[CNewpoliceStatue::PART_PART2] = pMedal2;
+	}
+	
+	/* 3 */
+	CPartObject* pMedal3 = { nullptr };
+
+	MedalDesc.pParentsTransform = m_pTransformCom;
+	MedalDesc.pState = &m_eState; 
+	MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_139_virginmedal01a");
+	MedalDesc.eMedelType = CMedal_NewpoliceStatue::MEDAL_TYPE::MEDAL_VIRGIN02;
+	memcpy(MedalDesc.eMedalRenderType, m_eMedalRender, sizeof(MedalDesc.eMedalRenderType));
+
+	pMedal3 = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_NewpoliceStatue"), &MedalDesc));
+
+	if (nullptr == pMedal3)
+		return E_FAIL;
+
+	else
+		m_PartObjects[CNewpoliceStatue::PART_PART3] = pMedal3;
 
 	return S_OK;
 }
 
 HRESULT CNewpoliceStatue::Initialize_PartObjects()
 {
+	if (m_PartObjects[PART_BODY] != nullptr)
+	{
+		CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
+		 
+		CMedal_NewpoliceStatue* pItem1 = dynamic_cast<CMedal_NewpoliceStatue*>(m_PartObjects[PART_PART1]);
+		_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet1")) };
+		pItem1->Set_Socket(pCombinedMatrix);
+
+		CMedal_NewpoliceStatue* pItem2 = dynamic_cast<CMedal_NewpoliceStatue*>(m_PartObjects[PART_PART2]);
+		pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet2")) };
+		pItem2->Set_Socket(pCombinedMatrix);
+
+		CMedal_NewpoliceStatue* pItem3 = dynamic_cast<CMedal_NewpoliceStatue*>(m_PartObjects[PART_PART3]);
+		pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet3")) };
+		pItem3->Set_Socket(pCombinedMatrix);
+	}
+
 
 	return S_OK;
 }
+
 
 HRESULT CNewpoliceStatue::Bind_ShaderResources()
 {
@@ -160,6 +267,34 @@ _float4 CNewpoliceStatue::Get_Object_Pos()
 
 
 	return _float4();
+}
+
+void CNewpoliceStatue::Animation_BaseOn_MedalType()
+{
+	if(true == m_isGiveMedal)
+	{
+		_int iMedalCnt = { 0 };
+
+		m_isGiveMedal = false; 
+
+		for (_uint i = 0; i < 3; i++)
+		{
+			if (true == m_eMedalRender[i])
+				++iMedalCnt;
+		}
+
+		if (1 == iMedalCnt)
+			m_eState = POLICEHALLSTATUE_1;
+
+		else if (2 == iMedalCnt)
+			m_eState = POLICEHALLSTATUE_2;
+
+		else if (3 == iMedalCnt)
+			m_eState = POLICEHALLSTATUE_3;
+
+		else
+			m_eState = POLICEHALLSTATUE_0;
+	}
 }
 
 CNewpoliceStatue* CNewpoliceStatue::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

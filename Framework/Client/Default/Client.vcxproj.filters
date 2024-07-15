@@ -316,12 +316,6 @@
     <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Body_Reader">
       <UniqueIdentifier>{a186c3e0-78c8-496a-a4fd-d32dd6dae0ee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Reader_Observer">
-      <UniqueIdentifier>{811c7063-452c-4d16-b305-11640d4ccc1d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Reader_Observer\Reader_Observer_Handle">
-      <UniqueIdentifier>{0512293c-6b46-4f82-9b55-01b90a3aff6e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\UI\15. LayOut">
       <UniqueIdentifier>{57e7ebf9-dbcd-44f9-8d5f-e0a91f6637a3}</UniqueIdentifier>
     </Filter>
@@ -711,6 +705,30 @@
     </Filter>
     <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Start\Dead">
       <UniqueIdentifier>{96eefabc-8da0-42b1-b5ad-08422f37da47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Cabinet\Lock_Cabinet">
+      <UniqueIdentifier>{35f24066-49e4-4651-95a1-c599c32550b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Camera\Camera_Gimmick">
+      <UniqueIdentifier>{005d1390-e7e6-4c60-8855-58a335d5c781}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\NewpoliceStatue\Medal_NewpoliceStatue">
+      <UniqueIdentifier>{b049cd71-bb2b-4dcb-80da-1b9c39106b29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Statue\Body_ItemStatue">
+      <UniqueIdentifier>{97714436-89b2-426b-82c4-9f96f4324d5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Door\Emblem_Door">
+      <UniqueIdentifier>{3af115dc-fb9f-4b8b-96af-2c18aa0bedb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Door\Key_Door">
+      <UniqueIdentifier>{35ebdb1f-4b53-448b-b5e9-f059c8bed30a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\ReaderMachine\Key_Reader">
+      <UniqueIdentifier>{e39179a2-30fc-4fc7-ad8e-52c76027dc8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Cabinet\Card_Cabinet">
+      <UniqueIdentifier>{2c900c8a-5eef-4bcc-9268-cdebc5d5d026}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1350,6 +1368,30 @@
     <ClInclude Include="..\Public\EnvCube.h">
       <Filter>02.GameObjects\EnvMap</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Lock_Cabinet.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Cabinet\Lock_Cabinet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Gimmick.h">
+      <Filter>02.GameObjects\Camera\Camera_Gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Medal_NewpoliceStatue.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\NewpoliceStatue\Medal_NewpoliceStatue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Item_Statue.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Statue\Body_ItemStatue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Card_Cabinet.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Cabinet\Card_Cabinet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Key_ReaderMachine.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\ReaderMachine\Key_Reader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Emblem_Door.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Door\Emblem_Door</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Key_Door.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Door\Key_Door</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Part_Mesh_Info_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\Part_Breaker\Part_Mesh_Info</Filter>
     </ClInclude>
@@ -1978,6 +2020,30 @@
     </ClCompile>
     <ClCompile Include="..\Private\EnvCube.cpp">
       <Filter>02.GameObjects\EnvMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Lock_Cabinet.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Cabinet\Lock_Cabinet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Gimmick.cpp">
+      <Filter>02.GameObjects\Camera\Camera_Gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Medal_NewpoliceStatue.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\NewpoliceStatue\Medal_NewpoliceStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item_Statue.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Statue\Body_ItemStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Card_Cabinet.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Cabinet\Card_Cabinet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Key_ReaderMachine.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\ReaderMachine\Key_Reader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Emblem_Door.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Door\Emblem_Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Key_Door.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Door\Key_Door</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Part_Mesh_Info_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\Part_Breaker\Part_Mesh_Info</Filter>

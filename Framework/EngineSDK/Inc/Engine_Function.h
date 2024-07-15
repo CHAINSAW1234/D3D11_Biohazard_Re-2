@@ -50,6 +50,14 @@ namespace Engine
 		return iRefCnt;
 	}
 
+	template<typename T>
+	bool isEqual(vector<T> const& v1, vector<T> const& v2)
+	{
+		return (v1.size() == v2.size() &&
+			equal(v1.begin(), v1.end(), v2.begin()));
+	}
+
+
 	inline _int SignBit(_float fNum) {
 		return copysign(1.0, fNum) < 0 ? -1 : 1;
 	}

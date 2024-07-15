@@ -49,7 +49,6 @@ HRESULT CBody_NewpoliceStatue::Initialize(void* pArg)
 void CBody_NewpoliceStatue::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
-
 }
 
 void CBody_NewpoliceStatue::Late_Tick(_float fTimeDelta)
@@ -64,7 +63,10 @@ void CBody_NewpoliceStatue::Late_Tick(_float fTimeDelta)
 		break;
 	case CNewpoliceStatue::POLICEHALLSTATUE_2:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
-
+		break;
+	case CNewpoliceStatue::POLICEHALLSTATUE_3:
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
+		break;
 	case CNewpoliceStatue::POLICEHALLSTATUE_END:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		break;
