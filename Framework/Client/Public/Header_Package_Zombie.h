@@ -53,6 +53,11 @@
 
 /* Bite */
 #include "Bite_Zombie.h"	
+#include "Bite_Lost_Zombie.h"
+
+/* Start */
+#include "Hide_Locker_Zombie.h"
+#include "Dead_Zombie.h"
 
 /* Interact */
 #include "Break_Window_Zombie.h"

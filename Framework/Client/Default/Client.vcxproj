@@ -191,6 +191,7 @@
     <ClInclude Include="..\Public\Actor_PL00.h" />
     <ClInclude Include="..\Public\Actor_PL78.h" />
     <ClInclude Include="..\public\BackGround.h" />
+    <ClInclude Include="..\Public\Bite_Lost_Zombie.h" />
     <ClInclude Include="..\Public\Bite_Zombie.h" />
     <ClInclude Include="..\Public\BlackBoard_Zombie.h" />
     <ClInclude Include="..\Public\Blood.h" />
@@ -218,6 +219,7 @@
     <ClInclude Include="..\Public\Burst_Zombie.h" />
     <ClInclude Include="..\Public\Button_UI.h" />
     <ClInclude Include="..\Public\Cabinet.h" />
+    <ClInclude Include="..\Public\Call_Center.h" />
     <ClInclude Include="..\Public\Camera_Event.h" />
     <ClInclude Include="..\Public\Camera_Event_Struct.h" />
     <ClInclude Include="..\public\Camera_Free.h" />
@@ -225,6 +227,7 @@
     <ClInclude Include="..\Public\Cut_Scene_CF93.h" />
     <ClInclude Include="..\Public\Damage_Lost_Zombie.h" />
     <ClInclude Include="..\Public\Damage_UI.h" />
+    <ClInclude Include="..\Public\Dead_Zombie.h" />
     <ClInclude Include="..\Public\Decal_BulletHole.h" />
     <ClInclude Include="..\Public\Decal_SSD.h" />
     <ClInclude Include="..\Public\Effect_Header_Zombie.h" />
@@ -233,6 +236,7 @@
     <ClInclude Include="..\Public\Event_Base.h" />
     <ClInclude Include="..\Public\Find_Door_To_Target_Zombie.h" />
     <ClInclude Include="..\Public\HG_Cartridge.h" />
+    <ClInclude Include="..\Public\Hide_Locker_Zombie.h" />
     <ClInclude Include="..\Public\Hint.h" />
     <ClInclude Include="..\Public\Hint_Display.h" />
     <ClInclude Include="..\Public\Hint_Highliter.h" />
@@ -445,6 +449,7 @@
     <ClCompile Include="..\Private\Actor_PL00.cpp" />
     <ClCompile Include="..\Private\Actor_PL78.cpp" />
     <ClCompile Include="..\private\BackGround.cpp" />
+    <ClCompile Include="..\Private\Bite_Lost_Zombie.cpp" />
     <ClCompile Include="..\Private\Bite_Zombie.cpp" />
     <ClCompile Include="..\Private\BlackBoard_Zombie.cpp" />
     <ClCompile Include="..\Private\Blood.cpp" />
@@ -470,6 +475,7 @@
     <ClCompile Include="..\Private\Burst_Zombie.cpp" />
     <ClCompile Include="..\Private\Button_UI.cpp" />
     <ClCompile Include="..\Private\Cabinet.cpp" />
+    <ClCompile Include="..\Private\Call_Center.cpp" />
     <ClCompile Include="..\Private\Camera_Event.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\Private\Creep_Zombie.cpp" />
@@ -477,12 +483,14 @@
     <ClCompile Include="..\Private\Cut_Scene_CF93.cpp" />
     <ClCompile Include="..\Private\Damage_Lost_Zombie.cpp" />
     <ClCompile Include="..\Private\Damage_UI.cpp" />
+    <ClCompile Include="..\Private\Dead_Zombie.cpp" />
     <ClCompile Include="..\Private\Decal_BulletHole.cpp" />
     <ClCompile Include="..\Private\Decal_SSD.cpp" />
     <ClCompile Include="..\Private\EnvCube.cpp" />
     <ClCompile Include="..\Private\Event_Base.cpp" />
     <ClCompile Include="..\Private\Find_Door_To_Target_Zombie.cpp" />
     <ClCompile Include="..\Private\HG_Cartridge.cpp" />
+    <ClCompile Include="..\Private\Hide_Locker_Zombie.cpp" />
     <ClCompile Include="..\Private\Hint.cpp" />
     <ClCompile Include="..\Private\Hint_Display.cpp" />
     <ClCompile Include="..\Private\Hint_Highliter.cpp" />

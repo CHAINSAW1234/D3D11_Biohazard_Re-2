@@ -32,8 +32,8 @@ private:
 public:
 	virtual HRESULT				Initialize_Prototype() override;
 	virtual HRESULT				Initialize(void* pArg) override;
-	virtual void					Tick(_float fTimeDelta) override;
-	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual void				Tick(_float fTimeDelta) override;
+	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
 
 private:
@@ -41,6 +41,9 @@ private:
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
 	virtual HRESULT				Bind_ShaderResources() override;
+
+public:
+	inline _bool				Is_Opened() { return m_bOpened; }
 
 private:
 	void Active();

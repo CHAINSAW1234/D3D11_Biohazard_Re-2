@@ -700,6 +700,18 @@
     <Filter Include="02.GameObjects\Effect\Impact_Grenade">
       <UniqueIdentifier>{b0dfbe9f-435a-4ba2-bf40-4a69fa774dbb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Start">
+      <UniqueIdentifier>{682eaf8b-6f13-41b8-bf43-7eadc0e084c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Start\Hide_Locker">
+      <UniqueIdentifier>{c806d68f-82f2-4e0f-82bf-f5bdb6841ade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Call_Center">
+      <UniqueIdentifier>{d6824a1f-6b20-44c5-8b74-078d2f9649a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Start\Dead">
+      <UniqueIdentifier>{96eefabc-8da0-42b1-b5ad-08422f37da47}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1356,6 +1368,18 @@
     <ClInclude Include="..\Public\Impact_Grenade.h">
       <Filter>02.GameObjects\Effect\Impact_Grenade</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Hide_Locker_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Start\Hide_Locker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Call_Center.h">
+      <Filter>02.GameObjects\Call_Center</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Bite_Lost_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Bite\Bite_Lost</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Dead_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Start\Dead</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1972,6 +1996,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Impact_Grenade.cpp">
       <Filter>02.GameObjects\Effect\Impact_Grenade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Hide_Locker_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Start\Hide_Locker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Call_Center.cpp">
+      <Filter>02.GameObjects\Call_Center</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Bite_Lost_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Bite\Bite_Lost</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dead_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Start\Dead</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -86,6 +86,13 @@ HRESULT CBlackBoard_Zombie::SetUp_Nearest_Door()
 	return S_OK;
 }
 
+void CBlackBoard_Zombie::Set_Target_Object(CGameObject* pTargetObject)
+{
+	Safe_Release(m_pTarget_Object);
+	m_pTarget_Object = pTargetObject;
+	Safe_AddRef(m_pTarget_Object);
+}
+
 void CBlackBoard_Zombie::Priority_Tick(_float fTimeDelta)
 {
 	Update_Timers(fTimeDelta);
@@ -1224,5 +1231,6 @@ void CBlackBoard_Zombie::Free()
 	Safe_Release(m_pNearest_Door);
 	Safe_Release(m_pTarget_Door);
 	Safe_Release(m_pPart_Breaker);
+	Safe_Release(m_pTarget_Object);
 }
 

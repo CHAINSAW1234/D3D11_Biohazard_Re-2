@@ -30,6 +30,7 @@ public:
 public:
 	HRESULT							SetUp_Nearest_Window();
 	HRESULT							SetUp_Nearest_Door();
+	void							Set_Target_Object(CGameObject* pTargetObject);
 
 public:
 	virtual void					Priority_Tick(_float fTimeDelta) override;
@@ -90,6 +91,7 @@ public: // Getter
 
 	inline CTask_Node*				Get_PreTaskNode() { return m_pPreTaskNode; }
 	inline class CDoor*				Get_Target_Door() { return m_pTarget_Door; }
+	inline class CGameObject*		Get_Target_Object() { return m_pTarget_Object; }
 
 	void							Set_Current_MotionType_Body(MOTION_TYPE eType);
 	_uint							Get_Current_MotionType_Body();
@@ -192,6 +194,8 @@ private:
 	class CWindow*					m_pNearest_Window = { nullptr };
 	class CDoor*					m_pNearest_Door = { nullptr };
 	class CDoor*					m_pTarget_Door = { nullptr };
+
+	class CGameObject*				m_pTarget_Object = { nullptr };
 
 	_bool							m_isNewPartBreak = { false };
 	_int							m_iNewBreakPartType = { -1 };
