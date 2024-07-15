@@ -2,7 +2,7 @@
 #include "Body_ReaderMachine.h"
 #include"Player.h"
 
-#include"Statue.h"
+#include"ReaderMachine.h"
 #include"Light.h"
 
 CBody_ReaderMachine::CBody_ReaderMachine(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -23,9 +23,6 @@ HRESULT CBody_ReaderMachine::Initialize_Prototype()
 
 HRESULT CBody_ReaderMachine::Initialize(void* pArg)
 {
-	/*문자식 파트오브젝트 붙혀야하는데 뼈가 문고리에 없어서 직접 찍어야 하는데
-	프로토타입 끝나고 뼈 붙혀보겠나이다*/
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 	
@@ -39,7 +36,6 @@ HRESULT CBody_ReaderMachine::Initialize(void* pArg)
 
 
 	m_pModelCom->Active_RootMotion_Rotation(true);
-	//m_pTransformCom->Set_WorldMatrix(m_tagPropDesc.worldMatrix);
 
 #ifndef NON_COLLISION_PROP
 
@@ -58,21 +54,11 @@ void CBody_ReaderMachine::Tick(_float fTimeDelta)
 
 void CBody_ReaderMachine::Late_Tick(_float fTimeDelta)
 {
-	switch (*m_pState)
-	{
-	case CStatue::STATE_PLAY:
-		//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // 잘알아갑니다 꺼억
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
-		break;
-	case CStatue::STATE_STATIC:
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
-		break;
-	}
+	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
+	
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
-	if (m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE] != nullptr)
-		m_pColliderCom[Part_INTERACTPROPS_COL_SPHERE]->Tick(m_pParentsTransform->Get_WorldMatrix());
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 

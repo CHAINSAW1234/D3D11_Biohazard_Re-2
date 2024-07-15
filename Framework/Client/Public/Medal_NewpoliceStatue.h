@@ -45,12 +45,6 @@ private:
 public :
 	void						Set_Render_MedalType(_ubyte _eMedalType) { }
 
-public:
-	void						Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
-
-private :
-	_float4x4*					m_pSocketMatrix		= { nullptr };
-
 private:
 	_ubyte						m_eMedelType			= { MEDAL_TYPE::MEDAL_END };
 	_bool*						m_eRender_MedalType		= { nullptr };

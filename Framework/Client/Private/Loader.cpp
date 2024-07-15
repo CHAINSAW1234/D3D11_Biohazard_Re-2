@@ -51,6 +51,7 @@
 #include "Cabinet.h"
 #include "Body_Cabinet.h"
 #include"Lock_Cabinet.h"
+#include"Card_Cabinet.h"
 #include "Window.h"
 #include "Body_Window.h"
 #include "Pannel_Window.h"
@@ -71,6 +72,7 @@
 #include "Body_Ladder.h"
 #include "ReaderMachine.h"
 #include "Body_ReaderMachine.h"
+#include "Key_ReaderMachine.h"
 #include "MovingShelf.h"
 #include "Body_MovingShelf.h"
 #include "Lever.h"
@@ -891,6 +893,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			/*if(Inform->wstrGameObjectPrototypeName.find(TEXT("sm40_007")) != wstring::npos)
 				m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, Inform->strModelPath.c_str(), Ininitmatrix));
 			else*/
+
 			m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, Inform->strModelPath.c_str(), Ininitmatrix));
 		}
 		else
@@ -920,6 +923,9 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_197")) != wstring::npos || Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_232")) != wstring::npos) && (bDo = true))
 				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_MovingShlef::Create(m_pDevice, m_pContext));
+			
+			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_006")) != wstring::npos) && (bDo = true))
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_ReaderMachine::Create(m_pDevice, m_pContext));
 
 			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_024_newpolicestatue01a")) != wstring::npos) && (bDo = true))
 				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_NewpoliceStatue::Create(m_pDevice, m_pContext));
@@ -984,6 +990,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Lever"), CLever::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MovingShelf"), CMovingShelf::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Reader"), CReaderMachine::Create(m_pDevice, m_pContext));
 
 
 	_matrix Ininitmatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
@@ -993,7 +1000,9 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_019_safeboxdial01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_019_safeboxdial01a_Anim.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_014_diallock01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_014_diallock01a_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_174_cardreader04a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_174_cardreader04a_Anim.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Lock_Cabinet"), CLock_Cabinet::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Card_Cabinet"), CCard_Cabinet::Create(m_pDevice, m_pContext));
 
 	/* Medal*/
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_102_unicornmedal01a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_102_unicornmedal01a.fbx", Ininitmatrix));
@@ -1005,6 +1014,9 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_109_kingscepter01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_109_kingscepter01a_Anim.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_136_statuehand01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_136_statuehand01a_Anim.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medal_Body_ItemStatue"), CItem_Statue::Create(m_pDevice, m_pContext));
+	
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_020_keystrokedevice01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_020_keystrokedevice01a_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Key_Reader"), CKey_ReaderMachine::Create(m_pDevice, m_pContext));
 
 	/* Door Emblem */
 	/* 1. Space */
@@ -2401,6 +2413,12 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(Load_Item_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
 		return E_FAIL;
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_Ye/Make_Prototype.dat"))))
+		return E_FAIL;
+#endif 
+#ifdef Map_TEST2
+	if (FAILED(Load_Item_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
+		return E_FAIL;
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_TEST2/Make_Prototype.dat"))))
 		return E_FAIL;
 #endif 
 

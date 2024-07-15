@@ -203,6 +203,7 @@ namespace Client
 		OBJ_LADDER,
 		OBJ_LEVER,
 		OBJ_MOVINGSHELF,
+		OBJ_CARDREADER,
 		OBJ_END
 	};
 
