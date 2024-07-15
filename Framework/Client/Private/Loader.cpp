@@ -77,7 +77,7 @@
 #include "Body_Lever.h"
 #include "Item_Statue.h"
 #include "Emblem_Door.h"
-
+#include "Key_Door.h"
 /* UI */
 #include "Customize_UI.h"
 #include "Inventory_Item_UI.h"
@@ -1011,6 +1011,9 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_00md_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_500_dooremblem01a_00md_Anim.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medal_EmblemDoor"), CEmblem_Door::Create(m_pDevice, m_pContext));
 	
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_103_spadekey01a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_103_spadekey01a.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medal_KeyDoor"), CKey_Door::Create(m_pDevice, m_pContext));
+
 	CloseHandle(hFile);
 	return S_OK;
 }

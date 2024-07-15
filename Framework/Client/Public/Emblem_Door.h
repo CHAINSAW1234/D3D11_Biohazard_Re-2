@@ -10,16 +10,28 @@ BEGIN(Client)
 class CEmblem_Door final : public CPart_InteractProps
 {
 public:
-	enum class STATUE_ITEM
+	enum class EMBLEM_TYPE
 	{
-		KINGSCEPTER_ITEM,
-		STATUEHAND_ITEM,
-		END_ITEM
+		HEART_EMBLEM,
+		SPADE_EMBLEM,
+		CLUB_EMBLEM,
+		DIA_EMBLEM,
+		END_EMBLEM
+	};
+
+	enum class EMBLEM_ANIM
+	{
+		STATIC_ANIM,
+		START_ANIM,
+		OPEN_ANIM,
+		END_ANIM
 	};
 
 	typedef struct tag_EmblemDoor_desc : public CPart_InteractProps::PART_INTERACTPROPS_DESC
 	{
-	
+		_ubyte eEmblemType;
+		_ubyte* EmblemAnim;
+
 	}BODY_EMBLEM_DOOR;
 
 private:
@@ -39,6 +51,9 @@ private:
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
 
+public :
+	_float4x4*					Get_WorldMatrix() { return &m_WorldMatrix; }
+
 public:
 	void						Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
 
@@ -46,6 +61,8 @@ public:
 private:
 	_float4x4*					m_pSocketMatrix = { nullptr };
 
+	_ubyte						m_eEmblemType = {};
+	_ubyte*						m_pEmblem_Anim;
 
 public:
 	static CEmblem_Door* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

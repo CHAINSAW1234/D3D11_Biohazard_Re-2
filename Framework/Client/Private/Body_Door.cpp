@@ -32,20 +32,28 @@ HRESULT CBody_Door::Initialize(void* pArg)
 		return E_FAIL;
 
 	if (*m_pState == CDoor::DOOR_ONE)
+	{
 		if (FAILED(Initialize_Model()))
 			return E_FAIL;
+	}
 
 	if (pArg != nullptr)
 	{
 		BODY_DOOR_DESC* pbody_door_desc = (BODY_DOOR_DESC*)pArg;
+
 		m_pDoubleDoorType = pbody_door_desc->pDoubleDoorType;
+
 		m_pDoubleState = pbody_door_desc->pDoubleDoorState;
+
 		m_pDoubleState_Prev = pbody_door_desc->pDoubleDoorState_Prev;
+
 		m_pOneState = pbody_door_desc->pOneDoorState;
+
 		m_pOneState_Prev = pbody_door_desc->pOneDoorState_Prev;
 
-
+		m_isEmblem = pbody_door_desc->isEmblem;
 	}
+
 	if (*m_pState != CDoor::DOOR_DUMMY)
 	{
 		m_pModelCom->Set_RootBone("RootNode");
@@ -62,8 +70,16 @@ HRESULT CBody_Door::Initialize(void* pArg)
 		}
 		*/
 	}
-		m_pModelCom->Active_RootMotion_Rotation(false);
 
+	m_pModelCom->Active_RootMotion_Rotation(false);
+
+	/* Hide Emblem */
+	if(true == m_isEmblem)
+	{
+		if (FAILED(Model_Hide()))
+			return E_FAIL;
+	}
+	
 #ifndef NON_COLLISION_PROP
 
 		if (*m_pState == CDoor::DOOR_DOUBLE)
@@ -148,52 +164,104 @@ HRESULT CBody_Door::Render()
 		return E_FAIL;
 
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (size_t i = 0; i < iNumMeshes; i++)
+	if(true == m_isEmblem)
 	{
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
-			return E_FAIL;
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+		for (auto& i : NonHideIndices)
 		{
-			_bool isAlphaTexture = false;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
-		}
-		else
-		{
-			_bool isAlphaTexture = true;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 				return E_FAIL;
-		}
 
-		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
-		{
-			_bool isAOTexture = false;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
-		}
-		else
-		{
-			_bool isAOTexture = true;
-			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+			{
+				_bool isAlphaTexture = false;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+			else
+			{
+				_bool isAlphaTexture = true;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
+			{
+				_bool isAOTexture = false;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+			else
+			{
+				_bool isAOTexture = true;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+
+
+			if (FAILED(m_pShaderCom->Begin(0)))
 				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
 		}
-
-
-		if (FAILED(m_pShaderCom->Begin(0)))
-			return E_FAIL;
-
-		m_pModelCom->Render(static_cast<_uint>(i));
 	}
 
+	else
+	{
+		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
+
+		for (size_t i = 0; i < iNumMeshes; i++)
+		{
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+				return E_FAIL;
+
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
+				return E_FAIL;
+
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+			{
+				_bool isAlphaTexture = false;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+			else
+			{
+				_bool isAlphaTexture = true;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+
+			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
+			{
+				_bool isAOTexture = false;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+			else
+			{
+				_bool isAOTexture = true;
+				if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+					return E_FAIL;
+			}
+
+
+			if (FAILED(m_pShaderCom->Begin(0)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+
+	}
 
 
 	return S_OK;
@@ -358,13 +426,39 @@ HRESULT CBody_Door::Initialize_Model()
 			m_strDoorPart[BODY_PART_L_LHANDLE] = strMeshTag;
 
 	}
+
 	return S_OK;
 
 }
 
+HRESULT CBody_Door::Model_Hide()
+{
+	/* Set_Hide_Mesh */
+	if (true == m_isEmblem)
+	{
+		vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
+
+		vector<string>			ResultMeshTags;
+		for (auto& strMeshTag : MeshTags)
+		{
+			if ((strMeshTag.find("7fd6b80") == string::npos))
+				ResultMeshTags.push_back(strMeshTag);
+		}
+		for (auto& strMeshTag : MeshTags)
+		{
+			m_pModelCom->Hide_Mesh(strMeshTag, true);
+		}
+		for (auto& strMeshTag : ResultMeshTags)
+		{
+			m_pModelCom->Hide_Mesh(strMeshTag, false);
+		}
+	}
+
+	return S_OK;
+}
+
 void CBody_Door::Get_SpecialBone_Rotation()
 {
-
 	_matrix Combined;
 	if(CDoor::DOOR_DOUBLE == *m_pState)
 	{

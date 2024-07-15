@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Emblem_Door.h"
 #include "Player.h"
+#include "Camera_Gimmick.h"
 
 CEmblem_Door::CEmblem_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPart_InteractProps{ pDevice, pContext }
@@ -26,6 +27,10 @@ HRESULT CEmblem_Door::Initialize(void* pArg)
 	if (pArg != nullptr)
 	{
 		BODY_EMBLEM_DOOR* desc = (BODY_EMBLEM_DOOR*)pArg;
+
+		m_pEmblem_Anim = desc->EmblemAnim;
+
+		m_eEmblemType = desc->eEmblemType;
 	}
 
 	if (FAILED(Add_Components()))
@@ -45,6 +50,7 @@ HRESULT CEmblem_Door::Initialize(void* pArg)
 
 void CEmblem_Door::Tick(_float fTimeDelta)
 {
+	
 }
 
 void CEmblem_Door::Late_Tick(_float fTimeDelta)
@@ -52,7 +58,28 @@ void CEmblem_Door::Late_Tick(_float fTimeDelta)
 	if (m_bDead)
 		return;
 
-	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
+	switch (*m_pEmblem_Anim)
+	{
+	case (_int)EMBLEM_ANIM::STATIC_ANIM:
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
+		break;
+
+	case (_int)EMBLEM_ANIM::START_ANIM : 
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
+		break;
+
+	case (_int)EMBLEM_ANIM::OPEN_ANIM:
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
+		break;
+	}
+
+	_float4x4			mWorldMatrix = m_pTransformCom->Get_WorldMatrix();
+
+	mWorldMatrix._41 += 95.f;
+	mWorldMatrix._42 += 95.f;
+	mWorldMatrix._43 += 1.f;
+
+	_matrix			WorldMatrix = { mWorldMatrix * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
 	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 
 	_float3	vDirection = { };
@@ -76,6 +103,7 @@ HRESULT CEmblem_Door::Render()
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
+
 
 	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 
@@ -155,7 +183,6 @@ HRESULT CEmblem_Door::Add_Components()
 
 HRESULT CEmblem_Door::Add_PartObjects()
 {
-
 	return S_OK;
 }
 

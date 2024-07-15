@@ -245,7 +245,7 @@ HRESULT CBody_Cabinet::Render_LightDepth_Dir()
 			return E_FAIL;
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
-
+		
 		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 		for (auto& i : NonHideIndices)
 		{

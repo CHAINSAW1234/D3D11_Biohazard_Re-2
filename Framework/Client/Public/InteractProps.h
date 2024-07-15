@@ -190,19 +190,19 @@ protected:
 	CShader*											m_pShaderCom = { nullptr };
 	CCollider*											m_pColliderCom[INTER_COL_END][COL_STEP_END] = { {nullptr,nullptr,nullptr},{nullptr,nullptr,nullptr} };
 	
-	class CPlayer*											m_pPlayer = { nullptr };
-	_bool*														m_pPlayerInteract = { nullptr };//player의 m_bInteract 변수 포인터
-	CTransform*												m_pPlayerTransform = { nullptr }; 
-	CCollider*													m_pPlayerCol = { nullptr };
+	class CPlayer*										m_pPlayer = { nullptr };
+	_bool*												m_pPlayerInteract = { nullptr };//player의 m_bInteract 변수 포인터
+	CTransform*											m_pPlayerTransform = { nullptr }; 
+	CCollider*											m_pPlayerCol = { nullptr };
 
 	class CCamera_Free*									m_pCamera = { nullptr };
-	CTransform*												m_pCameraTransform = { nullptr };
+	CTransform*											m_pCameraTransform = { nullptr };
 
-	class CCamera_Gimmick*									m_pCameraGimmick = { nullptr };
-	CTransform*												m_pCameraGimmickTransform = { nullptr };
+	class CCamera_Gimmick*								m_pCameraGimmick = { nullptr };
+	CTransform*											m_pCameraGimmickTransform = { nullptr };
 
-	_float3														m_vRootTranslation = {};
-	INTERACTPROPS_DESC 								m_tagPropDesc ={};
+	_float3												m_vRootTranslation = {};
+	INTERACTPROPS_DESC 									m_tagPropDesc ={};
 	vector<CPartObject*>								m_PartObjects;
 
 protected:

@@ -3003,8 +3003,8 @@ void CModel::Create_Cloth()
 
 _int CModel::Find_BoneIndex(const string& strRootTag)
 {
-	_int		iIndex = { 0 };
-	for (auto& Bone : m_Bones)
+	_int		iIndex = { 0 }; 
+	for (auto& Bone : m_Bones)  
 	{
 		if (true == Bone->Compare_Name(strRootTag.c_str()))
 			return iIndex;

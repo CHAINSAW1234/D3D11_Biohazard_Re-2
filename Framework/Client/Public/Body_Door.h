@@ -27,6 +27,7 @@ public:
 		const _ubyte* pOneDoorState_Prev;
 		const _ubyte* pDoubleDoorState;
 		const _ubyte* pDoubleDoorState_Prev;
+		_bool isEmblem;
 
 	}BODY_DOOR_DESC;
 
@@ -38,28 +39,29 @@ private:
 public:
 	virtual HRESULT				Initialize_Prototype() override;
 	virtual HRESULT				Initialize(void* pArg) override;
-	virtual void					Tick(_float fTimeDelta) override;
-	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual void				Tick(_float fTimeDelta) override;
+	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
-	virtual HRESULT					Render_LightDepth_Dir()override;
-	virtual HRESULT					Render_LightDepth_Point() override;
-	virtual HRESULT					Render_LightDepth_Spot()override;
+	virtual HRESULT				Render_LightDepth_Dir()override;
+	virtual HRESULT				Render_LightDepth_Point() override;
+	virtual HRESULT				Render_LightDepth_Spot()override;
 
 private:
 	virtual HRESULT				Add_Components();
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
-	 HRESULT						Initialize_Model() ;
-	virtual void					Get_SpecialBone_Rotation() override;
+	 HRESULT					Initialize_Model() ;
+	virtual void				Get_SpecialBone_Rotation() override;
+	HRESULT						Model_Hide();
 
 public:
 	virtual _float4				Get_Pos(_int iArg = 0) override;
 
 private:
-	void								DoubleDoor_Tick(_float fTimeDelta);
-	void								DoubleDoor_Late_Tick(_float fTimeDelta);
-	void								OneDoor_Tick(_float fTimeDelta);
-	void								OneDoor_Late_Tick(_float fTimeDelta);
+	void						DoubleDoor_Tick(_float fTimeDelta);
+	void						DoubleDoor_Late_Tick(_float fTimeDelta);
+	void						OneDoor_Tick(_float fTimeDelta);
+	void						OneDoor_Late_Tick(_float fTimeDelta);
 
 private:
 	void						Update_Hit_Reaction(_float fTimeDelta);
@@ -70,24 +72,30 @@ public:
 
 
 private:
-	string							m_strDoorPart[BODY_PART_END];
-	_bool								m_bLock								= { false };
-	_bool								m_bActivity							= { false };
+	string						m_strDoorPart[BODY_PART_END];
+	_bool						m_bLock							= { false };
+	_bool						m_bActivity						= { false };
 
-	_bool								m_bDoubleCol						= { false };
+private :
+	_bool						m_bDoubleCol					= { false };
 
 	const _ubyte*				m_pDoubleDoorType				= {};
-	const _ubyte*				m_pOneState							= {};
-	const _ubyte*				m_pOneState_Prev					= {};
-	const _ubyte*				m_pDoubleState						= {};
-	const _ubyte*				m_pDoubleState_Prev			= {};
+	const _ubyte*				m_pOneState						= {};
+	const _ubyte*				m_pOneState_Prev				= {};
+	const _ubyte*				m_pDoubleState					= {};
+	const _ubyte*				m_pDoubleState_Prev				= {};
 
-	_bool								m_isHit = { false };
-	_bool								m_isInverseRotate_HitRecation = { false };
-	_float								m_fAccHitTime = { 0.f };
-	_bool								m_isHitFromFront = { false };
+private :
+	_bool						m_isHit							= { false };
+	_bool						m_isInverseRotate_HitRecation	= { false };
+	_float						m_fAccHitTime					= { 0.f };
+	_bool						m_isHitFromFront				= { false };
 
-	_float							m_fTime								= { 0.f };
+	_float						m_fTime							= { 0.f };
+
+private :
+	_bool						m_isEmblem						= { false };
+
 public:
 	static CBody_Door* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
