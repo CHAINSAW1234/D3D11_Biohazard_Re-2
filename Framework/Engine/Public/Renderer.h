@@ -11,7 +11,7 @@ public:
 		RENDER_PRIORITY,
 		RENDER_FIELD_SHADOW_DIR, RENDER_FIELD_SHADOW_POINT,
 		RENDER_SSAO,
-		RENDER_FIELD, RENDER_NONBLEND, RENDER_DECAL, RENDER_NONLIGHT, RENDER_NON_POSTPROCESSING,
+		RENDER_FIELD, RENDER_NONBLEND, RENDER_DECAL, RENDER_NONLIGHT,
 		RENDER_SHADOW_DIR, RENDER_SHADOW_POINT, RENDER_SHADOW_SPOT,
 		RENDER_DISTORTION, RENDER_EMISSIVE, RENDER_EFFECT, RENDER_EFFECT_BLOOM,
 		RENDER_BLEND,
@@ -55,7 +55,6 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT						SetUp_RenderTargets_SSAO(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_Shadow(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_Pre_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
-	HRESULT						SetUp_RenderTargets_PostProcessing(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_PostProcessing_Result(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_SSR(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_DOF(const D3D11_VIEWPORT& ViewportDesc);
@@ -132,7 +131,6 @@ private:
 	HRESULT						Render_NonBlend();
 	HRESULT						Render_NonLight();
 	HRESULT						Render_Blend();
-	HRESULT						Render_Non_PostProcessing();
 	HRESULT						Render_UI();
 	HRESULT						Render_Font();
 	HRESULT						Render_Examine();
@@ -164,7 +162,6 @@ private:
 	HRESULT						Render_Volumetric();
 	HRESULT						Render_FXAA();
 private:
-	HRESULT						Render_PostProcessing();
 	HRESULT						Render_PostProcessing_Result();
 
 private:

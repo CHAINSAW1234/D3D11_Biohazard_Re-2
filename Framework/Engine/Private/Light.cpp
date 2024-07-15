@@ -131,6 +131,8 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 
 		else if (LIGHT_DESC::TYPE_POINT == Light_desc->eType)
 		{
+			//return S_OK;
+
 			iPassIndex = (_uint)SHADER_PASS_DEFERRED::PASS_LIGHT_POINT;
 
 			if (FAILED(pShader->Bind_RawValue("g_vLightPos", &Light_desc->vPosition, sizeof(_float4))))
@@ -159,6 +161,7 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 			if (FAILED(pShader->Bind_RawValue("g_fOutCutOff", &Light_desc->fOutCutOff, sizeof(_float))))
 				return E_FAIL;
 		}
+
 		if (FAILED(pShader->Bind_RawValue("g_vLightDiffuse", &Light_desc->vDiffuse, sizeof(_float4))))
 			return E_FAIL;
 		if (FAILED(pShader->Bind_RawValue("g_vLightAmbient", &Light_desc->vAmbient, sizeof(_float4))))
