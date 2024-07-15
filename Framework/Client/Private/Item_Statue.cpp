@@ -61,7 +61,6 @@ void CItem_Statue::Tick(_float fTimeDelta)
 
 void CItem_Statue::Late_Tick(_float fTimeDelta)
 {
-	return;
 	if (m_bDead)
 		return;
 
