@@ -60,7 +60,6 @@ void CEnvCube::Tick(_float fTimeDelta)
 
 	m_pGameInstance->Set_CubeMap(m_TextureComMap[m_iCurRegion], iIndex);
 
-
 	return;
 }
 

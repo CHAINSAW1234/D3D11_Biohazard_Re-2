@@ -121,9 +121,15 @@ void CTab_Window::Start()
 
 void CTab_Window::Tick(_float fTimeDelta)
 {
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB) && PICK_UP_ITEM_WINDOW != m_eWindowType)
+	if (true == IsInputTab())
 	{
 		OnOff_EventHandle();
+	}
+
+	if (false == m_isSecondTick)
+	{
+		m_isSecondTick = true;
+		m_pInventory_Manager->SecondTivk_Seting();
 	}
 	
 	if (true == m_bDead)
@@ -181,32 +187,35 @@ void CTab_Window::Late_Tick(_float fTimeDelta)
 	if (true == m_bDead)
 		return;
 
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
-
 	switch (m_eWindowType)
 	{
 	case Client::CTab_Window::MINIMAP: {
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 		break;
 	}
 
 	case Client::CTab_Window::INVENTORY: {
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 		m_pInventory_Manager->Late_Tick(fTimeDelta);
 		m_pItem_Discription->Late_Tick(fTimeDelta);
 		break;
 	}
 
 	case Client::CTab_Window::HINT: {
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 		m_pHint->Late_Tick(fTimeDelta);
 		break;
 	}
 
 	case Client::CTab_Window::EXAMINE: {
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 		m_pItem_Mesh_Viewer->Late_Tick(fTimeDelta);
 		m_pItem_Discription->Late_Tick(fTimeDelta);
 		break;
 	}
 
 	case Client::CTab_Window::PICK_UP_ITEM_WINDOW: {
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
 		m_pInventory_Manager->Late_Tick(fTimeDelta);
 		m_pItem_Mesh_Viewer->Late_Tick(fTimeDelta);
 		m_pItem_Discription->Late_Tick(fTimeDelta);
@@ -279,11 +288,27 @@ void CTab_Window::EXAMINE_Operation(_float fTimeDelta)
 			m_eSequence = HIDE;
 			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END, 0);
 
-			m_pHintButton->Set_Dead(false);
-			m_pInvenButton->Set_Dead(false);
-			m_pMapButton->Set_Dead(false);
-			m_pInventory_Manager->Set_OnOff_Inven(false);
-			m_pHotKey->Set_Dead(false);
+			switch (m_ePreWindowType)
+			{
+			case Client::CTab_Window::INVENTORY:
+				m_pHintButton->Set_Dead(false);
+				m_pInvenButton->Set_Dead(false);
+				m_pMapButton->Set_Dead(false);
+				m_pHotKey->Set_Dead(false);
+				m_pInventory_Manager->Set_OnOff_Inven(false);
+				break;
+			
+			case Client::CTab_Window::INTERACT_PROPS:
+				m_pInventory_Manager->Set_OnOff_Inven(false);
+
+				break;
+
+			default:
+				break;
+			}
+
+			
+
 		}
 		break;
 	}
@@ -294,12 +319,13 @@ void CTab_Window::EXAMINE_Operation(_float fTimeDelta)
 		{
 			m_fCurTime += fTimeDelta;
 			m_fAlpha = m_pGameInstance->Get_Ease(Ease_InSine, 1.f, BACKGROUND_MIN_ALPHA, m_fCurTime / 0.5f);
+			
 		}
 
 		else
 		{
-			m_eWindowType = INVENTORY;
-
+			m_eWindowType = m_ePreWindowType;
+			m_eSequence = POP_UP;
 			m_pItem_Mesh_Viewer->Set_Dead(true);
 
 			m_fCurTime = 0.f;
@@ -369,7 +395,7 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 			break;
 		}
 
-		else if (DROP_ITEM == m_pInventory_Manager->Get_InventoryEvent())
+		else if (EVENT_CANCLE == m_pInventory_Manager->Get_InventoryEvent())
 		{
 			m_fCurTime = 0.f;
 			m_eSequence = HIDE;
@@ -421,10 +447,61 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 
 void CTab_Window::INTERACT_PROPS_Operation(_float fTimeDelta)
 {
-	m_pInventory_Manager->Tick(fTimeDelta);
-	ITEM_NUMBER eSelectedItemNum = m_pInventory_Manager->Get_Selected_ItemNum();
-	m_pItem_Discription->Set_Item_Number(eSelectedItemNum);
-	m_pItem_Discription->Tick(fTimeDelta);
+	switch (m_eSequence)
+	{
+	case Client::POP_UP: {
+		m_pInventory_Manager->Tick(fTimeDelta);
+		ITEM_NUMBER eSelectedItemNum = m_pInventory_Manager->Get_Selected_ItemNum();
+		m_pItem_Discription->Set_Item_Number(eSelectedItemNum);
+		m_pItem_Discription->Tick(fTimeDelta);
+
+		INVENTORY_EVENT eEvent = m_pInventory_Manager->Get_InventoryEvent();
+		
+		switch (eEvent)
+		{
+		case Client::EVENT_CANCLE: {
+			m_fCurTime = 0.f;
+			m_eSequence = STATE_END;
+			m_pPickedUp_Item = nullptr;
+			m_pGameInstance->Set_IsPaused(false);
+			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+			pPlayer->Set_isCamTurn(false);
+			OnOff_EventHandle();
+			break;
+		}
+
+		case Client::USE_INTERACT_ITEM: {
+			static_cast<CInteractProps*>(m_pPickedUp_Item)->Do_Interact_Props();
+			m_eSequence = UI_IDLE;
+			m_fCurTime = 0.f;
+			m_eSequence = STATE_END;
+			m_pPickedUp_Item = nullptr;
+			m_pGameInstance->Set_IsPaused(false);
+			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+			pPlayer->Set_isCamTurn(false);
+			OnOff_EventHandle();
+			break;
+		}
+
+		default:
+			break;
+		}
+
+
+		break;
+	}
+		
+	case Client::UI_IDLE: {
+		break;
+	}
+		
+	case Client::HIDE: {
+		break;
+	}
+	
+	default:
+		break;
+	}
 }
 
 void CTab_Window::ItemIven_EventHandle(_float fTimeDelta)
@@ -436,6 +513,7 @@ void CTab_Window::ItemIven_EventHandle(_float fTimeDelta)
 	case Client::EXAMINE_ITEM: {
 		if (ITEM_NUMBER_END != m_pInventory_Manager->Get_Selected_ItemNum())
 		{
+			m_ePreWindowType = m_eWindowType;
 			m_eWindowType = EXAMINE;
 			m_eSequence = POP_UP;
 			m_isMapRender = false;
@@ -496,6 +574,22 @@ void CTab_Window::Button_Act(_float fTimeDelta)
 			m_pGameInstance->Play_Sound(TEXT("ui_ingame_media.bnk.2_51.mp3"), CHANNELID::CH30);
 		}
 	}
+}
+
+_bool CTab_Window::IsInputTab()
+{
+	_bool isInputTab = false;
+
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB) || UP == m_pGameInstance->Get_KeyState(VK_ESCAPE))
+		isInputTab = true;
+
+	if (PICK_UP_ITEM_WINDOW == m_eWindowType)
+		isInputTab = false;
+
+	if(INTERACT_PROPS == m_eWindowType)
+		isInputTab = false;
+
+	return isInputTab;
 }
 
 void CTab_Window::OnOff_EventHandle()
@@ -586,13 +680,31 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 	}
 }
 
-void CTab_Window::interact_Props(CGameObject* pPickedUp_Item)
+void CTab_Window::Interact_Props(CGameObject* pInteractedProps)
 {
-	CInteractProps* pProp = dynamic_cast<CInteractProps*>(pPickedUp_Item);
+	CInteractProps* pProp = dynamic_cast<CInteractProps*>(pInteractedProps);
 	if (nullptr == pProp)
 		return;
-	_int iItemIndex = pProp->Get_NeedItem_Index(); // 필요한 아이템 인덱스 get tto da ze -
-	pProp->Do_Interact_Props(); // 프롭의 동작 함수 (올바른 아이템을 사용했을시 이 함수 호출- 일단 창문만 해놨어요)
+
+	m_bDead = false;
+	m_eWindowType = INTERACT_PROPS;
+	m_eSequence = POP_UP;
+	m_pPickedUp_Item = pInteractedProps;
+
+	/*Inventory_Manager 세팅*/
+	_int iPickedUpItemNum = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_NeedItem_Index();
+	ITEM_NUMBER ePickedItemNum = static_cast<ITEM_NUMBER>(iPickedUpItemNum);
+	m_pInventory_Manager->IIO_Seting(ePickedItemNum);
+
+	/*Cursor 세팅*/
+	if (nullptr != m_pCursor[1])
+	{
+		m_pCursor[0]->Set_Inven_Open(true);
+		m_pCursor[1]->Set_Inven_Open(true);
+	}
+
+	//_int iRequiredItem = pProp->Get_NeedItem_Index(); // 필요한 아이템 인덱스 get tto da ze -
+	//pProp->Do_Interact_Props(); // 프롭의 동작 함수 (올바른 아이템을 사용했을시 이 함수 호출- 일단 창문만 해놨어요)
 }
 
 void CTab_Window::AddItem_ToInven(ITEM_NUMBER eAcquiredItem, _int iItemQuantity)

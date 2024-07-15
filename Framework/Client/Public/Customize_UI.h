@@ -250,6 +250,12 @@ public:// for. Set inline
 		m_fSplit = _value->fSplit;
 	}
 
+	void Child_Set_Value_Color(_uint iChildNum, _uint iFrame)
+	{
+		static_cast<CCustomize_UI*>(m_vecChildUI[iChildNum])->Set_Value_Color(
+			&(static_cast<CCustomize_UI*>(m_vecChildUI[iChildNum])->Get_Value_Color(iFrame)));
+	}
+
 	void Set_EndingType(_int i) { m_iEndingType = i; }
 
 	/* 컬러 재생할 것인가? */
@@ -324,6 +330,9 @@ public:// for. Set inline
 
 	void Set_MyChild_Text(_uint iChildNum, _uint iTextNum, wstring wstrSetText) {
 		static_cast<CCustomize_UI*>(m_vecChildUI[iChildNum])->Set_Text(iTextNum, wstrSetText);
+	}
+	void Set_MyChild_TextColor(_uint iChildNum, _uint iTextNum, _vector vTextColor) {
+		static_cast<CCustomize_UI*>(m_vecChildUI[iChildNum])->Set_Text_Color(iTextNum, vTextColor);
 	}
 
 public:/* for.Get Inline */

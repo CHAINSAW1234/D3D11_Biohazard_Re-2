@@ -78,44 +78,44 @@ void CLevel_GamePlay::Tick(_float fTimeDelta)
 	m_pGameInstance->Add_ShadowLight(CPipeLine::DIRECTION, g_strDirectionalTag);
 	m_pGameInstance->Add_ShadowLight(CPipeLine::POINT, TEXT("LIGHT_TEST_POINT"));
 	
-	 
-	/*(임시) 이벤트 처리 구간*/
-	_bool bGoal = { false };
-	_float4 vGoal = { 0.f,0.f,0.f,0.f };
-	CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
-	iCurIndex = pPlayer->Get_Player_Region();
-	if (iCurIndex!= iPreIndex)
-	{
-		LIGHT_DESC* plight_desc = m_pGameInstance->Get_Light_List(g_strDirectionalTag)->front();
-		LIGHT_DESC light_desc = *plight_desc;
-		if (iCurIndex == 2)
-		{
-			light_desc.vDiffuse = _float4(0.2f, 0.2f, 0.2f, 0.2f);
-			light_desc.vAmbient = _float4(0.2f, 0.2f, 0.2f, 0.2f);
-			if (plight_desc->vDiffuse.x < 0.22f && plight_desc->vDiffuse.x > 0.18f)
-				iPreIndex = iCurIndex;
-			
-			m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta);
-		}
-		else if(iCurIndex == 10)
-		{
-			light_desc.vDiffuse = _float4(0.09f, 0.09f, 0.12f, 0.09f);
-			light_desc.vAmbient = _float4(0.09f, 0.09f, 0.12f, 0.09f);
-			if (plight_desc->vDiffuse.x < 0.11f && plight_desc->vDiffuse.x > 0.07f)
-				iPreIndex = iCurIndex;
-			
-			m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta*2.f);
-		}
-		else if (iCurIndex == 0)
-		{
-			light_desc.vDiffuse = _float4(0.4f, 0.4f, 0.4f, 0.4f);
-			light_desc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 0.4f);
-			if (plight_desc->vDiffuse.x < 0.42f && plight_desc->vDiffuse.x > 0.38f)
-				iPreIndex = iCurIndex;
-			
-			m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta);
-		}		
-	}
+	// 
+	///*(임시) 이벤트 처리 구간*/
+	//_bool bGoal = { false };
+	//_float4 vGoal = { 0.f,0.f,0.f,0.f };
+	//CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
+	//iCurIndex = pPlayer->Get_Player_Region();
+	//if (iCurIndex!= iPreIndex)
+	//{
+	//	LIGHT_DESC* plight_desc = m_pGameInstance->Get_Light_List(g_strDirectionalTag)->front();
+	//	LIGHT_DESC light_desc = *plight_desc;
+	//	if (iCurIndex == 2)
+	//	{
+	//		light_desc.vDiffuse = _float4(0.2f, 0.2f, 0.2f, 0.2f);
+	//		light_desc.vAmbient = _float4(0.2f, 0.2f, 0.2f, 0.2f);
+	//		if (plight_desc->vDiffuse.x < 0.22f && plight_desc->vDiffuse.x > 0.18f)
+	//			iPreIndex = iCurIndex;
+	//		
+	//		m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta);
+	//	}
+	//	else if(iCurIndex == 10)
+	//	{
+	//		light_desc.vDiffuse = _float4(0.09f, 0.09f, 0.12f, 0.09f);
+	//		light_desc.vAmbient = _float4(0.09f, 0.09f, 0.12f, 0.09f);
+	//		if (plight_desc->vDiffuse.x < 0.11f && plight_desc->vDiffuse.x > 0.07f)
+	//			iPreIndex = iCurIndex;
+	//		
+	//		m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta*2.f);
+	//	}
+	//	else if (iCurIndex == 0)
+	//	{
+	//		light_desc.vDiffuse = _float4(0.4f, 0.4f, 0.4f, 0.4f);
+	//		light_desc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 0.4f);
+	//		if (plight_desc->vDiffuse.x < 0.42f && plight_desc->vDiffuse.x > 0.38f)
+	//			iPreIndex = iCurIndex;
+	//		
+	//		m_pGameInstance->Update_Light(g_strDirectionalTag, light_desc, 0, fTimeDelta);
+	//	}		
+	//}
 
 
 

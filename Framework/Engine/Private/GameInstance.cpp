@@ -229,9 +229,12 @@ void CGameInstance::Tick_Engine(_float fTimeDelta)
 	if (m_pEvent_Manager)
 		m_pEvent_Manager->Tick(fTimeDelta); // 모든 처리가 끝나는 후에
 
-	if (DOWN == Get_KeyState(VK_TAB))
+	if(m_bSimulate)
 	{
-		m_bPause = !m_bPause;
+		if (DOWN == Get_KeyState(VK_TAB))
+		{
+			m_bPause = !m_bPause;
+		}
 	}
 }
 

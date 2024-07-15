@@ -26,7 +26,14 @@ public:
     std::vector<_vector>                        m_body_pos_relative_to_joint;
     std::vector<_vector>                        m_original_joint_rotations;
 
+    std::vector<_vector>                        m_relative_joint_pos_BreakPart;
+    std::vector<_vector>                        m_original_body_rotations_BreakPart;
+
+    std::vector<_vector>                        m_body_pos_relative_to_joint_BreakPart;
+    std::vector<_vector>                        m_original_joint_rotations_BreakPart;
+
     PxRigidDynamic*                             find_recent_body(uint32_t idx, class Skeleton* skeleton, uint32_t& chosen_idx);
+    PxRigidDynamic*                             find_recent_body_BreakPart(uint32_t idx, class Skeleton* skeleton, uint32_t& chosen_idx);
     void                                        set_kinematic(bool state);
     XMVECTOR                                    pos_from_transform(const XMMATRIX& m)
     {
@@ -43,10 +50,14 @@ public:
     AnimRagdoll(Skeleton* skeleton);
     ~AnimRagdoll();
     struct PoseTransforms* apply(CRagdoll* ragdoll, _matrix model_scale, _matrix model_rotation);
+    struct PoseTransforms* apply_BreakPart(CRagdoll* ragdoll, _matrix model_scale, _matrix model_rotation,vector<_bool>* pBreakPart);
+    struct PoseTransforms* apply_BreakPart_Leg(CRagdoll* ragdoll, _matrix model_scale, _matrix model_rotation,vector<_bool>* pBreakPart);
 
 private:
     Skeleton*       m_skeleton;
     PoseTransforms  m_transforms;
+    PoseTransforms  m_transforms_BreakPart;
+    PoseTransforms  m_transforms_BreakPart_Leg;
 };
 
 END

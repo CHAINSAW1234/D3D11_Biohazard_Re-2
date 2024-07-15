@@ -150,6 +150,7 @@ namespace Client
 		DOCUMENT,
 		HOTKEY,
 		FULL_SLOT_COMBINABLE_PICKED_UP,// 자리가 꽉찼을때 픽업된 조합가능 아이템
+		INTERACT,
 		INVEN_ITEM_TYPE_END
 	};
 
@@ -166,8 +167,10 @@ namespace Client
 		CONTEXTUI_SELECT,
 		PICK_UP_ITEM,
 		GET_ITEM,
-		DROP_ITEM,
+		EVENT_CANCLE,
 		SWITCH_ITEM,
+		INTERACT_PROPS,
+		USE_INTERACT_ITEM,
 		INVEN_EVENT_END
 	};
 
@@ -397,6 +400,7 @@ namespace Client
 		Grenade,
 		vp70stock,
 		portablesafe,
+		//statuebookhand,
 		ITEM_NUMBER_END
 	};
 

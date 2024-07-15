@@ -316,8 +316,8 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region Camera
 
-	if (UP == m_pGameInstance->Get_KeyState('Z'))
-		m_isCamTurn = !m_isCamTurn;
+	//if (UP == m_pGameInstance->Get_KeyState('Z'))
+	//	m_isCamTurn = !m_isCamTurn;
 
 	if (m_pCamera && false == m_isCamTurn)
 	{
@@ -1767,6 +1767,15 @@ void CPlayer::PickUp_Item(CGameObject* pPickedUp_Item)
 	m_pGameInstance->Set_IsPaused(true);
 
 	m_pTabWindow->PickUp_Item(pPickedUp_Item);
+
+	m_isCamTurn = true;
+}
+
+void CPlayer::Interact_Props(CGameObject* pPickedUp_Item)
+{
+	m_pGameInstance->Set_IsPaused(true);
+
+	m_pTabWindow->Interact_Props(pPickedUp_Item);
 
 	m_isCamTurn = true;
 }
