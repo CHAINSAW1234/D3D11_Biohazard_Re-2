@@ -672,7 +672,11 @@ void CBite_Zombie::Set_Bite_LinearStart_HalfMatrix()
 	//	if (false == m_pBlackBoard->Compute_HalfMatrix_Current_BiteAnim(strAnimLayerTag, iAnimIndex, &ResultMatrixFloat4x4))
 	//		return;
 
-	XMStoreFloat4x4(&ResultMatrixFloat4x4, m_pBlackBoard->Get_Player()->Get_Transform()->Get_WorldMatrix());
+	if(CZombie::POSE_STATE::_UP == m_eStartPoseState)
+		XMStoreFloat4x4(&ResultMatrixFloat4x4, m_pBlackBoard->Get_Player()->Get_Transform()->Get_WorldMatrix());
+	else if(CZombie::POSE_STATE::_CREEP == m_eStartPoseState)
+		XMStoreFloat4x4(&ResultMatrixFloat4x4, m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix());
+
 
 	_matrix					PlayerWorldMatrix = { m_pBlackBoard->Get_Player()->Get_Transform()->Get_WorldMatrix() };
 	_matrix					ZombieWorldMatrix = { m_pBlackBoard->Get_AI()->Get_Transform()->Get_WorldMatrix() };

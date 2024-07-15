@@ -42,7 +42,8 @@ _bool CDead_Zombie::Execute(_float fTimeDelta)
 		return false;
 
 	ZOMBIE_START_TYPE			eStartType = { m_pBlackBoard->Get_AI()->Get_StartType() };
-	if (ZOMBIE_START_TYPE::_DEAD_FAKE != eStartType)
+	if (static_cast<_int>(ZOMBIE_START_TYPE::_DEAD_FAKE1) > static_cast<_int>(eStartType) ||
+		static_cast<_int>(ZOMBIE_START_TYPE::_DEAD_FAKE4) < static_cast<_int>(eStartType))
 		return false;
 
 	CModel*						pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
@@ -67,6 +68,16 @@ _bool CDead_Zombie::Execute(_float fTimeDelta)
 		{
 			m_eDeadAnimState = ZOMBIE_DEAD_ANIM_STATE::_LOOK_PLAYER;
 		}
+
+		if(ZOMBIE_START_TYPE::_DEAD_FAKE1 == eStartType)
+			m_eDeadAnimType = ZOMBIE_DEAD_ANIM_TYPE::_1;
+		else if (ZOMBIE_START_TYPE::_DEAD_FAKE2 == eStartType)
+			m_eDeadAnimType = ZOMBIE_DEAD_ANIM_TYPE::_2;
+		else if (ZOMBIE_START_TYPE::_DEAD_FAKE3 == eStartType)
+			m_eDeadAnimType = ZOMBIE_DEAD_ANIM_TYPE::_3;
+		else if (ZOMBIE_START_TYPE::_DEAD_FAKE4 == eStartType)
+			m_eDeadAnimType = ZOMBIE_DEAD_ANIM_TYPE::_4;
+
 	}
 	
 	else
