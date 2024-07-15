@@ -44,6 +44,9 @@ using namespace Client;
 //#define MAP_NOTHING
 #define MAP_INTERACT
 //#define MAP_TEST
+//#define Map_J
+//#define Map_Ye
+//#define Map_TEST2
 
 #define TEST_ZOMBIE_MAINHALL
 
@@ -52,7 +55,7 @@ using namespace Client;
 
 //#define UI_POS
 
-#define NO_COLLISTION
+//#define NO_COLLISTION
 
 #define DISPLAY_FRAME
 //	#define DISPLAY_NAVMESH

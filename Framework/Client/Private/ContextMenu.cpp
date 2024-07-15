@@ -4,7 +4,7 @@
 #include "Context_Highlighter.h"
 #include "LayOut_UI.h"
 
-constexpr _float CONTEXT_HIGHLIGHTER_POSZ = 0.51f;
+constexpr _float CONTEXT_HIGHLIGHTER_POSZ = 0.004f;
 
 CContextMenu::CContextMenu(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCustomize_UI{ pDevice , pContext }
@@ -49,7 +49,7 @@ void CContextMenu::Tick(_float fTimeDelta)
 	{
 		Find_LayOut();
 
-		if (nullptr == m_pLayOut)
+		if (nullptr == m_pLayOut)   
 			MSG_BOX(TEXT("CContextMenu() : Inventory가 사용할 수 있는 Layout이 없습니다. "));
 	}
 

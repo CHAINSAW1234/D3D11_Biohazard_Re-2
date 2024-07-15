@@ -184,18 +184,14 @@ void CBullet_UI::Tick(_float fTimeDelta)
             m_fBlending += fTimeDelta * 1.5f;
     }
 
-    //  Bullet_Font();
-    if (!m_vecTextBoxes.empty())
-    {
-        _float4 result = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * _float4(1.f, 1.f, 1.f, 1.f);
-        m_vecTextBoxes.back()->Set_FontColor(result);
-    }
+    Bullet_Font();
 
  /*   if (!m_vecTextBoxes.empty())
     {
         _float4 result = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * _float4(1.f, 1.f, 1.f, 1.f);
         m_vecTextBoxes.back()->Set_FontColor(result);
     }*/
+
 
     if (m_iCurrentBullet < 1)
         Mission_Complete();

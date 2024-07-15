@@ -93,6 +93,12 @@ public:
 
 	}ITEM_PROP_DESC;
 
+	typedef struct Reader_Prop_Desc
+	{
+
+
+	}READER_PROP_DESC;
+
 public:
 	typedef struct tagInteractProps_desc : public CGameObject::GAMEOBJECT_DESC
 	{
@@ -105,6 +111,7 @@ public:
 		STATUE_DESC tagStatue = {};
 		BIG_STATUE_DESC tagBigStatue = {};
 		ITEM_PROP_DESC tagItemDesc = {};
+		READER_PROP_DESC tagReaderDesc = {};
 	}INTERACTPROPS_DESC;
 
 protected:
@@ -128,18 +135,19 @@ public:
 
 
 
-	virtual HRESULT										Render_LightDepth_Dir() override;
-	virtual	HRESULT										Render_LightDepth_Spot() override;
-	virtual HRESULT										Render_LightDepth_Point() override;
+	virtual HRESULT								Render_LightDepth_Dir() override;
+	virtual	HRESULT							Render_LightDepth_Spot() override;
+	virtual HRESULT								Render_LightDepth_Point() override;
 	
 public:
-	_bool*												Get_Activity() { return &m_bActivity; }
+	INTERACTPROPS_DESC*					Get_DESC() { return &m_tagPropDesc; }
+	_bool*											Get_Activity() { return &m_bActivity; }
 
-	_bool*												ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
-	_bool*												Selector_Rendering() { return &m_isSelector_Rendering;  }
+	_bool*											ComeClose_toPlayer(_float _come); /* NY : 해당 거리까지 Obj에 플레이어가 다가갔는 지 확인 */
+	_bool*											Selector_Rendering() { return &m_isSelector_Rendering;  }
 
 	/*To NY*/
-	virtual _float4										Get_Object_Pos() = 0;
+	virtual _float4								Get_Object_Pos() = 0;
 	_int												Get_PropType() { return m_tagPropDesc.iPropType; } // 프롭타입이라 쓰고 arg라 읽는다. // 문의 지역 enum을 반환한다.
 
 
@@ -149,9 +157,9 @@ public:
 	_int												Get_Region() { return m_tagPropDesc.iRegionNum; }
 	_int												Get_Type() { return m_tagPropDesc.iPropType; }
 	void												Set_Region(_int iRegion) { m_tagPropDesc.iRegionNum = iRegion; }
-	virtual _bool										Attack_Prop(class CTransform* pTransfromCom = nullptr) { return false; };
+	virtual _bool									Attack_Prop(class CTransform* pTransfromCom = nullptr) { return false; };
 
-	_float												Get_PlayerLook_Degree();
+	_float											Get_PlayerLook_Degree();
 	
 #pragma region 나옹
 	/* Function */
@@ -184,11 +192,11 @@ protected:
 	_bool												m_bVisible = { true };
 	_bool												m_bCol[INTER_COL_END][COL_STEP_END] = { {false,false,false},{false,false,false} };
 	_int												m_iItemIndex = { -1 };
-	_float												m_fTimeDelay = { 0.f };
-	_float												m_fDistance = { 0.f };
-	CModel*												m_pModelCom = { nullptr };
-	CShader*											m_pShaderCom = { nullptr };
-	CCollider*											m_pColliderCom[INTER_COL_END][COL_STEP_END] = { {nullptr,nullptr,nullptr},{nullptr,nullptr,nullptr} };
+	_float											m_fTimeDelay = { 0.f };
+	_float											m_fDistance = { 0.f };
+	CModel*										m_pModelCom = { nullptr };
+	CShader*										m_pShaderCom = { nullptr };
+	CCollider*										m_pColliderCom[INTER_COL_END][COL_STEP_END] = { {nullptr,nullptr,nullptr},{nullptr,nullptr,nullptr} };
 	
 	class CPlayer*										m_pPlayer = { nullptr };
 	_bool*												m_pPlayerInteract = { nullptr };//player의 m_bInteract 변수 포인터
@@ -197,6 +205,9 @@ protected:
 
 	class CCamera_Free*									m_pCamera = { nullptr };
 	CTransform*											m_pCameraTransform = { nullptr };
+
+	class CCamera_Gimmick*								m_pCameraGimmick = { nullptr };
+	CTransform*											m_pCameraGimmickTransform = { nullptr };
 
 	_float3												m_vRootTranslation = {};
 	INTERACTPROPS_DESC 									m_tagPropDesc ={};

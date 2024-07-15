@@ -5,6 +5,7 @@
 #include "GameInstance.h"
 #include "Camera_Free.h"
 #include "Camera_Event.h"
+#include "Camera_Gimmick.h"
 
 /* Player */
 #include "Player.h"
@@ -49,10 +50,13 @@
 #include "Body_Door.h"
 #include "Cabinet.h"
 #include "Body_Cabinet.h"
+#include"Lock_Cabinet.h"
+#include"Card_Cabinet.h"
 #include "Window.h"
 #include "Body_Window.h"
 #include "Pannel_Window.h"
 #include "NewpoliceStatue.h"
+#include "Medal_NewpoliceStatue.h"
 #include "Body_NewpoliceStatue.h"
 #include "ItemProp.h"
 #include "Body_ItemProp.h"
@@ -68,11 +72,14 @@
 #include "Body_Ladder.h"
 #include "ReaderMachine.h"
 #include "Body_ReaderMachine.h"
+#include "Key_ReaderMachine.h"
 #include "MovingShelf.h"
 #include "Body_MovingShelf.h"
 #include "Lever.h"
 #include "Body_Lever.h"
-
+#include "Item_Statue.h"
+#include "Emblem_Door.h"
+#include "Key_Door.h"
 /* UI */
 #include "Customize_UI.h"
 #include "Inventory_Item_UI.h"
@@ -104,8 +111,12 @@
 #include "LayOut_UI.h"
 #include "Damage_UI.h"
 #include "HotKey.h"
+
 #include "Hint.h"
+#include "Hint_Directory.h"
+#include "Hint_Display.h"
 #include "Hint_Highliter.h"
+#include "Hint_Blind.h"
 
 // EnvMap 큐브맵이라는뜻
 #include"EnvCube.h"
@@ -392,6 +403,11 @@ HRESULT CLoader::Load_Prototype()
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Event"),
 		CCamera_Event::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	
+	/* For.Prototype_GameObject_Camera_Gimmick */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Gimmick"),
+		CCamera_Gimmick::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 
 #pragma region Player
@@ -625,16 +641,32 @@ HRESULT CLoader::Load_Prototype()
 		CHotKey::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+
 	/* For.Prototype_GameObject_Hint */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hint"),
 		CHint::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+	
+	/* For.Prototype_GameObject_Hint_Directory */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hint_Directory"),
+		CHint_Directory::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
-	/* For.Prototype_GameObject_Hint */
+	/* For.Prototype_GameObject_Hint_Display */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hint_Display"),
+		CHint_Display::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Hint_Highliter */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hint_Highliter"),
 		CHint_Highliter::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	
+
+	/* For.Prototype_GameObject_Hint_Blind */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hint_Blind"),
+		CHint_Blind::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 #pragma endregion
 
 #pragma region CubeMap
@@ -881,6 +913,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 			/*if(Inform->wstrGameObjectPrototypeName.find(TEXT("sm40_007")) != wstring::npos)
 				m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, Inform->strModelPath.c_str(), Ininitmatrix));
 			else*/
+
 			m_pGameInstance->Add_Prototype(m_eNextLevelID , Inform->wstrModelPrototypeName, CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, Inform->strModelPath.c_str(), Ininitmatrix));
 		}
 		else
@@ -898,6 +931,9 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 		{
 			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("zombiewindow")) != wstring::npos) && (bDo = true))
 				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Window::Create(m_pDevice, m_pContext));
+			
+			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_022")) != wstring::npos) && (bDo = true))
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Statue::Create(m_pDevice, m_pContext));
 
 			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm40")) != wstring::npos) && (bDo = true))
 				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_Door::Create(m_pDevice, m_pContext));
@@ -907,6 +943,9 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_197")) != wstring::npos || Inform->wstrGameObjectPrototypeName.find(TEXT("sm42_232")) != wstring::npos) && (bDo = true))
 				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_MovingShlef::Create(m_pDevice, m_pContext));
+			
+			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_006")) != wstring::npos) && (bDo = true))
+				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_ReaderMachine::Create(m_pDevice, m_pContext));
 
 			if (!bDo && (Inform->wstrGameObjectPrototypeName.find(TEXT("sm41_024_newpolicestatue01a")) != wstring::npos) && (bDo = true))
 				m_pGameInstance->Add_Prototype(Inform->wstrGameObjectPrototypeName, CBody_NewpoliceStatue::Create(m_pDevice, m_pContext));
@@ -971,15 +1010,41 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Lever"), CLever::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_MovingShelf"), CMovingShelf::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Reader"), CReaderMachine::Create(m_pDevice, m_pContext));
 
 
 	_matrix Ininitmatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_034_windowbarricade01a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM,"..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_034_windowbarricade01a.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_035_windowoldbarricade01a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_035_windowoldbarricade01a.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_PannelWindow"), CPannel_Window::Create(m_pDevice, m_pContext));
+	
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_019_safeboxdial01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_019_safeboxdial01a_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_014_diallock01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_014_diallock01a_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_174_cardreader04a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_174_cardreader04a_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Lock_Cabinet"), CLock_Cabinet::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Card_Cabinet"), CCard_Cabinet::Create(m_pDevice, m_pContext));
 
+	/* Medal*/
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_102_unicornmedal01a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_102_unicornmedal01a.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_139_virginmedal01a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_139_virginmedal01a.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_145_virginmedal02a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_145_virginmedal02a.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medal_NewpoliceStatue"), CMedal_NewpoliceStatue::Create(m_pDevice, m_pContext));
 
-	//m_pGameInstance->Set_ModelTags(TEXT("ItemModel_Tags"), ItemModelTags);
+	/* Statue*/
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_109_kingscepter01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_109_kingscepter01a_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_136_statuehand01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_136_statuehand01a_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medal_Body_ItemStatue"), CItem_Statue::Create(m_pDevice, m_pContext));
+	
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_020_keystrokedevice01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_020_keystrokedevice01a_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Key_Reader"), CKey_ReaderMachine::Create(m_pDevice, m_pContext));
+
+	/* Door Emblem */
+	/* 1. Space */
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_00md_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_500_dooremblem01a_00md_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medal_EmblemDoor"), CEmblem_Door::Create(m_pDevice, m_pContext));
+	
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_103_spadekey01a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_103_spadekey01a.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medal_KeyDoor"), CKey_Door::Create(m_pDevice, m_pContext));
 
 	CloseHandle(hFile);
 	return S_OK;
@@ -2358,6 +2423,25 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_InteractObj/Make_Prototype.dat"))))
 		return E_FAIL;
 #endif 
+#ifdef Map_J
+	if (FAILED(Load_Item_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
+		return E_FAIL;
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_J/Make_Prototype.dat"))))
+		return E_FAIL;
+#endif 
+#ifdef Map_Ye
+	if (FAILED(Load_Item_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
+		return E_FAIL;
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_Ye/Make_Prototype.dat"))))
+		return E_FAIL;
+#endif 
+#ifdef Map_TEST2
+	if (FAILED(Load_Item_Prototype(TEXT("../Bin/DataFiles/Scene_TabWindow/Inventory/Item_Prototype.dat"))))
+		return E_FAIL;
+	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_TEST2/Make_Prototype.dat"))))
+		return E_FAIL;
+#endif 
+
 #ifdef MAP_TEST
 	if (FAILED(Load_Field_Prototype(TEXT("../Bin/Data/Level_Test/Make_Prototype.dat"))))
 		return E_FAIL;

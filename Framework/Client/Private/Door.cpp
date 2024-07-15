@@ -4,11 +4,14 @@
 #include "Bone.h"
 #include "PxCollider.h"
 
-#include"Body_Door.h"
-#include"CustomCollider.h"
+#include "Body_Door.h"
+#include "CustomCollider.h"
 #include "Room_Finder.h"
 
 #include "Selector_UI.h"
+#include "Emblem_Door.h"
+#include "Key_Door.h"
+#include "Camera_Gimmick.h"
 
 CDoor::CDoor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
@@ -28,16 +31,24 @@ HRESULT CDoor::Initialize_Prototype()
 
 HRESULT CDoor::Initialize(void* pArg)
 {
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-	//m_bLock = m_tagPropDesc.tagDoor.bLock;
+
+	m_bLock = m_tagPropDesc.tagDoor.bLock;
+
+	m_tagPropDesc.tagDoor.iLockType; //0=>앰블럼 1=> chain 3=>dial
+	 /* 0 하트 1 스페이스 2 클로버 3 다이아*/
+	m_iEmblemType = m_tagPropDesc.tagDoor.iEmblemType;
+	
 	if ((m_tagPropDesc.strGamePrototypeName.find("007") != string::npos) || (m_tagPropDesc.strGamePrototypeName.find("038") != string::npos) || (m_tagPropDesc.strGamePrototypeName.find("113") != string::npos))
 		m_eType = DOOR_DOUBLE;
+
 	else if (m_tagPropDesc.strGamePrototypeName.find("056") != string::npos)
 		m_eType = DOOR_DUMMY;
+
 	else
 		m_eType = DOOR_ONE;
+
 	if (m_eType == DOOR_DOUBLE)
 	{
 		if ((m_tagPropDesc.strGamePrototypeName.find("007") != string::npos))
@@ -52,6 +63,9 @@ HRESULT CDoor::Initialize(void* pArg)
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_PartObjects()))
+		return E_FAIL;
+	
 	return S_OK;
 }
 
@@ -101,6 +115,18 @@ void CDoor::Start()
 void CDoor::Tick(_float fTimeDelta)
 {
 	__super::Tick_Col();
+	if (DOWN == m_pGameInstance->Get_KeyState('J'))
+	{
+		m_isCameraGimmick = !m_isCameraGimmick;
+
+		CPart_InteractProps* pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_SPADE_KEY]);
+		m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + pPartLock->GetLookDir_Vector() * 0.15f + _vector{ 0.05f,0.1f,0.f,0.f });
+		m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
+	}
+
+	if (true == m_isCameraGimmick)
+		m_pCameraGimmick->Active_Camera(true);
+
 
 	if (!m_bVisible)
 		return;
@@ -244,6 +270,14 @@ HRESULT CDoor::Add_PartObjects()
 	BodyDesc.pOneDoorState = &m_eOneState;
 	BodyDesc.pOneDoorState_Prev = &m_eOneState_Prev;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
+
+	if (true == m_bLock && m_tagPropDesc.tagDoor.iLockType == 0 && (/*m_iEmblemType == 0 ||*/ m_iEmblemType == 1 /*|| m_iEmblemType == 2 || m_iEmblemType == 3*/))
+		BodyDesc.isEmblem = true;
+	else
+	{
+		BodyDesc.isEmblem = false;
+		m_bLock = false; //임시
+	}
 	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(m_tagPropDesc.strObjectPrototype, &BodyDesc));
 	if (nullptr == pBodyObj)
 		return E_FAIL;
@@ -255,13 +289,127 @@ HRESULT CDoor::Add_PartObjects()
 	
 	/*PART_HANDLE*/
 
+	/* 0 하트 1 스페이스 2 클로버 3 다이아*/
+	if (true== BodyDesc.isEmblem)
+	{
+		if (CEmblem_Door::EMBLEM_TYPE::HEART_EMBLEM == static_cast<CEmblem_Door::EMBLEM_TYPE>(m_iEmblemType))
+		{
+			CPartObject* pEmblem = { nullptr };
+			CEmblem_Door::BODY_EMBLEM_DOOR EmblemDesc;
+
+			EmblemDesc.pParentsTransform = m_pTransformCom;
+			EmblemDesc.EmblemAnim = &m_eEmblemAnim_Type;
+			EmblemDesc.eEmblemType = static_cast<_ubyte>(m_iEmblemType);
+			EmblemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_00md_Anim");
+			pEmblem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_EmblemDoor"), &EmblemDesc));
+
+			if (nullptr == pEmblem)
+				return E_FAIL;
+			else
+				m_PartObjects[PART_HEART_EMBLEM] = pEmblem;
+		}
+
+		else if (CEmblem_Door::EMBLEM_TYPE::SPADE_EMBLEM == static_cast<CEmblem_Door::EMBLEM_TYPE>(m_iEmblemType))
+		{
+			CPartObject* pEmblem = { nullptr };
+			CEmblem_Door::BODY_EMBLEM_DOOR EmblemDesc;
+
+			EmblemDesc.pParentsTransform = m_pTransformCom;
+			EmblemDesc.EmblemAnim = &m_eEmblemAnim_Type;
+			EmblemDesc.eEmblemType = static_cast<_ubyte>(m_iEmblemType);
+			EmblemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_00md_Anim");
+			pEmblem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_EmblemDoor"), &EmblemDesc));
+
+			if (nullptr == pEmblem)
+				return E_FAIL;
+			else
+				m_PartObjects[PART_SPADE_EMBLEM] = pEmblem;
+
+			/* Key*/
+			CPartObject* pKey;
+
+			CKey_Door::KEY_DOOR KeyDesc;
+
+			CEmblem_Door* pEmblemObj = static_cast<CEmblem_Door*>(m_PartObjects[PART_SPADE_EMBLEM]);
+			KeyDesc.pParentsTransform = m_pTransformCom;
+			KeyDesc.pParentWorldMatrix = pEmblemObj->Get_WorldMatrix();
+			KeyDesc.EmblemAnim = &m_eEmblemAnim_Type; /* emblem Anim */
+			KeyDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_103_spadekey01a");
+			pKey = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_KeyDoor"), &KeyDesc));
+
+			if (nullptr == pKey)
+				return E_FAIL;
+			else
+				m_PartObjects[PART_SPADE_KEY] = pKey;
+		}
+
+		else if (CEmblem_Door::EMBLEM_TYPE::CLUB_EMBLEM == static_cast<CEmblem_Door::EMBLEM_TYPE>(m_iEmblemType))
+		{
+			CPartObject* pEmblem = { nullptr };
+			CEmblem_Door::BODY_EMBLEM_DOOR EmblemDesc;
+
+			EmblemDesc.pParentsTransform = m_pTransformCom;
+			EmblemDesc.EmblemAnim = &m_eEmblemAnim_Type;
+			EmblemDesc.eEmblemType = static_cast<_ubyte>(m_iEmblemType);
+			EmblemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_00md_Anim");
+			pEmblem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_EmblemDoor"), &EmblemDesc));
+
+			if (nullptr == pEmblem)
+				return E_FAIL;
+			else
+				m_PartObjects[PART_CULB_EMBLEM] = pEmblem;
+		}
+
+		else if (CEmblem_Door::EMBLEM_TYPE::DIA_EMBLEM == static_cast<CEmblem_Door::EMBLEM_TYPE>(m_iEmblemType))
+		{
+
+			CPartObject* pEmblem = { nullptr };
+			CEmblem_Door::BODY_EMBLEM_DOOR EmblemDesc;
+
+			EmblemDesc.pParentsTransform = m_pTransformCom;
+			EmblemDesc.EmblemAnim = &m_eEmblemAnim_Type;
+			EmblemDesc.eEmblemType = static_cast<_ubyte>(m_iEmblemType);
+			EmblemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_00md_Anim");
+			pEmblem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_EmblemDoor"), &EmblemDesc));
+
+			if (nullptr == pEmblem)
+				return E_FAIL;
+			else
+				m_PartObjects[PART_DIA_EMBLEM] = pEmblem;
+
+		}
+	}
+	
 
 	return S_OK;
 }
 
 HRESULT CDoor::Initialize_PartObjects()
 {
+	if (m_PartObjects[PART_BODY] != nullptr)
+	{
+		if(m_bLock)
+			if (CEmblem_Door::EMBLEM_TYPE::SPADE_EMBLEM == static_cast<CEmblem_Door::EMBLEM_TYPE>(m_iEmblemType)/* ||
+				CEmblem_Door::EMBLEM_TYPE::CLUB_EMBLEM == static_cast<CEmblem_Door::EMBLEM_TYPE>(m_iEmblemType) ||
+				CEmblem_Door::EMBLEM_TYPE::HEART_EMBLEM == static_cast<CEmblem_Door::EMBLEM_TYPE>(m_iEmblemType) ||
+				CEmblem_Door::EMBLEM_TYPE::DIA_EMBLEM == static_cast<CEmblem_Door::EMBLEM_TYPE>(m_iEmblemType)*/)
+			{
+				/* 1. Emblem*/
+				CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
 
+				CEmblem_Door* pItem1 = dynamic_cast<CEmblem_Door*>(m_PartObjects[PART_SPADE_EMBLEM]);
+				_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("_00")) };
+				pItem1->Set_Socket(pCombinedMatrix);
+
+				/* 2. Key */
+				CModel* pEmblemModel = { dynamic_cast<CModel*>(m_PartObjects[PART_SPADE_EMBLEM]->Get_Component(TEXT("Com_Body_Model"))) };
+
+				CKey_Door* pKey = dynamic_cast<CKey_Door*>(m_PartObjects[PART_SPADE_KEY]);
+				_float4x4* pCombinedMatrixKey = { const_cast<_float4x4*>(pEmblemModel->Get_CombinedMatrix("ItemSet")) };
+				pKey->Set_Socket(pCombinedMatrixKey);
+			}
+	}
+	
 	return S_OK;
 }
 
@@ -791,16 +939,23 @@ void CDoor::OneDoor_Active()
 {
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
+
 	if (m_bLock)
-		return;
-	m_bInteract = true;
-
-	_float fScala = Radian_To_Player();
-
-	if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
-		m_eOneState = ONEDOOR_OPEN_L;
+	{
+		m_eEmblemAnim_Type = (_int)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM;
+	}
 	else
-		m_eOneState = ONEDOOR_OPEN_R;
+	{
+		m_bInteract = true;
+
+		_float fScala = Radian_To_Player();
+
+		if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
+			m_eOneState = ONEDOOR_OPEN_L;
+		else
+			m_eOneState = ONEDOOR_OPEN_R;
+	}
+	
 }
 
 

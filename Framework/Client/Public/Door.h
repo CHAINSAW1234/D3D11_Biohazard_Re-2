@@ -42,9 +42,16 @@ public:
 	{
 		PART_BODY,
 		PART_LOCK,
+		PART_HEART_EMBLEM,
+		PART_SPADE_EMBLEM,
+		PART_CULB_EMBLEM,
+		PART_DIA_EMBLEM,
+		PART_HEART_KEY,
+		PART_SPADE_KEY,
+		PART_CULB_KEY,
+		PART_DIA_KEY,
 		PART_END
 	};
-
 
 private:
 	CDoor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -62,6 +69,7 @@ public:
 private:
 	virtual HRESULT								Add_Components();
 	virtual HRESULT								Add_PartObjects() override;
+	HRESULT										Model_Hide();
 	virtual HRESULT								Initialize_PartObjects() override;
 
 private:
@@ -116,7 +124,14 @@ private:
 	_ubyte   									m_eDoubleState_Prev		= { DOUBLEDOOR_STATIC };
 	_ubyte										m_eDoubleDoorType;
 	list<LOCATION_MAP_VISIT>					m_Linked_Locations;
-	CTransform* m_pZombieTransform = { nullptr };
+	CTransform*									m_pZombieTransform = { nullptr };
+
+private :
+	_uint										m_iEmblemType = {};
+	_int										m_iPropType = { 0 };
+	_ubyte										m_eEmblemAnim_Type = {};
+	_bool										m_isCameraGimmick = {};
+
 public:
 	static CDoor* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

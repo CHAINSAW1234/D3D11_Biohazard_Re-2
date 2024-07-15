@@ -220,6 +220,9 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const wstring & strLayerTag)
 	
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Camera_Event"), &CameraDesc)))
 		return E_FAIL;
+	
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Camera_Gimmick"), &CameraDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -337,6 +340,18 @@ HRESULT CLevel_GamePlay::Ready_Layer_LandBackGround(const wstring & strLayerTag)
 #endif
 #ifdef MAP_TEST
 	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_Test"), LEVEL_GAMEPLAY)))
+		return E_FAIL;
+#endif
+#ifdef Map_J
+	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_J"), LEVEL_GAMEPLAY)))
+		return E_FAIL;
+#endif
+#ifdef Map_Ye
+	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_Ye"), LEVEL_GAMEPLAY)))
+		return E_FAIL;
+#endif
+#ifdef Map_TEST2
+	if (FAILED(Load_Layer(TEXT("../Bin/Data/Level_TEST2"), LEVEL_GAMEPLAY)))
 		return E_FAIL;
 #endif
 
