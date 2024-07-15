@@ -843,9 +843,6 @@ PS_OUT PS_POST_PROCESSING_RESULT(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     
     vector DiffuseDesc = g_DiffuseTexture.Sample(PointSamplerClamp, In.vTexcoord);
-
-    if (DiffuseDesc.a == 0)
-        discard;
     
     Out.vColor = DiffuseDesc;
     
