@@ -313,39 +313,6 @@ void CZombie::Tick(_float fTimeDelta)
 
 #pragma endregion
 
-
-#pragma region 길찾기 임시 코드
-	//if (m_bArrived == false)
-	//{
-	//	m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-	//	m_vDir.w = 0.f;
-
-	//	_float4 vDelta = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) - m_vNextTarget;
-	//	vDelta.y = 0.f;
-
-	//	if (XMVectorGetX(XMVector3Length(XMLoadFloat4(&vDelta))) < 0.75f)
-	//	{
-	//		m_bArrived = true;
-	//	}
-	//	else
-	//	{
-	//		//if (m_pController)
-	//		//	m_pController->Move(m_vDir * 0.015f, fTimeDelta);
-	//	}
-	//}
-	//else
-	//{
-	//	m_vNextTarget = m_pPathFinder->GetNextTarget_Opt();
-	//	m_vDir = Float4_Normalize(m_vNextTarget - m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
-	//	m_vDir.w = 0.f;
-	//
-	//	if (m_vNextTarget.x == 0 && m_vNextTarget.y == 0 && m_vNextTarget.z == 0)
-	//		m_bArrived = true;
-	//	else
-	//		m_bArrived = false;
-	//}
-#pragma endregion
-
 #pragma region Ragdoll 피격
 	if (m_bRagdoll)
 	{
@@ -439,7 +406,7 @@ void CZombie::Tick(_float fTimeDelta)
 					auto Type = m_pController->Get_Hit_Collider_Type();
 
 
-					if(Type != COLLIDER_TYPE::CHEST /*&& Type != COLLIDER_TYPE::PELVIS*/ && Type != COLLIDER_TYPE::HEAD)
+					if(Type != COLLIDER_TYPE::CHEST && Type != COLLIDER_TYPE::PELVIS && Type != COLLIDER_TYPE::HEAD)
 					{
 						for (auto& pPartObject : m_PartObjects)
 						{
