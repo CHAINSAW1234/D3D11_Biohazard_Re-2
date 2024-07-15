@@ -93,6 +93,12 @@ public:
 
 	}ITEM_PROP_DESC;
 
+	typedef struct Reader_Prop_Desc
+	{
+
+
+	}READER_PROP_DESC;
+
 public:
 	typedef struct tagInteractProps_desc : public CGameObject::GAMEOBJECT_DESC
 	{
@@ -105,6 +111,7 @@ public:
 		STATUE_DESC tagStatue = {};
 		BIG_STATUE_DESC tagBigStatue = {};
 		ITEM_PROP_DESC tagItemDesc = {};
+		READER_PROP_DESC tagReaderDesc = {};
 	}INTERACTPROPS_DESC;
 
 protected:
@@ -185,11 +192,11 @@ protected:
 	_bool												m_bVisible = { true };
 	_bool												m_bCol[INTER_COL_END][COL_STEP_END] = { {false,false,false},{false,false,false} };
 	_int												m_iItemIndex = { -1 };
-	_float												m_fTimeDelay = { 0.f };
-	_float												m_fDistance = { 0.f };
-	CModel*												m_pModelCom = { nullptr };
-	CShader*											m_pShaderCom = { nullptr };
-	CCollider*											m_pColliderCom[INTER_COL_END][COL_STEP_END] = { {nullptr,nullptr,nullptr},{nullptr,nullptr,nullptr} };
+	_float											m_fTimeDelay = { 0.f };
+	_float											m_fDistance = { 0.f };
+	CModel*										m_pModelCom = { nullptr };
+	CShader*										m_pShaderCom = { nullptr };
+	CCollider*										m_pColliderCom[INTER_COL_END][COL_STEP_END] = { {nullptr,nullptr,nullptr},{nullptr,nullptr,nullptr} };
 	
 	class CPlayer*											m_pPlayer = { nullptr };
 	_bool*														m_pPlayerInteract = { nullptr };//player의 m_bInteract 변수 포인터

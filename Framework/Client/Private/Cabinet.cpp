@@ -10,6 +10,7 @@
 #include"Body_Cabinet.h"
 #include"Body_ItemProp.h"
 #include"Lock_Cabinet.h"
+#include"Card_Cabinet.h"
 
 CCabinet::CCabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
@@ -46,6 +47,10 @@ HRESULT CCabinet::Initialize(void* pArg)
 		m_eCabinetType = TYPE_SAFEBOX;
 	else if (m_tagPropDesc.strGamePrototypeName.find("005") != string::npos)
 		m_eCabinetType = TYPE_ELECTRIC;
+	else if (m_tagPropDesc.strGamePrototypeName.find("020") != string::npos)
+		m_eCabinetType = TYPE_WEAPON;
+	else if (m_tagPropDesc.strGamePrototypeName.find("024") != string::npos)
+		m_eCabinetType = TYPE_ZOMBIE;
 	else
 		m_eCabinetType = TYPE_NORMAL;
 
@@ -58,6 +63,9 @@ HRESULT CCabinet::Initialize(void* pArg)
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;
 
+	if (m_eCabinetType == TYPE_ELECTRIC)
+		m_strElectTag = static_cast<CBody_Cabinet*>(m_PartObjects[PART_BODY])->Get_Tag();
+	
 
 
 	return S_OK;
@@ -86,13 +94,19 @@ void CCabinet::Tick(_float fTimeDelta)
 	{
 	case TYPE_NORMAL:
 	case TYPE_SAFEBOX:
-		Safe_Normal_Tick(fTimeDelta);
+		Safe_Normal_Tick(fTimeDelta); 
 		break;
 	case TYPE_ELECTRIC:
 		Electric_Tick(fTimeDelta);
 		break;
 	case TYPE_LEON:
 		LeonDesk_Tick(fTimeDelta);
+		break;
+	case TYPE_WEAPON:
+		Weapon_Tick(fTimeDelta);
+		break;
+	case TYPE_ZOMBIE:
+		Zombie_Tick(fTimeDelta);
 		break;
 	}
 
@@ -255,7 +269,6 @@ HRESULT CCabinet::Add_PartObjects()
 			LockDesc.pPassword = (_int*)m_iPassWord;
 			LockDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_014_diallock01a_Anim");
 			LockDesc.iLockType = CLock_Cabinet::OPENLOCKER_DIAL;
-			/*if(m_tagPropDesc.tagCabinet.iItemIndex==0)*/
 			pLock = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Lock_Cabinet"), &LockDesc));
 			if (nullptr == pLock)
 				return E_FAIL;
@@ -269,11 +282,11 @@ HRESULT CCabinet::Add_PartObjects()
 			LockDesc.pParentsTransform = m_pTransformCom;
 			LockDesc.pState = &m_eState; //현재 캐비넷 본체의 상황을 받는거야
 			LockDesc.pPassword = (_int*)m_iPassWord; // 123 
+			LockDesc.pKeyInput = &m_eKeyInput;
 			LockDesc.pCameraControl = &m_isCamera_Reset;
 			LockDesc.pLockState = &m_eLockState; //제어당할 스테이트
 			LockDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_019_safeboxdial01a_Anim");
 			LockDesc.iLockType = CLock_Cabinet::SAFEBOX_DIAL;
-			/*if(m_tagPropDesc.tagCabinet.iItemIndex==0)*/
 			pLock = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Lock_Cabinet"), &LockDesc));
 			if (nullptr == pLock)
 				return E_FAIL;
@@ -321,12 +334,45 @@ HRESULT CCabinet::Add_PartObjects()
 			m_PartObjects[CCabinet::PART_LOCK1] = pLock;
 		}
 		break;
+		case TYPE_WEAPON:
+		{
+			CPartObject* pLock = { nullptr };
+			CLock_Cabinet::BODY_LOCK_CABINET_DESC LockDesc = {};
+			LockDesc.pParentsTransform = m_pTransformCom;
+			LockDesc.pState = &m_eState;
+			LockDesc.pKeyInput = &m_eKeyInput;
+			LockDesc.pLockState = &m_eLockState;
+			LockDesc.pPassword = (_int*)m_iPassWord;
+			LockDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_174_cardreader04a_Anim");
+			LockDesc.iLockType = CLock_Cabinet::CARD_KEY;
+			pLock = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Lock_Cabinet"), &LockDesc));
+			if (nullptr == pLock)
+				return E_FAIL;
+			m_PartObjects[CCabinet::PART_LOCK] = pLock;
+		}
+		break;
 		}
 	}
 	else
 		m_PartObjects[CCabinet::PART_LOCK] = nullptr;
 
+	/*PART_CARD*/
+	if (m_eCabinetType == TYPE_WEAPON)
+	{
+		CPartObject* pCard = { nullptr };
+		CCard_Cabinet::CARD_CABINET_DESC CardCabinet = {};
+		CardCabinet.pParentsTransform = m_pTransformCom;
+		CardCabinet.pLock_Cabinet_State = &m_eLockState;
+		CardCabinet.pLock_WorldMatrix = static_cast<CPart_InteractProps*>(m_PartObjects[CCabinet::PART_LOCK])->Get_WorldMatrix_Ptr();
+		CardCabinet.strModelComponentName = TEXT("Prototype_Component_Model_sm42_174_cardreader04a_Anim");
+		pCard = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Card_Cabinet"), &CardCabinet));
+		if (nullptr == pCard)
+			return E_FAIL;
 
+		m_PartObjects[CCabinet::PART_CARD] = pCard;
+	}
+	else
+		m_PartObjects[CCabinet::PART_CARD] = nullptr;
 
 	return S_OK;
 }
@@ -344,7 +390,7 @@ HRESULT CCabinet::Initialize_PartObjects()
 
 	}
 
-	if (m_bLock && m_eCabinetType != TYPE_ELECTRIC)
+	if (m_bLock && m_eCabinetType != TYPE_ELECTRIC&& m_eCabinetType != TYPE_WEAPON)
 	{
 		CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
 
@@ -359,14 +405,45 @@ HRESULT CCabinet::Initialize_PartObjects()
 		}
 	}
 
+	if (m_eCabinetType == TYPE_WEAPON)
+	{
+		CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
+
+		CLock_Cabinet* pLock = dynamic_cast<CLock_Cabinet*>(m_PartObjects[PART_LOCK]);
+		_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet")) };
+		pLock->Set_Socket(pCombinedMatrix);
 
 
+		CModel* pLockModel = { dynamic_cast<CModel*>(m_PartObjects[PART_LOCK]->Get_Component(TEXT("Com_Body_Model"))) };
+
+		CCard_Cabinet* pCard = dynamic_cast<CCard_Cabinet*>(m_PartObjects[PART_CARD]);
+		_float4x4* pLockCombinedMatrix = { const_cast<_float4x4*>(pLockModel->Get_CombinedMatrix("ItemSet")) };
+		pCard->Set_Socket(pLockCombinedMatrix);
+
+	}
 	return S_OK;
 }
 
 HRESULT CCabinet::Bind_ShaderResources()
 {
 	return S_OK;
+}
+
+
+
+void CCabinet::Camera_Active(CCabinet::CABINET_PART ePart, _float3 vRatio)
+{
+	CPart_InteractProps* pPartLock = { nullptr };
+	pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[ePart]);
+	m_pCameraGimmick->SetPosition(XMVectorSetW(pPartLock->Get_Pos_vector() + pPartLock->Get_World_Look_Dir() * _vector { vRatio.x, vRatio.y, vRatio.z}, 1.f));
+	m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
+}
+
+void CCabinet::Reset_Camera()
+{
+	m_pCameraGimmick->Active_Camera(false);
+	m_isCamera_Reset = false;
+	m_pPlayer->ResetCamera();
 }
 
 void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
@@ -393,7 +470,8 @@ void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
 	}
 	else
 		m_eKeyInput = KEY_NOTHING;
-
+	if (m_isCamera_Reset)
+		bCam = true;
 	if (m_bCamera && (bCam || static_cast<CLock_Cabinet*>(m_PartObjects[PART_LOCK])->Get_Clear()))
 	{
 		if (!bCam)
@@ -401,16 +479,13 @@ void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
 			if (m_eLockState == CCabinet::CLEAR_LOCK)
 				m_bLock = false;
 		}
-		m_pCameraGimmick->Active_Camera(false);
+		Reset_Camera();
 		m_bCamera = false;
-		m_pPlayer->ResetCamera();
+		
 	}
 	if (m_bCamera)
 	{
-		CPart_InteractProps* pPartLock = { nullptr };
-		pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK]);
-		m_pCameraGimmick->SetPosition(XMVectorSetW(pPartLock->Get_Pos_vector() + pPartLock->Get_World_Look_Dir() * _vector { 20.5f, 40.5f, 20.5f, 0.f }, 1.f));
-		m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
+		Camera_Active(PART_LOCK, _float3(20.5f, 40.5f, 20.5f));
 	}
 
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
@@ -468,9 +543,7 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 		}
 		 if(bCam || bCamera_Reset)
 		{
-			m_pCameraGimmick->Active_Camera(false);
-			m_bCamera = false;
-			m_pPlayer->ResetCamera();
+			 Reset_Camera();
 		}
 		
 
@@ -480,14 +553,10 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 
 	if (m_bCamera)
 	{
-		CPart_InteractProps* pPartLock = { nullptr };
-
 		if (m_eLockLeonState != CCabinet::STATIC_LOCK && (m_eLockState == CCabinet::STATIC_LOCK || m_eLockState == CCabinet::CLEAR_LOCK))
-			pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK1]);
+			Camera_Active(PART_LOCK1, _float3(20.5f, 40.5f, 20.5f));
 		else if (m_eLockState != CCabinet::STATIC_LOCK && (m_eLockLeonState == CCabinet::STATIC_LOCK || m_eLockLeonState == CCabinet::CLEAR_LOCK))
-			pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_LOCK]);
-		m_pCameraGimmick->SetPosition(XMVectorSetW(pPartLock->Get_Pos_vector() + pPartLock->Get_World_Look_Dir() * _vector { 20.5f, 40.5f, 20.5f, 0.f }, 1.f));
-		m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
+			Camera_Active(PART_LOCK, _float3(20.5f, 40.5f, 20.5f));
 	}
 
 
@@ -507,7 +576,85 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 
 void CCabinet::Electric_Tick(_float fTimeDelta)
 {
+	_bool bCam = false;
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+	{
+		bCam = true;
+	}
+	if (m_bCamera)
+	{
+		Camera_Active(PART_BODY, _float3(5.5f, 5.5f, 5.5f));
+	}
+	if (m_bCamera && bCam)
+	{
+		Reset_Camera();
+		m_bCamera = false;
+
+	}
+	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
+	{
+		if (*m_pPlayerInteract)
+			Electric_Active();
+	}
+	if (m_eState == CABINET_OPEN)
+	{
+		m_bObtain = true;
+		return;
+	}
+	__super::Tick(fTimeDelta);
+}
+
+void CCabinet::Weapon_Tick(_float fTimeDelta)
+{
+	_bool bCam = false;
+
+	if (m_eLockState == CCabinet::LIVE_LOCK)
+	{
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+			bCam = true;
+	}
+	if (m_bCamera && (bCam || static_cast<CLock_Cabinet*>(m_PartObjects[PART_LOCK])->Get_Clear()))
+	{
+		if (!bCam)
+		{
+			if (m_eLockState == CCabinet::CLEAR_LOCK)
+				m_bLock = false;
+		}
+		Reset_Camera();
+		m_bCamera = false;
+
+	}
+	if (m_bCamera)
+		Camera_Active(PART_LOCK, _float3(20.5f, 40.5f, 20.5f));
 	
+
+	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] )
+	{
+		if (*m_pPlayerInteract)
+			Weapon_Active();
+	}
+	if (m_eState == CABINET_OPEN)
+	{
+		m_bObtain = true;
+		return;
+	}
+	__super::Tick(fTimeDelta);
+}
+
+void CCabinet::Zombie_Tick(_float fTimeDelta)
+{
+	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
+	{
+		if (*m_pPlayerInteract)
+			Zombie_Active();
+	}
+	if (m_eState == CABINET_OPEN)
+	{
+		m_bObtain = true;
+		return;
+	}
+	__super::Tick(fTimeDelta);
+
 }
 
 void CCabinet::Safe_Normal_Active()
@@ -570,6 +717,67 @@ void CCabinet::LeonDesk_Active()
 
 void CCabinet::Electric_Active()
 {
+	*m_pPlayerInteract = false;
+	m_bActivity = true;
+
+	if (!m_bLock)
+	{
+		m_eState = CABINET_OPEN;
+		if (m_bObtain)
+			if (nullptr != m_PartObjects[PART_ITEM] && !m_bItemDead)
+				m_pPlayer->PickUp_Item(this);
+	}
+	else
+	{
+		m_pCameraGimmick->Active_Camera(true);
+		//tabwindow의 힘을 빌려야 할 차례입니다
+		m_bCamera = true;
+
+	}
+}
+
+void CCabinet::Weapon_Active()
+{
+	*m_pPlayerInteract = false;
+	m_bActivity = true;
+
+	if (!m_bLock)
+	{
+		m_eState = CABINET_OPEN;
+		if (m_bObtain)
+			if (nullptr != m_PartObjects[PART_ITEM] && !m_bItemDead)
+				m_pPlayer->PickUp_Item(this);
+	}
+	else
+	{
+		m_eLockState = LIVE_LOCK;
+
+		m_pCameraGimmick->Active_Camera(true);
+		//tabwindow의 힘을 빌려야 할 차례입니다
+		m_bCamera = true;
+
+	}
+}
+
+void CCabinet::Zombie_Active()
+{
+	*m_pPlayerInteract = false;
+	m_bActivity = true;
+
+	if (!m_bLock)
+	{
+		m_eState = CABINET_OPEN;
+		if (m_bObtain)
+			if (nullptr != m_PartObjects[PART_ITEM] && !m_bItemDead)
+				m_pPlayer->PickUp_Item(this);
+	}
+	else
+	{
+		m_pCameraGimmick->Active_Camera(true);
+		//tabwindow의 힘을 빌려야 할 차례입니다
+		m_bCamera = true;
+
+	}
 }
 
 CCabinet* CCabinet::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

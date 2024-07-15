@@ -200,6 +200,7 @@
     <ClInclude Include="..\Public\Body_EventProp.h" />
     <ClInclude Include="..\Public\Body_ItemLocker.h" />
     <ClInclude Include="..\Public\Body_ItemProp.h" />
+    <ClInclude Include="..\Public\Card_Cabinet.h" />
     <ClInclude Include="..\Public\Item_Statue.h" />
     <ClInclude Include="..\Public\Body_Ladder.h" />
     <ClInclude Include="..\Public\Body_Lever.h" />
@@ -242,6 +243,7 @@
     <ClInclude Include="..\Public\Impact.h" />
     <ClInclude Include="..\Public\Is_Different_Location_To_Player_Zombie.h" />
     <ClInclude Include="..\Public\Is_Start_Rub_Door_Zombie.h" />
+    <ClInclude Include="..\Public\Key_ReaderMachine.h" />
     <ClInclude Include="..\Public\Lock_Cabinet.h" />
     <ClInclude Include="..\Public\Medal_NewpoliceStatue.h" />
     <ClInclude Include="..\Public\Muzzle_ShockWave.h" />
@@ -472,6 +474,7 @@
     <ClCompile Include="..\Private\Camera_Event.cpp" />
     <ClCompile Include="..\private\Camera_Free.cpp" />
     <ClCompile Include="..\Private\Camera_Gimmick.cpp" />
+    <ClCompile Include="..\Private\Card_Cabinet.cpp" />
     <ClCompile Include="..\Private\Creep_Zombie.cpp" />
     <ClCompile Include="..\Private\Cut_Scene.cpp" />
     <ClCompile Include="..\Private\Cut_Scene_CF93.cpp" />
@@ -493,6 +496,7 @@
     <ClCompile Include="..\Private\Is_Same_Location_To_Player_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Start_Rub_Door_Zombie.cpp" />
     <ClCompile Include="..\Private\Is_Start_Zombie.cpp" />
+    <ClCompile Include="..\Private\Key_ReaderMachine.cpp" />
     <ClCompile Include="..\Private\Lock_Cabinet.cpp" />
     <ClCompile Include="..\Private\Medal_NewpoliceStatue.cpp" />
     <ClCompile Include="..\Private\Muzzle_Light_SG.cpp" />

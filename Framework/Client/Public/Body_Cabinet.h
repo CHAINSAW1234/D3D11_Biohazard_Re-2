@@ -33,8 +33,9 @@ private:
 public:
 	virtual _float4				Get_Pos(_int iArg = 0) override;
 	virtual void					Get_SpecialBone_Rotation() override;
+	string							Get_Tag() { return m_strTag; }
 private:
-	list<_uint>					m_NonHideIndices;
+	string							m_strTag = { "" };
 public:
 	static CBody_Cabinet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

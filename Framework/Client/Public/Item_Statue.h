@@ -39,11 +39,6 @@ private:
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
 
-public :
-	void						Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
-
-private :
-	_float4x4*					m_pSocketMatrix = { nullptr };
 
 private :
 	STATUE_ITEM					m_Item_Type = { STATUE_ITEM::END_ITEM };

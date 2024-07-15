@@ -91,7 +91,8 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Cabinet(&ResultMat);
 		}
-
+		if (m_pModelCom->isFinished(0))
+			*m_pState = CCabinet::CABINET_OPENED;
 		break;
 	}
 	case CCabinet::CABINET_OPENED:
@@ -388,8 +389,16 @@ HRESULT CBody_Cabinet::Initialize_Model_i44()
 		string strFindTag = "10" + to_string(m_iPropType);
 		if (m_iPropType >= 10)
 			strFindTag = "20" + to_string(m_iPropType - 10);
-		if ((strMeshTag.find(strFindTag) != string::npos) || (strMeshTag.find("Group_0_") != string::npos) || (strMeshTag.find("Group_1_") != string::npos))
+		if (strMeshTag.find(strFindTag) != string::npos)
+		{
+			m_strTag = strFindTag;
 			ResultMeshTags.push_back(strMeshTag);
+		}
+		if ((strMeshTag.find(strFindTag) != string::npos)  || (strMeshTag.find("Group_0_") != string::npos) || (strMeshTag.find("Group_1_") != string::npos))
+		{
+			ResultMeshTags.push_back(strMeshTag);
+
+		}
 	}
 
 	for (auto& strMeshTag : MeshTags)

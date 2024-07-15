@@ -70,6 +70,7 @@ void CLock_Cabinet::Tick(_float fTimeDelta)
 		switch (m_eLockType)
 		{
 		case SAFEBOX_DIAL:
+			Safebox_Clear_Condition();
 			break;
 		case OPENLOCKER_DIAL:
 			_bool bOpen = { false };
@@ -100,7 +101,7 @@ void CLock_Cabinet::Late_Tick(_float fTimeDelta)
 	if (m_bDead)
 		return;
 
-	m_eLockType == SAFEBOX_DIAL ? Safebox_Late_Tick(fTimeDelta) : OpenLocker_Late_Tick(fTimeDelta);
+	m_eLockType == SAFEBOX_DIAL ? Safebox_Late_Tick(fTimeDelta) : (m_eLockType == OPENLOCKER_DIAL? OpenLocker_Late_Tick(fTimeDelta): CardLocker_Late_Tick(fTimeDelta));
 
 	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
 	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
@@ -301,31 +302,25 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 	case CCabinet::LIVE_LOCK:
 	{
 		/* 1. 조작 키*/
-		if (DOWN == m_pGameInstance->Get_KeyState('Q')) /* 왼쪽 */
+		switch (*m_pPressKeyState)
 		{
+		case CCabinet::KEY_A:
 			m_eMoveingKey = LOCK_ALLOW_KEY::LEFT_LOCK_KEY;
 			m_iRotationCnt--;
-			
-		}
-		
-		else if (DOWN == m_pGameInstance->Get_KeyState('E')) /* 오른쪽 */
-		{
+			*m_pPressKeyState = CCabinet::KEY_NOTHING;
+			break;
+		case CCabinet::KEY_D:
 			m_eMoveingKey = LOCK_ALLOW_KEY::RIGHT_LOCK_KEY;
-
 			m_iRotationCnt++;
+			*m_pPressKeyState = CCabinet::KEY_NOTHING;
+			break;
 		}
-
 		/* 2. 행동 패턴 */
 		if(LOCK_ALLOW_KEY::END_LOCK_KEY != m_eMoveingKey)
 		{
 			Safebox_RotationLock(m_eMoveingKey, fTimeDelta);
 		}
 
-		/* 3. Clear 조건 */
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_SPACE))
-		{
-			Safebox_Clear_Condition();
-		}
 	}
 	break;
 
@@ -335,6 +330,7 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 		break;
 
 	case CCabinet::CLEAR_LOCK:
+		m_bClear = true;
 		break;
 	}
 
@@ -628,6 +624,62 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 
 	Get_SpecialBone_Rotation(); // for UI
 
+}
+
+void CLock_Cabinet::CardLocker_Late_Tick(_float fTimeDelta)
+{
+	switch (*m_pLockState)
+	{
+	case CCabinet::STATIC_LOCK:
+		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pLockState);
+		break;
+
+	case CCabinet::LIVE_LOCK:
+	{
+		m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
+
+	}
+	break;
+
+	case CCabinet::WRONG_LOCK:
+
+		//카드키는 틀린 경우가 없음 => 아예 받질 않으니
+		if (m_pModelCom->isFinished(0))
+			*m_pLockState = CCabinet::LIVE_LOCK;
+
+		break;
+
+	case CCabinet::CLEAR_LOCK:
+		m_bClear = true;
+		break;
+	}
+
+	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
+	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
+	_float3				vDirection = { };
+
+	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vDirection);
+	if (*m_pLockState != CCabinet::CLEAR_LOCK)
+	{
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	}
+	else
+		if (!m_pModelCom->isFinished(0))
+		{
+			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+
+			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+		}
+
+
+
+	Get_SpecialBone_Rotation(); // for UI
 }
 
 CLock_Cabinet* CLock_Cabinet::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
