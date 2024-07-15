@@ -1807,9 +1807,9 @@ void CRagdoll_Physics::create_joint()
 		m_pClavicle_R_Joint = create_d6_joint(m_Chest, m_Arm_R, m_upperarm_r_idx_Bone, m_upperarm_r_idx);
 
 	// Upperarm to Lowerman
-	if (!m_pElbow_L_Joint)
+	if (!m_pElbow_L_Joint && m_vecBreakPartFilter[m_lowerarm_l_idx] == false)
 		m_pElbow_L_Joint = create_d6_joint(m_Arm_L, m_ForeArm_L, m_lowerarm_l_idx_Bone, m_lowerarm_l_idx);
-	if (!m_pElbow_R_Joint)
+	if (!m_pElbow_R_Joint && m_vecBreakPartFilter[m_lowerarm_r_idx] == false)
 		m_pElbow_R_Joint = create_d6_joint(m_Arm_R, m_ForeArm_R, m_lowerarm_r_idx_Bone, m_lowerarm_r_idx);
 
 	// Lowerarm to Hand
