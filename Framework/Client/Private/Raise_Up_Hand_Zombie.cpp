@@ -65,12 +65,10 @@ _bool CRaise_Up_Hand_Zombie::Execute(_float fTimeDelta)
 	MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() }; 
 	CZombie::POSE_STATE		ePoseState = { m_pBlackBoard->Get_AI()->Get_PoseState() };
 
-	if (CZombie::POSE_STATE::_UP != ePoseState)
-		return true;
-		
-	if (MONSTER_STATE::MST_IDLE != eMonsterState &&
-		MONSTER_STATE::MST_WALK != eMonsterState &&
-		MONSTER_STATE::MST_TURN != eMonsterState)
+	if (CZombie::POSE_STATE::_UP != ePoseState ||
+		(MONSTER_STATE::MST_IDLE != eMonsterState &&
+			MONSTER_STATE::MST_WALK != eMonsterState &&
+			MONSTER_STATE::MST_TURN != eMonsterState))
 	{
 		CModel* pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
 		pBody_Model->Set_Blend_IK(ZOMBIE_IK_L_HUMEROUS_RADIUS_TAG, 0.f);
@@ -78,6 +76,7 @@ _bool CRaise_Up_Hand_Zombie::Execute(_float fTimeDelta)
 		m_pBlackBoard->Get_AI()->Active_IK_Body(false);
 
 		m_fAccActiveTime = 0.f;
+		return true;
 	}
 
 	return true;
