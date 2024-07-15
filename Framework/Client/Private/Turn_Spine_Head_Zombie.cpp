@@ -40,16 +40,15 @@ _bool CTurn_Spine_Head_Zombie::Execute(_float fTimeDelta)
 	MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 	CZombie::POSE_STATE		ePoseState = { m_pBlackBoard->Get_AI()->Get_PoseState() };
 	_bool					isLookTarget = { m_pBlackBoard->Is_LookTarget() };
+	_float					fDistanceToPlayer = {};
+	if (false == m_pBlackBoard->Compute_Distance_To_Player_World(&fDistanceToPlayer))
+		return false;
 
-	if (MONSTER_STATE::MST_IDLE != eMonsterState &&
-		MONSTER_STATE::MST_WALK != eMonsterState &&
-		MONSTER_STATE::MST_TURN != eMonsterState)
-		return true;
-
-	if (CZombie::POSE_STATE::_UP != ePoseState)
-		return true;
-
-	if (true == isLookTarget)
+	if (m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fRecognitionRange >= fDistanceToPlayer &&
+		(MONSTER_STATE::MST_IDLE == eMonsterState ||
+		MONSTER_STATE::MST_WALK == eMonsterState ||
+		MONSTER_STATE::MST_TURN == eMonsterState) &&
+		CZombie::POSE_STATE::_UP == ePoseState)
 	{
 		m_fMaxAngle += XMConvertToRadians(90.f) * fTimeDelta;
 		if (m_fMaxAngle > XMConvertToRadians(100.f))

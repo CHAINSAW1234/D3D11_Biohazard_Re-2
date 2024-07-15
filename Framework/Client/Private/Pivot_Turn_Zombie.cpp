@@ -80,9 +80,9 @@ void CPivot_Turn_Zombie::Exit()
 	//	CModel*				pBody_Model = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY) };
 	//	if (nullptr == pBody_Model)
 	//		return;
-
-	//	pBody_Model->Set_BlendWeight(static_cast<_uint>(m_eBasePlayingIndex), 1.f, 10.f);
-	//	pBody_Model->Set_BlendWeight(static_cast<_uint>(m_eBlendPlayingIndex), 0.f, 10.f);
+	//
+	//	pBody_Model->Set_BlendWeight(static_cast<_uint>(m_eBasePlayingIndex), 1.f, 60.f);
+	//	pBody_Model->Set_BlendWeight(static_cast<_uint>(m_eBlendPlayingIndex), 0.f, 60.f);
 }
 
 void CPivot_Turn_Zombie::Change_Animation(_float fTimeDelta)
@@ -181,18 +181,18 @@ void CPivot_Turn_Zombie::Change_Animation(_float fTimeDelta)
 	if (-1 == iBaseAnimIndex || -1 == iBlendAnimIndex)
 		return;
 
-	_float			fBlendRatio = { fminf((fAngleToTarget - XMConvertToRadians(90.f)) / XMConvertToRadians(90.f), XMConvertToRadians(90.f)) };
+	float			fBlendRatio = { fminf((fAngleToTarget - XMConvertToRadians(90.f)) / XMConvertToRadians(90.f), XMConvertToRadians(90.f)) };
 	_float			fDegree = { XMConvertToDegrees(fAngleToTarget)};
 
-	//pBodyModel->Change_Animation(static_cast<_uint>(m_eBasePlayingIndex), TEXT("Ordinary_PivotTurn"), iBaseAnimIndex);
-	//pBodyModel->Change_Animation(static_cast<_uint>(m_eBlendPlayingIndex), TEXT("Ordinary_PivotTurn"), iBlendAnimIndex);
-	//pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_eBasePlayingIndex), m_strBoneLayerTag);
-	//pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_eBlendPlayingIndex), m_strBoneLayerTag);
-	//pBodyModel->Set_BlendWeight(static_cast<_uint>(m_eBasePlayingIndex), 1.f - fBlendRatio, 20.f);
-	//pBodyModel->Set_BlendWeight(static_cast<_uint>(m_eBlendPlayingIndex), fBlendRatio, 20.f);
+	/*_pBodyModel->Change_Animation(static_cast<_uint>(m_eBasePlayingIndex), TEXT("Ordinary_PivotTurn"), iBaseAnimIndex);
+	pBodyModel->Change_Animation(static_cast<_uint>(m_eBlendPlayingIndex), TEXT("Ordinary_PivotTurn"), iBlendAnimIndex);
+	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_eBasePlayingIndex), m_strBoneLayerTag);
+	pBodyModel->Set_BoneLayer_PlayingInfo(static_cast<_uint>(m_eBlendPlayingIndex), m_strBoneLayerTag);
+	pBodyModel->Set_BlendWeight(static_cast<_uint>(m_eBasePlayingIndex), 1.f - fBlendRatio, 20.f);
+	pBodyModel->Set_BlendWeight(static_cast<_uint>(m_eBlendPlayingIndex), fBlendRatio, 20.f);
 
-	//pBodyModel->Set_TrackPosition(static_cast<_uint>(m_eBasePlayingIndex), 0.f, false);
-	//pBodyModel->Set_TrackPosition(static_cast<_uint>(m_eBlendPlayingIndex), 0.f, false);
+	pBodyModel->Set_TrackPosition(static_cast<_uint>(m_eBasePlayingIndex), 0.f, true);
+	pBodyModel->Set_TrackPosition(static_cast<_uint>(m_eBlendPlayingIndex), 0.f, true);*/
 
 	if (fBlendRatio > 0.5f)
 	{

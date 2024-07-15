@@ -40,7 +40,7 @@ protected:
 	unordered_map<wstring, unordered_set<_uint>>			m_LoopAnimIndicesLayer;
 
 	const PLAYING_INDEX				m_eBasePlayingIndex = { PLAYING_INDEX::INDEX_0 };
-	const PLAYING_INDEX				m_eBlendPlayingIndex = { PLAYING_INDEX::INDEX_1 };
+	const PLAYING_INDEX				m_eBlendPlayingIndex = { PLAYING_INDEX::INDEX_2 };
 
 	const wstring					m_strBoneLayerTag = { BONE_LAYER_DEFAULT_TAG };
 	const wstring					m_strAnimLayerTag = { TEXT("Ordinary_PivotTurn") };
