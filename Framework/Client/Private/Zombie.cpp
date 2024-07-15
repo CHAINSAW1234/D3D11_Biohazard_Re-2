@@ -428,7 +428,7 @@ void CZombie::Tick(_float fTimeDelta)
 						pPartObject->SetRagdoll(m_iIndex_CCT, vForce, eType);
 				}
 			}
-			else
+		/*	else
 			{
 				if(bDecalRay)
 				{
@@ -493,7 +493,7 @@ void CZombie::Tick(_float fTimeDelta)
 						m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
 					}
 				}
-			}
+			}*/
 
 			if (m_bBigAttack)
 			{
@@ -1502,7 +1502,7 @@ void CZombie::Perform_Skinning()
 
 				for (auto& i : NonHideIndex)
 				{
-					if (m_pBodyModel->Get_Mesh_Branch(i) != (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER)
+					//if (m_pBodyModel->Get_Mesh_Branch(i) != (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER)
 					{
 						m_pBodyModel->Bind_Resource_Skinning(i);
 						m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
