@@ -47,6 +47,7 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
             else if (1 == m_iWhich_Child)
             {
                 list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
                 _int iLastType = { -1 };
                 _int iMaxSize = { -1 };
 
@@ -71,9 +72,6 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
 
                 else if (iLastType == (_int)LAYOUT_TAB_TYPE::MINMAP_UI_TYPE)
                     m_eTabLayout_Type = LAYOUT_TAB_TYPE::INVEN_UI_TYPE;
-
-                else if (iLastType == (_int)LAYOUT_TAB_TYPE::INVEN_UI_TYPE)
-                    m_eTabLayout_Type = LAYOUT_TAB_TYPE::HINT_UI_TYPE;
             }
 
             else
@@ -89,11 +87,15 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
 
                     else if (pLayout->m_eTabLayout_Type == LAYOUT_TAB_TYPE::INVEN_UI_TYPE)
                         m_eTabLayout_Type = LAYOUT_TAB_TYPE::INVEN_UI_TYPE;
-
-                    else if (pLayout->m_eTabLayout_Type == LAYOUT_TAB_TYPE::HINT_UI_TYPE)
-                        m_eTabLayout_Type = LAYOUT_TAB_TYPE::HINT_UI_TYPE;
                 }
             }
+        }
+
+        else if (CustomUIDesc->wstrFileName == TEXT("UI_HintLayout"))
+        {
+            m_eLayout_Type = LAYOUT_TYPE::LAYOUT_TAB;
+
+            m_eTabLayout_Type = LAYOUT_TAB_TYPE::HINT_UI_TYPE;
         }
 
         else if (CustomUIDesc->wstrFileName == TEXT("UI_Layout_Key"))
@@ -115,6 +117,7 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
                 m_eTabLayout_Type = LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE;
             }
         }
+
     }
 
     if (LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE == m_eTabLayout_Type)
