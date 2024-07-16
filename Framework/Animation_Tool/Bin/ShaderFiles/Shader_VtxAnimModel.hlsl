@@ -300,8 +300,6 @@ PS_OUT PS_MAIN(PS_IN In)
 				{
 					if (distance < 0.1f)
 					{
-						/*decalColor = float4(0.5f, 0.0f, 0.0f, 0.f);
-						Out.vDiffuse = decalColor;*/
 						if(g_Hair == false)
 							discard;
 					}
@@ -318,8 +316,6 @@ PS_OUT PS_MAIN(PS_IN In)
 				{
 					if (distance < 0.3f)
 					{
-						/*decalColor = float4(0.5f, 0.0f, 0.0f, 0.f);
-						Out.vDiffuse = decalColor;*/
 						discard;
 					}
 					else
