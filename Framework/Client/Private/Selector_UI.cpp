@@ -56,22 +56,8 @@ HRESULT CSelector_UI::Initialize(void* pArg)
     Find_Player();
 
     /* Tool*/
-    m_fColorTimer_Limit = 1.f;
-    m_iEndingType = PLAY_BUTTON::PLAY_DEFAULT;
-    m_vColor[0].fBlender_Value = m_fBlending = 0.f;
-    m_isPlay = false;
-
-    m_vColor[0].isBlender = m_isBlending = true;
-    m_vColor[0].vColor = m_vCurrentColor = ALHPE_ZERO;
-    m_vColor[0].isColorChange = m_isColorChange = true;
-
-    /* Client*/
-    m_fOriginSize = m_pTransformCom->Get_Scaled();
-    m_isRender = false;
-
-    /* 1. Texture*/
-    m_wstrInteractive_Tag = m_wstrDefaultTexturComTag;
-    m_wstrNonInteractive_Tag = TEXT("Prototype_Component_Texture_Perspective_Selecter_Check"); 
+    if (FAILED(Change_Tool()))
+        return E_FAIL;
 
     return S_OK;
 }
@@ -99,6 +85,28 @@ HRESULT CSelector_UI::Render()
     return S_OK;
 }
 
+HRESULT CSelector_UI::Change_Tool()
+{
+    m_fColorTimer_Limit = 1.f;
+    m_iEndingType = PLAY_BUTTON::PLAY_DEFAULT;
+    m_vColor[0].fBlender_Value = m_fBlending = 0.f;
+    m_isPlay = false;
+
+    m_vColor[0].isBlender = m_isBlending = true;
+    m_vColor[0].vColor = m_vCurrentColor = ALHPE_ZERO;
+    m_vColor[0].isColorChange = m_isColorChange = true;
+
+    /* Client*/
+    m_fOriginSize = m_pTransformCom->Get_Scaled();
+    m_isRender = false;
+
+    /* 1. Texture*/
+    m_wstrInteractive_Tag = m_wstrDefaultTexturComTag;
+    m_wstrNonInteractive_Tag = TEXT("Prototype_Component_Texture_Perspective_Selecter_Check");
+
+    return S_OK;
+}
+
 CGameObject* CSelector_UI::Destroy_Selector()
 {
     m_isOutDistance = true;
@@ -121,53 +129,41 @@ void CSelector_UI::Select_Type(_bool _Interact, _float4 _objPos)
 
 void CSelector_UI::Calc_Position()
 {
-    if (true == m_IsChild)
-    {
-        if (nullptr == m_pSelectorParent)
-            return;
+    _float fDistance = Distance_Player(m_vTargetPos);
 
-        CTransform* pParent = static_cast<CTransform*>(m_pSelectorParent->Get_Component(g_strTransformTag));
+    _vector                         vTargetPos
+        = { XMLoadFloat4(&m_vTargetPos) };
 
-        m_pTransformCom->Set_State(CTransform::STATE_POSITION, pParent->Get_State_Float4(CTransform::STATE_POSITION));
-    }
+    _matrix							ViewMatrix
+        = { m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_VIEW) };
 
-    else if(false == m_IsChild)
-    {
-        _float fDistance = Distance_Player(m_vTargetPos);
+    _matrix							ProjMatrix
+        = { m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_PROJ) };
 
-        _vector                         vTargetPos
-            = { XMLoadFloat4(&m_vTargetPos) };
+    _matrix							VPMatrix
+        = { ViewMatrix * ProjMatrix };
 
-        _matrix							ViewMatrix
-            = { m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_VIEW) };
+    _vector                         vViewPos
+        = { XMVector3TransformCoord(vTargetPos, ViewMatrix) };
 
-        _matrix							ProjMatrix
-            = { m_pGameInstance->Get_Transform_Matrix(CPipeLine::D3DTS_PROJ) };
+    m_isCull
+        = { XMVectorGetZ(vViewPos) < 0.f };
 
-        _matrix							VPMatrix
-            = { ViewMatrix * ProjMatrix };
+    _vector			                vProjSpacePosition
+        = { XMVector3TransformCoord(vTargetPos, VPMatrix) };
 
-        _vector                         vViewPos
-            = { XMVector3TransformCoord(vTargetPos, ViewMatrix) };
+    _matrix                          OrthoProjMatrix
+        = { XMLoadFloat4x4(&m_ProjMatrix) };
 
-        m_isCull
-            = { XMVectorGetZ(vViewPos) < 0.f };
+    _matrix                         OrthoProjMatrixInv
+        = { XMMatrixInverse(nullptr, OrthoProjMatrix) };
 
-        _vector			                vProjSpacePosition
-            = { XMVector3TransformCoord(vTargetPos, VPMatrix) };
-
-        _matrix                          OrthoProjMatrix
-            = { XMLoadFloat4x4(&m_ProjMatrix) };
-
-        _matrix                         OrthoProjMatrixInv
-            = { XMMatrixInverse(nullptr, OrthoProjMatrix) };
-
-        _vector                         vOrthoWorldPosition
-            = { XMVector3TransformCoord(vProjSpacePosition, OrthoProjMatrixInv) };
+    _vector                         vOrthoWorldPosition
+        = { XMVector3TransformCoord(vProjSpacePosition, OrthoProjMatrixInv) };
 
 
-        m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(XMVectorGetX(vOrthoWorldPosition), XMVectorGetY(vOrthoWorldPosition), 0.5f, 1.f));
-    }
+    m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSet(XMVectorGetX(vOrthoWorldPosition), XMVectorGetY(vOrthoWorldPosition), 0.5f, 1.f));
+
 
     if (false == m_isCull)
     {

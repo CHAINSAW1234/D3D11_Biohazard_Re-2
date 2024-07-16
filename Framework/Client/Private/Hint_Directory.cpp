@@ -59,6 +59,11 @@ HRESULT CHint_Directory::Render()
 	return S_OK;
 }
 
+HRESULT CHint_Directory::Change_Tool()
+{
+	return S_OK;
+}
+
 CHint_Directory* CHint_Directory::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CHint_Directory* pInstance = new CHint_Directory(pDevice, pContext);

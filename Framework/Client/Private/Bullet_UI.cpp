@@ -116,27 +116,11 @@ HRESULT CBullet_UI::Initialize(void* pArg)
 
     /* Find ÇÔ¼ö */
     Find_Crosshair();
+
     Find_Player();
 
-    /* Tool */
-    {
-        m_isRender = false;
-        m_isPlay = false;
-
-        m_isBlending = true;
-        m_vColor[0].isColorChange = m_isColorChange = true;
-        m_vColor[0].vColor = m_vCurrentColor = ALPHA_ZERO;
-
-        m_fOrigin_Blending = m_vColor[0].fBlender_Value = m_fBlending;
-        m_vColor[0].isBlender = m_isBlending = true;
-
-        m_isLightMask = false;
-        m_isMask = true;
-        m_fMaskControl.x = 0.3f;
-        m_fMaskControl.y = 0.4f;
-
-        m_iCurrentBullet = 1;
-    }
+    if (FAILED(Change_Tool()))
+        return E_FAIL;
 
     return S_OK;
 }
@@ -233,6 +217,28 @@ HRESULT CBullet_UI::Render()
         return E_FAIL;
 
     return S_OK; 
+}
+
+HRESULT CBullet_UI::Change_Tool()
+{
+    m_isRender = false;
+    m_isPlay = false;
+
+    m_isBlending = true;
+    m_vColor[0].isColorChange = m_isColorChange = true;
+    m_vColor[0].vColor = m_vCurrentColor = ALPHA_ZERO;
+
+    m_fOrigin_Blending = m_vColor[0].fBlender_Value = m_fBlending;
+    m_vColor[0].isBlender = m_isBlending = true;
+
+    m_isLightMask = false;
+    m_isMask = true;
+    m_fMaskControl.x = 0.3f;
+    m_fMaskControl.y = 0.4f;
+
+    m_iCurrentBullet = 1;
+
+    return S_OK;
 }
 
 void CBullet_UI::Mission_Complete()

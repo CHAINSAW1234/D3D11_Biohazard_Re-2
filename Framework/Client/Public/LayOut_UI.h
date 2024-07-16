@@ -54,6 +54,7 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT Change_Tool() override;
 
 public :
 	void							Set_Typing_LayOut(_bool _isHover, _int _hoverType)

@@ -120,25 +120,6 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
 
     }
 
-    if (LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE == m_eTabLayout_Type)
-    {
-        m_isMask = m_Mask[0].isMask = true;
-        m_fMaskControl = m_Mask[0].fMaskControl = _float2(0.652f, 0.428f);
-        m_vColor[0].vColor.w = 0.8f;
-
-        Find_TabWindow();
-        m_isMainRender = m_pTab_Window->Get_MainRender_Ptr();
-
-    }
-
-    if (!m_vecTextBoxes.empty())
-    {
-        for (auto& iter : m_vecTextBoxes)
-        {
-            iter->Set_FontColor(ALPHA_ZERO);
-        }
-    }
-
     if (m_eTabLayout_Type == LAYOUT_TAB_TYPE::INVEN_UI_TYPE)
     {
         if (!m_vecTextBoxes.empty())
@@ -158,6 +139,15 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
             }
         }
     }
+
+    if (LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE == m_eTabLayout_Type)
+    {
+        Find_TabWindow();
+        m_isMainRender = m_pTab_Window->Get_MainRender_Ptr();
+    }
+
+    if (FAILED(Change_Tool()))
+        return E_FAIL;
 
     m_isPrevRender = m_isRender = false;
 
@@ -196,6 +186,26 @@ HRESULT CLayOut_UI::Render()
 {
     if (FAILED(__super::Render()))
         return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CLayOut_UI::Change_Tool()
+{
+    if (LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE == m_eTabLayout_Type)
+    {
+        m_isMask = m_Mask[0].isMask = true;
+        m_fMaskControl = m_Mask[0].fMaskControl = _float2(0.652f, 0.428f);
+        m_vColor[0].vColor.w = 0.8f;
+    }
+
+    if (!m_vecTextBoxes.empty())
+    {
+        for (auto& iter : m_vecTextBoxes)
+        {
+            iter->Set_FontColor(ALPHA_ZERO);
+        }
+    }
 
     return S_OK;
 }

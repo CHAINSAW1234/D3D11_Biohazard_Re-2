@@ -17,7 +17,7 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-
+	virtual HRESULT Change_Tool() override;
 public:
 	_bool Get_IsFilled() const {
 		return m_isFilled;

@@ -154,6 +154,11 @@ HRESULT CTitle_UI::Render()
     return S_OK;
 }
 
+HRESULT CTitle_UI::Change_Tool()
+{
+    return S_OK;
+}
+
 void CTitle_UI::TitleGame_Start()
 {
     /* 만약 로고의 플레이가 완료 되었다면, */
