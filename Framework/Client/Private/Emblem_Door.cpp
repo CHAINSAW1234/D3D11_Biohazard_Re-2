@@ -74,12 +74,13 @@ void CEmblem_Door::Late_Tick(_float fTimeDelta)
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
 		break;
 	}
+	m_pTransformCom->Rotation(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), XMConvertToRadians(360.f));
 
 	_float4x4			mWorldMatrix = m_pTransformCom->Get_WorldMatrix();
 
 	mWorldMatrix._41 += 95.f;
 	mWorldMatrix._42 += 95.f;
-	mWorldMatrix._43 += 1.f;
+	mWorldMatrix._43 -= 5.f;
 
 	_matrix			WorldMatrix = { };
 	switch (*m_pDoorState)
@@ -93,7 +94,7 @@ void CEmblem_Door::Late_Tick(_float fTimeDelta)
 		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 		break;
 	case CDoor::ONEDOOR_STATIC:
-		WorldMatrix = { mWorldMatrix * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
+		WorldMatrix = { mWorldMatrix * XMLoadFloat4x4(m_pSocketMatrix_01) * (m_pParentsTransform->Get_WorldMatrix()) };
 		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 		break;
 	}
@@ -122,6 +123,79 @@ HRESULT CEmblem_Door::Render()
 
 
 	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+
+	for (auto& i : NonHideIndices)
+	{
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+		{
+			_bool isAlphaTexture = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isAlphaTexture = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
+		{
+			_bool isAOTexture = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isAOTexture = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+
+
+		if (FAILED(m_pShaderCom->Begin(0)))
+			return E_FAIL;
+
+		m_pModelCom->Render(static_cast<_uint>(i));
+	}
+	
+	m_pTransformCom->Rotation(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP),XMConvertToRadians(180.f));
+	_float4x4			mWorldMatrix = m_pTransformCom->Get_WorldMatrix();
+	
+	mWorldMatrix._41 += 95.f;
+	mWorldMatrix._42 += 95.f;
+
+	_matrix			WorldMatrix = { };
+	switch (*m_pDoorState)
+	{
+	case CDoor::ONEDOOR_OPEN_L:
+		WorldMatrix = { mWorldMatrix * XMLoadFloat4x4(m_pSocketMatrix_01) * (m_pParentsTransform->Get_WorldMatrix()) };
+		m_WorldMatrix = WorldMatrix;
+		break;
+	case CDoor::ONEDOOR_OPEN_R:
+		WorldMatrix = { mWorldMatrix * XMLoadFloat4x4(m_pSocketMatrix_01) * (m_pParentsTransform->Get_WorldMatrix()) };
+		m_WorldMatrix = WorldMatrix;
+		break;
+	case CDoor::ONEDOOR_STATIC:
+		WorldMatrix = { mWorldMatrix * XMLoadFloat4x4(m_pSocketMatrix_01) * (m_pParentsTransform->Get_WorldMatrix()) };
+		m_WorldMatrix = WorldMatrix;
+		break;
+	}
+
+
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
+
+	NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 
 	for (auto& i : NonHideIndices)
 	{

@@ -66,7 +66,8 @@ HRESULT CDoor::Initialize(void* pArg)
 
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;
-	
+	if (m_tagPropDesc.tagDoor.iLockType != 0)
+		m_bLock = false;
 	return S_OK;
 }
 
@@ -293,6 +294,7 @@ HRESULT CDoor::Add_PartObjects()
 	/* 0 하트 1 스페이스 2 클로버 3 다이아*/
 	if (true == BodyDesc.isEmblem && m_bLock)
 	{
+		/* Emblem*/
 		CPartObject* pEmblem = { nullptr };
 		CEmblem_Door::BODY_EMBLEM_DOOR EmblemDesc;
 
@@ -311,6 +313,14 @@ HRESULT CDoor::Add_PartObjects()
 		MarkDesc.eEmblemType = static_cast<_ubyte>(m_iEmblemType);
 		MarkDesc.pDoorState = &m_eOneState;
 
+		/* Key*/
+		CPartObject* pKey;
+
+		CKey_Door::KEY_DOOR KeyDesc;
+
+		KeyDesc.pParentsTransform = m_pTransformCom;
+		KeyDesc.EmblemAnim = &m_eEmblemAnim_Type; /* emblem Anim */
+
 		switch (m_iEmblemType)
 		{
 		case (_uint)CDoor::EMBLEM_TYPE::HEART_EMBLEM:
@@ -318,32 +328,15 @@ HRESULT CDoor::Add_PartObjects()
 			MarkDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_504_dooremblemmark01a_heart");
 
 			break;
+
 		case (_uint)CDoor::EMBLEM_TYPE::SPADE_EMBLEM:
-		{
-
-			/* Key*/
-			CPartObject* pKey;
-
-			CKey_Door::KEY_DOOR KeyDesc;
-
-			CEmblem_Door* pEmblemObj = static_cast<CEmblem_Door*>(m_PartObjects[PART_EMBLEM]);
-			KeyDesc.pParentsTransform = m_pTransformCom;
-			KeyDesc.pParentWorldMatrix = pEmblemObj->Get_WorldMatrix();
-			KeyDesc.EmblemAnim = &m_eEmblemAnim_Type; /* emblem Anim */
-
 			KeyDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_103_spadekey01a");
-			pKey = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_KeyDoor"), &KeyDesc));
-			if (nullptr == pKey)
-				return E_FAIL;
-			else
-				m_PartObjects[PART_KEY] = pKey;
-
 			EmblemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_00md_Anim");
 			MarkDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_504_dooremblemmark01a_spade");
 
-		}
 
 			break;
+
 		case (_uint)CDoor::EMBLEM_TYPE::CLOVER_EMBLEM:
 			EmblemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_clover_Anim");
 			MarkDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_504_dooremblemmark01a_clover");
@@ -351,32 +344,15 @@ HRESULT CDoor::Add_PartObjects()
 
 
 			break;
+
 		case (_uint)CDoor::EMBLEM_TYPE::DIA_EMBLEM:
-			/* Key*/
-			CPartObject* pKey;
-
-			CKey_Door::KEY_DOOR KeyDesc;
-
-			CEmblem_Door* pEmblemObj = static_cast<CEmblem_Door*>(m_PartObjects[PART_EMBLEM]);
-			KeyDesc.pParentsTransform = m_pTransformCom;
-			KeyDesc.pParentWorldMatrix = pEmblemObj->Get_WorldMatrix();
-			KeyDesc.EmblemAnim = &m_eEmblemAnim_Type; /* emblem Anim */
-
 			KeyDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_140_diakey01a");
-
-			pKey = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_KeyDoor"), &KeyDesc));
-			if (nullptr == pKey)
-				return E_FAIL;
-			else
-				m_PartObjects[PART_KEY] = pKey;
-
 			EmblemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_dia_Anim");
 			MarkDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_504_dooremblemmark01a_dia");
 
 
 			break;
 		}
-		pMark = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Mark_EmblemDoor"), &EmblemDesc));
 		pEmblem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_EmblemDoor"), &EmblemDesc));
 
 		if (nullptr == pEmblem)
@@ -384,13 +360,29 @@ HRESULT CDoor::Add_PartObjects()
 		else
 			m_PartObjects[PART_EMBLEM] = pEmblem;
 
+		pMark = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Mark_EmblemDoor"), &MarkDesc));
 	
 		if (nullptr == pMark)
 			return E_FAIL;
 		else
 			m_PartObjects[PART_EMBLEM_MARK] = pMark;
 
-	
+		if (m_iEmblemType == (_int)CDoor::EMBLEM_TYPE::SPADE_EMBLEM ||
+			m_iEmblemType == (_int)CDoor::EMBLEM_TYPE::DIA_EMBLEM)
+		{
+			CEmblem_Door* pEmblemObj = static_cast<CEmblem_Door*>(m_PartObjects[PART_EMBLEM]);
+			KeyDesc.pParentWorldMatrix = pEmblemObj->Get_WorldMatrix();
+			pKey = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_KeyDoor"), &KeyDesc));
+			if (nullptr == pKey)
+				return E_FAIL;
+			else
+				m_PartObjects[PART_KEY] = pKey;
+		}
+		else
+			m_PartObjects[PART_KEY] = nullptr;
+
+
+
 	}
 	
 
@@ -408,20 +400,31 @@ HRESULT CDoor::Initialize_PartObjects()
 				CDoor::EMBLEM_TYPE::DIA_EMBLEM == static_cast<CDoor::EMBLEM_TYPE>(m_iEmblemType))
 			{
 				/* 1. Emblem*/
-				CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
+				CModel* pBodyModel = { static_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
 
-				CEmblem_Door* pItem1 = dynamic_cast<CEmblem_Door*>(m_PartObjects[PART_EMBLEM]);
+				CEmblem_Door* pItem1 = static_cast<CEmblem_Door*>(m_PartObjects[PART_EMBLEM]);
 				_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("_00")) };
 				pItem1->Set_Socket(pCombinedMatrix);
 				pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("_01")) };
 				pItem1->Set_Socket01(pCombinedMatrix);
 
 				/* 2. Key */
-				CModel* pEmblemModel = { dynamic_cast<CModel*>(m_PartObjects[PART_EMBLEM]->Get_Component(TEXT("Com_Body_Model"))) };
+				if (CDoor::EMBLEM_TYPE::SPADE_EMBLEM == static_cast<CDoor::EMBLEM_TYPE>(m_iEmblemType)|| CDoor::EMBLEM_TYPE::DIA_EMBLEM == static_cast<CDoor::EMBLEM_TYPE>(m_iEmblemType))
+				{
+					CModel* pEmblemModel = { static_cast<CModel*>(m_PartObjects[PART_EMBLEM]->Get_Component(TEXT("Com_Body_Model"))) };
 
-				CKey_Door* pKey = dynamic_cast<CKey_Door*>(m_PartObjects[PART_KEY]);
-				_float4x4* pCombinedMatrixKey = { const_cast<_float4x4*>(pEmblemModel->Get_CombinedMatrix("ItemSet")) };
-				pKey->Set_Socket(pCombinedMatrixKey);
+					CKey_Door* pKey = static_cast<CKey_Door*>(m_PartObjects[PART_KEY]);
+					_float4x4* pCombinedMatrixKey = { const_cast<_float4x4*>(pEmblemModel->Get_CombinedMatrix("ItemSet")) };
+					pKey->Set_Socket(pCombinedMatrixKey);
+				}
+
+				/*mark*/
+				CMark_Door* pMark = static_cast<CMark_Door*>(m_PartObjects[PART_EMBLEM_MARK]);
+				pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("_00")) };
+				pMark->Set_Socket(pCombinedMatrix);
+				pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("_01")) };
+				pMark->Set_Socket01(pCombinedMatrix);
+
 			}
 	}
 	

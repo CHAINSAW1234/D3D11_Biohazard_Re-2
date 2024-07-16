@@ -48,6 +48,7 @@ HRESULT CKey_Door::Initialize(void* pArg)
 
 void CKey_Door::Tick(_float fTimeDelta)
 {
+	m_ParentWorldMatirx2 = m_pParentWorldMatrix;
 	/* Static ป๓ลย */
 	if (DOWN == m_pGameInstance->Get_KeyState('1'))
 		*m_pEmblemAnim = 0;
@@ -73,10 +74,10 @@ void CKey_Door::Late_Tick(_float fTimeDelta)
 	if (m_bDead)
 		return;
 
+	
 	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * XMLoadFloat4x4(m_pParentWorldMatrix) };
 
-	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
-
+	m_WorldMatrix = WorldMatrix;
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
@@ -100,6 +101,55 @@ HRESULT CKey_Door::Render()
 
 	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 
+	for (auto& i : NonHideIndices)
+	{
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
+			return E_FAIL;
+
+
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
+		{
+			_bool isAlphaTexture = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isAlphaTexture = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaTexture", &isAlphaTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+
+		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AOTexture", static_cast<_uint>(i), aiTextureType_SHININESS)))
+		{
+			_bool isAOTexture = false;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+		else
+		{
+			_bool isAOTexture = true;
+			if (FAILED(m_pShaderCom->Bind_RawValue("g_isAOTexture", &isAOTexture, sizeof(_bool))))
+				return E_FAIL;
+		}
+
+
+		if (FAILED(m_pShaderCom->Begin(0)))
+			return E_FAIL;
+
+		m_pModelCom->Render(static_cast<_uint>(i));
+	}
+
+	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * XMLoadFloat4x4(m_ParentWorldMatirx2) };
+	m_WorldMatrix = WorldMatrix;
+	
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
+
+	NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 	for (auto& i : NonHideIndices)
 	{
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
