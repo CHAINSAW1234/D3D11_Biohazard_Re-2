@@ -37,7 +37,7 @@ HRESULT CPart_Breaker_Zombie::Initialize(void* pArg)
 
 	m_HPs.resize(static_cast<_uint>(BREAK_PART::_END));
 	for (auto& iHP : m_HPs)
-		iHP = 20;
+		iHP = 2;
 
 	m_isBreakParts.resize(static_cast<_uint>(BREAK_PART::_END));
 
