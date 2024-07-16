@@ -1,0 +1,110 @@
+[
+  {
+    "ITEM_READ_TYPE": "사건 일지",
+    "ProtoTypeTag": "Prototype_Component_Texture_ReadType_Incident_log2"
+  },
+  {
+    "ITEM_READ_TYPE": "사건 일지",
+    "ProtoTypeTag": "Prototype_Component_Texture_ReadType_Incident_log3"
+  },
+  {
+    "ITEM_READ_TYPE": "사건 일지",
+    "ProtoTypeTag": "Prototype_Component_Texture_ReadType_Incident_log4"
+  },
+  {
+    "ITEM_READ_TYPE": "사건 일지",
+    "ProtoTypeTag": "Prototype_Component_Texture_ReadType_Incident_log5"
+  },
+  {
+    "ITEM_READ_TYPE": "작전 보고서",
+    "ProtoTypeTag": "Prototype_Component_Texture_Operate_Report2"
+  },
+  {
+    "ITEM_READ_TYPE": "작전 보고서",
+    "ProtoTypeTag": "Prototype_Component_Texture_Operate_Report3"
+  },
+  {
+    "ITEM_READ_TYPE": "신입의 첫 번째 과제",
+    "ProtoTypeTag": "Prototype_Component_Texture_Task2"
+  },
+  {
+    "ITEM_READ_TYPE": "신입의 첫 번째 과제",
+    "ProtoTypeTag": "Prototype_Component_Texture_Task3"
+  },
+  {
+    "ITEM_READ_TYPE": "신입의 첫 번째 과제",
+    "ProtoTypeTag": "Prototype_Component_Texture_Task4"
+  },
+  {
+    "ITEM_READ_TYPE": "신입의 첫 번째 과제",
+    "ProtoTypeTag": "Prototype_Component_Texture_Task5"
+  },
+  {
+    "ITEM_READ_TYPE": "약초의 의학적 효능",
+    "ProtoTypeTag": "Prototype_Component_Texture_Medicinal2"
+  },
+  {
+    "ITEM_READ_TYPE": "약초의 의학적 효능",
+    "ProtoTypeTag": "Prototype_Component_Texture_Medicinal3"
+  },
+  {
+    "ITEM_READ_TYPE": "약초의 의학적 효능",
+    "ProtoTypeTag": "Prototype_Component_Texture_Medicinal4"
+  },
+  {
+    "ITEM_READ_TYPE": "화약 사용",
+    "ProtoTypeTag": "Prototype_Component_Texture_Gunpowder_Note2"
+  },
+  {
+    "ITEM_READ_TYPE": "화약 사용",
+    "ProtoTypeTag": "Prototype_Component_Texture_Gunpowder_Note3"
+  },
+  {
+    "ITEM_READ_TYPE": "물품 보관함 단말기 관련 쪽지",
+    "ProtoTypeTag": "Prototype_Component_Texture_Fix_Lock_Note2"
+  },
+  {
+    "ITEM_READ_TYPE": "휴대용 금고 지침",
+    "ProtoTypeTag": "Prototype_Component_Texture_Portable_Safe2"
+  },
+  {
+    "ITEM_READ_TYPE": "내부용 쪽지",
+    "ProtoTypeTag": "Prototype_Component_Texture_Safe_PassWard_Note2"
+  },
+  {
+    "ITEM_READ_TYPE": "내부용 쪽지",
+    "ProtoTypeTag": "Prototype_Component_Texture_Safe_PassWard_Note3"
+  },
+  {
+    "ITEM_READ_TYPE": "만일의 생존자에게",
+    "ProtoTypeTag": "Prototype_Component_Texture_ReadType_Ricker2"
+  },
+  {
+    "ITEM_READ_TYPE": "만일의 생존자에게",
+    "ProtoTypeTag": "Prototype_Component_Texture_ReadType_Ricker3"
+  },
+  {
+    "ITEM_READ_TYPE": "만일의 생존자에게",
+    "ProtoTypeTag": "Prototype_Component_Texture_ReadType_Ricker4"
+  },
+  {
+    "ITEM_READ_TYPE": "가이드 책자",
+    "ProtoTypeTag": "Prototype_Component_Texture_PamphletNote2"
+  },
+  {
+    "ITEM_READ_TYPE": "가이드 책자",
+    "ProtoTypeTag": "Prototype_Component_Texture_PamphletNote3"
+  },
+  {
+    "ITEM_READ_TYPE": "가이드 책자",
+    "ProtoTypeTag": "Prototype_Component_Texture_PamphletNote4"
+  },
+  {
+    "ITEM_READ_TYPE": "경관의 노트",
+    "ProtoTypeTag": "Prototype_Component_Texture_ReadType_Police_Note1"
+  },
+  {
+    "ITEM_READ_TYPE": "경관의 노트",
+    "ProtoTypeTag": "Prototype_Component_Texture_ReadType_Police_Note2"
+  }
+]

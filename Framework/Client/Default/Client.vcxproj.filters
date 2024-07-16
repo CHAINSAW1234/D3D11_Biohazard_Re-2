@@ -742,6 +742,9 @@
     <Filter Include="02.GameObjects\Effect\Grenade_Explosion">
       <UniqueIdentifier>{40ad2d9f-fe82-4c4b-902a-c971bae6be79}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display\Display_Background">
+      <UniqueIdentifier>{7804f4df-3fdb-4446-9edd-c649c5760041}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">

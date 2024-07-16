@@ -3,6 +3,7 @@
 #include "Hint.h"
 
 
+constexpr _uint	 MAX_DOCUMENT = 8;
 
 
 CHint::CHint(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -32,6 +33,9 @@ HRESULT CHint::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	if (FAILED(Load_DocumentINFO()))
+		return E_FAIL;
+
 	if (FAILED(Create_Display_Blinde()))
 		return E_FAIL;
 
@@ -57,8 +61,16 @@ void CHint::Start()
 	for (auto& iter : m_vecDirectory)
 	{
 		iter->Move(fMove);
-		fMove += _float3{ 0.f, -23.5f, 0.f };
+		fMove += _float3{ 0.f, -58.f, 0.f };
 	}
+
+#pragma region 테스트용
+	Acquire_Document(ITEM_READ_TYPE::INCIDENT_LOG_NOTE); //사건일지
+	Acquire_Document(ITEM_READ_TYPE::OPERATE_REPORT_NOTE); //작전보고서
+	Acquire_Document(ITEM_READ_TYPE::OFFICER_NOTE); 
+	Acquire_Document(ITEM_READ_TYPE::GUNPOWDER_NOTE);
+#pragma endregion
+
 }
 
 void CHint::Tick(_float fTimeDelta)
@@ -66,6 +78,8 @@ void CHint::Tick(_float fTimeDelta)
 	if (true == m_bDead)
 		return;
 
+	Directory_Seting();
+	Hoverd_Highlight();
 }
 
 void CHint::Late_Tick(_float fTimeDelta)
@@ -93,25 +107,116 @@ HRESULT CHint::Render()
 	return S_OK;
 }
 
-void CHint::Set_Dead(_bool bDead)
+void CHint::Directory_Seting()
 {
-	m_bDead = bDead;
-
-	m_pHighlighter->Set_Dead(bDead);
-
-	for (_uint i = 0; i < 8; i++)
+	//아이템이 8개 미만이면 현재 어떤놈 먹었는지 기준으로 Directory를 정해준다
+	if (MAX_DOCUMENT > m_mapAcqDoc[m_eCurrentDC].size())
 	{
-		m_vecDirectory[i]->Set_Dead(bDead);
+		for (_uint i = 0; i < m_mapAcqDoc[m_eCurrentDC].size(); i++)
+		{
+			ITEM_READ_TYPE eIRT = m_mapAcqDoc[m_eCurrentDC][i];
+			wstring wstrName = m_mapDocumentInfo[eIRT].wstrName;
+			m_vecDirectory[i]->Set_Directory(eIRT, wstrName);
+		}
 	}
 
-	//m_pDisplay->Set_Dead(bDead);
+	//아니면 최대 갯수 기준으로
+	else
+	{
+		_int iStartnum = static_cast<int>(m_iCur_TopDoument);
+		for (_uint i = 0; i < MAX_DOCUMENT; i++)
+		{
+			ITEM_READ_TYPE eIRT = m_mapAcqDoc[m_eCurrentDC][iStartnum + i];
+			wstring wstrName = m_mapDocumentInfo[eIRT].wstrName;
+			m_vecDirectory[i]->Set_Directory(eIRT, wstrName);
+			iStartnum++;
+		}
+	}
+}
+
+void CHint::Hoverd_Highlight()
+{
+	if (MAX_DOCUMENT >= m_mapAcqDoc[m_eCurrentDC].size())
+	{
+		for (_uint i = 0; i < m_mapAcqDoc[m_eCurrentDC].size(); i++)
+		{
+			if (true == m_vecDirectory[i]->IsMouseHover())
+			{
+				m_pHL_Trans->Set_State(CTransform::STATE_POSITION, m_vecDirectory[i]->GetPosition());
+				ITEM_READ_TYPE eIRT = m_vecDirectory[i]->Get_DirectoryType();
+				DOCUMENT_INFO DocumentInfo = m_mapDocumentInfo[eIRT];
+				m_pDisplay->Set_Display(eIRT, 0, DocumentInfo.fPosition, DocumentInfo.fSize);
+			}
+		}
+	}
+
+	else
+	{
+		for (_uint i = 0; i < MAX_DOCUMENT; i++)
+		{
+			if (true == m_vecDirectory[i]->IsMouseHover())
+			{
+				m_pHL_Trans->Set_State(CTransform::STATE_POSITION, m_vecDirectory[i]->GetPosition());
+				ITEM_READ_TYPE eIRT = m_vecDirectory[i]->Get_DirectoryType();
+				DOCUMENT_INFO DocumentInfo = m_mapDocumentInfo[eIRT];
+				m_pDisplay->Set_Display(eIRT, 0, DocumentInfo.fPosition, DocumentInfo.fSize);
+			}
+		}
+	}
+}
+
+void CHint::Set_Dead(_bool bDead)
+{
+	m_bDead = bDead;		
+
+	if (0 != m_mapAcqDoc.size()) {
+		m_pHighlighter->Set_Dead(bDead);
+		m_pHL_Trans->Set_State(CTransform::STATE_POSITION, m_vecDirectory[0]->GetPosition());
+		m_iCur_TopDoument = m_mapAcqDoc[m_eCurrentDC][0];
+	}
+		
+	if (false == bDead)
+	{
+		if (m_mapAcqDoc[m_eCurrentDC].size() >= MAX_DOCUMENT)
+		{
+			for (_uint i = 0; i < MAX_DOCUMENT; i++)
+			{
+				m_vecDirectory[i]->Set_Dead(false);
+				m_vecDirectory[i]->Set_Directory(m_mapAcqDoc[m_eCurrentDC][i], m_mapDocumentInfo[m_mapAcqDoc[m_eCurrentDC][i]].wstrName);
+			}
+		}
+		else
+		{
+			for (size_t i = 0; i < m_mapAcqDoc[m_eCurrentDC].size(); i++)
+			{
+				m_vecDirectory[i]->Set_Dead(false);
+				m_vecDirectory[i]->Set_Directory(m_mapAcqDoc[m_eCurrentDC][i], m_mapDocumentInfo[m_mapAcqDoc[m_eCurrentDC][i]].wstrName);
+			}
+		}
+	} 
+
+	else{
+		m_eCurrentDC = POLICE;
+		for (auto& iter : m_vecDirectory) 
+		{
+			iter->Set_Dead(true);
+		}
+	}
+
+	m_pDisplay->Set_Dead(bDead);
+
+	ITEM_READ_TYPE eIRT = m_vecDirectory[0]->Get_DirectoryType();
+	DOCUMENT_INFO DocumentInfo = m_mapDocumentInfo[eIRT];
+	m_pDisplay->Set_Display(eIRT, 0, DocumentInfo.fPosition, DocumentInfo.fSize);
 
 	m_pDisplay_Blinde->Set_Dead(bDead);
 }
 
-void CHint::Acquire_Document(ITEM_NUMBER eAcquire_Document)
+void CHint::Acquire_Document(ITEM_READ_TYPE eAcquire_Document)
 {
+	DOCUMENT_CLASSIFY eDC = Document_Classify_ByNumber(eAcquire_Document);
 
+	m_mapAcqDoc[eDC].push_back(eAcquire_Document);
 }
 
 HRESULT CHint::Bind_ShaderResources()
@@ -140,6 +245,59 @@ HRESULT CHint::Bind_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CHint::Load_DocumentINFO()
+{
+	//"../Bin/DataFiles/Item_Discription/Document_INFO.json"
+
+	 // JSON 파일 열기
+	FILE* fp;
+	errno_t err = fopen_s(&fp, "../Bin/DataFiles/Item_Discription/Document_INFO.json", "r");
+	if (err != 0)
+		return E_FAIL;
+
+	char readBuffer[65536]{};
+	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+
+	// JSON 문서 파싱
+	rapidjson::Document document;
+	rapidjson::ParseResult result = document.Parse<rapidjson::kParseDefaultFlags | rapidjson::kParseValidateEncodingFlag>(readBuffer);
+
+	if (true == result.IsError())
+		return E_FAIL;
+
+	document.ParseStream(is);
+
+	// JSON 데이터 입력
+	if (document.IsArray())
+	{
+		for (rapidjson::Value::ConstValueIterator itr = document.Begin(); itr != document.End(); ++itr)
+		{
+			wstring wstrDocumentClassify = m_pGameInstance->ConvertToWString((*itr)["CLASSIFY"].GetString(), (*itr)["CLASSIFY"].GetStringLength());
+			wstring wstrDocumentName = m_pGameInstance->ConvertToWString((*itr)["NAME"].GetString(), (*itr)["NAME"].GetStringLength());
+			_float fPosX = (*itr)["POSITION_X"].GetFloat();
+			_float fPosY = (*itr)["POSITION_Y"].GetFloat();
+			_float fSizeX = (*itr)["SIZE_X"].GetFloat();
+			_float fSizeY = (*itr)["SIZE_Y"].GetFloat();
+
+			DOCUMENT_INFO DocumentInfo = {};
+
+			if (TEXT("POLICE") == wstrDocumentClassify)
+				DocumentInfo.eDoc_Classify = POLICE;
+			else
+				DocumentInfo.eDoc_Classify = TUTORIAL;
+			DocumentInfo.wstrName = wstrDocumentName;
+			DocumentInfo.fPosition = { fPosX , fPosY };
+			DocumentInfo.fSize = { fSizeX , fSizeY };
+
+			m_mapDocumentInfo.emplace(Classify_IRT_By_Name(DocumentInfo.wstrName), DocumentInfo);
+		}
+	}
+
+	fclose(fp);
+
+	return S_OK;
+}
+
 HRESULT CHint::Create_Display_Blinde()
 {
 	ifstream inputFileStream;
@@ -161,6 +319,19 @@ HRESULT CHint::Create_Display_Blinde()
 
 HRESULT CHint::Create_Display()
 {
+	ifstream inputFileStream;
+	wstring selectedFilePath;
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Hint/Hint_Display.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+
+	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Hint_Display"),
+		(CGameObject**)&m_pDisplay, m_pDevice, m_pContext);
+
+	if (nullptr == m_pDisplay)
+		return E_FAIL;
+
+	Safe_AddRef(m_pDisplay);
+	m_pDisplay->Set_Dead(true);
 
 
 	return S_OK;
@@ -168,7 +339,7 @@ HRESULT CHint::Create_Display()
 
 HRESULT CHint::Create_Directory()
 {
-	for (_uint i = 0; i < static_cast<_uint>(ITEM_READ_TYPE::END_NOTE); i++)
+	for (_uint i = 0; i < MAX_DOCUMENT; i++)
 	{
 		ifstream inputFileStream;
 		wstring selectedFilePath;
@@ -198,11 +369,23 @@ HRESULT CHint::Create_Directory()
 
 HRESULT CHint::Create_Directory_Highlighter()
 {
-	CGameObject* pGameOBJ = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Hint_Highliter"));
-	m_pHighlighter = dynamic_cast<CHint_Highliter*>(pGameOBJ);
+	ifstream inputFileStream;
+	wstring selectedFilePath;
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Hint/Hint_Highlighter.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+
+	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_Hint_Highliter"),
+		(CGameObject**)&m_pHighlighter, m_pDevice, m_pContext);
 
 	if (nullptr == m_pHighlighter)
 		return E_FAIL;
+
+	m_pHL_Trans = m_pHighlighter->Get_Transform();
+
+	Safe_AddRef(m_pHighlighter);
+	Safe_AddRef(m_pHL_Trans);
+
+	m_pHighlighter->Set_Dead(true);
 
 	return S_OK;
 }
@@ -258,10 +441,75 @@ void CHint::Free()
 {
 	__super::Free();
 	Safe_Release(m_pDisplay_Blinde);
-	//Safe_Release(m_pDisplay);
+	Safe_Release(m_pDisplay);
 	for (auto& iter : m_vecDirectory)
 	{
 		Safe_Release(iter);
 	}
 	Safe_Release(m_pHighlighter);
+	Safe_Release(m_pHL_Trans);
+}
+
+CHint::DOCUMENT_CLASSIFY CHint::Document_Classify_ByNumber(ITEM_READ_TYPE eIRT_Num)
+{
+	switch (eIRT_Num)
+	{
+	case Client::ITEM_READ_TYPE::INCIDENT_LOG_NOTE:
+	case Client::ITEM_READ_TYPE::OPERATE_REPORT_NOTE:
+	case Client::ITEM_READ_TYPE::TASK_NOTE:
+	case Client::ITEM_READ_TYPE::MEDICINAL_NOTE:
+	case Client::ITEM_READ_TYPE::OFFICER_NOTE:
+	case Client::ITEM_READ_TYPE::GUNPOWDER_NOTE:
+	case Client::ITEM_READ_TYPE::FIX_LOCKER_NOTE:
+	case Client::ITEM_READ_TYPE::HAND_HELD_SAFE_NOTE:
+	case Client::ITEM_READ_TYPE::RICKER_NOTE:
+	case Client::ITEM_READ_TYPE::SAFE_PASSWARD_NOTE:
+	case Client::ITEM_READ_TYPE::PAMPHLET:
+		return POLICE;
+		break;
+
+	default:
+		break;
+	}
+
+	return DC_END;
+}
+
+ITEM_READ_TYPE CHint::Classify_IRT_By_Name(wstring wstrName)
+{
+	if (TEXT("사건 일지") == wstrName)
+		return ITEM_READ_TYPE::INCIDENT_LOG_NOTE;
+
+	else if (TEXT("작전 보고서") == wstrName)
+		return ITEM_READ_TYPE::OPERATE_REPORT_NOTE;
+
+	else if (TEXT("신입의 첫 번째 과제") == wstrName)
+		return ITEM_READ_TYPE::TASK_NOTE;
+
+	else if (TEXT("약초의 의학적 효능") == wstrName)
+		return ITEM_READ_TYPE::MEDICINAL_NOTE;
+
+	else if (TEXT("경관의 노트") == wstrName)
+		return ITEM_READ_TYPE::OFFICER_NOTE;
+
+	else if (TEXT("화약 사용") == wstrName)
+		return ITEM_READ_TYPE::GUNPOWDER_NOTE;
+
+	else if (TEXT("물품 보관함 단말기 관련 쪽지") == wstrName)
+		return ITEM_READ_TYPE::FIX_LOCKER_NOTE;
+
+	else if (TEXT("휴대용 금고 지침") == wstrName)
+		return ITEM_READ_TYPE::HAND_HELD_SAFE_NOTE;
+
+	else if (TEXT("만일의 생존자에게") == wstrName)
+		return ITEM_READ_TYPE::RICKER_NOTE;
+
+	else if (TEXT("내부용 쪽지") == wstrName)
+		return ITEM_READ_TYPE::SAFE_PASSWARD_NOTE;
+
+	else if (TEXT("가이드 책자") == wstrName)
+		return ITEM_READ_TYPE::PAMPHLET;
+
+
+	return ITEM_READ_TYPE::END_NOTE;
 }
