@@ -25,22 +25,38 @@ HRESULT CHint_Directory::Initialize(void* pArg)
 			return E_FAIL;
 	}
 
-	//	m_isLoad = false;
+	m_isLoad = false;
+
+	if (false == m_IsChild)
+	{
+		m_vecTextBoxes[0]->Set_isTransformBase(false);
+	}
+
+	else
+	{
+		//m_fBlending = 1.f;
+	}
 
 	return S_OK;
 }
 
 void CHint_Directory::Start()
 {
+	Set_Value_Color(&m_vColor[0]);
 
+	if (true == m_IsChild)
+	{
+		m_fBlending = 0.1f;
+		m_pTransformCom->Set_Scaled(560.f, 30.f, 1.f);
+	}
 }
 
 void CHint_Directory::Tick(_float fTimeDelta)
 {
 	if (true == m_bDead)
 		return;
-
-	__super::Tick(fTimeDelta);
+	
+	//__super::Tick(fTimeDelta);
 }
 
 void CHint_Directory::Late_Tick(_float fTimeDelta)
@@ -57,6 +73,12 @@ HRESULT CHint_Directory::Render()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CHint_Directory::Set_Directory(ITEM_READ_TYPE eIRT, wstring wstrText)
+{
+	m_eItem_Read_Type = eIRT;
+	m_vecTextBoxes[0]->Set_Text(wstrText);
 }
 
 CHint_Directory* CHint_Directory::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

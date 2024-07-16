@@ -1,15 +1,15 @@
 #include "stdafx.h"
 
 #include "Hint_Display.h"
-
+#include "Hint.h"
 
 CHint_Display::CHint_Display(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CUI{ pDevice , pContext }
+	: CCustomize_UI{ pDevice , pContext }
 {
 }
 
 CHint_Display::CHint_Display(const CHint_Display& rhs)
-	: CUI{ rhs }
+	: CCustomize_UI{ rhs }
 {
 }
 
@@ -20,25 +20,22 @@ HRESULT CHint_Display::Initialize_Prototype()
 
 HRESULT CHint_Display::Initialize(void* pArg)
 {
-	CUI::UI_DESC UIDesc = {};
-	UIDesc.vPos = { 121.f, 197.f, 0.f };
-	UIDesc.vSize = { 320.f, 50.f };
+	if (nullptr != pArg)
+	{
+		if (FAILED(__super::Initialize(pArg)))
+			return E_FAIL;
+	}
 
-	if (FAILED(__super::Initialize(&UIDesc)))
-		return E_FAIL;
-
-	if (FAILED(Add_Components()))
+	if(FAILED(Load_Texture()))
 		return E_FAIL;
 
 	m_bDead = true;
-	
-	m_isAlphaControl = true;
 
-	m_fAlpha = 0.3f;
+	m_pOriginalTexture = m_pTextureCom;
 
 	return S_OK;
 }
-
+ 
 void CHint_Display::Start()
 {
 	
@@ -48,7 +45,6 @@ void CHint_Display::Tick(_float fTimeDelta)
 {
 	if (true == m_bDead)
 		return;
-
 }
 
 void CHint_Display::Late_Tick(_float fTimeDelta)
@@ -61,69 +57,70 @@ void CHint_Display::Late_Tick(_float fTimeDelta)
 
 HRESULT CHint_Display::Render()
 {
-	if (FAILED(Bind_ShaderResources()))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Begin(0)))
-		return E_FAIL;
-
-	if (FAILED(m_pVIBufferCom->Bind_Buffers()))
-		return E_FAIL;
-
-	if (FAILED(m_pVIBufferCom->Render()))
+	if (FAILED(__super::Render()))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-void CHint_Display::Set_Dead(_bool bDead)
+void CHint_Display::Set_Display(ITEM_READ_TYPE eItemReadType, _uint TextureNum, _float2 fPos, _float2 fSize)
 {
-	m_bDead = bDead;
-
+	if (TextureNum < m_mapDocumentTextures[eItemReadType].size())
+	{
+		m_pTextureCom = m_mapDocumentTextures[eItemReadType][TextureNum];
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(fPos.x, fPos.y, 0.007f, 1.f));
+		m_pTransformCom->Set_Scaled(fSize.x, fSize.y, 1.f);
+		m_iCurTypeTexCount = m_mapDocumentTextures[eItemReadType].size();
+		m_iCurTexNum = TextureNum;
+	}
+	else
+	{
+		m_bDead = true;
+	}
 }
 
-HRESULT CHint_Display::Bind_ShaderResources()
+HRESULT CHint_Display::Load_Texture()
 {
-	if (nullptr == m_pShaderCom)
+	//"../Bin/DataFiles/Item_Discription/Document_TextureTag.json"
+
+	 // JSON 파일 열기
+	FILE* fp;
+	errno_t err = fopen_s(&fp, "../Bin/DataFiles/Item_Discription/Document_TextureTag.json", "r");
+	if (err != 0)
 		return E_FAIL;
 
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	char readBuffer[65536]{};
+	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+
+	// JSON 문서 파싱
+	rapidjson::Document document;
+	rapidjson::ParseResult result = document.Parse<rapidjson::kParseDefaultFlags | rapidjson::kParseValidateEncodingFlag>(readBuffer);
+
+	if (true == result.IsError())
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
-		return E_FAIL;
+	document.ParseStream(is);
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-		return E_FAIL;
+	// JSON 데이터 입력
+	if (document.IsArray())
+	{
+		for (rapidjson::Value::ConstValueIterator itr = document.Begin(); itr != document.End(); ++itr)
+		{
+			wstring wstrIRT = m_pGameInstance->ConvertToWString((*itr)["ITEM_READ_TYPE"].GetString(), (*itr)["ITEM_READ_TYPE"].GetStringLength());
+			wstring wstrPrototypeTag = m_pGameInstance->ConvertToWString((*itr)["ProtoTypeTag"].GetString(), (*itr)["ProtoTypeTag"].GetStringLength());
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", 0)))
-		return E_FAIL;
+			ITEM_READ_TYPE eIRT = CHint::Classify_IRT_By_Name(wstrIRT);
+			
+			CTexture* pTexture = dynamic_cast<CTexture*>(m_pGameInstance->Clone_Component(g_Level, wstrPrototypeTag));
 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_Alpha", &m_fAlpha, sizeof(_float))))
-		return E_FAIL;
+			if (nullptr == pTexture)
+				return E_FAIL;
+			
+			m_mapDocumentTextures[eIRT].push_back(pTexture);
+		}
+	}
 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_isAlphaControl", &m_isAlphaControl, sizeof(_bool))))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-HRESULT CHint_Display::Add_Components()
-{
-	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
-		TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom)))
-		return E_FAIL;
-
-	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAlphaSortTex"),
-		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
-		return E_FAIL;
-
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Texture_Long_Box_Select_Click"),
-		TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
-		return E_FAIL;
+	fclose(fp);
 
 	return S_OK;
 }
@@ -157,6 +154,17 @@ CGameObject* CHint_Display::Clone(void* pArg)
 
 void CHint_Display::Free()
 {
+	m_pTextureCom = m_pOriginalTexture;
 	__super::Free();
 
+	for (_int i = 0; i < static_cast<_int>(ITEM_READ_TYPE::END_NOTE); i++)
+	{
+		vector<CTexture*>* vecCTextures = &(m_mapDocumentTextures[static_cast<ITEM_READ_TYPE>(i)]);
+		for (auto& iter : *vecCTextures)
+		{
+			Safe_Release(iter);
+		}
+	}
+
+	//m_mapDocumentTextures.clear();
 }
