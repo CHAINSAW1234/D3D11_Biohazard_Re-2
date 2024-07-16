@@ -2632,25 +2632,32 @@ void CPlayer::Initiate_Cartridge()
 	}
 }
 
-void CPlayer::Calc_Decal_Map()
+void CPlayer::Calc_Decal_Map(const _float4x4& DecalWorldMat)
 {
+	if (m_bCalcDecalMap == false)
+		return;
+
+	Perform_Skinning();
+
 	if (m_pBodyModel)
 	{
-		m_pBodyModel->SetDecalWorldMatrix_Player(_float4x4());
+		m_pBodyModel->SetDecalWorldMatrix_Player(DecalWorldMat);
 		m_pBodyModel->Perform_Calc_DecalMap_Player();
 	}
 
 	if (m_pHeadModel)
 	{
-		m_pHeadModel->SetDecalWorldMatrix_Player(_float4x4());
+		m_pHeadModel->SetDecalWorldMatrix_Player(DecalWorldMat);
 		m_pHeadModel->Perform_Calc_DecalMap_Player();
 	}
 
-	if (m_pHairModel)
+	/*if (m_pHairModel)
 	{
-		m_pHairModel->SetDecalWorldMatrix_Player(_float4x4());
+		m_pHairModel->SetDecalWorldMatrix_Player(DecalWorldMat);
 		m_pHairModel->Perform_Calc_DecalMap_Player();
-	}
+	}*/
+
+	m_bCalcDecalMap = false;
 }
 
 void CPlayer::Perform_Skinning()
@@ -2681,14 +2688,14 @@ void CPlayer::Perform_Skinning()
 
 			for (auto& i : NonHideIndex)
 			{
-				m_pHairModel->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pHairModel->GetMeshes())[i]->GetNumVertices());
+				m_pHeadModel->Bind_Resource_Skinning(i);
+				m_pGameInstance->Perform_Skinning((*m_pHeadModel->GetMeshes())[i]->GetNumVertices());
 			}
 		}
 	}
 
 	//Hair Model
-	{
+	/*{
 		if (nullptr != m_pHairModel)
 		{
 			m_pHairModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
@@ -2701,7 +2708,7 @@ void CPlayer::Perform_Skinning()
 				m_pGameInstance->Perform_Skinning((*m_pHairModel->GetMeshes())[i]->GetNumVertices());
 			}
 		}
-	}
+	}*/
 }
 
 HRESULT CPlayer::Add_Components()
