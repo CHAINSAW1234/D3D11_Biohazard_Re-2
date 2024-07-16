@@ -1,36 +1,35 @@
 #include "stdafx.h"
-#include "Emblem_Door.h"
+#include "Mark_Door.h"
 #include "Player.h"
 #include "Camera_Gimmick.h"
 
 #include"Door.h"
-CEmblem_Door::CEmblem_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CMark_Door::CMark_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPart_InteractProps{ pDevice, pContext }
 {
 }
 
-CEmblem_Door::CEmblem_Door(const CEmblem_Door& rhs)
+CMark_Door::CMark_Door(const CMark_Door& rhs)
 	: CPart_InteractProps{ rhs }
 {
 
 }
 
-HRESULT CEmblem_Door::Initialize_Prototype()
+HRESULT CMark_Door::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CEmblem_Door::Initialize(void* pArg)
+HRESULT CMark_Door::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	if (pArg != nullptr)
 	{
-		BODY_EMBLEM_DOOR* desc = (BODY_EMBLEM_DOOR*)pArg;
+		EMBLEMMARK_DOOR_DESC* desc = (EMBLEMMARK_DOOR_DESC*)pArg;
 
 		m_pEmblem_Anim = desc->EmblemAnim;
-
 		m_eEmblemType = desc->eEmblemType;
 		m_pDoorState = desc->pDoorState;
 	}
@@ -44,41 +43,29 @@ HRESULT CEmblem_Door::Initialize(void* pArg)
 	m_pModelCom->Active_RootMotion_Rotation(false);
 
 #ifndef NON_COLLISION_PROP
-	//m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
+	m_pGameInstance->Create_Px_Collider(m_pModelCom, m_pParentsTransform, &m_iPx_Collider_Id);
 #endif
 
 	return S_OK;
 }
 
-void CEmblem_Door::Tick(_float fTimeDelta)
+void CMark_Door::Tick(_float fTimeDelta)
 {
 	
 }
 
-void CEmblem_Door::Late_Tick(_float fTimeDelta)
+void CMark_Door::Late_Tick(_float fTimeDelta)
 {
 	if (m_bDead)
 		return;
 
-	switch (*m_pEmblem_Anim)
-	{
-	case (_int)EMBLEM_ANIM::STATIC_ANIM:
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
-		break;
+	/*if(m_bSide)
+*/
 
-	case (_int)EMBLEM_ANIM::START_ANIM : 
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
-		break;
+	_float4x4			mWorldMatrix = { m_pTransformCom->Get_WorldMatrix() };
 
-	case (_int)EMBLEM_ANIM::OPEN_ANIM:
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
-		break;
-	}
-
-	_float4x4			mWorldMatrix = m_pTransformCom->Get_WorldMatrix();
-
-	mWorldMatrix._41 += 95.f;
-	mWorldMatrix._42 += 95.f;
+	mWorldMatrix._41 += 50.f;
+	mWorldMatrix._42 += 80.f;
 	mWorldMatrix._43 += 1.f;
 
 	_matrix			WorldMatrix = { };
@@ -110,7 +97,7 @@ void CEmblem_Door::Late_Tick(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 }
 
-HRESULT CEmblem_Door::Render()
+HRESULT CMark_Door::Render()
 {
 	if (m_bRender == false)
 		return S_OK;
@@ -171,7 +158,7 @@ HRESULT CEmblem_Door::Render()
 	return S_OK;
 }
 
-HRESULT CEmblem_Door::Add_Components()
+HRESULT CMark_Door::Add_Components()
 {
 	/* For.Com_Body_Shader */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxAnimModel"),
@@ -197,23 +184,23 @@ HRESULT CEmblem_Door::Add_Components()
 	return S_OK;
 }
 
-HRESULT CEmblem_Door::Add_PartObjects()
+HRESULT CMark_Door::Add_PartObjects()
 {
 	return S_OK;
 }
 
-HRESULT CEmblem_Door::Initialize_PartObjects()
+HRESULT CMark_Door::Initialize_PartObjects()
 {
 	return S_OK;
 }
 
-CEmblem_Door* CEmblem_Door::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CMark_Door* CMark_Door::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CEmblem_Door* pInstance = new CEmblem_Door(pDevice, pContext);
+	CMark_Door* pInstance = new CMark_Door(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX(TEXT("Failed To Created : CEmblem_Door"));
+		MSG_BOX(TEXT("Failed To Created : CMark_Door"));
 
 		Safe_Release(pInstance);
 	}
@@ -222,13 +209,13 @@ CEmblem_Door* CEmblem_Door::Create(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 }
 
-CGameObject* CEmblem_Door::Clone(void* pArg)
+CGameObject* CMark_Door::Clone(void* pArg)
 {
-	CEmblem_Door* pInstance = new CEmblem_Door(*this);
+	CMark_Door* pInstance = new CMark_Door(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX(TEXT("Failed To Created : CEmblem_Door"));
+		MSG_BOX(TEXT("Failed To Created : CMark_Door"));
 
 		Safe_Release(pInstance);
 	}
@@ -236,7 +223,7 @@ CGameObject* CEmblem_Door::Clone(void* pArg)
 	return pInstance;
 }
 
-void CEmblem_Door::Free()
+void CMark_Door::Free()
 {
 	__super::Free();
 

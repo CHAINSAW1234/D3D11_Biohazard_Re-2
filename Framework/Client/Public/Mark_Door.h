@@ -7,7 +7,7 @@
 
 BEGIN(Client)
 
-class CEmblem_Door final : public CPart_InteractProps
+class CMark_Door final : public CPart_InteractProps
 {
 public:
 
@@ -25,12 +25,12 @@ public:
 		_ubyte* EmblemAnim;
 		_ubyte* pDoorState = { nullptr };
 
-	}BODY_EMBLEM_DOOR;
+	}EMBLEMMARK_DOOR_DESC;
 
 private:
-	CEmblem_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CEmblem_Door(const CEmblem_Door& rhs);
-	virtual ~CEmblem_Door() = default;
+	CMark_Door(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CMark_Door(const CMark_Door& rhs);
+	virtual ~CMark_Door() = default;
 
 public:
 	virtual HRESULT				Initialize_Prototype() override;
@@ -52,6 +52,7 @@ public:
 
 
 private:
+	_bool							m_bSide = { false };
 	_float4x4*					m_pSocketMatrix_01 = { nullptr };
 
 	_ubyte						m_eEmblemType = {};
@@ -59,7 +60,7 @@ private:
 	_ubyte*						m_pDoorState = {nullptr};
 
 public:
-	static CEmblem_Door* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CMark_Door* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
 	virtual void Free() override;
 };
