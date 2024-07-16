@@ -145,7 +145,37 @@ void CBullet_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-  
+    CTab_Window* pTabWindow = dynamic_cast<CTab_Window*>(m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0));
+
+    if (*pTabWindow->Get_MainRender_Ptr() == false)
+    {
+        m_fBulletTimer = 0.f;
+        
+        m_fBlending = 1.f;
+        
+        m_isRender = m_isKeepCross = false;
+       
+        if(m_iEqipType == CPlayer::EQUIP::HG)
+        {
+            if(nullptr != m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText && 
+                nullptr != m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText)
+            {
+                m_pTextUI[(_int)BULLET_TEXT_TYPE::CURRENT_BULLET].pText->Set_FontColor(ALPHA_ZERO);
+                m_pTextUI[(_int)BULLET_TEXT_TYPE::STORE_BULLET].pText->Set_FontColor(ALPHA_ZERO);
+            }
+        }
+        else if(m_iEqipType == CPlayer::EQUIP::GRENADE)
+        {
+            if (!m_vecTextBoxes.empty())
+            {
+                _float4 result = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * _float4(1.f, 1.f, 1.f, 1.f);
+                m_vecTextBoxes.back()->Set_FontColor(result);
+            }
+        }
+
+        return;
+    }
+
     if (m_pPlayer->Get_Equip() == (_int)CPlayer::EQUIP::STG || CPlayer::EQUIP::HG == m_pPlayer->Get_Equip())
     {
         if (m_iEqipType == (_int)CPlayer::EQUIP::STG || m_iEqipType == (_int)CPlayer::EQUIP::HG || m_iEqipType == BULLET_BACKGROUND)
@@ -185,12 +215,6 @@ void CBullet_UI::Tick(_float fTimeDelta)
     }
 
     Bullet_Font();
-
- /*   if (!m_vecTextBoxes.empty())
-    {
-        _float4 result = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * _float4(1.f, 1.f, 1.f, 1.f);
-        m_vecTextBoxes.back()->Set_FontColor(result);
-    }*/
 
 
     if (m_iCurrentBullet < 1)

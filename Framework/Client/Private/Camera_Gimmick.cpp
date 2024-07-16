@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Camera_Gimmick.h"
 #include "player.h"
+#include "LayOut_UI.h"
 
 CCamera_Gimmick::CCamera_Gimmick(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CCamera{ pDevice, pContext }
@@ -31,6 +32,8 @@ HRESULT CCamera_Gimmick::Initialize(void * pArg)
 		return E_FAIL;
 
 	m_pGameInstance->Set_Camera_Transform(m_pTransformCom);
+
+	m_eLayout_Type = static_cast<_ubyte>(CLayOut_UI::LAYOUT_TYPE::LAYOUT_END);
 
 	return S_OK;
 }
