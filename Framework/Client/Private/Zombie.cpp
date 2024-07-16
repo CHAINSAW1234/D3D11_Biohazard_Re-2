@@ -401,7 +401,7 @@ void CZombie::Tick(_float fTimeDelta)
 			}
 			else
 			{
-				if(bDecalRay)
+			/*	if(bDecalRay)
 				{
 					auto Type = m_pController->Get_Hit_Collider_Type();
 
@@ -473,7 +473,7 @@ void CZombie::Tick(_float fTimeDelta)
 						auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
 						m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
 					}
-				}
+				}*/
 			}
 
 			if (m_bBigAttack)
