@@ -850,6 +850,11 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 	}
+
+
+	if (m_eEmblemAnim_Type == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM)
+		m_bLock = false;
+
 }
 
 void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
