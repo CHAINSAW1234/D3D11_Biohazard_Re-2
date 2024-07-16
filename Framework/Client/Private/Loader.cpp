@@ -1686,6 +1686,16 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Hit_Props_5"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Hit_Props/Hit_Props_5.dds"), 1, &Desc))))
 		return E_FAIL;
+
+	Desc.iWidth = 1024;
+	Desc.iHeight = 1024;
+	Desc.iCountX = 8;
+	Desc.iCountY = 8;
+
+	/*Prototype_Component_Texture_Grenade_Explosion*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_Grenade_Explosion"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Effect/Grenade_Explosion/Grenade_Explosion.dds"), 1, &Desc))))
+		return E_FAIL;
 #pragma endregion
 
 #pragma region CubeMap

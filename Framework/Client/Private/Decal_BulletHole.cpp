@@ -120,6 +120,8 @@ HRESULT CDecal_BulletHole::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(pDeferredShader->Bind_RawValue("g_vDecalNormal", &m_vNormal, sizeof(_float4))))
 		return E_FAIL;
+	if (FAILED(pDeferredShader->Bind_RawValue("g_bBlood", &m_bBlood, sizeof(_bool))))
+		return E_FAIL;
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(pDeferredShader, "g_DecalTexture",m_iFrame)))
 		return E_FAIL;

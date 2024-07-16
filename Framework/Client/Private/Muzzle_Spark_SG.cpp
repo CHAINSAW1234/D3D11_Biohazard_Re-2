@@ -107,7 +107,7 @@ void CMuzzle_Spark_SG::Compute_CurrentUV()
 
 void CMuzzle_Spark_SG::Setup_Billboard()
 {
-	m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Float4());
+	m_pTransformCom->Look_At(m_pGameInstance->Get_CamPosition_Vector());
 }
 
 void CMuzzle_Spark_SG::SetSize(_float fSizeX, _float fSizeY)

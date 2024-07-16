@@ -136,7 +136,7 @@ void CMuzzle_Smoke::Compute_CurrentUV()
 
 void CMuzzle_Smoke::Setup_Billboard()
 {
-	m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Float4());
+	m_pTransformCom->Look_At(m_pGameInstance->Get_CamPosition_Vector());
 }
 
 void CMuzzle_Smoke::SetSize(_float fSizeX, _float fSizeY)

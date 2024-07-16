@@ -2,13 +2,17 @@
 #include "..\Public\Impact_Grenade.h"
 
 #include "GameInstance.h"
+#include "Grenade_Light.h"
+#include "Impact_Grenade_End.h"
+#include "Grenade_Explosion.h"
 
-CImpact_Grenade::CImpact_Grenade(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+
+CImpact_Grenade::CImpact_Grenade(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CEffect{ pDevice, pContext }
 {
 }
 
-CImpact_Grenade::CImpact_Grenade(const CImpact_Grenade & rhs)
+CImpact_Grenade::CImpact_Grenade(const CImpact_Grenade& rhs)
 	: CEffect{ rhs }
 {
 }
@@ -18,7 +22,7 @@ HRESULT CImpact_Grenade::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CImpact_Grenade::Initialize(void * pArg)
+HRESULT CImpact_Grenade::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -35,27 +39,57 @@ HRESULT CImpact_Grenade::Initialize(void * pArg)
 
 	m_iFrame = 2;
 
+	m_pGrenade_Light = CGrenade_Light::Create(m_pDevice, m_pContext);
+	m_pGrenade_Light->SetSize(10.f, 10.f);
+	m_pGrenade_Light->SetType(1);
+
+	m_pImpact_Grenade_End = CImpact_Grenade_End::Create(m_pDevice, m_pContext);
+	m_pImpact_Grenade_End->SetSize(1.f, 1.f);
+
+	m_pGrenade_Explosion = CGrenade_Explosion::Create(m_pDevice, m_pContext);
+	m_pGrenade_Explosion->SetSize(5.f, 5.f);
+
 	return S_OK;
 }
 
 void CImpact_Grenade::Tick(_float fTimeDelta)
 {
+	m_pGrenade_Explosion->Tick(fTimeDelta);
+	m_pGrenade_Light->Tick(fTimeDelta);
+	m_pImpact_Grenade_End->Tick(fTimeDelta);
+
 	if (m_bRender == false)
 	{
 		return;
 	}
 
-	m_fSizeX -= 1.2f;
-	m_fSizeY -= 1.2f;
+	m_fSizeX += 3.f;
+	m_fSizeY += 3.f;
 	m_pTransformCom->Set_Scaled(m_fSizeX, m_fSizeY, 1.f);
 
-	if (m_fSizeX <= 0.1f)
+	/*if (m_fSizeX <= 3.f)
 	{
+		m_pGrenade_Light->Set_Render(true);
+		m_pGrenade_Light->SetPosition(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+		m_pGrenade_Light->Setup_Billboard();
+	}*/
+
+	if (m_fSizeX >= 10.f)
+	{
+		/*m_pImpact_Grenade_End->Set_Render(true);
+		m_pImpact_Grenade_End->SetPosition(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+		m_pImpact_Grenade_End->Setup_Billboard();*/
+
 		m_fSizeX = m_fDefaultSize_X;
 		m_fSizeY = m_fDefaultSize_Y;
 
 		m_pTransformCom->Set_Scaled(m_fSizeX, m_fSizeY, 1.f);
+
 		m_bRender = false;
+
+		m_pGrenade_Explosion->Set_Render(true);
+		m_pGrenade_Explosion->SetPosition(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+		m_pGrenade_Explosion->Setup_Billboard();
 
 		return;
 	}
@@ -65,7 +99,10 @@ void CImpact_Grenade::Tick(_float fTimeDelta)
 
 void CImpact_Grenade::Late_Tick(_float fTimeDelta)
 {
-	if(m_bRender == true)
+	m_pGrenade_Explosion->Late_Tick(fTimeDelta);
+	m_pImpact_Grenade_End->Late_Tick(fTimeDelta)
+;
+	if (m_bRender == true)
 	{
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_EFFECT_BLOOM, this);
 	}
@@ -76,7 +113,7 @@ HRESULT CImpact_Grenade::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(7);
+	m_pShaderCom->Begin(6);
 
 	m_pVIBufferCom->Bind_Buffers();
 
@@ -87,7 +124,7 @@ HRESULT CImpact_Grenade::Render()
 
 void CImpact_Grenade::Setup_Billboard()
 {
-	m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Float4());
+	m_pTransformCom->Look_At(m_pGameInstance->Get_CamPosition_Vector());
 }
 
 void CImpact_Grenade::SetSize(_float fSizeX, _float fSizeY)
@@ -96,7 +133,7 @@ void CImpact_Grenade::SetSize(_float fSizeX, _float fSizeY)
 	m_fSizeY = fSizeY;
 	m_fDefaultSize_X = fSizeX;
 	m_fDefaultSize_Y = fSizeY;
-	m_pTransformCom->Set_Scaled(fSizeX, fSizeY,1.f);
+	m_pTransformCom->Set_Scaled(fSizeX, fSizeY, 1.f);
 }
 
 void CImpact_Grenade::SetPosition(_float4 Pos)
@@ -118,8 +155,13 @@ HRESULT CImpact_Grenade::Add_Components()
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
+	///* For.Com_Texture */
+	//if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Impact"),
+	//	TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
+	//	return E_FAIL;
+
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Impact"),
+	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Texture_Muzzle_Light_SG"),
 		TEXT("Com_Texture"), (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
@@ -144,18 +186,21 @@ HRESULT CImpact_Grenade::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_fAlpha_Delta", &m_fAlpha_Delta,sizeof(m_fAlpha_Delta))))
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_fAlpha_Delta", &m_fAlpha_Delta, sizeof(m_fAlpha_Delta))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture",m_iFrame)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture", m_iFrame)))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShaderCom, TEXT("Target_Field_Depth"), "g_DepthTexture")))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-CImpact_Grenade * CImpact_Grenade::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CImpact_Grenade* CImpact_Grenade::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CImpact_Grenade*		pInstance = new CImpact_Grenade(pDevice, pContext);
+	CImpact_Grenade* pInstance = new CImpact_Grenade(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -170,9 +215,9 @@ CImpact_Grenade * CImpact_Grenade::Create(ID3D11Device * pDevice, ID3D11DeviceCo
 
 }
 
-CGameObject * CImpact_Grenade::Clone(void * pArg)
+CGameObject* CImpact_Grenade::Clone(void* pArg)
 {
-	CImpact_Grenade*		pInstance = new CImpact_Grenade(*this);
+	CImpact_Grenade* pInstance = new CImpact_Grenade(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
@@ -191,4 +236,7 @@ void CImpact_Grenade::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pGrenade_Light);
+	Safe_Release(m_pImpact_Grenade_End);
+	Safe_Release(m_pGrenade_Explosion);
 }

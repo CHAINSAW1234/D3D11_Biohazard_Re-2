@@ -106,6 +106,7 @@ const float PI = 3.14159265359f;
 //For SSD
 float3 g_vExtent;
 float4 g_vDecalNormal;
+bool   g_bBlood;
 
 struct VS_IN
 {
@@ -1535,16 +1536,74 @@ PS_OUT PS_DECAL(PS_IN In)
 
         float4 vDiffuseColor = g_DecalTexture.Sample(PointSamplerClamp, decalTextureUV);
 
-        if (vDiffuseColor.a < 0.1f)
-            discard;
+        if(g_bBlood)
+        {
+            if (vDiffuseColor.a < 0.1f)
+                discard;
+            else
+                Out.vColor = float4(0.2f, 0.f, 0.f, 1.f);
+        }
         else
-            Out.vColor = float4(0.2f, 0.f, 0.f, 1.f);
+        {
+            if (vDiffuseColor.a < 0.1f)
+                discard;
+            else
+                Out.vColor = vDiffuseColor;
+        }
     }
     else
     {
         clip(-1);
     }
 
+
+    return Out;
+}
+
+PS_OUT PS_MAIN_BLURX_EFFECT_STRONG(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT)0;
+
+    float4 vOut = 0;
+    float2 t = In.vTexcoord;
+    float2 uv = 0;
+    float TotalWeight = 0;
+    float tu = 1.f / 640.f;
+
+    for (int i = -35; i <= 35; ++i)
+    {
+        uv = t + float2(tu * i, 0);
+        float weight = Gaussian(float(i), 400);
+        vOut += weight * g_Texture.Sample(LinearSamplerClamp, uv);
+        TotalWeight += weight;
+    }
+    TotalWeight *= 0.6f;
+    vOut /= TotalWeight;
+    Out.vColor = vOut;
+
+    return Out;
+}
+
+PS_OUT PS_MAIN_BLURY_EFFECT_STRONG(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT)0;
+
+    float4 vOut = 0;
+    float2 t = In.vTexcoord;
+    float2 uv = 0;
+    float TotalWeight = 0;
+    float tu = 1.f / (640.f * 0.7f);
+
+    for (int i = -35; i <= 35; ++i)
+    {
+        uv = t + float2(0, tu * i);
+        float weight = Gaussian(float(i), 400);
+        vOut += weight * g_Texture.Sample(LinearSamplerClamp, uv);
+        TotalWeight += weight;
+    }
+    TotalWeight *= 0.3f;
+    vOut /= TotalWeight;
+    Out.vColor = vOut;
 
     return Out;
 }
@@ -1857,5 +1916,31 @@ technique11 DefaultTechnique
         HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BLURY_EFFECT();
+    }
+
+    pass BlurX_Effect_Strong //  21
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_BLURX_EFFECT_STRONG();
+    }
+
+    pass BlurY_Effect_Strong //  22
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_BLURY_EFFECT_STRONG();
     }
 }

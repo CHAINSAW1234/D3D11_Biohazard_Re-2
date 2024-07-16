@@ -711,7 +711,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 
 void CMesh::Static_Mesh_Cooking(CTransform* pTransform, _int* pIndex)
 {
-	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pTransform,pIndex);
+	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pTransform, pIndex);
 }
 
 void CMesh::Static_Mesh_Cooking_NoRotation(CTransform* pTransform)
@@ -953,17 +953,24 @@ void CMesh::SetDecalWorldMatrix(_float4x4 WorldMatrix, _bool bBigAttack)
 {
 	m_pDecal_Blood->SetWorldMatrix(WorldMatrix);
 
-	if(bBigAttack)
+	if (bBigAttack)
 		m_pDecal_Blood->SetExtent(BIG_ATTACK_DECAL_EXTENT);
 	else
 		m_pDecal_Blood->SetExtent(NORMAL_ATTACK_DECAL_EXTENT);
+}
+
+void CMesh::SetDecalWorldMatrix_Player(_float4x4 WorldMatrix)
+{
+	m_pDecal_Blood->SetWorldMatrix(WorldMatrix);
+
+	m_pDecal_Blood->SetExtent(NORMAL_ATTACK_DECAL_EXTENT);
 }
 
 void CMesh::Bind_Resource_CalcDecalMap(ID3D11UnorderedAccessView* pUAV)
 {
 	m_Calc_Decal_Map_Input.iNumVertex = m_iNumVertices;
 	m_Calc_Decal_Map_Input.pUav_Skinning = m_pUAV_Skinning;
-	m_pDecal_Blood->Bind_Resource_DecalMap(m_Calc_Decal_Map_Input,pUAV);
+	m_pDecal_Blood->Bind_Resource_DecalMap(m_Calc_Decal_Map_Input, pUAV);
 }
 
 void CMesh::Bind_Resource_CalcDecalMap_StaticModel(ID3D11UnorderedAccessView* pUAV)

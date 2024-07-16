@@ -294,7 +294,37 @@ PS_OUT_EFFECT PS_EFFECT_SOFT(PS_IN In)
 	if (Out.vDiffuse.a <= 0.1f)
 		discard;
 
-	/*float2 vTexcoord = (float2)0.f;
+	//float2 vTexcoord = (float2)0.f;
+
+	//vTexcoord.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	//vTexcoord.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+	//float4 vDepthDesc = g_DepthTexture.Sample(PointSampler, vTexcoord);
+	//float fOldViewZ = vDepthDesc.y * 1000.f;
+
+	//Out.vDiffuse.a = Out.vDiffuse.a * saturate(fOldViewZ - In.vProjPos.w);
+
+	return Out;
+}
+
+PS_OUT_EFFECT PS_MUZZLE_LIGHT_SOFT(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexcoord);
+
+	if (Out.vColor.a < 0.01f)
+		discard;
+
+	Out.vColor.a = 0.4f;
+
+	float2 center = float2(0.5, 0.5);
+
+	float distance = length(In.vTexcoord - center);
+
+	float alpha = saturate(1.0 - distance * 2.f);
+
+	float2 vTexcoord = (float2)0.f;
 
 	vTexcoord.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
 	vTexcoord.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
@@ -302,7 +332,9 @@ PS_OUT_EFFECT PS_EFFECT_SOFT(PS_IN In)
 	float4 vDepthDesc = g_DepthTexture.Sample(PointSampler, vTexcoord);
 	float fOldViewZ = vDepthDesc.y * 1000.f;
 
-	Out.vDiffuse.a = Out.vDiffuse.a * saturate(fOldViewZ - In.vProjPos.w);*/
+	Out.vColor.a = Out.vColor.a * saturate(fOldViewZ - In.vProjPos.w);
+
+	Out.vColor.a *= alpha;
 
 	return Out;
 }
@@ -433,5 +465,19 @@ technique11 DefaultTechnique
 		HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
 		DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
 		PixelShader = compile ps_5_0 PS_EFFECT_SOFT();
+	}
+
+	//9
+	pass Muzzle_Light_Soft
+	{
+		SetRasterizerState(RS_NoCulling);
+		SetDepthStencilState(DSS_Default, 0);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+		VertexShader = compile vs_5_0 VS_MAIN();
+		GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+		HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+		DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+		PixelShader = compile ps_5_0 PS_MUZZLE_LIGHT_SOFT();
 	}
 }
