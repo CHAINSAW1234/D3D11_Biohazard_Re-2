@@ -927,7 +927,7 @@ void CBite_Zombie::Initiate_Effect()
 
 		_float fTrackPosition = pBodyModel->Get_TrackPosition(static_cast<_uint>(m_ePlayingIndex));
 
-		if(abs(fTrackPosition - 20.f) < 0.2f)
+		if(abs(fTrackPosition - 20.8f) < 0.2f)
 		{
 			m_pBlackBoard->Get_AI()->ResetBiteEffect();
 			m_pBlackBoard->Get_Player()->SetCalcDecalMap(true);
