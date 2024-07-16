@@ -117,6 +117,7 @@ protected :
 	HRESULT Add_Components(const wstring& wstrTextureTag, const wstring& wstrMaskTag, _uint iDefaultTexturLevel);
 	HRESULT Bind_ShaderResources();
 	HRESULT Change_Texture(const wstring& strPrototypeTag, const wstring& strComponentTag);
+	virtual HRESULT Change_Tool() = 0;
 
 protected :
 	/* Frame */

@@ -18,6 +18,7 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT Change_Tool() override;
 
 public:
 	static CHint_Directory* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

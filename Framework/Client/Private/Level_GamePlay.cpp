@@ -496,9 +496,27 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 		UI_Distinction(selectedFilePath);
 		CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 	}
-	
+	/////////////////////////* ¢º ¢º  ¢º  ¢º  ¢º LayOut  */////////////////////////////
 	/* 4. UI_LayOut */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_LayOut.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
+	/* 4. UI_Layout_Key */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Layout_Key.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
+	/* 4. UI_Layout_Statue */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Layout_Statue.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+	
+	/* 4. UI_HintLayout */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_HintLayout.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
@@ -933,7 +951,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 	}
 
 	/* 4. UI_LayOut */
-	else if (TEXT("UI_LayOut") == fileName)
+	else if (TEXT("UI_LayOut") == fileName || TEXT("UI_Layout_Key") == fileName || TEXT("UI_Layout_Statue") == fileName || TEXT("UI_HintLayout") == fileName)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_LayOut_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));

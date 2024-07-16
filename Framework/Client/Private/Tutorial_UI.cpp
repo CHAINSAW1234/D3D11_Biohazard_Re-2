@@ -36,20 +36,18 @@ HRESULT CTutorial_UI::Initialize(void* pArg)
             m_pTutorial_Supervise = this;
     }
 
+    /* 1. Font */
     if (!m_vecTextBoxes.empty())
     {
         m_vOriginTextColor = m_vecTextBoxes.back()->Get_FontColor();
+
         m_vecTextBoxes.back()->Set_FontColor(ALHPE_ZERO);
+
         m_Origin_TextPosition.x = m_vecTextBoxes.back()->GetPosition().x;
         m_Origin_TextPosition.y = m_vecTextBoxes.back()->GetPosition().y;
     }
 
-    m_isPlay = false;
-    m_iEndingType = PLAY_BUTTON::PLAY_CHANGE;
-    m_fColorTimer_Limit = 1.f;
-    m_Mask[0].isMask = m_isMask = false;
-    m_isRender = false;
-
+    /* 2. Parent */
     if(false == m_IsChild)
     {
         Find_Player();
@@ -57,6 +55,9 @@ HRESULT CTutorial_UI::Initialize(void* pArg)
         m_pisTutorial_Notify = m_pPlayer->Get_Tutorial_Notify();
         m_eTutorial_Type = m_pPlayer->Get_Tutorial_Type();
     }
+
+    if (FAILED(Change_Tool()))
+        return E_FAIL;
 
     return S_OK;
 }
@@ -76,6 +77,7 @@ void CTutorial_UI::Tick(_float fTimeDelta)
     /* Operate */
     Tutorial_Start();
     Operation_Tutorial(fTimeDelta);
+
 }
 
 void CTutorial_UI::Late_Tick(_float fTimeDelta)
@@ -87,6 +89,21 @@ HRESULT CTutorial_UI::Render()
 {
     if (FAILED(__super::Render()))
         return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CTutorial_UI::Change_Tool()
+{
+    m_isPlay = false;
+
+    m_iEndingType = PLAY_BUTTON::PLAY_CHANGE;
+
+    m_fColorTimer_Limit = 1.f;
+
+    m_Mask[0].isMask = m_isMask = false;
+
+    m_isRender = false;
 
     return S_OK;
 }

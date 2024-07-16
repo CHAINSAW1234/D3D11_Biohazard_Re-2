@@ -62,6 +62,11 @@ HRESULT CButton_UI::Render()
 	return S_OK;
 }
 
+HRESULT CButton_UI::Change_Tool()
+{
+	return S_OK;
+}
+
 void CButton_UI::FirstTick_Seting()
 {
 

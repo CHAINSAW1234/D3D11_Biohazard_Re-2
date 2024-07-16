@@ -135,6 +135,11 @@ HRESULT CInventory_Item_UI::Render()
     return S_OK;
 }
 
+HRESULT CInventory_Item_UI::Change_Tool()
+{
+    return S_OK;
+}
+
 /* 박스 동작 방식 모음 */
 void CInventory_Item_UI::Box_Operater(_float fTimeDelta)
 {

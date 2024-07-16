@@ -53,24 +53,6 @@ void CNewpoliceStatue::Tick(_float fTimeDelta)
 //#endif
 //#endif
 
-	/* 예비 카메라 */
-	if (DOWN == m_pGameInstance->Get_KeyState('J'))
-	{
-		m_bCamera = false;
-		m_pCameraGimmick->Active_Camera(false);
-		m_pPlayer->ResetCamera();
-	}
-
-	if (DOWN == m_pGameInstance->Get_KeyState('Y'))
-	{
-		m_bCamera = false;
-		CPart_InteractProps* pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_PART1]);
-		m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + pPartLock->GetLookDir_Vector() * 0.15f + _vector{ 0.05f,0.1f,0.f,0.f });
-		m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
-
-		m_pCameraGimmick->Active_Camera(true);
-	}
-
 	if (DOWN== m_pGameInstance->Get_KeyState('L'))
 	{
 		m_isGiveMedal = true;

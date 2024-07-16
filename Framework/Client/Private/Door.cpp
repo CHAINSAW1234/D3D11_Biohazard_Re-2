@@ -73,6 +73,7 @@ HRESULT CDoor::Initialize(void* pArg)
 void CDoor::Start()
 {
 	__super::Start();
+
 	list<CGameObject*>* pCollider = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Jombie_Collider"));
 	if (pCollider == nullptr)
 		return;
@@ -116,18 +117,6 @@ void CDoor::Start()
 void CDoor::Tick(_float fTimeDelta)
 {
 	__super::Tick_Col();
-	if (DOWN == m_pGameInstance->Get_KeyState('J'))
-	{
-		m_isCameraGimmick = !m_isCameraGimmick;
-
-		CPart_InteractProps* pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_KEY]);
-		m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + pPartLock->GetLookDir_Vector() * 0.15f + _vector{ 0.05f,0.1f,0.f,0.f });
-		m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
-	}
-
-	if (true == m_isCameraGimmick)
-		m_pCameraGimmick->Active_Camera(true);
-
 
 	if (!m_bVisible)
 		return;
@@ -625,6 +614,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 			else
 			{
 				m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+
 				Opreate_Selector_UI(false, Get_Object_Pos());
 			}
 			
@@ -637,6 +627,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 			if(nullptr != m_pSelector)
 			{
 				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
 				m_pSelector = nullptr;
 			}
 
