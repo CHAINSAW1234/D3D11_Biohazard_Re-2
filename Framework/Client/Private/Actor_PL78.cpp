@@ -85,6 +85,10 @@ HRESULT CActor_PL78::Add_PartObjects()
 
 	m_PartObjects[static_cast<_uint>(ACTOR_PL78_PART::_GUTS)] = pPartObject_Guts;
 
+	CModel* pHeadModel = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(ACTOR_PL78_PART::_HEAD)]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pHairModel = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(ACTOR_PL78_PART::_HAIR)]->Get_Component(TEXT("Com_Model"))) };
+	pHairModel->Link_Bone_Auto(pHeadModel);
+
 	return S_OK;
 }
 

@@ -356,6 +356,8 @@ public:	//For Camera
 public:
 	void										Set_ManualMove(_bool isManualMove);
 
+	void										Move_Manual(_fmatrix WorldMatrix);
+
 private:
 	class CCamera_Free*							m_pCamera = { nullptr };
 	_float4										m_vCameraPosition;

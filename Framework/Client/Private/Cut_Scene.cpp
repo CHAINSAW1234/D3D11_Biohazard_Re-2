@@ -23,16 +23,14 @@ HRESULT CCut_Scene::Initialize(void* pArg)
 	if (FAILED(Add_Actors()))
 		return E_FAIL;
 
+	if (FAILED(SetUp_Animation_Layer()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
 void CCut_Scene::Priority_Tick(_float fTimeDelta)
 {
-	if (DOWN == m_pGameInstance->Get_KeyState('T'))
-	{
-		m_isPlaying = true;
-	}
-
 	if (false == m_isPlaying)
 		return;
 
@@ -49,16 +47,6 @@ void CCut_Scene::Priority_Tick(_float fTimeDelta)
 
 	if (false == isNonFinishedCurrentAnim)
 	{
-		_uint	iPartType = { 0 };
-		for (auto& pActor : m_Actors)
-		{
-			pActor->Set_Next_Animation(iPartType);
-			++iPartType;
-		}
-	}
-
-	else
-	{
 		_bool		isNonFinshedCurrentSeq = { false };
 		for (auto& pActor : m_Actors)
 		{
@@ -72,8 +60,21 @@ void CCut_Scene::Priority_Tick(_float fTimeDelta)
 		if (false == isNonFinshedCurrentSeq)
 		{
 			m_isPlaying = false;
+
+			cout << "Finish" << endl;
+
+			Finish();
 		}
-	}	
+		else
+		{
+			cout << "Next" << endl;
+
+			for (auto& pActor : m_Actors)
+			{
+				pActor->Set_Next_Animation_Sequence();	
+			}
+		}		
+	}
 
 	Priority_Tick_Actors(fTimeDelta);
 }
@@ -99,6 +100,11 @@ HRESULT CCut_Scene::Render()
 	return S_OK;
 }
 
+HRESULT CCut_Scene::SetUp_Animation_Layer()
+{
+	return S_OK;
+}
+
 HRESULT CCut_Scene::Add_Actor(const wstring& strPrototypeTag, _uint iActorType, void* pArg)
 {
 	CGameObject*			pGameObject = { m_pGameInstance->Clone_GameObject(strPrototypeTag, pArg) };
@@ -110,7 +116,6 @@ HRESULT CCut_Scene::Add_Actor(const wstring& strPrototypeTag, _uint iActorType, 
 		return E_FAIL;
 
 	m_Actors[iActorType] = pActor;
-	Safe_AddRef(pActor);
 
 	return S_OK;
 }

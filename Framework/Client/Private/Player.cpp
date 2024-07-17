@@ -35,6 +35,8 @@
 #include "HG_Cartridge.h"
 #include "SG_Cartridge.h"
 
+#include "Call_Center.h"
+
 #define MODEL_SCALE 0.01f
 #define SHOTGUN_BULLET_COUNT 7
 #define SHOTGUN_SPREAD_AMOUNT 0.14f
@@ -80,6 +82,11 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+
+
+	///	For.CutScene
+	CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_PL00);
+	///
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
@@ -135,7 +142,19 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 void CPlayer::Tick(_float fTimeDelta)
 {
 	if (m_pGameInstance->Get_KeyState('T') == DOWN) {
+		m_pEventCamera->Set_PlayCamlist(TEXT("cf092"));
+	}
+
+	if (m_pGameInstance->Get_KeyState('Y') == DOWN) {
 		m_pEventCamera->Set_PlayCamlist(TEXT("cf093"));
+	}
+
+	if (m_pGameInstance->Get_KeyState('U') == DOWN) {
+		m_pEventCamera->Set_PlayCamlist(TEXT("cf094"));
+	}
+
+	if (m_pGameInstance->Get_KeyState('I') == DOWN) {
+		m_pEventCamera->Set_PlayCamlist(TEXT("cf095"));
 	}
 
 
@@ -362,11 +381,11 @@ void CPlayer::Tick(_float fTimeDelta)
 
 #pragma region TEST
 
-	if (m_pGameInstance->Get_KeyState('T') == DOWN) {
+	/*if (m_pGameInstance->Get_KeyState('T') == DOWN) {
 		Change_Player_State_Bite(0, TEXT("Bite_Default"), XMMatrixIdentity(), 0.2f);
 		Request_NextBiteAnimation(1);
 
-	}
+	}*/
 
 
 	//if (m_pGameInstance->Get_KeyState('E') == DOWN) {
@@ -1749,6 +1768,15 @@ void CPlayer::Set_ManualMove(_bool isManualMove)
 	}
 }
 
+void CPlayer::Move_Manual(_fmatrix WorldMatrix)
+{
+	m_pTransformCom->Set_WorldMatrix(WorldMatrix);
+
+	_float4				vPosition = { m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) };
+	vPosition.y += CONTROLLER_GROUND_GAP;
+	m_pController->SetPosition(vPosition);
+}
+
 void CPlayer::Set_Muzzle_Smoke()
 {
 	if (m_eEquip == HG)
@@ -2321,7 +2349,10 @@ HRESULT CPlayer::Ready_Camera()
 	m_pCamera->Bind_PipeLine();
 
 	m_pEventCamera = (CCamera_Event*)m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 1);
+	m_pEventCamera->Add_CamList(TEXT("cf092"), TEXT("../Bin/DataFiles/mcamlist/cf092.mcamlist.13"));
 	m_pEventCamera->Add_CamList(TEXT("cf093"), TEXT("../Bin/DataFiles/mcamlist/cf093.mcamlist.13"));
+	m_pEventCamera->Add_CamList(TEXT("cf094"), TEXT("../Bin/DataFiles/mcamlist/cf094.mcamlist.13"));
+	m_pEventCamera->Add_CamList(TEXT("cf095"), TEXT("../Bin/DataFiles/mcamlist/cf095.mcamlist.13"));
 	return S_OK;
 }
 

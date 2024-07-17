@@ -75,12 +75,12 @@ void CBody_Shutter::Late_Tick(_float fTimeDelta)
 		Shutter_034_Late_Tick(fTimeDelta);
 		break;
 	}
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+	/*m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);*/
 }
 
 HRESULT CBody_Shutter::Render()

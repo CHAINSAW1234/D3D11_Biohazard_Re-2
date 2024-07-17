@@ -20,13 +20,19 @@ public:
 	virtual void								Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT								Render() override;
 
+protected:
+	virtual	HRESULT								SetUp_Animation_Layer();
+
 public:
 	inline void									Play() { m_isPlaying = true; }
 	inline void									Stop() { m_isPlaying = false; }
 
 public:
-	inline _bool								Is_Playing() { return m_isPlaying;  }
-	
+	virtual void								Start() = 0;
+	virtual void								Finish() = 0;
+
+public:
+	inline _bool								Is_Playing() { return m_isPlaying;  }	
 
 protected:
 	HRESULT										Add_Actor(const wstring& strPrototypeTag, _uint iActorType, void* pArg);

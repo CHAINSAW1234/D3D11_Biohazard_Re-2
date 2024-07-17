@@ -90,6 +90,7 @@ private:
 	virtual HRESULT						Initialize_Status() override;
 	virtual HRESULT						Initialize_States();
 	virtual HRESULT						Initialize_PartBreaker();
+	virtual HRESULT						Add_RagDoll_OtherParts();
 
 public:
 	void								Play_Animations_Body(_float fTimeDelta);

@@ -37,6 +37,20 @@
 //	Broken Right		|	BokenrHeadA_mesh0104						|												|
 //	Broken Center		|	BokenrHeadB_mesh0105						|												|
 //	Broken Left			|	BokenrHeadC_mesh0106						|												|
+
+
+//	Shirt
+
+//	R_Arm	29
+//	L_Arm	39
+//	Shirt	Shirt
+//	Tshirt	Tshirt
+
+//	Pants
+
+//	R_Pants 49			|	R_Shoes				44						|	
+//	L_Pants 59			|	L_Shoes				54						|
+//	Pants	60
 																														
 BEGIN(Client)
 
@@ -63,10 +77,16 @@ public:
 public:
 	HRESULT											Compute_MeshParts_Types_Indices_Male(vector<vector<_int>>& MeshPartsTypesIndices, const vector<string>& MeshTags);
 	HRESULT											Compute_MeshParts_Types_Indices_Female_Male_Big(vector<vector<_int>>& MeshPartsTypesIndices, const vector<string>& MeshTags);
+	HRESULT											Compute_MeshParts_Types_Indices_Shirt(vector<vector<_int>>& MeshPartsTypesIndices, const vector<string>& MeshTags);
+	HRESULT											Compute_MeshParts_Types_Indices_Pants(vector<vector<_int>>& MeshPartsTypesIndices, const vector<string>& MeshTags);
+
+	HRESULT											SetUp_Additional_Child_Meshes();
 
 public:
 	_bool											Is_BreaKPart(BREAK_PART ePart);
-	_bool											Is_RagDoll_Mesh(_uint iMeshIndex);
+	_bool											Is_RagDoll_Mesh_Body(_uint iMeshIndex);
+	_bool											Is_RagDoll_Mesh_Shirt(_uint iMeshIndex);
+	_bool											Is_RagDoll_Mesh_Pants(_uint iMeshIndex);
 
 public:
 	_bool											Attack(BREAK_PART ePart);
@@ -77,10 +97,18 @@ private:
 
 	vector<_bool>									m_isBreakParts;			//	Part_Index
 	vector<_uint>									m_HPs;
-	unordered_set<_uint>							m_RagDollMeshIndices;	//	Part_Index
-	unordered_set<_uint>							m_AnimMeshIndices;		//	Part_Index
+	unordered_set<_uint>							m_RagDollMeshIndices_Body;	//	Part_Index
+	unordered_set<_uint>							m_AnimMeshIndices_Body;		//	Part_Index
 
-	vector<class CPart_Mesh_Info_Zombie*>			m_PartMeshInfos;
+	unordered_set<_uint>							m_RagDollMeshIndices_Shirt;	//	Part_Index
+	unordered_set<_uint>							m_AnimMeshIndices_Shirt;	//	Part_Index
+
+	unordered_set<_uint>							m_RagDollMeshIndices_Pants;	//	Part_Index
+	unordered_set<_uint>							m_AnimMeshIndices_Pants;	//	Part_Index
+
+	vector<class CPart_Mesh_Info_Zombie*>			m_PartMeshInfos_Body;
+	vector<class CPart_Mesh_Info_Zombie*>			m_PartMeshInfos_Shirt;
+	vector<class CPart_Mesh_Info_Zombie*>			m_PartMeshInfos_Pants;
 
 	CModel*											m_pBody_Model = { nullptr };
 	CModel*											m_pFace_Model = { nullptr };

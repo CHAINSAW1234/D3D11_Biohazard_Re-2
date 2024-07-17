@@ -3,6 +3,8 @@
 #include"Player.h"
 
 #include"Body_Shutter.h"
+#include "Call_Center.h"
+
 CShutter::CShutter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -25,7 +27,10 @@ HRESULT CShutter::Initialize(void* pArg)
 		return E_FAIL;
 	
 	if (m_tagPropDesc.strGamePrototypeName.find("60_033") != string::npos)
+	{
 		m_eType = SHUTTER_033;
+		CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_SM60_033);
+	}
 	else if (m_tagPropDesc.strGamePrototypeName.find("60_034") != string::npos)
 		m_eType = SHUTTER_034;
 	else

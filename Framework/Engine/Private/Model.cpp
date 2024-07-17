@@ -232,6 +232,40 @@ _matrix CModel::Get_FirstKeyFrame_Root_CombinedMatrix(const wstring& strAnimLaye
 	return ResultMatrix;
 }
 
+_matrix CModel::Get_CurrentKeyFrame_Root_CombinedMatrix(_uint iPlayingIndex)
+{
+	CPlayingInfo*				pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+	if (nullptr == pPlayingInfo)
+		return XMMatrixIdentity();
+
+	_int						iAnimationIndex = { pPlayingInfo->Get_AnimIndex() };
+	wstring						strAnimLayerTag = { pPlayingInfo->Get_AnimLayerTag() };
+
+	if (-1 == iAnimationIndex || TEXT("") == strAnimLayerTag)
+		return XMMatrixIdentity();
+
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	if (iter == m_AnimationLayers.end())
+		return XMMatrixIdentity();
+
+	CAnimation_Layer*			pAnimationLayer = { iter->second };	
+	CAnimation*					pAnimation = { pAnimationLayer->Get_Animation(iAnimationIndex) };
+
+	_float						fTrackPosition = { pPlayingInfo->Get_TrackPosition() };
+	_int						iRootBoneIndex = { Find_RootBoneIndex() };
+
+	if (-1 == iRootBoneIndex)
+		return XMMatrixIdentity();
+
+	KEYFRAME					KeyFrame = { pAnimation->Get_CurrentKeyFrame(iRootBoneIndex, fTrackPosition) };
+
+	_vector						vScale = { XMLoadFloat3(&KeyFrame.vScale) };
+	_vector						vTranslation = { XMVectorSetW(XMLoadFloat3(&KeyFrame.vTranslation), 1.f) };
+	_vector						vQuaternion = { XMLoadFloat4(&KeyFrame.vRotation) };
+
+	return XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
+}
+
 void CModel::Reset_PreAnimation(_uint iPlayingIndex)
 {
 	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
@@ -1494,11 +1528,15 @@ _bool CModel::Find_AnimIndex(_int* pAnimIndex, wstring* pAnimLayerTag, const str
 				break;
 			}
 
-			if (true == isFind)
-				iAnimIndex = iIndex;
-
 			++iIndex;
 		}
+
+		if (true == isFind)
+		{
+			iAnimIndex = iIndex;
+			break;
+		}
+
 	}
 
 	*pAnimIndex = iAnimIndex;
@@ -2440,14 +2478,6 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 		return E_FAIL;
 	}
 
-	_int				iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
-	if (false == pPlayingInfo->Is_Set_CurrentAnimation())
-	{
-		MSG_BOX(TEXT("false == pPlayingInfo->Is_Set_CurrentAnimation(),  HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)"));
-
-		return E_FAIL;
-	}
-
 	CBone_Layer* pBoneLayer = { Find_BoneLayer(pPlayingInfo->Get_BoneLayerTag()) };
 	if (nullptr == pBoneLayer)
 	{
@@ -2456,23 +2486,35 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 		return E_FAIL;
 	}
 
+	_int				iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
 	_uint				iNumBones = { static_cast<_uint>(m_Bones.size()) };
 	unordered_set<_uint>			IncludeBoneIndices = { pBoneLayer->Get_IncludedBoneIndices() };
-
-	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
-	CAnimation* pAnimation = { iter->second->Get_Animation(iAnimIndex) };
-
-	vector<_float4x4>				TransformationMatrices = { pAnimation->Compute_TransfromationMatrix(fTimeDelta, iNumBones, IncludeBoneIndices, m_T_Pose_Matrices, pPlayingInfo) };
-
-	Update_LinearInterpolation(fTimeDelta, 0);
-	if (true == pPlayingInfo->Is_LinearInterpolation())
+	vector<_float4x4>				TransformationMatrices;
+	if (-1 != iAnimIndex)
 	{
-		_float						fAccLinearTime = { pPlayingInfo->Get_AccLinearInterpolation() };
-		vector<KEYFRAME>			LinearStartKeyFrames = { pPlayingInfo->Get_LinearStartKeyFrames() };
+		unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
+		CAnimation* pAnimation = { iter->second->Get_Animation(iAnimIndex) };
 
-		for (_uint i = 0; i < iNumBones; ++i)
+		TransformationMatrices = { pAnimation->Compute_TransfromationMatrix(fTimeDelta, iNumBones, IncludeBoneIndices, m_T_Pose_Matrices, pPlayingInfo) };
+
+		Update_LinearInterpolation(fTimeDelta, 0);
+		if (true == pPlayingInfo->Is_LinearInterpolation())
 		{
-			TransformationMatrices = pAnimation->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearTime, m_fTotalLinearTime, TransformationMatrices, iNumBones, LinearStartKeyFrames);
+			_float						fAccLinearTime = { pPlayingInfo->Get_AccLinearInterpolation() };
+			vector<KEYFRAME>			LinearStartKeyFrames = { pPlayingInfo->Get_LinearStartKeyFrames() };
+
+			for (_uint i = 0; i < iNumBones; ++i)
+			{
+				TransformationMatrices = pAnimation->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearTime, m_fTotalLinearTime, TransformationMatrices, iNumBones, LinearStartKeyFrames);
+			}
+		}
+	}	
+
+	else
+	{
+		for (auto& T_Pose_Matrix : m_T_Pose_Matrices)
+		{
+			TransformationMatrices.push_back(T_Pose_Matrix);
 		}
 	}
 

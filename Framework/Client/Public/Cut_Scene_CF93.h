@@ -19,6 +19,18 @@ public:
 	virtual HRESULT								Initialize_Prototype() override;
 	virtual HRESULT								Initialize(void* pArg) override;
 
+public:
+	virtual void								Priority_Tick(_float fTimeDelta) override;
+	virtual void								Tick(_float fTimeDelta) override;
+	virtual void								Late_Tick(_float fTimeDelta) override;
+
+public:
+	virtual void								Start() override { }
+	virtual void								Finish() override;
+
+private:
+	virtual HRESULT								SetUp_Animation_Layer() override;
+
 private:
 	virtual HRESULT								Add_Actors() override;
 

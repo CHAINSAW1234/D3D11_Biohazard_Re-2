@@ -406,7 +406,7 @@ void CZombie::Tick(_float fTimeDelta)
 					auto Type = m_pController->Get_Hit_Collider_Type();
 
 
-					if(Type != COLLIDER_TYPE::CHEST && Type != COLLIDER_TYPE::PELVIS && Type != COLLIDER_TYPE::HEAD)
+					if(Type != COLLIDER_TYPE::CHEST && Type != COLLIDER_TYPE::PELVIS /*&& Type != COLLIDER_TYPE::HEAD*/)
 					{
 						for (auto& pPartObject : m_PartObjects)
 						{
@@ -415,7 +415,7 @@ void CZombie::Tick(_float fTimeDelta)
 							switch (eType)
 							{
 							case COLLIDER_TYPE::HEAD:
-								eBreakType = BREAK_PART::_HEAD;
+								eBreakType = BREAK_PART::_HEAD;	
 								break;
 
 							case COLLIDER_TYPE::ARM_R:
@@ -1259,6 +1259,7 @@ HRESULT CZombie::Add_PartObjects()
 	ClothesShirtsDesc.eBodyType = static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID);
 	ClothesShirtsDesc.eClothesType = ZOMBIE_CLOTHES_TYPE::_SHIRTS;
 	ClothesShirtsDesc.iClothesModelID = m_iShirts_ID;
+	ClothesShirtsDesc.ppPart_Breaker = &m_pPart_Breaker;
 
 	pShirtsObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Zombie"), &ClothesShirtsDesc));
 	if (nullptr == pShirtsObject)
@@ -1289,6 +1290,7 @@ HRESULT CZombie::Add_PartObjects()
 	ClothesPantsDesc.eBodyType = static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID);
 	ClothesPantsDesc.eClothesType = ZOMBIE_CLOTHES_TYPE::_PANTS;
 	ClothesPantsDesc.iClothesModelID = m_iPants_ID;
+	ClothesPantsDesc.ppPart_Breaker = &m_pPart_Breaker;
 
 	pPantsObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Zombie"), &ClothesPantsDesc));
 	if (nullptr == pPantsObject)
@@ -1354,6 +1356,18 @@ HRESULT CZombie::Initialize_PartBreaker()
 
 	if (nullptr == m_pPart_Breaker)
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CZombie::Add_RagDoll_OtherParts()
+{
+	CRagdoll_Physics*			pRagDoll = { static_cast<CBody_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_BODY)])->Get_RagDoll_Ptr() };
+	if (nullptr == pRagDoll)
+		return E_FAIL;
+
+	static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_SHIRTS)])->Set_RagDoll_Ptr(pRagDoll);
+	static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_PANTS)])->Set_RagDoll_Ptr(pRagDoll);
 
 	return S_OK;
 }

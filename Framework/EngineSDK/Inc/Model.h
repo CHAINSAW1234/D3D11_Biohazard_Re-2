@@ -47,6 +47,7 @@ public:		/* For.Animation */
 
 	_matrix									Get_FirstKeyFrame_Root_TransformationMatrix(const wstring& strAnimLayerTag, _int iAnimIndex);
 	_matrix									Get_FirstKeyFrame_Root_CombinedMatrix(const wstring& strAnimLayerTag, _int iAnimIndex);
+	_matrix									Get_CurrentKeyFrame_Root_CombinedMatrix(_uint iPlayingIndex);
 
 	void									Reset_PreAnimation(_uint iPlayingIndex);
 	void									Reset_PreAnim_CurrentAnim(_uint iPlayingIndex);

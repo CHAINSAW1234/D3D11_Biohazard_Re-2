@@ -45,7 +45,11 @@ HRESULT CActor_PL00::Add_PartObjects()
 	Body_Desc.pRootTranslation = &m_vRootTranslation;
 	Body_Desc.isBaseObject = true;
 	Body_Desc.strModelPrototypeTag = TEXT("Prototype_Component_Model_LeonBody");
+	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF92_PL0000"));
 	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF93_PL0000"));
+	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF94_PL0000"));
+	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF95_PL0000"));
+	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF120_PL0000"));
 
 	CActor_PartObject* pPartObject_Body = { CActor_PartObject::Create(m_pDevice, m_pContext, &Body_Desc) };
 	if (nullptr == pPartObject_Body)
@@ -56,7 +60,11 @@ HRESULT CActor_PL00::Add_PartObjects()
 	CActor_PartObject::ACTOR_PART_DESC			Head_Desc;
 	Head_Desc.pParentsTransform = m_pTransformCom;
 	Head_Desc.strModelPrototypeTag = TEXT("Prototype_Component_Model_LeonFace");
+	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF92_PL0050"));
 	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF93_PL0050"));
+	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF94_PL0050"));
+	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF95_PL0050"));
+	Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF120_PL0050"));
 
 	CActor_PartObject* pPartObject_Head = { CActor_PartObject::Create(m_pDevice, m_pContext, &Head_Desc) };
 	if (nullptr == pPartObject_Head)
@@ -73,6 +81,15 @@ HRESULT CActor_PL00::Add_PartObjects()
 		return E_FAIL;
 
 	m_PartObjects[static_cast<_uint>(ACTOR_PL00_PART::_HAIR)] = pPartObject_Hair;
+		
+	CModel* pHeadModel = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(ACTOR_PL00_PART::_HEAD)]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pHairModel = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(ACTOR_PL00_PART::_HAIR)]->Get_Component(TEXT("Com_Model"))) };
+	pHairModel->Link_Bone_Auto(pHeadModel);
+
+	/*pHairModel->Add_Bone_Layer_All_Bone(TEXT("Default"));
+	pHairModel->Add_AnimPlayingInfo(true, 0, TEXT("Default"), 1.f);
+	pHairModel->Set_RootBone("RootNode");
+	pHairModel->Change_Animation(0, TEXT("Default"), 0);*/
 
 	return S_OK;
 }
