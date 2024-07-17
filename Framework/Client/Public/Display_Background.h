@@ -19,7 +19,7 @@ public:
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-	void Set_BackGround(ITEM_READ_TYPE eIRT);
+	void Set_BackGround(ITEM_READ_TYPE eIRT, _bool bDead);
 
 public:
 	static _bool IsCanChangeBG_Tex(ITEM_READ_TYPE eIRT);

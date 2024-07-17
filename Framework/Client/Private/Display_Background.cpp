@@ -65,16 +65,16 @@ HRESULT CHint_Display_Background::Render()
 	return S_OK;
 }
 
-void CHint_Display_Background::Set_BackGround(ITEM_READ_TYPE eIRT)
+void CHint_Display_Background::Set_BackGround(ITEM_READ_TYPE eIRT, _bool bDead)
 {
 	if (false == CHint_Display_Background::IsCanChangeBG_Tex(eIRT))
 	{
 		m_bDead = true;
-		m_fBlending = 1.f;
 	}
 		
 	else
 	{
+		m_bDead = bDead;
 		m_fBlending = 0.5f;
 		m_pTextureCom = m_mapDocumentTextures[eIRT];
 	}

@@ -21,7 +21,7 @@ public:
 
 	virtual void Set_Dead(_bool bDead) override;
 
-	void Set_Display(ITEM_READ_TYPE eItemReadType, _uint TextureNum, _float2 fPos, _float2 fSize);
+	void Set_Display(ITEM_READ_TYPE eItemReadType, _uint TextureNum, _float2 fPos, _float2 fSize, _bool bDead);
 	_uint Get_CurTypeTexCount() const { return m_iCurTypeTexCount; }
 	_uint Get_CurTexNum() const { return m_iCurTexNum; }
 	ITEM_READ_TYPE Get_CurIRT() { return m_eCurIRT;	}

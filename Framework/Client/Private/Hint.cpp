@@ -165,7 +165,7 @@ void CHint::Hoverd_Highlight()
 				if (eIRT != m_pDisplay->Get_CurIRT())
 				{
 					DOCUMENT_INFO DocumentInfo = m_mapDocumentInfo[eIRT];
-					m_pDisplay->Set_Display(eIRT, 0, DocumentInfo.fPosition, DocumentInfo.fSize);
+					m_pDisplay->Set_Display(eIRT, 0, DocumentInfo.fPosition, DocumentInfo.fSize, false);
 				}
 			}
 		}
@@ -182,7 +182,7 @@ void CHint::Hoverd_Highlight()
 				if (eIRT != m_pDisplay->Get_CurIRT())
 				{
 					DOCUMENT_INFO DocumentInfo = m_mapDocumentInfo[eIRT];
-					m_pDisplay->Set_Display(eIRT, 0, DocumentInfo.fPosition, DocumentInfo.fSize);
+					m_pDisplay->Set_Display(eIRT, 0, DocumentInfo.fPosition, DocumentInfo.fSize, false);
 				}
 			}
 		}
@@ -218,6 +218,8 @@ void CHint::Button_Action()
 		if (true == m_pPoliceButton->IsMouseHover() && POLICE != m_eCurrentDC)
 		{
 			m_eCurrentDC = POLICE;
+			m_pPoliceButton->Set_FontColor(XMVectorSet(1.0f, 1.f, 1.f, 1.f));
+			m_pTutorialButton->Set_FontColor(XMVectorSet(0.8f, 0.8f, 0.8f, 1.f));
 
 			for (auto& iter : m_vecDirectory)
 				iter->Set_Dead(true);
@@ -235,16 +237,22 @@ void CHint::Button_Action()
 				for (size_t i = 0; i < m_mapAcqDoc[m_eCurrentDC].size(); i++)
 				{
 					m_vecDirectory[i]->Set_Directory(m_mapAcqDoc[m_eCurrentDC][i], m_mapDocumentInfo[m_mapAcqDoc[m_eCurrentDC][i]].wstrName);
-				
 					m_vecDirectory[i]->Set_Dead(false);
 				}
 			}
+
+			DOCUMENT_INFO DocuInfo = m_mapDocumentInfo[m_mapAcqDoc[m_eCurrentDC][0]];
+
+			m_pDisplay->Set_Display(m_mapAcqDoc[m_eCurrentDC][0], 0, DocuInfo.fPosition, DocuInfo.fSize, false);
 		}
 
 		else if (true == m_pTutorialButton->IsMouseHover() && TUTORIAL != m_eCurrentDC)
 		{
 			m_eCurrentDC = TUTORIAL;
 
+			m_pTutorialButton->Set_FontColor(XMVectorSet(1.0f, 1.f, 1.f, 1.f));
+			m_pPoliceButton->Set_FontColor(XMVectorSet(0.8f, 0.8f, 0.8f, 1.f));
+
 			for (auto& iter : m_vecDirectory)
 				iter->Set_Dead(true);
 
@@ -264,6 +272,10 @@ void CHint::Button_Action()
 					m_vecDirectory[i]->Set_Dead(false);
 				}
 			}
+
+			DOCUMENT_INFO DocuInfo = m_mapDocumentInfo[m_mapAcqDoc[m_eCurrentDC][0]];
+
+			m_pDisplay->Set_Display(m_mapAcqDoc[m_eCurrentDC][0], 0, DocuInfo.fPosition, DocuInfo.fSize, false);
 		}
 	}
 }
@@ -310,7 +322,7 @@ void CHint::Set_Dead(_bool bDead)
 
 	ITEM_READ_TYPE eIRT = m_vecDirectory[0]->Get_DirectoryType();
 	DOCUMENT_INFO DocumentInfo = m_mapDocumentInfo[eIRT];
-	m_pDisplay->Set_Display(eIRT, 0, DocumentInfo.fPosition, DocumentInfo.fSize);
+	m_pDisplay->Set_Display(eIRT, 0, DocumentInfo.fPosition, DocumentInfo.fSize, bDead);
 
 	m_pDisplay_Blinde->Set_Dead(bDead);
 }
@@ -554,6 +566,8 @@ void CHint::Free()
 	}
 	Safe_Release(m_pHighlighter);
 	Safe_Release(m_pHL_Trans);
+	Safe_Release(m_pPoliceButton);
+	Safe_Release(m_pTutorialButton);
 }
 
 CHint::DOCUMENT_CLASSIFY CHint::Document_Classify_ByNumber(ITEM_READ_TYPE eIRT_Num)

@@ -74,7 +74,7 @@ void CHint_Display::Set_Dead(_bool bDead)
 	m_pBackground->Set_Dead(bDead);
 }
 
-void CHint_Display::Set_Display(ITEM_READ_TYPE eItemReadType, _uint TextureNum, _float2 fPos, _float2 fSize)
+void CHint_Display::Set_Display(ITEM_READ_TYPE eItemReadType, _uint TextureNum, _float2 fPos, _float2 fSize, _bool bDead)
 {
 	if (TextureNum < m_mapDocumentTextures[eItemReadType].size())
 	{
@@ -86,11 +86,12 @@ void CHint_Display::Set_Display(ITEM_READ_TYPE eItemReadType, _uint TextureNum, 
 		m_eCurIRT = eItemReadType;
 
 
-		m_pBackground->Set_BackGround(eItemReadType);
+		m_pBackground->Set_BackGround(eItemReadType, bDead);
 	}
 	else
 	{
 		m_bDead = true;
+		m_pBackground->Set_BackGround(eItemReadType, true);
 	}
 }
 
