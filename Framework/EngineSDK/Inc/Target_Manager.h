@@ -25,7 +25,7 @@ public:
 	HRESULT													Bind_OutputShaderResource(class CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName);
 	HRESULT													Copy_Resource(const wstring& strRenderTargetTag, ID3D11Texture2D** ppTextureHub);
 	HRESULT													Copy_Resource(const wstring& strDestRenderTargetTag, const wstring& strSrcRenderTargetTag);
-
+	HRESULT													Copy_BackBuffer(const wstring& strRenderTargetTag);
 #ifdef _DEBUG
 public:
 	HRESULT													Ready_Debug(const wstring& strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
@@ -33,6 +33,7 @@ public:
 #endif
 
 private:
+	class CGameInstance*									m_pGameInstance = { nullptr };
 	ID3D11Device*											m_pDevice = { nullptr };
 	ID3D11DeviceContext*									m_pContext = { nullptr };
 	map<const wstring, class CRenderTarget*>				m_RenderTargets;
