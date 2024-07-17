@@ -19,6 +19,7 @@ class CPart_InteractProps abstract : public CPartObject
 public:
 	typedef struct tagPart_InteractProps_Desc : public CPartObject::PARTOBJECT_DESC
 	{
+		_bool*				pIsOutOfControll = { nullptr };
 		const _bool*		pRender;
 		_ubyte*				pState;
 		_float3*				pRootTranslation = { nullptr };
@@ -112,6 +113,8 @@ protected:
 
 	class CPxCollider*						m_pPx_Collider = { nullptr };
 	vector<CBone*>						m_vecRotationBone;
+
+	_bool*									m_pIsOutOfControll = { nullptr };
 
 protected:
 	void											Check_Col_Sphere_Player();

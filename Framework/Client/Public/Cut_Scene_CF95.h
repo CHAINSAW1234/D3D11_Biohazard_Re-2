@@ -28,11 +28,13 @@ private:
 	virtual HRESULT								SetUp_Animation_Layer() override;
 
 public:
-	virtual void								Start() override;
-	virtual void								Finish() override;
+	virtual void								Start_CutScene() override;
+	virtual void								Finish_CutScene() override;
 
 private:
 	virtual HRESULT								Add_Actors() override;
+	virtual HRESULT								Add_Props() override;
+	virtual	HRESULT								Add_Camera_Event() override;
 
 public:
 	static CCut_Scene_CF95* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

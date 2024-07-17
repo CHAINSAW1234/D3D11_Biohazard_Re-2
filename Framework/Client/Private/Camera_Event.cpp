@@ -80,6 +80,8 @@ void CCamera_Event::Reset()
 	m_iCurrentTranslateFrame = 0;
 	m_iCurrentRotationFrame = 0;
 	m_iCurrentZoomFrame = 0;
+	m_isFinished = false;
+	m_isAllFinished = false;
 	m_pGameInstance->Active_Camera(g_Level,
 		(CCamera*)(m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 0)));
 }
@@ -91,6 +93,13 @@ void CCamera_Event::Change_to_Next(_float fTimeDelta)
 	m_iCurrentTranslateFrame = 0;
 	m_iCurrentRotationFrame = 0;
 	m_iCurrentZoomFrame = 0;
+	m_isFinished = false;
+
+#ifdef _DEBUG
+
+	cout << "Change Camara : " << m_iCurrentMCAMIndex << endl;
+
+#endif
 }
 
 HRESULT CCamera_Event::Set_PlayCamlist(const wstring& strCamTag)
@@ -104,6 +113,7 @@ HRESULT CCamera_Event::Set_PlayCamlist(const wstring& strCamTag)
 	m_iCurrentTranslateFrame = 0;
 	m_iCurrentRotationFrame = 0;
 	m_iCurrentZoomFrame = 0;
+	m_isFinished = false;
 	m_isPlay = true;
 	m_fTrackPosition = 0.f;
 
@@ -313,6 +323,9 @@ MCAM* CCamera_Event::Find_MCAM(const wstring& strCamListTag, _uint iIndex)
 
 void CCamera_Event::Play_MCAM(_float fTimeDelta)
 {
+	if (true == m_isFinished)
+		return;
+
 	//	cout << m_iCurrentTranslateFrame << endl;
 	if (nullptr == m_pCurrentMCAMList)
 		return;
@@ -324,16 +337,16 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 
 	m_fTrackPosition += fTimeDelta * CurrentMCAM.CAMHeader.frameRate;
 
-	if (m_fTrackPosition > CurrentMCAM.CAMHeader.frameCount) {
-		_float fNextTrackPosition = m_fTrackPosition - CurrentMCAM.CAMHeader.frameCount;
-		m_fTrackPosition = CurrentMCAM.CAMHeader.frameCount;
-		Change_to_Next(fNextTrackPosition);
-		if (m_iCurrentMCAMIndex >= m_pCurrentMCAMList->size()) {
-			Reset();
-			return;
+	if (m_fTrackPosition > CurrentMCAM.CAMHeader.frameCount)
+	{
+		m_isFinished = true;
+
+		if (m_iCurrentMCAMIndex >= m_pCurrentMCAMList->size() - 1) {
+
+			m_isAllFinished = true;
 		}
 
-		CurrentMCAM = (*m_pCurrentMCAMList)[m_iCurrentMCAMIndex]; 
+		return;
 
 		// 이 카메라는 이제 끝이여
 	}
@@ -399,9 +412,6 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 	m_fFovy = XMConvertToRadians(60.f) * vZoom;
 
 #pragma region 축회전 해봣는데 안댐
-	_matrix				TransformationMatrixX = { XMMatrixRotationX(XMConvertToRadians(180.f)) };
-	_matrix				TransformationMatrixY = { XMMatrixRotationY(XMConvertToRadians(180.f)) };
-	_matrix				TransformationMatrixZ = { XMMatrixRotationZ(XMConvertToRadians(180.f)) };
 	_vector				vTransaltionWorld = { XMVectorSetW(XMLoadFloat3(&vTranslation), 1.f)};
 	vTransaltionWorld.m128_f32[0] = vTransaltionWorld.m128_f32[0] * -1.f;
 	//	_vector				vTransaltionWorld = { XMVectorSetW(XMVector3TransformCoord(vTranslation, TransformationMatrix), 1.f) };
@@ -416,27 +426,6 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 
 	vQuaternion = vFippedQuaternion;
 
-	static _float		fMoveZ = { 0.f };
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_LEFT))
-	{
-		fMoveZ -= 0.3f;
-	}
-
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_RIGHT))
-	{
-		fMoveZ += 0.3f;
-	}
-	vTransaltionWorld.m128_f32[2] += fMoveZ;
-
-	//_vector				vQuaternion = { XMLoadFloat4(&vRotation) };
-	//_vector				vAdditionalQuaternion = { XMQuaternionRotationAxis(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f)) };
-	//vQuaternion = { XMQuaternionNormalize(XMQuaternionMultiply(XMQuaternionNormalize(vQuaternion), XMQuaternionNormalize((vAdditionalQuaternion)))) };
-	//_vector				vAxis = { XMVectorSetW(vQuaternion, 0.f) };
-	//_vector				vRotatedAxis = { XMVector3TransformNormal(vAxis, TransformationMatrix) };
-	//_vector				vRotatedQuaternion = { XMQuaternionNormalize(XMVectorSetW(vRotatedAxis, XMVectorGetW(vQuaternion))) };
-
-	////	_matrix				ResultMatrix = { RotationMatrix * TranslationMatrix };
-	//_matrix				ResultMatrix = { XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotatedQuaternion, vTransaltionWorld) };
 	_matrix					WorldMatrix = { XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),  vQuaternion, vTransaltionWorld)};
 
 	_matrix					RotationLookMatrix = { XMMatrixRotationAxis(XMVector3Normalize(WorldMatrix.r[CTransform::STATE_LOOK]), XMConvertToRadians(180.f)) };

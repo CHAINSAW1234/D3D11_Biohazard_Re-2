@@ -20,6 +20,9 @@ public:
 	virtual void								Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT								Render() override;
 
+public:
+	virtual void								Start() override;
+
 protected:
 	virtual	HRESULT								SetUp_Animation_Layer();
 
@@ -28,15 +31,19 @@ public:
 	inline void									Stop() { m_isPlaying = false; }
 
 public:
-	virtual void								Start() = 0;
-	virtual void								Finish() = 0;
+	virtual void								Start_CutScene();
+	virtual void								Finish_CutScene();
 
 public:
 	inline _bool								Is_Playing() { return m_isPlaying;  }	
 
 protected:
 	HRESULT										Add_Actor(const wstring& strPrototypeTag, _uint iActorType, void* pArg);
+	HRESULT										Add_PropController(const wstring& strPrototypeTag, _uint iPropType, void* pArg);
+
 	virtual HRESULT								Add_Actors() = 0;
+	virtual HRESULT								Add_Props() = 0;
+	virtual	HRESULT								Add_Camera_Event() = 0;
 
 public:
 	class CActor*								Get_Actor(_uint iActorType);
@@ -48,6 +55,9 @@ private:
 
 protected:
 	vector<class CActor*>						m_Actors;
+	vector<class CProp_Controller*>				m_PropControllers;
+	class CCamera_Event*						m_pEvent_Camera = { nullptr };
+	wstring										m_strCamera_Event_Tag = { TEXT("") };
 
 	_bool										m_isPlaying = { false };
 

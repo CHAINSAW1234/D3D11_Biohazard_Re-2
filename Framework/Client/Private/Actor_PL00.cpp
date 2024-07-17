@@ -2,6 +2,9 @@
 #include "Actor_PL00.h"
 #include "Actor_PartObject.h"
 
+#include "Call_Center.h"
+#include "Player.h"
+
 CActor_PL00::CActor_PL00(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CActor{ pDevice, pContext }
 {
@@ -26,6 +29,23 @@ HRESULT CActor_PL00::Initialize(void* pArg)
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CActor_PL00::Priority_Tick(_float fTimeDelta)
+{
+	__super::Priority_Tick(fTimeDelta);
+}
+
+void CActor_PL00::Tick(_float fTimeDelta)
+{
+	__super::Tick(fTimeDelta);
+
+	Move_Player();
+}
+
+void CActor_PL00::Late_Tick(_float fTimeDelta)
+{
+	__super::Late_Tick(fTimeDelta);
 }
 
 HRESULT CActor_PL00::Add_Components()
@@ -92,6 +112,35 @@ HRESULT CActor_PL00::Add_PartObjects()
 	pHairModel->Change_Animation(0, TEXT("Default"), 0);*/
 
 	return S_OK;
+}
+
+void CActor_PL00::Move_Player()
+{
+	CGameObject* pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
+	if (nullptr == pGameObject)
+		return;
+
+	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
+	CTransform* pPlayerTransform = { pPlayer->Get_Transform() };
+	if (nullptr == pPlayerTransform)
+		return;
+
+	_vector					vWorldScale = { XMLoadFloat3(&pPlayerTransform->Get_Scaled()) };
+
+	pPlayerTransform->Get_WorldMatrix();
+
+	CModel*					pPL00_Model = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_BODY)]->Get_Component(TEXT("Com_Model"))) };
+	_matrix					CurrentCombinedMatrix = { pPL00_Model->Get_CurrentKeyFrame_Root_CombinedMatrix(0)};
+	_matrix					ModelTransformationMtarix = { XMLoadFloat4x4(&pPL00_Model->Get_TransformationMatrix()) };
+	_vector					vScaleLocal, vQuaternionLocal, vTranslationLocal;
+	XMMatrixDecompose(&vScaleLocal, &vQuaternionLocal, &vTranslationLocal, CurrentCombinedMatrix);
+
+	vTranslationLocal = XMVector3TransformCoord(vTranslationLocal, ModelTransformationMtarix);
+	_matrix					ResultCombiendMatrix = { XMMatrixAffineTransformation(vScaleLocal, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternionLocal, vTranslationLocal) };
+	_matrix					ScaleMatrix = XMMatrixScalingFromVector(vWorldScale);
+
+	_matrix					ResultMatrix = { ResultCombiendMatrix * ScaleMatrix };
+	pPlayer->Move_Manual(ResultMatrix);
 }
 
 CActor_PL00* CActor_PL00::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

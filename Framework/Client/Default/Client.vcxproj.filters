@@ -754,9 +754,6 @@
     <Filter Include="02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF120">
       <UniqueIdentifier>{b0003ed6-c1f6-4caa-8879-b21283a3580d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Cut_Scene\Actor\Prop_SM60_033_00">
-      <UniqueIdentifier>{d9d1312c-d86d-473d-ac99-8e07be1feb5f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Effect\Grenade_Light">
       <UniqueIdentifier>{3e46d2df-8bef-497a-9757-854a1274c398}</UniqueIdentifier>
     </Filter>
@@ -768,6 +765,12 @@
     </Filter>
     <Filter Include="02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display\Display_Background">
       <UniqueIdentifier>{7804f4df-3fdb-4446-9edd-c649c5760041}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Prop_Controller">
+      <UniqueIdentifier>{f025e3bb-01ae-493f-b8cd-853d26bb8594}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_033_00">
+      <UniqueIdentifier>{d9d1312c-d86d-473d-ac99-8e07be1feb5f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1479,8 +1482,8 @@
     <ClInclude Include="..\Public\Cut_Scene_CF95.h">
       <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF95</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Actor_SM60_033_00.h">
-      <Filter>02.GameObjects\Cut_Scene\Actor\Prop_SM60_033_00</Filter>
+    <ClInclude Include="..\Public\Prop_SM60_033_00.h">
+      <Filter>02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_033_00</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Grenade_Light.h">
       <Filter>02.GameObjects\Effect\Grenade_Light</Filter>
@@ -1493,6 +1496,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Display_Background.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display\Display_Background</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Prop_Controller.h">
+      <Filter>02.GameObjects\Cut_Scene\Prop_Controller</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2165,8 +2171,8 @@
     <ClCompile Include="..\Private\Cut_Scene_CF95.cpp">
       <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF95</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Actor_SM60_033_00.cpp">
-      <Filter>02.GameObjects\Cut_Scene\Actor\Prop_SM60_033_00</Filter>
+    <ClCompile Include="..\Private\Prop_SM60_033_00.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_033_00</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Grenade_Light.cpp">
       <Filter>02.GameObjects\Effect\Grenade_Light</Filter>
@@ -2179,6 +2185,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Display_Background.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display\Display_Background</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Prop_Controller.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Prop_Controller</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -132,6 +132,7 @@ HRESULT CShutter::Add_PartObjects()
 	BodyDesc.e033State = &m_e033State;
 	BodyDesc.e034State = &m_e034State;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
+	BodyDesc.pIsOutOfControll = &m_isOutOfControll;
 	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(m_tagPropDesc.strObjectPrototype, &BodyDesc));
 	if (nullptr == pBodyObj)
 		return E_FAIL;
@@ -180,6 +181,15 @@ void CShutter::Set_Shutter_Open_State()
 		m_e034State = SHUTTER_034_OPEN;
 		break;
 	}
+}
+
+CGameObject* CShutter::Get_PartObject(SHUTTER_PART ePartType)
+{
+
+	if (static_cast<_uint>(ePartType) >= SHUTTER_PART::PART_END)
+		return nullptr;
+
+	return m_PartObjects[static_cast<_uint>(ePartType)];
 }
 
 void CShutter::Active()

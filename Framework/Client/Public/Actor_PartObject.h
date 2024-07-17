@@ -47,8 +47,7 @@ private:
 	_bool					m_isBaseObject = { false };
 	_bool					m_isPause_Anim = { false };
 	wstring					m_strAnimLayerTag = { TEXT("") };
-	unordered_map<wstring, vector<string>>				m_Animations_Seq;
-	
+	unordered_map<wstring, vector<string>>				m_Animations_Seq;	
 
 private:
 	HRESULT					Add_Components(const wstring& strModelPrototypeTag);

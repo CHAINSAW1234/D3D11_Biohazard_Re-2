@@ -31,6 +31,7 @@ HRESULT CClothes_Zombie::Initialize(void* pArg)
 	m_eClothesType = pDesc->eClothesType;
 	m_eBodyType = pDesc->eBodyType;
 	m_iClothesModelID = pDesc->iClothesModelID;
+	m_ppPart_Breaker = pDesc->ppPart_Breaker;
 
 	if (ZOMBIE_CLOTHES_TYPE::_END == m_eClothesType ||
 		ZOMBIE_BODY_TYPE::_END == m_eBodyType ||
@@ -801,19 +802,43 @@ HRESULT CClothes_Zombie::Bind_WorldMatrix(_uint iIndex)
 	}
 	else
 	{
-		if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Body(iIndex))
+		if (ZOMBIE_CLOTHES_TYPE::_PANTS == m_eClothesType)
 		{
-			auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
-			WorldMat._41 = 0.f;
-			WorldMat._42 = 0.f;
-			WorldMat._43 = 0.f;
-			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
-				return E_FAIL;
+			if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Pants(iIndex))
+			{
+				auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+				WorldMat._41 = 0.f;
+				WorldMat._42 = 0.f;
+				WorldMat._43 = 0.f;
+				if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+					return E_FAIL;
+			}
+			else
+			{
+				if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+					return E_FAIL;
+			}
 		}
+		
 		else
 		{
-			if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-				return E_FAIL;
+			if (ZOMBIE_CLOTHES_TYPE::_PANTS == m_eClothesType)
+			{
+				if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Shirt(iIndex))
+				{
+					auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+					WorldMat._41 = 0.f;
+					WorldMat._42 = 0.f;
+					WorldMat._43 = 0.f;
+					if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+						return E_FAIL;
+				}
+				else
+				{
+					if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+						return E_FAIL;
+				}
+			}
 		}
 	}
 	return S_OK;

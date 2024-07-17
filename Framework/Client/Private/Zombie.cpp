@@ -138,6 +138,9 @@ HRESULT CZombie::Initialize(void* pArg)
 	if (FAILED(Initialize_PartBreaker()))
 		return E_FAIL;
 
+	if (FAILED(Add_RagDoll_OtherParts()))
+		return E_FAIL;
+
 	//if (FAILED(Add_Components()))
 	//	return E_FAIL;
 

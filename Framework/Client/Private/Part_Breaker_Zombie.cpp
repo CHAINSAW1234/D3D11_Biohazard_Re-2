@@ -1665,6 +1665,9 @@ HRESULT CPart_Breaker_Zombie::Compute_MeshParts_Types_Indices_Shirt(vector<vecto
 			iMeshType = static_cast<_int>(CPart_Mesh_Info_Zombie::SHIRT_PART_MESH_TYPE::_BODY);
 		}
 
+		if (iMeshPart == -1 || iMeshType == -1)
+			continue;
+
 		MeshPartsTypesIndices[iMeshPart][iMeshType] = static_cast<_int>(iMeshIndex);
 		++iMeshIndex;
 	}
@@ -1707,6 +1710,9 @@ HRESULT CPart_Breaker_Zombie::Compute_MeshParts_Types_Indices_Pants(vector<vecto
 			iMeshPart = static_cast<_int>(PANTS_MESH_PART::_BODY);
 			iMeshType = static_cast<_int>(CPart_Mesh_Info_Zombie::SHIRT_PART_MESH_TYPE::_BODY);
 		}
+
+		if (iMeshPart == -1 || iMeshType == -1)
+			continue;
 
 		MeshPartsTypesIndices[iMeshPart][iMeshType] = static_cast<_int>(iMeshIndex);
 		++iMeshIndex;

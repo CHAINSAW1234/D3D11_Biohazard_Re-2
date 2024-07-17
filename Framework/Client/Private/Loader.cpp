@@ -38,7 +38,7 @@
 #include "Actor_PL00.h"
 #include "Actor_EM00.h"
 
-#include "Actor_SM60_033_00.h"
+#include "Prop_SM60_033_00.h"
 
 /* CutScene */
 #include "Cut_Scene_CF92.h"
@@ -1211,8 +1211,8 @@ HRESULT CLoader::Create_Prototypes_Actor()
 
 
 
-	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_SM60_033"),
-		CActor_SM60_033_00::Create(m_pDevice, m_pContext))))
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Prop_SM60_033"),
+		CProp_SM60_033::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;

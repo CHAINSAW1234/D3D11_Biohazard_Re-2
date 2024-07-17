@@ -393,17 +393,17 @@ HRESULT CLevel_GamePlay::Ready_RegionCollider()
 
 HRESULT CLevel_GamePlay::Ready_CutScene()
 {
-	//	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF92"))))
-	//		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF92"))))
+		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF93"))))
 		return E_FAIL;
 
-	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF94"))))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF94"))))
+		return E_FAIL;
 
-	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF95"))))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF95"))))
+		return E_FAIL;
 
 	return S_OK;
 }

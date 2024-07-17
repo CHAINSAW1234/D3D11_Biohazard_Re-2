@@ -10,6 +10,8 @@
 #include "Call_Center.h"
 #include "Actor_PartObject.h"
 
+#include "Camera_Event.h"
+
 CCut_Scene_CF95::CCut_Scene_CF95(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCut_Scene{ pDevice, pContext }
 {
@@ -45,8 +47,9 @@ void CCut_Scene_CF95::Priority_Tick(_float fTimeDelta)
 		for (auto& pActor : m_Actors)
 		{
 			pActor->Reset_Animations();
-			Start();
 		}
+
+		Start_CutScene();
 	}
 
 	__super::Priority_Tick(fTimeDelta);
@@ -79,8 +82,10 @@ HRESULT CCut_Scene_CF95::SetUp_Animation_Layer()
 	return S_OK;
 }
 
-void CCut_Scene_CF95::Start()
+void CCut_Scene_CF95::Start_CutScene()
 {
+	__super::Start_CutScene();
+
 	CGameObject* pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
 	if (nullptr == pGameObject)
 		return;
@@ -89,8 +94,10 @@ void CCut_Scene_CF95::Start()
 	pPlayer->Set_Render(false);
 }
 
-void CCut_Scene_CF95::Finish()
+void CCut_Scene_CF95::Finish_CutScene()
 {
+	__super::Finish_CutScene();
+
 	/*CGameObject* pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
 	if (nullptr == pGameObject)
 		return;
@@ -142,6 +149,27 @@ HRESULT CCut_Scene_CF95::Add_Actors()
 
 	if (FAILED(Add_Actor(TEXT("Prototype_GameObject_Actor_EM0000"), static_cast<_uint>(CF95_ACTOR_TYPE::_EM_0000), &Actor_EM0000_Desc)))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CCut_Scene_CF95::Add_Props()
+{
+	return S_OK;
+}
+
+HRESULT CCut_Scene_CF95::Add_Camera_Event()
+{
+	m_strCamera_Event_Tag = TEXT("cf95");
+
+	m_pEvent_Camera = (CCamera_Event*)m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 1);
+	if (nullptr == m_pEvent_Camera)
+		return E_FAIL;
+
+	if (FAILED(m_pEvent_Camera->Add_CamList(m_strCamera_Event_Tag, TEXT("../Bin/DataFiles/mcamlist/cf095.mcamlist.13"))))
+		return E_FAIL;
+
+	Safe_AddRef(m_pEvent_Camera);
 
 	return S_OK;
 }

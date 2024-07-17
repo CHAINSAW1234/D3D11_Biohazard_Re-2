@@ -33,11 +33,11 @@ protected:
 	void					Late_Tick_PartObjects(_float fTimeDelta);
 
 public:
-	HRESULT					Set_Animation(_uint iPartType, const wstring& strAnimLayerTag, _uint iAnimIndex);
-	void					Set_Next_Animation_Sequence();
-	void					Set_Loop(_uint iPartType, _bool isLoop);
+	virtual HRESULT			Set_Animation(_uint iPartType, const wstring& strAnimLayerTag, _uint iAnimIndex);
+	virtual void			Set_Next_Animation_Sequence();
+	virtual void			Set_Loop(_uint iPartType, _bool isLoop);
 
-	void					Reset_Animations();
+	virtual void			Reset_Animations();
 
 	inline _uint			Get_NumParts() { return m_iNumParts; }
 

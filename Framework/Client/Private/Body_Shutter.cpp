@@ -62,25 +62,40 @@ void CBody_Shutter::Tick(_float fTimeDelta)
 
 void CBody_Shutter::Late_Tick(_float fTimeDelta)
 {
-
-	switch (*m_eType)
+	_bool				isOutOfControll = { false };
+	if (nullptr != m_pIsOutOfControll)
 	{
-	case CShutter::SHUTTER_NORMAL:
-		Shutter_Normal_Late_Tick(fTimeDelta);
-		break;
-	case CShutter::SHUTTER_033:
-		Shutter_033_Late_Tick(fTimeDelta);
-		break;
-	case CShutter::SHUTTER_034:
-		Shutter_034_Late_Tick(fTimeDelta);
-		break;
+		isOutOfControll = *m_pIsOutOfControll;
 	}
-	/*m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+
+	if (false == isOutOfControll)
+	{
+		switch (*m_eType)
+		{
+		case CShutter::SHUTTER_NORMAL:
+			Shutter_Normal_Late_Tick(fTimeDelta);
+			break;
+		case CShutter::SHUTTER_033:
+			Shutter_033_Late_Tick(fTimeDelta);
+			break;
+		case CShutter::SHUTTER_034:
+			Shutter_034_Late_Tick(fTimeDelta);
+			break;
+		}
+	}
+
+	else
+	{
+		//	cout << "THX" << endl;
+		m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+	}
+	
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);*/
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 }
 
 HRESULT CBody_Shutter::Render()

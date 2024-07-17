@@ -175,6 +175,9 @@ public:
 	_int												Get_NeedItem_Index() const { return m_iNeedItem; }
 	virtual void										Do_Interact_Props() { return ; }
 
+public:
+	void												Set_OutOfControll(_bool isOutOfControll) { m_isOutOfControll = isOutOfControll; }
+
 protected:
 	_int												m_iNeedItem = {-1};// 필요 없으면 -1 => 이건 문제가 안되는게 어차피 interact_props함수를 interactprops에서 부를 것이기 때문이다.
 #pragma endregion
@@ -212,6 +215,8 @@ protected:
 	_float3												m_vRootTranslation = {};
 	INTERACTPROPS_DESC 									m_tagPropDesc ={};
 	vector<CPartObject*>								m_PartObjects;
+
+	_bool												m_isOutOfControll = { false };
 
 protected:
 	void												Check_Player();

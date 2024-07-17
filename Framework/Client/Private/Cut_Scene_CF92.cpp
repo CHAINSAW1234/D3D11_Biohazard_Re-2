@@ -5,11 +5,15 @@
 #include "Cut_Scene_CF92.h"
 
 #include "Actor_PL00.h"
-#include "Actor_SM60_033_00.h"
+#include "Prop_SM60_033_00.h"
 
 #include "Player.h"
 #include "Call_Center.h"
 #include "Actor_PartObject.h"
+#include "Prop_Controller.h"
+
+#include "Shutter.h"
+#include "Camera_Event.h"
 
 CCut_Scene_CF92::CCut_Scene_CF92(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCut_Scene{ pDevice, pContext }
@@ -45,10 +49,9 @@ HRESULT CCut_Scene_CF92::SetUp_Animation_Layer()
 	if (FAILED(m_Actors[static_cast<_uint>(CF92_ACTOR_TYPE::_PL_0000)]->Set_Animation(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_HEAD), TEXT("CF92_PL0050"), 0)))
 		return E_FAIL;
 
-
-	//	For.SM60_033
-	if (FAILED(m_Actors[static_cast<_uint>(CF92_ACTOR_TYPE::_SM_60_033)]->Set_Animation(static_cast<_uint>(CActor_SM60_033_00::ACTOR_SM60_033_PART::_BODY), TEXT("CF92_SM60_033_00"), 0)))
-		return E_FAIL;
+	////	For.SM60_033
+	//if (FAILED(m_PropControllers[static_cast<_uint>(CF92_PROP_TYPE::_SM_60_033)]->Set_Animation(static_cast<_uint>(0))))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -62,8 +65,14 @@ void CCut_Scene_CF92::Priority_Tick(_float fTimeDelta)
 		for (auto& pActor : m_Actors)
 		{
 			pActor->Reset_Animations();
-			Start();
 		}
+
+		for (auto& pProp : m_PropControllers)
+		{
+			pProp->Reset_Animations();
+		}
+
+		Start_CutScene();
 	}
 
 	__super::Priority_Tick(fTimeDelta);
@@ -79,18 +88,30 @@ void CCut_Scene_CF92::Late_Tick(_float fTimeDelta)
 	__super::Late_Tick(fTimeDelta);
 }
 
-void CCut_Scene_CF92::Start()
+void CCut_Scene_CF92::Start_CutScene()
 {
+	__super::Start_CutScene();
+
 	CGameObject* pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
 	if (nullptr == pGameObject)
 		return;
 
 	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
 	pPlayer->Set_Render(false);
+
+	CProp_Controller* pProp_Controller = { m_PropControllers[static_cast<_uint>(CF92_PROP_TYPE::_SM_60_033)] };
+	CShutter* pShutter = { static_cast<CShutter*>(pProp_Controller->Get_PropObject()) };
+
+	if (nullptr == pShutter)
+		return;
+
+	pShutter->Set_OutOfControll(true);
 }
 
-void CCut_Scene_CF92::Finish()
+void CCut_Scene_CF92::Finish_CutScene()
 {
+	__super::Finish_CutScene();
+
 	CGameObject*			pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
 	if (nullptr == pGameObject)
 		return;
@@ -120,6 +141,15 @@ void CCut_Scene_CF92::Finish()
 	_matrix					ResultMatrix = { ResultCombiendMatrix * ScaleMatrix };
 	pPlayer->Move_Manual(ResultMatrix);
 	pPlayer->Set_Render(true);
+
+
+	CProp_Controller*		pProp_Controller = { m_PropControllers[static_cast<_uint>(CF92_PROP_TYPE::_SM_60_033)] };
+	CShutter*				pShutter = { static_cast<CShutter*>(pProp_Controller->Get_PropObject()) };
+
+	if (nullptr == pShutter)
+		return;
+
+	pShutter->Set_OutOfControll(false);
 }
 
 HRESULT CCut_Scene_CF92::Add_Actors()
@@ -134,13 +164,34 @@ HRESULT CCut_Scene_CF92::Add_Actors()
 	if (FAILED(Add_Actor(TEXT("Prototype_GameObject_Actor_PL0000"), static_cast<_uint>(CF92_ACTOR_TYPE::_PL_0000), &Actor_PL0000_Desc)))
 		return E_FAIL;
 
-	CActor::ACTOR_DESC			Actor_SM60_033_Desc;
-	XMStoreFloat4x4(&Actor_SM60_033_Desc.worldMatrix, XMMatrixScaling(0.01f, 0.01f, 0.01f));
-	Actor_SM60_033_Desc.iBasePartIndex = static_cast<_uint>(CActor_SM60_033_00::ACTOR_SM60_033_PART::_BODY);
-	Actor_SM60_033_Desc.iNumParts = static_cast<_uint>(CActor_SM60_033_00::ACTOR_SM60_033_PART::_END);
+	return S_OK;
+}
 
-	if (FAILED(Add_Actor(TEXT("Prototype_GameObject_Actor_SM60_033"), static_cast<_uint>(CF92_ACTOR_TYPE::_SM_60_033), &Actor_SM60_033_Desc)))
+HRESULT CCut_Scene_CF92::Add_Props()
+{
+	m_PropControllers.resize(static_cast<size_t>(CF92_PROP_TYPE::_END));
+
+	CProp_Controller::PROP_CONTROLL_DESC			Prop_SM60_033_Desc;
+	Prop_SM60_033_Desc.strAnimLayerTag = TEXT("CF92_SM60_033_00");
+
+	if (FAILED(Add_PropController(TEXT("Prototype_GameObject_Prop_SM60_033"), static_cast<_uint>(CF92_PROP_TYPE::_SM_60_033), &Prop_SM60_033_Desc)))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CCut_Scene_CF92::Add_Camera_Event()
+{
+	m_strCamera_Event_Tag = TEXT("cf92");
+
+	m_pEvent_Camera = (CCamera_Event*)m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 1);
+	if (nullptr == m_pEvent_Camera)
+		return E_FAIL;
+
+	if (FAILED(m_pEvent_Camera->Add_CamList(m_strCamera_Event_Tag, TEXT("../Bin/DataFiles/mcamlist/cf092.mcamlist.13"))))
+		return E_FAIL;
+
+	Safe_AddRef(m_pEvent_Camera);
 
 	return S_OK;
 }

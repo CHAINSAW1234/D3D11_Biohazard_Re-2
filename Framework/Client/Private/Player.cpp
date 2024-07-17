@@ -143,23 +143,6 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 
 void CPlayer::Tick(_float fTimeDelta)
 {
-	if (m_pGameInstance->Get_KeyState('T') == DOWN) {
-		m_pEventCamera->Set_PlayCamlist(TEXT("cf092"));
-	}
-
-	if (m_pGameInstance->Get_KeyState('Y') == DOWN) {
-		m_pEventCamera->Set_PlayCamlist(TEXT("cf093"));
-	}
-
-	if (m_pGameInstance->Get_KeyState('U') == DOWN) {
-		m_pEventCamera->Set_PlayCamlist(TEXT("cf094"));
-	}
-
-	if (m_pGameInstance->Get_KeyState('I') == DOWN) {
-		m_pEventCamera->Set_PlayCamlist(TEXT("cf095"));
-	}
-
-
 	if (m_pGameInstance->IsPaused())
 	{
 		fTimeDelta = 0.f;
@@ -2354,11 +2337,6 @@ HRESULT CPlayer::Ready_Camera()
 
 	m_pCamera->Bind_PipeLine();
 
-	m_pEventCamera = (CCamera_Event*)m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 1);
-	m_pEventCamera->Add_CamList(TEXT("cf092"), TEXT("../Bin/DataFiles/mcamlist/cf092.mcamlist.13"));
-	m_pEventCamera->Add_CamList(TEXT("cf093"), TEXT("../Bin/DataFiles/mcamlist/cf093.mcamlist.13"));
-	m_pEventCamera->Add_CamList(TEXT("cf094"), TEXT("../Bin/DataFiles/mcamlist/cf094.mcamlist.13"));
-	m_pEventCamera->Add_CamList(TEXT("cf095"), TEXT("../Bin/DataFiles/mcamlist/cf095.mcamlist.13"));
 	return S_OK;
 }
 
