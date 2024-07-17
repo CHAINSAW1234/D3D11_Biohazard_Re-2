@@ -39,7 +39,7 @@ HRESULT CHead_Player::Initialize(void* pArg)
 
 	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
 
-
+	m_pModelCom->Hide_Mesh("LOD_1_Group_0_Sub_2__pl0050_Eyebrowse_Mat_mesh0001", true);
 	/*CModel::ANIM_PLAYING_DESC		AnimDesc;
 	AnimDesc.iAnimIndex = 0;
 	AnimDesc.isLoop = true;

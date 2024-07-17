@@ -660,6 +660,8 @@ void CCabinet::Zombie_Tick(_float fTimeDelta)
 		m_bObtain = true;
 		return;
 	}
+	if (m_eState == CABINET_OPENED)
+		m_bOpened = true;
 	__super::Tick(fTimeDelta);
 
 }

@@ -2,6 +2,7 @@
 #include "FlashLight.h"
 #include "Light.h"
 #include "Bone.h"
+#include "Player.h"
 
 CFlashLight::CFlashLight(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
@@ -38,7 +39,7 @@ HRESULT CFlashLight::Initialize(void* pArg)
 	eDesc.vPosition = _float4(0.f, 0.f, 0.f, 1.f);
 	eDesc.vDirection = _float4(0.f, 0.f, 1.f, 1.f);
 
-	eDesc.vDiffuse = _float4(.2f, .2f, .2f, 1.f);
+	eDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	eDesc.vAmbient = _float4(0.4f, 0.4f, 0.4f, 1.f);
 	eDesc.vSpecular = _float4(0.4f, 0.4f, 0.4f, 1.f);
 
@@ -60,6 +61,20 @@ HRESULT CFlashLight::Initialize(void* pArg)
 void CFlashLight::Tick(_float fTimeDelta)
 {
 	//__super::Tick(fTimeDelta);
+
+	CPlayer* pPlayer = (CPlayer*)m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_Player"), 0);
+
+	if (nullptr == pPlayer)
+		return;
+
+	if (pPlayer->Get_Equip() == CPlayer::STG && pPlayer->Get_Player_State() == CPlayer::HOLD) {
+		m_pTransformCom->Set_WorldMatrix(XMMatrixRotationY(XMConvertToRadians(180.f)));
+	}
+	else {
+		m_pTransformCom->Set_WorldMatrix(XMMatrixIdentity());
+	}
+	
+
 }
 
 void CFlashLight::Late_Tick(_float fTimeDelta)

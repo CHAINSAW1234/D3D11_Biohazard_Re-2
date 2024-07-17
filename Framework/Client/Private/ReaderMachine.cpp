@@ -41,6 +41,7 @@ HRESULT CReaderMachine::Initialize(void* pArg)
 
 void CReaderMachine::Start()
 {
+	return ;
 	__super::Start();
 	list<CGameObject*>* pInteractObjList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_InteractObj"));
 	for (auto iter : *pInteractObjList)
@@ -60,6 +61,7 @@ void CReaderMachine::Start()
 
 void CReaderMachine::Tick(_float fTimeDelta)
 {
+	return ;
 	__super::Tick_Col();
 
 	if (!m_bVisible)
@@ -121,6 +123,7 @@ void CReaderMachine::Camera_Active(CReaderMachine::READERMACHINE_PART ePart, _fl
 
 void CReaderMachine::Late_Tick(_float fTimeDelta)
 {
+	return ;
 	if (m_pPlayer == nullptr)
 		return;
 	if (!Visible())
