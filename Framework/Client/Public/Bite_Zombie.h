@@ -56,6 +56,12 @@ private:
 
 public:
 	void							SetBlackBoard(class CBlackBoard_Zombie* pBlackBoard) { m_pBlackBoard = pBlackBoard; }
+
+#pragma region Effect
+public:
+	void							Initiate_Effect();
+#pragma endregion 
+
 private:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
 

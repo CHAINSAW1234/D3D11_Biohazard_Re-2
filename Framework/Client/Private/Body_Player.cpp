@@ -174,6 +174,9 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	//m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/LeonTest/LeonBody.fbx");
 
 	m_bDecalRender = false;
+	m_pModelCom->Init_Decal(LEVEL_GAMEPLAY);
+	m_bCloth = true;
+	m_bDecal_Player = true;
 
 	return S_OK;
 }
@@ -902,6 +905,13 @@ HRESULT CBody_Player::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_Cloth", &m_bCloth, sizeof(_bool))))
+		return E_FAIL;
+	auto bHair = false;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_Hair", &bHair, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bPlayer", &m_bDecal_Player, sizeof(_bool))))
 		return E_FAIL;
 
 	return S_OK;

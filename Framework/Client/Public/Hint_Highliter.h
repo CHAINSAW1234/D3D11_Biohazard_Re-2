@@ -1,10 +1,10 @@
 #pragma once
+#include "Customize_UI.h"
 
-#include "UI.h"
 
 BEGIN(Client)
 
-class CHint_Highliter final : public CUI
+class CHint_Highliter final : public CCustomize_UI
 {
 protected:
 	CHint_Highliter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -18,13 +18,6 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
-
-public:
-	virtual void Set_Dead(_bool bDead) override;
-
-private:
-	HRESULT Add_Components();
-	HRESULT Bind_ShaderResources();
 
 public:
 	static CHint_Highliter* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

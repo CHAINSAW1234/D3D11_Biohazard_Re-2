@@ -401,77 +401,74 @@ void CZombie::Tick(_float fTimeDelta)
 			}
 			else
 			{
-				if(bDecalRay)
+				if (bDecalRay)
 				{
 					auto Type = m_pController->Get_Hit_Collider_Type();
 
 
 					if(Type != COLLIDER_TYPE::CHEST && Type != COLLIDER_TYPE::PELVIS /*&& Type != COLLIDER_TYPE::HEAD*/)
 					{
-						for (auto& pPartObject : m_PartObjects)
+						BREAK_PART eBreakType = BREAK_PART::_END;
+
+						switch (eType)
 						{
-							BREAK_PART eBreakType = BREAK_PART::_END;							
+						case COLLIDER_TYPE::HEAD:
+							eBreakType = BREAK_PART::_HEAD;
+							break;
 
-							switch (eType)
-							{
-							case COLLIDER_TYPE::HEAD:
-								eBreakType = BREAK_PART::_HEAD;	
-								break;
-
-							case COLLIDER_TYPE::ARM_R:
-								eBreakType = BREAK_PART::_R_UPPER_HUMEROUS;
-								break;
-							case COLLIDER_TYPE::ARM_L:
-								eBreakType = BREAK_PART::_L_UPPER_HUMEROUS;
-								break;
+						case COLLIDER_TYPE::ARM_R:
+							eBreakType = BREAK_PART::_R_UPPER_HUMEROUS;
+							break;
+						case COLLIDER_TYPE::ARM_L:
+							eBreakType = BREAK_PART::_L_UPPER_HUMEROUS;
+							break;
 
 
-							case COLLIDER_TYPE::FOREARM_R:
-								eBreakType = BREAK_PART::_R_UPPER_RADIUS;
-								break;
-							case COLLIDER_TYPE::FOREARM_L:
-								eBreakType = BREAK_PART::_L_UPPER_RADIUS;
-								break;
+						case COLLIDER_TYPE::FOREARM_R:
+							eBreakType = BREAK_PART::_R_UPPER_RADIUS;
+							break;
+						case COLLIDER_TYPE::FOREARM_L:
+							eBreakType = BREAK_PART::_L_UPPER_RADIUS;
+							break;
 
 
-							case COLLIDER_TYPE::LEG_R:
-								eBreakType = BREAK_PART::_R_UPPER_FEMUR;
-								break;
-							case COLLIDER_TYPE::CALF_R:
-								eBreakType = BREAK_PART::_R_UPPER_TABIA;
-								break;
+						case COLLIDER_TYPE::LEG_R:
+							eBreakType = BREAK_PART::_R_UPPER_FEMUR;
+							break;
+						case COLLIDER_TYPE::CALF_R:
+							eBreakType = BREAK_PART::_R_UPPER_TABIA;
+							break;
 
 
-							case COLLIDER_TYPE::LEG_L:
-								eBreakType = BREAK_PART::_L_UPPER_FEMUR;
-								break;
-							case COLLIDER_TYPE::CALF_L:
-								eBreakType = BREAK_PART::_L_UPPER_TABIA;
-								break;
+						case COLLIDER_TYPE::LEG_L:
+							eBreakType = BREAK_PART::_L_UPPER_FEMUR;
+							break;
+						case COLLIDER_TYPE::CALF_L:
+							eBreakType = BREAK_PART::_L_UPPER_TABIA;
+							break;
 
-							case COLLIDER_TYPE::FOOT_R:
-								eBreakType = BREAK_PART::_R_LOWER_TABIA;
-								break;
-							case COLLIDER_TYPE::FOOT_L:
-								eBreakType = BREAK_PART::_L_LOWER_TABIA;
-								break;
-							}
-
-							if (true == m_pPart_Breaker->Attack(eBreakType))
-							{
-								if (BREAK_PART::_END != eBreakType)
-								{
-									m_iNew_Break_PartType = static_cast<_int>(eBreakType);
-									if (nullptr != pPartObject)
-										pPartObject->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
-
-									m_bPartial_Ragdoll = true;
-								}
-							}
+						case COLLIDER_TYPE::FOOT_R:
+							eBreakType = BREAK_PART::_R_LOWER_TABIA;
+							break;
+						case COLLIDER_TYPE::FOOT_L:
+							eBreakType = BREAK_PART::_L_LOWER_TABIA;
+							break;
 						}
 
-						auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
-						m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
+						if (true == m_pPart_Breaker->Attack(eBreakType))
+						{
+							if (BREAK_PART::_END != eBreakType)
+							{
+								m_iNew_Break_PartType = static_cast<_int>(eBreakType);
+								if (nullptr != m_PartObjects[CMonster::PART_BODY])
+									m_PartObjects[CMonster::PART_BODY]->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
+
+								m_bPartial_Ragdoll = true;
+
+								auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+								m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
+							}
+						}
 					}
 				}
 			}
@@ -815,15 +812,15 @@ void CZombie::Init_BehaviorTree_Zombie()
 	pSelectorNode_InDoorCheck->Insert_Decorator_Node(pDeco_Is_In_Door_Zombie);
 
 #pragma region Selector Start SetUp
-//
-//	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
-//	CComposite_Node* pSelectorNode_StartSetUp = { CComposite_Node::Create(&CompositeNodeDesc) };
-//	pSelectorNode_InDoorCheck->Insert_Child_Node(pSelectorNode_StartSetUp);
-//
-//	CIs_Start_Rub_Door_Zombie* pDeco_Is_Start_Rub_Door = { CIs_Start_Rub_Door_Zombie::Create() };
-//	pDeco_Is_Start_Rub_Door->SetBlackBoard(m_pBlackBoard);
-//	pSelectorNode_StartSetUp->Insert_Child_Node(pDeco_Is_Start_Rub_Door);
-//
+	//
+	//	CompositeNodeDesc.eType = COMPOSITE_NODE_TYPE::CNT_SELECTOR;
+	//	CComposite_Node* pSelectorNode_StartSetUp = { CComposite_Node::Create(&CompositeNodeDesc) };
+	//	pSelectorNode_InDoorCheck->Insert_Child_Node(pSelectorNode_StartSetUp);
+	//
+	//	CIs_Start_Rub_Door_Zombie* pDeco_Is_Start_Rub_Door = { CIs_Start_Rub_Door_Zombie::Create() };
+	//	pDeco_Is_Start_Rub_Door->SetBlackBoard(m_pBlackBoard);
+	//	pSelectorNode_StartSetUp->Insert_Child_Node(pDeco_Is_Start_Rub_Door);
+	//
 #pragma region Rub Door
 //
 //	CRub_Door_Zombie* pTask_Rub_Door = { CRub_Door_Zombie::Create() };
@@ -865,7 +862,7 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 	CFind_Door_To_Target_Zombie* pTask_Find_Door_To_Target = { CFind_Door_To_Target_Zombie::Create() };
 	pTask_Find_Door_To_Target->SetBlackBoard(m_pBlackBoard);
-	pSequecne_Different_Region_Player->Insert_Child_Node(pTask_Find_Door_To_Target);	
+	pSequecne_Different_Region_Player->Insert_Child_Node(pTask_Find_Door_To_Target);
 
 #pragma endregion		//	Sequence Different Location Player Child
 
@@ -1350,9 +1347,9 @@ HRESULT CZombie::Initialize_PartBreaker()
 	PartBreakerDesc.pShirts_Model = static_cast<CModel*>(m_PartObjects[CMonster::PART_SHIRTS]->Get_Component(TEXT("Com_Model")));
 	PartBreakerDesc.iBodyType = m_iBody_ID;
 
-	CPart_Breaker_Zombie*			pPart_Breaker = { CPart_Breaker_Zombie::Create(&PartBreakerDesc) };
+	CPart_Breaker_Zombie* pPart_Breaker = { CPart_Breaker_Zombie::Create(&PartBreakerDesc) };
 	m_pPart_Breaker = pPart_Breaker;
-	
+
 
 	if (nullptr == m_pPart_Breaker)
 		return E_FAIL;
@@ -1429,7 +1426,7 @@ HRESULT CZombie::Initialize_PartModels()
 _bool CZombie::Is_Enough_Stamina(USE_STAMINA eAction)
 {
 	_bool		isEnough = { false };
-	if (USE_STAMINA::_BITE == eAction)	
+	if (USE_STAMINA::_BITE == eAction)
 	{
 		isEnough = m_pStatus->fStamina > ZOMBIE_NEED_STAMINA_BITE;
 	}
@@ -1536,7 +1533,7 @@ void CZombie::SetRagdoll_StartPose()
 	for (auto& pPartObject : m_PartObjects)
 	{
 		if (nullptr != pPartObject)
-			pPartObject->SetRagdoll(m_iIndex_CCT, _float4(0.f,0.f,0.f,0.f), COLLIDER_TYPE::CHEST);
+			pPartObject->SetRagdoll(m_iIndex_CCT, _float4(0.f, 0.f, 0.f, 0.f), COLLIDER_TYPE::CHEST);
 	}
 }
 
@@ -2088,6 +2085,7 @@ void CZombie::SetBlood()
 	if (m_BloodDelay + m_BloodTime < GetTickCount64())
 	{
 		m_BloodTime = GetTickCount64();
+		m_vecBlood[m_iBloodCount]->SetBiteBlood(false);
 		m_vecBlood[m_iBloodCount]->Set_Render(true);
 		m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
 
@@ -2210,6 +2208,81 @@ void CZombie::SetBlood()
 	}
 }
 
+void CZombie::SetBiteBlood()
+{
+	if (m_bBiteBlood == false)
+	{
+		return;
+	}
+
+	XMStoreFloat4(&m_vMouthPos, (XMLoadFloat4x4(m_pHeadModel->Get_CombinedMatrix("mouth07")) * m_pTransformCom->Get_WorldMatrix()).r[3]);
+	XMStoreFloat4(&m_vMouthLook, (XMLoadFloat4x4(m_pHeadModel->Get_CombinedMatrix("mouth07")) * m_pTransformCom->Get_WorldMatrix()).r[2]);
+	m_vMouthLook = Float4_Normalize(m_vMouthLook);
+
+	if (m_iBloodCount >= m_vecBlood.size())
+	{
+		m_bBiteBlood = false;
+		m_iBloodCount = 0;
+		return;
+	}
+
+	if (m_BloodDelay + m_BloodTime < GetTickCount64())
+	{
+		m_BloodTime = GetTickCount64();
+		m_vecBlood[m_iBloodCount]->Set_Render(true);
+		m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vMouthLook);
+		m_vecBlood[m_iBloodCount]->SetBiteBlood(true);
+		m_vecBlood[m_iBloodCount]->SetPosition(m_vMouthPos);
+
+		if (m_iBloodCount == 0)
+		{
+			m_iBloodType = m_pGameInstance->GetRandom_Int(0, 10);
+
+			m_vecBlood[m_iBloodCount]->SetType(m_iBloodType);
+
+			if (m_iBloodType >= 10)
+			{
+				m_iBloodType = 0;
+			}
+
+			m_vecBlood[m_iBloodCount]->SetSize(NORMAL_ATTACK_BLOOD_SIZE, NORMAL_ATTACK_BLOOD_SIZE, NORMAL_ATTACK_BLOOD_SIZE);
+
+			m_vecBlood_Drop[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vMouthLook);
+			m_vecBlood_Drop[m_iBloodCount]->Set_Render(true);
+			m_vecBlood_Drop[m_iBloodCount]->SetPosition(m_vMouthPos);
+			m_vecBlood_Drop[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(0, 7));
+		}
+		else
+		{
+			m_vecBlood[m_iBloodCount]->SetType(++m_iBloodType);
+
+			if (m_iBloodType >= 9)
+			{
+				m_iBloodType = 0;
+			}
+
+			m_vecBlood[m_iBloodCount]->SetSize(NORMAL_ATTACK_BLOOD_SIZE, NORMAL_ATTACK_BLOOD_SIZE, NORMAL_ATTACK_BLOOD_SIZE);
+
+			if (m_iBloodCount < BLOOD_DROP_COUNT)
+			{
+				m_vecBlood_Drop[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vMouthLook);
+				m_vecBlood_Drop[m_iBloodCount]->Set_Render(true);
+				m_vecBlood_Drop[m_iBloodCount]->SetPosition(m_vMouthPos);
+				m_vecBlood_Drop[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(0, 7));
+			}
+		}
+
+		++m_iBloodCount;
+
+		if (m_iBloodCount >= m_vecBlood.size())
+		{
+			m_bBiteBlood = false;
+			m_iBloodCount = 0;
+			return;
+		}
+	}
+}
+
 void CZombie::Calc_Decal_Map()
 {
 	if (m_bBigAttack)
@@ -2323,6 +2396,24 @@ void CZombie::SetBlood_STG()
 		pColliderTypes->clear();
 		pHitParts->clear();
 	}
+}
+
+void CZombie::ResetBiteEffect()
+{
+	m_BloodTime = GetTickCount64();
+	m_bBiteBlood = true;
+	m_iBloodCount = 0;
+}
+
+_float4x4 CZombie::GetDecalWorldMat()
+{
+	XMStoreFloat4(&m_vMouthPos, (XMLoadFloat4x4(m_pHeadModel->Get_CombinedMatrix("mouth07")) * m_pTransformCom->Get_WorldMatrix()).r[3]);
+	XMStoreFloat4(&m_vMouthLook, (XMLoadFloat4x4(m_pHeadModel->Get_CombinedMatrix("mouth07")) * m_pTransformCom->Get_WorldMatrix()).r[2]);
+	m_vMouthLook = Float4_Normalize(m_vMouthLook);
+	m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vMouthLook);
+	m_vecBlood[m_iBloodCount]->SetPosition(m_vMouthPos);
+
+	return	m_vecBlood[m_iBloodCount]->GetWorldMatrix();
 }
 
 void CZombie::Set_ManualMove(_bool isManualMove)

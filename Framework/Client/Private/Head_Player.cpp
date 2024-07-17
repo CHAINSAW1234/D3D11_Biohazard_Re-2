@@ -39,7 +39,7 @@ HRESULT CHead_Player::Initialize(void* pArg)
 
 	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
 
-
+	m_pModelCom->Hide_Mesh("LOD_1_Group_0_Sub_2__pl0050_Eyebrowse_Mat_mesh0001", true);
 	/*CModel::ANIM_PLAYING_DESC		AnimDesc;
 	AnimDesc.iAnimIndex = 0;
 	AnimDesc.isLoop = true;
@@ -53,7 +53,9 @@ HRESULT CHead_Player::Initialize(void* pArg)
 
 	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);*/
 
-	m_bDecalRender = false;
+	m_bDecalRender = true;
+	m_pModelCom->Init_Decal(LEVEL_GAMEPLAY);
+	m_bCloth = true;
 
 	return S_OK;
 }
@@ -154,6 +156,10 @@ HRESULT CHead_Player::Render()
 			if (FAILED(m_pShaderCom->Bind_RawValue("g_isEmissiveTexture", &isEmissive, sizeof(_bool))))
 				return E_FAIL;
 		}
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
+			return E_FAIL;
+		m_pModelCom->Bind_DecalMap(i, m_pShaderCom);
 
 		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_DEFAULT)))
 			return E_FAIL;
@@ -415,6 +421,11 @@ HRESULT CHead_Player::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_PrevProjMatrix", &m_pGameInstance->Get_PrevTransform_Float4x4(CPipeLine::D3DTS_PROJ))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_DecalRender", &m_bDecalRender, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_Cloth", &m_bCloth, sizeof(_bool))))
+		return E_FAIL;
+	auto bHair = false;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_Hair", &bHair, sizeof(_bool))))
 		return E_FAIL;
 
 	return S_OK;

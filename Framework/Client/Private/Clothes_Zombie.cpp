@@ -52,6 +52,7 @@ HRESULT CClothes_Zombie::Initialize(void* pArg)
 
 	m_bDecalRender = true;
 	m_bCloth = true;
+	m_bDecal_Player = false;
 
 	return S_OK;
 }
@@ -780,6 +781,8 @@ HRESULT CClothes_Zombie::Bind_ShaderResources()
 
 	auto bHair = false;
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_Hair", &bHair, sizeof(_bool))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_bPlayer", &m_bDecal_Player, sizeof(_bool))))
 		return E_FAIL;
 
 	return S_OK;

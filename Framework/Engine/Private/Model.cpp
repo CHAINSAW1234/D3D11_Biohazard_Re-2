@@ -327,12 +327,12 @@ HRESULT CModel::Add_Bones(CModel* pModel)
 {
 	for (auto& pDstBone : pModel->m_Bones)
 	{
-		_char*				pDstName = { pDstBone->Get_Name() };
+		_char* pDstName = { pDstBone->Get_Name() };
 
 		_bool				isAlreadyIn = { false };
 		for (auto& pSrcBone : m_Bones)
 		{
-			_char*			pSrcName = { pSrcBone->Get_Name() };
+			_char* pSrcName = { pSrcBone->Get_Name() };
 			if (0 == strcmp(pSrcName, pDstName))
 			{
 				isAlreadyIn = true;
@@ -995,10 +995,10 @@ unordered_set<_uint> CModel::Compute_IncludedBoneIndices_AllBoneLayer_Blend()
 		wstring							strAnimLayerTag = { pPlayingInfo->Get_AnimLayerTag() };
 		_float							fWeight = { pPlayingInfo->Get_BlendWeight() };
 		if (-1 == iAnimIndex || TEXT("") == strAnimLayerTag || 0.f >= fWeight)
-			continue; 
+			continue;
 
 		wstring			strBoneLayerTag = { pPlayingInfo->Get_BoneLayerTag() };
-		CBone_Layer*	pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
+		CBone_Layer* pBoneLayer = { Find_BoneLayer(strBoneLayerTag) };
 
 		if (nullptr == pBoneLayer)
 			continue;
@@ -1011,7 +1011,7 @@ unordered_set<_uint> CModel::Compute_IncludedBoneIndices_AllBoneLayer_Blend()
 		}
 	}
 
-	
+
 
 	return ResultIncludedBoneIndices;
 }
@@ -2149,7 +2149,7 @@ void CModel::Set_Mesh_Branch(const string& strMeshTag, _uint iMeshBranch)
 	_uint			iNumBranch = { static_cast<_uint>(m_MeshBranches.size()) };
 	for (_uint iMeshIndex = 0; iMeshIndex < iNumBranch; ++iMeshIndex)
 	{
-		CMesh*		pMesh = { m_Meshes[iMeshIndex] };
+		CMesh* pMesh = { m_Meshes[iMeshIndex] };
 		if (nullptr == pMesh)
 			continue;
 
@@ -2319,7 +2319,7 @@ HRESULT CModel::Initialize(void* pArg)
 	{
 		XMStoreFloat4x4(&m_T_Pose_Matrices[iBoneIndex++], pBone->Get_TrasformationMatrix());
 	}
-	
+
 	for (auto& iIndex : m_MeshBranches)
 	{
 		iIndex = -1;
@@ -2345,7 +2345,7 @@ HRESULT CModel::Bind_BoneMatrices_Ragdoll(CShader* pShader, const _char* pConsta
 {
 	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * MAX_COUNT_BONE);
 
-	m_Meshes[iMeshIndex]->Stock_Matrices_Ragdoll(m_Bones, m_MeshBoneMatrices,pBoneMatrices);
+	m_Meshes[iMeshIndex]->Stock_Matrices_Ragdoll(m_Bones, m_MeshBoneMatrices, pBoneMatrices);
 
 	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, MAX_COUNT_BONE);
 }
@@ -2470,7 +2470,7 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 
 	_bool		isFinished = { false };
 
-	CPlayingInfo*		pPlayingInfo = { Find_PlayingInfo(0) };
+	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(0) };
 	if (nullptr == pPlayingInfo)
 	{
 		MSG_BOX(TEXT("Default Playing Info 생성 필요 HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)"));
@@ -2536,7 +2536,7 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 
 HRESULT CModel::Play_Pose(_uint iPlayingIndex)
 {
-	CPlayingInfo*		pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+	CPlayingInfo* pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
 	if (nullptr == pPlayingInfo)
 		return E_FAIL;
 
@@ -2548,7 +2548,7 @@ HRESULT CModel::Play_Pose(_uint iPlayingIndex)
 		return E_FAIL;
 	}
 
-	CBone_Layer*		pBoneLayer = { Find_BoneLayer(pPlayingInfo->Get_BoneLayerTag()) };
+	CBone_Layer* pBoneLayer = { Find_BoneLayer(pPlayingInfo->Get_BoneLayerTag()) };
 	if (nullptr == pBoneLayer)
 	{
 		MSG_BOX(TEXT("Bone Layer 설정 하시오, HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)"));
@@ -2982,7 +2982,7 @@ void CModel::Static_Mesh_Cooking(CTransform* pTransform, _int* pIndex)
 {
 	for (int i = 0; i < m_Meshes.size(); ++i)
 	{
-		m_Meshes[i]->Static_Mesh_Cooking(pTransform,pIndex);
+		m_Meshes[i]->Static_Mesh_Cooking(pTransform, pIndex);
 	}
 }
 
@@ -3088,8 +3088,8 @@ void CModel::Create_Cloth()
 
 _int CModel::Find_BoneIndex(const string& strRootTag)
 {
-	_int		iIndex = { 0 }; 
-	for (auto& Bone : m_Bones)  
+	_int		iIndex = { 0 };
+	for (auto& Bone : m_Bones)
 	{
 		if (true == Bone->Compare_Name(strRootTag.c_str()))
 			return iIndex;
@@ -3362,7 +3362,7 @@ HRESULT CModel::Ready_Materials(ifstream& ifs)
 			unordered_map<wstring, CTexture*>::iterator			iter = { m_LoadedTextures.find(strFileName) };
 			if (iter == m_LoadedTextures.end())
 			{
-				CTexture*			pTexture = { CTexture::Create(m_pDevice, m_pContext, szPath) };
+				CTexture* pTexture = { CTexture::Create(m_pDevice, m_pContext, szPath) };
 				MeshMaterial.MaterialTextures[i] = pTexture;
 				if (nullptr == MeshMaterial.MaterialTextures[i])
 					return E_FAIL;
@@ -3489,14 +3489,34 @@ void CModel::Perform_Skinning(_uint iIndex)
 	m_pGameInstance->Perform_Skinning(m_Meshes[iIndex]->GetNumVertices());
 }
 
-void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix,_int iMeshType, _bool bBigAttack)
+void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix, _int iMeshType, _bool bBigAttack)
 {
 	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
 
 	for (auto& i : NonHideIndex)
 	{
-		if(m_MeshBranches[i] != iMeshType)
+		if (m_MeshBranches[i] != iMeshType)
 			m_Meshes[i]->SetDecalWorldMatrix(WorldMatrix, bBigAttack);
+	}
+}
+
+void CModel::SetDecalWorldMatrix_Player_Front(_float4x4 WorldMatrix)
+{
+	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
+
+	for (auto& i : NonHideIndex)
+	{
+		m_Meshes[i]->SetDecalWorldMatrix_Player(WorldMatrix,true);
+	}
+}
+
+void CModel::SetDecalWorldMatrix_Player_Back(_float4x4 WorldMatrix)
+{
+	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
+
+	for (auto& i : NonHideIndex)
+	{
+		m_Meshes[i]->SetDecalWorldMatrix_Player(WorldMatrix,false);
 	}
 }
 
@@ -3510,16 +3530,16 @@ void CModel::InitDecalWorldMatrix(_float4 vPos, _float4 vNormal)
 	WorldMat_Decal._43 = vPos.z;
 
 	auto iNumMesh = m_Meshes.size();
-	for(size_t i = 0;i< iNumMesh;++i)
+	for (size_t i = 0; i < iNumMesh; ++i)
 	{
-		m_Meshes[i]->SetDecalWorldMatrix(WorldMat_Decal,false);
+		m_Meshes[i]->SetDecalWorldMatrix(WorldMat_Decal, false);
 		m_Meshes[i]->SetDecalExtent(_float3(0.2f, 0.2f, 0.2f));
 	}
 }
 
 void CModel::Init_Decal(_uint iLevel)
 {
-	for(auto& pMesh : m_Meshes)
+	for (auto& pMesh : m_Meshes)
 		pMesh->Init_Decal(iLevel);
 }
 
@@ -3528,13 +3548,13 @@ void CModel::Bind_Resource_NonCShader_Decal(_uint iIndex, class CShader* pShader
 	m_Meshes[iIndex]->Bind_Resource_NonCShader_Decal(pShader);
 }
 
-void CModel::Calc_DecalMap_NonCS(CShader* pShader,_int iMeshType)
+void CModel::Calc_DecalMap_NonCS(CShader* pShader, _int iMeshType)
 {
 	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
 
 	for (auto& i : NonHideIndex)
 	{
-		if(m_MeshBranches[i] != iMeshType)
+		if (m_MeshBranches[i] != iMeshType)
 		{
 			pShader->Begin(6);
 			pShader->Bind_Matrices("g_BoneMatrices", m_MeshBoneMatrices, 512);
@@ -3616,11 +3636,20 @@ void CModel::Perform_Calc_DecalMap(_int iMeshType)
 	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
 	for (auto& i : NonHideIndex)
 	{
-		if(m_MeshBranches[i] != iMeshType)
+		if (m_MeshBranches[i] != iMeshType)
 		{
 			m_Meshes[i]->Bind_Resource_CalcDecalMap(m_vecUAV_DecalMap[i]);
 			m_Meshes[i]->Perform_Calc_DecalMap();
 		}
+	}
+}
+
+void CModel::Perform_Calc_DecalMap_Player()
+{
+	for (size_t i = 0; i <m_Meshes.size();++i)
+	{
+		m_Meshes[i]->Bind_Resource_CalcDecalMap(m_vecUAV_DecalMap[i]);
+		m_Meshes[i]->Perform_Calc_DecalMap();
 	}
 }
 
@@ -3738,7 +3767,7 @@ void CModel::Free()
 
 	m_Importer.FreeScene();
 
-	
+
 
 
 	for (size_t i = 0; i < m_vecDecal_Map.size(); ++i)
@@ -3766,7 +3795,7 @@ void CModel::Release_IndexBuffer(_uint iNumMesh)
 {
 	m_Meshes[iNumMesh]->Release_IndexBuffer();
 }
-	
+
 void CModel::Release_Decal_Dump()
 {
 	for (size_t i = 0; i < m_Meshes.size(); ++i)

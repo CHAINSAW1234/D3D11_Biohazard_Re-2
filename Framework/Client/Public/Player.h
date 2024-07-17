@@ -199,7 +199,6 @@ private:
 	ANIMSET_HOLD								m_eAnimSet_Hold = { HOLD_HG };
 
 	_bool										m_isBite = { false };
-	_uint										m_eBiteType;
 	_int										m_iBiteAnimIndex = { -1 };
 	_float4x4									m_vBiteInterpolateMatrix;
 	_float										m_fTotalInterpolateTime = 0.f;
@@ -413,8 +412,6 @@ private:
 	_float										m_fSpineRotate_PerSec = { XMConvertToRadians(90.f) };
 	_float3										m_vPreHeadDir = { 0.f, 0.f, 1.f };
 
-	class CModel*								m_pBodyModel = { nullptr };
-
 	_bool										m_bRecoil = { false };
 	_float										m_fRecoil_Rotate_Amount_X = { 0.f };
 	_float										m_fRecoil_Rotate_Amount_Y = { 0.f };
@@ -427,11 +424,25 @@ private:
 
 #pragma region Effect
 public:
-	void	Ready_Effect();
-	void	Release_Effect();
-	void	Tick_Effect(_float fTimeDelta);
-	void	Late_Tick_Effect(_float fTimeDelta);
-	void	Initiate_Cartridge();
+	void										Ready_Effect();
+	void										Release_Effect();
+	void										Tick_Effect(_float fTimeDelta);
+	void										Late_Tick_Effect(_float fTimeDelta);
+	void										Initiate_Cartridge();
+	void										Calc_Decal_Map();
+	virtual void								Perform_Skinning();
+	void										SetCalcDecalMap(_bool boolean)
+	{
+		m_bCalcDecalMap = boolean;
+	}
+	void										SetDecalMatrix(_float4x4 DecalMatrix)
+	{
+		m_DecalMatrix = DecalMatrix;
+	}
+	void										SetBiteType(BITE_TYPE_FOR_EFFECT eType)
+	{
+		m_eBiteType = eType;
+	}
 private:
 	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
 	class CMuzzle_Flash_SG*						m_pMuzzle_Flash_SG = { nullptr };
@@ -456,6 +467,14 @@ private:
 
 	vector<class CSG_Cartridge*>				m_vecSG_Cartridges;
 	_uint										m_iSG_Cartridge_Index = { 0 };
+
+	class CModel*								m_pBodyModel = { nullptr };
+	class CModel*								m_pHeadModel = { nullptr };
+	class CModel*								m_pHairModel = { nullptr };
+
+	_bool										m_bCalcDecalMap = { false };
+	_float4x4									m_DecalMatrix;
+	BITE_TYPE_FOR_EFFECT						m_eBiteType = { DEFAULT };
 #pragma endregion
 private:
 	HRESULT Add_Components();

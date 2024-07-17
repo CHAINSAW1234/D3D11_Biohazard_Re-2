@@ -40,11 +40,28 @@ namespace Client
 		ID_END
 	};
 
-	enum class ITEM_READ_TYPE { INCIDENT_LOG_NOTE, OPERATE_REPORT_NOTE, TASK_NOTE, MEDICINAL_NOTE, OFFICER_NOTE, GUNPOWDER_NOTE, FIX_LOCKER_NOTE, HAND_HELD_SAFE_NOTE, RICKER_NOTE, SAFE_PASSWARD_NOTE, PAMPHLET, END_NOTE };
+	enum class ITEM_READ_TYPE { 
+		INCIDENT_LOG_NOTE, //사건 일지
+		OPERATE_REPORT_NOTE, //작전 보고서
+		TASK_NOTE, //신입의 첫 번째 과제
+		MEDICINAL_NOTE, //약초의 의학적 효능
+		OFFICER_NOTE, //경관의 노트
+		GUNPOWDER_NOTE, //화약 사용
+		FIX_LOCKER_NOTE, //물품 보관함 단말기 관련 쪽지
+		HAND_HELD_SAFE_NOTE, //휴대용 금고 지침
+		RICKER_NOTE, //만일의 생존자에게
+		SAFE_PASSWARD_NOTE, //내부용 쪽지
+		PAMPHLET, //가이드 책자
+		EXAMIN_ITEM, //아이템 검사
+		USE_KEY_ITEM, //열쇠 아이템 사용
+		ABOUT_MAP,//지도 활용
+		COMBIND_ITEM,//아이템 조합
+		HP_HEAL_ITEM,//체력 및 회복 아이템
+		END_NOTE 
+	};
 	// 사건 일지 , 작전실 노트 , 레온의 과제, 약초의 효능, 경찰의 수첩, 화약 일지 , 락커 고쳐줘, 휴대용 금고 설명서, 리커에 대한 설명
 	// 맵 5번 : 
-	// 
-	//    hand-held safe manual
+	// hand-held safe manual
 	// 금고 몇번 돌리는 지? 스타스 오피스pamphlet
 	// 팜플렛
 
@@ -406,4 +423,12 @@ namespace Client
 		ITEM_NUMBER_END
 	};
 
+	enum BITE_TYPE_FOR_EFFECT
+	{
+		STAND_FRONT,
+		STAND_BACK,
+		CREEP_UP,
+		CREEP_DOWN,
+		DEFAULT
+	};
 }

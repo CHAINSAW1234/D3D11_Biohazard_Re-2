@@ -34,6 +34,8 @@
 #include "Decal_BulletHole.h"
 #include "HG_Cartridge.h"
 #include "SG_Cartridge.h"
+#include "Mesh.h"
+#include "Zombie.h"
 
 #include "Call_Center.h"
 
@@ -512,6 +514,10 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	}
 
 	Late_Tick_Effect(fTimeDelta);
+#pragma endregion
+
+#pragma region Decal
+	Calc_Decal_Map();
 #pragma endregion
 }
 
@@ -1170,7 +1176,7 @@ void CPlayer::Update_FSM()
 
 		break;
 	case SUBHOLD:
-		if (m_pGameInstance->Get_KeyState(VK_SPACE) != PRESSING && 
+		if (m_pGameInstance->Get_KeyState(VK_SPACE) != PRESSING &&
 			Get_Body_Model()->Is_Loop_PlayingInfo(0) &&
 			Get_Body_Model()->Is_Loop_PlayingInfo(3)) {
 			Change_State(MOVE);
@@ -1824,13 +1830,13 @@ void CPlayer::RayCast_Shoot()
 
 		_bool bDynamic = false;
 
-		if (m_pGameInstance->RayCast_Effect(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, false,&bDynamic))
+		if (m_pGameInstance->RayCast_Effect(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, false, &bDynamic))
 		{
 			auto iIndex = m_pGameInstance->GetRandom_Int(0, HIT_PROPS_EFFECT_TYPE_COUNT - 1);
 			m_vecHit_Props_HG[iIndex]->Set_Render(true);
 			m_vecHit_Props_HG[iIndex]->SetPosition(vBlockPoint);
 
-			if(bDynamic == false)
+			if (bDynamic == false)
 			{
 				m_vecDecal_BulletHole[m_iDecal_Index]->Set_Render(true);
 				m_vecDecal_BulletHole[m_iDecal_Index]->SetPosition(vBlockPoint);
@@ -1855,7 +1861,7 @@ void CPlayer::RayCast_Shoot()
 			NewCamLook = Float4_Normalize(NewCamLook);
 
 			_bool bDynamic = false;
-			if (m_pGameInstance->RayCast_Effect(vCamPos, NewCamLook, &vBlockPoint, &vBlockNormal, true,&bDynamic))
+			if (m_pGameInstance->RayCast_Effect(vCamPos, NewCamLook, &vBlockPoint, &vBlockNormal, true, &bDynamic))
 			{
 				m_vecHit_Dynamic[i] = bDynamic;
 				continue;
@@ -1872,7 +1878,7 @@ void CPlayer::RayCast_Shoot()
 			m_vecHit_Props_SG[i]->Set_Render(true);
 			m_vecHit_Props_SG[i]->SetPosition((*BlockPoints)[i]);
 
-			if(m_vecHit_Dynamic[i] == false)
+			if (m_vecHit_Dynamic[i] == false)
 			{
 				m_vecDecal_BulletHole[m_iDecal_Index]->Set_Render(true);
 				m_vecDecal_BulletHole[m_iDecal_Index]->SetPosition((*BlockPoints)[i]);
@@ -1893,13 +1899,13 @@ void CPlayer::RayCast_Shoot()
 	{
 		_bool bDynamic = false;
 
-		if (m_pGameInstance->RayCast_Effect(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, false,&bDynamic))
+		if (m_pGameInstance->RayCast_Effect(m_pCamera->GetPosition(), m_pCamera->Get_Transform()->Get_State_Float4(CTransform::STATE_LOOK), &vBlockPoint, &vBlockNormal, false, &bDynamic))
 		{
 			auto iIndex = m_pGameInstance->GetRandom_Int(0, HIT_PROPS_EFFECT_TYPE_COUNT - 1);
 			m_vecHit_Props_HG[iIndex]->Set_Render(true);
 			m_vecHit_Props_HG[iIndex]->SetPosition(vBlockPoint);
 
-			if(bDynamic == false)
+			if (bDynamic == false)
 			{
 				m_vecDecal_BulletHole[m_iDecal_Index]->Set_Render(true);
 				m_vecDecal_BulletHole[m_iDecal_Index]->SetPosition(vBlockPoint);
@@ -2637,7 +2643,7 @@ void CPlayer::Initiate_Cartridge()
 		_float4 vDir = Get_CartridgeDir();
 		_float4 vPos = Get_CartridgePosition();
 		_float4 vLook = m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK);
-		m_vecHG_Cartridges[m_iHG_Cartridge_Index]->Initiate(vPos, vDir,Float4_Normalize(vLook));
+		m_vecHG_Cartridges[m_iHG_Cartridge_Index]->Initiate(vPos, vDir, Float4_Normalize(vLook));
 
 		++m_iHG_Cartridge_Index;
 
@@ -2658,6 +2664,87 @@ void CPlayer::Initiate_Cartridge()
 		if (m_iSG_Cartridge_Index >= SG_CARTRIDGE_COUNT)
 		{
 			m_iSG_Cartridge_Index = 0;
+		}
+	}
+}
+
+void CPlayer::Calc_Decal_Map()
+{
+	if (m_bCalcDecalMap == false)
+		return;
+
+	_matrix WorldMat;
+
+	switch (m_eBiteType)
+	{
+	case BITE_TYPE_FOR_EFFECT::STAND_FRONT:
+	{
+		WorldMat = XMLoadFloat4x4(m_pBodyModel->Get_CombinedMatrix("r_arm_clavicle")) * m_pTransformCom->Get_WorldMatrix();
+		_vector vRight = WorldMat.r[0];
+		_vector vUp = WorldMat.r[1];
+		_vector vLook = WorldMat.r[2];
+		vRight = XMVector3Normalize(vRight);
+		vUp = XMVector3Normalize(vUp);
+		vLook = XMVector3Normalize(vLook);
+		WorldMat.r[0] = vRight;
+		WorldMat.r[1] = vUp;
+		WorldMat.r[2] = vLook;
+		XMStoreFloat4x4(&m_DecalMatrix, WorldMat);
+
+		Perform_Skinning();
+
+		if (m_pHeadModel)
+		{
+			m_pHeadModel->SetDecalWorldMatrix_Player_Front(m_DecalMatrix);
+			m_pHeadModel->Perform_Calc_DecalMap_Player();
+		}
+
+		break;
+	}
+	case BITE_TYPE_FOR_EFFECT::STAND_BACK:
+	{
+		WorldMat = XMLoadFloat4x4(m_pBodyModel->Get_CombinedMatrix("r_arm_humerus")) * m_pTransformCom->Get_WorldMatrix();
+		_vector vRight = WorldMat.r[0];
+		_vector vUp = WorldMat.r[1];
+		_vector vLook = WorldMat.r[2];
+		vRight = XMVector3Normalize(vRight);
+		vUp = XMVector3Normalize(vUp);
+		vLook = XMVector3Normalize(vLook);
+		WorldMat.r[0] = vRight;
+		WorldMat.r[1] = vUp;
+		WorldMat.r[2] = vLook;
+		XMStoreFloat4x4(&m_DecalMatrix, WorldMat);
+
+		Perform_Skinning();
+
+		if (m_pHeadModel)
+		{
+			m_pHeadModel->SetDecalWorldMatrix_Player_Back(m_DecalMatrix);
+			m_pHeadModel->Perform_Calc_DecalMap_Player();
+		}
+
+		break;
+	}
+	}
+
+	m_bCalcDecalMap = false;
+}
+
+void CPlayer::Perform_Skinning()
+{
+	//Face Model
+	{
+		if (nullptr != m_pHeadModel)
+		{
+			m_pHeadModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
+
+			list<_uint> NonHideIndex = m_pHeadModel->Get_NonHideMeshIndices();
+
+			for (auto& i : NonHideIndex)
+			{
+				m_pHeadModel->Bind_Resource_Skinning(i);
+				m_pGameInstance->Perform_Skinning((*m_pHeadModel->GetMeshes())[i]->GetNumVertices());
+			}
 		}
 	}
 }
@@ -2867,6 +2954,8 @@ HRESULT CPlayer::Initialize_PartModels()
 	CModel* pHairModel = { dynamic_cast<CModel*>(m_PartObjects[PART_HAIR]->Get_Component(TEXT("Com_Model"))) };
 
 	m_pBodyModel = pBodyModel;
+	m_pHeadModel = pHeadModel;
+	m_pHairModel = pHairModel;
 
 	if (nullptr == pBodyModel ||
 		nullptr == pHeadModel ||

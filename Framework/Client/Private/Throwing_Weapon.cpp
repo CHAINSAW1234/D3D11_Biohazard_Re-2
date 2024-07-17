@@ -69,7 +69,7 @@ HRESULT CThrowing_Weapon::Initialize(void* pArg)
 		m_pTransformCom->Get_State_Float4(CTransform::STATE_LOOK));
 
 	m_pImpact_Grenade = CImpact_Grenade::Create(m_pDevice, m_pContext);
-	m_pImpact_Grenade->SetSize(30.f, 30.f);
+	m_pImpact_Grenade->SetSize(5.f, 5.f);
 
 	m_Explode_Time = GetTickCount64();
 	m_Explode_Delay = 3000;
@@ -100,7 +100,10 @@ void CThrowing_Weapon::Tick(_float fTimeDelta)
 	{
 		m_bRender = false;
 		m_pImpact_Grenade->Set_Render(true);
-		m_pImpact_Grenade->SetPosition(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION));
+		auto vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+		vPos.y += 1.f;
+		m_pImpact_Grenade->SetPosition(vPos);
+		m_pImpact_Grenade->Setup_Billboard();
 
 		m_pRigid_Dynamic->Release_Body();
 	}

@@ -1,0 +1,42 @@
+[
+  {
+    "NAME": "사건 일지",
+    "TEXTURE_TAG": "Prototype_Component_Texture_Document2"
+  },
+  {
+    "NAME": "작전 보고서",
+    "TEXTURE_TAG": "Prototype_Component_Texture_Document2"
+  },
+  {
+    "NAME": "신입의 첫 번째 과제",
+    "TEXTURE_TAG": "Prototype_Component_Texture_DocumentBlood1"
+  },
+  {
+    "NAME": "약초의 의학적 효능",
+    "TEXTURE_TAG": "Prototype_Component_Texture_Document1"
+  },
+  {
+    "NAME": "화약 사용",
+    "TEXTURE_TAG": "Prototype_Component_Texture_Memo1"
+  },
+  {
+    "NAME": "물품 보관함 단말기 관련 쪽지",
+    "TEXTURE_TAG": "Prototype_Component_Texture_GuidePamphlet1"
+  },
+  {
+    "NAME": "휴대용 금고 지침",
+    "TEXTURE_TAG": "Prototype_Component_Texture_Document1"
+  },
+  {
+    "NAME": "만일의 생존자에게",
+    "TEXTURE_TAG": "Prototype_Component_Texture_DocumentBlood1"
+  },
+  {
+    "NAME": "내부용 쪽지",
+    "TEXTURE_TAG": "Prototype_Component_Texture_Document1"
+  },
+  {
+    "NAME": "가이드 책자",
+    "TEXTURE_TAG": "Prototype_Component_Texture_GuidePamphlet1"
+  }
+]

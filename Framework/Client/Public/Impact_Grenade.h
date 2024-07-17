@@ -31,6 +31,11 @@ private:
 private:
 	_float					m_fDefaultSize_X = { 0.f };
 	_float					m_fDefaultSize_Y = { 0.f };
+
+	class CGrenade_Light*		m_pGrenade_Light = { nullptr };
+	class CImpact_Grenade_End*	m_pImpact_Grenade_End = { nullptr };
+
+	class CGrenade_Explosion*	m_pGrenade_Explosion = { nullptr };
 public:
 	static CImpact_Grenade* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

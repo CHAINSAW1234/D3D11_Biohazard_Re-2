@@ -50,7 +50,10 @@ HRESULT CMuzzle_Light_SG::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(6);
+	if(m_iType == 0)
+		m_pShaderCom->Begin(6);
+	else
+		m_pShaderCom->Begin(9);
 
 	m_pVIBufferCom->Bind_Buffers();
 
@@ -61,8 +64,7 @@ HRESULT CMuzzle_Light_SG::Render()
 
 void CMuzzle_Light_SG::Setup_Billboard()
 {
-	m_pTransformCom->Look_At(m_pGameInstance->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW).r[CTransform::STATE_POSITION]);
-	//	m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Float4());
+	m_pTransformCom->Look_At(m_pGameInstance->Get_CamPosition_Vector());
 }
 
 void CMuzzle_Light_SG::SetSize(_float fSizeX, _float fSizeY)
@@ -115,6 +117,12 @@ HRESULT CMuzzle_Light_SG::Bind_ShaderResources()
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_Texture")))
 		return E_FAIL;
+
+	if (m_iType == 1)
+	{
+		if (FAILED(m_pGameInstance->Bind_RTShaderResource(m_pShaderCom, TEXT("Target_Field_Depth"), "g_DepthTexture")))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }

@@ -61,6 +61,7 @@ private:
 
 private:
 	_bool*					m_pRender = { nullptr };
+	_bool					m_bDecal_Player = { false };
 
 private:
 	class CPart_Breaker_Zombie** m_ppPart_Breaker = { nullptr };

@@ -757,6 +757,18 @@
     <Filter Include="02.GameObjects\Cut_Scene\Actor\Prop_SM60_033_00">
       <UniqueIdentifier>{d9d1312c-d86d-473d-ac99-8e07be1feb5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Effect\Grenade_Light">
+      <UniqueIdentifier>{3e46d2df-8bef-497a-9757-854a1274c398}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Impact_Grenade_End">
+      <UniqueIdentifier>{8917fd90-7811-4db9-95af-9a9e6e1ea98a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Effect\Grenade_Explosion">
+      <UniqueIdentifier>{40ad2d9f-fe82-4c4b-902a-c971bae6be79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display\Display_Background">
+      <UniqueIdentifier>{7804f4df-3fdb-4446-9edd-c649c5760041}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1470,6 +1482,18 @@
     <ClInclude Include="..\Public\Actor_SM60_033_00.h">
       <Filter>02.GameObjects\Cut_Scene\Actor\Prop_SM60_033_00</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Grenade_Light.h">
+      <Filter>02.GameObjects\Effect\Grenade_Light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Impact_Grenade_End.h">
+      <Filter>02.GameObjects\Effect\Impact_Grenade_End</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Grenade_Explosion.h">
+      <Filter>02.GameObjects\Effect\Grenade_Explosion</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Display_Background.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display\Display_Background</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2143,6 +2167,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Actor_SM60_033_00.cpp">
       <Filter>02.GameObjects\Cut_Scene\Actor\Prop_SM60_033_00</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Grenade_Light.cpp">
+      <Filter>02.GameObjects\Effect\Grenade_Light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Impact_Grenade_End.cpp">
+      <Filter>02.GameObjects\Effect\Impact_Grenade_End</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Grenade_Explosion.cpp">
+      <Filter>02.GameObjects\Effect\Grenade_Explosion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Display_Background.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display\Display_Background</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

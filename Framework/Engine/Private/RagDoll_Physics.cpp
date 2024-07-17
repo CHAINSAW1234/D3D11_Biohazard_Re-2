@@ -393,6 +393,7 @@ _bool CRagdoll_Physics::Init(const string& name)
 	SetBoneIndex();
 
 	m_ragdoll->m_rigid_bodies.resize(m_skeletal_mesh->skeleton()->num_bones());
+	m_ragdoll->m_rigid_bodies_BreakPart.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_relative_joint_pos.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_original_body_rotations.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_body_pos_relative_to_joint.resize(m_skeletal_mesh->skeleton()->num_bones());
@@ -494,7 +495,7 @@ void CRagdoll_Physics::create_ragdoll()
 	}
 #endif
 
-	if (m_Calf_L == nullptr && m_Calf_L_High == nullptr)
+	if (m_Calf_L == nullptr)
 	{
 		m_Calf_L = create_capsule_bone(m_calf_l_idx, m_foot_l_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::CALF_L);
 		m_Scene->addActor(*m_Calf_L);
@@ -569,7 +570,7 @@ void CRagdoll_Physics::create_ragdoll()
 		m_ragdoll->m_rigid_bodies[m_Arm_L_Twist_1] = m_Arm_L_High;
 		m_ragdoll->m_rigid_bodies[m_Arm_L_Twist_2] = m_Arm_L_High;
 		m_ragdoll->m_rigid_bodies[m_Arm_L_Twist_3] = m_Arm_L_High;
-		m_vecBreakPartFilter[m_upperarm_high_l_idx] = false;
+		//m_vecBreakPartFilter[m_upperarm_high_l_idx] = false;
 	}
 
 	if (m_ForeArm_L_High)
@@ -595,7 +596,7 @@ void CRagdoll_Physics::create_ragdoll()
 		m_ragdoll->m_rigid_bodies[m_Arm_R_Twist_1] = m_Arm_R_High;
 		m_ragdoll->m_rigid_bodies[m_Arm_R_Twist_2] = m_Arm_R_High;
 		m_ragdoll->m_rigid_bodies[m_Arm_R_Twist_3] = m_Arm_R_High;
-		m_vecBreakPartFilter[m_upperarm_high_r_idx] = false;
+		//m_vecBreakPartFilter[m_upperarm_high_r_idx] = false;
 	}
 
 	if (m_ForeArm_R_High)
@@ -613,12 +614,42 @@ void CRagdoll_Physics::create_ragdoll()
 
 	if (m_Calf_L_High)
 	{
-		m_ragdoll->m_rigid_bodies[m_Leg_L_Twist_0] = m_Calf_L_High;
+		joints[m_Calf_L_Twist_0].parent_index = m_calf_l_idx;
+		joints[m_Calf_L_Twist_1].parent_index = m_calf_l_idx;
+		m_ragdoll->m_rigid_bodies[m_Calf_L_Twist_0] = m_Calf_L_High;
+		m_ragdoll->m_rigid_bodies[m_Calf_L_Twist_1] = m_Calf_L_High;
+		m_vecBreakPartFilter[m_calf_l_idx] = false;
 	}
 
 	if (m_Calf_R_High)
 	{
-		m_ragdoll->m_rigid_bodies[m_Leg_R_Twist_0] = m_Calf_R_High;
+		joints[m_Calf_R_Twist_0].parent_index = m_calf_r_idx;
+		joints[m_Calf_R_Twist_1].parent_index = m_calf_r_idx;
+		m_ragdoll->m_rigid_bodies[m_Calf_R_Twist_0] = m_Calf_R_High;
+		m_ragdoll->m_rigid_bodies[m_Calf_R_Twist_1] = m_Calf_R_High;
+		m_vecBreakPartFilter[m_calf_r_idx] = false;
+	}
+
+	if (m_Leg_L_High)
+	{
+		joints[m_Leg_L_Twist_0].parent_index = m_thigh_l_idx;
+		joints[m_Leg_L_Twist_1].parent_index = m_thigh_l_idx;
+		joints[m_Leg_L_Twist_2].parent_index = m_thigh_l_idx;
+		m_ragdoll->m_rigid_bodies[m_Leg_L_Twist_0] = m_Leg_L_High;
+		m_ragdoll->m_rigid_bodies[m_Leg_L_Twist_1] = m_Leg_L_High;
+		m_ragdoll->m_rigid_bodies[m_Leg_L_Twist_2] = m_Leg_L_High;
+		m_vecBreakPartFilter[m_thigh_l_idx] = false;
+	}
+
+	if (m_Leg_R_High)
+	{
+		joints[m_Leg_R_Twist_0].parent_index = m_thigh_r_idx;
+		joints[m_Leg_R_Twist_1].parent_index = m_thigh_r_idx;
+		joints[m_Leg_R_Twist_2].parent_index = m_thigh_r_idx;
+		m_ragdoll->m_rigid_bodies[m_Leg_R_Twist_0] = m_Leg_R_High;
+		m_ragdoll->m_rigid_bodies[m_Leg_R_Twist_1] = m_Leg_R_High;
+		m_ragdoll->m_rigid_bodies[m_Leg_R_Twist_2] = m_Leg_R_High;
+		m_vecBreakPartFilter[m_thigh_r_idx] = false;
 	}
 
 	auto iNumBone = m_skeletal_mesh->skeleton()->num_bones();
@@ -663,7 +694,7 @@ void CRagdoll_Physics::create_ragdoll()
 		uint32_t        chosen_idx;
 		PxRigidDynamic* body = m_ragdoll->find_recent_body_BreakPart((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
-		if (!body || m_vecBreakPartFilter[chosen_idx] == true)
+		if (!body)
 		{
 			continue;
 		}
@@ -1240,6 +1271,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		break;
 	}
 	case COLLIDER_TYPE::CALF_L:
+	{
 		//m_Calf_L = create_capsule_bone(m_calf_l_idx, m_foot_l_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::CALF_L);
 
 		if (m_Calf_L_High == nullptr)
@@ -1254,9 +1286,13 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		//m_Scene->addActor(*m_Calf_L);
 		m_Scene->addActor(*m_Foot_L);
 
-		m_vecBreak_Parent_Flag[m_Leg_L_Twist_0] = true;
-		joints[m_Leg_L_Twist_0].parent_index_BreakPart = joints[m_Leg_L_Twist_0].parent_index;
-		joints[m_Leg_L_Twist_0].parent_index = m_calf_l_idx;
+		m_vecBreak_Parent_Flag[m_Calf_L_Twist_0] = true;
+		joints[m_Calf_L_Twist_0].parent_index_BreakPart = joints[m_Calf_L_Twist_0].parent_index;
+		m_vecBreak_Parent_Flag[m_Calf_L_Twist_1] = true;
+		joints[m_Calf_L_Twist_1].parent_index_BreakPart = joints[m_Calf_L_Twist_1].parent_index;
+
+		joints[m_Calf_L_Twist_0].parent_index = m_calf_l_idx;
+		joints[m_Calf_L_Twist_1].parent_index = m_calf_l_idx;
 
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
@@ -1296,11 +1332,14 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		m_vecBreakPartFilter[m_calf_l_idx] = true;
 		m_vecBreakPartFilter[m_foot_l_idx] = true;
 
-		m_vecBreakPartFilter[m_Leg_L_Twist_0] = true;
+		m_vecBreakPartFilter[m_Calf_L_Twist_0] = true;
+		m_vecBreakPartFilter[m_Calf_L_Twist_1] = true;
 
 		break;
+	}
 	case COLLIDER_TYPE::CALF_R:
-		//m_Calf_R = create_capsule_bone(m_calf_r_idx, m_foot_r_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::CALF_R);
+	{
+		//m_Calf_L = create_capsule_bone(m_calf_l_idx, m_foot_l_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::CALF_L);
 
 		if (m_Calf_R_High == nullptr)
 			m_Calf_R_High = create_capsule_bone(m_calf_r_idx, m_foot_r_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::CALF_R);
@@ -1311,12 +1350,16 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		m_Foot_R = create_capsule_bone(m_foot_r_idx, m_ball_r_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::FOOT_R);
 		m_Scene->addActor(*m_Calf_R_High);
-		//m_Scene->addActor(*m_Calf_R);
+		//m_Scene->addActor(*m_Calf_L);
 		m_Scene->addActor(*m_Foot_R);
 
-		m_vecBreak_Parent_Flag[m_Leg_R_Twist_0] = true;
-		joints[m_Leg_R_Twist_0].parent_index_BreakPart = joints[m_Leg_R_Twist_0].parent_index;
-		joints[m_Leg_R_Twist_0].parent_index = m_calf_r_idx;
+		m_vecBreak_Parent_Flag[m_Calf_R_Twist_0] = true;
+		joints[m_Calf_R_Twist_0].parent_index_BreakPart = joints[m_Calf_R_Twist_0].parent_index;
+		m_vecBreak_Parent_Flag[m_Calf_R_Twist_1] = true;
+		joints[m_Calf_R_Twist_1].parent_index_BreakPart = joints[m_Calf_R_Twist_1].parent_index;
+
+		joints[m_Calf_R_Twist_0].parent_index = m_calf_r_idx;
+		joints[m_Calf_R_Twist_1].parent_index = m_calf_r_idx;
 
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
@@ -1349,27 +1392,34 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		Update_Partial(1 / 60.f);
 
-		//if (m_Calf_R && m_Foot_R)
-		//	m_pAnkle_Joint_R = create_d6_joint_Foot(m_Calf_R, m_Foot_R, m_ball_r_idx_Bone, m_foot_r_idx);
-
 		if (m_Calf_R_High && m_Foot_R)
-			m_Ankle_R_Upper_Joint = create_d6_joint_Foot(m_Calf_R_High, m_Foot_R, m_ball_r_idx_Bone, m_foot_r_idx);
+			m_pAnkle_Joint_R = create_d6_joint_Foot(m_Calf_R_High, m_Foot_R, m_ball_r_idx_Bone, m_foot_r_idx);
 
 		Update_Partial_After(1 / 60.f);
-
 		m_vecBreakPartFilter[m_calf_r_idx] = true;
 		m_vecBreakPartFilter[m_foot_r_idx] = true;
 
-		m_vecBreakPartFilter[m_Leg_R_Twist_0] = true;
+		m_vecBreakPartFilter[m_Calf_R_Twist_0] = true;
+		m_vecBreakPartFilter[m_Calf_R_Twist_1] = true;
 
 		break;
+	}
 	case COLLIDER_TYPE::LEG_L:
+	{
 
-		if (!m_Leg_L)
+		/*if (!m_Leg_L)
 		{
 			m_Leg_L = create_capsule_bone(m_thigh_l_idx, m_calf_l_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::LEG_L);
 			m_Scene->addActor(*m_Leg_L);
+		}*/
+
+		if (m_Leg_L_High == nullptr)
+		{
+			m_Leg_L_High = create_capsule_bone(m_thigh_l_idx, m_calf_l_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::LEG_L);
+			m_Scene->addActor(*m_Leg_L_High);
 		}
+		else
+			break;
 
 		if (!m_Calf_L)
 		{
@@ -1385,6 +1435,17 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			m_Scene->addActor(*m_Foot_L);
 		}
 
+		m_vecBreak_Parent_Flag[m_Leg_L_Twist_0] = true;
+		joints[m_Leg_L_Twist_0].parent_index_BreakPart = joints[m_Leg_L_Twist_0].parent_index;
+		m_vecBreak_Parent_Flag[m_Leg_L_Twist_1] = true;
+		joints[m_Leg_L_Twist_1].parent_index_BreakPart = joints[m_Leg_L_Twist_1].parent_index;
+		m_vecBreak_Parent_Flag[m_Leg_L_Twist_2] = true;
+		joints[m_Leg_L_Twist_2].parent_index_BreakPart = joints[m_Leg_L_Twist_2].parent_index;
+
+		joints[m_Leg_L_Twist_0].parent_index = m_thigh_l_idx;
+		joints[m_Leg_L_Twist_1].parent_index = m_thigh_l_idx;
+		joints[m_Leg_L_Twist_2].parent_index = m_thigh_l_idx;
+
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
 			uint32_t        chosen_idx;
@@ -1416,8 +1477,8 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		Update_Partial(1 / 60.f);
 
-		if (m_Leg_L && m_Calf_L)
-			m_pKnee_Joint_L = create_d6_joint(m_Leg_L, m_Calf_L, m_calf_l_idx_Bone, m_calf_l_idx);
+		if (m_Leg_L_High && m_Calf_L)
+			m_Knee_L_Upper_Joint = create_d6_joint(m_Leg_L_High, m_Calf_L, m_calf_l_idx_Bone, m_calf_l_idx);
 
 		if (m_Calf_L && m_Foot_L)
 			m_pAnkle_Joint_L = create_d6_joint_Foot(m_Calf_L, m_Foot_L, m_ball_l_idx_Bone, m_foot_l_idx);
@@ -1428,14 +1489,21 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		m_vecBreakPartFilter[m_calf_l_idx] = true;
 		m_vecBreakPartFilter[m_foot_l_idx] = true;
 		m_vecBreakPartFilter[m_thigh_l_idx] = true;
-		break;
-	case COLLIDER_TYPE::LEG_R:
 
-		if (!m_Leg_R)
+		m_vecBreakPartFilter[m_Leg_L_Twist_0] = true;
+		m_vecBreakPartFilter[m_Leg_L_Twist_1] = true;
+		m_vecBreakPartFilter[m_Leg_L_Twist_2] = true;
+		break;
+	}
+	case COLLIDER_TYPE::LEG_R:
+	{
+		if (m_Leg_R_High == nullptr)
 		{
-			m_Leg_R = create_capsule_bone(m_thigh_r_idx, m_calf_r_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::LEG_R);
-			m_Scene->addActor(*m_Leg_R);
+			m_Leg_R_High = create_capsule_bone(m_thigh_r_idx, m_calf_r_idx, *m_ragdoll, r * SIZE_MAG, rot, COLLIDER_TYPE::LEG_R);
+			m_Scene->addActor(*m_Leg_R_High);
 		}
+		else
+			break;
 
 		if (!m_Calf_R)
 		{
@@ -1451,6 +1519,17 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			m_Scene->addActor(*m_Foot_R);
 		}
 
+		m_vecBreak_Parent_Flag[m_Leg_R_Twist_0] = true;
+		joints[m_Leg_R_Twist_0].parent_index_BreakPart = joints[m_Leg_R_Twist_0].parent_index;
+		m_vecBreak_Parent_Flag[m_Leg_R_Twist_1] = true;
+		joints[m_Leg_R_Twist_1].parent_index_BreakPart = joints[m_Leg_R_Twist_1].parent_index;
+		m_vecBreak_Parent_Flag[m_Leg_R_Twist_2] = true;
+		joints[m_Leg_R_Twist_2].parent_index_BreakPart = joints[m_Leg_R_Twist_2].parent_index;
+
+		joints[m_Leg_R_Twist_0].parent_index = m_thigh_r_idx;
+		joints[m_Leg_R_Twist_1].parent_index = m_thigh_r_idx;
+		joints[m_Leg_R_Twist_2].parent_index = m_thigh_r_idx;
+
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
 			uint32_t        chosen_idx;
@@ -1482,18 +1561,24 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 
 		Update_Partial(1 / 60.f);
 
-		if (m_Leg_R && m_Calf_R)
-			m_pKnee_Joint_R = create_d6_joint(m_Leg_R, m_Calf_R, m_calf_r_idx_Bone, m_calf_r_idx);
+		if (m_Leg_R_High && m_Calf_R)
+			m_Knee_R_Upper_Joint = create_d6_joint(m_Leg_R_High, m_Calf_R, m_calf_r_idx_Bone, m_calf_r_idx);
 
 		if (m_Calf_R && m_Foot_R)
 			m_pAnkle_Joint_R = create_d6_joint_Foot(m_Calf_R, m_Foot_R, m_ball_r_idx_Bone, m_foot_r_idx);
 
 		Update_Partial_After(1 / 60.f);
 
+
 		m_vecBreakPartFilter[m_calf_r_idx] = true;
 		m_vecBreakPartFilter[m_foot_r_idx] = true;
 		m_vecBreakPartFilter[m_thigh_r_idx] = true;
+
+		m_vecBreakPartFilter[m_Leg_R_Twist_0] = true;
+		m_vecBreakPartFilter[m_Leg_R_Twist_1] = true;
+		m_vecBreakPartFilter[m_Leg_R_Twist_2] = true;
 		break;
+	}
 	}
 }
 
@@ -1783,15 +1868,15 @@ void CRagdoll_Physics::create_joint()
 		m_pUpSpine_Joint = create_d6_joint_Head(m_Pelvis, m_Chest, m_spine_02_idx_Bone, m_spine_01_idx);
 
 	// Pelvis to Thighs
-	if (!m_pHip_Joint_L && m_vecBreakPartFilter[m_thigh_l_idx] == false)
+	if (!m_pHip_Joint_L)
 		m_pHip_Joint_L = create_d6_joint(m_Pelvis, m_Leg_L, m_thigh_l_idx_Bone, m_thigh_l_idx);
-	if (!m_pHip_Joint_R && m_vecBreakPartFilter[m_thigh_r_idx] == false)
+	if (!m_pHip_Joint_R)
 		m_pHip_Joint_R = create_d6_joint(m_Pelvis, m_Leg_R, m_thigh_r_idx_Bone, m_thigh_r_idx);
 
 	// Thighs to Calf
-	if (!m_pKnee_Joint_L && m_vecBreakPartFilter[m_calf_l_idx] == false && m_Leg_L && m_Calf_L)
+	if (!m_pKnee_Joint_L && m_Leg_L && m_Calf_L && m_Knee_L_Upper_Joint == nullptr)
 		m_pKnee_Joint_L = create_d6_joint(m_Leg_L, m_Calf_L, m_calf_l_idx_Bone, m_calf_l_idx);
-	if (!m_pKnee_Joint_R && m_vecBreakPartFilter[m_calf_r_idx] == false && m_Leg_R && m_Calf_R)
+	if (!m_pKnee_Joint_R && m_Leg_R && m_Calf_R && m_Knee_R_Upper_Joint == nullptr)
 		m_pKnee_Joint_R = create_d6_joint(m_Leg_R, m_Calf_R, m_calf_r_idx_Bone, m_calf_r_idx);
 
 	// Calf to Foot
@@ -1806,7 +1891,7 @@ void CRagdoll_Physics::create_joint()
 	if (!m_pClavicle_R_Joint)
 		m_pClavicle_R_Joint = create_d6_joint(m_Chest, m_Arm_R, m_upperarm_r_idx_Bone, m_upperarm_r_idx);
 
-	// Upperarm to Lowerman
+	//// Upperarm to Lowerman
 	if (!m_pElbow_L_Joint && m_vecBreakPartFilter[m_lowerarm_l_idx] == false)
 		m_pElbow_L_Joint = create_d6_joint(m_Arm_L, m_ForeArm_L, m_lowerarm_l_idx_Bone, m_lowerarm_l_idx);
 	if (!m_pElbow_R_Joint && m_vecBreakPartFilter[m_lowerarm_r_idx] == false)

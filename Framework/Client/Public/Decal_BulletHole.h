@@ -40,6 +40,7 @@ protected:
 	_float3					m_vExtent;
 	_float4					m_vNormal;
 	_int					m_iFrame = { 0 };
+	_bool					m_bBlood = { false };
 protected:
 	virtual HRESULT			Add_Components();
 	virtual HRESULT			Bind_ShaderResources();

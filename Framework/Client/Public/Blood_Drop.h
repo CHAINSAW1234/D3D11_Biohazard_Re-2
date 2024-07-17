@@ -25,9 +25,12 @@ public:
 	_float4x4				GetWorldMatrix();
 	void					SetHitPart(PxRigidDynamic* pHitPart)
 	{
-		m_pHitPart = pHitPart;
-		PxVec3 HitPartPos = m_pHitPart->getGlobalPose().p;
-		m_vPrev_HitPartPos = _float4(HitPartPos.x, HitPartPos.y, HitPartPos.z, 1.f);
+		if(pHitPart)
+		{
+			m_pHitPart = pHitPart;
+			PxVec3 HitPartPos = m_pHitPart->getGlobalPose().p;
+			m_vPrev_HitPartPos = _float4(HitPartPos.x, HitPartPos.y, HitPartPos.z, 1.f);
+		}
 	}
 	_float4					GetPosition();
 	virtual void			SetPosition(_float4 Pos) override;

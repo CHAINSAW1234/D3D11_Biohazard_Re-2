@@ -40,7 +40,7 @@ void CBlood::Tick(_float fTimeDelta)
 	if (m_bRender == false)
 		return;
 
-	if (m_pHitPart)
+	if (m_pHitPart && m_bBiteBlood == false)
 	{
 		PxVec3 HitPartPos = m_pHitPart->getGlobalPose().p;
 		_float4 HitPartFloat4 = _float4(HitPartPos.x, HitPartPos.y, HitPartPos.z, 1.f);

@@ -1224,6 +1224,11 @@ void CInventory_Manager::UseItem(ITEM_NUMBER eTargetItemNum, _int iUsage)
 		{
 			iter->Set_ItemVariation(-iUsage);
 			m_pHotkey->Update_Registed_Item(eTargetItemNum, iter->Get_ItemQuantity());
+			if (0 == iter->Get_ItemQuantity() && HandGun != iter->Get_ItemNumber() && ShotGun != iter->Get_ItemNumber())
+			{
+				Find_Slot(_float2{ iter->GetPosition().x, iter->GetPosition().y })->Set_IsFilled(false);
+			}
+			
 			//todo 재귀하게 만들어보면 좋을듯 남은 수량 다 써버리게
 			//if (iter->Get_ItemQuantity() >= iUsage)
 			//	iter->Set_ItemVariation(-iUsage);

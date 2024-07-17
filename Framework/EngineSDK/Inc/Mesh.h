@@ -194,6 +194,7 @@ public:
 
 	//Set Decal WorldMatrix
 	void					SetDecalWorldMatrix(_float4x4 WorldMatrix,_bool bBigAttack);
+	void					SetDecalWorldMatrix_Player(_float4x4 WorldMatrix,_bool bFront);
 
 	//CalcDecalMap
 	void					Bind_Resource_CalcDecalMap(ID3D11UnorderedAccessView* pUAV);

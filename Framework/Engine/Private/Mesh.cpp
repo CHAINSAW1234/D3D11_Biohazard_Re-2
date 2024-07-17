@@ -6,6 +6,8 @@
 
 #define BIG_ATTACK_DECAL_EXTENT _float3(0.4f,0.4f,0.4f)
 #define NORMAL_ATTACK_DECAL_EXTENT _float3(0.2f,0.5f,0.2f)
+#define PLAYER_ATTACK_DECAL_EXTENT_FRONT _float3(0.155f,0.155f,0.155f)
+#define PLAYER_ATTACK_DECAL_EXTENT_BACK _float3(0.21f,0.21f,0.21f)
 
 CMesh::CMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CVIBuffer(pDevice, pContext)
@@ -711,7 +713,7 @@ HRESULT CMesh::Ready_Vertices_For_AnimModel(const vector<VTXANIMMESH>& Vertices,
 
 void CMesh::Static_Mesh_Cooking(CTransform* pTransform, _int* pIndex)
 {
-	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pTransform,pIndex);
+	m_pGameInstance->Cook_Mesh(m_pVertices_Cooking, m_pIndices_Cooking, m_iNumVertices, m_iNumIndices, pTransform, pIndex);
 }
 
 void CMesh::Static_Mesh_Cooking_NoRotation(CTransform* pTransform)
@@ -953,17 +955,27 @@ void CMesh::SetDecalWorldMatrix(_float4x4 WorldMatrix, _bool bBigAttack)
 {
 	m_pDecal_Blood->SetWorldMatrix(WorldMatrix);
 
-	if(bBigAttack)
+	if (bBigAttack)
 		m_pDecal_Blood->SetExtent(BIG_ATTACK_DECAL_EXTENT);
 	else
 		m_pDecal_Blood->SetExtent(NORMAL_ATTACK_DECAL_EXTENT);
+}
+
+void CMesh::SetDecalWorldMatrix_Player(_float4x4 WorldMatrix,_bool bFront)
+{
+	m_pDecal_Blood->SetWorldMatrix(WorldMatrix);
+
+	if (bFront == true)
+		m_pDecal_Blood->SetExtent(PLAYER_ATTACK_DECAL_EXTENT_FRONT);
+	else
+		m_pDecal_Blood->SetExtent(PLAYER_ATTACK_DECAL_EXTENT_BACK);
 }
 
 void CMesh::Bind_Resource_CalcDecalMap(ID3D11UnorderedAccessView* pUAV)
 {
 	m_Calc_Decal_Map_Input.iNumVertex = m_iNumVertices;
 	m_Calc_Decal_Map_Input.pUav_Skinning = m_pUAV_Skinning;
-	m_pDecal_Blood->Bind_Resource_DecalMap(m_Calc_Decal_Map_Input,pUAV);
+	m_pDecal_Blood->Bind_Resource_DecalMap(m_Calc_Decal_Map_Input, pUAV);
 }
 
 void CMesh::Bind_Resource_CalcDecalMap_StaticModel(ID3D11UnorderedAccessView* pUAV)

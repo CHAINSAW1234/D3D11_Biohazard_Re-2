@@ -106,6 +106,7 @@ const float PI = 3.14159265359f;
 //For SSD
 float3 g_vExtent;
 float4 g_vDecalNormal;
+bool   g_bBlood;
 
 struct VS_IN
 {
@@ -372,7 +373,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
     
     // 여기부터 for문이였음
    // float3 Li = -g_vLightDir.xyz;
-    float3 Li = -float3(0.f,-1.f,0.f);
+    float3 Li = float3(0.f,-1.f,0.f);
     float3 Lh = normalize(Li + Lo);
     
     float cosLi = max(0.0, dot(vNormal.xyz, Li));
@@ -462,10 +463,9 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
     vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
     vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
 
-    
     float fDistance = length(g_vLightPos - vWorldPos);
-    float fAttenuation = max(0.f, 1.f - (fDistance * fDistance) / (g_fLightRange * g_fLightRange)); // 감마 보정을 위한 감쇠값
-    
+    float fAttenuation = max(0.f, 1.f - pow((fDistance * fDistance) / (g_fLightRange * g_fLightRange), 2)); // 감마 보정을 위한 감쇠값
+    fAttenuation = fAttenuation * fAttenuation;
     if (fAttenuation <= 0)
         discard;
     
@@ -479,7 +479,7 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
     
     // 여기부터 for문이였음
    // float3 Li = -g_vLightDir.xyz;
-    float3 Li = -normalize(g_vLightPos.xyz - vWorldPos.xyz);
+    float3 Li = normalize(g_vLightPos.xyz - vWorldPos.xyz);
     float3 Lh = normalize(Li + Lo);
     
     float cosLi = max(0.0, dot(vNormal.xyz, Li));
@@ -573,11 +573,16 @@ PS_OUT PS_MAIN_SPOT(PS_IN In)
     vector vSpotDir = g_vLightDir;
     
     float fResult = acos(dot(normalize(vLightDir), normalize(vSpotDir)));
-    float fDistance = length(g_vLightPos - vWorldPos);
-    float fIntensity = (fResult - g_fCutOff) / (g_fCutOff - g_fOutCutOff);
-    float fAtt = saturate((g_fSpotLightRange - fDistance) / g_fSpotLightRange) * fIntensity; //범위 줘서 끝 범위에서는 연해지게 
+    if (g_fOutCutOff < fResult)
+        discard;
     
-    if (fAtt <= 0)
+    float fDistance = length(vLightDir.xyz);
+    float fIntensity = (fResult - g_fOutCutOff) / (g_fCutOff - g_fOutCutOff);
+    float fAtt = max(0.f, 1.f - pow((fDistance * fDistance) / (g_fLightRange * g_fLightRange), 2)); // 감마 보정을 위한 감쇠값
+    fAtt *= fAtt;
+    fAtt *= (fIntensity * fIntensity);
+
+    if (fAtt <= 0.f)
         discard;
     
     float3 Lo = normalize(g_vCamPosition.xyz - vWorldPos.xyz);
@@ -843,6 +848,9 @@ PS_OUT PS_POST_PROCESSING_RESULT(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     
     vector DiffuseDesc = g_DiffuseTexture.Sample(PointSamplerClamp, In.vTexcoord);
+    
+    if (DiffuseDesc.a == 0)
+        discard;
     
     Out.vColor = DiffuseDesc;
     
@@ -1535,16 +1543,74 @@ PS_OUT PS_DECAL(PS_IN In)
 
         float4 vDiffuseColor = g_DecalTexture.Sample(PointSamplerClamp, decalTextureUV);
 
-        if (vDiffuseColor.a < 0.1f)
-            discard;
+        if(g_bBlood)
+        {
+            if (vDiffuseColor.a < 0.1f)
+                discard;
+            else
+                Out.vColor = float4(0.2f, 0.f, 0.f, 1.f);
+        }
         else
-            Out.vColor = float4(0.2f, 0.f, 0.f, 1.f);
+        {
+            if (vDiffuseColor.a < 0.1f)
+                discard;
+            else
+                Out.vColor = vDiffuseColor;
+        }
     }
     else
     {
         clip(-1);
     }
 
+
+    return Out;
+}
+
+PS_OUT PS_MAIN_BLURX_EFFECT_STRONG(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT)0;
+
+    float4 vOut = 0;
+    float2 t = In.vTexcoord;
+    float2 uv = 0;
+    float TotalWeight = 0;
+    float tu = 1.f / 640.f;
+
+    for (int i = -35; i <= 35; ++i)
+    {
+        uv = t + float2(tu * i, 0);
+        float weight = Gaussian(float(i), 400);
+        vOut += weight * g_Texture.Sample(LinearSamplerClamp, uv);
+        TotalWeight += weight;
+    }
+    TotalWeight *= 0.6f;
+    vOut /= TotalWeight;
+    Out.vColor = vOut;
+
+    return Out;
+}
+
+PS_OUT PS_MAIN_BLURY_EFFECT_STRONG(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT)0;
+
+    float4 vOut = 0;
+    float2 t = In.vTexcoord;
+    float2 uv = 0;
+    float TotalWeight = 0;
+    float tu = 1.f / (640.f * 0.7f);
+
+    for (int i = -35; i <= 35; ++i)
+    {
+        uv = t + float2(0, tu * i);
+        float weight = Gaussian(float(i), 400);
+        vOut += weight * g_Texture.Sample(LinearSamplerClamp, uv);
+        TotalWeight += weight;
+    }
+    TotalWeight *= 0.3f;
+    vOut /= TotalWeight;
+    Out.vColor = vOut;
 
     return Out;
 }
@@ -1857,5 +1923,31 @@ technique11 DefaultTechnique
         HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
         DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
         PixelShader = compile ps_5_0 PS_MAIN_BLURY_EFFECT();
+    }
+
+    pass BlurX_Effect_Strong //  21
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_BLURX_EFFECT_STRONG();
+    }
+
+    pass BlurY_Effect_Strong //  22
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_NO_TEST_WRITE, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = /*compile gs_5_0 GS_MAIN()*/NULL;
+        HullShader = /*compile hs_5_0 HS_MAIN()*/NULL;
+        DomainShader = /*compile ds_5_0 DS_MAIN()*/NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_BLURY_EFFECT_STRONG();
     }
 }

@@ -129,22 +129,22 @@ class ENGINE_DLL CRagdoll_Physics : public CBase
 {
 public:
 
-    PxRigidDynamic*                     create_capsule_bone(uint32_t parent_idx, uint32_t child_idx,class CRagdoll& ragdoll, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity(),COLLIDER_TYPE eType = COLLIDER_TYPE::_END);
-    PxRigidDynamic*                     create_capsule_bone(uint32_t parent_idx, class CRagdoll& ragdoll, XMVECTOR offset, float l, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity(), COLLIDER_TYPE eType = COLLIDER_TYPE::_END);
-    PxRigidDynamic*                     create_sphere_bone(uint32_t parent_idx, class CRagdoll& ragdoll, float r, COLLIDER_TYPE eType = COLLIDER_TYPE::_END);
-    PxD6Joint*                          create_d6_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
-    PxD6Joint*                          create_d6_joint_Foot(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
-    PxD6Joint*                          create_d6_joint_Head(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
+    PxRigidDynamic* create_capsule_bone(uint32_t parent_idx, uint32_t child_idx, class CRagdoll& ragdoll, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity(), COLLIDER_TYPE eType = COLLIDER_TYPE::_END);
+    PxRigidDynamic* create_capsule_bone(uint32_t parent_idx, class CRagdoll& ragdoll, XMVECTOR offset, float l, float r = 0.5f, XMMATRIX rotation = XMMatrixIdentity(), COLLIDER_TYPE eType = COLLIDER_TYPE::_END);
+    PxRigidDynamic* create_sphere_bone(uint32_t parent_idx, class CRagdoll& ragdoll, float r, COLLIDER_TYPE eType = COLLIDER_TYPE::_END);
+    PxD6Joint* create_d6_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
+    PxD6Joint* create_d6_joint_Foot(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
+    PxD6Joint* create_d6_joint_Head(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t Bone_Pos, uint32_t Joint_Pos);
     void                                create_revolute_joint(PxRigidDynamic* parent, PxRigidDynamic* child, uint32_t joint_pos, XMMATRIX rotation = XMMatrixIdentity());
     void                                config_d6_joint(physx::PxReal swing0, physx::PxReal swing1, physx::PxReal twistLo, physx::PxReal twistHi, physx::PxD6Joint* joint);
 public:
-	CRagdoll_Physics(PxScene* Scene,PxPhysics* Physics, PxDefaultAllocator allocator, PxDefaultErrorCallback Callback,
-        PxFoundation* Foundation,PxDefaultCpuDispatcher* dispatcher, PxMaterial* Material);
-	CRagdoll_Physics(const CRagdoll_Physics& rhs);
-	virtual ~CRagdoll_Physics() = default;
+    CRagdoll_Physics(PxScene* Scene, PxPhysics* Physics, PxDefaultAllocator allocator, PxDefaultErrorCallback Callback,
+        PxFoundation* Foundation, PxDefaultCpuDispatcher* dispatcher, PxMaterial* Material);
+    CRagdoll_Physics(const CRagdoll_Physics& rhs);
+    virtual ~CRagdoll_Physics() = default;
 public:
-	virtual HRESULT                     Initialize_Prototype();
-	virtual HRESULT                     Initialize(void* pArg);
+    virtual HRESULT                     Initialize_Prototype();
+    virtual HRESULT                     Initialize(void* pArg);
 
 public:
     _bool                               Init(const string& name);
@@ -196,7 +196,7 @@ public:
     void                                SetSimulate(_bool boolean);
     void                                SetSimulate_Partial(_bool boolean);
     void                                ResetForce();
-    void                                Add_Force(_float4 vForce,COLLIDER_TYPE eType);
+    void                                Add_Force(_float4 vForce, COLLIDER_TYPE eType);
     void                                SetCulling(_bool boolean)
     {
         m_bCulling = boolean;
@@ -207,12 +207,12 @@ public:
         m_iId = Index;
     }
     _int                                Find_BoneIndex(const string& strRootTag);
-    FORCEINLINE PxRigidDynamic*         GetRigidBody(COLLIDER_TYPE eType)
+    FORCEINLINE PxRigidDynamic* GetRigidBody(COLLIDER_TYPE eType)
     {
         switch (eType)
         {
         case COLLIDER_TYPE::HEAD:
-           return m_Head;
+            return m_Head;
             break;
         case COLLIDER_TYPE::CHEST:
             return m_Chest;
@@ -221,16 +221,48 @@ public:
             return m_Pelvis;
             break;
         case COLLIDER_TYPE::ARM_L:
-            return m_Arm_L;
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_Arm_L_High == nullptr)
+                    return m_Arm_L;
+                else
+                    return m_Arm_L_High;
+            }
+            else
+                return m_Arm_L;
             break;
         case COLLIDER_TYPE::ARM_R:
-            return m_Arm_R;
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_Arm_R_High == nullptr)
+                    return m_Arm_R;
+                else
+                    return m_Arm_R_High;
+            }
+            else
+                return m_Arm_R;
             break;
         case COLLIDER_TYPE::FOREARM_L:
-            return m_ForeArm_L;
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_ForeArm_L_High == nullptr)
+                    return m_ForeArm_L;
+                else
+                    return m_ForeArm_L_High;
+            }
+            else
+                return m_ForeArm_L;
             break;
         case COLLIDER_TYPE::FOREARM_R:
-            return m_ForeArm_R;
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_ForeArm_R_High == nullptr)
+                    return m_ForeArm_R;
+                else
+                    return m_ForeArm_R_High;
+            }
+            else
+                return m_ForeArm_R;
             break;
         case COLLIDER_TYPE::HAND_L:
             return m_Hand_L;
@@ -239,16 +271,48 @@ public:
             return m_Hand_R;
             break;
         case COLLIDER_TYPE::CALF_L:
-            return m_Calf_L;
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_Calf_L_High == nullptr)
+                    return m_Calf_L;
+                else
+                    return m_Calf_L_High;
+            }
+            else
+                return m_Calf_L;
             break;
         case COLLIDER_TYPE::CALF_R:
-            return m_Calf_R;
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_Calf_R_High == nullptr)
+                    return m_Calf_R;
+                else
+                    return m_Calf_R_High;
+            }
+            else
+                return m_Calf_R;
             break;
         case COLLIDER_TYPE::LEG_L:
-            return m_Leg_L;
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_Leg_L_High == nullptr)
+                    return m_Leg_L;
+                else
+                    return m_Leg_L_High;
+            }
+            else
+                return m_Leg_L;
             break;
         case COLLIDER_TYPE::LEG_R:
-            return m_Leg_R;
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_Leg_R_High == nullptr)
+                    return m_Leg_R;
+                else
+                    return m_Leg_R_High;
+            }
+            else
+                return m_Leg_R;
             break;
         case COLLIDER_TYPE::FOOT_L:
             return m_Foot_L;
@@ -260,7 +324,7 @@ public:
 
         return nullptr;
     }
-    FORCEINLINE void Insert_Rigid_Body(vector<PxRigidDynamic*>* pRigidBodies, vector<COLLIDER_TYPE>* pColliders,COLLIDER_TYPE eType)
+    FORCEINLINE void Insert_Rigid_Body(vector<PxRigidDynamic*>* pRigidBodies, vector<COLLIDER_TYPE>* pColliders, COLLIDER_TYPE eType)
     {
         pColliders->push_back(eType);
 
@@ -276,16 +340,49 @@ public:
             pRigidBodies->push_back(m_Pelvis);
             break;
         case COLLIDER_TYPE::ARM_L:
-            pRigidBodies->push_back(m_Arm_L);
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_Arm_L_High != nullptr)
+                    pRigidBodies->push_back(m_Arm_L);
+                else
+                    pRigidBodies->push_back(m_Arm_L_High);
+            }
+            else
+                pRigidBodies->push_back(m_Arm_L);
+
             break;
         case COLLIDER_TYPE::ARM_R:
-            pRigidBodies->push_back(m_Arm_R);
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_Arm_R_High != nullptr)
+                    pRigidBodies->push_back(m_Arm_R);
+                else
+                    pRigidBodies->push_back(m_Arm_R_High);
+            }
+            else
+                pRigidBodies->push_back(m_Arm_R);
             break;
         case COLLIDER_TYPE::FOREARM_L:
-            pRigidBodies->push_back(m_ForeArm_L);
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_ForeArm_L_High != nullptr)
+                    pRigidBodies->push_back(m_ForeArm_L);
+                else
+                    pRigidBodies->push_back(m_ForeArm_L_High);
+            }
+            else
+                pRigidBodies->push_back(m_ForeArm_L);
             break;
         case COLLIDER_TYPE::FOREARM_R:
-            pRigidBodies->push_back(m_ForeArm_R);
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_ForeArm_R_High != nullptr)
+                    pRigidBodies->push_back(m_ForeArm_R);
+                else
+                    pRigidBodies->push_back(m_ForeArm_R_High);
+            }
+            else
+                pRigidBodies->push_back(m_ForeArm_R);
             break;
         case COLLIDER_TYPE::HAND_L:
             pRigidBodies->push_back(m_Hand_L);
@@ -294,16 +391,48 @@ public:
             pRigidBodies->push_back(m_Hand_R);
             break;
         case COLLIDER_TYPE::CALF_L:
-            pRigidBodies->push_back(m_Calf_L);
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_Calf_L_High != nullptr)
+                    pRigidBodies->push_back(m_Calf_L);
+                else
+                    pRigidBodies->push_back(m_Calf_L_High);
+            }
+            else
+                pRigidBodies->push_back(m_Calf_L);
             break;
         case COLLIDER_TYPE::CALF_R:
-            pRigidBodies->push_back(m_Calf_R);
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_Calf_R_High != nullptr)
+                    pRigidBodies->push_back(m_Calf_R);
+                else
+                    pRigidBodies->push_back(m_Calf_R_High);
+            }
+            else
+                pRigidBodies->push_back(m_Calf_R);
             break;
         case COLLIDER_TYPE::LEG_L:
-            pRigidBodies->push_back(m_Leg_L);
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_Leg_L_High != nullptr)
+                    pRigidBodies->push_back(m_Leg_L);
+                else
+                    pRigidBodies->push_back(m_Leg_L_High);
+            }
+            else
+                pRigidBodies->push_back(m_Leg_L);
             break;
         case COLLIDER_TYPE::LEG_R:
-            pRigidBodies->push_back(m_Leg_R);
+            if (m_bPartialRagdoll == true)
+            {
+                if (m_Leg_R_High != nullptr)
+                    pRigidBodies->push_back(m_Leg_R);
+                else
+                    pRigidBodies->push_back(m_Leg_R_High);
+            }
+            else
+                pRigidBodies->push_back(m_Leg_R);
             break;
         case COLLIDER_TYPE::FOOT_L:
             pRigidBodies->push_back(m_Foot_L);
@@ -315,25 +444,25 @@ public:
     }
     _float4     GetBodyPosition();
 public:
-	static CRagdoll_Physics*            Create();
+    static CRagdoll_Physics* Create();
 
 #pragma region Partial Ragdoll
 public:
     void                                Init_PartialRagdoll(COLLIDER_TYPE eType);
-    _float4x4*                          GetBoneMatrices_Ragdoll()
+    _float4x4* GetBoneMatrices_Ragdoll()
     {
         return m_BoneMatrices;
     }
 #pragma endregion
 
 private:
-    PxScene*                                        m_Scene = { nullptr };
-    PxPhysics*                                      m_Physics = { nullptr };
+    PxScene* m_Scene = { nullptr };
+    PxPhysics* m_Physics = { nullptr };
     PxDefaultAllocator                              m_allocator;
     PxDefaultErrorCallback                          m_error_callback;
-    PxFoundation*                                   m_foundation = nullptr;
-    PxDefaultCpuDispatcher*                         m_dispatcher = nullptr;
-    PxMaterial*                                     m_material = nullptr;
+    PxFoundation* m_foundation = nullptr;
+    PxDefaultCpuDispatcher* m_dispatcher = nullptr;
+    PxMaterial* m_material = nullptr;
 
     PoseTransforms                                  m_pose_transforms;
     _matrix                                         m_model;
@@ -343,8 +472,8 @@ private:
     float                                           m_ui_scale = m_scale;
     float                                           m_mass = 14.f;
 
-    class SkeletalMesh*                             m_skeletal_mesh = { nullptr };
-    class CRagdoll*                                 m_ragdoll = { nullptr };
+    class SkeletalMesh* m_skeletal_mesh = { nullptr };
+    class CRagdoll* m_ragdoll = { nullptr };
 
     int32_t                                         m_selected_node = -1;
     std::vector<_vector>                            m_joint_pos;
@@ -354,57 +483,57 @@ private:
     std::vector<_int>                               m_joint_Index;
     std::vector<int32_t>                            m_selected_joints;
     std::vector<std::string>                        m_joint_names;
-    class AnimRagdoll*                              m_ragdoll_pose = { nullptr };
+    class AnimRagdoll* m_ragdoll_pose = { nullptr };
     bool                                            m_simulate = false;
-    vector<class CBone*>*                           m_vecBone = { nullptr };
+    vector<class CBone*>* m_vecBone = { nullptr };
     _bool                                           m_bRagdoll = { false };
 
-    PxRigidDynamic*                                 m_Head = { nullptr };
-    PxRigidDynamic*                                 m_Pelvis = { nullptr };
-    PxRigidDynamic*                                 m_Chest = { nullptr };
-    PxRigidDynamic*                                 m_Arm_L = { nullptr };
-    PxRigidDynamic*                                 m_Arm_R = { nullptr };
-    PxRigidDynamic*                                 m_ForeArm_L = { nullptr };
-    PxRigidDynamic*                                 m_ForeArm_R = { nullptr };
-    PxRigidDynamic*                                 m_Leg_R = { nullptr };
-    PxRigidDynamic*                                 m_Leg_L = { nullptr };
-    PxRigidDynamic*                                 m_Calf_L = { nullptr };
-    PxRigidDynamic*                                 m_Calf_R = { nullptr };
-    PxRigidDynamic*                                 m_Foot_L = { nullptr };
-    PxRigidDynamic*                                 m_Foot_R = { nullptr };
-    PxRigidDynamic*                                 m_Hand_R = { nullptr };
-    PxRigidDynamic*                                 m_Hand_L = { nullptr };
+    PxRigidDynamic* m_Head = { nullptr };
+    PxRigidDynamic* m_Pelvis = { nullptr };
+    PxRigidDynamic* m_Chest = { nullptr };
+    PxRigidDynamic* m_Arm_L = { nullptr };
+    PxRigidDynamic* m_Arm_R = { nullptr };
+    PxRigidDynamic* m_ForeArm_L = { nullptr };
+    PxRigidDynamic* m_ForeArm_R = { nullptr };
+    PxRigidDynamic* m_Leg_R = { nullptr };
+    PxRigidDynamic* m_Leg_L = { nullptr };
+    PxRigidDynamic* m_Calf_L = { nullptr };
+    PxRigidDynamic* m_Calf_R = { nullptr };
+    PxRigidDynamic* m_Foot_L = { nullptr };
+    PxRigidDynamic* m_Foot_R = { nullptr };
+    PxRigidDynamic* m_Hand_R = { nullptr };
+    PxRigidDynamic* m_Hand_L = { nullptr };
 
     _bool                                           m_bJoint_Set = { false };
 
-    _float4x4*                                      m_pWorldMatrix;
+    _float4x4* m_pWorldMatrix;
     _float4x4                                       m_RotationMatrix;
     PoseTransforms                                  m_Global_transforms;
     PoseTransforms                                  m_Global_transforms_BreakPart;
     std::vector<_bool>                              m_vecBreak_Parent_Flag;
 
     PxFilterData                                    m_FilterData;
-    class CTransform*                               m_pTransform = { nullptr };
+    class CTransform* m_pTransform = { nullptr };
 
     _bool                                           m_bRagdoll_AddForce = { false };
     _bool                                           m_bCulling = { false };
 
     vector<_int>                                    m_vecBoneIndex;
-    PxD6Joint*                                      m_pNeckJoint = { nullptr };
-    PxD6Joint*                                      m_pUpSpine_Joint = { nullptr };
-    PxD6Joint*                                      m_pSpine_Joint = { nullptr };
-    PxD6Joint*                                      m_pClavicle_L_Joint = { nullptr };
-    PxD6Joint*                                      m_pClavicle_R_Joint = { nullptr };
-    PxD6Joint*                                      m_pElbow_L_Joint = { nullptr };
-    PxD6Joint*                                      m_pElbow_R_Joint = { nullptr };
-    PxD6Joint*                                      m_pWrist_L_Joint = { nullptr };
-    PxD6Joint*                                      m_pWrist_R_Joint = { nullptr };
-    PxD6Joint*                                      m_pHip_Joint_L = { nullptr };
-    PxD6Joint*                                      m_pHip_Joint_R = { nullptr };
-    PxD6Joint*                                      m_pKnee_Joint_L = { nullptr };
-    PxD6Joint*                                      m_pKnee_Joint_R = { nullptr };
-    PxD6Joint*                                      m_pAnkle_Joint_L = { nullptr };
-    PxD6Joint*                                      m_pAnkle_Joint_R = { nullptr };
+    PxD6Joint* m_pNeckJoint = { nullptr };
+    PxD6Joint* m_pUpSpine_Joint = { nullptr };
+    PxD6Joint* m_pSpine_Joint = { nullptr };
+    PxD6Joint* m_pClavicle_L_Joint = { nullptr };
+    PxD6Joint* m_pClavicle_R_Joint = { nullptr };
+    PxD6Joint* m_pElbow_L_Joint = { nullptr };
+    PxD6Joint* m_pElbow_R_Joint = { nullptr };
+    PxD6Joint* m_pWrist_L_Joint = { nullptr };
+    PxD6Joint* m_pWrist_R_Joint = { nullptr };
+    PxD6Joint* m_pHip_Joint_L = { nullptr };
+    PxD6Joint* m_pHip_Joint_R = { nullptr };
+    PxD6Joint* m_pKnee_Joint_L = { nullptr };
+    PxD6Joint* m_pKnee_Joint_R = { nullptr };
+    PxD6Joint* m_pAnkle_Joint_L = { nullptr };
+    PxD6Joint* m_pAnkle_Joint_R = { nullptr };
 
     _uint                                           m_iId = { 0 };
     _uint                                           m_iRagdollType = { RAGDOLL_TYPE::TYPE_NONE };
@@ -417,17 +546,17 @@ private:
     uint32_t m_spine_02_idx = { 0 };		//spine_2
     uint32_t m_spine_01_idx = { 0 };		//spine_1
     uint32_t m_pelvis_idx = { 0 };		//spine_0
-             
+
     uint32_t m_thigh_l_idx = { 0 };		//l_leg_femur
     uint32_t m_calf_l_idx = { 0 };		//l_leg_tibia
     uint32_t m_foot_l_idx = { 0 };		//l_leg_ankle
     uint32_t m_ball_l_idx = { 0 };		//l_leg_ball
-             
+
     uint32_t m_thigh_r_idx = { 0 };		//r_leg_femur
     uint32_t m_calf_r_idx = { 0 };		//r_leg_tibia
     uint32_t m_foot_r_idx = { 0 };		//r_leg_ankle
     uint32_t m_ball_r_idx = { 0 };		//r_leg_ball
-             
+
     uint32_t m_upperarm_l_idx = { 0 };	//l_arm_humerus
     uint32_t m_lowerarm_l_idx = { 0 };	//l_arm_radius
     uint32_t m_hand_l_idx = { 0 };		//l_arm_wrist
@@ -468,42 +597,42 @@ private:
 
 #pragma region Additional Joint
 
-    uint32_t m_upperarm_high_l_idx = { 0 };	  
-    uint32_t m_lowerarm_high_l_idx = { 0 };   
+    uint32_t m_upperarm_high_l_idx = { 0 };
+    uint32_t m_lowerarm_high_l_idx = { 0 };
 
-    uint32_t m_upperarm_high_r_idx = { 0 };	  
-    uint32_t m_lowerarm_high_r_idx = { 0 };   
+    uint32_t m_upperarm_high_r_idx = { 0 };
+    uint32_t m_lowerarm_high_r_idx = { 0 };
 
-    uint32_t m_leg_high_l_idx = { 0 };	    
-    uint32_t m_calf_high_l_idx = { 0 };     
+    uint32_t m_leg_high_l_idx = { 0 };
+    uint32_t m_calf_high_l_idx = { 0 };
 
-    uint32_t m_leg_high_r_idx = { 0 };	    
-    uint32_t m_calf_high_r_idx = { 0 };     
+    uint32_t m_leg_high_r_idx = { 0 };
+    uint32_t m_calf_high_r_idx = { 0 };
 
 #pragma endregion
 
 #pragma region Additional Bone
 
-    uint32_t m_upperarm_high_l_idx_Bone = { 0 };	
-    uint32_t m_lowerarm_high_l_idx_Bone = { 0 };	
+    uint32_t m_upperarm_high_l_idx_Bone = { 0 };
+    uint32_t m_lowerarm_high_l_idx_Bone = { 0 };
 
     uint32_t m_upperarm_high_r_idx_Bone = { 0 };
     uint32_t m_lowerarm_high_r_idx_Bone = { 0 };
 
-    uint32_t m_leg_high_l_idx_Bone = { 0 };	   
-    uint32_t m_calf_high_l_idx_Bone = { 0 };    
+    uint32_t m_leg_high_l_idx_Bone = { 0 };
+    uint32_t m_calf_high_l_idx_Bone = { 0 };
 
-    uint32_t m_leg_high_r_idx_Bone = { 0 };	   
-    uint32_t m_calf_high_r_idx_Bone = { 0 };    
+    uint32_t m_leg_high_r_idx_Bone = { 0 };
+    uint32_t m_calf_high_r_idx_Bone = { 0 };
 
 
 #pragma endregion
 
 #pragma region Twist Bone Index
-    uint32_t m_Arm_L_Twist_0 = { 0 };    
-    uint32_t m_Arm_L_Twist_1 = { 0 };    
-    uint32_t m_Arm_L_Twist_2 = { 0 };    
-    uint32_t m_Arm_L_Twist_3 = { 0 };    
+    uint32_t m_Arm_L_Twist_0 = { 0 };
+    uint32_t m_Arm_L_Twist_1 = { 0 };
+    uint32_t m_Arm_L_Twist_2 = { 0 };
+    uint32_t m_Arm_L_Twist_3 = { 0 };
 
     uint32_t m_Arm_R_Twist_0 = { 0 };
     uint32_t m_Arm_R_Twist_1 = { 0 };
@@ -569,7 +698,7 @@ private:
     _float4x4           m_BoneMatrices[MAX_COUNT_BONE];
 
 public:
-	virtual void Free() override;
+    virtual void Free() override;
 };
 
 END

@@ -428,6 +428,8 @@ public:/*For Skinned Mesh Decal*/
 	void									Staging_Skinning(_uint iIndex);
 	void									Perform_Skinning(_uint iIndex);
 	void									SetDecalWorldMatrix(_uint iIndex,_float4x4 WorldMatrix,_int iMeshType,_bool bBigAttack);
+	void									SetDecalWorldMatrix_Player_Front(_float4x4 WorldMatrix);
+	void									SetDecalWorldMatrix_Player_Back(_float4x4 WorldMatrix);
 	void									InitDecalWorldMatrix(_float4 vPos,_float4 vNormal);
 	void									Init_Decal(_uint iLevel);
 	void									Bind_Resource_NonCShader_Decal(_uint iIndex,class CShader* pShader);
@@ -447,6 +449,7 @@ public:/*For Decal Map*/
 
 public:/*For Calc Decal Map*/
 	void									Perform_Calc_DecalMap(_int iMeshType);
+	void									Perform_Calc_DecalMap_Player();
 	void									Perform_Calc_DecalMap_StaticModel();
 	void									Bind_DecalMap(_uint iIndex,class CShader* pShader);
 

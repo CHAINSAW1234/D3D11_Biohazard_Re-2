@@ -148,52 +148,12 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 
 	//LightDesc.fRange = 1000000.f;
 
-	LightDesc.vDiffuse = _float4(.4f, .4f, .4f, 1.f);
+	LightDesc.vDiffuse = _float4(.2f, .2f, .2f, 1.f);
 	LightDesc.vAmbient = _float4(.0f, .0f, .0f, 1.f);
 	LightDesc.vSpecular = _float4(0.4f, 0.4f, 0.4f, 1.f);
 
 	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
 		return E_FAIL;
-
-	//LightDesc.eType = LIGHT_DESC::TYPE_POINT;
-	//LightDesc.bShadow = true;
-	//LightDesc.vPosition =_float4(-2.f, 3.f, 0.f, 1.f);
-	//LightDesc.fRange = 5.f;
-
-	//LightDesc.vDiffuse = _float4(1.f, 0.f, 0.f, 1.f);
-	//LightDesc.vAmbient = _float4(0.f, 0.f, 0.f, 1.f);
-	//LightDesc.vSpecular = _float4(1.f, 0.4f, 0.4f, 1.f);
-	//if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
-	//	return E_FAIL;
-
-	//LightDesc.eType = LIGHT_DESC::TYPE_POINT;
-	//LightDesc.bShadow = true;
-	//LightDesc.vPosition = _float4(2.f, 3.f, 0.f, 1.f);
-	//LightDesc.fRange = 5.f;
-
-	//LightDesc.vDiffuse = _float4(0.f, 1.f, 0.f, 1.f);
-	//LightDesc.vAmbient = _float4(0.f, 0.f, 0.f, 1.f);
-	//LightDesc.vSpecular = _float4(0.4f, 1.f, 0.4f, 1.f);
-	//if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_POINT"), LightDesc)))
-	//	return E_FAIL;
-
-	//LightDesc.eType = LIGHT_DESC::TYPE_SPOT;
-	//LightDesc.bShadow = true;
-	//LightDesc.vPosition = _float4(0, 4.f, -2.f, 1.f);
-
-	//LightDesc.fRange = 6.f;
-	//LightDesc.vDirection = _float4(0.f,-1.f, 0.f,0.f);
-	//LightDesc.fCutOff = XMConvertToRadians(30.f);
-	//LightDesc.fOutCutOff = XMConvertToRadians(40.f);
-
-	//LightDesc.vDiffuse = _float4(0.f, 0.f, 1.f, 1.f);
-	//LightDesc.vAmbient = _float4(0.2f, 0.2f, 0.4f, 1.f);
-	//LightDesc.vSpecular = _float4(0.4f, 0.4f, 1.f, 1.f);
-	//
-	//if (FAILED(m_pGameInstance->Add_Light(TEXT("LIGHT_TEST_SPOT"), LightDesc)))
-	//	return E_FAIL;
-
-
 
 	if (FAILED(Load_Light(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
 		return E_FAIL;

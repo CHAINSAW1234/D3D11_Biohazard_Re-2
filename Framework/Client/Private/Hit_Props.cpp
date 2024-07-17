@@ -98,7 +98,7 @@ void CHit_Props::Compute_CurrentUV()
 
 void CHit_Props::Setup_Billboard()
 {
-	m_pTransformCom->Look_At(m_pGameInstance->Get_Camera_Pos_Float4());
+	m_pTransformCom->Look_At(m_pGameInstance->Get_CamPosition_Vector());
 }
 
 void CHit_Props::SetSize(_float fSizeX, _float fSizeY)

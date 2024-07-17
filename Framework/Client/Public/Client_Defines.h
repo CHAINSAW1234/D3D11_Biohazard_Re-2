@@ -51,7 +51,7 @@ using namespace Client;
 #define TEST_ZOMBIE_MAINHALL
 
 //#define NON_COLLISION_PROP
-//#define PROPS_COOKING
+#define PROPS_COOKING
 
 //#define UI_POS
 
@@ -59,7 +59,7 @@ using namespace Client;
 
 #define DISPLAY_FRAME
 //	#define DISPLAY_NAVMESH
-//	#define FRAME_LOCK
+	#define FRAME_LOCK
 
 typedef struct Tag_Prototype_Inform
 {

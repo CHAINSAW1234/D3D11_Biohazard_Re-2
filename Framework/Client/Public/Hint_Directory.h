@@ -20,6 +20,15 @@ public:
 	virtual HRESULT Render() override;
 
 public:
+	void Set_Directory(ITEM_READ_TYPE eIRT, wstring wstrText);
+	ITEM_READ_TYPE Get_DirectoryType() const {
+		return m_eItem_Read_Type;
+	}
+
+private:
+	ITEM_READ_TYPE m_eItem_Read_Type = { ITEM_READ_TYPE::END_NOTE };
+
+public:
 	static CHint_Directory* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual void Free() override;
