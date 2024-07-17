@@ -174,7 +174,6 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	//m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/LeonTest/LeonBody.fbx");
 
 	m_bDecalRender = false;
-	m_pModelCom->Init_Decal(LEVEL_GAMEPLAY);
 	m_bCloth = true;
 	m_bDecal_Player = true;
 

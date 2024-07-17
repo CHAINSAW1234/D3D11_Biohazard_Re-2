@@ -2288,6 +2288,71 @@ _int CRagdoll_Physics::Find_BoneIndex(const string& strRootTag)
 	return -1;
 }
 
+_float4 CRagdoll_Physics::GetRigidBodyPos(COLLIDER_TYPE eType)
+{
+	PxRigidDynamic* pBody = nullptr;
+	switch (eType)
+	{
+	case COLLIDER_TYPE::HEAD:
+		pBody = m_Head;
+		break;
+	case COLLIDER_TYPE::CHEST:
+		pBody = m_Chest;
+		break;
+	case COLLIDER_TYPE::PELVIS:
+		pBody = m_Pelvis;
+		break;
+	case COLLIDER_TYPE::ARM_L:
+
+		break;
+	case COLLIDER_TYPE::ARM_R:
+
+		break;
+	case COLLIDER_TYPE::FOREARM_L:
+
+		break;
+	case COLLIDER_TYPE::FOREARM_R:
+
+		break;
+	case COLLIDER_TYPE::HAND_L:
+
+		break;
+	case COLLIDER_TYPE::HAND_R:
+
+		break;
+	case COLLIDER_TYPE::CALF_L:
+
+		break;
+	case COLLIDER_TYPE::CALF_R:
+
+		break;
+	case COLLIDER_TYPE::LEG_L:
+
+		break;
+	case COLLIDER_TYPE::LEG_R:
+
+		break;
+	case COLLIDER_TYPE::FOOT_L:
+
+		break;
+	case COLLIDER_TYPE::FOOT_R:
+
+		break;
+	}
+
+	if (pBody)
+	{
+		auto vPos = pBody->getGlobalPose().p;
+		_float4 vPos_float = _float4(vPos.x, vPos.y, vPos.z,1.f);
+
+		return vPos_float;
+	}
+	else
+	{
+		return _float4(0.f, 0.f, 0.f, 1.f);
+	}
+}
+
 _float4 CRagdoll_Physics::GetBodyPosition()
 {
 	_float4 vPos = _float4(0.f, 0.f, 0.f, 1.f);

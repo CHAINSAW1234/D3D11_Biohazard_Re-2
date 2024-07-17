@@ -207,7 +207,8 @@ public:
         m_iId = Index;
     }
     _int                                Find_BoneIndex(const string& strRootTag);
-    FORCEINLINE PxRigidDynamic* GetRigidBody(COLLIDER_TYPE eType)
+    _float4                             GetRigidBodyPos(COLLIDER_TYPE eType);
+    FORCEINLINE                         PxRigidDynamic* GetRigidBody(COLLIDER_TYPE eType)
     {
         switch (eType)
         {
@@ -324,7 +325,7 @@ public:
 
         return nullptr;
     }
-    FORCEINLINE void Insert_Rigid_Body(vector<PxRigidDynamic*>* pRigidBodies, vector<COLLIDER_TYPE>* pColliders, COLLIDER_TYPE eType)
+    FORCEINLINE                         void Insert_Rigid_Body(vector<PxRigidDynamic*>* pRigidBodies, vector<COLLIDER_TYPE>* pColliders, COLLIDER_TYPE eType)
     {
         pColliders->push_back(eType);
 
