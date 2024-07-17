@@ -4,9 +4,11 @@
 #include "GameInstance.h"
 
 CTarget_Manager::CTarget_Manager(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	: m_pDevice { pDevice }
+	: m_pGameInstance{ CGameInstance::Get_Instance() }
+	, m_pDevice { pDevice }
 	, m_pContext { pContext }
 {
+	Safe_AddRef(m_pGameInstance);
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
 }
@@ -189,6 +191,15 @@ HRESULT CTarget_Manager::Copy_Resource(const wstring& strDestRenderTargetTag, co
 	return pDestRenderTarget->Copy_Resource(pSrcRenderTarget->Get_Texture2D());
 }
 
+HRESULT CTarget_Manager::Copy_BackBuffer(const wstring& strRenderTargetTag)
+{
+	CRenderTarget* pRenderTarget = Find_RenderTarget(strRenderTargetTag);
+	if (nullptr == pRenderTarget)
+		return E_FAIL;
+
+	return m_pGameInstance->Copy_BackBuffer(pRenderTarget->Get_Texture2D());
+}
+
 #ifdef _DEBUG
 
 HRESULT CTarget_Manager::Ready_Debug(const wstring & strRenderTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
@@ -262,6 +273,7 @@ void CTarget_Manager::Free()
 		Safe_Release(Pair.second);
 	m_RenderTargets.clear();
 
+	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 }

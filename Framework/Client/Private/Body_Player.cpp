@@ -38,8 +38,8 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-	/*if (FAILED(Add_Animations()))
-		return E_FAIL;*/
+	if (FAILED(Add_Animations()))
+		return E_FAIL;
 
 	m_pModelCom->Hide_Mesh("LOD_1_Group_200_Sub_1__pl0001_Gun_Mat_mesh0007", true);
 
@@ -138,45 +138,17 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Add_AnimPlayingInfo(true, 3, TEXT("UpperBody"), 0.f);
 	m_pModelCom->Add_AnimPlayingInfo(true, 4, TEXT("Left_Arm"), 0.f);
 
-
 	// 크기 월드 위치
-
-
-	//for (int i = 0; i < CPlayer::ANIMSET_MOVE_END; ++i) {
-	//	
-
-	//	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_F_LOOP,
-	//		64);
-	//	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_L_LOOP,
-	//		m_pModelCom->Get_Duration_From_Anim(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_L_LOOP) + 1);
-	//	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_R_LOOP,
-	//		m_pModelCom->Get_Duration_From_Anim(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_R_LOOP) + 1);
-	//	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_L_LOOP,
-	//		m_pModelCom->Get_Duration_From_Anim(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_L_LOOP) + 1);
-	//	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_B_LOOP,
-	//		m_pModelCom->Get_Duration_From_Anim(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_B_LOOP) + 1);
-	//	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_R_LOOP,
-	//		m_pModelCom->Get_Duration_From_Anim(CPlayer::Get_AnimSetMoveName((CPlayer::ANIMSET_MOVE)i), CPlayer::WALK_BACK_R_LOOP) + 1);
-	//}
-	 
-	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), CPlayer::HOLD_LEFTHAND_LIGHT, 1.f);
-
-	/*m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_L180, 300.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::WHEEL_R180, 300.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::HOLD_SHOT, 300.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_HG), CPlayer::HOLD_SHOT_NO_AMMO, 300.f);
-
-	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::WHEEL_L180, 300.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::WHEEL_R180, 300.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::HOLD_SHOT, 300.f);
-	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetHoldName(CPlayer::HOLD_STG), CPlayer::HOLD_SHOT_NO_AMMO, 300.f);*/
-
-	//m_pRagdoll = m_pGameInstance->Create_Ragdoll(m_pModelCom->GetBoneVector(), m_pParentsTransform, "../Bin/Resources/Models/LeonTest/LeonBody.fbx");
-
+	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), CPlayer::HOLD_LEFTHAND_LIGHT, .1f);
+	
 	m_bDecalRender = false;
 	m_pModelCom->Init_Decal(LEVEL_GAMEPLAY);
 	m_bCloth = true;
 	m_bDecal_Player = true;
+
+	m_pModelCom->Active_RootMotion_XZ(true);
+	m_pModelCom->Active_RootMotion_Y(true);
+	m_pModelCom->Active_RootMotion_Rotation(true);
 
 	return S_OK;
 }
@@ -203,20 +175,6 @@ void CBody_Player::Tick(_float fTimeDelta)
 
 	m_pColliderCom->Tick(WorldMatrix);
 
-	/*static _uint iAnimIndex = { 0 };
-	if (UP == m_pGameInstance->Get_KeyState(VK_UP))
-	{
-		++iAnimIndex;
-		if (50 <= iAnimIndex)
-			iAnimIndex = 50;
-	}
-
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_DOWN))
-	{
-		--iAnimIndex;
-		if (1000000 < iAnimIndex)
-			iAnimIndex = 0;
-	}*/
 
 	static _float fWeight = { 1.f };
 	static _float fMoveHieght = { 0.f };
@@ -269,29 +227,6 @@ void CBody_Player::Tick(_float fTimeDelta)
 	//m_pModelCom->Set_BlendWeight(0, 1.f);
 
 	//m_pModelCom->Set_TickPerSec(iAnimIndex, 60.f);
-
-
-	static _bool		isSetRootXZ = true;
-	static _bool		isSetRootRotation = true;
-	static _bool		isSetRootY = true;
-	if (UP == m_pGameInstance->Get_KeyState('I'))
-	{
-		isSetRootY = !isSetRootY;
-	}
-
-	if (UP == m_pGameInstance->Get_KeyState('O'))
-	{
-		isSetRootXZ = !isSetRootXZ;
-	}
-
-	if (UP == m_pGameInstance->Get_KeyState('P'))
-	{
-		isSetRootRotation = !isSetRootRotation;
-	}
-
-	m_pModelCom->Active_RootMotion_XZ(isSetRootXZ);
-	m_pModelCom->Active_RootMotion_Y(isSetRootY);
-	m_pModelCom->Active_RootMotion_Rotation(isSetRootRotation);
 
 	_uint		iIndex = { 0 };
 	{

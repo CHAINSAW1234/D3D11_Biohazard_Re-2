@@ -62,6 +62,7 @@ private:		/* For.SetUp_RenderTarget */
 	HRESULT						SetUp_RenderTargets_FXAA(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTarget_SubResult(const D3D11_VIEWPORT& ViewportDesc);
 	// 잘 모름 
+	HRESULT						SetUp_RenderTargets_UI_Blur(const D3D11_VIEWPORT& ViewportDesc);
 	HRESULT						SetUp_RenderTargets_Distortion(const D3D11_VIEWPORT& ViewportDesc);
 #pragma region Effect
 	HRESULT						SetUp_RenderTargets_Effect_Bloom(const D3D11_VIEWPORT& ViewportDesc);
@@ -148,7 +149,7 @@ private:
 	HRESULT						Render_Shadow_Spot();
 
 private:
-	// 잘 모름
+	HRESULT						Render_UI_Blur();
 	HRESULT						Render_Distortion();
 
 
@@ -161,6 +162,7 @@ private:
 	HRESULT						Render_DOF();
 	HRESULT						Render_Volumetric();
 	HRESULT						Render_FXAA();
+
 private:
 	HRESULT						Render_PostProcessing_Result();
 

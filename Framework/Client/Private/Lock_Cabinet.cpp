@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Lock_Cabinet.h"
 #include"Player.h"
-
+#include "Light.h"
 #include"Cabinet.h"
 
 #define SAFEBOX_KEY_DISTANCE 0.15f
@@ -165,6 +165,115 @@ HRESULT CLock_Cabinet::Render()
 		m_pModelCom->Render(static_cast<_uint>(i));
 	}
 
+
+	return S_OK;
+}
+
+HRESULT CLock_Cabinet::Render_LightDepth_Dir()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+
+	if (m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) != nullptr) {
+
+		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION);
+		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
+			return E_FAIL;
+
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
+		{
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CLock_Cabinet::Render_LightDepth_Point()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+
+	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
+	_int iIndex = 0;
+	for (auto& pLightDesc : LightDescList) {
+		const _float4x4* pLightViewMatrices;
+		_float4x4 LightProjMatrix;
+		pLightViewMatrices = pLightDesc->ViewMatrix;
+		LightProjMatrix = pLightDesc->ProjMatrix;
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_LightIndex", &iIndex, sizeof(_int))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrices("g_LightViewMatrix", pLightViewMatrices, 6)))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
+			return E_FAIL;
+
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
+		{
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH_CUBE)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+
+		++iIndex;
+	}
+
+	return S_OK;
+}
+
+HRESULT CLock_Cabinet::Render_LightDepth_Spot()
+{
+	if (nullptr == m_pShaderCom)
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+
+	if (m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT) != nullptr) {
+
+		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::SPOT);
+		const LIGHT_DESC* pDesc = pLight->Get_LightDesc(0);
+
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &pDesc->ViewMatrix[0])))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
+			return E_FAIL;
+
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
+		{
+			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+				return E_FAIL;
+
+			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
+				return E_FAIL;
+
+			m_pModelCom->Render(static_cast<_uint>(i));
+		}
+	}
 
 	return S_OK;
 }
