@@ -5,6 +5,9 @@
 #include"BigStatue.h"
 #include"Light.h"
 
+#define PUT_Z -0.9f
+#define ROTATION 30.f
+
 CMini_BigStatue::CMini_BigStatue(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPart_InteractProps{ pDevice, pContext }
 {
@@ -26,8 +29,25 @@ HRESULT CMini_BigStatue::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	if (pArg != nullptr)
+	{
+		BODY_MINI_STATUE_DESC* desc = (BODY_MINI_STATUE_DESC*)pArg;
+
+		m_eMiniType = static_cast<_ubyte>(desc->eMiniType);
+
+		m_ePartsType = static_cast<_ubyte>(desc->eParts_Type);
+
+		m_isMedalAnim = desc->isMedalAnim;
+
+		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
+		{
+			m_ParentWorldMatrix = desc->vParts_WorldMatrix;
+		}
+	}
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
+
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 	m_pModelCom->Add_AnimPlayingInfo(false, 0, TEXT("Default"), 1.f);
@@ -44,16 +64,61 @@ void CMini_BigStatue::Tick(_float fTimeDelta)
 {
 	__super::Tick(fTimeDelta);
 
+	if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_UNICON) == m_eMiniType)
+	{
+		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
+		{
+			if (DOWN == m_pGameInstance->Get_KeyState('L'))
+				m_isMoveStart = true;
+
+			if(true == m_isMoveStart)
+				Unicon_Statue(fTimeDelta);
+		}
+	}
+
+	else if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_WOMAN) == m_eMiniType)
+	{
+		Woman_Statue(fTimeDelta);
+	}
+
+	else if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_LION) == m_eMiniType)
+	{
+		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
+		{
+			if (DOWN == m_pGameInstance->Get_KeyState('R'))
+				m_isMoveStart = true;
+
+			if (true == m_isMoveStart)
+				Lion_Statue(fTimeDelta);
+		}
+
+	}
+
+	if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
+	{
+		
+	}
 }
 
 void CMini_BigStatue::Late_Tick(_float fTimeDelta)
 {
+	if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_LION) == m_eMiniType)
+	{
+		if (DOWN == m_pGameInstance->Get_KeyState('R'))
+			m_isMoveStart = true;
 
-	m_pModelCom->Change_Animation(0, TEXT("Default"), 0); //static상태 유지
+		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
+		{
+			if (true == m_isMoveStart)
+				Lion_Statue(fTimeDelta);
+		} 
+	}
+
+	m_pModelCom->Change_Animation(0, TEXT("Default"), (_int)m_eAnim); //static상태 유지
 
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
-	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
+	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, 0);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
@@ -61,8 +126,24 @@ void CMini_BigStatue::Late_Tick(_float fTimeDelta)
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 
-	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
-	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+	if (PARTS_TYPE::MINI_BODY == static_cast<PARTS_TYPE>(m_ePartsType))
+	{
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+
+		_matrix WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
+		
+		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+
+	}
+
+	else if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
+	{
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(0.f));
+		 
+		_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_ParentWorldMatrix) };
+
+		XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
+	}
 }
 
 HRESULT CMini_BigStatue::Render()
@@ -71,7 +152,6 @@ HRESULT CMini_BigStatue::Render()
 		return S_OK;
 	else
 		m_bRender = false;
-
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
@@ -271,6 +351,269 @@ HRESULT CMini_BigStatue::Add_PartObjects()
 HRESULT CMini_BigStatue::Initialize_PartObjects()
 {
 	return S_OK;
+}
+
+void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
+{
+	vector<string> BoneNames = { m_pModelCom->Get_BoneNames() };
+
+	if(false == m_isMoveEnd)
+	{
+		/* 1. 처음에 Z 축으로 들어감*/
+		if (m_fAdditionalZ <= PUT_Z)
+		{
+			m_fZTimer += fTimeDelta;
+		}
+
+		else
+		{
+			if(m_fRotationAngle >= ROTATION)
+			{
+				if (m_fAdditionalZ >= PUT_Z)
+					m_fAdditionalZ -= 3.5f * fTimeDelta;
+			}
+
+			else
+			{
+				m_fRotationAngle += fTimeDelta * 60.f;
+			}
+		}
+
+		_matrix			TranslationMatrix = { XMMatrixTranslation(0.f, 0.f, m_fAdditionalZ) };
+
+		if (m_fZTimer >= 0.8f)
+		{
+			m_fAdditionalHeight_D -= 5.f * fTimeDelta;
+			m_fAdditionalHeight += 5.f * fTimeDelta;
+		}
+
+		/* Rotation */
+		_vector vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
+		_vector vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, XMConvertToRadians(m_fRotationAngle)) };
+		_matrix RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
+
+		list<_uint> ChildJointIndices_Root;
+		m_pModelCom->Get_Child_ZointIndices("RootNode", "_00", ChildJointIndices_Root);
+
+		for (auto& iJointIndex : ChildJointIndices_Root)
+		{
+			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
+		}
+
+		/* 1. 아래로 내리기 */
+		_matrix			TranslationMatrix1 = { XMMatrixTranslation(-m_fAdditionalHeight_D, m_fAdditionalHeight_D, m_fAdditionalZ) };
+		list<_uint>		ChildJointIndices_1;
+		m_pModelCom->Get_Child_ZointIndices("_00", "_01_end_end_end", ChildJointIndices_1);
+
+		for (auto& iJointIndex : ChildJointIndices_1)
+		{
+			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix1);
+		}
+
+		/* 2. 위로 올려야 함 */
+		_matrix			TranslationMatrix2 = { XMMatrixTranslation(-m_fAdditionalHeight, m_fAdditionalHeight, m_fAdditionalZ) };
+
+		list<_uint> ChildJointIndices_2;
+		m_pModelCom->Get_Child_ZointIndices("_00", "_02_end_end_end", ChildJointIndices_2);
+
+		for (auto& iJointIndex : ChildJointIndices_2)
+		{
+			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix2);
+		}
+
+		if (m_fAdditionalHeight >= 9.f)
+		{
+			m_isMoveEnd = true;
+			*m_isMedalAnim = true;
+		}
+	}
+
+	else if (true == m_isMoveEnd)
+	{
+		/* Rotation */
+		_vector vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
+		_vector vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, XMConvertToRadians(m_fRotationAngle)) };
+		_matrix RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
+
+		list<_uint> ChildJointIndices_Root;
+		m_pModelCom->Get_Child_ZointIndices("RootNode", "_00", ChildJointIndices_Root);
+
+		for (auto& iJointIndex : ChildJointIndices_Root)
+		{
+			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
+		}
+
+
+		_matrix			TranslationMatrix = { XMMatrixTranslation(-m_fAdditionalHeight_D, m_fAdditionalHeight_D, m_fAdditionalZ) };
+
+		list<_uint> ChildJointIndices_1;
+		// root / RootNode 위치도 함께 흘러 내림
+		m_pModelCom->Get_Child_ZointIndices("_00", "_01_end_end_end", ChildJointIndices_1);
+		for (auto& iJointIndex : ChildJointIndices_1)
+		{
+			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix);
+		}
+
+		_matrix			TranslationMatrix2 = { XMMatrixTranslation(-m_fAdditionalHeight, m_fAdditionalHeight, m_fAdditionalZ) };
+
+		list<_uint> ChildJointIndices_2;
+		m_pModelCom->Get_Child_ZointIndices("_00", "_02_end_end_end", ChildJointIndices_2);
+
+		for (auto& iJointIndex : ChildJointIndices_2)
+		{
+			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix2);
+		}
+	}
+
+	if (DOWN == m_pGameInstance->Get_KeyState('K'))
+	{
+		m_fAdditionalHeight = 0.f;
+		m_fAdditionalHeight_D = 0.f;
+		m_fAdditionalZ = 0.f;
+		m_fZTimer = 0.f;
+		m_fRotationAngle = 0.f;
+		m_isMoveStart = false;
+		m_isMoveEnd = false;
+	}
+}
+
+void CMini_BigStatue::Woman_Statue(_float fTimeDelta)
+{
+	/* 3. 뼈 회전 적용 */
+	vector<string> BoneNames = { m_pModelCom->Get_BoneNames() };
+
+	/* 아래로 내리기 */
+	m_fAdditionalHeight -= 0.6f * fTimeDelta;
+	_matrix			TranslationMatrix = { XMMatrixTranslation(0.f, m_fAdditionalHeight, 0.f) };
+	list<_uint> ChildJointIndices_1;
+	m_pModelCom->Get_Child_ZointIndices("RootNode", "ItemSet01_end_end_end", ChildJointIndices_1);
+	for (auto& iJointIndex : ChildJointIndices_1)
+	{
+		m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix);
+	}
+}
+
+void CMini_BigStatue::Lion_Statue(_float fTimeDelta)
+{
+	vector<string> BoneNames = { m_pModelCom->Get_BoneNames() };
+
+	if (false == m_isMoveEnd)
+	{
+		/* 1. 처음에 Z 축으로 들어감*/
+		if (m_fAdditionalZ <= PUT_Z)
+		{
+			m_fZTimer += fTimeDelta;
+		}
+
+		else
+		{
+			if (m_fRotationAngle >= ROTATION)
+			{
+				if (m_fAdditionalZ >= PUT_Z)
+					m_fAdditionalZ -= 3.5f * fTimeDelta;
+			}
+
+			else
+			{
+				m_fRotationAngle += fTimeDelta * 60.f;
+			}
+		}
+
+		_matrix			TranslationMatrix = { XMMatrixTranslation(0.f, 0.f, m_fAdditionalZ) };
+
+		if (m_fZTimer >= 0.8f)
+		{
+			m_fAdditionalHeight_D -= 5.f * fTimeDelta;
+			m_fAdditionalHeight += 5.f * fTimeDelta;
+		}
+
+		/* Rotation */
+		_vector vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
+		_vector vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, XMConvertToRadians(m_fRotationAngle)) };
+		_matrix RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
+
+		list<_uint> ChildJointIndices_Root;
+		m_pModelCom->Get_Child_ZointIndices("RootNode", "_00", ChildJointIndices_Root);
+
+		for (auto& iJointIndex : ChildJointIndices_Root)
+		{
+			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
+		}
+
+		/* 1. 아래로 내리기 */
+		_matrix			TranslationMatrix1 = { XMMatrixTranslation(-m_fAdditionalHeight_D, m_fAdditionalHeight_D, m_fAdditionalZ)};
+		list<_uint>		ChildJointIndices_1;
+		m_pModelCom->Get_Child_ZointIndices("_00", "_01_end_end_end", ChildJointIndices_1);
+
+		for (auto& iJointIndex : ChildJointIndices_1)
+		{
+			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix1);
+		}
+
+		/* 2. 위로 올려야 함 */
+		_matrix			TranslationMatrix2 = { XMMatrixTranslation(-m_fAdditionalHeight , m_fAdditionalHeight, m_fAdditionalZ) };
+
+		list<_uint> ChildJointIndices_2;
+		m_pModelCom->Get_Child_ZointIndices("_00", "_02_end_end_end", ChildJointIndices_2);
+
+		for (auto& iJointIndex : ChildJointIndices_2)
+		{
+			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix2);
+		}
+
+		if (m_fAdditionalHeight >= 9.f)
+		{
+			m_isMoveEnd = true;
+			*m_isMedalAnim = true;
+		}
+	}
+
+	else if (true == m_isMoveEnd)
+	{
+		/* Rotation */
+		_vector vRotateAxis = { m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK) };
+		_vector vNewQuaternion = { XMQuaternionRotationAxis(vRotateAxis, XMConvertToRadians(m_fRotationAngle)) };
+		_matrix RotationMatrix = { XMMatrixRotationQuaternion(vNewQuaternion) };
+
+		list<_uint> ChildJointIndices_Root;
+		m_pModelCom->Get_Child_ZointIndices("RootNode", "_00", ChildJointIndices_Root);
+
+		for (auto& iJointIndex : ChildJointIndices_Root)
+		{
+			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
+		}
+
+		_matrix			TranslationMatrix = { XMMatrixTranslation(-m_fAdditionalHeight_D, m_fAdditionalHeight_D, m_fAdditionalZ) };
+
+		list<_uint> ChildJointIndices_1;
+		// root / RootNode 위치도 함께 흘러 내림
+		m_pModelCom->Get_Child_ZointIndices("_00", "_01_end_end_end", ChildJointIndices_1);
+		for (auto& iJointIndex : ChildJointIndices_1)
+		{
+			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix);
+		}
+
+		_matrix			TranslationMatrix2 = { XMMatrixTranslation(-m_fAdditionalHeight, m_fAdditionalHeight, m_fAdditionalZ) };
+
+		list<_uint> ChildJointIndices_2;
+		m_pModelCom->Get_Child_ZointIndices("_00", "_02_end_end_end", ChildJointIndices_2);
+
+		for (auto& iJointIndex : ChildJointIndices_2)
+		{
+			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix2);
+		}
+	}
+
+	if (DOWN == m_pGameInstance->Get_KeyState('K'))
+	{
+		m_fAdditionalHeight = 0.f;
+		m_fAdditionalHeight_D = 0.f;
+		m_fAdditionalZ = 0.f;
+		m_fZTimer = 0.f;
+		m_fRotationAngle = 0.f;
+		m_isMoveStart = false;
+		m_isMoveEnd = false;
+	}
 }
 
 

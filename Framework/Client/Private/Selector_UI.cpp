@@ -222,10 +222,13 @@ void CSelector_UI::Rendering(_float fTimeDelta)
 
     else if (true == m_IsChild)
     {
+        CTransform* pTransform = static_cast<CTransform*>(m_pSelectorParent->Get_Component(g_strTransformTag));
+        m_pTransformCom->Set_State(CTransform::STATE_POSITION, pTransform->Get_State_Float4(CTransform::STATE_POSITION));
+
+
         if (true == m_pSelectorParent->m_isRender)
         {
             m_fBlending = m_pSelectorParent->m_fBlending;
-
             m_isRender = true;
         }
 

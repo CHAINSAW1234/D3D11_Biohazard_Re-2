@@ -28,7 +28,12 @@ HRESULT CMedal_BigStatue::Initialize(void* pArg)
 		MEDAL_BIGSTATUE_DESC* desc = (MEDAL_BIGSTATUE_DESC*)pArg;
 		
 		m_eMedelType = desc->eMedelType;
+
 		m_pParentWorldMatrix = desc->pParentWorldMatrix;
+
+		m_eMedelType = desc->eMedelType;
+
+		m_isMedalAnim = desc->isMedalAnim;
 	}
 
 	if (FAILED(Add_Components()))
@@ -38,13 +43,21 @@ HRESULT CMedal_BigStatue::Initialize(void* pArg)
 		return E_FAIL;
 	
 	m_pTransformCom->Set_Scaled(100, 100, 100);
-
 	
 	return S_OK;
 }
 
 void CMedal_BigStatue::Tick(_float fTimeDelta)
 {
+	m_bDead = true;
+	if(m_eMedelType == MEDAL_TYPE::MEDAL_UNICORN)
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
+
+	else if (m_eMedelType == MEDAL_TYPE::MEDAL_LION)
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(0.f));
+
+	else
+		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
 }
 
 void CMedal_BigStatue::Late_Tick(_float fTimeDelta)
@@ -52,35 +65,25 @@ void CMedal_BigStatue::Late_Tick(_float fTimeDelta)
 	if (m_bDead)
 		return;
 
-	m_pTransformCom->Set_Scaled(130.f, 130.f, 130.f);
+	m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
 
-	_float4x4 vTrans = m_pTransformCom->Get_WorldMatrix();
-	vTrans._43 += 54.3f;
-	vTrans._42 -= 58.f;
-
-	/* 왼쪽 메달 : 유니콘*/
-	if (MEDAL_TYPE::MEDAL_UNICORN == m_eMedelType)
+	_float4x4 vMedalpos = m_pTransformCom->Get_WorldMatrix();
+	vMedalpos._43 += 1.f;
+	if(nullptr != m_isMedalAnim)
 	{
-		vTrans._41 -= 2.3f;
-		vTrans._42 -= 1.f;
-		vTrans._43 -= 0.3f;
-	}
-	/* 오른쪽 메달 : 사자 */
-	else if (MEDAL_TYPE::MEDAL_VIRGIN01 == m_eMedelType)
-	{
-		vTrans._41 += 4.f;
-		vTrans._42 -= 3.f;
-		vTrans._43 -= 2.5f;
-
-	}
-	/* 가운데 메달 : 여자*/
-	else if (MEDAL_TYPE::MEDAL_VIRGIN02 == m_eMedelType)
-	{
-		vTrans._41 -= 1.2f;
-		vTrans._42 -= 0.7f;
+		if (true == *m_isMedalAnim)
+		{
+			if (m_fStore_ZPos + 2.5f > m_pTransformCom->Get_WorldFloat4x4()._43)
+			{
+				vMedalpos._43 += fTimeDelta * 1.5f;
+				m_pTransformCom->Set_WorldMatrix(vMedalpos);
+			}
+		}
+		else
+			m_fStore_ZPos = vMedalpos._43;
 	}
 
-	_matrix			WorldMatrix = { vTrans * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
+	_matrix			WorldMatrix = { vMedalpos * XMLoadFloat4x4(m_pParentWorldMatrix) };
 	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);

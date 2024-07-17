@@ -21,9 +21,10 @@ public:
 	{
 		const _bool*		pRender;
 		_ubyte*				pState;
-		_float3*				pRootTranslation = { nullptr };
+		_float3*			pRootTranslation = { nullptr };
 		wstring				strModelComponentName = { TEXT("") };
-		_int					iPropType = {0};
+		_int				iPropType = {0};
+
 	}PART_INTERACTPROPS_DESC;
 
 	enum Part_INTERACTPROPS_COL

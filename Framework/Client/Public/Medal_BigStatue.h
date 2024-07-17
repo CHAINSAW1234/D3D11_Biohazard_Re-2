@@ -11,8 +11,8 @@ public :
 	enum MEDAL_TYPE
 	{
 		MEDAL_UNICORN,
-		MEDAL_VIRGIN01,
-		MEDAL_VIRGIN02,
+		MEDAL_LION,
+		MEDAL_WOMAN,
 		MEDAL_END
 	};
 
@@ -20,7 +20,9 @@ public :
 	{
 		_ubyte		eMedelType = { MEDAL_TYPE::MEDAL_END };
 		_bool*		eMedalRenderType;
-		_float4x4* pParentWorldMatrix = { nullptr };
+		_float4x4*  pParentWorldMatrix = { nullptr };
+		_bool*		isMedalAnim;
+
 
 	}MEDAL_BIGSTATUE_DESC;
 
@@ -49,8 +51,12 @@ public :
 private:
 	_ubyte						m_eMedelType			= { MEDAL_TYPE::MEDAL_END };
 	_bool*						m_eRender_MedalType		= { nullptr };
-	_float4x4*					m_pParentWorldMatrix = { nullptr };
-	_bool							m_isTransformControl = { false };
+	_float4x4*					m_pParentWorldMatrix	= { nullptr };
+	_bool						m_isTransformControl	 = { false };
+
+	_bool*						m_isMedalAnim;
+	_float						m_fStore_ZPos = {};
+
 public:
 	static CMedal_BigStatue* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

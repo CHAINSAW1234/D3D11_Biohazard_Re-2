@@ -72,6 +72,7 @@ void CLock_Cabinet::Tick(_float fTimeDelta)
 		case SAFEBOX_DIAL:
 			Safebox_Clear_Condition();
 			break;
+
 		case OPENLOCKER_DIAL:
 			_bool bOpen = { false };
 			for (_int i = 0; i < BONE_DIAL_END; i++)
@@ -92,6 +93,7 @@ void CLock_Cabinet::Tick(_float fTimeDelta)
  				*m_pLockState = CCabinet::WRONG_LOCK;
 			break;
 		}
+
 		m_bCheckAnswer = false;
 	}
 }
@@ -610,15 +612,14 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 	}
-	else
-		if (!m_pModelCom->isFinished(0))
-		{
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+	else if (!m_pModelCom->isFinished(0))
+	{
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
-		}
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	}
 	
 
 

@@ -1073,9 +1073,12 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 	//큰 석상이 가지고 있는 미니 
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_182_womanstatue01a_Mini_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Part_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_182_womanstatue01a_Mini_Part_Anim.fbx", Ininitmatrix));
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_183_lionstatue01a_Mini_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_183_lionstatue01a_Mini_Anim.fbx", Ininitmatrix));
-	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_180_pushstatue01a_Mini_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_180_pushstatue01a_Mini_Anim.fbx", Ininitmatrix));
-
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_183_lionstatue01a_Mini_Parts_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_183_lionstatue01a_Mini_Parts_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_180_pushstatue01a_Mini_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_180_pushstatue01a_Mini_Anim.fbx", Ininitmatrix)); 
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_180_pushstatue01a_Mini_Parts_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_180_pushstatue01a_MiniParts_Anim.fbx", Ininitmatrix)); 
+	
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medal_BigStatue"), CMedal_BigStatue::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Mini_BigStatue"), CMini_BigStatue::Create(m_pDevice, m_pContext));
 

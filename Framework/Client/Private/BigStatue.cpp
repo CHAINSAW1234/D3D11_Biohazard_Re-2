@@ -30,13 +30,11 @@ HRESULT CBigStatue::Initialize(void* pArg)
 		return E_FAIL;
 
 	if (m_tagPropDesc.strObjectPrototype.find(TEXT("182")) != wstring::npos)
-		m_eType = BIGSTATUE_WOMEN;
+		m_eType = BIGSTATUE_WOMAN;
 	else if(m_tagPropDesc.strObjectPrototype.find(TEXT("183")) != wstring::npos)
 		m_eType = BIGSTATUE_LION;
 	else
 		m_eType = BIGSTATUE_UNICON;
-
-
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -58,7 +56,6 @@ void CBigStatue::Tick(_float fTimeDelta)
 		return;
 
 	__super::Tick(fTimeDelta);
-
 }
 
 void CBigStatue::Late_Tick(_float fTimeDelta)
@@ -127,59 +124,86 @@ HRESULT CBigStatue::Add_PartObjects()
 		return E_FAIL;
 	m_PartObjects[CBigStatue::PART_BODY] = pBodyObj;
 
-
 	/* Part_Mini_Statue	Part_Medal_BigStatue		Part_Dial*/
 	CPartObject* pMini= { nullptr };
-	CMini_BigStatue::PART_INTERACTPROPS_DESC MiniDesc = {};
+	CMini_BigStatue::BODY_MINI_STATUE_DESC MiniDesc = {};
 	MiniDesc.pParentsTransform = m_pTransformCom;
+	MiniDesc.isMedalAnim = &m_isMedalAnim;
 	MiniDesc.pState = &m_eState;	
-	
+	MiniDesc.eParts_Type = static_cast<_ubyte>(CMini_BigStatue::PARTS_TYPE::MINI_BODY);
+
+	CPartObject* pMiniPart = { nullptr };
+	CMini_BigStatue::BODY_MINI_STATUE_DESC MiniParts_Desc = {};
+	MiniParts_Desc.pParentsTransform = m_pTransformCom;
+	MiniParts_Desc.isMedalAnim = &m_isMedalAnim;
+	MiniParts_Desc.pState = &m_eState;
+	MiniParts_Desc.eParts_Type = static_cast<_ubyte>(CMini_BigStatue::PARTS_TYPE::MINI_PARTS);
+
 	CPartObject* pPart= { nullptr };
 	CMedal_BigStatue::MEDAL_BIGSTATUE_DESC MedalDesc = {};
+	MedalDesc.pParentsTransform = m_pTransformCom;
 	MedalDesc.pState = &m_eState;
-	
+	MedalDesc.isMedalAnim = &m_isMedalAnim;
+
 	switch (m_eType)
 	{
 	case BIGSTATUE_UNICON:
+		MiniParts_Desc.eMiniType = MiniDesc.eMiniType = BIGSTATUE_UNICON;
+		MedalDesc.eMedelType = CMedal_BigStatue::MEDAL_TYPE::MEDAL_UNICORN;
+
 		MiniDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_180_pushstatue01a_Mini_Anim");
+		MiniParts_Desc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_180_pushstatue01a_Mini_Parts_Anim");
 		MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_102_unicornmedal01a");
-
-
-
 		break;
-	case BIGSTATUE_WOMEN:
+
+	case BIGSTATUE_WOMAN:
+		MiniParts_Desc.eMiniType = MiniDesc.eMiniType = BIGSTATUE_WOMAN;
+		MedalDesc.eMedelType = CMedal_BigStatue::MEDAL_TYPE::MEDAL_WOMAN;
+
 		MiniDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Anim");
+		MiniParts_Desc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Part_Anim");
 		MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_139_virginmedal01a");
 		break;
 
 	case BIGSTATUE_LION:
+		MiniParts_Desc.eMiniType = MiniDesc.eMiniType = BIGSTATUE_LION;
+		MedalDesc.eMedelType = CMedal_BigStatue::MEDAL_TYPE::MEDAL_LION;
+
 		MiniDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_183_lionstatue01a_Mini_Anim");
+		MiniParts_Desc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_183_lionstatue01a_Mini_Parts_Anim");
 		MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_145_virginmedal02a");
-
-
 		break;
+
 	}
 
-
-	/* Part_Mini_Statue*/
-	pMini = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Mini_BigStatue"), &MiniDesc));
-	if (nullptr == pMini)
-		return E_FAIL;
-	m_PartObjects[CBigStatue::PART_MINI_STATUE] = pMini;
-
-
-	MedalDesc.pParentsTransform =m_pTransformCom;
-	MedalDesc.pParentWorldMatrix = static_cast<CMedal_BigStatue*>(pMini)->Get_WorldMatrix_Ptr();
-
-	/* Part_Medal_BigStatue*/
-	pPart = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_BigStatue"), &MedalDesc));
-	if (nullptr == pPart)
-		return E_FAIL;
-	m_PartObjects[CBigStatue::PART_MEDAL] = pPart;
-
-	/* Part_Medal_Medal*/
-
+	/* 1. Part_Mini_Statue*/
+	{
+		pMini = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Mini_BigStatue"), &MiniDesc));
+		if (nullptr == pMini)
+			return E_FAIL;
+		m_PartObjects[CBigStatue::PART_MINI_STATUE] = pMini;
+	}
 	
+	/* 2. Mini Parts*/
+	{
+		MiniParts_Desc.vParts_WorldMatrix = static_cast<CMini_BigStatue*>(m_PartObjects[CBigStatue::PART_MINI_STATUE])->Get_WorldMatrix_Ptr();
+
+		pMiniPart = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Mini_BigStatue"), &MiniParts_Desc));
+
+		if (nullptr == pMiniPart)
+			return E_FAIL;
+		m_PartObjects[CBigStatue::PART_MINI_PARTS_STATUE] = pMiniPart;
+	}
+	
+	/* 3. Part_Medal_BigStatue*/
+	{
+		MedalDesc.pParentWorldMatrix = static_cast<CMini_BigStatue*>(m_PartObjects[CBigStatue::PART_MINI_STATUE])->Get_WorldMatrix_Ptr();
+		
+		pPart = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_BigStatue"), &MedalDesc));
+		if (nullptr == pPart)
+			return E_FAIL;
+		m_PartObjects[CBigStatue::PART_MEDAL] = pPart;
+	}
 
 	return S_OK;
 }
@@ -193,7 +217,13 @@ HRESULT CBigStatue::Initialize_PartObjects()
 		CMini_BigStatue* pMiniStatue = dynamic_cast<CMini_BigStatue*>(m_PartObjects[PART_MINI_STATUE]);
 		_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet")) };
 		pMiniStatue->Set_Socket(pCombinedMatrix);
-
+		
+		if (m_eType == BIGSTATUE_UNICON)
+		{
+			CMini_BigStatue* pMiniPartsStatue = dynamic_cast<CMini_BigStatue*>(m_PartObjects[PART_MINI_PARTS_STATUE]);
+			_float4x4* pCombinedMatrixParts = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet")) };
+			pMiniPartsStatue->Set_Socket(pCombinedMatrixParts);
+		}
 
 		CModel* pMiniModel = { dynamic_cast<CModel*>(m_PartObjects[PART_MINI_STATUE]->Get_Component(TEXT("Com_Body_Model"))) };
 		CMedal_BigStatue* pMedalStatue = dynamic_cast<CMedal_BigStatue*>(m_PartObjects[PART_MEDAL]);

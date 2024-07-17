@@ -171,7 +171,7 @@ HRESULT CNewpoliceStatue::Add_PartObjects()
 	MedalDesc.pParentsTransform = m_pTransformCom;
 	MedalDesc.pState = &m_eState;
 	MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_145_virginmedal02a");
-	MedalDesc.eMedelType = CMedal_NewpoliceStatue::MEDAL_TYPE::MEDAL_VIRGIN01;
+	MedalDesc.eMedelType = CMedal_NewpoliceStatue::MEDAL_TYPE::MEDAL_LION;
 	memcpy(MedalDesc.eMedalRenderType, m_eMedalRender, sizeof(MedalDesc.eMedalRenderType));
 
 	pMedal2 = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_NewpoliceStatue"), &MedalDesc));
@@ -190,7 +190,7 @@ HRESULT CNewpoliceStatue::Add_PartObjects()
 	MedalDesc.pParentsTransform = m_pTransformCom;
 	MedalDesc.pState = &m_eState; 
 	MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_139_virginmedal01a");
-	MedalDesc.eMedelType = CMedal_NewpoliceStatue::MEDAL_TYPE::MEDAL_VIRGIN02;
+	MedalDesc.eMedelType = CMedal_NewpoliceStatue::MEDAL_TYPE::MEDAL_WOMAN;
 	memcpy(MedalDesc.eMedalRenderType, m_eMedalRender, sizeof(MedalDesc.eMedalRenderType));
 
 	pMedal3 = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_NewpoliceStatue"), &MedalDesc));
