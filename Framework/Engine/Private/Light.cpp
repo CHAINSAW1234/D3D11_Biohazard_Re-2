@@ -121,7 +121,6 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 
 		if (LIGHT_DESC::TYPE_DIRECTIONAL == Light_desc->eType)
 		{
-			continue;
 			iPassIndex = (_uint)SHADER_PASS_DEFERRED::PASS_LIGHT_DIRECTIONAL;
 
 			if (FAILED(pShader->Bind_RawValue("g_vLightDir", &Light_desc->vDirection, sizeof(_float4))))
