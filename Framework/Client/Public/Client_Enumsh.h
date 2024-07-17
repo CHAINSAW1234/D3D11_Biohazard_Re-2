@@ -418,4 +418,12 @@ namespace Client
 		ITEM_NUMBER_END
 	};
 
+	enum BITE_TYPE_FOR_EFFECT
+	{
+		STAND_FRONT,
+		STAND_BACK,
+		CREEP_UP,
+		CREEP_DOWN,
+		DEFAULT
+	};
 }

@@ -3458,13 +3458,23 @@ void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix, _int iMesh
 	}
 }
 
-void CModel::SetDecalWorldMatrix_Player(_float4x4 WorldMatrix)
+void CModel::SetDecalWorldMatrix_Player_Front(_float4x4 WorldMatrix)
 {
 	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
 
 	for (auto& i : NonHideIndex)
 	{
-		m_Meshes[i]->SetDecalWorldMatrix_Player(WorldMatrix);
+		m_Meshes[i]->SetDecalWorldMatrix_Player(WorldMatrix,true);
+	}
+}
+
+void CModel::SetDecalWorldMatrix_Player_Back(_float4x4 WorldMatrix)
+{
+	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
+
+	for (auto& i : NonHideIndex)
+	{
+		m_Meshes[i]->SetDecalWorldMatrix_Player(WorldMatrix,false);
 	}
 }
 
@@ -3594,8 +3604,7 @@ void CModel::Perform_Calc_DecalMap(_int iMeshType)
 
 void CModel::Perform_Calc_DecalMap_Player()
 {
-	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
-	for (auto& i : NonHideIndex)
+	for (size_t i = 0; i <m_Meshes.size();++i)
 	{
 		m_Meshes[i]->Bind_Resource_CalcDecalMap(m_vecUAV_DecalMap[i]);
 		m_Meshes[i]->Perform_Calc_DecalMap();

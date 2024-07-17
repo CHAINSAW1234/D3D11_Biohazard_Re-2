@@ -464,12 +464,12 @@ void CZombie::Tick(_float fTimeDelta)
 									m_PartObjects[CMonster::PART_BODY]->SetPartialRagdoll(m_iIndex_CCT, vForce, eType);
 
 								m_bPartial_Ragdoll = true;
+
+								auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
+								m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
 							}
 						}
 					}
-
-					auto pBody = static_cast<CBody_Zombie*>(m_PartObjects[CZombie::PART_BODY]);
-					m_pController->SetHitPart(pBody->Get_Ragdoll_RigidBody(Type));
 				}
 			}
 
@@ -2071,6 +2071,7 @@ void CZombie::SetBlood()
 	if (m_BloodDelay + m_BloodTime < GetTickCount64())
 	{
 		m_BloodTime = GetTickCount64();
+		m_vecBlood[m_iBloodCount]->SetBiteBlood(false);
 		m_vecBlood[m_iBloodCount]->Set_Render(true);
 		m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vHitNormal);
 
@@ -2216,7 +2217,7 @@ void CZombie::SetBiteBlood()
 		m_BloodTime = GetTickCount64();
 		m_vecBlood[m_iBloodCount]->Set_Render(true);
 		m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vMouthLook);
-
+		m_vecBlood[m_iBloodCount]->SetBiteBlood(true);
 		m_vecBlood[m_iBloodCount]->SetPosition(m_vMouthPos);
 
 		if (m_iBloodCount == 0)
@@ -2234,7 +2235,7 @@ void CZombie::SetBiteBlood()
 
 			m_vecBlood_Drop[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vMouthLook);
 			m_vecBlood_Drop[m_iBloodCount]->Set_Render(true);
-			m_vecBlood_Drop[m_iBloodCount]->SetPosition(m_vHitPosition);
+			m_vecBlood_Drop[m_iBloodCount]->SetPosition(m_vMouthPos);
 			m_vecBlood_Drop[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(0, 7));
 		}
 		else
@@ -2387,14 +2388,18 @@ void CZombie::ResetBiteEffect()
 {
 	m_BloodTime = GetTickCount64();
 	m_bBiteBlood = true;
+	m_iBloodCount = 0;
 }
 
 _float4x4 CZombie::GetDecalWorldMat()
 {
-	if (m_iBloodCount != 0)
-		return	m_vecBlood[m_iBloodCount]->GetWorldMatrix();
-	else
-		return _float4x4();
+	XMStoreFloat4(&m_vMouthPos, (XMLoadFloat4x4(m_pHeadModel->Get_CombinedMatrix("mouth07")) * m_pTransformCom->Get_WorldMatrix()).r[3]);
+	XMStoreFloat4(&m_vMouthLook, (XMLoadFloat4x4(m_pHeadModel->Get_CombinedMatrix("mouth07")) * m_pTransformCom->Get_WorldMatrix()).r[2]);
+	m_vMouthLook = Float4_Normalize(m_vMouthLook);
+	m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vMouthLook);
+	m_vecBlood[m_iBloodCount]->SetPosition(m_vMouthPos);
+
+	return	m_vecBlood[m_iBloodCount]->GetWorldMatrix();
 }
 
 void CZombie::Set_ManualMove(_bool isManualMove)

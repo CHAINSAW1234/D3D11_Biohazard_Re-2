@@ -35,6 +35,7 @@
 #include "HG_Cartridge.h"
 #include "SG_Cartridge.h"
 #include "Mesh.h"
+#include "Zombie.h"
 
 #define MODEL_SCALE 0.01f
 #define SHOTGUN_BULLET_COUNT 7
@@ -494,6 +495,10 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 	}
 
 	Late_Tick_Effect(fTimeDelta);
+#pragma endregion
+
+#pragma region Decal
+	Calc_Decal_Map();
 #pragma endregion
 }
 
@@ -2632,52 +2637,70 @@ void CPlayer::Initiate_Cartridge()
 	}
 }
 
-void CPlayer::Calc_Decal_Map(const _float4x4& DecalWorldMat)
+void CPlayer::Calc_Decal_Map()
 {
 	if (m_bCalcDecalMap == false)
 		return;
 
-	Perform_Skinning();
+	_matrix WorldMat;
 
-	if (m_pBodyModel)
+	switch (m_eBiteType)
 	{
-		m_pBodyModel->SetDecalWorldMatrix_Player(DecalWorldMat);
-		m_pBodyModel->Perform_Calc_DecalMap_Player();
+	case BITE_TYPE_FOR_EFFECT::STAND_FRONT:
+	{
+		WorldMat = XMLoadFloat4x4(m_pBodyModel->Get_CombinedMatrix("r_arm_clavicle")) * m_pTransformCom->Get_WorldMatrix();
+		_vector vRight = WorldMat.r[0];
+		_vector vUp = WorldMat.r[1];
+		_vector vLook = WorldMat.r[2];
+		vRight = XMVector3Normalize(vRight);
+		vUp = XMVector3Normalize(vUp);
+		vLook = XMVector3Normalize(vLook);
+		WorldMat.r[0] = vRight;
+		WorldMat.r[1] = vUp;
+		WorldMat.r[2] = vLook;
+		XMStoreFloat4x4(&m_DecalMatrix, WorldMat);
+
+		Perform_Skinning();
+
+		if (m_pHeadModel)
+		{
+			m_pHeadModel->SetDecalWorldMatrix_Player_Front(m_DecalMatrix);
+			m_pHeadModel->Perform_Calc_DecalMap_Player();
+		}
+
+		break;
 	}
-
-	if (m_pHeadModel)
+	case BITE_TYPE_FOR_EFFECT::STAND_BACK:
 	{
-		m_pHeadModel->SetDecalWorldMatrix_Player(DecalWorldMat);
-		m_pHeadModel->Perform_Calc_DecalMap_Player();
+		WorldMat = XMLoadFloat4x4(m_pBodyModel->Get_CombinedMatrix("r_arm_humerus")) * m_pTransformCom->Get_WorldMatrix();
+		_vector vRight = WorldMat.r[0];
+		_vector vUp = WorldMat.r[1];
+		_vector vLook = WorldMat.r[2];
+		vRight = XMVector3Normalize(vRight);
+		vUp = XMVector3Normalize(vUp);
+		vLook = XMVector3Normalize(vLook);
+		WorldMat.r[0] = vRight;
+		WorldMat.r[1] = vUp;
+		WorldMat.r[2] = vLook;
+		XMStoreFloat4x4(&m_DecalMatrix, WorldMat);
+
+		Perform_Skinning();
+
+		if (m_pHeadModel)
+		{
+			m_pHeadModel->SetDecalWorldMatrix_Player_Back(m_DecalMatrix);
+			m_pHeadModel->Perform_Calc_DecalMap_Player();
+		}
+
+		break;
 	}
-
-	/*if (m_pHairModel)
-	{
-		m_pHairModel->SetDecalWorldMatrix_Player(DecalWorldMat);
-		m_pHairModel->Perform_Calc_DecalMap_Player();
-	}*/
+	}
 
 	m_bCalcDecalMap = false;
 }
 
 void CPlayer::Perform_Skinning()
 {
-	m_pBodyModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
-
-	//Body Model
-	{
-		if (nullptr != m_pBodyModel)
-		{
-			list<_uint> NonHideIndex = m_pBodyModel->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
-			{
-				m_pBodyModel->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pBodyModel->GetMeshes())[i]->GetNumVertices());
-			}
-		}
-	}
-
 	//Face Model
 	{
 		if (nullptr != m_pHeadModel)
@@ -2693,22 +2716,6 @@ void CPlayer::Perform_Skinning()
 			}
 		}
 	}
-
-	//Hair Model
-	/*{
-		if (nullptr != m_pHairModel)
-		{
-			m_pHairModel->Bind_Essential_Resource_Skinning(m_pTransformCom->Get_WorldFloat4x4_Ptr());
-
-			list<_uint> NonHideIndex = m_pHairModel->Get_NonHideMeshIndices();
-
-			for (auto& i : NonHideIndex)
-			{
-				m_pHairModel->Bind_Resource_Skinning(i);
-				m_pGameInstance->Perform_Skinning((*m_pHairModel->GetMeshes())[i]->GetNumVertices());
-			}
-		}
-	}*/
 }
 
 HRESULT CPlayer::Add_Components()

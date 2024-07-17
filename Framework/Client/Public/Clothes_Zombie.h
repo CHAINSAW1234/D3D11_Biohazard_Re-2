@@ -49,6 +49,7 @@ private:
 
 private:
 	_bool*					m_pRender = { nullptr };
+	_bool					m_bDecal_Player = { false };
 
 private:
 	HRESULT					Add_Components();

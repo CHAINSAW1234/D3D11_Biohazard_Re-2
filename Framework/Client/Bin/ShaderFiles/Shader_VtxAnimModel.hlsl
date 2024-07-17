@@ -38,6 +38,7 @@ StructuredBuffer<float2> g_DecalMap;
 bool		g_DecalRender;
 bool		g_Cloth;
 bool		g_Hair;
+bool		g_bPlayer;
 
 struct VS_IN
 {
@@ -300,8 +301,13 @@ PS_OUT PS_MAIN(PS_IN In)
 				{
 					if (distance < 0.1f)
 					{
-						if(g_Hair == false)
+						if(g_bPlayer == false)
 							discard;
+						else
+						{
+							decalColor = float4(0.3f, 0.0f, 0.0f, 1.f);
+							Out.vDiffuse = decalColor;
+						}
 					}
 					else
 					{
@@ -316,7 +322,8 @@ PS_OUT PS_MAIN(PS_IN In)
 				{
 					if (distance < 0.3f)
 					{
-						discard;
+						if(g_Hair == false)
+							discard;
 					}
 					else
 					{

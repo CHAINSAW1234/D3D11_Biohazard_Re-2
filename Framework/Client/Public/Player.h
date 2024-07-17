@@ -199,7 +199,6 @@ private:
 	ANIMSET_HOLD								m_eAnimSet_Hold = { HOLD_HG };
 
 	_bool										m_isBite = { false };
-	_uint										m_eBiteType;
 	_int										m_iBiteAnimIndex = { -1 };
 	_float4x4									m_vBiteInterpolateMatrix;
 	_float										m_fTotalInterpolateTime = 0.f;
@@ -428,11 +427,19 @@ public:
 	void										Tick_Effect(_float fTimeDelta);
 	void										Late_Tick_Effect(_float fTimeDelta);
 	void										Initiate_Cartridge();
-	void										Calc_Decal_Map(const _float4x4& DecalWorldMat);
+	void										Calc_Decal_Map();
 	virtual void								Perform_Skinning();
 	void										SetCalcDecalMap(_bool boolean)
 	{
 		m_bCalcDecalMap = boolean;
+	}
+	void										SetDecalMatrix(_float4x4 DecalMatrix)
+	{
+		m_DecalMatrix = DecalMatrix;
+	}
+	void										SetBiteType(BITE_TYPE_FOR_EFFECT eType)
+	{
+		m_eBiteType = eType;
 	}
 private:
 	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
@@ -464,6 +471,8 @@ private:
 	class CModel*								m_pHairModel = { nullptr };
 
 	_bool										m_bCalcDecalMap = { false };
+	_float4x4									m_DecalMatrix;
+	BITE_TYPE_FOR_EFFECT						m_eBiteType = { DEFAULT };
 #pragma endregion
 private:
 	HRESULT Add_Components();

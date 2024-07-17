@@ -921,20 +921,46 @@ void CBite_Zombie::Initiate_Effect()
 	{
 	case CZombie::POSE_STATE::_UP:
 	{
-		CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
-		if (nullptr == pBodyModel)
-			return;
-
-		_float fTrackPosition = pBodyModel->Get_TrackPosition(static_cast<_uint>(m_ePlayingIndex));
-
-		if(abs(fTrackPosition - 20.8f) < 0.2f)
+		if(m_eAnimType == BITE_ANIM_TYPE::_DEFAULT_F)
 		{
-			m_pBlackBoard->Get_AI()->ResetBiteEffect();
-			m_pBlackBoard->Get_Player()->SetCalcDecalMap(true);
-		}
+			CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+			if (nullptr == pBodyModel)
+				return;
 
-		m_pBlackBoard->Get_AI()->SetBiteBlood();
-		m_pBlackBoard->Get_Player()->Calc_Decal_Map(m_pBlackBoard->Get_AI()->GetDecalWorldMat());
+			if (Is_CurrentAnim_MiddleAnim())
+			{
+				_float fTrackPosition = pBodyModel->Get_TrackPosition(static_cast<_uint>(m_ePlayingIndex));
+
+				if (abs(fTrackPosition - 40.f) < 1.3f)
+				{
+					m_pBlackBoard->Get_AI()->ResetBiteEffect();
+					m_pBlackBoard->Get_Player()->SetCalcDecalMap(true);
+				}
+			}
+
+			m_pBlackBoard->Get_AI()->SetBiteBlood();
+			m_pBlackBoard->Get_Player()->SetBiteType(BITE_TYPE_FOR_EFFECT::STAND_FRONT);
+		}
+		else
+		{
+			CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+			if (nullptr == pBodyModel)
+				return;
+
+			if (Is_CurrentAnim_StartAnim())
+			{
+				_float fTrackPosition = pBodyModel->Get_TrackPosition(static_cast<_uint>(m_ePlayingIndex));
+
+				if (abs(fTrackPosition - 40.f) < 1.3f)
+				{
+					m_pBlackBoard->Get_AI()->ResetBiteEffect();
+					m_pBlackBoard->Get_Player()->SetCalcDecalMap(true);
+				}
+			}
+
+			m_pBlackBoard->Get_AI()->SetBiteBlood();
+			m_pBlackBoard->Get_Player()->SetBiteType(BITE_TYPE_FOR_EFFECT::STAND_BACK);
+		}
 
 		break;
 	}
@@ -944,10 +970,40 @@ void CBite_Zombie::Initiate_Effect()
 		{
 		case CZombie::FACE_STATE::_UP:
 		{
+			CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+			if (nullptr == pBodyModel)
+				return;
+
+			if (Is_CurrentAnim_StartAnim())
+			{
+				_float fTrackPosition = pBodyModel->Get_TrackPosition(static_cast<_uint>(m_ePlayingIndex));
+
+				if (abs(fTrackPosition - 40.f) < 1.3f)
+				{
+					m_pBlackBoard->Get_AI()->ResetBiteEffect();
+				}
+			}
+
+			m_pBlackBoard->Get_AI()->SetBiteBlood();
 			break;
 		}
 		case CZombie::FACE_STATE::_DOWN:
 		{
+			CModel* pBodyModel = { m_pBlackBoard->Get_PartModel(CZombie::PART_BODY) };
+			if (nullptr == pBodyModel)
+				return;
+
+			if (Is_CurrentAnim_StartAnim())
+			{
+				_float fTrackPosition = pBodyModel->Get_TrackPosition(static_cast<_uint>(m_ePlayingIndex));
+
+				if (abs(fTrackPosition - 40.f) < 1.3f)
+				{
+					m_pBlackBoard->Get_AI()->ResetBiteEffect();
+				}
+			}
+
+			m_pBlackBoard->Get_AI()->SetBiteBlood();
 			break;
 		}
 		}

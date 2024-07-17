@@ -25,13 +25,20 @@ public:
 	_float4x4				GetWorldMatrix();
 	void					SetHitPart(PxRigidDynamic* pHitPart)
 	{
-	/*	m_pHitPart = pHitPart;
-		PxVec3 HitPartPos = m_pHitPart->getGlobalPose().p;
-		m_vPrev_HitPartPos = _float4(HitPartPos.x, HitPartPos.y, HitPartPos.z, 1.f);
-		m_bDissolving = false;*/
+		if(pHitPart)
+		{
+			m_pHitPart = pHitPart;
+			PxVec3 HitPartPos = m_pHitPart->getGlobalPose().p;
+			m_vPrev_HitPartPos = _float4(HitPartPos.x, HitPartPos.y, HitPartPos.z, 1.f);
+			m_bDissolving = false;
+		}
 	}
 	_float4					GetPosition();
 	virtual void			Start() override;
+	void					SetBiteBlood(_bool boolean)
+	{
+		m_bBiteBlood = boolean;
+	}
 private:
 	virtual HRESULT			Add_Components();
 	virtual HRESULT			Bind_ShaderResources();
@@ -55,6 +62,7 @@ private:
 
 	PxRigidDynamic*			m_pHitPart = { nullptr };
 	_float4					m_vPrev_HitPartPos;
+	_bool					m_bBiteBlood = { false };
 public:
 	static CBlood* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;

@@ -410,7 +410,7 @@ public:
                     pRigidBodies->push_back(m_Calf_R_High);
             }
             else
-                pRigidBodies->push_back(m_Calf_L);
+                pRigidBodies->push_back(m_Calf_R);
             break;
         case COLLIDER_TYPE::LEG_L:
             if (m_bPartialRagdoll == true)

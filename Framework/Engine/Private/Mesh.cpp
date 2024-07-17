@@ -6,6 +6,8 @@
 
 #define BIG_ATTACK_DECAL_EXTENT _float3(0.4f,0.4f,0.4f)
 #define NORMAL_ATTACK_DECAL_EXTENT _float3(0.2f,0.5f,0.2f)
+#define PLAYER_ATTACK_DECAL_EXTENT_FRONT _float3(0.155f,0.155f,0.155f)
+#define PLAYER_ATTACK_DECAL_EXTENT_BACK _float3(0.21f,0.21f,0.21f)
 
 CMesh::CMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CVIBuffer(pDevice, pContext)
@@ -959,11 +961,14 @@ void CMesh::SetDecalWorldMatrix(_float4x4 WorldMatrix, _bool bBigAttack)
 		m_pDecal_Blood->SetExtent(NORMAL_ATTACK_DECAL_EXTENT);
 }
 
-void CMesh::SetDecalWorldMatrix_Player(_float4x4 WorldMatrix)
+void CMesh::SetDecalWorldMatrix_Player(_float4x4 WorldMatrix,_bool bFront)
 {
 	m_pDecal_Blood->SetWorldMatrix(WorldMatrix);
 
-	m_pDecal_Blood->SetExtent(NORMAL_ATTACK_DECAL_EXTENT);
+	if (bFront == true)
+		m_pDecal_Blood->SetExtent(PLAYER_ATTACK_DECAL_EXTENT_FRONT);
+	else
+		m_pDecal_Blood->SetExtent(PLAYER_ATTACK_DECAL_EXTENT_BACK);
 }
 
 void CMesh::Bind_Resource_CalcDecalMap(ID3D11UnorderedAccessView* pUAV)
