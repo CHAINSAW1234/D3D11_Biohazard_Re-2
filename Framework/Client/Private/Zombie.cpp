@@ -2193,6 +2193,81 @@ void CZombie::SetBlood()
 	}
 }
 
+void CZombie::SetBiteBlood()
+{
+	if (m_bBiteBlood == false)
+	{
+		return;
+	}
+
+	XMStoreFloat4(&m_vMouthPos, (XMLoadFloat4x4(m_pHeadModel->Get_CombinedMatrix("mouth07")) * m_pTransformCom->Get_WorldMatrix()).r[3]);
+	XMStoreFloat4(&m_vMouthLook, (XMLoadFloat4x4(m_pHeadModel->Get_CombinedMatrix("mouth07")) * m_pTransformCom->Get_WorldMatrix()).r[2]);
+	m_vMouthLook = Float4_Normalize(m_vMouthLook);
+
+	if (m_iBloodCount >= m_vecBlood.size())
+	{
+		m_bBiteBlood = false;
+		m_iBloodCount = 0;
+		return;
+	}
+
+	if (m_BloodDelay + m_BloodTime < GetTickCount64())
+	{
+		m_BloodTime = GetTickCount64();
+		m_vecBlood[m_iBloodCount]->Set_Render(true);
+		m_vecBlood[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vMouthLook);
+
+		m_vecBlood[m_iBloodCount]->SetPosition(m_vMouthPos);
+
+		if (m_iBloodCount == 0)
+		{
+			m_iBloodType = m_pGameInstance->GetRandom_Int(0, 10);
+
+			m_vecBlood[m_iBloodCount]->SetType(m_iBloodType);
+
+			if (m_iBloodType >= 10)
+			{
+				m_iBloodType = 0;
+			}
+
+			m_vecBlood[m_iBloodCount]->SetSize(NORMAL_ATTACK_BLOOD_SIZE, NORMAL_ATTACK_BLOOD_SIZE, NORMAL_ATTACK_BLOOD_SIZE);
+
+			m_vecBlood_Drop[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vMouthLook);
+			m_vecBlood_Drop[m_iBloodCount]->Set_Render(true);
+			m_vecBlood_Drop[m_iBloodCount]->SetPosition(m_vHitPosition);
+			m_vecBlood_Drop[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(0, 7));
+		}
+		else
+		{
+			m_vecBlood[m_iBloodCount]->SetType(++m_iBloodType);
+
+			if (m_iBloodType >= 9)
+			{
+				m_iBloodType = 0;
+			}
+
+			m_vecBlood[m_iBloodCount]->SetSize(NORMAL_ATTACK_BLOOD_SIZE, NORMAL_ATTACK_BLOOD_SIZE, NORMAL_ATTACK_BLOOD_SIZE);
+
+			if (m_iBloodCount < BLOOD_DROP_COUNT)
+			{
+				m_vecBlood_Drop[m_iBloodCount]->SetWorldMatrix_With_HitNormal(m_vMouthLook);
+				m_vecBlood_Drop[m_iBloodCount]->Set_Render(true);
+				m_vecBlood_Drop[m_iBloodCount]->SetPosition(m_vMouthPos);
+				m_vecBlood_Drop[m_iBloodCount]->SetType(m_pGameInstance->GetRandom_Int(0, 7));
+			}
+		}
+
+		++m_iBloodCount;
+
+		if (m_iBloodCount >= m_vecBlood.size())
+		{
+			m_bBiteBlood = false;
+			m_iBloodCount = 0;
+			return;
+		}
+	}
+}
+
 void CZombie::Calc_Decal_Map()
 {
 	if (m_bBigAttack)
@@ -2306,6 +2381,20 @@ void CZombie::SetBlood_STG()
 		pColliderTypes->clear();
 		pHitParts->clear();
 	}
+}
+
+void CZombie::ResetBiteEffect()
+{
+	m_BloodTime = GetTickCount64();
+	m_bBiteBlood = true;
+}
+
+_float4x4 CZombie::GetDecalWorldMat()
+{
+	if (m_iBloodCount != 0)
+		return	m_vecBlood[m_iBloodCount]->GetWorldMatrix();
+	else
+		return _float4x4();
 }
 
 void CZombie::Set_ManualMove(_bool isManualMove)

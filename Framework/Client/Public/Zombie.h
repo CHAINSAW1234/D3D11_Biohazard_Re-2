@@ -222,8 +222,11 @@ public:
 	void								Tick_Effect(_float fTimeDelta);
 	void								Late_Tick_Effect(_float fTimeDelta);
 	void								SetBlood();
+	void								SetBiteBlood();
 	void								Calc_Decal_Map();
 	void								SetBlood_STG();
+	void								ResetBiteEffect();
+	_float4x4							GetDecalWorldMat();
 protected:
 	vector<class CBlood*>				m_vecBlood;
 	vector<class CBlood*>				m_vecBlood_STG;
@@ -256,10 +259,14 @@ protected:
 	_uint								m_iDecal_Index = { 0 };
 	_bool								m_bBigAttack = { false };
 
-
 	/*Impact*/
 	class CImpact*						m_pImpact = { nullptr };
 	vector<class CHit*>					m_vecHit = { nullptr };
+
+	_float4								m_vMouthPos;
+	_float4								m_vMouthLook;
+	_float4x4							m_MouthBone_Combined;
+	_bool								m_bBiteBlood = { false };
 #pragma endregion
 
 private:

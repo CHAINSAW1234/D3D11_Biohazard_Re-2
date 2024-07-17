@@ -428,8 +428,12 @@ public:
 	void										Tick_Effect(_float fTimeDelta);
 	void										Late_Tick_Effect(_float fTimeDelta);
 	void										Initiate_Cartridge();
-	void										Calc_Decal_Map();
+	void										Calc_Decal_Map(const _float4x4& DecalWorldMat);
 	virtual void								Perform_Skinning();
+	void										SetCalcDecalMap(_bool boolean)
+	{
+		m_bCalcDecalMap = boolean;
+	}
 private:
 	class CMuzzle_Flash*						m_pMuzzle_Flash = { nullptr };
 	class CMuzzle_Flash_SG*						m_pMuzzle_Flash_SG = { nullptr };
@@ -458,6 +462,8 @@ private:
 	class CModel*								m_pBodyModel = { nullptr };
 	class CModel*								m_pHeadModel = { nullptr };
 	class CModel*								m_pHairModel = { nullptr };
+
+	_bool										m_bCalcDecalMap = { false };
 #pragma endregion
 private:
 	HRESULT Add_Components();
