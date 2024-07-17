@@ -72,13 +72,8 @@ void CBody_ItemProp::Tick(_float fTimeDelta)
 
 void CBody_ItemProp::Late_Tick(_float fTimeDelta)
 {
-	if (m_bRealDead)
+	if (*m_pObtain)
 		return;
-	if (m_bDead)
-	{
-		m_bRealDead = true;
-		return;
-	}
 	/*
 	m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 

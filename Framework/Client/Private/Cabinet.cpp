@@ -88,6 +88,13 @@ void CCabinet::Tick(_float fTimeDelta)
 	__super::Tick_Col();
 	if (!m_bVisible)
 		return;
+	if (m_fDelayLockTime > 0.f)
+		m_fDelayLockTime -= fTimeDelta;
+	if (m_fDelayLockTime < 0.f)
+	{
+		m_fDelayLockTime = 0.f;
+		m_bLock = false;
+	}
 
 	//if (m_bActivity)
 	//	m_fTimeDelay += fTimeDelta;
@@ -243,7 +250,7 @@ HRESULT CCabinet::Add_PartObjects()
 		ItemDesc.pParentsTransform = m_pTransformCom;
 		m_iItemIndex = ItemDesc.iItemIndex = m_tagPropDesc.tagCabinet.iItemIndex;
 		ItemDesc.pState = &m_eState;
-		ItemDesc.pObtain = &m_bObtain;
+		ItemDesc.pObtain = &m_bItemDead; //얻었는가?
 		ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_") + m_tagPropDesc.tagCabinet.Name;
 		/*if(m_tagPropDesc.tagCabinet.iItemIndex==0)*/
 		pItem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_") + m_tagPropDesc.tagCabinet.Name, &ItemDesc));
@@ -348,6 +355,7 @@ HRESULT CCabinet::Add_PartObjects()
 			LockDesc.pParentsTransform = m_pTransformCom;
 			LockDesc.pState = &m_eState;
 			LockDesc.pKeyInput = &m_eKeyInput;
+			LockDesc.pAction = &m_bAction;
 			LockDesc.pLockState = &m_eLockState;
 			LockDesc.pPassword = (_int*)m_iPassWord;
 			LockDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_174_cardreader04a_Anim");
@@ -370,8 +378,9 @@ HRESULT CCabinet::Add_PartObjects()
 		CCard_Cabinet::CARD_CABINET_DESC CardCabinet = {};
 		CardCabinet.pParentsTransform = m_pTransformCom;
 		CardCabinet.pLock_Cabinet_State = &m_eLockState;
+		CardCabinet.pAction = &m_bAction;
 		CardCabinet.pLock_WorldMatrix = static_cast<CPart_InteractProps*>(m_PartObjects[CCabinet::PART_LOCK])->Get_WorldMatrix_Ptr();
-		CardCabinet.strModelComponentName = TEXT("Prototype_Component_Model_sm42_174_cardreader04a_Anim");
+		CardCabinet.strModelComponentName = TEXT("Prototype_Component_Model_sm73_105_cardkeylv201a");
 		pCard = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Card_Cabinet"), &CardCabinet));
 		if (nullptr == pCard)
 			return E_FAIL;
@@ -389,9 +398,9 @@ HRESULT CCabinet::Initialize_PartObjects()
 	if (m_PartObjects[PART_ITEM] != nullptr)
 	{
 
-		CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
+		CModel* pBodyModel = { static_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
 
-		CBody_ItemProp* pItem = dynamic_cast<CBody_ItemProp*>(m_PartObjects[PART_ITEM]);
+		CBody_ItemProp* pItem = static_cast<CBody_ItemProp*>(m_PartObjects[PART_ITEM]);
 		_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet01")) };
 		pItem->Set_Socket(pCombinedMatrix);
 
@@ -399,14 +408,14 @@ HRESULT CCabinet::Initialize_PartObjects()
 
 	if (m_bLock && m_eCabinetType != TYPE_ELECTRIC&& m_eCabinetType != TYPE_WEAPON)
 	{
-		CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
+		CModel* pBodyModel = { static_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
 
-		CLock_Cabinet* pLock = dynamic_cast<CLock_Cabinet*>(m_PartObjects[PART_LOCK]);
+		CLock_Cabinet* pLock = static_cast<CLock_Cabinet*>(m_PartObjects[PART_LOCK]);
 		_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("GimmickSet")) };
 		pLock->Set_Socket(pCombinedMatrix);
 		if (m_eCabinetType == TYPE_LEON)
 		{
-			pLock = dynamic_cast<CLock_Cabinet*>(m_PartObjects[PART_LOCK1]);
+			pLock = static_cast<CLock_Cabinet*>(m_PartObjects[PART_LOCK1]);
 			_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("GimmickSet2")) };
 			pLock->Set_Socket(pCombinedMatrix);
 		}
@@ -414,16 +423,16 @@ HRESULT CCabinet::Initialize_PartObjects()
 
 	if (m_eCabinetType == TYPE_WEAPON)
 	{
-		CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
+		CModel* pBodyModel = { static_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
 
-		CLock_Cabinet* pLock = dynamic_cast<CLock_Cabinet*>(m_PartObjects[PART_LOCK]);
+		CLock_Cabinet* pLock = static_cast<CLock_Cabinet*>(m_PartObjects[PART_LOCK]);
 		_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet")) };
 		pLock->Set_Socket(pCombinedMatrix);
 
 
-		CModel* pLockModel = { dynamic_cast<CModel*>(m_PartObjects[PART_LOCK]->Get_Component(TEXT("Com_Body_Model"))) };
+		CModel* pLockModel = { static_cast<CModel*>(m_PartObjects[PART_LOCK]->Get_Component(TEXT("Com_Body_Model"))) };
 
-		CCard_Cabinet* pCard = dynamic_cast<CCard_Cabinet*>(m_PartObjects[PART_CARD]);
+		CCard_Cabinet* pCard = static_cast<CCard_Cabinet*>(m_PartObjects[PART_CARD]);
 		_float4x4* pLockCombinedMatrix = { const_cast<_float4x4*>(pLockModel->Get_CombinedMatrix("ItemSet")) };
 		pCard->Set_Socket(pLockCombinedMatrix);
 
@@ -435,8 +444,6 @@ HRESULT CCabinet::Bind_ShaderResources()
 {
 	return S_OK;
 }
-
-
 
 void CCabinet::Camera_Active(CCabinet::CABINET_PART ePart, _float3 vRatio)
 {
@@ -484,7 +491,7 @@ void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
 		if (!bCam)
 		{
 			if (m_eLockState == CCabinet::CLEAR_LOCK)
-				m_bLock = false;
+				m_fDelayLockTime = 10.f;
 		}
 		Reset_Camera();
 		m_bCamera = false;
@@ -494,8 +501,10 @@ void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
 	{
 		Camera_Active(PART_LOCK, _float3(20.5f, 40.5f, 20.5f));
 	}
+	if (m_bDead)
+		m_bItemDead = true;
 
-	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
+	if (!m_bDead && m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
 	{
 		if (*m_pPlayerInteract)
 			Safe_Normal_Active();
@@ -566,9 +575,10 @@ void CCabinet::LeonDesk_Tick(_float fTimeDelta)
 		else if (m_eLockState != CCabinet::STATIC_LOCK && (m_eLockLeonState == CCabinet::STATIC_LOCK || m_eLockLeonState == CCabinet::CLEAR_LOCK))
 			Camera_Active(PART_LOCK, _float3(20.5f, 40.5f, 20.5f));
 	}
+	if (m_bDead)
+		m_bItemDead = true;
 
-
-	if ((m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1])/* && !m_bActivity*/)
+	if (!m_bDead && (m_bCol[INTER_COL_NORMAL][COL_STEP1] || m_bCol[INTER_COL_DOUBLE][COL_STEP1])/* && !m_bActivity*/)
 	{
 		if (*m_pPlayerInteract)
 			LeonDesk_Active();
@@ -599,7 +609,7 @@ void CCabinet::Electric_Tick(_float fTimeDelta)
 		m_bCamera = false;
 
 	}
-	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
+	if (!m_bDead && m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
 	{
 		if (*m_pPlayerInteract)
 			Electric_Active();
@@ -615,7 +625,7 @@ void CCabinet::Electric_Tick(_float fTimeDelta)
 void CCabinet::Weapon_Tick(_float fTimeDelta)
 {
 	_bool bCam = false;
-
+	
 	if (m_eLockState == CCabinet::LIVE_LOCK)
 	{
 		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
@@ -635,8 +645,13 @@ void CCabinet::Weapon_Tick(_float fTimeDelta)
 	if (m_bCamera)
 		Camera_Active(PART_LOCK, _float3(20.5f, 40.5f, 20.5f));
 	
+	if (m_bCamera)
+	{
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_F1))
+			m_bAction = true;
+	}
 
-	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] )
+	if (!m_bDead && m_bCol[INTER_COL_NORMAL][COL_STEP1])
 	{
 		if (*m_pPlayerInteract)
 			Weapon_Active();

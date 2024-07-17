@@ -97,8 +97,10 @@ public:
 	string				Get_Electric_Tag() { return m_strElectTag; }
 private:
 	_bool					m_bLeonDesk = { false };
-	_bool					m_bItemDead = { true };
-	_bool					m_bObtain = { false };
+	_bool					m_bAction = { false };
+	_bool					m_bItemDead = { false }; //얻었는가?
+	_bool					m_bObtain = { false }; // 얻을 수 있는가?
+
 	_bool					m_bOpened = { false };
 	_bool					m_bLock =	{ false };
 	_bool					m_bActivity = { false };
@@ -108,6 +110,8 @@ private:
 	_ubyte				m_eLockState = { STATIC_LOCK };
 	_int					m_eCabinetType = { TYPE_NORMAL };
 	
+	_float				m_fDelayLockTime = { 0.f };
+
 	_bool					m_isCamera_Reset = { false };
 	_ubyte				m_eKeyInput = { KEY_NOTHING }; // 직접 nothing인 타이밍을 알아서 key_nothing으로 세팅 해줘야함
 

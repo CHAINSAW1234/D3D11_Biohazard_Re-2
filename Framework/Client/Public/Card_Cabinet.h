@@ -18,6 +18,7 @@ public:
 	{
 		const _float4x4* pLock_WorldMatrix = { nullptr };
 		_ubyte* pLock_Cabinet_State = { nullptr };
+		_bool* pAction = { nullptr };
 
 	}CARD_CABINET_DESC;
 
@@ -46,7 +47,7 @@ private:
 private:
 	_ubyte*								m_pLockState = { nullptr };
 	const _float4x4*					m_pWorldMatrix = { nullptr };
-
+	_bool*								m_bAction = { nullptr };
 public:
 	static CCard_Cabinet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);
