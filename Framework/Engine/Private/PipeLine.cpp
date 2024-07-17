@@ -246,21 +246,21 @@ HRESULT CPipeLine::Create_Texture()
 {
 	CRenderTarget* pRenderTarget;
 		
-	pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, 256, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, TEXT("Target_HDR"), _float4(1.f, 1.f, 1.f, 1.f), false);
+	pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, 256, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, TEXT("Target_HDR"), _float4(0.f,0.f,0.f, 1.f), false);
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
 
 	m_pHDRTexture = pRenderTarget;
 	m_pHDRTexture->Clear();
 
-	pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, 256, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, TEXT("Target_Irradiance"), _float4(1.f,1.f,1.f,1.f), false);
+	pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, 256, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, TEXT("Target_Irradiance"), _float4(0.f, 0.f, 0.f, 1.f), false);
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
 
 	m_pCurIrradialTexture = pRenderTarget;
 	m_pCurIrradialTexture->Clear();
 
-	pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, 256, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, TEXT("Target_Irradiance"), _float4(1.f, 1.f, 1.f, 1.f), false);
+	pRenderTarget = CRenderTarget::Create_Cube(m_pDevice, m_pContext, 256, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, TEXT("Target_Irradiance"), _float4(0.f, 0.f, 0.f, 1.f), false);
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
 

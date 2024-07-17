@@ -6,6 +6,7 @@ IMPLEMENT_SINGLETON(CCall_Center)
 
 CCall_Center::CCall_Center()
 {
+	m_Callers.resize(static_cast<_uint>(CALLER::_END));
 }
 
 void CCall_Center::Free()

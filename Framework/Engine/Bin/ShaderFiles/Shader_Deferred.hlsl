@@ -372,7 +372,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
     
     // 여기부터 for문이였음
    // float3 Li = -g_vLightDir.xyz;
-    float3 Li = -float3(0.f,-1.f,0.f);
+    float3 Li = float3(0.f,-1.f,0.f);
     float3 Lh = normalize(Li + Lo);
     
     float cosLi = max(0.0, dot(vNormal.xyz, Li));
@@ -462,10 +462,9 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
     vWorldPos = mul(vWorldPos, g_ProjMatrixInv);
     vWorldPos = mul(vWorldPos, g_ViewMatrixInv);
 
-    
     float fDistance = length(g_vLightPos - vWorldPos);
-    float fAttenuation = max(0.f, 1.f - (fDistance * fDistance) / (g_fLightRange * g_fLightRange)); // 감마 보정을 위한 감쇠값
-    
+    float fAttenuation = max(0.f, 1.f - pow((fDistance * fDistance) / (g_fLightRange * g_fLightRange), 2)); // 감마 보정을 위한 감쇠값
+    fAttenuation = fAttenuation * fAttenuation;
     if (fAttenuation <= 0)
         discard;
     
@@ -479,7 +478,7 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
     
     // 여기부터 for문이였음
    // float3 Li = -g_vLightDir.xyz;
-    float3 Li = -normalize(g_vLightPos.xyz - vWorldPos.xyz);
+    float3 Li = normalize(g_vLightPos.xyz - vWorldPos.xyz);
     float3 Lh = normalize(Li + Lo);
     
     float cosLi = max(0.0, dot(vNormal.xyz, Li));
@@ -573,11 +572,16 @@ PS_OUT PS_MAIN_SPOT(PS_IN In)
     vector vSpotDir = g_vLightDir;
     
     float fResult = acos(dot(normalize(vLightDir), normalize(vSpotDir)));
-    float fDistance = length(g_vLightPos - vWorldPos);
-    float fIntensity = (fResult - g_fCutOff) / (g_fCutOff - g_fOutCutOff);
-    float fAtt = saturate((g_fSpotLightRange - fDistance) / g_fSpotLightRange) * fIntensity; //범위 줘서 끝 범위에서는 연해지게 
+    if (g_fOutCutOff < fResult)
+        discard;
     
-    if (fAtt <= 0)
+    float fDistance = length(vLightDir.xyz);
+    float fIntensity = (fResult - g_fOutCutOff) / (g_fCutOff - g_fOutCutOff);
+    float fAtt = max(0.f, 1.f - pow((fDistance * fDistance) / (g_fLightRange * g_fLightRange), 2)); // 감마 보정을 위한 감쇠값
+    fAtt *= fAtt;
+    fAtt *= (fIntensity * fIntensity);
+
+    if (fAtt <= 0.f)
         discard;
     
     float3 Lo = normalize(g_vCamPosition.xyz - vWorldPos.xyz);
@@ -843,6 +847,9 @@ PS_OUT PS_POST_PROCESSING_RESULT(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
     
     vector DiffuseDesc = g_DiffuseTexture.Sample(PointSamplerClamp, In.vTexcoord);
+    
+    if (DiffuseDesc.a == 0)
+        discard;
     
     Out.vColor = DiffuseDesc;
     
