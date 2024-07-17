@@ -39,11 +39,13 @@ private:
 	DOCUMENT_CLASSIFY Document_Classify_ByNumber(ITEM_READ_TYPE eIRT_Num);
 	void Directory_Seting();
 	void Hoverd_Highlight();
-	
+	void Change_Display();
+	void Button_Action();
 
 public:
 	virtual void Set_Dead(_bool bDead) override;
 	void Acquire_Document(ITEM_READ_TYPE eAcquire_Document);
+	
 
 private:
 	CHint_Highliter*			m_pHighlighter = { nullptr };
@@ -51,6 +53,8 @@ private:
 	CHint_Blind*				m_pDisplay_Blinde = { nullptr }; 
 	vector<CHint_Directory*>	m_vecDirectory;
 	CHint_Display*				m_pDisplay = { nullptr };
+	CTextBox*					m_pPoliceButton = { nullptr };
+	CTextBox*					m_pTutorialButton = { nullptr };
 
 private:
 	ITEM_READ_TYPE										m_iCur_TopDoument = { ITEM_READ_TYPE::END_NOTE };	//현재 맨위에있는 이름
@@ -68,6 +72,7 @@ private:
 	HRESULT	Create_Display();
 	HRESULT Create_Directory();
 	HRESULT Create_Directory_Highlighter();
+	HRESULT Create_Text_Button();
 
 public:
 	static CHint* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

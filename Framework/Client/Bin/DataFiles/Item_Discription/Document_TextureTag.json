@@ -106,5 +106,25 @@
   {
     "ITEM_READ_TYPE": "경관의 노트",
     "ProtoTypeTag": "Prototype_Component_Texture_ReadType_Police_Note2"
+  },
+  {
+    "ITEM_READ_TYPE": "아이템 검사",
+    "ProtoTypeTag": "Prototype_Component_Texture_TUTORIAL_EXAMIN"
+  },
+  {
+    "ITEM_READ_TYPE": "열쇠 아이템 사용",
+    "ProtoTypeTag": "Prototype_Component_Texture_TUTORIAL_USE_KEY"
+  },
+  {
+    "ITEM_READ_TYPE": "지도 활용",
+    "ProtoTypeTag": "Prototype_Component_Texture_TUTORIAL_ABOUT_MAP"
+  },
+  {
+    "ITEM_READ_TYPE": "아이템 조합",
+    "ProtoTypeTag": "Prototype_Component_Texture_TUTORIAL_COMBIND"
+  },
+  {
+    "ITEM_READ_TYPE": "체력 및 회복 아이템",
+    "ProtoTypeTag": "Prototype_Component_Texture_TUTORIAL_HP_HEAL"
   }
 ]

@@ -52,6 +52,11 @@ namespace Client
 		RICKER_NOTE, //만일의 생존자에게
 		SAFE_PASSWARD_NOTE, //내부용 쪽지
 		PAMPHLET, //가이드 책자
+		EXAMIN_ITEM, //아이템 검사
+		USE_KEY_ITEM, //열쇠 아이템 사용
+		ABOUT_MAP,//지도 활용
+		COMBIND_ITEM,//아이템 조합
+		HP_HEAL_ITEM,//체력 및 회복 아이템
 		END_NOTE 
 	};
 	// 사건 일지 , 작전실 노트 , 레온의 과제, 약초의 효능, 경찰의 수첩, 화약 일지 , 락커 고쳐줘, 휴대용 금고 설명서, 리커에 대한 설명

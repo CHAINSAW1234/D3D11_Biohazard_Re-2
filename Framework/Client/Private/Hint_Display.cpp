@@ -2,6 +2,7 @@
 
 #include "Hint_Display.h"
 #include "Hint.h"
+#include "Display_Background.h"
 
 CHint_Display::CHint_Display(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCustomize_UI{ pDevice , pContext }
@@ -27,6 +28,9 @@ HRESULT CHint_Display::Initialize(void* pArg)
 	}
 
 	if(FAILED(Load_Texture()))
+		return E_FAIL;
+
+	if (FAILED(Create_DisplayBackground()))
 		return E_FAIL;
 
 	m_bDead = true;
@@ -63,6 +67,13 @@ HRESULT CHint_Display::Render()
 	return S_OK;
 }
 
+void CHint_Display::Set_Dead(_bool bDead)
+{
+	__super::Set_Dead(bDead);
+
+	m_pBackground->Set_Dead(bDead);
+}
+
 void CHint_Display::Set_Display(ITEM_READ_TYPE eItemReadType, _uint TextureNum, _float2 fPos, _float2 fSize)
 {
 	if (TextureNum < m_mapDocumentTextures[eItemReadType].size())
@@ -72,6 +83,10 @@ void CHint_Display::Set_Display(ITEM_READ_TYPE eItemReadType, _uint TextureNum, 
 		m_pTransformCom->Set_Scaled(fSize.x, fSize.y, 1.f);
 		m_iCurTypeTexCount = m_mapDocumentTextures[eItemReadType].size();
 		m_iCurTexNum = TextureNum;
+		m_eCurIRT = eItemReadType;
+
+
+		m_pBackground->Set_BackGround(eItemReadType);
 	}
 	else
 	{
@@ -125,6 +140,25 @@ HRESULT CHint_Display::Load_Texture()
 	return S_OK;
 }
 
+HRESULT CHint_Display::Create_DisplayBackground()
+{
+	ifstream inputFileStream;
+	wstring selectedFilePath;
+	selectedFilePath = TEXT("../Bin/DataFiles/Scene_TabWindow/Hint/Hint_Display_Background.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+
+	CCustomize_UI::CreatUI_FromDat(inputFileStream, nullptr, TEXT("Prototype_GameObject_HintDisplayBackground"),
+		(CGameObject**)&m_pBackground, m_pDevice, m_pContext);
+
+	if (nullptr == m_pBackground)
+		return E_FAIL;
+
+	Safe_AddRef(m_pBackground);
+	m_pBackground->Set_Dead(true);
+
+	return S_OK;
+}
+
 CHint_Display* CHint_Display::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CHint_Display* pInstance = new CHint_Display(pDevice, pContext);
@@ -166,5 +200,8 @@ void CHint_Display::Free()
 		}
 	}
 
-	//m_mapDocumentTextures.clear();
+	m_mapDocumentTextures.clear();
+
+	Safe_Release(m_pBackground);
+	
 }

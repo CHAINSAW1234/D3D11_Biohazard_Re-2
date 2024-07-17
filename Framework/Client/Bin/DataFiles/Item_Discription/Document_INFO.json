@@ -89,10 +89,42 @@
   },
   {
     "CLASSIFY": "TUTORIAL",
-    "NAME": "아직 추가 안됨",
-    "POSITION_X": 0,
-    "POSITION_Y": 0,
-    "SIZE_X": 10,
-    "SIZE_Y": 10
+    "NAME": "아이템 검사",
+    "POSITION_X": 478,
+    "POSITION_Y": 76,
+    "SIZE_X": 588,
+    "SIZE_Y": 422
+  },
+  {
+    "CLASSIFY": "TUTORIAL",
+    "NAME": "열쇠 아이템 사용",
+    "POSITION_X": 478,
+    "POSITION_Y": 76,
+    "SIZE_X": 588,
+    "SIZE_Y": 422
+  },
+  {
+    "CLASSIFY": "TUTORIAL",
+    "NAME": "지도 활용",
+    "POSITION_X": 478,
+    "POSITION_Y": 76,
+    "SIZE_X": 588,
+    "SIZE_Y": 422
+  },
+  {
+    "CLASSIFY": "TUTORIAL",
+    "NAME": "아이템 조합",
+    "POSITION_X": 478,
+    "POSITION_Y": 76,
+    "SIZE_X": 588,
+    "SIZE_Y": 422
+  },
+  {
+    "CLASSIFY": "TUTORIAL",
+    "NAME": "체력 및 회복 아이템",
+    "POSITION_X": 478,
+    "POSITION_Y": 76,
+    "SIZE_X": 588,
+    "SIZE_Y": 422
   }
 ]

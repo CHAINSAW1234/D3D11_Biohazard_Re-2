@@ -388,12 +388,30 @@ void CTab_Window::PICK_UP_ITEM_WINDOW_Operation(_float fTimeDelta)
 	case Client::UI_IDLE: {
 		if (GET_ITEM == m_pInventory_Manager->Get_InventoryEvent())
 		{
+			/* 아이템 삭제 */
+			_int iFloorType = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_Floor();
+			_int iLocation_map_visit = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_Region();
 			_int iCollectNum = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_iItemIndex();
+
+			m_pMapItem_UI->Destory_Item(static_cast<MAP_FLOOR_TYPE>(iFloorType),
+				static_cast<LOCATION_MAP_VISIT>(iLocation_map_visit),
+				static_cast<ITEM_NUMBER>(iCollectNum));
+
+			/* 아이템으로 인한 맵 확인 */
+			if (nullptr != m_pTargetNotify_UI)
+			{
+				/* Tab Window -> Target Notify -> Main Map*/
+				m_pTargetNotify_UI->Set_SearchFor_Verification_MapType(
+					static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_Floor(),
+					static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_Region());
+			}
+
 			m_vecCollect_ITEM.push_back(static_cast<ITEM_NUMBER>(iCollectNum));
 			m_pPickedUp_Item->Set_Dead(true);
 			m_fCurTime = 0.f;
 			m_eSequence = HIDE;
 			m_pItem_Mesh_Viewer->Set_Operation(HIDE, ITEM_NUMBER_END, 1);
+
 			break;
 		}
 
@@ -661,25 +679,11 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 
 	else
 	{
-		if (iPickedUpItemNum >= rpddocument01a && iPickedUpItemNum <= mapupperpolice01a)
-		{
-			m_pRead_Item_UI->Set_ReadItem_Type((ITEM_READ_TYPE)pProp->Get_PropType());
-			//인벤토리 문서 부분에 먹었다 추가=> 아직 없는 것으로 앎 나중에
-			pPickedUp_Item->Set_Dead(true);
-		}
-
-		else
-		{
-			/* 아이템 삭제 */
-			m_pMapItem_UI->Destory_Item((MAP_FLOOR_TYPE)pProp->Get_Floor(), (LOCATION_MAP_VISIT)pProp->Get_Region(), (ITEM_NUMBER)iPickedUpItemNum);
-			
-			/* 아이템으로 인한 맵 확인 */
-			if (nullptr != m_pTargetNotify_UI)
-			{
-				/* Tab Window -> Target Notify -> Main Map*/
-				m_pTargetNotify_UI->Set_SearchFor_Verification_MapType(pProp->Get_Floor(), pProp->Get_Region());
-			}
-		}
+		ITEM_READ_TYPE eIRT = static_cast<ITEM_READ_TYPE>(pProp->Get_PropType());
+		m_pRead_Item_UI->Set_ReadItem_Type(eIRT);
+		m_pHint->Acquire_Document(eIRT);
+		//인벤토리 문서 부분에 먹었다 추가=> 아직 없는 것으로 앎 나중에
+		pPickedUp_Item->Set_Dead(true);
 	}
 }
 

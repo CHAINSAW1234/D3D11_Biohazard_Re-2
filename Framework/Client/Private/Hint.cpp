@@ -48,6 +48,9 @@ HRESULT CHint::Initialize(void* pArg)
 	if (FAILED(Create_Directory_Highlighter()))
 		return E_FAIL;
 
+	if (FAILED(Create_Text_Button()))
+		return E_FAIL;
+
 
 	m_bDead = true;
 
@@ -64,6 +67,14 @@ void CHint::Start()
 		fMove += _float3{ 0.f, -58.f, 0.f };
 	}
 
+#pragma region 초기화
+	Acquire_Document(ITEM_READ_TYPE::EXAMIN_ITEM);//아이템 검사
+	Acquire_Document(ITEM_READ_TYPE::USE_KEY_ITEM);//열쇠 아이템 사용
+	Acquire_Document(ITEM_READ_TYPE::ABOUT_MAP);//지도 활용
+	Acquire_Document(ITEM_READ_TYPE::COMBIND_ITEM);//아이템 조합
+	Acquire_Document(ITEM_READ_TYPE::HP_HEAL_ITEM);//체력 및 회복 아이템
+#pragma endregion
+
 #pragma region 테스트용
 	Acquire_Document(ITEM_READ_TYPE::INCIDENT_LOG_NOTE); //사건일지
 	Acquire_Document(ITEM_READ_TYPE::OPERATE_REPORT_NOTE); //작전보고서
@@ -78,8 +89,13 @@ void CHint::Tick(_float fTimeDelta)
 	if (true == m_bDead)
 		return;
 
+	Button_Action();
 	Directory_Seting();
 	Hoverd_Highlight();
+	Change_Display();
+
+	m_pPoliceButton->Tick(fTimeDelta);
+	m_pTutorialButton->Tick(fTimeDelta);
 }
 
 void CHint::Late_Tick(_float fTimeDelta)
@@ -88,6 +104,8 @@ void CHint::Late_Tick(_float fTimeDelta)
 		return;
 
 	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_UI, this);
+	m_pPoliceButton->Late_Tick(fTimeDelta);
+	m_pTutorialButton->Late_Tick(fTimeDelta);
 }
 
 HRESULT CHint::Render()
@@ -144,8 +162,11 @@ void CHint::Hoverd_Highlight()
 			{
 				m_pHL_Trans->Set_State(CTransform::STATE_POSITION, m_vecDirectory[i]->GetPosition());
 				ITEM_READ_TYPE eIRT = m_vecDirectory[i]->Get_DirectoryType();
-				DOCUMENT_INFO DocumentInfo = m_mapDocumentInfo[eIRT];
-				m_pDisplay->Set_Display(eIRT, 0, DocumentInfo.fPosition, DocumentInfo.fSize);
+				if (eIRT != m_pDisplay->Get_CurIRT())
+				{
+					DOCUMENT_INFO DocumentInfo = m_mapDocumentInfo[eIRT];
+					m_pDisplay->Set_Display(eIRT, 0, DocumentInfo.fPosition, DocumentInfo.fSize);
+				}
 			}
 		}
 	}
@@ -158,8 +179,90 @@ void CHint::Hoverd_Highlight()
 			{
 				m_pHL_Trans->Set_State(CTransform::STATE_POSITION, m_vecDirectory[i]->GetPosition());
 				ITEM_READ_TYPE eIRT = m_vecDirectory[i]->Get_DirectoryType();
-				DOCUMENT_INFO DocumentInfo = m_mapDocumentInfo[eIRT];
-				m_pDisplay->Set_Display(eIRT, 0, DocumentInfo.fPosition, DocumentInfo.fSize);
+				if (eIRT != m_pDisplay->Get_CurIRT())
+				{
+					DOCUMENT_INFO DocumentInfo = m_mapDocumentInfo[eIRT];
+					m_pDisplay->Set_Display(eIRT, 0, DocumentInfo.fPosition, DocumentInfo.fSize);
+				}
+			}
+		}
+	}
+}
+
+void CHint::Change_Display()
+{
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_LEFT))
+	{
+		_uint iCurTexNum = m_pDisplay->Get_CurTexNum();
+		if (0 != iCurTexNum)
+		{
+			m_pDisplay->Set_CurTexNum(--iCurTexNum);
+		}
+	}
+
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_RIGHT))
+	{
+		_uint iMaxTexCount = m_pDisplay->Get_CurTypeTexCount();
+		_uint iCurTexNum = m_pDisplay->Get_CurTexNum();
+		if (iMaxTexCount > iCurTexNum + 1)
+		{
+			m_pDisplay->Set_CurTexNum(++iCurTexNum);
+		}
+	}
+}
+
+void CHint::Button_Action()
+{
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+	{
+		if (true == m_pPoliceButton->IsMouseHover() && POLICE != m_eCurrentDC)
+		{
+			m_eCurrentDC = POLICE;
+
+			for (auto& iter : m_vecDirectory)
+				iter->Set_Dead(true);
+
+			if (m_mapAcqDoc[m_eCurrentDC].size() >= MAX_DOCUMENT)
+			{
+				for (_uint i = 0; i < MAX_DOCUMENT; i++)
+				{
+					m_vecDirectory[i]->Set_Directory(m_mapAcqDoc[m_eCurrentDC][i], m_mapDocumentInfo[m_mapAcqDoc[m_eCurrentDC][i]].wstrName);
+					m_vecDirectory[i]->Set_Dead(false);
+				}
+			}
+			else
+			{
+				for (size_t i = 0; i < m_mapAcqDoc[m_eCurrentDC].size(); i++)
+				{
+					m_vecDirectory[i]->Set_Directory(m_mapAcqDoc[m_eCurrentDC][i], m_mapDocumentInfo[m_mapAcqDoc[m_eCurrentDC][i]].wstrName);
+				
+					m_vecDirectory[i]->Set_Dead(false);
+				}
+			}
+		}
+
+		else if (true == m_pTutorialButton->IsMouseHover() && TUTORIAL != m_eCurrentDC)
+		{
+			m_eCurrentDC = TUTORIAL;
+
+			for (auto& iter : m_vecDirectory)
+				iter->Set_Dead(true);
+
+			if (m_mapAcqDoc[m_eCurrentDC].size() >= MAX_DOCUMENT)
+			{
+				for (_uint i = 0; i < MAX_DOCUMENT; i++)
+				{
+					m_vecDirectory[i]->Set_Directory(m_mapAcqDoc[m_eCurrentDC][i], m_mapDocumentInfo[m_mapAcqDoc[m_eCurrentDC][i]].wstrName);
+					m_vecDirectory[i]->Set_Dead(false);
+				}
+			}
+			else
+			{
+				for (size_t i = 0; i < m_mapAcqDoc[m_eCurrentDC].size(); i++)
+				{
+					m_vecDirectory[i]->Set_Directory(m_mapAcqDoc[m_eCurrentDC][i], m_mapDocumentInfo[m_mapAcqDoc[m_eCurrentDC][i]].wstrName);
+					m_vecDirectory[i]->Set_Dead(false);
+				}
 			}
 		}
 	}
@@ -283,8 +386,11 @@ HRESULT CHint::Load_DocumentINFO()
 
 			if (TEXT("POLICE") == wstrDocumentClassify)
 				DocumentInfo.eDoc_Classify = POLICE;
-			else
+			else if (TEXT("TUTORIAL") == wstrDocumentClassify)
 				DocumentInfo.eDoc_Classify = TUTORIAL;
+			else
+				return E_FAIL;
+
 			DocumentInfo.wstrName = wstrDocumentName;
 			DocumentInfo.fPosition = { fPosX , fPosY };
 			DocumentInfo.fSize = { fSizeX , fSizeY };
@@ -468,11 +574,55 @@ CHint::DOCUMENT_CLASSIFY CHint::Document_Classify_ByNumber(ITEM_READ_TYPE eIRT_N
 		return POLICE;
 		break;
 
+	case Client::ITEM_READ_TYPE::EXAMIN_ITEM:
+	case Client::ITEM_READ_TYPE::USE_KEY_ITEM:
+	case Client::ITEM_READ_TYPE::ABOUT_MAP:
+	case Client::ITEM_READ_TYPE::COMBIND_ITEM:
+	case Client::ITEM_READ_TYPE::HP_HEAL_ITEM:
+		return TUTORIAL;
+		break;
+
 	default:
 		break;
 	}
 
 	return DC_END;
+}
+
+HRESULT CHint::Create_Text_Button()
+{
+
+	CTextBox::TextBox_DESC TextBox_Desc= {};
+	TextBox_Desc.wstrText = TEXT("경찰서");
+	TextBox_Desc.wstrFontType = TEXT("Font_CGBold");
+	TextBox_Desc.vFontColor = { 1.f, 1.f, 1.f, 1.f };
+	TextBox_Desc.iFontSize = { 14 };
+	TextBox_Desc.isUI_Render = { false };
+	TextBox_Desc.vPos = { 740.f, 120.f };
+	TextBox_Desc.vSize = { 100.f, 50.f };
+
+	CGameObject* pPoliceButton = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_TextBox"), &TextBox_Desc);
+	m_pPoliceButton = dynamic_cast<CTextBox*>(pPoliceButton);
+
+	if (nullptr == m_pPoliceButton)
+		return E_FAIL;
+
+	TextBox_Desc.wstrText = TEXT("튜토리얼");
+	TextBox_Desc.wstrFontType = TEXT("Font_CGBold");
+	TextBox_Desc.vFontColor = { 1.f, 1.f, 1.f, 1.f };
+	TextBox_Desc.iFontSize = { 14 };
+	TextBox_Desc.isUI_Render = { false };
+	TextBox_Desc.vPos = { 840.f, 120.f };
+	TextBox_Desc.vSize = { 100.f, 50.f };
+
+
+	CGameObject* pTutorialButton = m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_TextBox"), &TextBox_Desc);
+	m_pTutorialButton = dynamic_cast<CTextBox*>(pTutorialButton);
+
+	if (nullptr == m_pTutorialButton)
+		return E_FAIL;
+
+	return S_OK;
 }
 
 ITEM_READ_TYPE CHint::Classify_IRT_By_Name(wstring wstrName)
@@ -509,6 +659,21 @@ ITEM_READ_TYPE CHint::Classify_IRT_By_Name(wstring wstrName)
 
 	else if (TEXT("가이드 책자") == wstrName)
 		return ITEM_READ_TYPE::PAMPHLET;
+	
+	else if (TEXT("아이템 검사") == wstrName)
+		return ITEM_READ_TYPE::EXAMIN_ITEM;
+
+	else if (TEXT("열쇠 아이템 사용") == wstrName)
+		return ITEM_READ_TYPE::USE_KEY_ITEM;
+
+	else if (TEXT("지도 활용") == wstrName)
+		return ITEM_READ_TYPE::ABOUT_MAP;
+
+	else if (TEXT("아이템 조합") == wstrName)
+		return ITEM_READ_TYPE::COMBIND_ITEM;
+
+	else if (TEXT("체력 및 회복 아이템") == wstrName)
+		return ITEM_READ_TYPE::HP_HEAL_ITEM;
 
 
 	return ITEM_READ_TYPE::END_NOTE;

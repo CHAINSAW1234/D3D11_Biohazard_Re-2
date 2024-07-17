@@ -117,6 +117,7 @@
 #include "Hint_Display.h"
 #include "Hint_Highliter.h"
 #include "Hint_Blind.h"
+#include "Display_Background.h"
 
 // EnvMap 큐브맵이라는뜻
 #include"EnvCube.h"
@@ -665,6 +666,11 @@ HRESULT CLoader::Load_Prototype()
 	/* For.Prototype_GameObject_Hint_Blind */
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Hint_Blind"),
 		CHint_Blind::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_HintDisplayBackground */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HintDisplayBackground"),
+		CHint_Display_Background::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 #pragma endregion
@@ -1462,6 +1468,32 @@ HRESULT CLoader::Loading_For_GamePlay()
 	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_ReadType_Police_Note2"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/Note/PoliceNote2.png")))))
 		return E_FAIL;
+
+	/* EXAMIN_ITEM, //아이템 검사*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_TUTORIAL_EXAMIN"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/TUTORIAL_EXAMIN.png")))))
+		return E_FAIL;
+
+	/* USE_KEY_ITEM, //열쇠 아이템 사용*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_TUTORIAL_USE_KEY"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/TUTORIAL_USE_KEY.png")))))
+		return E_FAIL;
+
+	/* ABOUT_MAP,//지도 활용*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_TUTORIAL_ABOUT_MAP"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/TUTORIAL_ABOUT_MAP.png")))))
+		return E_FAIL;
+
+	/* COMBIND_ITEM,//아이템 조합*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_TUTORIAL_COMBIND"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/TUTORIAL_COMBIND.png")))))
+		return E_FAIL;
+
+	/* HP_HEAL_ITEM,//체력 및 회복 아이템*/
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Texture_TUTORIAL_HP_HEAL"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/UI/Get_Item_UI/ReadType_Item/Text/TUTORIAL_HP_HEAL.png")))))
+		return E_FAIL;
+
 #pragma endregion
 
 #pragma region Effect

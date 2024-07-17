@@ -1452,6 +1452,9 @@
     <ClInclude Include="..\Public\Grenade_Explosion.h">
       <Filter>02.GameObjects\Effect\Grenade_Explosion</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Display_Background.h">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display\Display_Background</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2119,6 +2122,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Grenade_Explosion.cpp">
       <Filter>02.GameObjects\Effect\Grenade_Explosion</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Display_Background.cpp">
+      <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display\Display_Background</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
