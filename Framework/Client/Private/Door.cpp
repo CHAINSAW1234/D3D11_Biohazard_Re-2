@@ -117,17 +117,16 @@ void CDoor::Start()
 void CDoor::Tick(_float fTimeDelta)
 {
 	__super::Tick_Col();
-	if (DOWN == m_pGameInstance->Get_KeyState('J'))
+	if (m_fDelayLockTime > 0.f)
+		m_fDelayLockTime -= fTimeDelta;
+	if (m_fDelayLockTime < 0.f)
 	{
-		m_isCameraGimmick = !m_isCameraGimmick;
-
-		CPart_InteractProps* pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_KEY]);
-		m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + pPartLock->GetLookDir_Vector() * 0.15f + _vector{ 0.05f,0.1f,0.f,0.f });
-		m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
+		m_fDelayLockTime = 0.f;
+		m_bLock = false;
 	}
 
-	if (true == m_isCameraGimmick)
-		m_pCameraGimmick->Active_Camera(true);
+	if(m_isCameraGimmick)
+
 
 
 	if (!m_bVisible)
@@ -294,6 +293,8 @@ HRESULT CDoor::Add_PartObjects()
 	/* 0 하트 1 스페이스 2 클로버 3 다이아*/
 	if (true == BodyDesc.isEmblem && m_bLock)
 	{
+		m_iNeedItem = woodbarricade01a;
+
 		/* Emblem*/
 		CPartObject* pEmblem = { nullptr };
 		CEmblem_Door::BODY_EMBLEM_DOOR EmblemDesc;
@@ -380,13 +381,15 @@ HRESULT CDoor::Add_PartObjects()
 		}
 		else
 			m_PartObjects[PART_KEY] = nullptr;
-
-
-
 	}
 	
 
 	return S_OK;
+}
+
+void CDoor::Do_Interact_Props()
+{
+	m_eEmblemAnim_Type = (_uint)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM;
 }
 
 HRESULT CDoor::Initialize_PartObjects()
@@ -848,16 +851,78 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 				m_bAttack = false;
 				m_fTime = 0.f;
 				m_bActivity = false;
-				m_eDoubleState = DOUBLEDOOR_STATIC;
+				m_eOneState = ONEDOOR_STATIC;
 			}
+		}
+		//else if(!m_bOnce)
+		//{
+		//	m_fTime = 0.f;
+		//	m_bActivity = false;
+		//}
+
+	}
+	
+	_bool bCam = { false };
+	if (m_eEmblemAnim_Type == (_ubyte)CEmblem_Door::EMBLEM_ANIM::START_ANIM)
+	{
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		{
+			if ((m_eEmblemAnim_Type != (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM)||(m_eEmblemAnim_Type != (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPENED_ANIM))
+				m_eEmblemAnim_Type = (_ubyte)CEmblem_Door::EMBLEM_ANIM::STATIC_ANIM;
+			bCam = true;
+		}
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_F1))
+		{
+			m_eEmblemAnim_Type =(_ubyte)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM;
 		}
 	}
 
-	if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity)
+	if (m_bCamera && (bCam || static_cast<CEmblem_Door*>(m_PartObjects[PART_EMBLEM])->Get_Clear()))
+	{
+		if (!bCam&&m_bLock)
+		{
+			if (m_eEmblemAnim_Type == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM && m_fDelayLockTime == 0.f)
+				m_fDelayLockTime = 5.f;
+		}
+		else if (bCam || !m_bLock)
+		{
+			Reset_Camera();
+			m_bCamera = false;
+		}
+	}
+	if (m_bCamera)
+	{
+		_float fScala = Radian_To_Player();
+
+		if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
+			Camera_Active(PART_EMBLEM, _float3(-0.5f, -0.5f, -10.1f));
+		else
+			Camera_Active(PART_EMBLEM, _float3(0.5f, 0.5f, -10.1f));
+
+	}
+
+
+	if (m_bLock)
+	{
+		if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
+		{
+			if (m_bCol[INTER_COL_NORMAL][COL_STEP2])
+				m_bActivity = true;
+			if (*m_pPlayerInteract)
+				OneDoor_Active();
+		}
+		//m_bActivity = true;
+		
+	}
+	else if (m_bCol[INTER_COL_NORMAL][COL_STEP1] && !m_bActivity)
 	{
 		//UI띄우고
-		if (*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2])
-			OneDoor_Active();
+		
+			if (*m_pPlayerInteract || m_bCol[INTER_COL_NORMAL][COL_STEP2])
+				OneDoor_Active();
+
+		
+		
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 
@@ -868,10 +933,7 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
 	}
-
-
-	if (m_eEmblemAnim_Type == (_ubyte)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM)
-		m_bLock = false;
+	
 
 }
 
@@ -965,7 +1027,13 @@ void CDoor::OneDoor_Active()
 
 	if (m_bLock)
 	{
-		//m_eEmblemAnim_Type = (_int)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM;
+		//m_bInteract = true;
+
+		m_eEmblemAnim_Type = (_uint)CEmblem_Door::EMBLEM_ANIM::START_ANIM;
+		m_pCameraGimmick->Active_Camera(true);
+		m_bCamera = true;
+		/*if (false == m_pGameInstance->IsPaused())
+			m_pPlayer->Interact_Props(this);*/
 	}
 	else
 	{

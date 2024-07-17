@@ -49,24 +49,22 @@ HRESULT CKey_Door::Initialize(void* pArg)
 void CKey_Door::Tick(_float fTimeDelta)
 {
 	m_ParentWorldMatirx2 = m_pParentWorldMatrix;
-	/* Static 상태 */
-	if (DOWN == m_pGameInstance->Get_KeyState('1'))
-		*m_pEmblemAnim = 0;
+	///* Static 상태 */
+	//if (DOWN == m_pGameInstance->Get_KeyState('1'))
+	//	*m_pEmblemAnim = 0;
 
-	/* 아이템을 사용할 수 있어서 열었다면, */
-	if (DOWN == m_pGameInstance->Get_KeyState('2'))
-		m_isKeyUsing = true;
+	///* 아이템을 사용할 수 있어서 열었다면, */
+	//if (DOWN == m_pGameInstance->Get_KeyState('2'))
+	//	m_isKeyUsing = true;
 
-	/* 처음 문에 접속했을 때 덜컹덜컹 */
-	if (DOWN == m_pGameInstance->Get_KeyState('3'))
-		*m_pEmblemAnim = 2;
+	///* 처음 문에 접속했을 때 덜컹덜컹 */
+	//if (DOWN == m_pGameInstance->Get_KeyState('3'))
+	//	*m_pEmblemAnim = 2;
+	if (*m_pEmblemAnim == (_uint)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM)
+		m_isKeyRender =true;
+	if(*m_pEmblemAnim == (_uint)CEmblem_Door::EMBLEM_ANIM::OPENED_ANIM)
+		m_isKeyRender = false;
 
-	if (true == m_isKeyUsing)
-	{
-		m_isKeyRender = true;
-
-		*m_pEmblemAnim = 1;
-	}
 }
 
 void CKey_Door::Late_Tick(_float fTimeDelta)

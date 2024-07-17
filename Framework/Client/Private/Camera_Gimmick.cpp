@@ -37,7 +37,7 @@ HRESULT CCamera_Gimmick::Initialize(void * pArg)
 
 void CCamera_Gimmick::Tick(_float fTimeDelta)
 {
-	if (PRESSING == m_pGameInstance->Get_KeyState(VK_MBUTTON))
+	/*if (PRESSING == m_pGameInstance->Get_KeyState(VK_MBUTTON))
 	{
 		if (PRESSING == m_pGameInstance->Get_KeyState('A'))
 		{
@@ -86,7 +86,7 @@ void CCamera_Gimmick::Tick(_float fTimeDelta)
 
 		ClientToScreen(g_hWnd, &ptPos);
 		SetCursorPos(ptPos.x, ptPos.y);
-	}
+	}*/
 
 	__super::Bind_PipeLines();
 }

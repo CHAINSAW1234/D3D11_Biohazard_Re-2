@@ -33,6 +33,7 @@ HRESULT CEmblem_Door::Initialize(void* pArg)
 
 		m_eEmblemType = desc->eEmblemType;
 		m_pDoorState = desc->pDoorState;
+		m_pKeyUsing = desc->pKeyUsing;
 	}
 
 	if (FAILED(Add_Components()))
@@ -72,6 +73,10 @@ void CEmblem_Door::Late_Tick(_float fTimeDelta)
 
 	case (_int)EMBLEM_ANIM::OPEN_ANIM:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
+		if (m_pModelCom->isFinished(0))
+			*m_pEmblem_Anim = (_int)EMBLEM_ANIM::OPENED_ANIM;
+	case (_int)EMBLEM_ANIM::OPENED_ANIM:
+		m_bClear = true;
 		break;
 	}
 	m_pTransformCom->Rotation(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), XMConvertToRadians(360.f));

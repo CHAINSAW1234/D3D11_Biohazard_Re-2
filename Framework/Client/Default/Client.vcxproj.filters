@@ -1464,6 +1464,9 @@
     <ClInclude Include="..\Public\Mini_BigStatue.h">
       <Filter>02.GameObjects\MapObject\InteractProps\BigStatue\Mini_BigStatue</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Dial_BigStatue.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\BigStatue\Dial_BigStatue</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2137,6 +2140,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Mini_BigStatue.cpp">
       <Filter>02.GameObjects\MapObject\InteractProps\BigStatue\Mini_BigStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dial_BigStatue.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\BigStatue\Dial_BigStatue</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -89,7 +89,7 @@ public:
 private:
 	virtual HRESULT								Add_Components();
 	virtual HRESULT								Add_PartObjects() override;
-	HRESULT										Model_Hide();
+	virtual void									Do_Interact_Props() override;
 	virtual HRESULT								Initialize_PartObjects() override;
 
 private:
@@ -130,7 +130,8 @@ private:
 	_bool										m_bLock =	{ false };
 	_bool										m_bAttack = { false };
 	_int										m_iHP = { 5 };
-
+	_float									m_fDelayTime = { 0.f };
+	_float									m_fDelayLockTime = { 0.f };
 	_float										m_fTime = { 0.f };
 	_ubyte										m_eType = {DOOR_ONE};
 
@@ -147,6 +148,8 @@ private:
 	CTransform*									m_pZombieTransform = { nullptr };
 
 private :
+	_bool										m_bKeyUsing = { true };
+	_bool										m_bCamera = { false };
 	_uint										m_iEmblemType = {};
 	_int										m_iPropType = { 0 };
 	_ubyte										m_eEmblemAnim_Type = {};

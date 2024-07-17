@@ -67,15 +67,15 @@ void CMark_Door::Late_Tick(_float fTimeDelta)
 	switch (*m_pDoorState)
 	{
 	case CDoor::ONEDOOR_OPEN_L:
-		WorldMatrix = { mWorldMatrix **m_pSocketMatrix_01 * (m_pParentsTransform->Get_WorldMatrix()) };
+		WorldMatrix = { mWorldMatrix *(*m_pSocketMatrix_01) * (m_pParentsTransform->Get_WorldMatrix()) };
 		m_WorldMatrix = WorldMatrix;
 		break;
 	case CDoor::ONEDOOR_OPEN_R:
-		WorldMatrix = { mWorldMatrix **m_pSocketMatrix_01* (m_pParentsTransform->Get_WorldMatrix()) };
+		WorldMatrix = { mWorldMatrix *(*m_pSocketMatrix_01)* (m_pParentsTransform->Get_WorldMatrix()) };
 		m_WorldMatrix = WorldMatrix;
 		break;
 	case CDoor::ONEDOOR_STATIC:
-		WorldMatrix = { mWorldMatrix * *m_pSocketMatrix_01 * (m_pParentsTransform->Get_WorldMatrix()) };
+		WorldMatrix = { mWorldMatrix * (*m_pSocketMatrix_01) * (m_pParentsTransform->Get_WorldMatrix()) };
 		m_WorldMatrix = WorldMatrix;
 		break;
 	}
