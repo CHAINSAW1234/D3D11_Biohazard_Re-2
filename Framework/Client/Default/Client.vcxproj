@@ -201,6 +201,7 @@
     <ClInclude Include="..\Public\Body_EventProp.h" />
     <ClInclude Include="..\Public\Body_ItemLocker.h" />
     <ClInclude Include="..\Public\Body_ItemProp.h" />
+    <ClInclude Include="..\Public\Display_Background.h" />
     <ClInclude Include="..\Public\Key_Door.h" />
     <ClInclude Include="..\Public\Emblem_Door.h" />
     <ClInclude Include="..\Public\Card_Cabinet.h" />
@@ -498,6 +499,7 @@
     <ClCompile Include="..\Private\Dead_Zombie.cpp" />
     <ClCompile Include="..\Private\Decal_BulletHole.cpp" />
     <ClCompile Include="..\Private\Decal_SSD.cpp" />
+    <ClCompile Include="..\Private\Display_Background.cpp" />
     <ClCompile Include="..\Private\Key_Door.cpp" />
     <ClCompile Include="..\Private\Emblem_Door.cpp" />
     <ClCompile Include="..\Private\EnvCube.cpp" />
