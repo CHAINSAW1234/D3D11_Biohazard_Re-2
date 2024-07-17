@@ -145,6 +145,8 @@ public:
 	void										Set_Position(_float4 vPos);
 	void										Set_Position(_fvector vPos);
 
+	virtual void								Set_Render(_bool boolean);
+
 	// ============================ CHANGE == SET ============================
 	void										Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex);
 	void										Change_Body_Animation_Hold(_uint iPlayingIndex, _uint iAnimIndex);

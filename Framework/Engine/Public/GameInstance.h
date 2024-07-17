@@ -63,6 +63,11 @@ private:
 #pragma endregion
 
 
+#pragma region Graphic_Device
+public: /* For.Graphic_Device */
+	HRESULT									Copy_BackBuffer(ID3D11Texture2D* pTexture);
+#pragma endregion
+
 #pragma region Input_Device
 public: /* For.Input_Device */
 	_uint									Get_KeyState(_int iKey);
@@ -189,6 +194,7 @@ public: /* For.Target_Manager */
 	HRESULT									Bind_OutputShaderResource(class CComputeShader* pShader, const wstring& strRenderTargetTag, const _char* pConstantName);
 	HRESULT									Copy_Resource(const wstring& strRenderTargetTag, ID3D11Texture2D** ppTextureHub);
 	HRESULT									Copy_Resource(const wstring& strDestRenderTargetTag, const wstring& strSrcRenderTargetTag);
+	HRESULT									Copy_BackBuffer(const wstring& strRenderTargetTag);
 #pragma endregion
 
 #pragma region Frustrum
@@ -447,29 +453,29 @@ public:
 
 private:
 	class CGraphic_Device*						m_pGraphic_Device = { nullptr };
-	class CInput_Device*							m_pInput_Device = { nullptr };
+	class CInput_Device*						m_pInput_Device = { nullptr };
 	class CLevel_Manager*						m_pLevel_Manager = { nullptr };
 	class CObject_Manager*						m_pObject_Manager = { nullptr };
-	class CComponent_Manager*				m_pComponent_Manager = { nullptr };
-	class CRenderer*								m_pRenderer = { nullptr };
+	class CComponent_Manager*					m_pComponent_Manager = { nullptr };
+	class CRenderer*							m_pRenderer = { nullptr };
 	class CTimer_Manager*						m_pTimer_Manager = { nullptr };
-	class CPipeLine*									m_pPipeLine = { nullptr };
+	class CPipeLine*							m_pPipeLine = { nullptr };
 	class CLight_Manager*						m_pLight_Manager = { nullptr };
 	class CFont_Manager*						m_pFont_Manager = { nullptr };
 	class CTarget_Manager*						m_pTarget_Manager = { nullptr };
-	class CFrustum*									m_pFrustum = { nullptr };
-	class CExtractor*								m_pExtractor = { nullptr };
+	class CFrustum*								m_pFrustum = { nullptr };
+	class CExtractor*							m_pExtractor = { nullptr };
 	class CPhysics_Controller*					m_pPhysics_Controller = { nullptr };
 	class CSound_Manager*						m_pSound_Manager = { nullptr };
-	class CPicking*									m_pPicking = { nullptr };
+	class CPicking*								m_pPicking = { nullptr };
 	class CThread_Pool*							m_pThread_Pool = { nullptr };
-	class CAIController*							m_pAIController = { nullptr };
-	class CEasing*									m_pEasing = { nullptr };
+	class CAIController*						m_pAIController = { nullptr };
+	class CEasing*								m_pEasing = { nullptr };
 	class CAnimation_Library*					m_pAnimation_Library = { nullptr };
-	class CCompute_Shader_Manager*		m_pCS_Manager = { nullptr };
+	class CCompute_Shader_Manager*				m_pCS_Manager = { nullptr };
 	class CEvent_Manager*						m_pEvent_Manager = { nullptr };
 	/*for physics*/
-	_bool									m_bSimulate = { false };
+	_bool										m_bSimulate = { false };
 
 	//Random Number
 	random_device							m_RandomDevice;

@@ -83,6 +83,16 @@ HRESULT CGraphic_Device::Present()
 	return m_pSwapChain->Present(0, 0);	
 	}
 
+HRESULT CGraphic_Device::Copy_BackBuffer(ID3D11Texture2D* pTexture)
+{
+	ID3D11Texture2D* backBuffer = nullptr;
+	m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBuffer);
+
+	m_pDeviceContext->CopyResource(pTexture, backBuffer);
+
+	return S_OK;
+}
+
 HRESULT CGraphic_Device::Ready_SwapChain(HWND hWnd, _bool isWindowed, _uint iWinCX, _uint iWinCY)
 {
 	IDXGIDevice*			pDevice = nullptr;

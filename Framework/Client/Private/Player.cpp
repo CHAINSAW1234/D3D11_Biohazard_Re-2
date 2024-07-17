@@ -704,6 +704,28 @@ void CPlayer::Set_Position(_fvector vPos)
 	m_pController->SetPosition(vvPos);
 }
 
+void CPlayer::Set_Render(_bool boolean)
+{	
+	m_bRender = boolean;
+
+	for (auto& pPartObject : m_PartObjects) {
+		pPartObject->Set_Render(boolean);
+	}
+
+	if (m_bRender) {
+		for (auto& pWeapons : m_Weapons) {
+			pWeapons->Set_Render(boolean);
+		}
+	}
+	else {
+		for (auto& pWeapons : m_Weapons) {
+			if(pWeapons->Get_RenderLocation() != CWeapon::RENDERLOCATION::NONE)
+				pWeapons->Set_Render(boolean);
+		}
+	}
+
+}
+
 void CPlayer::Change_Body_Animation_Move(_uint iPlayingIndex, _uint iAnimIndex)
 {
 	Get_Body_Model()->Change_Animation(iPlayingIndex, Get_AnimSetMoveName(m_eAnimSet_Move), iAnimIndex);
@@ -2986,9 +3008,6 @@ HRESULT CPlayer::Initialize_PartModels()
 	_float4x4* pLeftWeaponCombinedMatrix = { const_cast<_float4x4*>(Get_Body_Model()->Get_CombinedMatrix("l_weapon")) };
 	pFlashLight->Set_Socket(pLeftWeaponCombinedMatrix);
 #pragma endregion
-
-	if (FAILED(static_cast<CBody_Player*>(m_PartObjects[PART_BODY])->Add_Animations()))
-		return E_FAIL;
 
 	return S_OK;
 }

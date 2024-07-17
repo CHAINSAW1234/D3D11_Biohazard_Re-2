@@ -18,6 +18,9 @@ public:
 	HRESULT						Clear_DepthStencil_View();
 
 	HRESULT						Present();
+
+	HRESULT						Copy_BackBuffer(ID3D11Texture2D* pTexture);
+
 private:	
 	ID3D11Device*				m_pDevice = { nullptr };
 		

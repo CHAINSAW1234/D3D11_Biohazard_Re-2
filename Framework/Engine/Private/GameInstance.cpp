@@ -325,6 +325,12 @@ wstring CGameInstance::ConvertToWString(const char* str, size_t len)
 	return wstring();
 }
 
+#pragma region Graphic_Device
+HRESULT CGameInstance::Copy_BackBuffer(ID3D11Texture2D* pTexture)
+{
+	return m_pGraphic_Device->Copy_BackBuffer(pTexture);
+}
+#pragma endregion
 
 #pragma region Input_Device
 _uint CGameInstance::Get_KeyState(_int iKey)
@@ -1091,6 +1097,11 @@ HRESULT CGameInstance::Copy_Resource(const wstring & strRenderTargetTag, ID3D11T
 HRESULT CGameInstance::Copy_Resource(const wstring& strDestRenderTargetTag, const wstring& strSrcRenderTargetTag)
 {
 	return m_pTarget_Manager->Copy_Resource(strDestRenderTargetTag, strSrcRenderTargetTag);
+}
+
+HRESULT CGameInstance::Copy_BackBuffer(const wstring& strRenderTargetTag)
+{
+	return m_pTarget_Manager->Copy_BackBuffer(strRenderTargetTag);
 }
 
 #pragma endregion
