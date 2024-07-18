@@ -127,10 +127,11 @@ private:
 	_ubyte			m_eKeyInput = { KEY_NOTHING };
 	_int				m_iSelectRow = { ROW_0 };
 	_int				m_iSelectCol = { COL_0 };
-	_bool				m_bCanPush[ROW_END][COL_END] = {true,};
+	_bool				m_bCanPush[ROW_END][COL_END] = {false,};
 	_int				m_iKeyPad[ROW_END][COL_END] = { {PAD_7,PAD_8,PAD_9},{PAD_4,PAD_5,PAD_6},{PAD_1,PAD_2,PAD_3},{PAD_0,PAD_0,PAD_DELETE},{PAD_ENTER,PAD_ENTER,PAD_ENTER} };
-	_int				m_bPush[NUM_END] = { -1,-1,-1 };
+	_int				m_iPush[NUM_END] = { -1,-1,-1 };
 	_int				m_iSelectPushNum = { NUM_0 };
+	_bool				m_bKey[2] = { false };
 
 	map<string, class CCabinet*> m_Cabinets;  //elect캐비넷 tag와 그 주소
 
