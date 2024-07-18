@@ -972,14 +972,28 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 			{
 				if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP2) && !m_bActivity)
 					m_bOnce = true;
+
+				Opreate_Selector_UI(true, Get_Object_Pos());
 			}
 			else
+			{
 				m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+
+				Opreate_Selector_UI(false, Get_Object_Pos());
+
+			}
 		}
 		else
 		{
 			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 			m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+
+			if (nullptr != m_pSelector)
+			{
+				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+				m_pSelector = nullptr;
+			}
 		}
 	}
 	else
@@ -987,7 +1001,9 @@ void CDoor::OneDoor_Late_Tick(_float fTimeDelta)
 		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
 		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+
 	}
+
 	if (!m_bBlock && m_bOnce&& m_bCol[INTER_COL_NORMAL][COL_STEP2])
 	{
 		m_bOnce = false;

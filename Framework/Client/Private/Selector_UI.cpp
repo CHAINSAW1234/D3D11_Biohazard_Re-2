@@ -111,8 +111,6 @@ CGameObject* CSelector_UI::Destroy_Selector()
 {
     m_isOutDistance = true;
 
-    m_isUsing = false;
-
     return nullptr;
 }
 
@@ -252,7 +250,7 @@ void CSelector_UI::Exception_Handle()
     {
         Find_Player();
     }
-}
+} 
 
 
 void CSelector_UI::Reset()
