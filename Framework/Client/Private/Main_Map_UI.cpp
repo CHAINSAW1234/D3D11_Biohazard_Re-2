@@ -45,33 +45,16 @@ HRESULT CMain_Map_UI::Initialize(void* pArg)
         m_eDoor_Type = CustomUIDesc->eDoor_Type;
     }
 
-    /* 1. 부모일 경우 : 필요 없는 뒷 배경, 렌더하지 않을 것이다. */
-    if (false == m_IsChild)
-    {
-        m_isRender = false;
-        m_vColor[0].vColor = m_vCurrentColor = ALPHA_ZERO;
-    }
-
-    /* 필수 요소 */
-    if (m_iWhichChild == (_uint)MAP_CHILD_TYPE::BACKGROUND_MAP)
-    {
-        m_isPlay = false;
-        m_vColor[0].vColor = m_vCurrentColor = ALPHA_ZERO;
-        m_vColor[0].fBlender_Value = m_fBlending = 1.f;
-        m_vColor[0].isBlender = m_isBlending = true;
-    }
-
-    if (m_iWhichChild == (_uint)MAP_CHILD_TYPE::LINE_MAP)
-    {
-        m_vColor[0].vColor = m_vCurrentColor = _float4(0.f, 0.f, 0.f, 0);
-    }
-
     if (MAP_UI_TYPE::DOOR_MAP == m_eMapComponent_Type)
     {
         Find_DoorObj();
     }
 
+    if (FAILED(Change_Tool()))
+        return E_FAIL;
+
     m_isMouse_Control = true;
+
     m_vOriginPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
     return S_OK;
@@ -101,6 +84,32 @@ HRESULT CMain_Map_UI::Render()
 {
     if (FAILED(__super::Render()))
         return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CMain_Map_UI::Change_Tool()
+{
+    /* 1. 부모일 경우 : 필요 없는 뒷 배경, 렌더하지 않을 것이다. */
+    if (false == m_IsChild)
+    {
+        m_isRender = false;
+        m_vColor[0].vColor = m_vCurrentColor = ALPHA_ZERO;
+    }
+
+    /* 필수 요소 */
+    if (m_iWhichChild == (_uint)MAP_CHILD_TYPE::BACKGROUND_MAP)
+    {
+        m_isPlay = false;
+        m_vColor[0].vColor = m_vCurrentColor = ALPHA_ZERO;
+        m_vColor[0].fBlender_Value = m_fBlending = 1.f;
+        m_vColor[0].isBlender = m_isBlending = true;
+    }
+
+    if (m_iWhichChild == (_uint)MAP_CHILD_TYPE::LINE_MAP)
+    {
+        m_vColor[0].vColor = m_vCurrentColor = _float4(0.f, 0.f, 0.f, 0);
+    }
 
     return S_OK;
 }

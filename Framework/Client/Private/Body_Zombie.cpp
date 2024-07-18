@@ -209,7 +209,8 @@ HRESULT CBody_Zombie::Render()
 		}
 
 		auto iBranch = m_pModelCom->Get_Mesh_Branch(i);
-		if(iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER && iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_DAMAGED && iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_DEFICIT)
+		if(iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_INNER && iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_DAMAGED && iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_DEFICIT
+			&& iBranch != (_int)CBody_Zombie::BODY_MESH_TYPE::_BROKEN_HEAD)
 		{
 			m_bDecalRender = true;
 
@@ -1020,6 +1021,9 @@ void CBody_Zombie::SetRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType)
 
 void CBody_Zombie::SetPartialRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType)
 {
+	if (eType == COLLIDER_TYPE::HEAD)
+		return;
+
 	m_pGameInstance->Start_PartialRagdoll(m_pRagdoll, iId,eType);
 
 	//m_pRagdoll->Add_Force(vForce, eType);
@@ -1036,6 +1040,11 @@ void CBody_Zombie::SetCulling(_bool boolean)
 PxRigidDynamic* CBody_Zombie::Get_Ragdoll_RigidBody(COLLIDER_TYPE eType)
 {
 	return m_pRagdoll->GetRigidBody(eType);
+}
+
+_float4 CBody_Zombie::GetRigidBodyPos(COLLIDER_TYPE eType)
+{
+	return m_pRagdoll->GetRigidBodyPos(eType);
 }
 
 void CBody_Zombie::Update_Current_MotionType()

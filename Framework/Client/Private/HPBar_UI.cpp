@@ -45,9 +45,6 @@ HRESULT CHPBar_UI::Initialize(void* pArg)
             m_wstrWaring = TEXT("Prototype_Component_Texture_WaringHP_UI");
             m_wstrDanger = TEXT("Prototype_Component_Texture_DangerHP_UI");
 
-            // m_fMaskControl.y = 0.f;
-            // m_Mask->fMaskControl.y = 0.f;
-
             m_fOrigin_MaskControl = m_Mask[0].fMaskControl;
             m_vDefaultColor_Origin = m_vColor[0].vColor;
 
@@ -86,16 +83,16 @@ HRESULT CHPBar_UI::Initialize(void* pArg)
         m_isLightMask = true;
     }
     else
+    {
         m_fBlending = 0.5f;
-
-    _float4 vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-    _float3 vScaled = m_pTransformCom->Get_Scaled();
+    }
 
     Find_Main_Inventory();
+
     HPBar_Position_Setting();
 
-    m_SavePos[0] = m_pTransformCom->Get_WorldMatrix();
-    m_isRender = false;
+    if (FAILED(Change_Tool()))
+        return E_FAIL;
 
     return S_OK;
 }
@@ -162,6 +159,18 @@ void CHPBar_UI::OnNotify()
             m_vecTextBoxes.back()->Set_FontColor(m_vCurrentColor);
     }
 
+}
+
+HRESULT CHPBar_UI::Change_Tool()
+{
+    _float4 vPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+    _float3 vScaled = m_pTransformCom->Get_Scaled();
+
+    m_SavePos[0] = m_pTransformCom->Get_WorldMatrix();
+
+    m_isRender = false;
+
+    return S_OK;
 }
 
 void CHPBar_UI::Find_DamageUI()

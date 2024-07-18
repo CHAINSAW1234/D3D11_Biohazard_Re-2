@@ -1875,7 +1875,6 @@ void CModel::Get_Child_ZointIndices(string strStartBoneTag, const string& strEnd
 	if (-1 == iEndBoneIndex || -1 == iStartBoneIndex)
 		return;
 
-
 	_int			iParentIndex = { -1 };
 	_int			iCurrentBoneIndex = { iEndBoneIndex };
 	while (iParentIndex != iStartBoneIndex)

@@ -38,12 +38,21 @@ HRESULT CDecal_BulletHole::Initialize(void* pArg)
 
 void CDecal_BulletHole::Tick(_float fTimeDelta)
 {
+	if (!m_pGameInstance->isInFrustum_WorldSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), m_vExtent.x))
+	{
+		m_bRender = false;
+	}
+	else
+	{
+		m_bRender = true;
+	}
 	m_iFrame = 0;
 }
 
 void CDecal_BulletHole::Late_Tick(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_DECAL, this);
+	if(m_bRender == true)
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_DECAL, this);
 }
 
 HRESULT CDecal_BulletHole::Render()

@@ -766,6 +766,24 @@
     <Filter Include="02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display\Display_Background">
       <UniqueIdentifier>{7804f4df-3fdb-4446-9edd-c649c5760041}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\BigStatue">
+      <UniqueIdentifier>{6b3e8aff-7784-438e-959f-34e8c1f511f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\Door\Mark_Door">
+      <UniqueIdentifier>{57705a7b-4d83-4544-933f-f7598bbdce7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\BigStatue\Body_BigStatue">
+      <UniqueIdentifier>{077c275d-3d15-4b65-96b1-5551acb2ff07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\BigStatue\Mini_BigStatue">
+      <UniqueIdentifier>{52ab86cb-14ba-482a-906b-ee6890ef9eaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\BigStatue\Medal_BigStatue">
+      <UniqueIdentifier>{8fad683d-c6fe-46a8-92eb-d1f0ebcf8c71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\MapObject\InteractProps\BigStatue\Dial_BigStatue">
+      <UniqueIdentifier>{985abf78-ed81-4107-b3da-d6adcceb9fa2}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Cut_Scene\Prop_Controller">
       <UniqueIdentifier>{f025e3bb-01ae-493f-b8cd-853d26bb8594}</UniqueIdentifier>
     </Filter>
@@ -1503,6 +1521,24 @@
     <ClInclude Include="..\Public\Display_Background.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display\Display_Background</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Mark_Door.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\Door\Mark_Door</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BigStatue.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\BigStatue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Body_BigStatue.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\BigStatue\Body_BigStatue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Medal_BigStatue.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\BigStatue\Medal_BigStatue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Mini_BigStatue.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\BigStatue\Mini_BigStatue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Dial_BigStatue.h">
+      <Filter>02.GameObjects\MapObject\InteractProps\BigStatue\Dial_BigStatue</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Prop_Controller.h">
       <Filter>02.GameObjects\Cut_Scene\Prop_Controller</Filter>
     </ClInclude>
@@ -2197,6 +2233,24 @@
     </ClCompile>
     <ClCompile Include="..\Private\Display_Background.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Display\Display_Background</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Mark_Door.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\Door\Mark_Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BigStatue.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\BigStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Body_BigStatue.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\BigStatue\Body_BigStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Medal_BigStatue.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\BigStatue\Medal_BigStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Mini_BigStatue.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\BigStatue\Mini_BigStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Dial_BigStatue.cpp">
+      <Filter>02.GameObjects\MapObject\InteractProps\BigStatue\Dial_BigStatue</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Prop_Controller.cpp">
       <Filter>02.GameObjects\Cut_Scene\Prop_Controller</Filter>

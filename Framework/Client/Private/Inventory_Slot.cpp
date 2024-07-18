@@ -75,6 +75,11 @@ HRESULT CInventory_Slot::Render()
 	return S_OK;
 }
 
+HRESULT CInventory_Slot::Change_Tool()
+{
+	return S_OK;
+}
+
 CInventory_Slot* CInventory_Slot::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CInventory_Slot* pInstance = new CInventory_Slot(pDevice, pContext);

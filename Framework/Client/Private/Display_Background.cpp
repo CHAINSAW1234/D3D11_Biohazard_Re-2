@@ -65,6 +65,11 @@ HRESULT CHint_Display_Background::Render()
 	return S_OK;
 }
 
+HRESULT CHint_Display_Background::Change_Tool()
+{
+	return S_OK;
+}
+
 void CHint_Display_Background::Set_BackGround(ITEM_READ_TYPE eIRT, _bool bDead)
 {
 	if (false == CHint_Display_Background::IsCanChangeBG_Tex(eIRT))

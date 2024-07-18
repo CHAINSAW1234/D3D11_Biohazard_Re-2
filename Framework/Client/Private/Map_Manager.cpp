@@ -92,6 +92,11 @@ HRESULT CMap_Manager::Render()
 	return S_OK;
 }
 
+HRESULT CMap_Manager::Change_Tool()
+{
+	return E_NOTIMPL;
+}
+
 void CMap_Manager::Mouse_Pos(_float fTimeDelta)
 {
 	if (!(m_eFloorType == *m_pMapPlayer->Get_ViewFloor_Type() || MAP_FLOOR_TYPE::FLOOR_FREE == m_eFloorType))

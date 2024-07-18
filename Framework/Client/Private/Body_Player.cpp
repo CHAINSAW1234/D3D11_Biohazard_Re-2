@@ -142,7 +142,6 @@ HRESULT CBody_Player::Initialize(void* pArg)
 	m_pModelCom->Set_TickPerSec(CPlayer::Get_AnimSetEtcName(CPlayer::COMMON), CPlayer::HOLD_LEFTHAND_LIGHT, .1f);
 	
 	m_bDecalRender = false;
-	m_pModelCom->Init_Decal(LEVEL_GAMEPLAY);
 	m_bCloth = true;
 	m_bDecal_Player = true;
 

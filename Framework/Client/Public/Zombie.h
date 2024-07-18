@@ -228,20 +228,25 @@ public:
 	void								SetBlood_STG();
 	void								ResetBiteEffect();
 	_float4x4							GetDecalWorldMat();
+	void								SetBlood_HeadBlow();
 protected:
 	vector<class CBlood*>				m_vecBlood;
 	vector<class CBlood*>				m_vecBlood_STG;
 	vector<class CBlood_Drop*>			m_vecBlood_Drop;
 	vector<class CBlood_Drop*>			m_vecBlood_Drop_STG;
 	vector<class CBlood_Drop*>			m_vecBlood_Drop_STG_NoRay;
+	vector<class CBlood_Drop*>			m_vecBlood_Drop_HeadBlow;
+	vector<class CBlood*>				m_vecBlood_HeadBlow;
 
 	ULONGLONG							m_BloodTime;
 	ULONGLONG							m_BloodDelay;
 	_uint								m_iBloodCount = { 0 };
+	_uint								m_iBloodCount_HeadBlow = { 0 };
 	_bool								m_bSetBlood = { false };
 	_float4								m_vHitPosition;
 	_float4								m_vHitNormal;
 	_uint								m_iBloodType = { 0 };
+	_uint								m_iBloodType_HeadBlow = { 0 };
 	_float								m_fHitDistance = { 0.f };
 	_uint								m_iMeshIndex_Hit = { 0 };
 
@@ -268,6 +273,10 @@ protected:
 	_float4								m_vMouthLook;
 	_float4x4							m_MouthBone_Combined;
 	_bool								m_bBiteBlood = { false };
+
+	ULONGLONG							m_HeadBlowEffectTime = { 0 };
+	ULONGLONG							m_HeadBlowEffectDelay = { 0 };
+	_bool								m_bHeadBlow = { false };
 #pragma endregion
 
 private:

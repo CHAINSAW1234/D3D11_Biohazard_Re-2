@@ -74,6 +74,11 @@ HRESULT CSlot_Highlighter::Render()
 	return S_OK;
 }
 
+HRESULT CSlot_Highlighter::Change_Tool()
+{
+	return S_OK;
+}
+
 void CSlot_Highlighter::Set_Dead(_bool bDead)
 {
 	m_bDead = bDead;

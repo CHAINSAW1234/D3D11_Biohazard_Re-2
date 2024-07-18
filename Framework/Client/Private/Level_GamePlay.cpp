@@ -261,41 +261,20 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 #endif
 
 #ifdef TEST_ZOMBIE_MAINHALL
+	CZombie::ZOMBIE_FEMALE_DESC		ObjectDesc;
+	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_FEMALE };
+	ObjectDesc.ePantsType = { static_cast<ZOMBIE_FEMALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_PANTS::_END) - 1)) };
+	ObjectDesc.eFaceType = { static_cast<ZOMBIE_FEMALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_FACE::_END) - 1)) };
+	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_FEMALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_SHIRTS::_END) - 1)) };
 
-	for (_uint i = 0; i < 2; ++i)
-	{
+	//CZombie::ZOMBIE_MALE_DESC		ObjectDesc;
+	//ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
+	//ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
+	//ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
+	//ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
 
-		_int			iRandomBody = { m_pGameInstance->GetRandom_Int(static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE), static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE_BIG)) };
-
-		if (ZOMBIE_BODY_TYPE::_MALE == static_cast<ZOMBIE_BODY_TYPE>(iRandomBody))
-		{
-			CZombie::ZOMBIE_MALE_DESC		ObjectDesc;
-			ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
-			ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
-			ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
-			ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
-			ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
-			ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
-
-			_float			fRandomX = { m_pGameInstance->GetRandom_Real(3.f, 10.f) };
-			_float			fRandomZ = { m_pGameInstance->GetRandom_Real(3.f, 10.f) };
-
-			_matrix			WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(fRandomX, 0.f, fRandomZ) };
-			XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
-
-			if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-				return E_FAIL;
-		}
-
-		else if (ZOMBIE_BODY_TYPE::_FEMALE == static_cast<ZOMBIE_BODY_TYPE>(iRandomBody))
-		{
-			CZombie::ZOMBIE_FEMALE_DESC		ObjectDesc;
-			ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_FEMALE };
-			ObjectDesc.ePantsType = { static_cast<ZOMBIE_FEMALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_PANTS::_END) - 1)) };
-			ObjectDesc.eFaceType = { static_cast<ZOMBIE_FEMALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_FACE::_END) - 1)) };
-			ObjectDesc.eShirtsType = { static_cast<ZOMBIE_FEMALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_SHIRTS::_END) - 1)) };
-			ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
-			ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
+	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
+	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
 
 			_float			fRandomX = { m_pGameInstance->GetRandom_Real(3.f, 10.f) };
 			_float			fRandomZ = { m_pGameInstance->GetRandom_Real(3.f, 10.f) };
@@ -511,9 +490,27 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 		UI_Distinction(selectedFilePath);
 		CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 	}
-	
+	/////////////////////////* ¢º ¢º  ¢º  ¢º  ¢º LayOut  */////////////////////////////
 	/* 4. UI_LayOut */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_LayOut.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
+	/* 4. UI_Layout_Key */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Layout_Key.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
+	/* 4. UI_Layout_Statue */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Layout_Statue.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+	
+	/* 4. UI_HintLayout */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_HintLayout.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
@@ -948,7 +945,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 	}
 
 	/* 4. UI_LayOut */
-	else if (TEXT("UI_LayOut") == fileName)
+	else if (TEXT("UI_LayOut") == fileName || TEXT("UI_Layout_Key") == fileName || TEXT("UI_Layout_Statue") == fileName || TEXT("UI_HintLayout") == fileName)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_LayOut_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
@@ -1440,6 +1437,20 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 
 			case OBJ_BIGSTATUE:
 
+				for (size_t i = 0; i < 10; i++)
+				{
+					_int iNum = { 0 };
+
+
+					if (!ReadFile(hFile, &iNum, sizeof(_int), &dwByte, NULL))
+					{
+						CloseHandle(hFile);
+						return E_FAIL;
+					}
+
+					tagInteractprops.tagBigStatue.iLockNum[i] = iNum;
+
+				}
 				break;
 
 			case OBJ_HALL_STATUE:

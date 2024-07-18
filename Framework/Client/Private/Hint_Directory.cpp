@@ -75,6 +75,11 @@ HRESULT CHint_Directory::Render()
 	return S_OK;
 }
 
+HRESULT CHint_Directory::Change_Tool()
+{
+	return S_OK;
+}
+
 void CHint_Directory::Set_Directory(ITEM_READ_TYPE eIRT, wstring wstrText)
 {
 	m_eItem_Read_Type = eIRT;

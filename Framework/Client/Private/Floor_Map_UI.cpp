@@ -58,6 +58,11 @@ HRESULT CFloor_Map_UI::Render()
     return S_OK;
 }
 
+HRESULT CFloor_Map_UI::Change_Tool()
+{
+    return S_OK;
+}
+
 
 /* Floor를 검색할 때 */
 void CFloor_Map_UI::Floor_Select()

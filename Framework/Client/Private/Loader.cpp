@@ -57,6 +57,7 @@
 #include "Map.h"
 #include "Door.h"
 #include "Body_Door.h"
+#include "Mark_Door.h"
 #include "Cabinet.h"
 #include "Body_Cabinet.h"
 #include"Lock_Cabinet.h"
@@ -89,6 +90,12 @@
 #include "Item_Statue.h"
 #include "Emblem_Door.h"
 #include "Key_Door.h"
+#include "BigStatue.h"
+#include "Body_BigStatue.h"
+#include "Medal_BigStatue.h"
+#include "Mini_BigStatue.h"
+#include "Dial_BigStatue.h"
+
 /* UI */
 #include "Customize_UI.h"
 #include "Inventory_Item_UI.h"
@@ -1017,6 +1024,7 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Shutter"), CShutter::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Statue"), CStatue::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Big_Statue"), CBigStatue::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_EventProp"), CEventProp::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ItemProp"), CItemProp::Create(m_pDevice, m_pContext));
 
@@ -1054,12 +1062,53 @@ HRESULT CLoader::Load_Field_Prototype(const wstring& filePath)
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Key_Reader"), CKey_ReaderMachine::Create(m_pDevice, m_pContext));
 
 	/* Door Emblem */
-	/* 1. Space */
+
+	/* 0. Heart*/
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_heart_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_500_dooremblem01a_heart_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_504_dooremblemmark01a_heart"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_504_dooremblemmark01a_heart.fbx", Ininitmatrix));
+
+	/* 1. Spade */
 	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_00md_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_500_dooremblem01a_00md_Anim.fbx", Ininitmatrix));
-	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medal_EmblemDoor"), CEmblem_Door::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_504_dooremblemmark01a_spade"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_504_dooremblemmark01a_spade.fbx", Ininitmatrix));
 	
-	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm73_103_spadekey01a"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "..\\Bin\\Resources\\Models\\Map\\Item\\sm73\\sm73_103_spadekey01a.fbx", Ininitmatrix));
+	/* 2. Clover*/
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_clover_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_500_dooremblem01a_clover_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_504_dooremblemmark01a_clover"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_504_dooremblemmark01a_clover.fbx", Ininitmatrix));
+	
+	/* 3. Dia*/
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_dia_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_500_dooremblem01a_dia_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm40_504_dooremblemmark01a_dia"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm40\\sm40_504_dooremblemmark01a_dia.fbx", Ininitmatrix));
+	
+	
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medal_EmblemDoor"), CEmblem_Door::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Mark_EmblemDoor"), CMark_Door::Create(m_pDevice, m_pContext));
 	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medal_KeyDoor"), CKey_Door::Create(m_pDevice, m_pContext));
+
+
+
+
+	//큰 석상이 가지고 있는 미니 
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_182_womanstatue01a_Mini_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Part_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_182_womanstatue01a_Mini_Part_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_183_lionstatue01a_Mini_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_183_lionstatue01a_Mini_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_180_pushstatue01a_Mini_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_180_pushstatue01a_Mini_Anim.fbx", Ininitmatrix));
+
+	//석상의dial
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_177_hieroglyphicdiallock01b_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_177_hieroglyphicdiallock01b_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_176_hieroglyphicdiallock01a_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_176_hieroglyphicdiallock01a_Anim.fbx", Ininitmatrix));
+	
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_183_lionstatue01a_Mini_Parts_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_183_lionstatue01a_Mini_Parts_Anim.fbx", Ininitmatrix));
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_180_pushstatue01a_Mini_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_180_pushstatue01a_Mini_Anim.fbx", Ininitmatrix)); 
+	m_pGameInstance->Add_Prototype(m_eNextLevelID, TEXT("Prototype_Component_Model_sm42_180_pushstatue01a_Mini_Parts_Anim"), CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "..\\Bin\\Resources\\Models\\Map\\Prop\\Gimmick\\sm42\\sm42_180_pushstatue01a_MiniParts_Anim.fbx", Ininitmatrix)); 
+	
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Medal_BigStatue"), CMedal_BigStatue::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Mini_BigStatue"), CMini_BigStatue::Create(m_pDevice, m_pContext));
+	m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Dial_BigStatue"), CDial_BigStatue::Create(m_pDevice, m_pContext));
+
+
+
+
+
 
 	CloseHandle(hFile);
 	return S_OK;

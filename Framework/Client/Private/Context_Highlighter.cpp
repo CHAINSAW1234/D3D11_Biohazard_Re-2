@@ -54,6 +54,11 @@ HRESULT CContext_Highlighter::Render()
 	return S_OK;
 }
 
+HRESULT CContext_Highlighter::Change_Tool()
+{
+	return E_NOTIMPL;
+}
+
 CContext_Highlighter* CContext_Highlighter::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CContext_Highlighter* pInstance = new CContext_Highlighter(pDevice, pContext);

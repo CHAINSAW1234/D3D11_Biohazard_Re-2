@@ -22,9 +22,10 @@ public:
 		_bool*				pIsOutOfControll = { nullptr };
 		const _bool*		pRender;
 		_ubyte*				pState;
-		_float3*				pRootTranslation = { nullptr };
+		_float3*			pRootTranslation = { nullptr };
 		wstring				strModelComponentName = { TEXT("") };
-		_int					iPropType = {0};
+		_int				iPropType = {0};
+
 	}PART_INTERACTPROPS_DESC;
 
 	enum Part_INTERACTPROPS_COL
@@ -78,7 +79,7 @@ public :
 	_bool													Is_Finishied_Anim() { return m_pModelCom->isFinished(0); }
 	void													Change_Anim(){m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);}
 	void													Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
-	const _float4x4*									Get_WorldMatrix_Ptr() { return &m_WorldMatrix; }
+	_float4x4*											Get_WorldMatrix_Ptr() { return &m_WorldMatrix; }
 
 protected:
 	_int											m_iPropType = { 0 };

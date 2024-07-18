@@ -93,6 +93,7 @@ public:
 public:
 	CRagdoll_Physics*					Get_RagDoll_Ptr() { return m_pRagdoll; }
 
+	_float4								GetRigidBodyPos(COLLIDER_TYPE eType);
 private:
 	CModel*								m_pModelCom = { nullptr };
 	CShader*							m_pShaderCom = { nullptr };
