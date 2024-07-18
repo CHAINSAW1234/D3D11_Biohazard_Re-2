@@ -16,6 +16,7 @@ HRESULT CSound_Manager::Initialize()
 	if (eResult != FMOD_OK)
 		return E_FAIL;
 	LoadSoundFile();
+	LoadSoundFile_Zombie();
 
 	return S_OK;
 }
@@ -279,6 +280,42 @@ void CSound_Manager::LoadSoundFile()
 	_int iResult = 0;
 
 	char szCurPath[MAX_PATH] = "../Bin/Resources/Sound/";
+	char szFullPath[MAX_PATH] = "";
+	char szFilename[MAX_PATH];
+	while (iResult != -1)
+	{
+		WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
+		strcpy_s(szFullPath, szCurPath);
+		strcat_s(szFullPath, szFilename);
+		SOUND_DESC* Sound_desc = new SOUND_DESC;
+		FMOD_RESULT eRes = FMOD_System_CreateSound(m_pSystem, szFullPath, FMOD_3D, 0, &Sound_desc->pSound);//|FMOD_3D_HEADRELATIVE  | FMOD_3D_INVERSEROLLOFF
+		if (eRes == FMOD_OK)
+		{
+			_int iLength = (_int)strlen(szFilename) + 1;
+
+			TCHAR pSoundKey[MAX_PATH] = { TEXT("") };
+			MultiByteToWideChar(CP_ACP, 0, szFilename, iLength, pSoundKey, iLength);
+			m_Soundmap.emplace(pSoundKey, Sound_desc);
+		}
+		else
+			delete Sound_desc;
+		iResult = _tfindnext64(handle, &fd);
+	}
+	FMOD_System_Update(m_pSystem);
+
+	_findclose(handle);
+}
+
+void CSound_Manager::LoadSoundFile_Zombie()
+{
+	_tfinddata64_t fd;
+	__int64 handle = _tfindfirst64(L"../Bin/Resources/Sound/em/*.*", &fd);
+	if (handle == -1 || handle == 0)
+		return;
+
+	_int iResult = 0;
+
+	char szCurPath[MAX_PATH] = "../Bin/Resources/Sound/em/";
 	char szFullPath[MAX_PATH] = "";
 	char szFilename[MAX_PATH];
 	while (iResult != -1)

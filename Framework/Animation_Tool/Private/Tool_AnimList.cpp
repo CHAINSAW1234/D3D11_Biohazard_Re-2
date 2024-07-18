@@ -79,6 +79,7 @@ void CTool_AnimList::Show_LayerTags()
     list<wstring>           AnimLayerTags = { m_pCurrentModel->Get_AnimationLayer_Tags() };
     for (auto& wstrAnimLayerTag : AnimLayerTags)
     {
+        ++iNumAnimLayer;
         string              strAnimLayerTag = { Convert_Wstring_String(wstrAnimLayerTag) };
         if(ImGui::CollapsingHeader(string(strAnimLayerTag + string("##Show_LayerTags()") + to_string(iNumAnimLayer)).c_str()))
         {

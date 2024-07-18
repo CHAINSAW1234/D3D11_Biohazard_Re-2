@@ -259,6 +259,8 @@ void CZombie::Tick(_float fTimeDelta)
 		}
 	}
 
+	Update_Sounds();
+
 	__super::Tick(fTimeDelta);
 
 	if (nullptr != m_pController && false == m_isManualMove && m_pController->GetDead() == false)
@@ -1395,6 +1397,25 @@ void CZombie::Play_Animations_Body(_float fTimeDelta)
 void CZombie::Active_IK_Body(_bool isActive)
 {
 	static_cast<CBody_Zombie*>(m_PartObjects[PART_BODY])->Active_IK(isActive);
+}
+
+void CZombie::Update_Sounds()
+{
+	_float4			vPosition = { m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) };
+	memcpy(&m_SoundDesc.vPos, &vPosition, sizeof(_float3));
+
+	m_SoundDesc.fRange = _float2(3.f, 3.f);
+	m_SoundDesc.fVolume = 1.f;
+	m_SoundDesc.eMode = FMOD_3D | FMOD_3D_LINEARROLLOFF;
+	memcpy(&m_SoundDesc.vSpeedDir, &_float3(0.f, 0.f, 0.f), sizeof(_float3));
+
+	for (auto& Pair: m_SoundTags)
+	{	
+		_uint iChannelIndex = { Pair.first };
+		wstring strSoundTag = { Pair.second };
+
+		m_pGameInstance->Update_Sound(strSoundTag, m_SoundDesc);
+	}
 }
 
 _bool CZombie::Is_In_Location(LOCATION_MAP_VISIT eLocation)

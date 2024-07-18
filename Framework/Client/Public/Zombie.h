@@ -126,6 +126,9 @@ public:		/* For.Start_Trigger */
 	inline _bool						Is_Start() { return m_isStart; }
 	inline void							Set_Start(_bool isStart) { m_isStart = isStart; }
 
+public:		/* For.Update_Sound */
+	void								Update_Sounds();
+
 public:		/* For.Location Controll */
 	_bool								Is_In_Location(LOCATION_MAP_VISIT eLocation);
 	_bool								Is_In_Linked_Location(LOCATION_MAP_VISIT eLocation);
@@ -291,6 +294,8 @@ private:
 private:
 	LOCATION_MAP_VISIT					m_eLocation = { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
 
+	SOUND_DESC							m_SoundDesc;
+	unordered_map<_uint, wstring>		m_SoundTags;
 
 public:
 	static CZombie* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

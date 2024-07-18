@@ -31,6 +31,7 @@ public:
 
 private:
 	void										LoadSoundFile();
+	void										LoadSoundFile_Zombie();
 	SOUND_DESC*									Find_Sound(const wstring& SoundKeyTag);
 private:
 	// 사운드 리소스 정보를 갖는 객체 
