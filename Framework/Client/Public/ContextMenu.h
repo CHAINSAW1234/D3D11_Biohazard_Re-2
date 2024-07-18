@@ -51,6 +51,8 @@ private:
 
 	_float3						m_fArrivalPos = {};
 
+	CGameObject*				m_pHoverdChild = { nullptr };//사운드용
+
 #pragma region 나옹
 private:
 	/* Fuction */

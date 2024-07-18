@@ -52,6 +52,7 @@ private:
 	CTransform*					m_pHL_Trans = { nullptr };//하이라이트 트렌스폼
 	CHint_Blind*				m_pDisplay_Blinde = { nullptr }; 
 	vector<CHint_Directory*>	m_vecDirectory;
+	CHint_Directory*			m_pHoveredDirectory = { nullptr };
 	CHint_Display*				m_pDisplay = { nullptr };
 	CTextBox*					m_pPoliceButton = { nullptr };
 	CTextBox*					m_pTutorialButton = { nullptr };
@@ -61,6 +62,8 @@ private:
 	DOCUMENT_CLASSIFY									m_eCurrentDC = { POLICE };							//현재 탭
 	map <DOCUMENT_CLASSIFY, vector<ITEM_READ_TYPE>>		m_mapAcqDoc;										//습득한 문서
 	map <ITEM_READ_TYPE, DOCUMENT_INFO>					m_mapDocumentInfo;									//문서 정보
+	_bool												m_bLeftRight_Flip = { false };
+
 
 private:
 	HRESULT Add_Components();

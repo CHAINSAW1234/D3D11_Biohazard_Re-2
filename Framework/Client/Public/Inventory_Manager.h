@@ -121,6 +121,7 @@ private:
 private:
 	/* for. InvenSlot */
 	vector<CInventory_Slot*>		m_vecInvenSlot;
+	CInventory_Slot*				m_pHoverdSlot = { nullptr }; //사운드용
 	_uint							m_iInvenCount = { 8 };
 	_uint                           m_iInvenMaxCount = { 20 };
 

@@ -77,12 +77,9 @@ void CInventory_Manager::SecondTick_Seting()
 			_uint iHotKeyNum = m_pHotkey->RegisterHoykey(1, iter->Get_ItemNumber(), iter->Get_ItemQuantity());
 			iter->Set_Text(HOTKEY_DISPLAY, to_wstring(iHotKeyNum));
 		}
-		
-
 	}
 
 	m_pSlotHighlighter->ResetPosition(m_fSlotHighlighterResetPos);
-
 }
 
 void CInventory_Manager::Tick(_float fTimeDelta)
@@ -164,8 +161,14 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 	{
 		if (true == m_vecInvenSlot[i]->IsMouseHover())
 		{
+			if (m_pHoverdSlot != m_vecInvenSlot[i])
+			{
+				m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+				m_pHoverdSlot = m_vecInvenSlot[i];
+			}
 			m_IsNoOneHover = false;
 			pHoveredSlot = m_vecInvenSlot[i];
+			
 		}
 	}
 
@@ -196,6 +199,7 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 				{
 					m_eInven_Manager_State = CONTEXTUI_SELECT;
 					m_eTaskSequence = SETING;
+					m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Context_Open.mp3"), CHANNELID::CH30);
 				}
 			}
 
@@ -216,6 +220,7 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 						m_pSlotHighlighter->Set_DragShadow(true);
 						m_eTaskSequence = SETING;
 						m_eInven_Manager_State = REARRANGE_ITEM;
+						m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_DragUp.mp3"), CHANNELID::CH30);
 					}
 				}
 			}
@@ -280,6 +285,11 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 		{
 			if (true == m_vecInvenSlot[i]->IsMouseHover())
 			{
+				if (m_pHoverdSlot != m_vecInvenSlot[i])
+				{
+					m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+					m_pHoverdSlot = m_vecInvenSlot[i];
+				}
 				m_IsNoOneHover = false;
 				pHoveredSlot = m_vecInvenSlot[i];
 			}
@@ -395,6 +405,7 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 	}
 		
 	case Client::CInventory_Manager::APPLY: {
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_DragDown.mp3"), CHANNELID::CH30);
 		if (m_PickResult == -1)
 		{
 			m_eInven_Manager_State = EVENT_CANCLE;
@@ -601,6 +612,11 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 		{
 			if (true == m_vecInvenSlot[i]->IsMouseHover())
 			{
+				if (m_pHoverdSlot != m_vecInvenSlot[i])
+				{
+					m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+					m_pHoverdSlot = m_vecInvenSlot[i];
+				}
 				IsNoOneHover = false;
 				pHoveredSlot = m_vecInvenSlot[i];
 			}
@@ -614,12 +630,12 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 
 			for (auto& iter : m_vecItem_UI)
 			{
-				if (true == iter->IsMouseHover() && true == iter->Get_isWorking() && true == iter->Get_isActive() )
+				if (true == iter->IsMouseHover() && true == iter->Get_isWorking())
 				{
 					m_CombineResources[COMBINDE_NUM] = iter->Get_ItemNumber();
 					m_CombineResources[RESULT_NUM] = Find_Recipe(m_CombineResources[SELECTED_NUM], m_CombineResources[COMBINDE_NUM]);
 
-					if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+					if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON) && true == iter->Get_isActive())
 					{
 						if (iter != m_pSelected_ItemUI)
 						{
@@ -628,6 +644,10 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 							//pHoveredSlot->Set_IsFilled(false);
 							m_eTaskSequence = APPLY;
 						}
+					}
+					else if(UP == m_pGameInstance->Get_KeyState(VK_LBUTTON) && false == iter->Get_isActive())
+					{
+						m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Context_Denied.mp3"), CHANNELID::CH30);
 					}
 				}
 			}
@@ -676,6 +696,12 @@ void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 		CInventory_Slot* pHoverdSlot = m_pHotkey->Get_Hoverd_Slot();
 		if (nullptr != pHoverdSlot)
 		{
+			if (m_pHoverdSlot != pHoverdSlot)
+			{
+				m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+				m_pHoverdSlot = pHoverdSlot;
+			}
+
 			_float4 HighligeterSetingPos = { pHoverdSlot->GetPosition().x, pHoverdSlot->GetPosition().y, Z_POS_HIGH_LIGHTER, 1.f };
 			m_pSlotHighlighterTransform->Set_State(CTransform::STATE_POSITION, HighligeterSetingPos);
 			
@@ -690,6 +716,7 @@ void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 				m_eTaskSequence = TS_END;
 				m_eInven_Manager_State = EVENT_IDLE;
 				m_pSelected_ItemUI = nullptr;
+				m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_DragDown.mp3"), CHANNELID::CH30);
 			}
 		}
 		break;
@@ -712,6 +739,11 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 		{
 			if (true == m_vecInvenSlot[i]->IsMouseHover())
 			{
+				if (m_pHoverdSlot != m_vecInvenSlot[i])
+				{
+					m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+					m_pHoverdSlot = m_vecInvenSlot[i];
+				}
 				m_IsNoOneHover = false;
 				pHoveredSlot = m_vecInvenSlot[i];
 			}
@@ -755,6 +787,7 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 					m_eTaskSequence = TS_END;
 					m_pDragShadow->Set_Dead(true);
 					m_pSelected_ItemUI = nullptr;
+					m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_DragDown.mp3"), CHANNELID::CH30);
 				}
 
 				else
@@ -800,6 +833,7 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 			m_pSelected_ItemUI = nullptr;
 			m_pTemp_ItemUI = nullptr;
 			m_pContextMenu->Set_Dead(true);
+			m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_DragDown.mp3"), CHANNELID::CH30);
 			break;
 		}
 			
@@ -811,6 +845,7 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 			m_pDragShadow->Set_Dead(true);
 			m_pSelected_ItemUI = nullptr;
 			m_pContextMenu->Set_Dead(true);
+			m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_DragDown.mp3"), CHANNELID::CH30);
 			break;
 		}
 

@@ -9,7 +9,10 @@ namespace Client
 		CH18, CH19, CH20, CH21, CH22, CH23, CH24, CH25, CH26, CH27, CH28, CH29, CH30, CH31,
 		MAXCHANNEL
 	};
-
+	/*
+	채널 점유 현황
+	CH30 : Inventory에서 사용중
+	*/
 	enum LEVEL { LEVEL_STATIC, LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_END };
 
 	enum class SHADER_PASS_VTXANIMMODEL {

@@ -135,6 +135,11 @@ void CContextMenu::Idle_Operation(_float fTimeDelta)
 	{
 		if (true == static_cast<CContextMenu*>(m_vecChildUI[i])->IsMouseHover())
 		{
+			if (m_pHoverdChild != m_vecChildUI[i])
+			{
+				m_pHoverdChild = m_vecChildUI[i];
+				m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+			}
 			IsNoOneHover = false;
 			pHoveredMenu = static_cast<CContextMenu*>(m_vecChildUI[i]);
 			m_iHoverMenu_Type = i;
@@ -151,6 +156,7 @@ void CContextMenu::Idle_Operation(_float fTimeDelta)
 
 		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
+			m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_ContextMenu_Click.mp3"), CHANNELID::CH30);
 			Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
 		}
 
@@ -403,6 +409,7 @@ void CContextMenu::Set_EventbyTexture(_uint iTextureNum)
 
 	case 3: {
 		m_eContextEvent = EXAMINE_ITEM;
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Examin_Open.mp3"), CHANNELID::CH30);
 		break;
 	}
 
@@ -413,6 +420,7 @@ void CContextMenu::Set_EventbyTexture(_uint iTextureNum)
 
 	case 5: {
 		m_eContextEvent = HOTKEY_ASSIGNED_ITEM;
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_DragUp.mp3"), CHANNELID::CH30);
 		break;
 	}
 
