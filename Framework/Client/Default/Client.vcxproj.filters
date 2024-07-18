@@ -772,6 +772,12 @@
     <Filter Include="02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_033_00">
       <UniqueIdentifier>{d9d1312c-d86d-473d-ac99-8e07be1feb5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_WP4530">
+      <UniqueIdentifier>{c5e9667b-e823-4ecd-80b9-8ef23a564da2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_034_00">
+      <UniqueIdentifier>{29072f34-6b3c-4839-8e20-430e5f5e74a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1500,6 +1506,12 @@
     <ClInclude Include="..\Public\Prop_Controller.h">
       <Filter>02.GameObjects\Cut_Scene\Prop_Controller</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Actor_WP4530.h">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_WP4530</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Prop_SM60_034_00.h">
+      <Filter>02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_034_00</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2188,6 +2200,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Prop_Controller.cpp">
       <Filter>02.GameObjects\Cut_Scene\Prop_Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Actor_WP4530.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_WP4530</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Prop_SM60_034_00.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_034_00</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

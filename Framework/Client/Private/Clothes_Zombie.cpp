@@ -137,7 +137,7 @@ HRESULT CClothes_Zombie::Render()
 		
 		else
 		{
-			if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Pants(i))
+			if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Pants(i))	
 			{
 				if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i), m_pRagdoll->GetBoneMatrices_Ragdoll())))
 					return E_FAIL;
@@ -822,7 +822,7 @@ HRESULT CClothes_Zombie::Bind_WorldMatrix(_uint iIndex)
 		
 		else
 		{
-			if (ZOMBIE_CLOTHES_TYPE::_PANTS == m_eClothesType)
+			if (ZOMBIE_CLOTHES_TYPE::_SHIRTS == m_eClothesType)
 			{
 				if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Shirt(iIndex))
 				{

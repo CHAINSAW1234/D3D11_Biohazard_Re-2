@@ -38,7 +38,10 @@
 #include "Actor_PL00.h"
 #include "Actor_EM00.h"
 
+#include "Actor_WP4530.h"
+
 #include "Prop_SM60_033_00.h"
+#include "Prop_SM60_034_00.h"
 
 /* CutScene */
 #include "Cut_Scene_CF92.h"
@@ -1209,10 +1212,16 @@ HRESULT CLoader::Create_Prototypes_Actor()
 		CActor_PL57::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_WP4530"),
+		CActor_WP4530::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Prop_SM60_033"),
 		CProp_SM60_033::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Prop_SM60_034"),
+		CProp_SM60_034::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;
@@ -2868,6 +2877,10 @@ HRESULT CLoader::Load_Animations()
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL7850"), "../Bin/Resources/Animations/CutScene/CF93/pl7850/")))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL7880"), "../Bin/Resources/Animations/CutScene/CF93/pl7880/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_SM60_034_00"), "../Bin/Resources/Animations/CutScene/CF93/sm60_034/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_SM60_035_00"), "../Bin/Resources/Animations/CutScene/CF93/sm60_035/")))
 		return E_FAIL;
 
 #pragma endregion // CF93

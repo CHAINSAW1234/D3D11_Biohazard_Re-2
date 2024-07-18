@@ -90,7 +90,16 @@ vector<list<_int>> CPart_Mesh_Info_Zombie::Get_Child_MeshIndices()
         ChildMeshIndices[static_cast<_uint>(m_ePartID)].emplace_back(iMeshIndex);
 
     if (nullptr != m_pAdditional_Child_Part_Mesh_Info)
-        ChildMeshIndices[static_cast<_uint>(m_ePartID)].emplace_back(iMeshIndex);
+    {
+        for (auto& iMeshIndex : m_pAdditional_Child_Part_Mesh_Info->m_MeshTypeIndices)
+        {
+            if (-1 == iMeshIndex)
+                continue;
+
+            ChildMeshIndices[static_cast<_uint>(m_pAdditional_Child_Part_Mesh_Info->m_ePartID)].emplace_back(iMeshIndex);
+        }
+
+    }
 
     CPart_Mesh_Info_Zombie*         pChildMeshInfo = { m_pChild_Part_Mesh_Info };
     while (nullptr != pChildMeshInfo)
@@ -99,6 +108,17 @@ vector<list<_int>> CPart_Mesh_Info_Zombie::Get_Child_MeshIndices()
         {
             if (-1 != iChildMeshIndex)
                 ChildMeshIndices[static_cast<_uint>(m_ePartID)].emplace_back(iChildMeshIndex);
+        }
+
+        if (nullptr != pChildMeshInfo->m_pAdditional_Child_Part_Mesh_Info)
+        {
+            for (auto& iMeshIndex : pChildMeshInfo->m_pAdditional_Child_Part_Mesh_Info->m_MeshTypeIndices)
+            {
+                if (-1 == iMeshIndex)
+                    continue;
+
+                ChildMeshIndices[static_cast<_uint>(pChildMeshInfo->m_pAdditional_Child_Part_Mesh_Info->m_ePartID)].emplace_back(iMeshIndex);
+            }
         }
 
         pChildMeshInfo = pChildMeshInfo->m_pChild_Part_Mesh_Info;

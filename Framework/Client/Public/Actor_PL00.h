@@ -28,6 +28,7 @@ private:
 
 private:
 	void					Move_Player();
+	void					Render_Off_RealPlayer();
 
 public:
 	static CActor_PL00* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

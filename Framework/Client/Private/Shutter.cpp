@@ -32,7 +32,10 @@ HRESULT CShutter::Initialize(void* pArg)
 		CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_SM60_033);
 	}
 	else if (m_tagPropDesc.strGamePrototypeName.find("60_034") != string::npos)
+	{
 		m_eType = SHUTTER_034;
+		CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_SM60_034);
+	}
 	else
 		m_eType = SHUTTER_NORMAL;
 

@@ -41,6 +41,7 @@ void CActor_PL00::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	Move_Player();
+	Render_Off_RealPlayer();
 }
 
 void CActor_PL00::Late_Tick(_float fTimeDelta)
@@ -141,6 +142,16 @@ void CActor_PL00::Move_Player()
 
 	_matrix					ResultMatrix = { ResultCombiendMatrix * ScaleMatrix };
 	pPlayer->Move_Manual(ResultMatrix);
+}
+
+void CActor_PL00::Render_Off_RealPlayer()
+{
+	CGameObject* pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
+	if (nullptr == pGameObject)
+		return;
+
+	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
+	pPlayer->Set_Render(false);
 }
 
 CActor_PL00* CActor_PL00::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

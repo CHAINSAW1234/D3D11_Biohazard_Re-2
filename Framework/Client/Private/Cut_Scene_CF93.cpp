@@ -7,11 +7,13 @@
 #include "Actor_PL78.h"
 #include "Actor_PL00.h"
 #include "Actor_EM00.h"
+#include "Prop_SM60_034_00.h"
 
 #include "Call_Center.h"
 #include "Player.h"
 #include "Actor_PartObject.h"
 #include "Camera_Event.h"
+#include "Shutter.h"
 
 CCut_Scene_CF93::CCut_Scene_CF93(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCut_Scene{ pDevice, pContext }
@@ -69,6 +71,14 @@ void CCut_Scene_CF93::Late_Tick(_float fTimeDelta)
 void CCut_Scene_CF93::Start_CutScene()
 {
 	__super::Start_CutScene();
+
+	CProp_Controller* pProp_Controller = { m_PropControllers[static_cast<_uint>(CF93_PROP_TYPE::_SM_60_034)] };
+	CShutter* pShutter = { static_cast<CShutter*>(pProp_Controller->Get_PropObject()) };
+
+	if (nullptr == pShutter)
+		return;
+
+	pShutter->Set_OutOfControll(true);
 }
 
 void CCut_Scene_CF93::Finish_CutScene()
@@ -104,6 +114,14 @@ void CCut_Scene_CF93::Finish_CutScene()
 	_matrix					ResultMatrix = { ResultCombiendMatrix * ScaleMatrix };
 	pPlayer->Move_Manual(ResultMatrix);
 	pPlayer->Set_Render(true);
+
+	CProp_Controller* pProp_Controller = { m_PropControllers[static_cast<_uint>(CF93_PROP_TYPE::_SM_60_034)] };
+	CShutter* pShutter = { static_cast<CShutter*>(pProp_Controller->Get_PropObject()) };
+
+	if (nullptr == pShutter)
+		return;
+
+	pShutter->Set_OutOfControll(false);
 }
 
 HRESULT CCut_Scene_CF93::SetUp_Animation_Layer()
@@ -163,6 +181,14 @@ HRESULT CCut_Scene_CF93::Add_Actors()
 
 HRESULT CCut_Scene_CF93::Add_Props()
 {
+	m_PropControllers.resize(static_cast<size_t>(CF93_PROP_TYPE::_END));
+
+	CProp_Controller::PROP_CONTROLL_DESC			Prop_SM60_034_Desc;
+	Prop_SM60_034_Desc.strAnimLayerTag = TEXT("CF93_SM60_034_00");
+
+	if (FAILED(Add_PropController(TEXT("Prototype_GameObject_Prop_SM60_034"), static_cast<_uint>(CF93_PROP_TYPE::_SM_60_034), &Prop_SM60_034_Desc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 

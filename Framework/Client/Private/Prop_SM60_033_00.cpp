@@ -42,6 +42,9 @@ void CProp_SM60_033::Start()
 {
 	__super::Start();
 
+	if (nullptr == m_pPropObject)
+		return;
+
 	CGameObject*			pBody_Shutter = { static_cast<CShutter*>(m_pPropObject)->Get_PartObject(CShutter::PART_BODY) };
 	if (nullptr == pBody_Shutter)
 		return;

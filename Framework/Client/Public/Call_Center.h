@@ -17,7 +17,7 @@ public:
 	enum class CALLER { _ZOMBIE_HIDE_LOCKER, 
 		/* For.CutScene */
 		_PL00, 
-		_SM60_033,
+		_SM60_033, _SM60_034,
 		_END };	
 
 private:

@@ -5,6 +5,7 @@
 #include "Cut_Scene_CF92.h"
 
 #include "Actor_PL00.h"
+#include "Actor_WP4530.h"
 #include "Prop_SM60_033_00.h"
 
 #include "Player.h"
@@ -49,9 +50,9 @@ HRESULT CCut_Scene_CF92::SetUp_Animation_Layer()
 	if (FAILED(m_Actors[static_cast<_uint>(CF92_ACTOR_TYPE::_PL_0000)]->Set_Animation(static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_HEAD), TEXT("CF92_PL0050"), 0)))
 		return E_FAIL;
 
-	////	For.SM60_033
-	//if (FAILED(m_PropControllers[static_cast<_uint>(CF92_PROP_TYPE::_SM_60_033)]->Set_Animation(static_cast<_uint>(0))))
-	//	return E_FAIL;
+	//	For.WP4530
+	if (FAILED(m_Actors[static_cast<_uint>(CF92_ACTOR_TYPE::_WP_4530)]->Set_Animation(static_cast<_uint>(CActor_WP4530::ACTOR_WP4530_PART::_BODY), TEXT("CF92_WP4530_00"), 0)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -64,11 +65,17 @@ void CCut_Scene_CF92::Priority_Tick(_float fTimeDelta)
 
 		for (auto& pActor : m_Actors)
 		{
+			if (nullptr == pActor)
+				continue;
+
 			pActor->Reset_Animations();
 		}
 
 		for (auto& pProp : m_PropControllers)
 		{
+			if (nullptr == pProp)
+				continue;
+
 			pProp->Reset_Animations();
 		}
 
@@ -91,13 +98,6 @@ void CCut_Scene_CF92::Late_Tick(_float fTimeDelta)
 void CCut_Scene_CF92::Start_CutScene()
 {
 	__super::Start_CutScene();
-
-	CGameObject* pGameObject = { CCall_Center::Get_Instance()->Get_Caller(CCall_Center::CALLER::_PL00) };
-	if (nullptr == pGameObject)
-		return;
-
-	CPlayer* pPlayer = { static_cast<CPlayer*>(pGameObject) };
-	pPlayer->Set_Render(false);
 
 	CProp_Controller* pProp_Controller = { m_PropControllers[static_cast<_uint>(CF92_PROP_TYPE::_SM_60_033)] };
 	CShutter* pShutter = { static_cast<CShutter*>(pProp_Controller->Get_PropObject()) };
@@ -162,6 +162,14 @@ HRESULT CCut_Scene_CF92::Add_Actors()
 	Actor_PL0000_Desc.iNumParts = static_cast<_uint>(CActor_PL00::ACTOR_PL00_PART::_END);
 
 	if (FAILED(Add_Actor(TEXT("Prototype_GameObject_Actor_PL0000"), static_cast<_uint>(CF92_ACTOR_TYPE::_PL_0000), &Actor_PL0000_Desc)))
+		return E_FAIL;
+
+	CActor::ACTOR_DESC			Actor_WP4530_Desc;
+	XMStoreFloat4x4(&Actor_WP4530_Desc.worldMatrix, XMMatrixScaling(0.01f, 0.01f, 0.01f));
+	Actor_WP4530_Desc.iBasePartIndex = static_cast<_uint>(CActor_WP4530::ACTOR_WP4530_PART::_BODY);
+	Actor_WP4530_Desc.iNumParts = static_cast<_uint>(CActor_WP4530::ACTOR_WP4530_PART::_END);
+
+	if (FAILED(Add_Actor(TEXT("Prototype_GameObject_Actor_WP4530"), static_cast<_uint>(CF92_ACTOR_TYPE::_WP_4530), &Actor_WP4530_Desc)))
 		return E_FAIL;
 
 	return S_OK;
