@@ -2412,6 +2412,11 @@ void CRagdoll_Physics::Init_PartialRagdoll(COLLIDER_TYPE eType)
 	m_bPartialRagdoll = true;
 }
 
+_float4x4* CRagdoll_Physics::GetCombinedMatrix_Ragdoll(_uint iIndex)
+{
+	return &m_BoneMatrices[iIndex];
+}
+
 void CRagdoll_Physics::Free()
 {
 	if (m_Pelvis)
