@@ -216,4 +216,5 @@ void CProp_Controller::Free()
 	__super::Free();
 
 	Safe_Release(m_pBodyModel);
+	Safe_Release(m_pPropObject);
 }

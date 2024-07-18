@@ -1621,6 +1621,40 @@ _int CModel::Get_BoneIndex(const string& strBoneTag)
 	return iBoneIndex;
 }
 
+HRESULT CModel::Linked_Bone_Indices(CModel* pTargetModel, vector<_int>& LinkedBoneIndices)
+{
+	if (nullptr == pTargetModel)
+		return E_FAIL;
+
+	if (this == pTargetModel)
+		return E_FAIL;
+
+	vector<string>			SrcBoneTags = { Get_BoneNames() };
+	vector<string>			DstBoneTags = { pTargetModel->Get_BoneNames() };
+
+	sort(SrcBoneTags.begin(), SrcBoneTags.end());
+	sort(DstBoneTags.begin(), DstBoneTags.end());
+
+	vector<string>			IntersectionBoneTags;
+	IntersectionBoneTags.resize(min(SrcBoneTags.size(), DstBoneTags.size()));
+
+	vector<string>::iterator			iter = { set_intersection(SrcBoneTags.begin(), SrcBoneTags.end(), DstBoneTags.begin(), DstBoneTags.end(), IntersectionBoneTags.begin()) };
+
+	IntersectionBoneTags.resize(iter - IntersectionBoneTags.begin());
+
+	for (auto& strIntersectBoneTag : IntersectionBoneTags)
+	{
+		_float4x4* pDstCombiendMatrix = { const_cast<_float4x4*>(pTargetModel->Get_CombinedMatrix(strIntersectBoneTag)) };
+		if (nullptr == pDstCombiendMatrix)
+			continue;
+
+		Set_Surbodinate(strIntersectBoneTag, true);
+		Set_Parent_CombinedMatrix_Ptr(strIntersectBoneTag, pDstCombiendMatrix);
+	}
+
+	return S_OK;
+}
+
 _float4 CModel::Invalidate_RootNode(const string& strRoot)
 {
 	for (auto& Bone : m_Bones)

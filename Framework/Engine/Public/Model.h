@@ -190,6 +190,7 @@ public:		/* For. Access */
 	class CBone_Layer*						Find_BoneLayer(const wstring& strBoneLayerTag);
 
 	HRESULT									Link_Bone_Auto(CModel* pTargetModel);
+	HRESULT									Linked_Bone_Indices(CModel* pTargetModel, vector<_int>& LinkedBoneIndices);
 
 	_int									Get_BoneIndex(const string& strBoneTag);
 

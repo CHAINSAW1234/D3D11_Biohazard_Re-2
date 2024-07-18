@@ -90,11 +90,14 @@ public:
 
 	void					Set_Combined_Matrix(_fmatrix CombinedMatrix);
 	void					Set_Parent_CombinedMatrix_Ptr(_float4x4* pParentMatrix);
-	void					Set_Surbodinate(_bool isSurbodinate) { m_isSurbordinate = isSurbodinate; }
+	void					Set_Parent_CombinedMatrix_Ptr_RagDoll(_float4x4* pParentMatrix);
+	void					Set_Surbodinate(_bool isSurbodinate) { m_isSurbordinate = isSurbodinate; m_isSurbordinate_RagDoll = !isSurbodinate; }
+	void					Set_Surbodinate_RagDoll(_bool isSurbodinate) { m_isSurbordinate_RagDoll = isSurbodinate; m_isSurbordinate = !isSurbodinate;}
 	void					Set_RootBone(_bool isRootBone);
 
 	_bool					Is_RootBone() { return m_isRootBone; }
 	_bool					Is_Surbodinate() { return m_isSurbordinate; }
+	_bool					Is_Surbodinate_RagDoll() { return m_isSurbordinate_RagDoll; }
 
 private:
 	_char					m_szName[MAX_PATH] = { "" };
@@ -108,7 +111,9 @@ private:
 	_bool					m_isRootBone = { false };
 
 	_bool					m_isSurbordinate = { false };
+	_bool					m_isSurbordinate_RagDoll = { false };
 	_float4x4*				m_pParentCombinedMatrix = { nullptr };
+	_float4x4*				m_pParentCombinedMatrix_RagDoll = { nullptr };
 
 public:
 	static CBone* Create(const aiNode* pAINode, _int iParentIndex);
