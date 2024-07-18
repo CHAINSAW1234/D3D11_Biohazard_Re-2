@@ -34,7 +34,7 @@ HRESULT CBigStatue::Initialize(void* pArg)
 		m_iPassWord[0] = 1; //¿©ÀÚ
 		m_iPassWord[1] = 2;//È°
 		m_iPassWord[2] = 0;//¹ì
-		m_eType = BIGSTATUE_WOMEN;
+		m_eType = BIGSTATUE_WOMAN;
 	}
 	else if(m_tagPropDesc.strObjectPrototype.find(TEXT("183")) != wstring::npos)
 	{
@@ -192,7 +192,7 @@ HRESULT CBigStatue::Add_Components()
 
 		ColliderDesc.vCenter = _float3(-10.f, 1.f, 50.f);
 		break;
-	case CBigStatue::BIGSTATUE_WOMEN:
+	case CBigStatue::BIGSTATUE_WOMAN:
 		ColliderDesc.vCenter = _float3(-10.f, 1.f, -50.f);
 		break;
 	}

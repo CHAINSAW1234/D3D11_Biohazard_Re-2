@@ -308,17 +308,19 @@ HRESULT CDial_BigStatue::Initialize_Model()
 
 	switch (m_eBigStatueType)
 	{
-	case CBigStatue::BIGSTATUE_UNICON:
+	case static_cast<_uint>(CBigStatue::BIGSTATUE_UNICON):
 		strFirstTag = "113";
 		strSecondTag = "121";
 		strThirdTag = "131";
 		break;
-	case CBigStatue::BIGSTATUE_WOMEN:
+
+	case static_cast<_uint>(CBigStatue::BIGSTATUE_WOMAN):
 		strFirstTag = "111";
 		strSecondTag = "121";
 		strThirdTag = "131";
 		break;
-	case CBigStatue::BIGSTATUE_LION:
+	
+	case static_cast<_uint>(CBigStatue::BIGSTATUE_LION):
 		strFirstTag = "113";
 		strSecondTag = "121";
 		strThirdTag = "131";
