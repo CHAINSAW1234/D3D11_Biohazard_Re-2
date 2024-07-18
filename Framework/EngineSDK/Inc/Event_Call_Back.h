@@ -10,6 +10,11 @@ public:
 	{
 		PxFilterData filterData0 = shape->getSimulationFilterData();
 
+		if ((filterData0.word0 & COLLISION_CATEGORY::CCT))
+		{
+			return PxQueryHitType::eNONE;
+		}
+
 		if ((filterData0.word0 & COLLISION_CATEGORY::COLLIDER) || (filterData0.word0 & COLLISION_CATEGORY::RAGDOLL))
 		{
 			return PxQueryHitType::eNONE; // 충돌 무시(Rigid Dynamic이 밀려남)
