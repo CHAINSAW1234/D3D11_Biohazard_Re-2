@@ -448,20 +448,8 @@
     <Filter Include="02.GameObjects\Cut_Scene\Actor">
       <UniqueIdentifier>{e7251cd2-468e-4922-9a70-347323ebc8d2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObjects\Cut_Scene\Cut_Scene_CF93">
-      <UniqueIdentifier>{83f3b0b6-3f3d-40f4-83ea-db3a70f469f8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_PartObject">
       <UniqueIdentifier>{93131286-d189-4187-aa4b-e81d8b0d940e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_PL78">
-      <UniqueIdentifier>{63c90ac9-6a65-4a35-be0b-10c2c18b28b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_PL00">
-      <UniqueIdentifier>{2296ca4a-454e-4288-b09c-c0d649c57fdb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_EM00">
-      <UniqueIdentifier>{41e64e67-4b4a-4f45-9be1-364a49859fe8}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObjects\MapObject\InteractProps\Lever">
       <UniqueIdentifier>{5a811629-46cf-45fe-83d2-0b722751e9be}</UniqueIdentifier>
@@ -733,6 +721,39 @@
     <Filter Include="02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Blind">
       <UniqueIdentifier>{ad194551-109d-42c1-82b8-25a406ea6cbc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_EM0000">
+      <UniqueIdentifier>{41e64e67-4b4a-4f45-9be1-364a49859fe8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_PL0000">
+      <UniqueIdentifier>{2296ca4a-454e-4288-b09c-c0d649c57fdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_PL7800">
+      <UniqueIdentifier>{63c90ac9-6a65-4a35-be0b-10c2c18b28b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_PL5700">
+      <UniqueIdentifier>{f54268a4-0cdf-4924-b82e-c43af6ce3a06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Props">
+      <UniqueIdentifier>{6ac18d6b-a399-4765-b9ff-635d646eef66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Scene">
+      <UniqueIdentifier>{89225f83-474d-48d3-a76a-f36cf3f17f1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF93">
+      <UniqueIdentifier>{83f3b0b6-3f3d-40f4-83ea-db3a70f469f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF92">
+      <UniqueIdentifier>{6fa7876c-5bee-4660-81b2-be480997e0be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF94">
+      <UniqueIdentifier>{2f49ed45-32fc-4117-ba90-0dc9aac1d064}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF95">
+      <UniqueIdentifier>{8f97f0af-c642-4eb3-85e3-4ed600045c1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF120">
+      <UniqueIdentifier>{b0003ed6-c1f6-4caa-8879-b21283a3580d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObjects\Effect\Grenade_Light">
       <UniqueIdentifier>{3e46d2df-8bef-497a-9757-854a1274c398}</UniqueIdentifier>
     </Filter>
@@ -762,6 +783,18 @@
     </Filter>
     <Filter Include="02.GameObjects\MapObject\InteractProps\BigStatue\Dial_BigStatue">
       <UniqueIdentifier>{985abf78-ed81-4107-b3da-d6adcceb9fa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Prop_Controller">
+      <UniqueIdentifier>{f025e3bb-01ae-493f-b8cd-853d26bb8594}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_033_00">
+      <UniqueIdentifier>{d9d1312c-d86d-473d-ac99-8e07be1feb5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Actor\Actor_WP4530">
+      <UniqueIdentifier>{c5e9667b-e823-4ecd-80b9-8ef23a564da2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_034_00">
+      <UniqueIdentifier>{29072f34-6b3c-4839-8e20-430e5f5e74a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1231,16 +1264,16 @@
       <Filter>02.GameObjects\Cut_Scene\Actor\Actor_PartObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Actor_PL78.h">
-      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_PL78</Filter>
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_PL7800</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Cut_Scene_CF93.h">
-      <Filter>02.GameObjects\Cut_Scene\Cut_Scene_CF93</Filter>
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF93</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Actor_PL00.h">
-      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_PL00</Filter>
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_PL0000</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Actor_EM00.h">
-      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_EM00</Filter>
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_EM0000</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Lever.h">
       <Filter>02.GameObjects\MapObject\InteractProps\Lever</Filter>
@@ -1461,6 +1494,21 @@
     <ClInclude Include="..\Public\Hint_Blind.h">
       <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Blind</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Cut_Scene_CF92.h">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF92</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Actor_PL57.h">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_PL5700</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cut_Scene_CF94.h">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF94</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Cut_Scene_CF95.h">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF95</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Prop_SM60_033_00.h">
+      <Filter>02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_033_00</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Grenade_Light.h">
       <Filter>02.GameObjects\Effect\Grenade_Light</Filter>
     </ClInclude>
@@ -1490,6 +1538,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\Dial_BigStatue.h">
       <Filter>02.GameObjects\MapObject\InteractProps\BigStatue\Dial_BigStatue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Prop_Controller.h">
+      <Filter>02.GameObjects\Cut_Scene\Prop_Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Actor_WP4530.h">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_WP4530</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Prop_SM60_034_00.h">
+      <Filter>02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_034_00</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1920,16 +1977,16 @@
       <Filter>02.GameObjects\Cut_Scene\Actor\Actor_PartObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Actor_PL78.cpp">
-      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_PL78</Filter>
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_PL7800</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Cut_Scene_CF93.cpp">
-      <Filter>02.GameObjects\Cut_Scene\Cut_Scene_CF93</Filter>
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF93</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Actor_PL00.cpp">
-      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_PL00</Filter>
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_PL0000</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Actor_EM00.cpp">
-      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_EM00</Filter>
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_EM0000</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Lever.cpp">
       <Filter>02.GameObjects\MapObject\InteractProps\Lever</Filter>
@@ -2150,6 +2207,21 @@
     <ClCompile Include="..\Private\Hint_Blind.cpp">
       <Filter>02.GameObjects\UI\99. Tab_Window\2. Hint\Hint_Blind</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Cut_Scene_CF92.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF92</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Actor_PL57.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_PL5700</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cut_Scene_CF94.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF94</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Cut_Scene_CF95.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Scene\Cut_Scene_CF95</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Prop_SM60_033_00.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_033_00</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Grenade_Light.cpp">
       <Filter>02.GameObjects\Effect\Grenade_Light</Filter>
     </ClCompile>
@@ -2179,6 +2251,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Dial_BigStatue.cpp">
       <Filter>02.GameObjects\MapObject\InteractProps\BigStatue\Dial_BigStatue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Prop_Controller.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Prop_Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Actor_WP4530.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Actor\Actor_WP4530</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Prop_SM60_034_00.cpp">
+      <Filter>02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_034_00</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

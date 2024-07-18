@@ -30,14 +30,14 @@ public:
 	{
 		_ubyte*		pKeyInput = {nullptr};
 		_ubyte*		pKeyState = {nullptr};
-		_bool*		pCanPush = {nullptr};
+		_bool			pCanPush[5][3];
 		_bool*		pDoOpen= {nullptr};
 		_int*			pPush = {nullptr};
 		_int*			pSelectRow = {nullptr};
 		_int*			pSelectCol = {nullptr};
 		_int			iKeyPad[5][3];
 		_int*			pKeyNum = {nullptr};
-
+		_bool*			pHideKey = { nullptr };
 	}KEY_READER_DESC;
 
 private:
@@ -59,7 +59,7 @@ private:
 	virtual void					Get_SpecialBone_Rotation() override;
 	HRESULT						Initialize_Model();
 	_bool								Check_PadFull();
-
+	_bool								Check_CanPush();
 
 public:
 	_bool								Get_Clear() { return m_bClear; }
@@ -72,13 +72,15 @@ private:
 	_bool								m_bClear = { false };
 	_ubyte*							m_pPressKeyState = { nullptr };
 	_ubyte*							m_pKeyState = { nullptr };
-	_bool*							m_pCanPush = { nullptr };
+	_bool								m_pCanPush[5][3] = {false,};
 	_int*								m_pPush = { nullptr };
 	_int*								m_pSelectRow = { nullptr };
 	_int*								m_pSelectCol = { nullptr };
 	_int								m_iKeyPad[5][3];
 	_int*								m_pKeyNum = { nullptr };
-
+	_bool*							m_pHideKey = { nullptr };
+	_float3							m_fCurLength[READERMACHINE_BONE_END] = { {0.f,0.f,0.f} ,{0.f,0.f,0.f} ,{0.f,0.f,0.f} ,{0.f,0.f,0.f} ,{0.f,0.f,0.f} ,{0.f,0.f,0.f},{0.f,0.f,0.f},{0.f,0.f,0.f}, { 0.f,0.f,0.f },{0.f,0.f,0.f},{0.f,0.f,0.f},{0.f,0.f,0.f} };
+	_float3							m_fGoalLength[READERMACHINE_BONE_END] = { {0.f,0.f,0.f} ,{0.f,0.f,0.f} ,{0.f,0.f,0.f} ,{0.f,0.f,0.f} ,{0.f,0.f,0.f} ,{0.f,0.f,0.f},{0.f,0.f,0.f},{0.f,0.f,0.f}, { 0.f,0.f,0.f },{0.f,0.f,0.f},{0.f,0.f,0.f},{0.f,0.f,0.f} };
 	string							m_strBoneTag[READERMACHINE_BONE_END] = { "Key0","Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "Key7", "Key8", "Key9", "KeyBack", "KeyEnter"};
 	_int								m_iCurBoneIndex = { BONE_KEY0 };
 	vector<string>				m_HidMesh = {};

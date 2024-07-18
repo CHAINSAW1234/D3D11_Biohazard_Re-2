@@ -3,6 +3,8 @@
 #include "Zombie.h"
 
 #include "Light.h"
+#include "Part_Breaker_Zombie.h"
+#include "RagDoll_Physics.h"
 
 CClothes_Zombie::CClothes_Zombie(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject{ pDevice, pContext }
@@ -29,6 +31,7 @@ HRESULT CClothes_Zombie::Initialize(void* pArg)
 	m_eClothesType = pDesc->eClothesType;
 	m_eBodyType = pDesc->eBodyType;
 	m_iClothesModelID = pDesc->iClothesModelID;
+	m_ppPart_Breaker = pDesc->ppPart_Breaker;
 
 	if (ZOMBIE_CLOTHES_TYPE::_END == m_eClothesType ||
 		ZOMBIE_BODY_TYPE::_END == m_eBodyType ||
@@ -103,10 +106,12 @@ HRESULT CClothes_Zombie::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMeshes; i++)
+	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+	for (auto& i : NonHideIndices)
 	{
+		if (FAILED(Bind_WorldMatrix(i)))
+			return E_FAIL;
+
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
 
@@ -116,8 +121,33 @@ HRESULT CClothes_Zombie::Render()
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
 
-		//if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
-		//	return E_FAIL;
+		if (ZOMBIE_CLOTHES_TYPE::_SHIRTS == m_eClothesType)
+		{
+			if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Shirt(i))
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll_PartObject(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+					return E_FAIL;
+			}
+			else
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+					return E_FAIL;
+			}
+		}
+		
+		else
+		{
+			if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Pants(i))	
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll_PartObject(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+					return E_FAIL;
+			}
+			else
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+					return E_FAIL;
+			}
+		}
 
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
 		{
@@ -171,21 +201,6 @@ HRESULT CClothes_Zombie::Render_LightDepth_Dir()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (m_bRagdoll)
-	{
-		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
-		WorldMat._41 = 0.f;
-		WorldMat._42 = 0.f;
-		WorldMat._43 = 0.f;
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
-			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-			return E_FAIL;
-	}
-
 	if (m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION) != nullptr) {
 
 		const CLight* pLight = m_pGameInstance->Get_ShadowLight(CPipeLine::DIRECTION);
@@ -196,12 +211,42 @@ HRESULT CClothes_Zombie::Render_LightDepth_Dir()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
 
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (size_t i = 0; i < iNumMeshes; i++)
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
 		{
+			if (FAILED(Bind_WorldMatrix(i)))
+				return E_FAIL;
+
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
+
+			if (ZOMBIE_CLOTHES_TYPE::_SHIRTS == m_eClothesType)
+			{
+				if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Shirt(i))
+				{
+					if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll_PartObject(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+						return E_FAIL;
+				}
+				else
+				{
+					if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+						return E_FAIL;
+				}
+			}
+
+			else
+			{
+				if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Pants(i))
+				{
+					if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll_PartObject(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+						return E_FAIL;
+				}
+				else
+				{
+					if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+						return E_FAIL;
+				}
+			}
 
 			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 				return E_FAIL;
@@ -222,21 +267,6 @@ HRESULT CClothes_Zombie::Render_LightDepth_Point()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (m_bRagdoll)
-	{
-		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
-		WorldMat._41 = 0.f;
-		WorldMat._42 = 0.f;
-		WorldMat._43 = 0.f;
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
-			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-			return E_FAIL;
-	}
-
 	list<LIGHT_DESC*> LightDescList = m_pGameInstance->Get_ShadowPointLightDesc_List();
 	_int iIndex = 0;
 	for (auto& pLightDesc : LightDescList) {
@@ -252,14 +282,42 @@ HRESULT CClothes_Zombie::Render_LightDepth_Point()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_LightProjMatrix", &LightProjMatrix)))
 			return E_FAIL;
 
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-		for (size_t i = 0; i < iNumMeshes; i++)
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
 		{
+			if (FAILED(Bind_WorldMatrix(i)))
+				return E_FAIL;
+
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
 
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
+			if (ZOMBIE_CLOTHES_TYPE::_SHIRTS == m_eClothesType)
+			{
+				if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Shirt(i))
+				{
+					if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll_PartObject(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+						return E_FAIL;
+				}
+				else
+				{
+					if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+						return E_FAIL;
+				}
+			}
+
+			else
+			{
+				if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Pants(i))
+				{
+					if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll_PartObject(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+						return E_FAIL;
+				}
+				else
+				{
+					if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+						return E_FAIL;
+				}
+			}
 
 			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH_CUBE)))
 				return E_FAIL;
@@ -303,15 +361,42 @@ HRESULT CClothes_Zombie::Render_LightDepth_Spot()
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", &pDesc->ProjMatrix)))
 			return E_FAIL;
 
-		_uint iNumMeshes = m_pModelCom->Get_NumMeshes();
-
-		for (size_t i = 0; i < iNumMeshes; i++)
+		list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
+		for (auto& i : NonHideIndices)
 		{
+			if (FAILED(Bind_WorldMatrix(i)))
+				return E_FAIL;
+
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
 
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
+			if (ZOMBIE_CLOTHES_TYPE::_SHIRTS == m_eClothesType)
+			{
+				if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Shirt(i))
+				{
+					if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll_PartObject(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+						return E_FAIL;
+				}
+				else
+				{
+					if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+						return E_FAIL;
+				}
+			}
+
+			else
+			{
+				if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Pants(i))
+				{
+					if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll_PartObject(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+						return E_FAIL;
+				}
+				else
+				{
+					if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+						return E_FAIL;
+				}
+			}
 
 			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
 				return E_FAIL;
@@ -355,6 +440,14 @@ HRESULT CClothes_Zombie::Initialize_Model()
 	m_pModelCom->Active_RootMotion_Rotation(false);
 
 	return S_OK;
+}
+
+void CClothes_Zombie::Set_RagDoll_Ptr(CRagdoll_Physics* pRagDoll)
+{
+
+	Safe_Release(m_pRagdoll);
+	m_pRagdoll = pRagDoll;
+	Safe_AddRef(m_pRagdoll);
 }
 
 HRESULT CClothes_Zombie::Add_Components()
@@ -707,7 +800,7 @@ HRESULT CClothes_Zombie::Add_Components()
 
 HRESULT CClothes_Zombie::Bind_ShaderResources()
 {
-	if (m_bRagdoll)
+	/*if (m_bRagdoll)
 	{
 		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
 		WorldMat._41 = 0.f;
@@ -720,7 +813,7 @@ HRESULT CClothes_Zombie::Bind_ShaderResources()
 	{
 		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 			return E_FAIL;
-	}
+	}*/
 
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_pGameInstance->Get_Transform_Float4x4(CPipeLine::D3DTS_VIEW))))
 		return E_FAIL;
@@ -744,6 +837,61 @@ HRESULT CClothes_Zombie::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_bPlayer", &m_bDecal_Player, sizeof(_bool))))
 		return E_FAIL;
 
+	return S_OK;
+}
+
+HRESULT CClothes_Zombie::Bind_WorldMatrix(_uint iIndex)
+{
+	if (m_bRagdoll)
+	{
+		auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+		WorldMat._41 = 0.f;
+		WorldMat._42 = 0.f;
+		WorldMat._43 = 0.f;
+		if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (ZOMBIE_CLOTHES_TYPE::_PANTS == m_eClothesType)
+		{
+			if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Pants(iIndex))
+			{
+				auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+				WorldMat._41 = 0.f;
+				WorldMat._42 = 0.f;
+				WorldMat._43 = 0.f;
+				if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+					return E_FAIL;
+			}
+			else
+			{
+				if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+					return E_FAIL;
+			}
+		}
+		
+		else
+		{
+			if (ZOMBIE_CLOTHES_TYPE::_SHIRTS == m_eClothesType)
+			{
+				if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Shirt(iIndex))
+				{
+					auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
+					WorldMat._41 = 0.f;
+					WorldMat._42 = 0.f;
+					WorldMat._43 = 0.f;
+					if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &WorldMat)))
+						return E_FAIL;
+				}
+				else
+				{
+					if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+						return E_FAIL;
+				}
+			}
+		}
+	}
 	return S_OK;
 }
 
@@ -781,4 +929,5 @@ void CClothes_Zombie::Free()
 
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pModelCom);
+	Safe_Release(m_pRagdoll);
 }

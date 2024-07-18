@@ -27,6 +27,7 @@ HRESULT CPart_InteractProps::Initialize(void* pArg)
 	m_strModelComponentName = pPartobj_desc->strModelComponentName;
 	m_pState = pPartobj_desc->pState;
 	m_iPropType = pPartobj_desc->iPropType;
+	m_pIsOutOfControll = pPartobj_desc->pIsOutOfControll;
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;

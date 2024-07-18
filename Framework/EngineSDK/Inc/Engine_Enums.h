@@ -61,6 +61,7 @@ namespace Engine
 		RAGDOLL = 1 << 1,
 		COLLIDER = 1 << 2,
 		STATIC_MESH = 1 << 3,
+		RAY = 1 << 4,
 	};
 
 	enum COLLIDER_TYPE 

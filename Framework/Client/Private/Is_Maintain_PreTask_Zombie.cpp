@@ -35,6 +35,8 @@ HRESULT CIs_Maintain_PreTask_Zombie::Initialize(void* pArg)
 	m_MaintainStates.emplace(MONSTER_STATE::MST_RUB_DOOR);
 	m_MaintainStates.emplace(MONSTER_STATE::MST_OPEN_DOOR);
 
+	m_MaintainStates.emplace(MONSTER_STATE::MST_START_HIDE_LOCKER);
+
 	return S_OK;
 }
 

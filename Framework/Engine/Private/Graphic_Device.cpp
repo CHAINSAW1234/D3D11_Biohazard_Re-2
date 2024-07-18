@@ -91,7 +91,6 @@ HRESULT CGraphic_Device::Copy_BackBuffer(ID3D11Texture2D* pTexture)
 	m_pDeviceContext->CopyResource(pTexture, backBuffer);
 
 	Safe_Release(backBuffer);
-
 	return S_OK;
 }
 

@@ -57,6 +57,9 @@ private:
 	HRESULT Load_Object(const wstring& strFilePath, const wstring& strLayerName, _uint iLevel);
 	HRESULT Load_Monster(const wstring& strFilePath, const wstring& strLayerName, _uint iLevel);
 
+private:
+	HRESULT SetUp_DeadMonsters();
+
 
 #pragma region ³ª¿Ë
 private:

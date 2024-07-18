@@ -155,7 +155,7 @@ HRESULT CBody_Zombie::Render()
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 			return E_FAIL;
 
-		if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh(i))
+		if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Body(i))
 		{
 			if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i),m_pRagdoll->GetBoneMatrices_Ragdoll())))
 				return E_FAIL;
@@ -259,8 +259,16 @@ HRESULT CBody_Zombie::Render_LightDepth_Dir()
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
 
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
+			if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Body(i))
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i), m_pRagdoll->GetBoneMatrices_Ragdoll())))
+					return E_FAIL;
+			}
+			else
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+					return E_FAIL;
+			}
 
 			/* 이 함수 내부에서 호출되는 Apply함수 호출 이전에 쉐이더 전역에 던져야할 모든 데이ㅏ터를 다 던져야한다. */
 			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
@@ -302,8 +310,16 @@ HRESULT CBody_Zombie::Render_LightDepth_Point()
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
 
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
+			if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Body(i))
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i), m_pRagdoll->GetBoneMatrices_Ragdoll())))
+					return E_FAIL;
+			}
+			else
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+					return E_FAIL;
+			}
 
 			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH_CUBE)))
 				return E_FAIL;
@@ -341,8 +357,16 @@ HRESULT CBody_Zombie::Render_LightDepth_Spot()
 			if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 				return E_FAIL;
 
-			if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
-				return E_FAIL;
+			if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Body(i))
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices_Ragdoll(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i), m_pRagdoll->GetBoneMatrices_Ragdoll())))
+					return E_FAIL;
+			}
+			else
+			{
+				if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
+					return E_FAIL;
+			}
 
 			if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_LIGHTDEPTH)))
 				return E_FAIL;
@@ -1233,7 +1257,7 @@ HRESULT CBody_Zombie::Bind_WorldMatrix(_uint iIndex)
 	}
 	else
 	{
-		if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh(iIndex))
+		if ((*m_ppPart_Breaker)->Is_RagDoll_Mesh_Body(iIndex))
 		{
 			auto WorldMat = m_pParentsTransform->Get_WorldFloat4x4();
 			WorldMat._41 = 0.f;

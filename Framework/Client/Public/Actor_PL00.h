@@ -18,10 +18,17 @@ private:
 public:
 	virtual HRESULT			Initialize_Prototype() override;
 	virtual HRESULT			Initialize(void* pArg) override;
+	virtual void			Priority_Tick(_float fTimeDelta) override;
+	virtual void			Tick(_float fTimeDelta) override;
+	virtual void			Late_Tick(_float fTimeDelta) override;
 
 private:
 	HRESULT					Add_Components();
 	virtual HRESULT			Add_PartObjects();
+
+private:
+	void					Move_Player();
+	void					Render_Off_RealPlayer();
 
 public:
 	static CActor_PL00* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

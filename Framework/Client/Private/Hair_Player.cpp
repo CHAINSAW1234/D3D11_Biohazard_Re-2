@@ -192,10 +192,13 @@ void CHair_Player::Late_Tick(_float fTimeDelta)
 	//	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta, &vMoveDir);
 	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
-	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+	if (false != m_bRender)
+	{
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
+	}
 
 #ifdef _DEBUG
 	m_pGameInstance->Add_DebugComponents(m_pColliderCom);

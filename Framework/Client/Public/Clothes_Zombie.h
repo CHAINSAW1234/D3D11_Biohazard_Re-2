@@ -4,6 +4,12 @@
 #include "PartObject.h"
 #include "Zombie.h"
 
+BEGIN(Engine)
+
+class CRagdoll_Physics;
+
+END
+
 BEGIN(Client)
 
 class CClothes_Zombie final : public CPartObject
@@ -12,6 +18,7 @@ public:
 public:
 	typedef struct tagClothesMonsterDesc : public CPartObject::PARTOBJECT_DESC
 	{
+		class CPart_Breaker_Zombie** ppPart_Breaker = { nullptr };
 		_bool*						pRender = { nullptr };
 		ZOMBIE_BODY_TYPE			eBodyType = { ZOMBIE_BODY_TYPE::_END };
 		ZOMBIE_CLOTHES_TYPE			eClothesType = { ZOMBIE_CLOTHES_TYPE::_END };
@@ -38,6 +45,9 @@ public:
 private:
 	HRESULT					Initialize_Model();
 
+public:
+	void					Set_RagDoll_Ptr(CRagdoll_Physics* pRagDoll);
+
 private:
 	CModel*					m_pModelCom = { nullptr };
 	CShader*				m_pShaderCom = { nullptr };
@@ -47,13 +57,19 @@ private:
 	ZOMBIE_CLOTHES_TYPE		m_eClothesType = { ZOMBIE_CLOTHES_TYPE::_END };
 	_int					m_iClothesModelID = { -1 };
 
+	CRagdoll_Physics*		m_pRagdoll = { nullptr };
+
 private:
 	_bool*					m_pRender = { nullptr };
 	_bool					m_bDecal_Player = { false };
 
 private:
+	class CPart_Breaker_Zombie** m_ppPart_Breaker = { nullptr };
+
+private:
 	HRESULT					Add_Components();
 	HRESULT					Bind_ShaderResources();
+	HRESULT					Bind_WorldMatrix(_uint iIndex);
 
 public:
 	static CClothes_Zombie* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

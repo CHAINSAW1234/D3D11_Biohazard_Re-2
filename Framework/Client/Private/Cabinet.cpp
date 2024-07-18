@@ -602,7 +602,13 @@ void CCabinet::Electric_Tick(_float fTimeDelta)
 		bCam = true;
 	}
 	if (m_bCamera)
-		Camera_Active(PART_BODY, _float3(5.5f, 5.5f, 5.5f));
+	{
+		if(m_PartObjects[PART_ITEM]!=nullptr)
+			Camera_Active(PART_ITEM, _float3(-1.5f, -1.5f, -1.5f));
+		else
+			Camera_Active(PART_BODY, _float3(-1.5f, -5.5f, -1.5f));
+
+	}
 	
 	if (m_fDelayLockTime > 0.f)
 	{

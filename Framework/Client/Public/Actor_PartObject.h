@@ -30,8 +30,8 @@ public:
 	virtual HRESULT			Render() override;
 
 public:
-	void					Set_Animation(_uint iPlayingIndex, const wstring& strAnimLayerTag, _uint iAnimIndex);
-	void					Set_Animation_Index(_uint iPlayingIndex, _uint iAnimIndex);
+	HRESULT					Set_Animation(_uint iPlayingIndex, const wstring& strAnimLayerTag, _uint iAnimIndex);
+	void					Set_Animation_Seq(_uint iPlayingIndex, _uint iSequenceLevel);
 	void					Set_Loop(_uint iPlayingIndex, _bool isLoop);
 	inline void				Pause_Animation(_bool isPause) { m_isPause_Anim = isPause; }
 
@@ -47,11 +47,13 @@ private:
 	_bool					m_isBaseObject = { false };
 	_bool					m_isPause_Anim = { false };
 	wstring					m_strAnimLayerTag = { TEXT("") };
+	unordered_map<wstring, vector<string>>				m_Animations_Seq;	
 
 private:
 	HRESULT					Add_Components(const wstring& strModelPrototypeTag);
 	HRESULT					Add_Animations(const list< wstring>& AnimPrototypeLayerTags);
 	HRESULT					Bind_ShaderResources();
+	HRESULT					Sort_Animation_Seq();
 
 public:
 	static CActor_PartObject* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);

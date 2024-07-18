@@ -52,9 +52,9 @@ private:
 public:
 	virtual HRESULT				Initialize_Prototype() override;
 	virtual HRESULT				Initialize(void* pArg) override;
-	virtual void					Start() override;
-	virtual void					Tick(_float fTimeDelta) override;
-	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual void				Start() override;
+	virtual void				Tick(_float fTimeDelta) override;
+	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
 
 private:
@@ -63,9 +63,11 @@ private:
 	virtual HRESULT				Initialize_PartObjects() override;
 	virtual HRESULT				Bind_ShaderResources() override;
 public:
-	virtual _float4 Get_Object_Pos() override;
-	void								Set_Shutter_Open_State();
+	virtual _float4				Get_Object_Pos() override;
+	void						Set_Shutter_Open_State();
 
+public:
+	CGameObject* Get_PartObject(SHUTTER_PART ePartType);
 
 private:
 	void Active();

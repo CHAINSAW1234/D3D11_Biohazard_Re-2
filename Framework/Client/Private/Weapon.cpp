@@ -79,7 +79,8 @@ void CWeapon::Tick(_float fTimeDelta)
 
 void CWeapon::Late_Tick(_float fTimeDelta)
 {
-	if (m_eRenderLocation != NONE) {
+	if (m_eRenderLocation != NONE &&
+		m_bRender) {
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
@@ -355,6 +356,17 @@ _float4 CWeapon::Get_BonePosition_Forward(const char* pBoneName)
 
 
 	return vPos;
+}
+
+void CWeapon::Set_RenderLocation(RENDERLOCATION eRenderLocation)
+{
+	m_eRenderLocation = eRenderLocation;
+	if (m_eRenderLocation != NONE) {
+		m_bRender = true;
+	}
+	else {
+		m_bRender = false;
+	}
 }
 
 HRESULT CWeapon::Add_Components()
