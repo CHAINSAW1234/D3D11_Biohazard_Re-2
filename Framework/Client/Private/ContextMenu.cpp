@@ -113,6 +113,11 @@ HRESULT CContextMenu::Render()
 	return S_OK;
 }
 
+HRESULT CContextMenu::Change_Tool()
+{
+	return S_OK;
+}
+
 void CContextMenu::PopUp_Operation(_float fTimeDelta)
 {
 

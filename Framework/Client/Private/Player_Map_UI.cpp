@@ -13,7 +13,7 @@
 #define MINMAP_Y_FLOOR2     585.407f
 
 #define MINMAP_X_FLOOR3     925.068f
-#define MINMAP_Y_FLOOR3     556.878
+#define MINMAP_Y_FLOOR3     556.878f
 
 
 /* 2층 크기*/
@@ -73,9 +73,11 @@ HRESULT CPlayer_Map_UI::Initialize(void* pArg)
         m_vBackGround_Center = pBackGroundTrans->Get_State_Float4(CTransform::STATE_POSITION);
     }
 
+    if (nullptr != m_pPlayer)
+        m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
+
     m_fCurrent_ModelScaled.x = MODELMAP_X_FLOO1;
     m_fCurrent_ModelScaled.y = MODELMAP_Y_FLOO1;
-
     
     m_vPlayer_MovePos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
 
@@ -83,12 +85,10 @@ HRESULT CPlayer_Map_UI::Initialize(void* pArg)
     m_vPlayer_InitPos.y = 0.f + m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).y;
 
     m_isMouse_Control = true;
+
     m_isPrevRender = true;
 
-    if (nullptr != m_pPlayer)
-    {
-        m_pPlayerTransform = static_cast<CTransform*>(m_pPlayer->Get_Component(g_strTransformTag));
-    }
+    
 
     return S_OK;
 }
@@ -117,6 +117,11 @@ HRESULT CPlayer_Map_UI::Render()
     return S_OK;
 }
 
+HRESULT CPlayer_Map_UI::Change_Tool()
+{
+    return E_NOTIMPL;
+}
+
 void CPlayer_Map_UI::Rendering()
 {
     /* 1. Map Inventory를 킬 때만 Map Player를 렌더한다. */
@@ -128,9 +133,7 @@ void CPlayer_Map_UI::Rendering()
                 m_isRender = true;
 
             else
-            {
                 m_isRender = false;
-            }
         }
         else
         {
@@ -140,7 +143,6 @@ void CPlayer_Map_UI::Rendering()
             m_fBlending = 0.f;
 
             m_pMapPlayer->m_eCurrent_ViewFloor = m_ePlayer_Floor;
-
         }
     }
 

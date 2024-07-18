@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "LayOut_UI.h"
 #include "Tab_Window.h"
+#include "Camera_Gimmick.h"
 
 #define WHITE_COLOR     _float4(1, 1, 1, 1)
 #define ALPHA_ZERO      _float4(0, 0, 0, 0)
@@ -31,85 +32,95 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
         CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
         
         m_iWhich_Child = CustomUIDesc->iWhich_Child;
+
         m_pLayout_BackGround = static_cast<CLayOut_UI*>(CustomUIDesc->pSupervisor);
 
-        if (0 == m_iWhich_Child)
+        if(CustomUIDesc->wstrFileName == TEXT("UI_LayOut"))
         {
-            m_eLayout_Type = LAYOUT_UI_TYPE::BACKGROUND_UI_TYPE;
-        }
+            m_eLayout_Type = LAYOUT_TYPE::LAYOUT_TAB;
 
-        else if (1 == m_iWhich_Child)
-        {
-            list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
-            _int iLastType = { -1 };
-            _int iMaxSize = { -1 };
-
-            for (auto& iter : *pUIList)
+            if (0 == m_iWhich_Child)
             {
-                CLayOut_UI* pLayout = dynamic_cast<CLayOut_UI*>(iter);
+                m_eTabLayout_Type = LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE;
+            }
 
-                if (nullptr != pLayout)
+            else if (1 == m_iWhich_Child)
+            {
+                list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+                _int iLastType = { -1 };
+                _int iMaxSize = { -1 };
+
+                for (auto& iter : *pUIList)
                 {
-                    if((_int)pLayout->m_eLayout_Type <= (_int)LAYOUT_UI_TYPE::HINT_UI_TYPE)
+                    CLayOut_UI* pLayout = dynamic_cast<CLayOut_UI*>(iter);
+
+                    if (nullptr != pLayout)
                     {
-                        if(iMaxSize < (_int)pLayout->m_eLayout_Type)
+                        if ((_int)pLayout->m_eTabLayout_Type <= (_int)LAYOUT_TAB_TYPE::HINT_UI_TYPE)
                         {
-                            iLastType = (_int)pLayout->m_eLayout_Type;
+                            if (iMaxSize < (_int)pLayout->m_eTabLayout_Type)
+                            {
+                                iLastType = (_int)pLayout->m_eTabLayout_Type;
+                            }
                         }
                     }
                 }
+
+                if (iLastType == -1)
+                    m_eTabLayout_Type = LAYOUT_TAB_TYPE::MINMAP_UI_TYPE;
+
+                else if (iLastType == (_int)LAYOUT_TAB_TYPE::MINMAP_UI_TYPE)
+                    m_eTabLayout_Type = LAYOUT_TAB_TYPE::INVEN_UI_TYPE;
             }
 
-            if (iLastType == -1)
-                m_eLayout_Type = LAYOUT_UI_TYPE::MINMAP_UI_TYPE;
-
-            else if (iLastType == (_int)LAYOUT_UI_TYPE::MINMAP_UI_TYPE)
-                m_eLayout_Type = LAYOUT_UI_TYPE::INVEN_UI_TYPE;
-
-            else if (iLastType == (_int)LAYOUT_UI_TYPE::INVEN_UI_TYPE)
-                m_eLayout_Type = LAYOUT_UI_TYPE::HINT_UI_TYPE;
-        }
-        
-        else
-        {
-            list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
-
-            if (nullptr != pUIList)
+            else
             {
-                CLayOut_UI* pLayout = static_cast<CLayOut_UI*>(pUIList->back());
+                list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
 
-                if (pLayout->m_eLayout_Type == LAYOUT_UI_TYPE::MINMAP_UI_TYPE)
-                    m_eLayout_Type = LAYOUT_UI_TYPE::MINMAP_UI_TYPE;
+                if (nullptr != pUIList)
+                {
+                    CLayOut_UI* pLayout = static_cast<CLayOut_UI*>(pUIList->back());
 
-                else if (pLayout->m_eLayout_Type == LAYOUT_UI_TYPE::INVEN_UI_TYPE)
-                    m_eLayout_Type = LAYOUT_UI_TYPE::INVEN_UI_TYPE;
+                    if (pLayout->m_eTabLayout_Type == LAYOUT_TAB_TYPE::MINMAP_UI_TYPE)
+                        m_eTabLayout_Type = LAYOUT_TAB_TYPE::MINMAP_UI_TYPE;
 
-                else if (pLayout->m_eLayout_Type == LAYOUT_UI_TYPE::HINT_UI_TYPE)
-                    m_eLayout_Type = LAYOUT_UI_TYPE::HINT_UI_TYPE;
+                    else if (pLayout->m_eTabLayout_Type == LAYOUT_TAB_TYPE::INVEN_UI_TYPE)
+                        m_eTabLayout_Type = LAYOUT_TAB_TYPE::INVEN_UI_TYPE;
+                }
             }
         }
-    }
 
-    if (LAYOUT_UI_TYPE::BACKGROUND_UI_TYPE == m_eLayout_Type)
-    {
-        m_isMask = m_Mask[0].isMask = true;
-        m_fMaskControl = m_Mask[0].fMaskControl = _float2(0.652f, 0.428f);
-        m_vColor[0].vColor.w = 0.8f;
-
-        Find_TabWindow();
-        m_isMainRender = m_pTab_Window->Get_MainRender_Ptr();
-
-    }
-
-    if (!m_vecTextBoxes.empty())
-    {
-        for (auto& iter : m_vecTextBoxes)
+        else if (CustomUIDesc->wstrFileName == TEXT("UI_HintLayout"))
         {
-            iter->Set_FontColor(ALPHA_ZERO);
+            m_eLayout_Type = LAYOUT_TYPE::LAYOUT_TAB;
+
+            m_eTabLayout_Type = LAYOUT_TAB_TYPE::HINT_UI_TYPE;
         }
+
+        else if (CustomUIDesc->wstrFileName == TEXT("UI_Layout_Key"))
+        {
+            m_eLayout_Type = LAYOUT_TYPE::LAYOUT_KEY;
+
+            if (0 == m_iWhich_Child)
+            {
+                m_eTabLayout_Type = LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE;
+            }
+        }
+
+        else if (CustomUIDesc->wstrFileName == TEXT("UI_Layout_Statue"))
+        {
+            m_eLayout_Type = LAYOUT_TYPE::LAYOUT_STATUE;
+
+            if (0 == m_iWhich_Child)
+            {
+                m_eTabLayout_Type = LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE;
+            }
+        }
+
     }
 
-    if (m_eLayout_Type == LAYOUT_UI_TYPE::INVEN_UI_TYPE)
+    if (m_eTabLayout_Type == LAYOUT_TAB_TYPE::INVEN_UI_TYPE)
     {
         if (!m_vecTextBoxes.empty())
         {
@@ -129,6 +140,15 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
         }
     }
 
+    if (LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE == m_eTabLayout_Type)
+    {
+        Find_TabWindow();
+        m_isMainRender = m_pTab_Window->Get_MainRender_Ptr();
+    }
+
+    if (FAILED(Change_Tool()))
+        return E_FAIL;
+
     m_isPrevRender = m_isRender = false;
 
     return S_OK;
@@ -143,82 +163,18 @@ void CLayOut_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
+    if (nullptr == m_isGimmickCamera_Layout_Type)
+        Find_GimmickCamera();
 
     _float4 vObjPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
     vObjPos.z = 0.1f;
     m_pTransformCom->Set_State(CTransform::STATE_POSITION, vObjPos);
 
-    if (LAYOUT_UI_TYPE::BACKGROUND_UI_TYPE == m_eLayout_Type)
-    {
-        if (nullptr == m_pTab_Window)
-        {
-            Find_TabWindow();
+    Layout_Tab();
 
-            if (nullptr == m_pTab_Window)
-            {
-                MSG_BOX(TEXT("LayOut에 Render를 구분할 Object(Tab Window)를 불러올 수 없습니다."));
-                /* Tab Window 가 nullptr 이 아닌 지 확인해주세요.*/
-            }
-        }
+    Layout_Key();
 
-        else
-        {
-            if (false == (*m_isMainRender))
-            {
-                m_isRender = true;
-                m_eRenderLayout_Type = (LAYOUT_UI_TYPE) *(m_pTab_Window->Get_Window_RenderType_Ptr());
-            }
-
-            else
-            {
-                m_isRender = false;
-                m_eRenderLayout_Type = LAYOUT_UI_TYPE::END_UI_TYPE;
-            }
-        }
-    }
-  
-    /* 내 렌더랑 호출할 렌더랑 같을 때 */
-    if(nullptr != m_pLayout_BackGround)
-    {
-        if (m_eLayout_Type == m_pLayout_BackGround->m_eRenderLayout_Type)
-        {
-            m_isRender = true;
-        }
-
-        else
-        {
-            m_isRender = false;
-        }
-    }
-
-    /* Redner 작동*/
-    if(m_isPrevRender != m_isRender)
-    {
-        if(true == m_isRender)
-        {
-            if (!m_vecTextBoxes.empty())
-            {
-                for (auto& iter : m_vecTextBoxes)
-                    iter->Set_FontColor(WHITE_COLOR);
-            }
-        }
-
-        else if (false == m_isRender)
-        {
-            if (!m_vecTextBoxes.empty())
-            {
-                for (auto& iter : m_vecTextBoxes)
-                    iter->Set_FontColor(ALPHA_ZERO);
-            }
-        }
-
-        m_isPrevRender = m_isRender;
-    }
-
-    if (true == m_isInvenCheck_Typing)
-    {
-        Typing_Menu_LayOut();
-    }
+    Layout_Statue();
 }   
 
 void CLayOut_UI::Late_Tick(_float fTimeDelta)
@@ -230,6 +186,26 @@ HRESULT CLayOut_UI::Render()
 {
     if (FAILED(__super::Render()))
         return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CLayOut_UI::Change_Tool()
+{
+    if (LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE == m_eTabLayout_Type)
+    {
+        m_isMask = m_Mask[0].isMask = true;
+        m_fMaskControl = m_Mask[0].fMaskControl = _float2(0.652f, 0.428f);
+        m_vColor[0].vColor.w = 0.8f;
+    }
+
+    if (!m_vecTextBoxes.empty())
+    {
+        for (auto& iter : m_vecTextBoxes)
+        {
+            iter->Set_FontColor(ALPHA_ZERO);
+        }
+    }
 
     return S_OK;
 }
@@ -255,7 +231,6 @@ void CLayOut_UI::Typing_Menu_LayOut()
 {
     if (!m_vecTextBoxes.empty())
     {
-
         for (auto& iter : m_vecTextBoxes)
         {
             _float4 originPos = m_vOriginTextPos;
@@ -292,6 +267,163 @@ void CLayOut_UI::Typing_Menu_LayOut()
     }
 }
 
+void CLayOut_UI::Find_GimmickCamera()
+{
+    CCamera_Gimmick* pCameraGimmick = static_cast<CCamera_Gimmick*>(m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 2));
+
+    m_isGimmickCamera_Layout_Type = pCameraGimmick->Get_Layout_Type();
+
+    if (nullptr == m_isGimmickCamera_Layout_Type)
+    {
+        MSG_BOX(TEXT("Gimmick Camera를 찾을 수 없음 "));
+    }
+}
+
+void CLayOut_UI::Layout_Tab()
+{
+    if (LAYOUT_TYPE::LAYOUT_TAB != m_eLayout_Type)
+        return;
+
+    if (*m_isGimmickCamera_Layout_Type == static_cast<_ubyte>(LAYOUT_TYPE::LAYOUT_KEY) || 
+        *m_isGimmickCamera_Layout_Type == static_cast<_ubyte>(LAYOUT_TYPE::LAYOUT_STATUE))
+        return;
+
+    if (LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE == m_eTabLayout_Type)
+    {
+        if (nullptr == m_pTab_Window)
+        {
+            Find_TabWindow();
+
+            if (nullptr == m_pTab_Window)
+            {
+                MSG_BOX(TEXT("LayOut에 Render를 구분할 Object(Tab Window)를 불러올 수 없습니다."));
+                /* Tab Window 가 nullptr 이 아닌 지 확인해주세요.*/
+            }
+        }
+
+        else
+        {
+            if (false == (*m_isMainRender))
+            {
+                m_isRender = true;
+                m_eRenderLayout_Type = (LAYOUT_TAB_TYPE) * (m_pTab_Window->Get_Window_RenderType_Ptr());
+            }
+
+            else
+            {
+                m_isRender = false;
+                m_eRenderLayout_Type = LAYOUT_TAB_TYPE::END_UI_TYPE;
+            }
+        }
+    }
+
+    /* 내 렌더랑 호출할 렌더랑 같을 때 */
+    if (nullptr != m_pLayout_BackGround)
+    {
+        if (m_eTabLayout_Type == m_pLayout_BackGround->m_eRenderLayout_Type)
+        {
+            m_isRender = true;
+        }
+
+        else
+        {
+            m_isRender = false;
+        }
+    }
+
+    /* Redner 작동*/
+    if (m_isPrevRender != m_isRender)
+    {
+        if (true == m_isRender)
+        {
+            if (!m_vecTextBoxes.empty())
+            {
+                for (auto& iter : m_vecTextBoxes)
+                    iter->Set_FontColor(WHITE_COLOR);
+            }
+        }
+
+        else if (false == m_isRender)
+        {
+            if (!m_vecTextBoxes.empty())
+            {
+                for (auto& iter : m_vecTextBoxes)
+                    iter->Set_FontColor(ALPHA_ZERO);
+            }
+        }
+
+        m_isPrevRender = m_isRender;
+    }
+
+    if (true == m_isInvenCheck_Typing)
+    {
+        Typing_Menu_LayOut();
+    }
+}
+
+void CLayOut_UI::Layout_Key()
+{
+    if (LAYOUT_TYPE::LAYOUT_KEY != m_eLayout_Type)
+        return;
+
+    if (*m_isGimmickCamera_Layout_Type == static_cast<_ubyte>(LAYOUT_TYPE::LAYOUT_KEY))
+    {
+        m_isRender = true;
+
+        if (!m_vecTextBoxes.empty())
+        {
+            for (auto& iter : m_vecTextBoxes)
+            {
+                iter->Set_FontColor(_float4(1, 1, 1, 1));
+            }
+        }
+    }
+    else
+    {
+        m_isRender = false;
+
+        if (!m_vecTextBoxes.empty())
+        {
+            for (auto& iter : m_vecTextBoxes)
+            {
+                iter->Set_FontColor(_float4(0, 0, 0, 0));
+            }
+        }
+    }
+}
+
+void CLayOut_UI::Layout_Statue()
+{
+    if (LAYOUT_TYPE::LAYOUT_STATUE != m_eLayout_Type)
+        return;
+
+    if (*m_isGimmickCamera_Layout_Type == static_cast<_ubyte>(LAYOUT_TYPE::LAYOUT_STATUE))
+    {
+        m_isRender = true;
+
+        if (!m_vecTextBoxes.empty())
+        {
+            for (auto& iter : m_vecTextBoxes)
+            {
+                iter->Set_FontColor(_float4(1, 1, 1, 1));
+            }
+        }
+    }
+    else
+    {
+        m_isRender = false;
+
+        if (!m_vecTextBoxes.empty())
+        {
+            for (auto& iter : m_vecTextBoxes)
+            {
+                iter->Set_FontColor(_float4(0, 0, 0, 0));
+            }
+        }
+    }
+}
+
+
 CCustomize_UI* CLayOut_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
     CLayOut_UI* pInstance = new CLayOut_UI(pDevice, pContext);
@@ -324,9 +456,5 @@ void CLayOut_UI::Free()
 {
     __super::Free();
 
-    //if(nullptr != m_pTab_Window)
-    //{
-    //    Safe_Release<CTab_Window*>(m_pTab_Window);
-    //    m_pTab_Window = nullptr;
-    //}
+   
 }

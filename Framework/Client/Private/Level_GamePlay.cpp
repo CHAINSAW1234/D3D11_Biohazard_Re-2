@@ -223,8 +223,8 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 	if (FAILED(Ready_Layer_LandBackGround(TEXT("Layer_LandBackGround"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -456,9 +456,27 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 		UI_Distinction(selectedFilePath);
 		CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 	}
-	
+	/////////////////////////* ¢º ¢º  ¢º  ¢º  ¢º LayOut  */////////////////////////////
 	/* 4. UI_LayOut */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_LayOut.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
+	/* 4. UI_Layout_Key */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Layout_Key.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
+	/* 4. UI_Layout_Statue */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Layout_Statue.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+	
+	/* 4. UI_HintLayout */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_HintLayout.dat");
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
@@ -893,7 +911,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 	}
 
 	/* 4. UI_LayOut */
-	else if (TEXT("UI_LayOut") == fileName)
+	else if (TEXT("UI_LayOut") == fileName || TEXT("UI_Layout_Key") == fileName || TEXT("UI_Layout_Statue") == fileName || TEXT("UI_HintLayout") == fileName)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_LayOut_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
@@ -1385,6 +1403,20 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 
 			case OBJ_BIGSTATUE:
 
+				for (size_t i = 0; i < 10; i++)
+				{
+					_int iNum = { 0 };
+
+
+					if (!ReadFile(hFile, &iNum, sizeof(_int), &dwByte, NULL))
+					{
+						CloseHandle(hFile);
+						return E_FAIL;
+					}
+
+					tagInteractprops.tagBigStatue.iLockNum[i] = iNum;
+
+				}
 				break;
 
 			case OBJ_HALL_STATUE:

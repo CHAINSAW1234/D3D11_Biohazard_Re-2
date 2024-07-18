@@ -41,6 +41,7 @@ private :
 	_float4x4*					m_pSocketMatrix		= { nullptr };
 	_ubyte*						m_pEmblemAnim;
 	_float4x4*					m_pParentWorldMatrix;
+	_float4x4*					m_ParentWorldMatirx2;
 
 	_bool						m_isKeyUsing		= { false };
 	_bool						m_isKeyRender		= { false };

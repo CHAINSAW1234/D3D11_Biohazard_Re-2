@@ -49,6 +49,11 @@ HRESULT CStatic_Map_UI::Render()
     return S_OK;
 }
 
+HRESULT CStatic_Map_UI::Change_Tool()
+{
+    return S_OK;
+}
+
 void CStatic_Map_UI::Rendering()
 {
     

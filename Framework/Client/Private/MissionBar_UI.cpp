@@ -79,29 +79,8 @@ HRESULT CMissionBar_UI::Initialize(void* pArg)
         }
     }
 
-    m_SavePos[2] = m_SavePos[1] = m_SavePos[0];
-    m_vColor[1].vColor.x = 1.f;
-    m_vColor[1].vColor.y = 1.f;
-    m_vColor[1].vColor.z = 1.f;
-    m_vColor[1].vColor.w = 0.5f;
-
-    m_fColorTimer_Limit = 1.f;
-    m_isRender = false;
-    m_fLightSize = 1.f;
-   
-    /*Client */
-    m_isPlay = true;
-    m_fLifeTimer = 0.f;
-    m_iColorCurNum = 0;
-
-    /* Light */
-    m_isMission_NonLighting = false;
-    m_fLightPosition.x = 3.f;
-    m_fLightPositionY = 0.f;
-
-    /* Tool */
-    m_isKeepPlay = false;
-    m_isLight = false;
+    if (FAILED(Change_Tool()))
+        return E_FAIL;
 
     return S_OK;
 }
@@ -144,6 +123,35 @@ HRESULT CMissionBar_UI::Render()
 {
     if (FAILED(__super::Render()))
         return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CMissionBar_UI::Change_Tool()
+{
+    m_SavePos[2] = m_SavePos[1] = m_SavePos[0];
+    m_vColor[1].vColor.x = 1.f;
+    m_vColor[1].vColor.y = 1.f;
+    m_vColor[1].vColor.z = 1.f;
+    m_vColor[1].vColor.w = 0.5f;
+
+    m_fColorTimer_Limit = 1.f;
+    m_isRender = false;
+    m_fLightSize = 1.f;
+
+    /*Client */
+    m_isPlay = true;
+    m_fLifeTimer = 0.f;
+    m_iColorCurNum = 0;
+
+    /* Light */
+    m_isMission_NonLighting = false;
+    m_fLightPosition.x = 3.f;
+    m_fLightPositionY = 0.f;
+
+    /* Tool */
+    m_isKeepPlay = false;
+    m_isLight = false;
 
     return S_OK;
 }

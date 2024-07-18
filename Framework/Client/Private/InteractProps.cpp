@@ -149,6 +149,21 @@ void CInteractProps::Late_Tick_PartObjects(_float fTimeDelta)
 	}
 }
 
+void CInteractProps::Camera_Active(_int ePart, _float3 vRatio)
+{
+	CPart_InteractProps* pPartLock = { nullptr };
+	pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[ePart]);
+	m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + XMVectorSetW(XMVector4Normalize(pPartLock->Get_World_Look_Dir()) * _vector { vRatio.x, vRatio.y, vRatio.z, 0.f }, 0.f));
+	m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
+}
+
+void CInteractProps::Reset_Camera()
+{
+	m_pCameraGimmick->Active_Camera(false);
+	m_isCamera_Reset = false;
+	m_pPlayer->ResetCamera();
+}
+
 void CInteractProps::Check_Player()
 {
 	m_pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());

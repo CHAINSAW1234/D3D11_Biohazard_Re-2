@@ -529,17 +529,6 @@ void CPlayer::Start()
 			/* 부모를 불러서 Selector를 구별한다 */
 			if (false == pSelect->Get_IsChild())
 			{
-				for (auto& child : *pSelecter_UI)
-				{
-					CSelector_UI* pSelectChild = dynamic_cast<CSelector_UI*>(child);
-
-					if (nullptr != pSelectChild)
-					{
-						/* 부모와 자식이 가지고 있는 Supervise가 같다면*/
-						if (pSelect == pSelectChild->Get_Supervise())
-							pSelect->Set_SelectorObj_Collection(pSelectChild);
-					}
-				}
 				m_SelectorVec.push_back(pSelect);
 			}
 		}
@@ -664,11 +653,6 @@ CGameObject* CPlayer::Create_Selector_UI()
 		if (false == *iter->Get_Using())
 		{
 			*iter->Get_Using() = true;
-
-			for (auto& iter1 : *iter->Get_Collection())
-			{
-				*iter1->Get_Using() = true;
-			}
 
 			return iter;
 		}

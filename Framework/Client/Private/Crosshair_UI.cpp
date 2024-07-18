@@ -114,9 +114,11 @@ HRESULT CCrosshair_UI::Initialize(void* pArg)
 
 
     m_pTabWindow = static_cast<CTab_Window*>(m_pGameInstance->Get_GameObject(g_Level, TEXT("Layer_TabWindow"), 0));
+    
     Find_Player();
 
-    m_isRender = false;
+    if (FAILED(Change_Tool()))
+        return E_FAIL;
 
     return S_OK;
 }
@@ -163,6 +165,13 @@ HRESULT CCrosshair_UI::Render()
 {
     if (FAILED(__super::Render()))
         return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CCrosshair_UI::Change_Tool()
+{
+    m_isRender = false;
 
     return S_OK;
 }

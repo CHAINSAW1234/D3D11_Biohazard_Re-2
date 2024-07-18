@@ -102,8 +102,6 @@ HRESULT CLoading_UI::Initialize(void* pArg)
         }
     }
 
-    
-    /* 2. Type에 따른 조건 */
     m_isPlay = false;
 
     return S_OK;
@@ -129,6 +127,11 @@ HRESULT CLoading_UI::Render()
     if (FAILED(__super::Render()))
         return E_FAIL;
 
+    return S_OK;
+}
+
+HRESULT CLoading_UI::Change_Tool()
+{
     return S_OK;
 }
 
