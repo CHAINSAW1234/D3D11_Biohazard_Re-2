@@ -27,6 +27,27 @@ public:
 	}
 };
 
+class QueryFilterCallback_Ray : public PxQueryFilterCallback
+{
+public:
+	QueryFilterCallback_Ray() {}
+	virtual PxQueryHitType::Enum preFilter(const PxFilterData& filterData, const PxShape* shape, const PxRigidActor* actor, PxHitFlags& queryFlags)
+	{
+		PxFilterData filterData0 = shape->getSimulationFilterData();
+
+		if ((filterData0.word0 & COLLISION_CATEGORY::CCT))
+		{
+			return PxQueryHitType::eNONE;
+		}
+	}
+
+	virtual PxQueryHitType::Enum PxQueryFilterCallback::postFilter(const PxFilterData& filterData, const PxQueryHit& hit, const PxShape* shape, const PxRigidActor* actor)
+	{
+		// 추가적인 후처리 로직이 필요하다면 작성
+		return PxQueryHitType::eNONE; // 충돌 무시
+	}
+};
+
 static physx::PxFilterFlags MegamotionFilterShader(
 	physx::PxFilterObjectAttributes attributes0,
 	physx::PxFilterData filterData0,
