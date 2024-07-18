@@ -479,11 +479,15 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 	{
 	case Client::emergencyspray01a: {
 		pPlayer->Set_Hp(5);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_emergencyspray.mp3"), CHANNELID::CH30);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
 		break;
 	}
 
 	case Client::greenherb01a: {
 		pPlayer->Set_Hp(pPlayer->Get_Hp() + 1);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_emergencyspray.mp3"), CHANNELID::CH30);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH31);
 		break;
 	}
 
@@ -497,31 +501,43 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 
 	case Client::herbsgg01a: {
 		pPlayer->Set_Hp(pPlayer->Get_Hp() + 3);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH31);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
 		break;
 	}
 
 	case Client::herbsgr01a: {
 		pPlayer->Set_Hp(pPlayer->Get_Hp() + 3);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH31);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
 		break;
 	}
 
 	case Client::herbsgb01a: {
 		pPlayer->Set_Hp(pPlayer->Get_Hp() + 1);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH31);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
 		break;
 	}
 
 	case Client::herbsggb01a: {
 		pPlayer->Set_Hp(pPlayer->Get_Hp() + 3);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH31);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
 		break;
 	}
 
 	case Client::herbsggg01a: {
 		pPlayer->Set_Hp(5);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH31);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
 		break;
 	}
 
 	case Client::herbsgrb01a: {
 		pPlayer->Set_Hp(5);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH31);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
 		break;
 	}
 
@@ -1158,6 +1174,16 @@ void CInventory_Manager::Deactivation(CItem_UI* pExcludeObj)
 
 void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 {
+	if (false == bInput)
+	{
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Inven_Open.mp3"), CHANNELID::CH30);
+	}
+	else
+	{
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Inven_Close.mp3"), CHANNELID::CH30);
+	}
+
+
 	for (_uint i = 0; i < m_iInvenCount; i++)
 	{
 		m_vecInvenSlot[i] -> Set_Dead(bInput);
@@ -1649,8 +1675,14 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 	case Client::kingscepter01a:
 	case Client::virginheart01a:
 	case Client::blankkey01a:
+		return QUEST;
+		break;
+
 	case Client::statuebook01a:
 	case Client::statuehand01a:
+		return CONSUMABLE;
+		break;
+
 	case Client::virginmedal01a:
 	case Client::diakey01a:
 	case Client::virginmedal02a:
@@ -1707,7 +1739,10 @@ ITEM_TYPE CInventory_Manager::ItemType_Classify_ByNumber(ITEM_NUMBER eItemNum)
 		return CONSUMABLE_EQUIPABLE;
 		break;
 	case Client::portablesafe:
-		return CONSUMABLE_EQUIPABLE;
+		return QUEST;
+		break;
+	case Client::statuebookhand:
+		return QUEST;
 		break;
 
 	default:
@@ -1785,6 +1820,7 @@ _uint CInventory_Manager::PickUpItem_Quantity_Classify(ITEM_NUMBER eItemNum)
 	case Client::Grenade:
 	case Client::vp70stock:
 	case Client::portablesafe:
+	case Client::statuebookhand:
 		return 1;
 		break;
 
@@ -1826,6 +1862,8 @@ void CInventory_Manager::Set_ItemRecipe()
 
 	Add_Recipe(shotgun_bullet01a, shotgun_bullet01a, shotgun_bullet01a);
 
+	Add_Recipe(statuehand01a, statuebook01a, statuebookhand);
+	Add_Recipe(statuebook01a, statuehand01a, statuebookhand);
 }
 
 void CInventory_Manager::Add_Recipe(ITEM_NUMBER eKeyItemNum, ITEM_NUMBER eCombinableItemNum, ITEM_NUMBER eResultItemNum)

@@ -12,6 +12,7 @@ namespace Client
 	/*
 	채널 점유 현황
 	CH30 : Inventory에서 사용중
+	CH31 : Inventory에서 사용중
 	*/
 	enum LEVEL { LEVEL_STATIC, LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_END };
 
@@ -422,7 +423,7 @@ namespace Client
 		Grenade,
 		vp70stock,
 		portablesafe,
-		//statuebookhand,
+		statuebookhand,
 		ITEM_NUMBER_END
 	};
 

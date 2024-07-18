@@ -2422,6 +2422,13 @@ HRESULT CLoader::Loading_For_GamePlay()
 
 
 
+#pragma region CHTEST
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_statuebookhand"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_NONANIM, "../Bin/Resources/Models/Map/Item/statuebookhand/statuebookhand.fbx",
+			TransformMatrix))))
+		return E_FAIL;
+#pragma endregion
+
 	/* Prototype_Component_VIBuffer_Terrain */
 	//if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_VIBuffer_Terrain"),
 	//	CVIBuffer_Terrain::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Terrain/Height.bmp")))))

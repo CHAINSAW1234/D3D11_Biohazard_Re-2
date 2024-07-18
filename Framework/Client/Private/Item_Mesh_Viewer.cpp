@@ -606,6 +606,8 @@ HRESULT CItem_Mesh_Viewer::Load_ItemModelTags()
 
 	CloseHandle(hFile);
 
+	m_vecModelTag.push_back(TEXT("Prototype_Component_Model_statuebookhand"));
+
 	if (ITEM_NUMBER_END != m_vecModelTag.size())
 		return E_FAIL;
 
@@ -969,6 +971,14 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_fStartSize = 0.01f;
 		m_fEndSize = 0.007f;
 		m_matMoveCenter = XMMatrixTranslation(0.f, -0.04f, 0.f);
+		break;
+	case Client::statuebookhand:
+		m_fPopupHide_EndDist = 0.15f;
+		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		m_fCurSize = 0.01f;
+		m_fStartSize = 0.01f;
+		m_fEndSize = 0.007f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 
 	default:

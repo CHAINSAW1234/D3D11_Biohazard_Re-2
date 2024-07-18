@@ -78,11 +78,9 @@ void CItem_UI::Tick(_float fTimeDelta)
 
 		m_iTextureNum = static_cast<_uint>(m_eItemNumber);
 
-		if (false == m_isActive)
-			m_fFrame;
-
 		switch (m_eInvenItemType)
 		{
+		case Client::HOTKEY:
 		case Client::EQUIPABLE: {
 			if (m_iItemQuantity < 10)
 			{
@@ -91,10 +89,42 @@ void CItem_UI::Tick(_float fTimeDelta)
 			}
 			else
 				static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text(0, to_wstring(m_iItemQuantity));
+
+			switch (m_eItemNumber)
+			{
+			case Client::HandGun: {
+				if (15 == m_iItemQuantity)
+				{
+					static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text_Color(0, XMVectorSet(0.5f, 0.7f, 0.4f, 1.f));
+				}
+				else
+				{
+					static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text_Color(0, XMVectorSet(1.f, 1.f, 1.f, 1.f));
+				}
+				break;
+			}
+
+			case Client::ShotGun: {
+				if (7 == m_iItemQuantity)
+				{
+					static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text_Color(0, XMVectorSet(0.5f, 0.7f, 0.4f, 1.f));
+				}
+				else
+				{
+					static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text_Color(0, XMVectorSet(1.f, 1.f, 1.f, 1.f));
+				}
+
+				break;
+			}
+
+			default:
+				break;
+			}
 			break;
 		}
 			
 		case Client::CONSUMABLE_EQUIPABLE: {
+			static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text_Color(0, XMVectorSet(1.f, 1.f, 1.f, 1.f));
 			if (m_iItemQuantity < 10)
 			{
 				wstring Text = TEXT(" ") + to_wstring(m_iItemQuantity);
@@ -110,6 +140,7 @@ void CItem_UI::Tick(_float fTimeDelta)
 		}
 			
 		case Client::CONSUMABLE: {
+			static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text_Color(0, XMVectorSet(1.f, 1.f, 1.f, 1.f));
 			if (m_iItemQuantity < 10)
 			{
 				wstring Text = TEXT(" ") + to_wstring(m_iItemQuantity);
@@ -121,6 +152,7 @@ void CItem_UI::Tick(_float fTimeDelta)
 		}
 
 		case Client::QUEST: {
+			static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text_Color(0, XMVectorSet(1.f, 1.f, 1.f, 1.f));
 			if (m_iItemQuantity < 10)
 			{
 				wstring Text = TEXT(" ") + to_wstring(m_iItemQuantity);
@@ -131,16 +163,17 @@ void CItem_UI::Tick(_float fTimeDelta)
 			break;
 		}
 						  
-		case Client::HOTKEY: {
-			if (m_iItemQuantity < 10)
-			{
-				wstring Text = TEXT(" ") + to_wstring(m_iItemQuantity);
-				static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text(0, Text);
-			}
-			else
-				static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text(0, to_wstring(m_iItemQuantity));
-			break;
-		}
+		//case Client::HOTKEY: {
+		//	static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text_Color(0, XMVectorSet(1.f, 1.f, 1.f, 1.f));
+		//	if (m_iItemQuantity < 10)
+		//	{
+		//		wstring Text = TEXT(" ") + to_wstring(m_iItemQuantity);
+		//		static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text(0, Text);
+		//	}
+		//	else
+		//		static_cast<CCustomize_UI*>(m_mapPartUI[COUNT_DISPLAY])->Set_Text(0, to_wstring(m_iItemQuantity));
+		//	break;
+		//}
 
 			
 		default:
@@ -261,21 +294,23 @@ void CItem_UI::Set_Activ_ItemUI(_bool Active)
 	if (false == Active)
 	{
 		m_isActive = false;
-
 		Frame_Change_ValueColor(1);
 
-		for (auto& iter : m_vecChildUI)
-			static_cast<CCustomize_UI*>(iter)->Frame_Change_ValueColor(1);
+		//m_mapPartUI[EQUIP_DISPLAY]->Frame_Change_ValueColor(1);
+		m_mapPartUI[EQUIP_DISPLAY]->Set_Text_Color(0, XMVectorSet(0.6f, 0.6f, 0.6f, 1.f));
+		m_mapPartUI[HOTKEY_DISPLAY]->Set_Text_Color(0, XMVectorSet(0.6f, 0.6f, 0.6f, 1.f));
+		m_mapPartUI[COUNT_DISPLAY]->Set_Text_Color(0, XMVectorSet(0.6f, 0.6f, 0.6f, 1.f));
 	}
 
 	else
 	{
 		m_isActive = true;
-
 		Frame_Change_ValueColor(0);
 
-		for (auto& iter : m_vecChildUI)
-			static_cast<CCustomize_UI*>(iter)->Frame_Change_ValueColor(0);
+		//m_mapPartUI[EQUIP_DISPLAY]->Frame_Change_ValueColor(0);
+		m_mapPartUI[EQUIP_DISPLAY]->Set_Text_Color(0, XMVectorSet(0.f, 0.f, 0.f, 1.f));
+		m_mapPartUI[HOTKEY_DISPLAY]->Set_Text_Color(0, XMVectorSet(1.f, 1.f, 1.f, 1.f));
+		m_mapPartUI[COUNT_DISPLAY]->Set_Text_Color(0, XMVectorSet(1.f, 1.f, 1.f, 1.f));
 	}
 }
 

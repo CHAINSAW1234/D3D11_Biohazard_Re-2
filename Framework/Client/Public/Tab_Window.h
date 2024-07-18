@@ -56,6 +56,7 @@ private:
 	void			ItemIven_EventHandle(_float fTimeDelta);
 	void			Button_Act(_float fTimeDelta);
 	_bool			IsInputTab();
+	void			USE_INTERACT_ITEM_SoundPlay();
 
 public:
 	void			OnOff_EventHandle();

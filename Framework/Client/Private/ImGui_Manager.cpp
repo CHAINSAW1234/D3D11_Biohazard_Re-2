@@ -604,6 +604,8 @@ wstring CImgui_Manager::Classify_ItemNum_To_String(ITEM_NUMBER eItemNum)
         break;
         ITEM_STRING(portablesafe);
         break;
+        ITEM_STRING(statuebookhand);
+        break;
     default:
         break;
     }
