@@ -454,7 +454,12 @@ public:
     {
         return m_BoneMatrices;
     }
+    _float4x4*                          GetBoneMatrices_Ragdoll_Cloth()
+    {
+        return m_BoneMatrices_Cloth;
+    }
     _float4x4*                    GetCombinedMatrix_Ragdoll(_uint iIndex);
+    _float4x4*                    GetCombinedMatrix_Ragdoll_Cloth(_uint iIndex);
 #pragma endregion
 
 private:
@@ -512,7 +517,9 @@ private:
     _float4x4                                       m_RotationMatrix;
     PoseTransforms                                  m_Global_transforms;
     PoseTransforms                                  m_Global_transforms_BreakPart;
+    PoseTransforms                                  m_Global_transforms_BreakPart_Cloth;
     std::vector<_bool>                              m_vecBreak_Parent_Flag;
+    std::vector<_bool>                              m_vecBreak_Parent_Flag_Cloth;
 
     PxFilterData                                    m_FilterData;
     class CTransform* m_pTransform = { nullptr };
@@ -541,6 +548,7 @@ private:
     _uint                                           m_iRagdollType = { RAGDOLL_TYPE::TYPE_NONE };
     _bool                                           m_bPartialRagdoll = { false };
     vector<_bool>									m_vecBreakPartFilter;
+    vector<_bool>									m_vecBreakPartFilter_Cloth;
 
     uint32_t m_head_idx = { 0 };		//neck_1
     uint32_t m_neck_01_idx = { 0 };	//neck_0
@@ -667,6 +675,18 @@ private:
 
     uint32_t m_Calf_R_Twist_0 = { 0 };
     uint32_t m_Calf_R_Twist_1 = { 0 };
+
+    uint32_t m_Cloth_L_Arm_01 = { 0 };
+    uint32_t m_Cloth_L_Arm_02 = { 0 };
+    uint32_t m_Cloth_L_Arm_03 = { 0 };
+    uint32_t m_Cloth_L_Arm_04 = { 0 };
+    uint32_t m_Cloth_L_Arm_05 = { 0 };
+    uint32_t m_Cloth_R_Arm_01= { 0 };
+    uint32_t m_Cloth_R_Arm_02= { 0 };
+    uint32_t m_Cloth_R_Arm_03= { 0 };
+    uint32_t m_Cloth_R_Arm_04= { 0 };
+    uint32_t m_Cloth_R_Arm_05= { 0 };
+   
 #pragma endregion
 
 #pragma region Additional Body
@@ -698,6 +718,7 @@ private:
 #pragma endregion
 
     _float4x4           m_BoneMatrices[MAX_COUNT_BONE];
+    _float4x4           m_BoneMatrices_Cloth[MAX_COUNT_BONE];
 
 public:
     virtual void Free() override;

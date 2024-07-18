@@ -393,26 +393,42 @@ _bool CRagdoll_Physics::Init(const string& name)
 	SetBoneIndex();
 
 	m_ragdoll->m_rigid_bodies.resize(m_skeletal_mesh->skeleton()->num_bones());
-	m_ragdoll->m_rigid_bodies_BreakPart.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_relative_joint_pos.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_original_body_rotations.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_body_pos_relative_to_joint.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_original_joint_rotations.resize(m_skeletal_mesh->skeleton()->num_bones());
 
+#pragma region ºÎÀ§ ÆÄ±«
+	m_ragdoll->m_rigid_bodies_BreakPart.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_relative_joint_pos_BreakPart.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_original_body_rotations_BreakPart.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_body_pos_relative_to_joint_BreakPart.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_original_joint_rotations_BreakPart.resize(m_skeletal_mesh->skeleton()->num_bones());
+#pragma endregion 
+
+#pragma region ¿Ê
+	m_ragdoll->m_rigid_bodies_BreakPart_Cloth.resize(m_skeletal_mesh->skeleton()->num_bones());
+	m_ragdoll->m_relative_joint_pos_BreakPart_Cloth.resize(m_skeletal_mesh->skeleton()->num_bones());
+	m_ragdoll->m_original_body_rotations_BreakPart_Cloth.resize(m_skeletal_mesh->skeleton()->num_bones());
+	m_ragdoll->m_body_pos_relative_to_joint_BreakPart_Cloth.resize(m_skeletal_mesh->skeleton()->num_bones());
+	m_ragdoll->m_original_joint_rotations_BreakPart_Cloth.resize(m_skeletal_mesh->skeleton()->num_bones());
+#pragma endregion
 
 	m_vecBreak_Parent_Flag.resize(m_skeletal_mesh->skeleton()->num_bones());
+	m_vecBreak_Parent_Flag_Cloth.resize(m_skeletal_mesh->skeleton()->num_bones());
 
 	m_vecBreakPartFilter.resize(m_skeletal_mesh->skeleton()->num_bones());
+	m_vecBreakPartFilter_Cloth.resize(m_skeletal_mesh->skeleton()->num_bones());
 
 	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 	{
 		m_ragdoll->m_rigid_bodies[i] = nullptr;
+		m_ragdoll->m_rigid_bodies_BreakPart[i] = nullptr;
+		m_ragdoll->m_rigid_bodies_BreakPart_Cloth[i] = nullptr;
 		m_vecBreakPartFilter[i] = false;
+		m_vecBreakPartFilter_Cloth[i] = false;
 		m_vecBreak_Parent_Flag[i] = false;
+		m_vecBreak_Parent_Flag_Cloth[i] = false;
 	}
 
 	return true;
@@ -954,13 +970,6 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 	}
 	case COLLIDER_TYPE::ARM_L:
 	{
-
-		/*if(!m_Arm_L)
-		{
-			m_Arm_L = create_capsule_bone(m_upperarm_l_idx, m_lowerarm_l_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_L);
-			m_Scene->addActor(*m_Arm_L);
-		}*/
-
 		if (m_Arm_L_High == nullptr)
 		{
 			m_Arm_L_High = create_capsule_bone(m_upperarm_high_l_idx, m_lowerarm_l_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_L);
@@ -991,20 +1000,56 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		m_vecBreak_Parent_Flag[m_Arm_L_Twist_3] = true;
 		joints[m_Arm_L_Twist_3].parent_index_BreakPart = m_upperarm_l_idx;
 
-		/*m_vecBreak_Parent_Flag[m_Arm_L_Twist_0] = true;
-		joints[m_Arm_L_Twist_0].parent_index_BreakPart = joints[m_Arm_L_Twist_0].parent_index;
-		m_vecBreak_Parent_Flag[m_Arm_L_Twist_1] = true;
-		joints[m_Arm_L_Twist_1].parent_index_BreakPart = joints[m_Arm_L_Twist_1].parent_index;
-		m_vecBreak_Parent_Flag[m_Arm_L_Twist_2] = true;
-		joints[m_Arm_L_Twist_2].parent_index_BreakPart = joints[m_Arm_L_Twist_2].parent_index;
-		m_vecBreak_Parent_Flag[m_Arm_L_Twist_3] = true;
-		joints[m_Arm_L_Twist_3].parent_index_BreakPart = joints[m_Arm_L_Twist_3].parent_index;*/
-
-
 		joints[m_Arm_L_Twist_0].parent_index = m_upperarm_high_l_idx;
 		joints[m_Arm_L_Twist_1].parent_index = m_upperarm_high_l_idx;
 		joints[m_Arm_L_Twist_2].parent_index = m_upperarm_high_l_idx;
 		joints[m_Arm_L_Twist_3].parent_index = m_upperarm_high_l_idx;
+
+
+#pragma region For Cloth
+
+		/*for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
+		{
+			if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index,m_skeletal_mesh->skeleton()) == nullptr)
+			{
+				m_vecBreak_Parent_Flag_Cloth[i] = true;
+				joints[i].parent_index_BreakPart_Cloth = m_upperarm_high_l_idx;
+				m_vecBreakPartFilter_Cloth[i] = true;
+			}
+		}*/
+
+		if(m_Cloth_L_Arm_01 < MAX_BONES)
+		{
+			m_vecBreak_Parent_Flag_Cloth[m_Cloth_L_Arm_01] = true;
+			m_vecBreakPartFilter_Cloth[m_Cloth_L_Arm_01] = true;
+			joints[m_Cloth_L_Arm_01].parent_index_BreakPart_Cloth = m_upperarm_high_l_idx;
+		}
+		if (m_Cloth_L_Arm_02 < MAX_BONES)
+		{
+			m_vecBreak_Parent_Flag_Cloth[m_Cloth_L_Arm_02] = true;
+			m_vecBreakPartFilter_Cloth[m_Cloth_L_Arm_02] = true;
+			joints[m_Cloth_L_Arm_02].parent_index_BreakPart_Cloth = m_upperarm_high_l_idx;
+		}
+		if (m_Cloth_L_Arm_03 < MAX_BONES)
+		{
+			m_vecBreak_Parent_Flag_Cloth[m_Cloth_L_Arm_03] = true;
+			m_vecBreakPartFilter_Cloth[m_Cloth_L_Arm_03] = true;
+			joints[m_Cloth_L_Arm_03].parent_index_BreakPart_Cloth = m_upperarm_high_l_idx;
+		}
+		if (m_Cloth_L_Arm_04 < MAX_BONES)
+		{
+			m_vecBreak_Parent_Flag_Cloth[m_Cloth_L_Arm_04] = true;
+			m_vecBreakPartFilter_Cloth[m_Cloth_L_Arm_04] = true;
+			joints[m_Cloth_L_Arm_04].parent_index_BreakPart_Cloth = m_upperarm_high_l_idx;
+		}
+		if (m_Cloth_L_Arm_05 < MAX_BONES)
+		{
+			m_vecBreak_Parent_Flag_Cloth[m_Cloth_L_Arm_05] = true;
+			m_vecBreakPartFilter_Cloth[m_Cloth_L_Arm_05] = true;
+			joints[m_Cloth_L_Arm_05].parent_index_BreakPart_Cloth = m_upperarm_high_l_idx;
+		}
+
+#pragma endregion
 
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
@@ -1035,14 +1080,40 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			}
 		}
 
+#pragma region For Cloth.
+		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
+		{
+			uint32_t        chosen_idx;
+			PxRigidDynamic* body = m_ragdoll->find_recent_body_Cloth((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
+
+			if (!body)
+				continue;
+
+			_matrix body_global_transform = to_mat4(body->getGlobalPose());
+			_matrix inv_body_global_transform = XMMatrixInverse(nullptr, body_global_transform);
+			_matrix bind_pose_ws = XMMatrixMultiply(m_model_without_scale, XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
+			_vector joint_pos_ws = XMLoadFloat3(&joints[i].bind_pos_ws(m_model));
+			joint_pos_ws = XMVectorSetW(joint_pos_ws, 1.f);
+
+			_vector p = XMVector4Transform(joint_pos_ws, inv_body_global_transform);
+			m_ragdoll->m_relative_joint_pos_BreakPart_Cloth[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
+			m_ragdoll->m_original_body_rotations_BreakPart_Cloth[i] = XMQuaternionRotationMatrix(body_global_transform);
+
+			if (m_ragdoll->m_rigid_bodies_BreakPart_Cloth[i])
+			{
+				// Rigid body position relative to the joint
+				_matrix m = XMMatrixInverse(nullptr, m_model * XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
+				p = XMVector4Transform(XMVectorSetW(to_vec3(m_ragdoll->m_rigid_bodies_BreakPart_Cloth[i]->getGlobalPose().p), 1.0f), m);
+
+				m_ragdoll->m_body_pos_relative_to_joint_BreakPart_Cloth[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
+				m_ragdoll->m_original_joint_rotations_BreakPart_Cloth[i] = XMQuaternionRotationMatrix(bind_pose_ws);
+			}
+		}
+#pragma endregion
+
 		Update_Partial(1 / 60.f);
 
-		//¿øº»
-		/*	if(m_Arm_L && m_ForeArm_L)
-				m_pElbow_L_Joint = create_d6_joint(m_Arm_L, m_ForeArm_L, m_lowerarm_l_idx_Bone, m_lowerarm_l_idx);*/
-
-
-				//TEMP
+		//TEMP
 		if (!m_pElbow_L_Joint)
 			m_pElbow_L_Joint = create_d6_joint(m_Arm_L_High, m_ForeArm_L, m_lowerarm_l_idx_Bone, m_lowerarm_l_idx);
 
@@ -1643,6 +1714,7 @@ void CRagdoll_Physics::update_animations()
 		{
 			m_Global_transforms.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
 			m_Global_transforms_BreakPart.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
+			m_Global_transforms_BreakPart_Cloth.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
 		}
 	}
 
@@ -1693,9 +1765,12 @@ void CRagdoll_Physics::update_animations()
 	else
 	{
 		m_Global_transforms = *m_ragdoll_pose->apply(m_ragdoll, m_model_only_scale, m_model_without_scale);
+		m_Global_transforms_BreakPart_Cloth = *m_ragdoll_pose->apply_BreakPart_Cloth(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth);
 
 		if (m_bPartialRagdoll == false)
+		{
 			m_Global_transforms_BreakPart = *m_ragdoll_pose->apply_BreakPart_Leg(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter);
+		}
 
 		auto joint = m_skeletal_mesh->skeleton()->joints();
 
@@ -1711,8 +1786,15 @@ void CRagdoll_Physics::update_animations()
 					{
 						auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
 						auto Result = m_Global_transforms.transforms[i] * Inverse;
-						//(*m_vecBone)[m_vecBoneIndex[i]]->Set_Combined_Matrix(Result);
 						m_BoneMatrices[m_vecBoneIndex[i]] = Result;
+						m_BoneMatrices_Cloth[m_vecBoneIndex[i]] = Result;
+					}
+
+					if (!IsIdentityMatrix(m_Global_transforms_BreakPart_Cloth.transforms[i]))
+					{
+						auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
+						auto Result = m_Global_transforms_BreakPart_Cloth.transforms[i] * Inverse;
+						m_BoneMatrices_Cloth[m_vecBoneIndex[i]] = Result;
 					}
 				}
 			}
@@ -1733,6 +1815,7 @@ void CRagdoll_Physics::update_animations()
 						auto Result = m_Global_transforms.transforms[i] * Inverse;
 						(*m_vecBone)[m_vecBoneIndex[i]]->Set_Combined_Matrix(Result);
 						m_BoneMatrices[m_vecBoneIndex[i]] = Result;
+						m_BoneMatrices_Cloth[m_vecBoneIndex[i]] = Result;
 
 						if (m_vecBreak_Parent_Flag[i] == true)
 						{
@@ -1740,6 +1823,13 @@ void CRagdoll_Physics::update_animations()
 							auto Result = m_Global_transforms_BreakPart.transforms[i] * Inverse;
 							//m_BoneMatrices[m_vecBoneIndex[i]] = Result;
 							(*m_vecBone)[m_vecBoneIndex[i]]->Set_Combined_Matrix(Result);
+						}
+
+						if (!IsIdentityMatrix(m_Global_transforms_BreakPart_Cloth.transforms[i]))
+						{
+							auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
+							auto Result = m_Global_transforms_BreakPart_Cloth.transforms[i] * Inverse;
+							m_BoneMatrices_Cloth[m_vecBoneIndex[i]] = Result;
 						}
 					}
 				}
@@ -1847,6 +1937,7 @@ void CRagdoll_Physics::update_animations_partial_after()
 void CRagdoll_Physics::Init_Ragdoll()
 {
 	ZeroMemory(m_BoneMatrices, sizeof(_float4x4) * MAX_COUNT_BONE);
+	ZeroMemory(m_BoneMatrices_Cloth, sizeof(_float4x4) * MAX_COUNT_BONE);
 
 	m_simulate = false;
 
@@ -2239,6 +2330,20 @@ void CRagdoll_Physics::SetBoneIndex()
 	m_Calf_R_Twist_0 = Skeleton->Find_BoneIndex("r_leg_tibia_twist_0_H");
 	m_Calf_R_Twist_1 = Skeleton->Find_BoneIndex("r_leg_tibia_twist_1_H");
 
+	m_Cloth_L_Arm_01 = Skeleton->Find_BoneIndex("Internal_chain00_02");
+	m_Cloth_L_Arm_02 = Skeleton->Find_BoneIndex("Internal_chain01_00");
+	m_Cloth_L_Arm_03 = Skeleton->Find_BoneIndex("Internal_chain01_01");
+	m_Cloth_L_Arm_04 = Skeleton->Find_BoneIndex("spine_1");
+	m_Cloth_L_Arm_05 = Skeleton->Find_BoneIndex("spine_2");
+
+	m_Cloth_R_Arm_01 = Skeleton->Find_BoneIndex("Shirt00_chain03_00");
+	m_Cloth_R_Arm_02 = Skeleton->Find_BoneIndex("Shirt00_chain03_01");
+	m_Cloth_R_Arm_03 = Skeleton->Find_BoneIndex("Shirt00_chain03_02");
+	m_Cloth_R_Arm_04 = Skeleton->Find_BoneIndex("Shirt00_chain03_03");
+	m_Cloth_R_Arm_05 = Skeleton->Find_BoneIndex("Shirt00_chain03_04");
+
+
+
 	m_head_idx_Bone = Find_BoneIndex("neck_1");
 	m_neck_01_idx_Bone = Find_BoneIndex("neck_0");
 	m_pelvis_idx_Bone = Find_BoneIndex("spine_0");
@@ -2415,6 +2520,11 @@ void CRagdoll_Physics::Init_PartialRagdoll(COLLIDER_TYPE eType)
 _float4x4* CRagdoll_Physics::GetCombinedMatrix_Ragdoll(_uint iIndex)
 {
 	return &m_BoneMatrices[iIndex];
+}
+
+_float4x4* CRagdoll_Physics::GetCombinedMatrix_Ragdoll_Cloth(_uint iIndex)
+{
+	return &m_BoneMatrices_Cloth[iIndex];
 }
 
 void CRagdoll_Physics::Free()

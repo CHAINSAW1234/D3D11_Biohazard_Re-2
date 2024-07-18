@@ -1642,7 +1642,7 @@ HRESULT CModel::Link_Bone_Auto_RagDoll(CModel* pTargetModel, CRagdoll_Physics* p
 		if (-1 == iDstBoneIndex)
 			continue;
 
-		_float4x4*		pRagDollCombinedMatrix = { pRagDoll->GetCombinedMatrix_Ragdoll(iDstBoneIndex) };
+		_float4x4*		pRagDollCombinedMatrix = { pRagDoll->GetCombinedMatrix_Ragdoll_Cloth(iDstBoneIndex) };
 
 		_int			iSrcBoneIndex = { Find_BoneIndex(strIntersectBoneTag) };
 		m_Bones[iSrcBoneIndex]->Set_Parent_CombinedMatrix_Ptr_RagDoll(pRagDollCombinedMatrix);
@@ -2404,7 +2404,7 @@ HRESULT CModel::Bind_BoneMatrices_Ragdoll_PartObject(CShader* pShader, const _ch
 		++iBoneIndex;
 	}
 
-	m_Meshes[iMeshIndex]->Stock_Matrices_Ragdoll(m_Bones, m_MeshBoneMatrices, CombinedMatrices);
+	m_Meshes[iMeshIndex]->Stock_Matrices_Ragdoll_Cloth(m_Bones, m_MeshBoneMatrices, CombinedMatrices);
 
 	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, MAX_COUNT_BONE);
 }
@@ -3550,6 +3550,14 @@ void CModel::Perform_Skinning(_uint iIndex)
 
 void CModel::SetDecalWorldMatrix(_uint iIndex, _float4x4 WorldMatrix, _int iMeshType, _bool bBigAttack)
 {
+	//_float4 vPos = _float4(WorldMatrix._41, WorldMatrix._42, WorldMatrix._43, 1.f);
+	//_matrix WorldMat = XMMatrixIdentity();
+	//_float4x4 NewWorldMat;
+	//XMStoreFloat4x4(&NewWorldMat,WorldMat);
+	//NewWorldMat._41 = vPos.x;
+	//NewWorldMat._42 = vPos.y;
+	//NewWorldMat._43 = vPos.z;
+
 	list<_uint> NonHideIndex = Get_NonHideMeshIndices();
 
 	for (auto& i : NonHideIndex)
