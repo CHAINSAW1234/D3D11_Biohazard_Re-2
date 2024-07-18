@@ -270,7 +270,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	//ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
 	//ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
 
-	/*ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
+	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
 	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
 
 	_matrix			WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
@@ -289,7 +289,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-		return E_FAIL;*/
+		return E_FAIL;
 #endif
 
 	return S_OK;
