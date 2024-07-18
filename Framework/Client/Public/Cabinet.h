@@ -94,6 +94,7 @@ public:
 	void					Set_Lock_False() { m_bLock = false; }
 	_int					Get_Cabinet_Type() {return m_eCabinetType; }
 	string				Get_Electric_Tag() { return m_strElectTag; }
+	void					Set_Electric_Open() { m_fDelayLockTime = 3.f; }
 private:
 	_bool					m_bLeonDesk = { false };
 	_bool					m_bAction = { false };

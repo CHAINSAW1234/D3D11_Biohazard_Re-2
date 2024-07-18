@@ -376,6 +376,8 @@ HRESULT CCabinet::Add_PartObjects()
 	/*PART_CARD*/
 	if (m_eCabinetType == TYPE_WEAPON)
 	{
+		m_iNeedItem = cardkeylv201a;
+
 		CPartObject* pCard = { nullptr };
 		CCard_Cabinet::CARD_CABINET_DESC CardCabinet = {};
 		CardCabinet.pParentsTransform = m_pTransformCom;
@@ -449,6 +451,8 @@ HRESULT CCabinet::Bind_ShaderResources()
 
 void CCabinet::Do_Interact_Props()
 {
+	if (m_eCabinetType == CCabinet::TYPE_WEAPON)
+		m_bAction = true;
 }
 
 void CCabinet::Safe_Normal_Tick(_float fTimeDelta)
@@ -598,15 +602,20 @@ void CCabinet::Electric_Tick(_float fTimeDelta)
 		bCam = true;
 	}
 	if (m_bCamera)
-	{
 		Camera_Active(PART_BODY, _float3(5.5f, 5.5f, 5.5f));
+	
+	if (m_fDelayLockTime > 0.f)
+	{
+		m_pCameraGimmick->Active_Camera(true);
+		m_bCamera = true;
 	}
-	if (m_bCamera && bCam)
+
+	if (m_bCamera && (bCam||!m_bLock))
 	{
 		Reset_Camera();
 		m_bCamera = false;
-
 	}
+
 	if (!m_bDead && m_bCol[INTER_COL_NORMAL][COL_STEP1] /*&& !m_bActivity*/)
 	{
 		if (*m_pPlayerInteract)
@@ -764,13 +773,6 @@ void CCabinet::Electric_Active()
 			if (nullptr != m_PartObjects[PART_ITEM] && !m_bItemDead)
 				m_pPlayer->PickUp_Item(this);
 	}
-	else
-	{
-		m_pCameraGimmick->Active_Camera(true);
-		//tabwindowÀÇ ÈûÀ» ºô·Á¾ß ÇÒ Â÷·ÊÀÔ´Ï´Ù
-		m_bCamera = true;
-
-	}
 }
 
 void CCabinet::Weapon_Active()
@@ -798,8 +800,9 @@ void CCabinet::Weapon_Active()
 		m_eLockState = LIVE_LOCK;
 
 		m_pCameraGimmick->Active_Camera(true);
-		//tabwindowÀÇ ÈûÀ» ºô·Á¾ß ÇÒ Â÷·ÊÀÔ´Ï´Ù
 		m_bCamera = true;
+		/*if (false == m_pGameInstance->IsPaused())
+			m_pPlayer->Interact_Props(this);*/
 
 	}
 }

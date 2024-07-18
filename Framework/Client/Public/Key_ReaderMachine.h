@@ -30,6 +30,13 @@ public:
 	{
 		_ubyte*		pKeyInput = {nullptr};
 		_ubyte*		pKeyState = {nullptr};
+		_bool*		pCanPush = {nullptr};
+		_bool*		pDoOpen= {nullptr};
+		_int*			pPush = {nullptr};
+		_int*			pSelectRow = {nullptr};
+		_int*			pSelectCol = {nullptr};
+		_int			iKeyPad[5][3];
+		_int*			pKeyNum = {nullptr};
 
 	}KEY_READER_DESC;
 
@@ -51,6 +58,7 @@ private:
 	virtual HRESULT				Initialize_PartObjects() override;
 	virtual void					Get_SpecialBone_Rotation() override;
 	HRESULT						Initialize_Model();
+	_bool								Check_PadFull();
 
 
 public:
@@ -59,10 +67,17 @@ public:
 private:
 	_int*								m_pPassword				= { nullptr };
 	_bool*							m_pCameraControl		= { nullptr };
+	_bool*							m_pDoOpen = { nullptr };
 	_bool								m_bCheckAnswer = { false };
 	_bool								m_bClear = { false };
 	_ubyte*							m_pPressKeyState = { nullptr };
 	_ubyte*							m_pKeyState = { nullptr };
+	_bool*							m_pCanPush = { nullptr };
+	_int*								m_pPush = { nullptr };
+	_int*								m_pSelectRow = { nullptr };
+	_int*								m_pSelectCol = { nullptr };
+	_int								m_iKeyPad[5][3];
+	_int*								m_pKeyNum = { nullptr };
 
 	string							m_strBoneTag[READERMACHINE_BONE_END] = { "Key0","Key1", "Key2", "Key3", "Key4", "Key5", "Key6", "Key7", "Key8", "Key9", "KeyBack", "KeyEnter"};
 	_int								m_iCurBoneIndex = { BONE_KEY0 };

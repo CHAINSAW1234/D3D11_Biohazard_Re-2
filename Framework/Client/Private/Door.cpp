@@ -293,7 +293,6 @@ HRESULT CDoor::Add_PartObjects()
 	/* 0 하트 1 스페이스 2 클로버 3 다이아*/
 	if (true == BodyDesc.isEmblem && m_bLock)
 	{
-		m_iNeedItem = woodbarricade01a;
 
 		/* Emblem*/
 		CPartObject* pEmblem = { nullptr };
@@ -325,12 +324,16 @@ HRESULT CDoor::Add_PartObjects()
 		switch (m_iEmblemType)
 		{
 		case (_uint)CDoor::EMBLEM_TYPE::HEART_EMBLEM:
+			m_iNeedItem = -1; 
+
 			EmblemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_heart_Anim");
 			MarkDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_504_dooremblemmark01a_heart");
 
 			break;
 
 		case (_uint)CDoor::EMBLEM_TYPE::SPADE_EMBLEM:
+			m_iNeedItem = spadekey01a; 
+
 			KeyDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_103_spadekey01a");
 			EmblemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_00md_Anim");
 			MarkDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_504_dooremblemmark01a_spade");
@@ -339,6 +342,8 @@ HRESULT CDoor::Add_PartObjects()
 			break;
 
 		case (_uint)CDoor::EMBLEM_TYPE::CLOVER_EMBLEM:
+			m_iNeedItem = -1; 
+
 			EmblemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_clover_Anim");
 			MarkDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_504_dooremblemmark01a_clover");
 
@@ -347,6 +352,8 @@ HRESULT CDoor::Add_PartObjects()
 			break;
 
 		case (_uint)CDoor::EMBLEM_TYPE::DIA_EMBLEM:
+			m_iNeedItem = diakey01a;
+
 			KeyDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_140_diakey01a");
 			EmblemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_500_dooremblem01a_dia_Anim");
 			MarkDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm40_504_dooremblemmark01a_dia");
