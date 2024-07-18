@@ -346,8 +346,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
     
     vector vMaterialDesc = g_MaterialTexture.Sample(PointSampler, In.vTexcoord);
     float fMaterialMetalic = vMaterialDesc.r;
-    float fMaterialRoughness = vMaterialDesc.g + 0.3f;
-    fMaterialRoughness = min(1.f, fMaterialRoughness);
+    float fMaterialRoughness = saturate(vMaterialDesc.g + 0.5f);
     float fMaterialAO = vMaterialDesc.b;
     
     // for specular
@@ -387,7 +386,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 diffuseBRDF = kd * vAlbedo.xyz;
     float3 specularBRDF = (F * D * G) / max(0.00001f, 4.0 * cosLi * cosLo);
   
-    float3 directLighting = (/*diffuseBRDF +*/ specularBRDF) * Lradiance * cosLi;
+    float3 directLighting = (diffuseBRDF + specularBRDF) * Lradiance * cosLi;
     
     float3 ambientLighting;
     {
@@ -446,8 +445,7 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
     
     vector vMaterialDesc = g_MaterialTexture.Sample(PointSampler, In.vTexcoord);
     float fMaterialMetalic = vMaterialDesc.r;
-    float fMaterialRoughness = vMaterialDesc.g + 0.3f;
-    fMaterialRoughness = min(1.f, fMaterialRoughness);
+    float fMaterialRoughness = saturate(vMaterialDesc.g + 0.5f);
     float fMaterialAO = vMaterialDesc.b;
     
     // for specular
@@ -552,8 +550,7 @@ PS_OUT PS_MAIN_SPOT(PS_IN In)
     
     vector vMaterialDesc = g_MaterialTexture.Sample(PointSampler, In.vTexcoord);
     float fMaterialMetalic = vMaterialDesc.r;
-    float fMaterialRoughness = vMaterialDesc.g + 0.3f;
-    fMaterialRoughness = min(1.f, fMaterialRoughness);
+    float fMaterialRoughness = saturate(vMaterialDesc.g + 0.5f);
     float fMaterialAO = vMaterialDesc.b;
     
     // for specular
@@ -792,20 +789,26 @@ float Cal_Shadow(float2 vTexcoord)
     
         vector vLightDir = vWorldPos - g_vSpotLightPosition;
         vector vSpotDir = g_vSpotLightDirection;
-    
         float fResult = acos(dot(normalize(vLightDir), normalize(vSpotDir)));
-
-        if (g_fOutCutOff >= fResult) // 빛이 번질 범위 안에 있을 때
+           
+        if (g_fSpotLightOutCutOff >= fResult) // 빛이 번질 범위 안에 있을 때
         {
             float fDistance = length(vLightDir);
             float fIntensity = (fResult - g_fSpotLightOutCutOff) / (g_fSpotLightCutOff - g_fSpotLightOutCutOff);
-            float fAtt = saturate((g_fSpotLightRange - fDistance) / g_fSpotLightRange) * fIntensity; //범위 줘서 끝 범위에서는 연해지게 
-        
-            fShadow += ShadowPCF(g_SpotLightDepthTexture, g_SpotLightDepthTexture, 0.0001f, vPosition.w, vTexcoord) * fAtt;
+            float fAtt = saturate(1.f - ((fDistance * fDistance) / (g_fSpotLightRange * g_fSpotLightRange))); //범위 줘서 끝 범위에서는 연해지게 
+            fAtt *= fAtt;
+            fAtt *= (fIntensity * fIntensity);
+            
+            if (fAtt > 0)
+            {
+                fShadow += ShadowPCF(g_SpotLightDepthTexture, g_SpotLightDepthTexture, 0.0001f, vPosition.w, vTexcoord) * fAtt;
+   
+            }
+         
         }
     }
     
-    return fShadow;
+    return min(1.f, fShadow);
 }
 
 float ConvertDepthToNdcZ(float depth)
