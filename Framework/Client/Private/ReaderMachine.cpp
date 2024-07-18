@@ -30,21 +30,21 @@ HRESULT CReaderMachine::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
+	m_bCanPush[ROW_2][COL_2] = true;
+	m_bCanPush[ROW_2][COL_1] = true;
+
 	if (FAILED(Add_PartObjects()))
 		return E_FAIL;
 
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;
 
-	m_bCanPush[ROW_2][COL_2] = false;
-	m_bCanPush[ROW_2][COL_1] = false;
 
 	return S_OK;
 }
 
 void CReaderMachine::Start()
 {
-	return ;
 	__super::Start();
 	list<CGameObject*>* pInteractObjList = m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_InteractObj"));
 	for (auto iter : *pInteractObjList)
@@ -64,12 +64,13 @@ void CReaderMachine::Start()
 
 void CReaderMachine::Tick(_float fTimeDelta)
 {
-	return ;
 	__super::Tick_Col();
 
 	if (!m_bVisible)
 		return;
 	_bool bCam = false;
+
+
 
 	if (m_eMachine_Key_State == CReaderMachine::READERMACHINE_KEY_LIVE)
 	{
@@ -86,11 +87,17 @@ void CReaderMachine::Tick(_float fTimeDelta)
 		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
 		{
 			m_eMachine_Key_State = CReaderMachine::READERMACHINE_KEY_STATIC;
-			m_bPush[0] = -1;
-			m_bPush[1] = -1;
-			m_bPush[2] = -1;
+			m_iPush[0] = -1;
+			m_iPush[1] = -1;
+			m_iPush[2] = -1;
 			bCam = true;
 		}
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_F1))
+			m_bKey[0] = true;
+		
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_F2))
+			m_bKey[1] = true;
+		
 
 	}
 	else
@@ -108,11 +115,13 @@ void CReaderMachine::Tick(_float fTimeDelta)
 	
 	if (m_bDoOpen)
 	{
-		Open_Cabinet();
-
-
-		m_bDoOpen = false;
-		m_bCameraReset = true;
+		if (Open_Cabinet())
+		{
+			m_bDoOpen = false;
+			m_bCameraReset = true;
+		}
+		else
+			m_bDoOpen = false;
 	}
 
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
@@ -139,14 +148,31 @@ void CReaderMachine::Camera_Active(CReaderMachine::READERMACHINE_PART ePart, _fl
 
 _bool CReaderMachine::Open_Cabinet()
 {
+	_int iNum = m_iPush[0] * 100 + m_iPush[1] * 10 + m_iPush[2];
+	auto& iter = m_Cabinets.find(to_string(iNum));
+	if (iter != m_Cabinets.end())
+	{
+		m_iPush[0] = -1;
+		m_iPush[1] = -1;
+		m_iPush[2] = -1;
+		m_eMachine_Key_State = READERMACHINE_KEY_CORRECT;
+		iter->second->Set_Electric_Open();
+		return true;
 
+	}
+	else
+	{
+		m_iPush[0] = -1;
+		m_iPush[1] = -1;
+		m_iPush[2] = -1;
+		m_eMachine_Key_State = READERMACHINE_KEY_WRONG;
 
-	return true;
+		return false;
+	}
 }
 
 void CReaderMachine::Late_Tick(_float fTimeDelta)
 {
-	return ;
 	if (m_pPlayer == nullptr)
 		return;
 	if (!Visible())
@@ -221,11 +247,13 @@ HRESULT CReaderMachine::Add_PartObjects()
 	Key_Desc.pState = &m_eState;
 	Key_Desc.pKeyInput = &m_eKeyInput;
 	Key_Desc.pKeyState = &m_eMachine_Key_State;
-	Key_Desc.pCanPush = (_bool*)m_bCanPush;
-	Key_Desc.pPush = (_int*)m_bPush;
+	memcpy_s(Key_Desc.pCanPush, sizeof(_bool) * 5 * 3, m_bCanPush, sizeof(_bool) * 5 * 3);
+	Key_Desc.pPush = (_int*)m_iPush;
 	Key_Desc.pSelectCol = &m_iSelectCol;
 	Key_Desc.pSelectRow = &m_iSelectRow;
 	Key_Desc.pDoOpen = &m_bDoOpen;
+	Key_Desc.pKeyNum = &m_iSelectPushNum;
+	Key_Desc.pHideKey = (_bool*)m_bKey;
 	memcpy_s(Key_Desc.iKeyPad,sizeof(_int)*5*3, m_iKeyPad, sizeof(_int) * 5 * 3);
 	Key_Desc.strModelComponentName =TEXT("Prototype_Component_Model_sm42_020_keystrokedevice01a_Anim");
 	pKeyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Key_Reader"), &Key_Desc));
