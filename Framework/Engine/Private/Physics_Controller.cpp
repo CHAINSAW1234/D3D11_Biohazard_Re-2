@@ -1289,28 +1289,28 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 	PxQueryFilterData filterData;
 	filterData.flags = PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC;
 
-	auto Filter = QueryFilterCallback();
+	auto Filter = QueryFilterCallback_Ray();
 
-	bool Status = m_Scene->raycast(PxvOrigin, PxvDir.getNormalized(), 50.f, hit,PxHitFlag::eANY_HIT, filterData, &Filter);
+	bool Status = m_Scene->raycast(PxvOrigin, PxvDir.getNormalized(), 50.f, hit,PxHitFlag::eDEFAULT | PxHitFlag::eNORMAL, filterData, &Filter);
 
-	//const PxU32 maxHits = 10;
-	//PxSweepHit hitBuffer[maxHits];
-	//PxSweepBufferN<maxHits> hit;
+	/*const PxU32 maxHits = 10;
+	PxSweepHit hitBuffer[maxHits];
+	PxSweepBufferN<maxHits> hit;
 
-	//PxQueryFilterData filterData;
-	//filterData.flags = PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC;
+	PxQueryFilterData filterData;
+	filterData.flags = PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC;
 
-	//PxSphereGeometry sphereGeometry(0.05f); // 반지름이 1.0인 구
+	PxSphereGeometry sphereGeometry(0.1f);
 
-	//bool Status = m_Scene->sweep(
-	//	sphereGeometry,          // 지오메트리 형태
-	//	PxTransform(PxvOrigin),  // 시작 위치
-	//	PxvDir.getNormalized(),  // 방향 벡터
-	//	50.f,                    // 최대 거리
-	//	hit,                     // 결과를 저장할 버퍼
-	//	PxHitFlag::eDEFAULT | PxHitFlag::ePRECISE_SWEEP,     // 히트 플래그
-	//	filterData               // 필터 데이터
-	//);
+	bool Status = m_Scene->sweep(
+		sphereGeometry,          
+		PxTransform(PxvOrigin),  
+		PxvDir.getNormalized(),  
+		50.f,                    
+		hit,                     
+		PxHitFlag::eDEFAULT | PxHitFlag::eNORMAL, 
+		filterData               
+	);*/
 
 	if (Status)
 	{
@@ -1323,24 +1323,6 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 			PxRigidActor* actor = hit_Obj.actor;
 
 			PxFilterData filterData = shape->getSimulationFilterData();
-
-			/*if (filterData.word0 & COLLISION_CATEGORY::STATIC_MESH)
-			{
-				*IsHit_Props = true;
-
-				if (bBigAttack)
-				{
-					m_vecBlockPoints_Props.push_back(PxVec_To_Float4_Coord(hit_Obj.position));
-					m_vecBlockNormals_Props.push_back(PxVec_To_Float4_Dir(hit_Obj.normal));
-				}
-				else
-				{
-					*pBlockNormal = PxVec_To_Float4_Dir(hit_Obj.normal);
-					*pBlockPoint = PxVec_To_Float4_Coord(hit_Obj.position);
-				}
-
-				return true;
-			}*/
 
 			if (filterData.word0 & COLLISION_CATEGORY::COLLIDER)
 			{
