@@ -81,7 +81,7 @@ void CHint_Display::Set_Display(ITEM_READ_TYPE eItemReadType, _uint TextureNum, 
 		m_pTextureCom = m_mapDocumentTextures[eItemReadType][TextureNum];
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(fPos.x, fPos.y, 0.007f, 1.f));
 		m_pTransformCom->Set_Scaled(fSize.x, fSize.y, 1.f);
-		m_iCurTypeTexCount = m_mapDocumentTextures[eItemReadType].size();
+		m_iCurTypeTexCount = (_uint)m_mapDocumentTextures[eItemReadType].size();
 		m_iCurTexNum = TextureNum;
 		m_eCurIRT = eItemReadType;
 

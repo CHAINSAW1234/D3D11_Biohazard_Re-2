@@ -339,8 +339,8 @@ void CPlayer_Map_UI::Map_Player_Moving(_float fTimeDelta)
 
     else if (MODELMAP_X_FLOO3 == m_fCurrent_ModelScaled.x && MODELMAP_Y_FLOO3 == m_fCurrent_ModelScaled.y)
     {
-        fComparison.x = (MINMAP_X_FLOOR3) / m_fCurrent_ModelScaled.x;
-        fComparison.y = (MINMAP_Y_FLOOR3) / m_fCurrent_ModelScaled.y;
+        fComparison.x = (_float)(MINMAP_X_FLOOR3) / m_fCurrent_ModelScaled.x;
+        fComparison.y = (_float)(MINMAP_Y_FLOOR3) / m_fCurrent_ModelScaled.y;
 
         m_vPlayer_MovePos = m_pPlayerTransform->Get_State_Float4(CTransform::STATE_POSITION);
         Moving_Value.x = -(m_vPlayer_MovePos.x + 2.f);

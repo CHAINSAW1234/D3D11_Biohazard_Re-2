@@ -97,7 +97,7 @@ void CProps::Late_Tick(_float fTimeDelta)
 
 	if (m_bVisible  /*1*//* && true == m_pGameInstance->isInFrustum_LocalSpace(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION), 1.0f)*/)
 	{
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_FIELD, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
 
 		if (m_bShadow)
 		{
@@ -168,7 +168,7 @@ HRESULT CProps::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_ALPHABLEND)))
+		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_ALPHABLEND)))
 			return E_FAIL;
 
 		m_pModelCom->Render(static_cast<_uint>(i));
