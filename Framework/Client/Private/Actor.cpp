@@ -105,20 +105,20 @@ void CActor::Late_Tick_PartObjects(_float fTimeDelta)
     }
 }
 
-void CActor::Set_Animation(_uint iPartType, const wstring& strAnimLayerTag, _uint iAnimIndex)
+HRESULT CActor::Set_Animation(_uint iPartType, const wstring& strAnimLayerTag, _uint iAnimIndex)
 {
     if (iPartType >= m_iNumParts)
-        return;
+        return E_FAIL;
 
-    m_PartObjects[iPartType]->Set_Animation(0, strAnimLayerTag, iAnimIndex);
+    return m_PartObjects[iPartType]->Set_Animation(0, strAnimLayerTag, iAnimIndex);
 }
 
-void CActor::Set_Next_Animation(_uint iPartType)
+void CActor::Set_Next_Animation_Sequence()
 {
-    if (iPartType >= m_iNumParts)
-        return;
+    ++m_iCurSeqLev;
 
-    m_PartObjects[iPartType]->Set_Animation_Index(0, ++m_iCurrentAnimIndex);
+    for(_uint i = 0; i < m_iNumParts; ++i)
+        m_PartObjects[i]->Set_Animation_Seq(0, m_iCurSeqLev);
 }
 
 void CActor::Set_Loop(_uint iPartType, _bool isLoop)
@@ -127,6 +127,16 @@ void CActor::Set_Loop(_uint iPartType, _bool isLoop)
         return;
 
     m_PartObjects[iPartType]->Set_Loop(0, isLoop);
+}
+
+void CActor::Reset_Animations()
+{
+    m_iCurSeqLev = 0;
+
+    for (auto& pPartObject : m_PartObjects)
+    {
+        pPartObject->Set_Animation_Seq(0, 0);
+    }
 }
 
 _bool CActor::Is_Finished_Animation_Part(_uint iPartType)
@@ -174,9 +184,12 @@ _bool CActor::Is_Finished_All_Animation_All()
         _int                iAnimIndex = { pPart_Model->Get_CurrentAnimIndex(0) };
         _uint               iNumAnims = { static_cast<_uint>(pPart_Model->Get_Animations(strCurrentAnimLayerTag).size()) };
 
+        if (strCurrentAnimLayerTag == TEXT("Default"))
+            continue;
+
         //  마지막 애니메이션이 아니라면
         if (iNumAnims - 1 != iAnimIndex)
-            return false;
+            return false;   
 
         if (false == pPart_Model->isFinished(0))
             return false;

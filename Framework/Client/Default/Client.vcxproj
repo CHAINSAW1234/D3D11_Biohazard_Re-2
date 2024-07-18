@@ -189,7 +189,10 @@
     <ClInclude Include="..\Public\Actor_EM00.h" />
     <ClInclude Include="..\Public\Actor_PartObject.h" />
     <ClInclude Include="..\Public\Actor_PL00.h" />
+    <ClInclude Include="..\Public\Actor_PL57.h" />
     <ClInclude Include="..\Public\Actor_PL78.h" />
+    <ClInclude Include="..\Public\Actor_WP4530.h" />
+    <ClInclude Include="..\Public\Prop_SM60_033_00.h" />
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\Public\BigStatue.h" />
     <ClInclude Include="..\Public\Bite_Lost_Zombie.h" />
@@ -203,6 +206,9 @@
     <ClInclude Include="..\Public\Body_EventProp.h" />
     <ClInclude Include="..\Public\Body_ItemLocker.h" />
     <ClInclude Include="..\Public\Body_ItemProp.h" />
+    <ClInclude Include="..\Public\Cut_Scene_CF92.h" />
+    <ClInclude Include="..\Public\Cut_Scene_CF94.h" />
+    <ClInclude Include="..\Public\Cut_Scene_CF95.h" />
     <ClInclude Include="..\Public\Display_Background.h" />
     <ClInclude Include="..\Public\Grenade_Explosion.h" />
     <ClInclude Include="..\Public\Grenade_Light.h" />
@@ -277,6 +283,8 @@
     <ClInclude Include="..\Public\Part_Breaker_Zombie.h" />
     <ClInclude Include="..\Public\HotKey.h" />
     <ClInclude Include="..\Public\Part_Mesh_Info_Zombie.h" />
+    <ClInclude Include="..\Public\Prop_Controller.h" />
+    <ClInclude Include="..\Public\Prop_SM60_034_00.h" />
     <ClInclude Include="..\Public\Turn_Lost_Zombie.h" />
     <ClInclude Include="..\Public\Player_State_Move_Shelf.h" />
     <ClInclude Include="..\Public\Region_Update_Zombie.h" />
@@ -467,7 +475,10 @@
     <ClCompile Include="..\Private\Actor_EM00.cpp" />
     <ClCompile Include="..\Private\Actor_PartObject.cpp" />
     <ClCompile Include="..\Private\Actor_PL00.cpp" />
+    <ClCompile Include="..\Private\Actor_PL57.cpp" />
     <ClCompile Include="..\Private\Actor_PL78.cpp" />
+    <ClCompile Include="..\Private\Actor_WP4530.cpp" />
+    <ClCompile Include="..\Private\Prop_SM60_033_00.cpp" />
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\BigStatue.cpp" />
     <ClCompile Include="..\Private\Bite_Lost_Zombie.cpp" />
@@ -504,7 +515,10 @@
     <ClCompile Include="..\Private\Card_Cabinet.cpp" />
     <ClCompile Include="..\Private\Creep_Zombie.cpp" />
     <ClCompile Include="..\Private\Cut_Scene.cpp" />
+    <ClCompile Include="..\Private\Cut_Scene_CF92.cpp" />
     <ClCompile Include="..\Private\Cut_Scene_CF93.cpp" />
+    <ClCompile Include="..\Private\Cut_Scene_CF94.cpp" />
+    <ClCompile Include="..\Private\Cut_Scene_CF95.cpp" />
     <ClCompile Include="..\Private\Damage_Lost_Zombie.cpp" />
     <ClCompile Include="..\Private\Damage_UI.cpp" />
     <ClCompile Include="..\Private\Dead_Zombie.cpp" />
@@ -550,6 +564,8 @@
     <ClCompile Include="..\Private\HotKey.cpp" />
     <ClCompile Include="..\Private\Pannel_Window.cpp" />
     <ClCompile Include="..\Private\Part_Mesh_Info_Zombie.cpp" />
+    <ClCompile Include="..\Private\Prop_Controller.cpp" />
+    <ClCompile Include="..\Private\Prop_SM60_034_00.cpp" />
     <ClCompile Include="..\Private\Turn_Lost_Zombie.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Shelf.cpp" />
     <ClCompile Include="..\Private\Region_Update_Zombie.cpp" />

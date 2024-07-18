@@ -47,6 +47,7 @@ public:		/* For.Animation */
 
 	_matrix									Get_FirstKeyFrame_Root_TransformationMatrix(const wstring& strAnimLayerTag, _int iAnimIndex);
 	_matrix									Get_FirstKeyFrame_Root_CombinedMatrix(const wstring& strAnimLayerTag, _int iAnimIndex);
+	_matrix									Get_CurrentKeyFrame_Root_CombinedMatrix(_uint iPlayingIndex);
 
 	void									Reset_PreAnimation(_uint iPlayingIndex);
 	void									Reset_PreAnim_CurrentAnim(_uint iPlayingIndex);
@@ -189,6 +190,7 @@ public:		/* For. Access */
 	class CBone_Layer*						Find_BoneLayer(const wstring& strBoneLayerTag);
 
 	HRESULT									Link_Bone_Auto(CModel* pTargetModel);
+	HRESULT									Link_Bone_Auto_RagDoll(CModel* pTargetModel, class CRagdoll_Physics* pRagDoll);
 
 	_int									Get_BoneIndex(const string& strBoneTag);
 
@@ -247,6 +249,7 @@ public:		/* For.Binary */
 public:
 	HRESULT									Bind_BoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 	HRESULT									Bind_BoneMatrices_Ragdoll(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex,_float4x4* pBoneMatrices);
+	HRESULT									Bind_BoneMatrices_Ragdoll_PartObject(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 	HRESULT									Bind_PrevBoneMatrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 	HRESULT									Bind_ShaderResource_Texture(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eTextureType);
 	HRESULT									Bind_ShaderResource_MaterialDesc(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);

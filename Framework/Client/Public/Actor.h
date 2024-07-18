@@ -33,9 +33,13 @@ protected:
 	void					Late_Tick_PartObjects(_float fTimeDelta);
 
 public:
-	void					Set_Animation(_uint iPartType, const wstring& strAnimLayerTag, _uint iAnimIndex);
-	void					Set_Next_Animation(_uint iPartType);
-	void					Set_Loop(_uint iPartType, _bool isLoop);
+	virtual HRESULT			Set_Animation(_uint iPartType, const wstring& strAnimLayerTag, _uint iAnimIndex);
+	virtual void			Set_Next_Animation_Sequence();
+	virtual void			Set_Loop(_uint iPartType, _bool isLoop);
+
+	virtual void			Reset_Animations();
+
+	inline _uint			Get_NumParts() { return m_iNumParts; }
 
 	_bool					Is_Finished_Animation_Part(_uint iPartType);
 	_bool					Is_Finished_Animation_All_Part();
@@ -57,7 +61,7 @@ protected:
 	_uint											m_iBasePartIndex = {};
 	_uint											m_iNumParts = {};
 
-	_uint											m_iCurrentAnimIndex = { 0 };
+	_uint											m_iCurSeqLev = { 0 };
 
 protected:
 	HRESULT					Add_Components();

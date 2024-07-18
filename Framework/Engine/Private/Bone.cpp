@@ -190,6 +190,14 @@ void CBone::Set_Parent_CombinedMatrix_Ptr(_float4x4* pParentMatrix)
 	m_pParentCombinedMatrix = pParentMatrix;
 }
 
+void CBone::Set_Parent_CombinedMatrix_Ptr_RagDoll(_float4x4* pParentMatrix)
+{
+	if (nullptr == pParentMatrix)
+		return;
+
+	m_pParentCombinedMatrix_RagDoll = pParentMatrix;
+}
+
 void CBone::Set_RootBone(_bool isRootBone)
 {
 	m_isRootBone = isRootBone;

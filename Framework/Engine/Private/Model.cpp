@@ -19,6 +19,7 @@
 #include "PlayingInfo.h"
 
 #include "Texture.h"
+#include "RagDoll_Physics.h"
 
 unordered_map<wstring, class CTexture*>	CModel::m_LoadedTextures;
 
@@ -230,6 +231,40 @@ _matrix CModel::Get_FirstKeyFrame_Root_CombinedMatrix(const wstring& strAnimLaye
 	}
 
 	return ResultMatrix;
+}
+
+_matrix CModel::Get_CurrentKeyFrame_Root_CombinedMatrix(_uint iPlayingIndex)
+{
+	CPlayingInfo*				pPlayingInfo = { Find_PlayingInfo(iPlayingIndex) };
+	if (nullptr == pPlayingInfo)
+		return XMMatrixIdentity();
+
+	_int						iAnimationIndex = { pPlayingInfo->Get_AnimIndex() };
+	wstring						strAnimLayerTag = { pPlayingInfo->Get_AnimLayerTag() };
+
+	if (-1 == iAnimationIndex || TEXT("") == strAnimLayerTag)
+		return XMMatrixIdentity();
+
+	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(strAnimLayerTag) };
+	if (iter == m_AnimationLayers.end())
+		return XMMatrixIdentity();
+
+	CAnimation_Layer*			pAnimationLayer = { iter->second };	
+	CAnimation*					pAnimation = { pAnimationLayer->Get_Animation(iAnimationIndex) };
+
+	_float						fTrackPosition = { pPlayingInfo->Get_TrackPosition() };
+	_int						iRootBoneIndex = { Find_RootBoneIndex() };
+
+	if (-1 == iRootBoneIndex)
+		return XMMatrixIdentity();
+
+	KEYFRAME					KeyFrame = { pAnimation->Get_CurrentKeyFrame(iRootBoneIndex, fTrackPosition) };
+
+	_vector						vScale = { XMLoadFloat3(&KeyFrame.vScale) };
+	_vector						vTranslation = { XMVectorSetW(XMLoadFloat3(&KeyFrame.vTranslation), 1.f) };
+	_vector						vQuaternion = { XMLoadFloat4(&KeyFrame.vRotation) };
+
+	return XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTranslation);
 }
 
 void CModel::Reset_PreAnimation(_uint iPlayingIndex)
@@ -1196,7 +1231,6 @@ void CModel::Set_Surbodinate(string strBoneTag, _bool isSurbodinate)
 
 	m_Bones[iBoneIndex]->Set_Surbodinate(isSurbodinate);
 }
-
 #pragma region MeshControll 
 
 _bool CModel::Is_Hide_Mesh(string strMeshTag)
@@ -1494,11 +1528,15 @@ _bool CModel::Find_AnimIndex(_int* pAnimIndex, wstring* pAnimLayerTag, const str
 				break;
 			}
 
-			if (true == isFind)
-				iAnimIndex = iIndex;
-
 			++iIndex;
 		}
+
+		if (true == isFind)
+		{
+			iAnimIndex = iIndex;
+			break;
+		}
+
 	}
 
 	*pAnimIndex = iAnimIndex;
@@ -1577,12 +1615,47 @@ HRESULT CModel::Link_Bone_Auto(CModel* pTargetModel)
 	return S_OK;
 }
 
+HRESULT CModel::Link_Bone_Auto_RagDoll(CModel* pTargetModel, CRagdoll_Physics* pRagDoll)
+{
+	if (nullptr == pTargetModel || nullptr == pRagDoll)
+		return E_FAIL;
+
+	if (this == pTargetModel)
+		return E_FAIL;
+
+	vector<string>			SrcBoneTags = { Get_BoneNames() };
+	vector<string>			DstBoneTags = { pTargetModel->Get_BoneNames() };
+
+	sort(SrcBoneTags.begin(), SrcBoneTags.end());
+	sort(DstBoneTags.begin(), DstBoneTags.end());
+
+	vector<string>			IntersectionBoneTags;
+	IntersectionBoneTags.resize(min(SrcBoneTags.size(), DstBoneTags.size()));
+
+	vector<string>::iterator			iter = { set_intersection(SrcBoneTags.begin(), SrcBoneTags.end(), DstBoneTags.begin(), DstBoneTags.end(), IntersectionBoneTags.begin()) };
+
+	IntersectionBoneTags.resize(iter - IntersectionBoneTags.begin());
+
+	for (auto& strIntersectBoneTag : IntersectionBoneTags)
+	{
+		_int			iDstBoneIndex = { pTargetModel->Find_BoneIndex(strIntersectBoneTag) };
+		if (-1 == iDstBoneIndex)
+			continue;
+
+		_float4x4*		pRagDollCombinedMatrix = { pRagDoll->GetCombinedMatrix_Ragdoll(iDstBoneIndex) };
+
+		_int			iSrcBoneIndex = { Find_BoneIndex(strIntersectBoneTag) };
+		m_Bones[iSrcBoneIndex]->Set_Parent_CombinedMatrix_Ptr_RagDoll(pRagDollCombinedMatrix);
+	}
+
+	return S_OK;
+}
+
 _int CModel::Get_BoneIndex(const string& strBoneTag)
 {
 	_int			iBoneIndex = { Find_BoneIndex(strBoneTag) };
 	return iBoneIndex;
 }
-
 _float4 CModel::Invalidate_RootNode(const string& strRoot)
 {
 	for (auto& Bone : m_Bones)
@@ -2311,6 +2384,31 @@ HRESULT CModel::Bind_BoneMatrices_Ragdoll(CShader* pShader, const _char* pConsta
 	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, MAX_COUNT_BONE);
 }
 
+HRESULT CModel::Bind_BoneMatrices_Ragdoll_PartObject(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
+{
+	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * MAX_COUNT_BONE);
+
+	_float4x4			CombinedMatrices[MAX_COUNT_BONE];
+	_uint				iBoneIndex = { 0 };
+	for (auto& pBone : m_Bones)
+	{
+		if (true == pBone->Is_Set_ParentCombiend_RagDoll())
+		{
+			CombinedMatrices[iBoneIndex] = *(pBone->Get_ParentCombinedMatrix_RagDoll_Ptr());
+		}
+		else
+		{
+			CombinedMatrices[iBoneIndex] = *(pBone->Get_CombinedTransformationMatrix());
+		}
+
+		++iBoneIndex;
+	}
+
+	m_Meshes[iMeshIndex]->Stock_Matrices_Ragdoll(m_Bones, m_MeshBoneMatrices, CombinedMatrices);
+
+	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, MAX_COUNT_BONE);
+}
+
 HRESULT CModel::Bind_PrevBoneMatrices(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
 {
 	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * 256);
@@ -2439,14 +2537,6 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 		return E_FAIL;
 	}
 
-	_int				iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
-	if (false == pPlayingInfo->Is_Set_CurrentAnimation())
-	{
-		MSG_BOX(TEXT("false == pPlayingInfo->Is_Set_CurrentAnimation(),  HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)"));
-
-		return E_FAIL;
-	}
-
 	CBone_Layer* pBoneLayer = { Find_BoneLayer(pPlayingInfo->Get_BoneLayerTag()) };
 	if (nullptr == pBoneLayer)
 	{
@@ -2455,23 +2545,35 @@ HRESULT CModel::Play_Animation_Light(CTransform* pTransform, _float fTimeDelta)
 		return E_FAIL;
 	}
 
+	_int				iAnimIndex = { pPlayingInfo->Get_AnimIndex() };
 	_uint				iNumBones = { static_cast<_uint>(m_Bones.size()) };
 	unordered_set<_uint>			IncludeBoneIndices = { pBoneLayer->Get_IncludedBoneIndices() };
-
-	unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
-	CAnimation* pAnimation = { iter->second->Get_Animation(iAnimIndex) };
-
-	vector<_float4x4>				TransformationMatrices = { pAnimation->Compute_TransfromationMatrix(fTimeDelta, iNumBones, IncludeBoneIndices, m_T_Pose_Matrices, pPlayingInfo) };
-
-	Update_LinearInterpolation(fTimeDelta, 0);
-	if (true == pPlayingInfo->Is_LinearInterpolation())
+	vector<_float4x4>				TransformationMatrices;
+	if (-1 != iAnimIndex)
 	{
-		_float						fAccLinearTime = { pPlayingInfo->Get_AccLinearInterpolation() };
-		vector<KEYFRAME>			LinearStartKeyFrames = { pPlayingInfo->Get_LinearStartKeyFrames() };
+		unordered_map<wstring, CAnimation_Layer*>::iterator		iter = { m_AnimationLayers.find(pPlayingInfo->Get_AnimLayerTag()) };
+		CAnimation* pAnimation = { iter->second->Get_Animation(iAnimIndex) };
 
-		for (_uint i = 0; i < iNumBones; ++i)
+		TransformationMatrices = { pAnimation->Compute_TransfromationMatrix(fTimeDelta, iNumBones, IncludeBoneIndices, m_T_Pose_Matrices, pPlayingInfo) };
+
+		Update_LinearInterpolation(fTimeDelta, 0);
+		if (true == pPlayingInfo->Is_LinearInterpolation())
 		{
-			TransformationMatrices = pAnimation->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearTime, m_fTotalLinearTime, TransformationMatrices, iNumBones, LinearStartKeyFrames);
+			_float						fAccLinearTime = { pPlayingInfo->Get_AccLinearInterpolation() };
+			vector<KEYFRAME>			LinearStartKeyFrames = { pPlayingInfo->Get_LinearStartKeyFrames() };
+
+			for (_uint i = 0; i < iNumBones; ++i)
+			{
+				TransformationMatrices = pAnimation->Compute_TransfromationMatrix_LinearInterpolation(fAccLinearTime, m_fTotalLinearTime, TransformationMatrices, iNumBones, LinearStartKeyFrames);
+			}
+		}
+	}	
+
+	else
+	{
+		for (auto& T_Pose_Matrix : m_T_Pose_Matrices)
+		{
+			TransformationMatrices.push_back(T_Pose_Matrix);
 		}
 	}
 

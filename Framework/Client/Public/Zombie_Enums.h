@@ -17,7 +17,7 @@ enum class BREAK_PART {
 	_END 
 };
 
-enum class MESH_PART {
+enum class BODY_MESH_PART {
 	_R_UPPER_HUMEROUS, _R_LOWER_HUMEROUS, _R_UPPER_RADIUS,	_R_LOWER_RADIUS,
 	_L_UPPER_HUMEROUS, _L_LOWER_HUMEROUS, _L_UPPER_RADIUS,	_L_LOWER_RADIUS,
 
@@ -27,6 +27,14 @@ enum class MESH_PART {
 	_HEAD,
 
 	_END
+};
+
+enum class SHIRT_MESH_PART {
+	_R_ARM, _L_ARM, _BODY, _INNER, _END
+};
+
+enum class PANTS_MESH_PART {
+	_R_LEG, _R_SHOES, _L_LEG, _L_SHOES, _BODY, _END
 };
 
 enum class ZOMBIE_BODY_TYPE { _MALE, _FEMALE, _MALE_BIG, _END };

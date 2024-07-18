@@ -3,6 +3,11 @@
 #include "Client_Defines.h"
 #include "PartObject.h"
 
+BEGIN(Engine)
+
+class CRagdoll_Physics;
+
+END
 
 BEGIN(Client)
 
@@ -84,6 +89,10 @@ public:
 	virtual void						SetPartialRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType) override;
 	virtual void						SetCulling(_bool boolean) override;
 	PxRigidDynamic*						Get_Ragdoll_RigidBody(COLLIDER_TYPE eType);
+
+public:
+	CRagdoll_Physics*					Get_RagDoll_Ptr() { return m_pRagdoll; }
+
 	_float4								GetRigidBodyPos(COLLIDER_TYPE eType);
 private:
 	CModel*								m_pModelCom = { nullptr };
@@ -94,7 +103,7 @@ private:
 
 	_float4x4							m_RotationMatrix;
 
-	class CRagdoll_Physics*				m_pRagdoll = { nullptr };
+	CRagdoll_Physics*					m_pRagdoll = { nullptr };
 
 private:		/* For Anim_Controll */
 	MOTION_TYPE							m_ePreMotionType = { MOTION_TYPE::MOTION_END };

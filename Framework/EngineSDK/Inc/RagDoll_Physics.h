@@ -450,10 +450,11 @@ public:
 #pragma region Partial Ragdoll
 public:
     void                                Init_PartialRagdoll(COLLIDER_TYPE eType);
-    _float4x4* GetBoneMatrices_Ragdoll()
+    _float4x4*                          GetBoneMatrices_Ragdoll()
     {
         return m_BoneMatrices;
     }
+    _float4x4*                    GetCombinedMatrix_Ragdoll(_uint iIndex);
 #pragma endregion
 
 private:

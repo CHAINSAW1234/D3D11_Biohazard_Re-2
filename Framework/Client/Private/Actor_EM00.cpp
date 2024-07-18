@@ -22,6 +22,12 @@ HRESULT CActor_EM00::Initialize_Prototype()
 
 HRESULT CActor_EM00::Initialize(void* pArg)
 {
+	if (nullptr == pArg)
+		return E_FAIL;
+
+	ACTOR_EM00_DESC*		pDesc = { static_cast<ACTOR_EM00_DESC*>(pArg) };
+	m_eFaceType = pDesc->eFaceType;
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -67,6 +73,7 @@ HRESULT CActor_EM00::Add_PartObjects()
 	Body_Desc.isBaseObject = true;
 	Body_Desc.strModelPrototypeTag = TEXT("Prototype_Component_Model_Zombie_Body_Male");
 	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF93_EM0000"));
+	Body_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF95_EM0000"));
 
 	CActor_PartObject* pPartObject_Body = { CActor_PartObject::Create(m_pDevice, m_pContext, &Body_Desc) };
 	if (nullptr == pPartObject_Body)
@@ -76,7 +83,15 @@ HRESULT CActor_EM00::Add_PartObjects()
 
 	CActor_PartObject::ACTOR_PART_DESC			Head_Desc;
 	Head_Desc.pParentsTransform = m_pTransformCom;
-	Head_Desc.strModelPrototypeTag = TEXT("Prototype_Component_Model_Zombie_Face00_Male");
+	if (ACTOR_EM00_FACE_TYPE::_DEFAULT == m_eFaceType)
+	{
+		Head_Desc.strModelPrototypeTag = TEXT("Prototype_Component_Model_Zombie_Face00_Male");
+	}
+	else if (ACTOR_EM00_FACE_TYPE::_BROKEN == m_eFaceType)
+	{
+		Head_Desc.strModelPrototypeTag = TEXT("Prototype_Component_Model_EM0000_Face11");
+		Head_Desc.AnimPrototypeLayerTags.emplace_back(TEXT("CF95_EM0050"));
+	}
 
 	CActor_PartObject* pPartObject_Head = { CActor_PartObject::Create(m_pDevice, m_pContext, &Head_Desc) };
 	if (nullptr == pPartObject_Head)
@@ -103,6 +118,14 @@ HRESULT CActor_EM00::Add_PartObjects()
 		return E_FAIL;
 
 	m_PartObjects[static_cast<_uint>(ACTOR_EM00_PART::_PANTS)] = pPartObject_Pants;
+
+	CModel* pBodyModel = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(ACTOR_EM00_PART::_BODY)]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pHeadModel = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(ACTOR_EM00_PART::_HEAD)]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pShirtsModel = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(ACTOR_EM00_PART::_SHIRTS)]->Get_Component(TEXT("Com_Model"))) };
+	CModel* pPantsModel = { static_cast<CModel*>(m_PartObjects[static_cast<_uint>(ACTOR_EM00_PART::_PANTS)]->Get_Component(TEXT("Com_Model"))) };
+	pHeadModel->Link_Bone_Auto(pBodyModel);
+	pShirtsModel->Link_Bone_Auto(pBodyModel);
+	pPantsModel->Link_Bone_Auto(pBodyModel);
 
 	return S_OK;
 }

@@ -55,8 +55,11 @@ _bool CHide_Locker_Zombie::Execute(_float fTimeDelta)
 	MONSTER_STATE				eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 	if (MONSTER_STATE::MST_START_HIDE_LOCKER != eMonsterState)
 	{
-		if (false == m_pTarget_Cabinet->Is_Opened())
-			return true;
+		if (nullptr == m_pTarget_Cabinet)
+		{
+			m_pTarget_Cabinet = static_cast<CCabinet*>(m_pBlackBoard->Get_Target_Object());
+			Safe_AddRef(m_pTarget_Cabinet);
+		}
 	}
 
 	else
@@ -71,19 +74,24 @@ _bool CHide_Locker_Zombie::Execute(_float fTimeDelta)
 		}
 	}
 
-	m_fAcc_Wait_Time += fTimeDelta;
-	if (m_fAcc_Wait_Time >= m_fTotal_Wait_Time)
-	{
-		pBody_Model->Set_TotalLinearInterpolation(0.f);
-		pBody_Model->Change_Animation(static_cast<_uint>(m_eBasePlayingIndex), m_strAnimLayerTag, static_cast<_int>(ANIM_DEAD_HIDE_LOCKER::_LOOP));
-		m_isStart = true;
-	}
+
 
 	if(m_pBlackBoard->Get_AI())
 		m_pBlackBoard->Organize_PreState(this);
 
 	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->Set_State(MONSTER_STATE::MST_START_HIDE_LOCKER);
+
+	if (false == m_pTarget_Cabinet->Is_Opened())
+		return true;
+
+	m_fAcc_Wait_Time += fTimeDelta;
+	if (m_fAcc_Wait_Time >= m_fTotal_Wait_Time)
+	{
+		pBody_Model->Set_TotalLinearInterpolation(0.f);
+		pBody_Model->Change_Animation(static_cast<_uint>(m_eBasePlayingIndex), m_strAnimLayerTag, static_cast<_int>(ANIM_DEAD_HIDE_LOCKER::_FINISH));
+		m_isStart = true;
+	}
 
 	return true;
 }

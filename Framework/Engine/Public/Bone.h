@@ -88,13 +88,18 @@ public:
 
 	_int					Get_ParentIndex() { return m_iParentBoneIndex; }
 
+	_float4x4*				Get_ParentCombinedMatrix_RagDoll_Ptr() { return m_pParentCombinedMatrix_RagDoll; }
+
 	void					Set_Combined_Matrix(_fmatrix CombinedMatrix);
 	void					Set_Parent_CombinedMatrix_Ptr(_float4x4* pParentMatrix);
+	void					Set_Parent_CombinedMatrix_Ptr_RagDoll(_float4x4* pParentMatrix);
 	void					Set_Surbodinate(_bool isSurbodinate) { m_isSurbordinate = isSurbodinate; }
 	void					Set_RootBone(_bool isRootBone);
 
 	_bool					Is_RootBone() { return m_isRootBone; }
 	_bool					Is_Surbodinate() { return m_isSurbordinate; }
+
+	_bool					Is_Set_ParentCombiend_RagDoll() { return nullptr != m_pParentCombinedMatrix_RagDoll; }
 
 private:
 	_char					m_szName[MAX_PATH] = { "" };
@@ -109,6 +114,7 @@ private:
 
 	_bool					m_isSurbordinate = { false };
 	_float4x4*				m_pParentCombinedMatrix = { nullptr };
+	_float4x4*				m_pParentCombinedMatrix_RagDoll = { nullptr };
 
 public:
 	static CBone* Create(const aiNode* pAINode, _int iParentIndex);

@@ -35,6 +35,9 @@ HRESULT CLevel_GamePlay::Initialize()
 {
 	if (FAILED(__super::Initialize()))
 		return E_FAIL;
+
+	if (FAILED(Ready_Managers()))
+		return E_FAIL;
 	
 	if (FAILED(Ready_Lights()))
 		return E_FAIL;
@@ -57,25 +60,25 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_RegionCollider()))
 		return E_FAIL;
 
-	/*if (FAILED(Ready_CutScene()))
-		return E_FAIL;*/
+	if (FAILED(Ready_CutScene()))
+		return E_FAIL;
 
 	if (FAILED(Ready_EnvCube()))
 		return E_FAIL;
 
 	m_pGameInstance->SetSimulate(true);
 
-	CImgui_Manager::Get_Instance()->Set_GraphicDevice(m_pDevice, m_pContext);
-	CImgui_Manager::Get_Instance()->Initialize();
-	CImgui_Manager::Get_Instance()->Tick();
-	CImgui_Manager::Get_Instance()->Render();
+	//CImgui_Manager::Get_Instance()->Set_GraphicDevice(m_pDevice, m_pContext);
+	//CImgui_Manager::Get_Instance()->Initialize();
+	//CImgui_Manager::Get_Instance()->Tick();
+	//CImgui_Manager::Get_Instance()->Render();
 
 	return S_OK;
 }
 
 void CLevel_GamePlay::Tick(_float fTimeDelta)
 {
-	CImgui_Manager::Get_Instance()->Tick();
+	//	CImgui_Manager::Get_Instance()->Tick();
 
 	__super::Tick(fTimeDelta);
 
@@ -132,7 +135,7 @@ HRESULT CLevel_GamePlay::Render()
 
 	SetWindowText(g_hWnd, TEXT("Level_GamePlay."));
 
-	CImgui_Manager::Get_Instance()->Render();
+	//	CImgui_Manager::Get_Instance()->Render();
 
 	return S_OK;
 }
@@ -223,8 +226,8 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 	if (FAILED(Ready_Layer_LandBackGround(TEXT("Layer_LandBackGround"))))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -253,18 +256,18 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 		return E_FAIL;
 #endif
 #ifdef MAP_INTERACT //- map
-	if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
-		return E_FAIL;
+//		if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
+//			return E_FAIL;
 #endif
 
 #ifdef TEST_ZOMBIE_MAINHALL
-	CZombie::ZOMBIE_FEMALE_DESC		ObjectDesc;
+	CZombie::ZOMBIE_FEMALE_DESC      ObjectDesc;
 	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_FEMALE };
 	ObjectDesc.ePantsType = { static_cast<ZOMBIE_FEMALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_PANTS::_END) - 1)) };
 	ObjectDesc.eFaceType = { static_cast<ZOMBIE_FEMALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_FACE::_END) - 1)) };
 	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_FEMALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_SHIRTS::_END) - 1)) };
 
-	//CZombie::ZOMBIE_MALE_DESC		ObjectDesc;
+	//CZombie::ZOMBIE_MALE_DESC      ObjectDesc;
 	//ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
 	//ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
 	//ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
@@ -273,24 +276,26 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
 	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
 
-	_matrix			WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
+	_matrix         WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 2.f)};
 	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-		return E_FAIL;
+	   return E_FAIL;
 
 	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(3.f, 0.f, 4.f) };
 	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-		return E_FAIL;
+	   return E_FAIL;
 
 	WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(5.f, 0.f, 5.f) };
 	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-		return E_FAIL;
+	   return E_FAIL;
 #endif
+
+	SetUp_DeadMonsters();
 
 	return S_OK;
 }
@@ -356,7 +361,16 @@ HRESULT CLevel_GamePlay::Ready_RegionCollider()
 
 HRESULT CLevel_GamePlay::Ready_CutScene()
 {
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF92"))))
+		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF93"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF94"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_CutScene"), TEXT("Prototype_GameObject_CutScene_CF95"))))
 		return E_FAIL;
 
 	return S_OK;
@@ -1631,6 +1645,26 @@ HRESULT CLevel_GamePlay::Load_Monster(const wstring& strFilePath, const wstring&
 		}
 	}
 	CloseHandle(hFile);
+	return S_OK;
+}
+
+HRESULT CLevel_GamePlay::SetUp_DeadMonsters()
+{
+	CZombie::ZOMBIE_MALE_DESC		ObjectDesc;
+	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
+	ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
+	ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
+	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
+
+	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_HIDE_LOCKER;
+	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;
+
+	_matrix			WorldMatrix = { XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixTranslation(0.f, 0.f, 0.f) };
+	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
+
+	//if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_Monster"), TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
+	//	return E_FAIL;
+
 	return S_OK;
 }
 

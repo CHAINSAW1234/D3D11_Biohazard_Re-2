@@ -33,12 +33,21 @@
 #include "NavMesh_Debug.h"
 
 /* Actor */
+#include "Actor_PL57.h"
 #include "Actor_PL78.h"
 #include "Actor_PL00.h"
 #include "Actor_EM00.h"
 
+#include "Actor_WP4530.h"
+
+#include "Prop_SM60_033_00.h"
+#include "Prop_SM60_034_00.h"
+
 /* CutScene */
+#include "Cut_Scene_CF92.h"
 #include "Cut_Scene_CF93.h"
+#include "Cut_Scene_CF94.h"
+#include "Cut_Scene_CF95.h"
 
 /* Decal*/
 #include "Decal_SSD.h"
@@ -1248,13 +1257,41 @@ HRESULT CLoader::Create_Prototypes_Actor()
 		CActor_PL78::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_PL5700"),
+		CActor_PL57::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Actor_WP4530"),
+		CActor_WP4530::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Prop_SM60_033"),
+		CProp_SM60_033::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Prop_SM60_034"),
+		CProp_SM60_034::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
 HRESULT CLoader::Create_Prototypes_CutScene()
 {
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CutScene_CF92"),
+		CCut_Scene_CF92::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
 	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CutScene_CF93"),
 		CCut_Scene_CF93::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CutScene_CF94"),
+		CCut_Scene_CF94::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_CutScene_CF95"),
+		CCut_Scene_CF95::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	return S_OK;
@@ -2464,7 +2501,44 @@ HRESULT CLoader::Loading_For_GamePlay()
 		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/pl7880/pl7880.fbx",
 			LeonTransformMatrix))))
 		return E_FAIL;
+
 #pragma endregion		//	PL7800
+
+#pragma region PL5800
+
+	/* Prototype_Component_Model_PL5700 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_PL5700"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/pl5700/pl5700.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+	/* Prototype_Component_Model_PL5700 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_PL5750"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/pl5750/pl5750.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+#pragma endregion
+
+#pragma region em0000_Face11
+
+	/* Prototype_Component_Model_EM0000_Face11 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_EM0000_Face11"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/CutScene/em0000_Face11/em0000_Face11.fbx",
+			LeonTransformMatrix))))
+		return E_FAIL;
+
+#pragma endregion //	EM0000_Face11
+
+#pragma region SM60_033
+
+	/* Prototype_Component_Model_SM60_033 */
+	if (FAILED(m_pGameInstance->Add_Prototype(g_Level, TEXT("Prototype_Component_Model_SM60_033"),
+		CModel::Create(m_pDevice, m_pContext, CModel::TYPE_ANIM, "../Bin/Resources/Models/Map/Prop/Gimmick/sm60/sm60_033_pipeshutter01a_Anim.fbx",
+			XMMatrixIdentity()))))
+		return E_FAIL;
+
+#pragma endregion
 
 #pragma endregion		//	CutScene_Model
 
@@ -2826,28 +2900,94 @@ HRESULT CLoader::Load_Animations()
 
 #pragma region For.CutScene Animatoin 
 
+#pragma region CF92
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF92_PL0000"), "../Bin/Resources/Animations/CutScene/CF92/pl0000/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF92_PL0050"), "../Bin/Resources/Animations/CutScene/CF92/pl0050/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF92_SM60_033_00"), "../Bin/Resources/Animations/CutScene/CF92/sm60_033_00/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF92_WP4530_00"), "../Bin/Resources/Animations/CutScene/CF92/wp4530_00/")))
+		return E_FAIL;
+
+#pragma endregion // CF92
+
 #pragma region CF93
 
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL0000"), "../Bin/Resources/Animations/CutScene/CF93/pl0000/")))
 		return E_FAIL;
-
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL0050"), "../Bin/Resources/Animations/CutScene/CF93/pl0050/")))
 		return E_FAIL;
-
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_EM0000"), "../Bin/Resources/Animations/CutScene/CF93/em0000/")))
 		return E_FAIL;
-
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL7800"), "../Bin/Resources/Animations/CutScene/CF93/pl7800/")))
 		return E_FAIL;
-
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL7850"), "../Bin/Resources/Animations/CutScene/CF93/pl7850/")))
 		return E_FAIL;
-
 	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_PL7880"), "../Bin/Resources/Animations/CutScene/CF93/pl7880/")))
 		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_SM60_034_00"), "../Bin/Resources/Animations/CutScene/CF93/sm60_034/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF93_SM60_035_00"), "../Bin/Resources/Animations/CutScene/CF93/sm60_035/")))
+		return E_FAIL;
 
-#pragma endregion // CF98
+#pragma endregion // CF93
 
+#pragma region CF94
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF94_PL0000"), "../Bin/Resources/Animations/CutScene/CF94/pl0000/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF94_PL0050"), "../Bin/Resources/Animations/CutScene/CF94/pl0050/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF94_PL5700"), "../Bin/Resources/Animations/CutScene/CF94/pl5700/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF94_PL5750"), "../Bin/Resources/Animations/CutScene/CF94/pl5750/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF94_SM60_033_00"), "../Bin/Resources/Animations/CutScene/CF94/sm60_033_00/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF94_SM69_015_00"), "../Bin/Resources/Animations/CutScene/CF94/sm69_015_00/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF94_WP4530_00"), "../Bin/Resources/Animations/CutScene/CF94/wp4530_00/")))
+		return E_FAIL;
+
+#pragma endregion // CF94
+
+#pragma region CF95
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF95_PL0000"), "../Bin/Resources/Animations/CutScene/CF95/pl0000/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF95_PL0050"), "../Bin/Resources/Animations/CutScene/CF95/pl0050/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF95_EM0000"), "../Bin/Resources/Animations/CutScene/CF95/em0000/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF95_EM0050"), "../Bin/Resources/Animations/CutScene/CF95/em0050/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF95_SM60_005_00"), "../Bin/Resources/Animations/CutScene/CF95/sm60_005_00/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF95_SM69_002_00"), "../Bin/Resources/Animations/CutScene/CF95/sm69_002_00/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF95_WP4530_00"), "../Bin/Resources/Animations/CutScene/CF95/wp4530_00/")))
+		return E_FAIL;
+
+#pragma endregion // CF95
+
+#pragma region CF120
+
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF120_PL0000"), "../Bin/Resources/Animations/CutScene/CF120/pl0000/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF120_PL0050"), "../Bin/Resources/Animations/CutScene/CF120/pl0050/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF120_PL5700"), "../Bin/Resources/Animations/CutScene/CF120/pl5700/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF120_PL5750"), "../Bin/Resources/Animations/CutScene/CF120/pl5750/")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_Prototypes_Animation(TEXT("CF120_SM42_198_00"), "../Bin/Resources/Animations/CutScene/CF120/sm42_198_00/")))
+		return E_FAIL;
+
+#pragma endregion // CF120
+
+#pragma region 
 
 #pragma endregion 
 

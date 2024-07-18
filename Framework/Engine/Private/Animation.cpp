@@ -307,44 +307,48 @@ _int CAnimation::Find_ChannelIndex(_uint iBoneIndex)
 
 HRESULT CAnimation::Read_Binary(ifstream& ifs)
 {
-	CAnimation::ANIM_DESC		AnimDesc;
 
 	_uint			iNumAnimation = {};
 	ifs.read(reinterpret_cast<_char*>(&iNumAnimation), sizeof(_char) * sizeof(_uint));
 
-	_char		szName[MAX_PATH];
-	ifs.read(reinterpret_cast<_char*>(&szName), sizeof(_char) * MAX_PATH);
-	AnimDesc.strName = szName;
-	ifs.read(reinterpret_cast<_char*>(&AnimDesc.fDuration), sizeof(_float));
-	ifs.read(reinterpret_cast<_char*>(&AnimDesc.fTickPerSecond), sizeof(_float));
-
-	ifs.read(reinterpret_cast<_char*>(&AnimDesc.iNumChannels), sizeof(_uint));
-	for (_uint j = 0; j < AnimDesc.iNumChannels; ++j)
+	for (_uint i = 0; i < iNumAnimation; ++i)
 	{
-		CChannel::CHANNEL_DESC		ChannelDesc;
+		CAnimation::ANIM_DESC		AnimDesc;
 
+		_char		szName[MAX_PATH];
 		ifs.read(reinterpret_cast<_char*>(&szName), sizeof(_char) * MAX_PATH);
-		ChannelDesc.strName = szName;
-		ifs.read(reinterpret_cast<_char*>(&ChannelDesc.iBoneIndex), sizeof(_uint));
+		AnimDesc.strName = szName;
+		ifs.read(reinterpret_cast<_char*>(&AnimDesc.fDuration), sizeof(_float));
+		ifs.read(reinterpret_cast<_char*>(&AnimDesc.fTickPerSecond), sizeof(_float));
 
-		ifs.read(reinterpret_cast<_char*>(&ChannelDesc.iNumKeyFrames), sizeof(_uint));
-		for (_uint k = 0; k < ChannelDesc.iNumKeyFrames; ++k)
+		ifs.read(reinterpret_cast<_char*>(&AnimDesc.iNumChannels), sizeof(_uint));
+		for (_uint j = 0; j < AnimDesc.iNumChannels; ++j)
 		{
-			KEYFRAME					KeyFrame;
+			CChannel::CHANNEL_DESC		ChannelDesc;
 
-			ifs.read(reinterpret_cast<_char*>(&KeyFrame.vScale), sizeof(_float3));
-			ifs.read(reinterpret_cast<_char*>(&KeyFrame.vRotation), sizeof(_float4));
-			ifs.read(reinterpret_cast<_char*>(&KeyFrame.vTranslation), sizeof(_float3));
-			ifs.read(reinterpret_cast<_char*>(&KeyFrame.fTime), sizeof(_float));
+			ifs.read(reinterpret_cast<_char*>(&szName), sizeof(_char) * MAX_PATH);
+			ChannelDesc.strName = szName;
+			ifs.read(reinterpret_cast<_char*>(&ChannelDesc.iBoneIndex), sizeof(_uint));
 
-			ChannelDesc.KeyFrames.push_back(KeyFrame);
+			ifs.read(reinterpret_cast<_char*>(&ChannelDesc.iNumKeyFrames), sizeof(_uint));
+			for (_uint k = 0; k < ChannelDesc.iNumKeyFrames; ++k)
+			{
+				KEYFRAME					KeyFrame;
+
+				ifs.read(reinterpret_cast<_char*>(&KeyFrame.vScale), sizeof(_float3));
+				ifs.read(reinterpret_cast<_char*>(&KeyFrame.vRotation), sizeof(_float4));
+				ifs.read(reinterpret_cast<_char*>(&KeyFrame.vTranslation), sizeof(_float3));
+				ifs.read(reinterpret_cast<_char*>(&KeyFrame.fTime), sizeof(_float));
+
+				ChannelDesc.KeyFrames.push_back(KeyFrame);
+			}
+
+			AnimDesc.ChannelDescs.push_back(ChannelDesc);
 		}
 
-		AnimDesc.ChannelDescs.push_back(ChannelDesc);
-	}
-
-	if (FAILED(Initialize_Prototype(AnimDesc)))
-		return E_FAIL;
+		if (FAILED(Initialize_Prototype(AnimDesc)))
+			return E_FAIL;
+	}	
 
 	return S_OK;
 }

@@ -80,6 +80,8 @@ void CCamera_Event::Reset()
 	m_iCurrentTranslateFrame = 0;
 	m_iCurrentRotationFrame = 0;
 	m_iCurrentZoomFrame = 0;
+	m_isFinished = false;
+	m_isAllFinished = false;
 	m_pGameInstance->Active_Camera(g_Level,
 		(CCamera*)(m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 0)));
 }
@@ -91,6 +93,13 @@ void CCamera_Event::Change_to_Next(_float fTimeDelta)
 	m_iCurrentTranslateFrame = 0;
 	m_iCurrentRotationFrame = 0;
 	m_iCurrentZoomFrame = 0;
+	m_isFinished = false;
+
+#ifdef _DEBUG
+
+	cout << "Change Camara : " << m_iCurrentMCAMIndex << endl;
+
+#endif
 }
 
 HRESULT CCamera_Event::Set_PlayCamlist(const wstring& strCamTag)
@@ -104,6 +113,7 @@ HRESULT CCamera_Event::Set_PlayCamlist(const wstring& strCamTag)
 	m_iCurrentTranslateFrame = 0;
 	m_iCurrentRotationFrame = 0;
 	m_iCurrentZoomFrame = 0;
+	m_isFinished = false;
 	m_isPlay = true;
 	m_fTrackPosition = 0.f;
 
@@ -313,7 +323,10 @@ MCAM* CCamera_Event::Find_MCAM(const wstring& strCamListTag, _uint iIndex)
 
 void CCamera_Event::Play_MCAM(_float fTimeDelta)
 {
-	cout << m_iCurrentTranslateFrame << endl;
+	if (true == m_isFinished)
+		return;
+
+	//	cout << m_iCurrentTranslateFrame << endl;
 	if (nullptr == m_pCurrentMCAMList)
 		return;
 
@@ -324,16 +337,16 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 
 	m_fTrackPosition += fTimeDelta * CurrentMCAM.CAMHeader.frameRate;
 
-	if (m_fTrackPosition > CurrentMCAM.CAMHeader.frameCount) {
-		_float fNextTrackPosition = m_fTrackPosition - CurrentMCAM.CAMHeader.frameCount;
-		m_fTrackPosition = CurrentMCAM.CAMHeader.frameCount;
-		Change_to_Next(fNextTrackPosition);
-		if (m_iCurrentMCAMIndex >= m_pCurrentMCAMList->size()) {
-			Reset();
-			return;
+	if (m_fTrackPosition > CurrentMCAM.CAMHeader.frameCount)
+	{
+		m_isFinished = true;
+
+		if (m_iCurrentMCAMIndex >= m_pCurrentMCAMList->size() - 1) {
+
+			m_isAllFinished = true;
 		}
 
-		CurrentMCAM = (*m_pCurrentMCAMList)[m_iCurrentMCAMIndex];
+		return;
 
 		// 이 카메라는 이제 끝이여
 	}
@@ -354,10 +367,7 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 	else {
 		vTranslation = XMVectorLerp(CurrentMCAM.Translations[m_iCurrentTranslateFrame],
 			CurrentMCAM.Translations[m_iCurrentTranslateFrame + 1],
-			(m_fTrackPosition - (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame]) / (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame + 1]);
-#pragma region 위에 기존방식 트랙포지션 비율 계산하는거 잘못된듯? Frame 전체길이가아니라 해당구간으로 나눠야하는 주석내방식이 적합해보임
-			//	(m_fTrackPosition - (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame]) / (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame + 1] - (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame]);
-#pragma endregion
+			(m_fTrackPosition - (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame]) / ((_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame + 1] - (_float)CurrentMCAM.TranslationFrame[m_iCurrentTranslateFrame]));
 	}
 
 	while (1) {
@@ -376,10 +386,7 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 	else {
 		vRotation = XMQuaternionSlerp(CurrentMCAM.Rotations[m_iCurrentRotationFrame],
 			CurrentMCAM.Rotations[m_iCurrentRotationFrame + 1], 
-			(m_fTrackPosition - (_float)CurrentMCAM.RotationFrame[m_iCurrentRotationFrame]) / (_float)CurrentMCAM.RotationFrame[m_iCurrentRotationFrame + 1]);
-#pragma region 위에 기존방식 트랙포지션 비율 계산하는거 잘못된듯? Frame 전체길이가아니라 해당구간으로 나눠야하는 주석내방식이 적합해보임
-			//	(m_fTrackPosition - (_float)CurrentMCAM.RotationFrame[m_iCurrentRotationFrame]) / (_float)CurrentMCAM.RotationFrame[m_iCurrentRotationFrame + 1] - (_float)CurrentMCAM.RotationFrame[m_iCurrentRotationFrame]);
-#pragma endregion
+			(m_fTrackPosition - (_float)CurrentMCAM.RotationFrame[m_iCurrentRotationFrame]) / ((_float)CurrentMCAM.RotationFrame[m_iCurrentRotationFrame + 1] - (_float)CurrentMCAM.RotationFrame[m_iCurrentRotationFrame]));
 	}
 
 	_float vZoom;
@@ -399,24 +406,37 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 	else {
 		vZoom = XMVectorGetX(XMVectorLerp(CurrentMCAM.Zooms[m_iCurrentZoomFrame],
 			CurrentMCAM.Zooms[m_iCurrentZoomFrame + 1], 
-			(m_fTrackPosition - (_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame]) / (_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame + 1]));
+			(m_fTrackPosition - (_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame]) / ((_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame + 1] - (_float)CurrentMCAM.ZoomFrame[m_iCurrentZoomFrame])));
 	}
 
+	m_fFovy = XMConvertToRadians(60.f) * vZoom;
+
 #pragma region 축회전 해봣는데 안댐
-	//_matrix				TransformationMatrix = { XMMatrixRotationY(XMConvertToRadians(180.f)) };
-	//_vector				vTransaltionWorld = { XMVectorSetW(XMVector3TransformNormal(vTranslation, TransformationMatrix), 1.f) };
-	//
-	//_vector				vQuaternion = { XMLoadFloat4(&vRotation) };
-	//_vector				vAxis = { XMVectorSetW(vQuaternion, 0.f) };
-	//_vector				vRotatedAxis = { XMVector3TransformNormal(vAxis, TransformationMatrix) };
-	//_vector				vRotatedQuaternion = { XMQuaternionNormalize(XMVectorSetW(vRotatedAxis, XMVectorGetW(vQuaternion))) };
+	_vector				vTransaltionWorld = { XMVectorSetW(XMLoadFloat3(&vTranslation), 1.f)};
+	vTransaltionWorld.m128_f32[0] = vTransaltionWorld.m128_f32[0] * -1.f;
+	//	_vector				vTransaltionWorld = { XMVectorSetW(XMVector3TransformCoord(vTranslation, TransformationMatrix), 1.f) };
 
-	//_matrix				TranslationMatrix = { XMMatrixTranslation(XMVectorGetX(vTransaltionWorld), XMVectorGetY(vTransaltionWorld), XMVectorGetZ(vTransaltionWorld)) };
-	//_matrix				RotationMatrix = { XMMatrixRotationQuaternion(vRotatedQuaternion) };
+	_vector				vQuaternion = { XMLoadFloat4(&vRotation) };
 
-	////	_matrix				ResultMatrix = { RotationMatrix * TranslationMatrix };
-	//	_matrix				ResultMatrix = { XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotatedQuaternion, vTransaltionWorld) };
+	// 평면의 법선 벡터를 쿼터니언으로 변환
+	_vector				vPlaneQuaternion = XMVectorSelect(XMVectorZero(), XMVectorSet(0.f, 1.f, 0.f, 0.f), g_XMSelect1110);
+	_vector				vFippedQuaternion = { XMQuaternionMultiply(vQuaternion, vPlaneQuaternion) };
+	vPlaneQuaternion = XMVectorSelect(XMVectorZero(), XMVectorSet(0.f, 0.f, 1.f, 0.f), g_XMSelect1110);
+	vFippedQuaternion = { XMQuaternionMultiply(vFippedQuaternion, vPlaneQuaternion) };
 
+	vQuaternion = vFippedQuaternion;
+
+	_matrix					WorldMatrix = { XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),  vQuaternion, vTransaltionWorld)};
+
+	_matrix					RotationLookMatrix = { XMMatrixRotationAxis(XMVector3Normalize(WorldMatrix.r[CTransform::STATE_LOOK]), XMConvertToRadians(180.f)) };
+
+	_vector					vPosition = { WorldMatrix.r[CTransform::STATE_POSITION] };
+	WorldMatrix.r[CTransform::STATE_POSITION] = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+	WorldMatrix = WorldMatrix * RotationLookMatrix;
+	WorldMatrix.r[CTransform::STATE_POSITION] = vPosition;
+	//	_matrix					WorldMatrix = { XMMatrixAffineTransformation(XMVectorSet(0.01f, 0.01f, 0.01f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f),  vQuaternion, vTransaltionWorld)};
+	//	WorldMatrix = WorldMatrix* TransformationMatrix;
+	m_pTransformCom->Set_WorldMatrix(WorldMatrix);
 #pragma endregion
 	//_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f),
 	//	XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 0.f),
@@ -427,9 +447,21 @@ void CCamera_Event::Play_MCAM(_float fTimeDelta)
 	//	XMVectorSet(0.f, 0.f, 0.f, 0.f)); // translation  죽임
 
 	
-	_matrix CombinedMatrix = XMMatrixAffineTransformation(XMVectorSet(0.01f, 0.01f, 0.01f, 0.f),
-		XMVectorSet(0.f, 0.f, 0.f, 1.f),  XMVector4Normalize(vRotation),
-		vTranslation); // 둘다 
+	//_matrix				TransformationMatrix = { XMMatrixRotationY(XMConvertToRadians(180.f)) };
+
+	//	_vector				vQuaternion = { XMLoadFloat4(&vRotation) };
+	//_vector				vTransaltionWorld = { XMVectorSetW(XMVector3TransformNormal(vTranslation, TransformationMatrix), 1.f) };
+
+	//	_matrix				WorldMatrix = { XMMatrixAffineTransformation(XMVectorSet(1.f, 1.f, 1.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), vQuaternion, vTransaltionWorld) };
+
+	
+	//	_matrix				RotationMatrix = { XMMatrixRotationRollPitchYawFromVector(vRotation) };
+		
+	//WorldMatrix = WorldMatrix * ScaleMatrix;
+
+	//	m_pTransformCom->Set_WorldMatrix(WorldMatrix);
+
+	//	m_fFovy = XMConvertToRadians(120.f);
 
 	//	m_pTransformCom->Set_WorldMatrix( CombinedMatrix * XMMatrixRotationY(XMConvertToRadians(180.f)));
 

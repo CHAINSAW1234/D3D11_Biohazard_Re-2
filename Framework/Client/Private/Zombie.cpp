@@ -140,6 +140,9 @@ HRESULT CZombie::Initialize(void* pArg)
 	if (FAILED(Initialize_PartBreaker()))
 		return E_FAIL;
 
+	if (FAILED(Add_RagDoll_OtherParts()))
+		return E_FAIL;
+
 	//if (FAILED(Add_Components()))
 	//	return E_FAIL;
 
@@ -1258,6 +1261,7 @@ HRESULT CZombie::Add_PartObjects()
 	ClothesShirtsDesc.eBodyType = static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID);
 	ClothesShirtsDesc.eClothesType = ZOMBIE_CLOTHES_TYPE::_SHIRTS;
 	ClothesShirtsDesc.iClothesModelID = m_iShirts_ID;
+	ClothesShirtsDesc.ppPart_Breaker = &m_pPart_Breaker;
 
 	pShirtsObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Zombie"), &ClothesShirtsDesc));
 	if (nullptr == pShirtsObject)
@@ -1288,6 +1292,7 @@ HRESULT CZombie::Add_PartObjects()
 	ClothesPantsDesc.eBodyType = static_cast<ZOMBIE_BODY_TYPE>(m_iBody_ID);
 	ClothesPantsDesc.eClothesType = ZOMBIE_CLOTHES_TYPE::_PANTS;
 	ClothesPantsDesc.iClothesModelID = m_iPants_ID;
+	ClothesPantsDesc.ppPart_Breaker = &m_pPart_Breaker;
 
 	pPantsObject = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Part_Clothes_Zombie"), &ClothesPantsDesc));
 	if (nullptr == pPantsObject)
@@ -1353,6 +1358,31 @@ HRESULT CZombie::Initialize_PartBreaker()
 
 	if (nullptr == m_pPart_Breaker)
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CZombie::Add_RagDoll_OtherParts()
+{
+	CRagdoll_Physics*			pRagDoll = { static_cast<CBody_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_BODY)])->Get_RagDoll_Ptr() };
+	if (nullptr == pRagDoll)
+		return E_FAIL;
+
+	static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_SHIRTS)])->Set_RagDoll_Ptr(pRagDoll);
+	static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_PANTS)])->Set_RagDoll_Ptr(pRagDoll);
+
+	CModel*						pBody_Model = { static_cast<CModel*>(static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_BODY)])->Get_Component(TEXT("Com_Model"))) };
+	CModel*						pShirt_Model = { static_cast<CModel*>(static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_SHIRTS)])->Get_Component(TEXT("Com_Model"))) };
+	CModel*						pPants_Model = { static_cast<CModel*>(static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_PANTS)])->Get_Component(TEXT("Com_Model"))) };
+
+	if (nullptr == pBody_Model || nullptr == pShirt_Model || nullptr == pPants_Model)
+		return E_FAIL;
+
+	if (FAILED(pShirt_Model->Link_Bone_Auto_RagDoll(pBody_Model, pRagDoll)))
+		return E_FAIL;
+	if (FAILED(pPants_Model->Link_Bone_Auto_RagDoll(pBody_Model, pRagDoll)))
+		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -2500,7 +2530,7 @@ void CZombie::Set_ManualMove(_bool isManualMove)
 {
 	m_isManualMove = isManualMove;
 
-	if (false == m_isManualMove)
+	if (false == m_isManualMove && false == m_bRagdoll)
 	{
 		_float4				vPosition = { m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) };
 		vPosition.y += CONTROLLER_GROUND_GAP_ZOMBIE;

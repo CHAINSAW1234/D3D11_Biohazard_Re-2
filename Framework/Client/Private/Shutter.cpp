@@ -3,6 +3,8 @@
 #include"Player.h"
 
 #include"Body_Shutter.h"
+#include "Call_Center.h"
+
 CShutter::CShutter(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CInteractProps{ pDevice, pContext }
 {
@@ -25,9 +27,15 @@ HRESULT CShutter::Initialize(void* pArg)
 		return E_FAIL;
 	
 	if (m_tagPropDesc.strGamePrototypeName.find("60_033") != string::npos)
+	{
 		m_eType = SHUTTER_033;
+		CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_SM60_033);
+	}
 	else if (m_tagPropDesc.strGamePrototypeName.find("60_034") != string::npos)
+	{
 		m_eType = SHUTTER_034;
+		CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_SM60_034);
+	}
 	else
 		m_eType = SHUTTER_NORMAL;
 
@@ -127,6 +135,7 @@ HRESULT CShutter::Add_PartObjects()
 	BodyDesc.e033State = &m_e033State;
 	BodyDesc.e034State = &m_e034State;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
+	BodyDesc.pIsOutOfControll = &m_isOutOfControll;
 	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(m_tagPropDesc.strObjectPrototype, &BodyDesc));
 	if (nullptr == pBodyObj)
 		return E_FAIL;
@@ -175,6 +184,15 @@ void CShutter::Set_Shutter_Open_State()
 		m_e034State = SHUTTER_034_OPEN;
 		break;
 	}
+}
+
+CGameObject* CShutter::Get_PartObject(SHUTTER_PART ePartType)
+{
+
+	if (static_cast<_uint>(ePartType) >= SHUTTER_PART::PART_END)
+		return nullptr;
+
+	return m_PartObjects[static_cast<_uint>(ePartType)];
 }
 
 void CShutter::Active()

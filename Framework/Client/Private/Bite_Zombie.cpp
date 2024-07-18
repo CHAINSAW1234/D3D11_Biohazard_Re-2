@@ -589,8 +589,12 @@ _bool CBite_Zombie::Is_Can_Start_Bite()
 		return false;
 
 	MONSTER_STATE					eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
-	CMonster::MONSTER_STATUS* pMonster_Status = { m_pBlackBoard->Get_ZombieStatus_Ptr() };
+	CMonster::MONSTER_STATUS*		pMonster_Status = { m_pBlackBoard->Get_ZombieStatus_Ptr() };
+	CPlayer::STATE					ePlayerState = { static_cast<CPlayer::STATE>(m_pBlackBoard->Get_Player()->Get_Player_State()) };
 
+	if (CPlayer::STATE::BITE == ePlayerState)
+		return false;
+	
 	if (MONSTER_STATE::MST_HOLD != eMonsterState)
 		return false;
 
