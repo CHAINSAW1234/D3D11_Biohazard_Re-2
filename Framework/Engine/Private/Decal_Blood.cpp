@@ -119,16 +119,16 @@ void CDecal_Blood::Bind_Resource_DecalMap(CALC_DECAL_MAP_INPUT Input, ID3D11Unor
 	XMStoreFloat4x4(&WorldInv_Float4x4, WorldInv);
 	Input.Decal_Matrix_Inv = WorldInv_Float4x4;
 
-	/*_vector Scale, Rot, Trans;
-	XMMatrixDecompose(&Scale, &Rot, &Trans, DecalWorldMat);
-	Rot = XMQuaternionNormalize(Rot);
-	_matrix RotMat, TransMat;
-	RotMat = XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(Rot));
-	TransMat = XMMatrixTranslation(-XMVectorGetX(Trans), -XMVectorGetY(Trans), -XMVectorGetZ(Trans));
-	_matrix WorldInv = TransMat * RotMat;
-	_float4x4 WorldInv_Float4x4;
-	XMStoreFloat4x4(&WorldInv_Float4x4, WorldInv);
-	Input.Decal_Matrix_Inv = WorldInv_Float4x4;*/
+	//_vector Scale, Rot, Trans;
+	//XMMatrixDecompose(&Scale, &Rot, &Trans, DecalWorldMat);
+	//Rot = XMQuaternionNormalize(Rot);
+	//_matrix RotMat, TransMat;
+	//RotMat = XMMatrixInverse(nullptr, XMMatrixRotationQuaternion(Rot));
+	//TransMat = XMMatrixTranslation(-XMVectorGetX(Trans), -XMVectorGetY(Trans), -XMVectorGetZ(Trans));
+	//_matrix WorldInv = TransMat * RotMat;
+	//_float4x4 WorldInv_Float4x4;
+	//XMStoreFloat4x4(&WorldInv_Float4x4, WorldInv);
+	//Input.Decal_Matrix_Inv = WorldInv_Float4x4;
 
 	/*_vector Scale, Rot, Trans;
 	XMMatrixDecompose(&Scale, &Rot, &Trans, DecalWorldMat);
