@@ -10,20 +10,13 @@ BEGIN(Client)
 class CEmblem_Door final : public CPart_InteractProps
 {
 public:
-	enum class EMBLEM_TYPE
-	{
-		HEART_EMBLEM,
-		SPADE_EMBLEM,
-		CLUB_EMBLEM,
-		DIA_EMBLEM,
-		END_EMBLEM
-	};
 
 	enum class EMBLEM_ANIM
 	{
 		STATIC_ANIM,
-		START_ANIM,
 		OPEN_ANIM,
+		START_ANIM,
+		OPENED_ANIM,
 		END_ANIM
 	};
 
@@ -31,7 +24,8 @@ public:
 	{
 		_ubyte eEmblemType;
 		_ubyte* EmblemAnim;
-
+		_ubyte* pDoorState = { nullptr };
+		_bool* pKeyUsing = { nullptr };
 	}BODY_EMBLEM_DOOR;
 
 private:
@@ -58,14 +52,16 @@ public :
 	_float4x4*					Get_WorldMatrix() { return &m_WorldMatrix; }
 
 public:
-	void						Set_Socket(_float4x4* pSocketMatrix) { m_pSocketMatrix = pSocketMatrix; }
-
+	void						Set_Socket01(_float4x4* pSocketMatrix) { m_pSocketMatrix_01 = pSocketMatrix; }
+	_bool						Get_Clear() { return m_bClear; }
 
 private:
-	_float4x4*					m_pSocketMatrix = { nullptr };
-
+	_float4x4*					m_pSocketMatrix_01 = { nullptr };
+	_bool							m_bClear = { false };
+	_bool*						m_pKeyUsing = { nullptr };
 	_ubyte						m_eEmblemType = {};
-	_ubyte*						m_pEmblem_Anim;
+	_ubyte*						m_pEmblem_Anim = {nullptr};
+	_ubyte*						m_pDoorState = {nullptr};
 
 public:
 	static CEmblem_Door* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

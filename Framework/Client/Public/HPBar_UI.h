@@ -22,6 +22,7 @@ public:
 	virtual HRESULT Render() override;
 	virtual void Start() override;
 	virtual void OnNotify() override;
+	virtual HRESULT Change_Tool() override;
 
 private :
 	void						Find_DamageUI();

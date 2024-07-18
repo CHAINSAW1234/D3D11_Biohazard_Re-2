@@ -9,6 +9,11 @@ BEGIN(Client)
 
 class CBody_Cabinet final : public CPart_InteractProps
 {
+public:
+	typedef struct tagBody_Cabinet_desc :public CPart_InteractProps::PART_INTERACTPROPS_DESC
+	{
+		_ubyte eCabinetType = { 0 };
+	}BODY_CABINET_DESC;
 private:
 	CBody_Cabinet(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBody_Cabinet(const CBody_Cabinet& rhs);
@@ -36,6 +41,7 @@ public:
 	string							Get_Tag() { return m_strTag; }
 private:
 	string							m_strTag = { "" };
+	_ubyte							m_uCabinetType = {0};
 public:
 	static CBody_Cabinet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg);

@@ -167,6 +167,11 @@ HRESULT CItem_UI::Render()
 	return S_OK;
 }
 
+HRESULT CItem_UI::Change_Tool()
+{
+	return S_OK;
+}
+
 void CItem_UI::Set_Dead(_bool bDead)
 {
 	m_bDead = bDead;

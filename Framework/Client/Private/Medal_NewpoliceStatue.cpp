@@ -66,7 +66,7 @@ void CMedal_NewpoliceStatue::Late_Tick(_float fTimeDelta)
 		vTrans._43 -= 0.3f;
 	}
 	/* 오른쪽 메달 : 사자 */
-	else if (MEDAL_TYPE::MEDAL_VIRGIN01 == m_eMedelType)
+	else if (MEDAL_TYPE::MEDAL_LION == m_eMedelType)
 	{
 		vTrans._41 += 4.f;
 		vTrans._42 -= 3.f;
@@ -74,7 +74,7 @@ void CMedal_NewpoliceStatue::Late_Tick(_float fTimeDelta)
 
 	}
 	/* 가운데 메달 : 여자*/
-	else if (MEDAL_TYPE::MEDAL_VIRGIN02 == m_eMedelType)
+	else if (MEDAL_TYPE::MEDAL_WOMAN == m_eMedelType)
 	{
 		vTrans._41 -= 1.2f;
 		vTrans._42 -= 0.7f;

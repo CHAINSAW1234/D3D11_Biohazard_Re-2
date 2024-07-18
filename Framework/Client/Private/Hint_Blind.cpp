@@ -59,6 +59,11 @@ HRESULT CHint_Blind::Render()
 	return S_OK;
 }
 
+HRESULT CHint_Blind::Change_Tool()
+{
+	return S_OK;
+}
+
 CHint_Blind* CHint_Blind::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CHint_Blind* pInstance = new CHint_Blind(pDevice, pContext);

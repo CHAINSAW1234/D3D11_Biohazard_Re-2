@@ -18,6 +18,7 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT Change_Tool() override;
 
 	void Set_BackGround(ITEM_READ_TYPE eIRT, _bool bDead);
 

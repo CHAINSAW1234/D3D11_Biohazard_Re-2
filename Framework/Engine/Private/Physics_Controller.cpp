@@ -1282,20 +1282,40 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 	PxVec3 PxvOrigin = Float4_To_PxVec(vOrigin);
 	PxVec3 PxvDir = Float4_To_PxVec(vDir);
 
+	//const PxU32 maxHits = 10;
+	//PxRaycastHit hitBuffer[maxHits];
+	//PxRaycastBufferN<maxHits> hit;
+
+	//PxQueryFilterData filterData;
+	//filterData.flags = PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC;
+
+	//bool Status = m_Scene->raycast(PxvOrigin, PxvDir.getNormalized(), 50.f, hit, PxHitFlag::eDEFAULT, filterData);
+
 	const PxU32 maxHits = 10;
-	PxRaycastHit hitBuffer[maxHits];
-	PxRaycastBufferN<maxHits> hit;
+	PxSweepHit hitBuffer[maxHits];
+	PxSweepBufferN<maxHits> hit;
 
 	PxQueryFilterData filterData;
 	filterData.flags = PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC;
 
-	bool Status = m_Scene->raycast(PxvOrigin, PxvDir.getNormalized(), 50.f, hit, PxHitFlag::eDEFAULT, filterData);
+	PxSphereGeometry sphereGeometry(0.05f); // 반지름이 1.0인 구
+
+	bool Status = m_Scene->sweep(
+		sphereGeometry,          // 지오메트리 형태
+		PxTransform(PxvOrigin),  // 시작 위치
+		PxvDir.getNormalized(),  // 방향 벡터
+		50.f,                    // 최대 거리
+		hit,                     // 결과를 저장할 버퍼
+		PxHitFlag::eDEFAULT | PxHitFlag::ePRECISE_SWEEP,     // 히트 플래그
+		filterData               // 필터 데이터
+	);
 
 	if (Status)
 	{
 		for (PxU32 i = 0; i < hit.getNbTouches(); ++i)
 		{
-			const PxRaycastHit& hit_Obj = hit.getTouch(i);
+			//const PxRaycastHit& hit_Obj = hit.getTouch(i);
+			const PxSweepHit& hit_Obj = hit.getTouch(i);
 
 			PxShape* shape = hit_Obj.shape;
 			PxRigidActor* actor = hit_Obj.actor;
@@ -1371,7 +1391,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 					}
 					else
 					{
-						if (m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() >= 5)
+						if (m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() >= 15)
 						{
 							/*Ragdoll을 구동하려면 살려야 함.*/
 							m_vecCharacter_Controller[filterData.word2]->SetReleased(true);

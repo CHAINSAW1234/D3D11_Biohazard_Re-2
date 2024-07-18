@@ -5,7 +5,7 @@
 #include "Decal_Blood.h"
 
 #define BIG_ATTACK_DECAL_EXTENT _float3(0.4f,0.4f,0.4f)
-#define NORMAL_ATTACK_DECAL_EXTENT _float3(0.2f,0.5f,0.2f)
+#define NORMAL_ATTACK_DECAL_EXTENT _float3(0.2f,0.2f,0.2f)
 #define PLAYER_ATTACK_DECAL_EXTENT_FRONT _float3(0.155f,0.155f,0.155f)
 #define PLAYER_ATTACK_DECAL_EXTENT_BACK _float3(0.21f,0.21f,0.21f)
 

@@ -19,29 +19,23 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT Change_Tool() override;
 
 	
-public :/* For. 옌*/
+public :
 	CGameObject*						Destroy_Selector(); /* 해당 객체를 사용하지 않을 것이다. */
 	void								Select_Type(_bool _Interact, _float4 _objPos);  /* 해당 객체의 어떤 상태를 사용하고자 하는가? */
 	
-	/* For. Player Call */
-	void								Set_SelectorObj_Collection(CSelector_UI* pSelect)
-	{
-		m_SelectorObj_Vec.push_back(pSelect);
-	} 
 	_bool*								Get_Using() { return &m_isUsing; }
 	CGameObject*						Get_Supervise() { return m_pSupervise;  } 
-	vector<CSelector_UI*>*				Get_Collection() { return &m_SelectorObj_Vec;  }
+
 private :
 	void								Exception_Handle();
-	void								Find_Selector_Obj();
 	void								Reset();
 	void								Operate_Selector(_float fTimeDelta);
 
 
 public:
-	void								NonInteractive_Rendering(_float fTimeDelta);
 	void								Calc_Position();
 	void								Rendering(_float fTimeDelta);
 	
@@ -51,7 +45,7 @@ private : /* 연동 관련 */
 
 private :
 	class CInteractProps*				m_pInteractObj				= { nullptr }; /* 목표물 */
-	CSelector_UI*						m_pParent					= { nullptr };	/* 부모 */
+	CSelector_UI*						m_pSelectorParent			= { nullptr };
 
 	SELECTOR_TYPE						m_eSelectorType				= { SELECTOR_TYPE::END_SELECTOR };
 
@@ -68,9 +62,6 @@ private : // X 표시
 	_bool								m_isArrow					= { false };
 	_float4								m_vXTransform				= {};
 	
-private :
-	vector<CSelector_UI*>				m_SelectorObj_Vec;
-
 	_bool								m_isUsing					= { false };
 	CGameObject*						m_pSupervise				= { nullptr }; /* 자식들의 초대 부모 */
 

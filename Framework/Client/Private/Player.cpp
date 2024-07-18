@@ -529,17 +529,6 @@ void CPlayer::Start()
 			/* 부모를 불러서 Selector를 구별한다 */
 			if (false == pSelect->Get_IsChild())
 			{
-				for (auto& child : *pSelecter_UI)
-				{
-					CSelector_UI* pSelectChild = dynamic_cast<CSelector_UI*>(child);
-
-					if (nullptr != pSelectChild)
-					{
-						/* 부모와 자식이 가지고 있는 Supervise가 같다면*/
-						if (pSelect == pSelectChild->Get_Supervise())
-							pSelect->Set_SelectorObj_Collection(pSelectChild);
-					}
-				}
 				m_SelectorVec.push_back(pSelect);
 			}
 		}
@@ -664,11 +653,6 @@ CGameObject* CPlayer::Create_Selector_UI()
 		if (false == *iter->Get_Using())
 		{
 			*iter->Get_Using() = true;
-
-			for (auto& iter1 : *iter->Get_Collection())
-			{
-				*iter1->Get_Using() = true;
-			}
 
 			return iter;
 		}
@@ -2751,15 +2735,6 @@ HRESULT CPlayer::Add_Components()
 
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 		TEXT("Com_Collider"), (CComponent**)&m_pColliderCom, &ColliderDesc)))
-		return E_FAIL;
-
-	/* For.Com_Navigation */
-	CNavigation::NAVIGATION_DESC			NavigationDesc{};
-
-	NavigationDesc.iCurrentIndex = 0;
-
-	if (FAILED(__super::Add_Component(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Navigation"),
-		TEXT("Com_Navigation"), (CComponent**)&m_pNavigationCom, &NavigationDesc)))
 		return E_FAIL;
 
 	if (FAILED(Add_FSM_States()))

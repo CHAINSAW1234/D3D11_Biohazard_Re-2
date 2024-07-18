@@ -35,6 +35,7 @@ public:
 	virtual void				Tick(_float fTimeDelta) override;
 	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
+	virtual void Do_Interact_Props() override;
 
 private:
 	virtual HRESULT				Add_Components();
@@ -44,7 +45,6 @@ private:
 
 private:
 	void Active();
-
 public:
 	virtual _float4 Get_Object_Pos() override;
 

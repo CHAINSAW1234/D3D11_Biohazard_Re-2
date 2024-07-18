@@ -28,12 +28,6 @@ HRESULT CRead_Item_UI::Initialize_Prototype()
 
 HRESULT CRead_Item_UI::Initialize(void* pArg)
 {
-    /*
-     1. TEXT("UI_Item_Introduce") => (소개글)
-     2. TEXT("UI_Item_Read") => 메인 / 부모 검정색 Background
-     3. TEXT("UI_Item_Read_Arrow") => 화살표
-    */
-
     if (pArg != nullptr)
     {
         if (FAILED(__super::Initialize(pArg)))
@@ -51,8 +45,6 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
             if (!m_vecTextBoxes.empty())
             {
                 m_vecTextBoxes.back()->Set_FontColor(ALPHA_ZERO);
-                // m_vFont_Position = m_vecTextBoxes.back()->GetPosition();
-                // m_vecTextBoxes.back()->Set_Position(m_vFont_Position.x - 200.f, m_vFont_Position.y, m_vFont_Position.z);
             }
         }
 
@@ -104,12 +96,6 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
             m_pRead_Supervise = Find_ReadUI(READ_UI_TYPE::MAIN_READ, false);
             CRead_Item_UI* pTexture_UI = Find_ReadUI(READ_UI_TYPE::TEXTURE_READ, true);
 
-           /* if (nullptr != m_pIntro_UI)
-                Safe_AddRef<CRead_Item_UI*>(m_pIntro_UI);
-
-            if (nullptr != m_pTexture_UI)
-                Safe_AddRef<CRead_Item_UI*>(m_pRead_Supervise);*/
-
             if (nullptr != pTexture_UI)
             {
                 CTransform* pMain_Trans = static_cast<CTransform*>(pTexture_UI->Get_Component(g_strTransformTag));
@@ -158,6 +144,7 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
     }
     
     m_isRender = false;
+
     return S_OK;
 }
 
@@ -199,6 +186,11 @@ HRESULT CRead_Item_UI::Render()
     if (FAILED(__super::Render()))
         return E_FAIL;
 
+    return S_OK;
+}
+
+HRESULT CRead_Item_UI::Change_Tool()
+{
     return S_OK;
 }
 
@@ -462,9 +454,6 @@ void CRead_Item_UI::Reset()
 
     if (nullptr != m_pIntro_UI)
         m_pIntro_UI->m_isRead_Start = false;
-
-    //if(!m_vecTextBoxes.empty())
-     //   m_vecTextBoxes.back()->Set_Position(m_vFont_Position.x - 200.f, m_vFont_Position.y, m_vFont_Position.z);
 }
 
 CCustomize_UI* CRead_Item_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -19,35 +19,41 @@ private:
 	virtual ~CCamera_Gimmick() = default;
 
 public:
-	virtual HRESULT				Initialize_Prototype() override;
-	virtual HRESULT				Initialize(void* pArg) override;
+	virtual HRESULT					Initialize_Prototype() override;
+	virtual HRESULT					Initialize(void* pArg) override;
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT				Render() override;
-	void								SetPosition(_float4 vPosition);
-	void								SetPosition(_vector vPosition);
+	virtual HRESULT					Render() override;
+
+public :
+	void							SetPosition(_float4 vPosition);
+	void							SetPosition(_vector vPosition);
+
 	CTransform* Get_Transform()
 	{
 		return m_pTransformCom;
 	}
+
 	_float4							Get_Position_Float4();
 	_vector							Get_Position_Vector();
-	void								SetPlayer(CGameObject* pPlayer);
-	void								LookAt(_float4 vPoint);
+	void							SetPlayer(CGameObject* pPlayer);
+	void							LookAt(_float4 vPoint);
+	void							Bind_PipeLine();
 
-	void								Bind_PipeLine();
 public:
-	void								Set_FixedMouse(_bool _Fixed) { m_isFixedMouse = _Fixed;  }
+	_ubyte*							Get_Layout_Type()				{ return &m_eLayout_Type; }
+	void							Set_FixedMouse(_bool _Fixed)	{ m_isFixedMouse = _Fixed;  }
 	virtual void					Active_Camera(_bool isActive) override;
 
 private:
 	_float							m_fMouseSensor	= { 0.0f };
 	_float							m_fOriginFovy	= { 0.0f };
-	_bool								m_isFixedMouse	= { true };
+	_bool							m_isFixedMouse	= { true };
 
-	class CPlayer*				m_pPlayer		= { nullptr };
+	class CPlayer*					m_pPlayer		= { nullptr };
 
-	_bool								m_isLockPlayer = { false };
+	_bool							m_isLockPlayer	= { false };
+	_ubyte							m_eLayout_Type	= { };
 
 public:
 	static CCamera_Gimmick* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

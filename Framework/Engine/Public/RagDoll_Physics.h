@@ -207,7 +207,8 @@ public:
         m_iId = Index;
     }
     _int                                Find_BoneIndex(const string& strRootTag);
-    FORCEINLINE PxRigidDynamic* GetRigidBody(COLLIDER_TYPE eType)
+    _float4                             GetRigidBodyPos(COLLIDER_TYPE eType);
+    FORCEINLINE                         PxRigidDynamic* GetRigidBody(COLLIDER_TYPE eType)
     {
         switch (eType)
         {
@@ -324,7 +325,7 @@ public:
 
         return nullptr;
     }
-    FORCEINLINE void Insert_Rigid_Body(vector<PxRigidDynamic*>* pRigidBodies, vector<COLLIDER_TYPE>* pColliders, COLLIDER_TYPE eType)
+    FORCEINLINE                         void Insert_Rigid_Body(vector<PxRigidDynamic*>* pRigidBodies, vector<COLLIDER_TYPE>* pColliders, COLLIDER_TYPE eType)
     {
         pColliders->push_back(eType);
 
@@ -449,10 +450,11 @@ public:
 #pragma region Partial Ragdoll
 public:
     void                                Init_PartialRagdoll(COLLIDER_TYPE eType);
-    _float4x4* GetBoneMatrices_Ragdoll()
+    _float4x4*                          GetBoneMatrices_Ragdoll()
     {
         return m_BoneMatrices;
     }
+    _float4x4*                    GetCombinedMatrix_Ragdoll(_uint iIndex);
 #pragma endregion
 
 private:

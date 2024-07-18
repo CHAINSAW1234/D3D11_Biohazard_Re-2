@@ -67,6 +67,11 @@ HRESULT CItem_Map_UI::Render()
     return S_OK;
 }
 
+HRESULT CItem_Map_UI::Change_Tool()
+{
+    return S_OK;
+}
+
 /* 몇 층에 어떤 지역의 어떤 아이템을 삭제할 것인가? */
 void CItem_Map_UI::Destory_Item(MAP_FLOOR_TYPE _floorType, LOCATION_MAP_VISIT _locationType, ITEM_NUMBER _ItemType)
 {

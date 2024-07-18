@@ -23,18 +23,10 @@ HRESULT CCursor_UI::Initialize(void* pArg)
 {
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
-
+  
     if (false == m_IsChild)
     {
         m_eCursor_Type = CURSOR_TYPE::CURSOR_BLUR;
-        m_vCurrentColor.w = m_vColor[0].vColor.w = 0.f;
-        m_vColor[0].fBlender_Value = m_fBlending = 1.f;
-
-        _float4 vBlurPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-
-        vBlurPos.y += 5.f;
-
-        m_pTransformCom->Set_State(CTransform::STATE_POSITION, vBlurPos);
     }
 
     else if (true == m_IsChild)
@@ -42,6 +34,7 @@ HRESULT CCursor_UI::Initialize(void* pArg)
         m_eCursor_Type = CURSOR_TYPE::CURSOR;
 
         CCursor_UI* pBlur = static_cast<CCursor_UI*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_UI"))->back());
+
         m_pBlurCursor_Trans = static_cast<CTransform*>(pBlur->Get_Component(g_strTransformTag));
 
         m_fBlur_Distance.x = abs(m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION).x - m_pBlurCursor_Trans->Get_State_Float4(CTransform::STATE_POSITION).x) + 3.f;
@@ -51,12 +44,8 @@ HRESULT CCursor_UI::Initialize(void* pArg)
             MSG_BOX(TEXT("CCursor_UI에서 자식이 부모(Blur Cursor)를 제대로 가져오지 못함."));
     }
 
-    /* Z 값 위치*/
-    _float4 pTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
-    pTrans.z = 0.0f;
-    m_pTransformCom->Set_State(CTransform::STATE_POSITION, pTrans);
-
-    m_isRender = false;
+    if (FAILED(Change_Tool()))
+        return E_FAIL;
 
     ShowCursor(m_isShowCursor);
 
@@ -85,6 +74,33 @@ HRESULT CCursor_UI::Render()
 {
     if (FAILED(__super::Render()))
         return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CCursor_UI::Change_Tool()
+{
+    /* Z 값 위치*/
+    _float4 pTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+    pTrans.z = 0.0f;
+
+    m_pTransformCom->Set_State(CTransform::STATE_POSITION, pTrans);
+
+    m_isRender = false;
+
+    if (false == m_IsChild)
+    {
+        m_vCurrentColor.w = m_vColor[0].vColor.w = 0.f;
+
+        m_vColor[0].fBlender_Value = m_fBlending = 1.f;
+
+        _float4 vBlurPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
+        vBlurPos.y += 5.f;
+
+        m_pTransformCom->Set_State(CTransform::STATE_POSITION, vBlurPos);
+    }
 
     return S_OK;
 }

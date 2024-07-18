@@ -453,7 +453,6 @@ public:
 			break;
 		}
 	}
-
 	void						Insert_Collider_Type_Ragdoll(COLLIDER_TYPE eType)
 	{
 		m_vecColliderType_STG.push_back(eType);

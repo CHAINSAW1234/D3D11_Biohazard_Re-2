@@ -35,10 +35,8 @@ HRESULT CDamage_UI::Initialize(void* pArg)
         CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
     }
 
-    // m_Mask[0].fMaskControl  = _float2(1.248f, 0.299f);
-    m_Mask[0].fMaskControl  = _float2(0.3f, 0.8f);
-    m_vColor[0].vColor      = _float4(0.572f, 0.09f, 0.09f, 0.f);
-    m_isRender              = false;
+    if (FAILED(Change_Tool()))
+        return E_FAIL;
 
     return S_OK;
 }
@@ -66,6 +64,17 @@ HRESULT CDamage_UI::Render()
 {
     if (FAILED(__super::Render()))
         return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CDamage_UI::Change_Tool()
+{
+    m_Mask[0].fMaskControl = _float2(0.3f, 0.8f);
+
+    m_vColor[0].vColor = _float4(0.572f, 0.09f, 0.09f, 0.f);
+
+    m_isRender = false;
 
     return S_OK;
 }

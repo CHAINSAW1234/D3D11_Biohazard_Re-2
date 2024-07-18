@@ -143,11 +143,8 @@ HRESULT CTargeting_Map_UI::Initialize(void* pArg)
     }
 
     /* Tool */
-    m_isMouse_Control = true;
-    m_isRender = false;
-
-    m_fOrigin_Blending = m_vColor[0].fBlender_Value;
-    m_vColor[0].vColor.w = 0.f;
+    if (FAILED(Change_Tool()))
+        return E_FAIL;
 
     return S_OK;
 }
@@ -175,6 +172,19 @@ HRESULT CTargeting_Map_UI::Render()
 {
     if (FAILED(__super::Render()))
         return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CTargeting_Map_UI::Change_Tool()
+{
+    m_isMouse_Control = true;
+
+    m_isRender = false;
+
+    m_fOrigin_Blending = m_vColor[0].fBlender_Value;
+
+    m_vColor[0].vColor.w = 0.f;
 
     return S_OK;
 }

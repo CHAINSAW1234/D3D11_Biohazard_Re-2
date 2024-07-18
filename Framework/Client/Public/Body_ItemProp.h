@@ -40,6 +40,7 @@ private:
 	_int								m_iItemIndex = { 0 };
 	_bool								m_bRealDead = { false };
 	_bool*							m_pObtain = { nullptr };
+	_bool*							iItemDead = { nullptr };
 
 
 public:
