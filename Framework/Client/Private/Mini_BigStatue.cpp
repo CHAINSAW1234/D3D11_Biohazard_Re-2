@@ -379,8 +379,6 @@ void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
 			}
 		}
 
-		_matrix			TranslationMatrix = { XMMatrixTranslation(0.f, 0.f, m_fAdditionalZ) };
-
 		if (m_fZTimer >= 0.8f)
 		{
 			m_fAdditionalHeight_D -= 5.f * fTimeDelta;
@@ -518,8 +516,6 @@ void CMini_BigStatue::Lion_Statue(_float fTimeDelta)
 				m_fRotationAngle += fTimeDelta * 60.f;
 			}
 		}
-
-		_matrix			TranslationMatrix = { XMMatrixTranslation(0.f, 0.f, m_fAdditionalZ) };
 
 		if (m_fZTimer >= 0.8f)
 		{

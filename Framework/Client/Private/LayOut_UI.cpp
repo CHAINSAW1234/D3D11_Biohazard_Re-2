@@ -93,6 +93,14 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
 
         else if (CustomUIDesc->wstrFileName == TEXT("UI_HintLayout"))
         {
+            if (nullptr == m_pLayout_BackGround)
+            {
+                m_pLayout_BackGround = static_cast<CLayOut_UI*>(Find_Layout_BackGround());
+
+                if (nullptr == m_pLayout_BackGround)
+                    MSG_BOX(TEXT("Hint Layout에서 Background를 사용할 수 없음 "));
+            }
+
             m_eLayout_Type = LAYOUT_TYPE::LAYOUT_TAB;
 
             m_eTabLayout_Type = LAYOUT_TAB_TYPE::HINT_UI_TYPE;
@@ -143,6 +151,7 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
     if (LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE == m_eTabLayout_Type)
     {
         Find_TabWindow();
+
         m_isMainRender = m_pTab_Window->Get_MainRender_Ptr();
     }
 
@@ -222,7 +231,7 @@ void CLayOut_UI::Find_TabWindow()
         {
             m_pTab_Window = pTabWin;
 
-          //  Safe_AddRef<CTab_Window*>(m_pTab_Window);
+            Safe_AddRef<CTab_Window*>(m_pTab_Window);
         }
     }
 }
@@ -233,28 +242,21 @@ void CLayOut_UI::Typing_Menu_LayOut()
     {
         for (auto& iter : m_vecTextBoxes)
         {
-            _float4 originPos = m_vOriginTextPos;
-
             switch ((MENU_HOVER_TYPE)m_iMenu_HoverType)
             {
             case MENU_HOVER_TYPE::UNMOUNTED_MENU :
                 iter->Set_Text(TEXT("장착된 무기를 해제합니다."));
-                originPos.x -= 20.f;
-                iter->Set_Position(originPos);
                 break;
 
             case MENU_HOVER_TYPE::INSPECTION_MENU:
-                iter->Set_Position(originPos);
                 iter->Set_Text(TEXT("아이템을 검사합니다."));
                 break;
 
             case MENU_HOVER_TYPE::COMBINATION_MENU:
-                iter->Set_Position(originPos);
                 iter->Set_Text(TEXT("아이템을 조합합니다."));
                 break;
 
             case MENU_HOVER_TYPE::SHORTCUTS_MENU:
-                iter->Set_Position(originPos);
                 iter->Set_Text(TEXT("단축키를 등록합니다."));
                 break;
 
@@ -279,6 +281,27 @@ void CLayOut_UI::Find_GimmickCamera()
     }
 }
 
+CGameObject* CLayOut_UI::Find_Layout_BackGround()
+{
+    list<CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+    for (auto& iter : *pUIList)
+    {
+        CLayOut_UI* pLayout = dynamic_cast<CLayOut_UI*>(iter);
+
+        if (nullptr != pLayout)
+        {
+            if (LAYOUT_TYPE::LAYOUT_TAB == pLayout->m_eLayout_Type)
+            {
+                if (nullptr != pLayout->m_pLayout_BackGround)
+                    return pLayout;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
 void CLayOut_UI::Layout_Tab()
 {
     if (LAYOUT_TYPE::LAYOUT_TAB != m_eLayout_Type)
@@ -286,7 +309,7 @@ void CLayOut_UI::Layout_Tab()
 
     if (*m_isGimmickCamera_Layout_Type == static_cast<_ubyte>(LAYOUT_TYPE::LAYOUT_KEY) || 
         *m_isGimmickCamera_Layout_Type == static_cast<_ubyte>(LAYOUT_TYPE::LAYOUT_STATUE))
-        return;
+        return; 
 
     if (LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE == m_eTabLayout_Type)
     {

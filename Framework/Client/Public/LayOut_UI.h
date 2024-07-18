@@ -69,6 +69,7 @@ private:
 	void							Find_TabWindow();
 	void							Typing_Menu_LayOut();
 	void							Find_GimmickCamera();
+	CGameObject*					Find_Layout_BackGround();
 
 private :
 	void							Layout_Tab();
