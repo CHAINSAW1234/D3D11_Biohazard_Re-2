@@ -2,6 +2,7 @@
 #include "LayOut_UI.h"
 #include "Tab_Window.h"
 #include "Camera_Gimmick.h"
+#include "InteractProps.h"
 
 #define WHITE_COLOR     _float4(1, 1, 1, 1)
 #define ALPHA_ZERO      _float4(0, 0, 0, 0)
@@ -173,7 +174,25 @@ void CLayOut_UI::Tick(_float fTimeDelta)
     __super::Tick(fTimeDelta);
 
     if (nullptr == m_isGimmickCamera_Layout_Type)
+    {
         Find_GimmickCamera();
+
+        if (nullptr == m_isGimmickCamera_Layout_Type)
+        {
+            MSG_BOX(TEXT("CLayOut_UI() : Gimmick Camera를 찾을 수 없습니다."));
+        }
+    }
+
+    if (nullptr == m_pTab_Window)
+    {
+        Find_TabWindow();
+
+        if (nullptr == m_pTab_Window)
+        {
+            MSG_BOX(TEXT("LayOut에 Render를 구분할 Object(Tab Window)를 불러올 수 없습니다."));
+            /* Tab Window 가 nullptr 이 아닌 지 확인해주세요.*/
+        }
+    }
 
     _float4 vObjPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
     vObjPos.z = 0.1f;
@@ -273,7 +292,7 @@ void CLayOut_UI::Find_GimmickCamera()
 {
     CCamera_Gimmick* pCameraGimmick = static_cast<CCamera_Gimmick*>(m_pGameInstance->Get_GameObject(g_Level, g_strCameraTag, 2));
 
-    m_isGimmickCamera_Layout_Type = pCameraGimmick->Get_Layout_Type();
+    m_isGimmickCamera_Layout_Type = pCameraGimmick->Get_Layout_Type_Ptr();
 
     if (nullptr == m_isGimmickCamera_Layout_Type)
     {
@@ -307,37 +326,23 @@ void CLayOut_UI::Layout_Tab()
     if (LAYOUT_TYPE::LAYOUT_TAB != m_eLayout_Type)
         return;
 
-    if (*m_isGimmickCamera_Layout_Type == static_cast<_ubyte>(LAYOUT_TYPE::LAYOUT_KEY) || 
-        *m_isGimmickCamera_Layout_Type == static_cast<_ubyte>(LAYOUT_TYPE::LAYOUT_STATUE))
+    if (*m_isGimmickCamera_Layout_Type != static_cast<_ubyte>(CInteractProps::INTERACT_GIMMICK_TYPE::NONE_GIMMICK))
         return; 
 
     if (LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE == m_eTabLayout_Type)
     {
-        if (nullptr == m_pTab_Window)
+        if (false == (*m_isMainRender))
         {
-            Find_TabWindow();
-
-            if (nullptr == m_pTab_Window)
-            {
-                MSG_BOX(TEXT("LayOut에 Render를 구분할 Object(Tab Window)를 불러올 수 없습니다."));
-                /* Tab Window 가 nullptr 이 아닌 지 확인해주세요.*/
-            }
+            m_isRender = true;
+            m_eRenderLayout_Type = (LAYOUT_TAB_TYPE) * (m_pTab_Window->Get_Window_RenderType_Ptr());
         }
 
         else
         {
-            if (false == (*m_isMainRender))
-            {
-                m_isRender = true;
-                m_eRenderLayout_Type = (LAYOUT_TAB_TYPE) * (m_pTab_Window->Get_Window_RenderType_Ptr());
-            }
-
-            else
-            {
-                m_isRender = false;
-                m_eRenderLayout_Type = LAYOUT_TAB_TYPE::END_UI_TYPE;
-            }
+            m_isRender = false;
+            m_eRenderLayout_Type = LAYOUT_TAB_TYPE::END_UI_TYPE;
         }
+        
     }
 
     /* 내 렌더랑 호출할 렌더랑 같을 때 */
@@ -386,10 +391,10 @@ void CLayOut_UI::Layout_Tab()
 
 void CLayOut_UI::Layout_Key()
 {
-    if (LAYOUT_TYPE::LAYOUT_KEY != m_eLayout_Type)
+    if (LAYOUT_TYPE::LAYOUT_KEY != m_eLayout_Type || false == *m_pTab_Window->Get_MainRender_Ptr())
         return;
 
-    if (*m_isGimmickCamera_Layout_Type == static_cast<_ubyte>(LAYOUT_TYPE::LAYOUT_KEY))
+    if (*m_isGimmickCamera_Layout_Type == CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK)
     {
         m_isRender = true;
 
@@ -417,10 +422,10 @@ void CLayOut_UI::Layout_Key()
 
 void CLayOut_UI::Layout_Statue()
 {
-    if (LAYOUT_TYPE::LAYOUT_STATUE != m_eLayout_Type)
+    if (LAYOUT_TYPE::LAYOUT_STATUE != m_eLayout_Type || false == *m_pTab_Window->Get_MainRender_Ptr())
         return;
 
-    if (*m_isGimmickCamera_Layout_Type == static_cast<_ubyte>(LAYOUT_TYPE::LAYOUT_STATUE))
+    if (*m_isGimmickCamera_Layout_Type == CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK)
     {
         m_isRender = true;
 

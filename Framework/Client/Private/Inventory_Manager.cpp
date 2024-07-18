@@ -1141,6 +1141,7 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 		}
 
 		//²ø¶© ´Ù²ôÀÚ
+
 		else
 		{
 			iter->Set_Dead(bInput);

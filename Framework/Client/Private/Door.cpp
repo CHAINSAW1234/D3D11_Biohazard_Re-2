@@ -905,9 +905,9 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 		_float fScala = Radian_To_Player();
 
 		if (XMConvertToDegrees(acosf(fScala)) <= 90.f)
-			Camera_Active(PART_EMBLEM, _float3(-0.5f, -0.5f, -10.1f));
+			Camera_Active(PART_EMBLEM, _float3(-0.5f, -0.5f, -10.1f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 		else
-			Camera_Active(PART_EMBLEM, _float3(0.5f, 0.5f, -10.1f));
+			Camera_Active(PART_EMBLEM, _float3(0.5f, 0.5f, -10.1f), CInteractProps::INTERACT_GIMMICK_TYPE::KEY_GIMMICK);
 
 	}
 

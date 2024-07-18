@@ -78,7 +78,15 @@ void CMini_BigStatue::Tick(_float fTimeDelta)
 
 	else if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_WOMAN) == m_eMiniType)
 	{
-		Woman_Statue(fTimeDelta);
+		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
+		{
+		}
+
+		if (DOWN == m_pGameInstance->Get_KeyState('W'))
+			m_isMoveStart = true;
+
+		if (true == m_isMoveStart)
+			Woman_Statue(fTimeDelta);
 	}
 
 	else if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_LION) == m_eMiniType)
@@ -91,12 +99,6 @@ void CMini_BigStatue::Tick(_float fTimeDelta)
 			if (true == m_isMoveStart)
 				Lion_Statue(fTimeDelta);
 		}
-
-	}
-
-	if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
-	{
-		
 	}
 }
 
@@ -477,18 +479,75 @@ void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
 
 void CMini_BigStatue::Woman_Statue(_float fTimeDelta)
 {
-	/* 3. 뼈 회전 적용 */
+	{
+		m_fAdditionalHeight_D -= 5.f * fTimeDelta;
+		m_fAdditionalHeight += 5.f * fTimeDelta;
+	}
+
+	/* Rotation */
+	_matrix			TranslationMatrix1 = { XMMatrixTranslation(0.f, m_fAdditionalHeight_D, m_fAdditionalZ) };
+	_matrix			TranslationMatrix2 = { XMMatrixTranslation(0.f, m_fAdditionalHeight_D, m_fAdditionalZ) };
+	_matrix			TranslationMatrix3 = { XMMatrixTranslation(0.f, m_fAdditionalHeight_D, m_fAdditionalZ) };
+	_matrix			TranslationMatrix4 = { XMMatrixTranslation(0.f, m_fAdditionalHeight_D, m_fAdditionalZ) };
+	_matrix			TranslationMatrix5 = { XMMatrixTranslation(0.f, m_fAdditionalHeight_D, m_fAdditionalZ) };
+	_matrix			TranslationMatrix6 = { XMMatrixTranslation(0.f, m_fAdditionalHeight_D, m_fAdditionalZ) };
+
 	vector<string> BoneNames = { m_pModelCom->Get_BoneNames() };
 
-	/* 아래로 내리기 */
-	m_fAdditionalHeight -= 0.6f * fTimeDelta;
-	_matrix			TranslationMatrix = { XMMatrixTranslation(0.f, m_fAdditionalHeight, 0.f) };
-	list<_uint> ChildJointIndices_1;
-	m_pModelCom->Get_Child_ZointIndices("RootNode", "ItemSet01_end_end_end", ChildJointIndices_1);
-	for (auto& iJointIndex : ChildJointIndices_1)
+	/* 1. 가운데 상단*/
+	list<_uint> ChildJointIndices_Root_CenterTop;
+	m_pModelCom->Get_Child_ZointIndices("_01", "_01_end_end_end_end", ChildJointIndices_Root_CenterTop);
+
+	for (auto& iJointIndex : ChildJointIndices_Root_CenterTop)
 	{
-		m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix);
+		m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix1);
 	}
+
+	/* 2. 우측 상단*/
+	list<_uint> ChildJointIndices_Root_Right_Top;
+	m_pModelCom->Get_Child_ZointIndices("_02", "_02_end_end_end_end", ChildJointIndices_Root_Right_Top);
+
+	for (auto& iJointIndex : ChildJointIndices_Root_Right_Top)
+	{
+		m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix2);
+	}
+
+	/* 3. 우측 하단*/
+	list<_uint> ChildJointIndices_Root_Right_Bottom;
+	m_pModelCom->Get_Child_ZointIndices("_03", "_03_end_end_end_end", ChildJointIndices_Root_Right_Bottom);
+
+	for (auto& iJointIndex : ChildJointIndices_Root_Right_Bottom)
+	{
+		m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix3);
+	}
+
+	/* 4. 가운데 하단*/
+	list<_uint> ChildJointIndices_Root_CenterBottom;
+	m_pModelCom->Get_Child_ZointIndices("_04", "_04_end_end_end_end", ChildJointIndices_Root_CenterBottom);
+
+	for (auto& iJointIndex : ChildJointIndices_Root_CenterBottom)
+	{
+		m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix4);
+	}
+
+	/* 5. 좌측 하단*/
+	list<_uint> ChildJointIndices_Root_LeftBottom;
+	m_pModelCom->Get_Child_ZointIndices("_05", "_05_end_end_end_end", ChildJointIndices_Root_LeftBottom);
+
+	for (auto& iJointIndex : ChildJointIndices_Root_LeftBottom)
+	{
+		m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix5);
+	}
+
+	/* 6. 좌측 상단 */
+	list<_uint> ChildJointIndices_Root_LeftTop;
+	m_pModelCom->Get_Child_ZointIndices("_06", "_06_end_end_end_end", ChildJointIndices_Root_LeftTop);
+
+	for (auto& iJointIndex : ChildJointIndices_Root_LeftTop)
+	{
+		m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], TranslationMatrix6);
+	}
+
 }
 
 void CMini_BigStatue::Lion_Statue(_float fTimeDelta)
@@ -578,6 +637,7 @@ void CMini_BigStatue::Lion_Statue(_float fTimeDelta)
 		{
 			m_pModelCom->Add_Additional_Transformation_World(BoneNames[iJointIndex], RotationMatrix);
 		}
+
 
 		_matrix			TranslationMatrix = { XMMatrixTranslation(-m_fAdditionalHeight_D, m_fAdditionalHeight_D, m_fAdditionalZ) };
 

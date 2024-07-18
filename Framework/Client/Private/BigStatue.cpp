@@ -73,7 +73,7 @@ void CBigStatue::Tick(_float fTimeDelta)
 	if (m_fDelayLockTime > 0.f)
 	{
 		m_fDelayLockTime -= fTimeDelta;
-		Camera_Active(PART_MEDAL, _float3(0.9f, -0.6f, -0.5f));
+		Camera_Active(PART_MEDAL, _float3(0.9f, -0.6f, -0.5f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
 	}
 	if (m_fDelayLockTime < 0.f)
 	{
@@ -120,7 +120,7 @@ void CBigStatue::Tick(_float fTimeDelta)
 
 	}
 	if (m_bCamera && m_eLockState != CLEAR_LOCK)
-		Camera_Active(PART_DIAL, _float3(0.9f, -0.6f, -0.5f));
+		Camera_Active(PART_DIAL, _float3(0.9f, -0.6f, -0.5f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
 	
 	if (m_bCol[INTER_COL_NORMAL][COL_STEP0] /*&& !m_bActivity*/|| m_bAutoOpen)
 	{
@@ -264,12 +264,16 @@ HRESULT CBigStatue::Add_PartObjects()
 		MiniParts_Desc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_180_pushstatue01a_Mini_Parts_Anim");
 		MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_102_unicornmedal01a");
 		DialDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_176_hieroglyphicdiallock01a_Anim");
+		break;
+
+	case BIGSTATUE_WOMAN :
+		MiniParts_Desc.eMiniType = MiniDesc.eMiniType = BIGSTATUE_WOMAN;
+		MedalDesc.eMedelType = CMedal_BigStatue::MEDAL_TYPE::MEDAL_WOMAN;
 
 		MiniDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Anim");
 		MiniParts_Desc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Part_Anim");
 		MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_139_virginmedal01a");
 		DialDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_177_hieroglyphicdiallock01b_Anim");
-
 		break;
 
 	case BIGSTATUE_LION:
@@ -280,8 +284,7 @@ HRESULT CBigStatue::Add_PartObjects()
 		MiniParts_Desc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_183_lionstatue01a_Mini_Parts_Anim");
 		MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_145_virginmedal02a");
 		DialDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_176_hieroglyphicdiallock01a_Anim");
-
-
+		break;
 	}
 
 	/* 1. Part_Mini_Statue*/
@@ -297,36 +300,25 @@ HRESULT CBigStatue::Add_PartObjects()
 		MiniParts_Desc.vParts_WorldMatrix = static_cast<CMini_BigStatue*>(m_PartObjects[CBigStatue::PART_MINI_STATUE])->Get_WorldMatrix_Ptr();
 
 		pMiniPart = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Mini_BigStatue"), &MiniParts_Desc));
-
-
-	MedalDesc.pParentsTransform =m_pTransformCom;
-	MedalDesc.pParentWorldMatrix = static_cast<CMedal_BigStatue*>(pMini)->Get_WorldMatrix_Ptr();
-
-	/* Part_Medal_BigStatue*/
-	pPart = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_BigStatue"), &MedalDesc));
-	if (nullptr == pPart)
-		return E_FAIL;
-	m_PartObjects[CBigStatue::PART_MEDAL] = pPart;
-
-	/* Part_Dial*/
-
-	DialDesc.pParentsTransform = m_pTransformCom;
-	DialDesc.pParentWorldMatrix = static_cast<CDial_BigStatue*>(pMini)->Get_WorldMatrix_Ptr();
-	DialDesc.pPassword =	(_int*)m_iPassWord;
-	DialDesc.eBigStatueType = m_eLockState;
-
-	pDial = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Dial_BigStatue"), &DialDesc));
-	if (nullptr == pDial)
-		return E_FAIL;
-	m_PartObjects[CBigStatue::PART_DIAL] = pDial;
-
-	
 		if (nullptr == pMiniPart)
 			return E_FAIL;
 		m_PartObjects[CBigStatue::PART_MINI_PARTS_STATUE] = pMiniPart;
 	}
+
+	/* 3. Part_Dial*/
+	{
+		DialDesc.pParentsTransform = m_pTransformCom;
+		DialDesc.pParentWorldMatrix = static_cast<CDial_BigStatue*>(pMini)->Get_WorldMatrix_Ptr();
+		DialDesc.pPassword = (_int*)m_iPassWord;
+		DialDesc.eBigStatueType = m_eLockState;
+
+		pDial = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Dial_BigStatue"), &DialDesc));
+		if (nullptr == pDial)
+			return E_FAIL;
+		m_PartObjects[CBigStatue::PART_DIAL] = pDial;
+	}
 	
-	/* 3. Part_Medal_BigStatue*/
+	/* 4. Part_Medal_BigStatue*/
 	{
 		MedalDesc.pParentWorldMatrix = static_cast<CMini_BigStatue*>(m_PartObjects[CBigStatue::PART_MINI_STATUE])->Get_WorldMatrix_Ptr();
 		

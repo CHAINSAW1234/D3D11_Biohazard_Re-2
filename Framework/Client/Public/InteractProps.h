@@ -33,6 +33,13 @@ public:
 		COL_STEP_END,
 	};
 
+	enum INTERACT_GIMMICK_TYPE
+	{
+		LOCK_GIMMICK,
+		KEY_GIMMICK,
+		NONE_GIMMICK
+	};
+
 	typedef struct Door_Desc
 	{
 		//lock의 여부, 엠블럼||사슬
@@ -135,7 +142,7 @@ public:
 	void												Tick_PartObjects(_float fTimeDelta);
 	void												Late_Tick_PartObjects(_float fTimeDelta);
 
-	void Camera_Active(_int ePart, _float3 vRatio);
+	void Camera_Active(_int ePart, _float3 vRatio, INTERACT_GIMMICK_TYPE _layoutType);
 	
 
 	void Reset_Camera();
@@ -188,7 +195,7 @@ protected:
 
 private :
 	_bool												m_isSelector_Rendering = { false };
-	_bool												m_isNYResult				= { false };
+	_bool												m_isNYResult			= { false };
 
 protected:
 	_bool												m_isCamera_Reset = { false };
@@ -200,11 +207,11 @@ protected:
 	_bool												m_bVisible = { true };
 	_bool												m_bCol[INTER_COL_END][COL_STEP_END] = { {false,false,false},{false,false,false} };
 	_int												m_iItemIndex = { -1 };
-	_float											m_fTimeDelay = { 0.f };
-	_float											m_fDistance = { 0.f };
-	CModel*										m_pModelCom = { nullptr };
-	CShader*										m_pShaderCom = { nullptr };
-	CCollider*										m_pColliderCom[INTER_COL_END][COL_STEP_END] = { {nullptr,nullptr,nullptr},{nullptr,nullptr,nullptr} };
+	_float												m_fTimeDelay = { 0.f };
+	_float												m_fDistance = { 0.f };
+	CModel*												m_pModelCom = { nullptr };
+	CShader*											m_pShaderCom = { nullptr };
+	CCollider*											m_pColliderCom[INTER_COL_END][COL_STEP_END] = { {nullptr,nullptr,nullptr},{nullptr,nullptr,nullptr} };
 	
 	class CPlayer*										m_pPlayer = { nullptr };
 	_bool*												m_pPlayerInteract = { nullptr };//player의 m_bInteract 변수 포인터
@@ -230,6 +237,8 @@ protected:
 	void												Tick_Col();
 	_bool												Visible();
 
+
+			
 #ifdef		_DEBUG
 	void												Add_Col_DebugCom();
 

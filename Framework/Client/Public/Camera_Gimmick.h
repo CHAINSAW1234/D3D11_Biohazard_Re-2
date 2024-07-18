@@ -41,7 +41,7 @@ public :
 	void							Bind_PipeLine();
 
 public:
-	_ubyte*							Get_Layout_Type()				{ return &m_eLayout_Type; }
+	_ubyte*							Get_Layout_Type_Ptr()				{ return &m_eLayout_Type; }
 	void							Set_FixedMouse(_bool _Fixed)	{ m_isFixedMouse = _Fixed;  }
 	virtual void					Active_Camera(_bool isActive) override;
 
