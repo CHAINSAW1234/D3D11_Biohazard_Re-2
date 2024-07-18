@@ -5,6 +5,7 @@
 #include "Body_BigStatue.h"
 #include"Mini_BigStatue.h"
 #include"Medal_BigStatue.h"
+#include"Dial_BigStatue.h"
 #include "Camera_Gimmick.h"
 
 
@@ -28,13 +29,27 @@ HRESULT CBigStatue::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
 	if (m_tagPropDesc.strObjectPrototype.find(TEXT("182")) != wstring::npos)
-		m_eType = BIGSTATUE_WOMAN;
+	{
+		m_iPassWord[0] = 1; //여자
+		m_iPassWord[1] = 2;//활
+		m_iPassWord[2] = 0;//뱀
+		m_eType = BIGSTATUE_WOMEN;
+	}
 	else if(m_tagPropDesc.strObjectPrototype.find(TEXT("183")) != wstring::npos)
+	{
+		m_iPassWord[0] = 4;
+		m_iPassWord[1] = 2;
+		m_iPassWord[2] = 5;
 		m_eType = BIGSTATUE_LION;
+	}
 	else
+	{
+		m_iPassWord[0] = 3;
+		m_iPassWord[1] = 3;
+		m_iPassWord[2] = 2;
 		m_eType = BIGSTATUE_UNICON;
+	}
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -55,6 +70,63 @@ void CBigStatue::Tick(_float fTimeDelta)
 	if (!m_bVisible)
 		return;
 
+	if (m_fDelayLockTime > 0.f)
+	{
+		m_fDelayLockTime -= fTimeDelta;
+		Camera_Active(PART_MEDAL, _float3(0.9f, -0.6f, -0.5f));
+	}
+	if (m_fDelayLockTime < 0.f)
+	{
+		m_fDelayLockTime = 0.f;
+		m_bCameraReset = true;
+	}
+
+	_bool bCam = false;
+	if (m_eLockState == CBigStatue::LIVE_LOCK)
+	{
+		if (DOWN == m_pGameInstance->Get_KeyState('D'))
+			m_eKeyInput = KEY_D;
+		else if (DOWN == m_pGameInstance->Get_KeyState('A'))
+			m_eKeyInput = KEY_A;
+		else if (DOWN == m_pGameInstance->Get_KeyState('W'))
+			m_eKeyInput = KEY_W;
+		else if (DOWN == m_pGameInstance->Get_KeyState('S'))
+			m_eKeyInput = KEY_S;
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+		{
+			if (m_eLockState != CBigStatue::CLEAR_LOCK)
+				m_eLockState = CBigStatue::STATIC_LOCK;
+			bCam = true;
+		}
+
+	}
+	else
+		m_eKeyInput = KEY_NOTHING;
+
+	if (m_bCamera && (bCam || static_cast<CDial_BigStatue*>(m_PartObjects[PART_DIAL])->Get_Clear() || m_bCameraReset))
+	{
+		if (!bCam&&!m_bCameraReset)
+		{
+			if (m_eLockState == CBigStatue::CLEAR_LOCK && m_fDelayLockTime == 0.f)
+				m_fDelayLockTime = 5.f;
+		}
+		else if (bCam|| m_bCameraReset)
+		{
+			m_bCameraReset = false;
+			Reset_Camera();
+			m_bCamera = false;
+		}
+		
+
+	}
+	if (m_bCamera && m_eLockState != CLEAR_LOCK)
+		Camera_Active(PART_DIAL, _float3(0.9f, -0.6f, -0.5f));
+	
+	if (m_bCol[INTER_COL_NORMAL][COL_STEP0] /*&& !m_bActivity*/|| m_bAutoOpen)
+	{
+		if (*m_pPlayerInteract|| m_bAutoOpen)
+			Active();
+	}
 	__super::Tick(fTimeDelta);
 }
 
@@ -77,6 +149,20 @@ void CBigStatue::Late_Tick(_float fTimeDelta)
 
 		m_bRender = false;
 	}
+
+	if (Activate_Col(Get_Collider_World_Pos(_float4(50.f, 1.f, 50.f, 1.f))) || Activate_Col(Get_Collider_World_Pos(_float4(-50.f, 1.f, 50.f, 1.f))))
+	{
+		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
+			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
+		else
+			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+	}
+	else
+	{
+		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+	}
+
 	__super::Late_Tick(fTimeDelta);
 
 #ifdef _DEBUG
@@ -89,12 +175,28 @@ HRESULT CBigStatue::Render()
 	return S_OK;
 }
 
+void CBigStatue::Do_Interact_Props()
+{
+	//메달 숨기기
+
+}
+
 HRESULT CBigStatue::Add_Components()
 {
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};
-
 	ColliderDesc.fRadius = _float(150.f);
-	ColliderDesc.vCenter = _float3(-10.f, 1.f, 0.f);
+	switch (m_eType)
+	{
+	case CBigStatue::BIGSTATUE_LION:
+	case CBigStatue::BIGSTATUE_UNICON:
+
+		ColliderDesc.vCenter = _float3(-10.f, 1.f, 50.f);
+		break;
+	case CBigStatue::BIGSTATUE_WOMEN:
+		ColliderDesc.vCenter = _float3(-10.f, 1.f, -50.f);
+		break;
+	}
+
 	/* For.Com_Collider */
 	if (FAILED(__super::Add_Component(LEVEL_STATIC, TEXT("Prototype_Component_Collider_Sphere"),
 		TEXT("Com_Collider_Normal_Step0"), (CComponent**)&m_pColliderCom[INTER_COL_NORMAL][COL_STEP0], &ColliderDesc)))
@@ -143,6 +245,13 @@ HRESULT CBigStatue::Add_PartObjects()
 	CMedal_BigStatue::MEDAL_BIGSTATUE_DESC MedalDesc = {};
 	MedalDesc.pParentsTransform = m_pTransformCom;
 	MedalDesc.pState = &m_eState;
+	
+	CPartObject* pDial= { nullptr };
+	CDial_BigStatue::DIAL_BIGSTATUE_DESC DialDesc = {};
+	DialDesc.pState = &m_eState;
+	DialDesc.pLockState = &m_eLockState;
+	DialDesc.pKeyInput = &m_eKeyInput;
+	
 	MedalDesc.isMedalAnim = &m_isMedalAnim;
 
 	switch (m_eType)
@@ -154,15 +263,13 @@ HRESULT CBigStatue::Add_PartObjects()
 		MiniDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_180_pushstatue01a_Mini_Anim");
 		MiniParts_Desc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_180_pushstatue01a_Mini_Parts_Anim");
 		MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_102_unicornmedal01a");
-		break;
-
-	case BIGSTATUE_WOMAN:
-		MiniParts_Desc.eMiniType = MiniDesc.eMiniType = BIGSTATUE_WOMAN;
-		MedalDesc.eMedelType = CMedal_BigStatue::MEDAL_TYPE::MEDAL_WOMAN;
+		DialDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_176_hieroglyphicdiallock01a_Anim");
 
 		MiniDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Anim");
 		MiniParts_Desc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Part_Anim");
 		MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_139_virginmedal01a");
+		DialDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_177_hieroglyphicdiallock01b_Anim");
+
 		break;
 
 	case BIGSTATUE_LION:
@@ -172,7 +279,8 @@ HRESULT CBigStatue::Add_PartObjects()
 		MiniDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_183_lionstatue01a_Mini_Anim");
 		MiniParts_Desc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_183_lionstatue01a_Mini_Parts_Anim");
 		MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_145_virginmedal02a");
-		break;
+		DialDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_176_hieroglyphicdiallock01a_Anim");
+
 
 	}
 
@@ -190,6 +298,29 @@ HRESULT CBigStatue::Add_PartObjects()
 
 		pMiniPart = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Mini_BigStatue"), &MiniParts_Desc));
 
+
+	MedalDesc.pParentsTransform =m_pTransformCom;
+	MedalDesc.pParentWorldMatrix = static_cast<CMedal_BigStatue*>(pMini)->Get_WorldMatrix_Ptr();
+
+	/* Part_Medal_BigStatue*/
+	pPart = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Medal_BigStatue"), &MedalDesc));
+	if (nullptr == pPart)
+		return E_FAIL;
+	m_PartObjects[CBigStatue::PART_MEDAL] = pPart;
+
+	/* Part_Dial*/
+
+	DialDesc.pParentsTransform = m_pTransformCom;
+	DialDesc.pParentWorldMatrix = static_cast<CDial_BigStatue*>(pMini)->Get_WorldMatrix_Ptr();
+	DialDesc.pPassword =	(_int*)m_iPassWord;
+	DialDesc.eBigStatueType = m_eLockState;
+
+	pDial = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Dial_BigStatue"), &DialDesc));
+	if (nullptr == pDial)
+		return E_FAIL;
+	m_PartObjects[CBigStatue::PART_DIAL] = pDial;
+
+	
 		if (nullptr == pMiniPart)
 			return E_FAIL;
 		m_PartObjects[CBigStatue::PART_MINI_PARTS_STATUE] = pMiniPart;
@@ -212,9 +343,9 @@ HRESULT CBigStatue::Initialize_PartObjects()
 {
 	if (m_PartObjects[PART_BODY] != nullptr)
 	{
-		CModel* pBodyModel = { dynamic_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
+		CModel* pBodyModel = { static_cast<CModel*>(m_PartObjects[PART_BODY]->Get_Component(TEXT("Com_Body_Model"))) };
 
-		CMini_BigStatue* pMiniStatue = dynamic_cast<CMini_BigStatue*>(m_PartObjects[PART_MINI_STATUE]);
+		CMini_BigStatue* pMiniStatue = static_cast<CMini_BigStatue*>(m_PartObjects[PART_MINI_STATUE]);
 		_float4x4* pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("ItemSet")) };
 		pMiniStatue->Set_Socket(pCombinedMatrix);
 		
@@ -225,10 +356,14 @@ HRESULT CBigStatue::Initialize_PartObjects()
 			pMiniPartsStatue->Set_Socket(pCombinedMatrixParts);
 		}
 
-		CModel* pMiniModel = { dynamic_cast<CModel*>(m_PartObjects[PART_MINI_STATUE]->Get_Component(TEXT("Com_Body_Model"))) };
-		CMedal_BigStatue* pMedalStatue = dynamic_cast<CMedal_BigStatue*>(m_PartObjects[PART_MEDAL]);
+		CModel* pMiniModel = { static_cast<CModel*>(m_PartObjects[PART_MINI_STATUE]->Get_Component(TEXT("Com_Body_Model"))) };
+		CMedal_BigStatue* pMedalStatue = static_cast<CMedal_BigStatue*>(m_PartObjects[PART_MEDAL]);
 		pCombinedMatrix = { const_cast<_float4x4*>(pMiniModel->Get_CombinedMatrix("ItemSet01")) };
 		pMedalStatue->Set_Socket(pCombinedMatrix);
+
+		CDial_BigStatue* pDial = static_cast<CDial_BigStatue*>(m_PartObjects[PART_DIAL]);
+		pCombinedMatrix = { const_cast<_float4x4*>(pBodyModel->Get_CombinedMatrix("GimmickSet")) };
+		pDial->Set_Socket(pCombinedMatrix);
 
 	}
 
@@ -254,6 +389,31 @@ void CBigStatue::Active()
 {
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
+
+	if (m_bAutoOpen)
+	{
+		//여기서 아이템 겟
+		/*if (false == m_pGameInstance->IsPaused())
+			m_pPlayer->Interact_Props(this);*/
+		m_bAutoOpen = false;
+		return;
+	}
+
+	if (m_eLockState != CLEAR_LOCK)
+	{
+		m_eLockState = LIVE_LOCK;
+
+		m_pCameraGimmick->Active_Camera(true);
+		m_bCamera = true;
+
+	}
+	else
+	{
+		/*if (false == m_pGameInstance->IsPaused())
+			m_pPlayer->Interact_Props(this);*/
+		//여기도 아이템 겟
+	}
+	
 
 }
 

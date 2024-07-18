@@ -30,6 +30,13 @@ HRESULT CKey_ReaderMachine::Initialize(void* pArg)
 		KEY_READER_DESC* pKey_Desc = (KEY_READER_DESC*)pArg;
 		m_pPressKeyState = pKey_Desc->pKeyInput;
 		m_pKeyState = pKey_Desc->pKeyState;
+		m_pCanPush = pKey_Desc->pCanPush;
+		m_pPush = pKey_Desc->pPush;
+		m_pSelectCol = pKey_Desc->pSelectCol;
+		m_pSelectRow = pKey_Desc->pSelectRow;
+		m_pDoOpen = pKey_Desc->pDoOpen;
+		memcpy_s(m_iKeyPad, sizeof(_int) * 5 * 3, pKey_Desc->iKeyPad, sizeof(_int) * 5 * 3);
+		m_pKeyNum = pKey_Desc->pKeyNum;
 	}
 
 	if (FAILED(Add_Components()))
@@ -38,7 +45,7 @@ HRESULT CKey_ReaderMachine::Initialize(void* pArg)
 	if (FAILED(Initialize_Model()))
 		return E_FAIL; 
 
-
+	m_pTransformCom->Set_Scaled(100.f, 100.f, 100.f);
 	m_pModelCom->Set_RootBone("RootNode");
 	m_pModelCom->Add_Bone_Layer_All_Bone(TEXT("Default"));
 
@@ -46,7 +53,7 @@ HRESULT CKey_ReaderMachine::Initialize(void* pArg)
 
 	
 	m_pModelCom->Active_RootMotion_Rotation(false);
-
+	
 
 
 
@@ -55,6 +62,7 @@ HRESULT CKey_ReaderMachine::Initialize(void* pArg)
 
 void CKey_ReaderMachine::Tick(_float fTimeDelta)
 {
+	m_pTransformCom->Rotation(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP),XMConvertToRadians(180.f));
 	if (m_bCheckAnswer)
 	{
 	
@@ -86,27 +94,53 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 			break;
 
 		case CReaderMachine::KEY_W:
+			*m_pSelectRow -= 1;
+			if (*m_pSelectRow < CReaderMachine::ROW_0)
+				*m_pSelectRow = CReaderMachine::ROW_4;
 			*m_pPressKeyState = CReaderMachine::KEY_NOTHING;
 			break;
 
 		case CReaderMachine::KEY_A:
 			*m_pPressKeyState = CReaderMachine::KEY_NOTHING;
-
+			*m_pSelectCol -= 1;
+			if (*m_pSelectCol < CReaderMachine::COL_0)
+				*m_pSelectCol = CReaderMachine::COL_2;
 			break;
 
 		case CReaderMachine::KEY_S:
 			*m_pPressKeyState = CReaderMachine::KEY_NOTHING;
-
+			*m_pSelectRow += 1;
+			if (*m_pSelectRow > CReaderMachine::ROW_4)
+				*m_pSelectRow = CReaderMachine::ROW_0;
 			break;
 
 		case CReaderMachine::KEY_D:
 			*m_pPressKeyState = CReaderMachine::KEY_NOTHING;
+			*m_pSelectCol += 1;
+			if (*m_pSelectCol > CReaderMachine::COL_2 )
+				*m_pSelectCol = CReaderMachine::COL_0;
 			break;
 
 		case CReaderMachine::KEY_SPACE:
 			*m_pPressKeyState = CReaderMachine::KEY_NOTHING;
+			if (m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)] == CReaderMachine::PAD_DELETE)
+				m_pPush[*m_pKeyNum] = -1;
+			if (m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)] == CReaderMachine::PAD_ENTER)
+			{
+				if (Check_PadFull())
+					break;
+				else
+					*m_pDoOpen = true;
+			}
+			else
+			{
+				m_pPush[*m_pKeyNum] = m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)];
+				m_pKeyNum++;
+				if (*m_pKeyNum > CReaderMachine::NUM_2)
+					*m_pKeyNum = CReaderMachine::NUM_0;
+				break;
+			}
 
-			break;
 		}
 
 	}
@@ -257,10 +291,12 @@ HRESULT CKey_ReaderMachine::Initialize_Model()
 
 	vector<string>			ResultMeshTags;
 	m_HidMesh.emplace_back("Group_102");
+	m_HidMesh.emplace_back("Group_103");
+	m_HidMesh.emplace_back("Group_124");
 	m_HidMesh.emplace_back("Group_125");
 	for (auto& strMeshTag : MeshTags)
 	{
-		if ((strMeshTag.find("Group_102") == string::npos) && (strMeshTag.find("Group_125") == string::npos))
+		if ((strMeshTag.find("Group_102") == string::npos) && (strMeshTag.find("Group_103") == string::npos)&& (strMeshTag.find("Group_124") == string::npos)&& (strMeshTag.find("Group_125") == string::npos))
 			ResultMeshTags.push_back(strMeshTag);
 	}
 
@@ -276,6 +312,19 @@ HRESULT CKey_ReaderMachine::Initialize_Model()
 
 
 	return S_OK;
+}
+
+_bool CKey_ReaderMachine::Check_PadFull()
+{
+	for (_int i = 0; i < CReaderMachine::NUM_END; i++)
+	{
+		if (m_pPush[i] == -1)
+			return false;
+
+
+	}
+
+	return true;
 }
 
 

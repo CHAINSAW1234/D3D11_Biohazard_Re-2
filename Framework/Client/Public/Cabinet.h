@@ -69,13 +69,12 @@ private:
 	virtual HRESULT				Add_PartObjects() override;
 	virtual HRESULT				Initialize_PartObjects() override;
 	virtual HRESULT				Bind_ShaderResources() override;
+	virtual void					Do_Interact_Props() override;
 
 public:
 	inline _bool				Is_Opened() { return m_bOpened; }
 
 private:
-	void						Camera_Active(CCabinet::CABINET_PART ePart, _float3 vRatio = { 10.f,10.f,10.f });
-	void						Reset_Camera();
 
 	void						Safe_Normal_Tick(_float fTimeDelta);
 	void						LeonDesk_Tick(_float fTimeDelta);
@@ -95,10 +94,14 @@ public:
 	void					Set_Lock_False() { m_bLock = false; }
 	_int					Get_Cabinet_Type() {return m_eCabinetType; }
 	string				Get_Electric_Tag() { return m_strElectTag; }
+	void					Set_Electric_Open() { m_fDelayLockTime = 3.f; }
 private:
 	_bool					m_bLeonDesk = { false };
-	_bool					m_bItemDead = { true };
-	_bool					m_bObtain = { false };
+	_bool					m_bAction = { false };
+	_bool					m_bItemDead = { false }; //얻었는가?
+	_bool					m_bObtain = { false }; // 얻을 수 있는가?
+	_bool					m_bAutoOpen = { false }; // 자동 문열림
+
 	_bool					m_bOpened = { false };
 	_bool					m_bLock =	{ false };
 	_bool					m_bActivity = { false };
@@ -108,7 +111,8 @@ private:
 	_ubyte				m_eLockState = { STATIC_LOCK };
 	_int					m_eCabinetType = { TYPE_NORMAL };
 	
-	_bool					m_isCamera_Reset = { false };
+	_float				m_fDelayLockTime = { 0.f };
+
 	_ubyte				m_eKeyInput = { KEY_NOTHING }; // 직접 nothing인 타이밍을 알아서 key_nothing으로 세팅 해줘야함
 
 	string				m_strElectTag = { "" };

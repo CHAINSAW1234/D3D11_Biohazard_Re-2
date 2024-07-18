@@ -454,7 +454,7 @@ HRESULT CBody_Door::Model_Hide()
 		vector<string>			ResultMeshTags;
 		for (auto& strMeshTag : MeshTags)
 		{
-			if ((strMeshTag.find("7fd6b80") == string::npos))
+			if ((strMeshTag.find("Group_1_") != string::npos))
 				ResultMeshTags.push_back(strMeshTag);
 		}
 		for (auto& strMeshTag : MeshTags)

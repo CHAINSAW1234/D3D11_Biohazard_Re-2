@@ -42,7 +42,7 @@ public:
 		_int*			pPassword = {nullptr};
 		_ubyte*		pKeyInput = {nullptr};
 		_bool*		pCameraControl	= { nullptr };
-
+		_bool*		pAction = { nullptr };
 	}BODY_LOCK_CABINET_DESC;
 
 private:
@@ -88,6 +88,7 @@ private:
 	_ubyte*							m_pLockState			= { nullptr };
 	_int*								m_pPassword				= { nullptr };
 	_bool*							m_pCameraControl		= { nullptr };
+	_bool*							m_pAction = { nullptr };
 	_bool								m_bCheckAnswer = { false };
 	_bool								m_bClear = { false };
 	_ubyte*							m_pPressKeyState = { nullptr };
@@ -118,6 +119,11 @@ private:
 	_int								m_iOpenDialAnswer[BONE_DIAL_END] = {0,0,0};
 #pragma endregion
 
+#pragma region CardKey Lock
+	_float							m_fGoalTranslation = {5.f};
+	_float							m_fCurTranslation = {0.f};
+
+#pragma endregion
 
 public:
 	static CLock_Cabinet* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

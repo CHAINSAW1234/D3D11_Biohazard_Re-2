@@ -142,6 +142,7 @@ HRESULT CItemProp::Add_PartObjects()
 	CBody_ItemProp::BODY_ITEMPROPS_DESC BodyDesc = {};
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pState = &m_eState;
+	BodyDesc.pObtain = &m_bObtain;
 	m_iItemIndex  = BodyDesc.iItemIndex = m_tagPropDesc.tagItemDesc.iItemIndex;
 	BodyDesc.strModelComponentName = TEXT("Prototype_Component_Model_") + m_tagPropDesc.tagItemDesc.Name;
 	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_") + m_tagPropDesc.tagItemDesc.Name, &BodyDesc));

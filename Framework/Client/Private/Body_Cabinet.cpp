@@ -91,7 +91,7 @@ void CBody_Cabinet::Late_Tick(_float fTimeDelta)
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Cabinet(&ResultMat);
 		}
-		if (m_pModelCom->isFinished(0))
+		if (m_pModelCom->isFinished(0)&&m_uCabinetType==CCabinet::TYPE_ZOMBIE)
 			*m_pState = CCabinet::CABINET_OPENED;
 		break;
 	}

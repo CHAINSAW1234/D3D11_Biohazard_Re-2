@@ -77,6 +77,7 @@ public:
 
 	typedef struct BIG_Statue_Desc
 	{
+		_int		iLockNum[10] = { -1, };
 
 	}BIG_STATUE_DESC;
 
@@ -112,6 +113,7 @@ public:
 		BIG_STATUE_DESC tagBigStatue = {};
 		ITEM_PROP_DESC tagItemDesc = {};
 		READER_PROP_DESC tagReaderDesc = {};
+
 	}INTERACTPROPS_DESC;
 
 protected:
@@ -133,6 +135,11 @@ public:
 	void												Tick_PartObjects(_float fTimeDelta);
 	void												Late_Tick_PartObjects(_float fTimeDelta);
 
+	void Camera_Active(_int ePart, _float3 vRatio);
+	
+
+	void Reset_Camera();
+	
 
 
 	virtual HRESULT								Render_LightDepth_Dir() override;
@@ -184,6 +191,7 @@ private :
 	_bool												m_isNYResult				= { false };
 
 protected:
+	_bool												m_isCamera_Reset = { false };
 	_bool												m_bActivity = { false };
 	_bool												m_bOnce = { false };
 	_bool												m_bBlock = { false };

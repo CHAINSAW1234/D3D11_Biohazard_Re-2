@@ -263,8 +263,8 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 	if (FAILED(Ready_Layer_LandBackGround(TEXT("Layer_LandBackGround"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -1443,6 +1443,20 @@ HRESULT CLevel_GamePlay::Load_Object(const wstring& strFilePath, const wstring& 
 
 			case OBJ_BIGSTATUE:
 
+				for (size_t i = 0; i < 10; i++)
+				{
+					_int iNum = { 0 };
+
+
+					if (!ReadFile(hFile, &iNum, sizeof(_int), &dwByte, NULL))
+					{
+						CloseHandle(hFile);
+						return E_FAIL;
+					}
+
+					tagInteractprops.tagBigStatue.iLockNum[i] = iNum;
+
+				}
 				break;
 
 			case OBJ_HALL_STATUE:

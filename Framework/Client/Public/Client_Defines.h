@@ -43,7 +43,7 @@ using namespace Client;
 	
 //#define MAP_NOTHING
 #define MAP_INTERACT
- //#define MAP_TEST
+//#define MAP_TEST
 //#define Map_J
 //#define Map_Ye
 //#define Map_TEST2

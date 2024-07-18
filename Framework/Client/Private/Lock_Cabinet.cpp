@@ -35,6 +35,7 @@ HRESULT CLock_Cabinet::Initialize(void* pArg)
 		m_pPassword = desc->pPassword;
 		m_pCameraControl = desc->pCameraControl;
 		m_pPressKeyState = desc->pKeyInput;
+		m_pAction = desc->pAction;
 	}
 
 	if (FAILED(Add_Components()))
@@ -106,12 +107,14 @@ void CLock_Cabinet::Late_Tick(_float fTimeDelta)
 	m_eLockType == SAFEBOX_DIAL ? Safebox_Late_Tick(fTimeDelta) : (m_eLockType == OPENLOCKER_DIAL? OpenLocker_Late_Tick(fTimeDelta): CardLocker_Late_Tick(fTimeDelta));
 
 	_matrix			WorldMatrix = { m_pTransformCom->Get_WorldMatrix() * XMLoadFloat4x4(m_pSocketMatrix) * (m_pParentsTransform->Get_WorldMatrix()) };
+	if (m_eLockType == CARD_KEY)
+		WorldMatrix.r[3] -= WorldMatrix.r[2]*5.f;
 	XMStoreFloat4x4(&m_WorldMatrix, WorldMatrix);
 }
 
 HRESULT CLock_Cabinet::Render()
 {
-	if (m_bClear)
+	if (m_bClear&&m_eLockType!= CLock_Cabinet::CARD_KEY)
 		return S_OK;
 	if (m_bRender == false)
 		return S_OK;
@@ -629,6 +632,9 @@ void CLock_Cabinet::OpenLocker_Late_Tick(_float fTimeDelta)
 
 void CLock_Cabinet::CardLocker_Late_Tick(_float fTimeDelta)
 {
+	if (*m_pAction)
+		*m_pLockState = CCabinet::CLEAR_LOCK;
+
 	switch (*m_pLockState)
 	{
 	case CCabinet::STATIC_LOCK:
@@ -652,6 +658,10 @@ void CLock_Cabinet::CardLocker_Late_Tick(_float fTimeDelta)
 
 	case CCabinet::CLEAR_LOCK:
 		m_bClear = true;
+		m_fCurTranslation = Lerp(m_fCurTranslation, m_fGoalTranslation, fTimeDelta);
+		_float4x4 TranslationMatrix = XMMatrixTranslation(0.f, -m_fCurTranslation,0.f);
+
+		m_pModelCom->Add_Additional_Transformation_World("ItemSet", TranslationMatrix);
 		break;
 	}
 
@@ -660,24 +670,11 @@ void CLock_Cabinet::CardLocker_Late_Tick(_float fTimeDelta)
 	_float3				vDirection = { };
 
 	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vDirection);
-	if (*m_pLockState != CCabinet::CLEAR_LOCK)
-	{
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
-	}
-	else
-		if (!m_pModelCom->isFinished(0))
-		{
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
-
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
-			m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
-		}
-
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
+	m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
 
 
 	Get_SpecialBone_Rotation(); // for UI

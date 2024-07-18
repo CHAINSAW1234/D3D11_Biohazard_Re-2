@@ -103,6 +103,10 @@ HRESULT CStatue::Render()
 	return S_OK;
 }
 
+void CStatue::Do_Interact_Props()
+{
+}
+
 HRESULT CStatue::Add_Components()
 {
 	CBounding_Sphere::BOUNDING_SPHERE_DESC		ColliderDesc{};

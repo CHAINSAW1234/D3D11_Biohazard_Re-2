@@ -16,6 +16,7 @@ public:
 		STATIC_ANIM,
 		OPEN_ANIM,
 		START_ANIM,
+		OPENED_ANIM,
 		END_ANIM
 	};
 
@@ -24,7 +25,7 @@ public:
 		_ubyte eEmblemType;
 		_ubyte* EmblemAnim;
 		_ubyte* pDoorState = { nullptr };
-
+		_bool* pKeyUsing = { nullptr };
 	}BODY_EMBLEM_DOOR;
 
 private:
@@ -49,11 +50,12 @@ public :
 
 public:
 	void						Set_Socket01(_float4x4* pSocketMatrix) { m_pSocketMatrix_01 = pSocketMatrix; }
-
+	_bool						Get_Clear() { return m_bClear; }
 
 private:
 	_float4x4*					m_pSocketMatrix_01 = { nullptr };
-
+	_bool							m_bClear = { false };
+	_bool*						m_pKeyUsing = { nullptr };
 	_ubyte						m_eEmblemType = {};
 	_ubyte*						m_pEmblem_Anim = {nullptr};
 	_ubyte*						m_pDoorState = {nullptr};
