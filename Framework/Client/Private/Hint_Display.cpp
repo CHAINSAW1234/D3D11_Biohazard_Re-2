@@ -67,6 +67,11 @@ HRESULT CHint_Display::Render()
 	return S_OK;
 }
 
+HRESULT CHint_Display::Change_Tool()
+{
+	return S_OK;
+}
+
 void CHint_Display::Set_Dead(_bool bDead)
 {
 	__super::Set_Dead(bDead);
@@ -81,7 +86,7 @@ void CHint_Display::Set_Display(ITEM_READ_TYPE eItemReadType, _uint TextureNum, 
 		m_pTextureCom = m_mapDocumentTextures[eItemReadType][TextureNum];
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(fPos.x, fPos.y, 0.007f, 1.f));
 		m_pTransformCom->Set_Scaled(fSize.x, fSize.y, 1.f);
-		m_iCurTypeTexCount = m_mapDocumentTextures[eItemReadType].size();
+		m_iCurTypeTexCount = static_cast<_uint>(m_mapDocumentTextures[eItemReadType].size());
 		m_iCurTexNum = TextureNum;
 		m_eCurIRT = eItemReadType;
 

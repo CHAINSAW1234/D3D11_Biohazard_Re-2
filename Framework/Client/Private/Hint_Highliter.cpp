@@ -62,6 +62,11 @@ HRESULT CHint_Highliter::Render()
 	return S_OK;
 }
 
+HRESULT CHint_Highliter::Change_Tool()
+{
+	return S_OK;
+}
+
 CHint_Highliter* CHint_Highliter::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CHint_Highliter* pInstance = new CHint_Highliter(pDevice, pContext);

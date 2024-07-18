@@ -18,9 +18,11 @@ public:
 	virtual void Tick(_float fTimeDelta) override;
 	virtual void Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+	virtual HRESULT Change_Tool() override;
 
 	virtual void Set_Dead(_bool bDead) override;
 
+public :
 	void Set_Display(ITEM_READ_TYPE eItemReadType, _uint TextureNum, _float2 fPos, _float2 fSize, _bool bDead);
 	_uint Get_CurTypeTexCount() const { return m_iCurTypeTexCount; }
 	_uint Get_CurTexNum() const { return m_iCurTexNum; }
