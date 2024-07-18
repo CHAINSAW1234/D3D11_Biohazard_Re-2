@@ -19,6 +19,7 @@
 #include "PlayingInfo.h"
 
 #include "Texture.h"
+#include "RagDoll_Physics.h"
 
 unordered_map<wstring, class CTexture*>	CModel::m_LoadedTextures;
 
@@ -1230,7 +1231,6 @@ void CModel::Set_Surbodinate(string strBoneTag, _bool isSurbodinate)
 
 	m_Bones[iBoneIndex]->Set_Surbodinate(isSurbodinate);
 }
-
 #pragma region MeshControll 
 
 _bool CModel::Is_Hide_Mesh(string strMeshTag)
@@ -1615,15 +1615,9 @@ HRESULT CModel::Link_Bone_Auto(CModel* pTargetModel)
 	return S_OK;
 }
 
-_int CModel::Get_BoneIndex(const string& strBoneTag)
+HRESULT CModel::Link_Bone_Auto_RagDoll(CModel* pTargetModel, CRagdoll_Physics* pRagDoll)
 {
-	_int			iBoneIndex = { Find_BoneIndex(strBoneTag) };
-	return iBoneIndex;
-}
-
-HRESULT CModel::Linked_Bone_Indices(CModel* pTargetModel, vector<_int>& LinkedBoneIndices)
-{
-	if (nullptr == pTargetModel)
+	if (nullptr == pTargetModel || nullptr == pRagDoll)
 		return E_FAIL;
 
 	if (this == pTargetModel)
@@ -1644,17 +1638,24 @@ HRESULT CModel::Linked_Bone_Indices(CModel* pTargetModel, vector<_int>& LinkedBo
 
 	for (auto& strIntersectBoneTag : IntersectionBoneTags)
 	{
-		_float4x4* pDstCombiendMatrix = { const_cast<_float4x4*>(pTargetModel->Get_CombinedMatrix(strIntersectBoneTag)) };
-		if (nullptr == pDstCombiendMatrix)
+		_int			iDstBoneIndex = { pTargetModel->Find_BoneIndex(strIntersectBoneTag) };
+		if (-1 == iDstBoneIndex)
 			continue;
 
-		Set_Surbodinate(strIntersectBoneTag, true);
-		Set_Parent_CombinedMatrix_Ptr(strIntersectBoneTag, pDstCombiendMatrix);
+		_float4x4*		pRagDollCombinedMatrix = { pRagDoll->GetCombinedMatrix_Ragdoll(iDstBoneIndex) };
+
+		_int			iSrcBoneIndex = { Find_BoneIndex(strIntersectBoneTag) };
+		m_Bones[iSrcBoneIndex]->Set_Parent_CombinedMatrix_Ptr_RagDoll(pRagDollCombinedMatrix);
 	}
 
 	return S_OK;
 }
 
+_int CModel::Get_BoneIndex(const string& strBoneTag)
+{
+	_int			iBoneIndex = { Find_BoneIndex(strBoneTag) };
+	return iBoneIndex;
+}
 _float4 CModel::Invalidate_RootNode(const string& strRoot)
 {
 	for (auto& Bone : m_Bones)
@@ -2379,6 +2380,31 @@ HRESULT CModel::Bind_BoneMatrices_Ragdoll(CShader* pShader, const _char* pConsta
 	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * MAX_COUNT_BONE);
 
 	m_Meshes[iMeshIndex]->Stock_Matrices_Ragdoll(m_Bones, m_MeshBoneMatrices, pBoneMatrices);
+
+	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, MAX_COUNT_BONE);
+}
+
+HRESULT CModel::Bind_BoneMatrices_Ragdoll_PartObject(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
+{
+	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * MAX_COUNT_BONE);
+
+	_float4x4			CombinedMatrices[MAX_COUNT_BONE];
+	_uint				iBoneIndex = { 0 };
+	for (auto& pBone : m_Bones)
+	{
+		if (true == pBone->Is_Set_ParentCombiend_RagDoll())
+		{
+			CombinedMatrices[iBoneIndex] = *(pBone->Get_ParentCombinedMatrix_RagDoll_Ptr());
+		}
+		else
+		{
+			CombinedMatrices[iBoneIndex] = *(pBone->Get_CombinedTransformationMatrix());
+		}
+
+		++iBoneIndex;
+	}
+
+	m_Meshes[iMeshIndex]->Stock_Matrices_Ragdoll(m_Bones, m_MeshBoneMatrices, CombinedMatrices);
 
 	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, MAX_COUNT_BONE);
 }

@@ -39,31 +39,34 @@ void CPart_Mesh_Info_Zombie::Set_AdditionalChild(CPart_Mesh_Info_Zombie* pChildM
 
 void CPart_Mesh_Info_Zombie::Break(CModel* pModel)
 {
-    //  Hide
-    _int            iBodyMeshIndex = { m_MeshTypeIndices[static_cast<_uint>(BODY_PART_MESH_TYPE::_BODY)] };
-    if (-1 != iBodyMeshIndex)
-        pModel->Hide_Mesh(iBodyMeshIndex, true);
+    if (CMonster::PART_ID::PART_BODY == m_ePartID)
+    {
+        //  Hide
+        _int            iBodyMeshIndex = { m_MeshTypeIndices[static_cast<_uint>(BODY_PART_MESH_TYPE::_BODY)] };
+        if (-1 != iBodyMeshIndex)
+            pModel->Hide_Mesh(iBodyMeshIndex, true);
 
-    _int            iInsideBodyMeshIndex = { m_MeshTypeIndices[static_cast<_uint>(BODY_PART_MESH_TYPE::_INSIDE)] };
-    if (-1 != iInsideBodyMeshIndex)
-        pModel->Hide_Mesh(iInsideBodyMeshIndex, true);
+        _int            iInsideBodyMeshIndex = { m_MeshTypeIndices[static_cast<_uint>(BODY_PART_MESH_TYPE::_INSIDE)] };
+        if (-1 != iInsideBodyMeshIndex)
+            pModel->Hide_Mesh(iInsideBodyMeshIndex, true);
 
-    //  Appear
-    _int            iFromParentDeficitMeshIndex = { m_MeshTypeIndices[static_cast<_uint>(BODY_PART_MESH_TYPE::_FROM_PARENT_DEFICIT)] };
-    if (-1 != iFromParentDeficitMeshIndex)
-        pModel->Hide_Mesh(iFromParentDeficitMeshIndex, false);
+        //  Appear
+        _int            iFromParentDeficitMeshIndex = { m_MeshTypeIndices[static_cast<_uint>(BODY_PART_MESH_TYPE::_FROM_PARENT_DEFICIT)] };
+        if (-1 != iFromParentDeficitMeshIndex)
+            pModel->Hide_Mesh(iFromParentDeficitMeshIndex, false);
 
-    _int            iFromChildDeficitMeshIndex = { m_MeshTypeIndices[static_cast<_uint>(BODY_PART_MESH_TYPE::_FROM_CHILD_DEFICIT)] };
-    if (-1 != iFromChildDeficitMeshIndex)
-        pModel->Hide_Mesh(iFromChildDeficitMeshIndex, false);
+        _int            iFromChildDeficitMeshIndex = { m_MeshTypeIndices[static_cast<_uint>(BODY_PART_MESH_TYPE::_FROM_CHILD_DEFICIT)] };
+        if (-1 != iFromChildDeficitMeshIndex)
+            pModel->Hide_Mesh(iFromChildDeficitMeshIndex, false);
 
-    _int            iFromParentDamageMeshIndex = { m_MeshTypeIndices[static_cast<_uint>(BODY_PART_MESH_TYPE::_FROM_PARENT_DAMAGE)] };
-    if (-1 != iFromParentDamageMeshIndex)
-        pModel->Hide_Mesh(iFromParentDamageMeshIndex, false);
+        _int            iFromParentDamageMeshIndex = { m_MeshTypeIndices[static_cast<_uint>(BODY_PART_MESH_TYPE::_FROM_PARENT_DAMAGE)] };
+        if (-1 != iFromParentDamageMeshIndex)
+            pModel->Hide_Mesh(iFromParentDamageMeshIndex, false);
 
-    _int            iFromChildDamageMeshIndex = { m_MeshTypeIndices[static_cast<_uint>(BODY_PART_MESH_TYPE::_FROM_CHILD_DAMAGE)] };
-    if (-1 != iFromChildDamageMeshIndex)
-        pModel->Hide_Mesh(iFromChildDamageMeshIndex, false);
+        _int            iFromChildDamageMeshIndex = { m_MeshTypeIndices[static_cast<_uint>(BODY_PART_MESH_TYPE::_FROM_CHILD_DAMAGE)] };
+        if (-1 != iFromChildDamageMeshIndex)
+            pModel->Hide_Mesh(iFromChildDamageMeshIndex, false);
+    }
 }
 
 _int CPart_Mesh_Info_Zombie::Get_MeshIndex_Type(BODY_PART_MESH_TYPE eType)

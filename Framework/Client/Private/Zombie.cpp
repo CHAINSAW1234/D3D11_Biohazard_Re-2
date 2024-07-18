@@ -1371,6 +1371,19 @@ HRESULT CZombie::Add_RagDoll_OtherParts()
 	static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_SHIRTS)])->Set_RagDoll_Ptr(pRagDoll);
 	static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_PANTS)])->Set_RagDoll_Ptr(pRagDoll);
 
+	CModel*						pBody_Model = { static_cast<CModel*>(static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_BODY)])->Get_Component(TEXT("Com_Model"))) };
+	CModel*						pShirt_Model = { static_cast<CModel*>(static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_SHIRTS)])->Get_Component(TEXT("Com_Model"))) };
+	CModel*						pPants_Model = { static_cast<CModel*>(static_cast<CClothes_Zombie*>(m_PartObjects[static_cast<_uint>(PART_ID::PART_PANTS)])->Get_Component(TEXT("Com_Model"))) };
+
+	if (nullptr == pBody_Model || nullptr == pShirt_Model || nullptr == pPants_Model)
+		return E_FAIL;
+
+	if (FAILED(pShirt_Model->Link_Bone_Auto_RagDoll(pBody_Model, pRagDoll)))
+		return E_FAIL;
+	if (FAILED(pPants_Model->Link_Bone_Auto_RagDoll(pBody_Model, pRagDoll)))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 

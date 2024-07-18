@@ -44,14 +44,6 @@ void CBone::Invalidate_CombinedTransformationMatrix(const vector<CBone*>& Bones,
 		m_CombinedTransformationMatrix = *m_pParentCombinedMatrix;
 	}
 
-	else if (true == m_isSurbordinate_RagDoll)
-	{
-		if (nullptr == m_pParentCombinedMatrix_RagDoll)
-			return;
-
-		m_CombinedTransformationMatrix = *m_pParentCombinedMatrix_RagDoll;
-	}
-
 	//	부모 뼈가 없다면 => 루트 노드라면
 	else if (true == isTopParrentBone)
 	{
@@ -83,14 +75,6 @@ void CBone::Invalidate_CombinedTransformationMatrix_RootMotion(const vector<CBon
 			return;
 
 		m_CombinedTransformationMatrix = *m_pParentCombinedMatrix;
-	}
-
-	else if (true == m_isSurbordinate_RagDoll)
-	{
-		if (nullptr == m_pParentCombinedMatrix_RagDoll)
-			return;
-
-		m_CombinedTransformationMatrix = *m_pParentCombinedMatrix_RagDoll;
 	}
 
 	//	부모 뼈가 없다면 => 루트 노드라면
