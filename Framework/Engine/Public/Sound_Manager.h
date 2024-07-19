@@ -50,11 +50,11 @@ public:
 	HRESULT										Add_Object_Sound(class CTransform* pTransform, _uint iNumChannel);
 
 private:
-	void										LoadSoundFile();
-	void										LoadSoundFile_Zombie();
-	FMOD_SOUND*									Find_Sound(const wstring& strSoundTag);
-	SOUND_DESC*									Find_SoundDesc_2D(_uint iChannelIndex);
-	SOUND_DESC*									Find_SoundDesc_3D(class CTransform* pTransform, _uint iSoudIndex);
+	void												LoadSoundFile();
+	void												LoadSoundFile_Zombie();
+	FMOD_SOUND*								Find_Sound(const wstring& strSoundTag);
+	SOUND_DESC*								Find_SoundDesc_2D(_uint iChannelIndex);
+	SOUND_DESC*								Find_SoundDesc_3D(class CTransform* pTransform, _uint iSoudIndex);
 private:
 	// 사운드 리소스 정보를 갖는 객체 
 	map<const wstring, FMOD_SOUND*>				m_Soundmap;
