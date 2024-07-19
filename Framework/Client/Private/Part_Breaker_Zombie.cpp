@@ -1666,7 +1666,10 @@ HRESULT CPart_Breaker_Zombie::Compute_MeshParts_Types_Indices_Shirt(vector<vecto
 		}
 
 		if (iMeshPart == -1 || iMeshType == -1)
+		{
+			++iMeshIndex;
 			continue;
+		}
 
 		MeshPartsTypesIndices[iMeshPart][iMeshType] = static_cast<_int>(iMeshIndex);
 		++iMeshIndex;
@@ -1712,7 +1715,10 @@ HRESULT CPart_Breaker_Zombie::Compute_MeshParts_Types_Indices_Pants(vector<vecto
 		}
 
 		if (iMeshPart == -1 || iMeshType == -1)
+		{
+			++iMeshIndex;
 			continue;
+		}
 
 		MeshPartsTypesIndices[iMeshPart][iMeshType] = static_cast<_int>(iMeshIndex);
 		++iMeshIndex;
@@ -1802,8 +1808,8 @@ _bool CPart_Breaker_Zombie::Is_R_Arm_Mesh(_uint iMeshIndex)
 
 _bool CPart_Breaker_Zombie::Is_L_Leg_Mesh(_uint iMeshIndex)
 {
-	_int			iTargetLegIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_L_LEG)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_LEG)) };
-	_int			iTargetShoesIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_L_SHOES)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_SHOES)) };
+	_int         iTargetLegIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_L_LEG)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_LEG)) };
+	_int         iTargetShoesIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_L_SHOES)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_SHOES)) };
 	if (-1 == iTargetLegIndex && -1 == iTargetShoesIndex)
 		return false;
 
@@ -1812,8 +1818,8 @@ _bool CPart_Breaker_Zombie::Is_L_Leg_Mesh(_uint iMeshIndex)
 
 _bool CPart_Breaker_Zombie::Is_R_Leg_Mesh(_uint iMeshIndex)
 {
-	_int			iTargetLegIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_R_LEG)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_LEG)) };
-	_int			iTargetShoesIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_R_SHOES)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_SHOES)) };
+	_int         iTargetLegIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_R_LEG)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_LEG)) };
+	_int         iTargetShoesIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_R_SHOES)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_SHOES)) };
 	if (-1 == iTargetLegIndex && -1 == iTargetShoesIndex)
 		return false;
 
