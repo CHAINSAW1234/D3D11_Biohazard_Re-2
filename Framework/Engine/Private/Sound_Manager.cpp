@@ -506,36 +506,67 @@ HRESULT CSound_Manager::Add_Object_Sound(CTransform* pTransform, _uint iNumChann
 
 void CSound_Manager::LoadSoundFile()
 {
-	_tfinddata64_t fd;
-	__int64 handle = _tfindfirst64(L"../Bin/Resources/Sound/*.*", &fd);
-	if (handle == -1 || handle == 0)
-		return;
+	_tfinddata64_t TypePathFinder;
+	_tfinddata64_t FileNameFinder;
 
-	_int iResult = 0;
+	int iTypeResult = 0;
+	int iFileResult = 0;
 
-	char szCurPath[MAX_PATH] = "../Bin/Resources/Sound/";
-	char szFullPath[MAX_PATH] = "";
-	char szFilename[MAX_PATH];
-	while (iResult != -1)
+	wstring szCurPath = TEXT("../Bin/Resources/Sound/");
+	wstring szFilePath = TEXT("");
+	wstring szFullPath = TEXT("");
+
+
+	__int64 Typehandle = _tfindfirst64(L"../Bin/Resources/Sound/*", &TypePathFinder);
+
+	while (wcscmp(TypePathFinder.name, L".") == 0 || wcscmp(TypePathFinder.name, L"..") == 0)
 	{
-		WideCharToMultiByte(CP_UTF8, 0, fd.name, -1, szFilename, sizeof(szFilename), NULL, NULL);
-		strcpy_s(szFullPath, szCurPath);
-		strcat_s(szFullPath, szFilename);
-		FMOD_SOUND*				pSound = { nullptr };
-		FMOD_RESULT eRes = FMOD_System_CreateSound(m_pSystem, szFullPath, FMOD_3D, 0, &pSound);//|FMOD_3D_HEADRELATIVE  | FMOD_3D_INVERSEROLLOFF
-		if (eRes == FMOD_OK)
-		{
-			_int iLength = (_int)strlen(szFilename) + 1;
-
-			TCHAR pSoundKey[MAX_PATH] = { TEXT("") };
-			MultiByteToWideChar(CP_ACP, 0, szFilename, iLength, pSoundKey, iLength);
-			m_Soundmap.emplace(pSoundKey, pSound);
+		if (_tfindnext64(Typehandle, &TypePathFinder) != 0) {
+			return;
 		}
-		iResult = _tfindnext64(handle, &fd);
 	}
 
-	FMOD_System_Update(m_pSystem);
-	_findclose(handle);
+	__int64 Filehandle = 0;
+
+	while (iTypeResult != -1)
+	{
+		szFilePath = szCurPath + TypePathFinder.name + L"/*";
+		szFullPath = szCurPath + TypePathFinder.name + L"/";
+
+		Filehandle = _tfindfirst64(szFilePath.c_str(), &FileNameFinder);
+
+		while (wcscmp(FileNameFinder.name, L".") == 0 || wcscmp(FileNameFinder.name, L"..") == 0)
+		{
+			if (_tfindnext64(Filehandle, &FileNameFinder) != 0)
+			{
+				return;
+			}
+		}
+
+		szFullPath = szCurPath + TypePathFinder.name + L"/" + FileNameFinder.name;
+
+		iFileResult = 0;
+		while (iFileResult != -1)
+		{
+			szFullPath = szCurPath + TypePathFinder.name + L"/" + FileNameFinder.name;
+			int size_needed = WideCharToMultiByte(CP_UTF8, 0, &szFullPath[0], (int)szFullPath.size(), NULL, 0, NULL, NULL);
+			string str(size_needed, 0);
+			WideCharToMultiByte(CP_UTF8, 0, &szFullPath[0], (int)szFullPath.size(), &str[0], size_needed, NULL, NULL);
+			char* cstr = &str[0];
+
+			FMOD_SOUND* pSound = nullptr;
+			FMOD_RESULT eRes = FMOD_System_CreateSound(m_pSystem, cstr, FMOD_3D, 0, &pSound);
+			m_Soundmap.emplace(FileNameFinder.name, pSound);
+
+			iFileResult = _tfindnext64(Filehandle, &FileNameFinder);//다음파일이 있다없다
+		}
+
+		FMOD_System_Update(m_pSystem);
+		iTypeResult = _tfindnext64(Typehandle, &TypePathFinder);//다음파일이 있다없다
+	}
+
+	_findclose(Filehandle);
+	_findclose(Typehandle);
 }
 
 void CSound_Manager::LoadSoundFile_Zombie()

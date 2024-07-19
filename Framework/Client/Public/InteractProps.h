@@ -235,6 +235,16 @@ protected:
 	void												Tick_Col();
 	_bool												Visible();
 
+	void Change_Sound(const wstring& strSoundTag, _uint iSoundIndex)
+	{
+		m_pGameInstance->Change_Sound_3D(m_pTransformCom, strSoundTag, iSoundIndex);
+	}
+
+	void Stop_Sound(_uint iSoundIndex)
+	{
+		m_pGameInstance->Stop_Sound_3D(m_pTransformCom, iSoundIndex);
+	}
+
 #ifdef		_DEBUG
 	void												Add_Col_DebugCom();
 
