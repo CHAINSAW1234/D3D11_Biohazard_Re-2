@@ -61,12 +61,12 @@ void CBite_Zombie::Enter()
 	m_fAccLinearTime_HalfMatrix = 0.f;
 
 
-	m_pGameInstance->Stop_Sound(0);
+	m_pBlackBoard->Get_AI()->Stop_Sound(0);
 	_int			iRandom = { m_pGameInstance->GetRandom_Int(0, 1) };
 	if (0 == iRandom)
-		m_pGameInstance->Play_Sound(TEXT("em0_media.bnk.2_61.mp3"), 0);
+		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_61.mp3"), 0);
 	if (1 == iRandom)
-		m_pGameInstance->Play_Sound(TEXT("em0_media.bnk.2_76.mp3"), 0);
+		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_76.mp3"), 0);
 
 
 #ifdef _DEBUG

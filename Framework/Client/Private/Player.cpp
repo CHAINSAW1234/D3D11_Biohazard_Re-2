@@ -181,7 +181,7 @@ void CPlayer::Tick(_float fTimeDelta)
 
 		FmodDesc.velocity = FMOD_VECTOR{ 0.f, 0.f, 0.f };
 
-		m_pGameInstance->Update_Listener(FmodDesc);
+		m_pGameInstance->Update_Listener(m_pTransformCom, _float3(0.f, 0.f, 0.f));
 	}
 
 	_vector			vMovedDirection = { XMLoadFloat3(&m_vRootTranslation) };

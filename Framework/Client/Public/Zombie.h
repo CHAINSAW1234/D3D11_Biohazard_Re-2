@@ -174,6 +174,10 @@ public:
 private:
 	void								Update_Region_Datas();
 
+public:
+	void								Change_Sound(const wstring& strSoundTag, _uint iSoundIndex);
+	void								Stop_Sound(_uint iSoundIndex);
+
 public: // For Ragdoll
 	void								SetRagdoll_StartPose();
 public://For Decal

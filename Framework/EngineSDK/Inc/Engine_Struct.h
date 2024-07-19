@@ -150,13 +150,14 @@ namespace Engine
 	// 3D음향을 위한 자료형의 모음 구조체
 	typedef struct Sound_Desc
 	{
-		_bool	 bPause = { true };
-		_float2 fRange = { 0.f,1.f };
-		_float fVolume = { SOUND_DEFAULT };
-		FMOD_VECTOR vPos = { FMOD_VECTOR() };
-		FMOD_VECTOR vSpeedDir = { FMOD_VECTOR() };
-		FMOD_SOUND* pSound = { nullptr };
-		FMOD_MODE eMode = { FMOD_DEFAULT };
+		_uint				iChannelIndex = { 0 };
+		_bool				bPause = { true };
+		_float2				vRange = { 0.f,1.f };
+		_float				fVolume = { SOUND_DEFAULT };
+		FMOD_VECTOR			vPos = { FMOD_VECTOR() };
+		FMOD_VECTOR			vSpeedDir = { FMOD_VECTOR() };
+		FMOD_SOUND*			pSound = { nullptr };
+		FMOD_MODE			eMode = { FMOD_DEFAULT };
 
 		Sound_Desc() = default;
 		Sound_Desc(const Sound_Desc&) = default;

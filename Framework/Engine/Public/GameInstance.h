@@ -242,14 +242,28 @@ public:
 
 #pragma region Sound_Manager
 public: /* For.m_pSound_Manager */
-	HRESULT									Update_Listener(FMOD_3D_ATTRIBUTES& Attributes_desc);
+	/*HRESULT									Update_Listener(FMOD_3D_ATTRIBUTES& Attributes_desc);
 	void									Update_Sound(const wstring& pSoundKey, SOUND_DESC _SoundTag);
 	HRESULT									Channel_Pause(_uint iID);
 	HRESULT									Change_Channel_Sound(const wstring& SoundKeyTag, _uint iID);
 	HRESULT									Play_Sound(const wstring& SoundKeyTag, _uint iID);
 	HRESULT									Play_Sound_Again(const wstring& SoundKeyTag, _uint iID);
-	HRESULT									PlayBGM(_uint iID, const wstring& SoundKey);
-	HRESULT									Stop_Sound(_uint iID);
+	HRESULT									Stop_Sound(_uint iID);*/
+	HRESULT									Update_Listener(class CTransform* pTransform, _float3 vVelocity);
+	HRESULT									Stop_Sound_2D(_uint iChannelIndex);
+	HRESULT									Stop_Sound_3D(CTransform* pTransform, _uint iSoundIndex);
+
+	void									Change_Sound_2D(_uint iChannelIndex, const wstring& strSoundTag);
+	void									Set_Volume_2D(_uint iChannelIndex, _float fVolume);
+	void									Set_Pause_2D(_uint iChannelIndex, _bool isPause);
+
+	void									Change_Sound_3D(CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex);
+	void									Set_Volume_3D(CTransform* pTransform, _uint iSoundIndex, _float fVolume);
+	void									Set_Pause_3D(CTransform* pTransform, _uint iSoundIndex, _bool isPause);
+	void									Set_Distance_3D(CTransform* pTransform, _uint iSoundIndex, _float fMinDistance, _float fMaxDistance);
+
+	HRESULT									Add_Object_Sound(class CTransform* pTransform, _uint iNumChannel);
+	HRESULT									PlayBGM(_uint iChannelIndex, const wstring& strSoundTag);
 	HRESULT									Stop_All();
 #pragma endregion
 
