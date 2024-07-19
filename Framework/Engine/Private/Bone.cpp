@@ -175,11 +175,18 @@ _vector CBone::Decompose_Quaternion(_fvector vQuaternion, _float4* pQuaternion)
 	return vResultQuaternion;
 }
 
+_float4x4* CBone::Get_ParentCombinedMatrix_RagDoll_Ptr(_uint iRagDollIndex)
+{
+	_uint			iNumMatrices = { static_cast<_uint>(m_pParentCombinedMatrices_RagDoll.size()) };
+	if (iNumMatrices <= iRagDollIndex)
+		return nullptr;
+
+	return m_pParentCombinedMatrices_RagDoll[iRagDollIndex];
+}
+
 void CBone::Set_Combined_Matrix(_fmatrix CombinedMatrix)
 {
 	XMStoreFloat4x4(&m_CombinedTransformationMatrix, CombinedMatrix);
-
-
 }
 
 void CBone::Set_Parent_CombinedMatrix_Ptr(_float4x4* pParentMatrix)
@@ -190,17 +197,35 @@ void CBone::Set_Parent_CombinedMatrix_Ptr(_float4x4* pParentMatrix)
 	m_pParentCombinedMatrix = pParentMatrix;
 }
 
-void CBone::Set_Parent_CombinedMatrix_Ptr_RagDoll(_float4x4* pParentMatrix)
+void CBone::Set_Parent_CombinedMatrix_Ptr_RagDoll(_uint iRagDollIndex, _float4x4* pParentMatrix)
 {
 	if (nullptr == pParentMatrix)
 		return;
 
-	m_pParentCombinedMatrix_RagDoll = pParentMatrix;
+	_uint			iNumMatrices = { static_cast<_uint>(m_pParentCombinedMatrices_RagDoll.size()) };
+	if (iNumMatrices <= iRagDollIndex)
+		return;
+
+	m_pParentCombinedMatrices_RagDoll[iRagDollIndex] = pParentMatrix;
 }
 
 void CBone::Set_RootBone(_bool isRootBone)
 {
 	m_isRootBone = isRootBone;
+}
+
+_bool CBone::Is_Set_ParentCombiend_RagDoll(_uint iRagDollIndex)
+{
+	_uint			iNumMatrices = { static_cast<_uint>(m_pParentCombinedMatrices_RagDoll.size()) };
+	if (iNumMatrices <= iRagDollIndex)
+		return false;
+
+	return nullptr != m_pParentCombinedMatrices_RagDoll[iRagDollIndex];
+}
+
+void CBone::Resize_ParentCombinedMatrices_RagDoll(_uint iNumRagDoll)
+{
+	m_pParentCombinedMatrices_RagDoll.resize(iNumRagDoll);
 }
 
 CBone* CBone::Create(const aiNode* pAINode, _int iParentIndex)
