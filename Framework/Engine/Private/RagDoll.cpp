@@ -279,7 +279,7 @@ PoseTransforms* AnimRagdoll::apply_BreakPart_Leg(CRagdoll* ragdoll, _matrix mode
     return &m_transforms_BreakPart_Leg;
 }
 
-PoseTransforms* AnimRagdoll::apply_BreakPart_Cloth(CRagdoll* ragdoll, _matrix model_scale, _matrix model_rotation, vector<_bool>* pBreakPart)
+PoseTransforms* AnimRagdoll::apply_BreakPart_Cloth_Leg_R(CRagdoll* ragdoll, _matrix model_scale, _matrix model_rotation, vector<_bool>* pBreakPart)
 {
     if (ragdoll->m_rigid_bodies.size() > 0)
     {
@@ -288,21 +288,21 @@ PoseTransforms* AnimRagdoll::apply_BreakPart_Cloth(CRagdoll* ragdoll, _matrix mo
         for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
         {
             uint32_t        chosen_idx;
-            PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth];
+            PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Leg_R];
 
             if (body == nullptr || (*pBreakPart)[i] == false)
             {
-                m_transforms_BreakPart_Cloth.transforms[i] = XMMatrixIdentity();
+                m_transforms_BreakPart_Cloth_Leg_R.transforms[i] = XMMatrixIdentity();
                 continue;
             }
 
             XMMATRIX global_transform = to_mat4(body->getGlobalPose());
             global_transform.r[3] = XMVectorSet(XMVectorGetX(global_transform.r[3]) * MODEL_SCALE_INVERSE, XMVectorGetY(global_transform.r[3]) * MODEL_SCALE_INVERSE, XMVectorGetZ(global_transform.r[3]) * MODEL_SCALE_INVERSE, 1.f);
-            XMVECTOR global_joint_pos = XMVector4Transform(ragdoll->m_relative_joint_pos_BreakPart_Cloth[i], global_transform);
+            XMVECTOR global_joint_pos = XMVector4Transform(ragdoll->m_relative_joint_pos_BreakPart_Cloth_Leg_R[i], global_transform);
             global_joint_pos = XMVectorSetW(global_joint_pos, 1.f);
 
             XMVECTOR body_rot_quat = XMQuaternionRotationMatrix(global_transform);
-            XMVECTOR diff_rot = XMQuaternionMultiply(XMQuaternionConjugate(ragdoll->m_original_body_rotations_BreakPart_Cloth[i]), body_rot_quat);
+            XMVECTOR diff_rot = XMQuaternionMultiply(XMQuaternionConjugate(ragdoll->m_original_body_rotations_BreakPart_Cloth_Leg_R[i]), body_rot_quat);
 
             global_joint_pos = XMVectorScale(global_joint_pos, 1.f);
             XMMATRIX translation = XMMatrixTranslationFromVector(global_joint_pos);
@@ -312,9 +312,129 @@ PoseTransforms* AnimRagdoll::apply_BreakPart_Cloth(CRagdoll* ragdoll, _matrix mo
 
             XMMATRIX model = model_scale * model_rotation;
 
-            m_transforms_BreakPart_Cloth.transforms[i] = model_scale * rotation * translation * XMMatrixInverse(nullptr, model);
+            m_transforms_BreakPart_Cloth_Leg_R.transforms[i] = model_scale * rotation * translation * XMMatrixInverse(nullptr, model);
         }
     }
 
-    return &m_transforms_BreakPart_Cloth;
+    return &m_transforms_BreakPart_Cloth_Leg_R;
+}
+
+PoseTransforms* AnimRagdoll::apply_BreakPart_Cloth_Arm_L(CRagdoll* ragdoll, _matrix model_scale, _matrix model_rotation, vector<_bool>* pBreakPart)
+{
+    if (ragdoll->m_rigid_bodies.size() > 0)
+    {
+        Joint* joints = m_skeleton->joints();
+
+        for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
+        {
+            uint32_t        chosen_idx;
+            PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Arm_L];
+
+            if (body == nullptr || (*pBreakPart)[i] == false)
+            {
+                m_transforms_BreakPart_Cloth_Arm_L.transforms[i] = XMMatrixIdentity();
+                continue;
+            }
+
+            XMMATRIX global_transform = to_mat4(body->getGlobalPose());
+            global_transform.r[3] = XMVectorSet(XMVectorGetX(global_transform.r[3]) * MODEL_SCALE_INVERSE, XMVectorGetY(global_transform.r[3]) * MODEL_SCALE_INVERSE, XMVectorGetZ(global_transform.r[3]) * MODEL_SCALE_INVERSE, 1.f);
+            XMVECTOR global_joint_pos = XMVector4Transform(ragdoll->m_relative_joint_pos_BreakPart_Cloth_Arm_L[i], global_transform);
+            global_joint_pos = XMVectorSetW(global_joint_pos, 1.f);
+
+            XMVECTOR body_rot_quat = XMQuaternionRotationMatrix(global_transform);
+            XMVECTOR diff_rot = XMQuaternionMultiply(XMQuaternionConjugate(ragdoll->m_original_body_rotations_BreakPart_Cloth_Arm_L[i]), body_rot_quat);
+
+            global_joint_pos = XMVectorScale(global_joint_pos, 1.f);
+            XMMATRIX translation = XMMatrixTranslationFromVector(global_joint_pos);
+
+            XMVECTOR final_rotation_quat = XMQuaternionMultiply(joints[i].original_rotation, diff_rot);
+            XMMATRIX rotation = XMMatrixRotationQuaternion(final_rotation_quat);
+
+            XMMATRIX model = model_scale * model_rotation;
+
+            m_transforms_BreakPart_Cloth_Arm_L.transforms[i] = model_scale * rotation * translation * XMMatrixInverse(nullptr, model);
+        }
+    }
+
+    return &m_transforms_BreakPart_Cloth_Arm_L;
+}
+
+PoseTransforms* AnimRagdoll::apply_BreakPart_Cloth_Arm_R(CRagdoll* ragdoll, _matrix model_scale, _matrix model_rotation, vector<_bool>* pBreakPart)
+{
+    if (ragdoll->m_rigid_bodies.size() > 0)
+    {
+        Joint* joints = m_skeleton->joints();
+
+        for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
+        {
+            uint32_t        chosen_idx;
+            PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Arm_R];
+
+            if (body == nullptr || (*pBreakPart)[i] == false)
+            {
+                m_transforms_BreakPart_Cloth_Arm_L.transforms[i] = XMMatrixIdentity();
+                continue;
+            }
+
+            XMMATRIX global_transform = to_mat4(body->getGlobalPose());
+            global_transform.r[3] = XMVectorSet(XMVectorGetX(global_transform.r[3]) * MODEL_SCALE_INVERSE, XMVectorGetY(global_transform.r[3]) * MODEL_SCALE_INVERSE, XMVectorGetZ(global_transform.r[3]) * MODEL_SCALE_INVERSE, 1.f);
+            XMVECTOR global_joint_pos = XMVector4Transform(ragdoll->m_relative_joint_pos_BreakPart_Cloth_Arm_R[i], global_transform);
+            global_joint_pos = XMVectorSetW(global_joint_pos, 1.f);
+
+            XMVECTOR body_rot_quat = XMQuaternionRotationMatrix(global_transform);
+            XMVECTOR diff_rot = XMQuaternionMultiply(XMQuaternionConjugate(ragdoll->m_original_body_rotations_BreakPart_Cloth_Arm_R[i]), body_rot_quat);
+
+            global_joint_pos = XMVectorScale(global_joint_pos, 1.f);
+            XMMATRIX translation = XMMatrixTranslationFromVector(global_joint_pos);
+
+            XMVECTOR final_rotation_quat = XMQuaternionMultiply(joints[i].original_rotation, diff_rot);
+            XMMATRIX rotation = XMMatrixRotationQuaternion(final_rotation_quat);
+
+            XMMATRIX model = model_scale * model_rotation;
+
+            m_transforms_BreakPart_Cloth_Arm_R.transforms[i] = model_scale * rotation * translation * XMMatrixInverse(nullptr, model);
+        }
+    }
+
+    return &m_transforms_BreakPart_Cloth_Arm_R;
+}
+
+PoseTransforms* AnimRagdoll::apply_BreakPart_Cloth_Leg_L(CRagdoll* ragdoll, _matrix model_scale, _matrix model_rotation, vector<_bool>* pBreakPart)
+{
+    if (ragdoll->m_rigid_bodies.size() > 0)
+    {
+        Joint* joints = m_skeleton->joints();
+
+        for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
+        {
+            uint32_t        chosen_idx;
+            PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Leg_L];
+
+            if (body == nullptr || (*pBreakPart)[i] == false)
+            {
+                m_transforms_BreakPart_Cloth_Leg_L.transforms[i] = XMMatrixIdentity();
+                continue;
+            }
+
+            XMMATRIX global_transform = to_mat4(body->getGlobalPose());
+            global_transform.r[3] = XMVectorSet(XMVectorGetX(global_transform.r[3]) * MODEL_SCALE_INVERSE, XMVectorGetY(global_transform.r[3]) * MODEL_SCALE_INVERSE, XMVectorGetZ(global_transform.r[3]) * MODEL_SCALE_INVERSE, 1.f);
+            XMVECTOR global_joint_pos = XMVector4Transform(ragdoll->m_relative_joint_pos_BreakPart_Cloth_Leg_R[i], global_transform);
+            global_joint_pos = XMVectorSetW(global_joint_pos, 1.f);
+
+            XMVECTOR body_rot_quat = XMQuaternionRotationMatrix(global_transform);
+            XMVECTOR diff_rot = XMQuaternionMultiply(XMQuaternionConjugate(ragdoll->m_original_body_rotations_BreakPart_Cloth_Leg_L[i]), body_rot_quat);
+
+            global_joint_pos = XMVectorScale(global_joint_pos, 1.f);
+            XMMATRIX translation = XMMatrixTranslationFromVector(global_joint_pos);
+
+            XMVECTOR final_rotation_quat = XMQuaternionMultiply(joints[i].original_rotation, diff_rot);
+            XMMATRIX rotation = XMMatrixRotationQuaternion(final_rotation_quat);
+
+            XMMATRIX model = model_scale * model_rotation;
+
+            m_transforms_BreakPart_Cloth_Leg_L.transforms[i] = model_scale * rotation * translation * XMMatrixInverse(nullptr, model);
+        }
+    }
+
+    return &m_transforms_BreakPart_Cloth_Leg_R;
 }

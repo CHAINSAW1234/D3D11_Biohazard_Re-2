@@ -454,12 +454,27 @@ public:
     {
         return m_BoneMatrices;
     }
-    _float4x4*                          GetBoneMatrices_Ragdoll_Cloth()
+    _float4x4*                          GetBoneMatrices_Ragdoll_Cloth_Arm_L()
     {
-        return m_BoneMatrices_Cloth;
+        return m_BoneMatrices_Cloth_Arm_L;
+    }
+    _float4x4*                          GetBoneMatrices_Ragdoll_Cloth_Arm_R()
+    {
+        return m_BoneMatrices_Cloth_Arm_R;
+    }
+    _float4x4*                          GetBoneMatrices_Ragdoll_Cloth_Leg_L()
+    {
+        return m_BoneMatrices_Cloth_Leg_L;
+    }
+    _float4x4*                          GetBoneMatrices_Ragdoll_Cloth_LegR()
+    {
+        return m_BoneMatrices_Cloth_Leg_R;
     }
     _float4x4*                    GetCombinedMatrix_Ragdoll(_uint iIndex);
-    _float4x4*                    GetCombinedMatrix_Ragdoll_Cloth(_uint iIndex);
+    _float4x4*                    GetCombinedMatrix_Ragdoll_Cloth_Arm_L(_uint iIndex);
+    _float4x4*                    GetCombinedMatrix_Ragdoll_Cloth_Arm_R(_uint iIndex);
+    _float4x4*                    GetCombinedMatrix_Ragdoll_Cloth_Leg_L(_uint iIndex);
+    _float4x4*                    GetCombinedMatrix_Ragdoll_Cloth_Leg_R(_uint iIndex);
 #pragma endregion
 
 private:
@@ -517,9 +532,15 @@ private:
     _float4x4                                       m_RotationMatrix;
     PoseTransforms                                  m_Global_transforms;
     PoseTransforms                                  m_Global_transforms_BreakPart;
-    PoseTransforms                                  m_Global_transforms_BreakPart_Cloth;
+    PoseTransforms                                  m_Global_transforms_BreakPart_Cloth_Arm_L;
+    PoseTransforms                                  m_Global_transforms_BreakPart_Cloth_Arm_R;
+    PoseTransforms                                  m_Global_transforms_BreakPart_Cloth_Leg_L;
+    PoseTransforms                                  m_Global_transforms_BreakPart_Cloth_Leg_R;
     std::vector<_bool>                              m_vecBreak_Parent_Flag;
-    std::vector<_bool>                              m_vecBreak_Parent_Flag_Cloth;
+    std::vector<_bool>                              m_vecBreak_Parent_Flag_Cloth_Arm_L;
+    std::vector<_bool>                              m_vecBreak_Parent_Flag_Cloth_Arm_R;
+    std::vector<_bool>                              m_vecBreak_Parent_Flag_Cloth_Leg_L;
+    std::vector<_bool>                              m_vecBreak_Parent_Flag_Cloth_Leg_R;
 
     PxFilterData                                    m_FilterData;
     class CTransform* m_pTransform = { nullptr };
@@ -548,7 +569,10 @@ private:
     _uint                                           m_iRagdollType = { RAGDOLL_TYPE::TYPE_NONE };
     _bool                                           m_bPartialRagdoll = { false };
     vector<_bool>									m_vecBreakPartFilter;
-    vector<_bool>									m_vecBreakPartFilter_Cloth;
+    vector<_bool>									m_vecBreakPartFilter_Cloth_Arm_L;
+    vector<_bool>									m_vecBreakPartFilter_Cloth_Arm_R;
+    vector<_bool>									m_vecBreakPartFilter_Cloth_Leg_L;
+    vector<_bool>									m_vecBreakPartFilter_Cloth_Leg_R;
 
     uint32_t m_head_idx = { 0 };		//neck_1
     uint32_t m_neck_01_idx = { 0 };	//neck_0
@@ -718,7 +742,10 @@ private:
 #pragma endregion
 
     _float4x4           m_BoneMatrices[MAX_COUNT_BONE];
-    _float4x4           m_BoneMatrices_Cloth[MAX_COUNT_BONE];
+    _float4x4           m_BoneMatrices_Cloth_Arm_L[MAX_COUNT_BONE];
+    _float4x4           m_BoneMatrices_Cloth_Arm_R[MAX_COUNT_BONE];
+    _float4x4           m_BoneMatrices_Cloth_Leg_L[MAX_COUNT_BONE];
+    _float4x4           m_BoneMatrices_Cloth_Leg_R[MAX_COUNT_BONE];
 
 public:
     virtual void Free() override;
