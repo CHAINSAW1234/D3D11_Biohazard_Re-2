@@ -85,10 +85,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-
 	///	For.CutScene
 	CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_PL00);
-	///
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
@@ -107,6 +105,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	Load_CameraPosition();
 	if (FAILED(Ready_Camera()))
 		return E_FAIL;
+
+	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 3);	// 일단 3개
 
 	m_pGameInstance->SetPlayer(this);
 
@@ -134,8 +134,6 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 	}
 	else
 		m_bInteract = false;
-
-
 
 #pragma endregion 
 
@@ -921,6 +919,8 @@ void CPlayer::Shot()
 		m_vMuzzle_Smoke_Pos = Get_MuzzlePosition();
 		m_MuzzleSmoke_Time = GetTickCount64();
 
+
+		Change_Sound_3D(TEXT("Sound_Player_HG_Shot"), 3, 0);
 		break;
 	}
 	case EQUIP::STG: {
@@ -940,6 +940,8 @@ void CPlayer::Shot()
 		m_bMuzzleSmoke = true;
 		m_vMuzzle_Smoke_Pos = Get_MuzzlePosition();
 		m_MuzzleSmoke_Time = GetTickCount64();
+
+		Change_Sound_3D(TEXT("Sound_Player_STG_Shot"), 0, 0);
 		break;
 	}
 	}
@@ -991,6 +993,7 @@ void CPlayer::Reload()
 		Set_Spotlight(false);
 	}
 
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, );
 
 }
 
@@ -1007,6 +1010,23 @@ void CPlayer::Stop_UpperBody()
 
 	m_isRequestChangeEquip = false;
 	m_eTargetEquip = NONE;
+}
+
+void CPlayer::Change_Sound_3D(const wstring& strSoundTag, _int iRandCnt, _uint iIndex)
+{
+
+	wstring strRandStoundTag;
+	if (iRandCnt != 0) {
+		_int iRand = rand() % iRandCnt;
+		strRandStoundTag = strSoundTag + to_wstring(iRand);
+
+	}
+	else {
+		strRandStoundTag = strSoundTag;
+	}
+	
+
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, strRandStoundTag, iIndex);
 }
 
 _bool CPlayer::IsShotAble()
