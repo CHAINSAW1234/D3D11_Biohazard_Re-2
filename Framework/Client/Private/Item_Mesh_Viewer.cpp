@@ -74,9 +74,12 @@ void CItem_Mesh_Viewer::Start()
 	if (nullptr == m_vecModelCom[HandGun] || nullptr == m_vecModelCom[ShotGun])
 		return;
 
+	m_vecModelCom[HandGun]->Hide_Mesh("LOD_1_Group_1_Sub_1__wp0100_VP70Custom_Mat_mesh0002", true);
+	m_vecModelCom[HandGun]->Hide_Mesh("LOD_1_Group_2_Sub_1__wp0000_PowerUp_Mat_mesh0003", true);
+	m_vecModelCom[HandGun]->Hide_Mesh("LOD_1_Group_6_Sub_1__wp0000_PowerUp_Mat_mesh0004", true);
 
-
-	
+	m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_3_Sub_1__wp1100_mt_mesh0004", true);
+	m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_4_Sub_1__wp1100_mt_mesh0005", true);
 }
 
 void CItem_Mesh_Viewer::Tick(_float fTimeDelta)

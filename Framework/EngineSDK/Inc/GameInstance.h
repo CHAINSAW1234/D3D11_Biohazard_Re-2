@@ -254,6 +254,7 @@ public: /* For.m_pSound_Manager */
 	HRESULT									Stop_Sound_3D(CTransform* pTransform, _uint iSoundIndex);
 
 	void									Change_Sound_2D(_uint iChannelIndex, const wstring& strSoundTag);
+	void									Change_Sound_2D(const wstring& strSoundTag, _uint iChannelIndex);
 	void									Set_Volume_2D(_uint iChannelIndex, _float fVolume);
 	void									Set_Pause_2D(_uint iChannelIndex, _bool isPause);
 
@@ -440,6 +441,18 @@ public:
 	{
 		return m_pCameraTransform;
 	}
+
+	void									Set_Gimmick_Camera_Transform(class CTransform* pTransform)
+	{
+		m_pGimmickCameraTransform = pTransform;
+	}
+	class CTransform* Get_Gimmick_Camera_Transform()
+	{
+		return m_pGimmickCameraTransform;
+	}
+
+
+
 	_float4									Get_Camera_Pos_Float4();
 	_vector									Get_Camera_Pos_Vector();
 #pragma endregion
@@ -501,6 +514,7 @@ private:
 	_float4									m_vRayOrigin_Aim;
 	_float4									m_vRayDir_Aim;
 	class CTransform*						m_pCameraTransform = { nullptr };
+	class CTransform*						m_pGimmickCameraTransform = { nullptr };
 
 
 public:

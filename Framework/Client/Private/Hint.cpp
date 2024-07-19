@@ -169,7 +169,7 @@ void CHint::Hoverd_Highlight()
 					if (m_pHoveredDirectory != m_vecDirectory[i])
 					{
 						m_pHoveredDirectory = m_vecDirectory[i];
-						m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+						m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
 					}
 				}
 			}
@@ -191,7 +191,7 @@ void CHint::Hoverd_Highlight()
 					if (m_pHoveredDirectory != m_vecDirectory[i])
 					{
 						m_pHoveredDirectory = m_vecDirectory[i];
-						m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+						m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
 					}
 				}
 			}
@@ -211,12 +211,12 @@ void CHint::Change_Display()
 			if (false == m_bLeftRight_Flip)
 			{
 				m_bLeftRight_Flip = !m_bLeftRight_Flip;
-				m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Flip_page_Left.mp3"), CHANNELID::CH30);
+				m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Flip_page_Left.mp3"), CHANNELID::CH30);
 			}
 			else
 			{
 				m_bLeftRight_Flip = !m_bLeftRight_Flip;
-				m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Flip_page_Right.mp3"), CHANNELID::CH30);
+				m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Flip_page_Right.mp3"), CHANNELID::CH30);
 			}
 		}
 	}
@@ -232,12 +232,12 @@ void CHint::Change_Display()
 			if (false == m_bLeftRight_Flip)
 			{
 				m_bLeftRight_Flip = !m_bLeftRight_Flip;
-				m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Flip_page_Left.mp3"), CHANNELID::CH30);
+				m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Flip_page_Left.mp3"), CHANNELID::CH30);
 			}
 			else
 			{
 				m_bLeftRight_Flip = !m_bLeftRight_Flip;
-				m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Flip_page_Right.mp3"), CHANNELID::CH30);
+				m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Flip_page_Right.mp3"), CHANNELID::CH30);
 			}
 		}
 	}
@@ -249,7 +249,7 @@ void CHint::Button_Action()
 	{
 		if (true == m_pPoliceButton->IsMouseHover() && POLICE != m_eCurrentDC)
 		{
-			m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Button_Click.mp3"), CHANNELID::CH30);
+			m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Button_Click.mp3"), CHANNELID::CH30);
 
 			m_eCurrentDC = POLICE;
 			m_pPoliceButton->Set_FontColor(XMVectorSet(1.0f, 1.f, 1.f, 1.f));
@@ -282,7 +282,7 @@ void CHint::Button_Action()
 
 		else if (true == m_pTutorialButton->IsMouseHover() && TUTORIAL != m_eCurrentDC)
 		{
-			m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Button_Click.mp3"), CHANNELID::CH30);
+			m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Button_Click.mp3"), CHANNELID::CH30);
 
 			m_eCurrentDC = TUTORIAL;
 

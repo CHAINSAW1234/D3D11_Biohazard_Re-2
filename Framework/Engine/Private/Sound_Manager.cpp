@@ -20,6 +20,8 @@ HRESULT CSound_Manager::Initialize()
 
 	ZeroMemory(m_pChannelArr, sizeof(FMOD_CHANNEL*) * SOUND_CHANNEL_MAX);
 
+	Initialize_SoundDesc_2D();
+
 	LoadSoundFile();
 	LoadSoundFile_Zombie();
 
@@ -169,6 +171,7 @@ void CSound_Manager::Change_Sound_2D(_uint iChannelIndex, const wstring& strSoun
 	eResult = FMOD_System_PlaySound(m_pSystem, pSoundDesc->pSound, nullptr, FALSE, &m_pChannelArr[pSoundDesc->iChannelIndex]);
 	if (FMOD_OK != eResult)
 		return;
+	FMOD_System_Update(m_pSystem);
 }
 
 void CSound_Manager::Change_Sound_3D(CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex)
@@ -194,6 +197,7 @@ void CSound_Manager::Change_Sound_3D(CTransform* pTransform, const wstring& strS
 	eResult = FMOD_System_PlaySound(m_pSystem, pSoundDesc->pSound, nullptr , FALSE, &m_pChannelArr[pSoundDesc->iChannelIndex]);
 	if (FMOD_OK != eResult)
 		return;
+	FMOD_System_Update(m_pSystem);
 }
 
 void CSound_Manager::Set_Volume_2D(_uint iChannelIndex, _float fVolume)
