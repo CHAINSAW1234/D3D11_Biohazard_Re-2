@@ -149,13 +149,16 @@ void CInteractProps::Late_Tick_PartObjects(_float fTimeDelta)
 	}
 }
 
-void CInteractProps::Camera_Active(_int ePart, _float3 vRatio)
+void CInteractProps::Camera_Active(_int ePart, _float3 vRatio, _float4 vPos)
 {
-	CPart_InteractProps* pPartLock = { nullptr };
-	pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[ePart]);
-	m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + XMVectorSetW(XMVector4Normalize(pPartLock->Get_World_Look_Dir()) * _vector { vRatio.x, vRatio.y, vRatio.z, 0.f }, 0.f));
-	m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
+	CPart_InteractProps* pPart = { nullptr };
+	pPart = static_cast<CPart_InteractProps*>(m_PartObjects[ePart]);
+	m_pCameraGimmick->SetPosition(pPart->Get_Pos_vector() + XMVectorSetW(XMVector4Normalize(pPart->Get_World_Look_Dir()) * _vector { vRatio.x, vRatio.y, vRatio.z, 1.f }, 0.f));
+	m_pCameraGimmick->LookAt(pPart->Get_Pos());
+	m_pCameraGimmick->SetPosition(XMVectorSetW(m_pCameraGimmickTransform->Get_State_Float4(CTransform::STATE_POSITION) + vPos, 1.f));
+
 }
+
 
 void CInteractProps::Reset_Camera()
 {

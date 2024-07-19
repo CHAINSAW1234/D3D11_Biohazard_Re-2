@@ -39,7 +39,7 @@ HRESULT CReaderMachine::Initialize(void* pArg)
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;
 
-
+	m_iNeedItem = blankkey01a;
 	return S_OK;
 }
 
@@ -92,13 +92,6 @@ void CReaderMachine::Tick(_float fTimeDelta)
 			m_iPush[2] = -1;
 			bCam = true;
 		}
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_F1))
-			m_bKey[0] = true;
-		
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_F2))
-			m_bKey[1] = true;
-		
-
 	}
 	else
 		m_eKeyInput = KEY_NOTHING;
@@ -306,6 +299,17 @@ HRESULT CReaderMachine::Bind_ShaderResources()
 	return S_OK;
 }
 
+void CReaderMachine::Do_Interact_Props()
+{
+
+	if(!m_bKey[0])
+		m_bKey[0] = true;
+	else
+		m_bKey[1] = true;
+
+
+}
+
 void CReaderMachine::Active()
 {
 	*m_pPlayerInteract = false;
@@ -313,8 +317,13 @@ void CReaderMachine::Active()
 	m_eMachine_Key_State = READERMACHINE_KEY_LIVE;
 
 	m_pCameraGimmick->Active_Camera(true);
-	//tabwindowÀÇ ÈûÀ» ºô·Á¾ß ÇÒ Â÷·ÊÀÔ´Ï´Ù
 	m_bCamera = true;
+
+	if (!m_bKey[0] || !m_bKey[1])
+		if (false == m_pGameInstance->IsPaused())
+			m_pPlayer->Interact_Props(this);
+
+
 }
 
 _float4 CReaderMachine::Get_Object_Pos()
