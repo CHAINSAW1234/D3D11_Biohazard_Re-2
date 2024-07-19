@@ -667,7 +667,7 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 		m_bDead = false;
 		m_eWindowType = PICK_UP_ITEM_WINDOW;
 		m_eSequence = POP_UP;
-		m_pPickedUp_Item = pPickedUp_Item;
+		m_pPickedUp_Item = pProp->Get_Item_Props();
 		m_isAlphaControl = true;
 
 		/*Item_Discription ¼¼ÆÃ*/

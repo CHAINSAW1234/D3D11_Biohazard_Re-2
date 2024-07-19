@@ -45,7 +45,15 @@ HRESULT CDoor::Initialize(void* pArg)
 		m_eType = DOOR_DOUBLE;
 
 	else if (m_tagPropDesc.strGamePrototypeName.find("056") != string::npos)
+	{
+		/*
+		if (m_tagPropDesc.strGamePrototypeName.find("iron") != string::npos)
+			sound_Map_sm40_door_m_iron_normal2_1
+		else
+			sound_Map_sm40_door_m_wood_normal2_1
+		*/
 		m_eType = DOOR_DUMMY;
+	}
 
 	else
 		m_eType = DOOR_ONE;
@@ -881,10 +889,7 @@ void CDoor::OneDoor_Tick(_float fTimeDelta)
 				m_eEmblemAnim_Type = (_ubyte)CEmblem_Door::EMBLEM_ANIM::STATIC_ANIM;
 			bCam = true;
 		}
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_F1))
-		{
-			m_eEmblemAnim_Type =(_ubyte)CEmblem_Door::EMBLEM_ANIM::OPEN_ANIM;
-		}
+	
 	}
 
 	if (m_bCamera && (bCam || static_cast<CEmblem_Door*>(m_PartObjects[PART_EMBLEM])->Get_Clear()))
@@ -1058,8 +1063,8 @@ void CDoor::OneDoor_Active()
 		m_eEmblemAnim_Type = (_uint)CEmblem_Door::EMBLEM_ANIM::START_ANIM;
 		m_pCameraGimmick->Active_Camera(true);
 		m_bCamera = true;
-		/*if (false == m_pGameInstance->IsPaused())
-			m_pPlayer->Interact_Props(this);*/
+		if (false == m_pGameInstance->IsPaused())
+			m_pPlayer->Interact_Props(this);
 	}
 	else
 	{

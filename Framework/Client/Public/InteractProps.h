@@ -135,10 +135,9 @@ public:
 	void												Tick_PartObjects(_float fTimeDelta);
 	void												Late_Tick_PartObjects(_float fTimeDelta);
 
-	void Camera_Active(_int ePart, _float3 vRatio);
-	
+	void												Camera_Active(_int ePart, _float3 vRatio, _float4 vPos = _float4{ 0.f,0.f,0.f,1.f });
 
-	void Reset_Camera();
+	void												Reset_Camera();
 	
 
 
@@ -177,10 +176,11 @@ public:
 	class CSelector_UI*									m_pSelector = { nullptr }; /* 사용 중인 Selector Obj */
 
 #pragma endregion
-#pragma region	For 창균오빠 - interact_Props()
+#pragma region	For 창균오빠 - interact_Props() && GET
 public:
 	_int												Get_NeedItem_Index() const { return m_iNeedItem; }
 	virtual void										Do_Interact_Props() { return ; }
+	CGameObject*										Get_Item_Props() { return this ; }
 
 public:
 	void												Set_OutOfControll(_bool isOutOfControll) { m_isOutOfControll = isOutOfControll; }

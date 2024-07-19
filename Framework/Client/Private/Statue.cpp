@@ -41,7 +41,9 @@ HRESULT CStatue::Initialize(void* pArg)
 
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;
-
+	//m_iNeedItem = statuebookhand;
+	m_iNeedItem = statuehand01a;
+	m_iItemIndex = kingscepter01a;
 	return S_OK;
 }
 
@@ -49,16 +51,41 @@ void CStatue::Tick(_float fTimeDelta)
 {
 	__super::Tick_Col();
 
+	if (m_bDead)
+	{
+		m_bItemDead = true;
+		m_PartObjects[PART_ITEM_SCEPTER]->Set_Dead(true);
+	}
+
 	if (!m_bVisible)
 		return;
+	
+	_bool bCam = { false };
 
-	if (DOWN == m_pGameInstance->Get_KeyState('K'))
+	if(m_bCamera)
 	{
-		CPart_InteractProps* pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_ITEM_SCEPTER]);
-		m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + pPartLock->GetLookDir_Vector() * 0.15f + _vector{ 0.05f,0.1f,0.f,0.f });
-		m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
+		if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
+			bCam = true;
+	}
+	if (m_isCamera_Reset)
+		bCam = true;
+	if (m_bCamera && (bCam || m_isCamera_Reset))
+	{
+		Reset_Camera();
+		m_bCamera = false;
+		m_isCamera_Reset = false;
+	}
 
-		m_pCameraGimmick->Active_Camera(true);
+
+	if (m_bCamera)
+	{
+		//CPart_InteractProps* pPartLock = static_cast<CPart_InteractProps*>(m_PartObjects[PART_ITEM_SCEPTER]);
+		//m_pCameraGimmick->SetPosition(pPartLock->Get_Pos_vector() + pPartLock->GetLookDir_Vector() * 0.15f + _vector{ 0.05f,0.1f,0.f,0.f });
+		//m_pCameraGimmick->LookAt(pPartLock->Get_Pos());
+
+		//m_pCameraGimmick->Active_Camera(true);
+		Camera_Active(PART_BODY, _float3(-0.5f, -1.f, -1.5f),_float4(0.f,1.5f,0.f,0.f));
+
 	}
 
 	/* 예시 코드 아이템 먹었을 때 연결할 거임 */
@@ -66,6 +93,13 @@ void CStatue::Tick(_float fTimeDelta)
 	if (true == m_isPut_HandItem)
 	{
 		m_eState = static_cast<_ubyte>(CStatue::STATE_PLAY);
+		m_bObtain = true;
+	}
+	
+	if (m_bCol[INTER_COL_NORMAL][COL_STEP1]&&!m_bItemDead)
+	{
+		if (*m_pPlayerInteract)
+			Active();
 	}
 
 	__super::Tick(fTimeDelta);
@@ -78,7 +112,6 @@ void CStatue::Late_Tick(_float fTimeDelta)
 		return;
 	if (!Visible())
 		return;
-
 	if (m_bRender == false)
 		return;
 	else
@@ -90,6 +123,21 @@ void CStatue::Late_Tick(_float fTimeDelta)
 		}
 
 		m_bRender = false;
+	}
+	
+	if (Activate_Col(Get_Collider_World_Pos(_float4(0.f, 0.f, 0.f, 1.f))))
+	{
+		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
+			Check_Col_Player(INTER_COL_NORMAL, COL_STEP1);
+		else
+			m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+	}
+	else
+	{
+		m_bCol[INTER_COL_NORMAL][COL_STEP0] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP1] = false;
+		m_bCol[INTER_COL_NORMAL][COL_STEP2] = false;
+
 	}
 	__super::Late_Tick(fTimeDelta);
 
@@ -105,6 +153,7 @@ HRESULT CStatue::Render()
 
 void CStatue::Do_Interact_Props()
 {
+	m_isPut_HandItem = true;
 }
 
 HRESULT CStatue::Add_Components()
@@ -133,9 +182,10 @@ HRESULT CStatue::Add_PartObjects()
 
 	/*Part_Body*/
 	CPartObject* pBodyObj = { nullptr };
-	CBody_Statue::PART_INTERACTPROPS_DESC BodyDesc = {};
+	CBody_Statue::STATUE_BODY_DESC BodyDesc = {};
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pState = &m_eState;
+	BodyDesc.pResetCamera = &m_isCamera_Reset;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
 	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(m_tagPropDesc.strObjectPrototype, &BodyDesc));
 	if (nullptr == pBodyObj)
@@ -214,7 +264,18 @@ void CStatue::Active()
 {
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
-
+	m_bCamera = true;
+	m_pCameraGimmick->Active_Camera(true);
+	if(m_eState != static_cast<_ubyte>(CStatue::STATE_PLAY))
+	{
+		if (false == m_pGameInstance->IsPaused())
+			m_pPlayer->Interact_Props(this);
+	}
+	else
+	{
+		if (m_bObtain&&!m_bItemDead)
+			m_pPlayer->PickUp_Item(this);
+	}
 }
 
 _float4 CStatue::Get_Object_Pos()
