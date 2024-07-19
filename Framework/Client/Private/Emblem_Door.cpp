@@ -82,11 +82,8 @@ void CEmblem_Door::Late_Tick(_float fTimeDelta)
 	}
 	m_pTransformCom->Rotation(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP), XMConvertToRadians(360.f));
 
-	_float4x4			mWorldMatrix = m_pTransformCom->Get_WorldMatrix();
-
-	mWorldMatrix._41 += 95.f;
-	mWorldMatrix._42 += 95.f;
-	mWorldMatrix._43 -= 5.f;
+	_matrix			mWorldMatrix = m_pTransformCom->Get_WorldMatrix();
+	mWorldMatrix.r[3] += _float4(95.f, 95.f, -5.f, 0.f);
 
 	_matrix			WorldMatrix = { };
 	switch (*m_pDoorState)

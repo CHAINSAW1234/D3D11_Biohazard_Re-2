@@ -993,8 +993,7 @@ void CPlayer::Reload()
 		Set_Spotlight(false);
 	}
 
-	m_pGameInstance->Change_Sound_3D(m_pTransformCom, );
-
+	
 }
 
 void CPlayer::Stop_UpperBody()
@@ -1018,11 +1017,11 @@ void CPlayer::Change_Sound_3D(const wstring& strSoundTag, _int iRandCnt, _uint i
 	wstring strRandStoundTag;
 	if (iRandCnt != 0) {
 		_int iRand = rand() % iRandCnt;
-		strRandStoundTag = strSoundTag + to_wstring(iRand);
+		strRandStoundTag = strSoundTag + to_wstring(iRand) + TEXT(".mp3");
 
 	}
 	else {
-		strRandStoundTag = strSoundTag;
+		strRandStoundTag = strSoundTag + TEXT(".mp3");
 	}
 	
 
@@ -1317,6 +1316,15 @@ void CPlayer::Update_Equip()
 				m_pWeapon->Set_RenderLocation(CWeapon::MOVE);
 				Change_Body_Animation_Hold(3, MOVETOHOLSTER);
 
+				switch (m_eEquip) {
+				case HG:
+					Change_Sound_3D(TEXT("Sound_Player_HG_HolsterToMove"), 0, 1);
+					break;
+				case STG:
+					Change_Sound_3D(TEXT("Sound_Player_STG_HolsterToMove"), 0, 1);
+					break;
+				}
+
 			}
 			else {
 				if (m_eState == SUBHOLD) {
@@ -1326,9 +1334,9 @@ void CPlayer::Update_Equip()
 					Set_Equip_Gun(&m_eTargetEquip);
 				}
 				Change_Body_Animation_Hold(3, HOLSTERTOMOVE);
+
+
 			}
-
-
 		}
 		else if (Get_Body_Model()->isFinished(3)) {
 			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.1f) {
@@ -1345,6 +1353,16 @@ void CPlayer::Update_Equip()
 				else {
 					Set_Equip_Gun(&m_eTargetEquip);
 				}
+
+				switch (m_eEquip) {
+				case HG:
+					Change_Sound_3D(TEXT("Sound_Player_HG_Holster_Fin"), 0, 1);
+					break;
+				case STG:
+					Change_Sound_3D(TEXT("Sound_Player_STG_Holster_Fin"), 0, 1);
+					break;
+				}
+
 				if (NONE == m_eEquip) {
 					Get_Body_Model()->Set_BlendWeight(3, 0.f, 5.f);
 				}

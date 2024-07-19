@@ -183,7 +183,7 @@ void CHair_Player::Late_Tick(_float fTimeDelta)
 
 	if (false != m_bRender)
 	{
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
