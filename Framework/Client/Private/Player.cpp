@@ -164,6 +164,24 @@ void CPlayer::Tick(_float fTimeDelta)
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, CameraPos);
 		CameraPos.y += CONTROLLER_GROUND_GAP;
 		m_pTransformCom_Camera->Set_State(CTransform::STATE_POSITION, CameraPos);
+
+
+		FMOD_3D_ATTRIBUTES			FmodDesc;
+		FmodDesc.forward.x = XMVectorGetX(m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK));
+		FmodDesc.forward.y = XMVectorGetY(m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK));
+		FmodDesc.forward.z = XMVectorGetZ(m_pTransformCom->Get_State_Vector(CTransform::STATE_LOOK));
+
+		FmodDesc.up.x = XMVectorGetX(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP));
+		FmodDesc.up.y = XMVectorGetY(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP));
+		FmodDesc.up.z = XMVectorGetZ(m_pTransformCom->Get_State_Vector(CTransform::STATE_UP));
+
+		FmodDesc.position.x = XMVectorGetX(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
+		FmodDesc.position.y = XMVectorGetY(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
+		FmodDesc.position.z = XMVectorGetZ(m_pTransformCom->Get_State_Vector(CTransform::STATE_POSITION));
+
+		FmodDesc.velocity = FMOD_VECTOR{ 0.f, 0.f, 0.f };
+
+		m_pGameInstance->Update_Listener(m_pTransformCom, _float3(0.f, 0.f, 0.f));
 	}
 
 	_vector			vMovedDirection = { XMLoadFloat3(&m_vRootTranslation) };

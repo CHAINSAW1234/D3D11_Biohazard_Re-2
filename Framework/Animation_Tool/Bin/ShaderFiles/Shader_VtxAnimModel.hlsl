@@ -320,7 +320,7 @@ PS_OUT PS_MAIN(PS_IN In)
 				}
 				else
 				{
-					if (distance < 0.3f)
+					if (distance < 0.5f)
 					{
 						if(g_Hair == false)
 							discard;

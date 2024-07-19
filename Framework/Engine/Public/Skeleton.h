@@ -13,6 +13,10 @@ struct Joint
 	_vector						original_rotation;
 	int32_t						parent_index = 0;
 	int32_t						parent_index_BreakPart = 0;
+	int32_t						parent_index_BreakPart_Cloth_Arm_L = 0;
+	int32_t						parent_index_BreakPart_Cloth_Arm_R = 0;
+	int32_t						parent_index_BreakPart_Cloth_Leg_L = 0;
+	int32_t						parent_index_BreakPart_Cloth_Leg_R = 0;
 
 	XMFLOAT3					bind_pos_ws(const XMMATRIX& model)
 	{

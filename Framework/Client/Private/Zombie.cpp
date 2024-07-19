@@ -143,6 +143,9 @@ HRESULT CZombie::Initialize(void* pArg)
 	if (FAILED(Add_RagDoll_OtherParts()))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 2)))
+		return E_FAIL;
+
 	//if (FAILED(Add_Components()))
 	//	return E_FAIL;
 
@@ -258,6 +261,8 @@ void CZombie::Tick(_float fTimeDelta)
 				it->SetCulling(false);
 		}
 	}
+
+	Update_Sounds();
 
 	__super::Tick(fTimeDelta);
 
@@ -1397,6 +1402,25 @@ void CZombie::Active_IK_Body(_bool isActive)
 	static_cast<CBody_Zombie*>(m_PartObjects[PART_BODY])->Active_IK(isActive);
 }
 
+void CZombie::Update_Sounds()
+{
+	/*_float4			vPosition = { m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION) };
+	memcpy(&m_SoundDesc.vPos, &vPosition, sizeof(_float3));
+
+	m_SoundDesc.fRange = _float2(3.f, 3.f);
+	m_SoundDesc.fVolume = 1.f;
+	m_SoundDesc.eMode = FMOD_3D | FMOD_3D_LINEARROLLOFF;
+	memcpy(&m_SoundDesc.vSpeedDir, &_float3(0.f, 0.f, 0.f), sizeof(_float3));
+
+	for (auto& Pair: m_SoundTags)
+	{	
+		_uint iChannelIndex = { Pair.first };
+		wstring strSoundTag = { Pair.second };
+
+		m_pGameInstance->Update_Sound(strSoundTag, m_SoundDesc);
+	}*/
+}
+
 _bool CZombie::Is_In_Location(LOCATION_MAP_VISIT eLocation)
 {
 	return eLocation == m_eLocation;
@@ -1538,6 +1562,16 @@ void CZombie::Update_Region_Datas()
 			break;
 		}
 	}
+}
+
+void CZombie::Change_Sound(const wstring& strSoundTag, _uint iSoundIndex)
+{
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, strSoundTag, iSoundIndex);
+}
+
+void CZombie::Stop_Sound(_uint iSoundIndex)
+{
+	m_pGameInstance->Stop_Sound_3D(m_pTransformCom, iSoundIndex);
 }
 
 void CZombie::SetRagdoll_StartPose()

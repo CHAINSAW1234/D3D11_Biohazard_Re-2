@@ -32,6 +32,20 @@ void CStand_Up_Zombie::Enter()
 	pBodyModel->Set_TotalLinearInterpolation(0.4f);
 	pBodyModel->Set_Loop(static_cast<_uint>(PLAYING_INDEX::INDEX_0), false);
 
+	m_pBlackBoard->Get_AI()->Stop_Sound(0);
+	m_pBlackBoard->Get_AI()->Stop_Sound(1);
+	_int			iRandom = { m_pGameInstance->GetRandom_Int(0, 3) };
+	if (0 == iRandom)
+		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_22.mp3"), 0);
+	if (1 == iRandom)
+		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_35.mp3"), 0);
+	if (2 == iRandom)
+		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_48.mp3"), 0);
+	if (3 == iRandom)
+		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_33.mp3"), 0);
+
+	m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_115.mp3"), 0);
+
 
 #ifdef _DEBUG
 
