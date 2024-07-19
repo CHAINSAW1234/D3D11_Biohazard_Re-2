@@ -85,6 +85,16 @@ void CClothes_Zombie::Late_Tick(_float fTimeDelta)
 {
 	__super::Late_Tick(fTimeDelta);
 
+	if (ZOMBIE_CLOTHES_TYPE::_SHIRTS == m_eClothesType)
+	{
+		int a = 0;
+	}
+
+	if (ZOMBIE_CLOTHES_TYPE::_PANTS == m_eClothesType)
+	{
+		int a = 0;
+	}
+
 	_float3			vTempTranslation = {};
 	if(true == *m_pRender)
 		m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vTempTranslation);

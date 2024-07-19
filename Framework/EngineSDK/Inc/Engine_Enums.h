@@ -101,4 +101,12 @@ namespace Engine
 
 	enum class MAP_FLOOR_TYPE { BASEMENT_2, BASEMENT_1, FLOOR_1, FLOOR_2, FLOOR_3, FLOOR_FREE, FLOOR_END };
 
+#pragma region For Sound 2D
+	enum CHANNEL_ID
+	{
+		CHID_BGM,
+		CHID_END
+	};
+#pragma endregion
+
 }

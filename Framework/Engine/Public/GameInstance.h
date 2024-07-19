@@ -267,6 +267,30 @@ public: /* For.m_pSound_Manager */
 	HRESULT									Stop_All();
 #pragma endregion
 
+#pragma region Sound_Manager_2D
+	int										VolumeUp_2D(_int eID, _float _vol);
+	int										VolumeDown_2D(_int eID, _float _vol);
+	int										BGMVolumeUp_2D(_float _vol, _int eID);
+	int										BGMVolumeDown_2D(_float _vol, _int eID);
+	int										Pause_2D(_int eID, _bool bPause);
+	void									PlayMySound_2D(wstring TypeKey, wstring FileKey, _int eID, _float _vol);
+	void									PlayBGM_2D(wstring FileKey, _int eID);
+	void									StopSound_2D(_int eID);
+	void									StopAll_2D();
+	void									ApplyLowPass_2D(_bool bSet, _int eID);
+	void									PlayLoopSound_2D(wstring TypeKey, wstring FileKey, _int eID, _float _vol);
+	void									SetVolume_2D(_int eID, _float _vol);
+	void									ApplyChorus_2D(_int eID);
+	void									ClearChorus_2D(_int eID);
+	void									MuteAll_2D();
+	void									PauseAll_2D();
+	void									ReplayAll_2D();
+	void									SetSlowMotionValue_2D(_bool _bSlowMotion);
+	void									ResetAllSlowMotion_2D();
+	_bool									IsPlaying_2D(_int eID, _bool* boolean);
+	void									PlaySoundEffect_2D(wstring TypeKey, wstring FileKey, _float Volume);
+#pragma endregion
+
 #pragma region Physics_Controller
 public:/*For Physics Controller*/
 	FORCEINLINE void						SetSimulate(_bool boolean)
@@ -488,6 +512,7 @@ private:
 	class CAnimation_Library*					m_pAnimation_Library = { nullptr };
 	class CCompute_Shader_Manager*				m_pCS_Manager = { nullptr };
 	class CEvent_Manager*						m_pEvent_Manager = { nullptr };
+	class CSound_Manager_2D*					m_pSound_Manager_2D = { nullptr };
 	/*for physics*/
 	_bool										m_bSimulate = { false };
 
