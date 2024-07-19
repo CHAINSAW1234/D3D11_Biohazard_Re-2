@@ -40,18 +40,6 @@ HRESULT CHead_Player::Initialize(void* pArg)
 	m_pModelCom->Change_Animation(0, TEXT("Default"), 0);
 
 	m_pModelCom->Hide_Mesh("LOD_1_Group_0_Sub_2__pl0050_Eyebrowse_Mat_mesh0001", true);
-	/*CModel::ANIM_PLAYING_DESC		AnimDesc;
-	AnimDesc.iAnimIndex = 0;
-	AnimDesc.isLoop = true;
-	_uint		iNumBones = { static_cast<_uint>(m_pModelCom->Get_BoneNames().size()) };
-	list<_uint>		iBoneIndices;
-	for (_uint i = 0; i < iNumBones; ++i)
-	{
-		iBoneIndices.emplace_back(i);
-	}
-	AnimDesc.TargetBoneIndices = iBoneIndices;
-
-	m_pModelCom->Set_Animation_Blend(AnimDesc, 0);*/
 
 	m_bDecalRender = true;
 	m_pModelCom->Init_Decal(LEVEL_GAMEPLAY);
@@ -88,8 +76,6 @@ void CHead_Player::Late_Tick(_float fTimeDelta)
 
 	_float3				vDirection = { };
 	m_pModelCom->Play_Animations(m_pParentsTransform, fTimeDelta, &vDirection);
-	//	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
-	//	m_pModelCom->Play_Pose(m_pParentsTransform, fTimeDelta);
 
 	if (false != m_bRender)
 	{
@@ -118,8 +104,7 @@ HRESULT CHead_Player::Render()
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
-		//	if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
-		//		return E_FAIL;
+
 
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
 		{
