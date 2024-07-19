@@ -169,7 +169,7 @@ void CHint::Hoverd_Highlight()
 					if (m_pHoveredDirectory != m_vecDirectory[i])
 					{
 						m_pHoveredDirectory = m_vecDirectory[i];
-						m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+						m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), 0.5f);
 					}
 				}
 			}
@@ -191,7 +191,7 @@ void CHint::Hoverd_Highlight()
 					if (m_pHoveredDirectory != m_vecDirectory[i])
 					{
 						m_pHoveredDirectory = m_vecDirectory[i];
-						m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+						m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), 0.5f);
 					}
 				}
 			}
@@ -211,12 +211,12 @@ void CHint::Change_Display()
 			if (false == m_bLeftRight_Flip)
 			{
 				m_bLeftRight_Flip = !m_bLeftRight_Flip;
-				m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Flip_page_Left.mp3"), CHANNELID::CH30);
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Flip_page_Left.mp3"), 0.5f);
 			}
 			else
 			{
 				m_bLeftRight_Flip = !m_bLeftRight_Flip;
-				m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Flip_page_Right.mp3"), CHANNELID::CH30);
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Flip_page_Right.mp3"), 0.5f);
 			}
 		}
 	}
@@ -232,13 +232,13 @@ void CHint::Change_Display()
 			if (false == m_bLeftRight_Flip)
 			{
 				m_bLeftRight_Flip = !m_bLeftRight_Flip;
-				//m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Flip_page_Left.mp3"), CHANNELID::CH30);
+				//m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Flip_page_Left.mp3"), 0.5f);
 				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Flip_page_Left.mp3"), 0.5f);
 			}
 			else
 			{
 				m_bLeftRight_Flip = !m_bLeftRight_Flip;
-				//m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Flip_page_Right.mp3"), CHANNELID::CH30);
+				//m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Flip_page_Right.mp3"), 0.5f);
 				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Flip_page_Left.mp3"), 0.5f);
 			}
 		}

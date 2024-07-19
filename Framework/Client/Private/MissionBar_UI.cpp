@@ -330,7 +330,7 @@ void CMissionBar_UI::Mission_Start()
     if (!m_pMission_ColliderQueue.empty())
         m_pMission_ColliderQueue.pop();
 
-    m_pGameInstance->Change_Sound_2D(CHANNELID::CH30, TEXT("ui_ingame_media.bnk.2_46.mp3"));
+    //  m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), CHANNELID::CH30, TEXT("ui_ingame_media.bnk.2_46.mp3"));
 
     /*Client */
     m_isFontStart = true;
