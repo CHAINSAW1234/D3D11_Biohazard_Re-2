@@ -32,7 +32,6 @@ public :
 		m_pTextureCom = m_mapDocumentTextures[m_eCurIRT][m_iCurTexNum];
 	}
 
-
 private:
 	class CHint_Display_Background* m_pBackground = { nullptr };
 

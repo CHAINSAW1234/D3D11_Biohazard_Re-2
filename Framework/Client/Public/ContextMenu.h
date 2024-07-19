@@ -29,7 +29,9 @@ public:
 
 	INVENTORY_EVENT Get_InventoryEvent() const {
 		return m_eContextEvent;
-	}
+	}		
+
+	virtual void		Set_Dead(_bool bDead) override;
 
 private:
 	void Set_EventbyTexture(_uint iTextureNum);

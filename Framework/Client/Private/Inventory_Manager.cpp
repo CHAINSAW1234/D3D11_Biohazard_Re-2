@@ -199,7 +199,6 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 				{
 					m_eInven_Manager_State = CONTEXTUI_SELECT;
 					m_eTaskSequence = SETING;
-					m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Context_Open.mp3"), CHANNELID::CH30);
 				}
 			}
 
@@ -233,12 +232,32 @@ void CInventory_Manager::EQUIP_ITEM_Operation(_float fTimeDelta)
 {
 	m_pSelected_ItemUI->Set_isEquiped(true);
 
+	ITEM_NUMBER eNumber = m_pSelected_ItemUI->Get_ItemNumber();
+
 	for (_uint i = 0; i < 5; i++)
 	{
 		if (ITEM_NUMBER_END == m_eEquipedItem[i]) {
-			m_eEquipedItem[i] = m_pSelected_ItemUI->Get_ItemNumber();
+			m_eEquipedItem[i] = eNumber;
 			break;
 		}
+	}
+
+	switch (eNumber)
+	{
+	case Client::HandGun:
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_EquipHandGun.mp3"), CHANNELID::CH30);
+		break;
+	case Client::ShotGun:
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_EquipShotgun.mp3"), CHANNELID::CH30);
+		break;
+	case Client::Flash_Bomb:
+		break;
+	case Client::Grenade:
+		break;
+
+
+	default:
+		break;
 	}
 
 	m_pSelected_ItemUI->Set_Dead(false);
@@ -250,14 +269,35 @@ void CInventory_Manager::UNEQUIP_ITEM_Operation(_float fTimeDelta)
 {
 	m_pSelected_ItemUI->Set_isEquiped(false);
 
+	ITEM_NUMBER eNumber = m_pSelected_ItemUI->Get_ItemNumber();
+
 	for (_uint i = 0; i < 5; i++)
 	{
-		if (m_eEquipedItem[i] == m_pSelected_ItemUI->Get_ItemNumber())
+		if (m_eEquipedItem[i] == eNumber)
 		{
 			m_eEquipedItem[i] = ITEM_NUMBER_END;
 			break;
 		}
 	}
+
+	switch (eNumber)
+	{
+	case Client::HandGun:
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_EquipHandGun.mp3"), CHANNELID::CH30);
+		break;
+	case Client::ShotGun:
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_EquipShotgun.mp3"), CHANNELID::CH30);
+		break;
+	case Client::Flash_Bomb:
+		break;
+	case Client::Grenade:
+		break;
+
+
+	default:
+		break;
+	}
+
 	m_pSelected_ItemUI->Set_Dead(false);
 	m_pSelected_ItemUI = nullptr;
 	m_eInven_Manager_State = EVENT_IDLE;
@@ -491,7 +531,7 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 		break;
 	}
 
-	case Client::redherb01a: { //내기억으론 이게 단독사용불가
+	case Client::redherb01a: { //내기억으론 이게 단독사용불가																																											
 		break;
 	}
 
@@ -501,42 +541,42 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 
 	case Client::herbsgg01a: {
 		pPlayer->Set_Hp(pPlayer->Get_Hp() + 3);
-		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH31);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH30);
 		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
 		break;
 	}
 
 	case Client::herbsgr01a: {
 		pPlayer->Set_Hp(pPlayer->Get_Hp() + 3);
-		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH31);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH30);
 		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
 		break;
 	}
 
 	case Client::herbsgb01a: {
 		pPlayer->Set_Hp(pPlayer->Get_Hp() + 1);
-		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH31);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH30);
 		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
 		break;
 	}
 
 	case Client::herbsggb01a: {
 		pPlayer->Set_Hp(pPlayer->Get_Hp() + 3);
-		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH31);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH30);
 		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
 		break;
 	}
 
 	case Client::herbsggg01a: {
 		pPlayer->Set_Hp(5);
-		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH31);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH30);
 		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
 		break;
 	}
 
 	case Client::herbsgrb01a: {
 		pPlayer->Set_Hp(5);
-		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH31);
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH30);
 		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
 		break;
 	}
@@ -695,6 +735,54 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 		break;
 	}
 
+}
+
+void CInventory_Manager::COMBINED_ITEM_SoundPlay()
+{
+	if (nullptr == m_pSelected_ItemUI)
+		return;
+
+	ITEM_NUMBER eItemNum = m_pSelected_ItemUI->Get_ItemNumber();
+	switch (eItemNum)
+	{
+	case Client::herbsgb01a:
+		break;
+	case Client::herbsggb01a:
+		break;
+	case Client::herbsggg01a:
+		break;
+	case Client::herbsgrb01a:
+		break;
+	case Client::herbsrb01a:
+		break;
+
+	case Client::handgun_bullet01a:
+		break;
+	case Client::shotgun_bullet01a:
+		break;
+
+
+	
+	case Client::HandGun:
+		break;
+	case Client::ShotGun:
+		break;
+	case Client::Flash_Bomb:
+		break;
+	case Client::Grenade:
+		break;
+	case Client::vp70stock:
+		break;
+	case Client::portablesafe:
+		break;
+	case Client::statuebookhand:
+		break;
+	case Client::ITEM_NUMBER_END:
+		break;
+	default:
+		break;
+	}
+	
 }
 
 void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
@@ -1078,6 +1166,7 @@ void CInventory_Manager::INTERACT_ITEM_Operation(_float fTimeDelta)
 			{
 				Find_Slot(_float2(m_pSelected_ItemUI->GetPosition().x, m_pSelected_ItemUI->GetPosition().y))->Set_IsFilled(false);
 			}
+			INTERACT_ITEM_SoundPlay();
 			m_pSelected_ItemUI = nullptr;
 			break;
 		}
@@ -1172,6 +1261,50 @@ void CInventory_Manager::Deactivation(CItem_UI* pExcludeObj)
 	
 }
 
+void CInventory_Manager::INTERACT_ITEM_SoundPlay()
+{
+	ITEM_NUMBER eItemNum = m_pSelected_ItemUI->Get_ItemNumber();
+	switch (eItemNum)
+	{
+	case Client::woodbarricade01a:
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Interect_Wood.mp3"), CHANNELID::CH30);
+		break;
+	case Client::blastingfuse01a:
+		break;
+	case Client::_9vbattery01a:
+		break;
+	case Client::unicornmedal01a:
+		break;
+	case Client::spadekey01a:
+		break;
+	case Client::cardkeylv101a:
+		break;
+	case Client::cardkeylv201a:
+		break;
+	case Client::valvehandle01a:
+		break;
+	case Client::kingscepter01a:
+		break;
+	case Client::virginheart01a:
+		break;
+	case Client::blankkey01a:
+		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Interact_blankkey.mp3"), CHANNELID::CH30);
+		break;
+	case Client::virginmedal01a:
+		break;
+	case Client::diakey01a:
+		break;
+	case Client::virginmedal02a:
+		break;
+	case Client::statuebookhand:
+		break;
+	case Client::ITEM_NUMBER_END:
+		break;
+	default:
+		break;
+	}
+}
+
 void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 {
 	if (false == bInput)
@@ -1225,7 +1358,6 @@ ITEM_NUMBER CInventory_Manager::Get_Selected_ItemNum()
 {
 	if (COMBINED_ITEM == m_eInven_Manager_State)
 		return m_CombineResources[RESULT_NUM];
-
 
 	if (nullptr != m_pSelected_ItemUI)
 	{
@@ -1835,6 +1967,7 @@ _uint CInventory_Manager::PickUpItem_Quantity_Classify(ITEM_NUMBER eItemNum)
 
 void CInventory_Manager::Set_ItemRecipe()
 {
+#pragma region 허브 조합식
 	Add_Recipe(greenherb01a, greenherb01a,	herbsgg01a);
 	Add_Recipe(greenherb01a, redherb01a,	herbsgr01a);
 	Add_Recipe(greenherb01a, blueherb01a,	herbsgb01a);
@@ -1857,13 +1990,38 @@ void CInventory_Manager::Set_ItemRecipe()
 	Add_Recipe(herbsgb01a,   redherb01a,    herbsgrb01a);
 
 	Add_Recipe(herbsrb01a,   greenherb01a,  herbsgrb01a);
+#pragma endregion
 
+#pragma region 탄알 조합식
 	Add_Recipe(handgun_bullet01a, handgun_bullet01a, handgun_bullet01a);
-
 	Add_Recipe(shotgun_bullet01a, shotgun_bullet01a, shotgun_bullet01a);
+#pragma endregion
 
+#pragma region 조각상 기믹
 	Add_Recipe(statuehand01a, statuebook01a, statuebookhand);
 	Add_Recipe(statuebook01a, statuehand01a, statuebookhand);
+#pragma endregion
+
+#pragma region 권총 조합식
+	Add_Recipe(HandGun, vp70stock, HandGun);
+	Add_Recipe(HandGun, vp70powerup, HandGun);
+	Add_Recipe(HandGun, vp70longmagazine, HandGun);
+
+	Add_Recipe(vp70stock, HandGun, HandGun);
+	Add_Recipe(vp70powerup, HandGun, HandGun);
+	Add_Recipe(vp70longmagazine, HandGun, HandGun);
+#pragma endregion
+
+#pragma region 샷건 조합식
+	Add_Recipe(ShotGun, shotgunpartsstock_00, ShotGun);
+
+	Add_Recipe(ShotGun, shotgunpartsbarrel, ShotGun);
+
+	Add_Recipe(shotgunpartsstock_00, ShotGun, ShotGun);
+
+	Add_Recipe(shotgunpartsbarrel, ShotGun, ShotGun);
+#pragma endregion
+
 }
 
 void CInventory_Manager::Add_Recipe(ITEM_NUMBER eKeyItemNum, ITEM_NUMBER eCombinableItemNum, ITEM_NUMBER eResultItemNum)

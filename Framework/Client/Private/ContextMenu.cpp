@@ -181,6 +181,8 @@ void CContextMenu::Hide_Operation(_float fTimeDelta)
 
 void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAppearPos, _float3 fArrivalPos)
 {
+	m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Context_Open.mp3"), CHANNELID::CH30);
+
 	m_bDead = false;
 	m_fAppearPos = fAppearPos;
 	m_fArrivalPos = fArrivalPos;
@@ -386,6 +388,13 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 	{
 		m_vecChildUI[i]->Set_Dead(false);
 	}
+}
+
+void CContextMenu::Set_Dead(_bool bDead)
+{
+	__super::Set_Dead(bDead);
+
+	m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Context_Close.mp3"), CHANNELID::CH30);
 }
 
 void CContextMenu::Set_EventbyTexture(_uint iTextureNum)

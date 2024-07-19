@@ -66,9 +66,17 @@ HRESULT CItem_Mesh_Viewer::Initialize(void* pArg)
 
 	Safe_AddRef(m_pCameraFree);
 
-	//m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f); //테스트 코드
-
 	return S_OK;
+}
+
+void CItem_Mesh_Viewer::Start()
+{
+	if (nullptr == m_vecModelCom[HandGun] || nullptr == m_vecModelCom[ShotGun])
+		return;
+
+
+
+	
 }
 
 void CItem_Mesh_Viewer::Tick(_float fTimeDelta)

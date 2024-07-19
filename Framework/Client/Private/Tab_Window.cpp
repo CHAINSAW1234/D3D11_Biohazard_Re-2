@@ -85,9 +85,6 @@ void CTab_Window::Start()
 
 	for (auto& iter : *pUILayer)
 	{
-
-		// if(&&!bReadItemUI)
-
 		CRead_Item_UI* pRead = dynamic_cast<CRead_Item_UI*>(iter);
 		if (pRead != nullptr && pRead->Get_UI_TYPE() == CRead_Item_UI::READ_UI_TYPE::INTRODUCE_READ)
 		{
@@ -117,6 +114,8 @@ void CTab_Window::Start()
 			Safe_AddRef(m_pHotKey);
 		}
 	}
+
+	m_pItem_Mesh_Viewer->Start();
 
 	m_pHint->Start();
 }
@@ -495,7 +494,6 @@ void CTab_Window::INTERACT_PROPS_Operation(_float fTimeDelta)
 			m_eSequence = UI_IDLE;
 			m_fCurTime = 0.f;
 			m_eSequence = STATE_END;
-			USE_INTERACT_ITEM_SoundPlay();
 			m_pPickedUp_Item = nullptr;
 			m_pGameInstance->Set_IsPaused(false);
 			CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
@@ -611,29 +609,6 @@ _bool CTab_Window::IsInputTab()
 		isInputTab = false;
 
 	return isInputTab;
-}
-
-void CTab_Window::USE_INTERACT_ITEM_SoundPlay()
-{
-	if (nullptr == m_pPickedUp_Item)
-		return;
-
-	_int iPickedUpItemNum = static_cast<CInteractProps*>(m_pPickedUp_Item)->Get_iItemIndex();
-	ITEM_NUMBER ePickedItemNum = static_cast<ITEM_NUMBER>(iPickedUpItemNum);
-
-	switch (ePickedItemNum)
-	{
-	case Client::woodbarricade01a:
-		m_pGameInstance->Play_Sound_Again(TEXT("sound_ui_Interect_Wood.mp3"), CHANNELID::CH30);
-		break;
-	
-	case Client::statuebookhand:
-
-		break;
-
-	default:
-		break;
-	}
 }
 
 void CTab_Window::OnOff_EventHandle()

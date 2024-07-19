@@ -296,6 +296,8 @@ void CItem_UI::Set_Activ_ItemUI(_bool Active)
 		m_isActive = false;
 		Frame_Change_ValueColor(1);
 
+
+
 		//m_mapPartUI[EQUIP_DISPLAY]->Frame_Change_ValueColor(1);
 		m_mapPartUI[EQUIP_DISPLAY]->Set_Text_Color(0, XMVectorSet(0.6f, 0.6f, 0.6f, 1.f));
 		m_mapPartUI[HOTKEY_DISPLAY]->Set_Text_Color(0, XMVectorSet(0.6f, 0.6f, 0.6f, 1.f));

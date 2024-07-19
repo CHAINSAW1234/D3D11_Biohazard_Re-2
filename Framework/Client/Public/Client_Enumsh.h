@@ -436,3 +436,19 @@ namespace Client
 		DEFAULT
 	};
 }
+
+
+
+
+
+//HandGunvp70stock,								//HandGun + vp70stock
+//HandGunvp70powerup,								//HandGun + vp70powerup
+//HandGunvp70longmagazine,						//HandGun + vp70longmagazine
+//HandGunvp70stockvp70powerup,					//HandGun + vp70stock + vp70powerup
+//HandGunvp70stockvp70longmagazine,				//HandGun + vp70stock + vp70longmagazine
+//HandGunvp70powerupvp70longmagazine,				//HandGun + vp70powerup + vp70longmagazine
+//HandGunvp70stockvp70powerupvp70longmagazine,	//HandGun + vp70stock + vp70powerup + vp70longmagazine
+
+//ShotGunshotgunpartsstock_00,					//ShotGun + shotgunpartsstock_00
+//ShotGunshotgunpartsbarrel,						//ShotGun + shotgunpartsbarrel
+//ShotGunshotgunpartsstock_00shotgunpartsbarrel,	//ShotGun + shotgunpartsstock_00 + shotgunpartsbarrel
