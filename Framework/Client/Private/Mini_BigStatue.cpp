@@ -479,10 +479,8 @@ void CMini_BigStatue::Unicon_Statue(_float fTimeDelta)
 
 void CMini_BigStatue::Woman_Statue(_float fTimeDelta)
 {
-	{
-		m_fAdditionalHeight_D -= 5.f * fTimeDelta;
-		m_fAdditionalHeight += 5.f * fTimeDelta;
-	}
+	m_fAdditionalHeight_D -= 5.f * fTimeDelta;
+	m_fAdditionalHeight += 5.f * fTimeDelta;
 
 	/* Rotation */
 	_matrix			TranslationMatrix1 = { XMMatrixTranslation(0.f, m_fAdditionalHeight_D, m_fAdditionalZ) };

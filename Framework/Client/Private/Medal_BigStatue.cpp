@@ -49,7 +49,6 @@ HRESULT CMedal_BigStatue::Initialize(void* pArg)
 
 void CMedal_BigStatue::Tick(_float fTimeDelta)
 {
-	m_bDead = true;
 	if(m_eMedelType == MEDAL_TYPE::MEDAL_UNICORN)
 		m_pTransformCom->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(180.f));
 
