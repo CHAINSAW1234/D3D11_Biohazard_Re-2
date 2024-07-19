@@ -200,6 +200,7 @@ private:
 	ANIMSET_MOVE								m_eAnimSet_Move = { FINE };
 	ANIMSET_HOLD								m_eAnimSet_Hold = { HOLD_HG };
 
+	_bool										m_isReloadedSpotLight = { false };	// reload중 라이트 끄기
 	_bool										m_isBite = { false };
 	_int										m_iBiteAnimIndex = { -1 };
 	_float4x4									m_vBiteInterpolateMatrix;

@@ -985,6 +985,13 @@ void CPlayer::Reload()
 		Get_Weapon_Model()->Change_Animation(0, TEXT("Default"), 2);
 		Get_Weapon_Model()->Set_TrackPosition(0, 0.f);
 	}
+
+	if (Get_Equip() == STG&& m_isSpotlight) {
+		m_isReloadedSpotLight = true;
+		Set_Spotlight(false);
+	}
+
+
 }
 
 void CPlayer::Stop_UpperBody()
@@ -1234,6 +1241,12 @@ void CPlayer::Update_KeyInput_Reload()
 
 			m_pTabWindow->UseItem(Get_Equip_As_ITEM_NUMBER(), -iNumBullet);
 			m_pTabWindow->UseItem(eItem, iNumBullet);
+
+			if (m_isReloadedSpotLight) {
+				m_isReloadedSpotLight = false;
+				Set_Spotlight(true);
+			}
+
 			NotifyObserver();
 
 		}

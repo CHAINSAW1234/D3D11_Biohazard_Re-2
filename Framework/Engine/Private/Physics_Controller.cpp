@@ -1282,63 +1282,217 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 	PxVec3 PxvOrigin = Float4_To_PxVec(vOrigin);
 	PxVec3 PxvDir = Float4_To_PxVec(vDir);
 
-	//const PxU32 maxHits = 10;
-	//PxRaycastHit hitBuffer[maxHits];
-	//PxRaycastBufferN<maxHits> hit;
-
-	//PxQueryFilterData filterData;
-	//filterData.flags = PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC;
-
-	//bool Status = m_Scene->raycast(PxvOrigin, PxvDir.getNormalized(), 50.f, hit, PxHitFlag::eDEFAULT, filterData);
-
 	const PxU32 maxHits = 10;
-	PxSweepHit hitBuffer[maxHits];
-	PxSweepBufferN<maxHits> hit;
+	PxRaycastHit hitBuffer[maxHits];
+	PxRaycastBufferN<maxHits> hit;
 
 	PxQueryFilterData filterData;
 	filterData.flags = PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC;
 
-	PxSphereGeometry sphereGeometry(0.05f); // 반지름이 1.0인 구
+	auto Filter = QueryFilterCallback_Ray();
 
-	bool Status = m_Scene->sweep(
-		sphereGeometry,          // 지오메트리 형태
-		PxTransform(PxvOrigin),  // 시작 위치
-		PxvDir.getNormalized(),  // 방향 벡터
-		50.f,                    // 최대 거리
-		hit,                     // 결과를 저장할 버퍼
-		PxHitFlag::eDEFAULT | PxHitFlag::ePRECISE_SWEEP,     // 히트 플래그
-		filterData               // 필터 데이터
-	);
+	bool Status = m_Scene->raycast(PxvOrigin, PxvDir.getNormalized(), 50.f, hit,PxHitFlag::eDEFAULT | PxHitFlag::eNORMAL, filterData, &Filter);
+
+	_vector OriginVector = XMLoadFloat4(&vOrigin);
 
 	if (Status)
 	{
 		for (PxU32 i = 0; i < hit.getNbTouches(); ++i)
 		{
-			//const PxRaycastHit& hit_Obj = hit.getTouch(i);
-			const PxSweepHit& hit_Obj = hit.getTouch(i);
+			const PxRaycastHit& hit_Obj = hit.getTouch(i);
 
 			PxShape* shape = hit_Obj.shape;
 			PxRigidActor* actor = hit_Obj.actor;
 
 			PxFilterData filterData = shape->getSimulationFilterData();
 
-			/*if (filterData.word0 & COLLISION_CATEGORY::STATIC_MESH)
+			if (filterData.word0 & COLLISION_CATEGORY::COLLIDER)
 			{
-				*IsHit_Props = true;
+				COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData.word3;
+
+				_float fDist = XMVectorGetX(XMVector3Length(OriginVector - XMLoadFloat4(&PxVec_To_Float4_Coord(hit_Obj.position))));
+				if (fDist < m_fMinDist)
+				{
+					m_fMinDist = fDist;
+					m_iMinPointIndex = i;
+					m_bRagdollHit = true;
+					m_bHit = true;
+				}
+			}
+
+			if (filterData.word0 & COLLISION_CATEGORY::RAGDOLL)
+			{
+				COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData.word3;
+
+				_float fDist = XMVectorGetX(XMVector3Length(OriginVector - XMLoadFloat4(&PxVec_To_Float4_Coord(hit_Obj.position))));
+				if (fDist < m_fMinDist)
+				{
+					m_fMinDist = fDist;
+					m_iMinPointIndex = i;
+					m_bRagdollHit = true;
+					m_bHit = true;
+				}
+			}
+		}
+
+		if (m_bHit == false)
+		{
+			m_fMinDist = 9999.f;
+			m_bHit = false;
+			m_bRagdollHit = false;
+			return false;
+		}
+
+		const PxRaycastHit& hit_Obj = hit.getTouch(m_iMinPointIndex);
+
+		PxShape* shape = hit_Obj.shape;
+		PxRigidActor* actor = hit_Obj.actor;
+
+		PxFilterData filterData = shape->getSimulationFilterData();
+
+		if (filterData.word0 & COLLISION_CATEGORY::COLLIDER)
+		{
+			COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData.word3;
+
+			*pBlockPoint = PxVec_To_Float4_Coord(hit_Obj.position);
+
+			if (m_vecCharacter_Controller[filterData.word2] && m_vecCharacter_Controller[filterData.word2]->IsReleased() == false)
+			{
+				auto vDelta = Float4_Normalize(*pBlockPoint - vOrigin);
+				vDelta.y = 0.f;
+
+				m_vecCharacter_Controller[filterData.word2]->Set_Hit(true);
+
+				if (bDecalRay)
+				{
+					m_vecCharacter_Controller[filterData.word2]->Set_Force(vDelta, eType);
+					m_vecCharacter_Controller[filterData.word2]->SetBlockPoint(*pBlockPoint);
+					m_vecCharacter_Controller[filterData.word2]->SetHitNormal(PxVec_To_Float4_Coord(hit_Obj.normal));
+					m_vecCharacter_Controller[filterData.word2]->Set_Hit_Decal_Ray(true);
+				}
 
 				if (bBigAttack)
 				{
-					m_vecBlockPoints_Props.push_back(PxVec_To_Float4_Coord(hit_Obj.position));
-					m_vecBlockNormals_Props.push_back(PxVec_To_Float4_Dir(hit_Obj.normal));
+					m_vecCharacter_Controller[filterData.word2]->SetBigAttack(true);
+					m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count_STG();
+					m_vecCharacter_Controller[filterData.word2]->Insert_Hit_Point_STG(*pBlockPoint);
+					m_vecCharacter_Controller[filterData.word2]->Insert_Hit_Normal_STG(PxVec_To_Float4_Coord(hit_Obj.normal));
+					m_vecCharacter_Controller[filterData.word2]->Insert_Collider_Type(eType);
 				}
 				else
 				{
-					*pBlockNormal = PxVec_To_Float4_Dir(hit_Obj.normal);
-					*pBlockPoint = PxVec_To_Float4_Coord(hit_Obj.position);
+					m_vecCharacter_Controller[filterData.word2]->SetBigAttack(false);
 				}
 
+				//if (eType == COLLIDER_TYPE::HEAD)
+				{
+					m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count();
+				}
+
+				if (bBigAttack)
+				{
+					if (m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() >= 15)
+					{
+						/*Ragdoll을 구동하려면 살려야 함.*/
+						m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
+						m_vecCharacter_Controller[filterData.word2]->SetDead(true);
+						m_vecCharacter_Controller[filterData.word2]->Set_Force(vDelta, eType);
+					}
+				}
+				else
+				{
+					if (m_vecCharacter_Controller[filterData.word2]->Get_Hit_Count() >= 15)
+					{
+						/*Ragdoll을 구동하려면 살려야 함.*/
+						m_vecCharacter_Controller[filterData.word2]->SetReleased(true);
+						m_vecCharacter_Controller[filterData.word2]->SetDead(true);
+						m_vecCharacter_Controller[filterData.word2]->Set_Force(vDelta, eType);
+					}
+				}
+
+				m_fMinDist = 9999.f;
+				m_bHit = false;
+				m_bRagdollHit = false;
 				return true;
-			}*/
+			}
+
+
+			m_fMinDist = 9999.f;
+			m_bHit = false;
+			m_bRagdollHit = false;
+			return false;
+		}
+
+		if (filterData.word0 & COLLISION_CATEGORY::RAGDOLL)
+		{
+			COLLIDER_TYPE eType = (COLLIDER_TYPE)(_int)filterData.word3;
+
+			*pBlockPoint = PxVec_To_Float4_Coord(hit_Obj.position);
+
+			PxRigidDynamic* dynamicActor = actor->is<PxRigidDynamic>();
+			if (dynamicActor)
+			{
+				auto vDelta = Float4_Normalize(*pBlockPoint - vOrigin);
+				vDelta.y = 0.f;
+
+				auto fPower = rand() % 100;
+
+				vDelta = vDelta * (fPower + 50.f);
+
+				PxVec3 pxForce = PxVec3(vDelta.x, vDelta.y, vDelta.z);
+				dynamicActor->addForce(pxForce, PxForceMode::eIMPULSE);
+				m_vecCharacter_Controller[filterData.word2]->Set_Hit(true);
+
+				if (bDecalRay)
+				{
+					m_vecCharacter_Controller[filterData.word2]->SetBlockPoint(*pBlockPoint);
+					m_vecCharacter_Controller[filterData.word2]->SetHitNormal(PxVec_To_Float4_Coord(hit_Obj.normal));
+					m_vecCharacter_Controller[filterData.word2]->Set_Hit_Decal_Ray(true);
+				}
+
+				if (bBigAttack)
+				{
+					m_vecCharacter_Controller[filterData.word2]->SetBigAttack(true);
+					m_vecCharacter_Controller[filterData.word2]->Increase_Hit_Count_STG();
+					m_vecCharacter_Controller[filterData.word2]->Insert_Hit_Point_STG(*pBlockPoint);
+					m_vecCharacter_Controller[filterData.word2]->Insert_Hit_Normal_STG(PxVec_To_Float4_Coord(hit_Obj.normal));
+					m_vecCharacter_Controller[filterData.word2]->Insert_Collider_Type(eType);
+				}
+				else
+				{
+					m_vecCharacter_Controller[filterData.word2]->SetBigAttack(false);
+				}
+			}
+
+			m_fMinDist = 9999.f;
+			m_bHit = false;
+			m_bRagdollHit = false;
+
+			return true;
+		}
+
+		m_fMinDist = 9999.f;
+		m_bHit = false;
+		m_bRagdollHit = false;
+		return false;
+	}
+
+	m_fMinDist = 9999.f;
+	m_bHit = false;
+	m_bRagdollHit = false;
+	return false;
+
+#pragma region 구버전
+	if (Status)
+	{
+		for (PxU32 i = 0; i < hit.getNbTouches(); ++i)
+		{
+			const PxRaycastHit& hit_Obj = hit.getTouch(i);
+
+			PxShape* shape = hit_Obj.shape;
+			PxRigidActor* actor = hit_Obj.actor;
+
+			PxFilterData filterData = shape->getSimulationFilterData();
 
 			if (filterData.word0 & COLLISION_CATEGORY::COLLIDER)
 			{
@@ -1454,6 +1608,7 @@ _bool CPhysics_Controller::RayCast_Shoot(_float4 vOrigin, _float4 vDir, _float4*
 
 		return false;
 	}
+#pragma endregion
 
 	return false;
 }

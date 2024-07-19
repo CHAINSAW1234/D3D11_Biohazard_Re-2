@@ -30,13 +30,15 @@ HRESULT CKey_ReaderMachine::Initialize(void* pArg)
 		KEY_READER_DESC* pKey_Desc = (KEY_READER_DESC*)pArg;
 		m_pPressKeyState = pKey_Desc->pKeyInput;
 		m_pKeyState = pKey_Desc->pKeyState;
-		m_pCanPush = pKey_Desc->pCanPush;
+		memcpy_s(m_pCanPush, sizeof(_bool) * 5 * 3, pKey_Desc->pCanPush, sizeof(_bool) * 5 * 3);
 		m_pPush = pKey_Desc->pPush;
 		m_pSelectCol = pKey_Desc->pSelectCol;
 		m_pSelectRow = pKey_Desc->pSelectRow;
 		m_pDoOpen = pKey_Desc->pDoOpen;
+		m_pKeyNum = pKey_Desc->pKeyNum;
 		memcpy_s(m_iKeyPad, sizeof(_int) * 5 * 3, pKey_Desc->iKeyPad, sizeof(_int) * 5 * 3);
 		m_pKeyNum = pKey_Desc->pKeyNum;
+		m_pHideKey = pKey_Desc->pHideKey;
 	}
 
 	if (FAILED(Add_Components()))
@@ -68,6 +70,22 @@ void CKey_ReaderMachine::Tick(_float fTimeDelta)
 	
 		m_bCheckAnswer = false;
 	}
+
+	if (m_pHideKey[0])
+	{
+		m_pModelCom->Hide_Mesh(m_HidMesh[3], false);
+
+		m_pCanPush[CReaderMachine::ROW_2][CReaderMachine::COL_1] = false;
+
+	}
+	if (m_pHideKey[1])
+	{
+		m_pModelCom->Hide_Mesh(m_HidMesh[0], false);
+
+		m_pCanPush[CReaderMachine::ROW_2][CReaderMachine::COL_2] = false;
+	}
+
+
 }
 
 void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
@@ -90,10 +108,16 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 		switch (*m_pPressKeyState)
 		{
 		case CReaderMachine::KEY_NOTHING:
-
+			if (m_fGoalLength[BONE_KEYB].z < 0.f)
+				m_fGoalLength[BONE_KEYB].z = 0.f;
+			if (m_fGoalLength[BONE_KEYENTER].z < 0.f)
+				m_fGoalLength[BONE_KEYENTER].z = 0.f;
+			m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]].x = 0.005f;
 			break;
 
 		case CReaderMachine::KEY_W:
+			m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]].x = 0.f;
+
 			*m_pSelectRow -= 1;
 			if (*m_pSelectRow < CReaderMachine::ROW_0)
 				*m_pSelectRow = CReaderMachine::ROW_4;
@@ -101,6 +125,8 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 			break;
 
 		case CReaderMachine::KEY_A:
+			m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]].x = 0.f;
+
 			*m_pPressKeyState = CReaderMachine::KEY_NOTHING;
 			*m_pSelectCol -= 1;
 			if (*m_pSelectCol < CReaderMachine::COL_0)
@@ -108,6 +134,8 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 			break;
 
 		case CReaderMachine::KEY_S:
+			m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]].x = 0.f;
+
 			*m_pPressKeyState = CReaderMachine::KEY_NOTHING;
 			*m_pSelectRow += 1;
 			if (*m_pSelectRow > CReaderMachine::ROW_4)
@@ -115,6 +143,8 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 			break;
 
 		case CReaderMachine::KEY_D:
+			m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]].x = 0.f;
+
 			*m_pPressKeyState = CReaderMachine::KEY_NOTHING;
 			*m_pSelectCol += 1;
 			if (*m_pSelectCol > CReaderMachine::COL_2 )
@@ -124,20 +154,42 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 		case CReaderMachine::KEY_SPACE:
 			*m_pPressKeyState = CReaderMachine::KEY_NOTHING;
 			if (m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)] == CReaderMachine::PAD_DELETE)
-				m_pPush[*m_pKeyNum] = -1;
-			if (m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)] == CReaderMachine::PAD_ENTER)
 			{
-				if (Check_PadFull())
-					break;
+				if (m_pPush[*m_pKeyNum] == -1)
+				{
+					*m_pKeyNum--;
+					if (*m_pKeyNum < CReaderMachine::NUM_0)
+						*m_pKeyNum = CReaderMachine::NUM_0;
+
+					m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]] = _float3(0.f, 0.f, -0.01f);
+				}
 				else
+					m_pPush[*m_pKeyNum] = -1;
+
+			}
+			else if (m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)] == CReaderMachine::PAD_ENTER)
+			{
+				m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]] = _float3(0.f, 0.f, -0.01f);
+				if (Check_PadFull())
 					*m_pDoOpen = true;
+
+
+				break;
+					
 			}
 			else
 			{
-				m_pPush[*m_pKeyNum] = m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)];
-				m_pKeyNum++;
-				if (*m_pKeyNum > CReaderMachine::NUM_2)
-					*m_pKeyNum = CReaderMachine::NUM_0;
+				if (Check_PadFull())
+					break;
+				if (Check_CanPush())
+				{
+					m_fGoalLength[m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)]] += _float3(0.f, 0.f, -0.005f);
+
+					m_pPush[*m_pKeyNum] = m_iKeyPad[*m_pSelectRow][(*m_pSelectCol)];
+					(*m_pKeyNum)++;
+					if (*m_pKeyNum > CReaderMachine::NUM_2)
+						*m_pKeyNum = CReaderMachine::NUM_0;
+				}
 				break;
 			}
 
@@ -147,20 +199,32 @@ void CKey_ReaderMachine::Late_Tick(_float fTimeDelta)
 	break;
 
 	case CReaderMachine::READERMACHINE_KEY_WRONG:
-		m_pModelCom->Change_Animation(0, TEXT("Default"),0);
-		if (m_pModelCom->isFinished(0))
-			*m_pKeyState = CReaderMachine::READERMACHINE_KEY_LIVE;
-
+		*m_pKeyState = CReaderMachine::READERMACHINE_KEY_LIVE;
+		for (_int i = 0; i < CReaderMachine::PAD_END; i++)
+		{
+			m_fGoalLength[i] = _float3(0.f, 0.f, 0.0f);
+		}
 		break;
 
 	case CReaderMachine::READERMACHINE_KEY_CORRECT:
+		for (_int i = 0; i < CReaderMachine::PAD_END; i++)
+		{
+			m_fGoalLength[i] = _float3(0.f, 0.f, 0.0f);
+		}
+		*m_pKeyState = CReaderMachine::READERMACHINE_KEY_LIVE;
 
-		m_pModelCom->Change_Animation(0, TEXT("Default"),0);
-		if (m_pModelCom->isFinished(0))
-			m_bClear = true;
 		break;
 	}
-	
+	for (_int i = 0; i < READERMACHINE_BONE_END; i++)
+	{
+		m_fCurLength[i] = XMVectorLerp(m_fCurLength[i], m_fGoalLength[i], fTimeDelta * 3.f);
+
+		_matrix			TranslationMatrix = m_pTransformCom->Get_WorldMatrix()* m_pTransformCom->Get_WorldMatrix_Inverse();
+		TranslationMatrix.r[3] = m_fCurLength[i];
+		m_pModelCom->Add_Additional_Transformation_World(m_strBoneTag[i], TranslationMatrix);
+
+		
+	}
 	_float4 fTransform4 = m_pParentsTransform->Get_State_Float4(CTransform::STATE_POSITION);
 	_float3 fTransform3 = _float3{ fTransform4.x,fTransform4.y,fTransform4.z };
 	_float3				vDirection = { };
@@ -290,16 +354,19 @@ HRESULT CKey_ReaderMachine::Initialize_Model()
 	vector<string>			MeshTags = { m_pModelCom->Get_MeshTags() };
 
 	vector<string>			ResultMeshTags;
+	vector<string>			HidMeshs;
 	m_HidMesh.emplace_back("Group_102");
 	m_HidMesh.emplace_back("Group_103");
 	m_HidMesh.emplace_back("Group_124");
 	m_HidMesh.emplace_back("Group_125");
 	for (auto& strMeshTag : MeshTags)
 	{
-		if ((strMeshTag.find("Group_102") == string::npos) && (strMeshTag.find("Group_103") == string::npos)&& (strMeshTag.find("Group_124") == string::npos)&& (strMeshTag.find("Group_125") == string::npos))
+		if ((strMeshTag.find("Group_102") == string::npos) && (strMeshTag.find("Group_103") == string::npos) && (strMeshTag.find("Group_124") == string::npos) && (strMeshTag.find("Group_125") == string::npos))
 			ResultMeshTags.push_back(strMeshTag);
+		else
+			HidMeshs.push_back(strMeshTag);
 	}
-
+	m_HidMesh = HidMeshs;
 	for (auto& strMeshTag : MeshTags)
 	{
 		m_pModelCom->Hide_Mesh(strMeshTag, true);
@@ -325,6 +392,14 @@ _bool CKey_ReaderMachine::Check_PadFull()
 	}
 
 	return true;
+}
+
+_bool CKey_ReaderMachine::Check_CanPush()
+{
+	if (false == m_pCanPush[*m_pSelectRow][*m_pSelectCol])
+		return true;
+
+	return false;
 }
 
 

@@ -358,6 +358,17 @@ _float4 CWeapon::Get_BonePosition_Forward(const char* pBoneName)
 	return vPos;
 }
 
+void CWeapon::Set_RenderLocation(RENDERLOCATION eRenderLocation)
+{
+	m_eRenderLocation = eRenderLocation;
+	if (m_eRenderLocation != NONE) {
+		m_bRender = true;
+	}
+	else {
+		m_bRender = false;
+	}
+}
+
 HRESULT CWeapon::Add_Components()
 {
 	/* For.Com_Shader */

@@ -226,8 +226,8 @@ HRESULT CLevel_GamePlay::Ready_LandObject()
 	if (FAILED(Ready_Layer_LandBackGround(TEXT("Layer_LandBackGround"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Monster(TEXT("Layer_Monster"))))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -261,17 +261,17 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 #endif
 
 #ifdef TEST_ZOMBIE_MAINHALL
-	CZombie::ZOMBIE_FEMALE_DESC      ObjectDesc;
+	/*CZombie::ZOMBIE_FEMALE_DESC      ObjectDesc;
 	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_FEMALE };
 	ObjectDesc.ePantsType = { static_cast<ZOMBIE_FEMALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_PANTS::_END) - 1)) };
 	ObjectDesc.eFaceType = { static_cast<ZOMBIE_FEMALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_FACE::_END) - 1)) };
-	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_FEMALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_SHIRTS::_END) - 1)) };
+	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_FEMALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_FEMALE_SHIRTS::_END) - 1)) };*/
 
-	//CZombie::ZOMBIE_MALE_DESC      ObjectDesc;
-	//ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
-	//ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
-	//ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
-	//ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
+	CZombie::ZOMBIE_MALE_DESC      ObjectDesc;
+	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE };
+	ObjectDesc.ePantsType = { static_cast<ZOMBIE_MALE_PANTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_PANTS::_END) - 1)) };
+	ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
+	ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
 
 	ObjectDesc.eStart_Type = ZOMBIE_START_TYPE::_IDLE;
 	ObjectDesc.eLocation = LOCATION_MAP_VISIT::MAIN_HOLL;

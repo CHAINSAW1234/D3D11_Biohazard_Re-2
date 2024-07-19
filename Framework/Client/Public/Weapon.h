@@ -55,7 +55,7 @@ public:
 	_float4							Get_BonePosition_Forward(const char* pBoneName);
 	_int							Get_MaxBullet() { return m_iMaxBullet; }
 
-	void							Set_RenderLocation(RENDERLOCATION eRenderLocation) { m_eRenderLocation = eRenderLocation; }
+	void							Set_RenderLocation(RENDERLOCATION eRenderLocation);
 
 private:
 	CModel*							m_pModelCom = { nullptr };

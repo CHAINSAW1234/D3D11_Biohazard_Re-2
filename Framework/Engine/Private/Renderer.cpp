@@ -994,10 +994,10 @@ HRESULT CRenderer::Render_Priority()
 		return E_FAIL;
 	
 
-	if (m_ShaderOptions[FXAA]) {
-		if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_FXAA"))))
-			return E_FAIL;
-	}
+	//if (m_ShaderOptions[FXAA]) {
+	//	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_FXAA"))))
+	//		return E_FAIL;
+	//}
 
 	for (auto& pRenderObject : m_RenderObjects[RENDER_PRIORITY])
 	{
@@ -1007,10 +1007,10 @@ HRESULT CRenderer::Render_Priority()
 	}
 	m_RenderObjects[RENDER_PRIORITY].clear();
 
-	if (m_ShaderOptions[FXAA]) {
-		if (FAILED(m_pGameInstance->End_MRT()))
-			return E_FAIL;
-	}
+	//if (m_ShaderOptions[FXAA]) {
+	//	if (FAILED(m_pGameInstance->End_MRT()))
+	//		return E_FAIL;
+	//}
 
 	return S_OK;
 }

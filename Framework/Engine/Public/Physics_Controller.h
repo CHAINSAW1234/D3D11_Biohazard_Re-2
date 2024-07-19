@@ -283,6 +283,12 @@ public:
 private:
 	vector<_float4>		m_vecBlockPoints_Props;
 	vector<_float4>		m_vecBlockNormals_Props;
+
+	_float4				m_vBlockPoint_Min;
+	_float				m_fMinDist = { 9999.f };
+	_uint				m_iMinPointIndex = { 0 };
+	_bool				m_bRagdollHit = { false };
+	_bool				m_bHit = { false };
 #pragma endregion
 };
 
