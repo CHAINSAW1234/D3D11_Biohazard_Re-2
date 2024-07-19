@@ -162,7 +162,7 @@ HRESULT CTitle_UI::Change_Tool()
 void CTitle_UI::TitleGame_Start()
 {
     /* 만약 로고의 플레이가 완료 되었다면, */
-    //  m_pGameInstance->Change_Sound_2D(CHANNELID::CH30, TEXT("ui_title_media.bnk.2_30.mp3"));
+    //  m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), CHANNELID::CH30, TEXT("ui_title_media.bnk.2_30.mp3"));
 
     if (nullptr != m_pLogo && true == m_pLogo->m_isPlay)
     {
@@ -231,7 +231,7 @@ void CTitle_UI::Option_Click(_float fTimeDelta)
         {
             if(m_pGameInstance->Get_KeyState(VK_LBUTTON))
             {
-                //  m_pGameInstance->Change_Sound_2D(CHANNELID::CH30, TEXT("ui_title_media.bnk.2_21.mp3"));
+                //  m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), CHANNELID::CH30, TEXT("ui_title_media.bnk.2_21.mp3"));
 
                 m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_GAMEPLAY));
             }
