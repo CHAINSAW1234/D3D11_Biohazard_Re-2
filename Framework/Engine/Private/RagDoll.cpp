@@ -507,7 +507,8 @@ void AnimRagdoll::apply_BreakPart_Cloth_Arm_L_NoReturn(CRagdoll* ragdoll, _matri
         for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
         {
             uint32_t        chosen_idx;
-            PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Arm_L];
+            //PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Arm_L];
+            PxRigidDynamic* body = ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_L[i];
 
             if (body == nullptr || (*pBreakPart)[i] == false)
             {
@@ -545,11 +546,12 @@ void AnimRagdoll::apply_BreakPart_Cloth_Arm_R_NoReturn(CRagdoll* ragdoll, _matri
         for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
         {
             uint32_t        chosen_idx;
-            PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Arm_R];
+            //PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Arm_R];
+            PxRigidDynamic* body = ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_R[i];
 
             if (body == nullptr || (*pBreakPart)[i] == false)
             {
-                m_transforms_BreakPart_Cloth_Arm_L.transforms[i] = XMMatrixIdentity();
+                m_transforms_BreakPart_Cloth_Arm_R.transforms[i] = XMMatrixIdentity();
                 continue;
             }
 
@@ -583,7 +585,8 @@ void AnimRagdoll::apply_BreakPart_Cloth_Leg_L_NoReturn(CRagdoll* ragdoll, _matri
         for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
         {
             uint32_t        chosen_idx;
-            PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Leg_L];
+            //PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Leg_L];
+            PxRigidDynamic* body = ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_L[i];
 
             if (body == nullptr || (*pBreakPart)[i] == false)
             {
@@ -593,7 +596,7 @@ void AnimRagdoll::apply_BreakPart_Cloth_Leg_L_NoReturn(CRagdoll* ragdoll, _matri
 
             XMMATRIX global_transform = to_mat4(body->getGlobalPose());
             global_transform.r[3] = XMVectorSet(XMVectorGetX(global_transform.r[3]) * MODEL_SCALE_INVERSE, XMVectorGetY(global_transform.r[3]) * MODEL_SCALE_INVERSE, XMVectorGetZ(global_transform.r[3]) * MODEL_SCALE_INVERSE, 1.f);
-            XMVECTOR global_joint_pos = XMVector4Transform(ragdoll->m_relative_joint_pos_BreakPart_Cloth_Leg_R[i], global_transform);
+            XMVECTOR global_joint_pos = XMVector4Transform(ragdoll->m_relative_joint_pos_BreakPart_Cloth_Leg_L[i], global_transform);
             global_joint_pos = XMVectorSetW(global_joint_pos, 1.f);
 
             XMVECTOR body_rot_quat = XMQuaternionRotationMatrix(global_transform);
@@ -621,7 +624,8 @@ void AnimRagdoll::apply_BreakPart_Cloth_Leg_R_NoReturn(CRagdoll* ragdoll, _matri
         for (uint32_t i = 0; i < m_skeleton->num_bones(); i++)
         {
             uint32_t        chosen_idx;
-            PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Leg_R];
+            //PxRigidDynamic* body = ragdoll->m_rigid_bodies[joints[i].parent_index_BreakPart_Cloth_Leg_R];
+            PxRigidDynamic* body = ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_R[i];
 
             if (body == nullptr || (*pBreakPart)[i] == false)
             {
@@ -703,7 +707,7 @@ PoseTransforms* AnimRagdoll::apply_BreakPart_Cloth_Arm_R(CRagdoll* ragdoll, _mat
 
             if (body == nullptr || (*pBreakPart)[i] == false)
             {
-                m_transforms_BreakPart_Cloth_Arm_L.transforms[i] = XMMatrixIdentity();
+                m_transforms_BreakPart_Cloth_Arm_R.transforms[i] = XMMatrixIdentity();
                 continue;
             }
 
