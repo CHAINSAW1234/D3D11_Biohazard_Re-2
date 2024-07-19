@@ -66,9 +66,20 @@ HRESULT CItem_Mesh_Viewer::Initialize(void* pArg)
 
 	Safe_AddRef(m_pCameraFree);
 
-	//m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f); //테스트 코드
-
 	return S_OK;
+}
+
+void CItem_Mesh_Viewer::Start()
+{
+	if (nullptr == m_vecModelCom[HandGun] || nullptr == m_vecModelCom[ShotGun])
+		return;
+
+	m_vecModelCom[HandGun]->Hide_Mesh("LOD_1_Group_1_Sub_1__wp0100_VP70Custom_Mat_mesh0002", true);
+	m_vecModelCom[HandGun]->Hide_Mesh("LOD_1_Group_2_Sub_1__wp0000_PowerUp_Mat_mesh0003", true);
+	m_vecModelCom[HandGun]->Hide_Mesh("LOD_1_Group_6_Sub_1__wp0000_PowerUp_Mat_mesh0004", true);
+
+	m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_3_Sub_1__wp1100_mt_mesh0004", true);
+	m_vecModelCom[ShotGun]->Hide_Mesh("LOD_1_Group_4_Sub_1__wp1100_mt_mesh0005", true);
 }
 
 void CItem_Mesh_Viewer::Tick(_float fTimeDelta)
@@ -606,6 +617,8 @@ HRESULT CItem_Mesh_Viewer::Load_ItemModelTags()
 
 	CloseHandle(hFile);
 
+	m_vecModelTag.push_back(TEXT("Prototype_Component_Model_statuebookhand"));
+
 	if (ITEM_NUMBER_END != m_vecModelTag.size())
 		return E_FAIL;
 
@@ -969,6 +982,14 @@ void CItem_Mesh_Viewer::Set_ScaleByItemNum(ITEM_NUMBER eCallItemType)
 		m_fStartSize = 0.01f;
 		m_fEndSize = 0.007f;
 		m_matMoveCenter = XMMatrixTranslation(0.f, -0.04f, 0.f);
+		break;
+	case Client::statuebookhand:
+		m_fPopupHide_EndDist = 0.15f;
+		m_pTransformCom->Set_Scaled(0.01f, 0.01f, 0.01f);
+		m_fCurSize = 0.01f;
+		m_fStartSize = 0.01f;
+		m_fEndSize = 0.007f;
+		m_matMoveCenter = XMMatrixIdentity();
 		break;
 
 	default:

@@ -64,7 +64,7 @@ void CHint::Start()
 	for (auto& iter : m_vecDirectory)
 	{
 		iter->Move(fMove);
-		fMove += _float3{ 0.f, -58.f, 0.f };
+		fMove += _float3{ 0.f, -63.f, 0.f };
 	}
 
 #pragma region 초기화
@@ -166,6 +166,11 @@ void CHint::Hoverd_Highlight()
 				{
 					DOCUMENT_INFO DocumentInfo = m_mapDocumentInfo[eIRT];
 					m_pDisplay->Set_Display(eIRT, 0, DocumentInfo.fPosition, DocumentInfo.fSize, false);
+					if (m_pHoveredDirectory != m_vecDirectory[i])
+					{
+						m_pHoveredDirectory = m_vecDirectory[i];
+						m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+					}
 				}
 			}
 		}
@@ -183,6 +188,11 @@ void CHint::Hoverd_Highlight()
 				{
 					DOCUMENT_INFO DocumentInfo = m_mapDocumentInfo[eIRT];
 					m_pDisplay->Set_Display(eIRT, 0, DocumentInfo.fPosition, DocumentInfo.fSize, false);
+					if (m_pHoveredDirectory != m_vecDirectory[i])
+					{
+						m_pHoveredDirectory = m_vecDirectory[i];
+						m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+					}
 				}
 			}
 		}
@@ -197,6 +207,17 @@ void CHint::Change_Display()
 		if (0 != iCurTexNum)
 		{
 			m_pDisplay->Set_CurTexNum(--iCurTexNum);
+
+			if (false == m_bLeftRight_Flip)
+			{
+				m_bLeftRight_Flip = !m_bLeftRight_Flip;
+				m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Flip_page_Left.mp3"), CHANNELID::CH30);
+			}
+			else
+			{
+				m_bLeftRight_Flip = !m_bLeftRight_Flip;
+				m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Flip_page_Right.mp3"), CHANNELID::CH30);
+			}
 		}
 	}
 
@@ -207,6 +228,19 @@ void CHint::Change_Display()
 		if (iMaxTexCount > iCurTexNum + 1)
 		{
 			m_pDisplay->Set_CurTexNum(++iCurTexNum);
+
+			if (false == m_bLeftRight_Flip)
+			{
+				m_bLeftRight_Flip = !m_bLeftRight_Flip;
+				//m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Flip_page_Left.mp3"), CHANNELID::CH30);
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Flip_page_Left.mp3"), 0.5f);
+			}
+			else
+			{
+				m_bLeftRight_Flip = !m_bLeftRight_Flip;
+				//m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Flip_page_Right.mp3"), CHANNELID::CH30);
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Flip_page_Left.mp3"), 0.5f);
+			}
 		}
 	}
 }
@@ -217,6 +251,9 @@ void CHint::Button_Action()
 	{
 		if (true == m_pPoliceButton->IsMouseHover() && POLICE != m_eCurrentDC)
 		{
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Button_Click.mp3"), 0.5f);
+			
+
 			m_eCurrentDC = POLICE;
 			m_pPoliceButton->Set_FontColor(XMVectorSet(1.0f, 1.f, 1.f, 1.f));
 			m_pTutorialButton->Set_FontColor(XMVectorSet(0.8f, 0.8f, 0.8f, 1.f));
@@ -248,6 +285,8 @@ void CHint::Button_Action()
 
 		else if (true == m_pTutorialButton->IsMouseHover() && TUTORIAL != m_eCurrentDC)
 		{
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"),TEXT("sound_ui_Button_Click.mp3"),0.5f);
+
 			m_eCurrentDC = TUTORIAL;
 
 			m_pTutorialButton->Set_FontColor(XMVectorSet(1.0f, 1.f, 1.f, 1.f));
@@ -621,6 +660,9 @@ HRESULT CHint::Create_Text_Button()
 	if (nullptr == m_pPoliceButton)
 		return E_FAIL;
 
+
+	m_pPoliceButton->Set_isUIRender(true);
+
 	TextBox_Desc.wstrText = TEXT("튜토리얼");
 	TextBox_Desc.wstrFontType = TEXT("Font_CGBold");
 	TextBox_Desc.vFontColor = { 1.f, 1.f, 1.f, 1.f };
@@ -635,6 +677,8 @@ HRESULT CHint::Create_Text_Button()
 
 	if (nullptr == m_pTutorialButton)
 		return E_FAIL;
+
+	m_pTutorialButton->Set_isUIRender(true);
 
 	return S_OK;
 }

@@ -187,12 +187,12 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 		return E_FAIL;
 	}
 
-	//m_pSound_Manager_2D = CSound_Manager_2D::Create();
-	//if (nullptr == m_pSound_Manager_2D)
-	//{
-	//	MSG_BOX(TEXT("Error: m_pSound_Manager_2D::Create -> nullptr"));
-	//	return E_FAIL;
-	//}
+	m_pSound_Manager_2D = CSound_Manager_2D::Create();
+	if (nullptr == m_pSound_Manager_2D)
+	{
+		MSG_BOX(TEXT("Error: m_pSound_Manager_2D::Create -> nullptr"));
+		return E_FAIL;
+	}
 
 	//Random Generator
 	m_RandomNumber = mt19937_64(m_RandomDevice());
@@ -1700,6 +1700,17 @@ HRESULT CGameInstance::Stop_Sound_3D(CTransform* pTransform, _uint iSoundIndex)
 }
 
 void CGameInstance::Change_Sound_2D(_uint iChannelIndex, const wstring& strSoundTag)
+{
+	if (nullptr == m_pSound_Manager)
+	{
+		MSG_BOX(TEXT("nullptr == m_pSound_Manager : CGameInstance"));
+		return;
+	}
+
+	m_pSound_Manager->Change_Sound_2D(iChannelIndex, strSoundTag);
+}
+
+void CGameInstance::Change_Sound_2D(const wstring& strSoundTag, _uint iChannelIndex)
 {
 	if (nullptr == m_pSound_Manager)
 	{

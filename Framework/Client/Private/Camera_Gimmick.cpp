@@ -31,7 +31,7 @@ HRESULT CCamera_Gimmick::Initialize(void * pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_pGameInstance->Set_Camera_Transform(m_pTransformCom);
+	m_pGameInstance->Set_Gimmick_Camera_Transform(m_pTransformCom);
 
 	m_eLayout_Type = static_cast<_ubyte>(CLayOut_UI::LAYOUT_TYPE::LAYOUT_END);
 
