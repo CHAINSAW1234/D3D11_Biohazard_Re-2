@@ -32,16 +32,22 @@ void CStun_Zombie::Enter()
 	pBodyModel->Set_TotalLinearInterpolation(0.2f);
 	pBodyModel->Set_Loop(static_cast<_uint>(m_ePlayingIndex), false);
 
-	//	m_pGameInstance->Stop_Sound(0);
-	//	_int			iRandom = { m_pGameInstance->GetRandom_Int(0, 3) };
-	//	if (0 == iRandom)
-	//		m_pGameInstance->Play_Sound(TEXT("em0_media.bnk.2_132.mp3"), 0);
-	//	if (1 == iRandom)
-	//		m_pGameInstance->Play_Sound(TEXT("em0_media.bnk.2_142.mp3"), 0);
-	//	if (2 == iRandom)
-	//		m_pGameInstance->Play_Sound(TEXT("em0_media.bnk.2_153.mp3"), 0);
-	//	if (3 == iRandom)
-	//		m_pGameInstance->Play_Sound(TEXT("em0_media.bnk.2_82.mp3"), 0);
+	m_pBlackBoard->Get_AI()->Stop_Sound(0);
+	_int			iRandom = { m_pGameInstance->GetRandom_Int(0, 6) };
+	if (0 == iRandom)
+		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_132.mp3"), 0);
+	if (1 == iRandom)
+		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_142.mp3"), 0);
+	if (2 == iRandom)
+		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_153.mp3"), 0);
+	if (3 == iRandom)
+		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_82.mp3"), 0);
+	if (4 == iRandom)
+		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_74.mp3"), 0);
+	if (5 == iRandom)
+		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_82.mp3"), 0);
+	if (6 == iRandom)
+		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_127.mp3"), 0);
 
 	m_isEntry = true;
 

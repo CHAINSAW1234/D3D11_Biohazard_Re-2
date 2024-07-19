@@ -1802,20 +1802,22 @@ _bool CPart_Breaker_Zombie::Is_R_Arm_Mesh(_uint iMeshIndex)
 
 _bool CPart_Breaker_Zombie::Is_L_Leg_Mesh(_uint iMeshIndex)
 {
-	_int			iTagetIndex = { m_PartMeshInfos_Shirt[static_cast<_uint>(PANTS_MESH_PART::_L_LEG)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_LEG)) };
-	if (-1 == iTagetIndex)
+	_int			iTargetLegIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_L_LEG)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_LEG)) };
+	_int			iTargetShoesIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_L_SHOES)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_SHOES)) };
+	if (-1 == iTargetLegIndex && -1 == iTargetShoesIndex)
 		return false;
 
-	return iTagetIndex == iMeshIndex;
+	return (iTargetLegIndex == iMeshIndex) || (iTargetShoesIndex == iMeshIndex);
 }
 
 _bool CPart_Breaker_Zombie::Is_R_Leg_Mesh(_uint iMeshIndex)
 {
-	_int			iTagetIndex = { m_PartMeshInfos_Shirt[static_cast<_uint>(PANTS_MESH_PART::_R_LEG)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_LEG)) };
-	if (-1 == iTagetIndex)
+	_int			iTargetLegIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_R_LEG)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_LEG)) };
+	_int			iTargetShoesIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_R_SHOES)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_SHOES)) };
+	if (-1 == iTargetLegIndex && -1 == iTargetShoesIndex)
 		return false;
 
-	return iTagetIndex == iMeshIndex;
+	return (iTargetLegIndex == iMeshIndex) || (iTargetShoesIndex == iMeshIndex);
 }
 
 _bool CPart_Breaker_Zombie::Attack(BREAK_PART ePart)
