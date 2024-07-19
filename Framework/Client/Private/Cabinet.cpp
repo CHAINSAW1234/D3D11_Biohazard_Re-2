@@ -252,7 +252,7 @@ HRESULT CCabinet::Add_PartObjects()
 		ItemDesc.pParentsTransform = m_pTransformCom;
 		m_iItemIndex = ItemDesc.iItemIndex = m_tagPropDesc.tagCabinet.iItemIndex;
 		ItemDesc.pState = &m_eState;
-		ItemDesc.pObtain = &m_bItemDead; //얻었는가?
+		ItemDesc.pItemDead = &m_bItemDead; //얻었는가?
 		ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_") + m_tagPropDesc.tagCabinet.Name;
 		/*if(m_tagPropDesc.tagCabinet.iItemIndex==0)*/
 		pItem = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_") + m_tagPropDesc.tagCabinet.Name, &ItemDesc));
@@ -661,11 +661,6 @@ void CCabinet::Weapon_Tick(_float fTimeDelta)
 	if (m_bCamera)
 		Camera_Active(PART_LOCK, _float3(0.3f, 2.5f, 0.3f));
 	
-	if (m_bCamera)
-	{
-		if (DOWN == m_pGameInstance->Get_KeyState(VK_F1))
-			m_bAction = true;
-	}
 	
 	if ((!m_bDead && m_bCol[INTER_COL_NORMAL][COL_STEP1]) || m_bAutoOpen)
 	{
@@ -807,8 +802,8 @@ void CCabinet::Weapon_Active()
 
 		m_pCameraGimmick->Active_Camera(true);
 		m_bCamera = true;
-		/*if (false == m_pGameInstance->IsPaused())
-			m_pPlayer->Interact_Props(this);*/
+		if (false == m_pGameInstance->IsPaused())
+			m_pPlayer->Interact_Props(this);
 
 	}
 }

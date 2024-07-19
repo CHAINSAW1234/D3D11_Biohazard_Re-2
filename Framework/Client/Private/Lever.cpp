@@ -37,6 +37,10 @@ HRESULT CLever::Initialize(void* pArg)
 	if (FAILED(Initialize_PartObjects()))
 		return E_FAIL;	
 
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 1)))
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -204,6 +208,9 @@ void CLever::Active()
 	m_bActivity = true;
 	
 	m_eState = LEVER_DOWN;
+	
+	Change_Sound(TEXT("sound_Map_sm42_shutter_lever2_1.mp3"),0);
+
 	m_pPlayer->Set_Lever_Setting(CPlayer::LEVER_BEHAVE_DOWN, m_pTransformCom->Get_WorldFloat4x4());
 	
 }

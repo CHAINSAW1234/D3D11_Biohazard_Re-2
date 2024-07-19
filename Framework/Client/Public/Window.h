@@ -88,7 +88,7 @@ public:
 	virtual _float4 Get_Object_Pos() override;
 
 	_bool		Get_Installable_Barrigate() { return m_bBarrigateInstallable; } // 설치 가능?
-	void		Set_Barrigate() { m_bBarrigate = true; m_bBarrigateInstallable = false; m_iHP[PART_PANNEL] = 10; } // 설치할때 호출
+	void		Set_Barrigate() { m_bBarrigate = true; m_bBarrigateInstallable = false; m_iHP[PART_PANNEL] = 10; m_eBarrigateState = BARRIGATE_NEW; } // 설치할때 호출
 
 
 	virtual void Do_Interact_Props() override;
@@ -97,10 +97,12 @@ public:
 private:
 	_bool				m_bBarrigateInstallable = { true };
 	_bool				m_bBarrigate = { false };
+	_bool				m_bCamera = { false };
 	_float			m_fBarrigateOldTime = { 0.f };
 	_int				m_iHP[PART_END] = {5,0};
 	_bool				m_bActivity = { false };
 	_float			m_fTime = { 0.f };
+	_float			m_fDelayLockTime = { 0.f };
 	_ubyte			m_eState = { WINDOW_STATIC };
 	_ubyte			m_eBarrigateState = { BARRIGATE_NO };
 
