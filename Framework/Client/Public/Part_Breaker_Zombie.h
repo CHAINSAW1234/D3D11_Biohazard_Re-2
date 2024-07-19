@@ -89,6 +89,12 @@ public:
 	_bool											Is_RagDoll_Mesh_Pants(_uint iMeshIndex);
 
 public:
+	_bool											Is_L_Arm_Mesh(_uint iMeshIndex);
+	_bool											Is_R_Arm_Mesh(_uint iMeshIndex);
+	_bool											Is_L_Leg_Mesh(_uint iMeshIndex);
+	_bool											Is_R_Leg_Mesh(_uint iMeshIndex);
+
+public:
 	_bool											Attack(BREAK_PART ePart);
 	_bool											Break(BREAK_PART ePart);
 	

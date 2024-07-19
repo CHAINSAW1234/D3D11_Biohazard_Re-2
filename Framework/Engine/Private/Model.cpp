@@ -1636,17 +1636,25 @@ HRESULT CModel::Link_Bone_Auto_RagDoll(CModel* pTargetModel, CRagdoll_Physics* p
 
 	IntersectionBoneTags.resize(iter - IntersectionBoneTags.begin());
 
-	/*for (auto& strIntersectBoneTag : IntersectionBoneTags)
+	for (auto& strIntersectBoneTag : IntersectionBoneTags)
 	{
 		_int			iDstBoneIndex = { pTargetModel->Find_BoneIndex(strIntersectBoneTag) };
 		if (-1 == iDstBoneIndex)
 			continue;
 
-		_float4x4*		pRagDollCombinedMatrix = { pRagDoll->GetCombinedMatrix_Ragdoll_Cloth(iDstBoneIndex) };
+		_float4x4*		pRagDollCombinedMatrix_L_Arm = { pRagDoll->GetCombinedMatrix_Ragdoll_Cloth_Arm_L(iDstBoneIndex) };
+		_float4x4*		pRagDollCombinedMatrix_R_Arm = { pRagDoll->GetCombinedMatrix_Ragdoll_Cloth_Arm_R(iDstBoneIndex) };
+		_float4x4*		pRagDollCombinedMatrix_L_Leg = { pRagDoll->GetCombinedMatrix_Ragdoll_Cloth_Leg_L(iDstBoneIndex) };
+		_float4x4*		pRagDollCombinedMatrix_R_Leg = { pRagDoll->GetCombinedMatrix_Ragdoll_Cloth_Leg_R(iDstBoneIndex) };
 
 		_int			iSrcBoneIndex = { Find_BoneIndex(strIntersectBoneTag) };
-		m_Bones[iSrcBoneIndex]->Set_Parent_CombinedMatrix_Ptr_RagDoll(pRagDollCombinedMatrix);
-	}*/
+
+		m_Bones[iSrcBoneIndex]->Resize_ParentCombinedMatrices_RagDoll(4);
+		m_Bones[iSrcBoneIndex]->Set_Parent_CombinedMatrix_Ptr_RagDoll(0, pRagDollCombinedMatrix_L_Arm);
+		m_Bones[iSrcBoneIndex]->Set_Parent_CombinedMatrix_Ptr_RagDoll(1, pRagDollCombinedMatrix_R_Arm);
+		m_Bones[iSrcBoneIndex]->Set_Parent_CombinedMatrix_Ptr_RagDoll(2, pRagDollCombinedMatrix_L_Leg);
+		m_Bones[iSrcBoneIndex]->Set_Parent_CombinedMatrix_Ptr_RagDoll(3, pRagDollCombinedMatrix_R_Leg);
+	}
 
 	return S_OK;
 }
@@ -2384,7 +2392,7 @@ HRESULT CModel::Bind_BoneMatrices_Ragdoll(CShader* pShader, const _char* pConsta
 	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, MAX_COUNT_BONE);
 }
 
-HRESULT CModel::Bind_BoneMatrices_Ragdoll_PartObject(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
+HRESULT CModel::Bind_BoneMatrices_Ragdoll_PartObject_L_Arm(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
 {
 	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * MAX_COUNT_BONE);
 
@@ -2392,9 +2400,84 @@ HRESULT CModel::Bind_BoneMatrices_Ragdoll_PartObject(CShader* pShader, const _ch
 	_uint				iBoneIndex = { 0 };
 	for (auto& pBone : m_Bones)
 	{
-		if (true == pBone->Is_Set_ParentCombiend_RagDoll())
+		if (true == pBone->Is_Set_ParentCombiend_RagDoll(0))
 		{
-			CombinedMatrices[iBoneIndex] = *(pBone->Get_ParentCombinedMatrix_RagDoll_Ptr());
+			CombinedMatrices[iBoneIndex] = *(pBone->Get_ParentCombinedMatrix_RagDoll_Ptr(0));
+		}
+		else
+		{
+			CombinedMatrices[iBoneIndex] = *(pBone->Get_CombinedTransformationMatrix());
+		}
+
+		++iBoneIndex;
+	}
+
+	m_Meshes[iMeshIndex]->Stock_Matrices_Ragdoll_Cloth(m_Bones, m_MeshBoneMatrices, CombinedMatrices);
+
+	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, MAX_COUNT_BONE);
+}
+
+HRESULT CModel::Bind_BoneMatrices_Ragdoll_PartObject_R_Arm(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
+{
+	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * MAX_COUNT_BONE);
+
+	_float4x4			CombinedMatrices[MAX_COUNT_BONE];
+	_uint				iBoneIndex = { 0 };
+	for (auto& pBone : m_Bones)
+	{
+		if (true == pBone->Is_Set_ParentCombiend_RagDoll(1))
+		{
+			CombinedMatrices[iBoneIndex] = *(pBone->Get_ParentCombinedMatrix_RagDoll_Ptr(1));
+		}
+		else
+		{
+			CombinedMatrices[iBoneIndex] = *(pBone->Get_CombinedTransformationMatrix());
+		}
+
+		++iBoneIndex;
+	}
+
+	m_Meshes[iMeshIndex]->Stock_Matrices_Ragdoll_Cloth(m_Bones, m_MeshBoneMatrices, CombinedMatrices);
+
+	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, MAX_COUNT_BONE);
+}
+
+HRESULT CModel::Bind_BoneMatrices_Ragdoll_PartObject_L_Leg(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
+{
+	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * MAX_COUNT_BONE);
+
+	_float4x4			CombinedMatrices[MAX_COUNT_BONE];
+	_uint				iBoneIndex = { 0 };
+	for (auto& pBone : m_Bones)
+	{
+		if (true == pBone->Is_Set_ParentCombiend_RagDoll(2))
+		{
+			CombinedMatrices[iBoneIndex] = *(pBone->Get_ParentCombinedMatrix_RagDoll_Ptr(2));
+		}
+		else
+		{
+			CombinedMatrices[iBoneIndex] = *(pBone->Get_CombinedTransformationMatrix());
+		}
+
+		++iBoneIndex;
+	}
+
+	m_Meshes[iMeshIndex]->Stock_Matrices_Ragdoll_Cloth(m_Bones, m_MeshBoneMatrices, CombinedMatrices);
+
+	return pShader->Bind_Matrices(pConstantName, m_MeshBoneMatrices, MAX_COUNT_BONE);
+}
+
+HRESULT CModel::Bind_BoneMatrices_Ragdoll_PartObject_R_Leg(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
+{
+	ZeroMemory(m_MeshBoneMatrices, sizeof(_float4x4) * MAX_COUNT_BONE);
+
+	_float4x4			CombinedMatrices[MAX_COUNT_BONE];
+	_uint				iBoneIndex = { 0 };
+	for (auto& pBone : m_Bones)
+	{
+		if (true == pBone->Is_Set_ParentCombiend_RagDoll(3))
+		{
+			CombinedMatrices[iBoneIndex] = *(pBone->Get_ParentCombinedMatrix_RagDoll_Ptr(3));
 		}
 		else
 		{
