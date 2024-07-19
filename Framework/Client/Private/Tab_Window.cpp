@@ -567,7 +567,7 @@ void CTab_Window::Button_Act(_float fTimeDelta)
 			m_pHint->Set_Dead(true);
 
 			m_pGameInstance->Change_Sound_2D(CHANNELID::CH30, TEXT("ui_ingame_media.bnk.2_51.mp3"));
-
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("ui_ingame_media.mp3"), 0.5f);
 		}
 
 		else if (true == m_pInvenButton->IsMouseHover())
