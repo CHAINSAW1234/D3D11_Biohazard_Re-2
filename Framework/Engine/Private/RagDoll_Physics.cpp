@@ -5,6 +5,7 @@
 #include "Skeleton.h"
 #include "Bone.h"
 #include "Transform.h"
+#include "GameInstance.h"
 
 #define ZOMBIE
 #define CHEST_SIZE 7.f
@@ -407,6 +408,11 @@ _bool CRagdoll_Physics::Init(const string& name)
 #pragma endregion 
 
 #pragma region ¿Ê
+	m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_L.resize(m_skeletal_mesh->skeleton()->num_bones());
+	m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_R.resize(m_skeletal_mesh->skeleton()->num_bones());
+	m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_L.resize(m_skeletal_mesh->skeleton()->num_bones());
+	m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_R.resize(m_skeletal_mesh->skeleton()->num_bones());
+
 	m_ragdoll->m_relative_joint_pos_BreakPart_Cloth_Arm_L.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_original_body_rotations_BreakPart_Cloth_Arm_L.resize(m_skeletal_mesh->skeleton()->num_bones());
 	m_ragdoll->m_body_pos_relative_to_joint_BreakPart_Cloth_Arm_L.resize(m_skeletal_mesh->skeleton()->num_bones());
@@ -443,8 +449,11 @@ _bool CRagdoll_Physics::Init(const string& name)
 	for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 	{
 		m_ragdoll->m_rigid_bodies[i] = nullptr;
-		//m_ragdoll->m_rigid_bodies_BreakPart[i] = nullptr;
-		//m_ragdoll->m_rigid_bodies_BreakPart_Cloth[i] = nullptr;
+		m_ragdoll->m_rigid_bodies_BreakPart[i] = nullptr;
+		m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_L[i] = nullptr;
+		m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_R[i] = nullptr;
+		m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_L[i] = nullptr;
+		m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_R[i] = nullptr;
 		m_vecBreakPartFilter[i] = false;
 		m_vecBreakPartFilter_Cloth_Arm_L[i] = false;
 		m_vecBreakPartFilter_Cloth_Arm_R[i] = false;
@@ -1080,7 +1089,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
 			uint32_t        chosen_idx;
-			PxRigidDynamic* body = m_ragdoll->find_recent_body_Cloth((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
+			PxRigidDynamic* body = m_ragdoll->find_recent_body_Cloth_Arm_L((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
 			if (!body)
 				continue;
@@ -1214,7 +1223,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
 			uint32_t        chosen_idx;
-			PxRigidDynamic* body = m_ragdoll->find_recent_body_Cloth((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
+			PxRigidDynamic* body = m_ragdoll->find_recent_body_Cloth_Arm_R((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
 			if (!body)
 				continue;
@@ -1554,7 +1563,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
 			uint32_t        chosen_idx;
-			PxRigidDynamic* body = m_ragdoll->find_recent_body_Cloth((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
+			PxRigidDynamic* body = m_ragdoll->find_recent_body_Cloth_Leg_L((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
 			if (!body)
 				continue;
@@ -1681,7 +1690,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
 			uint32_t        chosen_idx;
-			PxRigidDynamic* body = m_ragdoll->find_recent_body_Cloth((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
+			PxRigidDynamic* body = m_ragdoll->find_recent_body_Cloth_Leg_R((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
 			if (!body)
 				continue;
@@ -1874,11 +1883,36 @@ void CRagdoll_Physics::update_animations()
 	}
 	else
 	{
-		m_Global_transforms = *m_ragdoll_pose->apply(m_ragdoll, m_model_only_scale, m_model_without_scale);
+		/*m_Global_transforms = *m_ragdoll_pose->apply(m_ragdoll, m_model_only_scale, m_model_without_scale);
 		m_Global_transforms_BreakPart_Cloth_Arm_L = *m_ragdoll_pose->apply_BreakPart_Cloth_Arm_L(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Arm_L);
 		m_Global_transforms_BreakPart_Cloth_Arm_R = *m_ragdoll_pose->apply_BreakPart_Cloth_Arm_R(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Arm_R);
 		m_Global_transforms_BreakPart_Cloth_Leg_L = *m_ragdoll_pose->apply_BreakPart_Cloth_Leg_L(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Leg_L);
-		m_Global_transforms_BreakPart_Cloth_Leg_R = *m_ragdoll_pose->apply_BreakPart_Cloth_Leg_R(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Leg_R);
+		m_Global_transforms_BreakPart_Cloth_Leg_R = *m_ragdoll_pose->apply_BreakPart_Cloth_Leg_R(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Leg_R);*/
+
+#pragma region Using Thread
+		function<void()> job1 = bind(&AnimRagdoll::apply_BreakPart_Cloth_Arm_L_NoReturn, m_ragdoll_pose, m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Arm_L);
+		function<void()> job2 = bind(&AnimRagdoll::apply_BreakPart_Cloth_Arm_L_NoReturn, m_ragdoll_pose, m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Arm_R);
+		function<void()> job3 = bind(&AnimRagdoll::apply_BreakPart_Cloth_Arm_L_NoReturn, m_ragdoll_pose, m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Leg_L);
+		function<void()> job4 = bind(&AnimRagdoll::apply_BreakPart_Cloth_Arm_L_NoReturn, m_ragdoll_pose, m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Leg_R);
+		function<void()> job5 = bind(&AnimRagdoll::apply_NoReturn, m_ragdoll_pose, m_ragdoll, m_model_only_scale, m_model_without_scale);
+		CGameInstance::Get_Instance()->Insert_Job(job1);
+		CGameInstance::Get_Instance()->Insert_Job(job2);
+		CGameInstance::Get_Instance()->Insert_Job(job3);
+		CGameInstance::Get_Instance()->Insert_Job(job4);
+		CGameInstance::Get_Instance()->Insert_Job(job5);
+
+
+		while (!CGameInstance::Get_Instance()->AllJobsFinished())
+		{
+			this_thread::yield();
+		}
+
+		m_Global_transforms = *m_ragdoll_pose->GetRagdollTransform();
+		m_Global_transforms_BreakPart_Cloth_Arm_L = *m_ragdoll_pose->GetRagdollTransform_Arm_L();
+		m_Global_transforms_BreakPart_Cloth_Arm_R = *m_ragdoll_pose->GetRagdollTransform_Arm_R();
+		m_Global_transforms_BreakPart_Cloth_Leg_L = *m_ragdoll_pose->GetRagdollTransform_Leg_L();
+		m_Global_transforms_BreakPart_Cloth_Leg_R = *m_ragdoll_pose->GetRagdollTransform_Leg_R();
+#pragma endregion
 
 		if (m_bPartialRagdoll == false)
 		{

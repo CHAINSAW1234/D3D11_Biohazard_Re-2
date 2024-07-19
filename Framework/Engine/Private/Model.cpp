@@ -1636,7 +1636,7 @@ HRESULT CModel::Link_Bone_Auto_RagDoll(CModel* pTargetModel, CRagdoll_Physics* p
 
 	IntersectionBoneTags.resize(iter - IntersectionBoneTags.begin());
 
-	for (auto& strIntersectBoneTag : IntersectionBoneTags)
+	/*for (auto& strIntersectBoneTag : IntersectionBoneTags)
 	{
 		_int			iDstBoneIndex = { pTargetModel->Find_BoneIndex(strIntersectBoneTag) };
 		if (-1 == iDstBoneIndex)
@@ -1646,7 +1646,7 @@ HRESULT CModel::Link_Bone_Auto_RagDoll(CModel* pTargetModel, CRagdoll_Physics* p
 
 		_int			iSrcBoneIndex = { Find_BoneIndex(strIntersectBoneTag) };
 		m_Bones[iSrcBoneIndex]->Set_Parent_CombinedMatrix_Ptr_RagDoll(pRagDollCombinedMatrix);
-	}
+	}*/
 
 	return S_OK;
 }
