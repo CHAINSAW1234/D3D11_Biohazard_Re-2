@@ -1883,17 +1883,19 @@ void CRagdoll_Physics::update_animations()
 	}
 	else
 	{
+#pragma region Original Version
 		/*m_Global_transforms = *m_ragdoll_pose->apply(m_ragdoll, m_model_only_scale, m_model_without_scale);
 		m_Global_transforms_BreakPart_Cloth_Arm_L = *m_ragdoll_pose->apply_BreakPart_Cloth_Arm_L(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Arm_L);
 		m_Global_transforms_BreakPart_Cloth_Arm_R = *m_ragdoll_pose->apply_BreakPart_Cloth_Arm_R(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Arm_R);
 		m_Global_transforms_BreakPart_Cloth_Leg_L = *m_ragdoll_pose->apply_BreakPart_Cloth_Leg_L(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Leg_L);
 		m_Global_transforms_BreakPart_Cloth_Leg_R = *m_ragdoll_pose->apply_BreakPart_Cloth_Leg_R(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Leg_R);*/
+#pragma endregion
 
 #pragma region Using Thread
 		function<void()> job1 = bind(&AnimRagdoll::apply_BreakPart_Cloth_Arm_L_NoReturn, m_ragdoll_pose, m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Arm_L);
-		function<void()> job2 = bind(&AnimRagdoll::apply_BreakPart_Cloth_Arm_L_NoReturn, m_ragdoll_pose, m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Arm_R);
-		function<void()> job3 = bind(&AnimRagdoll::apply_BreakPart_Cloth_Arm_L_NoReturn, m_ragdoll_pose, m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Leg_L);
-		function<void()> job4 = bind(&AnimRagdoll::apply_BreakPart_Cloth_Arm_L_NoReturn, m_ragdoll_pose, m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Leg_R);
+		function<void()> job2 = bind(&AnimRagdoll::apply_BreakPart_Cloth_Arm_R_NoReturn, m_ragdoll_pose, m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Arm_R);
+		function<void()> job3 = bind(&AnimRagdoll::apply_BreakPart_Cloth_Leg_L_NoReturn, m_ragdoll_pose, m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Leg_L);
+		function<void()> job4 = bind(&AnimRagdoll::apply_BreakPart_Cloth_Leg_R_NoReturn, m_ragdoll_pose, m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Leg_R);
 		function<void()> job5 = bind(&AnimRagdoll::apply_NoReturn, m_ragdoll_pose, m_ragdoll, m_model_only_scale, m_model_without_scale);
 		CGameInstance::Get_Instance()->Insert_Job(job1);
 		CGameInstance::Get_Instance()->Insert_Job(job2);
@@ -1995,7 +1997,6 @@ void CRagdoll_Physics::update_animations()
 						{
 							auto Inverse = XMMatrixInverse(nullptr, XMLoadFloat4x4(&WorldMat));
 							auto Result = m_Global_transforms_BreakPart.transforms[i] * Inverse;
-							//m_BoneMatrices[m_vecBoneIndex[i]] = Result;
 							(*m_vecBone)[m_vecBoneIndex[i]]->Set_Combined_Matrix(Result);
 						}
 
