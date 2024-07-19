@@ -22,22 +22,22 @@
   {
     "NAME": "혼합 약초(녹+녹)",
     "CLASSIFY": "회복 아이템",
-    "DESCRIPTION": "추가 안됨"
+    "DESCRIPTION": "2개의 녹색 약초를 \n배합한 이 혼합물은\n체력을 중간정도 \n회복시킵니다."
   },
   {
     "NAME": "혼합 약초(녹+적)",
     "CLASSIFY": "회복 아이템",
-    "DESCRIPTION": "추가 안됨"
+    "DESCRIPTION": "녹, 적 약초를\n배합한 이 혼합물은\n체력을 완전히\n회복시킵니다."
   },
   {
     "NAME": "혼합 약초(녹+청)",
     "CLASSIFY": "회복 아이템",
-    "DESCRIPTION": "추가 안됨"
+    "DESCRIPTION": "녹, 청 약초를\n배합한 이 혼합물은\n체력을 조금\n회복시킵니다."
   },
   {
     "NAME": "혼합 약초(녹+녹+청)",
     "CLASSIFY": "회복 아이템",
-    "DESCRIPTION": "추가 안됨"
+    "DESCRIPTION": "3개의 녹색 약초를\n배합한 이 혼합물은\n체력을 완전히\n회복시킵니다."
   },
   {
     "NAME": "혼합 약초(녹+녹+녹)",
@@ -77,7 +77,7 @@
   {
     "NAME": "샷건 탄약",
     "CLASSIFY": "탄약",
-    "DESCRIPTION": "추가 안됨"
+    "DESCRIPTION": "18.1mm 펠릿으로 포장된\n12게이지 샷건 쉘입니다."
   },
   {
     "NAME": "나무 판",
@@ -105,29 +105,29 @@
     "DESCRIPTION": "대량의 화약. 일반 화약보다 탄약을 \n두 배 더 많이 만들 수 있습니다."
   },
   {
-    "NAME": "노란 강화 물약",
-    "CLASSIFY": "버프 아이템",
+    "NAME": "고급 화약",
+    "CLASSIFY": "자원",
     "DESCRIPTION": "정현이가 좋아합니다.\nps. 마약은 아닙니다."
   },
   {
-    "NAME": "보정기",
-    "CLASSIFY": "부착물",
-    "DESCRIPTION": "추가안됨"
+    "NAME": "소염기(마틸다)",
+    "CLASSIFY": "맞춤형 부품",
+    "DESCRIPTION": "마틸다의 맞춤형 부품으로\n압축가스의 방향을 총알에서\n먼 곳이나 위로 바꿔 반동 및\n총구가 들리는 정도를 줄입니다."
   },
   {
-    "NAME": "확장 탄창",
-    "CLASSIFY": "부착물",
-    "DESCRIPTION": "추가안됨"
+    "NAME": "대용량 탄창(마틸다)",
+    "CLASSIFY": "맞춤형 부품",
+    "DESCRIPTION": "마틸다의 맞춤형 부품으로\n탄창을 24발분으로 확장하고\n재장전 시간을 줄입니다."
   },
   {
-    "NAME": "샷건 개머리판",
-    "CLASSIFY": "부착물",
-    "DESCRIPTION": "추가안됨"
+    "NAME": "산탄총 개머리판(W-870)",
+    "CLASSIFY": "맞춤형 부품",
+    "DESCRIPTION": "W-870의 맞춤형 부품으로\n총을 안정시켜 한 번의\n부드러운 동작으로 발사 및\n재장전될 수 있도록 합니다."
   },
   {
     "NAME": "샷건 총열",
-    "CLASSIFY": "부착물",
-    "DESCRIPTION": "추가안됨"
+    "CLASSIFY": "맞춤형 부품",
+    "DESCRIPTION": "W-870의 맞춤형 부품으로\n총구 속도를 높이고 \n탄환 분산을 줄여 \n각 샷의 위력을 높여줍니다."
   },
   {
     "NAME": "유니콘 메달",
@@ -336,7 +336,7 @@
   },
   {
     "NAME": "힙 파우치",
-    "CLASSIFY": "",
+    "CLASSIFY": "열쇠 아이템",
     "DESCRIPTION": "벨트가 달린 작은 파우치로, \n더 많은 물건을 휴대하기에 좋습니다"
   },
   {
@@ -360,13 +360,18 @@
     "DESCRIPTION": "수류탄. 폭파 시 치명적인 금속 파편을 터뜨리며 주위를 파괴합니다."
   },
   {
-    "NAME": "개머리판",
-    "CLASSIFY": "부착물",
-    "DESCRIPTION": "추가 안됨"
+    "NAME": "개머리판(마틸다)",
+    "CLASSIFY": "맞춤형 부품",
+    "DESCRIPTION": "마틸다의 맞춤형 부품으로\n방아쇠를 한 번 당길 때마다\n3발분이 발사되도록 합니다."
   },
   {
     "NAME": "휴대용 금고",
     "CLASSIFY": "열쇠 아이템",
     "DESCRIPTION": "소형 휴대용 금고"
+  },
+  {
+    "NAME": "조각상의 손과 책",
+    "CLASSIFY": "열쇠 아이템",
+    "DESCRIPTION": "석고로 만든 왼팔. \n책이 장갑처럼 들어맞습니다."
   }
 ]

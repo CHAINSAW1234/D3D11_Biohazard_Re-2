@@ -20,6 +20,8 @@ HRESULT CSound_Manager::Initialize()
 
 	ZeroMemory(m_pChannelArr, sizeof(FMOD_CHANNEL*) * SOUND_CHANNEL_MAX);
 
+	Initialize_SoundDesc_2D();
+
 	LoadSoundFile();
 	LoadSoundFile_Zombie();
 

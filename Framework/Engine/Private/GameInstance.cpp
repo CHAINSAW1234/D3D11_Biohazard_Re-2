@@ -187,12 +187,12 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 		return E_FAIL;
 	}
 
-	//m_pSound_Manager_2D = CSound_Manager_2D::Create();
-	//if (nullptr == m_pSound_Manager_2D)
-	//{
-	//	MSG_BOX(TEXT("Error: m_pSound_Manager_2D::Create -> nullptr"));
-	//	return E_FAIL;
-	//}
+	m_pSound_Manager_2D = CSound_Manager_2D::Create();
+	if (nullptr == m_pSound_Manager_2D)
+	{
+		MSG_BOX(TEXT("Error: m_pSound_Manager_2D::Create -> nullptr"));
+		return E_FAIL;
+	}
 
 	//Random Generator
 	m_RandomNumber = mt19937_64(m_RandomDevice());

@@ -29,7 +29,9 @@ public:
 
 	INVENTORY_EVENT Get_InventoryEvent() const {
 		return m_eContextEvent;
-	}
+	}		
+
+	virtual void		Set_Dead(_bool bDead) override;
 
 private:
 	void Set_EventbyTexture(_uint iTextureNum);
@@ -50,6 +52,8 @@ private:
 	_float3						m_fAppearPos = {};
 
 	_float3						m_fArrivalPos = {};
+
+	CGameObject*				m_pHoverdChild = { nullptr };//사운드용
 
 #pragma region 나옹
 private:

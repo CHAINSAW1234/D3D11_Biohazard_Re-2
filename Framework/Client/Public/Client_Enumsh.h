@@ -9,7 +9,11 @@ namespace Client
 		CH18, CH19, CH20, CH21, CH22, CH23, CH24, CH25, CH26, CH27, CH28, CH29, CH30, CH31,
 		MAXCHANNEL
 	};
-
+	/*
+	채널 점유 현황
+	CH30 : Inventory에서 사용중
+	CH31 : Inventory에서 사용중
+	*/
 	enum LEVEL { LEVEL_STATIC, LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_END };
 
 	enum class SHADER_PASS_VTXANIMMODEL {
@@ -419,7 +423,7 @@ namespace Client
 		Grenade,
 		vp70stock,
 		portablesafe,
-		//statuebookhand,
+		statuebookhand,
 		ITEM_NUMBER_END
 	};
 
@@ -432,3 +436,19 @@ namespace Client
 		DEFAULT
 	};
 }
+
+
+
+
+
+//HandGunvp70stock,								//HandGun + vp70stock
+//HandGunvp70powerup,								//HandGun + vp70powerup
+//HandGunvp70longmagazine,						//HandGun + vp70longmagazine
+//HandGunvp70stockvp70powerup,					//HandGun + vp70stock + vp70powerup
+//HandGunvp70stockvp70longmagazine,				//HandGun + vp70stock + vp70longmagazine
+//HandGunvp70powerupvp70longmagazine,				//HandGun + vp70powerup + vp70longmagazine
+//HandGunvp70stockvp70powerupvp70longmagazine,	//HandGun + vp70stock + vp70powerup + vp70longmagazine
+
+//ShotGunshotgunpartsstock_00,					//ShotGun + shotgunpartsstock_00
+//ShotGunshotgunpartsbarrel,						//ShotGun + shotgunpartsbarrel
+//ShotGunshotgunpartsstock_00shotgunpartsbarrel,	//ShotGun + shotgunpartsstock_00 + shotgunpartsbarrel

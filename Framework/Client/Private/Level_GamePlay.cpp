@@ -68,17 +68,17 @@ HRESULT CLevel_GamePlay::Initialize()
 
 	m_pGameInstance->SetSimulate(true);
 
-	//CImgui_Manager::Get_Instance()->Set_GraphicDevice(m_pDevice, m_pContext);
-	//CImgui_Manager::Get_Instance()->Initialize();
-	//CImgui_Manager::Get_Instance()->Tick();
-	//CImgui_Manager::Get_Instance()->Render();
+	CImgui_Manager::Get_Instance()->Set_GraphicDevice(m_pDevice, m_pContext);
+	CImgui_Manager::Get_Instance()->Initialize();
+	CImgui_Manager::Get_Instance()->Tick();
+	CImgui_Manager::Get_Instance()->Render();
 
 	return S_OK;
 }
 
 void CLevel_GamePlay::Tick(_float fTimeDelta)
 {
-	//	CImgui_Manager::Get_Instance()->Tick();
+	CImgui_Manager::Get_Instance()->Tick();
 
 	__super::Tick(fTimeDelta);
 
@@ -135,7 +135,7 @@ HRESULT CLevel_GamePlay::Render()
 
 	SetWindowText(g_hWnd, TEXT("Level_GamePlay."));
 
-	//	CImgui_Manager::Get_Instance()->Render();
+	CImgui_Manager::Get_Instance()->Render();
 
 	return S_OK;
 }

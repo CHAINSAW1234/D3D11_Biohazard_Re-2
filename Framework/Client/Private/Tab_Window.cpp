@@ -85,9 +85,6 @@ void CTab_Window::Start()
 
 	for (auto& iter : *pUILayer)
 	{
-
-		// if(&&!bReadItemUI)
-
 		CRead_Item_UI* pRead = dynamic_cast<CRead_Item_UI*>(iter);
 		if (pRead != nullptr && pRead->Get_UI_TYPE() == CRead_Item_UI::READ_UI_TYPE::INTRODUCE_READ)
 		{
@@ -117,6 +114,8 @@ void CTab_Window::Start()
 			Safe_AddRef(m_pHotKey);
 		}
 	}
+
+	m_pItem_Mesh_Viewer->Start();
 
 	m_pHint->Start();
 }
@@ -600,7 +599,7 @@ _bool CTab_Window::IsInputTab()
 {
 	_bool isInputTab = false;
 
-	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB) || UP == m_pGameInstance->Get_KeyState(VK_ESCAPE))
+	if (DOWN == m_pGameInstance->Get_KeyState(VK_TAB))
 		isInputTab = true;
 
 	if (PICK_UP_ITEM_WINDOW == m_eWindowType)
@@ -675,6 +674,8 @@ void CTab_Window::PickUp_Item(CGameObject* pPickedUp_Item)
 
 		/*Item_Mesh_Viewer ¼¼ÆÃ*/
 		m_pItem_Mesh_Viewer->Set_Operation(POP_UP, ePickedItemNum, 1);
+
+
 	}
 
 	else

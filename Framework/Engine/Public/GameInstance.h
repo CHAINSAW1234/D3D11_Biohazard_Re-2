@@ -457,6 +457,18 @@ public:
 	{
 		return m_pCameraTransform;
 	}
+
+	void									Set_Gimmick_Camera_Transform(class CTransform* pTransform)
+	{
+		m_pGimmickCameraTransform = pTransform;
+	}
+	class CTransform* Get_Gimmick_Camera_Transform()
+	{
+		return m_pGimmickCameraTransform;
+	}
+
+
+
 	_float4									Get_Camera_Pos_Float4();
 	_vector									Get_Camera_Pos_Vector();
 #pragma endregion
@@ -519,6 +531,7 @@ private:
 	_float4									m_vRayOrigin_Aim;
 	_float4									m_vRayDir_Aim;
 	class CTransform*						m_pCameraTransform = { nullptr };
+	class CTransform*						m_pGimmickCameraTransform = { nullptr };
 
 
 public:

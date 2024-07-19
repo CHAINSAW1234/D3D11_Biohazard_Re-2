@@ -27,6 +27,8 @@ public:
 		m_isFilled = isFilled;
 	}
 
+
+
 private:
 	CTexture* m_pEmptyTexture = { nullptr };
 	CTexture* m_pFilledTexture = { nullptr };

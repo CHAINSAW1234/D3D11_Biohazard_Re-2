@@ -47,7 +47,7 @@ void CHint_Directory::Start()
 	if (true == m_IsChild)
 	{
 		m_fBlending = 0.1f;
-		m_pTransformCom->Set_Scaled(560.f, 30.f, 1.f);
+		//m_pTransformCom->Set_Scaled(560.f, 30.f, 1.f);
 	}
 }
 
