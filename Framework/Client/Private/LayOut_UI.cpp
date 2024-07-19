@@ -32,121 +32,67 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
 
         CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
         
-        m_iWhich_Child = CustomUIDesc->iWhich_Child;
-
         m_pLayout_BackGround = static_cast<CLayOut_UI*>(CustomUIDesc->pSupervisor);
 
-        if(CustomUIDesc->wstrFileName == TEXT("UI_LayOut"))
+        if(CustomUIDesc->wstrFileName == TEXT("UI_Layout_BackGround"))
         {
-            m_eLayout_Type = LAYOUT_TYPE::LAYOUT_TAB;
+            m_eLayout_Type = LAYOUT_TYPE::LAYOUT_BACKGROUND;
 
-            if (0 == m_iWhich_Child)
-            {
-                m_eTabLayout_Type = LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE;
-            }
-
-            else if (1 == m_iWhich_Child)
-            {
-                list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
-
-                _int iLastType = { -1 };
-                _int iMaxSize = { -1 };
-
-                for (auto& iter : *pUIList)
-                {
-                    CLayOut_UI* pLayout = dynamic_cast<CLayOut_UI*>(iter);
-
-                    if (nullptr != pLayout)
-                    {
-                        if ((_int)pLayout->m_eTabLayout_Type <= (_int)LAYOUT_TAB_TYPE::HINT_UI_TYPE)
-                        {
-                            if (iMaxSize < (_int)pLayout->m_eTabLayout_Type)
-                            {
-                                iLastType = (_int)pLayout->m_eTabLayout_Type;
-                            }
-                        }
-                    }
-                }
-
-                if (iLastType == -1)
-                    m_eTabLayout_Type = LAYOUT_TAB_TYPE::MINMAP_UI_TYPE;
-
-                else if (iLastType == (_int)LAYOUT_TAB_TYPE::MINMAP_UI_TYPE)
-                    m_eTabLayout_Type = LAYOUT_TAB_TYPE::INVEN_UI_TYPE;
-            }
-
-            else
-            {
-                list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
-
-                if (nullptr != pUIList)
-                {
-                    CLayOut_UI* pLayout = static_cast<CLayOut_UI*>(pUIList->back());
-
-                    if (pLayout->m_eTabLayout_Type == LAYOUT_TAB_TYPE::MINMAP_UI_TYPE)
-                        m_eTabLayout_Type = LAYOUT_TAB_TYPE::MINMAP_UI_TYPE;
-
-                    else if (pLayout->m_eTabLayout_Type == LAYOUT_TAB_TYPE::INVEN_UI_TYPE)
-                        m_eTabLayout_Type = LAYOUT_TAB_TYPE::INVEN_UI_TYPE;
-                }
-            }
+            m_eTabLayout_Type = LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE;
         }
 
-        else if (CustomUIDesc->wstrFileName == TEXT("UI_HintLayout"))
+        else if (CustomUIDesc->wstrFileName == TEXT("UI_Layout_Hint"))
         {
-            if (nullptr == m_pLayout_BackGround)
-            {
-                m_pLayout_BackGround = static_cast<CLayOut_UI*>(Find_Layout_BackGround());
-
-                if (nullptr == m_pLayout_BackGround)
-                    MSG_BOX(TEXT("Hint Layout에서 Background를 사용할 수 없음 "));
-            }
-
             m_eLayout_Type = LAYOUT_TYPE::LAYOUT_TAB;
 
             m_eTabLayout_Type = LAYOUT_TAB_TYPE::HINT_UI_TYPE;
+        }
+
+        else if (CustomUIDesc->wstrFileName == TEXT("UI_Layout_Inven"))
+        {
+            if (!m_vecTextBoxes.empty())
+            {
+                for (auto& iter : m_vecTextBoxes)
+                {
+                    if (iter->Get_Text() == TEXT("아이템을 검사합니다"))
+                    {
+                        CTransform* pTextTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
+
+                        m_vOriginTextPos = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
+
+                        m_isInvenCheck_Typing = true;
+
+                        break;
+                    }
+                }
+            }
+
+            m_eLayout_Type = LAYOUT_TYPE::LAYOUT_TAB;
+
+            m_eTabLayout_Type = LAYOUT_TAB_TYPE::INVEN_UI_TYPE;
+        }
+
+        else if (CustomUIDesc->wstrFileName == TEXT("UI_Layout_Map"))
+        {
+            m_eLayout_Type = LAYOUT_TYPE::LAYOUT_TAB;
+
+            m_eTabLayout_Type = LAYOUT_TAB_TYPE::MINMAP_UI_TYPE;
         }
 
         else if (CustomUIDesc->wstrFileName == TEXT("UI_Layout_Key"))
         {
             m_eLayout_Type = LAYOUT_TYPE::LAYOUT_KEY;
 
-            if (0 == m_iWhich_Child)
-            {
-                m_eTabLayout_Type = LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE;
-            }
+            m_eTabLayout_Type = LAYOUT_TAB_TYPE::KEY_UI_TYPE;
         }
 
         else if (CustomUIDesc->wstrFileName == TEXT("UI_Layout_Statue"))
         {
             m_eLayout_Type = LAYOUT_TYPE::LAYOUT_STATUE;
 
-            if (0 == m_iWhich_Child)
-            {
-                m_eTabLayout_Type = LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE;
-            }
+            m_eTabLayout_Type = LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE;
         }
 
-    }
-
-    if (m_eTabLayout_Type == LAYOUT_TAB_TYPE::INVEN_UI_TYPE)
-    {
-        if (!m_vecTextBoxes.empty())
-        {
-            for (auto& iter : m_vecTextBoxes)
-            {
-                if (iter->Get_Text() == TEXT("아이템을 검사합니다"))
-                {
-                    CTransform* pTextTrans = static_cast<CTransform*>(iter->Get_Component(g_strTransformTag));
-                    
-                    m_vOriginTextPos = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
-
-                    m_isInvenCheck_Typing = true;
-
-                    break;
-                }
-            }
-        }
     }
 
     if (LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE == m_eTabLayout_Type)
@@ -160,6 +106,8 @@ HRESULT CLayOut_UI::Initialize(void* pArg)
         return E_FAIL;
 
     m_isPrevRender = m_isRender = false;
+
+    m_pLayout_BackGround = static_cast<CLayOut_UI*>(Find_Layout_BackGround());
 
     return S_OK;
 }
@@ -183,7 +131,7 @@ void CLayOut_UI::Tick(_float fTimeDelta)
         }
     }
 
-    if (nullptr == m_pTab_Window)
+    if (nullptr == m_pTab_Window && m_eTabLayout_Type != LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE)
     {
         Find_TabWindow();
 
@@ -193,6 +141,17 @@ void CLayOut_UI::Tick(_float fTimeDelta)
             /* Tab Window 가 nullptr 이 아닌 지 확인해주세요.*/
         }
     }
+
+    if (nullptr == m_pLayout_BackGround)
+    {
+        m_pLayout_BackGround = static_cast<CLayOut_UI*>(Find_Layout_BackGround());
+        if (nullptr == m_pLayout_BackGround)
+        {
+            MSG_BOX(TEXT("LayOut에 m_pLayout_BackGround 불러올 수 없습니다."));
+            /* Tab Window 가 nullptr 이 아닌 지 확인해주세요.*/
+        }
+    }
+
 
     _float4 vObjPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
     vObjPos.z = 0.1f;
@@ -310,10 +269,9 @@ CGameObject* CLayOut_UI::Find_Layout_BackGround()
 
         if (nullptr != pLayout)
         {
-            if (LAYOUT_TYPE::LAYOUT_TAB == pLayout->m_eLayout_Type)
+            if (LAYOUT_TYPE::LAYOUT_BACKGROUND == pLayout->m_eLayout_Type)
             {
-                if (nullptr != pLayout->m_pLayout_BackGround)
-                    return pLayout;
+                return pLayout;
             }
         }
     }
@@ -323,69 +281,73 @@ CGameObject* CLayOut_UI::Find_Layout_BackGround()
 
 void CLayOut_UI::Layout_Tab()
 {
-    if (LAYOUT_TYPE::LAYOUT_TAB != m_eLayout_Type)
-        return;
-
-    if (*m_isGimmickCamera_Layout_Type != static_cast<_ubyte>(CInteractProps::INTERACT_GIMMICK_TYPE::NONE_GIMMICK))
-        return; 
-
-    if (LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE == m_eTabLayout_Type)
+    if (LAYOUT_TYPE::LAYOUT_TAB == m_eLayout_Type || LAYOUT_TYPE::LAYOUT_BACKGROUND == m_eLayout_Type)
     {
-        if (false == (*m_isMainRender))
+      /*  if (*m_isGimmickCamera_Layout_Type != static_cast<_ubyte>(CInteractProps::INTERACT_GIMMICK_TYPE::NONE_GIMMICK))
+            return;*/
+
+        if (LAYOUT_TAB_TYPE::BACKGROUND_UI_TYPE == m_eTabLayout_Type)
         {
-            m_isRender = true;
-            m_eRenderLayout_Type = (LAYOUT_TAB_TYPE) * (m_pTab_Window->Get_Window_RenderType_Ptr());
+            if (false == (*m_isMainRender))
+            {
+                m_isRender = true;
+                m_eRenderLayout_Type = (LAYOUT_TAB_TYPE) * (m_pTab_Window->Get_Window_RenderType_Ptr());
+            }
+
+            else
+            {
+                m_isRender = false;
+                m_eRenderLayout_Type = LAYOUT_TAB_TYPE::END_UI_TYPE;
+            }
+
         }
 
         else
         {
-            m_isRender = false;
-            m_eRenderLayout_Type = LAYOUT_TAB_TYPE::END_UI_TYPE;
-        }
-        
-    }
 
-    /* 내 렌더랑 호출할 렌더랑 같을 때 */
-    if (nullptr != m_pLayout_BackGround)
-    {
-        if (m_eTabLayout_Type == m_pLayout_BackGround->m_eRenderLayout_Type)
-        {
-            m_isRender = true;
-        }
-
-        else
-        {
-            m_isRender = false;
-        }
-    }
-
-    /* Redner 작동*/
-    if (m_isPrevRender != m_isRender)
-    {
-        if (true == m_isRender)
-        {
-            if (!m_vecTextBoxes.empty())
+            /* 내 렌더랑 호출할 렌더랑 같을 때 */
+            if (nullptr != m_pLayout_BackGround)
             {
-                for (auto& iter : m_vecTextBoxes)
-                    iter->Set_FontColor(WHITE_COLOR);
+                if (m_eTabLayout_Type == m_pLayout_BackGround->m_eRenderLayout_Type)
+                {
+                    m_isRender = true;
+                }
+
+                else
+                {
+                    m_isRender = false;
+                }
+            }
+
+            /* Redner 작동*/
+            if (m_isPrevRender != m_isRender)
+            {
+                if (true == m_isRender)
+                {
+                    if (!m_vecTextBoxes.empty())
+                    {
+                        for (auto& iter : m_vecTextBoxes)
+                            iter->Set_FontColor(WHITE_COLOR);
+                    }
+                }
+
+                else if (false == m_isRender)
+                {
+                    if (!m_vecTextBoxes.empty())
+                    {
+                        for (auto& iter : m_vecTextBoxes)
+                            iter->Set_FontColor(ALPHA_ZERO);
+                    }
+                }
+
+                m_isPrevRender = m_isRender;
             }
         }
 
-        else if (false == m_isRender)
+        if (true == m_isInvenCheck_Typing)
         {
-            if (!m_vecTextBoxes.empty())
-            {
-                for (auto& iter : m_vecTextBoxes)
-                    iter->Set_FontColor(ALPHA_ZERO);
-            }
+            Typing_Menu_LayOut();
         }
-
-        m_isPrevRender = m_isRender;
-    }
-
-    if (true == m_isInvenCheck_Typing)
-    {
-        Typing_Menu_LayOut();
     }
 }
 

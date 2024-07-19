@@ -20,6 +20,7 @@ public :
 		LAYOUT_TAB,
 		LAYOUT_KEY, // ¿­¼è Àá±Ý
 		LAYOUT_STATUE, // ÀÚ¹°¼è
+		LAYOUT_BACKGROUND, // ÀÚ¹°¼è
 		LAYOUT_END
 	};
 
