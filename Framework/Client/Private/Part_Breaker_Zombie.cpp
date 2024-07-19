@@ -1666,7 +1666,10 @@ HRESULT CPart_Breaker_Zombie::Compute_MeshParts_Types_Indices_Shirt(vector<vecto
 		}
 
 		if (iMeshPart == -1 || iMeshType == -1)
+		{
+			++iMeshIndex;
 			continue;
+		}
 
 		MeshPartsTypesIndices[iMeshPart][iMeshType] = static_cast<_int>(iMeshIndex);
 		++iMeshIndex;
@@ -1695,6 +1698,7 @@ HRESULT CPart_Breaker_Zombie::Compute_MeshParts_Types_Indices_Pants(vector<vecto
 		}
 		else if (strMeshTag.find("44") != string::npos)		//	R_Shoes
 		{
+
 			iMeshPart = static_cast<_int>(PANTS_MESH_PART::_R_SHOES);
 			iMeshType = static_cast<_int>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_SHOES);
 		}
@@ -1712,7 +1716,10 @@ HRESULT CPart_Breaker_Zombie::Compute_MeshParts_Types_Indices_Pants(vector<vecto
 		}
 
 		if (iMeshPart == -1 || iMeshType == -1)
+		{
+			++iMeshIndex;
 			continue;
+		}
 
 		MeshPartsTypesIndices[iMeshPart][iMeshType] = static_cast<_int>(iMeshIndex);
 		++iMeshIndex;

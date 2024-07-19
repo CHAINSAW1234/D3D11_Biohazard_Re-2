@@ -80,6 +80,10 @@ _bool CStun_Zombie::Execute(_float fTimeDelta)
 
 	else
 	{
+		_int			iRandom = { m_pGameInstance->GetRandom_Int(0, 2) };
+		if (0 != iRandom)
+			return false;
+
 		MONSTER_STATE			eMonsterState = { m_pBlackBoard->Get_AI()->Get_Current_MonsterState() };
 		if (MONSTER_STATE::MST_HOLD == eMonsterState)
 			return false;

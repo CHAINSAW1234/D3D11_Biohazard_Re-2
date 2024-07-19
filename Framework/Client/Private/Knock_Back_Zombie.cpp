@@ -70,6 +70,10 @@ _bool CKnock_Back_Zombie::Execute(_float fTimeDelta)
 
 	else
 	{
+		_int			iRandom = { m_pGameInstance->GetRandom_Int(0, 2) };
+		if (0 != iRandom)
+			return false;
+
 		HIT_TYPE		eHitType = { m_pBlackBoard->Get_AI()->Get_Current_HitType() };
 		if (HIT_TYPE::HIT_BIG != eHitType)
 			return false;

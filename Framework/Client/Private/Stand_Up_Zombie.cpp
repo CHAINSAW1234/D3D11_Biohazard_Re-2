@@ -66,6 +66,9 @@ _bool CStand_Up_Zombie::Execute(_float fTimeDelta)
 
 	if (m_pBlackBoard->Get_AI()->Get_Current_MonsterState() == MONSTER_STATE::MST_STANDUP)
 	{
+		if (true == m_pBlackBoard->Is_Break_L_Leg() || true == m_pBlackBoard->Is_Break_R_Leg())
+			return false;
+
 		_bool			isFinsihed = { m_pBlackBoard->Get_PartModel(CMonster::PART_BODY)->isFinished(static_cast<_uint>(m_ePlayingIndex)) };
 		if (true == isFinsihed)
 		{
