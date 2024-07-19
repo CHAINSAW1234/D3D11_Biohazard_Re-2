@@ -194,3 +194,9 @@ using namespace Engine;
 #define CALC_DECAL_MAP_THREAD_GROUP_SIZE 64 
 
 #pragma endregion
+
+#pragma region Sound 2D
+
+#define SOUND_CHANNEL_SIZE 1024
+
+#pragma endregion

@@ -328,6 +328,9 @@
     <Filter Include="01.Utility\15. Event\Manager">
       <UniqueIdentifier>{e50e6cca-74bc-4082-94e7-c01a796393b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\96.Sound\Manager\2D">
+      <UniqueIdentifier>{cd12bbbd-a4a9-4190-a314-72563323c18f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -620,6 +623,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Event_Manager.cpp">
       <Filter>01.Utility\15. Event\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sound_Manager_2D.cpp">
+      <Filter>01.Utility\96.Sound\Manager\2D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -935,6 +941,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Event_Manager.h">
       <Filter>01.Utility\15. Event\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sound_Manager_2D.h">
+      <Filter>01.Utility\96.Sound\Manager\2D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

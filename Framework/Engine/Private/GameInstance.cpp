@@ -20,7 +20,9 @@
 #include "Easing.h"
 #include "Animation_Library.h"
 #include "Compute_Shader_Manager.h"
-#include"Event_Manager.h"
+#include "Event_Manager.h"
+#include "Sound_Manager_2D.h"
+
 IMPLEMENT_SINGLETON(CGameInstance)
 
 CGameInstance::CGameInstance()	
@@ -184,6 +186,13 @@ HRESULT CGameInstance::Initialize_Engine(HINSTANCE hInstance, _uint iNumLevels, 
 		MSG_BOX(TEXT("Error: m_pEvent_Manager::Create -> nullptr"));
 		return E_FAIL;
 	}
+
+	//m_pSound_Manager_2D = CSound_Manager_2D::Create();
+	//if (nullptr == m_pSound_Manager_2D)
+	//{
+	//	MSG_BOX(TEXT("Error: m_pSound_Manager_2D::Create -> nullptr"));
+	//	return E_FAIL;
+	//}
 
 	//Random Generator
 	m_RandomNumber = mt19937_64(m_RandomDevice());
@@ -1658,6 +1667,142 @@ HRESULT CGameInstance::Stop_All()
 }
 #pragma endregion
 
+#pragma region Sound Mananger 2D
+
+int CGameInstance::VolumeUp_2D(_int eID, _float _vol)
+{
+	m_pSound_Manager_2D->VolumeUp_2D(eID, _vol);
+	return 0;
+}
+
+int CGameInstance::VolumeDown_2D(_int eID, _float _vol)
+{
+	m_pSound_Manager_2D->VolumeDown_2D(eID, _vol);
+	return 0;
+}
+
+int CGameInstance::BGMVolumeUp_2D(_float _vol, _int eID)
+{
+	m_pSound_Manager_2D->BGMVolumeUp_2D(_vol, eID);
+	return 0;
+}
+
+int CGameInstance::BGMVolumeDown_2D(_float _vol, _int eID)
+{
+	m_pSound_Manager_2D->BGMVolumeDown_2D(_vol, eID);
+	return 0;
+}
+
+int CGameInstance::Pause_2D(_int eID, _bool bPause)
+{
+	m_pSound_Manager_2D->Pause_2D(eID, bPause);
+	return 0;
+}
+
+void CGameInstance::PlayMySound_2D(wstring TypeKey, wstring FileKey, _int eID, _float _vol)
+{
+	m_pSound_Manager_2D->PlayMySound_2D(TypeKey, FileKey, eID, _vol);
+}
+
+void CGameInstance::PlayBGM_2D(wstring FileKey, _int eID)
+{
+	m_pSound_Manager_2D->PlayBGM_2D(FileKey, eID);
+}
+
+void CGameInstance::StopSound_2D(_int eID)
+{
+	m_pSound_Manager_2D->StopSound_2D(eID);
+}
+
+
+void CGameInstance::StopAll_2D()
+{
+	m_pSound_Manager_2D->StopAll_2D();
+}
+
+void CGameInstance::ApplyLowPass_2D(_bool bSet, _int eID)
+{
+	m_pSound_Manager_2D->ApplyLowPass_2D(bSet, eID);
+}
+
+void CGameInstance::PlayLoopSound_2D(wstring TypeKey, wstring FileKey, _int eID, _float _vol)
+{
+	m_pSound_Manager_2D->PlayLoopSound_2D(TypeKey, FileKey, eID, _vol);
+}
+
+void CGameInstance::SetVolume_2D(_int eID, _float _vol)
+{
+	m_pSound_Manager_2D->Set_Volume_2D(eID, _vol);
+}
+
+void CGameInstance::ApplyChorus_2D(_int eID)
+{
+	m_pSound_Manager_2D->ApplyChorus_2D(eID);
+}
+
+void CGameInstance::ClearChorus_2D(_int eID)
+{
+	m_pSound_Manager_2D->ClearChorus_2D(eID);
+}
+
+void CGameInstance::MuteAll_2D()
+{
+	m_pSound_Manager_2D->MuteAll_2D();
+}
+
+void CGameInstance::PauseAll_2D()
+{
+	m_pSound_Manager_2D->PauseAll_2D();
+}
+
+void CGameInstance::ReplayAll_2D()
+{
+	m_pSound_Manager_2D->ReplayAll_2D();
+}
+
+void CGameInstance::SetSlowMotionValue_2D(_bool _bSlowMotion)
+{
+	m_pSound_Manager_2D->SetSlowMotionValue_2D(_bSlowMotion);
+}
+
+void CGameInstance::ResetAllSlowMotion_2D()
+{
+	m_pSound_Manager_2D->ResetAllSlowMotion_2D();
+}
+
+_bool CGameInstance::IsPlaying_2D(_int eID, _bool* boolean)
+{
+	return m_pSound_Manager_2D->IsPlaying_2D(eID, boolean);
+}
+void CGameInstance::PlaySoundEffect_2D(wstring TypeKey, wstring FileKey, _float Volume)
+{
+	uniform_int_distribution<_int>	Prob(1, SOUND_CHANNEL_SIZE - 1);
+	_int Index = Prob(m_RandomNumber);
+	_bool boolean = false;
+
+	while (1)
+	{
+		if (!IsPlaying_2D(Index, &boolean))
+		{
+			break;
+		}
+		else
+		{
+			++Index;
+		}
+
+		if (Index >= SOUND_CHANNEL_SIZE)
+		{
+			Index = 1;
+		}
+	}
+
+	StopSound_2D(Index);
+	PlayMySound_2D(TypeKey, FileKey, Index, Volume);
+}
+
+#pragma endregion
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::Get_Instance()->Free();
@@ -1689,5 +1834,5 @@ void CGameInstance::Free()
 	Safe_Release(m_pAnimation_Library);
 	Safe_Release(m_pCS_Manager);
 	Safe_Release(m_pEvent_Manager);
-
+	Safe_Release(m_pSound_Manager_2D);
 }
