@@ -279,7 +279,7 @@ HRESULT CSound_Manager::Update_Sounds_Position()
 		return S_OK;
 
 	_vector				vListenerPosition = { m_pListener_Transform->Get_State_Vector(CTransform::STATE_POSITION) };
-	_matrix				CameraWorldMatrix = { CGameInstance::Get_Instance()->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_PROJ) };
+	_matrix				CameraWorldMatrix = { CGameInstance::Get_Instance()->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW) };
 	_vector				vCameraPosition = { CameraWorldMatrix.r[CTransform::STATE_POSITION] };
 
 	FMOD_RESULT			eResult = { FMOD_OK };
