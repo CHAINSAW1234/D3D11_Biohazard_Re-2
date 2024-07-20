@@ -89,6 +89,8 @@ protected : /* Variable */
 	_float					m_fMouseSensor				= { 10.f };
 	_float2					m_vPlayer_MovePos			= {};
 
+	/* 5. Sound */
+	_bool					m_isOneSound				= { false };
 public:
 	virtual CGameObject* Clone(void* pArg) override = 0;
 	virtual void Free() override;

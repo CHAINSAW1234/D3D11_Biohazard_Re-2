@@ -71,11 +71,15 @@ void CEmblem_Door::Late_Tick(_float fTimeDelta)
 	case (_int)EMBLEM_ANIM::START_ANIM : 
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
 		break;
+		/* LN : 키 클리어 : sound_Map_sm40_conveni_keyhole2_2 
+		(emblem이 두번 돌아가는데 소리는 한 번만 나오고 총 두번 나와야 함)*/
 
 	case (_int)EMBLEM_ANIM::OPEN_ANIM:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
 		if (m_pModelCom->isFinished(0))
 			*m_pEmblem_Anim = (_int)EMBLEM_ANIM::OPENED_ANIM;
+
+		/* LN : 키 클리어 : sound_Map_sm40_conveni_keyhole2_4 */
 	case (_int)EMBLEM_ANIM::OPENED_ANIM:
 		m_bClear = true;
 		break;
@@ -123,7 +127,6 @@ HRESULT CEmblem_Door::Render()
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
-
 
 	list<_uint>			NonHideIndices = { m_pModelCom->Get_NonHideMeshIndices() };
 

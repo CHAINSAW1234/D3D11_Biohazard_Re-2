@@ -72,6 +72,7 @@ void CMain_Map_UI::Tick(_float fTimeDelta)
 
     /* Door : Object가 없을 시 터질 수 있음, Noting 하려면 이거 주석하셈*/
     Region_State();
+
     Door_State();
 }
 
@@ -127,7 +128,6 @@ void CMain_Map_UI::Region_State()
         return;
 
     /* 2. 아이템을 전부 먹었을 때  */
-    /* 맵이 수색 중이고 아이템을 전부 먹었을 때 */
     if (true == m_isMapSearch_Clear && MAP_STATE_TYPE::SEARCH_STATE == m_eMapState)
     {
         Search_Map_Type(MAP_STATE_TYPE::SEARCH_CLEAR_STATE, m_eMap_Location);
@@ -135,7 +135,6 @@ void CMain_Map_UI::Region_State()
         m_isEnd_OnesRole = true;
     }
 
-    /* 1. 처음 Player가 입장했을 때 */
     else if (MAP_STATE_TYPE::NONE_STATE == m_eMapState && true == m_pPlayer->Get_Player_Region_Array()[m_eMap_Location])
     {
         Search_Map_Type(MAP_STATE_TYPE::SEARCH_STATE, m_eMap_Location);
@@ -144,39 +143,33 @@ void CMain_Map_UI::Region_State()
 
 void CMain_Map_UI::Search_Map_Type(MAP_STATE_TYPE _searType, LOCATION_MAP_VISIT _mapType)
 {
-    if (_mapType == m_eMap_Location && (MAP_CHILD_TYPE::BACKGROUND_MAP == (MAP_CHILD_TYPE)m_iWhichChild && m_eMapComponent_Type == MAP_UI_TYPE::MAIN_MAP))
-    {
-        Change_Search_Type(_searType);
-    }
+    if (_mapType == m_eMap_Location && 
+        (MAP_CHILD_TYPE::BACKGROUND_MAP == (MAP_CHILD_TYPE)m_iWhichChild && 
+            m_eMapComponent_Type == MAP_UI_TYPE::MAIN_MAP))
+        Change_Search_Type(_searType, false);
 }
 
 void CMain_Map_UI::Rendering()
 {	
-    /* Inventory를 오픈할 때만 사용할 것이다.  */
     if (false == m_pTab_Window->Get_MinMapRender())
     {
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, m_vOriginPos);
         m_isPrevRender = m_pTab_Window->Get_MinMapRender();
     }
 
-    /* ▶ Map Player와 Main의 모듣 객체와의 거리를 구하는 함수  */
-    /* 1. Player가 몇 층에 있는 지 확인했다면,  */
+    /* ▶ Map Player와 Main의 모듣 객체와의 거리 */
     if (true == *m_pMapPlayer->Get_PlayerFloorSetting())
     {
-        /* 2. Map을 켰는 지 확인했다면,  */
         if (m_isPrevRender != m_pTab_Window->Get_MinMapRender())
         {
-            /* 3. 플레이어와 객체의 거리를 구한다  */
             _float4 vMainTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
             _float4 vPlayertrans = m_pMapPlayer_Transform->Get_State_Float4(CTransform::STATE_POSITION);
 
             _vector Main = XMVectorSet(vMainTrans.x, vMainTrans.y, vMainTrans.z, vMainTrans.w);
             _vector Player = XMVectorSet(vPlayertrans.x, vPlayertrans.y, vPlayertrans.z, vPlayertrans.w);
 
-            /* 거리를 구할 때 player는 해당 위치에서부터 자유자재로 이동 */
             m_vMapOpen_Player_Distance = Main - Player;
 
-            /* 모든 객체와의 거리를 구한 것을 확인하기 위해 사용할 것이다. */
             m_isMainEnd = true;
         }
     }
@@ -184,30 +177,24 @@ void CMain_Map_UI::Rendering()
 
 void CMain_Map_UI::Player_BetweenDistance()
 {
-   /* Map Inventory를 오픈할 때만 사용할 것이다.  */
    if (true == m_pTab_Window->Get_Dead())
        m_isPrevRender = m_pTab_Window->Get_Dead();
 
-   /* ▶ Map Player와 Main의 모듣 객체와의 거리를 구하는 함수  */
-   /* 1. Player가 몇 층에 있는 지 확인했다면,  */
+   /* ▶ Map Player와 Main의 모든 객체와의 거리  */
    if (true == *m_pMapPlayer->Get_PlayerFloorSetting())
    {
-       /* 2. Map을 켰는 지 확인했다면, 내가 존재했던 view와 과거 view가 같지 않다면*/
        if (m_isPrevRender != m_pTab_Window->Get_Dead() || *m_pMapPlayer->Get_ViewFloor_Type() != m_ePrevViewFloor)
        {
            m_ePrevViewFloor = *m_pMapPlayer->Get_ViewFloor_Type();
 
-           /* 3. 플레이어와 객체의 거리를 구한다  */
            _float4 vMainTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
            _float4 vPlayertrans = m_pMapPlayer_Transform->Get_State_Float4(CTransform::STATE_POSITION);
 
            _vector Main = XMVectorSet(vMainTrans.x, vMainTrans.y, vMainTrans.z, vMainTrans.w);
            _vector Player = XMVectorSet(vPlayertrans.x, vPlayertrans.y, vPlayertrans.z, vPlayertrans.w);
 
-           /* 거리를 구할 때 player는 해당 위치에서부터 자유자재로 이동 */
            m_vMapOpen_Player_Distance = Main - Player;
 
-           /* 모든 객체와의 거리를 구0한0 것을0 확인하기 위해 사용할 것이다. */
            m_isMainEnd = true;
        }
    }
@@ -217,37 +204,42 @@ void CMain_Map_UI::Door_State()
 {
     if (MAP_UI_TYPE::DOOR_MAP == m_eMapComponent_Type)
     {
-        if (m_DoorList.empty())
-        {
-            // MSG_BOX(TEXT("Main Map UI() : Door Map이 List를 찾을 수 없습니다."));
-            return;
-        }
-
         /* Player가 어떤 무언가에 접촉했을 때만 돌길 원함 */
         for (auto& iter : m_DoorList)
         {
-            if(m_eDoor_Type == (DOOR_TYPE)iter->Get_PropType())
+            if (m_eDoor_Type == static_cast<DOOR_TYPE>(iter->Get_PropType()))
             {
                 /* 접촉만 했을 때 */
                 if (true == iter->Get_FirstInteract())
                 {
+                    if (static_cast<DOOR_TYPE>(iter->Get_PropType() == DOOR_TYPE::ENTRANCE_UP_DOOR))
+                    {
+                        m_pPlayer->Set_MissionEntrance(true);
+                    }
+
                     if (true == iter->Get_Interact())/* 문을 열었는가*/
                     {
                         Search_Door_Type(MAP_STATE_TYPE::SEARCH_STATE, (DOOR_TYPE)iter->Get_PropType());
+
+                        m_vCurrentColor.w = 1.f;
                     }
 
                     else if (false == iter->Get_Interact()) /* 열지 않았는가*/
                     {
                         Search_Door_Type(MAP_STATE_TYPE::SEARCH_CLEAR_STATE, (DOOR_TYPE)iter->Get_PropType());
+
+                        m_vCurrentColor.w = 1.f;
                     }
 
-                    m_isBackColor_Change = true; /* Black에 관련된 color만 변경 */
+                    // m_isBackColor_Change = true; /* Black에 관련된 color만 변경 */
                 }
 
                 /* 접촉하지 않았을 때 */
                 else if (false == iter->Get_FirstInteract())
                 {
                     Search_Door_Type(MAP_STATE_TYPE::NONE_STATE, (DOOR_TYPE)iter->Get_PropType());
+
+                    m_vCurrentColor.w = 1.f;
                 }
             }
         }
@@ -256,7 +248,7 @@ void CMain_Map_UI::Door_State()
 
 void CMain_Map_UI::Search_Door_Type(MAP_STATE_TYPE _searType, DOOR_TYPE _searchDoor)
 {
-    Change_Search_Type(_searType);
+    Change_Search_Type(_searType, true);
 }
 
 void CMain_Map_UI::Find_DoorObj()
@@ -274,29 +266,39 @@ void CMain_Map_UI::Find_DoorObj()
     }
 }
 
-void CMain_Map_UI::Change_Search_Type(MAP_STATE_TYPE _searType)
+void CMain_Map_UI::Change_Search_Type(MAP_STATE_TYPE _searType, _bool isDoor)
 {
     if (MAP_STATE_TYPE::NONE_STATE == _searType) // 기본
     {
         m_vCurrentColor = ALPHA_ZERO;
+
         m_fOrigin_Blending = 0.f;
 
     }
 
     else if (MAP_STATE_TYPE::SEARCH_STATE == _searType) // 수색 중
     {
-        m_vCurrentColor = RED;
+        if (false == isDoor)
+            m_vCurrentColor = RED;
+
+        else if (true == isDoor)
+            m_vCurrentColor = _float4(0.223529f, 0.470588f, 0.690196f, 1.f);
+
         m_fOrigin_Blending = BLENDING;
     }
 
     else if (MAP_STATE_TYPE::SEARCH_CLEAR_STATE == _searType) // 수색 완료
     {
-        m_vCurrentColor = BLUE;
+        if (false == isDoor)
+            m_vCurrentColor = BLUE;
+
+        else if (true == isDoor)
+            m_vCurrentColor = _float4(0.525490f, 0.086275f, 0.086275f, 1.f);
+        
         m_fOrigin_Blending = BLENDING;
     }
 
     m_eMapState = _searType;
-
 }
 
 

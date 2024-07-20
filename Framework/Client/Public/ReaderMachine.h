@@ -97,9 +97,9 @@ private:
 public:
 	virtual HRESULT				Initialize_Prototype() override;
 	virtual HRESULT				Initialize(void* pArg) override;
-	virtual void					Start() override;
-	virtual void					Tick(_float fTimeDelta) override;
-	virtual void					Late_Tick(_float fTimeDelta) override;
+	virtual void				Start() override;
+	virtual void				Tick(_float fTimeDelta) override;
+	virtual void				Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT				Render() override;
 
 private:
@@ -109,22 +109,22 @@ private:
 	virtual HRESULT				Bind_ShaderResources() override;
 
 private:
-	void								Active();
-	void								Reset_Camera();
-	void								Camera_Active(CReaderMachine::READERMACHINE_PART ePart, _float3 vRatio);
-	_bool								Open_Cabinet();
+	void						Active();
+	void						Reset_Camera();
+	void						Camera_Active(CReaderMachine::READERMACHINE_PART ePart, _float3 vRatio);
+	_bool						Open_Cabinet();
 public:
-	virtual _float4 Get_Object_Pos() override;
+	virtual _float4				Get_Object_Pos() override;
 
 private:
 	_bool				m_bCamera = { false };
 	_bool				m_bActivity = { false };
 	_bool				m_bDoOpen = { false };
 	_bool				m_bCameraReset = { false };
-	_float			m_fTime = { 0.f };
-	_ubyte			m_eState = { READERMACHINE_STATIC };
-	_ubyte			m_eMachine_Key_State = { READERMACHINE_KEY_STATIC };
-	_ubyte			m_eKeyInput = { KEY_NOTHING };
+	_float				m_fTime = { 0.f };
+	_ubyte				m_eState = { READERMACHINE_STATIC };
+	_ubyte				m_eMachine_Key_State = { READERMACHINE_KEY_STATIC };
+	_ubyte				m_eKeyInput = { KEY_NOTHING };
 	_int				m_iSelectRow = { ROW_0 };
 	_int				m_iSelectCol = { COL_0 };
 	_bool				m_bCanPush[ROW_END][COL_END] = {false,};

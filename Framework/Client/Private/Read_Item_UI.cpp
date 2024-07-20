@@ -375,14 +375,12 @@ void CRead_Item_UI::Text_Read(_float fTimeDelta)
         m_isRender = true;
 
         m_pRead_Supervise->m_isChange = false;
-        //m_pGameInstance->Change_Sound_2D(CHANNELID::CH30, TEXT("ui_ingame_media.bnk.2_35.mp3"));
-        m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("ui_ingame_media.bnk.2_35.mp3"), 0.5f);
+        m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_readUIAllow.mp3"), 0.5f);
     }
 
     else if (READ_UI_TYPE::TEXT_RIGHT_READ == m_eRead_type)
     {
-        //m_pGameInstance->Change_Sound_2D(CHANNELID::CH30, TEXT("ui_ingame_media.bnk.2_35.mp3"));
-        m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("ui_ingame_media.bnk.2_35.mp3"), 0.5f);
+        m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_readUIAllow.mp3"), 0.5f);
 
         m_isRender = false;
     }

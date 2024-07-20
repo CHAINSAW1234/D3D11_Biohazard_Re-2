@@ -59,15 +59,19 @@ void CBody_NewpoliceStatue::Late_Tick(_float fTimeDelta)
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		break;
 	case CNewpoliceStatue::POLICEHALLSTATUE_1:
+		/* LN : 키 클리어 : sound_Map_sm41_new_police_statue2_1 */
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		break;
 	case CNewpoliceStatue::POLICEHALLSTATUE_2:
+		/* LN : 키 클리어 : sound_Map_sm40_conveni_keyhole2_4 */
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		break;
 	case CNewpoliceStatue::POLICEHALLSTATUE_3:
+		/* LN : 키 클리어 : sound_Map_sm40_conveni_keyhole2_4 */
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		break;
 	case CNewpoliceStatue::POLICEHALLSTATUE_END:
+		/* LN : 키 클리어 : sound_Map_sm40_conveni_keyhole2_4 */
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		break;
 	}

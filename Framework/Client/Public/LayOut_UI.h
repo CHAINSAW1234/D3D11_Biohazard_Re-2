@@ -20,6 +20,7 @@ public :
 		LAYOUT_TAB,
 		LAYOUT_KEY, // ¿­¼è Àá±Ý
 		LAYOUT_STATUE, // ÀÚ¹°¼è
+		LAYOUT_BACKGROUND, // ÀÚ¹°¼è
 		LAYOUT_END
 	};
 
@@ -69,6 +70,7 @@ private:
 	void							Find_TabWindow();
 	void							Typing_Menu_LayOut();
 	void							Find_GimmickCamera();
+	CGameObject*					Find_Layout_BackGround();
 
 private :
 	void							Layout_Tab();

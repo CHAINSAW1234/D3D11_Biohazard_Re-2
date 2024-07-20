@@ -132,7 +132,7 @@ void CSlot_Highlighter::ResetPosition(_float4 fResetPos)
 	if (false == m_IsChild)
 		m_pCursorTranform->Set_State(CTransform::STATE_POSITION, XMLoadFloat4(&fResetPos) - m_vOriginDiff);
 
-	m_pTransformCom ->Set_State(CTransform::STATE_POSITION, fResetPos);
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, fResetPos);
 }
 
 void CSlot_Highlighter::Set_DragShadow(_bool IsDragShadow)

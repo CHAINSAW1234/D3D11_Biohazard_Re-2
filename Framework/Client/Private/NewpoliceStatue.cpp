@@ -53,6 +53,7 @@ void CNewpoliceStatue::Tick(_float fTimeDelta)
 //#endif
 //#endif
 
+	/* 예시 코드*/
 	if (DOWN== m_pGameInstance->Get_KeyState('L'))
 	{
 		m_isGiveMedal = true;
@@ -272,10 +273,19 @@ void CNewpoliceStatue::Animation_BaseOn_MedalType()
 			m_eState = POLICEHALLSTATUE_2;
 
 		else if (3 == iMedalCnt)
+		{
 			m_eState = POLICEHALLSTATUE_3;
+		}
 
 		else
 			m_eState = POLICEHALLSTATUE_0;
+
+		if (iMedalCnt != m_iPrevMedalCnt)
+		{
+			m_iPrevMedalCnt = iMedalCnt;
+
+			/* Mission 달성*/
+		}
 	}
 }
 
