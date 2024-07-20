@@ -169,6 +169,7 @@ HRESULT CItemProp::Add_PartObjects()
 	/*Part_Body*/
 	CPartObject* pBodyObj = { nullptr };
 	CBody_ItemProp::BODY_ITEMPROPS_DESC BodyDesc = {};
+	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pState = &m_eState;
 	BodyDesc.pItemDead = &m_bItemDead;

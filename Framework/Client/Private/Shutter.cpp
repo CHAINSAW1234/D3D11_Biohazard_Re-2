@@ -131,7 +131,8 @@ HRESULT CShutter::Add_PartObjects()
 	CBody_Shutter::BODY_SHUTTER_DESC BodyDesc = {};
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.eShutter_Type = &m_eType;
-	BodyDesc.eNormalState = &m_eNormalState;
+	BodyDesc.eNormalState = &m_eNormalState;	
+	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
 	BodyDesc.e033State = &m_e033State;
 	BodyDesc.e034State = &m_e034State;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;

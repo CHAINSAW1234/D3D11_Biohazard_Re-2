@@ -90,7 +90,7 @@ void CReaderMachine::Tick(_float fTimeDelta)
 			m_iPush[0] = -1;
 			m_iPush[1] = -1;
 			m_iPush[2] = -1;
-			bCam = true;
+			
 		}
 	}
 	else
@@ -117,18 +117,13 @@ void CReaderMachine::Tick(_float fTimeDelta)
 			m_bDoOpen = false;
 	}
 
-	if (m_bCol[INTER_COL_NORMAL][COL_STEP1])
+	if (m_bCol[INTER_COL_NORMAL][COL_STEP1]&&!m_bCamera)
 	{
 		if (*m_pPlayerInteract)
 			Active();
 	}
 	__super::Tick(fTimeDelta);
 
-}
-void CReaderMachine::Reset_Camera()
-{
-	m_pCameraGimmick->Active_Camera(false);
-	m_pPlayer->ResetCamera();
 }
 
 void CReaderMachine::Camera_Active(CReaderMachine::READERMACHINE_PART ePart, _float3 vRatio)
@@ -245,6 +240,7 @@ HRESULT CReaderMachine::Add_PartObjects()
 	Key_Desc.pSelectCol = &m_iSelectCol;
 	Key_Desc.pSelectRow = &m_iSelectRow;
 	Key_Desc.pDoOpen = &m_bDoOpen;
+	Key_Desc.pSoundCueSign = &m_bSoundCueSign;
 	Key_Desc.pKeyNum = &m_iSelectPushNum;
 	Key_Desc.pHideKey = (_bool*)m_bKey;
 	memcpy_s(Key_Desc.iKeyPad,sizeof(_int)*5*3, m_iKeyPad, sizeof(_int) * 5 * 3);
@@ -257,6 +253,7 @@ HRESULT CReaderMachine::Add_PartObjects()
 	/*Part_Body*/
 	CPartObject* pBodyObj = { nullptr };
 	CBody_ReaderMachine::PART_INTERACTPROPS_DESC BodyDesc = {};
+	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pState = &m_eState;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
@@ -316,7 +313,8 @@ void CReaderMachine::Active()
 	m_bActivity = true;
 	m_eMachine_Key_State = READERMACHINE_KEY_LIVE;
 
-	m_pCameraGimmick->Active_Camera(true);
+	m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+
 	m_bCamera = true;
 
 	if (!m_bKey[0] || !m_bKey[1])

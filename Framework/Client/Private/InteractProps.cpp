@@ -162,7 +162,8 @@ void CInteractProps::Camera_Active(_int ePart, _float3 vRatio, _float4 vPos)
 
 void CInteractProps::Reset_Camera()
 {
-	m_pCameraGimmick->Active_Camera(false);
+	m_pGameInstance->Active_Camera(g_Level, m_pCamera);
+
 	m_isCamera_Reset = false;
 	m_pPlayer->ResetCamera();
 }

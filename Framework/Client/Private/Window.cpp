@@ -213,6 +213,7 @@ HRESULT CWindow::Add_PartObjects()
 	CPartObject* pBodyObj = { nullptr };
 	CBody_Window::PART_INTERACTPROPS_DESC BodyDesc = {};
 	BodyDesc.pParentsTransform = m_pTransformCom;
+	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
 	BodyDesc.pState = &m_eState;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
 	pBodyObj = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(m_tagPropDesc.strObjectPrototype, &BodyDesc));
@@ -225,6 +226,7 @@ HRESULT CWindow::Add_PartObjects()
 
 	CPartObject* pPannel = { nullptr };
 	CBody_Window::PART_INTERACTPROPS_DESC PannelDesc = {};
+	PannelDesc.pSoundCueSign = &m_bSoundCueSign;
 	PannelDesc.pParentsTransform = m_pTransformCom;
 	PannelDesc.pState = &m_eBarrigateState;
 	pPannel = dynamic_cast<CPartObject*>(m_pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_PannelWindow"), &PannelDesc));
@@ -270,7 +272,8 @@ void CWindow::Active()
 	if(false == m_pGameInstance->IsPaused())
 		m_pPlayer->Interact_Props(this);
 
-	m_pCameraGimmick->Active_Camera(true);
+	m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+
 	//tabwindowÀÇ ÈûÀ» ºô·Á¾ß ÇÒ Â÷·ÊÀÔ´Ï´Ù
 	m_bCamera = true;
 	//m_bBarrigate = true;

@@ -111,7 +111,6 @@ private:
 
 private:
 	void								Active();
-	void								Reset_Camera();
 	void								Camera_Active(CReaderMachine::READERMACHINE_PART ePart, _float3 vRatio);
 	_bool								Open_Cabinet();
 public:

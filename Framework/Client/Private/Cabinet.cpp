@@ -233,6 +233,7 @@ HRESULT CCabinet::Add_PartObjects()
 	/*Part_Body*/
 	CPartObject* pBodyObj = { nullptr };
 	CBody_Cabinet::BODY_CABINET_DESC BodyDesc = {};
+	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
 	BodyDesc.pParentsTransform = m_pTransformCom;
 	BodyDesc.pState = &m_eState;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
@@ -251,6 +252,7 @@ HRESULT CCabinet::Add_PartObjects()
 		CBody_ItemProp::BODY_ITEMPROPS_DESC ItemDesc = {};
 		ItemDesc.pParentsTransform = m_pTransformCom;
 		m_iItemIndex = ItemDesc.iItemIndex = m_tagPropDesc.tagCabinet.iItemIndex;
+		ItemDesc.pSoundCueSign = &m_bSoundCueSign;
 		ItemDesc.pState = &m_eState;
 		ItemDesc.pItemDead = &m_bItemDead; //얻었는가?
 		ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_") + m_tagPropDesc.tagCabinet.Name;
@@ -279,6 +281,7 @@ HRESULT CCabinet::Add_PartObjects()
 			CPartObject* pLock = { nullptr };
 			CLock_Cabinet::BODY_LOCK_CABINET_DESC LockDesc = {};
 			LockDesc.pParentsTransform = m_pTransformCom;
+			LockDesc.pSoundCueSign = &m_bSoundCueSign;
 			LockDesc.pState = &m_eState;
 			LockDesc.pKeyInput = &m_eKeyInput;
 			LockDesc.pLockState = &m_eLockState;
@@ -298,6 +301,7 @@ HRESULT CCabinet::Add_PartObjects()
 			LockDesc.pParentsTransform = m_pTransformCom;
 			LockDesc.pState = &m_eState; //현재 캐비넷 본체의 상황을 받는거야
 			LockDesc.pPassword = (_int*)m_iPassWord; // 123 
+			LockDesc.pSoundCueSign = &m_bSoundCueSign;
 			LockDesc.pKeyInput = &m_eKeyInput;
 			LockDesc.pCameraControl = &m_isCamera_Reset;
 			LockDesc.pLockState = &m_eLockState; //제어당할 스테이트
@@ -319,6 +323,7 @@ HRESULT CCabinet::Add_PartObjects()
 			CPartObject* pLock = { nullptr };
 			CLock_Cabinet::BODY_LOCK_CABINET_DESC LockDesc = {};
 			LockDesc.pParentsTransform = m_pTransformCom;
+			LockDesc.pSoundCueSign = &m_bSoundCueSign;
 			LockDesc.pState = &m_eState;
 			LockDesc.pKeyInput = &m_eKeyInput;
 			LockDesc.pLockState = &m_eLockState;
@@ -337,6 +342,7 @@ HRESULT CCabinet::Add_PartObjects()
 			pLock = { nullptr };
 			LockDesc = {};
 			LockDesc.pParentsTransform = m_pTransformCom;
+			LockDesc.pSoundCueSign = &m_bSoundCueSign;
 			LockDesc.pState = &m_eState;
 			LockDesc.pKeyInput = &m_eKeyInput;
 			LockDesc.pLockState = &m_eLockLeonState;
@@ -356,6 +362,7 @@ HRESULT CCabinet::Add_PartObjects()
 			CLock_Cabinet::BODY_LOCK_CABINET_DESC LockDesc = {};
 			LockDesc.pParentsTransform = m_pTransformCom;
 			LockDesc.pState = &m_eState;
+			LockDesc.pSoundCueSign = &m_bSoundCueSign;
 			LockDesc.pKeyInput = &m_eKeyInput;
 			LockDesc.pAction = &m_bAction;
 			LockDesc.pLockState = &m_eLockState;
@@ -382,6 +389,7 @@ HRESULT CCabinet::Add_PartObjects()
 		CCard_Cabinet::CARD_CABINET_DESC CardCabinet = {};
 		CardCabinet.pParentsTransform = m_pTransformCom;
 		CardCabinet.pLock_Cabinet_State = &m_eLockState;
+		CardCabinet.pSoundCueSign = &m_bSoundCueSign;
 		CardCabinet.pAction = &m_bAction;
 		CardCabinet.pLock_WorldMatrix = static_cast<CPart_InteractProps*>(m_PartObjects[CCabinet::PART_LOCK])->Get_WorldMatrix_Ptr();
 		CardCabinet.strModelComponentName = TEXT("Prototype_Component_Model_sm73_105_cardkeylv201a");
@@ -612,7 +620,8 @@ void CCabinet::Electric_Tick(_float fTimeDelta)
 	
 	if (m_fDelayLockTime > 0.f)
 	{
-		m_pCameraGimmick->Active_Camera(true);
+		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+
 		m_bCamera = true;
 	}
 
@@ -715,7 +724,8 @@ void CCabinet::Safe_Normal_Active()
 	{
 		m_eLockState = LIVE_LOCK;
 
-		m_pCameraGimmick->Active_Camera(true);
+		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+
 		//tabwindow의 힘을 빌려야 할 차례입니다
 		m_bCamera = true;
 
@@ -747,13 +757,15 @@ void CCabinet::LeonDesk_Active()
 		if (m_bCol[INTER_COL_NORMAL][COL_STEP0] && m_bLock)
 		{
 			m_eLockState = LIVE_LOCK;
-			m_pCameraGimmick->Active_Camera(true);
+			m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+
 			m_bCamera = true;
 		}
 		else if (m_bCol[INTER_COL_DOUBLE][COL_STEP0] && m_bLockLeon)
 		{
 			m_eLockLeonState = LIVE_LOCK;
-			m_pCameraGimmick->Active_Camera(true);
+			m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+
 			m_bCamera = true;
 		}
 
@@ -800,7 +812,7 @@ void CCabinet::Weapon_Active()
 	{
 		m_eLockState = LIVE_LOCK;
 
-		m_pCameraGimmick->Active_Camera(true);
+		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
 		m_bCamera = true;
 		if (false == m_pGameInstance->IsPaused())
 			m_pPlayer->Interact_Props(this);
@@ -822,7 +834,8 @@ void CCabinet::Zombie_Active()
 	}
 	else
 	{
-		m_pCameraGimmick->Active_Camera(true);
+		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+
 		//tabwindow의 힘을 빌려야 할 차례입니다
 		m_bCamera = true;
 

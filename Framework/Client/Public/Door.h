@@ -152,7 +152,7 @@ private :
 	_bool										m_bCamera = { false };
 	_uint										m_iEmblemType = {};
 	_int										m_iPropType = { 0 };
-	_ubyte										m_eEmblemAnim_Type = {};
+	_ubyte										m_eEmblemAnim_Type = {0};
 	_bool										m_isCameraGimmick = {};
 
 public:

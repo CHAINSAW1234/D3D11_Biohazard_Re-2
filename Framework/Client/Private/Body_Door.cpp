@@ -586,6 +586,8 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform_Divided(&ResultMat, DOUBLE_DOOR_MESH_TYPE::DOOR_R);
+
+
 			break;
 		}
 		case CDoor::LSIDE_DOUBLEDOOR_OPEN_R:
@@ -915,7 +917,12 @@ void CBody_Door::OneDoor_Late_Tick(_float fTimeDelta)
 	}
 	case CDoor::ONEDOOR_OPEN_R:
 	{
-		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pOneState);
+		auto Combined = m_vecRotationBone[ATC_SINGLE_DOOR_OPEN_R]->Get_TrasformationMatrix();
+		_float4x4 ResultMat;
+		XMStoreFloat4x4(&ResultMat, Combined);
+		m_pPx_Collider->Update_Transform(&ResultMat);
+		break;
+
 	}
 	case CDoor::ONEDOOR_STATIC:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pOneState);
@@ -928,6 +935,7 @@ void CBody_Door::OneDoor_Late_Tick(_float fTimeDelta)
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform(&ResultMat);
+			Change_Sound(TEXT(""),0);
 			break;
 		}
 		case CDoor::ONEDOOR_OPEN_R:
@@ -936,6 +944,8 @@ void CBody_Door::OneDoor_Late_Tick(_float fTimeDelta)
 			_float4x4 ResultMat;
 			XMStoreFloat4x4(&ResultMat, Combined);
 			m_pPx_Collider->Update_Transform(&ResultMat);
+			Change_Sound(TEXT(""), 0);
+
 			break;
 		}
 		}

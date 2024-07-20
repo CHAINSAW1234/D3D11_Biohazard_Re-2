@@ -225,7 +225,7 @@ protected:
 	vector<CPartObject*>								m_PartObjects;
 
 	_bool												m_isOutOfControll = { false };
-
+	_bool												m_bSoundCueSign = { false };
 protected:
 	void												Check_Player();
 	_float												Check_Player_Distance();

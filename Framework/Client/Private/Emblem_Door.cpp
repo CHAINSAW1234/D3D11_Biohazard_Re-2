@@ -67,18 +67,27 @@ void CEmblem_Door::Late_Tick(_float fTimeDelta)
 		//
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
 		
+
 		break;
 
 	case (_int)EMBLEM_ANIM::START_ANIM : 
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
+		//if ((!*m_pSoundCue) && m_pModelCom->isFinished(0) != true)
+		//	*m_pSoundCue = true;
 		//sound_Map_sm40_door_handle2_1
+		Change_Sound(TEXT("sound_Map_sm40_door_handle2_1.mp3"), 0);
+
 		break;
 
 	case (_int)EMBLEM_ANIM::OPEN_ANIM:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pEmblem_Anim);
 		if (m_pModelCom->isFinished(0))
 			*m_pEmblem_Anim = (_int)EMBLEM_ANIM::OPENED_ANIM;
+		//if ((!*m_pSoundCue) && m_pModelCom->isFinished(0) != true)
+		//	*m_pSoundCue = true;
+		Change_Sound(TEXT("sound_Map_sm40_conveni_keyhole2_4.mp3"), 0);
 
+			//if (m_pModelCom->Get_TrackPosition(0) >= )
 		//sound_Map_sm40_conveni_keyhole2_4
 		break;
 	case (_int)EMBLEM_ANIM::OPENED_ANIM:

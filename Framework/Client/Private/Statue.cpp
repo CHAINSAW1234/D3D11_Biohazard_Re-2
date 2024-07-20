@@ -184,6 +184,7 @@ HRESULT CStatue::Add_PartObjects()
 	CPartObject* pBodyObj = { nullptr };
 	CBody_Statue::STATUE_BODY_DESC BodyDesc = {};
 	BodyDesc.pParentsTransform = m_pTransformCom;
+	BodyDesc.pSoundCueSign = &m_bSoundCueSign;
 	BodyDesc.pState = &m_eState;
 	BodyDesc.pResetCamera = &m_isCamera_Reset;
 	BodyDesc.strModelComponentName = m_tagPropDesc.strModelComponent;
@@ -199,6 +200,7 @@ HRESULT CStatue::Add_PartObjects()
 
 	ItemDesc.pParentsTransform = m_pTransformCom;
 	ItemDesc.pState = &m_eState;
+	ItemDesc.pSoundCueSign = &m_bSoundCueSign;
 	ItemDesc.isPut_HandItem = &m_isPut_HandItem;
 	ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_109_kingscepter01a_Anim");
 	ItemDesc.eItemType = static_cast<_ubyte>(CItem_Statue::STATUE_ITEM::KINGSCEPTER_ITEM);
@@ -214,6 +216,7 @@ HRESULT CStatue::Add_PartObjects()
 
 	ItemDesc.pParentsTransform = m_pTransformCom;
 	ItemDesc.pState = &m_eState;
+	ItemDesc.pSoundCueSign = &m_bSoundCueSign;
 	ItemDesc.isPut_HandItem = &m_isPut_HandItem;
 	ItemDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_136_statuehand01a_Anim");
 	ItemDesc.eItemType = static_cast<_ubyte>(CItem_Statue::STATUE_ITEM::STATUEHAND_ITEM);
@@ -265,7 +268,8 @@ void CStatue::Active()
 	*m_pPlayerInteract = false;
 	m_bActivity = true;
 	m_bCamera = true;
-	m_pCameraGimmick->Active_Camera(true);
+	m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+
 	if(m_eState != static_cast<_ubyte>(CStatue::STATE_PLAY))
 	{
 		if (false == m_pGameInstance->IsPaused())

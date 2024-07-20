@@ -28,6 +28,7 @@ HRESULT CPart_InteractProps::Initialize(void* pArg)
 	m_pState = pPartobj_desc->pState;
 	m_iPropType = pPartobj_desc->iPropType;
 	m_pIsOutOfControll = pPartobj_desc->pIsOutOfControll;
+	m_pSoundCue = pPartobj_desc->pSoundCueSign;
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;

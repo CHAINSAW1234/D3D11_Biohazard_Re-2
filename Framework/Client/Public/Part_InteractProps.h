@@ -20,11 +20,12 @@ public:
 	typedef struct tagPart_InteractProps_Desc : public CPartObject::PARTOBJECT_DESC
 	{
 		_bool*				pIsOutOfControll = { nullptr };
+		_bool*				pSoundCueSign = { nullptr };
 		const _bool*		pRender;
 		_ubyte*				pState;
-		_float3*			pRootTranslation = { nullptr };
+		_float3*				pRootTranslation = { nullptr };
 		wstring				strModelComponentName = { TEXT("") };
-		_int				iPropType = {0};
+		_int					iPropType = {0};
 
 	}PART_INTERACTPROPS_DESC;
 
@@ -71,6 +72,21 @@ public:
 		m_pCameraGimmickTransform = pCameraGimmickTransform;
 	}
 
+	void Change_Sound(const wstring& strSoundTag, _uint iSoundIndex)
+	{
+		if (m_pParentsTransform != nullptr)
+			m_pGameInstance->Change_Sound_3D(m_pParentsTransform, strSoundTag, iSoundIndex);
+		else
+			MSG_BOX(L"이 친구는 부모transform이 없다는 군(고쳐라~)");
+	}
+
+	void Stop_Sound(_uint iSoundIndex)
+	{
+		if (m_pParentsTransform != nullptr)
+			m_pGameInstance->Stop_Sound_3D(m_pParentsTransform, iSoundIndex);
+		else
+			MSG_BOX(L"이 친구는 부모transform이 없다는 군(고쳐라~)");
+	}
 public :
 	virtual _float4									Get_Pos(_int iArg = 0) { return XMVectorSetW( m_WorldMatrix.Translation(),1.f); }
 	virtual _vector									Get_Pos_vector(_int iArg = 0) { return XMVectorSetW( m_WorldMatrix.Translation(),1.f); }
@@ -116,7 +132,7 @@ protected:
 	vector<CBone*>						m_vecRotationBone;
 
 	_bool*									m_pIsOutOfControll = { nullptr };
-
+	_bool*										m_pSoundCue = { nullptr }; 
 protected:
 	void											Check_Col_Sphere_Player();
 	HRESULT									Add_Components();

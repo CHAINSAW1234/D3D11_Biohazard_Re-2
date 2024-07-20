@@ -403,7 +403,8 @@ void CBigStatue::Active()
 	{
 		m_eLockState = LIVE_LOCK;
 
-		m_pCameraGimmick->Active_Camera(true);
+		m_pGameInstance->Active_Camera(g_Level, m_pCameraGimmick);
+
 		m_bCamera = true;
 
 	}
