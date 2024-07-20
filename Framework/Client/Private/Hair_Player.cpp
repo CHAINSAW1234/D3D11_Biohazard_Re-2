@@ -90,17 +90,6 @@ void CHair_Player::Late_Tick(_float fTimeDelta)
 	BoneTags.push_back("hair08_0");
 	BoneTags.push_back("hair09_0");
 
-	if (PRESSING == m_pGameInstance->Get_KeyState(VK_LEFT))
-	{
-		fAdditionalHeight -= 10.f * fTimeDelta;
-		//	fAdditionalAngle -= 10.f * fTimeDelta;
-	}
-
-	if (PRESSING == m_pGameInstance->Get_KeyState(VK_RIGHT))
-	{
-		fAdditionalHeight += 10.f * fTimeDelta;
-		//	fAdditionalAngle += 10.f * fTimeDelta;
-	}
 
 	static _bool		isRotationInverse = { false };
 	static _bool		isTranslationInverse = { false };
@@ -189,12 +178,12 @@ void CHair_Player::Late_Tick(_float fTimeDelta)
 	}
 
 	_float3		vMoveDir = {};
-	//	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta, &vMoveDir);
+
 	m_pModelCom->Play_Animation_Light(m_pParentsTransform, fTimeDelta);
 
 	if (false != m_bRender)
 	{
-		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_BLEND, this);
+		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_NONBLEND, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_DIR, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_POINT, this);
 		m_pGameInstance->Add_RenderGroup(CRenderer::RENDER_SHADOW_SPOT, this);
@@ -219,8 +208,6 @@ HRESULT CHair_Player::Render()
 			return E_FAIL;
 		if (FAILED(m_pModelCom->Bind_BoneMatrices(m_pShaderCom, "g_BoneMatrices", static_cast<_uint>(i))))
 			return E_FAIL;
-		//	if (FAILED(m_pModelCom->Bind_PrevBoneMatrices(m_pShaderCom, "g_PrevBoneMatrices", static_cast<_uint>(i))))
-		//		return E_FAIL;
 
 		if (FAILED(m_pModelCom->Bind_ShaderResource_Texture(m_pShaderCom, "g_AlphaTexture", static_cast<_uint>(i), aiTextureType_METALNESS)))
 		{

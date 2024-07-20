@@ -1044,14 +1044,51 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 #pragma region For Cloth
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
-			if ((i >= m_Cloth_L_Arm_01 && i <= m_Cloth_L_Arm_02) || i == m_Cloth_L_Arm_03 || i == m_Cloth_L_Arm_04 || i == m_Cloth_L_Arm_05)
+			if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
 			{
-				if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
-				{
-					m_vecBreak_Parent_Flag_Cloth_Arm_L[i] = true;
-					joints[i].parent_index_BreakPart_Cloth_Arm_L = m_upperarm_high_l_idx;
-					m_vecBreakPartFilter_Cloth_Arm_L[i] = true;
-				}
+				m_vecBreak_Parent_Flag_Cloth_Arm_L[i] = true;
+				joints[i].parent_index_BreakPart_Cloth_Arm_L = m_upperarm_high_l_idx;
+				m_vecBreakPartFilter_Cloth_Arm_L[i] = true;
+				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_L[i] = m_Arm_L_High;
+			}
+
+		/*	if (joints[i].parent_index == -1)
+			{
+				m_vecBreak_Parent_Flag_Cloth_Arm_L[i] = true;
+				joints[i].parent_index_BreakPart_Cloth_Arm_L = m_upperarm_high_l_idx;
+				m_vecBreakPartFilter_Cloth_Arm_L[i] = true;
+				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_L[i] = m_Arm_L_High;
+			}*/
+		}
+#pragma endregion
+
+#pragma region For Cloth.
+		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
+		{
+			uint32_t        chosen_idx;
+			PxRigidDynamic* body = m_ragdoll->find_recent_body_Cloth_Arm_L((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
+
+			if (!body)
+				continue;
+
+			_matrix body_global_transform = to_mat4(body->getGlobalPose());
+			_matrix inv_body_global_transform = XMMatrixInverse(nullptr, body_global_transform);
+			_matrix bind_pose_ws = XMMatrixMultiply(m_model_without_scale, XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
+			_vector joint_pos_ws = XMLoadFloat3(&joints[i].bind_pos_ws(m_model));
+			joint_pos_ws = XMVectorSetW(joint_pos_ws, 1.f);
+
+			_vector p = XMVector4Transform(joint_pos_ws, inv_body_global_transform);
+			m_ragdoll->m_relative_joint_pos_BreakPart_Cloth_Arm_L[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
+			m_ragdoll->m_original_body_rotations_BreakPart_Cloth_Arm_L[i] = XMQuaternionRotationMatrix(body_global_transform);
+
+			if (m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_L[i])
+			{
+				// Rigid body position relative to the joint
+				_matrix m = XMMatrixInverse(nullptr, m_model * XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
+				p = XMVector4Transform(XMVectorSetW(to_vec3(m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_L[i]->getGlobalPose().p), 1.0f), m);
+
+				m_ragdoll->m_body_pos_relative_to_joint_BreakPart_Cloth_Arm_L[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
+				m_ragdoll->m_original_joint_rotations_BreakPart_Cloth_Arm_L[i] = XMQuaternionRotationMatrix(bind_pose_ws);
 			}
 		}
 #pragma endregion
@@ -1085,36 +1122,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			}
 		}
 
-#pragma region For Cloth.
-		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
-		{
-			uint32_t        chosen_idx;
-			PxRigidDynamic* body = m_ragdoll->find_recent_body_Cloth_Arm_L((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
 
-			if (!body)
-				continue;
-
-			_matrix body_global_transform = to_mat4(body->getGlobalPose());
-			_matrix inv_body_global_transform = XMMatrixInverse(nullptr, body_global_transform);
-			_matrix bind_pose_ws = XMMatrixMultiply(m_model_without_scale, XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
-			_vector joint_pos_ws = XMLoadFloat3(&joints[i].bind_pos_ws(m_model));
-			joint_pos_ws = XMVectorSetW(joint_pos_ws, 1.f);
-
-			_vector p = XMVector4Transform(joint_pos_ws, inv_body_global_transform);
-			m_ragdoll->m_relative_joint_pos_BreakPart_Cloth_Arm_L[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
-			m_ragdoll->m_original_body_rotations_BreakPart_Cloth_Arm_L[i] = XMQuaternionRotationMatrix(body_global_transform);
-
-			//if (m_ragdoll->m_rigid_bodies_BreakPart_Cloth[i])
-			//{
-			//	// Rigid body position relative to the joint
-			//	_matrix m = XMMatrixInverse(nullptr, m_model * XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
-			//	p = XMVector4Transform(XMVectorSetW(to_vec3(m_ragdoll->m_rigid_bodies_BreakPart_Cloth[i]->getGlobalPose().p), 1.0f), m);
-
-			//	m_ragdoll->m_body_pos_relative_to_joint_BreakPart_Cloth_Arm_L[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
-			//	m_ragdoll->m_original_joint_rotations_BreakPart_Cloth_Arm_L[i] = XMQuaternionRotationMatrix(bind_pose_ws);
-			//}
-		}
-#pragma endregion
 
 		Update_Partial(1 / 60.f);
 
@@ -1177,18 +1185,54 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 #pragma region For Cloth
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
-			if ((i >= m_Cloth_R_Arm_01) && (i <= m_Cloth_R_Arm_02) || i == m_Cloth_R_Arm_03 || i == m_Cloth_R_Arm_04 || i == m_Cloth_R_Arm_05)
+			if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
 			{
-				if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
-				{
-					m_vecBreak_Parent_Flag_Cloth_Arm_R[i] = true;
-					joints[i].parent_index_BreakPart_Cloth_Arm_R = m_upperarm_high_r_idx;
-					m_vecBreakPartFilter_Cloth_Arm_R[i] = true;
-				}
+				m_vecBreak_Parent_Flag_Cloth_Arm_R[i] = true;
+				joints[i].parent_index_BreakPart_Cloth_Arm_R = m_upperarm_high_r_idx;
+				m_vecBreakPartFilter_Cloth_Arm_R[i] = true;
+				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_R[i] = m_Arm_R_High;
 			}
+
+			/*if (joints[i].parent_index == -1)
+			{
+				m_vecBreak_Parent_Flag_Cloth_Arm_R[i] = true;
+				joints[i].parent_index_BreakPart_Cloth_Arm_R = m_upperarm_high_r_idx;
+				m_vecBreakPartFilter_Cloth_Arm_R[i] = true;
+				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_R[i] = m_Arm_R_High;
+			}*/
 		}
 #pragma endregion
 
+#pragma region For Cloth.
+		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
+		{
+			uint32_t        chosen_idx;
+			PxRigidDynamic* body = m_ragdoll->find_recent_body_Cloth_Arm_R((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
+
+			if (!body)
+				continue;
+
+			_matrix body_global_transform = to_mat4(body->getGlobalPose());
+			_matrix inv_body_global_transform = XMMatrixInverse(nullptr, body_global_transform);
+			_matrix bind_pose_ws = XMMatrixMultiply(m_model_without_scale, XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
+			_vector joint_pos_ws = XMLoadFloat3(&joints[i].bind_pos_ws(m_model));
+			joint_pos_ws = XMVectorSetW(joint_pos_ws, 1.f);
+
+			_vector p = XMVector4Transform(joint_pos_ws, inv_body_global_transform);
+			m_ragdoll->m_relative_joint_pos_BreakPart_Cloth_Arm_R[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
+			m_ragdoll->m_original_body_rotations_BreakPart_Cloth_Arm_R[i] = XMQuaternionRotationMatrix(body_global_transform);
+
+			if (m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_R[i])
+			{
+				// Rigid body position relative to the joint
+				_matrix m = XMMatrixInverse(nullptr, m_model * XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
+				p = XMVector4Transform(XMVectorSetW(to_vec3(m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_R[i]->getGlobalPose().p), 1.0f), m);
+
+				m_ragdoll->m_body_pos_relative_to_joint_BreakPart_Cloth_Arm_R[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
+				m_ragdoll->m_original_joint_rotations_BreakPart_Cloth_Arm_R[i] = XMQuaternionRotationMatrix(bind_pose_ws);
+			}
+		}
+#pragma endregion
 
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
@@ -1218,37 +1262,6 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 				m_ragdoll->m_original_joint_rotations[i] = XMQuaternionRotationMatrix(bind_pose_ws);
 			}
 		}
-
-#pragma region For Cloth.
-		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
-		{
-			uint32_t        chosen_idx;
-			PxRigidDynamic* body = m_ragdoll->find_recent_body_Cloth_Arm_R((uint32_t)i, m_skeletal_mesh->skeleton(), chosen_idx);
-
-			if (!body)
-				continue;
-
-			_matrix body_global_transform = to_mat4(body->getGlobalPose());
-			_matrix inv_body_global_transform = XMMatrixInverse(nullptr, body_global_transform);
-			_matrix bind_pose_ws = XMMatrixMultiply(m_model_without_scale, XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
-			_vector joint_pos_ws = XMLoadFloat3(&joints[i].bind_pos_ws(m_model));
-			joint_pos_ws = XMVectorSetW(joint_pos_ws, 1.f);
-
-			_vector p = XMVector4Transform(joint_pos_ws, inv_body_global_transform);
-			m_ragdoll->m_relative_joint_pos_BreakPart_Cloth_Arm_R[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
-			m_ragdoll->m_original_body_rotations_BreakPart_Cloth_Arm_R[i] = XMQuaternionRotationMatrix(body_global_transform);
-
-			//if (m_ragdoll->m_rigid_bodies_BreakPart_Cloth[i])
-			//{
-			//	// Rigid body position relative to the joint
-			//	_matrix m = XMMatrixInverse(nullptr, m_model * XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
-			//	p = XMVector4Transform(XMVectorSetW(to_vec3(m_ragdoll->m_rigid_bodies_BreakPart_Cloth[i]->getGlobalPose().p), 1.0f), m);
-
-			//	m_ragdoll->m_body_pos_relative_to_joint_BreakPart_Cloth_Arm_R[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
-			//	m_ragdoll->m_original_joint_rotations_BreakPart_Cloth_Arm_R[i] = XMQuaternionRotationMatrix(bind_pose_ws);
-			//}
-		}
-#pragma endregion
 
 		Update_Partial(1 / 60.f);
 
@@ -1555,7 +1568,16 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 				m_vecBreak_Parent_Flag_Cloth_Leg_L[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Leg_L = m_thigh_l_idx;
 				m_vecBreakPartFilter_Cloth_Leg_L[i] = true;
+				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_L[i] = m_Leg_L_High;
 			}
+
+		/*	if (joints[i].parent_index == -1)
+			{
+				m_vecBreak_Parent_Flag_Cloth_Leg_L[i] = true;
+				joints[i].parent_index_BreakPart_Cloth_Leg_L = m_thigh_l_idx;
+				m_vecBreakPartFilter_Cloth_Leg_L[i] = true;
+				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_L[i] = m_Leg_L_High;
+			}*/
 		}
 #pragma endregion
 
@@ -1578,15 +1600,15 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			m_ragdoll->m_relative_joint_pos_BreakPart_Cloth_Leg_L[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
 			m_ragdoll->m_original_body_rotations_BreakPart_Cloth_Leg_L[i] = XMQuaternionRotationMatrix(body_global_transform);
 
-			//if (m_ragdoll->m_rigid_bodies_BreakPart_Cloth[i])
-			//{
-			//	// Rigid body position relative to the joint
-			//	_matrix m = XMMatrixInverse(nullptr, m_model * XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
-			//	p = XMVector4Transform(XMVectorSetW(to_vec3(m_ragdoll->m_rigid_bodies_BreakPart_Cloth[i]->getGlobalPose().p), 1.0f), m);
+			if (m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_L[i])
+			{
+				// Rigid body position relative to the joint
+				_matrix m = XMMatrixInverse(nullptr, m_model * XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
+				p = XMVector4Transform(XMVectorSetW(to_vec3(m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_L[i]->getGlobalPose().p), 1.0f), m);
 
-			//	m_ragdoll->m_body_pos_relative_to_joint_BreakPart_Cloth_Leg_L[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
-			//	m_ragdoll->m_original_joint_rotations_BreakPart_Cloth_Leg_L[i] = XMQuaternionRotationMatrix(bind_pose_ws);
-			//}
+				m_ragdoll->m_body_pos_relative_to_joint_BreakPart_Cloth_Leg_L[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
+				m_ragdoll->m_original_joint_rotations_BreakPart_Cloth_Leg_L[i] = XMQuaternionRotationMatrix(bind_pose_ws);
+			}
 		}
 #pragma endregion
 
@@ -1682,7 +1704,16 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 				m_vecBreak_Parent_Flag_Cloth_Leg_R[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Leg_R = m_thigh_r_idx;
 				m_vecBreakPartFilter_Cloth_Leg_R[i] = true;
+				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_R[i] = m_Leg_R_High;
 			}
+
+			/*if (joints[i].parent_index != -1)
+			{
+				m_vecBreak_Parent_Flag_Cloth_Leg_R[i] = true;
+				joints[i].parent_index_BreakPart_Cloth_Leg_R = m_thigh_r_idx;
+				m_vecBreakPartFilter_Cloth_Leg_R[i] = true;
+				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_R[i] = m_Leg_R_High;
+			}*/
 		}
 #pragma endregion
 
@@ -1705,15 +1736,15 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 			m_ragdoll->m_relative_joint_pos_BreakPart_Cloth_Leg_R[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
 			m_ragdoll->m_original_body_rotations_BreakPart_Cloth_Leg_R[i] = XMQuaternionRotationMatrix(body_global_transform);
 
-			//if (m_ragdoll->m_rigid_bodies_BreakPart_Cloth[i])
-			//{
-			//	// Rigid body position relative to the joint
-			//	_matrix m = XMMatrixInverse(nullptr, m_model * XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
-			//	p = XMVector4Transform(XMVectorSetW(to_vec3(m_ragdoll->m_rigid_bodies_BreakPart_Cloth[i]->getGlobalPose().p), 1.0f), m);
+			if (m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_R[i])
+			{
+				// Rigid body position relative to the joint
+				_matrix m = XMMatrixInverse(nullptr, m_model * XMMatrixInverse(nullptr, joints[i].inverse_bind_pose));
+				p = XMVector4Transform(XMVectorSetW(to_vec3(m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_R[i]->getGlobalPose().p), 1.0f), m);
 
-			//	m_ragdoll->m_body_pos_relative_to_joint_BreakPart_Cloth_Leg_L[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
-			//	m_ragdoll->m_original_joint_rotations_BreakPart_Cloth_Leg_L[i] = XMQuaternionRotationMatrix(bind_pose_ws);
-			//}
+				m_ragdoll->m_body_pos_relative_to_joint_BreakPart_Cloth_Leg_R[i] = XMVectorSet(XMVectorGetX(p), XMVectorGetY(p), XMVectorGetZ(p), 1.f);
+				m_ragdoll->m_original_joint_rotations_BreakPart_Cloth_Leg_R[i] = XMQuaternionRotationMatrix(bind_pose_ws);
+			}
 		}
 #pragma endregion
 
@@ -1830,10 +1861,14 @@ void CRagdoll_Physics::update_animations()
 		{
 			m_Global_transforms.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
 			m_Global_transforms_BreakPart.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
-			m_Global_transforms_BreakPart_Cloth_Arm_L.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
-			m_Global_transforms_BreakPart_Cloth_Arm_R.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
-			m_Global_transforms_BreakPart_Cloth_Leg_L.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
-			m_Global_transforms_BreakPart_Cloth_Leg_R.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
+
+			if(m_bPartialRagdoll == true)
+			{
+				m_Global_transforms_BreakPart_Cloth_Arm_L.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
+				m_Global_transforms_BreakPart_Cloth_Arm_R.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
+				m_Global_transforms_BreakPart_Cloth_Leg_L.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
+				m_Global_transforms_BreakPart_Cloth_Leg_R.transforms[i] = XMLoadFloat4x4((*m_vecBone)[m_vecBoneIndex[i]]->Get_CombinedTransformationMatrix()) * XMLoadFloat4x4(m_pWorldMatrix);
+			}
 		}
 	}
 

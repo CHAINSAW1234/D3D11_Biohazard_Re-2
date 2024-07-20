@@ -1878,6 +1878,35 @@ void CGameInstance::PlaySoundEffect_2D(wstring TypeKey, wstring FileKey, _float 
 	PlayMySound_2D(TypeKey, FileKey, Index, Volume);
 }
 
+_uint CGameInstance::PlaySoundEffect_2D_Using_Index(wstring TypeKey, wstring FileKey, _float Volume)
+{
+	uniform_int_distribution<_int>	Prob(1, SOUND_CHANNEL_SIZE - 1);
+	_int Index = Prob(m_RandomNumber);
+	_bool boolean = false;
+
+	while (1)
+	{
+		if (!IsPlaying_2D(Index, &boolean))
+		{
+			break;
+		}
+		else
+		{
+			++Index;
+		}
+
+		if (Index >= SOUND_CHANNEL_SIZE)
+		{
+			Index = 1;
+		}
+	}
+
+	StopSound_2D(Index);
+	PlayMySound_2D(TypeKey, FileKey, Index, Volume);
+
+	return Index;
+}
+
 #pragma endregion
 
 void CGameInstance::Release_Engine()

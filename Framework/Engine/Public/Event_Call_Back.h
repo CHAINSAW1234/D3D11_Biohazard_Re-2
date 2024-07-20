@@ -39,6 +39,8 @@ public:
 		{
 			return PxQueryHitType::eNONE;
 		}
+
+		return PxQueryHitType::eBLOCK; // 충돌 처리
 	}
 
 	virtual PxQueryHitType::Enum PxQueryFilterCallback::postFilter(const PxFilterData& filterData, const PxQueryHit& hit, const PxShape* shape, const PxRigidActor* actor)

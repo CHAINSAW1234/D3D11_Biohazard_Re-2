@@ -282,6 +282,7 @@ public: /* For.m_pSound_Manager */
 	void									ResetAllSlowMotion_2D();
 	_bool									IsPlaying_2D(_int eID, _bool* boolean);
 	void									PlaySoundEffect_2D(wstring TypeKey, wstring FileKey, _float Volume);
+	_uint									PlaySoundEffect_2D_Using_Index(wstring TypeKey, wstring FileKey, _float Volume);
 #pragma endregion
 
 #pragma region Physics_Controller

@@ -44,6 +44,8 @@ public:
 private:
 	void										LoadSoundFile();
 	void										LoadSoundFile_Zombie();
+	void										LoadSoundFile_Player();
+
 	FMOD_SOUND*									Find_Sound(const wstring& strSoundTag);
 	SOUND_DESC*									Find_SoundDesc_3D(class CTransform* pTransform, _uint iSoudIndex);
 private:
