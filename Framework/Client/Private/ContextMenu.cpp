@@ -138,7 +138,7 @@ void CContextMenu::Idle_Operation(_float fTimeDelta)
 			if (m_pHoverdChild != m_vecChildUI[i])
 			{
 				m_pHoverdChild = m_vecChildUI[i];
-				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), 0.5f);
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH1_2D, 0.5f);
 			}
 			IsNoOneHover = false;
 			pHoveredMenu = static_cast<CContextMenu*>(m_vecChildUI[i]);
@@ -156,7 +156,7 @@ void CContextMenu::Idle_Operation(_float fTimeDelta)
 
 		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
-			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ContextMenu_Click.mp3"), 0.5f);
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ContextMenu_Click.mp3"), CH1_2D, 0.5f);
 			Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
 		}
 
@@ -181,8 +181,7 @@ void CContextMenu::Hide_Operation(_float fTimeDelta)
 
 void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAppearPos, _float3 fArrivalPos)
 {
-	m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Context_Open.mp3"), 0.5f);
-
+	m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Context_Open.mp3"), CH1_2D, 0.5f);
 	m_bDead = false;
 	m_fAppearPos = fAppearPos;
 	m_fArrivalPos = fArrivalPos;
@@ -393,8 +392,6 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 void CContextMenu::Set_Dead(_bool bDead)
 {
 	__super::Set_Dead(bDead);
-
-	m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Context_Close.mp3"), 0.5f);
 }
 
 void CContextMenu::Set_EventbyTexture(_uint iTextureNum)
@@ -418,7 +415,7 @@ void CContextMenu::Set_EventbyTexture(_uint iTextureNum)
 
 	case 3: {
 		m_eContextEvent = EXAMINE_ITEM;
-		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Examin_Open.mp3"), 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Examin_Open.mp3"), CH1_2D, 0.5f);
 		break;
 	}
 
@@ -429,7 +426,7 @@ void CContextMenu::Set_EventbyTexture(_uint iTextureNum)
 
 	case 5: {
 		m_eContextEvent = HOTKEY_ASSIGNED_ITEM;
-		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_DragUp.mp3"), 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_DragUp.mp3"), CH1_2D, 0.5f);
 		break;
 	}
 

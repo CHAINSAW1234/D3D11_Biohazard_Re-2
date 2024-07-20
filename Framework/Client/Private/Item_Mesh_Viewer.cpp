@@ -129,12 +129,14 @@ HRESULT CItem_Mesh_Viewer::Render()
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	_uint iNumMeshes = m_vecModelCom[m_eItem_Number]->Get_NumMeshes();
+	list<_uint>			NonHideIndices = { m_vecModelCom[m_eItem_Number]->Get_NonHideMeshIndices()};
 
-	for (size_t i = 0; i < iNumMeshes; i++)
+
+	for (auto& i : NonHideIndices)
 	{
 		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(m_pShaderCom, "g_DiffuseTexture", static_cast<_uint>(i), aiTextureType_DIFFUSE)))
 			return E_FAIL;
+
 		if (FAILED(m_vecModelCom[m_eItem_Number]->Bind_ShaderResource_Texture(m_pShaderCom, "g_NormalTexture", static_cast<_uint>(i), aiTextureType_NORMALS)))
 			return E_FAIL;
 
@@ -177,11 +179,12 @@ HRESULT CItem_Mesh_Viewer::Render()
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXANIMMODEL::PASS_DEFAULT)))
+		if (FAILED(m_pShaderCom->Begin((_uint)SHADER_PASS_VTXMODEL::PASS_ALPHABLEND)))
 			return E_FAIL;
 
 		m_vecModelCom[m_eItem_Number]->Render(static_cast<_uint>(i));
 	}
+
 
 	return S_OK;
 }

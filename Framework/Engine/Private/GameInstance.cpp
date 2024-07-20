@@ -1878,6 +1878,12 @@ void CGameInstance::PlaySoundEffect_2D(wstring TypeKey, wstring FileKey, _float 
 	PlayMySound_2D(TypeKey, FileKey, Index, Volume);
 }
 
+void CGameInstance::PlaySoundEffect_2D(wstring TypeKey, wstring FileKey, _int eID, _float Volume)
+{
+	StopSound_2D(eID);
+	PlayMySound_2D(TypeKey, FileKey, eID, Volume);
+}
+
 _uint CGameInstance::PlaySoundEffect_2D_Using_Index(wstring TypeKey, wstring FileKey, _float Volume)
 {
 	uniform_int_distribution<_int>	Prob(1, SOUND_CHANNEL_SIZE - 1);
