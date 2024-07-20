@@ -163,7 +163,8 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 		{
 			if (m_pHoverdSlot != m_vecInvenSlot[i])
 			{
-				m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), 0.5f);
+
 				m_pHoverdSlot = m_vecInvenSlot[i];
 			}
 			m_IsNoOneHover = false;
@@ -219,7 +220,7 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 						m_pSlotHighlighter->Set_DragShadow(true);
 						m_eTaskSequence = SETING;
 						m_eInven_Manager_State = REARRANGE_ITEM;
-						m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_DragUp.mp3"), CHANNELID::CH30);
+						m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_DragUp.mp3"), 0.5f);
 					}
 				}
 			}
@@ -245,10 +246,10 @@ void CInventory_Manager::EQUIP_ITEM_Operation(_float fTimeDelta)
 	switch (eNumber)
 	{
 	case Client::HandGun:
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_EquipHandGun.mp3"), CHANNELID::CH30);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipHandGun.mp3"), 0.5f);
 		break;
 	case Client::ShotGun:
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_EquipShotgun.mp3"), CHANNELID::CH30);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), 0.5f);
 		break;
 	case Client::Flash_Bomb:
 		break;
@@ -284,9 +285,12 @@ void CInventory_Manager::UNEQUIP_ITEM_Operation(_float fTimeDelta)
 	{
 	case Client::HandGun:
 		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_EquipHandGun.mp3"), CHANNELID::CH30);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), 0.5f);
+
 		break;
 	case Client::ShotGun:
 		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_EquipShotgun.mp3"), CHANNELID::CH30);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), 0.5f);
 		break;
 	case Client::Flash_Bomb:
 		break;

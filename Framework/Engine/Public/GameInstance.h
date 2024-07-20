@@ -253,8 +253,8 @@ public: /* For.m_pSound_Manager */
 	HRESULT									Stop_Sound_2D(_uint iChannelIndex);
 	HRESULT									Stop_Sound_3D(CTransform* pTransform, _uint iSoundIndex);
 
-	void									Change_Sound_2D(_uint iChannelIndex, const wstring& strSoundTag);
-	void									Change_Sound_2D(const wstring& strSoundTag, _uint iChannelIndex);
+	//void									Change_Sound_2D(_uint iChannelIndex, const wstring& strSoundTag);
+	//void									Change_Sound_2D(const wstring& strSoundTag, _uint iChannelIndex);
 	void									Set_Volume_2D(_uint iChannelIndex, _float fVolume);
 	void									Set_Pause_2D(_uint iChannelIndex, _bool isPause);
 

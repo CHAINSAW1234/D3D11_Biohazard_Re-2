@@ -1699,27 +1699,27 @@ HRESULT CGameInstance::Stop_Sound_3D(CTransform* pTransform, _uint iSoundIndex)
 	return m_pSound_Manager->Stop_Sound_3D(pTransform, iSoundIndex);
 }
 
-void CGameInstance::Change_Sound_2D(_uint iChannelIndex, const wstring& strSoundTag)
-{
-	if (nullptr == m_pSound_Manager)
-	{
-		MSG_BOX(TEXT("nullptr == m_pSound_Manager : CGameInstance"));
-		return;
-	}
-
-	m_pSound_Manager->Change_Sound_2D(iChannelIndex, strSoundTag);
-}
-
-void CGameInstance::Change_Sound_2D(const wstring& strSoundTag, _uint iChannelIndex)
-{
-	if (nullptr == m_pSound_Manager)
-	{
-		MSG_BOX(TEXT("nullptr == m_pSound_Manager : CGameInstance"));
-		return;
-	}
-
-	m_pSound_Manager->Change_Sound_2D(iChannelIndex, strSoundTag);
-}
+//void CGameInstance::Change_Sound_2D(_uint iChannelIndex, const wstring& strSoundTag)
+//{
+//	if (nullptr == m_pSound_Manager)
+//	{
+//		MSG_BOX(TEXT("nullptr == m_pSound_Manager : CGameInstance"));
+//		return;
+//	}
+//
+//	m_pSound_Manager->Change_Sound_2D(iChannelIndex, strSoundTag);
+//}
+//
+//void CGameInstance::Change_Sound_2D(const wstring& strSoundTag, _uint iChannelIndex)
+//{
+//	if (nullptr == m_pSound_Manager)
+//	{
+//		MSG_BOX(TEXT("nullptr == m_pSound_Manager : CGameInstance"));
+//		return;
+//	}
+//
+//	m_pSound_Manager->Change_Sound_2D(iChannelIndex, strSoundTag);
+//}
 
 void CGameInstance::Set_Volume_2D(_uint iChannelIndex, _float fVolume)
 {
