@@ -123,7 +123,7 @@ void CMap_Manager::Mouse_Pos(_float fTimeDelta)
 				{
 					m_isOneSound = true;
 
-					m_pGameInstance->Play_Sound(TEXT("sound_ui_keyDownMiniMap.mp3"), CHANNELID::CH30);
+					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_keyDownMiniMap.mp3"), 0.5f);
 				}
 			}
 

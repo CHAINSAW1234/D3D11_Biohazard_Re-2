@@ -604,9 +604,9 @@ void CCabinet::Electric_Tick(_float fTimeDelta)
 	if (m_bCamera)
 	{
 		if(m_PartObjects[PART_ITEM]!=nullptr)
-			Camera_Active(PART_ITEM, _float3(-1.5f, -1.5f, -1.5f));
+			Camera_Active(PART_ITEM, _float3(-1.5f, -1.5f, -1.5f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
 		else
-			Camera_Active(PART_BODY, _float3(-1.5f, -5.5f, -1.5f));
+			Camera_Active(PART_BODY, _float3(-1.5f, -5.5f, -1.5f), CInteractProps::INTERACT_GIMMICK_TYPE::LOCK_GIMMICK);
 
 	}
 	

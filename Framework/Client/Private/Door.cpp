@@ -714,11 +714,7 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_LOCK, Get_PlayerLook_Degree());
 		else
 			m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_OPEN);
-
 	}
-
-
-
 }
 
 void CDoor::DoubleDoor_Active()
