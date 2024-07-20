@@ -1144,6 +1144,14 @@ void CZombie::Init_BehaviorTree_Zombie()
 
 #pragma endregion		//	Sequence Root Child 
 
+#pragma region		Task Foot Sound 
+
+	CFoot_Sound_Zombie* pTask_Foot_Sound = { CFoot_Sound_Zombie::Create() };
+	pTask_Foot_Sound->SetBlackBoard(m_pBlackBoard);
+	pSequenceNode_Additional_Blend_Anim->Insert_Child_Node(pTask_Foot_Sound);
+
+#pragma endregion		//	Sequence Root Child
+
 #pragma endregion	//	Sequence Root Child
 
 #pragma endregion		//	Sequence Root
@@ -1398,6 +1406,7 @@ HRESULT CZombie::Add_RagDoll_OtherParts()
 HRESULT CZombie::Add_SoundTags()
 {
 	wstring						strHitSoundTag = { TEXT("em_common_dmg_hit_media.bnk.2_") };
+	wstring						strFootSoundTag = { TEXT("em_Foot_Normal_") };
 	wstring						strExtTag = { TEXT(".mp3") };
 
 	vector<wstring>				HitSoundTags;
@@ -1409,8 +1418,16 @@ HRESULT CZombie::Add_SoundTags()
 		wstring			strTag = { strHitSoundTag + to_wstring(i) + strExtTag };
 		HitSoundTags.push_back(strTag);
 	}
-
 	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_HIT, HitSoundTags);
+
+
+	vector<wstring>				FootSoundTags;
+	for (_uint i = 1; i <= 12; ++i)
+	{
+		wstring			strTag = { strFootSoundTag + to_wstring(i) + strExtTag };
+		HitSoundTags.push_back(strTag);
+	}
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_FOOT, FootSoundTags);
 
 	return S_OK;
 }
@@ -1433,6 +1450,38 @@ void CZombie::Play_Random_Hit_Sound()
 
 	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_EF));
 	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_EF));	
+}
+
+void CZombie::Play_Random_Voice_Sound()
+{
+}
+
+void CZombie::Play_Random_Effect_Sound()
+{
+}
+
+void CZombie::Play_Random_Cloth_Sound()
+{
+}
+
+void CZombie::Play_Random_Foot_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_FOOT) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumFootSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumFootSound) - 1) };
+
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+
+	const _float		fMinVolume = { 0.2f };
+	const _float		fMaxVolume = { 0.4f };
+
+	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(fMinVolume, fMaxVolume) };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_FOOT));
+	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_FOOT));
 }
 
 void CZombie::Play_Animations_Body(_float fTimeDelta)

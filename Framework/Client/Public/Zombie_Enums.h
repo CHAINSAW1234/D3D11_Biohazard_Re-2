@@ -18,7 +18,7 @@ enum class BREAK_PART {
 };
 
 enum class ZOMBIE_SOUND_TYPE {
-	_HIT, _COMMON,
+	_HIT, _COMMON, _FOOT, 
 	_END
 };
 

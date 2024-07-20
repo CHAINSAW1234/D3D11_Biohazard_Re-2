@@ -285,6 +285,7 @@
     <ClInclude Include="..\Public\Part_Mesh_Info_Zombie.h" />
     <ClInclude Include="..\Public\Prop_Controller.h" />
     <ClInclude Include="..\Public\Prop_SM60_034_00.h" />
+    <ClInclude Include="..\Public\Foot_Sound_Zombie.h" />
     <ClInclude Include="..\Public\Turn_Lost_Zombie.h" />
     <ClInclude Include="..\Public\Player_State_Move_Shelf.h" />
     <ClInclude Include="..\Public\Region_Update_Zombie.h" />
@@ -566,6 +567,7 @@
     <ClCompile Include="..\Private\Part_Mesh_Info_Zombie.cpp" />
     <ClCompile Include="..\Private\Prop_Controller.cpp" />
     <ClCompile Include="..\Private\Prop_SM60_034_00.cpp" />
+    <ClCompile Include="..\Private\Foot_Sound_Zombie.cpp" />
     <ClCompile Include="..\Private\Turn_Lost_Zombie.cpp" />
     <ClCompile Include="..\Private\Player_State_Move_Shelf.cpp" />
     <ClCompile Include="..\Private\Region_Update_Zombie.cpp" />

@@ -796,6 +796,9 @@
     <Filter Include="02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_034_00">
       <UniqueIdentifier>{29072f34-6b3c-4839-8e20-430e5f5e74a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Foot_Sound">
+      <UniqueIdentifier>{a9ec29c9-05f9-4d4f-958d-ede7056aa0f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1548,6 +1551,9 @@
     <ClInclude Include="..\Public\Prop_SM60_034_00.h">
       <Filter>02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_034_00</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Foot_Sound_Zombie.h">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Foot_Sound</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2260,6 +2266,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Prop_SM60_034_00.cpp">
       <Filter>02.GameObjects\Cut_Scene\Prop_Controller\Prop_SM60_034_00</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Foot_Sound_Zombie.cpp">
+      <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Foot_Sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
