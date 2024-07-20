@@ -151,6 +151,12 @@ void CPlayer_State_Hold_Idle::Shot()
 				}
 				else {
 					// 인벤토리에 총알 없음
+					if (m_pPlayer->Get_Equip() == CPlayer::HG) {
+						m_pPlayer->Change_Sound_3D(TEXT("Sound_Player_HG_Shot_No_Ammo"), 0, 1);
+					}
+					else {
+						m_pPlayer->Change_Sound_3D(TEXT("Sound_Player_STG_Shot_No_Ammo"), 0, 1);
+					}
 					m_pPlayer->Change_Body_Animation_Hold(2, CPlayer::HOLD_SHOT_NO_AMMO);
 				}
 			}

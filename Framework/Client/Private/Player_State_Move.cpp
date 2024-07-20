@@ -29,6 +29,7 @@ void CPlayer_State_Move::OnStateUpdate(_float fTimeDelta)
 
 	Update_State();
 	Open_Door();
+	Update_Sound(fTimeDelta);
 
 	if (m_pPlayer->Get_Spotlight()) {
 		m_pPlayer->Set_TurnSpineLight(true);
@@ -182,6 +183,48 @@ void CPlayer_State_Move::Open_Door()
 		}
 		m_pPlayer->Set_Door_Setting(CPlayer::DOOR_BEHAVE_NOTHING);
 	}
+}
+
+void CPlayer_State_Move::Update_Sound(_float fTimeDelta)
+{
+	if (m_eState != IDLE &&
+		m_eState != WALK &&
+		m_eState != JOG)
+		return;
+
+	m_fMoaningTime += ((m_eState == JOG) ? fTimeDelta * 3 : fTimeDelta);
+
+	if (m_fMoaningTime < m_fMoaningDuration) {
+		return;
+	}
+
+	m_fMoaningTime = 0.f;
+	_int iHp = m_pPlayer->Get_Hp();
+
+	wstring strHealth = {};
+	_int iRandCnt = {};
+	switch (iHp) {
+	case 5:
+		strHealth = TEXT("Fine");
+		iRandCnt = 11;
+		break;
+	case 3:
+	case 4:
+		strHealth = TEXT("Caution");
+		iRandCnt = 4;
+		break;
+	case 2:
+	case 1:
+		strHealth = TEXT("Danger");
+		iRandCnt = 7;
+		break;
+	}
+		
+	wstring strSoundTag;
+	strSoundTag = TEXT("Sound_Player_Moaning_") + strHealth;
+
+	m_pPlayer->Change_Sound_3D(strSoundTag, iRandCnt, 3);
+
 }
 
 HRESULT CPlayer_State_Move::Add_States()
