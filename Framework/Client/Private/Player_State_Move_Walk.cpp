@@ -33,6 +33,7 @@ void CPlayer_State_Move_Walk::OnStateUpdate(_float fTimeDelta)
 	Set_MoveAnimation(fTimeDelta);
 
 	Look_Cam(fTimeDelta);
+	Update_Sound();
 }
 
 void CPlayer_State_Move_Walk::OnStateExit()
@@ -161,6 +162,25 @@ void CPlayer_State_Move_Walk::Look_Cam(_float fTimeDelta)
 	if (abs(fDegree) > 5) {
 		m_pPlayer->m_pTransformCom->Turn(_float4(0.f, 1.f, 0.f, 0.f), fTimeDelta * fDegree / 10 );
 	}
+}
+
+void CPlayer_State_Move_Walk::Update_Sound()
+{
+	static _bool isPlayed = { false };
+
+	_float fTrackPosition = m_pPlayer->Get_Body_Model()->Get_TrackPosition(0);
+
+	_int iTrackPosition = static_cast<_int>(floor(fTrackPosition)) % 32;
+
+	if (!isPlayed && iTrackPosition == 24) {
+		isPlayed = true;	
+		m_pPlayer->Change_Sound_3D(TEXT("Sound_Player_FootStep_Wood"), 9, 2);
+	}
+
+	if (isPlayed && iTrackPosition == 0) {
+		isPlayed = false;
+	}
+
 }
 
 CPlayer_State_Move_Walk* CPlayer_State_Move_Walk::Create(CPlayer* pPlayer, CFSM_HState* pHState)
