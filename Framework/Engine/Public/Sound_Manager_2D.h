@@ -1,16 +1,17 @@
 #pragma once
-#include "Base.h""
-#include "Engine_Defines.h"
 
+#include "Base.h"
+
+#include "Engine_Defines.h"
 #include "fmod.h"
 #include "fmod.hpp"
 #include "fileapi.h"
 BEGIN(Engine)
 
-#define SOUND_MAX 1.0f
-#define SOUND_MIN 0.0f
-#define SOUND_DEFAULT 0.25f
-#define SOUND_WEIGHT 0.1f
+//#define SOUND_MAX 1.0f
+//#define SOUND_MIN 0.0f
+//#define SOUND_DEFAULT 0.25f
+//#define SOUND_WEIGHT 0.1f
 
 class ENGINE_DLL CSound_Manager_2D final : public CBase
 {

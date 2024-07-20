@@ -565,9 +565,7 @@ void CTab_Window::Button_Act(_float fTimeDelta)
 			m_pInventory_Manager->Set_OnOff_Inven(true);
 			m_pHotKey->Set_Dead(true);
 			m_pHint->Set_Dead(true);
-
-			//m_pGameInstance->Change_Sound_2D(CHANNELID::CH30, TEXT("ui_ingame_media.bnk.2_51.mp3"));
-			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Button_Click.mp3"), 0.5f);
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Button_Click.mp3"), CH1_2D, 0.5f);
 		}
 
 		else if (true == m_pInvenButton->IsMouseHover())
@@ -577,10 +575,7 @@ void CTab_Window::Button_Act(_float fTimeDelta)
 			m_pInventory_Manager->Set_OnOff_Inven(false);
 			m_pHotKey->Set_Dead(false);
 			m_pHint->Set_Dead(true);
-			
-			//m_pGameInstance->Change_Sound_2D(CHANNELID::CH30, TEXT("ui_ingame_media.bnk.2_51.mp3"));
-			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Button_Click.mp3"), 0.5f);
-
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Button_Click.mp3"), CH1_2D, 0.5f);
 		}
 
 		else if (true == m_pHintButton->IsMouseHover())
@@ -590,9 +585,7 @@ void CTab_Window::Button_Act(_float fTimeDelta)
 			m_pInventory_Manager->Set_OnOff_Inven(true);
 			m_pHotKey->Set_Dead(true);
 			m_pHint->Set_Dead(false);
-			
-			//m_pGameInstance->Change_Sound_2D(CHANNELID::CH30, TEXT("ui_ingame_media.bnk.2_51.mp3"));
-			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Button_Click.mp3"), 0.5f);
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Button_Click.mp3"), CH1_2D, 0.5f);
 		}
 	}
 }

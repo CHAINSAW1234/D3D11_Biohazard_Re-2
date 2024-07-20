@@ -163,7 +163,7 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 		{
 			if (m_pHoverdSlot != m_vecInvenSlot[i])
 			{
-				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), 0.5f);
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH1_2D, 0.2f);
 
 				m_pHoverdSlot = m_vecInvenSlot[i];
 			}
@@ -220,7 +220,7 @@ void CInventory_Manager::EVENT_IDLE_Operation(_float fTimeDelta)
 						m_pSlotHighlighter->Set_DragShadow(true);
 						m_eTaskSequence = SETING;
 						m_eInven_Manager_State = REARRANGE_ITEM;
-						m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_DragUp.mp3"), 0.5f);
+						m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_DragUp.mp3"), CH1_2D, 0.5f);
 					}
 				}
 			}
@@ -246,10 +246,10 @@ void CInventory_Manager::EQUIP_ITEM_Operation(_float fTimeDelta)
 	switch (eNumber)
 	{
 	case Client::HandGun:
-		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipHandGun.mp3"), 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipHandGun.mp3"), CH1_2D, 0.5f);
 		break;
 	case Client::ShotGun:
-		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), CH1_2D, 0.5f);
 		break;
 	case Client::Flash_Bomb:
 		break;
@@ -284,13 +284,11 @@ void CInventory_Manager::UNEQUIP_ITEM_Operation(_float fTimeDelta)
 	switch (eNumber)
 	{
 	case Client::HandGun:
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_EquipHandGun.mp3"), CHANNELID::CH30);
-		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), CH1_2D, 0.5f);
 
 		break;
 	case Client::ShotGun:
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_EquipShotgun.mp3"), CHANNELID::CH30);
-		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), CH1_2D, 0.5f);
 		break;
 	case Client::Flash_Bomb:
 		break;
@@ -331,7 +329,7 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 			{
 				if (m_pHoverdSlot != m_vecInvenSlot[i])
 				{
-					m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH1_2D, 0.2f);
 					m_pHoverdSlot = m_vecInvenSlot[i];
 				}
 				m_IsNoOneHover = false;
@@ -416,6 +414,7 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 		{
 			m_eTaskSequence = SETING;
 			m_pContextMenu->Set_Dead(true);
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Context_Close.mp3"), 0.1f);
 		}
 
 		switch (eInvenEvent)
@@ -431,7 +430,6 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 			m_PickResult = 1;
 			m_eTaskSequence = APPLY;
 			m_pContextMenu->Set_Dead(true);
-
 			for (auto& iter : m_vecInvenSlot)
 			{
 				if (false == iter->Get_IsFilled())
@@ -449,7 +447,7 @@ void CInventory_Manager::PICK_UP_ITEM_Operation(_float fTimeDelta)
 	}
 		
 	case Client::CInventory_Manager::APPLY: {
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_DragDown.mp3"), CHANNELID::CH30);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_DragDown.mp3"), CH1_2D ,0.5f);
 		if (m_PickResult == -1)
 		{
 			m_eInven_Manager_State = EVENT_CANCLE;
@@ -523,15 +521,15 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 	{
 	case Client::emergencyspray01a: {
 		pPlayer->Set_Hp(5);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_UseItem_emergencyspray.mp3"), CHANNELID::CH30);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_UseItem_emergencyspray.mp3"), CH1_2D, 0.5f );
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_heal.mp3"), CH2_2D, 0.5f);
 		break;
 	}
 
 	case Client::greenherb01a: {
 		pPlayer->Set_Hp(pPlayer->Get_Hp() + 1);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_UseItem_emergencyspray.mp3"), CHANNELID::CH30);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH31);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_UseItem_herbs.mp3"), CH1_2D, 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_heal.mp3"), CH2_2D, 0.5f);
 		break;
 	}
 
@@ -545,43 +543,43 @@ void CInventory_Manager::USE_ITEM_Operation(_float fTimeDelta)
 
 	case Client::herbsgg01a: {
 		pPlayer->Set_Hp(pPlayer->Get_Hp() + 3);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH30);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_UseItem_herbs.mp3"), CH1_2D, 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_heal.mp3"), CH2_2D, 0.5f);
 		break;
 	}
 
 	case Client::herbsgr01a: {
 		pPlayer->Set_Hp(pPlayer->Get_Hp() + 3);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH30);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_UseItem_herbs.mp3"), CH1_2D, 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_heal.mp3"), CH2_2D, 0.5f);
 		break;
 	}
 
 	case Client::herbsgb01a: {
 		pPlayer->Set_Hp(pPlayer->Get_Hp() + 1);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH30);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_UseItem_herbs.mp3"), CH1_2D, 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_heal.mp3"), CH2_2D, 0.5f);
 		break;
 	}
 
 	case Client::herbsggb01a: {
 		pPlayer->Set_Hp(pPlayer->Get_Hp() + 3);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH30);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_UseItem_herbs.mp3"), CH1_2D, 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_heal.mp3"), CH2_2D, 0.5f);
 		break;
 	}
 
 	case Client::herbsggg01a: {
 		pPlayer->Set_Hp(5);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH30);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_UseItem_herbs.mp3"), CH1_2D, 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_heal.mp3"), CH2_2D, 0.5f);
 		break;
 	}
 
 	case Client::herbsgrb01a: {
 		pPlayer->Set_Hp(5);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_UseItem_herbs.mp3"), CHANNELID::CH30);
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_heal.mp3"), CHANNELID::CH31);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_UseItem_herbs.mp3"), CH1_2D, 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_heal.mp3"), CH2_2D, 0.5f);
 		break;
 	}
 
@@ -674,7 +672,7 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 			{
 				if (m_pHoverdSlot != m_vecInvenSlot[i])
 				{
-					m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH1_2D, 0.2f);
 					m_pHoverdSlot = m_vecInvenSlot[i];
 				}
 				IsNoOneHover = false;
@@ -707,7 +705,7 @@ void CInventory_Manager::COMBINED_ITEM_Operation(_float fTimeDelta)
 					}
 					else if(UP == m_pGameInstance->Get_KeyState(VK_LBUTTON) && false == iter->Get_isActive())
 					{
-						m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Context_Denied.mp3"), CHANNELID::CH30);
+						m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Context_Denied.mp3"), CH1_2D, 0.5f);
 					}
 				}
 			}
@@ -806,7 +804,7 @@ void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 		{
 			if (m_pHoverdSlot != pHoverdSlot)
 			{
-				m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH1_2D, 0.2f);
 				m_pHoverdSlot = pHoverdSlot;
 			}
 
@@ -824,7 +822,7 @@ void CInventory_Manager::HOTKEY_ASSIGNED_ITEM_Operation(_float fTimeDelta)
 				m_eTaskSequence = TS_END;
 				m_eInven_Manager_State = EVENT_IDLE;
 				m_pSelected_ItemUI = nullptr;
-				m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_DragDown.mp3"), CHANNELID::CH30);
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_DragDown.mp3"), CH1_2D, 0.5f);
 			}
 		}
 		break;
@@ -849,7 +847,7 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 			{
 				if (m_pHoverdSlot != m_vecInvenSlot[i])
 				{
-					m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_InvenSlot_Tick.mp3"), CHANNELID::CH30);
+					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH1_2D, 0.2f);
 					m_pHoverdSlot = m_vecInvenSlot[i];
 				}
 				m_IsNoOneHover = false;
@@ -895,7 +893,7 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 					m_eTaskSequence = TS_END;
 					m_pDragShadow->Set_Dead(true);
 					m_pSelected_ItemUI = nullptr;
-					m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_DragDown.mp3"), CHANNELID::CH30);
+					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_DragDown.mp3"), CH1_2D, 0.5f);
 				}
 
 				else
@@ -941,7 +939,7 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 			m_pSelected_ItemUI = nullptr;
 			m_pTemp_ItemUI = nullptr;
 			m_pContextMenu->Set_Dead(true);
-			m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_DragDown.mp3"), CHANNELID::CH30);
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_DragDown.mp3"), CH1_2D, 0.5f);
 			break;
 		}
 			
@@ -953,7 +951,7 @@ void CInventory_Manager::REARRANGE_ITEM_Operation(_float fTimeDelta)
 			m_pDragShadow->Set_Dead(true);
 			m_pSelected_ItemUI = nullptr;
 			m_pContextMenu->Set_Dead(true);
-			m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_DragDown.mp3"), CHANNELID::CH30);
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_DragDown.mp3"), CH1_2D, 0.5f);
 			break;
 		}
 
@@ -995,9 +993,8 @@ void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 
 	case Client::CInventory_Manager::SELECT: {
 		INVENTORY_EVENT eInvenEvent = m_pContextMenu->Get_InventoryEvent();
-
 		switch (eInvenEvent)
-		{
+		{	
 		case Client::EVENT_IDLE:
 			break;
 
@@ -1079,6 +1076,7 @@ void CInventory_Manager::CONTEXTUI_SELECT_Operation(_float fTimeDelta)
 		m_eInven_Manager_State = EVENT_IDLE;
 		m_pContextMenu->Set_Dead(true);
 		m_pSelected_ItemUI = nullptr;
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Context_Close.mp3"), 0.1f);
 		return;
 	}
 }
@@ -1151,6 +1149,7 @@ void CInventory_Manager::INTERACT_ITEM_Operation(_float fTimeDelta)
 		{
 			m_eTaskSequence = SETING;
 			m_pContextMenu->Set_Dead(true);
+			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Context_Close.mp3"), 0.1f);
 			break;
 		}
 
@@ -1271,7 +1270,7 @@ void CInventory_Manager::INTERACT_ITEM_SoundPlay()
 	switch (eItemNum)
 	{
 	case Client::woodbarricade01a:
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Interect_Wood.mp3"), CHANNELID::CH30);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Interect_Wood.mp3"), CH1_2D, 0.5f);
 		break;
 	case Client::blastingfuse01a:
 		break;
@@ -1292,7 +1291,7 @@ void CInventory_Manager::INTERACT_ITEM_SoundPlay()
 	case Client::virginheart01a:
 		break;
 	case Client::blankkey01a:
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Interact_blankkey.mp3"), CHANNELID::CH30);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Interact_blankkey.mp3"), CH1_2D, 0.5f);
 		break;
 	case Client::virginmedal01a:
 		break;
@@ -1313,11 +1312,11 @@ void CInventory_Manager::Set_OnOff_Inven(_bool bInput)
 {
 	if (false == bInput)
 	{
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Inven_Open.mp3"), CHANNELID::CH30);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Inven_Open.mp3"), CH1_2D, 0.5f);
 	}
 	else
 	{
-		m_pGameInstance->Change_Sound_2D(TEXT("sound_ui_Inven_Close.mp3"), CHANNELID::CH30);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Inven_Close.mp3"), CH1_2D, 0.5f);
 	}
 
 
