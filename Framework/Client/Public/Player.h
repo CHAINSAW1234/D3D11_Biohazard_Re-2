@@ -226,7 +226,7 @@ private:
 
 #pragma region 나옹 추가
 public:
-	/* For. Getter Inline*/
+	///////////////* For. Getter Inline *////////////////////
 	_bool*										Col_Event_UI(class CCustomCollider* pCustom);
 	void										Set_Tutorial_Start(UI_TUTORIAL_TYPE i)
 	{ 
@@ -234,21 +234,29 @@ public:
 		m_isPlayer_FirstBehavior[(_int)i] = true;
 		m_eTutial_Type = i;
 	}
-	_int*										Get_Hp_Ptr()			{ return &m_iHp; }
+	void										Set_MissionEntrance(_bool _isEntrance)	{ m_isFlod_EntranceDoor = _isEntrance;  }
+	_int*										Get_Hp_Ptr()							{ return &m_iHp; }
 
-	_bool*										Get_Tutorial_Notify()	{ return &m_isTutorial_Notify; }
-	UI_TUTORIAL_TYPE*							Get_Tutorial_Type()		{ return &m_eTutial_Type; }
-	_byte										Get_Player_State()		{ return m_eState; } /* Player 상태 반환 */
-	_bool*										Get_ZoomOff()			{ return &m_isZoomOff;  }
-
-	/* For. Fuction */
+	_bool*										Get_Tutorial_Notify()					{ return &m_isTutorial_Notify; }
+	UI_TUTORIAL_TYPE*							Get_Tutorial_Type()						{ return &m_eTutial_Type; }
+	_byte										Get_Player_State()						{ return m_eState; } /* Player 상태 반환 */
+	_bool*										Get_ZoomOff()							{ return &m_isZoomOff;  }
+	_bool*										Get_MissionClear_Ptr()					{ return &m_isMissionClear; }
+	
+	//////////////////////* For. Fuction *///////////////////
 	void										Player_First_Behavior();
+	void										MissionClear_Font(wstring _missionText, _ubyte _missionType);
 
 	/* For. Selector UI Interact : */
 	CGameObject*								Create_Selector_UI(); /* 사용할 Selector Obj를 return */
 
+private :
+	void										Player_Mission_Timer(_float fTimeDelta);
 
-	/* For. Variable */
+private:
+
+	///////////////////////////* For. Variable */////////////////
+	private :
 	UI_TUTORIAL_TYPE							m_eTutial_Type					= { UI_TUTORIAL_TYPE::TUTORIAL_END };
 
 	_bool										m_isNYResult;
@@ -258,8 +266,11 @@ public:
 	
 	vector<class CSelector_UI*>					m_SelectorVec;	/* Selector UI의 부모를 넣는 공간 */
 
-
-
+	_bool										m_isMissionClear				= { false };
+	_bool										m_isFlod_EntranceDoor			= { false };
+	
+	_bool										m_isMissionTimer				= { 0.0f };
+	_bool										m_MissionCollection[MISSION_TYPE::END_MISSION] = { false };
 #pragma
 
 #pragma region 예은 추가 

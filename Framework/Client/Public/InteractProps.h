@@ -161,7 +161,7 @@ public:
 	_bool*											Selector_Rendering() { return &m_isSelector_Rendering;  }
 
 	/*To NY*/
-	virtual _float4								Get_Object_Pos() = 0;
+	virtual _float4										Get_Object_Pos() = 0;
 	_int												Get_PropType() { return m_tagPropDesc.iPropType; } // 프롭타입이라 쓰고 arg라 읽는다. // 문의 지역 enum을 반환한다.
 
 

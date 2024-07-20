@@ -5,6 +5,8 @@ BEGIN(Client)
 
 class CTitle_UI final : public CCustomize_UI
 {
+public :
+	enum TITLE_TYPE { MAIN_TITLE, SELECT_TITLE, END_TITLE };
 
 private:
 	CTitle_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -27,12 +29,17 @@ private :
 	void				Find_Logo();
 
 private :
+	void				MainTitle_Operate(_float fTimeDelta);
+	void				SelectTitle_Operate(_float fTimeDelta);
+
+private :
 	CTextBox*			m_pText;
 	CTitle_UI*			m_pTitle_BackGround			= { nullptr };
-	CTitle_UI*			m_pLogo						= {};
+	CTitle_UI*			m_pLogo						= { nullptr };
 
 private :
 	wstring				m_wstrLogo_Broken;
+	_ubyte				m_eTitleType				= {};
 
 private :
 	_bool				m_isTitleGame_Start			= { false };
@@ -45,7 +52,7 @@ private :
 
 private :
 	_float4				m_vOriginOption_Pos			= {};
-
+	_bool				m_isSelectCharector			= { false };
 
 public:
 	static CCustomize_UI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

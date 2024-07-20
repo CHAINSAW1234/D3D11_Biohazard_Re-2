@@ -78,10 +78,6 @@ void CMini_BigStatue::Tick(_float fTimeDelta)
 
 	else if (static_cast<_ubyte>(CBigStatue::BIGSTATUE_TYPE::BIGSTATUE_WOMAN) == m_eMiniType)
 	{
-		if (PARTS_TYPE::MINI_PARTS == static_cast<PARTS_TYPE>(m_ePartsType))
-		{
-		}
-
 		if (DOWN == m_pGameInstance->Get_KeyState('W'))
 			m_isMoveStart = true;
 

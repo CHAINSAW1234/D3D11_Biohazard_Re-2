@@ -54,6 +54,8 @@ void CBody_Statue::Late_Tick(_float fTimeDelta)
 	switch (*m_pState)
 	{
 	case CStatue::STATE_PLAY:
+		/* LN : Å° Å¬¸®¾î : sound_Map_sm41_wisdom_statue2_1 */
+		/* LN : ¼Õ¿¡¼­ ºÀÀ» ³ùÀ» ¶§  : sound_Map_sm41_wisdom_statue2_3*/
 		//m_pModelCom->Set_TotalLinearInterpolation(0.2f); // Àß¾Ë¾Æ°©´Ï´Ù ²¨¾ï
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pState);
 		break;

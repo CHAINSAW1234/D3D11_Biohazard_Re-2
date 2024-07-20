@@ -3,7 +3,6 @@
 #include "Level_Loading.h"
 
 #define ALPHA_ZERO           _float4(0, 0, 0, 0)
-//#define FONT_LIGHT_COLOR    _float4(0.929f, 0.925f, 0.894f, 0)
 #define FONT_LIGHT_COLOR    _float4(1, 1, 1, 0)
 #define OPTION_MOVE_DISTANCE     30.f
 
@@ -36,62 +35,80 @@ HRESULT CTitle_UI::Initialize(void* pArg)
             return E_FAIL;
 
         CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
-    }
 
-    if (false == m_IsChild)
-    {
-        /* 텍스트 지정*/
-        if (!m_vecTextBoxes.empty())
-            m_pText = m_vecTextBoxes.back();
-
-        m_pTitle_BackGround = this;
-
-        //Safe_AddRef<CTitle_UI*>(m_pTitle_BackGround);
-        Find_Logo();
-    }
-
-    else if (true == m_IsChild)
-    {
-        m_iEndingType = PLAY_BUTTON::PLAY_DEFAULT;
-
-        /* BackGround 가지고 있기 */
-        list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
-
-        for (auto& iter : *pUIList)
-        {
-            m_pTitle_BackGround = dynamic_cast<CTitle_UI*>(iter);
-
-            if (nullptr != m_pTitle_BackGround && false == m_pTitle_BackGround->m_IsChild)
-                break;
+        if (TEXT("Title_UI") == CustomUIDesc->wstrFileName)
+        { 
+            m_eTitleType = static_cast<TITLE_TYPE>(TITLE_TYPE::MAIN_TITLE);
         }
 
-        m_wstrLogo_Broken = TEXT("Prototype_Component_Texture_LogoBroken");
+        else if(TEXT("UI_Title_Select") == CustomUIDesc->wstrFileName)
+        { 
+            m_eTitleType = static_cast<TITLE_TYPE>(TITLE_TYPE::SELECT_TITLE);
+        }
     }
 
-    for (auto& iter : m_vecTextBoxes)
+    if(static_cast<TITLE_TYPE>(TITLE_TYPE::MAIN_TITLE) == m_eTitleType)
     {
-        CTextBox* pText = dynamic_cast<CTextBox*>(iter);
-
-        if (nullptr != pText)
+        if (false == m_IsChild)
         {
-            /* "게임 시작" Font라면,*/
-            if (TEXT("게임 시작") == pText->Get_Text())
+            /* 텍스트 지정*/
+            if (!m_vecTextBoxes.empty())
+                m_pText = m_vecTextBoxes.back();
+
+            m_pTitle_BackGround = this;
+
+            //Safe_AddRef<CTitle_UI*>(m_pTitle_BackGround);
+            Find_Logo();
+        }
+
+        else if (true == m_IsChild)
+        {
+            m_iEndingType = PLAY_BUTTON::PLAY_DEFAULT;
+
+            /* BackGround 가지고 있기 */
+            list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+            for (auto& iter : *pUIList)
             {
-                m_isGameStart_Text = true;
-                pText->Set_FontColor(ALPHA_ZERO);
+                m_pTitle_BackGround = dynamic_cast<CTitle_UI*>(iter);
+
+                if (nullptr != m_pTitle_BackGround && false == m_pTitle_BackGround->m_IsChild)
+                    break;
             }
 
-            /* Option Font라면,*/
-            if (true == m_IsChild) /* 로고가 아닌 폰트라면 가리기 */
-            {
-                m_vOriginTextColor = pText->Get_FontColor();
-                pText->Set_FontColor(ALPHA_ZERO);
+            m_wstrLogo_Broken = TEXT("Prototype_Component_Texture_LogoBroken");
+        }
 
-                /*Position 저장 */
-                CTransform* pTextTrans = static_cast<CTransform*>(pText->Get_Component(g_strTransformTag));
-                m_vOriginOption_Pos = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
+        for (auto& iter : m_vecTextBoxes)
+        {
+            CTextBox* pText = dynamic_cast<CTextBox*>(iter);
+
+            if (nullptr != pText)
+            {
+                /* "게임 시작" Font라면,*/
+                if (TEXT("게임 시작") == pText->Get_Text())
+                {
+                    m_isGameStart_Text = true;
+                    pText->Set_FontColor(ALPHA_ZERO);
+                }
+
+                /* Option Font라면,*/
+                if (true == m_IsChild) /* 로고가 아닌 폰트라면 가리기 */
+                {
+                    m_vOriginTextColor = pText->Get_FontColor();
+                    pText->Set_FontColor(ALPHA_ZERO);
+
+                    /*Position 저장 */
+                    CTransform* pTextTrans = static_cast<CTransform*>(pText->Get_Component(g_strTransformTag));
+                    m_vOriginOption_Pos = pTextTrans->Get_State_Float4(CTransform::STATE_POSITION);
+                }
             }
         }
+    }
+
+    else if(static_cast<TITLE_TYPE>(TITLE_TYPE::SELECT_TITLE) == m_eTitleType)
+    {
+        m_isRender = false;
     }
 
     m_isPlay = false;
@@ -103,42 +120,9 @@ void CTitle_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    ///* 부모 (BackGround) 가 Logo를 찾아야 함*/
-    if (nullptr == m_pLogo && false == m_IsChild)
-        Find_Logo();
+    MainTitle_Operate(fTimeDelta);
 
-    if (false == m_pTitle_BackGround->m_isTitleGame_Start)
-        TitleGame_Start();
-
-    ///* 인 게임 안에 들어가기 시작할 때 :  폰트 움직임 */
-    else if (true == m_pTitle_BackGround->m_isTitleGame_Start)
-    {
-        if (nullptr != m_pLogo)
-        {
-            if (m_pLogo->m_fCurrentColor_Timer >= 1.3f)
-            {
-                m_pLogo->m_isKeepPlay = true;
-                m_pLogo->m_isRender = false;
-            }
-        }
-
-        InGame_Start(fTimeDelta);
-    }
-
-    /* 옵션 창 안이라면, */
-    if (true == m_isInOption)
-        Option_Click(fTimeDelta);
-
-   /* if (true == m_IsChild)
-    {
-        if (!m_vecTextBoxes.empty())
-        {
-            CTextBox* pFont = m_vecTextBoxes.back();
-
-            _float4 result = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * m_vOriginTextColor;
-            pFont->Set_FontColor(result);
-        }
-    }*/
+    SelectTitle_Operate(fTimeDelta);
 }
 
 void CTitle_UI::Late_Tick(_float fTimeDelta)
@@ -162,7 +146,7 @@ HRESULT CTitle_UI::Change_Tool()
 void CTitle_UI::TitleGame_Start()
 {
     /* 만약 로고의 플레이가 완료 되었다면, */
-    m_pGameInstance->Play_Sound(TEXT("ui_title_media.bnk.2_30.mp3"), CHANNELID::CH30);
+    m_pGameInstance->Play_Sound(TEXT("sound_ui_titleLogoClear.mp3"), CHANNELID::CH30);
 
     if (nullptr != m_pLogo && true == m_pLogo->m_isPlay)
     {
@@ -231,15 +215,16 @@ void CTitle_UI::Option_Click(_float fTimeDelta)
         {
             if(m_pGameInstance->Get_KeyState(VK_LBUTTON))
             {
-                m_pGameInstance->Play_Sound(TEXT("ui_title_media.bnk.2_21.mp3"), CHANNELID::CH30);
+                m_pGameInstance->Play_Sound(TEXT("sound_ui_titleInGame.mp3"), CHANNELID::CH30);
 
+                // m_isSelectCharector = true;
                 m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL_GAMEPLAY));
             }
         }
 
         m_vecTextBoxes.back()->Set_FontColor(FONT_LIGHT_COLOR);
 
-        m_pGameInstance->Play_Sound(TEXT("ui_ingame_media.bnk.2_18.mp3"), CHANNELID::CH30);
+        m_pGameInstance->Play_Sound(TEXT("sound_ui_titleSelectOption.mp3"), CHANNELID::CH30);
 
         /* 오른쪽으로 밀기 */
         if (fOptionTextTrans.x < m_vOriginOption_Pos.x + OPTION_MOVE_DISTANCE)
@@ -287,6 +272,45 @@ void CTitle_UI::Find_Logo()
             if (nullptr != m_pLogo && true == m_pLogo->m_IsChild)
                 break;
         }
+    }
+}
+
+void CTitle_UI::MainTitle_Operate(_float fTimeDelta)
+{
+    /* 부모 (BackGround) 가 Logo를 찾아야 함*/
+    if (nullptr == m_pLogo && false == m_IsChild)
+        Find_Logo();
+
+    if (false == m_pTitle_BackGround->m_isTitleGame_Start)
+        TitleGame_Start();
+
+    /* 인 게임 안에 들어가기 시작할 때 :  폰트 움직임 */
+    else if (true == m_pTitle_BackGround->m_isTitleGame_Start)
+    {
+        if (nullptr != m_pLogo)
+        {
+            if (m_pLogo->m_fCurrentColor_Timer >= 1.3f)
+            {
+                m_pLogo->m_isKeepPlay = true;
+                m_pLogo->m_isRender = false;
+            }
+        }
+
+        InGame_Start(fTimeDelta);
+    }
+
+    /* 옵션 창 안이라면, */
+    if (true == m_isInOption)
+    {
+        Option_Click(fTimeDelta);
+    }
+}
+
+void CTitle_UI::SelectTitle_Operate(_float fTimeDelta)
+{
+    if (static_cast<TITLE_TYPE>(TITLE_TYPE::SELECT_TITLE) == m_eTitleType)
+    {
+        m_isRender = true;
     }
 }
 

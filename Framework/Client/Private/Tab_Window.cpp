@@ -567,7 +567,7 @@ void CTab_Window::Button_Act(_float fTimeDelta)
 			m_pHotKey->Set_Dead(true);
 			m_pHint->Set_Dead(true);
 
-			m_pGameInstance->Play_Sound(TEXT("ui_ingame_media.bnk.2_51.mp3"), CHANNELID::CH30);
+			m_pGameInstance->Play_Sound(TEXT("sound_ui_changeTab.mp3"), CHANNELID::CH30);
 
 		}
 
@@ -578,8 +578,8 @@ void CTab_Window::Button_Act(_float fTimeDelta)
 			m_pInventory_Manager->Set_OnOff_Inven(false);
 			m_pHotKey->Set_Dead(false);
 			m_pHint->Set_Dead(true);
-			
-			m_pGameInstance->Play_Sound(TEXT("ui_ingame_media.bnk.2_51.mp3"), CHANNELID::CH30);
+
+			m_pGameInstance->Play_Sound(TEXT("sound_ui_changeTab.mp3"), CHANNELID::CH30);
 
 		}
 
@@ -590,8 +590,8 @@ void CTab_Window::Button_Act(_float fTimeDelta)
 			m_pInventory_Manager->Set_OnOff_Inven(true);
 			m_pHotKey->Set_Dead(true);
 			m_pHint->Set_Dead(false);
-			
-			m_pGameInstance->Play_Sound(TEXT("ui_ingame_media.bnk.2_51.mp3"), CHANNELID::CH30);
+
+			m_pGameInstance->Play_Sound(TEXT("sound_ui_changeTab.mp3"), CHANNELID::CH30);
 		}
 	}
 }

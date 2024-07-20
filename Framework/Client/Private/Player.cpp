@@ -37,6 +37,8 @@
 #include "Mesh.h"
 #include "Zombie.h"
 
+#include "MissionBar_UI.h"
+
 #define MODEL_SCALE 0.01f
 #define SHOTGUN_BULLET_COUNT 7
 #define SHOTGUN_SPREAD_AMOUNT 0.14f
@@ -482,6 +484,8 @@ void CPlayer::Late_Tick(_float fTimeDelta)
 
 #pragma region 나옹 추가
 	Player_First_Behavior();
+
+	Player_Mission_Timer(fTimeDelta);
 #pragma endregion 
 
 #ifdef _DEBUG
@@ -659,6 +663,61 @@ CGameObject* CPlayer::Create_Selector_UI()
 	}
 
 	return nullptr;
+}
+
+void CPlayer::Player_Mission_Timer(_float fTimeDelta)
+{
+	if (false == m_isFlod_EntranceDoor)
+	{
+		m_isMissionTimer += fTimeDelta;
+
+		if(m_isMissionTimer >= 2.f)
+		{
+			if(false == m_MissionCollection[MISSION_TYPE::FOLD_ENTRANCE_MISSION])
+			{
+				MissionClear_Font(TEXT("경찰서로 이동하기"), static_cast<_ubyte>(MISSION_TYPE::FOLD_ENTRANCE_MISSION));
+				
+				m_isMissionTimer = 0.f;
+			}
+		}
+	}
+
+	else if (true == m_isFlod_EntranceDoor)
+	{
+		if (false == m_MissionCollection[MISSION_TYPE::EXPLORING_SURROUNDING_MISSION])
+		{
+			MissionClear_Font(TEXT("주변 환경 탐색하기"), static_cast<_ubyte>(MISSION_TYPE::EXPLORING_SURROUNDING_MISSION));
+		}
+	}
+}
+
+void CPlayer::MissionClear_Font(wstring _missionText, _ubyte _missionType)
+{
+	list<class CGameObject*>* pUIList = m_pGameInstance->Find_Layer(g_Level, TEXT("Layer_UI"));
+
+	for (auto& iter : *pUIList)
+	{
+		CMissionBar_UI* pMission = dynamic_cast<CMissionBar_UI*>(iter);
+
+		if(nullptr != pMission)
+		{
+			if (static_cast<_ubyte>(CMissionBar_UI::MISSION_UI_TYPE::FONT_MISSION) == pMission->Get_MissionType())
+			{
+				if (!pMission->Get_vecTextBoxes()->empty())
+				{
+					CTextBox* pFont = pMission->Get_vecTextBoxes()->back();
+
+					m_MissionCollection[_missionType] = true;
+
+					*pMission->Get_MissionBar()->Get_FontStart_Ptr() = false;
+
+					pFont->Set_Text(_missionText);
+
+					m_isMissionClear = true;
+				}
+			}
+		}
+	}
 }
 
 #pragma endregion

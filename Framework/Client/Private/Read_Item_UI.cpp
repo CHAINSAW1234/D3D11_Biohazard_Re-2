@@ -375,13 +375,14 @@ void CRead_Item_UI::Text_Read(_float fTimeDelta)
         m_isRender = true;
 
         m_pRead_Supervise->m_isChange = false;
-        m_pGameInstance->Play_Sound(TEXT("ui_ingame_media.bnk.2_35.mp3"), CHANNELID::CH30);
+
+        m_pGameInstance->Play_Sound(TEXT("sound_ui_readUIAllow.mp3"), CHANNELID::CH30);
 
     }
 
     else if (READ_UI_TYPE::TEXT_RIGHT_READ == m_eRead_type)
     {
-        m_pGameInstance->Play_Sound(TEXT("ui_ingame_media.bnk.2_35.mp3"), CHANNELID::CH30);
+        m_pGameInstance->Play_Sound(TEXT("sound_ui_readUIAllow.mp3"), CHANNELID::CH30);
 
         m_isRender = false;
     }

@@ -271,7 +271,7 @@ HRESULT CBigStatue::Add_PartObjects()
 		MedalDesc.eMedelType = CMedal_BigStatue::MEDAL_TYPE::MEDAL_WOMAN;
 
 		MiniDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Anim");
-		MiniParts_Desc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Part_Anim");
+		// MiniParts_Desc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_182_womanstatue01a_Mini_Part_Anim");
 		MedalDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm73_139_virginmedal01a");
 		DialDesc.strModelComponentName = TEXT("Prototype_Component_Model_sm42_177_hieroglyphicdiallock01b_Anim");
 		break;
@@ -296,6 +296,7 @@ HRESULT CBigStatue::Add_PartObjects()
 	}
 	
 	/* 2. Mini Parts*/
+	if(BIGSTATUE_WOMAN != m_eType)
 	{
 		MiniParts_Desc.vParts_WorldMatrix = static_cast<CMini_BigStatue*>(m_PartObjects[CBigStatue::PART_MINI_STATUE])->Get_WorldMatrix_Ptr();
 

@@ -44,6 +44,12 @@ HRESULT CLevel_Logo::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
+	/* UI_Title_Select */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Title_Select.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
 	return S_OK;
 
 }
@@ -67,12 +73,6 @@ void CLevel_Logo::UI_Distinction(wstring& selectedFilePath)
 void CLevel_Logo::CreatFromDat(ifstream& inputFileStream, wstring strListName, CGameObject* pGameParentsObj, wstring fileName, _int iWhich_Child)
 {
 	CCustomize_UI::CUSTOM_UI_DESC CustomizeUIDesc;
-
-	if (fileName == TEXT("UI_Map") || fileName == TEXT("UI_Map_Font") || fileName == TEXT("Map_Mask") || fileName == TEXT("Map_Mask_Font"))
-		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eMapUI_Type), sizeof(LOCATION_MAP_VISIT));
-
-	if (fileName == TEXT("UI_Item_Introduce") || fileName == TEXT("UI_Item_Read") || fileName == TEXT("UI_Item_Read_Arrow"))
-		inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.eMapUI_Type), sizeof(LOCATION_MAP_VISIT));
 
 	inputFileStream.read(reinterpret_cast<_char*>(&CustomizeUIDesc.isLoad), sizeof(_bool));
 
@@ -191,8 +191,8 @@ void CLevel_Logo::CreatFromDat(ifstream& inputFileStream, wstring strListName, C
 		CustomizeUIDesc.iWhich_Child = 0;
 	else
 		CustomizeUIDesc.iWhich_Child = iWhich_Child;
-
-	if (TEXT("Title_UI") == fileName)
+	
+	if (TEXT("Title_UI") == fileName || TEXT("UI_Title_Select") == fileName)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_LOGO, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Title_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));

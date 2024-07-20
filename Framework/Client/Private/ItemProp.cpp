@@ -64,8 +64,6 @@ void CItemProp::Tick(_float fTimeDelta)
 	}
 	
 	__super::Tick(fTimeDelta);
-
-
 }
 
 void CItemProp::Late_Tick(_float fTimeDelta)

@@ -419,10 +419,12 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 		switch (*m_pPressKeyState)
 		{
 		case CCabinet::KEY_A:
+			/* LN : 키 클리어 : sound_Map_sm42_safebox_dial2_2*/
 			m_eMoveingKey = LOCK_ALLOW_KEY::LEFT_LOCK_KEY;
 			m_iRotationCnt--;
 			*m_pPressKeyState = CCabinet::KEY_NOTHING;
 			break;
+
 		case CCabinet::KEY_D:
 			m_eMoveingKey = LOCK_ALLOW_KEY::RIGHT_LOCK_KEY;
 			m_iRotationCnt++;
@@ -439,6 +441,7 @@ void CLock_Cabinet::Safebox_Late_Tick(_float fTimeDelta)
 	break;
 
 	case CCabinet::WRONG_LOCK:
+		/* LN : 키 클리어 : sound_Map_sm42_safebox_dial2_4*/
 		m_eMoveingKey = LOCK_ALLOW_KEY::RIGHT_LOCK_KEY;
 		Safebox_RotationLock(m_eMoveingKey, fTimeDelta);
 		break;

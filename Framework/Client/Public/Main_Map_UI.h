@@ -31,7 +31,7 @@ private :
 	void				Find_DoorObj();
 
 private :	
-	void				Change_Search_Type(MAP_STATE_TYPE _searType);
+	void				Change_Search_Type(MAP_STATE_TYPE _searType, _bool isDoor = false);
 	void				Region_State();
 	void				Search_Map_Type(MAP_STATE_TYPE _searType, LOCATION_MAP_VISIT _mapType);
 

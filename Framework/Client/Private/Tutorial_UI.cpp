@@ -2,7 +2,7 @@
 #include "Tutorial_UI.h"
 #include "Player.h"
 
-#define ALHPE_ZERO _float4(0, 0, 0, 0)
+#define ALPHA_ZERO _float4(0, 0, 0, 0)
 #define LIFE_TIME 2.f
 
 CTutorial_UI::CTutorial_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -41,7 +41,7 @@ HRESULT CTutorial_UI::Initialize(void* pArg)
     {
         m_vOriginTextColor = m_vecTextBoxes.back()->Get_FontColor();
 
-        m_vecTextBoxes.back()->Set_FontColor(ALHPE_ZERO);
+        m_vecTextBoxes.back()->Set_FontColor(ALPHA_ZERO);
 
         m_Origin_TextPosition.x = m_vecTextBoxes.back()->GetPosition().x;
         m_Origin_TextPosition.y = m_vecTextBoxes.back()->GetPosition().y;
@@ -146,7 +146,7 @@ void CTutorial_UI::Play_Font(_float fTimeDelta)
 {
     /* 만약 플레이 중이라면, */
     CTextBox* pFont = m_vecTextBoxes.back();
-    _float4 result = m_fBlending * ALHPE_ZERO + (1 - m_fBlending) * m_vOriginTextColor;
+    _float4 result = m_fBlending * ALPHA_ZERO + (1 - m_fBlending) * m_vOriginTextColor;
     pFont->Set_FontColor(result);
 }
 

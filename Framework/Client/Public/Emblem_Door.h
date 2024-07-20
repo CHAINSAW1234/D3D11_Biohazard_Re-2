@@ -22,10 +22,10 @@ public:
 
 	typedef struct tag_EmblemDoor_desc : public CPart_InteractProps::PART_INTERACTPROPS_DESC
 	{
-		_ubyte eEmblemType;
+		_ubyte  eEmblemType;
 		_ubyte* EmblemAnim;
 		_ubyte* pDoorState = { nullptr };
-		_bool* pKeyUsing = { nullptr };
+		_bool*  pKeyUsing = { nullptr };
 	}BODY_EMBLEM_DOOR;
 
 private:
@@ -49,19 +49,19 @@ private:
 	virtual HRESULT				Initialize_PartObjects() override;
 
 public :
-	_float4x4*					Get_WorldMatrix() { return &m_WorldMatrix; }
+	_float4x4*					Get_WorldMatrix()						{ return &m_WorldMatrix; }
 
 public:
-	void						Set_Socket01(_float4x4* pSocketMatrix) { m_pSocketMatrix_01 = pSocketMatrix; }
-	_bool						Get_Clear() { return m_bClear; }
+	void						Set_Socket01(_float4x4* pSocketMatrix)	{ m_pSocketMatrix_01 = pSocketMatrix; }
+	_bool						Get_Clear()								{ return m_bClear; }
 
 private:
-	_float4x4*					m_pSocketMatrix_01 = { nullptr };
-	_bool							m_bClear = { false };
-	_bool*						m_pKeyUsing = { nullptr };
-	_ubyte						m_eEmblemType = {};
-	_ubyte*						m_pEmblem_Anim = {nullptr};
-	_ubyte*						m_pDoorState = {nullptr};
+	_float4x4*					m_pSocketMatrix_01	= { nullptr };
+	_bool						m_bClear			= { false };
+	_bool*						m_pKeyUsing			= { nullptr };
+	_ubyte						m_eEmblemType		= {};
+	_ubyte*						m_pEmblem_Anim		= {nullptr};
+	_ubyte*						m_pDoorState		= {nullptr};
 
 public:
 	static CEmblem_Door* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

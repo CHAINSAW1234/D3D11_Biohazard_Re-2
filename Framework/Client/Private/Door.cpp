@@ -118,6 +118,7 @@ void CDoor::Start()
 void CDoor::Tick(_float fTimeDelta)
 {
 	__super::Tick_Col();
+
 	if (m_fDelayLockTime > 0.f)
 		m_fDelayLockTime -= fTimeDelta;
 	if (m_fDelayLockTime < 0.f)
@@ -125,10 +126,6 @@ void CDoor::Tick(_float fTimeDelta)
 		m_fDelayLockTime = 0.f;
 		m_bLock = false;
 	}
-
-	if(m_isCameraGimmick)
-
-
 
 	if (!m_bVisible)
 		return;
@@ -154,7 +151,16 @@ void CDoor::Late_Tick(_float fTimeDelta)
 	if (m_pPlayer == nullptr)
 		return;
 	if (!Visible())
+	{
+		if (nullptr != m_pSelector)
+		{
+			m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+			m_pSelector = nullptr;
+		}
+
 		return;
+	}
 
 	if (m_eType == CDoor::DOOR_DUMMY)
 		return;
@@ -679,7 +685,13 @@ void CDoor::DoubleDoor_Late_Tick(_float fTimeDelta)
 		{
 			m_bCol[INTER_COL_DOUBLE][COL_STEP1] = false;
 			m_bCol[INTER_COL_DOUBLE][COL_STEP2] = false;
-			Opreate_Selector_UI(false, Get_Object_Pos());
+
+			if (nullptr != m_pSelector)
+			{
+				m_pSelector = static_cast<CSelector_UI*>(m_pSelector->Destroy_Selector());
+
+				m_pSelector = nullptr;
+			}
 
 		}
 	}

@@ -56,6 +56,7 @@ private:
 	_bool				m_isGiveMedal		= { false };
 
 	_uint				m_iEXCode = { 0 };
+	_uint				m_iPrevMedalCnt = { 0 }; 
 
 	_ubyte				m_eState			= { POLICEHALLSTATUE_0 };
 	_ubyte				m_eMedalType;

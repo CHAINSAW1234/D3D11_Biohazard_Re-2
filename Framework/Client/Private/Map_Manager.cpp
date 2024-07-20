@@ -7,7 +7,7 @@
 #define ALPHA_ZERO				_float4(0.f, 0.f, 0.f, 0.f)
 #define BLENDING                0.7f
 #define BLENDING_SPEED          5.f /* 지도 층을 바꿀 때 블랜딩 속도 가중 값*/
-#define TARGET_SPEED           10.f
+#define TARGET_SPEED            50.f
 
 CMap_Manager::CMap_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCustomize_UI{ pDevice, pContext }
@@ -35,7 +35,9 @@ HRESULT CMap_Manager::Initialize(void* pArg)
 		CUSTOM_UI_DESC* CustomUIDesc = (CUSTOM_UI_DESC*)pArg;
 
 		if (m_eMap_Location > LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END)
+		{
 			m_eMap_Location = LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END;
+		}
 
 		m_eMap_Location = CustomUIDesc->eMapUI_Type;
 
@@ -59,13 +61,18 @@ HRESULT CMap_Manager::Initialize(void* pArg)
 	
 	/* Tool */
 	_float4 pos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
 	pos.z = 0.01f;
+
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, pos);
 
 	m_fOrigin_Blending = m_vColor[0].fBlender_Value;
+
 	m_vColor[0].vColor.w = 0.f;
+
 	m_isRender = false;
 
+	
 	return S_OK;
 }
 
@@ -74,8 +81,11 @@ void CMap_Manager::Tick(_float fTimeDelta)
 	__super::Tick(fTimeDelta);
 
 	Exception_Handle();
+
 	Rendering(fTimeDelta);
+
 	Transform_Control(fTimeDelta);
+
 	Mouse_Pos(fTimeDelta);
 }
 
@@ -94,7 +104,8 @@ HRESULT CMap_Manager::Render()
 
 HRESULT CMap_Manager::Change_Tool()
 {
-	return E_NOTIMPL;
+	
+	return S_OK;
 }
 
 void CMap_Manager::Mouse_Pos(_float fTimeDelta)
@@ -106,6 +117,16 @@ void CMap_Manager::Mouse_Pos(_float fTimeDelta)
 	{
 		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
+			if(true == m_pTab_Window->Get_MinMapRender())
+			{
+				if (false == m_isOneSound)
+				{
+					m_isOneSound = true;
+
+					m_pGameInstance->Play_Sound(TEXT("sound_ui_keyDownMiniMap.mp3"), CHANNELID::CH30);
+				}
+			}
+
 			POINT		ptDeltaPos = m_pGameInstance->Get_MouseDeltaPos();
 
 			/* 속도 방향 정해주기 */
@@ -144,7 +165,10 @@ void CMap_Manager::Mouse_Pos(_float fTimeDelta)
 					m_vPlayer_MovePos.y -= fTimeDelta * (_float)ptDeltaPos.y * m_fMouseSensor * 3.f;
 			}
 		}
-	}
+
+		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+			m_isOneSound = false;
+	}	
 }
 
 
@@ -205,6 +229,7 @@ void CMap_Manager::Exception_Handle()
 		if (false == m_isTransfrom_Setting)
 			MSG_BOX(TEXT("CMap_UI에서 무언가가 Transform Setting이 설정되지 않았습니다."));
 	}
+
 }
 void CMap_Manager::Transform_Adjustment()
 {

@@ -18,9 +18,7 @@
 
 /*CubeMap*/
 #include"EnvCube.h"
-
 #include "ImGui_Manager.h"
-
 
 /* Manager */
 #include "Call_Center.h"
@@ -420,12 +418,6 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
-	///////////////////////////* ¢º  ¢º  ¢º  ¢º  ¢º    */////////////////////////////
-	/* 2. Cursor */
-	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Cursor.dat");
-	inputFileStream.open(selectedFilePath, ios::binary);
-	UI_Distinction(selectedFilePath);
-	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 
 	///////////////////////////* ¢º  ¢º  ¢º  ¢º  ¢º   BULLET  */////////////////////////////
 	/* 5. Bullet_UI */
@@ -462,6 +454,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 		UI_Distinction(selectedFilePath);
 		CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
 	}
+
 	/////////////////////////* ¢º ¢º  ¢º  ¢º  ¢º LayOut  */////////////////////////////
 	/* 4. UI_LayOut */
 	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Layout_BackGround.dat");
@@ -672,6 +665,14 @@ HRESULT CLevel_GamePlay::Ready_Layer_UI(const wstring& strLayerTag)
 	inputFileStream.open(selectedFilePath, ios::binary);
 	UI_Distinction(selectedFilePath);
 	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
+	///////////////////////////* ¢º  ¢º  ¢º  ¢º  ¢º    */////////////////////////////
+	/* 2. Cursor */
+	selectedFilePath = TEXT("../Bin/DataFiles/UI_Data/UI_Cursor.dat");
+	inputFileStream.open(selectedFilePath, ios::binary);
+	UI_Distinction(selectedFilePath);
+	CreatFromDat(inputFileStream, strLayerTag, nullptr, selectedFilePath);
+
 
 	return S_OK;
 
@@ -976,8 +977,7 @@ void CLevel_GamePlay::CreatFromDat(ifstream& inputFileStream, wstring strListNam
 			MSG_BOX(TEXT("Failed to Add Clone"));
 	}
 
-	else if (TEXT("Map_Mask") == fileName || TEXT("Map_BackGround") == fileName 
-		|| TEXT("Map_Search_Type") == fileName || TEXT("Map_Line") == fileName)
+	else if (TEXT("Map_Mask") == fileName || TEXT("Map_BackGround") == fileName || TEXT("Map_Search_Type") == fileName || TEXT("Map_Line") == fileName)
 	{
 		if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, TEXT("Layer_UI"), TEXT("Prototype_GameObject_Static_Map_UI"), &CustomizeUIDesc)))
 			MSG_BOX(TEXT("Failed to Add Clone"));
