@@ -23,7 +23,7 @@ public:
 private:
 	void						Update_State();
 	void						Open_Door();
-
+	void						Update_Sound(_float fTimeDelta);
 private:
 	HRESULT						Add_States();
 
@@ -31,6 +31,8 @@ private:
 	CPlayer*					m_pPlayer = { nullptr };
 	STATE						m_eState = { IDLE };
 
+	_float						m_fMoaningTime = { 0.f };
+	_float						m_fMoaningDuration = { 6.f };
 public:
 	static	CPlayer_State_Move* Create(CPlayer* pPlayer);
 	virtual void Free() override;

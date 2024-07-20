@@ -13,7 +13,7 @@ HRESULT CSound_Manager_2D::Initialize()
 	// 1. 시스템 포인터, 2. 사용할 가상채널 수 , 초기화 방식) 
 	FMOD_System_Init(m_pSystem, SOUND_CHANNEL_SIZE, FMOD_INIT_NORMAL, NULL);
 
-	LoadSoundFile();
+	//LoadSoundFile();
 
 	return S_OK;
 }

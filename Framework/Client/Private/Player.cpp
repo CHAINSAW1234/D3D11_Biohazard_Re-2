@@ -993,6 +993,16 @@ void CPlayer::Reload()
 		Set_Spotlight(false);
 	}
 
+
+	switch (m_eEquip) {
+	case HG:
+		Change_Sound_3D(TEXT("Sound_Player_HG_Reload"), 0, 2);
+		break;
+	case STG:
+		Change_Sound_3D(TEXT("Sound_Player_STG_Reload"), 0, 2);
+		break;
+	}
+
 	
 }
 
@@ -1017,7 +1027,7 @@ void CPlayer::Change_Sound_3D(const wstring& strSoundTag, _int iRandCnt, _uint i
 	wstring strRandStoundTag;
 	if (iRandCnt != 0) {
 		_int iRand = rand() % iRandCnt;
-		strRandStoundTag = strSoundTag + to_wstring(iRand) + TEXT(".mp3");
+		strRandStoundTag = strSoundTag + TEXT("_") + to_wstring(iRand) + TEXT(".mp3");
 
 	}
 	else {
