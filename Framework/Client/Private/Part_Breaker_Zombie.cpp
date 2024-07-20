@@ -16,7 +16,7 @@ HRESULT CPart_Breaker_Zombie::Initialize(void* pArg)
 	if (nullptr == pArg)
 		return E_FAIL;
 
-	PART_BREAKER_DESC*			pDesc = { static_cast<PART_BREAKER_DESC*>(pArg) };
+	PART_BREAKER_DESC* pDesc = { static_cast<PART_BREAKER_DESC*>(pArg) };
 	if (-1 == pDesc->iBodyType ||
 		pDesc->iBodyType >= static_cast<_int>(ZOMBIE_BODY_TYPE::_END))
 		return E_FAIL;
@@ -26,6 +26,8 @@ HRESULT CPart_Breaker_Zombie::Initialize(void* pArg)
 	m_pFace_Model = { pDesc->pFaceModel };
 	m_pShirts_Model = { pDesc->pShirts_Model };
 	m_pPants_Model = { pDesc->pPants_Model };
+	m_iClothesModelID_Shirts = { pDesc->iClothesModelID_Shirts };
+	m_iClothesModelID_Pants = { pDesc->iClothesModelID_Pants };
 
 	if (nullptr == m_pBody_Model || nullptr == m_pFace_Model)
 		return E_FAIL;
@@ -35,9 +37,88 @@ HRESULT CPart_Breaker_Zombie::Initialize(void* pArg)
 	Safe_AddRef(m_pShirts_Model);
 	Safe_AddRef(m_pPants_Model);
 
-	m_HPs.resize(static_cast<_uint>(BREAK_PART::_END));
-	for (auto& iHP : m_HPs)
-		iHP = 2;
+	if (m_iBodyType == static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE))
+	{
+		m_HPs.resize(static_cast<_uint>(BREAK_PART::_END));
+		for (auto& iHP : m_HPs)
+			iHP = 4;
+
+		if (m_iClothesModelID_Shirts == 0)
+		{
+			m_HPs[static_cast<_uint>(BREAK_PART::_L_UPPER_RADIUS)] = 10000;
+			m_HPs[static_cast<_uint>(BREAK_PART::_R_UPPER_RADIUS)] = 10000;
+			m_HPs[static_cast<_uint>(BREAK_PART::_R_UPPER_HUMEROUS)] = 10000;
+			m_HPs[static_cast<_uint>(BREAK_PART::_L_UPPER_HUMEROUS)] = 10000;
+		}
+
+		if (m_iClothesModelID_Shirts == 2 || m_iClothesModelID_Shirts == 3 || m_iClothesModelID_Shirts == 5 ||
+			m_iClothesModelID_Shirts == 6 || m_iClothesModelID_Shirts == 7 || m_iClothesModelID_Shirts == 8 || 
+			m_iClothesModelID_Shirts == 12 || m_iClothesModelID_Shirts == 13)
+		{
+			m_HPs[static_cast<_uint>(BREAK_PART::_L_UPPER_RADIUS)] = 10000;
+			m_HPs[static_cast<_uint>(BREAK_PART::_R_UPPER_RADIUS)] = 10000;
+		}
+
+		if (m_iClothesModelID_Pants == 0 || m_iClothesModelID_Pants == 1 || m_iClothesModelID_Pants == 3 ||
+			m_iClothesModelID_Pants == 4 || m_iClothesModelID_Pants == 5 || m_iClothesModelID_Pants == 6)
+		{
+			m_HPs[static_cast<_uint>(BREAK_PART::_L_UPPER_TABIA)] = 10000;
+			m_HPs[static_cast<_uint>(BREAK_PART::_R_UPPER_TABIA)] = 10000;
+		}
+	}
+
+	if (m_iBodyType == static_cast<_int>(ZOMBIE_BODY_TYPE::_FEMALE))
+	{
+		m_HPs.resize(static_cast<_uint>(BREAK_PART::_END));
+		for (auto& iHP : m_HPs)
+			iHP = 4;
+
+		if (m_iClothesModelID_Shirts == 1)
+		{
+			m_HPs[static_cast<_uint>(BREAK_PART::_L_UPPER_RADIUS)] = 10000;
+			m_HPs[static_cast<_uint>(BREAK_PART::_R_UPPER_RADIUS)] = 10000;
+		}
+
+		if (m_iClothesModelID_Shirts == 5)
+		{
+			m_HPs[static_cast<_uint>(BREAK_PART::_L_UPPER_RADIUS)] = 10000;
+			m_HPs[static_cast<_uint>(BREAK_PART::_R_UPPER_RADIUS)] = 10000;
+			m_HPs[static_cast<_uint>(BREAK_PART::_R_UPPER_HUMEROUS)] = 10000;
+		}
+
+		if (m_iClothesModelID_Shirts == 4)
+		{
+			m_HPs[static_cast<_uint>(BREAK_PART::_L_UPPER_RADIUS)] = 10000;
+		}
+
+		if (m_iClothesModelID_Pants == 1 || m_iClothesModelID_Pants == 2 || m_iClothesModelID_Pants == 3 )
+		{
+			m_HPs[static_cast<_uint>(BREAK_PART::_L_UPPER_TABIA)] = 10000;
+			m_HPs[static_cast<_uint>(BREAK_PART::_R_UPPER_TABIA)] = 10000;
+		}
+	}
+
+	if (m_iBodyType == static_cast<_int>(ZOMBIE_BODY_TYPE::_MALE_BIG))
+	{
+		m_HPs.resize(static_cast<_uint>(BREAK_PART::_END));
+		for (auto& iHP : m_HPs)
+			iHP = 4;
+
+		if (m_iClothesModelID_Shirts == 0 || m_iClothesModelID_Shirts == 3)
+		{
+			m_HPs[static_cast<_uint>(BREAK_PART::_R_UPPER_HUMEROUS)] = 10000;
+		}
+
+		if (m_iClothesModelID_Shirts == 1)
+		{
+			m_HPs[static_cast<_uint>(BREAK_PART::_L_UPPER_RADIUS)] = 10000;
+			m_HPs[static_cast<_uint>(BREAK_PART::_R_UPPER_RADIUS)] = 10000;
+			m_HPs[static_cast<_uint>(BREAK_PART::_R_UPPER_HUMEROUS)] = 10000;
+		}
+
+		m_HPs[static_cast<_uint>(BREAK_PART::_L_UPPER_TABIA)] = 10000;
+		m_HPs[static_cast<_uint>(BREAK_PART::_R_UPPER_TABIA)] = 10000;
+	}
 
 	m_isBreakParts.resize(static_cast<_uint>(BREAK_PART::_END));
 
@@ -104,7 +185,7 @@ HRESULT CPart_Breaker_Zombie::Initialize(void* pArg)
 	for (_int i = static_cast<_int>(BODY_MESH_PART::_END) - 2; 0 <= i; --i)
 	{
 		BODY_MESH_PART			ePart = { static_cast<BODY_MESH_PART>(i) };
-		CPart_Mesh_Info_Zombie::PART_MESH_INFO_DESC		PartMeshInfoDsec;		
+		CPart_Mesh_Info_Zombie::PART_MESH_INFO_DESC		PartMeshInfoDsec;
 
 		PartMeshInfoDsec.pMeshTypeIndices = &MeshPartsTypesIndices[i];
 		PartMeshInfoDsec.ePartID = CMonster::PART_ID::PART_BODY;
@@ -1897,16 +1978,16 @@ _bool CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 
 	if (BREAK_PART::_HEAD == ePart)
 	{
-		vector<string>				FaceMeshTags = { m_pFace_Model->Get_MeshTags() };
+		vector<string>            FaceMeshTags = { m_pFace_Model->Get_MeshTags() };
 		for (auto& strMeshTag : FaceMeshTags)
 		{
 			m_pFace_Model->Hide_Mesh(strMeshTag, true);
 		}
 
-		vector<string>				BodyMeshTags = { m_pBody_Model->Get_MeshTags() };
-		vector<_int>				BrokenHeadMeshIndices; 
+		vector<string>            BodyMeshTags = { m_pBody_Model->Get_MeshTags() };
+		vector<_int>            BrokenHeadMeshIndices;
 
-		_int						iIndex = { 0 };
+		_int                  iIndex = { 0 };
 		for (auto& strMeshTag : BodyMeshTags)
 		{
 			if (strMeshTag.find("Broken") != string::npos)
@@ -1916,16 +1997,15 @@ _bool CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 			++iIndex;
 		}
 
-		_int			iRandomHeadIndex = { CGameInstance::Get_Instance()->GetRandom_Int(0, static_cast<_int>(BrokenHeadMeshIndices.size() - 1)) };
+		_int         iRandomHeadIndex = { CGameInstance::Get_Instance()->GetRandom_Int(0, static_cast<_int>(BrokenHeadMeshIndices.size() - 1)) };
 		for (auto& iIndex : BrokenHeadMeshIndices)
 		{
-			if(BrokenHeadMeshIndices[iRandomHeadIndex] == iIndex)
+			if (BrokenHeadMeshIndices[iRandomHeadIndex] == iIndex)
 				m_pBody_Model->Hide_Mesh(iIndex, false);
 			else
 				m_pBody_Model->Hide_Mesh(iIndex, true);
 		}
 	}
-
 	else
 	{
 		m_PartMeshInfos_Body[static_cast<_uint>(ePart)]->Break(m_pBody_Model);
@@ -1937,6 +2017,19 @@ _bool CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 
 			for (auto& iRagDollMeshIndex : RagDollMeshIndices)
 			{
+				if (BREAK_PART::_L_LOWER_TABIA == ePart)
+				{
+
+					_int         iMeshIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_L_SHOES)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_SHOES)) };
+					m_pPants_Model->Hide_Mesh(iMeshIndex, true);
+				}
+
+				else if (BREAK_PART::_R_LOWER_TABIA == ePart)
+				{
+					_int         iMeshIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_R_SHOES)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_SHOES)) };
+					m_pPants_Model->Hide_Mesh(iMeshIndex, true);
+				}
+
 				if (CMonster::PART_ID::PART_BODY == ePartID)
 				{
 					unordered_set<_uint>::iterator			iterRagDoll = { m_RagDollMeshIndices_Body.find(iRagDollMeshIndex) };
@@ -1951,7 +2044,7 @@ _bool CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 						m_AnimMeshIndices_Body.erase(iterAnim);
 					}
 				}
-				
+
 				else if (CMonster::PART_ID::PART_SHIRTS == ePartID)
 				{
 					unordered_set<_uint>::iterator			iterRagDoll = { m_RagDollMeshIndices_Shirt.find(iRagDollMeshIndex) };
@@ -1981,10 +2074,10 @@ _bool CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 						m_AnimMeshIndices_Pants.erase(iterAnim);
 					}
 				}
-				
+
 			}
 		}
-		
+
 	}
 
 	return true;
@@ -1992,7 +2085,7 @@ _bool CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 
 CPart_Breaker_Zombie* CPart_Breaker_Zombie::Create(void* pArg)
 {
-	CPart_Breaker_Zombie*			pInstance = { new CPart_Breaker_Zombie() };
+	CPart_Breaker_Zombie* pInstance = { new CPart_Breaker_Zombie() };
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX(TEXT("Failed To Created : CPart_Breaker_Zombie"));
@@ -2010,7 +2103,7 @@ void CPart_Breaker_Zombie::Free()
 	{
 		Safe_Release(pMeshInfo);
 		pMeshInfo = nullptr;
-	}	
+	}
 	m_PartMeshInfos_Body.clear();
 
 	for (auto& pMeshInfo : m_PartMeshInfos_Shirt)

@@ -1044,7 +1044,8 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 #pragma region For Cloth
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
-			if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
+			if (joints[i].parent_index != -1 && joints[i].parent_index != m_upperarm_high_l_idx && joints[i].parent_index != m_hand_l_idx
+				&& joints[i].parent_index != m_lowerarm_l_idx)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Arm_L[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Arm_L = m_upperarm_high_l_idx;
@@ -1052,7 +1053,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_L[i] = m_Arm_L_High;
 			}
 
-		/*	if (joints[i].parent_index == -1)
+		/*	if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Arm_L[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Arm_L = m_upperarm_high_l_idx;
@@ -1151,6 +1152,8 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		{
 			m_Arm_R_High = create_capsule_bone(m_upperarm_high_r_idx, m_lowerarm_r_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::ARM_R);
 			m_Scene->addActor(*m_Arm_R_High);
+
+			m_ragdoll->m_rigid_bodies_BreakPart[m_upperarm_high_r_idx] = m_Arm_R_High;
 		}
 		else
 		{
@@ -1161,11 +1164,15 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 		{
 			m_ForeArm_R = create_capsule_bone(m_lowerarm_r_idx, m_hand_r_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::FOREARM_R);
 			m_Scene->addActor(*m_ForeArm_R);
+
+			m_ragdoll->m_rigid_bodies_BreakPart[m_lowerarm_r_idx] = m_ForeArm_R;
 		}
 		if (!m_Hand_R)
 		{
 			m_Hand_R = create_capsule_bone(m_hand_r_idx, m_middle_01_r_idx, *m_ragdoll, r * SIZE_MAG, XMMatrixIdentity(), COLLIDER_TYPE::HAND_R);
 			m_Scene->addActor(*m_Hand_R);
+
+			m_ragdoll->m_rigid_bodies_BreakPart[m_hand_r_idx] = m_Hand_R;
 		}
 
 		m_vecBreak_Parent_Flag[m_Arm_R_Twist_0] = true;
@@ -1185,7 +1192,8 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 #pragma region For Cloth
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
-			if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
+			if (joints[i].parent_index != -1 && joints[i].parent_index != m_upperarm_high_r_idx && joints[i].parent_index != m_hand_r_idx
+				&& joints[i].parent_index != m_lowerarm_r_idx)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Arm_R[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Arm_R = m_upperarm_high_r_idx;
@@ -1193,7 +1201,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Arm_R[i] = m_Arm_R_High;
 			}
 
-			/*if (joints[i].parent_index == -1)
+			/*if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Arm_R[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Arm_R = m_upperarm_high_r_idx;
@@ -1563,7 +1571,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 #pragma region Cloth
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
-			if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
+			if (joints[i].parent_index != -1 && joints[i].parent_index != m_foot_l_idx && joints[i].parent_index != m_thigh_l_idx && joints[i].parent_index != m_calf_l_idx)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Leg_L[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Leg_L = m_thigh_l_idx;
@@ -1571,7 +1579,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_L[i] = m_Leg_L_High;
 			}
 
-		/*	if (joints[i].parent_index == -1)
+			/*if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Leg_L[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Leg_L = m_thigh_l_idx;
@@ -1699,7 +1707,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 #pragma region Cloth
 		for (size_t i = 0; i < m_skeletal_mesh->skeleton()->num_bones(); i++)
 		{
-			if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
+			if (joints[i].parent_index != -1 && joints[i].parent_index != m_foot_r_idx && joints[i].parent_index != m_thigh_r_idx && joints[i].parent_index != m_calf_r_idx)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Leg_R[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Leg_R = m_thigh_r_idx;
@@ -1707,7 +1715,7 @@ void CRagdoll_Physics::create_partial_ragdoll(COLLIDER_TYPE eType)
 				m_ragdoll->m_rigid_bodies_BreakPart_Cloth_Leg_R[i] = m_Leg_R_High;
 			}
 
-			/*if (joints[i].parent_index != -1)
+			/*if (joints[i].parent_index != -1 && m_ragdoll->find_recent_body(joints[i].parent_index, m_skeletal_mesh->skeleton()) == nullptr)
 			{
 				m_vecBreak_Parent_Flag_Cloth_Leg_R[i] = true;
 				joints[i].parent_index_BreakPart_Cloth_Leg_R = m_thigh_r_idx;
@@ -1919,7 +1927,7 @@ void CRagdoll_Physics::update_animations()
 	else
 	{
 #pragma region Original Version
-		/*m_Global_transforms = *m_ragdoll_pose->apply(m_ragdoll, m_model_only_scale, m_model_without_scale);
+	/*	m_Global_transforms = *m_ragdoll_pose->apply(m_ragdoll, m_model_only_scale, m_model_without_scale);
 		m_Global_transforms_BreakPart_Cloth_Arm_L = *m_ragdoll_pose->apply_BreakPart_Cloth_Arm_L(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Arm_L);
 		m_Global_transforms_BreakPart_Cloth_Arm_R = *m_ragdoll_pose->apply_BreakPart_Cloth_Arm_R(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Arm_R);
 		m_Global_transforms_BreakPart_Cloth_Leg_L = *m_ragdoll_pose->apply_BreakPart_Cloth_Leg_L(m_ragdoll, m_model_only_scale, m_model_without_scale, &m_vecBreakPartFilter_Cloth_Leg_L);

@@ -42,6 +42,7 @@ public:
 	HRESULT					Render_LightDepth_Spot()override;
 	virtual void			Create_Cloth() override;
 	virtual void			Add_RenderGroup() override;
+	virtual void			SetRagdoll(_int iId, _float4 vForce, COLLIDER_TYPE eType) override;
 private:
 	HRESULT					Initialize_Model();
 

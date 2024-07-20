@@ -436,7 +436,16 @@ void CZombie::Tick(_float fTimeDelta)
 							eBreakType = BREAK_PART::_R_UPPER_FEMUR;
 							break;
 						case COLLIDER_TYPE::CALF_R:
-							eBreakType = BREAK_PART::_R_UPPER_TABIA;
+							if (m_pPart_Breaker->Is_BreaKPart(BREAK_PART::_R_LOWER_TABIA))
+							{
+								eBreakType = BREAK_PART::_R_UPPER_TABIA;
+							}
+							else
+							{
+								eBreakType = BREAK_PART::_R_LOWER_TABIA;
+								eType = COLLIDER_TYPE::FOOT_R;
+							}
+
 							break;
 
 
@@ -1356,10 +1365,11 @@ HRESULT CZombie::Initialize_PartBreaker()
 	PartBreakerDesc.pPants_Model = static_cast<CModel*>(m_PartObjects[CMonster::PART_PANTS]->Get_Component(TEXT("Com_Model")));
 	PartBreakerDesc.pShirts_Model = static_cast<CModel*>(m_PartObjects[CMonster::PART_SHIRTS]->Get_Component(TEXT("Com_Model")));
 	PartBreakerDesc.iBodyType = m_iBody_ID;
+	PartBreakerDesc.iClothesModelID_Shirts = m_iShirts_ID;
+	PartBreakerDesc.iClothesModelID_Pants = m_iPants_ID;
 
 	CPart_Breaker_Zombie* pPart_Breaker = { CPart_Breaker_Zombie::Create(&PartBreakerDesc) };
 	m_pPart_Breaker = pPart_Breaker;
-
 
 	if (nullptr == m_pPart_Breaker)
 		return E_FAIL;
