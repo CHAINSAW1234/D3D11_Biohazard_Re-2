@@ -2761,7 +2761,6 @@ void CPlayer::Calc_Decal_Map()
 			m_pHeadModel->SetDecalWorldMatrix_Player_Front(m_DecalMatrix);
 			m_pHeadModel->Perform_Calc_DecalMap_Player();
 		}
-
 		break;
 	}
 	case BITE_TYPE_FOR_EFFECT::STAND_BACK:
