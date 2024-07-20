@@ -1938,6 +1938,20 @@ _bool CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 
 			for (auto& iRagDollMeshIndex : RagDollMeshIndices)
 			{
+				if (BREAK_PART::_L_LOWER_TABIA == ePart)
+				{
+
+					_int			iMeshIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_L_SHOES)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_SHOES)) };
+					m_pPants_Model->Hide_Mesh(iMeshIndex, true);
+				}
+
+				else if (BREAK_PART::_R_LOWER_TABIA == ePart)
+				{
+					_int			iMeshIndex = { m_PartMeshInfos_Pants[static_cast<_uint>(PANTS_MESH_PART::_R_SHOES)]->Get_MeshIndex_Type(static_cast<CPart_Mesh_Info_Zombie::BODY_PART_MESH_TYPE>(CPart_Mesh_Info_Zombie::PANTS_PART_MESH_TYPE::_SHOES)) };
+					m_pPants_Model->Hide_Mesh(iMeshIndex, true);
+				}
+
+
 				if (CMonster::PART_ID::PART_BODY == ePartID)
 				{
 					unordered_set<_uint>::iterator			iterRagDoll = { m_RagDollMeshIndices_Body.find(iRagDollMeshIndex) };
@@ -1984,8 +1998,7 @@ _bool CPart_Breaker_Zombie::Break(BREAK_PART ePart)
 				}
 				
 			}
-		}
-		
+		}		
 	}
 
 	return true;

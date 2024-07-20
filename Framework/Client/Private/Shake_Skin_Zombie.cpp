@@ -70,6 +70,8 @@ _bool CShake_Skin_Zombie::Execute(_float fTimeDelta)
 	if (COLLIDER_TYPE::_END == eIntersectCollider)
 		return true;
 
+	m_pBlackBoard->Get_AI()->Play_Random_Hit_Sound();
+
 	DIRECTION			eHitDirection = { vHitDirectionLocalFloat3.z < 0.f ? DIRECTION::_F : DIRECTION::_B };
 
 	Add_Blend_Animation(eIntersectCollider, eHitDirection);

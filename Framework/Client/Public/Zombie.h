@@ -91,6 +91,16 @@ private:
 	virtual HRESULT						Initialize_States();
 	virtual HRESULT						Initialize_PartBreaker();
 	virtual HRESULT						Add_RagDoll_OtherParts();
+	
+private:
+	virtual HRESULT						Add_SoundTags();
+
+public:
+	void								Play_Random_Hit_Sound();
+	void								Play_Random_Voice_Sound();
+	void								Play_Random_Effect_Sound();
+	void								Play_Random_Cloth_Sound();
+	void								Play_Random_Foot_Sound();
 
 public:
 	void								Play_Animations_Body(_float fTimeDelta);
@@ -176,6 +186,7 @@ private:
 
 public:
 	void								Change_Sound(const wstring& strSoundTag, _uint iSoundIndex);
+	void								Set_Volume(_float fVolume, _uint iSoundIndex);
 	void								Stop_Sound(_uint iSoundIndex);
 
 public: // For Ragdoll
@@ -298,8 +309,7 @@ private:
 private:
 	LOCATION_MAP_VISIT					m_eLocation = { LOCATION_MAP_VISIT::LOCATION_MAP_VISIT_END };
 
-	SOUND_DESC							m_SoundDesc;
-	unordered_map<_uint, wstring>		m_SoundTags;
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>		m_SoundTags;
 
 public:
 	static CZombie* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -143,7 +143,10 @@ HRESULT CZombie::Initialize(void* pArg)
 	if (FAILED(Add_RagDoll_OtherParts()))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, 2)))
+	if (FAILED(m_pGameInstance->Add_Object_Sound(m_pTransformCom, static_cast<_uint>(ZOMBIE_SOUND_CH::_END))))
+		return E_FAIL;
+
+	if (FAILED(Add_SoundTags()))
 		return E_FAIL;
 
 	//if (FAILED(Add_Components()))
@@ -1392,6 +1395,46 @@ HRESULT CZombie::Add_RagDoll_OtherParts()
 	return S_OK;
 }
 
+HRESULT CZombie::Add_SoundTags()
+{
+	wstring						strHitSoundTag = { TEXT("em_common_dmg_hit_media.bnk.2_") };
+	wstring						strExtTag = { TEXT(".mp3") };
+
+	vector<wstring>				HitSoundTags;
+	for (_uint i = 1; i <= 36; ++i)
+	{
+		if (4 == i || 16 == i || 17 == i || 22 == i || 24 == i || 28 == i || 30 == i)
+			continue;
+
+		wstring			strTag = { strHitSoundTag + to_wstring(i) + strExtTag };
+		HitSoundTags.push_back(strTag);
+	}
+
+	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_HIT, HitSoundTags);
+
+	return S_OK;
+}
+
+void CZombie::Play_Random_Hit_Sound()
+{
+	unordered_map<ZOMBIE_SOUND_TYPE, vector<wstring>>::iterator			iter = { m_SoundTags.find(ZOMBIE_SOUND_TYPE::_HIT) };
+	if (iter == m_SoundTags.end())
+		return;
+
+	_uint				iNumHitSound = { static_cast<_uint>(iter->second.size()) };
+	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumHitSound) -1) };
+
+	wstring				strSoundTag = { iter->second[iRandomIndex] };
+
+	const _float		fMinVolume = { 0.3f };
+	const _float		fMaxVolume = { 0.7f };
+
+	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(fMinVolume, fMaxVolume) };
+
+	Change_Sound(strSoundTag, static_cast<_uint>(ZOMBIE_SOUND_CH::_EF));
+	Set_Volume(fRandomVolume, static_cast<_uint>(ZOMBIE_SOUND_CH::_EF));	
+}
+
 void CZombie::Play_Animations_Body(_float fTimeDelta)
 {
 	static_cast<CBody_Zombie*>(m_PartObjects[CMonster::PART_BODY])->Play_Animations(fTimeDelta);
@@ -1567,6 +1610,11 @@ void CZombie::Update_Region_Datas()
 void CZombie::Change_Sound(const wstring& strSoundTag, _uint iSoundIndex)
 {
 	m_pGameInstance->Change_Sound_3D(m_pTransformCom, strSoundTag, iSoundIndex);
+}
+
+void CZombie::Set_Volume(_float fVolume, _uint iSoundIndex)
+{
+	m_pGameInstance->Set_Volume_3D(m_pTransformCom, iSoundIndex, fVolume);
 }
 
 void CZombie::Stop_Sound(_uint iSoundIndex)
