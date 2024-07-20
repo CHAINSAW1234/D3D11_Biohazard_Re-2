@@ -11,6 +11,7 @@
 #define CHEST_SIZE 7.f
 #define SIZE_MAG 1.5f
 
+
 #pragma region Zombie Bone - Joint
 
 #ifdef ZOMBIE
@@ -50,6 +51,7 @@
 #define SIZE_VALUE 2.f
 #define JOINT_GAP 0.1f
 #define RADIUS 2.5f
+
 
 PxRigidDynamic* CRagdoll_Physics::create_capsule_bone(uint32_t parent_idx, uint32_t child_idx, CRagdoll& ragdoll, float r, XMMATRIX rotation, COLLIDER_TYPE eType)
 {

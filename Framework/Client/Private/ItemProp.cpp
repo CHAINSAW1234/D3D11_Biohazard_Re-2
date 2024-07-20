@@ -89,6 +89,7 @@ void CItemProp::Late_Tick(_float fTimeDelta)
 
 		m_bRender = false;
 	}
+
 	if(Activate_Col(Get_Collider_World_Pos(_float4(0.f, -50.f, 0.f, 1.f))))
 		if (Check_Col_Player(INTER_COL_NORMAL, COL_STEP0))
 		{

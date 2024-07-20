@@ -423,9 +423,9 @@ HRESULT CPannel_Window::Render_LightDepth_Point()
 
 HRESULT CPannel_Window::Render_LightDepth_Spot()
 {
-
 	if (m_bRender)
 		return S_OK;
+
 	if (*m_pState == CWindow::BARRIGATE_NO)
 		return S_OK;
 

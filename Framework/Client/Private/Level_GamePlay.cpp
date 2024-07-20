@@ -158,8 +158,8 @@ HRESULT CLevel_GamePlay::Ready_Lights()
 	if (FAILED(m_pGameInstance->Add_Light(g_strDirectionalTag, LightDesc)))
 		return E_FAIL;
 
-	if (FAILED(Load_Light(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
-		return E_FAIL;
+	/*if (FAILED(Load_Light(TEXT("../Bin/Data/Level_InteractObj"), LEVEL_GAMEPLAY)))
+		return E_FAIL;*/
 
 	return S_OK;
 }
@@ -256,8 +256,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 		return E_FAIL;
 #endif
 #ifdef MAP_INTERACT //- map
-//		if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
-//			return E_FAIL;
+		/*if (FAILED(Load_Monster(TEXT("../Bin/Data/Level_InteractObj/Layer_Monster.dat"), strLayerTag, g_Level)))
+			return E_FAIL;*/
 #endif
 
 #ifdef TEST_ZOMBIE_MAINHALL
@@ -273,7 +273,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	//ObjectDesc.eFaceType = { static_cast<ZOMBIE_MALE_FACE>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_FACE::_END) - 1)) };
 	//ObjectDesc.eShirtsType = { static_cast<ZOMBIE_MALE_SHIRTS>(m_pGameInstance->GetRandom_Int(0, static_cast<_int>(ZOMBIE_MALE_SHIRTS::_END) - 1)) };
 
-	ZOMBIE_MALE_SHIRTS::_END;
+	/*ZOMBIE_MALE_SHIRTS::_END;
 	ZOMBIE_MALE_PANTS::_END;
 	CZombie::ZOMBIE_MALE_DESC      ObjectDesc;
 	ObjectDesc.eBodyModelType = { ZOMBIE_BODY_TYPE::_MALE};
@@ -303,7 +303,7 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const wstring & strLayerTag)
 	XMStoreFloat4x4(&ObjectDesc.worldMatrix, WorldMatrix);
 
 	if (FAILED(m_pGameInstance->Add_Clone(LEVEL_GAMEPLAY, strLayerTag, TEXT("Prototype_GameObject_Zombie"), &ObjectDesc)))
-	   return E_FAIL;
+	   return E_FAIL;*/
 #endif
 
 	SetUp_DeadMonsters();

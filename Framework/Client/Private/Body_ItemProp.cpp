@@ -104,10 +104,11 @@ void CBody_ItemProp::Late_Tick(_float fTimeDelta)
 
 HRESULT CBody_ItemProp::Render()
 {
-	/*if (m_bRender == false)
+	if (m_bRender == false)
 		return S_OK;
 	else
-		m_bRender = false;*/
+		m_bRender = false;
+
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
