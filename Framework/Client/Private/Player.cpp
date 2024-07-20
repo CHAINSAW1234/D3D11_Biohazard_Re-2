@@ -1875,6 +1875,63 @@ void CPlayer::Interact_Props(CGameObject* pPickedUp_Item)
 	m_isCamTurn = true;
 }
 
+
+//m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_1_Sub_1__wp0100_VP70Custom_Mat_mesh0002", true);
+//m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_2_Sub_1__wp0000_PowerUp_Mat_mesh0003", true);
+//m_pModelCom->Hide_Mesh("wp0000vp70_1_Group_6_Sub_1__wp0000_PowerUp_Mat_mesh0004", true);
+// 
+//m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_3_Sub_1__wp1000_mt_mesh0004", true);
+//m_pModelCom->Hide_Mesh("wp1000shotgun_1_Group_4_Sub_1__wp1100_mt_mesh0005", true);
+
+void CPlayer::Set_Weapon_Accessories(ITEM_NUMBER eCallItemType, _uint iAccessories)
+{
+	switch (eCallItemType)
+	{
+	case Client::HandGun:
+		switch (iAccessories)
+		{
+		case 0:
+			m_Weapons[HG]->Set_Weapon_Accessory("wp0000vp70_1_Group_1_Sub_1__wp0100_VP70Custom_Mat_mesh0002", false);
+			break;
+
+		case 1:
+			m_Weapons[HG]->Set_Weapon_Accessory("wp0000vp70_1_Group_2_Sub_1__wp0000_PowerUp_Mat_mesh0003", false);
+			break;
+
+		case 2:
+			m_Weapons[HG]->Set_Weapon_Accessory("wp0000vp70_1_Group_6_Sub_1__wp0000_PowerUp_Mat_mesh0004", false);
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
+
+	case Client::ShotGun:
+		switch (iAccessories)
+		{
+		case 0:
+			m_Weapons[STG]->Set_Weapon_Accessory("wp1000shotgun_1_Group_3_Sub_1__wp1000_mt_mesh0004", false);
+			break;
+
+		case 1:
+			m_Weapons[STG]->Set_Weapon_Accessory("wp1000shotgun_1_Group_4_Sub_1__wp1100_mt_mesh0005", false);
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
+	default:
+		break;
+	}
+
+}
+
 void CPlayer::RayCast_Shoot()
 {
 	_float4 vBlockPoint;

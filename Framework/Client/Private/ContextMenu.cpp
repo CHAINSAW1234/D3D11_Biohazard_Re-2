@@ -138,7 +138,7 @@ void CContextMenu::Idle_Operation(_float fTimeDelta)
 			if (m_pHoverdChild != m_vecChildUI[i])
 			{
 				m_pHoverdChild = m_vecChildUI[i];
-				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH1_2D, 0.5f);
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_InvenSlot_Tick.mp3"), CH_TICK_2D, 0.5f);
 			}
 			IsNoOneHover = false;
 			pHoveredMenu = static_cast<CContextMenu*>(m_vecChildUI[i]);
@@ -156,8 +156,39 @@ void CContextMenu::Idle_Operation(_float fTimeDelta)
 
 		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
-			m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ContextMenu_Click.mp3"), CH1_2D, 0.5f);
-			Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
+			switch (m_eContextType)
+			{
+			case Client::EQUIPABLE:
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ContextMenu_Click.mp3"), 0.5f);
+				Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
+				break;
+			case Client::CONSUMABLE_EQUIPABLE:
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ContextMenu_Click.mp3"), 0.5f);
+				Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
+				break;
+			case Client::USEABLE:
+				if (true == m_isActive) {
+					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ContextMenu_Click.mp3"), 0.5f);
+					Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
+				}
+				else {
+					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Context_Denied.mp3"), 0.5f);
+				}
+				break;
+			case Client::CONSUMABLE:
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ContextMenu_Click.mp3"), 0.5f);
+				Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
+				break;
+			case Client::QUEST:
+				m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_ContextMenu_Click.mp3"), 0.5f);
+				Set_EventbyTexture(pHoveredMenu->Get_ChildTextureNum(0));
+				break;
+
+			default:
+				break;
+			}
+
+
 		}
 
 #pragma region 나옹
@@ -186,6 +217,7 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 	m_fAppearPos = fAppearPos;
 	m_fArrivalPos = fArrivalPos;
 	m_eContext_State = UI_IDLE;
+	m_isActive = bActive;
 
 	Set_Position(XMLoadFloat3(&fAppearPos));
 
@@ -260,13 +292,13 @@ void CContextMenu::Set_Operation(ITEM_TYPE eItemType, _bool bActive, _float3 fAp
 		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_ChildTextureNum(0, 4);
 		static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_Text(0, 0, TEXT("사용"));
 
-		if (true == bActive)
+		if (true == bActive) //사용 활성화
 		{
 			static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Set_Value_Color(0, 0);
 			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_TextColor(0, 0, XMVectorSet(1.f, 1.f, 1.f, 1.));
 		}
 
-		else
+		else // 사용불가
 		{
 			static_cast<CContextMenu*>(m_vecChildUI[0])->Child_Set_Value_Color(0, 1);
 			static_cast<CContextMenu*>(m_vecChildUI[0])->Set_MyChild_TextColor(0, 0, XMVectorSet(0.41f, 0.41f, 0.41f, 0.41f));
