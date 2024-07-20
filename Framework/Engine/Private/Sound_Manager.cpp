@@ -212,6 +212,8 @@ HRESULT CSound_Manager::Update_Listener_Camera()
 	if (eResult != FMOD_OK)
 		return E_FAIL;
 #endif
+
+	return S_OK;
 }
 
 HRESULT CSound_Manager::Update_Sounds_Position()

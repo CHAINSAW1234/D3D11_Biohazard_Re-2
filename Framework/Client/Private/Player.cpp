@@ -106,7 +106,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(Ready_Camera()))
 		return E_FAIL;
 
-	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 3);	// 일단 3개
+	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 6);	// 일단 3개
 
 	m_pGameInstance->SetPlayer(this);
 

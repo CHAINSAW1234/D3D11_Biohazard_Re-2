@@ -223,7 +223,7 @@ void CPlayer_State_Move::Update_Sound(_float fTimeDelta)
 	wstring strSoundTag;
 	strSoundTag = TEXT("Sound_Player_Moaning_") + strHealth;
 
-	m_pPlayer->Change_Sound_3D(strSoundTag, iRandCnt, 0);
+	m_pPlayer->Change_Sound_3D(strSoundTag, iRandCnt, 3);
 
 }
 
