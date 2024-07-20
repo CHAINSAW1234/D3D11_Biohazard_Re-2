@@ -1654,17 +1654,6 @@ HRESULT CGameInstance::Stop_Sound(_uint iID)
 
 	return m_pSound_Manager->Stop_Sound(iID);
 }*/
-HRESULT CGameInstance::PlayBGM(_uint iID, const wstring& SoundKey)
-{
-	if (nullptr == m_pSound_Manager)
-	{
-		MSG_BOX(TEXT("nullptr == m_pSound_Manager : CGameInstance"));
-		return E_FAIL;
-	}
-
-	return m_pSound_Manager->PlayBGM(iID, SoundKey);
-}
-
 
 HRESULT CGameInstance::Update_Listener(CTransform* pTransform, _float3 vVelocity)
 {
@@ -1677,17 +1666,6 @@ HRESULT CGameInstance::Update_Listener(CTransform* pTransform, _float3 vVelocity
 	return m_pSound_Manager->Update_Listener(pTransform, vVelocity);
 }
 
-HRESULT CGameInstance::Stop_Sound_2D(_uint iChannelIndex)
-{
-	if (nullptr == m_pSound_Manager)
-	{
-		MSG_BOX(TEXT("nullptr == m_pSound_Manager : CGameInstance"));
-		return E_FAIL;
-	}
-
-	return m_pSound_Manager->Stop_Sound_2D(iChannelIndex);
-}
-
 HRESULT CGameInstance::Stop_Sound_3D(CTransform* pTransform, _uint iSoundIndex)
 {
 	if (nullptr == m_pSound_Manager)
@@ -1697,50 +1675,6 @@ HRESULT CGameInstance::Stop_Sound_3D(CTransform* pTransform, _uint iSoundIndex)
 	}
 
 	return m_pSound_Manager->Stop_Sound_3D(pTransform, iSoundIndex);
-}
-
-//void CGameInstance::Change_Sound_2D(_uint iChannelIndex, const wstring& strSoundTag)
-//{
-//	if (nullptr == m_pSound_Manager)
-//	{
-//		MSG_BOX(TEXT("nullptr == m_pSound_Manager : CGameInstance"));
-//		return;
-//	}
-//
-//	m_pSound_Manager->Change_Sound_2D(iChannelIndex, strSoundTag);
-//}
-//
-//void CGameInstance::Change_Sound_2D(const wstring& strSoundTag, _uint iChannelIndex)
-//{
-//	if (nullptr == m_pSound_Manager)
-//	{
-//		MSG_BOX(TEXT("nullptr == m_pSound_Manager : CGameInstance"));
-//		return;
-//	}
-//
-//	m_pSound_Manager->Change_Sound_2D(iChannelIndex, strSoundTag);
-//}
-
-void CGameInstance::Set_Volume_2D(_uint iChannelIndex, _float fVolume)
-{
-	if (nullptr == m_pSound_Manager)
-	{
-		MSG_BOX(TEXT("nullptr == m_pSound_Manager : CGameInstance"));
-		return;
-	}
-
-	m_pSound_Manager->Set_Volume_2D(iChannelIndex, fVolume);
-}
-
-void CGameInstance::Set_Pause_2D(_uint iChannelIndex, _bool isPause)
-{
-	if (nullptr == m_pSound_Manager)
-	{
-		MSG_BOX(TEXT("nullptr == m_pSound_Manager : CGameInstance"));
-		return;
-	}
-
-	m_pSound_Manager->Set_Pause_2D(iChannelIndex, isPause);
 }
 
 void CGameInstance::Change_Sound_3D(CTransform* pTransform, const wstring& strSoundTag, _uint iSoundIndex)
@@ -1942,6 +1876,35 @@ void CGameInstance::PlaySoundEffect_2D(wstring TypeKey, wstring FileKey, _float 
 
 	StopSound_2D(Index);
 	PlayMySound_2D(TypeKey, FileKey, Index, Volume);
+}
+
+_uint CGameInstance::PlaySoundEffect_2D_Using_Index(wstring TypeKey, wstring FileKey, _float Volume)
+{
+	uniform_int_distribution<_int>	Prob(1, SOUND_CHANNEL_SIZE - 1);
+	_int Index = Prob(m_RandomNumber);
+	_bool boolean = false;
+
+	while (1)
+	{
+		if (!IsPlaying_2D(Index, &boolean))
+		{
+			break;
+		}
+		else
+		{
+			++Index;
+		}
+
+		if (Index >= SOUND_CHANNEL_SIZE)
+		{
+			Index = 1;
+		}
+	}
+
+	StopSound_2D(Index);
+	PlayMySound_2D(TypeKey, FileKey, Index, Volume);
+
+	return Index;
 }
 
 #pragma endregion

@@ -85,10 +85,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
-
 	///	For.CutScene
 	CCall_Center::Get_Instance()->Add_Caller(this, CCall_Center::CALLER::_PL00);
-	///
 
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scaled(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
@@ -107,6 +105,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	Load_CameraPosition();
 	if (FAILED(Ready_Camera()))
 		return E_FAIL;
+
+	m_pGameInstance->Add_Object_Sound(m_pTransformCom, 3);	// 일단 3개
 
 	m_pGameInstance->SetPlayer(this);
 
@@ -134,8 +134,6 @@ void CPlayer::Priority_Tick(_float fTimeDelta)
 	}
 	else
 		m_bInteract = false;
-
-
 
 #pragma endregion 
 
@@ -921,6 +919,8 @@ void CPlayer::Shot()
 		m_vMuzzle_Smoke_Pos = Get_MuzzlePosition();
 		m_MuzzleSmoke_Time = GetTickCount64();
 
+
+		Change_Sound_3D(TEXT("Sound_Player_HG_Shot"), 3, 0);
 		break;
 	}
 	case EQUIP::STG: {
@@ -940,6 +940,8 @@ void CPlayer::Shot()
 		m_bMuzzleSmoke = true;
 		m_vMuzzle_Smoke_Pos = Get_MuzzlePosition();
 		m_MuzzleSmoke_Time = GetTickCount64();
+
+		Change_Sound_3D(TEXT("Sound_Player_STG_Shot"), 0, 0);
 		break;
 	}
 	}
@@ -991,7 +993,7 @@ void CPlayer::Reload()
 		Set_Spotlight(false);
 	}
 
-
+	
 }
 
 void CPlayer::Stop_UpperBody()
@@ -1007,6 +1009,23 @@ void CPlayer::Stop_UpperBody()
 
 	m_isRequestChangeEquip = false;
 	m_eTargetEquip = NONE;
+}
+
+void CPlayer::Change_Sound_3D(const wstring& strSoundTag, _int iRandCnt, _uint iIndex)
+{
+
+	wstring strRandStoundTag;
+	if (iRandCnt != 0) {
+		_int iRand = rand() % iRandCnt;
+		strRandStoundTag = strSoundTag + to_wstring(iRand) + TEXT(".mp3");
+
+	}
+	else {
+		strRandStoundTag = strSoundTag + TEXT(".mp3");
+	}
+	
+
+	m_pGameInstance->Change_Sound_3D(m_pTransformCom, strRandStoundTag, iIndex);
 }
 
 _bool CPlayer::IsShotAble()
@@ -1297,6 +1316,15 @@ void CPlayer::Update_Equip()
 				m_pWeapon->Set_RenderLocation(CWeapon::MOVE);
 				Change_Body_Animation_Hold(3, MOVETOHOLSTER);
 
+				switch (m_eEquip) {
+				case HG:
+					Change_Sound_3D(TEXT("Sound_Player_HG_HolsterToMove"), 0, 1);
+					break;
+				case STG:
+					Change_Sound_3D(TEXT("Sound_Player_STG_HolsterToMove"), 0, 1);
+					break;
+				}
+
 			}
 			else {
 				if (m_eState == SUBHOLD) {
@@ -1306,9 +1334,9 @@ void CPlayer::Update_Equip()
 					Set_Equip_Gun(&m_eTargetEquip);
 				}
 				Change_Body_Animation_Hold(3, HOLSTERTOMOVE);
+
+
 			}
-
-
 		}
 		else if (Get_Body_Model()->isFinished(3)) {
 			if (Get_Body_Model()->Get_BlendWeight(3) <= 0.1f) {
@@ -1325,6 +1353,16 @@ void CPlayer::Update_Equip()
 				else {
 					Set_Equip_Gun(&m_eTargetEquip);
 				}
+
+				switch (m_eEquip) {
+				case HG:
+					Change_Sound_3D(TEXT("Sound_Player_HG_Holster_Fin"), 0, 1);
+					break;
+				case STG:
+					Change_Sound_3D(TEXT("Sound_Player_STG_Holster_Fin"), 0, 1);
+					break;
+				}
+
 				if (NONE == m_eEquip) {
 					Get_Body_Model()->Set_BlendWeight(3, 0.f, 5.f);
 				}

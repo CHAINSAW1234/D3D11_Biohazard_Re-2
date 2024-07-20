@@ -161,7 +161,7 @@ public:
 	void										Throw_Sub();
 	void										Reload();
 	void										Stop_UpperBody();
-
+	void										Change_Sound_3D(const wstring& strSoundTag, _int iRandCnt, _uint iIndex);
 
 	// ============================ CHECK = ISABLE ============================
 	_bool										IsShotAble();
