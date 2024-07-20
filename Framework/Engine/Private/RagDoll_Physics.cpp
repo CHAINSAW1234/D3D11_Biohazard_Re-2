@@ -772,38 +772,6 @@ void CRagdoll_Physics::create_ragdoll()
 			m_ragdoll->m_original_joint_rotations_BreakPart[i] = XMQuaternionRotationMatrix(bind_pose_ws);
 		}
 	}
-
-	// ---------------------------------------------------------------------------------------------------------------
-	// Add rigid bodies to scene
-	// ---------------------------------------------------------------------------------------------------------------
-
-//	// Chest and Head
-//	m_Scene->addActor(*m_Pelvis);
-//	m_Scene->addActor(*m_Head);
-//
-//	// Left Arm
-//	m_Scene->addActor(*m_Arm_L);
-//	m_Scene->addActor(*m_ForeArm_L);
-//	m_Scene->addActor(*m_Hand_L);
-//
-//	// Right Arm
-//	m_Scene->addActor(*m_Arm_R);
-//	m_Scene->addActor(*m_ForeArm_R);
-//	m_Scene->addActor(*m_Hand_R);
-//
-//	// Left Leg
-//	m_Scene->addActor(*m_Leg_L);
-//	m_Scene->addActor(*m_Calf_L);
-//	m_Scene->addActor(*m_Foot_L);
-//
-//	// Right Leg
-//	m_Scene->addActor(*m_Leg_R);
-//	m_Scene->addActor(*m_Calf_R);
-//	m_Scene->addActor(*m_Foot_R);
-//
-//#ifdef ZOMBIE
-//	m_Scene->addActor(*m_Chest);
-//#endif
 #pragma endregion
 }
 
