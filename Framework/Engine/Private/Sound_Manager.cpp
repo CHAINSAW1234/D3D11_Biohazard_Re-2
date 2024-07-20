@@ -115,7 +115,7 @@ void CSound_Manager::Change_Sound_3D(CTransform* pTransform, const wstring& strS
 	FMOD_BOOL				isPlaying = { false };
 	FMOD_RESULT				eResult = { FMOD_OK };
 	FMOD_Channel_IsPlaying(m_pChannelArr[pSoundDesc->iChannelIndex], &isPlaying);
-	if (true == isPlaying)
+	if (FALSE == isPlaying)
 	{
 		Stop_Sound_3D(pTransform, iSoundIndex);
 	}
@@ -212,6 +212,8 @@ HRESULT CSound_Manager::Update_Listener_Camera()
 	if (eResult != FMOD_OK)
 		return E_FAIL;
 #endif
+
+	return S_OK;
 }
 
 HRESULT CSound_Manager::Update_Sounds_Position()

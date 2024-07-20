@@ -73,14 +73,14 @@ _bool CFoot_Sound_Zombie::Execute(_float fTimeDelta)
 
 
 	if (true == m_isUp_L_Leg)
-		m_fAccIgnoreUpTime_L_Leg += fTimeDelta;
-	else
 		m_fAccIgnoreDownTime_L_Leg += fTimeDelta;
+	else
+		m_fAccIgnoreUpTime_L_Leg += fTimeDelta;
 
 	if (true == m_isUp_R_Leg)
-		m_fAccIgnoreUpTime_R_Leg += fTimeDelta;
-	else
 		m_fAccIgnoreDownTime_R_Leg += fTimeDelta;
+	else
+		m_fAccIgnoreUpTime_R_Leg += fTimeDelta;
 
 
 	_float				fRange = { 100.f };

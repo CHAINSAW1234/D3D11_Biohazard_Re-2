@@ -5,8 +5,8 @@
 #include "Body_Zombie.h"
 #include "Zombie.h"
 
-#define FOOT_UP_IGNORE_TIME				0.5f
-#define FOOT_DOWN_IGNORE_TIME			0.5f
+#define FOOT_UP_IGNORE_TIME				0.1f
+#define FOOT_DOWN_IGNORE_TIME			0.1f
 
 BEGIN(Client)
 

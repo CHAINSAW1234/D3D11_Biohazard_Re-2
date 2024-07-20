@@ -1425,7 +1425,7 @@ HRESULT CZombie::Add_SoundTags()
 	for (_uint i = 1; i <= 12; ++i)
 	{
 		wstring			strTag = { strFootSoundTag + to_wstring(i) + strExtTag };
-		HitSoundTags.push_back(strTag);
+		FootSoundTags.push_back(strTag);
 	}
 	m_SoundTags.emplace(ZOMBIE_SOUND_TYPE::_FOOT, FootSoundTags);
 
@@ -1473,10 +1473,12 @@ void CZombie::Play_Random_Foot_Sound()
 	_uint				iNumFootSound = { static_cast<_uint>(iter->second.size()) };
 	_int				iRandomIndex = { m_pGameInstance->GetRandom_Int(0, static_cast<_int>(iNumFootSound) - 1) };
 
+	iRandomIndex = 8;
+
 	wstring				strSoundTag = { iter->second[iRandomIndex] };
 
-	const _float		fMinVolume = { 0.2f };
-	const _float		fMaxVolume = { 0.4f };
+	const _float		fMinVolume = { 1.f };
+	const _float		fMaxVolume = { 1.f };
 
 	_float				fRandomVolume = { m_pGameInstance->GetRandom_Real(fMinVolume, fMaxVolume) };
 
