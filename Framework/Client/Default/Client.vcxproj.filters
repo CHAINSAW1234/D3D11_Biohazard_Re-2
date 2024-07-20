@@ -799,6 +799,9 @@
     <Filter Include="02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Foot_Sound">
       <UniqueIdentifier>{a9ec29c9-05f9-4d4f-958d-ede7056aa0f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Event_Center">
+      <UniqueIdentifier>{2c07f731-035d-48cf-8f69-4e5fc3b1ae3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1554,6 +1557,7 @@
     <ClInclude Include="..\Public\Foot_Sound_Zombie.h">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Foot_Sound</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Event_Call_Center.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2270,6 +2274,7 @@
     <ClCompile Include="..\Private\Foot_Sound_Zombie.cpp">
       <Filter>02.GameObjects\Monster\Zombie\AIController\Zombie\Task\Additional\Foot_Sound</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Event_Call_Center.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

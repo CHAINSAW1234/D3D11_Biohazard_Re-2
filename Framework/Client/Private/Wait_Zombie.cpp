@@ -41,20 +41,18 @@ _bool CWait_Zombie::Execute(_float fTimeDelta)
 		return false;
 #pragma endregion
 
-	static		_float		fAccTime = { 0.f };
-	fAccTime += fTimeDelta;
-	if (1.f <= fAccTime)
-	{
-		fAccTime = 0.f;
-		m_pBlackBoard->Get_AI()->Stop_Sound(0);
-		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_13.mp3"), 0);
-	}
-
 	CZombie::POSE_STATE			ePose_State = { m_pBlackBoard->Get_AI()->Get_PoseState() };
 	if (CZombie::POSE_STATE::_UP != ePose_State)
 		return false;
 
 	m_pBlackBoard->Organize_PreState(this);
+
+	m_fRemainSoundTime -= fTimeDelta;
+	if (0.f > m_fRemainSoundTime)
+	{
+		m_fRemainSoundTime = m_pGameInstance->GetRandom_Real(ZOMBIE_IDLE_SOUND_MIN_REMAIN, ZOMBIE_IDLE_SOUND_MAX_REMAIN);
+		m_pBlackBoard->Get_AI()->Play_Random_Idle_Sound();
+	}
 
 	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->Set_State(MONSTER_STATE::MST_IDLE);

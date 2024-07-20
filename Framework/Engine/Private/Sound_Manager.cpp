@@ -115,7 +115,7 @@ void CSound_Manager::Change_Sound_3D(CTransform* pTransform, const wstring& strS
 	FMOD_BOOL				isPlaying = { false };
 	FMOD_RESULT				eResult = { FMOD_OK };
 	FMOD_Channel_IsPlaying(m_pChannelArr[pSoundDesc->iChannelIndex], &isPlaying);
-	if (FALSE == isPlaying)
+	if (FALSE != isPlaying)
 	{
 		Stop_Sound_3D(pTransform, iSoundIndex);
 	}
@@ -124,6 +124,8 @@ void CSound_Manager::Change_Sound_3D(CTransform* pTransform, const wstring& strS
 	eResult = FMOD_System_PlaySound(m_pSystem, pSoundDesc->pSound, nullptr , FALSE, &m_pChannelArr[pSoundDesc->iChannelIndex]);
 	if (FMOD_OK != eResult)
 		return;
+
+	FMOD_System_Update(m_pSystem);
 }
 
 void CSound_Manager::Set_Volume_3D(CTransform* pTransform, _uint iSoundIndex, _float fVolume)

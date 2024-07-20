@@ -103,12 +103,19 @@ _bool CWait_Lost_Zombie::Execute(_float fTimeDelta)
 
 		if (-1 == m_iAnimationIndex)
 			return false;
-	}
+	}	
 
 	m_pBlackBoard->Organize_PreState(this);
 
+	m_fRemainSoundTime -= fTimeDelta;
+	if (0.f > m_fRemainSoundTime)
+	{
+		m_fRemainSoundTime = m_pGameInstance->GetRandom_Real(ZOMBIE_IDLE_SOUND_MIN_REMAIN, ZOMBIE_IDLE_SOUND_MAX_REMAIN);
+		m_pBlackBoard->Get_AI()->Play_Random_Idle_Sound();
+	}
+
 	auto pAI = m_pBlackBoard->Get_AI();
-	pAI->Set_State(MONSTER_STATE::MST_LOST_IDLE);
+	pAI->Set_State(MONSTER_STATE::MST_LOST_IDLE);	
 
 	return true;
 }

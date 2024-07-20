@@ -4,6 +4,9 @@
 #include "Task_Node.h"
 #include "Body_Zombie.h"
 
+#define ZOMBIE_MOVE_SOUND_MAX_REMAIN		6.f
+#define ZOMBIE_MOVE_SOUND_MIN_REMAIN		4.f
+
 BEGIN(Client)
 
 class CMove_To_Target_Lost_Zombie : public CTask_Node
@@ -38,6 +41,8 @@ protected:
 	ZOMBIE_MOVE_LOST_TYPE			m_eMoveLostAnimType = { ZOMBIE_MOVE_LOST_TYPE::_END };	
 	_bool							m_isHaveStartAnim = { false };
 	_bool							m_isFinishedStartAnim = { false };
+
+	_float							m_fRemainSoundTime = { 0.f };
 
 public:
 	static CMove_To_Target_Lost_Zombie* Create(void* pArg = nullptr);

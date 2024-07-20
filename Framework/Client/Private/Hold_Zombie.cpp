@@ -32,24 +32,7 @@ void CHold_Zombie::Enter()
 	pBodyModel->Set_BlendWeight(static_cast<_uint>(m_eBlendPlayingIndex), 0.f, 0.2f);
 	pBodyModel->Reset_PreAnim_CurrentAnim(static_cast<_uint>(m_eBlendPlayingIndex));
 
-	m_pBlackBoard->Get_AI()->Stop_Sound(0);
-	_int			iRandom = { m_pGameInstance->GetRandom_Int(0, 6) };
-	if (0 == iRandom)
-		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_9.mp3"), 0);
-	if (1 == iRandom)
-		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_45.mp3"), 0);
-	if (2 == iRandom)
-		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_69.mp3"), 0);
-	if (3 == iRandom)
-		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_73.mp3"), 0);
-	if (4 == iRandom)
-		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_74.mp3"), 0);
-	if (5 == iRandom)
-		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_82.mp3"), 0);
-	if (6 == iRandom)
-		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_127.mp3"), 0);
-
-	
+	m_pBlackBoard->Get_AI()->Play_Random_Hold_Sound();	
 
 #ifdef _DEBUG
 
@@ -60,8 +43,6 @@ void CHold_Zombie::Enter()
 
 _bool CHold_Zombie::Execute(_float fTimeDelta)
 {
-	return false; 
-
 #pragma region Default Function
 	if (nullptr == m_pBlackBoard)
 		return false;

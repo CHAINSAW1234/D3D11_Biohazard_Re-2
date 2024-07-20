@@ -57,22 +57,24 @@ void CBite_Zombie::Enter()
 	m_isFrontFromPlayer = { vDirectionFromPlayerLocal.z > 0.f };
 	XMStoreFloat4x4(&m_Delta_Matrix_To_HalfMatrix, XMMatrixIdentity());
 
-
 	m_fAccLinearTime_HalfMatrix = 0.f;
 
+	_float			fPlayerHP = { static_cast<_float>(m_pBlackBoard->Get_Player()->Get_Hp()) };
+	_float			fZombieAttack = { m_pBlackBoard->Get_AI()->Get_Status_Ptr()->fAttack };
+	_bool			isCanKillPlayer = { fPlayerHP <= fZombieAttack };
 
-	m_pBlackBoard->Get_AI()->Stop_Sound(0);
-	_int			iRandom = { m_pGameInstance->GetRandom_Int(0, 1) };
-	if (0 == iRandom)
-		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_61.mp3"), 0);
-	if (1 == iRandom)
-		m_pBlackBoard->Get_AI()->Change_Sound(TEXT("em0_media.bnk.2_76.mp3"), 0);
+	if (true == isCanKillPlayer)
+	{
+		m_pBlackBoard->Get_AI()->Play_Random_Bite_Sound();
+	}
 
+	else
+	{
+		m_pBlackBoard->Get_AI()->Play_Random_Bite_Reject_Sound();
+	}
 
 #ifdef _DEBUG
-
 	cout << "Enter Bite " << endl;
-
 #endif 
 }
 

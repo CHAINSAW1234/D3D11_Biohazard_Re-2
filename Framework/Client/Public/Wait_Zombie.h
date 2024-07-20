@@ -3,6 +3,8 @@
 #include "Client_Defines.h"
 #include "Task_Node.h"
 
+#define ZOMBIE_IDLE_SOUND_MAX_REMAIN		8.f
+#define ZOMBIE_IDLE_SOUND_MIN_REMAIN		6.f
 
 BEGIN(Client)
 
@@ -28,6 +30,7 @@ public:
 
 private:
 	class CBlackBoard_Zombie*		m_pBlackBoard = { nullptr };
+	_float							m_fRemainSoundTime = { 0.f };
 
 public:
 	static CWait_Zombie* Create(void* pArg = nullptr);

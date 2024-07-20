@@ -4,6 +4,9 @@
 #include "Task_Node.h"
 #include "Body_Zombie.h"
 
+#define ZOMBIE_MOVE_SOUND_MAX_REMAIN		6.f
+#define ZOMBIE_MOVE_SOUND_MIN_REMAIN		4.f
+
 BEGIN(Client)
 
 class CMove_To_Target_Zombie : public CTask_Node
@@ -55,6 +58,8 @@ protected:
 
 	unordered_map<wstring, unordered_set<_uint>>			m_StartAnimIndicesLayer;
 	unordered_map<wstring, unordered_set<_uint>>			m_LoopAnimIndicesLayer;
+
+	_float							m_fRemainSoundTime = { 0.f };
 
 public:
 	static CMove_To_Target_Zombie* Create(void* pArg = nullptr);

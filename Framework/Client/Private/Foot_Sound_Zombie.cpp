@@ -71,95 +71,28 @@ _bool CFoot_Sound_Zombie::Execute(_float fTimeDelta)
 	_float				fDistanceYToLBall = { fL_Ball_Hegiht - fRootHeight };
 	_float				fDistanceYToRBall = { fR_Ball_Hegiht - fRootHeight };
 
+	_float				fRange = { 6.f };
 
-	if (true == m_isUp_L_Leg)
-		m_fAccIgnoreDownTime_L_Leg += fTimeDelta;
-	else
-		m_fAccIgnoreUpTime_L_Leg += fTimeDelta;
-
-	if (true == m_isUp_R_Leg)
-		m_fAccIgnoreDownTime_R_Leg += fTimeDelta;
-	else
-		m_fAccIgnoreUpTime_R_Leg += fTimeDelta;
-
-
-	_float				fRange = { 100.f };
-	if (fRange > fDistanceYToLBall)
+	if (fRange < fDistanceYToLBall)
 	{
-		_float				fPre_L_Ball_Height = { m_vPre_L_Ball_Position_Local.y };
-
-		//	이전 발 위치보다 현재 발위치가 높은경우
-		if (fPre_L_Ball_Height < fL_Ball_Hegiht)
-		{
-			//	발이 올라간다의 상태가 아니었을 경우
-			if (false == m_isUp_L_Leg)
-			{
-				//	무시하기로한 시간보다 누적시간이 크다면
-				if (m_fAccIgnoreUpTime_L_Leg > FOOT_UP_IGNORE_TIME)
-				{
-					m_isUp_L_Leg = true;
-					m_fAccIgnoreUpTime_L_Leg = 0.f;
-
-					m_pBlackBoard->Get_AI()->Play_Random_Foot_Sound();
-
-					cout << "Play L Foot Sound" << endl;
-				}
-			}			
-		}
-
-		//	이전 발 위치보다 현재 발위치가 낮은 경우
-		else
-		{
-			//	발이 내려간다의 상태가 아니었을 경우
-			if (true == m_isUp_L_Leg)
-			{
-				//	무시하기로한 시간보다 누적시간이 크다면
-				if (m_fAccIgnoreDownTime_L_Leg > FOOT_DOWN_IGNORE_TIME)
-				{
-					m_isUp_L_Leg = false;
-					m_fAccIgnoreDownTime_L_Leg = 0.f;
-				}
-			}
-		}
+		m_isUp_L_Leg = true;
 	}
 
-	if (fRange > fDistanceYToRBall)
+	if (fRange < fDistanceYToRBall)
 	{
-		_float				fPre_R_Ball_Height = { m_vPre_R_Ball_Position_Local.y };
+		m_isUp_R_Leg = true;
+	}
 
-		//	이전 발 위치보다 현재 발위치가 높은경우
-		if (fPre_R_Ball_Height < fR_Ball_Hegiht)
-		{
-			//	발이 올라간다의 상태가 아니었을 경우
-			if (false == m_isUp_R_Leg)
-			{
-				//	무시하기로한 시간보다 누적시간이 크다면
-				if (m_fAccIgnoreUpTime_L_Leg > FOOT_UP_IGNORE_TIME)
-				{
-					m_isUp_R_Leg = true;
-					m_fAccIgnoreUpTime_R_Leg = 0.f;
+	if (fRange > fDistanceYToLBall && true == m_isUp_L_Leg)
+	{
+		m_pBlackBoard->Get_AI()->Play_Random_Foot_Sound();
+		m_isUp_L_Leg = false;
+	}
 
-					m_pBlackBoard->Get_AI()->Play_Random_Foot_Sound();
-
-					cout << "Play R Foot Sound" << endl;
-				}
-			}
-		}
-
-		//	이전 발 위치보다 현재 발위치가 낮은 경우
-		else
-		{
-			//	발이 내려간다의 상태가 아니었을 경우
-			if (true == m_isUp_R_Leg)
-			{
-				//	무시하기로한 시간보다 누적시간이 크다면
-				if (m_fAccIgnoreDownTime_L_Leg > FOOT_DOWN_IGNORE_TIME)
-				{
-					m_isUp_R_Leg = false;
-					m_fAccIgnoreDownTime_R_Leg = 0.f;
-				}
-			}
-		}
+	if (fRange > fDistanceYToRBall && true == m_isUp_R_Leg)
+	{
+		m_pBlackBoard->Get_AI()->Play_Random_Foot_Sound();
+		m_isUp_R_Leg = false;
 	}
 
 	m_vPre_L_Ball_Position_Local = vL_Ball_Position_Local_Float3;

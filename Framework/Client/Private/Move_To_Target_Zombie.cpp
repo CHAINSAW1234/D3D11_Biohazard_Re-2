@@ -155,6 +155,13 @@ _bool CMove_To_Target_Zombie::Execute(_float fTimeDelta)
 
 	m_pBlackBoard->Organize_PreState(this);
 
+	m_fRemainSoundTime -= fTimeDelta;
+	if (0.f > m_fRemainSoundTime)
+	{
+		m_fRemainSoundTime = m_pGameInstance->GetRandom_Real(ZOMBIE_MOVE_SOUND_MIN_REMAIN, ZOMBIE_MOVE_SOUND_MAX_REMAIN);
+		m_pBlackBoard->Get_AI()->Play_Random_Move_Sound();
+	}
+
 	auto pAI = m_pBlackBoard->Get_AI();
 	pAI->Set_State(MONSTER_STATE::MST_WALK);
 

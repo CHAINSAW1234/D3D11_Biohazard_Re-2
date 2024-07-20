@@ -95,11 +95,24 @@ private:
 private:
 	virtual HRESULT						Add_SoundTags();
 
+	HRESULT								Add_SoundTags_Idle();
+	HRESULT								Add_SoundTags_Move();
+	HRESULT								Add_SoundTags_Bite();
+	HRESULT								Add_SoundTags_KnockBack();
+	HRESULT								Add_SoundTags_Hit();
+	HRESULT								Add_SoundTags_Bite_Reject();
+	HRESULT								Add_SoundTags_Hold();
+	HRESULT								Add_SoundTags_Foot();
+	HRESULT								Add_SoundTags_ETC();
+	HRESULT								Add_SoundTags_Interact();
+
 public:
 	void								Play_Random_Hit_Sound();
-	void								Play_Random_Voice_Sound();
-	void								Play_Random_Effect_Sound();
-	void								Play_Random_Cloth_Sound();
+	void								Play_Random_Idle_Sound();
+	void								Play_Random_Move_Sound();
+	void								Play_Random_Hold_Sound();
+	void								Play_Random_Bite_Sound();
+	void								Play_Random_Bite_Reject_Sound();
 	void								Play_Random_Foot_Sound();
 
 public:
