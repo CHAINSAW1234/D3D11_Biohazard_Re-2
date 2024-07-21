@@ -1283,7 +1283,7 @@ void CInventory_Manager::Combind_Item(CItem_UI* FirstItemUI, CItem_UI* SecondIte
 	case Client::herbsggg01a:
 	case Client::herbsgrb01a:
 	case Client::herbsrb01a:
-		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_EquipShotgun.mp3"), CH3_2D, 0.5f);
+		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_UseItem_herbs.mp3"), CH3_2D, 0.5f);
 		break;
 	case Client::handgun_bullet01a:
 		m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_Drop_Bullet.mp3"), CH3_2D, 0.5f);
