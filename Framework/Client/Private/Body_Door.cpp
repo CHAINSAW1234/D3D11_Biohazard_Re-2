@@ -636,8 +636,8 @@ void CBody_Door::DoubleDoor_Late_Tick(_float fTimeDelta)
 		case CDoor::DOUBLEDOOR_STATIC:
 		{
 			m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pDoubleState);
-			if (!m_pModelCom->isFinished(0))
-				Change_Sound(TEXT("sound_Map_sm40_doubledoor_m_wood_normal2_7.mp3"), 0);
+			/*if (!m_pModelCom->isFinished(0))
+				Change_Sound(TEXT("sound_Map_sm40_doubledoor_m_wood_normal2_7.mp3"), 0);*/
 			switch (*m_pDoubleState_Prev)
 			{
 			case CDoor::LSIDE_DOUBLEDOOR_OPEN_L:
@@ -967,8 +967,8 @@ void CBody_Door::OneDoor_Late_Tick(_float fTimeDelta)
 	}
 	case CDoor::ONEDOOR_STATIC:
 		m_pModelCom->Change_Animation(0, TEXT("Default"), *m_pOneState);
-		if (!m_pModelCom->isFinished(0))
-			Change_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_1.mp3"), 0);
+		/*if (!m_pModelCom->isFinished(0))
+			Change_Sound(TEXT("sound_Map_sm40_door_m_wood_normal2_1.mp3"), 0);*/
 
 			
 		switch (*m_pOneState_Prev)
