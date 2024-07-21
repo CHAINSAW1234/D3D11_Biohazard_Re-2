@@ -66,6 +66,7 @@ protected : /* Render 관련*/
 	MAP_UI_TYPE				m_eMapComponent_Type		= { MAP_UI_TYPE::END_MAP };
 
 	_bool					m_isPrevRender				= { false }; /* 이전 Render Type */
+	_bool					m_isFirstRender				= { false }; /* 처음 mini map을 열였을 때 */
 
 
 protected : /* Variable */
@@ -86,7 +87,7 @@ protected : /* Variable */
 
 	_bool					m_isLastPosition			= { false };
 	_float4x4				m_vLastMatrix;
-	_float					m_fMouseSensor				= { 10.f };
+	_float					m_fMouseSensor				= { 50.f };
 	_float2					m_vPlayer_MovePos			= {};
 
 	/* 5. Sound */

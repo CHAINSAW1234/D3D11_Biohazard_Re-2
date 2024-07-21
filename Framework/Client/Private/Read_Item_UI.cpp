@@ -138,7 +138,7 @@ HRESULT CRead_Item_UI::Initialize(void* pArg)
         m_BookText[ITEM_READ_TYPE::HAND_HELD_SAFE_NOTE] = { TEXT("Prototype_Component_Texture_Document1"), TEXT("Prototype_Component_Texture_Portable_Safe1") , TEXT("Prototype_Component_Texture_Portable_Safe2") };
         m_BookText[ITEM_READ_TYPE::RICKER_NOTE]         = { TEXT("Prototype_Component_Texture_DocumentBlood1"), TEXT("Prototype_Component_Texture_ReadType_Ricker1") , TEXT("Prototype_Component_Texture_ReadType_Ricker2") , TEXT("Prototype_Component_Texture_ReadType_Ricker3") , TEXT("Prototype_Component_Texture_ReadType_Ricker4") };
         m_BookText[ITEM_READ_TYPE::SAFE_PASSWARD_NOTE]  = { TEXT("Prototype_Component_Texture_Document1"), TEXT("Prototype_Component_Texture_Safe_PassWard_Note1") , TEXT("Prototype_Component_Texture_Safe_PassWard_Note2") , TEXT("Prototype_Component_Texture_Safe_PassWard_Note3")};
-        m_BookText[ITEM_READ_TYPE::PAMPHLET]            = { TEXT("Prototype_Component_Texture_GuidePamphlet1"), TEXT("Prototype_Component_Texture_PamphletNote1"), TEXT("Prototype_Component_Texture_PamphletNote2"), TEXT("Prototype_Component_Texture_PamphletNote3"), TEXT("Prototype_Component_Texture_PamphletNote4") };
+        m_BookText[ITEM_READ_TYPE::PAMPHLET_NOTE]            = { TEXT("Prototype_Component_Texture_GuidePamphlet1"), TEXT("Prototype_Component_Texture_PamphletNote1"), TEXT("Prototype_Component_Texture_PamphletNote2"), TEXT("Prototype_Component_Texture_PamphletNote3"), TEXT("Prototype_Component_Texture_PamphletNote4") };
        
         m_BookText[ITEM_READ_TYPE::OFFICER_NOTE]        = { TEXT("Prototype_Component_Texture_GuidePamphlet1"), TEXT("Prototype_Component_Texture_ReadType_Police_Note1"), TEXT("Prototype_Component_Texture_ReadType_Police_Note2") };
     }
@@ -152,28 +152,9 @@ void CRead_Item_UI::Tick(_float fTimeDelta)
 {
     __super::Tick(fTimeDelta);
 
-    /* 예시 코드 */
-    if (true == m_isReadCall)
-    {
-        m_isRender = true;
-        Reset();
-        m_isReadCall = false;
-    }
-
-    Render_Condition();
-
-    /* 분기점 */
-    if (READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
-        Introduce_Read(fTimeDelta);
-
-    else if (READ_UI_TYPE::ARROW_READ == m_eRead_type)
-        Arrow_Read();
-
-    else if (READ_UI_TYPE::TEXTURE_READ == m_eRead_type)
-        Texture_Read();
-
-    else if (READ_UI_TYPE::TEXT_LEFT_READ == m_eRead_type || READ_UI_TYPE::TEXT_RIGHT_READ == m_eRead_type)
-        Text_Read(fTimeDelta);
+    Operate_ReadUI(fTimeDelta);
+   
+    Check_UsingReadUI();
 }
 
 void CRead_Item_UI::Late_Tick(_float fTimeDelta)
@@ -210,6 +191,33 @@ void CRead_Item_UI::Render_Destory(_bool _render)
     {
         m_isRender = true;
     }
+}
+
+void CRead_Item_UI::Operate_ReadUI(_float fTimeDelta)
+{
+    if (true == m_isReadCall)
+    {
+        m_isRender = true;
+
+        Reset();
+
+        m_isReadCall = false;
+    }
+
+    Render_Condition();
+
+    /* 분기점 */
+    if (READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
+        Introduce_Read(fTimeDelta);
+
+    else if (READ_UI_TYPE::ARROW_READ == m_eRead_type)
+        Arrow_Read();
+
+    else if (READ_UI_TYPE::TEXTURE_READ == m_eRead_type)
+        Texture_Read();
+
+    else if (READ_UI_TYPE::TEXT_LEFT_READ == m_eRead_type || READ_UI_TYPE::TEXT_RIGHT_READ == m_eRead_type)
+        Text_Read(fTimeDelta);
 }
 
 void CRead_Item_UI::Introduce_Read(_float fTimeDelta)
@@ -339,7 +347,9 @@ void CRead_Item_UI::Set_ReadItem_Type(ITEM_READ_TYPE _readType)
                 if(READ_UI_TYPE::INTRODUCE_READ == m_eRead_type)
                 {
                     iter->m_isReadCall = true;
-                    m_eBook_Type = _readType;   
+
+                    m_eBook_Type = _readType;  
+
                     return;
                 }
             }
@@ -375,14 +385,25 @@ void CRead_Item_UI::Text_Read(_float fTimeDelta)
         m_isRender = true;
 
         m_pRead_Supervise->m_isChange = false;
-        m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_readUIAllow.mp3"), 0.5f);
+        m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_readUIAllow.mp3"), CH_TICK_2D, 0.2f);
     }
 
     else if (READ_UI_TYPE::TEXT_RIGHT_READ == m_eRead_type)
     {
-        m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_readUIAllow.mp3"), 0.5f);
+        m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_readUIAllow.mp3"), CH_TICK_2D, 0.2f);
 
         m_isRender = false;
+    }
+}
+
+void CRead_Item_UI::Check_UsingReadUI()
+{
+    if (m_eRead_type == READ_UI_TYPE::INTRODUCE_READ)
+    {
+        if (true == m_eReadUI_Using[static_cast<_uint>(ITEM_READ_TYPE::OFFICER_NOTE)])
+        {
+            m_pPlayer->MissionClear_Font(TEXT("메인 홀로 돌아가기"), static_cast<_ubyte>(MISSION_TYPE::GO_BACK_MAINHOLL));
+        }
     }
 }
 
@@ -423,7 +444,6 @@ void CRead_Item_UI::Render_Condition()
         return;
     }
 
-    /* R Button 시에 삭제 */
     if (DOWN == m_pGameInstance->Get_KeyState(VK_RBUTTON))
     {
         m_isRender = false;
@@ -433,6 +453,8 @@ void CRead_Item_UI::Render_Condition()
         CPlayer* pPlayer = static_cast<CPlayer*>(m_pGameInstance->Find_Layer(LEVEL_GAMEPLAY, TEXT("Layer_Player"))->front());
         pPlayer->Set_isCamTurn(false);
         m_pGameInstance->Set_IsPaused(false);
+
+        m_eReadUI_Using[static_cast<_int>(m_pIntro_UI->m_eBook_Type)] = true;
 
         if (nullptr != m_pIntro_UI)
             m_pIntro_UI->m_isRead_Start = false;
@@ -445,7 +467,9 @@ void CRead_Item_UI::Render_Condition()
 void CRead_Item_UI::Reset()
 {
     m_fIntro_Timer = 0.f;
+
     m_fBlending = MAX_BLENDING;
+
     m_vCurrentColor = m_vOriginColor;
 
     if (nullptr != m_pRead_Supervise)

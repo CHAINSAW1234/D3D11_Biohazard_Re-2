@@ -38,13 +38,15 @@ private :
 public:
 	void								Calc_Position();
 	void								Rendering(_float fTimeDelta);
-	
+	void								Find_TabWindow();
+
 private : /* 연동 관련 */
 	_bool								m_isOutDistance				= { false }; /* 논외인가? */
 	_float4								m_vTargetPos				= {}; /* 타겟의 위치 */
 
 private :
 	class CInteractProps*				m_pInteractObj				= { nullptr }; /* 목표물 */
+	class CTab_Window*					m_pTab_Window				= { nullptr };
 	CSelector_UI*						m_pSelectorParent			= { nullptr };
 
 	SELECTOR_TYPE						m_eSelectorType				= { SELECTOR_TYPE::END_SELECTOR };

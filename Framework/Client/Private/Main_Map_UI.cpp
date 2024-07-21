@@ -65,12 +65,14 @@ void CMain_Map_UI::Tick(_float fTimeDelta)
     __super::Tick(fTimeDelta);
 
     if (m_DoorList.empty())
+    {
         Find_DoorObj();
+    }
 
     Rendering();
+
     Player_BetweenDistance();
 
-    /* Door : Object가 없을 시 터질 수 있음, Noting 하려면 이거 주석하셈*/
     Region_State();
 
     Door_State();
@@ -91,15 +93,14 @@ HRESULT CMain_Map_UI::Render()
 
 HRESULT CMain_Map_UI::Change_Tool()
 {
-    /* 1. 부모일 경우 : 필요 없는 뒷 배경, 렌더하지 않을 것이다. */
+    /* 부모일 경우 : 필요 없는 뒷 배경*/
     if (false == m_IsChild)
     {
         m_isRender = false;
         m_vColor[0].vColor = m_vCurrentColor = ALPHA_ZERO;
     }
 
-    /* 필수 요소 */
-    if (m_iWhichChild == (_uint)MAP_CHILD_TYPE::BACKGROUND_MAP)
+    if (m_iWhichChild == static_cast<_uint>(MAP_CHILD_TYPE::BACKGROUND_MAP))
     {
         m_isPlay = false;
         m_vColor[0].vColor = m_vCurrentColor = ALPHA_ZERO;
@@ -107,7 +108,7 @@ HRESULT CMain_Map_UI::Change_Tool()
         m_vColor[0].isBlender = m_isBlending = true;
     }
 
-    if (m_iWhichChild == (_uint)MAP_CHILD_TYPE::LINE_MAP)
+    if (m_iWhichChild == static_cast<_uint>(MAP_CHILD_TYPE::LINE_MAP))
     {
         m_vColor[0].vColor = m_vCurrentColor = _float4(0.f, 0.f, 0.f, 0);
     }
@@ -115,20 +116,16 @@ HRESULT CMain_Map_UI::Change_Tool()
     return S_OK;
 }
 
-/* 지역 타입을 확인해서 색깔을 정한다. */
 void CMain_Map_UI::Region_State()
 {
-    if (true == m_isEnd_OnesRole)
-        return;
-
     if (nullptr == m_pPlayer)
         return;
 
-    if (abs((int)m_eMap_Location) > 100)
+    if (abs(static_cast<_int>(m_eMap_Location)) > 100)
         return;
 
     /* 2. 아이템을 전부 먹었을 때  */
-    if (true == m_isMapSearch_Clear && MAP_STATE_TYPE::SEARCH_STATE == m_eMapState)
+    if (false == m_isEnd_OnesRole && true == m_isMapSearch_Clear && MAP_STATE_TYPE::SEARCH_STATE == m_eMapState)
     {
         Search_Map_Type(MAP_STATE_TYPE::SEARCH_CLEAR_STATE, m_eMap_Location);
 
@@ -144,9 +141,10 @@ void CMain_Map_UI::Region_State()
 void CMain_Map_UI::Search_Map_Type(MAP_STATE_TYPE _searType, LOCATION_MAP_VISIT _mapType)
 {
     if (_mapType == m_eMap_Location && 
-        (MAP_CHILD_TYPE::BACKGROUND_MAP == (MAP_CHILD_TYPE)m_iWhichChild && 
-            m_eMapComponent_Type == MAP_UI_TYPE::MAIN_MAP))
+        (MAP_CHILD_TYPE::BACKGROUND_MAP == static_cast<MAP_CHILD_TYPE>(m_iWhichChild) && m_eMapComponent_Type == MAP_UI_TYPE::MAIN_MAP))
+    {
         Change_Search_Type(_searType, false);
+    }
 }
 
 void CMain_Map_UI::Rendering()
@@ -157,7 +155,7 @@ void CMain_Map_UI::Rendering()
         m_isPrevRender = m_pTab_Window->Get_MinMapRender();
     }
 
-    /* ▶ Map Player와 Main의 모듣 객체와의 거리 */
+    /* ▶ Map Player와 Main의 모든 객체와의 거리 */
     if (true == *m_pMapPlayer->Get_PlayerFloorSetting())
     {
         if (m_isPrevRender != m_pTab_Window->Get_MinMapRender())
@@ -180,7 +178,7 @@ void CMain_Map_UI::Player_BetweenDistance()
    if (true == m_pTab_Window->Get_Dead())
        m_isPrevRender = m_pTab_Window->Get_Dead();
 
-   /* ▶ Map Player와 Main의 모든 객체와의 거리  */
+   /* ▶ Player와 Main의 모든 객체와의 거리  */
    if (true == *m_pMapPlayer->Get_PlayerFloorSetting())
    {
        if (m_isPrevRender != m_pTab_Window->Get_Dead() || *m_pMapPlayer->Get_ViewFloor_Type() != m_ePrevViewFloor)
@@ -219,27 +217,24 @@ void CMain_Map_UI::Door_State()
 
                     if (true == iter->Get_Interact())/* 문을 열었는가*/
                     {
-                        Search_Door_Type(MAP_STATE_TYPE::SEARCH_STATE, (DOOR_TYPE)iter->Get_PropType());
+                        Search_Door_Type(MAP_STATE_TYPE::SEARCH_CLEAR_STATE, static_cast<DOOR_TYPE>(iter->Get_PropType()));
 
-                        m_vCurrentColor.w = 1.f;
+                        m_isBlending = false;
                     }
 
-                    else if (false == iter->Get_Interact()) /* 열지 않았는가*/
+                    else if (false == iter->Get_Interact()) 
                     {
-                        Search_Door_Type(MAP_STATE_TYPE::SEARCH_CLEAR_STATE, (DOOR_TYPE)iter->Get_PropType());
+                        Search_Door_Type(MAP_STATE_TYPE::SEARCH_STATE, static_cast<DOOR_TYPE>(iter->Get_PropType()));
 
-                        m_vCurrentColor.w = 1.f;
+                        m_isBlending = false;
                     }
-
                     // m_isBackColor_Change = true; /* Black에 관련된 color만 변경 */
                 }
 
                 /* 접촉하지 않았을 때 */
                 else if (false == iter->Get_FirstInteract())
                 {
-                    Search_Door_Type(MAP_STATE_TYPE::NONE_STATE, (DOOR_TYPE)iter->Get_PropType());
-
-                    m_vCurrentColor.w = 1.f;
+                    Search_Door_Type(MAP_STATE_TYPE::NONE_STATE, static_cast<DOOR_TYPE>(iter->Get_PropType()));
                 }
             }
         }
@@ -273,7 +268,6 @@ void CMain_Map_UI::Change_Search_Type(MAP_STATE_TYPE _searType, _bool isDoor)
         m_vCurrentColor = ALPHA_ZERO;
 
         m_fOrigin_Blending = 0.f;
-
     }
 
     else if (MAP_STATE_TYPE::SEARCH_STATE == _searType) // 수색 중
@@ -282,7 +276,7 @@ void CMain_Map_UI::Change_Search_Type(MAP_STATE_TYPE _searType, _bool isDoor)
             m_vCurrentColor = RED;
 
         else if (true == isDoor)
-            m_vCurrentColor = _float4(0.223529f, 0.470588f, 0.690196f, 1.f);
+            m_vCurrentColor = _float4(0.4f, 0.15f, 0.05f, 1.f);
 
         m_fOrigin_Blending = BLENDING;
     }
@@ -293,7 +287,7 @@ void CMain_Map_UI::Change_Search_Type(MAP_STATE_TYPE _searType, _bool isDoor)
             m_vCurrentColor = BLUE;
 
         else if (true == isDoor)
-            m_vCurrentColor = _float4(0.525490f, 0.086275f, 0.086275f, 1.f);
+            m_vCurrentColor = _float4(0.2f, 0.2f, 0.35f, 1.f);
         
         m_fOrigin_Blending = BLENDING;
     }

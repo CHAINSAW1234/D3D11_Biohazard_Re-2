@@ -378,8 +378,8 @@ void CMissionBar_UI::Operater_MissionArrow(_float fTimeDelta)
         {
             m_fBlending -= fTimeDelta;
 
-            if (m_fBlending <= 0.f)
-                m_fBlending = 0.f;
+            if (m_fBlending <= 0.2f)
+                m_fBlending = 0.2f;
 
         }
     }

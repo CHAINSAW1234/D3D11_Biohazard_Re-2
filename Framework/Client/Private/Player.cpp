@@ -666,7 +666,6 @@ void CPlayer::Player_First_Behavior()
 	}
 }
 
-/* 쓸 Selector를 선택한다 */
 CGameObject* CPlayer::Create_Selector_UI()
 {
 	for (auto& iter : m_SelectorVec)
@@ -684,22 +683,7 @@ CGameObject* CPlayer::Create_Selector_UI()
 
 void CPlayer::Player_Mission_Timer(_float fTimeDelta)
 {
-	if (false == m_isFlod_EntranceDoor)
-	{
-		m_isMissionTimer += fTimeDelta;
-
-		if(m_isMissionTimer >= 2.f)
-		{
-			if(false == m_MissionCollection[MISSION_TYPE::FOLD_ENTRANCE_MISSION])
-			{
-				MissionClear_Font(TEXT("경찰서로 이동하기"), static_cast<_ubyte>(MISSION_TYPE::FOLD_ENTRANCE_MISSION));
-				
-				m_isMissionTimer = 0.f;
-			}
-		}
-	}
-
-	else if (true == m_isFlod_EntranceDoor)
+	if (true == m_isFlod_EntranceDoor)
 	{
 		if (false == m_MissionCollection[MISSION_TYPE::EXPLORING_SURROUNDING_MISSION])
 		{

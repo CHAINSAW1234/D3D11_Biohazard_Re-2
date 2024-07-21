@@ -620,7 +620,7 @@ CHint::DOCUMENT_CLASSIFY CHint::Document_Classify_ByNumber(ITEM_READ_TYPE eIRT_N
 	case Client::ITEM_READ_TYPE::HAND_HELD_SAFE_NOTE:
 	case Client::ITEM_READ_TYPE::RICKER_NOTE:
 	case Client::ITEM_READ_TYPE::SAFE_PASSWARD_NOTE:
-	case Client::ITEM_READ_TYPE::PAMPHLET:
+	case Client::ITEM_READ_TYPE::PAMPHLET_NOTE:
 		return POLICE;
 		break;
 
@@ -713,7 +713,7 @@ ITEM_READ_TYPE CHint::Classify_IRT_By_Name(wstring wstrName)
 		return ITEM_READ_TYPE::SAFE_PASSWARD_NOTE;
 
 	else if (TEXT("가이드 책자") == wstrName)
-		return ITEM_READ_TYPE::PAMPHLET;
+		return ITEM_READ_TYPE::PAMPHLET_NOTE;
 	
 	else if (TEXT("아이템 검사") == wstrName)
 		return ITEM_READ_TYPE::EXAMIN_ITEM;

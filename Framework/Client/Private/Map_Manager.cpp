@@ -6,7 +6,7 @@
 
 #define ALPHA_ZERO				_float4(0.f, 0.f, 0.f, 0.f)
 #define BLENDING                0.7f
-#define BLENDING_SPEED          5.f /* 지도 층을 바꿀 때 블랜딩 속도 가중 값*/
+#define BLENDING_SPEED          5.f /* 지도 층을 바꿀 때 블랜딩 속도 가중 값 */
 #define TARGET_SPEED            50.f
 
 CMap_Manager::CMap_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -113,20 +113,10 @@ void CMap_Manager::Mouse_Pos(_float fTimeDelta)
 	if (!(m_eFloorType == *m_pMapPlayer->Get_ViewFloor_Type() || MAP_FLOOR_TYPE::FLOOR_FREE == m_eFloorType))
 		return;
 	
-	if(true == m_isMouse_Control)
+	if (true == m_isMouse_Control)
 	{
 		if (PRESSING == m_pGameInstance->Get_KeyState(VK_LBUTTON))
 		{
-			if(true == m_pTab_Window->Get_MinMapRender())
-			{
-				if (false == m_isOneSound)
-				{
-					m_isOneSound = true;
-
-					m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_keyDownMiniMap.mp3"), 0.5f);
-				}
-			}
-
 			POINT		ptDeltaPos = m_pGameInstance->Get_MouseDeltaPos();
 
 			/* 속도 방향 정해주기 */
@@ -166,8 +156,29 @@ void CMap_Manager::Mouse_Pos(_float fTimeDelta)
 			}
 		}
 
-		if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
-			m_isOneSound = false;
+		if (MAP_UI_TYPE::PLAYER_MAP == m_eMapComponent_Type)
+		{
+			if(false == m_IsChild)
+			{
+				if (true == m_pTab_Window->Get_MinMapRender())
+				{
+					if (DOWN == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+					{
+						if (false == m_isOneSound)
+						{
+							m_isOneSound = true;
+
+							m_pGameInstance->PlaySoundEffect_2D(TEXT("UI"), TEXT("sound_ui_keyDownMiniMap.mp3"), CH_TICK_2D, 0.1f);
+						}
+					}
+
+					if (UP == m_pGameInstance->Get_KeyState(VK_LBUTTON))
+					{
+						m_isOneSound = false;
+					}
+				}
+			}
+		}
 	}	
 }
 
@@ -269,7 +280,9 @@ void CMap_Manager::Transform_Adjustment()
 		MAP_UI_TYPE::SEARCH_TYPE_MAP == m_eMapComponent_Type || MAP_UI_TYPE::FLOOR_TYPE_MAP == m_eMapComponent_Type)
 	{
 		_float4 vMainPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
 		vMainPos.z = 0.0f;
+
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vMainPos);
 
 		m_isTransfrom_Setting = true;
@@ -279,7 +292,9 @@ void CMap_Manager::Transform_Adjustment()
 	else if (MAP_UI_TYPE::BACKGROUND_MAP == m_eMapComponent_Type)
 	{
 		_float4 vMainPos = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
 		vMainPos.z = 0.9f;
+
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vMainPos);
 
 		m_isTransfrom_Setting = true;
@@ -301,7 +316,9 @@ void CMap_Manager::Transform_Adjustment()
 
 		/* Texture */
 		_float4 pTextureTrans = m_pTransformCom->Get_State_Float4(CTransform::STATE_POSITION);
+
 		pTextureTrans.z = 0.1f;
+
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, pTextureTrans);
 
 		m_isTransfrom_Setting = true;
@@ -339,9 +356,10 @@ void CMap_Manager::Transform_Control(_float fTimeDelta)
 void CMap_Manager::Rendering(_float fTimeDelta)
 {
 	if(m_eMapComponent_Type != MAP_UI_TYPE::TARGET_NOTIFY)
+	{
 		Open_Map();
+	}
 
-	/* ▶ Font Rendering */
 	if (!m_vecTextBoxes.empty())
 	{
 		if (true == m_isRender)
@@ -398,7 +416,7 @@ void CMap_Manager::Rendering(_float fTimeDelta)
 				m_pTransformCom->Set_RotationMatrix_Pure(m_fStoreRotation);
 
 				/* 2. 객체 Blending해서 자연스럽게 사라지기 */
-				m_vCurrentColor.w = 0.f; /* 혹시 모르니까 알파 값은 0으로 무조건 유지해두기 */
+				m_vCurrentColor.w = 0.f; 
 				m_fBlending += fTimeDelta * BLENDING_SPEED;
 			}
 		}
@@ -412,12 +430,21 @@ void CMap_Manager::Open_Map()
         /* 1. Map Open */
         if (true == m_pTab_Window->Get_MinMapRender())
 		{
+			if(false == m_isFirstRender)
+			{
+				m_fBlending = 0.f;
+			}
+
+			m_isFirstRender = true;
 			m_isRender = true;
 		}
 
         /* 2. Map Close*/
         else
-            m_isRender = false;
+		{
+			m_isFirstRender = false;
+			m_isRender = false;
+		}
     }
 }
 
